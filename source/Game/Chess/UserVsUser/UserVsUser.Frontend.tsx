@@ -1,7 +1,6 @@
+import * as Alerts from "../../../Alerts"
 import { Audio, Cmd, exhaustive, Option, p, Sub, t } from "../../../Core"
 import { UserId } from "../../../Data"
-import * as ProfileStore from "../../../Profile/Profile.Store"
-import * as Snackbar from "../../../Alerts"
 import * as UI from "../../../UI"
 import { Ctx } from "../../Game.Shared"
 import * as Board from "../Board"
@@ -20,7 +19,7 @@ import {
   SharedModel,
   startGame,
   ToBackend,
-  ToFrontend,
+  ToFrontend
 } from "./UserVsUser.Types"
 
 //
@@ -61,7 +60,7 @@ export const init = ({
 
 export type Msg = FrontendMsg
 
-export type OutAction = Snackbar.Action
+export type OutAction = Alerts.Action
 
 export const update = (
   { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd },
@@ -155,12 +154,7 @@ export const update = (
 }
 
 export const updateFromBackend = (
-  {
-    currentUserId,
-  }: {
-    currentUserId: UserId
-    profileStore: ProfileStore.Model
-  },
+  { ctx }: { ctx: Ctx, },
   msg: ToFrontend,
   _model: Model,
 ): [Model, Cmd<Msg>, OutAction[]] => {
@@ -199,8 +193,8 @@ export const updateFromBackend = (
       const soundCmd = Board.inCheck(sharedModelNew.board)
         ? playAudio(Sounds.check)
         : sharedModelNew.didCapture
-        ? playAudio(Sounds.capture)
-        : playAudio(Sounds.move)
+          ? playAudio(Sounds.capture)
+          : playAudio(Sounds.move)
 
       return [{ ...model, sharedModel: sharedModelNew }, soundCmd, []]
     }
@@ -260,8 +254,8 @@ export const updateFromBackend = (
 
       const isNotPlaying =
         sharedModel.type === "Game" &&
-        sharedModel.w !== currentUserId &&
-        sharedModel.b !== currentUserId
+        sharedModel.w !== ctx.currentUserId &&
+        sharedModel.b !== ctx.currentUserId
 
       if (isNotPlaying) {
         return [{ ...model, sharedModel }, Cmd.None, []]
@@ -269,7 +263,7 @@ export const updateFromBackend = (
 
       const action: OutAction = [
         "Alerts",
-        { variant: "Info", message: "Draw was declined" },
+        { tag: "Snack", message: "Draw was declined" },
       ]
 
       return [{ ...model, sharedModel }, Cmd.None, [action]]
@@ -286,17 +280,14 @@ export const updateFromBackend = (
 
       const isNotPlaying =
         sharedModel.type === "Game" &&
-        sharedModel.w !== currentUserId &&
-        sharedModel.b !== currentUserId
+        sharedModel.w !== ctx.currentUserId &&
+        sharedModel.b !== ctx.currentUserId
 
       if (isNotPlaying) {
         return [{ ...model, sharedModel }, Cmd.None, []]
       }
 
-      const action: OutAction = [
-        "Alerts",
-        { variant: "Info", message: "Draw was cancelled" },
-      ]
+      const action: OutAction = ["Alerts", { tag: "Snack", message: "Draw was cancelled" }]
 
       return [{ ...model, sharedModel }, Cmd.None, [action]]
     }
@@ -571,10 +562,10 @@ export const View = ({
     ctx.currentUserId === w && ctx.currentUserId === b
       ? "Both"
       : ctx.currentUserId === w
-      ? "w"
-      : ctx.currentUserId === b
-      ? "b"
-      : "None"
+        ? "w"
+        : ctx.currentUserId === b
+          ? "b"
+          : "None"
 
   const boardOrientation: Board.Color = p(
     currentUserColor === "None" || currentUserColor === "Both"
@@ -718,7 +709,7 @@ export const View = ({
                     model.sharedModel.type === "Game" &&
                     model.sharedModel.drawAgreement.type === "Asking" &&
                     model.sharedModel.drawAgreement.asker ===
-                      Board.toOppositeColor(currentUserColor)
+                    Board.toOppositeColor(currentUserColor)
                   }
                   headerIcon={
                     <UI.Icons.HandshakeTwoTone

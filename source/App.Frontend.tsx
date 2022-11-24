@@ -33,7 +33,7 @@ import * as Pages from "./Pages"
 import * as Party from "./Party/Party.Frontend"
 import * as ProfileStore from "./Profile/Profile.Store"
 import * as Route from "./Route"
-import * as Snackbar from "./Alerts"
+import * as Alerts from "./Alerts"
 import * as UI from "./UI"
 import { Divider } from "./UI"
 
@@ -54,8 +54,8 @@ const init = (location: Browser.Location): [Model, Cmd<Msg>] => {
     Option.withDefault<Route.Model>(["GameRoom"]),
   )
   const [auth, authCmd] = Auth.init()
-  const snackbar = Snackbar.init
-  const store = ChatStore.init
+  const alerts = Alerts.init
+  const chatStore = ChatStore.init
   const [gameRoom, gameRoomCmd] = GameRoom.init
   const [page, pageCmd] = Pages.initLoading()
   const [party, partyCmd] = Party.init({
@@ -66,8 +66,8 @@ const init = (location: Browser.Location): [Model, Cmd<Msg>] => {
   return [
     {
       route,
-      snackbar,
-      chatStore: store,
+      alerts,
+      chatStore,
       gameRoom,
       auth,
       page,
@@ -94,14 +94,21 @@ const init = (location: Browser.Location): [Model, Cmd<Msg>] => {
 
 type Msg = FrontendMsg
 
-type OutAction =
-  | Snackbar.Action
+type OutAction<Msg = FrontendMsg> =
+  | Alerts.Action<Msg>
   | GameRoom.Action
   | ChatStore.Action
   | Auth.Action
   | Party.Action
   | Route.Action
   | ProfileStore.Action
+
+const mapAction = <A, B>(mapper: (a: A) => B, action: OutAction<A>): OutAction<B> => {
+  if (action[0] === 'Alerts') {
+    return Alerts.mapAction(mapper, action)
+  }
+  return action
+}
 
 //
 //
@@ -142,9 +149,9 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     }
 
     case "Alerts": {
-      const [snackbarNew, alertsCmd] = Snackbar.update(msg[1], model.snackbar)
+      const [alertsNew, alertsCmd, msgs] = Alerts.update(msg[1], model.alerts)
 
-      return [{ ...model, snackbar: snackbarNew }, Cmd.tag("Alerts", alertsCmd)]
+      return p([{ ...model, alerts: alertsNew }, Cmd.tag("Alerts", alertsCmd)], andThenMany(update, msgs))
     }
 
     case "Party": {
@@ -202,7 +209,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
         model.gameRoom,
       )
 
-      return p([{ ...model, gameRoom: child }, Cmd.tag("GameRoom", childCmd)])
+      return [{ ...model, gameRoom: child }, Cmd.tag("GameRoom", childCmd)]
     }
 
     case "Page": {
@@ -310,9 +317,8 @@ const updateFromBackend = (
 
       const [gameRoom, gameRoomCmd, actions] = GameRoom.updateFromBackend(
         {
-          currentUserId,
+          ctx: { currentUserId, profiles: model.profileStore.profiles },
           sendToBackend: (msg) => sendToBackend(["GameRoom", msg]),
-          profileStore: model.profileStore,
         },
         msg[1],
         model.gameRoom,
@@ -320,7 +326,7 @@ const updateFromBackend = (
 
       return p(
         [{ ...model, gameRoom }, Cmd.tag("GameRoom", gameRoomCmd)],
-        andThenMany(runAction, actions),
+        andThenMany(runAction, actions.map(a => mapAction(t('GameRoom'), a))),
       )
     }
 
@@ -384,16 +390,16 @@ const initPage = (model: Model): [Model, Cmd<Msg>] => {
 
 const updateStatusChanged =
   (modelPrev: Model) =>
-  (_msg: Msg, model: Model): [Model, Cmd<Msg>] => {
-    const statusPrev = toStatus(modelPrev)
-    const statusNew = toStatus(model)
+    (_msg: Msg, model: Model): [Model, Cmd<Msg>] => {
+      const statusPrev = toStatus(modelPrev)
+      const statusNew = toStatus(model)
 
-    if (statusNew[0] === statusPrev[0]) {
-      return [model, Cmd.None]
+      if (statusNew[0] === statusPrev[0]) {
+        return [model, Cmd.None]
+      }
+
+      return initPage(model)
     }
-
-    return initPage(model)
-  }
 
 const runAction = (action: OutAction, model: Model): [Model, Cmd<Msg>] => {
   switch (action[0]) {
@@ -403,11 +409,11 @@ const runAction = (action: OutAction, model: Model): [Model, Cmd<Msg>] => {
     }
 
     case "Alerts": {
-      const [snackbarNew, alertsCmd] = Snackbar.runAction(
+      const [alertsNew, alertsCmd] = Alerts.runAction(
         action,
-        model.snackbar,
+        model.alerts,
       )
-      return [{ ...model, snackbar: snackbarNew }, Cmd.tag("Alerts", alertsCmd)]
+      return [{ ...model, alerts: alertsNew }, Cmd.tag("Alerts", alertsCmd)]
     }
 
     case "GameRoom": {
@@ -542,25 +548,8 @@ const toThemeMode = (model: Model): UI.ThemeMode => {
 const View = ({ model, $d }: { model: Model; $d: (msg: Msg) => void }) => {
   return (
     <UI.AppContainer themeMode={toThemeMode(model)}>
-      {/* <UI.Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          width: "100%",
-          overflow: "hidden",
-          flex: 1,
-        }}
-      > */}
-      <ViewMain
-        model={model}
-        $d={$d}
-      />
-      {/* </UI.Box> */}
-
-      <Snackbar.View
-        model={model.snackbar}
-        $d={(msg) => $d(["Alerts", msg])}
-      />
+      <ViewMain model={model} $d={$d} />
+      <Alerts.View model={model.alerts} $d={(msg) => $d(["Alerts", msg])} />
     </UI.AppContainer>
   )
 }
@@ -783,7 +772,7 @@ const wireStatus = Sub.create<WireStatus>((emit) => {
     emit("Disconnected")
   })
 
-  return () => {}
+  return () => { }
 })
 
 const fromBackend = Sub.create<ToFrontend>((emit) => {
@@ -791,14 +780,14 @@ const fromBackend = Sub.create<ToFrontend>((emit) => {
     emit(msg)
   })
 
-  return () => {}
+  return () => { }
 })
 
 const sendToBackend =
   (msg: ToBackend): Cmd =>
-  () => {
-    socketClient.emit("ToBackend", msg)
-  }
+    () => {
+      socketClient.emit("ToBackend", msg)
+    }
 
 //
 //

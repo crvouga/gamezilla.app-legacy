@@ -5,7 +5,7 @@ import * as GameRoom from "./Game/GameRoom.Types"
 import * as Page from "./Pages"
 import * as Party from "./Party/Party.Types"
 import * as Route from "./Route"
-import * as Snackbar from "./Alerts"
+import * as Alerts from "./Alerts"
 import * as ChatStore from "./Chat/Chat.Store"
 import * as ProfileStore from "./Profile/Profile.Store"
 
@@ -32,7 +32,7 @@ export type Session = {
 }
 
 export type FrontendModel = {
-  snackbar: Snackbar.Model
+  alerts: Alerts.Model<FrontendMsg>
   chatStore: ChatStore.Model
   auth: Auth.Model
   page: Page.Model
@@ -71,7 +71,7 @@ export type FrontendMsg =
   | ["▶", ToFrontend]
   | ["Wire", WireStatus]
   | ["Route", Route.Msg]
-  | ["Alerts", Snackbar.Msg]
+  | ["Alerts", Alerts.Msg]
   | ["GameRoom", GameRoom.FrontendMsg]
   | ["Store", ChatStore.Msg]
   | ["Auth", Auth.Msg]

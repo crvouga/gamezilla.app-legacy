@@ -1,5 +1,5 @@
 import { Audio, Cmd, exhaustive, Option, Sub, t } from "../../../Core"
-import * as Snackbar from "../../../Alerts"
+import * as Alerts from "../../../Alerts"
 import * as UI from "../../../UI"
 import { Ctx } from "../../Game.Shared"
 import * as Board from "../Board"
@@ -59,7 +59,7 @@ export const init = ({
 
 export type Msg = FrontendMsg
 
-export type OutAction = Snackbar.Action
+export type OutAction = Alerts.Action
 
 export const update = (
   { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd },
@@ -184,8 +184,8 @@ const updateFromBackend_ = (
         sharedModel.type === "Game" && Board.inCheck(sharedModel.board)
           ? playAudio(Sounds.check)
           : didCapture
-          ? playAudio(Sounds.capture)
-          : playAudio(Sounds.move)
+            ? playAudio(Sounds.capture)
+            : playAudio(Sounds.move)
 
       return [{ ...model, sharedModel }, soundCmd, []]
     }
@@ -210,8 +210,8 @@ const updateFromBackend_ = (
         sharedModelNew.type === "Game" && Board.inCheck(sharedModelNew.board)
           ? playAudio(Sounds.check)
           : sharedModelNew.didCapture
-          ? playAudio(Sounds.capture)
-          : playAudio(Sounds.move)
+            ? playAudio(Sounds.capture)
+            : playAudio(Sounds.move)
 
       return [modelNew, soundCmd, []]
     }
@@ -324,22 +324,22 @@ export const View = ({
             black={
               model.sharedModel.userColor === "w"
                 ? {
-                    type: "Bot",
-                    label: Board.levelToString(model.sharedModel.botLevel),
-                  }
+                  type: "Bot",
+                  label: Board.levelToString(model.sharedModel.botLevel),
+                }
                 : model.sharedModel.userId === "None"
-                ? { type: "None" }
-                : { type: "User", userId: model.sharedModel.userId }
+                  ? { type: "None" }
+                  : { type: "User", userId: model.sharedModel.userId }
             }
             white={
               model.sharedModel.userColor === "b"
                 ? {
-                    type: "Bot",
-                    label: Board.levelToString(model.sharedModel.botLevel),
-                  }
+                  type: "Bot",
+                  label: Board.levelToString(model.sharedModel.botLevel),
+                }
                 : model.sharedModel.userId === "None"
-                ? { type: "None" }
-                : { type: "User", userId: model.sharedModel.userId }
+                  ? { type: "None" }
+                  : { type: "User", userId: model.sharedModel.userId }
             }
           />
 
@@ -527,7 +527,7 @@ export const View = ({
       <UI.Avatar sx={{ marginRight: 2, backgroundColor: "transparent" }}>
         <UI.Icons.SmartToy
           sx={{ color: "text.primary", width: "100%", height: "100%" }}
-          // sx={{ width: 40, height: 40, marginRight: 2 }}
+        // sx={{ width: 40, height: 40, marginRight: 2 }}
         />
       </UI.Avatar>
 

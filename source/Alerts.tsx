@@ -1,5 +1,6 @@
 import { Cmd, Time, Uuid } from "./Core"
 import * as UI from "./UI"
+import { ConformationDialog } from "./UI"
 
 //
 //
@@ -9,8 +10,9 @@ import * as UI from "./UI"
 //
 //
 
-export type Model = {
+export type Model<TMsg = never> = {
   queue: Snack[]
+  conformation: { tag: "closed", title: string, } | { tag: "opened", title: string, onConfirm: TMsg }
 }
 
 type SnackId = string
@@ -24,6 +26,7 @@ export type Snack = {
 
 export const init: Model = {
   queue: [],
+  conformation: { tag: "closed", title: "" }
 }
 
 type Variant = "Info" | "Error"
@@ -37,59 +40,106 @@ type Variant = "Info" | "Error"
 //
 
 export type Msg =
-  | ["DurationElapsed", SnackId]
-  | ["ClickedClose", SnackId]
-  | ["ClickedAwayClose", SnackId]
+  | ["elapsed", SnackId]
+  | ["clicked_close", SnackId]
+  | ["clicked_away_close", SnackId]
+  | ["conformation_closed"]
+  | ["conformation_cancelled"]
+  | ['conformation_confirmed']
 
-export type Action = [
+export type Action<TMsg = never> = [
   "Alerts",
-  { variant: Variant; message: string; title?: string },
+  | { tag: "Snack", variant?: Variant; title?: string, message: string; }
+  | { tag: "Conformation", title: string, onConfirm: TMsg },
 ]
 
-export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
+export const mapAction = <A, B>(f: (a: A) => B, action: Action<A>): Action<B> => {
+  if (action[1].tag === 'Conformation') {
+    return ['Alerts', { ...action[1], onConfirm: f(action[1].onConfirm) }]
+  }
+  return ['Alerts', { ...action[1], }]
+}
+
+export const update = <TMsg,>(msg: Msg, model: Model<TMsg>): [Model<TMsg>, Cmd<Msg>, TMsg[]] => {
   switch (msg[0]) {
-    case "DurationElapsed":
-      return removeById(msg[1], model)
+    case "elapsed": {
 
-    case "ClickedClose":
-      return removeById(msg[1], model)
+      const snackId = msg[1]
+      return [
+        {
+          ...model,
+          queue: model.queue.filter((snack) => snack.snackId !== snackId),
+        },
+        Time.cancelTimeout(snackId),
+        []
+      ]
+    }
 
-    case "ClickedAwayClose":
-      return [model, Cmd.None]
+
+    case "clicked_close": {
+      const snackId = msg[1]
+      return [
+        {
+          ...model,
+          queue: model.queue.filter((snack) => snack.snackId !== snackId),
+        },
+        Time.cancelTimeout(snackId),
+        []
+      ]
+    }
+
+    case "clicked_away_close": {
+      return [model, Cmd.None, []]
+    }
+
+    case 'conformation_cancelled': {
+      return [{ ...model, conformation: { tag: "closed", title: model.conformation.title } }, Cmd.None, []]
+    }
+
+    case 'conformation_closed': {
+      return [{ ...model, conformation: { tag: "closed", title: model.conformation.title } }, Cmd.None, []]
+    }
+
+    case 'conformation_confirmed': {
+      const modelNew: Model = { ...model, conformation: { tag: "closed", title: model.conformation.title } }
+      const outMsgs = model.conformation.tag === 'opened' ? [model.conformation.onConfirm] : []
+      return [modelNew, Cmd.None, outMsgs]
+    }
   }
 }
 
 const snackTimeout = 4000
 
-export const runAction = (action: Action, model: Model): [Model, Cmd<Msg>] => {
-  const { message, title, variant } = action[1]
+export const runAction = <TMsg,>(action: Action<TMsg>, model: Model<TMsg>): [Model<TMsg>, Cmd<Msg>] => {
+  switch (action[1].tag) {
+    case 'Conformation': {
+      const modelNew: Model<TMsg> = { ...model, conformation: { tag: "opened", onConfirm: action[1].onConfirm, title: action[1].title } }
+      return [modelNew, Cmd.None]
+    }
+    case 'Snack': {
+      const { message, title, variant } = action[1]
 
-  const snack: Snack = {
-    snackId: Uuid.generateSync(),
-    message,
-    variant,
-    title,
+      const snack: Snack = {
+        snackId: Uuid.generateSync(),
+        message,
+        variant: variant ?? "Info",
+        title,
+      }
+
+      return [
+        {
+          ...model,
+          queue: [snack, ...model.queue],
+        },
+        Time.startTimeout(snack.snackId, snackTimeout, [
+          "elapsed",
+          snack.snackId,
+        ]),
+      ]
+    }
   }
-
-  return [
-    {
-      ...model,
-      queue: [snack, ...model.queue],
-    },
-    Time.startTimeout(snack.snackId, snackTimeout, [
-      "DurationElapsed",
-      snack.snackId,
-    ]),
-  ]
 }
 
-const removeById = (snackId: string, model: Model): [Model, Cmd<Msg>] => [
-  {
-    ...model,
-    queue: model.queue.filter((snack) => snack.snackId !== snackId),
-  },
-  Time.cancelTimeout(snackId),
-]
 
 //
 //
@@ -99,41 +149,41 @@ const removeById = (snackId: string, model: Model): [Model, Cmd<Msg>] => [
 //
 //
 
-export const View = ({
+export const View = <TMsg,>({
   $d,
   model,
 }: {
-  model: Model
+  model: Model<TMsg>
   $d: (msg: Msg) => void
 }) => {
-  const snack = model.queue[0]
-
-  if (!snack) {
-    return <></>
-  }
-
   return (
-    <UI.Portal>
-      <UI.Snackbar
-        anchorOrigin={{
-          horizontal: "center",
-          vertical: "top",
-        }}
-        open
-        message={snack.message}
-        onClose={() => $d(["ClickedAwayClose", snack.snackId])}
+    <>
+
+      <ConformationDialog
+        confirmTitle="Confirm"
+        onCancel={() => $d(['conformation_cancelled'])}
+        onClose={() => $d(['conformation_closed'])}
+        onConfirm={() => $d(['conformation_confirmed'])}
+        open={model.conformation.tag === 'opened'}
+        title={model.conformation.title}
+        cancelTitle="Cancel"
       />
 
-      {/* <UI.Alert
-          variant="filled"
-          onClose={() => $d(["ClickedClose", snack.snackId])}
-          severity={snack.variant === "Error" ? "error" : "info"}
-          sx={{ width: "100%" }}
-        >
-          {snack.title && <UI.AlertTitle>{snack.title}</UI.AlertTitle>}
-          {snack.message}
-        </UI.Alert>
-      </UI.Snackbar> */}
-    </UI.Portal>
+      <UI.Portal>
+        {model.queue[0] && <UI.Snackbar
+          anchorOrigin={{
+            horizontal: "center",
+            vertical: "top",
+          }}
+          open
+          message={model.queue[0].message}
+          onClose={() => {
+            if (model.queue[0]) {
+              $d(["clicked_away_close", model.queue[0].snackId])
+            }
+          }}
+        />}
+      </UI.Portal>
+    </>
   )
 }

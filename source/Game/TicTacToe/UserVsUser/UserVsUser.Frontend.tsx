@@ -1,7 +1,7 @@
 import { Cmd, exhaustive } from "../../../Core"
 import { UserId } from "../../../Data"
 import * as ProfileStore from "../../../Profile/Profile.Store"
-import * as Snackbar from "../../../Alerts"
+import * as Alerts from "../../../Alerts"
 import * as UI from "../../../UI"
 import { Ctx } from "../../Game.Shared"
 import {
@@ -67,7 +67,7 @@ export const init: Model = {
 
 export type Msg = FrontendMsg
 
-export type OutAction = ProfileStore.Action | Snackbar.Action
+export type OutAction = ProfileStore.Action | Alerts.Action
 
 export const update = (
   {
@@ -413,8 +413,8 @@ export const View = ({
     model.X === ctx.currentUserId
       ? "X"
       : model.O === ctx.currentUserId
-      ? "O"
-      : "None"
+        ? "O"
+        : "None"
 
   return (
     <UI.FillBox>
@@ -529,8 +529,8 @@ const ViewGameOverMessage = ({
     model.X === ctx.currentUserId
       ? "X"
       : model.O === ctx.currentUserId
-      ? "O"
-      : "None"
+        ? "O"
+        : "None"
 
   if (
     model.rematch.type === "Asking" &&
@@ -1124,9 +1124,8 @@ const toGameText = ({
     case "GameOver": {
       switch (model.gameOver.type) {
         case "Resignation": {
-          return `${
-            store.profiles[model[model.gameOver.resigner]]?.username ?? "..."
-          } resigned`
+          return `${store.profiles[model[model.gameOver.resigner]]?.username ?? "..."
+            } resigned`
         }
 
         case "Winner": {
@@ -1284,9 +1283,8 @@ const ViewPlayerGameSlot = ({
           display: "flex",
           alignItems: "center",
           overflow: "hidden",
-          borderBottom: `solid 3.5px ${
-            isTurn ? gameTheme.background : uiTheme.palette.divider
-          }`,
+          borderBottom: `solid 3.5px ${isTurn ? gameTheme.background : uiTheme.palette.divider
+            }`,
         }}
       >
         <UI.Box
@@ -1331,10 +1329,10 @@ const ViewPlayerGameSlot = ({
                 timeLeft === 3
                   ? "warning.light"
                   : timeLeft === 2
-                  ? "warning.dark"
-                  : timeLeft < 2
-                  ? "error.main"
-                  : "text.primary"
+                    ? "warning.dark"
+                    : timeLeft < 2
+                      ? "error.main"
+                      : "text.primary"
               }
             >
               {timeLeft}

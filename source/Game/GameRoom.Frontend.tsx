@@ -2,7 +2,7 @@ import { Cmd, exhaustive, p, RemoteData, Sub } from "../Core"
 import { RoomId, UserId } from "../Data"
 import * as ProfileStore from "../Profile/Profile.Store"
 import * as Route from "../Route"
-import * as Snackbar from "../Alerts"
+import * as Alerts from "../Alerts"
 import * as UI from "../UI"
 import { Button, ConformationDialog, Divider, Toolbar } from "../UI"
 import * as Game from "./Game.Frontend"
@@ -51,7 +51,7 @@ export type Msg = FrontendMsg
 
 export type Action = ["GameRoom", ["Msg", Msg]]
 
-type OutAction = Snackbar.Action | ProfileStore.Action | Route.Action
+type OutAction = Alerts.Action<Msg> | ProfileStore.Action | Route.Action
 
 //
 //
@@ -170,7 +170,11 @@ export const update = (
     }
 
     case "RoomLeaveThenJoin": {
-      return [model, sendToBackend(["RoomLeave", { userId: msg[1].userId }])]
+      return [model, sendToBackend(msg)]
+    }
+
+    case "RoomEndThenJoin": {
+      return [model, sendToBackend(msg)]
     }
 
     default:
@@ -180,13 +184,11 @@ export const update = (
 
 export const updateFromBackend = (
   {
-    currentUserId,
+    ctx,
     sendToBackend,
-    profileStore,
   }: {
-    currentUserId: UserId
+    ctx: Ctx,
     sendToBackend: (msg: ToBackend) => Cmd
-    profileStore: ProfileStore.Model
   },
   msg: ToFrontend,
   model: Model,
@@ -219,9 +221,8 @@ export const updateFromBackend = (
 
       const [gameNew, gameCmd, actions] = Game.updateFromBackend(
         {
-          currentUserId,
+          ctx,
           sendToBackend: (msg) => sendToBackend(["Games", roomId, msg]),
-          store: profileStore,
         },
         gameMsg,
         room.game,
@@ -259,7 +260,7 @@ export const updateFromBackend = (
     case "RoomDestroy": {
       const handled = updateResponse({ sendToBackend }, msg, model)
 
-      const user = model.users[currentUserId]
+      const user = model.users[ctx.currentUserId]
 
       if (!user) {
         return handled
@@ -271,27 +272,27 @@ export const updateFromBackend = (
         return handled
       }
 
-      if (room.hostId === currentUserId) {
+      if (room.hostId === ctx.currentUserId) {
         return handled
       }
 
-      const snackbarActions: OutAction[] =
+      const alertActions: OutAction[] =
         msg[2].type === "Ok"
           ? [
             [
               "Alerts",
               {
                 message: toRoomEndMessage({
-                  profileStore,
+                  ctx,
                   hostId: msg[1].userId,
                 }),
-                variant: "Info",
+                tag: "Snack",
               },
             ],
           ]
           : []
 
-      return [handled[0], handled[1], [...handled[2], ...snackbarActions]]
+      return [handled[0], handled[1], [...handled[2], ...alertActions]]
     }
 
     case "RoomLeave": {
@@ -301,58 +302,65 @@ export const updateFromBackend = (
         return handled
       }
 
-      const snackbarActions: OutAction[] =
-        msg[1].userId !== currentUserId
+      const alertActions: OutAction[] =
+        msg[1].userId !== ctx.currentUserId
           ? [
             [
               "Alerts",
               {
-                variant: "Info",
+                tag: "Snack",
                 message: toRoomLeaveMessage({
                   userId: msg[1].userId,
-                  profileStore,
+                  ctx,
                 }),
               },
             ],
           ]
           : []
 
-      return [handled[0], handled[1], [...handled[2], ...snackbarActions]]
+      return [handled[0], handled[1], [...handled[2], ...alertActions]]
     }
 
     case "RoomJoin": {
       const handled = updateResponse({ sendToBackend }, msg, model)
 
       if (msg[2].type === "Err") {
-        if (msg[2].error === "already_in_room") {
-          return [
-            {
-              ...handled[0],
-              modal: { type: "RoomLeaveThenJoin", roomId: msg[1].roomId },
-            },
-            handled[1],
-            handled[2],
-          ]
-        }
+        const currentRoomId = model.users[ctx.currentUserId]?.roomId
+        const currentRoom = currentRoomId ? model.rooms[currentRoomId] : undefined
 
-        return handled
+        const alertActions: Alerts.Action<Msg>[] = msg[2].error === "already_in_room" && msg[1].userId === ctx.currentUserId ?
+          ctx.currentUserId === currentRoom?.hostId ?
+            [
+              ['Alerts', { title: "End your current room to join this room?", tag: "Conformation", onConfirm: ['RoomEndThenJoin', msg[1]] }]
+            ]
+            :
+            [
+              ['Alerts', { title: "Leave your current room to join this room?", tag: "Conformation", onConfirm: ['RoomLeaveThenJoin', msg[1]] }]
+            ]
+          : []
+
+        return [
+          handled[0],
+          handled[1],
+          [...handled[2], ...alertActions],
+        ]
       }
 
       const routeActions: OutAction[] =
-        msg[1].userId === currentUserId
+        msg[1].userId === ctx.currentUserId
           ? [["Route", ["Replace", ["GameRoom"]]]]
           : []
 
-      const snackbarActions: OutAction[] =
-        msg[1].userId !== currentUserId
+      const alertActions: OutAction[] =
+        msg[1].userId !== ctx.currentUserId
           ? [
             [
               "Alerts",
               {
-                variant: "Info",
+                tag: "Snack",
                 message: toRoomJoinMessage({
                   userId: msg[1].userId,
-                  profileStore,
+                  ctx,
                 }),
               },
             ],
@@ -362,20 +370,20 @@ export const updateFromBackend = (
       return [
         handled[0],
         handled[1],
-        [...handled[2], ...routeActions, ...snackbarActions],
+        [...handled[2], ...routeActions, ...alertActions],
       ]
     }
   }
 }
 
 const toRoomEndMessage = ({
-  profileStore,
+  ctx,
   hostId,
 }: {
   hostId: UserId
-  profileStore: ProfileStore.Model
+  ctx: Ctx,
 }) => {
-  const profile = profileStore.profiles[hostId]
+  const profile = ctx.profiles[hostId]
   if (profile) {
     return `${profile.username} ended the room`
   }
@@ -383,13 +391,13 @@ const toRoomEndMessage = ({
 }
 
 const toRoomJoinMessage = ({
-  profileStore,
+  ctx,
   userId,
 }: {
   userId: UserId
-  profileStore: ProfileStore.Model
+  ctx: Ctx,
 }) => {
-  const profile = profileStore.profiles[userId]
+  const profile = ctx.profiles[userId]
   if (profile) {
     return `${profile.username} joined the room`
   }
@@ -397,13 +405,13 @@ const toRoomJoinMessage = ({
 }
 
 const toRoomLeaveMessage = ({
-  profileStore,
+  ctx,
   userId,
 }: {
   userId: UserId
-  profileStore: ProfileStore.Model
+  ctx: Ctx,
 }) => {
-  const profile = profileStore.profiles[userId]
+  const profile = ctx.profiles[userId]
   if (profile) {
     return `${profile.username} left the room`
   }

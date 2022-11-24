@@ -1,6 +1,6 @@
 import { Cmd, exhaustive } from "../../Core"
 import * as ProfileStore from "../../Profile/Profile.Store"
-import * as Snackbar from "../../Alerts"
+import * as Alerts from "../../Alerts"
 import * as UI from "../../UI"
 import { Ctx, GameModeCardGrid } from "../Game.Shared"
 import { Empty, gameTheme, Position, Slot, ViewSlot } from "./TicTacToe"
@@ -38,7 +38,7 @@ export const init: Model = {
 
 export type Msg = FrontendMsg
 
-export type OutAction = ProfileStore.Action | Snackbar.Action
+export type OutAction = ProfileStore.Action | Alerts.Action
 
 export const update = (
   {

@@ -1,6 +1,6 @@
 import { Cmd, exhaustive, Sub } from "../../../Core"
 import { UserId } from "../../../Data"
-import * as Snackbar from "../../../Alerts"
+import * as Alerts from "../../../Alerts"
 import * as UI from "../../../UI"
 import { Ctx } from "../../Game.Shared"
 import {
@@ -59,7 +59,7 @@ export const init = ({
 
 export type Msg = FrontendMsg
 
-export type OutAction = Snackbar.Action
+export type OutAction = Alerts.Action
 
 export const update = (
   { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd },

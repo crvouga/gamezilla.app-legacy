@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef } from "react"
 import { Cmd, exhaustive, Keyboard, Option, Result, Sub } from "../../Core"
 import * as Route from "../../Route"
-import * as Snackbar from "../../Alerts"
+import * as Alerts from "../../Alerts"
 import * as UI from "../../UI"
 import { Ctx } from "../Game.Shared"
 import { Direction } from "./Direction"
@@ -44,7 +44,7 @@ export const init: Model = {
 
 export type Msg = FrontendMsg
 
-export type OutAction = Snackbar.Action
+export type OutAction = Alerts.Action
 
 export const update = (
   {
@@ -77,9 +77,9 @@ export const update = (
       const changeDirectionCmd =
         direction.type === "Some"
           ? sendToBackend([
-              "InputDirection",
-              { userId: ctx.currentUserId, direction: direction.value },
-            ])
+            "InputDirection",
+            { userId: ctx.currentUserId, direction: direction.value },
+          ])
           : Cmd.None
 
       const toggleStatusCmd =
@@ -163,7 +163,7 @@ const updateResponse = <
 ): [Model, Cmd<Msg>, OutAction[]] => {
   if (result.type === "Err") {
     const message = result.error.split("_").join(" ")
-    return [model, Cmd.None, [["Alerts", { message, variant: "Error" }]]]
+    return [model, Cmd.None, [["Alerts", { tag: "Snack", message, variant: "Error" }]]]
   }
   const sharedModel = result.value
   return [{ ...model, ...sharedModel }, Cmd.None, []]
