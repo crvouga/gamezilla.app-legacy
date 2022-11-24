@@ -327,7 +327,7 @@ export const View = ({
       </Box>
 
 
-      <Divider orientation="vertical" sx={{ height: "2rem", marginX: "auto" }} />
+      <Divider orientation="vertical" sx={{ height: "3rem", marginX: "auto" }} />
 
       {model.method === 'phone' && (
         <>
@@ -362,7 +362,7 @@ export const View = ({
             : <>
 
               {/* <Divider orientation="vertical" sx={{ height: "2rem", marginX: "auto" }} /> */}
-              <Alert severity="success" variant="filled" action={
+              <Alert severity="success" action={
                 <IconButton color="inherit" size="small" onClick={() => $d(['send_code_clear'])}>
                   <Icons.Clear />
                 </IconButton>
@@ -380,7 +380,7 @@ export const View = ({
                   </Box>
                 </Typography>
               </Alert>
-              <Divider orientation="vertical" sx={{ height: "2rem", marginX: "auto" }} />
+              <Divider orientation="vertical" sx={{ height: "3rem", marginX: "auto" }} />
               <TextField
 
                 inputProps={{
