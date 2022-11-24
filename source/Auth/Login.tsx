@@ -287,7 +287,7 @@ export const View = ({
   }
 
   return (
-    <FillBox sx={{ p: 2, gap: 2, paddingBottom: 6, }}>
+    <FillBox sx={{ p: 2, gap: 2, paddingBottom: 8, }}>
       <Box>
         <Typography variant="h2">
           Sign Into
@@ -382,7 +382,6 @@ export const View = ({
               </Alert>
               <Divider orientation="vertical" sx={{ height: "3rem", marginX: "auto" }} />
               <TextField
-
                 inputProps={{
                   id: htmlIds.code,
                   // why? https://stackoverflow.com/questions/54706919/material-ui-remove-the-yellow-background-on-textfield-autofill
@@ -396,6 +395,7 @@ export const View = ({
                 value={model.send_code.code}
                 onChange={e => $d(['input_code', e.target.value])}
                 type="tel"
+
               />
               <Button fullWidth variant="contained" size="large" startIcon={<Icons.VerifiedUser />} onClick={() => $d(['verify_code'])} loading={model.send_code.verify.type === 'loading'}
                 disabled={model.send_code.code.length === 0}
