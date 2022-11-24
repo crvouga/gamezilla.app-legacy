@@ -1,4 +1,5 @@
 import { Browser, Cmd, Option } from "./Core"
+import { Some } from "./Core/Option"
 import { PhoneNumber, UserId, Iso3166Alpha2Code } from "./Data"
 
 //
@@ -11,7 +12,7 @@ import { PhoneNumber, UserId, Iso3166Alpha2Code } from "./Data"
 
 export type Model =
   | ["Account"]
-  | ["Login"]
+  | ["Login", { drawer: "country" | "none" }]
   | ["LoginEmailLink"]
   | ["LoginPhone"]
   | ["LoginPhoneVerify", { phoneNumber: PhoneNumber }]
@@ -81,7 +82,7 @@ export const decode = ({
   switch (first) {
     case "ChatConversation": {
       if (typeof second === "string") {
-        return Option.Some(["ChatConversation", { conversationId: second }])
+        return Some(["ChatConversation", { conversationId: second }])
       }
 
       return Option.None
@@ -91,7 +92,7 @@ export const decode = ({
       const userId = UserId.decode(second)
 
       if (userId.type === "Ok") {
-        return Option.Some(["Profile", { userId: userId.value }])
+        return Some(["Profile", { userId: userId.value }])
       }
 
       return Option.None
@@ -117,11 +118,22 @@ export const decode = ({
 
       const phoneNumber = decoded.value
 
-      return Option.Some(["LoginPhoneVerify", { phoneNumber: phoneNumber }])
+      return Some(["LoginPhoneVerify", { phoneNumber: phoneNumber }])
+    }
+
+    case 'Login': {
+      const drawerDirty = query['drawer']
+      if (!drawerDirty) {
+        return Some(['Login', { drawer: 'none' }])
+      }
+      if (drawerDirty === 'country' || drawerDirty === 'none') {
+        return Some(['Login', { drawer: drawerDirty }])
+      }
+      return Some(['Login', { drawer: 'none' }])
     }
 
     default: {
-      return Option.Some([first])
+      return Some([first])
     }
   }
 }
@@ -138,6 +150,11 @@ export const encode = (route: Model): string => {
       const phoneNumber = PhoneNumber.toString(route[1].phoneNumber)
       const country = PhoneNumber.toCountry(route[1].phoneNumber)
       const params = new URLSearchParams({ phoneNumber, country })
+      return `/${route[0]}?${params.toString()}`
+    }
+
+    case 'Login': {
+      const params = new URLSearchParams({ drawer: route[1].drawer })
       return `/${route[0]}?${params.toString()}`
     }
 

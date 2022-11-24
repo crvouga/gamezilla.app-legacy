@@ -43,7 +43,7 @@ import * as UI from "./UI"
 //
 
 export type Model =
-  | ["Login", Login.Model]
+  | ["Login", { drawer: "country" | "none" }, Login.Model]
   | ["LoginEmailLink", LoginEmailLink.Model]
   | ["LoginPhone", LoginPhone.Model]
   | ["LoginPhoneVerify", { phoneNumber: PhoneNumber }, LoginPhoneVerify.Model]
@@ -240,10 +240,11 @@ export const initReady = (
   }
 }
 
-export const initLoggedOut = (route: Route.Model): [Model, Cmd<Msg>] => {
+export const initLoggedOut = (model: Model, route: Route.Model): [Model, Cmd<Msg>] => {
   switch (route[0]) {
     case "Login":
-      return [["Login", Login.init], Cmd.None]
+      const childNew = model[0] === 'Login' ? model[2]  : Login.init
+      return [["Login", route[1], childNew], Cmd.None]
 
     case "LoginPhone":
       return [["LoginPhone", LoginPhone.init], Cmd.None]
@@ -279,7 +280,7 @@ export const initLoggedOut = (route: Route.Model): [Model, Cmd<Msg>] => {
     case "ProfileUpdateUsername":
     case "Party":
     case "Home":
-      return [["Login", Login.init], Route.push(["Login"])]
+      return [["Login", { drawer: "none" }, Login.init], Route.push(["Login", { drawer: "none" }])]
 
     default:
       return exhaustive(route)
@@ -577,7 +578,8 @@ export const updateLoggedOut = (
   switch (model[0]) {
     case "Login":
       if (msg[0] === "Login") {
-        return tagUpdate("Login", Login.update(msg[1], model[1]))
+        const [child, cmd] = Login.update(msg[1], model[2])
+        return [['Login', model[1], child], Cmd.tag("Login", cmd), []]
       }
       return [model, Cmd.None, []]
 
@@ -629,7 +631,7 @@ export const updateLoggedOut = (
     case "Party":
     case "Home":
 
-      return [model, Route.push(["Login"]), []]
+      return [model, Route.push(["Login", { drawer: "none" }]), []]
 
     default:
       return exhaustive(model)
@@ -1024,7 +1026,8 @@ export const ViewLoggedOut = ({
     case "Login":
       return (
         <Login.View
-          model={model[1]}
+          drawer={model[1].drawer}
+          model={model[2]}
           $d={(msg) => $d(["Login", msg])}
         />
       )

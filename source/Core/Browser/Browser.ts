@@ -95,12 +95,12 @@ export type FocusResult = Result<Problem, {}>
 export const focus =
   (htmlId: string): Task<FocusResult> =>
     async () => {
+      await new Promise(resolve => setTimeout(resolve, 0))
+
       const element = document.getElementById(htmlId)
 
       if (element) {
-        setTimeout(() => {
-          element.focus()
-        }, 0)
+        element.focus()
         return Result.Ok({})
       }
 
@@ -110,12 +110,15 @@ export const focus =
 export const scrollIntoView =
   (htmlId: string): Task<FocusResult> =>
     async () => {
+
+      await new Promise(resolve => setTimeout(resolve, 0))
+
       const element = document.getElementById(htmlId)
 
+
       if (element) {
-        setTimeout(() => {
-          element.scrollIntoView({ behavior: "auto" })
-        }, 0)
+        element.scrollIntoView({ behavior: "auto" })
+
         return Result.Ok({})
       }
 

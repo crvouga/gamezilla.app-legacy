@@ -348,7 +348,7 @@ const initPage = (model: Model): [Model, Cmd<Msg>] => {
     }
 
     case "LoggedOut": {
-      const [page, pageCmd] = Pages.initLoggedOut(model.route)
+      const [page, pageCmd] = Pages.initLoggedOut(model.page, model.route)
       return [{ ...model, page }, Cmd.tag("Page", pageCmd)]
     }
 

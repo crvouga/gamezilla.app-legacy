@@ -1,8 +1,9 @@
 import { ListItemText } from "@mui/material"
 import { matchSorter } from "match-sorter"
 import { Browser, Cmd, p } from "../Core"
-import { Iso3166Alpha2Code, PhoneNumber } from "../Data"
-import { Alert, Box, Button, Divider, FillBox, IconButton, Icons, InputAdornment, InputBase, List, ListItemButton, ListItemIcon, TextField, ToggleButton, ToggleButtonGroup, Typography, useTheme } from "../UI"
+import { EmailAddress, Iso3166Alpha2Code, PhoneNumber } from "../Data"
+import * as Route from "../Route"
+import { Alert, AlertTitle, Box, Button, Divider, FillBox, IconButton, Icons, InputAdornment, InputBase, List, ListItemButton, ListItemIcon, TextField, ToggleButton, ToggleButtonGroup, Typography, useTheme } from "../UI"
 import * as Auth from "./Auth"
 
 //
@@ -22,7 +23,30 @@ export type Model = {
   email: string,
   code: string,
   send_code: SendCode
+  send_link: SendLink
 }
+
+export type SendLink =
+  | { tag: "not_asked" }
+  | { tag: "loading", email: string }
+  | { tag: "err", err: string }
+  | { tag: "ok", email: string }
+
+export type SendCode =
+  | { tag: "not_asked" }
+  | { tag: "err", err: string }
+  | { tag: "loading", phoneNumber: PhoneNumber }
+  | {
+    tag: "ok",
+    phoneNumber: PhoneNumber
+    code: string,
+    verify:
+    | { tag: "not_asked" }
+    | { tag: "loading", }
+    | { tag: "err", err: string }
+    | { tag: "ok", }
+  }
+
 
 export const init: Model = {
   method: "phone",
@@ -32,25 +56,9 @@ export const init: Model = {
   phone: "",
   email: "",
   code: "",
-  send_code: { type: "not_asked" }
+  send_code: { tag: "not_asked" },
+  send_link: { tag: "not_asked" },
 }
-
-
-export type SendCode =
-  | { type: "not_asked" }
-  | { type: "err", err: string }
-  | { type: "loading", phoneNumber: PhoneNumber }
-  | {
-    type: "ok",
-    phoneNumber: PhoneNumber
-    code: string,
-    verify:
-    | { type: "not_asked" }
-    | { type: "loading", }
-    | { type: "err", err: string }
-    | { type: "ok", }
-  }
-
 
 //
 //
@@ -67,6 +75,8 @@ export type Msg =
   | ["clicked_country", Model['country']]
   | ["input_phone", Model['phone']]
   | ["input_email", Model['email']]
+  | ['send_link']
+  | ['send_link_done', Auth.AuthResult]
   | ['clicked_clear_search']
   | ['focused', Browser.FocusResult]
   | ['scrolled', Browser.FocusResult]
@@ -76,6 +86,7 @@ export type Msg =
   | ['verify_code']
   | ['verify_code_done', Auth.AuthResult]
   | ['input_code', string]
+  | ['clicked_phone_clear']
 
 
 
@@ -95,7 +106,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     }
 
     case 'input_drawer': {
-      return [{ ...model, drawer: msg[1] }, Cmd.None]
+      return [model, Route.push(['Login', { drawer: msg[1] }])]
     }
 
     case 'input_country_name': {
@@ -103,15 +114,26 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     }
 
     case 'clicked_country': {
-      return [{ ...model, drawer: "none", country: msg[1] }, Cmd.None]
+      return [
+        { ...model, country: msg[1] },
+        Cmd.batch([
+          Route.push(['Login', { drawer: 'none' }]),
+          focus('phone')
+        ])
+      ]
     }
+
 
     case 'input_email': {
       return [{ ...model, email: msg[1] }, Cmd.None]
     }
 
     case 'input_phone': {
-      return [{ ...model, phone: msg[1], send_code: { type: "not_asked" } }, Cmd.None]
+      return [{ ...model, phone: msg[1], send_code: { tag: "not_asked" } }, Cmd.None]
+    }
+
+    case 'clicked_phone_clear': {
+      return [{ ...model, phone: "", send_code: { tag: "not_asked" } }, focus('phone')]
     }
 
     case 'send_code': {
@@ -119,26 +141,26 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
       if (decoded.type === 'Err') {
         return [
-          { ...model, send_code: { type: "err", err: "Invalid phone number" } },
+          { ...model, send_code: { tag: "err", err: "Invalid phone number" } },
           Cmd.None
         ]
       }
 
       return [
-        { ...model, send_code: { type: "loading", phoneNumber: decoded.value } },
+        { ...model, send_code: { tag: "loading", phoneNumber: decoded.value } },
         p(Auth.sendCode({ phoneNumber: decoded.value }), Cmd.perform(result => ['send_code_done', result]))
       ]
     }
 
     case 'send_code_done': {
-      if (model.send_code.type !== 'loading') {
+      if (model.send_code.tag !== 'loading') {
         return [model, Cmd.None]
       }
 
       if (msg[1].type === 'Err') {
-        return [{ ...model, send_code: { type: "err", err: msg[1].error.message } }, Cmd.None]
+        return [{ ...model, send_code: { tag: "err", err: msg[1].error.message } }, Cmd.None]
       }
-      return [{ ...model, send_code: { type: "ok", phoneNumber: model.send_code.phoneNumber, code: "", verify: { type: "not_asked" } } },
+      return [{ ...model, send_code: { tag: "ok", phoneNumber: model.send_code.phoneNumber, code: "", verify: { tag: "not_asked" } } },
       Cmd.batch([
 
         focus('code'),
@@ -149,11 +171,11 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
 
     case 'send_code_clear': {
-      return [{ ...model, send_code: { type: "not_asked" } }, Cmd.None]
+      return [{ ...model, send_code: { tag: "not_asked" } }, focus('phone')]
     }
 
     case 'input_code': {
-      if (model.send_code.type !== 'ok') {
+      if (model.send_code.tag !== 'ok') {
         return [model, Cmd.None]
       }
 
@@ -161,24 +183,24 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     }
 
     case 'verify_code': {
-      if (model.send_code.type !== 'ok') {
+      if (model.send_code.tag !== 'ok') {
         return [model, Cmd.None]
       }
 
       return [
-        { ...model, send_code: { ...model.send_code, verify: { type: "loading" } } },
+        { ...model, send_code: { ...model.send_code, verify: { tag: "loading" } } },
         p(Auth.verifyCode({ phoneNumber: model.send_code.phoneNumber, code: model.send_code.code }), Cmd.perform(result => ['verify_code_done', result]))
       ]
     }
 
     case 'verify_code_done': {
-      if (model.send_code.type !== 'ok') {
+      if (model.send_code.tag !== 'ok') {
         return [model, Cmd.None]
       }
 
       if (msg[1].type === 'Err') {
         return [
-          { ...model, send_code: { ...model.send_code, verify: { type: "err", err: msg[1].error.message } } },
+          { ...model, send_code: { ...model.send_code, verify: { tag: "err", err: msg[1].error.message } } },
           Cmd.None
         ]
       }
@@ -189,13 +211,33 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       ]
     }
 
+    case 'send_link': {
+      return [
+        { ...model, send_link: { tag: "loading", email: model.email } },
+        p(Auth.loginWithEmailLink({ emailAddress: model.email }), Cmd.perform(result => ['send_link_done', result]))
+      ]
+    }
+
+    case 'send_link_done': {
+      if (model.send_link.tag !== 'loading') {
+        return [model, Cmd.None]
+      }
+
+      if (msg[1].type === 'Err') {
+        return [{ ...model, send_link: { tag: "err", err: msg[1].error.message } }, Cmd.None]
+      }
+
+      return [{ ...model, send_link: { tag: "ok", email: model.send_link.email } }, Cmd.None]
+    }
+
   }
 }
 
 const htmlIds = {
   country_name: "country_name",
   code: "code",
-  root: 'root'
+  root: 'root',
+  phone: 'phone'
 } as const
 
 const focus = (id: keyof (typeof htmlIds)): Cmd<Msg> => {
@@ -222,72 +264,32 @@ const scrollIntoView = (id: keyof (typeof htmlIds)): Cmd<Msg> => {
 //
 
 export const View = ({
+  drawer,
   model,
   $d,
 }: {
+  drawer: "country" | "none"
   model: Model
   $d: (msg: Msg) => void
 }) => {
   const theme = useTheme()
 
-  if (model.drawer === 'country') {
-    const matched = matchSorter(Iso3166Alpha2Code.all, model.country_name, { keys: [iso => Iso3166Alpha2Code.toName(iso)] })
+  if (drawer === 'country') {
     return (
-      <FillBox id={htmlIds.root}>
-        <Typography variant="h3" sx={{ px: 2, pt: 2 }}>
-          Select country
-        </Typography>
-
-        <InputBase
-
-          sx={{ p: 2 }}
-          inputProps={{ id: htmlIds.country_name }}
-          placeholder="Search country"
-          value={model.country_name}
-          onChange={e => $d(['input_country_name', e.target.value])}
-          startAdornment={
-            <InputAdornment position="start">
-              <Icons.Search sx={{ color: 'text.secondary' }} />
-            </InputAdornment>
-          }
-          endAdornment={
-            <InputAdornment position="end">
-              <IconButton edge="end" onClick={() => $d(['clicked_clear_search'])}>
-                <Icons.Clear />
-              </IconButton>
-            </InputAdornment>
-          }
-        />
-
-        <Divider />
-
-        {matched.length === 0 && (
-          <Typography color="text.secondary" sx={{ p: 2 }}>
-            No countries match
-          </Typography>
-        )}
-
-        <List disablePadding sx={{ overflowY: "scroll", flex: 1 }}>
-          {matched.map(iso => (
-            <ListItemButton key={iso} selected={iso === model.country} onClick={() => $d(['clicked_country', iso])}>
-              <ListItemIcon sx={{ fontSize: "2rem" }}>
-                {Iso3166Alpha2Code.toEmoji(iso)}
-              </ListItemIcon>
-              <ListItemText primary={Iso3166Alpha2Code.toName(iso)} />
-            </ListItemButton>
-          ))}
-        </List>
-        <Box sx={{ p: 2 }}>
-          <Button fullWidth variant="outlined" onClick={() => $d(['input_drawer', 'none'])}>
-            Close
-          </Button>
-        </Box>
-      </FillBox>
+      <CountrySelectScreen
+        inputId={htmlIds.country_name}
+        onChange={s => $d(['input_country_name', s])}
+        onClear={() => $d(['clicked_clear_search'])}
+        onClose={() => $d(['input_drawer', 'none'])}
+        onSelect={country => $d(['clicked_country', country])}
+        searchText={model.country_name}
+        selected={model.country}
+      />
     )
   }
 
   return (
-    <FillBox sx={{ p: 2, gap: 2, paddingBottom: 8, }}>
+    <FillBox id={htmlIds.root} sx={{ p: 2, gap: 2, paddingBottom: 8, }}>
       <Box>
         <Typography variant="h2">
           Sign Into
@@ -331,10 +333,14 @@ export const View = ({
 
       {model.method === 'phone' && (
         <>
-          <TextField sx={{ width: '100%' }} fullWidth label="Enter Phone Number" placeholder="Phone number"
+          <TextField
+            fullWidth
+            label="Enter Phone Number"
+            placeholder="Phone number"
             type="tel"
-            error={model.send_code.type === 'err'}
-            helperText={model.send_code.type === 'err' ? 'Invalid phone number' : ''}
+            id={htmlIds.phone}
+            error={model.send_code.tag === 'err'}
+            helperText={model.send_code.tag === 'err' ? 'Invalid phone number' : ''}
             value={model.phone}
             onChange={e => $d(['input_phone', e.target.value])}
             InputProps={{
@@ -346,14 +352,23 @@ export const View = ({
                   >
                     {Iso3166Alpha2Code.toEmoji(model.country)}
                   </IconButton>
+                </InputAdornment>,
+              endAdornment:
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => $d(['clicked_phone_clear'])}
+                    edge="end"
+                  >
+                    <Icons.Clear />
+                  </IconButton>
                 </InputAdornment>
 
             }}
           />
 
-          {model.send_code.type !== 'ok' ?
+          {model.send_code.tag !== 'ok' ?
             <>
-              <Button fullWidth variant="contained" size="large" startIcon={<Icons.SendToMobile />} onClick={() => $d(['send_code'])} loading={model.send_code.type === 'loading'}
+              <Button fullWidth variant="contained" size="large" startIcon={<Icons.SendToMobile />} onClick={() => $d(['send_code'])} loading={model.send_code.tag === 'loading'}
                 disabled={PhoneNumber.decode(model.country, model.phone).type === 'Err'}
               >
                 Send Code
@@ -397,12 +412,12 @@ export const View = ({
                 type="tel"
 
               />
-              <Button fullWidth variant="contained" size="large" startIcon={<Icons.VerifiedUser />} onClick={() => $d(['verify_code'])} loading={model.send_code.verify.type === 'loading'}
+              <Button fullWidth variant="contained" size="large" startIcon={<Icons.VerifiedUser />} onClick={() => $d(['verify_code'])} loading={model.send_code.verify.tag === 'loading'}
                 disabled={model.send_code.code.length === 0}
               >
                 Verify Code
               </Button>
-              {model.send_code.verify.type === 'err' && (
+              {model.send_code.verify.tag === 'err' && (
                 <Alert severity="error">
                   {model.send_code.verify.err}
                 </Alert>
@@ -415,11 +430,36 @@ export const View = ({
 
       {model.method === 'email' && (
         <>
-          <TextField type="email" sx={{ width: '100%' }} fullWidth label="Email" placeholder="Enter you email" />
+          <TextField type="email" sx={{ width: '100%' }} fullWidth label="Enter Email" placeholder="Email" value={model.email} onChange={e => $d(['input_email', e.target.value])} />
 
-          <Button fullWidth variant="contained" size="large" startIcon={<Icons.Send />}>
+          <Button fullWidth variant="contained" size="large" startIcon={<Icons.Send />} onClick={() => $d(['send_link'])} loading={model.send_link.tag === 'loading'} disabled={EmailAddress.decode(model.email).type === 'Err'}>
             Mail Link
           </Button>
+
+          {model.send_link.tag === 'err' && (
+            <Alert severity="error">
+              {model.send_link.err}
+            </Alert>
+          )}
+
+          {model.send_link.tag === 'ok' && (
+            <Alert severity="success">
+              <AlertTitle>Check your email</AlertTitle>
+              <Typography
+                color="text.secondary"
+                variant="body2"
+              >
+                An email was sent to{" "}
+                <Box
+                  component="span"
+                  sx={{ color: "text.primary" }}
+                >
+                  {model.send_link.email}
+                </Box>
+                . It has a link that will sign you in.
+              </Typography>
+            </Alert>
+          )}
         </>
       )}
 
@@ -429,3 +469,75 @@ export const View = ({
 }
 
 
+
+const CountrySelectScreen = ({
+  searchText,
+  inputId,
+  onChange,
+  onClear,
+  selected,
+  onSelect,
+  onClose
+}: {
+  searchText: string,
+  inputId: string,
+  onChange: (s: string) => void,
+  onClear: () => void,
+  selected: Iso3166Alpha2Code,
+  onSelect: (country: Iso3166Alpha2Code) => void
+  onClose: () => void
+}) => {
+  const matched = matchSorter(Iso3166Alpha2Code.all, searchText, { keys: [iso => Iso3166Alpha2Code.toName(iso)] })
+  return (
+    <FillBox>
+      <Typography variant="h3" sx={{ px: 2, pt: 2 }}>
+        Select country
+      </Typography>
+
+      <InputBase
+        sx={{ p: 2 }}
+        id={inputId}
+        placeholder="Search country"
+        value={searchText}
+        onChange={e => onChange(e.target.value)}
+        startAdornment={
+          <InputAdornment position="start">
+            <Icons.Search sx={{ color: 'text.secondary' }} />
+          </InputAdornment>
+        }
+        endAdornment={
+          <InputAdornment position="end">
+            <IconButton edge="end" onClick={onClear}>
+              <Icons.Clear />
+            </IconButton>
+          </InputAdornment>
+        }
+      />
+
+      <Divider />
+
+      {matched.length === 0 && (
+        <Typography color="text.secondary" sx={{ p: 2 }}>
+          No countries match
+        </Typography>
+      )}
+
+      <List disablePadding sx={{ overflowY: "scroll", flex: 1 }}>
+        {matched.map(iso => (
+          <ListItemButton key={iso} selected={iso === selected} onClick={() => onSelect(iso)}>
+            <ListItemIcon sx={{ fontSize: "2rem" }}>
+              {Iso3166Alpha2Code.toEmoji(iso)}
+            </ListItemIcon>
+            <ListItemText primary={Iso3166Alpha2Code.toName(iso)} />
+          </ListItemButton>
+        ))}
+      </List>
+      <Box sx={{ p: 2 }}>
+        <Button fullWidth variant="outlined" onClick={onClose} startIcon={<Icons.Close />}>
+          Close
+        </Button>
+      </Box>
+    </FillBox>
+  )
+
+}
