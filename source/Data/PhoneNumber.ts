@@ -45,5 +45,5 @@ export const PhoneNumber = {
   toString,
   eq,
   toCountry,
-  decode
+  decode,
 }
