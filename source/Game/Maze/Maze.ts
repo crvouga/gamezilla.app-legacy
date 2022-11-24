@@ -73,7 +73,7 @@ const make = ({
 }
 
 
-const memoizedMake = memoize(
+const makeMemoized = memoize(
     ({ seed, lower, upper }) => [seed, lower.x, lower.y, upper.x, upper.y].join("-"),
     make
 )
@@ -97,7 +97,8 @@ const eqEdge = <T>(x: [T, T], y: [T, T]): boolean => {
 }
 
 export const Maze = {
-    make: memoizedMake,
+    make,
+    makeMemoized,
     hasEdge,
     hasVertex
 }

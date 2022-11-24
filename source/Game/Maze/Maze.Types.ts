@@ -191,7 +191,7 @@ export const handle = (msg: Req, model: SharedModel): Result<Problem, SharedMode
         player.position,
       )
 
-      const maze = Maze.make(model)
+      const maze = Maze.makeMemoized(model)
 
       if (!Maze.hasEdge([player.position, positionNew], maze)) {
         return Err("hit_wall")
