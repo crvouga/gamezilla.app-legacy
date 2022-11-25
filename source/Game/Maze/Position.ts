@@ -1,3 +1,4 @@
+
 export type Position = {
   x: number
   y: number
@@ -77,10 +78,25 @@ const toDirection = ({
 
   return null
 }
+export const random = (gen: () => number, { lower, upper }: Bounds) => {
+  const x = Math.floor(gen() * (upper.x - lower.x)) + lower.x
+  const y = Math.floor(gen() * (upper.y - lower.y)) + lower.y
+  return {
+    x,
+    y
+  }
+}
+
+export const eq = (a: Position, b: Position): boolean => {
+  return a.x === b.x && a.y === b.y
+}
+
 
 export const Position = {
+  eq,
   add,
   sub,
+  random,
   range,
   toKey,
   toDirection,
