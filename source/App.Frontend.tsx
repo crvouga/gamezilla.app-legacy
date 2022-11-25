@@ -103,8 +103,11 @@ type OutAction<Msg = FrontendMsg> =
   | Route.Action
   | ProfileStore.Action
 
-const mapAction = <A, B>(mapper: (a: A) => B, action: OutAction<A>): OutAction<B> => {
-  if (action[0] === 'Alerts') {
+const mapAction = <A, B>(
+  mapper: (a: A) => B,
+  action: OutAction<A>,
+): OutAction<B> => {
+  if (action[0] === "Alerts") {
     return Alerts.mapAction(mapper, action)
   }
   return action
@@ -151,7 +154,10 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     case "Alerts": {
       const [alertsNew, alertsCmd, msgs] = Alerts.update(msg[1], model.alerts)
 
-      return p([{ ...model, alerts: alertsNew }, Cmd.tag("Alerts", alertsCmd)], andThenMany(update, msgs))
+      return p(
+        [{ ...model, alerts: alertsNew }, Cmd.tag("Alerts", alertsCmd)],
+        andThenMany(update, msgs),
+      )
     }
 
     case "Party": {
@@ -326,7 +332,10 @@ const updateFromBackend = (
 
       return p(
         [{ ...model, gameRoom }, Cmd.tag("GameRoom", gameRoomCmd)],
-        andThenMany(runAction, actions.map(a => mapAction(t('GameRoom'), a))),
+        andThenMany(
+          runAction,
+          actions.map((a) => mapAction(t("GameRoom"), a)),
+        ),
       )
     }
 
@@ -390,16 +399,16 @@ const initPage = (model: Model): [Model, Cmd<Msg>] => {
 
 const updateStatusChanged =
   (modelPrev: Model) =>
-    (_msg: Msg, model: Model): [Model, Cmd<Msg>] => {
-      const statusPrev = toStatus(modelPrev)
-      const statusNew = toStatus(model)
+  (_msg: Msg, model: Model): [Model, Cmd<Msg>] => {
+    const statusPrev = toStatus(modelPrev)
+    const statusNew = toStatus(model)
 
-      if (statusNew[0] === statusPrev[0]) {
-        return [model, Cmd.None]
-      }
-
-      return initPage(model)
+    if (statusNew[0] === statusPrev[0]) {
+      return [model, Cmd.None]
     }
+
+    return initPage(model)
+  }
 
 const runAction = (action: OutAction, model: Model): [Model, Cmd<Msg>] => {
   switch (action[0]) {
@@ -409,10 +418,7 @@ const runAction = (action: OutAction, model: Model): [Model, Cmd<Msg>] => {
     }
 
     case "Alerts": {
-      const [alertsNew, alertsCmd] = Alerts.runAction(
-        action,
-        model.alerts,
-      )
+      const [alertsNew, alertsCmd] = Alerts.runAction(action, model.alerts)
       return [{ ...model, alerts: alertsNew }, Cmd.tag("Alerts", alertsCmd)]
     }
 
@@ -772,7 +778,7 @@ const wireStatus = Sub.create<WireStatus>((emit) => {
     emit("Disconnected")
   })
 
-  return () => { }
+  return () => {}
 })
 
 const fromBackend = Sub.create<ToFrontend>((emit) => {
@@ -780,14 +786,14 @@ const fromBackend = Sub.create<ToFrontend>((emit) => {
     emit(msg)
   })
 
-  return () => { }
+  return () => {}
 })
 
 const sendToBackend =
   (msg: ToBackend): Cmd =>
-    () => {
-      socketClient.emit("ToBackend", msg)
-    }
+  () => {
+    socketClient.emit("ToBackend", msg)
+  }
 
 //
 //
@@ -814,12 +820,7 @@ program.sub$.subscribe((msg) => {
 
 program.state$.subscribe(({ model, cmd }) => {
   cmd(program.$d)
-  root.render(
-    <View
-      model={model}
-      $d={program.$d}
-    />,
-  )
+  root.render(<View model={model} $d={program.$d} />)
 })
 
 //

@@ -532,24 +532,12 @@ export const ViewSlot = ({
 
     case "O":
       return (
-        <Naught
-          strokeWidth={strokeWidth}
-          color={color}
-          r={r}
-          cx={cx}
-          cy={cy}
-        />
+        <Naught strokeWidth={strokeWidth} color={color} r={r} cx={cx} cy={cy} />
       )
 
     case "X":
       return (
-        <Cross
-          strokeWidth={strokeWidth}
-          color={color}
-          r={r}
-          cx={cx}
-          cy={cy}
-        />
+        <Cross strokeWidth={strokeWidth} color={color} r={r} cx={cx} cy={cy} />
       )
   }
 }
@@ -568,24 +556,11 @@ const Cross = ({
   strokeWidth?: number
 }) => {
   return (
-    <g
-      strokeWidth={strokeWidth}
-      stroke={color}
-    >
+    <g strokeWidth={strokeWidth} stroke={color}>
       {/* direction: \ */}
-      <line
-        x1={cx - r}
-        y1={cy - r}
-        x2={cx + r}
-        y2={cy + r}
-      />
+      <line x1={cx - r} y1={cy - r} x2={cx + r} y2={cy + r} />
       {/* direction: / */}
-      <line
-        x1={cx + r}
-        y1={cy - r}
-        x2={cx - r}
-        y2={cy + r}
-      />
+      <line x1={cx + r} y1={cy - r} x2={cx - r} y2={cy + r} />
     </g>
   )
 }
@@ -623,10 +598,7 @@ export const PlayerTypeIcon = ({
   sx?: UI.Sx
 }) => {
   return (
-    <UI.SvgIcon
-      viewBox="-1 -1 2 2"
-      sx={sx}
-    >
+    <UI.SvgIcon viewBox="-1 -1 2 2" sx={sx}>
       <ViewSlot
         cx={0}
         cy={0}

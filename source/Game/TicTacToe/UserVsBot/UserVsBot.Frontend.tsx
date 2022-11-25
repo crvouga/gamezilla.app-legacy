@@ -201,10 +201,7 @@ export const View = ({
                   sx={{ marginRight: 1 }}
                 />
                 <UI.Box sx={{ flex: 1, overflow: "hidden" }}>
-                  <UI.Typography
-                    noWrap
-                    sx={{ textOverflow: "ellipsis" }}
-                  >
+                  <UI.Typography noWrap sx={{ textOverflow: "ellipsis" }}>
                     {ctx.profiles[model.player]?.username ?? "..."}
                   </UI.Typography>
                 </UI.Box>
@@ -290,11 +287,7 @@ export const View = ({
             borderTop: `solid 1px ${uiTheme.palette.divider}`,
           }}
         >
-          <UI.Button
-            fullWidth
-            variant="outlined"
-            onClick={goBack}
-          >
+          <UI.Button fullWidth variant="outlined" onClick={goBack}>
             Back
           </UI.Button>
           <UI.Button
@@ -319,16 +312,8 @@ export const View = ({
     <UI.FillBox>
       <UI.Box sx={{ flex: 1 }}>
         <UI.Box sx={{ display: "flex", padding: 1, gap: 1, paddingTop: 0 }}>
-          <ViewPlayerGameSlot
-            model={model}
-            playerType="X"
-            ctx={ctx}
-          />
-          <ViewPlayerGameSlot
-            model={model}
-            playerType="O"
-            ctx={ctx}
-          />
+          <ViewPlayerGameSlot model={model} playerType="X" ctx={ctx} />
+          <ViewPlayerGameSlot model={model} playerType="O" ctx={ctx} />
         </UI.Box>
 
         <UI.Box
@@ -418,11 +403,7 @@ const ViewGameOverMessage = ({
           <UI.Box
             sx={{ display: "flex", placeContent: "center center", flex: 1 }}
           >
-            <UI.Typography
-              sx={{ fontSize: 72 }}
-              color="inherit"
-              align="center"
-            >
+            <UI.Typography sx={{ fontSize: 72 }} color="inherit" align="center">
               Tie
             </UI.Typography>
           </UI.Box>
@@ -502,11 +483,7 @@ const ViewGameOverMessage = ({
                 sx={{ marginRight: 2, width: 64, height: 64 }}
               />
             )}
-            <UI.Typography
-              sx={{ fontSize: 64 }}
-              color="inherit"
-              align="center"
-            >
+            <UI.Typography sx={{ fontSize: 64 }} color="inherit" align="center">
               Won
             </UI.Typography>
           </UI.Box>
@@ -549,8 +526,9 @@ export const ViewPlayerGameSlot = ({
           display: "flex",
           alignItems: "center",
           overflow: "hidden",
-          borderBottom: `solid 3.5px ${isTurn ? gameTheme.background : uiTheme.palette.divider
-            }`,
+          borderBottom: `solid 3.5px ${
+            isTurn ? gameTheme.background : uiTheme.palette.divider
+          }`,
         }}
       >
         <UI.Box
@@ -574,20 +552,14 @@ export const ViewPlayerGameSlot = ({
                 src={ctx.profiles[model.player]?.avatarUrl}
                 sx={{ marginRight: 1, ...iconSize }}
               />
-              <UI.Typography
-                noWrap
-                sx={{ flex: 1 }}
-              >
+              <UI.Typography noWrap sx={{ flex: 1 }}>
                 {ctx.profiles[model.player]?.username ?? "..."}
               </UI.Typography>
             </>
           ) : (
             <>
               <UI.Icons.SmartToy sx={{ marginRight: 1, ...iconSize }} />
-              <UI.Typography
-                noWrap
-                sx={{ flex: 1 }}
-              >
+              <UI.Typography noWrap sx={{ flex: 1 }}>
                 {model.botLevel}
               </UI.Typography>
               {isTurn && (

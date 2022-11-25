@@ -10,7 +10,7 @@ import {
   FrontendMsg,
   GameName,
   ToBackend,
-  ToFrontend
+  ToFrontend,
 } from "./Game.Types"
 import * as Maze from "./Maze/Maze.Frontend"
 import * as Snake from "./Snake/Snake.Frontend"
@@ -186,7 +186,7 @@ export const updateFromBackend = (
     ctx,
     sendToBackend,
   }: {
-    ctx: Ctx,
+    ctx: Ctx
     sendToBackend: (msg: ToBackend) => Cmd
   },
   msg: ToFrontend,
@@ -318,10 +318,7 @@ export const View = ({
 }) => {
   const views: { [key in typeof model[0]]: Function } = {
     Tetris: (model: Tetris.Model) => (
-      <Tetris.View
-        model={model}
-        $d={(msg) => $d(["Tetris", msg])}
-      />
+      <Tetris.View model={model} $d={(msg) => $d(["Tetris", msg])} />
     ),
 
     ConnectFour: (model: ConnectFour.Model) => (
@@ -333,11 +330,7 @@ export const View = ({
     ),
 
     Snake: (model: Snake.Model) => (
-      <Snake.View
-        ctx={ctx}
-        model={model}
-        $d={(msg) => $d(["Snake", msg])}
-      />
+      <Snake.View ctx={ctx} model={model} $d={(msg) => $d(["Snake", msg])} />
     ),
 
     TicTacToe: (model: TicTacToe.Model) => (
@@ -349,19 +342,11 @@ export const View = ({
     ),
 
     Chess: (model: Chess.Model) => (
-      <Chess.View
-        ctx={ctx}
-        model={model}
-        $d={(msg) => $d(["Chess", msg])}
-      />
+      <Chess.View ctx={ctx} model={model} $d={(msg) => $d(["Chess", msg])} />
     ),
 
     Maze: (model: Maze.Model) => (
-      <Maze.View
-        ctx={ctx}
-        model={model}
-        $d={(m) => $d(["Maze", m])}
-      />
+      <Maze.View ctx={ctx} model={model} $d={(m) => $d(["Maze", m])} />
     ),
   }
   return views[model[0]](model[1])

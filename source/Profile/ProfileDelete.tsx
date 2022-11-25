@@ -74,21 +74,12 @@ export const View = ({
 
   switch (mutation.type) {
     case "Loading":
-      return (
-        <UI.LoadingDialog
-          open
-          title="Deleting profile..."
-        />
-      )
+      return <UI.LoadingDialog open title="Deleting profile..." />
 
     case "Err":
       return (
         <UI.Backdrop open>
-          <UI.Alert
-            variant="filled"
-            severity="error"
-            sx={{ margin: 2 }}
-          >
+          <UI.Alert variant="filled" severity="error" sx={{ margin: 2 }}>
             <UI.AlertTitle>Failed to delete profile.</UI.AlertTitle>
             {mutation.error}
             <UI.Box

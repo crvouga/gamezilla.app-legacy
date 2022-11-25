@@ -59,10 +59,7 @@ export const generateBoard = () => {}
 
 export const ViewBoard = ({ board }: { board: Board }) => {
   return (
-    <svg
-      width="100%"
-      viewBox={toViewBox(board)}
-    >
+    <svg width="100%" viewBox={toViewBox(board)}>
       {toAllPositions(board).map((position) => (
         <rect
           key={`${position.x}, ${position.y}`}

@@ -159,15 +159,9 @@ export const View = ({
         {model.submission.type === "Ok" && (
           <UI.Alert severity="success">
             <UI.AlertTitle>Check your email</UI.AlertTitle>
-            <UI.Typography
-              color="text.secondary"
-              variant="body2"
-            >
+            <UI.Typography color="text.secondary" variant="body2">
               An email was sent to{" "}
-              <UI.Box
-                component="span"
-                sx={{ color: "text.primary" }}
-              >
+              <UI.Box component="span" sx={{ color: "text.primary" }}>
                 {model.submission.type === "Ok"
                   ? model.submission.sentToEmailAddress
                   : "the provider email address"}

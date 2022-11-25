@@ -198,16 +198,10 @@ export const View = ({
         >
           <UI.AvatarGroup>
             {profiles.map((item) => (
-              <UI.Avatar
-                key={item.userId}
-                src={item.avatarUrl}
-              />
+              <UI.Avatar key={item.userId} src={item.avatarUrl} />
             ))}
           </UI.AvatarGroup>
-          <UI.Typography
-            align="center"
-            noWrap
-          >
+          <UI.Typography align="center" noWrap>
             {profiles.map((profile) => profile.username).join(", ")}
           </UI.Typography>
         </UI.Box>

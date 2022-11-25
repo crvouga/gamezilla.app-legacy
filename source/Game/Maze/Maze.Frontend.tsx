@@ -189,10 +189,7 @@ export const View = ({
                     <CoverArt />
                 </Box> */}
         <Box sx={{ position: "relative" }}>
-          <svg
-            viewBox={artMazeViewBox}
-            width={"100%"}
-          >
+          <svg viewBox={artMazeViewBox} width={"100%"}>
             <rect
               x={artMaze.lower.x}
               y={artMaze.lower.y}
@@ -229,11 +226,7 @@ export const View = ({
               background: "rgba(0, 0, 0, 0.5)",
             }}
           >
-            <Typography
-              variant="h2"
-              align="center"
-              color="#fff"
-            >
+            <Typography variant="h2" align="center" color="#fff">
               Maze
             </Typography>
           </Box>
@@ -306,10 +299,7 @@ export const View = ({
                 src={ctx.profiles[player]?.avatarUrl}
                 sx={{ marginRight: 2 }}
               />
-              <Typography
-                noWrap
-                sx={{ flex: 1 }}
-              >
+              <Typography noWrap sx={{ flex: 1 }}>
                 {ctx.profiles[player]?.username ?? "..."}
               </Typography>
               {player === ctx.currentUserId && (
@@ -449,19 +439,12 @@ const Joystick = ({
       >
         <defs>
           <clipPath id="cut-off-bottom">
-            <circle
-              x="0"
-              y="0"
-              r={1}
-            />
+            <circle x="0" y="0" r={1} />
           </clipPath>
         </defs>
 
         <g strokeWidth={0.025}>
-          <g
-            clipPath="url(#cut-off-bottom)"
-            stroke={stroke}
-          >
+          <g clipPath="url(#cut-off-bottom)" stroke={stroke}>
             {Direction.all.map((direction) => {
               const { x, y } = directionToVector(direction)
               return (
@@ -537,11 +520,7 @@ const viewBox = [
 export const CoverArt = () => {
   const theme = useTheme()
   return (
-    <svg
-      viewBox={viewBox}
-      width={"100%"}
-      height={"100%"}
-    >
+    <svg viewBox={viewBox} width={"100%"} height={"100%"}>
       <rect
         x={coverArtMaze.lower.x}
         y={coverArtMaze.lower.y}

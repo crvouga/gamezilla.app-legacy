@@ -25,39 +25,23 @@ export const PlayerIcon = ({
 
 export const PlayerOneIcon = ({ sx }: { sx?: UI.Sx }) => {
   return (
-    <UI.SvgIcon
-      viewBox="-1 -1 2 2"
-      sx={{ ...sx }}
-    >
+    <UI.SvgIcon viewBox="-1 -1 2 2" sx={{ ...sx }}>
       <ViewPlayerOneGradientDef
         gradientId="playerOneGradient"
         cx={0}
         cy={0}
         r={1}
       />
-      <circle
-        cx={0}
-        cy={0}
-        r={1}
-        fill={`url(#playerOneGradient)`}
-      />
+      <circle cx={0} cy={0} r={1} fill={`url(#playerOneGradient)`} />
     </UI.SvgIcon>
   )
 }
 
 export const PlayerTwoIcon = ({ sx }: { sx?: UI.Sx }) => {
   return (
-    <UI.SvgIcon
-      viewBox="-1 -1 2 2"
-      sx={{ ...sx }}
-    >
+    <UI.SvgIcon viewBox="-1 -1 2 2" sx={{ ...sx }}>
       <ViewPlayerTwoGradientDef gradientId="playerTwoGradient" />
-      <circle
-        cx={0}
-        cy={0}
-        r={1}
-        fill={`url(#playerTwoGradient)`}
-      />
+      <circle cx={0} cy={0} r={1} fill={`url(#playerTwoGradient)`} />
     </UI.SvgIcon>
   )
 }

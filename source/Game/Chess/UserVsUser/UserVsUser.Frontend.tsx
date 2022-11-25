@@ -19,7 +19,7 @@ import {
   SharedModel,
   startGame,
   ToBackend,
-  ToFrontend
+  ToFrontend,
 } from "./UserVsUser.Types"
 
 //
@@ -154,7 +154,7 @@ export const update = (
 }
 
 export const updateFromBackend = (
-  { ctx }: { ctx: Ctx, },
+  { ctx }: { ctx: Ctx },
   msg: ToFrontend,
   _model: Model,
 ): [Model, Cmd<Msg>, OutAction[]] => {
@@ -193,8 +193,8 @@ export const updateFromBackend = (
       const soundCmd = Board.inCheck(sharedModelNew.board)
         ? playAudio(Sounds.check)
         : sharedModelNew.didCapture
-          ? playAudio(Sounds.capture)
-          : playAudio(Sounds.move)
+        ? playAudio(Sounds.capture)
+        : playAudio(Sounds.move)
 
       return [{ ...model, sharedModel: sharedModelNew }, soundCmd, []]
     }
@@ -287,7 +287,10 @@ export const updateFromBackend = (
         return [{ ...model, sharedModel }, Cmd.None, []]
       }
 
-      const action: OutAction = ["Alerts", { tag: "Snack", message: "Draw was cancelled" }]
+      const action: OutAction = [
+        "Alerts",
+        { tag: "Snack", message: "Draw was cancelled" },
+      ]
 
       return [{ ...model, sharedModel }, Cmd.None, [action]]
     }
@@ -533,11 +536,7 @@ export const View = ({
         </UI.Box>
 
         <UI.Box sx={{ padding: 2, display: "flex", gap: 2 }}>
-          <UI.Button
-            fullWidth
-            variant="outlined"
-            onClick={onClose}
-          >
+          <UI.Button fullWidth variant="outlined" onClick={onClose}>
             Back
           </UI.Button>
 
@@ -562,10 +561,10 @@ export const View = ({
     ctx.currentUserId === w && ctx.currentUserId === b
       ? "Both"
       : ctx.currentUserId === w
-        ? "w"
-        : ctx.currentUserId === b
-          ? "b"
-          : "None"
+      ? "w"
+      : ctx.currentUserId === b
+      ? "b"
+      : "None"
 
   const boardOrientation: Board.Color = p(
     currentUserColor === "None" || currentUserColor === "Both"
@@ -596,10 +595,7 @@ export const View = ({
 
   return (
     <UI.FillBox sx={{ overflowY: "scroll" }}>
-      <ViewUserPlayerSlot
-        position="top"
-        {...topSlot}
-      />
+      <ViewUserPlayerSlot position="top" {...topSlot} />
 
       <Board.View
         model={board}
@@ -627,17 +623,11 @@ export const View = ({
         }}
       />
 
-      <ViewUserPlayerSlot
-        position="bottom"
-        {...bottomSlot}
-      />
+      <ViewUserPlayerSlot position="bottom" {...bottomSlot} />
 
       <UI.Box sx={{ flex: 1 }} />
 
-      <ViewGameOverDialog
-        model={model}
-        $d={$d}
-      />
+      <ViewGameOverDialog model={model} $d={$d} />
 
       <UI.Box sx={{ width: "100%", display: "flex" }}>
         {model.sharedModel.type === "GameOver" && currentUserColor !== "None" && (
@@ -709,7 +699,7 @@ export const View = ({
                     model.sharedModel.type === "Game" &&
                     model.sharedModel.drawAgreement.type === "Asking" &&
                     model.sharedModel.drawAgreement.asker ===
-                    Board.toOppositeColor(currentUserColor)
+                      Board.toOppositeColor(currentUserColor)
                   }
                   headerIcon={
                     <UI.Icons.HandshakeTwoTone
@@ -820,10 +810,7 @@ const ViewInputUserPlayerSlot = ({
         src={ctx.profiles[userId]?.avatarUrl}
       />
 
-      <UI.Typography
-        sx={{ flex: 1 }}
-        noWrap
-      >
+      <UI.Typography sx={{ flex: 1 }} noWrap>
         {ctx.profiles[userId]?.username ?? "..."}
       </UI.Typography>
 

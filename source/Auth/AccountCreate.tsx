@@ -294,19 +294,13 @@ export const View = ({
         </UI.Button>
 
         {model.submission.type === "Problem" && (
-          <UI.Alert
-            severity="error"
-            sx={{ marginTop: 2 }}
-          >
+          <UI.Alert severity="error" sx={{ marginTop: 2 }}>
             {model.submission.message}
           </UI.Alert>
         )}
 
         <UI.Box sx={{ flex: 1 }} />
-        <UI.Typography
-          align="center"
-          color="text.secondary"
-        >
+        <UI.Typography align="center" color="text.secondary">
           Already have an account?
         </UI.Typography>
         <UI.Button onClick={() => $d(["ClickedLogin"])}>Login</UI.Button>

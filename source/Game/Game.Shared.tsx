@@ -23,7 +23,6 @@ export type Ctx = {
 //
 //
 
-
 export const bannerArtAspectRatio = Math.pow(3 / 4, 4)
 
 export const GameModeCard = ({
@@ -104,16 +103,16 @@ export const GameModeCardGrid = ({
 
 type Player =
   | {
-    type: "User"
-    userId: UserId
-  }
+      type: "User"
+      userId: UserId
+    }
   | {
-    type: "Bot"
-    label: string
-  }
+      type: "Bot"
+      label: string
+    }
   | {
-    type: "None"
-  }
+      type: "None"
+    }
 
 const avatarSx: UI.Sx = {
   width: 32,
@@ -190,10 +189,7 @@ export const VersusHeader = ({
             justifyContent: "center",
           }}
         >
-          <VersusHeaderPlayer
-            player={left}
-            ctx={ctx}
-          />
+          <VersusHeaderPlayer player={left} ctx={ctx} />
           {renderLeftIcon({ ...iconSx })}
         </UI.Box>
         <UI.Typography
@@ -213,10 +209,7 @@ export const VersusHeader = ({
           }}
         >
           {renderRightIcon({ ...iconSx })}
-          <VersusHeaderPlayer
-            player={right}
-            ctx={ctx}
-          />
+          <VersusHeaderPlayer player={right} ctx={ctx} />
         </UI.Box>
       </UI.Box>
     </UI.Box>
@@ -240,11 +233,7 @@ const VersusHeaderPlayer = ({ player, ctx }: { player: Player; ctx: Ctx }) => {
           <UI.Icons.SmartToy
             sx={{ marginX: "auto", width: 32, height: 32, color: "#fff" }}
           />
-          <UI.Typography
-            color="#fff"
-            noWrap
-            align="center"
-          >
+          <UI.Typography color="#fff" noWrap align="center">
             {player.label}
           </UI.Typography>
         </UI.Box>
@@ -256,11 +245,7 @@ const VersusHeaderPlayer = ({ player, ctx }: { player: Player; ctx: Ctx }) => {
           <UI.Avatar sx={{ ...avatarSx, marginX: "auto" }}>
             <UI.Icons.QuestionMark />
           </UI.Avatar>
-          <UI.Typography
-            noWrap
-            color="#fff"
-            align="center"
-          >
+          <UI.Typography noWrap color="#fff" align="center">
             ?
           </UI.Typography>
         </UI.Box>
@@ -275,11 +260,7 @@ const VersusHeaderPlayer = ({ player, ctx }: { player: Player; ctx: Ctx }) => {
             sx={{ ...avatarSx, marginX: "auto" }}
             src={profile?.avatarUrl}
           />
-          <UI.Typography
-            noWrap
-            color="#fff"
-            align="center"
-          >
+          <UI.Typography noWrap color="#fff" align="center">
             {profile?.username ?? "..."}
           </UI.Typography>
         </UI.Box>
@@ -304,10 +285,7 @@ export const GameHeader = ({
   return (
     <UI.Header
       left={
-        <UI.IconButton
-          onClick={onHome}
-          sx={{ ml: -1 }}
-        >
+        <UI.IconButton onClick={onHome} sx={{ ml: -1 }}>
           <UI.Icons.Home />
         </UI.IconButton>
       }

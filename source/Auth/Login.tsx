@@ -339,10 +339,7 @@ export const View = ({
   }
 
   return (
-    <FillBox
-      id={htmlIds.root}
-      sx={{ p: 2, gap: 2, paddingBottom: 8 }}
-    >
+    <FillBox id={htmlIds.root} sx={{ p: 2, gap: 2, paddingBottom: 8 }}>
       <Box>
         <Typography variant="h2">Sign Into</Typography>
 
@@ -366,18 +363,11 @@ export const View = ({
         </Typography>
       </Box>
       <Box>
-        <Typography
-          sx={{ mb: 1 / 2 }}
-          color="text.secondary"
-        >
+        <Typography sx={{ mb: 1 / 2 }} color="text.secondary">
           Choose Method
         </Typography>
 
-        <ToggleButtonGroup
-          fullWidth
-          size="medium"
-          value={model.method}
-        >
+        <ToggleButtonGroup fullWidth size="medium" value={model.method}>
           <ToggleButton
             value="phone"
             onClick={() => $d(["input_method", "phone"])}
@@ -469,15 +459,9 @@ export const View = ({
                   </IconButton>
                 }
               >
-                <Typography
-                  color="text.secondary"
-                  variant="body2"
-                >
+                <Typography color="text.secondary" variant="body2">
                   The code was sent to{" "}
-                  <Box
-                    component="span"
-                    sx={{ color: "text.primary" }}
-                  >
+                  <Box component="span" sx={{ color: "text.primary" }}>
                     {model.send_code.phoneNumber._validPhoneNumber}
                   </Box>
                 </Typography>
@@ -553,15 +537,9 @@ export const View = ({
           {model.send_link.tag === "ok" && (
             <Alert severity="success">
               <AlertTitle>Check your email</AlertTitle>
-              <Typography
-                color="text.secondary"
-                variant="body2"
-              >
+              <Typography color="text.secondary" variant="body2">
                 An email was sent to{" "}
-                <Box
-                  component="span"
-                  sx={{ color: "text.primary" }}
-                >
+                <Box component="span" sx={{ color: "text.primary" }}>
                   {model.send_link.email}
                 </Box>
                 . It has a link that will sign you in.
@@ -596,10 +574,7 @@ const CountrySelectScreen = ({
   })
   return (
     <FillBox>
-      <Typography
-        variant="h3"
-        sx={{ px: 2, pt: 2 }}
-      >
+      <Typography variant="h3" sx={{ px: 2, pt: 2 }}>
         Select country
       </Typography>
 
@@ -616,10 +591,7 @@ const CountrySelectScreen = ({
         }
         endAdornment={
           <InputAdornment position="end">
-            <IconButton
-              edge="end"
-              onClick={onClear}
-            >
+            <IconButton edge="end" onClick={onClear}>
               <Icons.Clear />
             </IconButton>
           </InputAdornment>
@@ -629,18 +601,12 @@ const CountrySelectScreen = ({
       <Divider />
 
       {matched.length === 0 && (
-        <Typography
-          color="text.secondary"
-          sx={{ p: 2 }}
-        >
+        <Typography color="text.secondary" sx={{ p: 2 }}>
           No countries match
         </Typography>
       )}
 
-      <List
-        disablePadding
-        sx={{ overflowY: "scroll", flex: 1 }}
-      >
+      <List disablePadding sx={{ overflowY: "scroll", flex: 1 }}>
         {matched.map((iso) => (
           <ListItemButton
             key={iso}

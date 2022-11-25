@@ -7,12 +7,7 @@ import { ReactNode, useEffect, useMemo, useRef } from "react"
 import * as Icons from "./Icons"
 
 const SlideTransition = (props: SlideProps) => {
-  return (
-    <Slide
-      {...props}
-      direction="down"
-    />
-  )
+  return <Slide {...props} direction="down" />
 }
 
 //
@@ -208,10 +203,7 @@ export const ThemeModeToggleButtons = ({
       }}
     >
       {Object.values(themeModes).map((themeMode) => (
-        <Mui.ToggleButton
-          key={themeMode}
-          value={themeMode}
-        >
+        <Mui.ToggleButton key={themeMode} value={themeMode}>
           <Mui.Box
             sx={{
               marginRight: 1,
@@ -253,10 +245,7 @@ export const TextField = ({ label, sx, ...props }: Mui.TextFieldProps) => {
       >
         {label}
       </Typography>
-      <Mui.TextField
-        ref={ref}
-        {...props}
-      />
+      <Mui.TextField ref={ref} {...props} />
     </Box>
   )
 }
@@ -414,12 +403,7 @@ export const Header = ({
         {left}
       </Box>
 
-      <Typography
-        noWrap
-        sx={{ flex: 3 }}
-        align="center"
-        variant="h6"
-      >
+      <Typography noWrap sx={{ flex: 3 }} align="center" variant="h6">
         {title}
       </Typography>
 
@@ -439,10 +423,7 @@ export const Header = ({
 
 export const HeaderBackButton = ({ onClick }: { onClick: () => void }) => {
   return (
-    <Mui.IconButton
-      edge="start"
-      onClick={onClick}
-    >
+    <Mui.IconButton edge="start" onClick={onClick}>
       <Icons.ChevronLeft />
     </Mui.IconButton>
   )
@@ -471,11 +452,7 @@ export const LoadingPage = ({ title }: { title?: string }) => {
   return (
     <FillBox sx={{ justifyContent: "center", alignItems: "center" }}>
       <CircularProgress sx={{ marginBottom: 2 }} />
-      <Typography
-        align="center"
-        variant="caption"
-        color="text.secondary"
-      >
+      <Typography align="center" variant="caption" color="text.secondary">
         {title}
       </Typography>
     </FillBox>
@@ -516,10 +493,7 @@ export const AspectRatio = ({
 
 export const LoadingBackdrop = ({ open }: { open?: boolean }) => {
   return (
-    <Mui.Backdrop
-      sx={{ zIndex: 10 }}
-      open={Boolean(open)}
-    >
+    <Mui.Backdrop sx={{ zIndex: 10 }} open={Boolean(open)}>
       <CircularProgress />
     </Mui.Backdrop>
   )
@@ -564,10 +538,7 @@ export const ConformationDialog = ({
   headerIcon?: ViewNode
 }) => {
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-    >
+    <Dialog open={open} onClose={onClose}>
       {headerIcon && (
         <Box sx={{ margin: "auto", paddingTop: 2, marginBottom: -1 }}>
           {headerIcon}
@@ -575,10 +546,7 @@ export const ConformationDialog = ({
       )}
       <DialogTitle>{title}</DialogTitle>
       {subtitle && (
-        <DialogTitle
-          variant="subtitle2"
-          color="text.secondary"
-        >
+        <DialogTitle variant="subtitle2" color="text.secondary">
           {subtitle}
         </DialogTitle>
       )}

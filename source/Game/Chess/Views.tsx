@@ -68,10 +68,7 @@ export const BannerArt = ({ title }: { title: string }) => {
           justifyContent: "center",
         }}
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 45 45"
-        >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45">
           <g
             transform="translate(0 -2) scale(1)"
             style={{ transformOrigin: "center" }}
@@ -178,10 +175,7 @@ export const VersusHeader = ({
         }}
       >
         <UI.Box sx={{ ...itemSx }}>
-          <PlayerSlot
-            ctx={ctx}
-            player={white}
-          />
+          <PlayerSlot ctx={ctx} player={white} />
         </UI.Box>
         <UI.Box sx={{ ...itemSx }}>
           <PawnIcon sx={{ color: "#fff", width: 72, height: 72 }} />
@@ -193,10 +187,7 @@ export const VersusHeader = ({
           />
         </UI.Box>
         <UI.Box sx={{ ...itemSx }}>
-          <PlayerSlot
-            ctx={ctx}
-            player={black}
-          />
+          <PlayerSlot ctx={ctx} player={black} />
         </UI.Box>
       </UI.Box>
     </UI.Box>
@@ -256,10 +247,7 @@ const PlayerSlot = ({ player, ctx }: { player: Player; ctx: Ctx }) => {
 
 export const PawnIcon = ({ sx, stroke }: { sx: UI.Sx; stroke?: string }) => {
   return (
-    <UI.SvgIcon
-      viewBox="0 0 45 45"
-      sx={{ ...sx }}
-    >
+    <UI.SvgIcon viewBox="0 0 45 45" sx={{ ...sx }}>
       <g
         transform="translate(0 -2) scale(1)"
         style={{ transformOrigin: "center" }}

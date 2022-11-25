@@ -273,25 +273,11 @@ export const CoverArt = () => {
   ] as const
 
   return (
-    <svg
-      width="100%"
-      viewBox="0 0 2 2"
-    >
-      <rect
-        x={0}
-        y={0}
-        width={2}
-        height={2}
-        fill={gameTheme.background}
-      />
+    <svg width="100%" viewBox="0 0 2 2">
+      <rect x={0} y={0} width={2} height={2} fill={gameTheme.background} />
 
       {LINES.map((line, index) => (
-        <line
-          key={index}
-          {...line}
-          stroke={gameTheme.line}
-          strokeWidth={0.1}
-        />
+        <line key={index} {...line} stroke={gameTheme.line} strokeWidth={0.1} />
       ))}
 
       {positions.map(([{ column, row }, slot], index) => (

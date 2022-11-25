@@ -120,10 +120,7 @@ export const View = ({
             <UI.ListItemAvatar>
               <UI.AvatarGroup max={2}>
                 {item.profiles.map((profile) => (
-                  <UI.Avatar
-                    key={profile.userId}
-                    src={profile.avatarUrl}
-                  />
+                  <UI.Avatar key={profile.userId} src={profile.avatarUrl} />
                 ))}
               </UI.AvatarGroup>
             </UI.ListItemAvatar>

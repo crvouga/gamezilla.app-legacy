@@ -785,12 +785,7 @@ export const ViewReady = ({
       )
 
     case "Logout":
-      return (
-        <Logout.View
-          model={model[1]}
-          $d={(msg) => $d(["Logout", msg])}
-        />
-      )
+      return <Logout.View model={model[1]} $d={(msg) => $d(["Logout", msg])} />
 
     case "ProfileDelete":
       return (
@@ -973,12 +968,7 @@ export const ViewProfileMissing = ({
 }) => {
   switch (model[0]) {
     case "Logout":
-      return (
-        <Logout.View
-          model={model[1]}
-          $d={(msg) => $d(["Logout", msg])}
-        />
-      )
+      return <Logout.View model={model[1]} $d={(msg) => $d(["Logout", msg])} />
 
     case "ProfileCreate":
       return (

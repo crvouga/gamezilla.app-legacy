@@ -5,11 +5,7 @@ export * from "@mui/icons-material"
 // source: https://github.com/MichalSzorad/react-social-login-buttons/blob/develop/src/buttons/GoogleLoginButton.js
 export const GoogleAlt = (props: SvgIconProps) => {
   return (
-    <SvgIcon
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 64 64"
-      {...props}
-    >
+    <SvgIcon xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" {...props}>
       <linearGradient
         id="95yY7w43Oj6n2vH63j6HJb"
         x1="29.401"
@@ -19,22 +15,10 @@ export const GoogleAlt = (props: SvgIconProps) => {
         gradientTransform="matrix(1 0 0 -1 0 66)"
         gradientUnits="userSpaceOnUse"
       >
-        <stop
-          offset="0"
-          stopColor="#ff5840"
-        />
-        <stop
-          offset=".007"
-          stopColor="#ff5840"
-        />
-        <stop
-          offset=".989"
-          stopColor="#fa528c"
-        />
-        <stop
-          offset="1"
-          stopColor="#fa528c"
-        />
+        <stop offset="0" stopColor="#ff5840" />
+        <stop offset=".007" stopColor="#ff5840" />
+        <stop offset=".989" stopColor="#fa528c" />
+        <stop offset="1" stopColor="#fa528c" />
       </linearGradient>
       <path
         fill="url(#95yY7w43Oj6n2vH63j6HJb)"
@@ -50,18 +34,9 @@ export const GoogleAlt = (props: SvgIconProps) => {
         gradientTransform="matrix(1 0 0 -1 0 66)"
         gradientUnits="userSpaceOnUse"
       >
-        <stop
-          offset="0"
-          stopColor="#feaa53"
-        />
-        <stop
-          offset=".612"
-          stopColor="#ffcd49"
-        />
-        <stop
-          offset="1"
-          stopColor="#ffde44"
-        />
+        <stop offset="0" stopColor="#feaa53" />
+        <stop offset=".612" stopColor="#ffcd49" />
+        <stop offset="1" stopColor="#ffde44" />
       </linearGradient>
       <path
         fill="url(#95yY7w43Oj6n2vH63j6HJc)"
@@ -77,18 +52,9 @@ export const GoogleAlt = (props: SvgIconProps) => {
         gradientTransform="matrix(1 0 0 -1 0 66)"
         gradientUnits="userSpaceOnUse"
       >
-        <stop
-          offset="0"
-          stopColor="#42d778"
-        />
-        <stop
-          offset=".428"
-          stopColor="#3dca76"
-        />
-        <stop
-          offset="1"
-          stopColor="#34b171"
-        />
+        <stop offset="0" stopColor="#42d778" />
+        <stop offset=".428" stopColor="#3dca76" />
+        <stop offset="1" stopColor="#34b171" />
       </linearGradient>
       <path
         fill="url(#95yY7w43Oj6n2vH63j6HJd)"
@@ -104,26 +70,11 @@ export const GoogleAlt = (props: SvgIconProps) => {
         gradientTransform="matrix(1 0 0 -1 0 66)"
         gradientUnits="userSpaceOnUse"
       >
-        <stop
-          offset="0"
-          stopColor="#155cde"
-        />
-        <stop
-          offset=".278"
-          stopColor="#1f7fe5"
-        />
-        <stop
-          offset=".569"
-          stopColor="#279ceb"
-        />
-        <stop
-          offset=".82"
-          stopColor="#2cafef"
-        />
-        <stop
-          offset="1"
-          stopColor="#2eb5f0"
-        />
+        <stop offset="0" stopColor="#155cde" />
+        <stop offset=".278" stopColor="#1f7fe5" />
+        <stop offset=".569" stopColor="#279ceb" />
+        <stop offset=".82" stopColor="#2cafef" />
+        <stop offset="1" stopColor="#2eb5f0" />
       </linearGradient>
       <path
         fill="url(#95yY7w43Oj6n2vH63j6HJe)"

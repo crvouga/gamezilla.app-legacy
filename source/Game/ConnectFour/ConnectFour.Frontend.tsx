@@ -214,14 +214,8 @@ const BannerArt = () => {
           gap: 4,
         }}
       >
-        <PlayerIcon
-          playerType="PlayerOne"
-          sx={iconSx}
-        />
-        <PlayerIcon
-          playerType="PlayerTwo"
-          sx={iconSx}
-        />
+        <PlayerIcon playerType="PlayerOne" sx={iconSx} />
+        <PlayerIcon playerType="PlayerTwo" sx={iconSx} />
       </UI.List>
       <UI.List
         sx={{
@@ -261,10 +255,7 @@ export const CoverArt = ({ id }: { id: string }) => {
   const playerTwoFill = `url(#${ids.playerTwoGradient})`
 
   return (
-    <svg
-      width="100%"
-      viewBox={"0 0 2 2"}
-    >
+    <svg width="100%" viewBox={"0 0 2 2"}>
       <defs>
         <pattern
           id={ids.holePattern}
@@ -272,12 +263,7 @@ export const CoverArt = ({ id }: { id: string }) => {
           width={1}
           height={1}
         >
-          <circle
-            cx={0.5}
-            cy={0.5}
-            r={0.425}
-            fill="black"
-          ></circle>
+          <circle cx={0.5} cy={0.5} r={0.425} fill="black"></circle>
         </pattern>
 
         <mask id={ids.holeMask}>
@@ -297,84 +283,37 @@ export const CoverArt = ({ id }: { id: string }) => {
           ></rect>
         </mask>
 
-        <linearGradient
-          id={ids.columnGradient}
-          gradientTransform="rotate(90)"
-        >
-          <stop
-            offset="0%"
-            stopColor={gameTheme.primary.light}
-          />
-          <stop
-            offset="100%"
-            stopColor={gameTheme.primary.dark}
-          />
+        <linearGradient id={ids.columnGradient} gradientTransform="rotate(90)">
+          <stop offset="0%" stopColor={gameTheme.primary.light} />
+          <stop offset="100%" stopColor={gameTheme.primary.dark} />
         </linearGradient>
 
         <linearGradient
           id={ids.playerOneGradient}
           gradientTransform="rotate(90)"
         >
-          <stop
-            offset="0%"
-            stopColor={gameTheme.PlayerOne.light}
-          />
-          <stop
-            offset="100%"
-            stopColor={gameTheme.PlayerOne.dark}
-          />
+          <stop offset="0%" stopColor={gameTheme.PlayerOne.light} />
+          <stop offset="100%" stopColor={gameTheme.PlayerOne.dark} />
         </linearGradient>
 
         <linearGradient
           id={ids.playerTwoGradient}
           gradientTransform="rotate(90)"
         >
-          <stop
-            offset="0%"
-            stopColor={gameTheme.PlayerTwo.light}
-          />
-          <stop
-            offset="100%"
-            stopColor={gameTheme.PlayerTwo.dark}
-          />
+          <stop offset="0%" stopColor={gameTheme.PlayerTwo.light} />
+          <stop offset="100%" stopColor={gameTheme.PlayerTwo.dark} />
         </linearGradient>
       </defs>
 
-      <rect
-        x={0}
-        y={0}
-        width={2}
-        height={2}
-        fill={gameTheme.primary.darker}
-      />
+      <rect x={0} y={0} width={2} height={2} fill={gameTheme.primary.darker} />
 
-      <circle
-        cx={0.5}
-        cy={0}
-        r={0.5}
-        fill={playerOneFill}
-      />
+      <circle cx={0.5} cy={0} r={0.5} fill={playerOneFill} />
 
-      <circle
-        cx={1.5}
-        cy={0.5}
-        r={0.5}
-        fill={playerTwoFill}
-      />
+      <circle cx={1.5} cy={0.5} r={0.5} fill={playerTwoFill} />
 
-      <circle
-        cx={1.5}
-        cy={1.5}
-        r={0.5}
-        fill={playerOneFill}
-      />
+      <circle cx={1.5} cy={1.5} r={0.5} fill={playerOneFill} />
 
-      <circle
-        cx={0.5}
-        cy={1.5}
-        r={0.5}
-        fill={playerTwoFill}
-      />
+      <circle cx={0.5} cy={1.5} r={0.5} fill={playerTwoFill} />
 
       <rect
         x={0}

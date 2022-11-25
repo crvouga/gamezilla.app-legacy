@@ -77,9 +77,9 @@ export const update = (
       const changeDirectionCmd =
         direction.type === "Some"
           ? sendToBackend([
-            "InputDirection",
-            { userId: ctx.currentUserId, direction: direction.value },
-          ])
+              "InputDirection",
+              { userId: ctx.currentUserId, direction: direction.value },
+            ])
           : Cmd.None
 
       const toggleStatusCmd =
@@ -163,7 +163,11 @@ const updateResponse = <
 ): [Model, Cmd<Msg>, OutAction[]] => {
   if (result.type === "Err") {
     const message = result.error.split("_").join(" ")
-    return [model, Cmd.None, [["Alerts", { tag: "Snack", message, variant: "Error" }]]]
+    return [
+      model,
+      Cmd.None,
+      [["Alerts", { tag: "Snack", message, variant: "Error" }]],
+    ]
   }
   const sharedModel = result.value
   return [{ ...model, ...sharedModel }, Cmd.None, []]
@@ -202,10 +206,7 @@ export const View = ({
     const menuAnchorId = "playerSlotMenuId"
     return (
       <UI.FillBox>
-        <UI.Typography
-          sx={{ paddingX: 2 }}
-          color="text.secondary"
-        >
+        <UI.Typography sx={{ paddingX: 2 }} color="text.secondary">
           Snake
         </UI.Typography>
 
@@ -291,10 +292,7 @@ export const View = ({
 
   return (
     <UI.FillBox>
-      <ViewBoard
-        model={model}
-        $d={$d}
-      />
+      <ViewBoard model={model} $d={$d} />
       {model.gameStatus.player[1] === ctx.currentUserId && (
         <UI.Box
           sx={{
@@ -448,10 +446,7 @@ export const CoverArt = () => {
   const food: Snake.Model["food"] = { x: 2, y: 2 }
 
   return (
-    <svg
-      width="100%"
-      viewBox={toViewBox(bounds)}
-    >
+    <svg width="100%" viewBox={toViewBox(bounds)}>
       {Position.range(bounds).map(({ x, y }, index) => (
         <rect
           key={`${x} ${y} ${index}`}

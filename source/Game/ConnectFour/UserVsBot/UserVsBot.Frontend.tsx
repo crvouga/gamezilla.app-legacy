@@ -31,7 +31,9 @@ import {
 
 export type Model = FrontendModel
 
-export const init = (...params: Parameters<typeof initShared>): FrontendModel => {
+export const init = (
+  ...params: Parameters<typeof initShared>
+): FrontendModel => {
   return { ...initShared(...params), ghostIndex: "None" }
 }
 
@@ -53,8 +55,7 @@ export const update = (
   model: Model,
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-
-    case 'Hovered': {
+    case "Hovered": {
       return [{ ...model, ghostIndex: msg[1].columnIndex }, Cmd.None]
     }
 
@@ -123,7 +124,7 @@ export const updateFromBackend = (
 
 export const mergeWithBackend = ({
   backendModel,
-  frontendModel
+  frontendModel,
 }: {
   frontendModel: FrontendModel
   backendModel: BackendModel
@@ -163,14 +164,7 @@ export const View = ({
   ctx: Ctx
 }) => {
   if (model.type === "Setup") {
-    return (
-      <ViewSetup
-        model={model}
-        goBack={goBack}
-        ctx={ctx}
-        $d={$d}
-      />
-    )
+    return <ViewSetup model={model} goBack={goBack} ctx={ctx} $d={$d} />
   }
 
   const stopGameRes = handle(["StopGame", { userId: ctx.currentUserId }], model)
@@ -191,30 +185,31 @@ export const View = ({
           paddingBottom: 2,
         }}
       >
-        <ViewGamePlayerSlot
-          model={model}
-          ctx={ctx}
-          playerType="PlayerOne"
-        />
-        <ViewGamePlayerSlot
-          model={model}
-          ctx={ctx}
-          playerType="PlayerTwo"
-        />
+        <ViewGamePlayerSlot model={model} ctx={ctx} playerType="PlayerOne" />
+        <ViewGamePlayerSlot model={model} ctx={ctx} playerType="PlayerTwo" />
       </UI.Box>
 
       <UI.Box sx={{ position: "relative" }}>
         <ViewColumns
-          ghost={ctx.currentUserId === model.player && toTurn(model.columns) === model.userPlayerType && model.ghostIndex !== 'None' ? { columnIndex: model.ghostIndex, playerType: model.userPlayerType } : undefined}
+          ghost={
+            ctx.currentUserId === model.player &&
+            toTurn(model.columns) === model.userPlayerType &&
+            model.ghostIndex !== "None"
+              ? {
+                  columnIndex: model.ghostIndex,
+                  playerType: model.userPlayerType,
+                }
+              : undefined
+          }
           columns={model.columns}
-          onHover={(columnIndex) => $d(['Hovered', { columnIndex }])}
+          onHover={(columnIndex) => $d(["Hovered", { columnIndex }])}
           onClick={(columnIndex) =>
             $d(["InputMove", { columnIndex, userId: ctx.currentUserId }])
           }
         />
         <UI.Fade in={gameOver.type !== "None"}>
           <UI.Box
-            onClick={() => $d(['Restart', { userId: ctx.currentUserId }])}
+            onClick={() => $d(["Restart", { userId: ctx.currentUserId }])}
             sx={{
               position: "absolute",
               top: 0,
@@ -277,10 +272,7 @@ const ViewGameOverMessage = ({
     case "Tie": {
       return (
         <>
-          <UI.Typography
-            align="center"
-            fontSize={64}
-          >
+          <UI.Typography align="center" fontSize={64}>
             Tie
           </UI.Typography>
         </>
@@ -294,10 +286,7 @@ const ViewGameOverMessage = ({
         if (winner === model.userPlayerType) {
           return (
             <>
-              <UI.Typography
-                align="center"
-                fontSize={64}
-              >
+              <UI.Typography align="center" fontSize={64}>
                 You Won
               </UI.Typography>
             </>
@@ -306,10 +295,7 @@ const ViewGameOverMessage = ({
 
         return (
           <>
-            <UI.Typography
-              align="center"
-              fontSize={64}
-            >
+            <UI.Typography align="center" fontSize={64}>
               You Lost
             </UI.Typography>
           </>
@@ -332,10 +318,7 @@ const ViewGameOverMessage = ({
               sx={{ width: size, height: size }}
               playerType={winner}
             />
-            <UI.Typography
-              align="center"
-              fontSize={size}
-            >
+            <UI.Typography align="center" fontSize={size}>
               Won
             </UI.Typography>
           </UI.Box>
@@ -366,10 +349,7 @@ const ViewGamePlayerSlot = ({
           overflow: "hidden",
         }}
       >
-        <PlayerIcon
-          playerType={playerType}
-          sx={{ ...size, marginRight: 1 }}
-        />
+        <PlayerIcon playerType={playerType} sx={{ ...size, marginRight: 1 }} />
         <UI.Avatar
           src={ctx.profiles[model.player]?.avatarUrl}
           sx={{ ...size, marginRight: 1 }}
@@ -390,17 +370,11 @@ const ViewGamePlayerSlot = ({
         overflow: "hidden",
       }}
     >
-      <PlayerIcon
-        playerType={playerType}
-        sx={{ ...size, marginRight: 1 }}
-      />
+      <PlayerIcon playerType={playerType} sx={{ ...size, marginRight: 1 }} />
       <UI.Icons.SmartToy
         sx={{ ...size, padding: 0, margin: 0, marginRight: 1 }}
       />
-      <UI.Typography
-        noWrap
-        sx={{ flex: 1 }}
-      >
+      <UI.Typography noWrap sx={{ flex: 1 }}>
         {model.botLevel}
       </UI.Typography>
       {isBotTurn(model) && (
@@ -449,10 +423,7 @@ const ViewSetup = ({
             />
           }
           renderLeftIcon={(sx) => (
-            <PlayerIcon
-              playerType="PlayerOne"
-              sx={{ ...sx }}
-            />
+            <PlayerIcon playerType="PlayerOne" sx={{ ...sx }} />
           )}
           left={
             model.userPlayerType === "PlayerOne"
@@ -462,10 +433,7 @@ const ViewSetup = ({
               : { type: "Bot", label: model.botLevel }
           }
           renderRightIcon={(sx) => (
-            <PlayerIcon
-              playerType="PlayerTwo"
-              sx={{ ...sx }}
-            />
+            <PlayerIcon playerType="PlayerTwo" sx={{ ...sx }} />
           )}
           right={
             model.userPlayerType === "PlayerTwo"
@@ -509,10 +477,7 @@ const ViewSetup = ({
               src={ctx.profiles[model.player]?.avatarUrl}
               sx={{ marginRight: 2 }}
             />
-            <UI.Typography
-              noWrap
-              sx={{ flex: 1 }}
-            >
+            <UI.Typography noWrap sx={{ flex: 1 }}>
               {ctx.profiles[model.player]?.username ?? "..."}
             </UI.Typography>
             {model.player === ctx.currentUserId && (
@@ -537,10 +502,7 @@ const ViewSetup = ({
         </UI.Typography>
 
         <UI.Box sx={{ paddingX: 2, paddingBottom: 2 }}>
-          <UI.ToggleButtonGroup
-            value={model.userPlayerType}
-            fullWidth
-          >
+          <UI.ToggleButtonGroup value={model.userPlayerType} fullWidth>
             <UI.ToggleButton
               value={"PlayerOne"}
               onClick={() =>
@@ -580,10 +542,7 @@ const ViewSetup = ({
         </UI.Typography>
 
         <UI.Box sx={{ paddingX: 2, paddingBottom: 4 }}>
-          <UI.ToggleButtonGroup
-            value={model.botLevel}
-            fullWidth
-          >
+          <UI.ToggleButtonGroup value={model.botLevel} fullWidth>
             {Object.values(botLevel).map((botLevel) => (
               <UI.ToggleButton
                 key={botLevel}
@@ -600,11 +559,7 @@ const ViewSetup = ({
       </UI.Box>
 
       <UI.Box sx={{ padding: 2, gap: 2, display: "flex" }}>
-        <UI.Button
-          variant="outlined"
-          onClick={goBack}
-          fullWidth
-        >
+        <UI.Button variant="outlined" onClick={goBack} fullWidth>
           Back
         </UI.Button>
 
