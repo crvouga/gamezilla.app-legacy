@@ -218,13 +218,10 @@ export const View = ({
   model: Model
   $d: (msg: Msg) => void
 }) => {
-  const theme = useTheme()
+
   if (model.type === "Setup") {
     return (
       <FillBox>
-        {/* <Box sx={{ width: "25%", pt: 2, mx: 'auto' }}>
-                    <CoverArt />
-                </Box> */}
         <Box sx={{ position: "relative" }}>
           <svg viewBox={artMazeViewBox} width={"100%"}>
             <rect
