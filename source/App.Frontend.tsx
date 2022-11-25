@@ -612,7 +612,7 @@ const ViewMain = ({ model, $d }: { model: Model; $d: (msg: Msg) => void }) => {
                 $d={(msg) => $d(["GameRoom", msg])}
               />
 
-              <Divider />
+              {/* <Divider /> */}
 
               <Party.ViewBanner
                 store={model.profileStore}
