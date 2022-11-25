@@ -45,6 +45,7 @@ export const updateFromFrontend = (
   model: Model,
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
+    case 'StopGame':
     case "InputDirection":
     case "InputSeed":
     case "StartGame":

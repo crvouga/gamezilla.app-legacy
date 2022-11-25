@@ -146,13 +146,13 @@ export const getBestMove =
     columns: Columns
     maximizingPlayer: PlayerType
   }): Task<BestMoveResult> =>
-  async () => {
-    const result = toBestMove({ columns, maximizingPlayer })
+    async () => {
+      const result = toBestMove({ columns, maximizingPlayer })
 
-    await new Promise((resolve) => setTimeout(resolve, 1_000))
+      await new Promise((resolve) => setTimeout(resolve, 1_000))
 
-    return result
-  }
+      return result
+    }
 
 export const toSlot = (
   columns: Columns,
@@ -177,16 +177,16 @@ const isFull = (columns: Columns) => {
 
 export type Status =
   | {
-      type: "Playing"
-      turn: PlayerType
-    }
+    type: "Playing"
+    turn: PlayerType
+  }
   | {
-      type: "Winner"
-      winner: PlayerType
-    }
+    type: "Winner"
+    winner: PlayerType
+  }
   | {
-      type: "Tie"
-    }
+    type: "Tie"
+  }
 
 export const toStatus = (columns: Columns): Status => {
   const wins = toWins(columns)
@@ -526,8 +526,8 @@ const ViewColumnsSvg = ({
               disabled || !onClick
                 ? undefined
                 : (columns[columnIndex]?.length ?? 0) >= MAX_COLUMN_HEIGHT
-                ? "not-allowed"
-                : "pointer",
+                  ? "not-allowed"
+                  : "pointer",
           }}
           onMouseOver={() => {
             if (!disabled && isColumnIndex(columnIndex) && onHover) {
