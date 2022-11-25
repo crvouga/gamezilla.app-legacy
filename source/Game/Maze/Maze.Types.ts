@@ -232,42 +232,6 @@ export const handle = (
         return Err("must_be_playing")
       }
 
-      if (msg[1].direction === 'None') {
-        const modelNew: SharedModel = {
-          ...model,
-          players: {
-            ...model.players,
-            [player.userId]: {
-              ...player,
-              direction: 'None',
-            },
-          },
-        }
-
-        return Ok(modelNew)
-      }
-
-      const positionNew = Position.add(
-        Direction.toVector(msg[1].direction),
-        player.position,
-      )
-
-      const maze = Maze.makeMemoized(model)
-
-      if (!Maze.hasEdge([player.position, positionNew], maze)) {
-        return Err("hit_wall")
-      }
-
-      if (!Maze.hasVertex(positionNew, maze)) {
-        return Err("out_of_bounds")
-      }
-
-      const playerNew: Player = {
-        ...player,
-        position: positionNew,
-        direction: msg[1].direction,
-      }
-
       const modelNew: SharedModel = {
         type: "Game",
         seed: model.seed,
@@ -275,7 +239,10 @@ export const handle = (
         lower: model.lower,
         players: {
           ...model.players,
-          [playerNew.userId]: playerNew,
+          [player.userId]: {
+            ...player,
+            direction: msg[1].direction,
+          },
         },
       }
 
