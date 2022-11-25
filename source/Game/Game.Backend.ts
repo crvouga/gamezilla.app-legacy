@@ -8,6 +8,7 @@ import * as Snake from "./Snake/Snake.Backend"
 import * as Tetris from "./Tetris/Tetris.Backend"
 import * as TicTacToe from "./TicTacToe/TicTacToe.Backend"
 
+
 //
 //
 //
@@ -124,7 +125,7 @@ export const update = (
 
     case "Maze": {
       if (model[0] === "Maze") {
-        const [child, cmd] = Maze.update(msg[1], model[1])
+        const [child, cmd] = Maze.update({ broadcast: (m) => broadcast(['Maze', m]) }, msg[1], model[1])
         return [["Maze", child], Cmd.tag("Maze", cmd)]
       }
       return [model, Cmd.None]
@@ -314,7 +315,7 @@ export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
       return Sub.tag("Tetris", Tetris.subscriptions(intervalId, model[1]))
     }
     case "Maze": {
-      return Sub.tag("Maze", Maze.subscriptions(model[1]))
+      return Sub.tag("Maze", Maze.subscriptions(intervalId, model[1]))
     }
   }
 }

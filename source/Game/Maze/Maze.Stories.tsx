@@ -3,9 +3,11 @@ import { ctx } from "../../test-data"
 import { AppContainer } from "../../UI"
 import { init, View } from "./Maze.Frontend"
 
+const initial = init({ userId: ctx.currentUserId })
+
 const props: Parameters<typeof View>[0] = {
-  $d: () => {},
-  model: init,
+  $d: () => { },
+  model: initial,
   ctx,
 }
 
@@ -28,16 +30,16 @@ export const Game = Template.bind({})
 Game.args = {
   model: {
     type: "Game",
-    colors: init.colors,
-    lower: init.lower,
-    seed: init.seed,
-    upper: init.upper,
+    lower: initial.lower,
+    seed: initial.seed,
+    upper: initial.upper,
     players: {
       [ctx.currentUserId]: {
         position: {
           x: 0,
           y: 0,
         },
+        color: "Red",
         userId: ctx.currentUserId,
         direction: "North",
       },

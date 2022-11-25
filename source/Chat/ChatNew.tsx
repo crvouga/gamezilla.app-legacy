@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react"
-import { Cmd, exhaustive, Keyboard, RemoteData, Sub } from "../Core"
+import { Cmd, exhaustive, Keyboard, p, RemoteData, Sub } from "../Core"
 import { UserId } from "../Data"
 import * as Route from "../Route"
 import * as ChatStore from "./Chat.Store"
@@ -192,11 +192,11 @@ const toggleSelected = (
 //
 //
 
-export const subscriptions = (_model: Model): Sub<Msg> => {
-  return Keyboard.keyDowns((key) =>
-    Keyboard.isArrowKey(key) || Keyboard.isEnterKey(key)
-      ? ["PressedKeyDown", key]
-      : Keyboard.SkipFlag,
+export const subscriptions = (_model: Model) => {
+  return p(
+    Keyboard.keyDowns((key) => key),
+    Sub.chain(key => Keyboard.isArrowKey(key) || Keyboard.isEnterKey(key) ? Sub.of(key) : Sub.None),
+    Sub.map((key): Msg => ["PressedKeyDown", key])
   )
 }
 
