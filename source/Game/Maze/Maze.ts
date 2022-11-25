@@ -31,6 +31,7 @@ const make = ({
   const gen = Random.generator(seed)
 
   const maze: Maze = { edges: [], lower, upper }
+
   const stack = [lower]
   const visited = new Set<string>([Position.toKey(lower)])
 
@@ -69,7 +70,47 @@ const make = ({
     maze.edges.push([current, unvisitedNeighbor.position])
   }
 
+  removeDeadEnds({ limit: Infinity, gen }, maze)
+
   return maze
+}
+
+const removeDeadEnds = ({ gen, limit }: { gen: () => number, limit: number }, maze: Maze) => {
+  let count = 0
+
+  for (let x = maze.lower.x; x <= maze.upper.x; x++) {
+    for (let y = maze.lower.y; y <= maze.upper.y; y++) {
+      const position: Position = { x, y }
+
+      const adjacencies = toAdjacencies(position, maze)
+
+      if (adjacencies.length >= 2) {
+        continue
+      }
+
+      for (const direction of Random.shuffle(gen, Direction.all)) {
+        const neighbor = Position.add(Direction.toVector(direction), position)
+
+        if (!hasVertex(neighbor, maze)) {
+          continue
+        }
+
+        const isAdjacent = adjacencies.some(adj => Position.eq(adj, neighbor))
+
+        if (isAdjacent) {
+          continue
+        }
+
+        maze.edges.push([neighbor, position])
+        count++
+        if (count >= limit) {
+          return
+        }
+
+        break
+      }
+    }
+  }
 }
 
 const makeMemoized = memoize(
@@ -77,6 +118,26 @@ const makeMemoized = memoize(
     [seed, lower.x, lower.y, upper.x, upper.y].join("-"),
   make,
 )
+
+
+const toAdjacencies = (position: Position, maze: Maze) => {
+  const adjancent: Position[] = []
+
+  for (const edge of maze.edges) {
+    if (Position.eq(position, edge[0])) {
+      adjancent.push(edge[1])
+    }
+
+    if (Position.eq(position, edge[1])) {
+      adjancent.push(edge[0])
+    }
+  }
+
+  return adjancent
+}
+
+
+
 
 const hasVertex = (vertex: Position, { lower, upper }: Maze): boolean => {
   return (

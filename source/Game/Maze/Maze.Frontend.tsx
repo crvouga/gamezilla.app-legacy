@@ -1,5 +1,6 @@
 import { Cmd, Keyboard, Set, Sub } from "../../Core"
 import {
+  ActionButton,
   Avatar,
   Box,
   Button,
@@ -8,6 +9,7 @@ import {
   Icons,
   InputAdornment,
   TextField,
+  Toolbar,
   Typography,
   useTheme,
 } from "../../UI"
@@ -359,23 +361,30 @@ export const View = ({
 
   return (
     <FillBox sx={{ alignItems: "center" }}>
+      <Box sx={{ width: '100%' }}>
+        <ActionButton
+          icon={<Icons.ExitToApp sx={{ transform: "rotate(180deg)" }} />}
+          label="Exit"
+          onClick={() => { }}
+        />
+      </Box>
       <svg
-        style={{ maxWidth: "400px", margin: 0 }}
+        // style={{ maxWidth: "400px", margin: 0 }}
         width="100%"
         viewBox={viewBox}
       >
         <rect
-          x={0}
-          y={0}
+          x={model.lower.x}
+          y={model.lower.y}
           width="100%"
           height="100%"
-          fill={theme.palette.background.default}
+          fill={"#000"}
         />
         {maze.edges.map(([a, b]) => (
           <g
             key={[a.x, a.y, b.x, b.y].join("-")}
             strokeWidth="0.1"
-            stroke={theme.palette.text.secondary}
+            stroke={"#fff"}
           >
             <line
               x1={a.x + 1 / 2}
