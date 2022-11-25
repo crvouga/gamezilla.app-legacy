@@ -3,7 +3,7 @@ import { UserId } from "../../../Data/UserId"
 import * as Alerts from "../../../Alerts"
 import * as UI from "../../../UI"
 import { Ctx, VersusHeader } from "../../Game.Shared"
-import { gameTheme, PlayerType, ViewColumns } from "../ConnectFour"
+import { gameTheme, PlayerType, toTurn, ViewColumns } from "../ConnectFour"
 import { PlayerIcon } from "../Views"
 import {
   BackendModel,
@@ -31,7 +31,9 @@ import {
 
 export type Model = FrontendModel
 
-export const init = initShared
+export const init = (...params: Parameters<typeof initShared>): FrontendModel => {
+  return { ...initShared(...params), ghostIndex: "None" }
+}
 
 //
 //
@@ -51,6 +53,11 @@ export const update = (
   model: Model,
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
+
+    case 'Hovered': {
+      return [{ ...model, ghostIndex: msg[1].columnIndex }, Cmd.None]
+    }
+
     case "InputMove":
     case "InputPlayerType":
     case "Restart":
@@ -78,7 +85,8 @@ export const updateFromBackend = (
       return [modelNew, Cmd.None, []]
     }
 
-    case "BotMove": {
+    case "BotMove":
+    case "InputMove": {
       if (msg[1].type === "Err") {
         return [model, Cmd.None, []]
       }
@@ -88,10 +96,9 @@ export const updateFromBackend = (
         backendModel: msg[1].value,
       })
 
-      return [modelNew, Cmd.None, []]
+      return [{ ...modelNew, ghostIndex: "None" }, Cmd.None, []]
     }
 
-    case "InputMove":
     case "InputPlayerType":
     case "Restart":
     case "StartGame":
@@ -116,11 +123,12 @@ export const updateFromBackend = (
 
 export const mergeWithBackend = ({
   backendModel,
+  frontendModel
 }: {
   frontendModel: FrontendModel
   backendModel: BackendModel
 }): FrontendModel => {
-  return backendModel
+  return { ...backendModel, ghostIndex: frontendModel.ghostIndex }
 }
 
 //
@@ -197,13 +205,16 @@ export const View = ({
 
       <UI.Box sx={{ position: "relative" }}>
         <ViewColumns
+          ghost={ctx.currentUserId === model.player && toTurn(model.columns) === model.userPlayerType && model.ghostIndex !== 'None' ? { columnIndex: model.ghostIndex, playerType: model.userPlayerType } : undefined}
           columns={model.columns}
+          onHover={(columnIndex) => $d(['Hovered', { columnIndex }])}
           onClick={(columnIndex) =>
             $d(["InputMove", { columnIndex, userId: ctx.currentUserId }])
           }
         />
         <UI.Fade in={gameOver.type !== "None"}>
           <UI.Box
+            onClick={() => $d(['Restart', { userId: ctx.currentUserId }])}
             sx={{
               position: "absolute",
               top: 0,

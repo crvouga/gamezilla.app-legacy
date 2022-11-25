@@ -49,7 +49,7 @@ export const isBotTurn = (model: SharedModel): boolean => {
 
 export type BackendModel = SharedModel
 
-export type FrontendModel = SharedModel
+export type FrontendModel = SharedModel & { ghostIndex: ColumnIndex | "None" }
 
 export const initShared = ({
   player,
@@ -109,7 +109,7 @@ export const botLevel: { [botLevel in BotLevel]: BotLevel } = {
 //
 //
 
-export type FrontendMsg = Req
+export type FrontendMsg = Req | ['Hovered', { columnIndex: ColumnIndex }]
 
 export type BackendMsg = ["BotMove", BestMoveResult]
 
