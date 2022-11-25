@@ -63,6 +63,11 @@ const isSkipFlag = (unknown: unknown): unknown is SkipFlag => {
 export const keyDowns = <T>(callback: (key: Key) => T | SkipFlag): Sub<T> => {
   return new Rx.Observable((subscriber) => {
     const handler = (event: KeyboardEvent) => {
+
+      if (event.repeat) {
+        return
+      }
+
       const key = event.key
 
       if (key === " ") {
