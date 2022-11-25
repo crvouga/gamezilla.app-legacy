@@ -8,10 +8,8 @@ import {
   IconButton,
   Icons,
   InputAdornment,
-  TextField,
-  Toolbar,
-  Typography,
-  useTheme,
+  TextField, Typography,
+  useTheme
 } from "../../UI"
 import { Ctx } from "../Game.Shared"
 import { Maze } from "./Maze"
@@ -22,7 +20,7 @@ import {
   handle,
   initShared,
   ToBackend,
-  ToFrontend,
+  ToFrontend
 } from "./Maze.Types"
 import { Direction, Position } from "./Position"
 
@@ -81,6 +79,7 @@ export const update = (
     case "InputSeed":
     case "InputDirection":
     case "StartGame":
+    case 'StopGame':
     case "StopPlaying":
     case "StartPlaying": {
       return [model, sendToBackend(msg)]
@@ -93,6 +92,7 @@ export const updateFromBackend = (
   model: Model,
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
+    case 'StopGame':
     case "InputSeed":
     case "InputDirection":
     case "StartGame":
@@ -359,15 +359,15 @@ export const View = ({
 
   const maze = Maze.makeMemoized(model)
 
+  const currentUserPlayer = model.players[ctx.currentUserId]
+
   return (
     <FillBox sx={{ alignItems: "center" }}>
-      <Box sx={{ width: '100%' }}>
-        <ActionButton
-          icon={<Icons.ExitToApp sx={{ transform: "rotate(180deg)" }} />}
-          label="Exit"
-          onClick={() => { }}
-        />
-      </Box>
+      {!currentUserPlayer && (
+        <Typography sx={{ p: 1 }} color="primary.light">
+          Spectating
+        </Typography>
+      )}
       <svg
         // style={{ maxWidth: "400px", margin: 0 }}
         width="100%"
@@ -405,15 +405,26 @@ export const View = ({
           />
         ))}
       </svg>
-      <Joystick
-        activeDirection={model.players[ctx.currentUserId]?.direction}
-        onChange={(direction) =>
-          $d(["InputDirection", { direction, userId: ctx.currentUserId }])
-        }
-        activeFill="#fff"
-        fill="#000"
-        stroke="#bcbcbc"
-      />
+      {currentUserPlayer && (
+        <>
+          <Joystick
+            activeDirection={model.players[ctx.currentUserId]?.direction}
+            onChange={(direction) =>
+              $d(["InputDirection", { direction, userId: ctx.currentUserId }])
+            }
+            activeFill="#fff"
+            fill="#000"
+            stroke="#bcbcbc"
+          />
+          <Box sx={{ width: '100%' }}>
+            <ActionButton
+              icon={<Icons.ExitToApp sx={{ transform: "rotate(180deg)" }} />}
+              label="Exit"
+              onClick={() => $d(['StopGame', { userId: ctx.currentUserId }])}
+            />
+          </Box>
+        </>
+      )}
     </FillBox>
   )
 }

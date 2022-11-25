@@ -16,21 +16,21 @@ export type SharedModel = SetupModel
 
 export type SetupModel =
   | {
-      type: "Setup"
-      players: Set<UserId>
-      colors: ColorMap
-      seed: string
-      lower: Position
-      upper: Position
-    }
+    type: "Setup"
+    players: { [userId: UserId]: UserId }
+    colors: ColorMap
+    seed: string
+    lower: Position
+    upper: Position
+  }
   | {
-      type: "Game"
-      players: { [userId: UserId]: Player }
-      colors: ColorMap
-      seed: string
-      lower: Position
-      upper: Position
-    }
+    type: "Game"
+    players: { [userId: UserId]: Player }
+    colors: ColorMap
+    seed: string
+    lower: Position
+    upper: Position
+  }
 
 type ColorMap = { [color in Color]?: UserId }
 
@@ -73,6 +73,7 @@ export type Req =
   | ["StartPlaying", { userId: UserId }]
   | ["StopPlaying", { userId: UserId }]
   | ["StartGame", { userId: UserId }]
+  | ["StopGame", { userId: UserId }]
   | ["InputDirection", { userId: UserId; direction: Direction }]
   | ["InputSeed", { userId: UserId; seed: string }]
 
@@ -110,6 +111,30 @@ export const handle = (
 
       return Ok(modelNew)
     }
+
+    case 'StopGame': {
+      if (model.type !== 'Game') {
+        return Err("must_be_game")
+      }
+
+      const player = model.players[msg[1].userId]
+
+      if (!player) {
+        return Err("must_be_playing")
+      }
+
+      const modelNew: SharedModel = {
+        type: "Setup",
+        colors: model.colors,
+        lower: model.lower,
+        players: mapValues(val => val.userId, model.players),
+        seed: model.seed,
+        upper: model.upper,
+      }
+
+      return Ok(modelNew)
+    }
+
 
     case "StartPlaying": {
       if (model.type !== "Setup") {
@@ -227,6 +252,17 @@ export const handle = (
       return Ok(modelNew)
     }
   }
+}
+
+const mapValues = <A, B>(f: (a: A) => B, record: Record<string, A>) => {
+  const ret: Record<string, B> = {}
+  for (const key in record) {
+    const value = record[key]
+    if (value) {
+      ret[key] = f(value)
+    }
+  }
+  return ret
 }
 
 //

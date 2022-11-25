@@ -82,9 +82,9 @@ const removeDeadEnds = ({ gen, limit }: { gen: () => number, limit: number }, ma
     for (let y = maze.lower.y; y <= maze.upper.y; y++) {
       const position: Position = { x, y }
 
-      const adjacencies = toAdjacencies(position, maze)
+      const connections = toConnections(position, maze)
 
-      if (adjacencies.length >= 2) {
+      if (connections.length >= 2) {
         continue
       }
 
@@ -95,13 +95,14 @@ const removeDeadEnds = ({ gen, limit }: { gen: () => number, limit: number }, ma
           continue
         }
 
-        const isAdjacent = adjacencies.some(adj => Position.eq(adj, neighbor))
+        const isAdjacent = connections.some(adj => Position.eq(adj, neighbor))
 
         if (isAdjacent) {
           continue
         }
 
         maze.edges.push([neighbor, position])
+
         count++
         if (count >= limit) {
           return
@@ -120,7 +121,7 @@ const makeMemoized = memoize(
 )
 
 
-const toAdjacencies = (position: Position, maze: Maze) => {
+const toConnections = (position: Position, maze: Maze) => {
   const adjancent: Position[] = []
 
   for (const edge of maze.edges) {
