@@ -47,10 +47,10 @@ export const gameNames: { [gameName in GameName]: GameName } = {
 }
 
 export const gameNameList: GameName[] = [
-  "Maze",
   "Chess",
-  "TicTacToe",
   "ConnectFour",
+  "TicTacToe",
+  "Maze",
 ]
 
 //
