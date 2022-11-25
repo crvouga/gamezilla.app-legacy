@@ -10,12 +10,13 @@ const setupModel: Model = {
   botLevel: "Medium",
   player: "None",
   userPlayerType: "PlayerOne",
+  ghostIndex: "None",
 }
 
 const props: Parameters<typeof View>[0] = {
-  $d: () => {},
+  $d: () => { },
   ctx,
-  goBack: () => {},
+  goBack: () => { },
   model: setupModel,
 }
 
@@ -44,6 +45,7 @@ SetupReady.args = {
 }
 
 const gameModel: Model = {
+  ghostIndex: "None",
   type: "Game",
   botLevel: "Medium",
   columns: emptyColumns,
