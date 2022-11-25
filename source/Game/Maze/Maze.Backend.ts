@@ -1,4 +1,4 @@
-import { Cmd, Sub } from "../../Core"
+import { Time, Cmd, Sub } from "../../Core"
 import { UserId } from "../../Data"
 import {
   BackendModel,
@@ -75,10 +75,10 @@ export const updateRoomLeave = (
 //
 //
 
-export const subscriptions = (_intervalId: string, model: BackendModel): Sub<Msg> => {
+export const subscriptions = (intervalId: string, model: BackendModel): Sub<Msg> => {
   if (model.type === 'Game') {
-    // return Time.every(intervalId, 300, () => ['Tick'])
-    return Sub.None
+    return Time.every(intervalId, 100, () => ['Tick'])
+    // return Sub.None
 
   }
   return Sub.None
