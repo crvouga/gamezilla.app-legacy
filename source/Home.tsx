@@ -132,27 +132,13 @@ export const View = ({
   const user = gameRoom.users[ctx.currentUserId]
 
   if (!user) {
-    return (
-      <ViewNotInRoom
-        model={model}
-        $d={$d}
-        ctx={ctx}
-        gameRoom={gameRoom}
-      />
-    )
+    return <ViewNotInRoom model={model} $d={$d} ctx={ctx} gameRoom={gameRoom} />
   }
 
   const currentRoom = gameRoom.rooms[user.roomId]
 
   if (!currentRoom) {
-    return (
-      <ViewNotInRoom
-        model={model}
-        $d={$d}
-        ctx={ctx}
-        gameRoom={gameRoom}
-      />
-    )
+    return <ViewNotInRoom model={model} $d={$d} ctx={ctx} gameRoom={gameRoom} />
   }
 
   const hostProfile = ctx.profiles[currentRoom.hostId]
@@ -170,10 +156,7 @@ export const View = ({
       <UI.Header title="Home" />
 
       <UI.Box sx={{ paddingX: 2 }}>
-        <UI.Typography
-          variant="h5"
-          sx={{ marginBottom: 1 }}
-        >
+        <UI.Typography variant="h5" sx={{ marginBottom: 1 }}>
           Current Room
         </UI.Typography>
 
@@ -212,17 +195,10 @@ export const View = ({
             </UI.Box>
 
             <UI.Box sx={{ flex: 2, padding: 2, overflow: "hidden" }}>
-              <UI.Typography
-                variant="h5"
-                noWrap
-              >
+              <UI.Typography variant="h5" noWrap>
                 {hostProfile ? `${hostProfile.username}'s room` : "..."}
               </UI.Typography>
-              <UI.Typography
-                variant="subtitle1"
-                color="text.secondary"
-                noWrap
-              >
+              <UI.Typography variant="subtitle1" color="text.secondary" noWrap>
                 {`${roomCount} in room`}
               </UI.Typography>
             </UI.Box>
@@ -311,10 +287,7 @@ const ViewNotInRoom = ({
       <UI.FillBox sx={{ overflowY: "scroll" }}>
         <UI.Header title="Home" />
 
-        <UI.Typography
-          variant="h4"
-          sx={{ paddingX: 2, marginBottom: 1 }}
-        >
+        <UI.Typography variant="h4" sx={{ paddingX: 2, marginBottom: 1 }}>
           Games
         </UI.Typography>
         <UI.Box
@@ -328,10 +301,7 @@ const ViewNotInRoom = ({
           }}
         >
           {gameNameList.map((gameName) => (
-            <UI.Box
-              key={gameName}
-              sx={{ minWidth: 150, flex: 1 }}
-            >
+            <UI.Box key={gameName} sx={{ minWidth: 150, flex: 1 }}>
               <GameRoom.ViewGameCard
                 key={gameName}
                 gameName={gameName}
@@ -348,10 +318,7 @@ const ViewNotInRoom = ({
     <UI.FillBox sx={{ overflowY: "scroll" }}>
       <UI.Header title="Home" />
 
-      <UI.Typography
-        variant="h4"
-        sx={{ paddingX: 2, marginBottom: 1 }}
-      >
+      <UI.Typography variant="h4" sx={{ paddingX: 2, marginBottom: 1 }}>
         Games
       </UI.Typography>
       <UI.Box

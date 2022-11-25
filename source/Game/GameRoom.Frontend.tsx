@@ -4,7 +4,16 @@ import * as ProfileStore from "../Profile/Profile.Store"
 import * as Route from "../Route"
 import * as Alerts from "../Alerts"
 import * as UI from "../UI"
-import { Typography, Icons, Box, ButtonBase, Button, ConformationDialog, Divider, Toolbar } from "../UI"
+import {
+  Typography,
+  Icons,
+  Box,
+  ButtonBase,
+  Button,
+  ConformationDialog,
+  Divider,
+  Toolbar,
+} from "../UI"
 import * as Game from "./Game.Frontend"
 import { Ctx } from "./Game.Shared"
 import { GameName, gameNameList } from "./Game.Types"
@@ -187,7 +196,7 @@ export const updateFromBackend = (
     ctx,
     sendToBackend,
   }: {
-    ctx: Ctx,
+    ctx: Ctx
     sendToBackend: (msg: ToBackend) => Cmd
   },
   msg: ToFrontend,
@@ -279,17 +288,17 @@ export const updateFromBackend = (
       const alertActions: OutAction[] =
         msg[2].type === "Ok"
           ? [
-            [
-              "Alerts",
-              {
-                message: toRoomEndMessage({
-                  ctx,
-                  hostId: msg[1].userId,
-                }),
-                tag: "Snack",
-              },
-            ],
-          ]
+              [
+                "Alerts",
+                {
+                  message: toRoomEndMessage({
+                    ctx,
+                    hostId: msg[1].userId,
+                  }),
+                  tag: "Snack",
+                },
+              ],
+            ]
           : []
 
       return [handled[0], handled[1], [...handled[2], ...alertActions]]
@@ -305,17 +314,17 @@ export const updateFromBackend = (
       const alertActions: OutAction[] =
         msg[1].userId !== ctx.currentUserId
           ? [
-            [
-              "Alerts",
-              {
-                tag: "Snack",
-                message: toRoomLeaveMessage({
-                  userId: msg[1].userId,
-                  ctx,
-                }),
-              },
-            ],
-          ]
+              [
+                "Alerts",
+                {
+                  tag: "Snack",
+                  message: toRoomLeaveMessage({
+                    userId: msg[1].userId,
+                    ctx,
+                  }),
+                },
+              ],
+            ]
           : []
 
       return [handled[0], handled[1], [...handled[2], ...alertActions]]
@@ -326,24 +335,37 @@ export const updateFromBackend = (
 
       if (msg[2].type === "Err") {
         const currentRoomId = model.users[ctx.currentUserId]?.roomId
-        const currentRoom = currentRoomId ? model.rooms[currentRoomId] : undefined
+        const currentRoom = currentRoomId
+          ? model.rooms[currentRoomId]
+          : undefined
 
-        const alertActions: Alerts.Action<Msg>[] = msg[2].error === "already_in_room" && msg[1].userId === ctx.currentUserId ?
-          ctx.currentUserId === currentRoom?.hostId ?
-            [
-              ['Alerts', { title: "End your current room to join this room?", tag: "Conformation", onConfirm: ['RoomEndThenJoin', msg[1]] }]
-            ]
-            :
-            [
-              ['Alerts', { title: "Leave your current room to join this room?", tag: "Conformation", onConfirm: ['RoomLeaveThenJoin', msg[1]] }]
-            ]
-          : []
+        const alertActions: Alerts.Action<Msg>[] =
+          msg[2].error === "already_in_room" &&
+          msg[1].userId === ctx.currentUserId
+            ? ctx.currentUserId === currentRoom?.hostId
+              ? [
+                  [
+                    "Alerts",
+                    {
+                      title: "End your current room to join this room?",
+                      tag: "Conformation",
+                      onConfirm: ["RoomEndThenJoin", msg[1]],
+                    },
+                  ],
+                ]
+              : [
+                  [
+                    "Alerts",
+                    {
+                      title: "Leave your current room to join this room?",
+                      tag: "Conformation",
+                      onConfirm: ["RoomLeaveThenJoin", msg[1]],
+                    },
+                  ],
+                ]
+            : []
 
-        return [
-          handled[0],
-          handled[1],
-          [...handled[2], ...alertActions],
-        ]
+        return [handled[0], handled[1], [...handled[2], ...alertActions]]
       }
 
       const routeActions: OutAction[] =
@@ -354,17 +376,17 @@ export const updateFromBackend = (
       const alertActions: OutAction[] =
         msg[1].userId !== ctx.currentUserId
           ? [
-            [
-              "Alerts",
-              {
-                tag: "Snack",
-                message: toRoomJoinMessage({
-                  userId: msg[1].userId,
-                  ctx,
-                }),
-              },
-            ],
-          ]
+              [
+                "Alerts",
+                {
+                  tag: "Snack",
+                  message: toRoomJoinMessage({
+                    userId: msg[1].userId,
+                    ctx,
+                  }),
+                },
+              ],
+            ]
           : []
 
       return [
@@ -376,13 +398,7 @@ export const updateFromBackend = (
   }
 }
 
-const toRoomEndMessage = ({
-  ctx,
-  hostId,
-}: {
-  hostId: UserId
-  ctx: Ctx,
-}) => {
+const toRoomEndMessage = ({ ctx, hostId }: { hostId: UserId; ctx: Ctx }) => {
   const profile = ctx.profiles[hostId]
   if (profile) {
     return `${profile.username} ended the room`
@@ -390,13 +406,7 @@ const toRoomEndMessage = ({
   return "The host ended the room"
 }
 
-const toRoomJoinMessage = ({
-  ctx,
-  userId,
-}: {
-  userId: UserId
-  ctx: Ctx,
-}) => {
+const toRoomJoinMessage = ({ ctx, userId }: { userId: UserId; ctx: Ctx }) => {
   const profile = ctx.profiles[userId]
   if (profile) {
     return `${profile.username} joined the room`
@@ -404,13 +414,7 @@ const toRoomJoinMessage = ({
   return "A user joined the room"
 }
 
-const toRoomLeaveMessage = ({
-  ctx,
-  userId,
-}: {
-  userId: UserId
-  ctx: Ctx,
-}) => {
+const toRoomLeaveMessage = ({ ctx, userId }: { userId: UserId; ctx: Ctx }) => {
   const profile = ctx.profiles[userId]
   if (profile) {
     return `${profile.username} left the room`
@@ -626,25 +630,13 @@ export const View = ({
   const user = model.users[ctx.currentUserId]
 
   if (!user) {
-    return (
-      <ViewNotInRoom
-        ctx={ctx}
-        model={model}
-        $d={$d}
-      />
-    )
+    return <ViewNotInRoom ctx={ctx} model={model} $d={$d} />
   }
 
   const room = model.rooms[user.roomId]
 
   if (!room) {
-    return (
-      <ViewNotInRoom
-        ctx={ctx}
-        model={model}
-        $d={$d}
-      />
-    )
+    return <ViewNotInRoom ctx={ctx} model={model} $d={$d} />
   }
 
   const game = room.game
@@ -702,12 +694,7 @@ export const View = ({
         </UI.Badge>
       </Toolbar>
 
-      <ViewGameRoomAvatarGroup
-        ctx={ctx}
-        room={room}
-        model={model}
-        $d={$d}
-      />
+      <ViewGameRoomAvatarGroup ctx={ctx} room={room} model={model} $d={$d} />
     </>
   )
 }
@@ -761,10 +748,7 @@ export const ViewNotInRoom = ({
   return (
     <UI.FillBox>
       {header}
-      <UI.Typography
-        sx={{ paddingX: 2, marginBottom: 1 }}
-        variant="h4"
-      >
+      <UI.Typography sx={{ paddingX: 2, marginBottom: 1 }} variant="h4">
         Games
       </UI.Typography>
 
@@ -780,10 +764,7 @@ export const ViewNotInRoom = ({
         }}
       >
         {gameNameList.map((gameName) => (
-          <UI.Box
-            key={gameName}
-            sx={{ minWidth: 150, flex: 1 }}
-          >
+          <UI.Box key={gameName} sx={{ minWidth: 150, flex: 1 }}>
             <ViewGameCard
               key={gameName}
               gameName={gameName}
@@ -924,10 +905,7 @@ const ViewGameRoomAvatarGroup = ({
               {ctx.profiles[user.userId]?.username ?? "..."}
             </UI.Typography>
             {user.userId === room.hostId ? (
-              <UI.Typography
-                variant="subtitle2"
-                color="text.secondary"
-              >
+              <UI.Typography variant="subtitle2" color="text.secondary">
                 Host
               </UI.Typography>
             ) : (
@@ -1014,11 +992,7 @@ export const ViewGameCard = ({
               background: `linear-gradient(transparent, rgba(0, 0, 0, 0.6))`,
             }}
           >
-            <UI.Typography
-              color="white"
-              align="left"
-              variant="h4"
-            >
+            <UI.Typography color="white" align="left" variant="h4">
               {Game.gameNameToString(gameName)}
             </UI.Typography>
           </UI.Box>
@@ -1072,8 +1046,8 @@ export const ViewBanner = ({
   return (
     <ButtonBase
       sx={{
-        display: 'flex',
-        alignItems: 'center',
+        display: "flex",
+        alignItems: "center",
       }}
       onClick={() => $d(["ClickedBanner"])}
     >
@@ -1083,13 +1057,12 @@ export const ViewBanner = ({
         </Box>
       )}
 
-      <Typography noWrap align="left" sx={{ flex: 1, }}>
+      <Typography noWrap align="left" sx={{ flex: 1 }}>
         {hostProfile ? `${hostProfile.username}'s room` : "..."}
       </Typography>
 
       <Icons.ChevronRight sx={{ mx: 2 }} />
     </ButtonBase>
-
   )
 }
 
@@ -1114,10 +1087,7 @@ export const ViewCard = ({
   ).length
   return (
     <UI.CardActionArea onClick={onClick}>
-      <UI.Paper
-        variant="outlined"
-        sx={{ overflow: "hidden", display: "flex" }}
-      >
+      <UI.Paper variant="outlined" sx={{ overflow: "hidden", display: "flex" }}>
         <UI.Box sx={{ width: 100 }}>
           <UI.AspectRatio aspectRatio={1}>
             {gameName ? (
@@ -1142,17 +1112,10 @@ export const ViewCard = ({
             overflow: "hidden",
           }}
         >
-          <UI.Typography
-            variant="h5"
-            noWrap
-          >
+          <UI.Typography variant="h5" noWrap>
             {hostProfile ? `${hostProfile.username}'s room` : "..."}
           </UI.Typography>
-          <UI.Typography
-            variant="subtitle1"
-            color="text.secondary"
-            noWrap
-          >
+          <UI.Typography variant="subtitle1" color="text.secondary" noWrap>
             {roomCount} in room
           </UI.Typography>
         </UI.Box>

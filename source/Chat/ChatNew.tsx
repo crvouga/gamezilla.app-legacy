@@ -255,10 +255,7 @@ export const View = ({
         }
       />
 
-      <UI.Typography
-        variant="h6"
-        sx={{ fontWeight: "bold", paddingX: 2 }}
-      >
+      <UI.Typography variant="h6" sx={{ fontWeight: "bold", paddingX: 2 }}>
         To
       </UI.Typography>
 
@@ -302,10 +299,7 @@ export const View = ({
 
       <UI.List sx={{ overflowY: "scroll", flex: 1 }}>
         {searchQuery.type === "Ok" && profiles.length === 0 && (
-          <UI.Typography
-            sx={{ p: 2 }}
-            color="text.secondary"
-          >
+          <UI.Typography sx={{ p: 2 }} color="text.secondary">
             No account found.
           </UI.Typography>
         )}

@@ -109,7 +109,7 @@ export const botLevel: { [botLevel in BotLevel]: BotLevel } = {
 //
 //
 
-export type FrontendMsg = Req | ['Hovered', { columnIndex: ColumnIndex }]
+export type FrontendMsg = Req | ["Hovered", { columnIndex: ColumnIndex }]
 
 export type BackendMsg = ["BotMove", BestMoveResult]
 

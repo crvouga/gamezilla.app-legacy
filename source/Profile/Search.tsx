@@ -103,10 +103,7 @@ export const View = ({
         endAdornment={
           <UI.InputAdornment position="end">
             {query.type === "Loading" && <UI.CircularProgress size={24} />}
-            <UI.IconButton
-              edge="end"
-              onClick={() => $d(["ClickedClear"])}
-            >
+            <UI.IconButton edge="end" onClick={() => $d(["ClickedClear"])}>
               <UI.Icons.Close />
             </UI.IconButton>
           </UI.InputAdornment>
@@ -116,10 +113,7 @@ export const View = ({
       <UI.Divider />
 
       {results.length === 0 && (
-        <UI.Typography
-          sx={{ paddingX: 2 }}
-          color="text.secondary"
-        >
+        <UI.Typography sx={{ paddingX: 2 }} color="text.secondary">
           {query.type === "Loading" ? "Searching..." : "No results found"}
         </UI.Typography>
       )}

@@ -7,7 +7,7 @@ import {
   FrontendModel,
   FrontendMsg,
   ToBackend,
-  ToFrontend
+  ToFrontend,
 } from "./Chess.Types"
 import * as Sounds from "./Sounds"
 import * as UserVsBot from "./UserVsBot/UserVsBot.Frontend"
@@ -24,10 +24,10 @@ import { BannerArt } from "./Views"
 
 export type Model = FrontendModel
 
-export const init = ({ }: // sendToBackend,
-  {
-    sendToBackend: (msg: ToBackend) => Cmd
-  }): [FrontendModel, Cmd<Msg>] => {
+export const init = ({}: // sendToBackend,
+{
+  sendToBackend: (msg: ToBackend) => Cmd
+}): [FrontendModel, Cmd<Msg>] => {
   return [
     {
       mode: ["None"],
@@ -113,7 +113,7 @@ export const updateFromBackend = (
     sendToBackend,
   }: {
     sendToBackend: (msg: ToBackend) => Cmd
-    ctx: Ctx,
+    ctx: Ctx
   },
   msg: ToFrontend,
   model: Model,
@@ -281,42 +281,14 @@ export const theme = {
 
 export const CoverArt = () => {
   return (
-    <svg
-      width="100%"
-      height="100%"
-      viewBox="0 0 2 2"
-    >
-      <rect
-        x={0}
-        y={0}
-        width={1}
-        height={1}
-        fill={theme.lightSquare}
-      />
+    <svg width="100%" height="100%" viewBox="0 0 2 2">
+      <rect x={0} y={0} width={1} height={1} fill={theme.lightSquare} />
 
-      <rect
-        x={0}
-        y={1}
-        width={1}
-        height={1}
-        fill={theme.darkSquare}
-      />
+      <rect x={0} y={1} width={1} height={1} fill={theme.darkSquare} />
 
-      <rect
-        x={1}
-        y={1}
-        width={1}
-        height={1}
-        fill={theme.lightSquare}
-      />
+      <rect x={1} y={1} width={1} height={1} fill={theme.lightSquare} />
 
-      <rect
-        x={1}
-        y={0}
-        width={1}
-        height={1}
-        fill={theme.darkSquare}
-      />
+      <rect x={1} y={0} width={1} height={1} fill={theme.darkSquare} />
 
       <svg
         xmlns="http://www.w3.org/2000/svg"

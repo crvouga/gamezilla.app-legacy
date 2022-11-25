@@ -561,10 +561,7 @@ const ViewNotInParty = ({
       </UI.Box>
       <UI.Box sx={{ flex: 1 }}>
         {parties.length === 0 && (
-          <UI.Typography
-            sx={{ padding: 2 }}
-            color="text.secondary"
-          >
+          <UI.Typography sx={{ padding: 2 }} color="text.secondary">
             No active parties
           </UI.Typography>
         )}

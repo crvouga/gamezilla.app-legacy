@@ -229,10 +229,7 @@ export const View = ({
           />
 
           <UI.Box sx={{ padding: 2 }}>
-            <UI.Typography
-              color="text.secondary"
-              sx={{ marginBottom: 2 }}
-            >
+            <UI.Typography color="text.secondary" sx={{ marginBottom: 2 }}>
               Players
             </UI.Typography>
 
@@ -256,10 +253,7 @@ export const View = ({
           <UI.Divider />
 
           <UI.Box sx={{ padding: 2 }}>
-            <UI.Typography
-              color="text.secondary"
-              sx={{ marginBottom: 1 }}
-            >
+            <UI.Typography color="text.secondary" sx={{ marginBottom: 1 }}>
               Best Out Of
             </UI.Typography>
 
@@ -321,11 +315,7 @@ export const View = ({
         </UI.Box>
 
         <UI.Box sx={{ padding: 2, display: "flex", gap: 2 }}>
-          <UI.Button
-            variant="outlined"
-            fullWidth
-            onClick={onCloseGame}
-          >
+          <UI.Button variant="outlined" fullWidth onClick={onCloseGame}>
             Close
           </UI.Button>
           <UI.Button
@@ -349,16 +339,8 @@ export const View = ({
       <UI.FillBox>
         <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
           <UI.Box sx={{ display: "flex", gap: 2, paddingX: 1, paddingY: 1 }}>
-            <ViewPlayerGameSlot
-              playerType="X"
-              ctx={ctx}
-              model={model}
-            />
-            <ViewPlayerGameSlot
-              playerType="O"
-              ctx={ctx}
-              model={model}
-            />
+            <ViewPlayerGameSlot playerType="X" ctx={ctx} model={model} />
+            <ViewPlayerGameSlot playerType="O" ctx={ctx} model={model} />
           </UI.Box>
 
           <UI.Box sx={{ width: "100%", position: "relative" }}>
@@ -384,21 +366,14 @@ export const View = ({
                   color: "#fff",
                 }}
               >
-                <ViewRoundStartingMessage
-                  ctx={ctx}
-                  model={model}
-                />
+                <ViewRoundStartingMessage ctx={ctx} model={model} />
               </UI.Box>
             </UI.Fade>
           </UI.Box>
         </UI.Box>
 
         <UI.Box sx={{ display: "flex", width: "100%" }}>
-          <ViewResignButton
-            model={model}
-            ctx={ctx}
-            $d={$d}
-          />
+          <ViewResignButton model={model} ctx={ctx} $d={$d} />
         </UI.Box>
       </UI.FillBox>
     )
@@ -413,22 +388,14 @@ export const View = ({
     model.X === ctx.currentUserId
       ? "X"
       : model.O === ctx.currentUserId
-        ? "O"
-        : "None"
+      ? "O"
+      : "None"
 
   return (
     <UI.FillBox>
       <UI.Box sx={{ display: "flex", gap: 2, paddingX: 1, paddingY: 1 }}>
-        <ViewPlayerGameSlot
-          playerType="X"
-          ctx={ctx}
-          model={model}
-        />
-        <ViewPlayerGameSlot
-          playerType="O"
-          ctx={ctx}
-          model={model}
-        />
+        <ViewPlayerGameSlot playerType="X" ctx={ctx} model={model} />
+        <ViewPlayerGameSlot playerType="O" ctx={ctx} model={model} />
       </UI.Box>
 
       <UI.Box sx={{ width: "100%", position: "relative" }}>
@@ -454,11 +421,7 @@ export const View = ({
               color: "#fff",
             }}
           >
-            <ViewGameOverMessage
-              ctx={ctx}
-              model={model}
-              $d={$d}
-            />
+            <ViewGameOverMessage ctx={ctx} model={model} $d={$d} />
           </UI.Box>
         </UI.Fade>
       </UI.Box>
@@ -529,8 +492,8 @@ const ViewGameOverMessage = ({
     model.X === ctx.currentUserId
       ? "X"
       : model.O === ctx.currentUserId
-        ? "O"
-        : "None"
+      ? "O"
+      : "None"
 
   if (
     model.rematch.type === "Asking" &&
@@ -549,11 +512,7 @@ const ViewGameOverMessage = ({
             color: "inherit",
           }}
         >
-          <UI.Typography
-            align="center"
-            color="inherit"
-            fontSize={52}
-          >
+          <UI.Typography align="center" color="inherit" fontSize={52}>
             Rematch?
           </UI.Typography>
         </UI.Box>
@@ -663,11 +622,7 @@ const ViewGameOverMessage = ({
             playerType={model.gameOver.resigner}
             sx={{ width: 64, height: 64 }}
           />
-          <UI.Typography
-            align="center"
-            color="inherit"
-            fontSize={52}
-          >
+          <UI.Typography align="center" color="inherit" fontSize={52}>
             Resigned
           </UI.Typography>
         </UI.Box>
@@ -695,11 +650,7 @@ const ViewGameOverMessage = ({
             color: "inherit",
           }}
         >
-          <UI.Typography
-            fontSize={72}
-            align="center"
-            color="inherit"
-          >
+          <UI.Typography fontSize={72} align="center" color="inherit">
             Tie
           </UI.Typography>
         </UI.Box>
@@ -731,11 +682,7 @@ const ViewGameOverMessage = ({
         }}
       >
         {isPlaying ? (
-          <UI.Typography
-            align="center"
-            color="inherit"
-            fontSize={64}
-          >
+          <UI.Typography align="center" color="inherit" fontSize={64}>
             {didCurrentUserWin ? "You Won" : "You Lost"}
           </UI.Typography>
         ) : (
@@ -747,10 +694,7 @@ const ViewGameOverMessage = ({
               flexDirection: "row",
             }}
           >
-            <svg
-              width={62}
-              viewBox="-1 -1 2 2"
-            >
+            <svg width={62} viewBox="-1 -1 2 2">
               <ViewSlot
                 strokeWidth={0.33}
                 cx={0}
@@ -874,19 +818,11 @@ export const ViewRoundStartingMessage = ({
         }}
       >
         {roundOver.type === "Tie" ? (
-          <UI.Typography
-            align="center"
-            fontSize={54}
-            color="inherit"
-          >
+          <UI.Typography align="center" fontSize={54} color="inherit">
             Round Tie
           </UI.Typography>
         ) : isPlaying ? (
-          <UI.Typography
-            align="center"
-            fontSize={54}
-            color="inherit"
-          >
+          <UI.Typography align="center" fontSize={54} color="inherit">
             {didCurrentUserWin ? "Round Win" : "Round Lost"}
           </UI.Typography>
         ) : (
@@ -903,11 +839,7 @@ export const ViewRoundStartingMessage = ({
               sx={{ width: 64, height: 64 }}
             />
 
-            <UI.Typography
-              align="center"
-              color="inherit"
-              fontSize={64}
-            >
+            <UI.Typography align="center" color="inherit" fontSize={64}>
               Won
             </UI.Typography>
           </UI.Box>
@@ -934,11 +866,7 @@ export const ViewRoundStartingMessage = ({
           padding: 4,
         }}
       >
-        <UI.Typography
-          align="center"
-          variant="h4"
-          color="inherit"
-        >
+        <UI.Typography align="center" variant="h4" color="inherit">
           Starting in {currentRound.countDown}
         </UI.Typography>
       </UI.Box>
@@ -976,10 +904,7 @@ const ViewScores = ({
           color: "inherit",
         }}
       >
-        <PlayerTypeIcon
-          playerType="X"
-          sx={{ width: width, height: width }}
-        />
+        <PlayerTypeIcon playerType="X" sx={{ width: width, height: width }} />
         <ViewScoreSlots
           tieCount={score.Tie}
           score={score.X}
@@ -999,10 +924,7 @@ const ViewScores = ({
           color: "inherit",
         }}
       >
-        <PlayerTypeIcon
-          playerType="O"
-          sx={{ width: width, height: width }}
-        />
+        <PlayerTypeIcon playerType="O" sx={{ width: width, height: width }} />
         <ViewScoreSlots
           tieCount={score.Tie}
           score={score.O}
@@ -1124,8 +1046,9 @@ const toGameText = ({
     case "GameOver": {
       switch (model.gameOver.type) {
         case "Resignation": {
-          return `${store.profiles[model[model.gameOver.resigner]]?.username ?? "..."
-            } resigned`
+          return `${
+            store.profiles[model[model.gameOver.resigner]]?.username ?? "..."
+          } resigned`
         }
 
         case "Winner": {
@@ -1219,10 +1142,7 @@ const ViewPlayerSetupSlot = ({
         sx={{ marginRight: 1 }}
       />
       <UI.Box sx={{ flex: 1, overflow: "hidden" }}>
-        <UI.Typography
-          noWrap
-          sx={{ textOverflow: "ellipsis" }}
-        >
+        <UI.Typography noWrap sx={{ textOverflow: "ellipsis" }}>
           {ctx.profiles[userId]?.username ?? "..."}
         </UI.Typography>
       </UI.Box>
@@ -1283,8 +1203,9 @@ const ViewPlayerGameSlot = ({
           display: "flex",
           alignItems: "center",
           overflow: "hidden",
-          borderBottom: `solid 3.5px ${isTurn ? gameTheme.background : uiTheme.palette.divider
-            }`,
+          borderBottom: `solid 3.5px ${
+            isTurn ? gameTheme.background : uiTheme.palette.divider
+          }`,
         }}
       >
         <UI.Box
@@ -1313,10 +1234,7 @@ const ViewPlayerGameSlot = ({
             src={profile?.avatarUrl}
             sx={{ marginRight: 1, ...iconSize }}
           />
-          <UI.Typography
-            noWrap
-            sx={{ flex: 1 }}
-          >
+          <UI.Typography noWrap sx={{ flex: 1 }}>
             {profile?.username ?? "..."}
           </UI.Typography>
         </UI.Box>
@@ -1329,10 +1247,10 @@ const ViewPlayerGameSlot = ({
                 timeLeft === 3
                   ? "warning.light"
                   : timeLeft === 2
-                    ? "warning.dark"
-                    : timeLeft < 2
-                      ? "error.main"
-                      : "text.primary"
+                  ? "warning.dark"
+                  : timeLeft < 2
+                  ? "error.main"
+                  : "text.primary"
               }
             >
               {timeLeft}
@@ -1366,25 +1284,11 @@ export const CoverArt = () => {
   ] as const
 
   return (
-    <svg
-      width="100%"
-      viewBox="0 0 2 2"
-    >
-      <rect
-        x={0}
-        y={0}
-        width={2}
-        height={2}
-        fill={gameTheme.background}
-      />
+    <svg width="100%" viewBox="0 0 2 2">
+      <rect x={0} y={0} width={2} height={2} fill={gameTheme.background} />
 
       {LINES.map((line, index) => (
-        <line
-          key={index}
-          {...line}
-          stroke={gameTheme.line}
-          strokeWidth={0.1}
-        />
+        <line key={index} {...line} stroke={gameTheme.line} strokeWidth={0.1} />
       ))}
 
       {positions.map(([{ column, row }, slot], index) => (
@@ -1416,29 +1320,11 @@ export const BannerArt = ({ title }: { title: string }) => {
           gap: 1,
         }}
       >
-        <svg
-          width="33%"
-          viewBox="-1 -1 2 2"
-        >
-          <ViewSlot
-            strokeWidth={strokeWidth}
-            slot="X"
-            cx={0}
-            cy={0}
-            r={0.75}
-          />
+        <svg width="33%" viewBox="-1 -1 2 2">
+          <ViewSlot strokeWidth={strokeWidth} slot="X" cx={0} cy={0} r={0.75} />
         </svg>
-        <svg
-          width="33%"
-          viewBox="-1 -1 2 2"
-        >
-          <ViewSlot
-            strokeWidth={strokeWidth}
-            slot="O"
-            cx={0}
-            cy={0}
-            r={0.75}
-          />
+        <svg width="33%" viewBox="-1 -1 2 2">
+          <ViewSlot strokeWidth={strokeWidth} slot="O" cx={0} cy={0} r={0.75} />
         </svg>
       </UI.Box>
 

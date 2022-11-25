@@ -4,7 +4,7 @@ import { AppContainer } from "../../UI"
 import { init, View } from "./Maze.Frontend"
 
 const props: Parameters<typeof View>[0] = {
-  $d: () => { },
+  $d: () => {},
   model: init,
   ctx,
 }
@@ -39,8 +39,8 @@ Game.args = {
           y: 0,
         },
         userId: ctx.currentUserId,
-        direction: "North"
-      }
+        direction: "North",
+      },
     },
-  }
+  },
 }

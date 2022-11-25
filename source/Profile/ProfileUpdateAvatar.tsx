@@ -153,10 +153,7 @@ export const View = ({
       />
 
       <UI.Box sx={{ padding: 2 }}>
-        <UI.Typography
-          variant="subtitle1"
-          sx={{ marginBottom: 1 }}
-        >
+        <UI.Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
           Style
         </UI.Typography>
         <UI.Select
@@ -208,10 +205,7 @@ export const View = ({
           ))}
         </UI.Select>
 
-        <UI.Typography
-          variant="subtitle1"
-          sx={{ marginBottom: 1 }}
-        >
+        <UI.Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
           Seed
         </UI.Typography>
 

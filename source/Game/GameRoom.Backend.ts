@@ -207,19 +207,22 @@ export const updateFromFrontend = (
     }
 
     case "RoomEndThenJoin": {
-      const roomDestroyed = handle(["RoomDestroy", { userId: msg[1].userId }], model)
+      const roomDestroyed = handle(
+        ["RoomDestroy", { userId: msg[1].userId }],
+        model,
+      )
 
       if (roomDestroyed.type === "Err") {
-        return [model, wire.sendToClient(['RoomDestroy', msg[1], roomDestroyed])]
+        return [
+          model,
+          wire.sendToClient(["RoomDestroy", msg[1], roomDestroyed]),
+        ]
       }
 
       const roomJoined = handle(["RoomJoin", msg[1]], roomDestroyed.value)
 
       if (roomJoined.type === "Err") {
-        return [
-          model,
-          wire.sendToClient(["RoomJoin", msg[1], roomJoined]),
-        ]
+        return [model, wire.sendToClient(["RoomJoin", msg[1], roomJoined])]
       }
 
       return [
@@ -230,7 +233,6 @@ export const updateFromFrontend = (
         ]),
       ]
     }
-
 
     default:
       return exhaustive(msg[0])

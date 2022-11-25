@@ -82,10 +82,7 @@ export const VersusHeader = ({
         paddingX: 2,
       }}
     >
-      <ViewHeaderPlayerSlot
-        player={X}
-        ctx={ctx}
-      />
+      <ViewHeaderPlayerSlot player={X} ctx={ctx} />
 
       <UI.Box
         sx={{
@@ -113,10 +110,7 @@ export const VersusHeader = ({
         />
       </UI.Box>
 
-      <ViewHeaderPlayerSlot
-        player={O}
-        ctx={ctx}
-      />
+      <ViewHeaderPlayerSlot player={O} ctx={ctx} />
     </UI.Box>
   )
 }
@@ -144,11 +138,7 @@ const ViewHeaderPlayerSlot = ({
     return (
       <UI.Box sx={wrapperSx}>
         <UI.Icons.SmartToy sx={{ ...iconSx }} />
-        <UI.Typography
-          variant="caption"
-          color="inherit"
-          noWrap
-        >
+        <UI.Typography variant="caption" color="inherit" noWrap>
           {player.label}
         </UI.Typography>
       </UI.Box>
@@ -161,10 +151,7 @@ const ViewHeaderPlayerSlot = ({
         <UI.Avatar sx={{ ...iconSx }}>
           <UI.Icons.QuestionMark />
         </UI.Avatar>
-        <UI.Typography
-          variant="caption"
-          color="inherit"
-        >
+        <UI.Typography variant="caption" color="inherit">
           ?
         </UI.Typography>
       </UI.Box>

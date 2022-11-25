@@ -217,14 +217,7 @@ export const View = ({
   goBack: () => void
 }) => {
   if (model.type === "Setup") {
-    return (
-      <ViewSetup
-        ctx={ctx}
-        goBack={goBack}
-        model={model}
-        $d={$d}
-      />
-    )
+    return <ViewSetup ctx={ctx} goBack={goBack} model={model} $d={$d} />
   }
 
   if (model.type === "Game") {
@@ -250,13 +243,7 @@ export const View = ({
     )
   }
 
-  return (
-    <ViewGameOver
-      model={model}
-      ctx={ctx}
-      $d={$d}
-    />
-  )
+  return <ViewGameOver model={model} ctx={ctx} $d={$d} />
 }
 
 const ViewGame = ({
@@ -284,16 +271,8 @@ const ViewGame = ({
           overflow: "hidden",
         }}
       >
-        <ViewGamePlayerSlot
-          playerType="PlayerOne"
-          model={model}
-          ctx={ctx}
-        />
-        <ViewGamePlayerSlot
-          playerType="PlayerTwo"
-          model={model}
-          ctx={ctx}
-        />
+        <ViewGamePlayerSlot playerType="PlayerOne" model={model} ctx={ctx} />
+        <ViewGamePlayerSlot playerType="PlayerTwo" model={model} ctx={ctx} />
       </UI.Box>
 
       <UI.Box sx={{ position: "relative", overflow: "hidden" }}>
@@ -351,23 +330,12 @@ const ViewGameOver = ({
           overflow: "hidden",
         }}
       >
-        <ViewGamePlayerSlot
-          playerType="PlayerOne"
-          model={model}
-          ctx={ctx}
-        />
-        <ViewGamePlayerSlot
-          playerType="PlayerTwo"
-          model={model}
-          ctx={ctx}
-        />
+        <ViewGamePlayerSlot playerType="PlayerOne" model={model} ctx={ctx} />
+        <ViewGamePlayerSlot playerType="PlayerTwo" model={model} ctx={ctx} />
       </UI.Box>
 
       <UI.Box sx={{ position: "relative", overflow: "hidden" }}>
-        <ViewColumns
-          columns={model.columns}
-          disabled
-        />
+        <ViewColumns columns={model.columns} disabled />
 
         {model.type === "GameOver" && (
           <UI.Fade in>
@@ -387,11 +355,7 @@ const ViewGameOver = ({
                 color: "#fff",
               }}
             >
-              <ViewGameOverMessage
-                $d={$d}
-                ctx={ctx}
-                model={model}
-              />
+              <ViewGameOverMessage $d={$d} ctx={ctx} model={model} />
             </UI.Box>
           </UI.Fade>
         )}
@@ -464,10 +428,7 @@ const ViewGameOverMessage = ({
   ) {
     return (
       <>
-        <UI.Typography
-          align="center"
-          sx={{ fontSize: 54, marginBottom: 4 }}
-        >
+        <UI.Typography align="center" sx={{ fontSize: 54, marginBottom: 4 }}>
           Rematch?
         </UI.Typography>
         <UI.Box sx={{ display: "flex", gap: 2 }}>
@@ -527,10 +488,7 @@ const ViewGameOverMessage = ({
               justifyContent: "center",
             }}
           >
-            <PlayerIcon
-              sx={{ ...size, marginRight: 2 }}
-              playerType={winner}
-            />
+            <PlayerIcon sx={{ ...size, marginRight: 2 }} playerType={winner} />
             <UI.Avatar
               sx={{ ...size }}
               src={ctx.profiles[model[winner]]?.avatarUrl}
@@ -565,10 +523,7 @@ const ViewGameOverMessage = ({
               justifyContent: "center",
             }}
           >
-            <PlayerIcon
-              sx={{ ...size, marginRight: 2 }}
-              playerType={winner}
-            />
+            <PlayerIcon sx={{ ...size, marginRight: 2 }} playerType={winner} />
             <UI.Avatar
               sx={{ ...size }}
               src={ctx.profiles[model[winner]]?.avatarUrl}
@@ -616,10 +571,7 @@ const ViewSetup = ({
 
   return (
     <UI.FillBox>
-      <ViewVersusHeader
-        model={model}
-        ctx={ctx}
-      />
+      <ViewVersusHeader model={model} ctx={ctx} />
 
       <UI.Typography
         color="text.secondary"
@@ -679,11 +631,7 @@ const ViewSetup = ({
       <UI.Box sx={{ flex: 1 }} />
 
       <UI.Box sx={{ padding: 2, gap: 2, display: "flex" }}>
-        <UI.Button
-          variant="outlined"
-          fullWidth
-          onClick={goBack}
-        >
+        <UI.Button variant="outlined" fullWidth onClick={goBack}>
           Back
         </UI.Button>
         <UI.Button
@@ -718,10 +666,7 @@ const ViewGamePlayerSlot = ({
         overflow: "hidden",
       }}
     >
-      <PlayerIcon
-        playerType={playerType}
-        sx={{ ...size, marginRight: 1 }}
-      />
+      <PlayerIcon playerType={playerType} sx={{ ...size, marginRight: 1 }} />
       <UI.Avatar
         src={ctx.profiles[model[playerType]]?.avatarUrl}
         sx={{ ...size, marginRight: 1 }}
@@ -785,10 +730,7 @@ const ViewSetupPlayerSlot = ({
             src={ctx.profiles[userId]?.avatarUrl}
             sx={{ marginRight: 1 }}
           />
-          <UI.Typography
-            noWrap
-            sx={{ flex: 1 }}
-          >
+          <UI.Typography noWrap sx={{ flex: 1 }}>
             {ctx.profiles[userId]?.username ?? "..."}
           </UI.Typography>
           {userId === ctx.currentUserId && (
@@ -838,21 +780,14 @@ const ViewVersusHeader = ({ model, ctx }: { model: SetupModel; ctx: Ctx }) => {
         >
           <UI.Icons.QuestionMark />
         </UI.Avatar>
-        <UI.Typography
-          color="#fff"
-          align="center"
-          noWrap
-        >
+        <UI.Typography color="#fff" align="center" noWrap>
           {model.PlayerOne === "None"
             ? "?"
             : ctx.profiles[model.PlayerOne]?.username ?? "..."}
         </UI.Typography>
       </UI.Box>
       <PlayerOneIcon sx={{ ...iconSx }} />
-      <UI.Typography
-        color="#fff"
-        sx={{ fontSize: 32 }}
-      >
+      <UI.Typography color="#fff" sx={{ fontSize: 32 }}>
         vs
       </UI.Typography>
       <PlayerTwoIcon sx={{ ...iconSx }} />
@@ -867,11 +802,7 @@ const ViewVersusHeader = ({ model, ctx }: { model: SetupModel; ctx: Ctx }) => {
         >
           <UI.Icons.QuestionMark />
         </UI.Avatar>
-        <UI.Typography
-          color="#fff"
-          align="center"
-          noWrap
-        >
+        <UI.Typography color="#fff" align="center" noWrap>
           {model.PlayerTwo === "None"
             ? "?"
             : ctx.profiles[model.PlayerTwo]?.username ?? "..."}

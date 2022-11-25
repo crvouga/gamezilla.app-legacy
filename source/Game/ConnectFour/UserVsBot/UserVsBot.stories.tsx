@@ -14,9 +14,9 @@ const setupModel: Model = {
 }
 
 const props: Parameters<typeof View>[0] = {
-  $d: () => { },
+  $d: () => {},
   ctx,
-  goBack: () => { },
+  goBack: () => {},
   model: setupModel,
 }
 

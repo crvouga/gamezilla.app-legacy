@@ -2,7 +2,7 @@
   "semi": false,
   "trailingComma": "all",
   "tabWidth": 2,
-  "singleAttributePerLine": true,
+  "singleAttributePerLine": false,
   "arrowParens": "always",
   "bracketSameLine": false,
   "endOfLine": "lf"

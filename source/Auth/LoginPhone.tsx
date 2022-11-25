@@ -195,10 +195,7 @@ export const View = ({
         </UI.Button>
 
         {model.submission.type === "Problem" && (
-          <UI.Alert
-            severity="error"
-            sx={{ marginTop: 2 }}
-          >
+          <UI.Alert severity="error" sx={{ marginTop: 2 }}>
             {model.submission.message}
           </UI.Alert>
         )}

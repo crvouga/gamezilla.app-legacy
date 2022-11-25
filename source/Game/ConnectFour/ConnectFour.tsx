@@ -366,14 +366,8 @@ export const ViewPlayerOneGradientDef = ({
       cy={cy}
       r={r}
     >
-      <stop
-        offset="50%"
-        stopColor={gameTheme.PlayerOne.light}
-      />
-      <stop
-        offset="100%"
-        stopColor={gameTheme.PlayerOne.dark}
-      />
+      <stop offset="50%" stopColor={gameTheme.PlayerOne.light} />
+      <stop offset="100%" stopColor={gameTheme.PlayerOne.dark} />
     </radialGradient>
   )
 }
@@ -384,18 +378,9 @@ export const ViewPlayerTwoGradientDef = ({
   gradientId: string
 }) => {
   return (
-    <radialGradient
-      id={gradientId}
-      gradientTransform="rotate(90)"
-    >
-      <stop
-        offset="0%"
-        stopColor={gameTheme.PlayerTwo.light}
-      />
-      <stop
-        offset="100%"
-        stopColor={gameTheme.PlayerTwo.dark}
-      />
+    <radialGradient id={gradientId} gradientTransform="rotate(90)">
+      <stop offset="0%" stopColor={gameTheme.PlayerTwo.light} />
+      <stop offset="100%" stopColor={gameTheme.PlayerTwo.dark} />
     </radialGradient>
   )
 }
@@ -444,10 +429,7 @@ const ViewColumnsSvg = ({
   const playerTwoFill = `url(#${ids.playerTwoGradient})`
 
   return (
-    <svg
-      width="100%"
-      viewBox={"0 0 7 6"}
-    >
+    <svg width="100%" viewBox={"0 0 7 6"}>
       <defs>
         <pattern
           id={ids.holePattern}
@@ -455,12 +437,7 @@ const ViewColumnsSvg = ({
           width={1}
           height={1}
         >
-          <circle
-            cx={0.5}
-            cy={0.5}
-            r={0.425}
-            fill="black"
-          ></circle>
+          <circle cx={0.5} cy={0.5} r={0.425} fill="black"></circle>
         </pattern>
 
         <mask id={ids.holeMask}>
@@ -480,56 +457,29 @@ const ViewColumnsSvg = ({
           ></rect>
         </mask>
 
-        <linearGradient
-          id={ids.columnGradient}
-          gradientTransform="rotate(90)"
-        >
-          <stop
-            offset="0%"
-            stopColor={gameTheme.primary.light}
-          />
-          <stop
-            offset="100%"
-            stopColor={gameTheme.primary.dark}
-          />
+        <linearGradient id={ids.columnGradient} gradientTransform="rotate(90)">
+          <stop offset="0%" stopColor={gameTheme.primary.light} />
+          <stop offset="100%" stopColor={gameTheme.primary.dark} />
         </linearGradient>
 
         <linearGradient
           id={ids.playerOneGradient}
           gradientTransform="rotate(90)"
         >
-          <stop
-            offset="0%"
-            stopColor={gameTheme.PlayerOne.light}
-          />
-          <stop
-            offset="100%"
-            stopColor={gameTheme.PlayerOne.dark}
-          />
+          <stop offset="0%" stopColor={gameTheme.PlayerOne.light} />
+          <stop offset="100%" stopColor={gameTheme.PlayerOne.dark} />
         </linearGradient>
 
         <linearGradient
           id={ids.playerTwoGradient}
           gradientTransform="rotate(90)"
         >
-          <stop
-            offset="0%"
-            stopColor={gameTheme.PlayerTwo.light}
-          />
-          <stop
-            offset="100%"
-            stopColor={gameTheme.PlayerTwo.dark}
-          />
+          <stop offset="0%" stopColor={gameTheme.PlayerTwo.light} />
+          <stop offset="100%" stopColor={gameTheme.PlayerTwo.dark} />
         </linearGradient>
       </defs>
 
-      <rect
-        x={0}
-        y={0}
-        width={7}
-        height={6}
-        fill={gameTheme.primary.darker}
-      />
+      <rect x={0} y={0} width={7} height={6} fill={gameTheme.primary.darker} />
 
       {columns.map((column, columnIndex) =>
         column.map((player, rowIndex) => (
