@@ -77,7 +77,7 @@ export const updateRoomLeave = (
 
 export const subscriptions = (intervalId: string, model: BackendModel): Sub<Msg> => {
   if (model.type === 'Game') {
-    return Time.every(intervalId, 100, () => ['Tick'])
+    return Time.every(intervalId, 500, () => ['Tick'])
     // return Sub.None
 
   }
