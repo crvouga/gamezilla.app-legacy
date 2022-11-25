@@ -1,3 +1,4 @@
+import * as Rx from "rxjs"
 import { Cmd, Keyboard, Set, Sub } from "../../Core"
 import {
   ActionButton,
@@ -151,7 +152,7 @@ const keyToDirection = (key: Keyboard.Key): Direction | null => {
 //
 
 export const subscriptions = (_model: Model): Sub<Msg> => {
-  return Keyboard.keyDowns((key) => ["KeyDown", key])
+  return Keyboard.keyDowns((key) => ['KeyDown', key])
 }
 
 //
