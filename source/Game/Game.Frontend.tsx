@@ -59,7 +59,7 @@ export const init = ({
     }
 
     case "Maze": {
-      return [["Maze", Maze.init], Cmd.None]
+      return [["Maze", Maze.init({})], Cmd.None]
     }
   }
 }
@@ -530,7 +530,7 @@ export const mergeWithBackend = ({
           Cmd.None,
         ]
       }
-      return [["Maze", Maze.init], Cmd.None]
+      return [["Maze", Maze.init({})], Cmd.None]
     }
   }
 }

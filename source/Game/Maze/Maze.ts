@@ -70,12 +70,12 @@ const make = ({
     maze.edges.push([current, unvisitedNeighbor.position])
   }
 
-  removeDeadEnds({ limit: Infinity, gen }, maze)
+  remove_dead_ends({ limit: Infinity, gen }, maze)
 
   return maze
 }
 
-const removeDeadEnds = ({ gen, limit }: { gen: () => number, limit: number }, maze: Maze) => {
+const remove_dead_ends = ({ gen, limit }: { gen: () => number, limit: number }, maze: Maze) => {
   let count = 0
 
   for (let x = maze.lower.x; x <= maze.upper.x; x++) {

@@ -52,15 +52,9 @@ const is = (key: unknown): key is Key => {
   return typeof key === "string" && key in keys
 }
 
-type SkipFlag = "Keyboard/SkipFlag"
 
-export const SkipFlag: SkipFlag = "Keyboard/SkipFlag"
 
-const isSkipFlag = (unknown: unknown): unknown is SkipFlag => {
-  return unknown === SkipFlag
-}
-
-export const keyDowns = <T>(callback: (key: Key) => T | SkipFlag): Sub<T> => {
+export const keyDowns = <T>(callback: (key: Key) => T): Sub<T> => {
   return new Rx.Observable((subscriber) => {
     const handler = (event: KeyboardEvent) => {
 
@@ -70,21 +64,8 @@ export const keyDowns = <T>(callback: (key: Key) => T | SkipFlag): Sub<T> => {
 
       const key = event.key
 
-      if (key === " ") {
-        const result = callback("Space")
-        if (isSkipFlag(result)) {
-          return
-        }
-        subscriber.next(result)
-      }
-
       if (is(key)) {
-        const result = callback(key)
-        if (isSkipFlag(result)) {
-          return
-        }
-
-        subscriber.next(result)
+        subscriber.next(callback(key))
       }
     }
 
@@ -94,3 +75,26 @@ export const keyDowns = <T>(callback: (key: Key) => T | SkipFlag): Sub<T> => {
     }
   })
 }
+
+export const keyUps = <T>(callback: (key: Key) => T): Sub<T> => {
+  return new Rx.Observable((subscriber) => {
+    const handler = (event: KeyboardEvent) => {
+
+      if (event.repeat) {
+        return
+      }
+
+      const key = event.key
+
+      if (is(key)) {
+        subscriber.next(callback(key))
+      }
+    }
+
+    document.addEventListener("keyup", handler)
+    return () => {
+      document.removeEventListener("keyup", handler)
+    }
+  })
+}
+

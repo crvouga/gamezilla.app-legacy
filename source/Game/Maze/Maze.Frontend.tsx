@@ -1,5 +1,4 @@
-import * as Rx from "rxjs"
-import { Cmd, Keyboard, Set, Sub } from "../../Core"
+import { Cmd, Keyboard, p, Sub } from "../../Core"
 import {
   ActionButton,
   Avatar,
@@ -16,6 +15,7 @@ import { Ctx } from "../Game.Shared"
 import { Maze } from "./Maze"
 import {
   BackendModel,
+  Color,
   FrontendModel,
   FrontendMsg,
   handle,
@@ -35,7 +35,7 @@ import { Direction, Position } from "./Position"
 
 export type Model = FrontendModel
 
-export const init: FrontendModel = initShared
+export const init = initShared
 
 //
 //
@@ -56,6 +56,22 @@ export const update = (
     //
     //
     //
+
+    case "KeyUp": {
+      const direction = keyToDirection(msg[1])
+
+      if (!direction) {
+        return [model, Cmd.None]
+      }
+
+      return [
+        model,
+        sendToBackend([
+          "InputDirection",
+          { userId: ctx.currentUserId, direction: "None" },
+        ]),
+      ]
+    }
 
     case "KeyDown": {
       const direction = keyToDirection(msg[1])
@@ -102,7 +118,13 @@ export const updateFromBackend = (
       if (msg[2].type === "Err") {
         return [model, Cmd.None]
       }
-      return [msg[2].value, Cmd.None]
+      const merged = mergeWithBackend({ frontendModel: model, backendModel: msg[2].value })
+      return [merged, Cmd.None]
+    }
+
+    case 'Tick': {
+      const merged = mergeWithBackend({ frontendModel: model, backendModel: msg[1] })
+      return [merged, Cmd.None]
     }
   }
 }
@@ -151,8 +173,11 @@ const keyToDirection = (key: Keyboard.Key): Direction | null => {
 //
 //
 
-export const subscriptions = (_model: Model): Sub<Msg> => {
-  return Keyboard.keyDowns((key) => ['KeyDown', key])
+export const subscriptions = (_model: Model) => {
+  return Sub.batch<Msg>([
+    Keyboard.keyDowns((key) => ['KeyDown', key]),
+    Keyboard.keyUps((key) => ['KeyUp', key]),
+  ])
 }
 
 //
@@ -174,6 +199,15 @@ const artMazeViewBox = [
   artMaze.upper.x - artMaze.lower.x + 1,
   artMaze.upper.y - artMaze.lower.y + 1,
 ].join(" ")
+
+const colorMap: { [color in Color]: string } = {
+  Blue: "#0333FF",
+  Green: "#02F900",
+  Purple: "#992197",
+  Red: "#FF2601",
+  Cyan: "#02FEFF",
+  Pink: "#FF40FF"
+}
 
 export const View = ({
   model,
@@ -288,9 +322,9 @@ export const View = ({
             flex: 1,
           }}
         >
-          {Set.toArray(model.players).map((player) => (
+          {Object.values(model.players).map((player) => (
             <Box
-              key={player}
+              key={player.userId}
               sx={{
                 display: "flex",
                 alignItems: "center",
@@ -298,14 +332,17 @@ export const View = ({
                 width: "100%",
               }}
             >
+              <svg width="36px" viewBox="-1 -1 2 2">
+                <circle cx={0} cy={0} r={1} fill={colorMap[player.color]} />
+              </svg>
               <Avatar
-                src={ctx.profiles[player]?.avatarUrl}
-                sx={{ marginRight: 2 }}
+                src={ctx.profiles[player.userId]?.avatarUrl}
+                sx={{ ml: 1, mr: 2 }}
               />
               <Typography noWrap sx={{ flex: 1 }}>
-                {ctx.profiles[player]?.username ?? "..."}
+                {ctx.profiles[player.userId]?.username ?? "..."}
               </Typography>
-              {player === ctx.currentUserId && (
+              {player.userId === ctx.currentUserId && (
                 <Button
                   onClick={() =>
                     $d(["StopPlaying", { userId: ctx.currentUserId }])
@@ -402,16 +439,19 @@ export const View = ({
             cx={player.position.x + 1 / 2}
             cy={player.position.y + 1 / 2}
             r={1 / 3}
-            fill={theme.palette.text.primary}
+            fill={colorMap[player.color]}
           />
         ))}
       </svg>
       {currentUserPlayer && (
         <>
           <Joystick
-            activeDirection={model.players[ctx.currentUserId]?.direction}
+            activeDirection={p(currentUserPlayer.direction, d => d === 'None' ? undefined : d)}
             onChange={(direction) =>
               $d(["InputDirection", { direction, userId: ctx.currentUserId }])
+            }
+            onDone={() =>
+              $d(["InputDirection", { direction: "None", userId: ctx.currentUserId }])
             }
             activeFill="#fff"
             fill="#000"
@@ -433,16 +473,20 @@ export const View = ({
 const Joystick = ({
   activeDirection,
   onChange,
+  onDone,
   stroke,
   fill,
   activeFill,
 }: {
   activeDirection?: Direction
   onChange: (direction: Direction) => void
+  onDone: () => void
   stroke: string
   fill: string
   activeFill: string
 }) => {
+
+
   return (
     <Box
       sx={{
@@ -452,6 +496,7 @@ const Joystick = ({
         transformOrigin: "center",
         transformBox: "fill-box",
       }}
+
     >
       <svg
         width="100%"
@@ -476,8 +521,16 @@ const Joystick = ({
                   width={1}
                   height={1}
                   fill={activeDirection === direction ? activeFill : fill}
+                  // 
                   onTouchStart={() => onChange(direction)}
+                  onTouchMove={() => onChange(direction)}
+                  onTouchEnd={onDone}
+                  onTouchCancel={onDone}
+                  onAbort={onDone}
+                  // 
                   onMouseDown={() => onChange(direction)}
+                  onMouseOver={() => onChange(direction)}
+                  onMouseUp={onDone}
                 />
               )
             })}

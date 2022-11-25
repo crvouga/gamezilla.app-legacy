@@ -6,8 +6,9 @@ import {
   handle,
   initShared,
   Res,
+  tick,
   ToBackend,
-  ToFrontend,
+  ToFrontend
 } from "./Maze.Types"
 //
 //
@@ -19,7 +20,7 @@ import {
 
 export type Model = BackendModel
 
-export const init: BackendModel = initShared
+export const init = initShared({})
 
 //
 //
@@ -31,10 +32,11 @@ export const init: BackendModel = initShared
 
 export type Msg = BackendMsg
 
-export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
+export const update = ({ broadcast }: { broadcast: (msg: ToFrontend) => Cmd }, msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case "None": {
-      return [model, Cmd.None]
+    case "Tick": {
+      const modelNew = tick(model)
+      return [modelNew, broadcast(['Tick', modelNew])]
     }
   }
 }
@@ -73,6 +75,11 @@ export const updateRoomLeave = (
 //
 //
 
-export const subscriptions = (_model: BackendModel): Sub<Msg> => {
+export const subscriptions = (_intervalId: string, model: BackendModel): Sub<Msg> => {
+  if (model.type === 'Game') {
+    // return Time.every(intervalId, 300, () => ['Tick'])
+    return Sub.None
+
+  }
   return Sub.None
 }

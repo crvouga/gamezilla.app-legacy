@@ -1,4 +1,4 @@
-import { Keyboard, Result, Set } from "../../Core"
+import { Keyboard, removeKey, Result } from "../../Core"
 import { Err, Ok } from "../../Core/Result"
 import { UserId } from "../../Data"
 import { Maze } from "./Maze"
@@ -17,8 +17,7 @@ export type SharedModel = SetupModel
 export type SetupModel =
   | {
     type: "Setup"
-    players: { [userId: UserId]: UserId }
-    colors: ColorMap
+    players: { [userId: UserId]: { userId: UserId, color: Color } }
     seed: string
     lower: Position
     upper: Position
@@ -26,23 +25,21 @@ export type SetupModel =
   | {
     type: "Game"
     players: { [userId: UserId]: Player }
-    colors: ColorMap
     seed: string
     lower: Position
     upper: Position
   }
 
-type ColorMap = { [color in Color]?: UserId }
-
 type Player = {
   userId: UserId
   position: Position
-  direction?: Direction
+  direction: Direction | "None"
+  color: Color
 }
 
-type Color = "Red" | "Blue" | "Green" | "Purple"
+export type Color = "Red" | "Blue" | "Green" | "Purple" | "Cyan" | "Pink"
 
-// const colorSequence: Color[] = ['Red', 'Blue', "Green", "Purple"]
+const colorSeq: Color[] = ['Red', 'Blue', "Green", "Purple"]
 
 export type FrontendModel = SharedModel
 
@@ -56,25 +53,26 @@ export type BackendModel = SharedModel
 //
 //
 
-export type FrontendMsg = Req | ["KeyDown", Keyboard.Key]
+export type FrontendMsg = Req | ["KeyDown", Keyboard.Key] | ['KeyUp', Keyboard.Key]
 
-export type BackendMsg = ["None"]
+export type BackendMsg = ["Tick"]
 
 export type ToBackend = Req
 
-export type ToFrontend = Res
+export type ToFrontend = Res | ["Tick", SharedModel]
 
 //
 //
 //
 //
+
 
 export type Req =
   | ["StartPlaying", { userId: UserId }]
   | ["StopPlaying", { userId: UserId }]
   | ["StartGame", { userId: UserId }]
   | ["StopGame", { userId: UserId }]
-  | ["InputDirection", { userId: UserId; direction: Direction }]
+  | ["InputDirection", { userId: UserId; direction: Direction | "None" }]
   | ["InputSeed", { userId: UserId; seed: string }]
 
 export type Res = [...Req, Result<Problem, SharedModel>]
@@ -87,6 +85,16 @@ type Problem =
   | "must_be_game"
   | "out_of_bounds"
   | "hit_wall"
+  | "no_next_color"
+
+const toNextColor = (model: SharedModel): Color | null => {
+  for (const color of colorSeq) {
+    if (Object.values(model.players).every(p => p.color !== color)) {
+      return color
+    }
+  }
+  return null
+}
 
 export const handle = (
   msg: Req,
@@ -125,9 +133,8 @@ export const handle = (
 
       const modelNew: SharedModel = {
         type: "Setup",
-        colors: model.colors,
         lower: model.lower,
-        players: mapValues(val => val.userId, model.players),
+        players: mapValues(val => ({ userId: val.userId, color: val.color }), model.players),
         seed: model.seed,
         upper: model.upper,
       }
@@ -141,13 +148,27 @@ export const handle = (
         return Err("must_be_setup")
       }
 
-      if (Set.isMember(msg[1].userId, model.players)) {
+      const player = model.players[msg[1].userId]
+
+      if (player) {
         return Err("already_playing")
+      }
+
+      const nextColor = toNextColor(model)
+
+      if (!nextColor) {
+        return Err("no_next_color")
       }
 
       const modelNew: SharedModel = {
         ...model,
-        players: Set.add(msg[1].userId, model.players),
+        players: {
+          ...model.players,
+          [msg[1].userId]: {
+            color: nextColor,
+            userId: msg[1].userId
+          }
+        }
       }
       return Ok(modelNew)
     }
@@ -159,7 +180,7 @@ export const handle = (
 
       const modelNew: SharedModel = {
         ...model,
-        players: Set.remove(msg[1].userId, model.players),
+        players: removeKey(msg[1].userId, model.players),
       }
 
       return Ok(modelNew)
@@ -174,23 +195,23 @@ export const handle = (
         return Err("must_have_at_least_one_player")
       }
 
-      const playersNew: { [userId: UserId]: Player } = Set.toArray(
+      const playersNew = Object.values(
         model.players,
       ).reduce<{ [userId: UserId]: Player }>(
-        (byId, userId) => ({
-          ...byId,
-          [userId]: {
-            userId,
+        (byId, player) => {
+          const playerNew: Player = {
+            userId: player.userId,
+            color: player.color,
             position: { x: 0, y: 0 },
             direction: "None",
-          },
-        }),
+          }
+          return { ...byId, [player.userId]: playerNew }
+        },
         {},
       )
 
       const modelNew: SharedModel = {
         type: "Game",
-        colors: model.colors,
         seed: model.seed,
         lower: model.lower,
         upper: model.upper,
@@ -211,6 +232,21 @@ export const handle = (
         return Err("must_be_playing")
       }
 
+      if (msg[1].direction === 'None') {
+        const modelNew: SharedModel = {
+          ...model,
+          players: {
+            ...model.players,
+            [player.userId]: {
+              ...player,
+              direction: 'None',
+            },
+          },
+        }
+
+        return Ok(modelNew)
+      }
+
       const positionNew = Position.add(
         Direction.toVector(msg[1].direction),
         player.position,
@@ -222,12 +258,7 @@ export const handle = (
         return Err("hit_wall")
       }
 
-      const inbounds = Position.inclusiveContains(
-        { lower: model.lower, upper: model.upper },
-        positionNew,
-      )
-
-      if (!inbounds) {
+      if (!Maze.hasVertex(positionNew, maze)) {
         return Err("out_of_bounds")
       }
 
@@ -239,7 +270,6 @@ export const handle = (
 
       const modelNew: SharedModel = {
         type: "Game",
-        colors: model.colors,
         seed: model.seed,
         upper: model.upper,
         lower: model.lower,
@@ -252,6 +282,40 @@ export const handle = (
       return Ok(modelNew)
     }
   }
+}
+
+export const tick = (model: SharedModel): SharedModel => {
+  if (model.type !== 'Game') {
+    return model
+  }
+
+  const maze = Maze.makeMemoized(model)
+
+  const modelNew: SharedModel = {
+    ...model,
+    players: mapValues(player => mapPlayer(maze, player), model.players)
+  }
+
+  return modelNew
+}
+
+const mapPlayer = (maze: Maze, player: Player): Player => {
+  if (player.direction === 'None') {
+    return player
+  }
+
+  const positionNew = Position.add(Direction.toVector(player.direction), player.position)
+
+  const playerNew: Player = {
+    ...player,
+    position: positionNew
+  }
+
+  if (!Maze.hasEdge([player.position, playerNew.position], maze) || !Maze.hasVertex(playerNew.position, maze)) {
+    return { ...player, direction: "None" }
+  }
+
+  return playerNew
 }
 
 const mapValues = <A, B>(f: (a: A) => B, record: Record<string, A>) => {
@@ -273,11 +337,18 @@ const mapValues = <A, B>(f: (a: A) => B, record: Record<string, A>) => {
 //
 //
 
-export const initShared: SharedModel = {
-  type: "Setup",
-  players: {},
-  colors: {},
-  seed: "some arbitrary seed",
-  lower: { x: -10, y: -10 },
-  upper: { x: 10, y: 10 },
+export const initShared = ({ userId }: { userId?: UserId }): SharedModel => {
+
+  return {
+    type: "Setup",
+    players: userId ? {
+      [userId]: {
+        color: colorSeq[0]!,
+        userId
+      }
+    } : {},
+    seed: "some arbitrary seed",
+    lower: { x: -10, y: -10 },
+    upper: { x: 10, y: 10 },
+  }
 }

@@ -8,33 +8,21 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
     />
-    <meta
-      name="description"
-      content=""
-    />
+    <meta name="description" content="" />
     <title>Gamezilla</title>
 
     <!-- fonts -->
-    <link
-      rel="preconnect"
-      href="https://fonts.googleapis.com"
-    />
-    <link
-      rel="preconnect"
-      href="https://fonts.gstatic.com"
-      crossorigin
-    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@900&display=swap"
       rel="stylesheet"
     />
   </head>
 
-  <body>
+  <!-- why? https://stackoverflow.com/questions/381795/how-to-disable-right-click-context-menu-in-javascript -->
+  <body oncontextmenu="return false;">
     <div id="root"></div>
-    <script
-      type="module"
-      src="./source/App.Frontend.tsx"
-    ></script>
+    <script type="module" src="./source/App.Frontend.tsx"></script>
   </body>
 </html>
