@@ -4,7 +4,7 @@ import * as ProfileStore from "../Profile/Profile.Store"
 import * as Route from "../Route"
 import * as Alerts from "../Alerts"
 import * as UI from "../UI"
-import { Button, ConformationDialog, Divider, Toolbar } from "../UI"
+import { Typography, Icons, Box, ButtonBase, Button, ConformationDialog, Divider, Toolbar } from "../UI"
 import * as Game from "./Game.Frontend"
 import { Ctx } from "./Game.Shared"
 import { GameName, gameNameList } from "./Game.Types"
@@ -1070,59 +1070,26 @@ export const ViewBanner = ({
   const hostProfile = store.profiles[room.hostId]
 
   return (
-    <>
-      <UI.ButtonBase
-        sx={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "flex-start",
-          textAlign: "left",
-          paddingY: 3,
-          // minHeight: bannerHeight,
-          // height: bannerHeight,
-          // maxHeight: bannerHeight,
-          overflow: "hidden",
-        }}
-        onClick={() => $d(["ClickedBanner"])}
-      >
-        {room.game ? (
-          <UI.Box sx={{ width: "40px" }}>
-            <UI.AspectRatio aspectRatio={1}>
-              <Game.CoverArt gameName={room.game[0]} />
-            </UI.AspectRatio>
-          </UI.Box>
-        ) : (
-          <UI.Avatar
-            variant="square"
-            sx={{}}
-            src={hostProfile?.avatarUrl ?? "..."}
-          />
-        )}
+    <ButtonBase
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+      }}
+      onClick={() => $d(["ClickedBanner"])}
+    >
+      {room.game && (
+        <Box sx={{ width: 48, height: 48, mr: 2 }}>
+          <Game.CoverArt gameName={room.game[0]} />
+        </Box>
+      )}
 
-        <UI.Box sx={{ marginLeft: 2, overflow: "hidden" }}>
-          <UI.Typography noWrap>
-            {hostProfile ? `${hostProfile.username}'s room` : "..."}
-          </UI.Typography>
+      <Typography noWrap align="left" sx={{ flex: 1, }}>
+        {hostProfile ? `${hostProfile.username}'s room` : "..."}
+      </Typography>
 
-          {/* <UI.Typography
-            variant="caption"
-            color="text.secondary"
-          >
-            {`${roomCount} in room`}
-          </UI.Typography> */}
-        </UI.Box>
+      <Icons.ChevronRight sx={{ mx: 2 }} />
+    </ButtonBase>
 
-        <UI.Box sx={{ flex: 1 }} />
-
-        <UI.Box sx={{ p: 2 }}>
-          <UI.Icons.ChevronRight />
-        </UI.Box>
-      </UI.ButtonBase>
-
-      <UI.Divider />
-    </>
   )
 }
 

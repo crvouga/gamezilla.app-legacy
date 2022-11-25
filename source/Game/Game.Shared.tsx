@@ -1,6 +1,6 @@
 import { UserId } from "../Data/UserId"
-import * as UI from "../UI"
 import * as ProfileStore from "../Profile/Profile.Store"
+import * as UI from "../UI"
 
 //
 //
@@ -22,6 +22,7 @@ export type Ctx = {
 //
 //
 //
+
 
 export const bannerArtAspectRatio = Math.pow(3 / 4, 4)
 
@@ -103,16 +104,16 @@ export const GameModeCardGrid = ({
 
 type Player =
   | {
-      type: "User"
-      userId: UserId
-    }
+    type: "User"
+    userId: UserId
+  }
   | {
-      type: "Bot"
-      label: string
-    }
+    type: "Bot"
+    label: string
+  }
   | {
-      type: "None"
-    }
+    type: "None"
+  }
 
 const avatarSx: UI.Sx = {
   width: 32,
