@@ -596,7 +596,7 @@ const ViewSetup = ({
 const PlayerSlotBar = ({ model, ctx }: { model: GameModel | GameOverModel, ctx: Ctx }) => {
   return (
     <Box sx={{ paddingTop: 2, paddingBottom: 1 }}>
-      <Box sx={{ paddingX: 1, mb: 1, gap: 2, display: "flex", width: "100%", overflow: "hidden", }}>
+      <Box sx={{ paddingX: 1, mb: 1, gap: 1, display: "flex", width: "100%", overflow: "hidden", }}>
         <PlayerSlot playerType="PlayerOne" model={model} ctx={ctx} />
         <PlayerSlot playerType="PlayerTwo" model={model} ctx={ctx} />
       </Box>
