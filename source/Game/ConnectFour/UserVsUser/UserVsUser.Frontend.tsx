@@ -611,7 +611,6 @@ const flicker = keyframes`
   100% { opacity: 1; }
 `
 
-
 const Feedback = ({ ctx, model }: { ctx: Ctx, model: GameModel | GameOverModel }) => {
 
   if (model.type === 'GameOver') {
@@ -662,7 +661,7 @@ const PlayerSlot = ({
   playerType: PlayerType
   ctx: Ctx
 }) => {
-  const size = { width: 32, height: 32 }
+  const size = { width: "1.5rem", height: "1.5rem" }
   const status = toStatus(model.columns)
   const uiTheme = useTheme()
   return (
