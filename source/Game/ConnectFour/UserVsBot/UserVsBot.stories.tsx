@@ -1,6 +1,6 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { ctx, userB } from "../../../test-data"
-import * as UI from "../../../UI"
+import { AppContainer } from "../../../UI"
 import { emptyColumns } from "../ConnectFour"
 import { leftAndRightDiagonal } from "../test-data"
 import { Model, View } from "./UserVsBot.Frontend"
@@ -14,9 +14,9 @@ const setupModel: Model = {
 }
 
 const props: Parameters<typeof View>[0] = {
-  $d: () => {},
+  $d: () => { },
   ctx,
-  goBack: () => {},
+  goBack: () => { },
   model: setupModel,
 }
 
@@ -28,9 +28,9 @@ export default {
 
 const Template: ComponentStory<typeof View> = (args) => {
   return (
-    <UI.AppContainer themeMode="System">
+    <AppContainer themeMode="System">
       <View {...args} />
-    </UI.AppContainer>
+    </AppContainer>
   )
 }
 
@@ -105,5 +105,14 @@ WinnerSpectating.args = {
     ...gameModel,
     player: userB.userId,
     columns: leftAndRightDiagonal,
+  },
+}
+
+
+export const GameSpectating = Template.bind({})
+GameSpectating.args = {
+  model: {
+    ...gameModel,
+    player: userB.userId,
   },
 }
