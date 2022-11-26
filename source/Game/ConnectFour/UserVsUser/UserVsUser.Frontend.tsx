@@ -1,15 +1,16 @@
+import { keyframes } from "@emotion/react"
+import * as Alerts from "../../../Alerts"
 import { Cmd, exhaustive, Sub } from "../../../Core"
 import { UserId } from "../../../Data"
-import * as Alerts from "../../../Alerts"
-import * as UI from "../../../UI"
+import { ActionButton, Avatar, Box, Button, CircularProgress, ConformationDialog, Divider, Fade, FillBox, Icons, Paper, Sx, ToggleButton, ToggleButtonGroup, Tooltip, Typography, useTheme } from "../../../UI"
 import { Ctx } from "../../Game.Shared"
 import {
-  ColumnIndex,
   gameTheme,
   PlayerType,
   playerTypeToColor,
+  toStatus,
   toTurn,
-  ViewColumns,
+  ViewColumns
 } from "../ConnectFour"
 import { PlayerIcon, PlayerOneIcon, PlayerTwoIcon } from "../Views"
 import {
@@ -25,7 +26,7 @@ import {
   SetupModel,
   ToBackend,
   ToFrontend,
-  toPlayerType,
+  toPlayerType
 } from "./UserVsUser.Types"
 
 //
@@ -221,17 +222,45 @@ export const View = ({
   }
 
   if (model.type === "Game") {
+    const currentUserPlayerType = toPlayerType(ctx.currentUserId, model)
+
     return (
       <>
-        <ViewGame
-          ctx={ctx}
-          ghostIndex={model.ghostIndex}
-          model={model}
-          $d={$d}
-        />
+        <FillBox>
 
-        <UI.ConformationDialog
-          headerIcon={<UI.Icons.Flag sx={{ width: 52, height: 52 }} />}
+          <PlayerSlotBar model={model} ctx={ctx} />
+
+
+          <ViewColumns
+            columns={model.columns}
+            onClick={(columnIndex) =>
+              $d(["InputMove", { userId: ctx.currentUserId, columnIndex }])
+            }
+            onHover={(columnIndex) => $d(["HoveredOverColumns", { columnIndex }])}
+            disabled={toTurn(model.columns) !== currentUserPlayerType}
+            ghost={
+              currentUserPlayerType !== "None" && model.ghostIndex !== "None"
+                ? { playerType: currentUserPlayerType, columnIndex: model.ghostIndex }
+                : undefined
+            }
+          />
+
+
+          <Box sx={{ flex: 1 }}></Box>
+
+
+          <Box sx={{ display: "flex" }}>
+            <ActionButton
+              icon={<Icons.Flag />}
+              label="Resign"
+              onClick={() => $d(["ClickedResign", { userId: ctx.currentUserId }])}
+            />
+
+          </Box>
+        </FillBox>
+
+        <ConformationDialog
+          headerIcon={<Icons.Flag sx={{ width: 52, height: 52 }} />}
           title="Resign from game?"
           onCancel={() => $d(["CloseModal"])}
           onClose={() => $d(["CloseModal"])}
@@ -243,103 +272,16 @@ export const View = ({
     )
   }
 
-  return <ViewGameOver model={model} ctx={ctx} $d={$d} />
-}
-
-const ViewGame = ({
-  model,
-  $d,
-  ghostIndex,
-  ctx,
-}: {
-  model: GameModel
-  $d: (msg: Msg) => void
-  ctx: Ctx
-  ghostIndex: ColumnIndex | "None"
-}) => {
-  const currentUserPlayerType = toPlayerType(ctx.currentUserId, model)
-
   return (
-    <UI.FillBox>
-      <UI.Box
-        sx={{
-          paddingX: 1,
-          gap: 2,
-          marginBottom: 2,
-          display: "flex",
-          width: "100%",
-          overflow: "hidden",
-        }}
-      >
-        <ViewGamePlayerSlot playerType="PlayerOne" model={model} ctx={ctx} />
-        <ViewGamePlayerSlot playerType="PlayerTwo" model={model} ctx={ctx} />
-      </UI.Box>
+    <FillBox>
+      <PlayerSlotBar model={model} ctx={ctx} />
 
-      <UI.Box sx={{ position: "relative", overflow: "hidden" }}>
-        <ViewColumns
-          columns={model.columns}
-          onClick={(columnIndex) =>
-            $d(["InputMove", { userId: ctx.currentUserId, columnIndex }])
-          }
-          onHover={(columnIndex) => $d(["HoveredOverColumns", { columnIndex }])}
-          disabled={toTurn(model.columns) !== currentUserPlayerType}
-          ghost={
-            currentUserPlayerType !== "None" && ghostIndex !== "None"
-              ? { playerType: currentUserPlayerType, columnIndex: ghostIndex }
-              : undefined
-          }
-        />
-      </UI.Box>
-
-      <UI.Box sx={{ flex: 1 }} />
-
-      <UI.Box sx={{ display: "flex" }}>
-        <UI.ActionButton
-          icon={<UI.Icons.Flag />}
-          label="Resign"
-          onClick={() => $d(["ClickedResign", { userId: ctx.currentUserId }])}
-        />
-        {/* <UI.ActionButton
-                    icon={<UI.Icons.HandshakeTwoTone />}
-                    label="Draw"
-                    onClick={() => { }}
-                /> */}
-      </UI.Box>
-    </UI.FillBox>
-  )
-}
-
-const ViewGameOver = ({
-  model,
-  $d,
-  ctx,
-}: {
-  model: GameOverModel
-  ctx: Ctx
-  $d: (msg: Msg) => void
-}) => {
-  return (
-    <UI.FillBox>
-      <UI.Box
-        sx={{
-          paddingX: 1,
-          gap: 2,
-          marginBottom: 2,
-          display: "flex",
-          width: "100%",
-          overflow: "hidden",
-        }}
-      >
-        <ViewGamePlayerSlot playerType="PlayerOne" model={model} ctx={ctx} />
-        <ViewGamePlayerSlot playerType="PlayerTwo" model={model} ctx={ctx} />
-      </UI.Box>
-
-      <UI.Box sx={{ position: "relative", overflow: "hidden" }}>
+      <Box sx={{ position: "relative", }}>
         <ViewColumns columns={model.columns} disabled />
 
         {model.type === "GameOver" && (
-          <UI.Fade in>
-            <UI.Box
+          <Fade in>
+            <Box
               sx={{
                 position: "absolute",
                 top: 0,
@@ -347,43 +289,47 @@ const ViewGameOver = ({
                 width: "100%",
                 height: "100%",
                 maxHeight: "100%",
+                overflow: "hidden",
                 background: "rgba(0, 0, 0, 0.5)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 flexDirection: "column",
                 color: "#fff",
+
               }}
             >
               <ViewGameOverMessage $d={$d} ctx={ctx} model={model} />
-            </UI.Box>
-          </UI.Fade>
+            </Box>
+          </Fade>
         )}
-      </UI.Box>
+      </Box>
 
-      <UI.Box sx={{ flex: 1 }} />
+      <Box sx={{ flex: 1 }} ></Box>
 
-      <UI.Box sx={{ display: "flex", padding: 2, gap: 2 }}>
-        <UI.Button
+      <Box sx={{ display: "flex", padding: 2, gap: 2 }}>
+        <Button
           variant="outlined"
           fullWidth
           onClick={() => $d(["NewGame", { userId: ctx.currentUserId }])}
         >
           Back
-        </UI.Button>
+        </Button>
 
-        <UI.Button
+        <Button
           variant="contained"
           fullWidth
           disabled={model.rematch.type === "Asking"}
           onClick={() => $d(["Rematch_Request", { userId: ctx.currentUserId }])}
         >
           Rematch
-        </UI.Button>
-      </UI.Box>
-    </UI.FillBox>
+        </Button>
+      </Box>
+    </FillBox>
   )
 }
+
+
 
 const ViewGameOverMessage = ({
   ctx,
@@ -404,19 +350,19 @@ const ViewGameOverMessage = ({
   ) {
     return (
       <>
-        <UI.Typography
+        <Typography
           align="center"
           sx={{ fontSize: "2rem", marginBottom: 4 }}
         >
           Waiting for response
-        </UI.Typography>
-        <UI.CircularProgress sx={{ marginBottom: 4 }} />
-        <UI.Button
+        </Typography>
+        <CircularProgress sx={{ marginBottom: 4 }} />
+        <Button
           variant="contained"
           onClick={() => $d(["Rematch_Cancel", { userId: ctx.currentUserId }])}
         >
           Cancel
-        </UI.Button>
+        </Button>
       </>
     )
   }
@@ -428,15 +374,15 @@ const ViewGameOverMessage = ({
   ) {
     return (
       <>
-        <UI.Typography align="center" sx={{ fontSize: 54, marginBottom: 4 }}>
+        <Typography align="center" sx={{ fontSize: "3rem", marginBottom: 4 }}>
           Rematch?
-        </UI.Typography>
-        <UI.Box sx={{ display: "flex", gap: 2 }}>
-          <UI.Button
+        </Typography>
+        <Box sx={{ display: "flex", gap: 2 }}>
+          <Button
             variant="contained"
             color="inherit"
             sx={{ color: "#000" }}
-            startIcon={<UI.Icons.Cancel />}
+            startIcon={<Icons.Cancel />}
             onClick={() =>
               $d([
                 "Rematch_Respond",
@@ -445,10 +391,10 @@ const ViewGameOverMessage = ({
             }
           >
             Decline
-          </UI.Button>
-          <UI.Button
+          </Button>
+          <Button
             variant="contained"
-            startIcon={<UI.Icons.Done />}
+            startIcon={<Icons.Done />}
             onClick={() =>
               $d([
                 "Rematch_Respond",
@@ -457,8 +403,8 @@ const ViewGameOverMessage = ({
             }
           >
             Accept
-          </UI.Button>
-        </UI.Box>
+          </Button>
+        </Box>
       </>
     )
   }
@@ -466,7 +412,7 @@ const ViewGameOverMessage = ({
   if (model.gameOver.type === "Draw") {
     return (
       <>
-        <UI.Typography sx={{ fontSize: 64 }}>Tie</UI.Typography>
+        <Typography sx={{ fontSize: "3rem" }}>Tie</Typography>
       </>
     )
   }
@@ -480,7 +426,7 @@ const ViewGameOverMessage = ({
     if (currentPlayerType === "None") {
       return (
         <>
-          <UI.Box
+          <Box
             sx={{
               display: "flex",
               alignItems: "center",
@@ -489,22 +435,22 @@ const ViewGameOverMessage = ({
             }}
           >
             <PlayerIcon sx={{ ...size, marginRight: 2 }} playerType={winner} />
-            <UI.Avatar
+            <Avatar
               sx={{ ...size }}
               src={ctx.profiles[model[winner]]?.avatarUrl}
             />
-          </UI.Box>
-          <UI.Typography sx={{ fontSize: 50 }}>Winner</UI.Typography>
+          </Box>
+          <Typography sx={{ fontSize: "2.5rem" }}>Winner</Typography>
         </>
       )
     }
 
     return (
       <>
-        <UI.Typography sx={{ fontSize: 64 }}>
+        <Typography sx={{ fontSize: "3rem" }}>
           {currentPlayerType === winner ? "You Won" : "You Lost"}
-        </UI.Typography>
-        <UI.Typography>by resignation</UI.Typography>
+        </Typography>
+        <Typography>by resignation</Typography>
       </>
     )
   }
@@ -515,7 +461,7 @@ const ViewGameOverMessage = ({
     if (currentPlayerType === "None") {
       return (
         <>
-          <UI.Box
+          <Box
             sx={{
               display: "flex",
               alignItems: "center",
@@ -524,21 +470,21 @@ const ViewGameOverMessage = ({
             }}
           >
             <PlayerIcon sx={{ ...size, marginRight: 2 }} playerType={winner} />
-            <UI.Avatar
+            <Avatar
               sx={{ ...size }}
               src={ctx.profiles[model[winner]]?.avatarUrl}
             />
-          </UI.Box>
-          <UI.Typography sx={{ fontSize: 50 }}>Winner</UI.Typography>
+          </Box>
+          <Typography sx={{ fontSize: 50 }}>Winner</Typography>
         </>
       )
     }
 
     return (
       <>
-        <UI.Typography sx={{ fontSize: 64 }}>
+        <Typography sx={{ fontSize: 64 }}>
           {currentPlayerType === winner ? "You Won" : "You Lost"}
-        </UI.Typography>
+        </Typography>
       </>
     )
   }
@@ -570,15 +516,15 @@ const ViewSetup = ({
   )
 
   return (
-    <UI.FillBox>
+    <FillBox>
       <ViewVersusHeader model={model} ctx={ctx} />
 
-      <UI.Typography
+      <Typography
         color="text.secondary"
         sx={{ paddingX: 2, paddingTop: 2, paddingBottom: 1 }}
       >
         Players
-      </UI.Typography>
+      </Typography>
 
       <ViewSetupPlayerSlot
         ctx={ctx}
@@ -594,24 +540,24 @@ const ViewSetup = ({
         $d={$d}
       />
 
-      <UI.Divider sx={{ paddingBottom: 2 }} />
+      <Divider sx={{ paddingBottom: 2 }} />
 
-      <UI.Typography
+      <Typography
         color="text.secondary"
         sx={{ paddingX: 2, paddingTop: 2, paddingBottom: 1 }}
       >
         Time Limit
-      </UI.Typography>
+      </Typography>
 
-      <UI.Box sx={{ paddingX: 2 }}>
-        <UI.Tooltip title={resultToString(inputMoveTimeLimitResult)}>
-          <UI.ToggleButtonGroup
+      <Box sx={{ paddingX: 2 }}>
+        <Tooltip title={resultToString(inputMoveTimeLimitResult)}>
+          <ToggleButtonGroup
             fullWidth
             value={model.moveTimeLimit}
             disabled={inputMoveTimeLimitResult.type === "Err"}
           >
             {Object.values(allMoveTimeLimit).map((moveTimeLimit) => (
-              <UI.ToggleButton
+              <ToggleButton
                 key={moveTimeLimit}
                 value={moveTimeLimit}
                 onClick={() =>
@@ -622,32 +568,92 @@ const ViewSetup = ({
                 }
               >
                 {`${moveTimeLimit} sec`}
-              </UI.ToggleButton>
+              </ToggleButton>
             ))}
-          </UI.ToggleButtonGroup>
-        </UI.Tooltip>
-      </UI.Box>
+          </ToggleButtonGroup>
+        </Tooltip>
+      </Box>
 
-      <UI.Box sx={{ flex: 1 }} />
+      <Box sx={{ flex: 1 }} />
 
-      <UI.Box sx={{ padding: 2, gap: 2, display: "flex" }}>
-        <UI.Button variant="outlined" fullWidth onClick={goBack}>
+      <Box sx={{ padding: 2, gap: 2, display: "flex" }}>
+        <Button variant="outlined" fullWidth onClick={goBack}>
           Back
-        </UI.Button>
-        <UI.Button
+        </Button>
+        <Button
           variant="contained"
           fullWidth
           disabled={startGameResult.type === "Err"}
           onClick={() => $d(["StartGame", { userId: ctx.currentUserId }])}
         >
           Start Game
-        </UI.Button>
-      </UI.Box>
-    </UI.FillBox>
+        </Button>
+      </Box>
+    </FillBox>
   )
 }
 
-const ViewGamePlayerSlot = ({
+const PlayerSlotBar = ({ model, ctx }: { model: GameModel | GameOverModel, ctx: Ctx }) => {
+  return (
+    <Box sx={{ paddingTop: 2, paddingBottom: 1 }}>
+      <Box sx={{ paddingX: 1, mb: 1, gap: 2, display: "flex", width: "100%", overflow: "hidden", }}>
+        <PlayerSlot playerType="PlayerOne" model={model} ctx={ctx} />
+        <PlayerSlot playerType="PlayerTwo" model={model} ctx={ctx} />
+      </Box>
+      <Feedback ctx={ctx} model={model} />
+    </Box>
+  )
+}
+
+const flicker = keyframes`
+  0% { opacity: 1; }
+  50% { opacity: 0.66; }
+  100% { opacity: 1; }
+`
+
+
+const Feedback = ({ ctx, model }: { ctx: Ctx, model: GameModel | GameOverModel }) => {
+
+  if (model.type === 'GameOver') {
+    return (
+      <Typography color="text.secondary" align="center" sx={{ display: 'flex', justifyContent: "center", alignItems: 'center' }}>
+        Game Over
+      </Typography>
+    )
+  }
+
+  const turn = toTurn(model.columns)
+
+  const currentUserPlayerType = toPlayerType(ctx.currentUserId, model)
+
+
+  if (currentUserPlayerType === turn) {
+    if (model.moveCountDown <= 5) {
+      return (
+        <Typography align="center" sx={{ animation: `${flicker} 0.75s infinite ease` }} >
+          Move in {model.moveCountDown}...
+        </Typography>
+      )
+    }
+
+    return (
+      <Typography align="center" sx={{ display: 'flex', justifyContent: "center", alignItems: 'center', animation: `${flicker} 0.75s infinite ease` }}>
+        <PlayerIcon sx={{ width: "1rem", height: "1rem", mr: 1 / 2 }} playerType={turn} />
+        Your Turn
+      </Typography>
+    )
+  }
+
+  return (
+    <Typography color="text.secondary" align="center" sx={{ display: 'flex', justifyContent: "center", alignItems: 'center' }}>
+      <PlayerIcon sx={{ width: "1rem", height: "1rem", mr: 1 / 2 }} playerType={turn} />
+      Turn
+    </Typography>
+
+  )
+}
+
+const PlayerSlot = ({
   model,
   playerType,
   ctx,
@@ -657,29 +663,30 @@ const ViewGamePlayerSlot = ({
   ctx: Ctx
 }) => {
   const size = { width: 32, height: 32 }
+  const status = toStatus(model.columns)
+  const uiTheme = useTheme()
   return (
-    <UI.Box
+    <Paper
+      variant="outlined"
       sx={{
         display: "flex",
         alignItems: "center",
         flex: 1,
         overflow: "hidden",
+        p: 1,
+        boxSizing: "content-box",
+        borderBottom: status.type === 'Playing' && status.turn === playerType ? `solid 3px ${gameTheme.primary.dark}` : `solid 3px ${uiTheme.palette.divider}`
       }}
     >
       <PlayerIcon playerType={playerType} sx={{ ...size, marginRight: 1 }} />
-      <UI.Avatar
+      <Avatar
         src={ctx.profiles[model[playerType]]?.avatarUrl}
         sx={{ ...size, marginRight: 1 }}
       />
-      <UI.Typography noWrap>
+      <Typography noWrap color="text.secondary">
         {ctx.profiles[model[playerType]]?.username ?? "..."}
-      </UI.Typography>
-      {model.type === "Game" && toTurn(model.columns) === playerType && (
-        <UI.Typography sx={{ marginLeft: 1, fontSize: 20 }}>
-          {model.moveCountDown}
-        </UI.Typography>
-      )}
-    </UI.Box>
+      </Typography>
+    </Paper >
   )
 }
 
@@ -695,7 +702,7 @@ const ViewSetupPlayerSlot = ({
   ctx: Ctx
 }) => {
   return (
-    <UI.Box
+    <Box
       sx={{
         paddingX: 2,
         display: "flex",
@@ -708,7 +715,7 @@ const ViewSetupPlayerSlot = ({
         sx={{ width: 42, height: 42, marginRight: 1 }}
       />
       {userId === "None" ? (
-        <UI.Button
+        <Button
           fullWidth
           variant="contained"
           onClick={() =>
@@ -716,9 +723,9 @@ const ViewSetupPlayerSlot = ({
           }
         >
           Play as {playerTypeToColor[playerType]}
-        </UI.Button>
+        </Button>
       ) : (
-        <UI.Box
+        <Box
           sx={{
             display: "flex",
             alignItems: "center",
@@ -726,38 +733,38 @@ const ViewSetupPlayerSlot = ({
             flex: 1,
           }}
         >
-          <UI.Avatar
+          <Avatar
             src={ctx.profiles[userId]?.avatarUrl}
             sx={{ marginRight: 1 }}
           />
-          <UI.Typography noWrap sx={{ flex: 1 }}>
+          <Typography noWrap sx={{ flex: 1 }}>
             {ctx.profiles[userId]?.username ?? "..."}
-          </UI.Typography>
+          </Typography>
           {userId === ctx.currentUserId && (
-            <UI.Button
+            <Button
               onClick={() => $d(["StopPlaying", { userId: ctx.currentUserId }])}
             >
               Stop Playing
-            </UI.Button>
+            </Button>
           )}
-        </UI.Box>
+        </Box>
       )}
-    </UI.Box>
+    </Box>
   )
 }
 
 const ViewVersusHeader = ({ model, ctx }: { model: SetupModel; ctx: Ctx }) => {
-  const avatarSx: UI.Sx = {
+  const avatarSx: Sx = {
     // width: 36,
     // height: 36,
   }
-  const iconSx: UI.Sx = {
+  const iconSx: Sx = {
     width: 52,
     height: 52,
   }
 
   return (
-    <UI.Box
+    <Box
       sx={{
         paddingY: 6,
         paddingX: 2,
@@ -769,8 +776,8 @@ const ViewVersusHeader = ({ model, ctx }: { model: SetupModel; ctx: Ctx }) => {
         gap: 2,
       }}
     >
-      <UI.Box sx={{ width: 72, overflow: "hidden", textAlign: "center" }}>
-        <UI.Avatar
+      <Box sx={{ width: 72, overflow: "hidden", textAlign: "center" }}>
+        <Avatar
           sx={{ ...avatarSx, marginX: "auto" }}
           src={
             model.PlayerOne === "None"
@@ -778,21 +785,21 @@ const ViewVersusHeader = ({ model, ctx }: { model: SetupModel; ctx: Ctx }) => {
               : ctx.profiles[model.PlayerOne]?.avatarUrl
           }
         >
-          <UI.Icons.QuestionMark />
-        </UI.Avatar>
-        <UI.Typography color="#fff" align="center" noWrap>
+          <Icons.QuestionMark />
+        </Avatar>
+        <Typography color="#fff" align="center" noWrap>
           {model.PlayerOne === "None"
             ? "?"
             : ctx.profiles[model.PlayerOne]?.username ?? "..."}
-        </UI.Typography>
-      </UI.Box>
+        </Typography>
+      </Box>
       <PlayerOneIcon sx={{ ...iconSx }} />
-      <UI.Typography color="#fff" sx={{ fontSize: 32 }}>
+      <Typography color="#fff" sx={{ fontSize: 32 }}>
         vs
-      </UI.Typography>
+      </Typography>
       <PlayerTwoIcon sx={{ ...iconSx }} />
-      <UI.Box sx={{ width: 72, overflow: "hidden", textAlign: "center" }}>
-        <UI.Avatar
+      <Box sx={{ width: 72, overflow: "hidden", textAlign: "center" }}>
+        <Avatar
           sx={{ ...avatarSx, marginX: "auto" }}
           src={
             model.PlayerTwo === "None"
@@ -800,14 +807,14 @@ const ViewVersusHeader = ({ model, ctx }: { model: SetupModel; ctx: Ctx }) => {
               : ctx.profiles[model.PlayerTwo]?.avatarUrl
           }
         >
-          <UI.Icons.QuestionMark />
-        </UI.Avatar>
-        <UI.Typography color="#fff" align="center" noWrap>
+          <Icons.QuestionMark />
+        </Avatar>
+        <Typography color="#fff" align="center" noWrap>
           {model.PlayerTwo === "None"
             ? "?"
             : ctx.profiles[model.PlayerTwo]?.username ?? "..."}
-        </UI.Typography>
-      </UI.Box>
-    </UI.Box>
+        </Typography>
+      </Box>
+    </Box>
   )
 }

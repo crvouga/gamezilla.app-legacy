@@ -123,6 +123,7 @@ export const update = (
 }
 
 export const updateFromBackend = (
+  _: { ctx: Ctx },
   msg: ToFrontend,
   model: Model,
 ): [Model, OutAction[]] => {
@@ -134,7 +135,6 @@ export const updateFromBackend = (
 
     case "RematchAccept_Done":
     case "RematchAsk_Done":
-    case "RematchDecline_Done":
     case "Rematch_Cancel_Done":
     case "NewGame_Done":
     case "InputMoveTimeLimit_Done":
@@ -143,6 +143,7 @@ export const updateFromBackend = (
     case "InputPlayer_Done":
     case "StopPlaying_Done":
     case "StartGame_Done":
+    case "RematchDecline_Done":
     case "Resign_Done": {
       const res: Res = msg
 
@@ -151,6 +152,7 @@ export const updateFromBackend = (
       }
 
       const modelNew = mergeWithBackend(model, res[1].value)
+
 
       return [{ ...modelNew, openedModal: "None" }, []]
     }
@@ -388,8 +390,8 @@ export const View = ({
     model.X === ctx.currentUserId
       ? "X"
       : model.O === ctx.currentUserId
-      ? "O"
-      : "None"
+        ? "O"
+        : "None"
 
   return (
     <UI.FillBox>
@@ -492,8 +494,8 @@ const ViewGameOverMessage = ({
     model.X === ctx.currentUserId
       ? "X"
       : model.O === ctx.currentUserId
-      ? "O"
-      : "None"
+        ? "O"
+        : "None"
 
   if (
     model.rematch.type === "Asking" &&
@@ -1046,9 +1048,8 @@ const toGameText = ({
     case "GameOver": {
       switch (model.gameOver.type) {
         case "Resignation": {
-          return `${
-            store.profiles[model[model.gameOver.resigner]]?.username ?? "..."
-          } resigned`
+          return `${store.profiles[model[model.gameOver.resigner]]?.username ?? "..."
+            } resigned`
         }
 
         case "Winner": {
@@ -1203,9 +1204,8 @@ const ViewPlayerGameSlot = ({
           display: "flex",
           alignItems: "center",
           overflow: "hidden",
-          borderBottom: `solid 3.5px ${
-            isTurn ? gameTheme.background : uiTheme.palette.divider
-          }`,
+          borderBottom: `solid 3.5px ${isTurn ? gameTheme.background : uiTheme.palette.divider
+            }`,
         }}
       >
         <UI.Box
@@ -1247,10 +1247,10 @@ const ViewPlayerGameSlot = ({
                 timeLeft === 3
                   ? "warning.light"
                   : timeLeft === 2
-                  ? "warning.dark"
-                  : timeLeft < 2
-                  ? "error.main"
-                  : "text.primary"
+                    ? "warning.dark"
+                    : timeLeft < 2
+                      ? "error.main"
+                      : "text.primary"
               }
             >
               {timeLeft}

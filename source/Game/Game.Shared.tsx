@@ -1,6 +1,6 @@
 import { UserId } from "../Data/UserId"
 import * as ProfileStore from "../Profile/Profile.Store"
-import * as UI from "../UI"
+import { Sx, Avatar, Icons, useTheme, Box, Typography, AspectRatio, CardActionArea, Card, ViewNode } from "../UI"
 
 //
 //
@@ -31,16 +31,16 @@ export const GameModeCard = ({
   title,
   onClick,
 }: {
-  leftIcon: UI.ViewNode
-  rightIcon: UI.ViewNode
+  leftIcon: ViewNode
+  rightIcon: ViewNode
   title: string
   onClick: () => void
 }) => {
-  const theme = UI.useTheme()
+  const theme = useTheme()
   return (
-    <UI.CardActionArea onClick={onClick}>
-      <UI.AspectRatio aspectRatio={1}>
-        <UI.Card
+    <CardActionArea onClick={onClick}>
+      <AspectRatio aspectRatio={1}>
+        <Card
           sx={{
             border: `1px solid ${theme.palette.divider}`,
             width: "100%",
@@ -51,7 +51,7 @@ export const GameModeCard = ({
             flexDirection: "column",
           }}
         >
-          <UI.Box
+          <Box
             sx={{
               display: "flex",
               alignItems: "center",
@@ -61,16 +61,16 @@ export const GameModeCard = ({
           >
             {leftIcon}
             {rightIcon}
-          </UI.Box>
-          <UI.Typography variant="h5">{title}</UI.Typography>
-        </UI.Card>
-      </UI.AspectRatio>
-    </UI.CardActionArea>
+          </Box>
+          <Typography variant="h5">{title}</Typography>
+        </Card>
+      </AspectRatio>
+    </CardActionArea>
   )
 }
 
 const iconSize = 64
-const iconSx: UI.Sx = { width: iconSize, height: iconSize }
+const iconSx: Sx = { width: iconSize, height: iconSize }
 
 export const GameModeCardGrid = ({
   onUserVsUser,
@@ -80,41 +80,41 @@ export const GameModeCardGrid = ({
   onUserVsBot: () => void
 }) => {
   return (
-    <UI.Box sx={{ display: "flex", gap: 2, padding: 2, flex: 1 }}>
-      <UI.Box sx={{ width: "50%" }}>
+    <Box sx={{ display: "flex", gap: 2, padding: 2, flex: 1 }}>
+      <Box sx={{ width: "50%" }}>
         <GameModeCard
-          leftIcon={<UI.Icons.Person sx={iconSx} />}
-          rightIcon={<UI.Icons.Person sx={iconSx} />}
+          leftIcon={<Icons.Person sx={iconSx} />}
+          rightIcon={<Icons.Person sx={iconSx} />}
           title="Vs Player"
           onClick={onUserVsUser}
         />
-      </UI.Box>
-      <UI.Box sx={{ width: "50%" }}>
+      </Box>
+      <Box sx={{ width: "50%" }}>
         <GameModeCard
-          leftIcon={<UI.Icons.Person sx={iconSx} />}
-          rightIcon={<UI.Icons.SmartToy sx={iconSx} />}
+          leftIcon={<Icons.Person sx={iconSx} />}
+          rightIcon={<Icons.SmartToy sx={iconSx} />}
           title="Vs Bot"
           onClick={onUserVsBot}
         />
-      </UI.Box>
-    </UI.Box>
+      </Box>
+    </Box>
   )
 }
 
 type Player =
   | {
-      type: "User"
-      userId: UserId
-    }
+    type: "User"
+    userId: UserId
+  }
   | {
-      type: "Bot"
-      label: string
-    }
+    type: "Bot"
+    label: string
+  }
   | {
-      type: "None"
-    }
+    type: "None"
+  }
 
-const avatarSx: UI.Sx = {
+const avatarSx: Sx = {
   width: 32,
   height: 32,
 }
@@ -129,20 +129,20 @@ export const VersusHeader = ({
   sx,
 }: {
   ctx: Ctx
-  background: UI.ViewNode
-  renderLeftIcon: (sx: UI.Sx) => UI.ViewNode
+  background: ViewNode
+  renderLeftIcon: (sx: Sx) => ViewNode
   left: Player
-  renderRightIcon: (sx: UI.Sx) => UI.ViewNode
+  renderRightIcon: (sx: Sx) => ViewNode
   right: Player
-  sx?: UI.Sx
+  sx?: Sx
 }) => {
-  const iconSx: UI.Sx = {
+  const iconSx: Sx = {
     width: 52,
     height: 52,
     display: "block",
   }
   return (
-    <UI.Box
+    <Box
       sx={{
         position: "relative",
         width: "100%",
@@ -151,7 +151,7 @@ export const VersusHeader = ({
         ...sx,
       }}
     >
-      <UI.Box
+      <Box
         sx={{
           position: "absolute",
           top: 0,
@@ -161,9 +161,9 @@ export const VersusHeader = ({
         }}
       >
         {background}
-      </UI.Box>
+      </Box>
 
-      <UI.Box
+      <Box
         sx={{
           position: "absolute",
           top: 0,
@@ -180,7 +180,7 @@ export const VersusHeader = ({
           paddingX: 2,
         }}
       >
-        <UI.Box
+        <Box
           sx={{
             display: "flex",
             gap: 1,
@@ -191,15 +191,15 @@ export const VersusHeader = ({
         >
           <VersusHeaderPlayer player={left} ctx={ctx} />
           {renderLeftIcon({ ...iconSx })}
-        </UI.Box>
-        <UI.Typography
+        </Box>
+        <Typography
           align="center"
           color="#fff"
           sx={{ fontSize: 24, marginX: 2 }}
         >
           vs
-        </UI.Typography>
-        <UI.Box
+        </Typography>
+        <Box
           sx={{
             display: "flex",
             gap: 1,
@@ -210,14 +210,14 @@ export const VersusHeader = ({
         >
           {renderRightIcon({ ...iconSx })}
           <VersusHeaderPlayer player={right} ctx={ctx} />
-        </UI.Box>
-      </UI.Box>
-    </UI.Box>
+        </Box>
+      </Box>
+    </Box>
   )
 }
 
 const VersusHeaderPlayer = ({ player, ctx }: { player: Player; ctx: Ctx }) => {
-  const sx: UI.Sx = {
+  const sx: Sx = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -229,74 +229,75 @@ const VersusHeaderPlayer = ({ player, ctx }: { player: Player; ctx: Ctx }) => {
   switch (player.type) {
     case "Bot": {
       return (
-        <UI.Box sx={{ ...sx }}>
-          <UI.Icons.SmartToy
+        <Box sx={{ ...sx }}>
+          <Icons.SmartToy
             sx={{ marginX: "auto", width: 32, height: 32, color: "#fff" }}
           />
-          <UI.Typography color="#fff" noWrap align="center">
+          <Typography color="#fff" noWrap align="center">
             {player.label}
-          </UI.Typography>
-        </UI.Box>
+          </Typography>
+        </Box>
       )
     }
     case "None": {
       return (
-        <UI.Box sx={{ ...sx }}>
-          <UI.Avatar sx={{ ...avatarSx, marginX: "auto" }}>
-            <UI.Icons.QuestionMark />
-          </UI.Avatar>
-          <UI.Typography noWrap color="#fff" align="center">
+        <Box sx={{ ...sx }}>
+          <Avatar sx={{ ...avatarSx, marginX: "auto" }}>
+            <Icons.QuestionMark />
+          </Avatar>
+          <Typography noWrap color="#fff" align="center">
             ?
-          </UI.Typography>
-        </UI.Box>
+          </Typography>
+        </Box>
       )
     }
 
     case "User": {
       const profile = ctx.profiles[player.userId]
       return (
-        <UI.Box sx={{ ...sx }}>
-          <UI.Avatar
+        <Box sx={{ ...sx }}>
+          <Avatar
             sx={{ ...avatarSx, marginX: "auto" }}
             src={profile?.avatarUrl}
           />
-          <UI.Typography noWrap color="#fff" align="center">
+          <Typography noWrap color="#fff" align="center">
             {profile?.username ?? "..."}
-          </UI.Typography>
-        </UI.Box>
+          </Typography>
+        </Box>
       )
     }
   }
 }
 
-type GameHeaderProps = {
-  onHome: () => void
-  onRoom: () => void
-  title: string
-  roomCount: number
-}
-
-export const GameHeader = ({
-  onHome,
-  title,
-  onRoom,
-  roomCount,
-}: GameHeaderProps) => {
+export const PlayerGameSlot = ({
+  playerIcon,
+  userId,
+  ctx,
+}: {
+  playerIcon: ViewNode,
+  userId: UserId
+  ctx: Ctx
+}) => {
+  const size = { width: 32, height: 32 }
   return (
-    <UI.Header
-      left={
-        <UI.IconButton onClick={onHome} sx={{ ml: -1 }}>
-          <UI.Icons.Home />
-        </UI.IconButton>
-      }
-      title={title}
-      right={
-        <UI.IconButton onClick={onRoom}>
-          <UI.Badge title={String(roomCount)}>
-            <UI.Icons.People />
-          </UI.Badge>
-        </UI.IconButton>
-      }
-    />
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        flex: 1,
+        overflow: "hidden",
+      }}
+    >
+      <Box sx={{ ...size }}>
+        {playerIcon}
+      </Box>
+      <Avatar
+        src={ctx.profiles[userId]?.avatarUrl}
+        sx={{ ...size, mr: 1 }}
+      />
+      <Typography noWrap>
+        {ctx.profiles[userId]?.username ?? "..."}
+      </Typography>
+    </Box>
   )
 }

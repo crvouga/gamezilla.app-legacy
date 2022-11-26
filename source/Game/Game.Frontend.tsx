@@ -226,6 +226,7 @@ export const updateFromBackend = (
     case "TicTacToe": {
       if (model[0] === "TicTacToe") {
         const [child, cmd, actions] = TicTacToe.updateFromBackend(
+          { ctx },
           msg[1],
           model[1],
         )

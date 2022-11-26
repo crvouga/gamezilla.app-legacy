@@ -90,6 +90,7 @@ export const update = (
 }
 
 export const updateFromBackend = (
+  { ctx, }: { ctx: Ctx },
   msg: ToFrontend,
   model: Model,
 ): [Model, Cmd<Msg>, OutAction[]] => {
@@ -109,6 +110,7 @@ export const updateFromBackend = (
     case "UserVsUser": {
       if (model.mode === "UserVsUser") {
         const [child, actions] = UserVsUser.updateFromBackend(
+          { ctx, },
           msg[1],
           model.child,
         )
