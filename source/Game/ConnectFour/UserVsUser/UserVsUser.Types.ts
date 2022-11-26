@@ -53,25 +53,25 @@ export type GameOverModel = {
 
 type Rematch =
   | {
-      type: "NotAsking"
-    }
+    type: "NotAsking"
+  }
   | {
-      type: "Asking"
-      asker: PlayerType
-    }
+    type: "Asking"
+    asker: PlayerType
+  }
 
 type GameOver =
   | {
-      type: "Draw"
-    }
+    type: "Draw"
+  }
   | {
-      type: "Winner"
-      winner: PlayerType
-    }
+    type: "Winner"
+    winner: PlayerType
+  }
   | {
-      type: "Resignation"
-      resigner: PlayerType
-    }
+    type: "Resignation"
+    resigner: PlayerType
+  }
 
 export const toGameOver = (model: SharedModel): GameOver | { type: "None" } => {
   if (model.type === "Setup") {
@@ -141,14 +141,17 @@ export type ToBackend = Req
 export type ToFrontend = Res | Tick_Done | ["PlayerLeft", SharedModel]
 
 export type Req =
+  // 
   | ["StopPlaying", { userId: UserId }]
   | ["StartPlaying", { userId: UserId; playerType: PlayerType }]
   | ["InputMoveTimeLimit", { userId: UserId; moveTimeLimit: MoveTimeLimit }]
-  | ["StartGame", { userId: UserId }]
   | ["InputMove", { columnIndex: ColumnIndex; userId: UserId }]
+  | ["StartGame", { userId: UserId }]
+  // 
   | ["Rematch_Request", { userId: UserId }]
   | ["Rematch_Respond", { userId: UserId; response: "Accept" | "Decline" }]
   | ["Rematch_Cancel", { userId: UserId }]
+  // 
   | ["NewGame", { userId: UserId }]
   | ["Resign", { userId: UserId }]
 
