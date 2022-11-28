@@ -18,6 +18,7 @@
     "Docgen",
     "esbuild",
     "Gamezilla",
+    "Gomoku",
     "immer",
     "mediasoup",
     "onplayerror",
