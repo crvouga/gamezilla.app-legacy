@@ -1,11 +1,9 @@
 import { ListItemText } from "@mui/material"
 import { matchSorter } from "match-sorter"
 import { Browser, Cmd, p } from "../Core"
-import { EmailAddress, Iso3166Alpha2Code, PhoneNumber } from "../Data"
+import { Iso3166Alpha2Code, PhoneNumber } from "../Data"
 import * as Route from "../Route"
 import {
-  Alert,
-  AlertTitle,
   Box,
   Button,
   Divider,
@@ -16,12 +14,8 @@ import {
   InputBase,
   List,
   ListItemButton,
-  ListItemIcon,
-  TextField,
-  ToggleButton,
-  ToggleButtonGroup,
-  Typography,
-  useTheme,
+  ListItemIcon, Typography,
+  useTheme
 } from "../UI"
 import * as Auth from "./Auth"
 
@@ -56,15 +50,15 @@ export type SendCode =
   | { tag: "err"; err: string }
   | { tag: "loading"; phoneNumber: PhoneNumber }
   | {
-      tag: "ok"
-      phoneNumber: PhoneNumber
-      code: string
-      verify:
-        | { tag: "not_asked" }
-        | { tag: "loading" }
-        | { tag: "err"; err: string }
-        | { tag: "ok" }
-    }
+    tag: "ok"
+    phoneNumber: PhoneNumber
+    code: string
+    verify:
+    | { tag: "not_asked" }
+    | { tag: "loading" }
+    | { tag: "err"; err: string }
+    | { tag: "ok" }
+  }
 
 export const init: Model = {
   method: "phone",
@@ -105,9 +99,20 @@ export type Msg =
   | ["verify_code_done", Auth.AuthResult]
   | ["input_code", string]
   | ["clicked_phone_clear"]
+  | ["clicked_email"]
+  | ["clicked_text"]
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
+
+    case 'clicked_text': {
+      return [model, Route.push(['LoginPhone'])]
+    }
+
+    case 'clicked_email': {
+      return [model, Route.push(['LoginEmailLink'])]
+    }
+
     case "clicked_clear_search": {
       return [{ ...model, country_name: "" }, focus("country_name")]
     }
@@ -339,15 +344,16 @@ export const View = ({
   }
 
   return (
-    <FillBox id={htmlIds.root} sx={{ p: 2, gap: 2, paddingBottom: 8 }}>
-      <Box>
+    <Box sx={{ p: 2, width: '100%', height: "100%", display: "grid", placeItems: "center" }}>
+
+      <Box sx={{ pb: 8 }}>
         <Typography variant="h2">Sign Into</Typography>
 
         <Typography
           variant="h2"
           sx={{
             fontWeight: 800,
-            mb: 1,
+            mb: 3,
           }}
         >
           <Box
@@ -361,194 +367,18 @@ export const View = ({
             Gamezilla
           </Box>
         </Typography>
+
+
+
+        <Button onClick={() => $d(['clicked_text'])} startIcon={<Icons.Textsms />} fullWidth variant="contained" size="large" sx={{ mb: 3 }}>
+          Continue With Text
+        </Button>
+
+        <Button onClick={() => $d(['clicked_email'])} startIcon={<Icons.Email />} fullWidth variant="contained" size="large">
+          Continue With Email
+        </Button>
       </Box>
-      <Box>
-        <Typography sx={{ mb: 1 / 2 }} color="text.secondary">
-          Choose Method
-        </Typography>
-
-        <ToggleButtonGroup fullWidth size="medium" value={model.method}>
-          <ToggleButton
-            value="phone"
-            onClick={() => $d(["input_method", "phone"])}
-          >
-            <Icons.Textsms sx={{ mr: 1 }} />
-            Text
-          </ToggleButton>
-          <ToggleButton
-            value="email"
-            onClick={() => $d(["input_method", "email"])}
-          >
-            <Icons.Email sx={{ mr: 1 }} />
-            Email
-          </ToggleButton>
-        </ToggleButtonGroup>
-      </Box>
-
-      <Divider
-        orientation="vertical"
-        sx={{ height: "3rem", marginX: "auto" }}
-      />
-
-      {model.method === "phone" && (
-        <>
-          <TextField
-            fullWidth
-            label="Enter Phone Number"
-            placeholder="Phone number"
-            type="tel"
-            id={htmlIds.phone}
-            error={model.send_code.tag === "err"}
-            helperText={
-              model.send_code.tag === "err" ? "Invalid phone number" : ""
-            }
-            value={model.phone}
-            onChange={(e) => $d(["input_phone", e.target.value])}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <IconButton
-                    onClick={() => $d(["input_drawer", "country"])}
-                    edge="start"
-                  >
-                    {Iso3166Alpha2Code.toEmoji(model.country)}
-                  </IconButton>
-                </InputAdornment>
-              ),
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    onClick={() => $d(["clicked_phone_clear"])}
-                    edge="end"
-                  >
-                    <Icons.Clear />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
-
-          {model.send_code.tag !== "ok" ? (
-            <>
-              <Button
-                fullWidth
-                variant="contained"
-                size="large"
-                startIcon={<Icons.SendToMobile />}
-                onClick={() => $d(["send_code"])}
-                loading={model.send_code.tag === "loading"}
-                disabled={
-                  PhoneNumber.decode(model.country, model.phone).type === "Err"
-                }
-              >
-                Send Code
-              </Button>
-            </>
-          ) : (
-            <>
-              {/* <Divider orientation="vertical" sx={{ height: "2rem", marginX: "auto" }} /> */}
-              <Alert
-                severity="success"
-                action={
-                  <IconButton
-                    color="inherit"
-                    size="small"
-                    onClick={() => $d(["send_code_clear"])}
-                  >
-                    <Icons.Clear />
-                  </IconButton>
-                }
-              >
-                <Typography color="text.secondary" variant="body2">
-                  The code was sent to{" "}
-                  <Box component="span" sx={{ color: "text.primary" }}>
-                    {model.send_code.phoneNumber._validPhoneNumber}
-                  </Box>
-                </Typography>
-              </Alert>
-              <Divider
-                orientation="vertical"
-                sx={{ height: "3rem", marginX: "auto" }}
-              />
-              <TextField
-                inputProps={{
-                  id: htmlIds.code,
-                  // why? https://stackoverflow.com/questions/54706919/material-ui-remove-the-yellow-background-on-textfield-autofill
-                  style: {
-                    WebkitBoxShadow: `0 0 0 1000px ${theme.palette.background.default} inset`,
-                  },
-                }}
-                sx={{ width: "100%" }}
-                autoFocus
-                fullWidth
-                label="Enter Code"
-                placeholder="Code"
-                value={model.send_code.code}
-                onChange={(e) => $d(["input_code", e.target.value])}
-                type="tel"
-              />
-              <Button
-                fullWidth
-                variant="contained"
-                size="large"
-                startIcon={<Icons.VerifiedUser />}
-                onClick={() => $d(["verify_code"])}
-                loading={model.send_code.verify.tag === "loading"}
-                disabled={model.send_code.code.length === 0}
-              >
-                Verify Code
-              </Button>
-              {model.send_code.verify.tag === "err" && (
-                <Alert severity="error">{model.send_code.verify.err}</Alert>
-              )}
-            </>
-          )}
-        </>
-      )}
-
-      {model.method === "email" && (
-        <>
-          <TextField
-            type="email"
-            sx={{ width: "100%" }}
-            fullWidth
-            label="Enter Email"
-            placeholder="Email"
-            value={model.email}
-            onChange={(e) => $d(["input_email", e.target.value])}
-          />
-
-          <Button
-            fullWidth
-            variant="contained"
-            size="large"
-            startIcon={<Icons.Send />}
-            onClick={() => $d(["send_link"])}
-            loading={model.send_link.tag === "loading"}
-            disabled={EmailAddress.decode(model.email).type === "Err"}
-          >
-            Mail Link
-          </Button>
-
-          {model.send_link.tag === "err" && (
-            <Alert severity="error">{model.send_link.err}</Alert>
-          )}
-
-          {model.send_link.tag === "ok" && (
-            <Alert severity="success">
-              <AlertTitle>Check your email</AlertTitle>
-              <Typography color="text.secondary" variant="body2">
-                An email was sent to{" "}
-                <Box component="span" sx={{ color: "text.primary" }}>
-                  {model.send_link.email}
-                </Box>
-                . It has a link that will sign you in.
-              </Typography>
-            </Alert>
-          )}
-        </>
-      )}
-    </FillBox>
+    </Box>
   )
 }
 
