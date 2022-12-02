@@ -1,4 +1,5 @@
-import { Audio, eq, Option, Result } from "../../../Core"
+import { Audio, eq, Option } from "../../../Core"
+import { Result, Ok, Err } from "../../../Core/Result"
 import { UserId } from "../../../Data"
 import * as Board from "../Board"
 import * as Clock from "../Clock"
@@ -24,50 +25,50 @@ export type BackendModel = SharedModel
 
 export type SharedModel =
   | {
-      type: "Setup"
-      clockPreset: Clock.Preset
-      w: UserId | "None"
-      b: UserId | "None"
-    }
+    type: "Setup"
+    clockPreset: Clock.Preset
+    w: UserId | "None"
+    b: UserId | "None"
+  }
   | {
-      type: "Game"
-      drawAgreement: DrawAgreement
-      w: UserId
-      b: UserId
-      clock: Clock.Clock
-      board: Board.Model
-    }
+    type: "Game"
+    drawAgreement: DrawAgreement
+    w: UserId
+    b: UserId
+    clock: Clock.Clock
+    board: Board.Model
+  }
   | {
-      type: "GameOver"
-      gameOver: GameOver
-      w: UserId
-      b: UserId
-      clock: Clock.Clock
-      board: Board.Model
-    }
+    type: "GameOver"
+    gameOver: GameOver
+    w: UserId
+    b: UserId
+    clock: Clock.Clock
+    board: Board.Model
+  }
 
 export type DrawAgreement =
   | {
-      type: "NotAsking"
-    }
+    type: "NotAsking"
+  }
   | {
-      type: "Asking"
-      asker: Board.Color
-    }
+    type: "Asking"
+    asker: Board.Color
+  }
 
 export type GameOver =
   | Board.GameOver
   | {
-      type: "Resignation"
-      resigner: Board.Color
-    }
+    type: "Resignation"
+    resigner: Board.Color
+  }
   | {
-      type: "DrawByAgreement"
-    }
+    type: "DrawByAgreement"
+  }
   | {
-      type: "WinOnTime"
-      winner: Board.Color
-    }
+    type: "WinOnTime"
+    winner: Board.Color
+  }
 
 export const initShared = ({
   userId,
@@ -157,11 +158,11 @@ export const inputMove = (
   model: SharedModel,
 ): InputMove_Done[1] => {
   if (model.type !== "Game") {
-    return Result.Err("game_must_be_started")
+    return Err("game_must_be_started")
   }
 
   if (model.w !== userId && model.b !== userId) {
-    return Result.Err("user_must_be_a_player")
+    return Err("user_must_be_a_player")
   }
 
   const result = Board.move(moveInput, model.board)
@@ -184,7 +185,7 @@ export const inputMove = (
       gameOver: gameOver,
     }
 
-    return Result.Ok({
+    return Ok({
       ...modelNew,
       didCapture: boardNew.didCapture,
     })
@@ -195,7 +196,7 @@ export const inputMove = (
     board: boardNew,
   }
 
-  return Result.Ok({
+  return Ok({
     ...modelNew,
     didCapture: boardNew.didCapture,
   })
@@ -228,14 +229,14 @@ export const inputPlayer = (
   model: SharedModel,
 ): InputPlayer_Done[1] => {
   if (model.type !== "Setup") {
-    return Result.Err("game_must_be_in_setup_mode")
+    return Err("game_must_be_in_setup_mode")
   }
 
   const targetPlayer = userId
   const targetColor = color
 
   if (model[targetColor] !== "None" && targetPlayer !== "None") {
-    return Result.Err("player_is_taken")
+    return Err("player_is_taken")
   }
 
   const otherColor = Board.toOppositeColor(color)
@@ -243,12 +244,12 @@ export const inputPlayer = (
 
   const otherPlayerNew =
     otherPlayer !== "None" &&
-    targetPlayer !== "None" &&
-    otherPlayer === targetPlayer
+      targetPlayer !== "None" &&
+      otherPlayer === targetPlayer
       ? "None"
       : otherPlayer
 
-  return Result.Ok({
+  return Ok({
     ...model,
     [targetColor]: targetPlayer,
     [otherColor]: otherPlayerNew,
@@ -293,16 +294,16 @@ export const inputClock = (
   model: SharedModel,
 ): InputClock_Done[1] => {
   if (model.type !== "Setup") {
-    return Result.Err("must_be_in_setup_mode")
+    return Err("must_be_in_setup_mode")
   }
 
   const someUserId = Option.Some(userId)
 
   if (!eq(someUserId, model.b) && !eq(someUserId, model.w)) {
-    return Result.Err("must_be_playing")
+    return Err("must_be_playing")
   }
 
-  return Result.Ok({
+  return Ok({
     ...model,
     clockPreset,
   })
@@ -354,26 +355,26 @@ export const startGame = (
   model: SharedModel,
 ): StartGame_Done[1] => {
   if (model.type !== "Setup") {
-    return Result.Err("game_not_in_setup_mode")
+    return Err("game_not_in_setup_mode")
   }
 
   if (model.w === "None" && model.b === "None") {
-    return Result.Err("missing_both_players")
+    return Err("missing_both_players")
   }
 
   if (model.w === "None") {
-    return Result.Err("missing_white_player")
+    return Err("missing_white_player")
   }
 
   if (model.b === "None") {
-    return Result.Err("missing_black_player")
+    return Err("missing_black_player")
   }
 
   if (userId !== model.b && userId !== model.w) {
-    return Result.Err("must_be_a_player")
+    return Err("must_be_a_player")
   }
 
-  return Result.Ok({
+  return Ok({
     type: "Game",
     w: model.w,
     b: model.b,
@@ -402,7 +403,7 @@ export const requestToDraw = (
   model: SharedModel,
 ): RequestToDraw_Done[1] => {
   if (model.type !== "Game") {
-    return Result.Err("game_must_be_started")
+    return Err("game_must_be_started")
   }
 
   const modelNew: SharedModel = {
@@ -412,7 +413,7 @@ export const requestToDraw = (
       asker: color,
     },
   }
-  return Result.Ok(modelNew)
+  return Ok(modelNew)
 }
 
 export type RespondToDraw = ["RespondToDraw", "Accepted" | "Declined"]
@@ -426,11 +427,11 @@ export const respondToDraw = (
   model: SharedModel,
 ): RespondToDraw_Done[1] => {
   if (model.type !== "Game") {
-    return Result.Err("failed_to_respond_to_draw")
+    return Err("failed_to_respond_to_draw")
   }
 
   if (!(model.drawAgreement.type === "Asking")) {
-    return Result.Err("failed_to_respond_to_draw")
+    return Err("failed_to_respond_to_draw")
   }
 
   if (drawResponse === "Declined") {
@@ -438,7 +439,7 @@ export const respondToDraw = (
       ...model,
       drawAgreement: { type: "NotAsking" },
     }
-    return Result.Ok(modelNew)
+    return Ok(modelNew)
   }
 
   const modelNew: SharedModel = {
@@ -452,7 +453,7 @@ export const respondToDraw = (
     },
   }
 
-  return Result.Ok(modelNew)
+  return Ok(modelNew)
 }
 
 export type CancelDraw = ["CancelDraw", { userId: UserId }]
@@ -471,22 +472,22 @@ export const cancelDraw = (
   model: SharedModel,
 ): CancelDraw_Done[1] => {
   if (model.type !== "Game") {
-    return Result.Err("must_be_in_game_mode")
+    return Err("must_be_in_game_mode")
   }
 
   if (model.drawAgreement.type === "NotAsking") {
-    return Result.Err("must_be_asking_for_a_draw")
+    return Err("must_be_asking_for_a_draw")
   }
 
   const color: Board.Color | "None" =
     model.b === userId ? "b" : model.w === userId ? "w" : "None"
 
   if (color === "None") {
-    return Result.Err("must_be_playing")
+    return Err("must_be_playing")
   }
 
   if (model.drawAgreement.asker !== color) {
-    return Result.Err("must_be_the_one_asking")
+    return Err("must_be_the_one_asking")
   }
 
   const modelNew: SharedModel = {
@@ -496,7 +497,7 @@ export const cancelDraw = (
     },
   }
 
-  return Result.Ok(modelNew)
+  return Ok(modelNew)
 }
 
 //
@@ -515,7 +516,7 @@ export const resign = (
   model: SharedModel,
 ): Resign_Done[1] => {
   if (model.type !== "Game") {
-    return Result.Err("can_not_resign")
+    return Err("can_not_resign")
   }
 
   const modelNew: SharedModel = {
@@ -530,7 +531,7 @@ export const resign = (
     },
   }
 
-  return Result.Ok(modelNew)
+  return Ok(modelNew)
 }
 
 //
@@ -545,7 +546,7 @@ export type NewGame_Done = [
 ]
 export const newGame = (model: SharedModel): NewGame_Done[1] => {
   if (model.type !== "GameOver") {
-    return Result.Err("game_must_be_over")
+    return Err("game_must_be_over")
   }
 
   const modelNew: SharedModel = {
@@ -555,7 +556,7 @@ export const newGame = (model: SharedModel): NewGame_Done[1] => {
     clockPreset: model.clock.preset,
   }
 
-  return Result.Ok(modelNew)
+  return Ok(modelNew)
 }
 
 //
