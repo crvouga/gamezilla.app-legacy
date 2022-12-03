@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef } from "react"
-import { eq, isSubset, shuffle, unique } from "../../Core"
+import { eq, isSubset, shuffle, unique, Uuid } from "../../Core"
 import { Err, Ok, Result } from "../../Core/Result"
 import { Task } from "../../Core/Task"
 
@@ -417,12 +417,13 @@ const ViewColumnsSvg = ({
   ghost,
   disabled,
 }: ViewColumnsProps) => {
+  const ref = useRef(Uuid.generateSync())
   const ids = {
-    playerOneGradient: "playerOneGradient",
-    playerTwoGradient: "playerTwoGradient",
-    holePattern: "holePattern",
-    columnGradient: "columnGradient",
-    holeMask: "holeMask",
+    playerOneGradient: `playerOneGradient${ref.current}`,
+    playerTwoGradient: `playerTwoGradient${ref.current}`,
+    holePattern: `holePattern${ref.current}`,
+    columnGradient: `columnGradient${ref.current}`,
+    holeMask: `holeMask${ref.current}`,
   }
 
   const playerOneFill = `url(#${ids.playerOneGradient})`
