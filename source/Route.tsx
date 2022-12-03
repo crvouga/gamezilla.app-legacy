@@ -12,7 +12,7 @@ import { PhoneNumber, UserId, Iso3166Alpha2Code } from "./Data"
 
 export type Model =
   | ["Account"]
-  | ["Login", { drawer: "country" | "none" }]
+  | ["Login"]
   | ["LoginEmailLink"]
   | ["LoginPhone"]
   | ["LoginPhoneVerify", { phoneNumber: PhoneNumber }]
@@ -121,17 +121,6 @@ export const decode = ({
       return Some(["LoginPhoneVerify", { phoneNumber: phoneNumber }])
     }
 
-    case "Login": {
-      const drawerDirty = query["drawer"]
-      if (!drawerDirty) {
-        return Some(["Login", { drawer: "none" }])
-      }
-      if (drawerDirty === "country" || drawerDirty === "none") {
-        return Some(["Login", { drawer: drawerDirty }])
-      }
-      return Some(["Login", { drawer: "none" }])
-    }
-
     default: {
       return Some([first])
     }
@@ -150,11 +139,6 @@ export const encode = (route: Model): string => {
       const phoneNumber = PhoneNumber.toString(route[1].phoneNumber)
       const country = PhoneNumber.toCountry(route[1].phoneNumber)
       const params = new URLSearchParams({ phoneNumber, country })
-      return `/${route[0]}?${params.toString()}`
-    }
-
-    case "Login": {
-      const params = new URLSearchParams({ drawer: route[1].drawer })
       return `/${route[0]}?${params.toString()}`
     }
 

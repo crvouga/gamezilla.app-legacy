@@ -41,7 +41,7 @@ import * as UI from "./UI"
 //
 
 export type Model =
-  | ["Login", { drawer: "country" | "none" }, Login.Model]
+  | ["Login", Login.Model]
   | ["LoginEmailLink", LoginEmailLink.Model]
   | ["LoginPhone", LoginPhone.Model]
   | ["LoginPhoneVerify", { phoneNumber: PhoneNumber }, LoginPhoneVerify.Model]
@@ -243,8 +243,8 @@ export const initLoggedOut = (
 ): [Model, Cmd<Msg>] => {
   switch (route[0]) {
     case "Login":
-      const childNew = model[0] === "Login" ? model[2] : Login.init
-      return [["Login", route[1], childNew], Cmd.None]
+      const childNew = model[0] === "Login" ? model[1] : Login.init
+      return [["Login", childNew], Cmd.None]
 
     case "LoginPhone":
       return [["LoginPhone", LoginPhone.init], Cmd.None]
@@ -280,8 +280,8 @@ export const initLoggedOut = (
     case "Party":
     case "Home":
       return [
-        ["Login", { drawer: "none" }, Login.init],
-        Route.push(["Login", { drawer: "none" }]),
+        ["Login", Login.init],
+        Route.push(["Login"]),
       ]
 
     default:
@@ -574,8 +574,8 @@ export const updateLoggedOut = (
   switch (model[0]) {
     case "Login":
       if (msg[0] === "Login") {
-        const [child, cmd] = Login.update(msg[1], model[2])
-        return [["Login", model[1], child], Cmd.tag("Login", cmd), []]
+        const [child, cmd] = Login.update(msg[1], model[1])
+        return [["Login", child], Cmd.tag("Login", cmd), []]
       }
       return [model, Cmd.None, []]
 
@@ -626,7 +626,7 @@ export const updateLoggedOut = (
     case "Search":
     case "Party":
     case "Home":
-      return [model, Route.push(["Login", { drawer: "none" }]), []]
+      return [model, Route.push(["Login"]), []]
 
     default:
       return exhaustive(model)
@@ -1016,8 +1016,7 @@ export const ViewLoggedOut = ({
     case "Login":
       return (
         <Login.View
-          drawer={model[1].drawer}
-          model={model[2]}
+          model={model[1]}
           $d={(msg) => $d(["Login", msg])}
         />
       )

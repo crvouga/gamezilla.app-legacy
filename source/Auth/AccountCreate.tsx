@@ -17,15 +17,15 @@ export type Model = {
   password: string
   passwordVisibility: Visibility
   submission:
-    | { type: "NotAsked" }
-    | { type: "Loading" }
-    | {
-        type: "ProblemValidation"
-        emailAddress: Problem[]
-        password: Problem[]
-      }
-    | { type: "Problem"; message: string }
-    | { type: "Succeeded" }
+  | { type: "NotAsked" }
+  | { type: "Loading" }
+  | {
+    type: "ProblemValidation"
+    emailAddress: Problem[]
+    password: Problem[]
+  }
+  | { type: "Problem"; message: string }
+  | { type: "Succeeded" }
 }
 
 type Visibility = "Showing" | "Hiding"
@@ -184,7 +184,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     }
 
     case "ClickedLogin": {
-      return [model, Route.push(["Login", { drawer: "none" }])]
+      return [model, Route.push(["Login"])]
     }
 
     default:
