@@ -387,7 +387,7 @@ export const CoverArt = ({ gameName }: { gameName: GameName }) => {
       return <Chess.CoverArt />
     }
     case "ConnectFour": {
-      return <ConnectFour.CoverArt id="" />
+      return <ConnectFour.CoverArt />
     }
     case "Snake": {
       return <Snake.CoverArt />

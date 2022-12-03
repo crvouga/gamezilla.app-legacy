@@ -1,4 +1,4 @@
-import { Cmd } from "../../Core"
+import { Cmd, Uuid } from "../../Core"
 import * as Alerts from "../../Alerts"
 import * as UI from "../../UI"
 import { bannerArtAspectRatio, Ctx, GameModeCardGrid } from "../Game.Shared"
@@ -13,6 +13,7 @@ import {
 import * as UserVsBot from "./UserVsBot/UserVsBot.Frontend"
 import * as UserVsUser from "./UserVsUser/UserVsUser.Frontend"
 import { PlayerIcon } from "./Views"
+import { useRef } from "react"
 
 //
 //
@@ -242,13 +243,14 @@ const BannerArt = () => {
   )
 }
 
-export const CoverArt = ({ id }: { id: string }) => {
+export const CoverArt = () => {
+  const ref = useRef(Uuid.generateSync())
   const ids = {
-    playerOneGradient: `${id}-playerOneGradient`,
-    playerTwoGradient: `${id}-playerTwoGradient`,
-    holePattern: `${id}-holePattern`,
-    columnGradient: `${id}-columnGradient`,
-    holeMask: `${id}-holeMask`,
+    playerOneGradient: `playerOneGradient${ref.current}`,
+    playerTwoGradient: `playerTwoGradient${ref.current}`,
+    holePattern: `holePattern${ref.current}`,
+    columnGradient: `columnGradient${ref.current}`,
+    holeMask: `holeMask${ref.current}`,
   }
 
   const playerOneFill = `url(#${ids.playerOneGradient})`
