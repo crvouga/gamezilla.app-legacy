@@ -1,7 +1,7 @@
 import { ListItemText } from "@mui/material"
 import { matchSorter } from "match-sorter"
-import { Browser, Cmd, p } from "../Core"
-import { Iso3166Alpha2Code, PhoneNumber } from "../Data"
+import { Cmd } from "../Core"
+import { Iso3166Alpha2Code } from "../Data"
 import * as Route from "../Route"
 import {
   Box,
@@ -17,7 +17,6 @@ import {
   ListItemIcon, Typography,
   useTheme
 } from "../UI"
-import * as Auth from "./Auth"
 
 //
 //
@@ -27,50 +26,9 @@ import * as Auth from "./Auth"
 //
 //
 
-export type Model = {
-  method: "phone" | "email"
-  drawer: "country" | "none"
-  country_name: string
-  country: Iso3166Alpha2Code
-  phone: string
-  email: string
-  code: string
-  send_code: SendCode
-  send_link: SendLink
-}
+export type Model = {}
 
-export type SendLink =
-  | { tag: "not_asked" }
-  | { tag: "loading"; email: string }
-  | { tag: "err"; err: string }
-  | { tag: "ok"; email: string }
-
-export type SendCode =
-  | { tag: "not_asked" }
-  | { tag: "err"; err: string }
-  | { tag: "loading"; phoneNumber: PhoneNumber }
-  | {
-    tag: "ok"
-    phoneNumber: PhoneNumber
-    code: string
-    verify:
-    | { tag: "not_asked" }
-    | { tag: "loading" }
-    | { tag: "err"; err: string }
-    | { tag: "ok" }
-  }
-
-export const init: Model = {
-  method: "phone",
-  drawer: "none",
-  country: "US",
-  country_name: "",
-  phone: "",
-  email: "",
-  code: "",
-  send_code: { tag: "not_asked" },
-  send_link: { tag: "not_asked" },
-}
+export const init: Model = {}
 
 //
 //
@@ -81,24 +39,6 @@ export const init: Model = {
 //
 
 export type Msg =
-  | ["input_method", Model["method"]]
-  | ["input_drawer", Model["drawer"]]
-  | ["input_country_name", Model["country_name"]]
-  | ["clicked_country", Model["country"]]
-  | ["input_phone", Model["phone"]]
-  | ["input_email", Model["email"]]
-  | ["send_link"]
-  | ["send_link_done", Auth.AuthResult]
-  | ["clicked_clear_search"]
-  | ["focused", Browser.FocusResult]
-  | ["scrolled", Browser.FocusResult]
-  | ["send_code"]
-  | ["send_code_done", Auth.AuthResult]
-  | ["send_code_clear"]
-  | ["verify_code"]
-  | ["verify_code_done", Auth.AuthResult]
-  | ["input_code", string]
-  | ["clicked_phone_clear"]
   | ["clicked_email"]
   | ["clicked_text"]
 
@@ -113,201 +53,8 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       return [model, Route.push(['LoginEmailLink'])]
     }
 
-    case "clicked_clear_search": {
-      return [{ ...model, country_name: "" }, focus("country_name")]
-    }
 
-    case "scrolled":
-    case "focused": {
-      return [model, Cmd.None]
-    }
-
-    case "input_method": {
-      return [{ ...model, method: msg[1] }, Cmd.None]
-    }
-
-    case "input_drawer": {
-      return [model, Route.push(["Login", { drawer: msg[1] }])]
-    }
-
-    case "input_country_name": {
-      return [{ ...model, country_name: msg[1] }, Cmd.None]
-    }
-
-    case "clicked_country": {
-      return [
-        { ...model, country: msg[1] },
-        Cmd.batch([Route.push(["Login", { drawer: "none" }]), focus("phone")]),
-      ]
-    }
-
-    case "input_email": {
-      return [{ ...model, email: msg[1] }, Cmd.None]
-    }
-
-    case "input_phone": {
-      return [
-        { ...model, phone: msg[1], send_code: { tag: "not_asked" } },
-        Cmd.None,
-      ]
-    }
-
-    case "clicked_phone_clear": {
-      return [
-        { ...model, phone: "", send_code: { tag: "not_asked" } },
-        focus("phone"),
-      ]
-    }
-
-    case "send_code": {
-      const decoded = PhoneNumber.decode(model.country, model.phone)
-
-      if (decoded.type === "Err") {
-        return [
-          { ...model, send_code: { tag: "err", err: "Invalid phone number" } },
-          Cmd.None,
-        ]
-      }
-
-      return [
-        { ...model, send_code: { tag: "loading", phoneNumber: decoded.value } },
-        p(
-          Auth.sendCode({ phoneNumber: decoded.value }),
-          Cmd.perform((result) => ["send_code_done", result]),
-        ),
-      ]
-    }
-
-    case "send_code_done": {
-      if (model.send_code.tag !== "loading") {
-        return [model, Cmd.None]
-      }
-
-      if (msg[1].type === "Err") {
-        return [
-          { ...model, send_code: { tag: "err", err: msg[1].error.message } },
-          Cmd.None,
-        ]
-      }
-      return [
-        {
-          ...model,
-          send_code: {
-            tag: "ok",
-            phoneNumber: model.send_code.phoneNumber,
-            code: "",
-            verify: { tag: "not_asked" },
-          },
-        },
-        Cmd.batch([focus("code"), scrollIntoView("code")]),
-      ]
-    }
-
-    case "send_code_clear": {
-      return [{ ...model, send_code: { tag: "not_asked" } }, focus("phone")]
-    }
-
-    case "input_code": {
-      if (model.send_code.tag !== "ok") {
-        return [model, Cmd.None]
-      }
-
-      return [
-        { ...model, send_code: { ...model.send_code, code: msg[1] } },
-        Cmd.None,
-      ]
-    }
-
-    case "verify_code": {
-      if (model.send_code.tag !== "ok") {
-        return [model, Cmd.None]
-      }
-
-      return [
-        {
-          ...model,
-          send_code: { ...model.send_code, verify: { tag: "loading" } },
-        },
-        p(
-          Auth.verifyCode({
-            phoneNumber: model.send_code.phoneNumber,
-            code: model.send_code.code,
-          }),
-          Cmd.perform((result) => ["verify_code_done", result]),
-        ),
-      ]
-    }
-
-    case "verify_code_done": {
-      if (model.send_code.tag !== "ok") {
-        return [model, Cmd.None]
-      }
-
-      if (msg[1].type === "Err") {
-        return [
-          {
-            ...model,
-            send_code: {
-              ...model.send_code,
-              verify: { tag: "err", err: msg[1].error.message },
-            },
-          },
-          Cmd.None,
-        ]
-      }
-
-      return [{ ...model, send_code: { ...model.send_code } }, Cmd.None]
-    }
-
-    case "send_link": {
-      return [
-        { ...model, send_link: { tag: "loading", email: model.email } },
-        p(
-          Auth.loginWithEmailLink({ emailAddress: model.email }),
-          Cmd.perform((result) => ["send_link_done", result]),
-        ),
-      ]
-    }
-
-    case "send_link_done": {
-      if (model.send_link.tag !== "loading") {
-        return [model, Cmd.None]
-      }
-
-      if (msg[1].type === "Err") {
-        return [
-          { ...model, send_link: { tag: "err", err: msg[1].error.message } },
-          Cmd.None,
-        ]
-      }
-
-      return [
-        { ...model, send_link: { tag: "ok", email: model.send_link.email } },
-        Cmd.None,
-      ]
-    }
   }
-}
-
-const htmlIds = {
-  country_name: "country_name",
-  code: "code",
-  root: "root",
-  phone: "phone",
-} as const
-
-const focus = (id: keyof typeof htmlIds): Cmd<Msg> => {
-  return p(
-    Browser.focus(id),
-    Cmd.perform((result) => ["focused", result]),
-  )
-}
-
-const scrollIntoView = (id: keyof typeof htmlIds): Cmd<Msg> => {
-  return p(
-    Browser.scrollIntoView(id),
-    Cmd.perform((result) => ["scrolled", result]),
-  )
 }
 
 //
@@ -319,29 +66,12 @@ const scrollIntoView = (id: keyof typeof htmlIds): Cmd<Msg> => {
 //
 
 export const View = ({
-  drawer,
-  model,
   $d,
 }: {
-  drawer: "country" | "none"
   model: Model
   $d: (msg: Msg) => void
 }) => {
   const theme = useTheme()
-
-  if (drawer === "country") {
-    return (
-      <CountrySelectScreen
-        inputId={htmlIds.country_name}
-        onChange={(s) => $d(["input_country_name", s])}
-        onClear={() => $d(["clicked_clear_search"])}
-        onClose={() => $d(["input_drawer", "none"])}
-        onSelect={(country) => $d(["clicked_country", country])}
-        searchText={model.country_name}
-        selected={model.country}
-      />
-    )
-  }
 
   return (
     <Box sx={{ p: 2, width: '100%', height: "100%", display: "grid", placeItems: "center" }}>
@@ -382,7 +112,7 @@ export const View = ({
   )
 }
 
-const CountrySelectScreen = ({
+export const CountrySelectScreen = ({
   searchText,
   inputId,
   onChange,
