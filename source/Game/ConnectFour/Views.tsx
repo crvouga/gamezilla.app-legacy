@@ -1,3 +1,5 @@
+import { useRef } from "react"
+import { Uuid } from "../../Core"
 import * as UI from "../../UI"
 import {
   PlayerType,
@@ -24,24 +26,26 @@ export const PlayerIcon = ({
 }
 
 export const PlayerOneIcon = ({ sx }: { sx?: UI.Sx }) => {
+  const ref = useRef(Uuid.generateSync())
   return (
     <UI.SvgIcon viewBox="-1 -1 2 2" sx={{ ...sx }}>
       <ViewPlayerOneGradientDef
-        gradientId="playerOneGradient"
         cx={0}
         cy={0}
         r={1}
+        gradientId={ref.current}
       />
-      <circle cx={0} cy={0} r={1} fill={`url(#playerOneGradient)`} />
+      <circle cx={0} cy={0} r={1} fill={`url(#${ref.current})`} />
     </UI.SvgIcon>
   )
 }
 
 export const PlayerTwoIcon = ({ sx }: { sx?: UI.Sx }) => {
+  const ref = useRef(Uuid.generateSync())
   return (
     <UI.SvgIcon viewBox="-1 -1 2 2" sx={{ ...sx }}>
-      <ViewPlayerTwoGradientDef gradientId="playerTwoGradient" />
-      <circle cx={0} cy={0} r={1} fill={`url(#playerTwoGradient)`} />
+      <ViewPlayerTwoGradientDef gradientId={ref.current} />
+      <circle cx={0} cy={0} r={1} fill={`url(#${ref.current})`} />
     </UI.SvgIcon>
   )
 }
