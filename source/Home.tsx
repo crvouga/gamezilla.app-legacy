@@ -2,7 +2,7 @@ import { Ctx } from "./App.Shared"
 import { Sub } from "./Core"
 import { RoomId, UserId } from "./Data"
 import * as Game from "./Game/Game.Frontend"
-import { GameName, gameNameList } from "./Game/Game.Types"
+import { GameName } from "./Game/Game.Types"
 import * as GameRoom from "./Game/GameRoom.Frontend"
 import * as Route from "./Route"
 import { AspectRatio, Avatar, Box, Button, CardActionArea, FillBox, Header, Paper, Typography } from "./UI"
@@ -291,33 +291,11 @@ const ViewNotInRoom = ({
     <FillBox sx={{ overflowY: "scroll" }}>
       <Header title="Home" />
 
-      <Typography variant="h3" sx={{ mb: 1, px: 2 }}>
-        Start a Game
-      </Typography>
+      <GameRoom.ViewCreateRoomCallToAction
+        onClickGame={(gameName) => $d(['ClickedGameCard', { roomId: RoomId.generate(), gameName }])}
+        onClickCreate={() => $d(['ClickedCreateRoom', { roomId: RoomId.generate() }])}
+      />
 
-      {/* <Typography variant="h6" color="text.secondary" sx={{ mb: 1, px: 2 }}>
-        Games
-      </Typography> */}
-
-      <Box sx={{ display: 'flex', overflow: "scroll", gap: 2, mb: 2, snapScrollType: "x mandatory", px: 2 }}>
-        {gameNameList.map(gameName => (
-          <CardActionArea key={gameName} onClick={() => $d(['ClickedGameCard', { roomId: RoomId.generate(), gameName }])} sx={{ width: "100px", minWidth: "100px", }}>
-
-            <Paper sx={{ overflow: "hidden", width: "100%" }}>
-              <Game.CoverArt gameName={gameName} />
-              <Typography variant="subtitle2" color="text.secondary" noWrap sx={{ width: "100%", px: 1 }}>
-                {Game.gameNameToString(gameName)}
-              </Typography>
-            </Paper>
-          </CardActionArea>
-        ))}
-      </Box>
-
-      <Box sx={{ px: 2 }}>
-        <Button fullWidth variant="contained" onClick={() => $d(['ClickedCreateRoom', { roomId: RoomId.generate() }])}>
-          Create New Room
-        </Button>
-      </Box>
 
       {rooms.length > 0 && <>
         <Typography

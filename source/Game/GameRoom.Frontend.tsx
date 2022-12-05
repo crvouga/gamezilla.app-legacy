@@ -490,7 +490,11 @@ const mergeWithBackendModel = ({
       const backendGame = backendRoom.game
 
       if (!backendGame) {
-        return [rooms, cmd]
+        const frontendRoomNew: FrontendRoom = {
+          hostId: backendRoom.hostId,
+          roomId: backendRoom.roomId
+        }
+        return [{ ...rooms, [roomId]: frontendRoomNew }, cmd]
       }
 
       const frontendGame = frontendModel.rooms[roomId]?.game
@@ -659,19 +663,22 @@ export const ViewPageGame = ({
   const { game } = room
 
 
-  if (!game) {
-    return <ViewNotInGame ctx={ctx} model={model} $d={$d} />
-  }
+
 
   const usersInRoom = toRoomUsers(room.roomId, model)
 
   return (
     <>
-      <Game.View
-        ctx={ctx}
-        $d={(msg) => $d(["Game", room.roomId, msg])}
-        model={game}
-      />
+
+      {game ? (
+        <Game.View
+          ctx={ctx}
+          $d={(msg) => $d(["Game", room.roomId, msg])}
+          model={game}
+        />
+      ) : (
+        <ViewNotInGame ctx={ctx} model={model} $d={$d} />
+      )}
 
       <Divider />
 
@@ -703,12 +710,28 @@ export const ViewPageGame = ({
   )
 }
 
-export const ViewNotInGame = (_props: {
+
+export const ViewNotInGame = ({ ctx, $d }: {
   ctx: Ctx
   model: Model
   $d: (msg: Msg) => void
 }) => {
-  return <></>
+  return <FillBox>
+    <Header title="Game Room" />
+    <Typography sx={{ px: 2, mb: 2 }} variant="h4">
+      Games
+    </Typography>
+
+    <Box sx={{ display: 'grid', px: 2, gap: 2, gridTemplateColumns: "1fr 1fr", width: '100%' }}>
+      {gameNameList.map((gameName) => (
+        <Box key={gameName}>
+          <CardActionArea onClick={() => $d(['InputGame', { userId: ctx.currentUserId, gameName }])}>
+            <GameCard gameName={gameName} />
+          </CardActionArea>
+        </Box>
+      ))}
+    </Box>
+  </FillBox>
 }
 
 export const ViewNotInRoom = ({
@@ -760,40 +783,12 @@ export const ViewNotInRoom = ({
   return (
     <FillBox>
       {header}
-      <Typography sx={{ paddingX: 2, marginBottom: 1 }} variant="h4">
-        Games
-      </Typography>
+      <ViewCreateRoomCallToAction
+        onClickCreate={() => $d(['RoomCreate', { roomId: RoomId.generate(), userId: ctx.currentUserId }])}
+        onClickGame={(gameName) => $d(['RoomCreate', { roomId: RoomId.generate(), userId: ctx.currentUserId, gameName }])}
+      />
 
-      <Box
-        sx={{
-          gap: 1,
-          paddingX: 2,
-          display: "flex",
-          overflowX: "scroll",
-          width: "100%",
-          snapScrollType: "x mandatory",
-          marginBottom: 2,
-        }}
-      >
-        {gameNameList.map((gameName) => (
-          <Box key={gameName} sx={{ minWidth: 150, flex: 1 }}>
-            <ViewGameCard
-              key={gameName}
-              gameName={gameName}
-              onClick={() =>
-                $d([
-                  "RoomCreate",
-                  {
-                    userId: ctx.currentUserId,
-                    roomId: RoomId.generate(),
-                    gameName,
-                  },
-                ])
-              }
-            />
-          </Box>
-        ))}
-      </Box>
+
 
       {Object.values(rooms).length > 0 && (
         <Typography
@@ -831,6 +826,46 @@ export const ViewNotInRoom = ({
         ))}
       </Box>
     </FillBox>
+  )
+}
+
+export const GameCard = ({ gameName }: { gameName: GameName }) => {
+  return (
+    <Paper sx={{ overflow: "hidden", width: "100%" }}>
+      <Game.CoverArt gameName={gameName} />
+      <Typography variant="subtitle1" noWrap sx={{ width: "100%", px: 1, py: 0.5 }}>
+        {Game.gameNameToString(gameName)}
+      </Typography>
+    </Paper>
+  )
+}
+
+export const ViewCreateRoomCallToAction = ({ onClickCreate }: { onClickGame: (gameName: GameName) => void, onClickCreate: () => void }) => {
+  return (
+    <>
+      <Typography variant="h3" sx={{ mb: 1, px: 2 }}>
+        Start a Game
+      </Typography>
+
+      {/* <Box sx={{ display: 'flex', overflow: "scroll", gap: 2, mb: 2, snapScrollType: "x mandatory", px: 2 }}>
+        {gameNameList.map(gameName => (
+          <CardActionArea key={gameName} onClick={() => onClickGame(gameName)} sx={{ width: "100px", minWidth: "100px", }}>
+            <Paper sx={{ overflow: "hidden", width: "100%" }}>
+              <Game.CoverArt gameName={gameName} />
+              <Typography variant="subtitle2" noWrap sx={{ width: "100%", px: 1 }}>
+                {Game.gameNameToString(gameName)}
+              </Typography>
+            </Paper>
+          </CardActionArea>
+        ))}
+      </Box> */}
+
+      <Box sx={{ px: 2 }}>
+        <Button fullWidth variant="contained" onClick={onClickCreate}>
+          Create New Room
+        </Button>
+      </Box>
+    </>
   )
 }
 
@@ -937,7 +972,9 @@ export const ViewPageRoom = ({
         ))}
       </Box>
 
-      <Box sx={{ paddingX: 2, paddingBottom: 2, display: "flex", gap: 2 }}>
+      <Box sx={{flex:1}} />
+
+      <Box sx={{ p: 2, display: "flex", gap: 2 }}>
         {ctx.currentUserId === room.hostId ? (
           <>
             <Button fullWidth>Change Game</Button>
