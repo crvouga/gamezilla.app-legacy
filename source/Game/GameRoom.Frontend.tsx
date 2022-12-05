@@ -214,13 +214,13 @@ export const updateFromBackend = (
 
       const actions: OutAction[] = [["Profile", ["FindMany", { userIds }]]]
 
-      const [synced, syncedCmd] = mergeWithBackendModel({
+      const merged = mergeWithBackendModel({
         backendModel: msg[1],
         frontendModel: model,
         sendToBackend,
       })
 
-      return [synced, syncedCmd, actions]
+      return [merged[0], merged[1], actions]
     }
 
     case "Game": {
