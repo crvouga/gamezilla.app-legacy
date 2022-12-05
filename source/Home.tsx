@@ -295,9 +295,9 @@ const ViewNotInRoom = ({
         Start a Game
       </Typography>
 
-      <Typography variant="h6" color="text.secondary" sx={{ mb: 1, px: 2 }}>
+      {/* <Typography variant="h6" color="text.secondary" sx={{ mb: 1, px: 2 }}>
         Games
-      </Typography>
+      </Typography> */}
 
       <Box sx={{ display: 'flex', overflow: "scroll", gap: 2, mb: 2, snapScrollType: "x mandatory", px: 2 }}>
         {gameNameList.map(gameName => (
