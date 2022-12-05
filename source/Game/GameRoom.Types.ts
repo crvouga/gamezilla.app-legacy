@@ -25,7 +25,7 @@ export type BackendModel = {
 export type BackendRoom = {
   roomId: RoomId
   hostId: UserId
-  game: Game.BackendModel
+  game?: Game.BackendModel
 }
 
 export type FrontendModel = {
@@ -35,10 +35,6 @@ export type FrontendModel = {
   users: {
     [userId: UserId]: RoomUser
   }
-  modal:
-    | { type: "DrawerOpened" }
-    | { type: "Closed" }
-    | { type: "RoomLeaveThenJoin"; roomId: RoomId }
   requests: {
     [key in Req[0]]?: RemoteData<Problem, "None">
   }
@@ -47,7 +43,7 @@ export type FrontendModel = {
 export type FrontendRoom = {
   roomId: RoomId
   hostId: UserId
-  game: Game.FrontendModel
+  game?: Game.FrontendModel
 }
 
 export type RoomUser = {
@@ -65,27 +61,27 @@ export type RoomUser = {
 
 export type ToFrontend =
   | ["Sync", BackendModel]
-  | ["Games", RoomId, Game.ToFrontend]
+  | ["Game", RoomId, Game.ToFrontend]
   | Res
 
 export type ToBackend =
   | Req
   | ["RoomEndThenJoin", { roomId: RoomId; userId: UserId }]
   | ["RoomLeaveThenJoin", { roomId: RoomId; userId: UserId }]
-  | ["Games", RoomId, Game.ToBackend]
+  | ["Game", RoomId, Game.ToBackend]
 
-export type BackendMsg = ["Games", RoomId, Game.BackendMsg]
+export type BackendMsg = ["Game", RoomId, Game.BackendMsg]
 
 export type FrontendMsg =
-  | ["ClickedGoHome"]
-  | ["ClickedRoomButton"]
-  | ["ClosedDrawer"]
+  | ["ClickedHome"]
+  | ["ClickedRoom"]
   | ["ClickedUser", { userId: UserId }]
   | ["ClickedBanner"]
-  | ["ClosedModal"]
-  | ["Games", RoomId, Game.FrontendMsg]
+  | ["ClickedRoomLeave", { userId: UserId }]
+  | ["Game", RoomId, Game.FrontendMsg]
   | ["RoomEndThenJoin", { roomId: RoomId; userId: UserId }]
   | ["RoomLeaveThenJoin", { roomId: RoomId; userId: UserId }]
+  | ["ClickedRoomDestroy", { userId: UserId }]
   | Req
 
 //
@@ -97,32 +93,32 @@ export type FrontendMsg =
 type Model = BackendModel
 
 export type Req =
-  | ["RoomCreate", { userId: UserId; roomId: RoomId; gameName: Game.GameName }]
+  | ["RoomCreate", { userId: UserId; roomId: RoomId; gameName?: Game.GameName }]
   | ["RoomDestroy", { userId: UserId }]
   | ["RoomJoin", { userId: UserId; roomId: RoomId }]
   | ["RoomLeave", { userId: UserId }]
-  | ["ChangeGame", { userId: UserId; gameName: Game.GameName }]
+  | ["InputGame", { userId: UserId; gameName?: Game.GameName }]
   | ["ChangeHost", { userId: UserId; nextHostId: UserId }]
 
 export type Res =
   | [
-      "RoomCreate",
-      { userId: UserId; roomId: RoomId; gameName: Game.GameName },
-      Result<Problem, Model>,
-    ]
+    "RoomCreate",
+    { userId: UserId; roomId: RoomId; gameName?: Game.GameName },
+    Result<Problem, Model>,
+  ]
   | ["RoomDestroy", { userId: UserId }, Result<Problem, Model>]
   | ["RoomJoin", { userId: UserId; roomId: RoomId }, Result<Problem, Model>]
   | ["RoomLeave", { userId: UserId }, Result<Problem, Model>]
   | [
-      "ChangeGame",
-      { userId: UserId; gameName: Game.GameName },
-      Result<Problem, Model>,
-    ]
+    "InputGame",
+    { userId: UserId; gameName?: Game.GameName },
+    Result<Problem, Model>,
+  ]
   | [
-      "ChangeHost",
-      { userId: UserId; nextHostId: UserId },
-      Result<Problem, Model>,
-    ]
+    "ChangeHost",
+    { userId: UserId; nextHostId: UserId },
+    Result<Problem, Model>,
+  ]
 
 export type Problem =
   | "must_be_host"
@@ -153,10 +149,11 @@ export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
         return Err("impossible_state_room_id_taken")
       }
 
+      const { gameName } = msg[1]
       const roomNew: BackendRoom = {
         roomId: msg[1].roomId,
         hostId: msg[1].userId,
-        game: GameBackend.init({ gameName: msg[1].gameName }),
+        game: gameName ? GameBackend.init({ gameName }) : undefined,
       }
 
       const userNew: RoomUser = {
@@ -262,8 +259,57 @@ export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
       return Ok(modelNew)
     }
 
-    case "ChangeGame": {
-      return Ok(model)
+    case "InputGame": {
+      const { userId, gameName } = msg[1]
+
+      const user = model.users[userId]
+
+      if (!user) {
+        return Err("not_in_room")
+      }
+
+      const room = model.rooms[user.roomId]
+
+      if (!room) {
+        return Err("not_in_room")
+      }
+
+      if (room.hostId !== user.userId) {
+        return Err("must_be_host")
+      }
+
+      if (!gameName) {
+        const roomNew: BackendRoom = {
+          hostId: room.hostId,
+          roomId: room.roomId,
+        }
+
+        const modelNew: BackendModel = {
+          ...model,
+          rooms: {
+            ...model.rooms,
+            [roomNew.roomId]: roomNew
+          }
+        }
+
+        return Ok(modelNew)
+      }
+
+      const roomNew: BackendRoom = {
+        hostId: room.hostId,
+        roomId: room.roomId,
+        game: GameBackend.init({ gameName })
+      }
+
+      const modelNew: BackendModel = {
+        ...model,
+        rooms: {
+          ...model.rooms,
+          [roomNew.roomId]: roomNew
+        }
+      }
+
+      return Ok(modelNew)
     }
 
     case "ChangeHost": {

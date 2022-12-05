@@ -4,7 +4,7 @@ import { RoomId } from "../Data"
 import { ctx, userB, userC } from "../test-data"
 import * as UI from "../UI"
 import * as Game from "./Game.Frontend"
-import { init, View } from "./GameRoom.Frontend"
+import { init, ViewPageGame } from "./GameRoom.Frontend"
 import { FrontendRoom } from "./GameRoom.Types"
 
 const roomA: FrontendRoom = {
@@ -22,22 +22,22 @@ const roomB: FrontendRoom = {
   roomId: RoomId.generate(),
 }
 
-const props: Parameters<typeof View>[0] = {
-  $d: () => {},
+const props: Parameters<typeof ViewPageGame>[0] = {
+  $d: () => { },
   model: init[0],
   ctx,
 }
 
 export default {
   title: "Game Room",
-  component: View,
+  component: ViewPageGame,
   args: props,
-} as ComponentMeta<typeof View>
+} as ComponentMeta<typeof ViewPageGame>
 
-const Template: ComponentStory<typeof View> = (args) => {
+const Template: ComponentStory<typeof ViewPageGame> = (args) => {
   return (
     <UI.AppContainer themeMode="System">
-      <View {...args} />
+      <ViewPageGame {...args} />
     </UI.AppContainer>
   )
 }

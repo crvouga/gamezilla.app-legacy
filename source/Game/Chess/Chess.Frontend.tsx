@@ -24,10 +24,10 @@ import { BannerArt } from "./Views"
 
 export type Model = FrontendModel
 
-export const init = ({}: // sendToBackend,
-{
-  sendToBackend: (msg: ToBackend) => Cmd
-}): [FrontendModel, Cmd<Msg>] => {
+export const init = ({ }: // sendToBackend,
+  {
+    sendToBackend: (msg: ToBackend) => Cmd
+  }): [FrontendModel, Cmd<Msg>] => {
   return [
     {
       mode: ["None"],
@@ -281,7 +281,7 @@ export const theme = {
 
 export const CoverArt = () => {
   return (
-    <svg width="100%" height="100%" viewBox="0 0 2 2">
+    <svg width="100%" viewBox={"0 0 2 2"}>
       <rect x={0} y={0} width={1} height={1} fill={theme.lightSquare} />
 
       <rect x={0} y={1} width={1} height={1} fill={theme.darkSquare} />
@@ -291,6 +291,7 @@ export const CoverArt = () => {
       <rect x={1} y={0} width={1} height={1} fill={theme.darkSquare} />
 
       <svg
+        x={0} y={0}
         xmlns="http://www.w3.org/2000/svg"
         width="2"
         height="2"
