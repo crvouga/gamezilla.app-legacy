@@ -591,7 +591,7 @@ const viewBox = [
 export const CoverArt = () => {
   const theme = useTheme()
   return (
-    <svg viewBox={viewBox} width={"100%"} height={"100%"}>
+    <svg viewBox={viewBox} width={"100%"}>
       <rect
         x={coverArtMaze.lower.x}
         y={coverArtMaze.lower.y}

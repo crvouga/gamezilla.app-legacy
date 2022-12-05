@@ -1,31 +1,20 @@
+import * as Alerts from "../Alerts"
 import { Cmd, exhaustive, p, RemoteData, Sub } from "../Core"
 import { RoomId, UserId } from "../Data"
 import * as ProfileStore from "../Profile/Profile.Store"
 import * as Route from "../Route"
-import * as Alerts from "../Alerts"
-import * as UI from "../UI"
-import {
-  Typography,
-  Icons,
-  Box,
-  ButtonBase,
-  Button,
-  ConformationDialog,
-  Divider,
-  Toolbar,
-} from "../UI"
+import { AspectRatio, Avatar, Badge, Box, Button, ButtonBase, CardActionArea, CircularProgress, Divider, FillBox, Header, IconButton, Icons, Paper, Toolbar, Typography } from "../UI"
 import * as Game from "./Game.Frontend"
 import { Ctx } from "./Game.Shared"
 import { GameName, gameNameList } from "./Game.Types"
 import {
-  BackendModel,
-  FrontendModel,
+  BackendModel, FrontendModel,
   FrontendMsg,
   FrontendRoom,
   Res,
   RoomUser,
   ToBackend,
-  ToFrontend,
+  ToFrontend
 } from "./GameRoom.Types"
 
 //
@@ -42,7 +31,6 @@ export const init: [Model, Cmd<Msg>] = [
   {
     rooms: {},
     users: {},
-    modal: { type: "Closed" },
     requests: {},
   },
   Cmd.None,
@@ -79,21 +67,16 @@ export const update = (
     sendToBackend: (msg: ToBackend) => Cmd
   },
   msg: Msg,
-  modelPrev: Model,
+  model: Model,
 ): [Model, Cmd<Msg>] => {
-  const model: Model = { ...modelPrev, modal: { type: "Closed" } }
 
   switch (msg[0]) {
-    case "ClickedGoHome": {
+    case "ClickedHome": {
       return [model, Route.push(["Home"])]
     }
 
-    case "ClickedRoomButton": {
-      return [{ ...model, modal: { type: "DrawerOpened" } }, Cmd.None]
-    }
-
-    case "ClosedDrawer": {
-      return [model, Cmd.None]
+    case "ClickedRoom": {
+      return [model, Route.push(['GameRoom'])]
     }
 
     case "ClickedUser": {
@@ -101,19 +84,16 @@ export const update = (
     }
 
     case "ClickedBanner": {
-      return [model, Route.push(["GameRoom"])]
+      return [model, Route.push(["Game"])]
     }
 
-    case "ClosedModal": {
-      return [{ ...model, modal: { type: "Closed" } }, Cmd.None]
-    }
 
     case "RoomCreate":
     case "RoomDestroy":
     case "RoomJoin":
     case "RoomLeave":
     case "ChangeHost":
-    case "ChangeGame": {
+    case "InputGame": {
       return [
         {
           ...model,
@@ -126,7 +106,7 @@ export const update = (
       ]
     }
 
-    case "Games": {
+    case "Game": {
       const user = model.users[ctx.currentUserId]
 
       if (!user) {
@@ -145,15 +125,21 @@ export const update = (
         return [model, Cmd.None]
       }
 
+      const { game } = room
+
+      if (!game) {
+        return [model, Cmd.None]
+      }
+
       const gameMsg = msg[2]
 
       const [gameNew, gameCmd] = Game.update(
         {
           ctx,
-          sendToBackend: (msg) => sendToBackend(["Games", roomId, msg]),
+          sendToBackend: (msg) => sendToBackend(["Game", roomId, msg]),
         },
         gameMsg,
-        room.game,
+        game,
       )
 
       const roomNew: FrontendRoom = {
@@ -173,7 +159,7 @@ export const update = (
         modelNew,
         p(
           gameCmd,
-          Cmd.map((msg): Msg => ["Games", roomId, msg]),
+          Cmd.map((msg): Msg => ["Game", roomId, msg]),
         ),
       ]
     }
@@ -184,6 +170,26 @@ export const update = (
 
     case "RoomEndThenJoin": {
       return [model, sendToBackend(msg)]
+    }
+
+    case 'ClickedRoomDestroy': {
+      return [
+        model,
+        Cmd.batch([
+          Route.push(["Home"]),
+          sendToBackend(['RoomDestroy', msg[1]])
+        ])
+      ];
+    }
+
+    case 'ClickedRoomLeave': {
+      return [
+        model,
+        Cmd.batch([
+          Route.push(["Home"]),
+          sendToBackend(['RoomLeave', msg[1]])
+        ])
+      ];
     }
 
     default:
@@ -217,7 +223,7 @@ export const updateFromBackend = (
       return [synced, syncedCmd, actions]
     }
 
-    case "Games": {
+    case "Game": {
       const roomId = msg[1]
 
       const room = model.rooms[roomId]
@@ -226,15 +232,21 @@ export const updateFromBackend = (
         return [model, Cmd.None, []]
       }
 
+      const { game } = room
+
+      if (!game) {
+        return [model, Cmd.None, []]
+      }
+
       const gameMsg = msg[2]
 
       const [gameNew, gameCmd, actions] = Game.updateFromBackend(
         {
           ctx,
-          sendToBackend: (msg) => sendToBackend(["Games", roomId, msg]),
+          sendToBackend: (msg) => sendToBackend(["Game", roomId, msg]),
         },
         gameMsg,
-        room.game,
+        game,
       )
 
       const roomNew: FrontendRoom = {
@@ -254,13 +266,13 @@ export const updateFromBackend = (
         modelNew,
         p(
           gameCmd,
-          Cmd.map((msg): Msg => ["Games", roomId, msg]),
+          Cmd.map((msg) => ["Game", roomId, msg]),
         ),
         actions,
       ]
     }
 
-    case "ChangeGame":
+    case "InputGame":
     case "ChangeHost":
     case "RoomCreate": {
       return updateResponse({ sendToBackend }, msg, model)
@@ -288,17 +300,17 @@ export const updateFromBackend = (
       const alertActions: OutAction[] =
         msg[2].type === "Ok"
           ? [
-              [
-                "Alerts",
-                {
-                  message: toRoomEndMessage({
-                    ctx,
-                    hostId: msg[1].userId,
-                  }),
-                  tag: "Snack",
-                },
-              ],
-            ]
+            [
+              "Alerts",
+              {
+                message: toRoomEndMessage({
+                  ctx,
+                  hostId: msg[1].userId,
+                }),
+                tag: "Snack",
+              },
+            ],
+          ]
           : []
 
       return [handled[0], handled[1], [...handled[2], ...alertActions]]
@@ -314,17 +326,17 @@ export const updateFromBackend = (
       const alertActions: OutAction[] =
         msg[1].userId !== ctx.currentUserId
           ? [
-              [
-                "Alerts",
-                {
-                  tag: "Snack",
-                  message: toRoomLeaveMessage({
-                    userId: msg[1].userId,
-                    ctx,
-                  }),
-                },
-              ],
-            ]
+            [
+              "Alerts",
+              {
+                tag: "Snack",
+                message: toRoomLeaveMessage({
+                  userId: msg[1].userId,
+                  ctx,
+                }),
+              },
+            ],
+          ]
           : []
 
       return [handled[0], handled[1], [...handled[2], ...alertActions]]
@@ -341,28 +353,28 @@ export const updateFromBackend = (
 
         const alertActions: Alerts.Action<Msg>[] =
           msg[2].error === "already_in_room" &&
-          msg[1].userId === ctx.currentUserId
+            msg[1].userId === ctx.currentUserId
             ? ctx.currentUserId === currentRoom?.hostId
               ? [
-                  [
-                    "Alerts",
-                    {
-                      title: "End your current room to join this room?",
-                      tag: "Conformation",
-                      onConfirm: ["RoomEndThenJoin", msg[1]],
-                    },
-                  ],
-                ]
+                [
+                  "Alerts",
+                  {
+                    title: "End your current room to join this room?",
+                    tag: "Conformation",
+                    onConfirm: ["RoomEndThenJoin", msg[1]],
+                  },
+                ],
+              ]
               : [
-                  [
-                    "Alerts",
-                    {
-                      title: "Leave your current room to join this room?",
-                      tag: "Conformation",
-                      onConfirm: ["RoomLeaveThenJoin", msg[1]],
-                    },
-                  ],
-                ]
+                [
+                  "Alerts",
+                  {
+                    title: "Leave your current room to join this room?",
+                    tag: "Conformation",
+                    onConfirm: ["RoomLeaveThenJoin", msg[1]],
+                  },
+                ],
+              ]
             : []
 
         return [handled[0], handled[1], [...handled[2], ...alertActions]]
@@ -376,17 +388,17 @@ export const updateFromBackend = (
       const alertActions: OutAction[] =
         msg[1].userId !== ctx.currentUserId
           ? [
-              [
-                "Alerts",
-                {
-                  tag: "Snack",
-                  message: toRoomJoinMessage({
-                    userId: msg[1].userId,
-                    ctx,
-                  }),
-                },
-              ],
-            ]
+            [
+              "Alerts",
+              {
+                tag: "Snack",
+                message: toRoomJoinMessage({
+                  userId: msg[1].userId,
+                  ctx,
+                }),
+              },
+            ],
+          ]
           : []
 
       return [
@@ -477,17 +489,23 @@ const mergeWithBackendModel = ({
 
       const backendGame = backendRoom.game
 
-      const frontendRoom = frontendModel.rooms[roomId]
+      if (!backendGame) {
+        return [rooms, cmd]
+      }
 
-      if (!frontendRoom) {
+      const frontendGame = frontendModel.rooms[roomId]?.game
+
+
+      if (!frontendGame) {
         const initial = Game.init({
           gameName: backendGame[0],
-          sendToBackend: (msg) => sendToBackend(["Games", roomId, msg]),
+          sendToBackend: (msg) => sendToBackend(["Game", roomId, msg]),
         })
+
         const merged = Game.mergeWithBackend({
           backendModel: backendGame,
           frontendModel: initial[0],
-          sendToBackend: (msg) => sendToBackend(["Games", roomId, msg]),
+          sendToBackend: (msg) => sendToBackend(["Game", roomId, msg]),
         })
 
         const frontendRoomNew: FrontendRoom = {
@@ -503,22 +521,16 @@ const mergeWithBackendModel = ({
           },
           Cmd.batch([
             cmd,
-            p(
-              initial[1],
-              Cmd.map((msg): Msg => ["Games", roomId, msg]),
-            ),
-            p(
-              merged[1],
-              Cmd.map((msg): Msg => ["Games", roomId, msg]),
-            ),
+            p(initial[1], Cmd.map((msg) => ["Game", roomId, msg])),
+            p(merged[1], Cmd.map((msg) => ["Game", roomId, msg])),
           ]),
         ]
       }
 
       const merged = Game.mergeWithBackend({
         backendModel: backendGame,
-        frontendModel: frontendRoom.game,
-        sendToBackend: (msg) => sendToBackend(["Games", roomId, msg]),
+        frontendModel: frontendGame,
+        sendToBackend: (msg) => sendToBackend(["Game", roomId, msg]),
       })
 
       const frontendRoomNew: FrontendRoom = {
@@ -536,7 +548,7 @@ const mergeWithBackendModel = ({
           cmd,
           p(
             merged[1],
-            Cmd.map((msg): Msg => ["Games", roomId, msg]),
+            Cmd.map((msg): Msg => ["Game", roomId, msg]),
           ),
         ]),
       ]
@@ -546,7 +558,6 @@ const mergeWithBackendModel = ({
 
   return [
     {
-      modal: frontendModel.modal,
       requests: frontendModel.requests,
       rooms: roomsNew,
       users: backendModel.users,
@@ -554,6 +565,7 @@ const mergeWithBackendModel = ({
     roomsCmd,
   ]
 }
+
 
 export const runAction = (
   {
@@ -600,11 +612,16 @@ export const subscriptions = (
     return Sub.None
   }
 
-  const intervalId = `room-${room.roomId}`
+
+  const { game } = room
+
+  if (!game) {
+    return Sub.None
+  }
 
   return p(
-    Game.subscriptions(intervalId, room.game),
-    Sub.map((msg): Msg => ["Games", room.roomId, msg]),
+    Game.subscriptions(`room/${room.roomId}`, game),
+    Sub.map((msg) => ["Game", room.roomId, msg]),
   )
 }
 
@@ -618,7 +635,7 @@ export const subscriptions = (
 //
 //
 
-export const View = ({
+export const ViewPageGame = ({
   ctx,
   model,
   $d,
@@ -639,31 +656,20 @@ export const View = ({
     return <ViewNotInRoom ctx={ctx} model={model} $d={$d} />
   }
 
-  const game = room.game
+  const { game } = room
+
+
+  if (!game) {
+    return <ViewNotInGame ctx={ctx} model={model} $d={$d} />
+  }
+
   const usersInRoom = toRoomUsers(room.roomId, model)
+
   return (
     <>
-      {/* todo make a global conformation dialog */}
-      <ConformationDialog
-        open={model.modal.type === "RoomLeaveThenJoin"}
-        onCancel={() => $d(["ClosedModal"])}
-        onClose={() => $d(["ClosedModal"])}
-        onConfirm={() => {
-          if (model.modal.type === "RoomLeaveThenJoin") {
-            $d([
-              "RoomLeaveThenJoin",
-              { userId: ctx.currentUserId, roomId: model.modal.roomId },
-            ])
-          }
-        }}
-        confirmTitle="Join"
-        cancelTitle="Cancel"
-        title="Leave your current room to join this room?"
-      />
-
       <Game.View
         ctx={ctx}
-        $d={(msg) => $d(["Games", room.roomId, msg])}
+        $d={(msg) => $d(["Game", room.roomId, msg])}
         model={game}
       />
 
@@ -674,29 +680,35 @@ export const View = ({
         sx={{ paddingX: 2, justifyContent: "space-between" }}
       >
         <Button
-          startIcon={<UI.Icons.Home />}
+          startIcon={<Icons.Home />}
           size="small"
-          onClick={() => $d(["ClickedGoHome"])}
+          onClick={() => $d(["ClickedHome"])}
         >
           Home
         </Button>
-        <UI.Badge
+        <Badge
           badgeContent={usersInRoom.length > 1 ? usersInRoom.length : undefined}
           color="secondary"
         >
           <Button
-            startIcon={<UI.Icons.Group />}
+            startIcon={<Icons.Group />}
             size="small"
-            onClick={() => $d(["ClickedRoomButton"])}
+            onClick={() => $d(["ClickedRoom"])}
           >
             Room
           </Button>
-        </UI.Badge>
+        </Badge>
       </Toolbar>
-
-      <ViewGameRoomAvatarGroup ctx={ctx} room={room} model={model} $d={$d} />
     </>
   )
+}
+
+export const ViewNotInGame = (_props: {
+  ctx: Ctx
+  model: Model
+  $d: (msg: Msg) => void
+}) => {
+  return <></>
 }
 
 export const ViewNotInRoom = ({
@@ -711,14 +723,14 @@ export const ViewNotInRoom = ({
   const rooms = Object.values(model.rooms)
 
   const header = (
-    <UI.Header
+    <Header
       left={
-        <UI.IconButton
+        <IconButton
           sx={{ marginLeft: -1 }}
-          onClick={() => $d(["ClickedGoHome"])}
+          onClick={() => $d(["ClickedHome"])}
         >
-          <UI.Icons.Home />
-        </UI.IconButton>
+          <Icons.Home />
+        </IconButton>
       }
       title="Game Rooms"
     />
@@ -729,9 +741,9 @@ export const ViewNotInRoom = ({
     model.requests.RoomJoin?.type === "Loading"
   ) {
     return (
-      <UI.FillBox>
+      <FillBox>
         {header}
-        <UI.Box
+        <Box
           sx={{
             flex: 1,
             display: "flex",
@@ -739,20 +751,20 @@ export const ViewNotInRoom = ({
             justifyContent: "center",
           }}
         >
-          <UI.CircularProgress />
-        </UI.Box>
-      </UI.FillBox>
+          <CircularProgress />
+        </Box>
+      </FillBox>
     )
   }
 
   return (
-    <UI.FillBox>
+    <FillBox>
       {header}
-      <UI.Typography sx={{ paddingX: 2, marginBottom: 1 }} variant="h4">
+      <Typography sx={{ paddingX: 2, marginBottom: 1 }} variant="h4">
         Games
-      </UI.Typography>
+      </Typography>
 
-      <UI.Box
+      <Box
         sx={{
           gap: 1,
           paddingX: 2,
@@ -764,7 +776,7 @@ export const ViewNotInRoom = ({
         }}
       >
         {gameNameList.map((gameName) => (
-          <UI.Box key={gameName} sx={{ minWidth: 150, flex: 1 }}>
+          <Box key={gameName} sx={{ minWidth: 150, flex: 1 }}>
             <ViewGameCard
               key={gameName}
               gameName={gameName}
@@ -779,20 +791,20 @@ export const ViewNotInRoom = ({
                 ])
               }
             />
-          </UI.Box>
+          </Box>
         ))}
-      </UI.Box>
+      </Box>
 
       {Object.values(rooms).length > 0 && (
-        <UI.Typography
+        <Typography
           sx={{ paddingX: 2, marginBottom: 1 }}
           variant="h6"
           color="text.secondary"
         >
           Active Rooms
-        </UI.Typography>
+        </Typography>
       )}
-      <UI.Box
+      <Box
         sx={{
           paddingX: 2,
           flex: 1,
@@ -806,7 +818,7 @@ export const ViewNotInRoom = ({
             key={room.roomId}
             roomId={room.roomId}
             hostId={room.hostId}
-            gameName={room.game[0]}
+            gameName={room?.game?.[0]}
             ctx={ctx}
             gameRoom={model}
             onClick={() =>
@@ -817,8 +829,8 @@ export const ViewNotInRoom = ({
             }
           />
         ))}
-      </UI.Box>
-    </UI.FillBox>
+      </Box>
+    </FillBox>
   )
 }
 
@@ -845,37 +857,41 @@ const toRoomUsers = (roomId: RoomId, model: Model): RoomUser[] => {
   return roomUsers
 }
 
-const ViewGameRoomAvatarGroup = ({
-  room,
+export const ViewPageRoom = ({
   model,
   $d,
   ctx,
 }: {
   ctx: Ctx
-  room: {
-    roomId: RoomId
-    hostId: UserId
-  }
   model: Model
   $d: (msg: Msg) => void
 }) => {
+
+  const user = model.users[ctx.currentUserId]
+
+  if (!user) {
+    return <ViewNotInRoom $d={$d} ctx={ctx} model={model} />
+  }
+
+  const room = model.rooms[user.roomId]
+
+  if (!room) {
+    return <ViewNotInRoom $d={$d} ctx={ctx} model={model} />
+  }
+
   const usersInRoom = toRoomUsers(room.roomId, model)
 
   return (
-    <UI.Drawer
-      anchor="bottom"
-      open={model.modal.type === "DrawerOpened"}
-      onClose={() => $d(["ClosedDrawer"])}
-    >
-      <UI.Typography
+    <FillBox>
+      <Typography
         variant="h4"
         sx={{ paddingX: 2, paddingTop: 2, width: "100%" }}
         noWrap
       >
         {ctx.profiles[room.hostId]?.username ?? "..."}'s room
-      </UI.Typography>
+      </Typography>
 
-      <UI.Box
+      <Box
         sx={{
           display: "flex",
           paddingY: 1,
@@ -883,7 +899,7 @@ const ViewGameRoomAvatarGroup = ({
         }}
       >
         {usersInRoom.map((user) => (
-          <UI.Box
+          <Box
             key={user.userId}
             onClick={() => $d(["ClickedUser", user])}
             sx={{
@@ -896,56 +912,56 @@ const ViewGameRoomAvatarGroup = ({
               overflowX: "hidden",
             }}
           >
-            <UI.Avatar src={ctx.profiles[user.userId]?.avatarUrl} />
-            <UI.Typography
+            <Avatar src={ctx.profiles[user.userId]?.avatarUrl} />
+            <Typography
               align="center"
               sx={{ marginBottom: -1 / 2, width: "100%" }}
               noWrap
             >
               {ctx.profiles[user.userId]?.username ?? "..."}
-            </UI.Typography>
+            </Typography>
             {user.userId === room.hostId ? (
-              <UI.Typography variant="subtitle2" color="text.secondary">
+              <Typography variant="subtitle2" color="text.secondary">
                 Host
-              </UI.Typography>
+              </Typography>
             ) : (
-              <UI.Typography
+              <Typography
                 variant="subtitle2"
                 color="text.secondary"
                 sx={{ opacity: 0 }}
               >
                 Guest
-              </UI.Typography>
+              </Typography>
             )}
-          </UI.Box>
+          </Box>
         ))}
-      </UI.Box>
+      </Box>
 
-      <UI.Box sx={{ paddingX: 2, paddingBottom: 2, display: "flex", gap: 2 }}>
+      <Box sx={{ paddingX: 2, paddingBottom: 2, display: "flex", gap: 2 }}>
         {ctx.currentUserId === room.hostId ? (
           <>
-            <UI.Button fullWidth>Change Game</UI.Button>
-            <UI.Button
+            <Button fullWidth>Change Game</Button>
+            <Button
               fullWidth
               color="error"
-              onClick={() => $d(["RoomDestroy", { userId: ctx.currentUserId }])}
+              onClick={() => $d(["ClickedRoomDestroy", { userId: ctx.currentUserId }])}
             >
               End Room
-            </UI.Button>
+            </Button>
           </>
         ) : (
           <>
-            <UI.Button
+            <Button
               fullWidth
               color="error"
-              onClick={() => $d(["RoomLeave", { userId: ctx.currentUserId }])}
+              onClick={() => $d(["ClickedRoomLeave", { userId: ctx.currentUserId }])}
             >
               Leave Room
-            </UI.Button>
+            </Button>
           </>
         )}
-      </UI.Box>
-    </UI.Drawer>
+      </Box>
+    </FillBox>
   )
 }
 
@@ -959,8 +975,8 @@ export const ViewGameCard = ({
   disabled?: boolean
 }) => {
   return (
-    <UI.AspectRatio aspectRatio={1}>
-      <UI.ButtonBase
+    <AspectRatio aspectRatio={1}>
+      <ButtonBase
         disabled={disabled}
         sx={{
           position: "relative",
@@ -972,7 +988,7 @@ export const ViewGameCard = ({
       >
         <Game.CoverArt gameName={gameName} />
 
-        <UI.Box
+        <Box
           sx={{
             position: "absolute",
             top: 0,
@@ -984,7 +1000,7 @@ export const ViewGameCard = ({
             justifyContent: "flex-end",
           }}
         >
-          <UI.Box
+          <Box
             sx={{
               width: "100%",
               padding: 1,
@@ -992,22 +1008,22 @@ export const ViewGameCard = ({
               background: `linear-gradient(transparent, rgba(0, 0, 0, 0.6))`,
             }}
           >
-            <UI.Typography color="white" align="left" variant="h4">
+            <Typography color="white" align="left" variant="h4">
               {Game.gameNameToString(gameName)}
-            </UI.Typography>
-          </UI.Box>
-        </UI.Box>
-      </UI.ButtonBase>
-    </UI.AspectRatio>
+            </Typography>
+          </Box>
+        </Box>
+      </ButtonBase>
+    </AspectRatio>
   )
 }
+
+
 
 //
 //
 //
-//
 // Banner
-//
 //
 //
 //
@@ -1025,7 +1041,7 @@ export const ViewBanner = ({
   $d: (msg: Msg) => void
   store: ProfileStore.Model
 }) => {
-  if (route[0] === "GameRoom") {
+  if (route[0] === "GameRoom" || route[0] === "Game") {
     return <></>
   }
 
@@ -1086,23 +1102,23 @@ export const ViewCard = ({
     (user) => user.roomId === roomId,
   ).length
   return (
-    <UI.CardActionArea onClick={onClick}>
-      <UI.Paper variant="outlined" sx={{ overflow: "hidden", display: "flex" }}>
-        <UI.Box sx={{ width: 100 }}>
-          <UI.AspectRatio aspectRatio={1}>
+    <CardActionArea onClick={onClick}>
+      <Paper variant="outlined" sx={{ overflow: "hidden", display: "flex" }}>
+        <Box sx={{ width: 100 }}>
+          <AspectRatio aspectRatio={1}>
             {gameName ? (
               <Game.CoverArt gameName={gameName} />
             ) : (
-              <UI.Avatar
+              <Avatar
                 src={hostProfile?.avatarUrl ?? ""}
                 variant="square"
                 sx={{ width: "100%", height: "100%" }}
               />
             )}
-          </UI.AspectRatio>
-        </UI.Box>
-        <UI.Divider orientation="vertical" />
-        <UI.Box
+          </AspectRatio>
+        </Box>
+        <Divider orientation="vertical" />
+        <Box
           sx={{
             padding: 2,
             display: "flex",
@@ -1112,14 +1128,18 @@ export const ViewCard = ({
             overflow: "hidden",
           }}
         >
-          <UI.Typography variant="h5" noWrap>
+          <Typography variant="h5" noWrap>
             {hostProfile ? `${hostProfile.username}'s room` : "..."}
-          </UI.Typography>
-          <UI.Typography variant="subtitle1" color="text.secondary" noWrap>
+          </Typography>
+          <Typography variant="subtitle1" color="text.secondary" noWrap>
             {roomCount} in room
-          </UI.Typography>
-        </UI.Box>
-      </UI.Paper>
-    </UI.CardActionArea>
+          </Typography>
+        </Box>
+      </Paper>
+    </CardActionArea>
   )
 }
+
+
+
+

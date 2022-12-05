@@ -2,7 +2,11 @@ import { Result } from "../Core"
 
 export type RoomId = string & { _opaque: "RoomId" }
 
+const namespace = "room"
+const separator = ":"
+
 const is = (id: unknown): id is RoomId => {
+  // todo: better validation
   return typeof id === "string"
 }
 
@@ -16,10 +20,11 @@ const decode = (id: string): Result<Problem, RoomId> => {
   return Result.Err("invalid_id")
 }
 
+
 const generate = (): RoomId => {
   // warning collisions could happen
   // use short id so the logs are more readable
-  const roomId = Math.random().toString(36).slice(-6)
+  const roomId = `${namespace}${separator}${Math.random().toString(36).slice(-6)}`
 
   if (is(roomId)) {
     return roomId
