@@ -5,7 +5,7 @@ import * as Game from "./Game/Game.Frontend"
 import { GameName } from "./Game/Game.Types"
 import * as GameRoom from "./Game/GameRoom.Frontend"
 import * as Route from "./Route"
-import { AspectRatio, Avatar, Box, Button, CardActionArea, FillBox, Header, Paper, Typography } from "./UI"
+import { Icons, AspectRatio, Avatar, Box, Button, CardActionArea, FillBox, Header, Paper, Typography } from "./UI"
 
 //
 //
@@ -96,7 +96,7 @@ export const update = (
     }
 
     case "ClickedCurrentRoom": {
-      return [model, [["Route", ["Push", ["GameRoom"]]]]]
+      return [model, [["Route", ["Push", ["Game"]]]]]
     }
   }
 }
@@ -291,19 +291,33 @@ const ViewNotInRoom = ({
     <FillBox sx={{ overflowY: "scroll" }}>
       <Header title="Home" />
 
-      <GameRoom.ViewCreateRoomCallToAction
-        onClickGame={(gameName) => $d(['ClickedGameCard', { roomId: RoomId.generate(), gameName }])}
-        onClickCreate={() => $d(['ClickedCreateRoom', { roomId: RoomId.generate() }])}
-      />
-
+      {rooms.length === 0 && (
+        <>
+          <Box sx={{ width: '100%', flex: 1, display: 'flex', flexDirection: "column", alignItems: "center", justifyContent: 'center', color: "text.secondary", pb: 8 }}>
+            <Icons.SportsEsportsOutlined sx={{ width: 100, height: 100 }} />
+            <Typography >
+              No Active Games
+            </Typography>
+            <Button variant="contained" onClick={() => $d(['ClickedCreateRoom', { roomId: RoomId.generate() }])} startIcon={<Icons.Add />} sx={{ mt: 2 }}>
+              Create Game
+            </Button>
+          </Box>
+        </>
+      )}
 
       {rooms.length > 0 && <>
+        <Box sx={{ px: 2 }}>
+          <Button fullWidth variant="contained" onClick={() => $d(['ClickedCreateRoom', { roomId: RoomId.generate() }])} startIcon={<Icons.Add />}>
+            Create Game
+          </Button>
+        </Box>
+
         <Typography
           variant="h6"
           color="text.secondary"
           sx={{ px: 2, mb: 1, mt: 2 }}
         >
-          Active Rooms
+          Active Games
         </Typography>
 
         <Box sx={{ px: 2, d: "flex", flexDirection: "column", gap: 2, }}>
