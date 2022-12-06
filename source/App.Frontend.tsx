@@ -399,16 +399,16 @@ const initPage = (model: Model): [Model, Cmd<Msg>] => {
 
 const updateStatusChanged =
   (modelPrev: Model) =>
-  (_msg: Msg, model: Model): [Model, Cmd<Msg>] => {
-    const statusPrev = toStatus(modelPrev)
-    const statusNew = toStatus(model)
+    (_msg: Msg, model: Model): [Model, Cmd<Msg>] => {
+      const statusPrev = toStatus(modelPrev)
+      const statusNew = toStatus(model)
 
-    if (statusNew[0] === statusPrev[0]) {
-      return [model, Cmd.None]
+      if (statusNew[0] === statusPrev[0]) {
+        return [model, Cmd.None]
+      }
+
+      return initPage(model)
     }
-
-    return initPage(model)
-  }
 
 const runAction = (action: OutAction, model: Model): [Model, Cmd<Msg>] => {
   switch (action[0]) {
@@ -601,14 +601,13 @@ const ViewMain = ({ model, $d }: { model: Model; $d: (msg: Msg) => void }) => {
           const { profile } = status[1]
           return (
             <>
-              <Pages.ViewReady
-                {...model}
-                profile={status[1].profile}
-                $d={(msg) => $d(["Page", msg])}
-                model={model.page}
+              <Party.ViewBanner
+                store={model.profileStore}
+                currentUserId={profile.userId}
+                model={model.party}
+                route={model.route}
+                $d={(msg) => $d(["Party", msg])}
               />
-
-              <Divider />
 
               <GameRoom.ViewBanner
                 store={model.profileStore}
@@ -618,15 +617,19 @@ const ViewMain = ({ model, $d }: { model: Model; $d: (msg: Msg) => void }) => {
                 $d={(msg) => $d(["GameRoom", msg])}
               />
 
-              {/* <Divider /> */}
+              <Divider />
 
-              <Party.ViewBanner
-                store={model.profileStore}
-                currentUserId={profile.userId}
-                model={model.party}
-                route={model.route}
-                $d={(msg) => $d(["Party", msg])}
+              <Pages.ViewReady
+                {...model}
+                profile={status[1].profile}
+                $d={(msg) => $d(["Page", msg])}
+                model={model.page}
               />
+
+
+
+
+
             </>
           )
       }
@@ -778,7 +781,7 @@ const wireStatus = Sub.create<WireStatus>((emit) => {
     emit("Disconnected")
   })
 
-  return () => {}
+  return () => { }
 })
 
 const fromBackend = Sub.create<ToFrontend>((emit) => {
@@ -786,14 +789,14 @@ const fromBackend = Sub.create<ToFrontend>((emit) => {
     emit(msg)
   })
 
-  return () => {}
+  return () => { }
 })
 
 const sendToBackend =
   (msg: ToBackend): Cmd =>
-  () => {
-    socketClient.emit("ToBackend", msg)
-  }
+    () => {
+      socketClient.emit("ToBackend", msg)
+    }
 
 //
 //

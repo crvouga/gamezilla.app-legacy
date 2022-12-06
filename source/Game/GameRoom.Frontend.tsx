@@ -1097,7 +1097,28 @@ export const ViewBanner = ({
   )
 }
 
-export const ViewCard = ({
+
+export const RoomGrid = ({ ctx, model, onClick }: { ctx: Ctx, model: Model, onClick: ({ roomId }: { roomId: RoomId }) => void }) => {
+  const rooms = Object.values(model.rooms)
+  return (
+    <Box sx={{ px: 1, pt: 1, d: "flex", }}>
+      {rooms.map((room) => (
+        <Box key={room.roomId} sx={{ width: "100%", p: 1 }}>
+          <RoomItem
+            roomId={room.roomId}
+            hostId={room.hostId}
+            gameName={room?.game?.[0]}
+            ctx={ctx}
+            gameRoom={model}
+            onClick={() => onClick(room)}
+          />
+        </Box>
+      ))}
+    </Box>
+  )
+}
+
+export const RoomItem = ({
   roomId,
   hostId,
   gameName,
@@ -1118,38 +1139,32 @@ export const ViewCard = ({
   ).length
   return (
     <CardActionArea onClick={onClick}>
-      <Paper variant="outlined" sx={{ overflow: "hidden", display: "flex" }}>
-        <Box sx={{ width: 100 }}>
-          <AspectRatio aspectRatio={1}>
-            {gameName ? (
-              <Game.CoverArt gameName={gameName} />
-            ) : (
-              <Avatar
-                src={hostProfile?.avatarUrl ?? ""}
-                variant="square"
-                sx={{ width: "100%", height: "100%" }}
-              />
-            )}
-          </AspectRatio>
-        </Box>
-        <Divider orientation="vertical" />
-        <Box
-          sx={{
-            padding: 2,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            flex: 1,
-            overflow: "hidden",
-          }}
-        >
-          <Typography variant="h5" noWrap>
-            {hostProfile ? `${hostProfile.username}'s room` : "..."}
-          </Typography>
-          <Typography variant="subtitle1" color="text.secondary" noWrap>
-            {roomCount} in room
-          </Typography>
-        </Box>
+      <Paper sx={{ overflow: "hidden", }}>
+        <AspectRatio aspectRatio={Math.pow(3 / 4, 3)}>
+          {gameName ? (
+            <Game.CoverArt gameName={gameName} />
+          ) : (
+            <Avatar
+              src={hostProfile?.avatarUrl ?? ""}
+              variant="square"
+              sx={{ width: "100%", height: "100%" }}
+            />
+          )}
+          <Box sx={{
+            p: 2, position: "absolute", top: 0, left: 0, width: "100%", height: "100%", background: "rgba(0, 0, 0, 0.5)",
+            display: 'flex', flexDirection: 'column', justifyContent: "flex-end"
+          }}>
+            {gameName && <Typography variant="subtitle1" color="text.secondary" noWrap>
+              {Game.gameNameToString(gameName)}
+            </Typography>}
+            <Typography variant="h5" noWrap >
+              {hostProfile ? `${hostProfile.username}'s game` : "..."}
+            </Typography>
+            <Typography variant="subtitle2" color="text.secondary" noWrap>
+              {roomCount} in game
+            </Typography>
+          </Box>
+        </AspectRatio>
       </Paper>
     </CardActionArea>
   )
