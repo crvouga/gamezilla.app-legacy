@@ -159,7 +159,7 @@ export const View = ({
       <Header title="Home" />
 
       <Box sx={{ px: 2 }}>
-        <Typography variant="h2" sx={{ mb: 1 }}>
+        <Typography variant="h3" sx={{ mb: 1 }}>
           Your Room
         </Typography>
 
@@ -244,31 +244,16 @@ export const View = ({
           <Typography
             variant="h6"
             color="text.secondary"
-            sx={{ paddingX: 2, marginBottom: 1, marginTop: 2 }}
+            sx={{ px: 2, mt: 2 }}
           >
-            Other Rooms
+            Active Games
           </Typography>
 
-          <Box
-            sx={{
-              paddingX: 2,
-              display: "flex",
-              flexDirection: "column",
-              gap: 2,
-            }}
-          >
-            {otherRooms.map((room) => (
-              <GameRoom.ViewCard
-                key={room.roomId}
-                roomId={room.roomId}
-                hostId={room.hostId}
-                gameName={room?.game?.[0]}
-                ctx={ctx}
-                gameRoom={gameRoom}
-                onClick={() => $d(["ClickedRoom", { roomId: room.roomId }])}
-              />
-            ))}
-          </Box>
+          <GameRoom.RoomGrid
+            ctx={ctx}
+            model={gameRoom}
+            onClick={({ roomId }) => $d(['ClickedRoom', { roomId: roomId }])}
+          />
         </>
       )}
     </FillBox>
@@ -315,24 +300,16 @@ const ViewNotInRoom = ({
         <Typography
           variant="h6"
           color="text.secondary"
-          sx={{ px: 2, mb: 1, mt: 2 }}
+          sx={{ px: 2, mt: 2 }}
         >
           Active Games
         </Typography>
 
-        <Box sx={{ px: 2, d: "flex", flexDirection: "column", gap: 2, }}>
-          {rooms.map((room) => (
-            <GameRoom.ViewCard
-              key={room.roomId}
-              roomId={room.roomId}
-              hostId={room.hostId}
-              gameName={room?.game?.[0]}
-              ctx={ctx}
-              gameRoom={gameRoom}
-              onClick={() => $d(["ClickedRoom", { roomId: room.roomId }])}
-            />
-          ))}
-        </Box>
+        <GameRoom.RoomGrid
+          ctx={ctx}
+          model={gameRoom}
+          onClick={({ roomId }) => $d(['ClickedRoom', { roomId: roomId }])}
+        />
       </>}
     </FillBox>
   )
