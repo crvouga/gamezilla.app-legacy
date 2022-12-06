@@ -382,7 +382,7 @@ export const updateFromBackend = (
 
       const routeActions: OutAction[] =
         msg[1].userId === ctx.currentUserId
-          ? [["Route", ["Replace", ["GameRoom"]]]]
+          ? [["Route", ["Replace", ["Game"]]]]
           : []
 
       const alertActions: OutAction[] =
@@ -662,24 +662,10 @@ export const ViewPageGame = ({
 
   const { game } = room
 
-
-
-
   const usersInRoom = toRoomUsers(room.roomId, model)
 
-  return (
+  const bottomBar = (
     <>
-
-      {game ? (
-        <Game.View
-          ctx={ctx}
-          $d={(msg) => $d(["Game", room.roomId, msg])}
-          model={game}
-        />
-      ) : (
-        <ViewNotInGame ctx={ctx} model={model} $d={$d} />
-      )}
-
       <Divider />
 
       <Toolbar
@@ -708,34 +694,44 @@ export const ViewPageGame = ({
       </Toolbar>
     </>
   )
-}
 
+  if (!game) {
+    return (
+      <FillBox>
+        <Header title="Game" />
 
-export const ViewNotInGame = ({ ctx, $d }: {
-  ctx: Ctx
-  model: Model
-  $d: (msg: Msg) => void
-}) => {
-  return <FillBox>
-    <Header title="Game Room" />
-    <Typography sx={{ px: 2, mb: 2 }} variant="h4">
-      Games
-    </Typography>
-
-    <Box sx={{ display: 'grid', px: 2, gap: 2, gridTemplateColumns: "1fr 1fr", width: '100%' }}>
-      {gameNameList.map((gameName) => (
-        <Box key={gameName}>
-          <CardActionArea onClick={() => $d(['InputGame', { userId: ctx.currentUserId, gameName }])}>
-            <GameCard gameName={gameName} />
-          </CardActionArea>
+        <Box sx={{ px: 1, pt: 1, width: '100%', display: 'flex', flexWrap: "wrap", justifyContent: "flex-start" }}>
+          {gameNameList.map((gameName) => (
+            <Box key={gameName} sx={{ width: "33.33%", p: 1 }}>
+              <CardActionArea disabled={room.hostId !== ctx.currentUserId} onClick={() => $d(['InputGame', { userId: ctx.currentUserId, gameName }])}>
+                <GameCard gameName={gameName} />
+              </CardActionArea>
+            </Box>
+          ))}
         </Box>
-      ))}
-    </Box>
-  </FillBox>
+
+        <Box sx={{ flex: 1 }} />
+
+        {bottomBar}
+      </FillBox>
+    )
+  }
+
+  return (
+    <FillBox>
+      <Game.View
+        ctx={ctx}
+        $d={(msg) => $d(["Game", room.roomId, msg])}
+        model={game}
+      />
+      {bottomBar}
+    </FillBox>
+  )
 }
+
 
 export const ViewNotInRoom = ({
-  ctx,
+  // ctx,
   model,
   $d,
 }: {
@@ -743,7 +739,7 @@ export const ViewNotInRoom = ({
   model: Model
   $d: (msg: Msg) => void
 }) => {
-  const rooms = Object.values(model.rooms)
+  // const rooms = Object.values(model.rooms)
 
   const header = (
     <Header
@@ -783,57 +779,30 @@ export const ViewNotInRoom = ({
   return (
     <FillBox>
       {header}
-      <ViewCreateRoomCallToAction
-        onClickCreate={() => $d(['RoomCreate', { roomId: RoomId.generate(), userId: ctx.currentUserId }])}
-        onClickGame={(gameName) => $d(['RoomCreate', { roomId: RoomId.generate(), userId: ctx.currentUserId, gameName }])}
-      />
 
 
 
-      {Object.values(rooms).length > 0 && (
-        <Typography
-          sx={{ paddingX: 2, marginBottom: 1 }}
-          variant="h6"
-          color="text.secondary"
-        >
-          Active Rooms
+      <Box sx={{ width: '100%', flex: 1, display: 'flex', flexDirection: "column", alignItems: "center", justifyContent: 'center', color: "text.secondary" }}>
+        <Icons.SportsEsportsOutlined sx={{ width: 100, height: 100 }} />
+        <Typography >
+          Not in game
         </Typography>
-      )}
-      <Box
-        sx={{
-          paddingX: 2,
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          gap: 2,
-        }}
-      >
-        {Object.values(rooms).map((room) => (
-          <ViewCard
-            key={room.roomId}
-            roomId={room.roomId}
-            hostId={room.hostId}
-            gameName={room?.game?.[0]}
-            ctx={ctx}
-            gameRoom={model}
-            onClick={() =>
-              $d([
-                "RoomJoin",
-                { roomId: room.roomId, userId: ctx.currentUserId },
-              ])
-            }
-          />
-        ))}
+        <Button variant="contained" onClick={() => { }} startIcon={<Icons.Add />} sx={{ mt: 2 }}>
+          Create Game
+        </Button>
       </Box>
+
+
+
     </FillBox>
   )
 }
 
 export const GameCard = ({ gameName }: { gameName: GameName }) => {
   return (
-    <Paper sx={{ overflow: "hidden", width: "100%" }}>
+    <Paper variant="outlined" sx={{ overflow: "hidden", width: "100%" }}>
       <Game.CoverArt gameName={gameName} />
-      <Typography variant="subtitle1" noWrap sx={{ width: "100%", px: 1, py: 0.5 }}>
+      <Typography variant="subtitle2" noWrap sx={{ width: "100%", px: 1, py: 0.5 }}>
         {Game.gameNameToString(gameName)}
       </Typography>
     </Paper>
@@ -972,7 +941,7 @@ export const ViewPageRoom = ({
         ))}
       </Box>
 
-      <Box sx={{flex:1}} />
+      <Box sx={{ flex: 1 }} />
 
       <Box sx={{ p: 2, display: "flex", gap: 2 }}>
         {ctx.currentUserId === room.hostId ? (
@@ -1104,6 +1073,15 @@ export const ViewBanner = ({
       }}
       onClick={() => $d(["ClickedBanner"])}
     >
+
+      {!room.game && (
+        <Avatar
+          src={hostProfile?.avatarUrl ?? ""}
+          variant="square"
+          sx={{ width: 48, height: 48, mr: 2 }}
+        />
+      )}
+
       {room.game && (
         <Box sx={{ width: 48, height: 48, mr: 2 }}>
           <Game.CoverArt gameName={room.game[0]} />
