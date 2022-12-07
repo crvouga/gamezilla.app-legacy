@@ -1,19 +1,17 @@
+import * as Alerts from "../../Alerts"
 import { Cmd, exhaustive } from "../../Core"
 import * as ProfileStore from "../../Profile/Profile.Store"
-import * as Alerts from "../../Alerts"
-import * as UI from "../../UI"
-import { Ctx, GameModeCardGrid } from "../Game.Shared"
+import { Ctx, GameModeSelectPage, GameRoomCtx } from "../Game.Shared"
 import { Empty, gameTheme, Position, Slot, ViewSlot } from "./TicTacToe"
 import {
   BackendModel,
   FrontendModel,
   FrontendMsg,
   ToBackend,
-  ToFrontend,
+  ToFrontend
 } from "./TicTacToe.Types"
 import * as UserVsBot from "./UserVsBot/UserVsBot.Frontend"
 import * as UserVsUser from "./UserVsUser/UserVsUser.Frontend"
-import { BannerArt } from "./Views"
 
 //
 //
@@ -196,32 +194,34 @@ export const View = ({
   ctx,
   model,
   $d,
+  gameRoomCtx
 }: {
   ctx: Ctx
   model: Model
   $d: (msg: Msg) => void
+  gameRoomCtx: GameRoomCtx
 }) => {
   switch (model.mode) {
     case "None": {
       return (
-        <UI.FillBox>
-          <BannerArt title="Tic Tac Toe" />
-
-          <GameModeCardGrid
-            onUserVsUser={() =>
-              $d([
-                "InputMode",
-                { mode: "UserVsUser", userId: ctx.currentUserId },
-              ])
-            }
-            onUserVsBot={() =>
-              $d([
-                "InputMode",
-                { mode: "UserVsBot", userId: ctx.currentUserId },
-              ])
-            }
-          />
-        </UI.FillBox>
+        <GameModeSelectPage
+          ctx={ctx}
+          gameRoomCtx={gameRoomCtx}
+          coverArt={<CoverArt />}
+          title="Tic-Tac-Toe"
+          onUserVsUser={() =>
+            $d([
+              "InputMode",
+              { mode: "UserVsUser", userId: ctx.currentUserId },
+            ])
+          }
+          onUserVsComputer={() =>
+            $d([
+              "InputMode",
+              { mode: "UserVsBot", userId: ctx.currentUserId },
+            ])
+          }
+        />
       )
     }
 

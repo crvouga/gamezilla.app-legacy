@@ -193,8 +193,8 @@ export const updateFromBackend = (
       const soundCmd = Board.inCheck(sharedModelNew.board)
         ? playAudio(Sounds.check)
         : sharedModelNew.didCapture
-        ? playAudio(Sounds.capture)
-        : playAudio(Sounds.move)
+          ? playAudio(Sounds.capture)
+          : playAudio(Sounds.move)
 
       return [{ ...model, sharedModel: sharedModelNew }, soundCmd, []]
     }
@@ -561,10 +561,10 @@ export const View = ({
     ctx.currentUserId === w && ctx.currentUserId === b
       ? "Both"
       : ctx.currentUserId === w
-      ? "w"
-      : ctx.currentUserId === b
-      ? "b"
-      : "None"
+        ? "w"
+        : ctx.currentUserId === b
+          ? "b"
+          : "None"
 
   const boardOrientation: Board.Color = p(
     currentUserColor === "None" || currentUserColor === "Both"
@@ -699,7 +699,7 @@ export const View = ({
                     model.sharedModel.type === "Game" &&
                     model.sharedModel.drawAgreement.type === "Asking" &&
                     model.sharedModel.drawAgreement.asker ===
-                      Board.toOppositeColor(currentUserColor)
+                    Board.toOppositeColor(currentUserColor)
                   }
                   headerIcon={
                     <UI.Icons.HandshakeTwoTone

@@ -77,9 +77,9 @@ export const update = (
       const changeDirectionCmd =
         direction.type === "Some"
           ? sendToBackend([
-              "InputDirection",
-              { userId: ctx.currentUserId, direction: direction.value },
-            ])
+            "InputDirection",
+            { userId: ctx.currentUserId, direction: direction.value },
+          ])
           : Cmd.None
 
       const toggleStatusCmd =

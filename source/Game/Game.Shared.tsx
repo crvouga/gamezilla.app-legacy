@@ -1,6 +1,6 @@
 import { UserId } from "../Data/UserId"
 import * as ProfileStore from "../Profile/Profile.Store"
-import { Sx, Avatar, Icons, useTheme, Box, Typography, AspectRatio, CardActionArea, Card, ViewNode } from "../UI"
+import { Button, FillBox, Sx, Avatar, Icons, useTheme, Box, Typography, AspectRatio, CardActionArea, Card, ViewNode } from "../UI"
 
 //
 //
@@ -13,6 +13,11 @@ import { Sx, Avatar, Icons, useTheme, Box, Typography, AspectRatio, CardActionAr
 export type Ctx = {
   profiles: ProfileStore.Model["profiles"]
   currentUserId: UserId
+}
+
+export type GameRoomCtx = {
+  onQuit: () => void
+  hostId: UserId
 }
 
 //
@@ -299,5 +304,75 @@ export const PlayerGameSlot = ({
         {ctx.profiles[userId]?.username ?? "..."}
       </Typography>
     </Box>
+  )
+}
+
+
+
+
+export const GameModeSelectPage = ({
+  ctx,
+  title,
+  coverArt,
+  onUserVsComputer,
+  onUserVsUser,
+  gameRoomCtx,
+}: {
+  gameRoomCtx: GameRoomCtx,
+  ctx: Ctx
+  title: string,
+  coverArt: ViewNode,
+  onUserVsUser: () => void
+  onUserVsComputer: () => void
+}) => {
+
+  if (ctx.currentUserId !== gameRoomCtx.hostId) {
+
+    return (
+      <FillBox sx={{ display: 'flex', alignItems: "center", justifyContent: 'center' }}>
+
+        <Box sx={{ height: 100, width: 100, mx: 'auto', borderRadius: 2, overflow: "hidden", mb: 1 }}>
+          {coverArt}
+        </Box>
+        <Typography variant="h2" align="center" sx={{ mb: 1 }} >
+          {title}
+        </Typography>
+
+
+        <Typography variant="subtitle2" color="text.secondary" align="center">
+          Host is selecting the mode
+        </Typography>
+      </FillBox>
+    )
+  }
+
+  return (
+    <FillBox sx={{ p: 2 }}>
+      <Box sx={{ height: 100, width: 100, mx: 'auto', borderRadius: 2, overflow: "hidden", mt: 2, mb: 2 }}>
+        {coverArt}
+      </Box>
+
+      <Typography variant="h2" align="center" sx={{ mb: 1 }} >
+        {title}
+      </Typography>
+
+      <Typography variant="subtitle2" color="text.secondary" align="center" sx={{ mb: 2 }}>
+        Select Mode
+      </Typography>
+
+      <Button onClick={onUserVsUser} size="large" fullWidth variant="outlined" startIcon={<Icons.PeopleAlt />} sx={{ mb: 2 }}>
+        Play Online
+      </Button>
+
+      <Button onClick={onUserVsComputer} size="large" fullWidth variant="outlined" startIcon={<Icons.SmartToy />}>
+        Play Computer
+      </Button>
+
+      <Box sx={{ flex: 1 }} />
+
+      <Button onClick={gameRoomCtx.onQuit} size="large" fullWidth variant="outlined" startIcon={<Icons.ArrowLeft />}>
+        Quit
+      </Button>
+    </FillBox>
   )
 }

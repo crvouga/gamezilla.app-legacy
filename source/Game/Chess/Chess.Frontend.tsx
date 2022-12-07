@@ -1,18 +1,16 @@
 import * as Alerts from "../../Alerts"
 import { Audio, Cmd, p, RemoteData, Sub, Unit } from "../../Core"
-import * as UI from "../../UI"
-import { Ctx, GameModeCardGrid } from "../Game.Shared"
+import { Ctx, GameModeSelectPage, GameRoomCtx } from "../Game.Shared"
 import {
   BackendModel,
   FrontendModel,
   FrontendMsg,
   ToBackend,
-  ToFrontend,
+  ToFrontend
 } from "./Chess.Types"
 import * as Sounds from "./Sounds"
 import * as UserVsBot from "./UserVsBot/UserVsBot.Frontend"
 import * as UserVsUser from "./UserVsUser/UserVsUser.Frontend"
-import { BannerArt } from "./Views"
 
 //
 //
@@ -206,32 +204,24 @@ export const View = ({
   ctx,
   model,
   $d,
+  gameRoomCtx
 }: {
   ctx: Ctx
   model: Model
   $d: (msg: Msg) => void
+  gameRoomCtx: GameRoomCtx
 }) => {
   switch (model.mode[0]) {
     case "None": {
       return (
-        <UI.FillBox>
-          <BannerArt title="Chess" />
-
-          <GameModeCardGrid
-            onUserVsUser={() =>
-              $d([
-                "InputMode",
-                { mode: "UserVsUser", userId: ctx.currentUserId },
-              ])
-            }
-            onUserVsBot={() =>
-              $d([
-                "InputMode",
-                { mode: "UserVsBot", userId: ctx.currentUserId },
-              ])
-            }
-          />
-        </UI.FillBox>
+        <GameModeSelectPage
+          ctx={ctx}
+          gameRoomCtx={gameRoomCtx}
+          coverArt={<CoverArt />}
+          onUserVsComputer={() => $d(['InputMode', { mode: 'UserVsBot', userId: ctx.currentUserId }])}
+          onUserVsUser={() => $d(['InputMode', { mode: 'UserVsUser', userId: ctx.currentUserId }])}
+          title="Chess"
+        />
       )
     }
 

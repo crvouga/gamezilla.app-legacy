@@ -1,11 +1,13 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { ctx } from "../../test-data"
 import * as UI from "../../UI"
+import { gameRoomCtx } from "../test-data"
 import { View } from "./TicTacToe.Frontend"
 
 const props: Parameters<typeof View>[0] = {
-  $d: () => {},
+  $d: () => { },
   ctx,
+  gameRoomCtx,
   model: { mode: "None" },
 }
 
