@@ -526,9 +526,8 @@ export const ViewPlayerGameSlot = ({
           display: "flex",
           alignItems: "center",
           overflow: "hidden",
-          borderBottom: `solid 3.5px ${
-            isTurn ? gameTheme.background : uiTheme.palette.divider
-          }`,
+          borderBottom: `solid 3.5px ${isTurn ? gameTheme.background : uiTheme.palette.divider
+            }`,
         }}
       >
         <UI.Box

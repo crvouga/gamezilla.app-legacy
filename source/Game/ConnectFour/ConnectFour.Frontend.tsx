@@ -1,19 +1,19 @@
-import { Cmd, Uuid } from "../../Core"
+import { useRef } from "react"
 import * as Alerts from "../../Alerts"
+import { Cmd, Uuid } from "../../Core"
 import * as UI from "../../UI"
-import { bannerArtAspectRatio, Ctx, GameModeCardGrid } from "../Game.Shared"
+import { bannerArtAspectRatio, Ctx, GameModeSelectPage, GameRoomCtx } from "../Game.Shared"
 import { COLUMN_COUNT, gameTheme, MAX_COLUMN_HEIGHT } from "./ConnectFour"
 import {
   BackendModel,
   FrontendModel,
   FrontendMsg,
   ToBackend,
-  ToFrontend,
+  ToFrontend
 } from "./ConnectFour.Types"
 import * as UserVsBot from "./UserVsBot/UserVsBot.Frontend"
 import * as UserVsUser from "./UserVsUser/UserVsUser.Frontend"
 import { PlayerIcon } from "./Views"
-import { useRef } from "react"
 
 //
 //
@@ -135,10 +135,12 @@ export const View = ({
   model,
   $d,
   ctx,
+  gameRoomCtx,
 }: {
   model: Model
   $d: (msg: Msg) => void
   ctx: Ctx
+  gameRoomCtx: GameRoomCtx
 }) => {
   const goBack = () =>
     $d(["InputMode", { userId: ctx.currentUserId, mode: "None" }])
@@ -146,24 +148,24 @@ export const View = ({
   switch (model.type) {
     case "None": {
       return (
-        <UI.FillBox>
-          <BannerArt />
-
-          <GameModeCardGrid
-            onUserVsUser={() =>
-              $d([
-                "InputMode",
-                { mode: "UserVsUser", userId: ctx.currentUserId },
-              ])
-            }
-            onUserVsBot={() =>
-              $d([
-                "InputMode",
-                { mode: "UserVsBot", userId: ctx.currentUserId },
-              ])
-            }
-          />
-        </UI.FillBox>
+        <GameModeSelectPage
+          ctx={ctx}
+          gameRoomCtx={gameRoomCtx}
+          coverArt={<CoverArt />}
+          title="ConnectFour"
+          onUserVsUser={() =>
+            $d([
+              "InputMode",
+              { mode: "UserVsUser", userId: ctx.currentUserId },
+            ])
+          }
+          onUserVsComputer={() =>
+            $d([
+              "InputMode",
+              { mode: "UserVsBot", userId: ctx.currentUserId },
+            ])
+          }
+        />
       )
     }
 
@@ -199,7 +201,7 @@ export const View = ({
 //
 //
 
-const BannerArt = () => {
+export const BannerArt = () => {
   const iconSx: UI.Sx = { width: 120, height: 120, maxHeight: "66%" }
 
   return (

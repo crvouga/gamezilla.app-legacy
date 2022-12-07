@@ -3,14 +3,14 @@ import { Cmd, Sub, tagUpdate } from "../Core"
 import * as ProfileStore from "../Profile/Profile.Store"
 import * as Chess from "./Chess/Chess.Frontend"
 import * as ConnectFour from "./ConnectFour/ConnectFour.Frontend"
-import { Ctx } from "./Game.Shared"
+import { Ctx, GameRoomCtx } from "./Game.Shared"
 import {
   BackendModel,
   FrontendModel,
   FrontendMsg,
   GameName,
   ToBackend,
-  ToFrontend,
+  ToFrontend
 } from "./Game.Types"
 import * as Maze from "./Maze/Maze.Frontend"
 import * as Snake from "./Snake/Snake.Frontend"
@@ -310,13 +310,17 @@ export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
 
 export const View = ({
   ctx,
+  gameRoomCtx,
   model,
   $d,
 }: {
   ctx: Ctx
+  gameRoomCtx: GameRoomCtx,
   model: Model
   $d: (msg: Msg) => void
 }) => {
+
+
   const views: { [key in typeof model[0]]: Function } = {
     Tetris: (model: Tetris.Model) => (
       <Tetris.View model={model} $d={(msg) => $d(["Tetris", msg])} />
@@ -324,6 +328,7 @@ export const View = ({
 
     ConnectFour: (model: ConnectFour.Model) => (
       <ConnectFour.View
+        gameRoomCtx={gameRoomCtx}
         ctx={ctx}
         model={model}
         $d={(msg) => $d(["ConnectFour", msg])}
@@ -336,6 +341,7 @@ export const View = ({
 
     TicTacToe: (model: TicTacToe.Model) => (
       <TicTacToe.View
+        gameRoomCtx={gameRoomCtx}
         ctx={ctx}
         model={model}
         $d={(msg) => $d(["TicTacToe", msg])}
@@ -343,7 +349,7 @@ export const View = ({
     ),
 
     Chess: (model: Chess.Model) => (
-      <Chess.View ctx={ctx} model={model} $d={(msg) => $d(["Chess", msg])} />
+      <Chess.View ctx={ctx} model={model} $d={(msg) => $d(["Chess", msg])} gameRoomCtx={gameRoomCtx} />
     ),
 
     Maze: (model: Maze.Model) => (

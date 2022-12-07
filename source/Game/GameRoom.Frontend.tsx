@@ -1,11 +1,11 @@
 import * as Alerts from "../Alerts"
+import { Ctx } from "../App.Shared"
 import { Cmd, exhaustive, p, RemoteData, Sub } from "../Core"
 import { RoomId, UserId } from "../Data"
 import * as ProfileStore from "../Profile/Profile.Store"
 import * as Route from "../Route"
 import { AspectRatio, Avatar, Badge, Box, Button, ButtonBase, CardActionArea, CircularProgress, Divider, FillBox, Header, IconButton, Icons, Paper, Toolbar, Typography } from "../UI"
 import * as Game from "./Game.Frontend"
-import { Ctx } from "./Game.Shared"
 import { GameName, gameNameList } from "./Game.Types"
 import {
   BackendModel, FrontendModel,
@@ -695,6 +695,26 @@ export const ViewPageGame = ({
     </>
   )
 
+  if (!game && room.hostId !== ctx.currentUserId) {
+    return (
+      <FillBox>
+        <Header title="Game" />
+
+        <Box sx={{ flex: 1 }}>
+          <Avatar src={ctx.profiles[room.hostId]?.avatarUrl} />
+          <Typography>
+            {ctx.profiles[room.hostId]?.username ?? "..."}
+          </Typography>
+          <Typography>
+            Host is selecting game
+          </Typography>
+        </Box>
+
+        {bottomBar}
+      </FillBox>
+    )
+  }
+
   if (!game) {
     return (
       <FillBox>
@@ -720,6 +740,10 @@ export const ViewPageGame = ({
   return (
     <FillBox>
       <Game.View
+        gameRoomCtx={{
+          hostId: room.hostId,
+          onQuit: () => $d(['InputGame', { userId: ctx.currentUserId, gameName: undefined }])
+        }}
         ctx={ctx}
         $d={(msg) => $d(["Game", room.roomId, msg])}
         model={game}

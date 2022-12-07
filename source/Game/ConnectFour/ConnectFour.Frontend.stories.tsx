@@ -4,9 +4,13 @@ import * as UI from "../../UI"
 import { View } from "./ConnectFour.Frontend"
 
 const props: Parameters<typeof View>[0] = {
-  $d: () => {},
+  $d: () => { },
   ctx,
   model: { type: "None" },
+  gameRoomCtx: {
+    hostId: ctx.currentUserId,
+    onQuit: () => { }
+  }
 }
 
 export default {

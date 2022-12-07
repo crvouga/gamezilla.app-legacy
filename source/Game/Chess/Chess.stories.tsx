@@ -2,11 +2,13 @@ import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { RemoteData } from "../../Core"
 import { ctx } from "../../test-data"
 import * as UI from "../../UI"
+import { gameRoomCtx } from "../test-data"
 import { View } from "./Chess.Frontend"
 
 const props: Parameters<typeof View>[0] = {
-  $d: () => {},
+  $d: () => { },
   ctx,
+  gameRoomCtx,
   model: {
     mode: ["None"],
     requests: {
