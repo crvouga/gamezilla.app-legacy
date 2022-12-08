@@ -1,8 +1,9 @@
+import { ViewEmptyState } from "../App.Shared"
 import { Cmd, exhaustive, p, RemoteData, Sub } from "../Core"
 import { PartyId, UserId } from "../Data"
 import * as ProfileStore from "../Profile/Profile.Store"
 import * as Route from "../Route"
-import { Avatar, useTheme, Box, Button, FillBox, Header, Icons, ListItemAvatar, ListItemButton, ListItemText, Typography } from "../UI"
+import { Avatar, Box, Button, FillBox, Header, Icons, ListItemAvatar, ListItemButton, ListItemText, Typography, useTheme } from "../UI"
 import { Mic } from "./Mic"
 import {
   FrontendModel,
@@ -333,6 +334,16 @@ const ViewNotInParty = ({
   if (parties.length === 0) {
     return <FillBox>
       <Header title="Party" />
+      <ViewEmptyState
+        renderIcon={({ sx }) => <Icons.People sx={sx} />}
+        title="No Active Parties"
+        actionTitle="Create Party"
+        actionIcon={<Icons.Add />}
+        onAction={() => $d([
+          "PartyCreate",
+          { userId: currentUserId, partyId: PartyId.generate() },
+        ])}
+      />
     </FillBox>
   }
 
@@ -356,11 +367,6 @@ const ViewNotInParty = ({
         </Button>
       </Box>
       <Box sx={{ flex: 1 }}>
-        {parties.length === 0 && (
-          <Typography sx={{ padding: 2 }} color="text.secondary">
-            No active parties
-          </Typography>
-        )}
         {parties.map((party) => (
           <ListItemButton
             key={party.partyId}
