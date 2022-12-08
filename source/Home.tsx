@@ -1,11 +1,11 @@
-import { Ctx } from "./App.Shared"
+import { Ctx, ViewEmptyState } from "./App.Shared"
 import { Sub } from "./Core"
 import { RoomId, UserId } from "./Data"
 import * as Game from "./Game/Game.Frontend"
 import { GameName } from "./Game/Game.Types"
 import * as GameRoom from "./Game/GameRoom.Frontend"
 import * as Route from "./Route"
-import { Icons, AspectRatio, Avatar, Box, Button, CardActionArea, FillBox, Header, Paper, Typography } from "./UI"
+import { AspectRatio, Avatar, Box, Button, CardActionArea, FillBox, Header, Icons, Paper, Typography } from "./UI"
 
 //
 //
@@ -278,15 +278,13 @@ const ViewNotInRoom = ({
 
       {rooms.length === 0 && (
         <>
-          <Box sx={{ width: '100%', flex: 1, display: 'flex', flexDirection: "column", alignItems: "center", justifyContent: 'center', color: "text.secondary", pb: 8 }}>
-            <Icons.SportsEsportsOutlined sx={{ width: 100, height: 100 }} />
-            <Typography >
-              No Active Games
-            </Typography>
-            <Button variant="contained" onClick={() => $d(['ClickedCreateRoom', { roomId: RoomId.generate() }])} startIcon={<Icons.Add />} sx={{ mt: 2 }}>
-              Create Game
-            </Button>
-          </Box>
+          <ViewEmptyState
+            actionIcon={<Icons.Add />}
+            actionTitle="Create Game"
+            onAction={() => $d(['ClickedCreateRoom', { roomId: RoomId.generate() }])}
+            renderIcon={(props) => <Icons.SportsEsportsOutlined {...props} />}
+            title="No Active Games"
+          />
         </>
       )}
 

@@ -1,10 +1,10 @@
 import * as Alerts from "../Alerts"
-import { Ctx } from "../App.Shared"
+import { Ctx, ViewEmptyState, ViewLoadingState } from "../App.Shared"
 import { Cmd, exhaustive, p, RemoteData, Sub } from "../Core"
 import { RoomId, UserId } from "../Data"
 import * as ProfileStore from "../Profile/Profile.Store"
 import * as Route from "../Route"
-import { AspectRatio, Avatar, Badge, Box, Button, ButtonBase, CardActionArea, CircularProgress, Divider, FillBox, Header, IconButton, Icons, Paper, Toolbar, Typography } from "../UI"
+import { AspectRatio, Avatar, Badge, Box, Button, ButtonBase, CardActionArea, Divider, FillBox, Header, Icons, Paper, Toolbar, Typography } from "../UI"
 import * as Game from "./Game.Frontend"
 import { GameName, gameNameList } from "./Game.Types"
 import {
@@ -755,7 +755,7 @@ export const ViewPageGame = ({
 
 
 export const ViewNotInRoom = ({
-  // ctx,
+  ctx,
   model,
   $d,
 }: {
@@ -763,61 +763,40 @@ export const ViewNotInRoom = ({
   model: Model
   $d: (msg: Msg) => void
 }) => {
-  // const rooms = Object.values(model.rooms)
 
-  const header = (
-    <Header
-      left={
-        <IconButton
-          sx={{ marginLeft: -1 }}
-          onClick={() => $d(["ClickedHome"])}
-        >
-          <Icons.Home />
-        </IconButton>
-      }
-      title="Game Rooms"
-    />
-  )
-
-  if (
-    model.requests.RoomCreate?.type === "Loading" ||
-    model.requests.RoomJoin?.type === "Loading"
-  ) {
+  if (model.requests.RoomCreate?.type === "Loading") {
     return (
       <FillBox>
-        {header}
-        <Box
-          sx={{
-            flex: 1,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <CircularProgress />
-        </Box>
+        <Header title="Game" />
+        <ViewLoadingState title="Creating game..." />
+      </FillBox>
+    )
+  }
+
+  if (model.requests.RoomJoin?.type === "Loading") {
+    return (
+      <FillBox>
+        <Header title="Game" />
+        <ViewLoadingState title="Joining game..." />
       </FillBox>
     )
   }
 
   return (
     <FillBox>
-      {header}
-
-
-
-      <Box sx={{ width: '100%', flex: 1, display: 'flex', flexDirection: "column", alignItems: "center", justifyContent: 'center', color: "text.secondary" }}>
-        <Icons.SportsEsportsOutlined sx={{ width: 100, height: 100 }} />
-        <Typography >
-          Not in game
-        </Typography>
-        <Button variant="contained" onClick={() => { }} startIcon={<Icons.Add />} sx={{ mt: 2 }}>
-          Create Game
+      <Header title="Game" />
+      <ViewEmptyState
+        actionIcon={<Icons.Add />}
+        actionTitle="Create Game"
+        onAction={() => $d(['RoomCreate', { userId: ctx.currentUserId, roomId: RoomId.generate() }])}
+        renderIcon={(props) => <Icons.SportsEsportsOutlined {...props} />}
+        title="Not in Game"
+      />
+      <Box sx={{ p: 2 }}>
+        <Button startIcon={<Icons.ChevronLeft />} fullWidth variant="outlined" onClick={() => $d(['ClickedHome'])}>
+          Go back home
         </Button>
       </Box>
-
-
-
     </FillBox>
   )
 }
