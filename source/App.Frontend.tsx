@@ -1,5 +1,7 @@
+import { keyframes } from "@emotion/react"
 import * as ReactDomClient from "react-dom/client"
 import { io, Socket } from "socket.io-client"
+import * as Alerts from "./Alerts"
 import {
   backendServerPort,
   ClientToServerEvents,
@@ -9,7 +11,7 @@ import {
   sessionIdKey,
   ToBackend,
   ToFrontend,
-  WireStatus,
+  WireStatus
 } from "./App.Types"
 import * as Auth from "./Auth/Auth"
 import * as ChatStore from "./Chat/Chat.Store"
@@ -26,16 +28,15 @@ import {
   Platform,
   RemoteData,
   Sub,
-  t,
+  t
 } from "./Core"
 import * as GameRoom from "./Game/GameRoom.Frontend"
 import * as Pages from "./Pages"
 import * as Party from "./Party/Party.Frontend"
 import * as ProfileStore from "./Profile/Profile.Store"
 import * as Route from "./Route"
-import * as Alerts from "./Alerts"
 import * as UI from "./UI"
-import { Divider } from "./UI"
+import { Box, Divider, FillBox, Typography } from "./UI"
 
 //
 //
@@ -560,6 +561,12 @@ const View = ({ model, $d }: { model: Model; $d: (msg: Msg) => void }) => {
   )
 }
 
+const flicker = keyframes`
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+`
+
 const ViewMain = ({ model, $d }: { model: Model; $d: (msg: Msg) => void }) => {
   const status = toStatus(model)
 
@@ -567,7 +574,31 @@ const ViewMain = ({ model, $d }: { model: Model; $d: (msg: Msg) => void }) => {
     case "Connecting":
     case "Disconnected":
     case "ConnectError":
-      return <ViewLoading reason="Connecting to backend..." />
+      const iconSize = { width: 64, height: 64 }
+      return (
+        <FillBox sx={{
+          flexDirection: "column", display: "flex", alignItems: "center", justifyContent: "center", color: "text.secondary", gap: 2,
+          // animation: `${flicker} 1s infinite ease`
+        }}>
+          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 1, }}>
+            <UI.Icons.Devices sx={iconSize} />
+
+            <UI.Icons.MoreHoriz sx={{
+              ...iconSize,
+              color: "primary.main",
+              animation: `${flicker} 0.66s infinite ease`
+            }} />
+
+
+            <UI.Icons.Storage sx={iconSize} />
+          </Box>
+          <Typography variant="subtitle2">
+            Connecting to backend...
+          </Typography>
+        </FillBox>
+
+      )
+    // <ViewLoading reason="Connecting to backend..." />
 
     case "Connected": {
       switch (status[0]) {
