@@ -1,8 +1,9 @@
+import { ViewEmptyState, ViewLoadingState } from "../App.Shared"
 import { Cmd, RemoteData } from "../Core"
 import { UserId } from "../Data"
 import * as ProfileStore from "../Profile/Profile.Store"
 import * as Route from "../Route"
-import * as UI from "../UI"
+import { Avatar, AvatarGroup, Box, Button, FillBox, Header, Icons, List, ListItemAvatar, ListItemButton, ListItemText } from "../UI"
 import * as ChatStore from "./Chat.Store"
 
 //
@@ -98,44 +99,62 @@ export const View = ({
       ]
     })
 
+  if (query.type === 'Loading') {
+    return (
+      <FillBox>
+        <Header title="Chat" />
+        <ViewLoadingState title="Loading conversations..." />
+      </FillBox>
+    )
+  }
+
+  if (conversations.length === 0) {
+    return (
+      <FillBox>
+        <Header title="Chat" />
+        <ViewEmptyState
+          actionIcon={<Icons.Send />}
+          actionTitle="Send Message"
+          onAction={() => $d(["ClickedSendMessage"])}
+          renderIcon={props => <Icons.Chat {...props} />}
+          title="No conversations"
+        />
+      </FillBox>
+    )
+  }
+
   return (
-    <UI.FillBox>
-      <UI.Header title="Chat" />
-      <UI.Box sx={{ paddingX: 2 }}>
-        <UI.Button
+    <FillBox>
+      <Header title="Chat" />
+      <Box sx={{ paddingX: 2 }}>
+        <Button
           fullWidth
           variant="contained"
           onClick={() => $d(["ClickedSendMessage"])}
         >
           Send Message
-        </UI.Button>
-      </UI.Box>
+        </Button>
+      </Box>
 
-      <UI.List sx={{ overflowY: "scroll" }}>
+      <List sx={{ overflowY: "scroll" }}>
         {conversations.map((item) => (
-          <UI.ListItemButton
+          <ListItemButton
             key={item.conversationId}
             onClick={() => $d(["ClickedConversationItem", item])}
           >
-            <UI.ListItemAvatar>
-              <UI.AvatarGroup max={2}>
+            <ListItemAvatar>
+              <AvatarGroup max={2}>
                 {item.profiles.map((profile) => (
-                  <UI.Avatar key={profile.userId} src={profile.avatarUrl} />
+                  <Avatar key={profile.userId} src={profile.avatarUrl} />
                 ))}
-              </UI.AvatarGroup>
-            </UI.ListItemAvatar>
-            <UI.ListItemText
+              </AvatarGroup>
+            </ListItemAvatar>
+            <ListItemText
               primary={item.profiles.map((item) => item.username).join(", ")}
             />
-          </UI.ListItemButton>
+          </ListItemButton>
         ))}
-      </UI.List>
-
-      {query.type === "Loading" && (
-        <UI.Box sx={{ p: 4, display: "flex", justifyContent: "center" }}>
-          <UI.CircularProgress />
-        </UI.Box>
-      )}
-    </UI.FillBox>
+      </List>
+    </FillBox>
   )
 }
