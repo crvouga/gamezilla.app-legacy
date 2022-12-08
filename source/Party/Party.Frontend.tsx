@@ -189,7 +189,7 @@ export const runAction = (
 //
 //
 
-export const View = ({
+export const ViewPage = ({
   currentUserId,
   store,
   model,
@@ -256,9 +256,8 @@ export const View = ({
                       width: 100,
                       height: 100,
                       boxSizing: "content-box",
-                      border: `solid 8px ${
-                        isActive ? theme.palette.primary.main : "transparent"
-                      }`,
+                      border: `solid 8px ${isActive ? theme.palette.primary.main : "transparent"
+                        }`,
                     }}
                   />
                 </UI.Box>
@@ -370,9 +369,8 @@ const ViewNotInParty = ({
             </UI.ListItemAvatar>
 
             <UI.ListItemText
-              primary={`${
-                store.profiles[party.hostId]?.username ?? "..."
-              }'s party`}
+              primary={`${store.profiles[party.hostId]?.username ?? "..."
+                }'s party`}
               secondary={`${countUsersInParty(party.partyId, model)} in party`}
             />
           </UI.ListItemButton>
@@ -398,13 +396,13 @@ export const ViewBanner = ({
   currentUserId,
   model,
 }: // store,
-{
-  store: ProfileStore.Model
-  route: Route.Model
-  currentUserId: UserId
-  model: Model
-  $d: (msg: Msg) => void
-}) => {
+  {
+    store: ProfileStore.Model
+    route: Route.Model
+    currentUserId: UserId
+    model: Model
+    $d: (msg: Msg) => void
+  }) => {
   if (route[0] === "Party") {
     return <></>
   }
