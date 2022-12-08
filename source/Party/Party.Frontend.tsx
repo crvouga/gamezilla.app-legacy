@@ -2,13 +2,13 @@ import { Cmd, exhaustive, p, RemoteData, Sub } from "../Core"
 import { PartyId, UserId } from "../Data"
 import * as ProfileStore from "../Profile/Profile.Store"
 import * as Route from "../Route"
-import * as UI from "../UI"
+import { Avatar, useTheme, Box, Button, FillBox, Header, Icons, ListItemAvatar, ListItemButton, ListItemText, Typography } from "../UI"
 import { Mic } from "./Mic"
 import {
   FrontendModel,
   FrontendMsg,
   ToBackend,
-  ToFrontend,
+  ToFrontend
 } from "./Party.Types"
 
 //
@@ -200,7 +200,7 @@ export const ViewPage = ({
   model: Model
   $d: (msg: Msg) => void
 }) => {
-  const theme = UI.useTheme()
+  const theme = useTheme()
   const user = model.users[currentUserId]
 
   if (!user) {
@@ -228,8 +228,8 @@ export const ViewPage = ({
   }
 
   return (
-    <UI.FillBox>
-      <UI.Box
+    <FillBox>
+      <Box
         sx={{ flex: 1, display: "flex", flexWrap: "wrap", width: "100%" }}
       >
         {Object.values(model.users)
@@ -238,7 +238,7 @@ export const ViewPage = ({
             const isActive = model.volume > 1 && user.userId === currentUserId
 
             return (
-              <UI.Box
+              <Box
                 key={user.userId}
                 sx={{
                   flex: 1,
@@ -249,8 +249,8 @@ export const ViewPage = ({
                   overflow: "hidden",
                 }}
               >
-                <UI.Box sx={{ padding: 2 }}>
-                  <UI.Avatar
+                <Box sx={{ padding: 2 }}>
+                  <Avatar
                     src={store.profiles[user.userId]?.avatarUrl}
                     sx={{
                       width: 100,
@@ -260,27 +260,27 @@ export const ViewPage = ({
                         }`,
                     }}
                   />
-                </UI.Box>
-                <UI.Typography
+                </Box>
+                <Typography
                   variant="h6"
                   noWrap
                   sx={{ width: "100%", paddingX: 1 }}
                   align="center"
                 >
                   {`${store.profiles[user.userId]?.username ?? "..."}`}
-                </UI.Typography>
-                <UI.Typography
+                </Typography>
+                <Typography
                   variant="subtitle1"
                   color="text.secondary"
                   sx={{ height: "1rem" }}
                 >
                   {party.hostId === user.userId ? "Host" : " "}
-                </UI.Typography>
-              </UI.Box>
+                </Typography>
+              </Box>
             )
           })}
-      </UI.Box>
-      <UI.Box
+      </Box>
+      <Box
         sx={{
           paddingX: 2,
           paddingY: 2,
@@ -290,30 +290,30 @@ export const ViewPage = ({
         }}
       >
         {party.hostId === currentUserId ? (
-          <UI.Button
+          <Button
             variant="outlined"
-            startIcon={<UI.Icons.CallEnd />}
+            startIcon={<Icons.CallEnd />}
             color="error"
             size="large"
             loading={model.requests.PartyDestroy?.type === "Loading"}
             onClick={() => $d(["PartyDestroy", { userId: currentUserId }])}
           >
             End
-          </UI.Button>
+          </Button>
         ) : (
-          <UI.Button
+          <Button
             variant="outlined"
-            startIcon={<UI.Icons.CallEnd />}
+            startIcon={<Icons.CallEnd />}
             color="error"
             size="large"
             loading={model.requests.PartyLeave?.type === "Loading"}
             onClick={() => $d(["PartyLeave", { userId: currentUserId }])}
           >
             Leave
-          </UI.Button>
+          </Button>
         )}
-      </UI.Box>
-    </UI.FillBox>
+      </Box>
+    </FillBox>
   )
 }
 
@@ -329,11 +329,18 @@ const ViewNotInParty = ({
   $d: (msg: Msg) => void
 }) => {
   const parties = Object.values(model.parties)
+
+  if (parties.length === 0) {
+    return <FillBox>
+      <Header title="Party" />
+    </FillBox>
+  }
+
   return (
-    <UI.FillBox>
-      <UI.Header title="Party" />
-      <UI.Box sx={{ paddingX: 2 }}>
-        <UI.Button
+    <FillBox>
+      <Header title="Party" />
+      <Box sx={{ paddingX: 2 }}>
+        <Button
           fullWidth
           variant="contained"
           size="large"
@@ -346,16 +353,16 @@ const ViewNotInParty = ({
           }
         >
           Start Party
-        </UI.Button>
-      </UI.Box>
-      <UI.Box sx={{ flex: 1 }}>
+        </Button>
+      </Box>
+      <Box sx={{ flex: 1 }}>
         {parties.length === 0 && (
-          <UI.Typography sx={{ padding: 2 }} color="text.secondary">
+          <Typography sx={{ padding: 2 }} color="text.secondary">
             No active parties
-          </UI.Typography>
+          </Typography>
         )}
         {parties.map((party) => (
-          <UI.ListItemButton
+          <ListItemButton
             key={party.partyId}
             onClick={() =>
               $d([
@@ -364,19 +371,19 @@ const ViewNotInParty = ({
               ])
             }
           >
-            <UI.ListItemAvatar>
-              <UI.Avatar src={store.profiles[party.hostId]?.avatarUrl} />
-            </UI.ListItemAvatar>
+            <ListItemAvatar>
+              <Avatar src={store.profiles[party.hostId]?.avatarUrl} />
+            </ListItemAvatar>
 
-            <UI.ListItemText
+            <ListItemText
               primary={`${store.profiles[party.hostId]?.username ?? "..."
                 }'s party`}
               secondary={`${countUsersInParty(party.partyId, model)} in party`}
             />
-          </UI.ListItemButton>
+          </ListItemButton>
         ))}
-      </UI.Box>
-    </UI.FillBox>
+      </Box>
+    </FillBox>
   )
 }
 
@@ -420,7 +427,7 @@ export const ViewBanner = ({
   }
 
   return (
-    <UI.Typography
+    <Typography
       variant="caption"
       align="center"
       onClick={() => $d(["ClickedBanner"])}
@@ -435,9 +442,9 @@ export const ViewBanner = ({
         justifyContent: "center",
       }}
     >
-      <UI.Icons.Group sx={{ marginRight: 1 / 2 }} />
+      <Icons.Group sx={{ marginRight: 1 / 2 }} />
       Party
-    </UI.Typography>
+    </Typography>
   )
 }
 
