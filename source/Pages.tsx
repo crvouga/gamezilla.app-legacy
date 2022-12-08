@@ -15,7 +15,6 @@ import { PhoneNumber, UserId } from "./Data"
 import * as GameRoom from "./Game/GameRoom.Frontend"
 import * as Home from "./Home"
 import * as Party from "./Party/Party.Frontend"
-import * as PartyPage from "./Party/PartyPage"
 import {
   Profile,
   ProfileCreate,
@@ -61,7 +60,7 @@ export type Model =
   | ["ChatConversation", { conversationId: string }, ChatConversation.Model]
   | ["GameRoom"]
   | ["Game"]
-  | ["Party", PartyPage.Model]
+  | ["Party"]
   | ["Loading"]
 
 //
@@ -91,7 +90,7 @@ export type Msg =
   | ["Chat", Chat.Msg]
   | ["GameRoom", GameRoom.Msg]
   | ["Game", GameRoom.Msg]
-  | ["Party", PartyPage.Msg]
+  | ["Party", Party.Msg]
   | ["ChatNew", ChatNew.Msg]
   | ["ChatConversation", ChatConversation.Msg]
   | ["Search", Search.Msg]
@@ -220,8 +219,7 @@ export const initReady = (
     }
 
     case "Party": {
-      const [modelInit, cmdInit] = PartyPage.init
-      return [["Party", modelInit], p(cmdInit, Cmd.map(t("Party"))), []]
+      return [["Party"], Cmd.None, []]
     }
 
     case "Home": {
@@ -491,7 +489,6 @@ export const updateReady = (
 
     case "Game": {
       if (msg[0] === "Game") {
-        console.log(msg[0])
         return [["Game"], Cmd.None, [['GameRoom', ['Msg', msg[1]]]]]
       }
       return [model, Cmd.None, []]
@@ -499,8 +496,7 @@ export const updateReady = (
 
     case "Party": {
       if (msg[0] === "Party") {
-        const [child, cmd, actions] = PartyPage.update(msg[1], model[1])
-        return [["Party", child], Cmd.tag("Party", cmd), actions]
+        return [["Party"], Cmd.None, [['Party', ['Msg', msg[1]]]]]
       }
 
       return [model, Cmd.None, []]
@@ -942,11 +938,10 @@ export const ViewReady = ({
     case "Party": {
       return (
         <UI.FillBox>
-          <PartyPage.View
+          <Party.ViewPage
             currentUserId={currentUserId}
-            party={party}
             store={profileStore}
-            model={model[1]}
+            model={party}
             $d={(msg) => $d(["Party", msg])}
           />
 
