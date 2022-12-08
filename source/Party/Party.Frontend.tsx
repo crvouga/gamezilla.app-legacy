@@ -1,4 +1,4 @@
-import { ViewEmptyState } from "../App.Shared"
+import { Ctx, ViewEmptyState } from "../App.Shared"
 import { Cmd, exhaustive, p, RemoteData, Sub } from "../Core"
 import { PartyId, UserId } from "../Data"
 import * as ProfileStore from "../Profile/Profile.Store"
@@ -191,25 +191,22 @@ export const runAction = (
 //
 
 export const ViewPage = ({
-  currentUserId,
-  store,
+  ctx,
   model,
   $d,
 }: {
-  currentUserId: UserId
-  store: ProfileStore.Model
+  ctx: Ctx
   model: Model
   $d: (msg: Msg) => void
 }) => {
   const theme = useTheme()
-  const user = model.users[currentUserId]
+  const user = model.users[ctx.currentUserId]
 
   if (!user) {
     return (
       <ViewNotInParty
+        ctx={ctx}
         model={model}
-        store={store}
-        currentUserId={currentUserId}
         $d={$d}
       />
     )
@@ -220,9 +217,8 @@ export const ViewPage = ({
   if (!party) {
     return (
       <ViewNotInParty
+        ctx={ctx}
         model={model}
-        store={store}
-        currentUserId={currentUserId}
         $d={$d}
       />
     )
@@ -236,7 +232,7 @@ export const ViewPage = ({
         {Object.values(model.users)
           .filter((user) => user.partyId === party.partyId)
           .map((user) => {
-            const isActive = model.volume > 1 && user.userId === currentUserId
+            const isActive = model.volume > 1 && user.userId === ctx.currentUserId
 
             return (
               <Box
@@ -252,7 +248,7 @@ export const ViewPage = ({
               >
                 <Box sx={{ padding: 2 }}>
                   <Avatar
-                    src={store.profiles[user.userId]?.avatarUrl}
+                    src={ctx.profiles[user.userId]?.avatarUrl}
                     sx={{
                       width: 100,
                       height: 100,
@@ -268,7 +264,7 @@ export const ViewPage = ({
                   sx={{ width: "100%", paddingX: 1 }}
                   align="center"
                 >
-                  {`${store.profiles[user.userId]?.username ?? "..."}`}
+                  {`${ctx.profiles[user.userId]?.username ?? "..."}`}
                 </Typography>
                 <Typography
                   variant="subtitle1"
@@ -290,14 +286,14 @@ export const ViewPage = ({
           justifyContent: "center",
         }}
       >
-        {party.hostId === currentUserId ? (
+        {party.hostId === ctx.currentUserId ? (
           <Button
             variant="outlined"
             startIcon={<Icons.CallEnd />}
             color="error"
             size="large"
             loading={model.requests.PartyDestroy?.type === "Loading"}
-            onClick={() => $d(["PartyDestroy", { userId: currentUserId }])}
+            onClick={() => $d(["PartyDestroy", { userId: ctx.currentUserId }])}
           >
             End
           </Button>
@@ -308,7 +304,7 @@ export const ViewPage = ({
             color="error"
             size="large"
             loading={model.requests.PartyLeave?.type === "Loading"}
-            onClick={() => $d(["PartyLeave", { userId: currentUserId }])}
+            onClick={() => $d(["PartyLeave", { userId: ctx.currentUserId }])}
           >
             Leave
           </Button>
@@ -319,14 +315,12 @@ export const ViewPage = ({
 }
 
 const ViewNotInParty = ({
-  currentUserId,
+  ctx,
   model,
-  store,
   $d,
 }: {
-  store: ProfileStore.Model
+  ctx: Ctx
   model: Model
-  currentUserId: UserId
   $d: (msg: Msg) => void
 }) => {
   const parties = Object.values(model.parties)
@@ -341,7 +335,7 @@ const ViewNotInParty = ({
         actionIcon={<Icons.Add />}
         onAction={() => $d([
           "PartyCreate",
-          { userId: currentUserId, partyId: PartyId.generate() },
+          { userId: ctx.currentUserId, partyId: PartyId.generate() },
         ])}
       />
     </FillBox>
@@ -359,7 +353,7 @@ const ViewNotInParty = ({
           onClick={() =>
             $d([
               "PartyCreate",
-              { userId: currentUserId, partyId: PartyId.generate() },
+              { userId: ctx.currentUserId, partyId: PartyId.generate() },
             ])
           }
         >
@@ -373,16 +367,16 @@ const ViewNotInParty = ({
             onClick={() =>
               $d([
                 "PartyJoin",
-                { userId: currentUserId, partyId: party.partyId },
+                { userId: ctx.currentUserId, partyId: party.partyId },
               ])
             }
           >
             <ListItemAvatar>
-              <Avatar src={store.profiles[party.hostId]?.avatarUrl} />
+              <Avatar src={ctx.profiles[party.hostId]?.avatarUrl} />
             </ListItemAvatar>
 
             <ListItemText
-              primary={`${store.profiles[party.hostId]?.username ?? "..."
+              primary={`${ctx.profiles[party.hostId]?.username ?? "..."
                 }'s party`}
               secondary={`${countUsersInParty(party.partyId, model)} in party`}
             />

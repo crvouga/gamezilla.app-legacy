@@ -939,8 +939,7 @@ export const ViewReady = ({
       return (
         <UI.FillBox>
           <Party.ViewPage
-            currentUserId={currentUserId}
-            store={profileStore}
+            ctx={{ currentUserId, profiles: profileStore.profiles }}
             model={party}
             $d={(msg) => $d(["Party", msg])}
           />
