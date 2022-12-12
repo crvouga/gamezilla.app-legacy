@@ -6,9 +6,9 @@ import { SendResult } from "../SMS/SMS"
 
 export type FrontendModel = {
   session:
-    | { type: "Loading" }
-    | { type: "LoggedOut" }
-    | { type: "LoggedIn"; currentUserId: UserId }
+  | { type: "Loading" }
+  | { type: "LoggedOut" }
+  | { type: "LoggedIn"; currentUserId: UserId }
 }
 
 export type BackendModel = {
@@ -27,6 +27,8 @@ export type BackendModel = {
     }
   }
 }
+
+
 
 //
 //

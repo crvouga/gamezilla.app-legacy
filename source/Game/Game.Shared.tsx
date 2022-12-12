@@ -334,6 +334,7 @@ export const GameModeSelectPage = ({
         <Box sx={{ height: 100, width: 100, mx: 'auto', borderRadius: 2, overflow: "hidden", mb: 1 }}>
           {coverArt}
         </Box>
+
         <Typography variant="h2" align="center" sx={{ mb: 1 }} >
           {title}
         </Typography>

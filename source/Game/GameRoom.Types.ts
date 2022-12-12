@@ -13,27 +13,27 @@ import * as Game from "./Game.Types"
 //
 //
 
-export type BackendModel = {
+export type SharedModel = {
   rooms: {
-    [roomId: RoomId]: BackendRoom
+    [roomId: RoomId]: Room
   }
   users: {
-    [userId: UserId]: RoomUser
+    [userId: UserId]: {
+      userId: UserId
+      roomId: RoomId
+    }
   }
 }
 
-export type BackendRoom = {
-  roomId: RoomId
-  hostId: UserId
-  game?: Game.BackendModel
+export type BackendModel = SharedModel & {
+  games: {
+    [roomId: RoomId]: Game.BackendModel
+  }
 }
 
-export type FrontendModel = {
-  rooms: {
-    [roomId: RoomId]: FrontendRoom
-  }
-  users: {
-    [userId: UserId]: RoomUser
+export type FrontendModel = SharedModel & {
+  games: {
+    [roomId: RoomId]: Game.FrontendModel
   }
   requests: {
     [key in Req[0]]?: RemoteData<Problem, "None">
@@ -49,6 +49,11 @@ export type FrontendRoom = {
 export type RoomUser = {
   userId: UserId
   roomId: RoomId
+}
+
+export type Room = {
+  roomId: RoomId
+  hostId: UserId
 }
 
 //
@@ -150,10 +155,12 @@ export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
       }
 
       const { gameName } = msg[1]
-      const roomNew: BackendRoom = {
+
+      const gameNew = gameName ? GameBackend.init({ gameName }) : undefined
+
+      const roomNew: Room = {
         roomId: msg[1].roomId,
         hostId: msg[1].userId,
-        game: gameName ? GameBackend.init({ gameName }) : undefined,
       }
 
       const userNew: RoomUser = {
@@ -163,6 +170,10 @@ export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
 
       const modelNew: Model = {
         ...model,
+        games: {
+          ...model.games,
+          [roomNew.roomId]: gameNew
+        },
         rooms: {
           ...model.rooms,
           [roomNew.roomId]: roomNew,
@@ -279,7 +290,7 @@ export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
       }
 
       if (!gameName) {
-        const roomNew: BackendRoom = {
+        const roomNew: Room = {
           hostId: room.hostId,
           roomId: room.roomId,
         }
@@ -295,17 +306,13 @@ export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
         return Ok(modelNew)
       }
 
-      const roomNew: BackendRoom = {
-        hostId: room.hostId,
-        roomId: room.roomId,
-        game: GameBackend.init({ gameName })
-      }
+      const gameNew = GameBackend.init({ gameName })
 
       const modelNew: BackendModel = {
         ...model,
-        rooms: {
-          ...model.rooms,
-          [roomNew.roomId]: roomNew
+        games: {
+          ...model.games,
+          [room.roomId]: gameNew
         }
       }
 
@@ -345,7 +352,7 @@ export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
         return Err("next_host_must_be_in_same_room")
       }
 
-      const roomNew: BackendRoom = {
+      const roomNew: Room = {
         ...room,
         hostId: nextHost.userId,
       }

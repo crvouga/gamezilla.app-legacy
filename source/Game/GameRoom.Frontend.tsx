@@ -4,7 +4,7 @@ import { Cmd, exhaustive, p, RemoteData, Sub } from "../Core"
 import { RoomId, UserId } from "../Data"
 import * as ProfileStore from "../Profile/Profile.Store"
 import * as Route from "../Route"
-import { AspectRatio, Avatar, Badge, Box, Button, ButtonBase, CardActionArea, Divider, FillBox, Header, Icons, Paper, Toolbar, Typography } from "../UI"
+import { AspectRatio, Avatar, Badge, Box, Button, ButtonBase, CardActionArea, FillBox, Header, Icons, Paper, Toolbar, Typography } from "../UI"
 import * as Game from "./Game.Frontend"
 import { GameName, gameNameList } from "./Game.Types"
 import {
@@ -29,6 +29,7 @@ export type Model = FrontendModel
 
 export const init: [Model, Cmd<Msg>] = [
   {
+    games: {},
     rooms: {},
     users: {},
     requests: {},
@@ -119,13 +120,7 @@ export const update = (
         return [model, Cmd.None]
       }
 
-      const room = model.rooms[roomId]
-
-      if (!room) {
-        return [model, Cmd.None]
-      }
-
-      const { game } = room
+      const game = model.games[roomId]
 
       if (!game) {
         return [model, Cmd.None]
@@ -142,17 +137,13 @@ export const update = (
         game,
       )
 
-      const roomNew: FrontendRoom = {
-        ...room,
-        game: gameNew,
-      }
 
       const modelNew: Model = {
         ...model,
-        rooms: {
-          ...model.rooms,
-          [roomId]: roomNew,
-        },
+        games: {
+          ...model.games,
+          [roomId]: gameNew
+        }
       }
 
       return [
@@ -226,13 +217,7 @@ export const updateFromBackend = (
     case "Game": {
       const roomId = msg[1]
 
-      const room = model.rooms[roomId]
-
-      if (!room) {
-        return [model, Cmd.None, []]
-      }
-
-      const { game } = room
+      const game = model.games[roomId]
 
       if (!game) {
         return [model, Cmd.None, []]
@@ -249,17 +234,12 @@ export const updateFromBackend = (
         game,
       )
 
-      const roomNew: FrontendRoom = {
-        ...room,
-        game: gameNew,
-      }
-
       const modelNew: Model = {
         ...model,
-        rooms: {
-          ...model.rooms,
-          [roomId]: roomNew,
-        },
+        games: {
+          ...model.games,
+          [roomId]: gameNew,
+        }
       }
 
       return [
@@ -479,28 +459,40 @@ const mergeWithBackendModel = ({
   frontendModel: FrontendModel
   backendModel: BackendModel
 }): [FrontendModel, Cmd<FrontendMsg>] => {
-  const [roomsNew, roomsCmd] = Object.entries(backendModel.rooms).reduce<
-    [FrontendModel["rooms"], Cmd<FrontendMsg>]
-  >(
-    ([rooms, cmd], [roomId, backendRoom]) => {
-      if (!RoomId.is(roomId)) {
-        return [rooms, cmd]
-      }
 
-      const backendGame = backendRoom.game
-
-      if (!backendGame) {
-        const frontendRoomNew: FrontendRoom = {
-          hostId: backendRoom.hostId,
-          roomId: backendRoom.roomId
+  const gamesNew =
+    Object.entries(backendModel.games).reduce<
+      [FrontendModel["games"], Cmd<FrontendMsg>]
+    >(
+      (gamesNew, [roomId, backendGame]) => {
+        if (!RoomId.is(roomId)) {
+          return gamesNew
         }
-        return [{ ...rooms, [roomId]: frontendRoomNew }, cmd]
-      }
 
-      const frontendGame = frontendModel.rooms[roomId]?.game
+        const frontendGame = frontendModel.games[roomId]
 
+        if (frontendGame) {
+          const merged = Game.mergeWithBackend({
+            backendModel: backendGame,
+            frontendModel: frontendGame,
+            sendToBackend: (msg) => sendToBackend(["Game", roomId, msg]),
+          })
 
-      if (!frontendGame) {
+          return [
+            {
+              ...gamesNew[0],
+              [roomId]: merged[0],
+            },
+            Cmd.batch([
+              gamesNew[1],
+              p(
+                merged[1],
+                Cmd.map((m): Msg => ["Game", roomId, m]),
+              ),
+            ]),
+          ]
+        }
+
         const initial = Game.init({
           gameName: backendGame[0],
           sendToBackend: (msg) => sendToBackend(["Game", roomId, msg]),
@@ -512,64 +504,31 @@ const mergeWithBackendModel = ({
           sendToBackend: (msg) => sendToBackend(["Game", roomId, msg]),
         })
 
-        const frontendRoomNew: FrontendRoom = {
-          hostId: backendRoom.hostId,
-          roomId: backendRoom.roomId,
-          game: merged[0],
-        }
-
         return [
           {
-            ...rooms,
-            [roomId]: frontendRoomNew,
+            ...gamesNew[0],
+            [roomId]: merged[0],
           },
           Cmd.batch([
-            cmd,
+            gamesNew[1],
             p(initial[1], Cmd.map((msg) => ["Game", roomId, msg])),
             p(merged[1], Cmd.map((msg) => ["Game", roomId, msg])),
           ]),
         ]
-      }
-
-      const merged = Game.mergeWithBackend({
-        backendModel: backendGame,
-        frontendModel: frontendGame,
-        sendToBackend: (msg) => sendToBackend(["Game", roomId, msg]),
-      })
-
-      const frontendRoomNew: FrontendRoom = {
-        hostId: backendRoom.hostId,
-        roomId: backendRoom.roomId,
-        game: merged[0],
-      }
-
-      return [
-        {
-          ...rooms,
-          [roomId]: frontendRoomNew,
-        },
-        Cmd.batch([
-          cmd,
-          p(
-            merged[1],
-            Cmd.map((msg): Msg => ["Game", roomId, msg]),
-          ),
-        ]),
-      ]
-    },
-    [{}, Cmd.None],
-  )
+      },
+      [{}, Cmd.None],
+    )
 
   return [
     {
       requests: frontendModel.requests,
-      rooms: roomsNew,
+      games: gamesNew[0],
+      rooms: backendModel.rooms,
       users: backendModel.users,
     },
-    roomsCmd,
+    gamesNew[1]
   ]
 }
-
 
 export const runAction = (
   {
@@ -610,22 +569,15 @@ export const subscriptions = (
     return Sub.None
   }
 
-  const room = model.rooms[user.roomId]
-
-  if (!room) {
-    return Sub.None
-  }
-
-
-  const { game } = room
+  const game = model.games[user.roomId]
 
   if (!game) {
     return Sub.None
   }
 
   return p(
-    Game.subscriptions(`room/${room.roomId}`, game),
-    Sub.map((msg) => ["Game", room.roomId, msg]),
+    Game.subscriptions(`room/${user.roomId}`, game),
+    Sub.map((msg) => ["Game", user.roomId, msg]),
   )
 }
 
@@ -660,13 +612,23 @@ export const ViewPageGame = ({
     return <ViewNotInRoom ctx={ctx} model={model} $d={$d} />
   }
 
-  const { game } = room
+  const game = model.games[room.roomId]
 
-  const usersInRoom = toRoomUsers(room.roomId, model)
+  const usersInRoom = Object.values(model.users).filter(user => user.roomId === room.roomId)
 
-  const bottomBar = (
-    <>
-      <Divider />
+  return (
+    <FillBox>
+      {game ? <Game.View
+        gameRoomCtx={{
+          hostId: room.hostId,
+          onQuit: () => $d(['InputGame', { userId: ctx.currentUserId, gameName: undefined }])
+        }}
+        ctx={ctx}
+        $d={(msg) => $d(["Game", room.roomId, msg])}
+        model={game}
+      /> :
+        <ViewNotInGame ctx={ctx} room={room} $d={$d} />
+      }
 
       <Toolbar
         variant="dense"
@@ -692,10 +654,12 @@ export const ViewPageGame = ({
           </Button>
         </Badge>
       </Toolbar>
-    </>
+    </FillBox>
   )
+}
 
-  if (!game && room.hostId !== ctx.currentUserId) {
+export const ViewNotInGame = ({ room, ctx, $d }: { room: FrontendRoom, ctx: Ctx, $d: (m: Msg) => void }) => {
+  if (room.hostId !== ctx.currentUserId) {
     return (
       <FillBox>
         <Header title="Game" />
@@ -710,48 +674,31 @@ export const ViewPageGame = ({
           </Typography>
         </Box>
 
-        {bottomBar}
       </FillBox>
     )
   }
 
-  if (!game) {
-    return (
-      <FillBox>
-        <Header title="Game" />
-
-        <Box sx={{ px: 1, pt: 1, width: '100%', display: 'flex', flexWrap: "wrap", justifyContent: "flex-start" }}>
-          {gameNameList.map((gameName) => (
-            <Box key={gameName} sx={{ width: "33.33%", p: 1 }}>
-              <CardActionArea disabled={room.hostId !== ctx.currentUserId} onClick={() => $d(['InputGame', { userId: ctx.currentUserId, gameName }])}>
-                <GameCard gameName={gameName} />
-              </CardActionArea>
-            </Box>
-          ))}
-        </Box>
-
-        <Box sx={{ flex: 1 }} />
-
-        {bottomBar}
-      </FillBox>
-    )
-  }
 
   return (
     <FillBox>
-      <Game.View
-        gameRoomCtx={{
-          hostId: room.hostId,
-          onQuit: () => $d(['InputGame', { userId: ctx.currentUserId, gameName: undefined }])
-        }}
-        ctx={ctx}
-        $d={(msg) => $d(["Game", room.roomId, msg])}
-        model={game}
-      />
-      {bottomBar}
+      <Header title="Game" />
+
+      <Box sx={{ px: 1, pt: 1, width: '100%', display: 'flex', flexWrap: "wrap", justifyContent: "flex-start" }}>
+        {gameNameList.map((gameName) => (
+          <Box key={gameName} sx={{ width: "33.33%", p: 1 }}>
+            <CardActionArea disabled={room.hostId !== ctx.currentUserId} onClick={() => $d(['InputGame', { gameName, userId: ctx.currentUserId }])}>
+              <GameCard gameName={gameName} />
+            </CardActionArea>
+          </Box>
+        ))}
+      </Box>
+
+      <Box sx={{ flex: 1 }} />
     </FillBox>
   )
+
 }
+
 
 
 export const ViewNotInRoom = ({
@@ -1066,6 +1013,8 @@ export const ViewBanner = ({
     return <></>
   }
 
+  const game = model.games[room.roomId]
+
   const hostProfile = store.profiles[room.hostId]
 
   return (
@@ -1077,7 +1026,7 @@ export const ViewBanner = ({
       onClick={() => $d(["ClickedBanner"])}
     >
 
-      {!room.game && (
+      {!game && (
         <Avatar
           src={hostProfile?.avatarUrl ?? ""}
           variant="square"
@@ -1085,9 +1034,9 @@ export const ViewBanner = ({
         />
       )}
 
-      {room.game && (
+      {game && (
         <Box sx={{ width: 48, height: 48, mr: 2 }}>
-          <Game.CoverArt gameName={room.game[0]} />
+          <Game.CoverArt gameName={game[0]} />
         </Box>
       )}
 
@@ -1104,13 +1053,13 @@ export const ViewBanner = ({
 export const RoomGrid = ({ ctx, model, onClick }: { ctx: Ctx, model: Model, onClick: ({ roomId }: { roomId: RoomId }) => void }) => {
   const rooms = Object.values(model.rooms)
   return (
-    <Box sx={{ px: 1, pt: 1, d: "flex", }}>
+    <Box sx={{ px: 1, pt: 1, display: "flex", }}>
       {rooms.map((room) => (
-        <Box key={room.roomId} sx={{ width: "100%", p: 1 }}>
-          <RoomItem
+        <Box key={room.roomId} sx={{ width: "50%", p: 1 }}>
+          <RoomCard
             roomId={room.roomId}
             hostId={room.hostId}
-            gameName={room?.game?.[0]}
+            gameName={model.games[room.roomId]?.[0]}
             ctx={ctx}
             gameRoom={model}
             onClick={() => onClick(room)}
@@ -1121,7 +1070,7 @@ export const RoomGrid = ({ ctx, model, onClick }: { ctx: Ctx, model: Model, onCl
   )
 }
 
-export const RoomItem = ({
+export const RoomCard = ({
   roomId,
   hostId,
   gameName,
@@ -1142,7 +1091,7 @@ export const RoomItem = ({
   ).length
   return (
     <CardActionArea onClick={onClick}>
-      <Paper sx={{ overflow: "hidden", }}>
+      <Paper sx={{ overflow: "hidden", height: "100%", }}>
         <AspectRatio aspectRatio={Math.pow(3 / 4, 3)}>
           {gameName ? (
             <Game.CoverArt gameName={gameName} />
@@ -1153,26 +1102,22 @@ export const RoomItem = ({
               sx={{ width: "100%", height: "100%" }}
             />
           )}
-          <Box sx={{
-            p: 2, position: "absolute", top: 0, left: 0, width: "100%", height: "100%", background: "rgba(0, 0, 0, 0.5)",
-            display: 'flex', flexDirection: 'column', justifyContent: "flex-end"
-          }}>
-            {gameName && <Typography variant="subtitle1" color="text.secondary" noWrap>
-              {Game.gameNameToString(gameName)}
-            </Typography>}
-            <Typography variant="h5" noWrap >
-              {hostProfile ? `${hostProfile.username}'s game` : "..."}
-            </Typography>
-            <Typography variant="subtitle2" color="text.secondary" noWrap>
-              {roomCount} in game
-            </Typography>
-          </Box>
         </AspectRatio>
+        <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', justifyContent: "flex-end" }}>
+          {gameName && <Typography variant="subtitle1" color="text.secondary" noWrap>
+            {Game.gameNameToString(gameName)}
+          </Typography>}
+          <Typography variant="h6" noWrap>
+            {hostProfile ? `${hostProfile.username}'s game` : "..."}
+          </Typography>
+          <Typography variant="subtitle2" color="text.secondary" noWrap>
+            {roomCount} in game
+          </Typography>
+        </Box>
       </Paper>
     </CardActionArea>
   )
 }
-
 
 
 
