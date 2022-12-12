@@ -5,7 +5,7 @@ import * as Game from "./Game/Game.Frontend"
 import { GameName } from "./Game/Game.Types"
 import * as GameRoom from "./Game/GameRoom.Frontend"
 import * as Route from "./Route"
-import { AspectRatio, Avatar, Box, Button, CardActionArea, FillBox, Header, Icons, Paper, Typography } from "./UI"
+import { AspectRatio, Avatar, Box, Button, CardActionArea, Divider, FillBox, Header, Icons, Paper, Typography } from "./UI"
 
 //
 //
@@ -161,84 +161,77 @@ export const View = ({
       <Header title="Home" />
 
       <Box sx={{ px: 2 }}>
-        <Typography variant="h3" sx={{ mb: 1 }}>
+        <Typography variant="h3" sx={{ mb: 2 }}>
           Your Room
         </Typography>
 
-        <Paper
-          onClick={() => $d(["ClickedCurrentRoom"])}
-          variant="outlined"
-          sx={{
-            overflow: "hidden",
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <CardActionArea
-            sx={{
-              width: 100,
-              minWidth: 100,
-              flex: 1,
-              display: "flex",
-              flexDirection: "row",
-            }}
-          >
-            <Box sx={{ width: 100 }}>
-              <AspectRatio aspectRatio={1}>
-                {gameName ? (
-                  <Game.CoverArt gameName={gameName} />
-                ) : (
-                  <Avatar
-                    variant="square"
-                    src={hostProfile?.avatarUrl ?? ""}
-                    sx={{ width: "100%", height: "100%" }}
-                  />
-                )}
-              </AspectRatio>
-            </Box>
+        <Paper sx={{ display: "flex", flexDirection: "column", }}>
+          <CardActionArea onClick={() => $d(["ClickedCurrentRoom"])}>
+            <AspectRatio aspectRatio={Math.pow(3 / 4, 4)}>
+              {gameName ? (
+                <Game.CoverArt gameName={gameName} />
+              ) : (
+                <Avatar
+                  variant="square"
+                  src={hostProfile?.avatarUrl ?? ""}
+                  sx={{ width: "100%", height: "100%" }}
+                />
+              )}
+            </AspectRatio>
+
+
+            <Divider />
+
 
             <Box sx={{ flex: 2, padding: 2, overflow: "hidden" }}>
+              <Typography variant="overline" color="primary.main" noWrap>
+                {gameName ? Game.gameNameToString(gameName) : "..."}
+              </Typography>
               <Typography variant="h5" noWrap>
                 {hostProfile ? `${hostProfile.username}'s room` : "..."}
               </Typography>
-              <Typography variant="subtitle1" color="text.secondary" noWrap>
-                {`${roomCount} in room`}
+              <Typography variant="h6" color="text.secondary" noWrap>
+                {`${roomCount} in game`}
               </Typography>
             </Box>
           </CardActionArea>
 
+          <Box sx={{ flex: 2, p: 2, pt: 0, overflow: "hidden" }}>
+            {currentRoom.hostId === ctx.currentUserId ? (
+              <>
+                <Button
+                  fullWidth
+                  sx={{ mt: 2 }}
+                  color="error"
+                  startIcon={<Icons.DeleteForever />}
+                  variant="outlined"
+                  onClick={() => {
+                    $d(["ClickedCurrentRoomDestroy"])
+                  }}
+                >
+                  End Room
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  fullWidth
+                  sx={{ mt: 2 }}
+                  color="error"
+                  startIcon={<Icons.ExitToApp sx={{ "transform": "rotate(180deg)" }} />}
+                  variant="outlined"
+                  onClick={() => {
+                    $d(["ClickedCurrentRoomLeave"])
+                  }}
+                >
+                  Leave
+                </Button>
+              </>
+            )}
+          </Box>
+
+
         </Paper>
-        {currentRoom.hostId === ctx.currentUserId ? (
-          <>
-            <Button
-              fullWidth
-              sx={{ mt: 2 }}
-              color="error"
-              onClick={(event) => {
-                event.stopPropagation()
-                $d(["ClickedCurrentRoomDestroy"])
-              }}
-            >
-              End Room
-            </Button>
-          </>
-        ) : (
-          <>
-            <Button
-              fullWidth
-              sx={{ mt: 2 }}
-              color="error"
-              onClick={(event) => {
-                event.stopPropagation()
-                $d(["ClickedCurrentRoomLeave"])
-              }}
-            >
-              Leave
-            </Button>
-          </>
-        )}
       </Box>
 
       {otherRooms.length > 0 && (
@@ -246,16 +239,18 @@ export const View = ({
           <Typography
             variant="h6"
             color="text.secondary"
-            sx={{ px: 2, mt: 2 }}
+            sx={{ px: 2, mt: 2, }}
           >
             Active Games
           </Typography>
 
-          <GameRoom.RoomGrid
-            ctx={ctx}
-            model={gameRoom}
-            onClick={({ roomId }) => $d(['ClickedRoom', { roomId: roomId }])}
-          />
+          <Box sx={{ px: 2 }}>
+            <GameRoom.RoomGrid
+              ctx={ctx}
+              model={gameRoom}
+              onClick={({ roomId }) => $d(['ClickedRoom', { roomId: roomId }])}
+            />
+          </Box>
         </>
       )}
     </FillBox>
@@ -296,20 +291,21 @@ const ViewNotInRoom = ({
             Create Game
           </Button>
         </Box>
-
         <Typography
           variant="h6"
           color="text.secondary"
-          sx={{ px: 2, mt: 2 }}
+          sx={{ px: 2, mt: 2, }}
         >
           Active Games
         </Typography>
 
-        <GameRoom.RoomGrid
-          ctx={ctx}
-          model={gameRoom}
-          onClick={({ roomId }) => $d(['ClickedRoom', { roomId: roomId }])}
-        />
+        <Box sx={{ px: 2 }}>
+          <GameRoom.RoomGrid
+            ctx={ctx}
+            model={gameRoom}
+            onClick={({ roomId }) => $d(['ClickedRoom', { roomId: roomId }])}
+          />
+        </Box>
       </>}
     </FillBox>
   )
