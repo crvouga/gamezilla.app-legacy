@@ -69,7 +69,6 @@ describe("Gomoku", () => {
         ]
         const board = to_board(matrix)
         const wins = to_wins(board)
-        console.log(wins)
         expect(wins.length).toBe(1)
     })
 })
