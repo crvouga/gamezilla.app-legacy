@@ -290,17 +290,9 @@ export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
       }
 
       if (!gameName) {
-        const roomNew: Room = {
-          hostId: room.hostId,
-          roomId: room.roomId,
-        }
-
         const modelNew: BackendModel = {
           ...model,
-          rooms: {
-            ...model.rooms,
-            [roomNew.roomId]: roomNew
-          }
+          games: removeKey(room.roomId, model.games)
         }
 
         return Ok(modelNew)

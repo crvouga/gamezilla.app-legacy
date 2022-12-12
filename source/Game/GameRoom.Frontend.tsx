@@ -349,7 +349,7 @@ export const updateFromBackend = (
                 [
                   "Alerts",
                   {
-                    title: "Leave your current room to join this room?",
+                    title: "Leave your current room then join this room?",
                     tag: "Conformation",
                     onConfirm: ["RoomLeaveThenJoin", msg[1]],
                   },
@@ -661,7 +661,7 @@ export const ViewPageGame = ({
 export const ViewNotInGame = ({ room, ctx, $d }: { room: FrontendRoom, ctx: Ctx, $d: (m: Msg) => void }) => {
   if (room.hostId !== ctx.currentUserId) {
     return (
-      <FillBox>
+      <FillBox sx={{ display: 'flex', alignItems: "center", justifyContent: "center" }}>
         <Header title="Game" />
 
         <Box sx={{ flex: 1 }}>
@@ -1051,7 +1051,8 @@ export const ViewBanner = ({
 
 
 export const RoomGrid = ({ ctx, model, onClick }: { ctx: Ctx, model: Model, onClick: ({ roomId }: { roomId: RoomId }) => void }) => {
-  const rooms = Object.values(model.rooms)
+  const rooms = Object.values(model.rooms).filter(room => room.roomId !== model.users[ctx.currentUserId]?.roomId)
+
   return (
     <Box sx={{ px: 1, pt: 1, display: "flex", }}>
       {rooms.map((room) => (

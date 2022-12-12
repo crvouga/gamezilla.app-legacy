@@ -403,7 +403,7 @@ export const Header = ({
         {left}
       </Box>
 
-      <Typography noWrap sx={{ flex: 3 }} align="center" variant="h6">
+      <Typography noWrap sx={{ flex: 4 }} align="center" variant="h6">
         {title}
       </Typography>
 
