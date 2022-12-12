@@ -2,7 +2,7 @@
 
 describe("TicTacToe", () => {
   it.todo("test")
-  // it("Okfully moves", () => {
+  // it("Ok fully moves", () => {
   //   const before: Board = [
   //     ["X", "O", "_"],
   //     ["X", "_", "_"],
