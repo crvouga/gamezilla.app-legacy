@@ -149,7 +149,9 @@ export const View = ({
     (user) => user.roomId === currentRoom.roomId,
   ).length
 
-  const gameName = currentRoom?.game?.[0]
+
+  const gameName = gameRoom.games[user.roomId]?.[0]
+
   const otherRooms = Object.values(gameRoom.rooms).filter(
     (room) => room.roomId !== currentRoom.roomId,
   )

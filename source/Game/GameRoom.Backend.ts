@@ -4,7 +4,6 @@ import * as Game from "./Game.Backend"
 import {
   BackendModel,
   BackendMsg,
-  BackendRoom,
   handle,
   Problem,
   Res,
@@ -25,6 +24,7 @@ export type Model = BackendModel
 export const init: Model = {
   rooms: {},
   users: {},
+  games: {},
 }
 
 //
@@ -50,13 +50,7 @@ export const update = (
     case "Game": {
       const roomId = msg[1]
 
-      const room = model.rooms[roomId]
-
-      if (!room) {
-        return [model, Cmd.None]
-      }
-
-      const { game } = room
+      const game = model.games[roomId]
 
       if (!game) {
         return [model, Cmd.None]
@@ -73,17 +67,12 @@ export const update = (
         game,
       )
 
-      const roomNew: BackendRoom = {
-        ...room,
-        game: gameNew,
-      }
-
       const modelNew: Model = {
         ...model,
-        rooms: {
-          ...model.rooms,
-          [roomId]: roomNew,
-        },
+        games: {
+          ...model.games,
+          [roomId]: gameNew,
+        }
       }
 
       return [
@@ -118,7 +107,7 @@ export const updateFromFrontend = (
         return [model, Cmd.None]
       }
 
-      const { game } = room
+      const game = model.games[roomId]
 
       if (!game) {
         return [model, Cmd.None]
@@ -142,17 +131,13 @@ export const updateFromFrontend = (
         game,
       )
 
-      const roomNew: BackendRoom = {
-        ...room,
-        game: gameNew,
-      }
 
       const modelNew: Model = {
         ...model,
-        rooms: {
-          ...model.rooms,
-          [roomId]: roomNew,
-        },
+        games: {
+          ...model.games,
+          [roomId]: gameNew
+        }
       }
 
       return [
@@ -272,7 +257,7 @@ const updateRoomLeave = (
     return [modelAfter, wire.sendToClient(res)]
   }
 
-  const { game } = room
+  const game = model.games[room.roomId]
 
   if (!game) {
     return [modelAfter, wire.sendToClient(res)]
@@ -292,17 +277,12 @@ const updateRoomLeave = (
     game,
   )
 
-  const roomNew: BackendRoom = {
-    ...room,
-    game: gameNew,
-  }
-
   const modelNew: Model = {
     ...modelAfter,
-    rooms: {
-      ...modelAfter.rooms,
-      [roomNew.roomId]: roomNew,
-    },
+    games: {
+      ...modelAfter.games,
+      [user.roomId]: gameNew
+    }
   }
 
   return [
@@ -380,13 +360,7 @@ export const subscriptions = (model: Model): Sub<Msg> => {
       continue
     }
 
-    const room = model.rooms[roomId]
-
-    if (!room) {
-      continue
-    }
-
-    const { game } = room
+    const game = model.games[roomId]
 
     if (!game) {
       continue
