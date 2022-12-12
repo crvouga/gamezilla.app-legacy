@@ -4,7 +4,7 @@ import { Cmd, exhaustive, p, RemoteData, Sub } from "../Core"
 import { RoomId, UserId } from "../Data"
 import * as ProfileStore from "../Profile/Profile.Store"
 import * as Route from "../Route"
-import { AspectRatio, Avatar, Badge, Box, Button, ButtonBase, CardActionArea, FillBox, Header, Icons, Paper, Toolbar, Typography } from "../UI"
+import { Divider, AspectRatio, Avatar, Badge, Box, Button, ButtonBase, CardActionArea, FillBox, Header, Icons, Paper, Toolbar, Typography } from "../UI"
 import * as Game from "./Game.Frontend"
 import { GameName, gameNameList } from "./Game.Types"
 import {
@@ -661,19 +661,14 @@ export const ViewPageGame = ({
 export const ViewNotInGame = ({ room, ctx, $d }: { room: FrontendRoom, ctx: Ctx, $d: (m: Msg) => void }) => {
   if (room.hostId !== ctx.currentUserId) {
     return (
-      <FillBox sx={{ display: 'flex', alignItems: "center", justifyContent: "center" }}>
+      <FillBox>
         <Header title="Game" />
-
-        <Box sx={{ flex: 1 }}>
-          <Avatar src={ctx.profiles[room.hostId]?.avatarUrl} />
-          <Typography>
-            {ctx.profiles[room.hostId]?.username ?? "..."}
-          </Typography>
-          <Typography>
-            Host is selecting game
+        <Box sx={{ flex: 1, display: 'flex', alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
+          <Avatar src={ctx.profiles[room.hostId]?.avatarUrl} sx={{ mb: 2, width: 100, height: 100 }} />
+          <Typography color='text.secondary'>
+            {ctx.profiles[room.hostId]?.username ?? "..."} is selecting game
           </Typography>
         </Box>
-
       </FillBox>
     )
   }
@@ -1054,7 +1049,7 @@ export const RoomGrid = ({ ctx, model, onClick }: { ctx: Ctx, model: Model, onCl
   const rooms = Object.values(model.rooms).filter(room => room.roomId !== model.users[ctx.currentUserId]?.roomId)
 
   return (
-    <Box sx={{ px: 1, pt: 1, display: "flex", }}>
+    <Box sx={{ display: "flex", mx: -1 }}>
       {rooms.map((room) => (
         <Box key={room.roomId} sx={{ width: "50%", p: 1 }}>
           <RoomCard
@@ -1104,8 +1099,11 @@ export const RoomCard = ({
             />
           )}
         </AspectRatio>
+
+        <Divider />
+
         <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', justifyContent: "flex-end" }}>
-          {gameName && <Typography variant="subtitle1" color="text.secondary" noWrap>
+          {gameName && <Typography variant="overline" color="primary.main" noWrap>
             {Game.gameNameToString(gameName)}
           </Typography>}
           <Typography variant="h6" noWrap>
@@ -1119,6 +1117,4 @@ export const RoomCard = ({
     </CardActionArea>
   )
 }
-
-
 

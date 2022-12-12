@@ -366,7 +366,7 @@ export const gameNameToString = (game: GameName): string => {
     }
 
     case "TicTacToe": {
-      return "Tic Tac Toe"
+      return "Tic-Tac-Toe"
     }
 
     case "Snake": {
