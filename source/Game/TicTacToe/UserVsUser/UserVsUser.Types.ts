@@ -43,27 +43,27 @@ export type GameOverModel = {
 
 type Rematch =
   | {
-      type: "NotAsking"
-    }
+    type: "NotAsking"
+  }
   | {
-      type: "Asking"
-      asker: TicTacToe.PlayerType
-    }
+    type: "Asking"
+    asker: TicTacToe.PlayerType
+  }
 
 const initCountDown = 5
 
 export type GameOver =
   | {
-      type: "Resignation"
-      resigner: TicTacToe.PlayerType
-    }
+    type: "Resignation"
+    resigner: TicTacToe.PlayerType
+  }
   | {
-      type: "Winner"
-      winner: TicTacToe.PlayerType
-    }
+    type: "Winner"
+    winner: TicTacToe.PlayerType
+  }
   | {
-      type: "Tie"
-    }
+    type: "Tie"
+  }
 
 export type BestOutOf = 1 | 3 | 5 | 7
 

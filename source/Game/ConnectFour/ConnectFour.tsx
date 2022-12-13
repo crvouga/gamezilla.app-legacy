@@ -13,6 +13,11 @@ import { Task } from "../../Core/Task"
 
 export type PlayerType = "PlayerOne" | "PlayerTwo"
 
+export const playerTypes: { [playerType in PlayerType]: PlayerType } = {
+  PlayerOne: "PlayerTwo",
+  PlayerTwo: "PlayerOne",
+}
+
 export const opposite: { [playerType in PlayerType]: PlayerType } = {
   PlayerOne: "PlayerTwo",
   PlayerTwo: "PlayerOne",
