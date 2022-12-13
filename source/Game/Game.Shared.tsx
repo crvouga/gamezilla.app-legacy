@@ -1,6 +1,6 @@
 import { UserId } from "../Data/UserId"
 import * as ProfileStore from "../Profile/Profile.Store"
-import { Button, FillBox, Sx, Avatar, Icons, useTheme, Box, Typography, AspectRatio, CardActionArea, Card, ViewNode } from "../UI"
+import { AspectRatio, Avatar, Box, Button, Card, CardActionArea, FillBox, Icons, Sx, ToggleButton, ToggleButtonGroup, Typography, useTheme, ViewNode } from "../UI"
 
 //
 //
@@ -129,12 +129,10 @@ export const VersusHeader = ({
   renderLeftIcon,
   right,
   renderRightIcon,
-  background,
   ctx,
   sx,
 }: {
   ctx: Ctx
-  background: ViewNode
   renderLeftIcon: (sx: Sx) => ViewNode
   left: Player
   renderRightIcon: (sx: Sx) => ViewNode
@@ -149,7 +147,9 @@ export const VersusHeader = ({
   return (
     <Box
       sx={{
-        position: "relative",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
         width: "100%",
         paddingY: 10,
         overflowX: "hidden",
@@ -158,65 +158,36 @@ export const VersusHeader = ({
     >
       <Box
         sx={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
+          display: "flex",
+          gap: 1,
+          flex: 1,
+          overflow: "hidden",
+          justifyContent: "center",
         }}
       >
-        {background}
+        <VersusHeaderPlayer player={left} ctx={ctx} />
+        {renderLeftIcon({ ...iconSx })}
       </Box>
-
+      <Typography
+        align="center"
+        color="#fff"
+        sx={{ fontSize: 24, marginX: 2 }}
+      >
+        vs
+      </Typography>
       <Box
         sx={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          //
-          overflow: "hidden",
-          //
           display: "flex",
-          flexDirection: "row",
+          gap: 1,
+          flex: 1,
+          overflow: "hidden",
           justifyContent: "center",
-          alignItems: "center",
-          paddingX: 2,
         }}
       >
-        <Box
-          sx={{
-            display: "flex",
-            gap: 1,
-            flex: 1,
-            overflow: "hidden",
-            justifyContent: "center",
-          }}
-        >
-          <VersusHeaderPlayer player={left} ctx={ctx} />
-          {renderLeftIcon({ ...iconSx })}
-        </Box>
-        <Typography
-          align="center"
-          color="#fff"
-          sx={{ fontSize: 24, marginX: 2 }}
-        >
-          vs
-        </Typography>
-        <Box
-          sx={{
-            display: "flex",
-            gap: 1,
-            flex: 1,
-            overflow: "hidden",
-            justifyContent: "center",
-          }}
-        >
-          {renderRightIcon({ ...iconSx })}
-          <VersusHeaderPlayer player={right} ctx={ctx} />
-        </Box>
+        {renderRightIcon({ ...iconSx })}
+        <VersusHeaderPlayer player={right} ctx={ctx} />
       </Box>
+
     </Box>
   )
 }
@@ -308,7 +279,143 @@ export const PlayerGameSlot = ({
 }
 
 
+export const UserVsBotSetupPage = <BotLevel, Player>({
+  title,
+  subtitle,
+  coverArt,
+  ctx,
+  playerId,
+  botLevel,
+  player,
+  onStartGame,
+  onCancel,
+  onStopPlaying
+}: {
+  ctx: Ctx
+  title: string,
+  subtitle: string,
+  coverArt: ViewNode,
+  playerId: UserId | null
+  onStopPlaying: () => void
+  botLevel: {
+    values: BotLevel[]
+    selected: BotLevel
+    onInput: (value: BotLevel) => void
+  }
+  player: {
+    selected: Player,
+    values: Player[]
+    onInput: (value: Player) => void
+    icon: (value: Player) => ViewNode
+  }
+  onCancel: () => void,
+  onStartGame: () => void,
+}) => {
 
+  return (
+    <FillBox sx={{ overflowY: "scroll", pt: 2, }}>
+      <Box sx={{ height: 100, width: 100, minHeight: 100, minWidth: 100, mx: 'auto', borderRadius: 2, overflow: "hidden", mt: 2, mb: 2 }}>
+        {coverArt}
+      </Box>
+
+      <Typography variant="h2" align="center" sx={{ mb: 1 }} >
+        {title}
+      </Typography>
+
+      <Typography variant="subtitle2" color="text.secondary" align="center" sx={{ mb: 2 }}>
+        {subtitle}
+      </Typography>
+
+      <Typography color="text.secondary" sx={{ px: 2, mb: 1 }}>
+        Human
+      </Typography>
+
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          px: 2,
+          mb: 3,
+        }}>
+        <Avatar sx={{ mr: 1 }} src={playerId ? ctx.profiles[playerId]?.avatarUrl : ""} />
+        <Typography noWrap sx={{ flex: 1 }}>
+          {playerId ? ctx.profiles[playerId]?.username ?? "..." : "..."}
+        </Typography>
+        {ctx.currentUserId === playerId &&
+          <Button onClick={onStopPlaying}>
+            Stop Playing
+          </Button>}
+      </Box>
+
+
+      <Typography color="text.secondary" sx={{ px: 2, mb: 1 }}>
+        Computer
+      </Typography>
+
+      <Box
+        sx={{
+          width: "100%",
+          px: 2,
+          mb: 3,
+        }}>
+
+        <ToggleButtonGroup fullWidth value={String(botLevel.selected)}>
+          {botLevel.values.map((value) => (
+            <ToggleButton
+              key={String(value)}
+              value={String(value)}
+              onClick={() => botLevel.onInput(value)}>
+              {String(value)}
+            </ToggleButton>
+          ))}
+        </ToggleButtonGroup>
+      </Box>
+
+      <Typography color="text.secondary" sx={{ px: 2, mb: 1 }}>
+        Play As
+      </Typography>
+
+      <Box
+        sx={{
+          width: "100%",
+          px: 2,
+          mb: 3,
+        }}>
+
+        <ToggleButtonGroup fullWidth value={String(player.selected)}>
+          {player.values.map((value) => (
+            <ToggleButton key={String(value)} value={String(value)} onClick={() => player.onInput(value)}>
+              {player.icon(value)}
+            </ToggleButton>
+          ))}
+        </ToggleButtonGroup>
+      </Box>
+
+      <Box sx={{ px: 2, mt: 2 }} >
+        <Button
+          fullWidth
+          variant="contained"
+          startIcon={<Icons.PlayArrow />}
+          onClick={onStartGame}
+        >
+          Start Game
+        </Button>
+      </Box>
+
+      <Box sx={{ flex: 1, py: 2, }} />
+
+      <Box sx={{ px: 2, mt: 2 }} >
+        <Button fullWidth variant="outlined"
+          startIcon={<Icons.Close />}
+          onClick={onCancel}
+        >
+          Cancel
+        </Button>
+      </Box>
+
+    </FillBox>
+  )
+}
 
 export const GameModeSelectPage = ({
   ctx,
