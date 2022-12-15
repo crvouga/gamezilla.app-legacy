@@ -1,26 +1,20 @@
-import { Audio, Cmd, exhaustive, Option, Sub, t } from "../../../Core"
 import * as Alerts from "../../../Alerts"
+import { Audio, Cmd, exhaustive, Option, Sub, t } from "../../../Core"
 import * as UI from "../../../UI"
-import { Ctx } from "../../Game.Shared"
+import { Ctx, UserVsBotSetupPage } from "../../Game.Shared"
 import * as Board from "../Board"
+import { CoverArt } from "../Chess.Frontend"
 import * as Sounds from "../Sounds"
-import { PawnIcon, VersusHeader } from "../Views"
+import { PawnIcon } from "../Views"
 import {
   BackendModel,
   FrontendModel,
   FrontendMsg,
-  initShared,
-  inputBot,
-  inputBotProblemToString,
-  inputColor,
-  inputColorProblemToString,
-  inputMove,
+  initShared, inputMove,
   isBotTurn,
   Res,
-  SharedModel,
-  startGame,
-  ToBackend,
-  ToFrontend,
+  SharedModel, ToBackend,
+  ToFrontend
 } from "./UserVsBot.Types"
 
 //
@@ -302,222 +296,34 @@ export const View = ({
   $d: (msg: Msg) => void
   onClose: () => void
 }) => {
+
   if (model.sharedModel.type === "Setup") {
-    const startGameResult = startGame(
-      { userId: ctx.currentUserId },
-      model.sharedModel,
-    )
-    const inputBotResult = inputBot(
-      { botLevel: model.sharedModel.botLevel, userId: ctx.currentUserId },
-      model.sharedModel,
-    )
-    const inputColorResult = inputColor(
-      { userColor: model.sharedModel.userColor, userId: ctx.currentUserId },
-      model.sharedModel,
-    )
-
     return (
-      <UI.FillBox>
-        <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
-          <VersusHeader
-            ctx={ctx}
-            black={
-              model.sharedModel.userColor === "w"
-                ? {
-                  type: "Bot",
-                  label: Board.levelToString(model.sharedModel.botLevel),
-                }
-                : model.sharedModel.userId === "None"
-                  ? { type: "None" }
-                  : { type: "User", userId: model.sharedModel.userId }
-            }
-            white={
-              model.sharedModel.userColor === "b"
-                ? {
-                  type: "Bot",
-                  label: Board.levelToString(model.sharedModel.botLevel),
-                }
-                : model.sharedModel.userId === "None"
-                  ? { type: "None" }
-                  : { type: "User", userId: model.sharedModel.userId }
-            }
-          />
-
-          <UI.Typography
-            sx={{ paddingX: 2, marginTop: 2, marginBottom: 1 }}
-            color="text.secondary"
-          >
-            Player
-          </UI.Typography>
-
-          {model.sharedModel.userId === "None" ? (
-            <UI.Box sx={{ paddingX: 2 }}>
-              <UI.Button
-                fullWidth
-                size="large"
-                variant="contained"
-                onClick={() => {
-                  $d(["InputUser", { userId: ctx.currentUserId }])
-                }}
-              >
-                Start Playing
-              </UI.Button>
-            </UI.Box>
-          ) : (
-            <UI.Box sx={{ display: "flex", alignItems: "center", paddingX: 2 }}>
-              <UI.Avatar
-                sx={{ marginRight: 1 }}
-                src={ctx.profiles[model.sharedModel.userId]?.avatarUrl}
-              />
-
-              <UI.Typography sx={{ flex: 1 }} noWrap>
-                {ctx.profiles[model.sharedModel.userId]?.username ?? "..."}
-              </UI.Typography>
-
-              {model.sharedModel.userId === ctx.currentUserId && (
-                <UI.Button
-                  size="large"
-                  onClick={() => $d(["InputUser", { userId: "None" }])}
-                >
-                  Stop Playing
-                </UI.Button>
-              )}
-            </UI.Box>
-          )}
-
-          <UI.Divider sx={{ marginY: 2 }} />
-
-          <UI.Typography
-            sx={{ paddingX: 2, marginBottom: 1 }}
-            color="text.secondary"
-          >
-            Color
-          </UI.Typography>
-
-          <UI.Box sx={{ paddingX: 2 }}>
-            <UI.Tooltip
-              title={
-                inputColorResult.type === "Err"
-                  ? inputColorProblemToString(inputColorResult.error)
-                  : ""
-              }
-            >
-              <UI.ToggleButtonGroup
-                disabled={inputColorResult.type === "Err"}
-                fullWidth
-                value={model.sharedModel.userColor}
-              >
-                <UI.ToggleButton
-                  value="w"
-                  onClick={() =>
-                    $d([
-                      "InputColor",
-                      { userColor: "w", userId: ctx.currentUserId },
-                    ])
-                  }
-                >
-                  <PawnIcon
-                    stroke="#000"
-                    sx={{ width: 36, height: 36, color: "#fff" }}
-                  />
-                  White
-                </UI.ToggleButton>
-                <UI.ToggleButton
-                  value="b"
-                  onClick={() =>
-                    $d([
-                      "InputColor",
-                      { userColor: "b", userId: ctx.currentUserId },
-                    ])
-                  }
-                >
-                  <PawnIcon
-                    stroke="#ccc"
-                    sx={{ width: 36, height: 36, color: "#000" }}
-                  />
-                  Black
-                </UI.ToggleButton>
-              </UI.ToggleButtonGroup>
-            </UI.Tooltip>
-          </UI.Box>
-
-          <UI.Typography
-            sx={{ paddingX: 2, marginBottom: 1, marginTop: 2 }}
-            color="text.secondary"
-          >
-            Bot
-          </UI.Typography>
-
-          <UI.Box sx={{ paddingX: 2 }}>
-            <UI.Tooltip
-              enterTouchDelay={0}
-              title={
-                inputBotResult.type === "Err"
-                  ? inputBotProblemToString(inputBotResult.error)
-                  : ""
-              }
-            >
-              <UI.Box
-                sx={{
-                  width: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1.5,
-                  flexWrap: "wrap",
-                }}
-              >
-                {Board.allLevels.map((level) => (
-                  <UI.Chip
-                    clickable
-                    color={
-                      model.sharedModel.botLevel === level
-                        ? "primary"
-                        : undefined
-                    }
-                    // variant={model.sharedModel.botLevel === level ? "filled" : "outlined"}
-                    key={level}
-                    onClick={() => {
-                      $d([
-                        "InputBot",
-                        { botLevel: level, userId: ctx.currentUserId },
-                      ])
-                    }}
-                    sx={{ fontSize: "1.1rem" }}
-                    label={Board.levelToString(level)}
-                  />
-                ))}
-              </UI.Box>
-            </UI.Tooltip>
-          </UI.Box>
-
-          <UI.Box sx={{ flex: 1, paddingBottom: 4 }} />
-        </UI.Box>
-
-        <UI.Box sx={{ padding: 2, display: "flex", gap: 2 }}>
-          <UI.Button
-            fullWidth
-            size="large"
-            variant="outlined"
-            onClick={onClose}
-          >
-            Back
-          </UI.Button>
-
-          <UI.Button
-            fullWidth
-            size="large"
-            variant="contained"
-            disabled={startGameResult.type === "Err"}
-            onClick={() => $d(["StartGame", { userId: ctx.currentUserId }])}
-          >
-            Start Game
-          </UI.Button>
-        </UI.Box>
-      </UI.FillBox>
+      <UserVsBotSetupPage
+        botLevel={{
+          values: Board.allBotLevels,
+          selected: model.sharedModel.botLevel,
+          onInput: (botLevel) => $d(["InputBot", { botLevel, userId: ctx.currentUserId }]),
+        }}
+        onCancel={onClose}
+        coverArt={<CoverArt />}
+        ctx={ctx}
+        onStartGame={() => $d(["StartGame", { userId: ctx.currentUserId }])}
+        onStartPlaying={() => $d(["InputUser", { userId: ctx.currentUserId }])}
+        onStopPlaying={() => $d(["InputUser", { userId: "None" }])}
+        player={{
+          values: Object.values(Board.colors),
+          selected: model.sharedModel.userColor,
+          onInput: (color) => $d(["InputColor", { userColor: color, userId: ctx.currentUserId }]),
+          icon: (color) => <PawnIcon sx={{ color: color === 'w' ? '#fff' : "#000" }} stroke={color === 'w' ? '#000' : '#fff'} />
+        }}
+        playerId={model.sharedModel.userId === 'None' ? null : model.sharedModel.userId}
+        title={"Chess"}
+        subtitle="Vs Computer"
+      />
     )
   }
 
-  // const stopGameResult = stopGame({ userId: currentUserId }, model.sharedModel)
 
   const botSlot = (
     <UI.Box sx={{ paddingX: 2, display: "flex", alignItems: "center" }}>
@@ -530,7 +336,7 @@ export const View = ({
 
       <UI.Box sx={{ flex: 1 }}>
         <UI.Typography variant="h6">
-          {Board.levelToString(model.sharedModel.botLevel)}
+          {Board.botLevelToString(model.sharedModel.botLevel)}
         </UI.Typography>
       </UI.Box>
 

@@ -25,7 +25,7 @@ export type SetupModel = {
   type: "Setup"
   userColor: Board.Color
   userId: UserId | "None"
-  botLevel: Board.Level
+  botLevel: Board.BotLevel
 }
 
 export type GameModel = {
@@ -33,7 +33,7 @@ export type GameModel = {
   userColor: Board.Color
   userId: UserId
   board: Board.Model
-  botLevel: Board.Level
+  botLevel: Board.BotLevel
 }
 
 export type GameOverModel = {
@@ -42,7 +42,7 @@ export type GameOverModel = {
   userColor: Board.Color
   userId: UserId
   board: Board.Model
-  botLevel: Board.Level
+  botLevel: Board.BotLevel
 }
 
 export type GameOver = Board.GameOver
@@ -193,7 +193,7 @@ export const inputColor = (
 //
 //
 
-export type InputBot = ["InputBot", { botLevel: Board.Level; userId: UserId }]
+export type InputBot = ["InputBot", { botLevel: Board.BotLevel; userId: UserId }]
 export type InputBot_Done = [
   "InputBot_Done",
   Result<InputBotProblem, SharedModel>,
