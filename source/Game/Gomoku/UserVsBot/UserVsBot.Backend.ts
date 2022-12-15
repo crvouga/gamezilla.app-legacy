@@ -1,4 +1,5 @@
 import { Cmd, Sub } from "../../../Core";
+import { UserId } from "../../../Data";
 import { BackendModel, BackendMsg, ToBackend } from "./UserVsBot.Types";
 
 //
@@ -40,6 +41,10 @@ export const updateFromFrontend = (msg: ToBackend, model: Model): [Model, Cmd<Ms
         }
     }
 };
+
+export const updateRoomLeave = (_userId: UserId, _model: Model): [Model, Cmd<Msg>] => {
+    return init
+}
 
 //
 //

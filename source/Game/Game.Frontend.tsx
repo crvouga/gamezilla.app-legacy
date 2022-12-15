@@ -1,5 +1,5 @@
 import * as Alerts from "../Alerts"
-import { Cmd, Sub, tagUpdate } from "../Core"
+import { Cmd, Sub } from "../Core"
 import * as ProfileStore from "../Profile/Profile.Store"
 import * as Chess from "./Chess/Chess.Frontend"
 import * as ConnectFour from "./ConnectFour/ConnectFour.Frontend"
@@ -12,6 +12,7 @@ import {
   ToBackend,
   ToFrontend
 } from "./Game.Types"
+import * as Gomoku from "./Gomoku/Gomoku.Frontend"
 import * as Maze from "./Maze/Maze.Frontend"
 import * as Snake from "./Snake/Snake.Frontend"
 import * as Tetris from "./Tetris/Tetris.Frontend"
@@ -61,6 +62,10 @@ export const init = ({
     case "Maze": {
       return [["Maze", Maze.init({})], Cmd.None]
     }
+
+    case 'Gomoku': {
+      return [['Gomoku', Gomoku.init], Cmd.None]
+    }
   }
 }
 
@@ -104,14 +109,13 @@ export const update = (
 
     case "ConnectFour": {
       if (msg[0] === "ConnectFour") {
-        return tagUpdate(
-          "ConnectFour",
-          ConnectFour.update(
-            { sendToBackend: (msg) => sendToBackend(["ConnectFour", msg]) },
-            msg[1],
-            model[1],
-          ),
+        const [child, cmd] = ConnectFour.update(
+          { sendToBackend: (msg) => sendToBackend(["ConnectFour", msg]) },
+          msg[1],
+          model[1],
         )
+        return [["ConnectFour", child], Cmd.tag("ConnectFour", cmd)]
+
       }
 
       return [model, Cmd.None]
@@ -119,14 +123,12 @@ export const update = (
 
     case "Tetris": {
       if (msg[0] === "Tetris") {
-        return tagUpdate(
-          "Tetris",
-          Tetris.update(
-            { sendToBackend: (msg) => sendToBackend(["Tetris", msg]) },
-            msg[1],
-            model[1],
-          ),
+        const [child, cmd] = Tetris.update(
+          { sendToBackend: (msg) => sendToBackend(["Tetris", msg]) },
+          msg[1],
+          model[1],
         )
+        return [["Tetris", child], Cmd.tag("Tetris", cmd)]
       }
 
       return [model, Cmd.None]
@@ -134,47 +136,48 @@ export const update = (
 
     case "Snake": {
       if (msg[0] === "Snake") {
-        return tagUpdate(
-          "Snake",
-          Snake.update(
-            {
-              ctx,
-              sendToBackend: (msg) => sendToBackend(["Snake", msg]),
-            },
-            msg[1],
-            model[1],
-          ),
+        const [child, cmd] = Snake.update(
+          { sendToBackend: (msg) => sendToBackend(["Snake", msg]), ctx },
+          msg[1],
+          model[1],
         )
+        return [["Snake", child], Cmd.tag("Snake", cmd)]
       }
       return [model, Cmd.None]
     }
 
     case "TicTacToe": {
       if (msg[0] === "TicTacToe") {
-        return tagUpdate(
-          "TicTacToe",
-          TicTacToe.update(
-            {
-              sendToBackend: (msg) => sendToBackend(["TicTacToe", msg]),
-            },
-            msg[1],
-            model[1],
-          ),
+        const [child, cmd] = TicTacToe.update(
+          { sendToBackend: (msg) => sendToBackend(["TicTacToe", msg]) },
+          msg[1],
+          model[1],
         )
+        return [["TicTacToe", child], Cmd.tag("TicTacToe", cmd)]
       }
       return [model, Cmd.None]
     }
 
     case "Chess": {
       if (msg[0] === "Chess") {
-        return tagUpdate(
-          "Chess",
-          Chess.update(
-            { sendToBackend: (msg) => sendToBackend(["Chess", msg]) },
-            msg[1],
-            model[1],
-          ),
+        const [child, cmd] = Chess.update(
+          { sendToBackend: (msg) => sendToBackend(["Chess", msg]) },
+          msg[1],
+          model[1],
         )
+        return [["Chess", child], Cmd.tag("Chess", cmd)]
+      }
+      return [model, Cmd.None]
+    }
+
+    case 'Gomoku': {
+      if (msg[0] === 'Gomoku') {
+        const [child, cmd] = Gomoku.update(
+          { sendToBackend: (msg) => sendToBackend(['Gomoku', msg]) },
+          msg[1],
+          model[1],
+        )
+        return [['Gomoku', child], Cmd.tag('Gomoku', cmd)]
       }
       return [model, Cmd.None]
     }
@@ -195,10 +198,11 @@ export const updateFromBackend = (
   switch (msg[0]) {
     case "Tetris": {
       if (model[0] === "Tetris") {
-        return [
-          ...tagUpdate("Tetris", Tetris.updateFromBackend(msg[1], model[1])),
-          [],
-        ]
+        const [child, cmd] = Tetris.updateFromBackend(
+          msg[1],
+          model[1],
+        )
+        return [["Tetris", child], Cmd.tag("Tetris", cmd), []]
       }
 
       return [model, Cmd.None, []]
@@ -258,6 +262,14 @@ export const updateFromBackend = (
       }
       return [model, Cmd.None, []]
     }
+
+    case 'Gomoku': {
+      if (model[0] === 'Gomoku') {
+        const [child, cmd] = Gomoku.updateFromBackend(msg[1], model[1])
+        return [['Gomoku', child], Cmd.tag('Gomoku', cmd), []]
+      }
+      return [model, Cmd.None, []]
+    }
   }
 }
 
@@ -296,6 +308,10 @@ export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
 
     case "Maze": {
       return Sub.tag("Maze", Maze.subscriptions(model[1]))
+    }
+
+    case 'Gomoku': {
+      return Sub.tag('Gomoku', Gomoku.subscriptions(model[1]))
     }
   }
 }
@@ -355,6 +371,10 @@ export const View = ({
     Maze: (model: Maze.Model) => (
       <Maze.View ctx={ctx} model={model} $d={(m) => $d(["Maze", m])} />
     ),
+
+    Gomoku: (model: Gomoku.Model) => (
+      Gomoku.view({ ctx, gameRoomCtx, model, $d: (m) => $d(['Gomoku', m]) })
+    ),
   }
   return views[model[0]](model[1])
 }
@@ -384,6 +404,10 @@ export const gameNameToString = (game: GameName): string => {
     case "Maze": {
       return "Maze"
     }
+
+    case 'Gomoku': {
+      return "Gomoku"
+    }
   }
 }
 
@@ -406,6 +430,9 @@ export const CoverArt = ({ gameName }: { gameName: GameName }) => {
     }
     case "Maze": {
       return <Maze.CoverArt />
+    }
+    case 'Gomoku': {
+      return Gomoku.coverArt()
     }
   }
 }
@@ -538,6 +565,26 @@ export const mergeWithBackend = ({
         ]
       }
       return [["Maze", Maze.init({})], Cmd.None]
+    }
+
+    case 'Gomoku': {
+      if (frontendModel[0] === "Gomoku") {
+        return [
+          [
+            "Gomoku",
+            Gomoku.mergeWithBackend({
+              frontendModel: frontendModel[1],
+              backendModel: backendModel[1],
+            }),
+          ],
+          Cmd.None,
+        ]
+      }
+
+      return [
+        ["Gomoku", Gomoku.mergeWithBackend({ frontendModel: Gomoku.init, backendModel: backendModel[1], })],
+        Cmd.None
+      ]
     }
   }
 }

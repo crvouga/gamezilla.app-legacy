@@ -7,6 +7,7 @@ import * as Maze from "./Maze/Maze.Backend"
 import * as Snake from "./Snake/Snake.Backend"
 import * as Tetris from "./Tetris/Tetris.Backend"
 import * as TicTacToe from "./TicTacToe/TicTacToe.Backend"
+import * as Gomoku from "./Gomoku/Gomoku.Backend"
 
 
 //
@@ -43,6 +44,10 @@ export const init = ({ gameName }: { gameName: Model[0] }): Model => {
 
     case "Maze": {
       return ["Maze", Maze.init]
+    }
+
+    case "Gomoku": {
+      return ["Gomoku", Gomoku.init]
     }
   }
 }
@@ -130,8 +135,17 @@ export const update = (
       }
       return [model, Cmd.None]
     }
+
+    case "Gomoku": {
+      if (model[0] === "Gomoku") {
+        const [child, cmd] = Gomoku.update(msg[1], model[1])
+        return [["Gomoku", child], Cmd.tag("Gomoku", cmd)]
+      }
+      return [model, Cmd.None]
+    }
   }
 }
+
 
 export const updateFromFrontend = (
   {
@@ -235,6 +249,17 @@ export const updateFromFrontend = (
       }
       return [model, Cmd.None]
     }
+    case "Gomoku": {
+      if (model[0] === "Gomoku") {
+        const [child, cmd] = Gomoku.updateFromFrontend(
+          { broadcast: (m) => broadcast(["Gomoku", m]) },
+          msg[1],
+          model[1]
+        )
+        return [["Gomoku", child], Cmd.tag("Gomoku", cmd)]
+      }
+      return [model, Cmd.None]
+    }
   }
 }
 
@@ -283,6 +308,11 @@ export const updateRoomLeave = (
       const [child, cmd] = Maze.updateRoomLeave(userId, model[1])
       return [["Maze", child], Cmd.tag("Maze", cmd)]
     }
+
+    case 'Gomoku': {
+      const [child, cmd] = Gomoku.updateRoomLeave(userId, model[1])
+      return [['Gomoku', child], Cmd.tag('Gomoku', cmd)]
+    }
   }
 }
 
@@ -302,20 +332,29 @@ export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
         ConnectFour.subscriptions(intervalId, model[1]),
       )
     }
+
     case "TicTacToe": {
       return Sub.tag("TicTacToe", TicTacToe.subscriptions(intervalId, model[1]))
     }
+
     case "Snake": {
       return Sub.tag("Snake", Snake.subscriptions(intervalId, model[1]))
     }
+
     case "Chess": {
       return Sub.tag("Chess", Chess.subscriptions(intervalId, model[1]))
     }
+
     case "Tetris": {
       return Sub.tag("Tetris", Tetris.subscriptions(intervalId, model[1]))
     }
+
     case "Maze": {
       return Sub.tag("Maze", Maze.subscriptions(intervalId, model[1]))
+    }
+
+    case 'Gomoku': {
+      return Sub.tag("Gomoku", Gomoku.subscriptions(model[1]))
     }
   }
 }

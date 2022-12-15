@@ -105,7 +105,7 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 // 
 // 
 
-export const view = ({ model, ctx, gameRoomCtx }: { model: Model, ctx: Ctx, gameRoomCtx: GameRoomCtx, }) => {
+export const view = ({ model, ctx, gameRoomCtx, }: { model: Model, ctx: Ctx, gameRoomCtx: GameRoomCtx, $d: (m: Msg) => void }) => {
     switch (model.type) {
         case 'None': {
             return (
