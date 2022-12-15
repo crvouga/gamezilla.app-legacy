@@ -7,11 +7,11 @@ import { spawn, Thread, Worker } from "threads"
 import { exhaustive, Result, Task } from "../../Core"
 import { BoardWorker } from "./board-worker"
 
-export type Level = 0 | 1 | 2 | 3 | 4
+export type BotLevel = 0 | 1 | 2 | 3 | 4
 
-export const allLevels: Level[] = [0, 1, 2, 3, 4]
+export const allBotLevels: BotLevel[] = [0, 1, 2, 3, 4]
 
-export const levelToString = (level: Level): string => {
+export const botLevelToString = (level: BotLevel): string => {
   switch (level) {
     case 0: {
       // return "Monkey"
@@ -46,7 +46,7 @@ const isRecord = (record: unknown): record is Record<string, string> => {
 }
 
 export const toBestMoveInput = (
-  level: Level,
+  level: BotLevel,
   model: Model,
 ): BestMoveInputResult => {
   const fen = toFen(model)
@@ -84,18 +84,18 @@ export const toRandomMoveInput = (
 }
 
 export const getBestMove =
-  (level: Level, model: Model): Task<BestMoveInputResult> =>
-  async () => {
-    const worker = new Worker("./board-worker")
+  (level: BotLevel, model: Model): Task<BestMoveInputResult> =>
+    async () => {
+      const worker = new Worker("./board-worker")
 
-    const boardWorker = await spawn<BoardWorker>(worker)
+      const boardWorker = await spawn<BoardWorker>(worker)
 
-    const result = await boardWorker.toBestMove(level, model)
+      const result = await boardWorker.toBestMove(level, model)
 
-    await Thread.terminate(boardWorker)
+      await Thread.terminate(boardWorker)
 
-    return result
-  }
+      return result
+    }
 
 //
 //
@@ -495,6 +495,11 @@ export type PieceSymbol = "p" | "b" | "n" | "r" | "q" | "k"
 
 export type Color = "w" | "b"
 
+export const colors: { [color in Color]: Color } = {
+  b: "b",
+  w: "w",
+}
+
 export type Piece = `${Color}${PieceType}`
 
 export const toColor = (piece: Piece): Color => {
@@ -631,12 +636,12 @@ export const toTurn = (model: Model): Color => {
 
 export type GameOver =
   | {
-      type: "Checkmate"
-      winner: Color
-    }
+    type: "Checkmate"
+    winner: Color
+  }
   | {
-      type: "Stalemate"
-    }
+    type: "Stalemate"
+  }
 
 export const toGameOver = (model: Model): GameOver | { type: "None" } => {
   if (inCheckmate(model)) {
@@ -793,14 +798,14 @@ export const View = ({
 
   const lastMoveStyles: CustomSquareStyles = model.previousMove
     ? {
-        [toLowercaseSquare(model.previousMove.to)]: {
-          background: "rgba(255, 255, 0, 0.4)",
-        },
+      [toLowercaseSquare(model.previousMove.to)]: {
+        background: "rgba(255, 255, 0, 0.4)",
+      },
 
-        [toLowercaseSquare(model.previousMove.from)]: {
-          background: "rgba(255, 255, 0, 0.4)",
-        },
-      }
+      [toLowercaseSquare(model.previousMove.from)]: {
+        background: "rgba(255, 255, 0, 0.4)",
+      },
+    }
     : {}
 
   const game = instanceRef.current
@@ -810,28 +815,28 @@ export const View = ({
       ...styles,
       [toLowercaseSquare(move.to)]:
         game.get(move.to) &&
-        selectedSquare &&
-        game.get(toLowercaseSquare(move.to))?.color !==
+          selectedSquare &&
+          game.get(toLowercaseSquare(move.to))?.color !==
           game.get(toLowercaseSquare(selectedSquare))?.color
           ? {
-              background:
-                "radial-gradient(circle, rgba(0,0,0,.2) 85%, transparent 85%)",
-              borderRadius: "50%",
-              cursor: "pointer",
-            }
+            background:
+              "radial-gradient(circle, rgba(0,0,0,.2) 85%, transparent 85%)",
+            borderRadius: "50%",
+            cursor: "pointer",
+          }
           : {
-              background:
-                "radial-gradient(circle, rgba(0,0,0,.2) 25%, transparent 25%)",
-              borderRadius: "50%",
-              cursor: "pointer",
-            },
+            background:
+              "radial-gradient(circle, rgba(0,0,0,.2) 25%, transparent 25%)",
+            borderRadius: "50%",
+            cursor: "pointer",
+          },
     }),
     selectedSquare
       ? {
-          [toLowercaseSquare(selectedSquare)]: {
-            background: "rgba(255, 255, 0, 0.4)",
-          },
-        }
+        [toLowercaseSquare(selectedSquare)]: {
+          background: "rgba(255, 255, 0, 0.4)",
+        },
+      }
       : {},
   )
 
@@ -876,21 +881,21 @@ export const View = ({
         isDraggablePiece={
           isDraggablePiece
             ? ({ piece }) => {
-                return isDraggablePiece({ piece })
-              }
+              return isDraggablePiece({ piece })
+            }
             : undefined
         }
         onPieceDrop={
           onPieceDrop
             ? (from, to, _piece) => {
-                const moveInput: MoveInput = {
-                  from: fromLowercase(from),
-                  to: fromLowercase(to),
-                  promotion: "q",
-                }
-
-                return onPieceDrop(moveInput)
+              const moveInput: MoveInput = {
+                from: fromLowercase(from),
+                to: fromLowercase(to),
+                promotion: "q",
               }
+
+              return onPieceDrop(moveInput)
+            }
             : undefined
         }
       />
