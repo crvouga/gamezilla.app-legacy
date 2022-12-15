@@ -424,10 +424,10 @@ export const UserVsBotSetupPage = <BotLevel, Player>({
 
       <Box sx={{ px: 2, mt: 2 }} >
         <Button fullWidth variant="outlined"
-          startIcon={<Icons.Close />}
+          startIcon={<Icons.ArrowLeft />}
           onClick={onCancel}
         >
-          Cancel
+          Back
         </Button>
       </Box>
 
@@ -473,8 +473,8 @@ export const GameModeSelectPage = ({
   }
 
   return (
-    <FillBox sx={{ p: 2 }}>
-      <Box sx={{ height: 100, width: 100, mx: 'auto', borderRadius: 2, overflow: "hidden", mt: 2, mb: 2 }}>
+    <FillBox sx={{ px: 2 }}>
+      <Box sx={{ height: 100, width: 100, mx: 'auto', borderRadius: 2, overflow: "hidden", mt: 4, mb: 2 }}>
         {coverArt}
       </Box>
 
@@ -497,7 +497,7 @@ export const GameModeSelectPage = ({
       <Box sx={{ flex: 1 }} />
 
       <Button onClick={gameRoomCtx.onQuit} size="large" fullWidth variant="outlined" startIcon={<Icons.ArrowLeft />}>
-        Quit
+        Back
       </Button>
     </FillBox>
   )
