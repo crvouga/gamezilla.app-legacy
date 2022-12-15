@@ -358,19 +358,19 @@ export const updateReady = (
   switch (model[0]) {
     case "Account":
       if (msg[0] === "Account") {
-        return tagUpdate("Account", Account.update(msg[1], model[1]))
+        return tag("Account", Account.update(msg[1], model[1]))
       }
       return [model, Cmd.None, []]
 
     case "Logout":
       if (msg[0] === "Logout") {
-        return tagUpdate("Logout", Logout.update(msg[1], model[1]))
+        return tag("Logout", Logout.update(msg[1], model[1]))
       }
       return [model, Cmd.None, []]
 
     case "ProfileDelete":
       if (msg[0] === "ProfileDelete") {
-        return tagUpdate(
+        return tag(
           "ProfileDelete",
           ProfileDelete.update(profile, msg[1], model[1]),
         )
@@ -379,7 +379,7 @@ export const updateReady = (
 
     case "ProfileUpdate":
       if (msg[0] === "ProfileUpdate") {
-        return tagUpdate(
+        return tag(
           "ProfileUpdate",
           ProfileUpdate.update(msg[1], model[1]),
         )
@@ -388,7 +388,7 @@ export const updateReady = (
 
     case "ProfileUpdateAvatar":
       if (msg[0] === "ProfileUpdateAvatar") {
-        return tagUpdate(
+        return tag(
           "ProfileUpdateAvatar",
           ProfileUpdateAvatar.update(profile, msg[1], model[1]),
         )
@@ -397,7 +397,7 @@ export const updateReady = (
 
     case "ProfileUpdateName":
       if (msg[0] === "ProfileUpdateName") {
-        return tagUpdate(
+        return tag(
           "ProfileUpdateName",
           ProfileUpdateName.update(profile, msg[1], model[1]),
         )
@@ -406,7 +406,7 @@ export const updateReady = (
 
     case "ProfileUpdateUsername":
       if (msg[0] === "ProfileUpdateUsername") {
-        return tagUpdate(
+        return tag(
           "ProfileUpdateUsername",
           ProfileUpdateUsername.update(profile, msg[1], model[1]),
         )
@@ -415,13 +415,13 @@ export const updateReady = (
 
     case "Chat":
       if (msg[0] === "Chat") {
-        return tagUpdate("Chat", Chat.update(msg[1], model[1]))
+        return tag("Chat", Chat.update(msg[1], model[1]))
       }
       return [model, Cmd.None, []]
 
     case "ChatNew":
       if (msg[0] === "ChatNew") {
-        return tagUpdate(
+        return tag(
           "ChatNew",
           ChatNew.update(
             { profileStore: profileStore, currentUserId: profile.userId },
@@ -449,7 +449,7 @@ export const updateReady = (
 
     case "ProfileUpdateTheme":
       if (msg[0] === "ProfileUpdateTheme") {
-        return tagUpdate(
+        return tag(
           "ProfileUpdateTheme",
           ProfileUpdateTheme.update(profile, msg[1], model[1]),
         )
@@ -474,7 +474,7 @@ export const updateReady = (
 
     case "Search":
       if (msg[0] === "Search") {
-        return tagUpdate("Search", Search.update(msg[1], model[1]))
+        return tag("Search", Search.update(msg[1], model[1]))
       }
 
       return [model, Cmd.None, []]
@@ -540,13 +540,13 @@ export const updateProfileMissing = (
   switch (model[0]) {
     case "Logout":
       if (msg[0] === "Logout") {
-        return tagUpdate("Logout", Logout.update(msg[1], model[1]))
+        return tag("Logout", Logout.update(msg[1], model[1]))
       }
       return [model, Cmd.None, []]
 
     case "ProfileCreate":
       if (msg[0] === "ProfileCreate") {
-        return tagUpdate(
+        return tag(
           "ProfileCreate",
           ProfileCreate.update(auth, msg[1], model[1]),
         )
@@ -595,7 +595,7 @@ export const updateLoggedOut = (
 
     case "LoginEmailLink": {
       if (msg[0] === "LoginEmailLink") {
-        return tagUpdate(
+        return tag(
           "LoginEmailLink",
           LoginEmailLink.update(msg[1], model[1]),
         )
@@ -605,7 +605,7 @@ export const updateLoggedOut = (
 
     case "LoginPhone": {
       if (msg[0] === "LoginPhone") {
-        return tagUpdate("LoginPhone", LoginPhone.update(msg[1], model[1]))
+        return tag("LoginPhone", LoginPhone.update(msg[1], model[1]))
       }
       return [model, Cmd.None, []]
     }
@@ -1222,7 +1222,7 @@ const ViewBottomNavigation = ({
 //
 //
 
-const tagUpdate = <TModel, TMsg, TAction, TPage extends Msg[0]>(
+const tag = <TModel, TMsg, TAction, TPage extends Msg[0]>(
   page: TPage,
   [modelPrev, cmdPrev, actionsPrev = []]:
     | [TModel, Cmd<TMsg>, TAction[]]
@@ -1230,3 +1230,4 @@ const tagUpdate = <TModel, TMsg, TAction, TPage extends Msg[0]>(
 ): [[TPage, TModel], Cmd<[TPage, TMsg]>, TAction[]] => {
   return [[page, modelPrev], p(cmdPrev, Cmd.map(t(page))), actionsPrev]
 }
+

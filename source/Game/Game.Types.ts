@@ -4,6 +4,7 @@ import * as Maze from "./Maze/Maze.Types"
 import * as Snake from "./Snake/Snake.Types"
 import * as Tetris from "./Tetris/Tetris.Types"
 import * as TicTacToe from "./TicTacToe/TicTacToe.Types"
+import * as Gomoku from "./Gomoku/Gomoku.Types"
 
 //
 //
@@ -20,6 +21,7 @@ export type FrontendModel =
   | ["Chess", Chess.FrontendModel]
   | ["Tetris", Tetris.FrontendModel]
   | ["Maze", Maze.FrontendModel]
+  | ["Gomoku", Gomoku.FrontendModel]
 
 export type BackendModel =
   | ["TicTacToe", TicTacToe.BackendModel]
@@ -28,6 +30,7 @@ export type BackendModel =
   | ["Chess", Chess.BackendModel]
   | ["Tetris", Tetris.BackendModel]
   | ["Maze", Maze.BackendModel]
+  | ["Gomoku", Gomoku.BackendModel]
 
 export type GameName =
   | "TicTacToe"
@@ -36,6 +39,7 @@ export type GameName =
   | "Chess"
   | "Tetris"
   | "Maze"
+  | "Gomoku"
 
 export const gameNames: { [gameName in GameName]: GameName } = {
   TicTacToe: "TicTacToe",
@@ -44,12 +48,14 @@ export const gameNames: { [gameName in GameName]: GameName } = {
   Chess: "Chess",
   Tetris: "Tetris",
   Maze: "Maze",
+  Gomoku: "Gomoku",
 }
 
 export const gameNameList: GameName[] = [
   "Chess",
   "ConnectFour",
   "TicTacToe",
+  "Gomoku"
 ]
 
 //
@@ -67,6 +73,7 @@ export type BackendMsg =
   | ["Chess", Chess.BackendMsg]
   | ["Tetris", Tetris.BackendMsg]
   | ["Maze", Maze.BackendMsg]
+  | ["Gomoku", Gomoku.BackendMsg]
 
 export type FrontendMsg =
   | ["TicTacToe", TicTacToe.FrontendMsg]
@@ -75,6 +82,7 @@ export type FrontendMsg =
   | ["Chess", Chess.FrontendMsg]
   | ["Tetris", Tetris.FrontendMsg]
   | ["Maze", Maze.FrontendMsg]
+  | ["Gomoku", Gomoku.FrontendMsg]
 
 export type ToFrontend =
   | ["TicTacToe", TicTacToe.ToFrontend]
@@ -83,6 +91,7 @@ export type ToFrontend =
   | ["Chess", Chess.ToFrontend]
   | ["Tetris", Tetris.ToFrontend]
   | ["Maze", Maze.ToFrontend]
+  | ["Gomoku", Gomoku.ToFrontend]
 
 export type ToBackend =
   | ["TicTacToe", TicTacToe.ToBackend]
@@ -91,3 +100,4 @@ export type ToBackend =
   | ["Chess", Chess.ToBackend]
   | ["Tetris", Tetris.ToBackend]
   | ["Maze", Maze.ToBackend]
+  | ["Gomoku", Gomoku.ToBackend]

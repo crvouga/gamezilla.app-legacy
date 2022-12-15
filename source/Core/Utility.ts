@@ -10,60 +10,48 @@ export const andThen_ =
     msg: Msg,
     update: (msg: Msg, model: Model) => [Model, Cmd<Msg>],
   ) =>
-  ([model, cmdPrev]: [Model, Cmd<Msg>]): [Model, Cmd<Msg>] => {
-    const [modelNew, cmdNew] = update(msg, model)
+    ([model, cmdPrev]: [Model, Cmd<Msg>]): [Model, Cmd<Msg>] => {
+      const [modelNew, cmdNew] = update(msg, model)
 
-    return [modelNew, Cmd.batch([cmdNew, cmdPrev])]
-  }
+      return [modelNew, Cmd.batch([cmdNew, cmdPrev])]
+    }
 
 export const andThen =
   <Msg, Model>(
     update: (msg: Msg, model: Model) => [Model, Cmd<Msg>],
     msg: Msg,
   ) =>
-  ([model, cmdPrev]: [Model, Cmd<Msg>]): [Model, Cmd<Msg>] => {
-    const [modelNew, cmdNew] = update(msg, model)
+    ([model, cmdPrev]: [Model, Cmd<Msg>]): [Model, Cmd<Msg>] => {
+      const [modelNew, cmdNew] = update(msg, model)
 
-    return [modelNew, Cmd.batch([cmdNew, cmdPrev])]
-  }
+      return [modelNew, Cmd.batch([cmdNew, cmdPrev])]
+    }
 
 export const andThenMany =
   <Action, Model, Msg>(
     update: (msg: Action, model: Model) => [Model, Cmd<Msg>],
     msgs: Action[],
   ) =>
-  ([modelPrev, cmdPrev]: [Model, Cmd<Msg>]): [Model, Cmd<Msg>] => {
-    const [msg, ...msgsRest] = msgs
+    ([modelPrev, cmdPrev]: [Model, Cmd<Msg>]): [Model, Cmd<Msg>] => {
+      const [msg, ...msgsRest] = msgs
 
-    if (!msg) {
-      return [modelPrev, cmdPrev]
+      if (!msg) {
+        return [modelPrev, cmdPrev]
+      }
+
+      const [modelNew, cmdNew] = update(msg, modelPrev)
+
+      return p(
+        [modelNew, Cmd.batch([cmdPrev, cmdNew])],
+        andThenMany(update, msgsRest),
+      )
     }
-
-    const [modelNew, cmdNew] = update(msg, modelPrev)
-
-    return p(
-      [modelNew, Cmd.batch([cmdPrev, cmdNew])],
-      andThenMany(update, msgsRest),
-    )
-  }
 
 export const t =
   <Tag extends string>(tag: Tag) =>
-  <Value>(value: Value): [Tag, Value] =>
-    [tag, value]
+    <Value>(value: Value): [Tag, Value] =>
+      [tag, value]
 
-export const tagUpdate = <TagName extends string, Model, Msg>(
-  tagName: TagName,
-  [model, cmd]: [Model, Cmd<Msg>],
-): [[TagName, Model], Cmd<[TagName, Msg]>] => {
-  return [
-    [tagName, model],
-    p(
-      cmd,
-      Cmd.map((msg) => [tagName, msg]),
-    ),
-  ]
-}
 
 export type Unit = { type: "Unit" }
 

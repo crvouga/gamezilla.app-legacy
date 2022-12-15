@@ -98,6 +98,22 @@ export const updateFromFrontend = ({ broadcast }: { broadcast: (m: ToFrontend) =
 };
 
 
+export const updateRoomLeave = (userId: UserId, model: Model): [Model, Cmd<Msg>] => {
+    switch (model.type) {
+        case "UserVsBot": {
+            const [child, cmd] = UserVsBot.updateRoomLeave(userId, model.child)
+            return [{ type: "UserVsBot", child }, Cmd.tag("UserVsBot", cmd)]
+        }
+        case "UserVsUser": {
+            const [child, cmd] = UserVsUser.updateRoomLeave(userId, model.child)
+            return [{ type: "UserVsUser", child }, Cmd.tag("UserVsUser", cmd)]
+        }
+        case "None": {
+            return [model, Cmd.None]
+        }
+    }
+}
+
 //
 //
 //
