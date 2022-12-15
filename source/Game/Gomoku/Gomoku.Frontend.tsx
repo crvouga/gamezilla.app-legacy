@@ -110,7 +110,7 @@ export const view = ({ model, ctx, gameRoomCtx, }: { model: Model, ctx: Ctx, gam
         case 'None': {
             return (
                 <GameModeSelectPage
-                    coverArt={<>cover art</>}
+                    coverArt={coverArt()}
                     ctx={ctx}
                     gameRoomCtx={gameRoomCtx}
                     onUserVsComputer={() => { }}
@@ -132,10 +132,20 @@ export const view = ({ model, ctx, gameRoomCtx, }: { model: Model, ctx: Ctx, gam
 }
 
 export const coverArt = () => {
-    return <svg width={"100%"} viewBox="0 0 8 8">
+    const columnCount = 6
+    const rowCount = 6
+    const viewBox = [0, 0, rowCount, columnCount].join(" ")
+    return <svg width={"100%"} viewBox={viewBox}>
         <rect x={0} y={0} width="100%" height="100%" fill="#000" />
-        {Array.from({ length: 8 }).map((_, x) => Array.from({ length: 8 }).map((_, y) => (
-            <circle key={[x, y].join("-")} cx={x + 1 / 2} cy={y + 1 / 2} fill={"#fff"} r={0.1} />
-        )))}
+        <g transform="translate(0.5, 0.5)">
+            {Array.from({ length: columnCount }).map((_, x) => Array.from({ length: rowCount }).map((_, y) => (
+                <circle key={[x, y].join("-")} cx={x} cy={y} fill={"#fff"} r={0.1} />
+            )))}
+            <circle cx={3} cy={4} fill={"orange"} r={0.45} />
+            <circle cx={3} cy={3} fill={"blue"} r={0.45} />
+            <circle cx={2} cy={3} fill={"orange"} r={0.45} />
+            <circle cx={2} cy={2} fill={"blue"} r={0.45} />
+            <circle cx={3} cy={2} fill={"orange"} r={0.45} />
+        </g>
     </svg>
 }
