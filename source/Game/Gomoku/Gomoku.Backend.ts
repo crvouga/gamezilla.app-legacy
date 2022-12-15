@@ -1,5 +1,9 @@
 import { Cmd, Sub } from "../../Core";
-import { ToBackend, BackendMsg, BackendModel } from "./Gomoku.Types"
+import { UserId } from "../../Data";
+import { ToBackend, BackendMsg, BackendModel, Mode, ToFrontend } from "./Gomoku.Types"
+import * as UserVsUser from "./UserVsUser/UserVsUser.Backend"
+import * as UserVsBot from "./UserVsBot/UserVsBot.Backend"
+import { Ok } from "../../Core/Result";
 
 //
 //
@@ -12,7 +16,31 @@ import { ToBackend, BackendMsg, BackendModel } from "./Gomoku.Types"
 export type Model = BackendModel;
 
 
-export const init: [Model, Cmd<Msg>] = [{}, Cmd.None];
+export const init: Model = {
+    type: "None"
+}
+
+const initMode = ({ mode, }: { mode: Mode, userId: UserId }): Model => {
+    switch (mode) {
+        case "None": {
+            return { type: "None" }
+        }
+
+        case "UserVsBot": {
+            return {
+                type: "UserVsBot",
+                child: UserVsBot.init,
+            }
+        }
+
+        case "UserVsUser": {
+            return {
+                type: "UserVsUser",
+                child: UserVsUser.init,
+            }
+        }
+    }
+}
 
 //
 //
@@ -26,20 +54,49 @@ export type Msg = BackendMsg
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
-        case "none": {
+        case "UserVsBot": {
+            return [model, Cmd.None]
+        }
+        case 'UserVsUser': {
             return [model, Cmd.None]
         }
     }
 };
 
 
-export const update_from_frontend = (msg: ToBackend, model: Model): [Model, Cmd<Msg>] => {
+export const updateFromFrontend = ({ broadcast }: { broadcast: (m: ToFrontend) => Cmd }, msg: ToBackend, model: Model): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
-        case "none": {
+        case "InputMode": {
+            const modelNew = initMode(msg[1])
+            return [modelNew, broadcast(['InputMode', msg[1], Ok(modelNew)])]
+        }
+
+        case 'UserVsBot': {
+            if (model.type === 'UserVsBot') {
+                const [child, cmd] = UserVsBot.updateFromFrontend(
+                    // { broadcast: (m) => broadcast(['UserVsBot', m]) },
+                    msg[1],
+                    model.child
+                )
+                return [{ type: 'UserVsBot', child }, Cmd.tag('UserVsBot', cmd)]
+            }
+            return [model, Cmd.None]
+        }
+
+        case 'UserVsUser': {
+            if (model.type === 'UserVsUser') {
+                const [child, cmd] = UserVsUser.updateFromFrontend(
+                    // { broadcast: (m) => broadcast(['UserVsUser', m]) },
+                    msg[1],
+                    model.child
+                )
+                return [{ type: 'UserVsUser', child }, Cmd.tag('UserVsUser', cmd)]
+            }
             return [model, Cmd.None]
         }
     }
 };
+
 
 //
 //
