@@ -33,7 +33,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 };
 
 
-export const update_from_backend = (msg: ToFrontend, model: Model): [Model, Cmd<Msg>] => {
+export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
         case "none": {
             return [model, Cmd.None]
