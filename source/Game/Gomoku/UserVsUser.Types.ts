@@ -2,11 +2,11 @@ import { UserId } from "../../Data";
 
 // 
 // 
+// 
 // Model
 // 
 // 
-
-
+// 
 
 export type Model = {
     tag: "setup";
@@ -20,7 +20,9 @@ export type BackendModel = Model
 
 // 
 // 
+// 
 // Msg
+// 
 // 
 // 
 
@@ -38,8 +40,8 @@ export type ToFrontend = ["None"]
 // 
 // 
 
-type Color = "white" | "black"
+export type Color = "white" | "black"
 
-export type Req = ['InputPlayer', { color: Color, userId: UserId }]
+export type Req = ['input_player', { color: Color, userId: UserId }]
 
 
