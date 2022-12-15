@@ -289,14 +289,14 @@ export const UserVsBotSetupPage = <BotLevel, Player>({
   player,
   onStartGame,
   onCancel,
-  onStopPlaying
+  onStopPlaying,
+  onStartPlaying
 }: {
   ctx: Ctx
   title: string,
   subtitle: string,
   coverArt: ViewNode,
   playerId: UserId | null
-  onStopPlaying: () => void
   botLevel: {
     values: BotLevel[]
     selected: BotLevel
@@ -310,6 +310,8 @@ export const UserVsBotSetupPage = <BotLevel, Player>({
   }
   onCancel: () => void,
   onStartGame: () => void,
+  onStartPlaying: () => void
+  onStopPlaying: () => void
 }) => {
 
   return (
@@ -330,22 +332,37 @@ export const UserVsBotSetupPage = <BotLevel, Player>({
         Human
       </Typography>
 
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          px: 2,
-          mb: 3,
-        }}>
-        <Avatar sx={{ mr: 1 }} src={playerId ? ctx.profiles[playerId]?.avatarUrl : ""} />
-        <Typography noWrap sx={{ flex: 1 }}>
-          {playerId ? ctx.profiles[playerId]?.username ?? "..." : "..."}
-        </Typography>
-        {ctx.currentUserId === playerId &&
-          <Button onClick={onStopPlaying}>
-            Stop Playing
-          </Button>}
-      </Box>
+      {playerId ? (
+
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            px: 2,
+            mb: 3,
+          }}>
+          <Avatar sx={{ mr: 1 }} src={playerId ? ctx.profiles[playerId]?.avatarUrl : ""} />
+          <Typography noWrap sx={{ flex: 1 }}>
+            {playerId ? ctx.profiles[playerId]?.username ?? "..." : "..."}
+          </Typography>
+          {ctx.currentUserId === playerId &&
+            <Button onClick={onStopPlaying}>
+              Stop Playing
+            </Button>}
+        </Box>
+      ) : (
+
+        <Box
+          sx={{
+            px: 2,
+            mb: 3,
+          }}>
+          <Button fullWidth variant="contained" onClick={onStartPlaying}>
+            Start Playing
+          </Button>
+        </Box>
+      )}
+
 
 
       <Typography color="text.secondary" sx={{ px: 2, mb: 1 }}>
@@ -359,7 +376,7 @@ export const UserVsBotSetupPage = <BotLevel, Player>({
           mb: 3,
         }}>
 
-        <ToggleButtonGroup fullWidth value={String(botLevel.selected)}>
+        <ToggleButtonGroup disabled={ctx.currentUserId !== playerId} fullWidth value={String(botLevel.selected)}>
           {botLevel.values.map((value) => (
             <ToggleButton
               key={String(value)}
@@ -382,7 +399,7 @@ export const UserVsBotSetupPage = <BotLevel, Player>({
           mb: 3,
         }}>
 
-        <ToggleButtonGroup fullWidth value={String(player.selected)}>
+        <ToggleButtonGroup disabled={ctx.currentUserId !== playerId} fullWidth value={String(player.selected)}>
           {player.values.map((value) => (
             <ToggleButton key={String(value)} value={String(value)} onClick={() => player.onInput(value)}>
               {player.icon(value)}
@@ -393,6 +410,7 @@ export const UserVsBotSetupPage = <BotLevel, Player>({
 
       <Box sx={{ px: 2, mt: 2 }} >
         <Button
+          disabled={ctx.currentUserId !== playerId}
           fullWidth
           variant="contained"
           startIcon={<Icons.PlayArrow />}

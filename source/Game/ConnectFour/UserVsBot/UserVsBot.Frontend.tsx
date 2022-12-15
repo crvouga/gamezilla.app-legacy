@@ -170,6 +170,7 @@ export const View = ({
         subtitle="Vs Computer"
         ctx={ctx}
         playerId={model.player === "None" ? null : model.player}
+        onStartPlaying={() => $d(['StartPlaying', { userId: ctx.currentUserId }])}
         onStopPlaying={() => $d(['StopPlaying', { userId: ctx.currentUserId }])}
         botLevel={{
           values: Object.values(botLevel),
