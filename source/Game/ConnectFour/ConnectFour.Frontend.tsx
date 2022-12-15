@@ -152,7 +152,7 @@ export const View = ({
           ctx={ctx}
           gameRoomCtx={gameRoomCtx}
           coverArt={<CoverArt />}
-          title="ConnectFour"
+          title="Connect Four"
           onUserVsUser={() =>
             $d([
               "InputMode",
