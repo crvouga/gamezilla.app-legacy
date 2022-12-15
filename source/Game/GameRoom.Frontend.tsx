@@ -663,10 +663,16 @@ export const ViewNotInGame = ({ room, ctx, $d }: { room: FrontendRoom, ctx: Ctx,
     return (
       <FillBox>
         <Header title="Game" />
-        <Box sx={{ flex: 1, display: 'flex', alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
-          <Avatar src={ctx.profiles[room.hostId]?.avatarUrl} sx={{ mb: 2, width: 100, height: 100 }} />
-          <Typography color='text.secondary'>
-            {ctx.profiles[room.hostId]?.username ?? "..."} is selecting game
+        <Box sx={{ flex: 1, display: 'flex', alignItems: "center", justifyContent: "center", flexDirection: "column", px: 2 }}>
+          <Avatar src={ctx.profiles[room.hostId]?.avatarUrl} sx={{ mb: 1, width: 100, height: 100 }} />
+          <Typography color='text.primary' align='center' >
+            {ctx.profiles[room.hostId]?.username ?? "..."}
+          </Typography>
+          <Typography variant="subtitle2" color='text.secondary' align='center' sx={{ mb: 4 }}>
+            Host
+          </Typography>
+          <Typography align='center'>
+            No game selected
           </Typography>
         </Box>
       </FillBox>
