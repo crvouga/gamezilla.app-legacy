@@ -1,7 +1,7 @@
-import { Cmd, Sub } from "../../../Core"
 import * as Alerts from "../../../Alerts"
+import { Cmd, Sub } from "../../../Core"
 import * as UI from "../../../UI"
-import { Ctx } from "../../Game.Shared"
+import { Ctx, UserVsBotSetupPage } from "../../Game.Shared"
 import {
   botLevels,
   GameOver,
@@ -11,25 +11,18 @@ import {
   playerTypes,
   toGameOver,
   toTurn,
-  ViewBoard,
+  ViewBoard
 } from "../TicTacToe"
-import { VersusHeader } from "../Views"
+import { CoverArt } from "../TicTacToe.Frontend"
 import {
   BackendModel,
   FrontendModel,
   FrontendMsg,
   GameModel,
-  initSharedModel,
-  inputBot,
-  inputBotToString,
-  inputPlayerType,
-  inputPlayerTypeToString,
-  restart,
-  startGame,
-  stopGame,
+  initSharedModel, restart, stopGame,
   swapSides,
   ToBackend,
-  ToFrontend,
+  ToFrontend
 } from "./UserVsBot.Types"
 
 //
@@ -143,163 +136,30 @@ export const View = ({
   model: Model
   $d: (msg: Msg) => void
 }) => {
-  const uiTheme = UI.useTheme()
-
   if (model.type === "Setup") {
-    const startGameResult = startGame({ userId: ctx.currentUserId }, model)
-    const inputBotResult = inputBot(
-      { userId: ctx.currentUserId, botLevel: model.botLevel },
-      model,
-    )
-    const inputPlayerTypeResult = inputPlayerType(
-      { userId: ctx.currentUserId, playerType: model.userPlayerType },
-      model,
-    )
-
     return (
-      <UI.FillBox>
-        <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
-          <VersusHeader
-            ctx={ctx}
-            X={
-              model.userPlayerType === "X"
-                ? model.player === "None"
-                  ? { type: "User" }
-                  : { type: "User", userId: model.player }
-                : { type: "Bot", label: model.botLevel }
-            }
-            O={
-              model.userPlayerType === "O"
-                ? model.player === "None"
-                  ? { type: "User" }
-                  : { type: "User", userId: model.player }
-                : { type: "Bot", label: model.botLevel }
-            }
-          />
-          <UI.Typography
-            color="text.secondary"
-            sx={{ paddingX: 2, paddingTop: 2, paddingBottom: 1 }}
-          >
-            Player
-          </UI.Typography>
-
-          <UI.Box sx={{ paddingX: 2, paddingBottom: 2 }}>
-            {model.player === "None" ? (
-              <UI.Button
-                fullWidth
-                variant="contained"
-                onClick={() =>
-                  $d(["StartPlaying", { userId: ctx.currentUserId }])
-                }
-              >
-                Start Playing
-              </UI.Button>
-            ) : (
-              <UI.Box sx={{ display: "flex", alignItems: "center" }}>
-                <UI.Avatar
-                  src={ctx.profiles[model.player]?.avatarUrl}
-                  sx={{ marginRight: 1 }}
-                />
-                <UI.Box sx={{ flex: 1, overflow: "hidden" }}>
-                  <UI.Typography noWrap sx={{ textOverflow: "ellipsis" }}>
-                    {ctx.profiles[model.player]?.username ?? "..."}
-                  </UI.Typography>
-                </UI.Box>
-
-                {model.player === ctx.currentUserId && (
-                  <UI.Button
-                    onClick={() =>
-                      $d(["StopPlaying", { userId: ctx.currentUserId }])
-                    }
-                  >
-                    Stop Playing
-                  </UI.Button>
-                )}
-              </UI.Box>
-            )}
-          </UI.Box>
-
-          <UI.Divider />
-
-          <UI.Typography
-            color="text.secondary"
-            sx={{ paddingBottom: 1, paddingTop: 2, paddingX: 2 }}
-          >
-            Play As
-          </UI.Typography>
-          <UI.Tooltip title={inputPlayerTypeToString(inputPlayerTypeResult)}>
-            <UI.ToggleButtonGroup
-              fullWidth
-              value={model.userPlayerType}
-              sx={{ marginBottom: 2, paddingX: 2 }}
-              disabled={inputPlayerTypeResult.type === "Err"}
-            >
-              {Object.values(playerTypes).map((playerType) => (
-                <UI.ToggleButton
-                  value={playerType}
-                  key={playerType}
-                  onClick={() =>
-                    $d([
-                      "InputPlayerType",
-                      { playerType, userId: ctx.currentUserId },
-                    ])
-                  }
-                >
-                  <PlayerTypeIcon playerType={playerType} />
-                </UI.ToggleButton>
-              ))}
-            </UI.ToggleButtonGroup>
-          </UI.Tooltip>
-
-          <UI.Typography
-            color="text.secondary"
-            sx={{ marginBottom: 1, paddingX: 2 }}
-          >
-            Bot Level
-          </UI.Typography>
-          <UI.Tooltip title={inputBotToString(inputBotResult)}>
-            <UI.ToggleButtonGroup
-              disabled={inputBotResult.type === "Err"}
-              sx={{ marginBottom: 2, paddingX: 2 }}
-              fullWidth
-              value={model.botLevel}
-            >
-              {Object.values(botLevels).map((botLevel) => (
-                <UI.ToggleButton
-                  value={botLevel}
-                  key={botLevel}
-                  onClick={() =>
-                    $d(["InputBot", { userId: ctx.currentUserId, botLevel }])
-                  }
-                >
-                  {botLevel}
-                </UI.ToggleButton>
-              ))}
-            </UI.ToggleButtonGroup>
-          </UI.Tooltip>
-        </UI.Box>
-
-        <UI.Box
-          sx={{
-            padding: 2,
-            display: "flex",
-            gap: 2,
-            borderTop: `solid 1px ${uiTheme.palette.divider}`,
-          }}
-        >
-          <UI.Button fullWidth variant="outlined" onClick={goBack}>
-            Back
-          </UI.Button>
-          <UI.Button
-            fullWidth
-            variant="contained"
-            disabled={startGameResult.type === "Err"}
-            onClick={() => $d(["StartGame", { userId: ctx.currentUserId }])}
-          >
-            Start Game
-          </UI.Button>
-        </UI.Box>
-      </UI.FillBox>
+      <UserVsBotSetupPage
+        playerId={model.player === 'None' ? null : model.player}
+        subtitle="Vs Computer"
+        title="Tic-Tac-Toe"
+        coverArt={<CoverArt />}
+        ctx={ctx}
+        onCancel={goBack}
+        onStartGame={() => $d(["StartGame", { userId: ctx.currentUserId }])}
+        onStartPlaying={() => $d(["StartPlaying", { userId: ctx.currentUserId }])}
+        onStopPlaying={() => $d(["StopPlaying", { userId: ctx.currentUserId }])}
+        player={{
+          values: Object.values(playerTypes),
+          onInput: (player) => $d(["InputPlayerType", { userId: ctx.currentUserId, playerType: player }]),
+          selected: model.userPlayerType,
+          icon: (playerType) => <PlayerTypeIcon playerType={playerType} />,
+        }}
+        botLevel={{
+          onInput: (botLevel) => $d(["InputBot", { userId: ctx.currentUserId, botLevel }]),
+          selected: model.botLevel,
+          values: Object.values(botLevels)
+        }}
+      />
     )
   }
 

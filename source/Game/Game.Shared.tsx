@@ -363,8 +363,6 @@ export const UserVsBotSetupPage = <BotLevel, Player>({
         </Box>
       )}
 
-
-
       <Typography color="text.secondary" sx={{ px: 2, mb: 1 }}>
         Computer
       </Typography>
@@ -413,7 +411,7 @@ export const UserVsBotSetupPage = <BotLevel, Player>({
           disabled={ctx.currentUserId !== playerId}
           fullWidth
           variant="contained"
-          startIcon={<Icons.PlayArrow />}
+          endIcon={<Icons.ArrowRight />}
           onClick={onStartGame}
         >
           Start Game
