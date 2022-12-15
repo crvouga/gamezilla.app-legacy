@@ -50,7 +50,6 @@ export const gameNameList: GameName[] = [
   "Chess",
   "ConnectFour",
   "TicTacToe",
-  "Maze",
 ]
 
 //
