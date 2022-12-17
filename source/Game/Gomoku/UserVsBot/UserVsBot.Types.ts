@@ -1,7 +1,9 @@
 import { Result } from "../../../Core"
 import { Err, Ok } from "../../../Core/Result"
 import { UserId } from "../../../Data"
-import { Board, BotLevel, initBoard, Stone } from "../Gomoku/Gomoku"
+import { toOppositeStone, MoveProblem, Board, BotLevel, initBoard, move, Stone } from "../Gomoku/Gomoku"
+import { Position } from "../Gomoku/Position"
+
 
 // 
 // 
@@ -60,15 +62,22 @@ export type ToFrontend = Res
 // 
 
 export type Req =
+    // setup
     | ['StartPlaying', { userId: UserId }]
     | ['StopPlaying', { userId: UserId }]
     | ['InputUserStone', { userId: UserId, userStone: Stone }]
     | ['InputBotLevel', { userId: UserId, botLevel: BotLevel }]
     | ['StartGame', { userId: UserId, }]
+    // game
+    | ['InputMove', { userId: UserId, position: Position }]
+    | ['StopGame', { userId: UserId }]
+    | ['Restart', { userId: UserId }]
+    | ['SwapSides', { userId: UserId }]
+
 
 export type Res = [...Req, Result<Problem, Model>]
 
-export type Problem = "must_be_player" | "must_be_setup" | "must_be_no_player"
+export type Problem = "must_be_player" | "must_be_setup" | "must_be_no_player" | "must_be_game" | MoveProblem
 
 export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
     switch (msg[0]) {
@@ -142,6 +151,86 @@ export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
                 userId: model.userId,
                 userStone: model.userStone
             }
+            return Ok(modelNew)
+        }
+
+        case 'InputMove': {
+            if (model.type !== 'game') {
+                return Err("must_be_game")
+            }
+
+            if (model.userId !== msg[1].userId) {
+                return Err("must_be_player")
+            }
+
+            const moved = move({
+                position: msg[1].position,
+                stone: model.userStone,
+                board: model.board
+            })
+
+            if (moved.type === 'Err') {
+                return moved
+            }
+
+            const modelNew: Model = {
+                ...model,
+                board: moved.value
+            }
+
+            return Ok(modelNew)
+        }
+
+        case 'StopGame': {
+            if (model.type !== 'game') {
+                return Err("must_be_game")
+            }
+
+            if (model.userId !== msg[1].userId) {
+                return Err("must_be_player")
+            }
+
+            const modelNew: Model = {
+                type: "setup",
+                botLevel: model.botLevel,
+                userId: model.userId,
+                userStone: model.userStone
+            }
+
+            return Ok(modelNew)
+        }
+
+        case 'Restart': {
+            if (model.type !== 'game') {
+                return Err("must_be_game")
+            }
+
+            if (model.userId !== msg[1].userId) {
+                return Err("must_be_player")
+            }
+
+            const modelNew: Model = {
+                ...model,
+                board: initBoard
+            }
+
+            return Ok(modelNew)
+        }
+
+        case 'SwapSides': {
+            if (model.type !== 'game') {
+                return Err("must_be_game")
+            }
+
+            if (model.userId !== msg[1].userId) {
+                return Err("must_be_player")
+            }
+
+            const modelNew: Model = {
+                ...model,
+                userStone: toOppositeStone(model.userStone)
+            }
+
             return Ok(modelNew)
         }
     }

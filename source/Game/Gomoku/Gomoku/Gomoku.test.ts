@@ -1,4 +1,4 @@
-import { Stone, setStone, Board, toWins } from "./Gomoku"
+import { Board, setStone, Stone, toWins } from "./Gomoku"
 
 
 type Matrix = (" " | "b" | "w")[][]
@@ -71,5 +71,7 @@ describe("Gomoku", () => {
         const wins = toWins(board)
         expect(wins.length).toBe(1)
     })
+
+
 })
 

@@ -1,5 +1,5 @@
 import { Result, Ok, Err } from "../../../Core/Result"
-import { SvgIcon } from "../../../UI"
+import { SvgIcon, Sx } from "../../../UI"
 import { Direction, Position } from "./Position"
 
 export type Board = {
@@ -9,6 +9,7 @@ export type Board = {
 }
 
 export const initBoard: Board = {}
+
 
 export type BotLevel = "Easy" | "Medium" | "Hard"
 
@@ -25,6 +26,18 @@ export const stones: { [stone in Stone]: Stone } = {
     black: "black",
 }
 
+export const toOppositeStone = (stone: Stone) => {
+    switch (stone) {
+        case 'black': {
+            return 'white'
+        }
+
+        case 'white': {
+            return 'black'
+        }
+    }
+}
+
 export const bounds = {
     lower: {
         x: 0,
@@ -36,7 +49,7 @@ export const bounds = {
     }
 }
 
-type MoveProblem = "out_of_bounds" | "not_turn"
+export type MoveProblem = "out_of_bounds" | "not_turn"
 
 const inBounds = (position: Position): boolean => {
     return bounds.lower.x <= position.x && position.x <= bounds.upper.x && bounds.lower.y <= position.y && position.y <= bounds.upper.y
@@ -74,7 +87,7 @@ const toStone = (position: Position, board: Board): Stone | null => {
 }
 
 
-const toTurn = (board: Board): Stone => {
+export const toTurn = (board: Board): Stone => {
     const freq = { black: 0, white: 0 }
 
     for (const xKey in board) {
@@ -192,10 +205,10 @@ export const stoneToColor = (stone: Stone): string => {
     }
 }
 
-export const viewStoneIcon = ({ stone }: { stone: Stone }) => {
+export const viewStoneIcon = ({ stone, ...sx }: { stone: Stone } & Sx) => {
     return (
-        <SvgIcon viewBox="-1 -1 2 2">
-            <circle cx={0} cy={0} r={0.5} fill={stoneToColor(stone)} />
+        <SvgIcon viewBox="-1 -1 2 2" sx={sx}>
+            <circle cx={0} cy={0} r={0.9} fill={stoneToColor(stone)} />
         </SvgIcon>
     )
 }
@@ -230,11 +243,24 @@ const viewBox = [
 
 
 
-export const viewBoard = () => {
+export const viewBoard = ({ board, onPress }: { board: Board, onPress: (position: Position) => void }) => {
     return (
         <svg viewBox={viewBox}>
             <rect x={0} y={0} width="100%" height="100%" fill="#000" />
-
+            <g transform="translate(0.5, 0.5)">
+                {Position.rangeInclusive(bounds).map(({ x, y }) => {
+                    const stone = toStone({ x, y }, board)
+                    const key = [x, y, stone].join("-")
+                    return (
+                        <g key={key} onClick={() => onPress({ x, y })}>
+                            <circle cx={x} cy={y} r={0.1} fill={gameTheme.line} />
+                            {stone && (
+                                <circle cx={x} cy={y} r={0.45} fill={stoneToColor(stone)} />
+                            )}
+                        </g>
+                    )
+                })}
+            </g>
         </svg>
     )
 }
