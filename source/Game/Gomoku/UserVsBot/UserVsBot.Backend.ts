@@ -35,11 +35,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
 export const updateFromFrontend = ({ sendToClient, broadcast }: { sendToClient: (m: ToFrontend) => Cmd, broadcast: (m: ToFrontend) => Cmd }, msg: ToBackend, model: Model): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
-        case 'InputUserStone':
-        case 'InputBotLevel':
-        case 'StartGame':
-        case 'StartPlaying':
-        case "StopPlaying": {
+        default: {
             const res: Res = [...msg, handle(msg, model)]
             if (res[2].type === 'Err') {
                 return [model, sendToClient(res)]

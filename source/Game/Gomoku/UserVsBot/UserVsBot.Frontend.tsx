@@ -1,7 +1,14 @@
 import { Cmd, Sub } from "../../../Core";
-import { FillBox } from "../../../UI";
+import { avatar, box, fillBox, icon, paper, typography } from "../../../UI";
 import { Ctx, UserVsBotSetupPage } from "../../Game.Shared";
-import { botLevels, stones, viewCoverArt, viewStoneIcon } from "../Gomoku/Gomoku";
+import {
+    botLevels,
+    stones,
+    toOppositeStone,
+    viewBoard,
+    viewCoverArt,
+    viewStoneIcon
+} from "../Gomoku/Gomoku";
 import { BackendModel, FrontendModel, FrontendMsg, initShared, ToBackend, ToFrontend } from "./UserVsBot.Types";
 
 //
@@ -28,11 +35,7 @@ export type Msg = FrontendMsg
 
 export const update = ({ sendToBackend }: { sendToBackend: (m: ToBackend) => Cmd }, msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
-        case 'InputUserStone':
-        case 'InputBotLevel':
-        case 'StartGame':
-        case 'StartPlaying':
-        case "StopPlaying": {
+        default: {
             return [model, sendToBackend(msg)]
         }
     }
@@ -41,11 +44,7 @@ export const update = ({ sendToBackend }: { sendToBackend: (m: ToBackend) => Cmd
 
 export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
-        case 'InputUserStone':
-        case 'InputBotLevel':
-        case 'StartGame':
-        case 'StartPlaying':
-        case "StopPlaying": {
+        default: {
             if (msg[2].type === 'Err') {
                 return [model, Cmd.None]
             }
@@ -112,9 +111,52 @@ export const view = ({ $d, model, ctx, onBack }: { model: Model, ctx: Ctx, $d: (
         }
 
         case 'game': {
-            return <FillBox>
+            return (
+                fillBox({}, [
+                    viewPlayerSlots({ model }),
+                    viewBoard({
+                        board: model.board,
+                        onPress: position => $d(['InputMove', { userId: ctx.currentUserId, position }])
+                    }),
+                    box({ flex: 1 }, []),
+                    box({ display: 'flex' }, [
 
-            </FillBox>
+                    ])
+                ])
+            )
         }
     }
+}
+
+
+export const viewPlayerSlots = ({ model }: { model: Model }) => {
+    const iconSize = {
+        width: 32,
+        height: 32
+    }
+
+    const botSlot =
+        paper({ display: "flex", variant: "outlined", alignItems: "center", p: 1, width: "50%" }, [
+            viewStoneIcon({ ...iconSize, stone: toOppositeStone(model.userStone), mr: 1 }),
+            icon({ ...iconSize, name: "smart-toy", mr: 1, }),
+            typography({}, [model.botLevel])
+        ])
+
+    const userSlot =
+        paper({ display: "flex", variant: "outlined", alignItems: "center", p: 1, width: "50%" }, [
+            viewStoneIcon({ ...iconSize, stone: model.userStone, mr: 1 }),
+            avatar({ ...iconSize, mr: 1, src: ctx.profiles[model.userId]?.avatarUrl }),
+            typography({ noWrap: true }, [ctx.profiles[model.userId]?.username])
+        ])
+
+    const whiteSlot = model.userStone === 'white' ? userSlot : botSlot
+    const blackSlot = model.userStone === 'black' ? userSlot : botSlot
+
+    return (
+        box({ py: 2, display: "flex", gap: 2, justifyContent: "center", alignItems: 'center' }, [
+            whiteSlot,
+            blackSlot
+        ])
+    )
+
 }

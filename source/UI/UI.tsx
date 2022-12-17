@@ -1,5 +1,7 @@
+import { SmartToy } from "@mui/icons-material"
 import * as MuiLab from "@mui/lab"
 import * as Mui from "@mui/material"
+import { TypographyProps } from "@mui/material"
 import { blue } from "@mui/material/colors"
 import Slide, { SlideProps } from "@mui/material/Slide"
 import { keyframes } from "@mui/system"
@@ -264,6 +266,14 @@ export const SvgIcon = Mui.SvgIcon
 
 export const Box = Mui.Box
 
+export const box = ({ ...sx }: Sx, children: ViewNode[]) => {
+  return (
+    <Box sx={sx}>
+      {children}
+    </Box>
+  )
+}
+
 export const Divider = Mui.Divider
 
 export const ListItemButton = Mui.ListItemButton
@@ -288,11 +298,25 @@ export const ListItemSecondaryAction = Mui.ListItemSecondaryAction
 
 export const Paper = Mui.Paper
 
+export const paper = ({ ...sx }: Sx, children: ViewNode[]) => {
+  return (
+    <Paper sx={sx} variant="outlined">
+      {children}
+    </Paper>
+  )
+}
+
 export const Button = MuiLab.LoadingButton
 
 export const InputAdornment = Mui.InputAdornment
 
 export const Typography = Mui.Typography
+
+export const typography = (props: TypographyProps, children: ViewNode) => {
+  return <Typography {...props}>
+    {children}
+  </Typography>
+}
 
 export const Tabs = Mui.Tabs
 
@@ -331,6 +355,10 @@ export const ListSubheader = Mui.ListSubheader
 export const MobileStepper = Mui.MobileStepper
 
 export const Avatar = Mui.Avatar
+
+export const avatar = ({ src, ...sx }: { src?: string | null, } & Sx) => {
+  return <Mui.Avatar src={src ?? ""} sx={sx} />
+}
 
 export const AvatarGroup = Mui.AvatarGroup
 
@@ -426,6 +454,23 @@ export const HeaderBackButton = ({ onClick }: { onClick: () => void }) => {
     <Mui.IconButton edge="start" onClick={onClick}>
       <Icons.ChevronLeft />
     </Mui.IconButton>
+  )
+}
+
+export const fillBox = ({ ...sx }: Sx, children: ViewNode[]) => {
+  return box(
+    {
+      display: "flex",
+      flexDirection: "column",
+      width: "100%",
+      height: "100%",
+      overflowX: "hidden",
+      overflowY: "scroll",
+      padding: 0,
+      margin: 0,
+      ...sx,
+    },
+    children
   )
 }
 
@@ -625,3 +670,14 @@ export const ActionButton = ({
 // 
 // 
 // 
+
+
+type IconName = "smart-toy"
+
+export const icon = ({ name, ...sx }: { name: IconName } & Sx) => {
+  switch (name) {
+    case 'smart-toy': {
+      return <SmartToy sx={sx} />
+    }
+  }
+}
