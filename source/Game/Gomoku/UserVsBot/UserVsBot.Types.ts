@@ -1,3 +1,5 @@
+import { UserId } from "../../../Data"
+
 // 
 // 
 // 
@@ -6,11 +8,19 @@
 // 
 // 
 
-export type Model = {}
+export type Model = {
+    type: "setup",
+    userId: UserId | null
+}
 
 export type FrontendModel = Model
 
 export type BackendModel = Model
+
+export const initShared: Model = {
+    type: "setup",
+    userId: null
+}
 
 // 
 // 

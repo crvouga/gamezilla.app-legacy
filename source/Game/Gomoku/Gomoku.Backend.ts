@@ -29,6 +29,7 @@ const initMode = ({ mode, }: { mode: Mode, userId: UserId }): Model => {
         case "UserVsBot": {
             return {
                 type: "UserVsBot",
+
                 child: UserVsBot.init,
             }
         }

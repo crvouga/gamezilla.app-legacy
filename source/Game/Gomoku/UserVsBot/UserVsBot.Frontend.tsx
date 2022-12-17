@@ -1,5 +1,7 @@
 import { Cmd, Sub } from "../../../Core";
-import { BackendModel, FrontendModel, FrontendMsg, ToFrontend } from "./UserVsBot.Types";
+import { Ctx, UserVsBotSetupPage } from "../../Game.Shared";
+import { viewCoverArt } from "../Gomoku/Gomoku";
+import { BackendModel, FrontendModel, FrontendMsg, initShared, ToFrontend } from "./UserVsBot.Types";
 
 //
 //
@@ -11,8 +13,7 @@ import { BackendModel, FrontendModel, FrontendMsg, ToFrontend } from "./UserVsBo
 
 export type Model = FrontendModel;
 
-
-export const init: [Model, Cmd<Msg>] = [{}, Cmd.None];
+export const init: Model = initShared
 
 //
 //
@@ -65,10 +66,36 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 // 
 // 
 
-export const view = ({ model }: { model: Model }) => {
-    return (
-        <pre>
-            {JSON.stringify(model, null, 2)}
-        </pre>
-    )
+export const view = ({ model, ctx }: { model: Model, ctx: Ctx }) => {
+
+    switch (model.type) {
+        case 'setup': {
+            return (
+                <UserVsBotSetupPage
+                    botLevel={{
+                        onInput: () => { },
+                        selected: null,
+                        values: []
+                    }}
+                    coverArt={viewCoverArt()}
+                    player={{
+                        onInput: () => { },
+                        selected: null,
+                        values: [],
+                        icon: () => <></>
+                    }}
+                    ctx={ctx}
+                    title="Gomoku"
+                    subtitle="Vs Computer"
+                    onCancel={() => { }}
+                    onStartGame={() => { }}
+                    onStartPlaying={() => { }}
+                    onStopPlaying={() => { }}
+                    playerId={null}
+                />
+            )
+        }
+    }
+
+
 }

@@ -592,13 +592,18 @@ const ViewMain = ({ model, $d }: { model: Model; $d: (msg: Msg) => void }) => {
 
             <UI.Icons.Storage sx={iconSize} />
           </Box>
-          <Typography variant="subtitle2">
+          <Typography
+            sx={{ position: "absolute", bottom: 0, left: 0, padding: 1 }}
+            align="center"
+            variant="caption"
+            color="text.secondary"
+          >
             Connecting to backend...
           </Typography>
         </FillBox>
 
       )
-    // <ViewLoading reason="Connecting to backend..." />
+
 
     case "Connected": {
       switch (status[0]) {
