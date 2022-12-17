@@ -1,6 +1,6 @@
 import { Cmd, Sub } from "../../../Core";
 import { UserId } from "../../../Data";
-import { initShared, BackendModel, BackendMsg, ToBackend } from "./UserVsBot.Types";
+import { initShared, BackendModel, BackendMsg, ToBackend, handle, Res, ToFrontend } from "./UserVsBot.Types";
 
 //
 //
@@ -33,10 +33,18 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 };
 
 
-export const updateFromFrontend = (msg: ToBackend, model: Model): [Model, Cmd<Msg>] => {
+export const updateFromFrontend = ({ sendToClient, broadcast }: { sendToClient: (m: ToFrontend) => Cmd, broadcast: (m: ToFrontend) => Cmd }, msg: ToBackend, model: Model): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
-        case "none": {
-            return [model, Cmd.None]
+        case 'InputUserStone':
+        case 'InputBotLevel':
+        case 'StartGame':
+        case 'StartPlaying':
+        case "StopPlaying": {
+            const res: Res = [...msg, handle(msg, model)]
+            if (res[2].type === 'Err') {
+                return [model, sendToClient(res)]
+            }
+            return [model, broadcast(res)]
         }
     }
 };

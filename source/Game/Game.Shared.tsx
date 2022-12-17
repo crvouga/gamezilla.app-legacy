@@ -315,7 +315,7 @@ export const UserVsBotSetupPage = <BotLevel, Player>({
 }) => {
 
   return (
-    <FillBox sx={{ overflowY: "scroll", pt: 2, }}>
+    <FillBox sx={{ overflowY: "scroll", py: 2, }}>
       <Box sx={{ height: 100, width: 100, minHeight: 100, minWidth: 100, mx: 'auto', borderRadius: 2, overflow: "hidden", mt: 2, mb: 2 }}>
         {coverArt}
       </Box>

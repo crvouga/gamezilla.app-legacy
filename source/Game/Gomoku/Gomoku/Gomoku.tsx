@@ -1,4 +1,5 @@
 import { Result, Ok, Err } from "../../../Core/Result"
+import { SvgIcon } from "../../../UI"
 import { Direction, Position } from "./Position"
 
 export type Board = {
@@ -7,7 +8,22 @@ export type Board = {
     }
 }
 
+export const initBoard: Board = {}
+
+export type BotLevel = "Easy" | "Medium" | "Hard"
+
+export const botLevels: { [botLevel in BotLevel]: BotLevel } = {
+    Easy: "Easy",
+    Medium: "Medium",
+    Hard: "Hard",
+}
+
 export type Stone = "white" | "black"
+
+export const stones: { [stone in Stone]: Stone } = {
+    white: "white",
+    black: "black",
+}
 
 export const bounds = {
     lower: {
@@ -153,12 +169,36 @@ export const toWins = (board: Board): Position[][] => {
     return wins
 }
 
-
 // 
 // 
 // view
 // 
 // 
+
+const gameTheme = {
+    whiteStone: "orange",
+    blackStone: "blue",
+    background: "#000",
+    line: "#fff"
+}
+
+export const stoneToColor = (stone: Stone): string => {
+    switch (stone) {
+        case 'black':
+            return gameTheme.blackStone
+
+        case 'white':
+            return gameTheme.whiteStone
+    }
+}
+
+export const viewStoneIcon = ({ stone }: { stone: Stone }) => {
+    return (
+        <SvgIcon viewBox="-1 -1 2 2">
+            <circle cx={0} cy={0} r={0.5} fill={stoneToColor(stone)} />
+        </SvgIcon>
+    )
+}
 
 export const viewCoverArt = () => {
     const columnCount = 6
@@ -169,14 +209,32 @@ export const viewCoverArt = () => {
             <rect x={0} y={0} width="100%" height="100%" fill="#000" />
             <g transform="translate(0.5, 0.5)">
                 {Array.from({ length: columnCount }).map((_, x) => Array.from({ length: rowCount }).map((_, y) => (
-                    <circle key={[x, y].join("-")} cx={x} cy={y} fill={"#fff"} r={0.1} />
+                    <circle key={[x, y].join("-")} cx={x} cy={y} fill={gameTheme.line} r={0.1} />
                 )))}
-                <circle cx={3} cy={4} fill={"orange"} r={0.45} />
-                <circle cx={3} cy={3} fill={"blue"} r={0.45} />
-                <circle cx={2} cy={3} fill={"orange"} r={0.45} />
-                <circle cx={2} cy={2} fill={"blue"} r={0.45} />
-                <circle cx={3} cy={2} fill={"orange"} r={0.45} />
+                <circle cx={3} cy={4} fill={gameTheme.whiteStone} r={0.45} />
+                <circle cx={3} cy={3} fill={gameTheme.blackStone} r={0.45} />
+                <circle cx={2} cy={3} fill={gameTheme.whiteStone} r={0.45} />
+                <circle cx={2} cy={2} fill={gameTheme.blackStone} r={0.45} />
+                <circle cx={3} cy={2} fill={gameTheme.whiteStone} r={0.45} />
             </g>
+        </svg>
+    )
+}
+
+const viewBox = [
+    bounds.lower.x,
+    bounds.lower.y,
+    bounds.upper.x - bounds.lower.x,
+    bounds.upper.y - bounds.lower.y,
+].join(" ")
+
+
+
+export const viewBoard = () => {
+    return (
+        <svg viewBox={viewBox}>
+            <rect x={0} y={0} width="100%" height="100%" fill="#000" />
+
         </svg>
     )
 }

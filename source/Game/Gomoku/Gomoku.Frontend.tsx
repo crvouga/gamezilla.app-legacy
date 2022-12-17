@@ -121,7 +121,7 @@ export const view = ({ model, ctx, gameRoomCtx, $d }: { model: Model, ctx: Ctx, 
         }
 
         case 'UserVsBot': {
-            return UserVsBot.view({ model: model.child, ctx, })
+            return UserVsBot.view({ model: model.child, ctx, onBack: () => $d(['InputMode', { mode: "None", userId: ctx.currentUserId }]), $d: m => $d(['UserVsBot', m]) })
         }
 
         case 'UserVsUser': {
