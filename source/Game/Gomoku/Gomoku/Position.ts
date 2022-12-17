@@ -12,7 +12,7 @@ const directions: { [direction in Direction]: Direction } = {
     right_diagonal: "right_diagonal"
 }
 
-const to_vector = (direction: Direction): Position => {
+const toVector = (direction: Direction): Position => {
     switch (direction) {
         case 'horizontal': {
             return { x: 1, y: 0 }
@@ -34,7 +34,7 @@ const to_vector = (direction: Direction): Position => {
 
 export const Direction = {
     all: Object.values(directions),
-    to_vector,
+    toVector: toVector,
 }
 
 // source:https://stackoverflow.com/questions/17410809/how-to-calculate-rotation-in-2d-in-javascript 
