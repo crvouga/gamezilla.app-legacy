@@ -1,7 +1,7 @@
 import * as Alerts from "../../Alerts"
 import { Cmd, exhaustive } from "../../Core"
 import * as ProfileStore from "../../Profile/Profile.Store"
-import { Ctx, GameModeSelectPage, GameRoomCtx } from "../Game.Shared"
+import { Ctx, GameRoomCtx, viewSelectModeScreen } from "../Game.Shared"
 import { Empty, gameTheme, Position, Slot, ViewSlot } from "./TicTacToe"
 import {
   BackendModel,
@@ -204,24 +204,20 @@ export const View = ({
   switch (model.mode) {
     case "None": {
       return (
-        <GameModeSelectPage
-          ctx={ctx}
-          gameRoomCtx={gameRoomCtx}
-          coverArt={<CoverArt />}
-          title="Tic-Tac-Toe"
-          onUserVsUser={() =>
-            $d([
-              "InputMode",
-              { mode: "UserVsUser", userId: ctx.currentUserId },
-            ])
-          }
-          onUserVsComputer={() =>
-            $d([
-              "InputMode",
-              { mode: "UserVsBot", userId: ctx.currentUserId },
-            ])
-          }
-        />
+        viewSelectModeScreen({
+          title: "Tic-Tac-Toe",
+          ctx,
+          gameRoomCtx,
+          coverArt: CoverArt(),
+          onUserVsUser: () => $d([
+            "InputMode",
+            { mode: "UserVsUser", userId: ctx.currentUserId },
+          ]),
+          onUserVsComputer: () => $d([
+            "InputMode",
+            { mode: "UserVsBot", userId: ctx.currentUserId },
+          ])
+        })
       )
     }
 

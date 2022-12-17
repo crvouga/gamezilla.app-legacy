@@ -1,6 +1,6 @@
 import * as Alerts from "../../Alerts"
 import { Audio, Cmd, p, RemoteData, Sub, Unit } from "../../Core"
-import { Ctx, GameModeSelectPage, GameRoomCtx } from "../Game.Shared"
+import { Ctx, viewSelectModeScreen, GameRoomCtx } from "../Game.Shared"
 import {
   BackendModel,
   FrontendModel,
@@ -214,14 +214,15 @@ export const View = ({
   switch (model.mode[0]) {
     case "None": {
       return (
-        <GameModeSelectPage
-          ctx={ctx}
-          gameRoomCtx={gameRoomCtx}
-          coverArt={<CoverArt />}
-          onUserVsComputer={() => $d(['InputMode', { mode: 'UserVsBot', userId: ctx.currentUserId }])}
-          onUserVsUser={() => $d(['InputMode', { mode: 'UserVsUser', userId: ctx.currentUserId }])}
-          title="Chess"
-        />
+        viewSelectModeScreen({
+          ctx: ctx,
+          gameRoomCtx: gameRoomCtx,
+          coverArt: CoverArt(),
+          onUserVsComputer: () => $d(['InputMode', { mode: 'UserVsBot', userId: ctx.currentUserId }]),
+          onUserVsUser: () => $d(['InputMode', { mode: 'UserVsUser', userId: ctx.currentUserId }]),
+          title: "Chess"
+        })
+
       )
     }
 
