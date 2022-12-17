@@ -2,7 +2,7 @@ import { useRef } from "react"
 import * as Alerts from "../../Alerts"
 import { Cmd, Uuid } from "../../Core"
 import * as UI from "../../UI"
-import { bannerArtAspectRatio, Ctx, GameModeSelectPage, GameRoomCtx } from "../Game.Shared"
+import { bannerArtAspectRatio, Ctx, viewSelectModeScreen, GameRoomCtx } from "../Game.Shared"
 import { COLUMN_COUNT, gameTheme, MAX_COLUMN_HEIGHT } from "./ConnectFour"
 import {
   BackendModel,
@@ -148,24 +148,22 @@ export const View = ({
   switch (model.type) {
     case "None": {
       return (
-        <GameModeSelectPage
-          ctx={ctx}
-          gameRoomCtx={gameRoomCtx}
-          coverArt={<CoverArt />}
-          title="Connect Four"
-          onUserVsUser={() =>
+        viewSelectModeScreen({
+          ctx: ctx,
+          gameRoomCtx: gameRoomCtx,
+          coverArt: CoverArt(),
+          title: "Connect Four",
+          onUserVsUser: () =>
             $d([
               "InputMode",
               { mode: "UserVsUser", userId: ctx.currentUserId },
-            ])
-          }
-          onUserVsComputer={() =>
+            ]),
+          onUserVsComputer: () =>
             $d([
               "InputMode",
               { mode: "UserVsBot", userId: ctx.currentUserId },
             ])
-          }
-        />
+        })
       )
     }
 

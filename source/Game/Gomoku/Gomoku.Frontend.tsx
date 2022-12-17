@@ -1,5 +1,5 @@
 import { Cmd, Sub } from "../../Core";
-import { Ctx, GameModeSelectPage, GameRoomCtx } from "../Game.Shared";
+import { Ctx, GameRoomCtx, viewSelectModeScreen } from "../Game.Shared";
 import { BackendModel, FrontendModel, FrontendMsg, ToBackend, ToFrontend } from "./Gomoku.Types";
 import { viewCoverArt } from "./Gomoku/Gomoku";
 import * as UserVsBot from "./UserVsBot/UserVsBot.Frontend";
@@ -109,14 +109,15 @@ export const view = ({ model, ctx, gameRoomCtx, $d }: { model: Model, ctx: Ctx, 
     switch (model.type) {
         case 'None': {
             return (
-                <GameModeSelectPage
-                    coverArt={viewCoverArt()}
-                    ctx={ctx}
-                    gameRoomCtx={gameRoomCtx}
-                    onUserVsComputer={() => $d(['InputMode', { userId: ctx.currentUserId, mode: "UserVsBot" }])}
-                    onUserVsUser={() => $d(['InputMode', { userId: ctx.currentUserId, mode: "UserVsUser" }])}
-                    title="Gomoku"
-                />
+                viewSelectModeScreen({
+                    coverArt: viewCoverArt(),
+                    ctx,
+                    gameRoomCtx,
+                    onUserVsComputer: () => $d(['InputMode', { userId: ctx.currentUserId, mode: "UserVsBot" }]),
+                    onUserVsUser: () => $d(['InputMode', { userId: ctx.currentUserId, mode: "UserVsUser" }]),
+                    title: "Gomoku"
+                })
+
             )
         }
 
