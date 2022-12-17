@@ -9,7 +9,7 @@ import {
     viewCoverArt,
     viewStoneIcon
 } from "../Gomoku/Gomoku";
-import { BackendModel, FrontendModel, FrontendMsg, initShared, ToBackend, ToFrontend } from "./UserVsBot.Types";
+import { BackendModel, FrontendModel, FrontendMsg, GameModel, initShared, ToBackend, ToFrontend } from "./UserVsBot.Types";
 
 //
 //
@@ -85,42 +85,41 @@ export const view = ({ $d, model, ctx, onBack }: { model: Model, ctx: Ctx, $d: (
     switch (model.type) {
         case 'setup': {
             return (
-                <UserVsBotSetupPage
-                    botLevel={{
+                UserVsBotSetupPage({
+                    botLevel: {
                         onInput: (botLevel) => $d(['InputBotLevel', { userId: ctx.currentUserId, botLevel }]),
                         selected: model.botLevel,
                         values: Object.values(botLevels)
-                    }}
-                    coverArt={viewCoverArt()}
-                    player={{
+                    },
+                    coverArt: viewCoverArt(),
+                    player: {
                         onInput: (userStone) => $d(['InputUserStone', { userId: ctx.currentUserId, userStone }]),
                         selected: model.userStone,
                         values: Object.values(stones),
                         icon: (stone) => viewStoneIcon({ stone })
-                    }}
-                    ctx={ctx}
-                    title="Gomoku"
-                    subtitle="Vs Computer"
-                    onCancel={onBack}
-                    onStartPlaying={() => $d(['StartPlaying', { userId: ctx.currentUserId }])}
-                    onStopPlaying={() => $d(['StopPlaying', { userId: ctx.currentUserId }])}
-                    onStartGame={() => { }}
-                    playerId={model.userId}
-                />
+                    },
+                    ctx,
+                    title: "Gomoku",
+                    subtitle: "Vs Computer",
+                    onCancel: onBack,
+                    onStartPlaying: () => $d(['StartPlaying', { userId: ctx.currentUserId }]),
+                    onStopPlaying: () => $d(['StopPlaying', { userId: ctx.currentUserId }]),
+                    onStartGame: () => { },
+                    playerId: model.userId,
+                })
             )
         }
 
         case 'game': {
             return (
                 fillBox({}, [
-                    viewPlayerSlots({ model }),
+                    viewPlayerSlots({ ctx, model }),
                     viewBoard({
                         board: model.board,
                         onPress: position => $d(['InputMove', { userId: ctx.currentUserId, position }])
                     }),
                     box({ flex: 1 }, []),
                     box({ display: 'flex' }, [
-
                     ])
                 ])
             )
@@ -129,7 +128,7 @@ export const view = ({ $d, model, ctx, onBack }: { model: Model, ctx: Ctx, $d: (
 }
 
 
-export const viewPlayerSlots = ({ model }: { model: Model }) => {
+export const viewPlayerSlots = ({ model, ctx }: { ctx: Ctx, model: GameModel }) => {
     const iconSize = {
         width: 32,
         height: 32

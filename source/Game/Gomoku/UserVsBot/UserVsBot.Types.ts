@@ -13,20 +13,22 @@ import { Position } from "../Gomoku/Position"
 // 
 // 
 
-export type Model =
-    | {
-        type: "setup",
-        userId: UserId | null
-        userStone: Stone
-        botLevel: BotLevel
-    }
-    | {
-        type: "game",
-        userId: UserId,
-        userStone: Stone
-        botLevel: BotLevel
-        board: Board
-    }
+export type Model = SetupModel | GameModel
+
+export type SetupModel = {
+    type: "setup",
+    userId: UserId | null
+    userStone: Stone
+    botLevel: BotLevel
+}
+
+export type GameModel = {
+    type: "game",
+    userId: UserId,
+    userStone: Stone
+    botLevel: BotLevel
+    board: Board
+}
 
 export type FrontendModel = Model
 
