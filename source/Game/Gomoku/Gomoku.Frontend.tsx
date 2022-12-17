@@ -35,6 +35,11 @@ export const update = ({ sendToBackend, }: { sendToBackend: (m: ToBackend) => Cm
             return [model, sendToBackend(msg)]
         }
         case 'UserVsBot': {
+            if (model.type === 'UserVsBot') {
+                const [child, cmd] = UserVsBot.update({ sendToBackend: m => sendToBackend(['UserVsBot', m]) }, msg[1], model.child)
+                return [{ type: "UserVsBot", child }, Cmd.tag("UserVsBot", cmd)]
+            }
+
             return [model, Cmd.None]
         }
         case 'UserVsUser': {
@@ -55,6 +60,10 @@ export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd<Ms
         }
 
         case 'UserVsBot': {
+            if (model.type === 'UserVsBot') {
+                const [child, cmd] = UserVsBot.updateFromBackend(msg[1], model.child)
+                return [{ type: "UserVsBot", child }, Cmd.tag("UserVsBot", cmd)]
+            }
             return [model, Cmd.None]
         }
         case 'UserVsUser': {

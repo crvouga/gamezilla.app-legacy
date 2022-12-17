@@ -1,5 +1,5 @@
 import { Cmd, Sub } from "../../../Core";
-import { avatar, box, fillBox, icon, paper, typography } from "../../../UI";
+import { actionButton, avatar, box, fillBox, icon, paper, typography } from "../../../UI";
 import { Ctx, UserVsBotSetupPage } from "../../Game.Shared";
 import {
     botLevels,
@@ -104,7 +104,7 @@ export const view = ({ $d, model, ctx, onBack }: { model: Model, ctx: Ctx, $d: (
                     onCancel: onBack,
                     onStartPlaying: () => $d(['StartPlaying', { userId: ctx.currentUserId }]),
                     onStopPlaying: () => $d(['StopPlaying', { userId: ctx.currentUserId }]),
-                    onStartGame: () => { },
+                    onStartGame: () => $d(['StartGame', { userId: ctx.currentUserId }]),
                     playerId: model.userId,
                 })
             )
@@ -120,6 +120,21 @@ export const view = ({ $d, model, ctx, onBack }: { model: Model, ctx: Ctx, $d: (
                     }),
                     box({ flex: 1 }, []),
                     box({ display: 'flex' }, [
+                        actionButton({
+                            onPress: () => $d(['StopGame', { userId: ctx.currentUserId }]),
+                            icon: icon({ name: "exit" }),
+                            label: "Exit"
+                        }),
+                        actionButton({
+                            onPress: () => $d(['Restart', { userId: ctx.currentUserId }]),
+                            icon: icon({ name: "restart" }),
+                            label: "Restart"
+                        }),
+                        actionButton({
+                            onPress: () => $d(['SwapSides', { userId: ctx.currentUserId }]),
+                            icon: icon({ name: "swap" }),
+                            label: "Swap Sides"
+                        }),
                     ])
                 ])
             )

@@ -1,4 +1,4 @@
-import { SmartToy } from "@mui/icons-material"
+import { ExitToApp, RestartAlt, SmartToy, SwapHorizSharp } from "@mui/icons-material"
 import * as MuiLab from "@mui/lab"
 import * as Mui from "@mui/material"
 import { TypographyProps } from "@mui/material"
@@ -630,6 +630,39 @@ export type ViewNode = ReactNode
 
 export type Sx = Mui.SxProps
 
+export const actionButton = ({
+  label,
+  icon,
+  onPress,
+  disabled = false,
+}: {
+  label: string
+  icon: ReactNode
+  onPress?: () => void
+  disabled?: boolean
+}) => {
+  const theme = useTheme()
+  return (
+    <ButtonBase
+      onClick={onPress}
+      sx={{
+        paddingY: 1 / 2,
+        paddingX: 2,
+        display: "flex",
+        flexDirection: "column",
+        flex: 1,
+        width: "100%",
+        color: disabled
+          ? theme.palette.action.disabled
+          : theme.palette.action.active,
+      }}
+    >
+      {icon}
+      <Typography variant="caption">{label}</Typography>
+    </ButtonBase>
+  )
+}
+
 export const ActionButton = ({
   label,
   icon,
@@ -672,12 +705,24 @@ export const ActionButton = ({
 // 
 
 
-type IconName = "smart-toy"
+type IconName = "smart-toy" | 'exit' | 'swap' | 'restart'
 
 export const icon = ({ name, ...sx }: { name: IconName } & Sx) => {
   switch (name) {
     case 'smart-toy': {
       return <SmartToy sx={sx} />
+    }
+
+    case 'exit': {
+      return <ExitToApp sx={{ ...sx, transform: "rotate(180deg)" }} />
+
+    }
+    case 'swap': {
+      return <SwapHorizSharp sx={sx} />
+    }
+
+    case 'restart': {
+      return <RestartAlt sx={sx} />
     }
   }
 }
