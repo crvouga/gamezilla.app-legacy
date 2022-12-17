@@ -1,4 +1,4 @@
-import { Stone, set_stone, Board, to_wins } from "./Gomoku"
+import { Stone, setStone, Board, toWins } from "./Gomoku"
 
 
 type Matrix = (" " | "b" | "w")[][]
@@ -6,14 +6,14 @@ const _ = " "
 const w = "w"
 const b = "b"
 
-const to_board = (matrix: Matrix): Board => {
+const toBoard = (matrix: Matrix): Board => {
     let board: Board = {}
     for (let x = 0; x < matrix.length; x++) {
         for (let y = 0; y < matrix[x]!.length; y++) {
             const element = matrix[x]![y]
             const stone: Stone | null = element === 'w' ? 'white' : element === 'b' ? 'black' : null
             if (stone) {
-                board = set_stone({ x, y }, stone, board)
+                board = setStone({ x, y }, stone, board)
             }
         }
     }
@@ -29,8 +29,8 @@ describe("Gomoku", () => {
             [_, _, _, _, _],
             [_, _, _, _, _],
         ]
-        const board = to_board(matrix)
-        const wins = to_wins(board)
+        const board = toBoard(matrix)
+        const wins = toWins(board)
         expect(wins.length).toBe(1)
     })
 
@@ -42,8 +42,8 @@ describe("Gomoku", () => {
             [w, b, _, _, _],
             [w, _, _, _, _],
         ]
-        const board = to_board(matrix)
-        const wins = to_wins(board)
+        const board = toBoard(matrix)
+        const wins = toWins(board)
         expect(wins.length).toBe(1)
     })
 
@@ -55,8 +55,8 @@ describe("Gomoku", () => {
             [_, _, b, w, _],
             [_, _, _, b, w],
         ]
-        const board = to_board(matrix)
-        const wins = to_wins(board)
+        const board = toBoard(matrix)
+        const wins = toWins(board)
         expect(wins.length).toBe(1)
     })
     it("detects one right diagonal win", () => {
@@ -67,8 +67,8 @@ describe("Gomoku", () => {
             [_, w, b, _, _],
             [w, b, _, _, _],
         ]
-        const board = to_board(matrix)
-        const wins = to_wins(board)
+        const board = toBoard(matrix)
+        const wins = toWins(board)
         expect(wins.length).toBe(1)
     })
 })

@@ -1,4 +1,4 @@
-import { Result, Ok, Err } from "../../Core/Result"
+import { Result, Ok, Err } from "../../../Core/Result"
 import { Direction, Position } from "./Position"
 
 export type Board = {
@@ -22,28 +22,28 @@ export const bounds = {
 
 type MoveProblem = "out_of_bounds" | "not_turn"
 
-const in_bounds = (position: Position): boolean => {
+const inBounds = (position: Position): boolean => {
     return bounds.lower.x <= position.x && position.x <= bounds.upper.x && bounds.lower.y <= position.y && position.y <= bounds.upper.y
 }
 
 export const move = ({ position, stone, board }: { position: Position, stone: Stone, board: Board }): Result<MoveProblem, Board> => {
-    if (!in_bounds(position)) {
+    if (!inBounds(position)) {
         return Err("out_of_bounds")
     }
 
-    const turn = to_turn(board)
+    const turn = toTurn(board)
 
 
     if (turn !== stone) {
         return Err("not_turn")
     }
 
-    const board_new = set_stone(position, stone, board)
+    const board_new = setStone(position, stone, board)
 
     return Ok(board_new)
 }
 
-export const set_stone = (position: Position, stone: Stone, board: Board): Board => {
+export const setStone = (position: Position, stone: Stone, board: Board): Board => {
     return {
         ...board,
         [position.x]: {
@@ -53,17 +53,19 @@ export const set_stone = (position: Position, stone: Stone, board: Board): Board
     }
 }
 
-const to_stone = (position: Position, board: Board): Stone | null => {
+const toStone = (position: Position, board: Board): Stone | null => {
     return board[position.x]?.[position.y] ?? null
 }
 
 
-const to_turn = (board: Board): Stone => {
+const toTurn = (board: Board): Stone => {
     const freq = { black: 0, white: 0 }
 
-    for (const x in board) {
-        for (const y in board[x]) {
-            const stone = board[Number(x)]?.[Number(y)]
+    for (const xKey in board) {
+        for (const yKey in board[xKey]) {
+            const x = Number(xKey)
+            const y = Number(yKey)
+            const stone = toStone({ x, y }, board)
             if (!stone) {
                 continue
             }
@@ -79,20 +81,20 @@ const to_turn = (board: Board): Stone => {
 }
 
 
-const to_key = ({ position, direction }: { position: Position, direction: Direction }): string => {
+const toKey = ({ position, direction }: { position: Position, direction: Direction }): string => {
     return [position.x, position.y, direction].join("-")
 }
 
-const min_win_length = 5
+const minWinLength = 5
 
-export const to_wins = (board: Board): Position[][] => {
+export const toWins = (board: Board): Position[][] => {
     const wins: Position[][] = []
     const visited = new Set<string>()
-    for (const x_key in board) {
-        for (const y_key in board[x_key]) {
-            const x = Number(x_key)
-            const y = Number(y_key)
-            const stone = to_stone({ x, y }, board)
+    for (const xKey in board) {
+        for (const yKey in board[xKey]) {
+            const x = Number(xKey)
+            const y = Number(yKey)
+            const stone = toStone({ x, y }, board)
 
             if (!stone) {
                 continue
@@ -101,34 +103,35 @@ export const to_wins = (board: Board): Position[][] => {
             for (const direction of Direction.all) {
                 let current: Position = { x, y }
 
-                if (visited.has(to_key({ position: current, direction }))) {
+                if (visited.has(toKey({ position: current, direction }))) {
                     continue
                 }
 
                 const win: Position[] = [current]
 
-                const vector = Direction.to_vector(direction)
+                const vector = Direction.toVector(direction)
+
                 while (true) {
                     const next = Position.add(vector, current)
-                    const next_stone = to_stone(next, board)
-                    if (!next_stone) {
+                    const nextStone = toStone(next, board)
+                    if (!nextStone) {
                         break
                     }
-                    if (next_stone !== stone) {
+                    if (nextStone !== stone) {
                         break
                     }
                     win.push(next)
                     current = next
                 }
 
-                const opposite_vector = Position.rotate({ theta: 180, center: { x: 0, y: 0 }, position: vector })
+                const oppositeVector = Position.rotate({ theta: 180, center: { x: 0, y: 0 }, position: vector })
                 while (true) {
-                    const next = Position.add(opposite_vector, current)
-                    const next_stone = to_stone(next, board)
-                    if (!next_stone) {
+                    const next = Position.add(oppositeVector, current)
+                    const nextStone = toStone(next, board)
+                    if (!nextStone) {
                         break
                     }
-                    if (next_stone !== stone) {
+                    if (nextStone !== stone) {
                         break
                     }
                     win.push(next)
@@ -136,10 +139,10 @@ export const to_wins = (board: Board): Position[][] => {
                 }
 
                 for (const position of win) {
-                    visited.add(to_key({ position, direction }))
+                    visited.add(toKey({ position, direction }))
                 }
 
-                if (win.length >= min_win_length) {
+                if (win.length >= minWinLength) {
                     wins.push(win)
                 }
 

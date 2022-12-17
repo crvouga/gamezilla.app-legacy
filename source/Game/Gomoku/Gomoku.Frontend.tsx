@@ -105,7 +105,7 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 // 
 // 
 
-export const view = ({ model, ctx, gameRoomCtx, }: { model: Model, ctx: Ctx, gameRoomCtx: GameRoomCtx, $d: (m: Msg) => void }) => {
+export const view = ({ model, ctx, gameRoomCtx, $d }: { model: Model, ctx: Ctx, gameRoomCtx: GameRoomCtx, $d: (m: Msg) => void }) => {
     switch (model.type) {
         case 'None': {
             return (
@@ -113,8 +113,8 @@ export const view = ({ model, ctx, gameRoomCtx, }: { model: Model, ctx: Ctx, gam
                     coverArt={coverArt()}
                     ctx={ctx}
                     gameRoomCtx={gameRoomCtx}
-                    onUserVsComputer={() => { }}
-                    onUserVsUser={() => { }}
+                    onUserVsComputer={() => $d(['InputMode', { userId: ctx.currentUserId, mode: "UserVsBot" }])}
+                    onUserVsUser={() => $d(['InputMode', { userId: ctx.currentUserId, mode: "UserVsUser" }])}
                     title="Gomoku"
                 />
             )
