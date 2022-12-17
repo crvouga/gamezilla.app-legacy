@@ -1,8 +1,9 @@
 import { Cmd, Sub } from "../../Core";
-import { ToFrontend, FrontendMsg, FrontendModel, ToBackend, BackendModel } from "./Gomoku.Types"
-import * as UserVsUser from "./UserVsUser/UserVsUser.Frontend"
-import * as UserVsBot from "./UserVsBot/UserVsBot.Frontend"
 import { Ctx, GameModeSelectPage, GameRoomCtx } from "../Game.Shared";
+import { BackendModel, FrontendModel, FrontendMsg, ToBackend, ToFrontend } from "./Gomoku.Types";
+import { viewCoverArt } from "./Gomoku/Gomoku";
+import * as UserVsBot from "./UserVsBot/UserVsBot.Frontend";
+import * as UserVsUser from "./UserVsUser/UserVsUser.Frontend";
 
 //
 //
@@ -13,7 +14,6 @@ import { Ctx, GameModeSelectPage, GameRoomCtx } from "../Game.Shared";
 //
 
 export type Model = FrontendModel;
-
 
 export const init: Model = {
     type: "None"
@@ -110,7 +110,7 @@ export const view = ({ model, ctx, gameRoomCtx, $d }: { model: Model, ctx: Ctx, 
         case 'None': {
             return (
                 <GameModeSelectPage
-                    coverArt={coverArt()}
+                    coverArt={viewCoverArt()}
                     ctx={ctx}
                     gameRoomCtx={gameRoomCtx}
                     onUserVsComputer={() => $d(['InputMode', { userId: ctx.currentUserId, mode: "UserVsBot" }])}
@@ -121,7 +121,7 @@ export const view = ({ model, ctx, gameRoomCtx, $d }: { model: Model, ctx: Ctx, 
         }
 
         case 'UserVsBot': {
-            return UserVsBot.view({ model: model.child, })
+            return UserVsBot.view({ model: model.child, ctx, })
         }
 
         case 'UserVsUser': {
@@ -131,21 +131,5 @@ export const view = ({ model, ctx, gameRoomCtx, $d }: { model: Model, ctx: Ctx, 
 
 }
 
-export const coverArt = () => {
-    const columnCount = 6
-    const rowCount = 6
-    const viewBox = [0, 0, rowCount, columnCount].join(" ")
-    return <svg width={"100%"} viewBox={viewBox}>
-        <rect x={0} y={0} width="100%" height="100%" fill="#000" />
-        <g transform="translate(0.5, 0.5)">
-            {Array.from({ length: columnCount }).map((_, x) => Array.from({ length: rowCount }).map((_, y) => (
-                <circle key={[x, y].join("-")} cx={x} cy={y} fill={"#fff"} r={0.1} />
-            )))}
-            <circle cx={3} cy={4} fill={"orange"} r={0.45} />
-            <circle cx={3} cy={3} fill={"blue"} r={0.45} />
-            <circle cx={2} cy={3} fill={"orange"} r={0.45} />
-            <circle cx={2} cy={2} fill={"blue"} r={0.45} />
-            <circle cx={3} cy={2} fill={"orange"} r={0.45} />
-        </g>
-    </svg>
-}
+
+export const coverArt = viewCoverArt
