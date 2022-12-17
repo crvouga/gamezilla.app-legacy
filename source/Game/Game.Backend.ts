@@ -252,7 +252,10 @@ export const updateFromFrontend = (
     case "Gomoku": {
       if (model[0] === "Gomoku") {
         const [child, cmd] = Gomoku.updateFromFrontend(
-          { broadcast: (m) => broadcast(["Gomoku", m]) },
+          {
+            broadcast: (m) => broadcast(["Gomoku", m]),
+            sendToClient: m => sendToClient(['Gomoku', m])
+          },
           msg[1],
           model[1]
         )

@@ -65,7 +65,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 };
 
 
-export const updateFromFrontend = ({ broadcast }: { broadcast: (m: ToFrontend) => Cmd }, msg: ToBackend, model: Model): [Model, Cmd<Msg>] => {
+export const updateFromFrontend = ({ broadcast, sendToClient }: { sendToClient: (m: ToFrontend) => Cmd, broadcast: (m: ToFrontend) => Cmd }, msg: ToBackend, model: Model): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
         case "InputMode": {
             const modelNew = initMode(msg[1])
@@ -75,7 +75,10 @@ export const updateFromFrontend = ({ broadcast }: { broadcast: (m: ToFrontend) =
         case 'UserVsBot': {
             if (model.type === 'UserVsBot') {
                 const [child, cmd] = UserVsBot.updateFromFrontend(
-                    // { broadcast: (m) => broadcast(['UserVsBot', m]) },
+                    {
+                        broadcast: (m) => broadcast(['UserVsBot', m]),
+                        sendToClient: (m) => sendToClient(['UserVsBot', m])
+                    },
                     msg[1],
                     model.child
                 )
