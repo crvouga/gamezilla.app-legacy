@@ -1,6 +1,5 @@
 import * as Rx from "rxjs"
 import { Cmd } from "../Cmd"
-import * as Platform from "../Platform"
 import { Sub } from "../Sub"
 
 //
@@ -53,7 +52,7 @@ export interface Debugger<Model, Msg extends {}> {
 export interface DebuggerDeps<Model, Msg extends {}> {
   init: Model
   debug$: Rx.BehaviorSubject<DebugData<Model, Msg>>
-  $d: Platform.$d<MsgWithDebug<Model, Msg>>
+  $d: (m: MsgWithDebug<Model, Msg>) => void
 }
 
 /**
@@ -103,33 +102,33 @@ export const updateWithDebug =
     debugId$: Rx.BehaviorSubject<string | undefined>
     update: (msg: Msg, model: Model) => [Model, Cmd<Msg>]
   }) =>
-  (msg: MsgWithDebug<Model, Msg>, model: Model): [Model, Cmd<Msg>] => {
-    if ("type" in msg) {
-      switch (msg.type) {
-        case "__DebugUpdateModel__":
-          return [msg.payload, Cmd.None]
+    (msg: MsgWithDebug<Model, Msg>, model: Model): [Model, Cmd<Msg>] => {
+      if ("type" in msg) {
+        switch (msg.type) {
+          case "__DebugUpdateModel__":
+            return [msg.payload, Cmd.None]
 
-        case "__DebugApplyMsg__":
-          return [update(msg.payload, model)[0], Cmd.None]
+          case "__DebugApplyMsg__":
+            return [update(msg.payload, model)[0], Cmd.None]
 
-        case "__DebugStarted__":
-          return [model, Cmd.None]
+          case "__DebugStarted__":
+            return [model, Cmd.None]
+        }
       }
+
+      const [modelNew, cmdNew] = update(msg, model)
+
+      const debugId = debugIdGen.next().value
+
+      // @ts-ignore
+      modelNew[DEBUG_ID_KEY] = debugId
+
+      debugId$.next(debugId)
+
+      debug$.next([debugMsg(msg), modelNew])
+
+      return [modelNew, cmdNew]
     }
-
-    const [modelNew, cmdNew] = update(msg, model)
-
-    const debugId = debugIdGen.next().value
-
-    // @ts-ignore
-    modelNew[DEBUG_ID_KEY] = debugId
-
-    debugId$.next(debugId)
-
-    debug$.next([debugMsg(msg), modelNew])
-
-    return [modelNew, cmdNew]
-  }
 
 /**
  *
@@ -145,19 +144,19 @@ export const subscriptionsWithDebug =
     subscriptions: (model: Model) => Sub<Msg>
     debugId$: Rx.BehaviorSubject<string | undefined>
   }) =>
-  (model: Model) => {
-    // @ts-ignore
-    const debugId: string = model[DEBUG_ID_KEY]
+    (model: Model) => {
+      // @ts-ignore
+      const debugId: string = model[DEBUG_ID_KEY]
 
-    const latestDebugId = debugId$.getValue()
+      const latestDebugId = debugId$.getValue()
 
-    if (latestDebugId === debugId) {
-      return subscriptions(model)
+      if (latestDebugId === debugId) {
+        return subscriptions(model)
+      }
+
+      console.info(
+        `[debugger] Detected time traveling so subscriptions are being ignored. latestDebugId: ${latestDebugId} debugId: ${debugId}`,
+      )
+
+      return Sub.None
     }
-
-    console.info(
-      `[debugger] Detected time traveling so subscriptions are being ignored. latestDebugId: ${latestDebugId} debugId: ${debugId}`,
-    )
-
-    return Sub.None
-  }

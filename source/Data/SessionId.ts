@@ -34,7 +34,7 @@ const generateId = (length: number): string => {
 }
 
 export const generate = (): SessionId => {
-  const sessionId = generateId(10)
+  const sessionId = `session-${generateId(5)}`
 
   if (is(sessionId)) {
     return sessionId

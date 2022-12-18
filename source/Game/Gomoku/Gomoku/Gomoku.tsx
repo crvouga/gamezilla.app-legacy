@@ -242,24 +242,57 @@ const viewBox = [
 ].join(" ")
 
 
+
+
 export const viewBoard = ({ board, onPress }: { board: Board, onPress: (position: Position) => void }) => {
     return (
-        <svg viewBox={viewBox}>
-            <rect x={0} y={0} width="100%" height="100%" fill="#000" />
-            <g transform="translate(0.5, 0.5)">
+        <svg width="100%" viewBox={viewBox}>
+            <>
+                <rect x={0} y={0} width="100%" height="100%" fill="#000" />
+
+                <g strokeWidth={0.1} stroke={gameTheme.line}>
+                    {rangeInclusive({ lower: 1, upper: 14 }).map(x => (
+                        <line key={x} x1={x} y1={bounds.lower.y} x2={x} y2={bounds.upper.y} />
+                    ))}
+
+                    {rangeInclusive({ lower: 1, upper: 14 }).map(y => (
+                        <line key={y} x1={bounds.lower.x} y1={y} x2={bounds.upper.x} y2={y} />
+                    ))}
+                </g>
+
+
+                <g transform="translate(0.5, 0.5)">
+                    {Position.rangeInclusive(bounds).map(({ x, y }) => {
+                        const stone = toStone({ x, y }, board)
+                        if (!stone) {
+                            return <></>
+                        }
+                        return (
+                            <circle
+                                key={[x, y, stone].join("-")}
+                                cx={x}
+                                cy={y}
+                                r={0.45}
+                                fill={stoneToColor(stone)}
+                            />
+                        )
+                    })}
+                </g>
+
+
+
                 {Position.rangeInclusive(bounds).map(({ x, y }) => {
-                    const stone = toStone({ x, y }, board)
-                    const key = [x, y, stone].join("-")
-                    return (
-                        <g key={key} onClick={() => onPress({ x, y })}>
-                            <circle cx={x} cy={y} r={0.1} fill={gameTheme.line} />
-                            {stone && (
-                                <circle cx={x} cy={y} r={0.45} fill={stoneToColor(stone)} />
-                            )}
-                        </g>
-                    )
+                    <rect onClick={() => onPress({ x, y })} key={`${x} ${y}`} x={x} y={y} width={1} height={1} fill="none" stroke="none" />
                 })}
-            </g>
+            </>
         </svg>
     )
+}
+
+const rangeInclusive = ({ lower, upper }: { lower: number, upper: number }): number[] => {
+    const range: number[] = []
+    for (let n = lower; n <= upper; n++) {
+        range.push(n)
+    }
+    return range
 }

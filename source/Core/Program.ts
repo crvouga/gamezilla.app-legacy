@@ -1,3 +1,4 @@
+
 import * as Rx from "rxjs"
 import { Cmd } from "./Cmd"
 import { Sub } from "./Sub"
@@ -32,7 +33,7 @@ export type $d<Msg> = (msg: Msg) => void
 //
 //
 
-export const createProgram = <Model, Msg>({
+const create = <Model, Msg>({
   init,
   update,
   subscriptions,
@@ -41,14 +42,12 @@ export const createProgram = <Model, Msg>({
   update: (msg: Msg, model: Model) => [Model, Cmd<Msg>]
   subscriptions: (model: Model) => Sub<Msg>
 }): Program<Model, Msg> => {
-  const initialState: State<Model, Msg> = {
+  const state$ = new Rx.BehaviorSubject<State<Model, Msg>>({
     model: init[0],
     cmd: init[1],
-  }
+  })
 
-  const state$ = new Rx.BehaviorSubject(initialState)
-
-  const $d: $d<Msg> = (msg) => {
+  const $d = (msg: Msg) => {
     const prev = state$.getValue()
     const [model, cmd] = update(msg, prev.model)
     state$.next({
@@ -65,4 +64,36 @@ export const createProgram = <Model, Msg>({
     sub$,
     state$,
   }
+}
+
+
+const run = <Model, Msg>(program: Program<Model, Msg>): () => void => {
+  const subSub = program.sub$.subscribe((msg) => {
+    program.$d(msg)
+  })
+
+  const cmdSub = program.state$.subscribe(({ cmd }) => {
+    cmd(program.$d)
+  })
+
+  return () => {
+    subSub.unsubscribe()
+    cmdSub.unsubscribe()
+  }
+}
+
+
+const subscribe = <Model, Msg>(program: Program<Model, Msg>, subscriber: (state: State<Model, Msg>) => void): () => void => {
+  const sub = program.state$.subscribe((state) => {
+    subscriber(state)
+  })
+  return () => {
+    sub.unsubscribe()
+  }
+}
+
+export const Program = {
+  create,
+  run,
+  subscribe,
 }
