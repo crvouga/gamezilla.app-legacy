@@ -1,7 +1,7 @@
 import { Result } from "../../../Core"
 import { Err, Ok } from "../../../Core/Result"
 import { UserId } from "../../../Data"
-import { toOppositeStone, MoveProblem, Board, BotLevel, initBoard, move, Stone } from "../Gomoku/Gomoku"
+import { Board, BotLevel, initBoard, move, MoveProblem, Stone, toOppositeStone } from "../Gomoku/Gomoku"
 import { Position } from "../Gomoku/Position"
 
 
@@ -95,11 +95,10 @@ export const handle = ({ currentUserId }: { currentUserId: UserId }, msg: Req, m
             if (model.userId !== currentUserId) {
                 return Err("must_be_player")
             }
-            const modelNew: Model = {
+            return Ok({
                 ...model,
                 botLevel: msg[1].botLevel
-            }
-            return Ok(modelNew)
+            })
         }
 
         case 'InputUserStone': {
@@ -109,11 +108,10 @@ export const handle = ({ currentUserId }: { currentUserId: UserId }, msg: Req, m
             if (model.userId !== currentUserId) {
                 return Err("must_be_player")
             }
-            const modelNew: Model = {
+            return Ok({
                 ...model,
                 userStone: msg[1].userStone
-            }
-            return Ok(modelNew)
+            })
         }
 
         case 'StartPlaying': {
@@ -123,11 +121,10 @@ export const handle = ({ currentUserId }: { currentUserId: UserId }, msg: Req, m
             if (model.userId) {
                 return Err("must_be_no_player")
             }
-            const modelNew: Model = {
+            return Ok({
                 ...model,
                 userId: currentUserId
-            }
-            return Ok(modelNew)
+            })
         }
 
         case 'StopPlaying': {
@@ -137,11 +134,10 @@ export const handle = ({ currentUserId }: { currentUserId: UserId }, msg: Req, m
             if (model.userId !== currentUserId) {
                 return Err("must_be_player")
             }
-            const modelNew: Model = {
+            return Ok({
                 ...model,
                 userId: null
-            }
-            return Ok(modelNew)
+            })
         }
 
         case 'StartGame': {
@@ -151,94 +147,75 @@ export const handle = ({ currentUserId }: { currentUserId: UserId }, msg: Req, m
             if (model.userId !== currentUserId) {
                 return Err("must_be_player")
             }
-            const modelNew: Model = {
+            return Ok({
                 type: "game",
                 board: initBoard,
                 botLevel: model.botLevel,
                 userId: model.userId,
                 userStone: model.userStone
-            }
-            return Ok(modelNew)
+            })
         }
 
         case 'InputMove': {
             if (model.type !== 'game') {
                 return Err("must_be_game")
             }
-
             if (model.userId !== currentUserId) {
                 return Err("must_be_player")
             }
-
             const moved = move({
                 position: msg[1].position,
                 stone: model.userStone,
                 board: model.board
             })
-
             if (moved.type === 'Err') {
                 return moved
             }
-
-            const modelNew: Model = {
+            return Ok({
                 ...model,
                 board: moved.value
-            }
-
-            return Ok(modelNew)
+            })
         }
 
         case 'StopGame': {
             if (model.type !== 'game') {
                 return Err("must_be_game")
             }
-
             if (model.userId !== currentUserId) {
                 return Err("must_be_player")
             }
-
-            const modelNew: Model = {
+            return Ok({
                 type: "setup",
                 botLevel: model.botLevel,
                 userId: model.userId,
                 userStone: model.userStone
-            }
-
-            return Ok(modelNew)
+            })
         }
 
         case 'Restart': {
             if (model.type !== 'game') {
                 return Err("must_be_game")
             }
-
             if (model.userId !== currentUserId) {
                 return Err("must_be_player")
             }
-
-            const modelNew: Model = {
+            return Ok({
                 ...model,
                 board: initBoard
-            }
-
-            return Ok(modelNew)
+            })
         }
 
         case 'SwapSides': {
             if (model.type !== 'game') {
                 return Err("must_be_game")
             }
-
             if (model.userId !== currentUserId) {
                 return Err("must_be_player")
             }
-
-            const modelNew: Model = {
+            return Ok({
                 ...model,
                 userStone: toOppositeStone(model.userStone)
-            }
-
-            return Ok(modelNew)
+            })
         }
     }
 }
