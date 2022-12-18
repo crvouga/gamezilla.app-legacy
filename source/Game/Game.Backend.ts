@@ -150,10 +150,12 @@ export const update = (
 export const updateFromFrontend = (
   {
     hostId,
+    ctx,
     sendToClient,
     broadcast,
   }: {
     hostId: UserId
+    ctx: { currentUserId: UserId }
     sendToClient: (msg: ToFrontend) => Cmd
     broadcast: (msg: ToFrontend) => Cmd
   },
@@ -253,6 +255,7 @@ export const updateFromFrontend = (
       if (model[0] === "Gomoku") {
         const [child, cmd] = Gomoku.updateFromFrontend(
           {
+            ctx,
             broadcast: (m) => broadcast(["Gomoku", m]),
             sendToClient: m => sendToClient(['Gomoku', m])
           },

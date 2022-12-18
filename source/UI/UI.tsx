@@ -632,12 +632,12 @@ export type Sx = Mui.SxProps
 
 export const actionButton = ({
   label,
-  icon,
+  iconName,
   onPress,
   disabled = false,
 }: {
   label: string
-  icon: ReactNode
+  iconName: IconName
   onPress?: () => void
   disabled?: boolean
 }) => {
@@ -657,7 +657,7 @@ export const actionButton = ({
           : theme.palette.action.active,
       }}
     >
-      {icon}
+      {icon(iconName)}
       <Typography variant="caption">{label}</Typography>
     </ButtonBase>
   )

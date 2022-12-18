@@ -93,6 +93,7 @@ type Wire = {
 }
 
 export const updateFromFrontend = (
+  ctx: { currentUserId: UserId },
   wire: Wire,
   msg: ToBackend,
   model: Model,
@@ -118,6 +119,7 @@ export const updateFromFrontend = (
       const [gameNew, gameCmd] = Game.updateFromFrontend(
         {
           hostId: room.hostId,
+          ctx,
           sendToClient: (msg) => wire.sendToClient(["Game", roomId, msg]),
           broadcast: (msg) =>
             sendToRoom({

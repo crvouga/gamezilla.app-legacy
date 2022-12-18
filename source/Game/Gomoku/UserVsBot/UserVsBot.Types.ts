@@ -65,29 +65,34 @@ export type ToFrontend = Res
 
 export type Req =
     // setup
-    | ['StartPlaying', { userId: UserId }]
-    | ['StopPlaying', { userId: UserId }]
-    | ['InputUserStone', { userId: UserId, userStone: Stone }]
-    | ['InputBotLevel', { userId: UserId, botLevel: BotLevel }]
-    | ['StartGame', { userId: UserId, }]
+    | ['StartPlaying']
+    | ['StopPlaying']
+    | ['InputUserStone', { userStone: Stone }]
+    | ['InputBotLevel', { botLevel: BotLevel }]
+    | ['StartGame']
     // game
-    | ['InputMove', { userId: UserId, position: Position }]
-    | ['StopGame', { userId: UserId }]
-    | ['Restart', { userId: UserId }]
-    | ['SwapSides', { userId: UserId }]
+    | ['InputMove', { position: Position }]
+    | ['StopGame']
+    | ['Restart']
+    | ['SwapSides']
 
 
-export type Res = [...Req, Result<Problem, Model>]
+export type Res = [Req[0], Result<Problem, Model>]
 
-export type Problem = "must_be_player" | "must_be_setup" | "must_be_no_player" | "must_be_game" | MoveProblem
+export type Problem =
+    | "must_be_player"
+    | "must_be_setup"
+    | "must_be_no_player"
+    | "must_be_game"
+    | MoveProblem
 
-export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
+export const handle = ({ currentUserId }: { currentUserId: UserId }, msg: Req, model: Model): Result<Problem, Model> => {
     switch (msg[0]) {
         case 'InputBotLevel': {
             if (model.type !== 'setup') {
                 return Err("must_be_setup")
             }
-            if (model.userId !== msg[1].userId) {
+            if (model.userId !== currentUserId) {
                 return Err("must_be_player")
             }
             const modelNew: Model = {
@@ -101,7 +106,7 @@ export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
             if (model.type !== 'setup') {
                 return Err('must_be_setup')
             }
-            if (model.userId !== msg[1].userId) {
+            if (model.userId !== currentUserId) {
                 return Err("must_be_player")
             }
             const modelNew: Model = {
@@ -120,7 +125,7 @@ export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
             }
             const modelNew: Model = {
                 ...model,
-                userId: msg[1].userId
+                userId: currentUserId
             }
             return Ok(modelNew)
         }
@@ -129,7 +134,7 @@ export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
             if (model.type !== 'setup') {
                 return Err('must_be_setup')
             }
-            if (model.userId !== msg[1].userId) {
+            if (model.userId !== currentUserId) {
                 return Err("must_be_player")
             }
             const modelNew: Model = {
@@ -143,7 +148,7 @@ export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
             if (model.type !== 'setup') {
                 return Err('must_be_setup')
             }
-            if (model.userId !== msg[1].userId) {
+            if (model.userId !== currentUserId) {
                 return Err("must_be_player")
             }
             const modelNew: Model = {
@@ -161,7 +166,7 @@ export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
                 return Err("must_be_game")
             }
 
-            if (model.userId !== msg[1].userId) {
+            if (model.userId !== currentUserId) {
                 return Err("must_be_player")
             }
 
@@ -188,7 +193,7 @@ export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
                 return Err("must_be_game")
             }
 
-            if (model.userId !== msg[1].userId) {
+            if (model.userId !== currentUserId) {
                 return Err("must_be_player")
             }
 
@@ -207,7 +212,7 @@ export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
                 return Err("must_be_game")
             }
 
-            if (model.userId !== msg[1].userId) {
+            if (model.userId !== currentUserId) {
                 return Err("must_be_player")
             }
 
@@ -224,7 +229,7 @@ export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
                 return Err("must_be_game")
             }
 
-            if (model.userId !== msg[1].userId) {
+            if (model.userId !== currentUserId) {
                 return Err("must_be_player")
             }
 

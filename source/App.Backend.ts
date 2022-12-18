@@ -187,7 +187,20 @@ const updateFromFrontend = (
     }
 
     case "GameRoom": {
+      const session = model.sessions[sessionId]
+
+      if (!session) {
+        // TODO: error feedback
+        return [model, Cmd.None]
+      }
+
+      if (session.userId.type === 'None') {
+        // TODO: error feedback
+        return [model, Cmd.None]
+      }
+
       const [child, childCmd] = GameRoom.updateFromFrontend(
+        { currentUserId: session.userId.value },
         {
           broadcast: (msg) => broadcast(["GameRoom", msg]),
           sendToClient: (msg) => sendToClient(["GameRoom", msg]),
@@ -334,16 +347,16 @@ socketServer.on("connection", (socket) => {
 
 const sendToFrontend =
   (clientIds: ClientId[], msg: ToFrontend): Cmd =>
-  () => {
-    socketServer.to(clientIds).emit("ToFrontend", msg)
-    socketServer.emit("ToFrontend", msg)
-  }
+    () => {
+      socketServer.to(clientIds).emit("ToFrontend", msg)
+      socketServer.emit("ToFrontend", msg)
+    }
 
 const broadcast =
   (msg: ToFrontend): Cmd =>
-  () => {
-    socketServer.emit("ToFrontend", msg)
-  }
+    () => {
+      socketServer.emit("ToFrontend", msg)
+    }
 
 const port = Number(process.env["PORT"]) || backendServerPort
 

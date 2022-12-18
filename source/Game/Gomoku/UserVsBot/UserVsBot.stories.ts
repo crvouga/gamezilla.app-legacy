@@ -30,8 +30,6 @@ Setup.args = {
     },
 }
 
-
-
 const board: Board = {
     6: {
         6: 'white',
