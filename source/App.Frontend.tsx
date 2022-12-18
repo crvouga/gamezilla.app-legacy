@@ -25,7 +25,7 @@ import {
   LocalStorage,
   Option,
   p,
-  Platform,
+  Program,
   RemoteData,
   Sub,
   t
@@ -552,7 +552,7 @@ const toThemeMode = (model: Model): UI.ThemeMode => {
   }
 }
 
-const View = ({ model, $d }: { model: Model; $d: (msg: Msg) => void }) => {
+const view = ({ model, $d }: { model: Model; $d: (msg: Msg) => void }) => {
   return (
     <UI.AppContainer themeMode={toThemeMode(model)}>
       <ViewMain model={model} $d={$d} />
@@ -842,24 +842,21 @@ const sendToBackend =
 //
 //
 
-const { program } = p(
-  Platform.createProgram({
-    init: init(Browser.getLocation()),
-    subscriptions,
-    update,
-  }),
-  Debug.ReduxDevTools.withDebugger,
-)
+const { program } =
+  Debug.ReduxDevTools.withDebugger(
+    Program.create({
+      init: init(Browser.getLocation()),
+      subscriptions,
+      update,
+    })
+  )
+
+Program.run(program)
 
 const root = ReactDomClient.createRoot(document.getElementById("root")!)
 
-program.sub$.subscribe((msg) => {
-  program.$d(msg)
-})
-
-program.state$.subscribe(({ model, cmd }) => {
-  cmd(program.$d)
-  root.render(<View model={model} $d={program.$d} />)
+Program.subscribe(program, state => {
+  root.render(view({ model: state.model, $d: program.$d }))
 })
 
 //

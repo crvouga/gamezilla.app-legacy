@@ -1,5 +1,6 @@
-import * as Rx from "rxjs"
+import fs from 'fs'
 import * as Http from "http"
+import * as Rx from "rxjs"
 import * as Socket from "socket.io"
 import {
   BackendModel,
@@ -10,9 +11,9 @@ import {
   Session,
   sessionIdKey,
   ToBackend,
-  ToFrontend,
+  ToFrontend
 } from "./App.Types"
-import { Cmd, exhaustive, Option, p, Platform, Sub, t } from "./Core"
+import { Program, Cmd, exhaustive, Option, p, Sub, t } from "./Core"
 import { formatMsg } from "./Core/Debug"
 import { ClientId, SessionId, UserId } from "./Data"
 import * as GameRoom from "./Game/GameRoom.Backend"
@@ -374,18 +375,32 @@ httpServer.listen(port, () => {
 //
 //
 
-const program = Platform.createProgram({
-  init: init(),
+
+const backendModelPath = "./backend-model.json"
+
+const getInit = (): [Model, Cmd<Msg>] => {
+  console.log(process.env)
+  try {
+    const loaded = require(backendModelPath);
+    const model = loaded as Model
+    console.info("Loaded model", model)
+    return [model, Cmd.None]
+  } catch (error) {
+    return init()
+  }
+}
+
+const program = Program.create({
+  init: getInit(),
   subscriptions,
   update,
 })
 
-program.sub$.subscribe((msg) => {
-  program.$d(msg)
-})
+Program.run(program)
 
-program.state$.subscribe(({ cmd }) => {
-  cmd(program.$d)
+// persist model
+program.state$.subscribe(async ({ model }) => {
+  fs.writeFile(backendModelPath, JSON.stringify(model, null, 4), () => { })
 })
 
 // logging
