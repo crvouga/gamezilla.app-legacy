@@ -1,7 +1,7 @@
 import * as Alerts from "../../../Alerts"
 import { Cmd, Sub } from "../../../Core"
 import * as UI from "../../../UI"
-import { Ctx, UserVsBotSetupPage } from "../../Game.Shared"
+import { Ctx, viewUserVsBotSetupScreen } from "../../Game.Shared"
 import {
   botLevels,
   GameOver,
@@ -138,28 +138,28 @@ export const View = ({
 }) => {
   if (model.type === "Setup") {
     return (
-      <UserVsBotSetupPage
-        playerId={model.player === 'None' ? null : model.player}
-        subtitle="Vs Computer"
-        title="Tic-Tac-Toe"
-        coverArt={<CoverArt />}
-        ctx={ctx}
-        onCancel={goBack}
-        onStartGame={() => $d(["StartGame", { userId: ctx.currentUserId }])}
-        onStartPlaying={() => $d(["StartPlaying", { userId: ctx.currentUserId }])}
-        onStopPlaying={() => $d(["StopPlaying", { userId: ctx.currentUserId }])}
-        player={{
+      viewUserVsBotSetupScreen({
+        playerId: model.player === 'None' ? null : model.player,
+        subtitle: "Vs Computer",
+        title: "Tic-Tac-Toe",
+        coverArt: CoverArt(),
+        ctx,
+        onCancel: goBack,
+        onStartGame: () => $d(["StartGame", { userId: ctx.currentUserId }]),
+        onStartPlaying: () => $d(["StartPlaying", { userId: ctx.currentUserId }]),
+        onStopPlaying: () => $d(["StopPlaying", { userId: ctx.currentUserId }]),
+        player: {
           values: Object.values(playerTypes),
           onInput: (player) => $d(["InputPlayerType", { userId: ctx.currentUserId, playerType: player }]),
           selected: model.userPlayerType,
           icon: (playerType) => <PlayerTypeIcon playerType={playerType} />,
-        }}
-        botLevel={{
+        },
+        botLevel: {
           onInput: (botLevel) => $d(["InputBot", { userId: ctx.currentUserId, botLevel }]),
           selected: model.botLevel,
           values: Object.values(botLevels)
-        }}
-      />
+        }
+      })
     )
   }
 

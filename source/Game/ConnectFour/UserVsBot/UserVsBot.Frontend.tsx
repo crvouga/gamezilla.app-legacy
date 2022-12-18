@@ -3,7 +3,7 @@ import * as Alerts from "../../../Alerts"
 import { Cmd, Sub } from "../../../Core"
 import { UserId } from "../../../Data/UserId"
 import { ActionButton, Avatar, Box, CircularProgress, Fade, FillBox, Icons, Paper, Typography, useTheme } from "../../../UI"
-import { Ctx, UserVsBotSetupPage } from "../../Game.Shared"
+import { Ctx, viewUserVsBotSetupScreen } from "../../Game.Shared"
 import { gameTheme, PlayerType, playerTypes, toStatus, toTurn, ViewColumns } from "../ConnectFour"
 import { CoverArt } from "../ConnectFour.Frontend"
 import { PlayerIcon } from "../Views"
@@ -164,29 +164,29 @@ export const View = ({
 }) => {
   if (model.type === "Setup") {
     return (
-      <UserVsBotSetupPage
-        coverArt={<CoverArt />}
-        title="Connect Four"
-        subtitle="Vs Computer"
-        ctx={ctx}
-        playerId={model.player === "None" ? null : model.player}
-        onStartPlaying={() => $d(['StartPlaying', { userId: ctx.currentUserId }])}
-        onStopPlaying={() => $d(['StopPlaying', { userId: ctx.currentUserId }])}
-        botLevel={{
+      viewUserVsBotSetupScreen({
+        coverArt: CoverArt(),
+        title: "Connect Four",
+        subtitle: "Vs Computer",
+        ctx,
+        playerId: model.player === "None" ? null : model.player,
+        onStartPlaying: () => $d(['StartPlaying', { userId: ctx.currentUserId }]),
+        onStopPlaying: () => $d(['StopPlaying', { userId: ctx.currentUserId }]),
+        botLevel: {
           values: Object.values(botLevel),
           selected: model.botLevel,
           onInput: (level) => $d(['InputBotLevel', { botLevel: level, userId: ctx.currentUserId }]),
-        }
-        }
-        player={{
+        },
+        player: {
           values: Object.values(playerTypes),
           selected: model.userPlayerType,
           onInput: (playerType) => $d(['InputPlayerType', { playerType, userId: ctx.currentUserId }]),
           icon: (playerType) => <PlayerIcon playerType={playerType} sx={{ width: "1rem", height: "1rem" }} />,
-        }}
-        onCancel={goBack}
-        onStartGame={() => $d(['StartGame', { userId: ctx.currentUserId }])}
-      />
+        },
+        onCancel: goBack,
+        onStartGame: () => $d(['StartGame', { userId: ctx.currentUserId }]),
+      })
+
     )
   }
 

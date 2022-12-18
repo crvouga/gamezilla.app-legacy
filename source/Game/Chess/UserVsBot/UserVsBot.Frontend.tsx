@@ -1,7 +1,7 @@
 import * as Alerts from "../../../Alerts"
 import { Audio, Cmd, exhaustive, Option, Sub, t } from "../../../Core"
 import * as UI from "../../../UI"
-import { Ctx, UserVsBotSetupPage } from "../../Game.Shared"
+import { Ctx, viewUserVsBotSetupScreen } from "../../Game.Shared"
 import * as Board from "../Board"
 import { CoverArt } from "../Chess.Frontend"
 import * as Sounds from "../Sounds"
@@ -299,28 +299,28 @@ export const View = ({
 
   if (model.sharedModel.type === "Setup") {
     return (
-      <UserVsBotSetupPage
-        botLevel={{
+      viewUserVsBotSetupScreen({
+        botLevel: {
           values: Board.allBotLevels,
           selected: model.sharedModel.botLevel,
           onInput: (botLevel) => $d(["InputBot", { botLevel, userId: ctx.currentUserId }]),
-        }}
-        onCancel={onClose}
-        coverArt={<CoverArt />}
-        ctx={ctx}
-        onStartGame={() => $d(["StartGame", { userId: ctx.currentUserId }])}
-        onStartPlaying={() => $d(["InputUser", { userId: ctx.currentUserId }])}
-        onStopPlaying={() => $d(["InputUser", { userId: "None" }])}
-        player={{
+        },
+        onCancel: onClose,
+        coverArt: CoverArt(),
+        ctx,
+        onStartGame: () => $d(["StartGame", { userId: ctx.currentUserId }]),
+        onStartPlaying: () => $d(["InputUser", { userId: ctx.currentUserId }]),
+        onStopPlaying: () => $d(["InputUser", { userId: "None" }]),
+        player: {
           values: Object.values(Board.colors),
           selected: model.sharedModel.userColor,
           onInput: (color) => $d(["InputColor", { userColor: color, userId: ctx.currentUserId }]),
           icon: (color) => <PawnIcon sx={{ color: color === 'w' ? '#fff' : "#000" }} stroke={color === 'w' ? '#000' : '#fff'} />
-        }}
-        playerId={model.sharedModel.userId === 'None' ? null : model.sharedModel.userId}
-        title={"Chess"}
-        subtitle="Vs Computer"
-      />
+        },
+        playerId: model.sharedModel.userId === 'None' ? null : model.sharedModel.userId,
+        title: "Chess",
+        subtitle: "Vs Computer",
+      })
     )
   }
 

@@ -31,7 +31,7 @@ export type GameRoomCtx = {
 export const bannerArtAspectRatio = Math.pow(3 / 4, 4)
 
 
-export const UserVsBotSetupPage = <BotLevel, Player>({
+export const viewUserVsBotSetupScreen = <BotLevel, Player>({
   title,
   subtitle,
   coverArt,

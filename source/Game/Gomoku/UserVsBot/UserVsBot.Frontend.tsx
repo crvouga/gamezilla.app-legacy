@@ -1,6 +1,6 @@
 import { Cmd, Sub } from "../../../Core";
 import { actionButton, avatar, box, fillBox, icon, paper, typography } from "../../../UI";
-import { Ctx, UserVsBotSetupPage } from "../../Game.Shared";
+import { Ctx, viewUserVsBotSetupScreen } from "../../Game.Shared";
 import {
     botLevels,
     stones,
@@ -85,7 +85,7 @@ export const view = ({ $d, model, ctx, onBack }: { model: Model, ctx: Ctx, $d: (
     switch (model.type) {
         case 'setup': {
             return (
-                UserVsBotSetupPage({
+                viewUserVsBotSetupScreen({
                     botLevel: {
                         onInput: (botLevel) => $d(['InputBotLevel', { userId: ctx.currentUserId, botLevel }]),
                         selected: model.botLevel,
