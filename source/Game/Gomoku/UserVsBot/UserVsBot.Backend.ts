@@ -33,14 +33,14 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 };
 
 
-export const updateFromFrontend = ({ sendToClient, broadcast }: { sendToClient: (m: ToFrontend) => Cmd, broadcast: (m: ToFrontend) => Cmd }, msg: ToBackend, model: Model): [Model, Cmd<Msg>] => {
+export const updateFromFrontend = ({ ctx, sendToClient, broadcast }: { ctx: { currentUserId: UserId }; sendToClient: (m: ToFrontend) => Cmd, broadcast: (m: ToFrontend) => Cmd }, msg: ToBackend, model: Model): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
         default: {
-            const res: Res = [...msg, handle(msg, model)]
-            if (res[2].type === 'Err') {
+            const res: Res = [msg[0], handle(ctx, msg, model)]
+            if (res[1].type === 'Err') {
                 return [model, sendToClient(res)]
             }
-            return [res[2].value, broadcast(res)]
+            return [res[1].value, broadcast(res)]
         }
     }
 };

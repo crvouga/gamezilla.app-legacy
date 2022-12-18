@@ -45,12 +45,12 @@ export const update = ({ sendToBackend }: { sendToBackend: (m: ToBackend) => Cmd
 export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
         default: {
-            if (msg[2].type === 'Err') {
+            if (msg[1].type === 'Err') {
                 return [model, Cmd.None]
             }
             const merged = mergeWithBackend({
                 frontendModel: model,
-                backendModel: msg[2].value
+                backendModel: msg[1].value
             })
             return [merged, Cmd.None]
         }
@@ -87,13 +87,13 @@ export const view = ({ $d, model, ctx, onBack }: { model: Model, ctx: Ctx, $d: (
             return (
                 viewUserVsBotSetupScreen({
                     botLevel: {
-                        onInput: (botLevel) => $d(['InputBotLevel', { userId: ctx.currentUserId, botLevel }]),
+                        onInput: (botLevel) => $d(['InputBotLevel', { botLevel }]),
                         selected: model.botLevel,
                         values: Object.values(botLevels)
                     },
                     coverArt: viewCoverArt(),
                     player: {
-                        onInput: (userStone) => $d(['InputUserStone', { userId: ctx.currentUserId, userStone }]),
+                        onInput: (userStone) => $d(['InputUserStone', { userStone }]),
                         selected: model.userStone,
                         values: Object.values(stones),
                         icon: (stone) => viewStoneIcon({ stone })
@@ -102,9 +102,9 @@ export const view = ({ $d, model, ctx, onBack }: { model: Model, ctx: Ctx, $d: (
                     title: "Gomoku",
                     subtitle: "Vs Computer",
                     onCancel: onBack,
-                    onStartPlaying: () => $d(['StartPlaying', { userId: ctx.currentUserId }]),
-                    onStopPlaying: () => $d(['StopPlaying', { userId: ctx.currentUserId }]),
-                    onStartGame: () => $d(['StartGame', { userId: ctx.currentUserId }]),
+                    onStartPlaying: () => $d(['StartPlaying']),
+                    onStopPlaying: () => $d(['StopPlaying']),
+                    onStartGame: () => $d(['StartGame']),
                     playerId: model.userId,
                 })
             )
@@ -114,27 +114,12 @@ export const view = ({ $d, model, ctx, onBack }: { model: Model, ctx: Ctx, $d: (
             return (
                 fillBox({}, [
                     viewPlayerSlots({ ctx, model }),
-                    viewBoard({
-                        board: model.board,
-                        onPress: position => $d(['InputMove', { userId: ctx.currentUserId, position }])
-                    }),
+                    viewBoard({ board: model.board, onPress: position => $d(['InputMove', { position }]) }),
                     box({ flex: 1 }, []),
                     box({ display: 'flex' }, [
-                        actionButton({
-                            onPress: () => $d(['StopGame', { userId: ctx.currentUserId }]),
-                            icon: icon("exit"),
-                            label: "Exit"
-                        }),
-                        actionButton({
-                            onPress: () => $d(['Restart', { userId: ctx.currentUserId }]),
-                            icon: icon("restart"),
-                            label: "Restart"
-                        }),
-                        actionButton({
-                            onPress: () => $d(['SwapSides', { userId: ctx.currentUserId }]),
-                            icon: icon("swap"),
-                            label: "Swap Sides"
-                        }),
+                        actionButton({ onPress: () => $d(['Restart']), iconName: "restart", label: "Restart" }),
+                        actionButton({ onPress: () => $d(['SwapSides']), iconName: "swap", label: "Swap Sides" }),
+                        actionButton({ onPress: () => $d(['StopGame']), iconName: "exit", label: "Exit" }),
                     ])
                 ])
             )
@@ -164,13 +149,11 @@ export const viewPlayerSlots = ({ model, ctx }: { ctx: Ctx, model: GameModel }) 
         ])
 
     const whiteSlot = model.userStone === 'white' ? userSlot : botSlot
+
     const blackSlot = model.userStone === 'black' ? userSlot : botSlot
 
     return (
-        box({ py: 2, display: "flex", gap: 2, justifyContent: "center", alignItems: 'center' }, [
-            whiteSlot,
-            blackSlot
-        ])
+        box({ py: 2, display: "flex", gap: 2, justifyContent: "center", alignItems: 'center' }, [whiteSlot, blackSlot])
     )
 
 }
