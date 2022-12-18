@@ -40,7 +40,7 @@ export const updateFromFrontend = ({ sendToClient, broadcast }: { sendToClient: 
             if (res[2].type === 'Err') {
                 return [model, sendToClient(res)]
             }
-            return [model, broadcast(res)]
+            return [res[2].value, broadcast(res)]
         }
     }
 };
