@@ -5,7 +5,7 @@ import { TypographyProps } from "@mui/material"
 import { blue } from "@mui/material/colors"
 import Slide, { SlideProps } from "@mui/material/Slide"
 import { keyframes } from "@mui/system"
-import { ReactNode, useEffect, useMemo, useRef } from "react"
+import { Fragment, ReactNode, useEffect, useMemo, useRef } from "react"
 import * as Icons from "./Icons"
 
 const SlideTransition = (props: SlideProps) => {
@@ -725,4 +725,11 @@ export const icon = (name: IconName, sx?: Sx) => {
       return <RestartAlt sx={sx} />
     }
   }
+}
+export const fragment = (children: ViewNode[]) => {
+  return (
+    <>
+      {children}
+    </>
+  )
 }

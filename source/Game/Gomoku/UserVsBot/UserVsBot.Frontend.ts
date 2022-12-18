@@ -1,10 +1,11 @@
 import { Cmd, Sub } from "../../../Core";
-import { actionButton, avatar, box, fillBox, icon, paper, typography } from "../../../UI";
+import { fragment, actionButton, avatar, box, fillBox, icon, paper, typography } from "../../../UI";
 import { Ctx, viewUserVsBotSetupScreen } from "../../Game.Shared";
 import {
     botLevels,
     stones,
     toOppositeStone,
+    toTurn,
     viewBoard,
     viewCoverArt,
     viewStoneIcon
@@ -114,6 +115,9 @@ export const view = ({ $d, model, ctx, onBack }: { model: Model, ctx: Ctx, $d: (
             return (
                 fillBox({}, [
                     viewPlayerSlots({ ctx, model }),
+                    box({ display: 'flex', justifyContent: "center", alignItems: 'center' }, [
+                        viewMessage({ model }),
+                    ]),
                     viewBoard({ board: model.board, onPress: position => $d(['InputMove', { position }]) }),
                     box({ flex: 1 }, []),
                     box({ display: 'flex' }, [
@@ -127,6 +131,22 @@ export const view = ({ $d, model, ctx, onBack }: { model: Model, ctx: Ctx, $d: (
     }
 }
 
+const viewMessage = ({ model }: { model: GameModel }) => {
+    const turn = toTurn(model.board)
+
+    if (turn === 'black') {
+        return fragment([
+            viewStoneIcon({ stone: "black", mr: 1 }),
+            typography({}, ["Turn"])
+        ])
+    }
+
+    return fragment([
+        viewStoneIcon({ stone: "white", mr: 1 }),
+        typography({}, ["Turn"])
+    ])
+
+}
 
 export const viewPlayerSlots = ({ model, ctx }: { ctx: Ctx, model: GameModel }) => {
     const iconSize = {
@@ -153,7 +173,7 @@ export const viewPlayerSlots = ({ model, ctx }: { ctx: Ctx, model: GameModel }) 
     const blackSlot = model.userStone === 'black' ? userSlot : botSlot
 
     return (
-        box({ py: 2, display: "flex", gap: 2, justifyContent: "center", alignItems: 'center' }, [whiteSlot, blackSlot])
+        box({ px: 2, pt: 2, display: "flex", gap: 2, justifyContent: "center", alignItems: 'center' }, [whiteSlot, blackSlot])
     )
 
 }
