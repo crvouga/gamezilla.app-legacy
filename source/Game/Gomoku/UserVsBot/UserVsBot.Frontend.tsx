@@ -122,17 +122,17 @@ export const view = ({ $d, model, ctx, onBack }: { model: Model, ctx: Ctx, $d: (
                     box({ display: 'flex' }, [
                         actionButton({
                             onPress: () => $d(['StopGame', { userId: ctx.currentUserId }]),
-                            icon: icon({ name: "exit" }),
+                            icon: icon("exit"),
                             label: "Exit"
                         }),
                         actionButton({
                             onPress: () => $d(['Restart', { userId: ctx.currentUserId }]),
-                            icon: icon({ name: "restart" }),
+                            icon: icon("restart"),
                             label: "Restart"
                         }),
                         actionButton({
                             onPress: () => $d(['SwapSides', { userId: ctx.currentUserId }]),
-                            icon: icon({ name: "swap" }),
+                            icon: icon("swap"),
                             label: "Swap Sides"
                         }),
                     ])
@@ -152,7 +152,7 @@ export const viewPlayerSlots = ({ model, ctx }: { ctx: Ctx, model: GameModel }) 
     const botSlot =
         paper({ display: "flex", variant: "outlined", alignItems: "center", p: 1, width: "50%" }, [
             viewStoneIcon({ ...iconSize, stone: toOppositeStone(model.userStone), mr: 1 }),
-            icon({ ...iconSize, name: "smart-toy", mr: 1, }),
+            icon("smart-toy", { ...iconSize, mr: 1, }),
             typography({}, [model.botLevel])
         ])
 
