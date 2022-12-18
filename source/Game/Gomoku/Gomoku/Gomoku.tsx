@@ -242,7 +242,6 @@ const viewBox = [
 ].join(" ")
 
 
-
 export const viewBoard = ({ board, onPress }: { board: Board, onPress: (position: Position) => void }) => {
     return (
         <svg viewBox={viewBox}>

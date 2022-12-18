@@ -705,9 +705,9 @@ export const ActionButton = ({
 // 
 
 
-type IconName = "smart-toy" | 'exit' | 'swap' | 'restart'
+export type IconName = "smart-toy" | 'exit' | 'swap' | 'restart'
 
-export const icon = ({ name, ...sx }: { name: IconName } & Sx) => {
+export const icon = (name: IconName, sx?: Sx) => {
   switch (name) {
     case 'smart-toy': {
       return <SmartToy sx={sx} />
