@@ -1,12 +1,48 @@
 {
     "gameRoom": {
-        "rooms": {},
-        "users": {},
-        "games": {}
+        "rooms": {
+            "room-hpqkqm": {
+                "roomId": "room-hpqkqm",
+                "hostId": "caa13257-430f-4bdf-89ab-a97b5c8d1f52"
+            }
+        },
+        "users": {
+            "caa13257-430f-4bdf-89ab-a97b5c8d1f52": {
+                "roomId": "room-hpqkqm",
+                "userId": "caa13257-430f-4bdf-89ab-a97b5c8d1f52"
+            }
+        },
+        "games": {
+            "room-hpqkqm": [
+                "Gomoku",
+                {
+                    "type": "UserVsBot",
+                    "child": {
+                        "type": "game",
+                        "board": {},
+                        "botLevel": "Medium",
+                        "userId": "caa13257-430f-4bdf-89ab-a97b5c8d1f52",
+                        "userStone": "black"
+                    }
+                }
+            ]
+        }
     },
     "party": {
         "parties": {},
         "users": {}
     },
-    "sessions": {}
+    "sessions": {
+        "zHJZBi4irU": {
+            "sessionId": "zHJZBi4irU",
+            "clientId": {
+                "type": "Some",
+                "value": "_KZrVdQ9Us55mWOEAAAB"
+            },
+            "userId": {
+                "type": "Some",
+                "value": "caa13257-430f-4bdf-89ab-a97b5c8d1f52"
+            }
+        }
+    }
 }

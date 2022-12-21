@@ -1,3 +1,4 @@
+import fs from "fs"
 import * as Http from "http"
 import * as Rx from "rxjs"
 import * as Socket from "socket.io"
@@ -361,9 +362,8 @@ const broadcast =
 const port = Number(process.env["PORT"]) || backendServerPort
 
 httpServer.listen(port, () => {
-  console.clear()
-  console.log(`\n[backend] http server running at:`)
-  console.log(`[backend] http://localhost:${port}/\n`)
+  console.log(`[backend] http server running at:`)
+  console.log(`[backend] http://localhost:${port}/`)
 })
 
 //
@@ -375,30 +375,40 @@ httpServer.listen(port, () => {
 //
 
 
-// const backendModelPath = "./backend-model.json"
+const backendModelPath = "./backend-model.json"
 
-// const getInit = (): [Model, Cmd<Msg>] => {
-//   try {
-//     const loaded = require(backendModelPath);
-//     const model = loaded as Model
-//     return [model, Cmd.None]
-//   } catch (error) {
-//     return init()
-//   }
-// }
+const shouldPersistModel = Boolean(process.env['PERSIST_MODEL'])
+
+const getInit = (): [Model, Cmd<Msg>] => {
+  if (!shouldPersistModel) {
+    return init()
+  }
+  console.log(`[backend] persisting model to ${backendModelPath}`)
+  try {
+    const loaded = require(backendModelPath);
+    const model = loaded as Model
+    return [model, Cmd.None]
+  } catch (error) {
+    return init()
+  }
+}
 
 const program = Program.create({
-  init: init(),
+  init: getInit(),
   subscriptions,
   update,
 })
 
 Program.run(program)
 
-// // persist model
-// program.state$.subscribe(async ({ model }) => {
-//   fs.writeFile(backendModelPath, JSON.stringify(model, null, 4), () => { })
-// })
+if (shouldPersistModel) {
+  program.state$.subscribe(async ({ model }) => {
+    try {
+      fs.writeFile(backendModelPath, JSON.stringify(model, null, 4), () => { })
+    } catch (error) { }
+  })
+}
+
 
 // logging
 program.state$.subscribe((state) => {
