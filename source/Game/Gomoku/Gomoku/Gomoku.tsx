@@ -280,7 +280,16 @@ export const viewBoard = ({ board, onPress }: { board: Board, onPress: (position
 
 
                 {Position.rangeInclusive(bounds).map(({ x, y }) => {
-                    <rect onClick={() => onPress({ x, y })} key={`${x} ${y}`} x={x} y={y} width={1} height={1} fill="none" stroke="none" />
+                    <rect
+                        onClick={() => onPress({ x, y })}
+                        key={`${x} ${y}`}
+                        x={x}
+                        y={y}
+                        width={1}
+                        height={1}
+                        fill="none"
+                        stroke="none"
+                    />
                 })}
             </>
         </svg>

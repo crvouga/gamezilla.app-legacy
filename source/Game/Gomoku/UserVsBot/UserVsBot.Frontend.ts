@@ -115,7 +115,7 @@ export const view = ({ $d, model, ctx, onBack }: { model: Model, ctx: Ctx, $d: (
             return (
                 fillBox({}, [
                     viewPlayerSlots({ ctx, model }),
-                    box({ display: 'flex', justifyContent: "center", alignItems: 'center' }, [
+                    box({ display: 'flex', justifyContent: "center", alignItems: 'center', py: 1 }, [
                         viewMessage({ model }),
                     ]),
                     viewBoard({ board: model.board, onPress: position => $d(['InputMove', { position }]) }),
@@ -155,14 +155,14 @@ export const viewPlayerSlots = ({ model, ctx }: { ctx: Ctx, model: GameModel }) 
     }
 
     const botSlot =
-        paper({ display: "flex", variant: "outlined", alignItems: "center", p: 1, width: "50%" }, [
+        paper({ display: "flex", variant: "outlined", alignItems: "center", p: 1, flex: 1, overflow: 'hidden' }, [
             viewStoneIcon({ ...iconSize, stone: toOppositeStone(model.userStone), mr: 1 }),
             icon("smart-toy", { ...iconSize, mr: 1, }),
             typography({}, [model.botLevel])
         ])
 
     const userSlot =
-        paper({ display: "flex", variant: "outlined", alignItems: "center", p: 1, width: "50%" }, [
+        paper({ display: "flex", variant: "outlined", alignItems: "center", p: 1, flex: 1, overflow: 'hidden' }, [
             viewStoneIcon({ ...iconSize, stone: model.userStone, mr: 1 }),
             avatar({ ...iconSize, mr: 1, src: ctx.profiles[model.userId]?.avatarUrl }),
             typography({ noWrap: true }, [ctx.profiles[model.userId]?.username])
