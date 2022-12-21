@@ -1,4 +1,3 @@
-import fs from 'fs'
 import * as Http from "http"
 import * as Rx from "rxjs"
 import * as Socket from "socket.io"
@@ -13,7 +12,7 @@ import {
   ToBackend,
   ToFrontend
 } from "./App.Types"
-import { Program, Cmd, exhaustive, Option, p, Sub, t } from "./Core"
+import { Cmd, exhaustive, Option, p, Program, Sub, t } from "./Core"
 import { formatMsg } from "./Core/Debug"
 import { ClientId, SessionId, UserId } from "./Data"
 import * as GameRoom from "./Game/GameRoom.Backend"
@@ -376,32 +375,30 @@ httpServer.listen(port, () => {
 //
 
 
-const backendModelPath = "./backend-model.json"
+// const backendModelPath = "./backend-model.json"
 
-const getInit = (): [Model, Cmd<Msg>] => {
-  console.log(process.env)
-  try {
-    const loaded = require(backendModelPath);
-    const model = loaded as Model
-    console.info("Loaded model", model)
-    return [model, Cmd.None]
-  } catch (error) {
-    return init()
-  }
-}
+// const getInit = (): [Model, Cmd<Msg>] => {
+//   try {
+//     const loaded = require(backendModelPath);
+//     const model = loaded as Model
+//     return [model, Cmd.None]
+//   } catch (error) {
+//     return init()
+//   }
+// }
 
 const program = Program.create({
-  init: getInit(),
+  init: init(),
   subscriptions,
   update,
 })
 
 Program.run(program)
 
-// persist model
-program.state$.subscribe(async ({ model }) => {
-  fs.writeFile(backendModelPath, JSON.stringify(model, null, 4), () => { })
-})
+// // persist model
+// program.state$.subscribe(async ({ model }) => {
+//   fs.writeFile(backendModelPath, JSON.stringify(model, null, 4), () => { })
+// })
 
 // logging
 program.state$.subscribe((state) => {
