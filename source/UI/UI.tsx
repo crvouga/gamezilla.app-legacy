@@ -5,7 +5,7 @@ import { TypographyProps } from "@mui/material"
 import { blue } from "@mui/material/colors"
 import Slide, { SlideProps } from "@mui/material/Slide"
 import { keyframes } from "@mui/system"
-import { Fragment, ReactNode, useEffect, useMemo, useRef } from "react"
+import { ReactNode, useEffect, useMemo, useRef } from "react"
 import * as Icons from "./Icons"
 
 const SlideTransition = (props: SlideProps) => {

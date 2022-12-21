@@ -20,7 +20,7 @@ export const init: Model = {
     type: "None"
 }
 
-const initMode = ({ mode, }: { mode: Mode, userId: UserId }): Model => {
+const initMode = ({ mode, userId }: { mode: Mode, userId: UserId }): Model => {
     switch (mode) {
         case "None": {
             return { type: "None" }
@@ -29,8 +29,7 @@ const initMode = ({ mode, }: { mode: Mode, userId: UserId }): Model => {
         case "UserVsBot": {
             return {
                 type: "UserVsBot",
-
-                child: UserVsBot.init,
+                child: UserVsBot.init({ userId })
             }
         }
 

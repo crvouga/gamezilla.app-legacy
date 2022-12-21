@@ -192,7 +192,7 @@ const gameTheme = {
     whiteStone: "orange",
     blackStone: "blue",
     background: "#000",
-    line: "#fff"
+    line: "#676767"
 }
 
 export const stoneToColor = (stone: Stone): string => {
@@ -242,15 +242,13 @@ const viewBox = [
 ].join(" ")
 
 
-
-
 export const viewBoard = ({ board, onPress }: { board: Board, onPress: (position: Position) => void }) => {
     return (
         <svg width="100%" viewBox={viewBox}>
             <>
                 <rect x={0} y={0} width="100%" height="100%" fill="#000" />
 
-                <g strokeWidth={0.1} stroke={gameTheme.line}>
+                <g strokeWidth={0.05} stroke={gameTheme.line}>
                     {rangeInclusive({ lower: 1, upper: 14 }).map(x => (
                         <line key={x} x1={x} y1={bounds.lower.y} x2={x} y2={bounds.upper.y} />
                     ))}

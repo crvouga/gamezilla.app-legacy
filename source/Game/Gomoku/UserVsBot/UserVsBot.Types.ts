@@ -34,11 +34,13 @@ export type FrontendModel = Model
 
 export type BackendModel = Model
 
-export const initShared: Model = {
-    type: "setup",
-    userId: null,
-    userStone: "black",
-    botLevel: "Medium"
+export const initShared = ({ userId }: { userId: UserId | null }): Model => {
+    return {
+        type: "setup",
+        userId,
+        userStone: "black",
+        botLevel: "Medium"
+    }
 }
 
 // 

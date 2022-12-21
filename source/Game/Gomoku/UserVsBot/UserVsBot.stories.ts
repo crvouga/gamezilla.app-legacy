@@ -6,7 +6,7 @@ import { init, view } from "./UserVsBot.Frontend"
 
 const props: Parameters<typeof view>[0] = {
     ctx: ctx,
-    model: init,
+    model: init({ userId: ctx.currentUserId }),
     onBack: () => { },
     $d: () => { },
 }
@@ -25,8 +25,7 @@ const Template: ComponentStory<typeof view> = (args) => AppContainer({
 export const Setup = Template.bind({})
 Setup.args = {
     model: {
-        ...init,
-        userId: ctx.currentUserId
+        ...init({ userId: ctx.currentUserId }),
     },
 }
 
