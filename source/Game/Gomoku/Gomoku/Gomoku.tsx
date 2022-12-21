@@ -242,25 +242,28 @@ const viewBox = [
 ].join(" ")
 
 
+const allPositions = Position.rangeExclusive({ lower: bounds.lower, upper: { x: bounds.upper.x - 1, y: bounds.upper.y - 1 } })
+
 export const viewBoard = ({ board, onPress }: { board: Board, onPress: (position: Position) => void }) => {
+
     return (
         <svg width="100%" viewBox={viewBox}>
             <>
-                <rect x={0} y={0} width="100%" height="100%" fill="#000" />
+                {/* <rect x={0} y={0} width="100%" height="100%" fill="#000" /> */}
 
                 <g strokeWidth={0.05} stroke={gameTheme.line}>
                     {rangeInclusive({ lower: 1, upper: 14 }).map(x => (
-                        <line key={x} x1={x} y1={bounds.lower.y} x2={x} y2={bounds.upper.y} />
+                        <line key={`x-${x}`} x1={x} y1={bounds.lower.y} x2={x} y2={bounds.upper.y} />
                     ))}
 
                     {rangeInclusive({ lower: 1, upper: 14 }).map(y => (
-                        <line key={y} x1={bounds.lower.x} y1={y} x2={bounds.upper.x} y2={y} />
+                        <line key={`y-${y}`} x1={bounds.lower.x} y1={y} x2={bounds.upper.x} y2={y} />
                     ))}
                 </g>
 
 
                 <g transform="translate(0.5, 0.5)">
-                    {Position.rangeInclusive(bounds).map(({ x, y }) => {
+                    {allPositions.map(({ x, y }) => {
                         const stone = toStone({ x, y }, board)
                         if (!stone) {
                             return <></>
@@ -278,19 +281,25 @@ export const viewBoard = ({ board, onPress }: { board: Board, onPress: (position
                 </g>
 
 
-
-                {Position.rangeInclusive(bounds).map(({ x, y }) => {
-                    <rect
-                        onClick={() => onPress({ x, y })}
-                        key={`${x} ${y}`}
-                        x={x}
-                        y={y}
-                        width={1}
-                        height={1}
-                        fill="none"
-                        stroke="none"
-                    />
-                })}
+                <g>
+                    {allPositions.map(({ x, y }) => {
+                        return (
+                            <circle
+                                key={`x-${x}-y-${y}`}
+                                onClick={() => {
+                                    console.log({ x, y })
+                                    onPress({ x, y })
+                                }}
+                                cx={x + 1}
+                                cy={y + 1}
+                                r={1 / 2}
+                                fill="none"
+                                stroke="none"
+                                style={{ cursor: "pointer", zIndex: 2 }}
+                            />
+                        )
+                    })}
+                </g>
             </>
         </svg>
     )

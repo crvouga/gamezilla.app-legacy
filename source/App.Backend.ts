@@ -362,8 +362,7 @@ const broadcast =
 const port = Number(process.env["PORT"]) || backendServerPort
 
 httpServer.listen(port, () => {
-  console.log(`[backend] http server running at:`)
-  console.log(`[backend] http://localhost:${port}/`)
+  console.log(`[backend] http server listening: http://localhost:${port}/`)
 })
 
 //
@@ -383,10 +382,11 @@ const getInit = (): [Model, Cmd<Msg>] => {
   if (!shouldPersistModel) {
     return init()
   }
-  console.log(`[backend] persisting model to ${backendModelPath}`)
+
   try {
     const loaded = require(backendModelPath);
     const model = loaded as Model
+    console.log(`[backend] initial model: ${JSON.stringify(model, null, 4)}`)
     return [model, Cmd.None]
   } catch (error) {
     return init()
@@ -402,15 +402,16 @@ const program = Program.create({
 Program.run(program)
 
 if (shouldPersistModel) {
+  console.log('[backend] persisting model')
   program.state$.subscribe(async ({ model }) => {
     try {
       fs.writeFile(backendModelPath, JSON.stringify(model, null, 4), () => { })
-    } catch (error) { }
+    } catch (error) {
+      console.error("failed to persist model")
+    }
   })
 }
 
-
-// logging
 program.state$.subscribe((state) => {
   const msg = state.msg?.flat(Infinity)
   const msgType = msg?.reduce<string | null>(
