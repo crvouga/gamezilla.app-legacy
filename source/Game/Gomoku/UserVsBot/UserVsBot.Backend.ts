@@ -1,6 +1,6 @@
 import { Cmd, Sub } from "../../../Core";
 import { UserId } from "../../../Data";
-import { initShared, BackendModel, BackendMsg, ToBackend, handle, Res, ToFrontend } from "./UserVsBot.Types";
+import { BackendModel, BackendMsg, handle, initShared, Res, ToBackend, ToFrontend } from "./UserVsBot.Types";
 
 //
 //
@@ -12,7 +12,7 @@ import { initShared, BackendModel, BackendMsg, ToBackend, handle, Res, ToFronten
 
 export type Model = BackendModel;
 
-export const init: Model = initShared
+export const init = initShared
 
 //
 //
@@ -45,8 +45,8 @@ export const updateFromFrontend = ({ ctx, sendToClient, broadcast }: { ctx: { cu
     }
 };
 
-export const updateRoomLeave = (_userId: UserId, _model: Model): [Model, Cmd<Msg>] => {
-    return [init, Cmd.None]
+export const updateRoomLeave = (_userId: UserId, model: Model): [Model, Cmd<Msg>] => {
+    return [init({ userId: model.userId }), Cmd.None]
 }
 
 //

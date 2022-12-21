@@ -82,7 +82,7 @@ export const mergeWithBackend = ({ frontendModel, backendModel }: { frontendMode
             if (frontendModel.type === 'UserVsBot') {
                 return { type: "UserVsBot", child: UserVsBot.mergeWithBackend({ frontendModel: frontendModel.child, backendModel: backendModel.child }) }
             }
-            return { type: "UserVsBot", child: UserVsBot.mergeWithBackend({ frontendModel: UserVsBot.init, backendModel: backendModel.child }) }
+            return { type: "UserVsBot", child: UserVsBot.mergeWithBackend({ frontendModel: UserVsBot.init({ userId: null }), backendModel: backendModel.child }) }
         }
 
         case 'UserVsUser': {

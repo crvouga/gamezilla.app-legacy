@@ -22,7 +22,7 @@ import { BackendModel, FrontendModel, FrontendMsg, GameModel, initShared, ToBack
 
 export type Model = FrontendModel;
 
-export const init: Model = initShared
+export const init = initShared
 
 //
 //
@@ -121,9 +121,9 @@ export const view = ({ $d, model, ctx, onBack }: { model: Model, ctx: Ctx, $d: (
                     viewBoard({ board: model.board, onPress: position => $d(['InputMove', { position }]) }),
                     box({ flex: 1 }, []),
                     box({ display: 'flex' }, [
+                        actionButton({ onPress: () => $d(['StopGame']), iconName: "exit", label: "Exit" }),
                         actionButton({ onPress: () => $d(['Restart']), iconName: "restart", label: "Restart" }),
                         actionButton({ onPress: () => $d(['SwapSides']), iconName: "swap", label: "Swap Sides" }),
-                        actionButton({ onPress: () => $d(['StopGame']), iconName: "exit", label: "Exit" }),
                     ])
                 ])
             )
