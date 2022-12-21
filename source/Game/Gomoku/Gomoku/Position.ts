@@ -62,8 +62,19 @@ export const rangeInclusive = ({ lower, upper }: { lower: Position, upper: Posit
     return positions
 }
 
+export const rangeExclusive = ({ lower, upper }: { lower: Position, upper: Position }): Position[] => {
+    const positions: Position[] = []
+    for (let x = lower.x; x < upper.x; x++) {
+        for (let y = lower.y; y < upper.y; y++) {
+            positions.push({ x, y })
+        }
+    }
+    return positions
+}
+
 export const Position = {
     rotate,
     add,
-    rangeInclusive
+    rangeInclusive,
+    rangeExclusive
 }
