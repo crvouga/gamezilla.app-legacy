@@ -1,5 +1,6 @@
 import { Cmd, Sub } from "../../../Core";
 import { UserId } from "../../../Data";
+import { move, toBestMove, toOppositeStone, toTurn } from "../Gomoku/Gomoku";
 import { BackendModel, BackendMsg, handle, initShared, Res, ToBackend, ToFrontend } from "./UserVsBot.Types";
 
 //
@@ -33,7 +34,44 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 };
 
 
-export const updateFromFrontend = ({ ctx, sendToClient, broadcast }: { ctx: { currentUserId: UserId }; sendToClient: (m: ToFrontend) => Cmd, broadcast: (m: ToFrontend) => Cmd }, msg: ToBackend, model: Model): [Model, Cmd<Msg>] => {
+type UpdateFromFrontend = (params: { ctx: { currentUserId: UserId }; sendToClient: (m: ToFrontend) => Cmd, broadcast: (m: ToFrontend) => Cmd }, msg: ToBackend, model: Model) => [Model, Cmd<Msg>]
+
+export const updateFromFrontend: UpdateFromFrontend = (params, msg, modelPrev) => {
+    const [model, cmd] = updateFromFrontend_(params, msg, modelPrev)
+
+    if (model.type !== 'game') {
+        console.log('not game', modelPrev)
+        return [model, cmd]
+    }
+
+    const isBotTurn = model.userStone === toOppositeStone(model.userStone)
+
+    if (!isBotTurn) {
+        return [model, cmd]
+    }
+
+    const botStone = toOppositeStone(model.userStone)
+
+    const position = toBestMove({ stone: botStone, board: model.board, })
+
+    if (!position) {
+        return [model, cmd]
+    }
+
+    const moved = move({ stone: botStone, position, board: model.board })
+
+    if (moved.type === 'Err') {
+        return [model, cmd]
+    }
+
+    const modelNew: Model = { ...model, board: moved.value }
+
+    return [modelNew, cmd]
+}
+
+
+
+const updateFromFrontend_: UpdateFromFrontend = ({ ctx, sendToClient, broadcast }, msg, model) => {
     switch (msg[0]) {
         default: {
             const res: Res = [msg[0], handle(ctx, msg, model)]

@@ -1,3 +1,4 @@
+import { shuffle } from "../../../Core"
 import { Result, Ok, Err } from "../../../Core/Result"
 import { SvgIcon, Sx } from "../../../UI"
 import { Direction, Position } from "./Position"
@@ -9,6 +10,7 @@ export type Board = {
 }
 
 export const initBoard: Board = {}
+
 
 
 export type BotLevel = "Easy" | "Medium" | "Hard"
@@ -26,7 +28,7 @@ export const stones: { [stone in Stone]: Stone } = {
     black: "black",
 }
 
-export const toOppositeStone = (stone: Stone) => {
+export const toOppositeStone = (stone: Stone): Stone => {
     switch (stone) {
         case 'black': {
             return 'white'
@@ -49,7 +51,10 @@ export const bounds = {
     }
 }
 
-export type MoveProblem = "out_of_bounds" | "not_turn"
+const allPositions = Position.rangeExclusive({ lower: bounds.lower, upper: { x: bounds.upper.x - 1, y: bounds.upper.y - 1 } })
+
+
+export type MoveProblem = "out_of_bounds" | "not_turn" | "position_occupied"
 
 const inBounds = (position: Position): boolean => {
     return bounds.lower.x <= position.x && position.x <= bounds.upper.x && bounds.lower.y <= position.y && position.y <= bounds.upper.y
@@ -62,14 +67,29 @@ export const move = ({ position, stone, board }: { position: Position, stone: St
 
     const turn = toTurn(board)
 
-
     if (turn !== stone) {
         return Err("not_turn")
     }
 
-    const board_new = setStone(position, stone, board)
+    if (toStone(position, board)) {
+        return Err("position_occupied")
+    }
 
-    return Ok(board_new)
+    const boardNew = setStone(position, stone, board)
+
+    return Ok(boardNew)
+}
+
+
+
+export const toBestMove = ({ stone, board }: { stone: Stone, board: Board }) => {
+    for (const position of shuffle(allPositions)) {
+        const moved = move({ position, stone, board })
+        if (moved.type === 'Ok') {
+            return position
+        }
+    }
+    return null
 }
 
 export const setStone = (position: Position, stone: Stone, board: Board): Board => {
@@ -110,13 +130,13 @@ export const toTurn = (board: Board): Stone => {
 }
 
 
-const toKey = ({ position, direction }: { position: Position, direction: Direction }): string => {
-    return [position.x, position.y, direction].join("-")
-}
-
 const minWinLength = 5
 
 export const toWins = (board: Board): Position[][] => {
+    const toKey = ({ position, direction }: { position: Position, direction: Direction }): string => {
+        return [position.x, position.y, direction].join("-")
+    }
+
     const wins: Position[][] = []
     const visited = new Set<string>()
     for (const xKey in board) {
@@ -242,58 +262,57 @@ const viewBox = [
 ].join(" ")
 
 
-const allPositions = Position.rangeExclusive({ lower: bounds.lower, upper: { x: bounds.upper.x - 1, y: bounds.upper.y - 1 } })
 
 export const viewBoard = ({ board, onPress }: { board: Board, onPress: (position: Position) => void }) => {
 
     return (
         <svg width="100%" viewBox={viewBox}>
             <>
-                {/* <rect x={0} y={0} width="100%" height="100%" fill="#000" /> */}
+                <rect x={0} y={0} width="100%" height="100%" fill="#000" />
 
                 <g strokeWidth={0.05} stroke={gameTheme.line}>
                     {rangeInclusive({ lower: 1, upper: 14 }).map(x => (
-                        <line key={`x-${x}`} x1={x} y1={bounds.lower.y} x2={x} y2={bounds.upper.y} />
+                        <line key={`x${x}`} x1={x} y1={bounds.lower.y} x2={x} y2={bounds.upper.y} />
                     ))}
 
                     {rangeInclusive({ lower: 1, upper: 14 }).map(y => (
-                        <line key={`y-${y}`} x1={bounds.lower.x} y1={y} x2={bounds.upper.x} y2={y} />
+                        <line key={`y${y}`} x1={bounds.lower.x} y1={y} x2={bounds.upper.x} y2={y} />
                     ))}
                 </g>
 
 
-                <g transform="translate(0.5, 0.5)">
-                    {allPositions.map(({ x, y }) => {
+                <g>
+                    {allPositions.flatMap(({ x, y }) => {
                         const stone = toStone({ x, y }, board)
                         if (!stone) {
-                            return <></>
+                            return []
                         }
-                        return (
+                        return [
                             <circle
                                 key={[x, y, stone].join("-")}
-                                cx={x}
-                                cy={y}
+                                cx={x + 1}
+                                cy={y + 1}
                                 r={0.45}
                                 fill={stoneToColor(stone)}
                             />
-                        )
+                        ]
                     })}
                 </g>
 
 
                 <g>
                     {allPositions.map(({ x, y }) => {
+                        const key = `x${x}y${y}`
                         return (
                             <circle
-                                key={`x-${x}-y-${y}`}
-                                onClick={() => {
-                                    console.log({ x, y })
+                                key={key}
+                                onMouseDown={() => {
                                     onPress({ x, y })
                                 }}
                                 cx={x + 1}
                                 cy={y + 1}
                                 r={1 / 2}
-                                fill="none"
+                                fill="transparent"
                                 stroke="none"
                                 style={{ cursor: "pointer", zIndex: 2 }}
                             />
