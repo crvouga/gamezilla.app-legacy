@@ -4,12 +4,20 @@
             "room-3nwdbe": {
                 "roomId": "room-3nwdbe",
                 "hostId": "86b8647c-646b-42a3-aad4-d08dd16a641e"
+            },
+            "room-sit6h5": {
+                "roomId": "room-sit6h5",
+                "hostId": "b571a421-0bed-4c98-856f-164b66421d0c"
             }
         },
         "users": {
             "86b8647c-646b-42a3-aad4-d08dd16a641e": {
                 "roomId": "room-3nwdbe",
                 "userId": "86b8647c-646b-42a3-aad4-d08dd16a641e"
+            },
+            "b571a421-0bed-4c98-856f-164b66421d0c": {
+                "roomId": "room-sit6h5",
+                "userId": "b571a421-0bed-4c98-856f-164b66421d0c"
             }
         },
         "games": {
@@ -23,6 +31,18 @@
                         "botLevel": "Medium",
                         "userId": "86b8647c-646b-42a3-aad4-d08dd16a641e",
                         "userStone": "black"
+                    }
+                }
+            ],
+            "room-sit6h5": [
+                "Gomoku",
+                {
+                    "type": "UserVsBot",
+                    "child": {
+                        "type": "setup",
+                        "userId": "b571a421-0bed-4c98-856f-164b66421d0c",
+                        "userStone": "black",
+                        "botLevel": "Medium"
                     }
                 }
             ]
@@ -40,7 +60,8 @@
                 "value": "jfQ07Lfs-9fY-BdZAAAB"
             },
             "userId": {
-                "type": "None"
+                "type": "Some",
+                "value": "b571a421-0bed-4c98-856f-164b66421d0c"
             }
         },
         "ark3b11qMq": {
