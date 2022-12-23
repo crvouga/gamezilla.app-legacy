@@ -1,7 +1,7 @@
 import { Result } from "../../../Core"
 import { Err, Ok } from "../../../Core/Result"
 import { UserId } from "../../../Data"
-import { Board, BotLevel, initBoard, move, MoveProblem, Stone, toOppositeStone } from "../Gomoku/Gomoku"
+import { Board, BotLevel, initBoard, move, MoveProblem, Stone, toOppositeStone, toTurn } from "../Gomoku/Gomoku"
 import { Position } from "../Gomoku/Position"
 
 
@@ -42,6 +42,7 @@ export const initShared = ({ userId }: { userId: UserId | null }): Model => {
         botLevel: "Medium"
     }
 }
+
 
 // 
 // 
