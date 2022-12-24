@@ -1,6 +1,6 @@
 import { Cmd, Sub } from "../../../Core";
 import { UserId } from "../../../Data";
-import { move, toBestMove, toOppositeStone, toTurn } from "../Gomoku/Gomoku";
+import { move, toBestMove, toOppositeStone } from "../Gomoku/Gomoku";
 import { BackendModel, BackendMsg, handle, initShared, Res, ToBackend, ToFrontend } from "./UserVsBot.Types";
 
 //
