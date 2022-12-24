@@ -1,6 +1,6 @@
 import { UserId } from "../../Data"
 import * as UI from "../../UI"
-import { bannerArtAspectRatio, Ctx } from "../Game.Shared"
+import { bannerArtAspectRatio, Ctx } from "../Game"
 import { gameTheme, PlayerTypeIcon } from "./TicTacToe"
 
 export const BannerArt = ({ title }: { title: string }) => {

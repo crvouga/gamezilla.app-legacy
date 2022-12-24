@@ -3,7 +3,7 @@ import { UserId } from "../../../Data"
 import * as ProfileStore from "../../../Profile/Profile.Store"
 import * as Alerts from "../../../Alerts"
 import * as UI from "../../../UI"
-import { Ctx } from "../../Game.Shared"
+import { Ctx } from "../../Game"
 import {
   emptyBoard,
   gameTheme,

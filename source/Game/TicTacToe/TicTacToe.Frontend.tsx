@@ -1,8 +1,8 @@
 import * as Alerts from "../../Alerts"
 import { Cmd, exhaustive } from "../../Core"
 import * as ProfileStore from "../../Profile/Profile.Store"
-import { Ctx, GameRoomCtx, viewSelectModeScreen } from "../Game.Shared"
-import { Empty, gameTheme, Position, Slot, ViewSlot } from "./TicTacToe"
+import { Ctx, GameRoomCtx, viewSelectModeScreen } from "../Game"
+import { viewCoverArt } from "./TicTacToe"
 import {
   BackendModel,
   FrontendModel,
@@ -208,7 +208,7 @@ export const View = ({
           title: "Tic-Tac-Toe",
           ctx,
           gameRoomCtx,
-          coverArt: CoverArt(),
+          coverArt: viewCoverArt(),
           onUserVsUser: () => $d([
             "InputMode",
             { mode: "UserVsUser", userId: ctx.currentUserId },
@@ -247,46 +247,4 @@ export const View = ({
       )
     }
   }
-}
-
-//
-//
-//
-//
-//
-//
-//
-
-export const CoverArt = () => {
-  const positions: [Position, Slot][] = [
-    [{ row: 0, column: 0 }, "X"],
-    [{ row: 0, column: 1 }, Empty],
-    [{ row: 1, column: 0 }, Empty],
-    [{ row: 1, column: 1 }, "O"],
-  ]
-
-  const LINES = [
-    { x1: 1, y1: 0, x2: 1, y2: 3 },
-    { x1: 0, y1: 1, x2: 3, y2: 1 },
-  ] as const
-
-  return (
-    <svg width="100%" viewBox="0 0 2 2">
-      <rect x={0} y={0} width={2} height={2} fill={gameTheme.background} />
-
-      {LINES.map((line, index) => (
-        <line key={index} {...line} stroke={gameTheme.line} strokeWidth={0.1} />
-      ))}
-
-      {positions.map(([{ column, row }, slot], index) => (
-        <ViewSlot
-          key={index}
-          slot={slot}
-          cx={Number(column) + 0.5}
-          cy={Number(row) + 0.5}
-          r={0.3}
-        />
-      ))}
-    </svg>
-  )
 }

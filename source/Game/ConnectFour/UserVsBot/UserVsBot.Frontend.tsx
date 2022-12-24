@@ -3,9 +3,9 @@ import * as Alerts from "../../../Alerts"
 import { Cmd, Sub } from "../../../Core"
 import { UserId } from "../../../Data/UserId"
 import { ActionButton, Avatar, Box, CircularProgress, Fade, FillBox, Icons, Paper, Typography, useTheme } from "../../../UI"
-import { Ctx, viewUserVsBotSetupScreen } from "../../Game.Shared"
-import { gameTheme, PlayerType, playerTypes, toStatus, toTurn, ViewColumns } from "../ConnectFour"
-import { CoverArt } from "../ConnectFour.Frontend"
+import { Ctx, viewUserVsBotSetupScreen } from "../../Game"
+import { gameTheme, PlayerType, playerTypes, toStatus, toTurn, ViewColumns, viewCoverArt } from "../ConnectFour"
+
 import { PlayerIcon } from "../Views"
 import {
   BackendModel, botLevel, FrontendModel,
@@ -165,7 +165,7 @@ export const View = ({
   if (model.type === "Setup") {
     return (
       viewUserVsBotSetupScreen({
-        coverArt: CoverArt(),
+        coverArt: viewCoverArt(),
         title: "Connect Four",
         subtitle: "Vs Computer",
         ctx,

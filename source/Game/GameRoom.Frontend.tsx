@@ -6,6 +6,7 @@ import * as ProfileStore from "../Profile/Profile.Store"
 import * as Route from "../Route"
 import { Divider, AspectRatio, Avatar, Badge, Box, Button, ButtonBase, CardActionArea, FillBox, Header, Icons, Paper, Toolbar, Typography } from "../UI"
 import * as Game from "./Game.Frontend"
+import { viewCoverArt } from "./Game"
 import { GameName, gameNameList } from "./Game.Types"
 import {
   BackendModel, FrontendModel,
@@ -752,7 +753,8 @@ export const ViewNotInRoom = ({
 export const GameCard = ({ gameName }: { gameName: GameName }) => {
   return (
     <Paper variant="outlined" sx={{ overflow: "hidden", width: "100%" }}>
-      <Game.CoverArt gameName={gameName} />
+      {viewCoverArt({ gameName })}
+
       <Typography variant="subtitle2" noWrap sx={{ width: "100%", px: 1, py: 0.5 }}>
         {Game.gameNameToString(gameName)}
       </Typography>
@@ -943,7 +945,7 @@ export const ViewGameCard = ({
         }}
         onClick={onClick}
       >
-        <Game.CoverArt gameName={gameName} />
+        {viewCoverArt({ gameName })}
 
         <Box
           sx={{
@@ -1037,7 +1039,7 @@ export const ViewBanner = ({
 
       {game && (
         <Box sx={{ width: 48, height: 48, mr: 2 }}>
-          <Game.CoverArt gameName={game[0]} />
+          {viewCoverArt({ gameName: game[0] })}
         </Box>
       )}
 
@@ -1096,7 +1098,7 @@ export const RoomCard = ({
       <Paper sx={{ overflow: "hidden", height: "100%", }}>
         <AspectRatio aspectRatio={Math.pow(3 / 4, 3)}>
           {gameName ? (
-            <Game.CoverArt gameName={gameName} />
+            viewCoverArt({ gameName })
           ) : (
             <Avatar
               src={hostProfile?.avatarUrl ?? ""}

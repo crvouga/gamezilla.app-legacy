@@ -153,7 +153,7 @@ const hasEdge = (edge: [Position, Position], maze: Maze): boolean => {
   return maze.edges.some((arbitrary) => eqEdge(arbitrary, edge))
 }
 
-const eqEdge = <T>(x: [T, T], y: [T, T]): boolean => {
+const eqEdge = <T,>(x: [T, T], y: [T, T]): boolean => {
   return (
     (eq(x[0], y[0]) && eq(x[1], y[1])) || (eq(x[1], y[0]) && eq(x[0], y[1]))
   )
@@ -164,4 +164,54 @@ export const Maze = {
   makeMemoized,
   hasEdge,
   hasVertex,
+}
+
+//
+// 
+// 
+// 
+// 
+
+const coverArtMaze = Maze.make({
+  seed: "cover art maze!",
+  lower: { x: 0, y: 0 },
+  upper: { x: 8, y: 8 },
+})
+
+const viewBox = [
+  coverArtMaze.lower.x,
+  coverArtMaze.lower.y,
+  coverArtMaze.upper.x - coverArtMaze.lower.x + 1,
+  coverArtMaze.upper.y - coverArtMaze.lower.y + 1,
+].join(" ")
+
+export const viewCoverArt = () => {
+  return (
+    <svg viewBox={viewBox} width={"100%"}>
+      <rect
+        x={coverArtMaze.lower.x}
+        y={coverArtMaze.lower.y}
+        width="100%"
+        height="100%"
+        fill={"#000"}
+      />
+      {
+        coverArtMaze.edges.map(([a, b]) => (
+          <g
+            key={[a.x, a.y, b.x, b.y].join("-")}
+            strokeWidth="0.1"
+            stroke={"#fff"}
+          >
+            <line
+              x1={a.x + 1 / 2}
+              y1={a.y + 1 / 2}
+              x2={b.x + 1 / 2}
+              y2={b.y + 1 / 2}
+            />
+          </g>
+        ))
+      }
+
+    </svg>
+  )
 }

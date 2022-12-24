@@ -1,6 +1,16 @@
 import { UserId } from "../Data/UserId"
 import * as ProfileStore from "../Profile/Profile.Store"
 import { Avatar, Box, Button, FillBox, Icons, ToggleButton, ToggleButtonGroup, Typography, ViewNode } from "../UI"
+import * as Chess from "./Chess/Chess"
+import * as ConnectFour from "./ConnectFour/ConnectFour"
+import {
+  GameName
+} from "./Game.Types"
+import * as Gomoku from "./Gomoku/Gomoku/Gomoku"
+import * as Maze from "./Maze/Maze"
+import * as Snake from "./Snake/Snake"
+import * as Tetris from "./Tetris/Tetris.Frontend"
+import * as TicTacToe from "./TicTacToe/TicTacToe"
 
 //
 //
@@ -253,3 +263,29 @@ export const viewSelectModeScreen = ({
   )
 }
 
+
+export const viewCoverArt = ({ gameName }: { gameName: GameName }) => {
+  switch (gameName) {
+    case "Chess": {
+      return Chess.viewCoverArt()
+    }
+    case "ConnectFour": {
+      return ConnectFour.viewCoverArt()
+    }
+    case "Snake": {
+      return Snake.viewCoverArt()
+    }
+    case "TicTacToe": {
+      return TicTacToe.viewCoverArt()
+    }
+    case "Tetris": {
+      return Tetris.viewCoverArt()
+    }
+    case "Maze": {
+      return Maze.viewCoverArt()
+    }
+    case 'Gomoku': {
+      return Gomoku.viewCoverArt()
+    }
+  }
+}
