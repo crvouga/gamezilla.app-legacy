@@ -58,7 +58,7 @@ export type BackendMsg = ["none"]
 
 export type ToBackend = Req
 
-export type ToFrontend = Res
+export type ToFrontend = Res | ['BotMoved', Model]
 
 // 
 // 

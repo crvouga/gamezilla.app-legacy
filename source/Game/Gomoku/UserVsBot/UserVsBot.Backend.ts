@@ -1,6 +1,6 @@
 import { Cmd, Sub } from "../../../Core";
 import { UserId } from "../../../Data";
-import { move, toBestMove, toOppositeStone } from "../Gomoku/Gomoku";
+import { move, toBestMove, toOppositeStone, toTurn } from "../Gomoku/Gomoku";
 import { BackendModel, BackendMsg, handle, initShared, Res, ToBackend, ToFrontend } from "./UserVsBot.Types";
 
 //
@@ -40,11 +40,10 @@ export const updateFromFrontend: UpdateFromFrontend = (params, msg, modelPrev) =
     const [model, cmd] = updateFromFrontend_(params, msg, modelPrev)
 
     if (model.type !== 'game') {
-        console.log('not game', modelPrev)
         return [model, cmd]
     }
 
-    const isBotTurn = model.userStone === toOppositeStone(model.userStone)
+    const isBotTurn = toTurn(model.board) === toOppositeStone(model.userStone)
 
     if (!isBotTurn) {
         return [model, cmd]
@@ -66,7 +65,10 @@ export const updateFromFrontend: UpdateFromFrontend = (params, msg, modelPrev) =
 
     const modelNew: Model = { ...model, board: moved.value }
 
-    return [modelNew, cmd]
+    return [modelNew, Cmd.batch([
+        cmd,
+        params.broadcast(['BotMoved', modelNew])
+    ])]
 }
 
 

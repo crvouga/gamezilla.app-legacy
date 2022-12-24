@@ -45,6 +45,11 @@ export const update = ({ sendToBackend }: { sendToBackend: (m: ToBackend) => Cmd
 
 export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
+        case 'BotMoved': {
+            const merged = mergeWithBackend({ frontendModel: model, backendModel: msg[1] })
+            return [merged, Cmd.None]
+        }
+
         default: {
             if (msg[1].type === 'Err') {
                 return [model, Cmd.None]
