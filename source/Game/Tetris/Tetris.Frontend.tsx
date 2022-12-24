@@ -481,7 +481,7 @@ const theme = {
   pieceBlue: "#2C2C7E",
 }
 
-export const CoverArt = () => {
+export const viewCoverArt = () => {
   return (
     <svg width="100%" viewBox={[0, 0, 4, 4].join(", ")}>
       <rect width="100%" height="100%" fill={theme.lightBlue} />

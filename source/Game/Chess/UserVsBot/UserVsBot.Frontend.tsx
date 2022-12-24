@@ -1,9 +1,9 @@
 import * as Alerts from "../../../Alerts"
 import { Audio, Cmd, exhaustive, Option, Sub, t } from "../../../Core"
 import * as UI from "../../../UI"
-import { Ctx, viewUserVsBotSetupScreen } from "../../Game.Shared"
+import { Ctx, viewUserVsBotSetupScreen } from "../../Game"
 import * as Board from "../Board"
-import { CoverArt } from "../Chess.Frontend"
+import { viewCoverArt } from "../Chess"
 import * as Sounds from "../Sounds"
 import { PawnIcon } from "../Views"
 import {
@@ -306,7 +306,7 @@ export const View = ({
           onInput: (botLevel) => $d(["InputBot", { botLevel, userId: ctx.currentUserId }]),
         },
         onCancel: onClose,
-        coverArt: CoverArt(),
+        coverArt: viewCoverArt(),
         ctx,
         onStartGame: () => $d(["StartGame", { userId: ctx.currentUserId }]),
         onStartPlaying: () => $d(["InputUser", { userId: ctx.currentUserId }]),

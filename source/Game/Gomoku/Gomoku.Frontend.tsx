@@ -1,5 +1,5 @@
 import { Cmd, Sub } from "../../Core";
-import { Ctx, GameRoomCtx, viewSelectModeScreen } from "../Game.Shared";
+import { Ctx, GameRoomCtx, viewSelectModeScreen } from "../Game";
 import { BackendModel, FrontendModel, FrontendMsg, ToBackend, ToFrontend } from "./Gomoku.Types";
 import { viewCoverArt } from "./Gomoku/Gomoku";
 import * as UserVsBot from "./UserVsBot/UserVsBot.Frontend";

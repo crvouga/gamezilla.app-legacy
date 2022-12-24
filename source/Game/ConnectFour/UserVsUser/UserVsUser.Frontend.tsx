@@ -3,7 +3,7 @@ import * as Alerts from "../../../Alerts"
 import { Cmd, exhaustive, Sub } from "../../../Core"
 import { UserId } from "../../../Data"
 import { ActionButton, Avatar, Box, Button, CircularProgress, ConformationDialog, Divider, Fade, FillBox, Icons, Paper, Sx, ToggleButton, ToggleButtonGroup, Tooltip, Typography, useTheme } from "../../../UI"
-import { Ctx } from "../../Game.Shared"
+import { Ctx } from "../../Game"
 import {
   gameTheme,
   PlayerType,

@@ -2,6 +2,7 @@ import { Ctx, ViewEmptyState } from "./App.Shared"
 import { Sub } from "./Core"
 import { RoomId, UserId } from "./Data"
 import * as Game from "./Game/Game.Frontend"
+import { viewCoverArt } from "./Game/Game"
 import { GameName } from "./Game/Game.Types"
 import * as GameRoom from "./Game/GameRoom.Frontend"
 import * as Route from "./Route"
@@ -169,7 +170,7 @@ export const View = ({
           <CardActionArea onClick={() => $d(["ClickedCurrentRoom"])}>
             <AspectRatio aspectRatio={Math.pow(3 / 4, 4)}>
               {gameName ? (
-                <Game.CoverArt gameName={gameName} />
+                viewCoverArt({ gameName })
               ) : (
                 <Avatar
                   variant="square"

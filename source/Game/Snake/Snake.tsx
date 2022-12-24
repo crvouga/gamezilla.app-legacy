@@ -252,3 +252,73 @@ export const toTileVariant = (position: Position): TileVariant => {
 const isEven = (x: number) => x % 2 === 0
 
 const isOdd = (x: number) => !isEven(x)
+
+
+// 
+// 
+// 
+// 
+// 
+
+const toViewBox = ({ lower, upper }: Model["bounds"]) =>
+  [lower.x, lower.y, upper.x, upper.y].join(", ")
+
+export const viewCoverArt = () => {
+  const bounds: Model["bounds"] = {
+    lower: {
+      x: 0,
+      y: 0,
+    },
+    upper: {
+      x: 4,
+      y: 4,
+    },
+  }
+
+  const tail: Model["tail"] = [
+    { x: 0, y: 1 },
+    { x: 1, y: 1 },
+  ]
+
+  const food: Model["food"] = { x: 2, y: 2 }
+
+  return (
+    <svg width="100%" viewBox={toViewBox(bounds)}>
+      {Position.range(bounds).map(({ x, y }, index) => (
+        <rect
+          key={`${x} ${y} ${index}`}
+          x={x}
+          y={y}
+          width={1}
+          height={1}
+          fill={theme[toTileVariant({ x, y })]}
+          stroke="none"
+        />
+      ))}
+
+      {tail.map(({ x, y }, index) => (
+        <rect
+          key={`${x} ${y} ${index}`}
+          x={x}
+          y={y}
+          width={1}
+          height={1}
+          fill={theme.snake}
+          stroke="none"
+        />
+      ))}
+
+      {[food].map(({ x, y }, index) => (
+        <rect
+          key={`${x} ${y} ${index}`}
+          x={x}
+          y={y}
+          width={1}
+          height={1}
+          fill={theme.apple}
+          stroke="none"
+        />
+      ))}
+    </svg>
+  )
+}

@@ -175,31 +175,31 @@ export const getBestMove =
     maximizingPlayer: PlayerType
     board: Board
   }): Task<Result<GetBestMoveProblem, Position>> =>
-  async () => {
-    const result = toBestMove({ board, depth, maximizingPlayer })
+    async () => {
+      const result = toBestMove({ board, depth, maximizingPlayer })
 
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+      await new Promise((resolve) => setTimeout(resolve, 1000))
 
-    return result
+      return result
 
-    // try {
-    //   // docs: https://threads.js.org/
-    //   const worker = new Threads.Worker("./tictactoe-worker")
+      // try {
+      //   // docs: https://threads.js.org/
+      //   const worker = new Threads.Worker("./tictactoe-worker")
 
-    //   const spawned = await Threads.spawn<Worker>(worker)
+      //   const spawned = await Threads.spawn<Worker>(worker)
 
-    //   try {
-    //     const result = await spawned.toBestMove({ depth, maximizingPlayer, board })
-    //     return result
-    //   } catch (error) {
-    //     return Err("worker_thread_error")
-    //   } finally {
-    //     await Threads.Thread.terminate(spawned)
-    //   }
-    // } catch (error) {
-    //   return Err("worker_thread_error")
-    // }
-  }
+      //   try {
+      //     const result = await spawned.toBestMove({ depth, maximizingPlayer, board })
+      //     return result
+      //   } catch (error) {
+      //     return Err("worker_thread_error")
+      //   } finally {
+      //     await Threads.Thread.terminate(spawned)
+      //   }
+      // } catch (error) {
+      //   return Err("worker_thread_error")
+      // }
+    }
 
 type NonEmptyArray<T> = [T, ...T[]]
 
@@ -323,8 +323,8 @@ const toWins = (board: Board): Wins => {
       a === "X" && b === "X" && c === "X"
         ? "X"
         : a === "O" && b === "O" && c === "O"
-        ? "O"
-        : "None"
+          ? "O"
+          : "None"
 
     wins[key].push(group)
   }
@@ -608,5 +608,46 @@ export const PlayerTypeIcon = ({
         strokeWidth={0.33}
       />
     </UI.SvgIcon>
+  )
+}
+
+
+// 
+// 
+// 
+// 
+// 
+
+export const viewCoverArt = () => {
+  const positions: [Position, Slot][] = [
+    [{ row: 0, column: 0 }, "X"],
+    [{ row: 0, column: 1 }, Empty],
+    [{ row: 1, column: 0 }, Empty],
+    [{ row: 1, column: 1 }, "O"],
+  ]
+
+  const LINES = [
+    { x1: 1, y1: 0, x2: 1, y2: 3 },
+    { x1: 0, y1: 1, x2: 3, y2: 1 },
+  ] as const
+
+  return (
+    <svg width="100%" viewBox="0 0 2 2">
+      <rect x={0} y={0} width={2} height={2} fill={gameTheme.background} />
+
+      {LINES.map((line, index) => (
+        <line key={index} {...line} stroke={gameTheme.line} strokeWidth={0.1} />
+      ))}
+
+      {positions.map(([{ column, row }, slot], index) => (
+        <ViewSlot
+          key={index}
+          slot={slot}
+          cx={Number(column) + 0.5}
+          cy={Number(row) + 0.5}
+          r={0.3}
+        />
+      ))}
+    </svg>
   )
 }

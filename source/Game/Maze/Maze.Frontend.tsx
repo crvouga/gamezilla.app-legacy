@@ -8,10 +8,9 @@ import {
   IconButton,
   Icons,
   InputAdornment,
-  TextField, Typography,
-  useTheme
+  TextField, Typography
 } from "../../UI"
-import { Ctx } from "../Game.Shared"
+import { Ctx } from "../Game"
 import { Maze } from "./Maze"
 import {
   BackendModel,
@@ -576,44 +575,3 @@ const directionToVector = (direction: Direction): Position => {
   }
 }
 
-const coverArtMaze = Maze.make({
-  seed: "cover art maze!",
-  lower: { x: 0, y: 0 },
-  upper: { x: 8, y: 8 },
-})
-const viewBox = [
-  coverArtMaze.lower.x,
-  coverArtMaze.lower.y,
-  coverArtMaze.upper.x - coverArtMaze.lower.x + 1,
-  coverArtMaze.upper.y - coverArtMaze.lower.y + 1,
-].join(" ")
-
-export const CoverArt = () => {
-  const theme = useTheme()
-  return (
-    <svg viewBox={viewBox} width={"100%"}>
-      <rect
-        x={coverArtMaze.lower.x}
-        y={coverArtMaze.lower.y}
-        width="100%"
-        height="100%"
-        fill={theme.palette.background.default}
-      />
-      {coverArtMaze.edges.map(([a, b]) => (
-        <g
-          key={[a.x, a.y, b.x, b.y].join("-")}
-          strokeWidth="0.1"
-          stroke={theme.palette.text.secondary}
-        >
-          <line
-            x1={a.x + 1 / 2}
-            y1={a.y + 1 / 2}
-            x2={b.x + 1 / 2}
-            y2={b.y + 1 / 2}
-          />
-        </g>
-      ))}
-      {/* <rect x={coverArtMaze.lower.x} y={coverArtMaze.lower.y} width="100%" height="100%" fill="transparent" stroke={stroke} strokeWidth={strokeWidth} /> */}
-    </svg>
-  )
-}

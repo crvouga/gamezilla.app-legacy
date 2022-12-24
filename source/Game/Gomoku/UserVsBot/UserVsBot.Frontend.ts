@@ -1,6 +1,6 @@
 import { Cmd, Sub } from "../../../Core";
 import { fragment, actionButton, avatar, box, fillBox, icon, paper, typography } from "../../../UI";
-import { Ctx, viewUserVsBotSetupScreen } from "../../Game.Shared";
+import { Ctx, viewUserVsBotSetupScreen } from "../../Game";
 import {
     botLevels,
     stones,

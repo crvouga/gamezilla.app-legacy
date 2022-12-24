@@ -3,7 +3,7 @@ import { Cmd, Sub } from "../Core"
 import * as ProfileStore from "../Profile/Profile.Store"
 import * as Chess from "./Chess/Chess.Frontend"
 import * as ConnectFour from "./ConnectFour/ConnectFour.Frontend"
-import { Ctx, GameRoomCtx } from "./Game.Shared"
+import { Ctx, GameRoomCtx } from "./Game"
 import {
   BackendModel,
   FrontendModel,
@@ -411,31 +411,7 @@ export const gameNameToString = (game: GameName): string => {
   }
 }
 
-export const CoverArt = ({ gameName }: { gameName: GameName }) => {
-  switch (gameName) {
-    case "Chess": {
-      return <Chess.CoverArt />
-    }
-    case "ConnectFour": {
-      return <ConnectFour.CoverArt />
-    }
-    case "Snake": {
-      return <Snake.CoverArt />
-    }
-    case "TicTacToe": {
-      return <TicTacToe.CoverArt />
-    }
-    case "Tetris": {
-      return <Tetris.CoverArt />
-    }
-    case "Maze": {
-      return <Maze.CoverArt />
-    }
-    case 'Gomoku': {
-      return Gomoku.coverArt()
-    }
-  }
-}
+
 
 export const mergeWithBackend = ({
   sendToBackend,

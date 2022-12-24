@@ -1,7 +1,7 @@
 import * as Alerts from "../../../Alerts"
 import { Cmd, Sub } from "../../../Core"
 import * as UI from "../../../UI"
-import { Ctx, viewUserVsBotSetupScreen } from "../../Game.Shared"
+import { Ctx, viewUserVsBotSetupScreen } from "../../Game"
 import {
   botLevels,
   GameOver,
@@ -13,7 +13,7 @@ import {
   toTurn,
   ViewBoard
 } from "../TicTacToe"
-import { CoverArt } from "../TicTacToe.Frontend"
+import { viewCoverArt } from "../TicTacToe"
 import {
   BackendModel,
   FrontendModel,
@@ -142,7 +142,7 @@ export const View = ({
         playerId: model.player === 'None' ? null : model.player,
         subtitle: "Vs Computer",
         title: "Tic-Tac-Toe",
-        coverArt: CoverArt(),
+        coverArt: viewCoverArt(),
         ctx,
         onCancel: goBack,
         onStartGame: () => $d(["StartGame", { userId: ctx.currentUserId }]),
