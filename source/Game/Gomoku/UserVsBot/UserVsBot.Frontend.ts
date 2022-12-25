@@ -141,7 +141,6 @@ export const view = ({ $d, model, ctx, onBack }: { model: Model, ctx: Ctx, $d: (
                             viewBoard({ board: model.board, onPress: position => $d(['InputMove', { position }]) }),
                             viewOverlay({ $d, ctx, model }),
                         ]),
-
                     ])
                 )
             }
@@ -150,7 +149,10 @@ export const view = ({ $d, model, ctx, onBack }: { model: Model, ctx: Ctx, $d: (
                 fillBox({}, [
                     viewPlayerSlots({ ctx, model }),
                     viewMessage({ ctx, model }),
-                    viewBoard({ board: model.board, onPress: position => $d(['InputMove', { position }]) }),
+                    box({ position: "relative", aspectRatio: "1", }, [
+                        viewBoard({ board: model.board, onPress: position => $d(['InputMove', { position }]) }),
+                        viewOverlay({ $d, ctx, model }),
+                    ]),
                     box({ flex: 1 }, []),
                     box({ display: 'flex' }, [
                         actionButton({ onPress: () => $d(['StopGame']), iconName: "exit", label: "Exit" }),
@@ -162,9 +164,6 @@ export const view = ({ $d, model, ctx, onBack }: { model: Model, ctx: Ctx, $d: (
         }
     }
 }
-
-
-
 
 
 

@@ -60,23 +60,8 @@
                     "child": {
                         "type": "game",
                         "board": {
-                            "3": {
-                                "4": "white"
-                            },
-                            "6": {
-                                "4": "black",
-                                "5": "black",
-                                "6": "black",
-                                "7": "black",
-                                "8": "black"
-                            },
-                            "10": {
-                                "12": "white"
-                            },
-                            "12": {
-                                "3": "white",
-                                "11": "white",
-                                "13": "white"
+                            "7": {
+                                "9": "white"
                             }
                         },
                         "botLevel": "Medium",
@@ -96,7 +81,7 @@
             "sessionId": "ark3b11qMq",
             "clientId": {
                 "type": "Some",
-                "value": "7O49kwE17QQTnPneAADV"
+                "value": "HPDqMHbD-k29ITY3AADm"
             },
             "userId": {
                 "type": "Some",
@@ -107,7 +92,7 @@
             "sessionId": "2c3a57d2-8e68-40fe-a8da-6986714ca64b",
             "clientId": {
                 "type": "Some",
-                "value": "F3JNdQwlkY7kwMJ4AADX"
+                "value": "uQnGf2A5CLvxUN9gAADo"
             },
             "userId": {
                 "type": "Some",
