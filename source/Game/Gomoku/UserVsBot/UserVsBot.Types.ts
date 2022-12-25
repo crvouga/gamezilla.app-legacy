@@ -1,7 +1,7 @@
 import { Result } from "../../../Core"
 import { Err, Ok } from "../../../Core/Result"
 import { UserId } from "../../../Data"
-import { Board, BotLevel, initBoard, move, MoveProblem, Stone, toOppositeStone } from "../Gomoku/Gomoku"
+import { Board, BotLevel, initBoard, move, MoveProblem, Stone, toBestMove, toOppositeStone, toTurn } from "../Gomoku/Gomoku"
 import { Position } from "../Gomoku/Position"
 
 
@@ -83,10 +83,12 @@ export type Req =
 export type Res = [Req[0], Result<Problem, Model>]
 
 export type Problem =
+    | "not_bot_turn"
     | "must_be_player"
     | "must_be_setup"
     | "must_be_no_player"
     | "must_be_game"
+    | "no_position"
     | MoveProblem
 
 export const handle = ({ currentUserId }: { currentUserId: UserId }, msg: Req, model: Model): Result<Problem, Model> => {
@@ -224,3 +226,32 @@ export const handle = ({ currentUserId }: { currentUserId: UserId }, msg: Req, m
     }
 }
 
+export const handleBotMove = (model: Model): Result<Problem, Model> => {
+    if (model.type !== 'game') {
+        return Err('must_be_game')
+    }
+
+    const isBotTurn = toTurn(model.board) === toOppositeStone(model.userStone)
+
+    if (!isBotTurn) {
+        return Err('not_bot_turn')
+    }
+
+    const botStone = toOppositeStone(model.userStone)
+
+    const position = toBestMove({ stone: botStone, board: model.board, })
+
+    if (!position) {
+        return Err('no_position')
+    }
+
+    const moved = move({ stone: botStone, position, board: model.board })
+
+    if (moved.type === 'Err') {
+        return moved
+    }
+
+    const modelNew: Model = { ...model, board: moved.value }
+
+    return Ok(modelNew)
+}

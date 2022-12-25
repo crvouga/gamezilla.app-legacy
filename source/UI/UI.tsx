@@ -308,11 +308,17 @@ export const paper = ({ ...sx }: Sx, children: ViewNode[]) => {
 
 export const Button = MuiLab.LoadingButton
 
+export const button = ({ size, variant, onPress, ...sx }: Sx & { onPress?: () => void; variant: "outlined" | 'contained' | 'text'; size?: 'lg' | 'md' | 'sm', }, text: string) => {
+  return <Button variant={variant} onClick={onPress} sx={sx} size={size === 'lg' ? 'large' : size === 'md' ? 'medium' : size === 'sm' ? 'small' : undefined}>
+    {text}
+  </Button>
+}
+
 export const InputAdornment = Mui.InputAdornment
 
 export const Typography = Mui.Typography
 
-export const typography = (props: TypographyProps, children: ViewNode) => {
+export const text = (props: TypographyProps, children: ViewNode) => {
   return <Typography {...props}>
     {children}
   </Typography>

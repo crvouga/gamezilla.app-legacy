@@ -144,7 +144,8 @@ export const toStatus = (board: Board) => {
     if (wins.length > 0 && position) {
         const winner = toStone(position, board)
         return {
-            type: 'win',
+            type: 'game_over',
+            gameOverType: 'win',
             wins,
             winner
         }
@@ -152,14 +153,15 @@ export const toStatus = (board: Board) => {
 
     if (isDraw(board)) {
         return {
-            type: 'draw'
+            type: 'game_over',
+            gameOverType: "draw"
         }
     }
 
     const turn = toTurn(board)
 
     return {
-        type: 'turn',
+        type: 'game',
         turn
     }
 }
