@@ -1,67 +1,49 @@
 {
     "gameRoom": {
         "rooms": {
-            "room-cq7i6h": {
-                "roomId": "room-cq7i6h",
+            "room-zldzxt": {
+                "roomId": "room-zldzxt",
                 "hostId": "86b8647c-646b-42a3-aad4-d08dd16a641e"
             }
         },
         "users": {
             "86b8647c-646b-42a3-aad4-d08dd16a641e": {
-                "roomId": "room-cq7i6h",
+                "roomId": "room-zldzxt",
                 "userId": "86b8647c-646b-42a3-aad4-d08dd16a641e"
             }
         },
         "games": {
-            "room-cq7i6h": [
+            "room-zldzxt": [
                 "Gomoku",
                 {
                     "type": "UserVsBot",
                     "child": {
                         "type": "game",
                         "board": {
+                            "1": {
+                                "6": "white"
+                            },
                             "2": {
-                                "1": "white",
-                                "4": "black",
-                                "9": "white"
+                                "2": "white",
+                                "3": "white"
                             },
                             "5": {
-                                "3": "black",
-                                "9": "white"
+                                "2": "white"
                             },
                             "6": {
-                                "1": "black",
-                                "2": "black",
+                                "0": "black",
                                 "3": "black",
                                 "4": "black",
                                 "5": "black",
-                                "6": "black",
-                                "7": "black"
-                            },
-                            "7": {
-                                "4": "white",
-                                "6": "black"
-                            },
-                            "8": {
-                                "1": "white",
-                                "7": "white"
-                            },
-                            "9": {
-                                "13": "white"
-                            },
-                            "10": {
-                                "3": "white",
-                                "12": "black"
-                            },
-                            "11": {
-                                "2": "white",
                                 "9": "white"
                             },
-                            "12": {
-                                "7": "white"
+                            "7": {
+                                "0": "black",
+                                "5": "black",
+                                "9": "white"
                             },
                             "13": {
-                                "0": "white"
+                                "6": "white"
                             }
                         },
                         "botLevel": "Medium",
@@ -77,22 +59,11 @@
         "users": {}
     },
     "sessions": {
-        "2c3a57d2-8e68-40fe-a8da-6986714ca64b": {
-            "sessionId": "2c3a57d2-8e68-40fe-a8da-6986714ca64b",
-            "clientId": {
-                "type": "Some",
-                "value": "3craVcLBedx_8VaCAAAM"
-            },
-            "userId": {
-                "type": "Some",
-                "value": "b571a421-0bed-4c98-856f-164b66421d0c"
-            }
-        },
         "ark3b11qMq": {
             "sessionId": "ark3b11qMq",
             "clientId": {
                 "type": "Some",
-                "value": "ysoMisUxy1N_lNDyAAAN"
+                "value": "xQ8Zmty1fEKA4hFvAAAb"
             },
             "userId": {
                 "type": "Some",
