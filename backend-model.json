@@ -1,32 +1,87 @@
 {
     "gameRoom": {
         "rooms": {
-            "room-ccyxx4": {
-                "roomId": "room-ccyxx4",
-                "hostId": "b571a421-0bed-4c98-856f-164b66421d0c"
+            "room-yabzqa": {
+                "roomId": "room-yabzqa",
+                "hostId": "86b8647c-646b-42a3-aad4-d08dd16a641e"
             }
         },
         "users": {
-            "b571a421-0bed-4c98-856f-164b66421d0c": {
-                "roomId": "room-ccyxx4",
-                "userId": "b571a421-0bed-4c98-856f-164b66421d0c"
-            },
             "86b8647c-646b-42a3-aad4-d08dd16a641e": {
-                "roomId": "room-ccyxx4",
+                "roomId": "room-yabzqa",
                 "userId": "86b8647c-646b-42a3-aad4-d08dd16a641e"
+            },
+            "b571a421-0bed-4c98-856f-164b66421d0c": {
+                "roomId": "room-yabzqa",
+                "userId": "b571a421-0bed-4c98-856f-164b66421d0c"
             }
         },
         "games": {
-            "room-ccyxx4": [
+            "room-atngtl": [
                 "Gomoku",
                 {
                     "type": "UserVsBot",
                     "child": {
                         "type": "game",
-                        "board": {},
+                        "board": {
+                            "0": {
+                                "6": "white"
+                            },
+                            "1": {
+                                "6": "white"
+                            },
+                            "4": {
+                                "9": "white"
+                            },
+                            "6": {
+                                "7": "black",
+                                "8": "black",
+                                "9": "black",
+                                "10": "black",
+                                "11": "black"
+                            },
+                            "10": {
+                                "0": "white"
+                            },
+                            "11": {
+                                "11": "white"
+                            }
+                        },
                         "botLevel": "Medium",
                         "userId": "b571a421-0bed-4c98-856f-164b66421d0c",
-                        "userStone": "white"
+                        "userStone": "black"
+                    }
+                }
+            ],
+            "room-yabzqa": [
+                "Gomoku",
+                {
+                    "type": "UserVsBot",
+                    "child": {
+                        "type": "game",
+                        "board": {
+                            "3": {
+                                "4": "white"
+                            },
+                            "6": {
+                                "4": "black",
+                                "5": "black",
+                                "6": "black",
+                                "7": "black",
+                                "8": "black"
+                            },
+                            "10": {
+                                "12": "white"
+                            },
+                            "12": {
+                                "3": "white",
+                                "11": "white",
+                                "13": "white"
+                            }
+                        },
+                        "botLevel": "Medium",
+                        "userId": "86b8647c-646b-42a3-aad4-d08dd16a641e",
+                        "userStone": "black"
                     }
                 }
             ]
@@ -37,26 +92,26 @@
         "users": {}
     },
     "sessions": {
-        "2c3a57d2-8e68-40fe-a8da-6986714ca64b": {
-            "sessionId": "2c3a57d2-8e68-40fe-a8da-6986714ca64b",
-            "clientId": {
-                "type": "Some",
-                "value": "xfFiUInbJEfMN4LFAABD"
-            },
-            "userId": {
-                "type": "Some",
-                "value": "b571a421-0bed-4c98-856f-164b66421d0c"
-            }
-        },
         "ark3b11qMq": {
             "sessionId": "ark3b11qMq",
             "clientId": {
                 "type": "Some",
-                "value": "W9dTyIxFjALoXIBdAABF"
+                "value": "7O49kwE17QQTnPneAADV"
             },
             "userId": {
                 "type": "Some",
                 "value": "86b8647c-646b-42a3-aad4-d08dd16a641e"
+            }
+        },
+        "2c3a57d2-8e68-40fe-a8da-6986714ca64b": {
+            "sessionId": "2c3a57d2-8e68-40fe-a8da-6986714ca64b",
+            "clientId": {
+                "type": "Some",
+                "value": "F3JNdQwlkY7kwMJ4AADX"
+            },
+            "userId": {
+                "type": "Some",
+                "value": "b571a421-0bed-4c98-856f-164b66421d0c"
             }
         }
     }
