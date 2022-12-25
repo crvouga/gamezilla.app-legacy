@@ -54,7 +54,7 @@ export const bounds = {
 const allPositions = Position.rangeExclusive({ lower: bounds.lower, upper: { x: bounds.upper.x - 1, y: bounds.upper.y - 1 } })
 
 
-export type MoveProblem = "out_of_bounds" | "not_turn" | "position_occupied"
+export type MoveProblem = "out_of_bounds" | "not_turn" | "position_occupied" | "game_over"
 
 const inBounds = (position: Position): boolean => {
     return bounds.lower.x <= position.x && position.x <= bounds.upper.x && bounds.lower.y <= position.y && position.y <= bounds.upper.y
@@ -65,9 +65,17 @@ export const move = ({ position, stone, board }: { position: Position, stone: St
         return Err("out_of_bounds")
     }
 
-    const turn = toTurn(board)
+    const status = toStatus(board)
 
-    if (turn !== stone) {
+    if (status.type === 'win') {
+        return Err("game_over")
+    }
+
+    if (status.type === 'draw') {
+        return Err("game_over")
+    }
+
+    if (status.turn !== stone) {
         return Err("not_turn")
     }
 
@@ -127,6 +135,37 @@ export const toTurn = (board: Board): Stone => {
     }
 
     return 'black'
+}
+
+export const toStatus = (board: Board) => {
+    const wins = toWins(board)
+
+    const position = wins[0]?.[0]
+    if (wins.length > 0 && position) {
+        const winner = toStone(position, board)
+        return {
+            type: 'win',
+            wins,
+            winner
+        }
+    }
+
+    if (isDraw(board)) {
+        return {
+            type: 'draw'
+        }
+    }
+
+    const turn = toTurn(board)
+
+    return {
+        type: 'turn',
+        turn
+    }
+}
+
+const isDraw = (board: Board) => {
+    return allPositions.every(position => toStone(position, board) !== null)
 }
 
 

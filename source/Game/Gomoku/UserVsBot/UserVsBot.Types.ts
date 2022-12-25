@@ -217,6 +217,7 @@ export const handle = ({ currentUserId }: { currentUserId: UserId }, msg: Req, m
             }
             return Ok({
                 ...model,
+                board: initBoard,
                 userStone: toOppositeStone(model.userStone)
             })
         }

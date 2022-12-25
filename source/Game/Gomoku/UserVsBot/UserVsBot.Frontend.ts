@@ -121,7 +121,7 @@ export const view = ({ $d, model, ctx, onBack }: { model: Model, ctx: Ctx, $d: (
                 fillBox({}, [
                     viewPlayerSlots({ ctx, model }),
                     box({ display: 'flex', justifyContent: "center", alignItems: 'center', py: 1 }, [
-                        viewMessage({ model }),
+                        viewMessage({ ctx, model }),
                     ]),
                     viewBoard({ board: model.board, onPress: position => $d(['InputMove', { position }]) }),
                     box({ flex: 1 }, []),
@@ -136,21 +136,26 @@ export const view = ({ $d, model, ctx, onBack }: { model: Model, ctx: Ctx, $d: (
     }
 }
 
-const viewMessage = ({ model }: { model: GameModel }) => {
+const viewMessage = ({ ctx, model }: { ctx: Ctx, model: GameModel }) => {
     const turn = toTurn(model.board)
 
-    if (turn === 'black') {
-        return fragment([
-            viewStoneIcon({ stone: "black", mr: 1 }),
-            typography({}, ["Turn"])
-        ])
-    }
-
     return fragment([
-        viewStoneIcon({ stone: "white", mr: 1 }),
+        viewPlayerIcon({ ctx, model, stone: turn }),
+        viewStoneIcon({ stone: turn, mx: 1, }),
         typography({}, ["Turn"])
     ])
 
+}
+
+export const viewPlayerIcon = ({ ctx, model, stone }: { ctx: Ctx, model: GameModel, stone: 'white' | 'black' }) => {
+    const size = {
+        width: 24,
+        height: 24
+    }
+    if (model.userStone === stone) {
+        return avatar({ src: ctx.profiles[model.userId]?.avatarUrl, ...size })
+    }
+    return icon("smart-toy", { ...size })
 }
 
 export const viewPlayerSlots = ({ model, ctx }: { ctx: Ctx, model: GameModel }) => {
