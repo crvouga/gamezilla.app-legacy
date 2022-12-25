@@ -1,54 +1,32 @@
 {
     "gameRoom": {
         "rooms": {
-            "room-zldzxt": {
-                "roomId": "room-zldzxt",
-                "hostId": "86b8647c-646b-42a3-aad4-d08dd16a641e"
+            "room-ccyxx4": {
+                "roomId": "room-ccyxx4",
+                "hostId": "b571a421-0bed-4c98-856f-164b66421d0c"
             }
         },
         "users": {
+            "b571a421-0bed-4c98-856f-164b66421d0c": {
+                "roomId": "room-ccyxx4",
+                "userId": "b571a421-0bed-4c98-856f-164b66421d0c"
+            },
             "86b8647c-646b-42a3-aad4-d08dd16a641e": {
-                "roomId": "room-zldzxt",
+                "roomId": "room-ccyxx4",
                 "userId": "86b8647c-646b-42a3-aad4-d08dd16a641e"
             }
         },
         "games": {
-            "room-zldzxt": [
+            "room-ccyxx4": [
                 "Gomoku",
                 {
                     "type": "UserVsBot",
                     "child": {
                         "type": "game",
-                        "board": {
-                            "1": {
-                                "6": "white"
-                            },
-                            "2": {
-                                "2": "white",
-                                "3": "white"
-                            },
-                            "5": {
-                                "2": "white"
-                            },
-                            "6": {
-                                "0": "black",
-                                "3": "black",
-                                "4": "black",
-                                "5": "black",
-                                "9": "white"
-                            },
-                            "7": {
-                                "0": "black",
-                                "5": "black",
-                                "9": "white"
-                            },
-                            "13": {
-                                "6": "white"
-                            }
-                        },
+                        "board": {},
                         "botLevel": "Medium",
-                        "userId": "86b8647c-646b-42a3-aad4-d08dd16a641e",
-                        "userStone": "black"
+                        "userId": "b571a421-0bed-4c98-856f-164b66421d0c",
+                        "userStone": "white"
                     }
                 }
             ]
@@ -59,11 +37,22 @@
         "users": {}
     },
     "sessions": {
+        "2c3a57d2-8e68-40fe-a8da-6986714ca64b": {
+            "sessionId": "2c3a57d2-8e68-40fe-a8da-6986714ca64b",
+            "clientId": {
+                "type": "Some",
+                "value": "xfFiUInbJEfMN4LFAABD"
+            },
+            "userId": {
+                "type": "Some",
+                "value": "b571a421-0bed-4c98-856f-164b66421d0c"
+            }
+        },
         "ark3b11qMq": {
             "sessionId": "ark3b11qMq",
             "clientId": {
                 "type": "Some",
-                "value": "xQ8Zmty1fEKA4hFvAAAb"
+                "value": "W9dTyIxFjALoXIBdAABF"
             },
             "userId": {
                 "type": "Some",

@@ -1,7 +1,6 @@
 import { Cmd, Sub } from "../../../Core";
 import { UserId } from "../../../Data";
-import { move, toBestMove, toOppositeStone, toTurn } from "../Gomoku/Gomoku";
-import { BackendModel, BackendMsg, handle, initShared, Res, ToBackend, ToFrontend } from "./UserVsBot.Types";
+import { BackendModel, BackendMsg, handle, handleBotMove, initShared, Res, ToBackend, ToFrontend } from "./UserVsBot.Types";
 
 //
 //
@@ -39,36 +38,21 @@ type UpdateFromFrontend = (params: { ctx: { currentUserId: UserId }; sendToClien
 export const updateFromFrontend: UpdateFromFrontend = (params, msg, modelPrev) => {
     const [model, cmd] = updateFromFrontend_(params, msg, modelPrev)
 
-    if (model.type !== 'game') {
+    const handled = handleBotMove(model)
+
+    if (handled.type === 'Err') {
         return [model, cmd]
     }
 
-    const isBotTurn = toTurn(model.board) === toOppositeStone(model.userStone)
+    const modelNew = handled.value
 
-    if (!isBotTurn) {
-        return [model, cmd]
-    }
-
-    const botStone = toOppositeStone(model.userStone)
-
-    const position = toBestMove({ stone: botStone, board: model.board, })
-
-    if (!position) {
-        return [model, cmd]
-    }
-
-    const moved = move({ stone: botStone, position, board: model.board })
-
-    if (moved.type === 'Err') {
-        return [model, cmd]
-    }
-
-    const modelNew: Model = { ...model, board: moved.value }
-
-    return [modelNew, Cmd.batch([
-        cmd,
-        params.broadcast(['BotMoved', modelNew])
-    ])]
+    return [
+        modelNew,
+        Cmd.batch([
+            cmd,
+            params.broadcast(['BotMoved', modelNew])
+        ])
+    ]
 }
 
 

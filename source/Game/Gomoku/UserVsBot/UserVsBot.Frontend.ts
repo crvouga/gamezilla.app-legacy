@@ -1,10 +1,11 @@
 import { Cmd, Sub } from "../../../Core";
-import { fragment, actionButton, avatar, box, fillBox, icon, paper, typography } from "../../../UI";
+import { actionButton, avatar, box, button, fillBox, fragment, icon, paper, Sx, text } from "../../../UI";
 import { Ctx, viewUserVsBotSetupScreen } from "../../Game";
 import {
     botLevels,
     stones,
     toOppositeStone,
+    toStatus,
     toTurn,
     viewBoard,
     viewCoverArt,
@@ -117,45 +118,148 @@ export const view = ({ $d, model, ctx, onBack }: { model: Model, ctx: Ctx, $d: (
         }
 
         case 'game': {
-            return (
-                fillBox({}, [
+            if (model.userId !== ctx.currentUserId) {
+                return fillBox({}, [
+                    text({ color: 'primary.main', width: '100%', mt: 1, textAlign: 'center' }, ['Spectating']),
                     viewPlayerSlots({ ctx, model }),
-                    box({ display: 'flex', justifyContent: "center", alignItems: 'center', py: 1 }, [
-                        viewMessage({ ctx, model }),
-                    ]),
-                    viewBoard({ board: model.board, onPress: position => $d(['InputMove', { position }]) }),
-                    box({ flex: 1 }, []),
-                    box({ display: 'flex' }, [
-                        actionButton({ onPress: () => $d(['StopGame']), iconName: "exit", label: "Exit" }),
-                        actionButton({ onPress: () => $d(['Restart']), iconName: "restart", label: "Restart" }),
-                        actionButton({ onPress: () => $d(['SwapSides']), iconName: "swap", label: "Swap Sides" }),
+                    viewMessage({ ctx, model }),
+                    box({ position: "relative" }, [
+                        viewBoard({ board: model.board, onPress: position => $d(['InputMove', { position }]) }),
+                        viewOverlay({ $d, model, ctx }),
                     ])
                 ])
-            )
+            }
+
+            return viewPlayingScreen({ model, ctx, $d })
         }
     }
 }
 
+export const viewPlayingScreen = ({ ctx, model, $d }: { model: GameModel, $d: (m: Msg) => void; ctx: Ctx }) => {
+    const status = toStatus(model.board)
+
+    if (status.type === 'game_over') {
+        return (
+            fillBox({}, [
+                viewPlayerSlots({ ctx, model }),
+                viewMessage({ ctx, model }),
+                box({ position: "relative" }, [
+                    viewBoard({ board: model.board, onPress: position => $d(['InputMove', { position }]) }),
+                    viewOverlay({ $d, ctx, model }),
+                ]),
+
+            ])
+        )
+    }
+
+
+
+    return (
+        fillBox({}, [
+            viewPlayerSlots({ ctx, model }),
+            viewMessage({ ctx, model }),
+            viewBoard({ board: model.board, onPress: position => $d(['InputMove', { position }]) }),
+            box({ flex: 1 }, []),
+            box({ display: 'flex' }, [
+                actionButton({ onPress: () => $d(['StopGame']), iconName: "exit", label: "Exit" }),
+                actionButton({ onPress: () => $d(['Restart']), iconName: "restart", label: "Restart" }),
+                actionButton({ onPress: () => $d(['SwapSides']), iconName: "swap", label: "Swap Sides" }),
+            ])
+        ])
+    )
+}
+
+
+
+const viewOverlay = ({ model, ctx, $d }: { ctx: Ctx, model: GameModel, $d: (m: Msg) => void }) => {
+    const props = { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', flexDirection: "column", justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' } as const
+    const status = toStatus(model.board)
+
+
+
+    if (status.type === 'game_over' && ctx.currentUserId === model.userId) {
+        return (
+            box(props, [
+                viewGameOverTitle({ model, ctx }),
+                box({ width: '100%', display: 'flex', gap: 2, p: 2 }, [
+                    button({ onPress: () => $d(['StopGame']), width: '100%', variant: "contained", color: "inherit", size: "lg" }, 'Back to Lobby'),
+                    button({ onPress: () => $d(['Restart']), width: '100%', variant: "contained", size: "lg" }, 'Play Again'),
+                ])
+            ])
+        )
+    }
+
+    if (status.type === 'game_over') {
+        return (
+            box(props, [viewGameOverTitle({ model, ctx }),])
+        )
+    }
+
+    return (
+        fragment([])
+    )
+}
+
+const viewGameOverTitle = ({ model, ctx }: { ctx: Ctx; model: GameModel }) => {
+    const status = toStatus(model.board)
+
+    if (status.type !== 'game_over') {
+        return null
+    }
+
+    if (ctx.currentUserId === model.userId) {
+        if (status.winner === model.userStone) {
+            return (
+                text({ variant: 'h1' }, ["You Won"])
+            )
+        }
+        return (
+            text({ variant: 'h1' }, ["You Lost"])
+        )
+    }
+
+    return (
+        text({ variant: 'h1' }, ["Game Over"])
+    )
+}
+
 const viewMessage = ({ ctx, model }: { ctx: Ctx, model: GameModel }) => {
+    const props = { display: 'flex', justifyContent: "center", alignItems: 'center', py: 1 } as const
+
+    const status = toStatus(model.board)
+
+    if (status.type === 'game_over') {
+        return box(props, [
+            text({}, ["Game Over"])
+        ])
+    }
+
     const turn = toTurn(model.board)
 
-    return fragment([
-        viewPlayerIcon({ ctx, model, stone: turn }),
-        viewStoneIcon({ stone: turn, mx: 1, }),
-        typography({}, ["Turn"])
+    if (ctx.currentUserId === model.userId && turn === model.userStone) {
+        return box(props, [
+            viewStoneIcon({ stone: turn, mr: 1, }),
+            text({}, ["Your Turn"])
+        ])
+    }
+
+    return box(props, [
+        viewStoneIcon({ stone: turn, }),
+        viewPlayerIcon({ ctx, model, mx: 1, stone: turn }),
+        text({}, ["Turn"])
     ])
 
 }
 
-export const viewPlayerIcon = ({ ctx, model, stone }: { ctx: Ctx, model: GameModel, stone: 'white' | 'black' }) => {
+export const viewPlayerIcon = ({ ctx, model, stone, ...sx }: { ctx: Ctx, model: GameModel, stone: 'white' | 'black' } & Sx) => {
     const size = {
         width: 24,
         height: 24
     }
     if (model.userStone === stone) {
-        return avatar({ src: ctx.profiles[model.userId]?.avatarUrl, ...size })
+        return avatar({ src: ctx.profiles[model.userId]?.avatarUrl, ...size, ...sx })
     }
-    return icon("smart-toy", { ...size })
+    return icon("smart-toy", { ...size, ...sx })
 }
 
 export const viewPlayerSlots = ({ model, ctx }: { ctx: Ctx, model: GameModel }) => {
@@ -168,14 +272,14 @@ export const viewPlayerSlots = ({ model, ctx }: { ctx: Ctx, model: GameModel }) 
         paper({ display: "flex", variant: "outlined", alignItems: "center", p: 1, flex: 1, overflow: 'hidden' }, [
             viewStoneIcon({ ...iconSize, stone: toOppositeStone(model.userStone), mr: 1 }),
             icon("smart-toy", { ...iconSize, mr: 1, }),
-            typography({}, [model.botLevel])
+            text({}, [model.botLevel])
         ])
 
     const userSlot =
         paper({ display: "flex", variant: "outlined", alignItems: "center", p: 1, flex: 1, overflow: 'hidden' }, [
             viewStoneIcon({ ...iconSize, stone: model.userStone, mr: 1 }),
             avatar({ ...iconSize, mr: 1, src: ctx.profiles[model.userId]?.avatarUrl }),
-            typography({ noWrap: true }, [ctx.profiles[model.userId]?.username])
+            text({ noWrap: true }, [ctx.profiles[model.userId]?.username])
         ])
 
     const whiteSlot = model.userStone === 'white' ? userSlot : botSlot
