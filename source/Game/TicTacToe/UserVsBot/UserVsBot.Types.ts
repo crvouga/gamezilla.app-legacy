@@ -11,7 +11,7 @@ import {
   Position,
   toOpposite,
   toStatus,
-} from "../TicTacToe"
+} from "../TicTacToe/TicTacToe"
 
 //
 //

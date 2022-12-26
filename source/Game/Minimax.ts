@@ -25,7 +25,7 @@ function alphabeta(node, depth, α, β, maximizingPlayer) is
 
 */
 
-export const create = <TState>({
+const create = <TState>({
   toScore,
   toChildren,
 }: {
@@ -51,38 +51,36 @@ export const create = <TState>({
 
     if (isMaximizing) {
       let value = -Infinity
-      let alpha_ = alpha
 
-      for (let index = 0; index < children.length; index++) {
+      for (const child of children) {
         value = Math.max(
           value,
-          recur(children[index]!, depth - 1, alpha_, beta, false),
+          recur(child, depth - 1, alpha, beta, false),
         )
 
         if (value >= beta) {
           break
         }
 
-        alpha_ = Math.max(alpha_, value)
+        alpha = Math.max(alpha, value)
       }
 
       return value
     }
 
     let value = Infinity
-    let beta_ = beta
 
-    for (let index = 0; index < children.length; index++) {
+    for (const child of children) {
       value = Math.min(
         value,
-        recur(children[index]!, depth - 1, alpha, beta_, true),
+        recur(child, depth - 1, alpha, beta, true),
       )
 
       if (value <= alpha) {
         break
       }
 
-      beta_ = Math.min(beta_, value)
+      beta = Math.min(beta, value)
     }
 
     return value
@@ -99,4 +97,9 @@ export const create = <TState>({
   }
 
   return initialCall
+
+}
+
+export const Minimax = {
+  create
 }

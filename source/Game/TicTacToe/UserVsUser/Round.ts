@@ -1,15 +1,15 @@
-import * as TicTacToe from "../TicTacToe"
+import * as TicTacToe from "../TicTacToe/TicTacToe"
 
 export type Round =
   | {
-      type: "RoundStarting"
-      countDown: number
-    }
+    type: "RoundStarting"
+    countDown: number
+  }
   | {
-      type: "RoundStarted"
-      board: TicTacToe.Board
-      moveCountDown: number
-    }
+    type: "RoundStarted"
+    board: TicTacToe.Board
+    moveCountDown: number
+  }
   | RoundOver
 
 type RoundOver = {
@@ -161,12 +161,12 @@ export const toScore = (round: Round): Score => {
 
 export type GameOver =
   | {
-      type: "Winner"
-      winner: TicTacToe.PlayerType
-    }
+    type: "Winner"
+    winner: TicTacToe.PlayerType
+  }
   | {
-      type: "Tie"
-    }
+    type: "Tie"
+  }
 
 export const toGameOver = ({
   maxRoundCount,
