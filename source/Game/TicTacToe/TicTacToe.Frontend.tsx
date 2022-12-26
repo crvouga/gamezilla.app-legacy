@@ -2,7 +2,7 @@ import * as Alerts from "../../Alerts"
 import { Cmd, exhaustive } from "../../Core"
 import * as ProfileStore from "../../Profile/Profile.Store"
 import { Ctx, GameRoomCtx, viewSelectModeScreen } from "../Game"
-import { viewCoverArt } from "./TicTacToe"
+import { viewCoverArt } from "./TicTacToe/TicTacToe"
 import {
   BackendModel,
   FrontendModel,

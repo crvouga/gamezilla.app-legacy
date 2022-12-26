@@ -1,6 +1,6 @@
 import { Err, Ok, Result } from "../../../Core/Result"
 import { UserId } from "../../../Data"
-import * as TicTacToe from "../TicTacToe"
+import * as TicTacToe from "../TicTacToe/TicTacToe"
 import * as Round from "./Round"
 
 //

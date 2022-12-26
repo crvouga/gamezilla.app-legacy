@@ -1,6 +1,6 @@
 import { Cmd, exhaustive, Sub, Time } from "../../../Core"
 import { UserId } from "../../../Data"
-import { PlayerType, toOpposite, toTurn } from "../TicTacToe"
+import { PlayerType, toOpposite, toTurn } from "../TicTacToe/TicTacToe"
 import * as Round from "./Round"
 import {
   BackendModel,

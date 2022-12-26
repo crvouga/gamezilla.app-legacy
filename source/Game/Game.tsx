@@ -10,7 +10,7 @@ import * as Gomoku from "./Gomoku/Gomoku/Gomoku"
 import * as Maze from "./Maze/Maze"
 import * as Snake from "./Snake/Snake"
 import * as Tetris from "./Tetris/Tetris.Frontend"
-import * as TicTacToe from "./TicTacToe/TicTacToe"
+import * as TicTacToe from "./TicTacToe/TicTacToe/TicTacToe"
 
 //
 //

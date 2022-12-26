@@ -12,8 +12,8 @@ import {
   toGameOver,
   toTurn,
   ViewBoard
-} from "../TicTacToe"
-import { viewCoverArt } from "../TicTacToe"
+} from "../TicTacToe/TicTacToe"
+import { viewCoverArt } from "../TicTacToe/TicTacToe"
 import {
   BackendModel,
   FrontendModel,

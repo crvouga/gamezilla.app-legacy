@@ -14,7 +14,7 @@ import {
   toTurn,
   ViewBoard,
   ViewSlot,
-} from "../TicTacToe"
+} from "../TicTacToe/TicTacToe"
 import { VersusHeader } from "../Views"
 import * as Round from "./Round"
 import {

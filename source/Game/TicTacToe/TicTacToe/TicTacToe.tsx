@@ -1,8 +1,9 @@
-// import * as Threads from "threads"
-import { Err, Ok, Result } from "../../Core/Result"
-import { Task } from "../../Core/Task"
-import * as UI from "../../UI"
-import * as Minimax from "../Minimax"
+import * as Threads from "threads"
+import { memoize } from "../../../Core"
+import { Err, Ok, Result } from "../../../Core/Result"
+import { Task } from "../../../Core/Task"
+import * as UI from "../../../UI"
+import { Minimax } from "../../Minimax"
 
 //
 //
@@ -42,6 +43,7 @@ export type Row = 0 | 1 | 2
 export type Column = 0 | 1 | 2
 
 export type Board = [[Slot, Slot, Slot], [Slot, Slot, Slot], [Slot, Slot, Slot]]
+
 
 const toChildren = (board: Board): Board[] => {
   const turn = toTurn(board)
@@ -101,16 +103,15 @@ const toScore = ({
 
     case "Win": {
       if (gameOver.winner === maximizingPlayer) {
-        return Infinity
+        return 2
       }
 
-      return -Infinity
+      return -1
     }
   }
 }
 
-// todo: make this run faster. its too slow
-export const toBestMove_ = ({
+export const toBestMove = ({
   depth,
   maximizingPlayer,
   board,
@@ -118,7 +119,7 @@ export const toBestMove_ = ({
   depth: number
   maximizingPlayer: PlayerType
   board: Board
-}): Position => {
+}): Result<ToBestMoveProblem, Position> => {
   const minimax = Minimax.create({
     toChildren,
     toScore: (board) => toScore({ board, maximizingPlayer }),
@@ -136,12 +137,12 @@ export const toBestMove_ = ({
     return score
   })
 
-  return bestMove
+  return Ok(bestMove)
 }
 
 export type ToBestMoveProblem = "no_valid_move"
 
-export const toBestMove = ({
+export const toBestMove_ = ({
   maximizingPlayer,
   board,
 }: {
@@ -165,7 +166,9 @@ export type Worker = {
 
 export type GetBestMoveProblem = "worker_thread_error" | ToBestMoveProblem
 
-export const getBestMove =
+
+
+export const findBestMove =
   ({
     board,
     depth,
@@ -176,29 +179,29 @@ export const getBestMove =
     board: Board
   }): Task<Result<GetBestMoveProblem, Position>> =>
     async () => {
-      const result = toBestMove({ board, depth, maximizingPlayer })
+      // const result = toBestMove({ board, depth, maximizingPlayer })
 
       await new Promise((resolve) => setTimeout(resolve, 1000))
 
-      return result
+      // return result
 
-      // try {
-      //   // docs: https://threads.js.org/
-      //   const worker = new Threads.Worker("./tictactoe-worker")
+      try {
+        // docs: https://threads.js.org/
+        const worker = new Threads.Worker("./worker")
 
-      //   const spawned = await Threads.spawn<Worker>(worker)
+        const spawned = await Threads.spawn<Worker>(worker)
 
-      //   try {
-      //     const result = await spawned.toBestMove({ depth, maximizingPlayer, board })
-      //     return result
-      //   } catch (error) {
-      //     return Err("worker_thread_error")
-      //   } finally {
-      //     await Threads.Thread.terminate(spawned)
-      //   }
-      // } catch (error) {
-      //   return Err("worker_thread_error")
-      // }
+        try {
+          const result = await spawned.toBestMove({ depth, maximizingPlayer, board })
+          return result
+        } catch (error) {
+          return Err("worker_thread_error")
+        } finally {
+          await Threads.Thread.terminate(spawned)
+        }
+      } catch (error) {
+        return Err("worker_thread_error")
+      }
     }
 
 type NonEmptyArray<T> = [T, ...T[]]
@@ -306,7 +309,9 @@ export const allWinningGroups: WinningGroup[] = [
 
 type Wins = { X: WinningGroup[]; O: WinningGroup[]; None: WinningGroup[] }
 
-const toWins = (board: Board): Wins => {
+let n = 0
+const toWins = memoize(x => JSON.stringify(x), (board: Board): Wins => {
+  console.log("toWins", n++)
   const wins: Wins = {
     X: [],
     O: [],
@@ -330,7 +335,7 @@ const toWins = (board: Board): Wins => {
   }
 
   return wins
-}
+})
 
 export type Status = { type: "Turn"; turn: PlayerType } | GameOver
 
@@ -384,6 +389,7 @@ const toSlotFrequency = (board: Board): SlotFrequency => {
 
   return frequency
 }
+
 
 export const toTurn = (board: Board): PlayerType => {
   const frequency = toSlotFrequency(board)

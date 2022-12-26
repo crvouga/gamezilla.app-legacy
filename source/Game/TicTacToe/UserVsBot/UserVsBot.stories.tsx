@@ -2,7 +2,7 @@ import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { p } from "../../../Core"
 import { ctx, userB } from "../../../test-data"
 import * as UI from "../../../UI"
-import { emptyBoard, setSlot } from "../TicTacToe"
+import { emptyBoard, setSlot } from "../TicTacToe/TicTacToe"
 import { Model, View } from "./UserVsBot.Frontend"
 
 const modelSetup: Model = {
@@ -13,9 +13,9 @@ const modelSetup: Model = {
 }
 
 const props: Parameters<typeof View>[0] = {
-  $d: () => {},
+  $d: () => { },
   ctx,
-  goBack: () => {},
+  goBack: () => { },
   model: modelSetup,
 }
 

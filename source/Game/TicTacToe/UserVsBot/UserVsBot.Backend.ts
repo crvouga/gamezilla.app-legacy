@@ -1,6 +1,6 @@
 import { Cmd, p, Sub } from "../../../Core"
 import { UserId } from "../../../Data/UserId"
-import { toDepth, getBestMove, toOpposite } from "../TicTacToe"
+import { toDepth, findBestMove, toOpposite } from "../TicTacToe/TicTacToe"
 import {
   BackendModel,
   BackendMsg,
@@ -95,7 +95,7 @@ export const updateFromFrontend: UpdateFromFrontend = (
       Cmd.batch([
         cmd,
         p(
-          getBestMove({
+          findBestMove({
             depth: toDepth(modelNext.botLevel),
             maximizingPlayer: toOpposite(modelNext.userPlayerType),
             board: modelNext.board,
