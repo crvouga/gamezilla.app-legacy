@@ -120,7 +120,7 @@ export const view = ({ $d, model, ctx, onBack }: { model: Model, ctx: Ctx, $d: (
         case 'game': {
             if (model.userId !== ctx.currentUserId) {
                 return fillBox({}, [
-                    text({ color: 'primary.main', width: '100%', mt: 1, textAlign: 'center' }, ['Spectating']),
+                    text({ color: 'primary.main', width: '100%', mt: 1, textAlign: 'center' }, ["You're Spectating"]),
                     viewPlayerSlots({ ctx, model }),
                     viewMessage({ ctx, model }),
                     box({ position: "relative", aspectRatio: "1", }, [
