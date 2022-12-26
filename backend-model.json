@@ -23,25 +23,7 @@
                     "type": "UserVsBot",
                     "child": {
                         "type": "game",
-                        "board": {
-                            "3": {
-                                "10": "black"
-                            },
-                            "6": {
-                                "5": "white",
-                                "6": "white",
-                                "7": "white",
-                                "8": "white",
-                                "9": "white",
-                                "10": "black"
-                            },
-                            "8": {
-                                "4": "black"
-                            },
-                            "10": {
-                                "4": "black"
-                            }
-                        },
+                        "board": {},
                         "botLevel": "Medium",
                         "userId": "86b8647c-646b-42a3-aad4-d08dd16a641e",
                         "userStone": "white"
@@ -59,7 +41,7 @@
             "sessionId": "ark3b11qMq",
             "clientId": {
                 "type": "Some",
-                "value": "R4x08uZrSODM-7BqAAAH"
+                "value": "o709dlz-_6w7eplEAAAR"
             },
             "userId": {
                 "type": "Some",
@@ -70,7 +52,7 @@
             "sessionId": "2c3a57d2-8e68-40fe-a8da-6986714ca64b",
             "clientId": {
                 "type": "Some",
-                "value": "nWhNIgTVqMGFfCX7AAAF"
+                "value": "4E0z1cKBaw63amnrAAAT"
             },
             "userId": {
                 "type": "Some",
