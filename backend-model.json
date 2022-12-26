@@ -1,59 +1,63 @@
 {
     "gameRoom": {
         "rooms": {
-            "room-ycts64": {
-                "roomId": "room-ycts64",
+            "room-x2mivp": {
+                "roomId": "room-x2mivp",
                 "hostId": "b571a421-0bed-4c98-856f-164b66421d0c"
             },
-            "room-1lrcjy": {
-                "roomId": "room-1lrcjy",
+            "room-u0mzlv": {
+                "roomId": "room-u0mzlv",
                 "hostId": "86b8647c-646b-42a3-aad4-d08dd16a641e"
             }
         },
         "users": {
             "b571a421-0bed-4c98-856f-164b66421d0c": {
-                "roomId": "room-ycts64",
+                "roomId": "room-x2mivp",
                 "userId": "b571a421-0bed-4c98-856f-164b66421d0c"
             },
             "86b8647c-646b-42a3-aad4-d08dd16a641e": {
-                "roomId": "room-1lrcjy",
+                "roomId": "room-u0mzlv",
                 "userId": "86b8647c-646b-42a3-aad4-d08dd16a641e"
             }
         },
         "games": {
-            "room-ycts64": [
+            "room-i1uf3b": [
+                "Gomoku",
+                {
+                    "type": "UserVsBot",
+                    "child": {
+                        "type": "setup",
+                        "userId": "b571a421-0bed-4c98-856f-164b66421d0c",
+                        "userStone": "white",
+                        "botLevel": "Medium"
+                    }
+                }
+            ],
+            "room-exqttx": [
                 "Gomoku",
                 {
                     "type": "UserVsBot",
                     "child": {
                         "type": "game",
                         "board": {
-                            "2": {
-                                "9": "black"
+                            "4": {
+                                "4": "black"
                             },
-                            "7": {
-                                "8": "white"
+                            "6": {
+                                "9": "white",
+                                "10": "white",
+                                "11": "white",
+                                "12": "white",
+                                "13": "white"
                             },
                             "8": {
-                                "7": "white",
-                                "8": "white"
-                            },
-                            "9": {
-                                "6": "white",
-                                "13": "black"
+                                "1": "black"
                             },
                             "10": {
-                                "2": "black",
-                                "5": "white"
-                            },
-                            "11": {
-                                "4": "white"
-                            },
-                            "13": {
-                                "9": "black"
+                                "13": "black"
                             },
                             "14": {
-                                "6": "black"
+                                "11": "black"
                             }
                         },
                         "botLevel": "Medium",
@@ -62,7 +66,24 @@
                     }
                 }
             ],
-            "room-1lrcjy": [
+            "room-x2mivp": [
+                "Gomoku",
+                {
+                    "type": "UserVsBot",
+                    "child": {
+                        "type": "game",
+                        "board": {
+                            "3": {
+                                "12": "white"
+                            }
+                        },
+                        "botLevel": "Medium",
+                        "userId": "b571a421-0bed-4c98-856f-164b66421d0c",
+                        "userStone": "black"
+                    }
+                }
+            ],
+            "room-u0mzlv": [
                 "Gomoku",
                 {
                     "type": "UserVsBot",
@@ -86,7 +107,7 @@
             "sessionId": "2c3a57d2-8e68-40fe-a8da-6986714ca64b",
             "clientId": {
                 "type": "Some",
-                "value": "TdO5xldkkHXerP0bAAAB"
+                "value": "HPTuKzUpNxq3Mv7tAAAJ"
             },
             "userId": {
                 "type": "Some",
@@ -97,7 +118,7 @@
             "sessionId": "ark3b11qMq",
             "clientId": {
                 "type": "Some",
-                "value": "_SIJMFs75M9h9rrEAAAD"
+                "value": "qnf8Ph9XTks0tl7QAAAL"
             },
             "userId": {
                 "type": "Some",

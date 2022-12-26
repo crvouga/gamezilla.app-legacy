@@ -274,8 +274,8 @@ export const stoneToColor = (stone: Stone): string => {
 
 export const viewStoneIcon = ({ stone, ...sx }: { stone: Stone } & Sx) => {
     return (
-        <SvgIcon viewBox="-1 -1 2 2" sx={sx}>
-            <circle cx={0} cy={0} r={0.9} fill={stoneToColor(stone)} />
+        <SvgIcon viewBox="-1 -1 2 2" sx={{ ...sx, }}>
+            <circle cx={0} cy={0} r={0.9} fill={stoneToColor(stone)} strokeWidth={0.1} stroke="#454545" />
         </SvgIcon>
     )
 }
@@ -294,7 +294,6 @@ export const viewCoverArt = () => {
                 lower: { x: 0, y: 0 },
                 upper: { x: 6, y: 6 }
             },
-            onPress: () => { },
         })
     )
 }
@@ -303,7 +302,7 @@ export const viewCoverArt = () => {
 
 
 
-export const viewBoard = ({ board, onPress, bounds: bounds_ = bounds, viewBoxOffset = 0.8 }: { board: Board, onPress: (position: Position) => void, bounds?: Bounds, viewBoxOffset?: number }) => {
+export const viewBoard = ({ board, onPress, bounds: bounds_ = bounds, viewBoxOffset = 0.8 }: { board: Board, onPress?: (position: Position) => void, bounds?: Bounds, viewBoxOffset?: number }) => {
 
 
     const boundsView = {
@@ -355,15 +354,15 @@ export const viewBoard = ({ board, onPress, bounds: bounds_ = bounds, viewBoxOff
                             return (
                                 <circle
                                     key={[x, y].join("-")}
-                                    onMouseDown={() => {
+                                    onMouseDown={onPress ? () => {
                                         onPress({ x, y })
-                                    }}
+                                    } : undefined}
                                     cx={x}
                                     cy={y}
                                     r={1 / 2}
                                     fill="transparent"
                                     stroke="none"
-                                    style={{ cursor: "pointer", zIndex: 2 }}
+                                    style={onPress ? { cursor: "pointer" } : { cursor: "default" }}
                                 />
                             )
                         }
