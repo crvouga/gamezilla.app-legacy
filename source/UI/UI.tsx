@@ -668,7 +668,7 @@ export const actionButton = ({
         width: "100%",
         color: disabled
           ? theme.palette.action.disabled
-          : theme.palette.primary.main,
+          : theme.palette.action.active,
       }}
     >
       {icon(iconName)}

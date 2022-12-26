@@ -657,3 +657,35 @@ export const viewCoverArt = () => {
     </svg>
   )
 }
+
+// 
+// 
+// 
+// 
+// 
+
+type State = {
+  board: Board
+  turn: PlayerType
+}
+
+export const toNextStates = (state: State): State[] => {
+  const nextStates: State[] = []
+
+  for (const position of allPositions) {
+    const slot = toSlot(state.board, position)
+
+    if (slot !== '_') {
+      continue
+    }
+
+    nextStates.push({
+      board: setSlot(state.board, position, state.turn),
+      turn: toOpposite(state.turn)
+    })
+  }
+
+  return nextStates
+}
+
+

@@ -118,6 +118,20 @@ export const view = ({ $d, model, ctx, onBack }: { model: Model, ctx: Ctx, $d: (
         }
 
         case 'game': {
+
+            // return (
+            //     viewUserVsBotGameScreen({
+            //         ctx,
+            //         botLabel: model.botLevel,
+            //         userPlayer: model.userStone,
+            //         botPlayer: toOppositeStone(model.userStone),
+            //         leftPlayer: 'White',
+            //         playerUserId: model.userId,
+            //         viewGame: () => viewBoard({ board: model.board, onPress: position => $d(['InputMove', { position }]) }),
+            //         viewPlayerIcon: (player, sx) => viewStoneIcon({ stone: player, ...sx })
+            //     })
+            // )
+
             if (model.userId !== ctx.currentUserId) {
                 return fillBox({}, [
                     text({ color: 'primary.main', width: '100%', mt: 1, textAlign: 'center' }, ["You're Spectating"]),
@@ -163,10 +177,6 @@ export const view = ({ $d, model, ctx, onBack }: { model: Model, ctx: Ctx, $d: (
             )
         }
     }
-}
-
-export const viewUserVsBotGameScreen = () => {
-    return fragment([])
 }
 
 const viewOverlay = ({ model, ctx, $d }: { ctx: Ctx, model: GameModel, $d: (m: Msg) => void }) => {
