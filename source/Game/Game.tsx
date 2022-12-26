@@ -1,6 +1,6 @@
 import { UserId } from "../Data/UserId"
 import * as ProfileStore from "../Profile/Profile.Store"
-import { Avatar, Box, Button, FillBox, Icons, ToggleButton, ToggleButtonGroup, Typography, ViewNode } from "../UI"
+import { avatar, Avatar, box, Box, Button, fillBox, FillBox, icon, Icons, paper, Sx, text, ToggleButton, ToggleButtonGroup, Typography, ViewNode } from "../UI"
 import * as Chess from "./Chess/Chess"
 import * as ConnectFour from "./ConnectFour/ConnectFour"
 import {
@@ -194,6 +194,58 @@ export const viewUserVsBotSetupScreen = <BotLevel, Player>({
     </FillBox>
   )
 }
+
+export const viewUserVsBotGameScreen = <Player,>({
+  botPlayer,
+  userPlayer,
+  botLabel,
+  viewPlayerIcon,
+  playerUserId,
+  ctx,
+  viewGame,
+  leftPlayer
+}: {
+  botPlayer: Player,
+  botLabel: string,
+  userPlayer: Player,
+  leftPlayer: Player,
+  playerUserId: UserId,
+  ctx: Ctx
+  viewPlayerIcon: (player: Player, sx: Sx) => ViewNode
+  viewGame: () => ViewNode
+}) => {
+  const iconSize = {
+    width: 32,
+    height: 32
+  }
+
+  const botSlot =
+    paper({ display: "flex", variant: "outlined", alignItems: "center", p: 1, flex: 1, overflow: 'hidden' }, [
+      viewPlayerIcon(botPlayer, { ...iconSize, mr: 1 }),
+      icon("smart-toy", { ...iconSize, mr: 1, }),
+      text({}, [botLabel])
+    ])
+
+  const userSlot =
+    paper({ display: "flex", variant: "outlined", alignItems: "center", p: 1, flex: 1, overflow: 'hidden' }, [
+      viewPlayerIcon(userPlayer, { ...iconSize, mr: 1 }),
+      avatar({ ...iconSize, mr: 1, src: ctx.profiles[playerUserId]?.avatarUrl }),
+      text({ noWrap: true }, [ctx.profiles[playerUserId]?.username])
+    ])
+
+  const leftSlot = userPlayer === leftPlayer ? userSlot : botSlot
+
+  const rightSlot = userPlayer !== leftPlayer ? userSlot : botSlot
+
+  return (
+    fillBox({}, [
+      box({ px: 2, pt: 2, display: "flex", gap: 2, justifyContent: "center", alignItems: 'center' }, [leftSlot, rightSlot]),
+      viewGame()
+    ])
+  )
+}
+
+
 
 export const viewSelectModeScreen = ({
   ctx,

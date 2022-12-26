@@ -1,12 +1,33 @@
 {
     "gameRoom": {
-        "rooms": {},
-        "users": {},
+        "rooms": {
+            "room-krhp24": {
+                "roomId": "room-krhp24",
+                "hostId": "b571a421-0bed-4c98-856f-164b66421d0c"
+            }
+        },
+        "users": {
+            "b571a421-0bed-4c98-856f-164b66421d0c": {
+                "roomId": "room-krhp24",
+                "userId": "b571a421-0bed-4c98-856f-164b66421d0c"
+            }
+        },
         "games": {}
     },
     "party": {
         "parties": {},
         "users": {}
     },
-    "sessions": {}
+    "sessions": {
+        "2c3a57d2-8e68-40fe-a8da-6986714ca64b": {
+            "clientId": {
+                "type": "None"
+            },
+            "sessionId": "2c3a57d2-8e68-40fe-a8da-6986714ca64b",
+            "userId": {
+                "type": "Some",
+                "value": "b571a421-0bed-4c98-856f-164b66421d0c"
+            }
+        }
+    }
 }
