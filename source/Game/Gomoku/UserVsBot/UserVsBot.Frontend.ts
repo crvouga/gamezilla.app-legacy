@@ -165,7 +165,9 @@ export const view = ({ $d, model, ctx, onBack }: { model: Model, ctx: Ctx, $d: (
     }
 }
 
-
+export const viewUserVsBotGameScreen = () => {
+    return fragment([])
+}
 
 const viewOverlay = ({ model, ctx, $d }: { ctx: Ctx, model: GameModel, $d: (m: Msg) => void }) => {
     const props: Sx = {
