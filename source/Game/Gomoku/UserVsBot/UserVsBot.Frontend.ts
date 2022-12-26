@@ -124,7 +124,7 @@ export const view = ({ $d, model, ctx, onBack }: { model: Model, ctx: Ctx, $d: (
                     viewPlayerSlots({ ctx, model }),
                     viewMessage({ ctx, model }),
                     box({ position: "relative", aspectRatio: "1", }, [
-                        viewBoard({ board: model.board, onPress: position => $d(['InputMove', { position }]) }),
+                        viewBoard({ board: model.board, }),
                         viewOverlay({ $d, model, ctx }),
                     ])
                 ])
