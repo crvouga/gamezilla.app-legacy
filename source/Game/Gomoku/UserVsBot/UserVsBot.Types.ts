@@ -38,7 +38,7 @@ export const initShared = ({ userId }: { userId: UserId | null }): Model => {
     return {
         type: "setup",
         userId,
-        userStone: "black",
+        userStone: "white",
         botLevel: "Medium"
     }
 }
