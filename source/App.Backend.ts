@@ -378,17 +378,20 @@ const backendModelPath = "./backend-model.json"
 
 const shouldPersistModel = Boolean(process.env['PERSIST_MODEL'])
 
+
 const getInit = (): [Model, Cmd<Msg>] => {
   if (!shouldPersistModel) {
     return init()
   }
 
   try {
-    const loaded = require(backendModelPath);
-    const model = loaded as Model
+    const loaded = fs.readFileSync(backendModelPath)
+    // @ts-ignore
+    const model = JSON.parse(loaded) as Model
     console.log(`[backend] initial model: ${JSON.stringify(model, null, 4)}`)
     return [model, Cmd.None]
   } catch (error) {
+    console.error("failed to load model", String(error))
     return init()
   }
 }
