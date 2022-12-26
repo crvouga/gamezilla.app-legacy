@@ -1,8 +1,54 @@
 {
     "gameRoom": {
-        "rooms": {},
-        "users": {},
-        "games": {}
+        "rooms": {
+            "room-kcgn9h": {
+                "roomId": "room-kcgn9h",
+                "hostId": "86b8647c-646b-42a3-aad4-d08dd16a641e"
+            }
+        },
+        "users": {
+            "86b8647c-646b-42a3-aad4-d08dd16a641e": {
+                "roomId": "room-kcgn9h",
+                "userId": "86b8647c-646b-42a3-aad4-d08dd16a641e"
+            },
+            "b571a421-0bed-4c98-856f-164b66421d0c": {
+                "roomId": "room-kcgn9h",
+                "userId": "b571a421-0bed-4c98-856f-164b66421d0c"
+            }
+        },
+        "games": {
+            "room-kcgn9h": [
+                "Gomoku",
+                {
+                    "type": "UserVsBot",
+                    "child": {
+                        "type": "game",
+                        "board": {
+                            "3": {
+                                "10": "black"
+                            },
+                            "6": {
+                                "5": "white",
+                                "6": "white",
+                                "7": "white",
+                                "8": "white",
+                                "9": "white",
+                                "10": "black"
+                            },
+                            "8": {
+                                "4": "black"
+                            },
+                            "10": {
+                                "4": "black"
+                            }
+                        },
+                        "botLevel": "Medium",
+                        "userId": "86b8647c-646b-42a3-aad4-d08dd16a641e",
+                        "userStone": "white"
+                    }
+                }
+            ]
+        }
     },
     "party": {
         "parties": {},
@@ -13,7 +59,7 @@
             "sessionId": "ark3b11qMq",
             "clientId": {
                 "type": "Some",
-                "value": "543x0TQLWKQ8ou9jAAAB"
+                "value": "R4x08uZrSODM-7BqAAAH"
             },
             "userId": {
                 "type": "Some",
@@ -24,7 +70,7 @@
             "sessionId": "2c3a57d2-8e68-40fe-a8da-6986714ca64b",
             "clientId": {
                 "type": "Some",
-                "value": "JAeDTnCsOSX_i0vWAAAD"
+                "value": "nWhNIgTVqMGFfCX7AAAF"
             },
             "userId": {
                 "type": "Some",
