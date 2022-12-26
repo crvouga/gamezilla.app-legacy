@@ -89,7 +89,7 @@ export const mergeWithBackend = ({ frontendModel, backendModel }: { frontendMode
             if (frontendModel.type === 'UserVsUser') {
                 return { type: "UserVsUser", child: UserVsUser.mergeWithBackend({ frontendModel: frontendModel.child, backendModel: backendModel.child }) }
             }
-            return { type: "UserVsUser", child: UserVsUser.mergeWithBackend({ frontendModel: UserVsUser.init, backendModel: backendModel.child }) }
+            return { type: "UserVsUser", child: UserVsUser.mergeWithBackend({ frontendModel: UserVsUser.init({ white: null, black: null }), backendModel: backendModel.child }) }
         }
     }
 }
@@ -135,7 +135,11 @@ export const view = ({ model, ctx, gameRoomCtx, $d }: { model: Model, ctx: Ctx, 
         }
 
         case 'UserVsUser': {
-            return UserVsUser.view({ model: model.child, })
+            return UserVsUser.view({
+                model: model.child,
+                ctx,
+                onCancel: () => $d(['InputMode', { mode: "None", userId: ctx.currentUserId }]),
+            })
         }
     }
 
