@@ -1,6 +1,6 @@
 import { Cmd, Sub } from "../../../Core";
 import { UserId } from "../../../Data";
-import { BackendModel, BackendMsg, ToBackend } from "./UserVsUser.Types";
+import { initShared, BackendModel, BackendMsg, ToBackend } from "./UserVsUser.Types";
 
 //
 //
@@ -13,7 +13,7 @@ import { BackendModel, BackendMsg, ToBackend } from "./UserVsUser.Types";
 export type Model = BackendModel;
 
 
-export const init: [Model, Cmd<Msg>] = [{}, Cmd.None];
+export const init = initShared
 
 //
 //
@@ -42,8 +42,8 @@ export const updateFromFrontend = (msg: ToBackend, model: Model): [Model, Cmd<Ms
     }
 };
 
-export const updateRoomLeave = (_userId: UserId, _model: Model): [Model, Cmd<Msg>] => {
-    return init
+export const updateRoomLeave = (_userId: UserId, model: Model): [Model, Cmd<Msg>] => {
+    return [init(model), Cmd.None]
 }
 
 //

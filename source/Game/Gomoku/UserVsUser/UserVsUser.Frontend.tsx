@@ -1,5 +1,7 @@
 import { Cmd, Sub } from "../../../Core";
-import { BackendModel, ToFrontend, FrontendMsg, FrontendModel } from "./UserVsUser.Types"
+import { Ctx, viewUserVsUserSetupScreen } from "../../Game";
+import { viewCoverArt, viewStoneIcon } from "../Gomoku/Gomoku";
+import { initShared, BackendModel, ToFrontend, FrontendMsg, FrontendModel } from "./UserVsUser.Types"
 
 //
 //
@@ -11,8 +13,7 @@ import { BackendModel, ToFrontend, FrontendMsg, FrontendModel } from "./UserVsUs
 
 export type Model = FrontendModel;
 
-
-export const init: [Model, Cmd<Msg>] = [{}, Cmd.None];
+export const init = initShared
 
 //
 //
@@ -65,10 +66,34 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 // 
 // 
 
-export const view = ({ model }: { model: Model }) => {
-    return (
-        <pre>
-            {JSON.stringify(model, null, 2)}
-        </pre>
-    )
+export const view = ({ model, ctx, onCancel }: { ctx: Ctx; model: Model, onCancel: () => void }) => {
+    switch (model.type) {
+        case 'setup': {
+            return (
+                viewUserVsUserSetupScreen({
+                    title: "Gomoku",
+                    subtitle: "Player Vs Player",
+                    coverArt: viewCoverArt(),
+                    ctx,
+                    playerOne: {
+                        label: 'White',
+                        userId: model.white,
+                        onStartPlaying: () => { },
+                        onStopPlaying: () => { },
+                        icon: (sx) => viewStoneIcon({ ...sx, stone: 'white' })
+                    },
+                    playerTwo: {
+                        label: 'Black',
+                        userId: model.black,
+                        onStartPlaying: () => { },
+                        onStopPlaying: () => { },
+                        icon: sx => viewStoneIcon({ ...sx, stone: 'black' })
+                    },
+                    onCancel,
+                    onStartGame: () => { },
+                })
+            )
+        }
+    }
+
 }

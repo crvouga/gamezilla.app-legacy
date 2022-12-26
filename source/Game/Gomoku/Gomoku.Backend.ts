@@ -36,7 +36,7 @@ const initMode = ({ mode, userId }: { mode: Mode, userId: UserId }): Model => {
         case "UserVsUser": {
             return {
                 type: "UserVsUser",
-                child: UserVsUser.init,
+                child: UserVsUser.init({ white: userId, black: null }),
             }
         }
     }
