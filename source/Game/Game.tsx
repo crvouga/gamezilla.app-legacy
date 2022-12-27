@@ -74,6 +74,8 @@ export const viewUserVsUserSetupScreen = ({
   onCancel: () => void,
 }) => {
 
+  const isCurrentUserPlaying = ctx.currentUserId === playerOne.userId || ctx.currentUserId === playerTwo.userId
+
 
   return (
     <FillBox sx={{ overflowY: "scroll", py: 2, }}>
@@ -93,9 +95,9 @@ export const viewUserVsUserSetupScreen = ({
 
       {viewPlayerSlot({ ...playerTwo, ctx })}
 
-      <Box sx={{ px: 2, mt: 2 }} >
+      <Box sx={{ px: 2, mt: 4 }} >
         <Button
-          disabled={ctx.currentUserId !== playerOne.userId && ctx.currentUserId !== playerTwo.userId}
+          disabled={!isCurrentUserPlaying || (!playerOne.userId && !playerTwo.userId)}
           fullWidth
           variant="contained"
           endIcon={<Icons.ArrowRight />}
@@ -143,7 +145,10 @@ const viewPlayerSlot = ({ ctx, label, userId, icon, onStartPlaying, onStopPlayin
           sx={{
             px: 2,
             mb: 2,
+            display: "flex",
+            alignItems: "center",
           }}>
+          {icon({ ...size, mr: 1 })}
           <Button fullWidth variant="contained" onClick={onStartPlaying}>
             Play As {label}
           </Button>

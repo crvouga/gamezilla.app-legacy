@@ -1,8 +1,34 @@
 {
     "gameRoom": {
-        "rooms": {},
-        "users": {},
-        "games": {}
+        "rooms": {
+            "room-n916b8": {
+                "roomId": "room-n916b8",
+                "hostId": "b571a421-0bed-4c98-856f-164b66421d0c"
+            }
+        },
+        "users": {
+            "b571a421-0bed-4c98-856f-164b66421d0c": {
+                "roomId": "room-n916b8",
+                "userId": "b571a421-0bed-4c98-856f-164b66421d0c"
+            },
+            "86b8647c-646b-42a3-aad4-d08dd16a641e": {
+                "roomId": "room-n916b8",
+                "userId": "86b8647c-646b-42a3-aad4-d08dd16a641e"
+            }
+        },
+        "games": {
+            "room-n916b8": [
+                "Gomoku",
+                {
+                    "type": "UserVsUser",
+                    "child": {
+                        "type": "setup",
+                        "white": "b571a421-0bed-4c98-856f-164b66421d0c",
+                        "black": "86b8647c-646b-42a3-aad4-d08dd16a641e"
+                    }
+                }
+            ]
+        }
     },
     "party": {
         "parties": {},
@@ -13,7 +39,7 @@
             "sessionId": "2c3a57d2-8e68-40fe-a8da-6986714ca64b",
             "clientId": {
                 "type": "Some",
-                "value": "wJ-Pa1MDw0sAd050AAAB"
+                "value": "uwbaNiQTBI5hxX5_AAAV"
             },
             "userId": {
                 "type": "Some",
@@ -24,7 +50,7 @@
             "sessionId": "ark3b11qMq",
             "clientId": {
                 "type": "Some",
-                "value": "z1Q94AgcmjU-zpGIAAAD"
+                "value": "PXYZ7FGZWu_GSwgdAAAX"
             },
             "userId": {
                 "type": "Some",

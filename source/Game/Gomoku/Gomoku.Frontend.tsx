@@ -39,10 +39,13 @@ export const update = ({ sendToBackend, }: { sendToBackend: (m: ToBackend) => Cm
                 const [child, cmd] = UserVsBot.update({ sendToBackend: m => sendToBackend(['UserVsBot', m]) }, msg[1], model.child)
                 return [{ type: "UserVsBot", child }, Cmd.tag("UserVsBot", cmd)]
             }
-
             return [model, Cmd.None]
         }
         case 'UserVsUser': {
+            if (model.type === 'UserVsUser') {
+                const [child, cmd] = UserVsUser.update({ sendToBackend: m => sendToBackend(['UserVsUser', m]), msg: msg[1], model: model.child })
+                return [{ type: "UserVsUser", child }, Cmd.tag("UserVsUser", cmd)]
+            }
             return [model, Cmd.None]
         }
     }
@@ -67,6 +70,10 @@ export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd<Ms
             return [model, Cmd.None]
         }
         case 'UserVsUser': {
+            if (model.type === 'UserVsUser') {
+                const [child, cmd] = UserVsUser.updateFromBackend(msg[1], model.child)
+                return [{ type: "UserVsUser", child }, Cmd.tag("UserVsUser", cmd)]
+            }
             return [model, Cmd.None]
         }
     }
@@ -139,6 +146,7 @@ export const view = ({ model, ctx, gameRoomCtx, $d }: { model: Model, ctx: Ctx, 
                 model: model.child,
                 ctx,
                 onCancel: () => $d(['InputMode', { mode: "None", userId: ctx.currentUserId }]),
+                $d: m => $d(['UserVsUser', m]),
             })
         }
     }

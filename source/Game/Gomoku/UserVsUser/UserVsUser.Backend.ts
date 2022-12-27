@@ -1,6 +1,6 @@
 import { Cmd, Sub } from "../../../Core";
 import { UserId } from "../../../Data";
-import { initShared, BackendModel, BackendMsg, ToBackend } from "./UserVsUser.Types";
+import { initShared, BackendModel, BackendMsg, ToBackend, handle, ToFrontend, Res } from "./UserVsUser.Types";
 
 //
 //
@@ -34,10 +34,15 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 };
 
 
-export const updateFromFrontend = (msg: ToBackend, model: Model): [Model, Cmd<Msg>] => {
+export const updateFromFrontend = ({ sendToClient, broadcast, msg, model, ctx }: { ctx: { currentUserId: UserId, }; msg: ToBackend, model: Model, broadcast: (m: ToFrontend) => Cmd, sendToClient: (m: ToFrontend) => Cmd }): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
-        case "none": {
-            return [model, Cmd.None]
+        case 'StopPlaying':
+        case "StartPlaying": {
+            const res: Res = [msg[0], handle({ msg, model, currentUserId: ctx.currentUserId })]
+            if (res[1].type === "Err") {
+                return [model, sendToClient(res)]
+            }
+            return [res[1].value, broadcast(res)]
         }
     }
 };
