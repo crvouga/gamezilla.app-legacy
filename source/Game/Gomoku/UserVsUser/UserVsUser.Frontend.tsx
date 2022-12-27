@@ -1,7 +1,7 @@
 import { Cmd, Sub } from "../../../Core";
 import { Ctx, viewUserVsUserSetupScreen } from "../../Game";
 import { viewCoverArt, viewStoneIcon } from "../Gomoku/Gomoku";
-import { initShared, BackendModel, ToFrontend, FrontendMsg, FrontendModel } from "./UserVsUser.Types"
+import { initShared, BackendModel, ToFrontend, FrontendMsg, FrontendModel, ToBackend } from "./UserVsUser.Types"
 
 //
 //
@@ -25,10 +25,11 @@ export const init = initShared
 
 export type Msg = FrontendMsg
 
-export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
+export const update = ({ msg, model, sendToBackend }: { sendToBackend: (m: ToBackend) => Cmd, msg: Msg, model: Model }): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
-        case "none": {
-            return [model, Cmd.None]
+        case 'StopPlaying':
+        case "StartPlaying": {
+            return [model, sendToBackend(msg)]
         }
     }
 };
@@ -36,8 +37,13 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
 export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
-        case "none": {
-            return [model, Cmd.None]
+        case 'StopPlaying':
+        case "StartPlaying": {
+            if (msg[1].type === 'Err') {
+                return [model, Cmd.None]
+            }
+            const merged = mergeWithBackend({ backendModel: msg[1].value, frontendModel: model })
+            return [merged, Cmd.None]
         }
     }
 };
@@ -66,7 +72,7 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 // 
 // 
 
-export const view = ({ model, ctx, onCancel }: { ctx: Ctx; model: Model, onCancel: () => void }) => {
+export const view = ({ model, ctx, onCancel, $d }: { $d: (m: Msg) => void; ctx: Ctx; model: Model, onCancel: () => void }) => {
     switch (model.type) {
         case 'setup': {
             return (
@@ -78,15 +84,15 @@ export const view = ({ model, ctx, onCancel }: { ctx: Ctx; model: Model, onCance
                     playerOne: {
                         label: 'White',
                         userId: model.white,
-                        onStartPlaying: () => { },
-                        onStopPlaying: () => { },
+                        onStartPlaying: () => $d(['StartPlaying', { stone: 'white' }]),
+                        onStopPlaying: () => $d(['StopPlaying', { stone: 'white' }]),
                         icon: (sx) => viewStoneIcon({ ...sx, stone: 'white' })
                     },
                     playerTwo: {
                         label: 'Black',
                         userId: model.black,
-                        onStartPlaying: () => { },
-                        onStopPlaying: () => { },
+                        onStartPlaying: () => $d(['StartPlaying', { stone: 'black' }]),
+                        onStopPlaying: () => $d(['StopPlaying', { stone: 'black' }]),
                         icon: sx => viewStoneIcon({ ...sx, stone: 'black' })
                     },
                     onCancel,

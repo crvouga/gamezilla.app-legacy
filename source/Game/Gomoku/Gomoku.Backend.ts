@@ -89,11 +89,14 @@ export const updateFromFrontend = ({ ctx, broadcast, sendToClient }: { ctx: { cu
 
         case 'UserVsUser': {
             if (model.type === 'UserVsUser') {
-                const [child, cmd] = UserVsUser.updateFromFrontend(
-                    // { broadcast: (m) => broadcast(['UserVsUser', m]) },
-                    msg[1],
-                    model.child
-                )
+                const [child, cmd] = UserVsUser.updateFromFrontend({
+                    msg: msg[1],
+                    model: model.child,
+                    ctx,
+                    broadcast: (m) => broadcast(['UserVsUser', m]),
+                    sendToClient: m => sendToClient(['UserVsUser', m])
+                })
+
                 return [{ type: 'UserVsUser', child }, Cmd.tag('UserVsUser', cmd)]
             }
             return [model, Cmd.None]
