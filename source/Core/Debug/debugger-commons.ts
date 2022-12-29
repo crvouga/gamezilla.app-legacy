@@ -52,13 +52,13 @@ export interface Debugger<Model, Msg extends {}> {
 export interface DebuggerDeps<Model, Msg extends {}> {
   init: Model
   debug$: Rx.BehaviorSubject<DebugData<Model, Msg>>
-  $d: (m: MsgWithDebug<Model, Msg>) => void
+  $send: (m: MsgWithDebug<Model, Msg>) => void
 }
 
 /**
  * Adds debugging capability to the provided `update` function.
  *
- * It tracks through the `debug$` stream every `Message` $ded and resulting `Model` update.
+ * It tracks through the `debug$` stream every `Message` $sended and resulting `Model` update.
  *
  * It also lets directly updating the application's state with a special `Message` of type:
  *

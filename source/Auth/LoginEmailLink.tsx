@@ -14,10 +14,10 @@ import * as UI from "../UI"
 export type Model = {
   emailAddress: string
   submission:
-    | { type: "Idle" }
-    | { type: "Loading"; sentToEmailAddress: string }
-    | { type: "Problem"; message: string }
-    | { type: "Ok"; sentToEmailAddress: string }
+  | { type: "Idle" }
+  | { type: "Loading"; sentToEmailAddress: string }
+  | { type: "Problem"; message: string }
+  | { type: "Ok"; sentToEmailAddress: string }
 }
 
 export const init: Model = {
@@ -111,15 +111,15 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
 export const View = ({
   model,
-  $d,
+  $send,
 }: {
   model: Model
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
 }) => {
   return (
     <UI.FillBox>
       <UI.Header
-        left={<UI.HeaderBackButton onClick={() => $d(["ClickedBack"])} />}
+        left={<UI.HeaderBackButton onClick={() => $send(["ClickedBack"])} />}
         title="Login With Email"
       />
 
@@ -137,7 +137,7 @@ export const View = ({
           label="Email Address"
           value={model.emailAddress}
           onChange={(event) => {
-            $d(["InputtedEmailAddress", event.target.value])
+            $send(["InputtedEmailAddress", event.target.value])
           }}
         />
 
@@ -146,7 +146,7 @@ export const View = ({
           size="large"
           fullWidth
           loading={model.submission.type === "Loading"}
-          onClick={() => $d(["ClickedSendLoginLink"])}
+          onClick={() => $send(["ClickedSendLoginLink"])}
           sx={{ marginBottom: 2 }}
         >
           Send Login Link

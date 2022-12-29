@@ -17,7 +17,7 @@ const setupModel: Model = {
 
 const props: Parameters<typeof View>[0] = {
   ctx,
-  $d: () => { },
+  $send: () => { },
   onClose: () => { },
   model: setupModel,
 }

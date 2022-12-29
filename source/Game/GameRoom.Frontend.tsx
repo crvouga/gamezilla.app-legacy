@@ -595,22 +595,22 @@ export const subscriptions = (
 export const ViewPageGame = ({
   ctx,
   model,
-  $d,
+  $send,
 }: {
   ctx: Ctx
   model: Model
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
 }) => {
   const user = model.users[ctx.currentUserId]
 
   if (!user) {
-    return <ViewNotInRoom ctx={ctx} model={model} $d={$d} />
+    return <ViewNotInRoom ctx={ctx} model={model} $send={$send} />
   }
 
   const room = model.rooms[user.roomId]
 
   if (!room) {
-    return <ViewNotInRoom ctx={ctx} model={model} $d={$d} />
+    return <ViewNotInRoom ctx={ctx} model={model} $send={$send} />
   }
 
   const game = model.games[room.roomId]
@@ -622,13 +622,13 @@ export const ViewPageGame = ({
       {game ? <Game.View
         gameRoomCtx={{
           hostId: room.hostId,
-          onQuit: () => $d(['InputGame', { userId: ctx.currentUserId, gameName: undefined }])
+          onQuit: () => $send(['InputGame', { userId: ctx.currentUserId, gameName: undefined }])
         }}
         ctx={ctx}
-        $d={(msg) => $d(["Game", room.roomId, msg])}
+        $send={(msg) => $send(["Game", room.roomId, msg])}
         model={game}
       /> :
-        <ViewNotInGame ctx={ctx} room={room} $d={$d} />
+        <ViewNotInGame ctx={ctx} room={room} $send={$send} />
       }
 
       <Toolbar
@@ -638,7 +638,7 @@ export const ViewPageGame = ({
         <Button
           startIcon={<Icons.Home />}
           size="small"
-          onClick={() => $d(["ClickedHome"])}
+          onClick={() => $send(["ClickedHome"])}
         >
           Home
         </Button>
@@ -649,7 +649,7 @@ export const ViewPageGame = ({
           <Button
             startIcon={<Icons.Group />}
             size="small"
-            onClick={() => $d(["ClickedRoom"])}
+            onClick={() => $send(["ClickedRoom"])}
           >
             Room
           </Button>
@@ -659,7 +659,7 @@ export const ViewPageGame = ({
   )
 }
 
-export const ViewNotInGame = ({ room, ctx, $d }: { room: FrontendRoom, ctx: Ctx, $d: (m: Msg) => void }) => {
+export const ViewNotInGame = ({ room, ctx, $send }: { room: FrontendRoom, ctx: Ctx, $send: (m: Msg) => void }) => {
   if (room.hostId !== ctx.currentUserId) {
     return (
       <FillBox>
@@ -688,7 +688,7 @@ export const ViewNotInGame = ({ room, ctx, $d }: { room: FrontendRoom, ctx: Ctx,
       <Box sx={{ px: 1, pt: 1, width: '100%', display: 'flex', flexWrap: "wrap", justifyContent: "flex-start" }}>
         {gameNameList.map((gameName) => (
           <Box key={gameName} sx={{ width: "33.33%", p: 1 }}>
-            <CardActionArea disabled={room.hostId !== ctx.currentUserId} onClick={() => $d(['InputGame', { gameName, userId: ctx.currentUserId }])}>
+            <CardActionArea disabled={room.hostId !== ctx.currentUserId} onClick={() => $send(['InputGame', { gameName, userId: ctx.currentUserId }])}>
               <GameCard gameName={gameName} />
             </CardActionArea>
           </Box>
@@ -706,11 +706,11 @@ export const ViewNotInGame = ({ room, ctx, $d }: { room: FrontendRoom, ctx: Ctx,
 export const ViewNotInRoom = ({
   ctx,
   model,
-  $d,
+  $send,
 }: {
   ctx: Ctx
   model: Model
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
 }) => {
 
   if (model.requests.RoomCreate?.type === "Loading") {
@@ -737,12 +737,12 @@ export const ViewNotInRoom = ({
       <ViewEmptyState
         actionIcon={<Icons.Add />}
         actionTitle="Create Game"
-        onAction={() => $d(['RoomCreate', { userId: ctx.currentUserId, roomId: RoomId.generate() }])}
+        onAction={() => $send(['RoomCreate', { userId: ctx.currentUserId, roomId: RoomId.generate() }])}
         renderIcon={(props) => <Icons.SportsEsportsOutlined {...props} />}
         title="Not in Game"
       />
       <Box sx={{ p: 2 }}>
-        <Button startIcon={<Icons.ChevronLeft />} fullWidth variant="outlined" onClick={() => $d(['ClickedHome'])}>
+        <Button startIcon={<Icons.ChevronLeft />} fullWidth variant="outlined" onClick={() => $send(['ClickedHome'])}>
           Go back home
         </Button>
       </Box>
@@ -816,24 +816,24 @@ const toRoomUsers = (roomId: RoomId, model: Model): RoomUser[] => {
 
 export const ViewPageRoom = ({
   model,
-  $d,
+  $send,
   ctx,
 }: {
   ctx: Ctx
   model: Model
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
 }) => {
 
   const user = model.users[ctx.currentUserId]
 
   if (!user) {
-    return <ViewNotInRoom $d={$d} ctx={ctx} model={model} />
+    return <ViewNotInRoom $send={$send} ctx={ctx} model={model} />
   }
 
   const room = model.rooms[user.roomId]
 
   if (!room) {
-    return <ViewNotInRoom $d={$d} ctx={ctx} model={model} />
+    return <ViewNotInRoom $send={$send} ctx={ctx} model={model} />
   }
 
   const usersInRoom = toRoomUsers(room.roomId, model)
@@ -858,7 +858,7 @@ export const ViewPageRoom = ({
         {usersInRoom.map((user) => (
           <Box
             key={user.userId}
-            onClick={() => $d(["ClickedUser", user])}
+            onClick={() => $send(["ClickedUser", user])}
             sx={{
               display: "flex",
               flexDirection: "column",
@@ -903,7 +903,7 @@ export const ViewPageRoom = ({
             <Button
               fullWidth
               color="error"
-              onClick={() => $d(["ClickedRoomDestroy", { userId: ctx.currentUserId }])}
+              onClick={() => $send(["ClickedRoomDestroy", { userId: ctx.currentUserId }])}
             >
               End Room
             </Button>
@@ -913,7 +913,7 @@ export const ViewPageRoom = ({
             <Button
               fullWidth
               color="error"
-              onClick={() => $d(["ClickedRoomLeave", { userId: ctx.currentUserId }])}
+              onClick={() => $send(["ClickedRoomLeave", { userId: ctx.currentUserId }])}
             >
               Leave Room
             </Button>
@@ -991,13 +991,13 @@ export const ViewBanner = ({
   currentUserId,
   route,
   model,
-  $d,
+  $send,
   store,
 }: {
   currentUserId: UserId
   route: Route.Model
   model: Model
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
   store: ProfileStore.Model
 }) => {
   if (route[0] === "GameRoom" || route[0] === "Game") {
@@ -1026,7 +1026,7 @@ export const ViewBanner = ({
         display: "flex",
         alignItems: "center",
       }}
-      onClick={() => $d(["ClickedBanner"])}
+      onClick={() => $send(["ClickedBanner"])}
     >
 
       {!game && (

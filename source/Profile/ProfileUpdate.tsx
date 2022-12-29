@@ -63,15 +63,15 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
 export const View = ({
   profile,
-  $d,
+  $send,
 }: {
   profile: ProfileStore.Profile
   model: Model
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
 }) => (
   <UI.FillBox>
     <UI.Header
-      left={<UI.HeaderBackButton onClick={() => $d(["ClickedBack"])} />}
+      left={<UI.HeaderBackButton onClick={() => $send(["ClickedBack"])} />}
       title="Update Profile"
     />
 
@@ -83,12 +83,12 @@ export const View = ({
         height: "150px",
         marginBottom: 1,
       }}
-      onClick={() => $d(["ClickedAvatar"])}
+      onClick={() => $send(["ClickedAvatar"])}
     />
 
     <UI.Button
       sx={{ display: "block", marginX: "auto", marginBottom: 2 }}
-      onClick={() => $d(["ClickedChangedAvatar"])}
+      onClick={() => $send(["ClickedChangedAvatar"])}
     >
       Change Avatar
     </UI.Button>
@@ -97,19 +97,19 @@ export const View = ({
       <UI.Field
         label="Username"
         value={profile.username}
-        onClick={() => $d(["ClickedUsername"])}
+        onClick={() => $send(["ClickedUsername"])}
       />
 
       {/* <UI.Field
         label="Name"
         value={profile.name}
-        onClick={() => $d(["ClickedName"])}
+        onClick={() => $send(["ClickedName"])}
       /> */}
 
       <UI.Field
         label="Theme"
         value={profile.themeMode}
-        onClick={() => $d(["ClickedTheme"])}
+        onClick={() => $send(["ClickedTheme"])}
       />
     </UI.List>
   </UI.FillBox>

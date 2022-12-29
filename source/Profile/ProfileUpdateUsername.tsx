@@ -78,17 +78,17 @@ export const update = (
 
 export const View = ({
   model,
-  $d,
+  $send,
 }: {
   model: Model
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
 }) => (
   <UI.FillBox>
     <UI.Header
       left={
         <UI.Button
           sx={{ marginLeft: -1 }}
-          onClick={() => $d(["ClickedCancel"])}
+          onClick={() => $send(["ClickedCancel"])}
         >
           Cancel
         </UI.Button>
@@ -97,7 +97,7 @@ export const View = ({
       right={
         <UI.Button
           sx={{ marginRight: -1 }}
-          onClick={() => $d(["ClickedSubmit"])}
+          onClick={() => $send(["ClickedSubmit"])}
         >
           Done
         </UI.Button>
@@ -111,7 +111,7 @@ export const View = ({
         label="Username"
         fullWidth
         onChange={(event) =>
-          $d(["InputtedUsername", event.currentTarget.value])
+          $send(["InputtedUsername", event.currentTarget.value])
         }
       />
     </UI.Box>

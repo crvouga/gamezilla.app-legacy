@@ -195,11 +195,11 @@ export const subscriptions = (_intervalId: string, _model: Model): Sub<Msg> => {
 export const View = ({
   ctx,
   model,
-  $d,
+  $send,
 }: {
   ctx: Ctx
   model: Model
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
 }) => {
   if (model.gameStatus.type === "GameSetup") {
     const menuAnchorId = "playerSlotMenuId"
@@ -223,7 +223,7 @@ export const View = ({
                 variant="contained"
                 fullWidth
                 onClick={() =>
-                  $d(["InputPlayer", Option.Some(["User", ctx.currentUserId])])
+                  $send(["InputPlayer", Option.Some(["User", ctx.currentUserId])])
                 }
               >
                 Play as Snake
@@ -233,7 +233,7 @@ export const View = ({
             <>
               <UI.ListItemButton
                 id={menuAnchorId}
-                onClick={() => $d(["OpenedMenu", menuAnchorId])}
+                onClick={() => $send(["OpenedMenu", menuAnchorId])}
               >
                 <UI.ListItemAvatar>
                   <UI.Avatar
@@ -256,13 +256,13 @@ export const View = ({
                   model.openedMenuId.type === "Some" &&
                   model.openedMenuId.value === menuAnchorId
                 }
-                onClose={() => $d(["ClosedMenu"])}
+                onClose={() => $send(["ClosedMenu"])}
                 anchorEl={document.getElementById(menuAnchorId)}
               >
                 <UI.Button
                   size="large"
                   fullWidth
-                  onClick={() => $d(["InputPlayer", Option.None])}
+                  onClick={() => $send(["InputPlayer", Option.None])}
                 >
                   Stop Playing
                 </UI.Button>
@@ -279,7 +279,7 @@ export const View = ({
             fullWidth
             disabled={!canStartGame(model)}
             onClick={() => {
-              $d(["StartGame"])
+              $send(["StartGame"])
             }}
           >
             Start Game
@@ -291,7 +291,7 @@ export const View = ({
 
   return (
     <UI.FillBox>
-      <ViewBoard model={model} $d={$d} />
+      <ViewBoard model={model} $send={$send} />
       {model.gameStatus.player[1] === ctx.currentUserId && (
         <UI.Box
           sx={{
@@ -304,7 +304,7 @@ export const View = ({
         >
           <Joystick.ViewJoystick
             onMove={(moveEvent) => {
-              $d([
+              $send([
                 "InputDirection",
                 {
                   userId: ctx.currentUserId,
@@ -327,7 +327,7 @@ export const View = ({
               >
                 <UI.ButtonBase
                   sx={leftRight}
-                  onMouseDown={() => $d(["InputDirection", { direction: "left", userId: currentUserId }])}
+                  onMouseDown={() => $send(["InputDirection", { direction: "left", userId: currentUserId }])}
                 >
                   <UI.Icons.KeyboardArrowLeft sx={iconSx} />
                 </UI.ButtonBase>
@@ -335,14 +335,14 @@ export const View = ({
                 <UI.Box sx={{ display: "flex", flexDirection: "column" }}>
                   <UI.ButtonBase
                     sx={upDown}
-                    onMouseDown={() => $d(["InputDirection", { direction: "up", userId: currentUserId }])}
+                    onMouseDown={() => $send(["InputDirection", { direction: "up", userId: currentUserId }])}
                   >
                     <UI.Icons.KeyboardArrowUp sx={iconSx} />
                   </UI.ButtonBase>
 
                   <UI.ButtonBase
                     sx={upDown}
-                    onMouseDown={() => $d(["InputDirection", { direction: "down", userId: currentUserId }])}
+                    onMouseDown={() => $send(["InputDirection", { direction: "down", userId: currentUserId }])}
                   >
                     <UI.Icons.KeyboardArrowDown sx={iconSx} />
                   </UI.ButtonBase>
@@ -350,7 +350,7 @@ export const View = ({
 
                 <UI.ButtonBase
                   sx={leftRight}
-                  onMouseDown={() => $d(["InputDirection", { direction: "right", userId: currentUserId }])}
+                  onMouseDown={() => $send(["InputDirection", { direction: "right", userId: currentUserId }])}
                 >
                   <UI.Icons.KeyboardArrowRight sx={iconSx} />
                 </UI.ButtonBase>
@@ -387,7 +387,7 @@ export const ViewBoard = ({
   model,
 }: {
   model: Model
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
 }) => {
   const ref = useRef<HTMLCanvasElement | null>(null)
 

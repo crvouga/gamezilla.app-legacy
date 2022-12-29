@@ -5,7 +5,7 @@ import { gameRoomCtx } from "../test-data"
 import { View } from "./TicTacToe.Frontend"
 
 const props: Parameters<typeof View>[0] = {
-  $d: () => { },
+  $send: () => { },
   ctx,
   gameRoomCtx,
   model: { mode: "None" },

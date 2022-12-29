@@ -4,7 +4,7 @@ import * as UI from "../../UI"
 import { View } from "./ConnectFour.Frontend"
 
 const props: Parameters<typeof View>[0] = {
-  $d: () => { },
+  $send: () => { },
   ctx,
   model: { type: "None" },
   gameRoomCtx: {

@@ -193,12 +193,12 @@ export const mergeWithBackend = (
 export const View = ({
   ctx,
   model,
-  $d,
+  $send,
   gameRoomCtx
 }: {
   ctx: Ctx
   model: Model
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
   gameRoomCtx: GameRoomCtx
 }) => {
   switch (model.mode) {
@@ -209,11 +209,11 @@ export const View = ({
           ctx,
           gameRoomCtx,
           coverArt: viewCoverArt(),
-          onVsUser: () => $d([
+          onVsUser: () => $send([
             "InputMode",
             { mode: "VsUser", userId: ctx.currentUserId },
           ]),
-          onUserVsComputer: () => $d([
+          onUserVsComputer: () => $send([
             "InputMode",
             { mode: "VsBot", userId: ctx.currentUserId },
           ])
@@ -225,11 +225,11 @@ export const View = ({
       return (
         <VsUser.View
           onCloseGame={() => {
-            $d(["InputMode", { mode: "None", userId: ctx.currentUserId }])
+            $send(["InputMode", { mode: "None", userId: ctx.currentUserId }])
           }}
           ctx={ctx}
           model={model.child}
-          $d={(msg) => $d(["VsUser", msg])}
+          $send={(msg) => $send(["VsUser", msg])}
         />
       )
     }
@@ -238,11 +238,11 @@ export const View = ({
       return (
         <VsBot.View
           goBack={() => {
-            $d(["InputMode", { mode: "None", userId: ctx.currentUserId }])
+            $send(["InputMode", { mode: "None", userId: ctx.currentUserId }])
           }}
           ctx={ctx}
           model={model.child}
-          $d={(msg) => $d(["VsBot", msg])}
+          $send={(msg) => $send(["VsBot", msg])}
         />
       )
     }

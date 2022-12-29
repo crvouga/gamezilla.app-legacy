@@ -204,12 +204,12 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 export const View = ({
   ctx,
   model,
-  $d,
+  $send,
   gameRoomCtx
 }: {
   ctx: Ctx
   model: Model
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
   gameRoomCtx: GameRoomCtx
 }) => {
   switch (model.mode[0]) {
@@ -219,8 +219,8 @@ export const View = ({
           ctx: ctx,
           gameRoomCtx: gameRoomCtx,
           coverArt: viewCoverArt(),
-          onUserVsComputer: () => $d(['InputMode', { mode: 'VsBot', userId: ctx.currentUserId }]),
-          onVsUser: () => $d(['InputMode', { mode: 'VsUser', userId: ctx.currentUserId }]),
+          onUserVsComputer: () => $send(['InputMode', { mode: 'VsBot', userId: ctx.currentUserId }]),
+          onVsUser: () => $send(['InputMode', { mode: 'VsUser', userId: ctx.currentUserId }]),
           title: "Chess"
         })
 
@@ -231,10 +231,10 @@ export const View = ({
       return (
         <VsBot.View
           ctx={ctx}
-          $d={(msg) => $d(["VsBot", msg])}
+          $send={(msg) => $send(["VsBot", msg])}
           model={model.mode[1]}
           onClose={() =>
-            $d(["InputMode", { mode: "None", userId: ctx.currentUserId }])
+            $send(["InputMode", { mode: "None", userId: ctx.currentUserId }])
           }
         />
       )
@@ -245,9 +245,9 @@ export const View = ({
         <VsUser.View
           ctx={ctx}
           model={model.mode[1]}
-          $d={(msg) => $d(["VsUser", msg])}
+          $send={(msg) => $send(["VsUser", msg])}
           onClose={() =>
-            $d(["InputMode", { mode: "None", userId: ctx.currentUserId }])
+            $send(["InputMode", { mode: "None", userId: ctx.currentUserId }])
           }
         />
       )

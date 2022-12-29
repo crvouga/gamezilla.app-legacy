@@ -4,7 +4,7 @@ import * as Json from "../Json"
 import { Option } from "../Option"
 import { p } from "../pipe"
 import * as Platform from "../Program"
-import { $d } from "../Program"
+import { $send } from "../Program"
 import { Result } from "../Result"
 import { Task } from "../Task"
 import { Debug, Debugger, Global, MsgWithDebug } from "./debugger-commons"
@@ -29,7 +29,7 @@ export interface Extension {
  * @since 0.5.0
  */
 export interface Connection<Model, Msg> {
-  subscribe: (listener?: $d<DevToolMsg>) => Unsubscribe
+  subscribe: (listener?: $send<DevToolMsg>) => Unsubscribe
   send(action: null, state: LiftedState<Model>): void
   send(action: Msg, state: Model): void
   init: (state: Model) => void
@@ -77,7 +77,7 @@ interface LiftedState<Model> {
 interface DevToolHandlerR<Model, Msg extends {}> {
   init: Model
   //   debug$: Rx.BehaviorSubject<DebugData<Model, Msg>>
-  $d: Platform.$d<MsgWithDebug<Model, Msg>>
+  $send: Platform.$send<MsgWithDebug<Model, Msg>>
   connection: Connection<Model, Msg>
 }
 
@@ -152,31 +152,31 @@ const handleSubscription = <Model, Msg extends {}>(
  *
  * This is largely inspired by https://github.com/zalmoxisus/mobx-remotedev/blob/master/src/monitorActions.js
  *
- * **Note:** the monitor can $d messages of any shape that will be re-$ded into the application; these messages **are not validated** and can lead to unexpected behaviors.
+ * **Note:** the monitor can $send messages of any shape that will be re-$sended into the application; these messages **are not validated** and can lead to unexpected behaviors.
  * @since 0.5.0
  */
 const handleIncomingMsg = <Model, Msg extends {}>({
   connection,
   init,
   //   debug$,
-  $d,
+  $send,
 }: DevToolHandlerR<Model, Msg>): ((
   msg: DevToolMsg,
 ) => Result<string, Task<void>>) => {
-  const $dToApp =
+  const $sendToApp =
     (m: unknown): Task<void> =>
       async () =>
-        $d(m as Msg)
+        $send(m as Msg)
 
   const initAgain: Task<void> = p(
     async () => {
       connection.init(init)
     },
-    Task.chain(() => $dToApp({ type: "__DebugStarted__" })),
+    Task.chain(() => $sendToApp({ type: "__DebugStarted__" })),
   )
 
   const update = (payload: Model): Task<void> =>
-    $dToApp({ type: "__DebugUpdateModel__", payload })
+    $sendToApp({ type: "__DebugUpdateModel__", payload })
 
   const restart =
     (model: Model): Task<void> =>
@@ -188,7 +188,7 @@ const handleIncomingMsg = <Model, Msg extends {}>({
       async () =>
         connection.send(null, state)
 
-  const toggle = toggleAction($d)
+  const toggle = toggleAction($send)
 
   return (msg) => {
     switch (msg.type) {
@@ -202,7 +202,7 @@ const handleIncomingMsg = <Model, Msg extends {}>({
             return Result.Err(result.error.message)
 
           case "Ok":
-            return Result.Ok($dToApp(result.value))
+            return Result.Ok($sendToApp(result.value))
         }
       }
 
@@ -377,7 +377,7 @@ const parseToggleAction = <Model>(
  */
 
 const toggleAction =
-  <Model, Msg extends {}>($d: $d<MsgWithDebug<Model, Msg>>) =>
+  <Model, Msg extends {}>($send: $send<MsgWithDebug<Model, Msg>>) =>
     (id: number, liftedState: LiftedState<Model>): Task<LiftedState<Model>> =>
       async () => {
         const state = unsafeCopy(liftedState)
@@ -393,7 +393,7 @@ const toggleAction =
           return state
         }
 
-        $d({
+        $send({
           type: "__DebugUpdateModel__",
           // @ts-ignore
           payload: computedStates[actionIndex - 1].state,
@@ -414,7 +414,7 @@ const toggleAction =
           }
 
           if (currentActionId) {
-            $d({
+            $send({
               type: "__DebugApplyMsg__",
               // @ts-ignore
               payload: actionsById[currentActionId].action,
@@ -463,11 +463,11 @@ export const withDebugger = <Model, Msg extends {}>(
       //   debug$,
       connection,
       init: program.state$.getValue().model,
-      $d: (msg) => {
+      $send: (msg) => {
         if ("type" in msg) {
           switch (msg.type) {
             case "__DebugApplyMsg__":
-              program.$d(msg.payload)
+              program.$send(msg.payload)
               break
 
             case "__DebugStarted__":

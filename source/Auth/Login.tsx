@@ -66,10 +66,10 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 //
 
 export const View = ({
-  $d,
+  $send,
 }: {
   model: Model
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
 }) => {
   const theme = useTheme()
 
@@ -100,11 +100,11 @@ export const View = ({
 
 
 
-        <Button onClick={() => $d(['clicked_text'])} startIcon={<Icons.Textsms />} fullWidth variant="contained" size="large" sx={{ mb: 3 }}>
+        <Button onClick={() => $send(['clicked_text'])} startIcon={<Icons.Textsms />} fullWidth variant="contained" size="large" sx={{ mb: 3 }}>
           Continue With Text
         </Button>
 
-        <Button onClick={() => $d(['clicked_email'])} startIcon={<Icons.Email />} fullWidth variant="contained" size="large">
+        <Button onClick={() => $send(['clicked_email'])} startIcon={<Icons.Email />} fullWidth variant="contained" size="large">
           Continue With Email
         </Button>
       </Box>

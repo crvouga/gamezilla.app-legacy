@@ -21,27 +21,27 @@ export type Model = {
 
 type FocusedModel =
   | {
-      type: "Blurred"
-    }
+    type: "Blurred"
+  }
   | {
-      type: "Focused"
-      messageId: string
-      copyStatus: "Failed" | "NotAsked" | "Succeeded" | "Loading"
-    }
+    type: "Focused"
+    messageId: string
+    copyStatus: "Failed" | "NotAsked" | "Succeeded" | "Loading"
+  }
 
 export const init = ({
   conversationId,
 }: {
   conversationId: string
 }): [Model, Cmd<Msg>, OutAction[]] => [
-  {
-    text: "",
-    focused: { type: "Blurred" },
-  },
-  Cmd.None,
+    {
+      text: "",
+      focused: { type: "Blurred" },
+    },
+    Cmd.None,
 
-  [["Chat", ["Conversation", ["FindOne", { conversationId }]]]],
-]
+    [["Chat", ["Conversation", ["FindOne", { conversationId }]]]],
+  ]
 
 //
 //
@@ -146,7 +146,7 @@ export const View = ({
   chatStore,
   profileStore,
   model,
-  $d,
+  $send,
   conversationId,
   currentUserId,
 }: {
@@ -155,7 +155,7 @@ export const View = ({
   currentUserId: UserId
   model: Model
   conversationId: string
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
 }) => {
   const query =
     chatStore.queries.Conversation.FindOne[conversationId] ??
@@ -183,7 +183,7 @@ export const View = ({
     <UI.FillBox>
       <UI.Toolbar>
         <UI.Box sx={{ flex: 1 }}>
-          <UI.HeaderBackButton onClick={() => $d(["ClickedBack"])} />
+          <UI.HeaderBackButton onClick={() => $send(["ClickedBack"])} />
         </UI.Box>
 
         <UI.Box
@@ -219,7 +219,7 @@ export const View = ({
             key={message.messageId}
             message={message}
             currentUserId={currentUserId}
-            $d={$d}
+            $send={$send}
             model={model}
             store={chatStore}
           />
@@ -228,8 +228,8 @@ export const View = ({
 
       <ChatInput
         value={model.text}
-        onChange={(text) => $d(["InputtedText", text])}
-        onSend={() => $d(["ClickedSend"])}
+        onChange={(text) => $send(["InputtedText", text])}
+        onSend={() => $send(["ClickedSend"])}
         isSending={messageInsertMutation.type === "Loading"}
       />
     </UI.FillBox>
@@ -361,7 +361,7 @@ const ChatMessage = ({
   currentUserId,
   model,
   store,
-  $d,
+  $send,
 }: {
   message: {
     messageId: string
@@ -370,13 +370,13 @@ const ChatMessage = ({
   }
   currentUserId: UserId
   model: Model
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
   store: ChatStore.Model
 }) => {
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
     event.stopPropagation()
-    $d(["ClickedMessage", message])
+    $send(["ClickedMessage", message])
   }
 
   const variant = currentUserId === message.userId ? "sent" : "received"
@@ -426,7 +426,7 @@ const ChatMessage = ({
           model.focused.type === "Focused" &&
           model.focused.messageId === message.messageId
         }
-        onClose={() => $d(["ClosedMessageMenu", message])}
+        onClose={() => $send(["ClosedMessageMenu", message])}
         anchorOrigin={{
           vertical: "bottom",
           horizontal: variant === "sent" ? "left" : "right",
@@ -442,10 +442,10 @@ const ChatMessage = ({
               model.focused.type === "Focused" &&
               model.focused.copyStatus === "Loading"
             }
-            onClick={() => $d(["ClickedCopyMessageText", message.message])}
+            onClick={() => $send(["ClickedCopyMessageText", message.message])}
           >
             {model.focused.type === "Focused" &&
-            model.focused.copyStatus === "Succeeded"
+              model.focused.copyStatus === "Succeeded"
               ? "Copied"
               : "Copy Text"}
           </UI.Button>
@@ -455,7 +455,7 @@ const ChatMessage = ({
                 store.mutations.Message.Unsend[message.messageId]?.type ===
                 "Loading"
               }
-              onClick={() => $d(["ClickedDeleteMessage", message])}
+              onClick={() => $send(["ClickedDeleteMessage", message])}
             >
               Delete Forever
             </UI.Button>

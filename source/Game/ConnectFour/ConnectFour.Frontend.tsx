@@ -132,17 +132,17 @@ export const updateFromBackend = (
 
 export const View = ({
   model,
-  $d,
+  $send,
   ctx,
   gameRoomCtx,
 }: {
   model: Model
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
   ctx: Ctx
   gameRoomCtx: GameRoomCtx
 }) => {
   const goBack = () =>
-    $d(["InputMode", { userId: ctx.currentUserId, mode: "None" }])
+    $send(["InputMode", { userId: ctx.currentUserId, mode: "None" }])
 
   switch (model.type) {
     case "None": {
@@ -153,12 +153,12 @@ export const View = ({
           coverArt: viewCoverArt(),
           title: "Connect Four",
           onVsUser: () =>
-            $d([
+            $send([
               "InputMode",
               { mode: "VsUser", userId: ctx.currentUserId },
             ]),
           onUserVsComputer: () =>
-            $d([
+            $send([
               "InputMode",
               { mode: "VsBot", userId: ctx.currentUserId },
             ])
@@ -170,7 +170,7 @@ export const View = ({
       return (
         <VsUser.View
           ctx={ctx}
-          $d={(msg) => $d(["VsUser", msg])}
+          $send={(msg) => $send(["VsUser", msg])}
           goBack={goBack}
           model={model.child}
         />
@@ -181,7 +181,7 @@ export const View = ({
       return (
         <VsBot.View
           ctx={ctx}
-          $d={(msg) => $d(["VsBot", msg])}
+          $send={(msg) => $send(["VsBot", msg])}
           model={model.child}
           goBack={goBack}
         />

@@ -6,7 +6,7 @@ import { init, View } from "./Maze.Frontend"
 const initial = init({ userId: ctx.currentUserId })
 
 const props: Parameters<typeof View>[0] = {
-  $d: () => { },
+  $send: () => { },
   model: initial,
   ctx,
 }

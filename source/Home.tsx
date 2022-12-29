@@ -124,25 +124,25 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 
 export const View = ({
   model,
-  $d,
+  $send,
   gameRoom,
   ctx,
 }: {
   gameRoom: GameRoom.Model
   model: Model
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
   ctx: Ctx
 }) => {
   const user = gameRoom.users[ctx.currentUserId]
 
   if (!user) {
-    return <ViewNotInRoom model={model} $d={$d} ctx={ctx} gameRoom={gameRoom} />
+    return <ViewNotInRoom model={model} $send={$send} ctx={ctx} gameRoom={gameRoom} />
   }
 
   const currentRoom = gameRoom.rooms[user.roomId]
 
   if (!currentRoom) {
-    return <ViewNotInRoom model={model} $d={$d} ctx={ctx} gameRoom={gameRoom} />
+    return <ViewNotInRoom model={model} $send={$send} ctx={ctx} gameRoom={gameRoom} />
   }
 
   const hostProfile = ctx.profiles[currentRoom.hostId]
@@ -167,7 +167,7 @@ export const View = ({
         </Typography>
 
         <Paper sx={{ display: "flex", flexDirection: "column", }}>
-          <CardActionArea onClick={() => $d(["ClickedCurrentRoom"])}>
+          <CardActionArea onClick={() => $send(["ClickedCurrentRoom"])}>
             <AspectRatio aspectRatio={Math.pow(3 / 4, 4)}>
               {gameName ? (
                 viewCoverArt({ gameName })
@@ -207,7 +207,7 @@ export const View = ({
                   startIcon={<Icons.DeleteForever />}
                   variant="outlined"
                   onClick={() => {
-                    $d(["ClickedCurrentRoomDestroy"])
+                    $send(["ClickedCurrentRoomDestroy"])
                   }}
                 >
                   End Room
@@ -222,7 +222,7 @@ export const View = ({
                   startIcon={<Icons.ExitToApp sx={{ "transform": "rotate(180deg)" }} />}
                   variant="outlined"
                   onClick={() => {
-                    $d(["ClickedCurrentRoomLeave"])
+                    $send(["ClickedCurrentRoomLeave"])
                   }}
                 >
                   Leave
@@ -249,7 +249,7 @@ export const View = ({
             <GameRoom.RoomGrid
               ctx={ctx}
               model={gameRoom}
-              onClick={({ roomId }) => $d(['ClickedRoom', { roomId: roomId }])}
+              onClick={({ roomId }) => $send(['ClickedRoom', { roomId: roomId }])}
             />
           </Box>
         </>
@@ -259,14 +259,14 @@ export const View = ({
 }
 
 const ViewNotInRoom = ({
-  $d,
+  $send,
   gameRoom,
   ctx,
 }: {
   ctx: Ctx
   gameRoom: GameRoom.Model
   model: Model
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
 }) => {
   const rooms = Object.values(gameRoom.rooms)
 
@@ -279,7 +279,7 @@ const ViewNotInRoom = ({
           <ViewEmptyState
             actionIcon={<Icons.Add />}
             actionTitle="Create Game"
-            onAction={() => $d(['ClickedCreateRoom', { roomId: RoomId.generate() }])}
+            onAction={() => $send(['ClickedCreateRoom', { roomId: RoomId.generate() }])}
             renderIcon={(props) => <Icons.SportsEsportsOutlined {...props} />}
             title="No Active Games"
           />
@@ -288,7 +288,7 @@ const ViewNotInRoom = ({
 
       {rooms.length > 0 && <>
         <Box sx={{ px: 2 }}>
-          <Button fullWidth variant="contained" onClick={() => $d(['ClickedCreateRoom', { roomId: RoomId.generate() }])} startIcon={<Icons.Add />}>
+          <Button fullWidth variant="contained" onClick={() => $send(['ClickedCreateRoom', { roomId: RoomId.generate() }])} startIcon={<Icons.Add />}>
             Create Game
           </Button>
         </Box>
@@ -304,7 +304,7 @@ const ViewNotInRoom = ({
           <GameRoom.RoomGrid
             ctx={ctx}
             model={gameRoom}
-            onClick={({ roomId }) => $d(['ClickedRoom', { roomId: roomId }])}
+            onClick={({ roomId }) => $send(['ClickedRoom', { roomId: roomId }])}
           />
         </Box>
       </>}

@@ -13,7 +13,7 @@ const modelSetup: Model = {
 }
 
 const props: Parameters<typeof View>[0] = {
-  $d: () => { },
+  $send: () => { },
   ctx,
   goBack: () => { },
   model: modelSetup,

@@ -17,10 +17,10 @@ export type Model = {
   country: Iso3166Alpha2Code
   validation: "NotChecked" | "InvalidPhoneNumber" | "EmptyPhoneNumber"
   submission:
-    | { type: "Idle" }
-    | { type: "Loading" }
-    | { type: "Problem"; message: string }
-    | { type: "Ok" }
+  | { type: "Idle" }
+  | { type: "Loading" }
+  | { type: "Problem"; message: string }
+  | { type: "Ok" }
 }
 
 export const init: Model = {
@@ -118,15 +118,15 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
 export const View = ({
   model,
-  $d,
+  $send,
 }: {
   model: Model
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
 }) => {
   return (
     <UI.FillBox>
       <UI.Header
-        left={<UI.HeaderBackButton onClick={() => $d(["ClickedBack"])} />}
+        left={<UI.HeaderBackButton onClick={() => $send(["ClickedBack"])} />}
         title="Login With Phone"
       />
       <UI.Box
@@ -153,7 +153,7 @@ export const View = ({
           )}
           onChange={(_event, value) => {
             if (value) {
-              $d(["InputtedCountry", value])
+              $send(["InputtedCountry", value])
             }
           }}
         />
@@ -167,7 +167,7 @@ export const View = ({
           label="Phone Number"
           value={model.phoneNumber}
           onChange={(event) => {
-            $d(["InputtedPhoneNumber", event.target.value])
+            $send(["InputtedPhoneNumber", event.target.value])
           }}
           error={
             model.validation === "InvalidPhoneNumber" ||
@@ -176,11 +176,11 @@ export const View = ({
           helperText={
             model.validation === "InvalidPhoneNumber"
               ? `Invalid phone number for ${Iso3166Alpha2Code.toName(
-                  model.country,
-                )}`
+                model.country,
+              )}`
               : model.validation === "EmptyPhoneNumber"
-              ? "Phone number is required"
-              : undefined
+                ? "Phone number is required"
+                : undefined
           }
         />
 
@@ -189,7 +189,7 @@ export const View = ({
           size="large"
           fullWidth
           loading={model.submission.type === "Loading"}
-          onClick={() => $d(["ClickedSendCode"])}
+          onClick={() => $send(["ClickedSendCode"])}
         >
           Send Code
         </UI.Button>

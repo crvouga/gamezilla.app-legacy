@@ -15,19 +15,19 @@ import * as UI from "../UI"
 export type Model = {
   code: string
   submission:
-    | {
-        type: "Idle"
-      }
-    | {
-        type: "Loading"
-      }
-    | {
-        type: "Problem"
-        message: string
-      }
-    | {
-        type: "Ok"
-      }
+  | {
+    type: "Idle"
+  }
+  | {
+    type: "Loading"
+  }
+  | {
+    type: "Problem"
+    message: string
+  }
+  | {
+    type: "Ok"
+  }
 }
 
 //
@@ -117,16 +117,16 @@ export const update = (
 export const View = ({
   phoneNumber,
   model,
-  $d,
+  $send,
 }: {
   phoneNumber: PhoneNumber
   model: Model
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
 }) => {
   return (
     <UI.FillBox>
       <UI.Header
-        left={<UI.HeaderBackButton onClick={() => $d(["ClickedBack"])} />}
+        left={<UI.HeaderBackButton onClick={() => $send(["ClickedBack"])} />}
         title="Verify Code"
       />
       <UI.Box
@@ -143,7 +143,7 @@ export const View = ({
           inputMode="tel"
           label="Code"
           value={model.code}
-          onChange={(e) => $d(["InputtedCode", e.target.value])}
+          onChange={(e) => $send(["InputtedCode", e.target.value])}
           helperText={`The code was sent to ${PhoneNumber.toString(
             phoneNumber,
           )}`}
@@ -154,7 +154,7 @@ export const View = ({
           size="large"
           fullWidth
           loading={model.submission.type === "Loading"}
-          onClick={() => $d(["ClickedVerifyCode"])}
+          onClick={() => $send(["ClickedVerifyCode"])}
         >
           Verify Code
         </UI.Button>

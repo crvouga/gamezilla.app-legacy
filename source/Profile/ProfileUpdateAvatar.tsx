@@ -110,10 +110,10 @@ export const update = (
 
 export const View = ({
   model,
-  $d,
+  $send,
 }: {
   model: Model
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
 }) => {
   return (
     <UI.FillBox>
@@ -121,7 +121,7 @@ export const View = ({
         left={
           <UI.Button
             sx={{ marginLeft: -1 }}
-            onClick={() => $d(["ClickedCancel"])}
+            onClick={() => $send(["ClickedCancel"])}
           >
             Cancel
           </UI.Button>
@@ -130,7 +130,7 @@ export const View = ({
         right={
           <UI.Button
             sx={{ marginRight: -1 }}
-            onClick={() => $d(["ClickedDone"])}
+            onClick={() => $send(["ClickedDone"])}
           >
             Done
           </UI.Button>
@@ -161,8 +161,8 @@ export const View = ({
           open={model.status === "StyleSelectOpened"}
           fullWidth
           value={model.style}
-          onOpen={() => $d(["StyleSelectOpened"])}
-          onClose={() => $d(["StyleSelectClosed"])}
+          onOpen={() => $send(["StyleSelectOpened"])}
+          onClose={() => $send(["StyleSelectClosed"])}
           renderValue={(style) => (
             <UI.Box
               sx={{
@@ -191,7 +191,7 @@ export const View = ({
                 flexDirection: "row",
                 alignItems: "center",
               }}
-              onClick={() => $d(["ClickedStyle", style])}
+              onClick={() => $send(["ClickedStyle", style])}
             >
               <UI.Avatar
                 sx={{ marginRight: 1 }}
@@ -213,7 +213,7 @@ export const View = ({
           fullWidth
           value={model.seed}
           onChange={(event) =>
-            $d([
+            $send([
               "InputtedSeed",
               ProfileAvatar.toSeed(event.currentTarget.value),
             ])
@@ -225,7 +225,7 @@ export const View = ({
           loading={model.status === "GeneratingSeed"}
           fullWidth
           variant="outlined"
-          onClick={() => $d(["ClickedRandomSeed"])}
+          onClick={() => $send(["ClickedRandomSeed"])}
           sx={{ marginBottom: 4 }}
         >
           Random Seed

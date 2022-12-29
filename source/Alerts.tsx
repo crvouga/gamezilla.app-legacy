@@ -13,8 +13,8 @@ import { ConformationDialog } from "./UI"
 export type Model<TMsg = never> = {
   queue: Snack[]
   conformation:
-    | { tag: "closed"; title: string }
-    | { tag: "opened"; title: string; onConfirm: TMsg }
+  | { tag: "closed"; title: string }
+  | { tag: "opened"; title: string; onConfirm: TMsg }
 }
 
 type SnackId = string
@@ -187,19 +187,19 @@ export const runAction = <TMsg,>(
 //
 
 export const View = <TMsg,>({
-  $d,
+  $send,
   model,
 }: {
   model: Model<TMsg>
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
 }) => {
   return (
     <>
       <ConformationDialog
         confirmTitle="Confirm"
-        onCancel={() => $d(["conformation_cancelled"])}
-        onClose={() => $d(["conformation_closed"])}
-        onConfirm={() => $d(["conformation_confirmed"])}
+        onCancel={() => $send(["conformation_cancelled"])}
+        onClose={() => $send(["conformation_closed"])}
+        onConfirm={() => $send(["conformation_confirmed"])}
         open={model.conformation.tag === "opened"}
         title={model.conformation.title}
         cancelTitle="Cancel"
@@ -216,7 +216,7 @@ export const View = <TMsg,>({
             message={model.queue[0].message}
             onClose={() => {
               if (model.queue[0]) {
-                $d(["clicked_away_close", model.queue[0].snackId])
+                $send(["clicked_away_close", model.queue[0].snackId])
               }
             }}
           />

@@ -155,10 +155,10 @@ export const View = ({
   model,
   goBack,
   ctx,
-  $d,
+  $send,
 }: {
   model: Model
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
   goBack: () => void
   ctx: Ctx
 }) => {
@@ -170,21 +170,21 @@ export const View = ({
         subtitle: "Vs Computer",
         ctx,
         playerId: model.player === "None" ? null : model.player,
-        onStartPlaying: () => $d(['StartPlaying', { userId: ctx.currentUserId }]),
-        onStopPlaying: () => $d(['StopPlaying', { userId: ctx.currentUserId }]),
+        onStartPlaying: () => $send(['StartPlaying', { userId: ctx.currentUserId }]),
+        onStopPlaying: () => $send(['StopPlaying', { userId: ctx.currentUserId }]),
         botLevel: {
           values: Object.values(botLevel),
           selected: model.botLevel,
-          onInput: (level) => $d(['InputBotLevel', { botLevel: level, userId: ctx.currentUserId }]),
+          onInput: (level) => $send(['InputBotLevel', { botLevel: level, userId: ctx.currentUserId }]),
         },
         player: {
           values: Object.values(playerTypes),
           selected: model.userPlayerType,
-          onInput: (playerType) => $d(['InputPlayerType', { playerType, userId: ctx.currentUserId }]),
+          onInput: (playerType) => $send(['InputPlayerType', { playerType, userId: ctx.currentUserId }]),
           icon: (playerType) => <PlayerIcon playerType={playerType} sx={{ width: "1rem", height: "1rem" }} />,
         },
         onCancel: goBack,
-        onStartGame: () => $d(['StartGame', { userId: ctx.currentUserId }]),
+        onStartGame: () => $send(['StartGame', { userId: ctx.currentUserId }]),
       })
 
     )
@@ -226,14 +226,14 @@ export const View = ({
               : undefined
           }
           columns={model.columns}
-          onHover={(columnIndex) => $d(["Hovered", { columnIndex }])}
+          onHover={(columnIndex) => $send(["Hovered", { columnIndex }])}
           onClick={(columnIndex) =>
-            $d(["InputMove", { columnIndex, userId: ctx.currentUserId }])
+            $send(["InputMove", { columnIndex, userId: ctx.currentUserId }])
           }
         />
         <Fade in={gameOver.type !== "None"}>
           <Box
-            onClick={() => $d(["Restart", { userId: ctx.currentUserId }])}
+            onClick={() => $send(["Restart", { userId: ctx.currentUserId }])}
             sx={{
               position: "absolute",
               top: 0,
@@ -263,19 +263,19 @@ export const View = ({
         <ActionButton
           icon={<Icons.ExitToApp sx={{ transform: "rotate(180deg)" }} />}
           label="Exit"
-          onClick={() => $d(["StopGame", { userId: ctx.currentUserId }])}
+          onClick={() => $send(["StopGame", { userId: ctx.currentUserId }])}
           disabled={stopGameRes.type === "Err"}
         />
         <ActionButton
           icon={<Icons.RestartAlt />}
           label="Restart"
-          onClick={() => $d(["Restart", { userId: ctx.currentUserId }])}
+          onClick={() => $send(["Restart", { userId: ctx.currentUserId }])}
           disabled={restartRes.type === "Err"}
         />
         <ActionButton
           icon={<Icons.SwapHorizSharp />}
           label="Swap"
-          onClick={() => $d(["SwapSides", { userId: ctx.currentUserId }])}
+          onClick={() => $send(["SwapSides", { userId: ctx.currentUserId }])}
           disabled={swapSidesRes.type === "Err"}
         />
       </Box>

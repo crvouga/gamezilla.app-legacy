@@ -72,7 +72,7 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 // 
 // 
 
-export const view = ({ model, ctx, onCancel, $d }: { $d: (m: Msg) => void; ctx: Ctx; model: Model, onCancel: () => void }) => {
+export const view = ({ model, ctx, onCancel, $send }: { $send: (m: Msg) => void; ctx: Ctx; model: Model, onCancel: () => void }) => {
     switch (model.type) {
         case 'setup': {
             return (
@@ -84,15 +84,15 @@ export const view = ({ model, ctx, onCancel, $d }: { $d: (m: Msg) => void; ctx: 
                     playerOne: {
                         label: 'White',
                         userId: model.white,
-                        onStartPlaying: () => $d(['StartPlaying', { stone: 'white' }]),
-                        onStopPlaying: () => $d(['StopPlaying', { stone: 'white' }]),
+                        onStartPlaying: () => $send(['StartPlaying', { stone: 'white' }]),
+                        onStopPlaying: () => $send(['StopPlaying', { stone: 'white' }]),
                         icon: (sx) => viewStoneIcon({ ...sx, stone: 'white' })
                     },
                     playerTwo: {
                         label: 'Black',
                         userId: model.black,
-                        onStartPlaying: () => $d(['StartPlaying', { stone: 'black' }]),
-                        onStopPlaying: () => $d(['StopPlaying', { stone: 'black' }]),
+                        onStartPlaying: () => $send(['StartPlaying', { stone: 'black' }]),
+                        onStopPlaying: () => $send(['StopPlaying', { stone: 'black' }]),
                         icon: sx => viewStoneIcon({ ...sx, stone: 'black' })
                     },
                     onCancel,

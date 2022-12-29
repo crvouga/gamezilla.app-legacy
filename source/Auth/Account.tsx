@@ -58,17 +58,17 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
 export const View = ({
   username,
-  $d,
+  $send,
 }: {
   username: string
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
   model: Model
 }) => (
   <UI.FillBox>
     <UI.Header title={username} />
 
     <UI.List>
-      <UI.ListItemButton onClick={() => $d(["ClickedUpdateProfile"])}>
+      <UI.ListItemButton onClick={() => $send(["ClickedUpdateProfile"])}>
         <UI.ListItemIcon>
           <UI.Icons.Edit />
         </UI.ListItemIcon>
@@ -78,21 +78,21 @@ export const View = ({
         </UI.ListItemSecondaryAction>
       </UI.ListItemButton>
 
-      <UI.ListItemButton onClick={() => $d(["ClickedDeleteProfile"])}>
+      <UI.ListItemButton onClick={() => $send(["ClickedDeleteProfile"])}>
         <UI.ListItemIcon>
           <UI.Icons.Delete />
         </UI.ListItemIcon>
         <UI.ListItemText primary="Delete Profile" />
       </UI.ListItemButton>
 
-      <UI.ListItemButton onClick={() => $d(["ClickedLogout"])}>
+      <UI.ListItemButton onClick={() => $send(["ClickedLogout"])}>
         <UI.ListItemIcon>
           <UI.Icons.Logout />
         </UI.ListItemIcon>
         <UI.ListItemText primary="Logout" />
       </UI.ListItemButton>
 
-      <UI.ListItemButton onClick={() => $d(["ClickedDebug"])}>
+      <UI.ListItemButton onClick={() => $send(["ClickedDebug"])}>
         <UI.ListItemIcon>
           <UI.Icons.BugReport />
         </UI.ListItemIcon>
