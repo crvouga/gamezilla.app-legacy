@@ -67,14 +67,14 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 export const View = ({
   chatStore,
   profileStore,
-  $d,
+  $send,
   currentUserId,
 }: {
   chatStore: ChatStore.Model
   profileStore: ProfileStore.Model
   currentUserId: UserId
   model: Model
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
 }) => {
   const query =
     chatStore.queries.Conversation.FindManyByUserId[currentUserId] ??
@@ -115,7 +115,7 @@ export const View = ({
         <ViewEmptyState
           actionIcon={<Icons.Send />}
           actionTitle="Send Message"
-          onAction={() => $d(["ClickedSendMessage"])}
+          onAction={() => $send(["ClickedSendMessage"])}
           renderIcon={props => <Icons.Chat {...props} />}
           title="No conversations"
         />
@@ -130,7 +130,7 @@ export const View = ({
         <Button
           fullWidth
           variant="contained"
-          onClick={() => $d(["ClickedSendMessage"])}
+          onClick={() => $send(["ClickedSendMessage"])}
         >
           Send Message
         </Button>
@@ -140,7 +140,7 @@ export const View = ({
         {conversations.map((item) => (
           <ListItemButton
             key={item.conversationId}
-            onClick={() => $d(["ClickedConversationItem", item])}
+            onClick={() => $send(["ClickedConversationItem", item])}
           >
             <ListItemAvatar>
               <AvatarGroup max={2}>

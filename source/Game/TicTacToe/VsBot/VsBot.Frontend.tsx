@@ -128,13 +128,13 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 export const View = ({
   goBack,
   model,
-  $d,
+  $send,
   ctx,
 }: {
   ctx: Ctx
   goBack: () => void
   model: Model
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
 }) => {
   if (model.type === "Setup") {
     return (
@@ -145,17 +145,17 @@ export const View = ({
         coverArt: viewCoverArt(),
         ctx,
         onCancel: goBack,
-        onStartGame: () => $d(["StartGame", { userId: ctx.currentUserId }]),
-        onStartPlaying: () => $d(["StartPlaying", { userId: ctx.currentUserId }]),
-        onStopPlaying: () => $d(["StopPlaying", { userId: ctx.currentUserId }]),
+        onStartGame: () => $send(["StartGame", { userId: ctx.currentUserId }]),
+        onStartPlaying: () => $send(["StartPlaying", { userId: ctx.currentUserId }]),
+        onStopPlaying: () => $send(["StopPlaying", { userId: ctx.currentUserId }]),
         player: {
           values: Object.values(playerTypes),
-          onInput: (player) => $d(["InputPlayerType", { userId: ctx.currentUserId, playerType: player }]),
+          onInput: (player) => $send(["InputPlayerType", { userId: ctx.currentUserId, playerType: player }]),
           selected: model.userPlayerType,
           icon: (playerType) => <PlayerTypeIcon playerType={playerType} />,
         },
         botLevel: {
-          onInput: (botLevel) => $d(["InputBot", { userId: ctx.currentUserId, botLevel }]),
+          onInput: (botLevel) => $send(["InputBot", { userId: ctx.currentUserId, botLevel }]),
           selected: model.botLevel,
           values: Object.values(botLevels)
         }
@@ -188,13 +188,13 @@ export const View = ({
           <ViewBoard
             board={model.board}
             onClick={(position) =>
-              $d(["InputMove", { userId: ctx.currentUserId, position }])
+              $send(["InputMove", { userId: ctx.currentUserId, position }])
             }
           />
 
           <UI.Fade in={gameOver.type !== "None"}>
             <UI.Box
-              onClick={() => $d(["Restart", { userId: ctx.currentUserId }])}
+              onClick={() => $send(["Restart", { userId: ctx.currentUserId }])}
               sx={{
                 position: "absolute",
                 inset: 0,
@@ -218,7 +218,7 @@ export const View = ({
       <UI.Box sx={{ display: "flex" }}>
         <UI.ActionButton
           onClick={() => {
-            $d(["StopGame", { userId: ctx.currentUserId }])
+            $send(["StopGame", { userId: ctx.currentUserId }])
           }}
           disabled={stopGameRes.type === "Err"}
           icon={<UI.Icons.ExitToApp sx={{ transform: "rotate(180deg)" }} />}
@@ -226,13 +226,13 @@ export const View = ({
         />
         <UI.ActionButton
           disabled={swapSidesRes.type === "Err"}
-          onClick={() => $d(["SwapSides", { userId: ctx.currentUserId }])}
+          onClick={() => $send(["SwapSides", { userId: ctx.currentUserId }])}
           icon={<UI.Icons.SwapHoriz />}
           label="Swap"
         />
         <UI.ActionButton
           disabled={restartRes.type === "Err"}
-          onClick={() => $d(["Restart", { userId: ctx.currentUserId }])}
+          onClick={() => $send(["Restart", { userId: ctx.currentUserId }])}
           icon={<UI.Icons.RestartAlt />}
           label="Reset"
         />

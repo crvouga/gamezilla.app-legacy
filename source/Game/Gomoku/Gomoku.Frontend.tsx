@@ -121,7 +121,7 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 // 
 // 
 
-export const view = ({ model, ctx, gameRoomCtx, $d }: { model: Model, ctx: Ctx, gameRoomCtx: GameRoomCtx, $d: (m: Msg) => void }) => {
+export const view = ({ model, ctx, gameRoomCtx, $send }: { model: Model, ctx: Ctx, gameRoomCtx: GameRoomCtx, $send: (m: Msg) => void }) => {
     switch (model.type) {
         case 'None': {
             return (
@@ -129,8 +129,8 @@ export const view = ({ model, ctx, gameRoomCtx, $d }: { model: Model, ctx: Ctx, 
                     coverArt: viewCoverArt(),
                     ctx,
                     gameRoomCtx,
-                    onUserVsComputer: () => $d(['InputMode', { userId: ctx.currentUserId, mode: "VsBot" }]),
-                    onVsUser: () => $d(['InputMode', { userId: ctx.currentUserId, mode: "VsUser" }]),
+                    onUserVsComputer: () => $send(['InputMode', { userId: ctx.currentUserId, mode: "VsBot" }]),
+                    onVsUser: () => $send(['InputMode', { userId: ctx.currentUserId, mode: "VsUser" }]),
                     title: "Gomoku"
                 })
 
@@ -138,15 +138,15 @@ export const view = ({ model, ctx, gameRoomCtx, $d }: { model: Model, ctx: Ctx, 
         }
 
         case 'VsBot': {
-            return VsBot.view({ model: model.child, ctx, onBack: () => $d(['InputMode', { mode: "None", userId: ctx.currentUserId }]), $d: m => $d(['VsBot', m]) })
+            return VsBot.view({ model: model.child, ctx, onBack: () => $send(['InputMode', { mode: "None", userId: ctx.currentUserId }]), $send: m => $send(['VsBot', m]) })
         }
 
         case 'VsUser': {
             return VsUser.view({
                 model: model.child,
                 ctx,
-                onCancel: () => $d(['InputMode', { mode: "None", userId: ctx.currentUserId }]),
-                $d: m => $d(['VsUser', m]),
+                onCancel: () => $send(['InputMode', { mode: "None", userId: ctx.currentUserId }]),
+                $send: m => $send(['VsUser', m]),
             })
         }
     }

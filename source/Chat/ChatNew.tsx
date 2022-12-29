@@ -211,7 +211,7 @@ export const subscriptions = (_model: Model) => {
 export const View = ({
   chatStore,
   currentUserProfile,
-  $d,
+  $send,
   model,
   profileStore,
 }: {
@@ -219,7 +219,7 @@ export const View = ({
   chatStore: ChatStore.Model
   currentUserProfile: ProfileStore.Profile
   model: Model
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
 }) => {
   const mutation = chatStore.mutations.Conversation.FindElseInsert
 
@@ -240,14 +240,14 @@ export const View = ({
   return (
     <UI.FillBox>
       <UI.Header
-        left={<UI.HeaderBackButton onClick={() => $d(["ClickedCancel"])} />}
+        left={<UI.HeaderBackButton onClick={() => $send(["ClickedCancel"])} />}
         title="New message"
         right={
           <UI.Button
             size="large"
             disabled={Object.values(model.selected).length === 0}
             sx={{ marginRight: -1 }}
-            onClick={() => $d(["ClickedChat"])}
+            onClick={() => $send(["ClickedChat"])}
             loading={mutation.type === "Loading"}
           >
             Chat
@@ -274,7 +274,7 @@ export const View = ({
             key={profile.userId}
             label={profile.username}
             onDelete={() => {
-              $d([
+              $send([
                 "ClickedSelectedDelete",
                 {
                   userId: profile.userId,
@@ -290,7 +290,7 @@ export const View = ({
           value={model.searchText}
           onChange={(event) => {
             const searchText = event.currentTarget.value
-            $d(["InputtedSearch", searchText])
+            $send(["InputtedSearch", searchText])
           }}
         />
       </UI.Box>
@@ -309,7 +309,7 @@ export const View = ({
             key={profile.userId}
             profile={profile}
             onClick={() => {
-              $d([
+              $send([
                 "ClickedResult",
                 {
                   userId: profile.userId,

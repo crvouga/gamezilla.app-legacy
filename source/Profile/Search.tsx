@@ -84,11 +84,11 @@ export const update = (
 export const View = ({
   profileStore,
   model,
-  $d,
+  $send,
 }: {
   profileStore: ProfileStore.Model
   model: Model
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
 }) => {
   const results = ProfileStore.toSearch(model.searchText, profileStore)
   const query = profileStore.search[model.searchText] ?? RemoteData.NotAsked
@@ -99,11 +99,11 @@ export const View = ({
         sx={{ width: "100%", paddingY: 1, paddingX: 2 }}
         placeholder="Search"
         value={model.searchText}
-        onChange={(event) => $d(["InputtedSearchText", event.target.value])}
+        onChange={(event) => $send(["InputtedSearchText", event.target.value])}
         endAdornment={
           <UI.InputAdornment position="end">
             {query.type === "Loading" && <UI.CircularProgress size={24} />}
-            <UI.IconButton edge="end" onClick={() => $d(["ClickedClear"])}>
+            <UI.IconButton edge="end" onClick={() => $send(["ClickedClear"])}>
               <UI.Icons.Close />
             </UI.IconButton>
           </UI.InputAdornment>
@@ -123,7 +123,7 @@ export const View = ({
           <UI.ListItemButton
             key={result.userId}
             sx={{ width: "100%" }}
-            onClick={() => $d(["ClickedResult", { userId: result.userId }])}
+            onClick={() => $send(["ClickedResult", { userId: result.userId }])}
           >
             <UI.ListItemAvatar>
               <UI.Avatar src={result.avatarUrl} />

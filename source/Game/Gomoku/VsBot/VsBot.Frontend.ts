@@ -88,19 +88,19 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 // 
 // 
 
-export const view = ({ $d, model, ctx, onBack }: { model: Model, ctx: Ctx, $d: (m: Msg) => void; onBack: () => void }) => {
+export const view = ({ $send, model, ctx, onBack }: { model: Model, ctx: Ctx, $send: (m: Msg) => void; onBack: () => void }) => {
     switch (model.type) {
         case 'setup': {
             return (
                 viewVsBotSetupScreen({
                     botLevel: {
-                        onInput: (botLevel) => $d(['InputBotLevel', { botLevel }]),
+                        onInput: (botLevel) => $send(['InputBotLevel', { botLevel }]),
                         selected: model.botLevel,
                         values: Object.values(botLevels)
                     },
                     coverArt: viewCoverArt(),
                     player: {
-                        onInput: (userStone) => $d(['InputUserStone', { userStone }]),
+                        onInput: (userStone) => $send(['InputUserStone', { userStone }]),
                         selected: model.userStone,
                         values: Object.values(stones),
                         icon: (stone) => viewStoneIcon({ stone })
@@ -109,9 +109,9 @@ export const view = ({ $d, model, ctx, onBack }: { model: Model, ctx: Ctx, $d: (
                     title: "Gomoku",
                     subtitle: "Vs Computer",
                     onCancel: onBack,
-                    onStartPlaying: () => $d(['StartPlaying']),
-                    onStopPlaying: () => $d(['StopPlaying']),
-                    onStartGame: () => $d(['StartGame']),
+                    onStartPlaying: () => $send(['StartPlaying']),
+                    onStopPlaying: () => $send(['StopPlaying']),
+                    onStartGame: () => $send(['StartGame']),
                     playerId: model.userId,
                 })
             )
@@ -127,7 +127,7 @@ export const view = ({ $d, model, ctx, onBack }: { model: Model, ctx: Ctx, $d: (
             //         botPlayer: toOppositeStone(model.userStone),
             //         leftPlayer: 'White',
             //         playerUserId: model.userId,
-            //         viewGame: () => viewBoard({ board: model.board, onPress: position => $d(['InputMove', { position }]) }),
+            //         viewGame: () => viewBoard({ board: model.board, onPress: position => $send(['InputMove', { position }]) }),
             //         viewPlayerIcon: (player, sx) => viewStoneIcon({ stone: player, ...sx })
             //     })
             // )
@@ -139,7 +139,7 @@ export const view = ({ $d, model, ctx, onBack }: { model: Model, ctx: Ctx, $d: (
                     viewMessage({ ctx, model }),
                     box({ position: "relative", aspectRatio: "1", }, [
                         viewBoard({ board: model.board, }),
-                        viewOverlay({ $d, model, ctx }),
+                        viewOverlay({ $send, model, ctx }),
                     ])
                 ])
             }
@@ -152,8 +152,8 @@ export const view = ({ $d, model, ctx, onBack }: { model: Model, ctx: Ctx, $d: (
                         viewPlayerSlots({ ctx, model }),
                         viewMessage({ ctx, model }),
                         box({ position: "relative", aspectRatio: "1", }, [
-                            viewBoard({ board: model.board, onPress: position => $d(['InputMove', { position }]) }),
-                            viewOverlay({ $d, ctx, model }),
+                            viewBoard({ board: model.board, onPress: position => $send(['InputMove', { position }]) }),
+                            viewOverlay({ $send, ctx, model }),
                         ]),
                     ])
                 )
@@ -164,14 +164,14 @@ export const view = ({ $d, model, ctx, onBack }: { model: Model, ctx: Ctx, $d: (
                     viewPlayerSlots({ ctx, model }),
                     viewMessage({ ctx, model }),
                     box({ position: "relative", aspectRatio: "1", }, [
-                        viewBoard({ board: model.board, onPress: position => $d(['InputMove', { position }]) }),
-                        viewOverlay({ $d, ctx, model }),
+                        viewBoard({ board: model.board, onPress: position => $send(['InputMove', { position }]) }),
+                        viewOverlay({ $send, ctx, model }),
                     ]),
                     box({ flex: 1 }, []),
                     box({ display: 'flex' }, [
-                        actionButton({ onPress: () => $d(['StopGame']), iconName: "exit", label: "Exit" }),
-                        actionButton({ onPress: () => $d(['Restart']), iconName: "restart", label: "Restart" }),
-                        actionButton({ onPress: () => $d(['SwapSides']), iconName: "swap", label: "Swap Sides" }),
+                        actionButton({ onPress: () => $send(['StopGame']), iconName: "exit", label: "Exit" }),
+                        actionButton({ onPress: () => $send(['Restart']), iconName: "restart", label: "Restart" }),
+                        actionButton({ onPress: () => $send(['SwapSides']), iconName: "swap", label: "Swap Sides" }),
                     ])
                 ])
             )
@@ -179,7 +179,7 @@ export const view = ({ $d, model, ctx, onBack }: { model: Model, ctx: Ctx, $d: (
     }
 }
 
-const viewOverlay = ({ model, ctx, $d }: { ctx: Ctx, model: GameModel, $d: (m: Msg) => void }) => {
+const viewOverlay = ({ model, ctx, $send }: { ctx: Ctx, model: GameModel, $send: (m: Msg) => void }) => {
     const props: Sx = {
         position: 'absolute', top: 0, left: 0, width: '100%',
         display: 'flex', flexDirection: "column", justifyContent: 'center', alignItems: 'center',
@@ -193,8 +193,8 @@ const viewOverlay = ({ model, ctx, $d }: { ctx: Ctx, model: GameModel, $d: (m: M
             box(props, [
                 viewGameOverTitle({ model, ctx }),
                 box({ width: '100%', display: 'flex', gap: 2, p: 2 }, [
-                    button({ onPress: () => $d(['StopGame']), width: '100%', variant: "contained", size: "lg", startIcon: "exit" }, 'Exit'),
-                    button({ onPress: () => $d(['Restart']), width: '100%', variant: "contained", size: "lg", startIcon: "restart" }, 'Play Again'),
+                    button({ onPress: () => $send(['StopGame']), width: '100%', variant: "contained", size: "lg", startIcon: "exit" }, 'Exit'),
+                    button({ onPress: () => $send(['Restart']), width: '100%', variant: "contained", size: "lg", startIcon: "restart" }, 'Play Again'),
                 ])
             ])
         )

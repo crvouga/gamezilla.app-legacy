@@ -211,11 +211,11 @@ const colorMap: { [color in Color]: string } = {
 export const View = ({
   model,
   ctx,
-  $d,
+  $send,
 }: {
   ctx: Ctx
   model: Model
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
 }) => {
 
   if (model.type === "Setup") {
@@ -274,7 +274,7 @@ export const View = ({
             }
             value={model.seed}
             onChange={(e) =>
-              $d([
+              $send([
                 "InputSeed",
                 { userId: ctx.currentUserId, seed: e.target.value },
               ])
@@ -286,7 +286,7 @@ export const View = ({
                 <InputAdornment
                   position="end"
                   onClick={() =>
-                    $d([
+                    $send([
                       "InputSeed",
                       {
                         userId: ctx.currentUserId,
@@ -341,7 +341,7 @@ export const View = ({
               {player.userId === ctx.currentUserId && (
                 <Button
                   onClick={() =>
-                    $d(["StopPlaying", { userId: ctx.currentUserId }])
+                    $send(["StopPlaying", { userId: ctx.currentUserId }])
                   }
                 >
                   Stop Playing
@@ -355,7 +355,7 @@ export const View = ({
               variant="outlined"
               fullWidth
               onClick={() =>
-                $d(["StartPlaying", { userId: ctx.currentUserId }])
+                $send(["StartPlaying", { userId: ctx.currentUserId }])
               }
               disabled={
                 handle(["StartPlaying", { userId: ctx.currentUserId }], model)
@@ -371,7 +371,7 @@ export const View = ({
           <Button
             fullWidth
             variant="contained"
-            onClick={() => $d(["StartGame", { userId: ctx.currentUserId }])}
+            onClick={() => $send(["StartGame", { userId: ctx.currentUserId }])}
             disabled={
               handle(["StartGame", { userId: ctx.currentUserId }], model)
                 .type === "Err"
@@ -444,10 +444,10 @@ export const View = ({
           <Joystick
             activeDirection={p(currentUserPlayer.direction, d => d === 'None' ? undefined : d)}
             onChange={(direction) =>
-              $d(["InputDirection", { direction, userId: ctx.currentUserId }])
+              $send(["InputDirection", { direction, userId: ctx.currentUserId }])
             }
             onDone={() =>
-              $d(["InputDirection", { direction: "None", userId: ctx.currentUserId }])
+              $send(["InputDirection", { direction: "None", userId: ctx.currentUserId }])
             }
             activeFill="#fff"
             fill="#000"
@@ -457,7 +457,7 @@ export const View = ({
             <ActionButton
               icon={<Icons.ExitToApp sx={{ transform: "rotate(180deg)" }} />}
               label="Exit"
-              onClick={() => $d(['StopGame', { userId: ctx.currentUserId }])}
+              onClick={() => $send(['StopGame', { userId: ctx.currentUserId }])}
             />
           </Box>
         </>

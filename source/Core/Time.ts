@@ -9,10 +9,10 @@ export const now = (): Task<number> => {
 
 export const delay =
   <TMsg>(timeout: number, msg: TMsg): Task<TMsg> =>
-  async () => {
-    await new Promise((resolve) => setTimeout(resolve, timeout))
-    return msg
-  }
+    async () => {
+      await new Promise((resolve) => setTimeout(resolve, timeout))
+      return msg
+    }
 
 //
 //
@@ -29,12 +29,12 @@ export const startTimeout = <Msg>(
   duration: number,
   msg: Msg,
 ): Cmd<Msg> => {
-  return ($d) => {
+  return ($send) => {
     timeouts.set(timeoutId, timeoutId)
 
     setTimeout(() => {
       if (timeouts.has(timeoutId)) {
-        $d(msg)
+        $send(msg)
       }
 
       timeouts.delete(timeoutId)

@@ -415,12 +415,12 @@ export const View = ({
   currentUserId,
   store,
   model,
-  $d,
+  $send,
 }: {
   currentUserId: UserId
   store: ProfileStore.Model
   model: Model
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
 }) => {
   const theme = UI.useTheme()
   const user = model.users[currentUserId]
@@ -431,7 +431,7 @@ export const View = ({
         model={model}
         store={store}
         currentUserId={currentUserId}
-        $d={$d}
+        $send={$send}
       />
     )
   }
@@ -444,7 +444,7 @@ export const View = ({
         model={model}
         store={store}
         currentUserId={currentUserId}
-        $d={$d}
+        $send={$send}
       />
     )
   }
@@ -481,9 +481,8 @@ export const View = ({
                       width: 100,
                       height: 100,
                       boxSizing: "content-box",
-                      border: `solid 8px ${
-                        isActive ? theme.palette.primary.main : "transparent"
-                      }`,
+                      border: `solid 8px ${isActive ? theme.palette.primary.main : "transparent"
+                        }`,
                     }}
                   />
                 </UI.Box>
@@ -520,7 +519,7 @@ export const View = ({
           startIcon={<UI.Icons.CallEnd />}
           color="error"
           size="large"
-          onClick={() => $d(["LeaveParty", { userId: currentUserId }])}
+          onClick={() => $send(["LeaveParty", { userId: currentUserId }])}
         >
           Leave
         </UI.Button>
@@ -533,12 +532,12 @@ const ViewNotInParty = ({
   currentUserId,
   model,
   store,
-  $d,
+  $send,
 }: {
   store: ProfileStore.Model
   model: Model
   currentUserId: UserId
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
 }) => {
   const parties = Object.values(model.parties)
   return (
@@ -550,7 +549,7 @@ const ViewNotInParty = ({
           variant="contained"
           size="large"
           onClick={() =>
-            $d([
+            $send([
               "StartParty",
               { hostId: currentUserId, partyId: PartyId.generate() },
             ])
@@ -569,7 +568,7 @@ const ViewNotInParty = ({
           <UI.ListItemButton
             key={party.partyId}
             onClick={() =>
-              $d([
+              $send([
                 "JoinParty",
                 { userId: currentUserId, partyId: party.partyId },
               ])
@@ -580,9 +579,8 @@ const ViewNotInParty = ({
             </UI.ListItemAvatar>
 
             <UI.ListItemText
-              primary={`${
-                store.profiles[party.hostId]?.username ?? "..."
-              }'s party`}
+              primary={`${store.profiles[party.hostId]?.username ?? "..."
+                }'s party`}
               secondary={`${countUsersInParty(party.partyId, model)} in party`}
             />
           </UI.ListItemButton>
@@ -603,18 +601,18 @@ const countUsersInParty = (partyId: PartyId, model: Model): number => {
 }
 
 export const ViewBanner = ({
-  $d,
+  $send,
   route,
   currentUserId,
   model,
 }: // store,
-{
-  store: ProfileStore.Model
-  route: Route.Model
-  currentUserId: UserId
-  model: Model
-  $d: (msg: Msg) => void
-}) => {
+  {
+    store: ProfileStore.Model
+    route: Route.Model
+    currentUserId: UserId
+    model: Model
+    $send: (msg: Msg) => void
+  }) => {
   if (route[0] === "Party") {
     return <></>
   }
@@ -635,7 +633,7 @@ export const ViewBanner = ({
     <UI.Typography
       variant="caption"
       align="center"
-      onClick={() => $d(["ClickedBanner"])}
+      onClick={() => $send(["ClickedBanner"])}
       sx={{
         width: "100%",
         paddingX: 2,
@@ -655,7 +653,7 @@ export const ViewBanner = ({
   // return (
   //   <>
   //     <UI.ButtonBase
-  //       onClick={() => $d(["ClickedBanner"])}
+  //       onClick={() => $send(["ClickedBanner"])}
   //       sx={{
   //         width: "100%",
   //         height: 58,
@@ -755,26 +753,26 @@ const loadDevice =
   }: {
     routerRtpCapabilities: RtpCapabilities
   }): Task<LoadDevice_Done[2]> =>
-  async () => {
-    try {
-      if (device) {
-        return Err("device_is_already_loaded")
+    async () => {
+      try {
+        if (device) {
+          return Err("device_is_already_loaded")
+        }
+
+        const deviceNew = new mediasoupClient.Device()
+
+        await deviceNew.load({ routerRtpCapabilities })
+
+        device = deviceNew
+
+        return Ok({
+          deviceRtpCapabilities: deviceNew.rtpCapabilities,
+        })
+      } catch (_error) {
+        console.error(_error)
+        return Err("failed_to_load_device")
       }
-
-      const deviceNew = new mediasoupClient.Device()
-
-      await deviceNew.load({ routerRtpCapabilities })
-
-      device = deviceNew
-
-      return Ok({
-        deviceRtpCapabilities: deviceNew.rtpCapabilities,
-      })
-    } catch (_error) {
-      console.error(_error)
-      return Err("failed_to_load_device")
     }
-  }
 
 const unloadDevice: Task<UnloadDevice_Done[1]> = async () => {
   device = null
@@ -784,10 +782,10 @@ const unloadDevice: Task<UnloadDevice_Done[1]> = async () => {
 const backendProducerId$ = new Rx.Subject<{ producerId: string }>()
 const emitBackendProducerId =
   ({ producerId }: { producerId: string }): Task<Unit> =>
-  async () => {
-    backendProducerId$.next({ producerId })
-    return Unit
-  }
+    async () => {
+      backendProducerId$.next({ producerId })
+      return Unit
+    }
 
 const initSendTransport =
   ({
@@ -797,53 +795,53 @@ const initSendTransport =
     userId: UserId
     transportOptions: TransportOptions
   }): Task<SendTransport_InitFrontend_Done[1]> =>
-  async () => {
-    if (!device) {
-      return Err("device_does_not_exists")
-    }
+    async () => {
+      if (!device) {
+        return Err("device_does_not_exists")
+      }
 
-    if (sendTransport) {
-      return Err("producer_transport_is_already_initialized")
-    }
+      if (sendTransport) {
+        return Err("producer_transport_is_already_initialized")
+      }
 
-    sendTransport = device.createSendTransport({
-      ...transportOptions,
-      id: transportOptions.transportId,
+      sendTransport = device.createSendTransport({
+        ...transportOptions,
+        id: transportOptions.transportId,
 
-      // @ts-ignore
-      iceCandidates: transportOptions.iceCandidates,
+        // @ts-ignore
+        iceCandidates: transportOptions.iceCandidates,
 
-      // this fixes compiler error but cause runtime error 😑
-      // iceCandidates: options.iceCandidates.map(item => ({
-      //     ...item, tcpType: item.tcpType ?? "passive"
-      // }))
-    })
+        // this fixes compiler error but cause runtime error 😑
+        // iceCandidates: options.iceCandidates.map(item => ({
+        //     ...item, tcpType: item.tcpType ?? "passive"
+        // }))
+      })
 
-    sendTransport.on("connect", ({ dtlsParameters }, callback, _errback) => {
-      mediasoupClientMsgs.next([
-        "SendTransport_OnConnect",
-        { userId, dtlsParameters },
-      ])
-      callback()
-    })
-
-    sendTransport.on(
-      "produce",
-      ({ appData, kind, rtpParameters }, callback) => {
+      sendTransport.on("connect", ({ dtlsParameters }, callback, _errback) => {
         mediasoupClientMsgs.next([
-          "SendTransport_OnProduce",
-          { userId, appData, kind, rtpParameters },
+          "SendTransport_OnConnect",
+          { userId, dtlsParameters },
         ])
-        backendProducerId$.subscribe(({ producerId }) => {
-          callback({
-            id: producerId,
-          })
-        })
-      },
-    )
+        callback()
+      })
 
-    return Ok(Unit)
-  }
+      sendTransport.on(
+        "produce",
+        ({ appData, kind, rtpParameters }, callback) => {
+          mediasoupClientMsgs.next([
+            "SendTransport_OnProduce",
+            { userId, appData, kind, rtpParameters },
+          ])
+          backendProducerId$.subscribe(({ producerId }) => {
+            callback({
+              id: producerId,
+            })
+          })
+        },
+      )
+
+      return Ok(Unit)
+    }
 
 const startProducing = (): Task<StartProducing_Done[1]> => async () => {
   if (!sendTransport) {
@@ -886,34 +884,34 @@ const initRecvTransport =
     userId: UserId
     transportOptions: TransportOptions
   }): Task<RecvTransport_InitFrontend_Done[1]> =>
-  async () => {
-    if (!device) {
-      return Err("device_does_not_exists")
+    async () => {
+      if (!device) {
+        return Err("device_does_not_exists")
+      }
+
+      recvTransport = device.createRecvTransport({
+        ...transportOptions,
+        id: transportOptions.transportId,
+
+        // @ts-ignore
+        iceCandidates: transportOptions.iceCandidates,
+
+        // this fixes compiler error but cause runtime error 😑
+        // iceCandidates: transportOptions.iceCandidates.map(item => ({
+        //     ...item, tcpType: item.tcpType ?? "passive"
+        // }))
+      })
+
+      recvTransport.on("connect", ({ dtlsParameters }, callback) => {
+        mediasoupClientMsgs.next([
+          "RecvTransport_OnConnect",
+          { userId, dtlsParameters },
+        ])
+        callback()
+      })
+
+      return Ok(Unit)
     }
-
-    recvTransport = device.createRecvTransport({
-      ...transportOptions,
-      id: transportOptions.transportId,
-
-      // @ts-ignore
-      iceCandidates: transportOptions.iceCandidates,
-
-      // this fixes compiler error but cause runtime error 😑
-      // iceCandidates: transportOptions.iceCandidates.map(item => ({
-      //     ...item, tcpType: item.tcpType ?? "passive"
-      // }))
-    })
-
-    recvTransport.on("connect", ({ dtlsParameters }, callback) => {
-      mediasoupClientMsgs.next([
-        "RecvTransport_OnConnect",
-        { userId, dtlsParameters },
-      ])
-      callback()
-    })
-
-    return Ok(Unit)
-  }
 
 // https://mediasoup.org/documentation/v3/mediasoup-client/api/#ProducerOptions
 // https://mediasoup.org/documentation/v3/mediasoup-client/api/#transport-produce

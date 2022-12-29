@@ -214,15 +214,15 @@ const toggleVisibility = (visibility: Visibility): Visibility => {
 
 export const View = ({
   model,
-  $d,
+  $send,
 }: {
   model: Model
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
 }) => {
   return (
     <UI.FillBox>
       <UI.Header
-        left={<UI.HeaderBackButton onClick={() => $d(["ClickedBack"])} />}
+        left={<UI.HeaderBackButton onClick={() => $send(["ClickedBack"])} />}
         title="Create Account"
       />
 
@@ -243,7 +243,7 @@ export const View = ({
           inputMode="email"
           label="Email Address"
           value={model.emailAddress}
-          onChange={(event) => $d(["InputtedEmailAddress", event.target.value])}
+          onChange={(event) => $send(["InputtedEmailAddress", event.target.value])}
           error={
             model.submission.type === "ProblemValidation" &&
             model.submission.emailAddress.length > 0
@@ -262,7 +262,7 @@ export const View = ({
           fullWidth
           label="Password"
           value={model.password}
-          onChange={(event) => $d(["InputtedPassword", event.target.value])}
+          onChange={(event) => $send(["InputtedPassword", event.target.value])}
           error={
             model.submission.type === "ProblemValidation" &&
             model.submission.password.length > 0
@@ -276,7 +276,7 @@ export const View = ({
             endAdornment: (
               <UI.InputAdornment position="end">
                 <UI.Button
-                  onClick={() => $d(["ClickedTogglePasswordVisibility"])}
+                  onClick={() => $send(["ClickedTogglePasswordVisibility"])}
                 >
                   {model.passwordVisibility === "Hiding" ? "Show" : "Hide"}
                 </UI.Button>
@@ -288,7 +288,7 @@ export const View = ({
         <UI.Button
           variant="contained"
           loading={model.submission.type === "Loading"}
-          onClick={() => $d(["ClickedCreateAccount"])}
+          onClick={() => $send(["ClickedCreateAccount"])}
         >
           Create Account
         </UI.Button>
@@ -303,7 +303,7 @@ export const View = ({
         <UI.Typography align="center" color="text.secondary">
           Already have an account?
         </UI.Typography>
-        <UI.Button onClick={() => $d(["ClickedLogin"])}>Login</UI.Button>
+        <UI.Button onClick={() => $send(["ClickedLogin"])}>Login</UI.Button>
       </UI.Box>
     </UI.FillBox>
   )

@@ -8,7 +8,7 @@ const props: Parameters<typeof view>[0] = {
     ctx: ctx,
     model: init({ userId: ctx.currentUserId }),
     onBack: () => { },
-    $d: () => { },
+    $send: () => { },
 }
 
 export default {

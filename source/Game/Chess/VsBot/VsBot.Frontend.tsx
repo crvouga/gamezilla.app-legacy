@@ -288,12 +288,12 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 export const View = ({
   ctx,
   model,
-  $d,
+  $send,
   onClose,
 }: {
   ctx: Ctx
   model: Model
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
   onClose: () => void
 }) => {
 
@@ -303,18 +303,18 @@ export const View = ({
         botLevel: {
           values: Board.allBotLevels,
           selected: model.sharedModel.botLevel,
-          onInput: (botLevel) => $d(["InputBot", { botLevel, userId: ctx.currentUserId }]),
+          onInput: (botLevel) => $send(["InputBot", { botLevel, userId: ctx.currentUserId }]),
         },
         onCancel: onClose,
         coverArt: viewCoverArt(),
         ctx,
-        onStartGame: () => $d(["StartGame", { userId: ctx.currentUserId }]),
-        onStartPlaying: () => $d(["InputUser", { userId: ctx.currentUserId }]),
-        onStopPlaying: () => $d(["InputUser", { userId: "None" }]),
+        onStartGame: () => $send(["StartGame", { userId: ctx.currentUserId }]),
+        onStartPlaying: () => $send(["InputUser", { userId: ctx.currentUserId }]),
+        onStopPlaying: () => $send(["InputUser", { userId: "None" }]),
         player: {
           values: Object.values(Board.colors),
           selected: model.sharedModel.userColor,
-          onInput: (color) => $d(["InputColor", { userColor: color, userId: ctx.currentUserId }]),
+          onInput: (color) => $send(["InputColor", { userColor: color, userId: ctx.currentUserId }]),
           icon: (color) => <PawnIcon sx={{ color: color === 'w' ? '#fff' : "#000" }} stroke={color === 'w' ? '#000' : '#fff'} />
         },
         playerId: model.sharedModel.userId === 'None' ? null : model.sharedModel.userId,
@@ -397,7 +397,7 @@ export const View = ({
             },
           ]
 
-          $d(msg)
+          $send(msg)
 
           const result = inputMove(msg[1], model.sharedModel)
 
@@ -413,7 +413,7 @@ export const View = ({
         <UI.ActionButton
           icon={<UI.Icons.ExitToApp sx={{ transform: "rotate(180deg)" }} />}
           label={"Exit"}
-          onClick={() => $d(["StopGame", { userId: ctx.currentUserId }])}
+          onClick={() => $send(["StopGame", { userId: ctx.currentUserId }])}
         />
 
         <UI.ActionButton
@@ -426,7 +426,7 @@ export const View = ({
           }
           label={model.isFlipped ? "Unflip" : "Flip"}
           onClick={() => {
-            $d(["ClickedFlip"])
+            $send(["ClickedFlip"])
           }}
         />
       </UI.Box>
@@ -437,7 +437,7 @@ export const View = ({
             model.sharedModel.type === "GameOver" &&
             model.openedModal === "GameOver"
           }
-          onClose={() => $d(["ClosedModal"])}
+          onClose={() => $send(["ClosedModal"])}
         >
           {model.sharedModel.gameOver.type === "Checkmate" && (
             <UI.DialogTitle>
@@ -451,7 +451,7 @@ export const View = ({
           )}
 
           <UI.DialogActions>
-            <UI.Button onClick={() => $d(["ClosedModal"])}>Close</UI.Button>
+            <UI.Button onClick={() => $send(["ClosedModal"])}>Close</UI.Button>
           </UI.DialogActions>
         </UI.Dialog>
       )}

@@ -328,18 +328,18 @@ export const View = ({
   ctx,
   gameRoomCtx,
   model,
-  $d,
+  $send,
 }: {
   ctx: Ctx
   gameRoomCtx: GameRoomCtx,
   model: Model
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
 }) => {
 
 
   const views: { [key in typeof model[0]]: Function } = {
     Tetris: (model: Tetris.Model) => (
-      <Tetris.View model={model} $d={(msg) => $d(["Tetris", msg])} />
+      <Tetris.View model={model} $send={(msg) => $send(["Tetris", msg])} />
     ),
 
     ConnectFour: (model: ConnectFour.Model) => (
@@ -347,12 +347,12 @@ export const View = ({
         gameRoomCtx={gameRoomCtx}
         ctx={ctx}
         model={model}
-        $d={(msg) => $d(["ConnectFour", msg])}
+        $send={(msg) => $send(["ConnectFour", msg])}
       />
     ),
 
     Snake: (model: Snake.Model) => (
-      <Snake.View ctx={ctx} model={model} $d={(msg) => $d(["Snake", msg])} />
+      <Snake.View ctx={ctx} model={model} $send={(msg) => $send(["Snake", msg])} />
     ),
 
     TicTacToe: (model: TicTacToe.Model) => (
@@ -360,20 +360,20 @@ export const View = ({
         gameRoomCtx={gameRoomCtx}
         ctx={ctx}
         model={model}
-        $d={(msg) => $d(["TicTacToe", msg])}
+        $send={(msg) => $send(["TicTacToe", msg])}
       />
     ),
 
     Chess: (model: Chess.Model) => (
-      <Chess.View ctx={ctx} model={model} $d={(msg) => $d(["Chess", msg])} gameRoomCtx={gameRoomCtx} />
+      <Chess.View ctx={ctx} model={model} $send={(msg) => $send(["Chess", msg])} gameRoomCtx={gameRoomCtx} />
     ),
 
     Maze: (model: Maze.Model) => (
-      <Maze.View ctx={ctx} model={model} $d={(m) => $d(["Maze", m])} />
+      <Maze.View ctx={ctx} model={model} $send={(m) => $send(["Maze", m])} />
     ),
 
     Gomoku: (model: Gomoku.Model) => (
-      Gomoku.view({ ctx, gameRoomCtx, model, $d: (m) => $d(['Gomoku', m]) })
+      Gomoku.view({ ctx, gameRoomCtx, model, $send: (m) => $send(['Gomoku', m]) })
     ),
   }
   return views[model[0]](model[1])

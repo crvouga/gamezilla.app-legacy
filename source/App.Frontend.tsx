@@ -552,11 +552,11 @@ const toThemeMode = (model: Model): UI.ThemeMode => {
   }
 }
 
-const view = ({ model, $d }: { model: Model; $d: (msg: Msg) => void }) => {
+const view = ({ model, $send }: { model: Model; $send: (msg: Msg) => void }) => {
   return (
     <UI.AppContainer themeMode={toThemeMode(model)}>
-      <ViewMain model={model} $d={$d} />
-      <Alerts.View model={model.alerts} $d={(msg) => $d(["Alerts", msg])} />
+      <ViewMain model={model} $send={$send} />
+      <Alerts.View model={model.alerts} $send={(msg) => $send(["Alerts", msg])} />
     </UI.AppContainer>
   )
 }
@@ -567,7 +567,7 @@ const flicker = keyframes`
   100% { opacity: 1; }
 `
 
-const ViewMain = ({ model, $d }: { model: Model; $d: (msg: Msg) => void }) => {
+const ViewMain = ({ model, $send }: { model: Model; $send: (msg: Msg) => void }) => {
   const status = toStatus(model)
 
   switch (model.wire) {
@@ -620,7 +620,7 @@ const ViewMain = ({ model, $d }: { model: Model; $d: (msg: Msg) => void }) => {
           return (
             <Pages.ViewLoggedOut
               model={model.page}
-              $d={(msg) => $d(["Page", msg])}
+              $send={(msg) => $send(["Page", msg])}
             />
           )
 
@@ -629,7 +629,7 @@ const ViewMain = ({ model, $d }: { model: Model; $d: (msg: Msg) => void }) => {
             <Pages.ViewProfileMissing
               authSession={status[1].authSession}
               model={model.page}
-              $d={(msg) => $d(["Page", msg])}
+              $send={(msg) => $send(["Page", msg])}
             />
           )
 
@@ -642,7 +642,7 @@ const ViewMain = ({ model, $d }: { model: Model; $d: (msg: Msg) => void }) => {
                 currentUserId={profile.userId}
                 model={model.party}
                 route={model.route}
-                $d={(msg) => $d(["Party", msg])}
+                $send={(msg) => $send(["Party", msg])}
               />
 
               <GameRoom.ViewBanner
@@ -650,7 +650,7 @@ const ViewMain = ({ model, $d }: { model: Model; $d: (msg: Msg) => void }) => {
                 currentUserId={profile.userId}
                 model={model.gameRoom}
                 route={model.route}
-                $d={(msg) => $d(["GameRoom", msg])}
+                $send={(msg) => $send(["GameRoom", msg])}
               />
 
               <Divider />
@@ -658,7 +658,7 @@ const ViewMain = ({ model, $d }: { model: Model; $d: (msg: Msg) => void }) => {
               <Pages.ViewReady
                 {...model}
                 profile={status[1].profile}
-                $d={(msg) => $d(["Page", msg])}
+                $send={(msg) => $send(["Page", msg])}
                 model={model.page}
               />
 
@@ -856,7 +856,7 @@ Program.run(program)
 const root = ReactDomClient.createRoot(document.getElementById("root")!)
 
 Program.subscribe(program, state => {
-  root.render(view({ model: state.model, $d: program.$d }))
+  root.render(view({ model: state.model, $send: program.$send }))
 })
 
 //

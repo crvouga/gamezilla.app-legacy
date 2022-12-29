@@ -10,7 +10,7 @@ const props: Parameters<typeof ViewReady>[0] = {
   model: initReady(["Home"], userA)[0],
   route: ["Home"],
   profileStore: profileStore,
-  $d: () => {},
+  $send: () => { },
   chatStore: chatStore,
   profile: userA,
   gameRoom: GameRoom.init[0],

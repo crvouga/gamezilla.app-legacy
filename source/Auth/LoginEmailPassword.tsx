@@ -16,9 +16,9 @@ export type Model = {
   password: string
   passwordVisibility: Visibility
   submission:
-    | { type: "Idle" }
-    | { type: "Loading" }
-    | { type: "Problem"; message: string }
+  | { type: "Idle" }
+  | { type: "Loading" }
+  | { type: "Problem"; message: string }
 }
 
 type Visibility = "Showing" | "Hiding"
@@ -152,15 +152,15 @@ const toggleVisibility = (visibility: Visibility): Visibility => {
 
 export const View = ({
   model,
-  $d,
+  $send,
 }: {
   model: Model
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
 }) => {
   return (
     <UI.FillBox>
       <UI.Header
-        left={<UI.HeaderBackButton onClick={() => $d(["ClickedBack"])} />}
+        left={<UI.HeaderBackButton onClick={() => $send(["ClickedBack"])} />}
         title="Continue With Email"
       />
 
@@ -182,7 +182,7 @@ export const View = ({
           label="Email Address"
           value={model.emailAddress}
           onChange={(event) => {
-            $d(["InputtedEmailAddress", event.target.value])
+            $send(["InputtedEmailAddress", event.target.value])
           }}
         />
 
@@ -194,13 +194,13 @@ export const View = ({
           label="Password"
           value={model.password}
           onChange={(event) => {
-            $d(["InputtedPassword", event.target.value])
+            $send(["InputtedPassword", event.target.value])
           }}
           InputProps={{
             endAdornment: (
               <UI.InputAdornment position="end">
                 <UI.Button
-                  onClick={() => $d(["ClickedTogglePasswordVisibility"])}
+                  onClick={() => $send(["ClickedTogglePasswordVisibility"])}
                 >
                   {model.passwordVisibility === "Hiding" ? "Show" : "Hide"}
                 </UI.Button>
@@ -214,7 +214,7 @@ export const View = ({
           size="large"
           fullWidth
           loading={model.submission.type === "Loading"}
-          onClick={() => $d(["ClickedLogin"])}
+          onClick={() => $send(["ClickedLogin"])}
         >
           Login
         </UI.Button>
@@ -233,7 +233,7 @@ export const View = ({
 
         <UI.Button
           sx={{ marginBottom: 2 }}
-          onClick={() => $d(["ClickedCreateAccount"])}
+          onClick={() => $send(["ClickedCreateAccount"])}
         >
           Create Account
         </UI.Button>
@@ -241,7 +241,7 @@ export const View = ({
           Forgot password?
         </UI.Typography>
 
-        <UI.Button onClick={() => $d(["ClickedResetPassword"])}>
+        <UI.Button onClick={() => $send(["ClickedResetPassword"])}>
           Reset Password
         </UI.Button>
       </UI.Box>

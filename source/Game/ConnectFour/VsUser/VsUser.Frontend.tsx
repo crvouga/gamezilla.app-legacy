@@ -209,16 +209,16 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 export const View = ({
   ctx,
   model,
-  $d,
+  $send,
   goBack,
 }: {
   model: Model
   ctx: Ctx
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
   goBack: () => void
 }) => {
   if (model.type === "Setup") {
-    return <ViewSetup ctx={ctx} goBack={goBack} model={model} $d={$d} />
+    return <ViewSetup ctx={ctx} goBack={goBack} model={model} $send={$send} />
   }
 
   if (model.type === "Game") {
@@ -234,9 +234,9 @@ export const View = ({
           <ViewColumns
             columns={model.columns}
             onClick={(columnIndex) =>
-              $d(["InputMove", { userId: ctx.currentUserId, columnIndex }])
+              $send(["InputMove", { userId: ctx.currentUserId, columnIndex }])
             }
-            onHover={(columnIndex) => $d(["HoveredOverColumns", { columnIndex }])}
+            onHover={(columnIndex) => $send(["HoveredOverColumns", { columnIndex }])}
             disabled={toTurn(model.columns) !== currentUserPlayerType}
             ghost={
               currentUserPlayerType !== "None" && model.ghostIndex !== "None"
@@ -253,7 +253,7 @@ export const View = ({
             <ActionButton
               icon={<Icons.Flag />}
               label="Resign"
-              onClick={() => $d(["ClickedResign", { userId: ctx.currentUserId }])}
+              onClick={() => $send(["ClickedResign", { userId: ctx.currentUserId }])}
             />
 
           </Box>
@@ -262,10 +262,10 @@ export const View = ({
         <ConformationDialog
           headerIcon={<Icons.Flag sx={{ width: 52, height: 52 }} />}
           title="Resign from game?"
-          onCancel={() => $d(["CloseModal"])}
-          onClose={() => $d(["CloseModal"])}
+          onCancel={() => $send(["CloseModal"])}
+          onClose={() => $send(["CloseModal"])}
           confirmTitle="Resign"
-          onConfirm={() => $d(["Resign", { userId: ctx.currentUserId }])}
+          onConfirm={() => $send(["Resign", { userId: ctx.currentUserId }])}
           open={model.openedModal === "ConfirmResign"}
         />
       </>
@@ -299,7 +299,7 @@ export const View = ({
 
               }}
             >
-              <ViewGameOverMessage $d={$d} ctx={ctx} model={model} />
+              <ViewGameOverMessage $send={$send} ctx={ctx} model={model} />
             </Box>
           </Fade>
         )}
@@ -311,7 +311,7 @@ export const View = ({
         <Button
           variant="outlined"
           fullWidth
-          onClick={() => $d(["NewGame", { userId: ctx.currentUserId }])}
+          onClick={() => $send(["NewGame", { userId: ctx.currentUserId }])}
         >
           Back
         </Button>
@@ -320,7 +320,7 @@ export const View = ({
           variant="contained"
           fullWidth
           disabled={model.rematch.type === "Asking"}
-          onClick={() => $d(["Rematch_Request", { userId: ctx.currentUserId }])}
+          onClick={() => $send(["Rematch_Request", { userId: ctx.currentUserId }])}
         >
           Rematch
         </Button>
@@ -334,11 +334,11 @@ export const View = ({
 const ViewGameOverMessage = ({
   ctx,
   model,
-  $d,
+  $send,
 }: {
   model: GameOverModel
   ctx: Ctx
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
 }) => {
   const size = { width: 84, height: 84 }
 
@@ -359,7 +359,7 @@ const ViewGameOverMessage = ({
         <CircularProgress sx={{ marginBottom: 4 }} />
         <Button
           variant="contained"
-          onClick={() => $d(["Rematch_Cancel", { userId: ctx.currentUserId }])}
+          onClick={() => $send(["Rematch_Cancel", { userId: ctx.currentUserId }])}
         >
           Cancel
         </Button>
@@ -384,7 +384,7 @@ const ViewGameOverMessage = ({
             sx={{ color: "#000" }}
             startIcon={<Icons.Cancel />}
             onClick={() =>
-              $d([
+              $send([
                 "Rematch_Respond",
                 { response: "Decline", userId: ctx.currentUserId },
               ])
@@ -396,7 +396,7 @@ const ViewGameOverMessage = ({
             variant="contained"
             startIcon={<Icons.Done />}
             onClick={() =>
-              $d([
+              $send([
                 "Rematch_Respond",
                 { response: "Accept", userId: ctx.currentUserId },
               ])
@@ -494,14 +494,14 @@ const ViewGameOverMessage = ({
 
 const ViewSetup = ({
   model,
-  $d,
+  $send,
   ctx,
   goBack,
 }: {
   goBack: () => void
   model: SetupModel
   ctx: Ctx
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
 }) => {
   const startGameResult = handle(
     ["StartGame", { userId: ctx.currentUserId }],
@@ -530,14 +530,14 @@ const ViewSetup = ({
         ctx={ctx}
         playerType={"PlayerOne"}
         userId={model.PlayerOne}
-        $d={$d}
+        $send={$send}
       />
 
       <ViewSetupPlayerSlot
         ctx={ctx}
         playerType={"PlayerTwo"}
         userId={model.PlayerTwo}
-        $d={$d}
+        $send={$send}
       />
 
       <Divider sx={{ paddingBottom: 2 }} />
@@ -561,7 +561,7 @@ const ViewSetup = ({
                 key={moveTimeLimit}
                 value={moveTimeLimit}
                 onClick={() =>
-                  $d([
+                  $send([
                     "InputMoveTimeLimit",
                     { moveTimeLimit, userId: ctx.currentUserId },
                   ])
@@ -584,7 +584,7 @@ const ViewSetup = ({
           variant="contained"
           fullWidth
           disabled={startGameResult.type === "Err"}
-          onClick={() => $d(["StartGame", { userId: ctx.currentUserId }])}
+          onClick={() => $send(["StartGame", { userId: ctx.currentUserId }])}
         >
           Start Game
         </Button>
@@ -690,12 +690,12 @@ const PlayerSlot = ({
 }
 
 const ViewSetupPlayerSlot = ({
-  $d,
+  $send,
   userId,
   ctx,
   playerType,
 }: {
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
   playerType: PlayerType
   userId: "None" | UserId
   ctx: Ctx
@@ -718,7 +718,7 @@ const ViewSetupPlayerSlot = ({
           fullWidth
           variant="contained"
           onClick={() =>
-            $d(["StartPlaying", { userId: ctx.currentUserId, playerType }])
+            $send(["StartPlaying", { userId: ctx.currentUserId, playerType }])
           }
         >
           Play as {playerTypeToColor[playerType]}
@@ -741,7 +741,7 @@ const ViewSetupPlayerSlot = ({
           </Typography>
           {userId === ctx.currentUserId && (
             <Button
-              onClick={() => $d(["StopPlaying", { userId: ctx.currentUserId }])}
+              onClick={() => $send(["StopPlaying", { userId: ctx.currentUserId }])}
             >
               Stop Playing
             </Button>

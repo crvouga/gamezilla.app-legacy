@@ -14,10 +14,10 @@ import { Cmd, p } from "../Core"
 export type Model = {
   emailAddress: string
   submission:
-    | { type: "Idle" }
-    | { type: "Loading" }
-    | { type: "Problem"; message: string }
-    | { type: "Succeeded"; sentTo: string }
+  | { type: "Idle" }
+  | { type: "Loading" }
+  | { type: "Problem"; message: string }
+  | { type: "Succeeded"; sentTo: string }
 }
 
 //
@@ -46,12 +46,12 @@ export type Msg =
   | ["ClickedSend"]
   | ["InputtedEmailAddress", string]
   | [
-      "Send_Done",
-      {
-        sentTo: string
-        result: AccountStore.SendResetPasswordLinkResult
-      },
-    ]
+    "Send_Done",
+    {
+      sentTo: string
+      result: AccountStore.SendResetPasswordLinkResult
+    },
+  ]
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
@@ -118,15 +118,15 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
 export const View = ({
   model,
-  $d,
+  $send,
 }: {
   model: Model
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
 }) => {
   return (
     <UI.FillBox>
       <UI.Header
-        left={<UI.HeaderBackButton onClick={() => $d(["ClickedBack"])} />}
+        left={<UI.HeaderBackButton onClick={() => $send(["ClickedBack"])} />}
         title="Reset Password"
       />
 
@@ -148,7 +148,7 @@ export const View = ({
           label="Email Address"
           value={model.emailAddress}
           onChange={(event) => {
-            $d(["InputtedEmailAddress", event.target.value])
+            $send(["InputtedEmailAddress", event.target.value])
           }}
         />
 
@@ -157,7 +157,7 @@ export const View = ({
           size="large"
           fullWidth
           loading={model.submission.type === "Loading"}
-          onClick={() => $d(["ClickedSend"])}
+          onClick={() => $send(["ClickedSend"])}
         >
           Send Password Reset Link
         </UI.Button>

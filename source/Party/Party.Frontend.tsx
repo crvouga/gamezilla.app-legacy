@@ -193,11 +193,11 @@ export const runAction = (
 export const ViewPage = ({
   ctx,
   model,
-  $d,
+  $send,
 }: {
   ctx: Ctx
   model: Model
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
 }) => {
   const theme = useTheme()
   const user = model.users[ctx.currentUserId]
@@ -207,7 +207,7 @@ export const ViewPage = ({
       <ViewNotInParty
         ctx={ctx}
         model={model}
-        $d={$d}
+        $send={$send}
       />
     )
   }
@@ -219,7 +219,7 @@ export const ViewPage = ({
       <ViewNotInParty
         ctx={ctx}
         model={model}
-        $d={$d}
+        $send={$send}
       />
     )
   }
@@ -293,7 +293,7 @@ export const ViewPage = ({
             color="error"
             size="large"
             loading={model.requests.PartyDestroy?.type === "Loading"}
-            onClick={() => $d(["PartyDestroy", { userId: ctx.currentUserId }])}
+            onClick={() => $send(["PartyDestroy", { userId: ctx.currentUserId }])}
           >
             End
           </Button>
@@ -304,7 +304,7 @@ export const ViewPage = ({
             color="error"
             size="large"
             loading={model.requests.PartyLeave?.type === "Loading"}
-            onClick={() => $d(["PartyLeave", { userId: ctx.currentUserId }])}
+            onClick={() => $send(["PartyLeave", { userId: ctx.currentUserId }])}
           >
             Leave
           </Button>
@@ -317,11 +317,11 @@ export const ViewPage = ({
 const ViewNotInParty = ({
   ctx,
   model,
-  $d,
+  $send,
 }: {
   ctx: Ctx
   model: Model
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
 }) => {
   const parties = Object.values(model.parties)
 
@@ -333,7 +333,7 @@ const ViewNotInParty = ({
         title="No Active Parties"
         actionTitle="Create Party"
         actionIcon={<Icons.Add />}
-        onAction={() => $d([
+        onAction={() => $send([
           "PartyCreate",
           { userId: ctx.currentUserId, partyId: PartyId.generate() },
         ])}
@@ -351,7 +351,7 @@ const ViewNotInParty = ({
           size="large"
           loading={model.requests.PartyCreate?.type === "Loading"}
           onClick={() =>
-            $d([
+            $send([
               "PartyCreate",
               { userId: ctx.currentUserId, partyId: PartyId.generate() },
             ])
@@ -365,7 +365,7 @@ const ViewNotInParty = ({
           <ListItemButton
             key={party.partyId}
             onClick={() =>
-              $d([
+              $send([
                 "PartyJoin",
                 { userId: ctx.currentUserId, partyId: party.partyId },
               ])
@@ -398,7 +398,7 @@ const countUsersInParty = (partyId: PartyId, model: Model): number => {
 }
 
 export const ViewBanner = ({
-  $d,
+  $send,
   route,
   currentUserId,
   model,
@@ -408,7 +408,7 @@ export const ViewBanner = ({
     route: Route.Model
     currentUserId: UserId
     model: Model
-    $d: (msg: Msg) => void
+    $send: (msg: Msg) => void
   }) => {
   if (route[0] === "Party") {
     return <></>
@@ -430,7 +430,7 @@ export const ViewBanner = ({
     <Typography
       variant="caption"
       align="center"
-      onClick={() => $d(["ClickedBanner"])}
+      onClick={() => $send(["ClickedBanner"])}
       sx={{
         width: "100%",
         paddingX: 2,

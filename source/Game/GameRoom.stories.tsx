@@ -23,7 +23,7 @@ const roomB: FrontendRoom = {
 }
 
 const props: Parameters<typeof ViewPageGame>[0] = {
-  $d: () => { },
+  $send: () => { },
   model: init[0],
   ctx,
 }

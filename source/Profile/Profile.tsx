@@ -20,10 +20,10 @@ export const init = ({
 }: {
   userId: UserId
 }): [Model, Cmd<Msg>, OutAction[]] => [
-  {},
-  Cmd.None,
-  [["Profile", ["FindMany", { userIds: [userId] }]]],
-]
+    {},
+    Cmd.None,
+    [["Profile", ["FindMany", { userIds: [userId] }]]],
+  ]
 
 //
 //
@@ -97,14 +97,14 @@ export const View = ({
   chatStore,
   currentUserId,
   userId,
-  $d,
+  $send,
 }: {
   chatStore: ChatStore.Model
   profileStore: ProfileStore.Model
   currentUserId: UserId
   userId: UserId
   model: Model
-  $d: (msg: Msg) => void
+  $send: (msg: Msg) => void
 }) => {
   const profile = profileStore.profiles[userId]
 
@@ -134,7 +134,7 @@ export const View = ({
           right={
             <UI.IconButton
               edge="end"
-              onClick={() => $d(["ClickedAccountMenu"])}
+              onClick={() => $send(["ClickedAccountMenu"])}
             >
               <UI.Icons.Menu />
             </UI.IconButton>
@@ -167,7 +167,7 @@ export const View = ({
             variant="contained"
             size="small"
             sx={{ marginBottom: 2 }}
-            onClick={() => $d(["ClickedEditProfile"])}
+            onClick={() => $send(["ClickedEditProfile"])}
           >
             Edit Profile
           </UI.Button>
@@ -179,7 +179,7 @@ export const View = ({
   return (
     <UI.FillBox>
       <UI.Header
-        left={<UI.HeaderBackButton onClick={() => $d(["ClickedBack"])} />}
+        left={<UI.HeaderBackButton onClick={() => $send(["ClickedBack"])} />}
         title={profile.username}
       />
 
@@ -220,7 +220,7 @@ export const View = ({
             chatStore.mutations.Conversation.FindElseInsert.type === "Loading"
           }
           variant="contained"
-          onClick={() => $d(["ClickedSendMessage"])}
+          onClick={() => $send(["ClickedSendMessage"])}
         >
           Send Message
         </UI.Button>
