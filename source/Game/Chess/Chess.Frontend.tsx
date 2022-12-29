@@ -11,7 +11,7 @@ import {
 } from "./Chess.Types"
 import * as Sounds from "./Sounds"
 import * as UserVsBot from "./UserVsBot/UserVsBot.Frontend"
-import * as UserVsUser from "./UserVsUser/UserVsUser.Frontend"
+import * as VsUser from "./VsUser/VsUser.Frontend"
 
 //
 //
@@ -70,17 +70,17 @@ export const update = (
       ]
     }
 
-    case "UserVsUser": {
-      if (model.mode[0] === "UserVsUser") {
-        const [child, cmd] = UserVsUser.update(
-          { sendToBackend: (msg) => sendToBackend(["UserVsUser", msg]) },
+    case "VsUser": {
+      if (model.mode[0] === "VsUser") {
+        const [child, cmd] = VsUser.update(
+          { sendToBackend: (msg) => sendToBackend(["VsUser", msg]) },
           msg[1],
           model.mode[1],
         )
 
         return [
-          { ...model, mode: ["UserVsUser", child] },
-          Cmd.tag("UserVsUser", cmd),
+          { ...model, mode: ["VsUser", child] },
+          Cmd.tag("VsUser", cmd),
         ]
       }
 
@@ -145,17 +145,17 @@ export const updateFromBackend = (
       return [merged, mergedCmd, []]
     }
 
-    case "UserVsUser": {
-      if (model.mode[0] === "UserVsUser") {
-        const [child, cmd, actions] = UserVsUser.updateFromBackend(
+    case "VsUser": {
+      if (model.mode[0] === "VsUser") {
+        const [child, cmd, actions] = VsUser.updateFromBackend(
           { ctx },
           msg[1],
           model.mode[1],
         )
 
         return [
-          { ...model, mode: ["UserVsUser", child] },
-          Cmd.tag("UserVsUser", cmd),
+          { ...model, mode: ["VsUser", child] },
+          Cmd.tag("VsUser", cmd),
           actions,
         ]
       }
@@ -220,7 +220,7 @@ export const View = ({
           gameRoomCtx: gameRoomCtx,
           coverArt: viewCoverArt(),
           onUserVsComputer: () => $d(['InputMode', { mode: 'UserVsBot', userId: ctx.currentUserId }]),
-          onUserVsUser: () => $d(['InputMode', { mode: 'UserVsUser', userId: ctx.currentUserId }]),
+          onVsUser: () => $d(['InputMode', { mode: 'VsUser', userId: ctx.currentUserId }]),
           title: "Chess"
         })
 
@@ -240,12 +240,12 @@ export const View = ({
       )
     }
 
-    case "UserVsUser": {
+    case "VsUser": {
       return (
-        <UserVsUser.View
+        <VsUser.View
           ctx={ctx}
           model={model.mode[1]}
-          $d={(msg) => $d(["UserVsUser", msg])}
+          $d={(msg) => $d(["VsUser", msg])}
           onClose={() =>
             $d(["InputMode", { mode: "None", userId: ctx.currentUserId }])
           }
@@ -278,14 +278,14 @@ export const mergeWithBackend = ({
       return [{ ...frontendModel, mode: ["None"] }, Cmd.None]
     }
 
-    case "UserVsUser": {
-      if (frontendModel.mode[0] === "UserVsUser") {
+    case "VsUser": {
+      if (frontendModel.mode[0] === "VsUser") {
         return [
           {
             ...frontendModel,
             mode: [
-              "UserVsUser",
-              UserVsUser.mergeWithBackend(
+              "VsUser",
+              VsUser.mergeWithBackend(
                 frontendModel.mode[1],
                 backendModel[1],
               ),
@@ -295,20 +295,20 @@ export const mergeWithBackend = ({
         ]
       }
 
-      const [child, childCmd] = UserVsUser.init({
+      const [child, childCmd] = VsUser.init({
         userId: "None",
-        sendToBackend: (msg) => sendToBackend(["UserVsUser", msg]),
+        sendToBackend: (msg) => sendToBackend(["VsUser", msg]),
       })
 
       return [
         {
           ...frontendModel,
           mode: [
-            "UserVsUser",
-            UserVsUser.mergeWithBackend(child, backendModel[1]),
+            "VsUser",
+            VsUser.mergeWithBackend(child, backendModel[1]),
           ],
         },
-        Cmd.tag("UserVsUser", childCmd),
+        Cmd.tag("VsUser", childCmd),
       ]
     }
 

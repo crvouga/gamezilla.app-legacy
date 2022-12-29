@@ -1,7 +1,7 @@
 import { Result } from "../../Core"
 import { UserId } from "../../Data"
 import * as UserVsBot from "./UserVsBot/UserVsBot.Types"
-import * as UserVsUser from "./UserVsUser/UserVsUser.Types"
+import * as VsUser from "./VsUser/VsUser.Types"
 
 // 
 // 
@@ -16,8 +16,8 @@ export type FrontendModel =
         type: "None"
     }
     | {
-        type: "UserVsUser"
-        child: UserVsUser.FrontendModel
+        type: "VsUser"
+        child: VsUser.FrontendModel
     }
     | {
         type: "UserVsBot",
@@ -29,8 +29,8 @@ export type BackendModel =
         type: "None"
     }
     | {
-        type: "UserVsUser",
-        child: UserVsUser.BackendModel
+        type: "VsUser",
+        child: VsUser.BackendModel
     }
     | {
         type: "UserVsBot",
@@ -47,13 +47,13 @@ export type Mode = BackendModel['type']
 // 
 // 
 
-export type FrontendMsg = Req | ["UserVsUser", UserVsUser.FrontendMsg] | ["UserVsBot", UserVsBot.FrontendMsg]
+export type FrontendMsg = Req | ["VsUser", VsUser.FrontendMsg] | ["UserVsBot", UserVsBot.FrontendMsg]
 
-export type BackendMsg = ["UserVsUser", UserVsUser.BackendMsg] | ["UserVsBot", UserVsBot.BackendMsg]
+export type BackendMsg = ["VsUser", VsUser.BackendMsg] | ["UserVsBot", UserVsBot.BackendMsg]
 
-export type ToFrontend = Res | ["UserVsUser", UserVsUser.ToFrontend] | ["UserVsBot", UserVsBot.ToFrontend]
+export type ToFrontend = Res | ["VsUser", VsUser.ToFrontend] | ["UserVsBot", UserVsBot.ToFrontend]
 
-export type ToBackend = Req | ["UserVsUser", UserVsUser.ToBackend] | ["UserVsBot", UserVsBot.ToBackend]
+export type ToBackend = Req | ["VsUser", VsUser.ToBackend] | ["UserVsBot", UserVsBot.ToBackend]
 
 // 
 // 

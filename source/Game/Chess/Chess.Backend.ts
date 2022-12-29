@@ -9,7 +9,7 @@ import {
   ToFrontend,
 } from "./Chess.Types"
 import * as UserVsBot from "./UserVsBot/UserVsBot.Backend"
-import * as UserVsUser from "./UserVsUser/UserVsUser.Backend"
+import * as VsUser from "./VsUser/VsUser.Backend"
 
 //
 //
@@ -43,15 +43,15 @@ export const update = (
       return [model, Cmd.None]
     }
 
-    case "UserVsUser": {
-      if (msg[0] === "UserVsUser") {
-        const [child, cmd] = UserVsUser.update(
-          { broadcast: (msg) => broadcast(["UserVsUser", msg]) },
+    case "VsUser": {
+      if (msg[0] === "VsUser") {
+        const [child, cmd] = VsUser.update(
+          { broadcast: (msg) => broadcast(["VsUser", msg]) },
           msg[1],
           model[1],
         )
 
-        return [["UserVsUser", child], Cmd.tag("UserVsUser", cmd)]
+        return [["VsUser", child], Cmd.tag("VsUser", cmd)]
       }
 
       return [model, Cmd.None]
@@ -122,18 +122,18 @@ export const updateFromFrontend = (
       return [model, Cmd.None]
     }
 
-    case "UserVsUser": {
-      if (model[0] === "UserVsUser") {
-        const [child, cmd] = UserVsUser.updateFromFrontend(
+    case "VsUser": {
+      if (model[0] === "VsUser") {
+        const [child, cmd] = VsUser.updateFromFrontend(
           {
-            sendToClient: (msg) => sendToClient(["UserVsUser", msg]),
-            broadcast: (msg) => broadcast(["UserVsUser", msg]),
+            sendToClient: (msg) => sendToClient(["VsUser", msg]),
+            broadcast: (msg) => broadcast(["VsUser", msg]),
           },
           msg[1],
           model[1],
         )
 
-        return [["UserVsUser", child], Cmd.tag("UserVsUser", cmd)]
+        return [["VsUser", child], Cmd.tag("VsUser", cmd)]
       }
 
       return [model, Cmd.None]
@@ -160,13 +160,13 @@ export const updateRoomLeave = (
       return [["UserVsBot", child], Cmd.tag("UserVsBot", cmd)]
     }
 
-    case "UserVsUser": {
-      const [child, cmd] = UserVsUser.updateRoomLeave(
-        { broadcast: (msg) => broadcast(["UserVsUser", msg]) },
+    case "VsUser": {
+      const [child, cmd] = VsUser.updateRoomLeave(
+        { broadcast: (msg) => broadcast(["VsUser", msg]) },
         userId,
         model[1],
       )
-      return [["UserVsUser", child], Cmd.tag("UserVsUser", cmd)]
+      return [["VsUser", child], Cmd.tag("VsUser", cmd)]
     }
   }
 }
@@ -200,10 +200,10 @@ const initMode = ({
       return Ok(modelNew)
     }
 
-    case "UserVsUser": {
+    case "VsUser": {
       const modelNew: BackendModel = [
-        "UserVsUser",
-        UserVsUser.init({ userId: userId }),
+        "VsUser",
+        VsUser.init({ userId: userId }),
       ]
 
       return Ok(modelNew)
@@ -225,10 +225,10 @@ export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
       return Sub.None
     }
 
-    case "UserVsUser": {
+    case "VsUser": {
       return Sub.tag(
-        "UserVsUser",
-        UserVsUser.subscriptions(intervalId, model[1]),
+        "VsUser",
+        VsUser.subscriptions(intervalId, model[1]),
       )
     }
 

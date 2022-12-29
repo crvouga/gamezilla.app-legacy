@@ -23,7 +23,7 @@ import {
   stopPlaying,
   ToBackend,
   ToFrontend,
-} from "./UserVsUser.Types"
+} from "./VsUser.Types"
 
 //
 //
