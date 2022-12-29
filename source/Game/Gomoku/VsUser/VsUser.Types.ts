@@ -11,23 +11,36 @@ import { Position } from "../Gomoku/Position"
 // 
 // 
 
-export type Model =
+export type Model = | ModelSetup | ModelPlaying | ModelGameOver
+
+export type ModelSetup = {
+    type: "setup",
+    white: UserId | null,
+    black: UserId | null,
+}
+
+export type ModelPlaying = {
+    type: "playing",
+    white: UserId,
+    black: UserId,
+    board: Board
+}
+
+export type ModelGameOver = {
+    type: "gameOver",
+    white: UserId,
+    black: UserId,
+    board: Board,
+    gameOver: GameOver
+    rematch: Rematch
+}
+
+type Rematch =
     | {
-        type: "setup",
-        white: UserId | null,
-        black: UserId | null,
+        type: "None",
     }
     | {
-        type: "playing",
-        white: UserId,
-        black: UserId,
-        board: Board
-    } | {
-        type: "finished",
-        white: UserId,
-        black: UserId,
-        board: Board,
-        gameOver: GameOver
+        type: "Requested",
     }
 
 type GameOver = {
@@ -80,6 +93,8 @@ export type Req =
     // 
     | ['InputMove', { position: Position }]
     | ['Resign']
+    | ['RematchRequest']
+    | ['RematchRespond', { response: "Accept" | "Decline" }]
 
 export type Res = [Req[0], Result<Problem, Model>]
 
@@ -183,17 +198,26 @@ export const handle = ({ currentUserId, msg, model }: { currentUserId: UserId, m
             const currentUserStone = model.white === currentUserId ? 'white' : 'black'
 
             const modelNew: Model = {
-                type: "finished",
+                type: "gameOver",
                 white: model.white,
                 black: model.black,
                 board: model.board,
                 gameOver: {
                     type: "Resigned",
                     resigner: currentUserStone,
-                }
+                },
+                rematch: { type: "None" }
             }
 
             return Ok(modelNew)
+        }
+
+        case 'RematchRequest': {
+            return Ok(model)
+        }
+
+        case 'RematchRespond': {
+            return Ok(model)
         }
     }
 }

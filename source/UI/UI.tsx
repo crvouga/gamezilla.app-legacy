@@ -778,7 +778,7 @@ export const conformation = ({
   return (
     <Dialog open={open} onClose={onClose}>
       {iconName && (
-        icon(iconName, { margin: "auto", paddingTop: 2, marginBottom: -1 })
+        icon(iconName, { margin: "auto", paddingTop: 2, width: 64, height: 64 })
       )}
       <DialogTitle>{title}</DialogTitle>
       {subtitle && (
