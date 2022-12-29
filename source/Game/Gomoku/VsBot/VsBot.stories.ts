@@ -2,7 +2,7 @@ import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { ctx } from "../../../test-data"
 import { AppContainer } from "../../../UI"
 import { Board } from "../Gomoku/Gomoku"
-import { init, view } from "./UserVsBot.Frontend"
+import { init, view } from "./VsBot.Frontend"
 
 const props: Parameters<typeof view>[0] = {
     ctx: ctx,
@@ -12,7 +12,7 @@ const props: Parameters<typeof view>[0] = {
 }
 
 export default {
-    title: "Gomoku / UserVsBot",
+    title: "Gomoku / VsBot",
     component: view,
     args: props,
 } as ComponentMeta<typeof view>

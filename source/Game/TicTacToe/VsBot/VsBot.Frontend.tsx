@@ -1,7 +1,7 @@
 import * as Alerts from "../../../Alerts"
 import { Cmd, Sub } from "../../../Core"
 import * as UI from "../../../UI"
-import { Ctx, viewUserVsBotSetupScreen } from "../../Game"
+import { Ctx, viewVsBotSetupScreen } from "../../Game"
 import {
   botLevels,
   GameOver,
@@ -23,7 +23,7 @@ import {
   swapSides,
   ToBackend,
   ToFrontend
-} from "./UserVsBot.Types"
+} from "./VsBot.Types"
 
 //
 //
@@ -138,7 +138,7 @@ export const View = ({
 }) => {
   if (model.type === "Setup") {
     return (
-      viewUserVsBotSetupScreen({
+      viewVsBotSetupScreen({
         playerId: model.player === 'None' ? null : model.player,
         subtitle: "Vs Computer",
         title: "Tic-Tac-Toe",

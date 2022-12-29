@@ -3,7 +3,7 @@ import { p } from "../../../Core"
 import { ctx, userB } from "../../../test-data"
 import * as UI from "../../../UI"
 import { emptyBoard, setSlot } from "../TicTacToe/TicTacToe"
-import { Model, View } from "./UserVsBot.Frontend"
+import { Model, View } from "./VsBot.Frontend"
 
 const modelSetup: Model = {
   type: "Setup",
@@ -20,7 +20,7 @@ const props: Parameters<typeof View>[0] = {
 }
 
 export default {
-  title: "TicTacToe / UserVsBot",
+  title: "TicTacToe / VsBot",
   component: View,
   args: props,
 } as ComponentMeta<typeof View>

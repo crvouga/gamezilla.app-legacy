@@ -3,7 +3,7 @@ import { ctx, userB } from "../../../test-data"
 import { AppContainer } from "../../../UI"
 import { emptyColumns } from "../ConnectFour"
 import { leftAndRightDiagonal } from "../test-data"
-import { Model, View } from "./UserVsBot.Frontend"
+import { Model, View } from "./VsBot.Frontend"
 
 const setupModel: Model = {
   type: "Setup",
@@ -21,7 +21,7 @@ const props: Parameters<typeof View>[0] = {
 }
 
 export default {
-  title: "Connect Four/UserVsBot",
+  title: "Connect Four/VsBot",
   component: View,
   args: props,
 } as ComponentMeta<typeof View>

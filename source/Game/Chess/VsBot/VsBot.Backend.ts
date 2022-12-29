@@ -15,7 +15,7 @@ import {
   stopGame,
   ToBackend,
   ToFrontend,
-} from "./UserVsBot.Types"
+} from "./VsBot.Types"
 
 //
 //

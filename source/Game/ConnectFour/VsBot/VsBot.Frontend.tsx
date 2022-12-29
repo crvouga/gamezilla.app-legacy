@@ -3,7 +3,7 @@ import * as Alerts from "../../../Alerts"
 import { Cmd, Sub } from "../../../Core"
 import { UserId } from "../../../Data/UserId"
 import { ActionButton, Avatar, Box, CircularProgress, Fade, FillBox, Icons, Paper, Typography, useTheme } from "../../../UI"
-import { Ctx, viewUserVsBotSetupScreen } from "../../Game"
+import { Ctx, viewVsBotSetupScreen } from "../../Game"
 import { gameTheme, PlayerType, playerTypes, toStatus, toTurn, ViewColumns, viewCoverArt } from "../ConnectFour"
 
 import { PlayerIcon } from "../Views"
@@ -18,7 +18,7 @@ import {
   ToBackend,
   ToFrontend,
   toGameOver
-} from "./UserVsBot.Types"
+} from "./VsBot.Types"
 
 //
 //
@@ -164,7 +164,7 @@ export const View = ({
 }) => {
   if (model.type === "Setup") {
     return (
-      viewUserVsBotSetupScreen({
+      viewVsBotSetupScreen({
         coverArt: viewCoverArt(),
         title: "Connect Four",
         subtitle: "Vs Computer",

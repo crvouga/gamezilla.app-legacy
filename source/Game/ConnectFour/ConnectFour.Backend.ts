@@ -7,7 +7,7 @@ import {
   ToBackend,
   ToFrontend,
 } from "./ConnectFour.Types"
-import * as UserVsBot from "./UserVsBot/UserVsBot.Backend"
+import * as VsBot from "./VsBot/VsBot.Backend"
 import * as VsUser from "./VsUser/VsUser.Backend"
 
 //
@@ -51,14 +51,14 @@ export const update = (
       return [model, Cmd.None]
     }
 
-    case "UserVsBot": {
-      if (model.type === "UserVsBot") {
-        const [child, cmd] = UserVsBot.update(
-          { broadcast: (m) => broadcast(["UserVsBot", m]) },
+    case "VsBot": {
+      if (model.type === "VsBot") {
+        const [child, cmd] = VsBot.update(
+          { broadcast: (m) => broadcast(["VsBot", m]) },
           msg[1],
           model.child,
         )
-        return [{ type: "UserVsBot", child }, Cmd.tag("UserVsBot", cmd)]
+        return [{ type: "VsBot", child }, Cmd.tag("VsBot", cmd)]
       }
 
       return [model, Cmd.None]
@@ -100,17 +100,17 @@ export const updateFromFrontend = (
       return [model, Cmd.None]
     }
 
-    case "UserVsBot": {
-      if (model.type === "UserVsBot") {
-        const [child, cmd] = UserVsBot.updateFromFrontend(
+    case "VsBot": {
+      if (model.type === "VsBot") {
+        const [child, cmd] = VsBot.updateFromFrontend(
           {
-            sendToClient: (msg) => sendToClient(["UserVsBot", msg]),
-            broadcast: (msg) => broadcast(["UserVsBot", msg]),
+            sendToClient: (msg) => sendToClient(["VsBot", msg]),
+            broadcast: (msg) => broadcast(["VsBot", msg]),
           },
           msg[1],
           model.child,
         )
-        return [{ type: "UserVsBot", child }, Cmd.tag("UserVsBot", cmd)]
+        return [{ type: "VsBot", child }, Cmd.tag("VsBot", cmd)]
       }
 
       return [model, Cmd.None]
@@ -132,13 +132,13 @@ export const updateRoomLeave = ({
       return [model, Cmd.None]
     }
 
-    case "UserVsBot": {
-      const [child, cmd] = UserVsBot.updateRoomLeave({
+    case "VsBot": {
+      const [child, cmd] = VsBot.updateRoomLeave({
         userId,
         model: model.child,
-        broadcast: (m) => broadcast(["UserVsBot", m]),
+        broadcast: (m) => broadcast(["VsBot", m]),
       })
-      return [{ type: "UserVsBot", child }, Cmd.tag("UserVsBot", cmd)]
+      return [{ type: "VsBot", child }, Cmd.tag("VsBot", cmd)]
     }
 
     case "VsUser": {
@@ -158,10 +158,10 @@ const initMode = (mode: Mode, userId: UserId): Model => {
       return { type: "None" }
     }
 
-    case "UserVsBot": {
+    case "VsBot": {
       return {
-        type: "UserVsBot",
-        child: UserVsBot.init({ player: userId }),
+        type: "VsBot",
+        child: VsBot.init({ player: userId }),
       }
     }
 
@@ -188,7 +188,7 @@ export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
       return Sub.None
     }
 
-    case "UserVsBot": {
+    case "VsBot": {
       return Sub.None
     }
 

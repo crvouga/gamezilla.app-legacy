@@ -10,7 +10,7 @@ import {
   ToBackend,
   ToFrontend
 } from "./ConnectFour.Types"
-import * as UserVsBot from "./UserVsBot/UserVsBot.Frontend"
+import * as VsBot from "./VsBot/VsBot.Frontend"
 import * as VsUser from "./VsUser/VsUser.Frontend"
 import { PlayerIcon } from "./Views"
 
@@ -61,16 +61,16 @@ export const update = (
       return [model, Cmd.None]
     }
 
-    case "UserVsBot": {
-      if (model.type === "UserVsBot") {
-        const [child, cmd] = UserVsBot.update(
+    case "VsBot": {
+      if (model.type === "VsBot") {
+        const [child, cmd] = VsBot.update(
           {
-            sendToBackend: (msg) => sendToBackend(["UserVsBot", msg]),
+            sendToBackend: (msg) => sendToBackend(["VsBot", msg]),
           },
           msg[1],
           model.child,
         )
-        return [{ type: "UserVsBot", child }, Cmd.tag("UserVsBot", cmd)]
+        return [{ type: "VsBot", child }, Cmd.tag("VsBot", cmd)]
       }
       return [model, Cmd.None]
     }
@@ -105,15 +105,15 @@ export const updateFromBackend = (
       return [model, Cmd.None, []]
     }
 
-    case "UserVsBot": {
-      if (model.type === "UserVsBot") {
-        const [child, cmd, actions] = UserVsBot.updateFromBackend(
+    case "VsBot": {
+      if (model.type === "VsBot") {
+        const [child, cmd, actions] = VsBot.updateFromBackend(
           msg[1],
           model.child,
         )
         return [
-          { type: "UserVsBot", child },
-          Cmd.tag("UserVsBot", cmd),
+          { type: "VsBot", child },
+          Cmd.tag("VsBot", cmd),
           actions,
         ]
       }
@@ -160,7 +160,7 @@ export const View = ({
           onUserVsComputer: () =>
             $d([
               "InputMode",
-              { mode: "UserVsBot", userId: ctx.currentUserId },
+              { mode: "VsBot", userId: ctx.currentUserId },
             ])
         })
       )
@@ -177,11 +177,11 @@ export const View = ({
       )
     }
 
-    case "UserVsBot": {
+    case "VsBot": {
       return (
-        <UserVsBot.View
+        <VsBot.View
           ctx={ctx}
-          $d={(msg) => $d(["UserVsBot", msg])}
+          $d={(msg) => $d(["VsBot", msg])}
           model={model.child}
           goBack={goBack}
         />
@@ -254,11 +254,11 @@ export const mergeWithBackend = ({
       return backendModel
     }
 
-    case "UserVsBot": {
-      if (frontendModel.type === "UserVsBot") {
+    case "VsBot": {
+      if (frontendModel.type === "VsBot") {
         return {
-          type: "UserVsBot",
-          child: UserVsBot.mergeWithBackend({
+          type: "VsBot",
+          child: VsBot.mergeWithBackend({
             frontendModel: frontendModel.child,
             backendModel: backendModel.child,
           }),
@@ -266,9 +266,9 @@ export const mergeWithBackend = ({
       }
 
       return {
-        type: "UserVsBot",
-        child: UserVsBot.mergeWithBackend({
-          frontendModel: UserVsBot.init(backendModel.child),
+        type: "VsBot",
+        child: VsBot.mergeWithBackend({
+          frontendModel: VsBot.init(backendModel.child),
           backendModel: backendModel.child,
         }),
       }

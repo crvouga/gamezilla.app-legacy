@@ -1,6 +1,6 @@
 import { Cmd, Sub } from "../../../Core";
 import { UserId } from "../../../Data";
-import { BackendModel, BackendMsg, handle, handleBotMove, initShared, Res, ToBackend, ToFrontend } from "./UserVsBot.Types";
+import { BackendModel, BackendMsg, handle, handleBotMove, initShared, Res, ToBackend, ToFrontend } from "./VsBot.Types";
 
 //
 //

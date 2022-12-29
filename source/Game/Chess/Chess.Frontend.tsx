@@ -10,7 +10,7 @@ import {
   ToFrontend
 } from "./Chess.Types"
 import * as Sounds from "./Sounds"
-import * as UserVsBot from "./UserVsBot/UserVsBot.Frontend"
+import * as VsBot from "./VsBot/VsBot.Frontend"
 import * as VsUser from "./VsUser/VsUser.Frontend"
 
 //
@@ -87,17 +87,17 @@ export const update = (
       return [model, Cmd.None]
     }
 
-    case "UserVsBot": {
-      if (model.mode[0] === "UserVsBot") {
-        const [child, cmd] = UserVsBot.update(
-          { sendToBackend: (msg) => sendToBackend(["UserVsBot", msg]) },
+    case "VsBot": {
+      if (model.mode[0] === "VsBot") {
+        const [child, cmd] = VsBot.update(
+          { sendToBackend: (msg) => sendToBackend(["VsBot", msg]) },
           msg[1],
           model.mode[1],
         )
 
         return [
-          { ...model, mode: ["UserVsBot", child] },
-          Cmd.tag("UserVsBot", cmd),
+          { ...model, mode: ["VsBot", child] },
+          Cmd.tag("VsBot", cmd),
         ]
       }
 
@@ -163,16 +163,16 @@ export const updateFromBackend = (
       return [model, Cmd.None, []]
     }
 
-    case "UserVsBot": {
-      if (model.mode[0] === "UserVsBot") {
-        const [child, cmd, actions] = UserVsBot.updateFromBackend(
+    case "VsBot": {
+      if (model.mode[0] === "VsBot") {
+        const [child, cmd, actions] = VsBot.updateFromBackend(
           msg[1],
           model.mode[1],
         )
 
         return [
-          { ...model, mode: ["UserVsBot", child] },
-          Cmd.tag("UserVsBot", cmd),
+          { ...model, mode: ["VsBot", child] },
+          Cmd.tag("VsBot", cmd),
           actions,
         ]
       }
@@ -219,7 +219,7 @@ export const View = ({
           ctx: ctx,
           gameRoomCtx: gameRoomCtx,
           coverArt: viewCoverArt(),
-          onUserVsComputer: () => $d(['InputMode', { mode: 'UserVsBot', userId: ctx.currentUserId }]),
+          onUserVsComputer: () => $d(['InputMode', { mode: 'VsBot', userId: ctx.currentUserId }]),
           onVsUser: () => $d(['InputMode', { mode: 'VsUser', userId: ctx.currentUserId }]),
           title: "Chess"
         })
@@ -227,11 +227,11 @@ export const View = ({
       )
     }
 
-    case "UserVsBot": {
+    case "VsBot": {
       return (
-        <UserVsBot.View
+        <VsBot.View
           ctx={ctx}
-          $d={(msg) => $d(["UserVsBot", msg])}
+          $d={(msg) => $d(["VsBot", msg])}
           model={model.mode[1]}
           onClose={() =>
             $d(["InputMode", { mode: "None", userId: ctx.currentUserId }])
@@ -312,14 +312,14 @@ export const mergeWithBackend = ({
       ]
     }
 
-    case "UserVsBot": {
-      if (frontendModel.mode[0] === "UserVsBot") {
+    case "VsBot": {
+      if (frontendModel.mode[0] === "VsBot") {
         return [
           {
             ...frontendModel,
             mode: [
-              "UserVsBot",
-              UserVsBot.mergeWithBackend(
+              "VsBot",
+              VsBot.mergeWithBackend(
                 frontendModel.mode[1],
                 backendModel[1],
               ),
@@ -329,19 +329,19 @@ export const mergeWithBackend = ({
         ]
       }
 
-      const [child, childCmd] = UserVsBot.init({
-        sendToBackend: (msg) => sendToBackend(["UserVsBot", msg]),
+      const [child, childCmd] = VsBot.init({
+        sendToBackend: (msg) => sendToBackend(["VsBot", msg]),
       })
 
       return [
         {
           ...frontendModel,
           mode: [
-            "UserVsBot",
-            UserVsBot.mergeWithBackend(child, backendModel[1]),
+            "VsBot",
+            VsBot.mergeWithBackend(child, backendModel[1]),
           ],
         },
-        Cmd.tag("UserVsBot", childCmd),
+        Cmd.tag("VsBot", childCmd),
       ]
     }
   }
