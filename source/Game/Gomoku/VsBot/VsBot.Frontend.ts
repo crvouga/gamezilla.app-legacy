@@ -118,20 +118,6 @@ export const view = ({ $send, model, ctx, onBack }: { model: Model, ctx: Ctx, $s
         }
 
         case 'game': {
-
-            // return (
-            //     viewVsBotGameScreen({
-            //         ctx,
-            //         botLabel: model.botLevel,
-            //         userPlayer: model.userStone,
-            //         botPlayer: toOppositeStone(model.userStone),
-            //         leftPlayer: 'White',
-            //         playerUserId: model.userId,
-            //         viewGame: () => viewBoard({ board: model.board, onPress: position => $send(['InputMove', { position }]) }),
-            //         viewPlayerIcon: (player, sx) => viewStoneIcon({ stone: player, ...sx })
-            //     })
-            // )
-
             if (model.userId !== ctx.currentUserId) {
                 return fillBox({}, [
                     text({ color: 'primary.main', width: '100%', mt: 1, textAlign: 'center' }, ["You're Spectating"]),

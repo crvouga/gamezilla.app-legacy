@@ -6,8 +6,6 @@
 // 
 // 
 
-export type Model = {}
-
 export type FrontendModel = {}
 
 export type BackendModel = {}

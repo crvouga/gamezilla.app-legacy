@@ -1,5 +1,5 @@
 import { Cmd, Sub } from "..";
-import { ToFrontend, FrontendMsg, FrontendModel } from "./Types"
+import { FrontendModel, FrontendMsg, ToFrontend } from "./Types";
 
 //
 //

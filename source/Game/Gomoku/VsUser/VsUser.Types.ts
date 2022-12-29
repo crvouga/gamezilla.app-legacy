@@ -1,6 +1,7 @@
-import { Result, Ok, Err } from "../../../Core/Result"
+import { Err, Ok, Result } from "../../../Core/Result"
 import { UserId } from "../../../Data"
-import { Stone, toOppositeStone } from "../Gomoku/Gomoku"
+import { Board, initBoard, move, MoveProblem, Stone, toOppositeStone } from "../Gomoku/Gomoku"
+import { Position } from "../Gomoku/Position"
 
 // 
 // 
@@ -10,13 +11,35 @@ import { Stone, toOppositeStone } from "../Gomoku/Gomoku"
 // 
 // 
 
-export type Model = {
-    type: "setup",
-    white: UserId | null,
-    black: UserId | null,
+export type Model =
+    | {
+        type: "setup",
+        white: UserId | null,
+        black: UserId | null,
+    }
+    | {
+        type: "playing",
+        white: UserId,
+        black: UserId,
+        board: Board
+    } | {
+        type: "finished",
+        white: UserId,
+        black: UserId,
+        board: Board,
+        gameOver: GameOver
+    }
+
+type GameOver = {
+    type: "Resigned",
+    resigner: Stone,
 }
 
-export type FrontendModel = Model
+
+
+export type FrontendModel = Model & {
+    confirming?: FrontendMsg[0]
+}
 
 export type BackendModel = Model
 
@@ -36,7 +59,7 @@ export const initShared = ({ white, black }: { white: UserId | null, black: User
 // 
 // 
 
-export type FrontendMsg = Req
+export type FrontendMsg = Req | ['ClickedCancel']
 
 export type BackendMsg = ["none"]
 
@@ -53,11 +76,14 @@ export type ToBackend = Req
 export type Req =
     | ['StartPlaying', { stone: Stone }]
     | ['StopPlaying', { stone: Stone }]
+    | ['StartGame']
+    // 
+    | ['InputMove', { position: Position }]
+    | ['Resign']
 
 export type Res = [Req[0], Result<Problem, Model>]
 
-type Problem = 'must_be_setup' | 'player_taken' | "must_be_player"
-
+type Problem = 'must_be_setup' | 'player_taken' | "must_be_player" | 'missing_player' | 'must_be_playing' | MoveProblem
 
 
 export const handle = ({ currentUserId, msg, model }: { currentUserId: UserId, msg: Req, model: Model }): Result<Problem, Model> => {
@@ -100,7 +126,74 @@ export const handle = ({ currentUserId, msg, model }: { currentUserId: UserId, m
 
             return Ok(modelNew)
         }
+
+        case 'StartGame': {
+            if (model.type !== 'setup') {
+                return Err('must_be_setup')
+            }
+
+            if (!(model.white && model.black)) {
+                return Err('missing_player')
+            }
+
+            const modelNew: Model = {
+                type: "playing",
+                white: model.white,
+                black: model.black,
+                board: initBoard,
+
+            }
+
+            return Ok(modelNew)
+        }
+
+        case 'InputMove': {
+            if (model.type !== 'playing') {
+                return Err('must_be_playing')
+            }
+
+            const { position } = msg[1]
+
+
+            const currentUserStone = model.white === currentUserId ? 'white' : 'black'
+
+            const moved = move({ board: model.board, position, stone: currentUserStone })
+
+            if (moved.type === 'Err') {
+                return moved
+            }
+
+            const modelNew: Model = {
+                ...model,
+                board: moved.value,
+            }
+
+            return Ok(modelNew)
+        }
+
+        case 'Resign': {
+            if (model.type !== 'playing') {
+                return Err('must_be_playing')
+            }
+
+            if (model.white !== currentUserId && model.black !== currentUserId) {
+                return Err('must_be_player')
+            }
+
+            const currentUserStone = model.white === currentUserId ? 'white' : 'black'
+
+            const modelNew: Model = {
+                type: "finished",
+                white: model.white,
+                black: model.black,
+                board: model.board,
+                gameOver: {
+                    type: "Resigned",
+                    resigner: currentUserStone,
+                }
+            }
+
+            return Ok(modelNew)
+        }
     }
 }
-
-

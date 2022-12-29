@@ -36,6 +36,9 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
 export const updateFromFrontend = ({ sendToClient, broadcast, msg, model, ctx }: { ctx: { currentUserId: UserId, }; msg: ToBackend, model: Model, broadcast: (m: ToFrontend) => Cmd, sendToClient: (m: ToFrontend) => Cmd }): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
+        case 'Resign':
+        case 'InputMove':
+        case 'StartGame':
         case 'StopPlaying':
         case "StartPlaying": {
             const res: Res = [msg[0], handle({ msg, model, currentUserId: ctx.currentUserId })]

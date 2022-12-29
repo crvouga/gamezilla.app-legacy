@@ -33,3 +33,5 @@ web-build
 .parcel-cache
 
 storybook-static
+
+backend-model.json
