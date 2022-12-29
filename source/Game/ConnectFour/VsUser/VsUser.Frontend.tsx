@@ -27,7 +27,7 @@ import {
   ToBackend,
   ToFrontend,
   toPlayerType
-} from "./UserVsUser.Types"
+} from "./VsUser.Types"
 
 //
 //

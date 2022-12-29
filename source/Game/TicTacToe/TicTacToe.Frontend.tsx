@@ -11,7 +11,7 @@ import {
   ToFrontend
 } from "./TicTacToe.Types"
 import * as UserVsBot from "./UserVsBot/UserVsBot.Frontend"
-import * as UserVsUser from "./UserVsUser/UserVsUser.Frontend"
+import * as VsUser from "./VsUser/VsUser.Frontend"
 
 //
 //
@@ -52,16 +52,16 @@ export const update = (
       return [model, sendToBackend(msg)]
     }
 
-    case "UserVsUser": {
-      if (model.mode === "UserVsUser") {
-        const [child, cmd] = UserVsUser.update(
+    case "VsUser": {
+      if (model.mode === "VsUser") {
+        const [child, cmd] = VsUser.update(
           {
-            sendToBackend: (msg) => sendToBackend(["UserVsUser", msg]),
+            sendToBackend: (msg) => sendToBackend(["VsUser", msg]),
           },
           msg[1],
           model.child,
         )
-        return [{ mode: "UserVsUser", child }, Cmd.tag("UserVsUser", cmd)]
+        return [{ mode: "VsUser", child }, Cmd.tag("VsUser", cmd)]
       }
       return [model, Cmd.None]
     }
@@ -105,14 +105,14 @@ export const updateFromBackend = (
       return [modelNew, Cmd.None, []]
     }
 
-    case "UserVsUser": {
-      if (model.mode === "UserVsUser") {
-        const [child, actions] = UserVsUser.updateFromBackend(
+    case "VsUser": {
+      if (model.mode === "VsUser") {
+        const [child, actions] = VsUser.updateFromBackend(
           { ctx, },
           msg[1],
           model.child,
         )
-        return [{ mode: "UserVsUser", child }, Cmd.None, actions]
+        return [{ mode: "VsUser", child }, Cmd.None, actions]
       }
 
       return [model, Cmd.None, []]
@@ -150,15 +150,15 @@ export const mergeWithBackend = (
         mode: "None",
       }
     }
-    case "UserVsUser": {
+    case "VsUser": {
       const frontendModelChild =
-        frontendModel.mode === "UserVsUser"
+        frontendModel.mode === "VsUser"
           ? frontendModel.child
-          : UserVsUser.init
+          : VsUser.init
 
       return {
-        mode: "UserVsUser",
-        child: UserVsUser.mergeWithBackend(
+        mode: "VsUser",
+        child: VsUser.mergeWithBackend(
           frontendModelChild,
           backendModel.child,
         ),
@@ -209,9 +209,9 @@ export const View = ({
           ctx,
           gameRoomCtx,
           coverArt: viewCoverArt(),
-          onUserVsUser: () => $d([
+          onVsUser: () => $d([
             "InputMode",
-            { mode: "UserVsUser", userId: ctx.currentUserId },
+            { mode: "VsUser", userId: ctx.currentUserId },
           ]),
           onUserVsComputer: () => $d([
             "InputMode",
@@ -221,15 +221,15 @@ export const View = ({
       )
     }
 
-    case "UserVsUser": {
+    case "VsUser": {
       return (
-        <UserVsUser.View
+        <VsUser.View
           onCloseGame={() => {
             $d(["InputMode", { mode: "None", userId: ctx.currentUserId }])
           }}
           ctx={ctx}
           model={model.child}
-          $d={(msg) => $d(["UserVsUser", msg])}
+          $d={(msg) => $d(["VsUser", msg])}
         />
       )
     }

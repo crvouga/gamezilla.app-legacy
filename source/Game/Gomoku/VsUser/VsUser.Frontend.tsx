@@ -1,7 +1,7 @@
 import { Cmd, Sub } from "../../../Core";
-import { Ctx, viewUserVsUserSetupScreen } from "../../Game";
+import { Ctx, viewVsUserSetupScreen } from "../../Game";
 import { viewCoverArt, viewStoneIcon } from "../Gomoku/Gomoku";
-import { initShared, BackendModel, ToFrontend, FrontendMsg, FrontendModel, ToBackend } from "./UserVsUser.Types"
+import { initShared, BackendModel, ToFrontend, FrontendMsg, FrontendModel, ToBackend } from "./VsUser.Types"
 
 //
 //
@@ -76,7 +76,7 @@ export const view = ({ model, ctx, onCancel, $d }: { $d: (m: Msg) => void; ctx: 
     switch (model.type) {
         case 'setup': {
             return (
-                viewUserVsUserSetupScreen({
+                viewVsUserSetupScreen({
                     title: "Gomoku",
                     subtitle: "Player Vs Player",
                     coverArt: viewCoverArt(),

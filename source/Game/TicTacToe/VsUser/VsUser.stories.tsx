@@ -1,7 +1,7 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { ctx, userA, userB, userC } from "../../../test-data"
 import * as UI from "../../../UI"
-import { Model, View } from "./UserVsUser.Frontend"
+import { Model, View } from "./VsUser.Frontend"
 
 const modelSetup: Model = {
   type: "Setup",
@@ -13,14 +13,14 @@ const modelSetup: Model = {
 }
 
 const props: Parameters<typeof View>[0] = {
-  $d: () => {},
+  $d: () => { },
   ctx: ctx,
   model: modelSetup,
-  onCloseGame: () => {},
+  onCloseGame: () => { },
 }
 
 export default {
-  title: "TicTacToe / UserVsUser",
+  title: "TicTacToe / VsUser",
   component: View,
   args: props,
 } as ComponentMeta<typeof View>

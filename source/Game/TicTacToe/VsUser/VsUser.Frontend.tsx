@@ -41,7 +41,7 @@ import {
   ToBackend,
   ToFrontend,
   toWinCount,
-} from "./UserVsUser.Types"
+} from "./VsUser.Types"
 
 //
 //

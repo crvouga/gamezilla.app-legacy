@@ -3,7 +3,7 @@ import { Ctx, GameRoomCtx, viewSelectModeScreen } from "../Game";
 import { BackendModel, FrontendModel, FrontendMsg, ToBackend, ToFrontend } from "./Gomoku.Types";
 import { viewCoverArt } from "./Gomoku/Gomoku";
 import * as UserVsBot from "./UserVsBot/UserVsBot.Frontend";
-import * as UserVsUser from "./UserVsUser/UserVsUser.Frontend";
+import * as VsUser from "./VsUser/VsUser.Frontend";
 
 //
 //
@@ -41,10 +41,10 @@ export const update = ({ sendToBackend, }: { sendToBackend: (m: ToBackend) => Cm
             }
             return [model, Cmd.None]
         }
-        case 'UserVsUser': {
-            if (model.type === 'UserVsUser') {
-                const [child, cmd] = UserVsUser.update({ sendToBackend: m => sendToBackend(['UserVsUser', m]), msg: msg[1], model: model.child })
-                return [{ type: "UserVsUser", child }, Cmd.tag("UserVsUser", cmd)]
+        case 'VsUser': {
+            if (model.type === 'VsUser') {
+                const [child, cmd] = VsUser.update({ sendToBackend: m => sendToBackend(['VsUser', m]), msg: msg[1], model: model.child })
+                return [{ type: "VsUser", child }, Cmd.tag("VsUser", cmd)]
             }
             return [model, Cmd.None]
         }
@@ -69,10 +69,10 @@ export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd<Ms
             }
             return [model, Cmd.None]
         }
-        case 'UserVsUser': {
-            if (model.type === 'UserVsUser') {
-                const [child, cmd] = UserVsUser.updateFromBackend(msg[1], model.child)
-                return [{ type: "UserVsUser", child }, Cmd.tag("UserVsUser", cmd)]
+        case 'VsUser': {
+            if (model.type === 'VsUser') {
+                const [child, cmd] = VsUser.updateFromBackend(msg[1], model.child)
+                return [{ type: "VsUser", child }, Cmd.tag("VsUser", cmd)]
             }
             return [model, Cmd.None]
         }
@@ -92,11 +92,11 @@ export const mergeWithBackend = ({ frontendModel, backendModel }: { frontendMode
             return { type: "UserVsBot", child: UserVsBot.mergeWithBackend({ frontendModel: UserVsBot.init({ userId: null }), backendModel: backendModel.child }) }
         }
 
-        case 'UserVsUser': {
-            if (frontendModel.type === 'UserVsUser') {
-                return { type: "UserVsUser", child: UserVsUser.mergeWithBackend({ frontendModel: frontendModel.child, backendModel: backendModel.child }) }
+        case 'VsUser': {
+            if (frontendModel.type === 'VsUser') {
+                return { type: "VsUser", child: VsUser.mergeWithBackend({ frontendModel: frontendModel.child, backendModel: backendModel.child }) }
             }
-            return { type: "UserVsUser", child: UserVsUser.mergeWithBackend({ frontendModel: UserVsUser.init({ white: null, black: null }), backendModel: backendModel.child }) }
+            return { type: "VsUser", child: VsUser.mergeWithBackend({ frontendModel: VsUser.init({ white: null, black: null }), backendModel: backendModel.child }) }
         }
     }
 }
@@ -130,7 +130,7 @@ export const view = ({ model, ctx, gameRoomCtx, $d }: { model: Model, ctx: Ctx, 
                     ctx,
                     gameRoomCtx,
                     onUserVsComputer: () => $d(['InputMode', { userId: ctx.currentUserId, mode: "UserVsBot" }]),
-                    onUserVsUser: () => $d(['InputMode', { userId: ctx.currentUserId, mode: "UserVsUser" }]),
+                    onVsUser: () => $d(['InputMode', { userId: ctx.currentUserId, mode: "VsUser" }]),
                     title: "Gomoku"
                 })
 
@@ -141,12 +141,12 @@ export const view = ({ model, ctx, gameRoomCtx, $d }: { model: Model, ctx: Ctx, 
             return UserVsBot.view({ model: model.child, ctx, onBack: () => $d(['InputMode', { mode: "None", userId: ctx.currentUserId }]), $d: m => $d(['UserVsBot', m]) })
         }
 
-        case 'UserVsUser': {
-            return UserVsUser.view({
+        case 'VsUser': {
+            return VsUser.view({
                 model: model.child,
                 ctx,
                 onCancel: () => $d(['InputMode', { mode: "None", userId: ctx.currentUserId }]),
-                $d: m => $d(['UserVsUser', m]),
+                $d: m => $d(['VsUser', m]),
             })
         }
     }

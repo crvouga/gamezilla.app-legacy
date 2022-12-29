@@ -11,7 +11,7 @@ import {
   ToFrontend
 } from "./ConnectFour.Types"
 import * as UserVsBot from "./UserVsBot/UserVsBot.Frontend"
-import * as UserVsUser from "./UserVsUser/UserVsUser.Frontend"
+import * as VsUser from "./VsUser/VsUser.Frontend"
 import { PlayerIcon } from "./Views"
 
 //
@@ -47,16 +47,16 @@ export const update = (
     case "InputMode": {
       return [model, sendToBackend(msg)]
     }
-    case "UserVsUser": {
-      if (model.type === "UserVsUser") {
-        const [child, cmd] = UserVsUser.update(
+    case "VsUser": {
+      if (model.type === "VsUser") {
+        const [child, cmd] = VsUser.update(
           {
-            sendToBackend: (msg) => sendToBackend(["UserVsUser", msg]),
+            sendToBackend: (msg) => sendToBackend(["VsUser", msg]),
           },
           msg[1],
           model.child,
         )
-        return [{ type: "UserVsUser", child }, Cmd.tag("UserVsUser", cmd)]
+        return [{ type: "VsUser", child }, Cmd.tag("VsUser", cmd)]
       }
       return [model, Cmd.None]
     }
@@ -90,15 +90,15 @@ export const updateFromBackend = (
       return [merged, Cmd.None, []]
     }
 
-    case "UserVsUser": {
-      if (model.type === "UserVsUser") {
-        const [child, cmd, actions] = UserVsUser.updateFromBackend(
+    case "VsUser": {
+      if (model.type === "VsUser") {
+        const [child, cmd, actions] = VsUser.updateFromBackend(
           msg[1],
           model.child,
         )
         return [
-          { type: "UserVsUser", child },
-          Cmd.tag("UserVsUser", cmd),
+          { type: "VsUser", child },
+          Cmd.tag("VsUser", cmd),
           actions,
         ]
       }
@@ -152,10 +152,10 @@ export const View = ({
           gameRoomCtx: gameRoomCtx,
           coverArt: viewCoverArt(),
           title: "Connect Four",
-          onUserVsUser: () =>
+          onVsUser: () =>
             $d([
               "InputMode",
-              { mode: "UserVsUser", userId: ctx.currentUserId },
+              { mode: "VsUser", userId: ctx.currentUserId },
             ]),
           onUserVsComputer: () =>
             $d([
@@ -166,11 +166,11 @@ export const View = ({
       )
     }
 
-    case "UserVsUser": {
+    case "VsUser": {
       return (
-        <UserVsUser.View
+        <VsUser.View
           ctx={ctx}
-          $d={(msg) => $d(["UserVsUser", msg])}
+          $d={(msg) => $d(["VsUser", msg])}
           goBack={goBack}
           model={model.child}
         />
@@ -274,11 +274,11 @@ export const mergeWithBackend = ({
       }
     }
 
-    case "UserVsUser": {
-      if (frontendModel.type === "UserVsUser") {
+    case "VsUser": {
+      if (frontendModel.type === "VsUser") {
         return {
-          type: "UserVsUser",
-          child: UserVsUser.mergeWithBackend({
+          type: "VsUser",
+          child: VsUser.mergeWithBackend({
             frontendModel: frontendModel.child,
             backendModel: backendModel.child,
           }),
@@ -286,9 +286,9 @@ export const mergeWithBackend = ({
       }
 
       return {
-        type: "UserVsUser",
-        child: UserVsUser.mergeWithBackend({
-          frontendModel: UserVsUser.init(backendModel.child),
+        type: "VsUser",
+        child: VsUser.mergeWithBackend({
+          frontendModel: VsUser.init(backendModel.child),
           backendModel: backendModel.child,
         }),
       }

@@ -41,7 +41,7 @@ export type GameRoomCtx = {
 export const bannerArtAspectRatio = Math.pow(3 / 4, 4)
 
 
-export const viewUserVsUserSetupScreen = ({
+export const viewVsUserSetupScreen = ({
   title,
   subtitle,
   coverArt,
@@ -396,14 +396,14 @@ export const viewSelectModeScreen = ({
   title,
   coverArt,
   onUserVsComputer,
-  onUserVsUser,
+  onVsUser,
   gameRoomCtx,
 }: {
   gameRoomCtx: GameRoomCtx,
   ctx: Ctx
   title: string,
   coverArt: ViewNode,
-  onUserVsUser: () => void
+  onVsUser: () => void
   onUserVsComputer: () => void
 }) => {
 
@@ -442,7 +442,7 @@ export const viewSelectModeScreen = ({
         Select Mode
       </Typography>
 
-      <Button onClick={onUserVsUser} size="large" fullWidth variant="outlined" startIcon={<Icons.PeopleAlt />} sx={{ mb: 2 }}>
+      <Button onClick={onVsUser} size="large" fullWidth variant="outlined" startIcon={<Icons.PeopleAlt />} sx={{ mb: 2 }}>
         Play Online
       </Button>
 

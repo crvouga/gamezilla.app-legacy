@@ -2,7 +2,7 @@ import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { ctx, userB, userC } from "../../../test-data"
 import * as UI from "../../../UI"
 import { emptyColumns, mapColumns, PlayerType } from "../ConnectFour"
-import { Model, View } from "./UserVsUser.Frontend"
+import { Model, View } from "./VsUser.Frontend"
 
 const setupModel: Model = {
   openedModal: "None",
@@ -15,13 +15,13 @@ const setupModel: Model = {
 
 const props: Parameters<typeof View>[0] = {
   ctx,
-  $d: () => {},
-  goBack: () => {},
+  $d: () => { },
+  goBack: () => { },
   model: setupModel,
 }
 
 export default {
-  title: "Connect Four/UserVsUser",
+  title: "Connect Four/VsUser",
   component: View,
   args: props,
 } as ComponentMeta<typeof View>

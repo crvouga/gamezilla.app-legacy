@@ -1,7 +1,7 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { ctx, userA, userB } from "../../../test-data"
 import * as UI from "../../../UI"
-import { Model, View } from "./UserVsUser.Frontend"
+import { Model, View } from "./VsUser.Frontend"
 
 const setupModel: Model = {
   isFlipped: false,
@@ -17,13 +17,13 @@ const setupModel: Model = {
 
 const props: Parameters<typeof View>[0] = {
   ctx,
-  $d: () => {},
-  onClose: () => {},
+  $d: () => { },
+  onClose: () => { },
   model: setupModel,
 }
 
 export default {
-  title: "Chess/UserVsUser",
+  title: "Chess/VsUser",
   component: View,
   args: props,
 } as ComponentMeta<typeof View>

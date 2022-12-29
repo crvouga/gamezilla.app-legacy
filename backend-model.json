@@ -27,6 +27,18 @@
                         "black": "86b8647c-646b-42a3-aad4-d08dd16a641e"
                     }
                 }
+            ],
+            "room-043n2q": [
+                "ConnectFour",
+                {
+                    "type": "UserVsUser",
+                    "child": {
+                        "type": "Setup",
+                        "moveTimeLimit": 7,
+                        "PlayerOne": "86b8647c-646b-42a3-aad4-d08dd16a641e",
+                        "PlayerTwo": "None"
+                    }
+                }
             ]
         }
     },
@@ -36,22 +48,20 @@
     },
     "sessions": {
         "2c3a57d2-8e68-40fe-a8da-6986714ca64b": {
-            "sessionId": "2c3a57d2-8e68-40fe-a8da-6986714ca64b",
             "clientId": {
-                "type": "Some",
-                "value": "uwbaNiQTBI5hxX5_AAAV"
+                "type": "None"
             },
+            "sessionId": "2c3a57d2-8e68-40fe-a8da-6986714ca64b",
             "userId": {
                 "type": "Some",
                 "value": "b571a421-0bed-4c98-856f-164b66421d0c"
             }
         },
         "ark3b11qMq": {
-            "sessionId": "ark3b11qMq",
             "clientId": {
-                "type": "Some",
-                "value": "PXYZ7FGZWu_GSwgdAAAX"
+                "type": "None"
             },
+            "sessionId": "ark3b11qMq",
             "userId": {
                 "type": "Some",
                 "value": "86b8647c-646b-42a3-aad4-d08dd16a641e"
