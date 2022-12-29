@@ -1,7 +1,7 @@
 import * as Alerts from "../../../Alerts"
 import { Audio, Cmd, exhaustive, Option, Sub, t } from "../../../Core"
 import * as UI from "../../../UI"
-import { Ctx, viewUserVsBotSetupScreen } from "../../Game"
+import { Ctx, viewVsBotSetupScreen } from "../../Game"
 import * as Board from "../Board"
 import { viewCoverArt } from "../Chess"
 import * as Sounds from "../Sounds"
@@ -15,7 +15,7 @@ import {
   Res,
   SharedModel, ToBackend,
   ToFrontend
-} from "./UserVsBot.Types"
+} from "./VsBot.Types"
 
 //
 //
@@ -299,7 +299,7 @@ export const View = ({
 
   if (model.sharedModel.type === "Setup") {
     return (
-      viewUserVsBotSetupScreen({
+      viewVsBotSetupScreen({
         botLevel: {
           values: Board.allBotLevels,
           selected: model.sharedModel.botLevel,

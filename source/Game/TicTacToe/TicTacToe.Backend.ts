@@ -7,7 +7,7 @@ import {
   ToBackend,
   ToFrontend,
 } from "./TicTacToe.Types"
-import * as UserVsBot from "./UserVsBot/UserVsBot.Backend"
+import * as VsBot from "./VsBot/VsBot.Backend"
 import * as VsUser from "./VsUser/VsUser.Backend"
 
 //
@@ -54,14 +54,14 @@ export const update = (
       return [model, Cmd.None]
     }
 
-    case "UserVsBot": {
-      if (model.mode === "UserVsBot") {
-        const [child, cmd] = UserVsBot.update(
-          { broadcast: (msg) => broadcast(["UserVsBot", msg]) },
+    case "VsBot": {
+      if (model.mode === "VsBot") {
+        const [child, cmd] = VsBot.update(
+          { broadcast: (msg) => broadcast(["VsBot", msg]) },
           msg[1],
           model.child,
         )
-        return [{ mode: "UserVsBot", child }, Cmd.tag("UserVsBot", cmd)]
+        return [{ mode: "VsBot", child }, Cmd.tag("VsBot", cmd)]
       }
       return [model, Cmd.None]
     }
@@ -103,18 +103,18 @@ export const updateFromFrontend = (
       return [model, Cmd.None]
     }
 
-    case "UserVsBot": {
-      if (model.mode === "UserVsBot") {
-        const [child, cmd] = UserVsBot.updateFromFrontend(
+    case "VsBot": {
+      if (model.mode === "VsBot") {
+        const [child, cmd] = VsBot.updateFromFrontend(
           {
-            sendToClient: (msg) => sendToClient(["UserVsBot", msg]),
-            broadcast: (msg) => broadcast(["UserVsBot", msg]),
+            sendToClient: (msg) => sendToClient(["VsBot", msg]),
+            broadcast: (msg) => broadcast(["VsBot", msg]),
           },
           msg[1],
           model.child,
         )
 
-        return [{ mode: "UserVsBot", child }, Cmd.tag("UserVsBot", cmd)]
+        return [{ mode: "VsBot", child }, Cmd.tag("VsBot", cmd)]
       }
 
       return [model, Cmd.None]
@@ -136,13 +136,13 @@ export const updateRoomLeave = (
       return [model, Cmd.None]
     }
 
-    case "UserVsBot": {
-      const [child, cmd] = UserVsBot.updateRoomLeave({
-        broadcast: (m) => broadcast(["UserVsBot", m]),
+    case "VsBot": {
+      const [child, cmd] = VsBot.updateRoomLeave({
+        broadcast: (m) => broadcast(["VsBot", m]),
         userId,
         model: model.child,
       })
-      return [{ mode: "UserVsBot", child }, Cmd.tag("UserVsBot", cmd)]
+      return [{ mode: "VsBot", child }, Cmd.tag("VsBot", cmd)]
     }
 
     case "VsUser": {
@@ -177,10 +177,10 @@ const initMode = ({
       }
     }
 
-    case "UserVsBot": {
+    case "VsBot": {
       return {
-        mode: "UserVsBot",
-        child: UserVsBot.init({ userId }),
+        mode: "VsBot",
+        child: VsBot.init({ userId }),
       }
     }
   }
@@ -207,8 +207,8 @@ export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
       )
     }
 
-    case "UserVsBot": {
-      return Sub.tag("UserVsBot", UserVsBot.subscriptions(model.child))
+    case "VsBot": {
+      return Sub.tag("VsBot", VsBot.subscriptions(model.child))
     }
   }
 }

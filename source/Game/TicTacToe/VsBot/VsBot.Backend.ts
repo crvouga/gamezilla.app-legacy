@@ -19,7 +19,7 @@ import {
   swapSides,
   ToBackend,
   ToFrontend,
-} from "./UserVsBot.Types"
+} from "./VsBot.Types"
 
 //
 //

@@ -1,6 +1,6 @@
 import { Cmd, Sub } from "../../../Core";
 import { actionButton, avatar, box, button, fillBox, fragment, icon, paper, Sx, text } from "../../../UI";
-import { Ctx, viewUserVsBotSetupScreen } from "../../Game";
+import { Ctx, viewVsBotSetupScreen } from "../../Game";
 import {
     botLevels,
     stones,
@@ -11,7 +11,7 @@ import {
     viewCoverArt,
     viewStoneIcon
 } from "../Gomoku/Gomoku";
-import { BackendModel, FrontendModel, FrontendMsg, GameModel, initShared, ToBackend, ToFrontend } from "./UserVsBot.Types";
+import { BackendModel, FrontendModel, FrontendMsg, GameModel, initShared, ToBackend, ToFrontend } from "./VsBot.Types";
 
 //
 //
@@ -92,7 +92,7 @@ export const view = ({ $d, model, ctx, onBack }: { model: Model, ctx: Ctx, $d: (
     switch (model.type) {
         case 'setup': {
             return (
-                viewUserVsBotSetupScreen({
+                viewVsBotSetupScreen({
                     botLevel: {
                         onInput: (botLevel) => $d(['InputBotLevel', { botLevel }]),
                         selected: model.botLevel,
@@ -120,7 +120,7 @@ export const view = ({ $d, model, ctx, onBack }: { model: Model, ctx: Ctx, $d: (
         case 'game': {
 
             // return (
-            //     viewUserVsBotGameScreen({
+            //     viewVsBotGameScreen({
             //         ctx,
             //         botLabel: model.botLevel,
             //         userPlayer: model.userStone,

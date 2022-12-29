@@ -2,7 +2,7 @@ import { Cmd, Sub } from "../../Core";
 import { Ctx, GameRoomCtx, viewSelectModeScreen } from "../Game";
 import { BackendModel, FrontendModel, FrontendMsg, ToBackend, ToFrontend } from "./Gomoku.Types";
 import { viewCoverArt } from "./Gomoku/Gomoku";
-import * as UserVsBot from "./UserVsBot/UserVsBot.Frontend";
+import * as VsBot from "./VsBot/VsBot.Frontend";
 import * as VsUser from "./VsUser/VsUser.Frontend";
 
 //
@@ -34,10 +34,10 @@ export const update = ({ sendToBackend, }: { sendToBackend: (m: ToBackend) => Cm
         case "InputMode": {
             return [model, sendToBackend(msg)]
         }
-        case 'UserVsBot': {
-            if (model.type === 'UserVsBot') {
-                const [child, cmd] = UserVsBot.update({ sendToBackend: m => sendToBackend(['UserVsBot', m]) }, msg[1], model.child)
-                return [{ type: "UserVsBot", child }, Cmd.tag("UserVsBot", cmd)]
+        case 'VsBot': {
+            if (model.type === 'VsBot') {
+                const [child, cmd] = VsBot.update({ sendToBackend: m => sendToBackend(['VsBot', m]) }, msg[1], model.child)
+                return [{ type: "VsBot", child }, Cmd.tag("VsBot", cmd)]
             }
             return [model, Cmd.None]
         }
@@ -62,10 +62,10 @@ export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd<Ms
             return [merged, Cmd.None]
         }
 
-        case 'UserVsBot': {
-            if (model.type === 'UserVsBot') {
-                const [child, cmd] = UserVsBot.updateFromBackend(msg[1], model.child)
-                return [{ type: "UserVsBot", child }, Cmd.tag("UserVsBot", cmd)]
+        case 'VsBot': {
+            if (model.type === 'VsBot') {
+                const [child, cmd] = VsBot.updateFromBackend(msg[1], model.child)
+                return [{ type: "VsBot", child }, Cmd.tag("VsBot", cmd)]
             }
             return [model, Cmd.None]
         }
@@ -85,11 +85,11 @@ export const mergeWithBackend = ({ frontendModel, backendModel }: { frontendMode
             return { type: "None" }
         }
 
-        case 'UserVsBot': {
-            if (frontendModel.type === 'UserVsBot') {
-                return { type: "UserVsBot", child: UserVsBot.mergeWithBackend({ frontendModel: frontendModel.child, backendModel: backendModel.child }) }
+        case 'VsBot': {
+            if (frontendModel.type === 'VsBot') {
+                return { type: "VsBot", child: VsBot.mergeWithBackend({ frontendModel: frontendModel.child, backendModel: backendModel.child }) }
             }
-            return { type: "UserVsBot", child: UserVsBot.mergeWithBackend({ frontendModel: UserVsBot.init({ userId: null }), backendModel: backendModel.child }) }
+            return { type: "VsBot", child: VsBot.mergeWithBackend({ frontendModel: VsBot.init({ userId: null }), backendModel: backendModel.child }) }
         }
 
         case 'VsUser': {
@@ -129,7 +129,7 @@ export const view = ({ model, ctx, gameRoomCtx, $d }: { model: Model, ctx: Ctx, 
                     coverArt: viewCoverArt(),
                     ctx,
                     gameRoomCtx,
-                    onUserVsComputer: () => $d(['InputMode', { userId: ctx.currentUserId, mode: "UserVsBot" }]),
+                    onUserVsComputer: () => $d(['InputMode', { userId: ctx.currentUserId, mode: "VsBot" }]),
                     onVsUser: () => $d(['InputMode', { userId: ctx.currentUserId, mode: "VsUser" }]),
                     title: "Gomoku"
                 })
@@ -137,8 +137,8 @@ export const view = ({ model, ctx, gameRoomCtx, $d }: { model: Model, ctx: Ctx, 
             )
         }
 
-        case 'UserVsBot': {
-            return UserVsBot.view({ model: model.child, ctx, onBack: () => $d(['InputMode', { mode: "None", userId: ctx.currentUserId }]), $d: m => $d(['UserVsBot', m]) })
+        case 'VsBot': {
+            return VsBot.view({ model: model.child, ctx, onBack: () => $d(['InputMode', { mode: "None", userId: ctx.currentUserId }]), $d: m => $d(['VsBot', m]) })
         }
 
         case 'VsUser': {

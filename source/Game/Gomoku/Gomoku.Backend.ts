@@ -2,7 +2,7 @@ import { Cmd, Sub } from "../../Core";
 import { UserId } from "../../Data";
 import { ToBackend, BackendMsg, BackendModel, Mode, ToFrontend } from "./Gomoku.Types"
 import * as VsUser from "./VsUser/VsUser.Backend"
-import * as UserVsBot from "./UserVsBot/UserVsBot.Backend"
+import * as VsBot from "./VsBot/VsBot.Backend"
 import { Ok } from "../../Core/Result";
 
 //
@@ -26,10 +26,10 @@ const initMode = ({ mode, userId }: { mode: Mode, userId: UserId }): Model => {
             return { type: "None" }
         }
 
-        case "UserVsBot": {
+        case "VsBot": {
             return {
-                type: "UserVsBot",
-                child: UserVsBot.init({ userId })
+                type: "VsBot",
+                child: VsBot.init({ userId })
             }
         }
 
@@ -54,7 +54,7 @@ export type Msg = BackendMsg
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
-        case "UserVsBot": {
+        case "VsBot": {
             return [model, Cmd.None]
         }
         case 'VsUser': {
@@ -71,18 +71,18 @@ export const updateFromFrontend = ({ ctx, broadcast, sendToClient }: { ctx: { cu
             return [modelNew, broadcast(['InputMode', msg[1], Ok(modelNew)])]
         }
 
-        case 'UserVsBot': {
-            if (model.type === 'UserVsBot') {
-                const [child, cmd] = UserVsBot.updateFromFrontend(
+        case 'VsBot': {
+            if (model.type === 'VsBot') {
+                const [child, cmd] = VsBot.updateFromFrontend(
                     {
                         ctx,
-                        broadcast: (m) => broadcast(['UserVsBot', m]),
-                        sendToClient: (m) => sendToClient(['UserVsBot', m])
+                        broadcast: (m) => broadcast(['VsBot', m]),
+                        sendToClient: (m) => sendToClient(['VsBot', m])
                     },
                     msg[1],
                     model.child
                 )
-                return [{ type: 'UserVsBot', child }, Cmd.tag('UserVsBot', cmd)]
+                return [{ type: 'VsBot', child }, Cmd.tag('VsBot', cmd)]
             }
             return [model, Cmd.None]
         }
@@ -107,9 +107,9 @@ export const updateFromFrontend = ({ ctx, broadcast, sendToClient }: { ctx: { cu
 
 export const updateRoomLeave = (userId: UserId, model: Model): [Model, Cmd<Msg>] => {
     switch (model.type) {
-        case "UserVsBot": {
-            const [child, cmd] = UserVsBot.updateRoomLeave(userId, model.child)
-            return [{ type: "UserVsBot", child }, Cmd.tag("UserVsBot", cmd)]
+        case "VsBot": {
+            const [child, cmd] = VsBot.updateRoomLeave(userId, model.child)
+            return [{ type: "VsBot", child }, Cmd.tag("VsBot", cmd)]
         }
         case "VsUser": {
             const [child, cmd] = VsUser.updateRoomLeave(userId, model.child)

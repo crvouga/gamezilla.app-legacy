@@ -185,7 +185,7 @@ const viewPlayerSlot = ({ ctx, label, userId, icon, onStartPlaying, onStopPlayin
 }
 
 
-export const viewUserVsBotSetupScreen = <BotLevel, Player>({
+export const viewVsBotSetupScreen = <BotLevel, Player>({
   title,
   subtitle,
   coverArt,
@@ -339,7 +339,7 @@ export const viewUserVsBotSetupScreen = <BotLevel, Player>({
   )
 }
 
-export const viewUserVsBotGameScreen = <Player,>({
+export const viewVsBotGameScreen = <Player,>({
   botPlayer,
   userPlayer,
   botLabel,
