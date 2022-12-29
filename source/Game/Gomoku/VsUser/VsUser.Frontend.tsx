@@ -1,7 +1,8 @@
 import { Cmd, Sub } from "../../../Core";
+import { actionButton, box, conformation, fillBox } from "../../../UI";
 import { Ctx, viewVsUserSetupScreen } from "../../Game";
-import { viewCoverArt, viewStoneIcon } from "../Gomoku/Gomoku";
-import { initShared, BackendModel, ToFrontend, FrontendMsg, FrontendModel, ToBackend } from "./VsUser.Types"
+import { viewBoard, viewCoverArt, viewStoneIcon } from "../Gomoku/Gomoku";
+import { BackendModel, FrontendModel, FrontendMsg, initShared, ToBackend, ToFrontend } from "./VsUser.Types";
 
 //
 //
@@ -27,7 +28,19 @@ export type Msg = FrontendMsg
 
 export const update = ({ msg, model, sendToBackend }: { sendToBackend: (m: ToBackend) => Cmd, msg: Msg, model: Model }): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
+        case 'ClickedCancel': {
+            return [{ ...model, confirming: undefined }, Cmd.None]
+        }
+
+        case 'Resign': {
+            if (model.confirming === 'Resign') {
+                return [model, sendToBackend(msg)]
+            }
+            return [{ ...model, confirming: 'Resign' }, Cmd.None]
+        }
         case 'StopPlaying':
+        case 'StartGame':
+        case 'InputMove':
         case "StartPlaying": {
             return [model, sendToBackend(msg)]
         }
@@ -38,6 +51,9 @@ export const update = ({ msg, model, sendToBackend }: { sendToBackend: (m: ToBac
 export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
         case 'StopPlaying':
+        case 'StartGame':
+        case 'Resign':
+        case 'InputMove':
         case "StartPlaying": {
             if (msg[1].type === 'Err') {
                 return [model, Cmd.None]
@@ -96,10 +112,51 @@ export const view = ({ model, ctx, onCancel, $send }: { $send: (m: Msg) => void;
                         icon: sx => viewStoneIcon({ ...sx, stone: 'black' })
                     },
                     onCancel,
-                    onStartGame: () => { },
+                    onStartGame: () => $send(['StartGame']),
                 })
             )
         }
+
+        case 'playing': {
+            return (
+                fillBox({}, [
+                    viewBoard({
+                        board: model.board,
+                        onPress: position => $send(['InputMove', { position }])
+                    }),
+                    box({ flex: 1 }, []),
+                    box({ display: 'flex', p: 2, }, [
+                        actionButton({ label: 'Resign', iconName: 'flag', onPress: () => $send(['Resign']) }),
+                    ]),
+                    conformation({
+                        open: 'Resign' === model.confirming,
+                        title: 'Resign from game?',
+                        iconName: 'flag',
+                        confirmTitle: 'Resign',
+                        onConfirm: () => $send(['Resign',]),
+                        onCancel: () => $send(['ClickedCancel',]),
+                        onClose: () => $send(['ClickedCancel',]),
+                    }),
+
+                ])
+            )
+
+        }
+
+        case 'finished': {
+            return (
+                fillBox({}, [
+
+                    viewBoard({
+                        board: model.board,
+                        onPress: position => $send(['InputMove', { position }])
+                    }),
+
+
+                ])
+            )
+        }
+
     }
 
 }

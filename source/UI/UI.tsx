@@ -1,4 +1,4 @@
-import { ExitToApp, RestartAlt, SmartToy, SwapHorizSharp } from "@mui/icons-material"
+import { Flag, ExitToApp, RestartAlt, SmartToy, SwapHorizSharp } from "@mui/icons-material"
 import * as MuiLab from "@mui/lab"
 import * as Mui from "@mui/material"
 import { TypographyProps } from "@mui/material"
@@ -719,7 +719,7 @@ export const ActionButton = ({
 // 
 
 
-export type IconName = "smart-toy" | 'exit' | 'swap' | 'restart'
+export type IconName = "smart-toy" | 'exit' | 'swap' | 'restart' | 'flag'
 
 export const icon = (name: IconName, sx?: Sx) => {
   switch (name) {
@@ -738,6 +738,10 @@ export const icon = (name: IconName, sx?: Sx) => {
     case 'restart': {
       return <RestartAlt sx={sx} />
     }
+
+    case 'flag': {
+      return <Flag sx={sx} />
+    }
   }
 }
 export const fragment = (children: ViewNode[]) => {
@@ -745,5 +749,47 @@ export const fragment = (children: ViewNode[]) => {
     <>
       {children}
     </>
+  )
+}
+
+
+export const conformation = ({
+  iconName,
+  open,
+  title,
+  subtitle,
+  confirmTitle,
+  cancelTitle = "Cancel",
+  onConfirm,
+  onCancel,
+  onClose
+}: {
+  iconName?: IconName
+  open: boolean
+  title: string
+  subtitle?: string
+  confirmTitle: string
+  cancelTitle?: string
+  onConfirm: () => void
+  onCancel: () => void
+  onClose: () => void
+}) => {
+
+  return (
+    <Dialog open={open} onClose={onClose}>
+      {iconName && (
+        icon(iconName, { margin: "auto", paddingTop: 2, marginBottom: -1 })
+      )}
+      <DialogTitle>{title}</DialogTitle>
+      {subtitle && (
+        <DialogTitle variant="subtitle2" color="text.secondary">
+          {subtitle}
+        </DialogTitle>
+      )}
+      <DialogActions>
+        <Button onClick={onCancel}>{cancelTitle}</Button>
+        <Button onClick={onConfirm}>{confirmTitle}</Button>
+      </DialogActions>
+    </Dialog>
   )
 }
