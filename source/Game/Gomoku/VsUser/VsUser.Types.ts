@@ -1,6 +1,7 @@
+import { NonEmpty } from "../../../Core"
 import { Err, Ok, Result } from "../../../Core/Result"
 import { UserId } from "../../../Data"
-import { Board, initBoard, move, MoveProblem, Stone, toOppositeStone } from "../Gomoku/Gomoku"
+import { Win, Board, initBoard, move, MoveProblem, Stone, toOppositeStone, toStatus } from "../Gomoku/Gomoku"
 import { Position } from "../Gomoku/Position"
 
 // 
@@ -43,10 +44,19 @@ type Rematch =
         type: "Requested",
     }
 
-type GameOver = {
-    type: "Resigned",
-    resigner: Stone,
-}
+type GameOver =
+    | {
+        type: "Resigned",
+        resigner: Stone,
+    }
+    | {
+        type: "Winner",
+        winner: Stone,
+        wins: NonEmpty<Win>
+    }
+    | {
+        type: "Draw"
+    }
 
 
 
@@ -178,12 +188,30 @@ export const handle = ({ currentUserId, msg, model }: { currentUserId: UserId, m
                 return moved
             }
 
-            const modelNew: Model = {
-                ...model,
-                board: moved.value,
+            const boardNew = moved.value
+
+            const status = toStatus(boardNew)
+
+            if (status.type === 'win') {
+                const gameOver: GameOver = {
+                    type: "Winner",
+                    winner: status.winner,
+                    wins: status.wins,
+                }
+
+                const modelNew = initGameOver({ model, gameOver })
+                return Ok(modelNew)
             }
 
-            return Ok(modelNew)
+            if (status.type === 'draw') {
+                const modelNew = initGameOver({ model, gameOver: { type: "Draw" } })
+                return Ok(modelNew)
+            }
+
+            return Ok({
+                ...model,
+                board: boardNew,
+            })
         }
 
         case 'Resign': {
@@ -197,17 +225,7 @@ export const handle = ({ currentUserId, msg, model }: { currentUserId: UserId, m
 
             const currentUserStone = model.white === currentUserId ? 'white' : 'black'
 
-            const modelNew: Model = {
-                type: "gameOver",
-                white: model.white,
-                black: model.black,
-                board: model.board,
-                gameOver: {
-                    type: "Resigned",
-                    resigner: currentUserStone,
-                },
-                rematch: { type: "None" }
-            }
+            const modelNew = initGameOver({ model, gameOver: { type: "Resigned", resigner: currentUserStone } })
 
             return Ok(modelNew)
         }
@@ -221,3 +239,20 @@ export const handle = ({ currentUserId, msg, model }: { currentUserId: UserId, m
         }
     }
 }
+
+
+const initGameOver = ({ model, gameOver }: { gameOver: GameOver, model: ModelPlaying }): ModelGameOver => {
+    return {
+        type: "gameOver",
+        black: model.black,
+        white: model.white,
+        board: model.board,
+        rematch: { type: "None" },
+        gameOver,
+    }
+
+}
+
+// fibonacci function
+
+

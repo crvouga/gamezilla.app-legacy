@@ -113,6 +113,7 @@ export const view = ({ model, ctx, onCancel, $send }: { $send: (m: Msg) => void;
         case 'playing': {
             return (
                 fillBox({}, [
+                    viewVsUserSlots(),
                     viewBoard({
                         board: model.board,
                         onPress: position => $send(['InputMove', { position }])
@@ -139,6 +140,7 @@ export const view = ({ model, ctx, onCancel, $send }: { $send: (m: Msg) => void;
         case 'gameOver': {
             return (
                 fillBox({}, [
+                    viewVsUserSlots(),
                     box({ position: "relative", aspectRatio: "1", }, [
                         viewBoard({ board: model.board, }),
                         viewOverlay({ model, ctx }),
@@ -165,6 +167,19 @@ export const viewOverlay = ({ model, ctx }: { model: ModelGameOver, ctx: Ctx }) 
         ])
     )
 }
+
+
+export const viewVsUserSlots = () => {
+    return (
+        box({ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', }, [
+            "slots"
+            // viewUserSlot(playerOne),
+            // viewUserSlot(playerTwo),
+        ])
+    )
+}
+
+
 
 export const viewOverlayContent = ({ model, ctx }: { model: ModelGameOver, ctx: Ctx }) => {
 
