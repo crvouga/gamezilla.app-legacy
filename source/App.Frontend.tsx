@@ -809,9 +809,9 @@ const wireStatus = Sub.create<WireStatus>((emit) => {
     emit("Connected")
   })
 
-  socketClient.on("connect_error", () => {
-    emit("ConnectError")
-  })
+  // socketClient.on("connect_error", () => {
+  //   emit("ConnectError")
+  // })
 
   socketClient.on("disconnect", () => {
     emit("Disconnected")

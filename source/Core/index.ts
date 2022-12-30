@@ -17,4 +17,4 @@ export { Task } from "./Task"
 export * as Time from "./Time"
 export * from "./Utility"
 export { Uuid } from "./Uuid"
-
+export { NonEmpty } from "./NonEmpty"

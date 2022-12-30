@@ -1,5 +1,5 @@
-import { shuffle } from "../../../Core"
-import { Result, Ok, Err } from "../../../Core/Result"
+import { NonEmpty, shuffle } from "../../../Core"
+import { Err, Ok, Result } from "../../../Core/Result"
 import { SvgIcon, Sx } from "../../../UI"
 import { Direction, Position } from "./Position"
 
@@ -143,25 +143,23 @@ export const toTurn = (board: Board): Stone => {
     return 'black'
 }
 
+
+
 export const toStatus = (board: Board) => {
     const wins = toWins(board)
 
-    const position = wins[0]?.[0]
-    if (wins.length > 0 && position) {
-        const winner = toStone(position, board)
+    if (NonEmpty.is(wins)) {
         return {
-            type: 'game_over',
-            gameOverType: 'win',
+            type: 'win',
             wins,
-            winner
-        }
+            winner: wins[0].stone
+        } as const
     }
 
     if (isDraw(board)) {
         return {
-            type: 'game_over',
-            gameOverType: "draw"
-        }
+            type: 'draw',
+        } as const
     }
 
     const turn = toTurn(board)
@@ -169,7 +167,7 @@ export const toStatus = (board: Board) => {
     return {
         type: 'game',
         turn
-    }
+    } as const
 }
 
 const isDraw = (board: Board) => {
@@ -179,13 +177,19 @@ const isDraw = (board: Board) => {
 
 const minWinLength = 5
 
-export const toWins = (board: Board): Position[][] => {
+export type Win = {
+    stone: Stone;
+    positions: Position[]
+}
+
+export const toWins = (board: Board): Win[] => {
     const toKey = ({ position, direction }: { position: Position, direction: Direction }): string => {
         return [position.x, position.y, direction].join("-")
     }
 
-    const wins: Position[][] = []
+    const wins: Win[] = []
     const visited = new Set<string>()
+
     for (const xKey in board) {
         for (const yKey in board[xKey]) {
             const x = Number(xKey)
@@ -239,7 +243,10 @@ export const toWins = (board: Board): Position[][] => {
                 }
 
                 if (win.length >= minWinLength) {
-                    wins.push(win)
+                    wins.push({
+                        stone,
+                        positions: win
+                    })
                 }
 
             }

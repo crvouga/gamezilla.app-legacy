@@ -132,7 +132,7 @@ export const view = ({ $send, model, ctx, onBack }: { model: Model, ctx: Ctx, $s
 
             const status = toStatus(model.board)
 
-            if (status.type === 'game_over') {
+            if (status.type !== 'game') {
                 return (
                     fillBox({}, [
                         viewPlayerSlots({ ctx, model }),
@@ -174,7 +174,7 @@ const viewOverlay = ({ model, ctx, $send }: { ctx: Ctx, model: GameModel, $send:
     }
     const status = toStatus(model.board)
 
-    if (status.type === 'game_over' && ctx.currentUserId === model.userId) {
+    if (status.type !== 'game' && ctx.currentUserId === model.userId) {
         return (
             box(props, [
                 viewGameOverTitle({ model, ctx }),
@@ -186,7 +186,7 @@ const viewOverlay = ({ model, ctx, $send }: { ctx: Ctx, model: GameModel, $send:
         )
     }
 
-    if (status.type === 'game_over') {
+    if (status.type !== 'game') {
         return (
             box(props, [viewGameOverTitle({ model, ctx }),])
         )
@@ -200,7 +200,7 @@ const viewOverlay = ({ model, ctx, $send }: { ctx: Ctx, model: GameModel, $send:
 const viewGameOverTitle = ({ model, ctx }: { ctx: Ctx; model: GameModel }) => {
     const status = toStatus(model.board)
 
-    if (status.type !== 'game_over') {
+    if (status.type === 'game') {
         return null
     }
 
@@ -245,7 +245,7 @@ const viewMessage = ({ ctx, model }: { ctx: Ctx, model: GameModel }) => {
 
     const status = toStatus(model.board)
 
-    if (status.type === 'game_over') {
+    if (status.type !== 'game') {
         return box(props, [
             text({}, ["Game Over"])
         ])

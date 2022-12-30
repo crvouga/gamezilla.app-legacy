@@ -204,9 +204,9 @@ export const findBestMove =
       }
     }
 
-type NonEmptyArray<T> = [T, ...T[]]
+type NonEmpty<T> = [T, ...T[]]
 
-const maxBy = <X,>(xs: NonEmptyArray<X>, toValue: (x: X) => number): X => {
+const maxBy = <X,>(xs: NonEmpty<X>, toValue: (x: X) => number): X => {
   let runningMax = xs[0]
 
   for (const x of xs) {
@@ -243,7 +243,7 @@ export const setSlot = (
   ) as Board
 }
 
-export const allPositions: NonEmptyArray<Position> = [
+export const allPositions: NonEmpty<Position> = [
   { row: 0, column: 0 },
   { row: 0, column: 1 },
   { row: 0, column: 2 },
