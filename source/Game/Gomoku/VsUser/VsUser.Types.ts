@@ -258,6 +258,7 @@ export const handle = ({ currentUserId, msg, model }: { currentUserId: UserId, m
             if (model.black !== currentUserId && model.white !== currentUserId) {
                 return Err('must_be_player')
             }
+
             return Ok(initSetup(model))
         }
     }
