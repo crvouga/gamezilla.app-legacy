@@ -66,14 +66,14 @@ export type Room = {
 
 export type ToFrontend =
   | ["Sync", BackendModel]
-  | ["Game", RoomId, Game.ToFrontend]
+  | ["Game", Game.ToFrontend]
   | Res
 
 export type ToBackend =
   | Req
   | ["RoomEndThenJoin", { roomId: RoomId; userId: UserId }]
   | ["RoomLeaveThenJoin", { roomId: RoomId; userId: UserId }]
-  | ["Game", RoomId, Game.ToBackend]
+  | ["Game", Game.ToBackend]
 
 export type BackendMsg = ["Game", RoomId, Game.BackendMsg]
 
@@ -83,7 +83,7 @@ export type FrontendMsg =
   | ["ClickedUser", { userId: UserId }]
   | ["ClickedBanner"]
   | ["ClickedRoomLeave", { userId: UserId }]
-  | ["Game", RoomId, Game.FrontendMsg]
+  | ["Game", Game.FrontendMsg]
   | ["RoomEndThenJoin", { roomId: RoomId; userId: UserId }]
   | ["RoomLeaveThenJoin", { roomId: RoomId; userId: UserId }]
   | ["ClickedRoomDestroy", { userId: UserId }]

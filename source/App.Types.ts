@@ -58,12 +58,12 @@ export type WireStatus =
 //
 
 export type ToBackend =
-  | ["GameRoom", GameRoom.ToBackend]
+  | ["Room", GameRoom.ToBackend]
   | ["Party", Party.ToBackend]
   | ["Auth", Auth.ToBackend]
 
 export type ToFrontend =
-  | ["GameRoom", GameRoom.ToFrontend]
+  | ["Room", GameRoom.ToFrontend]
   | ["Party", Party.ToFrontend]
   | ["Session", SessionId]
 
@@ -72,7 +72,7 @@ export type FrontendMsg =
   | ["Wire", WireStatus]
   | ["Route", Route.Msg]
   | ["Alerts", Alerts.Msg]
-  | ["GameRoom", GameRoom.FrontendMsg]
+  | ["Room", GameRoom.FrontendMsg]
   | ["Store", ChatStore.Msg]
   | ["Auth", Auth.Msg]
   | ["Page", Page.Msg]
@@ -84,7 +84,7 @@ export type BackendMsg =
   | ["▶", SessionId, ClientId, ToBackend]
   | ["ClientConnected", SessionId, ClientId]
   | ["ClientDisconnected", SessionId, ClientId]
-  | ["GameRoom", GameRoom.BackendMsg]
+  | ["Room", GameRoom.BackendMsg]
   | ["Party", Party.BackendMsg]
 
 //

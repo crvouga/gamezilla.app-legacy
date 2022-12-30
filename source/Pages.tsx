@@ -58,7 +58,7 @@ export type Model =
   | ["ChatNew", ChatNew.Model]
   | ["Search", Search.Model]
   | ["ChatConversation", { conversationId: string }, ChatConversation.Model]
-  | ["GameRoom"]
+  | ["Room"]
   | ["Game"]
   | ["Party"]
   | ["Loading"]
@@ -88,7 +88,7 @@ export type Msg =
   | ["ProfileUpdateUsername", ProfileUpdateUsername.Msg]
   | ["ProfileUpdateTheme", ProfileUpdateTheme.Msg]
   | ["Chat", Chat.Msg]
-  | ["GameRoom", GameRoom.Msg]
+  | ["Room", GameRoom.Msg]
   | ["Game", GameRoom.Msg]
   | ["Party", Party.Msg]
   | ["ChatNew", ChatNew.Msg]
@@ -210,8 +210,8 @@ export const initReady = (
       ]
     }
 
-    case "GameRoom": {
-      return [["GameRoom"], Cmd.None, []]
+    case "Room": {
+      return [["Room"], Cmd.None, []]
     }
 
     case "Game": {
@@ -279,7 +279,7 @@ export const initLoggedOut = (
     case "Search":
     case "ProfileUpdateTheme":
     case "Game":
-    case "GameRoom":
+    case "Room":
     case "ProfileUpdateName":
     case "ProfileUpdateUsername":
     case "Party":
@@ -322,7 +322,7 @@ export const initProfileMissing = (
     case "LoginPhone":
     case "LoginPhoneVerify":
     case "Game":
-    case "GameRoom":
+    case "Room":
     case "Home":
     case "Party":
       return [["ProfileCreate", ProfileCreate.init(auth)], Cmd.None]
@@ -479,9 +479,9 @@ export const updateReady = (
 
       return [model, Cmd.None, []]
 
-    case "GameRoom": {
-      if (msg[0] === "GameRoom") {
-        return [["GameRoom"], Cmd.None, [['GameRoom', ['Msg', msg[1]]]]]
+    case "Room": {
+      if (msg[0] === "Room") {
+        return [["Room"], Cmd.None, [["Room", ['Msg', msg[1]]]]]
       }
       return [model, Cmd.None, []]
     }
@@ -489,7 +489,7 @@ export const updateReady = (
 
     case "Game": {
       if (msg[0] === "Game") {
-        return [["Game"], Cmd.None, [['GameRoom', ['Msg', msg[1]]]]]
+        return [["Game"], Cmd.None, [["Room", ['Msg', msg[1]]]]]
       }
       return [model, Cmd.None, []]
     }
@@ -566,7 +566,7 @@ export const updateProfileMissing = (
     case "ChatConversation":
     case "ProfileUpdateTheme":
     case "Game":
-    case "GameRoom":
+    case "Room":
     case "Loading":
     case "LoginEmailLink":
     case "Search":
@@ -633,7 +633,7 @@ export const updateLoggedOut = (
     case "ChatNew":
     case "ChatConversation":
     case "ProfileUpdateTheme":
-    case "GameRoom":
+    case "Room":
     case 'Game':
     case "Loading":
     case "Logout":
@@ -678,7 +678,7 @@ export const subscriptions = (model: Model): Sub<Msg> => {
     case "Profile":
     case "Search":
     case "Game":
-    case "GameRoom":
+    case "Room":
     case "Party":
     case "LoginPhone":
     case "LoginPhoneVerify":
@@ -909,7 +909,7 @@ export const ViewReady = ({
         </UI.FillBox>
       )
 
-    case "GameRoom": {
+    case "Room": {
       return (
         <GameRoom.ViewPageRoom
           ctx={{
@@ -917,7 +917,7 @@ export const ViewReady = ({
             profiles: profileStore.profiles,
           }}
           model={gameRoom}
-          $send={(msg) => $send(["GameRoom", msg])}
+          $send={(msg) => $send(["Room", msg])}
         />
       )
     }
@@ -1022,7 +1022,7 @@ export const ViewProfileMissing = ({
     case "Search":
     case "Profile":
     case "Game":
-    case "GameRoom":
+    case "Room":
     case "Party":
     case "Home":
       return <UI.LoadingPage />
@@ -1078,7 +1078,7 @@ export const ViewLoggedOut = ({
     case "ChatConversation":
     case "ChatNew":
     case "Game":
-    case "GameRoom":
+    case "Room":
     case "Logout":
     case "ProfileCreate":
     case "ProfileDelete":

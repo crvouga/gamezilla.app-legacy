@@ -48,7 +48,7 @@ export const init: [Model, Cmd<Msg>] = [
 
 export type Msg = FrontendMsg
 
-export type Action = ["GameRoom", ["Msg", Msg]]
+export type Action = ["Room", ["Msg", Msg]]
 
 type OutAction = Alerts.Action<Msg> | ProfileStore.Action | Route.Action
 
@@ -78,7 +78,7 @@ export const update = (
     }
 
     case "ClickedRoom": {
-      return [model, Route.push(['GameRoom'])]
+      return [model, Route.push(["Room"])]
     }
 
     case "ClickedUser": {
@@ -115,24 +115,18 @@ export const update = (
         return [model, Cmd.None]
       }
 
-      const roomId = msg[1]
-
-      if (user.roomId !== roomId) {
-        return [model, Cmd.None]
-      }
-
-      const game = model.games[roomId]
+      const game = model.games[user.roomId]
 
       if (!game) {
         return [model, Cmd.None]
       }
 
-      const gameMsg = msg[2]
+      const gameMsg = msg[1]
 
       const [gameNew, gameCmd] = Game.update(
         {
           ctx,
-          sendToBackend: (msg) => sendToBackend(["Game", roomId, msg]),
+          sendToBackend: (msg) => sendToBackend(["Game", msg]),
         },
         gameMsg,
         game,
@@ -143,7 +137,7 @@ export const update = (
         ...model,
         games: {
           ...model.games,
-          [roomId]: gameNew
+          [user.roomId]: gameNew
         }
       }
 
@@ -151,7 +145,7 @@ export const update = (
         modelNew,
         p(
           gameCmd,
-          Cmd.map((msg): Msg => ["Game", roomId, msg]),
+          Cmd.map((msg): Msg => ["Game", msg]),
         ),
       ]
     }
@@ -216,20 +210,24 @@ export const updateFromBackend = (
     }
 
     case "Game": {
-      const roomId = msg[1]
+      const user = model.users[ctx.currentUserId]
 
-      const game = model.games[roomId]
+      if (!user) {
+        return [model, Cmd.None, []]
+      }
+
+      const game = model.games[user.roomId]
 
       if (!game) {
         return [model, Cmd.None, []]
       }
 
-      const gameMsg = msg[2]
+      const gameMsg = msg[1]
 
       const [gameNew, gameCmd, actions] = Game.updateFromBackend(
         {
           ctx,
-          sendToBackend: (msg) => sendToBackend(["Game", roomId, msg]),
+          sendToBackend: (msg) => sendToBackend(["Game", msg]),
         },
         gameMsg,
         game,
@@ -239,7 +237,7 @@ export const updateFromBackend = (
         ...model,
         games: {
           ...model.games,
-          [roomId]: gameNew,
+          [user.roomId]: gameNew,
         }
       }
 
@@ -247,7 +245,7 @@ export const updateFromBackend = (
         modelNew,
         p(
           gameCmd,
-          Cmd.map((msg) => ["Game", roomId, msg]),
+          Cmd.map((msg) => ["Game", msg]),
         ),
         actions,
       ]
@@ -476,7 +474,7 @@ const mergeWithBackendModel = ({
           const merged = Game.mergeWithBackend({
             backendModel: backendGame,
             frontendModel: frontendGame,
-            sendToBackend: (msg) => sendToBackend(["Game", roomId, msg]),
+            sendToBackend: (msg) => sendToBackend(["Game", msg]),
           })
 
           return [
@@ -488,7 +486,7 @@ const mergeWithBackendModel = ({
               gamesNew[1],
               p(
                 merged[1],
-                Cmd.map((m): Msg => ["Game", roomId, m]),
+                Cmd.map((m): Msg => ["Game", m]),
               ),
             ]),
           ]
@@ -496,13 +494,13 @@ const mergeWithBackendModel = ({
 
         const initial = Game.init({
           gameName: backendGame[0],
-          sendToBackend: (msg) => sendToBackend(["Game", roomId, msg]),
+          sendToBackend: (msg) => sendToBackend(["Game", msg]),
         })
 
         const merged = Game.mergeWithBackend({
           backendModel: backendGame,
           frontendModel: initial[0],
-          sendToBackend: (msg) => sendToBackend(["Game", roomId, msg]),
+          sendToBackend: (msg) => sendToBackend(["Game", msg]),
         })
 
         return [
@@ -512,8 +510,8 @@ const mergeWithBackendModel = ({
           },
           Cmd.batch([
             gamesNew[1],
-            p(initial[1], Cmd.map((msg) => ["Game", roomId, msg])),
-            p(merged[1], Cmd.map((msg) => ["Game", roomId, msg])),
+            p(initial[1], Cmd.map((msg) => ["Game", msg])),
+            p(merged[1], Cmd.map((msg) => ["Game", msg])),
           ]),
         ]
       },
@@ -578,7 +576,7 @@ export const subscriptions = (
 
   return p(
     Game.subscriptions(`room/${user.roomId}`, game),
-    Sub.map((msg) => ["Game", user.roomId, msg]),
+    Sub.map((msg) => ["Game", msg]),
   )
 }
 
@@ -619,17 +617,19 @@ export const ViewPageGame = ({
 
   return (
     <FillBox>
-      {game ? <Game.View
-        gameRoomCtx={{
-          hostId: room.hostId,
-          onQuit: () => $send(['InputGame', { userId: ctx.currentUserId, gameName: undefined }])
-        }}
-        ctx={ctx}
-        $send={(msg) => $send(["Game", room.roomId, msg])}
-        model={game}
-      /> :
+      {game ? (
+        <Game.View
+          gameRoomCtx={{
+            hostId: room.hostId,
+            onQuit: () => $send(['InputGame', { userId: ctx.currentUserId, gameName: undefined }])
+          }}
+          ctx={ctx}
+          $send={(msg) => $send(["Game", msg])}
+          model={game}
+        />
+      ) : (
         <ViewNotInGame ctx={ctx} room={room} $send={$send} />
-      }
+      )}
 
       <Toolbar
         variant="dense"
@@ -1000,7 +1000,7 @@ export const ViewBanner = ({
   $send: (msg: Msg) => void
   store: ProfileStore.Model
 }) => {
-  if (route[0] === "GameRoom" || route[0] === "Game") {
+  if (route[0] === "Room" || route[0] === "Game") {
     return <></>
   }
 

@@ -46,6 +46,7 @@ export const update = (
   msg: Msg,
   model: Model,
 ): [Model, Cmd<Msg>] => {
+
   switch (msg[0]) {
     case "Game": {
       const roomId = msg[1]
@@ -61,7 +62,7 @@ export const update = (
       const [gameNew, gameCmd] = Game.update(
         {
           broadcast: (msg) =>
-            sendToRoom({ sendToUser, model, roomId, msg: ["Game", roomId, msg] }),
+            sendToRoom({ sendToUser, model, roomId, msg: ["Game", msg] }),
         },
         gameMsg,
         game,
@@ -100,33 +101,37 @@ export const updateFromFrontend = (
 ): [Model, Cmd<BackendMsg>] => {
   switch (msg[0]) {
     case "Game": {
-      const roomId = msg[1]
+      const user = model.users[ctx.currentUserId]
 
-      const room = model.rooms[roomId]
+      if (!user) {
+        return [model, Cmd.None]
+      }
+
+      const room = model.rooms[user.roomId]
 
       if (!room) {
         return [model, Cmd.None]
       }
 
-      const game = model.games[roomId]
+      const game = model.games[user.roomId]
 
       if (!game) {
         return [model, Cmd.None]
       }
 
-      const gameMsg = msg[2]
+      const gameMsg = msg[1]
 
       const [gameNew, gameCmd] = Game.updateFromFrontend(
         {
           hostId: room.hostId,
           ctx,
-          sendToClient: (msg) => wire.sendToClient(["Game", roomId, msg]),
+          sendToClient: (msg) => wire.sendToClient(["Game", msg]),
           broadcast: (msg) =>
             sendToRoom({
               sendToUser: wire.sendToUser,
               model,
-              roomId,
-              msg: ["Game", roomId, msg],
+              roomId: room.roomId,
+              msg: ["Game", msg],
             }),
         },
         gameMsg,
@@ -138,7 +143,7 @@ export const updateFromFrontend = (
         ...model,
         games: {
           ...model.games,
-          [roomId]: gameNew
+          [room.roomId]: gameNew
         }
       }
 
@@ -146,7 +151,7 @@ export const updateFromFrontend = (
         modelNew,
         p(
           gameCmd,
-          Cmd.map((msg): Msg => ["Game", roomId, msg]),
+          Cmd.map((msg): Msg => ["Game", room.roomId, msg]),
         ),
       ]
     }
@@ -272,7 +277,7 @@ const updateRoomLeave = (
           sendToUser: wire.sendToUser,
           model: modelAfter,
           roomId: room.roomId,
-          msg: ["Game", room.roomId, msg],
+          msg: ["Game", msg],
         }),
     },
     user.userId,

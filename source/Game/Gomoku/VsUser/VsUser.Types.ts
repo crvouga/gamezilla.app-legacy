@@ -74,6 +74,27 @@ export const initShared = ({ white, black }: { white: UserId | null, black: User
     }
 }
 
+
+const initGameOver = ({ model, gameOver }: { gameOver: GameOver, model: ModelPlaying }): ModelGameOver => {
+    return {
+        type: "gameOver",
+        black: model.black,
+        white: model.white,
+        board: model.board,
+        rematch: { type: "None" },
+        gameOver,
+    }
+
+}
+
+const initSetup = (model: Model): ModelSetup => {
+    return {
+        type: "setup",
+        black: model.black,
+        white: model.white,
+    }
+}
+
 // 
 // 
 // 
@@ -105,6 +126,7 @@ export type Req =
     | ['Resign']
     | ['RematchRequest']
     | ['RematchRespond', { response: "Accept" | "Decline" }]
+    | ['StopGame']
 
 export type Res = [Req[0], Result<Problem, Model>]
 
@@ -231,22 +253,18 @@ export const handle = ({ currentUserId, msg, model }: { currentUserId: UserId, m
         case 'RematchRespond': {
             return Ok(model)
         }
+
+        case 'StopGame': {
+            if (model.black !== currentUserId && model.white !== currentUserId) {
+                return Err('must_be_player')
+            }
+            return Ok(initSetup(model))
+        }
     }
 }
 
 
-const initGameOver = ({ model, gameOver }: { gameOver: GameOver, model: ModelPlaying }): ModelGameOver => {
-    return {
-        type: "gameOver",
-        black: model.black,
-        white: model.white,
-        board: model.board,
-        rematch: { type: "None" },
-        gameOver,
-    }
 
-}
 
-// fibonacci function
 
 

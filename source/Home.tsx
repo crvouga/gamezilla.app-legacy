@@ -54,7 +54,7 @@ export const update = (
         model,
         [
           ["Route", ["Push", ["Game"]]],
-          ["GameRoom", ["Msg", ["RoomCreate", payload]]]
+          ["Room", ["Msg", ["RoomCreate", payload]]]
         ],
       ]
     }
@@ -64,7 +64,7 @@ export const update = (
         model,
         [
           ["Route", ["Push", ["Game"]]],
-          ['GameRoom', ['Msg', ['RoomCreate', { roomId: msg[1].roomId, userId: currentUserId }]]]
+          ["Room", ['Msg', ['RoomCreate', { roomId: msg[1].roomId, userId: currentUserId }]]]
         ]
       ]
     }
@@ -75,7 +75,7 @@ export const update = (
         model,
         [
           [
-            "GameRoom",
+            "Room",
             ["Msg", ["RoomJoin", { roomId, userId: currentUserId }]],
           ],
         ],
@@ -85,14 +85,14 @@ export const update = (
     case "ClickedCurrentRoomLeave": {
       return [
         model,
-        [["GameRoom", ["Msg", ["RoomLeave", { userId: currentUserId }]]]],
+        [["Room", ["Msg", ["RoomLeave", { userId: currentUserId }]]]],
       ]
     }
 
     case "ClickedCurrentRoomDestroy": {
       return [
         model,
-        [["GameRoom", ["Msg", ["RoomDestroy", { userId: currentUserId }]]]],
+        [["Room", ["Msg", ["RoomDestroy", { userId: currentUserId }]]]],
       ]
     }
 

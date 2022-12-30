@@ -1,5 +1,5 @@
 import { Cmd, Sub } from "../../../Core";
-import { actionButton, box, button, conformation, fillBox, fragment, text } from "../../../UI";
+import { actionButton, box, button, conformation, fillBox, text } from "../../../UI";
 import { Ctx, viewVsUserSetupScreen } from "../../Game";
 import { viewBoard, viewCoverArt, viewStoneIcon } from "../Gomoku/Gomoku";
 import { BackendModel, FrontendModel, FrontendMsg, initShared, ModelGameOver, ToBackend, ToFrontend } from "./VsUser.Types";
@@ -47,6 +47,16 @@ export const update = ({ msg, model, sendToBackend }: { sendToBackend: (m: ToBac
 
 export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
+
+        case 'InputMove': {
+            if (msg[1].type === 'Err') {
+                return [model, Cmd.None]
+            }
+            const merged = mergeWithBackend({ backendModel: msg[1].value, frontendModel: model })
+
+            return [merged, Cmd.None,]
+        }
+
         default: {
             if (msg[1].type === 'Err') {
                 return [model, Cmd.None]
@@ -146,8 +156,8 @@ export const view = ({ model, ctx, onCancel, $send }: { $send: (m: Msg) => void;
                         viewOverlay({ model, ctx }),
                     ]),
                     box({ p: 2, display: 'flex', gap: 2, flexDirection: 'column' }, [
-                        button({ onPress: () => { }, variant: "contained", startIcon: 'restart', width: '100%', }, 'Rematch'),
-                        button({ onPress: () => { }, variant: "contained", startIcon: 'exit', width: '100%', }, 'Back to lobby'),
+                        button({ onPress: () => $send(['RematchRequest']), variant: "contained", startIcon: 'restart', width: '100%', }, 'Rematch'),
+                        button({ onPress: () => $send(['StopGame']), variant: "contained", startIcon: 'exit', width: '100%', }, 'Back to lobby'),
                     ]),
                 ])
             )
@@ -155,17 +165,6 @@ export const view = ({ model, ctx, onCancel, $send }: { $send: (m: Msg) => void;
 
     }
 
-}
-
-export const viewOverlay = ({ model, ctx }: { model: ModelGameOver, ctx: Ctx }) => {
-    return (
-        box({
-            position: "absolute", top: 0, left: 0, width: "100%", height: '100%', backgroundColor: "rgba(0,0,0,0.5)",
-            display: "flex", justifyContent: "center", alignItems: "center",
-        }, [
-            viewOverlayContent({ model, ctx })
-        ])
-    )
 }
 
 
@@ -180,8 +179,18 @@ export const viewVsUserSlots = () => {
 }
 
 
+export const viewOverlay = ({ model, ctx }: { model: ModelGameOver, ctx: Ctx }) => {
+    return (
+        box({
+            position: "absolute", top: 0, left: 0, width: "100%", height: '100%', backgroundColor: "rgba(0,0,0,0.5)",
+            display: "flex", justifyContent: "center", alignItems: "center",
+        }, [
+            viewOverlay_({ model, ctx })
+        ])
+    )
+}
 
-export const viewOverlayContent = ({ model, ctx }: { model: ModelGameOver, ctx: Ctx }) => {
+export const viewOverlay_ = ({ model, ctx }: { model: ModelGameOver, ctx: Ctx }) => {
 
     const currentUserStone = ctx.currentUserId === model.white ? 'white' : 'black'
     if (model.gameOver.type === 'Resigned' && model.gameOver.resigner === currentUserStone) {
@@ -194,17 +203,41 @@ export const viewOverlayContent = ({ model, ctx }: { model: ModelGameOver, ctx: 
 
     if (model.gameOver.type === 'Resigned') {
         return (
-            box({ display: 'flex', flexDirection: 'column', alignItems: 'center', }, [
-                viewStoneIcon({ stone: model.gameOver.resigner, width: 100, height: 100 }),
-                text({ color: 'white', variant: 'h2', }, "Resigned")
+            box({ display: 'flex', alignItems: 'center', }, [
+                viewStoneIcon({ stone: model.gameOver.resigner, width: 64, height: 64, mr: 2 }),
+                text({ color: 'white', variant: 'h1', }, "Resigned")
             ])
         )
     }
 
+    if (model.gameOver.type === 'Draw') {
+        return (
+            text({ color: 'white', variant: 'h1', }, [
+                'Draw'
+            ])
+        )
+    }
+
+    if (model.gameOver.type === 'Winner' && model.gameOver.winner === currentUserStone) {
+        return (
+            text({ color: 'white', variant: 'h1', }, [
+                'You won'
+            ])
+        )
+    }
+
+    if (model.gameOver.type === 'Winner') {
+        return (
+            box({ display: 'flex', alignItems: 'center', }, [
+                viewStoneIcon({ stone: model.gameOver.winner, width: 64, height: 64, mr: 2 }),
+                text({ color: 'white', variant: 'h1', }, "Won")
+            ])
+        )
+    }
 
     return (
-        fragment([
-
+        text({ color: 'white', variant: 'h2', }, [
+            'Game Over'
         ])
     )
 }
