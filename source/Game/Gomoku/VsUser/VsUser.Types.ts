@@ -188,30 +188,24 @@ export const handle = ({ currentUserId, msg, model }: { currentUserId: UserId, m
                 return moved
             }
 
-            const boardNew = moved.value
+            const modelNew = { ...model, board: moved.value, }
 
-            const status = toStatus(boardNew)
+            const statusNew = toStatus(modelNew.board)
 
-            if (status.type === 'win') {
+            if (statusNew.type === 'win') {
                 const gameOver: GameOver = {
                     type: "Winner",
-                    winner: status.winner,
-                    wins: status.wins,
+                    winner: statusNew.winner,
+                    wins: statusNew.wins,
                 }
-
-                const modelNew = initGameOver({ model, gameOver })
-                return Ok(modelNew)
+                return Ok(initGameOver({ model: modelNew, gameOver }))
             }
 
-            if (status.type === 'draw') {
-                const modelNew = initGameOver({ model, gameOver: { type: "Draw" } })
-                return Ok(modelNew)
+            if (statusNew.type === 'draw') {
+                return Ok(initGameOver({ model: modelNew, gameOver: { type: "Draw" } }))
             }
 
-            return Ok({
-                ...model,
-                board: boardNew,
-            })
+            return Ok(modelNew)
         }
 
         case 'Resign': {
