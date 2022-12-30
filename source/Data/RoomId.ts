@@ -2,8 +2,8 @@ import { Result } from "../Core"
 
 export type RoomId = string & { _opaque: "RoomId" }
 
-const namespace = "room"
-const separator = "-"
+const namespace = ""
+const separator = ""
 
 const is = (id: unknown): id is RoomId => {
   // todo: better validation

@@ -76,12 +76,12 @@ const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
       const gameRoomCmd = GameRoom.onClientConnected(
         {
-          sendToClient: (msg) => sendToFrontend([clientId], ["GameRoom", msg]),
+          sendToClient: (msg) => sendToFrontend([clientId], ["Room", msg]),
         },
         model.gameRoom,
       )
 
-      return [modelNew, Cmd.batch<Msg>([Cmd.tag("GameRoom", gameRoomCmd)])]
+      return [modelNew, Cmd.batch<Msg>([Cmd.tag("Room", gameRoomCmd)])]
     }
 
     case "ClientDisconnected": {
@@ -119,17 +119,17 @@ const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       return [{ ...model, party: child }, Cmd.tag("Party", childCmd)]
     }
 
-    case "GameRoom": {
+    case "Room": {
       const [child, childCmd] = GameRoom.update(
         {
           sendToUser: (userIds, msg) =>
-            sendToUser(model, userIds, ["GameRoom", msg]),
+            sendToUser(model, userIds, ["Room", msg]),
         },
         msg[1],
         model.gameRoom,
       )
 
-      return [{ ...model, gameRoom: child }, Cmd.tag("GameRoom", childCmd)]
+      return [{ ...model, gameRoom: child }, Cmd.tag("Room", childCmd)]
     }
 
     default: {
@@ -187,7 +187,7 @@ const updateFromFrontend = (
       return [{ ...model, party: child }, Cmd.tag("Party", childCmd)]
     }
 
-    case "GameRoom": {
+    case "Room": {
       const session = model.sessions[sessionId]
 
       if (!session) {
@@ -203,16 +203,16 @@ const updateFromFrontend = (
       const [child, childCmd] = GameRoom.updateFromFrontend(
         { currentUserId: session.userId.value },
         {
-          broadcast: (msg) => broadcast(["GameRoom", msg]),
-          sendToClient: (msg) => sendToClient(["GameRoom", msg]),
+          broadcast: (msg) => broadcast(["Room", msg]),
+          sendToClient: (msg) => sendToClient(["Room", msg]),
           sendToUser: (userIds, msg) =>
-            sendToUser(model, userIds, ["GameRoom", msg]),
+            sendToUser(model, userIds, ["Room", msg]),
         },
         msg[1],
         model.gameRoom,
       )
 
-      return [{ ...model, gameRoom: child }, Cmd.tag("GameRoom", childCmd)]
+      return [{ ...model, gameRoom: child }, Cmd.tag("Room", childCmd)]
     }
   }
 }
@@ -235,6 +235,7 @@ const sendToUser = (model: Model, userIds: UserId[], msg: ToFrontend) => {
       session.clientId.type !== "None" &&
       userIdSet.has(session.userId.value)
     ) {
+
       clientIds.push(session.clientId.value)
     }
   }
@@ -252,7 +253,7 @@ const sendToUser = (model: Model, userIds: UserId[], msg: ToFrontend) => {
 
 const subscriptions = (model: Model): Sub<Msg> => {
   return Sub.batch([
-    p(GameRoom.subscriptions(model.gameRoom), Sub.map(t("GameRoom"))),
+    p(GameRoom.subscriptions(model.gameRoom), Sub.map(t("Room"))),
     p(
       onConnect,
       Sub.map(
@@ -350,7 +351,6 @@ const sendToFrontend =
   (clientIds: ClientId[], msg: ToFrontend): Cmd =>
     () => {
       socketServer.to(clientIds).emit("ToFrontend", msg)
-      socketServer.emit("ToFrontend", msg)
     }
 
 const broadcast =

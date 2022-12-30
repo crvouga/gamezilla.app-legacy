@@ -25,7 +25,7 @@ export type Model =
   | ["ProfileUpdateName"]
   | ["ProfileUpdateUsername"]
   | ["ProfileUpdateTheme"]
-  | ["GameRoom"]
+  | ["Room"]
   | ["Game"]
   | ["Party"]
   | ["Chat"]
@@ -57,7 +57,7 @@ export const routesTypes: { [routeType in Model[0]]: string } = {
   ProfileUpdateName: "ProfileUpdateName",
   ProfileUpdateUsername: "ProfileUpdateUsername",
   ProfileUpdateTheme: "ProfileUpdateTheme",
-  GameRoom: "GameRoom",
+  Room: "Room",
   Game: "Game",
   Party: "Party",
   Chat: "Chat",

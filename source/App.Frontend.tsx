@@ -52,7 +52,7 @@ const init = (location: Browser.Location): [Model, Cmd<Msg>] => {
   const route = p(
     location,
     Route.decode,
-    Option.withDefault<Route.Model>(["GameRoom"]),
+    Option.withDefault<Route.Model>(["Room"]),
   )
   const [auth, authCmd] = Auth.init()
   const alerts = Alerts.init
@@ -79,7 +79,7 @@ const init = (location: Browser.Location): [Model, Cmd<Msg>] => {
     Cmd.batch<Msg>([
       Cmd.tag("Auth", authCmd),
       Cmd.tag("Page", pageCmd),
-      Cmd.tag("GameRoom", gameRoomCmd),
+      Cmd.tag("Room", gameRoomCmd),
       Cmd.tag("Party", partyCmd),
     ]),
   ]
@@ -195,7 +195,7 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       return [model, Cmd.None]
     }
 
-    case "GameRoom": {
+    case "Room": {
       const status = toStatus(model)
 
       if (status[0] !== "Ready") {
@@ -210,13 +210,13 @@ const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
             currentUserId: profile.userId,
             profiles: model.profileStore.profiles,
           },
-          sendToBackend: (msg) => sendToBackend(["GameRoom", msg]),
+          sendToBackend: (msg) => sendToBackend(["Room", msg]),
         },
         msg[1],
         model.gameRoom,
       )
 
-      return [{ ...model, gameRoom: child }, Cmd.tag("GameRoom", childCmd)]
+      return [{ ...model, gameRoom: child }, Cmd.tag("Room", childCmd)]
     }
 
     case "Page": {
@@ -315,7 +315,7 @@ const updateFromBackend = (
       )
     }
 
-    case "GameRoom": {
+    case "Room": {
       if (model.auth[0] !== "LoggedIn") {
         return [model, Cmd.None]
       }
@@ -325,17 +325,17 @@ const updateFromBackend = (
       const [gameRoom, gameRoomCmd, actions] = GameRoom.updateFromBackend(
         {
           ctx: { currentUserId, profiles: model.profileStore.profiles },
-          sendToBackend: (msg) => sendToBackend(["GameRoom", msg]),
+          sendToBackend: (msg) => sendToBackend(["Room", msg]),
         },
         msg[1],
         model.gameRoom,
       )
 
       return p(
-        [{ ...model, gameRoom }, Cmd.tag("GameRoom", gameRoomCmd)],
+        [{ ...model, gameRoom }, Cmd.tag("Room", gameRoomCmd)],
         andThenMany(
           runAction,
-          actions.map((a) => mapAction(t("GameRoom"), a)),
+          actions.map((a) => mapAction(t("Room"), a)),
         ),
       )
     }
@@ -423,7 +423,7 @@ const runAction = (action: OutAction, model: Model): [Model, Cmd<Msg>] => {
       return [{ ...model, alerts: alertsNew }, Cmd.tag("Alerts", alertsCmd)]
     }
 
-    case "GameRoom": {
+    case "Room": {
       if (model.auth[0] !== "LoggedIn") {
         return [model, Cmd.None]
       }
@@ -434,12 +434,12 @@ const runAction = (action: OutAction, model: Model): [Model, Cmd<Msg>] => {
             currentUserId: model.auth[1].userId,
             profiles: model.profileStore.profiles,
           },
-          sendToBackend: (msg) => sendToBackend(["GameRoom", msg]),
+          sendToBackend: (msg) => sendToBackend(["Room", msg]),
         },
         action,
         model.gameRoom,
       )
-      return [{ ...model, gameRoom }, Cmd.tag("GameRoom", gameRoomCmd)]
+      return [{ ...model, gameRoom }, Cmd.tag("Room", gameRoomCmd)]
     }
 
     case "Auth": {
@@ -510,7 +510,7 @@ const gameRoomSub = (model: Model): Sub<Msg> => {
 
     case "LoggedIn": {
       return Sub.tag(
-        "GameRoom",
+        "Room",
         GameRoom.subscriptions(
           { currentUserId: model.auth[1].userId },
           model.gameRoom,
@@ -524,7 +524,7 @@ const onLocationChange = (location: Browser.Location): Msg => {
   return p(
     location,
     Route.decode,
-    Option.withDefault<Route.Model>(["GameRoom"]),
+    Option.withDefault<Route.Model>(["Room"]),
     (route) => ["Route", ["GotRoute", route]],
   )
 }
@@ -650,7 +650,7 @@ const ViewMain = ({ model, $send }: { model: Model; $send: (msg: Msg) => void })
                 currentUserId={profile.userId}
                 model={model.gameRoom}
                 route={model.route}
-                $send={(msg) => $send(["GameRoom", msg])}
+                $send={(msg) => $send(["Room", msg])}
               />
 
               <Divider />
@@ -801,6 +801,8 @@ const socketClient: Socket<ServerToClientEvents, ClientToServerEvents> = io(
       [sessionIdKey]: localStorage.getItem(sessionIdKey) ?? undefined,
     },
     forceNew: true,
+    closeOnBeforeunload: true,
+
   },
 )
 
