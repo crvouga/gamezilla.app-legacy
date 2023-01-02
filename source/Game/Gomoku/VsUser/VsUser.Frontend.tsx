@@ -1,6 +1,6 @@
 import { Cmd, Sub } from "../../../Core";
 import { actionButton, box, button, conformation, fillBox, text } from "../../../UI";
-import { Ctx, viewVsUserSetupScreen } from "../../Game";
+import { Ctx, viewUserPlayerSlotBar, viewVsUserSetupScreen } from "../../Game";
 import { viewBoard, viewCoverArt, viewStoneIcon } from "../Gomoku/Gomoku";
 import { BackendModel, FrontendModel, FrontendMsg, initShared, ModelGameOver, ToBackend, ToFrontend } from "./VsUser.Types";
 
@@ -123,7 +123,7 @@ export const view = ({ model, ctx, onCancel, $send }: { $send: (m: Msg) => void;
         case 'playing': {
             return (
                 fillBox({}, [
-                    viewVsUserSlots(),
+                    viewUserPlayerSlotBar({ left: model.white, right: model.black, ctx }),
                     viewBoard({
                         board: model.board,
                         onPress: position => $send(['InputMove', { position }])
@@ -150,7 +150,7 @@ export const view = ({ model, ctx, onCancel, $send }: { $send: (m: Msg) => void;
         case 'gameOver': {
             return (
                 fillBox({}, [
-                    viewVsUserSlots(),
+                    viewUserPlayerSlotBar({ left: model.white, right: model.black, ctx }),
                     box({ position: "relative", aspectRatio: "1", }, [
                         viewBoard({ board: model.board, }),
                         viewOverlay({ model, ctx }),
@@ -168,22 +168,14 @@ export const view = ({ model, ctx, onCancel, $send }: { $send: (m: Msg) => void;
 }
 
 
-export const viewVsUserSlots = () => {
-    return (
-        box({ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', }, [
-            "slots"
-            // viewUserSlot(playerOne),
-            // viewUserSlot(playerTwo),
-        ])
-    )
-}
-
 
 export const viewOverlay = ({ model, ctx }: { model: ModelGameOver, ctx: Ctx }) => {
     return (
         box({
-            position: "absolute", top: 0, left: 0, width: "100%", height: '100%', backgroundColor: "rgba(0,0,0,0.5)",
-            display: "flex", justifyContent: "center", alignItems: "center",
+            position: 'absolute', top: 0, left: 0, width: '100%',
+            display: 'flex', flexDirection: "column", justifyContent: 'center', alignItems: 'center',
+            color: "#fff", backgroundColor: 'rgba(0,0,0,0.66)',
+            aspectRatio: "1",
         }, [
             viewOverlay_({ model, ctx })
         ])

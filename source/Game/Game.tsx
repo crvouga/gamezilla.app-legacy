@@ -485,3 +485,40 @@ export const viewCoverArt = ({ gameName }: { gameName: GameName }) => {
     }
   }
 }
+
+
+export const viewUserPlayerSlot = ({ ctx, userId }: { userId: UserId; ctx: Ctx }) => {
+  return (
+    box({ display: "flex", alignItems: "center", gap: 1, flex: 1, overflow: 'hidden' }, [
+      avatar({ width: 32, height: 32, mr: 1, src: ctx.profiles[userId]?.avatarUrl }),
+      text({ noWrap: true }, [ctx.profiles[userId]?.username])
+    ])
+  )
+}
+
+export const viewUserPlayerSlotBar = ({ ctx, left, right }: { left: UserId, right: UserId; ctx: Ctx }) => {
+  return (
+    box({ p: 2, width: "100%", display: "flex", alignItems: "center", gap: 1, flex: 1, overflow: 'hidden' }, [
+      viewUserPlayerSlot({ ctx, userId: left }),
+      viewUserPlayerSlot({ ctx, userId: right })
+    ])
+  )
+}
+
+export const viewOverlay = ({ open, ...sx }: { open?: boolean } & Sx, children: ViewNode[]) => {
+  if (!open) {
+    return null
+  }
+
+  return (
+    box({
+      position: 'absolute', top: 0, left: 0, width: '100%',
+      display: 'flex', flexDirection: "column", justifyContent: 'center', alignItems: 'center',
+      color: "#fff", backgroundColor: 'rgba(0,0,0,0.66)',
+      aspectRatio: "1",
+      ...sx,
+    }, [
+      children
+    ])
+  )
+}
