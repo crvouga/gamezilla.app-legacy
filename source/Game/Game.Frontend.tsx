@@ -2,7 +2,7 @@ import * as Alerts from "../Alerts"
 import { Cmd, Sub } from "../Core"
 import * as ProfileStore from "../Profile/Profile.Store"
 import * as Chess from "./Chess/Chess.Frontend"
-import * as ConnectFour from "./ConnectFour/ConnectFour.Frontend"
+import * as ConnectFour from "./connect-four/connect-four.frontend"
 import { Ctx, GameRoomCtx } from "./Game"
 import {
   BackendModel,

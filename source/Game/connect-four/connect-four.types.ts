@@ -1,6 +1,6 @@
 import { UserId } from "../../Data"
-import * as VsUser from "./VsUser/VsUser.Types"
-import * as VsBot from "./VsBot/VsBot.Types"
+import * as VsUser from "./vs-user/vs-user.types"
+import * as VsBot from "./vs-bot/vs-bot.types"
 
 //
 //

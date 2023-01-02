@@ -13,7 +13,7 @@ import {
   PlayerType,
   toStatus,
   toTurn,
-} from "../ConnectFour"
+} from "../connect-four/connect-four"
 
 //
 //

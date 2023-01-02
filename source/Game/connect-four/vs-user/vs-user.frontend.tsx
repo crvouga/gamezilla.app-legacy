@@ -10,9 +10,11 @@ import {
   playerTypeToColor,
   toStatus,
   toTurn,
-  ViewColumns
-} from "../ConnectFour"
-import { PlayerIcon, PlayerOneIcon, PlayerTwoIcon } from "../Views"
+  ViewColumns,
+  PlayerIcon,
+  PlayerOneIcon,
+  PlayerTwoIcon
+} from "../connect-four/connect-four"
 import {
   allMoveTimeLimit,
   BackendModel,
@@ -27,7 +29,7 @@ import {
   ToBackend,
   ToFrontend,
   toPlayerType
-} from "./VsUser.Types"
+} from "./vs-user.types"
 
 //
 //

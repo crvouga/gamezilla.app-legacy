@@ -2,17 +2,17 @@ import * as Alerts from "../../Alerts"
 import { Cmd } from "../../Core"
 import * as UI from "../../UI"
 import { bannerArtAspectRatio, Ctx, GameRoomCtx, viewSelectModeScreen } from "../Game"
-import { gameTheme, viewCoverArt } from "./ConnectFour"
 import {
   BackendModel,
   FrontendModel,
   FrontendMsg,
   ToBackend,
   ToFrontend
-} from "./ConnectFour.Types"
-import * as VsBot from "./VsBot/VsBot.Frontend"
-import * as VsUser from "./VsUser/VsUser.Frontend"
-import { PlayerIcon } from "./Views"
+} from "./connect-four.types"
+import { gameTheme, PlayerIcon, viewCoverArt } from "./connect-four/connect-four"
+import * as VsBot from "./vs-bot/vs-bot.frontend"
+import * as VsUser from "./vs-user/vs-user.frontend"
+
 
 //
 //

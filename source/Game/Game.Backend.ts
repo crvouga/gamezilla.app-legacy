@@ -1,7 +1,7 @@
 import { Cmd, Sub } from "../Core"
 import { UserId } from "../Data"
 import * as Chess from "./Chess/Chess.Backend"
-import * as ConnectFour from "./ConnectFour/ConnectFour.Backend"
+import * as ConnectFour from "./connect-four/connect-four.backend"
 import { BackendModel, BackendMsg, ToBackend, ToFrontend } from "./Game.Types"
 import * as Maze from "./Maze/Maze.Backend"
 import * as Snake from "./Snake/Snake.Backend"

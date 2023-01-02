@@ -1,7 +1,8 @@
 import { useLayoutEffect, useRef } from "react"
-import { eq, isSubset, shuffle, unique, Uuid } from "../../Core"
-import { Err, Ok, Result } from "../../Core/Result"
-import { Task } from "../../Core/Task"
+import { eq, isSubset, shuffle, unique, Uuid } from "../../../Core"
+import { Err, Ok, Result } from "../../../Core/Result"
+import { Task } from "../../../Core/Task"
+import { SvgIcon, Sx } from "../../../UI"
 
 //
 //
@@ -806,5 +807,49 @@ export const viewCoverArt = () => {
         mask={`url(#${ids.holeMask})`}
       />
     </svg>
+  )
+}
+
+
+export const PlayerIcon = ({
+  playerType,
+  sx,
+}: {
+  playerType: PlayerType
+  sx?: Sx
+}) => {
+  switch (playerType) {
+    case "PlayerOne": {
+      return <PlayerOneIcon sx={sx} />
+    }
+
+    case "PlayerTwo": {
+      return <PlayerTwoIcon sx={sx} />
+    }
+  }
+}
+
+export const PlayerOneIcon = ({ sx }: { sx?: Sx }) => {
+  const ref = useRef(Uuid.generateSync())
+  return (
+    <SvgIcon viewBox="-1 -1 2 2" sx={{ ...sx }}>
+      <ViewPlayerOneGradientDef
+        cx={0}
+        cy={0}
+        r={1}
+        gradientId={ref.current}
+      />
+      <circle cx={0} cy={0} r={1} fill={`url(#${ref.current})`} />
+    </SvgIcon>
+  )
+}
+
+export const PlayerTwoIcon = ({ sx }: { sx?: Sx }) => {
+  const ref = useRef(Uuid.generateSync())
+  return (
+    <SvgIcon viewBox="-1 -1 2 2" sx={{ ...sx }}>
+      <ViewPlayerTwoGradientDef gradientId={ref.current} />
+      <circle cx={0} cy={0} r={1} fill={`url(#${ref.current})`} />
+    </SvgIcon>
   )
 }

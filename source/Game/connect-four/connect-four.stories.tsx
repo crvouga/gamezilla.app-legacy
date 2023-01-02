@@ -1,7 +1,7 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { ctx } from "../../test-data"
 import * as UI from "../../UI"
-import { View } from "./ConnectFour.Frontend"
+import { View } from "./connect-four.frontend"
 
 const props: Parameters<typeof View>[0] = {
   $send: () => { },

@@ -1,8 +1,8 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { ctx, userB, userC } from "../../../test-data"
 import * as UI from "../../../UI"
-import { emptyColumns, mapColumns, PlayerType } from "../ConnectFour"
-import { Model, View } from "./VsUser.Frontend"
+import { emptyColumns, mapColumns, PlayerType } from "../connect-four/connect-four"
+import { Model, View } from "./vs-user.frontend"
 
 const setupModel: Model = {
   openedModal: "None",

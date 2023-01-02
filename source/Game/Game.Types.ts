@@ -1,5 +1,5 @@
 import * as Chess from "./Chess/Chess.Types"
-import * as ConnectFour from "./ConnectFour/ConnectFour.Types"
+import * as ConnectFour from "./connect-four/connect-four.types"
 import * as Maze from "./Maze/Maze.Types"
 import * as Snake from "./Snake/Snake.Types"
 import * as Tetris from "./Tetris/Tetris.Types"

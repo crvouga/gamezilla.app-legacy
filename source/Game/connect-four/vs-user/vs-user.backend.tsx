@@ -10,7 +10,7 @@ import {
   ToBackend,
   ToFrontend,
   toPlayerType,
-} from "./VsUser.Types"
+} from "./vs-user.types"
 
 //
 //

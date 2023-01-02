@@ -9,9 +9,9 @@ import {
   Res,
   ToFrontend,
   botMove,
-} from "./VsBot.Types"
+} from "./vs-bot.types"
 import { UserId } from "../../../Data/UserId"
-import { getBestMove, opposite } from "../ConnectFour"
+import { getBestMove, opposite } from "../connect-four/connect-four"
 
 //
 //

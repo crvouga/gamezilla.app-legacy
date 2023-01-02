@@ -6,9 +6,9 @@ import {
   Mode,
   ToBackend,
   ToFrontend,
-} from "./ConnectFour.Types"
-import * as VsBot from "./VsBot/VsBot.Backend"
-import * as VsUser from "./VsUser/VsUser.Backend"
+} from "./connect-four.types"
+import * as VsBot from "./vs-bot/vs-bot.backend"
+import * as VsUser from "./vs-user/vs-user.backend"
 
 //
 //

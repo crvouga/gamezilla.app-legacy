@@ -1,6 +1,6 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
-import * as UI from "../../UI"
-import { emptyColumns, ViewColumns } from "./ConnectFour"
+import * as UI from "../../../UI"
+import { emptyColumns, ViewColumns } from "./connect-four"
 import {
   horizontal,
   horizontalLongest,
@@ -8,16 +8,16 @@ import {
   leftDiagonal,
   rightDiagonal,
   tie,
-  vertical,
-} from "./test-data"
+  vertical
+} from "./connect-four.test"
 
 export default {
   title: "Connect Four/Columns",
   component: ViewColumns,
   args: {
-    onHover: () => {},
+    onHover: () => { },
     columns: emptyColumns,
-    onClick: () => {},
+    onClick: () => { },
   },
 } as ComponentMeta<typeof ViewColumns>
 

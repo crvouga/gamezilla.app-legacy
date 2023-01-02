@@ -12,7 +12,7 @@ import {
   opposite,
   PlayerType,
   toStatus,
-} from "../ConnectFour"
+} from "../connect-four/connect-four"
 
 //
 //
