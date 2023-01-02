@@ -2,7 +2,7 @@ import { UserId } from "../Data/UserId"
 import * as ProfileStore from "../Profile/Profile.Store"
 import { avatar, Avatar, box, Box, Button, fillBox, FillBox, icon, Icons, paper, Sx, text, ToggleButton, ToggleButtonGroup, Typography, ViewNode } from "../UI"
 import * as Chess from "./Chess/Chess"
-import * as ConnectFour from "./ConnectFour/ConnectFour"
+import * as ConnectFour from "./connect-four/connect-four/connect-four"
 import {
   GameName
 } from "./Game.Types"

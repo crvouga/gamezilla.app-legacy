@@ -1,9 +1,9 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { ctx, userB } from "../../../test-data"
 import { AppContainer } from "../../../UI"
-import { emptyColumns } from "../ConnectFour"
-import { leftAndRightDiagonal } from "../test-data"
-import { Model, View } from "./VsBot.Frontend"
+import { emptyColumns } from "../connect-four/connect-four"
+import { leftAndRightDiagonal } from "../connect-four/connect-four.test"
+import { Model, View } from "./vs-bot.frontend"
 
 const setupModel: Model = {
   type: "Setup",

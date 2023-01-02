@@ -4,9 +4,7 @@ import { Cmd, Sub } from "../../../Core"
 import { UserId } from "../../../Data/UserId"
 import { ActionButton, Avatar, Box, CircularProgress, Fade, FillBox, Icons, Paper, Typography, useTheme } from "../../../UI"
 import { Ctx, viewVsBotSetupScreen } from "../../Game"
-import { gameTheme, PlayerType, playerTypes, toStatus, toTurn, ViewColumns, viewCoverArt } from "../ConnectFour"
-
-import { PlayerIcon } from "../Views"
+import { gameTheme, PlayerType, playerTypes, toStatus, toTurn, ViewColumns, viewCoverArt, PlayerIcon, } from "../connect-four/connect-four"
 import {
   BackendModel, botLevel, FrontendModel,
   FrontendMsg,
@@ -18,7 +16,7 @@ import {
   ToBackend,
   ToFrontend,
   toGameOver
-} from "./VsBot.Types"
+} from "./vs-bot.types"
 
 //
 //
