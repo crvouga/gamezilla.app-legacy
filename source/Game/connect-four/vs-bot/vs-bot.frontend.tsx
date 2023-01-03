@@ -5,6 +5,7 @@ import { UserId } from "../../../Data/UserId"
 import { ActionButton, Avatar, Box, CircularProgress, Fade, FillBox, Icons, Paper, Typography, useTheme } from "../../../UI"
 import { Ctx, viewVsBotSetupScreen } from "../../Game"
 import { gameTheme, PlayerType, playerTypes, toStatus, toTurn, ViewColumns, viewCoverArt, PlayerIcon, } from "../connect-four/connect-four"
+import * as Spring from "../../../Core/animation/spring"
 import {
   BackendModel, botLevel, FrontendModel,
   FrontendMsg,
@@ -28,10 +29,24 @@ import {
 
 export type Model = FrontendModel
 
+const initAnimationValue: Spring.Model = {
+  current: 0,
+  target: 12,
+  velocity: 2,
+  friction: 1,
+  tension: 0.1,
+  precision: NaN,
+}
+
+
 export const init = (
   ...params: Parameters<typeof initShared>
 ): FrontendModel => {
-  return { ...initShared(...params), ghostIndex: "None" }
+  return {
+    ...initShared(...params),
+    ghostIndex: "None",
+    animationValue: initAnimationValue,
+  }
 }
 
 //
@@ -54,6 +69,15 @@ export const update = (
   switch (msg[0]) {
     case "Hovered": {
       return [{ ...model, ghostIndex: msg[1].columnIndex }, Cmd.None]
+    }
+
+    case 'clicked-animation': {
+      return [{ ...model, animationValue: initAnimationValue }, Cmd.None]
+    }
+
+    case 'frame': {
+      const animationValueNew = Spring.step(model.animationValue)
+      return [{ ...model, animationValue: animationValueNew }, Cmd.None]
     }
 
     case "InputMove":
@@ -126,7 +150,7 @@ export const mergeWithBackend = ({
   frontendModel: FrontendModel
   backendModel: BackendModel
 }): FrontendModel => {
-  return { ...backendModel, ghostIndex: frontendModel.ghostIndex }
+  return { ...backendModel, ghostIndex: frontendModel.ghostIndex, animationValue: frontendModel.animationValue }
 }
 
 //
@@ -137,8 +161,11 @@ export const mergeWithBackend = ({
 //
 //
 
-export const subscriptions = (_model: Model): Sub<Msg> => {
-  return Sub.None
+export const subscriptions = (model: Model): Sub<Msg> => {
+  if (Spring.isDone(model.animationValue)) {
+    return Sub.None
+  }
+  return Spring.onAnimationFrame(() => ['frame'])
 }
 
 //
@@ -208,6 +235,19 @@ export const View = ({
         <ViewGamePlayerSlot model={model} ctx={ctx} playerType="PlayerOne" />
         <ViewGamePlayerSlot model={model} ctx={ctx} playerType="PlayerTwo" />
       </Box>
+
+      <svg viewBox="0 0 10 10" onClick={() => $send(['clicked-animation'])}>
+        <circle
+          cx={model.animationValue.current}
+          cy="5"
+          r="1"
+          fill="red"
+          stroke="black"
+          strokeWidth="0.1"
+        />
+      </svg>
+
+
 
       <FeedbackBar ctx={ctx} model={model} />
 

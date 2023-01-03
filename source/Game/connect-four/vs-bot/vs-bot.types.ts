@@ -1,6 +1,7 @@
 import { exhaustive } from "../../../Core"
 import { Err, Ok, Result } from "../../../Core/Result"
 import { UserId } from "../../../Data/UserId"
+import * as Spring from "../../../Core/animation/spring"
 import {
   BestMoveProblem,
   BestMoveResult,
@@ -49,7 +50,7 @@ export const isBotTurn = (model: SharedModel): boolean => {
 
 export type BackendModel = SharedModel
 
-export type FrontendModel = SharedModel & { ghostIndex: ColumnIndex | "None" }
+export type FrontendModel = SharedModel & { ghostIndex: ColumnIndex | "None", animationValue: Spring.Model }
 
 export const initShared = ({
   player,
@@ -109,7 +110,7 @@ export const botLevel: { [botLevel in BotLevel]: BotLevel } = {
 //
 //
 
-export type FrontendMsg = Req | ["Hovered", { columnIndex: ColumnIndex }]
+export type FrontendMsg = Req | ["Hovered", { columnIndex: ColumnIndex }] | ["frame"] | ['clicked-animation']
 
 export type BackendMsg = ["BotMove", BestMoveResult]
 

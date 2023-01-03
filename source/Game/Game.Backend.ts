@@ -22,8 +22,8 @@ export type Model = BackendModel
 
 export const init = ({ gameName }: { gameName: Model[0] }): Model => {
   switch (gameName) {
-    case "ConnectFour": {
-      return ["ConnectFour", ConnectFour.init]
+    case "connect-four": {
+      return ["connect-four", ConnectFour.init]
     }
 
     case "Snake": {
@@ -80,14 +80,14 @@ export const update = (
       return [model, Cmd.None]
     }
 
-    case "ConnectFour": {
-      if (model[0] === "ConnectFour") {
+    case "connect-four": {
+      if (model[0] === "connect-four") {
         const [child, cmd] = ConnectFour.update(
-          { broadcast: (m) => broadcast(["ConnectFour", m]) },
+          { broadcast: (m) => broadcast(["connect-four", m]) },
           msg[1],
           model[1],
         )
-        return [["ConnectFour", child], Cmd.tag("ConnectFour", cmd)]
+        return [["connect-four", child], Cmd.tag("connect-four", cmd)]
       }
       return [model, Cmd.None]
     }
@@ -179,17 +179,17 @@ export const updateFromFrontend = (
       return [model, Cmd.None]
     }
 
-    case "ConnectFour": {
-      if (model[0] === "ConnectFour") {
+    case "connect-four": {
+      if (model[0] === "connect-four") {
         const [child, cmd] = ConnectFour.updateFromFrontend(
           {
-            sendToClient: (msg) => sendToClient(["ConnectFour", msg]),
-            broadcast: (msg) => broadcast(["ConnectFour", msg]),
+            sendToClient: (msg) => sendToClient(["connect-four", msg]),
+            broadcast: (msg) => broadcast(["connect-four", msg]),
           },
           msg[1],
           model[1],
         )
-        return [["ConnectFour", child], Cmd.tag("ConnectFour", cmd)]
+        return [["connect-four", child], Cmd.tag("connect-four", cmd)]
       }
       return [model, Cmd.None]
     }
@@ -284,13 +284,13 @@ export const updateRoomLeave = (
       return [["Chess", child], Cmd.tag("Chess", cmd)]
     }
 
-    case "ConnectFour": {
+    case "connect-four": {
       const [child, cmd] = ConnectFour.updateRoomLeave({
         userId,
         model: model[1],
-        broadcast: (msg) => broadcast(["ConnectFour", msg]),
+        broadcast: (msg) => broadcast(["connect-four", msg]),
       })
-      return [["ConnectFour", child], Cmd.tag("ConnectFour", cmd)]
+      return [["connect-four", child], Cmd.tag("connect-four", cmd)]
     }
 
     case "Snake": {
@@ -332,9 +332,9 @@ export const updateRoomLeave = (
 
 export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
   switch (model[0]) {
-    case "ConnectFour": {
+    case "connect-four": {
       return Sub.tag(
-        "ConnectFour",
+        "connect-four",
         ConnectFour.subscriptions(intervalId, model[1]),
       )
     }

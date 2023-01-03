@@ -15,7 +15,7 @@ const roomA: FrontendRoom = {
 
 const roomB: FrontendRoom = {
   game: Game.init({
-    gameName: "ConnectFour",
+    gameName: "connect-four",
     sendToBackend: () => Cmd.None,
   })[0],
   hostId: userC.userId,
