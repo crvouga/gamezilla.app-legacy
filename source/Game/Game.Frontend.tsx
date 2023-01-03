@@ -44,8 +44,8 @@ export const init = ({
       return [["Snake", Snake.init], Cmd.None]
     }
 
-    case "ConnectFour": {
-      return [["ConnectFour", ConnectFour.init], Cmd.None]
+    case "connect-four": {
+      return [["connect-four", ConnectFour.init], Cmd.None]
     }
 
     case "Tetris": {
@@ -107,14 +107,14 @@ export const update = (
       return [model, Cmd.None]
     }
 
-    case "ConnectFour": {
-      if (msg[0] === "ConnectFour") {
+    case "connect-four": {
+      if (msg[0] === "connect-four") {
         const [child, cmd] = ConnectFour.update(
-          { sendToBackend: (msg) => sendToBackend(["ConnectFour", msg]) },
+          { sendToBackend: (msg) => sendToBackend(["connect-four", msg]) },
           msg[1],
           model[1],
         )
-        return [["ConnectFour", child], Cmd.tag("ConnectFour", cmd)]
+        return [["connect-four", child], Cmd.tag("connect-four", cmd)]
 
       }
 
@@ -208,13 +208,13 @@ export const updateFromBackend = (
       return [model, Cmd.None, []]
     }
 
-    case "ConnectFour": {
-      if (model[0] === "ConnectFour") {
+    case "connect-four": {
+      if (model[0] === "connect-four") {
         const [child, cmd, actions] = ConnectFour.updateFromBackend(
           msg[1],
           model[1],
         )
-        return [["ConnectFour", child], Cmd.tag("ConnectFour", cmd), actions]
+        return [["connect-four", child], Cmd.tag("connect-four", cmd), actions]
       }
       return [model, Cmd.None, []]
     }
@@ -283,8 +283,8 @@ export const updateFromBackend = (
 
 export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
   switch (model[0]) {
-    case "ConnectFour": {
-      return Sub.None
+    case "connect-four": {
+      return Sub.tag('connect-four', ConnectFour.subscriptions(model[1]))
     }
 
     case "Snake": {
@@ -342,12 +342,12 @@ export const View = ({
       <Tetris.View model={model} $send={(msg) => $send(["Tetris", msg])} />
     ),
 
-    ConnectFour: (model: ConnectFour.Model) => (
+    "connect-four": (model: ConnectFour.Model) => (
       <ConnectFour.View
         gameRoomCtx={gameRoomCtx}
         ctx={ctx}
         model={model}
-        $send={(msg) => $send(["ConnectFour", msg])}
+        $send={(msg) => $send(["connect-four", msg])}
       />
     ),
 
@@ -381,7 +381,7 @@ export const View = ({
 
 export const gameNameToString = (game: GameName): string => {
   switch (game) {
-    case "ConnectFour": {
+    case "connect-four": {
       return "Connect Four"
     }
 
@@ -464,11 +464,11 @@ export const mergeWithBackend = ({
       ]
     }
 
-    case "ConnectFour": {
-      if (frontendModel[0] === "ConnectFour") {
+    case "connect-four": {
+      if (frontendModel[0] === "connect-four") {
         return [
           [
-            "ConnectFour",
+            "connect-four",
             ConnectFour.mergeWithBackend({
               frontendModel: frontendModel[1],
               backendModel: backendModel[1],
@@ -482,7 +482,7 @@ export const mergeWithBackend = ({
 
       return [
         [
-          "ConnectFour",
+          "connect-four",
           ConnectFour.mergeWithBackend({
             frontendModel: initial,
             backendModel: backendModel[1],

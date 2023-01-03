@@ -11,6 +11,14 @@ const setupModel: Model = {
   player: "None",
   userPlayerType: "PlayerOne",
   ghostIndex: "None",
+  animationValue: {
+    current: 0,
+    target: 0,
+    tension: 170,
+    friction: 0.1,
+    precision: 0.0001,
+    velocity: 0,
+  }
 }
 
 const props: Parameters<typeof View>[0] = {
@@ -46,6 +54,7 @@ SetupReady.args = {
 
 const gameModel: Model = {
   ghostIndex: "None",
+  animationValue: setupModel.animationValue,
   type: "Game",
   botLevel: "Medium",
   columns: emptyColumns,

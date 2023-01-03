@@ -1,5 +1,5 @@
 import * as Alerts from "../../Alerts"
-import { Cmd } from "../../Core"
+import { Cmd, Sub } from "../../Core"
 import * as UI from "../../UI"
 import { bannerArtAspectRatio, Ctx, GameRoomCtx, viewSelectModeScreen } from "../Game"
 import {
@@ -292,6 +292,30 @@ export const mergeWithBackend = ({
           backendModel: backendModel.child,
         }),
       }
+    }
+  }
+}
+
+// 
+// 
+// 
+// Subscriptions
+// 
+// 
+// 
+
+export const subscriptions = (model: Model): Sub<Msg> => {
+  switch (model.type) {
+    case "None": {
+      return Sub.None
+    }
+
+    case 'VsBot': {
+      return Sub.tag('VsBot', VsBot.subscriptions(model.child))
+    }
+
+    case 'VsUser': {
+      return Sub.tag('VsUser', VsUser.subscriptions(model.child))
     }
   }
 }

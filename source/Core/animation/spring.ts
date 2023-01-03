@@ -6,30 +6,28 @@ export type Model = {
     velocity: number;
     friction: number;
     tension: number;
-    mass: number;
+    precision: number;
 };
 
 export const isDone = (model: Model): boolean => {
     return (
-        Math.abs(model.velocity) < 0.001 && Math.abs(model.target - model.current) < 0.001
+        Math.abs(model.velocity) < model.precision || Math.abs(model.target - model.current) < model.precision
     )
 }
 
-export const step = (model: Model): [Model, boolean] => {
+export const step = (model: Model): Model => {
+    if (isDone(model)) {
+        return model
+    }
     const velocityNew = model.velocity + (model.target - model.current) * model.tension;
     const currentNew = model.current + velocityNew;
     const velocityNew2 = velocityNew * (1 - model.friction);
-
-    const modelNew = {
+    const modelNew: Model = {
+        ...model,
         current: currentNew,
-        target: model.target,
         velocity: velocityNew2,
-        friction: model.friction,
-        tension: model.tension,
-        mass: model.mass,
     }
-
-    return [modelNew, true]
+    return modelNew
 }
 
 

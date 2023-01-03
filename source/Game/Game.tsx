@@ -465,7 +465,7 @@ export const viewCoverArt = ({ gameName }: { gameName: GameName }) => {
     case "Chess": {
       return Chess.viewCoverArt()
     }
-    case "ConnectFour": {
+    case "connect-four": {
       return ConnectFour.viewCoverArt()
     }
     case "Snake": {

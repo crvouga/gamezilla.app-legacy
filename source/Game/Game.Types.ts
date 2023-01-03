@@ -16,7 +16,7 @@ import * as Gomoku from "./Gomoku/Gomoku.Types"
 
 export type FrontendModel =
   | ["TicTacToe", TicTacToe.FrontendModel]
-  | ["ConnectFour", ConnectFour.FrontendModel]
+  | ["connect-four", ConnectFour.FrontendModel]
   | ["Snake", Snake.FrontendModel]
   | ["Chess", Chess.FrontendModel]
   | ["Tetris", Tetris.FrontendModel]
@@ -25,7 +25,7 @@ export type FrontendModel =
 
 export type BackendModel =
   | ["TicTacToe", TicTacToe.BackendModel]
-  | ["ConnectFour", ConnectFour.BackendModel]
+  | ["connect-four", ConnectFour.BackendModel]
   | ["Snake", Snake.BackendModel]
   | ["Chess", Chess.BackendModel]
   | ["Tetris", Tetris.BackendModel]
@@ -34,7 +34,7 @@ export type BackendModel =
 
 export type GameName =
   | "TicTacToe"
-  | "ConnectFour"
+  | "connect-four"
   | "Snake"
   | "Chess"
   | "Tetris"
@@ -43,7 +43,7 @@ export type GameName =
 
 export const gameNames: { [gameName in GameName]: GameName } = {
   TicTacToe: "TicTacToe",
-  ConnectFour: "ConnectFour",
+  "connect-four": "connect-four",
   Snake: "Snake",
   Chess: "Chess",
   Tetris: "Tetris",
@@ -53,7 +53,7 @@ export const gameNames: { [gameName in GameName]: GameName } = {
 
 export const gameNameList: GameName[] = [
   "Chess",
-  "ConnectFour",
+  "connect-four",
   "TicTacToe",
   "Gomoku"
 ]
@@ -68,7 +68,7 @@ export const gameNameList: GameName[] = [
 
 export type BackendMsg =
   | ["TicTacToe", TicTacToe.BackendMsg]
-  | ["ConnectFour", ConnectFour.BackendMsg]
+  | ["connect-four", ConnectFour.BackendMsg]
   | ["Snake", Snake.BackendMsg]
   | ["Chess", Chess.BackendMsg]
   | ["Tetris", Tetris.BackendMsg]
@@ -77,7 +77,7 @@ export type BackendMsg =
 
 export type FrontendMsg =
   | ["TicTacToe", TicTacToe.FrontendMsg]
-  | ["ConnectFour", ConnectFour.FrontendMsg]
+  | ["connect-four", ConnectFour.FrontendMsg]
   | ["Snake", Snake.FrontendMsg]
   | ["Chess", Chess.FrontendMsg]
   | ["Tetris", Tetris.FrontendMsg]
@@ -86,7 +86,7 @@ export type FrontendMsg =
 
 export type ToFrontend =
   | ["TicTacToe", TicTacToe.ToFrontend]
-  | ["ConnectFour", ConnectFour.ToFrontend]
+  | ["connect-four", ConnectFour.ToFrontend]
   | ["Snake", Snake.ToFrontend]
   | ["Chess", Chess.ToFrontend]
   | ["Tetris", Tetris.ToFrontend]
@@ -95,7 +95,7 @@ export type ToFrontend =
 
 export type ToBackend =
   | ["TicTacToe", TicTacToe.ToBackend]
-  | ["ConnectFour", ConnectFour.ToBackend]
+  | ["connect-four", ConnectFour.ToBackend]
   | ["Snake", Snake.ToBackend]
   | ["Chess", Chess.ToBackend]
   | ["Tetris", Tetris.ToBackend]
