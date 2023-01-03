@@ -12,7 +12,7 @@
     "allowSyntheticDefaultImports": true,
     "noFallthroughCasesInSwitch": true,
     "strict": true,
-    "forceConsistentCasingInFileNames": true,
+    "forceConsistentCasingInFileNames": false,
     "module": "NodeNext",
     "moduleResolution": "Node",
     "resolveJsonModule": true,
