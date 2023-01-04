@@ -12,7 +12,7 @@ import { Sub } from "./Sub"
 //
 
 export type State<Model, Msg> = {
-  model: Model
+  model: Model & { _debugId: number }
   cmd: Cmd<Msg>
   msg?: Msg
 }
@@ -42,22 +42,41 @@ const create = <Model, Msg>({
   update: (msg: Msg, model: Model) => [Model, Cmd<Msg>]
   subscriptions: (model: Model) => Sub<Msg>
 }): Program<Model, Msg> => {
+  let runningDebugId = 0
+
   const state$ = new Rx.BehaviorSubject<State<Model, Msg>>({
-    model: init[0],
+    model: {
+      ...init[0],
+      _debugId: runningDebugId
+    },
     cmd: init[1],
   })
+
+
 
   const $send = (msg: Msg) => {
     const prev = state$.getValue()
     const [model, cmd] = update(msg, prev.model)
+    const debugIdNext = prev.model._debugId + 1
+
+    runningDebugId = debugIdNext
     state$.next({
-      model,
+      model: {
+        ...model,
+        _debugId: debugIdNext
+      },
       cmd,
       msg,
     })
   }
 
-  const sub$ = state$.pipe(Rx.switchMap((state) => subscriptions(state.model)))
+  const sub$ = state$.pipe(Rx.switchMap((state) => {
+    if (runningDebugId === state.model._debugId) {
+      return subscriptions(state.model)
+    }
+    console.log("[program] skip subscription")
+    return Rx.EMPTY
+  }))
 
   return {
     $send,
