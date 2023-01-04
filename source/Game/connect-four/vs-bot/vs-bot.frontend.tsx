@@ -5,7 +5,7 @@ import * as Spring from "../../../Core/animation/spring"
 import { UserId } from "../../../Data/UserId"
 import { ActionButton, Avatar, Box, CircularProgress, Fade, FillBox, Icons, Paper, Typography, useTheme } from "../../../UI"
 import { Ctx, viewVsBotSetupScreen } from "../../Game"
-import { gameTheme, initVisual, isDone, PlayerIcon, PlayerType, playerTypes, step, toStatus, toTurn, ViewColumns, viewCoverArt } from "../connect-four/connect-four"
+import { gameTheme, initVisual, PlayerIcon, PlayerType, playerTypes, step, toStatus, toTurn, ViewColumns, viewCoverArt } from "../connect-four/connect-four"
 import {
   BackendModel, botLevel, FrontendModel,
   FrontendMsg,
