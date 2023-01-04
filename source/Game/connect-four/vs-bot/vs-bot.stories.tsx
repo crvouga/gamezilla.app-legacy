@@ -11,6 +11,7 @@ const setupModel: Model = {
   player: "None",
   userPlayerType: "PlayerOne",
   ghostIndex: "None",
+  animationDirection: "right",
   animationValue: {
     current: 0,
     target: 0,
@@ -60,6 +61,7 @@ const gameModel: Model = {
   columns: emptyColumns,
   player: ctx.currentUserId,
   userPlayerType: "PlayerOne",
+  animationDirection: "right"
 }
 
 export const GameStarted = Template.bind({})
