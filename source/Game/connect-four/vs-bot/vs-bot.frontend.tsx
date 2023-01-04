@@ -1,11 +1,11 @@
 import { keyframes } from "@emotion/react"
 import * as Alerts from "../../../Alerts"
 import { Cmd, Sub } from "../../../Core"
+import * as Spring from "../../../Core/animation/spring"
 import { UserId } from "../../../Data/UserId"
 import { ActionButton, Avatar, Box, CircularProgress, Fade, FillBox, Icons, Paper, Typography, useTheme } from "../../../UI"
 import { Ctx, viewVsBotSetupScreen } from "../../Game"
-import { gameTheme, PlayerType, playerTypes, toStatus, toTurn, ViewColumns, viewCoverArt, PlayerIcon, } from "../connect-four/connect-four"
-import * as Spring from "../../../Core/animation/spring"
+import { gameTheme, initVisual, isDone, PlayerIcon, PlayerType, playerTypes, step, toStatus, toTurn, ViewColumns, viewCoverArt } from "../connect-four/connect-four"
 import {
   BackendModel, botLevel, FrontendModel,
   FrontendMsg,
@@ -29,32 +29,31 @@ import {
 
 export type Model = FrontendModel
 
-const initAnimationRight: Spring.Model = {
-  current: -1,
-  target: 13,
-  velocity: 2,
-  friction: 1,
-  tension: 0.1,
-  precision: 0.001,
-}
+const initAnimationRight = Spring.init({
+  to: 13,
+  from: -1,
+})
 
-const initAnimationLeft: Spring.Model = {
-  current: 13,
-  target: -1,
-  velocity: 2,
-  friction: 1,
-  tension: 0.1,
-  precision: 0.001,
-}
+const initAnimationLeft = Spring.init({
+  from: 13,
+  to: -1,
+})
 
 export const init = (
   ...params: Parameters<typeof initShared>
 ): FrontendModel => {
+  const shared = initShared(...params)
+
+  if (shared.type === 'Setup') {
+    return shared
+  }
+
   return {
-    ...initShared(...params),
+    ...shared,
     ghostIndex: "None",
     animationValue: initAnimationRight,
-    animationDirection: "right"
+    animationDirection: "right",
+    visual: initVisual(shared.columns)
   }
 }
 
@@ -77,10 +76,16 @@ export const update = (
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "Hovered": {
+      if (model.type !== 'Game') {
+        return [model, Cmd.None]
+      }
       return [{ ...model, ghostIndex: msg[1].columnIndex }, Cmd.None]
     }
 
     case 'clicked-animation': {
+      if (model.type !== 'Game') {
+        return [model, Cmd.None]
+      }
       const directionNext = model.animationDirection === "right" ? "left" : "right"
 
       const animationNext: Spring.Model = directionNext === "right"
@@ -91,8 +96,12 @@ export const update = (
     }
 
     case 'frame': {
+      if (model.type !== 'Game') {
+        return [model, Cmd.None]
+      }
       const animationValueNew = Spring.step(model.animationValue)
-      return [{ ...model, animationValue: animationValueNew }, Cmd.None]
+      const visualNew = step({ columns: model.columns, current: model.visual })
+      return [{ ...model, visual: visualNew, animationValue: animationValueNew }, Cmd.None]
     }
 
     case "InputMove":
@@ -133,7 +142,7 @@ export const updateFromBackend = (
         backendModel: msg[1].value,
       })
 
-      return [{ ...modelNew, ghostIndex: "None" }, Cmd.None, []]
+      return [{ ...modelNew, }, Cmd.None, []]
     }
 
     case "InputPlayerType":
@@ -165,11 +174,28 @@ export const mergeWithBackend = ({
   frontendModel: FrontendModel
   backendModel: BackendModel
 }): FrontendModel => {
+  if (backendModel.type === 'Setup') {
+    return backendModel
+  }
+
+  if (frontendModel.type === 'Setup') {
+    return {
+      ...backendModel,
+      ghostIndex: "None",
+      animationValue: initAnimationRight,
+      animationDirection: "right",
+      visual: initVisual(backendModel.columns)
+    }
+  }
+
+
+
   return {
     ...backendModel,
     ghostIndex: frontendModel.ghostIndex,
     animationValue: frontendModel.animationValue,
-    animationDirection: frontendModel.animationDirection
+    animationDirection: frontendModel.animationDirection,
+    visual: frontendModel.visual,
   }
 }
 
@@ -181,10 +207,10 @@ export const mergeWithBackend = ({
 //
 //
 
-export const subscriptions = (model: Model): Sub<Msg> => {
-  if (Spring.isDone(model.animationValue)) {
-    return Sub.None
-  }
+export const subscriptions = (_model: Model): Sub<Msg> => {
+  // if (model.type === 'Game' && Spring.isDone(model.animationValue) && isDone(model.visual)) {
+  //   return Sub.None
+  // }
   return Spring.onAnimationFrame(() => ['frame'])
 }
 
@@ -288,6 +314,7 @@ export const View = ({
           onClick={(columnIndex) =>
             $send(["InputMove", { columnIndex, userId: ctx.currentUserId }])
           }
+          visual={model.visual}
         />
         <Fade in={gameOver.type !== "None"}>
           <Box

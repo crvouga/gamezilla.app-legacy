@@ -1,25 +1,24 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { ctx, userB } from "../../../test-data"
 import { AppContainer } from "../../../UI"
-import { emptyColumns } from "../connect-four/connect-four"
+import { emptyColumns, initVisual } from "../connect-four/connect-four"
 import { leftAndRightDiagonal } from "../connect-four/connect-four.test"
 import { Model, View } from "./vs-bot.frontend"
+
+const initAnimationValue = {
+  current: 0,
+  target: 0,
+  tension: 2,
+  friction: 0.1,
+  precision: 0.1,
+  velocity: 0,
+} as const
 
 const setupModel: Model = {
   type: "Setup",
   botLevel: "Medium",
   player: "None",
   userPlayerType: "PlayerOne",
-  ghostIndex: "None",
-  animationDirection: "right",
-  animationValue: {
-    current: 0,
-    target: 0,
-    tension: 2,
-    friction: 0.1,
-    precision: 0.1,
-    velocity: 0,
-  }
 }
 
 const props: Parameters<typeof View>[0] = {
@@ -55,13 +54,14 @@ SetupReady.args = {
 
 const gameModel: Model = {
   ghostIndex: "None",
-  animationValue: setupModel.animationValue,
+  animationValue: initAnimationValue,
   type: "Game",
   botLevel: "Medium",
   columns: emptyColumns,
   player: ctx.currentUserId,
   userPlayerType: "PlayerOne",
-  animationDirection: "right"
+  animationDirection: "right",
+  visual: initVisual(emptyColumns)
 }
 
 export const GameStarted = Template.bind({})
@@ -107,6 +107,7 @@ WonBot.args = {
     ...gameModel,
     userPlayerType: "PlayerTwo",
     columns: leftAndRightDiagonal,
+
   },
 }
 
