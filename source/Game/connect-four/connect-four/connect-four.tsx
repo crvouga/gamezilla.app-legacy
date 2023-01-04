@@ -1,3 +1,4 @@
+import * as Spring from "../../../Core/animation/spring"
 import { useLayoutEffect, useRef } from "react"
 import { eq, isSubset, shuffle, Task, unique, Uuid } from "../../../Core"
 import { Err, Ok, Result } from "../../../Core/Result"
@@ -397,6 +398,7 @@ type ViewColumnsProps = {
   onClick?: (columnIndex: ColumnIndex) => void
   onHover?: (columnINdex: ColumnIndex) => void
   disabled?: boolean
+  visual: VisualModel
 }
 
 export const ViewColumns = ({
@@ -422,6 +424,7 @@ const ViewColumnsSvg = ({
   onHover,
   ghost,
   disabled,
+  visual
 }: ViewColumnsProps) => {
   const ref = useRef(Uuid.generateSync())
   const ids = {
@@ -488,7 +491,7 @@ const ViewColumnsSvg = ({
 
       <rect x={0} y={0} width={7} height={6} fill={gameTheme.primary.darker} />
 
-      {columns.map((column, columnIndex) =>
+      {/* {columns.map((column, columnIndex) =>
         column.map((player, rowIndex) => (
           <circle
             key={[columnIndex, rowIndex].join(", ")}
@@ -496,6 +499,18 @@ const ViewColumnsSvg = ({
             cy={MAX_COLUMN_HEIGHT - (rowIndex + 0.5)}
             r={0.5}
             fill={player === "PlayerOne" ? playerOneFill : playerTwoFill}
+          />
+        )),
+      )} */}
+
+      {visual.map((columnVisual, columnIndex) =>
+        columnVisual.map((disc, rowIndex) => (
+          <circle
+            key={[columnIndex, rowIndex].join(", ")}
+            cx={columnIndex + 0.5}
+            cy={MAX_COLUMN_HEIGHT - (disc.yPosition.current + 0.5)}
+            r={0.5}
+            fill={disc.playerType === "PlayerOne" ? playerOneFill : playerTwoFill}
           />
         )),
       )}
@@ -852,4 +867,101 @@ export const PlayerTwoIcon = ({ sx }: { sx?: Sx }) => {
       <circle cx={0} cy={0} r={1} fill={`url(#${ref.current})`} />
     </SvgIcon>
   )
+}
+
+// 
+// 
+// 
+// View
+// 
+// 
+// 
+
+
+
+export type VisualModel = VisualDisc[][]
+
+export type VisualDisc = {
+  type: "entry" | "exit";
+  yPosition: Spring.Model;
+  playerType: PlayerType
+}
+
+export const step = ({ columns, current }: { columns: Columns, current: VisualModel }): VisualModel => {
+  const ret: VisualModel = []
+
+  for (let i = 0; i < COLUMN_COUNT; i++) {
+    const ret_i: VisualDisc[] = []
+    for (let j = 0; j < MAX_COLUMN_HEIGHT; j++) {
+      const discTrue = columns[i]?.[j]
+      const discVisual = current[i]?.[j]
+
+      // entry
+      if (!discVisual && discTrue) {
+        ret_i.push({
+          type: "entry",
+          playerType: discTrue,
+          yPosition: Spring.init({ from: MAX_COLUMN_HEIGHT + 1, to: j })
+        })
+        continue
+      }
+
+      // exit
+      if (!discTrue && discVisual && discVisual.type !== 'exit') {
+        ret_i.push({
+          ...discVisual,
+          type: "exit",
+          yPosition: Spring.init({ from: discVisual.yPosition.current, to: -1 })
+        })
+        continue
+      }
+
+      if (discVisual && discVisual.type === 'exit' && Spring.isDone(discVisual.yPosition)) {
+        continue
+      }
+
+
+      if (discVisual) {
+        ret_i.push({
+          ...discVisual,
+          yPosition: Spring.step(discVisual.yPosition)
+        })
+        continue
+      }
+    }
+
+    ret.push(ret_i)
+  }
+
+  return ret
+}
+
+export const initVisual = (columns: Columns): VisualModel => {
+  const ret: VisualModel = []
+
+  for (let i = 0; i < COLUMN_COUNT; i++) {
+    const ret_i: VisualDisc[] = []
+    for (let j = 0; j < MAX_COLUMN_HEIGHT; j++) {
+      const discTrue = columns[i]?.[j]
+      if (discTrue) {
+        ret_i.push({ type: "entry", playerType: discTrue, yPosition: Spring.init({ from: j, to: j }) })
+      }
+    }
+    ret.push(ret_i)
+  }
+
+  return ret
+}
+
+export const isDone = (model: VisualModel): boolean => {
+  for (let i = 0; i < COLUMN_COUNT; i++) {
+    for (let j = 0; j < MAX_COLUMN_HEIGHT; j++) {
+      const discVisual = model[i]?.[j]
+      if (discVisual && !Spring.isDone(discVisual.yPosition)) {
+        return false
+      }
+    }
+  }
+
+  return true
 }

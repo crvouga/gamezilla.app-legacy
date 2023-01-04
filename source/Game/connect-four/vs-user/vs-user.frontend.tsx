@@ -13,7 +13,8 @@ import {
   ViewColumns,
   PlayerIcon,
   PlayerOneIcon,
-  PlayerTwoIcon
+  PlayerTwoIcon,
+  initVisual
 } from "../connect-four/connect-four"
 import {
   allMoveTimeLimit,
@@ -234,6 +235,7 @@ export const View = ({
 
 
           <ViewColumns
+            visual={initVisual(model.columns)}
             columns={model.columns}
             onClick={(columnIndex) =>
               $send(["InputMove", { userId: ctx.currentUserId, columnIndex }])
@@ -279,7 +281,7 @@ export const View = ({
       <PlayerSlotBar model={model} ctx={ctx} />
 
       <Box sx={{ position: "relative", }}>
-        <ViewColumns columns={model.columns} disabled />
+        <ViewColumns visual={initVisual(model.columns)} columns={model.columns} disabled />
 
         {model.type === "GameOver" && (
           <Fade in>

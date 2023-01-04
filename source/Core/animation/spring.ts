@@ -9,6 +9,25 @@ export type Model = {
     precision: number;
 };
 
+export type Config = {
+    velocity: number;
+    friction: number;
+    tension: number;
+    precision: number;
+    mass: number
+}
+
+export const init = ({ from, to }: { from: number, to: number }): Model => {
+    return {
+        current: from,
+        target: to,
+        velocity: 0,
+        friction: 0.9,
+        tension: 0.1,
+        precision: 0.01,
+    }
+}
+
 export const isDone = (model: Model): boolean => {
     return (
         Math.abs(model.velocity) < model.precision && Math.abs(model.target - model.current) < model.precision

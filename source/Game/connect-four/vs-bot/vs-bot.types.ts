@@ -13,6 +13,7 @@ import {
   opposite,
   PlayerType,
   toStatus,
+  VisualModel,
 } from "../connect-four/connect-four"
 
 //
@@ -50,7 +51,12 @@ export const isBotTurn = (model: SharedModel): boolean => {
 
 export type BackendModel = SharedModel
 
-export type FrontendModel = SharedModel & { ghostIndex: ColumnIndex | "None", animationValue: Spring.Model, animationDirection: "right" | "left" }
+export type FrontendModel = SetupModel | (GameModel & {
+  ghostIndex: ColumnIndex | "None",
+  animationValue: Spring.Model,
+  animationDirection: "right" | "left"
+  visual: VisualModel
+})
 
 export const initShared = ({
   player,
