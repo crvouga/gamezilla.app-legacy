@@ -50,7 +50,7 @@ export const isBotTurn = (model: SharedModel): boolean => {
 
 export type BackendModel = SharedModel
 
-export type FrontendModel = SharedModel & { ghostIndex: ColumnIndex | "None", animationValue: Spring.Model }
+export type FrontendModel = SharedModel & { ghostIndex: ColumnIndex | "None", animationValue: Spring.Model, animationDirection: "right" | "left" }
 
 export const initShared = ({
   player,

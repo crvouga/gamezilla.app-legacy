@@ -29,7 +29,7 @@ import {
 
 export type Model = FrontendModel
 
-const initAnimationValue: Spring.Model = {
+const initAnimationRight: Spring.Model = {
   current: -1,
   target: 13,
   velocity: 2,
@@ -38,6 +38,14 @@ const initAnimationValue: Spring.Model = {
   precision: 0.001,
 }
 
+const initAnimationLeft: Spring.Model = {
+  current: 13,
+  target: -1,
+  velocity: 2,
+  friction: 1,
+  tension: 0.1,
+  precision: 0.001,
+}
 
 export const init = (
   ...params: Parameters<typeof initShared>
@@ -45,7 +53,8 @@ export const init = (
   return {
     ...initShared(...params),
     ghostIndex: "None",
-    animationValue: initAnimationValue,
+    animationValue: initAnimationRight,
+    animationDirection: "right"
   }
 }
 
@@ -72,7 +81,13 @@ export const update = (
     }
 
     case 'clicked-animation': {
-      return [{ ...model, animationValue: initAnimationValue }, Cmd.None]
+      const directionNext = model.animationDirection === "right" ? "left" : "right"
+
+      const animationNext: Spring.Model = directionNext === "right"
+        ? { ...initAnimationRight, velocity: model.animationValue.velocity, current: model.animationValue.current }
+        : { ...initAnimationLeft, velocity: model.animationValue.velocity, current: model.animationValue.current }
+
+      return [{ ...model, animationValue: animationNext, animationDirection: directionNext }, Cmd.None]
     }
 
     case 'frame': {
@@ -150,7 +165,12 @@ export const mergeWithBackend = ({
   frontendModel: FrontendModel
   backendModel: BackendModel
 }): FrontendModel => {
-  return { ...backendModel, ghostIndex: frontendModel.ghostIndex, animationValue: frontendModel.animationValue }
+  return {
+    ...backendModel,
+    ghostIndex: frontendModel.ghostIndex,
+    animationValue: frontendModel.animationValue,
+    animationDirection: frontendModel.animationDirection
+  }
 }
 
 //
