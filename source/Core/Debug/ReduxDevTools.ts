@@ -212,7 +212,6 @@ const handleIncomingMsg = <Model, Msg extends {}>({
             return p(parseJump<Model>(msg), Result.map(update))
 
           case "JUMP_TO_ACTION":
-            console.log("hello", msg)
             return p(parseJump<Model>(msg), Result.map(update))
 
           case "RESET":
@@ -451,7 +450,10 @@ export const withDebugger = <Model, Msg extends {}>(
   const maybeConnection = getConnection<Model, Msg>(window)
 
   if (maybeConnection.type === "None") {
-    return { program, stopDebugger: () => { } }
+    return {
+      program,
+      stopDebugger: () => { }
+    }
   }
 
   const connection = maybeConnection.value
@@ -460,31 +462,28 @@ export const withDebugger = <Model, Msg extends {}>(
 
   const unsubscribe = connection.subscribe(
     handleSubscription({
-      //   debug$,
       connection,
       init: program.state$.getValue().model,
       $send: (msg) => {
-        if ("type" in msg) {
-          switch (msg.type) {
-            case "__DebugApplyMsg__":
-              program.$send(msg.payload)
-              break
+        if (!("type" in msg)) {
+          return
+        }
 
-            case "__DebugStarted__":
-              debuggerStarted$.next("STARTED")
-              break
+        switch (msg.type) {
+          case "__DebugApplyMsg__":
+            program.$send(msg.payload)
+            return
 
-            case "__DebugUpdateModel__":
-              //   const debugId =
-              //     // @ts-ignore
-              //     msg.payload["debugId"]
+          case "__DebugStarted__":
+            debuggerStarted$.next("STARTED")
+            return
 
-              program.state$.next({
-                model: msg.payload,
-                cmd: Cmd.None,
-              })
-              break
-          }
+          case "__DebugUpdateModel__":
+            program.state$.next({
+              model: msg.payload,
+              cmd: Cmd.None,
+            })
+            return
         }
       },
     }),
@@ -501,20 +500,19 @@ export const withDebugger = <Model, Msg extends {}>(
       connection.send(action, state.model)
     })
 
-  // Todo put somewhere else has nothing do to with redux dev tools
-  // program.state$.subscribe((state) => {
-  //   const size = new TextEncoder().encode(JSON.stringify(state.model)).length;
-  //   const kiloBytes = Math.round(size / 1024);
-  //   // const megaBytes = kiloBytes / 1024;
-  //   console.log(`[app] model memory size is ${kiloBytes} kiloBytes`);
-  // });
-
   const stopDebugger = () => {
     unsubscribe()
     subscription.unsubscribe()
   }
 
-  return { program, stopDebugger }
+  const programNew: Platform.Program<Model, Msg> = {
+    ...program,
+  }
+
+  return {
+    program: programNew,
+    stopDebugger
+  }
 }
 
 //
