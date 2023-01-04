@@ -60,14 +60,15 @@ export const allColumnIndexes: ColumnIndex[] = [0, 1, 2, 3, 4, 5, 6]
 
 const isColumnIndex = (index: unknown): index is ColumnIndex => {
   return (
-    typeof index === "number" &&
-    (index === 0 ||
+    typeof index === "number" && (
+      index === 0 ||
       index === 1 ||
       index === 2 ||
       index === 3 ||
       index === 4 ||
       index === 5 ||
-      index == 6)
+      index === 6
+    )
   )
 }
 
