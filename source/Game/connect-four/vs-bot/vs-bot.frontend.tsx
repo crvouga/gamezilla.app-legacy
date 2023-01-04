@@ -30,12 +30,12 @@ import {
 export type Model = FrontendModel
 
 const initAnimationValue: Spring.Model = {
-  current: 0,
-  target: 12,
+  current: -1,
+  target: 13,
   velocity: 2,
   friction: 1,
   tension: 0.1,
-  precision: NaN,
+  precision: 0.001,
 }
 
 

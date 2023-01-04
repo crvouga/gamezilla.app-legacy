@@ -11,7 +11,7 @@ export type Model = {
 
 export const isDone = (model: Model): boolean => {
     return (
-        Math.abs(model.velocity) < model.precision || Math.abs(model.target - model.current) < model.precision
+        Math.abs(model.velocity) < model.precision && Math.abs(model.target - model.current) < model.precision
     )
 }
 

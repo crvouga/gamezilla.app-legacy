@@ -14,9 +14,9 @@ const setupModel: Model = {
   animationValue: {
     current: 0,
     target: 0,
-    tension: 170,
+    tension: 2,
     friction: 0.1,
-    precision: 0.0001,
+    precision: 0.1,
     velocity: 0,
   }
 }
