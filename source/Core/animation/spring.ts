@@ -22,7 +22,7 @@ export const init = ({ from, to }: { from: number, to: number }): Model => {
         current: from,
         target: to,
         velocity: 0,
-        friction: 0.9,
+        friction: 0.5,
         tension: 0.1,
         precision: 0.01,
     }
