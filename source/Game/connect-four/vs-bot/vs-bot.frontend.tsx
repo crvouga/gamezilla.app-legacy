@@ -282,19 +282,6 @@ export const View = ({
         <ViewGamePlayerSlot model={model} ctx={ctx} playerType="PlayerTwo" />
       </Box>
 
-      <svg viewBox="0 0 10 10" onClick={() => $send(['clicked-animation'])}>
-        <circle
-          cx={model.animationValue.current}
-          cy="5"
-          r="1"
-          fill="red"
-          stroke="black"
-          strokeWidth="0.1"
-        />
-      </svg>
-
-
-
       <FeedbackBar ctx={ctx} model={model} />
 
       <Box sx={{ position: "relative", mt: 1 }}>

@@ -422,7 +422,7 @@ const ViewColumnsSvg = ({
   columns,
   onClick,
   onHover,
-  ghost,
+  // ghost,
   disabled,
   visual
 }: ViewColumnsProps) => {
@@ -515,7 +515,7 @@ const ViewColumnsSvg = ({
         )),
       )}
 
-      {!disabled && ghost && (
+      {/* {!disabled && ghost &&  (
         <circle
           cx={ghost.columnIndex + 0.5}
           cy={
@@ -530,7 +530,7 @@ const ViewColumnsSvg = ({
             ghost.playerType === "PlayerOne" ? playerOneFill : playerTwoFill
           }
         />
-      )}
+      )} */}
 
       <rect
         x={0}
@@ -911,7 +911,7 @@ export const step = ({ columns, current }: { columns: Columns, current: VisualMo
         ret_i.push({
           ...discVisual,
           type: "exit",
-          yPosition: Spring.init({ from: discVisual.yPosition.current, to: -1 })
+          yPosition: Spring.init({ from: discVisual.yPosition.current, to: -j })
         })
         continue
       }
