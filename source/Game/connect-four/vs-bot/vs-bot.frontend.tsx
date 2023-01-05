@@ -75,7 +75,7 @@ export const update = (
   model: Model,
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case "Hovered": {
+    case "hovered": {
       if (model.type !== 'Game') {
         return [model, Cmd.None]
       }
@@ -104,15 +104,15 @@ export const update = (
       return [{ ...model, visual: visualNew, animationValue: animationValueNew }, Cmd.None]
     }
 
-    case "InputMove":
-    case "InputPlayerType":
-    case "Restart":
-    case "StartGame":
-    case "StartPlaying":
-    case "StopGame":
-    case "StopPlaying":
-    case "SwapSides":
-    case "InputBotLevel": {
+    case 'input-move':
+    case "input-player-type":
+    case 'restart':
+    case 'start-game':
+    case "start-playing":
+    case 'stop-game':
+    case "stop-playing":
+    case 'swap-sides':
+    case 'input-bot-level': {
       return [model, sendToBackend(msg)]
     }
   }
@@ -123,7 +123,7 @@ export const updateFromBackend = (
   model: Model,
 ): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-    case "PlayerLeft": {
+    case "player-left": {
       const modelNew = mergeWithBackend({
         frontendModel: model,
         backendModel: msg[1],
@@ -131,8 +131,8 @@ export const updateFromBackend = (
       return [modelNew, Cmd.None, []]
     }
 
-    case "BotMove":
-    case "InputMove": {
+    case "bot-move":
+    case 'input-move': {
       if (msg[1].type === "Err") {
         return [model, Cmd.None, []]
       }
@@ -145,14 +145,14 @@ export const updateFromBackend = (
       return [{ ...modelNew, }, Cmd.None, []]
     }
 
-    case "InputPlayerType":
-    case "Restart":
-    case "StartGame":
-    case "StartPlaying":
-    case "StopGame":
-    case "StopPlaying":
-    case "SwapSides":
-    case "InputBotLevel": {
+    case "input-player-type":
+    case 'restart':
+    case 'start-game':
+    case "start-playing":
+    case 'stop-game':
+    case "stop-playing":
+    case 'swap-sides':
+    case 'input-bot-level': {
       if (msg[1].type === "Err") {
         return [model, Cmd.None, []]
       }
@@ -241,30 +241,30 @@ export const View = ({
         subtitle: "Vs Computer",
         ctx,
         playerId: model.player === "None" ? null : model.player,
-        onStartPlaying: () => $send(['StartPlaying', { userId: ctx.currentUserId }]),
-        onStopPlaying: () => $send(['StopPlaying', { userId: ctx.currentUserId }]),
+        onStartPlaying: () => $send(["start-playing", { userId: ctx.currentUserId }]),
+        onStopPlaying: () => $send(["stop-playing", { userId: ctx.currentUserId }]),
         botLevel: {
           values: Object.values(botLevel),
           selected: model.botLevel,
-          onInput: (level) => $send(['InputBotLevel', { botLevel: level, userId: ctx.currentUserId }]),
+          onInput: (level) => $send(['input-bot-level', { botLevel: level, userId: ctx.currentUserId }]),
         },
         player: {
           values: Object.values(playerTypes),
           selected: model.userPlayerType,
-          onInput: (playerType) => $send(['InputPlayerType', { playerType, userId: ctx.currentUserId }]),
+          onInput: (playerType) => $send(['input-player-type', { playerType, userId: ctx.currentUserId }]),
           icon: (playerType) => <PlayerIcon playerType={playerType} sx={{ width: "1rem", height: "1rem" }} />,
         },
         onCancel: goBack,
-        onStartGame: () => $send(['StartGame', { userId: ctx.currentUserId }]),
+        onStartGame: () => $send(['start-game', { userId: ctx.currentUserId }]),
       })
 
     )
   }
 
-  const stopGameRes = handle(["StopGame", { userId: ctx.currentUserId }], model)
-  const restartRes = handle(["Restart", { userId: ctx.currentUserId }], model)
+  const stopGameRes = handle(['stop-game', { userId: ctx.currentUserId }], model)
+  const restartRes = handle(['restart', { userId: ctx.currentUserId }], model)
   const swapSidesRes = handle(
-    ["SwapSides", { userId: ctx.currentUserId }],
+    ['swap-sides', { userId: ctx.currentUserId }],
     model,
   )
   const gameOver = toGameOver(model)
@@ -297,15 +297,15 @@ export const View = ({
               : undefined
           }
           columns={model.columns}
-          onHover={(columnIndex) => $send(["Hovered", { columnIndex }])}
+          onHover={(columnIndex) => $send(["hovered", { columnIndex }])}
           onClick={(columnIndex) =>
-            $send(["InputMove", { columnIndex, userId: ctx.currentUserId }])
+            $send(['input-move', { columnIndex, userId: ctx.currentUserId }])
           }
           visual={model.visual}
         />
         <Fade in={gameOver.type !== "None"}>
           <Box
-            onClick={() => $send(["Restart", { userId: ctx.currentUserId }])}
+            onClick={() => $send(['restart', { userId: ctx.currentUserId }])}
             sx={{
               position: "absolute",
               top: 0,
@@ -335,19 +335,19 @@ export const View = ({
         <ActionButton
           icon={<Icons.ExitToApp sx={{ transform: "rotate(180deg)" }} />}
           label="Exit"
-          onClick={() => $send(["StopGame", { userId: ctx.currentUserId }])}
+          onClick={() => $send(['stop-game', { userId: ctx.currentUserId }])}
           disabled={stopGameRes.type === "Err"}
         />
         <ActionButton
           icon={<Icons.RestartAlt />}
-          label="Restart"
-          onClick={() => $send(["Restart", { userId: ctx.currentUserId }])}
+          label='restart'
+          onClick={() => $send(['restart', { userId: ctx.currentUserId }])}
           disabled={restartRes.type === "Err"}
         />
         <ActionButton
           icon={<Icons.SwapHorizSharp />}
           label="Swap"
-          onClick={() => $send(["SwapSides", { userId: ctx.currentUserId }])}
+          onClick={() => $send(['swap-sides', { userId: ctx.currentUserId }])}
           disabled={swapSidesRes.type === "Err"}
         />
       </Box>

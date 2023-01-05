@@ -94,10 +94,10 @@ export const update = (
 
     case "InputSeed":
     case "InputDirection":
-    case "StartGame":
-    case 'StopGame':
-    case "StopPlaying":
-    case "StartPlaying": {
+    case 'start-game':
+    case 'stop-game':
+    case "stop-playing":
+    case "start-playing": {
       return [model, sendToBackend(msg)]
     }
   }
@@ -108,12 +108,12 @@ export const updateFromBackend = (
   model: Model,
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'StopGame':
+    case 'stop-game':
     case "InputSeed":
     case "InputDirection":
-    case "StartGame":
-    case "StopPlaying":
-    case "StartPlaying": {
+    case 'start-game':
+    case "stop-playing":
+    case "start-playing": {
       if (msg[2].type === "Err") {
         return [model, Cmd.None]
       }
@@ -341,7 +341,7 @@ export const View = ({
               {player.userId === ctx.currentUserId && (
                 <Button
                   onClick={() =>
-                    $send(["StopPlaying", { userId: ctx.currentUserId }])
+                    $send(["stop-playing", { userId: ctx.currentUserId }])
                   }
                 >
                   Stop Playing
@@ -355,10 +355,10 @@ export const View = ({
               variant="outlined"
               fullWidth
               onClick={() =>
-                $send(["StartPlaying", { userId: ctx.currentUserId }])
+                $send(["start-playing", { userId: ctx.currentUserId }])
               }
               disabled={
-                handle(["StartPlaying", { userId: ctx.currentUserId }], model)
+                handle(["start-playing", { userId: ctx.currentUserId }], model)
                   .type === "Err"
               }
             >
@@ -371,9 +371,9 @@ export const View = ({
           <Button
             fullWidth
             variant="contained"
-            onClick={() => $send(["StartGame", { userId: ctx.currentUserId }])}
+            onClick={() => $send(['start-game', { userId: ctx.currentUserId }])}
             disabled={
-              handle(["StartGame", { userId: ctx.currentUserId }], model)
+              handle(['start-game', { userId: ctx.currentUserId }], model)
                 .type === "Err"
             }
           >
@@ -457,7 +457,7 @@ export const View = ({
             <ActionButton
               icon={<Icons.ExitToApp sx={{ transform: "rotate(180deg)" }} />}
               label="Exit"
-              onClick={() => $send(['StopGame', { userId: ctx.currentUserId }])}
+              onClick={() => $send(['stop-game', { userId: ctx.currentUserId }])}
             />
           </Box>
         </>

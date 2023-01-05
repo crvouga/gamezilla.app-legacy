@@ -110,7 +110,7 @@ export const update = (
       return [model, sendToBackend(msg)]
     }
 
-    case "StartGame": {
+    case 'start-game': {
       return [model, sendToBackend(msg)]
     }
 
@@ -134,7 +134,7 @@ export const update = (
       return [model, sendToBackend(msg)]
     }
 
-    case "InputMove": {
+    case 'input-move': {
       const result = inputMove(msg[1], model.sharedModel)
 
       if (result.type === "Err") {
@@ -350,7 +350,7 @@ export const updateFromBackend = (
       return [{ ...model, sharedModel }, Cmd.None, []]
     }
 
-    case "PlayerLeft": {
+    case "player-left": {
       return [{ ...model, sharedModel: msg[1] }, Cmd.None, []]
     }
 
@@ -545,7 +545,7 @@ export const View = ({
             fullWidth
             variant="contained"
             onClick={() => {
-              $send(["StartGame", { userId: ctx.currentUserId }])
+              $send(['start-game', { userId: ctx.currentUserId }])
             }}
           >
             Start Game
@@ -608,7 +608,7 @@ export const View = ({
         }}
         onPieceDrop={(moveInput) => {
           const msg: InputMove = [
-            "InputMove",
+            'input-move',
             {
               userId: ctx.currentUserId,
               ...moveInput,

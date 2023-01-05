@@ -107,11 +107,11 @@ export const update = (
     case "Rematch_Cancel":
     case "InputBestOutOf":
     case "InputMoveTimeLimit":
-    case "InputMove":
+    case 'input-move':
     case "Resign":
     case "InputPlayer":
-    case "StopPlaying":
-    case "StartGame":
+    case "stop-playing":
+    case 'start-game':
     case "NewGame": {
       return [model, sendToBackend(msg)]
     }
@@ -128,7 +128,7 @@ export const updateFromBackend = (
   model: Model,
 ): [Model, OutAction[]] => {
   switch (msg[0]) {
-    case "PlayerLeft": {
+    case "player-left": {
       const modelNew = mergeWithBackend(model, msg[1])
       return [modelNew, []]
     }
@@ -323,7 +323,7 @@ export const View = ({
           <UI.Button
             variant="contained"
             fullWidth
-            onClick={() => $send(["StartGame", { userId: ctx.currentUserId }])}
+            onClick={() => $send(['start-game', { userId: ctx.currentUserId }])}
             disabled={startGameResult.type === "Err"}
           >
             Start
@@ -349,7 +349,7 @@ export const View = ({
             <ViewBoard
               board={board}
               onClick={(position) =>
-                $send(["InputMove", { position, userId: ctx.currentUserId }])
+                $send(['input-move', { position, userId: ctx.currentUserId }])
               }
             />
 
@@ -404,7 +404,7 @@ export const View = ({
         <ViewBoard
           board={board}
           onClick={(position) =>
-            $send(["InputMove", { position, userId: ctx.currentUserId }])
+            $send(['input-move', { position, userId: ctx.currentUserId }])
           }
         />
 
@@ -1149,7 +1149,7 @@ const ViewPlayerSetupSlot = ({
       </UI.Box>
       {ctx.currentUserId === userId && (
         <UI.Button
-          onClick={() => $send(["StopPlaying", { userId: ctx.currentUserId }])}
+          onClick={() => $send(["stop-playing", { userId: ctx.currentUserId }])}
         >
           Stop Playing
         </UI.Button>

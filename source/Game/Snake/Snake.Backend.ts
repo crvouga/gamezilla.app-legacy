@@ -68,7 +68,7 @@ export const updateFromFrontend = (
   model: Model,
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case "StartGame": {
+    case 'start-game': {
       return updateRequest(
         { sendToClient, broadcast },
         ["StartGame_Done", startGame(model)],

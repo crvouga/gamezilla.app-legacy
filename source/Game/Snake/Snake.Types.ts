@@ -19,14 +19,14 @@ export type FrontendModel = SharedModel & {
 
 export type SharedModel = Snake.Model & {
   gameStatus:
-    | {
-        type: "GameSetup"
-        player: Option<Player>
-      }
-    | {
-        type: "GameStarted"
-        player: Player
-      }
+  | {
+    type: "GameSetup"
+    player: Option<Player>
+  }
+  | {
+    type: "GameStarted"
+    player: Player
+  }
 }
 
 export type Player = ["User", UserId]
@@ -119,7 +119,7 @@ export type InputPlayer_Done = [
   Result<"must_be_in_game_setup", SharedModel>,
 ]
 
-export type StartGame = ["StartGame"]
+export type StartGame = ['start-game']
 export type StartGame_Done = [
   "StartGame_Done",
   Result<"must_be_in_game_setup" | "missing_player", SharedModel>,

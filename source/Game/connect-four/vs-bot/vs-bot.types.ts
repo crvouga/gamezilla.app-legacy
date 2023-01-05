@@ -1,7 +1,7 @@
 import { exhaustive } from "../../../Core"
+import * as Spring from "../../../Core/animation/spring"
 import { Err, Ok, Result } from "../../../Core/Result"
 import { UserId } from "../../../Data/UserId"
-import * as Spring from "../../../Core/animation/spring"
 import {
   BestMoveProblem,
   BestMoveResult,
@@ -13,7 +13,7 @@ import {
   opposite,
   PlayerType,
   toStatus,
-  VisualModel,
+  VisualModel
 } from "../connect-four/connect-four"
 
 //
@@ -116,27 +116,27 @@ export const botLevel: { [botLevel in BotLevel]: BotLevel } = {
 //
 //
 
-export type FrontendMsg = Req | ["Hovered", { columnIndex: ColumnIndex }] | ["frame"] | ['clicked-animation']
+export type FrontendMsg = Req | ["hovered", { columnIndex: ColumnIndex }] | ["frame"] | ['clicked-animation']
 
-export type BackendMsg = ["BotMove", BestMoveResult]
+export type BackendMsg = ["bot-move", BestMoveResult]
 
 export type ToFrontend =
   | Res
-  | ["PlayerLeft", SharedModel]
-  | ["BotMove", BotMoveResult]
+  | ["player-left", SharedModel]
+  | ["bot-move", BotMoveResult]
 
 export type ToBackend = Req
 
 export type Req =
-  | ["StartPlaying", { userId: UserId }]
-  | ["StopPlaying", { userId: UserId }]
-  | ["InputPlayerType", { userId: UserId; playerType: PlayerType }]
-  | ["InputBotLevel", { userId: UserId; botLevel: BotLevel }]
-  | ["StartGame", { userId: UserId }]
-  | ["InputMove", { userId: UserId; columnIndex: ColumnIndex }]
-  | ["StopGame", { userId: UserId }]
-  | ["SwapSides", { userId: UserId }]
-  | ["Restart", { userId: UserId }]
+  | ["start-playing", { userId: UserId }]
+  | ["stop-playing", { userId: UserId }]
+  | ["input-player-type", { userId: UserId; playerType: PlayerType }]
+  | ['input-bot-level', { userId: UserId; botLevel: BotLevel }]
+  | ['start-game', { userId: UserId }]
+  | ['input-move', { userId: UserId; columnIndex: ColumnIndex }]
+  | ['stop-game', { userId: UserId }]
+  | ['swap-sides', { userId: UserId }]
+  | ['restart', { userId: UserId }]
 
 export type Res = [Req[0], Result<Problem, SharedModel>]
 
@@ -158,7 +158,7 @@ export const handle = (
   model: SharedModel,
 ): Result<Problem, SharedModel> => {
   switch (msg[0]) {
-    case "StartPlaying": {
+    case "start-playing": {
       if (model.type !== "Setup") {
         return Err("not_setup")
       }
@@ -175,7 +175,7 @@ export const handle = (
       return Ok(modelNew)
     }
 
-    case "StopPlaying": {
+    case "stop-playing": {
       if (model.type !== "Setup") {
         return Err("not_setup")
       }
@@ -196,7 +196,7 @@ export const handle = (
       return Ok(modelNew)
     }
 
-    case "InputPlayerType": {
+    case "input-player-type": {
       if (model.type !== "Setup") {
         return Err("not_setup")
       }
@@ -213,7 +213,7 @@ export const handle = (
       return Ok(modelNew)
     }
 
-    case "InputBotLevel": {
+    case 'input-bot-level': {
       if (model.type !== "Setup") {
         return Err("not_setup")
       }
@@ -230,7 +230,7 @@ export const handle = (
       return Ok(modelNew)
     }
 
-    case "StartGame": {
+    case 'start-game': {
       if (model.type !== "Setup") {
         return Err("not_setup")
       }
@@ -254,7 +254,7 @@ export const handle = (
       return Ok(modelNew)
     }
 
-    case "StopGame": {
+    case 'stop-game': {
       if (model.type !== "Game") {
         return Err("not_game")
       }
@@ -273,7 +273,7 @@ export const handle = (
       return Ok(modelNew)
     }
 
-    case "SwapSides": {
+    case 'swap-sides': {
       if (model.type !== "Game") {
         return Err("not_game")
       }
@@ -291,7 +291,7 @@ export const handle = (
       return Ok(modelNew)
     }
 
-    case "InputMove": {
+    case 'input-move': {
       if (model.type !== "Game") {
         return Err("not_game")
       }
@@ -318,7 +318,7 @@ export const handle = (
       return Ok(modelNew)
     }
 
-    case "Restart": {
+    case 'restart': {
       if (model.type !== "Game") {
         return Err("not_game")
       }

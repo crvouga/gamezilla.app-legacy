@@ -68,10 +68,10 @@ export type ToFrontend = Res | ["Tick", SharedModel]
 
 
 export type Req =
-  | ["StartPlaying", { userId: UserId }]
-  | ["StopPlaying", { userId: UserId }]
-  | ["StartGame", { userId: UserId }]
-  | ["StopGame", { userId: UserId }]
+  | ["start-playing", { userId: UserId }]
+  | ["stop-playing", { userId: UserId }]
+  | ['start-game', { userId: UserId }]
+  | ['stop-game', { userId: UserId }]
   | ["InputDirection", { userId: UserId; direction: Direction | "None" }]
   | ["InputSeed", { userId: UserId; seed: string }]
 
@@ -120,7 +120,7 @@ export const handle = (
       return Ok(modelNew)
     }
 
-    case 'StopGame': {
+    case 'stop-game': {
       if (model.type !== 'Game') {
         return Err("must_be_game")
       }
@@ -143,7 +143,7 @@ export const handle = (
     }
 
 
-    case "StartPlaying": {
+    case "start-playing": {
       if (model.type !== "Setup") {
         return Err("must_be_setup")
       }
@@ -173,7 +173,7 @@ export const handle = (
       return Ok(modelNew)
     }
 
-    case "StopPlaying": {
+    case "stop-playing": {
       if (model.type !== "Setup") {
         return Err("must_be_setup")
       }
@@ -186,7 +186,7 @@ export const handle = (
       return Ok(modelNew)
     }
 
-    case "StartGame": {
+    case 'start-game': {
       if (model.type !== "Setup") {
         return Err("must_be_setup")
       }

@@ -55,15 +55,15 @@ export const update = (
   model: Model,
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case "StartGame":
-    case "StopPlaying":
-    case "StartPlaying":
+    case 'start-game':
+    case "stop-playing":
+    case "start-playing":
     case "InputBot":
-    case "StopGame":
-    case "InputMove":
-    case "Restart":
-    case "SwapSides":
-    case "InputPlayerType": {
+    case 'stop-game':
+    case 'input-move':
+    case 'restart':
+    case 'swap-sides':
+    case "input-player-type": {
       return [model, sendToBackend(msg)]
     }
   }
@@ -74,7 +74,7 @@ export const updateFromBackend = (
   model: Model,
 ): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-    case "PlayerLeft": {
+    case "player-left": {
       const modelNew = mergeWithBackend(model, msg[1])
       return [modelNew, Cmd.None, []]
     }
@@ -145,12 +145,12 @@ export const View = ({
         coverArt: viewCoverArt(),
         ctx,
         onCancel: goBack,
-        onStartGame: () => $send(["StartGame", { userId: ctx.currentUserId }]),
-        onStartPlaying: () => $send(["StartPlaying", { userId: ctx.currentUserId }]),
-        onStopPlaying: () => $send(["StopPlaying", { userId: ctx.currentUserId }]),
+        onStartGame: () => $send(['start-game', { userId: ctx.currentUserId }]),
+        onStartPlaying: () => $send(["start-playing", { userId: ctx.currentUserId }]),
+        onStopPlaying: () => $send(["stop-playing", { userId: ctx.currentUserId }]),
         player: {
           values: Object.values(playerTypes),
-          onInput: (player) => $send(["InputPlayerType", { userId: ctx.currentUserId, playerType: player }]),
+          onInput: (player) => $send(["input-player-type", { userId: ctx.currentUserId, playerType: player }]),
           selected: model.userPlayerType,
           icon: (playerType) => <PlayerTypeIcon playerType={playerType} />,
         },
@@ -188,13 +188,13 @@ export const View = ({
           <ViewBoard
             board={model.board}
             onClick={(position) =>
-              $send(["InputMove", { userId: ctx.currentUserId, position }])
+              $send(['input-move', { userId: ctx.currentUserId, position }])
             }
           />
 
           <UI.Fade in={gameOver.type !== "None"}>
             <UI.Box
-              onClick={() => $send(["Restart", { userId: ctx.currentUserId }])}
+              onClick={() => $send(['restart', { userId: ctx.currentUserId }])}
               sx={{
                 position: "absolute",
                 inset: 0,
@@ -218,7 +218,7 @@ export const View = ({
       <UI.Box sx={{ display: "flex" }}>
         <UI.ActionButton
           onClick={() => {
-            $send(["StopGame", { userId: ctx.currentUserId }])
+            $send(['stop-game', { userId: ctx.currentUserId }])
           }}
           disabled={stopGameRes.type === "Err"}
           icon={<UI.Icons.ExitToApp sx={{ transform: "rotate(180deg)" }} />}
@@ -226,13 +226,13 @@ export const View = ({
         />
         <UI.ActionButton
           disabled={swapSidesRes.type === "Err"}
-          onClick={() => $send(["SwapSides", { userId: ctx.currentUserId }])}
+          onClick={() => $send(['swap-sides', { userId: ctx.currentUserId }])}
           icon={<UI.Icons.SwapHoriz />}
           label="Swap"
         />
         <UI.ActionButton
           disabled={restartRes.type === "Err"}
-          onClick={() => $send(["Restart", { userId: ctx.currentUserId }])}
+          onClick={() => $send(['restart', { userId: ctx.currentUserId }])}
           icon={<UI.Icons.RestartAlt />}
           label="Reset"
         />

@@ -47,12 +47,12 @@ export const updateFromFrontend = (
   model: Model,
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'StopGame':
+    case 'stop-game':
     case "InputDirection":
     case "InputSeed":
-    case "StartGame":
-    case "StopPlaying":
-    case "StartPlaying": {
+    case 'start-game':
+    case "stop-playing":
+    case "start-playing": {
       const res: Res = [...msg, handle(msg, model)]
       const modelNew = res[2].type === "Ok" ? res[2].value : model
       return [modelNew, broadcast(res)]
