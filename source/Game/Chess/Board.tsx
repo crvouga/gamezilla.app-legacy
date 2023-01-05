@@ -643,7 +643,7 @@ export type GameOver =
     type: "Stalemate"
   }
 
-export const toGameOver = (model: Model): GameOver | { type: "None" } => {
+export const toGameOver = (model: Model): GameOver | { type: "none" } => {
   if (inCheckmate(model)) {
     return {
       type: "Checkmate",
@@ -658,7 +658,7 @@ export const toGameOver = (model: Model): GameOver | { type: "None" } => {
   }
 
   return {
-    type: "None",
+    type: "none",
   }
 }
 

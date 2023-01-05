@@ -15,8 +15,8 @@ export type SharedModel = SetupModel | GameModel | GameOverModel
 
 export type SetupModel = {
   type: "Setup"
-  X: UserId | "None"
-  O: UserId | "None"
+  X: UserId | "none"
+  O: UserId | "none"
   maxRoundCount: BestOutOf
   moveTimeLimit: MoveTimeLimit
 }
@@ -120,7 +120,7 @@ export const initSharedModel = ({
 }
 
 export type FrontendModel = SharedModel & {
-  openedModal: "None" | ModalName
+  openedModal: "none" | ModalName
 }
 
 export type BackendModel = SharedModel
@@ -205,14 +205,14 @@ export const inputPlayer = (
 
   const targetPlayer = model[playerType]
 
-  if (targetPlayer !== "None") {
+  if (targetPlayer !== "none") {
     return Err("player_is_taken")
   }
 
   const otherPlayer = model[TicTacToe.toOpposite(playerType)]
 
   const otherPlayerNew =
-    otherPlayer !== "None" && otherPlayer === userId ? "None" : otherPlayer
+    otherPlayer !== "none" && otherPlayer === userId ? "none" : otherPlayer
 
   const modelNew: SharedModel = {
     ...model,
@@ -247,8 +247,8 @@ export const stopPlaying = (
 
   const modelNew: SharedModel = {
     ...model,
-    X: isPlayingX ? "None" : model.X,
-    O: isPlayingO ? "None" : model.O,
+    X: isPlayingX ? "none" : model.X,
+    O: isPlayingO ? "none" : model.O,
   }
 
   return Ok(modelNew)
@@ -281,15 +281,15 @@ export const startGame = (
     return Err("not_playing")
   }
 
-  if (model.X === "None" && model.O === "None") {
+  if (model.X === "none" && model.O === "none") {
     return Err("missing_both")
   }
 
-  if (model.X === "None") {
+  if (model.X === "none") {
     return Err("missing_x")
   }
 
-  if (model.O === "None") {
+  if (model.O === "none") {
     return Err("missing_o")
   }
 
@@ -326,10 +326,10 @@ export const resign = (
     return Err("not_in_game_mode")
   }
 
-  const resigner: TicTacToe.PlayerType | "None" =
-    model.O === userId ? "O" : model.X === userId ? "X" : "None"
+  const resigner: TicTacToe.PlayerType | "none" =
+    model.O === userId ? "O" : model.X === userId ? "X" : "none"
 
-  if (resigner === "None") {
+  if (resigner === "none") {
     return Err("not_playing")
   }
 
@@ -376,10 +376,10 @@ export const inputMove = (
     return Err("round_not_started")
   }
 
-  const playerType: TicTacToe.PlayerType | "None" =
-    model.O === userId ? "O" : model.X === userId ? "X" : "None"
+  const playerType: TicTacToe.PlayerType | "none" =
+    model.O === userId ? "O" : model.X === userId ? "X" : "none"
 
-  if (playerType === "None") {
+  if (playerType === "none") {
     return Err("not_playing")
   }
 
@@ -395,7 +395,7 @@ export const inputMove = (
 
   const roundOver = TicTacToe.toGameOver(boardNew)
 
-  if (roundOver.type === "None") {
+  if (roundOver.type === "none") {
     const modelNew: SharedModel = {
       ...model,
       round: Round.mapCurrent(model.round, () => ({
@@ -423,7 +423,7 @@ export const inputMove = (
 
   const gameOver = Round.toGameOver(modelNew)
 
-  if (gameOver.type === "None") {
+  if (gameOver.type === "none") {
     return Ok(modelNew)
   }
 
@@ -796,10 +796,10 @@ export const rematchCancel = (
     return Err("not_asking")
   }
 
-  const playerType: TicTacToe.PlayerType | "None" =
-    model.X === userId ? "X" : model.O === userId ? "O" : "None"
+  const playerType: TicTacToe.PlayerType | "none" =
+    model.X === userId ? "X" : model.O === userId ? "O" : "none"
 
-  if (playerType === "None") {
+  if (playerType === "none") {
     return Err("not_player")
   }
 

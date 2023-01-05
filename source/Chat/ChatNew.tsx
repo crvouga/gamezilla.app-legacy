@@ -17,7 +17,7 @@ import * as UI from "../UI"
 export type Model = {
   searchText: string
   selected: { [userId: UserId]: UserId }
-  highlightedIndex: "None" | number
+  highlightedIndex: "none" | number
 }
 
 //
@@ -34,7 +34,7 @@ export const init = (): [Model, Cmd<Msg>, OutAction[]] => {
     {
       searchText,
       selected: {},
-      highlightedIndex: "None",
+      highlightedIndex: "none",
     },
     Cmd.None,
     [["Profile", ["Search", { searchText }]]],
@@ -87,7 +87,7 @@ export const update = (
         {
           ...model,
           searchText,
-          highlightedIndex: "None",
+          highlightedIndex: "none",
         },
         Cmd.None,
         [["Profile", ["Search", { searchText }]]],
@@ -106,7 +106,7 @@ export const update = (
             {
               ...model,
               highlightedIndex:
-                model.highlightedIndex === "None"
+                model.highlightedIndex === "none"
                   ? 0
                   : circularIndex(model.highlightedIndex + 1, profiles.length),
             },
@@ -119,7 +119,7 @@ export const update = (
             {
               ...model,
               highlightedIndex:
-                model.highlightedIndex === "None"
+                model.highlightedIndex === "none"
                   ? 0
                   : circularIndex(model.highlightedIndex - 1, profiles.length),
             },
@@ -128,7 +128,7 @@ export const update = (
           ]
 
         case "Enter":
-          if (model.highlightedIndex === "None") {
+          if (model.highlightedIndex === "none") {
             return [model, Cmd.None, []]
           }
 
@@ -147,7 +147,7 @@ export const update = (
 
     case "ClickedResult":
       const [modelNew, cmdNew, actions] = toggleSelected(msg[1].userId, model)
-      return [{ ...modelNew, highlightedIndex: "None" }, cmdNew, actions]
+      return [{ ...modelNew, highlightedIndex: "none" }, cmdNew, actions]
 
     default:
       return exhaustive(msg[0])
@@ -318,7 +318,7 @@ export const View = ({
             }}
             selected={profile.userId in model.selected}
             highlighted={
-              model.highlightedIndex !== "None" &&
+              model.highlightedIndex !== "none" &&
               circularIndex(model.highlightedIndex, profiles.length) === index
             }
           />

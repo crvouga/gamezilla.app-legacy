@@ -238,10 +238,10 @@ export const updateRoomLeave = (
   userId: UserId,
   model: Model,
 ): [Model, Cmd<Msg>] => {
-  const player: PlayerType | "None" =
-    model.O === userId ? "O" : model.X === userId ? "X" : "None"
+  const player: PlayerType | "none" =
+    model.O === userId ? "O" : model.X === userId ? "X" : "none"
 
-  if (player === "None") {
+  if (player === "none") {
     return [model, Cmd.None]
   }
 
@@ -253,7 +253,7 @@ export const updateRoomLeave = (
     moveTimeLimit: model.moveTimeLimit,
     X: model.X,
     O: model.O,
-    [player]: "None",
+    [player]: "none",
     [other]: model[other],
   }
 

@@ -44,7 +44,7 @@ SetupNoPlayer.args = {
     type: "Setup",
     botLevel: "Medium",
     userPlayerType: "X",
-    player: "None",
+    player: "none",
   },
 }
 

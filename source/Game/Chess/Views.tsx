@@ -111,7 +111,7 @@ export const BannerArt = ({ title }: { title: string }) => {
 }
 
 type Player =
-  | { type: "None" }
+  | { type: "none" }
   | { type: "User"; userId: UserId }
   | { type: "Bot"; label: string }
 
@@ -216,7 +216,7 @@ const PlayerSlot = ({ player, ctx }: { player: Player; ctx: Ctx }) => {
       )
     }
 
-    case "None": {
+    case "none": {
       return (
         <UI.Box sx={{ ...boxSx }}>
           <UI.Avatar sx={{ ...iconSx }}>

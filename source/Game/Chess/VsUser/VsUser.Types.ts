@@ -15,7 +15,7 @@ import * as Clock from "../Clock"
 export type FrontendModel = {
   sharedModel: SharedModel
   openedMenuId: Option<string>
-  openedModal: Modal | "None"
+  openedModal: Modal | "none"
   isFlipped: boolean
 }
 
@@ -27,8 +27,8 @@ export type SharedModel =
   | {
     type: "Setup"
     clockPreset: Clock.Preset
-    w: UserId | "None"
-    b: UserId | "None"
+    w: UserId | "none"
+    b: UserId | "none"
   }
   | {
     type: "Game"
@@ -73,12 +73,12 @@ export type GameOver =
 export const initShared = ({
   userId,
 }: {
-  userId: UserId | "None"
+  userId: UserId | "none"
 }): SharedModel => {
   return {
     type: "Setup",
     w: userId,
-    b: "None",
+    b: "none",
     clockPreset: "Blitz",
   }
 }
@@ -175,7 +175,7 @@ export const inputMove = (
 
   const gameOver = Board.toGameOver(boardNew)
 
-  if (gameOver.type !== "None") {
+  if (gameOver.type !== "none") {
     const modelNew: SharedModel = {
       type: "GameOver",
       b: model.b,
@@ -210,7 +210,7 @@ export type InputPlayer = [
   "InputPlayer",
   {
     color: Board.Color
-    userId: UserId | "None"
+    userId: UserId | "none"
   },
 ]
 
@@ -235,7 +235,7 @@ export const inputPlayer = (
   const targetPlayer = userId
   const targetColor = color
 
-  if (model[targetColor] !== "None" && targetPlayer !== "None") {
+  if (model[targetColor] !== "none" && targetPlayer !== "none") {
     return Err("player_is_taken")
   }
 
@@ -243,10 +243,10 @@ export const inputPlayer = (
   const otherPlayer = model[otherColor]
 
   const otherPlayerNew =
-    otherPlayer !== "None" &&
-      targetPlayer !== "None" &&
+    otherPlayer !== "none" &&
+      targetPlayer !== "none" &&
       otherPlayer === targetPlayer
-      ? "None"
+      ? "none"
       : otherPlayer
 
   return Ok({
@@ -358,15 +358,15 @@ export const startGame = (
     return Err("game_not_in_setup_mode")
   }
 
-  if (model.w === "None" && model.b === "None") {
+  if (model.w === "none" && model.b === "none") {
     return Err("missing_both_players")
   }
 
-  if (model.w === "None") {
+  if (model.w === "none") {
     return Err("missing_white_player")
   }
 
-  if (model.b === "None") {
+  if (model.b === "none") {
     return Err("missing_black_player")
   }
 
@@ -479,10 +479,10 @@ export const cancelDraw = (
     return Err("must_be_asking_for_a_draw")
   }
 
-  const color: Board.Color | "None" =
-    model.b === userId ? "b" : model.w === userId ? "w" : "None"
+  const color: Board.Color | "none" =
+    model.b === userId ? "b" : model.w === userId ? "w" : "none"
 
-  if (color === "None") {
+  if (color === "none") {
     return Err("must_be_playing")
   }
 

@@ -43,7 +43,7 @@ export const update = (
   model: Model,
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case "None": {
+    case "none": {
       return [model, Cmd.None]
     }
 

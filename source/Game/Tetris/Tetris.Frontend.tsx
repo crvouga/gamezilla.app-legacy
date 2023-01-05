@@ -58,7 +58,7 @@ export const update = (
     }
 
     case "TouchMove": {
-      if (model.touched.type === "None") {
+      if (model.touched.type === "none") {
         return [model, Cmd.None]
       }
 
@@ -68,7 +68,7 @@ export const update = (
 
       const direction = positionsToDirection({ from, to })
 
-      if (direction === "None") {
+      if (direction === "none") {
         return [model, Cmd.None]
       }
 
@@ -92,7 +92,7 @@ export const update = (
 
       const direction = keyToDirection(key)
 
-      if (direction !== "None") {
+      if (direction !== "none") {
         return [model, sendToBackend(["InputTranslate", { direction }])]
       }
 
@@ -117,7 +117,7 @@ const positionsToDirection = ({
 }: {
   from: Position.Position
   to: Position.Position
-}): Direction.Direction | "None" => {
+}): Direction.Direction | "none" => {
   const xDelta = to.x - from.x
   const yDelta = to.y - from.y
 
@@ -133,10 +133,10 @@ const positionsToDirection = ({
     return "Down"
   }
 
-  return "None"
+  return "none"
 }
 
-const keyToDirection = (key: Keyboard.Key): Direction.Direction | "None" => {
+const keyToDirection = (key: Keyboard.Key): Direction.Direction | "none" => {
   switch (key) {
     case "A":
     case "a":
@@ -154,7 +154,7 @@ const keyToDirection = (key: Keyboard.Key): Direction.Direction | "None" => {
       return "Down"
 
     default:
-      return "None"
+      return "none"
   }
 }
 

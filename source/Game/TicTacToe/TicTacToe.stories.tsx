@@ -8,7 +8,7 @@ const props: Parameters<typeof View>[0] = {
   $send: () => { },
   ctx,
   gameRoomCtx,
-  model: { mode: "None" },
+  model: { mode: "none" },
 }
 
 export default {

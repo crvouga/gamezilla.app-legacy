@@ -33,7 +33,7 @@ export type SetupModel =
 type Player = {
   userId: UserId
   position: Position
-  direction: Direction | "None"
+  direction: Direction | "none"
   color: Color
 }
 
@@ -72,7 +72,7 @@ export type Req =
   | ["stop-playing", { userId: UserId }]
   | ['start-game', { userId: UserId }]
   | ['stop-game', { userId: UserId }]
-  | ["InputDirection", { userId: UserId; direction: Direction | "None" }]
+  | ["InputDirection", { userId: UserId; direction: Direction | "none" }]
   | ["InputSeed", { userId: UserId; seed: string }]
 
 export type Res = [...Req, Result<Problem, SharedModel>]
@@ -203,7 +203,7 @@ export const handle = (
             userId: player.userId,
             color: player.color,
             position: { x: 0, y: 0 },
-            direction: "None",
+            direction: "none",
           }
           return { ...byId, [player.userId]: playerNew }
         },
@@ -267,7 +267,7 @@ export const tick = (model: SharedModel): SharedModel => {
 }
 
 const mapPlayer = (maze: Maze, player: Player): Player => {
-  if (player.direction === 'None') {
+  if (player.direction === "none") {
     return player
   }
 
@@ -279,7 +279,7 @@ const mapPlayer = (maze: Maze, player: Player): Player => {
   }
 
   if (!Maze.hasEdge([player.position, playerNew.position], maze) || !Maze.hasVertex(playerNew.position, maze)) {
-    return { ...player, direction: "None" }
+    return { ...player, direction: "none" }
   }
 
   return playerNew

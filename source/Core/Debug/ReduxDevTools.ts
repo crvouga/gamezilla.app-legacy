@@ -449,7 +449,7 @@ export const withDebugger = <Model, Msg extends {}>(
 ): { program: Platform.Program<Model, Msg>; stopDebugger: () => void } => {
   const maybeConnection = getConnection<Model, Msg>(window)
 
-  if (maybeConnection.type === "None") {
+  if (maybeConnection.type === "none") {
     return {
       program,
       stopDebugger: () => { }

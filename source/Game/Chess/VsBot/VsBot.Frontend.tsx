@@ -36,7 +36,7 @@ export const init = ({
     {
       sharedModel: initShared,
       openedMenuId: Option.None,
-      openedModal: "None",
+      openedModal: "none",
       isFlipped: false,
     },
     sendToBackend(["Init"]),
@@ -73,7 +73,7 @@ export const update = (
     }
 
     case "ClosedModal": {
-      return [{ ...model, openedModal: "None" }, Cmd.None]
+      return [{ ...model, openedModal: "none" }, Cmd.None]
     }
 
     case "ClickedFlip": {
@@ -310,14 +310,14 @@ export const View = ({
         ctx,
         onStartGame: () => $send(['start-game', { userId: ctx.currentUserId }]),
         onStartPlaying: () => $send(["InputUser", { userId: ctx.currentUserId }]),
-        onStopPlaying: () => $send(["InputUser", { userId: "None" }]),
+        onStopPlaying: () => $send(["InputUser", { userId: "none" }]),
         player: {
           values: Object.values(Board.colors),
           selected: model.sharedModel.userColor,
           onInput: (color) => $send(["InputColor", { userColor: color, userId: ctx.currentUserId }]),
           icon: (color) => <PawnIcon sx={{ color: color === 'w' ? '#fff' : "#000" }} stroke={color === 'w' ? '#000' : '#fff'} />
         },
-        playerId: model.sharedModel.userId === 'None' ? null : model.sharedModel.userId,
+        playerId: model.sharedModel.userId === "none" ? null : model.sharedModel.userId,
         title: "Chess",
         subtitle: "Vs Computer",
       })

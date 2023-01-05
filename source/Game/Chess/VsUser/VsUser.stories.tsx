@@ -5,12 +5,12 @@ import { Model, View } from "./VsUser.Frontend"
 
 const setupModel: Model = {
   isFlipped: false,
-  openedMenuId: { type: "None" },
-  openedModal: "None",
+  openedMenuId: { type: "none" },
+  openedModal: "none",
   sharedModel: {
     type: "Setup",
-    b: "None",
-    w: "None",
+    b: "none",
+    w: "none",
     clockPreset: "Bullet",
   },
 }
@@ -49,7 +49,7 @@ MissingWhite.args = {
     ...setupModel,
     sharedModel: {
       type: "Setup",
-      w: "None",
+      w: "none",
       b: userB.userId,
       clockPreset: "Blitz",
     },
@@ -63,7 +63,7 @@ MissingBlack.args = {
     sharedModel: {
       type: "Setup",
       w: userB.userId,
-      b: "None",
+      b: "none",
       clockPreset: "Blitz",
     },
   },

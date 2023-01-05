@@ -139,7 +139,7 @@ export const View = ({
   if (model.type === "Setup") {
     return (
       viewVsBotSetupScreen({
-        playerId: model.player === 'None' ? null : model.player,
+        playerId: model.player === "none" ? null : model.player,
         subtitle: "Vs Computer",
         title: "Tic-Tac-Toe",
         coverArt: viewCoverArt(),
@@ -192,7 +192,7 @@ export const View = ({
             }
           />
 
-          <UI.Fade in={gameOver.type !== "None"}>
+          <UI.Fade in={gameOver.type !== "none"}>
             <UI.Box
               onClick={() => $send(['restart', { userId: ctx.currentUserId }])}
               sx={{
@@ -247,11 +247,11 @@ const ViewGameOverMessage = ({
   ctx,
 }: {
   model: GameModel
-  gameOver: GameOver | { type: "None" }
+  gameOver: GameOver | { type: "none" }
   ctx: Ctx
 }) => {
   switch (gameOver.type) {
-    case "None": {
+    case "none": {
       return <></>
     }
 
@@ -373,7 +373,7 @@ export const ViewPlayerGameSlot = ({
 
   const gameOver = toGameOver(model.board)
 
-  const isTurn = gameOver.type === "None" && toTurn(model.board) === playerType
+  const isTurn = gameOver.type === "none" && toTurn(model.board) === playerType
 
   return (
     <UI.Paper

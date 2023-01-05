@@ -13,9 +13,9 @@ import * as VsUser from "./VsUser/VsUser.Types"
 
 export type FrontendModel = {
   mode:
-  | ["None"]
-  | ["VsUser", VsUser.FrontendModel]
-  | ["VsBot", VsBot.FrontendModel]
+  | ["none"]
+  | ["vs-user", VsUser.FrontendModel]
+  | ["vs-bot", VsBot.FrontendModel]
 
   requests: {
     InputMode: RemoteData<InputModeProblem, Unit>
@@ -23,9 +23,9 @@ export type FrontendModel = {
 }
 
 export type BackendModel =
-  | ["None"]
-  | ["VsUser", VsUser.BackendModel]
-  | ["VsBot", VsBot.BackendModel]
+  | ["none"]
+  | ["vs-user", VsUser.BackendModel]
+  | ["vs-bot", VsBot.BackendModel]
 
 type Mode = BackendModel[0]
 
@@ -38,23 +38,23 @@ type Mode = BackendModel[0]
 //
 
 export type FrontendMsg =
-  | ["VsUser", VsUser.FrontendMsg]
-  | ["VsBot", VsBot.FrontendMsg]
+  | ["vs-user", VsUser.FrontendMsg]
+  | ["vs-bot", VsBot.FrontendMsg]
   | InputMode
   | ["PreloadAudio_Done"]
 
 export type BackendMsg =
-  | ["VsUser", VsUser.BackendMsg]
-  | ["VsBot", VsBot.BackendMsg]
+  | ["vs-user", VsUser.BackendMsg]
+  | ["vs-bot", VsBot.BackendMsg]
 
 export type ToFrontend =
-  | ["VsUser", VsUser.ToFrontend]
-  | ["VsBot", VsBot.ToFrontend]
+  | ["vs-user", VsUser.ToFrontend]
+  | ["vs-bot", VsBot.ToFrontend]
   | InputMode_Done
 
 export type ToBackend =
-  | ["VsUser", VsUser.ToBackend]
-  | ["VsBot", VsBot.ToBackend]
+  | ["vs-user", VsUser.ToBackend]
+  | ["vs-bot", VsBot.ToBackend]
   | InputMode
 
 //
@@ -64,9 +64,9 @@ export type ToBackend =
 //
 //
 
-export type InputMode = ["InputMode", { mode: Mode; userId: UserId }]
+export type InputMode = ["input-mode", { mode: Mode; userId: UserId }]
 export type InputMode_Done = [
-  "InputMode_Done",
+  "input-mode-done",
   { mode: Mode; userId: UserId },
   Result<InputModeProblem, BackendModel>,
 ]

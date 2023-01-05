@@ -189,24 +189,24 @@ export const updateRoomLeave = (
 ): [Model, Cmd<Msg>] => {
   switch (model.type) {
     case "Setup": {
-      const color: Board.Color | "None" =
-        model.b === userId ? "b" : model.w === userId ? "w" : "None"
+      const color: Board.Color | "none" =
+        model.b === userId ? "b" : model.w === userId ? "w" : "none"
 
-      if (color === "None") {
+      if (color === "none") {
         return [model, Cmd.None]
       }
 
-      const modelNew: Model = { ...model, [color]: "None" }
+      const modelNew: Model = { ...model, [color]: "none" }
 
       return [modelNew, broadcast(["player-left", modelNew])]
     }
 
     case "Game":
     case "GameOver": {
-      const color: Board.Color | "None" =
-        model.b === userId ? "b" : model.w === userId ? "w" : "None"
+      const color: Board.Color | "none" =
+        model.b === userId ? "b" : model.w === userId ? "w" : "none"
 
-      if (color === "None") {
+      if (color === "none") {
         return [model, Cmd.None]
       }
 
@@ -217,7 +217,7 @@ export const updateRoomLeave = (
         type: "Setup",
         clockPreset: model.clock.preset,
         [otherColor]: model[otherColor],
-        [color]: "None",
+        [color]: "none",
       }
 
       return [modelNew, broadcast(["player-left", modelNew])]

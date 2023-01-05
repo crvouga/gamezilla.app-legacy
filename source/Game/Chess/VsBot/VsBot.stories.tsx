@@ -5,13 +5,13 @@ import { Model, View } from "./VsBot.Frontend"
 
 const setupModel: Model = {
   isFlipped: false,
-  openedMenuId: { type: "None" },
-  openedModal: "None",
+  openedMenuId: { type: "none" },
+  openedModal: "none",
   sharedModel: {
     type: "Setup",
     botLevel: 2,
     userColor: "w",
-    userId: "None",
+    userId: "none",
   },
 }
 

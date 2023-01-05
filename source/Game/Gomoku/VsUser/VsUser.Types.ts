@@ -38,7 +38,7 @@ export type ModelGameOver = {
 
 type Rematch =
     | {
-        type: "None",
+        type: "none",
     }
     | {
         type: "Requested",
@@ -81,7 +81,7 @@ const initGameOver = ({ model, gameOver }: { gameOver: GameOver, model: ModelPla
         black: model.black,
         white: model.white,
         board: model.board,
-        rematch: { type: "None" },
+        rematch: { type: "none" },
         gameOver,
     }
 

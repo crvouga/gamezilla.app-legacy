@@ -24,7 +24,7 @@ import * as VsUser from "./VsUser/VsUser.Frontend"
 export type Model = FrontendModel
 
 export const init: Model = {
-  mode: "None",
+  mode: "none",
 }
 
 //
@@ -48,35 +48,35 @@ export const update = (
   model: Model,
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case "InputMode": {
+    case "input-mode": {
       return [model, sendToBackend(msg)]
     }
 
-    case "VsUser": {
-      if (model.mode === "VsUser") {
+    case "vs-user": {
+      if (model.mode === "vs-user") {
         const [child, cmd] = VsUser.update(
           {
-            sendToBackend: (msg) => sendToBackend(["VsUser", msg]),
+            sendToBackend: (msg) => sendToBackend(["vs-user", msg]),
           },
           msg[1],
           model.child,
         )
-        return [{ mode: "VsUser", child }, Cmd.tag("VsUser", cmd)]
+        return [{ mode: "vs-user", child }, Cmd.tag("vs-user", cmd)]
       }
       return [model, Cmd.None]
     }
 
-    case "VsBot": {
-      if (model.mode === "VsBot") {
+    case "vs-bot": {
+      if (model.mode === "vs-bot") {
         const [child, cmd] = VsBot.update(
           {
             // currentUserId,
-            sendToBackend: (msg) => sendToBackend(["VsBot", msg]),
+            sendToBackend: (msg) => sendToBackend(["vs-bot", msg]),
           },
           msg[1],
           model.child,
         )
-        return [{ mode: "VsBot", child }, Cmd.tag("VsBot", cmd)]
+        return [{ mode: "vs-bot", child }, Cmd.tag("vs-bot", cmd)]
       }
       return [model, Cmd.None]
     }
@@ -93,7 +93,7 @@ export const updateFromBackend = (
   model: Model,
 ): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-    case "InputMode_Done": {
+    case "input-mode-done": {
       const result = msg[1]
 
       if (result.type === "Err") {
@@ -105,28 +105,28 @@ export const updateFromBackend = (
       return [modelNew, Cmd.None, []]
     }
 
-    case "VsUser": {
-      if (model.mode === "VsUser") {
+    case "vs-user": {
+      if (model.mode === "vs-user") {
         const [child, actions] = VsUser.updateFromBackend(
           { ctx, },
           msg[1],
           model.child,
         )
-        return [{ mode: "VsUser", child }, Cmd.None, actions]
+        return [{ mode: "vs-user", child }, Cmd.None, actions]
       }
 
       return [model, Cmd.None, []]
     }
 
-    case "VsBot": {
-      if (model.mode === "VsBot") {
+    case "vs-bot": {
+      if (model.mode === "vs-bot") {
         const [child, cmd, actions] = VsBot.updateFromBackend(
           msg[1],
           model.child,
         )
         return [
-          { mode: "VsBot", child },
-          Cmd.tag("VsBot", cmd),
+          { mode: "vs-bot", child },
+          Cmd.tag("vs-bot", cmd),
           actions,
         ]
       }
@@ -145,19 +145,19 @@ export const mergeWithBackend = (
   backendModel: BackendModel,
 ): FrontendModel => {
   switch (backendModel.mode) {
-    case "None": {
+    case "none": {
       return {
-        mode: "None",
+        mode: "none",
       }
     }
-    case "VsUser": {
+    case "vs-user": {
       const frontendModelChild =
-        frontendModel.mode === "VsUser"
+        frontendModel.mode === "vs-user"
           ? frontendModel.child
           : VsUser.init
 
       return {
-        mode: "VsUser",
+        mode: "vs-user",
         child: VsUser.mergeWithBackend(
           frontendModelChild,
           backendModel.child,
@@ -165,14 +165,14 @@ export const mergeWithBackend = (
       }
     }
 
-    case "VsBot": {
+    case "vs-bot": {
       const frontendModelChild =
-        frontendModel.mode === "VsBot"
+        frontendModel.mode === "vs-bot"
           ? frontendModel.child
-          : VsBot.init({ userId: "None" })
+          : VsBot.init({ userId: "none" })
 
       return {
-        mode: "VsBot",
+        mode: "vs-bot",
         child: VsBot.mergeWithBackend(
           frontendModelChild,
           backendModel.child,
@@ -202,7 +202,7 @@ export const View = ({
   gameRoomCtx: GameRoomCtx
 }) => {
   switch (model.mode) {
-    case "None": {
+    case "none": {
       return (
         viewSelectModeScreen({
           title: "Tic-Tac-Toe",
@@ -210,39 +210,39 @@ export const View = ({
           gameRoomCtx,
           coverArt: viewCoverArt(),
           onVsUser: () => $send([
-            "InputMode",
-            { mode: "VsUser", userId: ctx.currentUserId },
+            "input-mode",
+            { mode: "vs-user", userId: ctx.currentUserId },
           ]),
           onUserVsComputer: () => $send([
-            "InputMode",
-            { mode: "VsBot", userId: ctx.currentUserId },
+            "input-mode",
+            { mode: "vs-bot", userId: ctx.currentUserId },
           ])
         })
       )
     }
 
-    case "VsUser": {
+    case "vs-user": {
       return (
         <VsUser.View
           onCloseGame={() => {
-            $send(["InputMode", { mode: "None", userId: ctx.currentUserId }])
+            $send(["input-mode", { mode: "none", userId: ctx.currentUserId }])
           }}
           ctx={ctx}
           model={model.child}
-          $send={(msg) => $send(["VsUser", msg])}
+          $send={(msg) => $send(["vs-user", msg])}
         />
       )
     }
 
-    case "VsBot": {
+    case "vs-bot": {
       return (
         <VsBot.View
           goBack={() => {
-            $send(["InputMode", { mode: "None", userId: ctx.currentUserId }])
+            $send(["input-mode", { mode: "none", userId: ctx.currentUserId }])
           }}
           ctx={ctx}
           model={model.child}
-          $send={(msg) => $send(["VsBot", msg])}
+          $send={(msg) => $send(["vs-bot", msg])}
         />
       )
     }

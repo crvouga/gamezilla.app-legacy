@@ -44,7 +44,7 @@ export type FrontendModel = SharedModel & {
 //
 //
 
-export type BackendMsg = ["None"]
+export type BackendMsg = ["none"]
 
 export type FrontendMsg =
   | Req
@@ -75,17 +75,17 @@ export type Req =
 export type Res =
   | ["PartyGet", {}, Result<Problem, SharedModel>]
   | [
-      "PartyCreate",
-      { userId: UserId; partyId: PartyId },
-      Result<Problem, SharedModel>,
-    ]
+    "PartyCreate",
+    { userId: UserId; partyId: PartyId },
+    Result<Problem, SharedModel>,
+  ]
   | ["PartyDestroy", { userId: UserId }, Result<Problem, SharedModel>]
   | ["PartyLeave", { userId: UserId }, Result<Problem, SharedModel>]
   | [
-      "PartyJoin",
-      { userId: UserId; partyId: PartyId },
-      Result<Problem, SharedModel>,
-    ]
+    "PartyJoin",
+    { userId: UserId; partyId: PartyId },
+    Result<Problem, SharedModel>,
+  ]
 
 type Problem =
   | "must_not_be_in_party"

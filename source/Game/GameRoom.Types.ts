@@ -36,7 +36,7 @@ export type FrontendModel = SharedModel & {
     [roomId: RoomId]: Game.FrontendModel
   }
   requests: {
-    [key in Req[0]]?: RemoteData<Problem, "None">
+    [key in Req[0]]?: RemoteData<Problem, "none">
   }
 }
 

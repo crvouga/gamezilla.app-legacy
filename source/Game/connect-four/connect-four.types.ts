@@ -12,27 +12,27 @@ import * as VsBot from "./vs-bot/vs-bot.types"
 
 export type FrontendModel =
   | {
-    type: "None"
+    type: "none"
   }
   | {
-    type: "VsUser"
+    type: "vs-user"
     child: VsUser.FrontendModel
   }
   | {
-    type: "VsBot"
+    type: "vs-bot"
     child: VsBot.FrontendModel
   }
 
 export type BackendModel =
   | {
-    type: "None"
+    type: "none"
   }
   | {
-    type: "VsUser"
+    type: "vs-user"
     child: VsUser.BackendModel
   }
   | {
-    type: "VsBot"
+    type: "vs-bot"
     child: VsBot.BackendModel
   }
 
@@ -47,22 +47,22 @@ export type Mode = BackendModel["type"]
 //
 
 export type FrontendMsg =
-  | ["VsUser", VsUser.FrontendMsg]
-  | ["VsBot", VsBot.FrontendMsg]
+  | ["vs-user", VsUser.FrontendMsg]
+  | ["vs-bot", VsBot.FrontendMsg]
   | InputMode
 
 export type BackendMsg =
-  | ["VsUser", VsUser.BackendMsg]
-  | ["VsBot", VsBot.BackendMsg]
+  | ["vs-user", VsUser.BackendMsg]
+  | ["vs-bot", VsBot.BackendMsg]
 
 export type ToFrontend =
-  | ["VsUser", VsUser.ToFrontend]
-  | ["VsBot", VsBot.ToFrontend]
+  | ["vs-user", VsUser.ToFrontend]
+  | ["vs-bot", VsBot.ToFrontend]
   | InputMode_Done
 
 export type ToBackend =
-  | ["VsUser", VsUser.ToBackend]
-  | ["VsBot", VsBot.ToBackend]
+  | ["vs-user", VsUser.ToBackend]
+  | ["vs-bot", VsBot.ToBackend]
   | InputMode
 
 //
@@ -71,5 +71,5 @@ export type ToBackend =
 //
 //
 
-type InputMode = ["InputMode", { mode: Mode; userId: UserId }]
-type InputMode_Done = ["InputMode_Done", BackendModel]
+type InputMode = ["input-mode", { mode: Mode; userId: UserId }]
+type InputMode_Done = ["input-mode-done", BackendModel]

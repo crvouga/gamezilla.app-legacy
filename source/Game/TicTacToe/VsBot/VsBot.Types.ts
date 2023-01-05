@@ -25,7 +25,7 @@ export type SharedModel = SetupModel | GameModel
 
 export type SetupModel = {
   type: "Setup"
-  player: UserId | "None"
+  player: UserId | "none"
   userPlayerType: PlayerType
   botLevel: BotLevel
 }
@@ -227,7 +227,7 @@ export const startPlaying = (
     return Err("not_in_setup")
   }
 
-  if (model.player !== "None") {
+  if (model.player !== "none") {
     return Err("player_is_taken")
   }
 
@@ -258,7 +258,7 @@ export const stopPlaying = (
 
   return Ok({
     ...model,
-    player: "None",
+    player: "none",
   })
 }
 
@@ -280,7 +280,7 @@ export const startGame = (
     return Err("not_in_setup")
   }
 
-  if (model.player === "None") {
+  if (model.player === "none") {
     return Err("missing_player")
   }
 

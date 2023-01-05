@@ -217,7 +217,7 @@ export const View = ({
             width: "100%",
           }}
         >
-          {model.gameStatus.player.type === "None" ? (
+          {model.gameStatus.player.type === "none" ? (
             <UI.Box sx={{ padding: 2, width: "100%" }}>
               <UI.Button
                 variant="contained"

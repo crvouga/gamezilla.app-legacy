@@ -51,7 +51,7 @@ export const init = (
 
   return {
     ...shared,
-    ghostIndex: "None",
+    ghostIndex: "none",
     animationValue: initAnimationRight,
     animationDirection: "right",
     visual: initVisual(shared.columns)
@@ -182,7 +182,7 @@ export const mergeWithBackend = ({
   if (frontendModel.type === 'Setup') {
     return {
       ...backendModel,
-      ghostIndex: "None",
+      ghostIndex: "none",
       animationValue: initAnimationRight,
       animationDirection: "right",
       visual: initVisual(backendModel.columns)
@@ -241,7 +241,7 @@ export const View = ({
         title: "Connect Four",
         subtitle: "Vs Computer",
         ctx,
-        playerId: model.player === "None" ? null : model.player,
+        playerId: model.player === "none" ? null : model.player,
         onStartPlaying: () => $send(["start-playing", { userId: ctx.currentUserId }]),
         onStopPlaying: () => $send(["stop-playing", { userId: ctx.currentUserId }]),
         botLevel: {
@@ -290,7 +290,7 @@ export const View = ({
           ghost={
             ctx.currentUserId === model.player &&
               toTurn(model.columns) === model.userPlayerType &&
-              model.ghostIndex !== "None"
+              model.ghostIndex !== "none"
               ? {
                 columnIndex: model.ghostIndex,
                 playerType: model.userPlayerType,
@@ -304,7 +304,7 @@ export const View = ({
           }
           visual={model.visual}
         />
-        <Fade in={gameOver.type !== "None"}>
+        <Fade in={gameOver.type !== "none"}>
           <Box
             onClick={() => $send(['restart', { userId: ctx.currentUserId }])}
             sx={{
@@ -320,7 +320,7 @@ export const View = ({
               color: "#fff",
             }}
           >
-            {gameOver.type !== "None" && (
+            {gameOver.type !== "none" && (
               <ViewGameOverMessage
                 model={model}
                 currentUserId={ctx.currentUserId}

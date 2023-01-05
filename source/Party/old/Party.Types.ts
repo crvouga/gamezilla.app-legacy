@@ -44,7 +44,7 @@ export type MicrophonePermissionStatus =
   | "Granted"
   | "Denied"
   | "Prompt"
-  | "None"
+  | "none"
 
 type DeviceModel = { type: "Unloaded" } | { type: "Loaded" }
 

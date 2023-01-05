@@ -40,7 +40,7 @@ export const init = (): [Model, Cmd<Msg>] => {
       device: { type: "Unloaded" },
       mediaStream: { type: "Unloaded" },
       volume: 0,
-      microphonePermissionStatus: "None",
+      microphonePermissionStatus: "none",
       micData: new Uint8Array(),
     },
     Cmd.None,

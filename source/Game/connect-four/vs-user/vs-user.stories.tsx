@@ -5,12 +5,12 @@ import { emptyColumns, mapColumns, PlayerType } from "../connect-four/connect-fo
 import { Model, View } from "./vs-user.frontend"
 
 const setupModel: Model = {
-  openedModal: "None",
+  openedModal: "none",
   type: "Setup",
   moveTimeLimit: 7,
-  ghostIndex: "None",
-  PlayerOne: "None",
-  PlayerTwo: "None",
+  ghostIndex: "none",
+  PlayerOne: "none",
+  PlayerTwo: "none",
 }
 
 const props: Parameters<typeof View>[0] = {
@@ -73,8 +73,8 @@ const gameModel: Model = {
   moveTimeLimit: 7,
   PlayerOne: ctx.currentUserId,
   PlayerTwo: userB.userId,
-  ghostIndex: "None",
-  openedModal: "None",
+  ghostIndex: "none",
+  openedModal: "none",
 }
 
 export const GameStarted = Template.bind({})
@@ -108,8 +108,8 @@ const gameOverModel: Model = {
   ],
   gameOver: { type: "Winner", winner: p1 },
   moveTimeLimit: 7,
-  ghostIndex: "None",
-  openedModal: "None",
+  ghostIndex: "none",
+  openedModal: "none",
   PlayerOne: gameModel.PlayerOne,
   PlayerTwo: gameModel.PlayerTwo,
   rematch: { type: "NotAsking" },
