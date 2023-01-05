@@ -13,27 +13,27 @@ import * as VsUser from "./VsUser/VsUser.Types"
 
 export type FrontendModel =
     | {
-        type: "None"
+        type: "none"
     }
     | {
-        type: "VsUser"
+        type: "vs-user"
         child: VsUser.FrontendModel
     }
     | {
-        type: "VsBot",
+        type: "vs-bot",
         child: VsBot.FrontendModel
     }
 
 export type BackendModel =
     | {
-        type: "None"
+        type: "none"
     }
     | {
-        type: "VsUser",
+        type: "vs-user",
         child: VsUser.BackendModel
     }
     | {
-        type: "VsBot",
+        type: "vs-bot",
         child: VsBot.BackendModel
     }
 
@@ -47,13 +47,13 @@ export type Mode = BackendModel['type']
 // 
 // 
 
-export type FrontendMsg = Req | ["VsUser", VsUser.FrontendMsg] | ["VsBot", VsBot.FrontendMsg]
+export type FrontendMsg = Req | ["vs-user", VsUser.FrontendMsg] | ["vs-bot", VsBot.FrontendMsg]
 
-export type BackendMsg = ["VsUser", VsUser.BackendMsg] | ["VsBot", VsBot.BackendMsg]
+export type BackendMsg = ["vs-user", VsUser.BackendMsg] | ["vs-bot", VsBot.BackendMsg]
 
-export type ToFrontend = Res | ["VsUser", VsUser.ToFrontend] | ["VsBot", VsBot.ToFrontend]
+export type ToFrontend = Res | ["vs-user", VsUser.ToFrontend] | ["vs-bot", VsBot.ToFrontend]
 
-export type ToBackend = Req | ["VsUser", VsUser.ToBackend] | ["VsBot", VsBot.ToBackend]
+export type ToBackend = Req | ["vs-user", VsUser.ToBackend] | ["vs-bot", VsBot.ToBackend]
 
 // 
 // 
@@ -61,8 +61,8 @@ export type ToBackend = Req | ["VsUser", VsUser.ToBackend] | ["VsBot", VsBot.ToB
 // 
 // 
 
-export type Req = ['InputMode', { userId: UserId, mode: Mode }]
+export type Req = ["input-mode", { userId: UserId, mode: Mode }]
 
-export type Res = ['InputMode', { userId: UserId, mode: Mode }, Result<Problem, BackendModel>]
+export type Res = ["input-mode", { userId: UserId, mode: Mode }, Result<Problem, BackendModel>]
 
 export type Problem = "must_be_host"

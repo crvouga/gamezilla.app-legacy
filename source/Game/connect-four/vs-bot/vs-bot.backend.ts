@@ -133,7 +133,7 @@ export const updateRoomLeave = ({
     type: "Setup",
     botLevel: model.botLevel,
     userPlayerType: model.userPlayerType,
-    player: "None",
+    player: "none",
   }
 
   return [modelNew, broadcast(["player-left", modelNew])]

@@ -442,7 +442,7 @@ const updateResponse = (
   return [
     {
       ...merged[0],
-      requests: { ...merged[0].requests, [msg[0]]: RemoteData.Ok("None") },
+      requests: { ...merged[0].requests, [msg[0]]: RemoteData.Ok("none") },
     },
     merged[1],
     storeActions,

@@ -6,7 +6,7 @@ import { View } from "./connect-four.frontend"
 const props: Parameters<typeof View>[0] = {
   $send: () => { },
   ctx,
-  model: { type: "None" },
+  model: { type: "none" },
   gameRoomCtx: {
     hostId: ctx.currentUserId,
     onQuit: () => { }

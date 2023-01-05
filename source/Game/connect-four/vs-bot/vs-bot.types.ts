@@ -31,7 +31,7 @@ export type SetupModel = {
   type: "Setup"
   userPlayerType: PlayerType
   botLevel: BotLevel
-  player: UserId | "None"
+  player: UserId | "none"
 }
 
 export type GameModel = {
@@ -55,7 +55,7 @@ export const isBotTurn = (model: SharedModel): boolean => {
 export type BackendModel = SharedModel
 
 export type FrontendModel = SetupModel | (GameModel & {
-  ghostIndex: ColumnIndex | "None",
+  ghostIndex: ColumnIndex | "none",
   animationValue: Spring.Model,
   animationDirection: "right" | "left"
   visual: VisualModel
@@ -64,7 +64,7 @@ export type FrontendModel = SetupModel | (GameModel & {
 export const initShared = ({
   player,
 }: {
-  player: UserId | "None"
+  player: UserId | "none"
 }): SharedModel => {
   return {
     type: "Setup",
@@ -81,13 +81,13 @@ export const initShared = ({
 
 export type GameOver = { type: "Tie" } | { type: "Winner"; winner: PlayerType }
 
-export const toGameOver = (model: SharedModel): GameOver | { type: "None" } => {
+export const toGameOver = (model: SharedModel): GameOver | { type: "none" } => {
   switch (model.type) {
     case "Game": {
       const status = toStatus(model.columns)
       switch (status.type) {
         case "Playing": {
-          return { type: "None" }
+          return { type: "none" }
         }
         case "Tie": {
           return { type: "Tie" }
@@ -100,7 +100,7 @@ export const toGameOver = (model: SharedModel): GameOver | { type: "None" } => {
     }
 
     case "Setup": {
-      return { type: "None" }
+      return { type: "none" }
     }
   }
 }
@@ -166,7 +166,7 @@ export const handle = (
         return Err("not_setup")
       }
 
-      if (model.player !== "None") {
+      if (model.player !== "none") {
         return Err("player_taken")
       }
 
@@ -183,7 +183,7 @@ export const handle = (
         return Err("not_setup")
       }
 
-      if (model.player === "None") {
+      if (model.player === "none") {
         return Err("not_playing")
       }
 
@@ -193,7 +193,7 @@ export const handle = (
 
       const modelNew: SharedModel = {
         ...model,
-        player: "None",
+        player: "none",
       }
 
       return Ok(modelNew)
@@ -242,7 +242,7 @@ export const handle = (
         return Err("not_playing")
       }
 
-      if (model.player === "None") {
+      if (model.player === "none") {
         return Err("missing_player")
       }
 

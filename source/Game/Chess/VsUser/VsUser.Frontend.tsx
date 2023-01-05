@@ -37,13 +37,13 @@ export const init = ({
   userId,
 }: {
   sendToBackend: (msg: ToBackend) => Cmd
-  userId: UserId | "None"
+  userId: UserId | "none"
 }): [FrontendModel, Cmd<Msg>] => {
   return [
     {
       sharedModel: initShared({ userId }),
       openedMenuId: Option.None,
-      openedModal: "None",
+      openedModal: "none",
       isFlipped: false,
     },
     sendToBackend(["Init"]),
@@ -95,7 +95,7 @@ export const update = (
     }
 
     case "ClosedModal": {
-      return [{ ...model, openedModal: "None" }, Cmd.None]
+      return [{ ...model, openedModal: "none" }, Cmd.None]
     }
 
     //
@@ -123,7 +123,7 @@ export const update = (
     }
 
     case "Resign": {
-      return [{ ...model, openedModal: "None" }, sendToBackend(msg)]
+      return [{ ...model, openedModal: "none" }, sendToBackend(msg)]
     }
 
     case "RespondToDraw": {
@@ -411,14 +411,14 @@ export const View = ({
           <VersusHeader
             ctx={ctx}
             black={
-              model.sharedModel.b !== "None"
+              model.sharedModel.b !== "none"
                 ? { type: "User", userId: model.sharedModel.b }
-                : { type: "None" }
+                : { type: "none" }
             }
             white={
-              model.sharedModel.w !== "None"
+              model.sharedModel.w !== "none"
                 ? { type: "User", userId: model.sharedModel.w }
-                : { type: "None" }
+                : { type: "none" }
             }
           />
 
@@ -440,7 +440,7 @@ export const View = ({
           >
             <PawnIcon sx={{ width: 60, height: 60, color: "#fff" }} />
 
-            {model.sharedModel.w === "None" ? (
+            {model.sharedModel.w === "none" ? (
               <UI.Button
                 fullWidth
                 size="large"
@@ -473,7 +473,7 @@ export const View = ({
               stroke="#787878"
               sx={{ width: 60, height: 60, color: "#000" }}
             />
-            {model.sharedModel.b === "None" ? (
+            {model.sharedModel.b === "none" ? (
               <UI.Button
                 fullWidth
                 size="large"
@@ -557,17 +557,17 @@ export const View = ({
 
   const { w, b, board, clock } = model.sharedModel
 
-  const currentUserColor: Board.Color | "None" | "Both" =
+  const currentUserColor: Board.Color | "none" | "Both" =
     ctx.currentUserId === w && ctx.currentUserId === b
       ? "Both"
       : ctx.currentUserId === w
         ? "w"
         : ctx.currentUserId === b
           ? "b"
-          : "None"
+          : "none"
 
   const boardOrientation: Board.Color = p(
-    currentUserColor === "None" || currentUserColor === "Both"
+    currentUserColor === "none" || currentUserColor === "Both"
       ? "w"
       : currentUserColor,
     (color) => (model.isFlipped ? Board.toOppositeColor(color) : color),
@@ -630,7 +630,7 @@ export const View = ({
       <ViewGameOverDialog model={model} $send={$send} />
 
       <UI.Box sx={{ width: "100%", display: "flex" }}>
-        {model.sharedModel.type === "GameOver" && currentUserColor !== "None" && (
+        {model.sharedModel.type === "GameOver" && currentUserColor !== "none" && (
           <UI.Box sx={{ padding: 2, width: "100%" }}>
             <UI.Button
               fullWidth
@@ -817,7 +817,7 @@ const ViewInputUserPlayerSlot = ({
       {userId === ctx.currentUserId && (
         <UI.Button
           size="large"
-          onClick={() => $send(["InputPlayer", { userId: "None", color }])}
+          onClick={() => $send(["InputPlayer", { userId: "none", color }])}
         >
           Stop Playing
         </UI.Button>

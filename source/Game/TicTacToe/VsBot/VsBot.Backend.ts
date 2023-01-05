@@ -214,7 +214,7 @@ export const updateRoomLeave = ({
   const modelNew: Model = {
     type: "Setup",
     botLevel: model.botLevel,
-    player: "None",
+    player: "none",
     userPlayerType: model.userPlayerType,
   }
 

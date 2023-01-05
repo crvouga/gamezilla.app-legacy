@@ -195,7 +195,7 @@ const updateFromFrontend = (
         return [model, Cmd.None]
       }
 
-      if (session.userId.type === 'None') {
+      if (session.userId.type === "none") {
         // TODO: error feedback
         return [model, Cmd.None]
       }
@@ -231,8 +231,8 @@ const sendToUser = (model: Model, userIds: UserId[], msg: ToFrontend) => {
 
     if (
       session &&
-      session.userId.type !== "None" &&
-      session.clientId.type !== "None" &&
+      session.userId.type !== "none" &&
+      session.clientId.type !== "none" &&
       userIdSet.has(session.userId.value)
     ) {
 
@@ -253,7 +253,7 @@ const sendToUser = (model: Model, userIds: UserId[], msg: ToFrontend) => {
 
 const subscriptions = (model: Model): Sub<Msg> => {
   return Sub.batch([
-    p(GameRoom.subscriptions(model.gameRoom), Sub.map(t("Room"))),
+    Sub.tag("Room", GameRoom.subscriptions(model.gameRoom)),
     p(
       onConnect,
       Sub.map(
@@ -380,8 +380,8 @@ const shouldPersistModel = Boolean(process.env['PERSIST_MODEL'])
 
 
 const getInit = (): [Model, Cmd<Msg>] => {
+  return init()
   if (!shouldPersistModel) {
-    return init()
   }
 
   try {

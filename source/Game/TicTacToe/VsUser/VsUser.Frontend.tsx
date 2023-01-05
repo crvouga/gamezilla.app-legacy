@@ -54,8 +54,8 @@ import {
 export type Model = FrontendModel
 
 export const init: Model = {
-  ...initSharedModel({ X: "None", O: "None" }),
-  openedModal: "None",
+  ...initSharedModel({ X: "none", O: "none" }),
+  openedModal: "none",
 }
 
 //
@@ -86,7 +86,7 @@ export const update = (
     //
 
     case "CloseModal": {
-      return [{ ...model, openedModal: "None" }, Cmd.None]
+      return [{ ...model, openedModal: "none" }, Cmd.None]
     }
 
     case "OpenModal": {
@@ -154,7 +154,7 @@ export const updateFromBackend = (
       const modelNew = mergeWithBackend(model, res[1].value)
 
 
-      return [{ ...modelNew, openedModal: "None" }, []]
+      return [{ ...modelNew, openedModal: "none" }, []]
     }
 
     case "MoveCountDown_Done":
@@ -219,12 +219,12 @@ export const View = ({
           <VersusHeader
             ctx={ctx}
             X={
-              model.X === "None"
+              model.X === "none"
                 ? { type: "User" }
                 : { type: "User", userId: model.X }
             }
             O={
-              model.O === "None"
+              model.O === "none"
                 ? { type: "User" }
                 : { type: "User", userId: model.O }
             }
@@ -386,12 +386,12 @@ export const View = ({
   const rematchAskResult = rematchAsk({ userId: ctx.currentUserId }, model)
   const newGameResult = newGame({ userId: ctx.currentUserId }, model)
 
-  const currentPlayerType: PlayerType | "None" =
+  const currentPlayerType: PlayerType | "none" =
     model.X === ctx.currentUserId
       ? "X"
       : model.O === ctx.currentUserId
         ? "O"
-        : "None"
+        : "none"
 
   return (
     <UI.FillBox>
@@ -490,17 +490,17 @@ const ViewGameOverMessage = ({
   const score = Round.toScore(model.round)
   const winCount = toWinCount(model)
 
-  const currentPlayerType: PlayerType | "None" =
+  const currentPlayerType: PlayerType | "none" =
     model.X === ctx.currentUserId
       ? "X"
       : model.O === ctx.currentUserId
         ? "O"
-        : "None"
+        : "none"
 
   if (
     model.rematch.type === "Asking" &&
     model.rematch.asker !== currentPlayerType &&
-    currentPlayerType !== "None"
+    currentPlayerType !== "none"
   ) {
     return (
       <>
@@ -749,7 +749,7 @@ export const ViewRoundStartingMessage = ({
   const score = Round.toScore(model.round)
   const winCount = toWinCount(model)
 
-  if (previousRound.type === "None") {
+  if (previousRound.type === "none") {
     const countDown = currentRound.countDown
 
     return (
@@ -1100,14 +1100,14 @@ const ViewPlayerSetupSlot = ({
   sx,
 }: {
   ctx: Ctx
-  userId: UserId | "None"
+  userId: UserId | "none"
   playerType: PlayerType
   $send: (msg: Msg) => void
   sx?: UI.Sx
 }) => {
   const iconSx = { width: 42, height: 42, color: "text.secondary" }
 
-  if (userId === "None") {
+  if (userId === "none") {
     return (
       <UI.Box
         sx={{ display: "flex", width: "100%", alignItems: "center", ...sx }}

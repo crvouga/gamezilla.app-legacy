@@ -158,7 +158,7 @@ export const updateRoomLeave = (
       type: "Setup",
       botLevel: model.botLevel,
       userColor: model.userColor,
-      userId: "None",
+      userId: "none",
     }
     return [modelNew, broadcast(["player-left", modelNew])]
   }

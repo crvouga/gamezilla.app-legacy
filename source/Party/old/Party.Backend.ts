@@ -314,14 +314,14 @@ export const updateFromFrontend = (
 
       const cmd = user
         ? Cmd.batch([
-            broadcast(["Sync", sharedModelNew]),
-            sendToParty({
-              sendToUser,
-              model,
-              partyId: user.partyId,
-              msg: ["LeaveParty_Done", { userId, result: Ok(sharedModelNew) }],
-            }),
-          ])
+          broadcast(["Sync", sharedModelNew]),
+          sendToParty({
+            sendToUser,
+            model,
+            partyId: user.partyId,
+            msg: ["LeaveParty_Done", { userId, result: Ok(sharedModelNew) }],
+          }),
+        ])
         : broadcast(["Sync", sharedModelNew])
 
       return [
@@ -477,7 +477,7 @@ export const onClientConnected = (
   maybeUserId: Option<UserId>,
   model: Model,
 ): Cmd<Msg> => {
-  if (maybeUserId.type === "None") {
+  if (maybeUserId.type === "none") {
     return Cmd.None
   }
 
@@ -552,167 +552,167 @@ const initWorker: Task<Unit> = async () => {
 
 const initRouter =
   (partyId: PartyId): Task<CreateRouter_Done[2]> =>
-  async () => {
-    if (!worker) {
-      return Result.Err("worker_does_not_exists")
+    async () => {
+      if (!worker) {
+        return Result.Err("worker_does_not_exists")
+      }
+
+      const router = await worker.createRouter(Config.mediasoup.router)
+
+      routers.set(partyId, router)
+
+      return Result.Ok({
+        routerRtpCapabilities: router.rtpCapabilities,
+      })
     }
-
-    const router = await worker.createRouter(Config.mediasoup.router)
-
-    routers.set(partyId, router)
-
-    return Result.Ok({
-      routerRtpCapabilities: router.rtpCapabilities,
-    })
-  }
 
 export const initSendTransport =
   ({
     partyId,
     userId,
   }: SendTransport_InitBackend[1]): Task<SendTransport_InitBackend_Done[2]> =>
-  async () => {
-    const router = routers.get(partyId)
+    async () => {
+      const router = routers.get(partyId)
 
-    if (!router) {
-      return Result.Err("router_does_not_exists")
+      if (!router) {
+        return Result.Err("router_does_not_exists")
+      }
+
+      const sendTransport = await router.createWebRtcTransport(
+        Config.mediasoup.webRtcTransport,
+      )
+
+      const peer: Peer = {
+        ...initialPeer,
+        ...peers.get(userId),
+        sendTransport: sendTransport,
+      }
+
+      peers.set(userId, peer)
+
+      const transportOptions: TransportOptions = {
+        transportId: sendTransport.id,
+        iceParameters: sendTransport.iceParameters,
+        iceCandidates: sendTransport.iceCandidates,
+        dtlsParameters: sendTransport.dtlsParameters,
+      }
+
+      return Result.Ok({ transportOptions })
     }
-
-    const sendTransport = await router.createWebRtcTransport(
-      Config.mediasoup.webRtcTransport,
-    )
-
-    const peer: Peer = {
-      ...initialPeer,
-      ...peers.get(userId),
-      sendTransport: sendTransport,
-    }
-
-    peers.set(userId, peer)
-
-    const transportOptions: TransportOptions = {
-      transportId: sendTransport.id,
-      iceParameters: sendTransport.iceParameters,
-      iceCandidates: sendTransport.iceCandidates,
-      dtlsParameters: sendTransport.dtlsParameters,
-    }
-
-    return Result.Ok({ transportOptions })
-  }
 
 const handleSendTransport_OnConnect =
   ({
     dtlsParameters,
     userId,
   }: SendTransport_OnConnect[1]): Task<SendTransport_OnConnect_Done[2]> =>
-  async () => {
-    const peer = peers.get(userId)
+    async () => {
+      const peer = peers.get(userId)
 
-    if (!peer) {
-      return Result.Err("peer_does_not_exists")
-    }
+      if (!peer) {
+        return Result.Err("peer_does_not_exists")
+      }
 
-    if (!peer.sendTransport) {
-      return Result.Err("peer_missing_producer_transport")
-    }
+      if (!peer.sendTransport) {
+        return Result.Err("peer_missing_producer_transport")
+      }
 
-    try {
-      await peer.sendTransport.connect({ dtlsParameters })
-      return Result.Ok(Unit)
-    } catch (_error) {
-      return Result.Err("producer_transport_connect_errored")
+      try {
+        await peer.sendTransport.connect({ dtlsParameters })
+        return Result.Ok(Unit)
+      } catch (_error) {
+        return Result.Err("producer_transport_connect_errored")
+      }
     }
-  }
 
 const handleSendTransport_OnProduce =
   (
     model: Model,
     { appData, kind, rtpParameters, userId }: SendTransport_OnProduce[1],
   ): Task<SendTransport_OnProduce_Done[2]> =>
-  async () => {
-    const peer = peers.get(userId)
+    async () => {
+      const peer = peers.get(userId)
 
-    if (!peer) {
-      return Result.Err("peer_does_not_exists")
-    }
-
-    if (!peer.sendTransport) {
-      return Result.Err("peer_missing_producer_transport")
-    }
-
-    try {
-      const producer = await peer.sendTransport.produce({
-        kind: kind,
-        rtpParameters: rtpParameters,
-        appData: appData,
-      })
-
-      const producingPeer: Peer = {
-        ...peer,
-        producer,
+      if (!peer) {
+        return Result.Err("peer_does_not_exists")
       }
 
-      peers.set(userId, producingPeer)
-
-      const producingUser = model.users[userId]
-
-      if (!producingUser) {
-        return Result.Err("user_does_not_exists")
+      if (!peer.sendTransport) {
+        return Result.Err("peer_missing_producer_transport")
       }
 
-      const otherUsers = Object.values(model.users).filter(
-        (user) =>
-          user.userId !== producingUser.userId &&
-          user.partyId === producingUser.partyId,
-      )
-
-      for (const consumingUser of otherUsers) {
-        const consumingPeer = peers.get(consumingUser.userId)
-
-        if (!consumingPeer) {
-          continue
-        }
-
-        if (!consumingPeer.recvTransport) {
-          continue
-        }
-
-        const router = routers.get(consumingUser.partyId)
-
-        if (!router) {
-          continue
-        }
-
-        if (consumingUser.deviceRtpCapabilities.type === "None") {
-          continue
-        }
-
-        const params = {
-          producerId: producer.id,
-          rtpCapabilities: consumingUser.deviceRtpCapabilities.value,
-        }
-
-        if (!router.canConsume(params)) {
-          continue
-        }
-
-        const consumer = await consumingPeer.recvTransport.consume(params)
-
-        peers.set(consumingUser.userId, {
-          ...consumingPeer,
-          consumers: {
-            ...consumingPeer.consumers,
-            [producingUser.userId]: consumer,
-          },
+      try {
+        const producer = await peer.sendTransport.produce({
+          kind: kind,
+          rtpParameters: rtpParameters,
+          appData: appData,
         })
-      }
 
-      return Result.Ok({ producerId: producer.id })
-    } catch (_error) {
-      console.error(_error)
-      return Result.Err("produce_threw_an_error")
+        const producingPeer: Peer = {
+          ...peer,
+          producer,
+        }
+
+        peers.set(userId, producingPeer)
+
+        const producingUser = model.users[userId]
+
+        if (!producingUser) {
+          return Result.Err("user_does_not_exists")
+        }
+
+        const otherUsers = Object.values(model.users).filter(
+          (user) =>
+            user.userId !== producingUser.userId &&
+            user.partyId === producingUser.partyId,
+        )
+
+        for (const consumingUser of otherUsers) {
+          const consumingPeer = peers.get(consumingUser.userId)
+
+          if (!consumingPeer) {
+            continue
+          }
+
+          if (!consumingPeer.recvTransport) {
+            continue
+          }
+
+          const router = routers.get(consumingUser.partyId)
+
+          if (!router) {
+            continue
+          }
+
+          if (consumingUser.deviceRtpCapabilities.type === "none") {
+            continue
+          }
+
+          const params = {
+            producerId: producer.id,
+            rtpCapabilities: consumingUser.deviceRtpCapabilities.value,
+          }
+
+          if (!router.canConsume(params)) {
+            continue
+          }
+
+          const consumer = await consumingPeer.recvTransport.consume(params)
+
+          peers.set(consumingUser.userId, {
+            ...consumingPeer,
+            consumers: {
+              ...consumingPeer.consumers,
+              [producingUser.userId]: consumer,
+            },
+          })
+        }
+
+        return Result.Ok({ producerId: producer.id })
+      } catch (_error) {
+        console.error(_error)
+        return Result.Err("produce_threw_an_error")
+      }
     }
-  }
 
 // const toOtherUsersInParty = (
 //   someUser: { userId: UserId; partyId: PartyId },
@@ -731,35 +731,35 @@ const initRecvTransport =
     partyId,
     userId,
   }: RecvTransport_InitBackend[1]): Task<RecvTransport_InitBackend_Done[2]> =>
-  async () => {
-    const router = routers.get(partyId)
+    async () => {
+      const router = routers.get(partyId)
 
-    if (!router) {
-      return Result.Err("router_does_not_exists")
+      if (!router) {
+        return Result.Err("router_does_not_exists")
+      }
+
+      const peerPrev = peers.get(userId) ?? initialPeer
+
+      const recvTransport = await router.createWebRtcTransport(
+        Config.mediasoup.webRtcTransport,
+      )
+
+      const peerNew: Peer = {
+        ...peerPrev,
+        recvTransport: recvTransport,
+      }
+
+      peers.set(userId, peerNew)
+
+      const transportOptions: TransportOptions = {
+        transportId: recvTransport.id,
+        iceParameters: recvTransport.iceParameters,
+        iceCandidates: recvTransport.iceCandidates,
+        dtlsParameters: recvTransport.dtlsParameters,
+      }
+
+      return Result.Ok({ transportOptions })
     }
-
-    const peerPrev = peers.get(userId) ?? initialPeer
-
-    const recvTransport = await router.createWebRtcTransport(
-      Config.mediasoup.webRtcTransport,
-    )
-
-    const peerNew: Peer = {
-      ...peerPrev,
-      recvTransport: recvTransport,
-    }
-
-    peers.set(userId, peerNew)
-
-    const transportOptions: TransportOptions = {
-      transportId: recvTransport.id,
-      iceParameters: recvTransport.iceParameters,
-      iceCandidates: recvTransport.iceCandidates,
-      dtlsParameters: recvTransport.dtlsParameters,
-    }
-
-    return Result.Ok({ transportOptions })
-  }
 
 // const startConsuming =
 //   ({

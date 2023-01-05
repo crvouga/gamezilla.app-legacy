@@ -13,7 +13,7 @@ import * as Board from "../Board"
 export type FrontendModel = {
   sharedModel: SharedModel
   openedMenuId: Option<string>
-  openedModal: "None" | "GameOver"
+  openedModal: "none" | "GameOver"
   isFlipped: boolean
 }
 
@@ -24,7 +24,7 @@ export type SharedModel = SetupModel | GameModel | GameOverModel
 export type SetupModel = {
   type: "Setup"
   userColor: Board.Color
-  userId: UserId | "None"
+  userId: UserId | "none"
   botLevel: Board.BotLevel
 }
 
@@ -50,14 +50,14 @@ export type GameOver = Board.GameOver
 export const initShared: SharedModel = {
   type: "Setup",
   userColor: "w",
-  userId: "None",
+  userId: "none",
   botLevel: 1,
 }
 
 export const initBackend = ({
   userId,
 }: {
-  userId: UserId | "None"
+  userId: UserId | "none"
 }): BackendModel => {
   return {
     type: "Setup",
@@ -118,7 +118,7 @@ export type Res =
 //
 //
 
-export type InputUser = ["InputUser", { userId: UserId | "None" }]
+export type InputUser = ["InputUser", { userId: UserId | "none" }]
 export type InputUser_Done = [
   "InputUser_Done",
   Result<"must_be_in_setup_mode", SharedModel>,
@@ -172,7 +172,7 @@ export const inputColor = (
     return Result.Err("must_be_in_setup_mode")
   }
 
-  if (model.userId === "None") {
+  if (model.userId === "none") {
     return Result.Err("must_be_playing")
   }
 
@@ -220,7 +220,7 @@ export const inputBot = (
     return Result.Err("must_be_in_setup_mode")
   }
 
-  if (model.userId === "None") {
+  if (model.userId === "none") {
     return Result.Err("must_be_playing")
   }
 
@@ -269,7 +269,7 @@ export const startGame = (
     return Result.Err("must_be_in_setup_mode")
   }
 
-  if (model.userId === "None") {
+  if (model.userId === "none") {
     return Result.Err("user_is_missing")
   }
 
@@ -378,7 +378,7 @@ export const inputMove = (
 
   const gameOver = Board.toGameOver(boardNew)
 
-  if (gameOver.type !== "None") {
+  if (gameOver.type !== "none") {
     const modelNew: SharedModel = {
       ...model,
       type: "GameOver",
@@ -452,7 +452,7 @@ export const botMoved = (
 
   const gameOver = Board.toGameOver(boardNew)
 
-  if (gameOver.type !== "None") {
+  if (gameOver.type !== "none") {
     const modelNew: SharedModel = {
       ...model,
       type: "GameOver",

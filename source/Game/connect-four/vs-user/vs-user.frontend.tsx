@@ -68,8 +68,8 @@ export const init = ({
 }: Pick<FrontendModel, "PlayerOne" | "PlayerTwo">): FrontendModel => {
   return {
     ...initShared({ PlayerOne, PlayerTwo }),
-    ghostIndex: "None",
-    openedModal: "None",
+    ghostIndex: "none",
+    openedModal: "none",
   }
 }
 
@@ -107,7 +107,7 @@ export const update = (
     }
 
     case "CloseModal": {
-      return [{ ...model, openedModal: "None" }, Cmd.None]
+      return [{ ...model, openedModal: "none" }, Cmd.None]
     }
 
     //
@@ -131,7 +131,7 @@ export const update = (
       return [
         {
           ...model,
-          // ghostIndex: "None"
+          // ghostIndex: "none"
         },
         sendToBackend(msg),
       ]
@@ -161,7 +161,7 @@ export const updateFromBackend = (
         frontendModel: model,
         backendModel: modelNew,
       })
-      return [{ ...merged, openedModal: "None" }, Cmd.None, []]
+      return [{ ...merged, openedModal: "none" }, Cmd.None, []]
     }
 
     case 'input-move': {
@@ -170,7 +170,7 @@ export const updateFromBackend = (
         frontendModel: model,
         backendModel: modelNew,
       })
-      return [{ ...merged, ghostIndex: "None" }, Cmd.None, []]
+      return [{ ...merged, ghostIndex: "none" }, Cmd.None, []]
     }
 
     case "Tick_Done": {
@@ -262,7 +262,7 @@ export const View = ({
             onHover={(columnIndex) => $send(["HoveredOverColumns", { columnIndex }])}
             disabled={toTurn(model.columns) !== currentUserPlayerType}
             ghost={
-              currentUserPlayerType !== "None" && model.ghostIndex !== "None"
+              currentUserPlayerType !== "none" && model.ghostIndex !== "none"
                 ? { playerType: currentUserPlayerType, columnIndex: model.ghostIndex }
                 : undefined
             }
@@ -446,7 +446,7 @@ const ViewGameOverMessage = ({
     const winner: PlayerType =
       resigner === "PlayerOne" ? "PlayerTwo" : "PlayerOne"
 
-    if (currentPlayerType === "None") {
+    if (currentPlayerType === "none") {
       return (
         <>
           <Box
@@ -481,7 +481,7 @@ const ViewGameOverMessage = ({
   if (model.gameOver.type === "Winner") {
     const { winner } = model.gameOver
 
-    if (currentPlayerType === "None") {
+    if (currentPlayerType === "none") {
       return (
         <>
           <Box
@@ -720,7 +720,7 @@ const ViewSetupPlayerSlot = ({
 }: {
   $send: (msg: Msg) => void
   playerType: PlayerType
-  userId: "None" | UserId
+  userId: "none" | UserId
   ctx: Ctx
 }) => {
   return (
@@ -736,7 +736,7 @@ const ViewSetupPlayerSlot = ({
         playerType={playerType}
         sx={{ width: 42, height: 42, marginRight: 1 }}
       />
-      {userId === "None" ? (
+      {userId === "none" ? (
         <Button
           fullWidth
           variant="contained"
@@ -802,7 +802,7 @@ const ViewVersusHeader = ({ model, ctx }: { model: SetupModel; ctx: Ctx }) => {
         <Avatar
           sx={{ ...avatarSx, marginX: "auto" }}
           src={
-            model.PlayerOne === "None"
+            model.PlayerOne === "none"
               ? ""
               : ctx.profiles[model.PlayerOne]?.avatarUrl
           }
@@ -810,7 +810,7 @@ const ViewVersusHeader = ({ model, ctx }: { model: SetupModel; ctx: Ctx }) => {
           <Icons.QuestionMark />
         </Avatar>
         <Typography color="#fff" align="center" noWrap>
-          {model.PlayerOne === "None"
+          {model.PlayerOne === "none"
             ? "?"
             : ctx.profiles[model.PlayerOne]?.username ?? "..."}
         </Typography>
@@ -824,7 +824,7 @@ const ViewVersusHeader = ({ model, ctx }: { model: SetupModel; ctx: Ctx }) => {
         <Avatar
           sx={{ ...avatarSx, marginX: "auto" }}
           src={
-            model.PlayerTwo === "None"
+            model.PlayerTwo === "none"
               ? ""
               : ctx.profiles[model.PlayerTwo]?.avatarUrl
           }
@@ -832,7 +832,7 @@ const ViewVersusHeader = ({ model, ctx }: { model: SetupModel; ctx: Ctx }) => {
           <Icons.QuestionMark />
         </Avatar>
         <Typography color="#fff" align="center" noWrap>
-          {model.PlayerTwo === "None"
+          {model.PlayerTwo === "none"
             ? "?"
             : ctx.profiles[model.PlayerTwo]?.username ?? "..."}
         </Typography>

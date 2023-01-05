@@ -7,9 +7,9 @@ const modelSetup: Model = {
   type: "Setup",
   maxRoundCount: 3,
   moveTimeLimit: 5,
-  O: "None",
-  X: "None",
-  openedModal: "None",
+  O: "none",
+  X: "none",
+  openedModal: "none",
 }
 
 const props: Parameters<typeof View>[0] = {
@@ -77,7 +77,7 @@ GameStarting.args = {
       type: "RoundStarting",
       countDown: 3,
     },
-    openedModal: "None",
+    openedModal: "none",
   },
 }
 
@@ -98,7 +98,7 @@ GameStarted.args = {
       ],
       moveCountDown: 4,
     },
-    openedModal: "None",
+    openedModal: "none",
   },
 }
 
@@ -125,7 +125,7 @@ RoundOverTie.args = {
         type: "Tie",
       },
     },
-    openedModal: "None",
+    openedModal: "none",
   },
 }
 
@@ -153,7 +153,7 @@ RoundOverWin.args = {
         winner: "X",
       },
     },
-    openedModal: "None",
+    openedModal: "none",
   },
 }
 
@@ -181,7 +181,7 @@ RoundOverWinOther.args = {
         winner: "O",
       },
     },
-    openedModal: "None",
+    openedModal: "none",
   },
 }
 
@@ -210,7 +210,7 @@ const gameOverBase: Model = {
       winner: "O",
     },
   },
-  openedModal: "None",
+  openedModal: "none",
   rematch: {
     type: "NotAsking",
   },

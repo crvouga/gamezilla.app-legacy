@@ -28,8 +28,8 @@ export type SharedModel = SetupModel | GameModel | GameOverModel
 export type SetupModel = {
   type: "Setup"
   moveTimeLimit: MoveTimeLimit
-  PlayerOne: UserId | "None"
-  PlayerTwo: UserId | "None"
+  PlayerOne: UserId | "none"
+  PlayerTwo: UserId | "none"
 }
 
 export type GameModel = {
@@ -73,9 +73,9 @@ type GameOver =
     resigner: PlayerType
   }
 
-export const toGameOver = (model: SharedModel): GameOver | { type: "None" } => {
+export const toGameOver = (model: SharedModel): GameOver | { type: "none" } => {
   if (model.type === "Setup") {
-    return { type: "None" }
+    return { type: "none" }
   }
 
   const status = toStatus(model.columns)
@@ -88,7 +88,7 @@ export const toGameOver = (model: SharedModel): GameOver | { type: "None" } => {
     return { type: "Winner", winner: status.winner }
   }
 
-  return { type: "None" }
+  return { type: "none" }
 }
 
 export type MoveTimeLimit = 5 | 7 | 9
@@ -114,8 +114,8 @@ export const initShared = ({
 }
 
 export type FrontendModel = SharedModel & {
-  openedModal: "ConfirmResign" | "None"
-  ghostIndex: ColumnIndex | "None"
+  openedModal: "ConfirmResign" | "none"
+  ghostIndex: ColumnIndex | "none"
 }
 
 export type BackendModel = SharedModel
@@ -181,7 +181,7 @@ export const handle = (
 
       const playerType = toPlayerType(userId, model)
 
-      if (playerType === "None") {
+      if (playerType === "none") {
         return Err("not_playing")
       }
 
@@ -203,7 +203,7 @@ export const handle = (
 
       const { playerType, userId } = req[1]
 
-      if (model[playerType] !== "None") {
+      if (model[playerType] !== "none") {
         return Err("player_taken")
       }
 
@@ -211,7 +211,7 @@ export const handle = (
         ...model,
         [opposite[playerType]]:
           model[opposite[playerType]] === userId
-            ? "None"
+            ? "none"
             : model[opposite[playerType]],
         [playerType]: userId,
       }
@@ -228,7 +228,7 @@ export const handle = (
 
       const playerType = toPlayerType(userId, model)
 
-      if (playerType === "None") {
+      if (playerType === "none") {
         return Err("not_playing")
       }
 
@@ -249,13 +249,13 @@ export const handle = (
 
       const playerType = toPlayerType(userId, model)
 
-      if (playerType === "None") {
+      if (playerType === "none") {
         return Err("not_playing")
       }
 
       const modelNew: SharedModel = {
         ...model,
-        [playerType]: "None",
+        [playerType]: "none",
       }
 
       return Ok(modelNew)
@@ -266,7 +266,7 @@ export const handle = (
         return Err("not_in_setup")
       }
 
-      if (model.PlayerOne === "None" || model.PlayerTwo === "None") {
+      if (model.PlayerOne === "none" || model.PlayerTwo === "none") {
         return Err("missing_player")
       }
 
@@ -295,7 +295,7 @@ export const handle = (
 
       const playerType = toPlayerType(userId, model)
 
-      if (playerType === "None") {
+      if (playerType === "none") {
         return Err("not_playing")
       }
 
@@ -348,7 +348,7 @@ export const handle = (
 
       const playerType = toPlayerType(userId, model)
 
-      if (playerType === "None") {
+      if (playerType === "none") {
         return Err("not_playing")
       }
 
@@ -371,7 +371,7 @@ export const handle = (
 
       const playerType = toPlayerType(userId, model)
 
-      if (playerType === "None") {
+      if (playerType === "none") {
         return Err("not_playing")
       }
 
@@ -400,7 +400,7 @@ export const handle = (
 
       const playerType = toPlayerType(userId, model)
 
-      if (playerType === "None") {
+      if (playerType === "none") {
         return Err("not_playing")
       }
 
@@ -426,7 +426,7 @@ export const handle = (
 export const toPlayerType = (
   userId: UserId,
   model: SharedModel,
-): PlayerType | "None" => {
+): PlayerType | "none" => {
   if (model.PlayerOne === userId) {
     return "PlayerOne"
   }
@@ -435,7 +435,7 @@ export const toPlayerType = (
     return "PlayerTwo"
   }
 
-  return "None"
+  return "none"
 }
 
 export const resultToString = (result: ReturnType<typeof handle>): string => {

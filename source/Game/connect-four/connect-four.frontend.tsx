@@ -24,7 +24,7 @@ import * as VsUser from "./vs-user/vs-user.frontend"
 
 export type Model = FrontendModel
 
-export const init: Model = { type: "None" }
+export const init: Model = { type: "none" }
 
 //
 //
@@ -44,33 +44,33 @@ export const update = (
   model: Model,
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case "InputMode": {
+    case "input-mode": {
       return [model, sendToBackend(msg)]
     }
-    case "VsUser": {
-      if (model.type === "VsUser") {
+    case "vs-user": {
+      if (model.type === "vs-user") {
         const [child, cmd] = VsUser.update(
           {
-            sendToBackend: (msg) => sendToBackend(["VsUser", msg]),
+            sendToBackend: (msg) => sendToBackend(["vs-user", msg]),
           },
           msg[1],
           model.child,
         )
-        return [{ type: "VsUser", child }, Cmd.tag("VsUser", cmd)]
+        return [{ type: "vs-user", child }, Cmd.tag("vs-user", cmd)]
       }
       return [model, Cmd.None]
     }
 
-    case "VsBot": {
-      if (model.type === "VsBot") {
+    case "vs-bot": {
+      if (model.type === "vs-bot") {
         const [child, cmd] = VsBot.update(
           {
-            sendToBackend: (msg) => sendToBackend(["VsBot", msg]),
+            sendToBackend: (msg) => sendToBackend(["vs-bot", msg]),
           },
           msg[1],
           model.child,
         )
-        return [{ type: "VsBot", child }, Cmd.tag("VsBot", cmd)]
+        return [{ type: "vs-bot", child }, Cmd.tag("vs-bot", cmd)]
       }
       return [model, Cmd.None]
     }
@@ -82,7 +82,7 @@ export const updateFromBackend = (
   model: Model,
 ): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-    case "InputMode_Done": {
+    case "input-mode-done": {
       const merged = mergeWithBackend({
         frontendModel: model,
         backendModel: msg[1],
@@ -90,30 +90,30 @@ export const updateFromBackend = (
       return [merged, Cmd.None, []]
     }
 
-    case "VsUser": {
-      if (model.type === "VsUser") {
+    case "vs-user": {
+      if (model.type === "vs-user") {
         const [child, cmd, actions] = VsUser.updateFromBackend(
           msg[1],
           model.child,
         )
         return [
-          { type: "VsUser", child },
-          Cmd.tag("VsUser", cmd),
+          { type: "vs-user", child },
+          Cmd.tag("vs-user", cmd),
           actions,
         ]
       }
       return [model, Cmd.None, []]
     }
 
-    case "VsBot": {
-      if (model.type === "VsBot") {
+    case "vs-bot": {
+      if (model.type === "vs-bot") {
         const [child, cmd, actions] = VsBot.updateFromBackend(
           msg[1],
           model.child,
         )
         return [
-          { type: "VsBot", child },
-          Cmd.tag("VsBot", cmd),
+          { type: "vs-bot", child },
+          Cmd.tag("vs-bot", cmd),
           actions,
         ]
       }
@@ -142,10 +142,10 @@ export const View = ({
   gameRoomCtx: GameRoomCtx
 }) => {
   const goBack = () =>
-    $send(["InputMode", { userId: ctx.currentUserId, mode: "None" }])
+    $send(["input-mode", { userId: ctx.currentUserId, mode: "none" }])
 
   switch (model.type) {
-    case "None": {
+    case "none": {
       return (
         viewSelectModeScreen({
           ctx: ctx,
@@ -154,34 +154,34 @@ export const View = ({
           title: "Connect Four",
           onVsUser: () =>
             $send([
-              "InputMode",
-              { mode: "VsUser", userId: ctx.currentUserId },
+              "input-mode",
+              { mode: "vs-user", userId: ctx.currentUserId },
             ]),
           onUserVsComputer: () =>
             $send([
-              "InputMode",
-              { mode: "VsBot", userId: ctx.currentUserId },
+              "input-mode",
+              { mode: "vs-bot", userId: ctx.currentUserId },
             ])
         })
       )
     }
 
-    case "VsUser": {
+    case "vs-user": {
       return (
         <VsUser.View
           ctx={ctx}
-          $send={(msg) => $send(["VsUser", msg])}
+          $send={(msg) => $send(["vs-user", msg])}
           goBack={goBack}
           model={model.child}
         />
       )
     }
 
-    case "VsBot": {
+    case "vs-bot": {
       return (
         <VsBot.View
           ctx={ctx}
-          $send={(msg) => $send(["VsBot", msg])}
+          $send={(msg) => $send(["vs-bot", msg])}
           model={model.child}
           goBack={goBack}
         />
@@ -250,14 +250,14 @@ export const mergeWithBackend = ({
   backendModel: BackendModel
 }): FrontendModel => {
   switch (backendModel.type) {
-    case "None": {
+    case "none": {
       return backendModel
     }
 
-    case "VsBot": {
-      if (frontendModel.type === "VsBot") {
+    case "vs-bot": {
+      if (frontendModel.type === "vs-bot") {
         return {
-          type: "VsBot",
+          type: "vs-bot",
           child: VsBot.mergeWithBackend({
             frontendModel: frontendModel.child,
             backendModel: backendModel.child,
@@ -266,7 +266,7 @@ export const mergeWithBackend = ({
       }
 
       return {
-        type: "VsBot",
+        type: "vs-bot",
         child: VsBot.mergeWithBackend({
           frontendModel: VsBot.init(backendModel.child),
           backendModel: backendModel.child,
@@ -274,10 +274,10 @@ export const mergeWithBackend = ({
       }
     }
 
-    case "VsUser": {
-      if (frontendModel.type === "VsUser") {
+    case "vs-user": {
+      if (frontendModel.type === "vs-user") {
         return {
-          type: "VsUser",
+          type: "vs-user",
           child: VsUser.mergeWithBackend({
             frontendModel: frontendModel.child,
             backendModel: backendModel.child,
@@ -286,7 +286,7 @@ export const mergeWithBackend = ({
       }
 
       return {
-        type: "VsUser",
+        type: "vs-user",
         child: VsUser.mergeWithBackend({
           frontendModel: VsUser.init(backendModel.child),
           backendModel: backendModel.child,
@@ -306,16 +306,16 @@ export const mergeWithBackend = ({
 
 export const subscriptions = (model: Model): Sub<Msg> => {
   switch (model.type) {
-    case "None": {
+    case "none": {
       return Sub.None
     }
 
-    case 'VsBot': {
-      return Sub.tag('VsBot', VsBot.subscriptions(model.child))
+    case "vs-bot": {
+      return Sub.tag("vs-bot", VsBot.subscriptions(model.child))
     }
 
-    case 'VsUser': {
-      return Sub.tag('VsUser', VsUser.subscriptions(model.child))
+    case "vs-user": {
+      return Sub.tag("vs-user", VsUser.subscriptions(model.child))
     }
   }
 }

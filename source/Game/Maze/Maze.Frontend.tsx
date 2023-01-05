@@ -67,7 +67,7 @@ export const update = (
         model,
         sendToBackend([
           "InputDirection",
-          { userId: ctx.currentUserId, direction: "None" },
+          { userId: ctx.currentUserId, direction: "none" },
         ]),
       ]
     }
@@ -442,12 +442,12 @@ export const View = ({
       {currentUserPlayer && (
         <>
           <Joystick
-            activeDirection={p(currentUserPlayer.direction, d => d === 'None' ? undefined : d)}
+            activeDirection={p(currentUserPlayer.direction, d => d === "none" ? undefined : d)}
             onChange={(direction) =>
               $send(["InputDirection", { direction, userId: ctx.currentUserId }])
             }
             onDone={() =>
-              $send(["InputDirection", { direction: "None", userId: ctx.currentUserId }])
+              $send(["InputDirection", { direction: "none", userId: ctx.currentUserId }])
             }
             activeFill="#fff"
             fill="#000"

@@ -18,7 +18,7 @@ const initAnimationValue = {
 const setupModel: Model = {
   type: "Setup",
   botLevel: "Medium",
-  player: "None",
+  player: "none",
   userPlayerType: "PlayerOne",
 }
 
@@ -54,7 +54,7 @@ SetupReady.args = {
 }
 
 const gameModel: Model = {
-  ghostIndex: "None",
+  ghostIndex: "none",
   animationValue: initAnimationValue,
   type: "Game",
   botLevel: "Medium",

@@ -10,7 +10,7 @@ const props: Parameters<typeof View>[0] = {
   ctx,
   gameRoomCtx,
   model: {
-    mode: ["None"],
+    mode: ["none"],
     requests: {
       InputMode: RemoteData.NotAsked,
     },

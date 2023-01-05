@@ -95,7 +95,7 @@ export const updateRoomLeave = ({
 }): [Model, Cmd<Msg>] => {
   const player = toPlayerType(userId, model)
 
-  if (player === "None") {
+  if (player === "none") {
     return [model, Cmd.None]
   }
 
@@ -104,7 +104,7 @@ export const updateRoomLeave = ({
     moveTimeLimit: model.moveTimeLimit,
     PlayerOne: model.PlayerOne,
     PlayerTwo: model.PlayerTwo,
-    [player]: "None",
+    [player]: "none",
   }
 
   return [modelNew, broadcast(["player-left", modelNew])]

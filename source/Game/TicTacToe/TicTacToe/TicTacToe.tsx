@@ -93,7 +93,7 @@ const toScore = ({
   const gameOver = toGameOver(board)
 
   switch (gameOver.type) {
-    case "None": {
+    case "none": {
       return 0
     }
 
@@ -309,9 +309,7 @@ export const allWinningGroups: WinningGroup[] = [
 
 type Wins = { X: WinningGroup[]; O: WinningGroup[]; None: WinningGroup[] }
 
-let n = 0
 const toWins = memoize(x => JSON.stringify(x), (board: Board): Wins => {
-  console.log("toWins", n++)
   const wins: Wins = {
     X: [],
     O: [],
@@ -341,7 +339,7 @@ export type Status = { type: "Turn"; turn: PlayerType } | GameOver
 
 export type GameOver = { type: "Win"; winner: PlayerType } | { type: "Tie" }
 
-export const toGameOver = (board: Board): GameOver | { type: "None" } => {
+export const toGameOver = (board: Board): GameOver | { type: "none" } => {
   const wins = toWins(board)
 
   if (wins.X.length > 0) {
@@ -356,13 +354,13 @@ export const toGameOver = (board: Board): GameOver | { type: "None" } => {
     return { type: "Tie" }
   }
 
-  return { type: "None" }
+  return { type: "none" }
 }
 
 export const toStatus = (board: Board): Status => {
   const gameOver = toGameOver(board)
 
-  if (gameOver.type === "None") {
+  if (gameOver.type === "none") {
     return { type: "Turn", turn: toTurn(board) }
   }
 

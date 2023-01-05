@@ -137,7 +137,7 @@ export const startGame = (model: SharedModel): StartGame_Done[1] => {
     return Result.Err("must_be_in_game_setup")
   }
 
-  if (model.gameStatus.player.type === "None") {
+  if (model.gameStatus.player.type === "none") {
     return Result.Err("missing_player")
   }
 

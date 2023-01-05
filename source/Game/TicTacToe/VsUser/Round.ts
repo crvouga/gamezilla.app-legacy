@@ -35,7 +35,7 @@ export const toCurrent = (round: Round): Round => {
   }
 }
 
-export const toPrevious = (round: Round): RoundOver | { type: "None" } => {
+export const toPrevious = (round: Round): RoundOver | { type: "none" } => {
   switch (round.type) {
     case "RoundOver": {
       const next = round.next
@@ -56,11 +56,11 @@ export const toPrevious = (round: Round): RoundOver | { type: "None" } => {
     }
 
     case "RoundStarted": {
-      return { type: "None" }
+      return { type: "none" }
     }
 
     case "RoundStarting": {
-      return { type: "None" }
+      return { type: "none" }
     }
   }
 }
@@ -174,7 +174,7 @@ export const toGameOver = ({
 }: {
   maxRoundCount: number
   round: Round
-}): GameOver | { type: "None" } => {
+}): GameOver | { type: "none" } => {
   const score = toScore(round)
   const winCount = Math.floor((maxRoundCount + 1) / 2)
 
@@ -196,5 +196,5 @@ export const toGameOver = ({
   //   return { type: "Tie" }
   // }
 
-  return { type: "None" }
+  return { type: "none" }
 }
