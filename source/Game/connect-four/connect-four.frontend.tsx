@@ -9,7 +9,7 @@ import {
   ToBackend,
   ToFrontend
 } from "./connect-four.types"
-import { gameTheme, PlayerIcon, viewCoverArt } from "./connect-four/connect-four"
+import { gameTheme, PlayerIcon, viewCoverArt } from "./connect-four/connect-four-view"
 import * as VsBot from "./vs-bot/vs-bot.frontend"
 import * as VsUser from "./vs-user/vs-user.frontend"
 
