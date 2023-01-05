@@ -263,7 +263,7 @@ const ViewColumnsSvg = ({
     )
 }
 
-const ViewColumnsCanvas = ({ columns, onClick, visual }: ViewColumnsProps) => {
+const ViewColumnsCanvas = ({ columns, onClick, visual, }: ViewColumnsProps) => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
 
     useLayoutEffect(() => {
@@ -287,16 +287,32 @@ const ViewColumnsCanvas = ({ columns, onClick, visual }: ViewColumnsProps) => {
 
     return (
         <canvas
-            style={{ width: "100%" }}
+            style={{ width: "100%", cursor: "pointer" }}
             ref={canvasRef}
             onClick={(event) => {
+                const rect = event.currentTarget.getBoundingClientRect();
+                const elementRelativeX = event.clientX - rect.left;
+                const elementWidth = event.currentTarget.width
+                const canvasRelativeX = elementRelativeX * elementWidth / rect.width;
                 const columnIndex = Math.floor(
                     rescale({
-                        value: event.pageX - event.currentTarget.offsetLeft,
-                        from: [0, event.currentTarget.width],
-                        to: [0, COLUMN_COUNT - 1],
+                        value: canvasRelativeX,
+                        from: [0, elementWidth],
+                        to: [0, COLUMN_COUNT],
                     }),
                 )
+
+                console.log({
+                    elementRelativeX,
+                    elementWidth,
+                    canvasRelativeX,
+                    columnIndex,
+
+                    value: canvasRelativeX,
+                    from: [0, elementWidth],
+                    to: [0, COLUMN_COUNT - 1],
+
+                })
 
                 if (onClick && isColumnIndex(columnIndex)) {
                     onClick(columnIndex)
@@ -338,7 +354,6 @@ const paint = ({ context, visual }: { visual: VisualModel; context: CanvasRender
 
     let x, y, cx, cy, r, column, disc, gradient;
 
-
     for (x = 0; x < visual.length; x++) {
         column = visual[x]!
         for (y = 0; y < column.length; y++) {
@@ -379,9 +394,9 @@ const paint = ({ context, visual }: { visual: VisualModel; context: CanvasRender
 
     for (x = 0; x < COLUMN_COUNT; x++) {
         for (y = 0; y < MAX_COLUMN_HEIGHT; y++) {
-            const cx = (x + 1 / 2) * cellWidth
-            const cy = (y + 1 / 2) * cellHeight
-            const r = (cellWidth / 2) * 0.8
+            cx = (x + 1 / 2) * cellWidth
+            cy = (y + 1 / 2) * cellHeight
+            r = (cellWidth / 2) * 0.8
             context.moveTo(cy, cy)
             context.arc(cx, cy, r, 0, Math.PI * 2)
         }
