@@ -92,7 +92,7 @@ type ViewColumnsProps = {
 }
 
 export const ViewColumns = ({
-    implementation = "svg",
+    implementation = "canvas",
     ...props
 }: ViewColumnsProps & {
     implementation?: "svg" | "canvas"
@@ -263,7 +263,7 @@ const ViewColumnsSvg = ({
     )
 }
 
-const ViewColumnsCanvas = ({ columns, onClick }: ViewColumnsProps) => {
+const ViewColumnsCanvas = ({ columns, onClick, visual }: ViewColumnsProps) => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
 
     useLayoutEffect(() => {
@@ -282,24 +282,19 @@ const ViewColumnsCanvas = ({ columns, onClick }: ViewColumnsProps) => {
         context.canvas.height =
             (MAX_COLUMN_HEIGHT / COLUMN_COUNT) * context.canvas.width
 
-        paint(context, columns)
-    }, [columns])
+        paint({ context, columns, visual })
+    })
 
     return (
         <canvas
             style={{ width: "100%" }}
             ref={canvasRef}
             onClick={(event) => {
-                console.log({
-                    value: event.pageX - event.currentTarget.offsetLeft,
-                    from: [0, event.currentTarget.width],
-                    to: [0, COLUMN_COUNT],
-                })
                 const columnIndex = Math.floor(
                     rescale({
                         value: event.pageX - event.currentTarget.offsetLeft,
                         from: [0, event.currentTarget.width],
-                        to: [0, COLUMN_COUNT],
+                        to: [0, COLUMN_COUNT - 1],
                     }),
                 )
 
@@ -326,7 +321,7 @@ const rescale = ({
     return ((value - from[0]) * (to[1] - to[0])) / (from[1] - from[0]) + to[0]
 }
 
-const paint = (context: CanvasRenderingContext2D, columns: Columns): void => {
+const paint = ({ context, visual }: { visual: VisualModel; context: CanvasRenderingContext2D, columns: Columns }): void => {
     const width = context.canvas.width
     const height = context.canvas.height
 
@@ -340,34 +335,26 @@ const paint = (context: CanvasRenderingContext2D, columns: Columns): void => {
     const cellWidth = width / COLUMN_COUNT
     const cellHeight = height / MAX_COLUMN_HEIGHT
 
-    for (let x = 0; x < columns.length; x++) {
-        const column = columns[x]
 
-        if (!column) {
-            continue
-        }
+    let x, y, cx, cy, r, column, disc, gradient;
 
-        for (let y = 0; y < column.length; y++) {
-            const slot = column[y]
 
-            if (!slot) {
-                continue
-            }
+    for (x = 0; x < visual.length; x++) {
+        column = visual[x]!
+        for (y = 0; y < column.length; y++) {
+            disc = column[y]!
 
-            const cx = (x + 1 / 2) * cellWidth
-            const cy = (y + 1 / 2) * cellHeight
-            const r = cellWidth / 2
+            cx = (x + 1 / 2) * cellWidth
+            cy = (disc.yPosition.current + 1 / 2) * cellHeight
+            r = cellWidth / 2
 
             context.beginPath()
-
             context.arc(cx, cy, r, 0, Math.PI * 2)
-
-            const gradient = context.createRadialGradient(cx, cy, 0, cx, cy, r * 0.74)
-            gradient.addColorStop(0, gameTheme[slot].light)
-            gradient.addColorStop(1, gameTheme[slot].dark)
+            gradient = context.createRadialGradient(cx, cy, 0, cx, cy, r * 0.74)
+            gradient.addColorStop(0, gameTheme[disc.playerType].light)
+            gradient.addColorStop(1, gameTheme[disc.playerType].dark)
             context.fillStyle = gradient
             context.fill()
-
             context.closePath()
         }
     }
@@ -390,8 +377,8 @@ const paint = (context: CanvasRenderingContext2D, columns: Columns): void => {
     //
     //
 
-    for (let x = 0; x < COLUMN_COUNT; x++) {
-        for (let y = 0; y < MAX_COLUMN_HEIGHT; y++) {
+    for (x = 0; x < COLUMN_COUNT; x++) {
+        for (y = 0; y < MAX_COLUMN_HEIGHT; y++) {
             const cx = (x + 1 / 2) * cellWidth
             const cy = (y + 1 / 2) * cellHeight
             const r = (cellWidth / 2) * 0.8

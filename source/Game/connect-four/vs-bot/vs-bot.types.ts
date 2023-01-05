@@ -1,5 +1,4 @@
 import { exhaustive } from "../../../Core"
-import * as Spring from "../../../Core/animation/spring"
 import { Err, Ok, Result } from "../../../Core/Result"
 import { UserId } from "../../../Data/UserId"
 import {
@@ -12,8 +11,7 @@ import {
   MoveProblem,
   opposite,
   PlayerType,
-  toStatus,
-
+  toStatus
 } from "../connect-four/connect-four"
 import {
   VisualModel
@@ -56,8 +54,6 @@ export type BackendModel = SharedModel
 
 export type FrontendModel = SetupModel | (GameModel & {
   ghostIndex: ColumnIndex | "none",
-  animationValue: Spring.Model,
-  animationDirection: "right" | "left"
   visual: VisualModel
 })
 
@@ -119,7 +115,10 @@ export const botLevel: { [botLevel in BotLevel]: BotLevel } = {
 //
 //
 
-export type FrontendMsg = Req | ["hovered", { columnIndex: ColumnIndex }] | ["frame"] | ['clicked-animation']
+export type FrontendMsg =
+  | Req
+  | ["hovered", { columnIndex: ColumnIndex }]
+  | ["animate"]
 
 export type BackendMsg = ["bot-move", BestMoveResult]
 

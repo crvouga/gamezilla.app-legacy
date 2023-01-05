@@ -13,7 +13,7 @@ import {
   ToBackend,
   ToFrontend
 } from "./App.Types"
-import { Cmd, exhaustive, Option, p, Program, Sub, t } from "./Core"
+import { Cmd, exhaustive, Option, p, Program, Sub } from "./Core"
 import { formatMsg } from "./Core/Debug"
 import { ClientId, SessionId, UserId } from "./Data"
 import * as GameRoom from "./Game/GameRoom.Backend"
