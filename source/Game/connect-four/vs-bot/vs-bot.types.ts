@@ -13,8 +13,11 @@ import {
   opposite,
   PlayerType,
   toStatus,
-  VisualModel
+
 } from "../connect-four/connect-four"
+import {
+  VisualModel
+} from "../connect-four/connect-four-view"
 
 //
 //

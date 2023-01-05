@@ -1,7 +1,8 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import { ctx, userB } from "../../../test-data"
 import { AppContainer } from "../../../UI"
-import { emptyColumns, initVisual } from "../connect-four/connect-four"
+import { emptyColumns } from "../connect-four/connect-four"
+import { initVisual } from "../connect-four/connect-four-view"
 import { leftAndRightDiagonal } from "../connect-four/connect-four.test"
 import { Model, View } from "./vs-bot.frontend"
 

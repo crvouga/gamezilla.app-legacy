@@ -1,6 +1,7 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react"
 import * as UI from "../../../UI"
-import { emptyColumns, ViewColumns } from "./connect-four"
+import { emptyColumns } from "./connect-four"
+import { ViewColumns } from "./connect-four-view"
 import {
   horizontal,
   horizontalLongest,

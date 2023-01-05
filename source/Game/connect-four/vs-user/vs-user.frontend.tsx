@@ -2,20 +2,40 @@ import { keyframes } from "@emotion/react"
 import * as Alerts from "../../../Alerts"
 import { Cmd, exhaustive, Sub } from "../../../Core"
 import { UserId } from "../../../Data"
-import { ActionButton, Avatar, Box, Button, CircularProgress, ConformationDialog, Divider, Fade, FillBox, Icons, Paper, Sx, ToggleButton, ToggleButtonGroup, Tooltip, Typography, useTheme } from "../../../UI"
+import {
+  ActionButton,
+  Avatar,
+  Box,
+  Button,
+  CircularProgress,
+  ConformationDialog,
+  Divider,
+  Fade,
+  FillBox,
+  Icons,
+  Paper,
+  Sx,
+  ToggleButton,
+  ToggleButtonGroup,
+  Tooltip,
+  Typography,
+  useTheme
+} from "../../../UI"
 import { Ctx } from "../../Game"
 import {
-  gameTheme,
   PlayerType,
   playerTypeToColor,
   toStatus,
-  toTurn,
-  ViewColumns,
+  toTurn
+} from "../connect-four/connect-four"
+import {
+  gameTheme,
+  initVisual,
   PlayerIcon,
   PlayerOneIcon,
   PlayerTwoIcon,
-  initVisual
-} from "../connect-four/connect-four"
+  ViewColumns
+} from "../connect-four/connect-four-view"
 import {
   allMoveTimeLimit,
   BackendModel,
@@ -232,7 +252,6 @@ export const View = ({
         <FillBox>
 
           <PlayerSlotBar model={model} ctx={ctx} />
-
 
           <ViewColumns
             visual={initVisual(model.columns)}
