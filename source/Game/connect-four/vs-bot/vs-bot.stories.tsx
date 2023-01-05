@@ -6,14 +6,6 @@ import { initVisual } from "../connect-four/connect-four-view"
 import { leftAndRightDiagonal } from "../connect-four/connect-four.test"
 import { Model, View } from "./vs-bot.frontend"
 
-const initAnimationValue = {
-  current: 0,
-  target: 0,
-  tension: 2,
-  friction: 0.1,
-  precision: 0.1,
-  velocity: 0,
-} as const
 
 const setupModel: Model = {
   type: "Setup",
@@ -55,13 +47,11 @@ SetupReady.args = {
 
 const gameModel: Model = {
   ghostIndex: "none",
-  animationValue: initAnimationValue,
   type: "Game",
   botLevel: "Medium",
   columns: emptyColumns,
   player: ctx.currentUserId,
   userPlayerType: "PlayerOne",
-  animationDirection: "right",
   visual: initVisual(emptyColumns)
 }
 

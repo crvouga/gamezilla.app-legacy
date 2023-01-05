@@ -6,7 +6,7 @@ import { UserId } from "../../../Data/UserId"
 import { ActionButton, Avatar, Box, CircularProgress, Fade, FillBox, Icons, Paper, Typography, useTheme } from "../../../UI"
 import { Ctx, viewVsBotSetupScreen } from "../../Game"
 import { PlayerType, playerTypes, toStatus, toTurn } from "../connect-four/connect-four"
-import { gameTheme, initVisual, PlayerIcon, step, ViewColumns, viewCoverArt } from "../connect-four/connect-four-view"
+import { gameTheme, initVisual, isDone, PlayerIcon, step, ViewColumns, viewCoverArt } from "../connect-four/connect-four-view"
 import {
   BackendModel, botLevel, FrontendModel,
   FrontendMsg,
@@ -30,16 +30,6 @@ import {
 
 export type Model = FrontendModel
 
-const initAnimationRight = Spring.init({
-  to: 13,
-  from: -1,
-})
-
-const initAnimationLeft = Spring.init({
-  from: 13,
-  to: -1,
-})
-
 export const init = (
   ...params: Parameters<typeof initShared>
 ): FrontendModel => {
@@ -52,8 +42,6 @@ export const init = (
   return {
     ...shared,
     ghostIndex: "none",
-    animationValue: initAnimationRight,
-    animationDirection: "right",
     visual: initVisual(shared.columns)
   }
 }
@@ -83,29 +71,19 @@ export const update = (
       return [{ ...model, ghostIndex: msg[1].columnIndex }, Cmd.None]
     }
 
-    case 'clicked-animation': {
+    case 'animate': {
       if (model.type !== 'Game') {
         return [model, Cmd.None]
       }
-      const directionNext = model.animationDirection === "right" ? "left" : "right"
-
-      const animationNext: Spring.Model = directionNext === "right"
-        ? { ...initAnimationRight, velocity: model.animationValue.velocity, current: model.animationValue.current }
-        : { ...initAnimationLeft, velocity: model.animationValue.velocity, current: model.animationValue.current }
-
-      return [{ ...model, animationValue: animationNext, animationDirection: directionNext }, Cmd.None]
-    }
-
-    case 'frame': {
-      if (model.type !== 'Game') {
-        return [model, Cmd.None]
-      }
-      const animationValueNew = Spring.step(model.animationValue)
       const visualNew = step({ columns: model.columns, current: model.visual })
-      return [{ ...model, visual: visualNew, animationValue: animationValueNew }, Cmd.None]
+      return [{ ...model, visual: visualNew, }, Cmd.None]
     }
 
-    case 'input-move':
+    case 'input-move': {
+      // TODO: optimistic update
+      return [model, sendToBackend(msg)]
+    }
+
     case "input-player-type":
     case 'restart':
     case 'start-game':
@@ -143,7 +121,7 @@ export const updateFromBackend = (
         backendModel: msg[1].value,
       })
 
-      return [{ ...modelNew, }, Cmd.None, []]
+      return [modelNew, Cmd.None, []]
     }
 
     case "input-player-type":
@@ -179,24 +157,22 @@ export const mergeWithBackend = ({
     return backendModel
   }
 
+
   if (frontendModel.type === 'Setup') {
     return {
       ...backendModel,
       ghostIndex: "none",
-      animationValue: initAnimationRight,
-      animationDirection: "right",
       visual: initVisual(backendModel.columns)
     }
   }
 
-
+  const columnsNew = backendModel.columns
+  const visualNew = step({ columns: columnsNew, current: frontendModel.visual })
 
   return {
     ...backendModel,
+    visual: visualNew,
     ghostIndex: frontendModel.ghostIndex,
-    animationValue: frontendModel.animationValue,
-    animationDirection: frontendModel.animationDirection,
-    visual: frontendModel.visual,
   }
 }
 
@@ -208,11 +184,19 @@ export const mergeWithBackend = ({
 //
 //
 
-export const subscriptions = (_model: Model): Sub<Msg> => {
-  // if (model.type === 'Game' && Spring.isDone(model.animationValue) && isDone(model.visual)) {
-  //   return Sub.None
-  // }
-  return Spring.onAnimationFrame(() => ['frame'])
+export const subscriptions = (model: Model): Sub<Msg> => {
+  switch (model.type) {
+    case 'Game': {
+      if (isDone(model.visual)) {
+        return Sub.None
+      }
+      return Spring.onAnimationFrame(() => ['animate'])
+    }
+
+    case 'Setup': {
+      return Sub.None
+    }
+  }
 }
 
 //
