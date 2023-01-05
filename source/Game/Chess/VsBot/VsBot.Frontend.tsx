@@ -106,15 +106,15 @@ export const update = (
       return [model, sendToBackend(msg)]
     }
 
-    case "StartGame": {
+    case 'start-game': {
       return [model, sendToBackend(msg)]
     }
 
-    case "StopGame": {
+    case 'stop-game': {
       return [model, sendToBackend(msg)]
     }
 
-    case "InputMove": {
+    case 'input-move': {
       const result = inputMove(msg[1], model.sharedModel)
 
       const sharedModel =
@@ -184,7 +184,7 @@ const updateFromBackend_ = (
       return [{ ...model, sharedModel }, soundCmd, []]
     }
 
-    case "PlayerLeft": {
+    case "player-left": {
       const merged = mergeWithBackend(model, msg[1])
       return [merged, Cmd.None, []]
     }
@@ -308,7 +308,7 @@ export const View = ({
         onCancel: onClose,
         coverArt: viewCoverArt(),
         ctx,
-        onStartGame: () => $send(["StartGame", { userId: ctx.currentUserId }]),
+        onStartGame: () => $send(['start-game', { userId: ctx.currentUserId }]),
         onStartPlaying: () => $send(["InputUser", { userId: ctx.currentUserId }]),
         onStopPlaying: () => $send(["InputUser", { userId: "None" }]),
         player: {
@@ -388,7 +388,7 @@ export const View = ({
         model={model.sharedModel.board}
         onPieceDrop={(move) => {
           const msg: Msg = [
-            "InputMove",
+            'input-move',
             {
               userId: ctx.currentUserId,
               from: move.from,
@@ -413,7 +413,7 @@ export const View = ({
         <UI.ActionButton
           icon={<UI.Icons.ExitToApp sx={{ transform: "rotate(180deg)" }} />}
           label={"Exit"}
-          onClick={() => $send(["StopGame", { userId: ctx.currentUserId }])}
+          onClick={() => $send(['stop-game', { userId: ctx.currentUserId }])}
         />
 
         <UI.ActionButton

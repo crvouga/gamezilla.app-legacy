@@ -65,10 +65,10 @@ export const updateFromFrontend = (
     case "Rematch_Request":
     case "Rematch_Respond":
     case "InputMoveTimeLimit":
-    case "InputMove":
-    case "StartGame":
-    case "StopPlaying":
-    case "StartPlaying": {
+    case 'input-move':
+    case 'start-game':
+    case "stop-playing":
+    case "start-playing": {
       const res: Res = [msg[0], handle(msg, model)]
 
       if (res[1].type === "Err") {
@@ -107,7 +107,7 @@ export const updateRoomLeave = ({
     [player]: "None",
   }
 
-  return [modelNew, broadcast(["PlayerLeft", modelNew])]
+  return [modelNew, broadcast(["player-left", modelNew])]
 }
 
 //

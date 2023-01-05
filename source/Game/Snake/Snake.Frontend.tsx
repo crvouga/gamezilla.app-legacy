@@ -101,7 +101,7 @@ export const update = (
       return [model, sendToBackend(msg)]
     }
 
-    case "StartGame": {
+    case 'start-game': {
       return [model, sendToBackend(msg)]
     }
 
@@ -279,7 +279,7 @@ export const View = ({
             fullWidth
             disabled={!canStartGame(model)}
             onClick={() => {
-              $send(["StartGame"])
+              $send(['start-game'])
             }}
           >
             Start Game

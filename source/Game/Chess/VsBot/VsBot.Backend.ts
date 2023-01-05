@@ -98,7 +98,7 @@ const updateFromFrontend_ = (
       return [model, sendToClient(["Sync", model])]
     }
 
-    case "StartGame": {
+    case 'start-game': {
       const result = startGame(msg[1], model)
 
       const modelNew = result.type === "Err" ? model : result.value
@@ -106,7 +106,7 @@ const updateFromFrontend_ = (
       return [modelNew, broadcast(["StartGame_Done", result])]
     }
 
-    case "StopGame": {
+    case 'stop-game': {
       const result = stopGame(msg[1], model)
 
       const modelNew = result.type === "Err" ? model : result.value
@@ -138,7 +138,7 @@ const updateFromFrontend_ = (
       return [modelNew, broadcast(["InputBot_Done", result])]
     }
 
-    case "InputMove": {
+    case 'input-move': {
       const result = inputMove(msg[1], model)
 
       const modelNew = result.type === "Err" ? model : result.value
@@ -160,7 +160,7 @@ export const updateRoomLeave = (
       userColor: model.userColor,
       userId: "None",
     }
-    return [modelNew, broadcast(["PlayerLeft", modelNew])]
+    return [modelNew, broadcast(["player-left", modelNew])]
   }
 
   return [model, Cmd.None]

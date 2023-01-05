@@ -94,7 +94,7 @@ export const view = ({ $send, model, ctx, onBack }: { model: Model, ctx: Ctx, $s
             return (
                 viewVsBotSetupScreen({
                     botLevel: {
-                        onInput: (botLevel) => $send(['InputBotLevel', { botLevel }]),
+                        onInput: (botLevel) => $send(['input-bot-level', { botLevel }]),
                         selected: model.botLevel,
                         values: Object.values(botLevels)
                     },
@@ -109,9 +109,9 @@ export const view = ({ $send, model, ctx, onBack }: { model: Model, ctx: Ctx, $s
                     title: "Gomoku",
                     subtitle: "Vs Computer",
                     onCancel: onBack,
-                    onStartPlaying: () => $send(['StartPlaying']),
-                    onStopPlaying: () => $send(['StopPlaying']),
-                    onStartGame: () => $send(['StartGame']),
+                    onStartPlaying: () => $send(["start-playing"]),
+                    onStopPlaying: () => $send(["stop-playing"]),
+                    onStartGame: () => $send(['start-game']),
                     playerId: model.userId,
                 })
             )
@@ -138,7 +138,7 @@ export const view = ({ $send, model, ctx, onBack }: { model: Model, ctx: Ctx, $s
                         viewPlayerSlots({ ctx, model }),
                         viewMessage({ ctx, model }),
                         box({ position: "relative", aspectRatio: "1", }, [
-                            viewBoard({ board: model.board, onPress: position => $send(['InputMove', { position }]) }),
+                            viewBoard({ board: model.board, onPress: position => $send(['input-move', { position }]) }),
                             viewOverlay({ $send, ctx, model }),
                         ]),
                     ])
@@ -150,13 +150,13 @@ export const view = ({ $send, model, ctx, onBack }: { model: Model, ctx: Ctx, $s
                     viewPlayerSlots({ ctx, model }),
                     viewMessage({ ctx, model }),
                     box({ position: "relative", aspectRatio: "1", }, [
-                        viewBoard({ board: model.board, onPress: position => $send(['InputMove', { position }]) }),
+                        viewBoard({ board: model.board, onPress: position => $send(['input-move', { position }]) }),
                         viewOverlay({ $send, ctx, model }),
                     ]),
                     box({ flex: 1 }, []),
                     box({ display: 'flex' }, [
-                        actionButton({ onPress: () => $send(['StopGame']), iconName: "exit", label: "Exit" }),
-                        actionButton({ onPress: () => $send(['Restart']), iconName: "restart", label: "Restart" }),
+                        actionButton({ onPress: () => $send(['stop-game']), iconName: "exit", label: "Exit" }),
+                        actionButton({ onPress: () => $send(['restart']), iconName: 'restart', label: 'restart' }),
                         actionButton({ onPress: () => $send(['SwapSides']), iconName: "swap", label: "Swap Sides" }),
                     ])
                 ])
@@ -179,8 +179,8 @@ const viewOverlay = ({ model, ctx, $send }: { ctx: Ctx, model: GameModel, $send:
             box(props, [
                 viewGameOverTitle({ model, ctx }),
                 box({ width: '100%', display: 'flex', gap: 2, p: 2 }, [
-                    button({ onPress: () => $send(['StopGame']), width: '100%', variant: "contained", size: "lg", startIcon: "exit" }, 'Exit'),
-                    button({ onPress: () => $send(['Restart']), width: '100%', variant: "contained", size: "lg", startIcon: "restart" }, 'Play Again'),
+                    button({ onPress: () => $send(['stop-game']), width: '100%', variant: "contained", size: "lg", startIcon: "exit" }, 'Exit'),
+                    button({ onPress: () => $send(['restart']), width: '100%', variant: "contained", size: "lg", startIcon: 'restart' }, 'Play Again'),
                 ])
             ])
         )

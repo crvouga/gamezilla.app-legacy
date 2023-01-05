@@ -118,15 +118,15 @@ export type ToBackend = Req
 // 
 
 export type Req =
-    | ['StartPlaying', { stone: Stone }]
-    | ['StopPlaying', { stone: Stone }]
-    | ['StartGame']
+    | ["start-playing", { stone: Stone }]
+    | ["stop-playing", { stone: Stone }]
+    | ['start-game']
     // 
-    | ['InputMove', { position: Position }]
+    | ['input-move', { position: Position }]
     | ['Resign']
     | ['RematchRequest']
     | ['RematchRespond', { response: "Accept" | "Decline" }]
-    | ['StopGame']
+    | ['stop-game']
 
 export type Res = [Req[0], Result<Problem, Model>]
 
@@ -135,7 +135,7 @@ type Problem = 'must_be_setup' | 'player_taken' | "must_be_player" | 'missing_pl
 
 export const handle = ({ currentUserId, msg, model }: { currentUserId: UserId, msg: Req, model: Model }): Result<Problem, Model> => {
     switch (msg[0]) {
-        case "StartPlaying": {
+        case "start-playing": {
             if (model.type !== 'setup') {
                 return Err('must_be_setup')
             }
@@ -155,7 +155,7 @@ export const handle = ({ currentUserId, msg, model }: { currentUserId: UserId, m
             return Ok(modelNew)
         }
 
-        case 'StopPlaying': {
+        case "stop-playing": {
             if (model.type !== 'setup') {
                 return Err('must_be_setup')
             }
@@ -174,7 +174,7 @@ export const handle = ({ currentUserId, msg, model }: { currentUserId: UserId, m
             return Ok(modelNew)
         }
 
-        case 'StartGame': {
+        case 'start-game': {
             if (model.type !== 'setup') {
                 return Err('must_be_setup')
             }
@@ -194,7 +194,7 @@ export const handle = ({ currentUserId, msg, model }: { currentUserId: UserId, m
             return Ok(modelNew)
         }
 
-        case 'InputMove': {
+        case 'input-move': {
             if (model.type !== 'playing') {
                 return Err('must_be_playing')
             }
@@ -254,7 +254,7 @@ export const handle = ({ currentUserId, msg, model }: { currentUserId: UserId, m
             return Ok(model)
         }
 
-        case 'StopGame': {
+        case 'stop-game': {
             if (model.black !== currentUserId && model.white !== currentUserId) {
                 return Err('must_be_player')
             }

@@ -99,7 +99,7 @@ export const updateFromFrontend = (
       return [modelNew, broadcast(["InputPlayer_Done", result])]
     }
 
-    case "StopPlaying": {
+    case "stop-playing": {
       const result = stopPlaying(msg[1], model)
 
       if (result.type === "Err") {
@@ -111,7 +111,7 @@ export const updateFromFrontend = (
       return [modelNew, broadcast(["StopPlaying_Done", result])]
     }
 
-    case "StartGame": {
+    case 'start-game': {
       const result = startGame(msg[1], model)
 
       if (result.type === "Err") {
@@ -135,7 +135,7 @@ export const updateFromFrontend = (
       return [modelNew, broadcast(["Resign_Done", result])]
     }
 
-    case "InputMove": {
+    case 'input-move': {
       const result = inputMove(msg[1], model)
 
       if (result.type === "Err") {
@@ -257,7 +257,7 @@ export const updateRoomLeave = (
     [other]: model[other],
   }
 
-  return [modelNew, broadcast(["PlayerLeft", modelNew])]
+  return [modelNew, broadcast(["player-left", modelNew])]
 }
 
 //

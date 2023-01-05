@@ -106,7 +106,7 @@ export type ToFrontend =
   | ["Sync", SharedModel]
   | ["GameOver"]
   | ["GameStarted"]
-  | ["PlayerLeft", SharedModel]
+  | ["player-left", SharedModel]
   | ClockTicked_Done
   | Res
 
@@ -141,7 +141,7 @@ export type Res =
 //
 //
 
-export type InputMove = ["InputMove", Board.MoveInput & { userId: UserId }]
+export type InputMove = ['input-move', Board.MoveInput & { userId: UserId }]
 
 export type InputMove_Done = [
   "InputMove_Done",
@@ -314,7 +314,7 @@ export const inputClock = (
 //
 //
 
-export type StartGame = ["StartGame", { userId: UserId }]
+export type StartGame = ['start-game', { userId: UserId }]
 export type StartGame_Done = [
   "StartGame_Done",
   Result<StartGameProblem, SharedModel>,

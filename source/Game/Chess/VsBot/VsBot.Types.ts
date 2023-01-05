@@ -95,7 +95,7 @@ export type ToFrontend =
   | ["Sync", SharedModel]
   | Res
   | BotMoved_Done
-  | ["PlayerLeft", SharedModel]
+  | ["player-left", SharedModel]
 
 export type Req =
   | InputUser
@@ -235,7 +235,7 @@ export const inputBot = (
   return Result.Ok(modelNew)
 }
 
-export type StartGame = ["StartGame", { userId: UserId }]
+export type StartGame = ['start-game', { userId: UserId }]
 export type StartGame_Done = [
   "StartGame_Done",
   Result<StartGameProblem, SharedModel>,
@@ -293,7 +293,7 @@ export const startGame = (
 //
 //
 
-export type StopGame = ["StopGame", { userId: UserId }]
+export type StopGame = ['stop-game', { userId: UserId }]
 export type StopGame_Done = [
   "StopGame_Done",
   Result<"must_be_playing", SharedModel>,
@@ -339,7 +339,7 @@ export const stopGame = (
 //
 //
 
-export type InputMove = ["InputMove", Board.MoveInput & { userId: UserId }]
+export type InputMove = ['input-move', Board.MoveInput & { userId: UserId }]
 
 export type InputMove_Done = [
   "InputMove_Done",

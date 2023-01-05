@@ -102,12 +102,12 @@ export const update = (
     case "Rematch_Respond":
     case "Rematch_Cancel":
     case "InputMoveTimeLimit":
-    case "StartGame":
-    case "StopPlaying":
-    case "StartPlaying": {
+    case 'start-game':
+    case "stop-playing":
+    case "start-playing": {
       return [model, sendToBackend(msg)]
     }
-    case "InputMove": {
+    case 'input-move': {
       return [
         {
           ...model,
@@ -129,13 +129,13 @@ export const updateFromBackend = (
   switch (msg[0]) {
     case "NewGame":
     case "InputMoveTimeLimit":
-    case "StartGame":
-    case "StopPlaying":
+    case 'start-game':
+    case "stop-playing":
     case "Rematch_Cancel":
     case "Resign":
     case "Rematch_Request":
     case "Rematch_Respond":
-    case "StartPlaying": {
+    case "start-playing": {
       const modelNew = msg[1].type === "Err" ? model : msg[1].value
       const merged = mergeWithBackend({
         frontendModel: model,
@@ -144,7 +144,7 @@ export const updateFromBackend = (
       return [{ ...merged, openedModal: "None" }, Cmd.None, []]
     }
 
-    case "InputMove": {
+    case 'input-move': {
       const modelNew = msg[1].type === "Err" ? model : msg[1].value
       const merged = mergeWithBackend({
         frontendModel: model,
@@ -161,7 +161,7 @@ export const updateFromBackend = (
       return [merged, Cmd.None, []]
     }
 
-    case "PlayerLeft": {
+    case "player-left": {
       const merged = mergeWithBackend({
         frontendModel: model,
         backendModel: msg[1],
@@ -238,7 +238,7 @@ export const View = ({
             visual={initVisual(model.columns)}
             columns={model.columns}
             onClick={(columnIndex) =>
-              $send(["InputMove", { userId: ctx.currentUserId, columnIndex }])
+              $send(['input-move', { userId: ctx.currentUserId, columnIndex }])
             }
             onHover={(columnIndex) => $send(["HoveredOverColumns", { columnIndex }])}
             disabled={toTurn(model.columns) !== currentUserPlayerType}
@@ -508,7 +508,7 @@ const ViewSetup = ({
   $send: (msg: Msg) => void
 }) => {
   const startGameResult = handle(
-    ["StartGame", { userId: ctx.currentUserId }],
+    ['start-game', { userId: ctx.currentUserId }],
     model,
   )
   const inputMoveTimeLimitResult = handle(
@@ -588,7 +588,7 @@ const ViewSetup = ({
           variant="contained"
           fullWidth
           disabled={startGameResult.type === "Err"}
-          onClick={() => $send(["StartGame", { userId: ctx.currentUserId }])}
+          onClick={() => $send(['start-game', { userId: ctx.currentUserId }])}
         >
           Start Game
         </Button>
@@ -722,7 +722,7 @@ const ViewSetupPlayerSlot = ({
           fullWidth
           variant="contained"
           onClick={() =>
-            $send(["StartPlaying", { userId: ctx.currentUserId, playerType }])
+            $send(["start-playing", { userId: ctx.currentUserId, playerType }])
           }
         >
           Play as {playerTypeToColor[playerType]}
@@ -745,7 +745,7 @@ const ViewSetupPlayerSlot = ({
           </Typography>
           {userId === ctx.currentUserId && (
             <Button
-              onClick={() => $send(["StopPlaying", { userId: ctx.currentUserId }])}
+              onClick={() => $send(["stop-playing", { userId: ctx.currentUserId }])}
             >
               Stop Playing
             </Button>

@@ -108,7 +108,7 @@ export const updateFromFrontend = (
       )
     }
 
-    case "StartGame": {
+    case 'start-game': {
       return sendResponse(
         wire,
         ["StartGame_Done", startGame(msg[1], model)],
@@ -116,7 +116,7 @@ export const updateFromFrontend = (
       )
     }
 
-    case "InputMove": {
+    case 'input-move': {
       return sendResponse(
         wire,
         ["InputMove_Done", inputMove(msg[1], model)],
@@ -198,7 +198,7 @@ export const updateRoomLeave = (
 
       const modelNew: Model = { ...model, [color]: "None" }
 
-      return [modelNew, broadcast(["PlayerLeft", modelNew])]
+      return [modelNew, broadcast(["player-left", modelNew])]
     }
 
     case "Game":
@@ -220,7 +220,7 @@ export const updateRoomLeave = (
         [color]: "None",
       }
 
-      return [modelNew, broadcast(["PlayerLeft", modelNew])]
+      return [modelNew, broadcast(["player-left", modelNew])]
     }
   }
 }

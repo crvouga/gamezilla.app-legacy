@@ -138,15 +138,15 @@ export type FrontendMsg =
 
 export type ToBackend = Req
 
-export type ToFrontend = Res | Tick_Done | ["PlayerLeft", SharedModel]
+export type ToFrontend = Res | Tick_Done | ["player-left", SharedModel]
 
 export type Req =
   // 
-  | ["StopPlaying", { userId: UserId }]
-  | ["StartPlaying", { userId: UserId; playerType: PlayerType }]
+  | ["stop-playing", { userId: UserId }]
+  | ["start-playing", { userId: UserId; playerType: PlayerType }]
   | ["InputMoveTimeLimit", { userId: UserId; moveTimeLimit: MoveTimeLimit }]
-  | ["InputMove", { columnIndex: ColumnIndex; userId: UserId }]
-  | ["StartGame", { userId: UserId }]
+  | ['input-move', { columnIndex: ColumnIndex; userId: UserId }]
+  | ['start-game', { userId: UserId }]
   // 
   | ["Rematch_Request", { userId: UserId }]
   | ["Rematch_Respond", { userId: UserId; response: "Accept" | "Decline" }]
@@ -173,7 +173,7 @@ export const handle = (
   model: SharedModel,
 ): Result<Problem, SharedModel> => {
   switch (req[0]) {
-    case "InputMove": {
+    case 'input-move': {
       if (model.type !== "Game") {
         return Err("not_in_game")
       }
@@ -196,7 +196,7 @@ export const handle = (
       return Ok(modelNew)
     }
 
-    case "StartPlaying": {
+    case "start-playing": {
       if (model.type !== "Setup") {
         return Err("not_in_setup")
       }
@@ -240,7 +240,7 @@ export const handle = (
       return Ok(modelNew)
     }
 
-    case "StopPlaying": {
+    case "stop-playing": {
       if (model.type !== "Setup") {
         return Err("not_in_setup")
       }
@@ -261,7 +261,7 @@ export const handle = (
       return Ok(modelNew)
     }
 
-    case "StartGame": {
+    case 'start-game': {
       if (model.type !== "Setup") {
         return Err("not_in_setup")
       }

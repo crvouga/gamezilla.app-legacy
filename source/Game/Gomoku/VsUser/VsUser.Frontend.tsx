@@ -48,7 +48,7 @@ export const update = ({ msg, model, sendToBackend }: { sendToBackend: (m: ToBac
 export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
 
-        case 'InputMove': {
+        case 'input-move': {
             if (msg[1].type === 'Err') {
                 return [model, Cmd.None]
             }
@@ -103,19 +103,19 @@ export const view = ({ model, ctx, onCancel, $send }: { $send: (m: Msg) => void;
                     playerOne: {
                         label: 'White',
                         userId: model.white,
-                        onStartPlaying: () => $send(['StartPlaying', { stone: 'white' }]),
-                        onStopPlaying: () => $send(['StopPlaying', { stone: 'white' }]),
+                        onStartPlaying: () => $send(["start-playing", { stone: 'white' }]),
+                        onStopPlaying: () => $send(["stop-playing", { stone: 'white' }]),
                         icon: (sx) => viewStoneIcon({ ...sx, stone: 'white' })
                     },
                     playerTwo: {
                         label: 'Black',
                         userId: model.black,
-                        onStartPlaying: () => $send(['StartPlaying', { stone: 'black' }]),
-                        onStopPlaying: () => $send(['StopPlaying', { stone: 'black' }]),
+                        onStartPlaying: () => $send(["start-playing", { stone: 'black' }]),
+                        onStopPlaying: () => $send(["stop-playing", { stone: 'black' }]),
                         icon: sx => viewStoneIcon({ ...sx, stone: 'black' })
                     },
                     onCancel,
-                    onStartGame: () => $send(['StartGame']),
+                    onStartGame: () => $send(['start-game']),
                 })
             )
         }
@@ -126,7 +126,7 @@ export const view = ({ model, ctx, onCancel, $send }: { $send: (m: Msg) => void;
                     viewUserPlayerSlotBar({ left: model.white, right: model.black, ctx }),
                     viewBoard({
                         board: model.board,
-                        onPress: position => $send(['InputMove', { position }])
+                        onPress: position => $send(['input-move', { position }])
                     }),
                     box({ flex: 1 }, []),
                     box({ display: 'flex', p: 2, }, [
@@ -157,7 +157,7 @@ export const view = ({ model, ctx, onCancel, $send }: { $send: (m: Msg) => void;
                     ]),
                     box({ p: 2, display: 'flex', gap: 2, flexDirection: 'column' }, [
                         button({ onPress: () => $send(['RematchRequest']), variant: "contained", startIcon: 'restart', width: '100%', }, 'Rematch'),
-                        button({ onPress: () => $send(['StopGame']), variant: "contained", startIcon: 'exit', width: '100%', }, 'Back to lobby'),
+                        button({ onPress: () => $send(['stop-game']), variant: "contained", startIcon: 'exit', width: '100%', }, 'Back to lobby'),
                     ]),
                 ])
             )

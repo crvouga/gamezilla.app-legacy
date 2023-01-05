@@ -41,12 +41,12 @@ export const update = (
   model: Model,
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case "BotMove": {
+    case "bot-move": {
       const result = botMove(msg[1], model)
       if (result.type === "Err") {
-        return [model, broadcast(["BotMove", result])]
+        return [model, broadcast(["bot-move", result])]
       }
-      return [result.value, broadcast(["BotMove", result])]
+      return [result.value, broadcast(["bot-move", result])]
     }
   }
 }
@@ -75,7 +75,7 @@ export const updateFromFrontend = (
             columns: modelNext.columns,
             maximizingPlayer: opposite[modelNext.userPlayerType],
           }),
-          Cmd.perform((result) => ["BotMove", result]),
+          Cmd.perform((result) => ["bot-move", result]),
         ),
       ]),
     ]
@@ -96,15 +96,15 @@ const updateFromFrontend_ = (
   model: Model,
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case "Restart":
-    case "StartGame":
-    case "StartPlaying":
-    case "StopGame":
-    case "StopPlaying":
-    case "SwapSides":
-    case "InputPlayerType":
-    case "InputMove":
-    case "InputBotLevel": {
+    case 'restart':
+    case 'start-game':
+    case "start-playing":
+    case 'stop-game':
+    case "stop-playing":
+    case 'swap-sides':
+    case "input-player-type":
+    case 'input-move':
+    case 'input-bot-level': {
       const res: Res = [msg[0], handle(msg, model)]
 
       if (res[1].type === "Err") {
@@ -136,7 +136,7 @@ export const updateRoomLeave = ({
     player: "None",
   }
 
-  return [modelNew, broadcast(["PlayerLeft", modelNew])]
+  return [modelNew, broadcast(["player-left", modelNew])]
 }
 
 //

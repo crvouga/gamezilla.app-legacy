@@ -68,15 +68,15 @@ export type ToFrontend = Res | ['BotMoved', Model]
 
 export type Req =
     // setup
-    | ['StartPlaying']
-    | ['StopPlaying']
+    | ["start-playing"]
+    | ["stop-playing"]
     | ['InputUserStone', { userStone: Stone }]
-    | ['InputBotLevel', { botLevel: BotLevel }]
-    | ['StartGame']
+    | ['input-bot-level', { botLevel: BotLevel }]
+    | ['start-game']
     // game
-    | ['InputMove', { position: Position }]
-    | ['StopGame']
-    | ['Restart']
+    | ['input-move', { position: Position }]
+    | ['stop-game']
+    | ['restart']
     | ['SwapSides']
 
 
@@ -93,7 +93,7 @@ export type Problem =
 
 export const handle = ({ currentUserId }: { currentUserId: UserId }, msg: Req, model: Model): Result<Problem, Model> => {
     switch (msg[0]) {
-        case 'InputBotLevel': {
+        case 'input-bot-level': {
             if (model.type !== 'setup') {
                 return Err("must_be_setup")
             }
@@ -119,7 +119,7 @@ export const handle = ({ currentUserId }: { currentUserId: UserId }, msg: Req, m
             })
         }
 
-        case 'StartPlaying': {
+        case "start-playing": {
             if (model.type !== 'setup') {
                 return Err("must_be_setup")
             }
@@ -132,7 +132,7 @@ export const handle = ({ currentUserId }: { currentUserId: UserId }, msg: Req, m
             })
         }
 
-        case 'StopPlaying': {
+        case "stop-playing": {
             if (model.type !== 'setup') {
                 return Err('must_be_setup')
             }
@@ -145,7 +145,7 @@ export const handle = ({ currentUserId }: { currentUserId: UserId }, msg: Req, m
             })
         }
 
-        case 'StartGame': {
+        case 'start-game': {
             if (model.type !== 'setup') {
                 return Err('must_be_setup')
             }
@@ -161,7 +161,7 @@ export const handle = ({ currentUserId }: { currentUserId: UserId }, msg: Req, m
             })
         }
 
-        case 'InputMove': {
+        case 'input-move': {
             if (model.type !== 'game') {
                 return Err("must_be_game")
             }
@@ -182,7 +182,7 @@ export const handle = ({ currentUserId }: { currentUserId: UserId }, msg: Req, m
             })
         }
 
-        case 'StopGame': {
+        case 'stop-game': {
             if (model.type !== 'game') {
                 return Err("must_be_game")
             }
@@ -197,7 +197,7 @@ export const handle = ({ currentUserId }: { currentUserId: UserId }, msg: Req, m
             })
         }
 
-        case 'Restart': {
+        case 'restart': {
             if (model.type !== 'game') {
                 return Err("must_be_game")
             }

@@ -59,7 +59,7 @@ export const update: Update = (wire, msg, model) => {
 
 export const update_: Update = ({ broadcast }, msg, model) => {
   switch (msg[0]) {
-    case "BotMove": {
+    case "bot-move": {
       const response: ToFrontend = ["BotMove_Done", botMove(msg[1], model)]
       const modelNext = response[1].type === "Ok" ? response[1].value : model
       return [modelNext, broadcast(response)]
@@ -100,7 +100,7 @@ export const updateFromFrontend: UpdateFromFrontend = (
             maximizingPlayer: toOpposite(modelNext.userPlayerType),
             board: modelNext.board,
           }),
-          Cmd.perform((result) => ["BotMove", result]),
+          Cmd.perform((result) => ["bot-move", result]),
         ),
       ]),
     ]
@@ -115,7 +115,7 @@ const updateFromFrontend_: UpdateFromFrontend = (
   model,
 ) => {
   switch (msg[0]) {
-    case "StartGame": {
+    case 'start-game': {
       const response: Response = ["StartGame_Done", startGame(msg[1], model)]
       if (response[1].type === "Err") {
         return [model, sendToClient(response)]
@@ -123,7 +123,7 @@ const updateFromFrontend_: UpdateFromFrontend = (
       return [response[1].value, broadcast(response)]
     }
 
-    case "StopPlaying": {
+    case "stop-playing": {
       const response: Response = [
         "StopPlaying_Done",
         stopPlaying(msg[1], model),
@@ -134,7 +134,7 @@ const updateFromFrontend_: UpdateFromFrontend = (
       return [response[1].value, broadcast(response)]
     }
 
-    case "StartPlaying": {
+    case "start-playing": {
       const response: Response = [
         "StartPlaying_Done",
         startPlaying(msg[1], model),
@@ -153,7 +153,7 @@ const updateFromFrontend_: UpdateFromFrontend = (
       return [response[1].value, broadcast(response)]
     }
 
-    case "InputPlayerType": {
+    case "input-player-type": {
       const response: Response = [
         "InputPlayerType_Done",
         inputPlayerType(msg[1], model),
@@ -164,7 +164,7 @@ const updateFromFrontend_: UpdateFromFrontend = (
       return [response[1].value, broadcast(response)]
     }
 
-    case "StopGame": {
+    case 'stop-game': {
       const response: Response = ["StopGame_Done", stopGame(msg[1], model)]
       if (response[1].type === "Err") {
         return [model, sendToClient(response)]
@@ -172,7 +172,7 @@ const updateFromFrontend_: UpdateFromFrontend = (
       return [response[1].value, broadcast(response)]
     }
 
-    case "InputMove": {
+    case 'input-move': {
       const response: Response = ["InputMove_Done", inputMove(msg[1], model)]
       if (response[1].type === "Err") {
         return [model, sendToClient(response)]
@@ -180,7 +180,7 @@ const updateFromFrontend_: UpdateFromFrontend = (
       return [response[1].value, broadcast(response)]
     }
 
-    case "SwapSides": {
+    case 'swap-sides': {
       const response: Response = ["SwapSides_Done", swapSides(msg[1], model)]
       if (response[1].type === "Err") {
         return [model, sendToClient(response)]
@@ -188,7 +188,7 @@ const updateFromFrontend_: UpdateFromFrontend = (
       return [response[1].value, broadcast(response)]
     }
 
-    case "Restart": {
+    case 'restart': {
       const response: Response = ["Restart_Done", restart(msg[1], model)]
       if (response[1].type === "Err") {
         return [model, sendToClient(response)]
@@ -218,7 +218,7 @@ export const updateRoomLeave = ({
     userPlayerType: model.userPlayerType,
   }
 
-  return [modelNew, broadcast(["PlayerLeft", modelNew])]
+  return [modelNew, broadcast(["player-left", modelNew])]
 }
 
 //

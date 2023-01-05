@@ -145,7 +145,7 @@ export type ToFrontend =
   | Res
   | RoundCountDown_Done
   | MoveCountDown_Done
-  | ["PlayerLeft", SharedModel]
+  | ["player-left", SharedModel]
 
 export type GameMsg = ["ClickedBoard", TicTacToe.Position]
 
@@ -223,7 +223,7 @@ export const inputPlayer = (
   return Ok(modelNew)
 }
 
-type StopPlaying = ["StopPlaying", { userId: UserId }]
+type StopPlaying = ["stop-playing", { userId: UserId }]
 type StopPlaying_Done = [
   "StopPlaying_Done",
   Result<StopPlayingProblem, SharedModel>,
@@ -260,7 +260,7 @@ export const stopPlaying = (
 //
 //
 
-type StartGame = ["StartGame", { userId: UserId }]
+type StartGame = ['start-game', { userId: UserId }]
 type StartGame_Done = ["StartGame_Done", Result<StartGameProblem, SharedModel>]
 type StartGameProblem =
   | "not_in_setup_mode"
@@ -354,7 +354,7 @@ export const resign = (
 //
 //
 
-type InputMove = ["InputMove", { userId: UserId; position: TicTacToe.Position }]
+type InputMove = ['input-move', { userId: UserId; position: TicTacToe.Position }]
 type InputMove_Done = ["InputMove_Done", Result<InputMoveProblem, SharedModel>]
 type InputMoveProblem =
   | TicTacToe.MoveProblem
