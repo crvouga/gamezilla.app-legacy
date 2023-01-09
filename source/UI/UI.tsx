@@ -356,6 +356,10 @@ export const AlertTitle = Mui.AlertTitle
 
 export const CircularProgress = Mui.CircularProgress
 
+export const spinner = ({ size, ...sx }: Sx & { size?: number }) => {
+  return <CircularProgress size={size} sx={sx} />
+}
+
 export const Collapse = Mui.Collapse
 
 export const Badge = Mui.Badge

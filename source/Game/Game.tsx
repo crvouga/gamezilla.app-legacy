@@ -1,6 +1,6 @@
 import { UserId } from "../Data/UserId"
 import * as ProfileStore from "../Profile/Profile.Store"
-import { avatar, Avatar, box, Box, Button, fillBox, FillBox, icon, Icons, paper, Sx, text, ToggleButton, ToggleButtonGroup, Typography, ViewNode } from "../UI"
+import { fragment, actionButton, avatar, Avatar, box, Box, Button, fillBox, FillBox, icon, IconName, Icons, paper, spinner, Sx, text, ToggleButton, ToggleButtonGroup, Typography, ViewNode } from "../UI"
 import * as Chess from "./Chess/Chess"
 import * as ConnectFour from "./connect-four/connect-four/connect-four-view"
 import {
@@ -339,40 +339,52 @@ export const viewVsBotSetupScreen = <BotLevel, Player>({
   )
 }
 
-export const viewVsBotGameScreen = <Player,>({
+
+export const viewVsBotGameScreen = <PlayerType,>({
   botPlayer,
   userPlayer,
-  botLabel,
-  viewPlayerIcon,
+  botName,
   playerUserId,
   ctx,
-  viewGame,
-  leftPlayer
+  leftPlayer,
+  turn,
+  actions,
+  viewPlayerIcon,
+  viewBoard,
 }: {
-  botPlayer: Player,
-  botLabel: string,
-  userPlayer: Player,
-  leftPlayer: Player,
+  turn: PlayerType,
+  botPlayer: PlayerType,
+  botName: string,
+  userPlayer: PlayerType,
+  leftPlayer: PlayerType,
   playerUserId: UserId,
   ctx: Ctx
-  viewPlayerIcon: (player: Player, sx: Sx) => ViewNode
-  viewGame: () => ViewNode
+  actions: [string, IconName, () => void][],
+  viewPlayerIcon: (props: { playerType: PlayerType, sx: Sx }) => ViewNode
+  viewBoard: () => ViewNode
 }) => {
   const iconSize = {
     width: 32,
     height: 32
   }
 
+  const turnSx: Sx = {
+    borderBottomWidth: 1,
+    borderBottomStyle: "solid",
+    borderBottomColor: "primary.main"
+  }
+
   const botSlot =
-    paper({ display: "flex", variant: "outlined", alignItems: "center", p: 1, flex: 1, overflow: 'hidden' }, [
-      viewPlayerIcon(botPlayer, { ...iconSize, mr: 1 }),
+    paper({ display: "flex", variant: "outlined", alignItems: "center", p: 1, flex: 1, overflow: 'hidden', ...(turn === botPlayer ? turnSx : {}) }, [
+      viewPlayerIcon({ playerType: botPlayer, sx: { ...iconSize, mr: 1 } }),
       icon("smart-toy", { ...iconSize, mr: 1, }),
-      text({}, [botLabel])
+      text({ noWrap: true, flex: 1 }, [botName]),
+      turn === botPlayer ? spinner({ size: 24, mr: 1 }) : fragment([])
     ])
 
   const userSlot =
-    paper({ display: "flex", variant: "outlined", alignItems: "center", p: 1, flex: 1, overflow: 'hidden' }, [
-      viewPlayerIcon(userPlayer, { ...iconSize, mr: 1 }),
+    paper({ display: "flex", variant: "outlined", alignItems: "center", p: 1, flex: 1, overflow: 'hidden', ...(turn === userPlayer ? turnSx : {}) }, [
+      viewPlayerIcon({ playerType: userPlayer, sx: { ...iconSize, mr: 1 } }),
       avatar({ ...iconSize, mr: 1, src: ctx.profiles[playerUserId]?.avatarUrl }),
       text({ noWrap: true }, [ctx.profiles[playerUserId]?.username])
     ])
@@ -381,14 +393,20 @@ export const viewVsBotGameScreen = <Player,>({
 
   const rightSlot = userPlayer !== leftPlayer ? userSlot : botSlot
 
+  const feedback = ctx.currentUserId === playerUserId ? "Your Turn" : "Waiting for Opponent"
+
   return (
     fillBox({}, [
       box({ px: 2, pt: 2, display: "flex", gap: 2, justifyContent: "center", alignItems: 'center' }, [leftSlot, rightSlot]),
-      viewGame()
+      text({ px: 2, pt: 2, pb: 2, textAlign: "center" }, [feedback]),
+      viewBoard(),
+      box({ flex: 1 }, []),
+      box({ display: "flex", alignItems: "center", width: '100%' }, actions.map(([label, iconName, onPress]) => (
+        actionButton({ label, iconName, onPress })
+      )))
     ])
   )
 }
-
 
 
 export const viewSelectModeScreen = ({
