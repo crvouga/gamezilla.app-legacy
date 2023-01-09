@@ -447,7 +447,7 @@ export const viewSelectModeScreen = ({
   }
 
   return (
-    <FillBox sx={{ px: 2 }}>
+    <FillBox sx={{ p: 2 }}>
       <Box sx={{ height: 100, width: 100, mx: 'auto', borderRadius: 2, overflow: "hidden", mt: 4, mb: 2 }}>
         {coverArt}
       </Box>
