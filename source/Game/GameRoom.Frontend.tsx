@@ -615,22 +615,9 @@ export const ViewPageGame = ({
 
   const usersInRoom = Object.values(model.users).filter(user => user.roomId === room.roomId)
 
+
   return (
     <FillBox>
-      {game ? (
-        <Game.View
-          gameRoomCtx={{
-            hostId: room.hostId,
-            onQuit: () => $send(['InputGame', { userId: ctx.currentUserId, gameName: undefined }])
-          }}
-          ctx={ctx}
-          $send={(msg) => $send(["Game", msg])}
-          model={game}
-        />
-      ) : (
-        <ViewNotInGame ctx={ctx} room={room} $send={$send} />
-      )}
-
       <Toolbar
         variant="dense"
         sx={{ paddingX: 2, justifyContent: "space-between" }}
@@ -642,6 +629,9 @@ export const ViewPageGame = ({
         >
           Home
         </Button>
+        <Typography variant="body2" sx={{ flex: 1, textAlign: "center" }}>
+          {game?.[0] ? Game.gameNameToString(game[0]) : "Game"}
+        </Typography>
         <Badge
           badgeContent={usersInRoom.length > 1 ? usersInRoom.length : undefined}
           color="secondary"
@@ -655,6 +645,22 @@ export const ViewPageGame = ({
           </Button>
         </Badge>
       </Toolbar>
+
+      <Divider />
+
+      {game ? (
+        <Game.View
+          gameRoomCtx={{
+            hostId: room.hostId,
+            onQuit: () => $send(['InputGame', { userId: ctx.currentUserId, gameName: undefined }])
+          }}
+          ctx={ctx}
+          $send={(msg) => $send(["Game", msg])}
+          model={game}
+        />
+      ) : (
+        <ViewNotInGame ctx={ctx} room={room} $send={$send} />
+      )}
     </FillBox>
   )
 }
@@ -663,7 +669,6 @@ export const ViewNotInGame = ({ room, ctx, $send }: { room: FrontendRoom, ctx: C
   if (room.hostId !== ctx.currentUserId) {
     return (
       <FillBox>
-        <Header title="Game" />
         <Box sx={{ flex: 1, display: 'flex', alignItems: "center", justifyContent: "center", flexDirection: "column", px: 2 }}>
           <Avatar src={ctx.profiles[room.hostId]?.avatarUrl} sx={{ mb: 1, width: 100, height: 100 }} />
           <Typography color='text.primary' align='center' >
@@ -683,8 +688,6 @@ export const ViewNotInGame = ({ room, ctx, $send }: { room: FrontendRoom, ctx: C
 
   return (
     <FillBox>
-      <Header title="Game" />
-
       <Box sx={{ px: 1, pt: 1, width: '100%', display: 'flex', flexWrap: "wrap", justifyContent: "flex-start" }}>
         {gameNameList.map((gameName) => (
           <Box key={gameName} sx={{ width: "33.33%", p: 1 }}>
