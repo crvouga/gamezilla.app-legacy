@@ -1,6 +1,6 @@
 import { UserId } from "../Data/UserId"
 import * as ProfileStore from "../Profile/Profile.Store"
-import { fragment, actionButton, avatar, Avatar, box, Box, Button, fillBox, FillBox, icon, IconName, Icons, paper, spinner, Sx, text, ToggleButton, ToggleButtonGroup, Typography, ViewNode } from "../UI"
+import { Divider, actionButton, avatar, Avatar, box, Box, Button, fillBox, FillBox, fragment, icon, IconName, Icons, paper, spinner, Sx, text, ToggleButton, ToggleButtonGroup, Typography, ViewNode } from "../UI"
 import * as Chess from "./Chess/Chess"
 import * as ConnectFour from "./connect-four/connect-four/connect-four-view"
 import {
@@ -185,10 +185,63 @@ const viewPlayerSlot = ({ ctx, label, userId, icon, onStartPlaying, onStopPlayin
 }
 
 
+export const viewVsBotVersusBlock = ({
+  playerId,
+  botName,
+  ctx,
+}: {
+  ctx: Ctx,
+  botName: string,
+  playerId: UserId | null
+}) => {
+
+  const iconSx: Sx = {
+    width: 52,
+    height: 52,
+    mb: 1,
+  }
+
+  const slotSx: Sx = {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    overflow: "hidden",
+    width: "40%",
+    px: 2,
+  }
+
+  const humanSlot = <Box sx={slotSx}>
+    <Avatar sx={iconSx} src={playerId ? ctx.profiles[playerId]?.avatarUrl : ""} >
+      {/* <Icons.QuestionMark /> */}
+    </Avatar>
+    <Typography align="center" noWrap sx={{ width: "100%" }}>
+      {playerId ? ctx.profiles[playerId]?.username ?? "..." : "?"}
+    </Typography>
+  </Box>
+
+  const botSlot = <Box sx={slotSx}>
+    <Icons.SmartToy sx={{ ...iconSx }} />
+    <Typography align="center" noWrap>
+      {botName}
+    </Typography>
+  </Box>
+
+  return (
+    <Box sx={{ width: "100%", display: 'flex', alignItems: 'center', p: 2, py: 4, }}>
+      {humanSlot}
+      <Typography variant="h4" align="center" sx={{ px: 1, width: "20%", overflow: "hidden" }}>
+        vs
+      </Typography>
+      {botSlot}
+    </Box>
+  )
+}
+
+
 export const viewVsBotSetupScreen = <BotLevel, Player>({
-  title,
-  subtitle,
-  coverArt,
+  // title,
+  // subtitle,
+  // coverArt,
   ctx,
   playerId,
   botLevel,
@@ -219,10 +272,15 @@ export const viewVsBotSetupScreen = <BotLevel, Player>({
   onStartPlaying: () => void
   onStopPlaying: () => void
 }) => {
-
   return (
-    <FillBox sx={{ overflowY: "scroll", py: 2, }}>
-      <Box sx={{ height: 100, width: 100, minHeight: 100, minWidth: 100, mx: 'auto', borderRadius: 2, overflow: "hidden", mt: 2, mb: 2 }}>
+    <FillBox sx={{ overflowY: "scroll", pb: 2, }}>
+      {viewVsBotVersusBlock({
+        playerId,
+        botName: String(botLevel.selected),
+        ctx,
+      })}
+      <Divider />
+      {/* <Box sx={{ height: 100, width: 100, minHeight: 100, minWidth: 100, mx: 'auto', borderRadius: 2, overflow: "hidden", mt: 2, mb: 2 }}>
         {coverArt}
       </Box>
 
@@ -232,9 +290,9 @@ export const viewVsBotSetupScreen = <BotLevel, Player>({
 
       <Typography variant="subtitle2" color="text.secondary" align="center" sx={{ mb: 2 }}>
         {subtitle}
-      </Typography>
+      </Typography> */}
 
-      <Typography color="text.secondary" sx={{ px: 2, mb: 1 }}>
+      <Typography color="text.secondary" sx={{ mt: 2, px: 2, mb: 1 }}>
         Human
       </Typography>
 
