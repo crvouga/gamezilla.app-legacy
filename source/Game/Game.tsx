@@ -185,20 +185,30 @@ const viewPlayerSlot = ({ ctx, label, userId, icon, onStartPlaying, onStopPlayin
 }
 
 
-export const viewVsBotVersusBlock = ({
+export const viewVsBotVersusBlock = <PlayerType,>({
   playerId,
   botName,
   ctx,
+  viewPlayerIcon,
+  userPlayerType,
+  botPlayerType
 }: {
   ctx: Ctx,
   botName: string,
   playerId: UserId | null
+  userPlayerType: PlayerType,
+  botPlayerType: PlayerType,
+  viewPlayerIcon: ({ playerType, sx }: { sx?: Sx, playerType: PlayerType }) => ViewNode,
 }) => {
 
   const iconSx: Sx = {
     width: 52,
     height: 52,
-    mb: 1,
+  }
+
+  const playerTypeIconSx: Sx = {
+    width: 52,
+    height: 52,
   }
 
   const slotSx: Sx = {
@@ -211,16 +221,22 @@ export const viewVsBotVersusBlock = ({
   }
 
   const humanSlot = <Box sx={slotSx}>
-    <Avatar sx={iconSx} src={playerId ? ctx.profiles[playerId]?.avatarUrl : ""} >
-      {/* <Icons.QuestionMark /> */}
-    </Avatar>
+    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, gap: 1 }}>
+      {viewPlayerIcon({ playerType: userPlayerType, sx: { ...playerTypeIconSx } })}
+      <Avatar sx={iconSx} src={playerId ? ctx.profiles[playerId]?.avatarUrl : ""} >
+        {/* <Icons.QuestionMark /> */}
+      </Avatar>
+    </Box>
     <Typography align="center" noWrap sx={{ width: "100%" }}>
       {playerId ? ctx.profiles[playerId]?.username ?? "..." : "?"}
     </Typography>
   </Box>
 
   const botSlot = <Box sx={slotSx}>
-    <Icons.SmartToy sx={{ ...iconSx }} />
+    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, gap: 1 }}>
+      {viewPlayerIcon({ playerType: botPlayerType, sx: { ...playerTypeIconSx } })}
+      <Icons.SmartToy sx={{ ...iconSx }} />
+    </Box>
     <Typography align="center" noWrap>
       {botName}
     </Typography>
@@ -237,8 +253,7 @@ export const viewVsBotVersusBlock = ({
   )
 }
 
-
-export const viewVsBotSetupScreen = <BotLevel, Player>({
+export const viewVsBotSetupScreen = <BotLevel, PlayerType>({
   // title,
   // subtitle,
   // coverArt,
@@ -262,27 +277,36 @@ export const viewVsBotSetupScreen = <BotLevel, Player>({
     onInput: (value: BotLevel) => void
   }
   player: {
-    selected: Player,
-    values: Player[]
-    onInput: (value: Player) => void
-    icon: (value: Player) => ViewNode
-  }
+    selected: PlayerType,
+    values: PlayerType[]
+    onInput: (value: PlayerType) => void
+    icon: (props: { sx?: Sx, playerType: PlayerType }) => ViewNode
+  },
   onCancel: () => void,
   onStartGame: () => void,
   onStartPlaying: () => void
   onStopPlaying: () => void
 }) => {
+  // const coverArtSize = 72
   return (
     <FillBox sx={{ overflowY: "scroll", pb: 2, }}>
+      {/* <Box sx={{ height: coverArtSize, width: coverArtSize, minHeight: coverArtSize, minWidth: coverArtSize, mx: 'auto', borderRadius: 2, overflow: "hidden", mt: 2, }}>
+        {coverArt}
+      </Box>
+      <Typography variant="subtitle2" color="text.secondary" align="center" sx={{ mt: 1 }}>
+        Vs Bot
+      </Typography> */}
       {viewVsBotVersusBlock({
+        viewPlayerIcon: ({ sx, playerType }) => player.icon({ sx, playerType }),
         playerId,
         botName: String(botLevel.selected),
         ctx,
+        userPlayerType: player.selected,
+        botPlayerType: player.values.find((p) => p !== player.selected) ?? player.selected,
+
       })}
       <Divider />
-      {/* <Box sx={{ height: 100, width: 100, minHeight: 100, minWidth: 100, mx: 'auto', borderRadius: 2, overflow: "hidden", mt: 2, mb: 2 }}>
-        {coverArt}
-      </Box>
+      {/* 
 
       <Typography variant="h2" align="center" sx={{ mb: 1 }} >
         {title}
@@ -290,7 +314,8 @@ export const viewVsBotSetupScreen = <BotLevel, Player>({
 
       <Typography variant="subtitle2" color="text.secondary" align="center" sx={{ mb: 2 }}>
         {subtitle}
-      </Typography> */}
+      </Typography> 
+      */}
 
       <Typography color="text.secondary" sx={{ mt: 2, px: 2, mb: 1 }}>
         Human
@@ -327,60 +352,62 @@ export const viewVsBotSetupScreen = <BotLevel, Player>({
         </Box>
       )}
 
-      <Typography color="text.secondary" sx={{ px: 2, mb: 1 }}>
-        Computer
-      </Typography>
+      {ctx.currentUserId === playerId && <>
+        <Typography color="text.secondary" sx={{ px: 2, mb: 1 }}>
+          Computer
+        </Typography>
 
-      <Box
-        sx={{
-          width: "100%",
-          px: 2,
-          mb: 3,
-        }}>
+        <Box
+          sx={{
+            width: "100%",
+            px: 2,
+            mb: 3,
+          }}>
 
-        <ToggleButtonGroup disabled={ctx.currentUserId !== playerId} fullWidth value={String(botLevel.selected)}>
-          {botLevel.values.map((value) => (
-            <ToggleButton
-              key={String(value)}
-              value={String(value)}
-              onClick={() => botLevel.onInput(value)}>
-              {String(value)}
-            </ToggleButton>
-          ))}
-        </ToggleButtonGroup>
-      </Box>
+          <ToggleButtonGroup disabled={ctx.currentUserId !== playerId} fullWidth value={String(botLevel.selected)}>
+            {botLevel.values.map((value) => (
+              <ToggleButton
+                key={String(value)}
+                value={String(value)}
+                onClick={() => botLevel.onInput(value)}>
+                {String(value)}
+              </ToggleButton>
+            ))}
+          </ToggleButtonGroup>
+        </Box>
 
-      <Typography color="text.secondary" sx={{ px: 2, mb: 1 }}>
-        Play As
-      </Typography>
+        <Typography color="text.secondary" sx={{ px: 2, mb: 1 }}>
+          Play As
+        </Typography>
 
-      <Box
-        sx={{
-          width: "100%",
-          px: 2,
-          mb: 3,
-        }}>
+        <Box
+          sx={{
+            width: "100%",
+            px: 2,
+            mb: 3,
+          }}>
 
-        <ToggleButtonGroup disabled={ctx.currentUserId !== playerId} fullWidth value={String(player.selected)}>
-          {player.values.map((value) => (
-            <ToggleButton key={String(value)} value={String(value)} onClick={() => player.onInput(value)}>
-              {player.icon(value)}
-            </ToggleButton>
-          ))}
-        </ToggleButtonGroup>
-      </Box>
+          <ToggleButtonGroup disabled={ctx.currentUserId !== playerId} fullWidth value={String(player.selected)}>
+            {player.values.map((value) => (
+              <ToggleButton key={String(value)} value={String(value)} onClick={() => player.onInput(value)}>
+                {player.icon({ playerType: value, sx: {} })}
+              </ToggleButton>
+            ))}
+          </ToggleButtonGroup>
+        </Box>
 
-      <Box sx={{ px: 2, mt: 2 }} >
-        <Button
-          disabled={ctx.currentUserId !== playerId}
-          fullWidth
-          variant="contained"
-          endIcon={<Icons.ArrowRight />}
-          onClick={onStartGame}
-        >
-          Start Game
-        </Button>
-      </Box>
+        <Box sx={{ px: 2, mt: 2 }} >
+          <Button
+            disabled={ctx.currentUserId !== playerId}
+            fullWidth
+            variant="contained"
+            endIcon={<Icons.ArrowRight />}
+            onClick={onStartGame}
+          >
+            Start Game
+          </Button>
+        </Box>
+      </>}
 
       <Box sx={{ flex: 1, py: 2, }} />
 

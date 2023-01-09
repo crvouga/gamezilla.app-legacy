@@ -238,7 +238,7 @@ export const View = ({
           values: Object.values(playerTypes),
           selected: model.userPlayerType,
           onInput: (playerType) => $send(['input-player-type', { playerType, userId: ctx.currentUserId }]),
-          icon: (playerType) => <PlayerIcon playerType={playerType} sx={{ width: "1rem", height: "1rem" }} />,
+          icon: ({ sx, playerType }) => <PlayerIcon playerType={playerType} sx={{ width: "1rem", height: "1rem", ...sx }} />,
         },
         onCancel: goBack,
         onStartGame: () => $send(['start-game', { userId: ctx.currentUserId }]),
