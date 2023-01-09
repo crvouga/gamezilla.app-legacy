@@ -4,11 +4,12 @@ import { Cmd, Sub } from "../../../Core"
 import * as Spring from "../../../Core/animation/spring"
 import { UserId } from "../../../Data/UserId"
 import { ActionButton, Avatar, Box, CircularProgress, Fade, FillBox, Icons, Paper, Typography, useTheme } from "../../../UI"
-import { Ctx, viewVsBotSetupScreen } from "../../Game"
-import { PlayerType, playerTypes, toStatus, toTurn } from "../connect-four/connect-four"
+import { Ctx, viewVsBotGameScreen, viewVsBotSetupScreen } from "../../Game"
+import { opposite, PlayerType, playerTypes, toStatus, toTurn } from "../connect-four/connect-four"
 import { gameTheme, initVisual, isDone, PlayerIcon, step, ViewColumns, viewCoverArt } from "../connect-four/connect-four-view"
 import {
   BackendModel, botLevel, FrontendModel,
+  FrontendGameModel,
   FrontendMsg,
   GameModel,
   GameOver,
@@ -242,10 +243,55 @@ export const View = ({
         onCancel: goBack,
         onStartGame: () => $send(['start-game', { userId: ctx.currentUserId }]),
       })
-
     )
   }
 
+  // return viewGame({ model, ctx, $send, })
+
+  return viewVsBotGameScreen<PlayerType>({
+    botName: model.botLevel,
+    botPlayer: opposite[model.userPlayerType],
+    ctx,
+    leftPlayer: "PlayerOne",
+    playerUserId: model.player,
+    userPlayer: model.userPlayerType,
+    turn: toTurn(model.columns),
+    actions: [
+      ['Stop', 'exit', () => $send(['stop-game', { userId: ctx.currentUserId }])],
+      ['Restart', 'restart', () => $send(['restart', { userId: ctx.currentUserId }])],
+      ['Swap', 'swap', () => $send(['swap-sides', { userId: ctx.currentUserId }])],
+    ],
+    viewPlayerIcon: (props) => <PlayerIcon {...props} />,
+    viewBoard: () => <ViewColumns
+      ghost={
+        ctx.currentUserId === model.player &&
+          toTurn(model.columns) === model.userPlayerType &&
+          model.ghostIndex !== "none"
+          ? {
+            columnIndex: model.ghostIndex,
+            playerType: model.userPlayerType,
+          }
+          : undefined
+      }
+      columns={model.columns}
+      onHover={(columnIndex) => $send(["hovered", { columnIndex }])}
+      onClick={(columnIndex) =>
+        $send(['input-move', { columnIndex, userId: ctx.currentUserId }])
+      }
+      visual={model.visual}
+    />,
+  })
+}
+
+export const viewGame = ({
+  model,
+  ctx,
+  $send,
+}: {
+  model: FrontendGameModel
+  ctx: Ctx
+  $send: (msg: Msg) => void
+}) => {
   const stopGameRes = handle(['stop-game', { userId: ctx.currentUserId }], model)
   const restartRes = handle(['restart', { userId: ctx.currentUserId }], model)
   const swapSidesRes = handle(
@@ -336,7 +382,7 @@ export const View = ({
           disabled={swapSidesRes.type === "Err"}
         />
       </Box>
-    </FillBox >
+    </FillBox>
   )
 }
 

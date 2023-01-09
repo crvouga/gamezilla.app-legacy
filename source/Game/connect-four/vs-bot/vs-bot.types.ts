@@ -52,10 +52,12 @@ export const isBotTurn = (model: SharedModel): boolean => {
 
 export type BackendModel = SharedModel
 
-export type FrontendModel = SetupModel | (GameModel & {
+export type FrontendGameModel = GameModel & {
   ghostIndex: ColumnIndex | "none",
   visual: VisualModel
-})
+}
+
+export type FrontendModel = SetupModel | FrontendGameModel
 
 export const initShared = ({
   player,
