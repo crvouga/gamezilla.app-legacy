@@ -629,7 +629,7 @@ export const ViewPageGame = ({
         >
           Home
         </Button>
-        <Typography variant="body2" sx={{ flex: 1, textAlign: "center" }}>
+        <Typography variant="h6" sx={{ flex: 1, textAlign: "center" }}>
           {game?.[0] ? Game.gameNameToString(game[0]) : "Game"}
         </Typography>
         <Badge
