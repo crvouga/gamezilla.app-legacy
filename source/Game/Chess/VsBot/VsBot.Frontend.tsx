@@ -315,7 +315,7 @@ export const View = ({
           values: Object.values(Board.colors),
           selected: model.sharedModel.userColor,
           onInput: (color) => $send(["InputColor", { userColor: color, userId: ctx.currentUserId }]),
-          icon: (color) => <PawnIcon sx={{ color: color === 'w' ? '#fff' : "#000" }} stroke={color === 'w' ? '#000' : '#fff'} />
+          icon: ({ sx, playerType: color }) => <PawnIcon sx={{ ...sx, color: color === 'w' ? '#fff' : "#000" }} stroke={color === 'w' ? '#000' : '#fff'} />
         },
         playerId: model.sharedModel.userId === "none" ? null : model.sharedModel.userId,
         title: "Chess",

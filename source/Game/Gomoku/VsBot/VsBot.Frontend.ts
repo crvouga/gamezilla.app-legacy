@@ -103,7 +103,7 @@ export const view = ({ $send, model, ctx, onBack }: { model: Model, ctx: Ctx, $s
                         onInput: (userStone) => $send(['InputUserStone', { userStone }]),
                         selected: model.userStone,
                         values: Object.values(stones),
-                        icon: (stone) => viewStoneIcon({ stone })
+                        icon: ({ sx, playerType: stone }) => viewStoneIcon({ ...sx, stone })
                     },
                     ctx,
                     title: "Gomoku",
