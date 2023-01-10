@@ -1,3 +1,4 @@
+import { z } from "zod"
 import { Result, Uuid } from "../Core"
 
 export type UserId = string & { _opaque: "UserId" }

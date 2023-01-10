@@ -1,3 +1,4 @@
+import { z } from "zod"
 import { exhaustive } from "../../../Core"
 import { Err, Ok, Result } from "../../../Core/Result"
 import { UserId } from "../../../Data/UserId"
@@ -31,6 +32,29 @@ export type SetupModel = {
   botLevel: BotLevel
   player: UserId | "none"
 }
+
+const PlayerType = z.union([z.literal("PlayerOne"), z.literal("PlayerTwo")])
+
+const BotLevel = z.union([z.literal("Easy"), z.literal("Medium"), z.literal("Hard")])
+
+const SetupModel = z.object({
+  type: z.literal("Setup"),
+  userPlayerType: PlayerType,
+  botLevel: BotLevel,
+  player: z.union([z.string(), z.literal("none")]),
+})
+
+const Slot = z.union([z.literal("PlayerOne"), z.literal("PlayerTwo"), z.literal("none")])
+const Columns = z.array(z.array(Slot))
+
+const GameModel = z.object({
+  type: z.literal("Game"),
+  userPlayerType: PlayerType,
+  botLevel: BotLevel,
+  // player: UserId,
+  columns: Columns,
+})
+const SharedModel = z.discriminatedUnion("type", [SetupModel, GameModel])
 
 export type GameModel = {
   type: "Game"
