@@ -155,6 +155,15 @@ export type ToFrontend =
 
 export type ToBackend = Req
 
+const Req = z.union([
+  z.tuple([z.literal("start-playing"), z.object({ userId: z.string() })]),
+  z.tuple([z.literal("stop-playing"), z.object({ userId: z.string() })]),
+])
+
+type Req_ = z.infer<typeof Req>
+
+export const m: Req_ = ["start-playing", { userId: "123" }]
+
 export type Req =
   | ["start-playing", { userId: UserId }]
   | ["stop-playing", { userId: UserId }]

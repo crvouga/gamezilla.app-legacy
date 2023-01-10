@@ -3,7 +3,7 @@
   "version": "",
   "private": true,
   "scripts": {
-    "backend": "PERSIST_MODEL=true npx ts-node-dev --respawn --no-deps --transpile-only ./source/App.Backend.ts",
+    "backend": "npx ts-node-dev --respawn --no-deps --transpile-only ./source/App.Backend.ts",
     "backend:build": "npx tsc --project tsconfig.json",
     "backend:start": "node --max-old-space-size=300 ./dist/source/App.Backend.js",
     "build-storybook": "build-storybook",
