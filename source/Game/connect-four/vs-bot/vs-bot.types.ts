@@ -44,7 +44,8 @@ const SetupModel = z.object({
   player: z.union([z.string(), z.literal("none")]),
 })
 
-const Slot = z.union([z.literal("PlayerOne"), z.literal("PlayerTwo"), z.literal("none")])
+const Slot = z.union([PlayerType, z.literal("none")])
+
 const Columns = z.array(z.array(Slot))
 
 const GameModel = z.object({

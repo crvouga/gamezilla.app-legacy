@@ -106,6 +106,7 @@ const createTheme = ({ mode }: { mode: "light" | "dark" }) =>
 const darkTheme = createTheme({ mode: "dark" })
 const lightTheme = createTheme({ mode: "light" })
 
+
 export const AppContainer = ({
   children,
   themeMode,
