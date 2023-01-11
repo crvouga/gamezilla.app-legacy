@@ -127,7 +127,7 @@ export const toGameOver = (model: SharedModel): GameOver | { type: "none" } => {
   }
 }
 
-type BotLevel = "Easy" | "Medium" | "Hard"
+export type BotLevel = "Easy" | "Medium" | "Hard"
 
 export const botLevel: { [botLevel in BotLevel]: BotLevel } = {
   Easy: "Easy",
