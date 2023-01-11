@@ -3,6 +3,7 @@ import { Cmd, Sub } from "../../../Core"
 import * as UI from "../../../UI"
 import { Ctx, viewVsBotSetupScreen } from "../../Game"
 import {
+  BotLevel,
   botLevels,
   GameOver,
   gameTheme,
@@ -138,7 +139,8 @@ export const View = ({
 }) => {
   if (model.type === "Setup") {
     return (
-      viewVsBotSetupScreen({
+      viewVsBotSetupScreen<BotLevel, PlayerType>({
+        leftPlayerType: "X",
         playerId: model.player === "none" ? null : model.player,
         subtitle: "Vs Computer",
         title: "Tic-Tac-Toe",

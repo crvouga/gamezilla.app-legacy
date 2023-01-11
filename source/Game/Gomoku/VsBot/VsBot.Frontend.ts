@@ -2,7 +2,9 @@ import { Cmd, Sub } from "../../../Core";
 import { actionButton, avatar, box, button, fillBox, fragment, icon, paper, Sx, text } from "../../../UI";
 import { Ctx, viewVsBotSetupScreen } from "../../Game";
 import {
+    BotLevel,
     botLevels,
+    Stone,
     stones,
     toOppositeStone,
     toStatus,
@@ -92,7 +94,8 @@ export const view = ({ $send, model, ctx, onBack }: { model: Model, ctx: Ctx, $s
     switch (model.type) {
         case 'setup': {
             return (
-                viewVsBotSetupScreen({
+                viewVsBotSetupScreen<BotLevel, Stone>({
+                    leftPlayerType: "white",
                     botLevel: {
                         onInput: (botLevel) => $send(['input-bot-level', { botLevel }]),
                         selected: model.botLevel,

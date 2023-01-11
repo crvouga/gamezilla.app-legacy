@@ -8,9 +8,7 @@ import { Ctx, viewVsBotGameScreen, viewVsBotSetupScreen } from "../../Game"
 import { opposite, PlayerType, playerTypes, toStatus, toTurn } from "../connect-four/connect-four"
 import { gameTheme, initVisual, isDone, PlayerIcon, step, ViewColumns, viewCoverArt } from "../connect-four/connect-four-view"
 import {
-  BackendModel, botLevel, FrontendModel,
-  FrontendGameModel,
-  FrontendMsg,
+  BackendModel, BotLevel, botLevel, FrontendGameModel, FrontendModel, FrontendMsg,
   GameModel,
   GameOver,
   handle,
@@ -221,7 +219,7 @@ export const View = ({
 }) => {
   if (model.type === "Setup") {
     return (
-      viewVsBotSetupScreen({
+      viewVsBotSetupScreen<BotLevel, PlayerType>({
         coverArt: viewCoverArt(),
         title: "Connect Four",
         subtitle: "Vs Computer",
@@ -240,6 +238,7 @@ export const View = ({
           onInput: (playerType) => $send(['input-player-type', { playerType, userId: ctx.currentUserId }]),
           icon: ({ sx, playerType }) => <PlayerIcon playerType={playerType} sx={{ width: "1rem", height: "1rem", ...sx }} />,
         },
+        leftPlayerType: "PlayerOne",
         onCancel: goBack,
         onStartGame: () => $send(['start-game', { userId: ctx.currentUserId }]),
       })

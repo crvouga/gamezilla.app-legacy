@@ -191,11 +191,13 @@ export const viewVsBotVersusBlock = <PlayerType,>({
   ctx,
   viewPlayerIcon,
   userPlayerType,
-  botPlayerType
+  botPlayerType,
+  leftPlayerType
 }: {
   ctx: Ctx,
   botName: string,
-  playerId: UserId | null
+  playerId: UserId | null,
+  leftPlayerType: PlayerType,
   userPlayerType: PlayerType,
   botPlayerType: PlayerType,
   viewPlayerIcon: ({ playerType, sx }: { sx?: Sx, playerType: PlayerType }) => ViewNode,
@@ -242,13 +244,17 @@ export const viewVsBotVersusBlock = <PlayerType,>({
     </Typography>
   </Box>
 
+
+  const leftSlot = leftPlayerType === userPlayerType ? humanSlot : botSlot
+  const rightSlot = leftPlayerType === userPlayerType ? botSlot : humanSlot
+
   return (
     <Box sx={{ width: "100%", display: 'flex', alignItems: 'center', p: 2, py: 4, }}>
-      {humanSlot}
+      {leftSlot}
       <Typography variant="h4" align="center" sx={{ px: 1, width: "20%", overflow: "hidden" }}>
         vs
       </Typography>
-      {botSlot}
+      {rightSlot}
     </Box>
   )
 }
@@ -257,6 +263,7 @@ export const viewVsBotSetupScreen = <BotLevel, PlayerType>({
   // title,
   // subtitle,
   // coverArt,
+  leftPlayerType,
   ctx,
   playerId,
   botLevel,
@@ -270,6 +277,7 @@ export const viewVsBotSetupScreen = <BotLevel, PlayerType>({
   title: string,
   subtitle: string,
   coverArt: ViewNode,
+  leftPlayerType: PlayerType
   playerId: UserId | null
   botLevel: {
     values: BotLevel[]
@@ -303,7 +311,7 @@ export const viewVsBotSetupScreen = <BotLevel, PlayerType>({
         ctx,
         userPlayerType: player.selected,
         botPlayerType: player.values.find((p) => p !== player.selected) ?? player.selected,
-
+        leftPlayerType: leftPlayerType,
       })}
       <Divider />
       {/* 

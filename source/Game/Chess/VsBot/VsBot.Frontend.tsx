@@ -299,7 +299,7 @@ export const View = ({
 
   if (model.sharedModel.type === "Setup") {
     return (
-      viewVsBotSetupScreen({
+      viewVsBotSetupScreen<Board.BotLevel, Board.Color>({
         botLevel: {
           values: Board.allBotLevels,
           selected: model.sharedModel.botLevel,
@@ -317,6 +317,7 @@ export const View = ({
           onInput: (color) => $send(["InputColor", { userColor: color, userId: ctx.currentUserId }]),
           icon: ({ sx, playerType: color }) => <PawnIcon sx={{ ...sx, color: color === 'w' ? '#fff' : "#000" }} stroke={color === 'w' ? '#000' : '#fff'} />
         },
+        leftPlayerType: "w",
         playerId: model.sharedModel.userId === "none" ? null : model.sharedModel.userId,
         title: "Chess",
         subtitle: "Vs Computer",

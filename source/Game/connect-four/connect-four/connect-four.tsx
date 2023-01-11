@@ -12,8 +12,8 @@ import { Err, Ok, Result } from "../../../Core/Result"
 export type PlayerType = "PlayerOne" | "PlayerTwo"
 
 export const playerTypes: { [playerType in PlayerType]: PlayerType } = {
-  PlayerOne: "PlayerTwo",
-  PlayerTwo: "PlayerOne",
+  PlayerOne: "PlayerOne",
+  PlayerTwo: "PlayerTwo",
 }
 
 export const opposite: { [playerType in PlayerType]: PlayerType } = {
