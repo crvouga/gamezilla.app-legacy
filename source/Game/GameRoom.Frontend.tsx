@@ -4,9 +4,9 @@ import { Cmd, exhaustive, p, RemoteData, Sub } from "../Core"
 import { RoomId, UserId } from "../Data"
 import * as ProfileStore from "../Profile/Profile.Store"
 import * as Route from "../Route"
-import { Divider, AspectRatio, Avatar, Badge, Box, Button, ButtonBase, CardActionArea, FillBox, Header, Icons, Paper, Toolbar, Typography } from "../UI"
-import * as Game from "./Game.Frontend"
+import { AspectRatio, Avatar, Badge, Box, Button, ButtonBase, CardActionArea, Divider, FillBox, Header, Icons, Paper, Toolbar, Typography } from "../UI"
 import { viewCoverArt } from "./Game"
+import * as Game from "./Game.Frontend"
 import { GameName, gameNameList } from "./Game.Types"
 import {
   BackendModel, FrontendModel,
@@ -1024,34 +1024,38 @@ export const ViewBanner = ({
   const hostProfile = store.profiles[room.hostId]
 
   return (
-    <ButtonBase
-      sx={{
-        display: "flex",
-        alignItems: "center",
-      }}
-      onClick={() => $send(["ClickedBanner"])}
-    >
+    <>
+      <ButtonBase
+        sx={{
+          display: "flex",
+          alignItems: "center",
+        }}
+        onClick={() => $send(["ClickedBanner"])}
+      >
 
-      {!game && (
-        <Avatar
-          src={hostProfile?.avatarUrl ?? ""}
-          variant="square"
-          sx={{ width: 48, height: 48, mr: 2 }}
-        />
-      )}
+        {!game && (
+          <Avatar
+            src={hostProfile?.avatarUrl ?? ""}
+            variant="square"
+            sx={{ width: 48, height: 48, mr: 2 }}
+          />
+        )}
 
-      {game && (
-        <Box sx={{ width: 48, height: 48, mr: 2 }}>
-          {viewCoverArt({ gameName: game[0] })}
-        </Box>
-      )}
+        {game && (
+          <Box sx={{ width: 48, height: 48, mr: 2 }}>
+            {viewCoverArt({ gameName: game[0] })}
+          </Box>
+        )}
 
-      <Typography noWrap align="left" sx={{ flex: 1 }}>
-        {hostProfile ? `${hostProfile.username}'s room` : "..."}
-      </Typography>
+        <Typography noWrap align="left" sx={{ flex: 1 }}>
+          {hostProfile ? `${hostProfile.username}'s room` : "..."}
+        </Typography>
 
-      <Icons.ChevronRight sx={{ mx: 2 }} />
-    </ButtonBase>
+        <Icons.ChevronRight sx={{ mx: 2 }} />
+
+      </ButtonBase>
+      <Divider />
+    </>
   )
 }
 

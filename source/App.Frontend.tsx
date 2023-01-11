@@ -36,7 +36,7 @@ import * as Party from "./Party/Party.Frontend"
 import * as ProfileStore from "./Profile/Profile.Store"
 import * as Route from "./Route"
 import * as UI from "./UI"
-import { Box, Divider, FillBox, Typography } from "./UI"
+import { Box, FillBox, Typography } from "./UI"
 
 //
 //
@@ -653,18 +653,12 @@ const ViewMain = ({ model, $send }: { model: Model; $send: (msg: Msg) => void })
                 $send={(msg) => $send(["Room", msg])}
               />
 
-              <Divider />
-
               <Pages.ViewReady
                 {...model}
                 profile={status[1].profile}
                 $send={(msg) => $send(["Page", msg])}
                 model={model.page}
               />
-
-
-
-
 
             </>
           )
