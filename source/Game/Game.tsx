@@ -457,8 +457,8 @@ export const viewVsBotGameScreen = <PlayerType,>({
   viewBoard: () => ViewNode
 }) => {
   const iconSize = {
-    width: 32,
-    height: 32
+    width: 24,
+    height: 24
   }
 
   const turnSx: Sx = {
@@ -468,11 +468,11 @@ export const viewVsBotGameScreen = <PlayerType,>({
   }
 
   const botSlot =
-    paper({ display: "flex", variant: "outlined", alignItems: "center", p: 1, flex: 1, overflow: 'hidden', ...(turn === botPlayer ? turnSx : {}) }, [
+    paper({ display: "flex", variant: "outlined", flexWrap: "wrap", alignItems: "center", p: 1, flex: 1, overflow: 'hidden', ...(turn === botPlayer ? turnSx : {}) }, [
       viewPlayerIcon({ playerType: botPlayer, sx: { ...iconSize, mr: 1 } }),
       icon("smart-toy", { ...iconSize, mr: 1, }),
       text({ noWrap: true, flex: 1 }, [botName]),
-      turn === botPlayer ? spinner({ size: 24, mr: 1 }) : fragment([])
+      turn === botPlayer ? spinner({ size: 24, ml: 1 }) : fragment([])
     ])
 
   const userSlot =
@@ -486,17 +486,28 @@ export const viewVsBotGameScreen = <PlayerType,>({
 
   const rightSlot = userPlayer !== leftPlayer ? userSlot : botSlot
 
-  const feedback = ctx.currentUserId === playerUserId ? "Your Turn" : "Waiting for Opponent"
+  const isSpectating = ctx.currentUserId !== playerUserId
+
+  const feedback =
+    fragment([
+      viewPlayerIcon({ playerType: turn, sx: { width: 18, height: 18, mr: 1 / 2 } }),
+      turn === userPlayer && !isSpectating ? "Your Turn" : "Turn"
+    ])
 
   return (
     fillBox({}, [
-      box({ px: 2, pt: 2, display: "flex", gap: 2, justifyContent: "center", alignItems: 'center' }, [leftSlot, rightSlot]),
-      text({ px: 2, pt: 2, pb: 2, textAlign: "center" }, [feedback]),
+      isSpectating ? text({ px: 2, py: 1, color: "primary.main", textAlign: "center", variant: "subtitle1", }, ["You're spectating."]) : fragment([]),
+      box({ px: 2, pt: 1, display: "flex", gap: 2, justifyContent: "center", alignItems: 'center' }, [leftSlot, rightSlot]),
+      text({ px: 2, pt: 1, pb: 1, textAlign: "center", display: 'flex', alignItems: 'center', justifyContent: 'center' }, [feedback]),
       viewBoard(),
       box({ flex: 1 }, []),
-      box({ display: "flex", alignItems: "center", width: '100%' }, actions.map(([label, iconName, onPress]) => (
-        actionButton({ label, iconName, onPress })
-      )))
+      isSpectating
+        ? fragment([])
+        : box({ display: "flex", alignItems: "center", width: '100%' },
+          actions.map(([label, iconName, onPress]) => (
+            actionButton({ label, iconName, onPress })
+          ))
+        )
     ])
   )
 }
