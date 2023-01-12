@@ -494,8 +494,16 @@ export const viewVsBotGameScreen = <PlayerType,>({
       turn === userPlayer && !isSpectating ? "Your Turn" : "Turn"
     ])
 
+  const sx: Sx = isSpectating ? {
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderColor: "primary.main",
+  } : {
+
+  }
+
   return (
-    fillBox({}, [
+    fillBox(sx, [
       isSpectating ? text({ px: 2, py: 1, color: "primary.main", textAlign: "center", variant: "subtitle1", }, ["You're spectating."]) : fragment([]),
       box({ px: 2, pt: 1, display: "flex", gap: 2, justifyContent: "center", alignItems: 'center' }, [leftSlot, rightSlot]),
       text({ px: 2, pt: 1, pb: 1, textAlign: "center", display: 'flex', alignItems: 'center', justifyContent: 'center' }, [feedback]),
