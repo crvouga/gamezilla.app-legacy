@@ -1,6 +1,6 @@
 import { UserId } from "../Data/UserId"
 import * as ProfileStore from "../Profile/Profile.Store"
-import { Divider, actionButton, avatar, Avatar, box, Box, Button, fillBox, FillBox, fragment, icon, IconName, Icons, paper, spinner, Sx, text, ToggleButton, ToggleButtonGroup, Typography, ViewNode } from "../UI"
+import { ActionButton, avatar, Avatar, Box, box, Button, CircularProgress, Divider, FillBox, fragment, icon, IconName, Icons, Paper, Sx, text, ToggleButton, ToggleButtonGroup, Typography, ViewNode } from "../UI"
 import * as Chess from "./Chess/Chess"
 import * as ConnectFour from "./connect-four/connect-four/connect-four-view"
 import {
@@ -442,9 +442,11 @@ export const viewVsBotGameScreen = <PlayerType,>({
   leftPlayer,
   turn,
   actions,
+  isGameOver,
   viewPlayerIcon,
   viewBoard,
 }: {
+  isGameOver: boolean,
   turn: PlayerType,
   botPlayer: PlayerType,
   botName: string,
@@ -462,25 +464,37 @@ export const viewVsBotGameScreen = <PlayerType,>({
   }
 
   const turnSx: Sx = {
-    borderBottomWidth: 1,
+    borderBottomWidth: 2,
     borderBottomStyle: "solid",
     borderBottomColor: "primary.main"
   }
 
-  const botSlot =
-    paper({ display: "flex", variant: "outlined", flexWrap: "wrap", alignItems: "center", p: 1, flex: 1, overflow: 'hidden', ...(turn === botPlayer ? turnSx : {}) }, [
-      viewPlayerIcon({ playerType: botPlayer, sx: { ...iconSize, mr: 1 } }),
-      icon("smart-toy", { ...iconSize, mr: 1, }),
-      text({ noWrap: true, flex: 1 }, [botName]),
-      turn === botPlayer ? spinner({ size: 24, ml: 1 }) : fragment([])
-    ])
+  const botSlot = (
+    <Paper key={botName} sx={{
+      display: "flex",
+      variant: "outlined",
+      flexWrap: "wrap",
+      alignItems: "center",
+      p: 1,
+      flex: 1,
+      overflow: 'hidden',
+      ...(turn === botPlayer && !isGameOver ? turnSx : {})
+    }}>
+      {viewPlayerIcon({ playerType: userPlayer, sx: { ...iconSize, mr: 1 } })}
+      {icon("smart-toy", { ...iconSize, mr: 1, })}
+      <Typography noWrap={true} flex={1}>{botName}</Typography>
+      {turn === botPlayer && !isGameOver && <CircularProgress size={24} sx={{ ml: 1 }} />}
+    </Paper>
+  )
 
   const userSlot =
-    paper({ display: "flex", variant: "outlined", alignItems: "center", p: 1, flex: 1, overflow: 'hidden', ...(turn === userPlayer ? turnSx : {}) }, [
-      viewPlayerIcon({ playerType: userPlayer, sx: { ...iconSize, mr: 1 } }),
-      avatar({ ...iconSize, mr: 1, src: ctx.profiles[playerUserId]?.avatarUrl }),
-      text({ noWrap: true }, [ctx.profiles[playerUserId]?.username])
-    ])
+    <Paper sx={{ display: "flex", variant: "outlined", alignItems: "center", p: 1, flex: 1, overflow: 'hidden', ...(turn === userPlayer && !isGameOver ? turnSx : {}) }}>
+      {viewPlayerIcon({ playerType: userPlayer, sx: { ...iconSize, mr: 1 } })}
+      <Avatar sx={{ ...iconSize, mr: 1 }} src={ctx.profiles[playerUserId]?.avatarUrl} />
+      <Typography noWrap={true}>{ctx.profiles[playerUserId]?.username}</Typography>
+    </Paper>
+
+
 
   const leftSlot = userPlayer === leftPlayer ? userSlot : botSlot
 
@@ -489,34 +503,62 @@ export const viewVsBotGameScreen = <PlayerType,>({
   const isSpectating = ctx.currentUserId !== playerUserId
 
   const feedback =
-    fragment([
-      viewPlayerIcon({ playerType: turn, sx: { width: 18, height: 18, mr: 1 / 2 } }),
-      turn === userPlayer && !isSpectating ? "Your Turn" : "Turn"
-    ])
+    isGameOver ?
+      fragment(["Game Over"]) :
+      fragment([
+        viewPlayerIcon({ playerType: turn, sx: { width: 18, height: 18, mr: 1 / 2 } }),
+        turn === userPlayer && !isSpectating ? "Your Turn" : "Turn"
+      ])
 
   const sx: Sx = isSpectating ? {
     borderStyle: "solid",
-    borderWidth: 1,
+    borderWidth: 4,
     borderColor: "primary.main",
   } : {
 
   }
 
+  const overlaySx: Sx = {
+    position: 'absolute', top: 0, left: 0, width: '100%', height: "100%", maxHeight: "100%",
+    display: 'flex', flexDirection: "column", justifyContent: 'center', alignItems: 'center',
+    color: "#fff", backgroundColor: 'rgba(0,0,0,0.4)',
+    // aspectRatio: "1",
+    ...(isGameOver ? {} : { display: 'none' })
+  }
+
+
   return (
-    fillBox(sx, [
-      isSpectating ? text({ px: 2, py: 1, color: "primary.main", textAlign: "center", variant: "subtitle1", }, ["You're spectating."]) : fragment([]),
-      box({ px: 2, pt: 1, display: "flex", gap: 2, justifyContent: "center", alignItems: 'center' }, [leftSlot, rightSlot]),
-      text({ px: 2, pt: 1, pb: 1, textAlign: "center", display: 'flex', alignItems: 'center', justifyContent: 'center' }, [feedback]),
-      viewBoard(),
-      box({ flex: 1 }, []),
-      isSpectating
-        ? fragment([])
-        : box({ display: "flex", alignItems: "center", width: '100%' },
-          actions.map(([label, iconName, onPress]) => (
-            actionButton({ label, iconName, onPress })
-          ))
-        )
-    ])
+    <FillBox sx={sx} >
+      {isSpectating &&
+        <Typography sx={{ backgroundColor: "primary.main" }} color="#fff" textAlign="center" variant="subtitle2">
+          Spectating
+        </Typography>}
+      < Box px={1} pt={1} display="flex" gap={1} justifyContent="center" alignItems='center' >
+        {leftSlot}
+        {rightSlot}
+      </Box >
+      <Typography sx={{ px: 2, pt: 1, pb: 1, textAlign: "center", display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        {feedback}
+      </Typography>
+
+      <Box position="relative" display='flex'>
+        {viewBoard()}
+        <Box sx={overlaySx}>
+          <Typography variant="h1">Game Over</Typography>
+        </Box>
+      </Box>
+
+      <Box flex={1} />
+
+      {!isSpectating && (
+
+        <Box display="flex" alignItems="center" width='100%'>
+          {actions.map(([label, iconName, onPress]) => (
+            <ActionButton key={iconName} label={label} icon={icon(iconName)} onClick={onPress} />
+          ))}
+        </Box>
+      )}
+    </FillBox >
   )
 }
 

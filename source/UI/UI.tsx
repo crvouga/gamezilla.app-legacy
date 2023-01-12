@@ -1,12 +1,12 @@
-import { Flag, ExitToApp, RestartAlt, SmartToy, SwapHorizSharp } from "@mui/icons-material"
+import { ExitToApp, Flag, RestartAlt, SmartToy, SwapHorizSharp } from "@mui/icons-material"
 import * as MuiLab from "@mui/lab"
 import * as Mui from "@mui/material"
-import { TypographyProps } from "@mui/material"
+import { keyframes, TypographyProps } from "@mui/material"
 import { blue } from "@mui/material/colors"
 import Slide, { SlideProps } from "@mui/material/Slide"
-import { keyframes } from "@mui/system"
 import { ReactNode, useEffect, useMemo, useRef } from "react"
 import * as Icons from "./Icons"
+
 
 const SlideTransition = (props: SlideProps) => {
   return <Slide {...props} direction="down" />
@@ -299,9 +299,9 @@ export const ListItemSecondaryAction = Mui.ListItemSecondaryAction
 
 export const Paper = Mui.Paper
 
-export const paper = ({ ...sx }: Sx, children: ViewNode[]) => {
+export const paper = ({ key, ...sx }: Sx & { key?: string }, children: ViewNode[]) => {
   return (
-    <Paper sx={sx} variant="outlined">
+    <Paper key={key} sx={sx} variant="outlined">
       {children}
     </Paper>
   )
@@ -729,7 +729,7 @@ export type IconName = "smart-toy" | 'exit' | 'swap' | 'restart' | 'flag'
 export const icon = (name: IconName, sx?: Sx) => {
   switch (name) {
     case 'smart-toy': {
-      return <SmartToy sx={sx} />
+      return <SmartToy key="smart-toy" sx={sx} />
     }
 
     case 'exit': {

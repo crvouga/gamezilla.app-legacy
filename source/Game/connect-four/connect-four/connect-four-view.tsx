@@ -263,13 +263,19 @@ const ViewColumnsSvg = ({
     )
 }
 
-const ViewColumnsCanvas = ({ columns, onClick, visual, }: ViewColumnsProps) => {
-    const canvasRef = useRef<HTMLCanvasElement | null>(null)
+function isCanvas(i: unknown): i is HTMLCanvasElement {
+    return i instanceof HTMLCanvasElement;
+}
 
+const ViewColumnsCanvas = ({ columns, onClick, visual, }: ViewColumnsProps) => {
     useLayoutEffect(() => {
-        const canvas = canvasRef.current
+        const canvas = document.getElementById("view-columns-canvas")
 
         if (!canvas) {
+            return
+        }
+
+        if (!isCanvas(canvas)) {
             return
         }
 
@@ -287,8 +293,8 @@ const ViewColumnsCanvas = ({ columns, onClick, visual, }: ViewColumnsProps) => {
 
     return (
         <canvas
+            id="view-columns-canvas"
             style={{ width: "100%", cursor: "pointer" }}
-            ref={canvasRef}
             onClick={(event) => {
                 const rect = event.currentTarget.getBoundingClientRect();
                 const elementRelativeX = event.clientX - rect.left;
@@ -301,18 +307,6 @@ const ViewColumnsCanvas = ({ columns, onClick, visual, }: ViewColumnsProps) => {
                         to: [0, COLUMN_COUNT],
                     }),
                 )
-
-                console.log({
-                    elementRelativeX,
-                    elementWidth,
-                    canvasRelativeX,
-                    columnIndex,
-
-                    value: canvasRelativeX,
-                    from: [0, elementWidth],
-                    to: [0, COLUMN_COUNT - 1],
-
-                })
 
                 if (onClick && isColumnIndex(columnIndex)) {
                     onClick(columnIndex)
@@ -522,8 +516,8 @@ export const PlayerIcon = ({
     playerType,
     sx,
 }: {
-    playerType: PlayerType
-    sx?: Sx
+    playerType: PlayerType;
+    sx?: Sx;
 }) => {
     switch (playerType) {
         case "PlayerOne": {
@@ -536,10 +530,10 @@ export const PlayerIcon = ({
     }
 }
 
-export const PlayerOneIcon = ({ sx }: { sx?: Sx }) => {
+export const PlayerOneIcon = ({ key, sx }: { key?: string, sx?: Sx }) => {
     const ref = useRef(Uuid.generateSync())
     return (
-        <SvgIcon viewBox="-1 -1 2 2" sx={{ ...sx }}>
+        <SvgIcon key={key} viewBox="-1 -1 2 2" sx={{ ...sx }}>
             <ViewPlayerOneGradientDef
                 cx={0}
                 cy={0}
@@ -551,10 +545,10 @@ export const PlayerOneIcon = ({ sx }: { sx?: Sx }) => {
     )
 }
 
-export const PlayerTwoIcon = ({ sx }: { sx?: Sx }) => {
+export const PlayerTwoIcon = ({ key, sx }: { key?: string, sx?: Sx }) => {
     const ref = useRef(Uuid.generateSync())
     return (
-        <SvgIcon viewBox="-1 -1 2 2" sx={{ ...sx }}>
+        <SvgIcon key={key} viewBox="-1 -1 2 2" sx={{ ...sx }}>
             <ViewPlayerTwoGradientDef gradientId={ref.current} />
             <circle cx={0} cy={0} r={1} fill={`url(#${ref.current})`} />
         </SvgIcon>

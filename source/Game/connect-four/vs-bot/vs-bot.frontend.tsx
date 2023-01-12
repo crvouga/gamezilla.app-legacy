@@ -247,7 +247,11 @@ export const View = ({
 
   // return viewGame({ model, ctx, $send, })
 
+  const status = toStatus(model.columns)
+  const isGameOver = status.type === 'Winner' || status.type === 'Tie'
+
   return viewVsBotGameScreen<PlayerType>({
+    isGameOver: isGameOver,
     botName: model.botLevel,
     botPlayer: opposite[model.userPlayerType],
     ctx,
@@ -260,7 +264,7 @@ export const View = ({
       ['Restart', 'restart', () => $send(['restart', { userId: ctx.currentUserId }])],
       ['Swap', 'swap', () => $send(['swap-sides', { userId: ctx.currentUserId }])],
     ],
-    viewPlayerIcon: (props) => <PlayerIcon {...props} />,
+    viewPlayerIcon: (props) => <PlayerIcon key={props.playerType} {...props} />,
     viewBoard: () => <ViewColumns
       ghost={
         ctx.currentUserId === model.player &&
