@@ -14,7 +14,14 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@gamezilla/game": ["libs/game/src/index.ts"],
+      "@gamezilla/game/chess": ["libs/game/chess/src/index.ts"],
+      "@gamezilla/game/connect-four": ["libs/game/connect-four/src/index.ts"],
+      "@gamezilla/game/gomoku": ["libs/game/gomoku/src/index.ts"],
+      "@gamezilla/game/tic-tac-toe": ["libs/game/tic-tac-toe/src/index.ts"],
+      "@gamezilla/room": ["libs/room/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }
