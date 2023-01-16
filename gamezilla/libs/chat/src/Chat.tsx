@@ -1,11 +1,9 @@
 
 import { Cmd, RemoteData } from "@gamezilla/core"
 import { UserId } from "@gamezilla/data"
-import { Ctx } from "@gamezilla/shared"
-import * as Route from "@gamezilla/route"
+import { Ctx, Route } from "@gamezilla/shared"
 import { Avatar, AvatarGroup, Box, Button, FillBox, Header, Icons, List, ListItemAvatar, ListItemButton, ListItemText, ViewEmptyState, ViewLoadingState } from "@gamezilla/ui"
 import * as ChatStore from "./Chat.Store"
-
 //
 //
 //

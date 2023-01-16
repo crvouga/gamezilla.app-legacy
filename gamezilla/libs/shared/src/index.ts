@@ -1,3 +1,4 @@
+export * as Route from "./route"
 import { UserId, Username } from "@gamezilla/data"
 
 export type Ctx = {
@@ -10,3 +11,4 @@ export type Ctx = {
     },
     currentUserId: UserId
 }
+
