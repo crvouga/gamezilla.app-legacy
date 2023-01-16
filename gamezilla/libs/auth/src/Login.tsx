@@ -1,6 +1,6 @@
 import { Cmd } from "@gamezilla/core"
 import { Iso3166Alpha2Code } from "@gamezilla/data"
-import * as Route from "@gamezilla/route"
+import { Route } from "@gamezilla/shared"
 import {
   Box,
   Button,

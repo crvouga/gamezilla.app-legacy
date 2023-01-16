@@ -1,6 +1,6 @@
 import { Browser, Cmd, exhaustive, p } from "@gamezilla/core"
 import { EmailAddress, Password } from "@gamezilla/data"
-import * as Route from "@gamezilla/route"
+import { Route } from "@gamezilla/shared"
 import * as UI from "@gamezilla/ui"
 import * as AccountStore from "./account.store"
 

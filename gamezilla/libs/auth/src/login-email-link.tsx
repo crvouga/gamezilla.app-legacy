@@ -1,5 +1,5 @@
 import { Cmd, exhaustive, p, t } from "@gamezilla/core"
-import * as Route from "@gamezilla/route"
+import { Route } from "@gamezilla/shared"
 import * as UI from "@gamezilla/ui"
 import * as Auth from "./auth"
 

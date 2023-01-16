@@ -63,12 +63,3 @@ export const render = (node: Node) => {
         }
     }
 }
-
-export const view_ = ({ }: { model: number }): Node => {
-    return ['box', { w: "100%", h: "100%", d: 'flex', flexDirection: "column", p: 2 }, [
-        ['text', { textSize: "xl" }, "Sign in with"],
-        ['text', { textSize: "xl", textColor: 'primary', }, "Gamezilla"],
-        ['btn', {}, "Sign in with google"]
-    ]]
-}
-
