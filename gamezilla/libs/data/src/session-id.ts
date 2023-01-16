@@ -1,4 +1,5 @@
-import { Result } from "../Core"
+import { Result } from "@gamezilla/core"
+
 
 export type SessionId = string & { _opaque: "SessionId" }
 
