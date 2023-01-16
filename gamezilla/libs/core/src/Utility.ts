@@ -154,9 +154,9 @@ export const shuffle = <X>(xs: X[]): X[] => {
   const ys = [...xs]
   for (let i = ys.length - 1; i >= 0; i--) {
     const j = Math.floor(Math.random() * i)
-    const temp = ys[i]!
-    ys[i]! = ys[j]!
-    ys[j]! = temp
+    const temp = ys[i]
+    ys[i] = ys[j]
+    ys[j] = temp
   }
   return ys
 }
@@ -174,7 +174,12 @@ export const filterObject = <T extends object>(
   obj: T,
   predicate: (entry: Entry<T>, i: number, arr: Entry<T>[]) => boolean,
 ): T => {
-  return Object.fromEntries(
-    (Object.entries(obj) as Entry<T>[]).filter(predicate),
-  ) as T
+  const out: T = { ...obj }
+  for (const entry of (Object.entries(obj) as Entry<T>[]).filter(predicate)) {
+    const key = entry[0]
+    if (key) {
+      out[key] = entry[1]
+    }
+  }
+  return out
 }
