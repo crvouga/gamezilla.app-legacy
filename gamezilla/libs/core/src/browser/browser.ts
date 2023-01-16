@@ -1,9 +1,9 @@
 import * as Rx from "rxjs"
-import { Cmd } from "../Cmd"
+import { Cmd } from "../cmd"
 import { p } from "../pipe"
-import { Result } from "../Result"
-import { Sub } from "../Sub"
-import { Task } from "../Task"
+import { Result } from "../result"
+import { Sub } from "../sub"
+import { Task } from "../ask"
 
 //
 //
@@ -92,34 +92,34 @@ export type FocusResult = Result<Problem, {}>
 
 export const focus =
   (htmlId: string): Task<FocusResult> =>
-  async () => {
-    await new Promise((resolve) => setTimeout(resolve, 0))
+    async () => {
+      await new Promise((resolve) => setTimeout(resolve, 0))
 
-    const element = document.getElementById(htmlId)
+      const element = document.getElementById(htmlId)
 
-    if (element) {
-      element.focus()
-      return Result.Ok({})
+      if (element) {
+        element.focus()
+        return Result.Ok({})
+      }
+
+      return Result.Err({ type: "ElementNotFound" })
     }
-
-    return Result.Err({ type: "ElementNotFound" })
-  }
 
 export const scrollIntoView =
   (htmlId: string): Task<FocusResult> =>
-  async () => {
-    await new Promise((resolve) => setTimeout(resolve, 0))
+    async () => {
+      await new Promise((resolve) => setTimeout(resolve, 0))
 
-    const element = document.getElementById(htmlId)
+      const element = document.getElementById(htmlId)
 
-    if (element) {
-      element.scrollIntoView({ behavior: "auto" })
+      if (element) {
+        element.scrollIntoView({ behavior: "auto" })
 
-      return Result.Ok({})
+        return Result.Ok({})
+      }
+
+      return Result.Err({ type: "ElementNotFound" })
     }
-
-    return Result.Err({ type: "ElementNotFound" })
-  }
 
 export type GetElementByIdResult = Result<Problem, DomElement>
 
@@ -130,18 +130,18 @@ export type DomElement = {
 
 export const getElementById =
   (htmlId: string): Task<GetElementByIdResult> =>
-  async () => {
-    const element = document.getElementById(htmlId)
+    async () => {
+      const element = document.getElementById(htmlId)
 
-    if (element) {
-      return Result.Ok({
-        offsetHeight: element.offsetHeight,
-        offsetWidth: element.offsetWidth,
-      })
+      if (element) {
+        return Result.Ok({
+          offsetHeight: element.offsetHeight,
+          offsetWidth: element.offsetWidth,
+        })
+      }
+
+      return Result.Err({ type: "ElementNotFound" })
     }
-
-    return Result.Err({ type: "ElementNotFound" })
-  }
 
 export type Resize = {
   width: number

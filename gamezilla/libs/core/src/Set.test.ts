@@ -1,4 +1,4 @@
-import { Set } from "./Set"
+import { Set } from "./set"
 
 const { size, toArray, fromArray, union, intersect, diff } = Set
 

@@ -1,5 +1,5 @@
 import { p } from "./pipe"
-import { Task } from "./Task"
+import { Task } from "./ask"
 
 export type Cmd<Msg = never> = ($send: (msg: Msg) => void) => void
 
