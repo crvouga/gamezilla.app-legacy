@@ -1,1 +1,1 @@
-export const connectFour = "connectFour" 
+export * from './lib/game-connect-four';
