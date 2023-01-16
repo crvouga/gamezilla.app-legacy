@@ -480,7 +480,7 @@ export const viewVsBotGameScreen = <PlayerType,>({
       overflow: 'hidden',
       ...(turn === botPlayer && !isGameOver ? turnSx : {})
     }}>
-      {viewPlayerIcon({ playerType: userPlayer, sx: { ...iconSize, mr: 1 } })}
+      {viewPlayerIcon({ playerType: botPlayer, sx: { ...iconSize, mr: 1 } })}
       {icon("smart-toy", { ...iconSize, mr: 1, })}
       <Typography noWrap={true} flex={1}>{botName}</Typography>
       {turn === botPlayer && !isGameOver && <CircularProgress size={24} sx={{ ml: 1 }} />}
