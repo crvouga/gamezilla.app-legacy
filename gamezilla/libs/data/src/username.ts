@@ -1,4 +1,5 @@
-import { Err, Ok, Result } from "../Core/Result"
+import { Result } from "@gamezilla/core"
+const { Ok, Err } = Result
 
 export type Username = string & { _opaque: "Username" }
 

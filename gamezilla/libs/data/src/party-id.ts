@@ -1,4 +1,4 @@
-import { Result, Uuid } from "../Core"
+import { Result, Uuid } from "@gamezilla/core"
 
 export type PartyId = string & { _opaque: "PartyId" }
 
