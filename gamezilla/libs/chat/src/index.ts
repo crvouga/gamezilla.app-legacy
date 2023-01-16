@@ -1,1 +1,4 @@
-export * from './lib/chat';
+export * as Chat from "./Chat"
+export * as ChatConversation from "./ChatConversation"
+export * as ChatNew from "./ChatNew"
+
