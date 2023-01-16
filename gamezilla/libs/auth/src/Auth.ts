@@ -132,7 +132,7 @@ export const loginWithEmailAndPassword =
     password: string
   }): Task<AuthResult> =>
     async () => {
-      const response = await Supabase.client.auth.signIn({
+      const response = await client.auth.signIn({
         email: emailAddress,
         password: password,
       })
@@ -147,7 +147,7 @@ export const loginWithEmailAndPassword =
 export const sendCode =
   ({ phoneNumber }: { phoneNumber: PhoneNumber }): Task<AuthResult> =>
     async () => {
-      const response = await Supabase.client.auth.signIn({
+      const response = await client.auth.signIn({
         phone: PhoneNumber.toString(phoneNumber),
       })
 
@@ -167,7 +167,7 @@ export const verifyCode =
     phoneNumber: PhoneNumber
   }): Task<AuthResult> =>
     async () => {
-      const response = await Supabase.client.auth.verifyOTP({
+      const response = await client.auth.verifyOTP({
         phone: PhoneNumber.toString(phoneNumber),
         token: code,
       })
@@ -182,7 +182,7 @@ export const verifyCode =
 export const loginWithEmailLink =
   ({ emailAddress }: { emailAddress: string }): Task<AuthResult> =>
     async () => {
-      const response = await Supabase.client.auth.signIn({
+      const response = await client.auth.signIn({
         email: emailAddress,
       })
 
@@ -200,7 +200,7 @@ export const loginWithProvider =
     async () => {
       switch (provider) {
         case "Google": {
-          const response = await Supabase.client.auth.signIn({
+          const response = await client.auth.signIn({
             provider: "google",
           })
 
@@ -214,7 +214,7 @@ export const loginWithProvider =
     }
 
 const logout: Task<Result<null, null>> = async () => {
-  const { error } = await Supabase.client.auth.signOut()
+  const { error } = await client.auth.signOut()
 
   if (error) {
     return Result.Err(null)
@@ -224,7 +224,7 @@ const logout: Task<Result<null, null>> = async () => {
 }
 
 const getSession: Task<Msg> = async () => {
-  const session = Supabase.client.auth.session()
+  const session = client.auth.session()
 
   return fromSupabaseSession(session)
 }
@@ -239,7 +239,7 @@ const getSession: Task<Msg> = async () => {
 
 const subject = new Rx.Subject<Msg>()
 
-Supabase.client.auth.onAuthStateChange((event, supabaseSession) => {
+client.auth.onAuthStateChange((event, supabaseSession) => {
   switch (event) {
     case "PASSWORD_RECOVERY":
     case "SIGNED_IN":
