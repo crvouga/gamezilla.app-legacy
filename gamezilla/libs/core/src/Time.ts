@@ -1,7 +1,7 @@
 import * as Rx from "rxjs"
-import { Cmd } from "./Cmd"
-import { Sub } from "./Sub"
-import { Task } from "./Task"
+import { Cmd } from "./cmd"
+import { Sub } from "./sub"
+import { Task } from "./ask"
 
 export const now = (): Task<number> => {
   return async () => new Date().getTime()

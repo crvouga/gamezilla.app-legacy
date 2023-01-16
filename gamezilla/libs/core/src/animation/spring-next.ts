@@ -1,4 +1,4 @@
-import { Sub } from "../Sub";
+import { Sub } from "../sub";
 
 
 const { sqrt, exp, sin, cos } = Math;

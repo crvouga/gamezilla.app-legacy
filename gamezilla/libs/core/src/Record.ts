@@ -1,4 +1,4 @@
-import { Option } from "./Option"
+import { Option } from "./option"
 
 export const removeKey = <Key extends keyof Record, Record>(
   key: Key,

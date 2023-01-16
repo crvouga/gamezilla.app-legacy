@@ -1,8 +1,8 @@
 import * as Rx from "rxjs"
 import { p } from "./pipe"
-import { t } from "./Utility"
+import { t } from "./utility"
 
-export interface Sub<Msg> extends Rx.Observable<Msg> { }
+export type Sub<Msg> = Rx.Observable<Msg>
 
 export const map =
   <A, Msg>(f: (a: A) => Msg) =>

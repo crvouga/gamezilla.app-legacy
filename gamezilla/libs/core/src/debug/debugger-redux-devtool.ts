@@ -5,12 +5,12 @@
  *
  * @since 0.5.0
  */
-import * as Json from "../Json"
-import { Option } from "../Option"
+import * as Json from "../json"
+import { Option } from "../option"
 import { p } from "../pipe"
-import { $send } from "../Program"
-import { Result } from "../Result"
-import { Task } from "../Task"
+import { $send } from "../program"
+import { Result } from "../result"
+import { Task } from "../ask"
 import {
   Debug,
   Debugger,

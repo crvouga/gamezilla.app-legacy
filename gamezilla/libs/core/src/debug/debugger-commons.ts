@@ -1,6 +1,6 @@
 import * as Rx from "rxjs"
-import { Cmd } from "../Cmd"
-import { Sub } from "../Sub"
+import { Cmd } from "../cmd"
+import { Sub } from "../sub"
 
 //
 //
