@@ -1,1 +1,10 @@
-export * from './lib/profile';
+export * as Profile from "./Profile"
+export * as ProfileStore from "./Profile.Store"
+export * as ProfileCreate from "./ProfileCreate"
+export * as ProfileDelete from "./ProfileDelete"
+export * as ProfileUpdate from "./ProfileUpdate"
+export * as ProfileUpdateAvatar from "./ProfileUpdateAvatar"
+export * as ProfileUpdateName from "./ProfileUpdateName"
+export * as ProfileUpdateTheme from "./ProfileUpdateTheme"
+export * as ProfileUpdateUsername from "./ProfileUpdateUsername"
+export * as Search from "./Search"

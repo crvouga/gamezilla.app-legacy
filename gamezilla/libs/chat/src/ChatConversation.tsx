@@ -162,7 +162,7 @@ export const View = ({
     chatStore.queries.Conversation.FindOne[conversationId] ??
     RemoteData.NotAsked
 
-  const profiles = Object.values(chatStore.UsersConversations)
+  const filtered = Object.values(chatStore.UsersConversations)
     .filter((conversation) => conversation.conversationId === conversationId)
     .flatMap((joinRecord) => {
       const filtered = Object.values(profiles).filter(
@@ -198,12 +198,12 @@ export const View = ({
           }}
         >
           <UI.AvatarGroup>
-            {profiles.map((item) => (
+            {filtered.map((item) => (
               <UI.Avatar key={item.userId} src={item.avatarUrl} />
             ))}
           </UI.AvatarGroup>
           <UI.Typography align="center" noWrap>
-            {profiles.map((profile) => profile.username).join(", ")}
+            {filtered.map((profile) => profile.username).join(", ")}
           </UI.Typography>
         </UI.Box>
         <UI.Box sx={{ flex: 1 }}></UI.Box>

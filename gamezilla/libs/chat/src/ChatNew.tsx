@@ -1,8 +1,9 @@
 import { Cmd, exhaustive, Keyboard, p, RemoteData, Sub } from "@gamezilla/core"
 import { UserId } from "@gamezilla/data"
+import { ProfileStore } from "@gamezilla/profile"
 import * as Route from "@gamezilla/route"
-import * as UI from "@gamezilla/ui"
 import { Ctx } from "@gamezilla/shared"
+import * as UI from "@gamezilla/ui"
 import { useEffect, useRef } from "react"
 import * as ChatStore from "./Chat.Store"
 
@@ -57,7 +58,7 @@ export type Msg =
   | ["ClickedSelectedDelete", { userId: UserId }]
   | ["PressedKeyDown", Keyboard.ArrowKey | Keyboard.EnterKey]
 
-export type OutAction = ProfileStoreAction | ChatStore.Action
+export type OutAction = ProfileStore.Action | ChatStore.Action
 
 export const update = (
   {
@@ -68,7 +69,7 @@ export const update = (
   model: Model,
 ): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-    case "ClickedChat":
+    case "ClickedChat": {
       const userIds = [...Object.values(model.selected), currentUserId]
 
       const action: OutAction = [
@@ -77,11 +78,12 @@ export const update = (
       ]
 
       return [model, Cmd.None, [action]]
+    }
 
     case "ClickedCancel":
       return [model, Route.back, []]
 
-    case "InputtedSearch":
+    case "InputtedSearch": {
       const searchText = msg[1]
       return [
         {
@@ -92,12 +94,16 @@ export const update = (
         Cmd.None,
         [["Profile", ["Search", { searchText }]]],
       ]
+    }
 
-    case "ClickedSelectedDelete":
+    case "ClickedSelectedDelete": {
+
       const selectedNew = removeKey(msg[1].userId, model.selected)
       return [{ ...model, selected: selectedNew }, Cmd.None, []]
+    }
 
-    case "PressedKeyDown":
+    case "PressedKeyDown": {
+
       const profiles = ProfileStore.toSearch(model.searchText, profileStore)
 
       switch (msg[1]) {
@@ -127,7 +133,7 @@ export const update = (
             [],
           ]
 
-        case "Enter":
+        case "Enter": {
           if (model.highlightedIndex === "none") {
             return [model, Cmd.None, []]
           }
@@ -139,11 +145,16 @@ export const update = (
           }
 
           return toggleSelected(profile.userId, model)
+        }
 
         case "ArrowLeft":
         case "ArrowRight":
           return [model, Cmd.None, []]
+
+        default:
+          return [model, Cmd.None, []]
       }
+    }
 
     case "ClickedResult": {
 
@@ -212,14 +223,14 @@ export const subscriptions = (_model: Model) => {
 
 export const View = ({
   chatStore,
-  currentUserProfile,
+  ctx,
   $send,
   model,
   profileStore,
 }: {
-  ctx: ProfileStore.Model
+  ctx: Ctx
+  profileStore: ProfileStore.Model
   chatStore: ChatStore.Model
-  currentUserProfile: ProfileStore.Profile
   model: Model
   $send: (msg: Msg) => void
 }) => {
@@ -229,7 +240,7 @@ export const View = ({
     profileStore.search[model.searchText] ?? RemoteData.NotAsked
 
   const profiles = ProfileStore.toSearch(model.searchText, profileStore).filter(
-    (profile) => profile.userId !== currentUserProfile.userId,
+    (profile) => profile.userId !== ctx.currentUserId,
   )
 
   const selected = Object.values(model.selected).flatMap((userId) => {
