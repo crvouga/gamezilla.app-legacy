@@ -1,1 +1,1 @@
-export * from './lib/game-shared';
+export * from './game-shared';
