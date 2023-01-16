@@ -2,7 +2,7 @@ import { Cmd, p } from "@gamezilla/core"
 import { Iso3166Alpha2Code, PhoneNumber } from "@gamezilla/data"
 import * as Route from "@gamezilla/route"
 import * as UI from "@gamezilla/ui"
-import * as Auth from "./Auth"
+import * as Auth from "./auth"
 
 //
 //

@@ -1,4 +1,4 @@
-import * as Auth from "./Auth"
+import * as Auth from "./auth"
 import { Browser, Cmd, p, t } from "@gamezilla/core"
 import { PhoneNumber } from "@gamezilla/data"
 import * as Route from "@gamezilla/route"
