@@ -33,7 +33,6 @@
       "@gamezilla/profile": ["libs/profile/src/index.ts"],
       "@gamezilla/room": ["libs/room/src/index.ts"],
       "@gamezilla/shared": ["libs/shared/src/index.ts"],
-      "@gamezilla/supabase": ["libs/supabase/src/index.ts"],
       "@gamezilla/ui": ["libs/ui/src/index.ts"]
     }
   },

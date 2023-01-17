@@ -1,6 +1,6 @@
 import { Cmd, exhaustive, p, RemoteData, Result, Task, Unit } from "@gamezilla/core"
 import { UserId, Username } from "@gamezilla/shared"
-import { client, definitions } from "@gamezilla/supabase"
+import { client, definitions } from "@gamezilla/shared"
 import produce from "immer"
 import { matchSorter } from "match-sorter"
 
