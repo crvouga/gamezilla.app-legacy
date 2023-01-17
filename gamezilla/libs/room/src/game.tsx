@@ -2,7 +2,7 @@ import * as Chess from "@gamezilla/game/chess"
 import * as ConnectFour from "@gamezilla/game/connect-four"
 import * as Gomoku from "@gamezilla/game/gomoku"
 import * as TicTacToe from "@gamezilla/game/tic-tac-toe"
-import { GameName } from "./game.types-"
+import { GameName } from "./game.types"
 
 export const viewCoverArt = (gameName: GameName) => {
     switch (gameName) {
