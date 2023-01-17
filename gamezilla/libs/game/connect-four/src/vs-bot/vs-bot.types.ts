@@ -1,7 +1,7 @@
 import { z } from "zod"
 import { exhaustive } from "@gamezilla/core"
 import { Err, Ok, Result } from "../../../Core/Result"
-import { UserId } from "../../../Data/UserId"
+import { UserId } from "@gamezilla/data"
 import {
   BestMoveProblem,
   BestMoveResult,
