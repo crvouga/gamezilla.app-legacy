@@ -1,6 +1,6 @@
 import { Option, p, Result, Task, Unit } from "@gamezilla/core"
 import { EmailAddress, Password, UserId } from "@gamezilla/shared"
-import { client, definitions } from "@gamezilla/supabase"
+import { client, definitions } from "@gamezilla/shared"
 
 
 //

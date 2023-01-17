@@ -2,7 +2,7 @@
 import { Cmd, Option, p, RemoteData, Result, Task } from "@gamezilla/core"
 import { UserId } from "@gamezilla/shared"
 import { Route } from "@gamezilla/shared"
-import { client, definitions } from "@gamezilla/supabase"
+import { client, definitions } from "@gamezilla/shared"
 import produce from "immer"
 import * as Types from "./Types"
 

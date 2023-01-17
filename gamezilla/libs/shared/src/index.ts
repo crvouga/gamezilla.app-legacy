@@ -1,3 +1,4 @@
+export * from "./supabase"
 export * from "./data"
 export * as Route from "./route"
 import { UserId, Username } from "./data"

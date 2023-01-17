@@ -1,6 +1,6 @@
 import { Cmd, exhaustive, Option, p, Result, Sub, Task, Unit } from "@gamezilla/core"
 import { PhoneNumber, UserId } from "@gamezilla/shared"
-import { client, } from "@gamezilla/supabase"
+import { client, } from "@gamezilla/shared"
 import { Session as SupabaseSession } from "@supabase/supabase-js"
 import * as Rx from "rxjs"
 
