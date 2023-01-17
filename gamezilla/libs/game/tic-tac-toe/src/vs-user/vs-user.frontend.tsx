@@ -1,6 +1,6 @@
 import { Alerts } from "@gamezilla/alerts"
 import { Cmd, exhaustive } from "@gamezilla/core"
-import { UserId } from "@gamezilla/data"
+import { UserId } from "@gamezilla/shared"
 import { ProfileStore } from "@gamezilla/profile"
 import { Ctx } from "@gamezilla/shared"
 import * as UI from "@gamezilla/ui"

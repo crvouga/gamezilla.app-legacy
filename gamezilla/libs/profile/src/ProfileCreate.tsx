@@ -1,5 +1,5 @@
 import { Cmd } from "@gamezilla/core"
-import { ProfileAvatar, UserId, Username } from "@gamezilla/data"
+import { ProfileAvatar, UserId, Username } from "@gamezilla/shared"
 import { Route } from "@gamezilla/shared"
 import * as ProfileStore from "./Profile.Store"
 import * as UI from "@gamezilla/ui"

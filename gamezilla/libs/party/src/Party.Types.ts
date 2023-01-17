@@ -1,5 +1,5 @@
 import { filterObject, RemoteData, removeKey, Result } from "@gamezilla/core"
-import { PartyId, UserId } from "@gamezilla/data"
+import { PartyId, UserId } from "@gamezilla/shared"
 import { MicLoadResult, MicUnloadResult } from "./Mic"
 const { Err, Ok } = Result
 

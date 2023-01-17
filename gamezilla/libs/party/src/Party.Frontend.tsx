@@ -1,5 +1,5 @@
 import { Cmd, exhaustive, p, RemoteData, Sub } from "@gamezilla/core"
-import { PartyId, UserId } from "@gamezilla/data"
+import { PartyId, UserId } from "@gamezilla/shared"
 import { ProfileStore } from "@gamezilla/profile"
 import { Ctx, Route } from "@gamezilla/shared"
 import { Avatar, Box, Button, FillBox, Header, Icons, ListItemAvatar, ListItemButton, ListItemText, Typography, useTheme, ViewEmptyState } from "@gamezilla/ui"

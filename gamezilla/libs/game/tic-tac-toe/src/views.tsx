@@ -1,4 +1,4 @@
-import { UserId } from "@gamezilla/data"
+import { UserId } from "@gamezilla/shared"
 import { bannerArtAspectRatio } from "@gamezilla/game-shared"
 import { Ctx } from "@gamezilla/shared"
 import * as UI from "@gamezilla/ui"

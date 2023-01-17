@@ -1,5 +1,5 @@
 import { NonEmpty, Result } from "@gamezilla/core"
-import { UserId } from "@gamezilla/data"
+import { UserId } from "@gamezilla/shared"
 import { Board, initBoard, move, MoveProblem, Stone, toOppositeStone, toStatus, Win } from "../gomoku/gomoku"
 import { Position } from "../gomoku/gomoku-position"
 

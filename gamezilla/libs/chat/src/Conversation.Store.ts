@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Cmd, Option, p, RemoteData, Result, Task } from "@gamezilla/core"
-import { UserId } from "@gamezilla/data"
+import { UserId } from "@gamezilla/shared"
 import { Route } from "@gamezilla/shared"
 import { client, definitions } from "@gamezilla/supabase"
 import produce from "immer"

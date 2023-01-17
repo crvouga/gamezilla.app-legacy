@@ -1,5 +1,5 @@
 import { Cmd, Sub } from "@gamezilla/core";
-import { UserId } from "@gamezilla/data";
+import { UserId } from "@gamezilla/shared";
 import { initShared, BackendModel, BackendMsg, ToBackend, handle, ToFrontend, Res } from "./vs-user.types";
 
 //

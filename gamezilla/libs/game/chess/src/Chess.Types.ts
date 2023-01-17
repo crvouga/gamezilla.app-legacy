@@ -1,5 +1,5 @@
 import { RemoteData, Result, Unit } from "@gamezilla/core"
-import { UserId } from "@gamezilla/data"
+import { UserId } from "@gamezilla/shared"
 import * as VsBot from "./VsBot/VsBot.Types"
 import * as VsUser from "./VsUser/VsUser.Types"
 

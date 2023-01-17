@@ -1,6 +1,6 @@
 import { Alerts } from "@gamezilla/alerts"
 import { Cmd, exhaustive, p, RemoteData, Sub } from "@gamezilla/core"
-import { RoomId, UserId } from "@gamezilla/data"
+import { RoomId, UserId } from "@gamezilla/shared"
 import { ProfileStore } from "@gamezilla/profile"
 import { Ctx, Route } from "@gamezilla/shared"
 import { AspectRatio, Avatar, Badge, Box, Button, ButtonBase, CardActionArea, Divider, FillBox, Header, Icons, Paper, Toolbar, Typography, ViewEmptyState, ViewLoadingState } from "@gamezilla/ui"

@@ -1,5 +1,5 @@
 import { Cmd, Result, Sub } from "@gamezilla/core";
-import { UserId } from "@gamezilla/data";
+import { UserId } from "@gamezilla/shared";
 import { BackendModel, BackendMsg, Mode, ToBackend, ToFrontend } from "./gomoku.types";
 import * as VsBot from "./vs-bot/vs-bot.backend";
 import * as VsUser from "./vs-user/vs-user.backend";

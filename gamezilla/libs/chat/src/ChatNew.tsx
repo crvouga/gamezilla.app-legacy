@@ -1,5 +1,5 @@
 import { Cmd, exhaustive, Keyboard, p, RemoteData, Sub } from "@gamezilla/core"
-import { UserId } from "@gamezilla/data"
+import { UserId } from "@gamezilla/shared"
 import { ProfileStore } from "@gamezilla/profile"
 import { Ctx, Route } from "@gamezilla/shared"
 import * as UI from "@gamezilla/ui"

@@ -1,5 +1,5 @@
 import { Cmd, RemoteData } from "@gamezilla/core"
-import { UserId } from "@gamezilla/data"
+import { UserId } from "@gamezilla/shared"
 import { Route } from "@gamezilla/shared"
 import * as UI from "@gamezilla/ui"
 import * as ProfileStore from "./Profile.Store"

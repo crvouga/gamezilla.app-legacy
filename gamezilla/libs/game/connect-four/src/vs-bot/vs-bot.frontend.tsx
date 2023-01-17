@@ -1,7 +1,7 @@
 import { keyframes } from "@emotion/react"
 import { Alerts } from "@gamezilla/alerts"
 import { Cmd, Spring, Sub } from "@gamezilla/core"
-import { UserId } from "@gamezilla/data"
+import { UserId } from "@gamezilla/shared"
 import { Ctx } from "@gamezilla/shared"
 import { viewVsBotGameScreen, viewVsBotSetupScreen } from "@gamezilla/game-shared"
 import { ActionButton, Avatar, Box, CircularProgress, Fade, FillBox, Icons, Paper, Typography, useTheme } from "@gamezilla/ui"

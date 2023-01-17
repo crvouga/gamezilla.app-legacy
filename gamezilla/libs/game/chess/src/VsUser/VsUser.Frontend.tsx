@@ -1,6 +1,6 @@
 import { Alerts } from "@gamezilla/alerts"
 import { Audio, Cmd, exhaustive, Option, p, Sub, t } from "@gamezilla/core"
-import { UserId } from "@gamezilla/data"
+import { UserId } from "@gamezilla/shared"
 import * as UI from "@gamezilla/ui"
 import { Ctx } from "@gamezilla/shared"
 import * as Board from "../Board"
