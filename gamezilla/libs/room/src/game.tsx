@@ -23,3 +23,24 @@ export const viewCoverArt = (gameName: GameName) => {
         }
     }
 }
+
+
+export const gameNameToString = (gameName: GameName) => {
+    switch (gameName) {
+        case 'Chess': {
+            return "Chess"
+        }
+
+        case 'connect-four': {
+            return "Connect Four"
+        }
+
+        case 'Gomoku': {
+            return "Gomoku"
+        }
+
+        case 'TicTacToe': {
+            return "Tic-Tac-Toe"
+        }
+    }
+}
