@@ -1,5 +1,5 @@
 import { Cmd, p, Sub } from "@gamezilla/core"
-import { UserId } from "@gamezilla/data"
+import { UserId } from "@gamezilla/shared"
 import { getBestMove, opposite } from "../connect-four/connect-four"
 import {
   BackendModel, BackendMsg, botMove, handle, initShared, isBotTurn, Res, ToBackend, ToFrontend

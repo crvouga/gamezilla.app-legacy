@@ -1,5 +1,5 @@
 import { Cmd, Sub } from "@gamezilla/core"
-import { UserId } from "@gamezilla/data"
+import { UserId } from "@gamezilla/shared"
 import { ChessBackend as Chess } from "@gamezilla/game/chess"
 import { ConnectFourBackend as ConnectFour } from "@gamezilla/game/connect-four"
 import { GomokuBackend as Gomoku } from "@gamezilla/game/gomoku"

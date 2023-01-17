@@ -1,5 +1,5 @@
 import { Cmd, p, RemoteData, Result, Task } from "@gamezilla/core"
-import { UserId } from "@gamezilla/data"
+import { UserId } from "@gamezilla/shared"
 import { client, definitions } from "@gamezilla/supabase"
 import produce from "immer"
 import type { Problem, Store } from "./Types"

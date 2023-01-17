@@ -1,5 +1,5 @@
 import { Result } from "@gamezilla/core"
-import { UserId, Username } from "@gamezilla/data"
+import { UserId, Username } from "@gamezilla/shared"
 
 // 
 // 

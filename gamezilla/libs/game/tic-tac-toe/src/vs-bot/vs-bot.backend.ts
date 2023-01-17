@@ -1,5 +1,5 @@
 import { Cmd, p, Sub } from "@gamezilla/core"
-import { UserId } from "@gamezilla/data"
+import { UserId } from "@gamezilla/shared"
 import { toDepth, findBestMove, toOpposite } from "../tic-tic-toe/tic-tac-toe"
 import {
   BackendModel,

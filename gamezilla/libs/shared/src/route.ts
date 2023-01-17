@@ -1,5 +1,5 @@
 import { Browser, Cmd, Option } from "@gamezilla/core"
-import { Iso3166Alpha2Code, PhoneNumber, UserId } from "@gamezilla/data"
+import { Iso3166Alpha2Code, PhoneNumber, UserId } from "@gamezilla/shared"
 const { Some } = Option
 
 //

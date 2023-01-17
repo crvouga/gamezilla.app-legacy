@@ -1,5 +1,5 @@
 import { Cmd, exhaustive } from "@gamezilla/core"
-import { PartyId, UserId } from "@gamezilla/data"
+import { PartyId, UserId } from "@gamezilla/shared"
 import {
   BackendModel,
   BackendMsg,

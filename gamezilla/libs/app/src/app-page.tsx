@@ -10,7 +10,6 @@ import {
 } from '@gamezilla/auth';
 import { Chat, ChatConversation, ChatNew, ChatStore } from '@gamezilla/chat';
 import { Cmd, exhaustive, p, Sub, t } from '@gamezilla/core';
-import { PhoneNumber, UserId } from '@gamezilla/data';
 import * as Home from '@gamezilla/home';
 import { PartyFrontend as Party } from '@gamezilla/party';
 import {
@@ -26,7 +25,7 @@ import {
   Search
 } from '@gamezilla/profile';
 import { RoomFrontend as GameRoom } from '@gamezilla/room';
-import { Ctx, Route } from '@gamezilla/shared';
+import { Ctx, PhoneNumber, Route, UserId } from '@gamezilla/shared';
 import * as UI from '@gamezilla/ui';
 
 //

@@ -1,5 +1,5 @@
 import { Sub } from "@gamezilla/core"
-import { RoomId, UserId } from "@gamezilla/data"
+import { RoomId, UserId } from "@gamezilla/shared"
 import { GameName, RoomFrontend as GameRoom, gameNameToString, viewCoverArt } from "@gamezilla/room"
 import { Ctx, Route } from "@gamezilla/shared"
 import { AspectRatio, Avatar, Box, Button, CardActionArea, Divider, FillBox, Header, Icons, Paper, Typography, ViewEmptyState } from "@gamezilla/ui"

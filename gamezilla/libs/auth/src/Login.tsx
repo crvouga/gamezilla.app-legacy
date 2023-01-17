@@ -1,5 +1,5 @@
 import { Cmd } from "@gamezilla/core"
-import { Iso3166Alpha2Code } from "@gamezilla/data"
+import { Iso3166Alpha2Code } from "@gamezilla/shared"
 import { Route } from "@gamezilla/shared"
 import {
   Box,

@@ -2,7 +2,7 @@ import { Alerts } from '@gamezilla/alerts';
 import { Auth } from '@gamezilla/auth';
 import { ChatStore } from '@gamezilla/chat';
 import { LocalStorage, Option } from '@gamezilla/core';
-import { ClientId, SessionId, UserId } from '@gamezilla/data';
+import { ClientId, SessionId, UserId } from '@gamezilla/shared';
 import { Party } from '@gamezilla/party';
 import { ProfileStore } from '@gamezilla/profile';
 import * as GameRoom from '@gamezilla/room';

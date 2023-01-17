@@ -1,5 +1,5 @@
 import { Audio, eq, Option, Result } from "@gamezilla/core"
-import { UserId } from "@gamezilla/data"
+import { UserId } from "@gamezilla/shared"
 import * as Board from "../Board"
 import * as Clock from "../Clock"
 

@@ -1,5 +1,6 @@
+export * from "./data"
 export * as Route from "./route"
-import { UserId, Username } from "@gamezilla/data"
+import { UserId, Username } from "./data"
 
 export type Ctx = {
     profiles: {

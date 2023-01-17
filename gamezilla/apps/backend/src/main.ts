@@ -3,7 +3,7 @@ import {
     BackendMsg, backendServerPort, ClientToServerEvents, ServerToClientEvents, Session, sessionIdKey, ToBackend, ToFrontend
 } from "@gamezilla/app"
 import { Cmd, exhaustive, Option, p, Program, Sub } from "@gamezilla/core"
-import { ClientId, SessionId, UserId } from "@gamezilla/data"
+import { ClientId, SessionId, UserId } from "@gamezilla/shared"
 import { PartyBackend as Party } from "@gamezilla/party"
 import { RoomBackend as GameRoom } from "@gamezilla/room"
 import * as Http from "http"
