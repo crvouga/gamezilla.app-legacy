@@ -1,3 +1,5 @@
+import { Cmd } from "@gamezilla/core"
+import { Route } from '@gamezilla/shared'
 import * as UI from "@gamezilla/ui"
 
 //
@@ -26,6 +28,35 @@ export type Msg =
   | ["ClickedDeleteProfile"]
   | ["ClickedUpdateProfile"]
   | ["ClickedDebug"]
+
+
+export const update = (
+  msg: Msg,
+  model: Model,
+): [Model, Cmd<Msg>,] => {
+  switch (msg[0]) {
+    case 'ClickedBack': {
+      return [model, Route.back]
+    }
+
+    case 'ClickedDebug': {
+      return [model, Cmd.None]
+    }
+
+    case 'ClickedDeleteProfile': {
+      return [model, Route.push(['ProfileDelete'])]
+    }
+
+    case 'ClickedLogout': {
+      return [model, Route.push(['Logout'])]
+    }
+
+    case 'ClickedUpdateProfile': {
+      return [model, Route.push(['ProfileUpdate'])]
+    }
+  }
+}
+
 
 
 

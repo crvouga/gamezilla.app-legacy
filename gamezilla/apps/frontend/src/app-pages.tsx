@@ -8,25 +8,23 @@ import {
     LoginPhoneVerify,
     Logout
 } from "@gamezilla/auth"
-import { ChatStore, Chat, ChatConversation, ChatNew } from "@gamezilla/chat"
+import { Chat, ChatConversation, ChatNew, ChatStore } from "@gamezilla/chat"
 import { Cmd, exhaustive, p, Sub, t } from "@gamezilla/core"
 import { PhoneNumber, UserId } from "@gamezilla/data"
-import * as GameRoom from "@gamezilla/room"
 import * as Home from "@gamezilla/home"
 import { PartyFrontend as Party } from "@gamezilla/party"
 import {
     Profile,
     ProfileCreate,
-    ProfileDelete,
-    ProfileUpdate,
+    ProfileDelete, ProfileStore, ProfileUpdate,
     ProfileUpdateAvatar,
     ProfileUpdateName,
     ProfileUpdateTheme,
     ProfileUpdateUsername,
-    Search,
-    ProfileStore
+    Search
 } from "@gamezilla/profile"
-import { Route } from "@gamezilla/shared"
+import { RoomFrontend as GameRoom } from "@gamezilla/room"
+import { Ctx, Route } from "@gamezilla/shared"
 import * as UI from "@gamezilla/ui"
 
 //
@@ -245,9 +243,10 @@ export const initLoggedOut = (
     route: Route.Model,
 ): [Model, Cmd<Msg>] => {
     switch (route[0]) {
-        case "Login":
+        case "Login": {
             const childNew = model[0] === "Login" ? model[1] : Login.init
             return [["Login", childNew], Cmd.None]
+        }
 
         case "LoginPhone":
             return [["LoginPhone", LoginPhone.init], Cmd.None]
@@ -357,7 +356,11 @@ export const updateReady = (
     switch (model[0]) {
         case "Account":
             if (msg[0] === "Account") {
-                return tag("Account", Account.update(msg[1], model[1]))
+                const [modelNew, cmdNew] = Account.update(
+                    msg[1],
+                    model[1],
+                )
+                return [["Account", modelNew], Cmd.tag('Account', cmdNew), []]
             }
             return [model, Cmd.None, []]
 
@@ -706,7 +709,9 @@ export const ViewReady = ({
     model,
     profileStore,
     $send,
+    ctx,
 }: {
+    ctx: Ctx
     route: Route.Model
     gameRoom: GameRoom.Model
     profile: ProfileStore.Profile
@@ -738,8 +743,7 @@ export const ViewReady = ({
             return (
                 <UI.FillBox>
                     <Chat.View
-                        currentUserId={profile.userId}
-                        profileStore={profileStore}
+                        ctx={ctx}
                         model={model[1]}
                         $send={(msg) => $send(["Chat", msg])}
                         chatStore={chatStore}
@@ -775,7 +779,7 @@ export const ViewReady = ({
                     <ChatNew.View
                         profileStore={profileStore}
                         chatStore={chatStore}
-                        currentUserProfile={profile}
+                        ctx={ctx}
                         model={model[1]}
                         $send={(msg) => $send(["ChatNew", msg])}
                     />
@@ -790,9 +794,8 @@ export const ViewReady = ({
         case "ChatConversation":
             return (
                 <ChatConversation.View
-                    profileStore={profileStore}
+                    ctx={ctx}
                     chatStore={chatStore}
-                    currentUserId={profile.userId}
                     model={model[2]}
                     conversationId={model[1].conversationId}
                     $send={(msg) => $send(["ChatConversation", msg])}
