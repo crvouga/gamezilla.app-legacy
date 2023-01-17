@@ -1,11 +1,11 @@
 import { keyframes } from "@emotion/react"
 import { Alerts } from "@gamezilla/alerts"
-import { Animation, Cmd, Sub } from "@gamezilla/core"
+import { Cmd, Spring, Sub } from "@gamezilla/core"
 import { UserId } from "@gamezilla/data"
 import { Ctx, viewVsBotGameScreen, viewVsBotSetupScreen } from "@gamezilla/game-shared"
 import { ActionButton, Avatar, Box, CircularProgress, Fade, FillBox, Icons, Paper, Typography, useTheme } from "@gamezilla/ui"
 import { opposite, PlayerType, playerTypes, toStatus, toTurn } from "../connect-four/connect-four"
-import { gameTheme, initVisual, isDone, PlayerIcon, step, ViewColumns, viewCoverArt } from "../connect-four/connect-four-view"
+import { gameTheme, initVisual, isDone, PlayerIcon, step, ViewColumns, ViewCoverArt } from "../connect-four/connect-four-view"
 import {
   BackendModel, BotLevel, botLevel, FrontendGameModel, FrontendModel, FrontendMsg,
   GameModel,
@@ -18,7 +18,7 @@ import {
   toGameOver
 } from "./vs-bot.types"
 
-const { Spring } = Animation
+
 
 //
 //
@@ -221,7 +221,7 @@ export const View = ({
   if (model.type === "Setup") {
     return (
       viewVsBotSetupScreen<BotLevel, PlayerType>({
-        coverArt: viewCoverArt(),
+        coverArt: <ViewCoverArt />,
         title: "Connect Four",
         subtitle: "Vs Computer",
         ctx,

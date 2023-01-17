@@ -1,5 +1,5 @@
-import { Cmd, Sub } from "../../Core"
-import { UserId } from "../../Data/UserId"
+import { Cmd, Sub } from "@gamezilla/core"
+import { UserId } from "@gamezilla/data"
 import {
   BackendModel,
   BackendMsg,

@@ -1,5 +1,5 @@
 import { Cmd, exhaustive, Sub, Time } from "@gamezilla/core"
-import { UserId } from "../../../Data/UserId"
+import { UserId } from "@gamezilla/data"
 import {
   BackendModel,
   BackendMsg,
@@ -9,7 +9,7 @@ import {
   tick,
   ToBackend,
   ToFrontend,
-  toPlayerType,
+  toPlayerType
 } from "./vs-user.types"
 
 //

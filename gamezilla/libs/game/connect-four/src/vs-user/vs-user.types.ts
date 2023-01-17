@@ -1,6 +1,5 @@
-import { exhaustive } from "@gamezilla/core"
-import { Err, Ok, Result } from "../../../Core/Result"
-import { UserId } from "../../../Data/UserId"
+import { exhaustive, Result } from "@gamezilla/core"
+import { UserId } from "@gamezilla/data"
 import {
   allColumnIndexes,
   ColumnIndex,
@@ -12,9 +11,9 @@ import {
   opposite,
   PlayerType,
   toStatus,
-  toTurn,
+  toTurn
 } from "../connect-four/connect-four"
-
+const { Err, Ok, } = Result
 //
 //
 //

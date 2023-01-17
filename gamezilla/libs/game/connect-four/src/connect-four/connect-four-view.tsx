@@ -1,8 +1,9 @@
+import { Spring, Uuid } from "@gamezilla/core"
+import { SvgIcon, Sx } from "@gamezilla/ui"
 import { useLayoutEffect, useRef } from "react"
-import { Uuid } from "@gamezilla/core"
-import * as Spring from "../../../Core/animation/spring"
-import { SvgIcon, Sx } from "../../../UI"
 import { ColumnIndex, Columns, COLUMN_COUNT, isColumnIndex, MAX_COLUMN_HEIGHT, PlayerType } from "./connect-four"
+
+
 
 // 
 // 
@@ -40,9 +41,6 @@ export const gameTheme = {
     },
 }
 
-export const ViewSvgDefs = () => {
-    return <></>
-}
 
 export const ViewPlayerOneGradientDef = ({
     gradientId,
@@ -349,9 +347,9 @@ const paint = ({ context, visual }: { visual: VisualModel; context: CanvasRender
     let x, y, cx, cy, r, column, disc, gradient;
 
     for (x = 0; x < visual.length; x++) {
-        column = visual[x]!
+        column = visual[x]
         for (y = 0; y < column.length; y++) {
-            disc = column[y]!
+            disc = column[y]
 
             cx = (x + 1 / 2) * cellWidth
             cy = (disc.yPosition.current + 1 / 2) * cellHeight
@@ -425,7 +423,7 @@ const paint = ({ context, visual }: { visual: VisualModel; context: CanvasRender
 // }
 
 
-export const viewCoverArt = () => {
+export const ViewCoverArt = () => {
     const ref = useRef(Uuid.generateSync())
     const ids = {
         playerOneGradient: `playerOneGradient${ref.current}`,

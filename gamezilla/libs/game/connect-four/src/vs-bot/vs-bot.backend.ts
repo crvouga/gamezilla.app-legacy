@@ -1,17 +1,9 @@
 import { Cmd, p, Sub } from "@gamezilla/core"
-import {
-  isBotTurn,
-  initShared,
-  BackendMsg,
-  BackendModel,
-  ToBackend,
-  handle,
-  Res,
-  ToFrontend,
-  botMove,
-} from "./vs-bot.types"
-import { UserId } from "../../../Data/UserId"
+import { UserId } from "@gamezilla/data"
 import { getBestMove, opposite } from "../connect-four/connect-four"
+import {
+  BackendModel, BackendMsg, botMove, handle, initShared, isBotTurn, Res, ToBackend, ToFrontend
+} from "./vs-bot.types"
 
 //
 //
