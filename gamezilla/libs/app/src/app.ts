@@ -1,4 +1,4 @@
-import { Alerts } from '@gamezilla/alerts';
+import { Alerts } from "@gamezilla/shared";
 import { Auth } from '@gamezilla/auth';
 import { ChatStore } from '@gamezilla/chat';
 import { LocalStorage, Option } from '@gamezilla/core';

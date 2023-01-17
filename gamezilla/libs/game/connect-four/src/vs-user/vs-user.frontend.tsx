@@ -1,5 +1,5 @@
 import { keyframes } from "@emotion/react"
-import { Alerts } from "@gamezilla/alerts"
+import { Alerts } from "@gamezilla/shared"
 import { Cmd, exhaustive, Sub } from "@gamezilla/core"
 import { UserId } from "@gamezilla/shared"
 import { Ctx } from "@gamezilla/shared"
