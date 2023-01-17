@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Cmd, Option, p, RemoteData, Result, Task } from "@gamezilla/core"
 import { UserId } from "@gamezilla/data"
 import { Route } from "@gamezilla/shared"
@@ -98,11 +99,15 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
               data.conversation
 
             for (const message of data.messages) {
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
               model.Message[message.messageId] = message
             }
 
             for (const userConversation of data.usersConversations) {
               const id = Types.toUsersConversationsId(userConversation)
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
               model.UsersConversations[id] = userConversation
             }
           }
@@ -114,34 +119,62 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
     case "FindManyByUserId_Done": {
       const { userId, result } = msg[1]
-      const modelNew = produce(model, (draft) => {
-        draft.queries.Conversation.FindManyByUserId[userId] = p(
-          result,
-          RemoteData.map((data) => ({
-            conversation: data.conversations.map((item) => item.conversationId),
-            usersConversations: data.usersConversations.map(
-              Types.toUsersConversationsId,
-            ),
-          })),
-        )
 
-        switch (result.type) {
-          case "Err":
-            break
 
-          case "Ok": {
-            const data = result.value
-            for (const item of data.conversations) {
-              draft.Conversation[item.conversationId] = item
-            }
+      const modelNew: Model = {
+        ...model,
+        queries: {
+          ...model.queries,
+          Conversation: {
+            ...model.queries.Conversation,
+            FindManyByUserId: {
+              ...model.queries.Conversation.FindManyByUserId,
+              [userId]: p(
+                result,
+                RemoteData.map((data) => ({
+                  conversation: data.conversations.map(
+                    (item) => item.conversationId,
+                  ),
+                  usersConversations: data.usersConversations.map(
+                    Types.toUsersConversationsId,
+                  ),
+                })),
+              ),
+            },
+          },
+        },
 
-            for (const item of data.usersConversations) {
-              const id = Types.toUsersConversationsId(item)
-              draft.UsersConversations[id] = item
-            }
-          }
-        }
-      })
+        Conversation: {
+          ...model.Conversation,
+
+          ...(result.type === "Ok"
+            ? result.value.conversations.reduce(
+              (acc, item) => ({
+                ...acc,
+                [item.conversationId]: item,
+              }),
+              {},
+            )
+
+            : {}),
+        },
+
+        UsersConversations: {
+          ...model.UsersConversations,
+
+          ...(result.type === "Ok"
+            ? result.value.usersConversations.reduce(
+              (acc, item) => ({
+                ...acc,
+                [Types.toUsersConversationsId(item)]: item,
+              }),
+              {},
+            )
+
+            : {}),
+        },
+      }
+
 
       return [modelNew, Cmd.None]
     }
@@ -167,6 +200,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
             for (const item of data.usersConversations) {
               const id = Types.toUsersConversationsId(item)
+              // @ts-ignore
               model.UsersConversations[id] = item
             }
             break

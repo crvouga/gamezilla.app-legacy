@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import * as Rx from "rxjs"
 import { Cmd } from "../cmd"
 import * as Json from "../json"
@@ -203,6 +204,10 @@ const handleIncomingMsg = <Model, Msg extends {}>({
 
           case "Ok":
             return Result.Ok($sendToApp(result.value))
+
+          default: {
+            return Result.Err("Unknown result type")
+          }
         }
       }
 
@@ -243,6 +248,7 @@ const handleIncomingMsg = <Model, Msg extends {}>({
               Result.map((liftedState) =>
                 p(
                   update(
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-ignore
                     liftedState.computedStates[
                       liftedState.computedStates.length - 1
@@ -480,6 +486,8 @@ export const withDebugger = <Model, Msg extends {}>(
 
           case "__DebugUpdateModel__":
             program.state$.next({
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
               model: msg.payload,
               cmd: Cmd.None,
             })
@@ -538,7 +546,7 @@ const toAction = (action: unknown): { type: string; payload?: unknown } => {
     }
   }
 
-  const flatten = action.flat(Infinity)
+  const flatten = flattenDeep(action)
 
   const actionType = flatten
     .flatMap((item) => (typeof item === "string" ? [item] : []))
@@ -551,4 +559,8 @@ const toAction = (action: unknown): { type: string; payload?: unknown } => {
     type: actionType,
     payload: typeof payload === "string" ? undefined : payload,
   }
+}
+
+const flattenDeep = <T>(arr: T | (T[])): T[] => {
+  return Array.isArray(arr) ? arr.reduce<T[]>((a, b) => a.concat(flattenDeep(b)), []) : [arr]
 }

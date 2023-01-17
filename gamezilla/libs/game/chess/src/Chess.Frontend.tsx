@@ -10,7 +10,7 @@ import {
   ToBackend,
   ToFrontend
 } from "./Chess.Types"
-import * as Sounds from "./Sounds"
+import Sounds from "./Sounds"
 import * as VsBot from "./VsBot/VsBot.Frontend"
 import * as VsUser from "./VsUser/VsUser.Frontend"
 
@@ -32,7 +32,7 @@ export const init = (): [FrontendModel, Cmd<Msg>] => {
         InputMode: RemoteData.NotAsked,
       },
     },
-    Audio.preload(Object.values(Sounds), (): Msg => ["PreloadAudio_Done"]),
+    Audio.preload(Array.from(Object.values(Sounds)), (): Msg => ["PreloadAudio_Done"]),
   ]
 }
 

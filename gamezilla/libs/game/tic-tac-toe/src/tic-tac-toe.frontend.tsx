@@ -1,9 +1,8 @@
-import * as Alerts from "@gamezilla/alerts"
+import { Alerts } from "@gamezilla/alerts"
 import { Cmd, exhaustive } from "@gamezilla/core"
-import { ProfileStore } from "@gamezilla/profile"
 import { GameRoomCtx, viewSelectModeScreen } from "@gamezilla/game-shared"
+import { ProfileStore } from "@gamezilla/profile"
 import { Ctx } from "@gamezilla/shared"
-import { viewCoverArt } from "./tic-tic-toe/tic-tac-toe"
 import {
   BackendModel,
   FrontendModel,
@@ -11,6 +10,7 @@ import {
   ToBackend,
   ToFrontend
 } from "./tic-tac-toe.types"
+import { viewCoverArt } from "./tic-tic-toe/tic-tac-toe"
 import * as VsBot from "./vs-bot/vs-bot.frontend"
 import * as VsUser from "./vs-user/vs-user.frontend"
 

@@ -1,7 +1,6 @@
-import { z } from "zod"
-import { exhaustive } from "@gamezilla/core"
-import { Err, Ok, Result } from "@gamezilla/core"
+import { exhaustive, Result } from "@gamezilla/core"
 import { UserId } from "@gamezilla/data"
+import { z } from "zod"
 import {
   BestMoveProblem,
   BestMoveResult,
@@ -17,6 +16,8 @@ import {
 import {
   VisualModel
 } from "../connect-four/connect-four-view"
+
+const { Err, Ok, } = Result
 
 //
 //
@@ -118,6 +119,10 @@ export const toGameOver = (model: SharedModel): GameOver | { type: "none" } => {
 
         case "Winner": {
           return { type: "Winner", winner: status.winner }
+        }
+
+        default: {
+          return { type: "none" }
         }
       }
     }

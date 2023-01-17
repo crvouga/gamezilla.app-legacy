@@ -1,4 +1,4 @@
-import Howler from "howler"
+import * as Howler from "howler"
 import { Cmd } from "../cmd"
 import { p } from "../pipe"
 import { Result } from "../result"

@@ -3,9 +3,9 @@ export * as ReduxDevTools from "./ReduxDevTools"
 export const formatMsg = (msg: unknown): string => {
   try {
     return JSON.stringify(msg)
-      .replaceAll('"', "")
-      .replaceAll("[", "")
-      .replaceAll("]", "")
+      .replace('"', "")
+      .replace("[", "")
+      .replace("]", "")
       .split(",")
       .join(".")
   } catch (_error) {
@@ -14,8 +14,7 @@ export const formatMsg = (msg: unknown): string => {
 }
 
 export const format = (msg: Array<unknown>) => {
-  return msg
-    .flat(Infinity)
+  return flatten(msg)
     .reduce<[string | null, unknown | null]>(
       ([msgType, payload], item) =>
         typeof item === "string"
@@ -25,4 +24,21 @@ export const format = (msg: Array<unknown>) => {
           : [msgType, item],
       [null, null],
     )
+}
+
+
+const flatten = <T>(xs: T[] | T): T[] => {
+  if (!Array.isArray(xs)) {
+    return [xs]
+  }
+  return flatMap(xs, x => {
+    if (Array.isArray(x)) {
+      return flatten(x)
+    }
+    return [x]
+  })
+}
+
+const flatMap = <T>(xs: T[], f: (x: T) => T[]): T[] => {
+  return xs.reduce((acc, x) => [...acc, ...f(x)], [] as T[])
 }
