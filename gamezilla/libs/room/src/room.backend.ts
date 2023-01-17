@@ -1,6 +1,6 @@
 import { Cmd, exhaustive, p, Result, Sub } from "@gamezilla/core"
 import { RoomId, UserId } from "@gamezilla/data"
-import * as Game from "./game.backend-"
+import * as Game from "./game.backend"
 import {
   BackendModel,
   BackendMsg,

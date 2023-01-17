@@ -4,7 +4,7 @@ import { ChessBackend as Chess } from "@gamezilla/game/chess"
 import { ConnectFourBackend as ConnectFour } from "@gamezilla/game/connect-four"
 import { GomokuBackend as Gomoku } from "@gamezilla/game/gomoku"
 import { TicTacToeBackend as TicTacToe } from "@gamezilla/game/tic-tac-toe"
-import { BackendModel, BackendMsg, ToBackend, ToFrontend } from "./game.types-"
+import { BackendModel, BackendMsg, ToBackend, ToFrontend } from "./game.types"
 
 
 //

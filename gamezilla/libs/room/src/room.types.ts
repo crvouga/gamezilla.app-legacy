@@ -1,7 +1,7 @@
 import { RemoteData, Result } from "@gamezilla/core"
 import { RoomId, UserId } from "@gamezilla/data"
-import * as GameBackend from "./game.backend-"
-import * as Game from "./game.types-"
+import * as GameBackend from "./game.backend"
+import * as Game from "./game.types"
 
 const { Ok, Err } = Result
 

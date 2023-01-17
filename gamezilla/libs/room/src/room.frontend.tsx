@@ -5,8 +5,8 @@ import { ProfileStore } from "@gamezilla/profile"
 import { Ctx, Route } from "@gamezilla/shared"
 import { AspectRatio, Avatar, Badge, Box, Button, ButtonBase, CardActionArea, Divider, FillBox, Header, Icons, Paper, Toolbar, Typography, ViewEmptyState, ViewLoadingState } from "@gamezilla/ui"
 import { viewCoverArt } from "./game"
-import * as Game from "./game.frontend-"
-import { GameName, gameNameList } from "./game.types-"
+import * as Game from "./game.frontend"
+import { GameName, gameNameList } from "./game.types"
 import {
   BackendModel, FrontendModel,
   FrontendMsg,

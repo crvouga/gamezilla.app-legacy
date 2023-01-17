@@ -14,7 +14,7 @@ import {
   GameName,
   ToBackend,
   ToFrontend
-} from "./game.types-"
+} from "./game.types"
 
 
 //
