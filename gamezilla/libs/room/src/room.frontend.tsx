@@ -1,4 +1,4 @@
-import { Alerts } from "@gamezilla/alerts"
+import { Alerts } from "@gamezilla/shared"
 import { Cmd, exhaustive, p, RemoteData, Sub } from "@gamezilla/core"
 import { RoomId, UserId } from "@gamezilla/shared"
 import { ProfileStore } from "@gamezilla/profile"

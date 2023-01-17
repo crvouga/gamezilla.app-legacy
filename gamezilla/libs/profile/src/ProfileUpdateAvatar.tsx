@@ -1,4 +1,4 @@
-import { Alerts } from "@gamezilla/alerts"
+import { Alerts } from "@gamezilla/shared"
 import { Cmd, p } from "@gamezilla/core"
 import { ProfileAvatar, UserId } from "@gamezilla/shared"
 import { Route } from "@gamezilla/shared"

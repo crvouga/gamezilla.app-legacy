@@ -1,4 +1,4 @@
-import { Alerts } from "@gamezilla/alerts"
+import { Alerts } from "@gamezilla/shared"
 import { Audio, Cmd, p, RemoteData, Sub, Unit } from "@gamezilla/core"
 import { GameRoomCtx, viewSelectModeScreen } from "@gamezilla/game-shared"
 import { Ctx } from "@gamezilla/shared"

@@ -1,4 +1,4 @@
-import { Alerts } from '@gamezilla/alerts';
+import { Alerts } from "@gamezilla/shared";
 import {
   Account,
   Auth,

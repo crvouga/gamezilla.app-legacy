@@ -1,4 +1,4 @@
-import { Alerts } from "@gamezilla/alerts"
+import { Alerts } from "@gamezilla/shared"
 import { Audio, Cmd, exhaustive, Option, p, Sub, t } from "@gamezilla/core"
 import { UserId } from "@gamezilla/shared"
 import * as UI from "@gamezilla/ui"

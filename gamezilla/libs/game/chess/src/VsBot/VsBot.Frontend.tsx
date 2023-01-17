@@ -1,4 +1,4 @@
-import { Alerts } from "@gamezilla/alerts"
+import { Alerts } from "@gamezilla/shared"
 import { Audio, Cmd, exhaustive, Option, Sub, t } from "@gamezilla/core"
 import { viewVsBotSetupScreen } from "@gamezilla/game-shared"
 import { Ctx } from "@gamezilla/shared"
