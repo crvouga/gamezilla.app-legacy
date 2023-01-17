@@ -22,7 +22,6 @@
       "@gamezilla/core": ["libs/core/src/index.ts"],
       "@gamezilla/data": ["libs/data/src/index.ts"],
       "@gamezilla/game-shared": ["libs/game-shared/src/index.ts"],
-      "@gamezilla/game/battleship": ["libs/game/battleship/src/index.ts"],
       "@gamezilla/game/chess": ["libs/game/chess/src/index.ts"],
       "@gamezilla/game/connect-four": ["libs/game/connect-four/src/index.ts"],
       "@gamezilla/game/gomoku": ["libs/game/gomoku/src/index.ts"],

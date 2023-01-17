@@ -1,1 +1,4 @@
-export * from './lib/game-gomoku';
+export * as GomokuBackend from './gomoku.backend';
+export * as GomokuFrontend from './gomoku.frontend';
+export * from './gomoku.types';
+
