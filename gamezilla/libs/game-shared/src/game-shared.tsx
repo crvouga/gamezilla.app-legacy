@@ -1,5 +1,4 @@
 import { UserId } from "@gamezilla/data"
-import { ProfileStore } from "@gamezilla/profile"
 import { ActionButton, avatar, Avatar, Box, box, Button, CircularProgress, Divider, FillBox, fragment, icon, IconName, Icons, Paper, Sx, text, ToggleButton, ToggleButtonGroup, Typography, ViewNode } from "@gamezilla/ui"
 
 //
@@ -9,11 +8,6 @@ import { ActionButton, avatar, Avatar, Box, box, Button, CircularProgress, Divid
 //
 //
 //
-
-export type Ctx = {
-    profiles: ProfileStore.Model["profiles"]
-    currentUserId: UserId
-}
 
 export type GameRoomCtx = {
     onQuit: () => void

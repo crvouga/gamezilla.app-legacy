@@ -1,1 +1,3 @@
-export * from './lib/game-chess';
+export * as ChessBackend from "./Chess.Backend"
+export * as ChessFrontend from "./Chess.Frontend"
+export * from "./Chess.Types"
