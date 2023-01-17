@@ -17,6 +17,7 @@
     "baseUrl": ".",
     "paths": {
       "@gamezilla/alerts": ["libs/alerts/src/index.ts"],
+      "@gamezilla/app": ["libs/app/src/index.ts"],
       "@gamezilla/auth": ["libs/auth/src/index.ts"],
       "@gamezilla/chat": ["libs/chat/src/index.ts"],
       "@gamezilla/core": ["libs/core/src/index.ts"],
