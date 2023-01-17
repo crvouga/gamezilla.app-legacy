@@ -1,6 +1,7 @@
 import { UserId } from "@gamezilla/data"
 import * as UI from "@gamezilla/ui"
-import { bannerArtAspectRatio, Ctx } from "@gamezilla/game-shared"
+import { bannerArtAspectRatio } from "@gamezilla/game-shared"
+import { Ctx } from "@gamezilla/shared"
 
 export const theme = {
   lightSquare: "#EBEBD0",
