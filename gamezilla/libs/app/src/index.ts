@@ -1,3 +1,3 @@
 export * from './app';
-export * as Page from './app-page';
-
+export * as AppBackend from "./app.backend";
+export * as AppFrontend from './app.frontend';
