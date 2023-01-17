@@ -2,8 +2,8 @@ import { Cmd, p, RemoteData, Result, Task } from "@gamezilla/core"
 import { UserId } from "@gamezilla/data"
 import { client, definitions } from "@gamezilla/supabase"
 import produce from "immer"
-import * as Types from "./Types"
 import type { Problem, Store } from "./Types"
+import * as Types from "./Types"
 
 //
 //
@@ -73,22 +73,29 @@ export const update = (msg: Msg, model: Store): [Store, Cmd<Msg>] => {
 
     case "Send_Done": {
       const { conversationId, result } = msg[1]
-      const modelNew = produce(model, (model) => {
-        model.mutations.Message.Send[conversationId] = p(
-          result,
-          RemoteData.map((item) => item.messageId),
-        )
-        switch (result.type) {
-          case "Err":
-            break
 
-          case "Ok": {
-            const message = result.value
-            model.Message[message.messageId] = message
-            break
-          }
-        }
-      })
+
+      const modelNew: Store = {
+        ...model,
+        mutations: {
+          ...model.mutations,
+          Message: {
+            ...model.mutations.Message,
+            Send: {
+              ...model.mutations.Message.Send,
+              [conversationId]: p(result, RemoteData.map((message) => message.messageId)),
+            },
+          },
+        },
+
+        Message: {
+          ...model.Message,
+          ...(result.type === "Ok"
+            ? { [result.value.messageId]: result.value, }
+            : {}),
+        },
+      }
+
 
       return [modelNew, Cmd.None]
     }

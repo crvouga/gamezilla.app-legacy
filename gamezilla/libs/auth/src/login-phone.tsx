@@ -136,13 +136,18 @@ export const View = ({
       >
         <UI.Autocomplete
           id="iso_3166_phone_number"
+          multiple={false}
           defaultValue={Iso3166Alpha2Code.of("US")}
           options={Iso3166Alpha2Code.all}
-          getOptionLabel={(option) =>
-            `${Iso3166Alpha2Code.toEmoji(option)} ${Iso3166Alpha2Code.toName(
-              option,
-            )}`
-          }
+          getOptionLabel={(option) => {
+            if (!Iso3166Alpha2Code.is(option)) {
+              return option
+            }
+
+            const emoji = Iso3166Alpha2Code.toEmoji(option)
+            const name = Iso3166Alpha2Code.toName(option)
+            return `${emoji} ${name}`
+          }}
           renderInput={(params) => (
             <UI.TextField
               {...params}
@@ -152,7 +157,7 @@ export const View = ({
             />
           )}
           onChange={(_event, value) => {
-            if (value) {
+            if (value && Iso3166Alpha2Code.is(value)) {
               $send(["InputtedCountry", value])
             }
           }}

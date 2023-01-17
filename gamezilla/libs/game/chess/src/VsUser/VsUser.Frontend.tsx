@@ -5,7 +5,7 @@ import * as UI from "@gamezilla/ui"
 import { Ctx } from "@gamezilla/shared"
 import * as Board from "../Board"
 import * as Clock from "../Clock"
-import * as Sounds from "../Sounds"
+import Sounds from "../Sounds"
 import { PawnIcon, VersusHeader } from "../Views"
 import {
   BackendModel,
@@ -345,7 +345,8 @@ export const updateFromBackend = (
     }
 
     case "GameStarted": {
-      return [model, playAudio(Sounds.gameStart), []]
+      return [model,
+        playAudio(Sounds.gameStart), []]
     }
 
     case "ClockTicked": {

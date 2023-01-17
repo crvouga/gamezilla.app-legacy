@@ -1,6 +1,7 @@
 import { Cmd, exhaustive, Option, p, Result, Sub, Task, Unit } from "@gamezilla/core"
 import { PhoneNumber, UserId } from "@gamezilla/data"
-import * as Supabase from "@gamezilla/supabase"
+import { client, } from "@gamezilla/supabase"
+import { Session as SupabaseSession } from "@supabase/supabase-js"
 import * as Rx from "rxjs"
 
 //
@@ -263,13 +264,13 @@ export const subscriptions: Sub<Msg> = subject
 //
 //
 
-export const fromSupabaseSession = (auth: Supabase.Session | null): Msg => {
+export const fromSupabaseSession = (auth: SupabaseSession | null): Msg => {
   const userId = UserId.decode(auth?.user?.id)
 
   const defaultName =
-    auth?.user?.user_metadata?.["name"] ??
-    auth?.user?.user_metadata?.["full_name"] ??
-    ""
+    String(auth?.user?.user_metadata?.["name"] ??
+      auth?.user?.user_metadata?.["full_name"] ??
+      "")
 
   if (userId.type === "Ok") {
     return ["GotSession", Option.Some({ userId: userId.value, defaultName })]

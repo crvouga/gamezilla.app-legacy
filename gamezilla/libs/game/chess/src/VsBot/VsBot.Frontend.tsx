@@ -1,10 +1,11 @@
 import { Alerts } from "@gamezilla/alerts"
 import { Audio, Cmd, exhaustive, Option, Sub, t } from "@gamezilla/core"
+import { viewVsBotSetupScreen } from "@gamezilla/game-shared"
+import { Ctx } from "@gamezilla/shared"
 import * as UI from "@gamezilla/ui"
-import { Ctx, viewVsBotSetupScreen } from "@gamezilla/game-shared"
 import * as Board from "../Board"
 import { viewCoverArt } from "../Chess"
-import * as Sounds from "../Sounds"
+import Sounds from "../Sounds"
 import { PawnIcon } from "../Views"
 import {
   BackendModel,

@@ -1,6 +1,7 @@
 import { Alerts } from "@gamezilla/alerts"
 import { Cmd, Sub } from "@gamezilla/core"
-import { bannerArtAspectRatio, Ctx, GameRoomCtx, viewSelectModeScreen } from "@gamezilla/game-shared"
+import { bannerArtAspectRatio, GameRoomCtx, viewSelectModeScreen } from "@gamezilla/game-shared"
+import { Ctx } from "@gamezilla/shared"
 import * as UI from "@gamezilla/ui"
 import {
   BackendModel,
@@ -9,7 +10,7 @@ import {
   ToBackend,
   ToFrontend
 } from "./connect-four.types"
-import { gameTheme, PlayerIcon, viewCoverArt } from "./connect-four/connect-four-view"
+import { gameTheme, PlayerIcon, ViewCoverArt } from "./connect-four/connect-four-view"
 import * as VsBot from "./vs-bot/vs-bot.frontend"
 import * as VsUser from "./vs-user/vs-user.frontend"
 
@@ -150,7 +151,7 @@ export const View = ({
         viewSelectModeScreen({
           ctx: ctx,
           gameRoomCtx: gameRoomCtx,
-          coverArt: viewCoverArt(),
+          coverArt: <ViewCoverArt />,
           title: "Connect Four",
           onVsUser: () =>
             $send([

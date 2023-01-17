@@ -1,8 +1,8 @@
-import produce from "immer"
-import { matchSorter } from "match-sorter"
 import { Cmd, exhaustive, p, RemoteData, Result, Task, Unit } from "@gamezilla/core"
 import { UserId, Username } from "@gamezilla/data"
 import { client, definitions } from "@gamezilla/supabase"
+import produce from "immer"
+import { matchSorter } from "match-sorter"
 
 
 //
@@ -162,6 +162,8 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       const key = toFindManyKey(userIds)
 
       const modelNew = produce(model, (model) => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         model.findMany[key] = p(
           result,
           RemoteData.map((profiles) =>
@@ -171,6 +173,8 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
         if (result.type === "Ok") {
           for (const profile of result.value) {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             model.profiles[profile.userId] = profile
           }
         }
@@ -197,22 +201,19 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     case "CreateOne_Done": {
       const { userId, result } = msg[1]
 
-      const modelNew = produce(model, (model) => {
-        model.create[userId] = p(
-          result,
-          RemoteData.map((profile) => profile.userId),
-        )
+      const modelNew: Model = {
+        ...model,
+        create: {
+          ...model.create,
+          [userId]: p(result, RemoteData.map((profile) => profile.userId)),
+        },
 
-        switch (result.type) {
-          case "Err":
-            delete model.profiles[userId]
-            break
+        profiles: {
+          ...model.profiles,
+          [userId]: result.type === "Ok" ? result.value : undefined,
+        },
+      }
 
-          case "Ok":
-            model.profiles[userId] = result.value
-            break
-        }
-      })
 
       return [modelNew, Cmd.None]
     }
@@ -220,25 +221,30 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     case "Search_Done": {
       const { result, searchText } = msg[1]
 
-      const modelNew = produce(model, (model) => {
-        model.search[searchText] = p(
-          result,
-          RemoteData.map((profiles) =>
-            profiles.map((profile) => profile.userId),
+      const hits: Profile[] = result.type === 'Err' ? [] : result.value
+
+      const byId = hits.reduce((acc, hit) => {
+        acc[hit.userId] = hit
+        return acc
+      }, {} as Record<UserId, Profile>)
+
+
+      const modelNew: Model = {
+        ...model,
+        search: {
+          ...model.search,
+          [searchText]: p(
+            result,
+            RemoteData.map((profiles) =>
+              profiles.map((profile) => profile.userId),
+            ),
           ),
-        )
-
-        switch (result.type) {
-          case "Err":
-            break
-
-          case "Ok":
-            for (const profile of result.value) {
-              model.profiles[profile.userId] = profile
-            }
-            break
+        },
+        profiles: {
+          ...model.profiles,
+          ...byId,
         }
-      })
+      }
 
       return [modelNew, Cmd.None]
     }
@@ -259,11 +265,17 @@ export const runAction = (msg: Action, model: Model): [Model, Cmd<Msg>] => {
         return [model, Cmd.None]
       }
 
-      const modelNew = produce(model, (model) => {
-        model.edit[userId] = RemoteData.Loading
-
-        model.profiles[userId] = { ...profile, ...edits }
-      })
+      const modelNew: Model = {
+        ...model,
+        edit: {
+          ...model.edit,
+          [userId]: RemoteData.Loading
+        },
+        profiles: {
+          ...model.profiles,
+          [userId]: { ...profile, ...edits }
+        }
+      }
 
       return [
         modelNew,
@@ -318,7 +330,7 @@ export const runAction = (msg: Action, model: Model): [Model, Cmd<Msg>] => {
       const { profile } = msg[1][1]
       const modelNew = produce(model, (model) => {
         model.create[profile.userId] = RemoteData.Loading
-        model.profiles[profile.userId] = profile
+        model.profiles = profile
       })
 
       return [

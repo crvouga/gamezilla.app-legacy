@@ -2,7 +2,7 @@ import { keyframes } from "@emotion/react"
 import { Alerts } from "@gamezilla/alerts"
 import { Cmd, exhaustive, Sub } from "@gamezilla/core"
 import { UserId } from "@gamezilla/data"
-import { Ctx } from "@gamezilla/game-shared"
+import { Ctx } from "@gamezilla/shared"
 import {
   ActionButton,
   Avatar,
