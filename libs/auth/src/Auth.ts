@@ -1,8 +1,17 @@
-import { Cmd, exhaustive, Option, p, Result, Sub, Task, Unit } from "@gamezilla/core"
-import { PhoneNumber, UserId } from "@gamezilla/shared"
-import { client, } from "@gamezilla/shared"
-import { Session as SupabaseSession } from "@supabase/supabase-js"
-import * as Rx from "rxjs"
+import {
+  Cmd,
+  exhaustive,
+  Option,
+  p,
+  Result,
+  Sub,
+  Task,
+  Unit,
+} from '@gamezilla/core';
+import { PhoneNumber, UserId } from '@gamezilla/shared';
+import { client } from '@gamezilla/shared';
+import { Session as SupabaseSession } from '@supabase/supabase-js';
+import * as Rx from 'rxjs';
 
 //
 //
@@ -12,19 +21,19 @@ import * as Rx from "rxjs"
 //
 //
 
-export type Session = { defaultName: string; userId: UserId }
+export type Session = { defaultName: string; userId: UserId };
 
-export type Model = ["Loading"] | ["LoggedOut"] | ["LoggedIn", Session]
+export type Model = ['Loading'] | ['LoggedOut'] | ['LoggedIn', Session];
 
 export const init = (): [Model, Cmd<Msg>] => {
   return [
-    ["Loading"],
+    ['Loading'],
     p(
       getSession,
-      Cmd.perform((msg) => msg),
+      Cmd.perform((msg) => msg)
     ),
-  ]
-}
+  ];
+};
 
 //
 //
@@ -35,13 +44,13 @@ export const init = (): [Model, Cmd<Msg>] => {
 //
 
 export type Msg =
-  | ["GotSession", Option<Session>]
-  | ["Login_Done", Result<null, null>]
-  | ["Logout_Done", Result<null, null>]
+  | ['GotSession', Option<Session>]
+  | ['Login_Done', Result<null, null>]
+  | ['Logout_Done', Result<null, null>];
 
-export type Action = ["Auth", ["Logout"]]
+export type Action = ['Auth', ['Logout']];
 
-export type ToBackend = ["UserLoggedIn", UserId]
+export type ToBackend = ['UserLoggedIn', UserId];
 
 //
 //
@@ -54,63 +63,62 @@ export type ToBackend = ["UserLoggedIn", UserId]
 export const update = (
   { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd },
   msg: Msg,
-  model: Model,
+  model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case "GotSession":
+    case 'GotSession':
       switch (msg[1].type) {
-        case "none":
-          return [["LoggedOut"], Cmd.None]
+        case 'none':
+          return [['LoggedOut'], Cmd.None];
 
-        case "Some":
+        case 'Some':
           return [
-            ["LoggedIn", msg[1].value],
-            sendToBackend(["UserLoggedIn", msg[1].value.userId]),
-          ]
+            ['LoggedIn', msg[1].value],
+            sendToBackend(['UserLoggedIn', msg[1].value.userId]),
+          ];
 
         default: {
-          return [model, Cmd.None]
+          return [model, Cmd.None];
         }
       }
 
-    case "Login_Done": {
-
-      return [model, Cmd.None]
+    case 'Login_Done': {
+      return [model, Cmd.None];
     }
 
-    case "Logout_Done":
+    case 'Logout_Done':
       switch (msg[1].type) {
-        case "Err":
-          return [model, Cmd.None]
+        case 'Err':
+          return [model, Cmd.None];
 
-        case "Ok":
-          return [["LoggedOut"], Cmd.None]
+        case 'Ok':
+          return [['LoggedOut'], Cmd.None];
 
         default:
-          return exhaustive(msg[1])
+          return exhaustive(msg[1]);
       }
 
     default:
-      return exhaustive(msg[0])
+      return exhaustive(msg[0]);
   }
-}
+};
 
 export const runAction = (action: Action, model: Model): [Model, Cmd<Msg>] => {
   switch (action[0]) {
-    case "Auth": {
+    case 'Auth': {
       switch (action[1][0]) {
-        case "Logout":
+        case 'Logout':
           return [
             model,
             p(
               logout,
-              Cmd.perform((): Msg => ["Logout_Done", Result.Ok(null)]),
+              Cmd.perform((): Msg => ['Logout_Done', Result.Ok(null)])
             ),
-          ]
+          ];
       }
     }
   }
-}
+};
 
 //
 //
@@ -120,115 +128,115 @@ export const runAction = (action: Action, model: Model): [Model, Cmd<Msg>] => {
 //
 //
 
-type Problem = { message: string }
+type Problem = { message: string };
 
-export type AuthResult = Result<Problem, Unit>
+export type AuthResult = Result<Problem, Unit>;
 
 export const loginWithEmailAndPassword =
   ({
     emailAddress,
     password,
   }: {
-    emailAddress: string
-    password: string
+    emailAddress: string;
+    password: string;
   }): Task<AuthResult> =>
-    async () => {
-      const response = await client.auth.signIn({
-        email: emailAddress,
-        password: password,
-      })
+  async () => {
+    const response = await client.auth.signIn({
+      email: emailAddress,
+      password: password,
+    });
 
-      if (response.error) {
-        return Result.Err({ message: response.error.message })
-      }
-
-      return Result.Ok(Unit)
+    if (response.error) {
+      return Result.Err({ message: response.error.message });
     }
+
+    return Result.Ok(Unit);
+  };
 
 export const sendCode =
   ({ phoneNumber }: { phoneNumber: PhoneNumber }): Task<AuthResult> =>
-    async () => {
-      const response = await client.auth.signIn({
-        phone: PhoneNumber.toString(phoneNumber),
-      })
+  async () => {
+    const response = await client.auth.signIn({
+      phone: PhoneNumber.toString(phoneNumber),
+    });
 
-      if (response.error) {
-        return Result.Err({ message: response.error.message })
-      }
-
-      return Result.Ok(Unit)
+    if (response.error) {
+      return Result.Err({ message: response.error.message });
     }
+
+    return Result.Ok(Unit);
+  };
 
 export const verifyCode =
   ({
     code,
     phoneNumber,
   }: {
-    code: string
-    phoneNumber: PhoneNumber
+    code: string;
+    phoneNumber: PhoneNumber;
   }): Task<AuthResult> =>
-    async () => {
-      const response = await client.auth.verifyOTP({
-        phone: PhoneNumber.toString(phoneNumber),
-        token: code,
-      })
+  async () => {
+    const response = await client.auth.verifyOTP({
+      phone: PhoneNumber.toString(phoneNumber),
+      token: code,
+    });
 
-      if (response.error) {
-        return Result.Err({ message: response.error.message })
-      }
-
-      return Result.Ok(Unit)
+    if (response.error) {
+      return Result.Err({ message: response.error.message });
     }
+
+    return Result.Ok(Unit);
+  };
 
 export const loginWithEmailLink =
   ({ emailAddress }: { emailAddress: string }): Task<AuthResult> =>
-    async () => {
-      const response = await client.auth.signIn({
-        email: emailAddress,
-      })
+  async () => {
+    const response = await client.auth.signIn({
+      email: emailAddress,
+    });
 
-      if (response.error) {
-        return Result.Err({ message: response.error.message })
-      }
-
-      return Result.Ok(Unit)
+    if (response.error) {
+      return Result.Err({ message: response.error.message });
     }
 
-export type Provider = "Google"
+    return Result.Ok(Unit);
+  };
+
+export type Provider = 'Google';
 
 export const loginWithProvider =
   ({ provider }: { provider: Provider }): Task<AuthResult> =>
-    async () => {
-      switch (provider) {
-        case "Google": {
-          const response = await client.auth.signIn({
-            provider: "google",
-          })
+  async () => {
+    switch (provider) {
+      case 'Google': {
+        const response = await client.auth.signIn({
+          provider: 'google',
+        });
 
-          if (response.error) {
-            return Result.Err({ message: response.error.message })
-          }
-
-          return Result.Ok(Unit)
+        if (response.error) {
+          return Result.Err({ message: response.error.message });
         }
+
+        return Result.Ok(Unit);
       }
     }
+  };
 
 const logout: Task<Result<null, null>> = async () => {
-  const { error } = await client.auth.signOut()
+  const { error } = await client.auth.signOut();
 
   if (error) {
-    return Result.Err(null)
+    return Result.Err(null);
   }
 
-  return Result.Ok(null)
-}
+  return Result.Ok(null);
+};
 
 const getSession: Task<Msg> = async () => {
-  const session = client.auth.session()
+  const session = client.auth.session();
 
-  return fromSupabaseSession(session)
-}
+  return fromSupabaseSession(session);
+};
 
 //
 //
@@ -238,23 +246,23 @@ const getSession: Task<Msg> = async () => {
 //
 //
 
-const subject = new Rx.Subject<Msg>()
+const subject = new Rx.Subject<Msg>();
 
 client.auth.onAuthStateChange((event, supabaseSession) => {
   switch (event) {
-    case "PASSWORD_RECOVERY":
-    case "SIGNED_IN":
-    case "SIGNED_OUT":
-    case "TOKEN_REFRESHED":
-    case "USER_DELETED":
-    case "USER_UPDATED": {
-      const msg = fromSupabaseSession(supabaseSession)
-      subject.next(msg)
+    case 'PASSWORD_RECOVERY':
+    case 'SIGNED_IN':
+    case 'SIGNED_OUT':
+    case 'TOKEN_REFRESHED':
+    case 'USER_DELETED':
+    case 'USER_UPDATED': {
+      const msg = fromSupabaseSession(supabaseSession);
+      subject.next(msg);
     }
   }
-})
+});
 
-export const subscriptions: Sub<Msg> = subject
+export const subscriptions: Sub<Msg> = subject;
 
 //
 //
@@ -265,16 +273,17 @@ export const subscriptions: Sub<Msg> = subject
 //
 
 export const fromSupabaseSession = (auth: SupabaseSession | null): Msg => {
-  const userId = UserId.decode(auth?.user?.id)
+  const userId = UserId.decode(auth?.user?.id);
 
-  const defaultName =
-    String(auth?.user?.user_metadata?.["name"] ??
-      auth?.user?.user_metadata?.["full_name"] ??
-      "")
+  const defaultName = String(
+    auth?.user?.user_metadata?.['name'] ??
+      auth?.user?.user_metadata?.['full_name'] ??
+      ''
+  );
 
-  if (userId.type === "Ok") {
-    return ["GotSession", Option.Some({ userId: userId.value, defaultName })]
+  if (userId.type === 'Ok') {
+    return ['GotSession', Option.Some({ userId: userId.value, defaultName })];
   }
 
-  return ["GotSession", Option.None]
-}
+  return ['GotSession', Option.None];
+};

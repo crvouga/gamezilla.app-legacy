@@ -1,5 +1,5 @@
-import { Cmd, Uuid } from "@gamezilla/core"
-import { BackendModel, BackendMsg, ToBackend } from "./auth.Type"
+import { Cmd, Uuid } from '@gamezilla/core';
+import { BackendModel, BackendMsg, ToBackend } from './auth.Type';
 
 //
 //
@@ -9,9 +9,9 @@ import { BackendModel, BackendMsg, ToBackend } from "./auth.Type"
 //
 //
 
-export type Model = BackendModel
+export type Model = BackendModel;
 
-export const init: Model = { sessions: {}, verifications: {} }
+export const init: Model = { sessions: {}, verifications: {} };
 
 //
 //
@@ -21,24 +21,24 @@ export const init: Model = { sessions: {}, verifications: {} }
 //
 //
 
-export type Msg = BackendMsg
+export type Msg = BackendMsg;
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case "LoginCodeSent": {
-      return [model, Cmd.None]
+    case 'LoginCodeSent': {
+      return [model, Cmd.None];
     }
   }
-}
+};
 
 export const updateFromFrontend = (
   msg: ToBackend,
-  model: Model,
+  model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case "LoginWithCode": {
-      const code = generateRandomCode()
-      const requestId = Uuid.generateSync()
+    case 'LoginWithCode': {
+      const code = generateRandomCode();
+      const requestId = Uuid.generateSync();
       return [
         {
           ...model,
@@ -51,17 +51,16 @@ export const updateFromFrontend = (
             },
           },
         },
-        Cmd.None
-      ]
+        Cmd.None,
+      ];
     }
 
-    case "VerifyCode": {
-
-      return [model, Cmd.None]
+    case 'VerifyCode': {
+      return [model, Cmd.None];
     }
   }
-}
+};
 
 const generateRandomCode = () => {
-  return Math.floor(Math.random() * 100_000)
-}
+  return Math.floor(Math.random() * 100_000);
+};

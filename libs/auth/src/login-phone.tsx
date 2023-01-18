@@ -1,8 +1,8 @@
-import { Cmd, p } from "@gamezilla/core"
-import { Iso3166Alpha2Code, PhoneNumber } from "@gamezilla/shared"
-import { Route } from "@gamezilla/shared"
-import * as UI from "@gamezilla/ui"
-import * as Auth from "./auth"
+import { Cmd, p } from '@gamezilla/core';
+import { Iso3166Alpha2Code, PhoneNumber } from '@gamezilla/shared';
+import { Route } from '@gamezilla/shared';
+import * as UI from '@gamezilla/ui';
+import * as Auth from './auth';
 
 //
 //
@@ -13,24 +13,24 @@ import * as Auth from "./auth"
 //
 
 export type Model = {
-  phoneNumber: string
-  country: Iso3166Alpha2Code
-  validation: "NotChecked" | "InvalidPhoneNumber" | "EmptyPhoneNumber"
+  phoneNumber: string;
+  country: Iso3166Alpha2Code;
+  validation: 'NotChecked' | 'InvalidPhoneNumber' | 'EmptyPhoneNumber';
   submission:
-  | { type: "Idle" }
-  | { type: "Loading" }
-  | { type: "Problem"; message: string }
-  | { type: "Ok" }
-}
+    | { type: 'Idle' }
+    | { type: 'Loading' }
+    | { type: 'Problem'; message: string }
+    | { type: 'Ok' };
+};
 
 export const init: Model = {
-  country: "US",
-  phoneNumber: "",
-  validation: "NotChecked",
+  country: 'US',
+  phoneNumber: '',
+  validation: 'NotChecked',
   submission: {
-    type: "Idle",
+    type: 'Idle',
   },
-}
+};
 
 //
 //
@@ -41,72 +41,75 @@ export const init: Model = {
 //
 
 export type Msg =
-  | ["ClickedBack"]
-  | ["ClickedSendCode"]
-  | ["InputtedPhoneNumber", string]
-  | ["InputtedCountry", Iso3166Alpha2Code]
-  | ["SendCode_Done", PhoneNumber, Auth.AuthResult]
+  | ['ClickedBack']
+  | ['ClickedSendCode']
+  | ['InputtedPhoneNumber', string]
+  | ['InputtedCountry', Iso3166Alpha2Code]
+  | ['SendCode_Done', PhoneNumber, Auth.AuthResult];
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case "ClickedBack": {
-      return [model, Route.back]
+    case 'ClickedBack': {
+      return [model, Route.back];
     }
 
-    case "ClickedSendCode": {
+    case 'ClickedSendCode': {
       if (model.phoneNumber.length === 0) {
-        return [{ ...model, validation: "EmptyPhoneNumber" }, Cmd.None]
+        return [{ ...model, validation: 'EmptyPhoneNumber' }, Cmd.None];
       }
 
-      const decoded = PhoneNumber.decode(model.country, model.phoneNumber)
+      const decoded = PhoneNumber.decode(model.country, model.phoneNumber);
 
-      if (decoded.type === "Err") {
-        return [{ ...model, validation: "InvalidPhoneNumber" }, Cmd.None]
+      if (decoded.type === 'Err') {
+        return [{ ...model, validation: 'InvalidPhoneNumber' }, Cmd.None];
       }
 
-      const phoneNumber = decoded.value
+      const phoneNumber = decoded.value;
 
       return [
-        { ...model, submission: { type: "Loading" } },
+        { ...model, submission: { type: 'Loading' } },
         p(
           Auth.sendCode({ phoneNumber: phoneNumber }),
-          Cmd.perform((result): Msg => ["SendCode_Done", phoneNumber, result]),
+          Cmd.perform((result): Msg => ['SendCode_Done', phoneNumber, result])
         ),
-      ]
+      ];
     }
 
-    case "InputtedPhoneNumber": {
+    case 'InputtedPhoneNumber': {
       return [
-        { ...model, phoneNumber: msg[1], validation: "NotChecked" },
+        { ...model, phoneNumber: msg[1], validation: 'NotChecked' },
         Cmd.None,
-      ]
+      ];
     }
 
-    case "InputtedCountry": {
-      return [{ ...model, country: msg[1], validation: "NotChecked" }, Cmd.None]
+    case 'InputtedCountry': {
+      return [
+        { ...model, country: msg[1], validation: 'NotChecked' },
+        Cmd.None,
+      ];
     }
 
-    case "SendCode_Done": {
-      const phoneNumber = msg[1]
-      const result = msg[2]
+    case 'SendCode_Done': {
+      const phoneNumber = msg[1];
+      const result = msg[2];
 
-      if (result.type === "Err") {
+      if (result.type === 'Err') {
         return [
           {
             ...model,
-            submission: { type: "Problem", message: result.error.message },
+            submission: { type: 'Problem', message: result.error.message },
           },
           Cmd.None,
-        ]
+        ];
       }
 
       return [
-        { ...model, submission: { type: "Ok" } },
-        Route.push(["LoginPhoneVerify", { phoneNumber: phoneNumber }]),
-      ]
+        { ...model, submission: { type: 'Ok' } },
+        Route.push(['LoginPhoneVerify', { phoneNumber: phoneNumber }]),
+      ];
     }
   }
-}
+};
 
 //
 //
@@ -120,13 +123,13 @@ export const View = ({
   model,
   $send,
 }: {
-  model: Model
-  $send: (msg: Msg) => void
+  model: Model;
+  $send: (msg: Msg) => void;
 }) => {
   return (
     <UI.FillBox>
       <UI.Header
-        left={<UI.HeaderBackButton onClick={() => $send(["ClickedBack"])} />}
+        left={<UI.HeaderBackButton onClick={() => $send(['ClickedBack'])} />}
         title="Login With Phone"
       />
       <UI.Box
@@ -137,16 +140,16 @@ export const View = ({
         <UI.Autocomplete
           id="iso_3166_phone_number"
           multiple={false}
-          defaultValue={Iso3166Alpha2Code.of("US")}
+          defaultValue={Iso3166Alpha2Code.of('US')}
           options={Iso3166Alpha2Code.all}
           getOptionLabel={(option) => {
             if (!Iso3166Alpha2Code.is(option)) {
-              return option
+              return option;
             }
 
-            const emoji = Iso3166Alpha2Code.toEmoji(option)
-            const name = Iso3166Alpha2Code.toName(option)
-            return `${emoji} ${name}`
+            const emoji = Iso3166Alpha2Code.toEmoji(option);
+            const name = Iso3166Alpha2Code.toName(option);
+            return `${emoji} ${name}`;
           }}
           renderInput={(params) => (
             <UI.TextField
@@ -158,7 +161,7 @@ export const View = ({
           )}
           onChange={(_event, value) => {
             if (value && Iso3166Alpha2Code.is(value)) {
-              $send(["InputtedCountry", value])
+              $send(['InputtedCountry', value]);
             }
           }}
         />
@@ -172,20 +175,20 @@ export const View = ({
           label="Phone Number"
           value={model.phoneNumber}
           onChange={(event) => {
-            $send(["InputtedPhoneNumber", event.target.value])
+            $send(['InputtedPhoneNumber', event.target.value]);
           }}
           error={
-            model.validation === "InvalidPhoneNumber" ||
-            model.validation === "EmptyPhoneNumber"
+            model.validation === 'InvalidPhoneNumber' ||
+            model.validation === 'EmptyPhoneNumber'
           }
           helperText={
-            model.validation === "InvalidPhoneNumber"
+            model.validation === 'InvalidPhoneNumber'
               ? `Invalid phone number for ${Iso3166Alpha2Code.toName(
-                model.country,
-              )}`
-              : model.validation === "EmptyPhoneNumber"
-                ? "Phone number is required"
-                : undefined
+                  model.country
+                )}`
+              : model.validation === 'EmptyPhoneNumber'
+              ? 'Phone number is required'
+              : undefined
           }
         />
 
@@ -193,20 +196,20 @@ export const View = ({
           variant="contained"
           size="large"
           fullWidth
-          loading={model.submission.type === "Loading"}
-          onClick={() => $send(["ClickedSendCode"])}
+          loading={model.submission.type === 'Loading'}
+          onClick={() => $send(['ClickedSendCode'])}
         >
           Send Code
         </UI.Button>
 
-        {model.submission.type === "Problem" && (
+        {model.submission.type === 'Problem' && (
           <UI.Alert severity="error" sx={{ marginTop: 2 }}>
             {model.submission.message}
           </UI.Alert>
         )}
       </UI.Box>
     </UI.FillBox>
-  )
-}
+  );
+};
 
 // 4802098698

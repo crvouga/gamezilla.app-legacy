@@ -1,7 +1,7 @@
-import { Browser, Cmd, exhaustive, p } from "@gamezilla/core"
-import { Route } from "@gamezilla/shared"
-import * as UI from "@gamezilla/ui"
-import * as Auth from "./auth"
+import { Browser, Cmd, exhaustive, p } from '@gamezilla/core';
+import { Route } from '@gamezilla/shared';
+import * as UI from '@gamezilla/ui';
+import * as Auth from './auth';
 
 //
 //
@@ -12,16 +12,16 @@ import * as Auth from "./auth"
 //
 
 export type Model = {
-  emailAddress: string
-  password: string
-  passwordVisibility: Visibility
+  emailAddress: string;
+  password: string;
+  passwordVisibility: Visibility;
   submission:
-  | { type: "Idle" }
-  | { type: "Loading" }
-  | { type: "Problem"; message: string }
-}
+    | { type: 'Idle' }
+    | { type: 'Loading' }
+    | { type: 'Problem'; message: string };
+};
 
-type Visibility = "Showing" | "Hiding"
+type Visibility = 'Showing' | 'Hiding';
 
 //
 //
@@ -32,11 +32,11 @@ type Visibility = "Showing" | "Hiding"
 //
 
 export const init: Model = {
-  submission: { type: "Idle" },
-  passwordVisibility: "Hiding",
-  emailAddress: "",
-  password: "",
-}
+  submission: { type: 'Idle' },
+  passwordVisibility: 'Hiding',
+  emailAddress: '',
+  password: '',
+};
 
 //
 //
@@ -47,29 +47,29 @@ export const init: Model = {
 //
 
 export type Msg =
-  | ["ClickedBack"]
-  | ["ClickedTogglePasswordVisibility"]
-  | ["ClickedLogin"]
-  | ["ClickedCreateAccount"]
-  | ["ClickedResetPassword"]
-  | ["InputtedEmailAddress", string]
-  | ["InputtedPassword", string]
-  | ["Focus_Done", Browser.FocusResult]
-  | ["Login_Done", Auth.AuthResult]
+  | ['ClickedBack']
+  | ['ClickedTogglePasswordVisibility']
+  | ['ClickedLogin']
+  | ['ClickedCreateAccount']
+  | ['ClickedResetPassword']
+  | ['InputtedEmailAddress', string]
+  | ['InputtedPassword', string]
+  | ['Focus_Done', Browser.FocusResult]
+  | ['Login_Done', Auth.AuthResult];
 
-const passwordFieldId = "password"
+const passwordFieldId = 'password';
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case "InputtedEmailAddress": {
-      return [{ ...model, emailAddress: msg[1] }, Cmd.None]
+    case 'InputtedEmailAddress': {
+      return [{ ...model, emailAddress: msg[1] }, Cmd.None];
     }
 
-    case "InputtedPassword": {
-      return [{ ...model, password: msg[1] }, Cmd.None]
+    case 'InputtedPassword': {
+      return [{ ...model, password: msg[1] }, Cmd.None];
     }
 
-    case "ClickedTogglePasswordVisibility": {
+    case 'ClickedTogglePasswordVisibility': {
       return [
         {
           ...model,
@@ -77,79 +77,79 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
         },
         p(
           Browser.focus(passwordFieldId),
-          Cmd.perform((result) => ["Focus_Done", result]),
+          Cmd.perform((result) => ['Focus_Done', result])
         ),
-      ]
+      ];
     }
 
-    case "Focus_Done": {
-      return [model, Cmd.None]
+    case 'Focus_Done': {
+      return [model, Cmd.None];
     }
 
-    case "ClickedLogin": {
+    case 'ClickedLogin': {
       return [
         {
           ...model,
-          submission: { type: "Loading" },
+          submission: { type: 'Loading' },
         },
         p(
           Auth.loginWithEmailAndPassword({
             emailAddress: model.emailAddress,
             password: model.password,
           }),
-          Cmd.perform((result) => ["Login_Done", result]),
+          Cmd.perform((result) => ['Login_Done', result])
         ),
-      ]
+      ];
     }
 
-    case "Login_Done": {
+    case 'Login_Done': {
       switch (msg[1].type) {
-        case "Err":
+        case 'Err':
           return [
             {
               ...model,
               submission: {
-                type: "Problem",
+                type: 'Problem',
                 message: msg[1].error.message,
               },
             },
             Cmd.None,
-          ]
+          ];
 
-        case "Ok":
-          return [model, Cmd.None]
+        case 'Ok':
+          return [model, Cmd.None];
 
         default:
-          return [model, Cmd.None]
+          return [model, Cmd.None];
       }
     }
 
-    case "ClickedCreateAccount": {
+    case 'ClickedCreateAccount': {
       return [model, Cmd.None];
     }
     // return [model, Route.push(["AccountCreate"])]
 
-    case "ClickedResetPassword":
-      return [model, Cmd.None]
+    case 'ClickedResetPassword':
+      return [model, Cmd.None];
     // return [model, Route.push(["PasswordReset"])]
 
-    case "ClickedBack":
-      return [model, Route.back]
+    case 'ClickedBack':
+      return [model, Route.back];
 
     default:
-      return exhaustive(msg[0])
+      return exhaustive(msg[0]);
   }
-}
+};
 
 const toggleVisibility = (visibility: Visibility): Visibility => {
   switch (visibility) {
-    case "Hiding":
-      return "Showing"
+    case 'Hiding':
+      return 'Showing';
 
-    case "Showing":
-      return "Hiding"
+    case 'Showing':
+      return 'Hiding';
   }
-}
+};
 
 //
 //
@@ -163,22 +163,22 @@ export const View = ({
   model,
   $send,
 }: {
-  model: Model
-  $send: (msg: Msg) => void
+  model: Model;
+  $send: (msg: Msg) => void;
 }) => {
   return (
     <UI.FillBox>
       <UI.Header
-        left={<UI.HeaderBackButton onClick={() => $send(["ClickedBack"])} />}
+        left={<UI.HeaderBackButton onClick={() => $send(['ClickedBack'])} />}
         title="Continue With Email"
       />
 
       <UI.Box
         sx={{
           padding: 2,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
           flex: 1,
         }}
       >
@@ -191,27 +191,27 @@ export const View = ({
           label="Email Address"
           value={model.emailAddress}
           onChange={(event) => {
-            $send(["InputtedEmailAddress", event.target.value])
+            $send(['InputtedEmailAddress', event.target.value]);
           }}
         />
 
         <UI.TextField
           sx={{ marginBottom: 2 }}
           id={passwordFieldId}
-          type={model.passwordVisibility === "Hiding" ? "password" : "text"}
+          type={model.passwordVisibility === 'Hiding' ? 'password' : 'text'}
           fullWidth
           label="Password"
           value={model.password}
           onChange={(event) => {
-            $send(["InputtedPassword", event.target.value])
+            $send(['InputtedPassword', event.target.value]);
           }}
           InputProps={{
             endAdornment: (
               <UI.InputAdornment position="end">
                 <UI.Button
-                  onClick={() => $send(["ClickedTogglePasswordVisibility"])}
+                  onClick={() => $send(['ClickedTogglePasswordVisibility'])}
                 >
-                  {model.passwordVisibility === "Hiding" ? "Show" : "Hide"}
+                  {model.passwordVisibility === 'Hiding' ? 'Show' : 'Hide'}
                 </UI.Button>
               </UI.InputAdornment>
             ),
@@ -222,13 +222,13 @@ export const View = ({
           variant="contained"
           size="large"
           fullWidth
-          loading={model.submission.type === "Loading"}
-          onClick={() => $send(["ClickedLogin"])}
+          loading={model.submission.type === 'Loading'}
+          onClick={() => $send(['ClickedLogin'])}
         >
           Login
         </UI.Button>
 
-        {model.submission.type === "Problem" && (
+        {model.submission.type === 'Problem' && (
           <UI.Alert severity="error" sx={{ marginTop: 2 }}>
             {model.submission.message}
           </UI.Alert>
@@ -242,7 +242,7 @@ export const View = ({
 
         <UI.Button
           sx={{ marginBottom: 2 }}
-          onClick={() => $send(["ClickedCreateAccount"])}
+          onClick={() => $send(['ClickedCreateAccount'])}
         >
           Create Account
         </UI.Button>
@@ -250,10 +250,10 @@ export const View = ({
           Forgot password?
         </UI.Typography>
 
-        <UI.Button onClick={() => $send(["ClickedResetPassword"])}>
+        <UI.Button onClick={() => $send(['ClickedResetPassword'])}>
           Reset Password
         </UI.Button>
       </UI.Box>
     </UI.FillBox>
-  )
-}
+  );
+};
