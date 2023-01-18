@@ -1,10 +1,8 @@
-import { Browser, Cmd, p, RemoteData } from "@gamezilla/core"
-import { UserId } from "@gamezilla/shared"
-import { Route } from "@gamezilla/shared"
-import { Ctx } from "@gamezilla/shared"
-import * as UI from "@gamezilla/ui"
-import { ReactNode, useLayoutEffect, useRef, useState } from "react"
-import * as ChatStore from "./Chat.Store"
+import { Browser, Cmd, p, RemoteData } from '@gamezilla/core';
+import { Ctx, Route, UserId } from '@gamezilla/shared';
+import * as UI from '@gamezilla/ui';
+import { ReactNode, useLayoutEffect, useRef, useState } from 'react';
+import * as ChatStore from './Chat.Store';
 
 //
 //
@@ -15,33 +13,33 @@ import * as ChatStore from "./Chat.Store"
 //
 
 export type Model = {
-  text: string
-  focused: FocusedModel
-}
+  text: string;
+  focused: FocusedModel;
+};
 
 type FocusedModel =
   | {
-    type: "Blurred"
-  }
+      type: 'Blurred';
+    }
   | {
-    type: "Focused"
-    messageId: string
-    copyStatus: "Failed" | "NotAsked" | "Succeeded" | "Loading"
-  }
+      type: 'Focused';
+      messageId: string;
+      copyStatus: 'Failed' | 'NotAsked' | 'Succeeded' | 'Loading';
+    };
 
 export const init = ({
   conversationId,
 }: {
-  conversationId: string
+  conversationId: string;
 }): [Model, Cmd<Msg>, OutAction[]] => [
-    {
-      text: "",
-      focused: { type: "Blurred" },
-    },
-    Cmd.None,
+  {
+    text: '',
+    focused: { type: 'Blurred' },
+  },
+  Cmd.None,
 
-    [["Chat", ["Conversation", ["FindOne", { conversationId }]]]],
-  ]
+  [['Chat', ['Conversation', ['FindOne', { conversationId }]]]],
+];
 
 //
 //
@@ -52,89 +50,89 @@ export const init = ({
 //
 
 export type Msg =
-  | ["ClickedBack"]
-  | ["ClickedSend"]
-  | ["ClickedMessage", { messageId: string }]
-  | ["ClosedMessageMenu", { messageId: string }]
-  | ["ClickedDeleteMessage", { messageId: string }]
-  | ["ClickedCopyMessageText", string]
-  | ["InputtedText", string]
-  | ["ClipboardCopy_Done", Browser.Clipboard.CopyResult]
+  | ['ClickedBack']
+  | ['ClickedSend']
+  | ['ClickedMessage', { messageId: string }]
+  | ['ClosedMessageMenu', { messageId: string }]
+  | ['ClickedDeleteMessage', { messageId: string }]
+  | ['ClickedCopyMessageText', string]
+  | ['InputtedText', string]
+  | ['ClipboardCopy_Done', Browser.Clipboard.CopyResult];
 
-export type OutAction = ChatStore.Action
+export type OutAction = ChatStore.Action;
 
 export const update = (
   { userId, conversationId }: { userId: UserId; conversationId: string },
   msg: Msg,
-  model: Model,
+  model: Model
 ): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-    case "ClipboardCopy_Done":
-      return [{ ...model, focused: { type: "Blurred" } }, Cmd.None, []]
+    case 'ClipboardCopy_Done':
+      return [{ ...model, focused: { type: 'Blurred' } }, Cmd.None, []];
 
-    case "ClickedCopyMessageText":
+    case 'ClickedCopyMessageText':
       return [
         model,
         p(
           Browser.Clipboard.copy(msg[1]),
-          Cmd.perform((result) => ["ClipboardCopy_Done", result]),
+          Cmd.perform((result) => ['ClipboardCopy_Done', result])
         ),
         [],
-      ]
+      ];
 
-    case "ClickedBack":
-      return [model, Route.back, []]
+    case 'ClickedBack':
+      return [model, Route.back, []];
 
-    case "ClickedSend": {
+    case 'ClickedSend': {
       const payload = {
         userId,
         conversationId,
         messageText: model.text,
-      }
+      };
 
-      return [model, Cmd.None, [["Chat", ["Message", ["Send", payload]]]]]
+      return [model, Cmd.None, [['Chat', ['Message', ['Send', payload]]]]];
     }
 
-    case "InputtedText":
-      return [{ ...model, text: msg[1] }, Cmd.None, []]
+    case 'InputtedText':
+      return [{ ...model, text: msg[1] }, Cmd.None, []];
 
-    case "ClickedMessage":
+    case 'ClickedMessage':
       return [
         {
           ...model,
           focused: {
-            type: "Focused",
+            type: 'Focused',
             messageId: msg[1].messageId,
-            copyStatus: "NotAsked",
+            copyStatus: 'NotAsked',
           },
         },
         Cmd.None,
         [],
-      ]
+      ];
 
-    case "ClosedMessageMenu":
+    case 'ClosedMessageMenu':
       return [
         {
           ...model,
           focused: {
-            type: "Blurred",
+            type: 'Blurred',
           },
         },
         Cmd.None,
         [],
-      ]
+      ];
 
-    case "ClickedDeleteMessage": {
-      const { messageId } = msg[1]
+    case 'ClickedDeleteMessage': {
+      const { messageId } = msg[1];
 
       return [
         model,
         Cmd.None,
-        [["Chat", ["Message", ["Unsend", { messageId }]]]],
-      ]
+        [['Chat', ['Message', ['Unsend', { messageId }]]]],
+      ];
     }
   }
-}
+};
 
 //
 //
@@ -151,16 +149,16 @@ export const View = ({
   $send,
   conversationId,
 }: {
-  chatStore: ChatStore.Model
-  ctx: Ctx
-  model: Model
-  conversationId: string
-  $send: (msg: Msg) => void
+  chatStore: ChatStore.Model;
+  ctx: Ctx;
+  model: Model;
+  conversationId: string;
+  $send: (msg: Msg) => void;
 }) => {
-  const { currentUserId, profiles } = ctx
+  const { currentUserId, profiles } = ctx;
   const query =
     chatStore.queries.Conversation.FindOne[conversationId] ??
-    RemoteData.NotAsked
+    RemoteData.NotAsked;
 
   const filtered = Object.values(chatStore.UsersConversations)
     .filter((conversation) => conversation.conversationId === conversationId)
@@ -168,33 +166,33 @@ export const View = ({
       const filtered = Object.values(profiles).filter(
         (profile) =>
           profile.userId === joinRecord.userId &&
-          profile.userId !== currentUserId,
-      )
-      return filtered
-    })
+          profile.userId !== currentUserId
+      );
+      return filtered;
+    });
 
   const messages = Object.values(chatStore.Message).filter(
-    (message) => message.conversationId === conversationId,
-  )
+    (message) => message.conversationId === conversationId
+  );
 
   const messageInsertMutation =
-    chatStore.mutations.Message.Send[conversationId] ?? RemoteData.NotAsked
+    chatStore.mutations.Message.Send[conversationId] ?? RemoteData.NotAsked;
 
   return (
     <UI.FillBox>
       <UI.Toolbar>
         <UI.Box sx={{ flex: 1 }}>
-          <UI.HeaderBackButton onClick={() => $send(["ClickedBack"])} />
+          <UI.HeaderBackButton onClick={() => $send(['ClickedBack'])} />
         </UI.Box>
 
         <UI.Box
           sx={{
             flex: 3,
             paddingY: 2,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
         >
           <UI.AvatarGroup>
@@ -203,14 +201,14 @@ export const View = ({
             ))}
           </UI.AvatarGroup>
           <UI.Typography align="center" noWrap>
-            {filtered.map((profile) => profile.username).join(", ")}
+            {filtered.map((profile) => profile.username).join(', ')}
           </UI.Typography>
         </UI.Box>
         <UI.Box sx={{ flex: 1 }}></UI.Box>
       </UI.Toolbar>
 
       <MessageContainer
-        isLoading={query.type === "Loading"}
+        isLoading={query.type === 'Loading'}
         scrollKey={String(messages.length)}
       >
         <UI.Box sx={{ flex: 1 }}></UI.Box>
@@ -229,13 +227,13 @@ export const View = ({
 
       <ChatInput
         value={model.text}
-        onChange={(text) => $send(["InputtedText", text])}
-        onSend={() => $send(["ClickedSend"])}
-        isSending={messageInsertMutation.type === "Loading"}
+        onChange={(text) => $send(['InputtedText', text])}
+        onSend={() => $send(['ClickedSend'])}
+        isSending={messageInsertMutation.type === 'Loading'}
       />
     </UI.FillBox>
-  )
-}
+  );
+};
 
 const ChatInput = ({
   value,
@@ -243,24 +241,24 @@ const ChatInput = ({
   onSend,
   isSending,
 }: {
-  value: string
-  onChange: (valueNew: string) => void
-  onSend: () => void
-  isSending: boolean
+  value: string;
+  onChange: (valueNew: string) => void;
+  onSend: () => void;
+  isSending: boolean;
 }) => {
-  const inputRef = useRef<HTMLInputElement | null>(null)
-  const theme = UI.useTheme()
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const theme = UI.useTheme();
   const backgroundColor =
-    theme.palette.mode === "light"
-      ? theme.palette.grey["100"]
-      : theme.palette.grey["900"]
-  const textColor = theme.palette.getContrastText(backgroundColor)
+    theme.palette.mode === 'light'
+      ? theme.palette.grey['100']
+      : theme.palette.grey['900'];
+  const textColor = theme.palette.getContrastText(backgroundColor);
   return (
     <UI.Paper
       variant="outlined"
       sx={{
-        width: "100%",
-        display: "flex",
+        width: '100%',
+        display: 'flex',
         paddingX: 2,
         paddingY: 1 / 2,
         backgroundColor,
@@ -271,7 +269,7 @@ const ChatInput = ({
         ref={inputRef}
         value={value}
         onChange={(event) => {
-          onChange(event.currentTarget.value)
+          onChange(event.currentTarget.value);
         }}
         sx={{ color: textColor, paddingLeft: 1, flex: 1 }}
         placeholder="Message..."
@@ -283,10 +281,10 @@ const ChatInput = ({
           size="large"
           disabled={value.length === 0}
           onClick={() => {
-            onSend()
+            onSend();
 
             if (inputRef.current) {
-              inputRef.current.focus()
+              inputRef.current.focus();
             }
           }}
           loading={isSending}
@@ -295,44 +293,44 @@ const ChatInput = ({
         </UI.Button>
       </UI.Grow>
     </UI.Paper>
-  )
-}
+  );
+};
 
 const MessageContainer = ({
   scrollKey,
   children,
   isLoading,
 }: {
-  isLoading: boolean
-  scrollKey: string
-  children: ReactNode
+  isLoading: boolean;
+  scrollKey: string;
+  children: ReactNode;
 }) => {
-  const containerRef = useRef<HTMLDivElement | null>(null)
-  const ref = useRef<HTMLDivElement | null>(null)
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const ref = useRef<HTMLDivElement | null>(null);
 
   useLayoutEffect(() => {
     if (ref.current) {
-      ref.current.scrollIntoView({ behavior: "smooth" })
+      ref.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [scrollKey])
+  }, [scrollKey]);
 
   useLayoutEffect(() => {
     if (ref.current) {
-      ref.current.scrollTop = ref.current.scrollHeight
+      ref.current.scrollTop = ref.current.scrollHeight;
     }
-  }, [])
+  }, []);
 
   return (
     <UI.Box
       ref={containerRef}
       sx={{
         flex: 1,
-        overflowY: "scroll",
-        width: "100%",
+        overflowY: 'scroll',
+        width: '100%',
         paddingBottom: 2,
-        display: "flex",
-        flexDirection: "column",
-        position: "relative",
+        display: 'flex',
+        flexDirection: 'column',
+        position: 'relative',
         zIndex: 0,
       }}
     >
@@ -341,22 +339,22 @@ const MessageContainer = ({
       {isLoading && (
         <UI.Box
           sx={{
-            position: "absolute",
+            position: 'absolute',
             top: 0,
             left: 0,
             right: 0,
             bottom: 0,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
         >
           <UI.CircularProgress />
         </UI.Box>
       )}
     </UI.Box>
-  )
-}
+  );
+};
 const ChatMessage = ({
   message,
   currentUserId,
@@ -365,38 +363,38 @@ const ChatMessage = ({
   $send,
 }: {
   message: {
-    messageId: string
-    message: string
-    userId: UserId
-  }
-  currentUserId: UserId
-  model: Model
-  $send: (msg: Msg) => void
-  store: ChatStore.Model
+    messageId: string;
+    message: string;
+    userId: UserId;
+  };
+  currentUserId: UserId;
+  model: Model;
+  $send: (msg: Msg) => void;
+  store: ChatStore.Model;
 }) => {
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault()
-    event.stopPropagation()
-    $send(["ClickedMessage", message])
-  }
+    event.preventDefault();
+    event.stopPropagation();
+    $send(['ClickedMessage', message]);
+  };
 
-  const variant = currentUserId === message.userId ? "sent" : "received"
+  const variant = currentUserId === message.userId ? 'sent' : 'received';
 
-  const theme = UI.useTheme()
+  const theme = UI.useTheme();
   const backgroundColor =
-    variant === "sent" ? theme.palette.primary.main : theme.palette.grey["200"]
-  const textColor = theme.palette.getContrastText(backgroundColor)
+    variant === 'sent' ? theme.palette.primary.main : theme.palette.grey['200'];
+  const textColor = theme.palette.getContrastText(backgroundColor);
 
-  const [anchorRef, setAnchorRef] = useState<null | HTMLElement>(null)
+  const [anchorRef, setAnchorRef] = useState<null | HTMLElement>(null);
 
   return (
     <UI.Box
       sx={{
         paddingY: 1 / 2,
         paddingX: 1,
-        width: "100%",
-        display: "flex",
-        justifyContent: variant === "received" ? "flex-start" : "flex-end",
+        width: '100%',
+        display: 'flex',
+        justifyContent: variant === 'received' ? 'flex-start' : 'flex-end',
       }}
     >
       <UI.Typography
@@ -410,13 +408,13 @@ const ChatMessage = ({
           //     ? "blur(4px)"
           //     : undefined,
           borderRadius: theme.spacing(2),
-          display: "inline-block",
+          display: 'inline-block',
           padding: 1,
           backgroundColor,
           color: textColor,
-          cursor: model.focused.type === "Blurred" ? "pointer" : "default",
-          maxWidth: "80%",
-          wordBreak: "break-all",
+          cursor: model.focused.type === 'Blurred' ? 'pointer' : 'default',
+          maxWidth: '80%',
+          wordBreak: 'break-all',
         }}
       >
         {message.message}
@@ -424,39 +422,39 @@ const ChatMessage = ({
       <UI.Menu
         anchorEl={anchorRef}
         open={
-          model.focused.type === "Focused" &&
+          model.focused.type === 'Focused' &&
           model.focused.messageId === message.messageId
         }
-        onClose={() => $send(["ClosedMessageMenu", message])}
+        onClose={() => $send(['ClosedMessageMenu', message])}
         anchorOrigin={{
-          vertical: "bottom",
-          horizontal: variant === "sent" ? "left" : "right",
+          vertical: 'bottom',
+          horizontal: variant === 'sent' ? 'left' : 'right',
         }}
         transformOrigin={{
-          vertical: "center",
-          horizontal: variant === "sent" ? "right" : "left",
+          vertical: 'center',
+          horizontal: variant === 'sent' ? 'right' : 'left',
         }}
       >
-        <UI.Box sx={{ display: "flex", flexDirection: "column" }}>
+        <UI.Box sx={{ display: 'flex', flexDirection: 'column' }}>
           <UI.Button
             loading={
-              model.focused.type === "Focused" &&
-              model.focused.copyStatus === "Loading"
+              model.focused.type === 'Focused' &&
+              model.focused.copyStatus === 'Loading'
             }
-            onClick={() => $send(["ClickedCopyMessageText", message.message])}
+            onClick={() => $send(['ClickedCopyMessageText', message.message])}
           >
-            {model.focused.type === "Focused" &&
-              model.focused.copyStatus === "Succeeded"
-              ? "Copied"
-              : "Copy Text"}
+            {model.focused.type === 'Focused' &&
+            model.focused.copyStatus === 'Succeeded'
+              ? 'Copied'
+              : 'Copy Text'}
           </UI.Button>
-          {variant === "sent" && (
+          {variant === 'sent' && (
             <UI.Button
               loading={
                 store.mutations.Message.Unsend[message.messageId]?.type ===
-                "Loading"
+                'Loading'
               }
-              onClick={() => $send(["ClickedDeleteMessage", message])}
+              onClick={() => $send(['ClickedDeleteMessage', message])}
             >
               Delete Forever
             </UI.Button>
@@ -464,5 +462,5 @@ const ChatMessage = ({
         </UI.Box>
       </UI.Menu>
     </UI.Box>
-  )
-}
+  );
+};

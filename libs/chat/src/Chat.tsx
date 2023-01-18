@@ -1,9 +1,21 @@
-
-import { Cmd, RemoteData } from "@gamezilla/core"
-import { UserId } from "@gamezilla/shared"
-import { Ctx, Route } from "@gamezilla/shared"
-import { Avatar, AvatarGroup, Box, Button, FillBox, Header, Icons, List, ListItemAvatar, ListItemButton, ListItemText, ViewEmptyState, ViewLoadingState } from "@gamezilla/ui"
-import * as ChatStore from "./Chat.Store"
+import { Cmd, RemoteData } from '@gamezilla/core';
+import { Ctx, Route, UserId } from '@gamezilla/shared';
+import {
+  Avatar,
+  AvatarGroup,
+  Box,
+  Button,
+  FillBox,
+  Header,
+  Icons,
+  List,
+  ListItemAvatar,
+  ListItemButton,
+  ListItemText,
+  ViewEmptyState,
+  ViewLoadingState,
+} from '@gamezilla/ui';
+import * as ChatStore from './Chat.Store';
 //
 //
 //
@@ -11,19 +23,19 @@ import * as ChatStore from "./Chat.Store"
 //
 //
 //
-export type Model = null
+export type Model = null;
 
 export const init = ({
   userId,
 }: {
-  userId: UserId
+  userId: UserId;
 }): [Model, Cmd<Msg>, OutAction[]] => {
   return [
     null,
     Cmd.None,
-    [["Chat", ["Conversation", ["FindManyByUserId", { userId }]]]],
-  ]
-}
+    [['Chat', ['Conversation', ['FindManyByUserId', { userId }]]]],
+  ];
+};
 
 //
 //
@@ -34,24 +46,24 @@ export const init = ({
 //
 
 export type Msg =
-  | ["ClickedBack"]
-  | ["ClickedSendMessage"]
-  | ["ClickedConversationItem", { conversationId: string }]
+  | ['ClickedBack']
+  | ['ClickedSendMessage']
+  | ['ClickedConversationItem', { conversationId: string }];
 
-type OutAction = ChatStore.Action
+type OutAction = ChatStore.Action;
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case "ClickedBack":
-      return [model, Route.back]
+    case 'ClickedBack':
+      return [model, Route.back];
 
-    case "ClickedSendMessage":
-      return [model, Route.push(["ChatNew"])]
+    case 'ClickedSendMessage':
+      return [model, Route.push(['ChatNew'])];
 
-    case "ClickedConversationItem":
-      return [model, Route.push(["ChatConversation", msg[1]])]
+    case 'ClickedConversationItem':
+      return [model, Route.push(['ChatConversation', msg[1]])];
   }
-}
+};
 
 //
 //
@@ -66,25 +78,25 @@ export const View = ({
   $send,
   ctx,
 }: {
-  chatStore: ChatStore.Model
-  ctx: Ctx,
-  model: Model
-  $send: (msg: Msg) => void
+  chatStore: ChatStore.Model;
+  ctx: Ctx;
+  model: Model;
+  $send: (msg: Msg) => void;
 }) => {
-  const { currentUserId, profiles } = ctx
+  const { currentUserId, profiles } = ctx;
   const query =
     chatStore.queries.Conversation.FindManyByUserId[currentUserId] ??
-    RemoteData.NotAsked
+    RemoteData.NotAsked;
 
   const conversations = Object.values(chatStore.UsersConversations)
     .filter((item) => item.userId === currentUserId)
     .flatMap((item) => {
       const filtered = Object.values(profiles)
         .filter((profile) => profile.userId === item.userId)
-        .filter((profile) => profile.userId !== currentUserId)
+        .filter((profile) => profile.userId !== currentUserId);
 
       if (filtered.length === 0) {
-        return []
+        return [];
       }
 
       return [
@@ -92,8 +104,8 @@ export const View = ({
           ...item,
           profiles: filtered,
         },
-      ]
-    })
+      ];
+    });
 
   if (query.type === 'Loading') {
     return (
@@ -101,7 +113,7 @@ export const View = ({
         <Header title="Chat" />
         <ViewLoadingState title="Loading conversations..." />
       </FillBox>
-    )
+    );
   }
 
   if (conversations.length === 0) {
@@ -111,12 +123,12 @@ export const View = ({
         <ViewEmptyState
           actionIcon={<Icons.Send />}
           actionTitle="Send Message"
-          onAction={() => $send(["ClickedSendMessage"])}
-          renderIcon={props => <Icons.Chat {...props} />}
+          onAction={() => $send(['ClickedSendMessage'])}
+          renderIcon={(props) => <Icons.Chat {...props} />}
           title="No conversations"
         />
       </FillBox>
-    )
+    );
   }
 
   return (
@@ -126,17 +138,17 @@ export const View = ({
         <Button
           fullWidth
           variant="contained"
-          onClick={() => $send(["ClickedSendMessage"])}
+          onClick={() => $send(['ClickedSendMessage'])}
         >
           Send Message
         </Button>
       </Box>
 
-      <List sx={{ overflowY: "scroll" }}>
+      <List sx={{ overflowY: 'scroll' }}>
         {conversations.map((item) => (
           <ListItemButton
             key={item.conversationId}
-            onClick={() => $send(["ClickedConversationItem", item])}
+            onClick={() => $send(['ClickedConversationItem', item])}
           >
             <ListItemAvatar>
               <AvatarGroup max={2}>
@@ -146,11 +158,11 @@ export const View = ({
               </AvatarGroup>
             </ListItemAvatar>
             <ListItemText
-              primary={item.profiles.map((item) => item.username).join(", ")}
+              primary={item.profiles.map((item) => item.username).join(', ')}
             />
           </ListItemButton>
         ))}
       </List>
     </FillBox>
-  )
-}
+  );
+};

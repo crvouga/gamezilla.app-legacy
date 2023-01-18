@@ -1,7 +1,6 @@
 import { Cmd, exhaustive, Keyboard, p, RemoteData, Sub } from '@gamezilla/core';
-import { UserId } from '@gamezilla/shared';
 import { ProfileStore } from '@gamezilla/profile';
-import { Ctx, Route } from '@gamezilla/shared';
+import { Ctx, Route, UserId } from '@gamezilla/shared';
 import * as UI from '@gamezilla/ui';
 import { useEffect, useRef } from 'react';
 import * as ChatStore from './Chat.Store';
