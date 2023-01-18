@@ -1,16 +1,21 @@
-import { ExitToApp, Flag, RestartAlt, SmartToy, SwapHorizSharp } from "@mui/icons-material"
-import * as MuiLab from "@mui/lab"
-import * as Mui from "@mui/material"
-import { keyframes, TypographyProps } from "@mui/material"
-import { blue } from "@mui/material/colors"
-import Slide, { SlideProps } from "@mui/material/Slide"
-import { ReactNode, useEffect, useMemo, useRef } from "react"
-import * as Icons from "./ui-icons"
-
+import {
+  ExitToApp,
+  Flag,
+  RestartAlt,
+  SmartToy,
+  SwapHorizSharp,
+} from '@mui/icons-material';
+import * as MuiLab from '@mui/lab';
+import * as Mui from '@mui/material';
+import { keyframes, TypographyProps } from '@mui/material';
+import { blue } from '@mui/material/colors';
+import Slide, { SlideProps } from '@mui/material/Slide';
+import { ReactNode, useEffect, useMemo, useRef } from 'react';
+import * as Icons from './ui-icons';
 
 const SlideTransition = (props: SlideProps) => {
-  return <Slide {...props} direction="down" />
-}
+  return <Slide {...props} direction="down" />;
+};
 
 //
 //
@@ -20,7 +25,7 @@ const SlideTransition = (props: SlideProps) => {
 //
 //
 
-const createTheme = ({ mode }: { mode: "light" | "dark" }) =>
+const createTheme = ({ mode }: { mode: 'light' | 'dark' }) =>
   Mui.responsiveFontSizes(
     Mui.createTheme({
       palette: {
@@ -29,7 +34,7 @@ const createTheme = ({ mode }: { mode: "light" | "dark" }) =>
         // primary: purple,
       },
       typography: {
-        fontFamily: ["Inter", "Verdana"].join(","),
+        fontFamily: ['Inter', 'Verdana'].join(','),
       },
       components: {
         MuiCircularProgress: {
@@ -45,8 +50,8 @@ const createTheme = ({ mode }: { mode: "light" | "dark" }) =>
         MuiSnackbar: {
           defaultProps: {
             anchorOrigin: {
-              horizontal: "center",
-              vertical: "top",
+              horizontal: 'center',
+              vertical: 'top',
             },
             TransitionComponent: SlideTransition,
           },
@@ -60,39 +65,39 @@ const createTheme = ({ mode }: { mode: "light" | "dark" }) =>
         MuiToggleButton: {
           styleOverrides: {
             root: {
-              textTransform: "capitalize",
+              textTransform: 'capitalize',
             },
           },
         },
         MuiButton: {
           defaultProps: {
             disableElevation: true,
-            size: "large",
-            variant: "contained",
+            size: 'large',
+            variant: 'contained',
           },
           styleOverrides: {
             root: {
-              textTransform: "capitalize",
+              textTransform: 'capitalize',
             },
           },
         },
         MuiAvatar: {
           defaultProps: {
-            variant: "rounded",
+            variant: 'rounded',
           },
         },
         MuiAvatarGroup: {
           defaultProps: {
             max: 3,
             // spacing: "medium",
-            variant: "rounded",
+            variant: 'rounded',
           },
         },
 
         MuiButtonBase: {
           styleOverrides: {
             root: {
-              cursor: "pointer",
+              cursor: 'pointer',
             },
           },
           defaultProps: {
@@ -100,100 +105,99 @@ const createTheme = ({ mode }: { mode: "light" | "dark" }) =>
           },
         },
       },
-    }),
-  )
+    })
+  );
 
-const darkTheme = createTheme({ mode: "dark" })
-const lightTheme = createTheme({ mode: "light" })
-
+const darkTheme = createTheme({ mode: 'dark' });
+const lightTheme = createTheme({ mode: 'light' });
 
 export const AppContainer = ({
   children,
   themeMode,
 }: {
-  children: React.ReactNode
-  themeMode: ThemeMode
+  children: React.ReactNode;
+  themeMode: ThemeMode;
 }) => {
-  const prefersDarkMode = Mui.useMediaQuery("(prefers-color-scheme: dark)")
+  const prefersDarkMode = Mui.useMediaQuery('(prefers-color-scheme: dark)');
 
   const theme = useMemo(() => {
     switch (themeMode) {
-      case "Dark":
-        return darkTheme
+      case 'Dark':
+        return darkTheme;
 
-      case "Light":
-        return lightTheme
-      case "System":
+      case 'Light':
+        return lightTheme;
+      case 'System':
         if (prefersDarkMode) {
-          return darkTheme
+          return darkTheme;
         }
-        return lightTheme
+        return lightTheme;
     }
-  }, [themeMode, prefersDarkMode])
+  }, [themeMode, prefersDarkMode]);
 
   return (
     <Mui.ThemeProvider theme={theme}>
       <Mui.CssBaseline enableColorScheme />
       <Mui.Box
         sx={{
-          maxWidth: "sm",
-          maxHeight: "100%",
+          maxWidth: 'sm',
+          maxHeight: '100%',
 
           // userSelect: "none",
-          marginX: "auto",
-          position: "fixed",
-          width: "100%",
-          height: "100%",
-          overflow: "hidden",
+          marginX: 'auto',
+          position: 'fixed',
+          width: '100%',
+          height: '100%',
+          overflow: 'hidden',
           //
-          display: "flex",
-          flexDirection: "column",
-          left: "50%",
-          top: "50%",
-          transform: "translate(-50%, -50%)",
+          display: 'flex',
+          flexDirection: 'column',
+          left: '50%',
+          top: '50%',
+          transform: 'translate(-50%, -50%)',
         }}
       >
         {children}
       </Mui.Box>
     </Mui.ThemeProvider>
-  )
-}
+  );
+};
 
 export const useTheme = () => {
-  return Mui.useTheme()
-}
+  return Mui.useTheme();
+};
 
-export type ThemeMode = "Light" | "Dark" | "System"
+export type ThemeMode = 'Light' | 'Dark' | 'System';
 
 export const ThemeModeIcon = ({ themeMode }: { themeMode: ThemeMode }) => {
   switch (themeMode) {
-    case "Dark":
-      return <Icons.DarkMode />
+    case 'Dark':
+      return <Icons.DarkMode />;
 
-    case "Light":
-      return <Icons.LightMode />
+    case 'Light':
+      return <Icons.LightMode />;
 
-    case "System":
-      return <Icons.SettingsBrightness />
+    case 'System':
+      return <Icons.SettingsBrightness />;
   }
-}
+};
 
 const themeModes: { [key in ThemeMode]: ThemeMode } = {
-  Light: "Light",
-  Dark: "Dark",
-  System: "System",
-}
+  Light: 'Light',
+  Dark: 'Dark',
+  System: 'System',
+};
 
 const isThemeMode = (themeMode: unknown): themeMode is ThemeMode => {
-  return typeof themeMode === "string" && themeMode in themeModes
-}
+  return typeof themeMode === 'string' && themeMode in themeModes;
+};
 
 export const ThemeModeToggleButtons = ({
   themeMode,
   onChange,
 }: {
-  themeMode: ThemeMode
-  onChange: (themeMode: ThemeMode) => void
+  themeMode: ThemeMode;
+  onChange: (themeMode: ThemeMode) => void;
 }) => {
   return (
     <Mui.ToggleButtonGroup
@@ -203,7 +207,7 @@ export const ThemeModeToggleButtons = ({
       orientation="vertical"
       onChange={(_event, value) => {
         if (isThemeMode(value)) {
-          onChange(value)
+          onChange(value);
         }
       }}
     >
@@ -212,8 +216,8 @@ export const ThemeModeToggleButtons = ({
           <Mui.Box
             sx={{
               marginRight: 1,
-              alignItems: "center",
-              display: "flex",
+              alignItems: 'center',
+              display: 'flex',
             }}
           >
             <ThemeModeIcon themeMode={themeMode} />
@@ -222,8 +226,8 @@ export const ThemeModeToggleButtons = ({
         </Mui.ToggleButton>
       ))}
     </Mui.ToggleButtonGroup>
-  )
-}
+  );
+};
 
 //
 //
@@ -234,219 +238,238 @@ export const ThemeModeToggleButtons = ({
 //
 
 export const TextField = ({ label, sx, ...props }: Mui.TextFieldProps) => {
-  const ref = useRef<HTMLDivElement | null>(null)
+  const ref = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (props.autoFocus && ref.current) {
-      ref.current.focus()
+      ref.current.focus();
     }
-  }, [props.autoFocus])
+  }, [props.autoFocus]);
 
   return (
-    <Box sx={{ color: "text.secondary", ...sx }}>
+    <Box sx={{ color: 'text.secondary', ...sx }}>
       <Typography
-        color={props.disabled ? "text.disabled" : "inherit"}
+        color={props.disabled ? 'text.disabled' : 'inherit'}
         sx={{ mb: 1 / 2 }}
       >
         {label}
       </Typography>
       <Mui.TextField ref={ref} {...props} />
     </Box>
-  )
-}
+  );
+};
 
-export const InputBase = Mui.InputBase
+export const InputBase = Mui.InputBase;
 
-export const Snackbar = Mui.Snackbar
+export const Snackbar = Mui.Snackbar;
 
-export const Portal = Mui.Portal
+export const Portal = Mui.Portal;
 
-export const Grow = Mui.Grow
-export const Zoom = Mui.Zoom
-export const Fade = Mui.Fade
+export const Grow = Mui.Grow;
+export const Zoom = Mui.Zoom;
+export const Fade = Mui.Fade;
 
-export const SvgIcon = Mui.SvgIcon
+export const SvgIcon = Mui.SvgIcon;
 
-export const Box = Mui.Box
+export const Box = Mui.Box;
 
 export const box = ({ ...sx }: Sx, children: ViewNode[]) => {
-  return (
-    <Box sx={sx}>
-      {children}
-    </Box>
-  )
-}
+  return <Box sx={sx}>{children}</Box>;
+};
 
-export const Divider = Mui.Divider
+export const Divider = Mui.Divider;
 
-export const ListItemButton = Mui.ListItemButton
+export const ListItemButton = Mui.ListItemButton;
 
-export const LinearProgress = Mui.LinearProgress
+export const LinearProgress = Mui.LinearProgress;
 
-export const BottomNavigation = Mui.BottomNavigation
+export const BottomNavigation = Mui.BottomNavigation;
 
-export const BottomNavigationAction = Mui.BottomNavigationAction
+export const BottomNavigationAction = Mui.BottomNavigationAction;
 
-export const Chip = Mui.Chip
+export const Chip = Mui.Chip;
 
-export const ListItemText = Mui.ListItemText
+export const ListItemText = Mui.ListItemText;
 
-export const ListItemIcon = Mui.ListItemIcon
+export const ListItemIcon = Mui.ListItemIcon;
 
-export const Backdrop = Mui.Backdrop
+export const Backdrop = Mui.Backdrop;
 
-export const Checkbox = Mui.Checkbox
+export const Checkbox = Mui.Checkbox;
 
-export const ListItemSecondaryAction = Mui.ListItemSecondaryAction
+export const ListItemSecondaryAction = Mui.ListItemSecondaryAction;
 
-export const Paper = Mui.Paper
+export const Paper = Mui.Paper;
 
-export const paper = ({ key, ...sx }: Sx & { key?: string }, children: ViewNode[]) => {
+export const paper = (
+  { key, ...sx }: Sx & { key?: string },
+  children: ViewNode[]
+) => {
   return (
     <Paper key={key} sx={sx} variant="outlined">
       {children}
     </Paper>
-  )
-}
+  );
+};
 
-export const Button = MuiLab.LoadingButton
+export const Button = MuiLab.LoadingButton;
 
-export const button = ({ size, variant, onPress, startIcon, ...sx }: Sx & { startIcon: IconName; onPress?: () => void; variant: "outlined" | 'contained' | 'text'; size?: 'lg' | 'md' | 'sm', }, text: string) => {
+export const button = (
+  {
+    size,
+    variant,
+    onPress,
+    startIcon,
+    ...sx
+  }: Sx & {
+    startIcon: IconName;
+    onPress?: () => void;
+    variant: 'outlined' | 'contained' | 'text';
+    size?: 'lg' | 'md' | 'sm';
+  },
+  text: string
+) => {
   return (
     <Button
       variant={variant}
       onClick={onPress}
       sx={sx}
-      size={size === 'lg' ? 'large' : size === 'md' ? 'medium' : size === 'sm' ? 'small' : undefined}
+      size={
+        size === 'lg'
+          ? 'large'
+          : size === 'md'
+          ? 'medium'
+          : size === 'sm'
+          ? 'small'
+          : undefined
+      }
       startIcon={icon(startIcon)}
     >
       {text}
     </Button>
-  )
-}
+  );
+};
 
-export const InputAdornment = Mui.InputAdornment
+export const InputAdornment = Mui.InputAdornment;
 
-export const Typography = Mui.Typography
+export const Typography = Mui.Typography;
 
 export const text = (props: TypographyProps, children: ViewNode) => {
-  return <Typography {...props}>
-    {children}
-  </Typography>
-}
+  return <Typography {...props}>{children}</Typography>;
+};
 
-export const Tabs = Mui.Tabs
+export const Tabs = Mui.Tabs;
 
-export const Tab = Mui.Tab
+export const Tab = Mui.Tab;
 
-export const Drawer = Mui.Drawer
+export const Drawer = Mui.Drawer;
 
-export const Card = Mui.Card
+export const Card = Mui.Card;
 
-export const CardActionArea = Mui.CardActionArea
+export const CardActionArea = Mui.CardActionArea;
 
-export const Dialog = Mui.Dialog
+export const Dialog = Mui.Dialog;
 
-export const DialogTitle = Mui.DialogTitle
+export const DialogTitle = Mui.DialogTitle;
 
-export const DialogActions = Mui.DialogActions
+export const DialogActions = Mui.DialogActions;
 
-export const DialogContent = Mui.DialogContent
+export const DialogContent = Mui.DialogContent;
 
-export const Alert = Mui.Alert
+export const Alert = Mui.Alert;
 
-export const AlertTitle = Mui.AlertTitle
+export const AlertTitle = Mui.AlertTitle;
 
-export const CircularProgress = Mui.CircularProgress
+export const CircularProgress = Mui.CircularProgress;
 
 export const spinner = ({ size, ...sx }: Sx & { size?: number }) => {
-  return <CircularProgress size={size} sx={sx} />
-}
+  return <CircularProgress size={size} sx={sx} />;
+};
 
-export const Collapse = Mui.Collapse
+export const Collapse = Mui.Collapse;
 
-export const Badge = Mui.Badge
+export const Badge = Mui.Badge;
 
-export const ListItemAvatar = Mui.ListItemAvatar
+export const ListItemAvatar = Mui.ListItemAvatar;
 
-export const ListItem = Mui.ListItem
+export const ListItem = Mui.ListItem;
 
-export const ListSubheader = Mui.ListSubheader
+export const ListSubheader = Mui.ListSubheader;
 
-export const MobileStepper = Mui.MobileStepper
+export const MobileStepper = Mui.MobileStepper;
 
-export const Avatar = Mui.Avatar
+export const Avatar = Mui.Avatar;
 
-export const avatar = ({ src, ...sx }: { src?: string | null, } & Sx) => {
-  return <Mui.Avatar src={src ?? ""} sx={sx} />
-}
+export const avatar = ({ src, ...sx }: { src?: string | null } & Sx) => {
+  return <Mui.Avatar src={src ?? ''} sx={sx} />;
+};
 
-export const AvatarGroup = Mui.AvatarGroup
+export const AvatarGroup = Mui.AvatarGroup;
 
-export const Menu = Mui.Menu
+export const Menu = Mui.Menu;
 
-export const MenuItem = Mui.MenuItem
+export const MenuItem = Mui.MenuItem;
 
-export const Autocomplete = Mui.Autocomplete
+export const Autocomplete = Mui.Autocomplete;
 
-export const Select = Mui.Select
+export const Select = Mui.Select;
 
-export const List = Mui.List
+export const List = Mui.List;
 
-export const ButtonBase = Mui.ButtonBase
+export const ButtonBase = Mui.ButtonBase;
 
-export const Toolbar = Mui.Toolbar
+export const Toolbar = Mui.Toolbar;
 
-export const IconButton = Mui.IconButton
+export const IconButton = Mui.IconButton;
 
-export const ToggleButtonGroup = Mui.ToggleButtonGroup
+export const ToggleButtonGroup = Mui.ToggleButtonGroup;
 
-export const Tooltip = Mui.Tooltip
+export const Tooltip = Mui.Tooltip;
 
-export const ToggleButton = Mui.ToggleButton
+export const ToggleButton = Mui.ToggleButton;
 
 export const Field = ({
   label,
   value,
   onClick,
 }: {
-  label: string
-  value: string
-  onClick?: () => void
+  label: string;
+  value: string;
+  onClick?: () => void;
 }) => (
   <ListItemButton onClick={onClick}>
     <ListItemText
       primaryTypographyProps={{
-        variant: "subtitle1",
-        color: "text.secondary",
+        variant: 'subtitle1',
+        color: 'text.secondary',
       }}
       primary={label}
-      secondaryTypographyProps={{ variant: "h6", color: "text.primary" }}
+      secondaryTypographyProps={{ variant: 'h6', color: 'text.primary' }}
       secondary={value}
     />
     <ListItemSecondaryAction>
       <Icons.ChevronRight />
     </ListItemSecondaryAction>
   </ListItemButton>
-)
+);
 
 export const Header = ({
   left,
   title,
   right,
 }: {
-  left?: React.ReactNode
-  title: React.ReactNode
-  right?: React.ReactNode
+  left?: React.ReactNode;
+  title: React.ReactNode;
+  right?: React.ReactNode;
 }) => {
   return (
     <Mui.Toolbar>
       <Box
         sx={{
           flex: 1,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "flex-start",
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-start',
         }}
       >
         {left}
@@ -459,128 +482,128 @@ export const Header = ({
       <Box
         sx={{
           flex: 1,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "flex-end",
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
         }}
       >
         {right}
       </Box>
     </Mui.Toolbar>
-  )
-}
+  );
+};
 
 export const HeaderBackButton = ({ onClick }: { onClick: () => void }) => {
   return (
     <Mui.IconButton edge="start" onClick={onClick}>
       <Icons.ChevronLeft />
     </Mui.IconButton>
-  )
-}
+  );
+};
 
 export const fillBox = ({ ...sx }: Sx, children: ViewNode[]) => {
   return box(
     {
-      display: "flex",
-      flexDirection: "column",
-      width: "100%",
-      height: "100%",
-      overflowX: "hidden",
-      overflowY: "scroll",
+      display: 'flex',
+      flexDirection: 'column',
+      width: '100%',
+      height: '100%',
+      overflowX: 'hidden',
+      overflowY: 'scroll',
       padding: 0,
       margin: 0,
       ...sx,
     },
     children
-  )
-}
+  );
+};
 
 export const FillBox = ({ sx, ...props }: Mui.BoxProps) => {
   return (
     <Box
       sx={{
-        display: "flex",
-        flexDirection: "column",
-        width: "100%",
-        height: "100%",
-        overflowX: "hidden",
-        overflowY: "scroll",
+        display: 'flex',
+        flexDirection: 'column',
+        width: '100%',
+        height: '100%',
+        overflowX: 'hidden',
+        overflowY: 'scroll',
         padding: 0,
         margin: 0,
         ...sx,
       }}
       {...props}
     />
-  )
-}
+  );
+};
 
 export const LoadingPage = ({ title }: { title?: string }) => {
   return (
-    <FillBox sx={{ justifyContent: "center", alignItems: "center" }}>
+    <FillBox sx={{ justifyContent: 'center', alignItems: 'center' }}>
       <CircularProgress sx={{ marginBottom: 2 }} />
       <Typography align="center" variant="caption" color="text.secondary">
         {title}
       </Typography>
     </FillBox>
-  )
-}
+  );
+};
 
 export const AspectRatio = ({
   aspectRatio,
   children,
 }: {
-  aspectRatio: number
-  children: ReactNode
+  aspectRatio: number;
+  children: ReactNode;
 }) => {
   return (
     <Box
       sx={{
-        width: "100%",
+        width: '100%',
         paddingTop: `${aspectRatio * 100}%`,
-        position: "relative",
+        position: 'relative',
         height: 0,
-        overflow: "hidden",
+        overflow: 'hidden',
       }}
     >
       <Box
         sx={{
-          position: "absolute",
+          position: 'absolute',
           top: 0,
           left: 0,
-          width: "100%",
-          height: "100%",
+          width: '100%',
+          height: '100%',
         }}
       >
         {children}
       </Box>
     </Box>
-  )
-}
+  );
+};
 
 export const LoadingBackdrop = ({ open }: { open?: boolean }) => {
   return (
     <Mui.Backdrop sx={{ zIndex: 10 }} open={Boolean(open)}>
       <CircularProgress />
     </Mui.Backdrop>
-  )
-}
+  );
+};
 
 export const LoadingDialog = ({
   open,
   title,
 }: {
-  open: boolean
-  title: string
+  open: boolean;
+  title: string;
 }) => {
   return (
     <Dialog open={open}>
-      <Box sx={{ display: "flex", alignItems: "center", p: 2 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', p: 2 }}>
         <CircularProgress sx={{ marginRight: 2 }} />
         <Typography variant="h6">{title}</Typography>
       </Box>
     </Dialog>
-  )
-}
+  );
+};
 
 export const ConformationDialog = ({
   open,
@@ -589,24 +612,24 @@ export const ConformationDialog = ({
   onConfirm,
   title,
   confirmTitle,
-  cancelTitle = "Cancel",
+  cancelTitle = 'Cancel',
   headerIcon,
   subtitle,
 }: {
-  open: boolean
-  onCancel: () => void
-  onClose: () => void
-  onConfirm: () => void
-  title: string
-  subtitle?: string
-  confirmTitle: string
-  cancelTitle?: string
-  headerIcon?: ViewNode
+  open: boolean;
+  onCancel: () => void;
+  onClose: () => void;
+  onConfirm: () => void;
+  title: string;
+  subtitle?: string;
+  confirmTitle: string;
+  cancelTitle?: string;
+  headerIcon?: ViewNode;
 }) => {
   return (
     <Dialog open={open} onClose={onClose}>
       {headerIcon && (
-        <Box sx={{ margin: "auto", paddingTop: 2, marginBottom: -1 }}>
+        <Box sx={{ margin: 'auto', paddingTop: 2, marginBottom: -1 }}>
           {headerIcon}
         </Box>
       )}
@@ -621,8 +644,8 @@ export const ConformationDialog = ({
         <Button onClick={onConfirm}>{confirmTitle}</Button>
       </DialogActions>
     </Dialog>
-  )
-}
+  );
+};
 
 export const pulse = keyframes`
   0% {
@@ -634,7 +657,7 @@ export const pulse = keyframes`
   100% {
     opacity: 100%;
   }
-`
+`;
 
 export const spin = keyframes`
   from {
@@ -643,13 +666,13 @@ export const spin = keyframes`
   to {
     transform: rotate(360deg);
   }
-`
+`;
 
-export const pulseAnimation = `${pulse} 0.5s infinite ease`
+export const pulseAnimation = `${pulse} 0.5s infinite ease`;
 
-export type ViewNode = ReactNode
+export type ViewNode = ReactNode;
 
-export type Sx = Mui.SxProps
+export type Sx = Mui.SxProps;
 
 export const actionButton = ({
   label,
@@ -657,10 +680,10 @@ export const actionButton = ({
   onPress,
   disabled = false,
 }: {
-  label: string
-  iconName: IconName
-  onPress?: () => void
-  disabled?: boolean
+  label: string;
+  iconName: IconName;
+  onPress?: () => void;
+  disabled?: boolean;
 }) => {
   // const theme = useTheme()
   return (
@@ -669,10 +692,10 @@ export const actionButton = ({
       sx={{
         paddingY: 1 / 2,
         paddingX: 2,
-        display: "flex",
-        flexDirection: "column",
+        display: 'flex',
+        flexDirection: 'column',
         flex: 1,
-        width: "100%",
+        width: '100%',
         // color: disabled
         //   ? theme.palette.action.disabled
         //   : theme.palette.action.active,
@@ -681,8 +704,8 @@ export const actionButton = ({
       {icon(iconName)}
       <Typography variant="caption">{label}</Typography>
     </ButtonBase>
-  )
-}
+  );
+};
 
 export const ActionButton = ({
   label,
@@ -690,22 +713,22 @@ export const ActionButton = ({
   onClick,
   disabled = false,
 }: {
-  label: string
-  icon: ReactNode
-  onClick: () => void
-  disabled?: boolean
+  label: string;
+  icon: ReactNode;
+  onClick: () => void;
+  disabled?: boolean;
 }) => {
-  const theme = useTheme()
+  const theme = useTheme();
   return (
     <ButtonBase
       onClick={onClick}
       sx={{
         paddingY: 1 / 2,
         paddingX: 2,
-        display: "flex",
-        flexDirection: "column",
+        display: 'flex',
+        flexDirection: 'column',
         flex: 1,
-        width: "100%",
+        width: '100%',
         color: disabled
           ? theme.palette.action.disabled
           : theme.palette.action.active,
@@ -714,50 +737,43 @@ export const ActionButton = ({
       {icon}
       <Typography variant="caption">{label}</Typography>
     </ButtonBase>
-  )
-}
+  );
+};
 
+//
+//
+//
+//
+//
+//
 
-// 
-// 
-// 
-// 
-// 
-// 
-
-
-export type IconName = "smart-toy" | 'exit' | 'swap' | 'restart' | 'flag'
+export type IconName = 'smart-toy' | 'exit' | 'swap' | 'restart' | 'flag';
 
 export const icon = (name: IconName, sx?: Sx) => {
   switch (name) {
     case 'smart-toy': {
-      return <SmartToy key="smart-toy" sx={sx} />
+      return <SmartToy key="smart-toy" sx={sx} />;
     }
 
     case 'exit': {
-      return <ExitToApp sx={{ ...sx, transform: "rotate(180deg)" }} />
-
+      return <ExitToApp sx={{ ...sx, transform: 'rotate(180deg)' }} />;
     }
     case 'swap': {
-      return <SwapHorizSharp sx={sx} />
+      return <SwapHorizSharp sx={sx} />;
     }
 
     case 'restart': {
-      return <RestartAlt sx={sx} />
+      return <RestartAlt sx={sx} />;
     }
 
     case 'flag': {
-      return <Flag sx={sx} />
+      return <Flag sx={sx} />;
     }
   }
-}
+};
 export const fragment = (children: ViewNode[]) => {
-  return (
-    children
-
-  )
-}
-
+  return children;
+};
 
 export const conformation = ({
   iconName,
@@ -765,27 +781,30 @@ export const conformation = ({
   title,
   subtitle,
   confirmTitle,
-  cancelTitle = "Cancel",
+  cancelTitle = 'Cancel',
   onConfirm,
   onCancel,
-  onClose
+  onClose,
 }: {
-  iconName?: IconName
-  open: boolean
-  title: string
-  subtitle?: string
-  confirmTitle: string
-  cancelTitle?: string
-  onConfirm: () => void
-  onCancel: () => void
-  onClose: () => void
+  iconName?: IconName;
+  open: boolean;
+  title: string;
+  subtitle?: string;
+  confirmTitle: string;
+  cancelTitle?: string;
+  onConfirm: () => void;
+  onCancel: () => void;
+  onClose: () => void;
 }) => {
-
   return (
     <Dialog open={open} onClose={onClose}>
-      {iconName && (
-        icon(iconName, { margin: "auto", paddingTop: 2, width: 64, height: 64 })
-      )}
+      {iconName &&
+        icon(iconName, {
+          margin: 'auto',
+          paddingTop: 2,
+          width: 64,
+          height: 64,
+        })}
       <DialogTitle>{title}</DialogTitle>
       {subtitle && (
         <DialogTitle variant="subtitle2" color="text.secondary">
@@ -797,25 +816,32 @@ export const conformation = ({
         <Button onClick={onConfirm}>{confirmTitle}</Button>
       </DialogActions>
     </Dialog>
-  )
-}
-
+  );
+};
 
 export const ViewEmptyState = ({
   renderIcon,
   title,
   actionIcon,
   actionTitle,
-  onAction
+  onAction,
 }: {
-  actionIcon: ViewNode
-  actionTitle: string,
-  onAction: () => void,
-  title: string,
-  renderIcon: (props: { sx: Sx }) => ViewNode
+  actionIcon: ViewNode;
+  actionTitle: string;
+  onAction: () => void;
+  title: string;
+  renderIcon: (props: { sx: Sx }) => ViewNode;
 }) => {
   return (
-    <FillBox sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", color: "text.secondary" }}>
+    <FillBox
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        color: 'text.secondary',
+      }}
+    >
       {renderIcon({ sx: { width: 100, height: 100 } })}
       <Typography variant="h6" sx={{ mb: 2 }}>
         {title}
@@ -824,24 +850,22 @@ export const ViewEmptyState = ({
         {actionTitle}
       </Button>
     </FillBox>
-  )
-}
+  );
+};
 
 export const ViewLoadingState = ({ title }: { title: string }) => {
   return (
     <Box
       sx={{
         flex: 1,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        flexDirection: "column"
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'column',
       }}
     >
       <CircularProgress sx={{ mb: 1 }} />
-      <Typography color="text.secondary">
-        {title}
-      </Typography>
+      <Typography color="text.secondary">{title}</Typography>
     </Box>
-  )
-}
+  );
+};

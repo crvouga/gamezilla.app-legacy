@@ -1,19 +1,26 @@
-import { Alerts } from "@gamezilla/shared"
-import { Cmd, Sub } from "@gamezilla/core"
-import { bannerArtAspectRatio, GameRoomCtx, viewSelectModeScreen } from "@gamezilla/game-shared"
-import { Ctx } from "@gamezilla/shared"
-import * as UI from "@gamezilla/ui"
+import { Alerts } from '@gamezilla/shared';
+import { Cmd, Sub } from '@gamezilla/core';
+import {
+  bannerArtAspectRatio,
+  GameRoomCtx,
+  viewSelectModeScreen,
+} from '@gamezilla/game-shared';
+import { Ctx } from '@gamezilla/shared';
+import * as UI from '@gamezilla/ui';
 import {
   BackendModel,
   FrontendModel,
   FrontendMsg,
   ToBackend,
-  ToFrontend
-} from "./connect-four.types"
-import { gameTheme, PlayerIcon, ViewCoverArt } from "./connect-four/connect-four-view"
-import * as VsBot from "./vs-bot/vs-bot.frontend"
-import * as VsUser from "./vs-user/vs-user.frontend"
-
+  ToFrontend,
+} from './connect-four.types';
+import {
+  gameTheme,
+  PlayerIcon,
+  ViewCoverArt,
+} from './connect-four/connect-four-view';
+import * as VsBot from './vs-bot/vs-bot.frontend';
+import * as VsUser from './vs-user/vs-user.frontend';
 
 //
 //
@@ -23,9 +30,9 @@ import * as VsUser from "./vs-user/vs-user.frontend"
 //
 //
 
-export type Model = FrontendModel
+export type Model = FrontendModel;
 
-export const init: Model = { type: "none" }
+export const init: Model = { type: 'none' };
 
 //
 //
@@ -35,93 +42,85 @@ export const init: Model = { type: "none" }
 //
 //
 
-export type Msg = FrontendMsg
+export type Msg = FrontendMsg;
 
-type OutAction = Alerts.Action
+type OutAction = Alerts.Action;
 
 export const update = (
   { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd },
   msg: Msg,
-  model: Model,
+  model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case "input-mode": {
-      return [model, sendToBackend(msg)]
+    case 'input-mode': {
+      return [model, sendToBackend(msg)];
     }
-    case "vs-user": {
-      if (model.type === "vs-user") {
+    case 'vs-user': {
+      if (model.type === 'vs-user') {
         const [child, cmd] = VsUser.update(
           {
-            sendToBackend: (msg) => sendToBackend(["vs-user", msg]),
+            sendToBackend: (msg) => sendToBackend(['vs-user', msg]),
           },
           msg[1],
-          model.child,
-        )
-        return [{ type: "vs-user", child }, Cmd.tag("vs-user", cmd)]
+          model.child
+        );
+        return [{ type: 'vs-user', child }, Cmd.tag('vs-user', cmd)];
       }
-      return [model, Cmd.None]
+      return [model, Cmd.None];
     }
 
-    case "vs-bot": {
-      if (model.type === "vs-bot") {
+    case 'vs-bot': {
+      if (model.type === 'vs-bot') {
         const [child, cmd] = VsBot.update(
           {
-            sendToBackend: (msg) => sendToBackend(["vs-bot", msg]),
+            sendToBackend: (msg) => sendToBackend(['vs-bot', msg]),
           },
           msg[1],
-          model.child,
-        )
-        return [{ type: "vs-bot", child }, Cmd.tag("vs-bot", cmd)]
+          model.child
+        );
+        return [{ type: 'vs-bot', child }, Cmd.tag('vs-bot', cmd)];
       }
-      return [model, Cmd.None]
+      return [model, Cmd.None];
     }
   }
-}
+};
 
 export const updateFromBackend = (
   msg: ToFrontend,
-  model: Model,
+  model: Model
 ): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-    case "input-mode-done": {
+    case 'input-mode-done': {
       const merged = mergeWithBackend({
         frontendModel: model,
         backendModel: msg[1],
-      })
-      return [merged, Cmd.None, []]
+      });
+      return [merged, Cmd.None, []];
     }
 
-    case "vs-user": {
-      if (model.type === "vs-user") {
+    case 'vs-user': {
+      if (model.type === 'vs-user') {
         const [child, cmd, actions] = VsUser.updateFromBackend(
           msg[1],
-          model.child,
-        )
-        return [
-          { type: "vs-user", child },
-          Cmd.tag("vs-user", cmd),
-          actions,
-        ]
+          model.child
+        );
+        return [{ type: 'vs-user', child }, Cmd.tag('vs-user', cmd), actions];
       }
-      return [model, Cmd.None, []]
+      return [model, Cmd.None, []];
     }
 
-    case "vs-bot": {
-      if (model.type === "vs-bot") {
+    case 'vs-bot': {
+      if (model.type === 'vs-bot') {
         const [child, cmd, actions] = VsBot.updateFromBackend(
           msg[1],
-          model.child,
-        )
-        return [
-          { type: "vs-bot", child },
-          Cmd.tag("vs-bot", cmd),
-          actions,
-        ]
+          model.child
+        );
+        return [{ type: 'vs-bot', child }, Cmd.tag('vs-bot', cmd), actions];
       }
-      return [model, Cmd.None, []]
+      return [model, Cmd.None, []];
     }
   }
-}
+};
 
 //
 //
@@ -137,59 +136,51 @@ export const View = ({
   ctx,
   gameRoomCtx,
 }: {
-  model: Model
-  $send: (msg: Msg) => void
-  ctx: Ctx
-  gameRoomCtx: GameRoomCtx
+  model: Model;
+  $send: (msg: Msg) => void;
+  ctx: Ctx;
+  gameRoomCtx: GameRoomCtx;
 }) => {
   const goBack = () =>
-    $send(["input-mode", { userId: ctx.currentUserId, mode: "none" }])
+    $send(['input-mode', { userId: ctx.currentUserId, mode: 'none' }]);
 
   switch (model.type) {
-    case "none": {
-      return (
-        viewSelectModeScreen({
-          ctx: ctx,
-          gameRoomCtx: gameRoomCtx,
-          coverArt: <ViewCoverArt />,
-          title: "Connect Four",
-          onVsUser: () =>
-            $send([
-              "input-mode",
-              { mode: "vs-user", userId: ctx.currentUserId },
-            ]),
-          onUserVsComputer: () =>
-            $send([
-              "input-mode",
-              { mode: "vs-bot", userId: ctx.currentUserId },
-            ])
-        })
-      )
+    case 'none': {
+      return viewSelectModeScreen({
+        ctx: ctx,
+        gameRoomCtx: gameRoomCtx,
+        coverArt: <ViewCoverArt />,
+        title: 'Connect Four',
+        onVsUser: () =>
+          $send(['input-mode', { mode: 'vs-user', userId: ctx.currentUserId }]),
+        onUserVsComputer: () =>
+          $send(['input-mode', { mode: 'vs-bot', userId: ctx.currentUserId }]),
+      });
     }
 
-    case "vs-user": {
+    case 'vs-user': {
       return (
         <VsUser.View
           ctx={ctx}
-          $send={(msg) => $send(["vs-user", msg])}
+          $send={(msg) => $send(['vs-user', msg])}
           goBack={goBack}
           model={model.child}
         />
-      )
+      );
     }
 
-    case "vs-bot": {
+    case 'vs-bot': {
       return (
         <VsBot.View
           ctx={ctx}
-          $send={(msg) => $send(["vs-bot", msg])}
+          $send={(msg) => $send(['vs-bot', msg])}
           model={model.child}
           goBack={goBack}
         />
-      )
+      );
     }
   }
-}
+};
 
 //
 //
@@ -200,18 +191,18 @@ export const View = ({
 //
 
 export const BannerArt = () => {
-  const iconSx: UI.Sx = { width: 120, height: 120, maxHeight: "66%" }
+  const iconSx: UI.Sx = { width: 120, height: 120, maxHeight: '66%' };
 
   return (
     <UI.AspectRatio aspectRatio={bannerArtAspectRatio}>
       <UI.List
         sx={{
-          width: "100%",
-          height: "100%",
+          width: '100%',
+          height: '100%',
           background: `linear-gradient(${gameTheme.primary.dark}, ${gameTheme.primary.darker})`,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
           gap: 4,
         }}
       >
@@ -220,15 +211,15 @@ export const BannerArt = () => {
       </UI.List>
       <UI.List
         sx={{
-          width: "100%",
-          height: "100%",
-          background: "rgba(0, 0, 0, 0.1)",
-          position: "absolute",
+          width: '100%',
+          height: '100%',
+          background: 'rgba(0, 0, 0, 0.1)',
+          position: 'absolute',
           top: 0,
           left: 0,
-          overflow: "hidden",
-          display: "flex",
-          alignItems: "flex-end",
+          overflow: 'hidden',
+          display: 'flex',
+          alignItems: 'flex-end',
         }}
       >
         <UI.Typography
@@ -240,83 +231,83 @@ export const BannerArt = () => {
         </UI.Typography>
       </UI.List>
     </UI.AspectRatio>
-  )
-}
+  );
+};
 
 export const mergeWithBackend = ({
   frontendModel,
   backendModel,
 }: {
-  frontendModel: FrontendModel
-  backendModel: BackendModel
+  frontendModel: FrontendModel;
+  backendModel: BackendModel;
 }): FrontendModel => {
   switch (backendModel.type) {
-    case "none": {
-      return backendModel
+    case 'none': {
+      return backendModel;
     }
 
-    case "vs-bot": {
-      if (frontendModel.type === "vs-bot") {
+    case 'vs-bot': {
+      if (frontendModel.type === 'vs-bot') {
         return {
-          type: "vs-bot",
+          type: 'vs-bot',
           child: VsBot.mergeWithBackend({
             frontendModel: frontendModel.child,
             backendModel: backendModel.child,
           }),
-        }
+        };
       }
 
       return {
-        type: "vs-bot",
+        type: 'vs-bot',
         child: VsBot.mergeWithBackend({
           frontendModel: VsBot.init(backendModel.child),
           backendModel: backendModel.child,
         }),
-      }
+      };
     }
 
-    case "vs-user": {
-      if (frontendModel.type === "vs-user") {
+    case 'vs-user': {
+      if (frontendModel.type === 'vs-user') {
         return {
-          type: "vs-user",
+          type: 'vs-user',
           child: VsUser.mergeWithBackend({
             frontendModel: frontendModel.child,
             backendModel: backendModel.child,
           }),
-        }
+        };
       }
 
       return {
-        type: "vs-user",
+        type: 'vs-user',
         child: VsUser.mergeWithBackend({
           frontendModel: VsUser.init(backendModel.child),
           backendModel: backendModel.child,
         }),
-      }
+      };
     }
   }
-}
+};
 
-// 
-// 
-// 
+//
+//
+//
 // Subscriptions
-// 
-// 
-// 
+//
+//
+//
 
 export const subscriptions = (model: Model): Sub<Msg> => {
   switch (model.type) {
-    case "none": {
-      return Sub.None
+    case 'none': {
+      return Sub.None;
     }
 
-    case "vs-bot": {
-      return Sub.tag("vs-bot", VsBot.subscriptions(model.child))
+    case 'vs-bot': {
+      return Sub.tag('vs-bot', VsBot.subscriptions(model.child));
     }
 
-    case "vs-user": {
-      return Sub.tag("vs-user", VsUser.subscriptions(model.child))
+    case 'vs-user': {
+      return Sub.tag('vs-user', VsUser.subscriptions(model.child));
     }
   }
-}
+};

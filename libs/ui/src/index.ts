@@ -1,2 +1,2 @@
-export * as Icons from "./ui-icons"
-export * from "./ui"
+export * as Icons from './ui-icons';
+export * from './ui';
