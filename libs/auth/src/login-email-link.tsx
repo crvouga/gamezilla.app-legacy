@@ -1,7 +1,7 @@
-import { Cmd, exhaustive, p, t } from "@gamezilla/core"
-import { Route } from "@gamezilla/shared"
-import * as UI from "@gamezilla/ui"
-import * as Auth from "./auth"
+import { Cmd, exhaustive, p, t } from '@gamezilla/core';
+import { Route } from '@gamezilla/shared';
+import * as UI from '@gamezilla/ui';
+import * as Auth from './auth';
 
 //
 //
@@ -12,18 +12,18 @@ import * as Auth from "./auth"
 //
 
 export type Model = {
-  emailAddress: string
+  emailAddress: string;
   submission:
-  | { type: "Idle" }
-  | { type: "Loading"; sentToEmailAddress: string }
-  | { type: "Problem"; message: string }
-  | { type: "Ok"; sentToEmailAddress: string }
-}
+    | { type: 'Idle' }
+    | { type: 'Loading'; sentToEmailAddress: string }
+    | { type: 'Problem'; message: string }
+    | { type: 'Ok'; sentToEmailAddress: string };
+};
 
 export const init: Model = {
-  emailAddress: "",
-  submission: { type: "Idle" },
-}
+  emailAddress: '',
+  submission: { type: 'Idle' },
+};
 
 //
 //
@@ -34,75 +34,75 @@ export const init: Model = {
 //
 
 export type Msg =
-  | ["ClickedBack"]
-  | ["ClickedSendLoginLink"]
-  | ["InputtedEmailAddress", string]
-  | ["Login_Done", Auth.AuthResult]
+  | ['ClickedBack']
+  | ['ClickedSendLoginLink']
+  | ['InputtedEmailAddress', string]
+  | ['Login_Done', Auth.AuthResult];
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case "InputtedEmailAddress":
-      return [{ ...model, emailAddress: msg[1] }, Cmd.None]
+    case 'InputtedEmailAddress':
+      return [{ ...model, emailAddress: msg[1] }, Cmd.None];
 
-    case "Login_Done": {
+    case 'Login_Done': {
       switch (msg[1].type) {
-        case "Err": {
+        case 'Err': {
           return [
             {
               ...model,
               submission: {
-                type: "Problem",
+                type: 'Problem',
                 message: msg[1].error.message,
               },
             },
             Cmd.None,
-          ]
+          ];
         }
 
-        case "Ok": {
+        case 'Ok': {
           const emailAddress =
-            model.submission.type === "Loading"
+            model.submission.type === 'Loading'
               ? model.submission.sentToEmailAddress
-              : model.emailAddress
+              : model.emailAddress;
           return [
             {
               ...model,
-              emailAddress: "",
-              submission: { type: "Ok", sentToEmailAddress: emailAddress },
+              emailAddress: '',
+              submission: { type: 'Ok', sentToEmailAddress: emailAddress },
             },
             Cmd.None,
-          ]
+          ];
         }
 
         default:
-          return [model, Cmd.None]
+          return [model, Cmd.None];
       }
     }
 
-    case "ClickedSendLoginLink": {
+    case 'ClickedSendLoginLink': {
       return [
         {
           ...model,
           submission: {
-            type: "Loading",
+            type: 'Loading',
             sentToEmailAddress: model.emailAddress,
           },
         },
         p(
           Auth.loginWithEmailLink({ emailAddress: model.emailAddress }),
-          Cmd.perform(t("Login_Done")),
+          Cmd.perform(t('Login_Done'))
         ),
-      ]
+      ];
     }
 
-    case "ClickedBack": {
-      return [model, Route.back]
+    case 'ClickedBack': {
+      return [model, Route.back];
     }
 
     default:
-      return exhaustive(msg[0])
+      return exhaustive(msg[0]);
   }
-}
+};
 
 //
 //
@@ -116,13 +116,13 @@ export const View = ({
   model,
   $send,
 }: {
-  model: Model
-  $send: (msg: Msg) => void
+  model: Model;
+  $send: (msg: Msg) => void;
 }) => {
   return (
     <UI.FillBox>
       <UI.Header
-        left={<UI.HeaderBackButton onClick={() => $send(["ClickedBack"])} />}
+        left={<UI.HeaderBackButton onClick={() => $send(['ClickedBack'])} />}
         title="Login With Email"
       />
 
@@ -140,7 +140,7 @@ export const View = ({
           label="Email Address"
           value={model.emailAddress}
           onChange={(event) => {
-            $send(["InputtedEmailAddress", event.target.value])
+            $send(['InputtedEmailAddress', event.target.value]);
           }}
         />
 
@@ -148,26 +148,26 @@ export const View = ({
           variant="contained"
           size="large"
           fullWidth
-          loading={model.submission.type === "Loading"}
-          onClick={() => $send(["ClickedSendLoginLink"])}
+          loading={model.submission.type === 'Loading'}
+          onClick={() => $send(['ClickedSendLoginLink'])}
           sx={{ marginBottom: 2 }}
         >
           Send Login Link
         </UI.Button>
 
-        {model.submission.type === "Problem" && (
+        {model.submission.type === 'Problem' && (
           <UI.Alert severity="error">{model.submission.message}</UI.Alert>
         )}
 
-        {model.submission.type === "Ok" && (
+        {model.submission.type === 'Ok' && (
           <UI.Alert severity="success">
             <UI.AlertTitle>Check your email</UI.AlertTitle>
             <UI.Typography color="text.secondary" variant="body2">
-              An email was sent to{" "}
-              <UI.Box component="span" sx={{ color: "text.primary" }}>
-                {model.submission.type === "Ok"
+              An email was sent to{' '}
+              <UI.Box component="span" sx={{ color: 'text.primary' }}>
+                {model.submission.type === 'Ok'
                   ? model.submission.sentToEmailAddress
-                  : "the provider email address"}
+                  : 'the provider email address'}
               </UI.Box>
               . It has a link that will log you in.
             </UI.Typography>
@@ -175,5 +175,5 @@ export const View = ({
         )}
       </UI.Box>
     </UI.FillBox>
-  )
-}
+  );
+};

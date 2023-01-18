@@ -1,8 +1,8 @@
-import * as Auth from "./auth"
-import { Browser, Cmd, p, t } from "@gamezilla/core"
-import { PhoneNumber } from "@gamezilla/shared"
-import { Route } from "@gamezilla/shared"
-import * as UI from "@gamezilla/ui"
+import * as Auth from './auth';
+import { Browser, Cmd, p, t } from '@gamezilla/core';
+import { PhoneNumber } from '@gamezilla/shared';
+import { Route } from '@gamezilla/shared';
+import * as UI from '@gamezilla/ui';
 
 //
 //
@@ -13,22 +13,22 @@ import * as UI from "@gamezilla/ui"
 //
 
 export type Model = {
-  code: string
+  code: string;
   submission:
-  | {
-    type: "Idle"
-  }
-  | {
-    type: "Loading"
-  }
-  | {
-    type: "Problem"
-    message: string
-  }
-  | {
-    type: "Ok"
-  }
-}
+    | {
+        type: 'Idle';
+      }
+    | {
+        type: 'Loading';
+      }
+    | {
+        type: 'Problem';
+        message: string;
+      }
+    | {
+        type: 'Ok';
+      };
+};
 
 //
 //
@@ -39,9 +39,9 @@ export type Model = {
 //
 
 export const init: Model = {
-  code: "",
-  submission: { type: "Idle" },
-}
+  code: '',
+  submission: { type: 'Idle' },
+};
 
 //
 //
@@ -52,59 +52,59 @@ export const init: Model = {
 //
 
 export type Msg =
-  | ["ClickedBack"]
-  | ["ClickedVerifyCode"]
-  | ["InputtedCode", string]
-  | ["VerifyCode_Done", Auth.AuthResult]
-  | ["Focus_Done", Browser.FocusResult]
+  | ['ClickedBack']
+  | ['ClickedVerifyCode']
+  | ['InputtedCode', string]
+  | ['VerifyCode_Done', Auth.AuthResult]
+  | ['Focus_Done', Browser.FocusResult];
 
-const codeInputId = "codeInputId"
+const codeInputId = 'codeInputId';
 
 export const update = (
   { phoneNumber }: { phoneNumber: PhoneNumber },
   msg: Msg,
-  model: Model,
+  model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case "ClickedBack": {
-      return [model, Route.back]
+    case 'ClickedBack': {
+      return [model, Route.back];
     }
 
-    case "ClickedVerifyCode": {
+    case 'ClickedVerifyCode': {
       return [
-        { code: model.code, submission: { type: "Loading" } },
+        { code: model.code, submission: { type: 'Loading' } },
         p(
           Auth.verifyCode({ code: model.code, phoneNumber }),
-          Cmd.perform((result): Msg => ["VerifyCode_Done", result]),
+          Cmd.perform((result): Msg => ['VerifyCode_Done', result])
         ),
-      ]
+      ];
     }
 
-    case "InputtedCode": {
-      return [{ ...model, code: msg[1] }, Cmd.None]
+    case 'InputtedCode': {
+      return [{ ...model, code: msg[1] }, Cmd.None];
     }
 
-    case "VerifyCode_Done": {
-      const result = msg[1]
+    case 'VerifyCode_Done': {
+      const result = msg[1];
 
-      if (result.type === "Err") {
+      if (result.type === 'Err') {
         return [
           {
-            code: "",
-            submission: { type: "Problem", message: result.error.message },
+            code: '',
+            submission: { type: 'Problem', message: result.error.message },
           },
-          p(Browser.focus(codeInputId), Cmd.perform(t("Focus_Done"))),
-        ]
+          p(Browser.focus(codeInputId), Cmd.perform(t('Focus_Done'))),
+        ];
       }
 
-      return [{ ...model, submission: { type: "Ok" } }, Cmd.None]
+      return [{ ...model, submission: { type: 'Ok' } }, Cmd.None];
     }
 
-    case "Focus_Done": {
-      return [model, Cmd.None]
+    case 'Focus_Done': {
+      return [model, Cmd.None];
     }
   }
-}
+};
 
 //
 //
@@ -119,14 +119,14 @@ export const View = ({
   model,
   $send,
 }: {
-  phoneNumber: PhoneNumber
-  model: Model
-  $send: (msg: Msg) => void
+  phoneNumber: PhoneNumber;
+  model: Model;
+  $send: (msg: Msg) => void;
 }) => {
   return (
     <UI.FillBox>
       <UI.Header
-        left={<UI.HeaderBackButton onClick={() => $send(["ClickedBack"])} />}
+        left={<UI.HeaderBackButton onClick={() => $send(['ClickedBack'])} />}
         title="Verify Code"
       />
       <UI.Box
@@ -143,9 +143,9 @@ export const View = ({
           inputMode="tel"
           label="Code"
           value={model.code}
-          onChange={(e) => $send(["InputtedCode", e.target.value])}
+          onChange={(e) => $send(['InputtedCode', e.target.value])}
           helperText={`The code was sent to ${PhoneNumber.toString(
-            phoneNumber,
+            phoneNumber
           )}`}
         />
 
@@ -153,18 +153,18 @@ export const View = ({
           variant="contained"
           size="large"
           fullWidth
-          loading={model.submission.type === "Loading"}
-          onClick={() => $send(["ClickedVerifyCode"])}
+          loading={model.submission.type === 'Loading'}
+          onClick={() => $send(['ClickedVerifyCode'])}
         >
           Verify Code
         </UI.Button>
 
-        {model.submission.type === "Problem" && (
+        {model.submission.type === 'Problem' && (
           <UI.Alert severity="error" sx={{ marginTop: 2 }}>
             {model.submission.message}
           </UI.Alert>
         )}
       </UI.Box>
     </UI.FillBox>
-  )
-}
+  );
+};

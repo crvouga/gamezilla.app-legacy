@@ -1,6 +1,6 @@
-import { Cmd } from "@gamezilla/core"
-import { Route } from '@gamezilla/shared'
-import * as UI from "@gamezilla/ui"
+import { Cmd } from '@gamezilla/core';
+import { Route } from '@gamezilla/shared';
+import * as UI from '@gamezilla/ui';
 
 //
 //
@@ -10,9 +10,9 @@ import * as UI from "@gamezilla/ui"
 //
 //
 
-export type Model = null
+export type Model = null;
 
-export const init: Model = null
+export const init: Model = null;
 
 //
 //
@@ -23,42 +23,35 @@ export const init: Model = null
 //
 
 export type Msg =
-  | ["ClickedBack"]
-  | ["ClickedLogout"]
-  | ["ClickedDeleteProfile"]
-  | ["ClickedUpdateProfile"]
-  | ["ClickedDebug"]
+  | ['ClickedBack']
+  | ['ClickedLogout']
+  | ['ClickedDeleteProfile']
+  | ['ClickedUpdateProfile']
+  | ['ClickedDebug'];
 
-
-export const update = (
-  msg: Msg,
-  model: Model,
-): [Model, Cmd<Msg>,] => {
+export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case 'ClickedBack': {
-      return [model, Route.back]
+      return [model, Route.back];
     }
 
     case 'ClickedDebug': {
-      return [model, Cmd.None]
+      return [model, Cmd.None];
     }
 
     case 'ClickedDeleteProfile': {
-      return [model, Route.push(['ProfileDelete'])]
+      return [model, Route.push(['ProfileDelete'])];
     }
 
     case 'ClickedLogout': {
-      return [model, Route.push(['Logout'])]
+      return [model, Route.push(['Logout'])];
     }
 
     case 'ClickedUpdateProfile': {
-      return [model, Route.push(['ProfileUpdate'])]
+      return [model, Route.push(['ProfileUpdate'])];
     }
   }
-}
-
-
-
+};
 
 //
 //
@@ -72,15 +65,15 @@ export const View = ({
   username,
   $send,
 }: {
-  username: string
-  $send: (msg: Msg) => void
-  model: Model
+  username: string;
+  $send: (msg: Msg) => void;
+  model: Model;
 }) => (
   <UI.FillBox>
     <UI.Header title={username} />
 
     <UI.List>
-      <UI.ListItemButton onClick={() => $send(["ClickedUpdateProfile"])}>
+      <UI.ListItemButton onClick={() => $send(['ClickedUpdateProfile'])}>
         <UI.ListItemIcon>
           <UI.Icons.Edit />
         </UI.ListItemIcon>
@@ -90,21 +83,21 @@ export const View = ({
         </UI.ListItemSecondaryAction>
       </UI.ListItemButton>
 
-      <UI.ListItemButton onClick={() => $send(["ClickedDeleteProfile"])}>
+      <UI.ListItemButton onClick={() => $send(['ClickedDeleteProfile'])}>
         <UI.ListItemIcon>
           <UI.Icons.Delete />
         </UI.ListItemIcon>
         <UI.ListItemText primary="Delete Profile" />
       </UI.ListItemButton>
 
-      <UI.ListItemButton onClick={() => $send(["ClickedLogout"])}>
+      <UI.ListItemButton onClick={() => $send(['ClickedLogout'])}>
         <UI.ListItemIcon>
           <UI.Icons.Logout />
         </UI.ListItemIcon>
         <UI.ListItemText primary="Logout" />
       </UI.ListItemButton>
 
-      <UI.ListItemButton onClick={() => $send(["ClickedDebug"])}>
+      <UI.ListItemButton onClick={() => $send(['ClickedDebug'])}>
         <UI.ListItemIcon>
           <UI.Icons.BugReport />
         </UI.ListItemIcon>
@@ -115,4 +108,4 @@ export const View = ({
       </UI.ListItemButton>
     </UI.List>
   </UI.FillBox>
-)
+);
