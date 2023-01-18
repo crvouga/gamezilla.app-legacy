@@ -2,7 +2,7 @@ import { Cmd, p } from '@gamezilla/core';
 import { Iso3166Alpha2Code, PhoneNumber } from '@gamezilla/shared';
 import { Route } from '@gamezilla/shared';
 import * as UI from '@gamezilla/ui';
-import * as Auth from './auth-';
+import * as Auth from './auth';
 
 //
 //

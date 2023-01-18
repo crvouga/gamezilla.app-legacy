@@ -4,7 +4,7 @@ import {
   FrontendMsg,
   ToBackend,
   ToFrontend,
-} from './auth.types-';
+} from './auth.types';
 
 //
 //
