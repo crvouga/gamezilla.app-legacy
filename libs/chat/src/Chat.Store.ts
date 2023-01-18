@@ -1,7 +1,7 @@
 import { Cmd, p, t } from '@gamezilla/core';
-import * as Conversation from './conversation.store-';
-import * as Message from './message.store-';
-import { initialStore, Store } from './types-';
+import * as Conversation from './conversation.store';
+import * as Message from './message.store';
+import { initialStore, Store } from './types';
 
 //
 //
