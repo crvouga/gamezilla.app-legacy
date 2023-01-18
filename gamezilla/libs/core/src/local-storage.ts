@@ -1,8 +1,8 @@
-import { Cmd } from "./cmd-"
+import { Cmd } from "./cmd"
 import { p } from "./pipe"
-import { Result } from "./result-"
-import { Task } from "./task-"
-import { Unit } from "./utils-"
+import { Result } from "./result"
+import { Task } from "./task"
+import { Unit } from "./utils"
 
 export type PutResult = Result<"failed_put_item_in_local_storage", Unit>
 

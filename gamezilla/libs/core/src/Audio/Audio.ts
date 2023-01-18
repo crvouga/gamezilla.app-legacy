@@ -1,8 +1,8 @@
 import * as Howler from "howler"
-import { Cmd } from "../cmd-"
+import { Cmd } from "../cmd"
 import { p } from "../pipe"
-import { Result } from "../result-"
-import { Unit } from "../utils-"
+import { Result } from "../result"
+import { Unit } from "../utils"
 
 export type Problem = "Unknown"
 
