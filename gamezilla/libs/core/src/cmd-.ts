@@ -1,5 +1,5 @@
 import { p } from "./pipe"
-import { Task } from "./ask"
+import { Task } from "./task-"
 
 export type Cmd<Msg = never> = ($send: (msg: Msg) => void) => void
 
@@ -49,7 +49,9 @@ const batch = <Msg>(cmdList: Cmd<Msg>[]): Cmd<Msg> => {
   }
 }
 
-const None: Cmd = () => { }
+const None: Cmd = () => {
+  // do nothing
+}
 
 const perform =
   <A, Msg>(f: (a: A) => Msg) =>

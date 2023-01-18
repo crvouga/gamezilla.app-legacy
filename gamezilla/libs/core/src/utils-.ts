@@ -1,4 +1,4 @@
-import { Cmd } from "./cmd"
+import { Cmd } from "./cmd-"
 import { p } from "./pipe"
 
 export const exhaustive = (discriminatedUnionType: "Missing Case!"): never => {

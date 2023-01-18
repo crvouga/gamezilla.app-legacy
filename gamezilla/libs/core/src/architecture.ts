@@ -1,5 +1,5 @@
-import { Cmd } from "./cmd"
-import { Sub } from "./sub"
+import { Cmd } from "./cmd-"
+import { Sub } from "./sub-"
 
 //
 //

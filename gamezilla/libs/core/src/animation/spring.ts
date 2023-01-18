@@ -1,4 +1,4 @@
-import { Sub } from "../sub";
+import { Sub } from "../sub-";
 
 export type Model = {
     current: number;
