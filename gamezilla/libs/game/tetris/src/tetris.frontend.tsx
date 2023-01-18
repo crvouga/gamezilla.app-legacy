@@ -1,10 +1,10 @@
 import { useLayoutEffect, useRef } from "react"
-import { Cmd, exhaustive, Keyboard, Option, Sub } from "../../Core"
-import * as UI from "../../UI"
-import * as Board from "./board-"
-import * as Direction from "./direction-"
-import * as Piece from "./piece-"
-import * as Position from "./position-"
+import { Cmd, exhaustive, Keyboard, Option, Sub } from "@gamezilla/core"
+import * as UI from "@gamezilla/ui"
+import * as Board from "./board"
+import * as Direction from "./direction"
+import * as Piece from "./piece"
+import * as Position from "./position"
 import {
   BackendModel,
   columnCount,
@@ -16,7 +16,7 @@ import {
   ToFrontend,
   toGhostPiece,
   toPiece,
-} from "./tetris.types-"
+} from "./tetris.types"
 
 //
 //
@@ -467,13 +467,6 @@ const paint = (context: CanvasRenderingContext2D, model: Model) => {
   }
 }
 
-const range = (start: number, end: number): number[] => {
-  if (start >= end) {
-    return []
-  }
-
-  return [start, ...range(start + 1, end)]
-}
 
 const theme = {
   lightBlue: "#01DEEC",

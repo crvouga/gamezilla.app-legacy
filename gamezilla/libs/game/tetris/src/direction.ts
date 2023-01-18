@@ -1,4 +1,4 @@
-import * as Position from "./position-"
+import * as Position from "./position"
 
 export type Direction = "Down" | "Left" | "Right"
 

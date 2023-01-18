@@ -1,4 +1,4 @@
-import * as Piece from "./piece-"
+import * as Piece from "./piece"
 import * as Position from "./position-"
 
 //

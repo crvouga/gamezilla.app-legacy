@@ -10,7 +10,7 @@ import {
   tick,
   ToBackend,
   ToFrontend
-} from "./tetris.types-"
+} from "./tetris.types"
 
 //
 //
