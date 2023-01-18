@@ -1,4 +1,4 @@
-import * as Position from "./position-"
+import * as Position from "./position"
 
 export type Piece = Position.Position[]
 
@@ -84,27 +84,27 @@ export const View = ({ name }: { name: Name }) => {
     }
 
     case "J": {
-      return <></>
+      return null
     }
 
     case "L": {
-      return <></>
+      return null
     }
 
     case "O": {
-      return <></>
+      return null
     }
 
     case "S": {
-      return <></>
+      return null
     }
 
     case "T": {
-      return <></>
+      return null
     }
 
     case "Z": {
-      return <></>
+      return null
     }
   }
 }

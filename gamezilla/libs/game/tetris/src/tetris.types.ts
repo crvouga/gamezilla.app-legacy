@@ -1,9 +1,10 @@
-import { Keyboard, Option, Result } from "../../Core"
-import { Err, Ok } from "../../Core/Result"
-import * as Board from "./board-"
-import * as Direction from "./direction-"
-import * as Piece from "./piece-"
-import * as Position from "./position-"
+import * as Board from "./board"
+import * as Direction from "./direction"
+import * as Piece from "./piece"
+import * as Position from "./position"
+import { Keyboard, Option, Result } from "@gamezilla/core"
+
+const { Err, Ok } = Result
 
 //
 //
