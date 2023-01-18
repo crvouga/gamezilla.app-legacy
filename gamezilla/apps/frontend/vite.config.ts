@@ -12,6 +12,7 @@ export default defineConfig({
     react(),
     viteTsConfigPaths({
       root: '../../',
+      projects: ['tsconfig.base.json'],
     }),
   ],
 
