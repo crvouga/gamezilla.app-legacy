@@ -13,7 +13,7 @@ import {
   SharedModel,
   ToBackend,
   ToFrontend
-} from "./snake.types"
+} from "./snake.types-"
 
 //
 //
@@ -110,199 +110,204 @@ export const update = (
       return [{ ...model, openedMenuId: Option.None }, Cmd.None]
     }
 
-    default:
+    default: {
       return exhaustive(msg[0])
+    }
   }
-}
 
-export const updateFromBackend = (
-  msg: ToFrontend,
-  model: Model,
-): [Model, Cmd<Msg>, OutAction[]] => {
-  switch (msg[0]) {
-    case "Sync": {
-      const sharedModel = msg[1]
+
+  export const updateFromBackend = (
+    msg: ToFrontend,
+    model: Model,
+  ): [Model, Cmd<Msg>, OutAction[]] => {
+    switch (msg[0]) {
+      case "Sync": {
+        const sharedModel = msg[1]
+        return [
+          {
+            ...sharedModel,
+            openedMenuId: model.openedMenuId,
+          },
+          Cmd.None,
+          [],
+        ]
+      }
+
+      case "InputDirection_Done": {
+        return updateResponse(msg[1], model)
+      }
+
+      case "ToggleStatus_Done": {
+        return updateResponse(msg[1], model)
+      }
+
+      case "InputPlayer_Done": {
+        return updateResponse(msg[1], model)
+      }
+
+      case "StartGame_Done": {
+        return updateResponse(msg[1], model)
+      }
+
+      default: {
+        return exhaustive(msg[0])
+      }
+    }
+  }
+
+  const updateResponse = <
+    TProblem extends string,
+    TResult extends Result<TProblem, SharedModel>,
+  >(
+    result: TResult,
+    model: Model,
+  ): [Model, Cmd<Msg>, OutAction[]] => {
+    if (result.type === "Err") {
+      const message = result.error.split("_").join(" ")
       return [
-        {
-          ...sharedModel,
-          openedMenuId: model.openedMenuId,
-        },
+        model,
         Cmd.None,
-        [],
+        [["Alerts", { tag: "Snack", message, variant: "Error" }]],
       ]
     }
-
-    case "InputDirection_Done": {
-      return updateResponse(msg[1], model)
-    }
-
-    case "ToggleStatus_Done": {
-      return updateResponse(msg[1], model)
-    }
-
-    case "InputPlayer_Done": {
-      return updateResponse(msg[1], model)
-    }
-
-    case "StartGame_Done": {
-      return updateResponse(msg[1], model)
-    }
+    const sharedModel = result.value
+    return [{ ...model, ...sharedModel }, Cmd.None, []]
   }
-}
 
-const updateResponse = <
-  TProblem extends string,
-  TResult extends Result<TProblem, SharedModel>,
->(
-  result: TResult,
-  model: Model,
-): [Model, Cmd<Msg>, OutAction[]] => {
-  if (result.type === "Err") {
-    const message = result.error.split("_").join(" ")
-    return [
-      model,
-      Cmd.None,
-      [["Alerts", { tag: "Snack", message, variant: "Error" }]],
-    ]
+  //
+  //
+  //
+  // Subscriptions
+  //
+  //
+  //
+
+  export const subscriptions = (_intervalId: string, _model: Model): Sub<Msg> => {
+    return Keyboard.keyDowns<Msg>((key) => ["PressedKeyDown", key])
   }
-  const sharedModel = result.value
-  return [{ ...model, ...sharedModel }, Cmd.None, []]
-}
 
-//
-//
-//
-// Subscriptions
-//
-//
-//
+  //
+  //
+  //
+  // View
+  //
+  //
+  //
 
-export const subscriptions = (_intervalId: string, _model: Model): Sub<Msg> => {
-  return Keyboard.keyDowns<Msg>((key) => ["PressedKeyDown", key])
-}
+  export const View = ({
+    ctx,
+    model,
+    $send,
+  }: {
+    ctx: Ctx
+    model: Model
+    $send: (msg: Msg) => void
+  }) => {
+    if (model.gameStatus.type === "GameSetup") {
+      const menuAnchorId = "playerSlotMenuId"
+      return (
+        <UI.FillBox>
+          <UI.Typography sx={{ paddingX: 2 }} color="text.secondary">
+            Snake
+          </UI.Typography>
 
-//
-//
-//
-// View
-//
-//
-//
-
-export const View = ({
-  ctx,
-  model,
-  $send,
-}: {
-  ctx: Ctx
-  model: Model
-  $send: (msg: Msg) => void
-}) => {
-  if (model.gameStatus.type === "GameSetup") {
-    const menuAnchorId = "playerSlotMenuId"
-    return (
-      <UI.FillBox>
-        <UI.Typography sx={{ paddingX: 2 }} color="text.secondary">
-          Snake
-        </UI.Typography>
-
-        <UI.Box
-          sx={{
-            height: "48px",
-            display: "flex",
-            alignItems: "center",
-            width: "100%",
-          }}
-        >
-          {model.gameStatus.player.type === "none" ? (
-            <UI.Box sx={{ padding: 2, width: "100%" }}>
-              <UI.Button
-                variant="contained"
-                fullWidth
-                onClick={() =>
-                  $send(["InputPlayer", Option.Some(["User", ctx.currentUserId])])
-                }
-              >
-                Play as Snake
-              </UI.Button>
-            </UI.Box>
-          ) : (
-            <>
-              <UI.ListItemButton
-                id={menuAnchorId}
-                onClick={() => $send(["OpenedMenu", menuAnchorId])}
-              >
-                <UI.ListItemAvatar>
-                  <UI.Avatar
-                    src={
-                      ctx.profiles[model.gameStatus.player.value[1]]?.avatarUrl
-                    }
-                  />
-                </UI.ListItemAvatar>
-                <UI.ListItemText
-                  primary={
-                    ctx.profiles[model.gameStatus.player.value[1]]?.username
-                  }
-                />
-                <UI.ListItemSecondaryAction>
-                  <UI.Icons.MoreVert />
-                </UI.ListItemSecondaryAction>
-              </UI.ListItemButton>
-              <UI.Menu
-                open={
-                  model.openedMenuId.type === "Some" &&
-                  model.openedMenuId.value === menuAnchorId
-                }
-                onClose={() => $send(["ClosedMenu"])}
-                anchorEl={document.getElementById(menuAnchorId)}
-              >
-                <UI.Button
-                  size="large"
-                  fullWidth
-                  onClick={() => $send(["InputPlayer", Option.None])}
-                >
-                  Stop Playing
-                </UI.Button>
-              </UI.Menu>
-            </>
-          )}
-        </UI.Box>
-
-        <UI.Box sx={{ flex: 1 }} />
-
-        <UI.Box sx={{ padding: 2 }}>
-          <UI.Button
-            variant="contained"
-            fullWidth
-            disabled={!canStartGame(model)}
-            onClick={() => {
-              $send(['start-game'])
+          <UI.Box
+            sx={{
+              height: "48px",
+              display: "flex",
+              alignItems: "center",
+              width: "100%",
             }}
           >
-            Start Game
-          </UI.Button>
-        </UI.Box>
-      </UI.FillBox>
-    )
-  }
+            {model.gameStatus.player.type === "none" ? (
+              <UI.Box sx={{ padding: 2, width: "100%" }}>
+                <UI.Button
+                  variant="contained"
+                  fullWidth
+                  onClick={() =>
+                    $send(["InputPlayer", Option.Some(["User", ctx.currentUserId])])
+                  }
+                >
+                  Play as Snake
+                </UI.Button>
+              </UI.Box>
+            ) : (
+              <>
+                <UI.ListItemButton
+                  id={menuAnchorId}
+                  onClick={() => $send(["OpenedMenu", menuAnchorId])}
+                >
+                  <UI.ListItemAvatar>
+                    <UI.Avatar
+                      src={
+                        ctx.profiles[model.gameStatus.player.value[1]]?.avatarUrl
+                      }
+                    />
+                  </UI.ListItemAvatar>
+                  <UI.ListItemText
+                    primary={
+                      ctx.profiles[model.gameStatus.player.value[1]]?.username
+                    }
+                  />
+                  <UI.ListItemSecondaryAction>
+                    <UI.Icons.MoreVert />
+                  </UI.ListItemSecondaryAction>
+                </UI.ListItemButton>
+                <UI.Menu
+                  open={
+                    model.openedMenuId.type === "Some" &&
+                    model.openedMenuId.value === menuAnchorId
+                  }
+                  onClose={() => $send(["ClosedMenu"])}
+                  anchorEl={document.getElementById(menuAnchorId)}
+                >
+                  <UI.Button
+                    size="large"
+                    fullWidth
+                    onClick={() => $send(["InputPlayer", Option.None])}
+                  >
+                    Stop Playing
+                  </UI.Button>
+                </UI.Menu>
+              </>
+            )}
+          </UI.Box>
 
-  return (
-    <UI.FillBox>
-      <ViewBoard model={model} $send={$send} />
-      {model.gameStatus.player[1] === ctx.currentUserId && (
-        <UI.Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            width: "100%",
-            paddingBottom: 2,
-          }}
-        >
-          {/*  */}
-        </UI.Box>
-      )}
-      {/* {model.gameStatus.player[1] === currentUserId && (
+          <UI.Box sx={{ flex: 1 }} />
+
+          <UI.Box sx={{ padding: 2 }}>
+            <UI.Button
+              variant="contained"
+              fullWidth
+              disabled={!canStartGame(model)}
+              onClick={() => {
+                $send(['start-game'])
+              }}
+            >
+              Start Game
+            </UI.Button>
+          </UI.Box>
+        </UI.FillBox>
+      )
+    }
+
+    return (
+      <UI.FillBox>
+        <ViewBoard model={model} $send={$send} />
+        {model.gameStatus.player[1] === ctx.currentUserId && (
+          <UI.Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "100%",
+              paddingBottom: 2,
+            }}
+          >
+            {/*  */}
+          </UI.Box>
+        )}
+        {/* {model.gameStatus.player[1] === currentUserId && (
             <UI.Box sx={{ display: "flex", alignItems: "center", width: "100%" }}>
               <UI.Box
                 sx={{
@@ -344,56 +349,56 @@ export const View = ({
               </UI.Box>
             </UI.Box>
           )} */}
-    </UI.FillBox>
-  )
-}
-
-export const ViewBoard = ({
-  model,
-}: {
-  model: Model
-  $send: (msg: Msg) => void
-}) => {
-  const ref = useRef<HTMLCanvasElement | null>(null)
-
-  useLayoutEffect(() => {
-    const canvas = ref.current
-    const ctx = canvas?.getContext("2d")
-
-    if (canvas && ctx) {
-      const dpi = 1000
-      ctx.scale(dpi, dpi)
-
-      const width = canvas.width
-      const height = canvas.height
-
-      Snake.draw({ width, height }, model, ctx)
-    }
-  }, [model])
-
-  return (
-    <UI.Box sx={{ flex: 1, width: "100%", userSelect: "none" }}>
-      <canvas
-        style={{
-          userSelect: "none",
-          width: "100%",
-          height: "100%",
-          maxHeight: "100%",
-          minHeight: "100%",
-        }}
-        ref={ref}
-      />
-    </UI.Box>
-  )
-}
-
-
-export const mergeWithBackend = (
-  frontendModel: FrontendModel,
-  backendModel: BackendModel,
-): FrontendModel => {
-  return {
-    ...backendModel,
-    openedMenuId: frontendModel.openedMenuId,
+      </UI.FillBox>
+    )
   }
-}
+
+  export const ViewBoard = ({
+    model,
+  }: {
+    model: Model
+    $send: (msg: Msg) => void
+  }) => {
+    const ref = useRef<HTMLCanvasElement | null>(null)
+
+    useLayoutEffect(() => {
+      const canvas = ref.current
+      const ctx = canvas?.getContext("2d")
+
+      if (canvas && ctx) {
+        const dpi = 1000
+        ctx.scale(dpi, dpi)
+
+        const width = canvas.width
+        const height = canvas.height
+
+        Snake.draw({ width, height }, model, ctx)
+      }
+    }, [model])
+
+    return (
+      <UI.Box sx={{ flex: 1, width: "100%", userSelect: "none" }}>
+        <canvas
+          style={{
+            userSelect: "none",
+            width: "100%",
+            height: "100%",
+            maxHeight: "100%",
+            minHeight: "100%",
+          }}
+          ref={ref}
+        />
+      </UI.Box>
+    )
+  }
+
+
+  export const mergeWithBackend = (
+    frontendModel: FrontendModel,
+    backendModel: BackendModel,
+  ): FrontendModel => {
+    return {
+      ...backendModel,
+      openedMenuId: frontendModel.openedMenuId,
+    }
+  }

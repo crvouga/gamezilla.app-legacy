@@ -15,7 +15,7 @@ import {
   ToFrontend,
   ToggleStatus,
   ToggleStatusResult,
-} from "./snake.types"
+} from "./snake.types-"
 
 //
 //
