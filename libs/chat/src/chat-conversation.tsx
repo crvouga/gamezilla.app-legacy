@@ -2,7 +2,7 @@ import { Browser, Cmd, p, RemoteData } from '@gamezilla/core';
 import { Ctx, Route, UserId } from '@gamezilla/shared';
 import * as UI from '@gamezilla/ui';
 import { ReactNode, useLayoutEffect, useRef, useState } from 'react';
-import * as ChatStore from './Chat.Store';
+import * as ChatStore from './chat.store';
 
 //
 //
