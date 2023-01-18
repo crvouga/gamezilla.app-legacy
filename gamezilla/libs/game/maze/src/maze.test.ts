@@ -1,4 +1,4 @@
-import { Maze } from "./maze-"
+import { Maze } from "./maze"
 describe("Maze", () => {
   it("always generates the same maze", () => {
     const seed = "some arbitrary seed"
