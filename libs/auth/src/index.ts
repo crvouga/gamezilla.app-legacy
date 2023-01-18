@@ -1,9 +1,9 @@
-export * as Account from './account-';
-export * as AccountCreate from './account-create-';
-export * as Auth from './auth-';
-export * as Login from './login-';
+export * as Account from './account';
+export * as AccountCreate from './account-create';
+export * as Auth from './auth';
+export * as Login from './login';
 export * as LoginEmailLink from './login-email-link';
 export * as LoginEmailPassword from './login-email-password';
 export * as LoginPhone from './login-phone';
 export * as LoginPhoneVerify from './login-phone-verify';
-export * as Logout from './logout-';
+export * as Logout from './logout';
