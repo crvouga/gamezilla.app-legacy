@@ -1,8 +1,8 @@
 import { Cmd, p, RemoteData, Result, Task } from '@gamezilla/core';
 import { client, definitions, UserId } from '@gamezilla/shared';
 import produce from 'immer';
-import type { Problem, Store } from './types-';
-import * as Types from './types-';
+import type { Problem, Store } from './types';
+import * as Types from './types';
 
 //
 //
