@@ -1,10 +1,10 @@
-import { useLayoutEffect, useRef } from "react"
-import { Cmd, exhaustive, Keyboard, Option, Sub } from "@gamezilla/core"
-import * as UI from "@gamezilla/ui"
-import * as Board from "./board"
-import * as Direction from "./direction"
-import * as Piece from "./piece"
-import * as Position from "./position"
+import { useLayoutEffect, useRef } from 'react';
+import { Cmd, exhaustive, Keyboard, Option, Sub } from '@gamezilla/core';
+import * as UI from '@gamezilla/ui';
+import * as Board from './board';
+import * as Direction from './direction';
+import * as Piece from './piece';
+import * as Position from './position';
 import {
   BackendModel,
   columnCount,
@@ -16,7 +16,7 @@ import {
   ToFrontend,
   toGhostPiece,
   toPiece,
-} from "./tetris.types"
+} from './tetris.types';
 
 //
 //
@@ -26,12 +26,12 @@ import {
 //
 //
 
-export type Model = FrontendModel
+export type Model = FrontendModel;
 
 export const init: Model = {
   sharedModel: initShared,
   touched: Option.None,
-}
+};
 
 //
 //
@@ -41,195 +41,195 @@ export const init: Model = {
 //
 //
 
-export type Msg = FrontendMsg
+export type Msg = FrontendMsg;
 
 export const update = (
   { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd },
   msg: Msg,
-  model: Model,
+  model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case "MouseMove": {
-      return [model, sendToBackend(msg)]
+    case 'MouseMove': {
+      return [model, sendToBackend(msg)];
     }
 
-    case "TouchStart": {
-      return [{ ...model, touched: Option.Some(msg[1]) }, Cmd.None]
+    case 'TouchStart': {
+      return [{ ...model, touched: Option.Some(msg[1]) }, Cmd.None];
     }
 
-    case "TouchMove": {
-      if (model.touched.type === "none") {
-        return [model, Cmd.None]
+    case 'TouchMove': {
+      if (model.touched.type === 'none') {
+        return [model, Cmd.None];
       }
 
-      const from = model.touched.value
+      const from = model.touched.value;
 
-      const to = msg[1]
+      const to = msg[1];
 
-      const direction = positionsToDirection({ from, to })
+      const direction = positionsToDirection({ from, to });
 
-      if (direction === "none") {
-        return [model, Cmd.None]
+      if (direction === 'none') {
+        return [model, Cmd.None];
       }
 
-      return [model, sendToBackend(["InputTranslate", { direction }])]
+      return [model, sendToBackend(['InputTranslate', { direction }])];
     }
 
-    case "TouchEnd": {
-      return [{ ...model, touched: Option.None }, Cmd.None]
+    case 'TouchEnd': {
+      return [{ ...model, touched: Option.None }, Cmd.None];
     }
 
-    case "PressedKey": {
-      const key = msg[1]
+    case 'PressedKey': {
+      const key = msg[1];
 
-      if (key === "Space") {
-        return [model, sendToBackend(["InputDrop"])]
+      if (key === 'Space') {
+        return [model, sendToBackend(['InputDrop'])];
       }
 
-      if (key === "ArrowUp" || key === "W" || key === "w") {
-        return [model, sendToBackend(["InputRotate"])]
+      if (key === 'ArrowUp' || key === 'W' || key === 'w') {
+        return [model, sendToBackend(['InputRotate'])];
       }
 
-      const direction = keyToDirection(key)
+      const direction = keyToDirection(key);
 
-      if (direction !== "none") {
-        return [model, sendToBackend(["InputTranslate", { direction }])]
+      if (direction !== 'none') {
+        return [model, sendToBackend(['InputTranslate', { direction }])];
       }
 
-      return [model, Cmd.None]
+      return [model, Cmd.None];
     }
 
-    case "ClickedBoard": {
+    case 'ClickedBoard': {
       // const position = msg[1]
 
-      return [model, sendToBackend(["InputDrop"])]
+      return [model, sendToBackend(['InputDrop'])];
     }
 
     default: {
-      return exhaustive(msg[0])
+      return exhaustive(msg[0]);
     }
   }
-}
+};
 
 const positionsToDirection = ({
   from,
   to,
 }: {
-  from: Position.Position
-  to: Position.Position
-}): Direction.Direction | "none" => {
-  const xDelta = to.x - from.x
-  const yDelta = to.y - from.y
+  from: Position.Position;
+  to: Position.Position;
+}): Direction.Direction | 'none' => {
+  const xDelta = to.x - from.x;
+  const yDelta = to.y - from.y;
 
   if (xDelta < 0) {
-    return "Left"
+    return 'Left';
   }
 
   if (xDelta > 0) {
-    return "Right"
+    return 'Right';
   }
 
   if (yDelta > 0) {
-    return "Down"
+    return 'Down';
   }
 
-  return "none"
-}
+  return 'none';
+};
 
-const keyToDirection = (key: Keyboard.Key): Direction.Direction | "none" => {
+const keyToDirection = (key: Keyboard.Key): Direction.Direction | 'none' => {
   switch (key) {
-    case "A":
-    case "a":
-    case "ArrowLeft":
-      return "Left"
+    case 'A':
+    case 'a':
+    case 'ArrowLeft':
+      return 'Left';
 
-    case "D":
-    case "d":
-    case "ArrowRight":
-      return "Right"
+    case 'D':
+    case 'd':
+    case 'ArrowRight':
+      return 'Right';
 
-    case "S":
-    case "s":
-    case "ArrowDown":
-      return "Down"
+    case 'S':
+    case 's':
+    case 'ArrowDown':
+      return 'Down';
 
     default:
-      return "none"
+      return 'none';
   }
-}
+};
 
 export const updateFromBackend = (
   msg: ToFrontend,
-  model: Model,
+  model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case "MouseMove_Done": {
-      const result = msg[1]
+    case 'MouseMove_Done': {
+      const result = msg[1];
 
-      if (result.type === "Err") {
-        return [model, Cmd.None]
+      if (result.type === 'Err') {
+        return [model, Cmd.None];
       }
 
-      const modelNew = result.value
+      const modelNew = result.value;
 
-      return [{ ...model, sharedModel: modelNew }, Cmd.None]
+      return [{ ...model, sharedModel: modelNew }, Cmd.None];
     }
 
-    case "InputDrop_Done": {
-      const result = msg[1]
+    case 'InputDrop_Done': {
+      const result = msg[1];
 
-      if (result.type === "Err") {
-        return [model, Cmd.None]
+      if (result.type === 'Err') {
+        return [model, Cmd.None];
       }
 
-      const modelNew = result.value
+      const modelNew = result.value;
 
-      return [{ ...model, sharedModel: modelNew }, Cmd.None]
+      return [{ ...model, sharedModel: modelNew }, Cmd.None];
     }
 
-    case "Tick_Done": {
-      const modelNew = msg[1]
-      return [{ ...model, sharedModel: modelNew }, Cmd.None]
+    case 'Tick_Done': {
+      const modelNew = msg[1];
+      return [{ ...model, sharedModel: modelNew }, Cmd.None];
     }
 
-    case "InputRotate_Done": {
-      const result = msg[1]
+    case 'InputRotate_Done': {
+      const result = msg[1];
 
-      if (result.type === "Err") {
-        return [model, Cmd.None]
+      if (result.type === 'Err') {
+        return [model, Cmd.None];
       }
 
-      const modelNew = result.value
+      const modelNew = result.value;
 
-      return [{ ...model, sharedModel: modelNew }, Cmd.None]
+      return [{ ...model, sharedModel: modelNew }, Cmd.None];
     }
 
-    case "InputTranslate_Done": {
-      const result = msg[1]
+    case 'InputTranslate_Done': {
+      const result = msg[1];
 
-      if (result.type === "Err") {
-        return [model, Cmd.None]
+      if (result.type === 'Err') {
+        return [model, Cmd.None];
       }
 
-      const modelNew = result.value
+      const modelNew = result.value;
 
-      return [{ ...model, sharedModel: modelNew }, Cmd.None]
+      return [{ ...model, sharedModel: modelNew }, Cmd.None];
     }
   }
-}
+};
 
 export const mergeWithBackend = ({
   frontendModel,
   backendModel,
 }: {
-  frontendModel: FrontendModel
-  backendModel: BackendModel
+  frontendModel: FrontendModel;
+  backendModel: BackendModel;
 }): FrontendModel => {
   return {
     ...frontendModel,
     sharedModel: backendModel,
-  }
-}
+  };
+};
 
 //
 //
@@ -240,8 +240,8 @@ export const mergeWithBackend = ({
 //
 
 export const subscriptions = (_model: Model): Sub<Msg> => {
-  return Keyboard.keyDowns<Msg>((key) => ["PressedKey", key])
-}
+  return Keyboard.keyDowns<Msg>((key) => ['PressedKey', key]);
+};
 
 //
 //
@@ -258,69 +258,69 @@ export const View = ({
   model,
   $send,
 }: {
-  model: Model
-  $send: (msg: Msg) => void
+  model: Model;
+  $send: (msg: Msg) => void;
 }) => {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null)
-  const containerRef = useRef<HTMLDivElement | null>(null)
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   useLayoutEffect(() => {
-    const canvas = canvasRef.current
+    const canvas = canvasRef.current;
 
     if (!canvas) {
-      return
+      return;
     }
 
-    const context = canvas.getContext("2d")
+    const context = canvas.getContext('2d');
 
     if (!context) {
-      return
+      return;
     }
 
-    const container = containerRef.current
+    const container = containerRef.current;
 
     if (!container) {
-      return
+      return;
     }
 
-    const columnCount = Board.toColumnCount(model.sharedModel.board)
-    const rowCount = Board.toRowCount(model.sharedModel.board)
+    const columnCount = Board.toColumnCount(model.sharedModel.board);
+    const rowCount = Board.toRowCount(model.sharedModel.board);
 
-    const canvasHeight = container.offsetHeight
+    const canvasHeight = container.offsetHeight;
 
-    context.canvas.width = (columnCount / rowCount) * canvasHeight
-    context.canvas.height = canvasHeight
+    context.canvas.width = (columnCount / rowCount) * canvasHeight;
+    context.canvas.height = canvasHeight;
 
-    paint(context, model)
-  }, [model])
+    paint(context, model);
+  }, [model]);
 
   return (
     <UI.FillBox>
       <div
         ref={containerRef}
         style={{
-          display: "flex",
-          justifyContent: "center",
-          overflow: "hidden",
+          display: 'flex',
+          justifyContent: 'center',
+          overflow: 'hidden',
           flex: 1,
         }}
       >
         <canvas
           ref={canvasRef}
           onTouchMove={(event) => {
-            const touch = event.touches[0]
+            const touch = event.touches[0];
 
             if (!touch) {
-              return
+              return;
             }
 
-            const x = touch.clientX
-            const y = touch.clientY
+            const x = touch.clientX;
+            const y = touch.clientY;
 
-            console.log("MOVE", { x, y })
+            console.log('MOVE', { x, y });
           }}
           onClick={(event) => {
-            $send(["ClickedBoard", mouseEventToPosition(event)])
+            $send(['ClickedBoard', mouseEventToPosition(event)]);
           }}
           onMouseMove={(event) => {
             const x = Math.floor(
@@ -328,30 +328,30 @@ export const View = ({
                 value: event.pageX - event.currentTarget.offsetLeft,
                 from: [0, event.currentTarget.width],
                 to: [0, columnCount],
-              }),
-            )
+              })
+            );
 
             const y = Math.floor(
               rescale({
                 value: event.pageY - event.currentTarget.offsetTop,
                 from: [0, event.currentTarget.height],
                 to: [0, rowCount],
-              }),
-            )
+              })
+            );
 
-            $send(["MouseMove", { x, y }])
+            $send(['MouseMove', { x, y }]);
           }}
           onTouchStart={(event) => {
-            const touch = event.touches[0]
+            const touch = event.touches[0];
 
             if (!touch) {
-              return
+              return;
             }
 
-            const x = touch.clientX
-            const y = touch.clientY
+            const x = touch.clientX;
+            const y = touch.clientY;
 
-            console.log("Start", { x, y })
+            console.log('Start', { x, y });
           }}
         />
       </div>
@@ -393,93 +393,92 @@ export const View = ({
 
         </svg> */}
     </UI.FillBox>
-  )
-}
+  );
+};
 
 const mouseEventToPosition = (
-  event: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
+  event: React.MouseEvent<HTMLCanvasElement, MouseEvent>
 ): Position.Position => {
   const x = Math.floor(
     rescale({
       value: event.pageX - event.currentTarget.offsetLeft,
       from: [0, event.currentTarget.width],
       to: [0, columnCount],
-    }),
-  )
+    })
+  );
 
   const y = Math.floor(
     rescale({
       value: event.pageY - event.currentTarget.offsetTop,
       from: [0, event.currentTarget.height],
       to: [0, rowCount],
-    }),
-  )
+    })
+  );
 
-  return { x, y }
-}
+  return { x, y };
+};
 
 const paint = (context: CanvasRenderingContext2D, model: Model) => {
-  const columnCount = Board.toColumnCount(model.sharedModel.board)
-  const rowCount = Board.toRowCount(model.sharedModel.board)
-  const canvasWidth = context.canvas.width
-  const canvasHeight = context.canvas.height
-  const cellWidth = canvasWidth / columnCount
-  const cellHeight = canvasHeight / rowCount
-  const cellLength = Math.min(cellWidth, cellHeight)
+  const columnCount = Board.toColumnCount(model.sharedModel.board);
+  const rowCount = Board.toRowCount(model.sharedModel.board);
+  const canvasWidth = context.canvas.width;
+  const canvasHeight = context.canvas.height;
+  const cellWidth = canvasWidth / columnCount;
+  const cellHeight = canvasHeight / rowCount;
+  const cellLength = Math.min(cellWidth, cellHeight);
 
-  context.fillStyle = "#000"
-  context.fillRect(0, 0, columnCount * cellLength, rowCount * cellLength)
+  context.fillStyle = '#000';
+  context.fillRect(0, 0, columnCount * cellLength, rowCount * cellLength);
 
-  context.strokeStyle = "#222"
+  context.strokeStyle = '#222';
 
   for (let x = 0; x < columnCount; x++) {
-    context.moveTo(x * cellLength, 0 * cellLength)
-    context.lineTo(x * cellLength, rowCount * cellLength)
-    context.stroke()
+    context.moveTo(x * cellLength, 0 * cellLength);
+    context.lineTo(x * cellLength, rowCount * cellLength);
+    context.stroke();
   }
 
   for (let y = 0; y < rowCount; y++) {
-    context.moveTo(0 * cellLength, y * cellLength)
-    context.lineTo(columnCount * cellLength, y * cellLength)
-    context.stroke()
+    context.moveTo(0 * cellLength, y * cellLength);
+    context.lineTo(columnCount * cellLength, y * cellLength);
+    context.stroke();
   }
 
   for (const { x, y } of toGhostPiece(model.sharedModel)) {
-    context.fillStyle = "#555"
-    context.fillRect(x * cellLength, y * cellLength, cellLength, cellLength)
+    context.fillStyle = '#555';
+    context.fillRect(x * cellLength, y * cellLength, cellLength, cellLength);
   }
 
   for (const { x, y } of toPiece(model.sharedModel)) {
-    context.fillStyle = Piece.colors[model.sharedModel.tetrominoName]
-    context.fillRect(x * cellLength, y * cellLength, cellLength, cellLength)
+    context.fillStyle = Piece.colors[model.sharedModel.tetrominoName];
+    context.fillRect(x * cellLength, y * cellLength, cellLength, cellLength);
   }
 
   for (let x = 0; x < columnCount; x++) {
     for (let y = 0; y < rowCount; y++) {
-      const cell = Board.toCell({ x, y }, model.sharedModel.board)
+      const cell = Board.toCell({ x, y }, model.sharedModel.board);
 
-      if (cell === "Empty") {
-        continue
+      if (cell === 'Empty') {
+        continue;
       }
-      context.fillStyle = Piece.colors[cell]
-      context.fillRect(x * cellLength, y * cellLength, cellLength, cellLength)
+      context.fillStyle = Piece.colors[cell];
+      context.fillRect(x * cellLength, y * cellLength, cellLength, cellLength);
     }
   }
-}
-
+};
 
 const theme = {
-  lightBlue: "#01DEEC",
-  darkBlue: "#003D78",
-  pieceBlue: "#2C2C7E",
-}
+  lightBlue: '#01DEEC',
+  darkBlue: '#003D78',
+  pieceBlue: '#2C2C7E',
+};
 
 export const viewCoverArt = () => {
   return (
-    <svg width="100%" viewBox={[0, 0, 4, 4].join(", ")}>
+    <svg width="100%" viewBox={[0, 0, 4, 4].join(', ')}>
       <rect width="100%" height="100%" fill={theme.lightBlue} />
       {Piece.pieces.T.map((position) =>
-        Position.rotate(Position.rotate(position)),
+        Position.rotate(Position.rotate(position))
       )
         .map((position) => Position.add(position, { x: 1.5, y: 1 }))
         .map((position) => (
@@ -493,19 +492,19 @@ export const viewCoverArt = () => {
           />
         ))}
     </svg>
-  )
-}
+  );
+};
 
-type Range = [number, number]
+type Range = [number, number];
 
 const rescale = ({
   value,
   from,
   to,
 }: {
-  value: number
-  from: Range
-  to: Range
+  value: number;
+  from: Range;
+  to: Range;
 }) => {
-  return ((value - from[0]) * (to[1] - to[0])) / (from[1] - from[0]) + to[0]
-}
+  return ((value - from[0]) * (to[1] - to[0])) / (from[1] - from[0]) + to[0];
+};

@@ -1,4 +1,4 @@
-import { Cmd, Keyboard, p, Sub } from "@gamezilla/core"
+import { Cmd, Keyboard, p, Sub } from '@gamezilla/core';
 import {
   ActionButton,
   Avatar,
@@ -8,10 +8,11 @@ import {
   IconButton,
   Icons,
   InputAdornment,
-  TextField, Typography
-} from "@gamezilla/ui"
-import { Ctx } from "@gamezilla/shared"
-import { Maze } from "./maze"
+  TextField,
+  Typography,
+} from '@gamezilla/ui';
+import { Ctx } from '@gamezilla/shared';
+import { Maze } from './maze';
 import {
   BackendModel,
   Color,
@@ -20,9 +21,9 @@ import {
   handle,
   initShared,
   ToBackend,
-  ToFrontend
-} from "./maze.types"
-import { Direction, Position } from "./position"
+  ToFrontend,
+} from './maze.types';
+import { Direction, Position } from './position';
 
 //
 //
@@ -32,9 +33,9 @@ import { Direction, Position } from "./position"
 //
 //
 
-export type Model = FrontendModel
+export type Model = FrontendModel;
 
-export const init = initShared
+export const init = initShared;
 
 //
 //
@@ -44,125 +45,131 @@ export const init = initShared
 //
 //
 
-export type Msg = FrontendMsg
+export type Msg = FrontendMsg;
 
 export const update = (
   { ctx, sendToBackend }: { ctx: Ctx; sendToBackend: (m: ToBackend) => Cmd },
   msg: Msg,
-  model: Model,
+  model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     //
     //
     //
 
-    case "KeyUp": {
-      const direction = keyToDirection(msg[1])
+    case 'KeyUp': {
+      const direction = keyToDirection(msg[1]);
 
       if (!direction) {
-        return [model, Cmd.None]
+        return [model, Cmd.None];
       }
 
       return [
         model,
         sendToBackend([
-          "InputDirection",
-          { userId: ctx.currentUserId, direction: "none" },
+          'InputDirection',
+          { userId: ctx.currentUserId, direction: 'none' },
         ]),
-      ]
+      ];
     }
 
-    case "KeyDown": {
-      const direction = keyToDirection(msg[1])
+    case 'KeyDown': {
+      const direction = keyToDirection(msg[1]);
 
       if (!direction) {
-        return [model, Cmd.None]
+        return [model, Cmd.None];
       }
 
       return [
         model,
         sendToBackend([
-          "InputDirection",
+          'InputDirection',
           { userId: ctx.currentUserId, direction },
         ]),
-      ]
+      ];
     }
 
     //
     //
     //
 
-    case "InputSeed":
-    case "InputDirection":
+    case 'InputSeed':
+    case 'InputDirection':
     case 'start-game':
     case 'stop-game':
-    case "stop-playing":
-    case "start-playing": {
-      return [model, sendToBackend(msg)]
+    case 'stop-playing':
+    case 'start-playing': {
+      return [model, sendToBackend(msg)];
     }
   }
-}
+};
 
 export const updateFromBackend = (
   msg: ToFrontend,
-  model: Model,
+  model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case 'stop-game':
-    case "InputSeed":
-    case "InputDirection":
+    case 'InputSeed':
+    case 'InputDirection':
     case 'start-game':
-    case "stop-playing":
-    case "start-playing": {
-      if (msg[2].type === "Err") {
-        return [model, Cmd.None]
+    case 'stop-playing':
+    case 'start-playing': {
+      if (msg[2].type === 'Err') {
+        return [model, Cmd.None];
       }
-      const merged = mergeWithBackend({ frontendModel: model, backendModel: msg[2].value })
-      return [merged, Cmd.None]
+      const merged = mergeWithBackend({
+        frontendModel: model,
+        backendModel: msg[2].value,
+      });
+      return [merged, Cmd.None];
     }
 
     case 'Tick': {
-      const merged = mergeWithBackend({ frontendModel: model, backendModel: msg[1] })
-      return [merged, Cmd.None]
+      const merged = mergeWithBackend({
+        frontendModel: model,
+        backendModel: msg[1],
+      });
+      return [merged, Cmd.None];
     }
   }
-}
+};
 
 export const mergeWithBackend = ({
   backendModel,
 }: {
-  frontendModel: FrontendModel
-  backendModel: BackendModel
+  frontendModel: FrontendModel;
+  backendModel: BackendModel;
 }): FrontendModel => {
-  return backendModel
-}
+  return backendModel;
+};
 
 const keyToDirection = (key: Keyboard.Key): Direction | null => {
   switch (key) {
-    case "A":
-    case "a":
-    case "ArrowLeft":
-      return "West"
+    case 'A':
+    case 'a':
+    case 'ArrowLeft':
+      return 'West';
 
-    case "W":
-    case "w":
-    case "ArrowUp":
-      return "North"
+    case 'W':
+    case 'w':
+    case 'ArrowUp':
+      return 'North';
 
-    case "s":
-    case "S":
-    case "ArrowDown":
-      return "South"
+    case 's':
+    case 'S':
+    case 'ArrowDown':
+      return 'South';
 
-    case "d":
-    case "D":
-    case "ArrowRight":
-      return "East"
+    case 'd':
+    case 'D':
+    case 'ArrowRight':
+      return 'East';
 
     default:
-      return null
+      return null;
   }
-}
+};
 
 //
 //
@@ -176,8 +183,8 @@ export const subscriptions = (_model: Model) => {
   return Sub.batch<Msg>([
     Keyboard.keyDowns((key) => ['KeyDown', key]),
     Keyboard.keyUps((key) => ['KeyUp', key]),
-  ])
-}
+  ]);
+};
 
 //
 //
@@ -188,53 +195,52 @@ export const subscriptions = (_model: Model) => {
 //
 
 const artMaze = Maze.make({
-  seed: "art maze!",
+  seed: 'art maze!',
   lower: { x: 0, y: 0 },
   upper: { x: 27, y: 9 },
-})
+});
 const artMazeViewBox = [
   artMaze.lower.x,
   artMaze.lower.y,
   artMaze.upper.x - artMaze.lower.x + 1,
   artMaze.upper.y - artMaze.lower.y + 1,
-].join(" ")
+].join(' ');
 
 const colorMap: { [color in Color]: string } = {
-  Blue: "#0333FF",
-  Green: "#02F900",
-  Purple: "#992197",
-  Red: "#FF2601",
-  Cyan: "#02FEFF",
-  Pink: "#FF40FF"
-}
+  Blue: '#0333FF',
+  Green: '#02F900',
+  Purple: '#992197',
+  Red: '#FF2601',
+  Cyan: '#02FEFF',
+  Pink: '#FF40FF',
+};
 
 export const View = ({
   model,
   ctx,
   $send,
 }: {
-  ctx: Ctx
-  model: Model
-  $send: (msg: Msg) => void
+  ctx: Ctx;
+  model: Model;
+  $send: (msg: Msg) => void;
 }) => {
-
-  if (model.type === "Setup") {
+  if (model.type === 'Setup') {
     return (
       <FillBox>
-        <Box sx={{ position: "relative" }}>
-          <svg viewBox={artMazeViewBox} width={"100%"}>
+        <Box sx={{ position: 'relative' }}>
+          <svg viewBox={artMazeViewBox} width={'100%'}>
             <rect
               x={artMaze.lower.x}
               y={artMaze.lower.y}
               width="100%"
               height="100%"
-              fill={"#000"}
+              fill={'#000'}
             />
             {artMaze.edges.map(([a, b]) => (
               <g
-                key={[a.x, a.y, b.x, b.y].join("-")}
+                key={[a.x, a.y, b.x, b.y].join('-')}
                 strokeWidth="0.1"
-                stroke={"#bcbcbc"}
+                stroke={'#bcbcbc'}
               >
                 <line
                   x1={a.x + 1 / 2}
@@ -247,16 +253,16 @@ export const View = ({
           </svg>
           <Box
             sx={{
-              position: "absolute",
+              position: 'absolute',
               top: 0,
               left: 0,
-              width: "100%",
-              height: "100%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
               // background: `linear-gradient(transparent, ${theme.palette.background.default})`
-              background: "rgba(0, 0, 0, 0.5)",
+              background: 'rgba(0, 0, 0, 0.5)',
             }}
           >
             <Typography variant="h2" align="center" color="#fff">
@@ -268,14 +274,14 @@ export const View = ({
           <TextField
             disabled={
               handle(
-                ["InputSeed", { userId: ctx.currentUserId, seed: model.seed }],
-                model,
-              ).type === "Err"
+                ['InputSeed', { userId: ctx.currentUserId, seed: model.seed }],
+                model
+              ).type === 'Err'
             }
             value={model.seed}
             onChange={(e) =>
               $send([
-                "InputSeed",
+                'InputSeed',
                 { userId: ctx.currentUserId, seed: e.target.value },
               ])
             }
@@ -287,7 +293,7 @@ export const View = ({
                   position="end"
                   onClick={() =>
                     $send([
-                      "InputSeed",
+                      'InputSeed',
                       {
                         userId: ctx.currentUserId,
                         seed: `s${Math.floor(Math.random() * 1_000_000_000)}`,
@@ -304,14 +310,14 @@ export const View = ({
           />
         </Box>
 
-        <Typography sx={{ pt: 2, px: 2, color: "text.secondary" }}>
+        <Typography sx={{ pt: 2, px: 2, color: 'text.secondary' }}>
           Players
         </Typography>
 
         <Box
           sx={{
-            display: "flex",
-            flexDirection: "column",
+            display: 'flex',
+            flexDirection: 'column',
             gap: 1,
             px: 2,
             mt: 1,
@@ -322,10 +328,10 @@ export const View = ({
             <Box
               key={player.userId}
               sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                width: "100%",
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '100%',
               }}
             >
               <svg width="36px" viewBox="-1 -1 2 2">
@@ -336,12 +342,12 @@ export const View = ({
                 sx={{ ml: 1, mr: 2 }}
               />
               <Typography noWrap sx={{ flex: 1 }}>
-                {ctx.profiles[player.userId]?.username ?? "..."}
+                {ctx.profiles[player.userId]?.username ?? '...'}
               </Typography>
               {player.userId === ctx.currentUserId && (
                 <Button
                   onClick={() =>
-                    $send(["stop-playing", { userId: ctx.currentUserId }])
+                    $send(['stop-playing', { userId: ctx.currentUserId }])
                   }
                 >
                   Stop Playing
@@ -355,11 +361,11 @@ export const View = ({
               variant="outlined"
               fullWidth
               onClick={() =>
-                $send(["start-playing", { userId: ctx.currentUserId }])
+                $send(['start-playing', { userId: ctx.currentUserId }])
               }
               disabled={
-                handle(["start-playing", { userId: ctx.currentUserId }], model)
-                  .type === "Err"
+                handle(['start-playing', { userId: ctx.currentUserId }], model)
+                  .type === 'Err'
               }
             >
               Start Playing
@@ -367,21 +373,21 @@ export const View = ({
           )}
         </Box>
 
-        <Box sx={{ display: "flex", gap: 2, p: 2 }}>
+        <Box sx={{ display: 'flex', gap: 2, p: 2 }}>
           <Button
             fullWidth
             variant="contained"
             onClick={() => $send(['start-game', { userId: ctx.currentUserId }])}
             disabled={
               handle(['start-game', { userId: ctx.currentUserId }], model)
-                .type === "Err"
+                .type === 'Err'
             }
           >
             Start Game
           </Button>
         </Box>
       </FillBox>
-    )
+    );
   }
 
   const viewBox = [
@@ -389,14 +395,14 @@ export const View = ({
     model.lower.y,
     model.upper.x - model.lower.x + 1,
     model.upper.y - model.lower.y + 1,
-  ].join(" ")
+  ].join(' ');
 
-  const maze = Maze.makeMemoized(model)
+  const maze = Maze.makeMemoized(model);
 
-  const currentUserPlayer = model.players[ctx.currentUserId]
+  const currentUserPlayer = model.players[ctx.currentUserId];
 
   return (
-    <FillBox sx={{ alignItems: "center" }}>
+    <FillBox sx={{ alignItems: 'center' }}>
       {!currentUserPlayer && (
         <Typography sx={{ p: 1 }} color="primary.light">
           Spectating
@@ -412,13 +418,13 @@ export const View = ({
           y={model.lower.y}
           width="100%"
           height="100%"
-          fill={"#000"}
+          fill={'#000'}
         />
         {maze.edges.map(([a, b]) => (
           <g
-            key={[a.x, a.y, b.x, b.y].join("-")}
+            key={[a.x, a.y, b.x, b.y].join('-')}
             strokeWidth="0.1"
-            stroke={"#fff"}
+            stroke={'#fff'}
           >
             <line
               x1={a.x + 1 / 2}
@@ -442,12 +448,20 @@ export const View = ({
       {currentUserPlayer && (
         <>
           <Joystick
-            activeDirection={p(currentUserPlayer.direction, d => d === "none" ? undefined : d)}
+            activeDirection={p(currentUserPlayer.direction, (d) =>
+              d === 'none' ? undefined : d
+            )}
             onChange={(direction) =>
-              $send(["InputDirection", { direction, userId: ctx.currentUserId }])
+              $send([
+                'InputDirection',
+                { direction, userId: ctx.currentUserId },
+              ])
             }
             onDone={() =>
-              $send(["InputDirection", { direction: "none", userId: ctx.currentUserId }])
+              $send([
+                'InputDirection',
+                { direction: 'none', userId: ctx.currentUserId },
+              ])
             }
             activeFill="#fff"
             fill="#000"
@@ -455,16 +469,18 @@ export const View = ({
           />
           <Box sx={{ width: '100%' }}>
             <ActionButton
-              icon={<Icons.ExitToApp sx={{ transform: "rotate(180deg)" }} />}
+              icon={<Icons.ExitToApp sx={{ transform: 'rotate(180deg)' }} />}
               label="Exit"
-              onClick={() => $send(['stop-game', { userId: ctx.currentUserId }])}
+              onClick={() =>
+                $send(['stop-game', { userId: ctx.currentUserId }])
+              }
             />
           </Box>
         </>
       )}
     </FillBox>
-  )
-}
+  );
+};
 
 const Joystick = ({
   activeDirection,
@@ -474,30 +490,27 @@ const Joystick = ({
   fill,
   activeFill,
 }: {
-  activeDirection?: Direction
-  onChange: (direction: Direction) => void
-  onDone: () => void
-  stroke: string
-  fill: string
-  activeFill: string
+  activeDirection?: Direction;
+  onChange: (direction: Direction) => void;
+  onDone: () => void;
+  stroke: string;
+  fill: string;
+  activeFill: string;
 }) => {
-
-
   return (
     <Box
       sx={{
-        maxWidth: "40vw",
-        margin: "auto",
-        transform: "rotate(45deg)",
-        transformOrigin: "center",
-        transformBox: "fill-box",
+        maxWidth: '40vw',
+        margin: 'auto',
+        transform: 'rotate(45deg)',
+        transformOrigin: 'center',
+        transformBox: 'fill-box',
       }}
-
     >
       <svg
         width="100%"
         viewBox="-1 -1 2 2"
-        style={{ overflow: "hidden", userSelect: "none", touchAction: "none" }}
+        style={{ overflow: 'hidden', userSelect: 'none', touchAction: 'none' }}
       >
         <defs>
           <clipPath id="cut-off-bottom">
@@ -508,7 +521,7 @@ const Joystick = ({
         <g strokeWidth={0.025}>
           <g clipPath="url(#cut-off-bottom)" stroke={stroke}>
             {Direction.all.map((direction) => {
-              const { x, y } = directionToVector(direction)
+              const { x, y } = directionToVector(direction);
               return (
                 <rect
                   key={direction}
@@ -517,18 +530,18 @@ const Joystick = ({
                   width={1}
                   height={1}
                   fill={activeDirection === direction ? activeFill : fill}
-                  // 
+                  //
                   onTouchStart={() => onChange(direction)}
                   onTouchMove={() => onChange(direction)}
                   onTouchEnd={onDone}
                   onTouchCancel={onDone}
                   onAbort={onDone}
-                  // 
+                  //
                   onMouseDown={() => onChange(direction)}
                   onMouseOver={() => onChange(direction)}
                   onMouseUp={onDone}
                 />
-              )
+              );
             })}
           </g>
 
@@ -538,9 +551,9 @@ const Joystick = ({
             r={0.5}
             fill={fill}
             style={{
-              touchAction: "none",
-              userSelect: "none",
-              pointerEvents: "none",
+              touchAction: 'none',
+              userSelect: 'none',
+              pointerEvents: 'none',
             }}
             stroke={stroke}
           />
@@ -549,9 +562,9 @@ const Joystick = ({
             y="0"
             r={0.98}
             style={{
-              touchAction: "none",
-              userSelect: "none",
-              pointerEvents: "none",
+              touchAction: 'none',
+              userSelect: 'none',
+              pointerEvents: 'none',
             }}
             fill="transparent"
             stroke={stroke}
@@ -559,19 +572,18 @@ const Joystick = ({
         </g>
       </svg>
     </Box>
-  )
-}
+  );
+};
 
 const directionToVector = (direction: Direction): Position => {
   switch (direction) {
-    case "East":
-      return { x: 0, y: -1 }
-    case "North":
-      return { x: -1, y: -1 }
-    case "South":
-      return { x: 0, y: 0 }
-    case "West":
-      return { x: -1, y: 0 }
+    case 'East':
+      return { x: 0, y: -1 };
+    case 'North':
+      return { x: -1, y: -1 };
+    case 'South':
+      return { x: 0, y: 0 };
+    case 'West':
+      return { x: -1, y: 0 };
   }
-}
-
+};

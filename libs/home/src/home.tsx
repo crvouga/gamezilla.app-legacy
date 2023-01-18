@@ -1,8 +1,26 @@
-import { Sub } from "@gamezilla/core"
-import { RoomId, UserId } from "@gamezilla/shared"
-import { GameName, RoomFrontend as GameRoom, gameNameToString, viewCoverArt } from "@gamezilla/room"
-import { Ctx, Route } from "@gamezilla/shared"
-import { AspectRatio, Avatar, Box, Button, CardActionArea, Divider, FillBox, Header, Icons, Paper, Typography, ViewEmptyState } from "@gamezilla/ui"
+import { Sub } from '@gamezilla/core';
+import { RoomId, UserId } from '@gamezilla/shared';
+import {
+  GameName,
+  RoomFrontend as GameRoom,
+  gameNameToString,
+  viewCoverArt,
+} from '@gamezilla/room';
+import { Ctx, Route } from '@gamezilla/shared';
+import {
+  AspectRatio,
+  Avatar,
+  Box,
+  Button,
+  CardActionArea,
+  Divider,
+  FillBox,
+  Header,
+  Icons,
+  Paper,
+  Typography,
+  ViewEmptyState,
+} from '@gamezilla/ui';
 
 //
 //
@@ -12,9 +30,9 @@ import { AspectRatio, Avatar, Box, Button, CardActionArea, Divider, FillBox, Hea
 //
 //
 
-export type Model = null
+export type Model = null;
 
-export const init: Model = null
+export const init: Model = null;
 
 //
 //
@@ -25,78 +43,79 @@ export const init: Model = null
 //
 
 export type Msg =
-  | ["ClickedCurrentRoom"]
-  | ["ClickedCurrentRoomLeave"]
-  | ["ClickedCurrentRoomDestroy"]
-  | ["ClickedRoom", { roomId: RoomId }]
-  | ["ClickedGameCard", { roomId: RoomId, gameName: GameName }]
-  | ["ClickedCreateRoom", { roomId: RoomId }]
+  | ['ClickedCurrentRoom']
+  | ['ClickedCurrentRoomLeave']
+  | ['ClickedCurrentRoomDestroy']
+  | ['ClickedRoom', { roomId: RoomId }]
+  | ['ClickedGameCard', { roomId: RoomId; gameName: GameName }]
+  | ['ClickedCreateRoom', { roomId: RoomId }];
 
-export type OutAction = GameRoom.Action | Route.Action
+export type OutAction = GameRoom.Action | Route.Action;
 
 export const update = (
   { currentUserId }: { currentUserId: UserId },
   msg: Msg,
-  model: Model,
+  model: Model
 ): [Model, OutAction[]] => {
   switch (msg[0]) {
-    case "ClickedGameCard": {
+    case 'ClickedGameCard': {
       const payload = {
         gameName: msg[1].gameName,
         roomId: msg[1].roomId,
         userId: currentUserId,
-      }
+      };
       return [
         model,
         [
-          ["Route", ["Push", ["Game"]]],
-          ["Room", ["Msg", ["RoomCreate", payload]]]
+          ['Route', ['Push', ['Game']]],
+          ['Room', ['Msg', ['RoomCreate', payload]]],
         ],
-      ]
+      ];
     }
 
     case 'ClickedCreateRoom': {
       return [
         model,
         [
-          ["Route", ["Push", ["Game"]]],
-          ["Room", ['Msg', ['RoomCreate', { roomId: msg[1].roomId, userId: currentUserId }]]]
-        ]
-      ]
-    }
-
-    case "ClickedRoom": {
-      const roomId = msg[1].roomId
-      return [
-        model,
-        [
+          ['Route', ['Push', ['Game']]],
           [
-            "Room",
-            ["Msg", ["RoomJoin", { roomId, userId: currentUserId }]],
+            'Room',
+            [
+              'Msg',
+              ['RoomCreate', { roomId: msg[1].roomId, userId: currentUserId }],
+            ],
           ],
         ],
-      ]
+      ];
     }
 
-    case "ClickedCurrentRoomLeave": {
+    case 'ClickedRoom': {
+      const roomId = msg[1].roomId;
       return [
         model,
-        [["Room", ["Msg", ["RoomLeave", { userId: currentUserId }]]]],
-      ]
+        [['Room', ['Msg', ['RoomJoin', { roomId, userId: currentUserId }]]]],
+      ];
     }
 
-    case "ClickedCurrentRoomDestroy": {
+    case 'ClickedCurrentRoomLeave': {
       return [
         model,
-        [["Room", ["Msg", ["RoomDestroy", { userId: currentUserId }]]]],
-      ]
+        [['Room', ['Msg', ['RoomLeave', { userId: currentUserId }]]]],
+      ];
     }
 
-    case "ClickedCurrentRoom": {
-      return [model, [["Route", ["Push", ["Game"]]]]]
+    case 'ClickedCurrentRoomDestroy': {
+      return [
+        model,
+        [['Room', ['Msg', ['RoomDestroy', { userId: currentUserId }]]]],
+      ];
+    }
+
+    case 'ClickedCurrentRoom': {
+      return [model, [['Route', ['Push', ['Game']]]]];
     }
   }
-}
+};
 
 //
 //
@@ -107,8 +126,8 @@ export const update = (
 //
 
 export const subscriptions = (_model: Model): Sub<Msg> => {
-  return Sub.None
-}
+  return Sub.None;
+};
 
 //
 //
@@ -124,37 +143,50 @@ export const View = ({
   gameRoom,
   ctx,
 }: {
-  gameRoom: GameRoom.Model
-  model: Model
-  $send: (msg: Msg) => void
-  ctx: Ctx
+  gameRoom: GameRoom.Model;
+  model: Model;
+  $send: (msg: Msg) => void;
+  ctx: Ctx;
 }) => {
-  const user = gameRoom.users[ctx.currentUserId]
+  const user = gameRoom.users[ctx.currentUserId];
 
   if (!user) {
-    return <ViewNotInRoom model={model} $send={$send} ctx={ctx} gameRoom={gameRoom} />
+    return (
+      <ViewNotInRoom
+        model={model}
+        $send={$send}
+        ctx={ctx}
+        gameRoom={gameRoom}
+      />
+    );
   }
 
-  const currentRoom = gameRoom.rooms[user.roomId]
+  const currentRoom = gameRoom.rooms[user.roomId];
 
   if (!currentRoom) {
-    return <ViewNotInRoom model={model} $send={$send} ctx={ctx} gameRoom={gameRoom} />
+    return (
+      <ViewNotInRoom
+        model={model}
+        $send={$send}
+        ctx={ctx}
+        gameRoom={gameRoom}
+      />
+    );
   }
 
-  const hostProfile = ctx.profiles[currentRoom.hostId]
+  const hostProfile = ctx.profiles[currentRoom.hostId];
   const roomCount = Object.values(gameRoom.users).filter(
-    (user) => user.roomId === currentRoom.roomId,
-  ).length
+    (user) => user.roomId === currentRoom.roomId
+  ).length;
 
-
-  const gameName = gameRoom.games[user.roomId]?.[0]
+  const gameName = gameRoom.games[user.roomId]?.[0];
 
   const otherRooms = Object.values(gameRoom.rooms).filter(
-    (room) => room.roomId !== currentRoom.roomId,
-  )
+    (room) => room.roomId !== currentRoom.roomId
+  );
 
   return (
-    <FillBox sx={{ overflow: "scroll" }}>
+    <FillBox sx={{ overflow: 'scroll' }}>
       <Header title="Home" />
 
       <Box sx={{ px: 2 }}>
@@ -162,30 +194,28 @@ export const View = ({
           Your Room
         </Typography>
 
-        <Paper sx={{ display: "flex", flexDirection: "column", }}>
-          <CardActionArea onClick={() => $send(["ClickedCurrentRoom"])}>
+        <Paper sx={{ display: 'flex', flexDirection: 'column' }}>
+          <CardActionArea onClick={() => $send(['ClickedCurrentRoom'])}>
             <AspectRatio aspectRatio={Math.pow(3 / 4, 4)}>
               {gameName ? (
                 viewCoverArt(gameName)
               ) : (
                 <Avatar
                   variant="square"
-                  src={hostProfile?.avatarUrl ?? ""}
-                  sx={{ width: "100%", height: "100%" }}
+                  src={hostProfile?.avatarUrl ?? ''}
+                  sx={{ width: '100%', height: '100%' }}
                 />
               )}
             </AspectRatio>
 
-
             <Divider />
 
-
-            <Box sx={{ flex: 2, padding: 2, overflow: "hidden" }}>
+            <Box sx={{ flex: 2, padding: 2, overflow: 'hidden' }}>
               <Typography variant="overline" color="primary.main" noWrap>
-                {gameName ? gameNameToString(gameName) : "..."}
+                {gameName ? gameNameToString(gameName) : '...'}
               </Typography>
               <Typography variant="h5" noWrap>
-                {hostProfile ? `${hostProfile.username}'s room` : "..."}
+                {hostProfile ? `${hostProfile.username}'s room` : '...'}
               </Typography>
               <Typography variant="h6" color="text.secondary" noWrap>
                 {`${roomCount} in game`}
@@ -193,7 +223,7 @@ export const View = ({
             </Box>
           </CardActionArea>
 
-          <Box sx={{ flex: 2, p: 2, pt: 0, overflow: "hidden" }}>
+          <Box sx={{ flex: 2, p: 2, pt: 0, overflow: 'hidden' }}>
             {currentRoom.hostId === ctx.currentUserId ? (
               <Button
                 fullWidth
@@ -202,7 +232,7 @@ export const View = ({
                 startIcon={<Icons.DeleteForever />}
                 variant="outlined"
                 onClick={() => {
-                  $send(["ClickedCurrentRoomDestroy"])
+                  $send(['ClickedCurrentRoomDestroy']);
                 }}
               >
                 End Room
@@ -212,10 +242,12 @@ export const View = ({
                 fullWidth
                 sx={{ mt: 2 }}
                 color="error"
-                startIcon={<Icons.ExitToApp sx={{ "transform": "rotate(180deg)" }} />}
+                startIcon={
+                  <Icons.ExitToApp sx={{ transform: 'rotate(180deg)' }} />
+                }
                 variant="outlined"
                 onClick={() => {
-                  $send(["ClickedCurrentRoomLeave"])
+                  $send(['ClickedCurrentRoomLeave']);
                 }}
               >
                 Leave
@@ -227,11 +259,7 @@ export const View = ({
 
       {otherRooms.length > 0 && (
         <>
-          <Typography
-            variant="h6"
-            color="text.secondary"
-            sx={{ px: 2, mt: 2, }}
-          >
+          <Typography variant="h6" color="text.secondary" sx={{ px: 2, mt: 2 }}>
             Active Games
           </Typography>
 
@@ -239,63 +267,74 @@ export const View = ({
             <GameRoom.RoomGrid
               ctx={ctx}
               model={gameRoom}
-              onClick={({ roomId }) => $send(['ClickedRoom', { roomId: roomId }])}
+              onClick={({ roomId }) =>
+                $send(['ClickedRoom', { roomId: roomId }])
+              }
             />
           </Box>
         </>
       )}
     </FillBox>
-  )
-}
+  );
+};
 
 const ViewNotInRoom = ({
   $send,
   gameRoom,
   ctx,
 }: {
-  ctx: Ctx
-  gameRoom: GameRoom.Model
-  model: Model
-  $send: (msg: Msg) => void
+  ctx: Ctx;
+  gameRoom: GameRoom.Model;
+  model: Model;
+  $send: (msg: Msg) => void;
 }) => {
-  const rooms = Object.values(gameRoom.rooms)
+  const rooms = Object.values(gameRoom.rooms);
 
   return (
-    <FillBox sx={{ overflowY: "scroll" }}>
+    <FillBox sx={{ overflowY: 'scroll' }}>
       <Header title="Home" />
 
       {rooms.length === 0 && (
         <ViewEmptyState
           actionIcon={<Icons.Add />}
           actionTitle="Create Game"
-          onAction={() => $send(['ClickedCreateRoom', { roomId: RoomId.generate() }])}
+          onAction={() =>
+            $send(['ClickedCreateRoom', { roomId: RoomId.generate() }])
+          }
           renderIcon={(props) => <Icons.SportsEsportsOutlined {...props} />}
           title="No Active Games"
         />
       )}
 
-      {rooms.length > 0 && <>
-        <Box sx={{ px: 2 }}>
-          <Button fullWidth variant="contained" onClick={() => $send(['ClickedCreateRoom', { roomId: RoomId.generate() }])} startIcon={<Icons.Add />}>
-            Create Game
-          </Button>
-        </Box>
-        <Typography
-          variant="h6"
-          color="text.secondary"
-          sx={{ px: 2, mt: 2, }}
-        >
-          Active Games
-        </Typography>
+      {rooms.length > 0 && (
+        <>
+          <Box sx={{ px: 2 }}>
+            <Button
+              fullWidth
+              variant="contained"
+              onClick={() =>
+                $send(['ClickedCreateRoom', { roomId: RoomId.generate() }])
+              }
+              startIcon={<Icons.Add />}
+            >
+              Create Game
+            </Button>
+          </Box>
+          <Typography variant="h6" color="text.secondary" sx={{ px: 2, mt: 2 }}>
+            Active Games
+          </Typography>
 
-        <Box sx={{ px: 2 }}>
-          <GameRoom.RoomGrid
-            ctx={ctx}
-            model={gameRoom}
-            onClick={({ roomId }) => $send(['ClickedRoom', { roomId: roomId }])}
-          />
-        </Box>
-      </>}
+          <Box sx={{ px: 2 }}>
+            <GameRoom.RoomGrid
+              ctx={ctx}
+              model={gameRoom}
+              onClick={({ roomId }) =>
+                $send(['ClickedRoom', { roomId: roomId }])
+              }
+            />
+          </Box>
+        </>
+      )}
     </FillBox>
-  )
-}
+  );
+};
