@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import * as Rx from "rxjs"
-import { Cmd } from "../cmd"
-import * as Json from "../json"
-import { Option } from "../option"
+import { Cmd } from "../cmd-"
+import * as Json from "../json-"
+import { Option } from "../option-"
 import { p } from "../pipe"
-import * as Platform from "../program"
-import { $send } from "../program"
-import { Result } from "../result"
-import { Task } from "../ask"
+import * as Platform from "../program-"
+import { $send } from "../program-"
+import { Result } from "../result-"
+import { Task } from "../task-"
 import { Debug, Debugger, Global, MsgWithDebug } from "./debugger-commons"
 
 type Unsubscribe = () => void

@@ -1,5 +1,5 @@
 import * as Rx from "rxjs"
-import { Sub } from "./sub"
+import { Sub } from "./sub-"
 
 export type ArrowKey = "ArrowUp" | "ArrowDown" | "ArrowRight" | "ArrowLeft"
 

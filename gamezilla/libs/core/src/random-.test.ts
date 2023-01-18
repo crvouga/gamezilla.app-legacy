@@ -1,4 +1,4 @@
-import { Random } from "./random"
+import { Random } from "./random-"
 
 describe("random", () => {
   it("same seed generates same numbers", () => {
