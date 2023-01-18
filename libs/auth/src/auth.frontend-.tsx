@@ -1,5 +1,10 @@
 import { Cmd } from '@gamezilla/core';
-import { FrontendModel, FrontendMsg, ToBackend, ToFrontend } from './auth.Type';
+import {
+  FrontendModel,
+  FrontendMsg,
+  ToBackend,
+  ToFrontend,
+} from './auth.types-';
 
 //
 //
