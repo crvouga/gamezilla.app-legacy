@@ -25,6 +25,7 @@
       "@gamezilla/game/chess": ["libs/game/chess/src/index.ts"],
       "@gamezilla/game/connect-four": ["libs/game/connect-four/src/index.ts"],
       "@gamezilla/game/gomoku": ["libs/game/gomoku/src/index.ts"],
+      "@gamezilla/game/maze": ["libs/game/maze/src/index.ts"],
       "@gamezilla/game/shared": ["libs/game-shared/src/index.ts"],
       "@gamezilla/game/snake": ["libs/game/snake/src/index.ts"],
       "@gamezilla/game/tetris": ["libs/game/tetris/src/index.ts"],
