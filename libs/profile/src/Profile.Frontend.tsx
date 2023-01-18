@@ -1,5 +1,5 @@
-import { Cmd, Sub } from "@gamezilla/core";
-import { FrontendModel, FrontendMsg, ToFrontend } from "./Profile.Types";
+import { Cmd, Sub } from '@gamezilla/core';
+import { FrontendModel, FrontendMsg, ToFrontend } from './Profile.Types';
 
 //
 //
@@ -11,8 +11,7 @@ import { FrontendModel, FrontendMsg, ToFrontend } from "./Profile.Types";
 
 export type Model = FrontendModel;
 
-
-export const init: [Model, Cmd<Msg>] = [{}, Cmd.None];
+export const init: [Model, Cmd<Msg>] = [null, Cmd.None];
 
 //
 //
@@ -22,23 +21,25 @@ export const init: [Model, Cmd<Msg>] = [{}, Cmd.None];
 //
 //
 
-export type Msg = FrontendMsg
+export type Msg = FrontendMsg;
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
-    switch (msg[0]) {
-        case "find_many": {
-            return [model, Cmd.None]
-        }
+  switch (msg[0]) {
+    case 'find_many': {
+      return [model, Cmd.None];
     }
+  }
 };
 
-
-export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd<Msg>] => {
-    switch (msg[0]) {
-        case "find_many_done": {
-            return [model, Cmd.None]
-        }
+export const updateFromBackend = (
+  msg: ToFrontend,
+  model: Model
+): [Model, Cmd<Msg>] => {
+  switch (msg[0]) {
+    case 'find_many_done': {
+      return [model, Cmd.None];
     }
+  }
 };
 
 //
@@ -50,21 +51,17 @@ export const updateFromBackend = (msg: ToFrontend, model: Model): [Model, Cmd<Ms
 //
 
 export const subscriptions = (_model: Model): Sub<Msg> => {
-    return Sub.None;
+  return Sub.None;
 };
 
-// 
-// 
-// 
+//
+//
+//
 // view
-// 
-// 
-// 
+//
+//
+//
 
 export const view = (model: Model) => {
-    return (
-        <pre>
-            {JSON.stringify(model, null, 2)}
-        </pre>
-    )
-}
+  return <pre>{JSON.stringify(model, null, 2)}</pre>;
+};

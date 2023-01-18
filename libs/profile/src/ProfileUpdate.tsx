@@ -1,7 +1,7 @@
-import { Cmd } from "@gamezilla/core"
-import { Route } from "@gamezilla/shared"
-import * as ProfileStore from "./Profile.Store"
-import * as UI from "@gamezilla/ui"
+import { Cmd } from '@gamezilla/core';
+import { Route } from '@gamezilla/shared';
+import * as ProfileStore from './Profile.Store';
+import * as UI from '@gamezilla/ui';
 
 //
 //
@@ -11,9 +11,9 @@ import * as UI from "@gamezilla/ui"
 //
 //
 
-export type Model = null
+export type Model = null;
 
-export const init: Model = null
+export const init: Model = null;
 
 //
 //
@@ -24,34 +24,34 @@ export const init: Model = null
 //
 
 export type Msg =
-  | ["ClickedBack"]
-  | ["ClickedName"]
-  | ["ClickedUsername"]
-  | ["ClickedAvatar"]
-  | ["ClickedChangedAvatar"]
-  | ["ClickedTheme"]
+  | ['ClickedBack']
+  | ['ClickedName']
+  | ['ClickedUsername']
+  | ['ClickedAvatar']
+  | ['ClickedChangedAvatar']
+  | ['ClickedTheme'];
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case "ClickedAvatar":
-      return [model, Route.push(["ProfileUpdateAvatar"])]
+    case 'ClickedAvatar':
+      return [model, Route.push(['ProfileUpdateAvatar'])];
 
-    case "ClickedChangedAvatar":
-      return [model, Route.push(["ProfileUpdateAvatar"])]
+    case 'ClickedChangedAvatar':
+      return [model, Route.push(['ProfileUpdateAvatar'])];
 
-    case "ClickedBack":
-      return [model, Route.back]
+    case 'ClickedBack':
+      return [model, Route.back];
 
-    case "ClickedName":
-      return [model, Route.push(["ProfileUpdateName"])]
+    case 'ClickedName':
+      return [model, Route.push(['ProfileUpdateName'])];
 
-    case "ClickedUsername":
-      return [model, Route.push(["ProfileUpdateUsername"])]
+    case 'ClickedUsername':
+      return [model, Route.push(['ProfileUpdateUsername'])];
 
-    case "ClickedTheme":
-      return [model, Route.push(["ProfileUpdateTheme"])]
+    case 'ClickedTheme':
+      return [model, Route.push(['ProfileUpdateTheme'])];
   }
-}
+};
 
 //
 //
@@ -65,30 +65,30 @@ export const View = ({
   profile,
   $send,
 }: {
-  profile: ProfileStore.Profile
-  model: Model
-  $send: (msg: Msg) => void
+  profile: ProfileStore.Profile;
+  model: Model;
+  $send: (msg: Msg) => void;
 }) => (
   <UI.FillBox>
     <UI.Header
-      left={<UI.HeaderBackButton onClick={() => $send(["ClickedBack"])} />}
+      left={<UI.HeaderBackButton onClick={() => $send(['ClickedBack'])} />}
       title="Update Profile"
     />
 
     <UI.Avatar
       src={profile.avatarUrl}
       sx={{
-        marginX: "auto",
-        width: "150px",
-        height: "150px",
+        marginX: 'auto',
+        width: '150px',
+        height: '150px',
         marginBottom: 1,
       }}
-      onClick={() => $send(["ClickedAvatar"])}
+      onClick={() => $send(['ClickedAvatar'])}
     />
 
     <UI.Button
-      sx={{ display: "block", marginX: "auto", marginBottom: 2 }}
-      onClick={() => $send(["ClickedChangedAvatar"])}
+      sx={{ display: 'block', marginX: 'auto', marginBottom: 2 }}
+      onClick={() => $send(['ClickedChangedAvatar'])}
     >
       Change Avatar
     </UI.Button>
@@ -97,7 +97,7 @@ export const View = ({
       <UI.Field
         label="Username"
         value={profile.username}
-        onClick={() => $send(["ClickedUsername"])}
+        onClick={() => $send(['ClickedUsername'])}
       />
 
       {/* <UI.Field
@@ -109,8 +109,8 @@ export const View = ({
       <UI.Field
         label="Theme"
         value={profile.themeMode}
-        onClick={() => $send(["ClickedTheme"])}
+        onClick={() => $send(['ClickedTheme'])}
       />
     </UI.List>
   </UI.FillBox>
-)
+);
