@@ -1,9 +1,5 @@
-// import { Cmd, Time, Uuid } from "@gamezilla/core"
-// import * as UI from "@gamezilla/ui"
-
 import { Cmd, Time, Uuid } from "@gamezilla/core";
-
-
+import { ConformationDialog, Portal, Snackbar } from "@gamezilla/ui";
 
 
 //
@@ -199,7 +195,7 @@ export const View = <TMsg,>({
 }) => {
   return (
     <>
-      <UI.ConformationDialog
+      <ConformationDialog
         confirmTitle="Confirm"
         onCancel={() => $send(["conformation_cancelled"])}
         onClose={() => $send(["conformation_closed"])}
@@ -209,9 +205,9 @@ export const View = <TMsg,>({
         cancelTitle="Cancel"
       />
 
-      <UI.Portal>
+      <Portal>
         {model.queue[0] && (
-          <UI.Snackbar
+          <Snackbar
             anchorOrigin={{
               horizontal: "center",
               vertical: "top",
@@ -225,7 +221,7 @@ export const View = <TMsg,>({
             }}
           />
         )}
-      </UI.Portal>
+      </Portal>
     </>
   )
 }
