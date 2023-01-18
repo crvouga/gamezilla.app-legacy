@@ -1,5 +1,5 @@
 import { Cmd, Uuid } from '@gamezilla/core';
-import { BackendModel, BackendMsg, ToBackend } from './auth.Type';
+import { BackendModel, BackendMsg, ToBackend } from './auth.types-';
 
 //
 //

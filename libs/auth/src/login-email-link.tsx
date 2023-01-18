@@ -1,7 +1,7 @@
 import { Cmd, exhaustive, p, t } from '@gamezilla/core';
 import { Route } from '@gamezilla/shared';
 import * as UI from '@gamezilla/ui';
-import * as Auth from './auth';
+import * as Auth from './auth-';
 
 //
 //
