@@ -1,6 +1,6 @@
 import { NonNegInt, PosNum } from "@gamezilla/shared"
-import { Direction } from "./direction-"
-import { Position } from "./position-"
+import { Direction } from "./direction"
+import { Position } from "./position"
 
 //
 //
