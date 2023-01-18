@@ -1,5 +1,5 @@
-import { RemoteData } from "@gamezilla/core"
-import { UserId } from "@gamezilla/shared"
+import { RemoteData } from '@gamezilla/core';
+import { UserId } from '@gamezilla/shared';
 
 //
 //
@@ -11,17 +11,17 @@ import { UserId } from "@gamezilla/shared"
 
 export type Store = {
   Conversation: {
-    [id: string]: Conversation
-  }
+    [id: string]: Conversation;
+  };
   Message: {
-    [id: string]: Message
-  }
+    [id: string]: Message;
+  };
   UsersConversations: {
-    [id: string]: UsersConversations
-  }
-  queries: Queries
-  mutations: Mutations
-}
+    [id: string]: UsersConversations;
+  };
+  queries: Queries;
+  mutations: Mutations;
+};
 
 //
 //
@@ -31,29 +31,29 @@ export type Store = {
 //
 //
 export type UsersConversations = {
-  userId: UserId
-  conversationId: string
-}
+  userId: UserId;
+  conversationId: string;
+};
 export const toUsersConversationsId = ({
   userId,
   conversationId,
 }: {
-  userId: UserId
-  conversationId: string
+  userId: UserId;
+  conversationId: string;
 }): string => {
-  return [userId, conversationId].join(",")
-}
+  return [userId, conversationId].join(',');
+};
 
 export type Conversation = {
-  conversationId: string
-}
+  conversationId: string;
+};
 
 export type Message = {
-  messageId: string
-  conversationId: string
-  userId: UserId
-  message: string
-}
+  messageId: string;
+  conversationId: string;
+  userId: UserId;
+  message: string;
+};
 
 //
 //
@@ -69,22 +69,22 @@ export type Queries = {
       [id: string]: RemoteData<
         Problem,
         {
-          conversation: string
-          message: string[]
+          conversation: string;
+          message: string[];
         }
-      >
-    }
+      >;
+    };
     FindManyByUserId: {
       [userId: UserId]: RemoteData<
         Problem,
         {
-          conversation: string[]
-          usersConversations: string[]
+          conversation: string[];
+          usersConversations: string[];
         }
-      >
-    }
-  }
-}
+      >;
+    };
+  };
+};
 
 //
 //
@@ -96,17 +96,17 @@ export type Queries = {
 
 export type Mutations = {
   Conversation: {
-    FindElseInsert: RemoteData<Problem, string>
-  }
+    FindElseInsert: RemoteData<Problem, string>;
+  };
   Message: {
     Send: {
-      [conversationId: string]: RemoteData<Problem, string>
-    }
+      [conversationId: string]: RemoteData<Problem, string>;
+    };
     Unsend: {
-      [messageId: string]: RemoteData<Problem, string>
-    }
-  }
-}
+      [messageId: string]: RemoteData<Problem, string>;
+    };
+  };
+};
 
 //
 //
@@ -116,7 +116,7 @@ export type Mutations = {
 //
 //
 
-export type Problem = string
+export type Problem = string;
 
 //
 //
@@ -145,4 +145,4 @@ export const initialStore: Store = {
       Unsend: {},
     },
   },
-}
+};
