@@ -888,7 +888,6 @@ export const ViewReady = ({
         <UI.FillBox>
           <Profile.View
             userId={model[1].userId}
-            chatStore={chatStore}
             profileStore={profileStore}
             currentUserId={profile.userId}
             model={model[2]}
