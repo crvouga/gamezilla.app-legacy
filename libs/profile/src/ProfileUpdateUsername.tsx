@@ -1,8 +1,8 @@
-import { Cmd } from "@gamezilla/core"
-import { UserId, Username } from "@gamezilla/shared"
-import { Route } from "@gamezilla/shared"
-import * as ProfileStore from "./Profile.Store"
-import * as UI from "@gamezilla/ui"
+import { Cmd } from '@gamezilla/core';
+import { UserId, Username } from '@gamezilla/shared';
+import { Route } from '@gamezilla/shared';
+import * as ProfileStore from './Profile.Store';
+import * as UI from '@gamezilla/ui';
 
 //
 //
@@ -12,13 +12,13 @@ import * as UI from "@gamezilla/ui"
 //
 //
 
-export type Model = { username: string }
+export type Model = { username: string };
 
 export const init = ({ username }: { username: string }): Model => {
   return {
     username,
-  }
-}
+  };
+};
 
 //
 //
@@ -29,29 +29,29 @@ export const init = ({ username }: { username: string }): Model => {
 //
 
 export type Msg =
-  | ["ClickedCancel"]
-  | ["ClickedSubmit"]
-  | ["InputtedUsername", string]
+  | ['ClickedCancel']
+  | ['ClickedSubmit']
+  | ['InputtedUsername', string];
 
-type OutAction = ProfileStore.Action
+type OutAction = ProfileStore.Action;
 
 export const update = (
   { userId }: { userId: UserId },
   msg: Msg,
-  model: Model,
+  model: Model
 ): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-    case "InputtedUsername":
-      return [{ ...model, username: msg[1] }, Cmd.None, []]
+    case 'InputtedUsername':
+      return [{ ...model, username: msg[1] }, Cmd.None, []];
 
-    case "ClickedCancel":
-      return [model, Route.back, []]
+    case 'ClickedCancel':
+      return [model, Route.back, []];
 
-    case "ClickedSubmit": {
-      const username = Username.decode(model.username)
+    case 'ClickedSubmit': {
+      const username = Username.decode(model.username);
 
-      if (username.type === "Err") {
-        return [model, Cmd.None, []]
+      if (username.type === 'Err') {
+        return [model, Cmd.None, []];
       }
 
       return [
@@ -59,14 +59,14 @@ export const update = (
         Route.back,
         [
           [
-            "Profile",
-            ["EditOne", { userId, edits: { username: username.value } }],
+            'Profile',
+            ['EditOne', { userId, edits: { username: username.value } }],
           ],
         ],
-      ]
+      ];
     }
   }
-}
+};
 
 //
 //
@@ -80,15 +80,15 @@ export const View = ({
   model,
   $send,
 }: {
-  model: Model
-  $send: (msg: Msg) => void
+  model: Model;
+  $send: (msg: Msg) => void;
 }) => (
   <UI.FillBox>
     <UI.Header
       left={
         <UI.Button
           sx={{ marginLeft: -1 }}
-          onClick={() => $send(["ClickedCancel"])}
+          onClick={() => $send(['ClickedCancel'])}
         >
           Cancel
         </UI.Button>
@@ -97,23 +97,23 @@ export const View = ({
       right={
         <UI.Button
           sx={{ marginRight: -1 }}
-          onClick={() => $send(["ClickedSubmit"])}
+          onClick={() => $send(['ClickedSubmit'])}
         >
           Done
         </UI.Button>
       }
     />
 
-    <UI.Box sx={{ p: 2, width: "100%" }}>
+    <UI.Box sx={{ p: 2, width: '100%' }}>
       <UI.TextField
         value={model.username}
         sx={{ marginBottom: 4 }}
         label="Username"
         fullWidth
         onChange={(event) =>
-          $send(["InputtedUsername", event.currentTarget.value])
+          $send(['InputtedUsername', event.currentTarget.value])
         }
       />
     </UI.Box>
   </UI.FillBox>
-)
+);

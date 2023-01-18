@@ -1,8 +1,8 @@
-import { Cmd } from "@gamezilla/core"
-import { ProfileAvatar, UserId, Username } from "@gamezilla/shared"
-import { Route } from "@gamezilla/shared"
-import * as ProfileStore from "./Profile.Store"
-import * as UI from "@gamezilla/ui"
+import { Cmd } from '@gamezilla/core';
+import { ProfileAvatar, UserId, Username } from '@gamezilla/shared';
+import { Route } from '@gamezilla/shared';
+import * as ProfileStore from './Profile.Store';
+import * as UI from '@gamezilla/ui';
 
 //
 //
@@ -15,20 +15,20 @@ import * as UI from "@gamezilla/ui"
 //
 
 export type Model = {
-  username: string
-  avatarUrl: string
-}
+  username: string;
+  avatarUrl: string;
+};
 
 export const init = ({ defaultName }: { defaultName: string }): Model => {
-  const username = defaultName.replace(" ", "").toLowerCase()
+  const username = defaultName.replace(' ', '').toLowerCase();
   return {
     username,
     avatarUrl: ProfileAvatar.toUrl({
       seed: ProfileAvatar.toSeed(username),
-      style: "big-ears-neutral",
+      style: 'big-ears-neutral',
     }),
-  }
-}
+  };
+};
 
 //
 //
@@ -41,49 +41,49 @@ export const init = ({ defaultName }: { defaultName: string }): Model => {
 //
 
 export type Msg =
-  | ["InputtedUsername", string]
-  | ["ClickedSubmit"]
-  | ["ClickedLogout"]
+  | ['InputtedUsername', string]
+  | ['ClickedSubmit']
+  | ['ClickedLogout'];
 
-export type OutAction = ProfileStore.Action
+export type OutAction = ProfileStore.Action;
 
 export const update = (
   { userId }: { userId: UserId },
   msg: Msg,
-  model: Model,
+  model: Model
 ): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-    case "InputtedUsername":
-      return [{ ...model, username: msg[1] }, Cmd.None, []]
+    case 'InputtedUsername':
+      return [{ ...model, username: msg[1] }, Cmd.None, []];
 
-    case "ClickedSubmit": {
+    case 'ClickedSubmit': {
       const avatarUrl = ProfileAvatar.toUrl({
         seed: ProfileAvatar.toSeed(model.username),
-        style: "adventurer-neutral",
-      })
+        style: 'adventurer-neutral',
+      });
 
-      const username = Username.decode(model.username)
+      const username = Username.decode(model.username);
 
-      if (username.type === "Err") {
+      if (username.type === 'Err') {
         // todo handle validation error
-        return [model, Cmd.None, []]
+        return [model, Cmd.None, []];
       }
 
       const profile: ProfileStore.Profile = {
-        name: "",
+        name: '',
         username: username.value,
         userId,
         avatarUrl,
-        themeMode: "System",
-      }
+        themeMode: 'System',
+      };
 
-      return [model, Cmd.None, [["Profile", ["CreateOne", { profile }]]]]
+      return [model, Cmd.None, [['Profile', ['CreateOne', { profile }]]]];
     }
 
-    case "ClickedLogout":
-      return [model, Route.push(["Logout"]), []]
+    case 'ClickedLogout':
+      return [model, Route.push(['Logout']), []];
   }
-}
+};
 
 //
 //
@@ -99,8 +99,8 @@ export const View = ({
   model,
   $send,
 }: {
-  model: Model
-  $send: (msg: Msg) => void
+  model: Model;
+  $send: (msg: Msg) => void;
 }) => (
   <UI.FillBox>
     <UI.Header
@@ -108,7 +108,7 @@ export const View = ({
         <UI.Button
           sx={{ marginLeft: -1 }}
           size="small"
-          onClick={() => $send(["ClickedLogout"])}
+          onClick={() => $send(['ClickedLogout'])}
         >
           Logout
         </UI.Button>
@@ -116,21 +116,21 @@ export const View = ({
       title="Create Profile"
     />
 
-    <UI.Box sx={{ p: 2, width: "100%" }}>
+    <UI.Box sx={{ p: 2, width: '100%' }}>
       <UI.Avatar
         src={model.avatarUrl}
         sx={{
-          marginX: "auto",
-          width: "120px",
-          height: "120px",
+          marginX: 'auto',
+          width: '120px',
+          height: '120px',
           marginBottom: 1,
         }}
       />
 
       <UI.Button
         sx={{
-          display: "block",
-          marginX: "auto",
+          display: 'block',
+          marginX: 'auto',
           marginBottom: 2,
         }}
       >
@@ -144,7 +144,7 @@ export const View = ({
         label="Username"
         fullWidth
         onChange={(event) =>
-          $send(["InputtedUsername", event.currentTarget.value])
+          $send(['InputtedUsername', event.currentTarget.value])
         }
       />
 
@@ -152,10 +152,10 @@ export const View = ({
         fullWidth
         size="large"
         variant="contained"
-        onClick={() => $send(["ClickedSubmit"])}
+        onClick={() => $send(['ClickedSubmit'])}
       >
         Create Profile
       </UI.Button>
     </UI.Box>
   </UI.FillBox>
-)
+);

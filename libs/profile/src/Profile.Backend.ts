@@ -1,5 +1,5 @@
-import { Cmd, Sub } from "@gamezilla/core";
-import { BackendModel, BackendMsg, Req, ToBackend } from "./Profile.Types";
+import { Cmd, Sub } from '@gamezilla/core';
+import { BackendModel, BackendMsg, Req, ToBackend } from './Profile.Types';
 
 //
 //
@@ -11,8 +11,7 @@ import { BackendModel, BackendMsg, Req, ToBackend } from "./Profile.Types";
 
 export type Model = BackendModel;
 
-
-export const init: [Model, Cmd<Msg>] = [{}, Cmd.None];
+export const init: [Model, Cmd<Msg>] = [null, Cmd.None];
 
 //
 //
@@ -22,40 +21,36 @@ export const init: [Model, Cmd<Msg>] = [{}, Cmd.None];
 //
 //
 
-export type Msg = BackendMsg
+export type Msg = BackendMsg;
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
-    switch (msg[0]) {
-        case "none": {
-            return [model, Cmd.None]
-        }
+  switch (msg[0]) {
+    case 'none': {
+      return [model, Cmd.None];
     }
+  }
 };
 
-
-export const updateFromFrontend = (msg: ToBackend, model: Model): [Model, Cmd<Msg>] => {
-
-    switch (msg[0]) {
-        case "find_many": {
-            return [model, Cmd.None]
-        }
+export const updateFromFrontend = (
+  msg: ToBackend,
+  model: Model
+): [Model, Cmd<Msg>] => {
+  switch (msg[0]) {
+    case 'find_many': {
+      return [model, Cmd.None];
     }
+  }
 };
-
-
-
 
 export const msgToQuery = (msg: Req) => {
-    switch (msg[0]) {
-        case 'find_many': {
-            const userIds = msg[1].userId.map(x => `'${x}'`).join(',')
+  switch (msg[0]) {
+    case 'find_many': {
+      const userIds = msg[1].userId.map((x) => `'${x}'`).join(',');
 
-            return `SELECT * FROM profile WHERE user_id IN (${userIds})`
-        }
+      return `SELECT * FROM profile WHERE user_id IN (${userIds})`;
     }
-}
-
-
+  }
+};
 
 //
 //
@@ -66,5 +61,5 @@ export const msgToQuery = (msg: Req) => {
 //
 
 export const subscriptions = (_model: Model): Sub<Msg> => {
-    return Sub.None;
+  return Sub.None;
 };

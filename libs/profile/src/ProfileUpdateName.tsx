@@ -1,8 +1,8 @@
-import { Cmd } from "@gamezilla/core"
-import { UserId } from "@gamezilla/shared"
-import { Route } from "@gamezilla/shared"
-import * as ProfileStore from "./Profile.Store"
-import * as UI from "@gamezilla/ui"
+import { Cmd } from '@gamezilla/core';
+import { UserId } from '@gamezilla/shared';
+import { Route } from '@gamezilla/shared';
+import * as ProfileStore from './Profile.Store';
+import * as UI from '@gamezilla/ui';
 
 //
 //
@@ -12,13 +12,13 @@ import * as UI from "@gamezilla/ui"
 //
 //
 
-export type Model = { name: string }
+export type Model = { name: string };
 
 export const init = ({ name }: { name: string }): Model => {
   return {
     name,
-  }
-}
+  };
+};
 
 //
 //
@@ -29,32 +29,32 @@ export const init = ({ name }: { name: string }): Model => {
 //
 
 export type Msg =
-  | ["InputtedName", string]
-  | ["ClickedCancel"]
-  | ["ClickedSubmit"]
+  | ['InputtedName', string]
+  | ['ClickedCancel']
+  | ['ClickedSubmit'];
 
-export type OutAction = ProfileStore.Action
+export type OutAction = ProfileStore.Action;
 
 export const update = (
   { userId }: { userId: UserId },
   msg: Msg,
-  model: Model,
+  model: Model
 ): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-    case "InputtedName":
-      return [{ ...model, name: msg[1] }, Cmd.None, []]
+    case 'InputtedName':
+      return [{ ...model, name: msg[1] }, Cmd.None, []];
 
-    case "ClickedSubmit":
+    case 'ClickedSubmit':
       return [
         model,
         Route.back,
-        [["Profile", ["EditOne", { userId, edits: { name: model.name } }]]],
-      ]
+        [['Profile', ['EditOne', { userId, edits: { name: model.name } }]]],
+      ];
 
-    case "ClickedCancel":
-      return [model, Route.back, []]
+    case 'ClickedCancel':
+      return [model, Route.back, []];
   }
-}
+};
 
 //
 //
@@ -68,15 +68,15 @@ export const View = ({
   model,
   $send,
 }: {
-  model: Model
-  $send: (msg: Msg) => void
+  model: Model;
+  $send: (msg: Msg) => void;
 }) => (
   <UI.FillBox>
     <UI.Header
       left={
         <UI.Button
           sx={{ marginLeft: -1 }}
-          onClick={() => $send(["ClickedCancel"])}
+          onClick={() => $send(['ClickedCancel'])}
         >
           Cancel
         </UI.Button>
@@ -85,7 +85,7 @@ export const View = ({
       right={
         <UI.Button
           sx={{ marginRight: -1 }}
-          onClick={() => $send(["ClickedSubmit"])}
+          onClick={() => $send(['ClickedSubmit'])}
         >
           Done
         </UI.Button>
@@ -98,8 +98,8 @@ export const View = ({
         sx={{ marginBottom: 4 }}
         label="Name"
         fullWidth
-        onChange={(event) => $send(["InputtedName", event.currentTarget.value])}
+        onChange={(event) => $send(['InputtedName', event.currentTarget.value])}
       />
     </UI.Box>
   </UI.FillBox>
-)
+);

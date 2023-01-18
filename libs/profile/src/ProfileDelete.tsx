@@ -1,8 +1,8 @@
-import { Cmd, RemoteData } from "@gamezilla/core"
-import { UserId } from "@gamezilla/shared"
-import { Route } from "@gamezilla/shared"
-import * as UI from "@gamezilla/ui"
-import * as ProfileStore from "./Profile.Store"
+import { Cmd, RemoteData } from '@gamezilla/core';
+import { UserId } from '@gamezilla/shared';
+import { Route } from '@gamezilla/shared';
+import * as UI from '@gamezilla/ui';
+import * as ProfileStore from './Profile.Store';
 
 //
 //
@@ -12,9 +12,9 @@ import * as ProfileStore from "./Profile.Store"
 //
 //
 
-export type Model = null
+export type Model = null;
 
-export const init: [Model, Cmd<Msg>, OutAction[]] = [null, Cmd.None, []]
+export const init: [Model, Cmd<Msg>, OutAction[]] = [null, Cmd.None, []];
 
 //
 //
@@ -25,32 +25,32 @@ export const init: [Model, Cmd<Msg>, OutAction[]] = [null, Cmd.None, []]
 //
 
 export type Msg =
-  | ["ClickedCancel"]
-  | ["ClickedBackdrop"]
-  | ["ClickedDelete"]
-  | ["ClickedCloseErr"]
+  | ['ClickedCancel']
+  | ['ClickedBackdrop']
+  | ['ClickedDelete']
+  | ['ClickedCloseErr'];
 
-export type OutAction = ProfileStore.Action
+export type OutAction = ProfileStore.Action;
 
 export const update = (
   { userId }: { userId: UserId },
   msg: Msg,
-  model: Model,
+  model: Model
 ): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-    case "ClickedCancel":
-      return [model, Route.back, []]
+    case 'ClickedCancel':
+      return [model, Route.back, []];
 
-    case "ClickedBackdrop":
-      return [model, Route.back, []]
+    case 'ClickedBackdrop':
+      return [model, Route.back, []];
 
-    case "ClickedDelete":
-      return [model, Cmd.None, [["Profile", ["DeleteForever", { userId }]]]]
+    case 'ClickedDelete':
+      return [model, Cmd.None, [['Profile', ['DeleteForever', { userId }]]]];
 
-    case "ClickedCloseErr":
-      return [model, Cmd.None, [["Profile", ["ResetMutations"]]]]
+    case 'ClickedCloseErr':
+      return [model, Cmd.None, [['Profile', ['ResetMutations']]]];
   }
-}
+};
 
 //
 //
@@ -65,18 +65,18 @@ export const View = ({
   userId,
   $send,
 }: {
-  profileStore: ProfileStore.Model
-  userId: UserId
-  model: Model
-  $send: (msg: Msg) => void
+  profileStore: ProfileStore.Model;
+  userId: UserId;
+  model: Model;
+  $send: (msg: Msg) => void;
 }) => {
-  const mutation = profileStore.deleteForever[userId] ?? RemoteData.NotAsked
+  const mutation = profileStore.deleteForever[userId] ?? RemoteData.NotAsked;
 
   switch (mutation.type) {
-    case "Loading":
-      return <UI.LoadingDialog open title="Deleting profile..." />
+    case 'Loading':
+      return <UI.LoadingDialog open title="Deleting profile..." />;
 
-    case "Err":
+    case 'Err':
       return (
         <UI.Backdrop open>
           <UI.Alert variant="filled" severity="error" sx={{ margin: 2 }}>
@@ -84,8 +84,8 @@ export const View = ({
             {mutation.error}
             <UI.Box
               sx={{
-                display: "flex",
-                justifyContent: "flex-end",
+                display: 'flex',
+                justifyContent: 'flex-end',
                 marginTop: 2,
               }}
             >
@@ -94,26 +94,26 @@ export const View = ({
                 size="large"
                 color="inherit"
                 startIcon={<UI.Icons.Close />}
-                onClick={() => $send(["ClickedCloseErr"])}
+                onClick={() => $send(['ClickedCloseErr'])}
               >
                 Close
               </UI.Button>
             </UI.Box>
           </UI.Alert>
         </UI.Backdrop>
-      )
+      );
 
-    case "NotAsked":
-    case "Ok":
+    case 'NotAsked':
+    case 'Ok':
       return (
         <UI.ConformationDialog
           open
           title="Delete profile forever?"
           confirmTitle="Delete"
-          onCancel={() => $send(["ClickedCancel"])}
-          onClose={() => $send(["ClickedBackdrop"])}
-          onConfirm={() => $send(["ClickedDelete"])}
+          onCancel={() => $send(['ClickedCancel'])}
+          onClose={() => $send(['ClickedBackdrop'])}
+          onConfirm={() => $send(['ClickedDelete'])}
         />
-      )
+      );
   }
-}
+};

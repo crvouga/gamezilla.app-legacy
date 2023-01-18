@@ -1,8 +1,8 @@
-import { Cmd } from "@gamezilla/core"
-import { UserId } from "@gamezilla/shared"
-import { Route } from "@gamezilla/shared"
-import * as ProfileStore from "./Profile.Store"
-import * as UI from "@gamezilla/ui"
+import { Cmd } from '@gamezilla/core';
+import { UserId } from '@gamezilla/shared';
+import { Route } from '@gamezilla/shared';
+import * as ProfileStore from './Profile.Store';
+import * as UI from '@gamezilla/ui';
 
 //
 //
@@ -12,11 +12,11 @@ import * as UI from "@gamezilla/ui"
 //
 //
 
-export type Model = { status: "Idle" | "Updating" }
+export type Model = { status: 'Idle' | 'Updating' };
 
 export const init: Model = {
-  status: "Idle",
-}
+  status: 'Idle',
+};
 
 //
 //
@@ -27,28 +27,28 @@ export const init: Model = {
 //
 
 export type Msg =
-  | ["ClickedBack"]
-  | ["ClickedThemeMode", ProfileStore.Profile["themeMode"]]
+  | ['ClickedBack']
+  | ['ClickedThemeMode', ProfileStore.Profile['themeMode']];
 
-type OutMsg = ProfileStore.Action
+type OutMsg = ProfileStore.Action;
 
 export const update = (
   { userId }: { userId: UserId },
   msg: Msg,
-  model: Model,
+  model: Model
 ): [Model, Cmd<Msg>, OutMsg[]] => {
   switch (msg[0]) {
-    case "ClickedBack":
-      return [model, Route.back, []]
+    case 'ClickedBack':
+      return [model, Route.back, []];
 
-    case "ClickedThemeMode":
+    case 'ClickedThemeMode':
       return [
         model,
         Cmd.None,
-        [["Profile", ["EditOne", { userId, edits: { themeMode: msg[1] } }]]],
-      ]
+        [['Profile', ['EditOne', { userId, edits: { themeMode: msg[1] } }]]],
+      ];
   }
-}
+};
 
 //
 //
@@ -63,26 +63,26 @@ export const View = ({
   model,
   $send,
 }: {
-  profile: ProfileStore.Profile
-  model: Model
-  $send: (msg: Msg) => void
+  profile: ProfileStore.Profile;
+  model: Model;
+  $send: (msg: Msg) => void;
 }) => (
   <UI.FillBox>
     <UI.Header
-      left={<UI.HeaderBackButton onClick={() => $send(["ClickedBack"])} />}
+      left={<UI.HeaderBackButton onClick={() => $send(['ClickedBack'])} />}
       title="Theme"
     />
 
     <UI.LoadingDialog
-      open={model.status === "Updating"}
+      open={model.status === 'Updating'}
       title="Updating theme..."
     />
 
     <UI.Box sx={{ padding: 2 }}>
       <UI.ThemeModeToggleButtons
         themeMode={profile.themeMode}
-        onChange={(themeMode) => $send(["ClickedThemeMode", themeMode])}
+        onChange={(themeMode) => $send(['ClickedThemeMode', themeMode])}
       />
     </UI.Box>
   </UI.FillBox>
-)
+);

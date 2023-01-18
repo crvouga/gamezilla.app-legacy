@@ -1,8 +1,7 @@
-import { Browser, Cmd, p, RemoteData } from "@gamezilla/core"
-import { UserId } from "@gamezilla/shared"
-import { Route } from "@gamezilla/shared"
-import * as ProfileStore from "./Profile.Store"
-import * as UI from "@gamezilla/ui"
+import { Browser, Cmd, p, RemoteData } from '@gamezilla/core';
+import { Route, UserId } from '@gamezilla/shared';
+import * as UI from '@gamezilla/ui';
+import * as ProfileStore from './Profile.Store';
 
 //
 //
@@ -13,16 +12,16 @@ import * as UI from "@gamezilla/ui"
 //
 
 export type Model = {
-  searchText: string
-}
+  searchText: string;
+};
 
 export const init: [Model, Cmd<Msg>, OutAction[]] = [
   {
-    searchText: "",
+    searchText: '',
   },
   Cmd.None,
-  [["Profile", ["Search", { searchText: "" }]]],
-]
+  [['Profile', ['Search', { searchText: '' }]]],
+];
 
 //
 //
@@ -33,46 +32,46 @@ export const init: [Model, Cmd<Msg>, OutAction[]] = [
 //
 
 export type Msg =
-  | ["ClickedClear"]
-  | ["Focus_Done", Browser.FocusResult]
-  | ["InputtedSearchText", string]
-  | ["ClickedResult", { userId: UserId }]
+  | ['ClickedClear']
+  | ['Focus_Done', Browser.FocusResult]
+  | ['InputtedSearchText', string]
+  | ['ClickedResult', { userId: UserId }];
 
-export type OutAction = ProfileStore.Action
+export type OutAction = ProfileStore.Action;
 
-const searchInputId = "SearchInput"
+const searchInputId = 'SearchInput';
 
 export const update = (
   msg: Msg,
-  model: Model,
+  model: Model
 ): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-    case "Focus_Done":
-      return [model, Cmd.None, []]
+    case 'Focus_Done':
+      return [model, Cmd.None, []];
 
-    case "ClickedClear":
+    case 'ClickedClear':
       return [
-        { ...model, searchText: "" },
+        { ...model, searchText: '' },
         p(
           Browser.focus(searchInputId),
-          Cmd.perform((result) => ["Focus_Done", result]),
+          Cmd.perform((result) => ['Focus_Done', result])
         ),
         [],
-      ]
+      ];
 
-    case "ClickedResult":
-      return [model, Route.push(["Profile", msg[1]]), []]
+    case 'ClickedResult':
+      return [model, Route.push(['Profile', msg[1]]), []];
 
-    case "InputtedSearchText": {
-      const searchTextNew = msg[1]
+    case 'InputtedSearchText': {
+      const searchTextNew = msg[1];
       return [
         { ...model, searchText: searchTextNew },
         Cmd.None,
-        [["Profile", ["Search", { searchText: searchTextNew }]]],
-      ]
+        [['Profile', ['Search', { searchText: searchTextNew }]]],
+      ];
     }
   }
-}
+};
 
 //
 //
@@ -87,24 +86,24 @@ export const View = ({
   model,
   $send,
 }: {
-  profileStore: ProfileStore.Model
-  model: Model
-  $send: (msg: Msg) => void
+  profileStore: ProfileStore.Model;
+  model: Model;
+  $send: (msg: Msg) => void;
 }) => {
-  const results = ProfileStore.toSearch(model.searchText, profileStore)
-  const query = profileStore.search[model.searchText] ?? RemoteData.NotAsked
+  const results = ProfileStore.toSearch(model.searchText, profileStore);
+  const query = profileStore.search[model.searchText] ?? RemoteData.NotAsked;
 
   return (
     <UI.FillBox>
       <UI.InputBase
-        sx={{ width: "100%", paddingY: 1, paddingX: 2 }}
+        sx={{ width: '100%', paddingY: 1, paddingX: 2 }}
         placeholder="Search"
         value={model.searchText}
-        onChange={(event) => $send(["InputtedSearchText", event.target.value])}
+        onChange={(event) => $send(['InputtedSearchText', event.target.value])}
         endAdornment={
           <UI.InputAdornment position="end">
-            {query.type === "Loading" && <UI.CircularProgress size={24} />}
-            <UI.IconButton edge="end" onClick={() => $send(["ClickedClear"])}>
+            {query.type === 'Loading' && <UI.CircularProgress size={24} />}
+            <UI.IconButton edge="end" onClick={() => $send(['ClickedClear'])}>
               <UI.Icons.Close />
             </UI.IconButton>
           </UI.InputAdornment>
@@ -115,16 +114,16 @@ export const View = ({
 
       {results.length === 0 && (
         <UI.Typography sx={{ paddingX: 2 }} color="text.secondary">
-          {query.type === "Loading" ? "Searching..." : "No results found"}
+          {query.type === 'Loading' ? 'Searching...' : 'No results found'}
         </UI.Typography>
       )}
 
-      <UI.List sx={{ overflowY: "scroll" }}>
+      <UI.List sx={{ overflowY: 'scroll' }}>
         {results.map((result) => (
           <UI.ListItemButton
             key={result.userId}
-            sx={{ width: "100%" }}
-            onClick={() => $send(["ClickedResult", { userId: result.userId }])}
+            sx={{ width: '100%' }}
+            onClick={() => $send(['ClickedResult', { userId: result.userId }])}
           >
             <UI.ListItemAvatar>
               <UI.Avatar src={result.avatarUrl} />
@@ -140,5 +139,5 @@ export const View = ({
         ))}
       </UI.List>
     </UI.FillBox>
-  )
-}
+  );
+};

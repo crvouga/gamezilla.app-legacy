@@ -1,9 +1,9 @@
-import { Alerts } from "@gamezilla/shared"
-import { Cmd, p } from "@gamezilla/core"
-import { ProfileAvatar, UserId } from "@gamezilla/shared"
-import { Route } from "@gamezilla/shared"
-import * as UI from "@gamezilla/ui"
-import * as ProfileStore from "./Profile.Store"
+import { Alerts } from '@gamezilla/shared';
+import { Cmd, p } from '@gamezilla/core';
+import { ProfileAvatar, UserId } from '@gamezilla/shared';
+import { Route } from '@gamezilla/shared';
+import * as UI from '@gamezilla/ui';
+import * as ProfileStore from './Profile.Store';
 
 //
 //
@@ -14,20 +14,20 @@ import * as ProfileStore from "./Profile.Store"
 //
 
 export type Model = {
-  status: "Idle" | "GeneratingSeed" | "StyleSelectOpened" | "UpdatingAvatar"
-  seed: ProfileAvatar.Seed
-  style: ProfileAvatar.Style
-}
+  status: 'Idle' | 'GeneratingSeed' | 'StyleSelectOpened' | 'UpdatingAvatar';
+  seed: ProfileAvatar.Seed;
+  style: ProfileAvatar.Style;
+};
 
 export const init = ({ avatarUrl }: { avatarUrl: string }): Model => {
-  const { seed, style } = ProfileAvatar.parseUrl(avatarUrl)
+  const { seed, style } = ProfileAvatar.parseUrl(avatarUrl);
 
   return {
-    status: "Idle",
+    status: 'Idle',
     seed,
     style,
-  }
-}
+  };
+};
 
 //
 //
@@ -38,67 +38,67 @@ export const init = ({ avatarUrl }: { avatarUrl: string }): Model => {
 //
 
 export type Msg =
-  | ["ClickedCancel"]
-  | ["ClickedDone"]
-  | ["StyleSelectClosed"]
-  | ["StyleSelectOpened"]
-  | ["ClickedRandomSeed"]
-  | ["ClickedStyle", ProfileAvatar.Style]
-  | ["InputtedSeed", ProfileAvatar.Seed]
-  | ["RandomSeedGenerated", ProfileAvatar.Seed]
+  | ['ClickedCancel']
+  | ['ClickedDone']
+  | ['StyleSelectClosed']
+  | ['StyleSelectOpened']
+  | ['ClickedRandomSeed']
+  | ['ClickedStyle', ProfileAvatar.Style]
+  | ['InputtedSeed', ProfileAvatar.Seed]
+  | ['RandomSeedGenerated', ProfileAvatar.Seed];
 
-type OutAction = Alerts.Action | ProfileStore.Action
+type OutAction = Alerts.Action | ProfileStore.Action;
 
 export const update = (
   { userId }: { userId: UserId },
   msg: Msg,
-  model: Model,
+  model: Model
 ): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-    case "ClickedCancel":
-      return [model, Route.back, []]
+    case 'ClickedCancel':
+      return [model, Route.back, []];
 
-    case "StyleSelectClosed":
-      return [{ ...model, status: "Idle" }, Cmd.None, []]
+    case 'StyleSelectClosed':
+      return [{ ...model, status: 'Idle' }, Cmd.None, []];
 
-    case "StyleSelectOpened":
-      return [{ ...model, status: "StyleSelectOpened" }, Cmd.None, []]
+    case 'StyleSelectOpened':
+      return [{ ...model, status: 'StyleSelectOpened' }, Cmd.None, []];
 
-    case "InputtedSeed":
-      return [{ ...model, seed: msg[1] }, Cmd.None, []]
+    case 'InputtedSeed':
+      return [{ ...model, seed: msg[1] }, Cmd.None, []];
 
-    case "ClickedRandomSeed":
+    case 'ClickedRandomSeed':
       return [
-        { ...model, status: "GeneratingSeed" },
+        { ...model, status: 'GeneratingSeed' },
         p(
           ProfileAvatar.generateRandomSeed,
-          Cmd.perform((seed) => ["RandomSeedGenerated", seed]),
+          Cmd.perform((seed) => ['RandomSeedGenerated', seed])
         ),
         [],
-      ]
+      ];
 
-    case "RandomSeedGenerated":
-      return [{ ...model, status: "Idle", seed: msg[1] }, Cmd.None, []]
+    case 'RandomSeedGenerated':
+      return [{ ...model, status: 'Idle', seed: msg[1] }, Cmd.None, []];
 
-    case "ClickedStyle":
-      return [{ ...model, style: msg[1] }, Cmd.None, []]
+    case 'ClickedStyle':
+      return [{ ...model, style: msg[1] }, Cmd.None, []];
 
-    case "ClickedDone":
+    case 'ClickedDone':
       return [
         model,
         Route.back,
         [
           [
-            "Profile",
+            'Profile',
             [
-              "EditOne",
+              'EditOne',
               { userId, edits: { avatarUrl: ProfileAvatar.toUrl(model) } },
             ],
           ],
         ],
-      ]
+      ];
   }
-}
+};
 
 //
 //
@@ -112,8 +112,8 @@ export const View = ({
   model,
   $send,
 }: {
-  model: Model
-  $send: (msg: Msg) => void
+  model: Model;
+  $send: (msg: Msg) => void;
 }) => {
   return (
     <UI.FillBox>
@@ -121,7 +121,7 @@ export const View = ({
         left={
           <UI.Button
             sx={{ marginLeft: -1 }}
-            onClick={() => $send(["ClickedCancel"])}
+            onClick={() => $send(['ClickedCancel'])}
           >
             Cancel
           </UI.Button>
@@ -130,7 +130,7 @@ export const View = ({
         right={
           <UI.Button
             sx={{ marginRight: -1 }}
-            onClick={() => $send(["ClickedDone"])}
+            onClick={() => $send(['ClickedDone'])}
           >
             Done
           </UI.Button>
@@ -140,15 +140,15 @@ export const View = ({
       <UI.Avatar
         src={ProfileAvatar.toUrl(model)}
         sx={{
-          marginX: "auto",
-          width: "150px",
-          height: "150px",
+          marginX: 'auto',
+          width: '150px',
+          height: '150px',
           marginBottom: 1,
         }}
       />
 
       <UI.LoadingDialog
-        open={model.status === "UpdatingAvatar"}
+        open={model.status === 'UpdatingAvatar'}
         title="Updating avatar..."
       />
 
@@ -158,17 +158,17 @@ export const View = ({
         </UI.Typography>
         <UI.Select
           sx={{ marginBottom: 2 }}
-          open={model.status === "StyleSelectOpened"}
+          open={model.status === 'StyleSelectOpened'}
           fullWidth
           value={model.style}
-          onOpen={() => $send(["StyleSelectOpened"])}
-          onClose={() => $send(["StyleSelectClosed"])}
+          onOpen={() => $send(['StyleSelectOpened'])}
+          onClose={() => $send(['StyleSelectClosed'])}
           renderValue={(style) => (
             <UI.Box
               sx={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
               }}
             >
               <UI.Avatar
@@ -187,11 +187,11 @@ export const View = ({
               key={style}
               value={style}
               sx={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
               }}
-              onClick={() => $send(["ClickedStyle", style])}
+              onClick={() => $send(['ClickedStyle', style])}
             >
               <UI.Avatar
                 sx={{ marginRight: 1 }}
@@ -214,7 +214,7 @@ export const View = ({
           value={model.seed}
           onChange={(event) =>
             $send([
-              "InputtedSeed",
+              'InputtedSeed',
               ProfileAvatar.toSeed(event.currentTarget.value),
             ])
           }
@@ -222,15 +222,15 @@ export const View = ({
         />
 
         <UI.Button
-          loading={model.status === "GeneratingSeed"}
+          loading={model.status === 'GeneratingSeed'}
           fullWidth
           variant="outlined"
-          onClick={() => $send(["ClickedRandomSeed"])}
+          onClick={() => $send(['ClickedRandomSeed'])}
           sx={{ marginBottom: 4 }}
         >
           Random Seed
         </UI.Button>
       </UI.Box>
     </UI.FillBox>
-  )
-}
+  );
+};
