@@ -26,6 +26,7 @@
       "@gamezilla/game/connect-four": ["libs/game/connect-four/src/index.ts"],
       "@gamezilla/game/gomoku": ["libs/game/gomoku/src/index.ts"],
       "@gamezilla/game/shared": ["libs/game-shared/src/index.ts"],
+      "@gamezilla/game/tetris": ["libs/game/tetris/src/index.ts"],
       "@gamezilla/game/tic-tac-toe": ["libs/game/tic-tac-toe/src/index.ts"],
       "@gamezilla/home": ["libs/home/src/index.ts"],
       "@gamezilla/party": ["libs/party/src/index.ts"],
