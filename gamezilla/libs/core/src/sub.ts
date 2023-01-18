@@ -1,6 +1,6 @@
 import * as Rx from "rxjs"
 import { p } from "./pipe"
-import { t } from "./utils-"
+import { t } from "./utils"
 
 export type Sub<Msg> = Rx.Observable<Msg>
 

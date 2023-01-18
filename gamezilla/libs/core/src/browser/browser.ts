@@ -1,9 +1,9 @@
 import * as Rx from "rxjs"
-import { Cmd } from "../cmd-"
+import { Cmd } from "../cmd"
 import { p } from "../pipe"
-import { Result } from "../result-"
-import { Sub } from "../sub-"
-import { Task } from "../task-"
+import { Result } from "../result"
+import { Sub } from "../sub"
+import { Task } from "../task"
 
 //
 //
