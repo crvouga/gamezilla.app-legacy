@@ -9,7 +9,8 @@ import {
   tick,
   ToBackend,
   ToFrontend
-} from "./maze.types-"
+} from "./maze.types"
+
 //
 //
 //

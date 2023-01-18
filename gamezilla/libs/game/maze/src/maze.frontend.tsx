@@ -11,7 +11,7 @@ import {
   TextField, Typography
 } from "@gamezilla/ui"
 import { Ctx } from "@gamezilla/shared"
-import { Maze } from "./maze-"
+import { Maze } from "./maze"
 import {
   BackendModel,
   Color,
@@ -21,8 +21,8 @@ import {
   initShared,
   ToBackend,
   ToFrontend
-} from "./maze.types-"
-import { Direction, Position } from "./position-"
+} from "./maze.types"
+import { Direction, Position } from "./position"
 
 //
 //

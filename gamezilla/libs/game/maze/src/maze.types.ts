@@ -1,7 +1,7 @@
-import { Keyboard, removeKey, Result } from "@gamezilla/core"
+import { Keyboard, NonEmpty, removeKey, Result } from "@gamezilla/core"
 import { UserId } from "@gamezilla/shared"
-import { Maze } from "./maze-"
-import { Direction, Position } from "./position-"
+import { Maze } from "./maze"
+import { Direction, Position } from "./position"
 
 const { Err, Ok } = Result
 
@@ -40,7 +40,7 @@ type Player = {
 
 export type Color = "Red" | "Blue" | "Green" | "Purple" | "Cyan" | "Pink"
 
-const colorSeq: Color[] = ['Red', 'Blue', "Green", "Purple"]
+const colorSeq: NonEmpty<Color> = ['Red', 'Blue', "Green", "Purple"]
 
 export type FrontendModel = SharedModel
 
@@ -311,7 +311,7 @@ export const initShared = ({ userId }: { userId?: UserId }): SharedModel => {
     type: "Setup",
     players: userId ? {
       [userId]: {
-        color: colorSeq[0]!,
+        color: colorSeq[0],
         userId
       }
     } : {},
