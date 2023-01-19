@@ -1,6 +1,6 @@
 export * from './animation';
 export { Task } from './task';
-export * as Audio from './audio-';
+export * as Audio from './audio';
 export * as Browser from './browser';
 export { Cmd } from './cmd';
 export * as Debug from './debug';
