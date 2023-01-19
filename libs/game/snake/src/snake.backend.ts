@@ -1,5 +1,6 @@
-import { Cmd, Result, Sub, Time } from "@gamezilla/core"
-import * as Snake from "./snake"
+import { Cmd, Result, Sub, Time } from '@gamezilla/core';
+import { UserId } from '@gamezilla/shared';
+import * as Snake from './snake';
 import {
   BackendModel,
   BackendMsg,
@@ -15,7 +16,7 @@ import {
   ToFrontend,
   ToggleStatus,
   ToggleStatusResult,
-} from "./snake.types"
+} from './snake.types';
 
 //
 //
@@ -25,9 +26,9 @@ import {
 //
 //
 
-export type Model = BackendModel
+export type Model = BackendModel;
 
-export const init = initSharedModel
+export const init = initSharedModel;
 
 //
 //
@@ -37,93 +38,100 @@ export const init = initSharedModel
 //
 //
 
-export type Msg = BackendMsg
+export type Msg = BackendMsg;
 
 export const update = (
   { broadcast }: { broadcast: (msg: ToFrontend) => Cmd },
   msg: Msg,
-  model: Model,
+  model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case "Tick": {
+    case 'Tick': {
       const modelNew: Model = {
         ...Snake.step(model),
         gameStatus: model.gameStatus,
-      }
+      };
 
-      return [modelNew, broadcast(["Sync", modelNew])]
+      return [modelNew, broadcast(['Sync', modelNew])];
     }
   }
-}
+};
 
 export const updateFromFrontend = (
   {
     sendToClient,
     broadcast,
   }: {
-    sendToClient: (msg: ToFrontend) => Cmd
-    broadcast: (msg: ToFrontend) => Cmd
+    sendToClient: (msg: ToFrontend) => Cmd;
+    broadcast: (msg: ToFrontend) => Cmd;
   },
   msg: ToBackend,
-  model: Model,
+  model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case 'start-game': {
       return updateRequest(
         { sendToClient, broadcast },
-        ["StartGame_Done", startGame(model)],
-        model,
-      )
+        ['StartGame_Done', startGame(model)],
+        model
+      );
     }
 
-    case "ToggleStatus": {
+    case 'ToggleStatus': {
       return updateRequest(
         { sendToClient, broadcast },
-        ["ToggleStatus_Done", toggleStatus(msg[1], model)],
-        model,
-      )
+        ['ToggleStatus_Done', toggleStatus(msg[1], model)],
+        model
+      );
     }
 
-    case "InputDirection": {
+    case 'InputDirection': {
       return updateRequest(
         { sendToClient, broadcast },
-        ["InputDirection_Done", inputDirection(msg[1], model)],
-        model,
-      )
+        ['InputDirection_Done', inputDirection(msg[1], model)],
+        model
+      );
     }
 
-    case "InputPlayer": {
+    case 'InputPlayer': {
       return updateRequest(
         { sendToClient, broadcast },
-        ["InputPlayer_Done", inputPlayer(msg[1], model)],
-        model,
-      )
+        ['InputPlayer_Done', inputPlayer(msg[1], model)],
+        model
+      );
     }
   }
-}
+};
 
 const updateRequest = (
   {
     sendToClient,
     broadcast,
   }: {
-    sendToClient: (msg: ToFrontend) => Cmd
-    broadcast: (msg: ToFrontend) => Cmd
+    sendToClient: (msg: ToFrontend) => Cmd;
+    broadcast: (msg: ToFrontend) => Cmd;
   },
   response: Response,
-  model: Model,
+  model: Model
 ): [Model, Cmd<Msg>] => {
-  if (response[1].type === "Err") {
-    return [model, sendToClient(response)]
+  if (response[1].type === 'Err') {
+    return [model, sendToClient(response)];
   }
 
-  const modelNew = response[1].value
+  const modelNew = response[1].value;
 
   return [
     modelNew,
-    Cmd.batch([broadcast(response), broadcast(["Sync", modelNew])]),
-  ]
-}
+    Cmd.batch([broadcast(response), broadcast(['Sync', modelNew])]),
+  ];
+};
+
+export const updateRoomLeave = (
+  userId: UserId,
+  model: Model
+): [Model, Cmd<Msg>] => {
+  return [model, Cmd.None];
+};
 
 //
 //
@@ -135,15 +143,15 @@ const updateRequest = (
 
 export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
   switch (model.status) {
-    case "Paused": {
-      return Sub.None
+    case 'Paused': {
+      return Sub.None;
     }
 
-    case "Playing": {
-      return Time.every<Msg>(intervalId, model.tickRate, () => ["Tick"])
+    case 'Playing': {
+      return Time.every<Msg>(intervalId, model.tickRate, () => ['Tick']);
     }
   }
-}
+};
 
 //
 //
@@ -155,62 +163,62 @@ export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
 
 export const inputPlayer = (
   player: InputPlayer[1],
-  model: SharedModel,
+  model: SharedModel
 ): InputPlayer_Done[1] => {
-  if (model.gameStatus.type !== "GameSetup") {
-    return Result.Err("must_be_in_game_setup")
+  if (model.gameStatus.type !== 'GameSetup') {
+    return Result.Err('must_be_in_game_setup');
   }
 
   const modelNew: SharedModel = {
     ...model,
     gameStatus: {
-      type: "GameSetup",
+      type: 'GameSetup',
       player: player,
     },
-  }
+  };
 
-  return Result.Ok(modelNew)
-}
+  return Result.Ok(modelNew);
+};
 
 export const inputDirection = (
   { direction, userId }: InputDirection[1],
-  model: SharedModel,
+  model: SharedModel
 ): InputDirection_Done[1] => {
-  if (model.gameStatus.type !== "GameStarted") {
-    return Result.Err("must_be_in_game_started")
+  if (model.gameStatus.type !== 'GameStarted') {
+    return Result.Err('must_be_in_game_started');
   }
 
-  const playerUserId = model.gameStatus.player[1]
+  const playerUserId = model.gameStatus.player[1];
 
   if (playerUserId !== userId) {
-    return Result.Err("user_must_be_the_current_player")
+    return Result.Err('user_must_be_the_current_player');
   }
 
   const modelNew: SharedModel = {
     ...model,
     ...Snake.enqueueDirection(direction, model),
-    status: "Playing",
-  }
+    status: 'Playing',
+  };
 
-  return Result.Ok(modelNew)
-}
+  return Result.Ok(modelNew);
+};
 
 export const toggleStatus = (
   { userId }: ToggleStatus[1],
-  model: SharedModel,
+  model: SharedModel
 ): ToggleStatusResult => {
-  if (model.gameStatus.type !== "GameStarted") {
-    return Result.Err("must_be_in_game_started")
+  if (model.gameStatus.type !== 'GameStarted') {
+    return Result.Err('must_be_in_game_started');
   }
 
   if (model.gameStatus.player[1] !== userId) {
-    return Result.Err("user_must_be_the_current_player")
+    return Result.Err('user_must_be_the_current_player');
   }
 
   const modelNew: SharedModel = {
     ...model,
-    status: model.status === "Paused" ? "Playing" : "Paused",
-  }
+    status: model.status === 'Paused' ? 'Playing' : 'Paused',
+  };
 
-  return Result.Ok(modelNew)
-}
+  return Result.Ok(modelNew);
+};
