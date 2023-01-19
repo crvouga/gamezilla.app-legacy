@@ -1,7 +1,7 @@
 import { Cmd } from '@gamezilla/core';
-import { UserId } from '@gamezilla/shared';
+import { UserId, Username } from '@gamezilla/shared';
 import { Route } from '@gamezilla/shared';
-import * as ProfileStore from './Profile.Store';
+import * as ProfileStore from './profile-.store';
 import * as UI from '@gamezilla/ui';
 
 //
@@ -12,11 +12,11 @@ import * as UI from '@gamezilla/ui';
 //
 //
 
-export type Model = { name: string };
+export type Model = { username: string };
 
-export const init = ({ name }: { name: string }): Model => {
+export const init = ({ username }: { username: string }): Model => {
   return {
-    name,
+    username,
   };
 };
 
@@ -29,11 +29,11 @@ export const init = ({ name }: { name: string }): Model => {
 //
 
 export type Msg =
-  | ['InputtedName', string]
   | ['ClickedCancel']
-  | ['ClickedSubmit'];
+  | ['ClickedSubmit']
+  | ['InputtedUsername', string];
 
-export type OutAction = ProfileStore.Action;
+type OutAction = ProfileStore.Action;
 
 export const update = (
   { userId }: { userId: UserId },
@@ -41,18 +41,30 @@ export const update = (
   model: Model
 ): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-    case 'InputtedName':
-      return [{ ...model, name: msg[1] }, Cmd.None, []];
-
-    case 'ClickedSubmit':
-      return [
-        model,
-        Route.back,
-        [['Profile', ['EditOne', { userId, edits: { name: model.name } }]]],
-      ];
+    case 'InputtedUsername':
+      return [{ ...model, username: msg[1] }, Cmd.None, []];
 
     case 'ClickedCancel':
       return [model, Route.back, []];
+
+    case 'ClickedSubmit': {
+      const username = Username.decode(model.username);
+
+      if (username.type === 'Err') {
+        return [model, Cmd.None, []];
+      }
+
+      return [
+        model,
+        Route.back,
+        [
+          [
+            'Profile',
+            ['EditOne', { userId, edits: { username: username.value } }],
+          ],
+        ],
+      ];
+    }
   }
 };
 
@@ -81,7 +93,7 @@ export const View = ({
           Cancel
         </UI.Button>
       }
-      title="Name"
+      title="Username"
       right={
         <UI.Button
           sx={{ marginRight: -1 }}
@@ -92,13 +104,15 @@ export const View = ({
       }
     />
 
-    <UI.Box sx={{ padding: 2 }}>
+    <UI.Box sx={{ p: 2, width: '100%' }}>
       <UI.TextField
-        value={model.name}
+        value={model.username}
         sx={{ marginBottom: 4 }}
-        label="Name"
+        label="Username"
         fullWidth
-        onChange={(event) => $send(['InputtedName', event.currentTarget.value])}
+        onChange={(event) =>
+          $send(['InputtedUsername', event.currentTarget.value])
+        }
       />
     </UI.Box>
   </UI.FillBox>

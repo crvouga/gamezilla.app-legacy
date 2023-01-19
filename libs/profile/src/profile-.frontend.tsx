@@ -1,5 +1,5 @@
 import { Cmd, Sub } from '@gamezilla/core';
-import { FrontendModel, FrontendMsg, ToFrontend } from './Profile.Types';
+import { FrontendModel, FrontendMsg, ToFrontend } from './profile-.types';
 
 //
 //
