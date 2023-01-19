@@ -1,5 +1,5 @@
 import { Cmd, Sub } from '@gamezilla/core';
-import { BackendModel, BackendMsg, Req, ToBackend } from './profile-.types';
+import { FrontendModel, FrontendMsg, ToFrontend } from './profile.types';
 
 //
 //
@@ -9,7 +9,7 @@ import { BackendModel, BackendMsg, Req, ToBackend } from './profile-.types';
 //
 //
 
-export type Model = BackendModel;
+export type Model = FrontendModel;
 
 export const init: [Model, Cmd<Msg>] = [null, Cmd.None];
 
@@ -21,33 +21,23 @@ export const init: [Model, Cmd<Msg>] = [null, Cmd.None];
 //
 //
 
-export type Msg = BackendMsg;
+export type Msg = FrontendMsg;
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'none': {
+    case 'find_many': {
       return [model, Cmd.None];
     }
   }
 };
 
-export const updateFromFrontend = (
-  msg: ToBackend,
+export const updateFromBackend = (
+  msg: ToFrontend,
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'find_many': {
+    case 'find_many_done': {
       return [model, Cmd.None];
-    }
-  }
-};
-
-export const msgToQuery = (msg: Req) => {
-  switch (msg[0]) {
-    case 'find_many': {
-      const userIds = msg[1].userId.map((x) => `'${x}'`).join(',');
-
-      return `SELECT * FROM profile WHERE user_id IN (${userIds})`;
     }
   }
 };
@@ -62,4 +52,16 @@ export const msgToQuery = (msg: Req) => {
 
 export const subscriptions = (_model: Model): Sub<Msg> => {
   return Sub.None;
+};
+
+//
+//
+//
+// view
+//
+//
+//
+
+export const view = (model: Model) => {
+  return <pre>{JSON.stringify(model, null, 2)}</pre>;
 };

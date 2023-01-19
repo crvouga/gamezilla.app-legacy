@@ -1,8 +1,7 @@
 import { Cmd } from '@gamezilla/core';
-import { UserId, Username } from '@gamezilla/shared';
-import { Route } from '@gamezilla/shared';
-import * as ProfileStore from './profile-.store';
+import { Route, UserId, Username } from '@gamezilla/shared';
 import * as UI from '@gamezilla/ui';
+import * as ProfileStore from './profile.store';
 
 //
 //

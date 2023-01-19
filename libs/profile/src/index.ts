@@ -1,5 +1,5 @@
-export * as Profile from './profile-';
-export * as ProfileStore from './profile-.store';
+export * as Profile from './profile';
+export * as ProfileStore from './profile.store';
 export * as ProfileCreate from './profile-create';
 export * as ProfileDelete from './profile-delete';
 export * as ProfileUpdate from './profile-update';
@@ -7,4 +7,4 @@ export * as ProfileUpdateAvatar from './profile-update-avatar';
 export * as ProfileUpdateName from './profile-update-name';
 export * as ProfileUpdateTheme from './profile-update-theme';
 export * as ProfileUpdateUsername from './profile-update-username';
-export * as Search from './search-';
+export * as Search from './search';
