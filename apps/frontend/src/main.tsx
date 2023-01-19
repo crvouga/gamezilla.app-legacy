@@ -51,7 +51,7 @@ export const init = (location: Browser.Location): [Model, Cmd<Msg>] => {
   const route = p(
     location,
     Route.decode,
-    Option.withDefault<Route.Model>(['Room'])
+    Option.withDefault<Route.Model>(['Home'])
   );
   const [auth, authCmd] = Auth.init();
   const alerts = Alerts.init;
@@ -76,6 +76,7 @@ export const init = (location: Browser.Location): [Model, Cmd<Msg>] => {
       wire: 'Connecting',
     },
     Cmd.batch<Msg>([
+      Route.replace(route),
       Cmd.tag('Auth', authCmd),
       Cmd.tag('Page', pageCmd),
       Cmd.tag('Room', gameRoomCmd),
