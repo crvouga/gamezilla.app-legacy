@@ -3,10 +3,10 @@ import { Audio, Cmd, exhaustive, Option, p, Sub, t } from '@gamezilla/core';
 import { UserId } from '@gamezilla/shared';
 import * as UI from '@gamezilla/ui';
 import { Ctx } from '@gamezilla/shared';
-import * as Board from '../Board';
-import * as Clock from '../Clock';
-import Sounds from '../Sounds';
-import { PawnIcon, VersusHeader } from '../Views';
+import * as Board from '../chess-board';
+import * as Clock from '../chess-clock';
+import Sounds from '../chess-sounds';
+import { PawnIcon, VersusHeader } from '../chess-views';
 import {
   BackendModel,
   FrontendModel,
@@ -20,7 +20,7 @@ import {
   startGame,
   ToBackend,
   ToFrontend,
-} from './VsUser.Types';
+} from './vs-user.types';
 
 //
 //

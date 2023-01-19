@@ -3,10 +3,10 @@ import { Audio, Cmd, exhaustive, Option, Sub, t } from '@gamezilla/core';
 import { viewVsBotSetupScreen } from '@gamezilla/game-shared';
 import { Ctx } from '@gamezilla/shared';
 import * as UI from '@gamezilla/ui';
-import * as Board from '../Board';
-import { viewCoverArt } from '../Chess';
-import Sounds from '../Sounds';
-import { PawnIcon } from '../Views';
+import * as Board from '../chess-board';
+import { viewCoverArt } from '../chess-';
+import Sounds from '../chess-sounds';
+import { PawnIcon } from '../chess-views';
 import {
   BackendModel,
   FrontendModel,
@@ -18,7 +18,7 @@ import {
   SharedModel,
   ToBackend,
   ToFrontend,
-} from './VsBot.Types';
+} from './vs-bot.types';
 
 //
 //
