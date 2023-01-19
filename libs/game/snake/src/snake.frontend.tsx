@@ -402,10 +402,13 @@ export const ViewBoard = ({
   );
 };
 
-export const mergeWithBackend = (
-  frontendModel: FrontendModel,
-  backendModel: BackendModel
-): FrontendModel => {
+export const mergeWithBackend = ({
+  frontendModel,
+  backendModel,
+}: {
+  frontendModel: FrontendModel;
+  backendModel: BackendModel;
+}): FrontendModel => {
   return {
     ...backendModel,
     openedMenuId: frontendModel.openedMenuId,

@@ -1,4 +1,5 @@
-import { Cmd, Sub, Time } from "@gamezilla/core"
+import { Cmd, Sub, Time } from '@gamezilla/core';
+import { UserId } from '@gamezilla/shared';
 import {
   BackendModel,
   BackendMsg,
@@ -9,8 +10,8 @@ import {
   mouseMove,
   tick,
   ToBackend,
-  ToFrontend
-} from "./tetris.types"
+  ToFrontend,
+} from './tetris.types';
 
 //
 //
@@ -20,9 +21,9 @@ import {
 //
 //
 
-export type Model = BackendModel
+export type Model = BackendModel;
 
-export const init: Model = initShared
+export const init: Model = initShared;
 
 //
 //
@@ -32,83 +33,90 @@ export const init: Model = initShared
 //
 //
 
-export type Msg = BackendMsg
+export type Msg = BackendMsg;
 
 export const update = (
   { broadcast }: { broadcast: (msg: ToFrontend) => Cmd },
   msg: Msg,
-  model: Model,
+  model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case "Tick": {
-      const modelNext = tick(model)
+    case 'Tick': {
+      const modelNext = tick(model);
 
-      return [modelNext, broadcast(["Tick_Done", modelNext])]
+      return [modelNext, broadcast(['Tick_Done', modelNext])];
     }
   }
-}
+};
 
 export const updateFromFrontend = (
   {
     broadcast,
     sendToClient,
   }: {
-    broadcast: (msg: ToFrontend) => Cmd
-    sendToClient: (msg: ToFrontend) => Cmd
+    broadcast: (msg: ToFrontend) => Cmd;
+    sendToClient: (msg: ToFrontend) => Cmd;
   },
   msg: ToBackend,
-  model: Model,
+  model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case "MouseMove": {
-      const toFrontend = mouseMove(msg, model)
+    case 'MouseMove': {
+      const toFrontend = mouseMove(msg, model);
 
-      if (toFrontend[1].type === "Err") {
-        return [model, sendToClient(toFrontend)]
+      if (toFrontend[1].type === 'Err') {
+        return [model, sendToClient(toFrontend)];
       }
 
-      const modelNew = toFrontend[1].value
+      const modelNew = toFrontend[1].value;
 
-      return [modelNew, broadcast(toFrontend)]
+      return [modelNew, broadcast(toFrontend)];
     }
 
-    case "InputDrop": {
-      const result = inputDrop(model)
+    case 'InputDrop': {
+      const result = inputDrop(model);
 
-      if (result.type === "Err") {
-        return [model, sendToClient(["InputDrop_Done", result])]
+      if (result.type === 'Err') {
+        return [model, sendToClient(['InputDrop_Done', result])];
       }
 
-      const modelNew = result.value
+      const modelNew = result.value;
 
-      return [modelNew, broadcast(["InputDrop_Done", result])]
+      return [modelNew, broadcast(['InputDrop_Done', result])];
     }
 
-    case "InputTranslate": {
-      const result = inputTranslate(msg[1], model)
+    case 'InputTranslate': {
+      const result = inputTranslate(msg[1], model);
 
-      if (result.type === "Err") {
-        return [model, sendToClient(["InputTranslate_Done", result])]
+      if (result.type === 'Err') {
+        return [model, sendToClient(['InputTranslate_Done', result])];
       }
 
-      const modelNew = result.value
+      const modelNew = result.value;
 
-      return [modelNew, broadcast(["InputTranslate_Done", result])]
+      return [modelNew, broadcast(['InputTranslate_Done', result])];
     }
 
-    case "InputRotate": {
-      const result = inputRotate(model)
+    case 'InputRotate': {
+      const result = inputRotate(model);
 
-      if (result.type === "Err") {
-        return [model, sendToClient(["InputRotate_Done", result])]
+      if (result.type === 'Err') {
+        return [model, sendToClient(['InputRotate_Done', result])];
       }
 
-      const modelNew = result.value
+      const modelNew = result.value;
 
-      return [modelNew, broadcast(["InputRotate_Done", result])]
+      return [modelNew, broadcast(['InputRotate_Done', result])];
     }
   }
-}
+};
+
+export const updateRoomLeave = (
+  userId: UserId,
+  model: Model
+): [Model, Cmd<Msg>] => {
+  return [model, Cmd.None];
+};
 
 //
 //
@@ -119,5 +127,5 @@ export const updateFromFrontend = (
 //
 
 export const subscriptions = (intervalId: string, _model: Model): Sub<Msg> => {
-  return Time.every(intervalId, 500, (): Msg => ["Tick"])
-}
+  return Time.every(intervalId, 500, (): Msg => ['Tick']);
+};

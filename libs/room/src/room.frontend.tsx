@@ -21,7 +21,7 @@ import {
   ViewEmptyState,
   ViewLoadingState,
 } from '@gamezilla/ui';
-import { viewCoverArt } from './game';
+import { gameNameToString, viewCoverArt } from './game';
 import * as Game from './game.frontend';
 import { GameName, gameNameList } from './game.types';
 import {
@@ -645,7 +645,7 @@ export const ViewPageGame = ({
           Home
         </Button>
         <Typography variant="h6" sx={{ flex: 1, textAlign: 'center' }}>
-          {game?.[0] ? Game.gameNameToString(game[0]) : 'Game'}
+          {game?.[0] ? gameNameToString(game[0]) : 'Game'}
         </Typography>
         <Badge
           badgeContent={usersInRoom.length > 1 ? usersInRoom.length : undefined}
@@ -824,7 +824,7 @@ export const GameCard = ({ gameName }: { gameName: GameName }) => {
         noWrap
         sx={{ width: '100%', px: 1, py: 0.5 }}
       >
-        {Game.gameNameToString(gameName)}
+        {gameNameToString(gameName)}
       </Typography>
     </Paper>
   );
@@ -1042,7 +1042,7 @@ export const ViewGameCard = ({
             }}
           >
             <Typography color="white" align="left" variant="h4">
-              {Game.gameNameToString(gameName)}
+              {gameNameToString(gameName)}
             </Typography>
           </Box>
         </Box>
@@ -1203,7 +1203,7 @@ export const RoomCard = ({
         >
           {gameName && (
             <Typography variant="overline" color="primary.main" noWrap>
-              {Game.gameNameToString(gameName)}
+              {gameNameToString(gameName)}
             </Typography>
           )}
           <Typography variant="h6" noWrap>

@@ -1,17 +1,18 @@
-import { Alerts } from '@gamezilla/shared';
 import { Cmd, Sub } from '@gamezilla/core';
 import { GameRoomCtx } from '@gamezilla/game-shared';
 import { ChessFrontend as Chess } from '@gamezilla/game/chess';
 import { ConnectFourFrontend as ConnectFour } from '@gamezilla/game/connect-four';
 import { GomokuFrontend as Gomoku } from '@gamezilla/game/gomoku';
+import { MazeFrontend as Maze } from '@gamezilla/game/maze';
+import { SnakeFrontend as Snake } from '@gamezilla/game/snake';
+import { TetrisFrontend as Tetris } from '@gamezilla/game/tetris';
 import { TicTacToeFrontend as TicTacToe } from '@gamezilla/game/tic-tac-toe';
 import { ProfileStore } from '@gamezilla/profile';
-import { Ctx } from '@gamezilla/shared';
+import { Alerts, Ctx } from '@gamezilla/shared';
 import {
   BackendModel,
   FrontendModel,
   FrontendMsg,
-  GameName,
   ToBackend,
   ToFrontend,
 } from './game.types';
@@ -47,6 +48,18 @@ export const init = ({
 
     case 'Gomoku': {
       return [['Gomoku', Gomoku.init], Cmd.None];
+    }
+
+    case 'Tetris': {
+      return [['Tetris', Tetris.init], Cmd.None];
+    }
+
+    case 'Snake': {
+      return [['Snake', Snake.init], Cmd.None];
+    }
+
+    case 'Maze': {
+      return [['Maze', Maze.init({})], Cmd.None];
     }
   }
 };
@@ -123,6 +136,42 @@ export const update = (
       }
       return [model, Cmd.None];
     }
+
+    case 'Tetris': {
+      if (msg[0] === 'Tetris') {
+        const [child, cmd] = Tetris.update(
+          { sendToBackend: (msg) => sendToBackend(['Tetris', msg]) },
+          msg[1],
+          model[1]
+        );
+        return [['Tetris', child], Cmd.tag('Tetris', cmd)];
+      }
+      return [model, Cmd.None];
+    }
+
+    case 'Snake': {
+      if (msg[0] === 'Snake') {
+        const [child, cmd] = Snake.update(
+          { ctx, sendToBackend: (msg) => sendToBackend(['Snake', msg]) },
+          msg[1],
+          model[1]
+        );
+        return [['Snake', child], Cmd.tag('Snake', cmd)];
+      }
+      return [model, Cmd.None];
+    }
+
+    case 'Maze': {
+      if (msg[0] === 'Maze') {
+        const [child, cmd] = Maze.update(
+          { ctx, sendToBackend: (msg) => sendToBackend(['Maze', msg]) },
+          msg[1],
+          model[1]
+        );
+        return [['Maze', child], Cmd.tag('Maze', cmd)];
+      }
+      return [model, Cmd.None];
+    }
   }
 };
 
@@ -184,6 +233,38 @@ export const updateFromBackend = (
       }
       return [model, Cmd.None, []];
     }
+
+    case 'Tetris': {
+      if (model[0] === 'Tetris') {
+        const [child, cmd] = Tetris.updateFromBackend(msg[1], model[1]);
+        return [['Tetris', child], Cmd.tag('Tetris', cmd), []];
+      }
+      return [model, Cmd.None, []];
+    }
+
+    case 'Snake': {
+      if (model[0] === 'Snake') {
+        const [child, cmd] = Snake.updateFromBackend(
+          // { ctx, sendToBackend: (msg) => sendToBackend(['Snake', msg]) },
+          msg[1],
+          model[1]
+        );
+        return [['Snake', child], Cmd.tag('Snake', cmd), []];
+      }
+      return [model, Cmd.None, []];
+    }
+
+    case 'Maze': {
+      if (model[0] === 'Maze') {
+        const [child, cmd] = Maze.updateFromBackend(
+          // { ctx, sendToBackend: (msg) => sendToBackend(['Maze', msg]) },
+          msg[1],
+          model[1]
+        );
+        return [['Maze', child], Cmd.tag('Maze', cmd), []];
+      }
+      return [model, Cmd.None, []];
+    }
   }
 };
 
@@ -211,6 +292,18 @@ export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
 
     case 'Gomoku': {
       return Sub.tag('Gomoku', Gomoku.subscriptions(model[1]));
+    }
+
+    case 'Tetris': {
+      return Sub.tag('Tetris', Tetris.subscriptions(model[1]));
+    }
+
+    case 'Snake': {
+      return Sub.tag('Snake', Snake.subscriptions(intervalId, model[1]));
+    }
+
+    case 'Maze': {
+      return Sub.tag('Maze', Maze.subscriptions(model[1]));
     }
   }
 };
@@ -276,25 +369,32 @@ export const View = ({
         ctx,
       });
     }
-  }
-};
 
-export const gameNameToString = (game: GameName): string => {
-  switch (game) {
-    case 'connect-four': {
-      return 'Connect Four';
+    case 'Tetris': {
+      return Tetris.View({
+        $send: (msg) => $send(['Tetris', msg]),
+        model: model[1],
+        // gameRoomCtx,
+        // ctx,
+      });
     }
 
-    case 'TicTacToe': {
-      return 'Tic-Tac-Toe';
+    case 'Snake': {
+      return Snake.View({
+        $send: (msg) => $send(['Snake', msg]),
+        model: model[1],
+        // gameRoomCtx,
+        ctx,
+      });
     }
 
-    case 'Chess': {
-      return 'Chess';
-    }
-
-    case 'Gomoku': {
-      return 'Gomoku';
+    case 'Maze': {
+      return Maze.View({
+        $send: (msg) => $send(['Maze', msg]),
+        model: model[1],
+        // gameRoomCtx,
+        ctx,
+      });
     }
   }
 };
@@ -400,6 +500,84 @@ export const mergeWithBackend = ({
           'Gomoku',
           Gomoku.mergeWithBackend({
             frontendModel: Gomoku.init,
+            backendModel: backendModel[1],
+          }),
+        ],
+        Cmd.None,
+      ];
+    }
+
+    case 'Tetris': {
+      if (frontendModel[0] === 'Tetris') {
+        return [
+          [
+            'Tetris',
+            Tetris.mergeWithBackend({
+              frontendModel: frontendModel[1],
+              backendModel: backendModel[1],
+            }),
+          ],
+          Cmd.None,
+        ];
+      }
+
+      return [
+        [
+          'Tetris',
+          Tetris.mergeWithBackend({
+            frontendModel: Tetris.init,
+            backendModel: backendModel[1],
+          }),
+        ],
+        Cmd.None,
+      ];
+    }
+
+    case 'Snake': {
+      if (frontendModel[0] === 'Snake') {
+        return [
+          [
+            'Snake',
+            Snake.mergeWithBackend({
+              frontendModel: frontendModel[1],
+              backendModel: backendModel[1],
+            }),
+          ],
+          Cmd.None,
+        ];
+      }
+
+      return [
+        [
+          'Snake',
+          Snake.mergeWithBackend({
+            frontendModel: Snake.init,
+            backendModel: backendModel[1],
+          }),
+        ],
+        Cmd.None,
+      ];
+    }
+
+    case 'Maze': {
+      if (frontendModel[0] === 'Maze') {
+        return [
+          [
+            'Maze',
+            Maze.mergeWithBackend({
+              frontendModel: frontendModel[1],
+              backendModel: backendModel[1],
+            }),
+          ],
+          Cmd.None,
+        ];
+      }
+
+      return [
+        [
+          'Maze',
+          Maze.mergeWithBackend({
+            frontendModel: Maze.init({}),
             backendModel: backendModel[1],
           }),
         ],
