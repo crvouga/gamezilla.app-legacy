@@ -1,4 +1,4 @@
-import { Spring, Uuid } from '@gamezilla/core';
+import { Ease, Spring, Uuid } from '@gamezilla/core';
 import { SvgIcon, Sx } from '@gamezilla/ui';
 import { useLayoutEffect, useRef } from 'react';
 import {
@@ -21,6 +21,7 @@ export type VisualModel = VisualDisc[][];
 export type VisualDisc = {
   type: 'entry' | 'exit';
   yPosition: Spring.Model;
+  yPosition_: Ease.Model;
   playerType: PlayerType;
 };
 
@@ -579,6 +580,12 @@ export const step = ({
           type: 'entry',
           playerType: discTrue,
           yPosition: Spring.init({ from: MAX_COLUMN_HEIGHT + 1, to: j }),
+          yPosition_: {
+            from: MAX_COLUMN_HEIGHT + 1,
+            to: j,
+            durationMs: 1000,
+            startMs: Date.now(),
+          },
         });
         continue;
       }
@@ -628,6 +635,12 @@ export const initVisual = (columns: Columns): VisualModel => {
           type: 'entry',
           playerType: discTrue,
           yPosition: Spring.init({ from: j, to: j }),
+          yPosition_: {
+            from: j,
+            to: j,
+            durationMs: 0,
+            startMs: Date.now(),
+          },
         });
       }
     }
