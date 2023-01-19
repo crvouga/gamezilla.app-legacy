@@ -4,7 +4,7 @@ import { viewVsBotSetupScreen } from '@gamezilla/game-shared';
 import { Ctx } from '@gamezilla/shared';
 import * as UI from '@gamezilla/ui';
 import * as Board from '../chess-board';
-import { viewCoverArt } from '../chess-';
+import { viewCoverArt } from '../chess';
 import Sounds from '../chess-sounds';
 import { PawnIcon } from '../chess-views';
 import {
@@ -470,8 +470,7 @@ export const View = ({
   );
 };
 
-// @ts-ignore
-const toGameText = (model: SharedModel): string => {
+export const toGameText = (model: SharedModel): string => {
   switch (model.type) {
     case 'GameOver': {
       switch (model.gameOver.type) {

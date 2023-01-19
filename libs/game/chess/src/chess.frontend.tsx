@@ -9,7 +9,7 @@ import {
   FrontendMsg,
   ToBackend,
   ToFrontend,
-} from './chess.types';
+} from './chess-.types';
 import Sounds from './chess-sounds';
 import * as VsBot from './vs-bot/vs-bot.frontend';
 import * as VsUser from './vs-user/vs-user.frontend';
