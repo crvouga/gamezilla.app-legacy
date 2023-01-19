@@ -1,16 +1,15 @@
-import { Alerts } from '@gamezilla/shared';
 import { Audio, Cmd, p, RemoteData, Sub, Unit } from '@gamezilla/core';
 import { GameRoomCtx, viewSelectModeScreen } from '@gamezilla/game-shared';
-import { Ctx } from '@gamezilla/shared';
-import { viewCoverArt } from './chess';
+import { Alerts, Ctx } from '@gamezilla/shared';
+import { viewCoverArt } from './chess-board';
+import Sounds from './chess-sounds';
 import {
   BackendModel,
   FrontendModel,
   FrontendMsg,
   ToBackend,
   ToFrontend,
-} from './chess-.types';
-import Sounds from './chess-sounds';
+} from './chess.types';
 import * as VsBot from './vs-bot/vs-bot.frontend';
 import * as VsUser from './vs-user/vs-user.frontend';
 
