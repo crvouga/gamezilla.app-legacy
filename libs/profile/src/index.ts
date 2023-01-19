@@ -1,5 +1,5 @@
 export * as Profile from './profile';
-export * as ProfileStore from './profile-.store';
+export * as ProfileStore from './profile-store';
 export * as ProfileCreate from './profile-create';
 export * as ProfileDelete from './profile-delete';
 export * as ProfileUpdate from './profile-update';
