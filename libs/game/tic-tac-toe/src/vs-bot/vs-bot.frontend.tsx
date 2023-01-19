@@ -2,7 +2,7 @@ import { Alerts } from '@gamezilla/shared';
 import { Cmd, Sub } from '@gamezilla/core';
 import { viewVsBotSetupScreen } from '@gamezilla/game-shared';
 import { Ctx } from '@gamezilla/shared';
-import * as UI from '@gamezilla/ui';
+import * as UI from '@gamezilla/shared/ui';
 import {
   BotLevel,
   botLevels,

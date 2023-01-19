@@ -3,7 +3,7 @@ import { Cmd, exhaustive } from '@gamezilla/core';
 import { UserId } from '@gamezilla/shared';
 import { ProfileStore } from '@gamezilla/profile';
 import { Ctx } from '@gamezilla/shared';
-import * as UI from '@gamezilla/ui';
+import * as UI from '@gamezilla/shared/ui';
 import {
   emptyBoard,
   gameTheme,

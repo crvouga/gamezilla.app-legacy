@@ -1,4 +1,4 @@
-import { Alerts } from "@gamezilla/shared";
+import { Alerts } from '@gamezilla/shared';
 import {
   Account,
   Auth,
@@ -6,7 +6,7 @@ import {
   LoginEmailLink,
   LoginPhone,
   LoginPhoneVerify,
-  Logout
+  Logout,
 } from '@gamezilla/auth';
 import { Chat, ChatConversation, ChatNew, ChatStore } from '@gamezilla/chat';
 import { Cmd, exhaustive, p, Sub, t } from '@gamezilla/core';
@@ -22,11 +22,11 @@ import {
   ProfileUpdateName,
   ProfileUpdateTheme,
   ProfileUpdateUsername,
-  Search
+  Search,
 } from '@gamezilla/profile';
 import { RoomFrontend as GameRoom } from '@gamezilla/room';
 import { Ctx, PhoneNumber, Route, UserId } from '@gamezilla/shared';
-import * as UI from '@gamezilla/ui';
+import * as UI from '@gamezilla/shared/ui';
 
 //
 //

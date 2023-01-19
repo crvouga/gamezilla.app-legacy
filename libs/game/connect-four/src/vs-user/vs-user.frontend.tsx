@@ -21,7 +21,7 @@ import {
   Tooltip,
   Typography,
   useTheme,
-} from '@gamezilla/ui';
+} from '@gamezilla/shared/ui';
 import {
   PlayerType,
   playerTypeToColor,

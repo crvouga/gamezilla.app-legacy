@@ -15,7 +15,7 @@ import {
   Typography,
   useTheme,
   ViewEmptyState,
-} from '@gamezilla/ui';
+} from '@gamezilla/shared/ui';
 import { Mic } from './Mic';
 import {
   FrontendModel,

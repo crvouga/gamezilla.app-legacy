@@ -1,6 +1,6 @@
 import { memoize, Result, Task } from '@gamezilla/core';
 import { Minimax } from '@gamezilla/game-shared';
-import * as UI from '@gamezilla/ui';
+import * as UI from '@gamezilla/shared/ui';
 import * as Threads from 'threads';
 
 const { Err, Ok } = Result;
