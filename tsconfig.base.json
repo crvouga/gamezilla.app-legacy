@@ -35,7 +35,7 @@
       "@gamezilla/profile": ["libs/profile/src/index.ts"],
       "@gamezilla/room": ["libs/room/src/index.ts"],
       "@gamezilla/shared": ["libs/shared/src/index.ts"],
-      "@gamezilla/ui": ["libs/ui/src/index.ts"]
+      "@gamezilla/shared/ui": ["libs/shared/ui/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

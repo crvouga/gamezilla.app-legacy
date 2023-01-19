@@ -1,6 +1,6 @@
 import { Cmd, RemoteData } from '@gamezilla/core';
 import { Route, UserId } from '@gamezilla/shared';
-import * as UI from '@gamezilla/ui';
+import * as UI from '@gamezilla/shared/ui';
 import * as ProfileStore from './profile.store';
 
 //

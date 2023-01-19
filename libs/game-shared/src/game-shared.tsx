@@ -21,7 +21,7 @@ import {
   ToggleButtonGroup,
   Typography,
   ViewNode,
-} from '@gamezilla/ui';
+} from '@gamezilla/shared/ui';
 
 //
 //

@@ -11,7 +11,7 @@ import {
   conformation,
   fillBox,
   text,
-} from '@gamezilla/ui';
+} from '@gamezilla/shared/ui';
 import { viewBoard, viewCoverArt, viewStoneIcon } from '../gomoku/gomoku';
 import {
   BackendModel,

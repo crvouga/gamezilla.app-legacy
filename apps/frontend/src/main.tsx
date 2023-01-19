@@ -32,8 +32,8 @@ import { PartyFrontend as Party } from '@gamezilla/party';
 import { ProfileStore } from '@gamezilla/profile';
 import { RoomFrontend as GameRoom } from '@gamezilla/room';
 import { Alerts, Route } from '@gamezilla/shared';
-import * as UI from '@gamezilla/ui';
-import { Box, FillBox, Typography } from '@gamezilla/ui';
+import * as UI from '@gamezilla/shared/ui';
+import { Box, FillBox, Typography } from '@gamezilla/shared/ui';
 import * as ReactDOM from 'react-dom/client';
 import { io, Socket } from 'socket.io-client';
 

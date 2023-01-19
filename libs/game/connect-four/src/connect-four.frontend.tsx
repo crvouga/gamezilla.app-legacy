@@ -6,7 +6,7 @@ import {
   viewSelectModeScreen,
 } from '@gamezilla/game-shared';
 import { Ctx } from '@gamezilla/shared';
-import * as UI from '@gamezilla/ui';
+import * as UI from '@gamezilla/shared/ui';
 import {
   BackendModel,
   FrontendModel,

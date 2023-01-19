@@ -15,7 +15,7 @@ import {
   ListItemIcon,
   Typography,
   useTheme,
-} from '@gamezilla/ui';
+} from '@gamezilla/shared/ui';
 import { ListItemText } from '@mui/material';
 import { matchSorter } from 'match-sorter';
 

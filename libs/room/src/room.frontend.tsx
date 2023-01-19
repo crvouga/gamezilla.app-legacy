@@ -20,7 +20,7 @@ import {
   Typography,
   ViewEmptyState,
   ViewLoadingState,
-} from '@gamezilla/ui';
+} from '@gamezilla/shared/ui';
 import { gameNameToString, viewCoverArt } from './game';
 import * as Game from './game.frontend';
 import { GameName, gameNameList } from './game.types';

@@ -2,7 +2,7 @@ import * as Auth from './auth';
 import { Browser, Cmd, p, t } from '@gamezilla/core';
 import { PhoneNumber } from '@gamezilla/shared';
 import { Route } from '@gamezilla/shared';
-import * as UI from '@gamezilla/ui';
+import * as UI from '@gamezilla/shared/ui';
 
 //
 //

@@ -10,7 +10,7 @@ import {
   InputAdornment,
   TextField,
   Typography,
-} from '@gamezilla/ui';
+} from '@gamezilla/shared/ui';
 import { Ctx } from '@gamezilla/shared';
 import { Maze } from './maze';
 import {

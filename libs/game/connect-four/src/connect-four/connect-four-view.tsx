@@ -1,5 +1,5 @@
 import { Ease, Spring, Uuid } from '@gamezilla/core';
-import { SvgIcon, Sx } from '@gamezilla/ui';
+import { SvgIcon, Sx } from '@gamezilla/shared/ui';
 import { useLayoutEffect, useRef } from 'react';
 import {
   ColumnIndex,

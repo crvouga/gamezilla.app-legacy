@@ -1,5 +1,5 @@
 import { Cmd, Time, Uuid } from '@gamezilla/core';
-import { ConformationDialog, Portal, Snackbar } from '@gamezilla/ui';
+import { ConformationDialog, Portal, Snackbar } from '@gamezilla/shared/ui';
 
 //
 //

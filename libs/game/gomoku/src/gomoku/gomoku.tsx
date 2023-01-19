@@ -1,5 +1,5 @@
 import { NonEmpty, Result, shuffle } from '@gamezilla/core';
-import { SvgIcon, Sx } from '@gamezilla/ui';
+import { SvgIcon, Sx } from '@gamezilla/shared/ui';
 import { Direction, Position } from './gomoku-position';
 
 const { Ok, Err } = Result;

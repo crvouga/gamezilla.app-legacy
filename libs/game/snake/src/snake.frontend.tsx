@@ -8,7 +8,7 @@ import {
   Result,
   Sub,
 } from '@gamezilla/core';
-import * as UI from '@gamezilla/ui';
+import * as UI from '@gamezilla/shared/ui';
 import { Direction } from './direction';
 import * as Snake from './snake';
 import {

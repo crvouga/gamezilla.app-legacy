@@ -20,7 +20,7 @@ import {
   Paper,
   Typography,
   ViewEmptyState,
-} from '@gamezilla/ui';
+} from '@gamezilla/shared/ui';
 
 //
 //
