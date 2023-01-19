@@ -3,7 +3,7 @@ import { ProfileStore } from '@gamezilla/profile';
 import { Ctx, Route, UserId } from '@gamezilla/shared';
 import * as UI from '@gamezilla/ui';
 import { useEffect, useRef } from 'react';
-import * as ChatStore from './chat.store-';
+import * as ChatStore from './chat.store';
 
 //
 //

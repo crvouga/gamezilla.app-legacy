@@ -15,7 +15,7 @@ import {
   ViewEmptyState,
   ViewLoadingState,
 } from '@gamezilla/ui';
-import * as ChatStore from './chat.store-';
+import * as ChatStore from './chat.store';
 //
 //
 //
