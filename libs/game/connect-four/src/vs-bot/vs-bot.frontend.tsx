@@ -1,12 +1,10 @@
 import { keyframes } from '@emotion/react';
-import { Alerts } from '@gamezilla/shared';
 import { Cmd, Spring, Sub } from '@gamezilla/core';
-import { UserId } from '@gamezilla/shared';
-import { Ctx } from '@gamezilla/shared';
 import {
   viewVsBotGameScreen,
   viewVsBotSetupScreen,
 } from '@gamezilla/game-shared';
+import { Alerts, Ctx, UserId } from '@gamezilla/shared';
 import {
   ActionButton,
   Avatar,
@@ -112,8 +110,18 @@ export const update = (
     }
 
     case 'input-move': {
-      // TODO: optimistic update
-      return [model, sendToBackend(msg)];
+      const result = handle(msg, model);
+
+      if (result.type === 'Err') {
+        return [model, Cmd.None];
+      }
+
+      const modelNext = mergeWithBackend({
+        backendModel: result.value,
+        frontendModel: model,
+      });
+
+      return [modelNext, sendToBackend(msg)];
     }
 
     case 'input-player-type':
