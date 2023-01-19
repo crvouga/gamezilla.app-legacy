@@ -1,4 +1,4 @@
-export { viewCoverArt } from './Chess'
-export * as ChessBackend from "./Chess.Backend"
-export * as ChessFrontend from "./Chess.Frontend"
-export * from "./Chess.Types"
+export { viewCoverArt } from './chess-';
+export * as ChessBackend from './chess-.backend';
+export * as ChessFrontend from './chess-.frontend';
+export * from './chess-.types';
