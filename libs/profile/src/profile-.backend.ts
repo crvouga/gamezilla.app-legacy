@@ -1,5 +1,5 @@
 import { Cmd, Sub } from '@gamezilla/core';
-import { BackendModel, BackendMsg, Req, ToBackend } from './Profile.Types';
+import { BackendModel, BackendMsg, Req, ToBackend } from './profile-.types';
 
 //
 //
