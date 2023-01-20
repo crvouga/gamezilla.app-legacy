@@ -33,8 +33,14 @@ import { ProfileStore } from '@gamezilla/profile';
 import { RoomFrontend as GameRoom } from '@gamezilla/room';
 import { Alerts, Route } from '@gamezilla/shared';
 import * as UI from '@gamezilla/shared/ui';
-import { Box, Collapse, FillBox, Typography } from '@gamezilla/shared/ui';
-import { useState } from 'react';
+import {
+  Box,
+  CircularProgress,
+  Collapse,
+  FillBox,
+  Typography,
+} from '@gamezilla/shared/ui';
+import { useEffect, useState } from 'react';
 import * as ReactDOM from 'react-dom/client';
 import { io, Socket } from 'socket.io-client';
 
@@ -568,7 +574,7 @@ export const View = ({
         $send={(msg) => $send(['Alerts', msg])}
       />
 
-      <ViewConnectingHeadsUp isConnecting={model.wire !== 'Connected'} />
+      <ViewConnectingHeadsUp wire={model.wire} />
     </UI.AppContainer>
   );
 };
@@ -625,19 +631,26 @@ export const ViewConnectingScreen = () => {
     </FillBox>
   );
 };
-const ViewConnectingHeadsUp = ({ isConnecting }: { isConnecting: boolean }) => {
+const ViewConnectingHeadsUp = ({ wire }: { wire: WireStatus }) => {
+  if (wire === 'Connected') {
+    return null;
+  }
+
   return (
-    <Collapse in={isConnecting}>
-      <Box
-        sx={{
-          textAlign: 'center',
-          color: '#fff',
-          backgroundColor: 'primary.main',
-        }}
-      >
-        Connecting to backend...
-      </Box>
-    </Collapse>
+    <Box
+      sx={{
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#fff',
+        backgroundColor: 'primary.main',
+        // animation: `${flicker} 0.5s infinite ease`,
+      }}
+    >
+      <CircularProgress size="1rem" sx={{ color: '#fff', marginRight: 1 }} />
+      Connecting to backend...
+    </Box>
   );
 };
 
