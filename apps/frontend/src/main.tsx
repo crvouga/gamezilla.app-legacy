@@ -569,88 +569,32 @@ export const View = ({
   return (
     <UI.AppContainer themeMode={toThemeMode(model)}>
       <ViewMain model={model} $send={$send} />
+
       <Alerts.View
         model={model.alerts}
         $send={(msg) => $send(['Alerts', msg])}
       />
 
-      <ViewConnectingHeadsUp wire={model.wire} />
-    </UI.AppContainer>
-  );
-};
-
-const flicker = keyframes`
-  0% { opacity: 1; }
-  50% { opacity: 0.5; }
-  100% { opacity: 1; }
-`;
-
-export const ViewConnectingScreen = () => {
-  const iconSize = { width: 64, height: 64 };
-
-  return (
-    <FillBox
-      sx={{
-        flexDirection: 'column',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: 'text.secondary',
-        gap: 2,
-        // animation: `${flicker} 1s infinite ease`
-      }}
-    >
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 1,
-        }}
-      >
-        <UI.Icons.Devices sx={iconSize} />
-
-        <UI.Icons.MoreHoriz
+      {model.wire === 'Connecting' && (
+        <Box
           sx={{
-            ...iconSize,
-            color: 'primary.main',
-            animation: `${flicker} 0.66s infinite ease`,
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#fff',
+            backgroundColor: 'primary.main',
+            // animation: `${flicker} 0.5s infinite ease`,
           }}
-        />
-
-        <UI.Icons.Storage sx={iconSize} />
-      </Box>
-      <Typography
-        sx={{ position: 'absolute', bottom: 0, left: 0, padding: 1 }}
-        align="center"
-        variant="caption"
-        color="text.secondary"
-      >
-        Connecting to backend...
-      </Typography>
-    </FillBox>
-  );
-};
-const ViewConnectingHeadsUp = ({ wire }: { wire: WireStatus }) => {
-  if (wire === 'Connected') {
-    return null;
-  }
-
-  return (
-    <Box
-      sx={{
-        width: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: '#fff',
-        backgroundColor: 'primary.main',
-        // animation: `${flicker} 0.5s infinite ease`,
-      }}
-    >
-      <CircularProgress size="1rem" sx={{ color: '#fff', marginRight: 1 }} />
-      Connecting to backend...
-    </Box>
+        >
+          <CircularProgress
+            size="1rem"
+            sx={{ color: '#fff', marginRight: 1 }}
+          />
+          Connecting to backend...
+        </Box>
+      )}
+    </UI.AppContainer>
   );
 };
 
