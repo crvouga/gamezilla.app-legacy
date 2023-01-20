@@ -33,7 +33,8 @@ import { ProfileStore } from '@gamezilla/profile';
 import { RoomFrontend as GameRoom } from '@gamezilla/room';
 import { Alerts, Route } from '@gamezilla/shared';
 import * as UI from '@gamezilla/shared/ui';
-import { Box, FillBox, Typography } from '@gamezilla/shared/ui';
+import { Box, Collapse, FillBox, Typography } from '@gamezilla/shared/ui';
+import { useState } from 'react';
 import * as ReactDOM from 'react-dom/client';
 import { io, Socket } from 'socket.io-client';
 
@@ -566,6 +567,8 @@ export const View = ({
         model={model.alerts}
         $send={(msg) => $send(['Alerts', msg])}
       />
+
+      <ViewConnectingHeadsUp isConnecting={model.wire !== 'Connected'} />
     </UI.AppContainer>
   );
 };
@@ -576,6 +579,68 @@ const flicker = keyframes`
   100% { opacity: 1; }
 `;
 
+export const ViewConnectingScreen = () => {
+  const iconSize = { width: 64, height: 64 };
+
+  return (
+    <FillBox
+      sx={{
+        flexDirection: 'column',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: 'text.secondary',
+        gap: 2,
+        // animation: `${flicker} 1s infinite ease`
+      }}
+    >
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 1,
+        }}
+      >
+        <UI.Icons.Devices sx={iconSize} />
+
+        <UI.Icons.MoreHoriz
+          sx={{
+            ...iconSize,
+            color: 'primary.main',
+            animation: `${flicker} 0.66s infinite ease`,
+          }}
+        />
+
+        <UI.Icons.Storage sx={iconSize} />
+      </Box>
+      <Typography
+        sx={{ position: 'absolute', bottom: 0, left: 0, padding: 1 }}
+        align="center"
+        variant="caption"
+        color="text.secondary"
+      >
+        Connecting to backend...
+      </Typography>
+    </FillBox>
+  );
+};
+const ViewConnectingHeadsUp = ({ isConnecting }: { isConnecting: boolean }) => {
+  return (
+    <Collapse in={isConnecting}>
+      <Box
+        sx={{
+          textAlign: 'center',
+          color: '#fff',
+          backgroundColor: 'primary.main',
+        }}
+      >
+        Connecting to backend...
+      </Box>
+    </Collapse>
+  );
+};
+
 const ViewMain = ({
   model,
   $send,
@@ -585,117 +650,65 @@ const ViewMain = ({
 }) => {
   const status = toStatus(model);
 
-  switch (model.wire) {
-    case 'Connecting':
-    case 'Disconnected':
-    case 'ConnectError': {
-      const iconSize = { width: 64, height: 64 };
+  switch (status[0]) {
+    case 'AuthLoading':
+      return <ViewLoading reason="Authenticating..." />;
+
+    case 'ProfileLoading':
+      return <ViewLoading reason="Loading your profile..." />;
+
+    case 'ProfileError':
+      return <ViewError reason="Failed to load profile." />;
+
+    case 'LoggedOut':
       return (
-        <FillBox
-          sx={{
-            flexDirection: 'column',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'text.secondary',
-            gap: 2,
-            // animation: `${flicker} 1s infinite ease`
-          }}
-        >
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 1,
-            }}
-          >
-            <UI.Icons.Devices sx={iconSize} />
-
-            <UI.Icons.MoreHoriz
-              sx={{
-                ...iconSize,
-                color: 'primary.main',
-                animation: `${flicker} 0.66s infinite ease`,
-              }}
-            />
-
-            <UI.Icons.Storage sx={iconSize} />
-          </Box>
-          <Typography
-            sx={{ position: 'absolute', bottom: 0, left: 0, padding: 1 }}
-            align="center"
-            variant="caption"
-            color="text.secondary"
-          >
-            Connecting to backend...
-          </Typography>
-        </FillBox>
+        <Page.ViewLoggedOut
+          model={model.page}
+          $send={(msg) => $send(['Page', msg])}
+        />
       );
-    }
 
-    case 'Connected': {
-      switch (status[0]) {
-        case 'AuthLoading':
-          return <ViewLoading reason="Authenticating..." />;
+    case 'ProfileMissing':
+      return (
+        <Page.ViewProfileMissing
+          authSession={status[1].authSession}
+          model={model.page}
+          $send={(msg) => $send(['Page', msg])}
+        />
+      );
 
-        case 'ProfileLoading':
-          return <ViewLoading reason="Loading your profile..." />;
+    case 'Ready': {
+      const { profile } = status[1];
+      return (
+        <>
+          <Party.ViewBanner
+            store={model.profileStore}
+            currentUserId={profile.userId}
+            model={model.party}
+            route={model.route}
+            $send={(msg) => $send(['Party', msg])}
+          />
 
-        case 'ProfileError':
-          return <ViewError reason="Failed to load profile." />;
+          <GameRoom.ViewBanner
+            store={model.profileStore}
+            currentUserId={profile.userId}
+            model={model.gameRoom}
+            route={model.route}
+            $send={(msg) => $send(['Room', msg])}
+          />
 
-        case 'LoggedOut':
-          return (
-            <Page.ViewLoggedOut
-              model={model.page}
-              $send={(msg) => $send(['Page', msg])}
-            />
-          );
-
-        case 'ProfileMissing':
-          return (
-            <Page.ViewProfileMissing
-              authSession={status[1].authSession}
-              model={model.page}
-              $send={(msg) => $send(['Page', msg])}
-            />
-          );
-
-        case 'Ready': {
-          const { profile } = status[1];
-          return (
-            <>
-              <Party.ViewBanner
-                store={model.profileStore}
-                currentUserId={profile.userId}
-                model={model.party}
-                route={model.route}
-                $send={(msg) => $send(['Party', msg])}
-              />
-
-              <GameRoom.ViewBanner
-                store={model.profileStore}
-                currentUserId={profile.userId}
-                model={model.gameRoom}
-                route={model.route}
-                $send={(msg) => $send(['Room', msg])}
-              />
-
-              <Page.ViewReady
-                {...model}
-                ctx={{
-                  currentUserId: profile.userId,
-                  profiles: model.profileStore.profiles,
-                }}
-                profile={status[1].profile}
-                $send={(msg) => $send(['Page', msg])}
-                model={model.page}
-              />
-            </>
-          );
-        }
-      }
+          <Page.ViewReady
+            {...model}
+            ctx={{
+              currentUserId: profile.userId,
+              profiles: model.profileStore.profiles,
+            }}
+            profile={status[1].profile}
+            $send={(msg) => $send(['Page', msg])}
+            model={model.page}
+          />
+        </>
+      );
     }
   }
 };
@@ -704,14 +717,14 @@ const ViewLoading = ({ reason }: { reason: string }) => (
   <UI.FillBox sx={{ justifyContent: 'center', alignItems: 'center' }}>
     <UI.CircularProgress sx={{ marginBottom: 2 }} />
 
-    <UI.Typography
+    {/* <UI.Typography
       sx={{ position: 'absolute', bottom: 0, left: 0, padding: 1 }}
       align="center"
       variant="caption"
       color="text.secondary"
     >
       {reason}
-    </UI.Typography>
+    </UI.Typography> */}
   </UI.FillBox>
 );
 
