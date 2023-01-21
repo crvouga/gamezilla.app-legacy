@@ -18,7 +18,7 @@ import {
   gameTheme,
   PlayerIcon,
   ViewCoverArt,
-} from './connect-four/connect-four-view';
+} from './connect-four/connect-four-ui';
 import * as VsBot from './vs-bot/vs-bot.frontend';
 import * as VsUser from './vs-user/vs-user.frontend';
 

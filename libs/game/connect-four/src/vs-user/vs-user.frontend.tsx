@@ -35,7 +35,7 @@ import {
   PlayerOneIcon,
   PlayerTwoIcon,
   ViewColumns,
-} from '../connect-four/connect-four-view';
+} from '../connect-four/connect-four-ui';
 import {
   allMoveTimeLimit,
   BackendModel,

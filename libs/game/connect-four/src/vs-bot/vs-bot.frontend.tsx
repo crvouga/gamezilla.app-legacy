@@ -32,7 +32,7 @@ import {
   step,
   ViewColumns,
   ViewCoverArt,
-} from '../connect-four/connect-four-view';
+} from '../connect-four/connect-four-ui';
 import {
   BackendModel,
   BotLevel,
