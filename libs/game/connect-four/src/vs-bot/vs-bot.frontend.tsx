@@ -105,7 +105,11 @@ export const update = (
       if (model.type !== 'Game') {
         return [model, Cmd.None];
       }
-      const visualNew = step({ columns: model.columns, current: model.visual });
+      const visualNew = step({
+        nowMs: Date.now(),
+        columns: model.columns,
+        current: model.visual,
+      });
       return [{ ...model, visual: visualNew }, Cmd.None];
     }
 
@@ -207,6 +211,7 @@ export const mergeWithBackend = ({
 
   const columnsNew = backendModel.columns;
   const visualNew = step({
+    nowMs: Date.now(),
     columns: columnsNew,
     current: frontendModel.visual,
   });

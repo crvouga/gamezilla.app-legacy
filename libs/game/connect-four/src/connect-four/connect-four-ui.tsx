@@ -16,9 +16,9 @@ import {
 //
 //
 
-export type VisualModel = VisualDisc[][];
+export type VisualModel = Disc[][];
 
-export type VisualDisc = {
+export type Disc = {
   type: 'entry' | 'exit';
   yPosition: Spring.Model;
   yPosition_: Ease.Model;
@@ -201,7 +201,7 @@ const ViewColumnsSvg = ({
           <circle
             key={[columnIndex, rowIndex].join(', ')}
             cx={columnIndex + 0.5}
-            cy={MAX_COLUMN_HEIGHT - (disc.yPosition.current + 0.5)}
+            cy={disc.yPosition_.value + 0.5}
             r={0.5}
             fill={
               disc.playerType === 'PlayerOne' ? playerOneFill : playerTwoFill
@@ -560,16 +560,18 @@ export const PlayerTwoIcon = ({ key, sx }: { key?: string; sx?: Sx }) => {
 };
 
 export const step = ({
+  nowMs,
   columns,
   current,
 }: {
+  nowMs: number;
   columns: Columns;
   current: VisualModel;
 }): VisualModel => {
   const ret: VisualModel = [];
 
   for (let i = 0; i < COLUMN_COUNT; i++) {
-    const ret_i: VisualDisc[] = [];
+    const ret_i: Disc[] = [];
     for (let j = 0; j < MAX_COLUMN_HEIGHT; j++) {
       const discTrue = columns[i]?.[j];
       const discVisual = current[i]?.[j];
@@ -580,12 +582,11 @@ export const step = ({
           type: 'entry',
           playerType: discTrue,
           yPosition: Spring.init({ from: MAX_COLUMN_HEIGHT + 1, to: j }),
-          yPosition_: {
+          yPosition_: Ease.init({
             from: MAX_COLUMN_HEIGHT + 1,
             to: j,
-            durationMs: 1000,
-            startMs: Date.now(),
-          },
+            durationMs: 500,
+          }),
         });
         continue;
       }
@@ -599,6 +600,11 @@ export const step = ({
             from: discVisual.yPosition.current,
             to: -j,
           }),
+          yPosition_: Ease.init({
+            from: j,
+            to: MAX_COLUMN_HEIGHT + 1 + j,
+            durationMs: 500,
+          }),
         });
         continue;
       }
@@ -606,12 +612,14 @@ export const step = ({
       const shouldRemove =
         discVisual &&
         discVisual.type === 'exit' &&
-        Spring.isDone(discVisual.yPosition);
+        Ease.isDone(nowMs, discVisual.yPosition_);
+      // Spring.isDone(discVisual.yPosition);
 
       if (discVisual && !shouldRemove) {
         ret_i.push({
           ...discVisual,
           yPosition: Spring.step(discVisual.yPosition),
+          yPosition_: Ease.step(Ease.linear, nowMs, discVisual.yPosition_),
         });
         continue;
       }
@@ -627,7 +635,7 @@ export const initVisual = (columns: Columns): VisualModel => {
   const ret: VisualModel = [];
 
   for (let i = 0; i < COLUMN_COUNT; i++) {
-    const ret_i: VisualDisc[] = [];
+    const ret_i: Disc[] = [];
     for (let j = 0; j < MAX_COLUMN_HEIGHT; j++) {
       const discTrue = columns[i]?.[j];
       if (discTrue) {
@@ -635,12 +643,7 @@ export const initVisual = (columns: Columns): VisualModel => {
           type: 'entry',
           playerType: discTrue,
           yPosition: Spring.init({ from: j, to: j }),
-          yPosition_: {
-            from: j,
-            to: j,
-            durationMs: 0,
-            startMs: Date.now(),
-          },
+          yPosition_: Ease.init({ from: j, to: j, durationMs: 0 }),
         });
       }
     }
@@ -654,7 +657,11 @@ export const isDone = (model: VisualModel): boolean => {
   for (let i = 0; i < COLUMN_COUNT; i++) {
     for (let j = 0; j < MAX_COLUMN_HEIGHT; j++) {
       const discVisual = model[i]?.[j];
-      if (discVisual && !Spring.isDone(discVisual.yPosition)) {
+      if (
+        discVisual &&
+        // !Spring.isDone(discVisual.yPosition)
+        !Ease.isDone(Date.now(), discVisual.yPosition_)
+      ) {
         return false;
       }
     }
