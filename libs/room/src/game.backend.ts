@@ -19,34 +19,34 @@ import { BackendModel, BackendMsg, ToBackend, ToFrontend } from './game.types';
 
 export type Model = BackendModel;
 
-export const init = ({ gameName }: { gameName: Model[0] }): Model => {
+export const init = ({ gameName }: { gameName: Model['type'] }): Model => {
   switch (gameName) {
     case 'connect-four': {
-      return ['connect-four', ConnectFour.init];
+      return { type: 'connect-four', child: ConnectFour.init };
     }
 
     case 'TicTacToe': {
-      return ['TicTacToe', TicTacToe.init];
+      return { type: 'TicTacToe', child: TicTacToe.init };
     }
 
     case 'Chess': {
-      return ['Chess', Chess.init];
+      return { type: 'Chess', child: Chess.init };
     }
 
     case 'Gomoku': {
-      return ['Gomoku', Gomoku.init];
+      return { type: 'Gomoku', child: Gomoku.init };
     }
 
     case 'Tetris': {
-      return ['Tetris', Tetris.init];
+      return { type: 'Tetris', child: Tetris.init };
     }
 
     case 'Snake': {
-      return ['Snake', Snake.init];
+      return { type: 'Snake', child: Snake.init };
     }
 
     case 'Maze': {
-      return ['Maze', Maze.init];
+      return { type: 'Maze', child: Maze.init };
     }
   }
 };
@@ -68,87 +68,87 @@ export const update = (
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case 'connect-four': {
-      if (model[0] === 'connect-four') {
+      if (model.type === 'connect-four') {
         const [child, cmd] = ConnectFour.update(
           { broadcast: (m) => broadcast(['connect-four', m]) },
           msg[1],
-          model[1]
+          model.child
         );
-        return [['connect-four', child], Cmd.tag('connect-four', cmd)];
+        return [{ type: 'connect-four', child }, Cmd.tag('connect-four', cmd)];
       }
       return [model, Cmd.None];
     }
 
     case 'TicTacToe': {
-      if (model[0] === 'TicTacToe') {
+      if (model.type === 'TicTacToe') {
         const [child, cmd] = TicTacToe.update(
           { broadcast: (m) => broadcast(['TicTacToe', m]) },
           msg[1],
-          model[1]
+          model.child
         );
-        return [['TicTacToe', child], Cmd.tag('TicTacToe', cmd)];
+        return [{ type: 'TicTacToe', child }, Cmd.tag('TicTacToe', cmd)];
       }
       return [model, Cmd.None];
     }
 
     case 'Chess': {
-      if (model[0] === 'Chess') {
+      if (model.type === 'Chess') {
         const [child, cmd] = Chess.update(
           { broadcast: (m) => broadcast(['Chess', m]) },
           msg[1],
-          model[1]
+          model.child
         );
-        return [['Chess', child], Cmd.tag('Chess', cmd)];
+        return [{ type: 'Chess', child }, Cmd.tag('Chess', cmd)];
       }
       return [model, Cmd.None];
     }
 
     case 'Gomoku': {
-      if (model[0] === 'Gomoku') {
-        const [child, cmd] = Gomoku.update(msg[1], model[1]);
-        return [['Gomoku', child], Cmd.tag('Gomoku', cmd)];
+      if (model.type === 'Gomoku') {
+        const [child, cmd] = Gomoku.update(msg[1], model.child);
+        return [{ type: 'Gomoku', child }, Cmd.tag('Gomoku', cmd)];
       }
       return [model, Cmd.None];
     }
 
     case 'Tetris': {
-      if (model[0] === 'Tetris') {
+      if (model.type === 'Tetris') {
         const [child, cmd] = Tetris.update(
           {
             broadcast: (m) => broadcast(['Tetris', m]),
           },
           msg[1],
-          model[1]
+          model.child
         );
-        return [['Tetris', child], Cmd.tag('Tetris', cmd)];
+        return [{ type: 'Tetris', child }, Cmd.tag('Tetris', cmd)];
       }
       return [model, Cmd.None];
     }
 
     case 'Snake': {
-      if (model[0] === 'Snake') {
+      if (model.type === 'Snake') {
         const [child, cmd] = Snake.update(
           {
             broadcast: (m) => broadcast(['Snake', m]),
           },
           msg[1],
-          model[1]
+          model.child
         );
-        return [['Snake', child], Cmd.tag('Snake', cmd)];
+        return [{ type: 'Snake', child }, Cmd.tag('Snake', cmd)];
       }
       return [model, Cmd.None];
     }
 
     case 'Maze': {
-      if (model[0] === 'Maze') {
+      if (model.type === 'Maze') {
         const [child, cmd] = Maze.update(
           {
             broadcast: (m) => broadcast(['Maze', m]),
           },
           msg[1],
-          model[1]
+          model.child
         );
-        return [['Maze', child], Cmd.tag('Maze', cmd)];
+        return [{ type: 'Maze', child }, Cmd.tag('Maze', cmd)];
       }
       return [model, Cmd.None];
     }
@@ -172,37 +172,37 @@ export const updateFromFrontend = (
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case 'connect-four': {
-      if (model[0] === 'connect-four') {
+      if (model.type === 'connect-four') {
         const [child, cmd] = ConnectFour.updateFromFrontend(
           {
             sendToClient: (msg) => sendToClient(['connect-four', msg]),
             broadcast: (msg) => broadcast(['connect-four', msg]),
           },
           msg[1],
-          model[1]
+          model.child
         );
-        return [['connect-four', child], Cmd.tag('connect-four', cmd)];
+        return [{ type: 'connect-four', child }, Cmd.tag('connect-four', cmd)];
       }
       return [model, Cmd.None];
     }
 
     case 'TicTacToe': {
-      if (model[0] === 'TicTacToe') {
+      if (model.type === 'TicTacToe') {
         const [child, cmd] = TicTacToe.updateFromFrontend(
           {
             sendToClient: (msg) => sendToClient(['TicTacToe', msg]),
             broadcast: (msg) => broadcast(['TicTacToe', msg]),
           },
           msg[1],
-          model[1]
+          model.child
         );
-        return [['TicTacToe', child], Cmd.tag('TicTacToe', cmd)];
+        return [{ type: 'TicTacToe', child }, Cmd.tag('TicTacToe', cmd)];
       }
       return [model, Cmd.None];
     }
 
     case 'Chess': {
-      if (model[0] === 'Chess') {
+      if (model.type === 'Chess') {
         const [child, cmd] = Chess.updateFromFrontend(
           {
             hostId: hostId,
@@ -210,15 +210,15 @@ export const updateFromFrontend = (
             broadcast: (msg) => broadcast(['Chess', msg]),
           },
           msg[1],
-          model[1]
+          model.child
         );
-        return [['Chess', child], Cmd.tag('Chess', cmd)];
+        return [{ type: 'Chess', child }, Cmd.tag('Chess', cmd)];
       }
       return [model, Cmd.None];
     }
 
     case 'Gomoku': {
-      if (model[0] === 'Gomoku') {
+      if (model.type === 'Gomoku') {
         const [child, cmd] = Gomoku.updateFromFrontend(
           {
             ctx,
@@ -226,15 +226,15 @@ export const updateFromFrontend = (
             sendToClient: (m) => sendToClient(['Gomoku', m]),
           },
           msg[1],
-          model[1]
+          model.child
         );
-        return [['Gomoku', child], Cmd.tag('Gomoku', cmd)];
+        return [{ type: 'Gomoku', child }, Cmd.tag('Gomoku', cmd)];
       }
       return [model, Cmd.None];
     }
 
     case 'Tetris': {
-      if (model[0] === 'Tetris') {
+      if (model.type === 'Tetris') {
         const [child, cmd] = Tetris.updateFromFrontend(
           {
             // ctx,
@@ -242,15 +242,15 @@ export const updateFromFrontend = (
             sendToClient: (m) => sendToClient(['Tetris', m]),
           },
           msg[1],
-          model[1]
+          model.child
         );
-        return [['Tetris', child], Cmd.tag('Tetris', cmd)];
+        return [{ type: 'Tetris', child }, Cmd.tag('Tetris', cmd)];
       }
       return [model, Cmd.None];
     }
 
     case 'Snake': {
-      if (model[0] === 'Snake') {
+      if (model.type === 'Snake') {
         const [child, cmd] = Snake.updateFromFrontend(
           {
             // ctx,
@@ -258,15 +258,15 @@ export const updateFromFrontend = (
             sendToClient: (m) => sendToClient(['Snake', m]),
           },
           msg[1],
-          model[1]
+          model.child
         );
-        return [['Snake', child], Cmd.tag('Snake', cmd)];
+        return [{ type: 'Snake', child }, Cmd.tag('Snake', cmd)];
       }
       return [model, Cmd.None];
     }
 
     case 'Maze': {
-      if (model[0] === 'Maze') {
+      if (model.type === 'Maze') {
         const [child, cmd] = Maze.updateFromFrontend(
           {
             // ctx,
@@ -274,9 +274,9 @@ export const updateFromFrontend = (
             // sendToClient: (m) => sendToClient(['Maze', m]),
           },
           msg[1],
-          model[1]
+          model.child
         );
-        return [['Maze', child], Cmd.tag('Maze', cmd)];
+        return [{ type: 'Maze', child }, Cmd.tag('Maze', cmd)];
       }
       return [model, Cmd.None];
     }
@@ -288,52 +288,52 @@ export const updateRoomLeave = (
   userId: UserId,
   model: Model
 ): [Model, Cmd<Msg>] => {
-  switch (model[0]) {
+  switch (model.type) {
     case 'Chess': {
       const [child, cmd] = Chess.updateRoomLeave(
         { broadcast: (msg) => broadcast(['Chess', msg]) },
         userId,
-        model[1]
+        model.child
       );
-      return [['Chess', child], Cmd.tag('Chess', cmd)];
+      return [{ type: 'Chess', child }, Cmd.tag('Chess', cmd)];
     }
 
     case 'connect-four': {
       const [child, cmd] = ConnectFour.updateRoomLeave({
         userId,
-        model: model[1],
+        model: model.child,
         broadcast: (msg) => broadcast(['connect-four', msg]),
       });
-      return [['connect-four', child], Cmd.tag('connect-four', cmd)];
+      return [{ type: 'connect-four', child }, Cmd.tag('connect-four', cmd)];
     }
 
     case 'TicTacToe': {
       const [child, cmd] = TicTacToe.updateRoomLeave(
         { broadcast: (msg) => broadcast(['TicTacToe', msg]) },
         userId,
-        model[1]
+        model.child
       );
-      return [['TicTacToe', child], Cmd.tag('TicTacToe', cmd)];
+      return [{ type: 'TicTacToe', child }, Cmd.tag('TicTacToe', cmd)];
     }
 
     case 'Gomoku': {
-      const [child, cmd] = Gomoku.updateRoomLeave(userId, model[1]);
-      return [['Gomoku', child], Cmd.tag('Gomoku', cmd)];
+      const [child, cmd] = Gomoku.updateRoomLeave(userId, model.child);
+      return [{ type: 'Gomoku', child }, Cmd.tag('Gomoku', cmd)];
     }
 
     case 'Tetris': {
-      const [child, cmd] = Tetris.updateRoomLeave(userId, model[1]);
-      return [['Tetris', child], Cmd.tag('Tetris', cmd)];
+      const [child, cmd] = Tetris.updateRoomLeave(userId, model.child);
+      return [{ type: 'Tetris', child }, Cmd.tag('Tetris', cmd)];
     }
 
     case 'Snake': {
-      const [child, cmd] = Snake.updateRoomLeave(userId, model[1]);
-      return [['Snake', child], Cmd.tag('Snake', cmd)];
+      const [child, cmd] = Snake.updateRoomLeave(userId, model.child);
+      return [{ type: 'Snake', child }, Cmd.tag('Snake', cmd)];
     }
 
     case 'Maze': {
-      const [child, cmd] = Maze.updateRoomLeave(userId, model[1]);
-      return [['Maze', child], Cmd.tag('Maze', cmd)];
+      const [child, cmd] = Maze.updateRoomLeave(userId, model.child);
+      return [{ type: 'Maze', child }, Cmd.tag('Maze', cmd)];
     }
   }
 };
@@ -347,39 +347,39 @@ export const updateRoomLeave = (
 //
 
 export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
-  switch (model[0]) {
+  switch (model.type) {
     case 'connect-four': {
       return Sub.tag(
         'connect-four',
-        ConnectFour.subscriptions(intervalId, model[1])
+        ConnectFour.subscriptions(intervalId, model.child)
       );
     }
 
     case 'TicTacToe': {
       return Sub.tag(
         'TicTacToe',
-        TicTacToe.subscriptions(intervalId, model[1])
+        TicTacToe.subscriptions(intervalId, model.child)
       );
     }
 
     case 'Chess': {
-      return Sub.tag('Chess', Chess.subscriptions(intervalId, model[1]));
+      return Sub.tag('Chess', Chess.subscriptions(intervalId, model.child));
     }
 
     case 'Gomoku': {
-      return Sub.tag('Gomoku', Gomoku.subscriptions(model[1]));
+      return Sub.tag('Gomoku', Gomoku.subscriptions(model.child));
     }
 
     case 'Tetris': {
-      return Sub.tag('Tetris', Tetris.subscriptions(intervalId, model[1]));
+      return Sub.tag('Tetris', Tetris.subscriptions(intervalId, model.child));
     }
 
     case 'Snake': {
-      return Sub.tag('Snake', Snake.subscriptions(intervalId, model[1]));
+      return Sub.tag('Snake', Snake.subscriptions(intervalId, model.child));
     }
 
     case 'Maze': {
-      return Sub.tag('Maze', Maze.subscriptions(intervalId, model[1]));
+      return Sub.tag('Maze', Maze.subscriptions(intervalId, model.child));
     }
   }
 };

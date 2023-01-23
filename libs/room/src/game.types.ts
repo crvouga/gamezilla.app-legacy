@@ -15,24 +15,24 @@ import * as Maze from '@gamezilla/game/maze';
 //
 
 export type FrontendModel =
-  | ['TicTacToe', TicTacToe.FrontendModel]
-  | ['connect-four', ConnectFour.FrontendModel]
-  | ['Chess', Chess.FrontendModel]
-  | ['Gomoku', Gomoku.FrontendModel]
-  | ['Tetris', Tetris.FrontendModel]
-  | ['Snake', Snake.FrontendModel]
-  | ['Maze', Maze.FrontendModel];
+  | { type: 'TicTacToe'; child: TicTacToe.FrontendModel }
+  | { type: 'connect-four'; child: ConnectFour.FrontendModel }
+  | { type: 'Chess'; child: Chess.FrontendModel }
+  | { type: 'Gomoku'; child: Gomoku.FrontendModel }
+  | { type: 'Tetris'; child: Tetris.FrontendModel }
+  | { type: 'Snake'; child: Snake.FrontendModel }
+  | { type: 'Maze'; child: Maze.FrontendModel };
 
 export type BackendModel =
-  | ['TicTacToe', TicTacToe.BackendModel]
-  | ['connect-four', ConnectFour.BackendModel]
-  | ['Chess', Chess.BackendModel]
-  | ['Gomoku', Gomoku.BackendModel]
-  | ['Tetris', Tetris.BackendModel]
-  | ['Snake', Snake.BackendModel]
-  | ['Maze', Maze.BackendModel];
+  | { type: 'TicTacToe'; child: TicTacToe.BackendModel }
+  | { type: 'connect-four'; child: ConnectFour.BackendModel }
+  | { type: 'Chess'; child: Chess.BackendModel }
+  | { type: 'Gomoku'; child: Gomoku.BackendModel }
+  | { type: 'Tetris'; child: Tetris.BackendModel }
+  | { type: 'Snake'; child: Snake.BackendModel }
+  | { type: 'Maze'; child: Maze.BackendModel };
 
-export type GameName = BackendModel[0];
+export type GameName = BackendModel['type'];
 
 export const gameNames: { [gameName in GameName]: GameName } = {
   TicTacToe: 'TicTacToe',

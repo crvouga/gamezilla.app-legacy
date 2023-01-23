@@ -15,6 +15,13 @@
     "skipLibCheck": true,
     "jsx": "react-jsx",
     "skipDefaultLibCheck": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "noImplicitAny": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitThis": true,
+    "noUnusedParameters": true,
+    "noUnusedLocals": true,
     "baseUrl": ".",
     "paths": {
       "@gamezilla/app": ["libs/app/src/index.ts"],

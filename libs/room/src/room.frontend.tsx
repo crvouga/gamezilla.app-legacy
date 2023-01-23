@@ -1,8 +1,6 @@
-import { Alerts } from '@gamezilla/shared';
 import { Cmd, exhaustive, p, RemoteData, Sub } from '@gamezilla/core';
-import { RoomId, UserId } from '@gamezilla/shared';
 import { ProfileStore } from '@gamezilla/profile';
-import { Ctx, Route } from '@gamezilla/shared';
+import { Alerts, Ctx, RoomId, Route, UserId } from '@gamezilla/shared';
 import {
   AspectRatio,
   Avatar,
@@ -502,7 +500,7 @@ const mergeWithBackendModel = ({
       }
 
       const initial = Game.init({
-        gameName: backendGame[0],
+        gameName: backendGame.type,
       });
 
       const merged = Game.mergeWithBackend({
@@ -645,7 +643,7 @@ export const ViewPageGame = ({
           Home
         </Button>
         <Typography variant="h6" sx={{ flex: 1, textAlign: 'center' }}>
-          {game?.[0] ? gameNameToString(game[0]) : 'Game'}
+          {game ? gameNameToString(game.type) : 'Game'}
         </Typography>
         <Badge
           badgeContent={usersInRoom.length > 1 ? usersInRoom.length : undefined}
@@ -1111,7 +1109,7 @@ export const ViewBanner = ({
 
         {game && (
           <Box sx={{ width: 48, height: 48, mr: 2 }}>
-            {viewCoverArt(game[0])}
+            {viewCoverArt(game.type)}
           </Box>
         )}
 
@@ -1146,7 +1144,7 @@ export const RoomGrid = ({
           <RoomCard
             roomId={room.roomId}
             hostId={room.hostId}
-            gameName={model.games[room.roomId]?.[0]}
+            gameName={model.games[room.roomId]?.type}
             ctx={ctx}
             gameRoom={model}
             onClick={() => onClick(room)}

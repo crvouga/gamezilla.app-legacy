@@ -1,4 +1,3 @@
-import { keyframes } from '@emotion/react';
 import {
   backendServerPort,
   ClientToServerEvents,
@@ -33,15 +32,9 @@ import { ProfileStore } from '@gamezilla/profile';
 import { RoomFrontend as GameRoom } from '@gamezilla/room';
 import { Alerts, Route } from '@gamezilla/shared';
 import * as UI from '@gamezilla/shared/ui';
-import {
-  Box,
-  CircularProgress,
-  Collapse,
-  FillBox,
-  Typography,
-} from '@gamezilla/shared/ui';
-import { useEffect, useState } from 'react';
+import { Box, CircularProgress } from '@gamezilla/shared/ui';
 import * as ReactDOM from 'react-dom/client';
+import { Subject } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 
 //
@@ -54,43 +47,45 @@ import { io, Socket } from 'socket.io-client';
 
 type Model = FrontendModel;
 
-export const init = (location: Browser.Location): [Model, Cmd<Msg>] => {
-  const route = p(
-    location,
-    Route.decode,
-    Option.withDefault<Route.Model>(['Home'])
-  );
-  const [auth, authCmd] = Auth.init();
-  const alerts = Alerts.init;
-  const chatStore = ChatStore.init;
-  const [gameRoom, gameRoomCmd] = GameRoom.init;
-  const [page, pageCmd] = Page.initLoading();
-  const [party, partyCmd] = Party.init({
-    sendToBackend: (msg) => sendToBackend(['Party', msg]),
-  });
-  const profileStore = ProfileStore.init;
+const init =
+  ({ sendToBackend }: { sendToBackend: (m: ToBackend) => Cmd }) =>
+  (location: Browser.Location): [Model, Cmd<Msg>] => {
+    const route = p(
+      location,
+      Route.decode,
+      Option.withDefault<Route.Model>(['Home'])
+    );
+    const [auth, authCmd] = Auth.init();
+    const alerts = Alerts.init;
+    const chatStore = ChatStore.init;
+    const [gameRoom, gameRoomCmd] = GameRoom.init;
+    const [page, pageCmd] = Page.initLoading();
+    const [party, partyCmd] = Party.init({
+      sendToBackend: (msg) => sendToBackend(['Party', msg]),
+    });
+    const profileStore = ProfileStore.init;
 
-  return [
-    {
-      route,
-      alerts,
-      chatStore,
-      gameRoom,
-      auth,
-      page,
-      party,
-      profileStore,
-      wire: 'Connecting',
-    },
-    Cmd.batch<Msg>([
-      Route.replace(route),
-      Cmd.tag('Auth', authCmd),
-      Cmd.tag('Page', pageCmd),
-      Cmd.tag('Room', gameRoomCmd),
-      Cmd.tag('Party', partyCmd),
-    ]),
-  ];
-};
+    return [
+      {
+        route,
+        alerts,
+        chatStore,
+        gameRoom,
+        auth,
+        page,
+        party,
+        profileStore,
+        wire: 'Connecting',
+      },
+      Cmd.batch<Msg>([
+        Route.replace(route),
+        Cmd.tag('Auth', authCmd),
+        Cmd.tag('Page', pageCmd),
+        Cmd.tag('Room', gameRoomCmd),
+        Cmd.tag('Party', partyCmd),
+      ]),
+    ];
+  };
 
 //
 //
@@ -129,120 +124,130 @@ const mapAction = <A, B>(
 //
 //
 
-export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
-  return p(
-    [model, Cmd.None],
-    andThen(updateMain, msg),
-    andThen(updateStatusChanged(model), msg)
-  );
-};
+const update =
+  (wire: { sendToBackend: (m: ToBackend) => Cmd }) =>
+  (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
+    return p(
+      [model, Cmd.None],
+      andThen(updateMain(wire), msg),
+      andThen(updateStatusChanged(wire, model), msg)
+    );
+  };
 
-const updateMain = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
-  switch (msg[0]) {
-    case '▶': {
-      return updateFromBackend(msg[1], model);
-    }
+const updateMain =
+  ({ sendToBackend }: { sendToBackend: (m: ToBackend) => Cmd }) =>
+  (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
+    switch (msg[0]) {
+      case '▶': {
+        return updateFromBackend({ sendToBackend }, msg[1], model);
+      }
 
-    case 'Store': {
-      const [storeNew, storeCmd] = ChatStore.update(msg[1], model.chatStore);
+      case 'Store': {
+        const [storeNew, storeCmd] = ChatStore.update(msg[1], model.chatStore);
 
-      return [{ ...model, chatStore: storeNew }, Cmd.tag('Store', storeCmd)];
-    }
+        return [{ ...model, chatStore: storeNew }, Cmd.tag('Store', storeCmd)];
+      }
 
-    case 'Auth': {
-      const [authNew, authCmd] = Auth.update(
-        { sendToBackend: (msg) => sendToBackend(['Auth', msg]) },
-        msg[1],
-        model.auth
-      );
+      case 'Auth': {
+        const [authNew, authCmd] = Auth.update(
+          { sendToBackend: (msg) => sendToBackend(['Auth', msg]) },
+          msg[1],
+          model.auth
+        );
 
-      return [{ ...model, auth: authNew }, Cmd.tag('Auth', authCmd)];
-    }
+        return [{ ...model, auth: authNew }, Cmd.tag('Auth', authCmd)];
+      }
 
-    case 'Alerts': {
-      const [alertsNew, alertsCmd, msgs] = Alerts.update(msg[1], model.alerts);
+      case 'Alerts': {
+        const [alertsNew, alertsCmd, msgs] = Alerts.update(
+          msg[1],
+          model.alerts
+        );
 
-      return p(
-        [{ ...model, alerts: alertsNew }, Cmd.tag('Alerts', alertsCmd)],
-        andThenMany(update, msgs)
-      );
-    }
+        return p(
+          [{ ...model, alerts: alertsNew }, Cmd.tag('Alerts', alertsCmd)],
+          andThenMany(update({ sendToBackend }), msgs)
+        );
+      }
 
-    case 'Party': {
-      const [child, childCmd] = Party.update(
-        { sendToBackend: (msg) => sendToBackend(['Party', msg]) },
-        msg[1],
-        model.party
-      );
-      return [{ ...model, party: child }, Cmd.tag('Party', childCmd)];
-    }
+      case 'Party': {
+        const [child, childCmd] = Party.update(
+          { sendToBackend: (msg) => sendToBackend(['Party', msg]) },
+          msg[1],
+          model.party
+        );
+        return [{ ...model, party: child }, Cmd.tag('Party', childCmd)];
+      }
 
-    case 'Route': {
-      switch (msg[1][0]) {
-        case 'GotRoute': {
-          const modelNew: Model = {
-            ...model,
-            route: msg[1][1],
-          };
+      case 'Route': {
+        switch (msg[1][0]) {
+          case 'GotRoute': {
+            const modelNew: Model = {
+              ...model,
+              route: msg[1][1],
+            };
 
-          return initPage(modelNew);
-        }
+            return initPage({ sendToBackend }, modelNew);
+          }
 
-        default: {
-          return exhaustive(msg[1][0]);
+          default: {
+            return exhaustive(msg[1][0]);
+          }
         }
       }
-    }
 
-    case 'Wire': {
-      return [{ ...model, wire: msg[1] }, Cmd.None];
-    }
+      case 'Wire': {
+        return [{ ...model, wire: msg[1] }, Cmd.None];
+      }
 
-    case 'LocalStoragePut_Done': {
-      return [model, Cmd.None];
-    }
-
-    case 'Room': {
-      const status = toStatus(model);
-
-      if (status[0] !== 'Ready') {
+      case 'LocalStoragePut_Done': {
         return [model, Cmd.None];
       }
 
-      const { profile } = status[1];
+      case 'Room': {
+        const status = toStatus(model);
 
-      const [child, childCmd] = GameRoom.update(
-        {
-          ctx: {
-            currentUserId: profile.userId,
-            profiles: model.profileStore.profiles,
+        if (status[0] !== 'Ready') {
+          return [model, Cmd.None];
+        }
+
+        const { profile } = status[1];
+
+        const [child, childCmd] = GameRoom.update(
+          {
+            ctx: {
+              currentUserId: profile.userId,
+              profiles: model.profileStore.profiles,
+            },
+            sendToBackend: (msg) => sendToBackend(['Room', msg]),
           },
-          sendToBackend: (msg) => sendToBackend(['Room', msg]),
-        },
-        msg[1],
-        model.gameRoom
-      );
+          msg[1],
+          model.gameRoom
+        );
 
-      return [{ ...model, gameRoom: child }, Cmd.tag('Room', childCmd)];
+        return [{ ...model, gameRoom: child }, Cmd.tag('Room', childCmd)];
+      }
+
+      case 'Page': {
+        const [modelNew, cmd, actions] = updatePage(msg[1], model);
+        return p(
+          [modelNew, cmd],
+          andThenMany(runAction({ sendToBackend }), actions)
+        );
+      }
+
+      case 'ProfileStore': {
+        const [modelNew, cmd] = ProfileStore.update(msg[1], model.profileStore);
+        return [
+          { ...model, profileStore: modelNew },
+          Cmd.tag('ProfileStore', cmd),
+        ];
+      }
+
+      default:
+        return exhaustive(msg);
     }
-
-    case 'Page': {
-      const [modelNew, cmd, actions] = updatePage(msg[1], model);
-      return p([modelNew, cmd], andThenMany(runAction, actions));
-    }
-
-    case 'ProfileStore': {
-      const [modelNew, cmd] = ProfileStore.update(msg[1], model.profileStore);
-      return [
-        { ...model, profileStore: modelNew },
-        Cmd.tag('ProfileStore', cmd),
-      ];
-    }
-
-    default:
-      return exhaustive(msg);
-  }
-};
+  };
 
 const updatePage = (
   msg: Page.Msg,
@@ -290,6 +295,7 @@ const updatePage = (
 };
 
 const updateFromBackend = (
+  { sendToBackend }: { sendToBackend: (m: ToBackend) => Cmd },
   msg: ToFrontend,
   model: Model
 ): [Model, Cmd<Msg>] => {
@@ -318,7 +324,7 @@ const updateFromBackend = (
 
       return p(
         [{ ...model, party }, Cmd.tag('Party', partyCmd)],
-        andThenMany(runAction, actions)
+        andThenMany(runAction({ sendToBackend }), actions)
       );
     }
 
@@ -341,7 +347,7 @@ const updateFromBackend = (
       return p(
         [{ ...model, gameRoom }, Cmd.tag('Room', gameRoomCmd)],
         andThenMany(
-          runAction,
+          runAction({ sendToBackend }),
           actions.map((a) => mapAction(t('Room'), a))
         )
       );
@@ -353,7 +359,10 @@ const updateFromBackend = (
   }
 };
 
-const initPage = (model: Model): [Model, Cmd<Msg>] => {
+const initPage = (
+  { sendToBackend }: { sendToBackend: (m: ToBackend) => Cmd },
+  model: Model
+): [Model, Cmd<Msg>] => {
   const status = toStatus(model);
 
   switch (status[0]) {
@@ -371,7 +380,10 @@ const initPage = (model: Model): [Model, Cmd<Msg>] => {
         ['FindMany', { userIds: [status[1].authSession.userId] }],
       ];
 
-      return p([model, Cmd.None], andThenMany(runAction, [action]));
+      return p(
+        [model, Cmd.None],
+        andThenMany(runAction({ sendToBackend }), [action])
+      );
     }
 
     case 'ProfileMissing': {
@@ -395,7 +407,7 @@ const initPage = (model: Model): [Model, Cmd<Msg>] => {
       );
       return p(
         [{ ...model, page }, Cmd.tag('Page', pageCmd)],
-        andThenMany(runAction, actions)
+        andThenMany(runAction({ sendToBackend }), actions)
       );
     }
 
@@ -406,7 +418,7 @@ const initPage = (model: Model): [Model, Cmd<Msg>] => {
 };
 
 const updateStatusChanged =
-  (modelPrev: Model) =>
+  (wire: { sendToBackend: (m: ToBackend) => Cmd }, modelPrev: Model) =>
   (_msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     const statusPrev = toStatus(modelPrev);
     const statusNew = toStatus(model);
@@ -415,75 +427,77 @@ const updateStatusChanged =
       return [model, Cmd.None];
     }
 
-    return initPage(model);
+    return initPage(wire, model);
   };
 
-const runAction = (action: OutAction, model: Model): [Model, Cmd<Msg>] => {
-  switch (action[0]) {
-    case 'Chat': {
-      const [chatNew, chatCmd] = ChatStore.runAction(action, model.chatStore);
-      return [{ ...model, chatStore: chatNew }, Cmd.tag('Store', chatCmd)];
-    }
-
-    case 'Alerts': {
-      const [alertsNew, alertsCmd] = Alerts.runAction(action, model.alerts);
-      return [{ ...model, alerts: alertsNew }, Cmd.tag('Alerts', alertsCmd)];
-    }
-
-    case 'Room': {
-      if (model.auth[0] !== 'LoggedIn') {
-        return [model, Cmd.None];
+const runAction =
+  ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd }) =>
+  (action: OutAction, model: Model): [Model, Cmd<Msg>] => {
+    switch (action[0]) {
+      case 'Chat': {
+        const [chatNew, chatCmd] = ChatStore.runAction(action, model.chatStore);
+        return [{ ...model, chatStore: chatNew }, Cmd.tag('Store', chatCmd)];
       }
 
-      const [gameRoom, gameRoomCmd] = GameRoom.runAction(
-        {
-          ctx: {
-            currentUserId: model.auth[1].userId,
-            profiles: model.profileStore.profiles,
+      case 'Alerts': {
+        const [alertsNew, alertsCmd] = Alerts.runAction(action, model.alerts);
+        return [{ ...model, alerts: alertsNew }, Cmd.tag('Alerts', alertsCmd)];
+      }
+
+      case 'Room': {
+        if (model.auth[0] !== 'LoggedIn') {
+          return [model, Cmd.None];
+        }
+
+        const [gameRoom, gameRoomCmd] = GameRoom.runAction(
+          {
+            ctx: {
+              currentUserId: model.auth[1].userId,
+              profiles: model.profileStore.profiles,
+            },
+            sendToBackend: (msg) => sendToBackend(['Room', msg]),
           },
-          sendToBackend: (msg) => sendToBackend(['Room', msg]),
-        },
-        action,
-        model.gameRoom
-      );
-      return [{ ...model, gameRoom }, Cmd.tag('Room', gameRoomCmd)];
+          action,
+          model.gameRoom
+        );
+        return [{ ...model, gameRoom }, Cmd.tag('Room', gameRoomCmd)];
+      }
+
+      case 'Auth': {
+        const [authNew, authCmd] = Auth.runAction(action, model.auth);
+        return [{ ...model, auth: authNew }, Cmd.tag('Auth', authCmd)];
+      }
+
+      case 'Party': {
+        const [party, partyCmd] = Party.runAction(
+          { sendToBackend: (msg) => sendToBackend(['Party', msg]) },
+          action,
+          model.party
+        );
+        return [{ ...model, party }, Cmd.tag('Party', partyCmd)];
+      }
+
+      case 'Route': {
+        const [route, routeCmd] = Route.runAction(action, model.route);
+
+        return [{ ...model, route }, Cmd.tag('Route', routeCmd)];
+      }
+
+      case 'Profile': {
+        const [profileStore, profileStoreCmd] = ProfileStore.runAction(
+          action,
+          model.profileStore
+        );
+        return [
+          { ...model, profileStore },
+          Cmd.tag('ProfileStore', profileStoreCmd),
+        ];
+      }
+
+      default:
+        return exhaustive(action[0]);
     }
-
-    case 'Auth': {
-      const [authNew, authCmd] = Auth.runAction(action, model.auth);
-      return [{ ...model, auth: authNew }, Cmd.tag('Auth', authCmd)];
-    }
-
-    case 'Party': {
-      const [party, partyCmd] = Party.runAction(
-        { sendToBackend: (msg) => sendToBackend(['Party', msg]) },
-        action,
-        model.party
-      );
-      return [{ ...model, party }, Cmd.tag('Party', partyCmd)];
-    }
-
-    case 'Route': {
-      const [route, routeCmd] = Route.runAction(action, model.route);
-
-      return [{ ...model, route }, Cmd.tag('Route', routeCmd)];
-    }
-
-    case 'Profile': {
-      const [profileStore, profileStoreCmd] = ProfileStore.runAction(
-        action,
-        model.profileStore
-      );
-      return [
-        { ...model, profileStore },
-        Cmd.tag('ProfileStore', profileStoreCmd),
-      ];
-    }
-
-    default:
-      return exhaustive(action[0]);
-  }
-};
+  };
 
 //
 //
@@ -493,10 +507,10 @@ const runAction = (action: OutAction, model: Model): [Model, Cmd<Msg>] => {
 //
 //
 
-export const subscriptions = (model: Model): Sub<Msg> => {
+const subscriptions = (model: Model): Sub<Msg> => {
   return Sub.batch<Msg>([
-    Sub.tag('Wire', wireStatus),
-    Sub.tag('▶', fromBackend),
+    Sub.tag('Wire', wireStatus$),
+    Sub.tag('▶', toFrontend$),
     Browser.onLocation(onLocationChange),
     Sub.tag('Party', Party.subscriptions(model.party)),
     Sub.tag('Page', Page.subscriptions(model.page)),
@@ -559,7 +573,7 @@ const toThemeMode = (model: Model): UI.ThemeMode => {
   }
 };
 
-export const View = ({
+const View = ({
   model,
   $send,
 }: {
@@ -670,7 +684,7 @@ const ViewMain = ({
   }
 };
 
-const ViewLoading = ({ reason }: { reason: string }) => (
+const ViewLoading = (_props: { reason: string }) => (
   <UI.FillBox sx={{ justifyContent: 'center', alignItems: 'center' }}>
     <UI.CircularProgress sx={{ marginBottom: 2 }} />
 
@@ -784,60 +798,61 @@ const toStatus = ({
 //
 //
 
-const isProduction = process.env.NODE_ENV === 'production';
+export const wireStatus$ = new Subject<WireStatus>();
+export const toFrontend$ = new Subject<ToFrontend>();
 
-const backendUrl = isProduction
-  ? 'https://backend.gamezilla.app/'
-  : `http://localhost:${backendServerPort}/`;
+const getSocketClient = () => {
+  const cached: Socket<ServerToClientEvents, ClientToServerEvents> | null =
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    import.meta.hot?.data?.['socketClient'] ?? null;
 
-const socketClient: Socket<ServerToClientEvents, ClientToServerEvents> = io(
-  backendUrl,
-  {
-    auth: {
-      [sessionIdKey]:
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        // localStorage.getItem(sessionIdKey) ?? undefined,
-        '',
-    },
-    forceNew: true,
-    closeOnBeforeunload: true,
+  if (cached) {
+    console.log('[hot] reusing socket client');
+    return cached;
   }
-);
 
-const wireStatus = Sub.create<WireStatus>((emit) => {
+  console.log('[hot] creating new socket client');
+
+  const isProduction = process.env.NODE_ENV === 'production';
+
+  const backendUrl = isProduction
+    ? 'https://backend.gamezilla.app/'
+    : `http://localhost:${backendServerPort}/`;
+
+  const socketClient: Socket<ServerToClientEvents, ClientToServerEvents> = io(
+    backendUrl,
+    {
+      auth: {
+        [sessionIdKey]:
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          // localStorage.getItem(sessionIdKey) ?? undefined,
+          '',
+      },
+      forceNew: true,
+      closeOnBeforeunload: true,
+    }
+  );
+
   socketClient.on('connect', () => {
-    emit('Connected');
+    wireStatus$.next('Connected');
   });
-
-  // socketClient.on("connect_error", () => {
-  //   emit("ConnectError")
-  // })
 
   socketClient.on('disconnect', () => {
-    emit('Disconnected');
+    wireStatus$.next('Disconnected');
   });
 
-  return () => {
-    //
-  };
-});
-
-const fromBackend = Sub.create<ToFrontend>((emit) => {
   socketClient.on('ToFrontend', (msg) => {
-    emit(msg);
+    toFrontend$.next(msg);
   });
 
-  return () => {
-    //
-  };
-});
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  import.meta.hot.data['socketClient'] = socketClient;
 
-const sendToBackend =
-  (msg: ToBackend): Cmd =>
-  () => {
-    socketClient.emit('ToBackend', msg);
-  };
+  return socketClient;
+};
 
 //
 //
@@ -847,20 +862,73 @@ const sendToBackend =
 //
 //
 
-const { program } = Debug.ReduxDevTools.withDebugger(
-  Program.create({
-    init: init(Browser.getLocation()),
-    subscriptions,
-    update,
-  })
-);
+const main = () => {
+  const socketClient = getSocketClient();
 
-Program.run(program);
+  const sendToBackend =
+    (msg: ToBackend): Cmd =>
+    () => {
+      socketClient.emit('ToBackend', msg);
+    };
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  if (!import.meta.hot) {
+    const { program } = p(
+      Program.create({
+        init: init({ sendToBackend })(Browser.getLocation()),
+        subscriptions,
+        update: update({ sendToBackend }),
+      }),
+      Debug.ReduxDevTools.withDebugger
+    );
 
-Program.subscribe(program, (state) => {
-  root.render(<View model={state.model} $send={program.$send} />);
-});
+    Program.run(program);
+
+    const root = ReactDOM.createRoot(
+      document.getElementById('root') as HTMLElement
+    );
+
+    program.state$.subscribe(({ model }) => {
+      root.render(<View model={model} $send={program.$send} />);
+    });
+    return;
+  }
+
+  const program: Program<Msg, Model> | undefined =
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    import.meta.hot.data['program'];
+
+  if (program) {
+    console.log('[hot] reusing program');
+    return;
+  }
+
+  console.log('[hot] creating new program');
+
+  const created = p(
+    Program.create({
+      init: init({ sendToBackend })(Browser.getLocation()),
+      subscriptions,
+      update: update({ sendToBackend }),
+    }),
+    Debug.ReduxDevTools.withDebugger
+  );
+
+  Program.run(created.program);
+
+  const root = ReactDOM.createRoot(
+    document.getElementById('root') as HTMLElement
+  );
+
+  created.program.state$.subscribe(({ model }) => {
+    root.render(<View model={model} $send={created.program.$send} />);
+  });
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  import.meta.hot.data['program'] = created.program;
+};
+
+main();
