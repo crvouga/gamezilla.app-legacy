@@ -32,7 +32,7 @@ export type SharedModel =
       b: UserId | 'none';
     }
   | {
-      type: 'Game';
+      type: 'game';
       drawAgreement: DrawAgreement;
       w: UserId;
       b: UserId;
@@ -158,7 +158,7 @@ export const inputMove = (
   { userId, ...moveInput }: InputMove[1],
   model: SharedModel
 ): InputMove_Done[1] => {
-  if (model.type !== 'Game') {
+  if (model.type !== 'game') {
     return Err('game_must_be_started');
   }
 
@@ -376,7 +376,7 @@ export const startGame = (
   }
 
   return Ok({
-    type: 'Game',
+    type: 'game',
     w: model.w,
     b: model.b,
     board: Board.init(),
@@ -403,7 +403,7 @@ export const requestToDraw = (
   color: Board.Color,
   model: SharedModel
 ): RequestToDraw_Done[1] => {
-  if (model.type !== 'Game') {
+  if (model.type !== 'game') {
     return Err('game_must_be_started');
   }
 
@@ -427,7 +427,7 @@ export const respondToDraw = (
   drawResponse: RespondToDraw[1],
   model: SharedModel
 ): RespondToDraw_Done[1] => {
-  if (model.type !== 'Game') {
+  if (model.type !== 'game') {
     return Err('failed_to_respond_to_draw');
   }
 
@@ -472,7 +472,7 @@ export const cancelDraw = (
   { userId }: CancelDraw[1],
   model: SharedModel
 ): CancelDraw_Done[1] => {
-  if (model.type !== 'Game') {
+  if (model.type !== 'game') {
     return Err('must_be_in_game_mode');
   }
 
@@ -519,7 +519,7 @@ export const resign = (
   color: Resign[1],
   model: SharedModel
 ): Resign_Done[1] => {
-  if (model.type !== 'Game') {
+  if (model.type !== 'game') {
     return Err('can_not_resign');
   }
 
@@ -573,7 +573,7 @@ export type ClockTicked = ['ClockTicked'];
 export type ClockTicked_Done = ['ClockTicked', SharedModel];
 
 export const clockTicked = (model: SharedModel): SharedModel => {
-  if (model.type !== 'Game') {
+  if (model.type !== 'game') {
     return model;
   }
 

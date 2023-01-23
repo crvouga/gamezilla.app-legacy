@@ -47,7 +47,7 @@ export const update = (
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'Game': {
+    case 'game': {
       const roomId = msg[1];
 
       const game = model.games[roomId];
@@ -61,7 +61,7 @@ export const update = (
       const [gameNew, gameCmd] = Game.update(
         {
           broadcast: (msg) =>
-            sendToRoom({ sendToUser, model, roomId, msg: ['Game', msg] }),
+            sendToRoom({ sendToUser, model, roomId, msg: ['game', msg] }),
         },
         gameMsg,
         game
@@ -79,7 +79,7 @@ export const update = (
         modelNew,
         p(
           gameCmd,
-          Cmd.map((msg): Msg => ['Game', roomId, msg])
+          Cmd.map((msg): Msg => ['game', roomId, msg])
         ),
       ];
     }
@@ -99,7 +99,7 @@ export const updateFromFrontend = (
   model: Model
 ): [Model, Cmd<BackendMsg>] => {
   switch (msg[0]) {
-    case 'Game': {
+    case 'game': {
       const user = model.users[ctx.currentUserId];
 
       if (!user) {
@@ -124,13 +124,13 @@ export const updateFromFrontend = (
         {
           hostId: room.hostId,
           ctx,
-          sendToClient: (msg) => wire.sendToClient(['Game', msg]),
+          sendToClient: (msg) => wire.sendToClient(['game', msg]),
           broadcast: (msg) =>
             sendToRoom({
               sendToUser: wire.sendToUser,
               model,
               roomId: room.roomId,
-              msg: ['Game', msg],
+              msg: ['game', msg],
             }),
         },
         gameMsg,
@@ -149,7 +149,7 @@ export const updateFromFrontend = (
         modelNew,
         p(
           gameCmd,
-          Cmd.map((msg): Msg => ['Game', room.roomId, msg])
+          Cmd.map((msg): Msg => ['game', room.roomId, msg])
         ),
       ];
     }
@@ -275,7 +275,7 @@ const updateRoomLeave = (
           sendToUser: wire.sendToUser,
           model: modelAfter,
           roomId: room.roomId,
-          msg: ['Game', msg],
+          msg: ['game', msg],
         }),
     },
     user.userId,
@@ -296,7 +296,7 @@ const updateRoomLeave = (
       wire.broadcast(res),
       p(
         cmd,
-        Cmd.map((msg): Msg => ['Game', room.roomId, msg])
+        Cmd.map((msg): Msg => ['game', room.roomId, msg])
       ),
     ]),
   ];
@@ -373,7 +373,7 @@ export const subscriptions = (model: Model): Sub<Msg> => {
 
     const sub = p(
       Game.subscriptions(`room/${roomId}`, game),
-      Sub.map((msg): Msg => ['Game', roomId, msg])
+      Sub.map((msg): Msg => ['game', roomId, msg])
     );
 
     subs.push(sub);

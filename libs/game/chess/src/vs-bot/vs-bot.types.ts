@@ -29,7 +29,7 @@ export type SetupModel = {
 };
 
 export type GameModel = {
-  type: 'Game';
+  type: 'game';
   userColor: Board.Color;
   userId: UserId;
   board: Board.Model;
@@ -68,7 +68,7 @@ export const initBackend = ({
 };
 
 export const isBotTurn = (model: SharedModel) => {
-  return model.type === 'Game' && Board.toTurn(model.board) !== model.userColor;
+  return model.type === 'game' && Board.toTurn(model.board) !== model.userColor;
 };
 
 //
@@ -281,7 +281,7 @@ export const startGame = (
   }
 
   const modelNew: SharedModel = {
-    type: 'Game',
+    type: 'game',
     board: Board.init(),
     botLevel: model.botLevel,
     userColor: model.userColor,
@@ -359,7 +359,7 @@ export const inputMove = (
   { userId, ...moveInput }: InputMove[1],
   model: SharedModel
 ): InputMove_Done[1] => {
-  if (model.type !== 'Game') {
+  if (model.type !== 'game') {
     return Result.Err('must_be_started');
   }
 
@@ -429,7 +429,7 @@ export const botMoved = (
   botMoveResult: BotMoved[1],
   model: SharedModel
 ): BotMoved_Done[1] => {
-  if (model.type !== 'Game') {
+  if (model.type !== 'game') {
     return Result.Err('must_be_started');
   }
 

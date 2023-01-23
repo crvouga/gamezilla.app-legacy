@@ -244,7 +244,7 @@ export const View = ({
     return <ViewSetup ctx={ctx} goBack={goBack} model={model} $send={$send} />;
   }
 
-  if (model.type === 'Game') {
+  if (model.type === 'game') {
     const currentUserPlayerType = toPlayerType(ctx.currentUserId, model);
 
     return (

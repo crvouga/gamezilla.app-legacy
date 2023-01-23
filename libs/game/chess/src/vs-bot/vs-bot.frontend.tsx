@@ -149,8 +149,8 @@ export const updateFromBackend = (
   }
 
   if (
-    modelPrev.sharedModel.type !== 'Game' &&
-    modelNext.sharedModel.type === 'Game'
+    modelPrev.sharedModel.type !== 'game' &&
+    modelNext.sharedModel.type === 'game'
   ) {
     return [modelNext, Cmd.batch([cmd, playAudio(Sounds.gameStart)]), actions];
   }
@@ -177,7 +177,7 @@ const updateFromBackend_ = (
       const { didCapture, ...sharedModel } = result.value;
 
       const soundCmd =
-        sharedModel.type === 'Game' && Board.inCheck(sharedModel.board)
+        sharedModel.type === 'game' && Board.inCheck(sharedModel.board)
           ? playAudio(Sounds.check)
           : didCapture
           ? playAudio(Sounds.capture)
@@ -203,7 +203,7 @@ const updateFromBackend_ = (
       const modelNew = mergeWithBackend(model, sharedModelNew);
 
       const soundCmd =
-        sharedModelNew.type === 'Game' && Board.inCheck(sharedModelNew.board)
+        sharedModelNew.type === 'game' && Board.inCheck(sharedModelNew.board)
           ? playAudio(Sounds.check)
           : sharedModelNew.didCapture
           ? playAudio(Sounds.capture)
@@ -491,7 +491,7 @@ export const toGameText = (model: SharedModel): string => {
       return 'Setting up game';
     }
 
-    case 'Game': {
+    case 'game': {
       if (Board.inCheck(model.board)) {
         return `${Board.colorToString(Board.toTurn(model.board))} is in check`;
       }

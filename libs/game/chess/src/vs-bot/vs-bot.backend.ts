@@ -76,7 +76,7 @@ const toBotMoveCmd = (modelPrev: Model, modelNext: Model): Cmd<Msg> => {
   if (!didChangeToBotTurn) {
     return Cmd.None;
   }
-  if (modelNext.type !== 'Game') {
+  if (modelNext.type !== 'game') {
     return Cmd.None;
   }
 

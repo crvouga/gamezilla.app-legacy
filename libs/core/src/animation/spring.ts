@@ -1,5 +1,3 @@
-import { Sub } from '../sub';
-
 export type Model = {
   current: number;
   target: number;

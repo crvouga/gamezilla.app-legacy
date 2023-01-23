@@ -81,7 +81,7 @@ const init =
         Route.replace(route),
         Cmd.tag('Auth', authCmd),
         Cmd.tag('Page', pageCmd),
-        Cmd.tag('Room', gameRoomCmd),
+        Cmd.tag('room', gameRoomCmd),
         Cmd.tag('Party', partyCmd),
       ]),
     ];
@@ -204,7 +204,7 @@ const updateMain =
         return [model, Cmd.None];
       }
 
-      case 'Room': {
+      case 'room': {
         const status = toStatus(model);
 
         if (status[0] !== 'Ready') {
@@ -219,13 +219,13 @@ const updateMain =
               currentUserId: profile.userId,
               profiles: model.profileStore.profiles,
             },
-            sendToBackend: (msg) => sendToBackend(['Room', msg]),
+            sendToBackend: (msg) => sendToBackend(['room', msg]),
           },
           msg[1],
           model.gameRoom
         );
 
-        return [{ ...model, gameRoom: child }, Cmd.tag('Room', childCmd)];
+        return [{ ...model, gameRoom: child }, Cmd.tag('room', childCmd)];
       }
 
       case 'Page': {
@@ -328,7 +328,7 @@ const updateFromBackend = (
       );
     }
 
-    case 'Room': {
+    case 'room': {
       if (model.auth[0] !== 'LoggedIn') {
         return [model, Cmd.None];
       }
@@ -338,17 +338,17 @@ const updateFromBackend = (
       const [gameRoom, gameRoomCmd, actions] = GameRoom.updateFromBackend(
         {
           ctx: { currentUserId, profiles: model.profileStore.profiles },
-          sendToBackend: (msg) => sendToBackend(['Room', msg]),
+          sendToBackend: (msg) => sendToBackend(['room', msg]),
         },
         msg[1],
         model.gameRoom
       );
 
       return p(
-        [{ ...model, gameRoom }, Cmd.tag('Room', gameRoomCmd)],
+        [{ ...model, gameRoom }, Cmd.tag('room', gameRoomCmd)],
         andThenMany(
           runAction({ sendToBackend }),
-          actions.map((a) => mapAction(t('Room'), a))
+          actions.map((a) => mapAction(t('room'), a))
         )
       );
     }
@@ -444,7 +444,7 @@ const runAction =
         return [{ ...model, alerts: alertsNew }, Cmd.tag('Alerts', alertsCmd)];
       }
 
-      case 'Room': {
+      case 'room': {
         if (model.auth[0] !== 'LoggedIn') {
           return [model, Cmd.None];
         }
@@ -455,12 +455,12 @@ const runAction =
               currentUserId: model.auth[1].userId,
               profiles: model.profileStore.profiles,
             },
-            sendToBackend: (msg) => sendToBackend(['Room', msg]),
+            sendToBackend: (msg) => sendToBackend(['room', msg]),
           },
           action,
           model.gameRoom
         );
-        return [{ ...model, gameRoom }, Cmd.tag('Room', gameRoomCmd)];
+        return [{ ...model, gameRoom }, Cmd.tag('room', gameRoomCmd)];
       }
 
       case 'Auth': {
@@ -531,7 +531,7 @@ const gameRoomSub = (model: Model): Sub<Msg> => {
 
     case 'LoggedIn': {
       return Sub.tag(
-        'Room',
+        'room',
         GameRoom.subscriptions(
           { currentUserId: model.auth[1].userId },
           model.gameRoom
@@ -545,7 +545,7 @@ const onLocationChange = (location: Browser.Location): Msg => {
   return p(
     location,
     Route.decode,
-    Option.withDefault<Route.Model>(['Room']),
+    Option.withDefault<Route.Model>(['room']),
     (route) => ['Route', ['GotRoute', route]]
   );
 };
@@ -665,7 +665,7 @@ const ViewMain = ({
             currentUserId={profile.userId}
             model={model.gameRoom}
             route={model.route}
-            $send={(msg) => $send(['Room', msg])}
+            $send={(msg) => $send(['room', msg])}
           />
 
           <Page.ViewReady

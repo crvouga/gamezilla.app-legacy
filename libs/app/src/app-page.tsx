@@ -56,8 +56,8 @@ export type Model =
   | ['ChatNew', ChatNew.Model]
   | ['Search', Search.Model]
   | ['ChatConversation', { conversationId: string }, ChatConversation.Model]
-  | ['Room']
-  | ['Game']
+  | ['room']
+  | ['game']
   | ['Party']
   | ['Loading'];
 
@@ -86,8 +86,8 @@ export type Msg =
   | ['ProfileUpdateUsername', ProfileUpdateUsername.Msg]
   | ['ProfileUpdateTheme', ProfileUpdateTheme.Msg]
   | ['Chat', Chat.Msg]
-  | ['Room', GameRoom.Msg]
-  | ['Game', GameRoom.Msg]
+  | ['room', GameRoom.Msg]
+  | ['game', GameRoom.Msg]
   | ['Party', Party.Msg]
   | ['ChatNew', ChatNew.Msg]
   | ['ChatConversation', ChatConversation.Msg]
@@ -208,12 +208,12 @@ export const initReady = (
       ];
     }
 
-    case 'Room': {
-      return [['Room'], Cmd.None, []];
+    case 'room': {
+      return [['room'], Cmd.None, []];
     }
 
-    case 'Game': {
-      return [['Game'], Cmd.None, []];
+    case 'game': {
+      return [['game'], Cmd.None, []];
     }
 
     case 'Party': {
@@ -276,8 +276,8 @@ export const initLoggedOut = (
     case 'ProfileUpdateAvatar':
     case 'Search':
     case 'ProfileUpdateTheme':
-    case 'Game':
-    case 'Room':
+    case 'game':
+    case 'room':
     case 'ProfileUpdateName':
     case 'ProfileUpdateUsername':
     case 'Party':
@@ -316,8 +316,8 @@ export const initProfileMissing = (
     case 'LoginEmailLink':
     case 'LoginPhone':
     case 'LoginPhoneVerify':
-    case 'Game':
-    case 'Room':
+    case 'game':
+    case 'room':
     case 'Home':
     case 'Party':
       return [['ProfileCreate', ProfileCreate.init(auth)], Cmd.None];
@@ -468,16 +468,16 @@ export const updateReady = (
 
       return [model, Cmd.None, []];
 
-    case 'Room': {
-      if (msg[0] === 'Room') {
-        return [['Room'], Cmd.None, [['Room', ['Msg', msg[1]]]]];
+    case 'room': {
+      if (msg[0] === 'room') {
+        return [['room'], Cmd.None, [['room', ['Msg', msg[1]]]]];
       }
       return [model, Cmd.None, []];
     }
 
-    case 'Game': {
-      if (msg[0] === 'Game') {
-        return [['Game'], Cmd.None, [['Room', ['Msg', msg[1]]]]];
+    case 'game': {
+      if (msg[0] === 'game') {
+        return [['game'], Cmd.None, [['room', ['Msg', msg[1]]]]];
       }
       return [model, Cmd.None, []];
     }
@@ -551,8 +551,8 @@ export const updateProfileMissing = (
     case 'ChatNew':
     case 'ChatConversation':
     case 'ProfileUpdateTheme':
-    case 'Game':
-    case 'Room':
+    case 'game':
+    case 'room':
     case 'Loading':
     case 'LoginEmailLink':
     case 'Search':
@@ -620,8 +620,8 @@ export const updateLoggedOut = (
     case 'ChatNew':
     case 'ChatConversation':
     case 'ProfileUpdateTheme':
-    case 'Room':
-    case 'Game':
+    case 'room':
+    case 'game':
     case 'Loading':
     case 'Logout':
     case 'Profile':
@@ -664,8 +664,8 @@ export const subscriptions = (model: Model): Sub<Msg> => {
     case 'Loading':
     case 'Profile':
     case 'Search':
-    case 'Game':
-    case 'Room':
+    case 'game':
+    case 'room':
     case 'Party':
     case 'LoginPhone':
     case 'LoginPhoneVerify':
@@ -897,7 +897,7 @@ export const ViewReady = ({
         </UI.FillBox>
       );
 
-    case 'Room': {
+    case 'room': {
       return (
         <GameRoom.ViewPageRoom
           ctx={{
@@ -905,12 +905,12 @@ export const ViewReady = ({
             profiles: profileStore.profiles,
           }}
           model={gameRoom}
-          $send={(msg) => $send(['Room', msg])}
+          $send={(msg) => $send(['room', msg])}
         />
       );
     }
 
-    case 'Game': {
+    case 'game': {
       return (
         <GameRoom.ViewPageGame
           ctx={{
@@ -918,7 +918,7 @@ export const ViewReady = ({
             profiles: profileStore.profiles,
           }}
           model={gameRoom}
-          $send={(msg) => $send(['Game', msg])}
+          $send={(msg) => $send(['game', msg])}
         />
       );
     }
@@ -1011,8 +1011,8 @@ export const ViewProfileMissing = ({
     case 'Loading':
     case 'Search':
     case 'Profile':
-    case 'Game':
-    case 'Room':
+    case 'game':
+    case 'room':
     case 'Party':
     case 'Home':
       return <UI.LoadingPage />;
@@ -1064,8 +1064,8 @@ export const ViewLoggedOut = ({
     case 'Chat':
     case 'ChatConversation':
     case 'ChatNew':
-    case 'Game':
-    case 'Room':
+    case 'game':
+    case 'room':
     case 'Logout':
     case 'ProfileCreate':
     case 'ProfileDelete':

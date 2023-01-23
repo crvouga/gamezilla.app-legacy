@@ -332,7 +332,7 @@ export const View = ({
     );
   }
 
-  if (model.type === 'Game') {
+  if (model.type === 'game') {
     const currentRound = Round.toCurrent(model.round);
     const board = Round.toCurrentBoard(model.round) ?? emptyBoard;
 
@@ -1071,7 +1071,7 @@ export const toGameText = ({
       }
     }
 
-    case 'Game': {
+    case 'game': {
       const currentRound = Round.toCurrent(model.round);
 
       switch (currentRound.type) {
@@ -1189,7 +1189,7 @@ const ViewPlayerGameSlot = ({
   const round = Round.toCurrent(model.round);
 
   const isTurn =
-    model.type === 'Game' &&
+    model.type === 'game' &&
     round.type === 'RoundStarted' &&
     toTurn(round.board) === playerType;
 

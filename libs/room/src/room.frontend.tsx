@@ -63,7 +63,7 @@ export const init: [Model, Cmd<Msg>] = [
 
 export type Msg = FrontendMsg;
 
-export type Action = ['Room', ['Msg', Msg]];
+export type Action = ['room', ['Msg', Msg]];
 
 type OutAction = Alerts.Action<Msg> | ProfileStore.Action | Route.Action;
 
@@ -92,7 +92,7 @@ export const update = (
     }
 
     case 'ClickedRoom': {
-      return [model, Route.push(['Room'])];
+      return [model, Route.push(['room'])];
     }
 
     case 'ClickedUser': {
@@ -100,7 +100,7 @@ export const update = (
     }
 
     case 'ClickedBanner': {
-      return [model, Route.push(['Game'])];
+      return [model, Route.push(['game'])];
     }
 
     case 'RoomCreate':
@@ -121,7 +121,7 @@ export const update = (
       ];
     }
 
-    case 'Game': {
+    case 'game': {
       const user = model.users[ctx.currentUserId];
 
       if (!user) {
@@ -139,7 +139,7 @@ export const update = (
       const [gameNew, gameCmd] = Game.update(
         {
           ctx,
-          sendToBackend: (msg) => sendToBackend(['Game', msg]),
+          sendToBackend: (msg) => sendToBackend(['game', msg]),
         },
         gameMsg,
         game
@@ -157,7 +157,7 @@ export const update = (
         modelNew,
         p(
           gameCmd,
-          Cmd.map((msg): Msg => ['Game', msg])
+          Cmd.map((msg): Msg => ['game', msg])
         ),
       ];
     }
@@ -218,7 +218,7 @@ export const updateFromBackend = (
       return [merged[0], merged[1], actions];
     }
 
-    case 'Game': {
+    case 'game': {
       const user = model.users[ctx.currentUserId];
 
       if (!user) {
@@ -236,7 +236,7 @@ export const updateFromBackend = (
       const [gameNew, gameCmd, actions] = Game.updateFromBackend(
         {
           ctx,
-          sendToBackend: (msg) => sendToBackend(['Game', msg]),
+          sendToBackend: (msg) => sendToBackend(['game', msg]),
         },
         gameMsg,
         game
@@ -254,7 +254,7 @@ export const updateFromBackend = (
         modelNew,
         p(
           gameCmd,
-          Cmd.map((msg) => ['Game', msg])
+          Cmd.map((msg) => ['game', msg])
         ),
         actions,
       ];
@@ -370,7 +370,7 @@ export const updateFromBackend = (
 
       const routeActions: OutAction[] =
         msg[1].userId === ctx.currentUserId
-          ? [['Route', ['Replace', ['Game']]]]
+          ? [['Route', ['Replace', ['game']]]]
           : [];
 
       const alertActions: OutAction[] =
@@ -481,7 +481,7 @@ const mergeWithBackendModel = ({
         const merged = Game.mergeWithBackend({
           backendModel: backendGame,
           frontendModel: frontendGame,
-          sendToBackend: (msg) => sendToBackend(['Game', msg]),
+          sendToBackend: (msg) => sendToBackend(['game', msg]),
         });
 
         return [
@@ -493,7 +493,7 @@ const mergeWithBackendModel = ({
             gamesNew[1],
             p(
               merged[1],
-              Cmd.map((m): Msg => ['Game', m])
+              Cmd.map((m): Msg => ['game', m])
             ),
           ]),
         ];
@@ -506,7 +506,7 @@ const mergeWithBackendModel = ({
       const merged = Game.mergeWithBackend({
         backendModel: backendGame,
         frontendModel: initial[0],
-        sendToBackend: (msg) => sendToBackend(['Game', msg]),
+        sendToBackend: (msg) => sendToBackend(['game', msg]),
       });
 
       return [
@@ -518,11 +518,11 @@ const mergeWithBackendModel = ({
           gamesNew[1],
           p(
             initial[1],
-            Cmd.map((msg) => ['Game', msg])
+            Cmd.map((msg) => ['game', msg])
           ),
           p(
             merged[1],
-            Cmd.map((msg) => ['Game', msg])
+            Cmd.map((msg) => ['game', msg])
           ),
         ]),
       ];
@@ -588,7 +588,7 @@ export const subscriptions = (
 
   return p(
     Game.subscriptions(`room/${user.roomId}`, game),
-    Sub.map((msg) => ['Game', msg])
+    Sub.map((msg) => ['game', msg])
   );
 };
 
@@ -643,7 +643,7 @@ export const ViewPageGame = ({
           Home
         </Button>
         <Typography variant="h6" sx={{ flex: 1, textAlign: 'center' }}>
-          {game ? gameNameToString(game.type) : 'Game'}
+          {game ? gameNameToString(game.type) : 'game'}
         </Typography>
         <Badge
           badgeContent={usersInRoom.length > 1 ? usersInRoom.length : undefined}
@@ -672,7 +672,7 @@ export const ViewPageGame = ({
               ]),
           }}
           ctx={ctx}
-          $send={(msg) => $send(['Game', msg])}
+          $send={(msg) => $send(['game', msg])}
           model={game}
         />
       ) : (
@@ -768,7 +768,7 @@ export const ViewNotInRoom = ({
   if (model.requests.RoomCreate?.type === 'Loading') {
     return (
       <FillBox>
-        <Header title="Game" />
+        <Header title="game" />
         <ViewLoadingState title="Creating game..." />
       </FillBox>
     );
@@ -777,7 +777,7 @@ export const ViewNotInRoom = ({
   if (model.requests.RoomJoin?.type === 'Loading') {
     return (
       <FillBox>
-        <Header title="Game" />
+        <Header title="game" />
         <ViewLoadingState title="Joining game..." />
       </FillBox>
     );
@@ -785,7 +785,7 @@ export const ViewNotInRoom = ({
 
   return (
     <FillBox>
-      <Header title="Game" />
+      <Header title="game" />
       <ViewEmptyState
         actionIcon={<Icons.Add />}
         actionTitle="Create Game"
@@ -1070,7 +1070,7 @@ export const ViewBanner = ({
   $send: (msg: Msg) => void;
   store: ProfileStore.Model;
 }) => {
-  if (route[0] === 'Room' || route[0] === 'Game') {
+  if (route[0] === 'room' || route[0] === 'game') {
     return null;
   }
 
