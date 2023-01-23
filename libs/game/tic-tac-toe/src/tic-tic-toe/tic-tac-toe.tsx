@@ -325,6 +325,9 @@ const toWins = memoize(
 
     for (let i = 0; i < allWinningGroups.length; i++) {
       const group = allWinningGroups[i];
+      if (!group || !group[0] || !group[1] || !group[2]) {
+        continue;
+      }
       const a = toSlot(board, group[0]);
       const b = toSlot(board, group[1]);
       const c = toSlot(board, group[2]);
@@ -335,6 +338,10 @@ const toWins = memoize(
           : a === 'O' && b === 'O' && c === 'O'
           ? 'O'
           : 'None';
+
+      if (!group) {
+        continue;
+      }
 
       wins[key].push(group);
     }
@@ -389,6 +396,9 @@ const toSlotFrequency = (board: Board): SlotFrequency => {
 
   for (let i = 0; i < allPositions.length; i++) {
     const position = allPositions[i];
+    if (!position) {
+      continue;
+    }
     const slot = toSlot(board, position);
     frequency[slot] += 1;
   }

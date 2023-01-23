@@ -1,4 +1,4 @@
-type Easing = 'easeOutBounce' | 'easeOutQuint' | 'linear';
+type Easing = 'easeOutBounce' | 'easeOutQuint' | 'linear' | 'easeInBack';
 
 export type Model = {
   startMs: number;
@@ -45,6 +45,13 @@ export function easeOutQuint(x: number): number {
   return 1 - Math.pow(1 - x, 5);
 }
 
+export function easeInBack(x: number): number {
+  const c1 = 1.70158;
+  const c3 = c1 + 1;
+
+  return c3 * x * x * x - c1 * x * x;
+}
+
 const ease = (easing: Easing, x: number): number => {
   switch (easing) {
     case 'easeOutBounce':
@@ -52,6 +59,9 @@ const ease = (easing: Easing, x: number): number => {
 
     case 'easeOutQuint':
       return easeOutQuint(x);
+
+    case 'easeInBack':
+      return easeInBack(x);
 
     case 'linear':
       return x;
@@ -64,8 +74,10 @@ export const step = (nowMs: number, model: Model): Model => {
   if (progress >= 1) {
     return { ...model, value: model.to };
   }
-  const easedProgress = ease(model.easing, progress);
-  const valueNew = model.from + (model.to - model.from) * easedProgress;
+  const range = Math.abs(model.to - model.from);
+  const sign = Math.sign(model.to - model.from);
+  const easedProgress = sign * ease(model.easing, progress);
+  const valueNew = model.from + range * easedProgress;
   return { ...model, value: valueNew };
 };
 

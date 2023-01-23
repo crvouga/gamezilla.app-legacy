@@ -451,11 +451,7 @@ export const updateReady = (
 
     case 'Profile':
       if (msg[0] === 'Profile') {
-        const [modelPage, cmdPage, actions] = Profile.update(
-          { currentUserId: profile.userId, userId: model[1].userId },
-          msg[1],
-          model[2]
-        );
+        const [modelPage, cmdPage, actions] = Profile.update(msg[1], model[2]);
         return [
           ['Profile', model[1], modelPage],
           p(cmdPage, Cmd.map(t('Profile'))),

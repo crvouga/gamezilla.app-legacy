@@ -14,6 +14,7 @@ export const preload = <msg>(
   mapper: (result: PreloadResult) => msg
 ) =>
   p(async () => {
+    console.log('play sounds', srcList);
     // for (const src of srcList) {
     // getSoundInstance(src)
     // }
@@ -22,6 +23,7 @@ export const preload = <msg>(
 
 export const play = <msg>(src: string, mapper: (result: PlayResult) => msg) =>
   p(async () => {
+    console.log('play sound', src);
     // const sound = getSoundInstance(src);
 
     if (document.hasFocus()) {

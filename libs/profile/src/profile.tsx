@@ -40,7 +40,6 @@ export type Msg =
 type OutAction = ProfileStore.Action;
 
 export const update = (
-  { currentUserId, userId }: { currentUserId: UserId; userId: UserId },
   msg: Msg,
   model: Model
 ): [Model, Cmd<Msg>, OutAction[]] => {
