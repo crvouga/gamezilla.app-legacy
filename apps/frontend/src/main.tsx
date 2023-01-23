@@ -801,19 +801,15 @@ const toStatus = ({
 export const wireStatus$ = new Subject<WireStatus>();
 export const toFrontend$ = new Subject<ToFrontend>();
 
-const getSocketClient = () => {
-  const cached =
-    getHotData<Socket<ServerToClientEvents, ClientToServerEvents>>(
-      'socketClient'
-    );
+//
+//
+//
+// Main
+//
+//
+//
 
-  if (cached) {
-    console.log('[hot] reusing socket client');
-    return cached;
-  }
-
-  console.log('[hot] creating new socket client');
-
+const main = () => {
   const isProduction = process.env.NODE_ENV === 'production';
 
   const backendUrl = isProduction
@@ -825,8 +821,6 @@ const getSocketClient = () => {
     {
       auth: {
         [sessionIdKey]:
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
           // localStorage.getItem(sessionIdKey) ?? undefined,
           '',
       },
@@ -847,62 +841,13 @@ const getSocketClient = () => {
     toFrontend$.next(msg);
   });
 
-  setHotData('socketClient', socketClient);
-
-  return socketClient;
-};
-
-//
-//
-//
-// Main
-//
-//
-//
-
-const main = () => {
-  const socketClient = getSocketClient();
-
   const sendToBackend =
     (msg: ToBackend): Cmd =>
     () => {
       socketClient.emit('ToBackend', msg);
     };
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  if (!import.meta.hot) {
-    const { program } = p(
-      Program.create({
-        init: init({ sendToBackend })(Browser.getLocation()),
-        subscriptions,
-        update: update({ sendToBackend }),
-      }),
-      Debug.ReduxDevTools.withDebugger
-    );
-
-    Program.run(program);
-
-    const root = ReactDOM.createRoot(
-      document.getElementById('root') as HTMLElement
-    );
-
-    program.state$.subscribe(({ model }) => {
-      root.render(<View model={model} $send={program.$send} />);
-    });
-    return;
-  }
-
-  const program = getHotData<Program<Msg, Model>>('program');
-
-  if (program) {
-    console.log('[hot] reusing program');
-    return;
-  }
-
-  console.log('[hot] creating new program');
-
-  const created = p(
+  const { program } = p(
     Program.create({
       init: init({ sendToBackend })(Browser.getLocation()),
       subscriptions,
@@ -911,38 +856,15 @@ const main = () => {
     Debug.ReduxDevTools.withDebugger
   );
 
-  Program.run(created.program);
+  Program.run(program);
 
   const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
   );
 
-  created.program.state$.subscribe(({ model }) => {
-    root.render(<View model={model} $send={created.program.$send} />);
+  program.state$.subscribe(({ model }) => {
+    root.render(<View model={model} $send={program.$send} />);
   });
-
-  setHotData('program', created.program);
 };
 
 main();
-
-const getHotData = <T,>(key: string): T | null => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  if (import.meta.hot) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    return import.meta.hot.data[key] ?? null;
-  }
-  return null;
-};
-
-const setHotData = <T,>(key: string, value: T) => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  if (import.meta.hot) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    import.meta.hot.data[key] = value;
-  }
-};
