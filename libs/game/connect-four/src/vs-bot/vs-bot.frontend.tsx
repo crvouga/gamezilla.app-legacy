@@ -234,7 +234,7 @@ export const mergeWithBackend = ({
 export const subscriptions = (_intervalId: string, model: Model): Sub<Msg> => {
   switch (model.type) {
     case 'game': {
-      if (isDone(Date.now(), model.visual)) {
+      if (isDone(performance.now(), model.visual)) {
         return Sub.None;
       }
       return Animation.onFrame(() => ['animate']);
