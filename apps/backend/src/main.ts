@@ -50,7 +50,7 @@ type Msg = BackendMsg;
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case '▶':
+    case '→':
       return updateFromFrontend(msg[1], msg[2], msg[3], model);
 
     case 'ClientConnected': {
@@ -274,7 +274,7 @@ export const subscriptions = (model: Model): Sub<Msg> => {
     p(
       fromFrontend,
       Sub.map(
-        ([sessionId, clientId, msg]): Msg => ['▶', sessionId, clientId, msg]
+        ([sessionId, clientId, msg]): Msg => ['→', sessionId, clientId, msg]
       )
     ),
   ]);
