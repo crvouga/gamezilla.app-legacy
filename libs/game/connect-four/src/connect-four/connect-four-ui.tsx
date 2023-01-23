@@ -1,4 +1,4 @@
-import { Ease, Spring, Uuid } from '@gamezilla/core';
+import { Ease, Uuid } from '@gamezilla/core';
 import { SvgIcon, Sx } from '@gamezilla/shared/ui';
 import { useLayoutEffect, useRef } from 'react';
 import {
@@ -20,7 +20,6 @@ export type VisualModel = Disc[][];
 
 export type Disc = {
   type: 'entry' | 'exit';
-  yPosition: Spring.Model;
   yPosition_: Ease.Model;
   playerType: PlayerType;
 };
@@ -95,7 +94,7 @@ type ViewColumnsProps = {
 };
 
 export const ViewColumns = ({
-  implementation = 'canvas',
+  implementation = 'svg',
   ...props
 }: ViewColumnsProps & {
   implementation?: 'svg' | 'canvas';
@@ -201,7 +200,7 @@ const ViewColumnsSvg = ({
           <circle
             key={[columnIndex, rowIndex].join(', ')}
             cx={columnIndex + 0.5}
-            cy={disc.yPosition_.value + 0.5}
+            cy={MAX_COLUMN_HEIGHT - disc.yPosition_.value - 0.5}
             r={0.5}
             fill={
               disc.playerType === 'PlayerOne' ? playerOneFill : playerTwoFill
@@ -357,23 +356,34 @@ const paint = ({
   const cellWidth = width / COLUMN_COUNT;
   const cellHeight = height / MAX_COLUMN_HEIGHT;
 
-  let x, y, cx, cy, r, column, disc, gradient;
+  let x, y, cx, cy, r, gradient;
 
   for (x = 0; x < visual.length; x++) {
-    column = visual[x];
+    const column = visual[x];
+    if (!column) {
+      continue;
+    }
     for (y = 0; y < column.length; y++) {
-      disc = column[y];
+      const disc = column[y];
+
+      if (!disc) {
+        continue;
+      }
 
       cx = (x + 1 / 2) * cellWidth;
-      cy = (disc.yPosition.current + 1 / 2) * cellHeight;
+      cy = (disc.yPosition_.value + 1 / 2) * cellHeight;
       r = cellWidth / 2;
 
       context.beginPath();
       context.arc(cx, cy, r, 0, Math.PI * 2);
-      gradient = context.createRadialGradient(cx, cy, 0, cx, cy, r * 0.74);
-      gradient.addColorStop(0, gameTheme[disc.playerType].light);
-      gradient.addColorStop(1, gameTheme[disc.playerType].dark);
-      context.fillStyle = gradient;
+      try {
+        gradient = context.createRadialGradient(cx, cy, 0, cx, cy, r * 0.74);
+        gradient.addColorStop(0, gameTheme[disc.playerType].light);
+        gradient.addColorStop(1, gameTheme[disc.playerType].dark);
+        context.fillStyle = gradient;
+      } catch (error) {
+        context.fillStyle = gameTheme[disc.playerType].light;
+      }
       context.fill();
       context.closePath();
     }
@@ -411,29 +421,6 @@ const paint = ({
   context.rect(0, 0, width, height);
   context.fill('evenodd');
 };
-
-//
-//
-//
-// Animation
-//
-//
-//
-
-// source: https://easings.net/#easeOutBounce
-// const easeOutBounce = (x: number): number => {
-//   const n1 = 7.5625
-//   const d1 = 2.75
-//   if (x < 1 / d1) {
-//     return n1 * x * x
-//   } else if (x < 2 / d1) {
-//     return n1 * (x -= 1.5 / d1) * x + 0.75
-//   } else if (x < 2.5 / d1) {
-//     return n1 * (x -= 2.25 / d1) * x + 0.9375
-//   } else {
-//     return n1 * (x -= 2.625 / d1) * x + 0.984375
-//   }
-// }
 
 export const ViewCoverArt = () => {
   const ref = useRef(Uuid.generateSync());
@@ -581,11 +568,11 @@ export const step = ({
         ret_i.push({
           type: 'entry',
           playerType: discTrue,
-          yPosition: Spring.init({ from: MAX_COLUMN_HEIGHT + 1, to: j }),
           yPosition_: Ease.init({
-            from: MAX_COLUMN_HEIGHT + 1,
+            from: MAX_COLUMN_HEIGHT + 1 + j,
             to: j,
-            durationMs: 500,
+            durationMs: (0.2 + 0.3 * (1 - j / MAX_COLUMN_HEIGHT)) * 1000,
+            easing: 'easeOutBounce',
           }),
         });
         continue;
@@ -596,13 +583,10 @@ export const step = ({
         ret_i.push({
           ...discVisual,
           type: 'exit',
-          yPosition: Spring.init({
-            from: discVisual.yPosition.current,
-            to: -j,
-          }),
           yPosition_: Ease.init({
             from: j,
-            to: MAX_COLUMN_HEIGHT + 1 + j,
+            to: -(MAX_COLUMN_HEIGHT + 1 + j),
+            delayMs: ((i / COLUMN_COUNT) * 0.5 + 0.5) * 1000,
             durationMs: 500,
           }),
         });
@@ -613,13 +597,11 @@ export const step = ({
         discVisual &&
         discVisual.type === 'exit' &&
         Ease.isDone(nowMs, discVisual.yPosition_);
-      // Spring.isDone(discVisual.yPosition);
 
       if (discVisual && !shouldRemove) {
         ret_i.push({
           ...discVisual,
-          yPosition: Spring.step(discVisual.yPosition),
-          yPosition_: Ease.step(Ease.linear, nowMs, discVisual.yPosition_),
+          yPosition_: Ease.step(nowMs, discVisual.yPosition_),
         });
         continue;
       }
@@ -642,7 +624,6 @@ export const initVisual = (columns: Columns): VisualModel => {
         ret_i.push({
           type: 'entry',
           playerType: discTrue,
-          yPosition: Spring.init({ from: j, to: j }),
           yPosition_: Ease.init({ from: j, to: j, durationMs: 0 }),
         });
       }
@@ -653,15 +634,11 @@ export const initVisual = (columns: Columns): VisualModel => {
   return ret;
 };
 
-export const isDone = (model: VisualModel): boolean => {
+export const isDone = (nowMs: number, model: VisualModel): boolean => {
   for (let i = 0; i < COLUMN_COUNT; i++) {
     for (let j = 0; j < MAX_COLUMN_HEIGHT; j++) {
       const discVisual = model[i]?.[j];
-      if (
-        discVisual &&
-        // !Spring.isDone(discVisual.yPosition)
-        !Ease.isDone(Date.now(), discVisual.yPosition_)
-      ) {
+      if (discVisual && !Ease.isDone(nowMs, discVisual.yPosition_)) {
         return false;
       }
     }

@@ -1,63 +1,62 @@
-import { Cmd } from "./cmd"
-import { p } from "./pipe"
+import { Cmd } from './cmd';
+import { p } from './pipe';
 
-export const exhaustive = (discriminatedUnionType: "Missing Case!"): never => {
-  throw new Error(`Missing case for: ${discriminatedUnionType}`)
-}
+export const exhaustive = (discriminatedUnionType: 'Missing Case!'): never => {
+  throw new Error(`Missing case for: ${discriminatedUnionType}`);
+};
 
 export const andThen_ =
   <Msg, Model>(
     msg: Msg,
-    update: (msg: Msg, model: Model) => [Model, Cmd<Msg>],
+    update: (msg: Msg, model: Model) => [Model, Cmd<Msg>]
   ) =>
-    ([model, cmdPrev]: [Model, Cmd<Msg>]): [Model, Cmd<Msg>] => {
-      const [modelNew, cmdNew] = update(msg, model)
+  ([model, cmdPrev]: [Model, Cmd<Msg>]): [Model, Cmd<Msg>] => {
+    const [modelNew, cmdNew] = update(msg, model);
 
-      return [modelNew, Cmd.batch([cmdNew, cmdPrev])]
-    }
+    return [modelNew, Cmd.batch([cmdNew, cmdPrev])];
+  };
 
 export const andThen =
   <Msg, Model>(
     update: (msg: Msg, model: Model) => [Model, Cmd<Msg>],
-    msg: Msg,
+    msg: Msg
   ) =>
-    ([model, cmdPrev]: [Model, Cmd<Msg>]): [Model, Cmd<Msg>] => {
-      const [modelNew, cmdNew] = update(msg, model)
+  ([model, cmdPrev]: [Model, Cmd<Msg>]): [Model, Cmd<Msg>] => {
+    const [modelNew, cmdNew] = update(msg, model);
 
-      return [modelNew, Cmd.batch([cmdNew, cmdPrev])]
-    }
+    return [modelNew, Cmd.batch([cmdNew, cmdPrev])];
+  };
 
 export const andThenMany =
   <Action, Model, Msg>(
     update: (msg: Action, model: Model) => [Model, Cmd<Msg>],
-    msgs: Action[],
+    msgs: Action[]
   ) =>
-    ([modelPrev, cmdPrev]: [Model, Cmd<Msg>]): [Model, Cmd<Msg>] => {
-      const [msg, ...msgsRest] = msgs
+  ([modelPrev, cmdPrev]: [Model, Cmd<Msg>]): [Model, Cmd<Msg>] => {
+    const [msg, ...msgsRest] = msgs;
 
-      if (!msg) {
-        return [modelPrev, cmdPrev]
-      }
-
-      const [modelNew, cmdNew] = update(msg, modelPrev)
-
-      return p(
-        [modelNew, Cmd.batch([cmdPrev, cmdNew])],
-        andThenMany(update, msgsRest),
-      )
+    if (!msg) {
+      return [modelPrev, cmdPrev];
     }
+
+    const [modelNew, cmdNew] = update(msg, modelPrev);
+
+    return p(
+      [modelNew, Cmd.batch([cmdPrev, cmdNew])],
+      andThenMany(update, msgsRest)
+    );
+  };
 
 export const t =
   <Tag extends string>(tag: Tag) =>
-    <Value>(value: Value): [Tag, Value] =>
-      [tag, value]
+  <Value>(value: Value): [Tag, Value] =>
+    [tag, value];
 
+export type Unit = { type: 'Unit' };
 
-export type Unit = { type: "Unit" }
+export const Unit: Unit = { type: 'Unit' };
 
-export const Unit: Unit = { type: "Unit" }
-
-type Range = [number, number]
+type Range = [number, number];
 /**
  * @example
  * // assume a ∈ [0, 100]
@@ -69,12 +68,12 @@ export const rescale = ({
   from,
   to,
 }: {
-  value: number
-  from: Range
-  to: Range
+  value: number;
+  from: Range;
+  to: Range;
 }) => {
-  return ((value - from[0]) * (to[1] - to[0])) / (from[1] - from[0]) + to[0]
-}
+  return ((value - from[0]) * (to[1] - to[0])) / (from[1] - from[0]) + to[0];
+};
 
 /**
  * @example
@@ -85,16 +84,16 @@ export const rescale = ({
  * unique(strEq, ['1', 1, 1])    //=> ['1']
  */
 export const unique = <X>(eq: (a: X, b: X) => boolean, xs: X[]): X[] => {
-  const items: X[] = []
+  const items: X[] = [];
 
   for (const x of xs) {
     if (!items.some((item) => eq(item, x))) {
-      items.push(x)
+      items.push(x);
     }
   }
 
-  return items
-}
+  return items;
+};
 
 /**
  * @example
@@ -109,8 +108,8 @@ export const unique = <X>(eq: (a: X, b: X) => boolean, xs: X[]): X[] => {
 export const isSubset = <X>(
   eq: (x1: X, x2: X) => boolean,
   a: X[],
-  b: X[],
-): boolean => a.every((a_i) => b.some((b_i) => eq(a_i, b_i)))
+  b: X[]
+): boolean => a.every((a_i) => b.some((b_i) => eq(a_i, b_i)));
 
 /**
  * @description
@@ -126,18 +125,18 @@ export const isSubset = <X>(
  *
  */
 export const memoize = <X, Y>(toKey: (x: X) => string, f: (x: X) => Y) => {
-  const cache = new Map<string, Y>()
+  const cache = new Map<string, Y>();
   return (x: X): Y => {
-    const key = toKey(x)
-    const cached = cache.get(key)
+    const key = toKey(x);
+    const cached = cache.get(key);
     if (cached) {
-      return cached
+      return cached;
     }
-    const y = f(x)
-    cache.set(key, y)
-    return y
-  }
-}
+    const y = f(x);
+    cache.set(key, y);
+    return y;
+  };
+};
 
 /**
  * @description
@@ -151,35 +150,39 @@ export const memoize = <X, Y>(toKey: (x: X) => string, f: (x: X) => Y) => {
  * shuffle(x) //=> ['c', 'a', 'b']
  */
 export const shuffle = <X>(xs: X[]): X[] => {
-  const ys = [...xs]
+  const ys = [...xs];
   for (let i = ys.length - 1; i >= 0; i--) {
-    const j = Math.floor(Math.random() * i)
-    const temp = ys[i]
-    ys[i] = ys[j]
-    ys[j] = temp
+    const j = Math.floor(Math.random() * i);
+    const temp = ys[i];
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    ys[i] = ys[j];
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    ys[j] = temp;
   }
-  return ys
-}
+  return ys;
+};
 
 export const removeKey = <T>(key: keyof T, obj: T): Omit<T, keyof T> => {
-  const { [key]: _value, ...rest } = obj
-  return rest
-}
+  const { [key]: _value, ...rest } = obj;
+  return rest;
+};
 
 type Entry<T> = {
-  [K in keyof T]: [K, T[K]]
-}[keyof T]
+  [K in keyof T]: [K, T[K]];
+}[keyof T];
 
 export const filterObject = <T extends object>(
   obj: T,
-  predicate: (entry: Entry<T>, i: number, arr: Entry<T>[]) => boolean,
+  predicate: (entry: Entry<T>, i: number, arr: Entry<T>[]) => boolean
 ): T => {
-  const out: T = { ...obj }
+  const out: T = { ...obj };
   for (const entry of (Object.entries(obj) as Entry<T>[]).filter(predicate)) {
-    const key = entry[0]
+    const key = entry[0];
     if (key) {
-      out[key] = entry[1]
+      out[key] = entry[1];
     }
   }
-  return out
-}
+  return out;
+};
