@@ -68,7 +68,7 @@ export type ToFrontend =
   | ['Session', SessionId];
 
 export type FrontendMsg =
-  | ['▶', ToFrontend]
+  | ['→', ToFrontend]
   | ['Wire', WireStatus]
   | ['Route', Route.Msg]
   | ['Alerts', Alerts.Msg]
@@ -81,7 +81,7 @@ export type FrontendMsg =
   | ['ProfileStore', ProfileStore.Msg];
 
 export type BackendMsg =
-  | ['▶', SessionId, ClientId, ToBackend]
+  | ['→', SessionId, ClientId, ToBackend]
   | ['ClientConnected', SessionId, ClientId]
   | ['ClientDisconnected', SessionId, ClientId]
   | ['room', GameRoom.BackendMsg]

@@ -138,7 +138,7 @@ const updateMain =
   ({ sendToBackend }: { sendToBackend: (m: ToBackend) => Cmd }) =>
   (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     switch (msg[0]) {
-      case '▶': {
+      case '→': {
         return updateFromBackend({ sendToBackend }, msg[1], model);
       }
 
@@ -510,7 +510,7 @@ const runAction =
 const subscriptions = (model: Model): Sub<Msg> => {
   return Sub.batch<Msg>([
     Sub.tag('Wire', wireStatus$),
-    Sub.tag('▶', toFrontend$),
+    Sub.tag('→', toFrontend$),
     Browser.onLocation(onLocationChange),
     Sub.tag('Party', Party.subscriptions(model.party)),
     Sub.tag('Page', Page.subscriptions(model.page)),
