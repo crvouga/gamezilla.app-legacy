@@ -636,11 +636,8 @@ export const isDone = (nowMs: number, model: VisualModel): boolean => {
     }
     for (let y = 0; y < column.length; y++) {
       const discVisual = column[y];
-      if (!discVisual) {
-        continue;
-      }
 
-      if (!Ease.isDone(nowMs, discVisual.yPosition_)) {
+      if (discVisual && !Ease.isDone(nowMs, discVisual.yPosition_)) {
         return false;
       }
     }
