@@ -1,4 +1,8 @@
-type Easing = 'easeOutBounce' | 'easeOutQuint' | 'linear' | 'easeInBack';
+type Easing =
+  | { type: 'ease-out-bounce'; n1?: number; d1?: number }
+  | { type: 'ease-out-quint' }
+  | { type: 'linear' }
+  | { type: 'ease-in-back' };
 
 export type Model = {
   startMs: number;
@@ -7,10 +11,11 @@ export type Model = {
   from: number;
   to: number;
   easing: Easing;
+  delayMs: number;
 };
 
 export const isDone = (nowMs: number, model: Model): boolean => {
-  const endMs = model.startMs + model.durationMs;
+  const endMs = model.startMs + model.durationMs + model.delayMs;
   return endMs < nowMs;
 };
 
@@ -22,10 +27,10 @@ export const isDone = (nowMs: number, model: Model): boolean => {
  *
  * @returns {number}
  */
-export const easeOutBounce = (x: number): number => {
-  const n1 = 7.5625;
-  const d1 = 2.75;
-
+export const easeOutBounce = (
+  { n1 = 7.5625, d1 = 2.75 }: { n1?: number; d1?: number },
+  x: number
+): number => {
   if (x < 1 / d1) {
     return n1 * x * x;
   }
@@ -53,14 +58,14 @@ export function easeInBack(x: number): number {
 }
 
 const ease = (easing: Easing, x: number): number => {
-  switch (easing) {
-    case 'easeOutBounce':
-      return easeOutBounce(x);
+  switch (easing.type) {
+    case 'ease-out-bounce':
+      return easeOutBounce(easing, x);
 
-    case 'easeOutQuint':
+    case 'ease-out-quint':
       return easeOutQuint(x);
 
-    case 'easeInBack':
+    case 'ease-in-back':
       return easeInBack(x);
 
     case 'linear':
@@ -69,8 +74,11 @@ const ease = (easing: Easing, x: number): number => {
 };
 
 export const step = (nowMs: number, model: Model): Model => {
-  const elapsedTime = nowMs - model.startMs;
-  const progress = elapsedTime / model.durationMs;
+  const elapsedMs = nowMs - model.startMs;
+  if (elapsedMs < model.delayMs) {
+    return model;
+  }
+  const progress = (elapsedMs - model.delayMs) / model.durationMs;
   if (progress >= 1) {
     return { ...model, value: model.to };
   }
@@ -86,7 +94,7 @@ export const init = ({
   to,
   durationMs,
   delayMs = 0,
-  easing = 'linear',
+  easing = { type: 'linear' },
 }: {
   easing?: Easing;
   delayMs?: number;
@@ -95,11 +103,12 @@ export const init = ({
   durationMs: number;
 }): Model => {
   return {
-    startMs: Date.now() + delayMs,
+    startMs: Date.now(),
     durationMs,
     value: from,
     from,
     to,
     easing,
+    delayMs,
   };
 };
