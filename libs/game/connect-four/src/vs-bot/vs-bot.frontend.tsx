@@ -1,5 +1,5 @@
 import { keyframes } from '@emotion/react';
-import { Cmd, Spring, Sub } from '@gamezilla/core';
+import { Animation, Cmd, Sub } from '@gamezilla/core';
 import {
   viewVsBotGameScreen,
   viewVsBotSetupScreen,
@@ -231,13 +231,13 @@ export const mergeWithBackend = ({
 //
 //
 
-export const subscriptions = (model: Model): Sub<Msg> => {
+export const subscriptions = (_intervalId: string, model: Model): Sub<Msg> => {
   switch (model.type) {
     case 'Game': {
-      if (isDone(model.visual)) {
+      if (isDone(Date.now(), model.visual)) {
         return Sub.None;
       }
-      return Spring.onAnimationFrame(() => ['animate']);
+      return Animation.onFrame(() => ['animate']);
     }
 
     case 'Setup': {

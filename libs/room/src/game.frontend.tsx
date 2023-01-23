@@ -287,7 +287,10 @@ export const updateFromBackend = (
 export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
   switch (model.type) {
     case 'connect-four': {
-      return Sub.tag('connect-four', ConnectFour.subscriptions(model.child));
+      return Sub.tag(
+        'connect-four',
+        ConnectFour.subscriptions(intervalId, model.child)
+      );
     }
 
     case 'TicTacToe': {
