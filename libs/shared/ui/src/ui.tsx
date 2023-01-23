@@ -678,7 +678,6 @@ export const actionButton = ({
   label,
   iconName,
   onPress,
-  disabled = false,
 }: {
   label: string;
   iconName: IconName;

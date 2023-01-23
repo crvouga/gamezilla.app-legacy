@@ -130,6 +130,7 @@ export const updateRoomLeave = (
   userId: UserId,
   model: Model
 ): [Model, Cmd<Msg>] => {
+  console.log('handle room leave', userId);
   return [model, Cmd.None];
 };
 

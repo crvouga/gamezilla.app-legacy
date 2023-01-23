@@ -286,7 +286,7 @@ export const onDisconnect = new Rx.Subject<[SessionId, ClientId]>()
 
 
 
-const requestListener: Http.RequestListener = (request, response) => {
+const requestListener: Http.RequestListener = (_request, response) => {
     const state = program.state$.getValue()
     response.end(JSON.stringify({ msgType: state.msg, model: state.model }))
 }

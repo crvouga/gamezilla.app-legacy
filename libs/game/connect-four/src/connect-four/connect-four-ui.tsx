@@ -585,9 +585,10 @@ export const step = ({
           type: 'exit',
           yPosition_: Ease.init({
             from: j,
-            to: -(MAX_COLUMN_HEIGHT + 1 + j),
+            to: -(MAX_COLUMN_HEIGHT - j),
             delayMs: ((i / COLUMN_COUNT) * 0.5 + 0.5) * 1000,
             durationMs: 500,
+            easing: 'easeInBack',
           }),
         });
         continue;
