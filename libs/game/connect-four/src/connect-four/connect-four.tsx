@@ -57,6 +57,13 @@ export type ColumnIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
 export const allColumnIndexes: ColumnIndex[] = [0, 1, 2, 3, 4, 5, 6];
 
+export const allPositions: { x: number; y: number }[] = [];
+for (let x = 0; x < COLUMN_COUNT; x++) {
+  for (let y = 0; y < MAX_COLUMN_HEIGHT; y++) {
+    allPositions.push({ x: x, y: y });
+  }
+}
+
 export const isColumnIndex = (index: unknown): index is ColumnIndex => {
   return (
     typeof index === 'number' &&

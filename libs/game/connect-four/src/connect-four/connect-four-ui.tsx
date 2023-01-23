@@ -544,38 +544,42 @@ export const step = ({
   columns: Columns;
   current: VisualModel;
 }): VisualModel => {
-  const ret: VisualModel = [];
+  const next: VisualModel = [];
 
-  for (let i = 0; i < COLUMN_COUNT; i++) {
-    const ret_i: Disc[] = [];
-    for (let j = 0; j < MAX_COLUMN_HEIGHT; j++) {
-      const discTrue = columns[i]?.[j];
-      const discVisual = current[i]?.[j];
+  for (let x = 0; x < COLUMN_COUNT; x++) {
+    const next_i: Disc[] = [];
+    for (let y = 0; y < MAX_COLUMN_HEIGHT; y++) {
+      const discTrue = columns[x]?.[y];
+      const discVisual = current[x]?.[y];
 
+      //
       // entry
+      //
       if (!discVisual && discTrue) {
-        ret_i.push({
+        next_i.push({
           type: 'entry',
           playerType: discTrue,
           yPosition_: Ease.init({
-            from: MAX_COLUMN_HEIGHT + 1 + j,
-            to: j,
-            durationMs: (0.2 + 0.3 * (1 - j / MAX_COLUMN_HEIGHT)) * 1000,
+            from: MAX_COLUMN_HEIGHT + 1,
+            to: y,
+            durationMs: (0.2 + 0.1 * (1 - y / MAX_COLUMN_HEIGHT)) * 1000,
             easing: { type: 'ease-out-quint' },
           }),
         });
         continue;
       }
 
+      //
       // exit
+      //
       if (!discTrue && discVisual && discVisual.type !== 'exit') {
-        ret_i.push({
+        next_i.push({
           ...discVisual,
           type: 'exit',
           yPosition_: Ease.init({
-            from: j,
-            to: -(MAX_COLUMN_HEIGHT - j),
-            delayMs: (i / COLUMN_COUNT) * 0.5 * 1000,
+            from: y,
+            to: -(MAX_COLUMN_HEIGHT - y),
+            delayMs: (x / COLUMN_COUNT) * 0.33 * 1000,
             durationMs: 500,
             easing: { type: 'ease-in-back' },
           }),
@@ -589,7 +593,7 @@ export const step = ({
         Ease.isDone(nowMs, discVisual.yPosition_);
 
       if (discVisual && !shouldRemove) {
-        ret_i.push({
+        next_i.push({
           ...discVisual,
           yPosition_: Ease.step(nowMs, discVisual.yPosition_),
         });
@@ -597,10 +601,10 @@ export const step = ({
       }
     }
 
-    ret.push(ret_i);
+    next.push(next_i);
   }
 
-  return ret;
+  return next;
 };
 
 export const initVisual = (columns: Columns): VisualModel => {
@@ -625,14 +629,21 @@ export const initVisual = (columns: Columns): VisualModel => {
 };
 
 export const isDone = (nowMs: number, model: VisualModel): boolean => {
-  for (let i = 0; i < COLUMN_COUNT; i++) {
-    for (let j = 0; j < MAX_COLUMN_HEIGHT; j++) {
-      const discVisual = model[i]?.[j];
-      if (discVisual && !Ease.isDone(nowMs, discVisual.yPosition_)) {
+  for (let x = 0; x < model.length; x++) {
+    const column = model[x];
+    if (!column) {
+      continue;
+    }
+    for (let y = 0; y < column.length; y++) {
+      const discVisual = column[y];
+      if (!discVisual) {
+        continue;
+      }
+
+      if (!Ease.isDone(nowMs, discVisual.yPosition_)) {
         return false;
       }
     }
   }
-
   return true;
 };

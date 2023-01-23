@@ -2,7 +2,8 @@ type Easing =
   | { type: 'ease-out-bounce'; n1?: number; d1?: number }
   | { type: 'ease-out-quint' }
   | { type: 'linear' }
-  | { type: 'ease-in-back' };
+  | { type: 'ease-in-back' }
+  | { type: 'ease-in-expo' };
 
 export type Model = {
   startMs: number;
@@ -19,14 +20,6 @@ export const isDone = (nowMs: number, model: Model): boolean => {
   return endMs < nowMs;
 };
 
-/**
- *
- * @param x
- *
- * [0, 1] ∋ x
- *
- * @returns {number}
- */
 export const easeOutBounce = (
   { n1 = 7.5625, d1 = 2.75 }: { n1?: number; d1?: number },
   x: number
@@ -57,6 +50,10 @@ export function easeInBack(x: number): number {
   return c3 * x * x * x - c1 * x * x;
 }
 
+function easeInExpo(x: number): number {
+  return x === 0 ? 0 : Math.pow(2, 10 * x - 10);
+}
+
 const ease = (easing: Easing, x: number): number => {
   switch (easing.type) {
     case 'ease-out-bounce':
@@ -67,6 +64,9 @@ const ease = (easing: Easing, x: number): number => {
 
     case 'ease-in-back':
       return easeInBack(x);
+
+    case 'ease-in-expo':
+      return easeInExpo(x);
 
     case 'linear':
       return x;
