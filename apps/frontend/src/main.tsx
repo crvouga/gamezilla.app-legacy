@@ -805,7 +805,7 @@ const getSocketClient = () => {
   const cached: Socket<ServerToClientEvents, ClientToServerEvents> | null =
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    import.meta.hot?.data?.['socketClient'] ?? null;
+    import.meta?.hot?.data?.['socketClient'] ?? null;
 
   if (cached) {
     console.log('[hot] reusing socket client');
@@ -898,7 +898,7 @@ const main = () => {
   const program: Program<Msg, Model> | undefined =
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    import.meta.hot.data['program'];
+    import.meta?.hot?.data['program'];
 
   if (program) {
     console.log('[hot] reusing program');
