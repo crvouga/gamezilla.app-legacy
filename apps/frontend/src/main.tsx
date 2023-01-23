@@ -802,10 +802,10 @@ export const wireStatus$ = new Subject<WireStatus>();
 export const toFrontend$ = new Subject<ToFrontend>();
 
 const getSocketClient = () => {
-  const cached: Socket<ServerToClientEvents, ClientToServerEvents> | null =
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    import.meta?.hot?.data?.['socketClient'] ?? null;
+  const cached =
+    getHotData<Socket<ServerToClientEvents, ClientToServerEvents>>(
+      'socketClient'
+    );
 
   if (cached) {
     console.log('[hot] reusing socket client');
@@ -847,9 +847,7 @@ const getSocketClient = () => {
     toFrontend$.next(msg);
   });
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  import.meta.hot.data['socketClient'] = socketClient;
+  setHotData('socketClient', socketClient);
 
   return socketClient;
 };
@@ -895,10 +893,7 @@ const main = () => {
     return;
   }
 
-  const program: Program<Msg, Model> | undefined =
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    import.meta?.hot?.data['program'];
+  const program = getHotData<Program<Msg, Model>>('program');
 
   if (program) {
     console.log('[hot] reusing program');
@@ -926,9 +921,28 @@ const main = () => {
     root.render(<View model={model} $send={created.program.$send} />);
   });
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  import.meta.hot.data['program'] = created.program;
+  setHotData('program', created.program);
 };
 
 main();
+
+const getHotData = <T,>(key: string): T | null => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  if (import.meta.hot) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    return import.meta.hot.data[key] ?? null;
+  }
+  return null;
+};
+
+const setHotData = <T,>(key: string, value: T) => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  if (import.meta.hot) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    import.meta.hot.data[key] = value;
+  }
+};

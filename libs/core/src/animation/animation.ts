@@ -3,6 +3,7 @@ import { Sub } from '../sub';
 
 const frames$ = new Observable((subscriber) => {
   const id = requestAnimationFrame(() => {
+    console.log('FRAME');
     subscriber.next();
   });
   return () => {
