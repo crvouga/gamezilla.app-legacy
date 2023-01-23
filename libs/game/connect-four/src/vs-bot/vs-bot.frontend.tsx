@@ -95,14 +95,14 @@ export const update = (
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case 'hovered': {
-      if (model.type !== 'Game') {
+      if (model.type !== 'game') {
         return [model, Cmd.None];
       }
       return [{ ...model, ghostIndex: msg[1].columnIndex }, Cmd.None];
     }
 
     case 'animate': {
-      if (model.type !== 'Game') {
+      if (model.type !== 'game') {
         return [model, Cmd.None];
       }
       const visualNew = step({
@@ -233,7 +233,7 @@ export const mergeWithBackend = ({
 
 export const subscriptions = (_intervalId: string, model: Model): Sub<Msg> => {
   switch (model.type) {
-    case 'Game': {
+    case 'game': {
       if (isDone(Date.now(), model.visual)) {
         return Sub.None;
       }

@@ -52,7 +52,7 @@ const Slot = z.union([PlayerType, z.literal('none')]);
 const Columns = z.array(z.array(Slot));
 
 const GameModel = z.object({
-  type: z.literal('Game'),
+  type: z.literal('game'),
   userPlayerType: PlayerType,
   botLevel: BotLevel,
   // player: UserId,
@@ -61,7 +61,7 @@ const GameModel = z.object({
 const SharedModel = z.discriminatedUnion('type', [SetupModel, GameModel]);
 
 export type GameModel = {
-  type: 'Game';
+  type: 'game';
   userPlayerType: PlayerType;
   botLevel: BotLevel;
   player: UserId;
@@ -69,7 +69,7 @@ export type GameModel = {
 };
 
 export const isBotTurn = (model: SharedModel): boolean => {
-  if (model.type !== 'Game') {
+  if (model.type !== 'game') {
     return false;
   }
   const status = toStatus(model.columns);
@@ -109,7 +109,7 @@ export type GameOver = { type: 'Tie' } | { type: 'Winner'; winner: PlayerType };
 
 export const toGameOver = (model: SharedModel): GameOver | { type: 'none' } => {
   switch (model.type) {
-    case 'Game': {
+    case 'game': {
       const status = toStatus(model.columns);
       switch (status.type) {
         case 'Playing': {
@@ -289,7 +289,7 @@ export const handle = (
       }
 
       const modelNew: SharedModel = {
-        type: 'Game',
+        type: 'game',
         botLevel: model.botLevel,
         player: model.player,
         userPlayerType: model.userPlayerType,
@@ -300,7 +300,7 @@ export const handle = (
     }
 
     case 'stop-game': {
-      if (model.type !== 'Game') {
+      if (model.type !== 'game') {
         return Err('not_game');
       }
 
@@ -319,7 +319,7 @@ export const handle = (
     }
 
     case 'swap-sides': {
-      if (model.type !== 'Game') {
+      if (model.type !== 'game') {
         return Err('not_game');
       }
 
@@ -337,7 +337,7 @@ export const handle = (
     }
 
     case 'input-move': {
-      if (model.type !== 'Game') {
+      if (model.type !== 'game') {
         return Err('not_game');
       }
 
@@ -364,7 +364,7 @@ export const handle = (
     }
 
     case 'restart': {
-      if (model.type !== 'Game') {
+      if (model.type !== 'game') {
         return Err('not_game');
       }
 
@@ -395,7 +395,7 @@ export const botMove = (
   bestMoveResult: BestMoveResult,
   model: SharedModel
 ): BotMoveResult => {
-  if (model.type !== 'Game') {
+  if (model.type !== 'game') {
     return Err('not_game');
   }
 

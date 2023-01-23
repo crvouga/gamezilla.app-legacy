@@ -1,9 +1,17 @@
-import { Cmd, p, Sub } from "@gamezilla/core"
-import { UserId } from "@gamezilla/shared"
-import { getBestMove, opposite } from "../connect-four/connect-four"
+import { Cmd, p, Sub } from '@gamezilla/core';
+import { UserId } from '@gamezilla/shared';
+import { getBestMove, opposite } from '../connect-four/connect-four';
 import {
-  BackendModel, BackendMsg, botMove, handle, initShared, isBotTurn, Res, ToBackend, ToFrontend
-} from "./vs-bot.types"
+  BackendModel,
+  BackendMsg,
+  botMove,
+  handle,
+  initShared,
+  isBotTurn,
+  Res,
+  ToBackend,
+  ToFrontend,
+} from './vs-bot.types';
 
 //
 //
@@ -13,9 +21,9 @@ import {
 //
 //
 
-export type Model = BackendModel
+export type Model = BackendModel;
 
-export const init = initShared
+export const init = initShared;
 
 //
 //
@@ -25,38 +33,38 @@ export const init = initShared
 //
 //
 
-export type Msg = BackendMsg
+export type Msg = BackendMsg;
 
 export const update = (
   { broadcast }: { broadcast: (m: ToFrontend) => Cmd },
   msg: Msg,
-  model: Model,
+  model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case "bot-move": {
-      const result = botMove(msg[1], model)
-      if (result.type === "Err") {
-        return [model, broadcast(["bot-move", result])]
+    case 'bot-move': {
+      const result = botMove(msg[1], model);
+      if (result.type === 'Err') {
+        return [model, broadcast(['bot-move', result])];
       }
-      return [result.value, broadcast(["bot-move", result])]
+      return [result.value, broadcast(['bot-move', result])];
     }
   }
-}
+};
 
 export const updateFromFrontend = (
   wire: {
-    broadcast: (msg: ToFrontend) => Cmd
-    sendToClient: (msg: ToFrontend) => Cmd
+    broadcast: (msg: ToFrontend) => Cmd;
+    sendToClient: (msg: ToFrontend) => Cmd;
   },
   msg: ToBackend,
-  modelPrev: Model,
+  modelPrev: Model
 ): [Model, Cmd<Msg>] => {
-  const [modelNext, cmd] = updateFromFrontend_(wire, msg, modelPrev)
+  const [modelNext, cmd] = updateFromFrontend_(wire, msg, modelPrev);
 
   if (
     !isBotTurn(modelPrev) &&
     isBotTurn(modelNext) &&
-    modelNext.type === "Game"
+    modelNext.type === 'game'
   ) {
     return [
       modelNext,
@@ -67,69 +75,69 @@ export const updateFromFrontend = (
             columns: modelNext.columns,
             maximizingPlayer: opposite[modelNext.userPlayerType],
           }),
-          Cmd.perform((result) => ["bot-move", result]),
+          Cmd.perform((result) => ['bot-move', result])
         ),
       ]),
-    ]
+    ];
   }
 
-  return [modelNext, cmd]
-}
+  return [modelNext, cmd];
+};
 
 const updateFromFrontend_ = (
   {
     broadcast,
     sendToClient,
   }: {
-    broadcast: (msg: ToFrontend) => Cmd
-    sendToClient: (msg: ToFrontend) => Cmd
+    broadcast: (msg: ToFrontend) => Cmd;
+    sendToClient: (msg: ToFrontend) => Cmd;
   },
   msg: ToBackend,
-  model: Model,
+  model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case 'restart':
     case 'start-game':
-    case "start-playing":
+    case 'start-playing':
     case 'stop-game':
-    case "stop-playing":
+    case 'stop-playing':
     case 'swap-sides':
-    case "input-player-type":
+    case 'input-player-type':
     case 'input-move':
     case 'input-bot-level': {
-      const res: Res = [msg[0], handle(msg, model)]
+      const res: Res = [msg[0], handle(msg, model)];
 
-      if (res[1].type === "Err") {
-        return [model, sendToClient(res)]
+      if (res[1].type === 'Err') {
+        return [model, sendToClient(res)];
       }
 
-      return [res[1].value, broadcast(res)]
+      return [res[1].value, broadcast(res)];
     }
   }
-}
+};
 
 export const updateRoomLeave = ({
   userId,
   model,
   broadcast,
 }: {
-  broadcast: (m: ToFrontend) => Cmd
-  userId: UserId
-  model: Model
+  broadcast: (m: ToFrontend) => Cmd;
+  userId: UserId;
+  model: Model;
 }): [Model, Cmd<Msg>] => {
   if (model.player !== userId) {
-    return [model, Cmd.None]
+    return [model, Cmd.None];
   }
 
   const modelNew: Model = {
-    type: "Setup",
+    type: 'Setup',
     botLevel: model.botLevel,
     userPlayerType: model.userPlayerType,
-    player: "none",
-  }
+    player: 'none',
+  };
 
-  return [modelNew, broadcast(["player-left", modelNew])]
-}
+  return [modelNew, broadcast(['player-left', modelNew])];
+};
 
 //
 //
@@ -140,5 +148,5 @@ export const updateRoomLeave = ({
 //
 
 export const subscriptions = (_model: Model): Sub<Msg> => {
-  return Sub.None
-}
+  return Sub.None;
+};

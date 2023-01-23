@@ -1,4 +1,4 @@
-import { Alerts } from "@gamezilla/shared";
+import { Alerts } from '@gamezilla/shared';
 import { Auth } from '@gamezilla/auth';
 import { ChatStore } from '@gamezilla/chat';
 import { LocalStorage, Option } from '@gamezilla/core';
@@ -58,12 +58,12 @@ export type WireStatus =
 //
 
 export type ToBackend =
-  | ['Room', GameRoom.ToBackend]
+  | ['room', GameRoom.ToBackend]
   | ['Party', Party.ToBackend]
   | ['Auth', Auth.ToBackend];
 
 export type ToFrontend =
-  | ['Room', GameRoom.ToFrontend]
+  | ['room', GameRoom.ToFrontend]
   | ['Party', Party.ToFrontend]
   | ['Session', SessionId];
 
@@ -72,7 +72,7 @@ export type FrontendMsg =
   | ['Wire', WireStatus]
   | ['Route', Route.Msg]
   | ['Alerts', Alerts.Msg]
-  | ['Room', GameRoom.FrontendMsg]
+  | ['room', GameRoom.FrontendMsg]
   | ['Store', ChatStore.Msg]
   | ['Auth', Auth.Msg]
   | ['Page', Page.Msg]
@@ -84,7 +84,7 @@ export type BackendMsg =
   | ['▶', SessionId, ClientId, ToBackend]
   | ['ClientConnected', SessionId, ClientId]
   | ['ClientDisconnected', SessionId, ClientId]
-  | ['Room', GameRoom.BackendMsg]
+  | ['room', GameRoom.BackendMsg]
   | ['Party', Party.BackendMsg];
 
 //

@@ -1,5 +1,5 @@
-import { Cmd, exhaustive, Sub, Time } from "@gamezilla/core"
-import { UserId } from "@gamezilla/shared"
+import { Cmd, exhaustive, Sub, Time } from '@gamezilla/core';
+import { UserId } from '@gamezilla/shared';
 import {
   BackendModel,
   BackendMsg,
@@ -9,8 +9,8 @@ import {
   tick,
   ToBackend,
   ToFrontend,
-  toPlayerType
-} from "./vs-user.types"
+  toPlayerType,
+} from './vs-user.types';
 
 //
 //
@@ -20,9 +20,9 @@ import {
 //
 //
 
-export type Model = BackendModel
+export type Model = BackendModel;
 
-export const init = initShared
+export const init = initShared;
 
 //
 //
@@ -32,83 +32,83 @@ export const init = initShared
 //
 //
 
-export type Msg = BackendMsg
+export type Msg = BackendMsg;
 
 export const update = (
   { broadcast }: { broadcast: (msg: ToFrontend) => Cmd },
   msg: Msg,
-  model: Model,
+  model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case "Tick": {
-      const modelNew = tick(model)
-      return [modelNew, broadcast(["Tick_Done", modelNew])]
+    case 'Tick': {
+      const modelNew = tick(model);
+      return [modelNew, broadcast(['Tick_Done', modelNew])];
     }
   }
-}
+};
 
 export const updateFromFrontend = (
   {
     sendToClient,
     broadcast,
   }: {
-    sendToClient: (msg: ToFrontend) => Cmd
-    broadcast: (msg: ToFrontend) => Cmd
+    sendToClient: (msg: ToFrontend) => Cmd;
+    broadcast: (msg: ToFrontend) => Cmd;
   },
   msg: ToBackend,
-  model: Model,
+  model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case "Resign":
-    case "NewGame":
-    case "Rematch_Cancel":
-    case "Rematch_Request":
-    case "Rematch_Respond":
-    case "InputMoveTimeLimit":
+    case 'Resign':
+    case 'NewGame':
+    case 'Rematch_Cancel':
+    case 'Rematch_Request':
+    case 'Rematch_Respond':
+    case 'InputMoveTimeLimit':
     case 'input-move':
     case 'start-game':
-    case "stop-playing":
-    case "start-playing": {
-      const res: Res = [msg[0], handle(msg, model)]
+    case 'stop-playing':
+    case 'start-playing': {
+      const res: Res = [msg[0], handle(msg, model)];
 
-      if (res[1].type === "Err") {
-        return [model, sendToClient(res)]
+      if (res[1].type === 'Err') {
+        return [model, sendToClient(res)];
       }
 
-      return [res[1].value, broadcast(res)]
+      return [res[1].value, broadcast(res)];
     }
 
     default: {
-      return exhaustive(msg[0])
+      return exhaustive(msg[0]);
     }
   }
-}
+};
 
 export const updateRoomLeave = ({
   broadcast,
   userId,
   model,
 }: {
-  broadcast: (m: ToFrontend) => Cmd
-  userId: UserId
-  model: Model
+  broadcast: (m: ToFrontend) => Cmd;
+  userId: UserId;
+  model: Model;
 }): [Model, Cmd<Msg>] => {
-  const player = toPlayerType(userId, model)
+  const player = toPlayerType(userId, model);
 
-  if (player === "none") {
-    return [model, Cmd.None]
+  if (player === 'none') {
+    return [model, Cmd.None];
   }
 
   const modelNew: Model = {
-    type: "Setup",
+    type: 'Setup',
     moveTimeLimit: model.moveTimeLimit,
     PlayerOne: model.PlayerOne,
     PlayerTwo: model.PlayerTwo,
-    [player]: "none",
-  }
+    [player]: 'none',
+  };
 
-  return [modelNew, broadcast(["player-left", modelNew])]
-}
+  return [modelNew, broadcast(['player-left', modelNew])];
+};
 
 //
 //
@@ -120,16 +120,16 @@ export const updateRoomLeave = ({
 
 export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
   switch (model.type) {
-    case "GameOver": {
-      return Sub.None
+    case 'GameOver': {
+      return Sub.None;
     }
 
-    case "Setup": {
-      return Sub.None
+    case 'Setup': {
+      return Sub.None;
     }
 
-    case "Game": {
-      return Time.every(intervalId, 1000, () => ["Tick"])
+    case 'game': {
+      return Time.every(intervalId, 1000, () => ['Tick']);
     }
   }
-}
+};

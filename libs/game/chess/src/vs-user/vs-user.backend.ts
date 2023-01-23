@@ -201,7 +201,7 @@ export const updateRoomLeave = (
       return [modelNew, broadcast(['player-left', modelNew])];
     }
 
-    case 'Game':
+    case 'game':
     case 'GameOver': {
       const color: Board.Color | 'none' =
         model.b === userId ? 'b' : model.w === userId ? 'w' : 'none';
@@ -243,7 +243,7 @@ export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
       return Sub.None;
     }
 
-    case 'Game': {
+    case 'game': {
       const turn = Board.toTurn(model.board);
 
       switch (turn) {

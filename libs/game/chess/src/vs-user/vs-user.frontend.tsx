@@ -186,7 +186,7 @@ export const updateFromBackend = (
 
       const sharedModelNew = msg[1].value;
 
-      if (sharedModelNew.type !== 'Game') {
+      if (sharedModelNew.type !== 'game') {
         return [model, Cmd.None, []];
       }
 
@@ -257,7 +257,7 @@ export const updateFromBackend = (
       }
 
       const isNotPlaying =
-        sharedModel.type === 'Game' &&
+        sharedModel.type === 'game' &&
         sharedModel.w !== ctx.currentUserId &&
         sharedModel.b !== ctx.currentUserId;
 
@@ -283,7 +283,7 @@ export const updateFromBackend = (
       const sharedModel = result.value;
 
       const isNotPlaying =
-        sharedModel.type === 'Game' &&
+        sharedModel.type === 'game' &&
         sharedModel.w !== ctx.currentUserId &&
         sharedModel.b !== ctx.currentUserId;
 
@@ -588,14 +588,14 @@ export const View = ({
   const whiteSlot: ViewUserPlayerSlotProps = {
     src: ctx.profiles[w]?.avatarUrl,
     username: ctx.profiles[w]?.username ?? '...',
-    isActive: turn === 'w' && model.sharedModel.type === 'Game',
+    isActive: turn === 'w' && model.sharedModel.type === 'game',
     seconds: Clock.toTime('w', clock),
   };
 
   const blackSlot: ViewUserPlayerSlotProps = {
     src: ctx.profiles[b]?.avatarUrl,
     username: ctx.profiles[b]?.username ?? '...',
-    isActive: turn === 'b' && model.sharedModel.type === 'Game',
+    isActive: turn === 'b' && model.sharedModel.type === 'game',
     seconds: Clock.toTime('b', clock),
   };
 
@@ -657,7 +657,7 @@ export const View = ({
             </UI.Box>
           )}
 
-        {model.sharedModel.type === 'Game' && (
+        {model.sharedModel.type === 'game' && (
           <>
             {(currentUserColor === 'w' || currentUserColor === 'b') && (
               <>
@@ -683,7 +683,7 @@ export const View = ({
 
                 <UI.Dialog
                   open={
-                    model.sharedModel.type === 'Game' &&
+                    model.sharedModel.type === 'game' &&
                     model.sharedModel.drawAgreement.type === 'Asking' &&
                     model.sharedModel.drawAgreement.asker === currentUserColor
                   }
@@ -709,7 +709,7 @@ export const View = ({
 
                 <UI.ConformationDialog
                   open={
-                    model.sharedModel.type === 'Game' &&
+                    model.sharedModel.type === 'game' &&
                     model.sharedModel.drawAgreement.type === 'Asking' &&
                     model.sharedModel.drawAgreement.asker ===
                       Board.toOppositeColor(currentUserColor)
@@ -780,7 +780,7 @@ const ViewGameOverDialog = ({
     return <span></span>;
   }
 
-  if (model.sharedModel.type === 'Game') {
+  if (model.sharedModel.type === 'game') {
     return <span></span>;
   }
 
@@ -873,7 +873,7 @@ const toGameText = (model: SharedModel): string => {
       return 'Setting up game';
     }
 
-    case 'Game': {
+    case 'game': {
       if (Board.inCheck(model.board)) {
         return `${Board.colorToString(Board.toTurn(model.board))} is in check`;
       }
