@@ -1,16 +1,8 @@
-import { Observable } from 'rxjs';
+import { animationFrames, map } from 'rxjs';
 import { Sub } from '../sub';
 
-const frames$ = new Observable((subscriber) => {
-  const id = requestAnimationFrame(() => {
-    console.log('FRAME');
-    subscriber.next();
-  });
-  return () => {
-    cancelAnimationFrame(id);
-  };
-});
+const frames = animationFrames();
 
 export const onFrame = <Msg>(mapper: () => Msg): Sub<Msg> => {
-  return Sub.map(mapper)(frames$);
+  return frames.pipe(map(mapper));
 };

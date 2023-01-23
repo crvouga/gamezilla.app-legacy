@@ -867,4 +867,20 @@ const main = () => {
   });
 };
 
-main();
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+if (import.meta.hot) {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  if (!import.meta.hot.data?.['started']) {
+    console.log('[hot] starting app');
+    main();
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    import.meta.hot.data['started'] = true;
+  } else {
+    console.log('[hot] reload');
+  }
+} else {
+  main();
+}

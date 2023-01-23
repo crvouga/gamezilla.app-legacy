@@ -1,4 +1,4 @@
-import { Ease, Uuid } from '@gamezilla/core';
+import { Ease, rescale, Uuid } from '@gamezilla/core';
 import { SvgIcon, Sx } from '@gamezilla/shared/ui';
 import { useLayoutEffect, useRef } from 'react';
 import {
@@ -13,6 +13,8 @@ import {
 //
 //
 //
+// Model
+//
 //
 //
 
@@ -24,6 +26,7 @@ export type Disc = {
   playerType: PlayerType;
 };
 
+//
 //
 //
 //
@@ -321,20 +324,6 @@ const ViewColumnsCanvas = ({ columns, onClick, visual }: ViewColumnsProps) => {
   );
 };
 
-type Range = [number, number];
-
-const rescale = ({
-  value,
-  from,
-  to,
-}: {
-  value: number;
-  from: Range;
-  to: Range;
-}) => {
-  return ((value - from[0]) * (to[1] - to[0])) / (from[1] - from[0]) + to[0];
-};
-
 const paint = ({
   context,
   visual,
@@ -572,7 +561,7 @@ export const step = ({
             from: MAX_COLUMN_HEIGHT + 1 + j,
             to: j,
             durationMs: (0.2 + 0.3 * (1 - j / MAX_COLUMN_HEIGHT)) * 1000,
-            easing: 'easeOutBounce',
+            easing: { type: 'ease-out-quint' },
           }),
         });
         continue;
@@ -586,9 +575,9 @@ export const step = ({
           yPosition_: Ease.init({
             from: j,
             to: -(MAX_COLUMN_HEIGHT - j),
-            delayMs: ((i / COLUMN_COUNT) * 0.5 + 0.5) * 1000,
+            delayMs: (i / COLUMN_COUNT) * 0.5 * 1000,
             durationMs: 500,
-            easing: 'easeInBack',
+            easing: { type: 'ease-in-back' },
           }),
         });
         continue;

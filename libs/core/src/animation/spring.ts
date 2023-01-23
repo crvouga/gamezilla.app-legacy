@@ -50,15 +50,3 @@ export const step = (model: Model): Model => {
   };
   return modelNew;
 };
-
-export const onAnimationFrame = <Msg>(mapper: () => Msg): Sub<Msg> => {
-  return Sub.create<Msg>((emit) => {
-    const id = requestAnimationFrame(() => {
-      emit(mapper());
-    });
-
-    return () => {
-      cancelAnimationFrame(id);
-    };
-  });
-};
