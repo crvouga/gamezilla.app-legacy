@@ -1,5 +1,4 @@
-import { UserId } from '@gamezilla/shared';
-import { Ctx } from '@gamezilla/shared';
+import { Ctx, UserId } from '@gamezilla/shared';
 import {
   ActionButton,
   avatar,
@@ -20,9 +19,8 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   Typography,
-  ViewNode,
+  ViewNode
 } from '@gamezilla/shared/ui';
-
 //
 //
 //
@@ -35,6 +33,18 @@ export type GameRoomCtx = {
   onQuit: () => void;
   hostId: UserId;
 };
+
+// export type GameModule<Msg, Model> = {
+//   name: string;
+//   update: (msg: Msg, model: Model) => [Model, Cmd<Msg>];
+//   updateFromBackend: (msg: Msg, model: Model) => [Model, Cmd<Msg>];
+//   view: (props: {
+//     model: Model;
+//     ctx: Ctx;
+//     $send: (msg: Msg) => void;
+//   }) => ViewNode;
+//   subscriptions: (model: Model) => Sub<Msg>;
+// };
 
 //
 //

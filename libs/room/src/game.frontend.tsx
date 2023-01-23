@@ -30,36 +30,36 @@ export type Model = FrontendModel;
 export const init = ({
   gameName,
 }: {
-  gameName: Model[0];
+  gameName: Model['type'];
 }): [Model, Cmd<Msg>] => {
   switch (gameName) {
     case 'TicTacToe': {
-      return [['TicTacToe', TicTacToe.init], Cmd.None];
+      return [{ type: 'TicTacToe', child: TicTacToe.init }, Cmd.None];
     }
 
     case 'connect-four': {
-      return [['connect-four', ConnectFour.init], Cmd.None];
+      return [{ type: 'connect-four', child: ConnectFour.init }, Cmd.None];
     }
 
     case 'Chess': {
       const [child, cmd] = Chess.init();
-      return [['Chess', child], Cmd.tag('Chess', cmd)];
+      return [{ type: 'Chess', child }, Cmd.tag('Chess', cmd)];
     }
 
     case 'Gomoku': {
-      return [['Gomoku', Gomoku.init], Cmd.None];
+      return [{ type: 'Gomoku', child: Gomoku.init }, Cmd.None];
     }
 
     case 'Tetris': {
-      return [['Tetris', Tetris.init], Cmd.None];
+      return [{ type: 'Tetris', child: Tetris.init }, Cmd.None];
     }
 
     case 'Snake': {
-      return [['Snake', Snake.init], Cmd.None];
+      return [{ type: 'Snake', child: Snake.init }, Cmd.None];
     }
 
     case 'Maze': {
-      return [['Maze', Maze.init({})], Cmd.None];
+      return [{ type: 'Maze', child: Maze.init({}) }, Cmd.None];
     }
   }
 };
@@ -87,15 +87,15 @@ export const update = (
   msg: Msg,
   model: Model
 ): [Model, Cmd<Msg>] => {
-  switch (model[0]) {
+  switch (model.type) {
     case 'connect-four': {
       if (msg[0] === 'connect-four') {
         const [child, cmd] = ConnectFour.update(
           { sendToBackend: (msg) => sendToBackend(['connect-four', msg]) },
           msg[1],
-          model[1]
+          model.child
         );
-        return [['connect-four', child], Cmd.tag('connect-four', cmd)];
+        return [{ type: 'connect-four', child }, Cmd.tag('connect-four', cmd)];
       }
 
       return [model, Cmd.None];
@@ -106,9 +106,9 @@ export const update = (
         const [child, cmd] = TicTacToe.update(
           { sendToBackend: (msg) => sendToBackend(['TicTacToe', msg]) },
           msg[1],
-          model[1]
+          model.child
         );
-        return [['TicTacToe', child], Cmd.tag('TicTacToe', cmd)];
+        return [{ type: 'TicTacToe', child }, Cmd.tag('TicTacToe', cmd)];
       }
       return [model, Cmd.None];
     }
@@ -118,9 +118,9 @@ export const update = (
         const [child, cmd] = Chess.update(
           { sendToBackend: (msg) => sendToBackend(['Chess', msg]) },
           msg[1],
-          model[1]
+          model.child
         );
-        return [['Chess', child], Cmd.tag('Chess', cmd)];
+        return [{ type: 'Chess', child }, Cmd.tag('Chess', cmd)];
       }
       return [model, Cmd.None];
     }
@@ -130,9 +130,9 @@ export const update = (
         const [child, cmd] = Gomoku.update(
           { sendToBackend: (msg) => sendToBackend(['Gomoku', msg]) },
           msg[1],
-          model[1]
+          model.child
         );
-        return [['Gomoku', child], Cmd.tag('Gomoku', cmd)];
+        return [{ type: 'Gomoku', child }, Cmd.tag('Gomoku', cmd)];
       }
       return [model, Cmd.None];
     }
@@ -142,9 +142,9 @@ export const update = (
         const [child, cmd] = Tetris.update(
           { sendToBackend: (msg) => sendToBackend(['Tetris', msg]) },
           msg[1],
-          model[1]
+          model.child
         );
-        return [['Tetris', child], Cmd.tag('Tetris', cmd)];
+        return [{ type: 'Tetris', child }, Cmd.tag('Tetris', cmd)];
       }
       return [model, Cmd.None];
     }
@@ -154,9 +154,9 @@ export const update = (
         const [child, cmd] = Snake.update(
           { ctx, sendToBackend: (msg) => sendToBackend(['Snake', msg]) },
           msg[1],
-          model[1]
+          model.child
         );
-        return [['Snake', child], Cmd.tag('Snake', cmd)];
+        return [{ type: 'Snake', child }, Cmd.tag('Snake', cmd)];
       }
       return [model, Cmd.None];
     }
@@ -166,9 +166,9 @@ export const update = (
         const [child, cmd] = Maze.update(
           { ctx, sendToBackend: (msg) => sendToBackend(['Maze', msg]) },
           msg[1],
-          model[1]
+          model.child
         );
-        return [['Maze', child], Cmd.tag('Maze', cmd)];
+        return [{ type: 'Maze', child }, Cmd.tag('Maze', cmd)];
       }
       return [model, Cmd.None];
     }
@@ -188,80 +188,88 @@ export const updateFromBackend = (
 ): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
     case 'connect-four': {
-      if (model[0] === 'connect-four') {
+      if (model.type === 'connect-four') {
         const [child, cmd, actions] = ConnectFour.updateFromBackend(
           msg[1],
-          model[1]
+          model.child
         );
-        return [['connect-four', child], Cmd.tag('connect-four', cmd), actions];
+        return [
+          { type: 'connect-four', child },
+          Cmd.tag('connect-four', cmd),
+          actions,
+        ];
       }
       return [model, Cmd.None, []];
     }
 
     case 'TicTacToe': {
-      if (model[0] === 'TicTacToe') {
+      if (model.type === 'TicTacToe') {
         const [child, cmd, actions] = TicTacToe.updateFromBackend(
           { ctx },
           msg[1],
-          model[1]
+          model.child
         );
-        return [['TicTacToe', child], Cmd.tag('TicTacToe', cmd), actions];
+        return [
+          { type: 'TicTacToe', child },
+          Cmd.tag('TicTacToe', cmd),
+          actions,
+        ];
       }
       return [model, Cmd.None, []];
     }
 
     case 'Chess': {
-      if (model[0] === 'Chess') {
+      if (model.type === 'Chess') {
         const [child, cmd, actions] = Chess.updateFromBackend(
           {
             ctx,
             sendToBackend: (msg) => sendToBackend(['Chess', msg]),
           },
           msg[1],
-          model[1]
+          model.child
         );
 
-        return [['Chess', child], Cmd.tag('Chess', cmd), actions];
+        return [{ type: 'Chess', child }, Cmd.tag('Chess', cmd), actions];
       }
       return [model, Cmd.None, []];
     }
 
     case 'Gomoku': {
-      if (model[0] === 'Gomoku') {
-        const [child, cmd] = Gomoku.updateFromBackend(msg[1], model[1]);
-        return [['Gomoku', child], Cmd.tag('Gomoku', cmd), []];
+      if (model.type === 'Gomoku') {
+        const [child, cmd] = Gomoku.updateFromBackend(msg[1], model.child);
+        return [{ type: 'Gomoku', child }, Cmd.tag('Gomoku', cmd), []];
       }
       return [model, Cmd.None, []];
     }
 
     case 'Tetris': {
-      if (model[0] === 'Tetris') {
-        const [child, cmd] = Tetris.updateFromBackend(msg[1], model[1]);
-        return [['Tetris', child], Cmd.tag('Tetris', cmd), []];
+      if (model.type === 'Tetris') {
+        const [child, cmd] = Tetris.updateFromBackend(msg[1], model.child);
+        return [{ type: 'Tetris', child }, Cmd.tag('Tetris', cmd), []];
       }
       return [model, Cmd.None, []];
     }
 
     case 'Snake': {
-      if (model[0] === 'Snake') {
+      if (model.type === 'Snake') {
         const [child, cmd] = Snake.updateFromBackend(
           // { ctx, sendToBackend: (msg) => sendToBackend(['Snake', msg]) },
           msg[1],
-          model[1]
+          model.child
         );
-        return [['Snake', child], Cmd.tag('Snake', cmd), []];
+        return [{ type: 'Snake', child }, Cmd.tag('Snake', cmd), []];
       }
       return [model, Cmd.None, []];
     }
 
     case 'Maze': {
-      if (model[0] === 'Maze') {
+      if (model.type === 'Maze') {
         const [child, cmd] = Maze.updateFromBackend(
           // { ctx, sendToBackend: (msg) => sendToBackend(['Maze', msg]) },
           msg[1],
-          model[1]
+          model.child
         );
-        return [['Maze', child], Cmd.tag('Maze', cmd), []];
+        return [{ type: 'Maze', child }, Cmd.tag('Maze', cmd), []];
       }
       return [model, Cmd.None, []];
     }
@@ -277,9 +285,9 @@ export const updateFromBackend = (
 //
 
 export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
-  switch (model[0]) {
+  switch (model.type) {
     case 'connect-four': {
-      return Sub.tag('connect-four', ConnectFour.subscriptions(model[1]));
+      return Sub.tag('connect-four', ConnectFour.subscriptions(model.child));
     }
 
     case 'TicTacToe': {
@@ -287,23 +295,23 @@ export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
     }
 
     case 'Chess': {
-      return Sub.tag('Chess', Chess.subscriptions(model[1]));
+      return Sub.tag('Chess', Chess.subscriptions(model.child));
     }
 
     case 'Gomoku': {
-      return Sub.tag('Gomoku', Gomoku.subscriptions(model[1]));
+      return Sub.tag('Gomoku', Gomoku.subscriptions(model.child));
     }
 
     case 'Tetris': {
-      return Sub.tag('Tetris', Tetris.subscriptions(model[1]));
+      return Sub.tag('Tetris', Tetris.subscriptions(model.child));
     }
 
     case 'Snake': {
-      return Sub.tag('Snake', Snake.subscriptions(intervalId, model[1]));
+      return Sub.tag('Snake', Snake.subscriptions(intervalId, model.child));
     }
 
     case 'Maze': {
-      return Sub.tag('Maze', Maze.subscriptions(model[1]));
+      return Sub.tag('Maze', Maze.subscriptions(model.child));
     }
   }
 };
@@ -327,13 +335,13 @@ export const View = ({
   model: Model;
   $send: (msg: Msg) => void;
 }) => {
-  switch (model[0]) {
+  switch (model.type) {
     case 'connect-four': {
       return (
         <ConnectFour.View
           gameRoomCtx={gameRoomCtx}
           ctx={ctx}
-          model={model[1]}
+          model={model.child}
           $send={(msg) => $send(['connect-four', msg])}
         />
       );
@@ -344,7 +352,7 @@ export const View = ({
         <TicTacToe.View
           gameRoomCtx={gameRoomCtx}
           ctx={ctx}
-          model={model[1]}
+          model={model.child}
           $send={(msg) => $send(['TicTacToe', msg])}
         />
       );
@@ -354,7 +362,7 @@ export const View = ({
       return (
         <Chess.View
           ctx={ctx}
-          model={model[1]}
+          model={model.child}
           $send={(msg) => $send(['Chess', msg])}
           gameRoomCtx={gameRoomCtx}
         />
@@ -364,7 +372,7 @@ export const View = ({
     case 'Gomoku': {
       return Gomoku.view({
         $send: (msg) => $send(['Gomoku', msg]),
-        model: model[1],
+        model: model.child,
         gameRoomCtx,
         ctx,
       });
@@ -373,7 +381,7 @@ export const View = ({
     case 'Tetris': {
       return Tetris.View({
         $send: (msg) => $send(['Tetris', msg]),
-        model: model[1],
+        model: model.child,
         // gameRoomCtx,
         // ctx,
       });
@@ -382,7 +390,7 @@ export const View = ({
     case 'Snake': {
       return Snake.View({
         $send: (msg) => $send(['Snake', msg]),
-        model: model[1],
+        model: model.child,
         // gameRoomCtx,
         ctx,
       });
@@ -391,7 +399,7 @@ export const View = ({
     case 'Maze': {
       return Maze.View({
         $send: (msg) => $send(['Maze', msg]),
-        model: model[1],
+        model: model.child,
         // gameRoomCtx,
         ctx,
       });
@@ -408,16 +416,19 @@ export const mergeWithBackend = ({
   frontendModel: FrontendModel;
   backendModel: BackendModel;
 }): [FrontendModel, Cmd<Msg>] => {
-  switch (backendModel[0]) {
+  switch (backendModel.type) {
     case 'Chess': {
-      if (frontendModel[0] === 'Chess') {
+      if (frontendModel.type === 'Chess') {
         const merged = Chess.mergeWithBackend({
           sendToBackend: (msg) => sendToBackend(['Chess', msg]),
-          frontendModel: frontendModel[1],
-          backendModel: backendModel[1],
+          frontendModel: frontendModel.child,
+          backendModel: backendModel.child,
         });
 
-        return [['Chess', merged[0]], Cmd.tag('Chess', merged[1])];
+        return [
+          { type: 'Chess', child: merged[0] },
+          Cmd.tag('Chess', merged[1]),
+        ];
       }
 
       const initial = Chess.init();
@@ -425,25 +436,28 @@ export const mergeWithBackend = ({
       const merged = Chess.mergeWithBackend({
         sendToBackend: (msg) => sendToBackend(['Chess', msg]),
         frontendModel: initial[0],
-        backendModel: backendModel[1],
+        backendModel: backendModel.child,
       });
 
       return [
-        ['Chess', merged[0]],
+        {
+          type: 'Chess',
+          child: merged[0],
+        },
         Cmd.batch([Cmd.tag('Chess', initial[1]), Cmd.tag('Chess', merged[1])]),
       ];
     }
 
     case 'connect-four': {
-      if (frontendModel[0] === 'connect-four') {
+      if (frontendModel.type === 'connect-four') {
         return [
-          [
-            'connect-four',
-            ConnectFour.mergeWithBackend({
-              frontendModel: frontendModel[1],
-              backendModel: backendModel[1],
+          {
+            type: 'connect-four',
+            child: ConnectFour.mergeWithBackend({
+              frontendModel: frontendModel.child,
+              backendModel: backendModel.child,
             }),
-          ],
+          },
           Cmd.None,
         ];
       }
@@ -451,24 +465,27 @@ export const mergeWithBackend = ({
       const initial = ConnectFour.init;
 
       return [
-        [
-          'connect-four',
-          ConnectFour.mergeWithBackend({
+        {
+          type: 'connect-four',
+          child: ConnectFour.mergeWithBackend({
             frontendModel: initial,
-            backendModel: backendModel[1],
+            backendModel: backendModel.child,
           }),
-        ],
+        },
         Cmd.None,
       ];
     }
 
     case 'TicTacToe': {
-      if (frontendModel[0] === 'TicTacToe') {
+      if (frontendModel.type === 'TicTacToe') {
         return [
-          [
-            'TicTacToe',
-            TicTacToe.mergeWithBackend(frontendModel[1], backendModel[1]),
-          ],
+          {
+            type: 'TicTacToe',
+            child: TicTacToe.mergeWithBackend(
+              frontendModel.child,
+              backendModel.child
+            ),
+          },
           Cmd.None,
         ];
       }
@@ -476,111 +493,115 @@ export const mergeWithBackend = ({
       const initial = TicTacToe.init;
 
       return [
-        ['TicTacToe', TicTacToe.mergeWithBackend(initial, backendModel[1])],
+        {
+          type: 'TicTacToe',
+          child: TicTacToe.mergeWithBackend(initial, backendModel.child),
+        },
         Cmd.None,
       ];
     }
 
     case 'Gomoku': {
-      if (frontendModel[0] === 'Gomoku') {
+      if (frontendModel.type === 'Gomoku') {
         return [
-          [
-            'Gomoku',
-            Gomoku.mergeWithBackend({
-              frontendModel: frontendModel[1],
-              backendModel: backendModel[1],
+          {
+            type: 'Gomoku',
+            child: Gomoku.mergeWithBackend({
+              frontendModel: frontendModel.child,
+              backendModel: backendModel.child,
             }),
-          ],
+          },
           Cmd.None,
         ];
       }
 
       return [
-        [
-          'Gomoku',
-          Gomoku.mergeWithBackend({
+        {
+          type: 'Gomoku',
+          child: Gomoku.mergeWithBackend({
             frontendModel: Gomoku.init,
-            backendModel: backendModel[1],
+            backendModel: backendModel.child,
           }),
-        ],
+        },
         Cmd.None,
       ];
     }
 
     case 'Tetris': {
-      if (frontendModel[0] === 'Tetris') {
+      if (frontendModel.type === 'Tetris') {
         return [
-          [
-            'Tetris',
-            Tetris.mergeWithBackend({
-              frontendModel: frontendModel[1],
-              backendModel: backendModel[1],
+          {
+            type: 'Tetris',
+            child: Tetris.mergeWithBackend({
+              frontendModel: frontendModel.child,
+              backendModel: backendModel.child,
             }),
-          ],
+          },
           Cmd.None,
         ];
       }
 
       return [
-        [
-          'Tetris',
-          Tetris.mergeWithBackend({
+        {
+          type: 'Tetris',
+          child: Tetris.mergeWithBackend({
             frontendModel: Tetris.init,
-            backendModel: backendModel[1],
+            backendModel: backendModel.child,
           }),
-        ],
+        },
         Cmd.None,
       ];
     }
 
     case 'Snake': {
-      if (frontendModel[0] === 'Snake') {
+      if (frontendModel.type === 'Snake') {
         return [
-          [
-            'Snake',
-            Snake.mergeWithBackend({
-              frontendModel: frontendModel[1],
-              backendModel: backendModel[1],
+          {
+            type: 'Snake',
+            child: Snake.mergeWithBackend({
+              frontendModel: frontendModel.child,
+              backendModel: backendModel.child,
             }),
-          ],
+          },
+
           Cmd.None,
         ];
       }
 
       return [
-        [
-          'Snake',
-          Snake.mergeWithBackend({
+        {
+          type: 'Snake',
+          child: Snake.mergeWithBackend({
             frontendModel: Snake.init,
-            backendModel: backendModel[1],
+            backendModel: backendModel.child,
           }),
-        ],
+        },
         Cmd.None,
       ];
     }
 
     case 'Maze': {
-      if (frontendModel[0] === 'Maze') {
+      if (frontendModel.type === 'Maze') {
         return [
-          [
-            'Maze',
-            Maze.mergeWithBackend({
-              frontendModel: frontendModel[1],
-              backendModel: backendModel[1],
+          {
+            type: 'Maze',
+            child: Maze.mergeWithBackend({
+              frontendModel: frontendModel.child,
+              backendModel: backendModel.child,
             }),
-          ],
+          },
           Cmd.None,
         ];
       }
 
       return [
-        [
-          'Maze',
-          Maze.mergeWithBackend({
+        {
+          type: 'Maze',
+          child: Maze.mergeWithBackend({
             frontendModel: Maze.init({}),
-            backendModel: backendModel[1],
+            backendModel: backendModel.child,
           }),
-        ],
+        },
         Cmd.None,
       ];
     }

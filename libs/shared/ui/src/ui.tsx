@@ -31,7 +31,6 @@ const createTheme = ({ mode }: { mode: 'light' | 'dark' }) =>
       palette: {
         mode: mode,
         primary: blue,
-        // primary: purple,
       },
       typography: {
         fontFamily: ['Inter', 'Verdana'].join(','),
@@ -127,6 +126,7 @@ export const AppContainer = ({
 
       case 'Light':
         return lightTheme;
+
       case 'System':
         if (prefersDarkMode) {
           return darkTheme;
