@@ -89,7 +89,7 @@ export type Msg = FrontendMsg;
 type OutAction = Alerts.Action;
 
 export const update = (
-  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd },
+  { sendToBackend, ctx }: { ctx: Ctx; sendToBackend: (msg: ToBackend) => Cmd },
   msg: Msg,
   model: Model
 ): [Model, Cmd<Msg>] => {
@@ -114,7 +114,7 @@ export const update = (
     }
 
     case 'input-move': {
-      const result = handle(msg, model);
+      const result = handle(ctx, msg, model);
 
       if (result.type === 'Err') {
         return [model, Cmd.None];
@@ -272,27 +272,17 @@ export const View = ({
       subtitle: 'Vs Computer',
       ctx,
       playerId: model.player === 'none' ? null : model.player,
-      onStartPlaying: () =>
-        $send(['start-playing', { userId: ctx.currentUserId }]),
-      onStopPlaying: () =>
-        $send(['stop-playing', { userId: ctx.currentUserId }]),
+      onStartPlaying: () => $send(['start-playing']),
+      onStopPlaying: () => $send(['stop-playing']),
       botLevel: {
         values: Object.values(botLevel),
         selected: model.botLevel,
-        onInput: (level) =>
-          $send([
-            'input-bot-level',
-            { botLevel: level, userId: ctx.currentUserId },
-          ]),
+        onInput: (level) => $send(['input-bot-level', { botLevel: level }]),
       },
       player: {
         values: Object.values(playerTypes),
         selected: model.userPlayerType,
-        onInput: (playerType) =>
-          $send([
-            'input-player-type',
-            { playerType, userId: ctx.currentUserId },
-          ]),
+        onInput: (playerType) => $send(['input-player-type', { playerType }]),
         icon: ({ sx, playerType }) => (
           <PlayerIcon
             playerType={playerType}
@@ -302,11 +292,9 @@ export const View = ({
       },
       leftPlayerType: 'PlayerOne',
       onCancel: goBack,
-      onStartGame: () => $send(['start-game', { userId: ctx.currentUserId }]),
+      onStartGame: () => $send(['start-game']),
     });
   }
-
-  // return viewGame({ model, ctx, $send, })
 
   const status = toStatus(model.columns);
   const isGameOver = status.type === 'Winner' || status.type === 'Tie';
@@ -321,21 +309,9 @@ export const View = ({
     userPlayer: model.userPlayerType,
     turn: toTurn(model.columns),
     actions: [
-      [
-        'Stop',
-        'exit',
-        () => $send(['stop-game', { userId: ctx.currentUserId }]),
-      ],
-      [
-        'Restart',
-        'restart',
-        () => $send(['restart', { userId: ctx.currentUserId }]),
-      ],
-      [
-        'Swap',
-        'swap',
-        () => $send(['swap-sides', { userId: ctx.currentUserId }]),
-      ],
+      ['Stop', 'exit', () => $send(['stop-game'])],
+      ['Restart', 'restart', () => $send(['restart'])],
+      ['Swap', 'swap', () => $send(['swap-sides'])],
     ],
     viewPlayerIcon: (props) => <PlayerIcon key={props.playerType} {...props} />,
     viewBoard: () => (
@@ -352,9 +328,7 @@ export const View = ({
         }
         columns={model.columns}
         onHover={(columnIndex) => $send(['hovered', { columnIndex }])}
-        onClick={(columnIndex) =>
-          $send(['input-move', { columnIndex, userId: ctx.currentUserId }])
-        }
+        onClick={(columnIndex) => $send(['input-move', { columnIndex }])}
         visual={model.visual}
       />
     ),
@@ -370,15 +344,9 @@ export const viewGame = ({
   ctx: Ctx;
   $send: (msg: Msg) => void;
 }) => {
-  const stopGameRes = handle(
-    ['stop-game', { userId: ctx.currentUserId }],
-    model
-  );
-  const restartRes = handle(['restart', { userId: ctx.currentUserId }], model);
-  const swapSidesRes = handle(
-    ['swap-sides', { userId: ctx.currentUserId }],
-    model
-  );
+  const stopGameRes = handle(ctx, ['stop-game'], model);
+  const restartRes = handle(ctx, ['restart'], model);
+  const swapSidesRes = handle(ctx, ['swap-sides'], model);
   const gameOver = toGameOver(model);
   return (
     <FillBox>
@@ -410,14 +378,12 @@ export const viewGame = ({
           }
           columns={model.columns}
           onHover={(columnIndex) => $send(['hovered', { columnIndex }])}
-          onClick={(columnIndex) =>
-            $send(['input-move', { columnIndex, userId: ctx.currentUserId }])
-          }
+          onClick={(columnIndex) => $send(['input-move', { columnIndex }])}
           visual={model.visual}
         />
         <Fade in={gameOver.type !== 'none'}>
           <Box
-            onClick={() => $send(['restart', { userId: ctx.currentUserId }])}
+            onClick={() => $send(['restart'])}
             sx={{
               position: 'absolute',
               top: 0,
@@ -447,19 +413,19 @@ export const viewGame = ({
         <ActionButton
           icon={<Icons.ExitToApp sx={{ transform: 'rotate(180deg)' }} />}
           label="Exit"
-          onClick={() => $send(['stop-game', { userId: ctx.currentUserId }])}
+          onClick={() => $send(['stop-game'])}
           disabled={stopGameRes.type === 'Err'}
         />
         <ActionButton
           icon={<Icons.RestartAlt />}
           label="restart"
-          onClick={() => $send(['restart', { userId: ctx.currentUserId }])}
+          onClick={() => $send(['restart'])}
           disabled={restartRes.type === 'Err'}
         />
         <ActionButton
           icon={<Icons.SwapHorizSharp />}
           label="Swap"
-          onClick={() => $send(['swap-sides', { userId: ctx.currentUserId }])}
+          onClick={() => $send(['swap-sides'])}
           disabled={swapSidesRes.type === 'Err'}
         />
       </Box>
