@@ -105,7 +105,7 @@ export type Req =
   | ['RoomDestroy', { userId: UserId }]
   | ['RoomJoin', { userId: UserId; roomId: RoomId }]
   | ['RoomLeave', { userId: UserId }]
-  | ['InputGame', { userId: UserId; gameName?: Game.GameName }]
+  | ['input-game', { userId: UserId; gameName?: Game.GameName }]
   | ['ChangeHost', { userId: UserId; nextHostId: UserId }];
 
 export type Res =
@@ -118,7 +118,7 @@ export type Res =
   | ['RoomJoin', { userId: UserId; roomId: RoomId }, Result<Problem, Model>]
   | ['RoomLeave', { userId: UserId }, Result<Problem, Model>]
   | [
-      'InputGame',
+      'input-game',
       { userId: UserId; gameName?: Game.GameName },
       Result<Problem, Model>
     ]
@@ -273,7 +273,7 @@ export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
       return Ok(modelNew);
     }
 
-    case 'InputGame': {
+    case 'input-game': {
       const { userId, gameName } = msg[1];
 
       const user = model.users[userId];
