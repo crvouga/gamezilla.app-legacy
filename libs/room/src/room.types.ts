@@ -65,28 +65,28 @@ export type Room = {
 //
 
 export type ToFrontend =
-  | ['Sync', BackendModel]
+  | ['sync', BackendModel]
   | ['game', Game.ToFrontend]
   | Res;
 
 export type ToBackend =
   | Req
-  | ['RoomEndThenJoin', { roomId: RoomId; userId: UserId }]
-  | ['RoomLeaveThenJoin', { roomId: RoomId; userId: UserId }]
-  | ['game', Game.ToBackend];
+  | ['room-end-then-join', { roomId: RoomId; userId: UserId }]
+  | ['game', Game.ToBackend]
+  | ['room-leave-then-join', { roomId: RoomId; userId: UserId }];
 
 export type BackendMsg = ['game', RoomId, Game.BackendMsg];
 
 export type FrontendMsg =
   | ['clicked-home']
-  | ['ClickedRoom']
-  | ['ClickedUser', { userId: UserId }]
-  | ['ClickedBanner']
-  | ['ClickedRoomLeave', { userId: UserId }]
+  | ['clicked-room']
+  | ['clicked-user', { userId: UserId }]
+  | ['clicked-banner']
+  | ['clicked-room-leave', { userId: UserId }]
   | ['game', Game.FrontendMsg]
-  | ['RoomEndThenJoin', { roomId: RoomId; userId: UserId }]
-  | ['RoomLeaveThenJoin', { roomId: RoomId; userId: UserId }]
-  | ['ClickedRoomDestroy', { userId: UserId }]
+  | ['room-end-then-join', { roomId: RoomId; userId: UserId }]
+  | ['room-leave-then-join', { roomId: RoomId; userId: UserId }]
+  | ['clicked-room-destroy', { userId: UserId }]
   | Req;
 
 //
@@ -102,11 +102,11 @@ export type Req =
       'room-create',
       { userId: UserId; roomId: RoomId; gameName?: Game.GameName }
     ]
-  | ['RoomDestroy', { userId: UserId }]
-  | ['RoomJoin', { userId: UserId; roomId: RoomId }]
-  | ['RoomLeave', { userId: UserId }]
+  | ['room-destroy', { userId: UserId }]
+  | ['room-join', { userId: UserId; roomId: RoomId }]
+  | ['room-leave', { userId: UserId }]
   | ['input-game', { userId: UserId; gameName?: Game.GameName }]
-  | ['ChangeHost', { userId: UserId; nextHostId: UserId }];
+  | ['change-host', { userId: UserId; nextHostId: UserId }];
 
 export type Res =
   | [
@@ -114,16 +114,16 @@ export type Res =
       { userId: UserId; roomId: RoomId; gameName?: Game.GameName },
       Result<Problem, Model>
     ]
-  | ['RoomDestroy', { userId: UserId }, Result<Problem, Model>]
-  | ['RoomJoin', { userId: UserId; roomId: RoomId }, Result<Problem, Model>]
-  | ['RoomLeave', { userId: UserId }, Result<Problem, Model>]
+  | ['room-destroy', { userId: UserId }, Result<Problem, Model>]
+  | ['room-join', { userId: UserId; roomId: RoomId }, Result<Problem, Model>]
+  | ['room-leave', { userId: UserId }, Result<Problem, Model>]
   | [
       'input-game',
       { userId: UserId; gameName?: Game.GameName },
       Result<Problem, Model>
     ]
   | [
-      'ChangeHost',
+      'change-host',
       { userId: UserId; nextHostId: UserId },
       Result<Problem, Model>
     ];
@@ -190,7 +190,7 @@ export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
       return Ok(modelNew);
     }
 
-    case 'RoomDestroy': {
+    case 'room-destroy': {
       const user = model.users[msg[1].userId];
 
       if (!user) {
@@ -223,7 +223,7 @@ export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
       return Ok(modelNew);
     }
 
-    case 'RoomJoin': {
+    case 'room-join': {
       const user = model.users[msg[1].userId];
 
       if (user) {
@@ -246,7 +246,7 @@ export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
       return Ok(modelNew);
     }
 
-    case 'RoomLeave': {
+    case 'room-leave': {
       const user = model.users[msg[1].userId];
 
       if (!user) {
@@ -314,7 +314,7 @@ export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
       return Ok(modelNew);
     }
 
-    case 'ChangeHost': {
+    case 'change-host': {
       const user = model.users[msg[1].userId];
 
       if (!user) {

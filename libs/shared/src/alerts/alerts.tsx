@@ -157,7 +157,7 @@ export const runAction = <TMsg,>(
       const { message, title, variant } = action[1];
 
       const snack: Snack = {
-        snackId: Uuid.generateSync(),
+        snackId: Uuid.generatesync(),
         message,
         variant: variant ?? 'Info',
         title,

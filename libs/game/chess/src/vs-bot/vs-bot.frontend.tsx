@@ -163,7 +163,7 @@ const updateFromBackend_ = (
   model: Model
 ): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-    case 'Sync': {
+    case 'sync': {
       return [model, Cmd.None, []];
     }
 

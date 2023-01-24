@@ -1,6 +1,14 @@
-import { Cmd, Sub } from "@gamezilla/core";
-import { UserId } from "@gamezilla/shared";
-import { initShared, BackendModel, BackendMsg, ToBackend, handle, ToFrontend, Res } from "./vs-user.types";
+import { Cmd, Sub } from '@gamezilla/core';
+import { UserId } from '@gamezilla/shared';
+import {
+  initShared,
+  BackendModel,
+  BackendMsg,
+  ToBackend,
+  handle,
+  ToFrontend,
+  Res,
+} from './vs-user.types';
 
 //
 //
@@ -12,8 +20,7 @@ import { initShared, BackendModel, BackendMsg, ToBackend, handle, ToFrontend, Re
 
 export type Model = BackendModel;
 
-
-export const init = initShared
+export const init = initShared;
 
 //
 //
@@ -23,32 +30,49 @@ export const init = initShared
 //
 //
 
-export type Msg = BackendMsg
+export type Msg = BackendMsg;
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
-    switch (msg[0]) {
-        case "none": {
-            return [model, Cmd.None]
-        }
+  switch (msg[0]) {
+    case 'none': {
+      return [model, Cmd.None];
     }
+  }
 };
 
-
-export const updateFromFrontend = ({ sendToClient, broadcast, msg, model, ctx }: { ctx: { currentUserId: UserId, }; msg: ToBackend, model: Model, broadcast: (m: ToFrontend) => Cmd, sendToClient: (m: ToFrontend) => Cmd }): [Model, Cmd<Msg>] => {
-    switch (msg[0]) {
-        default: {
-            const res: Res = [msg[0], handle({ msg, model, currentUserId: ctx.currentUserId })]
-            if (res[1].type === "Err") {
-                return [model, sendToClient(res)]
-            }
-            return [res[1].value, broadcast(res)]
-        }
+export const updateFromFrontend = ({
+  sendToClient,
+  broadcast,
+  msg,
+  model,
+  ctx,
+}: {
+  ctx: { currentUserId: UserId };
+  msg: ToBackend;
+  model: Model;
+  broadcast: (m: ToFrontend) => Cmd;
+  sendToClient: (m: ToFrontend) => Cmd;
+}): [Model, Cmd<Msg>] => {
+  switch (msg[0]) {
+    default: {
+      const res: Res = [
+        msg[0],
+        handle({ msg, model, currentUserId: ctx.currentUserId }),
+      ];
+      if (res[1].type === 'Err') {
+        return [model, sendToClient(res)];
+      }
+      return [res[1].value, broadcast(res)];
     }
+  }
 };
 
-export const updateRoomLeave = (_userId: UserId, model: Model): [Model, Cmd<Msg>] => {
-    return [init(model), Cmd.None]
-}
+export const updateRoomLeave = (
+  _userId: UserId,
+  model: Model
+): [Model, Cmd<Msg>] => {
+  return [init(model), Cmd.None];
+};
 
 //
 //
@@ -59,5 +83,5 @@ export const updateRoomLeave = (_userId: UserId, model: Model): [Model, Cmd<Msg>
 //
 
 export const subscriptions = (_model: Model): Sub<Msg> => {
-    return Sub.None;
+  return Sub.None;
 };

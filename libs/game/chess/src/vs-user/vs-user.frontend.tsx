@@ -161,7 +161,7 @@ export const updateFromBackend = (
   const model: Model = { ..._model, openedMenuId: Option.None };
 
   switch (msg[0]) {
-    case 'Sync': {
+    case 'sync': {
       return [
         {
           ...model,

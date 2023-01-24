@@ -91,23 +91,23 @@ export const update = (
       return [model, Route.push(['home'])];
     }
 
-    case 'ClickedRoom': {
+    case 'clicked-room': {
       return [model, Route.push(['room'])];
     }
 
-    case 'ClickedUser': {
+    case 'clicked-user': {
       return [model, Route.push(['profile', { userId: msg[1].userId }])];
     }
 
-    case 'ClickedBanner': {
+    case 'clicked-banner': {
       return [model, Route.push(['game'])];
     }
 
     case 'room-create':
-    case 'RoomDestroy':
-    case 'RoomJoin':
-    case 'RoomLeave':
-    case 'ChangeHost':
+    case 'room-destroy':
+    case 'room-join':
+    case 'room-leave':
+    case 'change-host':
     case 'input-game': {
       return [
         {
@@ -162,28 +162,31 @@ export const update = (
       ];
     }
 
-    case 'RoomLeaveThenJoin': {
+    case 'room-leave-then-join': {
       return [model, sendToBackend(msg)];
     }
 
-    case 'RoomEndThenJoin': {
+    case 'room-end-then-join': {
       return [model, sendToBackend(msg)];
     }
 
-    case 'ClickedRoomDestroy': {
+    case 'clicked-room-destroy': {
       return [
         model,
         Cmd.batch([
           Route.push(['home']),
-          sendToBackend(['RoomDestroy', msg[1]]),
+          sendToBackend(['room-destroy', msg[1]]),
         ]),
       ];
     }
 
-    case 'ClickedRoomLeave': {
+    case 'clicked-room-leave': {
       return [
         model,
-        Cmd.batch([Route.push(['home']), sendToBackend(['RoomLeave', msg[1]])]),
+        Cmd.batch([
+          Route.push(['home']),
+          sendToBackend(['room-leave', msg[1]]),
+        ]),
       ];
     }
 
@@ -204,7 +207,7 @@ export const updateFromBackend = (
   model: Model
 ): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-    case 'Sync': {
+    case 'sync': {
       const userIds = Object.values(msg[1].users).map((user) => user.userId);
 
       const actions: OutAction[] = [['profile', ['FindMany', { userIds }]]];
@@ -261,12 +264,12 @@ export const updateFromBackend = (
     }
 
     case 'input-game':
-    case 'ChangeHost':
+    case 'change-host':
     case 'room-create': {
       return updateResponse({ sendToBackend }, msg, model);
     }
 
-    case 'RoomDestroy': {
+    case 'room-destroy': {
       const handled = updateResponse({ sendToBackend }, msg, model);
 
       const user = model.users[ctx.currentUserId];
@@ -304,7 +307,7 @@ export const updateFromBackend = (
       return [handled[0], handled[1], [...handled[2], ...alertActions]];
     }
 
-    case 'RoomLeave': {
+    case 'room-leave': {
       const handled = updateResponse({ sendToBackend }, msg, model);
 
       if (msg[2].type === 'Err') {
@@ -330,7 +333,7 @@ export const updateFromBackend = (
       return [handled[0], handled[1], [...handled[2], ...alertActions]];
     }
 
-    case 'RoomJoin': {
+    case 'room-join': {
       const handled = updateResponse({ sendToBackend }, msg, model);
 
       if (msg[2].type === 'Err') {
@@ -349,7 +352,7 @@ export const updateFromBackend = (
                     {
                       title: 'End your current room to join this room?',
                       tag: 'Conformation',
-                      onConfirm: ['RoomEndThenJoin', msg[1]],
+                      onConfirm: ['room-end-then-join', msg[1]],
                     },
                   ],
                 ]
@@ -359,7 +362,7 @@ export const updateFromBackend = (
                     {
                       title: 'Leave your current room then join this room?',
                       tag: 'Conformation',
-                      onConfirm: ['RoomLeaveThenJoin', msg[1]],
+                      onConfirm: ['room-leave-then-join', msg[1]],
                     },
                   ],
                 ]
@@ -652,7 +655,7 @@ export const ViewPageGame = ({
           <Button
             startIcon={<Icons.Group />}
             size="small"
-            onClick={() => $send(['ClickedRoom'])}
+            onClick={() => $send(['clicked-room'])}
           >
             Room
           </Button>
@@ -774,7 +777,7 @@ export const ViewNotInRoom = ({
     );
   }
 
-  if (model.requests.RoomJoin?.type === 'Loading') {
+  if (model.requests['room-join']?.type === 'Loading') {
     return (
       <FillBox>
         <Header title="game" />
@@ -928,7 +931,7 @@ export const ViewPageRoom = ({
         {usersInRoom.map((user) => (
           <Box
             key={user.userId}
-            onClick={() => $send(['ClickedUser', user])}
+            onClick={() => $send(['clicked-user', user])}
             sx={{
               display: 'flex',
               flexDirection: 'column',
@@ -974,7 +977,7 @@ export const ViewPageRoom = ({
               fullWidth
               color="error"
               onClick={() =>
-                $send(['ClickedRoomDestroy', { userId: ctx.currentUserId }])
+                $send(['clicked-room-destroy', { userId: ctx.currentUserId }])
               }
             >
               End Room
@@ -985,7 +988,7 @@ export const ViewPageRoom = ({
             fullWidth
             color="error"
             onClick={() =>
-              $send(['ClickedRoomLeave', { userId: ctx.currentUserId }])
+              $send(['clicked-room-leave', { userId: ctx.currentUserId }])
             }
           >
             Leave Room
@@ -1097,7 +1100,7 @@ export const ViewBanner = ({
           display: 'flex',
           alignItems: 'center',
         }}
-        onClick={() => $send(['ClickedBanner'])}
+        onClick={() => $send(['clicked-banner'])}
       >
         {!game && (
           <Avatar

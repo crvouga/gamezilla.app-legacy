@@ -1,34 +1,32 @@
-import { Result, Uuid } from "@gamezilla/core"
+import { Result, Uuid } from '@gamezilla/core';
 
-
-
-export type UserId = string & { _opaque: "UserId" }
+export type UserId = string & { _opaque: 'UserId' };
 
 const is = (userId: unknown): userId is UserId => {
-  return typeof userId === "string"
-}
+  return typeof userId === 'string';
+};
 
-type Problem = "invalid_user_id"
+type Problem = 'invalid_user_id';
 
 const decode = (id: unknown): Result<Problem, UserId> => {
   if (is(id)) {
-    return Result.Ok(id)
+    return Result.Ok(id);
   }
-  return Result.Err("invalid_user_id")
-}
+  return Result.Err('invalid_user_id');
+};
 
 const generate = () => {
-  const id = Uuid.generateSync()
+  const id = Uuid.generatesync();
 
   if (is(id)) {
-    return id
+    return id;
   }
 
-  throw new Error("impossible condition. generated invalid user id.")
-}
+  throw new Error('impossible condition. generated invalid user id.');
+};
 
 export const UserId = {
   generate,
   decode,
   is,
-}
+};

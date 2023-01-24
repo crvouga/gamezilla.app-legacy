@@ -77,7 +77,7 @@ export const updateFromFrontend = (
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case 'Init': {
-      return [model, wire.sendToClient(['Sync', model])];
+      return [model, wire.sendToClient(['sync', model])];
     }
 
     case 'RequestToDraw': {
@@ -164,7 +164,7 @@ const sendResponse = (
   if (response[1].type === 'Err') {
     return [
       model,
-      Cmd.batch([sendToClient(response), sendToClient(['Sync', model])]),
+      Cmd.batch([sendToClient(response), sendToClient(['sync', model])]),
     ];
   }
 

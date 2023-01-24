@@ -128,7 +128,7 @@ export const updateFromBackend = (
   model: Model
 ): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-    case 'Sync': {
+    case 'sync': {
       const sharedModel = msg[1];
       return [
         {

@@ -26,7 +26,7 @@ export const init: Model = null;
 export type Msg =
   | ['ClickedBack']
   | ['ClickedName']
-  | ['ClickedUsername']
+  | ['clicked-username']
   | ['ClickedAvatar']
   | ['ClickedChangedAvatar']
   | ['ClickedTheme'];
@@ -45,7 +45,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     case 'ClickedName':
       return [model, Route.push(['profile-update-name'])];
 
-    case 'ClickedUsername':
+    case 'clicked-username':
       return [model, Route.push(['profile-update-username'])];
 
     case 'ClickedTheme':
@@ -97,7 +97,7 @@ export const View = ({
       <UI.Field
         label="Username"
         value={profile.username}
-        onClick={() => $send(['ClickedUsername'])}
+        onClick={() => $send(['clicked-username'])}
       />
 
       {/* <UI.Field
