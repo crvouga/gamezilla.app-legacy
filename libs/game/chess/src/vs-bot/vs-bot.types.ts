@@ -92,7 +92,7 @@ export type BackendMsg = BotMoved;
 export type ToBackend = ['Init'] | Req;
 
 export type ToFrontend =
-  | ['Sync', SharedModel]
+  | ['sync', SharedModel]
   | Res
   | BotMoved_Done
   | ['player-left', SharedModel];

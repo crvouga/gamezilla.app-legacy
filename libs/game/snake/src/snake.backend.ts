@@ -52,7 +52,7 @@ export const update = (
         gameStatus: model.gameStatus,
       };
 
-      return [modelNew, broadcast(['Sync', modelNew])];
+      return [modelNew, broadcast(['sync', modelNew])];
     }
   }
 };
@@ -122,7 +122,7 @@ const updateRequest = (
 
   return [
     modelNew,
-    Cmd.batch([broadcast(response), broadcast(['Sync', modelNew])]),
+    Cmd.batch([broadcast(response), broadcast(['sync', modelNew])]),
   ];
 };
 

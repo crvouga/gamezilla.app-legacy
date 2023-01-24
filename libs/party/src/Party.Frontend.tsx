@@ -69,7 +69,7 @@ export const update = (
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'ClickedBanner': {
+    case 'clicked-banner': {
       return [model, Route.push(['party'])];
     }
 
@@ -437,7 +437,7 @@ export const ViewBanner = ({
     <Typography
       variant="caption"
       align="center"
-      onClick={() => $send(['ClickedBanner'])}
+      onClick={() => $send(['clicked-banner'])}
       sx={{
         width: '100%',
         paddingX: 2,

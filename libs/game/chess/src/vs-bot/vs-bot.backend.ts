@@ -95,7 +95,7 @@ const updateFromFrontend_ = (
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case 'Init': {
-      return [model, sendToClient(['Sync', model])];
+      return [model, sendToClient(['sync', model])];
     }
 
     case 'start-game': {

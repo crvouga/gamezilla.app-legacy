@@ -44,9 +44,9 @@ export const init: Model = null;
 
 export type Msg =
   | ['ClickedCurrentRoom']
-  | ['ClickedCurrentRoomLeave']
-  | ['ClickedCurrentRoomDestroy']
-  | ['ClickedRoom', { roomId: RoomId }]
+  | ['ClickedCurrentroom-leave']
+  | ['ClickedCurrentroom-destroy']
+  | ['clicked-room', { roomId: RoomId }]
   | ['ClickedGameCard', { roomId: RoomId; gameName: GameName }]
   | ['clicked-create-room', { roomId: RoomId }];
 
@@ -89,25 +89,25 @@ export const update = (
       ];
     }
 
-    case 'ClickedRoom': {
+    case 'clicked-room': {
       const roomId = msg[1].roomId;
       return [
         model,
-        [['room', ['Msg', ['RoomJoin', { roomId, userId: currentUserId }]]]],
+        [['room', ['Msg', ['room-join', { roomId, userId: currentUserId }]]]],
       ];
     }
 
-    case 'ClickedCurrentRoomLeave': {
+    case 'ClickedCurrentroom-leave': {
       return [
         model,
-        [['room', ['Msg', ['RoomLeave', { userId: currentUserId }]]]],
+        [['room', ['Msg', ['room-leave', { userId: currentUserId }]]]],
       ];
     }
 
-    case 'ClickedCurrentRoomDestroy': {
+    case 'ClickedCurrentroom-destroy': {
       return [
         model,
-        [['room', ['Msg', ['RoomDestroy', { userId: currentUserId }]]]],
+        [['room', ['Msg', ['room-destroy', { userId: currentUserId }]]]],
       ];
     }
 
@@ -232,7 +232,7 @@ export const View = ({
                 startIcon={<Icons.DeleteForever />}
                 variant="outlined"
                 onClick={() => {
-                  $send(['ClickedCurrentRoomDestroy']);
+                  $send(['ClickedCurrentroom-destroy']);
                 }}
               >
                 End Room
@@ -247,7 +247,7 @@ export const View = ({
                 }
                 variant="outlined"
                 onClick={() => {
-                  $send(['ClickedCurrentRoomLeave']);
+                  $send(['ClickedCurrentroom-leave']);
                 }}
               >
                 Leave
@@ -268,7 +268,7 @@ export const View = ({
               ctx={ctx}
               model={gameRoom}
               onClick={({ roomId }) =>
-                $send(['ClickedRoom', { roomId: roomId }])
+                $send(['clicked-room', { roomId: roomId }])
               }
             />
           </Box>
@@ -329,7 +329,7 @@ const ViewNotInRoom = ({
               ctx={ctx}
               model={gameRoom}
               onClick={({ roomId }) =>
-                $send(['ClickedRoom', { roomId: roomId }])
+                $send(['clicked-room', { roomId: roomId }])
               }
             />
           </Box>
