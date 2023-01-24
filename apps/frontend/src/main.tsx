@@ -29,7 +29,7 @@ import {
 } from '@gamezilla/core';
 import { PartyFrontend as Party } from '@gamezilla/party';
 import { ProfileStore } from '@gamezilla/profile';
-import { RoomFrontend as GameRoom } from '@gamezilla/room';
+import { RoomFrontend as Room } from '@gamezilla/room';
 import { Alerts, Route } from '@gamezilla/shared';
 import * as UI from '@gamezilla/shared/ui';
 import { Box, CircularProgress } from '@gamezilla/shared/ui';
@@ -58,7 +58,7 @@ const init =
     const [auth, authCmd] = Auth.init();
     const alerts = Alerts.init;
     const chatStore = ChatStore.init;
-    const [gameRoom, gameRoomCmd] = GameRoom.init;
+    const [gameRoom, gameRoomCmd] = Room.init;
     const [page, pageCmd] = Page.initLoading();
     const [party, partyCmd] = Party.init({
       sendToBackend: (msg) => sendToBackend(['party', msg]),
@@ -99,7 +99,7 @@ type Msg = FrontendMsg;
 
 type OutAction<Msg = FrontendMsg> =
   | Alerts.Action<Msg>
-  | GameRoom.Action
+  | Room.Action
   | ChatStore.Action
   | Auth.Action
   | Party.Action
@@ -216,13 +216,13 @@ const updateMain =
 
         const { profile } = status[1];
 
-        const [child, childCmd] = GameRoom.update(
+        const [child, childCmd] = Room.update(
           {
             ctx: {
               currentUserId: profile.userId,
               profiles: model.profileStore.profiles,
             },
-            sendToBackend: (msg) => sendToBackend(['room', msg]),
+            sendToBackend: (m) => sendToBackend(['room', m]),
           },
           msg[1],
           model.gameRoom
@@ -338,7 +338,7 @@ const updateFromBackend = (
 
       const currentUserId = model.auth[1].userId;
 
-      const [gameRoom, gameRoomCmd, actions] = GameRoom.updateFromBackend(
+      const [gameRoom, gameRoomCmd, actions] = Room.updateFromBackend(
         {
           ctx: { currentUserId, profiles: model.profileStore.profiles },
           sendToBackend: (msg) => sendToBackend(['room', msg]),
@@ -455,7 +455,7 @@ const runAction =
           return [model, Cmd.None];
         }
 
-        const [gameRoom, gameRoomCmd] = GameRoom.runAction(
+        const [gameRoom, gameRoomCmd] = Room.runAction(
           {
             ctx: {
               currentUserId: model.auth[1].userId,
@@ -538,7 +538,7 @@ const gameRoomSub = (model: Model): Sub<Msg> => {
     case 'LoggedIn': {
       return Sub.tag(
         'room',
-        GameRoom.subscriptions(
+        Room.subscriptions(
           { currentUserId: model.auth[1].userId },
           model.gameRoom
         )
@@ -666,7 +666,7 @@ const ViewMain = ({
             $send={(msg) => $send(['party', msg])}
           />
 
-          <GameRoom.ViewBanner
+          <Room.ViewBanner
             store={model.profileStore}
             currentUserId={profile.userId}
             model={model.gameRoom}
@@ -843,14 +843,14 @@ const main = () => {
     wireStatus$.next('Disconnected');
   });
 
-  socketClient.on('ToFrontend', (msg) => {
+  socketClient.on('to-frontend', (msg) => {
     toFrontend$.next(msg);
   });
 
   const sendToBackend =
     (msg: ToBackend): Cmd =>
     () => {
-      socketClient.emit('ToBackend', msg);
+      socketClient.emit('to-backend', msg);
     };
 
   const { program } = p(
