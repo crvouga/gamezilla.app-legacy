@@ -47,7 +47,7 @@ export type Msg = FrontendMsg;
 type OutAction = Alerts.Action;
 
 export const update = (
-  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd },
+  { sendToBackend, ctx }: { sendToBackend: (msg: ToBackend) => Cmd; ctx: Ctx },
   msg: Msg,
   model: Model
 ): [Model, Cmd<Msg>] => {
@@ -55,6 +55,7 @@ export const update = (
     case 'input-mode': {
       return [model, sendToBackend(msg)];
     }
+
     case 'vs-user': {
       if (model.type === 'vs-user') {
         const [child, cmd] = VsUser.update(
@@ -73,6 +74,7 @@ export const update = (
       if (model.type === 'vs-bot') {
         const [child, cmd] = VsBot.update(
           {
+            ctx,
             sendToBackend: (msg) => sendToBackend(['vs-bot', msg]),
           },
           msg[1],

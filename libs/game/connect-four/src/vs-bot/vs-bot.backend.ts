@@ -55,6 +55,7 @@ export const updateFromFrontend = (
   wire: {
     broadcast: (msg: ToFrontend) => Cmd;
     sendToClient: (msg: ToFrontend) => Cmd;
+    currentUserId: UserId;
   },
   msg: ToBackend,
   modelPrev: Model
@@ -88,9 +89,11 @@ const updateFromFrontend_ = (
   {
     broadcast,
     sendToClient,
+    currentUserId,
   }: {
-    broadcast: (msg: ToFrontend) => Cmd;
-    sendToClient: (msg: ToFrontend) => Cmd;
+    broadcast: (m: ToFrontend) => Cmd;
+    sendToClient: (m: ToFrontend) => Cmd;
+    currentUserId: UserId;
   },
   msg: ToBackend,
   model: Model
@@ -105,7 +108,7 @@ const updateFromFrontend_ = (
     case 'input-player-type':
     case 'input-move':
     case 'input-bot-level': {
-      const res: Res = [msg[0], handle(msg, model)];
+      const res: Res = [msg[0], handle({ currentUserId }, msg, model)];
 
       if (res[1].type === 'Err') {
         return [model, sendToClient(res)];

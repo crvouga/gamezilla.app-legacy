@@ -158,12 +158,12 @@ export const update = (
 export const updateFromFrontend = (
   {
     hostId,
-    ctx,
+    currentUserId,
     sendToClient,
     broadcast,
   }: {
     hostId: UserId;
-    ctx: { currentUserId: UserId };
+    currentUserId: UserId;
     sendToClient: (msg: ToFrontend) => Cmd;
     broadcast: (msg: ToFrontend) => Cmd;
   },
@@ -175,6 +175,7 @@ export const updateFromFrontend = (
       if (model.type === 'connect-four') {
         const [child, cmd] = ConnectFour.updateFromFrontend(
           {
+            currentUserId,
             sendToClient: (msg) => sendToClient(['connect-four', msg]),
             broadcast: (msg) => broadcast(['connect-four', msg]),
           },
@@ -221,7 +222,7 @@ export const updateFromFrontend = (
       if (model.type === 'Gomoku') {
         const [child, cmd] = Gomoku.updateFromFrontend(
           {
-            ctx,
+            ctx: { currentUserId },
             broadcast: (m) => broadcast(['Gomoku', m]),
             sendToClient: (m) => sendToClient(['Gomoku', m]),
           },

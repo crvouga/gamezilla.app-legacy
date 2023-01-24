@@ -168,20 +168,16 @@ const Req = z.union([
   z.tuple([z.literal('stop-playing'), z.object({ userId: z.string() })]),
 ]);
 
-type Req_ = z.infer<typeof Req>;
-
-export const m: Req_ = ['start-playing', { userId: '123' }];
-
 export type Req =
-  | ['start-playing', { userId: UserId }]
-  | ['stop-playing', { userId: UserId }]
-  | ['input-player-type', { userId: UserId; playerType: PlayerType }]
-  | ['input-bot-level', { userId: UserId; botLevel: BotLevel }]
-  | ['start-game', { userId: UserId }]
-  | ['input-move', { userId: UserId; columnIndex: ColumnIndex }]
-  | ['stop-game', { userId: UserId }]
-  | ['swap-sides', { userId: UserId }]
-  | ['restart', { userId: UserId }];
+  | ['start-playing']
+  | ['stop-playing']
+  | ['input-player-type', { playerType: PlayerType }]
+  | ['input-bot-level', { botLevel: BotLevel }]
+  | ['start-game']
+  | ['input-move', { columnIndex: ColumnIndex }]
+  | ['stop-game']
+  | ['swap-sides']
+  | ['restart'];
 
 export type Res = [Req[0], Result<Problem, SharedModel>];
 
@@ -199,6 +195,7 @@ export type Problem =
 //
 
 export const handle = (
+  { currentUserId }: { currentUserId: UserId },
   msg: Req,
   model: SharedModel
 ): Result<Problem, SharedModel> => {
@@ -214,7 +211,7 @@ export const handle = (
 
       const modelNew: SharedModel = {
         ...model,
-        player: msg[1].userId,
+        player: currentUserId,
       };
 
       return Ok(modelNew);
@@ -229,7 +226,7 @@ export const handle = (
         return Err('not_playing');
       }
 
-      if (model.player !== msg[1].userId) {
+      if (model.player !== currentUserId) {
         return Err('not_playing');
       }
 
@@ -246,7 +243,7 @@ export const handle = (
         return Err('not_setup');
       }
 
-      if (model.player !== msg[1].userId) {
+      if (model.player !== currentUserId) {
         return Err('not_playing');
       }
 
@@ -263,7 +260,7 @@ export const handle = (
         return Err('not_setup');
       }
 
-      if (model.player !== msg[1].userId) {
+      if (model.player !== currentUserId) {
         return Err('not_playing');
       }
 
@@ -280,7 +277,7 @@ export const handle = (
         return Err('not_setup');
       }
 
-      if (model.player !== msg[1].userId) {
+      if (model.player !== currentUserId) {
         return Err('not_playing');
       }
 
@@ -304,7 +301,7 @@ export const handle = (
         return Err('not_game');
       }
 
-      if (model.player !== msg[1].userId) {
+      if (model.player !== currentUserId) {
         return Err('not_playing');
       }
 
@@ -323,7 +320,7 @@ export const handle = (
         return Err('not_game');
       }
 
-      if (model.player !== msg[1].userId) {
+      if (model.player !== currentUserId) {
         return Err('not_playing');
       }
 
@@ -341,7 +338,7 @@ export const handle = (
         return Err('not_game');
       }
 
-      if (model.player !== msg[1].userId) {
+      if (model.player !== currentUserId) {
         return Err('not_playing');
       }
 
@@ -368,7 +365,7 @@ export const handle = (
         return Err('not_game');
       }
 
-      if (model.player !== msg[1].userId) {
+      if (model.player !== currentUserId) {
         return Err('not_playing');
       }
 

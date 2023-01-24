@@ -91,7 +91,7 @@ export const update = (
     case 'connect-four': {
       if (msg[0] === 'connect-four') {
         const [child, cmd] = ConnectFour.update(
-          { sendToBackend: (msg) => sendToBackend(['connect-four', msg]) },
+          { ctx, sendToBackend: (msg) => sendToBackend(['connect-four', msg]) },
           msg[1],
           model.child
         );

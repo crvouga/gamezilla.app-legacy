@@ -123,7 +123,7 @@ export const updateFromFrontend = (
       const [gameNew, gameCmd] = Game.updateFromFrontend(
         {
           hostId: room.hostId,
-          ctx,
+          currentUserId: ctx.currentUserId,
           sendToClient: (msg) => wire.sendToClient(['game', msg]),
           broadcast: (msg) =>
             sendToRoom({
