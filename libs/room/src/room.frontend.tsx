@@ -765,7 +765,7 @@ export const ViewNotInRoom = ({
   model: Model;
   $send: (msg: Msg) => void;
 }) => {
-  if (model.requests.RoomCreate?.type === 'Loading') {
+  if (model.requests?.['room-create']?.type === 'Loading') {
     return (
       <FillBox>
         <Header title="game" />
