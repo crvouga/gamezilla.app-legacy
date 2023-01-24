@@ -48,7 +48,7 @@ export type Msg =
   | ['ClickedCurrentRoomDestroy']
   | ['ClickedRoom', { roomId: RoomId }]
   | ['ClickedGameCard', { roomId: RoomId; gameName: GameName }]
-  | ['ClickedCreateRoom', { roomId: RoomId }];
+  | ['clicked-create-room', { roomId: RoomId }];
 
 export type OutAction = GameRoom.Action | Route.Action;
 
@@ -67,22 +67,22 @@ export const update = (
       return [
         model,
         [
-          ['Route', ['Push', ['game']]],
-          ['room', ['Msg', ['RoomCreate', payload]]],
+          ['route', ['Push', ['game']]],
+          ['room', ['Msg', ['room-create', payload]]],
         ],
       ];
     }
 
-    case 'ClickedCreateRoom': {
+    case 'clicked-create-room': {
       return [
         model,
         [
-          ['Route', ['Push', ['game']]],
+          ['route', ['Push', ['game']]],
           [
             'room',
             [
               'Msg',
-              ['RoomCreate', { roomId: msg[1].roomId, userId: currentUserId }],
+              ['room-create', { roomId: msg[1].roomId, userId: currentUserId }],
             ],
           ],
         ],
@@ -112,7 +112,7 @@ export const update = (
     }
 
     case 'ClickedCurrentRoom': {
-      return [model, [['Route', ['Push', ['game']]]]];
+      return [model, [['route', ['Push', ['game']]]]];
     }
   }
 };
@@ -299,7 +299,7 @@ const ViewNotInRoom = ({
           actionIcon={<Icons.Add />}
           actionTitle="Create Game"
           onAction={() =>
-            $send(['ClickedCreateRoom', { roomId: RoomId.generate() }])
+            $send(['clicked-create-room', { roomId: RoomId.generate() }])
           }
           renderIcon={(props) => <Icons.SportsEsportsOutlined {...props} />}
           title="No Active Games"
@@ -313,7 +313,7 @@ const ViewNotInRoom = ({
               fullWidth
               variant="contained"
               onClick={() =>
-                $send(['ClickedCreateRoom', { roomId: RoomId.generate() }])
+                $send(['clicked-create-room', { roomId: RoomId.generate() }])
               }
               startIcon={<Icons.Add />}
             >

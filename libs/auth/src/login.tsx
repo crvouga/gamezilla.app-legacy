@@ -44,11 +44,11 @@ export type Msg = ['clicked_email'] | ['clicked_text'];
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case 'clicked_text': {
-      return [model, Route.push(['LoginPhone'])];
+      return [model, Route.push(['login-phone'])];
     }
 
     case 'clicked_email': {
-      return [model, Route.push(['LoginEmailLink'])];
+      return [model, Route.push(['login-email-link'])];
     }
   }
 };

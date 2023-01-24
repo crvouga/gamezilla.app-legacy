@@ -47,7 +47,7 @@ export const update = (
       return [
         model,
         Route.back,
-        [['Profile', ['EditOne', { userId, edits: { name: model.name } }]]],
+        [['profile', ['EditOne', { userId, edits: { name: model.name } }]]],
       ];
 
     case 'ClickedCancel':

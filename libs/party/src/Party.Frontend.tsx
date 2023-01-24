@@ -70,7 +70,7 @@ export const update = (
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case 'ClickedBanner': {
-      return [model, Route.push(['Party'])];
+      return [model, Route.push(['party'])];
     }
 
     case 'MicSound': {
@@ -133,7 +133,7 @@ export const updateFromBackend = (
 
       const userIds = Object.values(modelNext.users).map((user) => user.userId);
 
-      const action: OutAction = ['Profile', ['FindMany', { userIds }]];
+      const action: OutAction = ['profile', ['FindMany', { userIds }]];
 
       const cmd = toLifecycleCmd({
         currentUserId,
@@ -180,7 +180,7 @@ const toLifecycleCmd = ({
   return Cmd.None;
 };
 
-export type Action = ['Party', ['Msg', Msg]];
+export type Action = ['party', ['Msg', Msg]];
 
 export const runAction = (
   wire: { sendToBackend: (msg: ToBackend) => Cmd },
@@ -330,7 +330,7 @@ const ViewNotInParty = ({
   if (parties.length === 0) {
     return (
       <FillBox>
-        <Header title="Party" />
+        <Header title="party" />
         <ViewEmptyState
           renderIcon={({ sx }) => <Icons.People sx={sx} />}
           title="No Active Parties"
@@ -349,7 +349,7 @@ const ViewNotInParty = ({
 
   return (
     <FillBox>
-      <Header title="Party" />
+      <Header title="party" />
       <Box sx={{ paddingX: 2 }}>
         <Button
           fullWidth
@@ -417,7 +417,7 @@ export const ViewBanner = ({
   model: Model;
   $send: (msg: Msg) => void;
 }) => {
-  if (route[0] === 'Party') {
+  if (route[0] === 'party') {
     return null;
   }
 

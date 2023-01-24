@@ -44,11 +44,11 @@ export const init = (): [Model, Cmd<Msg>] => {
 //
 
 export type Msg =
-  | ['GotSession', Option<Session>]
+  | ['got-session', Option<Session>]
   | ['Login_Done', Result<null, null>]
   | ['Logout_Done', Result<null, null>];
 
-export type Action = ['Auth', ['Logout']];
+export type Action = ['auth', ['logout']];
 
 export type ToBackend = ['UserLoggedIn', UserId];
 
@@ -66,7 +66,7 @@ export const update = (
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'GotSession':
+    case 'got-session':
       switch (msg[1].type) {
         case 'none':
           return [['LoggedOut'], Cmd.None];
@@ -105,9 +105,9 @@ export const update = (
 
 export const runAction = (action: Action, model: Model): [Model, Cmd<Msg>] => {
   switch (action[0]) {
-    case 'Auth': {
+    case 'auth': {
       switch (action[1][0]) {
-        case 'Logout':
+        case 'logout':
           return [
             model,
             p(
@@ -282,8 +282,8 @@ export const fromSupabaseSession = (auth: SupabaseSession | null): Msg => {
   );
 
   if (userId.type === 'Ok') {
-    return ['GotSession', Option.Some({ userId: userId.value, defaultName })];
+    return ['got-session', Option.Some({ userId: userId.value, defaultName })];
   }
 
-  return ['GotSession', Option.None];
+  return ['got-session', Option.None];
 };

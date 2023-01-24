@@ -39,7 +39,7 @@ export const update = (
       return [model, Route.back, []];
 
     case 'ClickedLogout':
-      return [{ type: 'LoggingOut' }, Cmd.None, [['Auth', ['Logout']]]];
+      return [{ type: 'LoggingOut' }, Cmd.None, [['auth', ['logout']]]];
   }
 };
 

@@ -44,10 +44,10 @@ export const update = (
       return [model, Route.back, []];
 
     case 'ClickedDelete':
-      return [model, Cmd.None, [['Profile', ['DeleteForever', { userId }]]]];
+      return [model, Cmd.None, [['profile', ['DeleteForever', { userId }]]]];
 
     case 'ClickedCloseErr':
-      return [model, Cmd.None, [['Profile', ['ResetMutations']]]];
+      return [model, Cmd.None, [['profile', ['ResetMutations']]]];
   }
 };
 

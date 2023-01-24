@@ -11,28 +11,28 @@ const { Some } = Option;
 //
 
 export type Model =
-  | ['Account']
-  | ['Login']
-  | ['LoginEmailLink']
-  | ['LoginPhone']
-  | ['LoginPhoneVerify', { phoneNumber: PhoneNumber }]
-  | ['Logout']
-  | ['Profile', { userId: UserId }]
-  | ['ProfileCreate']
-  | ['ProfileDelete']
-  | ['ProfileUpdate']
-  | ['ProfileUpdateAvatar']
-  | ['ProfileUpdateName']
-  | ['ProfileUpdateUsername']
-  | ['ProfileUpdateTheme']
+  | ['account']
+  | ['login']
+  | ['login-email-link']
+  | ['login-phone']
+  | ['login-phone-verify', { phoneNumber: PhoneNumber }]
+  | ['logout']
+  | ['profile', { userId: UserId }]
+  | ['profile-create']
+  | ['profile-delete']
+  | ['profile-update']
+  | ['profile-update-avatar']
+  | ['profile-update-name']
+  | ['profile-update-username']
+  | ['profile-update-theme']
   | ['room']
   | ['game']
-  | ['Party']
-  | ['Chat']
-  | ['ChatNew']
-  | ['ChatConversation', { conversationId: string }]
-  | ['Search']
-  | ['Home'];
+  | ['party']
+  | ['chat']
+  | ['chat-new']
+  | ['chat-conversation', { conversationId: string }]
+  | ['search']
+  | ['home'];
 
 //
 //
@@ -43,28 +43,28 @@ export type Model =
 //
 
 export const routesTypes: { [routeType in Model[0]]: string } = {
-  Account: 'Account',
-  Login: 'Login',
-  LoginEmailLink: 'LoginEmailLink',
-  LoginPhone: 'LoginPhone',
-  LoginPhoneVerify: 'LoginPhoneVerify',
-  Logout: 'Logout',
-  Profile: 'Profile',
-  ProfileCreate: 'ProfileCreate',
-  ProfileDelete: 'ProfileDelete',
-  ProfileUpdate: 'ProfileUpdate',
-  ProfileUpdateAvatar: 'ProfileUpdateAvatar',
-  ProfileUpdateName: 'ProfileUpdateName',
-  ProfileUpdateUsername: 'ProfileUpdateUsername',
-  ProfileUpdateTheme: 'ProfileUpdateTheme',
-  room: 'room',
-  game: 'game',
-  Party: 'Party',
-  Chat: 'Chat',
-  ChatNew: 'ChatNew',
-  ChatConversation: 'ChatConversation',
-  Search: 'Search',
-  Home: 'Home',
+  ['account']: 'account',
+  ['login']: 'login',
+  ['login-email-link']: 'login-email-link',
+  ['login-phone']: 'login-phone',
+  ['login-phone-verify']: 'login-phone-verify',
+  ['logout']: 'logout',
+  ['profile']: 'profile',
+  ['profile-create']: 'profile-create',
+  ['profile-delete']: 'profile-delete',
+  ['profile-update']: 'profile-update',
+  ['profile-update-avatar']: 'profile-update-avatar',
+  ['profile-update-name']: 'profile-update-name',
+  ['profile-update-username']: 'profile-update-username',
+  ['profile-update-theme']: 'profile-update-theme',
+  ['room']: 'room',
+  ['game']: 'game',
+  ['party']: 'party',
+  ['chat']: 'chat',
+  ['chat-new']: 'chat-new',
+  ['chat-conversation']: 'chat-conversation',
+  ['search']: 'search',
+  ['home']: 'home',
 };
 
 export const isRouteType = (routeType: unknown): routeType is Model[0] => {
@@ -82,25 +82,25 @@ export const decode = ({
   }
 
   switch (first) {
-    case 'ChatConversation': {
+    case 'chat-conversation': {
       if (typeof second === 'string') {
-        return Some(['ChatConversation', { conversationId: second }]);
+        return Some(['chat-conversation', { conversationId: second }]);
       }
 
       return Option.None;
     }
 
-    case 'Profile': {
+    case 'profile': {
       const userId = UserId.decode(second);
 
       if (userId.type === 'Ok') {
-        return Some(['Profile', { userId: userId.value }]);
+        return Some(['profile', { userId: userId.value }]);
       }
 
       return Option.None;
     }
 
-    case 'LoginPhoneVerify': {
+    case 'login-phone-verify': {
       const phoneNumberDirty = query['phoneNumber'];
       const country = query['country'];
 
@@ -120,7 +120,7 @@ export const decode = ({
 
       const phoneNumber = decoded.value;
 
-      return Some(['LoginPhoneVerify', { phoneNumber: phoneNumber }]);
+      return Some(['login-phone-verify', { phoneNumber: phoneNumber }]);
     }
 
     default: {
@@ -131,13 +131,13 @@ export const decode = ({
 
 export const encode = (route: Model): string => {
   switch (route[0]) {
-    case 'ChatConversation':
+    case 'chat-conversation':
       return `/${route[0]}/${route[1].conversationId}`;
 
-    case 'Profile':
+    case 'profile':
       return `/${route[0]}/${route[1].userId}`;
 
-    case 'LoginPhoneVerify': {
+    case 'login-phone-verify': {
       const phoneNumber = PhoneNumber.toString(route[1].phoneNumber);
       const country = PhoneNumber.toCountry(route[1].phoneNumber);
       const params = new URLSearchParams({ phoneNumber, country });
@@ -175,13 +175,13 @@ export const replace = (route: Model) => {
 //
 //
 
-export type Msg = ['GotRoute', Model];
+export type Msg = ['got-route', Model];
 
-export type Action = ['Route', ['Push', Model] | ['Replace', Model] | ['Back']];
+export type Action = ['route', ['Push', Model] | ['Replace', Model] | ['Back']];
 
 export const update = (msg: Msg): Model => {
   switch (msg[0]) {
-    case 'GotRoute': {
+    case 'got-route': {
       return msg[1];
     }
   }

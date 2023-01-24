@@ -20,7 +20,7 @@ export const init = ({
 }): [Model, Cmd<Msg>, OutAction[]] => [
   null,
   Cmd.None,
-  [['Profile', ['FindMany', { userIds: [userId] }]]],
+  [['profile', ['FindMany', { userIds: [userId] }]]],
 ];
 
 //
@@ -33,8 +33,8 @@ export const init = ({
 
 export type Msg =
   | ['ClickedBack']
-  | ['ClickedSendMessage']
-  | ['ClickedEditProfile']
+  | ['clicked-send-message']
+  | ['clicked-edit-profile']
   | ['ClickedAccountMenu'];
 
 type OutAction = ProfileStore.Action;
@@ -48,20 +48,20 @@ export const update = (
       return [model, Route.back, []];
     }
 
-    case 'ClickedEditProfile': {
-      return [model, Route.push(['ProfileUpdate']), []];
+    case 'clicked-edit-profile': {
+      return [model, Route.push(['profile-update']), []];
     }
 
     case 'ClickedAccountMenu': {
-      return [model, Route.push(['Account']), []];
+      return [model, Route.push(['account']), []];
     }
 
-    case 'ClickedSendMessage': {
+    case 'clicked-send-message': {
       // const userIds = [userId, currentUserId];
 
       // const action: OutAction = [
-      //   'Chat',
-      //   ['Conversation', ['FindOneElseInsert', { userIds }]],
+      //   'chat',
+      //   ['conversation', ['FindOneElseInsert', { userIds }]],
       // ];
 
       return [model, Cmd.None, []];
@@ -164,7 +164,7 @@ export const View = ({
             variant="contained"
             size="small"
             sx={{ marginBottom: 2 }}
-            onClick={() => $send(['ClickedEditProfile'])}
+            onClick={() => $send(['clicked-edit-profile'])}
           >
             Edit Profile
           </UI.Button>
@@ -217,7 +217,7 @@ export const View = ({
           //   chatStore.mutations.Conversation.FindElseInsert.type === 'Loading'
           // }
           variant="contained"
-          onClick={() => $send(['ClickedSendMessage'])}
+          onClick={() => $send(['clicked-send-message'])}
         >
           Send Message
         </UI.Button>

@@ -58,7 +58,7 @@ export const update = (
         Route.back,
         [
           [
-            'Profile',
+            'profile',
             ['EditOne', { userId, edits: { username: username.value } }],
           ],
         ],

@@ -208,7 +208,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       // todo put this logic elsewhere
       const cmdNew: Cmd<Msg> =
         result.type === 'Ok'
-          ? Route.push(['ChatConversation', result.value.conversation])
+          ? Route.push(['chat-conversation', result.value.conversation])
           : Cmd.None;
 
       return [modelNew, cmdNew];

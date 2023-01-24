@@ -44,7 +44,7 @@ export const update = (
       return [
         model,
         Cmd.None,
-        [['Profile', ['EditOne', { userId, edits: { themeMode: msg[1] } }]]],
+        [['profile', ['EditOne', { userId, edits: { themeMode: msg[1] } }]]],
       ];
   }
 };

@@ -266,7 +266,7 @@ export const updateFromBackend = (
       }
 
       const action: OutAction = [
-        'Alerts',
+        'alerts',
         { tag: 'Snack', message: 'Draw was declined' },
       ];
 
@@ -292,7 +292,7 @@ export const updateFromBackend = (
       }
 
       const action: OutAction = [
-        'Alerts',
+        'alerts',
         { tag: 'Snack', message: 'Draw was cancelled' },
       ];
 

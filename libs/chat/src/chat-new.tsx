@@ -36,7 +36,7 @@ export const init = (): [Model, Cmd<Msg>, OutAction[]] => {
       highlightedIndex: 'none',
     },
     Cmd.None,
-    [['Profile', ['Search', { searchText }]]],
+    [['profile', ['search', { searchText }]]],
   ];
 };
 
@@ -52,7 +52,7 @@ export type Msg =
   | ['ClickedCancel']
   | ['ClickedChat']
   | ['InputtedSearch', string]
-  | ['ClickedResult', { userId: UserId }]
+  | ['clicked-result', { userId: UserId }]
   | ['ClickedSelectedDelete', { userId: UserId }]
   | ['PressedKeyDown', Keyboard.ArrowKey | Keyboard.EnterKey];
 
@@ -71,8 +71,8 @@ export const update = (
       const userIds = [...Object.values(model.selected), currentUserId];
 
       const action: OutAction = [
-        'Chat',
-        ['Conversation', ['FindOneElseInsert', { userIds }]],
+        'chat',
+        ['conversation', ['FindOneElseInsert', { userIds }]],
       ];
 
       return [model, Cmd.None, [action]];
@@ -90,7 +90,7 @@ export const update = (
           highlightedIndex: 'none',
         },
         Cmd.None,
-        [['Profile', ['Search', { searchText }]]],
+        [['profile', ['search', { searchText }]]],
       ];
     }
 
@@ -152,7 +152,7 @@ export const update = (
       }
     }
 
-    case 'ClickedResult': {
+    case 'clicked-result': {
       const [modelNew, cmdNew, actions] = toggleSelected(msg[1].userId, model);
       return [{ ...modelNew, highlightedIndex: 'none' }, cmdNew, actions];
     }
@@ -298,7 +298,7 @@ export const View = ({
         <UI.InputBase
           sx={{ paddingX: 2, flex: 1 }}
           autoFocus
-          placeholder={selected.length === 0 ? 'Search' : ''}
+          placeholder={selected.length === 0 ? 'search' : ''}
           value={model.searchText}
           onChange={(event) => {
             const searchText = event.currentTarget.value;
@@ -322,7 +322,7 @@ export const View = ({
             profile={profile}
             onClick={() => {
               $send([
-                'ClickedResult',
+                'clicked-result',
                 {
                   userId: profile.userId,
                 },

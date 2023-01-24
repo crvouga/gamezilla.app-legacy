@@ -158,7 +158,7 @@ export const updateFromFrontend = (
     case 'ChangeHost':
     case 'RoomJoin':
     case 'RoomDestroy':
-    case 'RoomCreate': {
+    case 'room-create': {
       const res: Res = [...msg, handle(msg, model)];
 
       if (res[2].type === 'Err') {

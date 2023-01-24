@@ -53,7 +53,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     case '→':
       return updateFromFrontend(msg[1], msg[2], msg[3], model);
 
-    case 'ClientConnected': {
+    case 'client-connected': {
       const sessionId = msg[1];
       const clientId = msg[2];
       const sessionPrev = model.sessions[sessionId];
@@ -82,7 +82,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       return [modelNew, Cmd.batch<Msg>([Cmd.tag('room', gameRoomCmd)])];
     }
 
-    case 'ClientDisconnected': {
+    case 'client-disconnected': {
       const sessionId = msg[1];
       const sessionPrev = model.sessions[sessionId];
       const maybeUserId = sessionPrev ? sessionPrev.userId : Option.None;
@@ -103,18 +103,18 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       ];
     }
 
-    case 'Party': {
+    case 'party': {
       const [child, childCmd] = Party.update(
         {
-          broadcast: (msg) => broadcast(['Party', msg]),
+          broadcast: (msg) => broadcast(['party', msg]),
           sendToUser: (userId, msg) =>
-            sendToUser(model, userId, ['Party', msg]),
+            sendToUser(model, userId, ['party', msg]),
         },
         msg[1],
         model.party
       );
 
-      return [{ ...model, party: child }, Cmd.tag('Party', childCmd)];
+      return [{ ...model, party: child }, Cmd.tag('party', childCmd)];
     }
 
     case 'room': {
@@ -145,7 +145,7 @@ const updateFromFrontend = (
   const sendToClient = (msg: ToFrontend) => sendToFrontend([clientId], msg);
 
   switch (msg[0]) {
-    case 'Auth': {
+    case 'auth': {
       switch (msg[1][0]) {
         case 'UserLoggedIn': {
           const userId = msg[1][1];
@@ -174,19 +174,19 @@ const updateFromFrontend = (
       }
     }
 
-    case 'Party': {
+    case 'party': {
       const [child, childCmd] = Party.updateFromFrontend(
         {
-          sendToClient: (msg) => sendToFrontend([clientId], ['Party', msg]),
-          broadcast: (msg) => broadcast(['Party', msg]),
+          sendToClient: (msg) => sendToFrontend([clientId], ['party', msg]),
+          broadcast: (msg) => broadcast(['party', msg]),
           sendToUser: (userIds, msg) =>
-            sendToUser(model, userIds, ['Party', msg]),
+            sendToUser(model, userIds, ['party', msg]),
         },
         msg[1],
         model.party
       );
 
-      return [{ ...model, party: child }, Cmd.tag('Party', childCmd)];
+      return [{ ...model, party: child }, Cmd.tag('party', childCmd)];
     }
 
     case 'room': {
@@ -258,14 +258,18 @@ export const subscriptions = (model: Model): Sub<Msg> => {
     p(
       onConnect,
       Sub.map(
-        ([sessionId, clientId]): Msg => ['ClientConnected', sessionId, clientId]
+        ([sessionId, clientId]): Msg => [
+          'client-connected',
+          sessionId,
+          clientId,
+        ]
       )
     ),
     p(
       onDisconnect,
       Sub.map(
         ([sessionId, clientId]): Msg => [
-          'ClientDisconnected',
+          'client-disconnected',
           sessionId,
           clientId,
         ]
@@ -314,7 +318,7 @@ socketServer.on('connection', (socket) => {
   const sessionId = SessionId.is(cleaned) ? cleaned : SessionId.generate();
 
   // move this inside frontend
-  socket.emit('ToFrontend', ['Session', sessionId]);
+  socket.emit('to-frontend', ['session', sessionId]);
 
   if (ClientId.is(socket.id)) {
     onConnect.next([sessionId, socket.id]);
@@ -326,7 +330,7 @@ socketServer.on('connection', (socket) => {
     }
   });
 
-  socket.on('ToBackend', (msg) => {
+  socket.on('to-backend', (msg) => {
     if (ClientId.is(socket.id)) {
       fromFrontend.next([sessionId, socket.id, msg]);
     }
@@ -336,13 +340,13 @@ socketServer.on('connection', (socket) => {
 const sendToFrontend =
   (clientIds: ClientId[], msg: ToFrontend): Cmd =>
   () => {
-    socketServer.to(clientIds).emit('ToFrontend', msg);
+    socketServer.to(clientIds).emit('to-frontend', msg);
   };
 
 const broadcast =
   (msg: ToFrontend): Cmd =>
   () => {
-    socketServer.emit('ToFrontend', msg);
+    socketServer.emit('to-frontend', msg);
   };
 
 const port = Number(process.env['PORT']) || backendServerPort;
