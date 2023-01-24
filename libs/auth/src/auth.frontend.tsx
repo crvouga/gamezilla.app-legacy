@@ -28,7 +28,7 @@ export const init: Model = { session: { type: 'Loading' } };
 
 export type Msg = FrontendMsg;
 
-export type Action = ['Auth', FrontendMsg];
+export type Action = ['auth', FrontendMsg];
 
 export const update = ({
   sendToBackend,

@@ -174,7 +174,7 @@ const updateResponse = <
     return [
       model,
       Cmd.None,
-      [['Alerts', { tag: 'Snack', message, variant: 'Error' }]],
+      [['alerts', { tag: 'Snack', message, variant: 'Error' }]],
     ];
   }
   const sharedModel = result.value;

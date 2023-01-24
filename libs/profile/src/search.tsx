@@ -20,7 +20,7 @@ export const init: [Model, Cmd<Msg>, OutAction[]] = [
     searchText: '',
   },
   Cmd.None,
-  [['Profile', ['Search', { searchText: '' }]]],
+  [['profile', ['search', { searchText: '' }]]],
 ];
 
 //
@@ -35,7 +35,7 @@ export type Msg =
   | ['ClickedClear']
   | ['Focus_Done', Browser.FocusResult]
   | ['InputtedSearchText', string]
-  | ['ClickedResult', { userId: UserId }];
+  | ['clicked-result', { userId: UserId }];
 
 export type OutAction = ProfileStore.Action;
 
@@ -59,15 +59,15 @@ export const update = (
         [],
       ];
 
-    case 'ClickedResult':
-      return [model, Route.push(['Profile', msg[1]]), []];
+    case 'clicked-result':
+      return [model, Route.push(['profile', msg[1]]), []];
 
     case 'InputtedSearchText': {
       const searchTextNew = msg[1];
       return [
         { ...model, searchText: searchTextNew },
         Cmd.None,
-        [['Profile', ['Search', { searchText: searchTextNew }]]],
+        [['profile', ['search', { searchText: searchTextNew }]]],
       ];
     }
   }
@@ -123,7 +123,7 @@ export const View = ({
           <UI.ListItemButton
             key={result.userId}
             sx={{ width: '100%' }}
-            onClick={() => $send(['ClickedResult', { userId: result.userId }])}
+            onClick={() => $send(['clicked-result', { userId: result.userId }])}
           >
             <UI.ListItemAvatar>
               <UI.Avatar src={result.avatarUrl} />

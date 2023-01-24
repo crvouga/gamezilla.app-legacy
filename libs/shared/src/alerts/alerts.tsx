@@ -49,7 +49,7 @@ export type Msg =
   | ['conformation_confirmed'];
 
 export type Action<TMsg = never> = [
-  'Alerts',
+  'alerts',
   (
     | { tag: 'Snack'; variant?: Variant; title?: string; message: string }
     | { tag: 'Conformation'; title: string; onConfirm: TMsg }
@@ -61,9 +61,9 @@ export const mapAction = <A, B>(
   action: Action<A>
 ): Action<B> => {
   if (action[1].tag === 'Conformation') {
-    return ['Alerts', { ...action[1], onConfirm: f(action[1].onConfirm) }];
+    return ['alerts', { ...action[1], onConfirm: f(action[1].onConfirm) }];
   }
-  return ['Alerts', { ...action[1] }];
+  return ['alerts', { ...action[1] }];
 };
 
 export const update = <TMsg,>(

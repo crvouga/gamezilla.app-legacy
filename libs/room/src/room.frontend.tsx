@@ -87,8 +87,8 @@ export const update = (
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'ClickedHome': {
-      return [model, Route.push(['Home'])];
+    case 'clicked-home': {
+      return [model, Route.push(['home'])];
     }
 
     case 'ClickedRoom': {
@@ -96,14 +96,14 @@ export const update = (
     }
 
     case 'ClickedUser': {
-      return [model, Route.push(['Profile', { userId: msg[1].userId }])];
+      return [model, Route.push(['profile', { userId: msg[1].userId }])];
     }
 
     case 'ClickedBanner': {
       return [model, Route.push(['game'])];
     }
 
-    case 'RoomCreate':
+    case 'room-create':
     case 'RoomDestroy':
     case 'RoomJoin':
     case 'RoomLeave':
@@ -174,7 +174,7 @@ export const update = (
       return [
         model,
         Cmd.batch([
-          Route.push(['Home']),
+          Route.push(['home']),
           sendToBackend(['RoomDestroy', msg[1]]),
         ]),
       ];
@@ -183,7 +183,7 @@ export const update = (
     case 'ClickedRoomLeave': {
       return [
         model,
-        Cmd.batch([Route.push(['Home']), sendToBackend(['RoomLeave', msg[1]])]),
+        Cmd.batch([Route.push(['home']), sendToBackend(['RoomLeave', msg[1]])]),
       ];
     }
 
@@ -207,7 +207,7 @@ export const updateFromBackend = (
     case 'Sync': {
       const userIds = Object.values(msg[1].users).map((user) => user.userId);
 
-      const actions: OutAction[] = [['Profile', ['FindMany', { userIds }]]];
+      const actions: OutAction[] = [['profile', ['FindMany', { userIds }]]];
 
       const merged = mergeWithBackendModel({
         backendModel: msg[1],
@@ -262,7 +262,7 @@ export const updateFromBackend = (
 
     case 'InputGame':
     case 'ChangeHost':
-    case 'RoomCreate': {
+    case 'room-create': {
       return updateResponse({ sendToBackend }, msg, model);
     }
 
@@ -289,7 +289,7 @@ export const updateFromBackend = (
         msg[2].type === 'Ok'
           ? [
               [
-                'Alerts',
+                'alerts',
                 {
                   message: toRoomEndMessage({
                     ctx,
@@ -315,7 +315,7 @@ export const updateFromBackend = (
         msg[1].userId !== ctx.currentUserId
           ? [
               [
-                'Alerts',
+                'alerts',
                 {
                   tag: 'Snack',
                   message: toRoomLeaveMessage({
@@ -345,7 +345,7 @@ export const updateFromBackend = (
             ? ctx.currentUserId === currentRoom?.hostId
               ? [
                   [
-                    'Alerts',
+                    'alerts',
                     {
                       title: 'End your current room to join this room?',
                       tag: 'Conformation',
@@ -355,7 +355,7 @@ export const updateFromBackend = (
                 ]
               : [
                   [
-                    'Alerts',
+                    'alerts',
                     {
                       title: 'Leave your current room then join this room?',
                       tag: 'Conformation',
@@ -370,14 +370,14 @@ export const updateFromBackend = (
 
       const routeActions: OutAction[] =
         msg[1].userId === ctx.currentUserId
-          ? [['Route', ['Replace', ['game']]]]
+          ? [['route', ['Replace', ['game']]]]
           : [];
 
       const alertActions: OutAction[] =
         msg[1].userId !== ctx.currentUserId
           ? [
               [
-                'Alerts',
+                'alerts',
                 {
                   tag: 'Snack',
                   message: toRoomJoinMessage({
@@ -446,7 +446,7 @@ const updateResponse = (
 
   const userIds = Object.values(merged[0].users).map((user) => user.userId);
 
-  const storeActions: OutAction[] = [['Profile', ['FindMany', { userIds }]]];
+  const storeActions: OutAction[] = [['profile', ['FindMany', { userIds }]]];
 
   return [
     {
@@ -638,7 +638,7 @@ export const ViewPageGame = ({
         <Button
           startIcon={<Icons.Home />}
           size="small"
-          onClick={() => $send(['ClickedHome'])}
+          onClick={() => $send(['clicked-home'])}
         >
           Home
         </Button>
@@ -791,7 +791,7 @@ export const ViewNotInRoom = ({
         actionTitle="Create Game"
         onAction={() =>
           $send([
-            'RoomCreate',
+            'room-create',
             { userId: ctx.currentUserId, roomId: RoomId.generate() },
           ])
         }
@@ -803,7 +803,7 @@ export const ViewNotInRoom = ({
           startIcon={<Icons.ChevronLeft />}
           fullWidth
           variant="outlined"
-          onClick={() => $send(['ClickedHome'])}
+          onClick={() => $send(['clicked-home'])}
         >
           Go back home
         </Button>

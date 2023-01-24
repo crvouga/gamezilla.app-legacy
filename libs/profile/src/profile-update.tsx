@@ -34,22 +34,22 @@ export type Msg =
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case 'ClickedAvatar':
-      return [model, Route.push(['ProfileUpdateAvatar'])];
+      return [model, Route.push(['profile-update-avatar'])];
 
     case 'ClickedChangedAvatar':
-      return [model, Route.push(['ProfileUpdateAvatar'])];
+      return [model, Route.push(['profile-update-avatar'])];
 
     case 'ClickedBack':
       return [model, Route.back];
 
     case 'ClickedName':
-      return [model, Route.push(['ProfileUpdateName'])];
+      return [model, Route.push(['profile-update-name'])];
 
     case 'ClickedUsername':
-      return [model, Route.push(['ProfileUpdateUsername'])];
+      return [model, Route.push(['profile-update-username'])];
 
     case 'ClickedTheme':
-      return [model, Route.push(['ProfileUpdateTheme'])];
+      return [model, Route.push(['profile-update-theme'])];
   }
 };
 

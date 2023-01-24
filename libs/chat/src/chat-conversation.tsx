@@ -38,7 +38,7 @@ export const init = ({
   },
   Cmd.None,
 
-  [['Chat', ['Conversation', ['FindOne', { conversationId }]]]],
+  [['chat', ['conversation', ['FindOne', { conversationId }]]]],
 ];
 
 //
@@ -90,7 +90,7 @@ export const update = (
         messageText: model.text,
       };
 
-      return [model, Cmd.None, [['Chat', ['Message', ['Send', payload]]]]];
+      return [model, Cmd.None, [['chat', ['Message', ['Send', payload]]]]];
     }
 
     case 'InputtedText':
@@ -128,7 +128,7 @@ export const update = (
       return [
         model,
         Cmd.None,
-        [['Chat', ['Message', ['Unsend', { messageId }]]]],
+        [['chat', ['Message', ['Unsend', { messageId }]]]],
       ];
     }
   }

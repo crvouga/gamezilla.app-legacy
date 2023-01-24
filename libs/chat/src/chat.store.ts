@@ -23,11 +23,11 @@ export const init = initialStore;
 //
 //
 
-export type Msg = ['Conversation', Conversation.Msg] | ['Message', Message.Msg];
+export type Msg = ['conversation', Conversation.Msg] | ['Message', Message.Msg];
 
 export type Action =
-  | ['Chat', ['Conversation', Conversation.Action]]
-  | ['Chat', ['Message', Message.Action]];
+  | ['chat', ['conversation', Conversation.Action]]
+  | ['chat', ['Message', Message.Action]];
 
 //
 //
@@ -39,9 +39,9 @@ export type Action =
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'Conversation': {
+    case 'conversation': {
       const [modelNew, cmd] = Conversation.update(msg[1], model);
-      return [modelNew, p(cmd, Cmd.map(t('Conversation')))];
+      return [modelNew, p(cmd, Cmd.map(t('conversation')))];
     }
 
     case 'Message': {
@@ -53,9 +53,9 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
 export const runAction = (action: Action, model: Model): [Model, Cmd<Msg>] => {
   switch (action[1][0]) {
-    case 'Conversation': {
+    case 'conversation': {
       const [modelNew, cmd] = Conversation.runAction(action[1][1], model);
-      return [modelNew, p(cmd, Cmd.map(t('Conversation')))];
+      return [modelNew, p(cmd, Cmd.map(t('conversation')))];
     }
 
     case 'Message': {

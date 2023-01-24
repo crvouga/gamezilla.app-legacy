@@ -105,7 +105,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
       return [
         { ...model, submission: { type: 'Ok' } },
-        Route.push(['LoginPhoneVerify', { phoneNumber: phoneNumber }]),
+        Route.push(['login-phone-verify', { phoneNumber: phoneNumber }]),
       ];
     }
   }

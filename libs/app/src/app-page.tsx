@@ -37,28 +37,28 @@ import * as UI from '@gamezilla/shared/ui';
 //
 
 export type Model =
-  | ['Login', Login.Model]
-  | ['LoginEmailLink', LoginEmailLink.Model]
-  | ['LoginPhone', LoginPhone.Model]
-  | ['LoginPhoneVerify', { phoneNumber: PhoneNumber }, LoginPhoneVerify.Model]
-  | ['Home', Home.Model]
-  | ['ProfileCreate', ProfileCreate.Model]
-  | ['Logout', Logout.Model]
-  | ['Account', Account.Model]
-  | ['Profile', { userId: UserId }, Profile.Model]
-  | ['ProfileDelete', ProfileDelete.Model]
-  | ['ProfileUpdate', ProfileUpdate.Model]
-  | ['ProfileUpdateAvatar', ProfileUpdateAvatar.Model]
-  | ['ProfileUpdateName', ProfileUpdateName.Model]
-  | ['ProfileUpdateUsername', ProfileUpdateUsername.Model]
-  | ['ProfileUpdateTheme', ProfileUpdateTheme.Model]
-  | ['Chat', Chat.Model]
-  | ['ChatNew', ChatNew.Model]
-  | ['Search', Search.Model]
-  | ['ChatConversation', { conversationId: string }, ChatConversation.Model]
+  | ['login', Login.Model]
+  | ['login-email-link', LoginEmailLink.Model]
+  | ['login-phone', LoginPhone.Model]
+  | ['login-phone-verify', { phoneNumber: PhoneNumber }, LoginPhoneVerify.Model]
+  | ['home', Home.Model]
+  | ['profile-create', ProfileCreate.Model]
+  | ['logout', Logout.Model]
+  | ['account', Account.Model]
+  | ['profile', { userId: UserId }, Profile.Model]
+  | ['profile-delete', ProfileDelete.Model]
+  | ['profile-update', ProfileUpdate.Model]
+  | ['profile-update-avatar', ProfileUpdateAvatar.Model]
+  | ['profile-update-name', ProfileUpdateName.Model]
+  | ['profile-update-username', ProfileUpdateUsername.Model]
+  | ['profile-update-theme', ProfileUpdateTheme.Model]
+  | ['chat', Chat.Model]
+  | ['chat-new', ChatNew.Model]
+  | ['search', Search.Model]
+  | ['chat-conversation', { conversationId: string }, ChatConversation.Model]
   | ['room']
   | ['game']
-  | ['Party']
+  | ['party']
   | ['Loading'];
 
 //
@@ -70,29 +70,29 @@ export type Model =
 //
 
 export type Msg =
-  | ['Account', Account.Msg]
-  | ['Login', Login.Msg]
-  | ['LoginEmailLink', LoginEmailLink.Msg]
-  | ['LoginPhone', LoginPhone.Msg]
-  | ['LoginPhoneVerify', LoginPhoneVerify.Msg]
-  | ['Logout', Logout.Msg]
-  | ['Home', Home.Msg]
-  | ['Profile', Profile.Msg]
-  | ['ProfileCreate', ProfileCreate.Msg]
-  | ['ProfileDelete', ProfileDelete.Msg]
-  | ['ProfileUpdate', ProfileUpdate.Msg]
-  | ['ProfileUpdateAvatar', ProfileUpdateAvatar.Msg]
-  | ['ProfileUpdateName', ProfileUpdateName.Msg]
-  | ['ProfileUpdateUsername', ProfileUpdateUsername.Msg]
-  | ['ProfileUpdateTheme', ProfileUpdateTheme.Msg]
-  | ['Chat', Chat.Msg]
+  | ['account', Account.Msg]
+  | ['login', Login.Msg]
+  | ['login-email-link', LoginEmailLink.Msg]
+  | ['login-phone', LoginPhone.Msg]
+  | ['login-phone-verify', LoginPhoneVerify.Msg]
+  | ['logout', Logout.Msg]
+  | ['home', Home.Msg]
+  | ['profile', Profile.Msg]
+  | ['profile-create', ProfileCreate.Msg]
+  | ['profile-delete', ProfileDelete.Msg]
+  | ['profile-update', ProfileUpdate.Msg]
+  | ['profile-update-avatar', ProfileUpdateAvatar.Msg]
+  | ['profile-update-name', ProfileUpdateName.Msg]
+  | ['profile-update-username', ProfileUpdateUsername.Msg]
+  | ['profile-update-theme', ProfileUpdateTheme.Msg]
+  | ['chat', Chat.Msg]
   | ['room', GameRoom.Msg]
   | ['game', GameRoom.Msg]
-  | ['Party', Party.Msg]
-  | ['ChatNew', ChatNew.Msg]
-  | ['ChatConversation', ChatConversation.Msg]
-  | ['Search', Search.Msg]
-  | ['ClickedBottomNavigationLink', Route.Model];
+  | ['party', Party.Msg]
+  | ['chat-new', ChatNew.Msg]
+  | ['chat-conversation', ChatConversation.Msg]
+  | ['search', Search.Msg]
+  | ['clicked-bottom-nav-link', Route.Model];
 
 export type OutAction =
   | ChatStore.Action
@@ -120,90 +120,90 @@ export const initReady = (
   profile: ProfileStore.Profile
 ): [Model, Cmd<Msg>, OutAction[]] => {
   switch (route[0]) {
-    case 'Account':
-      return [['Account', Account.init], Cmd.None, []];
+    case 'account':
+      return [['account', Account.init], Cmd.None, []];
 
-    case 'Chat': {
+    case 'chat': {
       const [model, cmd, actions] = Chat.init(profile);
-      return [['Chat', model], p(cmd, Cmd.map(t('Chat'))), actions];
+      return [['chat', model], p(cmd, Cmd.map(t('chat'))), actions];
     }
 
-    case 'ChatNew': {
+    case 'chat-new': {
       const [chatNew, chatNewCmd, actions] = ChatNew.init();
 
       return [
-        ['ChatNew', chatNew],
-        p(chatNewCmd, Cmd.map(t('ChatNew'))),
+        ['chat-new', chatNew],
+        p(chatNewCmd, Cmd.map(t('chat-new'))),
         actions,
       ];
     }
 
-    case 'ChatConversation': {
+    case 'chat-conversation': {
       const [child, cmd, actions] = ChatConversation.init({
         conversationId: route[1].conversationId,
       });
       return [
-        ['ChatConversation', route[1], child],
-        Cmd.tag('ChatConversation', cmd),
+        ['chat-conversation', route[1], child],
+        Cmd.tag('chat-conversation', cmd),
         actions,
       ];
     }
 
-    case 'Logout':
-      return [['Logout', Logout.init], Cmd.None, []];
+    case 'logout':
+      return [['logout', Logout.init], Cmd.None, []];
 
-    case 'ProfileDelete': {
+    case 'profile-delete': {
       const [modelNew, cmdNew, actions] = ProfileDelete.init;
       return [
-        ['ProfileDelete', modelNew],
-        p(cmdNew, Cmd.map(t('ProfileDelete'))),
+        ['profile-delete', modelNew],
+        p(cmdNew, Cmd.map(t('profile-delete'))),
         actions,
       ];
     }
 
-    case 'ProfileUpdate':
-      return [['ProfileUpdate', ProfileUpdate.init], Cmd.None, []];
+    case 'profile-update':
+      return [['profile-update', ProfileUpdate.init], Cmd.None, []];
 
-    case 'ProfileUpdateAvatar':
+    case 'profile-update-avatar':
       return [
-        ['ProfileUpdateAvatar', ProfileUpdateAvatar.init(profile)],
+        ['profile-update-avatar', ProfileUpdateAvatar.init(profile)],
         Cmd.None,
         [],
       ];
 
-    case 'ProfileUpdateName':
+    case 'profile-update-name':
       return [
-        ['ProfileUpdateName', ProfileUpdateName.init(profile)],
+        ['profile-update-name', ProfileUpdateName.init(profile)],
         Cmd.None,
         [],
       ];
 
-    case 'ProfileUpdateUsername':
+    case 'profile-update-username':
       return [
-        ['ProfileUpdateUsername', ProfileUpdateUsername.init(profile)],
+        ['profile-update-username', ProfileUpdateUsername.init(profile)],
         Cmd.None,
         [],
       ];
 
-    case 'ProfileUpdateTheme':
-      return [['ProfileUpdateTheme', ProfileUpdateTheme.init], Cmd.None, []];
+    case 'profile-update-theme':
+      return [['profile-update-theme', ProfileUpdateTheme.init], Cmd.None, []];
 
-    case 'Profile': {
+    case 'profile': {
       const [modelInit, cmdInit, actions] = Profile.init({
         userId: route[1].userId,
       });
       return [
-        ['Profile', { userId: route[1].userId }, modelInit],
-        p(cmdInit, Cmd.map(t('Profile'))),
+        ['profile', { userId: route[1].userId }, modelInit],
+        p(cmdInit, Cmd.map(t('profile'))),
         actions,
       ];
     }
 
-    case 'Search': {
+    case 'search': {
       const [modelInit, cmdInit, actionsInit] = Search.init;
       return [
-        ['Search', modelInit],
-        p(cmdInit, Cmd.map(t('Search'))),
+        ['search', modelInit],
+        p(cmdInit, Cmd.map(t('search'))),
         actionsInit,
       ];
     }
@@ -216,21 +216,21 @@ export const initReady = (
       return [['game'], Cmd.None, []];
     }
 
-    case 'Party': {
-      return [['Party'], Cmd.None, []];
+    case 'party': {
+      return [['party'], Cmd.None, []];
     }
 
-    case 'Home': {
+    case 'home': {
       const modelInit = Home.init;
-      return [['Home', modelInit], Cmd.None, []];
+      return [['home', modelInit], Cmd.None, []];
     }
 
-    case 'ProfileCreate':
-    case 'Login':
-    case 'LoginPhone':
-    case 'LoginPhoneVerify':
-    case 'LoginEmailLink': {
-      return [['Loading'], Route.push(['Home']), []];
+    case 'profile-create':
+    case 'login':
+    case 'login-phone':
+    case 'login-phone-verify':
+    case 'login-email-link': {
+      return [['Loading'], Route.push(['home']), []];
     }
 
     default:
@@ -243,46 +243,46 @@ export const initLoggedOut = (
   route: Route.Model
 ): [Model, Cmd<Msg>] => {
   switch (route[0]) {
-    case 'Login': {
-      const childNew = model[0] === 'Login' ? model[1] : Login.init;
-      return [['Login', childNew], Cmd.None];
+    case 'login': {
+      const childNew = model[0] === 'login' ? model[1] : Login.init;
+      return [['login', childNew], Cmd.None];
     }
 
-    case 'LoginPhone':
-      return [['LoginPhone', LoginPhone.init], Cmd.None];
+    case 'login-phone':
+      return [['login-phone', LoginPhone.init], Cmd.None];
 
-    case 'LoginPhoneVerify':
+    case 'login-phone-verify':
       return [
         [
-          'LoginPhoneVerify',
+          'login-phone-verify',
           { phoneNumber: route[1].phoneNumber },
           LoginPhoneVerify.init,
         ],
         Cmd.None,
       ];
 
-    case 'LoginEmailLink':
-      return [['LoginEmailLink', LoginEmailLink.init], Cmd.None];
+    case 'login-email-link':
+      return [['login-email-link', LoginEmailLink.init], Cmd.None];
 
-    case 'Account':
-    case 'Chat':
-    case 'ChatConversation':
-    case 'ChatNew':
-    case 'Logout':
-    case 'Profile':
-    case 'ProfileCreate':
-    case 'ProfileDelete':
-    case 'ProfileUpdate':
-    case 'ProfileUpdateAvatar':
-    case 'Search':
-    case 'ProfileUpdateTheme':
+    case 'account':
+    case 'chat':
+    case 'chat-conversation':
+    case 'chat-new':
+    case 'logout':
+    case 'profile':
+    case 'profile-create':
+    case 'profile-delete':
+    case 'profile-update':
+    case 'profile-update-avatar':
+    case 'search':
+    case 'profile-update-theme':
     case 'game':
     case 'room':
-    case 'ProfileUpdateName':
-    case 'ProfileUpdateUsername':
-    case 'Party':
-    case 'Home':
-      return [['Login', Login.init], Route.push(['Login'])];
+    case 'profile-update-name':
+    case 'profile-update-username':
+    case 'party':
+    case 'home':
+      return [['login', Login.init], Route.push(['login'])];
 
     default:
       return exhaustive(route);
@@ -294,33 +294,33 @@ export const initProfileMissing = (
   auth: Auth.Session
 ): [Model, Cmd<Msg>] => {
   switch (route[0]) {
-    case 'ProfileCreate':
-      return [['ProfileCreate', ProfileCreate.init(auth)], Cmd.None];
+    case 'profile-create':
+      return [['profile-create', ProfileCreate.init(auth)], Cmd.None];
 
-    case 'Logout':
-      return [['Logout', Logout.init], Cmd.None];
+    case 'logout':
+      return [['logout', Logout.init], Cmd.None];
 
-    case 'Account':
-    case 'Chat':
-    case 'ChatConversation':
-    case 'ChatNew':
-    case 'Search':
-    case 'Profile':
-    case 'ProfileDelete':
-    case 'ProfileUpdate':
-    case 'ProfileUpdateAvatar':
-    case 'ProfileUpdateTheme':
-    case 'ProfileUpdateName':
-    case 'ProfileUpdateUsername':
-    case 'Login':
-    case 'LoginEmailLink':
-    case 'LoginPhone':
-    case 'LoginPhoneVerify':
+    case 'account':
+    case 'chat':
+    case 'chat-conversation':
+    case 'chat-new':
+    case 'search':
+    case 'profile':
+    case 'profile-delete':
+    case 'profile-update':
+    case 'profile-update-avatar':
+    case 'profile-update-theme':
+    case 'profile-update-name':
+    case 'profile-update-username':
+    case 'login':
+    case 'login-email-link':
+    case 'login-phone':
+    case 'login-phone-verify':
     case 'game':
     case 'room':
-    case 'Home':
-    case 'Party':
-      return [['ProfileCreate', ProfileCreate.init(auth)], Cmd.None];
+    case 'home':
+    case 'party':
+      return [['profile-create', ProfileCreate.init(auth)], Cmd.None];
     default:
       return exhaustive(route);
   }
@@ -346,76 +346,76 @@ export const updateReady = (
   msg: Msg,
   model: Model
 ): [Model, Cmd<Msg>, OutAction[]] => {
-  if (msg[0] === 'ClickedBottomNavigationLink') {
+  if (msg[0] === 'clicked-bottom-nav-link') {
     return [model, Route.push(msg[1]), []];
   }
 
   switch (model[0]) {
-    case 'Account':
-      if (msg[0] === 'Account') {
+    case 'account':
+      if (msg[0] === 'account') {
         const [modelNew, cmdNew] = Account.update(msg[1], model[1]);
-        return [['Account', modelNew], Cmd.tag('Account', cmdNew), []];
+        return [['account', modelNew], Cmd.tag('account', cmdNew), []];
       }
       return [model, Cmd.None, []];
 
-    case 'Logout':
-      if (msg[0] === 'Logout') {
-        return tag('Logout', Logout.update(msg[1], model[1]));
+    case 'logout':
+      if (msg[0] === 'logout') {
+        return tag('logout', Logout.update(msg[1], model[1]));
       }
       return [model, Cmd.None, []];
 
-    case 'ProfileDelete':
-      if (msg[0] === 'ProfileDelete') {
+    case 'profile-delete':
+      if (msg[0] === 'profile-delete') {
         return tag(
-          'ProfileDelete',
+          'profile-delete',
           ProfileDelete.update(profile, msg[1], model[1])
         );
       }
       return [model, Cmd.None, []];
 
-    case 'ProfileUpdate':
-      if (msg[0] === 'ProfileUpdate') {
-        return tag('ProfileUpdate', ProfileUpdate.update(msg[1], model[1]));
+    case 'profile-update':
+      if (msg[0] === 'profile-update') {
+        return tag('profile-update', ProfileUpdate.update(msg[1], model[1]));
       }
       return [model, Cmd.None, []];
 
-    case 'ProfileUpdateAvatar':
-      if (msg[0] === 'ProfileUpdateAvatar') {
+    case 'profile-update-avatar':
+      if (msg[0] === 'profile-update-avatar') {
         return tag(
-          'ProfileUpdateAvatar',
+          'profile-update-avatar',
           ProfileUpdateAvatar.update(profile, msg[1], model[1])
         );
       }
       return [model, Cmd.None, []];
 
-    case 'ProfileUpdateName':
-      if (msg[0] === 'ProfileUpdateName') {
+    case 'profile-update-name':
+      if (msg[0] === 'profile-update-name') {
         return tag(
-          'ProfileUpdateName',
+          'profile-update-name',
           ProfileUpdateName.update(profile, msg[1], model[1])
         );
       }
       return [model, Cmd.None, []];
 
-    case 'ProfileUpdateUsername':
-      if (msg[0] === 'ProfileUpdateUsername') {
+    case 'profile-update-username':
+      if (msg[0] === 'profile-update-username') {
         return tag(
-          'ProfileUpdateUsername',
+          'profile-update-username',
           ProfileUpdateUsername.update(profile, msg[1], model[1])
         );
       }
       return [model, Cmd.None, []];
 
-    case 'Chat':
-      if (msg[0] === 'Chat') {
-        return tag('Chat', Chat.update(msg[1], model[1]));
+    case 'chat':
+      if (msg[0] === 'chat') {
+        return tag('chat', Chat.update(msg[1], model[1]));
       }
       return [model, Cmd.None, []];
 
-    case 'ChatNew':
-      if (msg[0] === 'ChatNew') {
+    case 'chat-new':
+      if (msg[0] === 'chat-new') {
         return tag(
-          'ChatNew',
+          'chat-new',
           ChatNew.update(
             { profileStore: profileStore, currentUserId: profile.userId },
             msg[1],
@@ -425,45 +425,45 @@ export const updateReady = (
       }
       return [model, Cmd.None, []];
 
-    case 'ChatConversation':
-      if (msg[0] === 'ChatConversation') {
+    case 'chat-conversation':
+      if (msg[0] === 'chat-conversation') {
         const [child, cmd, actions] = ChatConversation.update(
           { userId: profile.userId, conversationId: model[1].conversationId },
           msg[1],
           model[2]
         );
         return [
-          ['ChatConversation', model[1], child],
-          Cmd.tag('ChatConversation', cmd),
+          ['chat-conversation', model[1], child],
+          Cmd.tag('chat-conversation', cmd),
           actions,
         ];
       }
       return [model, Cmd.None, []];
 
-    case 'ProfileUpdateTheme':
-      if (msg[0] === 'ProfileUpdateTheme') {
+    case 'profile-update-theme':
+      if (msg[0] === 'profile-update-theme') {
         return tag(
-          'ProfileUpdateTheme',
+          'profile-update-theme',
           ProfileUpdateTheme.update(profile, msg[1], model[1])
         );
       }
       return [model, Cmd.None, []];
 
-    case 'Profile':
-      if (msg[0] === 'Profile') {
+    case 'profile':
+      if (msg[0] === 'profile') {
         const [modelPage, cmdPage, actions] = Profile.update(msg[1], model[2]);
         return [
-          ['Profile', model[1], modelPage],
-          p(cmdPage, Cmd.map(t('Profile'))),
+          ['profile', model[1], modelPage],
+          p(cmdPage, Cmd.map(t('profile'))),
           actions,
         ];
       }
 
       return [model, Cmd.None, []];
 
-    case 'Search':
-      if (msg[0] === 'Search') {
-        return tag('Search', Search.update(msg[1], model[1]));
+    case 'search':
+      if (msg[0] === 'search') {
+        return tag('search', Search.update(msg[1], model[1]));
       }
 
       return [model, Cmd.None, []];
@@ -482,34 +482,34 @@ export const updateReady = (
       return [model, Cmd.None, []];
     }
 
-    case 'Party': {
-      if (msg[0] === 'Party') {
-        return [['Party'], Cmd.None, [['Party', ['Msg', msg[1]]]]];
+    case 'party': {
+      if (msg[0] === 'party') {
+        return [['party'], Cmd.None, [['party', ['Msg', msg[1]]]]];
       }
 
       return [model, Cmd.None, []];
     }
 
-    case 'Home': {
-      if (msg[0] === 'Home') {
+    case 'home': {
+      if (msg[0] === 'home') {
         const [child, actions] = Home.update(
           { currentUserId: profile.userId },
           msg[1],
           model[1]
         );
-        return [['Home', child], Cmd.None, actions];
+        return [['home', child], Cmd.None, actions];
       }
 
       return [model, Cmd.None, []];
     }
 
-    case 'Login':
+    case 'login':
     case 'Loading':
-    case 'ProfileCreate':
-    case 'LoginPhone':
-    case 'LoginPhoneVerify':
-    case 'LoginEmailLink': {
-      return [model, Route.push(['Home']), []];
+    case 'profile-create':
+    case 'login-phone':
+    case 'login-phone-verify':
+    case 'login-email-link': {
+      return [model, Route.push(['home']), []];
     }
 
     default: {
@@ -524,43 +524,43 @@ export const updateProfileMissing = (
   model: Model
 ): [Model, Cmd<Msg>, OutAction[]] => {
   switch (model[0]) {
-    case 'Logout':
-      if (msg[0] === 'Logout') {
-        return tag('Logout', Logout.update(msg[1], model[1]));
+    case 'logout':
+      if (msg[0] === 'logout') {
+        return tag('logout', Logout.update(msg[1], model[1]));
       }
       return [model, Cmd.None, []];
 
-    case 'ProfileCreate':
-      if (msg[0] === 'ProfileCreate') {
+    case 'profile-create':
+      if (msg[0] === 'profile-create') {
         return tag(
-          'ProfileCreate',
+          'profile-create',
           ProfileCreate.update(auth, msg[1], model[1])
         );
       }
       return [model, Cmd.None, []];
 
-    case 'Account':
-    case 'Login':
-    case 'Profile':
-    case 'ProfileDelete':
-    case 'ProfileUpdate':
-    case 'ProfileUpdateAvatar':
-    case 'ProfileUpdateName':
-    case 'ProfileUpdateUsername':
-    case 'Chat':
-    case 'ChatNew':
-    case 'ChatConversation':
-    case 'ProfileUpdateTheme':
+    case 'account':
+    case 'login':
+    case 'profile':
+    case 'profile-delete':
+    case 'profile-update':
+    case 'profile-update-avatar':
+    case 'profile-update-name':
+    case 'profile-update-username':
+    case 'chat':
+    case 'chat-new':
+    case 'chat-conversation':
+    case 'profile-update-theme':
     case 'game':
     case 'room':
     case 'Loading':
-    case 'LoginEmailLink':
-    case 'Search':
-    case 'LoginPhone':
-    case 'LoginPhoneVerify':
-    case 'Party':
-    case 'Home':
-      return [model, Route.push(['ProfileCreate']), []];
+    case 'login-email-link':
+    case 'search':
+    case 'login-phone':
+    case 'login-phone-verify':
+    case 'party':
+    case 'home':
+      return [model, Route.push(['profile-create']), []];
 
     default:
       return exhaustive(model);
@@ -572,63 +572,63 @@ export const updateLoggedOut = (
   model: Model
 ): [Model, Cmd<Msg>, OutAction[]] => {
   switch (model[0]) {
-    case 'Login':
-      if (msg[0] === 'Login') {
+    case 'login':
+      if (msg[0] === 'login') {
         const [child, cmd] = Login.update(msg[1], model[1]);
-        return [['Login', child], Cmd.tag('Login', cmd), []];
+        return [['login', child], Cmd.tag('login', cmd), []];
       }
       return [model, Cmd.None, []];
 
-    case 'LoginEmailLink': {
-      if (msg[0] === 'LoginEmailLink') {
-        return tag('LoginEmailLink', LoginEmailLink.update(msg[1], model[1]));
-      }
-      return [model, Cmd.None, []];
-    }
-
-    case 'LoginPhone': {
-      if (msg[0] === 'LoginPhone') {
-        return tag('LoginPhone', LoginPhone.update(msg[1], model[1]));
+    case 'login-email-link': {
+      if (msg[0] === 'login-email-link') {
+        return tag('login-email-link', LoginEmailLink.update(msg[1], model[1]));
       }
       return [model, Cmd.None, []];
     }
 
-    case 'LoginPhoneVerify': {
-      if (msg[0] === 'LoginPhoneVerify') {
+    case 'login-phone': {
+      if (msg[0] === 'login-phone') {
+        return tag('login-phone', LoginPhone.update(msg[1], model[1]));
+      }
+      return [model, Cmd.None, []];
+    }
+
+    case 'login-phone-verify': {
+      if (msg[0] === 'login-phone-verify') {
         const [child, cmd] = LoginPhoneVerify.update(
           model[1],
           msg[1],
           model[2]
         );
         return [
-          ['LoginPhoneVerify', model[1], child],
-          Cmd.tag('LoginPhoneVerify', cmd),
+          ['login-phone-verify', model[1], child],
+          Cmd.tag('login-phone-verify', cmd),
           [],
         ];
       }
       return [model, Cmd.None, []];
     }
 
-    case 'ProfileCreate':
-    case 'Account':
-    case 'ProfileDelete':
-    case 'ProfileUpdate':
-    case 'ProfileUpdateAvatar':
-    case 'ProfileUpdateName':
-    case 'ProfileUpdateUsername':
-    case 'Chat':
-    case 'ChatNew':
-    case 'ChatConversation':
-    case 'ProfileUpdateTheme':
+    case 'profile-create':
+    case 'account':
+    case 'profile-delete':
+    case 'profile-update':
+    case 'profile-update-avatar':
+    case 'profile-update-name':
+    case 'profile-update-username':
+    case 'chat':
+    case 'chat-new':
+    case 'chat-conversation':
+    case 'profile-update-theme':
     case 'room':
     case 'game':
     case 'Loading':
-    case 'Logout':
-    case 'Profile':
-    case 'Search':
-    case 'Party':
-    case 'Home':
-      return [model, Route.push(['Login']), []];
+    case 'logout':
+    case 'profile':
+    case 'search':
+    case 'party':
+    case 'home':
+      return [model, Route.push(['login']), []];
 
     default:
       return exhaustive(model);
@@ -645,31 +645,31 @@ export const updateLoggedOut = (
 
 export const subscriptions = (model: Model): Sub<Msg> => {
   switch (model[0]) {
-    case 'ChatNew':
-      return Sub.tag('ChatNew', ChatNew.subscriptions(model[1]));
+    case 'chat-new':
+      return Sub.tag('chat-new', ChatNew.subscriptions(model[1]));
 
-    case 'Account':
-    case 'Chat':
-    case 'ChatConversation':
-    case 'Login':
-    case 'LoginEmailLink':
-    case 'Logout':
-    case 'ProfileCreate':
-    case 'ProfileDelete':
-    case 'ProfileUpdate':
-    case 'ProfileUpdateAvatar':
-    case 'ProfileUpdateTheme':
-    case 'ProfileUpdateUsername':
-    case 'ProfileUpdateName':
+    case 'account':
+    case 'chat':
+    case 'chat-conversation':
+    case 'login':
+    case 'login-email-link':
+    case 'logout':
+    case 'profile-create':
+    case 'profile-delete':
+    case 'profile-update':
+    case 'profile-update-avatar':
+    case 'profile-update-theme':
+    case 'profile-update-username':
+    case 'profile-update-name':
     case 'Loading':
-    case 'Profile':
-    case 'Search':
+    case 'profile':
+    case 'search':
     case 'game':
     case 'room':
-    case 'Party':
-    case 'LoginPhone':
-    case 'LoginPhoneVerify':
-    case 'Home':
+    case 'party':
+    case 'login-phone':
+    case 'login-phone-verify':
+    case 'home':
       return Sub.None;
 
     default:
@@ -708,13 +708,13 @@ export const ViewReady = ({
 }) => {
   const currentUserId = profile.userId;
   switch (model[0]) {
-    case 'Account':
+    case 'account':
       return (
         <UI.FillBox>
           <Account.View
             username={profile.username}
             model={model[1]}
-            $send={(msg) => $send(['Account', msg])}
+            $send={(msg) => $send(['account', msg])}
           />
           <ViewBottomNavigation
             currentUserId={currentUserId}
@@ -724,13 +724,13 @@ export const ViewReady = ({
         </UI.FillBox>
       );
 
-    case 'Chat':
+    case 'chat':
       return (
         <UI.FillBox>
           <Chat.View
             ctx={ctx}
             model={model[1]}
-            $send={(msg) => $send(['Chat', msg])}
+            $send={(msg) => $send(['chat', msg])}
             chatStore={chatStore}
           />
           <ViewBottomNavigation
@@ -741,11 +741,11 @@ export const ViewReady = ({
         </UI.FillBox>
       );
 
-    case 'Search':
+    case 'search':
       return (
         <UI.FillBox>
           <Search.View
-            $send={(msg) => $send(['Search', msg])}
+            $send={(msg) => $send(['search', msg])}
             model={model[1]}
             profileStore={profileStore}
           />
@@ -758,7 +758,7 @@ export const ViewReady = ({
         </UI.FillBox>
       );
 
-    case 'ChatNew':
+    case 'chat-new':
       return (
         <UI.FillBox>
           <ChatNew.View
@@ -766,7 +766,7 @@ export const ViewReady = ({
             chatStore={chatStore}
             ctx={ctx}
             model={model[1]}
-            $send={(msg) => $send(['ChatNew', msg])}
+            $send={(msg) => $send(['chat-new', msg])}
           />
           <ViewBottomNavigation
             currentUserId={currentUserId}
@@ -776,39 +776,39 @@ export const ViewReady = ({
         </UI.FillBox>
       );
 
-    case 'ChatConversation':
+    case 'chat-conversation':
       return (
         <ChatConversation.View
           ctx={ctx}
           chatStore={chatStore}
           model={model[2]}
           conversationId={model[1].conversationId}
-          $send={(msg) => $send(['ChatConversation', msg])}
+          $send={(msg) => $send(['chat-conversation', msg])}
         />
       );
 
-    case 'Logout':
+    case 'logout':
       return (
-        <Logout.View model={model[1]} $send={(msg) => $send(['Logout', msg])} />
+        <Logout.View model={model[1]} $send={(msg) => $send(['logout', msg])} />
       );
 
-    case 'ProfileDelete':
+    case 'profile-delete':
       return (
         <ProfileDelete.View
           profileStore={profileStore}
           userId={profile.userId}
           model={model[1]}
-          $send={(msg) => $send(['ProfileDelete', msg])}
+          $send={(msg) => $send(['profile-delete', msg])}
         />
       );
 
-    case 'ProfileUpdate':
+    case 'profile-update':
       return (
         <UI.FillBox>
           <ProfileUpdate.View
             profile={profile}
             model={model[1]}
-            $send={(msg) => $send(['ProfileUpdate', msg])}
+            $send={(msg) => $send(['profile-update', msg])}
           />
           <ViewBottomNavigation
             currentUserId={currentUserId}
@@ -818,12 +818,12 @@ export const ViewReady = ({
         </UI.FillBox>
       );
 
-    case 'ProfileUpdateAvatar':
+    case 'profile-update-avatar':
       return (
         <UI.FillBox>
           <ProfileUpdateAvatar.View
             model={model[1]}
-            $send={(msg) => $send(['ProfileUpdateAvatar', msg])}
+            $send={(msg) => $send(['profile-update-avatar', msg])}
           />
           <ViewBottomNavigation
             currentUserId={currentUserId}
@@ -833,12 +833,12 @@ export const ViewReady = ({
         </UI.FillBox>
       );
 
-    case 'ProfileUpdateName':
+    case 'profile-update-name':
       return (
         <UI.FillBox>
           <ProfileUpdateName.View
             model={model[1]}
-            $send={(msg) => $send(['ProfileUpdateName', msg])}
+            $send={(msg) => $send(['profile-update-name', msg])}
           />
           <ViewBottomNavigation
             currentUserId={currentUserId}
@@ -848,13 +848,13 @@ export const ViewReady = ({
         </UI.FillBox>
       );
 
-    case 'ProfileUpdateTheme':
+    case 'profile-update-theme':
       return (
         <UI.FillBox>
           <ProfileUpdateTheme.View
             profile={profile}
             model={model[1]}
-            $send={(msg) => $send(['ProfileUpdateTheme', msg])}
+            $send={(msg) => $send(['profile-update-theme', msg])}
           />
           <ViewBottomNavigation
             currentUserId={currentUserId}
@@ -864,12 +864,12 @@ export const ViewReady = ({
         </UI.FillBox>
       );
 
-    case 'ProfileUpdateUsername':
+    case 'profile-update-username':
       return (
         <UI.FillBox>
           <ProfileUpdateUsername.View
             model={model[1]}
-            $send={(msg) => $send(['ProfileUpdateUsername', msg])}
+            $send={(msg) => $send(['profile-update-username', msg])}
           />
           <ViewBottomNavigation
             currentUserId={currentUserId}
@@ -879,7 +879,7 @@ export const ViewReady = ({
         </UI.FillBox>
       );
 
-    case 'Profile':
+    case 'profile':
       return (
         <UI.FillBox>
           <Profile.View
@@ -887,7 +887,7 @@ export const ViewReady = ({
             profileStore={profileStore}
             currentUserId={profile.userId}
             model={model[2]}
-            $send={(msg) => $send(['Profile', msg])}
+            $send={(msg) => $send(['profile', msg])}
           />
           <ViewBottomNavigation
             currentUserId={currentUserId}
@@ -923,13 +923,13 @@ export const ViewReady = ({
       );
     }
 
-    case 'Party': {
+    case 'party': {
       return (
         <UI.FillBox>
           <Party.ViewPage
             ctx={{ currentUserId, profiles: profileStore.profiles }}
             model={party}
-            $send={(msg) => $send(['Party', msg])}
+            $send={(msg) => $send(['party', msg])}
           />
 
           <ViewBottomNavigation
@@ -941,7 +941,7 @@ export const ViewReady = ({
       );
     }
 
-    case 'Home': {
+    case 'home': {
       return (
         <ViewTopLevel
           currentUserId={currentUserId}
@@ -953,18 +953,18 @@ export const ViewReady = ({
             ctx={{ profiles: profileStore.profiles, currentUserId }}
             gameRoom={gameRoom}
             model={model[1]}
-            $send={(msg) => $send(['Home', msg])}
+            $send={(msg) => $send(['home', msg])}
           />
         </ViewTopLevel>
       );
     }
 
-    case 'Login':
-    case 'ProfileCreate':
+    case 'login':
+    case 'profile-create':
     case 'Loading':
-    case 'LoginEmailLink':
-    case 'LoginPhone':
-    case 'LoginPhoneVerify':
+    case 'login-email-link':
+    case 'login-phone':
+    case 'login-phone-verify':
       return <UI.LoadingPage />;
 
     default:
@@ -981,40 +981,40 @@ export const ViewProfileMissing = ({
   $send: (msg: Msg) => void;
 }) => {
   switch (model[0]) {
-    case 'Logout':
+    case 'logout':
       return (
-        <Logout.View model={model[1]} $send={(msg) => $send(['Logout', msg])} />
+        <Logout.View model={model[1]} $send={(msg) => $send(['logout', msg])} />
       );
 
-    case 'ProfileCreate':
+    case 'profile-create':
       return (
         <ProfileCreate.View
           model={model[1]}
-          $send={(msg) => $send(['ProfileCreate', msg])}
+          $send={(msg) => $send(['profile-create', msg])}
         />
       );
 
-    case 'Account':
-    case 'Chat':
-    case 'ChatConversation':
-    case 'ChatNew':
-    case 'ProfileDelete':
-    case 'ProfileUpdate':
-    case 'ProfileUpdateAvatar':
-    case 'ProfileUpdateTheme':
-    case 'ProfileUpdateName':
-    case 'ProfileUpdateUsername':
-    case 'Login':
-    case 'LoginPhone':
-    case 'LoginPhoneVerify':
-    case 'LoginEmailLink':
+    case 'account':
+    case 'chat':
+    case 'chat-conversation':
+    case 'chat-new':
+    case 'profile-delete':
+    case 'profile-update':
+    case 'profile-update-avatar':
+    case 'profile-update-theme':
+    case 'profile-update-name':
+    case 'profile-update-username':
+    case 'login':
+    case 'login-phone':
+    case 'login-phone-verify':
+    case 'login-email-link':
     case 'Loading':
-    case 'Search':
-    case 'Profile':
+    case 'search':
+    case 'profile':
     case 'game':
     case 'room':
-    case 'Party':
-    case 'Home':
+    case 'party':
+    case 'home':
       return <UI.LoadingPage />;
 
     default:
@@ -1030,55 +1030,55 @@ export const ViewLoggedOut = ({
   $send: (msg: Msg) => void;
 }) => {
   switch (model[0]) {
-    case 'Login':
+    case 'login':
       return (
-        <Login.View model={model[1]} $send={(msg) => $send(['Login', msg])} />
+        <Login.View model={model[1]} $send={(msg) => $send(['login', msg])} />
       );
 
-    case 'LoginEmailLink':
+    case 'login-email-link':
       return (
         <LoginEmailLink.View
           model={model[1]}
-          $send={(msg) => $send(['LoginEmailLink', msg])}
+          $send={(msg) => $send(['login-email-link', msg])}
         />
       );
 
-    case 'LoginPhone':
+    case 'login-phone':
       return (
         <LoginPhone.View
           model={model[1]}
-          $send={(msg) => $send(['LoginPhone', msg])}
+          $send={(msg) => $send(['login-phone', msg])}
         />
       );
 
-    case 'LoginPhoneVerify':
+    case 'login-phone-verify':
       return (
         <LoginPhoneVerify.View
           phoneNumber={model[1].phoneNumber}
           model={model[2]}
-          $send={(msg) => $send(['LoginPhoneVerify', msg])}
+          $send={(msg) => $send(['login-phone-verify', msg])}
         />
       );
 
-    case 'Account':
-    case 'Chat':
-    case 'ChatConversation':
-    case 'ChatNew':
+    case 'account':
+    case 'chat':
+    case 'chat-conversation':
+    case 'chat-new':
     case 'game':
     case 'room':
-    case 'Logout':
-    case 'ProfileCreate':
-    case 'ProfileDelete':
-    case 'ProfileUpdate':
-    case 'ProfileUpdateAvatar':
-    case 'ProfileUpdateTheme':
-    case 'ProfileUpdateName':
-    case 'ProfileUpdateUsername':
-    case 'Profile':
-    case 'Search':
+    case 'logout':
+    case 'profile-create':
+    case 'profile-delete':
+    case 'profile-update':
+    case 'profile-update-avatar':
+    case 'profile-update-theme':
+    case 'profile-update-name':
+    case 'profile-update-username':
+    case 'profile':
+    case 'search':
     case 'Loading':
-    case 'Party':
-    case 'Home':
+    case 'party':
+    case 'home':
       return <UI.LoadingPage />;
 
     default:
@@ -1136,27 +1136,27 @@ const ViewBottomNavigation = ({
 }) => {
   const items: BottomNavigationItem[] = [
     {
-      route: ['Home'],
+      route: ['home'],
       filled: <UI.Icons.Home />,
       outlined: <UI.Icons.HomeOutlined />,
     },
     {
-      route: ['Party'],
+      route: ['party'],
       filled: <UI.Icons.Group />,
       outlined: <UI.Icons.GroupOutlined />,
     },
     {
-      route: ['Search'],
+      route: ['search'],
       filled: <UI.Icons.Search />,
       outlined: <UI.Icons.SearchOutlined />,
     },
     {
-      route: ['Chat'],
+      route: ['chat'],
       filled: <UI.Icons.Chat />,
       outlined: <UI.Icons.ChatOutlined />,
     },
     {
-      route: ['Profile', { userId: currentUserId }],
+      route: ['profile', { userId: currentUserId }],
       filled: <UI.Icons.AccountCircle />,
       outlined: <UI.Icons.AccountCircleOutlined />,
     },
@@ -1181,7 +1181,7 @@ const ViewBottomNavigation = ({
         return (
           <UI.ButtonBase
             key={Route.encode(item.route)}
-            onClick={() => $send(['ClickedBottomNavigationLink', item.route])}
+            onClick={() => $send(['clicked-bottom-nav-link', item.route])}
             sx={{
               color: isSelected ? 'primary.main' : 'text.secondary',
               paddingY: 0,

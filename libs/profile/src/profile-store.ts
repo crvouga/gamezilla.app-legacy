@@ -102,10 +102,13 @@ export type Req =
   | ['EditOne', { userId: UserId; edits: Partial<Profile> }]
   | ['DeleteForever', { userId: UserId }]
   | ['CreateOne', { profile: Profile }]
-  | ['Search', { searchText: string }];
+  | ['search', { searchText: string }];
 
 export type Res =
-  | ['FindMany_Done', { userIds: UserId[]; result: Result<Problem, Profile[]> }]
+  | [
+      'find-many-done',
+      { userIds: UserId[]; result: Result<Problem, Profile[]> }
+    ]
   | [
       'EditOne_Done',
       {
@@ -116,11 +119,11 @@ export type Res =
     ]
   | ['DeleteForever_Done', { userId: UserId; result: Result<Problem, Unit> }]
   | ['CreateOne_Done', { userId: UserId; result: Result<Problem, Profile> }]
-  | ['Search_Done', { searchText: string; result: Result<Problem, Profile[]> }];
+  | ['search-done', { searchText: string; result: Result<Problem, Profile[]> }];
 
 export type Msg = Res;
 
-export type Action = ['Profile', Req];
+export type Action = ['profile', Req];
 
 //
 //
@@ -163,7 +166,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       return [modelNew, Cmd.None];
     }
 
-    case 'FindMany_Done': {
+    case 'find-many-done': {
       const { userIds, result } = msg[1];
 
       const key = toFindManyKey(userIds);
@@ -227,7 +230,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       return [modelNew, Cmd.None];
     }
 
-    case 'Search_Done': {
+    case 'search-done': {
       const { result, searchText } = msg[1];
 
       const hits: Profile[] = result.type === 'Err' ? [] : result.value;
@@ -311,7 +314,7 @@ export const runAction = (msg: Action, model: Model): [Model, Cmd<Msg>] => {
         modelNew,
         p(
           findMany({ userIds }),
-          Cmd.perform((result): Msg => ['FindMany_Done', { userIds, result }])
+          Cmd.perform((result): Msg => ['find-many-done', { userIds, result }])
         ),
       ];
     }
@@ -355,7 +358,7 @@ export const runAction = (msg: Action, model: Model): [Model, Cmd<Msg>] => {
       ];
     }
 
-    case 'Search': {
+    case 'search': {
       const { searchText } = msg[1][1];
 
       const modelNew = produce(model, (model) => {
@@ -366,7 +369,7 @@ export const runAction = (msg: Action, model: Model): [Model, Cmd<Msg>] => {
         modelNew,
         p(
           search({ nameOrUsername: searchText }),
-          Cmd.perform((result): Msg => ['Search_Done', { result, searchText }])
+          Cmd.perform((result): Msg => ['search-done', { result, searchText }])
         ),
       ];
     }

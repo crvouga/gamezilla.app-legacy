@@ -33,7 +33,7 @@ export const init = ({
   return [
     null,
     Cmd.None,
-    [['Chat', ['Conversation', ['FindManyByUserId', { userId }]]]],
+    [['chat', ['conversation', ['FindManyByUserId', { userId }]]]],
   ];
 };
 
@@ -47,7 +47,7 @@ export const init = ({
 
 export type Msg =
   | ['ClickedBack']
-  | ['ClickedSendMessage']
+  | ['clicked-send-message']
   | ['ClickedConversationItem', { conversationId: string }];
 
 type OutAction = ChatStore.Action;
@@ -57,11 +57,11 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     case 'ClickedBack':
       return [model, Route.back];
 
-    case 'ClickedSendMessage':
-      return [model, Route.push(['ChatNew'])];
+    case 'clicked-send-message':
+      return [model, Route.push(['chat-new'])];
 
     case 'ClickedConversationItem':
-      return [model, Route.push(['ChatConversation', msg[1]])];
+      return [model, Route.push(['chat-conversation', msg[1]])];
   }
 };
 
@@ -123,7 +123,7 @@ export const View = ({
         <ViewEmptyState
           actionIcon={<Icons.Send />}
           actionTitle="Send Message"
-          onAction={() => $send(['ClickedSendMessage'])}
+          onAction={() => $send(['clicked-send-message'])}
           renderIcon={(props) => <Icons.Chat {...props} />}
           title="No conversations"
         />
@@ -138,7 +138,7 @@ export const View = ({
         <Button
           fullWidth
           variant="contained"
-          onClick={() => $send(['ClickedSendMessage'])}
+          onClick={() => $send(['clicked-send-message'])}
         >
           Send Message
         </Button>

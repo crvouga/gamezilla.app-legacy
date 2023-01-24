@@ -87,7 +87,7 @@ export const update = (
         Route.back,
         [
           [
-            'Profile',
+            'profile',
             [
               'EditOne',
               { userId, edits: { avatarUrl: ProfileAvatar.toUrl(model) } },

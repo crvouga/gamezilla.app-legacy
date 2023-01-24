@@ -53,7 +53,7 @@ const init =
     const route = p(
       location,
       Route.decode,
-      Option.withDefault<Route.Model>(['Home'])
+      Option.withDefault<Route.Model>(['home'])
     );
     const [auth, authCmd] = Auth.init();
     const alerts = Alerts.init;
@@ -61,7 +61,7 @@ const init =
     const [gameRoom, gameRoomCmd] = GameRoom.init;
     const [page, pageCmd] = Page.initLoading();
     const [party, partyCmd] = Party.init({
-      sendToBackend: (msg) => sendToBackend(['Party', msg]),
+      sendToBackend: (msg) => sendToBackend(['party', msg]),
     });
     const profileStore = ProfileStore.init;
 
@@ -79,10 +79,10 @@ const init =
       },
       Cmd.batch<Msg>([
         Route.replace(route),
-        Cmd.tag('Auth', authCmd),
-        Cmd.tag('Page', pageCmd),
+        Cmd.tag('auth', authCmd),
+        Cmd.tag('page', pageCmd),
         Cmd.tag('room', gameRoomCmd),
-        Cmd.tag('Party', partyCmd),
+        Cmd.tag('party', partyCmd),
       ]),
     ];
   };
@@ -110,7 +110,7 @@ const mapAction = <A, B>(
   mapper: (a: A) => B,
   action: OutAction<A>
 ): OutAction<B> => {
-  if (action[0] === 'Alerts') {
+  if (action[0] === 'alerts') {
     return Alerts.mapAction(mapper, action);
   }
   return action;
@@ -142,46 +142,49 @@ const updateMain =
         return updateFromBackend({ sendToBackend }, msg[1], model);
       }
 
-      case 'Store': {
+      case 'chat-store': {
         const [storeNew, storeCmd] = ChatStore.update(msg[1], model.chatStore);
 
-        return [{ ...model, chatStore: storeNew }, Cmd.tag('Store', storeCmd)];
+        return [
+          { ...model, chatStore: storeNew },
+          Cmd.tag('chat-store', storeCmd),
+        ];
       }
 
-      case 'Auth': {
+      case 'auth': {
         const [authNew, authCmd] = Auth.update(
-          { sendToBackend: (msg) => sendToBackend(['Auth', msg]) },
+          { sendToBackend: (msg) => sendToBackend(['auth', msg]) },
           msg[1],
           model.auth
         );
 
-        return [{ ...model, auth: authNew }, Cmd.tag('Auth', authCmd)];
+        return [{ ...model, auth: authNew }, Cmd.tag('auth', authCmd)];
       }
 
-      case 'Alerts': {
+      case 'alerts': {
         const [alertsNew, alertsCmd, msgs] = Alerts.update(
           msg[1],
           model.alerts
         );
 
         return p(
-          [{ ...model, alerts: alertsNew }, Cmd.tag('Alerts', alertsCmd)],
+          [{ ...model, alerts: alertsNew }, Cmd.tag('alerts', alertsCmd)],
           andThenMany(update({ sendToBackend }), msgs)
         );
       }
 
-      case 'Party': {
+      case 'party': {
         const [child, childCmd] = Party.update(
-          { sendToBackend: (msg) => sendToBackend(['Party', msg]) },
+          { sendToBackend: (msg) => sendToBackend(['party', msg]) },
           msg[1],
           model.party
         );
-        return [{ ...model, party: child }, Cmd.tag('Party', childCmd)];
+        return [{ ...model, party: child }, Cmd.tag('party', childCmd)];
       }
 
-      case 'Route': {
+      case 'route': {
         switch (msg[1][0]) {
-          case 'GotRoute': {
+          case 'got-route': {
             const modelNew: Model = {
               ...model,
               route: msg[1][1],
@@ -196,11 +199,11 @@ const updateMain =
         }
       }
 
-      case 'Wire': {
+      case 'wire': {
         return [{ ...model, wire: msg[1] }, Cmd.None];
       }
 
-      case 'LocalStoragePut_Done': {
+      case 'local-storage-put-done': {
         return [model, Cmd.None];
       }
 
@@ -228,7 +231,7 @@ const updateMain =
         return [{ ...model, gameRoom: child }, Cmd.tag('room', childCmd)];
       }
 
-      case 'Page': {
+      case 'page': {
         const [modelNew, cmd, actions] = updatePage(msg[1], model);
         return p(
           [modelNew, cmd],
@@ -236,11 +239,11 @@ const updateMain =
         );
       }
 
-      case 'ProfileStore': {
+      case 'profile-store': {
         const [modelNew, cmd] = ProfileStore.update(msg[1], model.profileStore);
         return [
           { ...model, profileStore: modelNew },
-          Cmd.tag('ProfileStore', cmd),
+          Cmd.tag('profile-store', cmd),
         ];
       }
 
@@ -264,7 +267,7 @@ const updatePage = (
     case 'LoggedOut': {
       const [pageNew, pageCmd, actions] = Page.updateLoggedOut(msg, model.page);
 
-      return [{ ...model, page: pageNew }, Cmd.tag('Page', pageCmd), actions];
+      return [{ ...model, page: pageNew }, Cmd.tag('page', pageCmd), actions];
     }
 
     case 'ProfileMissing': {
@@ -274,7 +277,7 @@ const updatePage = (
         model.page
       );
 
-      return [{ ...model, page: pageNew }, Cmd.tag('Page', pageCmd), actions];
+      return [{ ...model, page: pageNew }, Cmd.tag('page', pageCmd), actions];
     }
 
     case 'Ready': {
@@ -286,7 +289,7 @@ const updatePage = (
         msg,
         model.page
       );
-      return [{ ...model, page: pageNew }, Cmd.tag('Page', pageCmd), actions];
+      return [{ ...model, page: pageNew }, Cmd.tag('page', pageCmd), actions];
     }
 
     default:
@@ -300,16 +303,16 @@ const updateFromBackend = (
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'Session': {
+    case 'session': {
       const sessionId = msg[1];
 
       return [
         model,
-        LocalStorage.put(sessionIdKey, sessionId, t('LocalStoragePut_Done')),
+        LocalStorage.put(sessionIdKey, sessionId, t('local-storage-put-done')),
       ];
     }
 
-    case 'Party': {
+    case 'party': {
       if (model.auth[0] !== 'LoggedIn') {
         return [model, Cmd.None];
       }
@@ -323,7 +326,7 @@ const updateFromBackend = (
       );
 
       return p(
-        [{ ...model, party }, Cmd.tag('Party', partyCmd)],
+        [{ ...model, party }, Cmd.tag('party', partyCmd)],
         andThenMany(runAction({ sendToBackend }), actions)
       );
     }
@@ -376,7 +379,7 @@ const initPage = (
 
     case 'ProfileLoading': {
       const action: OutAction = [
-        'Profile',
+        'profile',
         ['FindMany', { userIds: [status[1].authSession.userId] }],
       ];
 
@@ -392,12 +395,12 @@ const initPage = (
         status[1].authSession
       );
 
-      return [{ ...model, page }, Cmd.tag('Page', pageCmd)];
+      return [{ ...model, page }, Cmd.tag('page', pageCmd)];
     }
 
     case 'LoggedOut': {
       const [page, pageCmd] = Page.initLoggedOut(model.page, model.route);
-      return [{ ...model, page }, Cmd.tag('Page', pageCmd)];
+      return [{ ...model, page }, Cmd.tag('page', pageCmd)];
     }
 
     case 'Ready': {
@@ -406,7 +409,7 @@ const initPage = (
         status[1].profile
       );
       return p(
-        [{ ...model, page }, Cmd.tag('Page', pageCmd)],
+        [{ ...model, page }, Cmd.tag('page', pageCmd)],
         andThenMany(runAction({ sendToBackend }), actions)
       );
     }
@@ -434,14 +437,17 @@ const runAction =
   ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd }) =>
   (action: OutAction, model: Model): [Model, Cmd<Msg>] => {
     switch (action[0]) {
-      case 'Chat': {
+      case 'chat': {
         const [chatNew, chatCmd] = ChatStore.runAction(action, model.chatStore);
-        return [{ ...model, chatStore: chatNew }, Cmd.tag('Store', chatCmd)];
+        return [
+          { ...model, chatStore: chatNew },
+          Cmd.tag('chat-store', chatCmd),
+        ];
       }
 
-      case 'Alerts': {
+      case 'alerts': {
         const [alertsNew, alertsCmd] = Alerts.runAction(action, model.alerts);
-        return [{ ...model, alerts: alertsNew }, Cmd.tag('Alerts', alertsCmd)];
+        return [{ ...model, alerts: alertsNew }, Cmd.tag('alerts', alertsCmd)];
       }
 
       case 'room': {
@@ -463,34 +469,34 @@ const runAction =
         return [{ ...model, gameRoom }, Cmd.tag('room', gameRoomCmd)];
       }
 
-      case 'Auth': {
+      case 'auth': {
         const [authNew, authCmd] = Auth.runAction(action, model.auth);
-        return [{ ...model, auth: authNew }, Cmd.tag('Auth', authCmd)];
+        return [{ ...model, auth: authNew }, Cmd.tag('auth', authCmd)];
       }
 
-      case 'Party': {
+      case 'party': {
         const [party, partyCmd] = Party.runAction(
-          { sendToBackend: (msg) => sendToBackend(['Party', msg]) },
+          { sendToBackend: (msg) => sendToBackend(['party', msg]) },
           action,
           model.party
         );
-        return [{ ...model, party }, Cmd.tag('Party', partyCmd)];
+        return [{ ...model, party }, Cmd.tag('party', partyCmd)];
       }
 
-      case 'Route': {
+      case 'route': {
         const [route, routeCmd] = Route.runAction(action, model.route);
 
-        return [{ ...model, route }, Cmd.tag('Route', routeCmd)];
+        return [{ ...model, route }, Cmd.tag('route', routeCmd)];
       }
 
-      case 'Profile': {
+      case 'profile': {
         const [profileStore, profileStoreCmd] = ProfileStore.runAction(
           action,
           model.profileStore
         );
         return [
           { ...model, profileStore },
-          Cmd.tag('ProfileStore', profileStoreCmd),
+          Cmd.tag('profile-store', profileStoreCmd),
         ];
       }
 
@@ -509,12 +515,12 @@ const runAction =
 
 const subscriptions = (model: Model): Sub<Msg> => {
   return Sub.batch<Msg>([
-    Sub.tag('Wire', wireStatus$),
+    Sub.tag('wire', wireStatus$),
     Sub.tag('→', toFrontend$),
     Browser.onLocation(onLocationChange),
-    Sub.tag('Party', Party.subscriptions(model.party)),
-    Sub.tag('Page', Page.subscriptions(model.page)),
-    Sub.tag('Auth', Auth.subscriptions),
+    Sub.tag('party', Party.subscriptions(model.party)),
+    Sub.tag('page', Page.subscriptions(model.page)),
+    Sub.tag('auth', Auth.subscriptions),
     gameRoomSub(model),
   ]);
 };
@@ -546,7 +552,7 @@ const onLocationChange = (location: Browser.Location): Msg => {
     location,
     Route.decode,
     Option.withDefault<Route.Model>(['room']),
-    (route) => ['Route', ['GotRoute', route]]
+    (route) => ['route', ['got-route', route]]
   );
 };
 
@@ -586,7 +592,7 @@ const View = ({
 
       <Alerts.View
         model={model.alerts}
-        $send={(msg) => $send(['Alerts', msg])}
+        $send={(msg) => $send(['alerts', msg])}
       />
 
       {model.wire === 'Connecting' && (
@@ -635,7 +641,7 @@ const ViewMain = ({
       return (
         <Page.ViewLoggedOut
           model={model.page}
-          $send={(msg) => $send(['Page', msg])}
+          $send={(msg) => $send(['page', msg])}
         />
       );
 
@@ -644,7 +650,7 @@ const ViewMain = ({
         <Page.ViewProfileMissing
           authSession={status[1].authSession}
           model={model.page}
-          $send={(msg) => $send(['Page', msg])}
+          $send={(msg) => $send(['page', msg])}
         />
       );
 
@@ -657,7 +663,7 @@ const ViewMain = ({
             currentUserId={profile.userId}
             model={model.party}
             route={model.route}
-            $send={(msg) => $send(['Party', msg])}
+            $send={(msg) => $send(['party', msg])}
           />
 
           <GameRoom.ViewBanner
@@ -675,7 +681,7 @@ const ViewMain = ({
               profiles: model.profileStore.profiles,
             }}
             profile={status[1].profile}
-            $send={(msg) => $send(['Page', msg])}
+            $send={(msg) => $send(['page', msg])}
             model={model.page}
           />
         </>
@@ -830,7 +836,7 @@ const main = () => {
   );
 
   socketClient.on('connect', () => {
-    wireStatus$.next('Connected');
+    wireStatus$.next('connected');
   });
 
   socketClient.on('disconnect', () => {

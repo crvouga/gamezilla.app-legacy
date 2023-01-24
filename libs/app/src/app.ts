@@ -47,7 +47,7 @@ export type WireStatus =
   | 'Connecting'
   | 'ConnectError'
   | 'Disconnected'
-  | 'Connected';
+  | 'connected';
 
 //
 //
@@ -59,33 +59,33 @@ export type WireStatus =
 
 export type ToBackend =
   | ['room', GameRoom.ToBackend]
-  | ['Party', Party.ToBackend]
-  | ['Auth', Auth.ToBackend];
+  | ['party', Party.ToBackend]
+  | ['auth', Auth.ToBackend];
 
 export type ToFrontend =
   | ['room', GameRoom.ToFrontend]
-  | ['Party', Party.ToFrontend]
-  | ['Session', SessionId];
+  | ['party', Party.ToFrontend]
+  | ['session', SessionId];
 
 export type FrontendMsg =
   | ['→', ToFrontend]
-  | ['Wire', WireStatus]
-  | ['Route', Route.Msg]
-  | ['Alerts', Alerts.Msg]
+  | ['wire', WireStatus]
+  | ['route', Route.Msg]
+  | ['alerts', Alerts.Msg]
   | ['room', GameRoom.FrontendMsg]
-  | ['Store', ChatStore.Msg]
-  | ['Auth', Auth.Msg]
-  | ['Page', Page.Msg]
-  | ['LocalStoragePut_Done', LocalStorage.PutResult]
-  | ['Party', Party.FrontendMsg]
-  | ['ProfileStore', ProfileStore.Msg];
+  | ['chat-store', ChatStore.Msg]
+  | ['auth', Auth.Msg]
+  | ['page', Page.Msg]
+  | ['local-storage-put-done', LocalStorage.PutResult]
+  | ['party', Party.FrontendMsg]
+  | ['profile-store', ProfileStore.Msg];
 
 export type BackendMsg =
   | ['→', SessionId, ClientId, ToBackend]
-  | ['ClientConnected', SessionId, ClientId]
-  | ['ClientDisconnected', SessionId, ClientId]
+  | ['client-connected', SessionId, ClientId]
+  | ['client-disconnected', SessionId, ClientId]
   | ['room', GameRoom.BackendMsg]
-  | ['Party', Party.BackendMsg];
+  | ['party', Party.BackendMsg];
 
 //
 //
@@ -96,11 +96,11 @@ export type BackendMsg =
 //
 
 export type ServerToClientEvents = {
-  ToFrontend: (msg: ToFrontend) => void;
+  ['to-frontend']: (msg: ToFrontend) => void;
 };
 
 export type ClientToServerEvents = {
-  ToBackend: (msg: ToBackend) => void;
+  ['to-backend']: (msg: ToBackend) => void;
 };
 
 export const backendServerPort = 5000;

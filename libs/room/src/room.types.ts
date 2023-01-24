@@ -78,7 +78,7 @@ export type ToBackend =
 export type BackendMsg = ['game', RoomId, Game.BackendMsg];
 
 export type FrontendMsg =
-  | ['ClickedHome']
+  | ['clicked-home']
   | ['ClickedRoom']
   | ['ClickedUser', { userId: UserId }]
   | ['ClickedBanner']
@@ -98,7 +98,10 @@ export type FrontendMsg =
 type Model = BackendModel;
 
 export type Req =
-  | ['RoomCreate', { userId: UserId; roomId: RoomId; gameName?: Game.GameName }]
+  | [
+      'room-create',
+      { userId: UserId; roomId: RoomId; gameName?: Game.GameName }
+    ]
   | ['RoomDestroy', { userId: UserId }]
   | ['RoomJoin', { userId: UserId; roomId: RoomId }]
   | ['RoomLeave', { userId: UserId }]
@@ -107,7 +110,7 @@ export type Req =
 
 export type Res =
   | [
-      'RoomCreate',
+      'room-create',
       { userId: UserId; roomId: RoomId; gameName?: Game.GameName },
       Result<Problem, Model>
     ]
@@ -141,7 +144,7 @@ type ChangeHostProblem =
 
 export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
   switch (msg[0]) {
-    case 'RoomCreate': {
+    case 'room-create': {
       const user = model.users[msg[1].userId];
 
       if (user) {

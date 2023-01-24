@@ -40,15 +40,15 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     }
 
     case 'ClickedDeleteProfile': {
-      return [model, Route.push(['ProfileDelete'])];
+      return [model, Route.push(['profile-delete'])];
     }
 
     case 'ClickedLogout': {
-      return [model, Route.push(['Logout'])];
+      return [model, Route.push(['logout'])];
     }
 
     case 'ClickedUpdateProfile': {
-      return [model, Route.push(['ProfileUpdate'])];
+      return [model, Route.push(['profile-update'])];
     }
   }
 };
