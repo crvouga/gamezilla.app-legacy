@@ -154,7 +154,7 @@ export const updateFromFrontend = (
       ];
     }
 
-    case 'InputGame':
+    case 'input-game':
     case 'ChangeHost':
     case 'RoomJoin':
     case 'RoomDestroy':

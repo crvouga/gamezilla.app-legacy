@@ -108,7 +108,7 @@ export const update = (
     case 'RoomJoin':
     case 'RoomLeave':
     case 'ChangeHost':
-    case 'InputGame': {
+    case 'input-game': {
       return [
         {
           ...model,
@@ -260,7 +260,7 @@ export const updateFromBackend = (
       ];
     }
 
-    case 'InputGame':
+    case 'input-game':
     case 'ChangeHost':
     case 'room-create': {
       return updateResponse({ sendToBackend }, msg, model);
@@ -667,7 +667,7 @@ export const ViewPageGame = ({
             hostId: room.hostId,
             onQuit: () =>
               $send([
-                'InputGame',
+                'input-game',
                 { userId: ctx.currentUserId, gameName: undefined },
               ]),
           }}
@@ -742,7 +742,7 @@ export const ViewNotInGame = ({
             <CardActionArea
               disabled={room.hostId !== ctx.currentUserId}
               onClick={() =>
-                $send(['InputGame', { gameName, userId: ctx.currentUserId }])
+                $send(['input-game', { gameName, userId: ctx.currentUserId }])
               }
             >
               <GameCard gameName={gameName} />
