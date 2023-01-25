@@ -1,7 +1,5 @@
-import { memoize, Result, Task } from '@gamezilla/core';
-import { Minimax } from '@gamezilla/game-shared';
+import { memoize, Result, shuffle, Task } from '@gamezilla/core';
 import * as UI from '@gamezilla/shared/ui';
-import * as Threads from 'threads';
 
 const { Err, Ok } = Result;
 
@@ -48,7 +46,7 @@ export type Board = [
   [Slot, Slot, Slot]
 ];
 
-const toChildren = (board: Board): Board[] => {
+export const toChildren = (board: Board): Board[] => {
   const turn = toTurn(board);
 
   const boards: Board[] = [];
@@ -86,7 +84,7 @@ export const toDepth = (botLevel: BotLevel): number => {
   }
 };
 
-const toScore = ({
+export const toScore = ({
   board,
   maximizingPlayer,
 }: {
@@ -115,7 +113,7 @@ const toScore = ({
 };
 
 export const toBestMove = ({
-  depth,
+  // depth,
   maximizingPlayer,
   board,
 }: {
@@ -123,24 +121,32 @@ export const toBestMove = ({
   maximizingPlayer: PlayerType;
   board: Board;
 }): Result<ToBestMoveProblem, Position> => {
-  const minimax = Minimax.create({
-    toChildren,
-    toScore: (board) => toScore({ board, maximizingPlayer }),
-  });
+  for (const position of shuffle(allPositions)) {
+    const moved = move({ board, player: maximizingPlayer, position });
 
-  const bestMove = maxBy(allPositions, (position) => {
-    const result = move({ board, player: maximizingPlayer, position });
-
-    if (result.type === 'Err') {
-      return -Infinity;
+    if (moved.type === 'Ok') {
+      return Ok(position);
     }
+  }
 
-    const score = minimax({ state: result.value, depth });
+  // const minimax = Minimax.create({
+  //   toChildren,
+  //   toScore: (board) => toScore({ board, maximizingPlayer }),
+  // });
 
-    return score;
-  });
+  // const bestMove = maxBy(allPositions, (position) => {
+  //   const result = move({ board, player: maximizingPlayer, position });
 
-  return Ok(bestMove);
+  //   if (result.type === 'Err') {
+  //     return -Infinity;
+  //   }
+
+  //   const score = minimax({ state: result.value, depth });
+
+  //   return score;
+  // });
+
+  return Err('no_valid_move');
 };
 
 export type ToBestMoveProblem = 'no_valid_move';
@@ -180,48 +186,36 @@ export const findBestMove =
     board: Board;
   }): Task<Result<GetBestMoveProblem, Position>> =>
   async () => {
-    // const result = toBestMove({ board, depth, maximizingPlayer })
+    const result = toBestMove({ board, depth, maximizingPlayer });
 
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    // return result
+    return result;
 
-    try {
-      // docs: https://threads.js.org/
-      const worker = new Threads.Worker('./worker');
+    // try {
+    //   // docs: https://threads.js.org/
+    //   const worker = new Threads.Worker('./worker');
 
-      const spawned = await Threads.spawn<Worker>(worker);
+    //   const spawned = await Threads.spawn<Worker>(worker);
 
-      try {
-        const result = await spawned.toBestMove({
-          depth,
-          maximizingPlayer,
-          board,
-        });
-        return result;
-      } catch (error) {
-        return Err('worker_thread_error');
-      } finally {
-        await Threads.Thread.terminate(spawned);
-      }
-    } catch (error) {
-      return Err('worker_thread_error');
-    }
+    //   try {
+    //     const result = await spawned.toBestMove({
+    //       depth,
+    //       maximizingPlayer,
+    //       board,
+    //     });
+    //     return result;
+    //   } catch (error) {
+    //     return Err('worker_thread_error');
+    //   } finally {
+    //     await Threads.Thread.terminate(spawned);
+    //   }
+    // } catch (error) {
+    //   return Err('worker_thread_error');
+    // }
   };
 
 type NonEmpty<T> = [T, ...T[]];
-
-const maxBy = <X,>(xs: NonEmpty<X>, toValue: (x: X) => number): X => {
-  let runningMax = xs[0];
-
-  for (const x of xs) {
-    if (toValue(x) > toValue(runningMax)) {
-      runningMax = x;
-    }
-  }
-
-  return runningMax;
-};
 
 export const emptyBoard: Board = [
   ['_', '_', '_'],
