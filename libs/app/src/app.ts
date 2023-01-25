@@ -46,7 +46,7 @@ export type FrontendModel = {
 export type WireStatus =
   | 'Connecting'
   | 'ConnectError'
-  | 'Disconnected'
+  | 'disconnected'
   | 'connected';
 
 //
