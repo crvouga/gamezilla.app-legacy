@@ -72,7 +72,7 @@ export const viewVsBotVersusBlock = <PlayerType,>({
           sx={iconSx}
           src={playerId ? ctx.profiles[playerId]?.avatarUrl : ''}
         >
-          {/* <Icons.QuestionMark /> */}
+          <Icons.QuestionMark />
         </Avatar>
       </Box>
       <Typography align="center" noWrap sx={{ width: '100%' }}>
@@ -152,15 +152,8 @@ export const viewVsBotSetupScreen = <BotLevel, PlayerType>({
   onStartPlaying: () => void;
   onStopPlaying: () => void;
 }) => {
-  // const coverArtSize = 72
   return (
     <FillBox sx={{ overflowY: 'scroll', pb: 2 }}>
-      {/* <Box sx={{ height: coverArtSize, width: coverArtSize, minHeight: coverArtSize, minWidth: coverArtSize, mx: 'auto', borderRadius: 2, overflow: "hidden", mt: 2, }}>
-        {coverArt}
-      </Box>
-      <Typography variant="subtitle2" color="text.secondary" align="center" sx={{ mt: 1 }}>
-        Vs Bot
-      </Typography> */}
       {viewVsBotVersusBlock({
         viewPlayerIcon: ({ sx, playerType }) => player.icon({ sx, playerType }),
         playerId,
@@ -171,17 +164,8 @@ export const viewVsBotSetupScreen = <BotLevel, PlayerType>({
           player.values.find((p) => p !== player.selected) ?? player.selected,
         leftPlayerType: leftPlayerType,
       })}
+
       <Divider />
-      {/* 
-
-      <Typography variant="h2" align="center" sx={{ mb: 1 }} >
-        {title}
-      </Typography>
-
-      <Typography variant="subtitle2" color="text.secondary" align="center" sx={{ mb: 2 }}>
-        {subtitle}
-      </Typography> 
-      */}
 
       <Typography color="text.secondary" sx={{ mt: 2, px: 2, mb: 1 }}>
         Human
@@ -277,24 +261,12 @@ export const viewVsBotSetupScreen = <BotLevel, PlayerType>({
               ))}
             </ToggleButtonGroup>
           </Box>
-
-          <Box sx={{ px: 2, mt: 2 }}>
-            <Button
-              disabled={ctx.currentUserId !== playerId}
-              fullWidth
-              variant="contained"
-              endIcon={<Icons.ArrowRight />}
-              onClick={onStartGame}
-            >
-              Start Game
-            </Button>
-          </Box>
         </>
       )}
 
       <Box sx={{ flex: 1, py: 2 }} />
 
-      <Box sx={{ px: 2, mt: 2 }}>
+      <Box sx={{ px: 2, gap: 2, mt: 2, display: 'flex' }}>
         <Button
           fullWidth
           variant="outlined"
@@ -302,6 +274,15 @@ export const viewVsBotSetupScreen = <BotLevel, PlayerType>({
           onClick={onCancel}
         >
           Back
+        </Button>
+        <Button
+          disabled={ctx.currentUserId !== playerId}
+          fullWidth
+          variant="contained"
+          endIcon={<Icons.ArrowRight />}
+          onClick={onStartGame}
+        >
+          Start Game
         </Button>
       </Box>
     </FillBox>

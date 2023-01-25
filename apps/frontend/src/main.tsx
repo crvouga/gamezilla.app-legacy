@@ -840,7 +840,7 @@ const main = () => {
   });
 
   socketClient.on('disconnect', () => {
-    wireStatus$.next('Disconnected');
+    wireStatus$.next('disconnected');
   });
 
   socketClient.on('to-frontend', (msg) => {
