@@ -6,6 +6,7 @@ import {
   Button,
   CircularProgress,
   Divider,
+  Fade,
   FillBox,
   fragment,
   icon,
@@ -18,103 +19,6 @@ import {
   Typography,
   ViewNode,
 } from '@gamezilla/shared/ui';
-
-export const viewVsBotVersusBlock = <PlayerType,>({
-  playerId,
-  botName,
-  ctx,
-  viewPlayerIcon,
-  userPlayerType,
-  botPlayerType,
-  leftPlayerType,
-}: {
-  ctx: Ctx;
-  botName: string;
-  playerId: UserId | null;
-  leftPlayerType: PlayerType;
-  userPlayerType: PlayerType;
-  botPlayerType: PlayerType;
-  viewPlayerIcon: ({
-    playerType,
-    sx,
-  }: {
-    sx?: Sx;
-    playerType: PlayerType;
-  }) => ViewNode;
-}) => {
-  const iconSx: Sx = {
-    width: 52,
-    height: 52,
-  };
-
-  const playerTypeIconSx: Sx = {
-    width: 52,
-    height: 52,
-  };
-
-  const slotSx: Sx = {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    overflow: 'hidden',
-    width: '40%',
-    px: 2,
-  };
-
-  const humanSlot = (
-    <Box sx={slotSx}>
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, gap: 1 }}>
-        {viewPlayerIcon({
-          playerType: userPlayerType,
-          sx: { ...playerTypeIconSx },
-        })}
-        <Avatar
-          sx={iconSx}
-          src={playerId ? ctx.profiles[playerId]?.avatarUrl : ''}
-        >
-          <Icons.QuestionMark />
-        </Avatar>
-      </Box>
-      <Typography align="center" noWrap sx={{ width: '100%' }}>
-        {playerId ? ctx.profiles[playerId]?.username ?? '...' : '?'}
-      </Typography>
-    </Box>
-  );
-
-  const botSlot = (
-    <Box sx={slotSx}>
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, gap: 1 }}>
-        {viewPlayerIcon({
-          playerType: botPlayerType,
-          sx: { ...playerTypeIconSx },
-        })}
-        <Icons.SmartToy sx={{ ...iconSx }} />
-      </Box>
-      <Typography align="center" noWrap>
-        {botName}
-      </Typography>
-    </Box>
-  );
-
-  const leftSlot = leftPlayerType === userPlayerType ? humanSlot : botSlot;
-  const rightSlot = leftPlayerType === userPlayerType ? botSlot : humanSlot;
-
-  return (
-    <Box
-      sx={{ width: '100%', display: 'flex', alignItems: 'center', p: 2, py: 4 }}
-    >
-      {leftSlot}
-      <Typography
-        variant="h4"
-        align="center"
-        sx={{ px: 1, width: '20%', overflow: 'hidden' }}
-      >
-        vs
-      </Typography>
-      {rightSlot}
-    </Box>
-  );
-};
 
 export const viewVsBotSetupScreen = <BotLevel, PlayerType>({
   // title,
@@ -154,7 +58,7 @@ export const viewVsBotSetupScreen = <BotLevel, PlayerType>({
 }) => {
   return (
     <FillBox sx={{ overflowY: 'scroll', pb: 2 }}>
-      {viewVsBotVersusBlock({
+      {viewVersusBlock({
         viewPlayerIcon: ({ sx, playerType }) => player.icon({ sx, playerType }),
         playerId,
         botName: String(botLevel.selected),
@@ -289,6 +193,115 @@ export const viewVsBotSetupScreen = <BotLevel, PlayerType>({
   );
 };
 
+const viewVersusBlock = <PlayerType,>({
+  playerId,
+  botName,
+  ctx,
+  viewPlayerIcon,
+  userPlayerType,
+  botPlayerType,
+  leftPlayerType,
+}: {
+  ctx: Ctx;
+  botName: string;
+  playerId: UserId | null;
+  leftPlayerType: PlayerType;
+  userPlayerType: PlayerType;
+  botPlayerType: PlayerType;
+  viewPlayerIcon: ({
+    playerType,
+    sx,
+  }: {
+    sx?: Sx;
+    playerType: PlayerType;
+  }) => ViewNode;
+}) => {
+  const iconSx: Sx = {
+    width: 52,
+    height: 52,
+  };
+
+  const playerTypeIconSx: Sx = {
+    width: 52,
+    height: 52,
+  };
+
+  const slotSx: Sx = {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    overflow: 'hidden',
+    width: '40%',
+    px: 2,
+  };
+
+  const humanSlot = (
+    <Box sx={slotSx}>
+      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, gap: 1 }}>
+        {viewPlayerIcon({
+          playerType: userPlayerType,
+          sx: { ...playerTypeIconSx },
+        })}
+        <Avatar
+          sx={iconSx}
+          src={playerId ? ctx.profiles[playerId]?.avatarUrl : ''}
+        >
+          <Icons.QuestionMark />
+        </Avatar>
+      </Box>
+      <Typography align="center" noWrap sx={{ width: '100%' }}>
+        {playerId ? ctx.profiles[playerId]?.username ?? '...' : '?'}
+      </Typography>
+    </Box>
+  );
+
+  const botSlot = (
+    <Box sx={slotSx}>
+      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, gap: 1 }}>
+        {viewPlayerIcon({
+          playerType: botPlayerType,
+          sx: { ...playerTypeIconSx },
+        })}
+        <Icons.SmartToy sx={{ ...iconSx }} />
+      </Box>
+      <Typography align="center" noWrap>
+        {botName}
+      </Typography>
+    </Box>
+  );
+
+  const leftSlot = leftPlayerType === userPlayerType ? humanSlot : botSlot;
+  const rightSlot = leftPlayerType === userPlayerType ? botSlot : humanSlot;
+
+  return (
+    <Box
+      sx={{ width: '100%', display: 'flex', alignItems: 'center', p: 2, py: 4 }}
+    >
+      {leftSlot}
+      <Typography
+        variant="h4"
+        align="center"
+        sx={{ px: 1, width: '20%', overflow: 'hidden' }}
+      >
+        vs
+      </Typography>
+      {rightSlot}
+    </Box>
+  );
+};
+
+type GameOver<PlayerType> =
+  | {
+      type: 'winner';
+      winner: PlayerType;
+    }
+  | {
+      type: 'draw';
+    }
+  | {
+      type: 'none';
+    };
+
 export const viewVsBotGameScreen = <PlayerType,>({
   botPlayer,
   userPlayer,
@@ -298,11 +311,11 @@ export const viewVsBotGameScreen = <PlayerType,>({
   leftPlayer,
   turn,
   actions,
-  isGameOver,
   viewPlayerIcon,
   viewBoard,
+  gameOver,
 }: {
-  isGameOver: boolean;
+  gameOver: GameOver<PlayerType>;
   turn: PlayerType;
   botPlayer: PlayerType;
   botName: string;
@@ -336,7 +349,7 @@ export const viewVsBotGameScreen = <PlayerType,>({
         p: 1,
         flex: 1,
         overflow: 'hidden',
-        ...(turn === botPlayer && !isGameOver ? turnSx : {}),
+        ...(turn === botPlayer && gameOver.type !== 'none' ? turnSx : {}),
       }}
     >
       {viewPlayerIcon({ playerType: botPlayer, sx: { ...iconSize, mr: 1 } })}
@@ -344,7 +357,7 @@ export const viewVsBotGameScreen = <PlayerType,>({
       <Typography noWrap={true} flex={1}>
         {botName}
       </Typography>
-      {turn === botPlayer && !isGameOver && (
+      {turn === botPlayer && gameOver.type === 'none' && (
         <CircularProgress size={24} sx={{ ml: 1 }} />
       )}
     </Paper>
@@ -359,7 +372,7 @@ export const viewVsBotGameScreen = <PlayerType,>({
         p: 1,
         flex: 1,
         overflow: 'hidden',
-        ...(turn === userPlayer && !isGameOver ? turnSx : {}),
+        ...(turn === userPlayer && gameOver.type !== 'none' ? turnSx : {}),
       }}
     >
       {viewPlayerIcon({ playerType: userPlayer, sx: { ...iconSize, mr: 1 } })}
@@ -379,21 +392,22 @@ export const viewVsBotGameScreen = <PlayerType,>({
 
   const isSpectating = ctx.currentUserId !== playerUserId;
 
-  const feedback = isGameOver
-    ? fragment(['Game Over'])
-    : fragment([
-        viewPlayerIcon({
-          playerType: turn,
-          sx: { width: 18, height: 18, mr: 1 / 2 },
-        }),
-        turn === userPlayer && !isSpectating ? 'Your Turn' : 'Turn',
-      ]);
+  const feedback =
+    gameOver.type !== 'none'
+      ? fragment(['Game Over'])
+      : fragment([
+          viewPlayerIcon({
+            playerType: turn,
+            sx: { width: '1rem', height: '1rem', mr: 1 / 2 },
+          }),
+          turn === userPlayer && !isSpectating ? 'Your Turn' : 'Turn',
+        ]);
 
   const sx: Sx = isSpectating
     ? {
-        borderStyle: 'solid',
-        borderWidth: 4,
-        borderColor: 'primary.main',
+        // borderStyle: 'solid',
+        // borderWidth: 4,
+        // borderColor: 'primary.main',
       }
     : {};
 
@@ -411,7 +425,7 @@ export const viewVsBotGameScreen = <PlayerType,>({
     color: '#fff',
     backgroundColor: 'rgba(0,0,0,0.4)',
     // aspectRatio: "1",
-    ...(isGameOver ? {} : { display: 'none' }),
+    // ...(gameOver.type !== 'none' ? {} : { display: 'none' }),
   };
 
   return (
@@ -453,9 +467,14 @@ export const viewVsBotGameScreen = <PlayerType,>({
 
       <Box position="relative" display="flex">
         {viewBoard()}
-        <Box sx={overlaySx}>
-          <Typography variant="h1">Game Over</Typography>
-        </Box>
+        <Fade in={gameOver.type !== 'none'}>
+          <Box sx={overlaySx}>
+            {viewGameOverMessage({
+              viewPlayerIcon,
+              gameOver,
+            })}
+          </Box>
+        </Fade>
       </Box>
 
       <Box flex={1} />
@@ -474,4 +493,41 @@ export const viewVsBotGameScreen = <PlayerType,>({
       )}
     </FillBox>
   );
+};
+
+const viewGameOverMessage = <PlayerType,>({
+  gameOver,
+  viewPlayerIcon,
+}: {
+  gameOver: GameOver<PlayerType>;
+  viewPlayerIcon: (props: { playerType: PlayerType; sx: Sx }) => ViewNode;
+}) => {
+  if (gameOver.type === 'draw') {
+    return <Typography variant="h1">Draw</Typography>;
+  }
+
+  if (gameOver.type === 'winner') {
+    return (
+      <Typography
+        variant="h1"
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 1,
+        }}
+      >
+        {viewPlayerIcon({
+          sx: {
+            width: '3.5rem',
+            height: '3.5rem',
+          },
+          playerType: gameOver.winner,
+        })}
+        Won
+      </Typography>
+    );
+  }
+
+  return <Typography variant="h1">Game Over</Typography>;
 };

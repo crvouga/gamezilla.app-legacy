@@ -44,7 +44,7 @@ export const init: Model = {
 export type Msg =
   | ['ClickedBack']
   | ['ClickedSend']
-  | ['InputtedEmailAddress', string]
+  | ['inputted-email-address', string]
   | [
       'Send_Done',
       {
@@ -58,7 +58,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     case 'ClickedBack':
       return [model, Route.back];
 
-    case 'InputtedEmailAddress':
+    case 'inputted-email-address':
       return [{ ...model, emailAddress: msg[1] }, Cmd.None];
 
     case 'ClickedSend':
@@ -149,7 +149,7 @@ export const View = ({
           label="Email Address"
           value={model.emailAddress}
           onChange={(event) => {
-            $send(['InputtedEmailAddress', event.target.value]);
+            $send(['inputted-email-address', event.target.value]);
           }}
         />
 

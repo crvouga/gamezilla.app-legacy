@@ -64,7 +64,7 @@ export type Msg =
   | ['ClickedLogin']
   | ['ClickedTogglePasswordVisibility']
   | ['ClickedCreateAccount']
-  | ['InputtedEmailAddress', string]
+  | ['inputted-email-address', string]
   | ['InputtedPassword', string]
   | ['CreateAccount_Done', AccountStore.CreateResult]
   | ['Focus_Done', Browser.FocusResult];
@@ -91,7 +91,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       ];
     }
 
-    case 'InputtedEmailAddress': {
+    case 'inputted-email-address': {
       return [
         {
           ...model,
@@ -243,7 +243,7 @@ export const View = ({
           label="Email Address"
           value={model.emailAddress}
           onChange={(event) =>
-            $send(['InputtedEmailAddress', event.target.value])
+            $send(['inputted-email-address', event.target.value])
           }
           error={
             model.submission.type === 'ProblemValidation' &&

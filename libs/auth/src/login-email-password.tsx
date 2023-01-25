@@ -52,16 +52,16 @@ export type Msg =
   | ['ClickedLogin']
   | ['ClickedCreateAccount']
   | ['ClickedResetPassword']
-  | ['InputtedEmailAddress', string]
+  | ['inputted-email-address', string]
   | ['InputtedPassword', string]
   | ['Focus_Done', Browser.FocusResult]
-  | ['Login_Done', Auth.AuthResult];
+  | ['login-done', Auth.AuthResult];
 
 const passwordFieldId = 'password';
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'InputtedEmailAddress': {
+    case 'inputted-email-address': {
       return [{ ...model, emailAddress: msg[1] }, Cmd.None];
     }
 
@@ -97,12 +97,12 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
             emailAddress: model.emailAddress,
             password: model.password,
           }),
-          Cmd.perform((result) => ['Login_Done', result])
+          Cmd.perform((result) => ['login-done', result])
         ),
       ];
     }
 
-    case 'Login_Done': {
+    case 'login-done': {
       switch (msg[1].type) {
         case 'Err':
           return [
@@ -191,7 +191,7 @@ export const View = ({
           label="Email Address"
           value={model.emailAddress}
           onChange={(event) => {
-            $send(['InputtedEmailAddress', event.target.value]);
+            $send(['inputted-email-address', event.target.value]);
           }}
         />
 

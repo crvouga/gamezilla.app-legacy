@@ -35,16 +35,16 @@ export const init: Model = {
 
 export type Msg =
   | ['ClickedBack']
-  | ['ClickedSendLoginLink']
-  | ['InputtedEmailAddress', string]
-  | ['Login_Done', Auth.AuthResult];
+  | ['clicked-send-login-link']
+  | ['inputted-email-address', string]
+  | ['login-done', Auth.AuthResult];
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'InputtedEmailAddress':
+    case 'inputted-email-address':
       return [{ ...model, emailAddress: msg[1] }, Cmd.None];
 
-    case 'Login_Done': {
+    case 'login-done': {
       switch (msg[1].type) {
         case 'Err': {
           return [
@@ -79,7 +79,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       }
     }
 
-    case 'ClickedSendLoginLink': {
+    case 'clicked-send-login-link': {
       return [
         {
           ...model,
@@ -90,7 +90,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
         },
         p(
           Auth.loginWithEmailLink({ emailAddress: model.emailAddress }),
-          Cmd.perform(t('Login_Done'))
+          Cmd.perform(t('login-done'))
         ),
       ];
     }
@@ -140,7 +140,7 @@ export const View = ({
           label="Email Address"
           value={model.emailAddress}
           onChange={(event) => {
-            $send(['InputtedEmailAddress', event.target.value]);
+            $send(['inputted-email-address', event.target.value]);
           }}
         />
 
@@ -149,7 +149,7 @@ export const View = ({
           size="large"
           fullWidth
           loading={model.submission.type === 'Loading'}
-          onClick={() => $send(['ClickedSendLoginLink'])}
+          onClick={() => $send(['clicked-send-login-link'])}
           sx={{ marginBottom: 2 }}
         >
           Send Login Link
