@@ -17,7 +17,7 @@ export const viewCoverArt = (gameName: GameName) => {
       return <ConnectFour.ViewCoverArt />;
     }
 
-    case 'Gomoku': {
+    case 'gomoku': {
       return Gomoku.viewCoverArt();
     }
 
@@ -49,7 +49,7 @@ export const gameNameToString = (gameName: GameName) => {
       return 'Connect Four';
     }
 
-    case 'Gomoku': {
+    case 'gomoku': {
       return 'Gomoku';
     }
 

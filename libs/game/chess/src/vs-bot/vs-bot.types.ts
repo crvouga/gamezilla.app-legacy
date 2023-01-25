@@ -414,9 +414,9 @@ export const inputMove = (
 //
 //
 
-export type BotMoved = ['BotMoved', Board.BestMoveInputResult];
+export type BotMoved = ['bot-moved', Board.BestMoveInputResult];
 export type BotMoved_Done = [
-  'BotMoved_Done',
+  'bot-moved_Done',
   Result<BotMovedProblem, SharedModel & { didCapture: boolean }>
 ];
 export type BotMovedProblem =

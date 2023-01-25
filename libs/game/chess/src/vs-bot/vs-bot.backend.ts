@@ -45,12 +45,12 @@ export const update = (
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'BotMoved': {
+    case 'bot-moved': {
       const result = botMoved(msg[1], model);
 
       const modelNew = result.type === 'Err' ? model : result.value;
 
-      return [modelNew, broadcast(['BotMoved_Done', result])];
+      return [modelNew, broadcast(['bot-moved_Done', result])];
     }
   }
 };
@@ -82,7 +82,7 @@ const toBotMoveCmd = (modelPrev: Model, modelNext: Model): Cmd<Msg> => {
 
   const cmd = p(
     Board.getBestMove(modelNext.botLevel, modelNext.board),
-    Cmd.perform((result): Msg => ['BotMoved', result])
+    Cmd.perform((result): Msg => ['bot-moved', result])
   );
 
   return cmd;

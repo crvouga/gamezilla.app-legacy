@@ -144,7 +144,7 @@ export const view = ({
   switch (model.type) {
     case 'setup': {
       return viewVsUserSetupScreen({
-        title: 'Gomoku',
+        title: 'gomoku',
         subtitle: 'Player Vs Player',
         coverArt: viewCoverArt(),
         ctx,

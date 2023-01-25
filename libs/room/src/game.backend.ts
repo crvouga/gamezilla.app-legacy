@@ -1,7 +1,7 @@
 import { Cmd, Sub } from '@gamezilla/core';
 import { ChessBackend as Chess } from '@gamezilla/game/chess';
 import { ConnectFourBackend as ConnectFour } from '@gamezilla/game/connect-four';
-import { GomokuBackend as Gomoku } from '@gamezilla/game/gomoku';
+import { gomokuBackend as gomoku } from '@gamezilla/game/gomoku';
 import { MazeBackend as Maze } from '@gamezilla/game/maze';
 import { SnakeBackend as Snake } from '@gamezilla/game/snake';
 import { TetrisBackend as Tetris } from '@gamezilla/game/tetris';
@@ -33,8 +33,8 @@ export const init = ({ gameName }: { gameName: Model['type'] }): Model => {
       return { type: 'Chess', child: Chess.init };
     }
 
-    case 'Gomoku': {
-      return { type: 'Gomoku', child: Gomoku.init };
+    case 'gomoku': {
+      return { type: 'gomoku', child: gomoku.init };
     }
 
     case 'Tetris': {
@@ -103,10 +103,10 @@ export const update = (
       return [model, Cmd.None];
     }
 
-    case 'Gomoku': {
-      if (model.type === 'Gomoku') {
-        const [child, cmd] = Gomoku.update(msg[1], model.child);
-        return [{ type: 'Gomoku', child }, Cmd.tag('Gomoku', cmd)];
+    case 'gomoku': {
+      if (model.type === 'gomoku') {
+        const [child, cmd] = gomoku.update(msg[1], model.child);
+        return [{ type: 'gomoku', child }, Cmd.tag('gomoku', cmd)];
       }
       return [model, Cmd.None];
     }
@@ -218,18 +218,18 @@ export const updateFromFrontend = (
       return [model, Cmd.None];
     }
 
-    case 'Gomoku': {
-      if (model.type === 'Gomoku') {
-        const [child, cmd] = Gomoku.updateFromFrontend(
+    case 'gomoku': {
+      if (model.type === 'gomoku') {
+        const [child, cmd] = gomoku.updateFromFrontend(
           {
             ctx: { currentUserId },
-            broadcast: (m) => broadcast(['Gomoku', m]),
-            sendToClient: (m) => sendToClient(['Gomoku', m]),
+            broadcast: (m) => broadcast(['gomoku', m]),
+            sendToClient: (m) => sendToClient(['gomoku', m]),
           },
           msg[1],
           model.child
         );
-        return [{ type: 'Gomoku', child }, Cmd.tag('Gomoku', cmd)];
+        return [{ type: 'gomoku', child }, Cmd.tag('gomoku', cmd)];
       }
       return [model, Cmd.None];
     }
@@ -317,9 +317,9 @@ export const updateRoomLeave = (
       return [{ type: 'TicTacToe', child }, Cmd.tag('TicTacToe', cmd)];
     }
 
-    case 'Gomoku': {
-      const [child, cmd] = Gomoku.updateRoomLeave(userId, model.child);
-      return [{ type: 'Gomoku', child }, Cmd.tag('Gomoku', cmd)];
+    case 'gomoku': {
+      const [child, cmd] = gomoku.updateRoomLeave(userId, model.child);
+      return [{ type: 'gomoku', child }, Cmd.tag('gomoku', cmd)];
     }
 
     case 'Tetris': {
@@ -367,8 +367,8 @@ export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
       return Sub.tag('Chess', Chess.subscriptions(intervalId, model.child));
     }
 
-    case 'Gomoku': {
-      return Sub.tag('Gomoku', Gomoku.subscriptions(model.child));
+    case 'gomoku': {
+      return Sub.tag('gomoku', gomoku.subscriptions(model.child));
     }
 
     case 'Tetris': {

@@ -64,7 +64,7 @@ export const updateFromBackend = (
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'BotMoved': {
+    case 'bot-moved': {
       const merged = mergeWithBackend({
         frontendModel: model,
         backendModel: msg[1],
@@ -142,7 +142,7 @@ export const view = ({
           icon: ({ sx, playerType: stone }) => viewStoneIcon({ ...sx, stone }),
         },
         ctx,
-        title: 'Gomoku',
+        title: 'gomoku',
         subtitle: 'Vs Computer',
         onCancel: onBack,
         onStartPlaying: () => $send(['start-playing']),
