@@ -282,10 +282,14 @@ export const View = ({
   return viewVsBotGameScreen<PlayerType>({
     gameOver:
       status.type === 'Tie'
-        ? { type: 'tie' }
+        ? { type: 'draw' }
         : status.type === 'Winner'
         ? { type: 'winner', winner: status.winner }
         : { type: 'none' },
+    gameOverActions: [
+      ['Play Again', 'restart', () => $send(['restart'])],
+      ['Exit', 'exit', () => $send(['stop-game'])],
+    ],
     botName: model.botLevel,
     botPlayer: opposite[model.userPlayerType],
     ctx,

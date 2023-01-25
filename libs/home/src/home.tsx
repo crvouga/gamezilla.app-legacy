@@ -43,7 +43,7 @@ export const init: Model = null;
 //
 
 export type Msg =
-  | ['ClickedCurrentRoom']
+  | ['clicked-current-room']
   | ['ClickedCurrentroom-leave']
   | ['ClickedCurrentroom-destroy']
   | ['clicked-room', { roomId: RoomId }]
@@ -111,7 +111,7 @@ export const update = (
       ];
     }
 
-    case 'ClickedCurrentRoom': {
+    case 'clicked-current-room': {
       return [model, [['route', ['Push', ['game']]]]];
     }
   }
@@ -195,7 +195,7 @@ export const View = ({
         </Typography>
 
         <Paper sx={{ display: 'flex', flexDirection: 'column' }}>
-          <CardActionArea onClick={() => $send(['ClickedCurrentRoom'])}>
+          <CardActionArea onClick={() => $send(['clicked-current-room'])}>
             <AspectRatio aspectRatio={Math.pow(3 / 4, 4)}>
               {gameName ? (
                 viewCoverArt(gameName)

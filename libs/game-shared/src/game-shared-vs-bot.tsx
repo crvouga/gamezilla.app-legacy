@@ -6,7 +6,6 @@ import {
   Button,
   CircularProgress,
   Divider,
-  Fade,
   FillBox,
   fragment,
   icon,
@@ -314,6 +313,7 @@ export const viewVsBotGameScreen = <PlayerType,>({
   viewPlayerIcon,
   viewBoard,
   gameOver,
+  gameOverActions,
 }: {
   gameOver: GameOver<PlayerType>;
   turn: PlayerType;
@@ -324,6 +324,7 @@ export const viewVsBotGameScreen = <PlayerType,>({
   playerUserId: UserId;
   ctx: Ctx;
   actions: [string, IconName, () => void][];
+  gameOverActions: [string, IconName, () => void][];
   viewPlayerIcon: (props: { playerType: PlayerType; sx: Sx }) => ViewNode;
   viewBoard: () => ViewNode;
 }) => {
@@ -338,9 +339,16 @@ export const viewVsBotGameScreen = <PlayerType,>({
     borderBottomColor: 'primary.main',
   };
 
+  const notTurnSx: Sx = {
+    borderBottomWidth: 2,
+    borderBottomStyle: 'solid',
+    borderBottomColor: '#343434',
+  };
+
   const botSlot = (
     <Paper
       key={botName}
+      variant="outlined"
       sx={{
         display: 'flex',
         variant: 'outlined',
@@ -349,7 +357,9 @@ export const viewVsBotGameScreen = <PlayerType,>({
         p: 1,
         flex: 1,
         overflow: 'hidden',
-        ...(turn === botPlayer && gameOver.type !== 'none' ? turnSx : {}),
+        ...(turn === botPlayer && gameOver.type === 'none'
+          ? turnSx
+          : notTurnSx),
       }}
     >
       {viewPlayerIcon({ playerType: botPlayer, sx: { ...iconSize, mr: 1 } })}
@@ -365,6 +375,7 @@ export const viewVsBotGameScreen = <PlayerType,>({
 
   const userSlot = (
     <Paper
+      variant="outlined"
       sx={{
         display: 'flex',
         variant: 'outlined',
@@ -372,7 +383,9 @@ export const viewVsBotGameScreen = <PlayerType,>({
         p: 1,
         flex: 1,
         overflow: 'hidden',
-        ...(turn === userPlayer && gameOver.type !== 'none' ? turnSx : {}),
+        ...(turn === userPlayer && gameOver.type === 'none'
+          ? turnSx
+          : notTurnSx),
       }}
     >
       {viewPlayerIcon({ playerType: userPlayer, sx: { ...iconSize, mr: 1 } })}
@@ -425,7 +438,7 @@ export const viewVsBotGameScreen = <PlayerType,>({
     color: '#fff',
     backgroundColor: 'rgba(0,0,0,0.4)',
     // aspectRatio: "1",
-    // ...(gameOver.type !== 'none' ? {} : { display: 'none' }),
+    ...(gameOver.type !== 'none' ? {} : { display: 'none' }),
   };
 
   return (
@@ -467,19 +480,39 @@ export const viewVsBotGameScreen = <PlayerType,>({
 
       <Box position="relative" display="flex">
         {viewBoard()}
-        <Fade in={gameOver.type !== 'none'}>
-          <Box sx={overlaySx}>
-            {viewGameOverMessage({
-              viewPlayerIcon,
-              gameOver,
-            })}
-          </Box>
-        </Fade>
+        {/* <Fade in={gameOver.type !== 'none'}> */}
+        <Box sx={overlaySx}>
+          {viewGameOverMessage({
+            viewPlayerIcon,
+            gameOver,
+          })}
+        </Box>
+        {/* </Fade> */}
       </Box>
+
+      {gameOver.type !== 'none' && (
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, p: 2 }}>
+          {gameOverActions.map(([label, iconName, onPress]) => {
+            return (
+              <Button
+                key={label}
+                startIcon={icon(iconName)}
+                fullWidth
+                variant="contained"
+                color="primary"
+                size="large"
+                onClick={onPress}
+              >
+                {label}
+              </Button>
+            );
+          })}
+        </Box>
+      )}
 
       <Box flex={1} />
 
-      {!isSpectating && (
+      {!isSpectating && gameOver.type === 'none' && (
         <Box display="flex" alignItems="center" width="100%">
           {actions.map(([label, iconName, onPress]) => (
             <ActionButton
