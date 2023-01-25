@@ -104,7 +104,7 @@ export type Response =
   | StartGame_Done
   | StopGame_Done
   | InputMove_Done
-  | SwapSides_Done
+  | SwapSidesDone
   | Restart_Done;
 
 //
@@ -402,13 +402,13 @@ export const inputMove = (
 //
 
 type SwapSides = ['swap-sides', { userId: UserId }];
-type SwapSides_Done = ['SwapSides_Done', Result<SwapSidesProblem, SharedModel>];
-type SwapSidesProblem = 'not_in_game' | 'not_playing';
+type SwapSidesDone = ['swap-sides-done', Result<SwapSideProblem, SharedModel>];
+type SwapSideProblem = 'not_in_game' | 'not_playing';
 
 export const swapSides = (
   { userId }: SwapSides[1],
   model: SharedModel
-): SwapSides_Done[1] => {
+): SwapSidesDone[1] => {
   if (model.type !== 'game') {
     return Err('not_in_game');
   }

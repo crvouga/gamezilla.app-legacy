@@ -91,7 +91,7 @@ export const updateFromBackend = (
     case 'StopGame_Done':
     case 'InputMove_Done':
     case 'Restart_Done':
-    case 'SwapSides_Done':
+    case 'swap-sides_Done':
     case 'InputPlayerType_Done': {
       if (msg[1].type === 'Err') {
         return [model, Cmd.None, []];
