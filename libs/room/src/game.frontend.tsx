@@ -2,7 +2,7 @@ import { Cmd, Sub } from '@gamezilla/core';
 import { GameRoomCtx } from '@gamezilla/game-shared';
 import { ChessFrontend as Chess } from '@gamezilla/game/chess';
 import { ConnectFourFrontend as ConnectFour } from '@gamezilla/game/connect-four';
-import { GomokuFrontend as Gomoku } from '@gamezilla/game/gomoku';
+import { gomokuFrontend as gomoku } from '@gamezilla/game/gomoku';
 import { MazeFrontend as Maze } from '@gamezilla/game/maze';
 import { SnakeFrontend as Snake } from '@gamezilla/game/snake';
 import { TetrisFrontend as Tetris } from '@gamezilla/game/tetris';
@@ -46,8 +46,8 @@ export const init = ({
       return [{ type: 'Chess', child }, Cmd.tag('Chess', cmd)];
     }
 
-    case 'Gomoku': {
-      return [{ type: 'Gomoku', child: Gomoku.init }, Cmd.None];
+    case 'gomoku': {
+      return [{ type: 'gomoku', child: gomoku.init }, Cmd.None];
     }
 
     case 'Tetris': {
@@ -125,14 +125,14 @@ export const update = (
       return [model, Cmd.None];
     }
 
-    case 'Gomoku': {
-      if (msg[0] === 'Gomoku') {
-        const [child, cmd] = Gomoku.update(
-          { sendToBackend: (msg) => sendToBackend(['Gomoku', msg]) },
+    case 'gomoku': {
+      if (msg[0] === 'gomoku') {
+        const [child, cmd] = gomoku.update(
+          { sendToBackend: (msg) => sendToBackend(['gomoku', msg]) },
           msg[1],
           model.child
         );
-        return [{ type: 'Gomoku', child }, Cmd.tag('Gomoku', cmd)];
+        return [{ type: 'gomoku', child }, Cmd.tag('gomoku', cmd)];
       }
       return [model, Cmd.None];
     }
@@ -234,10 +234,10 @@ export const updateFromBackend = (
       return [model, Cmd.None, []];
     }
 
-    case 'Gomoku': {
-      if (model.type === 'Gomoku') {
-        const [child, cmd] = Gomoku.updateFromBackend(msg[1], model.child);
-        return [{ type: 'Gomoku', child }, Cmd.tag('Gomoku', cmd), []];
+    case 'gomoku': {
+      if (model.type === 'gomoku') {
+        const [child, cmd] = gomoku.updateFromBackend(msg[1], model.child);
+        return [{ type: 'gomoku', child }, Cmd.tag('gomoku', cmd), []];
       }
       return [model, Cmd.None, []];
     }
@@ -301,8 +301,8 @@ export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
       return Sub.tag('Chess', Chess.subscriptions(model.child));
     }
 
-    case 'Gomoku': {
-      return Sub.tag('Gomoku', Gomoku.subscriptions(model.child));
+    case 'gomoku': {
+      return Sub.tag('gomoku', gomoku.subscriptions(model.child));
     }
 
     case 'Tetris': {
@@ -372,9 +372,9 @@ export const View = ({
       );
     }
 
-    case 'Gomoku': {
-      return Gomoku.view({
-        $send: (msg) => $send(['Gomoku', msg]),
+    case 'gomoku': {
+      return gomoku.view({
+        $send: (msg) => $send(['gomoku', msg]),
         model: model.child,
         gameRoomCtx,
         ctx,
@@ -504,12 +504,12 @@ export const mergeWithBackend = ({
       ];
     }
 
-    case 'Gomoku': {
-      if (frontendModel.type === 'Gomoku') {
+    case 'gomoku': {
+      if (frontendModel.type === 'gomoku') {
         return [
           {
-            type: 'Gomoku',
-            child: Gomoku.mergeWithBackend({
+            type: 'gomoku',
+            child: gomoku.mergeWithBackend({
               frontendModel: frontendModel.child,
               backendModel: backendModel.child,
             }),
@@ -520,9 +520,9 @@ export const mergeWithBackend = ({
 
       return [
         {
-          type: 'Gomoku',
-          child: Gomoku.mergeWithBackend({
-            frontendModel: Gomoku.init,
+          type: 'gomoku',
+          child: gomoku.mergeWithBackend({
+            frontendModel: gomoku.init,
             backendModel: backendModel.child,
           }),
         },

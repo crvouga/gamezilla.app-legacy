@@ -167,7 +167,7 @@ const updateFromBackend_ = (
       return [model, Cmd.None, []];
     }
 
-    case 'BotMoved_Done': {
+    case 'bot-moved_Done': {
       const result = msg[1];
 
       if (result.type === 'Err') {

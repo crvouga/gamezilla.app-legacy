@@ -66,7 +66,10 @@ export const updateFromFrontend: UpdateFromFrontend = (
 
   const modelNew = handled.value;
 
-  return [modelNew, Cmd.batch([cmd, params.broadcast(['BotMoved', modelNew])])];
+  return [
+    modelNew,
+    Cmd.batch([cmd, params.broadcast(['bot-moved', modelNew])]),
+  ];
 };
 
 const updateFromFrontend_: UpdateFromFrontend = (
