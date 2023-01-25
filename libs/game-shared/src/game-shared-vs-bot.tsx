@@ -547,13 +547,14 @@ const viewGameOverMessage = <PlayerType,>({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: 1,
+          gap: 2,
+          fontSize: '4rem',
         }}
       >
         {viewPlayerIcon({
           sx: {
-            width: '3.5rem',
-            height: '3.5rem',
+            width: '4rem',
+            height: '4rem',
           },
           playerType: gameOver.winner,
         })}
