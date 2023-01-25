@@ -178,7 +178,11 @@ export const view = ({
         playerUserId: model.userId,
         turn: toTurn(model.board),
         userPlayer: model.userStone,
-        viewBoard: () => viewBoard({ board: model.board }),
+        viewBoard: () =>
+          viewBoard({
+            board: model.board,
+            onPress: (position) => $send(['input-move', { position }]),
+          }),
         viewPlayerIcon: ({ sx, playerType: stone }) =>
           viewStoneIcon({ ...sx, stone }),
       });

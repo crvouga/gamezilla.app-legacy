@@ -646,7 +646,7 @@ export const ViewPageGame = ({
           Home
         </Button>
         <Typography variant="h6" sx={{ flex: 1, textAlign: 'center' }}>
-          {game ? gameNameToString(game.type) : 'game'}
+          {game ? gameNameToString(game.type) : 'Game'}
         </Typography>
         <Badge
           badgeContent={usersInRoom.length > 1 ? usersInRoom.length : undefined}
@@ -724,6 +724,24 @@ export const ViewNotInGame = ({
           </Typography>
           <Typography align="center">No game selected</Typography>
         </Box>
+        <Box sx={{ flex: 1 }} />
+        <Box sx={{ p: 2 }}>
+          <Button
+            variant="outlined"
+            startIcon={<Icons.ChevronLeft />}
+            fullWidth
+            onClick={() =>
+              $send([
+                'room-leave',
+                {
+                  userId: ctx.currentUserId,
+                },
+              ])
+            }
+          >
+            Leave Room
+          </Button>
+        </Box>
       </FillBox>
     );
   }
@@ -755,6 +773,16 @@ export const ViewNotInGame = ({
       </Box>
 
       <Box sx={{ flex: 1 }} />
+      <Box sx={{ p: 2 }}>
+        <Button
+          variant="outlined"
+          startIcon={<Icons.Close />}
+          fullWidth
+          onClick={() => $send(['room-destroy', { userId: ctx.currentUserId }])}
+        >
+          End Room
+        </Button>
+      </Box>
     </FillBox>
   );
 };
