@@ -42,10 +42,10 @@ export const init: Model = {
 
 export type Msg =
   | ['ClickedBack']
-  | ['ClickedSendCode']
-  | ['InputtedPhoneNumber', string]
+  | ['clicked-send-code']
+  | ['inputted-phone-number', string]
   | ['InputtedCountry', Iso3166Alpha2Code]
-  | ['SendCode_Done', PhoneNumber, Auth.AuthResult];
+  | ['send-code-done', PhoneNumber, Auth.AuthResult];
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
@@ -53,7 +53,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       return [model, Route.back];
     }
 
-    case 'ClickedSendCode': {
+    case 'clicked-send-code': {
       if (model.phoneNumber.length === 0) {
         return [{ ...model, validation: 'EmptyPhoneNumber' }, Cmd.None];
       }
@@ -70,12 +70,12 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
         { ...model, submission: { type: 'Loading' } },
         p(
           Auth.sendCode({ phoneNumber: phoneNumber }),
-          Cmd.perform((result): Msg => ['SendCode_Done', phoneNumber, result])
+          Cmd.perform((result): Msg => ['send-code-done', phoneNumber, result])
         ),
       ];
     }
 
-    case 'InputtedPhoneNumber': {
+    case 'inputted-phone-number': {
       return [
         { ...model, phoneNumber: msg[1], validation: 'NotChecked' },
         Cmd.None,
@@ -89,7 +89,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       ];
     }
 
-    case 'SendCode_Done': {
+    case 'send-code-done': {
       const phoneNumber = msg[1];
       const result = msg[2];
 
@@ -175,7 +175,7 @@ export const View = ({
           label="Phone Number"
           value={model.phoneNumber}
           onChange={(event) => {
-            $send(['InputtedPhoneNumber', event.target.value]);
+            $send(['inputted-phone-number', event.target.value]);
           }}
           error={
             model.validation === 'InvalidPhoneNumber' ||
@@ -197,7 +197,7 @@ export const View = ({
           size="large"
           fullWidth
           loading={model.submission.type === 'Loading'}
-          onClick={() => $send(['ClickedSendCode'])}
+          onClick={() => $send(['clicked-send-code'])}
         >
           Send Code
         </UI.Button>

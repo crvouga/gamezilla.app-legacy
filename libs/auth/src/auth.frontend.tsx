@@ -55,7 +55,7 @@ export const updateFromBackend = ({
   model: Model;
 }): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'VerifyCode_Done':
+    case 'verify-code-done':
     case 'LoginWithCode_Done': {
       return [model, Cmd.None];
     }

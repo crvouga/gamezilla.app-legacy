@@ -47,7 +47,7 @@ export const init = ({
       requests: {},
       volume: 0,
     },
-    sendToBackend(['PartyGet', null]),
+    sendToBackend(['party-get', null]),
   ];
 };
 
@@ -82,7 +82,7 @@ export const update = (
       return [model, Cmd.None];
     }
 
-    case 'PartyGet':
+    case 'party-get':
     case 'PartyCreate':
     case 'PartyDestroy':
     case 'PartyLeave':
@@ -108,7 +108,7 @@ export const updateFromBackend = (
   model: Model
 ): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-    case 'PartyGet':
+    case 'party-get':
     case 'PartyDestroy':
     case 'PartyCreate':
     case 'PartyJoin':

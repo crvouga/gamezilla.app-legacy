@@ -45,4 +45,4 @@ type Req =
 
 type Res =
   | ['LoginWithCode_Done', null]
-  | ['VerifyCode_Done', Result<'wrong_code', null>];
+  | ['verify-code-done', Result<'wrong_code', null>];
