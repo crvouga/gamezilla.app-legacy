@@ -1,22 +1,9 @@
-import { keyframes } from '@emotion/react';
 import { Animation, Cmd, Sub } from '@gamezilla/core';
 import {
   viewVsBotGameScreen,
   viewVsBotSetupScreen,
 } from '@gamezilla/game-shared';
-import { Alerts, Ctx, UserId } from '@gamezilla/shared';
-import {
-  ActionButton,
-  Avatar,
-  Box,
-  CircularProgress,
-  Fade,
-  FillBox,
-  Icons,
-  Paper,
-  Typography,
-  useTheme,
-} from '@gamezilla/shared/ui';
+import { Alerts, Ctx } from '@gamezilla/shared';
 import {
   opposite,
   PlayerType,
@@ -25,7 +12,6 @@ import {
   toTurn,
 } from '../connect-four/connect-four';
 import {
-  gameTheme,
   initVisual,
   isDone,
   PlayerIcon,
@@ -37,17 +23,12 @@ import {
   BackendModel,
   BotLevel,
   botLevel,
-  FrontendGameModel,
   FrontendModel,
   FrontendMsg,
-  GameModel,
-  GameOver,
   handle,
   initShared,
-  isBotTurn,
   ToBackend,
   ToFrontend,
-  toGameOver,
 } from './vs-bot.types';
 
 //
@@ -286,7 +267,7 @@ export const View = ({
         icon: ({ sx, playerType }) => (
           <PlayerIcon
             playerType={playerType}
-            sx={{ width: '1rem', height: '1rem', ...sx }}
+            sx={{ width: '1.5rem', height: '1.5rem', ...sx }}
           />
         ),
       },
@@ -297,10 +278,14 @@ export const View = ({
   }
 
   const status = toStatus(model.columns);
-  const isGameOver = status.type === 'Winner' || status.type === 'Tie';
 
   return viewVsBotGameScreen<PlayerType>({
-    isGameOver: isGameOver,
+    gameOver:
+      status.type === 'Tie'
+        ? { type: 'tie' }
+        : status.type === 'Winner'
+        ? { type: 'winner', winner: status.winner }
+        : { type: 'none' },
     botName: model.botLevel,
     botPlayer: opposite[model.userPlayerType],
     ctx,
@@ -333,311 +318,4 @@ export const View = ({
       />
     ),
   });
-};
-
-export const viewGame = ({
-  model,
-  ctx,
-  $send,
-}: {
-  model: FrontendGameModel;
-  ctx: Ctx;
-  $send: (msg: Msg) => void;
-}) => {
-  const stopGameRes = handle(ctx, ['stop-game'], model);
-  const restartRes = handle(ctx, ['restart'], model);
-  const swapSidesRes = handle(ctx, ['swap-sides'], model);
-  const gameOver = toGameOver(model);
-  return (
-    <FillBox>
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          padding: 1,
-          gap: 1,
-        }}
-      >
-        <ViewGamePlayerSlot model={model} ctx={ctx} playerType="PlayerOne" />
-        <ViewGamePlayerSlot model={model} ctx={ctx} playerType="PlayerTwo" />
-      </Box>
-
-      <FeedbackBar ctx={ctx} model={model} />
-
-      <Box sx={{ position: 'relative', mt: 1 }}>
-        <ViewColumns
-          ghost={
-            ctx.currentUserId === model.player &&
-            toTurn(model.columns) === model.userPlayerType &&
-            model.ghostIndex !== 'none'
-              ? {
-                  columnIndex: model.ghostIndex,
-                  playerType: model.userPlayerType,
-                }
-              : undefined
-          }
-          columns={model.columns}
-          onHover={(columnIndex) => $send(['hovered', { columnIndex }])}
-          onClick={(columnIndex) => $send(['input-move', { columnIndex }])}
-          visual={model.visual}
-        />
-        <Fade in={gameOver.type !== 'none'}>
-          <Box
-            onClick={() => $send(['restart'])}
-            sx={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              background: 'rgba(0, 0, 0, 0.333)',
-              color: '#fff',
-            }}
-          >
-            {gameOver.type !== 'none' && (
-              <ViewGameOverMessage
-                model={model}
-                currentUserId={ctx.currentUserId}
-                gameOver={gameOver}
-              />
-            )}
-          </Box>
-        </Fade>
-      </Box>
-
-      <Box sx={{ flex: 1 }} />
-      <Box sx={{ display: 'flex' }}>
-        <ActionButton
-          icon={<Icons.ExitToApp sx={{ transform: 'rotate(180deg)' }} />}
-          label="Exit"
-          onClick={() => $send(['stop-game'])}
-          disabled={stopGameRes.type === 'Err'}
-        />
-        <ActionButton
-          icon={<Icons.RestartAlt />}
-          label="restart"
-          onClick={() => $send(['restart'])}
-          disabled={restartRes.type === 'Err'}
-        />
-        <ActionButton
-          icon={<Icons.SwapHorizSharp />}
-          label="Swap"
-          onClick={() => $send(['swap-sides'])}
-          disabled={swapSidesRes.type === 'Err'}
-        />
-      </Box>
-    </FillBox>
-  );
-};
-
-const flicker = keyframes`
-  0% { opacity: 1; }
-  50% { opacity: 0.66; }
-  100% { opacity: 1; }
-`;
-
-const FeedbackBar = ({ ctx, model }: { ctx: Ctx; model: GameModel }) => {
-  const status = toStatus(model.columns);
-  if (status.type !== 'Playing') {
-    return (
-      <Typography align="center" color="text.secondary">
-        Game Over
-      </Typography>
-    );
-  }
-
-  if (status.turn === model.userPlayerType) {
-    if (ctx.currentUserId === model.player) {
-      return (
-        <Typography
-          align="center"
-          color="text.secondary"
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            animation: `${flicker} 0.75s infinite ease`,
-          }}
-        >
-          <PlayerIcon
-            sx={{ width: '1rem', height: '1rem', marginRight: 1 / 2 }}
-            playerType={status.turn}
-          />
-          Your Turn
-        </Typography>
-      );
-    }
-
-    return (
-      <Typography
-        align="center"
-        color="text.secondary"
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          animation: `${flicker} 0.75s infinite ease`,
-        }}
-      >
-        <PlayerIcon
-          sx={{ width: '1rem', height: '1rem', mr: 1 / 2 }}
-          playerType={status.turn}
-        />
-        <Avatar
-          sx={{ width: '1rem', height: '1rem', mr: 1 / 2 }}
-          src={ctx.profiles[model.player]?.avatarUrl}
-        />
-        Turn
-      </Typography>
-    );
-  }
-
-  return (
-    <Typography
-      align="center"
-      color="text.secondary"
-      sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-    >
-      <PlayerIcon
-        sx={{ width: '1rem', height: '1rem', mr: 1 / 2 }}
-        playerType={status.turn}
-      />
-      <Icons.SmartToy sx={{ width: '1rem', height: '1rem', mr: 1 / 2 }} />
-      Turn
-    </Typography>
-  );
-};
-
-const ViewGameOverMessage = ({
-  gameOver,
-  currentUserId,
-  model,
-}: {
-  model: Model;
-  currentUserId: UserId;
-  gameOver: GameOver;
-}) => {
-  switch (gameOver.type) {
-    case 'Tie': {
-      return (
-        <Typography align="center" fontSize={64}>
-          Tie
-        </Typography>
-      );
-    }
-
-    case 'Winner': {
-      const winner = gameOver.winner;
-
-      if (model.player === currentUserId) {
-        if (winner === model.userPlayerType) {
-          return (
-            <Typography align="center" fontSize={64}>
-              You Won
-            </Typography>
-          );
-        }
-
-        return (
-          <Typography align="center" fontSize={64}>
-            You Lost
-          </Typography>
-        );
-      }
-
-      const size = 72;
-      return (
-        <Box
-          sx={{
-            width: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 2,
-          }}
-        >
-          <PlayerIcon sx={{ width: size, height: size }} playerType={winner} />
-          <Typography align="center" fontSize={size}>
-            Won
-          </Typography>
-        </Box>
-      );
-    }
-  }
-};
-
-const ViewGamePlayerSlot = ({
-  model,
-  playerType,
-  ctx,
-}: {
-  model: GameModel;
-  playerType: PlayerType;
-  ctx: Ctx;
-}) => {
-  const size = { width: '1.5rem', height: '1.5rem' };
-  const status = toStatus(model.columns);
-  const uiTheme = useTheme();
-
-  return (
-    <Paper
-      // variant="outlined"
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        flex: 1,
-        overflow: 'hidden',
-        p: 1,
-        borderBottom:
-          status.type === 'Playing' && status.turn === playerType
-            ? `solid 3px ${gameTheme.primary.dark}`
-            : `solid 3px ${uiTheme.palette.divider}`,
-      }}
-    >
-      {model.userPlayerType === playerType ? (
-        <>
-          <PlayerIcon
-            playerType={playerType}
-            sx={{ ...size, marginRight: 1 }}
-          />
-          <Avatar
-            src={ctx.profiles[model.player]?.avatarUrl}
-            sx={{ ...size, marginRight: 1 }}
-          />
-          <Typography noWrap>
-            {ctx.profiles[model.player]?.username ?? '...'}
-          </Typography>
-        </>
-      ) : (
-        <>
-          <PlayerIcon
-            playerType={playerType}
-            sx={{ ...size, marginRight: 1 }}
-          />
-          <Icons.SmartToy
-            sx={{ ...size, padding: 0, margin: 0, marginRight: 1 }}
-          />
-          <Typography noWrap sx={{ flex: 1 }}>
-            {model.botLevel}
-          </Typography>
-
-          {isBotTurn(model) && (
-            <Box
-              sx={{
-                marginLeft: 1,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <CircularProgress size={size.width} />
-            </Box>
-          )}
-        </>
-      )}
-    </Paper>
-  );
 };

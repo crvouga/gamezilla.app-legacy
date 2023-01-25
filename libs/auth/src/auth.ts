@@ -45,7 +45,7 @@ export const init = (): [Model, Cmd<Msg>] => {
 
 export type Msg =
   | ['got-session', Option<Session>]
-  | ['Login_Done', Result<null, null>]
+  | ['login-done', Result<null, null>]
   | ['Logout_Done', Result<null, null>];
 
 export type Action = ['auth', ['logout']];
@@ -82,7 +82,7 @@ export const update = (
         }
       }
 
-    case 'Login_Done': {
+    case 'login-done': {
       return [model, Cmd.None];
     }
 
