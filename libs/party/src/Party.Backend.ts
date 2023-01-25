@@ -1,13 +1,13 @@
-import { Cmd, exhaustive } from "@gamezilla/core"
-import { PartyId, UserId } from "@gamezilla/shared"
+import { Cmd, exhaustive } from '@gamezilla/core';
+import { PartyId, UserId } from '@gamezilla/shared';
 import {
   BackendModel,
   BackendMsg,
   handle,
   Res,
   ToBackend,
-  ToFrontend
-} from "./Party.Types"
+  ToFrontend,
+} from './Party.Types';
 
 //
 //
@@ -17,12 +17,12 @@ import {
 //
 //
 
-export type Model = BackendModel
+export type Model = BackendModel;
 
 export const init: Model = {
   parties: {},
   users: {},
-}
+};
 
 //
 //
@@ -32,57 +32,57 @@ export const init: Model = {
 //
 //
 
-export type Msg = BackendMsg
+export type Msg = BackendMsg;
 
 export const update = (
   _wire: {
-    sendToUser: (userIds: UserId[], msg: ToFrontend) => Cmd
-    broadcast: (msg: ToFrontend) => Cmd
+    sendToUser: (userIds: UserId[], msg: ToFrontend) => Cmd;
+    broadcast: (msg: ToFrontend) => Cmd;
   },
   msg: Msg,
-  model: Model,
+  model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case "none": {
-      return [model, Cmd.None]
+    case 'none': {
+      return [model, Cmd.None];
     }
 
     default: {
-      return exhaustive(msg[0])
+      return exhaustive(msg[0]);
     }
   }
-}
+};
 
 export const updateFromFrontend = (
   {
     sendToClient,
     broadcast,
   }: {
-    broadcast: (msg: ToFrontend) => Cmd
-    sendToUser: (userId: UserId[], msg: ToFrontend) => Cmd
-    sendToClient: (msg: ToFrontend) => Cmd
+    broadcast: (msg: ToFrontend) => Cmd;
+    sendToUser: (userId: UserId[], msg: ToFrontend) => Cmd;
+    sendToClient: (msg: ToFrontend) => Cmd;
   },
   msg: ToBackend,
-  model: Model,
+  model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case "PartyCreate":
-    case "PartyDestroy":
-    case "PartyJoin":
-    case "PartyGet":
-    case "PartyLeave": {
-      const res: Res = [...msg, handle(msg, model)]
-      if (res[2].type === "Err") {
-        return [model, sendToClient(res)]
+    case 'PartyCreate':
+    case 'PartyDestroy':
+    case 'PartyJoin':
+    case 'party-get':
+    case 'PartyLeave': {
+      const res: Res = [...msg, handle(msg, model)];
+      if (res[2].type === 'Err') {
+        return [model, sendToClient(res)];
       }
-      return [res[2].value, broadcast(res)]
+      return [res[2].value, broadcast(res)];
     }
 
     default: {
-      return exhaustive(msg[0])
+      return exhaustive(msg[0]);
     }
   }
-}
+};
 
 export const sendToParty = ({
   model,
@@ -90,18 +90,18 @@ export const sendToParty = ({
   msg,
   sendToUser,
 }: {
-  model: Model
-  partyId: PartyId
-  msg: ToFrontend
-  sendToUser: (userIds: UserId[], msg: ToFrontend) => Cmd
+  model: Model;
+  partyId: PartyId;
+  msg: ToFrontend;
+  sendToUser: (userIds: UserId[], msg: ToFrontend) => Cmd;
 }): Cmd => {
-  const userIds: UserId[] = []
+  const userIds: UserId[] = [];
 
   for (const userId in model.users) {
     if (UserId.is(userId) && model.users[userId]?.partyId === partyId) {
-      userIds.push(userId)
+      userIds.push(userId);
     }
   }
 
-  return sendToUser(userIds, msg)
-}
+  return sendToUser(userIds, msg);
+};

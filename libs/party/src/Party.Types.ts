@@ -65,14 +65,14 @@ export type ToFrontend = Res;
 //
 
 export type Req =
-  | ['PartyGet', null]
+  | ['party-get', null]
   | ['PartyCreate', { userId: UserId; partyId: PartyId }]
   | ['PartyDestroy', { userId: UserId }]
   | ['PartyLeave', { userId: UserId }]
   | ['PartyJoin', { userId: UserId; partyId: PartyId }];
 
 export type Res =
-  | ['PartyGet', null, Result<Problem, SharedModel>]
+  | ['party-get', null, Result<Problem, SharedModel>]
   | [
       'PartyCreate',
       { userId: UserId; partyId: PartyId },
@@ -100,7 +100,7 @@ export const handle = (
   model: SharedModel
 ): Result<Problem, SharedModel> => {
   switch (msg[0]) {
-    case 'PartyGet': {
+    case 'party-get': {
       return Ok(model);
     }
 

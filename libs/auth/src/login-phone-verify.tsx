@@ -53,9 +53,9 @@ export const init: Model = {
 
 export type Msg =
   | ['ClickedBack']
-  | ['ClickedVerifyCode']
+  | ['clicked-verify-code']
   | ['InputtedCode', string]
-  | ['VerifyCode_Done', Auth.AuthResult]
+  | ['verify-code-done', Auth.AuthResult]
   | ['Focus_Done', Browser.FocusResult];
 
 const codeInputId = 'codeInputId';
@@ -70,12 +70,12 @@ export const update = (
       return [model, Route.back];
     }
 
-    case 'ClickedVerifyCode': {
+    case 'clicked-verify-code': {
       return [
         { code: model.code, submission: { type: 'Loading' } },
         p(
           Auth.verifyCode({ code: model.code, phoneNumber }),
-          Cmd.perform((result): Msg => ['VerifyCode_Done', result])
+          Cmd.perform((result): Msg => ['verify-code-done', result])
         ),
       ];
     }
@@ -84,7 +84,7 @@ export const update = (
       return [{ ...model, code: msg[1] }, Cmd.None];
     }
 
-    case 'VerifyCode_Done': {
+    case 'verify-code-done': {
       const result = msg[1];
 
       if (result.type === 'Err') {
@@ -154,7 +154,7 @@ export const View = ({
           size="large"
           fullWidth
           loading={model.submission.type === 'Loading'}
-          onClick={() => $send(['ClickedVerifyCode'])}
+          onClick={() => $send(['clicked-verify-code'])}
         >
           Verify Code
         </UI.Button>
