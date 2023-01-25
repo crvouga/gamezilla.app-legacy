@@ -2,7 +2,7 @@ import { Cmd, Sub } from '@gamezilla/core';
 import { GameRoomCtx } from '@gamezilla/game-shared';
 import { ChessFrontend as Chess } from '@gamezilla/game/chess';
 import { ConnectFourFrontend as ConnectFour } from '@gamezilla/game/connect-four';
-import { gomokuFrontend as gomoku } from '@gamezilla/game/gomoku';
+import { gomokuFrontend as Gomoku } from '@gamezilla/game/gomoku';
 import { MazeFrontend as Maze } from '@gamezilla/game/maze';
 import { SnakeFrontend as Snake } from '@gamezilla/game/snake';
 import { TetrisFrontend as Tetris } from '@gamezilla/game/tetris';
@@ -47,7 +47,7 @@ export const init = ({
     }
 
     case 'gomoku': {
-      return [{ type: 'gomoku', child: gomoku.init }, Cmd.None];
+      return [{ type: 'gomoku', child: Gomoku.init }, Cmd.None];
     }
 
     case 'Tetris': {
@@ -127,8 +127,8 @@ export const update = (
 
     case 'gomoku': {
       if (msg[0] === 'gomoku') {
-        const [child, cmd] = gomoku.update(
-          { sendToBackend: (msg) => sendToBackend(['gomoku', msg]) },
+        const [child, cmd] = Gomoku.update(
+          { ctx, sendToBackend: (msg) => sendToBackend(['gomoku', msg]) },
           msg[1],
           model.child
         );
@@ -236,7 +236,7 @@ export const updateFromBackend = (
 
     case 'gomoku': {
       if (model.type === 'gomoku') {
-        const [child, cmd] = gomoku.updateFromBackend(msg[1], model.child);
+        const [child, cmd] = Gomoku.updateFromBackend(msg[1], model.child);
         return [{ type: 'gomoku', child }, Cmd.tag('gomoku', cmd), []];
       }
       return [model, Cmd.None, []];
@@ -302,7 +302,7 @@ export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
     }
 
     case 'gomoku': {
-      return Sub.tag('gomoku', gomoku.subscriptions(model.child));
+      return Sub.tag('gomoku', Gomoku.subscriptions(model.child));
     }
 
     case 'Tetris': {
@@ -373,7 +373,7 @@ export const View = ({
     }
 
     case 'gomoku': {
-      return gomoku.view({
+      return Gomoku.view({
         $send: (msg) => $send(['gomoku', msg]),
         model: model.child,
         gameRoomCtx,
@@ -509,7 +509,7 @@ export const mergeWithBackend = ({
         return [
           {
             type: 'gomoku',
-            child: gomoku.mergeWithBackend({
+            child: Gomoku.mergeWithBackend({
               frontendModel: frontendModel.child,
               backendModel: backendModel.child,
             }),
@@ -521,8 +521,8 @@ export const mergeWithBackend = ({
       return [
         {
           type: 'gomoku',
-          child: gomoku.mergeWithBackend({
-            frontendModel: gomoku.init,
+          child: Gomoku.mergeWithBackend({
+            frontendModel: Gomoku.init,
             backendModel: backendModel.child,
           }),
         },
