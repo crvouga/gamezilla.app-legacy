@@ -20,6 +20,7 @@ import {
   BackendModel,
   FrontendModel,
   FrontendMsg,
+  handle,
   initShared,
   ToBackend,
   ToFrontend,
@@ -48,11 +49,19 @@ export const init = initShared;
 export type Msg = FrontendMsg;
 
 export const update = (
-  { sendToBackend }: { sendToBackend: (m: ToBackend) => Cmd },
+  { ctx, sendToBackend }: { ctx: Ctx; sendToBackend: (m: ToBackend) => Cmd },
   msg: Msg,
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
+    case 'input-move': {
+      const result = handle(ctx, msg, model);
+      if (result.type === 'Err') {
+        return [model, sendToBackend(msg)];
+      }
+      return [result.value, sendToBackend(msg)];
+    }
+
     default: {
       return [model, sendToBackend(msg)];
     }

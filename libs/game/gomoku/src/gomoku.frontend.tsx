@@ -37,7 +37,7 @@ export const init: Model = {
 export type Msg = FrontendMsg;
 
 export const update = (
-  { sendToBackend }: { sendToBackend: (m: ToBackend) => Cmd },
+  { sendToBackend, ctx }: { ctx: Ctx; sendToBackend: (m: ToBackend) => Cmd },
   msg: Msg,
   model: Model
 ): [Model, Cmd<Msg>] => {
@@ -48,7 +48,7 @@ export const update = (
     case 'vs-bot': {
       if (model.type === 'vs-bot') {
         const [child, cmd] = VsBot.update(
-          { sendToBackend: (m) => sendToBackend(['vs-bot', m]) },
+          { ctx, sendToBackend: (m) => sendToBackend(['vs-bot', m]) },
           msg[1],
           model.child
         );
