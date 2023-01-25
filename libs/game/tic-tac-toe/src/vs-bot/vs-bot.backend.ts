@@ -181,7 +181,7 @@ const updateFromFrontend_: UpdateFromFrontend = (
     }
 
     case 'swap-sides': {
-      const response: Response = ['swap-sides_Done', swapSides(msg[1], model)];
+      const response: Response = ['swap-sides-done', swapSides(msg[1], model)];
       if (response[1].type === 'Err') {
         return [model, sendToClient(response)];
       }
