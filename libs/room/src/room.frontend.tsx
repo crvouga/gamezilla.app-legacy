@@ -87,6 +87,10 @@ export const update = (
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
+    case 'clicked-back-to-game': {
+      return [model, Route.push(['game'])];
+    }
+
     case 'clicked-home': {
       return [model, Route.push(['home'])];
     }
@@ -998,23 +1002,32 @@ export const ViewPageRoom = ({
       <Box sx={{ flex: 1 }} />
 
       <Box sx={{ p: 2, display: 'flex', gap: 2 }}>
+        <Button
+          variant="outlined"
+          fullWidth
+          onClick={() => $send(['clicked-back-to-game'])}
+          startIcon={<Icons.ChevronLeft />}
+        >
+          Back
+        </Button>
         {ctx.currentUserId === room.hostId ? (
-          <>
-            <Button fullWidth>Change Game</Button>
-            <Button
-              fullWidth
-              color="error"
-              onClick={() =>
-                $send(['clicked-room-destroy', { userId: ctx.currentUserId }])
-              }
-            >
-              End Room
-            </Button>
-          </>
+          <Button
+            variant="outlined"
+            fullWidth
+            color="error"
+            startIcon={<Icons.Close />}
+            onClick={() =>
+              $send(['clicked-room-destroy', { userId: ctx.currentUserId }])
+            }
+          >
+            End Room
+          </Button>
         ) : (
           <Button
             fullWidth
+            variant="outlined"
             color="error"
+            startIcon={<Icons.ExitToApp />}
             onClick={() =>
               $send(['clicked-room-leave', { userId: ctx.currentUserId }])
             }
