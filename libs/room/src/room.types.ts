@@ -80,6 +80,7 @@ export type BackendMsg = ['game', RoomId, Game.BackendMsg];
 export type FrontendMsg =
   | ['clicked-home']
   | ['clicked-room']
+  | ['clicked-back-to-game']
   | ['clicked-user', { userId: UserId }]
   | ['clicked-banner']
   | ['clicked-room-leave', { userId: UserId }]
