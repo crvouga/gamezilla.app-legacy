@@ -14,12 +14,12 @@ import {
   toTurn,
 } from '../gomoku/gomoku';
 import {
+  initVisual,
   isAnimating,
   step,
   viewBoard,
   viewCoverArt,
   viewStoneIcon,
-  initVisual,
 } from '../gomoku/gomoku-ui';
 import {
   BackendModel,
@@ -130,7 +130,10 @@ export const updateFromBackend = ({
         frontendModel: model,
         backendModel: msg[1],
       });
-      return { model: merged };
+
+      return {
+        model: merged,
+      };
     }
 
     default: {

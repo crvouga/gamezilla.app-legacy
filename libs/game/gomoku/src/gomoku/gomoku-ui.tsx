@@ -1,4 +1,4 @@
-import { Ease } from '@gamezilla/core';
+import { Ease, Hex } from '@gamezilla/core';
 import { SvgIcon, Sx } from '@gamezilla/shared/ui';
 import { allPositions, Board, Bounds, bounds, Stone } from './gomoku';
 import { Position } from './gomoku-position';
@@ -47,7 +47,7 @@ export const initVisual = ({
               from: 0,
               to: 0.45,
               durationMs: 100,
-              delayMs: 20 * position.x + 20 * position.y,
+              delayMs: 20 * position.x + 20 * position.y + 100,
               easing: { type: 'ease-out-quint' },
             }),
         stone: stone,
@@ -89,11 +89,13 @@ const toStone = (
 //
 //
 
+const backgroundColor = '#C88655';
+const lineColor = Hex.darken(backgroundColor, 0.3);
 const gameTheme = {
   whiteStone: 'white',
   blackStone: 'black',
-  background: '#C88655',
-  line: '#90582e',
+  background: backgroundColor,
+  line: lineColor,
 };
 
 export const stoneToColor = (stone: Stone): string => {
@@ -336,7 +338,6 @@ export const step = ({
         !Ease.isAnimating(nowMs, stoneVisual.radius) &&
         stoneVisual.type === 'exit'
       ) {
-        console.log('REMOVE');
         continue;
       }
 

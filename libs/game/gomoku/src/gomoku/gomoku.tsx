@@ -49,8 +49,8 @@ export const bounds: Bounds = {
     y: 0,
   },
   upper: {
-    x: 15,
-    y: 15,
+    x: 9,
+    y: 9,
   },
 };
 

@@ -189,10 +189,12 @@ export const updateFromBackend = (
   switch (msg[0]) {
     case 'connect-four': {
       if (model.type === 'connect-four') {
-        const [child, cmd, actions] = ConnectFour.updateFromBackend(
-          msg[1],
-          model.child
-        );
+        const [child, cmd, actions] = ConnectFour.updateFromBackend({
+          msg: msg[1],
+          ctx,
+          model: model.child,
+        });
+
         return [
           { type: 'connect-four', child },
           Cmd.tag('connect-four', cmd),
@@ -467,6 +469,7 @@ export const mergeWithBackend = ({
           {
             type: 'connect-four',
             child: ConnectFour.mergeWithBackend({
+              ctx,
               frontendModel: frontendModel.child,
               backendModel: backendModel.child,
             }),
@@ -481,6 +484,7 @@ export const mergeWithBackend = ({
         {
           type: 'connect-four',
           child: ConnectFour.mergeWithBackend({
+            ctx,
             frontendModel: initial,
             backendModel: backendModel.child,
           }),

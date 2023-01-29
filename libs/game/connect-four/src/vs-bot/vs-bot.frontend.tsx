@@ -53,7 +53,7 @@ export const init = (
   return {
     ...shared,
     ghostIndex: 'none',
-    visual: initVisual(shared.columns),
+    visual: initVisual({ nowMs: Date.now(), columns: shared.columns }),
   };
 };
 
@@ -73,40 +73,41 @@ export const update = (
   { sendToBackend, ctx }: { ctx: Ctx; sendToBackend: (msg: ToBackend) => Cmd },
   msg: Msg,
   model: Model
-): [Model, Cmd<Msg>] => {
+): { model: Model; cmd?: Cmd<Msg> } => {
   switch (msg[0]) {
     case 'hovered': {
       if (model.type !== 'game') {
-        return [model, Cmd.None];
+        return { model };
       }
-      return [{ ...model, ghostIndex: msg[1].columnIndex }, Cmd.None];
+      return { model: { ...model, ghostIndex: msg[1].columnIndex } };
     }
 
     case 'animate': {
       if (model.type !== 'game') {
-        return [model, Cmd.None];
+        return { model };
       }
       const visualNew = step({
         nowMs: Date.now(),
         columns: model.columns,
         current: model.visual,
       });
-      return [{ ...model, visual: visualNew }, Cmd.None];
+      return { model: { ...model, visual: visualNew } };
     }
 
     case 'input-move': {
       const result = handle(ctx, msg, model);
 
       if (result.type === 'Err') {
-        return [model, Cmd.None];
+        return { model };
       }
 
       const modelNext = mergeWithBackend({
+        ctx,
         backendModel: result.value,
         frontendModel: model,
       });
 
-      return [modelNext, sendToBackend(msg)];
+      return { model: modelNext, cmd: sendToBackend(msg) };
     }
 
     case 'input-player-type':
@@ -117,36 +118,47 @@ export const update = (
     case 'stop-playing':
     case 'swap-sides':
     case 'input-bot-level': {
-      return [model, sendToBackend(msg)];
+      return { model, cmd: sendToBackend(msg) };
     }
   }
 };
 
-export const updateFromBackend = (
-  msg: ToFrontend,
-  model: Model
-): [Model, Cmd<Msg>, OutAction[]] => {
+export const updateFromBackend = ({
+  ctx,
+  msg,
+  model,
+}: {
+  ctx: Ctx;
+  msg: ToFrontend;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+  actions?: OutAction[];
+} => {
   switch (msg[0]) {
     case 'player-left': {
       const modelNew = mergeWithBackend({
+        ctx,
         frontendModel: model,
         backendModel: msg[1],
       });
-      return [modelNew, Cmd.None, []];
+      return { model: modelNew };
     }
 
     case 'bot-move':
     case 'input-move': {
       if (msg[1].type === 'Err') {
-        return [model, Cmd.None, []];
+        return { model };
       }
 
       const modelNew = mergeWithBackend({
+        ctx,
         frontendModel: model,
         backendModel: msg[1].value,
       });
 
-      return [modelNew, Cmd.None, []];
+      return { model: modelNew };
     }
 
     case 'input-player-type':
@@ -158,23 +170,26 @@ export const updateFromBackend = (
     case 'swap-sides':
     case 'input-bot-level': {
       if (msg[1].type === 'Err') {
-        return [model, Cmd.None, []];
+        return { model };
       }
 
       const modelNew = mergeWithBackend({
+        ctx,
         frontendModel: model,
         backendModel: msg[1].value,
       });
 
-      return [modelNew, Cmd.None, []];
+      return { model: modelNew };
     }
   }
 };
 
 export const mergeWithBackend = ({
+  ctx,
   backendModel,
   frontendModel,
 }: {
+  ctx: Ctx;
   frontendModel: FrontendModel;
   backendModel: BackendModel;
 }): FrontendModel => {
@@ -186,7 +201,7 @@ export const mergeWithBackend = ({
     return {
       ...backendModel,
       ghostIndex: 'none',
-      visual: initVisual(backendModel.columns),
+      visual: initVisual({ nowMs: ctx.now, columns: backendModel.columns }),
     };
   }
 
