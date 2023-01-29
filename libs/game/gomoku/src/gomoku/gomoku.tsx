@@ -43,6 +43,29 @@ export type Bounds = {
   upper: Position;
 };
 
+export type Preset = '9x9' | '13x13' | '19x19';
+
+export const presetToBound: { [preset in Preset]: Bounds } = {
+  '9x9': {
+    lower: { x: 0, y: 0 },
+    upper: { x: 8, y: 8 },
+  },
+  '13x13': {
+    lower: { x: 0, y: 0 },
+    upper: { x: 12, y: 12 },
+  },
+  '19x19': {
+    lower: { x: 0, y: 0 },
+    upper: { x: 18, y: 18 },
+  },
+};
+
+export const presetToAllPositions = {
+  '9x9': Position.rangeExclusive(presetToBound['9x9']),
+  '13x13': Position.rangeExclusive(presetToBound['13x13']),
+  '19x19': Position.rangeExclusive(presetToBound['19x19']),
+};
+
 export const bounds: Bounds = {
   lower: {
     x: 0,
