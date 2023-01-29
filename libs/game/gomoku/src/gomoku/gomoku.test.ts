@@ -8,8 +8,12 @@ const b = 'b';
 const toBoard = (matrix: Matrix): Board => {
   let board: Board = {};
   for (let x = 0; x < matrix.length; x++) {
-    for (let y = 0; y < matrix[x].length; y++) {
-      const element = matrix[x][y];
+    const slice = matrix[x];
+    if (!slice) {
+      continue;
+    }
+    for (let y = 0; y < slice.length; y++) {
+      const element = matrix?.[x]?.[y];
       const stone: Stone | null =
         element === 'w' ? 'white' : element === 'b' ? 'black' : null;
       if (stone) {

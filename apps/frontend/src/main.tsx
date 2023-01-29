@@ -221,6 +221,7 @@ const updateMain =
             ctx: {
               currentUserId: profile.userId,
               profiles: model.profileStore.profiles,
+              now: Date.now(),
             },
             sendToBackend: (m) => sendToBackend(['room', m]),
           },
@@ -340,7 +341,11 @@ const updateFromBackend = (
 
       const [gameRoom, gameRoomCmd, actions] = Room.updateFromBackend(
         {
-          ctx: { currentUserId, profiles: model.profileStore.profiles },
+          ctx: {
+            currentUserId,
+            profiles: model.profileStore.profiles,
+            now: Date.now(),
+          },
           sendToBackend: (msg) => sendToBackend(['room', msg]),
         },
         msg[1],
@@ -460,6 +465,7 @@ const runAction =
             ctx: {
               currentUserId: model.auth[1].userId,
               profiles: model.profileStore.profiles,
+              now: Date.now(),
             },
             sendToBackend: (msg) => sendToBackend(['room', msg]),
           },
@@ -539,7 +545,11 @@ const gameRoomSub = (model: Model): Sub<Msg> => {
       return Sub.tag(
         'room',
         Room.subscriptions(
-          { currentUserId: model.auth[1].userId },
+          {
+            currentUserId: model.auth[1].userId,
+            now: Date.now(),
+            profiles: model.profileStore.profiles,
+          },
           model.gameRoom
         )
       );
@@ -679,6 +689,7 @@ const ViewMain = ({
             ctx={{
               currentUserId: profile.userId,
               profiles: model.profileStore.profiles,
+              now: Date.now(),
             }}
             profile={status[1].profile}
             $send={(msg) => $send(['page', msg])}

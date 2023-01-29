@@ -706,7 +706,6 @@ export const ViewReady = ({
   model: Model;
   $send: (msg: Msg) => void;
 }) => {
-  const currentUserId = profile.userId;
   switch (model[0]) {
     case 'account':
       return (
@@ -716,11 +715,7 @@ export const ViewReady = ({
             model={model[1]}
             $send={(msg) => $send(['account', msg])}
           />
-          <ViewBottomNavigation
-            currentUserId={currentUserId}
-            route={route}
-            $send={$send}
-          />
+          <ViewBottomNavigation ctx={ctx} route={route} $send={$send} />
         </UI.FillBox>
       );
 
@@ -733,11 +728,7 @@ export const ViewReady = ({
             $send={(msg) => $send(['chat', msg])}
             chatStore={chatStore}
           />
-          <ViewBottomNavigation
-            currentUserId={currentUserId}
-            route={route}
-            $send={$send}
-          />
+          <ViewBottomNavigation ctx={ctx} route={route} $send={$send} />
         </UI.FillBox>
       );
 
@@ -750,11 +741,7 @@ export const ViewReady = ({
             profileStore={profileStore}
           />
 
-          <ViewBottomNavigation
-            currentUserId={currentUserId}
-            route={route}
-            $send={$send}
-          />
+          <ViewBottomNavigation ctx={ctx} route={route} $send={$send} />
         </UI.FillBox>
       );
 
@@ -768,11 +755,7 @@ export const ViewReady = ({
             model={model[1]}
             $send={(msg) => $send(['chat-new', msg])}
           />
-          <ViewBottomNavigation
-            currentUserId={currentUserId}
-            route={route}
-            $send={$send}
-          />
+          <ViewBottomNavigation ctx={ctx} route={route} $send={$send} />
         </UI.FillBox>
       );
 
@@ -810,11 +793,7 @@ export const ViewReady = ({
             model={model[1]}
             $send={(msg) => $send(['profile-update', msg])}
           />
-          <ViewBottomNavigation
-            currentUserId={currentUserId}
-            route={route}
-            $send={$send}
-          />
+          <ViewBottomNavigation ctx={ctx} route={route} $send={$send} />
         </UI.FillBox>
       );
 
@@ -825,11 +804,7 @@ export const ViewReady = ({
             model={model[1]}
             $send={(msg) => $send(['profile-update-avatar', msg])}
           />
-          <ViewBottomNavigation
-            currentUserId={currentUserId}
-            route={route}
-            $send={$send}
-          />
+          <ViewBottomNavigation ctx={ctx} route={route} $send={$send} />
         </UI.FillBox>
       );
 
@@ -840,11 +815,7 @@ export const ViewReady = ({
             model={model[1]}
             $send={(msg) => $send(['profile-update-name', msg])}
           />
-          <ViewBottomNavigation
-            currentUserId={currentUserId}
-            route={route}
-            $send={$send}
-          />
+          <ViewBottomNavigation ctx={ctx} route={route} $send={$send} />
         </UI.FillBox>
       );
 
@@ -856,11 +827,7 @@ export const ViewReady = ({
             model={model[1]}
             $send={(msg) => $send(['profile-update-theme', msg])}
           />
-          <ViewBottomNavigation
-            currentUserId={currentUserId}
-            route={route}
-            $send={$send}
-          />
+          <ViewBottomNavigation ctx={ctx} route={route} $send={$send} />
         </UI.FillBox>
       );
 
@@ -871,11 +838,7 @@ export const ViewReady = ({
             model={model[1]}
             $send={(msg) => $send(['profile-update-username', msg])}
           />
-          <ViewBottomNavigation
-            currentUserId={currentUserId}
-            route={route}
-            $send={$send}
-          />
+          <ViewBottomNavigation ctx={ctx} route={route} $send={$send} />
         </UI.FillBox>
       );
 
@@ -889,21 +852,14 @@ export const ViewReady = ({
             model={model[2]}
             $send={(msg) => $send(['profile', msg])}
           />
-          <ViewBottomNavigation
-            currentUserId={currentUserId}
-            route={route}
-            $send={$send}
-          />
+          <ViewBottomNavigation ctx={ctx} route={route} $send={$send} />
         </UI.FillBox>
       );
 
     case 'room': {
       return (
         <GameRoom.ViewPageRoom
-          ctx={{
-            currentUserId: profile.userId,
-            profiles: profileStore.profiles,
-          }}
+          ctx={ctx}
           model={gameRoom}
           $send={(msg) => $send(['room', msg])}
         />
@@ -913,10 +869,7 @@ export const ViewReady = ({
     case 'game': {
       return (
         <GameRoom.ViewPageGame
-          ctx={{
-            currentUserId: profile.userId,
-            profiles: profileStore.profiles,
-          }}
+          ctx={ctx}
           model={gameRoom}
           $send={(msg) => $send(['game', msg])}
         />
@@ -927,35 +880,27 @@ export const ViewReady = ({
       return (
         <UI.FillBox>
           <Party.ViewPage
-            ctx={{ currentUserId, profiles: profileStore.profiles }}
+            ctx={ctx}
             model={party}
             $send={(msg) => $send(['party', msg])}
           />
 
-          <ViewBottomNavigation
-            currentUserId={currentUserId}
-            route={route}
-            $send={$send}
-          />
+          <ViewBottomNavigation ctx={ctx} route={route} $send={$send} />
         </UI.FillBox>
       );
     }
 
     case 'home': {
       return (
-        <ViewTopLevel
-          currentUserId={currentUserId}
-          route={route}
-          $send={$send}
-          gameRoom={gameRoom}
-        >
+        <UI.FillBox>
           <Home.View
-            ctx={{ profiles: profileStore.profiles, currentUserId }}
+            ctx={ctx}
             gameRoom={gameRoom}
             model={model[1]}
             $send={(msg) => $send(['home', msg])}
           />
-        </ViewTopLevel>
+          <ViewBottomNavigation ctx={ctx} route={route} $send={$send} />
+        </UI.FillBox>
       );
     }
 
@@ -1095,30 +1040,6 @@ export const ViewLoggedOut = ({
 //
 //
 
-const ViewTopLevel = ({
-  children,
-  $send,
-  route,
-  currentUserId,
-}: {
-  children: UI.ViewNode;
-  currentUserId: UserId;
-  route: Route.Model;
-  $send: (msg: Msg) => void;
-  gameRoom: GameRoom.Model;
-}) => {
-  return (
-    <UI.FillBox>
-      {children}
-      <ViewBottomNavigation
-        currentUserId={currentUserId}
-        route={route}
-        $send={$send}
-      />
-    </UI.FillBox>
-  );
-};
-
 type BottomNavigationItem = {
   route: Route.Model;
   filled: UI.ViewNode;
@@ -1126,11 +1047,11 @@ type BottomNavigationItem = {
 };
 
 const ViewBottomNavigation = ({
-  currentUserId,
   route,
   $send,
+  ctx,
 }: {
-  currentUserId: UserId;
+  ctx: Ctx;
   route: Route.Model;
   $send: (msg: Msg) => void;
 }) => {
@@ -1156,7 +1077,7 @@ const ViewBottomNavigation = ({
       outlined: <UI.Icons.ChatOutlined />,
     },
     {
-      route: ['profile', { userId: currentUserId }],
+      route: ['profile', { userId: ctx.currentUserId }],
       filled: <UI.Icons.AccountCircle />,
       outlined: <UI.Icons.AccountCircleOutlined />,
     },

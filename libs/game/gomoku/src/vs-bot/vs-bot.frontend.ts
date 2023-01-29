@@ -1,4 +1,4 @@
-import { Cmd, Sub } from '@gamezilla/core';
+import { Animation, Cmd, Sub } from '@gamezilla/core';
 import {
   viewVsBotGameScreen,
   viewVsBotSetupScreen,
@@ -12,10 +12,15 @@ import {
   toOppositeStone,
   toStatus,
   toTurn,
+} from '../gomoku/gomoku';
+import {
+  isAnimating,
+  step,
   viewBoard,
   viewCoverArt,
   viewStoneIcon,
-} from '../gomoku/gomoku';
+  initVisual,
+} from '../gomoku/gomoku-ui';
 import {
   BackendModel,
   FrontendModel,
@@ -48,59 +53,126 @@ export const init = initShared;
 
 export type Msg = FrontendMsg;
 
-export const update = (
-  { ctx, sendToBackend }: { ctx: Ctx; sendToBackend: (m: ToBackend) => Cmd },
-  msg: Msg,
-  model: Model
-): [Model, Cmd<Msg>] => {
+export const update = ({
+  ctx,
+  sendToBackend,
+  msg,
+  model,
+}: {
+  ctx: Ctx;
+  sendToBackend: (m: ToBackend) => Cmd;
+  msg: Msg;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
   switch (msg[0]) {
+    case 'animate': {
+      if (model.type === 'game') {
+        const { board, visual } = model;
+        const visualNew = step({ nowMs: ctx.now, board, model: visual });
+        return {
+          model: { ...model, visual: visualNew },
+        };
+      }
+
+      return { model };
+    }
+
     case 'input-move': {
       const result = handle(ctx, msg, model);
+
       if (result.type === 'Err') {
-        return [model, sendToBackend(msg)];
+        return {
+          model,
+          cmd: sendToBackend(msg),
+        };
       }
-      return [result.value, sendToBackend(msg)];
+
+      const merged = mergeWithBackend({
+        ctx,
+        backendModel: result.value,
+        frontendModel: model,
+      });
+
+      return {
+        model: merged,
+        cmd: sendToBackend(msg),
+      };
     }
 
     default: {
-      return [model, sendToBackend(msg)];
+      return {
+        model,
+        cmd: sendToBackend(msg),
+      };
     }
   }
 };
 
-export const updateFromBackend = (
-  msg: ToFrontend,
-  model: Model
-): [Model, Cmd<Msg>] => {
+export const updateFromBackend = ({
+  msg,
+  model,
+  ctx,
+}: {
+  ctx: Ctx;
+  msg: ToFrontend;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
   switch (msg[0]) {
     case 'bot-moved': {
       const merged = mergeWithBackend({
+        ctx,
         frontendModel: model,
         backendModel: msg[1],
       });
-      return [merged, Cmd.None];
+      return { model: merged };
     }
 
     default: {
       if (msg[1].type === 'Err') {
-        return [model, Cmd.None];
+        return { model };
       }
       const merged = mergeWithBackend({
+        ctx,
         frontendModel: model,
         backendModel: msg[1].value,
       });
-      return [merged, Cmd.None];
+      return { model: merged };
     }
   }
 };
 
 export const mergeWithBackend = ({
+  ctx,
   backendModel,
+  frontendModel,
 }: {
+  ctx: Ctx;
   frontendModel: FrontendModel;
   backendModel: BackendModel;
 }): FrontendModel => {
-  return backendModel;
+  switch (backendModel.type) {
+    case 'setup': {
+      return backendModel;
+    }
+
+    case 'game': {
+      const visualNew = step({
+        board: backendModel.board,
+        model:
+          frontendModel.type === 'game'
+            ? frontendModel.visual
+            : initVisual({ nowMs: ctx.now, board: backendModel.board }),
+        nowMs: ctx.now,
+      });
+      return { ...backendModel, visual: visualNew };
+    }
+  }
 };
 
 //
@@ -111,8 +183,20 @@ export const mergeWithBackend = ({
 //
 //
 
-export const subscriptions = (_model: Model): Sub<Msg> => {
-  return Sub.None;
+export const subscriptions = (ctx: Ctx, model: Model): Sub<Msg> => {
+  switch (model.type) {
+    case 'game': {
+      if (isAnimating({ nowMs: ctx.now, model: model.visual })) {
+        return Animation.onFrame(() => ['animate']);
+      }
+
+      return Sub.None;
+    }
+
+    case 'setup': {
+      return Sub.None;
+    }
+  }
 };
 
 //
@@ -189,8 +273,8 @@ export const view = ({
         userPlayer: model.userStone,
         viewBoard: () =>
           viewBoard({
-            board: model.board,
             onPress: (position) => $send(['input-move', { position }]),
+            model: model.visual,
           }),
         viewPlayerIcon: ({ sx, playerType: stone }) =>
           viewStoneIcon({ ...sx, stone }),

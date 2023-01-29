@@ -3,7 +3,8 @@ type Easing =
   | { type: 'ease-out-quint' }
   | { type: 'linear' }
   | { type: 'ease-in-back' }
-  | { type: 'ease-in-expo' };
+  | { type: 'ease-in-expo' }
+  | { type: 'ease-out-back' };
 
 export type Model = {
   startMs: number;
@@ -15,9 +16,20 @@ export type Model = {
   delayMs: number;
 };
 
-export const isDone = (nowMs: number, model: Model): boolean => {
-  const endMs = model.startMs + model.durationMs + model.delayMs;
-  return endMs < nowMs;
+export const initConstant = (value: number): Model => {
+  return {
+    startMs: 0,
+    durationMs: 0,
+    value,
+    from: value,
+    to: value,
+    easing: { type: 'linear' },
+    delayMs: 0,
+  };
+};
+
+export const isAnimating = (nowMs: number, model: Model): boolean => {
+  return nowMs < model.startMs + model.durationMs + model.delayMs;
 };
 
 export const easeOutBounce = (
@@ -54,8 +66,18 @@ function easeInExpo(x: number): number {
   return x === 0 ? 0 : Math.pow(2, 10 * x - 10);
 }
 
+function easeOutBack(x: number): number {
+  const c1 = 1.70158;
+  const c3 = c1 + 1;
+
+  return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
+}
+
 const ease = (easing: Easing, x: number): number => {
   switch (easing.type) {
+    case 'ease-out-back':
+      return easeOutBack(x);
+
     case 'ease-out-bounce':
       return easeOutBounce(easing, x);
 
@@ -93,6 +115,7 @@ export const init = ({
   from,
   to,
   durationMs,
+  startMs,
   delayMs = 0,
   easing = { type: 'linear' },
 }: {
@@ -101,9 +124,10 @@ export const init = ({
   from: number;
   to: number;
   durationMs: number;
+  startMs: number;
 }): Model => {
   return {
-    startMs: Date.now(),
+    startMs,
     durationMs,
     value: from,
     from,

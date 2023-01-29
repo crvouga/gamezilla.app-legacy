@@ -562,6 +562,7 @@ export const step = ({
           yPosition_: Ease.init({
             from: MAX_COLUMN_HEIGHT + 1,
             to: y,
+            startMs: nowMs,
             durationMs: (0.2 + 0.1 * (1 - y / MAX_COLUMN_HEIGHT)) * 1000,
             easing: { type: 'ease-out-quint' },
           }),
@@ -577,6 +578,7 @@ export const step = ({
           ...discVisual,
           type: 'exit',
           yPosition_: Ease.init({
+            startMs: nowMs,
             from: y,
             to: -(MAX_COLUMN_HEIGHT - y),
             delayMs: (x / COLUMN_COUNT) * 0.33 * 1000,
@@ -590,7 +592,7 @@ export const step = ({
       const shouldRemove =
         discVisual &&
         discVisual.type === 'exit' &&
-        Ease.isDone(nowMs, discVisual.yPosition_);
+        !Ease.isAnimating(nowMs, discVisual.yPosition_);
 
       if (discVisual && !shouldRemove) {
         next_i.push({
@@ -607,7 +609,13 @@ export const step = ({
   return next;
 };
 
-export const initVisual = (columns: Columns): VisualModel => {
+export const initVisual = ({
+  nowMs,
+  columns,
+}: {
+  nowMs: number;
+  columns: Columns;
+}): VisualModel => {
   const ret: VisualModel = [];
 
   for (let i = 0; i < COLUMN_COUNT; i++) {
@@ -618,7 +626,12 @@ export const initVisual = (columns: Columns): VisualModel => {
         ret_i.push({
           type: 'entry',
           playerType: discTrue,
-          yPosition_: Ease.init({ from: j, to: j, durationMs: 0 }),
+          yPosition_: Ease.init({
+            startMs: nowMs,
+            from: j,
+            to: j,
+            durationMs: 0,
+          }),
         });
       }
     }
@@ -637,7 +650,7 @@ export const isDone = (nowMs: number, model: VisualModel): boolean => {
     for (let y = 0; y < column.length; y++) {
       const discVisual = column[y];
 
-      if (discVisual && !Ease.isDone(nowMs, discVisual.yPosition_)) {
+      if (discVisual && Ease.isAnimating(nowMs, discVisual.yPosition_)) {
         return false;
       }
     }
