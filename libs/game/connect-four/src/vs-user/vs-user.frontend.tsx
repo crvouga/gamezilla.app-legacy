@@ -253,7 +253,7 @@ export const View = ({
           <PlayerSlotBar model={model} ctx={ctx} />
 
           <ViewColumns
-            visual={initVisual(model.columns)}
+            visual={initVisual({ nowMs: Date.now(), columns: model.columns })}
             columns={model.columns}
             onClick={(columnIndex) =>
               $send(['input-move', { userId: ctx.currentUserId, columnIndex }])
@@ -304,7 +304,7 @@ export const View = ({
 
       <Box sx={{ position: 'relative' }}>
         <ViewColumns
-          visual={initVisual(model.columns)}
+          visual={initVisual({ nowMs: Date.now(), columns: model.columns })}
           columns={model.columns}
           disabled
         />
@@ -438,11 +438,7 @@ const ViewGameOverMessage = ({
   }
 
   if (model.gameOver.type === 'Draw') {
-    return (
-      <>
-        <Typography sx={{ fontSize: '3rem' }}>Tie</Typography>
-      </>
-    );
+    return <Typography sx={{ fontSize: '3rem' }}>Tie</Typography>;
   }
 
   if (model.gameOver.type === 'Resignation') {
@@ -509,15 +505,13 @@ const ViewGameOverMessage = ({
     }
 
     return (
-      <>
-        <Typography sx={{ fontSize: 64 }}>
-          {currentPlayerType === winner ? 'You Won' : 'You Lost'}
-        </Typography>
-      </>
+      <Typography sx={{ fontSize: 64 }}>
+        {currentPlayerType === winner ? 'You Won' : 'You Lost'}
+      </Typography>
     );
   }
 
-  return <></>;
+  return null;
 };
 
 const ViewSetup = ({
