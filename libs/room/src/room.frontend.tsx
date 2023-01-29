@@ -217,6 +217,7 @@ export const updateFromBackend = (
       const actions: OutAction[] = [['profile', ['FindMany', { userIds }]]];
 
       const merged = mergeWithBackendModel({
+        ctx,
         backendModel: msg[1],
         frontendModel: model,
         sendToBackend,
@@ -270,11 +271,11 @@ export const updateFromBackend = (
     case 'input-game':
     case 'change-host':
     case 'room-create': {
-      return updateResponse({ sendToBackend }, msg, model);
+      return updateResponse({ ctx, sendToBackend }, msg, model);
     }
 
     case 'room-destroy': {
-      const handled = updateResponse({ sendToBackend }, msg, model);
+      const handled = updateResponse({ ctx, sendToBackend }, msg, model);
 
       const user = model.users[ctx.currentUserId];
 
@@ -312,7 +313,7 @@ export const updateFromBackend = (
     }
 
     case 'room-leave': {
-      const handled = updateResponse({ sendToBackend }, msg, model);
+      const handled = updateResponse({ ctx, sendToBackend }, msg, model);
 
       if (msg[2].type === 'Err') {
         return handled;
@@ -338,7 +339,7 @@ export const updateFromBackend = (
     }
 
     case 'room-join': {
-      const handled = updateResponse({ sendToBackend }, msg, model);
+      const handled = updateResponse({ ctx, sendToBackend }, msg, model);
 
       if (msg[2].type === 'Err') {
         const currentRoomId = model.users[ctx.currentUserId]?.roomId;
@@ -430,7 +431,7 @@ const toRoomLeaveMessage = ({ ctx, userId }: { userId: UserId; ctx: Ctx }) => {
 };
 
 const updateResponse = (
-  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd },
+  { ctx, sendToBackend }: { ctx: Ctx; sendToBackend: (msg: ToBackend) => Cmd },
   msg: Res,
   model: Model
 ): [Model, Cmd<Msg>, OutAction[]] => {
@@ -446,6 +447,7 @@ const updateResponse = (
   }
 
   const merged = mergeWithBackendModel({
+    ctx,
     frontendModel: model,
     backendModel: msg[2].value,
     sendToBackend,
@@ -466,10 +468,12 @@ const updateResponse = (
 };
 
 const mergeWithBackendModel = ({
+  ctx,
   frontendModel,
   backendModel,
   sendToBackend,
 }: {
+  ctx: Ctx;
   sendToBackend: (msg: ToBackend) => Cmd;
   frontendModel: FrontendModel;
   backendModel: BackendModel;
@@ -486,6 +490,7 @@ const mergeWithBackendModel = ({
 
       if (frontendGame) {
         const merged = Game.mergeWithBackend({
+          ctx,
           backendModel: backendGame,
           frontendModel: frontendGame,
           sendToBackend: (msg) => sendToBackend(['game', msg]),
@@ -511,6 +516,7 @@ const mergeWithBackendModel = ({
       });
 
       const merged = Game.mergeWithBackend({
+        ctx,
         backendModel: backendGame,
         frontendModel: initial[0],
         sendToBackend: (msg) => sendToBackend(['game', msg]),
@@ -577,11 +583,8 @@ export const runAction = (
 //
 //
 
-export const subscriptions = (
-  { currentUserId }: { currentUserId: UserId },
-  model: Model
-): Sub<Msg> => {
-  const user = model.users[currentUserId];
+export const subscriptions = (ctx: Ctx, model: Model): Sub<Msg> => {
+  const user = model.users[ctx.currentUserId];
 
   if (!user) {
     return Sub.None;
@@ -594,7 +597,7 @@ export const subscriptions = (
   }
 
   return p(
-    Game.subscriptions(`room/${user.roomId}`, game),
+    Game.subscriptions(`room/${user.roomId}`, ctx, game),
     Sub.map((msg) => ['game', msg])
   );
 };

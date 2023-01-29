@@ -12,7 +12,7 @@ import {
   fillBox,
   text,
 } from '@gamezilla/shared/ui';
-import { viewBoard, viewCoverArt, viewStoneIcon } from '../gomoku/gomoku';
+import { viewCoverArt, viewStoneIcon } from '../gomoku/gomoku-ui';
 import {
   BackendModel,
   FrontendModel,
@@ -170,10 +170,10 @@ export const view = ({
     case 'playing': {
       return fillBox({}, [
         viewUserPlayerSlotBar({ left: model.white, right: model.black, ctx }),
-        viewBoard({
-          board: model.board,
-          onPress: (position) => $send(['input-move', { position }]),
-        }),
+        // viewBoard({
+        //   // model: model.visuals,
+        //   onPress: (position) => $send(['input-move', { position }]),
+        // }),
         box({ flex: 1 }, []),
         box({ display: 'flex', p: 2 }, [
           actionButton({
@@ -198,7 +198,7 @@ export const view = ({
       return fillBox({}, [
         viewUserPlayerSlotBar({ left: model.white, right: model.black, ctx }),
         box({ position: 'relative', aspectRatio: '1' }, [
-          viewBoard({ board: model.board }),
+          // viewBoard({ model: {} }),
           viewOverlay({ model, ctx }),
         ]),
         box({ p: 2, display: 'flex', gap: 2, flexDirection: 'column' }, [

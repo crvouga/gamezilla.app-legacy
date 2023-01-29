@@ -8,7 +8,7 @@ import {
   ToBackend,
   ToFrontend,
 } from './gomoku.types';
-import { viewCoverArt } from './gomoku/gomoku';
+import { viewCoverArt } from './gomoku/gomoku-ui';
 import * as VsBot from './vs-bot/vs-bot.frontend';
 import * as VsUser from './vs-user/vs-user.frontend';
 
@@ -47,12 +47,16 @@ export const update = (
     }
     case 'vs-bot': {
       if (model.type === 'vs-bot') {
-        const [child, cmd] = VsBot.update(
-          { ctx, sendToBackend: (m) => sendToBackend(['vs-bot', m]) },
-          msg[1],
-          model.child
-        );
-        return [{ type: 'vs-bot', child }, Cmd.tag('vs-bot', cmd)];
+        const updated = VsBot.update({
+          ctx,
+          sendToBackend: (m) => sendToBackend(['vs-bot', m]),
+          msg: msg[1],
+          model: model.child,
+        });
+        return [
+          { type: 'vs-bot', child: updated.model },
+          Cmd.tag('vs-bot', updated?.cmd ?? Cmd.None),
+        ];
       }
       return [model, Cmd.None];
     }
@@ -70,16 +74,22 @@ export const update = (
   }
 };
 
-export const updateFromBackend = (
-  msg: ToFrontend,
-  model: Model
-): [Model, Cmd<Msg>] => {
+export const updateFromBackend = ({
+  ctx,
+  model,
+  msg,
+}: {
+  ctx: Ctx;
+  msg: ToFrontend;
+  model: Model;
+}): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case 'input-mode': {
       if (msg[2].type === 'Err') {
         return [model, Cmd.None];
       }
       const merged = mergeWithBackend({
+        ctx,
         frontendModel: model,
         backendModel: msg[2].value,
       });
@@ -88,8 +98,15 @@ export const updateFromBackend = (
 
     case 'vs-bot': {
       if (model.type === 'vs-bot') {
-        const [child, cmd] = VsBot.updateFromBackend(msg[1], model.child);
-        return [{ type: 'vs-bot', child }, Cmd.tag('vs-bot', cmd)];
+        const updated = VsBot.updateFromBackend({
+          ctx,
+          msg: msg[1],
+          model: model.child,
+        });
+        return [
+          { type: 'vs-bot', child: updated.model },
+          Cmd.tag('vs-bot', updated.cmd ?? Cmd.None),
+        ];
       }
       return [model, Cmd.None];
     }
@@ -104,9 +121,11 @@ export const updateFromBackend = (
 };
 
 export const mergeWithBackend = ({
+  ctx,
   frontendModel,
   backendModel,
 }: {
+  ctx: Ctx;
   frontendModel: FrontendModel;
   backendModel: BackendModel;
 }): FrontendModel => {
@@ -120,6 +139,7 @@ export const mergeWithBackend = ({
         return {
           type: 'vs-bot',
           child: VsBot.mergeWithBackend({
+            ctx,
             frontendModel: frontendModel.child,
             backendModel: backendModel.child,
           }),
@@ -128,6 +148,7 @@ export const mergeWithBackend = ({
       return {
         type: 'vs-bot',
         child: VsBot.mergeWithBackend({
+          ctx,
           frontendModel: VsBot.init({ userId: null }),
           backendModel: backendModel.child,
         }),
@@ -163,8 +184,20 @@ export const mergeWithBackend = ({
 //
 //
 
-export const subscriptions = (_model: Model): Sub<Msg> => {
-  return Sub.None;
+export const subscriptions = (ctx: Ctx, model: Model): Sub<Msg> => {
+  switch (model.type) {
+    case 'vs-bot': {
+      return Sub.tag('vs-bot', VsBot.subscriptions(ctx, model.child));
+    }
+
+    case 'vs-user': {
+      return Sub.None;
+    }
+
+    case 'none': {
+      return Sub.None;
+    }
+  }
 };
 
 //

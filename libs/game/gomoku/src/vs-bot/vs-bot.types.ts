@@ -12,6 +12,7 @@ import {
   toTurn,
 } from '../gomoku/gomoku';
 import { Position } from '../gomoku/gomoku-position';
+import { VisualModel } from '../gomoku/gomoku-ui';
 
 const { Err, Ok } = Result;
 
@@ -38,6 +39,7 @@ export type GameModel = {
   userStone: Stone;
   botLevel: BotLevel;
   board: Board;
+  visual: VisualModel;
 };
 
 export type FrontendModel = Model;
@@ -61,7 +63,7 @@ export const initShared = ({ userId }: { userId: UserId | null }): Model => {
 //
 //
 
-export type FrontendMsg = Req;
+export type FrontendMsg = Req | ['animate'];
 
 export type BackendMsg = ['none'];
 
@@ -170,6 +172,7 @@ export const handle = (
         botLevel: model.botLevel,
         userId: model.userId,
         userStone: model.userStone,
+        visual: {},
       });
     }
 

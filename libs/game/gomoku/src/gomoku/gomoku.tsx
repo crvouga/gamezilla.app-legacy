@@ -1,5 +1,4 @@
 import { NonEmpty, Result, shuffle } from '@gamezilla/core';
-import { SvgIcon, Sx } from '@gamezilla/shared/ui';
 import { Direction, Position } from './gomoku-position';
 
 const { Ok, Err } = Result;
@@ -39,7 +38,7 @@ export const toOppositeStone = (stone: Stone): Stone => {
   }
 };
 
-type Bounds = {
+export type Bounds = {
   lower: Position;
   upper: Position;
 };
@@ -55,7 +54,7 @@ export const bounds: Bounds = {
   },
 };
 
-const allPositions = Position.rangeExclusive(bounds);
+export const allPositions = Position.rangeExclusive(bounds);
 
 export type MoveProblem =
   | 'out_of_bounds'
@@ -138,7 +137,7 @@ export const setStone = (
   };
 };
 
-const toStone = (position: Position, board: Board): Stone | null => {
+export const toStone = (position: Position, board: Board): Stone | null => {
   return board[position.x]?.[position.y] ?? null;
 };
 
@@ -283,182 +282,4 @@ export const toWins = (board: Board): Win[] => {
   }
 
   return wins;
-};
-
-//
-//
-// view
-//
-//
-
-const gameTheme = {
-  whiteStone: 'white',
-  blackStone: 'black',
-  background: '#C88655',
-  line: '#232323',
-};
-
-export const stoneToColor = (stone: Stone): string => {
-  switch (stone) {
-    case 'black':
-      return gameTheme.blackStone;
-
-    case 'white':
-      return gameTheme.whiteStone;
-  }
-};
-
-export const viewStoneIcon = ({ stone, ...sx }: { stone: Stone } & Sx) => {
-  return (
-    <SvgIcon viewBox="-1 -1 2 2" sx={{ ...sx }}>
-      <circle
-        cx={0}
-        cy={0}
-        r={0.9}
-        fill={stoneToColor(stone)}
-        strokeWidth={0.1}
-        stroke="#454545"
-      />
-    </SvgIcon>
-  );
-};
-
-export const viewCoverArt = () => {
-  return viewBoard({
-    board: {
-      2: { 2: 'black', 3: 'white' },
-      3: { 2: 'black', 3: 'white' },
-      4: { 2: 'white', 3: 'black' },
-    },
-    viewBoxOffset: 0.5,
-    bounds: {
-      lower: { x: 0, y: 0 },
-      upper: { x: 6, y: 6 },
-    },
-  });
-};
-
-export const viewBoard = ({
-  board,
-  onPress,
-  bounds: bounds_ = bounds,
-  viewBoxOffset = 0.8,
-}: {
-  board: Board;
-  onPress?: (position: Position) => void;
-  bounds?: Bounds;
-  viewBoxOffset?: number;
-}) => {
-  const boundsView = {
-    lower: {
-      x: bounds_.lower.x - viewBoxOffset,
-      y: bounds_.lower.y - viewBoxOffset,
-    },
-    upper: {
-      x: bounds_.upper.x - 1 + viewBoxOffset,
-      y: bounds_.upper.y - 1 + viewBoxOffset,
-    },
-  };
-
-  const width = boundsView.upper.x - boundsView.lower.x;
-  const height = boundsView.upper.y - boundsView.lower.y;
-
-  const viewBox = [boundsView.lower.x, boundsView.lower.y, width, height].join(
-    ' '
-  );
-
-  return (
-    <svg style={{ overflow: 'hidden' }} width="100%" viewBox={viewBox}>
-      <g strokeWidth={0.05}>
-        <rect
-          x={boundsView.lower.x}
-          y={boundsView.lower.y}
-          width={width}
-          height={height}
-          fill={gameTheme.background}
-        />
-
-        <g stroke={gameTheme.line}>
-          <rect
-            x={bounds_.lower.x}
-            y={bounds_.lower.y}
-            width={bounds_.upper.x - 1 - bounds_.lower.x}
-            height={bounds_.upper.y - 1 - bounds_.lower.y}
-            fill={gameTheme.background}
-          />
-          {rangeInclusive({ lower: 1, upper: bounds_.upper.y - 1 }).map((x) => (
-            <line
-              key={`x${x}`}
-              x1={x}
-              y1={bounds_.lower.y}
-              x2={x}
-              y2={bounds_.upper.y - 1}
-            />
-          ))}
-
-          {rangeInclusive({ lower: 1, upper: bounds.upper.x - 1 }).map((y) => (
-            <line
-              key={`y${y}`}
-              x1={bounds_.lower.x}
-              y1={y}
-              x2={bounds_.upper.x - 1}
-              y2={y}
-            />
-          ))}
-        </g>
-
-        <g>
-          {allPositions.map(({ x, y }) => {
-            const stone = toStone({ x, y }, board);
-            if (!stone) {
-              return (
-                <circle
-                  key={[x, y].join('-')}
-                  onMouseDown={
-                    onPress
-                      ? () => {
-                          onPress({ x, y });
-                        }
-                      : undefined
-                  }
-                  cx={x}
-                  cy={y}
-                  r={1 / 2}
-                  fill="transparent"
-                  stroke="none"
-                  style={
-                    onPress ? { cursor: 'pointer' } : { cursor: 'default' }
-                  }
-                />
-              );
-            }
-
-            return (
-              <circle
-                key={[x, y, stone].join('-')}
-                cx={x}
-                cy={y}
-                r={0.45}
-                fill={stoneToColor(stone)}
-              />
-            );
-          })}
-        </g>
-      </g>
-    </svg>
-  );
-};
-
-const rangeInclusive = ({
-  lower,
-  upper,
-}: {
-  lower: number;
-  upper: number;
-}): number[] => {
-  const range: number[] = [];
-  for (let n = lower; n <= upper; n++) {
-    range.push(n);
-  }
-  return range;
 };

@@ -236,7 +236,11 @@ export const updateFromBackend = (
 
     case 'gomoku': {
       if (model.type === 'gomoku') {
-        const [child, cmd] = Gomoku.updateFromBackend(msg[1], model.child);
+        const [child, cmd] = Gomoku.updateFromBackend({
+          ctx,
+          msg: msg[1],
+          model: model.child,
+        });
         return [{ type: 'gomoku', child }, Cmd.tag('gomoku', cmd), []];
       }
       return [model, Cmd.None, []];
@@ -284,7 +288,11 @@ export const updateFromBackend = (
 //
 //
 
-export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
+export const subscriptions = (
+  intervalId: string,
+  ctx: Ctx,
+  model: Model
+): Sub<Msg> => {
   switch (model.type) {
     case 'connect-four': {
       return Sub.tag(
@@ -302,7 +310,7 @@ export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
     }
 
     case 'gomoku': {
-      return Sub.tag('gomoku', Gomoku.subscriptions(model.child));
+      return Sub.tag('gomoku', Gomoku.subscriptions(ctx, model.child));
     }
 
     case 'Tetris': {
@@ -411,10 +419,12 @@ export const View = ({
 };
 
 export const mergeWithBackend = ({
+  ctx,
   sendToBackend,
   frontendModel,
   backendModel,
 }: {
+  ctx: Ctx;
   sendToBackend: (msg: ToBackend) => Cmd;
   frontendModel: FrontendModel;
   backendModel: BackendModel;
@@ -510,6 +520,7 @@ export const mergeWithBackend = ({
           {
             type: 'gomoku',
             child: Gomoku.mergeWithBackend({
+              ctx,
               frontendModel: frontendModel.child,
               backendModel: backendModel.child,
             }),
@@ -522,6 +533,7 @@ export const mergeWithBackend = ({
         {
           type: 'gomoku',
           child: Gomoku.mergeWithBackend({
+            ctx,
             frontendModel: Gomoku.init,
             backendModel: backendModel.child,
           }),
