@@ -1,8 +1,7 @@
-import { Alerts } from '@gamezilla/shared';
 import { Cmd, exhaustive } from '@gamezilla/core';
 import { GameRoomCtx, viewSelectModeScreen } from '@gamezilla/game-shared';
 import { ProfileStore } from '@gamezilla/profile';
-import { Ctx } from '@gamezilla/shared';
+import { Alerts, Ctx } from '@gamezilla/shared';
 import {
   BackendModel,
   FrontendModel,
@@ -10,7 +9,7 @@ import {
   ToBackend,
   ToFrontend,
 } from './tic-tac-toe.types';
-import { viewCoverArt } from './tic-tic-toe/tic-tac-toe';
+import { viewCoverArt } from './tic-tic-toe/tic-tac-toe-ui';
 import * as VsBot from './vs-bot/vs-bot.frontend';
 import * as VsUser from './vs-user/vs-user.frontend';
 
@@ -69,15 +68,16 @@ export const update = (
 
     case 'vs-bot': {
       if (model.mode === 'vs-bot') {
-        const [child, cmd] = VsBot.update(
-          {
-            // currentUserId,
-            sendToBackend: (msg) => sendToBackend(['vs-bot', msg]),
-          },
-          msg[1],
-          model.child
-        );
-        return [{ mode: 'vs-bot', child }, Cmd.tag('vs-bot', cmd)];
+        const updated = VsBot.update({
+          // currentUserId,
+          sendToBackend: (msg) => sendToBackend(['vs-bot', msg]),
+          msg: msg[1],
+          model: model.child,
+        });
+        return [
+          { mode: 'vs-bot', child: updated.model },
+          Cmd.tag('vs-bot', updated?.cmd ?? Cmd.None),
+        ];
       }
       return [model, Cmd.None];
     }
