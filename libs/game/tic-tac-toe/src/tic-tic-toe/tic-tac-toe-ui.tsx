@@ -211,6 +211,7 @@ const distance = (
 };
 
 export const viewSlotVisual = ({
+  key,
   slot,
   cx,
   cy,
@@ -219,6 +220,7 @@ export const viewSlotVisual = ({
   strokeWidth,
   percentageDrew,
 }: {
+  key: string;
   color?: string;
   strokeWidth?: number;
   slot: VisualSlot;
@@ -241,7 +243,7 @@ export const viewSlotVisual = ({
       });
 
       return (
-        <g strokeWidth={strokeWidth} stroke={color}>
+        <g key={key} strokeWidth={strokeWidth} stroke={color}>
           {/*
 
           direction: \
@@ -272,13 +274,6 @@ export const viewSlotVisual = ({
       );
     }
 
-    /**
-
-       { strokeDasharray: length, strokeDashoffset: length },
-        { strokeDashoffset: 0 }
-
-     */
-
     case 'O': {
       const circumference = 2 * Math.PI * r;
       const dashoffset = rescale({
@@ -288,6 +283,7 @@ export const viewSlotVisual = ({
       });
       return (
         <circle
+          key={key}
           r={r}
           cx={cx}
           cy={cy}
