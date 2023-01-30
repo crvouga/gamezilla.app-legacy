@@ -1,4 +1,4 @@
-import { Ease } from '@gamezilla/core';
+import { Ease, rescale } from '@gamezilla/core';
 import { SvgIcon, Sx } from '@gamezilla/shared/ui';
 import {
   allPositions,
@@ -203,13 +203,21 @@ const lines = [
   { x1: 0, y1: 2, x2: 3, y2: 2 },
 ];
 
-export const ViewVisualSlot = ({
+const distance = (
+  a: { x: number; y: number },
+  b: { x: number; y: number }
+): number => {
+  return Math.sqrt(Math.pow(a.x - b.y, 2) + Math.pow(a.y - b.y, 2));
+};
+
+export const viewSlotVisual = ({
   slot,
   cx,
   cy,
   r,
   color,
   strokeWidth,
+  percentageDrew,
 }: {
   color?: string;
   strokeWidth?: number;
@@ -217,9 +225,21 @@ export const ViewVisualSlot = ({
   r: number;
   cx: number;
   cy: number;
+  percentageDrew: number;
 }) => {
   switch (slot.playerType) {
-    case 'X':
+    case 'X': {
+      const length = distance(
+        { x: cx - r, y: cy - r },
+        { x: cx + r, y: cy + r }
+      );
+
+      const dashoffset = rescale({
+        value: percentageDrew,
+        from: [0, 1],
+        to: [0, length],
+      });
+
       return (
         <g strokeWidth={strokeWidth} stroke={color}>
           {/*
@@ -227,17 +247,45 @@ export const ViewVisualSlot = ({
           direction: \
 
           */}
-          <line x1={cx - r} y1={cy - r} x2={cx + r} y2={cy + r} />
+          <line
+            x1={cx - r}
+            y1={cy - r}
+            x2={cx + r}
+            y2={cy + r}
+            strokeDasharray={length}
+            strokeDashoffset={dashoffset}
+          />
           {/*
 
           direction: /
 
           */}
-          <line x1={cx + r} y1={cy - r} x2={cx - r} y2={cy + r} />
+          <line
+            x1={cx + r}
+            y1={cy - r}
+            x2={cx - r}
+            y2={cy + r}
+            strokeDasharray={length}
+            strokeDashoffset={dashoffset}
+          />
         </g>
       );
+    }
 
-    case 'O':
+    /**
+
+       { strokeDasharray: length, strokeDashoffset: length },
+        { strokeDashoffset: 0 }
+
+     */
+
+    case 'O': {
+      const circumference = 2 * Math.PI * r;
+      const dashoffset = rescale({
+        value: percentageDrew,
+        from: [0, 1],
+        to: [0, circumference],
+      });
       return (
         <circle
           r={r}
@@ -245,9 +293,12 @@ export const ViewVisualSlot = ({
           cy={cy}
           stroke={color}
           strokeWidth={strokeWidth}
+          strokeDasharray={circumference}
+          strokeDashoffset={dashoffset}
           fill="transparent"
         />
       );
+    }
   }
 };
 export const ViewSlot = ({
