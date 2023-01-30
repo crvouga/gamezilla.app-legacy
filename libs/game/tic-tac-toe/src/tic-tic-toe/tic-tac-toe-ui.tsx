@@ -237,7 +237,7 @@ export const viewSlotVisual = ({
       const dashoffset = rescale({
         value: percentageDrew,
         from: [0, 1],
-        to: [0, length],
+        to: [length, 0],
       });
 
       return (
