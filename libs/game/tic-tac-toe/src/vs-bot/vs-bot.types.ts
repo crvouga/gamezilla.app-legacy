@@ -12,6 +12,7 @@ import {
   toOpposite,
   toStatus,
 } from '../tic-tic-toe/tic-tac-toe';
+import { VisualModel } from '../tic-tic-toe/tic-tac-toe-ui';
 
 const { Err, Ok } = Result;
 
@@ -40,7 +41,9 @@ export type GameModel = {
   board: Board;
 };
 
-export type FrontendModel = SharedModel;
+export type FrontendModel = SharedModel & {
+  visual: VisualModel;
+};
 
 export type BackendModel = SharedModel;
 
@@ -77,7 +80,7 @@ export const isBotTurn = (model: SharedModel): model is GameModel => {
 //
 //
 
-export type FrontendMsg = Request;
+export type FrontendMsg = Request | ['animate'];
 
 export type BackendMsg = BotMove;
 

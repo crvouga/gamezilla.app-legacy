@@ -1,20 +1,20 @@
-import { Alerts } from '@gamezilla/shared';
 import { Cmd, exhaustive } from '@gamezilla/core';
-import { UserId } from '@gamezilla/shared';
 import { ProfileStore } from '@gamezilla/profile';
-import { Ctx } from '@gamezilla/shared';
+import { Alerts, Ctx, UserId } from '@gamezilla/shared';
 import * as UI from '@gamezilla/shared/ui';
 import {
   emptyBoard,
-  gameTheme,
   PlayerType,
-  PlayerTypeIcon,
   Position,
   Slot,
   toTurn,
+} from '../tic-tic-toe/tic-tac-toe';
+import {
+  gameTheme,
+  PlayerTypeIcon,
   ViewBoard,
   ViewSlot,
-} from '../tic-tic-toe/tic-tac-toe';
+} from '../tic-tic-toe/tic-tac-toe-ui';
 import { VersusHeader } from '../views';
 import * as Round from './vs-user-round';
 import {

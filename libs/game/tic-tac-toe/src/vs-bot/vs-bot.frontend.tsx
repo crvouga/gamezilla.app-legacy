@@ -1,4 +1,4 @@
-import { Cmd, Sub } from '@gamezilla/core';
+import { Animation, Cmd, Sub } from '@gamezilla/core';
 import {
   viewVsBotGameScreen,
   viewVsBotSetupScreen,
@@ -8,19 +8,24 @@ import {
   BotLevel,
   botLevels,
   PlayerType,
-  PlayerTypeIcon,
   playerTypes,
   toGameOver,
   toOpposite,
   toTurn,
+} from '../tic-tic-toe/tic-tac-toe';
+import {
+  isAnimating,
+  PlayerTypeIcon,
+  step,
   ViewBoard,
   viewCoverArt,
-} from '../tic-tic-toe/tic-tac-toe';
+} from '../tic-tic-toe/tic-tac-toe-ui';
 import {
   BackendModel,
   FrontendModel,
   FrontendMsg,
   initSharedModel,
+  inputMove,
   ToBackend,
   ToFrontend,
 } from './vs-bot.types';
@@ -35,7 +40,13 @@ import {
 
 export type Model = FrontendModel;
 
-export const init = initSharedModel;
+export const init = (...params: Parameters<typeof initSharedModel>): Model => {
+  const model = initSharedModel(...params);
+  return {
+    ...model,
+    visual: [],
+  };
+};
 
 //
 //
@@ -49,22 +60,37 @@ export type Msg = FrontendMsg;
 
 export type OutAction = Alerts.Action;
 
-export const update = (
-  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd },
-  msg: Msg,
-  model: Model
-): [Model, Cmd<Msg>] => {
+export const update = ({
+  sendToBackend,
+  msg,
+  model,
+}: {
+  sendToBackend: (msg: ToBackend) => Cmd;
+  msg: Msg;
+  model: Model;
+}): { model: Model; cmd?: Cmd<Msg> } => {
   switch (msg[0]) {
-    case 'start-game':
-    case 'stop-playing':
-    case 'start-playing':
-    case 'InputBot':
-    case 'stop-game':
-    case 'input-move':
-    case 'restart':
-    case 'swap-sides':
-    case 'input-player-type': {
-      return [model, sendToBackend(msg)];
+    case 'animate': {
+      if (model.type !== 'game') {
+        return { model };
+      }
+      const visualNew = step({
+        nowMs: Date.now(),
+        model: model.visual,
+        board: model.board,
+      });
+      return { model: { ...model, visual: visualNew } };
+    }
+    case 'input-move': {
+      const result = inputMove(msg[1], model);
+      if (result.type === 'Err') {
+        return { model, cmd: sendToBackend(msg) };
+      }
+      const merged = mergeWithBackend(model, result.value);
+      return { model: merged, cmd: sendToBackend(msg) };
+    }
+    default: {
+      return { model, cmd: sendToBackend(msg) };
     }
   }
 };
@@ -79,16 +105,7 @@ export const updateFromBackend = (
       return [modelNew, Cmd.None, []];
     }
 
-    case 'BotMove_Done':
-    case 'InputBot_Done':
-    case 'StartGame_Done':
-    case 'StartPlaying_Done':
-    case 'StopPlaying_Done':
-    case 'StopGame_Done':
-    case 'InputMove_Done':
-    case 'Restart_Done':
-    case 'swap-sides-done':
-    case 'InputPlayerType_Done': {
+    default: {
       if (msg[1].type === 'Err') {
         return [model, Cmd.None, []];
       }
@@ -99,10 +116,13 @@ export const updateFromBackend = (
 };
 
 export const mergeWithBackend = (
-  _frontendModel: FrontendModel,
+  frontendModel: FrontendModel,
   backendModel: BackendModel
 ): FrontendModel => {
-  return backendModel;
+  return {
+    ...backendModel,
+    visual: frontendModel.visual,
+  };
 };
 
 //
@@ -113,7 +133,10 @@ export const mergeWithBackend = (
 //
 //
 
-export const subscriptions = (_model: Model): Sub<Msg> => {
+export const subscriptions = (ctx: Ctx, model: Model): Sub<Msg> => {
+  if (isAnimating({ nowMs: ctx.now, model: model.visual })) {
+    return Animation.onFrame(() => ['animate']);
+  }
   return Sub.None;
 };
 
