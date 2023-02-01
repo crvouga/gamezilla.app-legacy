@@ -44,7 +44,7 @@ export type Msg =
   | ['ClickedBack']
   | ['clicked-send-code']
   | ['inputted-phone-number', string]
-  | ['InputtedCountry', Iso3166Alpha2Code]
+  | ['inputted-country', Iso3166Alpha2Code]
   | ['send-code-done', PhoneNumber, Auth.AuthResult];
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
@@ -82,7 +82,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       ];
     }
 
-    case 'InputtedCountry': {
+    case 'inputted-country': {
       return [
         { ...model, country: msg[1], validation: 'NotChecked' },
         Cmd.None,
@@ -161,7 +161,7 @@ export const View = ({
           )}
           onChange={(_event, value) => {
             if (value && Iso3166Alpha2Code.is(value)) {
-              $send(['InputtedCountry', value]);
+              $send(['inputted-country', value]);
             }
           }}
         />

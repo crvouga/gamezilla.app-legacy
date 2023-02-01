@@ -837,9 +837,7 @@ const main = () => {
     backendUrl,
     {
       auth: {
-        [sessionIdKey]:
-          // localStorage.getItem(sessionIdKey) ?? undefined,
-          '',
+        [sessionIdKey]: localStorage.getItem(sessionIdKey) ?? undefined,
       },
       forceNew: true,
       closeOnBeforeunload: true,
