@@ -81,7 +81,7 @@ export type Req =
   // setup
   | ['start-playing']
   | ['stop-playing']
-  | ['InputUserStone', { userStone: Stone }]
+  | ['inputted-user-stone', { userStone: Stone }]
   | ['input-bot-level', { botLevel: BotLevel }]
   | ['start-game']
   // game
@@ -120,7 +120,7 @@ export const handle = (
       });
     }
 
-    case 'InputUserStone': {
+    case 'inputted-user-stone': {
       if (model.type !== 'setup') {
         return Err('must_be_setup');
       }

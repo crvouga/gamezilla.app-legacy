@@ -232,7 +232,7 @@ export const view = ({
         },
         coverArt: viewCoverArt(),
         player: {
-          onInput: (userStone) => $send(['InputUserStone', { userStone }]),
+          onInput: (userStone) => $send(['inputted-user-stone', { userStone }]),
           selected: model.userStone,
           values: Object.values(stones),
           icon: ({ sx, playerType: stone }) => viewStoneIcon({ ...sx, stone }),
