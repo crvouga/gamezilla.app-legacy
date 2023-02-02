@@ -139,7 +139,7 @@ export const updateFromBackend = (
     case 'NewGame_Done':
     case 'InputMoveTimeLimit_Done':
     case 'InputBestOutOf_Done':
-    case 'InputMove_Done':
+    case 'input-move-done':
     case 'InputPlayer_Done':
     case 'StopPlaying_Done':
     case 'StartGame_Done':

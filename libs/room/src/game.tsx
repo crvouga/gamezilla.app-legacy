@@ -21,7 +21,7 @@ export const viewCoverArt = (gameName: GameName) => {
       return Gomoku.viewCoverArt();
     }
 
-    case 'TicTacToe': {
+    case 'tic-tac-toe': {
       return TicTacToe.viewCoverArt();
     }
 
@@ -53,7 +53,7 @@ export const gameNameToString = (gameName: GameName) => {
       return 'Gomoku';
     }
 
-    case 'TicTacToe': {
+    case 'tic-tac-toe': {
       return 'Tic-Tac-Toe';
     }
 

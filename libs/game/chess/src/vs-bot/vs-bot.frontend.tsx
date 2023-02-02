@@ -191,7 +191,7 @@ const updateFromBackend_ = (
       return [merged, Cmd.None, []];
     }
 
-    case 'InputMove_Done': {
+    case 'input-move-done': {
       const result = msg[1];
 
       if (result.type === 'Err') {

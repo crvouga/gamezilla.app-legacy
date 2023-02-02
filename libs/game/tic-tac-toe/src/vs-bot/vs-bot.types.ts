@@ -339,7 +339,7 @@ export const stopGame = (
 //
 
 type Restart = ['restart', { userId: UserId }];
-type Restart_Done = ['Restart_Done', Result<RestartProblem, SharedModel>];
+type Restart_Done = ['restart-done', Result<RestartProblem, SharedModel>];
 type RestartProblem = 'not_playing' | 'not_in_game';
 
 export const restart = (
@@ -366,7 +366,10 @@ export const restart = (
 //
 
 type InputMove = ['input-move', { userId: UserId; position: Position }];
-type InputMove_Done = ['InputMove_Done', Result<InputMoveProblem, SharedModel>];
+type InputMove_Done = [
+  'input-move-done',
+  Result<InputMoveProblem, SharedModel>
+];
 type InputMoveProblem = MoveProblem | 'not_in_game' | 'not_playing';
 
 export const inputMove = (
@@ -436,7 +439,7 @@ export const swapSides = (
 //
 
 type BotMove = ['bot-move', Result<GetBestMoveProblem, Position>];
-type BotMove_Done = ['BotMove_Done', Result<BotMoveProblem, SharedModel>];
+type BotMove_Done = ['bot-move-done', Result<BotMoveProblem, SharedModel>];
 type BotMoveProblem = 'not_in_game' | MoveProblem | GetBestMoveProblem;
 
 export const botMove = (

@@ -33,8 +33,8 @@ export const init = ({
   gameName: Model['type'];
 }): [Model, Cmd<Msg>] => {
   switch (gameName) {
-    case 'TicTacToe': {
-      return [{ type: 'TicTacToe', child: TicTacToe.init }, Cmd.None];
+    case 'tic-tac-toe': {
+      return [{ type: 'tic-tac-toe', child: TicTacToe.init }, Cmd.None];
     }
 
     case 'connect-four': {
@@ -101,14 +101,14 @@ export const update = (
       return [model, Cmd.None];
     }
 
-    case 'TicTacToe': {
-      if (msg[0] === 'TicTacToe') {
+    case 'tic-tac-toe': {
+      if (msg[0] === 'tic-tac-toe') {
         const [child, cmd] = TicTacToe.update(
-          { sendToBackend: (msg) => sendToBackend(['TicTacToe', msg]) },
+          { sendToBackend: (msg) => sendToBackend(['tic-tac-toe', msg]) },
           msg[1],
           model.child
         );
-        return [{ type: 'TicTacToe', child }, Cmd.tag('TicTacToe', cmd)];
+        return [{ type: 'tic-tac-toe', child }, Cmd.tag('tic-tac-toe', cmd)];
       }
       return [model, Cmd.None];
     }
@@ -204,16 +204,16 @@ export const updateFromBackend = (
       return [model, Cmd.None, []];
     }
 
-    case 'TicTacToe': {
-      if (model.type === 'TicTacToe') {
+    case 'tic-tac-toe': {
+      if (model.type === 'tic-tac-toe') {
         const [child, cmd, actions] = TicTacToe.updateFromBackend(
           { ctx },
           msg[1],
           model.child
         );
         return [
-          { type: 'TicTacToe', child },
-          Cmd.tag('TicTacToe', cmd),
+          { type: 'tic-tac-toe', child },
+          Cmd.tag('tic-tac-toe', cmd),
           actions,
         ];
       }
@@ -303,7 +303,7 @@ export const subscriptions = (
       );
     }
 
-    case 'TicTacToe': {
+    case 'tic-tac-toe': {
       return Sub.None;
     }
 
@@ -360,13 +360,13 @@ export const View = ({
       );
     }
 
-    case 'TicTacToe': {
+    case 'tic-tac-toe': {
       return (
         <TicTacToe.View
           gameRoomCtx={gameRoomCtx}
           ctx={ctx}
           model={model.child}
-          $send={(msg) => $send(['TicTacToe', msg])}
+          $send={(msg) => $send(['tic-tac-toe', msg])}
         />
       );
     }
@@ -493,11 +493,11 @@ export const mergeWithBackend = ({
       ];
     }
 
-    case 'TicTacToe': {
-      if (frontendModel.type === 'TicTacToe') {
+    case 'tic-tac-toe': {
+      if (frontendModel.type === 'tic-tac-toe') {
         return [
           {
-            type: 'TicTacToe',
+            type: 'tic-tac-toe',
             child: TicTacToe.mergeWithBackend(
               frontendModel.child,
               backendModel.child
@@ -511,7 +511,7 @@ export const mergeWithBackend = ({
 
       return [
         {
-          type: 'TicTacToe',
+          type: 'tic-tac-toe',
           child: TicTacToe.mergeWithBackend(initial, backendModel.child),
         },
         Cmd.None,
