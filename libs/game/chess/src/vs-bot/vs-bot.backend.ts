@@ -143,7 +143,7 @@ const updateFromFrontend_ = (
 
       const modelNew = result.type === 'Err' ? model : result.value;
 
-      return [modelNew, broadcast(['InputMove_Done', result])];
+      return [modelNew, broadcast(['input-move-done', result])];
     }
   }
 };

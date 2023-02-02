@@ -119,7 +119,7 @@ export const updateFromFrontend = (
     case 'input-move': {
       return sendResponse(
         wire,
-        ['InputMove_Done', inputMove(msg[1], model)],
+        ['input-move-done', inputMove(msg[1], model)],
         model
       );
     }

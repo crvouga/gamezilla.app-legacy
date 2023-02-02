@@ -25,8 +25,8 @@ export const init = ({ gameName }: { gameName: Model['type'] }): Model => {
       return { type: 'connect-four', child: ConnectFour.init };
     }
 
-    case 'TicTacToe': {
-      return { type: 'TicTacToe', child: TicTacToe.init };
+    case 'tic-tac-toe': {
+      return { type: 'tic-tac-toe', child: TicTacToe.init };
     }
 
     case 'Chess': {
@@ -79,14 +79,14 @@ export const update = (
       return [model, Cmd.None];
     }
 
-    case 'TicTacToe': {
-      if (model.type === 'TicTacToe') {
+    case 'tic-tac-toe': {
+      if (model.type === 'tic-tac-toe') {
         const [child, cmd] = TicTacToe.update(
-          { broadcast: (m) => broadcast(['TicTacToe', m]) },
+          { broadcast: (m) => broadcast(['tic-tac-toe', m]) },
           msg[1],
           model.child
         );
-        return [{ type: 'TicTacToe', child }, Cmd.tag('TicTacToe', cmd)];
+        return [{ type: 'tic-tac-toe', child }, Cmd.tag('tic-tac-toe', cmd)];
       }
       return [model, Cmd.None];
     }
@@ -187,17 +187,17 @@ export const updateFromFrontend = (
       return [model, Cmd.None];
     }
 
-    case 'TicTacToe': {
-      if (model.type === 'TicTacToe') {
+    case 'tic-tac-toe': {
+      if (model.type === 'tic-tac-toe') {
         const [child, cmd] = TicTacToe.updateFromFrontend(
           {
-            sendToClient: (msg) => sendToClient(['TicTacToe', msg]),
-            broadcast: (msg) => broadcast(['TicTacToe', msg]),
+            sendToClient: (msg) => sendToClient(['tic-tac-toe', msg]),
+            broadcast: (msg) => broadcast(['tic-tac-toe', msg]),
           },
           msg[1],
           model.child
         );
-        return [{ type: 'TicTacToe', child }, Cmd.tag('TicTacToe', cmd)];
+        return [{ type: 'tic-tac-toe', child }, Cmd.tag('tic-tac-toe', cmd)];
       }
       return [model, Cmd.None];
     }
@@ -308,13 +308,13 @@ export const updateRoomLeave = (
       return [{ type: 'connect-four', child }, Cmd.tag('connect-four', cmd)];
     }
 
-    case 'TicTacToe': {
+    case 'tic-tac-toe': {
       const [child, cmd] = TicTacToe.updateRoomLeave(
-        { broadcast: (msg) => broadcast(['TicTacToe', msg]) },
+        { broadcast: (msg) => broadcast(['tic-tac-toe', msg]) },
         userId,
         model.child
       );
-      return [{ type: 'TicTacToe', child }, Cmd.tag('TicTacToe', cmd)];
+      return [{ type: 'tic-tac-toe', child }, Cmd.tag('tic-tac-toe', cmd)];
     }
 
     case 'gomoku': {
@@ -356,9 +356,9 @@ export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
       );
     }
 
-    case 'TicTacToe': {
+    case 'tic-tac-toe': {
       return Sub.tag(
-        'TicTacToe',
+        'tic-tac-toe',
         TicTacToe.subscriptions(intervalId, model.child)
       );
     }

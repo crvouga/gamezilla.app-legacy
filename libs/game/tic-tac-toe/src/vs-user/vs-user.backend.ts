@@ -139,12 +139,12 @@ export const updateFromFrontend = (
       const result = inputMove(msg[1], model);
 
       if (result.type === 'Err') {
-        return [model, sendToClient(['InputMove_Done', result])];
+        return [model, sendToClient(['input-move-done', result])];
       }
 
       const modelNew = result.value;
 
-      return [modelNew, broadcast(['InputMove_Done', result])];
+      return [modelNew, broadcast(['input-move-done', result])];
     }
 
     case 'NewGame': {

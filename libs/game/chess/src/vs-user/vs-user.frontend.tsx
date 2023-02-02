@@ -179,7 +179,7 @@ export const updateFromBackend = (
       return [{ ...model, sharedModel: msg[1].value }, Cmd.None, []];
     }
 
-    case 'InputMove_Done': {
+    case 'input-move-done': {
       if (msg[1].type === 'Err') {
         return [model, Cmd.None, []];
       }

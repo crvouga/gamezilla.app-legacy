@@ -60,7 +60,7 @@ export const update: Update = (wire, msg, model) => {
 export const update_: Update = ({ broadcast }, msg, model) => {
   switch (msg[0]) {
     case 'bot-move': {
-      const response: ToFrontend = ['BotMove_Done', botMove(msg[1], model)];
+      const response: ToFrontend = ['bot-move-done', botMove(msg[1], model)];
       const modelNext = response[1].type === 'Ok' ? response[1].value : model;
       return [modelNext, broadcast(response)];
     }
@@ -173,7 +173,7 @@ const updateFromFrontend_: UpdateFromFrontend = (
     }
 
     case 'input-move': {
-      const response: Response = ['InputMove_Done', inputMove(msg[1], model)];
+      const response: Response = ['input-move-done', inputMove(msg[1], model)];
       if (response[1].type === 'Err') {
         return [model, sendToClient(response)];
       }
@@ -189,7 +189,7 @@ const updateFromFrontend_: UpdateFromFrontend = (
     }
 
     case 'restart': {
-      const response: Response = ['Restart_Done', restart(msg[1], model)];
+      const response: Response = ['restart-done', restart(msg[1], model)];
       if (response[1].type === 'Err') {
         return [model, sendToClient(response)];
       }

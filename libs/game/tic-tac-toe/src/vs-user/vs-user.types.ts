@@ -360,7 +360,10 @@ type InputMove = [
   'input-move',
   { userId: UserId; position: TicTacToe.Position }
 ];
-type InputMove_Done = ['InputMove_Done', Result<InputMoveProblem, SharedModel>];
+type InputMove_Done = [
+  'input-move-done',
+  Result<InputMoveProblem, SharedModel>
+];
 type InputMoveProblem =
   | TicTacToe.MoveProblem
   | 'not_playing'

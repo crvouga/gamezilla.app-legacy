@@ -345,7 +345,7 @@ export const stopGame = (
 export type InputMove = ['input-move', Board.MoveInput & { userId: UserId }];
 
 export type InputMove_Done = [
-  'InputMove_Done',
+  'input-move-done',
   Result<InputMoveProblem, SharedModel & { didCapture: boolean }>
 ];
 
