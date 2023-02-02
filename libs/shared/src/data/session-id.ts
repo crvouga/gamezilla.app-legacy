@@ -3,7 +3,11 @@ import { Result } from '@gamezilla/core';
 export type SessionId = string & { _opaque: 'SessionId' };
 
 export const is = (id: unknown): id is SessionId => {
-  return typeof id === 'string' && id.startsWith('session-');
+  return (
+    typeof id === 'string' &&
+    id.startsWith('session-') &&
+    id.split('').every((c) => characters.includes(c) || c === '-')
+  );
 };
 
 type Problem = 'invalid_session_id';

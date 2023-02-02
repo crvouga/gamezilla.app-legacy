@@ -203,10 +203,6 @@ const updateMain =
         return [{ ...model, wire: msg[1] }, Cmd.None];
       }
 
-      case 'local-storage-put-done': {
-        return [model, Cmd.None];
-      }
-
       case 'room': {
         const status = toStatus(model);
 
@@ -304,15 +300,6 @@ const updateFromBackend = (
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'session': {
-      const sessionId = msg[1];
-
-      return [
-        model,
-        LocalStorage.put(sessionIdKey, sessionId, t('local-storage-put-done')),
-      ];
-    }
-
     case 'party': {
       if (model.auth[0] !== 'LoggedIn') {
         return [model, Cmd.None];
@@ -839,10 +826,13 @@ const main = () => {
       auth: {
         [sessionIdKey]: localStorage.getItem(sessionIdKey) ?? undefined,
       },
-      forceNew: true,
-      closeOnBeforeunload: true,
     }
   );
+
+  socketClient.on('session-id', (sessionId) => {
+    console.log(`session-id: ${sessionId}`);
+    localStorage.setItem(sessionIdKey, sessionId);
+  });
 
   socketClient.on('connect', () => {
     wireStatus$.next('connected');

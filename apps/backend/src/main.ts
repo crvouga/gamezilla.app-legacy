@@ -309,16 +309,11 @@ const socketServer = new Socket.Server<
 socketServer.on('connection', (socket) => {
   const maybeSessionId: unknown = socket.handshake.auth[sessionIdKey];
 
-  // todo remove this hack
-  const cleaned =
-    typeof maybeSessionId === 'string'
-      ? maybeSessionId.replace('"', '').replace('\\', '')
-      : maybeSessionId;
+  const sessionId = SessionId.is(maybeSessionId)
+    ? maybeSessionId
+    : SessionId.generate();
 
-  const sessionId = SessionId.is(cleaned) ? cleaned : SessionId.generate();
-
-  // move this inside frontend
-  socket.emit('to-frontend', ['session', sessionId]);
+  socket.emit('session-id', sessionId);
 
   if (ClientId.is(socket.id)) {
     onConnect.next([sessionId, socket.id]);

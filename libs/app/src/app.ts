@@ -1,12 +1,10 @@
-import { Alerts } from '@gamezilla/shared';
 import { Auth } from '@gamezilla/auth';
 import { ChatStore } from '@gamezilla/chat';
-import { LocalStorage, Option } from '@gamezilla/core';
-import { ClientId, SessionId, UserId } from '@gamezilla/shared';
+import { Option } from '@gamezilla/core';
 import { Party } from '@gamezilla/party';
 import { ProfileStore } from '@gamezilla/profile';
 import * as GameRoom from '@gamezilla/room';
-import { Route } from '@gamezilla/shared';
+import { Alerts, ClientId, Route, SessionId, UserId } from '@gamezilla/shared';
 import * as Page from './app-page';
 
 //
@@ -64,8 +62,7 @@ export type ToBackend =
 
 export type ToFrontend =
   | ['room', GameRoom.ToFrontend]
-  | ['party', Party.ToFrontend]
-  | ['session', SessionId];
+  | ['party', Party.ToFrontend];
 
 export type FrontendMsg =
   | ['→', ToFrontend]
@@ -76,7 +73,6 @@ export type FrontendMsg =
   | ['chat-store', ChatStore.Msg]
   | ['auth', Auth.Msg]
   | ['page', Page.Msg]
-  | ['local-storage-put-done', LocalStorage.PutResult]
   | ['party', Party.FrontendMsg]
   | ['profile-store', ProfileStore.Msg];
 
@@ -97,6 +93,7 @@ export type BackendMsg =
 
 export type ServerToClientEvents = {
   ['to-frontend']: (msg: ToFrontend) => void;
+  ['session-id']: (sessionId: SessionId) => void;
 };
 
 export type ClientToServerEvents = {
