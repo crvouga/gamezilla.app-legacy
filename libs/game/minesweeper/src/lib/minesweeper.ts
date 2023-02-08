@@ -1,4 +1,6 @@
 import { p, shuffle } from '@gamezilla/core';
+import { Position } from './position';
+import { PositionSet } from './position-set';
 
 export type Model = {
   mines: PositionSet;
@@ -6,64 +8,21 @@ export type Model = {
   holes: PositionSet;
 };
 
-type PositionSet = {
-  [key: string]: Position;
-};
+const deltas = [
+  { x: -1, y: -1 },
+  { x: -1, y: 0 },
+  { x: -1, y: 1 },
+  { x: 0, y: -1 },
+  { x: 0, y: 1 },
+  { x: 1, y: -1 },
+  { x: 1, y: 0 },
+  { x: 1, y: 1 },
+];
 
-const fromArray = (array: Position[]): PositionSet => {
-  const set: PositionSet = {};
-  for (const position of array) {
-    set[toKey(position)] = position;
-  }
-  return set;
-};
-
-type Position = {
-  x: number;
-  y: number;
-};
-
-export const toKey = (position: Position) => {
-  return `${position.x},${position.y}`;
-};
-
-const has = (set: PositionSet, position: Position): boolean => {
-  return Boolean(set[toKey(position)]);
-};
-
-export const toMineCount = (model: Model, position: Position) => {
-  let count = 0;
-  for (let dx = -1; dx <= 1; dx++) {
-    for (let dy = -1; dy <= 1; dy++) {
-      if (dx === 0 && dy === 0) {
-        continue;
-      }
-      const adjacent: Position = {
-        x: position.x + dx,
-        y: position.y + dy,
-      };
-      if (has(model.mines, adjacent)) {
-        count++;
-      }
-    }
-  }
-  return count;
-};
-
-export const toAllPositions = ({
-  rowCount,
-  columnCount,
-}: {
-  rowCount: number;
-  columnCount: number;
-}): Position[] => {
-  const positions: Position[] = [];
-  for (let x = 0; x < columnCount; x++) {
-    for (let y = 0; y < rowCount; y++) {
-      positions.push({ x, y });
-    }
-  }
-  return positions;
+export const toMineCount = (model: Model, position: Position): number => {
+  return deltas
+    .map((delta) => Position.add(position, delta))
+    .filter((adjacent) => PositionSet.has(model.mines, adjacent)).length;
 };
 
 export const initMines = ({
@@ -78,9 +37,34 @@ export const initMines = ({
   seed: string;
 }): PositionSet => {
   return p(
-    toAllPositions({ rowCount, columnCount }),
+    Position.range({ maxX: columnCount, maxY: rowCount }),
     (x) => shuffle(seed, x),
     (x) => x.slice(0, mineCount),
-    fromArray
+    PositionSet.fromArray
   );
+};
+
+export const plantFlag = (model: Model, position: Position): Model => {
+  return {
+    ...model,
+    flags: PositionSet.add(model.flags, position),
+  };
+};
+
+export const removeFlag = (model: Model, position: Position): Model => {
+  return {
+    ...model,
+    flags: PositionSet.remove(model.flags, position),
+  };
+};
+
+export const digHole = (model: Model, position: Position): Model => {
+  if (PositionSet.has(model.flags, position)) {
+    return model;
+  }
+
+  return {
+    ...model,
+    holes: PositionSet.add(model.holes, position),
+  };
 };
