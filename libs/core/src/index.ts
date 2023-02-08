@@ -11,7 +11,7 @@ export { NonEmpty } from './non-empty';
 export { Option } from './option';
 export * from './pipe';
 export { Program } from './program';
-export { Random } from './random';
+export { Random, shuffle } from './random';
 export { RemoteData } from './remote-data';
 export { Result } from './result';
 export { Set } from './set';

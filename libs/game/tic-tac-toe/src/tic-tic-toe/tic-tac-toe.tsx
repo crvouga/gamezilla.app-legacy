@@ -124,7 +124,7 @@ export const toBestMove = ({
   maximizingPlayer: PlayerType;
   board: Board;
 }): Result<ToBestMoveProblem, Position> => {
-  for (const position of shuffle(allPositions)) {
+  for (const position of shuffle(String(Math.random()), allPositions)) {
     const moved = move({ board, player: maximizingPlayer, position });
 
     if (moved.type === 'Ok') {

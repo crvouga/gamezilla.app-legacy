@@ -1,6 +1,6 @@
 /* eslint-disable no-constant-condition */
-import { eq, memoize, Random } from "@gamezilla/core"
-import { Direction, Position } from "./position"
+import { eq, memoize, Random } from '@gamezilla/core';
+import { Direction, Position } from './position';
 
 //
 //
@@ -9,10 +9,10 @@ import { Direction, Position } from "./position"
 //
 
 export type Maze = {
-  lower: Position
-  upper: Position
-  edges: [Position, Position][]
-}
+  lower: Position;
+  upper: Position;
+  edges: [Position, Position][];
+};
 
 //
 //
@@ -25,121 +25,120 @@ const make = ({
   lower,
   upper,
 }: {
-  seed: string
-  lower: Position
-  upper: Position
+  seed: string;
+  lower: Position;
+  upper: Position;
 }) => {
-  const gen = Random.generator(seed)
+  const maze: Maze = { edges: [], lower, upper };
 
-  const maze: Maze = { edges: [], lower, upper }
-
-  const stack = [lower]
-  const visited = new Set<string>([Position.toKey(lower)])
+  const stack = [lower];
+  const visited = new Set<string>([Position.toKey(lower)]);
 
   while (true) {
-    const current = stack.pop()
+    const current = stack.pop();
 
     if (!current) {
-      break
+      break;
     }
 
     let unvisitedNeighbor: { position: Position; direction: Direction } | null =
-      null
+      null;
 
-    for (const direction of Random.shuffle(gen, Direction.all)) {
-      const neighbor = Position.add(Direction.toVector(direction), current)
+    for (const direction of Random.shuffle(seed, Direction.all)) {
+      const neighbor = Position.add(Direction.toVector(direction), current);
 
       if (!hasVertex(neighbor, maze)) {
-        continue
+        continue;
       }
 
       if (visited.has(Position.toKey(neighbor))) {
-        continue
+        continue;
       }
 
-      unvisitedNeighbor = { position: neighbor, direction }
-      break
+      unvisitedNeighbor = { position: neighbor, direction };
+      break;
     }
 
     if (!unvisitedNeighbor) {
-      continue
+      continue;
     }
 
-    stack.push(current)
-    stack.push(unvisitedNeighbor.position)
-    visited.add(Position.toKey(unvisitedNeighbor.position))
-    maze.edges.push([current, unvisitedNeighbor.position])
+    stack.push(current);
+    stack.push(unvisitedNeighbor.position);
+    visited.add(Position.toKey(unvisitedNeighbor.position));
+    maze.edges.push([current, unvisitedNeighbor.position]);
   }
 
-  remove_dead_ends({ limit: Infinity, gen }, maze)
+  remove_dead_ends({ limit: Infinity, seed }, maze);
 
-  return maze
-}
+  return maze;
+};
 
-const remove_dead_ends = ({ gen, limit }: { gen: () => number, limit: number }, maze: Maze) => {
-  let count = 0
+const remove_dead_ends = (
+  { seed, limit }: { seed: string; limit: number },
+  maze: Maze
+) => {
+  let count = 0;
 
   for (let x = maze.lower.x; x <= maze.upper.x; x++) {
     for (let y = maze.lower.y; y <= maze.upper.y; y++) {
-      const position: Position = { x, y }
+      const position: Position = { x, y };
 
-      const connections = toConnections(position, maze)
+      const connections = toConnections(position, maze);
 
       if (connections.length >= 2) {
-        continue
+        continue;
       }
 
-      for (const direction of Random.shuffle(gen, Direction.all)) {
-        const neighbor = Position.add(Direction.toVector(direction), position)
+      for (const direction of Random.shuffle(seed, Direction.all)) {
+        const neighbor = Position.add(Direction.toVector(direction), position);
 
         if (!hasVertex(neighbor, maze)) {
-          continue
+          continue;
         }
 
-        const isAdjacent = connections.some(adj => Position.eq(adj, neighbor))
+        const isAdjacent = connections.some((adj) =>
+          Position.eq(adj, neighbor)
+        );
 
         if (isAdjacent) {
-          continue
+          continue;
         }
 
-        maze.edges.push([neighbor, position])
+        maze.edges.push([neighbor, position]);
 
-        count++
+        count++;
         if (count >= limit) {
-          return
+          return;
         }
 
-        break
+        break;
       }
     }
   }
-}
+};
 
 const makeMemoized = memoize(
   ({ seed, lower, upper }) =>
-    [seed, lower.x, lower.y, upper.x, upper.y].join("-"),
-  make,
-)
-
+    [seed, lower.x, lower.y, upper.x, upper.y].join('-'),
+  make
+);
 
 const toConnections = (position: Position, maze: Maze) => {
-  const adjancent: Position[] = []
+  const adjacent: Position[] = [];
 
   for (const edge of maze.edges) {
     if (Position.eq(position, edge[0])) {
-      adjancent.push(edge[1])
+      adjacent.push(edge[1]);
     }
 
     if (Position.eq(position, edge[1])) {
-      adjancent.push(edge[0])
+      adjacent.push(edge[0]);
     }
   }
 
-  return adjancent
-}
-
-
-
+  return adjacent;
+};
 
 const hasVertex = (vertex: Position, { lower, upper }: Maze): boolean => {
   return (
@@ -147,72 +146,69 @@ const hasVertex = (vertex: Position, { lower, upper }: Maze): boolean => {
     vertex.x <= upper.x &&
     lower.y <= vertex.y &&
     vertex.y <= upper.y
-  )
-}
+  );
+};
 
 const hasEdge = (edge: [Position, Position], maze: Maze): boolean => {
-  return maze.edges.some((arbitrary) => eqEdge(arbitrary, edge))
-}
+  return maze.edges.some((arbitrary) => eqEdge(arbitrary, edge));
+};
 
 const eqEdge = <T,>(x: [T, T], y: [T, T]): boolean => {
   return (
     (eq(x[0], y[0]) && eq(x[1], y[1])) || (eq(x[1], y[0]) && eq(x[0], y[1]))
-  )
-}
+  );
+};
 
 export const Maze = {
   make,
   makeMemoized,
   hasEdge,
   hasVertex,
-}
+};
 
 //
-// 
-// 
-// 
-// 
+//
+//
+//
+//
 
 const coverArtMaze = Maze.make({
-  seed: "cover art maze!",
+  seed: 'cover art maze!',
   lower: { x: 0, y: 0 },
   upper: { x: 8, y: 8 },
-})
+});
 
 const viewBox = [
   coverArtMaze.lower.x,
   coverArtMaze.lower.y,
   coverArtMaze.upper.x - coverArtMaze.lower.x + 1,
   coverArtMaze.upper.y - coverArtMaze.lower.y + 1,
-].join(" ")
+].join(' ');
 
 export const viewCoverArt = () => {
   return (
-    <svg viewBox={viewBox} width={"100%"}>
+    <svg viewBox={viewBox} width={'100%'}>
       <rect
         x={coverArtMaze.lower.x}
         y={coverArtMaze.lower.y}
         width="100%"
         height="100%"
-        fill={"#000"}
+        fill={'#000'}
       />
-      {
-        coverArtMaze.edges.map(([a, b]) => (
-          <g
-            key={[a.x, a.y, b.x, b.y].join("-")}
-            strokeWidth="0.1"
-            stroke={"#fff"}
-          >
-            <line
-              x1={a.x + 1 / 2}
-              y1={a.y + 1 / 2}
-              x2={b.x + 1 / 2}
-              y2={b.y + 1 / 2}
-            />
-          </g>
-        ))
-      }
-
+      {coverArtMaze.edges.map(([a, b]) => (
+        <g
+          key={[a.x, a.y, b.x, b.y].join('-')}
+          strokeWidth="0.1"
+          stroke={'#fff'}
+        >
+          <line
+            x1={a.x + 1 / 2}
+            y1={a.y + 1 / 2}
+            x2={b.x + 1 / 2}
+            y2={b.y + 1 / 2}
+          />
+        </g>
+      ))}
     </svg>
-  )
-}
+  );
+};

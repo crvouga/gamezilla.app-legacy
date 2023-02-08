@@ -140,7 +140,7 @@ export const toBestMove = ({
   columns: Columns;
   maximizingPlayer: PlayerType;
 }): BestMoveResult => {
-  for (const columnIndex of shuffle(allColumnIndexes)) {
+  for (const columnIndex of shuffle(String(Math.random()), allColumnIndexes)) {
     const result = move(columns, columnIndex, maximizingPlayer);
     if (result.type === 'Ok') {
       return Ok(columnIndex);

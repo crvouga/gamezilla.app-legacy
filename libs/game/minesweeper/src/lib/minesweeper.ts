@@ -1,14 +1,21 @@
+import { p, shuffle } from '@gamezilla/core';
+
 export type Model = {
   mines: PositionSet;
   flags: PositionSet;
   holes: PositionSet;
-  mineCount: number;
-  rowCount: number;
-  columnCount: number;
 };
 
 type PositionSet = {
   [key: string]: Position;
+};
+
+const fromArray = (array: Position[]): PositionSet => {
+  const set: PositionSet = {};
+  for (const position of array) {
+    set[toKey(position)] = position;
+  }
+  return set;
 };
 
 type Position = {
@@ -43,9 +50,37 @@ export const toMineCount = (model: Model, position: Position) => {
   return count;
 };
 
-export const initMines = (model: Model): Model => {
-  return {
-    ...model,
-    mines: {},
-  };
+export const toAllPositions = ({
+  rowCount,
+  columnCount,
+}: {
+  rowCount: number;
+  columnCount: number;
+}): Position[] => {
+  const positions: Position[] = [];
+  for (let x = 0; x < columnCount; x++) {
+    for (let y = 0; y < rowCount; y++) {
+      positions.push({ x, y });
+    }
+  }
+  return positions;
+};
+
+export const initMines = ({
+  rowCount,
+  columnCount,
+  mineCount,
+  seed,
+}: {
+  rowCount: number;
+  columnCount: number;
+  mineCount: number;
+  seed: string;
+}): PositionSet => {
+  return p(
+    toAllPositions({ rowCount, columnCount }),
+    (x) => shuffle(seed, x),
+    (x) => x.slice(0, mineCount),
+    fromArray
+  );
 };

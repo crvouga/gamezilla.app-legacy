@@ -137,7 +137,7 @@ export const toBestMove = ({
   stone: Stone;
   board: Board;
 }) => {
-  for (const position of shuffle(allPositions)) {
+  for (const position of shuffle(String(Math.random()), allPositions)) {
     const moved = move({ position, stone, board });
     if (moved.type === 'Ok') {
       return position;
