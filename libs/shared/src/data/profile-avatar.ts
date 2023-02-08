@@ -1,127 +1,127 @@
 export type Style =
-  | "adventurer"
-  | "adventurer-neutral"
-  | "avataaars"
-  | "bottts"
-  | "big-ears"
-  | "big-ears-neutral"
-  | "big-smile"
-  | "croodles"
-  | "croodles-neutral"
-  | "gridy"
-  | "identicon"
-  | "initials"
-  | "jdenticon"
-  | "micah"
-  | "miniavs"
-  | "open-peeps"
-  | "personas"
-  | "pixel-art"
-  | "pixel-art-neutral"
+  | 'adventurer'
+  | 'adventurer-neutral'
+  | 'avataaars'
+  | 'bottts'
+  | 'big-ears'
+  | 'big-ears-neutral'
+  | 'big-smile'
+  | 'croodles'
+  | 'croodles-neutral'
+  | 'gridy'
+  | 'identicon'
+  | 'initials'
+  | 'jdenticon'
+  | 'micah'
+  | 'miniavs'
+  | 'open-peeps'
+  | 'personas'
+  | 'pixel-art'
+  | 'pixel-art-neutral';
 
 export const STYLES: { [style in Style]: Style } = {
-  adventurer: "adventurer",
-  "adventurer-neutral": "adventurer-neutral",
-  avataaars: "avataaars",
-  "big-ears": "big-ears",
-  bottts: "bottts",
-  "big-ears-neutral": "big-ears-neutral",
-  "big-smile": "big-smile",
-  croodles: "croodles",
-  "croodles-neutral": "croodles-neutral",
-  gridy: "gridy",
-  identicon: "identicon",
-  initials: "initials",
-  jdenticon: "jdenticon",
-  micah: "micah",
-  miniavs: "miniavs",
-  "open-peeps": "open-peeps",
-  personas: "personas",
-  "pixel-art": "pixel-art",
-  "pixel-art-neutral": "pixel-art-neutral",
-}
+  adventurer: 'adventurer',
+  'adventurer-neutral': 'adventurer-neutral',
+  avataaars: 'avataaars',
+  'big-ears': 'big-ears',
+  bottts: 'bottts',
+  'big-ears-neutral': 'big-ears-neutral',
+  'big-smile': 'big-smile',
+  croodles: 'croodles',
+  'croodles-neutral': 'croodles-neutral',
+  gridy: 'gridy',
+  identicon: 'identicon',
+  initials: 'initials',
+  jdenticon: 'jdenticon',
+  micah: 'micah',
+  miniavs: 'miniavs',
+  'open-peeps': 'open-peeps',
+  personas: 'personas',
+  'pixel-art': 'pixel-art',
+  'pixel-art-neutral': 'pixel-art-neutral',
+};
 
-export const ALL_STYLES = Object.keys(STYLES) as Style[]
+export const ALL_STYLES = Object.keys(STYLES) as Style[];
 
 const capitalize = (word: string) => {
-  const [first, ...rest] = word.split("")
-  return [first?.toUpperCase() ?? "", ...rest].join("")
-}
+  const [first, ...rest] = word.split('');
+  return [first?.toUpperCase() ?? '', ...rest].join('');
+};
 
 export const formatStyle = (style: Style) => {
-  return style.split("-").map(capitalize).join(" ")
-}
+  return style.split('-').map(capitalize).join(' ');
+};
 
 export const toStyle = (style: string): Style => {
   if (style in STYLES) {
-    return style as Style
+    return style as Style;
   }
 
-  return "adventurer"
-}
+  return 'adventurer';
+};
 
-export type Seed = string & { type: "Seed" }
+export type Seed = string & { type: 'Seed' };
 
 export const toSeed = (seedString: string) => {
-  return seedString.replace(" ", "").replace(";", "").replace(".", "") as Seed
-}
+  return seedString.replace(' ', '').replace(';', '').replace('.', '') as Seed;
+};
 
-const BASE_URL = `https://avatars.dicebear.com/api`
-const FILE_TYPE = "png"
+const BASE_URL = `https://avatars.dicebear.com/api`;
+const FILE_TYPE = 'png';
 
 export const toUrl = ({ seed, style }: { style: Style; seed: string }) => {
-  const url = new URL(`${BASE_URL}/${style}/${seed}.${FILE_TYPE}`)
+  const url = new URL(`${BASE_URL}/${style}/${seed}.${FILE_TYPE}`);
 
   // url.searchParams.append("backgroundColor", "white")
 
-  return url.toString()
-}
+  return url.toString();
+};
 
 export const parseUrl = (
-  avatarUrl?: string,
+  avatarUrl?: string
 ): {
-  seed: Seed
-  style: Style
+  seed: Seed;
+  style: Style;
 } => {
   try {
     const [style, seed] =
-      new URL(avatarUrl ?? "")?.pathname
-        ?.split(".")?.[0]
-        ?.split("/")
-        ?.slice(-2) ?? []
+      new URL(avatarUrl ?? '')?.pathname
+        ?.split('.')?.[0]
+        ?.split('/')
+        ?.slice(-2) ?? [];
 
     if (style && seed) {
       return {
         style: toStyle(style),
         seed: toSeed(seed),
-      }
+      };
     }
     return {
-      style: toStyle("adventurer"),
-      seed: toSeed(""),
-    }
+      style: toStyle('adventurer'),
+      seed: toSeed(''),
+    };
   } catch (error) {
     return {
-      style: toStyle("adventurer"),
-      seed: toSeed(""),
-    }
+      style: toStyle('adventurer'),
+      seed: toSeed(''),
+    };
   }
-}
+};
 
 export const generateRandomSeed = async () => {
-  await new Promise((resolve) => setTimeout(resolve, 100))
-  return toSeed(String(Math.floor(Math.random() * 10000)))
-}
+  await new Promise((resolve) => setTimeout(resolve, 100));
+  return toSeed(String(Math.floor(Math.random() * 10000)));
+};
 
 export const randomStyle = (): Style => {
-  const styles = shuffle(ALL_STYLES)
-  return styles[0] ?? "adventurer-neutral"
-}
+  const styles = shuffle(ALL_STYLES);
+  return styles[0] ?? 'adventurer-neutral';
+};
 
-const shuffle = <T,>(xs: T[]): T[] => {
-  const ys = [...xs]
+const shuffle = <T>(xs: T[]): T[] => {
+  const ys = [...xs];
 
-  ys.sort(() => (Math.random() > 0.5 ? 1 : -1))
+  ys.sort(() => (Math.random() > 0.5 ? 1 : -1));
 
-  return ys
-}
+  return ys;
+};
