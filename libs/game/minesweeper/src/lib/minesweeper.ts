@@ -6,23 +6,28 @@ export type Model = {
   mines: PositionSet;
   flags: PositionSet;
   holes: PositionSet;
+  rowCount: number;
+  columnCount: number;
 };
 
-const deltas = [
-  { x: -1, y: -1 },
-  { x: -1, y: 0 },
-  { x: -1, y: 1 },
-  { x: 0, y: -1 },
-  { x: 0, y: 1 },
-  { x: 1, y: -1 },
-  { x: 1, y: 0 },
-  { x: 1, y: 1 },
-];
-
 export const toMineCount = (model: Model, position: Position): number => {
-  return deltas
-    .map((delta) => Position.add(position, delta))
-    .filter((adjacent) => PositionSet.has(model.mines, adjacent)).length;
+  let count = 0;
+
+  for (let dx = -1; dx <= 1; dx++) {
+    for (let dy = -1; dy <= 1; dy++) {
+      if (dx === 0 && dy === 0) {
+        continue;
+      }
+
+      const adjacent = Position.add(position, { x: dx, y: dy });
+
+      if (PositionSet.has(model.mines, adjacent)) {
+        count++;
+      }
+    }
+  }
+
+  return count;
 };
 
 export const initMines = ({
@@ -44,7 +49,22 @@ export const initMines = ({
   );
 };
 
+export const didLose = (model: Model) => {
+  return PositionSet.size(PositionSet.intersect(model.mines, model.holes)) > 0;
+};
+
+export const didWin = (model: Model) => {
+  const holeCount = PositionSet.size(model.holes);
+  const mineCount = PositionSet.size(model.mines);
+  const slotCount = model.rowCount * model.columnCount;
+  return holeCount + mineCount === slotCount;
+};
+
 export const plantFlag = (model: Model, position: Position): Model => {
+  if (PositionSet.has(model.holes, position)) {
+    return model;
+  }
+
   return {
     ...model,
     flags: PositionSet.add(model.flags, position),

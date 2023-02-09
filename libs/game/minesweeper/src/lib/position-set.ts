@@ -30,7 +30,23 @@ const remove = (set: PositionSet, position: Position): PositionSet => {
 };
 
 const has = (set: PositionSet, position: Position): boolean => {
-  return !!set[toKey(position)];
+  return Boolean(set[toKey(position)]);
+};
+
+const intersect = (a: PositionSet, b: PositionSet): PositionSet => {
+  const intersection: PositionSet = {};
+  for (const keyA in a) {
+    const valueA = a[keyA];
+    const valueB = b[keyA];
+    if (valueA && valueB) {
+      intersection[keyA] = valueA;
+    }
+  }
+  return intersection;
+};
+
+const size = (set: PositionSet): number => {
+  return Object.keys(set).length;
 };
 
 export const PositionSet = {
@@ -38,4 +54,6 @@ export const PositionSet = {
   add,
   remove,
   has,
+  intersect,
+  size,
 };
