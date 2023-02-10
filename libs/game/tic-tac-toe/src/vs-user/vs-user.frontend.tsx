@@ -346,6 +346,7 @@ export const View = ({
 
           <UI.Box sx={{ width: '100%', position: 'relative' }}>
             <ViewBoard
+              model={[]}
               board={board}
               onClick={(position) =>
                 $send(['input-move', { position, userId: ctx.currentUserId }])
