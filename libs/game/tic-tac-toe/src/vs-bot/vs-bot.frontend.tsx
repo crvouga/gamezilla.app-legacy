@@ -146,7 +146,7 @@ export const mergeWithBackend = (
 //
 //
 //
-// Subscriptions
+// subscriptions
 //
 //
 //
