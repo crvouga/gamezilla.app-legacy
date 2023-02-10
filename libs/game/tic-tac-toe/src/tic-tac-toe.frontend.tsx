@@ -1,4 +1,4 @@
-import { Cmd, exhaustive } from '@gamezilla/core';
+import { Sub, Cmd, exhaustive } from '@gamezilla/core';
 import { GameRoomCtx, viewSelectModeScreen } from '@gamezilla/game-shared';
 import { ProfileStore } from '@gamezilla/profile';
 import { Alerts, Ctx } from '@gamezilla/shared';
@@ -167,6 +167,28 @@ export const mergeWithBackend = (
         mode: 'vs-bot',
         child: VsBot.mergeWithBackend(frontendModelChild, backendModel.child),
       };
+    }
+  }
+};
+
+//
+//
+// subscriptions
+//
+//
+
+export const subscriptions = (ctx: Ctx, model: Model): Sub<Msg> => {
+  switch (model.mode) {
+    case 'none': {
+      return Sub.None;
+    }
+
+    case 'vs-user': {
+      return Sub.None;
+    }
+
+    case 'vs-bot': {
+      return Sub.tag('vs-bot', VsBot.subscriptions(ctx, model.child));
     }
   }
 };

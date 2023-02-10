@@ -304,7 +304,7 @@ export const subscriptions = (
     }
 
     case 'tic-tac-toe': {
-      return Sub.None;
+      return Sub.tag('tic-tac-toe', TicTacToe.subscriptions(ctx, model.child));
     }
 
     case 'Chess': {

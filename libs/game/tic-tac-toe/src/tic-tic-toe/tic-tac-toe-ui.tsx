@@ -22,7 +22,7 @@ export type VisualModel = (VisualSlot | null)[][];
 
 export type VisualSlot = {
   type: 'enter' | 'exit';
-  lineLength: Ease.Model;
+  percentageDrew: Ease.Model;
   playerType: PlayerType;
 };
 
@@ -54,10 +54,10 @@ export const step = ({
         modelNewX.push({
           type: 'enter',
           playerType: slotTrue,
-          lineLength: Ease.init({
-            durationMs: 1000,
+          percentageDrew: Ease.init({
+            durationMs: 120,
             from: 0,
-            to: 0.8,
+            to: 1,
             startMs: nowMs,
           }),
         });
@@ -67,13 +67,17 @@ export const step = ({
       //
       // Exit
       //
-      if (!slotTrue && slotVisual) {
+      if (
+        (!slotTrue || slotTrue === '_') &&
+        slotVisual &&
+        slotVisual.type === 'enter'
+      ) {
         modelNewX.push({
           type: 'exit',
           playerType: slotVisual.playerType,
-          lineLength: Ease.init({
-            durationMs: 1000,
-            from: 0.8,
+          percentageDrew: Ease.init({
+            durationMs: 120,
+            from: 1,
             to: 0,
             startMs: nowMs,
           }),
@@ -84,11 +88,16 @@ export const step = ({
       //
       // Update
       //
-      if (slotTrue && slotVisual) {
+
+      const shouldRemove =
+        slotVisual &&
+        slotVisual.type === 'exit' &&
+        !Ease.isAnimating(nowMs, slotVisual.percentageDrew);
+
+      if (slotVisual && !shouldRemove) {
         modelNewX.push({
-          type: 'enter',
-          playerType: slotVisual.playerType,
-          lineLength: Ease.step(nowMs, slotVisual.lineLength),
+          ...slotVisual,
+          percentageDrew: Ease.step(nowMs, slotVisual.percentageDrew),
         });
         continue;
       }
@@ -98,6 +107,8 @@ export const step = ({
       //
       modelNewX.push(null);
     }
+
+    modelNew.push(modelNewX);
   }
 
   return modelNew;
@@ -113,7 +124,7 @@ export const isAnimating = ({
   for (let x = 0; x < MAX_X; x++) {
     for (let y = 0; y < MAX_Y; y++) {
       const slotVisual = model[x]?.[y];
-      if (slotVisual && Ease.isAnimating(nowMs, slotVisual.lineLength)) {
+      if (slotVisual && Ease.isAnimating(nowMs, slotVisual.percentageDrew)) {
         return true;
       }
     }
@@ -137,8 +148,10 @@ export const gameTheme = {
 
 export const ViewBoard = ({
   board,
+  model,
   onClick,
 }: {
+  model: VisualModel;
   board: Board;
   onClick: (position: Position) => void;
 }) => {
@@ -164,7 +177,7 @@ export const ViewBoard = ({
         ))}
       </g>
 
-      {allPositions.map((position) => (
+      {/* {allPositions.map((position) => (
         <ViewSlot
           key={[position.column, position.row, toSlot(board, position)].join(
             ' '
@@ -174,7 +187,23 @@ export const ViewBoard = ({
           cy={Number(position.row) + 0.5}
           r={0.3}
         />
-      ))}
+      ))} */}
+
+      {model.map((modelX, x) =>
+        modelX.map(
+          (slot, y) =>
+            slot &&
+            viewSlotVisual({
+              key: [x, y, slot.playerType].join(' '),
+              cx: Number(x) + 0.5,
+              cy: Number(y) + 0.5,
+              strokeWidth: 0.1,
+              r: 0.3,
+              slot: slot,
+              percentageDrew: slot.percentageDrew.value,
+            })
+        )
+      )}
 
       {allPositions.map((position) => (
         <rect
@@ -216,12 +245,11 @@ export const viewSlotVisual = ({
   cx,
   cy,
   r,
-  color,
+
   strokeWidth,
   percentageDrew,
 }: {
   key: string;
-  color?: string;
   strokeWidth?: number;
   slot: VisualSlot;
   r: number;
@@ -243,7 +271,7 @@ export const viewSlotVisual = ({
       });
 
       return (
-        <g key={key} strokeWidth={strokeWidth} stroke={color}>
+        <g key={key} strokeWidth={strokeWidth} stroke={gameTheme.cross}>
           {/*
 
           direction: \
@@ -279,7 +307,7 @@ export const viewSlotVisual = ({
       const dashoffset = rescale({
         value: percentageDrew,
         from: [0, 1],
-        to: [0, circumference],
+        to: [circumference, 0],
       });
       return (
         <circle
@@ -287,7 +315,7 @@ export const viewSlotVisual = ({
           r={r}
           cx={cx}
           cy={cy}
-          stroke={color}
+          stroke={gameTheme.naught}
           strokeWidth={strokeWidth}
           strokeDasharray={circumference}
           strokeDashoffset={dashoffset}
@@ -386,6 +414,7 @@ export const PlayerTypeIcon = ({
   return (
     <SvgIcon viewBox="-1 -1 2 2" sx={sx}>
       <ViewSlot
+        key={playerType}
         cx={0}
         cy={0}
         slot={playerType}

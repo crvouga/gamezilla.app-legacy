@@ -81,6 +81,7 @@ export const update = ({
       });
       return { model: { ...model, visual: visualNew } };
     }
+
     case 'input-move': {
       const result = inputMove(msg[1], model);
       if (result.type === 'Err') {
@@ -89,6 +90,7 @@ export const update = ({
       const merged = mergeWithBackend(model, result.value);
       return { model: merged, cmd: sendToBackend(msg) };
     }
+
     default: {
       return { model, cmd: sendToBackend(msg) };
     }
@@ -119,10 +121,26 @@ export const mergeWithBackend = (
   frontendModel: FrontendModel,
   backendModel: BackendModel
 ): FrontendModel => {
-  return {
-    ...backendModel,
-    visual: frontendModel.visual,
-  };
+  switch (backendModel.type) {
+    case 'Setup': {
+      return {
+        ...backendModel,
+        visual: frontendModel.visual,
+      };
+    }
+
+    case 'game': {
+      const visualNew = step({
+        board: backendModel.board,
+        model: frontendModel.visual,
+        nowMs: Date.now(),
+      });
+      return {
+        ...backendModel,
+        visual: visualNew,
+      };
+    }
+  }
 };
 
 //
@@ -240,6 +258,7 @@ export const View = ({
     userPlayer: model.userPlayerType,
     viewBoard: () => (
       <ViewBoard
+        model={model.visual}
         board={model.board}
         onClick={(position) =>
           $send(['input-move', { userId: ctx.currentUserId, position }])
