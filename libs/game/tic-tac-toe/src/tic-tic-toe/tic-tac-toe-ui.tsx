@@ -55,7 +55,8 @@ export const step = ({
           type: 'enter',
           playerType: slotTrue,
           percentageDrew: Ease.init({
-            durationMs: 120,
+            easing: { type: 'ease-out-quint' },
+            durationMs: 200,
             from: 0,
             to: 1,
             startMs: nowMs,
@@ -76,7 +77,8 @@ export const step = ({
           type: 'exit',
           playerType: slotVisual.playerType,
           percentageDrew: Ease.init({
-            durationMs: 120,
+            easing: { type: 'ease-out-quint' },
+            durationMs: 200,
             from: 1,
             to: 0,
             startMs: nowMs,
@@ -146,6 +148,8 @@ export const gameTheme = {
   text: '#fff',
 };
 
+const scale = 1_000;
+
 export const ViewBoard = ({
   board,
   model,
@@ -158,7 +162,7 @@ export const ViewBoard = ({
   return (
     <svg
       width={'100%'}
-      viewBox="0 0 3 3"
+      viewBox={[0, 0, MAX_X * scale, MAX_Y * scale].join(' ')}
       style={{
         backgroundColor: gameTheme.background,
       }}
@@ -167,27 +171,15 @@ export const ViewBoard = ({
         {lines.map((line, index) => (
           <line
             key={index}
-            x1={line.x1}
-            y1={line.y1}
-            x2={line.x2}
-            y2={line.y2}
+            x1={line.x1 * scale}
+            y1={line.y1 * scale}
+            x2={line.x2 * scale}
+            y2={line.y2 * scale}
             stroke={gameTheme.line}
-            strokeWidth={0.1}
+            strokeWidth={0.1 * scale}
           />
         ))}
       </g>
-
-      {/* {allPositions.map((position) => (
-        <ViewSlot
-          key={[position.column, position.row, toSlot(board, position)].join(
-            ' '
-          )}
-          slot={toSlot(board, position)}
-          cx={Number(position.column) + 0.5}
-          cy={Number(position.row) + 0.5}
-          r={0.3}
-        />
-      ))} */}
 
       {model.map((modelX, x) =>
         modelX.map(
@@ -195,10 +187,10 @@ export const ViewBoard = ({
             slot &&
             viewSlotVisual({
               key: [x, y, slot.playerType].join(' '),
-              cx: Number(x) + 0.5,
-              cy: Number(y) + 0.5,
-              strokeWidth: 0.1,
-              r: 0.3,
+              cx: (Number(x) + 0.5) * scale,
+              cy: (Number(y) + 0.5) * scale,
+              strokeWidth: 0.1 * scale,
+              r: 0.3 * scale,
               slot: slot,
               percentageDrew: slot.percentageDrew.value,
             })
@@ -213,10 +205,10 @@ export const ViewBoard = ({
           style={{
             cursor: 'pointer',
           }}
-          x={Number(position.column)}
-          y={Number(position.row)}
-          width={1}
-          height={1}
+          x={Number(position.column) * scale}
+          y={Number(position.row) * scale}
+          width={1 * scale}
+          height={1 * scale}
           onClick={() => onClick(position)}
           fill="transparent"
         />
@@ -236,7 +228,7 @@ const distance = (
   a: { x: number; y: number },
   b: { x: number; y: number }
 ): number => {
-  return Math.sqrt(Math.pow(a.x - b.y, 2) + Math.pow(a.y - b.y, 2));
+  return Math.sqrt(Math.pow(b.x - a.x, 2) + Math.pow(b.y - a.y, 2));
 };
 
 export const viewSlotVisual = ({
@@ -291,10 +283,10 @@ export const viewSlotVisual = ({
 
           */}
           <line
-            x1={cx + r}
-            y1={cy - r}
-            x2={cx - r}
-            y2={cy + r}
+            x1={cx - r}
+            y1={cy + r}
+            x2={cx + r}
+            y2={cy - r}
             strokeDasharray={length}
             strokeDashoffset={dashoffset}
           />
