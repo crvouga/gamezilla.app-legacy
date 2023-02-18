@@ -273,8 +273,15 @@ export const SvgIcon = Mui.SvgIcon;
 
 export const Box = Mui.Box;
 
-export const box = ({ ...sx }: Sx, children: ViewNode[]) => {
-  return <Box sx={sx}>{children}</Box>;
+export const box = (
+  { key, sx }: Sx & { key?: string; sx?: Sx },
+  children: ViewNode[]
+) => {
+  return (
+    <Box key={key} sx={sx}>
+      {children}
+    </Box>
+  );
 };
 
 export const Divider = Mui.Divider;
@@ -501,18 +508,20 @@ export const HeaderBackButton = ({ onClick }: { onClick: () => void }) => {
   );
 };
 
-export const fillBox = ({ ...sx }: Sx, children: ViewNode[]) => {
+export const fillBox = ({ sx }: { sx?: Sx }, children: ViewNode[]) => {
   return box(
     {
-      display: 'flex',
-      flexDirection: 'column',
-      width: '100%',
-      height: '100%',
-      overflowX: 'hidden',
-      overflowY: 'scroll',
-      padding: 0,
-      margin: 0,
-      ...sx,
+      sx: {
+        display: 'flex',
+        flexDirection: 'column',
+        width: '100%',
+        height: '100%',
+        overflowX: 'hidden',
+        overflowY: 'scroll',
+        padding: 0,
+        margin: 0,
+        ...sx,
+      },
     },
     children
   );

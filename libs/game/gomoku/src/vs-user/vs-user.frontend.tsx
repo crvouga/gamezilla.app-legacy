@@ -174,8 +174,8 @@ export const view = ({
         //   // model: model.visuals,
         //   onPress: (position) => $send(['input-move', { position }]),
         // }),
-        box({ flex: 1 }, []),
-        box({ display: 'flex', p: 2 }, [
+        box({ sx: { flex: 1 } }, []),
+        box({ sx: { display: 'flex', p: 2 } }, [
           actionButton({
             label: 'Resign',
             iconName: 'flag',
@@ -197,30 +197,33 @@ export const view = ({
     case 'gameOver': {
       return fillBox({}, [
         viewUserPlayerSlotBar({ left: model.white, right: model.black, ctx }),
-        box({ position: 'relative', aspectRatio: '1' }, [
+        box({ sx: { position: 'relative', aspectRatio: '1' } }, [
           // viewBoard({ model: {} }),
           viewOverlay({ model, ctx }),
         ]),
-        box({ p: 2, display: 'flex', gap: 2, flexDirection: 'column' }, [
-          button(
-            {
-              onPress: () => $send(['RematchRequest']),
-              variant: 'contained',
-              startIcon: 'restart',
-              width: '100%',
-            },
-            'Rematch'
-          ),
-          button(
-            {
-              onPress: () => $send(['stop-game']),
-              variant: 'contained',
-              startIcon: 'exit',
-              width: '100%',
-            },
-            'Back to lobby'
-          ),
-        ]),
+        box(
+          { sx: { p: 2, display: 'flex', gap: 2, flexDirection: 'column' } },
+          [
+            button(
+              {
+                onPress: () => $send(['RematchRequest']),
+                variant: 'contained',
+                startIcon: 'restart',
+                width: '100%',
+              },
+              'Rematch'
+            ),
+            button(
+              {
+                onPress: () => $send(['stop-game']),
+                variant: 'contained',
+                startIcon: 'exit',
+                width: '100%',
+              },
+              'Back to lobby'
+            ),
+          ]
+        ),
       ]);
     }
   }
@@ -235,17 +238,19 @@ export const viewOverlay = ({
 }) => {
   return box(
     {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      width: '100%',
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center',
-      color: '#fff',
-      backgroundColor: 'rgba(0,0,0,0.66)',
-      aspectRatio: '1',
+      sx: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        color: '#fff',
+        backgroundColor: 'rgba(0,0,0,0.66)',
+        aspectRatio: '1',
+      },
     },
     [viewOverlay_({ model, ctx })]
   );
@@ -268,7 +273,7 @@ export const viewOverlay_ = ({
   }
 
   if (model.gameOver.type === 'Resigned') {
-    return box({ display: 'flex', alignItems: 'center' }, [
+    return box({ sx: { display: 'flex', alignItems: 'center' } }, [
       viewStoneIcon({
         stone: model.gameOver.resigner,
         width: 64,
@@ -291,7 +296,7 @@ export const viewOverlay_ = ({
   }
 
   if (model.gameOver.type === 'Winner') {
-    return box({ display: 'flex', alignItems: 'center' }, [
+    return box({ sx: { display: 'flex', alignItems: 'center' } }, [
       viewStoneIcon({
         stone: model.gameOver.winner,
         width: 64,
