@@ -5,6 +5,7 @@ import {
   AspectRatio,
   Avatar,
   Badge,
+  box,
   Box,
   Button,
   ButtonBase,
@@ -1199,6 +1200,19 @@ export const RoomGrid = ({
         </Box>
       ))}
     </Box>
+  );
+};
+
+export const viewRoomCard = ({ key }: { key?: string }) => {
+  return box(
+    {
+      key,
+      sx: {
+        display: 'flex',
+        backgroundColor: '',
+      },
+    },
+    []
   );
 };
 
