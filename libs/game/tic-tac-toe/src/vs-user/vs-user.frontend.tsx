@@ -12,7 +12,7 @@ import {
 import {
   gameTheme,
   PlayerTypeIcon,
-  ViewBoard,
+  viewBoard,
   ViewSlot,
 } from '../tic-tic-toe/tic-tac-toe-ui';
 import { VersusHeader } from '../views';
@@ -345,13 +345,12 @@ export const View = ({
           </UI.Box>
 
           <UI.Box sx={{ width: '100%', position: 'relative' }}>
-            <ViewBoard
-              model={[]}
-              board={board}
-              onClick={(position) =>
-                $send(['input-move', { position, userId: ctx.currentUserId }])
-              }
-            />
+            {viewBoard({
+              model: [],
+              board,
+              onClick: (position) =>
+                $send(['input-move', { position, userId: ctx.currentUserId }]),
+            })}
 
             <UI.Fade in={currentRound.type === 'RoundStarting'}>
               <UI.Box
@@ -401,14 +400,12 @@ export const View = ({
       </UI.Box>
 
       <UI.Box sx={{ width: '100%', position: 'relative' }}>
-        <ViewBoard
-          model={[]}
-          board={board}
-          onClick={(position) =>
-            $send(['input-move', { position, userId: ctx.currentUserId }])
-          }
-        />
-
+        {viewBoard({
+          model: [],
+          board,
+          onClick: (position) =>
+            $send(['input-move', { position, userId: ctx.currentUserId }]),
+        })}
         <UI.Fade in>
           <UI.Box
             sx={{

@@ -150,7 +150,7 @@ export const gameTheme = {
 
 const scale = 1_000;
 
-export const ViewBoard = ({
+export const viewBoard = ({
   board,
   model,
   onClick,
