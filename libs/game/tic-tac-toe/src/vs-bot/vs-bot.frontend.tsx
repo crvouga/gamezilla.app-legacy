@@ -17,7 +17,7 @@ import {
   isAnimating,
   PlayerTypeIcon,
   step,
-  ViewBoard,
+  viewBoard,
   viewCoverArt,
 } from '../tic-tic-toe/tic-tac-toe-ui';
 import {
@@ -256,15 +256,13 @@ export const View = ({
     playerUserId: model.player,
     turn: toTurn(model.board),
     userPlayer: model.userPlayerType,
-    viewBoard: () => (
-      <ViewBoard
-        model={model.visual}
-        board={model.board}
-        onClick={(position) =>
-          $send(['input-move', { userId: ctx.currentUserId, position }])
-        }
-      />
-    ),
+    viewBoard: () =>
+      viewBoard({
+        model: model.visual,
+        board: model.board,
+        onClick: (position) =>
+          $send(['input-move', { userId: ctx.currentUserId, position }]),
+      }),
     viewPlayerIcon: ({ playerType, sx }) => (
       <PlayerTypeIcon sx={sx} playerType={playerType} />
     ),
