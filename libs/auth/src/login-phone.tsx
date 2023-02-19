@@ -34,7 +34,7 @@ export type Model = {
   phoneNumber: string;
   country: Iso3166Alpha2Code;
   countrySearchText: string;
-  validation: 'NotChecked' | 'InvalidPhoneNumber' | 'EmptyPhoneNumber';
+  validation: 'not-validated' | 'invalid-phone-number' | 'empty-phone-number';
   submission:
     | { type: 'Idle' }
     | { type: 'Loading' }
@@ -59,7 +59,7 @@ export const init = ({
       country,
       phoneNumber,
       countrySearchText: '',
-      validation: 'NotChecked',
+      validation: 'not-validated',
       submission: {
         type: 'Idle',
       },
@@ -108,13 +108,13 @@ export const update = ({
 
     case 'clicked-send-code': {
       if (model.phoneNumber.length === 0) {
-        return { model: { ...model, validation: 'EmptyPhoneNumber' } };
+        return { model: { ...model, validation: 'empty-phone-number' } };
       }
 
       const decoded = PhoneNumber.decode(model.country, model.phoneNumber);
 
       if (decoded.type === 'Err') {
-        return { model: { ...model, validation: 'InvalidPhoneNumber' } };
+        return { model: { ...model, validation: 'invalid-phone-number' } };
       }
 
       const phoneNumber = decoded.value;
@@ -130,14 +130,14 @@ export const update = ({
 
     case 'inputted-phone-number': {
       return {
-        model: { ...model, phoneNumber: msg[1], validation: 'NotChecked' },
+        model: { ...model, phoneNumber: msg[1], validation: 'not-validated' },
       };
     }
 
     case 'clicked-country-search-result': {
       return {
-        model: { ...model, country: msg[1], validation: 'NotChecked' },
-        cmd: Route.push(['login-phone', { isSelectingCountry: false }]),
+        model: { ...model, country: msg[1], validation: 'not-validated' },
+        cmd: Route.back,
       };
     }
 
@@ -170,7 +170,7 @@ export const update = ({
     case 'closed-country-search': {
       return {
         model,
-        cmd: Route.push(['login-phone', { isSelectingCountry: false }]),
+        cmd: Route.back,
       };
     }
 
@@ -182,6 +182,10 @@ export const update = ({
     case 'cleared-country-search-text': {
       return {
         model: { ...model, countrySearchText: '' },
+        cmd: p(
+          Browser.focus(countrySelectInputId, 10),
+          Cmd.perform(t('focus-done'))
+        ),
       };
     }
 
@@ -247,6 +251,7 @@ export const View = ({
             justifyContent: 'center',
             marginBottom: 2,
           }}
+          onClick={() => $send(['clicked-change-country'])}
         >
           <Box sx={{ fontSize: '2rem', marginRight: 1 }}>
             {Iso3166Alpha2Code.toEmoji(model.country)}
@@ -273,15 +278,15 @@ export const View = ({
             $send(['inputted-phone-number', event.target.value]);
           }}
           error={
-            model.validation === 'InvalidPhoneNumber' ||
-            model.validation === 'EmptyPhoneNumber'
+            model.validation === 'invalid-phone-number' ||
+            model.validation === 'empty-phone-number'
           }
           helperText={
-            model.validation === 'InvalidPhoneNumber'
+            model.validation === 'invalid-phone-number'
               ? `Invalid phone number for ${Iso3166Alpha2Code.toName(
                   model.country
                 )}`
-              : model.validation === 'EmptyPhoneNumber'
+              : model.validation === 'empty-phone-number'
               ? 'Phone number is required'
               : undefined
           }
@@ -380,9 +385,9 @@ export const CountrySelectScreen = ({
           fullWidth
           variant="outlined"
           onClick={onClose}
-          startIcon={<Icons.Close />}
+          // startIcon={<Icons.Close />}
         >
-          Close
+          Cancel
         </Button>
       </Box>
     </FillBox>

@@ -585,8 +585,12 @@ export const updateLoggedOut = (
   switch (model[0]) {
     case 'login':
       if (msg[0] === 'login') {
-        const [child, cmd] = Login.update(msg[1], model[1]);
-        return [['login', child], Cmd.tag('login', cmd), []];
+        const updated = Login.update({ msg: msg[1], model: model[1] });
+        return [
+          ['login', updated.model],
+          Cmd.tag('login', updated.cmd ?? Cmd.None),
+          [],
+        ];
       }
       return [model, Cmd.None, []];
 

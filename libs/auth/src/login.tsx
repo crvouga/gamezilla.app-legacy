@@ -1,23 +1,6 @@
 import { Cmd } from '@gamezilla/core';
-import { Iso3166Alpha2Code } from '@gamezilla/shared';
 import { Route } from '@gamezilla/shared';
-import {
-  Box,
-  Button,
-  Divider,
-  FillBox,
-  IconButton,
-  Icons,
-  InputAdornment,
-  InputBase,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  Typography,
-  useTheme,
-} from '@gamezilla/shared/ui';
-import { ListItemText } from '@mui/material';
-import { matchSorter } from 'match-sorter';
+import { Box, Button, Icons, Typography, useTheme } from '@gamezilla/shared/ui';
 
 //
 //
@@ -39,19 +22,25 @@ export const init: Model = null;
 //
 //
 
-export type Msg = ['clicked_email'] | ['clicked_text'];
+export type Msg = ['clicked-email'] | ['clicked-text'];
 
-export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
+export const update = ({
+  msg,
+  model,
+}: {
+  msg: Msg;
+  model: Model;
+}): { model: Model; cmd: Cmd<Msg> } => {
   switch (msg[0]) {
-    case 'clicked_text': {
-      return [
+    case 'clicked-text': {
+      return {
         model,
-        Route.push(['login-phone', { isSelectingCountry: false }]),
-      ];
+        cmd: Route.push(['login-phone', { isSelectingCountry: false }]),
+      };
     }
 
-    case 'clicked_email': {
-      return [model, Route.push(['login-email-link'])];
+    case 'clicked-email': {
+      return { model, cmd: Route.push(['login-email-link']) };
     }
   }
 };
@@ -105,7 +94,7 @@ export const View = ({
         </Typography>
 
         <Button
-          onClick={() => $send(['clicked_text'])}
+          onClick={() => $send(['clicked-text'])}
           startIcon={<Icons.Textsms />}
           fullWidth
           variant="contained"
@@ -116,7 +105,7 @@ export const View = ({
         </Button>
 
         <Button
-          onClick={() => $send(['clicked_email'])}
+          onClick={() => $send(['clicked-email'])}
           startIcon={<Icons.Email />}
           fullWidth
           variant="contained"
@@ -126,87 +115,5 @@ export const View = ({
         </Button>
       </Box>
     </Box>
-  );
-};
-
-export const CountrySelectScreen = ({
-  searchText,
-  inputId,
-  onChange,
-  onClear,
-  selected,
-  onSelect,
-  onClose,
-}: {
-  searchText: string;
-  inputId: string;
-  onChange: (s: string) => void;
-  onClear: () => void;
-  selected: Iso3166Alpha2Code;
-  onSelect: (country: Iso3166Alpha2Code) => void;
-  onClose: () => void;
-}) => {
-  const matched = matchSorter(Iso3166Alpha2Code.all, searchText, {
-    keys: [(iso) => Iso3166Alpha2Code.toName(iso)],
-  });
-  return (
-    <FillBox>
-      <Typography variant="h3" sx={{ px: 2, pt: 2 }}>
-        Select country
-      </Typography>
-
-      <InputBase
-        sx={{ p: 2 }}
-        id={inputId}
-        placeholder="Search country"
-        value={searchText}
-        onChange={(e) => onChange(e.target.value)}
-        startAdornment={
-          <InputAdornment position="start">
-            <Icons.Search sx={{ color: 'text.secondary' }} />
-          </InputAdornment>
-        }
-        endAdornment={
-          <InputAdornment position="end">
-            <IconButton edge="end" onClick={onClear}>
-              <Icons.Clear />
-            </IconButton>
-          </InputAdornment>
-        }
-      />
-
-      <Divider />
-
-      {matched.length === 0 && (
-        <Typography color="text.secondary" sx={{ p: 2 }}>
-          No countries match
-        </Typography>
-      )}
-
-      <List disablePadding sx={{ overflowY: 'scroll', flex: 1 }}>
-        {matched.map((iso) => (
-          <ListItemButton
-            key={iso}
-            selected={iso === selected}
-            onClick={() => onSelect(iso)}
-          >
-            <ListItemIcon sx={{ fontSize: '2rem' }}>
-              {Iso3166Alpha2Code.toEmoji(iso)}
-            </ListItemIcon>
-            <ListItemText primary={Iso3166Alpha2Code.toName(iso)} />
-          </ListItemButton>
-        ))}
-      </List>
-      <Box sx={{ p: 2 }}>
-        <Button
-          fullWidth
-          variant="outlined"
-          onClick={onClose}
-          startIcon={<Icons.Close />}
-        >
-          Close
-        </Button>
-      </Box>
-    </FillBox>
   );
 };

@@ -10,4 +10,10 @@ export type Ctx = {
     };
   };
   currentUserId: UserId;
+  theme: {
+    primary: {
+      light: string;
+      dark: string;
+    };
+  };
 };
