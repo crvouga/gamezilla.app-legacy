@@ -19,7 +19,6 @@ import {
   Cmd,
   Debug,
   exhaustive,
-  LocalStorage,
   Option,
   p,
   Program,
@@ -262,9 +261,16 @@ const updatePage = (
       return [model, Cmd.None, []];
 
     case 'LoggedOut': {
-      const [pageNew, pageCmd, actions] = Page.updateLoggedOut(msg, model.page);
+      const updated = Page.updateLoggedOut({
+        msg: msg,
+        model: model.page,
+      });
 
-      return [{ ...model, page: pageNew }, Cmd.tag('page', pageCmd), actions];
+      return [
+        { ...model, page: updated.model },
+        Cmd.tag('page', updated.cmd ?? Cmd.None),
+        [],
+      ];
     }
 
     case 'ProfileMissing': {
@@ -391,8 +397,14 @@ const initPage = (
     }
 
     case 'LoggedOut': {
-      const [page, pageCmd] = Page.initLoggedOut(model.page, model.route);
-      return [{ ...model, page }, Cmd.tag('page', pageCmd)];
+      const initial = Page.initLoggedOut({
+        route: model.route,
+        model: model.page,
+      });
+      return [
+        { ...model, page: initial.model },
+        Cmd.tag('page', initial.cmd ?? Cmd.None),
+      ];
     }
 
     case 'Ready': {

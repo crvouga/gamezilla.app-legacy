@@ -1,13 +1,5 @@
 import { Alerts } from '@gamezilla/shared';
-import {
-  Account,
-  Auth,
-  Login,
-  LoginEmailLink,
-  LoginPhone,
-  LoginPhoneVerify,
-  Logout,
-} from '@gamezilla/auth';
+import { Account, Auth, PageLogin, Logout } from '@gamezilla/auth';
 import { Chat, ChatConversation, ChatNew, ChatStore } from '@gamezilla/chat';
 import { Cmd, exhaustive, p, Sub, t } from '@gamezilla/core';
 import * as Home from '@gamezilla/home';
@@ -25,7 +17,7 @@ import {
   Search,
 } from '@gamezilla/profile';
 import { RoomFrontend as GameRoom } from '@gamezilla/room';
-import { Ctx, PhoneNumber, Route, UserId } from '@gamezilla/shared';
+import { Ctx, Route, UserId } from '@gamezilla/shared';
 import * as UI from '@gamezilla/shared/ui';
 
 //
@@ -37,10 +29,7 @@ import * as UI from '@gamezilla/shared/ui';
 //
 
 export type Model =
-  | ['login', Login.Model]
-  | ['login-email-link', LoginEmailLink.Model]
-  | ['login-phone', { isSelectingCountry: boolean }, LoginPhone.Model]
-  | ['login-phone-verify', { phoneNumber: PhoneNumber }, LoginPhoneVerify.Model]
+  | ['login', PageLogin.Model]
   | ['home', Home.Model]
   | ['profile-create', ProfileCreate.Model]
   | ['logout', Logout.Model]
@@ -71,10 +60,7 @@ export type Model =
 
 export type Msg =
   | ['account', Account.Msg]
-  | ['login', Login.Msg]
-  | ['login-email-link', LoginEmailLink.Msg]
-  | ['login-phone', LoginPhone.Msg]
-  | ['login-phone-verify', LoginPhoneVerify.Msg]
+  | ['login', PageLogin.Msg]
   | ['logout', Logout.Msg]
   | ['home', Home.Msg]
   | ['profile', Profile.Msg]
@@ -238,68 +224,6 @@ export const initReady = (
   }
 };
 
-export const initLoggedOut = (
-  model: Model,
-  route: Route.Model
-): [Model, Cmd<Msg>] => {
-  switch (route[0]) {
-    case 'login': {
-      const childNew = model[0] === 'login' ? model[1] : Login.init;
-      return [['login', childNew], Cmd.None];
-    }
-
-    case 'login-phone': {
-      const init = LoginPhone.init({
-        phoneNumber: model[0] === 'login-phone' ? model[2].phoneNumber : '',
-        country: model[0] === 'login-phone' ? model[2].country : 'US',
-        isSelectingCountry: route[1].isSelectingCountry,
-      });
-      return [
-        ['login-phone', route[1], init.model],
-        Cmd.tag('login-phone', init.cmd),
-      ];
-    }
-
-    case 'login-phone-verify': {
-      const init = LoginPhoneVerify.init();
-      return [
-        [
-          'login-phone-verify',
-          { phoneNumber: route[1].phoneNumber },
-          init.model,
-        ],
-        Cmd.tag('login-phone-verify', init.cmd),
-      ];
-    }
-
-    case 'login-email-link':
-      return [['login-email-link', LoginEmailLink.init], Cmd.None];
-
-    case 'account':
-    case 'chat':
-    case 'chat-conversation':
-    case 'chat-new':
-    case 'logout':
-    case 'profile':
-    case 'profile-create':
-    case 'profile-delete':
-    case 'profile-update':
-    case 'profile-update-avatar':
-    case 'search':
-    case 'profile-update-theme':
-    case 'game':
-    case 'room':
-    case 'profile-update-name':
-    case 'profile-update-username':
-    case 'party':
-    case 'home':
-      return [['login', Login.init], Route.push(['login'])];
-
-    default:
-      return exhaustive(route);
-  }
-};
-
 export const initProfileMissing = (
   route: Route.Model,
   auth: Auth.Session
@@ -334,6 +258,50 @@ export const initProfileMissing = (
       return [['profile-create', ProfileCreate.init(auth)], Cmd.None];
     default:
       return exhaustive(route);
+  }
+};
+
+export const initLoggedOut = ({
+  route,
+  model,
+}: {
+  route: Route.Model;
+  model: Model;
+}): { model: Model; cmd?: Cmd<Msg> } => {
+  switch (route[0]) {
+    case 'login':
+    case 'login-phone':
+    case 'login-email-link':
+    case 'login-phone-verify': {
+      if (model[0] !== 'login') {
+        const initial = PageLogin.init({
+          route,
+          model: { type: 'login', child: null },
+        });
+        return {
+          model: ['login', initial.model],
+          cmd: Cmd.tag('login', initial.cmd ?? Cmd.None),
+        };
+      }
+      const initial = PageLogin.init({
+        route,
+        model: model[1],
+      });
+      return {
+        model: ['login', initial.model],
+        cmd: Cmd.tag('login', initial.cmd ?? Cmd.None),
+      };
+    }
+    default: {
+      const initial = PageLogin.init({
+        route,
+        model: { type: 'login', child: null },
+      });
+      return {
+        model: ['login', initial.model],
+        cmd: Cmd.tag('login', initial.cmd ?? Cmd.None),
+      };
+    }
   }
 };
 
@@ -516,10 +484,7 @@ export const updateReady = (
 
     case 'login':
     case 'Loading':
-    case 'profile-create':
-    case 'login-phone':
-    case 'login-phone-verify':
-    case 'login-email-link': {
+    case 'profile-create': {
       return [model, Route.push(['home']), []];
     }
 
@@ -565,10 +530,7 @@ export const updateProfileMissing = (
     case 'game':
     case 'room':
     case 'Loading':
-    case 'login-email-link':
     case 'search':
-    case 'login-phone':
-    case 'login-phone-verify':
     case 'party':
     case 'home':
       return [model, Route.push(['profile-create']), []];
@@ -578,80 +540,28 @@ export const updateProfileMissing = (
   }
 };
 
-export const updateLoggedOut = (
-  msg: Msg,
-  model: Model
-): [Model, Cmd<Msg>, OutAction[]] => {
+export const updateLoggedOut = ({
+  msg,
+  model,
+}: {
+  msg: Msg;
+  model: Model;
+}): { model: Model; cmd?: Cmd<Msg> } => {
   switch (model[0]) {
-    case 'login':
-      if (msg[0] === 'login') {
-        const updated = Login.update({ msg: msg[1], model: model[1] });
-        return [
-          ['login', updated.model],
-          Cmd.tag('login', updated.cmd ?? Cmd.None),
-          [],
-        ];
+    case 'login': {
+      if (msg[0] !== 'login') {
+        return { model };
       }
-      return [model, Cmd.None, []];
-
-    case 'login-email-link': {
-      if (msg[0] === 'login-email-link') {
-        return tag('login-email-link', LoginEmailLink.update(msg[1], model[1]));
-      }
-      return [model, Cmd.None, []];
+      const updated = PageLogin.update({ msg: msg[1], model: model[1] });
+      return {
+        model: ['login', updated.model],
+        cmd: Cmd.tag('login', updated.cmd ?? Cmd.None),
+      };
     }
 
-    case 'login-phone': {
-      if (msg[0] === 'login-phone') {
-        const updated = LoginPhone.update({ msg: msg[1], model: model[2] });
-        return [
-          ['login-phone', model[1], updated.model],
-          Cmd.tag('login-phone', updated.cmd ?? Cmd.None),
-          [],
-        ];
-      }
-      return [model, Cmd.None, []];
+    default: {
+      return { model };
     }
-
-    case 'login-phone-verify': {
-      if (msg[0] === 'login-phone-verify') {
-        const updated = LoginPhoneVerify.update({
-          model: model[2],
-          msg: msg[1],
-          phoneNumber: model[1].phoneNumber,
-        });
-        return [
-          ['login-phone-verify', model[1], updated.model],
-          Cmd.tag('login-phone-verify', updated.cmd ?? Cmd.None),
-          [],
-        ];
-      }
-      return [model, Cmd.None, []];
-    }
-
-    case 'profile-create':
-    case 'account':
-    case 'profile-delete':
-    case 'profile-update':
-    case 'profile-update-avatar':
-    case 'profile-update-name':
-    case 'profile-update-username':
-    case 'chat':
-    case 'chat-new':
-    case 'chat-conversation':
-    case 'profile-update-theme':
-    case 'room':
-    case 'game':
-    case 'Loading':
-    case 'logout':
-    case 'profile':
-    case 'search':
-    case 'party':
-    case 'home':
-      return [model, Route.push(['login']), []];
-
-    default:
-      return exhaustive(model);
   }
 };
 
@@ -672,7 +582,6 @@ export const subscriptions = (model: Model): Sub<Msg> => {
     case 'chat':
     case 'chat-conversation':
     case 'login':
-    case 'login-email-link':
     case 'logout':
     case 'profile-create':
     case 'profile-delete':
@@ -687,8 +596,6 @@ export const subscriptions = (model: Model): Sub<Msg> => {
     case 'game':
     case 'room':
     case 'party':
-    case 'login-phone':
-    case 'login-phone-verify':
     case 'home':
       return Sub.None;
 
@@ -927,13 +834,31 @@ export const ViewReady = ({
     case 'login':
     case 'profile-create':
     case 'Loading':
-    case 'login-email-link':
-    case 'login-phone':
-    case 'login-phone-verify':
       return <UI.LoadingPage />;
 
     default:
       return exhaustive(model);
+  }
+};
+
+export const ViewLoggedOut = ({
+  model,
+  $send,
+}: {
+  model: Model;
+  $send: (msg: Msg) => void;
+}) => {
+  switch (model[0]) {
+    case 'login':
+      return (
+        <PageLogin.View
+          model={model[1]}
+          $send={(msg) => $send(['login', msg])}
+        />
+      );
+    default: {
+      return <UI.LoadingPage />;
+    }
   }
 };
 
@@ -970,79 +895,11 @@ export const ViewProfileMissing = ({
     case 'profile-update-name':
     case 'profile-update-username':
     case 'login':
-    case 'login-phone':
-    case 'login-phone-verify':
-    case 'login-email-link':
     case 'Loading':
     case 'search':
     case 'profile':
     case 'game':
     case 'room':
-    case 'party':
-    case 'home':
-      return <UI.LoadingPage />;
-
-    default:
-      return exhaustive(model);
-  }
-};
-
-export const ViewLoggedOut = ({
-  model,
-  $send,
-}: {
-  model: Model;
-  $send: (msg: Msg) => void;
-}) => {
-  switch (model[0]) {
-    case 'login':
-      return (
-        <Login.View model={model[1]} $send={(msg) => $send(['login', msg])} />
-      );
-
-    case 'login-email-link':
-      return (
-        <LoginEmailLink.View
-          model={model[1]}
-          $send={(msg) => $send(['login-email-link', msg])}
-        />
-      );
-
-    case 'login-phone':
-      return (
-        <LoginPhone.View
-          isSelectingCountry={model[1].isSelectingCountry}
-          model={model[2]}
-          $send={(msg) => $send(['login-phone', msg])}
-        />
-      );
-
-    case 'login-phone-verify':
-      return (
-        <LoginPhoneVerify.View
-          phoneNumber={model[1].phoneNumber}
-          model={model[2]}
-          $send={(msg) => $send(['login-phone-verify', msg])}
-        />
-      );
-
-    case 'account':
-    case 'chat':
-    case 'chat-conversation':
-    case 'chat-new':
-    case 'game':
-    case 'room':
-    case 'logout':
-    case 'profile-create':
-    case 'profile-delete':
-    case 'profile-update':
-    case 'profile-update-avatar':
-    case 'profile-update-theme':
-    case 'profile-update-name':
-    case 'profile-update-username':
-    case 'profile':
-    case 'search':
-    case 'Loading':
     case 'party':
     case 'home':
       return <UI.LoadingPage />;

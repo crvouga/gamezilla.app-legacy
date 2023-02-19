@@ -1,7 +1,7 @@
 import { Cmd, exhaustive, p, t } from '@gamezilla/core';
 import { Route } from '@gamezilla/shared';
 import * as UI from '@gamezilla/shared/ui';
-import * as Auth from './auth';
+import * as Auth from '../auth';
 
 //
 //
@@ -39,24 +39,29 @@ export type Msg =
   | ['inputted-email-address', string]
   | ['login-done', Auth.AuthResult];
 
-export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
+export const update = ({
+  msg,
+  model,
+}: {
+  msg: Msg;
+  model: Model;
+}): { model: Model; cmd?: Cmd<Msg> } => {
   switch (msg[0]) {
     case 'inputted-email-address':
-      return [{ ...model, emailAddress: msg[1] }, Cmd.None];
+      return { model: { ...model, emailAddress: msg[1] } };
 
     case 'login-done': {
       switch (msg[1].type) {
         case 'Err': {
-          return [
-            {
+          return {
+            model: {
               ...model,
               submission: {
                 type: 'Problem',
                 message: msg[1].error.message,
               },
             },
-            Cmd.None,
-          ];
+          };
         }
 
         case 'Ok': {
@@ -64,39 +69,38 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
             model.submission.type === 'Loading'
               ? model.submission.sentToEmailAddress
               : model.emailAddress;
-          return [
-            {
+          return {
+            model: {
               ...model,
               emailAddress: '',
               submission: { type: 'Ok', sentToEmailAddress: emailAddress },
             },
-            Cmd.None,
-          ];
+          };
         }
-
-        default:
-          return [model, Cmd.None];
+        default: {
+          return { model };
+        }
       }
     }
 
     case 'clicked-send-login-link': {
-      return [
-        {
+      return {
+        model: {
           ...model,
           submission: {
             type: 'Loading',
             sentToEmailAddress: model.emailAddress,
           },
         },
-        p(
+        cmd: p(
           Auth.loginWithEmailLink({ emailAddress: model.emailAddress }),
           Cmd.perform(t('login-done'))
         ),
-      ];
+      };
     }
 
     case 'clicked-back': {
-      return [model, Route.back];
+      return { model: model, cmd: Route.back };
     }
 
     default:
