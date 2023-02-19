@@ -48,9 +48,11 @@ const countrySelectInputId = 'countrySelectInputId';
 export const init = ({
   country,
   phoneNumber,
+  countrySearchText,
   isSelectingCountry,
 }: {
   country: Iso3166Alpha2Code;
+  countrySearchText: string;
   phoneNumber: string;
   isSelectingCountry: boolean;
 }): { model: Model; cmd: Cmd<Msg> } => {
@@ -58,7 +60,7 @@ export const init = ({
     model: {
       country,
       phoneNumber,
-      countrySearchText: '',
+      countrySearchText,
       validation: 'not-validated',
       submission: {
         type: 'Idle',
