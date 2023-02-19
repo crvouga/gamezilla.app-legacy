@@ -25,7 +25,7 @@ export const init: [Model, Cmd<Msg>, OutAction[]] = [null, Cmd.None, []];
 
 export type Msg =
   | ['ClickedCancel']
-  | ['ClickedBackdrop']
+  | ['clicked-backdrop']
   | ['ClickedDelete']
   | ['ClickedCloseErr'];
 
@@ -40,7 +40,7 @@ export const update = (
     case 'ClickedCancel':
       return [model, Route.back, []];
 
-    case 'ClickedBackdrop':
+    case 'clicked-backdrop':
       return [model, Route.back, []];
 
     case 'ClickedDelete':
@@ -110,7 +110,7 @@ export const View = ({
           title="Delete profile forever?"
           confirmTitle="Delete"
           onCancel={() => $send(['ClickedCancel'])}
-          onClose={() => $send(['ClickedBackdrop'])}
+          onClose={() => $send(['clicked-backdrop'])}
           onConfirm={() => $send(['ClickedDelete'])}
         />
       );

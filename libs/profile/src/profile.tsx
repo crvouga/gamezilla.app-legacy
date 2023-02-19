@@ -32,7 +32,7 @@ export const init = ({
 //
 
 export type Msg =
-  | ['ClickedBack']
+  | ['clicked-back']
   | ['clicked-send-message']
   | ['clicked-edit-profile']
   | ['ClickedAccountMenu'];
@@ -44,7 +44,7 @@ export const update = (
   model: Model
 ): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-    case 'ClickedBack': {
+    case 'clicked-back': {
       return [model, Route.back, []];
     }
 
@@ -176,7 +176,7 @@ export const View = ({
   return (
     <UI.FillBox>
       <UI.Header
-        left={<UI.HeaderBackButton onClick={() => $send(['ClickedBack'])} />}
+        left={<UI.HeaderBackButton onClick={() => $send(['clicked-back'])} />}
         title={profile.username}
       />
 

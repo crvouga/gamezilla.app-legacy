@@ -63,7 +63,7 @@ export const update = (
   const model: Model = { ..._model, openedMenuId: Option.None };
 
   switch (msg[0]) {
-    case 'ClickedBack':
+    case 'clicked-back':
       return [model, Route.back];
 
     case 'PressedKeyDown': {

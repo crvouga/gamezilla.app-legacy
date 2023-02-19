@@ -56,7 +56,7 @@ export const initSharedModel: SharedModel = {
 //
 
 export type FrontendMsg =
-  | ['ClickedBack']
+  | ['clicked-back']
   | ['PressedKeyDown', Keyboard.Key]
   | ['OpenedMenu', string]
   | ['ClosedMenu']

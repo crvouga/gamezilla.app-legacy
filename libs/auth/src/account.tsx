@@ -23,7 +23,7 @@ export const init: Model = null;
 //
 
 export type Msg =
-  | ['ClickedBack']
+  | ['clicked-back']
   | ['ClickedLogout']
   | ['ClickedDeleteProfile']
   | ['ClickedUpdateProfile']
@@ -31,7 +31,7 @@ export type Msg =
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'ClickedBack': {
+    case 'clicked-back': {
       return [model, Route.back];
     }
 

@@ -46,7 +46,7 @@ export const init = ({
 //
 
 export type Msg =
-  | ['ClickedBack']
+  | ['clicked-back']
   | ['clicked-send-message']
   | ['ClickedConversationItem', { conversationId: string }];
 
@@ -54,7 +54,7 @@ type OutAction = ChatStore.Action;
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'ClickedBack':
+    case 'clicked-back':
       return [model, Route.back];
 
     case 'clicked-send-message':

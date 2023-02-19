@@ -23,7 +23,7 @@ export const init: Model = { type: 'Idle' };
 //
 //
 
-export type Msg = ['ClickedCancel'] | ['ClickedBackdrop'] | ['ClickedLogout'];
+export type Msg = ['ClickedCancel'] | ['clicked-backdrop'] | ['ClickedLogout'];
 
 type OutAction = Auth.Action;
 
@@ -35,7 +35,7 @@ export const update = (
     case 'ClickedCancel':
       return [model, Route.back, []];
 
-    case 'ClickedBackdrop':
+    case 'clicked-backdrop':
       return [model, Route.back, []];
 
     case 'ClickedLogout':
@@ -66,7 +66,7 @@ export const View = ({
           title="Logout of Gamezilla?"
           confirmTitle="Logout"
           onConfirm={() => $send(['ClickedLogout'])}
-          onClose={() => $send(['ClickedBackdrop'])}
+          onClose={() => $send(['clicked-backdrop'])}
           onCancel={() => $send(['ClickedCancel'])}
         />
       );

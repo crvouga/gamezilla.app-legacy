@@ -1,5 +1,5 @@
 import { Browser, Cmd, Option } from '@gamezilla/core';
-import { Iso3166Alpha2Code, PhoneNumber, UserId } from '@gamezilla/shared';
+import { Iso3166Alpha2Code, PhoneNumber, UserId } from './data';
 const { Some } = Option;
 
 //
@@ -14,7 +14,7 @@ export type Model =
   | ['account']
   | ['login']
   | ['login-email-link']
-  | ['login-phone']
+  | ['login-phone', { isSelectingCountry: boolean }]
   | ['login-phone-verify', { phoneNumber: PhoneNumber }]
   | ['logout']
   | ['profile', { userId: UserId }]
@@ -100,6 +100,11 @@ export const decode = ({
       return Option.None;
     }
 
+    case 'login-phone': {
+      const isSelectingCountry = query['isSelectingCountry'] === 'true';
+      return Some(['login-phone', { isSelectingCountry }]);
+    }
+
     case 'login-phone-verify': {
       const phoneNumberDirty = query['phoneNumber'];
       const country = query['country'];
@@ -136,6 +141,13 @@ export const encode = (route: Model): string => {
 
     case 'profile':
       return `/${route[0]}/${route[1].userId}`;
+
+    case 'login-phone': {
+      const params = new URLSearchParams({
+        isSelectingCountry: route[1].isSelectingCountry.toString(),
+      });
+      return `/${route[0]}?${params.toString()}`;
+    }
 
     case 'login-phone-verify': {
       const phoneNumber = PhoneNumber.toString(route[1].phoneNumber);
