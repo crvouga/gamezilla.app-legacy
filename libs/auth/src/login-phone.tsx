@@ -1,7 +1,25 @@
-import { Cmd, p } from '@gamezilla/core';
-import { Iso3166Alpha2Code, PhoneNumber } from '@gamezilla/shared';
-import { Route } from '@gamezilla/shared';
-import * as UI from '@gamezilla/shared/ui';
+import { Browser, Cmd, exhaustive, p, t } from '@gamezilla/core';
+import { Iso3166Alpha2Code, PhoneNumber, Route } from '@gamezilla/shared';
+import {
+  Alert,
+  Box,
+  Button,
+  Divider,
+  FillBox,
+  Header,
+  HeaderBackButton,
+  IconButton,
+  Icons,
+  InputAdornment,
+  InputBase,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  TextField,
+  Typography,
+} from '@gamezilla/shared/ui';
+import { matchSorter } from 'match-sorter';
 import * as Auth from './auth';
 
 //
@@ -15,6 +33,7 @@ import * as Auth from './auth';
 export type Model = {
   phoneNumber: string;
   country: Iso3166Alpha2Code;
+  countrySearchText: string;
   validation: 'NotChecked' | 'InvalidPhoneNumber' | 'EmptyPhoneNumber';
   submission:
     | { type: 'Idle' }
@@ -23,13 +42,36 @@ export type Model = {
     | { type: 'Ok' };
 };
 
-export const init: Model = {
-  country: 'US',
-  phoneNumber: '',
-  validation: 'NotChecked',
-  submission: {
-    type: 'Idle',
-  },
+const phoneNumberInputId = 'phoneNumberInputId';
+const countrySelectInputId = 'countrySelectInputId';
+
+export const init = ({
+  country,
+  phoneNumber,
+  isSelectingCountry,
+}: {
+  country: Iso3166Alpha2Code;
+  phoneNumber: string;
+  isSelectingCountry: boolean;
+}): { model: Model; cmd: Cmd<Msg> } => {
+  return {
+    model: {
+      country,
+      phoneNumber,
+      countrySearchText: '',
+      validation: 'NotChecked',
+      submission: {
+        type: 'Idle',
+      },
+    },
+    cmd: p(
+      Browser.focus(
+        isSelectingCountry ? countrySelectInputId : phoneNumberInputId,
+        100
+      ),
+      Cmd.perform(t('focus-done'))
+    ),
+  };
 };
 
 //
@@ -41,52 +83,62 @@ export const init: Model = {
 //
 
 export type Msg =
-  | ['ClickedBack']
+  | ['clicked-back']
   | ['clicked-send-code']
   | ['inputted-phone-number', string]
-  | ['inputted-country', Iso3166Alpha2Code]
-  | ['send-code-done', PhoneNumber, Auth.AuthResult];
+  | ['clicked-change-country']
+  | ['inputted-country-search-text', string]
+  | ['cleared-country-search-text']
+  | ['closed-country-search']
+  | ['send-code-done', PhoneNumber, Auth.AuthResult]
+  | ['clicked-country-search-result', Iso3166Alpha2Code]
+  | ['focus-done', Browser.FocusResult];
 
-export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
+export const update = ({
+  msg,
+  model,
+}: {
+  msg: Msg;
+  model: Model;
+}): { model: Model; cmd?: Cmd<Msg> } => {
   switch (msg[0]) {
-    case 'ClickedBack': {
-      return [model, Route.back];
+    case 'clicked-back': {
+      return { model, cmd: Route.back };
     }
 
     case 'clicked-send-code': {
       if (model.phoneNumber.length === 0) {
-        return [{ ...model, validation: 'EmptyPhoneNumber' }, Cmd.None];
+        return { model: { ...model, validation: 'EmptyPhoneNumber' } };
       }
 
       const decoded = PhoneNumber.decode(model.country, model.phoneNumber);
 
       if (decoded.type === 'Err') {
-        return [{ ...model, validation: 'InvalidPhoneNumber' }, Cmd.None];
+        return { model: { ...model, validation: 'InvalidPhoneNumber' } };
       }
 
       const phoneNumber = decoded.value;
 
-      return [
-        { ...model, submission: { type: 'Loading' } },
-        p(
+      return {
+        model: { ...model, submission: { type: 'Loading' } },
+        cmd: p(
           Auth.sendCode({ phoneNumber: phoneNumber }),
           Cmd.perform((result): Msg => ['send-code-done', phoneNumber, result])
         ),
-      ];
+      };
     }
 
     case 'inputted-phone-number': {
-      return [
-        { ...model, phoneNumber: msg[1], validation: 'NotChecked' },
-        Cmd.None,
-      ];
+      return {
+        model: { ...model, phoneNumber: msg[1], validation: 'NotChecked' },
+      };
     }
 
-    case 'inputted-country': {
-      return [
-        { ...model, country: msg[1], validation: 'NotChecked' },
-        Cmd.None,
-      ];
+    case 'clicked-country-search-result': {
+      return {
+        model: { ...model, country: msg[1], validation: 'NotChecked' },
+        cmd: Route.push(['login-phone', { isSelectingCountry: false }]),
+      };
     }
 
     case 'send-code-done': {
@@ -94,19 +146,51 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       const result = msg[2];
 
       if (result.type === 'Err') {
-        return [
-          {
+        return {
+          model: {
             ...model,
             submission: { type: 'Problem', message: result.error.message },
           },
-          Cmd.None,
-        ];
+        };
       }
 
-      return [
-        { ...model, submission: { type: 'Ok' } },
-        Route.push(['login-phone-verify', { phoneNumber: phoneNumber }]),
-      ];
+      return {
+        model: { ...model, submission: { type: 'Ok' } },
+        cmd: Route.push(['login-phone-verify', { phoneNumber: phoneNumber }]),
+      };
+    }
+
+    case 'clicked-change-country': {
+      return {
+        model,
+        cmd: Route.push(['login-phone', { isSelectingCountry: true }]),
+      };
+    }
+
+    case 'closed-country-search': {
+      return {
+        model,
+        cmd: Route.push(['login-phone', { isSelectingCountry: false }]),
+      };
+    }
+
+    case 'inputted-country-search-text': {
+      return {
+        model: { ...model, countrySearchText: msg[1] },
+      };
+    }
+    case 'cleared-country-search-text': {
+      return {
+        model: { ...model, countrySearchText: '' },
+      };
+    }
+
+    case 'focus-done': {
+      return { model };
+    }
+
+    default: {
+      return exhaustive(msg[0]);
     }
   }
 };
@@ -122,51 +206,62 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 export const View = ({
   model,
   $send,
+  isSelectingCountry,
 }: {
+  isSelectingCountry: boolean;
   model: Model;
   $send: (msg: Msg) => void;
 }) => {
+  if (isSelectingCountry) {
+    return (
+      <CountrySelectScreen
+        inputId={countrySelectInputId}
+        searchText={model.countrySearchText}
+        onChange={(text) => $send(['inputted-country-search-text', text])}
+        onClear={() => $send(['cleared-country-search-text'])}
+        selected={model.country}
+        onSelect={(country) =>
+          $send(['clicked-country-search-result', country])
+        }
+        onClose={() => $send(['closed-country-search'])}
+      />
+    );
+  }
+
   return (
-    <UI.FillBox>
-      <UI.Header
-        left={<UI.HeaderBackButton onClick={() => $send(['ClickedBack'])} />}
+    <FillBox>
+      <Header
+        left={<HeaderBackButton onClick={() => $send(['clicked-back'])} />}
         title="Login With Phone"
       />
-      <UI.Box
+      <Box
         sx={{
           padding: 2,
         }}
       >
-        <UI.Autocomplete
-          id="iso_3166_phone_number"
-          multiple={false}
-          defaultValue={Iso3166Alpha2Code.of('US')}
-          options={Iso3166Alpha2Code.all}
-          getOptionLabel={(option) => {
-            if (!Iso3166Alpha2Code.is(option)) {
-              return option;
-            }
-
-            const emoji = Iso3166Alpha2Code.toEmoji(option);
-            const name = Iso3166Alpha2Code.toName(option);
-            return `${emoji} ${name}`;
+        <Typography color="text.secondary">Country</Typography>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: 2,
           }}
-          renderInput={(params) => (
-            <UI.TextField
-              {...params}
-              fullWidth
-              label="Country"
-              sx={{ marginBottom: 2 }}
-            />
-          )}
-          onChange={(_event, value) => {
-            if (value && Iso3166Alpha2Code.is(value)) {
-              $send(['inputted-country', value]);
-            }
-          }}
-        />
+        >
+          <Box sx={{ fontSize: '2rem', marginRight: 1 }}>
+            {Iso3166Alpha2Code.toEmoji(model.country)}
+          </Box>
+          <Typography sx={{ flex: 1 }} color="text.secondary">
+            {Iso3166Alpha2Code.toName(model.country)}
+          </Typography>
 
-        <UI.TextField
+          <Button onClick={() => $send(['clicked-change-country'])}>
+            Change
+          </Button>
+        </Box>
+
+        <TextField
+          id={phoneNumberInputId}
           autoFocus
           sx={{ marginBottom: 2 }}
           type="tel"
@@ -192,7 +287,7 @@ export const View = ({
           }
         />
 
-        <UI.Button
+        <Button
           variant="contained"
           size="large"
           fullWidth
@@ -200,16 +295,96 @@ export const View = ({
           onClick={() => $send(['clicked-send-code'])}
         >
           Send Code
-        </UI.Button>
+        </Button>
 
         {model.submission.type === 'Problem' && (
-          <UI.Alert severity="error" sx={{ marginTop: 2 }}>
+          <Alert severity="error" sx={{ marginTop: 2 }}>
             {model.submission.message}
-          </UI.Alert>
+          </Alert>
         )}
-      </UI.Box>
-    </UI.FillBox>
+      </Box>
+    </FillBox>
   );
 };
 
-// 4802098698
+export const CountrySelectScreen = ({
+  searchText,
+  inputId,
+  onChange,
+  onClear,
+  selected,
+  onSelect,
+  onClose,
+}: {
+  searchText: string;
+  inputId: string;
+  onChange: (s: string) => void;
+  onClear: () => void;
+  selected: Iso3166Alpha2Code;
+  onSelect: (country: Iso3166Alpha2Code) => void;
+  onClose: () => void;
+}) => {
+  const matched = matchSorter(Iso3166Alpha2Code.all, searchText, {
+    keys: [(iso) => Iso3166Alpha2Code.toName(iso)],
+  });
+  return (
+    <FillBox>
+      <Typography variant="h3" sx={{ px: 2, pt: 2 }}>
+        Select country
+      </Typography>
+
+      <InputBase
+        sx={{ p: 2 }}
+        id={inputId}
+        placeholder="Search country"
+        value={searchText}
+        onChange={(e) => onChange(e.target.value)}
+        startAdornment={
+          <InputAdornment position="start">
+            <Icons.Search sx={{ color: 'text.secondary' }} />
+          </InputAdornment>
+        }
+        endAdornment={
+          <InputAdornment position="end">
+            <IconButton edge="end" onClick={onClear}>
+              <Icons.Clear />
+            </IconButton>
+          </InputAdornment>
+        }
+      />
+
+      <Divider />
+
+      {matched.length === 0 && (
+        <Typography color="text.secondary" sx={{ p: 2 }}>
+          No countries match
+        </Typography>
+      )}
+
+      <List disablePadding sx={{ overflowY: 'scroll', flex: 1 }}>
+        {matched.map((iso) => (
+          <ListItemButton
+            key={iso}
+            selected={iso === selected}
+            onClick={() => onSelect(iso)}
+          >
+            <ListItemIcon sx={{ fontSize: '2rem' }}>
+              {Iso3166Alpha2Code.toEmoji(iso)}
+            </ListItemIcon>
+            <ListItemText primary={Iso3166Alpha2Code.toName(iso)} />
+          </ListItemButton>
+        ))}
+      </List>
+      <Box sx={{ p: 2 }}>
+        <Button
+          fullWidth
+          variant="outlined"
+          onClick={onClose}
+          startIcon={<Icons.Close />}
+        >
+          Close
+        </Button>
+      </Box>
+    </FillBox>
+  );
+};

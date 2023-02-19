@@ -47,14 +47,14 @@ export const init: Model = {
 //
 
 export type Msg =
-  | ['ClickedBack']
+  | ['clicked-back']
   | ['ClickedTogglePasswordVisibility']
   | ['ClickedLogin']
   | ['ClickedCreateAccount']
   | ['ClickedResetPassword']
   | ['inputted-email-address', string]
   | ['InputtedPassword', string]
-  | ['Focus_Done', Browser.FocusResult]
+  | ['focus-done', Browser.FocusResult]
   | ['login-done', Auth.AuthResult];
 
 const passwordFieldId = 'password';
@@ -77,12 +77,12 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
         },
         p(
           Browser.focus(passwordFieldId),
-          Cmd.perform((result) => ['Focus_Done', result])
+          Cmd.perform((result) => ['focus-done', result])
         ),
       ];
     }
 
-    case 'Focus_Done': {
+    case 'focus-done': {
       return [model, Cmd.None];
     }
 
@@ -133,7 +133,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       return [model, Cmd.None];
     // return [model, Route.push(["PasswordReset"])]
 
-    case 'ClickedBack':
+    case 'clicked-back':
       return [model, Route.back];
 
     default:
@@ -169,7 +169,7 @@ export const View = ({
   return (
     <UI.FillBox>
       <UI.Header
-        left={<UI.HeaderBackButton onClick={() => $send(['ClickedBack'])} />}
+        left={<UI.HeaderBackButton onClick={() => $send(['clicked-back'])} />}
         title="Continue With Email"
       />
 

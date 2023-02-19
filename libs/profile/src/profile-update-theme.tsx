@@ -26,7 +26,7 @@ export const init: Model = {
 //
 
 export type Msg =
-  | ['ClickedBack']
+  | ['clicked-back']
   | ['ClickedThemeMode', ProfileStore.Profile['themeMode']];
 
 type OutMsg = ProfileStore.Action;
@@ -37,7 +37,7 @@ export const update = (
   model: Model
 ): [Model, Cmd<Msg>, OutMsg[]] => {
   switch (msg[0]) {
-    case 'ClickedBack':
+    case 'clicked-back':
       return [model, Route.back, []];
 
     case 'ClickedThemeMode':
@@ -68,7 +68,7 @@ export const View = ({
 }) => (
   <UI.FillBox>
     <UI.Header
-      left={<UI.HeaderBackButton onClick={() => $send(['ClickedBack'])} />}
+      left={<UI.HeaderBackButton onClick={() => $send(['clicked-back'])} />}
       title="Theme"
     />
 

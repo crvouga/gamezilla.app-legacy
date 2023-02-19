@@ -34,7 +34,7 @@ export const init: Model = {
 //
 
 export type Msg =
-  | ['ClickedBack']
+  | ['clicked-back']
   | ['clicked-send-login-link']
   | ['inputted-email-address', string]
   | ['login-done', Auth.AuthResult];
@@ -95,7 +95,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       ];
     }
 
-    case 'ClickedBack': {
+    case 'clicked-back': {
       return [model, Route.back];
     }
 
@@ -122,7 +122,7 @@ export const View = ({
   return (
     <UI.FillBox>
       <UI.Header
-        left={<UI.HeaderBackButton onClick={() => $send(['ClickedBack'])} />}
+        left={<UI.HeaderBackButton onClick={() => $send(['clicked-back'])} />}
         title="Login With Email"
       />
 

@@ -42,7 +42,7 @@ export const init: Model = {
 //
 
 export type Msg =
-  | ['ClickedBack']
+  | ['clicked-back']
   | ['ClickedSend']
   | ['inputted-email-address', string]
   | [
@@ -55,7 +55,7 @@ export type Msg =
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'ClickedBack':
+    case 'clicked-back':
       return [model, Route.back];
 
     case 'inputted-email-address':
@@ -127,7 +127,7 @@ export const View = ({
   return (
     <UI.FillBox>
       <UI.Header
-        left={<UI.HeaderBackButton onClick={() => $send(['ClickedBack'])} />}
+        left={<UI.HeaderBackButton onClick={() => $send(['clicked-back'])} />}
         title="Reset Password"
       />
 

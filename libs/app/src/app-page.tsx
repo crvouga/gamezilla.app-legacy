@@ -39,7 +39,7 @@ import * as UI from '@gamezilla/shared/ui';
 export type Model =
   | ['login', Login.Model]
   | ['login-email-link', LoginEmailLink.Model]
-  | ['login-phone', LoginPhone.Model]
+  | ['login-phone', { isSelectingCountry: boolean }, LoginPhone.Model]
   | ['login-phone-verify', { phoneNumber: PhoneNumber }, LoginPhoneVerify.Model]
   | ['home', Home.Model]
   | ['profile-create', ProfileCreate.Model]
@@ -248,18 +248,29 @@ export const initLoggedOut = (
       return [['login', childNew], Cmd.None];
     }
 
-    case 'login-phone':
-      return [['login-phone', LoginPhone.init], Cmd.None];
+    case 'login-phone': {
+      const init = LoginPhone.init({
+        phoneNumber: model[0] === 'login-phone' ? model[2].phoneNumber : '',
+        country: model[0] === 'login-phone' ? model[2].country : 'US',
+        isSelectingCountry: route[1].isSelectingCountry,
+      });
+      return [
+        ['login-phone', route[1], init.model],
+        Cmd.tag('login-phone', init.cmd),
+      ];
+    }
 
-    case 'login-phone-verify':
+    case 'login-phone-verify': {
+      const init = LoginPhoneVerify.init();
       return [
         [
           'login-phone-verify',
           { phoneNumber: route[1].phoneNumber },
-          LoginPhoneVerify.init,
+          init.model,
         ],
-        Cmd.None,
+        Cmd.tag('login-phone-verify', init.cmd),
       ];
+    }
 
     case 'login-email-link':
       return [['login-email-link', LoginEmailLink.init], Cmd.None];
@@ -588,21 +599,26 @@ export const updateLoggedOut = (
 
     case 'login-phone': {
       if (msg[0] === 'login-phone') {
-        return tag('login-phone', LoginPhone.update(msg[1], model[1]));
+        const updated = LoginPhone.update({ msg: msg[1], model: model[2] });
+        return [
+          ['login-phone', model[1], updated.model],
+          Cmd.tag('login-phone', updated.cmd ?? Cmd.None),
+          [],
+        ];
       }
       return [model, Cmd.None, []];
     }
 
     case 'login-phone-verify': {
       if (msg[0] === 'login-phone-verify') {
-        const [child, cmd] = LoginPhoneVerify.update(
-          model[1],
-          msg[1],
-          model[2]
-        );
+        const updated = LoginPhoneVerify.update({
+          model: model[2],
+          msg: msg[1],
+          phoneNumber: model[1].phoneNumber,
+        });
         return [
-          ['login-phone-verify', model[1], child],
-          Cmd.tag('login-phone-verify', cmd),
+          ['login-phone-verify', model[1], updated.model],
+          Cmd.tag('login-phone-verify', updated.cmd ?? Cmd.None),
           [],
         ];
       }
@@ -991,7 +1007,8 @@ export const ViewLoggedOut = ({
     case 'login-phone':
       return (
         <LoginPhone.View
-          model={model[1]}
+          isSelectingCountry={model[1].isSelectingCountry}
+          model={model[2]}
           $send={(msg) => $send(['login-phone', msg])}
         />
       );

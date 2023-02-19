@@ -8,10 +8,10 @@ export const now = (): Task<number> => {
 };
 
 export const delay =
-  <TMsg>(timeout: number, msg: TMsg): Task<TMsg> =>
+  <TMsg>(timeout: number, msg?: TMsg): Task<TMsg | null> =>
   async () => {
     await new Promise((resolve) => setTimeout(resolve, timeout));
-    return msg;
+    return msg ?? null;
   };
 
 //

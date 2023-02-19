@@ -60,21 +60,21 @@ export const init = (): [Model, Cmd<Msg>] => {
 //
 
 export type Msg =
-  | ['ClickedBack']
+  | ['clicked-back']
   | ['ClickedLogin']
   | ['ClickedTogglePasswordVisibility']
   | ['ClickedCreateAccount']
   | ['inputted-email-address', string]
   | ['InputtedPassword', string]
   | ['CreateAccount_Done', AccountStore.CreateResult]
-  | ['Focus_Done', Browser.FocusResult];
+  | ['focus-done', Browser.FocusResult];
 
 const emailAddressId = 'emailAddress';
 const passwordId = 'password';
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'ClickedBack':
+    case 'clicked-back':
       return [model, Route.back];
 
     case 'InputtedPassword': {
@@ -105,7 +105,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       ];
     }
 
-    case 'Focus_Done':
+    case 'focus-done':
       return [model, Cmd.None];
 
     case 'ClickedTogglePasswordVisibility':
@@ -116,7 +116,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
         },
         p(
           Browser.focus(passwordId),
-          Cmd.perform((result) => ['Focus_Done', result])
+          Cmd.perform((result) => ['focus-done', result])
         ),
       ];
 
@@ -141,7 +141,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
           { ...model, submission: submissionNew },
           p(
             Browser.focus(focusId),
-            Cmd.perform((result) => ['Focus_Done', result])
+            Cmd.perform((result) => ['focus-done', result])
           ),
         ];
       }
@@ -221,7 +221,7 @@ export const View = ({
   return (
     <UI.FillBox>
       <UI.Header
-        left={<UI.HeaderBackButton onClick={() => $send(['ClickedBack'])} />}
+        left={<UI.HeaderBackButton onClick={() => $send(['clicked-back'])} />}
         title="Create Account"
       />
 

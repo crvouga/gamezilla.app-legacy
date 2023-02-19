@@ -33,7 +33,7 @@ export const init: [Model, Cmd<Msg>, OutAction[]] = [
 
 export type Msg =
   | ['ClickedClear']
-  | ['Focus_Done', Browser.FocusResult]
+  | ['focus-done', Browser.FocusResult]
   | ['InputtedSearchText', string]
   | ['clicked-result', { userId: UserId }];
 
@@ -46,7 +46,7 @@ export const update = (
   model: Model
 ): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-    case 'Focus_Done':
+    case 'focus-done':
       return [model, Cmd.None, []];
 
     case 'ClickedClear':
@@ -54,7 +54,7 @@ export const update = (
         { ...model, searchText: '' },
         p(
           Browser.focus(searchInputId),
-          Cmd.perform((result) => ['Focus_Done', result])
+          Cmd.perform((result) => ['focus-done', result])
         ),
         [],
       ];

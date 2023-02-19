@@ -50,7 +50,7 @@ export const init = ({
 //
 
 export type Msg =
-  | ['ClickedBack']
+  | ['clicked-back']
   | ['ClickedSend']
   | ['ClickedMessage', { messageId: string }]
   | ['ClosedMessageMenu', { messageId: string }]
@@ -80,7 +80,7 @@ export const update = (
         [],
       ];
 
-    case 'ClickedBack':
+    case 'clicked-back':
       return [model, Route.back, []];
 
     case 'ClickedSend': {
@@ -182,7 +182,7 @@ export const View = ({
     <UI.FillBox>
       <UI.Toolbar>
         <UI.Box sx={{ flex: 1 }}>
-          <UI.HeaderBackButton onClick={() => $send(['ClickedBack'])} />
+          <UI.HeaderBackButton onClick={() => $send(['clicked-back'])} />
         </UI.Box>
 
         <UI.Box

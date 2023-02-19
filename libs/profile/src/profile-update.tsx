@@ -24,7 +24,7 @@ export const init: Model = null;
 //
 
 export type Msg =
-  | ['ClickedBack']
+  | ['clicked-back']
   | ['ClickedName']
   | ['clicked-username']
   | ['ClickedAvatar']
@@ -39,7 +39,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     case 'ClickedChangedAvatar':
       return [model, Route.push(['profile-update-avatar'])];
 
-    case 'ClickedBack':
+    case 'clicked-back':
       return [model, Route.back];
 
     case 'ClickedName':
@@ -71,7 +71,7 @@ export const View = ({
 }) => (
   <UI.FillBox>
     <UI.Header
-      left={<UI.HeaderBackButton onClick={() => $send(['ClickedBack'])} />}
+      left={<UI.HeaderBackButton onClick={() => $send(['clicked-back'])} />}
       title="Update Profile"
     />
 
