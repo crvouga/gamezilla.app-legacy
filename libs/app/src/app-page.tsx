@@ -38,8 +38,7 @@ export type Model =
   | ['chat-conversation', { conversationId: string }, ChatConversation.Model]
   | ['room']
   | ['game']
-  | ['party']
-  | ['Loading'];
+  | ['party'];
 
 //
 //
@@ -83,10 +82,6 @@ export type OutAction =
 //
 //
 //
-
-export const initLoading = (): [Model, Cmd<Msg>] => {
-  return [['Loading'], Cmd.None];
-};
 
 export const initReady = (
   route: Route.Model,
@@ -188,7 +183,7 @@ export const initReady = (
     case 'login-phone':
     case 'login-phone-verify':
     case 'login-email-link': {
-      return [['Loading'], Route.push(['home']), []];
+      return [['home', Home.init], Route.push(['home']), []];
     }
 
     default:
@@ -432,7 +427,6 @@ export const updateReady = (
     }
 
     case 'login':
-    case 'Loading':
     case 'profile-create': {
       return [model, Route.push(['home']), []];
     }
@@ -474,7 +468,6 @@ export const updateProfileMissing = (
     case 'chat-conversation':
     case 'game':
     case 'room':
-    case 'Loading':
     case 'search':
     case 'party':
     case 'home':
@@ -531,7 +524,6 @@ export const subscriptions = (model: Model): Sub<Msg> => {
     case 'profile-create':
     case 'profile-delete':
     case 'profile-update':
-    case 'Loading':
     case 'profile':
     case 'search':
     case 'game':
@@ -729,7 +721,6 @@ export const ViewReady = ({
 
     case 'login':
     case 'profile-create':
-    case 'Loading':
       return <UI.LoadingPage />;
 
     default:
@@ -787,7 +778,6 @@ export const ViewProfileMissing = ({
     case 'profile-delete':
     case 'profile-update':
     case 'login':
-    case 'Loading':
     case 'search':
     case 'profile':
     case 'game':
