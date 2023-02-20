@@ -63,8 +63,8 @@ const init =
     const [auth, authCmd] = Auth.init();
     const alerts = Alerts.init;
     const chatStore = ChatStore.init;
-    const [gameRoom, gameRoomCmd] = Room.init;
-    const [page, pageCmd] = Page.initLoading();
+    const [gameRoom, roomCmd] = Room.init;
+    const page = Page.initLoading();
     const [party, partyCmd] = Party.init({
       sendToBackend: (msg) => sendToBackend(['party', msg]),
     });
@@ -87,8 +87,7 @@ const init =
       Cmd.batch<Msg>([
         Route.replace(route),
         Cmd.tag('auth', authCmd),
-        Cmd.tag('page', pageCmd),
-        Cmd.tag('room', gameRoomCmd),
+        Cmd.tag('room', roomCmd),
         Cmd.tag('party', partyCmd),
       ]),
     ];
