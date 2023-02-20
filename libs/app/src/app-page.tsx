@@ -14,6 +14,7 @@ import {
 import { RoomFrontend } from '@gamezilla/room';
 import { Alerts, Ctx, Route, UserId } from '@gamezilla/shared';
 import * as UI from '@gamezilla/shared/ui';
+import { ButtonBase, Typography } from '@gamezilla/shared/ui';
 
 //
 //
@@ -812,6 +813,7 @@ export const ViewProfileMissing = ({
 
 type BottomNavigationItem = {
   route: Route.Model;
+  label: string;
   filled: UI.ViewNode;
   outlined: UI.ViewNode;
 };
@@ -828,8 +830,9 @@ const ViewBottomNavigation = ({
   const items: BottomNavigationItem[] = [
     {
       route: ['home'],
-      filled: <UI.Icons.Home />,
-      outlined: <UI.Icons.HomeOutlined />,
+      label: 'Game',
+      filled: <UI.Icons.SportsEsports />,
+      outlined: <UI.Icons.SportsEsportsOutlined />,
     },
     // {
     //   route: ['party'],
@@ -838,16 +841,19 @@ const ViewBottomNavigation = ({
     // },
     {
       route: ['search'],
+      label: 'Search',
       filled: <UI.Icons.Search />,
       outlined: <UI.Icons.SearchOutlined />,
     },
     {
       route: ['chat'],
+      label: 'Chat',
       filled: <UI.Icons.Chat />,
       outlined: <UI.Icons.ChatOutlined />,
     },
     {
       route: ['profile', { userId: ctx.currentUserId }],
+      label: 'Profile',
       filled: <UI.Icons.AccountCircle />,
       outlined: <UI.Icons.AccountCircleOutlined />,
     },
@@ -863,14 +869,14 @@ const ViewBottomNavigation = ({
         alignItems: 'center',
         justifyContent: 'center',
         height: 52,
-        borderTop: `1.5px solid ${theme.palette.divider}`,
+        // borderTop: `1.5px solid ${theme.palette.divider}`,
       }}
     >
       {items.map((item) => {
         const isSelected = Route.equals(route, item.route);
 
         return (
-          <UI.ButtonBase
+          <ButtonBase
             key={Route.encode(item.route)}
             onClick={() => $send(['clicked-bottom-nav-link', item.route])}
             sx={{
@@ -884,8 +890,8 @@ const ViewBottomNavigation = ({
             }}
           >
             {isSelected ? item.filled : item.outlined}
-            <UI.Typography variant="caption">{item.route[0]}</UI.Typography>
-          </UI.ButtonBase>
+            <Typography variant="caption">{item.label}</Typography>
+          </ButtonBase>
         );
       })}
     </UI.Box>
