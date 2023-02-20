@@ -55,7 +55,7 @@ export const update = ({
   model: Model;
 }): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'ClickedCancel': {
+    case 'clicked-cancel': {
       return [{ ...model, confirming: undefined }, Cmd.None];
     }
 
@@ -188,8 +188,8 @@ export const view = ({
           iconName: 'flag',
           confirmTitle: 'Resign',
           onConfirm: () => $send(['Resign']),
-          onCancel: () => $send(['ClickedCancel']),
-          onClose: () => $send(['ClickedCancel']),
+          onCancel: () => $send(['clicked-cancel']),
+          onClose: () => $send(['clicked-cancel']),
         }),
       ]);
     }

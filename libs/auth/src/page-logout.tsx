@@ -11,9 +11,9 @@ import * as Auth from './auth';
 //
 //
 
-export type Model = { type: 'Idle' } | { type: 'LoggingOut' };
+export type Model = { type: 'idle' } | { type: 'LoggingOut' };
 
-export const init: Model = { type: 'Idle' };
+export const init: Model = { type: 'idle' };
 
 //
 //
@@ -23,7 +23,7 @@ export const init: Model = { type: 'Idle' };
 //
 //
 
-export type Msg = ['ClickedCancel'] | ['clicked-backdrop'] | ['ClickedLogout'];
+export type Msg = ['clicked-cancel'] | ['clicked-backdrop'] | ['ClickedLogout'];
 
 type OutAction = Auth.Action;
 
@@ -32,7 +32,7 @@ export const update = (
   model: Model
 ): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-    case 'ClickedCancel':
+    case 'clicked-cancel':
       return [model, Route.back, []];
 
     case 'clicked-backdrop':
@@ -59,15 +59,15 @@ export const View = ({
   $send: (msg: Msg) => void;
 }) => {
   switch (model.type) {
-    case 'Idle': {
+    case 'idle': {
       return (
         <UI.ConformationDialog
-          open={model.type === 'Idle'}
+          open={model.type === 'idle'}
           title="Logout of Gamezilla?"
           confirmTitle="Logout"
           onConfirm={() => $send(['ClickedLogout'])}
           onClose={() => $send(['clicked-backdrop'])}
-          onCancel={() => $send(['ClickedCancel'])}
+          onCancel={() => $send(['clicked-cancel'])}
         />
       );
     }

@@ -5,15 +5,11 @@ import { Cmd, exhaustive, p, Sub, t } from '@gamezilla/core';
 import * as Home from '@gamezilla/home';
 import { PartyFrontend as Party } from '@gamezilla/party';
 import {
+  PageProfileUpdate,
   Profile,
   ProfileCreate,
   ProfileDelete,
   ProfileStore,
-  ProfileUpdate,
-  ProfileUpdateAvatar,
-  ProfileUpdateName,
-  ProfileUpdateTheme,
-  ProfileUpdateUsername,
   Search,
 } from '@gamezilla/profile';
 import { RoomFrontend as GameRoom } from '@gamezilla/room';
@@ -36,11 +32,7 @@ export type Model =
   | ['account', Account.Model]
   | ['profile', { userId: UserId }, Profile.Model]
   | ['profile-delete', ProfileDelete.Model]
-  | ['profile-update', ProfileUpdate.Model]
-  | ['profile-update-avatar', ProfileUpdateAvatar.Model]
-  | ['profile-update-name', ProfileUpdateName.Model]
-  | ['profile-update-username', ProfileUpdateUsername.Model]
-  | ['profile-update-theme', ProfileUpdateTheme.Model]
+  | ['profile-update', PageProfileUpdate.Model]
   | ['chat', Chat.Model]
   | ['chat-new', ChatNew.Model]
   | ['search', Search.Model]
@@ -66,11 +58,7 @@ export type Msg =
   | ['profile', Profile.Msg]
   | ['profile-create', ProfileCreate.Msg]
   | ['profile-delete', ProfileDelete.Msg]
-  | ['profile-update', ProfileUpdate.Msg]
-  | ['profile-update-avatar', ProfileUpdateAvatar.Msg]
-  | ['profile-update-name', ProfileUpdateName.Msg]
-  | ['profile-update-username', ProfileUpdateUsername.Msg]
-  | ['profile-update-theme', ProfileUpdateTheme.Msg]
+  | ['profile-update', PageProfileUpdate.Msg]
   | ['chat', Chat.Msg]
   | ['room', GameRoom.Msg]
   | ['game', GameRoom.Msg]
@@ -147,32 +135,17 @@ export const initReady = (
       ];
     }
 
-    case 'profile-update':
-      return [['profile-update', ProfileUpdate.init], Cmd.None, []];
-
     case 'profile-update-avatar':
-      return [
-        ['profile-update-avatar', ProfileUpdateAvatar.init(profile)],
-        Cmd.None,
-        [],
-      ];
-
     case 'profile-update-name':
-      return [
-        ['profile-update-name', ProfileUpdateName.init(profile)],
-        Cmd.None,
-        [],
-      ];
-
     case 'profile-update-username':
-      return [
-        ['profile-update-username', ProfileUpdateUsername.init(profile)],
-        Cmd.None,
-        [],
-      ];
-
     case 'profile-update-theme':
-      return [['profile-update-theme', ProfileUpdateTheme.init], Cmd.None, []];
+    case 'profile-update': {
+      const initial = PageProfileUpdate.init({
+        currentUserProfile: profile,
+        route: route,
+      });
+      return [['profile-update', initial], Cmd.None, []];
+    }
 
     case 'profile': {
       const [modelInit, cmdInit, actions] = Profile.init({
@@ -352,38 +325,21 @@ export const updateReady = (
       }
       return [model, Cmd.None, []];
 
-    case 'profile-update':
-      if (msg[0] === 'profile-update') {
-        return tag('profile-update', ProfileUpdate.update(msg[1], model[1]));
+    case 'profile-update': {
+      if (msg[0] !== 'profile-update') {
+        return [model, Cmd.None, []];
       }
-      return [model, Cmd.None, []];
-
-    case 'profile-update-avatar':
-      if (msg[0] === 'profile-update-avatar') {
-        return tag(
-          'profile-update-avatar',
-          ProfileUpdateAvatar.update(profile, msg[1], model[1])
-        );
-      }
-      return [model, Cmd.None, []];
-
-    case 'profile-update-name':
-      if (msg[0] === 'profile-update-name') {
-        return tag(
-          'profile-update-name',
-          ProfileUpdateName.update(profile, msg[1], model[1])
-        );
-      }
-      return [model, Cmd.None, []];
-
-    case 'profile-update-username':
-      if (msg[0] === 'profile-update-username') {
-        return tag(
-          'profile-update-username',
-          ProfileUpdateUsername.update(profile, msg[1], model[1])
-        );
-      }
-      return [model, Cmd.None, []];
+      const updated = PageProfileUpdate.update({
+        msg: msg[1],
+        model: model[1],
+        currentUserId: profile.userId,
+      });
+      return [
+        ['profile-update', updated.model],
+        Cmd.tag('profile-update', updated.cmd ?? Cmd.None),
+        updated.actions ?? [],
+      ];
+    }
 
     case 'chat':
       if (msg[0] === 'chat') {
@@ -416,15 +372,6 @@ export const updateReady = (
           Cmd.tag('chat-conversation', cmd),
           actions,
         ];
-      }
-      return [model, Cmd.None, []];
-
-    case 'profile-update-theme':
-      if (msg[0] === 'profile-update-theme') {
-        return tag(
-          'profile-update-theme',
-          ProfileUpdateTheme.update(profile, msg[1], model[1])
-        );
       }
       return [model, Cmd.None, []];
 
@@ -520,13 +467,9 @@ export const updateProfileMissing = (
     case 'profile':
     case 'profile-delete':
     case 'profile-update':
-    case 'profile-update-avatar':
-    case 'profile-update-name':
-    case 'profile-update-username':
     case 'chat':
     case 'chat-new':
     case 'chat-conversation':
-    case 'profile-update-theme':
     case 'game':
     case 'room':
     case 'Loading':
@@ -586,10 +529,6 @@ export const subscriptions = (model: Model): Sub<Msg> => {
     case 'profile-create':
     case 'profile-delete':
     case 'profile-update':
-    case 'profile-update-avatar':
-    case 'profile-update-theme':
-    case 'profile-update-username':
-    case 'profile-update-name':
     case 'Loading':
     case 'profile':
     case 'search':
@@ -715,55 +654,10 @@ export const ViewReady = ({
     case 'profile-update':
       return (
         <UI.FillBox>
-          <ProfileUpdate.View
-            profile={profile}
+          <PageProfileUpdate.View
+            currentUserProfile={profile}
             model={model[1]}
             $send={(msg) => $send(['profile-update', msg])}
-          />
-          <ViewBottomNavigation ctx={ctx} route={route} $send={$send} />
-        </UI.FillBox>
-      );
-
-    case 'profile-update-avatar':
-      return (
-        <UI.FillBox>
-          <ProfileUpdateAvatar.View
-            model={model[1]}
-            $send={(msg) => $send(['profile-update-avatar', msg])}
-          />
-          <ViewBottomNavigation ctx={ctx} route={route} $send={$send} />
-        </UI.FillBox>
-      );
-
-    case 'profile-update-name':
-      return (
-        <UI.FillBox>
-          <ProfileUpdateName.View
-            model={model[1]}
-            $send={(msg) => $send(['profile-update-name', msg])}
-          />
-          <ViewBottomNavigation ctx={ctx} route={route} $send={$send} />
-        </UI.FillBox>
-      );
-
-    case 'profile-update-theme':
-      return (
-        <UI.FillBox>
-          <ProfileUpdateTheme.View
-            profile={profile}
-            model={model[1]}
-            $send={(msg) => $send(['profile-update-theme', msg])}
-          />
-          <ViewBottomNavigation ctx={ctx} route={route} $send={$send} />
-        </UI.FillBox>
-      );
-
-    case 'profile-update-username':
-      return (
-        <UI.FillBox>
-          <ProfileUpdateUsername.View
-            model={model[1]}
-            $send={(msg) => $send(['profile-update-username', msg])}
           />
           <ViewBottomNavigation ctx={ctx} route={route} $send={$send} />
         </UI.FillBox>
@@ -890,10 +784,6 @@ export const ViewProfileMissing = ({
     case 'chat-new':
     case 'profile-delete':
     case 'profile-update':
-    case 'profile-update-avatar':
-    case 'profile-update-theme':
-    case 'profile-update-name':
-    case 'profile-update-username':
     case 'login':
     case 'Loading':
     case 'search':

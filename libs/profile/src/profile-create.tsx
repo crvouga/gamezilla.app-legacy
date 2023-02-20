@@ -40,8 +40,8 @@ export const init = ({ defaultName }: { defaultName: string }): Model => {
 //
 
 export type Msg =
-  | ['InputtedUsername', string]
-  | ['ClickedSubmit']
+  | ['inputted-username', string]
+  | ['clicked-submit']
   | ['ClickedLogout'];
 
 export type OutAction = ProfileStore.Action;
@@ -52,10 +52,10 @@ export const update = (
   model: Model
 ): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-    case 'InputtedUsername':
+    case 'inputted-username':
       return [{ ...model, username: msg[1] }, Cmd.None, []];
 
-    case 'ClickedSubmit': {
+    case 'clicked-submit': {
       const avatarUrl = ProfileAvatar.toUrl({
         seed: ProfileAvatar.toSeed(model.username),
         style: 'adventurer-neutral',
@@ -143,7 +143,7 @@ export const View = ({
         label="Username"
         fullWidth
         onChange={(event) =>
-          $send(['InputtedUsername', event.currentTarget.value])
+          $send(['inputted-username', event.currentTarget.value])
         }
       />
 
@@ -151,7 +151,7 @@ export const View = ({
         fullWidth
         size="large"
         variant="contained"
-        onClick={() => $send(['ClickedSubmit'])}
+        onClick={() => $send(['clicked-submit'])}
       >
         Create Profile
       </UI.Button>

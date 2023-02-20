@@ -49,7 +49,7 @@ export const init = (): [Model, Cmd<Msg>, OutAction[]] => {
 //
 
 export type Msg =
-  | ['ClickedCancel']
+  | ['clicked-cancel']
   | ['ClickedChat']
   | ['InputtedSearch', string]
   | ['clicked-result', { userId: UserId }]
@@ -78,7 +78,7 @@ export const update = (
       return [model, Cmd.None, [action]];
     }
 
-    case 'ClickedCancel':
+    case 'clicked-cancel':
       return [model, Route.back, []];
 
     case 'InputtedSearch': {
@@ -252,7 +252,7 @@ export const View = ({
   return (
     <UI.FillBox>
       <UI.Header
-        left={<UI.HeaderBackButton onClick={() => $send(['ClickedCancel'])} />}
+        left={<UI.HeaderBackButton onClick={() => $send(['clicked-cancel'])} />}
         title="New message"
         right={
           <UI.Button

@@ -14,7 +14,7 @@ import * as Auth from '../auth';
 export type Model = {
   emailAddress: string;
   submission:
-    | { type: 'Idle' }
+    | { type: 'idle' }
     | { type: 'Loading'; sentToEmailAddress: string }
     | { type: 'Problem'; message: string }
     | { type: 'Ok'; sentToEmailAddress: string };
@@ -22,7 +22,7 @@ export type Model = {
 
 export const init: Model = {
   emailAddress: '',
-  submission: { type: 'Idle' },
+  submission: { type: 'idle' },
 };
 
 //
