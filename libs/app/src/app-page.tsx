@@ -24,6 +24,7 @@ import * as UI from '@gamezilla/shared/ui';
 //
 
 export type Model =
+  | ['loading']
   | ['login', PageLogin.Model]
   | ['home', Home.Model]
   | ['profile-create', PageProfileCreate.Model]
@@ -82,6 +83,10 @@ export type OutAction =
 //
 //
 //
+
+export const initLoading = (): Model => {
+  return ['loading'];
+};
 
 export const initReady = (
   route: Route.Model,
@@ -426,6 +431,7 @@ export const updateReady = (
       return [model, Cmd.None, []];
     }
 
+    case 'loading':
     case 'login':
     case 'profile-create': {
       return [model, Route.push(['home']), []];
@@ -470,6 +476,7 @@ export const updateProfileMissing = (
     case 'room':
     case 'search':
     case 'party':
+    case 'loading':
     case 'home':
       return [model, Route.push(['profile-create']), []];
 
@@ -529,6 +536,7 @@ export const subscriptions = (model: Model): Sub<Msg> => {
     case 'game':
     case 'room':
     case 'party':
+    case 'loading':
     case 'home':
       return Sub.None;
 
@@ -719,6 +727,7 @@ export const ViewReady = ({
       );
     }
 
+    case 'loading':
     case 'login':
     case 'profile-create':
       return <UI.LoadingPage />;
@@ -784,6 +793,7 @@ export const ViewProfileMissing = ({
     case 'room':
     case 'party':
     case 'home':
+    case 'loading':
       return <UI.LoadingPage />;
 
     default:
