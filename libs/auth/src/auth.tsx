@@ -23,11 +23,14 @@ import * as Rx from 'rxjs';
 
 export type Session = { defaultName: string; userId: UserId };
 
-export type Model = ['Loading'] | ['LoggedOut'] | ['LoggedIn', Session];
+export type Model =
+  | { type: 'loading' }
+  | { type: 'logged-out' }
+  | { type: 'logged-in'; session: Session };
 
 export const init = (): [Model, Cmd<Msg>] => {
   return [
-    ['Loading'],
+    { type: 'loading' },
     p(
       getSession,
       Cmd.perform((msg) => msg)
@@ -69,11 +72,11 @@ export const update = (
     case 'got-session':
       switch (msg[1].type) {
         case 'none':
-          return [['LoggedOut'], Cmd.None];
+          return [{ type: 'logged-out' }, Cmd.None];
 
         case 'Some':
           return [
-            ['LoggedIn', msg[1].value],
+            { type: 'logged-in', session: msg[1].value },
             sendToBackend(['UserLoggedIn', msg[1].value.userId]),
           ];
 
@@ -92,7 +95,7 @@ export const update = (
           return [model, Cmd.None];
 
         case 'Ok':
-          return [['LoggedOut'], Cmd.None];
+          return [{ type: 'logged-out' }, Cmd.None];
 
         default:
           return exhaustive(msg[1]);
