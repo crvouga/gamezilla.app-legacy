@@ -8,7 +8,6 @@ import {
   sessionIdKey,
   ToBackend,
   ToFrontend,
-  WireStatus,
 } from '@gamezilla/app';
 import { Auth } from '@gamezilla/auth';
 import { ChatStore } from '@gamezilla/chat';
@@ -31,7 +30,7 @@ import { ProfileStore } from '@gamezilla/profile';
 import { RoomFrontend as Room } from '@gamezilla/room';
 import { Alerts, Route } from '@gamezilla/shared';
 import * as UI from '@gamezilla/shared/ui';
-import { Box, CircularProgress } from '@gamezilla/shared/ui';
+import { Box, CircularProgress, Collapse } from '@gamezilla/shared/ui';
 import * as ReactDOM from 'react-dom/client';
 import { Subject } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
@@ -74,7 +73,9 @@ const init =
         page,
         party,
         profileStore,
-        wire: 'Connecting',
+        wire: {
+          type: 'connecting',
+        },
       },
       Cmd.batch<Msg>([
         Route.replace(route),
@@ -199,7 +200,18 @@ const updateMain =
       }
 
       case 'wire': {
-        return [{ ...model, wire: msg[1] }, Cmd.None];
+        if (msg[1] === 'connect-error') {
+          const wireNew: Model['wire'] = {
+            type: 'connect-error',
+            errorCount:
+              model.wire.type === 'connect-error'
+                ? model.wire.errorCount + 1
+                : 1,
+          };
+
+          return [{ ...model, wire: wireNew }, Cmd.None];
+        }
+        return [{ ...model, wire: { type: msg[1] } }, Cmd.None];
       }
 
       case 'room': {
@@ -604,7 +616,9 @@ const View = ({
         $send={(msg) => $send(['alerts', msg])}
       />
 
-      {model.wire === 'Connecting' && (
+      <Collapse
+        in={model.wire.type === 'connect-error' && model.wire.errorCount > 2}
+      >
         <Box
           sx={{
             width: '100%',
@@ -622,7 +636,7 @@ const View = ({
           />
           Connecting to backend...
         </Box>
-      )}
+      </Collapse>
     </UI.AppContainer>
   );
 };
@@ -814,7 +828,7 @@ const toStatus = ({
 //
 //
 
-export const wireStatus$ = new Subject<WireStatus>();
+export const wireStatus$ = new Subject<Model['wire']['type']>();
 export const toFrontend$ = new Subject<ToFrontend>();
 
 //
@@ -852,6 +866,10 @@ const main = () => {
 
   socketClient.on('disconnect', () => {
     wireStatus$.next('disconnected');
+  });
+
+  socketClient.on('connect_error', () => {
+    wireStatus$.next('connect-error');
   });
 
   socketClient.on('to-frontend', (msg) => {

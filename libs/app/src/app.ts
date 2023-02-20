@@ -37,15 +37,15 @@ export type FrontendModel = {
   route: Route.Model;
   gameRoom: GameRoom.FrontendModel;
   party: Party.FrontendModel;
-  wire: WireStatus;
+  wire: WireModel;
   profileStore: ProfileStore.Model;
 };
 
-export type WireStatus =
-  | 'Connecting'
-  | 'ConnectError'
-  | 'disconnected'
-  | 'connected';
+export type WireModel =
+  | { type: 'connecting' }
+  | { type: 'connect-error'; errorCount: number }
+  | { type: 'disconnected' }
+  | { type: 'connected' };
 
 //
 //
@@ -66,7 +66,7 @@ export type ToFrontend =
 
 export type FrontendMsg =
   | ['→', ToFrontend]
-  | ['wire', WireStatus]
+  | ['wire', WireModel['type']]
   | ['route', Route.Msg]
   | ['alerts', Alerts.Msg]
   | ['room', GameRoom.FrontendMsg]
