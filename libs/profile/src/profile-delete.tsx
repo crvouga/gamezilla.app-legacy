@@ -24,7 +24,7 @@ export const init: [Model, Cmd<Msg>, OutAction[]] = [null, Cmd.None, []];
 //
 
 export type Msg =
-  | ['ClickedCancel']
+  | ['clicked-cancel']
   | ['clicked-backdrop']
   | ['ClickedDelete']
   | ['ClickedCloseErr'];
@@ -37,7 +37,7 @@ export const update = (
   model: Model
 ): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-    case 'ClickedCancel':
+    case 'clicked-cancel':
       return [model, Route.back, []];
 
     case 'clicked-backdrop':
@@ -109,7 +109,7 @@ export const View = ({
           open
           title="Delete profile forever?"
           confirmTitle="Delete"
-          onCancel={() => $send(['ClickedCancel'])}
+          onCancel={() => $send(['clicked-cancel'])}
           onClose={() => $send(['clicked-backdrop'])}
           onConfirm={() => $send(['ClickedDelete'])}
         />

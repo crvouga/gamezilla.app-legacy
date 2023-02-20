@@ -22,7 +22,7 @@ export type Model = {
   code: string;
   submission:
     | {
-        type: 'Idle';
+        type: 'idle';
       }
     | {
         type: 'Loading';
@@ -42,7 +42,7 @@ export const init = (): { model: Model; cmd: Cmd<Msg> } => {
   return {
     model: {
       code: '',
-      submission: { type: 'Idle' },
+      submission: { type: 'idle' },
     },
     cmd: p(
       Time.delay(100, () => Unit),

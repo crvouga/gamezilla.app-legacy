@@ -36,7 +36,7 @@ export type Model = {
   countrySearchText: string;
   validation: 'not-validated' | 'invalid-phone-number' | 'empty-phone-number';
   submission:
-    | { type: 'Idle' }
+    | { type: 'idle' }
     | { type: 'Loading' }
     | { type: 'Problem'; message: string }
     | { type: 'Ok' };
@@ -63,7 +63,7 @@ export const init = ({
       countrySearchText,
       validation: 'not-validated',
       submission: {
-        type: 'Idle',
+        type: 'idle',
       },
     },
     cmd: p(
