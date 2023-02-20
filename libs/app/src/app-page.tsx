@@ -831,11 +831,11 @@ const ViewBottomNavigation = ({
       filled: <UI.Icons.Home />,
       outlined: <UI.Icons.HomeOutlined />,
     },
-    {
-      route: ['party'],
-      filled: <UI.Icons.Group />,
-      outlined: <UI.Icons.GroupOutlined />,
-    },
+    // {
+    //   route: ['party'],
+    //   filled: <UI.Icons.Group />,
+    //   outlined: <UI.Icons.GroupOutlined />,
+    // },
     {
       route: ['search'],
       filled: <UI.Icons.Search />,
