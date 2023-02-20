@@ -307,11 +307,11 @@ const updateFromBackend = (
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case 'party': {
-      if (model.auth[0] !== 'LoggedIn') {
+      if (model.auth.type !== 'logged-in') {
         return [model, Cmd.None];
       }
 
-      const currentUserId = model.auth[1].userId;
+      const currentUserId = model.auth.session.userId;
 
       const [party, partyCmd, actions] = Party.updateFromBackend(
         { currentUserId },
@@ -326,11 +326,11 @@ const updateFromBackend = (
     }
 
     case 'room': {
-      if (model.auth[0] !== 'LoggedIn') {
+      if (model.auth.type !== 'logged-in') {
         return [model, Cmd.None];
       }
 
-      const currentUserId = model.auth[1].userId;
+      const currentUserId = model.auth.session.userId;
 
       const [gameRoom, gameRoomCmd, actions] = Room.updateFromBackend(
         {
@@ -455,14 +455,14 @@ const runAction =
       }
 
       case 'room': {
-        if (model.auth[0] !== 'LoggedIn') {
+        if (model.auth.type !== 'logged-in') {
           return [model, Cmd.None];
         }
 
         const [gameRoom, gameRoomCmd] = Room.runAction(
           {
             ctx: {
-              currentUserId: model.auth[1].userId,
+              currentUserId: model.auth.session.userId,
               profiles: model.profileStore.profiles,
               now: Date.now(),
             },
@@ -531,21 +531,21 @@ const subscriptions = (model: Model): Sub<Msg> => {
 };
 
 const gameRoomSub = (model: Model): Sub<Msg> => {
-  switch (model.auth[0]) {
-    case 'Loading': {
+  switch (model.auth.type) {
+    case 'loading': {
       return Sub.None;
     }
 
-    case 'LoggedOut': {
+    case 'logged-out': {
       return Sub.None;
     }
 
-    case 'LoggedIn': {
+    case 'logged-in': {
       return Sub.tag(
         'room',
         Room.subscriptions(
           {
-            currentUserId: model.auth[1].userId,
+            currentUserId: model.auth.session.userId,
             now: Date.now(),
             profiles: model.profileStore.profiles,
           },
@@ -744,15 +744,15 @@ const toStatus = ({
   profileStore: ProfileStore.Model;
   auth: Auth.Model;
 }): Status => {
-  switch (auth[0]) {
-    case 'Loading':
+  switch (auth.type) {
+    case 'loading':
       return ['AuthLoading'];
 
-    case 'LoggedOut':
+    case 'logged-out':
       return ['LoggedOut'];
 
-    case 'LoggedIn': {
-      const authSession = auth[1];
+    case 'logged-in': {
+      const authSession = auth.session;
 
       const profile = profileStore.profiles[authSession.userId];
 
