@@ -44,10 +44,10 @@ export const init: Model = null;
 
 export type Msg =
   | ['clicked-current-room']
-  | ['ClickedCurrentroom-leave']
-  | ['ClickedCurrentroom-destroy']
+  | ['clicked-current-room-leave']
+  | ['clicked-current-room-destroy']
   | ['clicked-room', { roomId: RoomId }]
-  | ['ClickedGameCard', { roomId: RoomId; gameName: GameName }]
+  | ['clicked-game-card', { roomId: RoomId; gameName: GameName }]
   | ['clicked-create-room', { roomId: RoomId }];
 
 export type OutAction = GameRoom.Action | Route.Action;
@@ -58,7 +58,7 @@ export const update = (
   model: Model
 ): [Model, OutAction[]] => {
   switch (msg[0]) {
-    case 'ClickedGameCard': {
+    case 'clicked-game-card': {
       const payload = {
         gameName: msg[1].gameName,
         roomId: msg[1].roomId,
@@ -97,14 +97,14 @@ export const update = (
       ];
     }
 
-    case 'ClickedCurrentroom-leave': {
+    case 'clicked-current-room-leave': {
       return [
         model,
         [['room', ['Msg', ['room-leave', { userId: currentUserId }]]]],
       ];
     }
 
-    case 'ClickedCurrentroom-destroy': {
+    case 'clicked-current-room-destroy': {
       return [
         model,
         [['room', ['Msg', ['room-destroy', { userId: currentUserId }]]]],
@@ -232,7 +232,7 @@ export const View = ({
                 startIcon={<Icons.DeleteForever />}
                 variant="outlined"
                 onClick={() => {
-                  $send(['ClickedCurrentroom-destroy']);
+                  $send(['clicked-current-room-destroy']);
                 }}
               >
                 End Room
@@ -247,7 +247,7 @@ export const View = ({
                 }
                 variant="outlined"
                 onClick={() => {
-                  $send(['ClickedCurrentroom-leave']);
+                  $send(['clicked-current-room-leave']);
                 }}
               >
                 Leave

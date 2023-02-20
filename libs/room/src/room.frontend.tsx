@@ -613,6 +613,21 @@ export const subscriptions = (ctx: Ctx, model: Model): Sub<Msg> => {
 //
 //
 
+export const ViewPageRoomList = ({
+  model,
+  ctx,
+}: {
+  model: Model;
+  ctx: Ctx;
+}) => {
+  return (
+    <>
+      <pre>{JSON.stringify(model, null, 2)}</pre>
+      <pre>{JSON.stringify(ctx, null, 2)}</pre>
+    </>
+  );
+};
+
 export const ViewPageGame = ({
   ctx,
   model,
