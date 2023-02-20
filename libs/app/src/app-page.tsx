@@ -11,7 +11,7 @@ import {
   PageProfileUpdate,
   ProfileStore,
 } from '@gamezilla/profile';
-import { RoomFrontend as GameRoom } from '@gamezilla/room';
+import { RoomFrontend } from '@gamezilla/room';
 import { Alerts, Ctx, Route, UserId } from '@gamezilla/shared';
 import * as UI from '@gamezilla/shared/ui';
 
@@ -59,8 +59,8 @@ export type Msg =
   | ['profile-update', PageProfileUpdate.Msg]
   | ['search', PageProfileSearch.Msg]
   | ['chat', Chat.Msg]
-  | ['room', GameRoom.Msg]
-  | ['game', GameRoom.Msg]
+  | ['room', RoomFrontend.Msg]
+  | ['game', RoomFrontend.Msg]
   | ['party', Party.Msg]
   | ['chat-new', ChatNew.Msg]
   | ['chat-conversation', ChatConversation.Msg]
@@ -69,7 +69,7 @@ export type Msg =
 export type OutAction =
   | ChatStore.Action
   | Alerts.Action
-  | GameRoom.Action
+  | RoomFrontend.Action
   | Auth.Action
   | Party.Action
   | Route.Action
@@ -287,7 +287,7 @@ export const updateReady = (
   }: {
     profileStore: ProfileStore.Model;
     profile: ProfileStore.Profile;
-    gameRoom: GameRoom.Model;
+    gameRoom: RoomFrontend.Model;
   },
   msg: Msg,
   model: Model
@@ -558,7 +558,7 @@ export const ViewReady = ({
 }: {
   ctx: Ctx;
   route: Route.Model;
-  gameRoom: GameRoom.Model;
+  gameRoom: RoomFrontend.Model;
   profile: ProfileStore.Profile;
   chatStore: ChatStore.Model;
   profileStore: ProfileStore.Model;
@@ -673,7 +673,7 @@ export const ViewReady = ({
 
     case 'room': {
       return (
-        <GameRoom.ViewPageRoom
+        <RoomFrontend.ViewPageRoom
           ctx={ctx}
           model={gameRoom}
           $send={(msg) => $send(['room', msg])}
@@ -683,7 +683,7 @@ export const ViewReady = ({
 
     case 'game': {
       return (
-        <GameRoom.ViewPageGame
+        <RoomFrontend.ViewPageGame
           ctx={ctx}
           model={gameRoom}
           $send={(msg) => $send(['game', msg])}
