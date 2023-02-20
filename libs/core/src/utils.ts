@@ -152,12 +152,6 @@ export const filterObject = <T extends object>(
   obj: T,
   predicate: (entry: Entry<T>, i: number, arr: Entry<T>[]) => boolean
 ): T => {
-  const out: T = { ...obj };
-  for (const entry of (Object.entries(obj) as Entry<T>[]).filter(predicate)) {
-    const key = entry[0];
-    if (key) {
-      out[key] = entry[1];
-    }
-  }
-  return out;
+  const filtered = (Object.entries(obj) as Entry<T>[]).filter(predicate);
+  return Object.fromEntries(filtered) as T;
 };
