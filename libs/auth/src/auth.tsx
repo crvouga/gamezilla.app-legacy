@@ -49,7 +49,7 @@ export const init = (): [Model, Cmd<Msg>] => {
 export type Msg =
   | ['got-session', Option<Session>]
   | ['login-done', Result<null, null>]
-  | ['logout-don', Result<null, null>];
+  | ['logout-done', Result<null, null>];
 
 export type Action = ['auth', ['logout']];
 
@@ -89,7 +89,7 @@ export const update = (
       return [model, Cmd.None];
     }
 
-    case 'logout-don':
+    case 'logout-done':
       switch (msg[1].type) {
         case 'Err':
           return [model, Cmd.None];
@@ -115,7 +115,7 @@ export const runAction = (action: Action, model: Model): [Model, Cmd<Msg>] => {
             model,
             p(
               logout,
-              Cmd.perform((): Msg => ['logout-don', Result.Ok(null)])
+              Cmd.perform((): Msg => ['logout-done', Result.Ok(null)])
             ),
           ];
       }
