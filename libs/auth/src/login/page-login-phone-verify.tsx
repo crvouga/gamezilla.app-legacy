@@ -8,7 +8,7 @@ import {
   Header,
   TextField,
 } from '@gamezilla/shared/ui';
-import * as Auth from './auth';
+import * as Auth from '../auth';
 
 //
 //

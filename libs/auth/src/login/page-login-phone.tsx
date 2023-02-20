@@ -20,7 +20,7 @@ import {
   Typography,
 } from '@gamezilla/shared/ui';
 import { matchSorter } from 'match-sorter';
-import * as Auth from './auth';
+import * as Auth from '../auth';
 
 //
 //
@@ -247,7 +247,9 @@ export const View = ({
       >
         <Typography color="text.secondary">Country</Typography>
         <Box
+          role="button"
           sx={{
+            cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
