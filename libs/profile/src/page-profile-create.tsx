@@ -1,6 +1,7 @@
 import { Cmd } from '@gamezilla/core';
 import { ProfileAvatar, Route, UserId, Username } from '@gamezilla/shared';
 import * as UI from '@gamezilla/shared/ui';
+import { Button, FillBox, Header } from '@gamezilla/shared/ui';
 import * as ProfileStore from './profile-store';
 
 //
@@ -101,16 +102,16 @@ export const View = ({
   model: Model;
   $send: (msg: Msg) => void;
 }) => (
-  <UI.FillBox>
-    <UI.Header
+  <FillBox>
+    <Header
       left={
-        <UI.Button
+        <Button
           sx={{ marginLeft: -1 }}
           size="small"
           onClick={() => $send(['clicked-logout'])}
         >
           Logout
-        </UI.Button>
+        </Button>
       }
       title="Create Profile"
     />
@@ -138,6 +139,7 @@ export const View = ({
 
       <UI.TextField
         autoFocus
+        type="text"
         value={model.username}
         sx={{ marginBottom: 2 }}
         label="Username"
@@ -156,5 +158,5 @@ export const View = ({
         Create Profile
       </UI.Button>
     </UI.Box>
-  </UI.FillBox>
+  </FillBox>
 );
