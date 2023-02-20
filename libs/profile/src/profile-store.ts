@@ -117,8 +117,8 @@ export type Res =
         result: Result<Problem, Profile>;
       }
     ]
-  | ['DeleteForever_Done', { userId: UserId; result: Result<Problem, Unit> }]
-  | ['CreateOne_Done', { userId: UserId; result: Result<Problem, Profile> }]
+  | ['delete-forever-done', { userId: UserId; result: Result<Problem, Unit> }]
+  | ['create-one-done', { userId: UserId; result: Result<Problem, Profile> }]
   | ['search-done', { searchText: string; result: Result<Problem, Profile[]> }];
 
 export type Msg = Res;
@@ -192,7 +192,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       return [modelNew, Cmd.None];
     }
 
-    case 'DeleteForever_Done': {
+    case 'delete-forever-done': {
       const { result, userId } = msg[1];
       const modelNew = produce(model, (model) => {
         model.deleteForever[userId] = result;
@@ -208,7 +208,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       return [modelNew, Cmd.None];
     }
 
-    case 'CreateOne_Done': {
+    case 'create-one-done': {
       const { userId, result } = msg[1];
 
       const modelNew: Model = {
@@ -331,7 +331,7 @@ export const runAction = (msg: Action, model: Model): [Model, Cmd<Msg>] => {
         p(
           deleteForever(userId),
           Cmd.perform(
-            (result): Msg => ['DeleteForever_Done', { userId, result }]
+            (result): Msg => ['delete-forever-done', { userId, result }]
           )
         ),
       ];
@@ -350,7 +350,7 @@ export const runAction = (msg: Action, model: Model): [Model, Cmd<Msg>] => {
           create(profile),
           Cmd.perform(
             (result): Msg => [
-              'CreateOne_Done',
+              'create-one-done',
               { userId: profile.userId, result },
             ]
           )

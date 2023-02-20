@@ -26,7 +26,7 @@ export const init: [Model, Cmd<Msg>, OutAction[]] = [null, Cmd.None, []];
 export type Msg =
   | ['clicked-cancel']
   | ['clicked-backdrop']
-  | ['ClickedDelete']
+  | ['clicked-delete']
   | ['ClickedCloseErr'];
 
 export type OutAction = ProfileStore.Action;
@@ -43,7 +43,7 @@ export const update = (
     case 'clicked-backdrop':
       return [model, Route.back, []];
 
-    case 'ClickedDelete':
+    case 'clicked-delete':
       return [model, Cmd.None, [['profile', ['DeleteForever', { userId }]]]];
 
     case 'ClickedCloseErr':
@@ -111,7 +111,7 @@ export const View = ({
           confirmTitle="Delete"
           onCancel={() => $send(['clicked-cancel'])}
           onClose={() => $send(['clicked-backdrop'])}
-          onConfirm={() => $send(['ClickedDelete'])}
+          onConfirm={() => $send(['clicked-delete'])}
         />
       );
   }
