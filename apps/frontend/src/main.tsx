@@ -224,7 +224,7 @@ const updateMain =
       case 'room': {
         const status = toStatus(model);
 
-        if (status[0] !== 'Ready') {
+        if (status[0] !== 'ready') {
           return [model, Cmd.None];
         }
 
@@ -274,12 +274,12 @@ const updatePage = (
   const status = toStatus(model);
 
   switch (status[0]) {
-    case 'AuthLoading':
-    case 'ProfileError':
-    case 'ProfileLoading':
+    case 'auth-loading':
+    case 'profile-error':
+    case 'profile-loading':
       return [model, Cmd.None, []];
 
-    case 'LoggedOut': {
+    case 'auth-missing': {
       const updated = Page.updateLoggedOut({
         msg: msg,
         model: model.page,
@@ -292,7 +292,7 @@ const updatePage = (
       ];
     }
 
-    case 'ProfileMissing': {
+    case 'profile-missing': {
       const [pageNew, pageCmd, actions] = Page.updateProfileMissing(
         status[1].authSession,
         msg,
@@ -302,7 +302,7 @@ const updatePage = (
       return [{ ...model, page: pageNew }, Cmd.tag('page', pageCmd), actions];
     }
 
-    case 'Ready': {
+    case 'ready': {
       const [pageNew, pageCmd, actions] = Page.updateReady(
         {
           ...model,
@@ -386,15 +386,15 @@ const initPage = (
   const status = toStatus(model);
 
   switch (status[0]) {
-    case 'ProfileError': {
+    case 'profile-error': {
       return [model, Cmd.None];
     }
 
-    case 'AuthLoading': {
+    case 'auth-loading': {
       return [model, Cmd.None];
     }
 
-    case 'ProfileLoading': {
+    case 'profile-loading': {
       const action: OutAction = [
         'profile',
         ['FindMany', { userIds: [status[1].authSession.userId] }],
@@ -406,7 +406,7 @@ const initPage = (
       );
     }
 
-    case 'ProfileMissing': {
+    case 'profile-missing': {
       const [page, pageCmd] = Page.initProfileMissing(
         model.route,
         status[1].authSession
@@ -415,7 +415,7 @@ const initPage = (
       return [{ ...model, page }, Cmd.tag('page', pageCmd)];
     }
 
-    case 'LoggedOut': {
+    case 'auth-missing': {
       const initial = Page.initLoggedOut({
         route: model.route,
         model: model.page,
@@ -426,7 +426,7 @@ const initPage = (
       ];
     }
 
-    case 'Ready': {
+    case 'ready': {
       const [page, pageCmd, actions] = Page.initReady(
         model.route,
         status[1].profile
@@ -596,13 +596,13 @@ const toThemeMode = (model: Model): ThemeMode => {
   const status = toStatus(model);
 
   switch (status[0]) {
-    case 'AuthLoading':
-    case 'LoggedOut':
-    case 'ProfileLoading':
-    case 'ProfileMissing':
-    case 'ProfileError':
+    case 'auth-loading':
+    case 'auth-missing':
+    case 'profile-loading':
+    case 'profile-missing':
+    case 'profile-error':
       return 'System';
-    case 'Ready':
+    case 'ready':
       return status[1].profile.themeMode;
   }
 };
@@ -658,16 +658,16 @@ const ViewMain = ({
   const status = toStatus(model);
 
   switch (status[0]) {
-    case 'AuthLoading':
+    case 'auth-loading':
       return <ViewLoading reason="Authenticating..." />;
 
-    case 'ProfileLoading':
+    case 'profile-loading':
       return <ViewLoading reason="Loading your profile..." />;
 
-    case 'ProfileError':
+    case 'profile-error':
       return <ViewError reason="Failed to load profile." />;
 
-    case 'LoggedOut':
+    case 'auth-missing':
       return (
         <Page.ViewLoggedOut
           model={model.page}
@@ -675,7 +675,7 @@ const ViewMain = ({
         />
       );
 
-    case 'ProfileMissing':
+    case 'profile-missing':
       return (
         <Page.ViewProfileMissing
           authSession={status[1].authSession}
@@ -684,7 +684,7 @@ const ViewMain = ({
         />
       );
 
-    case 'Ready': {
+    case 'ready': {
       const { profile } = status[1];
       return (
         <>
@@ -742,12 +742,12 @@ const ViewError = ({ reason }: { reason: string }) => (
 //
 
 type Status =
-  | ['AuthLoading']
-  | ['LoggedOut']
-  | ['ProfileLoading', { authSession: Auth.Session }]
-  | ['ProfileMissing', { authSession: Auth.Session }]
-  | ['ProfileError', { authSession: Auth.Session }]
-  | ['Ready', { profile: ProfileStore.Profile; authSession: Auth.Session }];
+  | ['auth-loading']
+  | ['auth-missing']
+  | ['profile-loading', { authSession: Auth.Session }]
+  | ['profile-missing', { authSession: Auth.Session }]
+  | ['profile-error', { authSession: Auth.Session }]
+  | ['ready', { profile: ProfileStore.Profile; authSession: Auth.Session }];
 
 const toStatus = ({
   auth,
@@ -758,10 +758,10 @@ const toStatus = ({
 }): Status => {
   switch (auth.type) {
     case 'loading':
-      return ['AuthLoading'];
+      return ['auth-loading'];
 
     case 'logged-out':
-      return ['LoggedOut'];
+      return ['auth-missing'];
 
     case 'logged-in': {
       const authSession = auth.session;
@@ -770,7 +770,7 @@ const toStatus = ({
 
       if (profile) {
         return [
-          'Ready',
+          'ready',
           {
             authSession,
             profile,
@@ -784,13 +784,13 @@ const toStatus = ({
 
       switch (query.type) {
         case 'NotAsked':
-          return ['ProfileLoading', { authSession }];
+          return ['profile-loading', { authSession }];
 
         case 'Loading':
-          return ['ProfileLoading', { authSession }];
+          return ['profile-loading', { authSession }];
 
         case 'Err':
-          return ['ProfileError', { authSession }];
+          return ['profile-error', { authSession }];
 
         case 'Ok': {
           const userIds = query.value;
@@ -802,11 +802,11 @@ const toStatus = ({
           const profile = profiles[0];
 
           if (!profile) {
-            return ['ProfileMissing', { authSession }];
+            return ['profile-missing', { authSession }];
           }
 
           return [
-            'Ready',
+            'ready',
             {
               authSession,
               profile,
