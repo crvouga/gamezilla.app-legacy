@@ -53,7 +53,7 @@ export type Msg =
 
 export type Action = ['auth', ['logout']];
 
-export type ToBackend = ['UserLoggedIn', UserId];
+export type ToBackend = ['user-logged-in', UserId];
 
 //
 //
@@ -77,7 +77,7 @@ export const update = (
         case 'Some':
           return [
             { type: 'logged-in', session: msg[1].value },
-            sendToBackend(['UserLoggedIn', msg[1].value.userId]),
+            sendToBackend(['user-logged-in', msg[1].value.userId]),
           ];
 
         default: {
