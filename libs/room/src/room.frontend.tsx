@@ -215,7 +215,7 @@ export const updateFromBackend = (
     case 'sync': {
       const userIds = Object.values(msg[1].users).map((user) => user.userId);
 
-      const actions: OutAction[] = [['profile', ['FindMany', { userIds }]]];
+      const actions: OutAction[] = [['profile', ['find-many', { userIds }]]];
 
       const merged = mergeWithBackendModel({
         ctx,
@@ -456,7 +456,7 @@ const updateResponse = (
 
   const userIds = Object.values(merged[0].users).map((user) => user.userId);
 
-  const storeActions: OutAction[] = [['profile', ['FindMany', { userIds }]]];
+  const storeActions: OutAction[] = [['profile', ['find-many', { userIds }]]];
 
   return [
     {

@@ -107,7 +107,7 @@ export const update = ({
           [
             'profile',
             [
-              'EditOne',
+              'edit-one',
               {
                 userId: currentUserId,
                 edits: { avatarUrl: ProfileAvatar.toUrl(model) },

@@ -397,7 +397,7 @@ const initPage = (
     case 'profile-loading': {
       const action: OutAction = [
         'profile',
-        ['FindMany', { userIds: [status[1].authSession.userId] }],
+        ['find-many', { userIds: [status[1].authSession.userId] }],
       ];
 
       return p(

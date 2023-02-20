@@ -133,7 +133,7 @@ export const updateFromBackend = (
 
       const userIds = Object.values(modelNext.users).map((user) => user.userId);
 
-      const action: OutAction = ['profile', ['FindMany', { userIds }]];
+      const action: OutAction = ['profile', ['find-many', { userIds }]];
 
       const cmd = toLifecycleCmd({
         currentUserId,
