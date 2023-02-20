@@ -76,7 +76,7 @@ export const update = (
         themeMode: 'System',
       };
 
-      return [model, Cmd.None, [['profile', ['CreateOne', { profile }]]]];
+      return [model, Cmd.None, [['profile', ['create-one', { profile }]]]];
     }
 
     case 'clicked-logout':

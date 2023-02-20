@@ -54,7 +54,10 @@ export const update = ({
         actions: [
           [
             'profile',
-            ['EditOne', { userId: currentUserId, edits: { name: model.name } }],
+            [
+              'edit-one',
+              { userId: currentUserId, edits: { name: model.name } },
+            ],
           ],
         ],
       };

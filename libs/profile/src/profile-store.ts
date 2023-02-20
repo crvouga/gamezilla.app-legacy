@@ -7,9 +7,7 @@ import {
   Task,
   Unit,
 } from '@gamezilla/core';
-import { UserId, Username } from '@gamezilla/shared';
-import { client, definitions } from '@gamezilla/shared';
-import produce from 'immer';
+import { client, definitions, UserId, Username } from '@gamezilla/shared';
 import { matchSorter } from 'match-sorter';
 
 //
@@ -97,11 +95,11 @@ export const init: Model = {
 //
 
 export type Req =
-  | ['ResetMutations']
-  | ['FindMany', { userIds: UserId[] }]
-  | ['EditOne', { userId: UserId; edits: Partial<Profile> }]
-  | ['DeleteForever', { userId: UserId }]
-  | ['CreateOne', { profile: Profile }]
+  | ['reset-mutations']
+  | ['find-many', { userIds: UserId[] }]
+  | ['edit-one', { userId: UserId; edits: Partial<Profile> }]
+  | ['delete-forever', { userId: UserId }]
+  | ['create-one', { profile: Profile }]
   | ['search', { searchText: string }];
 
 export type Res =
@@ -110,7 +108,7 @@ export type Res =
       { userIds: UserId[]; result: Result<Problem, Profile[]> }
     ]
   | [
-      'EditOne_Done',
+      'edit-one-done',
       {
         userId: UserId;
         previous: Profile;
@@ -135,7 +133,7 @@ export type Action = ['profile', Req];
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'EditOne_Done': {
+    case 'edit-one-done': {
       const { userId, result } = msg[1];
 
       if (result.type === 'Err') {
@@ -171,40 +169,45 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
       const key = toFindManyKey(userIds);
 
-      const modelNew = produce(model, (model) => {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        model.findMany[key] = p(
-          result,
-          RemoteData.map((profiles) =>
-            profiles.map((profile) => profile.userId)
-          )
-        );
-
-        if (result.type === 'Ok') {
-          for (const profile of result.value) {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            model.profiles[profile.userId] = profile;
-          }
+      const profilesNew: { [id: UserId]: Profile } = {};
+      if (result.type === 'Ok') {
+        for (const profile of result.value) {
+          profilesNew[profile.userId] = profile;
         }
-      });
+      }
+
+      const modelNew = {
+        ...model,
+        profiles: {
+          ...model.profiles,
+          ...profilesNew,
+        },
+        findMany: {
+          ...model.findMany,
+          [key]: p(
+            result,
+            RemoteData.map((profiles) =>
+              profiles.map((profile) => profile.userId)
+            )
+          ),
+        },
+      };
+
       return [modelNew, Cmd.None];
     }
 
     case 'delete-forever-done': {
       const { result, userId } = msg[1];
-      const modelNew = produce(model, (model) => {
-        model.deleteForever[userId] = result;
 
-        switch (result.type) {
-          case 'Err':
-            break;
+      const modelNew: Model = {
+        ...model,
+        profiles: removeKey(userId, model.profiles),
+        deleteForever: {
+          ...model.deleteForever,
+          [userId]: result,
+        },
+      };
 
-          case 'Ok':
-            delete model.profiles[userId];
-        }
-      });
       return [modelNew, Cmd.None];
     }
 
@@ -267,7 +270,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
 export const runAction = (msg: Action, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[1][0]) {
-    case 'EditOne': {
+    case 'edit-one': {
       const { userId, edits } = msg[1][1];
 
       const profile = model.profiles[userId];
@@ -294,7 +297,7 @@ export const runAction = (msg: Action, model: Model): [Model, Cmd<Msg>] => {
           edit(userId, edits),
           Cmd.perform(
             (result): Msg => [
-              'EditOne_Done',
+              'edit-one-done',
               { previous: profile, userId, result },
             ]
           )
@@ -302,13 +305,22 @@ export const runAction = (msg: Action, model: Model): [Model, Cmd<Msg>] => {
       ];
     }
 
-    case 'FindMany': {
+    case 'find-many': {
       const { userIds } = msg[1][1];
 
-      const modelNew = produce(model, (model) => {
-        const key = toFindManyKey(userIds);
-        model.findMany[key] = RemoteData.Loading;
-      });
+      if (userIds.length === 0) {
+        return [model, Cmd.None];
+      }
+
+      const key = toFindManyKey(userIds);
+
+      const modelNew: Model = {
+        ...model,
+        findMany: {
+          ...model.findMany,
+          [key]: RemoteData.Loading,
+        },
+      };
 
       return [
         modelNew,
@@ -319,12 +331,16 @@ export const runAction = (msg: Action, model: Model): [Model, Cmd<Msg>] => {
       ];
     }
 
-    case 'DeleteForever': {
+    case 'delete-forever': {
       const { userId } = msg[1][1];
 
-      const modelNew = produce(model, (model) => {
-        model.deleteForever[userId] = RemoteData.Loading;
-      });
+      const modelNew: Model = {
+        ...model,
+        deleteForever: {
+          ...model.deleteForever,
+          [userId]: RemoteData.Loading,
+        },
+      };
 
       return [
         modelNew,
@@ -337,12 +353,19 @@ export const runAction = (msg: Action, model: Model): [Model, Cmd<Msg>] => {
       ];
     }
 
-    case 'CreateOne': {
+    case 'create-one': {
       const { profile } = msg[1][1];
-      const modelNew = produce(model, (model) => {
-        model.create[profile.userId] = RemoteData.Loading;
-        model.profiles = profile;
-      });
+      const modelNew: Model = {
+        ...model,
+        create: {
+          ...model.create,
+          [profile.userId]: RemoteData.Loading,
+        },
+        profiles: {
+          ...model.profiles,
+          [profile.userId]: profile,
+        },
+      };
 
       return [
         modelNew,
@@ -361,9 +384,13 @@ export const runAction = (msg: Action, model: Model): [Model, Cmd<Msg>] => {
     case 'search': {
       const { searchText } = msg[1][1];
 
-      const modelNew = produce(model, (model) => {
-        model.search[searchText] = RemoteData.Loading;
-      });
+      const modelNew: Model = {
+        ...model,
+        search: {
+          ...model.search,
+          [searchText]: RemoteData.Loading,
+        },
+      };
 
       return [
         modelNew,
@@ -374,7 +401,7 @@ export const runAction = (msg: Action, model: Model): [Model, Cmd<Msg>] => {
       ];
     }
 
-    case 'ResetMutations': {
+    case 'reset-mutations': {
       return [{ ...model, create: {}, deleteForever: {}, edit: {} }, Cmd.None];
     }
 

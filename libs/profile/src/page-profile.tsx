@@ -20,7 +20,7 @@ export const init = ({
 }): [Model, Cmd<Msg>, OutAction[]] => [
   null,
   Cmd.None,
-  [['profile', ['FindMany', { userIds: [userId] }]]],
+  [['profile', ['find-many', { userIds: [userId] }]]],
 ];
 
 //
