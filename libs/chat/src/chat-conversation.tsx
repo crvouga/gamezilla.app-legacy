@@ -54,7 +54,7 @@ export type Msg =
   | ['ClickedSend']
   | ['ClickedMessage', { messageId: string }]
   | ['ClosedMessageMenu', { messageId: string }]
-  | ['ClickedDeleteMessage', { messageId: string }]
+  | ['clicked-deleteMessage', { messageId: string }]
   | ['ClickedCopyMessageText', string]
   | ['InputtedText', string]
   | ['ClipboardCopy_Done', Browser.Clipboard.CopyResult];
@@ -122,7 +122,7 @@ export const update = (
         [],
       ];
 
-    case 'ClickedDeleteMessage': {
+    case 'clicked-deleteMessage': {
       const { messageId } = msg[1];
 
       return [
@@ -454,7 +454,7 @@ const ChatMessage = ({
                 store.mutations.Message.Unsend[message.messageId]?.type ===
                 'Loading'
               }
-              onClick={() => $send(['ClickedDeleteMessage', message])}
+              onClick={() => $send(['clicked-deleteMessage', message])}
             >
               Delete Forever
             </UI.Button>

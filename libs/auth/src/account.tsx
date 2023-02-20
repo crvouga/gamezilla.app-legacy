@@ -25,7 +25,7 @@ export const init: Model = null;
 export type Msg =
   | ['clicked-back']
   | ['clicked-logout']
-  | ['ClickedDeleteProfile']
+  | ['clicked-deleteProfile']
   | ['ClickedUpdateProfile'];
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
@@ -34,7 +34,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       return [model, Route.back];
     }
 
-    case 'ClickedDeleteProfile': {
+    case 'clicked-deleteProfile': {
       return [model, Route.push(['profile-delete'])];
     }
 
@@ -78,7 +78,7 @@ export const View = ({
         </UI.ListItemSecondaryAction>
       </UI.ListItemButton>
 
-      <UI.ListItemButton onClick={() => $send(['ClickedDeleteProfile'])}>
+      <UI.ListItemButton onClick={() => $send(['clicked-deleteProfile'])}>
         <UI.ListItemIcon>
           <UI.Icons.Delete />
         </UI.ListItemIcon>
