@@ -1,19 +1,18 @@
-import { Alerts } from '@gamezilla/shared';
-import { Account, Auth, PageLogin, Logout } from '@gamezilla/auth';
+import { Account, Auth, Logout, PageLogin } from '@gamezilla/auth';
 import { Chat, ChatConversation, ChatNew, ChatStore } from '@gamezilla/chat';
 import { Cmd, exhaustive, p, Sub, t } from '@gamezilla/core';
 import * as Home from '@gamezilla/home';
 import { PartyFrontend as Party } from '@gamezilla/party';
 import {
+  PageProfile,
+  PageProfileCreate,
+  PageProfileDelete,
+  PageProfileSearch,
   PageProfileUpdate,
-  Profile,
-  ProfileCreate,
-  ProfileDelete,
   ProfileStore,
-  Search,
 } from '@gamezilla/profile';
 import { RoomFrontend as GameRoom } from '@gamezilla/room';
-import { Ctx, Route, UserId } from '@gamezilla/shared';
+import { Alerts, Ctx, Route, UserId } from '@gamezilla/shared';
 import * as UI from '@gamezilla/shared/ui';
 
 //
@@ -27,15 +26,15 @@ import * as UI from '@gamezilla/shared/ui';
 export type Model =
   | ['login', PageLogin.Model]
   | ['home', Home.Model]
-  | ['profile-create', ProfileCreate.Model]
+  | ['profile-create', PageProfileCreate.Model]
   | ['logout', Logout.Model]
   | ['account', Account.Model]
-  | ['profile', { userId: UserId }, Profile.Model]
-  | ['profile-delete', ProfileDelete.Model]
+  | ['profile', { userId: UserId }, PageProfile.Model]
+  | ['profile-delete', PageProfileDelete.Model]
   | ['profile-update', PageProfileUpdate.Model]
   | ['chat', Chat.Model]
   | ['chat-new', ChatNew.Model]
-  | ['search', Search.Model]
+  | ['search', PageProfileSearch.Model]
   | ['chat-conversation', { conversationId: string }, ChatConversation.Model]
   | ['room']
   | ['game']
@@ -55,17 +54,17 @@ export type Msg =
   | ['login', PageLogin.Msg]
   | ['logout', Logout.Msg]
   | ['home', Home.Msg]
-  | ['profile', Profile.Msg]
-  | ['profile-create', ProfileCreate.Msg]
-  | ['profile-delete', ProfileDelete.Msg]
+  | ['profile', PageProfile.Msg]
+  | ['profile-create', PageProfileCreate.Msg]
+  | ['profile-delete', PageProfileDelete.Msg]
   | ['profile-update', PageProfileUpdate.Msg]
+  | ['search', PageProfileSearch.Msg]
   | ['chat', Chat.Msg]
   | ['room', GameRoom.Msg]
   | ['game', GameRoom.Msg]
   | ['party', Party.Msg]
   | ['chat-new', ChatNew.Msg]
   | ['chat-conversation', ChatConversation.Msg]
-  | ['search', Search.Msg]
   | ['clicked-bottom-nav-link', Route.Model];
 
 export type OutAction =
@@ -127,7 +126,7 @@ export const initReady = (
       return [['logout', Logout.init], Cmd.None, []];
 
     case 'profile-delete': {
-      const [modelNew, cmdNew, actions] = ProfileDelete.init;
+      const [modelNew, cmdNew, actions] = PageProfileDelete.init;
       return [
         ['profile-delete', modelNew],
         p(cmdNew, Cmd.map(t('profile-delete'))),
@@ -148,7 +147,7 @@ export const initReady = (
     }
 
     case 'profile': {
-      const [modelInit, cmdInit, actions] = Profile.init({
+      const [modelInit, cmdInit, actions] = PageProfile.init({
         userId: route[1].userId,
       });
       return [
@@ -159,7 +158,7 @@ export const initReady = (
     }
 
     case 'search': {
-      const [modelInit, cmdInit, actionsInit] = Search.init;
+      const [modelInit, cmdInit, actionsInit] = PageProfileSearch.init;
       return [
         ['search', modelInit],
         p(cmdInit, Cmd.map(t('search'))),
@@ -203,7 +202,7 @@ export const initProfileMissing = (
 ): [Model, Cmd<Msg>] => {
   switch (route[0]) {
     case 'profile-create':
-      return [['profile-create', ProfileCreate.init(auth)], Cmd.None];
+      return [['profile-create', PageProfileCreate.init(auth)], Cmd.None];
 
     case 'logout':
       return [['logout', Logout.init], Cmd.None];
@@ -228,7 +227,7 @@ export const initProfileMissing = (
     case 'room':
     case 'home':
     case 'party':
-      return [['profile-create', ProfileCreate.init(auth)], Cmd.None];
+      return [['profile-create', PageProfileCreate.init(auth)], Cmd.None];
     default:
       return exhaustive(route);
   }
@@ -320,7 +319,7 @@ export const updateReady = (
       if (msg[0] === 'profile-delete') {
         return tag(
           'profile-delete',
-          ProfileDelete.update(profile, msg[1], model[1])
+          PageProfileDelete.update(profile, msg[1], model[1])
         );
       }
       return [model, Cmd.None, []];
@@ -377,7 +376,10 @@ export const updateReady = (
 
     case 'profile':
       if (msg[0] === 'profile') {
-        const [modelPage, cmdPage, actions] = Profile.update(msg[1], model[2]);
+        const [modelPage, cmdPage, actions] = PageProfile.update(
+          msg[1],
+          model[2]
+        );
         return [
           ['profile', model[1], modelPage],
           p(cmdPage, Cmd.map(t('profile'))),
@@ -389,7 +391,7 @@ export const updateReady = (
 
     case 'search':
       if (msg[0] === 'search') {
-        return tag('search', Search.update(msg[1], model[1]));
+        return tag('search', PageProfileSearch.update(msg[1], model[1]));
       }
 
       return [model, Cmd.None, []];
@@ -457,7 +459,7 @@ export const updateProfileMissing = (
       if (msg[0] === 'profile-create') {
         return tag(
           'profile-create',
-          ProfileCreate.update(auth, msg[1], model[1])
+          PageProfileCreate.update(auth, msg[1], model[1])
         );
       }
       return [model, Cmd.None, []];
@@ -601,7 +603,7 @@ export const ViewReady = ({
     case 'search':
       return (
         <UI.FillBox>
-          <Search.View
+          <PageProfileSearch.View
             $send={(msg) => $send(['search', msg])}
             model={model[1]}
             profileStore={profileStore}
@@ -643,7 +645,7 @@ export const ViewReady = ({
 
     case 'profile-delete':
       return (
-        <ProfileDelete.View
+        <PageProfileDelete.View
           profileStore={profileStore}
           userId={profile.userId}
           model={model[1]}
@@ -666,7 +668,7 @@ export const ViewReady = ({
     case 'profile':
       return (
         <UI.FillBox>
-          <Profile.View
+          <PageProfile.View
             userId={model[1].userId}
             profileStore={profileStore}
             currentUserId={profile.userId}
@@ -772,7 +774,7 @@ export const ViewProfileMissing = ({
 
     case 'profile-create':
       return (
-        <ProfileCreate.View
+        <PageProfileCreate.View
           model={model[1]}
           $send={(msg) => $send(['profile-create', msg])}
         />
