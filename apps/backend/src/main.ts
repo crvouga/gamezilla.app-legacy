@@ -147,7 +147,7 @@ const updateFromFrontend = (
   switch (msg[0]) {
     case 'auth': {
       switch (msg[1][0]) {
-        case 'UserLoggedIn': {
+        case 'user-logged-in': {
           const userId = msg[1][1];
 
           const session: Session = {
