@@ -116,8 +116,8 @@ export const View = ({
       title="Create Profile"
     />
 
-    <UI.Box sx={{ p: 2, width: '100%' }}>
-      <UI.Avatar
+    <UI.Box sx={{ px: 2, width: '100%' }}>
+      {/* <UI.Avatar
         src={model.avatarUrl}
         sx={{
           marginX: 'auto',
@@ -135,13 +135,13 @@ export const View = ({
         }}
       >
         Change Avatar
-      </UI.Button>
+      </UI.Button> */}
 
       <UI.TextField
         autoFocus
         type="text"
         value={model.username}
-        sx={{ marginBottom: 2 }}
+        sx={{ marginBottom: 4 }}
         label="Username"
         fullWidth
         onChange={(event) =>
