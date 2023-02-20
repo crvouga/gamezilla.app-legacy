@@ -35,7 +35,7 @@ export type Msg =
   | ['clicked-back']
   | ['clicked-send-message']
   | ['clicked-edit-profile']
-  | ['ClickedAccountMenu'];
+  | ['clicked-account-menu'];
 
 type OutAction = ProfileStore.Action;
 
@@ -52,7 +52,7 @@ export const update = (
       return [model, Route.push(['profile-update']), []];
     }
 
-    case 'ClickedAccountMenu': {
+    case 'clicked-account-menu': {
       return [model, Route.push(['account']), []];
     }
 
@@ -131,7 +131,7 @@ export const View = ({
           right={
             <UI.IconButton
               edge="end"
-              onClick={() => $send(['ClickedAccountMenu'])}
+              onClick={() => $send(['clicked-account-menu'])}
             >
               <UI.Icons.Menu />
             </UI.IconButton>
