@@ -29,8 +29,15 @@ import { PartyFrontend as Party } from '@gamezilla/party';
 import { ProfileStore } from '@gamezilla/profile';
 import { RoomFrontend as Room } from '@gamezilla/room';
 import { Alerts, Route } from '@gamezilla/shared';
-import * as UI from '@gamezilla/shared/ui';
-import { Box, CircularProgress, Collapse } from '@gamezilla/shared/ui';
+import {
+  Alert,
+  AppContainer,
+  Box,
+  CircularProgress,
+  Collapse,
+  FillBox,
+  ThemeMode,
+} from '@gamezilla/shared/ui';
 import * as ReactDOM from 'react-dom/client';
 import { Subject } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
@@ -585,7 +592,7 @@ const onLocationChange = (location: Browser.Location): Msg => {
 //
 //
 
-const toThemeMode = (model: Model): UI.ThemeMode => {
+const toThemeMode = (model: Model): ThemeMode => {
   const status = toStatus(model);
 
   switch (status[0]) {
@@ -608,7 +615,7 @@ const View = ({
   $send: (msg: Msg) => void;
 }) => {
   return (
-    <UI.AppContainer themeMode={toThemeMode(model)}>
+    <AppContainer themeMode={toThemeMode(model)}>
       <ViewMain model={model} $send={$send} />
 
       <Alerts.View
@@ -637,7 +644,7 @@ const View = ({
           Connecting to backend...
         </Box>
       </Collapse>
-    </UI.AppContainer>
+    </AppContainer>
   );
 };
 
@@ -715,24 +722,15 @@ const ViewMain = ({
 };
 
 const ViewLoading = (_props: { reason: string }) => (
-  <UI.FillBox sx={{ justifyContent: 'center', alignItems: 'center' }}>
-    <UI.CircularProgress sx={{ marginBottom: 2 }} />
-
-    {/* <UI.Typography
-      sx={{ position: 'absolute', bottom: 0, left: 0, padding: 1 }}
-      align="center"
-      variant="caption"
-      color="text.secondary"
-    >
-      {reason}
-    </UI.Typography> */}
-  </UI.FillBox>
+  <FillBox sx={{ justifyContent: 'center', alignItems: 'center' }}>
+    <CircularProgress sx={{ marginBottom: 2 }} />
+  </FillBox>
 );
 
 const ViewError = ({ reason }: { reason: string }) => (
-  <UI.FillBox sx={{ justifyContent: 'center', alignItems: 'center', p: 2 }}>
-    <UI.Alert severity="error">{reason}</UI.Alert>
-  </UI.FillBox>
+  <FillBox sx={{ justifyContent: 'center', alignItems: 'center', p: 2 }}>
+    <Alert severity="error">{reason}</Alert>
+  </FillBox>
 );
 
 //

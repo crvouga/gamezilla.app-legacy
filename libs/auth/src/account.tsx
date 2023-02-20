@@ -24,7 +24,7 @@ export const init: Model = null;
 
 export type Msg =
   | ['clicked-back']
-  | ['ClickedLogout']
+  | ['clicked-logout']
   | ['ClickedDeleteProfile']
   | ['ClickedUpdateProfile'];
 
@@ -38,7 +38,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       return [model, Route.push(['profile-delete'])];
     }
 
-    case 'ClickedLogout': {
+    case 'clicked-logout': {
       return [model, Route.push(['logout'])];
     }
 
@@ -85,7 +85,7 @@ export const View = ({
         <UI.ListItemText primary="Delete Profile" />
       </UI.ListItemButton>
 
-      <UI.ListItemButton onClick={() => $send(['ClickedLogout'])}>
+      <UI.ListItemButton onClick={() => $send(['clicked-logout'])}>
         <UI.ListItemIcon>
           <UI.Icons.Logout />
         </UI.ListItemIcon>

@@ -42,7 +42,7 @@ export const init = ({ defaultName }: { defaultName: string }): Model => {
 export type Msg =
   | ['inputted-username', string]
   | ['clicked-submit']
-  | ['ClickedLogout'];
+  | ['clicked-logout'];
 
 export type OutAction = ProfileStore.Action;
 
@@ -79,7 +79,7 @@ export const update = (
       return [model, Cmd.None, [['profile', ['CreateOne', { profile }]]]];
     }
 
-    case 'ClickedLogout':
+    case 'clicked-logout':
       return [model, Route.push(['logout']), []];
   }
 };
@@ -107,7 +107,7 @@ export const View = ({
         <UI.Button
           sx={{ marginLeft: -1 }}
           size="small"
-          onClick={() => $send(['ClickedLogout'])}
+          onClick={() => $send(['clicked-logout'])}
         >
           Logout
         </UI.Button>
