@@ -83,11 +83,9 @@ export type FrontendMsg =
   | ['clicked-back-to-game']
   | ['clicked-user', { userId: UserId }]
   | ['clicked-banner']
-  | ['clicked-room-leave', { userId: UserId }]
   | ['game', Game.FrontendMsg]
   | ['room-end-then-join', { roomId: RoomId; userId: UserId }]
   | ['room-leave-then-join', { roomId: RoomId; userId: UserId }]
-  | ['clicked-room-destroy', { userId: UserId }]
   | Req;
 
 //

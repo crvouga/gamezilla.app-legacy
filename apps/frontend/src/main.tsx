@@ -686,35 +686,18 @@ const ViewMain = ({
     case 'ready': {
       const { profile } = status[1];
       return (
-        <>
-          <Party.ViewBanner
-            store={model.profileStore}
-            currentUserId={profile.userId}
-            model={model.party}
-            route={model.route}
-            $send={(msg) => $send(['party', msg])}
-          />
-
-          <Room.ViewBanner
-            store={model.profileStore}
-            currentUserId={profile.userId}
-            model={model.gameRoom}
-            route={model.route}
-            $send={(msg) => $send(['room', msg])}
-          />
-
-          <Page.ViewReady
-            {...model}
-            ctx={{
-              currentUserId: profile.userId,
-              profiles: model.profileStore.profiles,
-              now: Date.now(),
-            }}
-            profile={status[1].profile}
-            $send={(msg) => $send(['page', msg])}
-            model={model.page}
-          />
-        </>
+        <Page.ViewReady
+          {...model}
+          ctx={{
+            currentUserId: profile.userId,
+            profiles: model.profileStore.profiles,
+            now: Date.now(),
+          }}
+          profile={status[1].profile}
+          $send={(msg) => $send(['page', msg])}
+          $sendRoom={(msg) => $send(['room', msg])}
+          model={model.page}
+        />
       );
     }
   }

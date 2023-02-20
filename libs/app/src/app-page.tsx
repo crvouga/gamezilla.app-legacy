@@ -13,8 +13,16 @@ import {
 } from '@gamezilla/profile';
 import { RoomFrontend } from '@gamezilla/room';
 import { Alerts, Ctx, Route, UserId } from '@gamezilla/shared';
-import * as UI from '@gamezilla/shared/ui';
-import { ButtonBase, Typography } from '@gamezilla/shared/ui';
+import {
+  Box,
+  ButtonBase,
+  FillBox,
+  Icons,
+  LoadingPage,
+  Typography,
+  useTheme,
+  ViewNode,
+} from '@gamezilla/shared/ui';
 
 //
 //
@@ -61,8 +69,6 @@ export type Msg =
   | ['profile-update', PageProfileUpdate.Msg]
   | ['search', PageProfileSearch.Msg]
   | ['chat', Chat.Msg]
-  | ['room', RoomFrontend.Msg]
-  | ['game', RoomFrontend.Msg]
   | ['party', Party.Msg]
   | ['chat-new', ChatNew.Msg]
   | ['chat-conversation', ChatConversation.Msg]
@@ -398,16 +404,10 @@ export const updateReady = (
       return [model, Cmd.None, []];
 
     case 'room': {
-      if (msg[0] === 'room') {
-        return [['room'], Cmd.None, [['room', ['Msg', msg[1]]]]];
-      }
       return [model, Cmd.None, []];
     }
 
     case 'game': {
-      if (msg[0] === 'game') {
-        return [['game'], Cmd.None, [['room', ['Msg', msg[1]]]]];
-      }
       return [model, Cmd.None, []];
     }
 
@@ -563,60 +563,81 @@ export const ViewReady = ({
   model,
   profileStore,
   $send,
+  $sendRoom,
   ctx,
 }: {
   ctx: Ctx;
   route: Route.Model;
+
   gameRoom: RoomFrontend.Model;
   profile: ProfileStore.Profile;
   chatStore: ChatStore.Model;
   profileStore: ProfileStore.Model;
   party: Party.Model;
   model: Model;
+  $sendRoom: (msg: RoomFrontend.Msg) => void;
   $send: (msg: Msg) => void;
 }) => {
   switch (model[0]) {
     case 'account':
       return (
-        <UI.FillBox>
+        <FillBox>
           <Account.View
             username={profile.username}
             model={model[1]}
             $send={(msg) => $send(['account', msg])}
           />
-          <ViewBottomNavigation ctx={ctx} route={route} $send={$send} />
-        </UI.FillBox>
+          <ViewBottomBar
+            $sendRoom={$sendRoom}
+            gameRoom={gameRoom}
+            ctx={ctx}
+            route={route}
+            $send={$send}
+          />
+        </FillBox>
       );
 
     case 'chat':
       return (
-        <UI.FillBox>
+        <FillBox>
           <Chat.View
             ctx={ctx}
             model={model[1]}
             $send={(msg) => $send(['chat', msg])}
             chatStore={chatStore}
           />
-          <ViewBottomNavigation ctx={ctx} route={route} $send={$send} />
-        </UI.FillBox>
+          <ViewBottomBar
+            $sendRoom={$sendRoom}
+            gameRoom={gameRoom}
+            ctx={ctx}
+            route={route}
+            $send={$send}
+          />
+        </FillBox>
       );
 
     case 'search':
       return (
-        <UI.FillBox>
+        <FillBox>
           <PageProfileSearch.View
             $send={(msg) => $send(['search', msg])}
             model={model[1]}
             profileStore={profileStore}
           />
 
-          <ViewBottomNavigation ctx={ctx} route={route} $send={$send} />
-        </UI.FillBox>
+          <ViewBottomBar
+            $sendRoom={$sendRoom}
+            gameRoom={gameRoom}
+            ctx={ctx}
+            route={route}
+            $send={$send}
+          />
+        </FillBox>
       );
 
     case 'chat-new':
       return (
-        <UI.FillBox>
+        <FillBox>
           <ChatNew.View
             profileStore={profileStore}
             chatStore={chatStore}
@@ -624,8 +645,14 @@ export const ViewReady = ({
             model={model[1]}
             $send={(msg) => $send(['chat-new', msg])}
           />
-          <ViewBottomNavigation ctx={ctx} route={route} $send={$send} />
-        </UI.FillBox>
+          <ViewBottomBar
+            $sendRoom={$sendRoom}
+            gameRoom={gameRoom}
+            ctx={ctx}
+            route={route}
+            $send={$send}
+          />{' '}
+        </FillBox>
       );
 
     case 'chat-conversation':
@@ -656,19 +683,25 @@ export const ViewReady = ({
 
     case 'profile-update':
       return (
-        <UI.FillBox>
+        <FillBox>
           <PageProfileUpdate.View
             currentUserProfile={profile}
             model={model[1]}
             $send={(msg) => $send(['profile-update', msg])}
           />
-          <ViewBottomNavigation ctx={ctx} route={route} $send={$send} />
-        </UI.FillBox>
+          <ViewBottomBar
+            $sendRoom={$sendRoom}
+            gameRoom={gameRoom}
+            ctx={ctx}
+            route={route}
+            $send={$send}
+          />{' '}
+        </FillBox>
       );
 
     case 'profile':
       return (
-        <UI.FillBox>
+        <FillBox>
           <PageProfile.View
             userId={model[1].userId}
             profileStore={profileStore}
@@ -676,8 +709,14 @@ export const ViewReady = ({
             model={model[2]}
             $send={(msg) => $send(['profile', msg])}
           />
-          <ViewBottomNavigation ctx={ctx} route={route} $send={$send} />
-        </UI.FillBox>
+          <ViewBottomBar
+            $sendRoom={$sendRoom}
+            gameRoom={gameRoom}
+            ctx={ctx}
+            route={route}
+            $send={$send}
+          />{' '}
+        </FillBox>
       );
 
     case 'room': {
@@ -685,7 +724,7 @@ export const ViewReady = ({
         <RoomFrontend.ViewPageRoom
           ctx={ctx}
           model={gameRoom}
-          $send={(msg) => $send(['room', msg])}
+          $send={$sendRoom}
         />
       );
     }
@@ -695,43 +734,53 @@ export const ViewReady = ({
         <RoomFrontend.ViewPageGame
           ctx={ctx}
           model={gameRoom}
-          $send={(msg) => $send(['game', msg])}
+          $send={$sendRoom}
         />
       );
     }
 
     case 'party': {
       return (
-        <UI.FillBox>
+        <FillBox>
           <Party.ViewPage
             ctx={ctx}
             model={party}
             $send={(msg) => $send(['party', msg])}
           />
-
-          <ViewBottomNavigation ctx={ctx} route={route} $send={$send} />
-        </UI.FillBox>
+          <ViewBottomBar
+            $sendRoom={$sendRoom}
+            gameRoom={gameRoom}
+            ctx={ctx}
+            route={route}
+            $send={$send}
+          />{' '}
+        </FillBox>
       );
     }
 
     case 'home': {
       return (
-        <UI.FillBox>
-          <Home.View
+        <FillBox>
+          <RoomFrontend.ViewPageRoomList
+            $send={$sendRoom}
             ctx={ctx}
-            gameRoom={gameRoom}
-            model={model[1]}
-            $send={(msg) => $send(['home', msg])}
+            model={gameRoom}
           />
-          <ViewBottomNavigation ctx={ctx} route={route} $send={$send} />
-        </UI.FillBox>
+          <ViewBottomBar
+            $sendRoom={$sendRoom}
+            gameRoom={gameRoom}
+            ctx={ctx}
+            route={route}
+            $send={$send}
+          />{' '}
+        </FillBox>
       );
     }
 
     case 'loading':
     case 'login':
     case 'profile-create':
-      return <UI.LoadingPage />;
+      return <LoadingPage />;
 
     default:
       return exhaustive(model);
@@ -754,7 +803,7 @@ export const ViewLoggedOut = ({
         />
       );
     default: {
-      return <UI.LoadingPage />;
+      return <LoadingPage />;
     }
   }
 };
@@ -795,7 +844,7 @@ export const ViewProfileMissing = ({
     case 'party':
     case 'home':
     case 'loading':
-      return <UI.LoadingPage />;
+      return <LoadingPage />;
 
     default:
       return exhaustive(model);
@@ -811,11 +860,41 @@ export const ViewProfileMissing = ({
 //
 //
 
+const ViewBottomBar = ({
+  ctx,
+  route,
+  gameRoom,
+  $send,
+  $sendRoom,
+}: {
+  ctx: Ctx;
+  route: Route.Model;
+  $send: (m: Msg) => void;
+  gameRoom: RoomFrontend.Model;
+  $sendRoom: (m: RoomFrontend.Msg) => void;
+}) => {
+  return (
+    <Box
+      sx={{
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <RoomFrontend.ViewBanner ctx={ctx} model={gameRoom} $send={$sendRoom} />
+
+      <ViewBottomNavigation ctx={ctx} route={route} $send={$send} />
+    </Box>
+  );
+};
+
 type BottomNavigationItem = {
   route: Route.Model;
   label: string;
-  filled: UI.ViewNode;
-  outlined: UI.ViewNode;
+  filled: ViewNode;
+  outlined: ViewNode;
 };
 
 const ViewBottomNavigation = ({
@@ -831,45 +910,45 @@ const ViewBottomNavigation = ({
     {
       route: ['home'],
       label: 'Game',
-      filled: <UI.Icons.SportsEsports />,
-      outlined: <UI.Icons.SportsEsportsOutlined />,
+      filled: <Icons.SportsEsports />,
+      outlined: <Icons.SportsEsportsOutlined />,
     },
     // {
     //   route: ['party'],
-    //   filled: <UI.Icons.Group />,
-    //   outlined: <UI.Icons.GroupOutlined />,
+    //   filled: <Icons.Group />,
+    //   outlined: <Icons.GroupOutlined />,
     // },
     {
       route: ['search'],
       label: 'Search',
-      filled: <UI.Icons.Search />,
-      outlined: <UI.Icons.SearchOutlined />,
+      filled: <Icons.Search />,
+      outlined: <Icons.SearchOutlined />,
     },
     {
       route: ['chat'],
       label: 'Chat',
-      filled: <UI.Icons.Chat />,
-      outlined: <UI.Icons.ChatOutlined />,
+      filled: <Icons.Chat />,
+      outlined: <Icons.ChatOutlined />,
     },
     {
       route: ['profile', { userId: ctx.currentUserId }],
       label: 'Profile',
-      filled: <UI.Icons.AccountCircle />,
-      outlined: <UI.Icons.AccountCircleOutlined />,
+      filled: <Icons.AccountCircle />,
+      outlined: <Icons.AccountCircleOutlined />,
     },
   ];
 
-  const theme = UI.useTheme();
+  const theme = useTheme();
 
   return (
-    <UI.Box
+    <Box
       sx={{
         width: '100%',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         height: 52,
-        // borderTop: `1.5px solid ${theme.palette.divider}`,
+        borderTop: `1.5px solid ${theme.palette.divider}`,
       }}
     >
       {items.map((item) => {
@@ -894,7 +973,7 @@ const ViewBottomNavigation = ({
           </ButtonBase>
         );
       })}
-    </UI.Box>
+    </Box>
   );
 };
 

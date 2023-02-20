@@ -4,6 +4,7 @@ import { Alerts, Ctx, RoomId, Route, UserId } from '@gamezilla/shared';
 import {
   AspectRatio,
   Avatar,
+  AvatarGroup,
   Badge,
   box,
   Box,
@@ -13,10 +14,12 @@ import {
   Divider,
   FillBox,
   Header,
+  IconButton,
   Icons,
   Paper,
   Toolbar,
   Typography,
+  useTheme,
   ViewEmptyState,
   ViewLoadingState,
 } from '@gamezilla/shared/ui';
@@ -108,8 +111,20 @@ export const update = (
       return [model, Route.push(['game'])];
     }
 
+    case 'room-destroy': {
+      return [
+        {
+          ...model,
+          requests: {
+            ...model.requests,
+            [msg[0]]: RemoteData.Loading,
+          },
+        },
+        sendToBackend(msg),
+      ];
+    }
+
     case 'room-create':
-    case 'room-destroy':
     case 'room-join':
     case 'room-leave':
     case 'change-host':
@@ -173,26 +188,6 @@ export const update = (
 
     case 'room-end-then-join': {
       return [model, sendToBackend(msg)];
-    }
-
-    case 'clicked-room-destroy': {
-      return [
-        model,
-        Cmd.batch([
-          Route.push(['home']),
-          sendToBackend(['room-destroy', msg[1]]),
-        ]),
-      ];
-    }
-
-    case 'clicked-room-leave': {
-      return [
-        model,
-        Cmd.batch([
-          Route.push(['home']),
-          sendToBackend(['room-leave', msg[1]]),
-        ]),
-      ];
     }
 
     default:
@@ -270,9 +265,17 @@ export const updateFromBackend = (
     }
 
     case 'input-game':
-    case 'change-host':
-    case 'room-create': {
+    case 'change-host': {
       return updateResponse({ ctx, sendToBackend }, msg, model);
+    }
+
+    case 'room-create': {
+      const updated = updateResponse({ ctx, sendToBackend }, msg, model);
+      return [
+        updated[0],
+        Cmd.batch([updated[1], Route.push(['game'])]),
+        updated[2],
+      ];
     }
 
     case 'room-destroy': {
@@ -614,17 +617,88 @@ export const subscriptions = (ctx: Ctx, model: Model): Sub<Msg> => {
 //
 
 export const ViewPageRoomList = ({
-  model,
   ctx,
+  $send,
+  model,
 }: {
   model: Model;
   ctx: Ctx;
+  $send: (m: Msg) => void;
 }) => {
+  // const rooms = Object.values(model.rooms);
+  const user = model.users[ctx.currentUserId];
+  const currentRoom = user ? model.rooms[user.roomId] : undefined;
+
   return (
-    <>
-      <pre>{JSON.stringify(model, null, 2)}</pre>
-      <pre>{JSON.stringify(ctx, null, 2)}</pre>
-    </>
+    <FillBox>
+      <Header title={'Game'} />
+      <Box sx={{ paddingX: 2 }}>
+        <Button
+          sx={{ marginBottom: 2 }}
+          fullWidth
+          variant="contained"
+          loading={model.requests['room-create'] === RemoteData.Loading}
+          disabled={currentRoom !== undefined}
+          startIcon={<Icons.Add />}
+          onClick={() => {
+            $send([
+              'room-create',
+              { userId: ctx.currentUserId, roomId: RoomId.generate() },
+            ]);
+          }}
+        >
+          Create New Game
+        </Button>
+        {Object.values(model.rooms).map((room) => {
+          const host = ctx.profiles[room.hostId];
+          const title = host ? `${host.username}'s room` : '...';
+          const users = Object.values(model.users)
+            .filter((user) => user.roomId === room.roomId)
+            .flatMap((user) => {
+              const profile = ctx.profiles[user.userId];
+              if (profile) {
+                return [profile];
+              }
+              return [];
+            });
+          return (
+            <ViewRoomCardNew key={room.roomId} title={title} users={users} />
+          );
+        })}
+      </Box>
+    </FillBox>
+  );
+};
+
+const ViewRoomCardNew = ({
+  title,
+  users,
+}: {
+  title: string;
+  users: { avatarUrl: string }[];
+}) => {
+  const theme = useTheme();
+  return (
+    <Box
+      sx={{
+        width: '100%',
+        height: 200,
+        background: theme.palette.primary.dark,
+        borderRadius: '1rem',
+        padding: 2,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        alignItems: 'start',
+      }}
+    >
+      <Typography variant="h5">{title}</Typography>
+      <AvatarGroup>
+        {users.map((user) => (
+          <Avatar key={user.avatarUrl} src={user.avatarUrl} />
+        ))}
+      </AvatarGroup>
+    </Box>
   );
 };
 
@@ -1036,7 +1110,7 @@ export const ViewPageRoom = ({
             color="error"
             startIcon={<Icons.Close />}
             onClick={() =>
-              $send(['clicked-room-destroy', { userId: ctx.currentUserId }])
+              $send(['room-destroy', { userId: ctx.currentUserId }])
             }
           >
             End Room
@@ -1047,9 +1121,7 @@ export const ViewPageRoom = ({
             variant="outlined"
             color="error"
             startIcon={<Icons.ExitToApp />}
-            onClick={() =>
-              $send(['clicked-room-leave', { userId: ctx.currentUserId }])
-            }
+            onClick={() => $send(['room-leave', { userId: ctx.currentUserId }])}
           >
             Leave Room
           </Button>
@@ -1121,23 +1193,17 @@ export const ViewGameCard = ({
 //
 
 export const ViewBanner = ({
-  currentUserId,
-  route,
+  ctx,
   model,
   $send,
-  store,
 }: {
-  currentUserId: UserId;
-  route: Route.Model;
+  ctx: Ctx;
   model: Model;
   $send: (msg: Msg) => void;
-  store: ProfileStore.Model;
 }) => {
-  if (route[0] === 'room' || route[0] === 'game') {
-    return null;
-  }
+  const theme = useTheme();
 
-  const user = model.users[currentUserId];
+  const user = model.users[ctx.currentUserId];
 
   if (!user) {
     return null;
@@ -1151,12 +1217,20 @@ export const ViewBanner = ({
 
   const game = model.games[room.roomId];
 
-  const hostProfile = store.profiles[room.hostId];
+  const hostProfile = ctx.profiles[room.hostId];
 
   return (
-    <>
+    <Box
+      sx={{
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        borderTop: `3px solid ${theme.palette.primary.main}`,
+      }}
+    >
       <ButtonBase
         sx={{
+          flex: 1,
           display: 'flex',
           alignItems: 'center',
         }}
@@ -1179,11 +1253,21 @@ export const ViewBanner = ({
         <Typography noWrap align="left" sx={{ flex: 1 }}>
           {hostProfile ? `${hostProfile.username}'s room` : '...'}
         </Typography>
-
-        <Icons.ChevronRight sx={{ mx: 2 }} />
       </ButtonBase>
-      <Divider />
-    </>
+
+      <IconButton
+        onClick={() => {
+          if (ctx.currentUserId === room.hostId) {
+            $send(['room-destroy', { userId: ctx.currentUserId }]);
+            return;
+          }
+          $send(['room-leave', { userId: ctx.currentUserId }]);
+        }}
+        sx={{ marginRight: 1 }}
+      >
+        <Icons.Close />
+      </IconButton>
+    </Box>
   );
 };
 
