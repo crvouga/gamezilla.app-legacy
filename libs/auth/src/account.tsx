@@ -26,17 +26,12 @@ export type Msg =
   | ['clicked-back']
   | ['ClickedLogout']
   | ['ClickedDeleteProfile']
-  | ['ClickedUpdateProfile']
-  | ['ClickedDebug'];
+  | ['ClickedUpdateProfile'];
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case 'clicked-back': {
       return [model, Route.back];
-    }
-
-    case 'ClickedDebug': {
-      return [model, Cmd.None];
     }
 
     case 'ClickedDeleteProfile': {
@@ -95,16 +90,6 @@ export const View = ({
           <UI.Icons.Logout />
         </UI.ListItemIcon>
         <UI.ListItemText primary="Logout" />
-      </UI.ListItemButton>
-
-      <UI.ListItemButton onClick={() => $send(['ClickedDebug'])}>
-        <UI.ListItemIcon>
-          <UI.Icons.BugReport />
-        </UI.ListItemIcon>
-        <UI.ListItemText primary="Debug" />
-        <UI.ListItemSecondaryAction>
-          <UI.Icons.ChevronRight />
-        </UI.ListItemSecondaryAction>
       </UI.ListItemButton>
     </UI.List>
   </UI.FillBox>
