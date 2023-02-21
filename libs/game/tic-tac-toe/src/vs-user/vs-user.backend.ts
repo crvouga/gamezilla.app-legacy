@@ -1,4 +1,5 @@
 import { Cmd, exhaustive, Sub, Time } from '@gamezilla/core';
+import { SharedMsg } from '@gamezilla/game-shared';
 import { UserId } from '@gamezilla/shared';
 import { PlayerType, toOpposite, toTurn } from '../tic-tic-toe/tic-tac-toe';
 import * as Round from './vs-user-round';
@@ -57,6 +58,9 @@ export const update = (
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
+    case 'user-left': {
+    }
+
     case 'RoundCountDown': {
       const result = roundCountDown(model);
 
@@ -229,6 +233,45 @@ export const updateFromFrontend = (
 
     default: {
       return exhaustive(msg[0]);
+    }
+  }
+};
+
+export const updateShared = ({
+  msg,
+  model,
+  broadcast,
+}: {
+  broadcast: (m: ToFrontend) => Cmd;
+  msg: SharedMsg;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd;
+} => {
+  switch (msg[0]) {
+    case 'user-left': {
+      const { userId } = msg[1];
+      const player: PlayerType | 'none' =
+        model.O === userId ? 'O' : model.X === userId ? 'X' : 'none';
+
+      if (player === 'none') {
+        return { model };
+      }
+
+      const other = toOpposite(player);
+
+      const modelNew: Model = {
+        type: 'Setup',
+        maxRoundCount: model.maxRoundCount,
+        moveTimeLimit: model.moveTimeLimit,
+        X: model.X,
+        O: model.O,
+        [player]: 'none',
+        [other]: model[other],
+      };
+
+      return { model: modelNew, cmd: broadcast(['player-left', modelNew]) };
     }
   }
 };

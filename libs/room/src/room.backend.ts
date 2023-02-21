@@ -7,6 +7,7 @@ import {
   handle,
   Problem,
   Res,
+  Req,
   ToBackend,
   ToFrontend,
 } from './room.types';
@@ -236,6 +237,57 @@ export const updateFromFrontend = (
   }
 };
 
+export const handler = async ({
+  req,
+  roomRepo,
+  now,
+}: {
+  req: Req;
+  now: number;
+  roomRepo: {
+    findOneByUserId: (args: {
+      now: number;
+      userId: UserId;
+    }) => Promise<Result<null, null>>;
+    findOneByRoomId: (args: {
+      now: number;
+      roomId: RoomId;
+    }) => Promise<Result<null, null>>;
+  };
+}) => {
+  //
+  switch (req[0]) {
+    case 'room-join': {
+      const { userId, roomId } = req[1];
+
+      const foundByUserId = await roomRepo.findOneByUserId({ now, userId });
+
+      if (foundByUserId.type === 'Err') {
+        return foundByUserId;
+      }
+
+      if (foundByUserId.value) {
+        return ['err', 'already-in-room'];
+      }
+
+      const foundByRoomId = await roomRepo.findOneByRoomId({ now, roomId });
+
+      if (foundByRoomId.type === 'Err') {
+        return foundByRoomId;
+      }
+
+      if (!foundByRoomId.value) {
+        return ['err', 'room-not-found'];
+      }
+
+      return ['ok'];
+    }
+    default: {
+      return;
+    }
+  }
+};
+
 const updateRoomLeave = (
   wire: Wire,
   userId: UserId,
@@ -267,6 +319,18 @@ const updateRoomLeave = (
   if (!game) {
     return [modelAfter, wire.sendToClient(res)];
   }
+
+  const updated_ = Game.updateShared({
+    broadcast: (m) =>
+      sendToRoom({
+        sendToUser: wire.sendToUser,
+        model: modelAfter,
+        roomId: room.roomId,
+        msg: ['game', m],
+      }),
+    msg: ['user-left', user],
+    model: game,
+  });
 
   const [gameNew, cmd] = Game.updateRoomLeave(
     {

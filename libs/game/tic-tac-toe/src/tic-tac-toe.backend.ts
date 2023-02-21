@@ -1,4 +1,5 @@
 import { Cmd, exhaustive, Result, Sub } from '@gamezilla/core';
+import { SharedMsg } from '@gamezilla/game-shared';
 import { UserId } from '@gamezilla/shared';
 import {
   BackendModel,
@@ -123,6 +124,49 @@ export const updateFromFrontend = (
 
     default: {
       return exhaustive(msg[0]);
+    }
+  }
+};
+
+export const updateShared = ({
+  broadcast,
+  msg,
+  model,
+}: {
+  broadcast: (m: ToFrontend) => Cmd;
+  msg: SharedMsg;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  switch (model.mode) {
+    case 'none': {
+      return { model };
+    }
+
+    case 'vs-bot': {
+      const updated = VsBot.updateShared({
+        msg,
+        broadcast: (m) => broadcast(['vs-bot', m]),
+        model: model.child,
+      });
+      return {
+        model: { mode: 'vs-bot', child: updated.model },
+        cmd: updated.cmd ? Cmd.tag('vs-bot', updated.cmd) : undefined,
+      };
+    }
+
+    case 'vs-user': {
+      const updated = VsUser.updateShared({
+        msg,
+        broadcast: (m) => broadcast(['vs-user', m]),
+        model: model.child,
+      });
+      return {
+        model: { mode: 'vs-user', child: updated.model },
+        cmd: updated.cmd ? Cmd.tag('vs-user', updated.cmd) : undefined,
+      };
     }
   }
 };
