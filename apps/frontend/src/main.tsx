@@ -58,7 +58,7 @@ const init =
     const route = p(
       location,
       Route.decode,
-      Option.withDefault<Route.Model>(['home'])
+      Option.withDefault<Route.Model>(['room-list'])
     );
     const [auth, authCmd] = Auth.init();
     const alerts = Alerts.init;

@@ -27,12 +27,12 @@ export type Model =
   | ['profile-update-theme']
   | ['room']
   | ['room-game']
+  | ['room-list']
   | ['party']
   | ['chat']
   | ['chat-new']
   | ['chat-conversation', { conversationId: string }]
-  | ['search']
-  | ['home'];
+  | ['search'];
 
 //
 //
@@ -64,7 +64,7 @@ export const routesTypes: { [routeType in Model[0]]: string } = {
   ['chat-new']: 'chat-new',
   ['chat-conversation']: 'chat-conversation',
   ['search']: 'search',
-  ['home']: 'home',
+  ['room-list']: 'room-list',
 };
 
 export const isRouteType = (routeType: unknown): routeType is Model[0] => {

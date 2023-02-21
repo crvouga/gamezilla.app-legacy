@@ -96,7 +96,7 @@ export const update = (
     }
 
     case 'clicked-home': {
-      return [model, Route.push(['home'])];
+      return [model, Route.push(['room-list'])];
     }
 
     case 'clicked-room': {
