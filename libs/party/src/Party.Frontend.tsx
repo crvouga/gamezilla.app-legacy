@@ -334,14 +334,6 @@ const ViewNotInParty = ({
         <ViewEmptyState
           renderIcon={({ sx }) => <Icons.People sx={sx} />}
           title="No Active Parties"
-          actionTitle="Create Party"
-          actionIcon={<Icons.Add />}
-          onAction={() =>
-            $send([
-              'PartyCreate',
-              { userId: ctx.currentUserId, partyId: PartyId.generate() },
-            ])
-          }
         />
       </FillBox>
     );

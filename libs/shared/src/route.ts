@@ -26,7 +26,7 @@ export type Model =
   | ['profile-update-username']
   | ['profile-update-theme']
   | ['room']
-  | ['game']
+  | ['room-game']
   | ['party']
   | ['chat']
   | ['chat-new']
@@ -58,7 +58,7 @@ export const routesTypes: { [routeType in Model[0]]: string } = {
   ['profile-update-username']: 'profile-update-username',
   ['profile-update-theme']: 'profile-update-theme',
   ['room']: 'room',
-  ['game']: 'game',
+  ['room-game']: 'room-game',
   ['party']: 'party',
   ['chat']: 'chat',
   ['chat-new']: 'chat-new',
