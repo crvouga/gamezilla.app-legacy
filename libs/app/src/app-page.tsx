@@ -44,9 +44,9 @@ export type Model =
   | ['chat-new', ChatNew.Model]
   | ['search', PageProfileSearch.Model]
   | ['chat-conversation', { conversationId: string }, ChatConversation.Model]
-  | ['home']
   | ['room']
   | ['room-game']
+  | ['room-list']
   | ['party'];
 
 //
@@ -183,8 +183,8 @@ export const initReady = (
       return [['party'], Cmd.None, []];
     }
 
-    case 'home': {
-      return [['home'], Cmd.None, []];
+    case 'room-list': {
+      return [['room-list'], Cmd.None, []];
     }
 
     case 'profile-create':
@@ -192,7 +192,7 @@ export const initReady = (
     case 'login-phone':
     case 'login-phone-verify':
     case 'login-email-link': {
-      return [['home'], Route.push(['home']), []];
+      return [['room-list'], Route.push(['room-list']), []];
     }
 
     default:
@@ -229,7 +229,7 @@ export const initProfileMissing = (
     case 'login-phone-verify':
     case 'room-game':
     case 'room':
-    case 'home':
+    case 'room-list':
     case 'party':
       return [['profile-create', PageProfileCreate.init(auth)], Cmd.None];
     default:
@@ -416,14 +416,14 @@ export const updateReady = (
       return [model, Cmd.None, []];
     }
 
-    case 'home': {
+    case 'room-list': {
       return [model, Cmd.None, []];
     }
 
     case 'loading':
     case 'login':
     case 'profile-create': {
-      return [model, Route.push(['home']), []];
+      return [model, Route.push(['room-list']), []];
     }
 
     default: {
@@ -466,7 +466,7 @@ export const updateProfileMissing = (
     case 'search':
     case 'party':
     case 'loading':
-    case 'home':
+    case 'room-list':
       return [model, Route.push(['profile-create']), []];
 
     default:
@@ -522,11 +522,11 @@ export const subscriptions = (model: Model): Sub<Msg> => {
     case 'profile-update':
     case 'profile':
     case 'search':
-    case 'room-game':
     case 'room':
+    case 'room-game':
+    case 'room-list':
     case 'party':
     case 'loading':
-    case 'home':
       return Sub.None;
 
     default:
@@ -746,7 +746,7 @@ export const ViewReady = ({
       );
     }
 
-    case 'home': {
+    case 'room-list': {
       return (
         <FillBox>
           <RoomFrontend.ViewPageRoomList
@@ -827,10 +827,10 @@ export const ViewProfileMissing = ({
     case 'login':
     case 'search':
     case 'profile':
-    case 'room-game':
     case 'room':
+    case 'room-game':
+    case 'room-list':
     case 'party':
-    case 'home':
     case 'loading':
       return <LoadingPage />;
 
@@ -896,7 +896,7 @@ const ViewBottomNavigation = ({
 }) => {
   const items: BottomNavigationItem[] = [
     {
-      route: ['home'],
+      route: ['room-list'],
       label: 'Game',
       filled: <Icons.SportsEsports />,
       outlined: <Icons.SportsEsportsOutlined />,
