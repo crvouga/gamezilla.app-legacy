@@ -92,7 +92,7 @@ export const update = (
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case 'clicked-back-to-game': {
-      return [model, Route.push(['game'])];
+      return [model, Route.push(['room-game'])];
     }
 
     case 'clicked-home': {
@@ -108,7 +108,7 @@ export const update = (
     }
 
     case 'clicked-banner': {
-      return [model, Route.push(['game'])];
+      return [model, Route.push(['room-game'])];
     }
 
     case 'room-destroy': {
@@ -273,7 +273,7 @@ export const updateFromBackend = (
       const updated = updateResponse({ ctx, sendToBackend }, msg, model);
       return [
         updated[0],
-        Cmd.batch([updated[1], Route.push(['game'])]),
+        Cmd.batch([updated[1], Route.push(['room-game'])]),
         updated[2],
       ];
     }
@@ -382,7 +382,7 @@ export const updateFromBackend = (
 
       const routeActions: OutAction[] =
         msg[1].userId === ctx.currentUserId
-          ? [['route', ['Replace', ['game']]]]
+          ? [['route', ['Replace', ['room-game']]]]
           : [];
 
       const alertActions: OutAction[] =

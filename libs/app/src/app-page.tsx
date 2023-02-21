@@ -46,7 +46,7 @@ export type Model =
   | ['chat-conversation', { conversationId: string }, ChatConversation.Model]
   | ['home']
   | ['room']
-  | ['game']
+  | ['room-game']
   | ['party'];
 
 //
@@ -175,8 +175,8 @@ export const initReady = (
       return [['room'], Cmd.None, []];
     }
 
-    case 'game': {
-      return [['game'], Cmd.None, []];
+    case 'room-game': {
+      return [['room-game'], Cmd.None, []];
     }
 
     case 'party': {
@@ -227,7 +227,7 @@ export const initProfileMissing = (
     case 'login-email-link':
     case 'login-phone':
     case 'login-phone-verify':
-    case 'game':
+    case 'room-game':
     case 'room':
     case 'home':
     case 'party':
@@ -404,7 +404,7 @@ export const updateReady = (
       return [model, Cmd.None, []];
     }
 
-    case 'game': {
+    case 'room-game': {
       return [model, Cmd.None, []];
     }
 
@@ -461,7 +461,7 @@ export const updateProfileMissing = (
     case 'chat':
     case 'chat-new':
     case 'chat-conversation':
-    case 'game':
+    case 'room-game':
     case 'room':
     case 'search':
     case 'party':
@@ -522,7 +522,7 @@ export const subscriptions = (model: Model): Sub<Msg> => {
     case 'profile-update':
     case 'profile':
     case 'search':
-    case 'game':
+    case 'room-game':
     case 'room':
     case 'party':
     case 'loading':
@@ -717,7 +717,7 @@ export const ViewReady = ({
       );
     }
 
-    case 'game': {
+    case 'room-game': {
       return (
         <RoomFrontend.ViewPageGame
           ctx={ctx}
@@ -827,7 +827,7 @@ export const ViewProfileMissing = ({
     case 'login':
     case 'search':
     case 'profile':
-    case 'game':
+    case 'room-game':
     case 'room':
     case 'party':
     case 'home':
