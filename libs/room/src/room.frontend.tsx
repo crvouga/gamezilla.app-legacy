@@ -79,49 +79,49 @@ type OutAction = Alerts.Action<Msg> | ProfileStore.Action | Route.Action;
 //
 //
 
-export const update = (
-  {
-    ctx,
-    sendToBackend,
-  }: {
-    ctx: Ctx;
-    sendToBackend: (msg: ToBackend) => Cmd;
-  },
-  msg: Msg,
-  model: Model
-): [Model, Cmd<Msg>] => {
+export const update = ({
+  ctx,
+  sendToBackend,
+  msg,
+  model,
+}: {
+  ctx: Ctx;
+  sendToBackend: (msg: ToBackend) => Cmd;
+  msg: Msg;
+  model: Model;
+}): { model: Model; cmd?: Cmd<Msg> } => {
   switch (msg[0]) {
     case 'clicked-back-to-game': {
-      return [model, Route.push(['room-game'])];
+      return { model, cmd: Route.push(['room-game']) };
     }
 
     case 'clicked-home': {
-      return [model, Route.push(['room-list'])];
+      return { model, cmd: Route.push(['room-list']) };
     }
 
     case 'clicked-room': {
-      return [model, Route.push(['room'])];
+      return { model, cmd: Route.push(['room']) };
     }
 
     case 'clicked-user': {
-      return [model, Route.push(['profile', { userId: msg[1].userId }])];
+      return { model, cmd: Route.push(['profile', { userId: msg[1].userId }]) };
     }
 
     case 'clicked-banner': {
-      return [model, Route.push(['room-game'])];
+      return { model, cmd: Route.push(['room-game']) };
     }
 
     case 'room-destroy': {
-      return [
-        {
+      return {
+        model: {
           ...model,
           requests: {
             ...model.requests,
             [msg[0]]: RemoteData.Loading,
           },
         },
-        sendToBackend(msg),
-      ];
+        cmd: sendToBackend(msg),
+      };
     }
 
     case 'room-create':
@@ -129,29 +129,29 @@ export const update = (
     case 'room-leave':
     case 'change-host':
     case 'input-game': {
-      return [
-        {
+      return {
+        model: {
           ...model,
           requests: {
             ...model.requests,
             [msg[0]]: RemoteData.Loading,
           },
         },
-        sendToBackend(msg),
-      ];
+        cmd: sendToBackend(msg),
+      };
     }
 
     case 'game': {
       const user = model.users[ctx.currentUserId];
 
       if (!user) {
-        return [model, Cmd.None];
+        return { model };
       }
 
       const game = model.games[user.roomId];
 
       if (!game) {
-        return [model, Cmd.None];
+        return { model };
       }
 
       const gameMsg = msg[1];
@@ -173,21 +173,21 @@ export const update = (
         },
       };
 
-      return [
-        modelNew,
-        p(
+      return {
+        model: modelNew,
+        cmd: p(
           gameCmd,
           Cmd.map((msg): Msg => ['game', msg])
         ),
-      ];
+      };
     }
 
     case 'room-leave-then-join': {
-      return [model, sendToBackend(msg)];
+      return { model, cmd: sendToBackend(msg) };
     }
 
     case 'room-end-then-join': {
-      return [model, sendToBackend(msg)];
+      return { model, cmd: sendToBackend(msg) };
     }
 
     default:
@@ -558,21 +558,21 @@ const mergeWithBackendModel = ({
   ];
 };
 
-export const runAction = (
-  {
-    ctx,
-    sendToBackend,
-  }: {
-    ctx: Ctx;
-    sendToBackend: (msg: ToBackend) => Cmd;
-  },
-  action: Action,
-  model: Model
-): [Model, Cmd<Msg>] => {
+export const runAction = ({
+  ctx,
+  sendToBackend,
+  model,
+  action,
+}: {
+  ctx: Ctx;
+  sendToBackend: (msg: ToBackend) => Cmd;
+  action: Action;
+  model: Model;
+}): { model: Model; cmd?: Cmd<Msg> } => {
   switch (action[1][0]) {
     case 'Msg': {
       const msg = action[1][1];
-      return update({ sendToBackend, ctx }, msg, model);
+      return update({ sendToBackend, ctx, msg, model });
     }
   }
 };
@@ -663,7 +663,13 @@ export const ViewPageRoomList = ({
 
       {rooms.length > 0 && (
         <Box
-          sx={{ display: 'flex', flexDirection: 'column', gap: 2, paddingX: 2 }}
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
+            paddingX: 2,
+            paddingTop: 3,
+          }}
         >
           {rooms.map((room) => {
             const host = ctx.profiles[room.hostId];
@@ -930,7 +936,7 @@ export const ViewNotInGame = ({
                 $send(['input-game', { gameName, userId: ctx.currentUserId }])
               }
             >
-              <GameCard gameName={gameName} />
+              <ViewGameArtCard gameName={gameName} />
             </CardActionArea>
           </Box>
         ))}
@@ -940,6 +946,7 @@ export const ViewNotInGame = ({
       <Box sx={{ p: 2 }}>
         <Button
           variant="outlined"
+          color="error"
           startIcon={<Icons.Close />}
           fullWidth
           onClick={() => $send(['room-destroy', { userId: ctx.currentUserId }])}
@@ -959,43 +966,44 @@ export const ViewNotInRoom = ({
   model: Model;
   $send: (msg: Msg) => void;
 }) => {
-  if (model.requests?.['room-create']?.type === 'Loading') {
-    return (
-      <FillBox>
-        <Header title="Game" />
-        <ViewLoadingState title="Creating game..." />
-      </FillBox>
-    );
-  }
-
-  if (model.requests['room-join']?.type === 'Loading') {
-    return (
-      <FillBox>
-        <Header title="Game" />
-        <ViewLoadingState title="Joining game..." />
-      </FillBox>
-    );
-  }
+  const isCreating = model.requests['room-create']?.type === 'Loading';
+  const isJoining = model.requests['room-join']?.type === 'Loading';
 
   return (
     <FillBox>
       <Header title="Game" />
-
-      <Box sx={{ p: 2 }}>
-        <Button
-          startIcon={<Icons.ChevronLeft />}
-          fullWidth
-          variant="outlined"
-          onClick={() => $send(['clicked-home'])}
+      {isJoining ? (
+        <ViewLoadingState title="Joining game..." />
+      ) : isCreating ? (
+        <ViewLoadingState title="Creating game..." />
+      ) : (
+        <Box
+          sx={{
+            p: 2,
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
         >
-          Go back home
-        </Button>
-      </Box>
+          <Typography sx={{ marginBottom: 2 }} variant="h6">
+            Not in a room.
+          </Typography>
+          <Button
+            startIcon={<Icons.ChevronLeft />}
+            variant="contained"
+            onClick={() => $send(['clicked-home'])}
+          >
+            Back Home
+          </Button>
+        </Box>
+      )}
     </FillBox>
   );
 };
 
-export const GameCard = ({ gameName }: { gameName: GameName }) => {
+export const ViewGameArtCard = ({ gameName }: { gameName: GameName }) => {
   return (
     <Paper variant="outlined" sx={{ overflow: 'hidden', width: '100%' }}>
       {viewCoverArt(gameName)}
@@ -1008,40 +1016,6 @@ export const GameCard = ({ gameName }: { gameName: GameName }) => {
         {gameNameToString(gameName)}
       </Typography>
     </Paper>
-  );
-};
-
-export const ViewCreateRoomCallToAction = ({
-  onClickCreate,
-}: {
-  onClickGame: (gameName: GameName) => void;
-  onClickCreate: () => void;
-}) => {
-  return (
-    <>
-      <Typography variant="h3" sx={{ mb: 1, px: 2 }}>
-        Start a Game
-      </Typography>
-
-      {/* <Box sx={{ display: 'flex', overflow: "scroll", gap: 2, mb: 2, snapScrollType: "x mandatory", px: 2 }}>
-        {gameNameList.map(gameName => (
-          <CardActionArea key={gameName} onClick={() => onClickGame(gameName)} sx={{ width: "100px", minWidth: "100px", }}>
-            <Paper sx={{ overflow: "hidden", width: "100%" }}>
-              <Game.CoverArt gameName={gameName} />
-              <Typography variant="subtitle2" noWrap sx={{ width: "100%", px: 1 }}>
-                {Game.gameNameToString(gameName)}
-              </Typography>
-            </Paper>
-          </CardActionArea>
-        ))}
-      </Box> */}
-
-      <Box sx={{ px: 2 }}>
-        <Button fullWidth variant="contained" onClick={onClickCreate}>
-          Create New Room
-        </Button>
-      </Box>
-    </>
   );
 };
 
