@@ -71,7 +71,7 @@ export const View = ({
         placeItems: 'center',
       }}
     >
-      <Box sx={{ pb: 8 }}>
+      <Box sx={{ width: '100%' }}>
         <Typography variant="h2">Sign Into</Typography>
 
         <Typography
