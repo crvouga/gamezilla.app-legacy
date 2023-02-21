@@ -1,4 +1,5 @@
 import { Cmd, Sub } from '@gamezilla/core';
+import { SharedMsg } from '@gamezilla/game-shared';
 import { ChessBackend as Chess } from '@gamezilla/game/chess';
 import { ConnectFourBackend as ConnectFour } from '@gamezilla/game/connect-four';
 import { gomokuBackend as gomoku } from '@gamezilla/game/gomoku';
@@ -280,6 +281,51 @@ export const updateFromFrontend = (
         return [{ type: 'Maze', child }, Cmd.tag('Maze', cmd)];
       }
       return [model, Cmd.None];
+    }
+  }
+};
+
+export const updateShared = ({
+  model,
+  msg,
+  broadcast,
+}: {
+  msg: SharedMsg;
+  model: Model;
+  broadcast: (m: ToFrontend) => Cmd;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  switch (model.type) {
+    case 'gomoku': {
+      return { model };
+    }
+    case 'Tetris': {
+      return { model };
+    }
+    case 'Chess': {
+      return { model };
+    }
+    case 'Snake': {
+      return { model };
+    }
+    case 'connect-four': {
+      return { model };
+    }
+    case 'tic-tac-toe': {
+      const updated = TicTacToe.updateShared({
+        broadcast: (m) => broadcast(['tic-tac-toe', m]),
+        model: model.child,
+        msg,
+      });
+      return {
+        model: { type: 'tic-tac-toe', child: updated.model },
+        cmd: Cmd.tag('tic-tac-toe', updated?.cmd ?? Cmd.None),
+      };
+    }
+    case 'Maze': {
+      return { model };
     }
   }
 };

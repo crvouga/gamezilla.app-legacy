@@ -16,6 +16,8 @@ export type GameRoomCtx = {
   hostId: UserId;
 };
 
+export type SharedMsg = ['user-left', { userId: UserId }];
+
 export const bannerArtAspectRatio = Math.pow(3 / 4, 4);
 
 export const viewSelectModeScreen = ({

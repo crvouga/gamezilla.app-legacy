@@ -1,4 +1,5 @@
 import { Cmd, p, Sub } from '@gamezilla/core';
+import { SharedMsg } from '@gamezilla/game-shared';
 import { UserId } from '@gamezilla/shared';
 import { toDepth, findBestMove, toOpposite } from '../tic-tic-toe/tic-tac-toe';
 import {
@@ -194,6 +195,38 @@ const updateFromFrontend_: UpdateFromFrontend = (
         return [model, sendToClient(response)];
       }
       return [response[1].value, broadcast(response)];
+    }
+  }
+};
+
+export const updateShared = ({
+  msg,
+  model,
+  broadcast,
+}: {
+  msg: SharedMsg;
+  model: Model;
+  broadcast: (m: ToFrontend) => Cmd;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  switch (msg[0]) {
+    case 'user-left': {
+      const { userId } = msg[1];
+
+      if (model.player !== userId) {
+        return { model };
+      }
+
+      const modelNew: Model = {
+        type: 'Setup',
+        botLevel: model.botLevel,
+        player: 'none',
+        userPlayerType: model.userPlayerType,
+      };
+
+      return { model: modelNew, cmd: broadcast(['player-left', modelNew]) };
     }
   }
 };
