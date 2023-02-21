@@ -1,6 +1,7 @@
-import { Cmd } from '@gamezilla/core';
+import { Cmd, p, t } from '@gamezilla/core';
 import { Route } from '@gamezilla/shared';
 import { Box, Button, Icons, Typography, useTheme } from '@gamezilla/shared/ui';
+import { loginWithProvider, AuthResult } from '../auth';
 
 //
 //
@@ -22,7 +23,11 @@ export const init: Model = null;
 //
 //
 
-export type Msg = ['clicked-email'] | ['clicked-text'];
+export type Msg =
+  | ['clicked-email']
+  | ['clicked-text']
+  | ['clicked-google']
+  | ['login-done', AuthResult];
 
 export const update = ({
   msg,
@@ -41,6 +46,20 @@ export const update = ({
 
     case 'clicked-email': {
       return { model, cmd: Route.push(['login-email-link']) };
+    }
+
+    case 'clicked-google': {
+      return {
+        model,
+        cmd: p(
+          loginWithProvider({ provider: 'Google' }),
+          Cmd.perform(t('login-done'))
+        ),
+      };
+    }
+
+    case 'login-done': {
+      return { model };
     }
   }
 };
@@ -92,6 +111,17 @@ export const View = ({
             Gamezilla
           </Box>
         </Typography>
+
+        <Button
+          onClick={() => $send(['clicked-google'])}
+          startIcon={<Icons.Google />}
+          fullWidth
+          variant="contained"
+          size="large"
+          sx={{ mb: 3 }}
+        >
+          Continue With Google
+        </Button>
 
         <Button
           onClick={() => $send(['clicked-text'])}
