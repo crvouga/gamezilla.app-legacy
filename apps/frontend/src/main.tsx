@@ -229,20 +229,21 @@ const updateMain =
 
         const { profile } = status[1];
 
-        const [child, childCmd] = Room.update(
-          {
-            ctx: {
-              currentUserId: profile.userId,
-              profiles: model.profileStore.profiles,
-              now: Date.now(),
-            },
-            sendToBackend: (m) => sendToBackend(['room', m]),
+        const updated = Room.update({
+          ctx: {
+            currentUserId: profile.userId,
+            profiles: model.profileStore.profiles,
+            now: Date.now(),
           },
-          msg[1],
-          model.gameRoom
-        );
+          sendToBackend: (m) => sendToBackend(['room', m]),
+          msg: msg[1],
+          model: model.gameRoom,
+        });
 
-        return [{ ...model, gameRoom: child }, Cmd.tag('room', childCmd)];
+        return [
+          { ...model, gameRoom: updated.model },
+          Cmd.tag('room', updated.cmd ?? Cmd.None),
+        ];
       }
 
       case 'page': {
@@ -477,19 +478,20 @@ const runAction =
           return [model, Cmd.None];
         }
 
-        const [gameRoom, gameRoomCmd] = Room.runAction(
-          {
-            ctx: {
-              currentUserId: model.auth.session.userId,
-              profiles: model.profileStore.profiles,
-              now: Date.now(),
-            },
-            sendToBackend: (msg) => sendToBackend(['room', msg]),
+        const updated = Room.runAction({
+          ctx: {
+            currentUserId: model.auth.session.userId,
+            profiles: model.profileStore.profiles,
+            now: Date.now(),
           },
+          sendToBackend: (msg) => sendToBackend(['room', msg]),
           action,
-          model.gameRoom
-        );
-        return [{ ...model, gameRoom }, Cmd.tag('room', gameRoomCmd)];
+          model: model.gameRoom,
+        });
+        return [
+          { ...model, gameRoom: updated.model },
+          Cmd.tag('room', updated.cmd ?? Cmd.None),
+        ];
       }
 
       case 'auth': {
