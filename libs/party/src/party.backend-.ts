@@ -7,7 +7,7 @@ import {
   Res,
   ToBackend,
   ToFrontend,
-} from './Party.Types';
+} from './party.types-';
 
 //
 //
