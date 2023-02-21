@@ -16,13 +16,13 @@ import {
   useTheme,
   ViewEmptyState,
 } from '@gamezilla/shared/ui';
-import { Mic } from './mic-';
+import { Mic } from './mic';
 import {
   FrontendModel,
   FrontendMsg,
   ToBackend,
   ToFrontend,
-} from './party.types';
+} from './party.types-';
 
 //
 //
