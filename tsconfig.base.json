@@ -38,7 +38,6 @@
       "@gamezilla/game/snake": ["libs/game/snake/src/index.ts"],
       "@gamezilla/game/tetris": ["libs/game/tetris/src/index.ts"],
       "@gamezilla/game/tic-tac-toe": ["libs/game/tic-tac-toe/src/index.ts"],
-      "@gamezilla/home": ["libs/home/src/index.ts"],
       "@gamezilla/party": ["libs/party/src/index.ts"],
       "@gamezilla/profile": ["libs/profile/src/index.ts"],
       "@gamezilla/room": ["libs/room/src/index.ts"],

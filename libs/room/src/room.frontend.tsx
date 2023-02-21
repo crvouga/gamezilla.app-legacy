@@ -638,7 +638,6 @@ export const ViewPageRoomList = ({
       <Header title={'Game'} />
       <Box sx={{ paddingX: 2 }}>
         <Button
-          sx={{ marginBottom: 2 }}
           fullWidth
           variant="contained"
           loading={model.requests['room-create'] === RemoteData.Loading}
@@ -656,20 +655,10 @@ export const ViewPageRoomList = ({
       </Box>
 
       {rooms.length === 0 && (
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '100%',
-            height: '100%',
-            color: 'text.secondary',
-          }}
-        >
-          <Icons.SportsEsports sx={{ width: 64, height: 64 }} />
-          <Typography>No active games</Typography>
-        </Box>
+        <ViewEmptyState
+          title="No active games"
+          renderIcon={({ sx }) => <Icons.SportsEsports sx={sx} />}
+        />
       )}
 
       {rooms.length > 0 && (
@@ -963,7 +952,6 @@ export const ViewNotInGame = ({
 };
 
 export const ViewNotInRoom = ({
-  ctx,
   model,
   $send,
 }: {
@@ -974,7 +962,7 @@ export const ViewNotInRoom = ({
   if (model.requests?.['room-create']?.type === 'Loading') {
     return (
       <FillBox>
-        <Header title="game" />
+        <Header title="Game" />
         <ViewLoadingState title="Creating game..." />
       </FillBox>
     );
@@ -983,7 +971,7 @@ export const ViewNotInRoom = ({
   if (model.requests['room-join']?.type === 'Loading') {
     return (
       <FillBox>
-        <Header title="game" />
+        <Header title="Game" />
         <ViewLoadingState title="Joining game..." />
       </FillBox>
     );
@@ -991,19 +979,8 @@ export const ViewNotInRoom = ({
 
   return (
     <FillBox>
-      <Header title="game" />
-      <ViewEmptyState
-        actionIcon={<Icons.Add />}
-        actionTitle="Create Game"
-        onAction={() =>
-          $send([
-            'room-create',
-            { userId: ctx.currentUserId, roomId: RoomId.generate() },
-          ])
-        }
-        renderIcon={(props) => <Icons.SportsEsportsOutlined {...props} />}
-        title="Not in Game"
-      />
+      <Header title="Game" />
+
       <Box sx={{ p: 2 }}>
         <Button
           startIcon={<Icons.ChevronLeft />}

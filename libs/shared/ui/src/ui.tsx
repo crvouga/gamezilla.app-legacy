@@ -831,13 +831,7 @@ export const conformation = ({
 export const ViewEmptyState = ({
   renderIcon,
   title,
-  actionIcon,
-  actionTitle,
-  onAction,
 }: {
-  actionIcon: ViewNode;
-  actionTitle: string;
-  onAction: () => void;
   title: string;
   renderIcon: (props: { sx: Sx }) => ViewNode;
 }) => {
@@ -851,13 +845,8 @@ export const ViewEmptyState = ({
         color: 'text.secondary',
       }}
     >
-      {renderIcon({ sx: { width: 100, height: 100 } })}
-      <Typography variant="h6" sx={{ mb: 2 }}>
-        {title}
-      </Typography>
-      <Button startIcon={actionIcon} variant="contained" onClick={onAction}>
-        {actionTitle}
-      </Button>
+      {renderIcon({ sx: { width: 64, height: 64 } })}
+      <Typography variant="h6">{title}</Typography>
     </FillBox>
   );
 };
