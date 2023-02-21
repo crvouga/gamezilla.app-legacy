@@ -629,6 +629,10 @@ export const ViewPageRoomList = ({
   const user = model.users[ctx.currentUserId];
   const currentRoom = user ? model.rooms[user.roomId] : undefined;
 
+  const rooms = Object.values(model.rooms).filter(
+    (room) => user?.roomId !== room.roomId
+  );
+
   return (
     <FillBox>
       <Header title={'Game'} />
@@ -649,23 +653,59 @@ export const ViewPageRoomList = ({
         >
           Create New Game
         </Button>
-        {Object.values(model.rooms).map((room) => {
-          const host = ctx.profiles[room.hostId];
-          const title = host ? `${host.username}'s room` : '...';
-          const users = Object.values(model.users)
-            .filter((user) => user.roomId === room.roomId)
-            .flatMap((user) => {
-              const profile = ctx.profiles[user.userId];
-              if (profile) {
-                return [profile];
-              }
-              return [];
-            });
-          return (
-            <ViewRoomCardNew key={room.roomId} title={title} users={users} />
-          );
-        })}
       </Box>
+
+      {rooms.length === 0 && (
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '100%',
+            height: '100%',
+            color: 'text.secondary',
+          }}
+        >
+          <Icons.SportsEsports sx={{ width: 64, height: 64 }} />
+          <Typography>No active games</Typography>
+        </Box>
+      )}
+
+      {rooms.length > 0 && (
+        <Box
+          sx={{ display: 'flex', flexDirection: 'column', gap: 2, paddingX: 2 }}
+        >
+          {rooms.map((room) => {
+            const host = ctx.profiles[room.hostId];
+            const title = host ? `${host.username}'s room` : '...';
+            const users = Object.values(model.users)
+              .filter((user) => user.roomId === room.roomId)
+              .flatMap((user) => {
+                const profile = ctx.profiles[user.userId];
+                if (profile) {
+                  return [profile];
+                }
+                return [];
+              });
+            const gameName = model.games[room.roomId]?.type;
+            return (
+              <ViewRoomCardNew
+                key={room.roomId}
+                title={title}
+                users={users}
+                gameName={gameName}
+                onClick={() => {
+                  $send([
+                    'room-join',
+                    { userId: ctx.currentUserId, roomId: room.roomId },
+                  ]);
+                }}
+              />
+            );
+          })}
+        </Box>
+      )}
     </FillBox>
   );
 };
@@ -673,32 +713,70 @@ export const ViewPageRoomList = ({
 const ViewRoomCardNew = ({
   title,
   users,
+  gameName,
+  onClick,
 }: {
+  gameName?: GameName;
   title: string;
   users: { avatarUrl: string }[];
+  onClick: () => void;
 }) => {
   const theme = useTheme();
   return (
-    <Box
+    <ButtonBase
+      onClick={onClick}
       sx={{
         width: '100%',
-        height: 200,
         background: theme.palette.primary.dark,
-        borderRadius: '1rem',
+        borderRadius: '8px',
         padding: 2,
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
         alignItems: 'start',
+        color: '#fff',
+        gap: 4,
       }}
     >
-      <Typography variant="h5">{title}</Typography>
-      <AvatarGroup>
-        {users.map((user) => (
-          <Avatar key={user.avatarUrl} src={user.avatarUrl} />
-        ))}
-      </AvatarGroup>
-    </Box>
+      <Typography variant="h4">{title}</Typography>
+      {gameName && (
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}
+        >
+          <Box
+            sx={{
+              width: 44,
+              height: 44,
+              border: '2px solid',
+              borderRadius: '4px',
+              marginRight: 1,
+            }}
+          >
+            {viewCoverArt(gameName)}
+          </Box>
+
+          <Typography variant="h6">{gameNameToString(gameName)}</Typography>
+        </Box>
+      )}
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+        }}
+      >
+        <AvatarGroup sx={{ marginRight: 1 }}>
+          {users.map((user) => (
+            <Avatar key={user.avatarUrl} src={user.avatarUrl} />
+          ))}
+        </AvatarGroup>
+        <Typography variant="h6">{users.length} in room</Typography>
+      </Box>
+    </ButtonBase>
   );
 };
 
