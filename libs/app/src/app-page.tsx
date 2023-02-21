@@ -1,7 +1,6 @@
 import { Account, Auth, Logout, PageLogin } from '@gamezilla/auth';
 import { Chat, ChatConversation, ChatNew, ChatStore } from '@gamezilla/chat';
 import { Cmd, exhaustive, p, Sub, t } from '@gamezilla/core';
-import * as Home from '@gamezilla/home';
 import { PartyFrontend as Party } from '@gamezilla/party';
 import {
   PageProfile,
@@ -35,7 +34,6 @@ import {
 export type Model =
   | ['loading']
   | ['login', PageLogin.Model]
-  | ['home', Home.Model]
   | ['profile-create', PageProfileCreate.Model]
   | ['logout', Logout.Model]
   | ['account', Account.Model]
@@ -46,6 +44,7 @@ export type Model =
   | ['chat-new', ChatNew.Model]
   | ['search', PageProfileSearch.Model]
   | ['chat-conversation', { conversationId: string }, ChatConversation.Model]
+  | ['home']
   | ['room']
   | ['game']
   | ['party'];
@@ -62,7 +61,6 @@ export type Msg =
   | ['account', Account.Msg]
   | ['login', PageLogin.Msg]
   | ['logout', Logout.Msg]
-  | ['home', Home.Msg]
   | ['profile', PageProfile.Msg]
   | ['profile-create', PageProfileCreate.Msg]
   | ['profile-delete', PageProfileDelete.Msg]
@@ -186,8 +184,7 @@ export const initReady = (
     }
 
     case 'home': {
-      const modelInit = Home.init;
-      return [['home', modelInit], Cmd.None, []];
+      return [['home'], Cmd.None, []];
     }
 
     case 'profile-create':
@@ -195,7 +192,7 @@ export const initReady = (
     case 'login-phone':
     case 'login-phone-verify':
     case 'login-email-link': {
-      return [['home', Home.init], Route.push(['home']), []];
+      return [['home'], Route.push(['home']), []];
     }
 
     default:
@@ -420,15 +417,6 @@ export const updateReady = (
     }
 
     case 'home': {
-      if (msg[0] === 'home') {
-        const [child, actions] = Home.update(
-          { currentUserId: profile.userId },
-          msg[1],
-          model[1]
-        );
-        return [['home', child], Cmd.None, actions];
-      }
-
       return [model, Cmd.None, []];
     }
 

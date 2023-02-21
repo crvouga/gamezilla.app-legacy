@@ -59,7 +59,7 @@ export const update = ({
     }
 
     case 'login-done': {
-      return { model };
+      return { model, cmd: Cmd.None };
     }
   }
 };

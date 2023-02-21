@@ -107,35 +107,12 @@ export const View = ({
       ];
     });
 
-  if (query.type === 'Loading') {
-    return (
-      <FillBox>
-        <Header title="Chat" />
-        <ViewLoadingState title="Loading conversations..." />
-      </FillBox>
-    );
-  }
-
-  if (conversations.length === 0) {
-    return (
-      <FillBox>
-        <Header title="Chat" />
-        <ViewEmptyState
-          actionIcon={<Icons.Send />}
-          actionTitle="Send Message"
-          onAction={() => $send(['clicked-send-message'])}
-          renderIcon={(props) => <Icons.Chat {...props} />}
-          title="No conversations"
-        />
-      </FillBox>
-    );
-  }
-
   return (
     <FillBox>
       <Header title="Chat" />
       <Box sx={{ paddingX: 2 }}>
         <Button
+          startIcon={<Icons.Send />}
           fullWidth
           variant="contained"
           onClick={() => $send(['clicked-send-message'])}
@@ -144,25 +121,42 @@ export const View = ({
         </Button>
       </Box>
 
-      <List sx={{ overflowY: 'scroll' }}>
-        {conversations.map((item) => (
-          <ListItemButton
-            key={item.conversationId}
-            onClick={() => $send(['ClickedConversationItem', item])}
-          >
-            <ListItemAvatar>
-              <AvatarGroup max={2}>
-                {item.profiles.map((profile) => (
-                  <Avatar key={profile.userId} src={profile.avatarUrl} />
-                ))}
-              </AvatarGroup>
-            </ListItemAvatar>
-            <ListItemText
-              primary={item.profiles.map((item) => item.username).join(', ')}
+      {query.type === 'Loading' ? (
+        <ViewLoadingState title="Loading conversations..." />
+      ) : (
+        <>
+          {conversations.length === 0 && (
+            <ViewEmptyState
+              title="No messages"
+              renderIcon={({ sx }) => <Icons.Chat sx={sx} />}
             />
-          </ListItemButton>
-        ))}
-      </List>
+          )}
+
+          {conversations.length > 0 && (
+            <List sx={{ overflowY: 'scroll' }}>
+              {conversations.map((item) => (
+                <ListItemButton
+                  key={item.conversationId}
+                  onClick={() => $send(['ClickedConversationItem', item])}
+                >
+                  <ListItemAvatar>
+                    <AvatarGroup max={2}>
+                      {item.profiles.map((profile) => (
+                        <Avatar key={profile.userId} src={profile.avatarUrl} />
+                      ))}
+                    </AvatarGroup>
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={item.profiles
+                      .map((item) => item.username)
+                      .join(', ')}
+                  />
+                </ListItemButton>
+              ))}
+            </List>
+          )}
+        </>
+      )}
     </FillBox>
   );
 };
