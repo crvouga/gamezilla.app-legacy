@@ -79,17 +79,20 @@ type OutAction = Alerts.Action<Msg> | ProfileStore.Action | Route.Action;
 //
 //
 
-export const update = ({
-  ctx,
-  sendToBackend,
-  msg,
-  model,
-}: {
+type Update = (input: {
   ctx: Ctx;
   sendToBackend: (msg: ToBackend) => Cmd;
   msg: Msg;
   model: Model;
-}): { model: Model; cmd?: Cmd<Msg> } => {
+}) => { model: Model; cmd?: Cmd<Msg> };
+
+export const update: Update = (input) => {
+  const updated = update_(input);
+
+  return updated;
+};
+
+export const update_: Update = ({ ctx, sendToBackend, msg, model }) => {
   switch (msg[0]) {
     case 'clicked-back-to-game': {
       return { model, cmd: Route.push(['room-game']) };
