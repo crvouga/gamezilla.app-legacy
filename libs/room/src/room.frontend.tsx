@@ -989,13 +989,14 @@ const ViewRoomUserCard = ({
       }}
     >
       <Avatar
-        sx={{ width: '100%', flex: 1, aspectRatio: '1', marginBottom: 1 }}
+        sx={{ width: '100%', flex: 1, aspectRatio: '1' }}
         src={profile?.avatarUrl ?? '...'}
       />
       <Typography
         color="text.primary"
         align="center"
-        sx={{ width: '100%' }}
+        variant="subtitle2"
+        sx={{ width: '100%', padding: 1 }}
         noWrap
       >
         {profile?.username ?? '...'} {isHost && ' (host)'}
@@ -1092,7 +1093,7 @@ export const ViewNotInGame = ({
           return (
             <CardActionArea
               key={user.userId}
-              sx={{ width: 100 }}
+              sx={{ width: 72 }}
               onClick={() => $send(['clicked-user', user])}
             >
               <ViewRoomUserCard
