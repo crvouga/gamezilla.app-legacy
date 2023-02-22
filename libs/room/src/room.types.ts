@@ -94,11 +94,8 @@ export type BackendMsg = ['game', RoomId, Game.BackendMsg];
 
 export type FrontendMsg =
   | ['modal-closed']
-  | ['clicked-home']
   | ['clicked-room']
-  | ['clicked-back-to-game']
   | ['clicked-user', { userId: UserId }]
-  | ['clicked-banner']
   | ['game', Game.FrontendMsg]
   | ['room-end-then-join', { roomId: RoomId; userId: UserId }]
   | ['room-leave-then-join', { roomId: RoomId; userId: UserId }]

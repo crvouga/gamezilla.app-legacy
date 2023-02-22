@@ -2,11 +2,9 @@ import { Cmd, exhaustive, p, RemoteData, Sub } from '@gamezilla/core';
 import { ProfileStore } from '@gamezilla/profile';
 import { Alerts, Ctx, RoomId, Route, UserId } from '@gamezilla/shared';
 import {
-  AspectRatio,
   Avatar,
   AvatarGroup,
   Badge,
-  box,
   Box,
   Button,
   ButtonBase,
@@ -98,14 +96,6 @@ export const update: Update = (input) => {
 
 export const update_: Update = ({ ctx, sendToBackend, msg, model }) => {
   switch (msg[0]) {
-    case 'clicked-back-to-game': {
-      return { model, cmd: Route.push(['room-game']) };
-    }
-
-    case 'clicked-home': {
-      return { model, cmd: Route.push(['room-list']) };
-    }
-
     case 'clicked-room': {
       return { model, cmd: Route.push(['room']) };
     }
@@ -127,10 +117,6 @@ export const update_: Update = ({ ctx, sendToBackend, msg, model }) => {
         },
         // cmd: Route.push(['profile', { userId: msg[1].userId }])
       };
-    }
-
-    case 'clicked-banner': {
-      return { model, cmd: Route.push(['room-game']) };
     }
 
     case 'room-destroy': {
@@ -734,13 +720,9 @@ export const ViewPageRoomList = ({
   ctx: Ctx;
   $send: (m: Msg) => void;
 }) => {
-  // const rooms = Object.values(model.rooms);
   const user = model.users[ctx.currentUserId];
   const currentRoom = user ? model.rooms[user.roomId] : undefined;
-
-  const rooms = Object.values(model.rooms).filter(
-    (room) => user?.roomId !== room.roomId
-  );
+  const rooms = Object.values(model.rooms);
 
   return (
     <FillBox>
@@ -831,7 +813,7 @@ const ViewRoomCard = ({
       onClick={onClick}
       sx={{
         width: '100%',
-        background: theme.palette.primary.dark,
+        background: theme.palette.primary.main,
         borderRadius: '8px',
         padding: 2,
         display: 'flex',
@@ -920,7 +902,7 @@ const ViewPageGame = ({
         <Button
           startIcon={<Icons.Home />}
           size="small"
-          onClick={() => $send(['clicked-home'])}
+          onClick={() => ctx.$push(['room-list'])}
         >
           Home
         </Button>
@@ -1157,7 +1139,7 @@ export const ViewNotInGame = ({
 
 export const ViewNotInRoom = ({
   model,
-  $send,
+  ctx,
 }: {
   ctx: Ctx;
   model: Model;
@@ -1190,7 +1172,7 @@ export const ViewNotInRoom = ({
           <Button
             startIcon={<Icons.ChevronLeft />}
             variant="contained"
-            onClick={() => $send(['clicked-home'])}
+            onClick={() => ctx.$push(['room-list'])}
           >
             Back Home
           </Button>
@@ -1324,7 +1306,7 @@ const ViewPageRoom = ({
         <Button
           variant="outlined"
           fullWidth
-          onClick={() => $send(['clicked-back-to-game'])}
+          onClick={() => ctx.$push(['room-game'])}
           startIcon={<Icons.ChevronLeft />}
         >
           Back
@@ -1383,6 +1365,9 @@ export const ViewBar = ({
   const game = model.games[room.roomId];
 
   const hostProfile = ctx.profiles[room.hostId];
+  const userCount = Object.values(model.users).filter(
+    (user) => user.roomId === room.roomId
+  ).length;
 
   return (
     <Box
@@ -1399,7 +1384,7 @@ export const ViewBar = ({
           display: 'flex',
           alignItems: 'center',
         }}
-        onClick={() => $send(['clicked-banner'])}
+        onClick={() => ctx.$push(['room-game'])}
       >
         {!game && (
           <Avatar
@@ -1415,9 +1400,19 @@ export const ViewBar = ({
           </Box>
         )}
 
-        <Typography noWrap align="left" sx={{ flex: 1 }}>
-          {hostProfile ? `${hostProfile.username}'s room` : '...'}
-        </Typography>
+        <Box sx={{ flex: 1, overflow: 'hidden' }}>
+          <Typography noWrap align="left" color="primary.main">
+            {hostProfile ? `${hostProfile.username}'s room` : '...'}
+          </Typography>
+          <Typography
+            noWrap
+            align="left"
+            color="text.secondary"
+            variant="subtitle2"
+          >
+            {userCount} in room
+          </Typography>
+        </Box>
       </ButtonBase>
 
       <IconButton
