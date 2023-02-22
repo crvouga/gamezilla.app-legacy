@@ -320,17 +320,17 @@ const updateRoomLeave = (
     return [modelAfter, wire.sendToClient(res)];
   }
 
-  const updated_ = Game.updateShared({
-    broadcast: (m) =>
-      sendToRoom({
-        sendToUser: wire.sendToUser,
-        model: modelAfter,
-        roomId: room.roomId,
-        msg: ['game', m],
-      }),
-    msg: ['user-left', user],
-    model: game,
-  });
+  // const updated_ = Game.updateShared({
+  //   broadcast: (m) =>
+  //     sendToRoom({
+  //       sendToUser: wire.sendToUser,
+  //       model: modelAfter,
+  //       roomId: room.roomId,
+  //       msg: ['game', m],
+  //     }),
+  //   msg: ['user-left', user],
+  //   model: game,
+  // });
 
   const [gameNew, cmd] = Game.updateRoomLeave(
     {

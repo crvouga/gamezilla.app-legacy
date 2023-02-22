@@ -9,7 +9,7 @@ import { GameName } from './game.types';
 
 export const viewCoverArt = (gameName: GameName) => {
   switch (gameName) {
-    case 'Chess': {
+    case 'chess': {
       return Chess.viewCoverArt();
     }
 
@@ -25,15 +25,15 @@ export const viewCoverArt = (gameName: GameName) => {
       return TicTacToe.viewCoverArt();
     }
 
-    case 'Tetris': {
+    case 'tetris': {
       return Tetris.viewCoverArt();
     }
 
-    case 'Snake': {
+    case 'snake': {
       return Snake.viewCoverArt();
     }
 
-    case 'Maze': {
+    case 'maze': {
       return Maze.viewCoverArt();
     }
   }
@@ -41,8 +41,8 @@ export const viewCoverArt = (gameName: GameName) => {
 
 export const gameNameToString = (gameName: GameName) => {
   switch (gameName) {
-    case 'Chess': {
-      return 'Chess';
+    case 'chess': {
+      return 'chess';
     }
 
     case 'connect-four': {
@@ -57,16 +57,16 @@ export const gameNameToString = (gameName: GameName) => {
       return 'Tic-Tac-Toe';
     }
 
-    case 'Tetris': {
-      return 'Tetris';
+    case 'tetris': {
+      return 'tetris';
     }
 
-    case 'Snake': {
-      return 'Snake';
+    case 'snake': {
+      return 'snake';
     }
 
-    case 'Maze': {
-      return 'Maze';
+    case 'maze': {
+      return 'maze';
     }
   }
 };
