@@ -12,11 +12,13 @@ import {
   ButtonBase,
   CardActionArea,
   Divider,
+  Drawer,
   FillBox,
   Header,
   IconButton,
   Icons,
   Paper,
+  Sx,
   Toolbar,
   Typography,
   useTheme,
@@ -53,6 +55,7 @@ export const init: [Model, Cmd<Msg>] = [
     rooms: {},
     users: {},
     requests: {},
+    modal: 'none',
   },
   Cmd.None,
 ];
@@ -106,8 +109,23 @@ export const update_: Update = ({ ctx, sendToBackend, msg, model }) => {
       return { model, cmd: Route.push(['room']) };
     }
 
+    case 'modal-closed': {
+      return {
+        model: {
+          ...model,
+          modal: 'none',
+        },
+      };
+    }
+
     case 'clicked-user': {
-      return { model, cmd: Route.push(['profile', { userId: msg[1].userId }]) };
+      return {
+        model: {
+          ...model,
+          modal: 'user-preview',
+        },
+        // cmd: Route.push(['profile', { userId: msg[1].userId }])
+      };
     }
 
     case 'clicked-banner': {
@@ -132,6 +150,11 @@ export const update_: Update = ({ ctx, sendToBackend, msg, model }) => {
     case 'room-leave':
     case 'change-host':
     case 'input-game': {
+      const routeCmd =
+        msg[0] === 'room-join' || msg[0] === 'room-create'
+          ? Route.push(['room-game'])
+          : Cmd.None;
+
       return {
         model: {
           ...model,
@@ -140,7 +163,7 @@ export const update_: Update = ({ ctx, sendToBackend, msg, model }) => {
             [msg[0]]: RemoteData.Loading,
           },
         },
-        cmd: sendToBackend(msg),
+        cmd: Cmd.batch([routeCmd, sendToBackend(msg)]),
       };
     }
 
@@ -267,18 +290,10 @@ export const updateFromBackend = (
       ];
     }
 
+    case 'room-create':
     case 'input-game':
     case 'change-host': {
       return updateResponse({ ctx, sendToBackend }, msg, model);
-    }
-
-    case 'room-create': {
-      const updated = updateResponse({ ctx, sendToBackend }, msg, model);
-      return [
-        updated[0],
-        Cmd.batch([updated[1], Route.push(['room-game'])]),
-        updated[2],
-      ];
     }
 
     case 'room-destroy': {
@@ -552,7 +567,7 @@ const mergeWithBackendModel = ({
 
   return [
     {
-      requests: frontendModel.requests,
+      ...frontendModel,
       games: gamesNew[0],
       rooms: backendModel.rooms,
       users: backendModel.users,
@@ -618,6 +633,55 @@ export const subscriptions = (ctx: Ctx, model: Model): Sub<Msg> => {
 //
 //
 //
+
+type RoomRoute = 'room' | 'room-game';
+
+export const View = ({
+  ctx,
+  $send,
+  model,
+  route,
+}: {
+  route: RoomRoute;
+  model: Model;
+  ctx: Ctx;
+  $send: (m: Msg) => void;
+}) => {
+  return (
+    <>
+      <ViewPage ctx={ctx} $send={$send} model={model} route={route} />
+      <Drawer
+        open={model.modal === 'user-preview'}
+        onClose={() => $send(['modal-closed'])}
+        anchor="bottom"
+      >
+        hello
+      </Drawer>
+    </>
+  );
+};
+
+const ViewPage = ({
+  ctx,
+  $send,
+  model,
+  route,
+}: {
+  route: RoomRoute;
+  model: Model;
+  ctx: Ctx;
+  $send: (m: Msg) => void;
+}) => {
+  switch (route) {
+    case 'room': {
+      return <ViewPageRoom ctx={ctx} $send={$send} model={model} />;
+    }
+
+    case 'room-game': {
+      return <ViewPageGame ctx={ctx} $send={$send} model={model} />;
+    }
+  }
+};
 
 export const ViewPageRoomList = ({
   ctx,
@@ -778,7 +842,7 @@ const ViewRoomCardNew = ({
   );
 };
 
-export const ViewPageGame = ({
+const ViewPageGame = ({
   ctx,
   model,
   $send,
@@ -852,9 +916,43 @@ export const ViewPageGame = ({
           model={game}
         />
       ) : (
-        <ViewNotInGame ctx={ctx} room={room} $send={$send} />
+        <ViewNotInGame model={model} ctx={ctx} room={room} $send={$send} />
       )}
     </FillBox>
+  );
+};
+
+const ViewRoomUserCard = ({
+  ctx,
+  userId,
+  isHost,
+  sx,
+}: {
+  isHost: boolean;
+  userId: UserId;
+  ctx: Ctx;
+  sx?: Sx;
+}) => {
+  const profile = ctx.profiles[userId];
+  return (
+    <Paper
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        overflow: 'hidden',
+        ...sx,
+      }}
+    >
+      <Avatar
+        sx={{ width: '100%', flex: 1, aspectRatio: '1' }}
+        src={profile?.avatarUrl ?? '...'}
+      />
+      <Typography color="text.primary" align="center" sx={{ p: 1 }} noWrap>
+        {profile?.username ?? '...'} {isHost && ' (host)'}
+      </Typography>
+    </Paper>
   );
 };
 
@@ -862,47 +960,53 @@ export const ViewNotInGame = ({
   room,
   ctx,
   $send,
+  model,
 }: {
+  model: Model;
   room: FrontendRoom;
   ctx: Ctx;
   $send: (m: Msg) => void;
 }) => {
+  const users = toRoomUsers(room.roomId, model);
+
   if (room.hostId !== ctx.currentUserId) {
     return (
       <FillBox>
         <Box
           sx={{
-            flex: 1,
             display: 'flex',
+            flexWrap: 'wrap',
+            width: '100%',
+            gap: 3,
+            p: 3,
             alignItems: 'center',
             justifyContent: 'center',
-            flexDirection: 'column',
-            px: 2,
           }}
         >
-          <Avatar
-            src={ctx.profiles[room.hostId]?.avatarUrl}
-            sx={{ mb: 1, width: 100, height: 100 }}
-          />
-          <Typography color="text.primary" align="center">
-            {ctx.profiles[room.hostId]?.username ?? '...'}
-          </Typography>
-          <Typography
-            variant="subtitle2"
-            color="text.secondary"
-            align="center"
-            sx={{ mb: 4 }}
-          >
-            Host
-          </Typography>
-          <Typography align="center">No game selected</Typography>
+          {users.map((user) => {
+            return (
+              <ViewRoomUserCard
+                isHost={room.hostId === user.userId}
+                userId={user.userId}
+                ctx={ctx}
+                sx={{ width: '50%' }}
+              />
+            );
+          })}
         </Box>
+
         <Box sx={{ flex: 1 }} />
-        <Box sx={{ p: 2 }}>
+        <Box sx={{ p: 2, display: 'flex', justifyContent: 'center' }}>
           <Button
-            variant="outlined"
-            startIcon={<Icons.ChevronLeft />}
-            fullWidth
+            variant="contained"
+            startIcon={
+              <Icons.ExitToApp
+                sx={{
+                  transform: 'rotate(180deg)',
+                }}
+              />
+            }
+            color="error"
             onClick={() =>
               $send([
                 'room-leave',
@@ -912,7 +1016,7 @@ export const ViewNotInGame = ({
               ])
             }
           >
-            Leave Room
+            Leave
           </Button>
         </Box>
       </FillBox>
@@ -923,12 +1027,35 @@ export const ViewNotInGame = ({
     <FillBox>
       <Box
         sx={{
+          display: 'flex',
+          width: '100%',
+          gap: 2,
+          p: 2,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        {users.map((user) => {
+          return (
+            <ViewRoomUserCard
+              isHost={room.hostId === user.userId}
+              userId={user.userId}
+              ctx={ctx}
+              sx={{ width: 100 }}
+            />
+          );
+        })}
+      </Box>
+
+      <Divider />
+
+      <Box
+        sx={{
           px: 1,
           pt: 1,
           width: '100%',
           display: 'flex',
           flexWrap: 'wrap',
-          justifyContent: 'flex-start',
         }}
       >
         {gameNameList.map((gameName) => (
@@ -945,16 +1072,23 @@ export const ViewNotInGame = ({
         ))}
       </Box>
 
-      <Box sx={{ flex: 1 }} />
-      <Box sx={{ p: 2 }}>
+      <Box sx={{ flex: 1 }}></Box>
+
+      <Box
+        sx={{
+          p: 2,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
         <Button
-          variant="outlined"
+          variant="contained"
           color="error"
           startIcon={<Icons.Close />}
-          fullWidth
           onClick={() => $send(['room-destroy', { userId: ctx.currentUserId }])}
         >
-          End Room
+          End
         </Button>
       </Box>
     </FillBox>
@@ -1045,7 +1179,7 @@ const toRoomUsers = (roomId: RoomId, model: Model): RoomUser[] => {
   return roomUsers;
 };
 
-export const ViewPageRoom = ({
+const ViewPageRoom = ({
   model,
   $send,
   ctx,

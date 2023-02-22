@@ -52,6 +52,7 @@ export type FrontendModel = SharedModel & {
   requests: {
     [key in Req[0]]?: RemoteData<Problem, 'none'>;
   };
+  modal: 'user-preview' | 'none';
 };
 
 export type FrontendRoom = {
@@ -92,6 +93,7 @@ export type ToBackend =
 export type BackendMsg = ['game', RoomId, Game.BackendMsg];
 
 export type FrontendMsg =
+  | ['modal-closed']
   | ['clicked-home']
   | ['clicked-room']
   | ['clicked-back-to-game']
