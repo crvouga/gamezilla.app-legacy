@@ -42,7 +42,7 @@ export const viewCoverArt = (gameName: GameName) => {
 export const gameNameToString = (gameName: GameName) => {
   switch (gameName) {
     case 'chess': {
-      return 'chess';
+      return 'Chess';
     }
 
     case 'connect-four': {
@@ -58,15 +58,15 @@ export const gameNameToString = (gameName: GameName) => {
     }
 
     case 'tetris': {
-      return 'tetris';
+      return 'Tetris';
     }
 
     case 'snake': {
-      return 'snake';
+      return 'Snake';
     }
 
     case 'maze': {
-      return 'maze';
+      return 'Maze';
     }
   }
 };
