@@ -305,19 +305,19 @@ const updateRoomLeave = (
   const user = model.users[userId];
 
   if (!user) {
-    return [modelAfter, wire.sendToClient(res)];
+    return [modelAfter, wire.broadcast(res)];
   }
 
   const room = model.rooms[user.roomId];
 
   if (!room) {
-    return [modelAfter, wire.sendToClient(res)];
+    return [modelAfter, wire.broadcast(res)];
   }
 
   const game = model.games[room.roomId];
 
   if (!game) {
-    return [modelAfter, wire.sendToClient(res)];
+    return [modelAfter, wire.broadcast(res)];
   }
 
   // const updated_ = Game.updateShared({
