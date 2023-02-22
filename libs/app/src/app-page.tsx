@@ -707,19 +707,11 @@ export const ViewReady = ({
         </FillBox>
       );
 
+    case 'room-game':
     case 'room': {
       return (
-        <RoomFrontend.ViewPageRoom
-          ctx={ctx}
-          model={gameRoom}
-          $send={$sendRoom}
-        />
-      );
-    }
-
-    case 'room-game': {
-      return (
-        <RoomFrontend.ViewPageGame
+        <RoomFrontend.View
+          route={model[0]}
           ctx={ctx}
           model={gameRoom}
           $send={$sendRoom}

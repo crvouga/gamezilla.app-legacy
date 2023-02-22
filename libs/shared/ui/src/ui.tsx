@@ -82,7 +82,7 @@ const createTheme = ({ mode }: { mode: 'light' | 'dark' }) =>
         },
         MuiAvatar: {
           defaultProps: {
-            variant: 'rounded',
+            variant: 'circular',
           },
         },
         MuiAvatarGroup: {
