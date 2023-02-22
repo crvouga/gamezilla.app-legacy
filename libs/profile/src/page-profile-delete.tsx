@@ -27,7 +27,7 @@ export type Msg =
   | ['clicked-cancel']
   | ['clicked-backdrop']
   | ['clicked-delete']
-  | ['ClickedCloseErr'];
+  | ['clicked-close-error'];
 
 export type OutAction = ProfileStore.Action;
 
@@ -46,7 +46,7 @@ export const update = (
     case 'clicked-delete':
       return [model, Cmd.None, [['profile', ['delete-forever', { userId }]]]];
 
-    case 'ClickedCloseErr':
+    case 'clicked-close-error':
       return [model, Cmd.None, [['profile', ['reset-mutations']]]];
   }
 };
@@ -93,7 +93,7 @@ export const View = ({
                 size="large"
                 color="inherit"
                 startIcon={<UI.Icons.Close />}
-                onClick={() => $send(['ClickedCloseErr'])}
+                onClick={() => $send(['clicked-close-error'])}
               >
                 Close
               </UI.Button>
