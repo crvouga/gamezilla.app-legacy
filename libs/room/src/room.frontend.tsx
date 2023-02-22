@@ -11,6 +11,7 @@ import {
   Button,
   ButtonBase,
   CardActionArea,
+  CircularProgress,
   Divider,
   Drawer,
   FillBox,
@@ -55,7 +56,7 @@ export const init: [Model, Cmd<Msg>] = [
     rooms: {},
     users: {},
     requests: {},
-    modal: 'none',
+    modal: { type: 'none' },
   },
   Cmd.None,
 ];
@@ -113,7 +114,7 @@ export const update_: Update = ({ ctx, sendToBackend, msg, model }) => {
       return {
         model: {
           ...model,
-          modal: 'none',
+          modal: { type: 'none' },
         },
       };
     }
@@ -122,7 +123,7 @@ export const update_: Update = ({ ctx, sendToBackend, msg, model }) => {
       return {
         model: {
           ...model,
-          modal: 'user-preview',
+          modal: { type: 'user-preview', userId: msg[1].userId },
         },
         // cmd: Route.push(['profile', { userId: msg[1].userId }])
       };
@@ -651,11 +652,52 @@ export const View = ({
     <>
       <ViewPage ctx={ctx} $send={$send} model={model} route={route} />
       <Drawer
-        open={model.modal === 'user-preview'}
+        open={model.modal.type === 'user-preview'}
         onClose={() => $send(['modal-closed'])}
         anchor="bottom"
+        PaperProps={{
+          sx: {
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            maxWidth: 'xs',
+          },
+          variant: 'outlined',
+        }}
       >
-        hello
+        {model.modal.type === 'user-preview' ? (
+          <>
+            <ButtonBase
+              sx={{
+                width: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                p: 2,
+              }}
+              onClick={() => {
+                if (model.modal.type === 'user-preview') {
+                  ctx.$push(['profile', { userId: model.modal.userId }]);
+                }
+              }}
+            >
+              <Avatar
+                src={ctx.profiles[model.modal.userId]?.avatarUrl}
+                sx={{ width: 80, height: 80, marginBottom: 1 }}
+              />
+              <Typography variant="h6">
+                @{ctx.profiles[model.modal.userId]?.username ?? '...'}
+              </Typography>
+            </ButtonBase>
+            <Box sx={{ px: 2, paddingBottom: 4, width: '100%' }}>
+              <Button variant="outlined" fullWidth startIcon={<Icons.Send />}>
+                Direct Message
+              </Button>
+            </Box>
+          </>
+        ) : (
+          <CircularProgress />
+        )}
       </Drawer>
     </>
   );
@@ -936,20 +978,27 @@ const ViewRoomUserCard = ({
   const profile = ctx.profiles[userId];
   return (
     <Paper
+      variant="outlined"
       sx={{
         display: 'flex',
         alignItems: 'center',
         flexDirection: 'column',
         justifyContent: 'center',
         overflow: 'hidden',
+        padding: 1,
         ...sx,
       }}
     >
       <Avatar
-        sx={{ width: '100%', flex: 1, aspectRatio: '1' }}
+        sx={{ width: '100%', flex: 1, aspectRatio: '1', marginBottom: 1 }}
         src={profile?.avatarUrl ?? '...'}
       />
-      <Typography color="text.primary" align="center" sx={{ p: 1 }} noWrap>
+      <Typography
+        color="text.primary"
+        align="center"
+        sx={{ width: '100%' }}
+        noWrap
+      >
         {profile?.username ?? '...'} {isHost && ' (host)'}
       </Typography>
     </Paper>
@@ -985,7 +1034,10 @@ export const ViewNotInGame = ({
         >
           {users.map((user) => {
             return (
-              <CardActionArea onClick={() => $send(['clicked-user', user])}>
+              <CardActionArea
+                key={user.userId}
+                onClick={() => $send(['clicked-user', user])}
+              >
                 <ViewRoomUserCard
                   isHost={room.hostId === user.userId}
                   userId={user.userId}
@@ -1000,7 +1052,7 @@ export const ViewNotInGame = ({
         <Box sx={{ flex: 1 }} />
         <Box sx={{ p: 2, display: 'flex', justifyContent: 'center' }}>
           <Button
-            variant="contained"
+            variant="outlined"
             startIcon={
               <Icons.ExitToApp
                 sx={{
@@ -1034,13 +1086,14 @@ export const ViewNotInGame = ({
           gap: 2,
           p: 2,
           alignItems: 'center',
-          justifyContent: 'center',
+          // justifyContent: 'center',
         }}
       >
         {users.map((user) => {
           return (
             <CardActionArea
-              sx={{ width: 100 }}
+              key={user.userId}
+              sx={{ width: 72 }}
               onClick={() => $send(['clicked-user', user])}
             >
               <ViewRoomUserCard
@@ -1090,7 +1143,7 @@ export const ViewNotInGame = ({
         }}
       >
         <Button
-          variant="contained"
+          variant="outlined"
           color="error"
           startIcon={<Icons.Close />}
           onClick={() => $send(['room-destroy', { userId: ctx.currentUserId }])}
