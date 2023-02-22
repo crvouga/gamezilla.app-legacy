@@ -863,7 +863,7 @@ const ViewBottomBar = ({
         justifyContent: 'center',
       }}
     >
-      <RoomFrontend.ViewBanner ctx={ctx} model={gameRoom} $send={$sendRoom} />
+      <RoomFrontend.ViewBar ctx={ctx} model={gameRoom} $send={$sendRoom} />
 
       <ViewBottomNavigation ctx={ctx} route={route} $send={$send} />
     </Box>
