@@ -9,6 +9,7 @@ import {
   Button,
   ButtonBase,
   CardActionArea,
+  Chip,
   CircularProgress,
   Divider,
   Drawer,
@@ -358,6 +359,7 @@ export const updateFromBackend = (
 
         const alertActions: Alerts.Action<Msg>[] =
           msg[2].error === 'already_in_room' &&
+          currentRoomId !== msg[1].roomId &&
           msg[1].userId === ctx.currentUserId
             ? ctx.currentUserId === currentRoom?.hostId
               ? [
@@ -775,9 +777,11 @@ export const ViewPageRoomList = ({
                 return [];
               });
             const gameName = model.games[room.roomId]?.type;
+            const currentRoomId = model.users[ctx.currentUserId]?.roomId;
             return (
               <ViewRoomCard
                 key={room.roomId}
+                isCurrentRoom={currentRoomId === room.roomId}
                 title={title}
                 users={users}
                 gameName={gameName}
@@ -801,11 +805,13 @@ const ViewRoomCard = ({
   users,
   gameName,
   onClick,
+  isCurrentRoom,
 }: {
   gameName?: GameName;
   title: string;
   users: { avatarUrl: string }[];
   onClick: () => void;
+  isCurrentRoom?: boolean;
 }) => {
   const theme = useTheme();
   return (
@@ -813,7 +819,7 @@ const ViewRoomCard = ({
       onClick={onClick}
       sx={{
         width: '100%',
-        background: theme.palette.primary.main,
+        background: theme.palette.primary.dark,
         borderRadius: '8px',
         padding: 2,
         display: 'flex',
@@ -821,10 +827,22 @@ const ViewRoomCard = ({
         justifyContent: 'space-between',
         alignItems: 'start',
         color: '#fff',
-        gap: 4,
+        gap: 3,
       }}
     >
-      <Typography variant="h4">{title}</Typography>
+      <Box
+        sx={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}
+      >
+        {isCurrentRoom && (
+          <Chip
+            size="small"
+            color="primary"
+            label="Current Room"
+            sx={{ marginBottom: 0.5 }}
+          />
+        )}
+        <Typography variant="h4">{title}</Typography>
+      </Box>
       {gameName && (
         <Box
           sx={{
@@ -848,6 +866,7 @@ const ViewRoomCard = ({
           <Typography variant="h6">{gameNameToString(gameName)}</Typography>
         </Box>
       )}
+
       <Box
         sx={{
           display: 'flex',
