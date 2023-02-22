@@ -41,7 +41,7 @@ export type FrontendMsg =
   | ['vs-user', VsUser.FrontendMsg]
   | ['vs-bot', VsBot.FrontendMsg]
   | InputMode
-  | ['PreloadAudio_Done'];
+  | ['preload-audio-done'];
 
 export type BackendMsg =
   | ['vs-user', VsUser.BackendMsg]

@@ -93,7 +93,7 @@ export const initShared = ({
 //
 
 export type FrontendMsg =
-  | ['Audio_Done', Audio.PlayResult]
+  | ['audio-done', Audio.PlayResult]
   | ['OpenedMenu', string]
   | ['ClosedMenu']
   | ['OpenedModal', Modal]

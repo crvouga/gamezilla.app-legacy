@@ -33,7 +33,7 @@ export const init = (): [FrontendModel, Cmd<Msg>] => {
     },
     Audio.preload(
       Array.from(Object.values(Sounds)),
-      (): Msg => ['PreloadAudio_Done']
+      (): Msg => ['preload-audio-done']
     ),
   ];
 };
@@ -56,7 +56,7 @@ export const update = (
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'PreloadAudio_Done': {
+    case 'preload-audio-done': {
       return [model, Cmd.None];
     }
 
@@ -219,7 +219,7 @@ export const View = ({
           $send(['input-mode', { mode: 'vs-bot', userId: ctx.currentUserId }]),
         onVsUser: () =>
           $send(['input-mode', { mode: 'vs-user', userId: ctx.currentUserId }]),
-        title: 'chess',
+        title: 'Chess',
       });
     }
 

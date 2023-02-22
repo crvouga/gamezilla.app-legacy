@@ -74,7 +74,7 @@ export const update = (
     //
     //
 
-    case 'Audio_Done': {
+    case 'audio-done': {
       return [model, Cmd.None];
     }
 
@@ -365,7 +365,7 @@ export const updateFromBackend = (
 };
 
 const playAudio = (src: string): Cmd<Msg> => {
-  return Audio.play(src, t('Audio_Done'));
+  return Audio.play(src, t('audio-done'));
 };
 
 //

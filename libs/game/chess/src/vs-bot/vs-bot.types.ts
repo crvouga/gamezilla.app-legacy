@@ -80,7 +80,7 @@ export const isBotTurn = (model: SharedModel) => {
 //
 
 export type FrontendMsg =
-  | ['Audio_Done', Audio.PlayResult]
+  | ['audio-done', Audio.PlayResult]
   | ['OpenedMenu', string]
   | ['ClosedMenu']
   | ['ClickedFlip']
