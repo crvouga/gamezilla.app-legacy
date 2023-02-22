@@ -1,3 +1,4 @@
+import * as Route from './route';
 import { UserId, Username } from './data';
 
 export type Ctx = {
@@ -10,4 +11,5 @@ export type Ctx = {
     };
   };
   currentUserId: UserId;
+  $push: (route: Route.Model) => void;
 };

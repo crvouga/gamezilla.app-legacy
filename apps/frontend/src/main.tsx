@@ -189,20 +189,13 @@ const updateMain =
       }
 
       case 'route': {
-        switch (msg[1][0]) {
-          case 'got-route': {
-            const modelNew: Model = {
-              ...model,
-              route: msg[1][1],
-            };
-
-            return initPage({ sendToBackend }, modelNew);
-          }
-
-          default: {
-            return exhaustive(msg[1][0]);
-          }
-        }
+        const updated = Route.update({ msg: msg[1], model: model.route });
+        const modelNew: Model = { ...model, route: updated.model };
+        const initialize = initPage({ sendToBackend }, modelNew);
+        return [
+          initialize[0],
+          Cmd.batch([initialize[1], Cmd.tag('route', updated.cmd)]),
+        ];
       }
 
       case 'wire': {
@@ -234,6 +227,9 @@ const updateMain =
             currentUserId: profile.userId,
             profiles: model.profileStore.profiles,
             now: Date.now(),
+            $push: () => {
+              //
+            },
           },
           sendToBackend: (m) => sendToBackend(['room', m]),
           msg: msg[1],
@@ -357,6 +353,9 @@ const updateFromBackend = (
             currentUserId,
             profiles: model.profileStore.profiles,
             now: Date.now(),
+            $push: () => {
+              //
+            },
           },
           sendToBackend: (msg) => sendToBackend(['room', msg]),
         },
@@ -483,6 +482,9 @@ const runAction =
             currentUserId: model.auth.session.userId,
             profiles: model.profileStore.profiles,
             now: Date.now(),
+            $push: () => {
+              //
+            },
           },
           sendToBackend: (msg) => sendToBackend(['room', msg]),
           action,
@@ -568,6 +570,9 @@ const gameRoomSub = (model: Model): Sub<Msg> => {
             currentUserId: model.auth.session.userId,
             now: Date.now(),
             profiles: model.profileStore.profiles,
+            $push: () => {
+              //
+            },
           },
           model.gameRoom
         )
@@ -694,6 +699,7 @@ const ViewMain = ({
             currentUserId: profile.userId,
             profiles: model.profileStore.profiles,
             now: Date.now(),
+            $push: (route) => $send(['route', ['clicked-link', route]]),
           }}
           profile={status[1].profile}
           $send={(msg) => $send(['page', msg])}
