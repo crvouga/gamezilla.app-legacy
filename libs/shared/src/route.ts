@@ -187,14 +187,27 @@ export const replace = (route: Model) => {
 //
 //
 
-export type Msg = ['got-route', Model];
+export type Msg = ['got-route', Model] | ['clicked-link', Model];
 
 export type Action = ['route', ['Push', Model] | ['Replace', Model] | ['Back']];
 
-export const update = (msg: Msg): Model => {
+export const update = ({
+  msg,
+  model,
+}: {
+  msg: Msg;
+  model: Model;
+}): {
+  model: Model;
+  cmd: Cmd<Msg>;
+} => {
   switch (msg[0]) {
     case 'got-route': {
-      return msg[1];
+      return { model: msg[1], cmd: Cmd.None };
+    }
+
+    case 'clicked-link': {
+      return { model, cmd: push(msg[1]) };
     }
   }
 };

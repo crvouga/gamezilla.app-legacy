@@ -52,7 +52,7 @@ export type FrontendModel = SharedModel & {
   requests: {
     [key in Req[0]]?: RemoteData<Problem, 'none'>;
   };
-  modal: 'user-preview' | 'none';
+  modal: { type: 'user-preview'; userId: UserId } | { type: 'none' };
 };
 
 export type FrontendRoom = {
