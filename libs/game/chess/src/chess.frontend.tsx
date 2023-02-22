@@ -219,7 +219,7 @@ export const View = ({
           $send(['input-mode', { mode: 'vs-bot', userId: ctx.currentUserId }]),
         onVsUser: () =>
           $send(['input-mode', { mode: 'vs-user', userId: ctx.currentUserId }]),
-        title: 'Chess',
+        title: 'chess',
       });
     }
 

@@ -330,7 +330,7 @@ export const View = ({
       leftPlayerType: 'w',
       playerId:
         model.sharedModel.userId === 'none' ? null : model.sharedModel.userId,
-      title: 'Chess',
+      title: 'chess',
       subtitle: 'Vs Computer',
     });
   }

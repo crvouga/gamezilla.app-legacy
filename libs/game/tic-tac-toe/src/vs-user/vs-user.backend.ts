@@ -58,9 +58,6 @@ export const update = (
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'user-left': {
-    }
-
     case 'RoundCountDown': {
       const result = roundCountDown(model);
 
