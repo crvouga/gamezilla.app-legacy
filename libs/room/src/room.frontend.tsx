@@ -794,7 +794,7 @@ export const ViewPageRoomList = ({
               });
             const gameName = model.games[room.roomId]?.type;
             return (
-              <ViewRoomCardNew
+              <ViewRoomCard
                 key={room.roomId}
                 title={title}
                 users={users}
@@ -814,7 +814,7 @@ export const ViewPageRoomList = ({
   );
 };
 
-const ViewRoomCardNew = ({
+const ViewRoomCard = ({
   title,
   users,
   gameName,
@@ -1357,68 +1357,7 @@ const ViewPageRoom = ({
   );
 };
 
-export const ViewGameCard = ({
-  gameName,
-  onClick,
-  disabled = false,
-}: {
-  gameName: GameName;
-  onClick: () => void;
-  disabled?: boolean;
-}) => {
-  return (
-    <AspectRatio aspectRatio={1}>
-      <ButtonBase
-        disabled={disabled}
-        sx={{
-          position: 'relative',
-          overflow: 'hidden',
-          opacity: disabled ? 0.3 : 1,
-          borderRadius: 2,
-        }}
-        onClick={onClick}
-      >
-        {viewCoverArt(gameName)}
-
-        <Box
-          sx={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'flex-end',
-          }}
-        >
-          <Box
-            sx={{
-              width: '100%',
-              padding: 1,
-              paddingTop: 2,
-              background: `linear-gradient(transparent, rgba(0, 0, 0, 0.6))`,
-            }}
-          >
-            <Typography color="white" align="left" variant="h4">
-              {gameNameToString(gameName)}
-            </Typography>
-          </Box>
-        </Box>
-      </ButtonBase>
-    </AspectRatio>
-  );
-};
-
-//
-//
-//
-// Banner
-//
-//
-//
-
-export const ViewBanner = ({
+export const ViewBar = ({
   ctx,
   model,
   $send,
@@ -1494,110 +1433,5 @@ export const ViewBanner = ({
         <Icons.Close />
       </IconButton>
     </Box>
-  );
-};
-
-export const RoomGrid = ({
-  ctx,
-  model,
-  onClick,
-}: {
-  ctx: Ctx;
-  model: Model;
-  onClick: ({ roomId }: { roomId: RoomId }) => void;
-}) => {
-  const rooms = Object.values(model.rooms).filter(
-    (room) => room.roomId !== model.users[ctx.currentUserId]?.roomId
-  );
-
-  return (
-    <Box sx={{ display: 'flex', mx: -1 }}>
-      {rooms.map((room) => (
-        <Box key={room.roomId} sx={{ width: '50%', p: 1 }}>
-          <RoomCard
-            roomId={room.roomId}
-            hostId={room.hostId}
-            gameName={model.games[room.roomId]?.type}
-            ctx={ctx}
-            gameRoom={model}
-            onClick={() => onClick(room)}
-          />
-        </Box>
-      ))}
-    </Box>
-  );
-};
-
-export const viewRoomCard = ({ key }: { key?: string }) => {
-  return box(
-    {
-      key,
-      sx: {
-        display: 'flex',
-        backgroundColor: '',
-      },
-    },
-    []
-  );
-};
-
-export const RoomCard = ({
-  roomId,
-  hostId,
-  gameName,
-  ctx,
-  gameRoom,
-  onClick,
-}: {
-  roomId: RoomId;
-  hostId: UserId;
-  gameName?: GameName;
-  ctx: Ctx;
-  gameRoom: Model;
-  onClick: () => void;
-}) => {
-  const hostProfile = ctx.profiles[hostId];
-  const roomCount = Object.values(gameRoom.users).filter(
-    (user) => user.roomId === roomId
-  ).length;
-  return (
-    <CardActionArea onClick={onClick}>
-      <Paper sx={{ overflow: 'hidden', height: '100%' }}>
-        <AspectRatio aspectRatio={Math.pow(3 / 4, 3)}>
-          {gameName ? (
-            viewCoverArt(gameName)
-          ) : (
-            <Avatar
-              src={hostProfile?.avatarUrl ?? ''}
-              variant="square"
-              sx={{ width: '100%', height: '100%' }}
-            />
-          )}
-        </AspectRatio>
-
-        <Divider />
-
-        <Box
-          sx={{
-            p: 2,
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'flex-end',
-          }}
-        >
-          {gameName && (
-            <Typography variant="overline" color="primary.main" noWrap>
-              {gameNameToString(gameName)}
-            </Typography>
-          )}
-          <Typography variant="h6" noWrap>
-            {hostProfile ? `${hostProfile.username}'s game` : '...'}
-          </Typography>
-          <Typography variant="subtitle2" color="text.secondary" noWrap>
-            {roomCount} in game
-          </Typography>
-        </Box>
-      </Paper>
-    </CardActionArea>
   );
 };
