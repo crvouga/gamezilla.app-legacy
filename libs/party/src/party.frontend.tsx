@@ -330,7 +330,7 @@ const ViewNotInParty = ({
   if (parties.length === 0) {
     return (
       <FillBox>
-        <Header title="party" />
+        <Header title="Party" />
         <ViewEmptyState
           renderIcon={({ sx }) => <Icons.People sx={sx} />}
           title="No Active Parties"
@@ -341,7 +341,7 @@ const ViewNotInParty = ({
 
   return (
     <FillBox>
-      <Header title="party" />
+      <Header title="Party" />
       <Box sx={{ paddingX: 2 }}>
         <Button
           fullWidth

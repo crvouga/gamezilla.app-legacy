@@ -70,7 +70,7 @@ export const update = (
     //
     //
 
-    case 'Audio_Done': {
+    case 'audio-done': {
       return [model, Cmd.None];
     }
 
@@ -244,7 +244,7 @@ const handleResponse = (
 };
 
 const playAudio = (src: string): Cmd<Msg> => {
-  return Audio.play(src, t('Audio_Done'));
+  return Audio.play(src, t('audio-done'));
 };
 
 //
@@ -330,7 +330,7 @@ export const View = ({
       leftPlayerType: 'w',
       playerId:
         model.sharedModel.userId === 'none' ? null : model.sharedModel.userId,
-      title: 'chess',
+      title: 'Chess',
       subtitle: 'Vs Computer',
     });
   }
