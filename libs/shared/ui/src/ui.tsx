@@ -82,7 +82,7 @@ const createTheme = ({ mode }: { mode: 'light' | 'dark' }) =>
         },
         MuiAvatar: {
           defaultProps: {
-            variant: 'circular',
+            variant: 'rounded',
           },
         },
         MuiAvatarGroup: {
@@ -537,7 +537,7 @@ export const FillBox = ({ sx, ...props }: Mui.BoxProps) => {
         width: '100%',
         height: '100%',
         overflowX: 'hidden',
-        overflowY: 'scroll',
+        overflowY: 'hidden',
         padding: 0,
         margin: 0,
         ...sx,

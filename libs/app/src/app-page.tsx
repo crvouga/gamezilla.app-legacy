@@ -569,7 +569,7 @@ export const ViewReady = ({
   switch (model[0]) {
     case 'account':
       return (
-        <FillBox>
+        <>
           <Account.View
             username={profile.username}
             model={model[1]}
@@ -582,12 +582,12 @@ export const ViewReady = ({
             route={route}
             $send={$send}
           />
-        </FillBox>
+        </>
       );
 
     case 'chat':
       return (
-        <FillBox>
+        <>
           <Chat.View
             ctx={ctx}
             model={model[1]}
@@ -601,12 +601,12 @@ export const ViewReady = ({
             route={route}
             $send={$send}
           />
-        </FillBox>
+        </>
       );
 
     case 'search':
       return (
-        <FillBox>
+        <>
           <PageProfileSearch.View
             $send={(msg) => $send(['search', msg])}
             model={model[1]}
@@ -620,12 +620,12 @@ export const ViewReady = ({
             route={route}
             $send={$send}
           />
-        </FillBox>
+        </>
       );
 
     case 'chat-new':
       return (
-        <FillBox>
+        <>
           <ChatNew.View
             profileStore={profileStore}
             chatStore={chatStore}
@@ -640,7 +640,7 @@ export const ViewReady = ({
             route={route}
             $send={$send}
           />{' '}
-        </FillBox>
+        </>
       );
 
     case 'chat-conversation':
@@ -671,7 +671,7 @@ export const ViewReady = ({
 
     case 'profile-update':
       return (
-        <FillBox>
+        <>
           <PageProfileUpdate.View
             currentUserProfile={profile}
             model={model[1]}
@@ -684,12 +684,12 @@ export const ViewReady = ({
             route={route}
             $send={$send}
           />{' '}
-        </FillBox>
+        </>
       );
 
     case 'profile':
       return (
-        <FillBox>
+        <>
           <PageProfile.View
             userId={model[1].userId}
             profileStore={profileStore}
@@ -704,7 +704,7 @@ export const ViewReady = ({
             route={route}
             $send={$send}
           />{' '}
-        </FillBox>
+        </>
       );
 
     case 'room-game':
@@ -721,7 +721,7 @@ export const ViewReady = ({
 
     case 'party': {
       return (
-        <FillBox>
+        <>
           <Party.ViewPage
             ctx={ctx}
             model={party}
@@ -734,13 +734,13 @@ export const ViewReady = ({
             route={route}
             $send={$send}
           />{' '}
-        </FillBox>
+        </>
       );
     }
 
     case 'room-list': {
       return (
-        <FillBox>
+        <>
           <RoomFrontend.ViewPageRoomList
             $send={$sendRoom}
             ctx={ctx}
@@ -753,7 +753,7 @@ export const ViewReady = ({
             route={route}
             $send={$send}
           />{' '}
-        </FillBox>
+        </>
       );
     }
 

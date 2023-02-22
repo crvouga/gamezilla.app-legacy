@@ -985,7 +985,6 @@ const ViewRoomUserCard = ({
         flexDirection: 'column',
         justifyContent: 'center',
         overflow: 'hidden',
-        padding: 1,
         ...sx,
       }}
     >
