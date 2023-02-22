@@ -15,7 +15,6 @@ import { Alerts, Ctx, Route, UserId } from '@gamezilla/shared';
 import {
   Box,
   ButtonBase,
-  FillBox,
   Icons,
   LoadingPage,
   Typography,
