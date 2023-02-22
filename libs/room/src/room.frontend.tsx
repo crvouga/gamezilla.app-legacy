@@ -985,12 +985,14 @@ export const ViewNotInGame = ({
         >
           {users.map((user) => {
             return (
-              <ViewRoomUserCard
-                isHost={room.hostId === user.userId}
-                userId={user.userId}
-                ctx={ctx}
-                sx={{ width: '50%' }}
-              />
+              <CardActionArea onClick={() => $send(['clicked-user', user])}>
+                <ViewRoomUserCard
+                  isHost={room.hostId === user.userId}
+                  userId={user.userId}
+                  ctx={ctx}
+                  sx={{ width: '50%' }}
+                />
+              </CardActionArea>
             );
           })}
         </Box>
@@ -1037,12 +1039,17 @@ export const ViewNotInGame = ({
       >
         {users.map((user) => {
           return (
-            <ViewRoomUserCard
-              isHost={room.hostId === user.userId}
-              userId={user.userId}
-              ctx={ctx}
+            <CardActionArea
               sx={{ width: 100 }}
-            />
+              onClick={() => $send(['clicked-user', user])}
+            >
+              <ViewRoomUserCard
+                isHost={room.hostId === user.userId}
+                userId={user.userId}
+                ctx={ctx}
+                sx={{ width: '100%' }}
+              />
+            </CardActionArea>
           );
         })}
       </Box>
