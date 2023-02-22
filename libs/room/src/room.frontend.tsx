@@ -1093,7 +1093,7 @@ export const ViewNotInGame = ({
           return (
             <CardActionArea
               key={user.userId}
-              sx={{ width: 72 }}
+              sx={{ width: 100 }}
               onClick={() => $send(['clicked-user', user])}
             >
               <ViewRoomUserCard
