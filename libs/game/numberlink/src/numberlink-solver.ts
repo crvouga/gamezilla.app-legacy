@@ -1,3 +1,5 @@
+import { NonEmpty } from '@gamezilla/core';
+
 export type ModelUnsolved = (string | null)[][];
 
 export type ModelSolved = string[][];
@@ -68,26 +70,144 @@ const isSolved = (model: ModelUnsolved): model is ModelSolved => {
   return model.every((column) => column.every((cell) => cell !== null));
 };
 
-function* generateAllPossiblePaths(
-  _model: ModelUnsolved,
+export function* generateAllPossiblePaths(
+  model: ModelUnsolved,
   start: Position,
-  _end: Position
+  end: Position
 ): Generator<ModelUnsolved> {
   const visited = new Set<string>();
   const stack: Position[] = [start];
-  // const path: Position[] = [];
+  const path: Position[] = [];
+
   while (stack.length > 0) {
     const current = stack.pop();
     if (!current) {
       break;
     }
-    if (visited.has(toKey(current))) {
+
+    if (current.x === end.x && current.y === end.y) {
+      yield model;
       continue;
     }
-    visited.add(toKey(current));
+
+    path.push(current);
+
+    for (const neighbor of toNeighbors(model, current)) {
+      if (visited.has(toKey(neighbor))) {
+        continue;
+      }
+      stack.push(neighbor);
+    }
   }
-  yield _model;
+  yield model;
 }
+
+export function* allPaths(
+  model: ModelUnsolved,
+  start: Position,
+  end: Position,
+  visited: Set<string>,
+  path: Position[]
+): Generator<NonEmpty<Position>> {
+  path.push(start);
+  visited.add(toKey(start));
+
+  if (start.x === end.x && start.y === end.y) {
+    const copy = path.map((position) => ({ ...position }));
+    if (NonEmpty.is(copy)) {
+      yield copy;
+    }
+  } else {
+    for (const neighbor of toNeighbors(model, start)) {
+      if (!visited.has(toKey(neighbor))) {
+        yield* allPaths(model, neighbor, end, visited, path);
+      }
+    }
+  }
+  path.pop();
+  visited.delete(toKey(start));
+}
+
+const setCell = (
+  model: ModelUnsolved,
+  position: Position,
+  cellNew: string | null
+) => {
+  return model.map((column, x) =>
+    column.map((cell, y) =>
+      x === position.x && y === position.y ? cellNew : cell
+    )
+  );
+};
+
+export const addPath = (
+  model: ModelUnsolved,
+  cellNew: string,
+  path: Position[]
+): ModelUnsolved => {
+  return path.reduce(
+    (modelNew, position) => setCell(modelNew, position, cellNew),
+    model
+  );
+};
+
+export const modelToString = (model: ModelUnsolved): string => {
+  return model
+    .map((column) => column.map((cell) => (cell ? cell : '_')).join(' '))
+    .join('\n');
+};
+
+export const pathToString = (
+  model: ModelUnsolved,
+  path: NonEmpty<Position>
+): string => {
+  return model
+    .map((column, x) =>
+      column
+        .map((cell, y) => {
+          if (!cell) {
+            return '  ';
+          }
+
+          const position = { x, y };
+          const positionIndex = path.findIndex(
+            (position) => position.x === x && position.y === y
+          );
+          if (positionIndex === -1) {
+            return '⁉️';
+          }
+
+          const nextPosition = path[positionIndex + 1];
+
+          if (!nextPosition) {
+            return '🏁';
+          }
+          const emoji = toDirectionEmoji(sub(nextPosition, position));
+          return emoji;
+        })
+        .join(' ')
+    )
+    .join('\n');
+};
+
+const sub = (a: Position, b: Position): Position => {
+  return { x: a.x - b.x, y: a.y - b.y };
+};
+const toDirectionEmoji = ({ x, y }: Position): string => {
+  if (x === 1 && y === 0) {
+    return '👇';
+  }
+  if (x === -1 && y === 0) {
+    return '👆';
+  }
+  if (x === 0 && y === 1) {
+    return '👉';
+  }
+  if (x === 0 && y === -1) {
+    return '👈';
+  }
+  return '❓';
+};
 
 const isConnected = (
   model: ModelUnsolved,
@@ -109,26 +229,26 @@ const isConnected = (
     if (current.x === end.x && current.y === end.y) {
       return true;
     }
-    for (const neighbor of getNeighbors(model, current)) {
+    for (const neighbor of toNeighbors(model, current)) {
       stack.push(neighbor);
     }
   }
   return false;
 };
 
-const getNeighbors = (model: ModelUnsolved, position: Position): Position[] => {
+const toNeighbors = (model: ModelUnsolved, position: Position): Position[] => {
   const neighbors: Position[] = [];
   const { x, y } = position;
-  if (model[x - 1]?.[y]) {
+  if (model[x - 1]?.[y] !== undefined) {
     neighbors.push({ x: x - 1, y });
   }
-  if (model[x + 1]?.[y]) {
+  if (model[x + 1]?.[y] !== undefined) {
     neighbors.push({ x: x + 1, y });
   }
-  if (model[x]?.[y - 1]) {
+  if (model[x]?.[y - 1] !== undefined) {
     neighbors.push({ x, y: y - 1 });
   }
-  if (model[x]?.[y + 1]) {
+  if (model[x]?.[y + 1] !== undefined) {
     neighbors.push({ x, y: y + 1 });
   }
   return neighbors;
