@@ -1,5 +1,3 @@
-import { NonEmpty } from '@gamezilla/core';
-
 export type ModelUnsolved = (string | null)[][];
 
 export type ModelSolved = string[][];
