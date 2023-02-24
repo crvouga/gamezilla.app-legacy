@@ -56,7 +56,7 @@ describe('numberlink solver', () => {
     }
   });
 
-  it('generates all possible paths', () => {
+  it('generates all possible paths for 3x3 grid', () => {
     const start = { x: 0, y: 0 };
     const end = { x: 2, y: 2 };
     const input: ModelUnsolved = [
