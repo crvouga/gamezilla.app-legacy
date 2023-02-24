@@ -70,9 +70,22 @@ const isSolved = (model: ModelUnsolved): model is ModelSolved => {
 
 function* generateAllPossiblePaths(
   _model: ModelUnsolved,
-  _start: Position,
+  start: Position,
   _end: Position
 ): Generator<ModelUnsolved> {
+  const visited = new Set<string>();
+  const stack: Position[] = [start];
+  // const path: Position[] = [];
+  while (stack.length > 0) {
+    const current = stack.pop();
+    if (!current) {
+      break;
+    }
+    if (visited.has(toKey(current))) {
+      continue;
+    }
+    visited.add(toKey(current));
+  }
   yield _model;
 }
 
