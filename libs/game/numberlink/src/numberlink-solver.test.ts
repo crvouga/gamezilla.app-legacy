@@ -10,8 +10,6 @@ import {
 
 const _ = null;
 const a = 'a';
-const s = 'a';
-const e = 'a';
 const unsolved: ModelUnsolved = [
   [a, _, _, _, _],
   [_, '4', '5', '3', '4'],
@@ -29,37 +27,38 @@ describe('numberlink solver', () => {
   });
 
   it('generates all possible paths for 2x2 grid', () => {
+    const cell = '1';
     const start = { x: 0, y: 0 };
     const end = { x: 1, y: 1 };
     const input: ModelUnsolved = [
-      [s, _],
-      [_, e],
+      [cell, null],
+      [null, cell],
     ];
-
-    const expected: ModelUnsolved[] = [
+    const expected: PathSlot[][][] = [
       [
-        [s, _],
-        [a, e],
+        ['⬇️', '  '],
+        ['➡️', '✅'],
       ],
       [
-        [s, a],
-        [_, e],
+        ['➡️', '⬇️'],
+        ['  ', '✅'],
       ],
     ];
-
     const paths = Array.from(allPaths(input, start, end, new Set(), []));
+    const actual = paths.map((path) =>
+      toPathGrid(addPath(input, cell, path), path)
+    );
+
+    expect(actual).toEqual(expect.arrayContaining(expected));
     expect(paths.length).toEqual(expected.length);
-    for (const path of paths) {
-      const actual = addPath(input, a, path);
-      expect(expected).toContainEqual(actual);
-    }
   });
 
   it('generates all possible paths for 3x3 grid', () => {
+    const cell = '1';
     const input: ModelUnsolved = [
-      ['1', null, null],
+      [cell, null, null],
       [null, null, null],
-      [null, null, '1'],
+      [null, null, cell],
     ];
     const start = { x: 0, y: 0 };
     const end = { x: 2, y: 2 };
@@ -129,7 +128,7 @@ describe('numberlink solver', () => {
 
     const paths = Array.from(allPaths(input, start, end, new Set(), []));
     const actual = paths.map((path) =>
-      toPathGrid(addPath(input, a, path), path)
+      toPathGrid(addPath(input, cell, path), path)
     );
 
     expect(actual).toEqual(expect.arrayContaining(expected));
