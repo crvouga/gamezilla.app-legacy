@@ -154,15 +154,3 @@ describe('numberlink solver', () => {
     // expect(solutions).toEqual([expected]);
   });
 });
-
-const difference =
-  <T>(eq: (a: T, b: T) => boolean) =>
-  (a: T[], b: T[]) => {
-    return a.filter((x) => !b.some((y) => eq(x, y)));
-  };
-
-const duplicates =
-  <T>(eq: (a: T, b: T) => boolean) =>
-  (a: T[]) => {
-    return a.filter((x, i) => a.findIndex((y) => eq(x, y)) !== i);
-  };
