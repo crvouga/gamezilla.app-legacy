@@ -1,12 +1,11 @@
-import { eq } from '@gamezilla/core';
 import {
   addPath,
   allPaths,
   findEndPosition,
-  modelToString,
   ModelUnsolved,
-  pathToString,
+  PathSlot,
   Position,
+  toPathGrid,
 } from './numberlink-solver';
 
 const _ = null;
@@ -57,156 +56,83 @@ describe('numberlink solver', () => {
   });
 
   it('generates all possible paths for 3x3 grid', () => {
+    const input: ModelUnsolved = [
+      ['1', null, null],
+      [null, null, null],
+      [null, null, '1'],
+    ];
     const start = { x: 0, y: 0 };
     const end = { x: 2, y: 2 };
-    const input: ModelUnsolved = [
-      [s, _, _],
-      [_, _, _],
-      [_, _, e],
-    ];
 
-    const ____ = null;
-    const empty = [
-      [____, ____, ____],
-      [____, ____, ____],
-      [____, ____, '✅'],
-    ];
-    const _expected_: ModelUnsolved[] = [
+    const expected: PathSlot[][][] = [
       [
-        ['👇', ____, ____],
-        ['👇', ____, ____],
-        ['👉', '👉', '✅'],
+        ['⬇️', '  ', '  '],
+        ['⬇️', '  ', '  '],
+        ['➡️', '➡️', '✅'],
       ],
       [
-        ['👉', '👉', '👇'],
-        [____, ____, '👇'],
-        [____, ____, '✅'],
-      ],
-    ];
-
-    const expected: ModelUnsolved[] = [
-      /*
-        👇
-        👇
-        👉 👉 ✅
-      */
-      [
-        [s, _, _],
-        [a, _, _],
-        [a, a, e],
-      ],
-      /*
-        👉 👉 👇
-              👇
-              ✅
-      */
-      [
-        [s, a, a],
-        [_, _, a],
-        [_, _, e],
-      ],
-      /*
-        👇
-        👇 👉 👇
-        👉 👆 ✅
-      */
-      [
-        [s, _, _],
-        [a, a, a],
-        [a, a, e],
-      ],
-      /*
-        👇 👉 👇
-        👇 👆 👇
-        👉 👆 ✅
-      */
-      [
-        [s, a, a],
-        [a, a, a],
-        [a, a, e],
-      ],
-      /*
-        👉 👉 👇
-        👇 👈 👈
-        👉 👉 ✅
-      */
-      [
-        [s, a, a],
-        [a, a, a],
-        [a, a, e],
-      ],
-      /*
-        👉 👇
-           👉 👇
-              ✅
-      */
-      [
-        [s, a, _],
-        [_, a, a],
-        [_, _, e],
-      ],
-      /*
-        👉 👇
-           👇
-           👉  ✅
-      */
-      [
-        [s, a, _],
-        [_, a, _],
-        [_, a, e],
-      ],
-      /*
-        👉
-        👇 👉 👇
-              ✅
-      */
-      [
-        [s, _, _],
-        [a, a, a],
-        [_, _, e],
-      ],
-      /*
-        👉 👇
-        👇 👈
-        👉 👉 ✅
-      */
-      [
-        [s, a, _],
-        [a, a, _],
-        [a, a, e],
-      ],
-      /*
-        👇 👉 👇
-        👉 👆 👇
-              ✅
-      */
-      [
-        [s, a, a],
-        [a, a, a],
-        [_, _, e],
+        ['➡️', '➡️', '⬇️'],
+        ['  ', '  ', '⬇️'],
+        ['  ', '  ', '✅'],
       ],
       [
-        [s, a, a],
-        [_, a, a],
-        [_, a, e],
+        ['⬇️', '  ', '  '],
+        ['⬇️', '➡️', '⬇️'],
+        ['➡️', '⬆️', '✅'],
       ],
       [
-        [s, _, _],
-        [a, a, _],
-        [_, a, e],
+        ['⬇️', '➡️', '⬇️'],
+        ['⬇️', '⬆️', '⬇️'],
+        ['➡️', '⬆️', '✅'],
+      ],
+      [
+        ['➡️', '➡️', '⬇️'],
+        ['⬇️', '⬅️', '⬅️'],
+        ['➡️', '➡️', '✅'],
+      ],
+      [
+        ['➡️', '⬇️', '  '],
+        ['  ', '➡️', '⬇️'],
+        ['  ', '  ', '✅'],
+      ],
+      [
+        ['➡️', '⬇️', '  '],
+        ['  ', '⬇️', '  '],
+        ['  ', '➡️', '✅'],
+      ],
+      [
+        ['⬇️', '  ', '  '],
+        ['➡️', '➡️', '⬇️'],
+        ['  ', '  ', '✅'],
+      ],
+      [
+        ['➡️', '⬇️', '  '],
+        ['⬇️', '⬅️', '  '],
+        ['➡️', '➡️', '✅'],
+      ],
+      [
+        ['⬇️', '➡️', '⬇️'],
+        ['➡️', '⬆️', '⬇️'],
+        ['  ', '  ', '✅'],
+      ],
+      [
+        ['➡️', '➡️', '⬇️'],
+        ['  ', '⬇️', '⬅️'],
+        ['  ', '➡️', '✅'],
+      ],
+      [
+        ['⬇️', '  ', '  '],
+        ['➡️', '⬇️', '  '],
+        ['  ', '➡️', '✅'],
       ],
     ];
 
     const paths = Array.from(allPaths(input, start, end, new Set(), []));
+    const actual = paths.map((path) =>
+      toPathGrid(addPath(input, a, path), path)
+    );
 
-    const actual: ModelUnsolved[] = [];
-    for (const path of paths) {
-      const actualItem = addPath(input, a, path);
-      // console.log(pathToString(actualItem, path));
-      // console.log('------------------------------------------');
-      expect(expected).toContainEqual(actualItem);
-      actual.push(actualItem);
-    }
+    expect(actual).toEqual(expect.arrayContaining(expected));
     expect(paths.length).toEqual(expected.length);
   });
   it('should solve a simple puzzle', () => {

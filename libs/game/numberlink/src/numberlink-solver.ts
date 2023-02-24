@@ -108,15 +108,13 @@ export function* allPaths(
   end: Position,
   visited: Set<string>,
   path: Position[]
-): Generator<NonEmpty<Position>> {
+): Generator<Position[]> {
   path.push(start);
   visited.add(toKey(start));
 
   if (start.x === end.x && start.y === end.y) {
     const copy = path.map((position) => ({ ...position }));
-    if (NonEmpty.is(copy)) {
-      yield copy;
-    }
+    yield copy;
   } else {
     for (const neighbor of toNeighbors(model, start)) {
       if (!visited.has(toKey(neighbor))) {
@@ -151,62 +149,64 @@ export const addPath = (
   );
 };
 
+export type PathSlot = '⬇️' | '⬆️' | '➡️' | '⬅️' | '✅' | '  ';
+
 export const modelToString = (model: ModelUnsolved): string => {
   return model
     .map((column) => column.map((cell) => (cell ? cell : '_')).join(' '))
     .join('\n');
 };
 
-export const pathToString = (
+export const toPathGrid = (
   model: ModelUnsolved,
-  path: NonEmpty<Position>
-): string => {
-  return model
-    .map((column, x) =>
-      column
-        .map((cell, y) => {
-          if (!cell) {
-            return '  ';
-          }
+  path: Position[]
+): PathSlot[][] => {
+  return model.map((column, x) =>
+    column.map((cell, y) => {
+      if (!cell) {
+        return '  ';
+      }
 
-          const position = { x, y };
-          const positionIndex = path.findIndex(
-            (position) => position.x === x && position.y === y
-          );
-          if (positionIndex === -1) {
-            return '⁉️';
-          }
+      const position = { x, y };
+      const positionIndex = path.findIndex(
+        (position) => position.x === x && position.y === y
+      );
+      if (positionIndex === -1) {
+        return '  ';
+      }
 
-          const nextPosition = path[positionIndex + 1];
+      const nextPosition = path[positionIndex + 1];
 
-          if (!nextPosition) {
-            return '🏁';
-          }
-          const emoji = toDirectionEmoji(sub(nextPosition, position));
-          return emoji;
-        })
-        .join(' ')
-    )
-    .join('\n');
+      if (!nextPosition) {
+        return '✅';
+      }
+      const emoji = toDirectionEmoji(sub(nextPosition, position));
+      return emoji;
+    })
+  );
+};
+
+export const pathGridToString = (pathGrid: PathSlot[][]): string => {
+  return pathGrid.map((row) => row.join(' ')).join('\n');
 };
 
 const sub = (a: Position, b: Position): Position => {
   return { x: a.x - b.x, y: a.y - b.y };
 };
-const toDirectionEmoji = ({ x, y }: Position): string => {
+const toDirectionEmoji = ({ x, y }: Position): PathSlot => {
   if (x === 1 && y === 0) {
-    return '👇';
+    return '⬇️';
   }
   if (x === -1 && y === 0) {
-    return '👆';
+    return '⬆️';
   }
   if (x === 0 && y === 1) {
-    return '👉';
+    return '➡️';
   }
   if (x === 0 && y === -1) {
-    return '👈';
+    return '⬅️';
   }
-  return '❓';
+  return '  ';
 };
 
 const isConnected = (
