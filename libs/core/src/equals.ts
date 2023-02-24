@@ -1,3 +1,4 @@
+import fastDeepEqual from 'fast-deep-equal';
 /**
  *
  * @example
@@ -9,6 +10,5 @@
  */
 export const eq = <A, B>(a: A, b: B): boolean => {
   // TODO make this better
-  return JSON.stringify(a) === JSON.stringify(b)
-}
-
+  return fastDeepEqual(a, b);
+};
