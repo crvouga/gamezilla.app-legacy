@@ -73,7 +73,6 @@ export function* generateAllPossiblePaths(
   start: Position,
   end: Position
 ): Generator<ModelUnsolved> {
-  const visited = new Set<string>();
   const stack: Position[] = [start];
   const path: Position[] = [];
 
@@ -89,18 +88,19 @@ export function* generateAllPossiblePaths(
     }
 
     path.push(current);
-
-    for (const neighbor of toNeighbors(model, current)) {
-      if (visited.has(toKey(neighbor))) {
-        continue;
-      }
-      stack.push(neighbor);
-    }
   }
   yield model;
 }
 
+const deltas = [
+  { x: 1, y: 0 },
+  { x: 0, y: 1 },
+  { x: -1, y: 0 },
+  { x: 0, y: -1 },
+] as const;
+
 export function* allPaths(
+  targetCell: string,
   model: ModelUnsolved,
   start: Position,
   end: Position,
@@ -114,10 +114,27 @@ export function* allPaths(
     const copy = path.map((position) => ({ ...position }));
     yield copy;
   } else {
-    for (const neighbor of toNeighbors(model, start)) {
-      if (!visited.has(toKey(neighbor))) {
-        yield* allPaths(model, neighbor, end, visited, path);
+    for (const delta of deltas) {
+      const neighbor = { x: start.x + delta.x, y: start.y + delta.y };
+
+      const neighborCell = model[neighbor.x]?.[neighbor.y];
+
+      const isOutOfBounds = neighborCell === undefined;
+      if (isOutOfBounds) {
+        continue;
       }
+
+      const isObstacle =
+        typeof neighborCell === 'string' && neighborCell !== targetCell;
+      if (isObstacle) {
+        continue;
+      }
+
+      if (visited.has(toKey(neighbor))) {
+        continue;
+      }
+
+      yield* allPaths(targetCell, model, neighbor, end, visited, path);
     }
   }
   path.pop();
@@ -208,7 +225,7 @@ const toDirectionEmoji = ({ x, y }: Position): PathSlot => {
 };
 
 const isConnected = (
-  model: ModelUnsolved,
+  _model: ModelUnsolved,
   start: Position,
   end: Position
 ): boolean => {
@@ -227,29 +244,8 @@ const isConnected = (
     if (current.x === end.x && current.y === end.y) {
       return true;
     }
-    for (const neighbor of toNeighbors(model, current)) {
-      stack.push(neighbor);
-    }
   }
   return false;
-};
-
-const toNeighbors = (model: ModelUnsolved, position: Position): Position[] => {
-  const neighbors: Position[] = [];
-  const { x, y } = position;
-  if (model[x - 1]?.[y] !== undefined) {
-    neighbors.push({ x: x - 1, y });
-  }
-  if (model[x + 1]?.[y] !== undefined) {
-    neighbors.push({ x: x + 1, y });
-  }
-  if (model[x]?.[y - 1] !== undefined) {
-    neighbors.push({ x, y: y - 1 });
-  }
-  if (model[x]?.[y + 1] !== undefined) {
-    neighbors.push({ x, y: y + 1 });
-  }
-  return neighbors;
 };
 
 export const findEndPosition = (

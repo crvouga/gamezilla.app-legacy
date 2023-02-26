@@ -44,7 +44,7 @@ describe('numberlink solver', () => {
         ['  ', '✅'],
       ],
     ];
-    const paths = Array.from(allPaths(input, start, end, new Set(), []));
+    const paths = Array.from(allPaths(cell, input, start, end, new Set(), []));
     const actual = paths.map((path) =>
       toPathGrid(addPath(input, cell, path), path)
     );
@@ -126,7 +126,7 @@ describe('numberlink solver', () => {
       ],
     ];
 
-    const paths = Array.from(allPaths(input, start, end, new Set(), []));
+    const paths = Array.from(allPaths(cell, input, start, end, new Set(), []));
     const actual = paths.map((path) =>
       toPathGrid(addPath(input, cell, path), path)
     );
@@ -134,6 +134,64 @@ describe('numberlink solver', () => {
     expect(actual).toEqual(expect.arrayContaining(expected));
     expect(paths.length).toEqual(expected.length);
   });
+
+  it('generates all paths for 3x3 grid with obstacles', () => {
+    const input: ModelUnsolved = [
+      ['1', null, null],
+      [null, '2', null],
+      [null, null, '1'],
+    ];
+    const start = { x: 0, y: 0 };
+    const end = { x: 2, y: 2 };
+    const expected: PathSlot[][][] = [
+      [
+        ['⬇️', '  ', '  '],
+        ['⬇️', '  ', '  '],
+        ['➡️', '➡️', '✅'],
+      ],
+      [
+        ['➡️', '➡️', '⬇️'],
+        ['  ', '  ', '⬇️'],
+        ['  ', '  ', '✅'],
+      ],
+    ];
+
+    const paths = Array.from(allPaths('1', input, start, end, new Set(), []));
+    const actual = paths.map((path) =>
+      toPathGrid(addPath(input, '1', path), path)
+    );
+
+    expect(actual).toEqual(expect.arrayContaining(expected));
+    expect(paths.length).toEqual(expected.length);
+  });
+
+  it('generates all paths for 4x4 grid with obstacles', () => {
+    const input: ModelUnsolved = [
+      ['1', null, '3', '3'],
+      ['4', null, '2', '3'],
+      ['4', null, '2', '3'],
+      ['4', null, null, '1'],
+    ];
+    const start = { x: 0, y: 0 };
+    const end = { x: 3, y: 3 };
+    const expected: PathSlot[][][] = [
+      [
+        ['➡️', '⬇️', '  ', '  '],
+        ['  ', '⬇️', '  ', '  '],
+        ['  ', '⬇️', '  ', '  '],
+        ['  ', '➡️', '➡️', '✅'],
+      ],
+    ];
+
+    const paths = Array.from(allPaths('1', input, start, end, new Set(), []));
+    const actual = paths.map((path) =>
+      toPathGrid(addPath(input, '1', path), path)
+    );
+
+    expect(actual).toEqual(expect.arrayContaining(expected));
+    expect(paths.length).toEqual(expected.length);
+  });
+
   it('should solve a simple puzzle', () => {
     // const unsolved: ModelUnsolved = [
     //   [a, null, null, null, null],
