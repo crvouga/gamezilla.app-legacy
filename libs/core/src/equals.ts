@@ -1,4 +1,3 @@
-import fastDeepEqual from 'fast-deep-equal';
 /**
  *
  * @example
@@ -8,7 +7,6 @@ import fastDeepEqual from 'fast-deep-equal';
  * eq({a: { b: [1] }}, {a: { b: [1, 2] }}) \\=> false
  *
  */
-export const eq = <A, B>(a: A, b: B): boolean => {
-  // TODO make this better
-  return fastDeepEqual(a, b);
-};
+export function eq(a: unknown, b: unknown): boolean {
+  return JSON.stringify(a) === JSON.stringify(b);
+}
