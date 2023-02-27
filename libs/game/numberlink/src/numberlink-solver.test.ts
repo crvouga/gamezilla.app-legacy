@@ -1,7 +1,12 @@
+import { generate } from 'rxjs';
 import {
   addPath,
   allPaths,
   findEndPosition,
+  generateSolutions,
+  isConnected,
+  isSolved,
+  ModelSolved,
   ModelUnsolved,
   PathSlot,
   Position,
@@ -192,22 +197,80 @@ describe('numberlink solver', () => {
     expect(paths.length).toEqual(expected.length);
   });
 
-  it('should solve a simple puzzle', () => {
-    // const unsolved: ModelUnsolved = [
-    //   [a, null, null, null, null],
-    //   [null, '4', '5', '3', '4'],
-    //   [null, '5', null, null, '3'],
-    //   [null, null, null, null, null],
-    //   ['2', null, null, '2', a],
-    // ];
-    // const expected: ModelSolved = [
-    //   ['1', '4', '4', '4', '4'],
-    //   ['1', '4', '5', '3', '4'],
-    //   ['1', '5', '5', '3', '3'],
-    //   ['1', '1', '1', '1', '1'],
-    //   ['2', '2', '2', '2', '1'],
-    // ];
-    // const solutions = solve(unsolved);
-    // expect(solutions).toEqual([expected]);
+  it('detects if connected', () => {
+    const input: ModelUnsolved = [
+      ['1', null, null, null, null],
+      ['1', '4', '5', '3', '4'],
+      ['1', '5', null, null, '3'],
+      ['1', '1', '1', '1', '1'],
+      ['2', null, null, '2', '1'],
+    ];
+
+    const start = { x: 0, y: 0 };
+    const end = { x: 4, y: 4 };
+    const color = '1';
+
+    expect(isConnected(input, color, start, end)).toBeTruthy();
+  });
+
+  it('detects if not connected', () => {
+    const input: ModelUnsolved = [
+      ['1', null, null, null, null],
+      ['1', '4', '5', '3', '4'],
+      ['1', '5', null, null, '3'],
+      ['1', '1', '1', '1', null],
+      ['2', null, null, '2', '1'],
+    ];
+
+    const start = { x: 0, y: 0 };
+    const end = { x: 4, y: 4 };
+    const color = '1';
+
+    expect(isConnected(input, color, start, end)).toBeFalsy();
+  });
+
+  it('detects if not solved', () => {
+    const input: ModelUnsolved = [
+      ['1', '4', '4', '4', '4'],
+      ['1', '4', '5', '3', '4'],
+      ['1', '5', '5', '3', '3'],
+      ['1', '1', '1', '1', '1'],
+      ['2', '1', '1', '2', '1'],
+    ];
+
+    expect(isSolved(input)).toBeFalsy();
+  });
+
+  it('detects if solved', () => {
+    const input: ModelUnsolved = [
+      ['1', '4', '4', '4', '4'],
+      ['1', '4', '5', '3', '4'],
+      ['1', '5', '5', '3', '3'],
+      ['1', '1', '1', '1', '1'],
+      ['2', '2', '2', '2', '1'],
+    ];
+
+    expect(isSolved(input)).toBeTruthy();
+  });
+
+  it('should solve 5x5 puzzle', () => {
+    const unsolved: ModelUnsolved = [
+      ['1', null, null, null, null],
+      [null, '4', '5', '3', '4'],
+      [null, '5', null, null, '3'],
+      [null, null, null, null, null],
+      ['2', null, null, '2', '1'],
+    ];
+    const expected: ModelSolved = [
+      ['1', '4', '4', '4', '4'],
+      ['1', '4', '5', '3', '4'],
+      ['1', '5', '5', '3', '3'],
+      ['1', '1', '1', '1', '1'],
+      ['2', '2', '2', '2', '1'],
+    ];
+    const solutions = Array.from(generateSolutions(unsolved));
+
+    expect(solutions.length).toEqual(1);
+    expect(solutions[0]).toEqual(expected);
   });
 });
