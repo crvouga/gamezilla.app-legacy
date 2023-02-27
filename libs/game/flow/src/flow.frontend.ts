@@ -1,10 +1,12 @@
+import { Cmd, Sub } from '@gamezilla/core';
+import { GameRoomCtx } from '@gamezilla/game-shared';
 import { UserId } from '@gamezilla/shared';
-import { fillBox, text } from '@gamezilla/shared/ui';
-import { FrontendModel, FrontendMsg } from './flow.types';
+import { box, button, fillBox, text } from '@gamezilla/shared/ui';
+import { FrontendModel, FrontendMsg, SharedModel } from './flow.types';
 
 type Model = FrontendModel;
 
-export const init = ({ playerId }: { playerId: UserId }): Model => {
+export const init = ({ playerId }: { playerId?: UserId }): Model => {
   return {
     playerId,
   };
@@ -18,7 +20,7 @@ export const update = ({
 }: {
   msg: Msg;
   model: Model;
-}): { model: Model } => {
+}): { model: Model; cmd?: Cmd<Msg> } => {
   switch (msg[0]) {
     case 'none': {
       return { model };
@@ -26,6 +28,69 @@ export const update = ({
   }
 };
 
-export const view = ({ model }: { model: Model }) => {
-  return fillBox({}, [text({}, `hello world ${model.playerId}`)]);
+export const updateFromBackend = ({
+  msg,
+  model,
+}: {
+  msg: Msg;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  switch (msg[0]) {
+    case 'none': {
+      return { model };
+    }
+  }
+};
+
+export const mergeWithBackend = ({
+  frontendModel,
+  backendModel,
+}: {
+  frontendModel: FrontendModel;
+  backendModel: SharedModel;
+}) => {
+  return {
+    ...frontendModel,
+    ...backendModel,
+  };
+};
+
+export const subscriptions = (_model: Model): Sub<Msg> => {
+  return Sub.None;
+};
+
+export const view = ({
+  model,
+  gameRoomCtx,
+}: {
+  model: Model;
+  gameRoomCtx: GameRoomCtx;
+}) => {
+  return fillBox({}, [
+    text({}, `hello world ${model?.playerId ?? 'missing'}`),
+    box({ sx: { flex: 1 } }, []),
+    box(
+      {
+        sx: {
+          padding: 2,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        },
+      },
+      [
+        button(
+          {
+            variant: 'outlined',
+            startIcon: 'exit',
+            onPress: () => gameRoomCtx.onQuit(),
+          },
+          'Back'
+        ),
+      ]
+    ),
+  ]);
 };

@@ -4,7 +4,7 @@ import { BackendModel, BackendMsg, ToBackend } from './flow.types';
 
 type Model = BackendModel;
 
-export const init = ({ playerId }: { playerId: UserId }): Model => {
+export const init = ({ playerId }: { playerId?: UserId }): Model => {
   return {
     playerId,
   };

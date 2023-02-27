@@ -1,4 +1,4 @@
-import { Cmd, Sub } from '@gamezilla/core';
+import { Cmd, exhaustive, Sub } from '@gamezilla/core';
 import { GameRoomCtx } from '@gamezilla/game-shared';
 import { ChessFrontend } from '@gamezilla/game/chess';
 import { ConnectFourFrontend } from '@gamezilla/game/connect-four';
@@ -7,6 +7,7 @@ import { MazeFrontend } from '@gamezilla/game/maze';
 import { SnakeFrontend } from '@gamezilla/game/snake';
 import { TetrisFrontend } from '@gamezilla/game/tetris';
 import { TicTacToeFrontend } from '@gamezilla/game/tic-tac-toe';
+import { FlowFrontend } from '@gamezilla/game/flow';
 import { ProfileStore } from '@gamezilla/profile';
 import { Alerts, Ctx } from '@gamezilla/shared';
 import {
@@ -63,6 +64,10 @@ export const init = ({
 
     case 'maze': {
       return [{ type: 'maze', child: MazeFrontend.init({}) }, Cmd.None];
+    }
+
+    case 'flow': {
+      return [{ type: 'flow', child: FlowFrontend.init({}) }, Cmd.None];
     }
   }
 };
@@ -175,6 +180,20 @@ export const update = (
       }
       return [model, Cmd.None];
     }
+
+    case 'flow': {
+      if (msg[0] !== 'flow') {
+        return [model, Cmd.None];
+      }
+      const updated = FlowFrontend.update({
+        msg: msg[1],
+        model: model.child,
+      });
+      return [
+        { type: 'flow', child: updated.model },
+        Cmd.tag('flow', updated?.cmd ?? Cmd.None),
+      ];
+    }
   }
 };
 
@@ -285,6 +304,21 @@ export const updateFromBackend = (
       }
       return [model, Cmd.None, []];
     }
+
+    case 'flow': {
+      if (model.type !== 'flow') {
+        return [model, Cmd.None, []];
+      }
+      const updated = FlowFrontend.updateFromBackend({
+        msg: msg[1],
+        model: model.child,
+      });
+      return [
+        { type: 'flow', child: updated.model },
+        Cmd.tag('flow', updated?.cmd ?? Cmd.None),
+        [],
+      ];
+    }
   }
 };
 
@@ -337,6 +371,10 @@ export const subscriptions = (
 
     case 'maze': {
       return Sub.tag('maze', MazeFrontend.subscriptions(model.child));
+    }
+
+    case 'flow': {
+      return Sub.tag('flow', FlowFrontend.subscriptions(model.child));
     }
   }
 };
@@ -430,6 +468,14 @@ export const View = ({
           ctx={ctx}
         />
       );
+    }
+
+    case 'flow': {
+      return FlowFrontend.view({ model: model.child, gameRoomCtx });
+    }
+
+    default: {
+      return exhaustive(model);
     }
   }
 };
@@ -635,6 +681,32 @@ export const mergeWithBackend = ({
           type: 'maze',
           child: MazeFrontend.mergeWithBackend({
             frontendModel: MazeFrontend.init({}),
+            backendModel: backendModel.child,
+          }),
+        },
+        Cmd.None,
+      ];
+    }
+
+    case 'flow': {
+      if (frontendModel.type === 'flow') {
+        return [
+          {
+            type: 'flow',
+            child: FlowFrontend.mergeWithBackend({
+              frontendModel: frontendModel.child,
+              backendModel: backendModel.child,
+            }),
+          },
+          Cmd.None,
+        ];
+      }
+
+      return [
+        {
+          type: 'flow',
+          child: FlowFrontend.mergeWithBackend({
+            frontendModel: FlowFrontend.init({}),
             backendModel: backendModel.child,
           }),
         },
