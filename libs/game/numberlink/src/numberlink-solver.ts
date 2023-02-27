@@ -33,16 +33,6 @@ export function* generateSolutions(
     yield model;
   }
 
-  for (const [start, end] of generateAllNonConnectedPair(model)) {
-    for (const pathAdded of generateAllPossiblePaths(model, start, end)) {
-      yield* generateSolutions(pathAdded);
-    }
-  }
-}
-
-function* generateAllNonConnectedPair(
-  model: ModelUnsolved
-): Generator<[Position, Position]> {
   for (const start of generateAllPositions(model)) {
     const cell = model[start.x]?.[start.y];
     if (!cell) {
@@ -52,7 +42,7 @@ function* generateAllNonConnectedPair(
     const end = findEndPosition(model, start);
 
     if (!end) {
-      // impossible
+      // invalid model
       continue;
     }
 
@@ -60,7 +50,10 @@ function* generateAllNonConnectedPair(
       continue;
     }
 
-    yield [start, end];
+    for (const path of allPaths(cell, model, start, end, new Set(), [])) {
+      const added = addPath(model, cell, path);
+      yield* generateSolutions(added);
+    }
   }
 }
 
