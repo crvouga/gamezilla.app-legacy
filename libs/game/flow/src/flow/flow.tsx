@@ -1,4 +1,4 @@
-import { Position } from './position';
+import { Direction, Position } from './position';
 
 type Node = {
   position: Position;
@@ -14,6 +14,30 @@ export type Model = {
   nodes: Node[];
   paths: Path[];
 };
+
+export type Puzzle = {
+  nodes: PuzzleNode[][];
+  paths: { [key: string]: Path };
+};
+
+type ShorthandNode = '⬛️' | '🔴' | '🟢' | '🟡' | '🟠' | '🟣' | '🔵' | '  ';
+
+export const puzzle: ShorthandNode[][] = [
+  ['⬛️', '🔴', '  ', '🔴', '⬛️'],
+  ['🔵', '  ', '🟢', '  ', '🟢'],
+  ['⬛️', '  ', '  ', '  ', '🔵'],
+];
+
+type PuzzleNode =
+  | {
+      type: 'endpoint';
+      color: string;
+      position: Position;
+    }
+  | {
+      type: 'obstacle';
+      position: Position;
+    };
 
 export const viewCoverArt = () => {
   return (
