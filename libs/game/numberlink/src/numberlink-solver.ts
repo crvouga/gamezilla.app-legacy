@@ -26,11 +26,22 @@ export const solve = (model: ModelUnsolved): ModelSolved[] => {
   return solutions;
 };
 
+const modelToKey = (model: ModelUnsolved) => {
+  return model.map((column) => column.join(',')).join(',');
+};
+
 export function* generateSolutions(
-  model: ModelUnsolved
+  model: ModelUnsolved,
+  solved: Set<string> = new Set()
 ): Generator<ModelSolved> {
+  if (solved.has(modelToKey(model))) {
+    return;
+  }
+
   if (isSolved(model)) {
+    solved.add(modelToKey(model));
     yield model;
+    return;
   }
 
   for (const start of generateAllPositions(model)) {
@@ -51,15 +62,87 @@ export function* generateSolutions(
       continue;
     }
 
+    if (isConnected(model, color, start, end)) {
+      continue;
+    }
+
     for (const path of allPaths(color, model, start, end, new Set(), [])) {
       const added = addPath(model, color, path);
-      yield* generateSolutions(added);
+      yield* generateSolutions(added, solved);
     }
   }
 }
 
-const isSolved = (model: ModelUnsolved): model is ModelSolved => {
-  return model.every((column) => column.every((color) => color !== null));
+export const isConnected = (
+  model: ModelUnsolved,
+  color: string,
+  current: Position,
+  target: Position,
+  visited: Set<string> = new Set()
+) => {
+  visited.add(toKey(current));
+
+  if (current.x === target.x && current.y === target.y) {
+    return true;
+  }
+
+  for (const delta of deltas) {
+    const neighbor = { x: current.x + delta.x, y: current.y + delta.y };
+    const neighborColor = model[neighbor.x]?.[neighbor.y];
+
+    if (visited.has(toKey(neighbor))) {
+      continue;
+    }
+
+    if (neighborColor !== color) {
+      continue;
+    }
+
+    const isNeighborConnected = isConnected(
+      model,
+      color,
+      neighbor,
+      target,
+      visited
+    );
+
+    if (isNeighborConnected) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
+export const isSolved = (model: ModelUnsolved): model is ModelSolved => {
+  const checkedColors = new Set<string>();
+  for (const position of generateAllPositions(model)) {
+    const color = model[position.x]?.[position.y];
+
+    if (!color) {
+      return false;
+    }
+
+    if (checkedColors.has(color)) {
+      continue;
+    }
+
+    checkedColors.add(color);
+
+    const end = findEndPosition(model, position);
+
+    if (!end) {
+      return false;
+    }
+
+    const isColorConnected = isConnected(model, color, position, end);
+
+    if (!isColorConnected) {
+      return false;
+    }
+  }
+
+  return true;
 };
 
 export function* generateAllPossiblePaths(
