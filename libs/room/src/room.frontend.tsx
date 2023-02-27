@@ -1117,6 +1117,8 @@ export const ViewNotInGame = ({
           width: '100%',
           display: 'flex',
           flexWrap: 'wrap',
+          overflowY: 'scroll',
+          flex: 1,
         }}
       >
         {gameNameList.map((gameName) => (
@@ -1133,7 +1135,7 @@ export const ViewNotInGame = ({
         ))}
       </Box>
 
-      <Box sx={{ flex: 1 }}></Box>
+      {/* <Box sx={{ flex: 1 }}></Box> */}
 
       <Box
         sx={{

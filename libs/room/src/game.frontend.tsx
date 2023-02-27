@@ -463,6 +463,7 @@ export const View = ({
     case 'maze': {
       return (
         <MazeFrontend.View
+          gameRoomCtx={gameRoomCtx}
           $send={(m) => $send(['maze', m])}
           model={model.child}
           ctx={ctx}
