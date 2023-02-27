@@ -5,6 +5,7 @@ import * as Maze from '@gamezilla/game/maze';
 import * as Snake from '@gamezilla/game/snake';
 import * as Tetris from '@gamezilla/game/tetris';
 import * as TicTacToe from '@gamezilla/game/tic-tac-toe';
+import * as Flow from '@gamezilla/game/flow';
 
 //
 //
@@ -21,7 +22,8 @@ export type FrontendModel =
   | { type: 'gomoku'; child: Gomoku.FrontendModel }
   | { type: 'tetris'; child: Tetris.FrontendModel }
   | { type: 'snake'; child: Snake.FrontendModel }
-  | { type: 'maze'; child: Maze.FrontendModel };
+  | { type: 'maze'; child: Maze.FrontendModel }
+  | { type: 'flow'; child: Flow.FrontendModel };
 
 export type BackendModel =
   | { type: 'tic-tac-toe'; child: TicTacToe.BackendModel }
@@ -30,7 +32,8 @@ export type BackendModel =
   | { type: 'gomoku'; child: Gomoku.BackendModel }
   | { type: 'tetris'; child: Tetris.BackendModel }
   | { type: 'snake'; child: Snake.BackendModel }
-  | { type: 'maze'; child: Maze.BackendModel };
+  | { type: 'maze'; child: Maze.BackendModel }
+  | { type: 'flow'; child: Flow.BackendModel };
 
 export type GameName = BackendModel['type'];
 
@@ -42,6 +45,7 @@ export const gameNames: { [gameName in GameName]: GameName } = {
   tetris: 'tetris',
   snake: 'snake',
   maze: 'maze',
+  flow: 'flow',
 };
 
 export const gameNameList: GameName[] = [
@@ -49,6 +53,10 @@ export const gameNameList: GameName[] = [
   'connect-four',
   'tic-tac-toe',
   'gomoku',
+  'flow',
+  'snake',
+  'tetris',
+  'maze',
 ];
 
 //
@@ -66,7 +74,8 @@ export type BackendMsg =
   | ['gomoku', Gomoku.BackendMsg]
   | ['tetris', Tetris.BackendMsg]
   | ['snake', Snake.BackendMsg]
-  | ['maze', Maze.BackendMsg];
+  | ['maze', Maze.BackendMsg]
+  | ['flow', Flow.BackendMsg];
 
 export type FrontendMsg =
   | ['tic-tac-toe', TicTacToe.FrontendMsg]
@@ -75,7 +84,8 @@ export type FrontendMsg =
   | ['gomoku', Gomoku.FrontendMsg]
   | ['tetris', Tetris.FrontendMsg]
   | ['snake', Snake.FrontendMsg]
-  | ['maze', Maze.FrontendMsg];
+  | ['maze', Maze.FrontendMsg]
+  | ['flow', Flow.FrontendMsg];
 
 export type ToFrontend =
   | ['tic-tac-toe', TicTacToe.ToFrontend]
@@ -84,7 +94,8 @@ export type ToFrontend =
   | ['gomoku', Gomoku.ToFrontend]
   | ['tetris', Tetris.ToFrontend]
   | ['snake', Snake.ToFrontend]
-  | ['maze', Maze.ToFrontend];
+  | ['maze', Maze.ToFrontend]
+  | ['flow', Flow.ToFrontend];
 
 export type ToBackend =
   | ['tic-tac-toe', TicTacToe.ToBackend]
@@ -93,4 +104,5 @@ export type ToBackend =
   | ['gomoku', Gomoku.ToBackend]
   | ['tetris', Tetris.ToBackend]
   | ['snake', Snake.ToBackend]
-  | ['maze', Maze.ToBackend];
+  | ['maze', Maze.ToBackend]
+  | ['flow', Flow.ToBackend];

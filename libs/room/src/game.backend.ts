@@ -1,7 +1,8 @@
-import { Cmd, Sub } from '@gamezilla/core';
+import { Cmd, exhaustive, Sub } from '@gamezilla/core';
 import { SharedMsg } from '@gamezilla/game-shared';
 import { ChessBackend } from '@gamezilla/game/chess';
 import { ConnectFourBackend } from '@gamezilla/game/connect-four';
+import { FlowBackend } from '@gamezilla/game/flow';
 import { GomokuBackend } from '@gamezilla/game/gomoku';
 import { MazeBackend } from '@gamezilla/game/maze';
 import { SnakeBackend } from '@gamezilla/game/snake';
@@ -48,6 +49,14 @@ export const init = ({ gameName }: { gameName: Model['type'] }): Model => {
 
     case 'maze': {
       return { type: 'maze', child: MazeBackend.init };
+    }
+
+    case 'flow': {
+      return { type: 'flow', child: FlowBackend.init({}) };
+    }
+
+    default: {
+      return exhaustive(gameName);
     }
   }
 };
@@ -152,6 +161,24 @@ export const update = (
         return [{ type: 'maze', child }, Cmd.tag('maze', cmd)];
       }
       return [model, Cmd.None];
+    }
+
+    case 'flow': {
+      if (model.type !== 'flow') {
+        return [model, Cmd.None];
+      }
+      const updated = FlowBackend.update({
+        model: model.child,
+        msg: msg[1],
+      });
+      return [
+        { type: 'flow', child: updated.model },
+        Cmd.tag('flow', updated?.cmd ?? Cmd.None),
+      ];
+    }
+
+    default: {
+      return exhaustive(msg);
     }
   }
 };
@@ -282,6 +309,24 @@ export const updateFromFrontend = (
       }
       return [model, Cmd.None];
     }
+
+    case 'flow': {
+      if (model.type !== 'flow') {
+        return [model, Cmd.None];
+      }
+      const updated = FlowBackend.updateFromFrontend({
+        model: model.child,
+        msg: msg[1],
+      });
+      return [
+        { type: 'flow', child: updated.model },
+        Cmd.tag('flow', updated?.cmd ?? Cmd.None),
+      ];
+    }
+
+    default: {
+      return exhaustive(msg);
+    }
   }
 };
 
@@ -325,6 +370,10 @@ export const updateShared = ({
       };
     }
     case 'maze': {
+      return { model };
+    }
+
+    case 'flow': {
       return { model };
     }
   }
@@ -381,6 +430,10 @@ export const updateRoomLeave = (
     case 'maze': {
       const [child, cmd] = MazeBackend.updateRoomLeave(userId, model.child);
       return [{ type: 'maze', child }, Cmd.tag('maze', cmd)];
+    }
+
+    case 'flow': {
+      return [model, Cmd.None];
     }
   }
 };
@@ -439,6 +492,10 @@ export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
         'maze',
         MazeBackend.subscriptions(intervalId, model.child)
       );
+    }
+
+    case 'flow': {
+      return Sub.tag('flow', FlowBackend.subscriptions(model.child));
     }
   }
 };

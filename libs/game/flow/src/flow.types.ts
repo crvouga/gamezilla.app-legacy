@@ -11,7 +11,7 @@ export type FrontendModel = SharedModel;
 export type BackendModel = SharedModel;
 
 export type SharedModel = {
-  playerId: UserId;
+  playerId?: UserId;
 };
 
 //

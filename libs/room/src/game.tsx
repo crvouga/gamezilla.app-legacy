@@ -6,8 +6,11 @@ import * as Tetris from '@gamezilla/game/tetris';
 import * as Snake from '@gamezilla/game/snake';
 import * as Maze from '@gamezilla/game/maze';
 import { GameName } from './game.types';
+import { ViewNode } from '@gamezilla/shared/ui';
+import { exhaustive } from '@gamezilla/core';
+import * as Flow from '@gamezilla/game/flow';
 
-export const viewCoverArt = (gameName: GameName) => {
+export const viewCoverArt = (gameName: GameName): ViewNode => {
   switch (gameName) {
     case 'chess': {
       return Chess.viewCoverArt();
@@ -35,6 +38,14 @@ export const viewCoverArt = (gameName: GameName) => {
 
     case 'maze': {
       return Maze.viewCoverArt();
+    }
+
+    case 'flow': {
+      return Flow.viewCoverArt();
+    }
+
+    default: {
+      return exhaustive(gameName);
     }
   }
 };
@@ -67,6 +78,14 @@ export const gameNameToString = (gameName: GameName) => {
 
     case 'maze': {
       return 'Maze';
+    }
+
+    case 'flow': {
+      return 'Flow';
+    }
+
+    default: {
+      return exhaustive(gameName);
     }
   }
 };
