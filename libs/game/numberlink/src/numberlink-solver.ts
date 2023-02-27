@@ -16,8 +16,8 @@ export const solve = (model: ModelUnsolved): ModelSolved[] => {
       continue;
     }
     for (let y = 0; y < column.length; y++) {
-      const cell = column[y];
-      if (!cell) {
+      const color = column[y];
+      if (!color) {
         continue;
       }
     }
@@ -34,8 +34,8 @@ export function* generateSolutions(
   }
 
   for (const start of generateAllPositions(model)) {
-    const cell = model[start.x]?.[start.y];
-    if (!cell) {
+    const color = model[start.x]?.[start.y];
+    if (!color) {
       continue;
     }
 
@@ -46,19 +46,20 @@ export function* generateSolutions(
       continue;
     }
 
-    if (isConnected(model, start, end)) {
+    if (end.x === start.x && end.y === start.y) {
+      // invalid model
       continue;
     }
 
-    for (const path of allPaths(cell, model, start, end, new Set(), [])) {
-      const added = addPath(model, cell, path);
+    for (const path of allPaths(color, model, start, end, new Set(), [])) {
+      const added = addPath(model, color, path);
       yield* generateSolutions(added);
     }
   }
 }
 
 const isSolved = (model: ModelUnsolved): model is ModelSolved => {
-  return model.every((column) => column.every((cell) => cell !== null));
+  return model.every((column) => column.every((color) => color !== null));
 };
 
 export function* generateAllPossiblePaths(
@@ -93,7 +94,7 @@ const deltas = [
 ] as const;
 
 export function* allPaths(
-  targetCell: string,
+  targetColor: string,
   model: ModelUnsolved,
   start: Position,
   end: Position,
@@ -110,15 +111,15 @@ export function* allPaths(
     for (const delta of deltas) {
       const neighbor = { x: start.x + delta.x, y: start.y + delta.y };
 
-      const neighborCell = model[neighbor.x]?.[neighbor.y];
+      const neighborColor = model[neighbor.x]?.[neighbor.y];
 
-      const isOutOfBounds = neighborCell === undefined;
+      const isOutOfBounds = neighborColor === undefined;
       if (isOutOfBounds) {
         continue;
       }
 
       const isObstacle =
-        typeof neighborCell === 'string' && neighborCell !== targetCell;
+        typeof neighborColor === 'string' && neighborColor !== targetColor;
       if (isObstacle) {
         continue;
       }
@@ -127,32 +128,32 @@ export function* allPaths(
         continue;
       }
 
-      yield* allPaths(targetCell, model, neighbor, end, visited, path);
+      yield* allPaths(targetColor, model, neighbor, end, visited, path);
     }
   }
   path.pop();
   visited.delete(toKey(start));
 }
 
-const setCell = (
+const setColor = (
   model: ModelUnsolved,
   position: Position,
-  cellNew: string | null
+  color: string | null
 ) => {
   return model.map((column, x) =>
-    column.map((cell, y) =>
-      x === position.x && y === position.y ? cellNew : cell
+    column.map((colorPrev, y) =>
+      x === position.x && y === position.y ? color : colorPrev
     )
   );
 };
 
 export const addPath = (
   model: ModelUnsolved,
-  cellNew: string,
+  color: string,
   path: Position[]
 ): ModelUnsolved => {
   return path.reduce(
-    (modelNew, position) => setCell(modelNew, position, cellNew),
+    (modelNew, position) => setColor(modelNew, position, color),
     model
   );
 };
@@ -161,7 +162,7 @@ export type PathSlot = '⬇️' | '⬆️' | '➡️' | '⬅️' | '✅' | '  ';
 
 export const modelToString = (model: ModelUnsolved): string => {
   return model
-    .map((column) => column.map((cell) => (cell ? cell : '_')).join(' '))
+    .map((column) => column.map((color) => (color ? color : '_')).join(' '))
     .join('\n');
 };
 
@@ -170,8 +171,8 @@ export const toPathGrid = (
   path: Position[]
 ): PathSlot[][] => {
   return model.map((column, x) =>
-    column.map((cell, y) => {
-      if (!cell) {
+    column.map((color, y) => {
+      if (!color) {
         return '  ';
       }
 
@@ -217,30 +218,6 @@ const toDirectionEmoji = ({ x, y }: Position): PathSlot => {
   return '  ';
 };
 
-const isConnected = (
-  _model: ModelUnsolved,
-  start: Position,
-  end: Position
-): boolean => {
-  const visited = new Set<string>();
-  const stack: Position[] = [start];
-  while (stack.length > 0) {
-    const current = stack.pop();
-    if (!current) {
-      continue;
-    }
-    const key = toKey(current);
-    if (visited.has(key)) {
-      continue;
-    }
-    visited.add(key);
-    if (current.x === end.x && current.y === end.y) {
-      return true;
-    }
-  }
-  return false;
-};
-
 export const findEndPosition = (
   model: ModelUnsolved,
   start: Position
@@ -250,9 +227,9 @@ export const findEndPosition = (
       continue;
     }
 
-    const cell = model[position.x]?.[position.y];
+    const color = model[position.x]?.[position.y];
 
-    if (cell === model[start.x]?.[start.y]) {
+    if (color === model[start.x]?.[start.y]) {
       return position;
     }
   }
@@ -266,8 +243,8 @@ function* generateAllPositions(model: ModelUnsolved): Generator<Position> {
       continue;
     }
     for (let y = 0; y < column.length; y++) {
-      const cell = column[y];
-      if (!cell) {
+      const color = column[y];
+      if (!color) {
         continue;
       }
       yield { x, y };
@@ -289,16 +266,16 @@ export function* generateAllPaths(
     if (!currentPath) {
       break;
     }
-    const currentCell = currentPath[currentPath.length - 1];
-    if (!currentCell) {
+    const currentColor = currentPath[currentPath.length - 1];
+    if (!currentColor) {
       continue;
     }
-    if (currentCell.x === end.x && currentCell.y === end.y) {
+    if (currentColor.x === end.x && currentColor.y === end.y) {
       yield currentPath;
     }
-    visited.add(toKey(currentCell));
-    // const adjacentCells = getAdjacentCells(currentCell, grid.length);
-    // for (const adjacent of adjacentCells) {
+    visited.add(toKey(currentColor));
+    // const adjacentColors = getAdjacentColors(currentColor, grid.length);
+    // for (const adjacent of adjacentColors) {
     //   const isVisited = visited.has(toKey(adjacent));
     //   if (!isVisited && grid[adjacent.y][adjacent.x] === 0) {
     //     const newPath = [...currentPath, adjacent];
