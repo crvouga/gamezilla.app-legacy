@@ -1,4 +1,3 @@
-import { generate } from 'rxjs';
 import {
   addPath,
   allPaths,
@@ -11,7 +10,7 @@ import {
   PathSlot,
   Position,
   toPathGrid,
-} from './numberlink-solver';
+} from './flow-puzzle-solver';
 
 const _ = null;
 const a = 'a';
