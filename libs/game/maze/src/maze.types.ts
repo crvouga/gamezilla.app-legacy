@@ -76,7 +76,7 @@ export type Req =
   | ['start-game', { userId: UserId }]
   | ['stop-game', { userId: UserId }]
   | ['InputDirection', { userId: UserId; direction: Direction | 'none' }]
-  | ['InputSeed', { userId: UserId; seed: string }];
+  | ['input-seed', { userId: UserId; seed: string }];
 
 export type Res = [...Req, Result<Problem, SharedModel>];
 
@@ -104,7 +104,7 @@ export const handle = (
   model: SharedModel
 ): Result<Problem, SharedModel> => {
   switch (msg[0]) {
-    case 'InputSeed': {
+    case 'input-seed': {
       if (model.type !== 'Setup') {
         return Err('must_be_setup');
       }

@@ -24,6 +24,7 @@ import {
   ToFrontend,
 } from './maze.types';
 import { Direction, Position } from './position';
+import { GameRoomCtx } from '@gamezilla/game-shared';
 
 //
 //
@@ -93,7 +94,7 @@ export const update = (
     //
     //
 
-    case 'InputSeed':
+    case 'input-seed':
     case 'InputDirection':
     case 'start-game':
     case 'stop-game':
@@ -110,7 +111,7 @@ export const updateFromBackend = (
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case 'stop-game':
-    case 'InputSeed':
+    case 'input-seed':
     case 'InputDirection':
     case 'start-game':
     case 'stop-playing':
@@ -219,7 +220,9 @@ export const View = ({
   model,
   ctx,
   $send,
+  gameRoomCtx,
 }: {
+  gameRoomCtx: GameRoomCtx;
   ctx: Ctx;
   model: Model;
   $send: (msg: Msg) => void;
@@ -274,14 +277,14 @@ export const View = ({
           <TextField
             disabled={
               handle(
-                ['InputSeed', { userId: ctx.currentUserId, seed: model.seed }],
+                ['input-seed', { userId: ctx.currentUserId, seed: model.seed }],
                 model
               ).type === 'Err'
             }
             value={model.seed}
             onChange={(e) =>
               $send([
-                'InputSeed',
+                'input-seed',
                 { userId: ctx.currentUserId, seed: e.target.value },
               ])
             }
@@ -293,7 +296,7 @@ export const View = ({
                   position="end"
                   onClick={() =>
                     $send([
-                      'InputSeed',
+                      'input-seed',
                       {
                         userId: ctx.currentUserId,
                         seed: `s${Math.floor(Math.random() * 1_000_000_000)}`,
@@ -374,6 +377,9 @@ export const View = ({
         </Box>
 
         <Box sx={{ display: 'flex', gap: 2, p: 2 }}>
+          <Button fullWidth variant="outlined" onClick={gameRoomCtx.onQuit}>
+            Back
+          </Button>
           <Button
             fullWidth
             variant="contained"

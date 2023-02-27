@@ -54,7 +54,7 @@ export const updateFromFrontend = (
   switch (msg[0]) {
     case 'stop-game':
     case 'InputDirection':
-    case 'InputSeed':
+    case 'input-seed':
     case 'start-game':
     case 'stop-playing':
     case 'start-playing': {
