@@ -1,4 +1,4 @@
-import { Direction, Position } from './position';
+import { Position } from './position';
 
 type Node = {
   position: Position;
