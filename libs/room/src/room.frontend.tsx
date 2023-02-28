@@ -98,7 +98,7 @@ export const update: Update = (input) => {
 export const update_: Update = ({ ctx, sendToBackend, msg, model }) => {
   switch (msg[0]) {
     case 'clicked-room': {
-      return { model, cmd: Route.push(['room']) };
+      return { model, cmd: Route.push(['room', { roomId: msg[1].roomId }]) };
     }
 
     case 'modal-closed': {
@@ -140,7 +140,7 @@ export const update_: Update = ({ ctx, sendToBackend, msg, model }) => {
     case 'input-game': {
       const routeCmd =
         msg[0] === 'room-join' || msg[0] === 'room-create'
-          ? Route.push(['room-game'])
+          ? Route.push(['room-game', { roomId: msg[1].roomId }])
           : Cmd.None;
 
       return {
@@ -389,7 +389,7 @@ export const updateFromBackend = (
 
       const routeActions: OutAction[] =
         msg[1].userId === ctx.currentUserId
-          ? [['route', ['Replace', ['room-game']]]]
+          ? [['route', ['Replace', ['room-game', { roomId: msg[1].roomId }]]]]
           : [];
 
       const alertActions: OutAction[] =
@@ -630,15 +630,23 @@ export const View = ({
   $send,
   model,
   route,
+  roomId,
 }: {
   route: RoomRoute;
   model: Model;
   ctx: Ctx;
   $send: (m: Msg) => void;
+  roomId: RoomId;
 }) => {
   return (
     <>
-      <ViewPage ctx={ctx} $send={$send} model={model} route={route} />
+      <ViewPage
+        roomId={roomId}
+        ctx={ctx}
+        $send={$send}
+        model={model}
+        route={route}
+      />
       <Drawer
         open={model.modal.type === 'user-preview'}
         onClose={() => $send(['modal-closed'])}
@@ -696,7 +704,9 @@ const ViewPage = ({
   $send,
   model,
   route,
+  roomId,
 }: {
+  roomId: RoomId;
   route: RoomRoute;
   model: Model;
   ctx: Ctx;
@@ -704,11 +714,15 @@ const ViewPage = ({
 }) => {
   switch (route) {
     case 'room': {
-      return <ViewPageRoom ctx={ctx} $send={$send} model={model} />;
+      return (
+        <ViewPageRoom roomId={roomId} ctx={ctx} $send={$send} model={model} />
+      );
     }
 
     case 'room-game': {
-      return <ViewPageGame ctx={ctx} $send={$send} model={model} />;
+      return (
+        <ViewPageGame roomId={roomId} ctx={ctx} $send={$send} model={model} />
+      );
     }
   }
 };
@@ -890,6 +904,7 @@ const ViewPageGame = ({
   model,
   $send,
 }: {
+  roomId: RoomId;
   ctx: Ctx;
   model: Model;
   $send: (msg: Msg) => void;
@@ -935,7 +950,7 @@ const ViewPageGame = ({
           <Button
             startIcon={<Icons.Group />}
             size="small"
-            onClick={() => $send(['clicked-room'])}
+            onClick={() => $send(['clicked-room', { roomId: room.roomId }])}
           >
             Room
           </Button>
@@ -1247,6 +1262,7 @@ const ViewPageRoom = ({
   $send,
   ctx,
 }: {
+  roomId: RoomId;
   ctx: Ctx;
   model: Model;
   $send: (msg: Msg) => void;
@@ -1327,7 +1343,7 @@ const ViewPageRoom = ({
         <Button
           variant="outlined"
           fullWidth
-          onClick={() => ctx.$push(['room-game'])}
+          onClick={() => ctx.$push(['room-game', { roomId: room.roomId }])}
           startIcon={<Icons.ChevronLeft />}
         >
           Back
@@ -1405,7 +1421,7 @@ export const ViewBar = ({
           display: 'flex',
           alignItems: 'center',
         }}
-        onClick={() => ctx.$push(['room-game'])}
+        onClick={() => ctx.$push(['room-game', { roomId: room.roomId }])}
       >
         {!game && (
           <Avatar

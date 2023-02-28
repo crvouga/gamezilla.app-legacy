@@ -1,5 +1,5 @@
 import { Browser, Cmd, Option } from '@gamezilla/core';
-import { Iso3166Alpha2Code, PhoneNumber, UserId } from './data';
+import { Iso3166Alpha2Code, PhoneNumber, RoomId, UserId } from './data';
 const { Some } = Option;
 
 //
@@ -25,8 +25,8 @@ export type Model =
   | ['profile-update-name']
   | ['profile-update-username']
   | ['profile-update-theme']
-  | ['room']
-  | ['room-game']
+  | ['room', { roomId: RoomId }]
+  | ['room-game', { roomId: RoomId }]
   | ['room-list']
   | ['party']
   | ['chat']
@@ -128,6 +128,23 @@ export const decode = ({
       return Some(['login-phone-verify', { phoneNumber: phoneNumber }]);
     }
 
+    case 'room':
+    case 'room-game': {
+      if (!second) {
+        return Option.None;
+      }
+
+      const decoded = RoomId.decode(second);
+
+      if (decoded.type === 'Err') {
+        return Option.None;
+      }
+
+      const roomId = decoded.value;
+
+      return Some([first, { roomId }]);
+    }
+
     default: {
       return Some([first]);
     }
@@ -154,6 +171,11 @@ export const encode = (route: Model): string => {
       const country = PhoneNumber.toCountry(route[1].phoneNumber);
       const params = new URLSearchParams({ phoneNumber, country });
       return `/${route[0]}?${params.toString()}`;
+    }
+
+    case 'room':
+    case 'room-game': {
+      return `/${route[0]}/${route[1].roomId}`;
     }
 
     default:
