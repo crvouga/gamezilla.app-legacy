@@ -11,7 +11,7 @@ import {
   ProfileStore,
 } from '@gamezilla/profile';
 import { RoomFrontend } from '@gamezilla/room';
-import { Alerts, Ctx, Route, UserId } from '@gamezilla/shared';
+import { Alerts, Ctx, RoomId, Route, UserId } from '@gamezilla/shared';
 import {
   Box,
   ButtonBase,
@@ -43,8 +43,8 @@ export type Model =
   | ['chat-new', ChatNew.Model]
   | ['search', PageProfileSearch.Model]
   | ['chat-conversation', { conversationId: string }, ChatConversation.Model]
-  | ['room']
-  | ['room-game']
+  | ['room', { roomId: RoomId }]
+  | ['room-game', { roomId: RoomId }]
   | ['room-list']
   | ['party'];
 
@@ -171,11 +171,11 @@ export const initReady = (
     }
 
     case 'room': {
-      return [['room'], Cmd.None, []];
+      return [['room', { roomId: route[1].roomId }], Cmd.None, []];
     }
 
     case 'room-game': {
-      return [['room-game'], Cmd.None, []];
+      return [['room-game', { roomId: route[1].roomId }], Cmd.None, []];
     }
 
     case 'party': {
@@ -555,7 +555,6 @@ export const ViewReady = ({
 }: {
   ctx: Ctx;
   route: Route.Model;
-
   gameRoom: RoomFrontend.Model;
   profile: ProfileStore.Profile;
   chatStore: ChatStore.Model;
@@ -710,6 +709,7 @@ export const ViewReady = ({
     case 'room': {
       return (
         <RoomFrontend.View
+          roomId={model[1].roomId}
           route={model[0]}
           ctx={ctx}
           model={gameRoom}
