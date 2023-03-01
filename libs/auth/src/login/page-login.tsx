@@ -1,7 +1,7 @@
 import { Cmd, p, t } from '@gamezilla/core';
 import { Route } from '@gamezilla/shared';
 import { Box, Button, Icons, Typography, useTheme } from '@gamezilla/shared/ui';
-import { loginWithProvider, AuthResult } from '../auth';
+import { AuthResult, loginWithProvider } from '../auth';
 
 //
 //
@@ -11,9 +11,9 @@ import { loginWithProvider, AuthResult } from '../auth';
 //
 //
 
-export type Model = null;
+export type Model = 'idle' | 'signing-in-with-google';
 
-export const init: Model = null;
+export const init: Model = 'idle';
 
 //
 //
@@ -50,7 +50,7 @@ export const update = ({
 
     case 'clicked-google': {
       return {
-        model,
+        model: 'signing-in-with-google',
         cmd: p(
           loginWithProvider({ provider: 'Google' }),
           Cmd.perform(t('login-done'))
@@ -73,13 +73,13 @@ export const update = ({
 //
 
 export const View = ({
+  model,
   $send,
 }: {
   model: Model;
   $send: (msg: Msg) => void;
 }) => {
   const theme = useTheme();
-
   return (
     <Box
       sx={{
@@ -118,6 +118,7 @@ export const View = ({
           fullWidth
           variant="contained"
           size="large"
+          loading={model === 'signing-in-with-google'}
           sx={{ mb: 3 }}
         >
           Continue With Google

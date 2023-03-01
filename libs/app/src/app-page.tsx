@@ -251,7 +251,7 @@ export const initLoggedOut = ({
       if (model[0] !== 'login') {
         const initial = PageLogin.init({
           route,
-          model: { type: 'login', child: null },
+          model: { type: 'login', child: 'idle' },
         });
         return {
           model: ['login', initial.model],
@@ -270,7 +270,7 @@ export const initLoggedOut = ({
     default: {
       const initial = PageLogin.init({
         route,
-        model: { type: 'login', child: null },
+        model: { type: 'login', child: 'idle' },
       });
       return {
         model: ['login', initial.model],

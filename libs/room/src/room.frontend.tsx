@@ -11,6 +11,7 @@ import {
   CardActionArea,
   Chip,
   CircularProgress,
+  Collapse,
   Divider,
   Drawer,
   FillBox,
@@ -25,6 +26,7 @@ import {
   ViewEmptyState,
   ViewLoadingState,
 } from '@gamezilla/shared/ui';
+import { Fab } from '@mui/material';
 import { gameNameToString, viewCoverArt } from './game';
 import * as Game from './game.frontend';
 import { GameName, gameNameList } from './game.types';
@@ -741,15 +743,19 @@ export const ViewPageRoomList = ({
   const rooms = Object.values(model.rooms);
 
   return (
-    <FillBox>
-      <Header title={'Game'} />
-      <Box sx={{ paddingX: 2 }}>
-        <Button
-          fullWidth
-          variant="contained"
-          loading={model.requests['room-create'] === RemoteData.Loading}
-          disabled={currentRoom !== undefined}
-          startIcon={<Icons.Add />}
+    <FillBox sx={{ position: 'relative' }}>
+      <Collapse
+        in={
+          !(
+            currentRoom !== undefined ||
+            model.requests['room-create'] === RemoteData.Loading
+          )
+        }
+      >
+        <Fab
+          sx={{ position: 'absolute', bottom: 16, right: 16 }}
+          variant="extended"
+          color="primary"
           onClick={() => {
             $send([
               'room-create',
@@ -757,59 +763,64 @@ export const ViewPageRoomList = ({
             ]);
           }}
         >
-          Create New Game
-        </Button>
+          <Icons.SportsEsports sx={{ marginRight: 1 }} />
+          Create Game
+        </Fab>
+      </Collapse>
+
+      <Box sx={{ overflowY: 'scroll', flex: 1 }}>
+        <Header title={'Game'} />
+
+        {rooms.length === 0 && (
+          <ViewEmptyState
+            title="No active games"
+            renderIcon={({ sx }) => <Icons.SportsEsports sx={sx} />}
+          />
+        )}
+
+        {rooms.length > 0 && (
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 2,
+              paddingX: 2,
+              // paddingTop: 3,
+            }}
+          >
+            {rooms.map((room) => {
+              const host = ctx.profiles[room.hostId];
+              const title = host ? `${host.username}'s room` : '...';
+              const users = Object.values(model.users)
+                .filter((user) => user.roomId === room.roomId)
+                .flatMap((user) => {
+                  const profile = ctx.profiles[user.userId];
+                  if (profile) {
+                    return [profile];
+                  }
+                  return [];
+                });
+              const gameName = model.games[room.roomId]?.type;
+              const currentRoomId = model.users[ctx.currentUserId]?.roomId;
+              return (
+                <ViewRoomCard
+                  key={room.roomId}
+                  isCurrentRoom={currentRoomId === room.roomId}
+                  title={title}
+                  users={users}
+                  gameName={gameName}
+                  onClick={() => {
+                    $send([
+                      'room-join',
+                      { userId: ctx.currentUserId, roomId: room.roomId },
+                    ]);
+                  }}
+                />
+              );
+            })}
+          </Box>
+        )}
       </Box>
-
-      {rooms.length === 0 && (
-        <ViewEmptyState
-          title="No active games"
-          renderIcon={({ sx }) => <Icons.SportsEsports sx={sx} />}
-        />
-      )}
-
-      {rooms.length > 0 && (
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 2,
-            paddingX: 2,
-            paddingTop: 3,
-          }}
-        >
-          {rooms.map((room) => {
-            const host = ctx.profiles[room.hostId];
-            const title = host ? `${host.username}'s room` : '...';
-            const users = Object.values(model.users)
-              .filter((user) => user.roomId === room.roomId)
-              .flatMap((user) => {
-                const profile = ctx.profiles[user.userId];
-                if (profile) {
-                  return [profile];
-                }
-                return [];
-              });
-            const gameName = model.games[room.roomId]?.type;
-            const currentRoomId = model.users[ctx.currentUserId]?.roomId;
-            return (
-              <ViewRoomCard
-                key={room.roomId}
-                isCurrentRoom={currentRoomId === room.roomId}
-                title={title}
-                users={users}
-                gameName={gameName}
-                onClick={() => {
-                  $send([
-                    'room-join',
-                    { userId: ctx.currentUserId, roomId: room.roomId },
-                  ]);
-                }}
-              />
-            );
-          })}
-        </Box>
-      )}
     </FillBox>
   );
 };
