@@ -888,7 +888,7 @@ const ViewBottomNavigation = ({
   const items: BottomNavigationItem[] = [
     {
       route: ['room-list'],
-      label: 'Game',
+      label: 'Rooms',
       filled: <Icons.SportsEsports />,
       outlined: <Icons.SportsEsportsOutlined />,
     },

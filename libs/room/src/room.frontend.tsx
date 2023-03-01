@@ -11,7 +11,6 @@ import {
   CardActionArea,
   Chip,
   CircularProgress,
-  Collapse,
   Divider,
   Drawer,
   FillBox,
@@ -744,14 +743,10 @@ export const ViewPageRoomList = ({
 
   return (
     <FillBox sx={{ position: 'relative' }}>
-      <Collapse
-        in={
-          !(
-            currentRoom !== undefined ||
-            model.requests['room-create'] === RemoteData.Loading
-          )
-        }
-      >
+      {!(
+        currentRoom !== undefined ||
+        model.requests['room-create'] === RemoteData.Loading
+      ) && (
         <Fab
           sx={{ position: 'absolute', bottom: 16, right: 16 }}
           variant="extended"
@@ -766,10 +761,10 @@ export const ViewPageRoomList = ({
           <Icons.SportsEsports sx={{ marginRight: 1 }} />
           Create Game
         </Fab>
-      </Collapse>
+      )}
 
-      <Box sx={{ overflowY: 'scroll', flex: 1 }}>
-        <Header title={'Game'} />
+      <Box sx={{ overflowY: 'scroll', flex: 1, paddingBottom: 2 }}>
+        <Header title={'Rooms'} />
 
         {rooms.length === 0 && (
           <ViewEmptyState
@@ -790,7 +785,6 @@ export const ViewPageRoomList = ({
           >
             {rooms.map((room) => {
               const host = ctx.profiles[room.hostId];
-              const title = host ? `${host.username}'s room` : '...';
               const users = Object.values(model.users)
                 .filter((user) => user.roomId === room.roomId)
                 .flatMap((user) => {
@@ -804,9 +798,12 @@ export const ViewPageRoomList = ({
               const currentRoomId = model.users[ctx.currentUserId]?.roomId;
               return (
                 <ViewRoomCard
+                  host={{
+                    username: host?.username ?? '...',
+                    avatarUrl: host?.avatarUrl ?? '',
+                  }}
                   key={room.roomId}
                   isCurrentRoom={currentRoomId === room.roomId}
-                  title={title}
                   users={users}
                   gameName={gameName}
                   onClick={() => {
@@ -826,17 +823,20 @@ export const ViewPageRoomList = ({
 };
 
 const ViewRoomCard = ({
-  title,
   users,
   gameName,
   onClick,
   isCurrentRoom,
+  host,
 }: {
   gameName?: GameName;
-  title: string;
-  users: { avatarUrl: string }[];
+  users: { avatarUrl: string; username: string }[];
   onClick: () => void;
   isCurrentRoom?: boolean;
+  host: {
+    username: string;
+    avatarUrl: string;
+  };
 }) => {
   const theme = useTheme();
   return (
@@ -844,80 +844,133 @@ const ViewRoomCard = ({
       onClick={onClick}
       sx={{
         width: '100%',
-        background: theme.palette.primary.dark,
+        background: theme.palette.primary.main,
         borderRadius: '8px',
-        padding: 2,
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'space-between',
         alignItems: 'start',
         color: '#fff',
-        gap: 3,
+        // gap: 3,
         overflow: 'hidden',
         textAlign: 'start',
       }}
     >
       <Box
         sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'start',
-          overflow: 'hidden',
+          background: theme.palette.primary.dark,
           width: '100%',
+          padding: 2,
         }}
       >
-        {isCurrentRoom && (
-          <Chip
-            size="small"
-            color="primary"
-            label="Current Room"
-            sx={{ marginBottom: 0.5 }}
-          />
-        )}
-        <Typography sx={{ width: '100%' }} noWrap variant="h4">
-          {title}
-        </Typography>
-      </Box>
-      {gameName && (
         <Box
           sx={{
             display: 'flex',
             flexDirection: 'row',
             alignItems: 'center',
+            justifyContent: 'space-between',
+            overflow: 'hidden',
+            width: '100%',
           }}
         >
+          {isCurrentRoom && (
+            <Chip
+              size="small"
+              color="primary"
+              label="Current Room"
+              sx={{ mb: 1 }}
+            />
+          )}
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            overflow: 'hidden',
+            flex: 1,
+          }}
+        >
+          <Avatar sx={{ marginRight: 1 }} src={host.avatarUrl} />
+          <Typography sx={{ flex: 1 }} noWrap variant="h6">
+            {host.username}
+          </Typography>
+          <Chip
+            sx={{ marginLeft: 1 }}
+            size="small"
+            color="primary"
+            icon={<Icons.PeopleAlt />}
+            label={`${users.length}`}
+          />
+        </Box>
+      </Box>
+
+      <Box sx={{ px: 2, pb: 2 }}>
+        {gameName && (
           <Box
             sx={{
-              width: 44,
-              height: 44,
-              border: '2px solid',
-              borderRadius: '4px',
-              marginRight: 1,
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              mt: 2,
             }}
           >
-            {viewCoverArt(gameName)}
+            <Box
+              sx={{
+                width: 32,
+                height: 32,
+                border: '2px solid',
+                borderRadius: '4px',
+                marginRight: 1,
+              }}
+            >
+              {viewCoverArt(gameName)}
+            </Box>
+
+            <Typography>{gameNameToString(gameName)}</Typography>
           </Box>
+        )}
 
-          <Typography variant="h6">{gameNameToString(gameName)}</Typography>
+        <Box
+          sx={{
+            width: '100%',
+            mt: 2,
+            overflow: 'hidden',
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        >
+          <AvatarGroup sx={{ marginRight: 1 }}>
+            {users.map((user) => (
+              <Avatar
+                sx={{ width: 24, height: 24 }}
+                key={user.avatarUrl}
+                src={user.avatarUrl}
+              />
+            ))}
+          </AvatarGroup>
+          <Typography variant="subtitle2" noWrap>
+            {formatUsernames(users.map((user) => user.username))}
+          </Typography>
+          {/* <Typography variant="h6">{users.length} in room</Typography> */}
         </Box>
-      )}
-
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-        }}
-      >
-        <AvatarGroup sx={{ marginRight: 1 }}>
-          {users.map((user) => (
-            <Avatar key={user.avatarUrl} src={user.avatarUrl} />
-          ))}
-        </AvatarGroup>
-        <Typography variant="h6">{users.length} in room</Typography>
       </Box>
     </ButtonBase>
   );
+};
+
+const formatUsername = (username: string) => {
+  if (username.length > 12) {
+    return username.slice(0, 12) + '...';
+  }
+  return username;
+};
+
+const formatUsernames = (usernames: string[]) => {
+  const formatted = usernames.map(formatUsername);
+  if (formatted.length > 3) {
+    return `${formatted.slice(0, 3).join(', ')} & ${formatted.length - 3} more`;
+  }
+  return formatted.join(', ');
 };
 
 const ViewPageGame = ({
@@ -951,31 +1004,36 @@ const ViewPageGame = ({
   return (
     <FillBox>
       <Toolbar
-        variant="dense"
+        // variant="dense"
         sx={{ paddingX: 2, justifyContent: 'space-between' }}
       >
-        <Button
-          startIcon={<Icons.Home />}
-          size="small"
-          onClick={() => ctx.$push(['room-list'])}
-        >
-          Home
-        </Button>
-        <Typography variant="h6" sx={{ flex: 1, textAlign: 'center' }}>
+        <Box sx={{ flex: 1, textAlign: 'left' }}>
+          <IconButton
+            sx={{ marginLeft: -1 }}
+            onClick={() => ctx.$push(['room-list'])}
+          >
+            <Icons.ChevronLeft />
+          </IconButton>
+        </Box>
+        <Typography variant="h6" sx={{ flex: 2, textAlign: 'center' }}>
           {game ? gameNameToString(game.type) : 'Game'}
         </Typography>
-        <Badge
-          badgeContent={usersInRoom.length > 1 ? usersInRoom.length : undefined}
-          color="secondary"
-        >
-          <Button
-            startIcon={<Icons.Group />}
-            size="small"
-            onClick={() => $send(['clicked-room', { roomId: room.roomId }])}
+        <Box sx={{ flex: 1, textAlign: 'right' }}>
+          <Badge
+            badgeContent={
+              usersInRoom.length > 1 ? usersInRoom.length : undefined
+            }
+            color="secondary"
           >
-            Room
-          </Button>
-        </Badge>
+            <Button
+              startIcon={<Icons.Group />}
+              size="small"
+              onClick={() => $send(['clicked-room', { roomId: room.roomId }])}
+            >
+              Room
+            </Button>
+          </Badge>
+        </Box>
       </Toolbar>
 
       <Divider />
@@ -1447,19 +1505,28 @@ export const ViewBar = ({
         }}
         onClick={() => ctx.$push(['room-game', { roomId: room.roomId }])}
       >
-        {!game && (
-          <Avatar
-            src={hostProfile?.avatarUrl ?? ''}
-            variant="square"
-            sx={{ width: 48, height: 48, mr: 2 }}
-          />
-        )}
+        <Box sx={{ p: 1, mr: 1 }}>
+          {!game && (
+            <Avatar
+              src={hostProfile?.avatarUrl ?? ''}
+              variant="rounded"
+              sx={{ width: 48, height: 48 }}
+            />
+          )}
 
-        {game && (
-          <Box sx={{ width: 48, height: 48, mr: 2 }}>
-            {viewCoverArt(game.type)}
-          </Box>
-        )}
+          {game && (
+            <Box
+              sx={{
+                borderRadius: 1,
+                overflow: 'hidden',
+                width: 48,
+                height: 48,
+              }}
+            >
+              {viewCoverArt(game.type)}
+            </Box>
+          )}
+        </Box>
 
         <Box sx={{ overflow: 'hidden', flex: 1 }}>
           <Typography noWrap align="left" color="primary.main">
