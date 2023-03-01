@@ -15,6 +15,7 @@ import {
   ViewEmptyState,
   ViewLoadingState,
 } from '@gamezilla/shared/ui';
+import { Fab } from '@mui/material';
 import * as ChatStore from './chat.store';
 //
 //
@@ -108,55 +109,64 @@ export const View = ({
     });
 
   return (
-    <FillBox>
-      <Header title="Chat" />
-      <Box sx={{ paddingX: 2 }}>
-        <Button
-          startIcon={<Icons.Send />}
-          fullWidth
-          variant="contained"
-          onClick={() => $send(['clicked-send-message'])}
-        >
-          Send Message
-        </Button>
+    <FillBox sx={{ position: 'relative' }}>
+      <Fab
+        sx={{
+          position: 'absolute',
+          bottom: 16,
+          right: 16,
+        }}
+        color="primary"
+        variant="extended"
+        onClick={() => $send(['clicked-send-message'])}
+      >
+        <Icons.Send sx={{ mr: 1 }} />
+        Send Message
+      </Fab>
+
+      <Box sx={{ flex: 1, overflowY: 'scroll' }}>
+        <Header title="Chat" />
+
+        {query.type === 'Loading' ? (
+          <ViewLoadingState title="Loading conversations..." />
+        ) : (
+          <>
+            {conversations.length === 0 && (
+              <ViewEmptyState
+                title="No messages"
+                renderIcon={({ sx }) => <Icons.Chat sx={sx} />}
+              />
+            )}
+
+            {conversations.length > 0 && (
+              <List sx={{ overflowY: 'scroll' }}>
+                {conversations.map((item) => (
+                  <ListItemButton
+                    key={item.conversationId}
+                    onClick={() => $send(['ClickedConversationItem', item])}
+                  >
+                    <ListItemAvatar>
+                      <AvatarGroup max={2}>
+                        {item.profiles.map((profile) => (
+                          <Avatar
+                            key={profile.userId}
+                            src={profile.avatarUrl}
+                          />
+                        ))}
+                      </AvatarGroup>
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary={item.profiles
+                        .map((item) => item.username)
+                        .join(', ')}
+                    />
+                  </ListItemButton>
+                ))}
+              </List>
+            )}
+          </>
+        )}
       </Box>
-
-      {query.type === 'Loading' ? (
-        <ViewLoadingState title="Loading conversations..." />
-      ) : (
-        <>
-          {conversations.length === 0 && (
-            <ViewEmptyState
-              title="No messages"
-              renderIcon={({ sx }) => <Icons.Chat sx={sx} />}
-            />
-          )}
-
-          {conversations.length > 0 && (
-            <List sx={{ overflowY: 'scroll' }}>
-              {conversations.map((item) => (
-                <ListItemButton
-                  key={item.conversationId}
-                  onClick={() => $send(['ClickedConversationItem', item])}
-                >
-                  <ListItemAvatar>
-                    <AvatarGroup max={2}>
-                      {item.profiles.map((profile) => (
-                        <Avatar key={profile.userId} src={profile.avatarUrl} />
-                      ))}
-                    </AvatarGroup>
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={item.profiles
-                      .map((item) => item.username)
-                      .join(', ')}
-                  />
-                </ListItemButton>
-              ))}
-            </List>
-          )}
-        </>
-      )}
     </FillBox>
   );
 };
