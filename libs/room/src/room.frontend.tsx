@@ -850,61 +850,29 @@ const ViewRoomCard = ({
         flexDirection: 'column',
         alignItems: 'start',
         color: '#fff',
-        // gap: 3,
         overflow: 'hidden',
         textAlign: 'start',
       }}
     >
       <Box
         sx={{
-          background: theme.palette.primary.dark,
-          width: '100%',
-          padding: 2,
+          px: 2,
+          pt: 1,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1,
         }}
       >
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            overflow: 'hidden',
-            width: '100%',
-          }}
-        >
-          {isCurrentRoom && (
-            <Chip
-              size="small"
-              color="primary"
-              label="Current Room"
-              sx={{ mb: 1 }}
-            />
-          )}
-        </Box>
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            overflow: 'hidden',
-            flex: 1,
-          }}
-        >
-          <Avatar sx={{ marginRight: 1 }} src={host.avatarUrl} />
-          <Typography sx={{ flex: 1 }} noWrap variant="h6">
-            {host.username}
-          </Typography>
-          <Chip
-            sx={{ marginLeft: 1 }}
-            size="small"
-            color="primary"
-            icon={<Icons.PeopleAlt />}
-            label={`${users.length}`}
-          />
-        </Box>
+        <Typography sx={{ fontWeight: 900 }}>LIVE</Typography>
+        {isCurrentRoom && (
+          <>
+            <Typography>•</Typography>
+            <Typography sx={{ fontStyle: 'italic' }}>Current Room</Typography>
+          </>
+        )}
       </Box>
 
-      <Box sx={{ px: 2, pb: 2 }}>
+      <Box sx={{ px: 2, pb: 2, width: '100%', overflow: 'hidden' }}>
         {gameName && (
           <Box
             sx={{
@@ -919,14 +887,14 @@ const ViewRoomCard = ({
                 width: 32,
                 height: 32,
                 border: '2px solid',
-                borderRadius: '4px',
+                borderRadius: '3px',
                 marginRight: 1,
               }}
             >
               {viewCoverArt(gameName)}
             </Box>
 
-            <Typography>{gameNameToString(gameName)}</Typography>
+            <Typography variant="h4">{gameNameToString(gameName)}</Typography>
           </Box>
         )}
 
@@ -939,19 +907,61 @@ const ViewRoomCard = ({
             alignItems: 'center',
           }}
         >
-          <AvatarGroup sx={{ marginRight: 1 }}>
+          <AvatarGroup
+            sx={{
+              marginRight: 1,
+            }}
+          >
             {users.map((user) => (
               <Avatar
-                sx={{ width: 24, height: 24 }}
+                sx={{
+                  width: 24,
+                  height: 24,
+                }}
+                style={{
+                  borderColor: theme.palette.primary.main,
+                }}
                 key={user.avatarUrl}
                 src={user.avatarUrl}
               />
             ))}
           </AvatarGroup>
-          <Typography variant="subtitle2" noWrap>
-            {formatUsernames(users.map((user) => user.username))}
-          </Typography>
-          {/* <Typography variant="h6">{users.length} in room</Typography> */}
+          <Typography variant="h6">{users.length} in room</Typography>
+        </Box>
+
+        <Typography variant="subtitle2" noWrap sx={{ width: '100%' }}>
+          {formatUsernames(users.map((user) => user.username))}
+        </Typography>
+      </Box>
+
+      <Box
+        sx={{
+          background: theme.palette.primary.dark,
+          width: '100%',
+          padding: 2,
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            overflow: 'hidden',
+            flex: 1,
+          }}
+        >
+          <Avatar
+            sx={{ width: '1.25rem', height: '1.25rem', marginRight: 1 }}
+            src={host.avatarUrl}
+          />
+          <Typography noWrap>{host.username}</Typography>
+          <Chip
+            sx={{ ml: 1 }}
+            color="primary"
+            label="Host"
+            variant="filled"
+            size="small"
+          />
         </Box>
       </Box>
     </ButtonBase>
