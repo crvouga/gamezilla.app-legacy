@@ -4,7 +4,6 @@ import {
   Avatar,
   AvatarGroup,
   Box,
-  Button,
   FillBox,
   Header,
   Icons,
