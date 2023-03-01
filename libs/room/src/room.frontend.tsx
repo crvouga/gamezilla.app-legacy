@@ -842,10 +842,18 @@ const ViewRoomCard = ({
         alignItems: 'start',
         color: '#fff',
         gap: 3,
+        overflow: 'hidden',
+        textAlign: 'start',
       }}
     >
       <Box
-        sx={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'start',
+          overflow: 'hidden',
+          width: '100%',
+        }}
       >
         {isCurrentRoom && (
           <Chip
@@ -855,7 +863,9 @@ const ViewRoomCard = ({
             sx={{ marginBottom: 0.5 }}
           />
         )}
-        <Typography variant="h4">{title}</Typography>
+        <Typography sx={{ width: '100%' }} noWrap variant="h4">
+          {title}
+        </Typography>
       </Box>
       {gameName && (
         <Box
@@ -1413,6 +1423,8 @@ export const ViewBar = ({
         display: 'flex',
         alignItems: 'center',
         borderTop: `3px solid ${theme.palette.primary.main}`,
+        maxWidth: '100%',
+        overflow: 'hidden',
       }}
     >
       <ButtonBase
@@ -1420,6 +1432,7 @@ export const ViewBar = ({
           flex: 1,
           display: 'flex',
           alignItems: 'center',
+          overflow: 'hidden',
         }}
         onClick={() => ctx.$push(['room-game', { roomId: room.roomId }])}
       >
@@ -1437,7 +1450,7 @@ export const ViewBar = ({
           </Box>
         )}
 
-        <Box sx={{ flex: 1, overflow: 'hidden' }}>
+        <Box sx={{ overflow: 'hidden', flex: 1 }}>
           <Typography noWrap align="left" color="primary.main">
             {hostProfile ? `${hostProfile.username}'s room` : '...'}
           </Typography>
