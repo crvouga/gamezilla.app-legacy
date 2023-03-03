@@ -774,38 +774,16 @@ export const ViewPageRoomList = ({
   const rooms = Object.values(model.rooms);
 
   return (
-    <FillBox sx={{ position: 'relative' }}>
-      {!(
-        currentRoom !== undefined ||
-        model.requests['room-create'] === RemoteData.Loading
-      ) && (
-        <Fab
-          sx={{ position: 'absolute', bottom: 16, right: 16 }}
-          variant="extended"
-          color="primary"
-          onClick={() => {
-            $send([
-              'room-create',
-              { userId: ctx.currentUserId, roomId: RoomId.generate() },
-            ]);
-          }}
-        >
-          <Icons.SportsEsports sx={{ marginRight: 1 }} />
-          Create Game
-        </Fab>
+    <FillBox>
+      <Header title={'Rooms'} />
+      {rooms.length === 0 && (
+        <ViewEmptyState
+          title="No active rooms"
+          renderIcon={({ sx }) => <Icons.SportsEsports sx={sx} />}
+        />
       )}
-
-      <Box sx={{ overflowY: 'scroll', flex: 1, paddingBottom: 2 }}>
-        <Header title={'Rooms'} />
-
-        {rooms.length === 0 && (
-          <ViewEmptyState
-            title="No active games"
-            renderIcon={({ sx }) => <Icons.SportsEsports sx={sx} />}
-          />
-        )}
-
-        {rooms.length > 0 && (
+      {rooms.length > 0 && (
+        <Box sx={{ overflowY: 'scroll', pb: 2 }}>
           <Box
             sx={{
               display: 'flex',
@@ -845,8 +823,31 @@ export const ViewPageRoomList = ({
               );
             })}
           </Box>
-        )}
-      </Box>
+        </Box>
+      )}
+
+      <Box sx={{ flex: 1 }} />
+
+      {!(
+        currentRoom !== undefined ||
+        model.requests['room-create'] === RemoteData.Loading
+      ) && (
+        <Box sx={{ width: '100%', px: 2, py: 2 }}>
+          <Button
+            variant="contained"
+            fullWidth
+            size="large"
+            onClick={() => {
+              $send([
+                'room-create',
+                { userId: ctx.currentUserId, roomId: RoomId.generate() },
+              ]);
+            }}
+          >
+            Create Room
+          </Button>
+        </Box>
+      )}
     </FillBox>
   );
 };
