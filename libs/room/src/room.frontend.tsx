@@ -25,7 +25,6 @@ import {
   useTheme,
   ViewEmptyState,
 } from '@gamezilla/shared/ui';
-import { Fab } from '@mui/material';
 import { gameNameToString, viewCoverArt } from './game';
 import * as Game from './game.frontend';
 import { GameName, gameNameList } from './game.types';
