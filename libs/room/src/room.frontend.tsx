@@ -1302,13 +1302,11 @@ export const ViewNotInRoom = ({
         left={<HeaderBackButton onClick={() => ctx.$push(['room-list'])} />}
         title={title}
       />
+
       <Box
         sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
           flex: 1,
+          overflow: 'hidden',
         }}
       >
         <Box
@@ -1318,7 +1316,8 @@ export const ViewNotInRoom = ({
             flexDirection: 'column',
             justifyContent: 'center',
             width: '100%',
-            mb: 2,
+            height: '33.3333%',
+            maxHeight: '33.3333%',
           }}
         >
           <Box
@@ -1349,11 +1348,13 @@ export const ViewNotInRoom = ({
           </Typography>
         </Box>
 
+        <Divider />
         <Box
           sx={{
-            display: 'flex',
-            flexDirection: 'column',
             width: '100%',
+            height: '66.6666%',
+            maxHeight: '66.6666%',
+            overflowY: 'scroll',
           }}
         >
           <ButtonBase
@@ -1365,13 +1366,14 @@ export const ViewNotInRoom = ({
               justifyContent: 'flex-start',
               alignItems: 'center',
               width: '100%',
+              overflow: 'hidden',
             }}
           >
             <Avatar sx={{ mr: 1 }} src={host?.avatarUrl ?? ''} />
-            <Typography align="left" sx={{ flex: 1 }}>
+            <Typography align="left" noWrap>
               {host?.username ?? '...'}
             </Typography>
-            <Chip label="Host" />
+            <Chip sx={{ ml: 1 }} label="Host" />
           </ButtonBase>
 
           {usersInRoom.map((user) => {
