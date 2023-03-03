@@ -24,7 +24,6 @@ import {
   Typography,
   useTheme,
   ViewEmptyState,
-  ViewLoadingState,
 } from '@gamezilla/shared/ui';
 import { Fab } from '@mui/material';
 import { gameNameToString, viewCoverArt } from './game';
