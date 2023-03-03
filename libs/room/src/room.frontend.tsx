@@ -139,7 +139,7 @@ export const update_: Update = ({ ctx, sendToBackend, msg, model }) => {
     case 'change-host':
     case 'input-game': {
       const routeCmd =
-        msg[0] === 'room-join' || msg[0] === 'room-create'
+        msg[0] === 'room-create'
           ? Route.push(['room-game', { roomId: msg[1].roomId }])
           : Cmd.None;
 
