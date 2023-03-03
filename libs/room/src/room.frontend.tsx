@@ -941,7 +941,7 @@ const ViewRoomCard = ({
               marginRight: 1,
             }}
           >
-            {users.map((user) => (
+            {users.slice(0, 3).map((user) => (
               <Avatar
                 sx={{
                   width: 24,
