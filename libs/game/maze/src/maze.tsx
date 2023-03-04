@@ -34,7 +34,10 @@ const make = ({
   const stack = [lower];
   const visited = new Set<string>([Position.toKey(lower)]);
 
+  let count = 0;
+
   while (true) {
+    count++;
     const current = stack.pop();
 
     if (!current) {
@@ -44,7 +47,7 @@ const make = ({
     let unvisitedNeighbor: { position: Position; direction: Direction } | null =
       null;
 
-    for (const direction of Random.shuffle(seed, Direction.all)) {
+    for (const direction of Random.shuffle(`${seed}-${count}`, Direction.all)) {
       const neighbor = Position.add(Direction.toVector(direction), current);
 
       if (!hasVertex(neighbor, maze)) {

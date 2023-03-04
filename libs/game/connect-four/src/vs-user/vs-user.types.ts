@@ -507,7 +507,7 @@ export const resultToString = (result: ReturnType<typeof handle>): string => {
 //
 //
 
-type Tick = ['Tick'];
+type Tick = ['tick'];
 type Tick_Done = ['Tick_Done', SharedModel];
 
 export const tick = (model: SharedModel): SharedModel => {

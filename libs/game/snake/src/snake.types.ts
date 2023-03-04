@@ -62,7 +62,7 @@ export type FrontendMsg =
   | ['ClosedMenu']
   | Request;
 
-export type BackendMsg = ['Tick'];
+export type BackendMsg = ['tick'];
 
 export type ToBackend = Request;
 
@@ -81,7 +81,7 @@ export type Response =
 //
 
 export type InputDirection = [
-  'InputDirection',
+  'input-direction',
   { direction: Direction.Direction; userId: UserId }
 ];
 

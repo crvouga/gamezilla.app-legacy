@@ -524,6 +524,7 @@ const mergeWithBackendModel = ({
 
       const initial = Game.init({
         gameName: backendGame.type,
+        ctx,
       });
 
       const merged = Game.mergeWithBackend({

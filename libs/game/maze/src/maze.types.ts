@@ -56,14 +56,14 @@ export type BackendModel = SharedModel;
 
 export type FrontendMsg =
   | Req
-  | ['KeyDown', Keyboard.Key]
-  | ['KeyUp', Keyboard.Key];
+  | ['key-down', Keyboard.Key]
+  | ['key-up', Keyboard.Key];
 
-export type BackendMsg = ['Tick'];
+export type BackendMsg = ['tick'];
 
 export type ToBackend = Req;
 
-export type ToFrontend = Res | ['Tick', SharedModel];
+export type ToFrontend = Res | ['tick', SharedModel];
 
 //
 //
@@ -75,7 +75,7 @@ export type Req =
   | ['stop-playing', { userId: UserId }]
   | ['start-game', { userId: UserId }]
   | ['stop-game', { userId: UserId }]
-  | ['InputDirection', { userId: UserId; direction: Direction | 'none' }]
+  | ['input-direction', { userId: UserId; direction: Direction | 'none' }]
   | ['input-seed', { userId: UserId; seed: string }];
 
 export type Res = [...Req, Result<Problem, SharedModel>];
@@ -223,7 +223,7 @@ export const handle = (
       return Ok(modelNew);
     }
 
-    case 'InputDirection': {
+    case 'input-direction': {
       if (model.type !== 'game') {
         return Err('must_be_game');
       }
@@ -312,17 +312,15 @@ const mapValues = <A, B>(f: (a: A) => B, record: Record<string, A>) => {
 //
 //
 
-export const initShared = ({ userId }: { userId?: UserId }): SharedModel => {
+export const initShared = ({ userId }: { userId: UserId }): SharedModel => {
   return {
     type: 'Setup',
-    players: userId
-      ? {
-          [userId]: {
-            color: colorSeq[0],
-            userId,
-          },
-        }
-      : {},
+    players: {
+      [userId]: {
+        color: colorSeq[0],
+        userId,
+      },
+    },
     seed: 'some arbitrary seed',
     lower: { x: -10, y: -10 },
     upper: { x: 10, y: 10 },

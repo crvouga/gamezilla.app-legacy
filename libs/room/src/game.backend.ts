@@ -21,7 +21,13 @@ import { BackendModel, BackendMsg, ToBackend, ToFrontend } from './game.types';
 
 export type Model = BackendModel;
 
-export const init = ({ gameName }: { gameName: Model['type'] }): Model => {
+export const init = ({
+  gameName,
+  ctx,
+}: {
+  ctx: { currentUserId: UserId };
+  gameName: Model['type'];
+}): Model => {
   switch (gameName) {
     case 'connect-four': {
       return { type: 'connect-four', child: ConnectFourBackend.init };
@@ -48,7 +54,12 @@ export const init = ({ gameName }: { gameName: Model['type'] }): Model => {
     }
 
     case 'maze': {
-      return { type: 'maze', child: MazeBackend.init };
+      return {
+        type: 'maze',
+        child: MazeBackend.init({
+          userId: ctx.currentUserId,
+        }),
+      };
     }
 
     case 'flow': {

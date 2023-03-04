@@ -46,7 +46,7 @@ export const update = (
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'Tick': {
+    case 'tick': {
       const modelNew: Model = {
         ...Snake.step(model),
         gameStatus: model.gameStatus,
@@ -85,7 +85,7 @@ export const updateFromFrontend = (
       );
     }
 
-    case 'InputDirection': {
+    case 'input-direction': {
       return updateRequest(
         { sendToClient, broadcast },
         ['InputDirection_Done', inputDirection(msg[1], model)],
@@ -149,7 +149,7 @@ export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
     }
 
     case 'Playing': {
-      return Time.every<Msg>(intervalId, model.tickRate, () => ['Tick']);
+      return Time.every<Msg>(intervalId, model.tickRate, () => ['tick']);
     }
   }
 };

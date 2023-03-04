@@ -171,7 +171,14 @@ export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
 
       const { gameName } = msg[1];
 
-      const gameNew = gameName ? GameBackend.init({ gameName }) : undefined;
+      const gameNew = gameName
+        ? GameBackend.init({
+            gameName,
+            ctx: {
+              currentUserId: msg[1].userId,
+            },
+          })
+        : undefined;
 
       const roomNew: Room = {
         roomId: msg[1].roomId,
@@ -313,7 +320,12 @@ export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
         return Ok(modelNew);
       }
 
-      const gameNew = GameBackend.init({ gameName });
+      const gameNew = GameBackend.init({
+        gameName,
+        ctx: {
+          currentUserId: userId,
+        },
+      });
 
       const modelNew: BackendModel = {
         ...model,
