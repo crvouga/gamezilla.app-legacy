@@ -2,6 +2,7 @@ import { Cmd, exhaustive, p, RemoteData, Sub } from '@gamezilla/core';
 import { ProfileStore } from '@gamezilla/profile';
 import { Alerts, Ctx, RoomId, Route, UserId } from '@gamezilla/shared';
 import {
+  ActionButton,
   Avatar,
   AvatarGroup,
   Badge,
@@ -1032,7 +1033,7 @@ const ViewPageGame = ({
 
   return (
     <FillBox>
-      <Toolbar
+      {/* <Toolbar
         // variant="dense"
         sx={{ paddingX: 2, justifyContent: 'space-between' }}
       >
@@ -1063,9 +1064,7 @@ const ViewPageGame = ({
             </Button>
           </Badge>
         </Box>
-      </Toolbar>
-
-      <Divider />
+      </Toolbar> */}
 
       {game ? (
         <Game.View
@@ -1084,6 +1083,52 @@ const ViewPageGame = ({
       ) : (
         <ViewNotInGame model={model} ctx={ctx} room={room} $send={$send} />
       )}
+
+      <Divider />
+
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <ActionButton
+          icon={<Icons.ChevronLeft />}
+          label="Back"
+          onClick={() => {
+            ctx.$push(['room-list']);
+          }}
+        />
+        <ActionButton
+          icon={<Icons.People />}
+          label="People"
+          onClick={() => {
+            ctx.$push(['room', { roomId: room.roomId }]);
+          }}
+        />
+        <Box sx={{ flex: 1 }}></Box>
+        {/* <ActionButton
+          color="error"
+          icon={<Icons.Close />}
+          label="End"
+          onClick={() => {
+            $send([
+              'room-destroy',
+              { roomId: room.roomId, userId: ctx.currentUserId },
+            ]);
+          }}
+        /> */}
+        <Box sx={{ pr: 2 }}>
+          <Button
+            size="small"
+            color="error"
+            variant="contained"
+            onClick={() => {
+              $send([
+                'room-destroy',
+                { roomId: room.roomId, userId: ctx.currentUserId },
+              ]);
+            }}
+          >
+            End
+          </Button>
+        </Box>
+      </Box>
     </FillBox>
   );
 };
@@ -1260,7 +1305,7 @@ export const ViewNotInGame = ({
 
       {/* <Box sx={{ flex: 1 }}></Box> */}
 
-      <Box
+      {/* <Box
         sx={{
           p: 2,
           display: 'flex',
@@ -1276,7 +1321,7 @@ export const ViewNotInGame = ({
         >
           End
         </Button>
-      </Box>
+      </Box> */}
     </FillBox>
   );
 };
