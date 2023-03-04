@@ -41,7 +41,7 @@ export const update = (
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'Tick': {
+    case 'tick': {
       const modelNext = tick(model);
 
       return [modelNext, broadcast(['Tick_Done', modelNext])];
@@ -128,5 +128,5 @@ export const updateRoomLeave = (
 //
 
 export const subscriptions = (intervalId: string, _model: Model): Sub<Msg> => {
-  return Time.every(intervalId, 500, (): Msg => ['Tick']);
+  return Time.every(intervalId, 500, (): Msg => ['tick']);
 };

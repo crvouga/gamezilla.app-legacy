@@ -80,7 +80,7 @@ export const update = (
       const changeDirectionCmd =
         direction.type === 'Some'
           ? sendToBackend([
-              'InputDirection',
+              'input-direction',
               { userId: ctx.currentUserId, direction: direction.value },
             ])
           : Cmd.None;
@@ -101,7 +101,7 @@ export const update = (
       return [model, sendToBackend(msg)];
     }
 
-    case 'InputDirection': {
+    case 'input-direction': {
       return [model, sendToBackend(msg)];
     }
 

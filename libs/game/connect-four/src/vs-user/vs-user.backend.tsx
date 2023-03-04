@@ -40,7 +40,7 @@ export const update = (
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'Tick': {
+    case 'tick': {
       const modelNew = tick(model);
       return [modelNew, broadcast(['Tick_Done', modelNew])];
     }
@@ -129,7 +129,7 @@ export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
     }
 
     case 'game': {
-      return Time.every(intervalId, 1000, () => ['Tick']);
+      return Time.every(intervalId, 1000, () => ['tick']);
     }
   }
 };

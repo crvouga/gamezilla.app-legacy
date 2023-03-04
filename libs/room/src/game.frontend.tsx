@@ -2,12 +2,12 @@ import { Cmd, exhaustive, Sub } from '@gamezilla/core';
 import { GameRoomCtx } from '@gamezilla/game-shared';
 import { ChessFrontend } from '@gamezilla/game/chess';
 import { ConnectFourFrontend } from '@gamezilla/game/connect-four';
+import { FlowFrontend } from '@gamezilla/game/flow';
 import { GomokuFrontend } from '@gamezilla/game/gomoku';
 import { MazeFrontend } from '@gamezilla/game/maze';
 import { SnakeFrontend } from '@gamezilla/game/snake';
 import { TetrisFrontend } from '@gamezilla/game/tetris';
 import { TicTacToeFrontend } from '@gamezilla/game/tic-tac-toe';
-import { FlowFrontend } from '@gamezilla/game/flow';
 import { ProfileStore } from '@gamezilla/profile';
 import { Alerts, Ctx } from '@gamezilla/shared';
 import {
@@ -30,8 +30,10 @@ export type Model = FrontendModel;
 
 export const init = ({
   gameName,
+  ctx,
 }: {
   gameName: Model['type'];
+  ctx: Ctx;
 }): [Model, Cmd<Msg>] => {
   switch (gameName) {
     case 'tic-tac-toe': {
@@ -63,7 +65,15 @@ export const init = ({
     }
 
     case 'maze': {
-      return [{ type: 'maze', child: MazeFrontend.init({}) }, Cmd.None];
+      return [
+        {
+          type: 'maze',
+          child: MazeFrontend.init({
+            userId: ctx.currentUserId,
+          }),
+        },
+        Cmd.None,
+      ];
     }
 
     case 'flow': {
@@ -681,7 +691,9 @@ export const mergeWithBackend = ({
         {
           type: 'maze',
           child: MazeFrontend.mergeWithBackend({
-            frontendModel: MazeFrontend.init({}),
+            frontendModel: MazeFrontend.init({
+              userId: ctx.currentUserId,
+            }),
             backendModel: backendModel.child,
           }),
         },

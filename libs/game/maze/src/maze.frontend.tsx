@@ -1,4 +1,6 @@
 import { Cmd, Keyboard, p, Sub } from '@gamezilla/core';
+import { GameRoomCtx } from '@gamezilla/game-shared';
+import { Ctx } from '@gamezilla/shared';
 import {
   ActionButton,
   Avatar,
@@ -11,7 +13,6 @@ import {
   TextField,
   Typography,
 } from '@gamezilla/shared/ui';
-import { Ctx } from '@gamezilla/shared';
 import { Maze } from './maze';
 import {
   BackendModel,
@@ -24,7 +25,6 @@ import {
   ToFrontend,
 } from './maze.types';
 import { Direction, Position } from './position';
-import { GameRoomCtx } from '@gamezilla/game-shared';
 
 //
 //
@@ -58,7 +58,7 @@ export const update = (
     //
     //
 
-    case 'KeyUp': {
+    case 'key-up': {
       const direction = keyToDirection(msg[1]);
 
       if (!direction) {
@@ -68,13 +68,13 @@ export const update = (
       return [
         model,
         sendToBackend([
-          'InputDirection',
+          'input-direction',
           { userId: ctx.currentUserId, direction: 'none' },
         ]),
       ];
     }
 
-    case 'KeyDown': {
+    case 'key-down': {
       const direction = keyToDirection(msg[1]);
 
       if (!direction) {
@@ -84,7 +84,7 @@ export const update = (
       return [
         model,
         sendToBackend([
-          'InputDirection',
+          'input-direction',
           { userId: ctx.currentUserId, direction },
         ]),
       ];
@@ -95,7 +95,7 @@ export const update = (
     //
 
     case 'input-seed':
-    case 'InputDirection':
+    case 'input-direction':
     case 'start-game':
     case 'stop-game':
     case 'stop-playing':
@@ -112,7 +112,7 @@ export const updateFromBackend = (
   switch (msg[0]) {
     case 'stop-game':
     case 'input-seed':
-    case 'InputDirection':
+    case 'input-direction':
     case 'start-game':
     case 'stop-playing':
     case 'start-playing': {
@@ -126,7 +126,7 @@ export const updateFromBackend = (
       return [merged, Cmd.None];
     }
 
-    case 'Tick': {
+    case 'tick': {
       const merged = mergeWithBackend({
         frontendModel: model,
         backendModel: msg[1],
@@ -182,8 +182,8 @@ const keyToDirection = (key: Keyboard.Key): Direction | null => {
 
 export const subscriptions = (_model: Model) => {
   return Sub.batch<Msg>([
-    Keyboard.keyDowns((key) => ['KeyDown', key]),
-    Keyboard.keyUps((key) => ['KeyUp', key]),
+    Keyboard.keyDowns((key) => ['key-down', key]),
+    Keyboard.keyUps((key) => ['key-up', key]),
   ]);
 };
 
@@ -194,18 +194,6 @@ export const subscriptions = (_model: Model) => {
 //
 //
 //
-
-const artMaze = Maze.make({
-  seed: 'art maze!',
-  lower: { x: 0, y: 0 },
-  upper: { x: 27, y: 9 },
-});
-const artMazeViewBox = [
-  artMaze.lower.x,
-  artMaze.lower.y,
-  artMaze.upper.x - artMaze.lower.x + 1,
-  artMaze.upper.y - artMaze.lower.y + 1,
-].join(' ');
 
 const colorMap: { [color in Color]: string } = {
   Blue: '#0333FF',
@@ -230,49 +218,6 @@ export const View = ({
   if (model.type === 'Setup') {
     return (
       <FillBox>
-        <Box sx={{ position: 'relative' }}>
-          <svg viewBox={artMazeViewBox} width={'100%'}>
-            <rect
-              x={artMaze.lower.x}
-              y={artMaze.lower.y}
-              width="100%"
-              height="100%"
-              fill={'#000'}
-            />
-            {artMaze.edges.map(([a, b]) => (
-              <g
-                key={[a.x, a.y, b.x, b.y].join('-')}
-                strokeWidth="0.1"
-                stroke={'#bcbcbc'}
-              >
-                <line
-                  x1={a.x + 1 / 2}
-                  y1={a.y + 1 / 2}
-                  x2={b.x + 1 / 2}
-                  y2={b.y + 1 / 2}
-                />
-              </g>
-            ))}
-          </svg>
-          <Box
-            sx={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              // background: `linear-gradient(transparent, ${theme.palette.background.default})`
-              background: 'rgba(0, 0, 0, 0.5)',
-            }}
-          >
-            <Typography variant="h2" align="center" color="#fff">
-              Maze
-            </Typography>
-          </Box>
-        </Box>
         <Box sx={{ px: 2, pt: 2 }}>
           <TextField
             disabled={
@@ -453,19 +398,19 @@ export const View = ({
       </svg>
       {currentUserPlayer && (
         <>
-          <Joystick
+          <ViewJoystick
             activeDirection={p(currentUserPlayer.direction, (d) =>
               d === 'none' ? undefined : d
             )}
             onChange={(direction) =>
               $send([
-                'InputDirection',
+                'input-direction',
                 { direction, userId: ctx.currentUserId },
               ])
             }
             onDone={() =>
               $send([
-                'InputDirection',
+                'input-direction',
                 { direction: 'none', userId: ctx.currentUserId },
               ])
             }
@@ -488,7 +433,7 @@ export const View = ({
   );
 };
 
-const Joystick = ({
+const ViewJoystick = ({
   activeDirection,
   onChange,
   onDone,

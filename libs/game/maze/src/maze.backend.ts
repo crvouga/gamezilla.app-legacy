@@ -21,7 +21,7 @@ import {
 
 export type Model = BackendModel;
 
-export const init = initShared({});
+export const init = initShared;
 
 //
 //
@@ -39,9 +39,9 @@ export const update = (
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'Tick': {
+    case 'tick': {
       const modelNew = tick(model);
-      return [modelNew, broadcast(['Tick', modelNew])];
+      return [modelNew, broadcast(['tick', modelNew])];
     }
   }
 };
@@ -53,7 +53,7 @@ export const updateFromFrontend = (
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case 'stop-game':
-    case 'InputDirection':
+    case 'input-direction':
     case 'input-seed':
     case 'start-game':
     case 'stop-playing':
@@ -85,7 +85,7 @@ export const subscriptions = (
   model: BackendModel
 ): Sub<Msg> => {
   if (model.type === 'game') {
-    return Time.every(intervalId, 500, () => ['Tick']);
+    return Time.every(intervalId, 500, () => ['tick']);
     // return Sub.None
   }
   return Sub.None;
