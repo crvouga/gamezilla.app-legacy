@@ -5,7 +5,6 @@ import {
   ActionButton,
   Avatar,
   AvatarGroup,
-  Badge,
   Box,
   Button,
   ButtonBase,
@@ -20,8 +19,6 @@ import {
   IconButton,
   Icons,
   Paper,
-  Sx,
-  Toolbar,
   Typography,
   useTheme,
   ViewEmptyState,
@@ -1084,47 +1081,6 @@ const ViewPageGame = ({
         <ViewNotInGame model={model} ctx={ctx} room={room} $send={$send} />
       )}
     </FillBox>
-  );
-};
-
-const ViewRoomUserCard = ({
-  ctx,
-  userId,
-  isHost,
-  sx,
-}: {
-  isHost: boolean;
-  userId: UserId;
-  ctx: Ctx;
-  sx?: Sx;
-}) => {
-  const profile = ctx.profiles[userId];
-  return (
-    <Paper
-      variant="outlined"
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        overflow: 'hidden',
-        ...sx,
-      }}
-    >
-      <Avatar
-        sx={{ width: '100%', flex: 1, aspectRatio: '1' }}
-        src={profile?.avatarUrl ?? '...'}
-      />
-      <Typography
-        color="text.primary"
-        align="center"
-        variant="subtitle2"
-        sx={{ width: '100%', padding: 1 }}
-        noWrap
-      >
-        {profile?.username ?? '...'} {isHost && ' (host)'}
-      </Typography>
-    </Paper>
   );
 };
 
