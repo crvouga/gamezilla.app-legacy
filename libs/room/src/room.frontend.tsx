@@ -1028,6 +1028,7 @@ const ViewPageGame = ({
     <FillBox>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
         <ActionButton
+          sx={{ width: 72 }}
           icon={<Icons.ChevronLeft />}
           label="Back"
           onClick={() => {
@@ -1035,6 +1036,7 @@ const ViewPageGame = ({
           }}
         />
         <ActionButton
+          sx={{ width: 72 }}
           icon={<Icons.People />}
           label="People"
           onClick={() => {
