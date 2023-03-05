@@ -722,7 +722,9 @@ export const ActionButton = ({
   onClick,
   disabled = false,
   color,
+  sx,
 }: {
+  sx?: Sx;
   color?: 'error';
   label: string;
   icon: ReactNode;
@@ -734,17 +736,17 @@ export const ActionButton = ({
     <ButtonBase
       onClick={onClick}
       sx={{
+        width: '100%',
         paddingY: 1 / 2,
         paddingX: 2,
         display: 'flex',
         flexDirection: 'column',
-        // flex: 1,
-        width: 72,
         color: disabled
           ? theme.palette.action.disabled
           : color === 'error'
           ? theme.palette.error.main
           : theme.palette.action.active,
+        ...sx,
       }}
     >
       {icon}
