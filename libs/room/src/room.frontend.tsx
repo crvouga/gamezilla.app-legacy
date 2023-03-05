@@ -1027,44 +1027,44 @@ const ViewPageGame = ({
 }) => {
   const game = model.games[room.roomId];
 
-  const usersInRoom = Object.values(model.users).filter(
-    (user) => user.roomId === room.roomId
-  );
-
   return (
     <FillBox>
-      {/* <Toolbar
-        // variant="dense"
-        sx={{ paddingX: 2, justifyContent: 'space-between' }}
-      >
-        <Box sx={{ flex: 1, textAlign: 'left' }}>
-          <IconButton
-            sx={{ marginLeft: -1 }}
-            onClick={() => ctx.$push(['room-list'])}
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <ActionButton
+          icon={<Icons.ChevronLeft />}
+          label="Back"
+          onClick={() => {
+            ctx.$push(['room-list']);
+          }}
+        />
+        <ActionButton
+          icon={<Icons.People />}
+          label="People"
+          onClick={() => {
+            ctx.$push(['room', { roomId: room.roomId }]);
+          }}
+        />
+        <Box sx={{ flex: 1 }}></Box>
+
+        <Box sx={{ pr: 2 }}>
+          <Button
+            size="small"
+            color="error"
+            variant="contained"
+            onClick={() => {
+              if (room.hostId === ctx.currentUserId) {
+                $send(['room-destroy', { userId: ctx.currentUserId }]);
+              } else {
+                $send(['room-leave', { userId: ctx.currentUserId }]);
+              }
+            }}
           >
-            <Icons.ChevronLeft />
-          </IconButton>
+            {room.hostId === ctx.currentUserId ? 'End' : 'Leave'}
+          </Button>
         </Box>
-        <Typography variant="h6" sx={{ flex: 2, textAlign: 'center' }}>
-          {game ? gameNameToString(game.type) : 'Game'}
-        </Typography>
-        <Box sx={{ flex: 1, textAlign: 'right' }}>
-          <Badge
-            badgeContent={
-              usersInRoom.length > 1 ? usersInRoom.length : undefined
-            }
-            color="secondary"
-          >
-            <Button
-              startIcon={<Icons.Group />}
-              size="small"
-              onClick={() => $send(['clicked-room', { roomId: room.roomId }])}
-            >
-              Room
-            </Button>
-          </Badge>
-        </Box>
-      </Toolbar> */}
+      </Box>
+
+      <Divider />
 
       {game ? (
         <Game.View
@@ -1083,52 +1083,6 @@ const ViewPageGame = ({
       ) : (
         <ViewNotInGame model={model} ctx={ctx} room={room} $send={$send} />
       )}
-
-      <Divider />
-
-      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        <ActionButton
-          icon={<Icons.ChevronLeft />}
-          label="Back"
-          onClick={() => {
-            ctx.$push(['room-list']);
-          }}
-        />
-        <ActionButton
-          icon={<Icons.People />}
-          label="People"
-          onClick={() => {
-            ctx.$push(['room', { roomId: room.roomId }]);
-          }}
-        />
-        <Box sx={{ flex: 1 }}></Box>
-        {/* <ActionButton
-          color="error"
-          icon={<Icons.Close />}
-          label="End"
-          onClick={() => {
-            $send([
-              'room-destroy',
-              { roomId: room.roomId, userId: ctx.currentUserId },
-            ]);
-          }}
-        /> */}
-        <Box sx={{ pr: 2 }}>
-          <Button
-            size="small"
-            color="error"
-            variant="contained"
-            onClick={() => {
-              $send([
-                'room-destroy',
-                { roomId: room.roomId, userId: ctx.currentUserId },
-              ]);
-            }}
-          >
-            End
-          </Button>
-        </Box>
-      </Box>
     </FillBox>
   );
 };
@@ -1178,69 +1132,35 @@ export const ViewNotInGame = ({
   room,
   ctx,
   $send,
-  model,
 }: {
   model: Model;
   room: FrontendRoom;
   ctx: Ctx;
   $send: (m: Msg) => void;
 }) => {
-  const users = toRoomUsers(room.roomId, model);
-
   if (room.hostId !== ctx.currentUserId) {
     return (
       <FillBox>
         <Box
           sx={{
-            display: 'flex',
-            flexWrap: 'wrap',
             width: '100%',
-            gap: 3,
-            p: 3,
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
           }}
         >
-          {users.map((user) => {
-            return (
-              <CardActionArea
-                key={user.userId}
-                onClick={() => $send(['clicked-user', user])}
-              >
-                <ViewRoomUserCard
-                  isHost={room.hostId === user.userId}
-                  userId={user.userId}
-                  ctx={ctx}
-                  sx={{ width: '50%' }}
-                />
-              </CardActionArea>
-            );
-          })}
-        </Box>
-
-        <Box sx={{ flex: 1 }} />
-        <Box sx={{ p: 2, display: 'flex', justifyContent: 'center' }}>
-          <Button
-            variant="outlined"
-            startIcon={
-              <Icons.ExitToApp
-                sx={{
-                  transform: 'rotate(180deg)',
-                }}
-              />
-            }
-            color="error"
-            onClick={() =>
-              $send([
-                'room-leave',
-                {
-                  userId: ctx.currentUserId,
-                },
-              ])
-            }
-          >
-            Leave
-          </Button>
+          <Icons.SportsEsports
+            sx={{
+              width: 72,
+              height: 72,
+              color: 'text.secondary',
+            }}
+          />
+          <Typography variant="h6" color="text.secondary">
+            No game selected
+          </Typography>
         </Box>
       </FillBox>
     );
@@ -1250,78 +1170,24 @@ export const ViewNotInGame = ({
     <FillBox>
       <Box
         sx={{
-          display: 'flex',
-          width: '100%',
-          gap: 2,
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr 1fr',
+          gap: 1,
           p: 2,
-          alignItems: 'center',
-          // justifyContent: 'center',
-        }}
-      >
-        {users.map((user) => {
-          return (
-            <CardActionArea
-              key={user.userId}
-              sx={{ width: 72 }}
-              onClick={() => $send(['clicked-user', user])}
-            >
-              <ViewRoomUserCard
-                isHost={room.hostId === user.userId}
-                userId={user.userId}
-                ctx={ctx}
-                sx={{ width: '100%' }}
-              />
-            </CardActionArea>
-          );
-        })}
-      </Box>
-
-      <Divider />
-
-      <Box
-        sx={{
-          px: 1,
-          pt: 1,
-          width: '100%',
-          display: 'flex',
-          flexWrap: 'wrap',
-          overflowY: 'scroll',
-          flex: 1,
         }}
       >
         {gameNameList.map((gameName) => (
-          <Box key={gameName} sx={{ width: '33.33%', p: 1 }}>
-            <CardActionArea
-              disabled={room.hostId !== ctx.currentUserId}
-              onClick={() =>
-                $send(['input-game', { gameName, userId: ctx.currentUserId }])
-              }
-            >
-              <ViewGameArtCard gameName={gameName} />
-            </CardActionArea>
-          </Box>
+          <CardActionArea
+            key={gameName}
+            disabled={room.hostId !== ctx.currentUserId}
+            onClick={() =>
+              $send(['input-game', { gameName, userId: ctx.currentUserId }])
+            }
+          >
+            <ViewGameArtCard gameName={gameName} />
+          </CardActionArea>
         ))}
       </Box>
-
-      {/* <Box sx={{ flex: 1 }}></Box> */}
-
-      {/* <Box
-        sx={{
-          p: 2,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <Button
-          variant="outlined"
-          color="error"
-          startIcon={<Icons.Close />}
-          onClick={() => $send(['room-destroy', { userId: ctx.currentUserId }])}
-        >
-          End
-        </Button>
-      </Box> */}
     </FillBox>
   );
 };
