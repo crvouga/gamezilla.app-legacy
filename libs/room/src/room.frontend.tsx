@@ -5,6 +5,7 @@ import {
   ActionButton,
   Avatar,
   AvatarGroup,
+  Badge,
   Box,
   Button,
   ButtonBase,
@@ -22,6 +23,7 @@ import {
   useTheme,
   ViewEmptyState,
 } from '@gamezilla/shared/ui';
+import { BadgeProps, styled } from '@mui/material';
 import { gameNameToString, viewCoverArt } from './game';
 import * as Game from './game.frontend';
 import { GameName, gameNameList } from './game.types';
@@ -994,6 +996,15 @@ const formatUsernames = (usernames: string[]) => {
   return formatted.join(', ');
 };
 
+const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
+  '& .MuiBadge-badge': {
+    right: -4,
+    top: 13,
+    border: `2px solid ${theme.palette.background.paper}`,
+    padding: '0 4px',
+  },
+}));
+
 const ViewRoom = ({
   ctx,
   model,
@@ -1006,7 +1017,7 @@ const ViewRoom = ({
   $send: (msg: Msg) => void;
 }) => {
   const game = model.games[room.roomId];
-
+  const theme = useTheme();
   return (
     <FillBox>
       {game ? (
@@ -1041,13 +1052,13 @@ const ViewRoom = ({
         <ActionButton
           sx={{ width: 72 }}
           icon={
-            <Icons.People />
-            // <Badge
-            //   badgeContent={toRoomUsers(room.roomId, model).length}
-            //   color="primary"
-            // >
-            //   <Icons.People />
-            // </Badge>
+            // <Icons.People />
+            <StyledBadge
+              badgeContent={toRoomUsers(room.roomId, model).length}
+              color="primary"
+            >
+              <Icons.Groups />
+            </StyledBadge>
           }
           label={`People`}
           onClick={() => {
