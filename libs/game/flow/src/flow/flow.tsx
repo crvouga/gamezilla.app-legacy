@@ -77,16 +77,6 @@ export const viewCoverArt = () => {
 
           return (
             <g key={`${x}-${y}-${fill}`} transform="translate(0.5, 0.5)">
-              {/* {north && north === letter && (
-                <line
-                  x1={x}
-                  y1={y}
-                  x2={x}
-                  y2={y + 1}
-                  stroke={fill}
-                  strokeWidth={0.1}
-                /> */}
-              )}
               <circle cx={x} cy={y} r={0.25} fill={fill} />
             </g>
           );
