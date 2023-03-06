@@ -585,7 +585,7 @@ const onLocationChange = (location: Browser.Location): Msg => {
   return p(
     location,
     Route.decode,
-    Option.withDefault<Route.Model>(['room']),
+    Option.withDefault<Route.Model>(['room-list']),
     (route) => ['route', ['got-route', route]]
   );
 };

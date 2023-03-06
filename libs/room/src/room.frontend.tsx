@@ -5,12 +5,12 @@ import {
   ActionButton,
   Avatar,
   AvatarGroup,
+  Badge,
   Box,
   Button,
   ButtonBase,
   CardActionArea,
   Chip,
-  CircularProgress,
   Divider,
   Drawer,
   FillBox,
@@ -53,7 +53,8 @@ export const init: [Model, Cmd<Msg>] = [
     rooms: {},
     users: {},
     requests: {},
-    modal: { type: 'none' },
+    modal: 'none',
+    previewUserId: null,
   },
   Cmd.None,
 ];
@@ -96,15 +97,21 @@ export const update: Update = (input) => {
 export const update_: Update = ({ ctx, sendToBackend, msg, model }) => {
   switch (msg[0]) {
     case 'clicked-room': {
-      return { model, cmd: Route.push(['room', { roomId: msg[1].roomId }]) };
+      return { model, cmd: Route.push(['room', msg[1].roomId]) };
     }
 
     case 'modal-closed': {
+      return { model: { ...model, modal: 'none' } };
+    }
+
+    case 'modal-open': {
+      return { model: { ...model, modal: msg[1] } };
+    }
+
+    case 'clicked-user-link': {
       return {
-        model: {
-          ...model,
-          modal: { type: 'none' },
-        },
+        model: { ...model, modal: 'none' },
+        cmd: Route.push(['profile', msg[1]]),
       };
     }
 
@@ -112,9 +119,9 @@ export const update_: Update = ({ ctx, sendToBackend, msg, model }) => {
       return {
         model: {
           ...model,
-          modal: { type: 'user-preview', userId: msg[1].userId },
+          previewUserId: msg[1].userId,
+          modal: 'user-preview',
         },
-        // cmd: Route.push(['profile', { userId: msg[1].userId }])
       };
     }
 
@@ -138,7 +145,7 @@ export const update_: Update = ({ ctx, sendToBackend, msg, model }) => {
     case 'input-game': {
       const routeCmd =
         msg[0] === 'room-create'
-          ? Route.push(['room-game', { roomId: msg[1].roomId }])
+          ? Route.push(['room', msg[1].roomId])
           : Cmd.None;
 
       return {
@@ -387,7 +394,7 @@ export const updateFromBackend = (
 
       const routeActions: OutAction[] =
         msg[1].userId === ctx.currentUserId
-          ? [['route', ['Replace', ['room-game', { roomId: msg[1].roomId }]]]]
+          ? [['route', ['Replace', ['room', msg[1].roomId]]]]
           : [];
 
       const alertActions: OutAction[] =
@@ -622,32 +629,23 @@ export const subscriptions = (ctx: Ctx, model: Model): Sub<Msg> => {
 //
 //
 
-type RoomRoute = 'room' | 'room-game';
-
 export const View = ({
   ctx,
   $send,
   model,
-  route,
   roomId,
 }: {
-  route: RoomRoute;
   model: Model;
   ctx: Ctx;
   $send: (m: Msg) => void;
   roomId: RoomId;
 }) => {
+  const room = model.rooms[roomId];
   return (
-    <>
-      <ViewPage
-        roomId={roomId}
-        ctx={ctx}
-        $send={$send}
-        model={model}
-        route={route}
-      />
+    <FillBox>
+      <ViewPage roomId={roomId} ctx={ctx} $send={$send} model={model} />
       <Drawer
-        open={model.modal.type === 'user-preview'}
+        open={model.modal === 'users'}
         onClose={() => $send(['modal-closed'])}
         anchor="bottom"
         PaperProps={{
@@ -661,40 +659,56 @@ export const View = ({
           variant: 'outlined',
         }}
       >
-        {model.modal.type === 'user-preview' ? (
-          <>
-            <ButtonBase
-              sx={{
-                width: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                p: 2,
-              }}
-              onClick={() => {
-                if (model.modal.type === 'user-preview') {
-                  ctx.$push(['profile', { userId: model.modal.userId }]);
-                }
-              }}
-            >
-              <Avatar
-                src={ctx.profiles[model.modal.userId]?.avatarUrl}
-                sx={{ width: 80, height: 80, marginBottom: 1 }}
-              />
-              <Typography variant="h6">
-                @{ctx.profiles[model.modal.userId]?.username ?? '...'}
-              </Typography>
-            </ButtonBase>
-            <Box sx={{ px: 2, paddingBottom: 4, width: '100%' }}>
-              <Button variant="outlined" fullWidth startIcon={<Icons.Send />}>
-                Direct Message
-              </Button>
-            </Box>
-          </>
-        ) : (
-          <CircularProgress />
+        {room && (
+          <ViewRoomPeople room={room} ctx={ctx} $send={$send} model={model} />
         )}
       </Drawer>
-    </>
+
+      <Drawer
+        open={model.modal === 'user-preview'}
+        onClose={() => $send(['modal-closed'])}
+        anchor="bottom"
+        PaperProps={{
+          sx: {
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            maxWidth: 'xs',
+          },
+          variant: 'outlined',
+        }}
+      >
+        {model.previewUserId && (
+          <ButtonBase
+            sx={{
+              width: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              p: 2,
+            }}
+            onClick={() => {
+              if (model.previewUserId) {
+                $send(['clicked-user-link', { userId: model.previewUserId }]);
+              }
+            }}
+          >
+            <Avatar
+              src={ctx.profiles[model.previewUserId]?.avatarUrl}
+              sx={{ width: 80, height: 80, marginBottom: 1 }}
+            />
+            <Typography variant="h6">
+              @{ctx.profiles[model.previewUserId]?.username ?? '...'}
+            </Typography>
+          </ButtonBase>
+        )}
+        <Box sx={{ px: 2, paddingBottom: 4, width: '100%' }}>
+          <Button variant="outlined" fullWidth startIcon={<Icons.Send />}>
+            Direct Message
+          </Button>
+        </Box>
+      </Drawer>
+    </FillBox>
   );
 };
 
@@ -702,11 +716,9 @@ const ViewPage = ({
   ctx,
   $send,
   model,
-  route,
   roomId,
 }: {
   roomId: RoomId;
-  route: RoomRoute;
   model: Model;
   ctx: Ctx;
   $send: (m: Msg) => void;
@@ -727,15 +739,7 @@ const ViewPage = ({
     return <ViewNotInRoom room={room} $send={$send} ctx={ctx} model={model} />;
   }
 
-  switch (route) {
-    case 'room': {
-      return <ViewPageRoom room={room} ctx={ctx} $send={$send} model={model} />;
-    }
-
-    case 'room-game': {
-      return <ViewPageGame room={room} ctx={ctx} $send={$send} model={model} />;
-    }
-  }
+  return <ViewRoom room={room} ctx={ctx} $send={$send} model={model} />;
 };
 
 export const ViewRoomNotFound = ({ ctx }: { ctx: Ctx }) => {
@@ -815,7 +819,7 @@ export const ViewPageRoomList = ({
                   users={users}
                   gameName={gameName}
                   onClick={() => {
-                    ctx.$push(['room-game', { roomId: room.roomId }]);
+                    ctx.$push(['room', room.roomId]);
                   }}
                 />
               );
@@ -1011,7 +1015,7 @@ const formatUsernames = (usernames: string[]) => {
   return formatted.join(', ');
 };
 
-const ViewPageGame = ({
+const ViewRoom = ({
   ctx,
   model,
   $send,
@@ -1026,9 +1030,29 @@ const ViewPageGame = ({
 
   return (
     <FillBox>
+      {game ? (
+        <Game.View
+          gameRoomCtx={{
+            hostId: room.hostId,
+            onQuit: () =>
+              $send([
+                'input-game',
+                { userId: ctx.currentUserId, gameName: undefined },
+              ]),
+          }}
+          ctx={ctx}
+          $send={(msg) => $send(['game', msg])}
+          model={game}
+        />
+      ) : (
+        <ViewNotInGame model={model} ctx={ctx} room={room} $send={$send} />
+      )}
+
+      <Divider />
+
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
         <ActionButton
-          sx={{ width: 72 }}
+          sx={{ width: 80 }}
           icon={<Icons.ChevronLeft />}
           label="Back"
           onClick={() => {
@@ -1037,10 +1061,17 @@ const ViewPageGame = ({
         />
         <ActionButton
           sx={{ width: 72 }}
-          icon={<Icons.People />}
-          label="People"
+          icon={
+            <Badge
+              badgeContent={toRoomUsers(room.roomId, model).length}
+              color="primary"
+            >
+              <Icons.People />
+            </Badge>
+          }
+          label={`People`}
           onClick={() => {
-            ctx.$push(['room', { roomId: room.roomId }]);
+            $send(['modal-open', 'users']);
           }}
         />
         <Box sx={{ flex: 1 }}></Box>
@@ -1062,26 +1093,6 @@ const ViewPageGame = ({
           </Button>
         </Box>
       </Box>
-
-      <Divider />
-
-      {game ? (
-        <Game.View
-          gameRoomCtx={{
-            hostId: room.hostId,
-            onQuit: () =>
-              $send([
-                'input-game',
-                { userId: ctx.currentUserId, gameName: undefined },
-              ]),
-          }}
-          ctx={ctx}
-          $send={(msg) => $send(['game', msg])}
-          model={game}
-        />
-      ) : (
-        <ViewNotInGame model={model} ctx={ctx} room={room} $send={$send} />
-      )}
     </FillBox>
   );
 };
@@ -1227,50 +1238,25 @@ export const ViewNotInRoom = ({
             overflowY: 'scroll',
           }}
         >
-          <ButtonBase
+          <ViewRoomUserListItem
+            isHost
+            key={room.hostId}
+            userId={room.hostId}
+            ctx={ctx}
             onClick={() => $send(['clicked-user', { userId: room.hostId }])}
-            sx={{
-              px: 2,
-              py: 1,
-              display: 'flex',
-              justifyContent: 'flex-start',
-              alignItems: 'center',
-              width: '100%',
-              overflow: 'hidden',
-            }}
-          >
-            <Avatar sx={{ mr: 1 }} src={host?.avatarUrl ?? ''} />
-            <Typography align="left" noWrap>
-              {host?.username ?? '...'}
-            </Typography>
-            <Chip sx={{ ml: 1 }} label="Host" />
-          </ButtonBase>
+          />
 
           {usersInRoom.map((user) => {
             if (user.userId === room.hostId) {
               return null;
             }
             return (
-              <ButtonBase
-                onClick={() => $send(['clicked-user', { userId: user.userId }])}
+              <ViewRoomUserListItem
                 key={user.userId}
-                sx={{
-                  px: 2,
-                  py: 1,
-                  display: 'flex',
-                  justifyContent: 'flex-start',
-                  alignItems: 'center',
-                  width: '100%',
-                }}
-              >
-                <Avatar
-                  sx={{ mr: 1 }}
-                  src={ctx.profiles[user.userId]?.avatarUrl ?? ''}
-                />
-                <Typography align="left" sx={{ flex: 1 }}>
-                  {ctx.profiles[user.userId]?.username ?? '...'}
-                </Typography>
-              </ButtonBase>
+                userId={user.userId}
+                ctx={ctx}
+                onClick={() => $send(['clicked-user', { userId: user.userId }])}
+              />
             );
           })}
         </Box>
@@ -1293,6 +1279,39 @@ export const ViewNotInRoom = ({
         </Button>
       </Box>
     </FillBox>
+  );
+};
+
+const ViewRoomUserListItem = ({
+  ctx,
+  userId,
+  onClick,
+  isHost,
+}: {
+  ctx: Ctx;
+  userId: UserId;
+  onClick: () => void;
+  isHost?: boolean;
+}) => {
+  return (
+    <ButtonBase
+      onClick={onClick}
+      sx={{
+        px: 2,
+        py: 1,
+        display: 'flex',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        width: '100%',
+      }}
+    >
+      <Avatar sx={{ mr: 1 }} src={ctx.profiles[userId]?.avatarUrl ?? ''} />
+      <Typography align="left">
+        {ctx.profiles[userId]?.username ?? '...'}
+      </Typography>
+      {ctx.currentUserId === userId && <Chip sx={{ ml: 1 }} label="You" />}
+      {isHost && <Chip sx={{ ml: 1 }} label="Host" />}
+    </ButtonBase>
   );
 };
 
@@ -1335,7 +1354,7 @@ const toRoomUsers = (roomId: RoomId, model: Model): RoomUser[] => {
   return roomUsers;
 };
 
-const ViewPageRoom = ({
+const ViewRoomPeople = ({
   model,
   $send,
   ctx,
@@ -1347,97 +1366,36 @@ const ViewPageRoom = ({
   $send: (msg: Msg) => void;
 }) => {
   const usersInRoom = toRoomUsers(room.roomId, model);
+  const userCount = usersInRoom.length;
 
   return (
     <FillBox>
-      <Typography
-        variant="h4"
-        sx={{ paddingX: 2, paddingTop: 2, width: '100%' }}
-        noWrap
-      >
-        {ctx.profiles[room.hostId]?.username ?? '...'}'s room
-      </Typography>
-
-      <Box
-        sx={{
-          display: 'flex',
-          paddingY: 1,
-          paddingX: 2,
-        }}
-      >
-        {usersInRoom.map((user) => (
-          <Box
-            key={user.userId}
-            onClick={() => $send(['clicked-user', user])}
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: `${(1 / 3) * 100}%`,
-              padding: 1,
-              overflowX: 'hidden',
-            }}
-          >
-            <Avatar src={ctx.profiles[user.userId]?.avatarUrl} />
-            <Typography
-              align="center"
-              sx={{ marginBottom: -1 / 2, width: '100%' }}
-              noWrap
-            >
-              {ctx.profiles[user.userId]?.username ?? '...'}
-            </Typography>
-            {user.userId === room.hostId ? (
-              <Typography variant="subtitle2" color="text.secondary">
-                Host
-              </Typography>
-            ) : (
-              <Typography
-                variant="subtitle2"
-                color="text.secondary"
-                sx={{ opacity: 0 }}
-              >
-                Guest
-              </Typography>
-            )}
-          </Box>
-        ))}
-      </Box>
-
-      <Box sx={{ flex: 1 }} />
-
-      <Box sx={{ p: 2, display: 'flex', gap: 2 }}>
-        <Button
-          variant="outlined"
-          fullWidth
-          onClick={() => ctx.$push(['room-game', { roomId: room.roomId }])}
-          startIcon={<Icons.ChevronLeft />}
-        >
-          Back
-        </Button>
-        {ctx.currentUserId === room.hostId ? (
+      <Header
+        left={
           <Button
-            variant="outlined"
-            fullWidth
-            color="error"
-            startIcon={<Icons.Close />}
-            onClick={() =>
-              $send(['room-destroy', { userId: ctx.currentUserId }])
-            }
+            size="small"
+            sx={{ marginLeft: -1 }}
+            onClick={() => $send(['modal-closed'])}
           >
-            End Room
+            Close
           </Button>
-        ) : (
-          <Button
-            fullWidth
-            variant="outlined"
-            color="error"
-            startIcon={<Icons.ExitToApp />}
-            onClick={() => $send(['room-leave', { userId: ctx.currentUserId }])}
-          >
-            Leave Room
-          </Button>
-        )}
+        }
+        title={`People (${userCount})`}
+      />
+      <Divider />
+
+      <Box>
+        {usersInRoom.map((user) => {
+          return (
+            <ViewRoomUserListItem
+              isHost={user.userId === room.hostId}
+              key={user.userId}
+              userId={user.userId}
+              ctx={ctx}
+              onClick={() => $send(['clicked-user', { userId: user.userId }])}
+            />
+          );
+        })}
       </Box>
     </FillBox>
   );
@@ -1491,7 +1449,7 @@ export const ViewBar = ({
           alignItems: 'center',
           overflow: 'hidden',
         }}
-        onClick={() => ctx.$push(['room-game', { roomId: room.roomId }])}
+        onClick={() => ctx.$push(['room', room.roomId])}
       >
         <Box sx={{ p: 1, mr: 1 }}>
           {!game && (
