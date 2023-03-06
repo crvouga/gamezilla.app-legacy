@@ -70,14 +70,34 @@ export const viewCoverArt = () => {
         row.map((letter, x) => {
           const fill = letterToColor(letter);
 
-          // const north = board[y - 1]?.[x];
-          // const south = board[y + 1]?.[x];
-          // const east = board[y]?.[x + 1];
-          // const west = board[y]?.[x - 1];
+          const isNorth = board[y - 1]?.[x] === letter;
+          const isSouth = board[y + 1]?.[x] === letter;
+          const isEast = board[y]?.[x + 1] === letter;
+          const isWest = board[y]?.[x - 1] === letter;
+
+          const isEndpoint =
+            [isNorth, isSouth, isEast, isWest].filter((flag) => flag).length ===
+            1;
 
           return (
-            <g key={`${x}-${y}-${fill}`} transform="translate(0.5, 0.5)">
-              <circle cx={x} cy={y} r={0.25} fill={fill} />
+            <g
+              key={`${x}-${y}-${fill}`}
+              transform="translate(0.5, 0.5)"
+              strokeWidth={0.3}
+            >
+              <circle cx={x} cy={y} r={isEndpoint ? 0.3 : 0.15} fill={fill} />
+              {isNorth && (
+                <line x1={x} y1={y} x2={x} y2={y - 0.6} stroke={fill} />
+              )}
+              {isSouth && (
+                <line x1={x} y1={y} x2={x} y2={y + 0.6} stroke={fill} />
+              )}
+              {isWest && (
+                <line x1={x} y1={y} x2={x - 0.6} y2={y} stroke={fill} />
+              )}
+              {isEast && (
+                <line x1={x} y1={y} x2={x + 0.6} y2={y} stroke={fill} />
+              )}
             </g>
           );
         })
