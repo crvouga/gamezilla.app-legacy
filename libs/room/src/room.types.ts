@@ -52,8 +52,11 @@ export type FrontendModel = SharedModel & {
   requests: {
     [key in Req[0]]?: RemoteData<Problem, 'none'>;
   };
-  modal: { type: 'user-preview'; userId: UserId } | { type: 'none' };
+  previewUserId: UserId | null;
+  modal: ModalModel;
 };
+
+type ModalModel = 'none' | 'user-preview' | 'users';
 
 export type FrontendRoom = {
   roomId: RoomId;
@@ -94,8 +97,10 @@ export type BackendMsg = ['game', RoomId, Game.BackendMsg];
 
 export type FrontendMsg =
   | ['modal-closed']
+  | ['modal-open', ModalModel]
   | ['clicked-room', { roomId: RoomId }]
   | ['clicked-user', { userId: UserId }]
+  | ['clicked-user-link', { userId: UserId }]
   | ['game', Game.FrontendMsg]
   | ['room-end-then-join', { roomId: RoomId; userId: UserId }]
   | ['room-leave-then-join', { roomId: RoomId; userId: UserId }]

@@ -43,8 +43,7 @@ export type Model =
   | ['chat-new', ChatNew.Model]
   | ['search', PageProfileSearch.Model]
   | ['chat-conversation', { conversationId: string }, ChatConversation.Model]
-  | ['room', { roomId: RoomId }]
-  | ['room-game', { roomId: RoomId }]
+  | ['room', RoomId]
   | ['room-list']
   | ['party'];
 
@@ -171,11 +170,7 @@ export const initReady = (
     }
 
     case 'room': {
-      return [['room', { roomId: route[1].roomId }], Cmd.None, []];
-    }
-
-    case 'room-game': {
-      return [['room-game', { roomId: route[1].roomId }], Cmd.None, []];
+      return [['room', route[1]], Cmd.None, []];
     }
 
     case 'party': {
@@ -226,7 +221,6 @@ export const initProfileMissing = (
     case 'login-email-link':
     case 'login-phone':
     case 'login-phone-verify':
-    case 'room-game':
     case 'room':
     case 'room-list':
     case 'party':
@@ -403,10 +397,6 @@ export const updateReady = (
       return [model, Cmd.None, []];
     }
 
-    case 'room-game': {
-      return [model, Cmd.None, []];
-    }
-
     case 'party': {
       if (msg[0] === 'party') {
         return [['party'], Cmd.None, [['party', ['Msg', msg[1]]]]];
@@ -460,7 +450,6 @@ export const updateProfileMissing = (
     case 'chat':
     case 'chat-new':
     case 'chat-conversation':
-    case 'room-game':
     case 'room':
     case 'search':
     case 'party':
@@ -522,7 +511,6 @@ export const subscriptions = (model: Model): Sub<Msg> => {
     case 'profile':
     case 'search':
     case 'room':
-    case 'room-game':
     case 'room-list':
     case 'party':
     case 'loading':
@@ -701,16 +689,14 @@ export const ViewReady = ({
             ctx={ctx}
             route={route}
             $send={$send}
-          />{' '}
+          />
         </>
       );
 
-    case 'room-game':
     case 'room': {
       return (
         <RoomFrontend.View
-          roomId={model[1].roomId}
-          route={model[0]}
+          roomId={model[1]}
           ctx={ctx}
           model={gameRoom}
           $send={$sendRoom}
@@ -819,7 +805,6 @@ export const ViewProfileMissing = ({
     case 'search':
     case 'profile':
     case 'room':
-    case 'room-game':
     case 'room-list':
     case 'party':
     case 'loading':

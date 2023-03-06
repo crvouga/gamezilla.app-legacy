@@ -1,4 +1,4 @@
-import { Result } from '@gamezilla/core';
+import { RemoteData, Result } from '@gamezilla/core';
 import { UserId, Username } from '@gamezilla/shared';
 
 //
@@ -14,6 +14,15 @@ export type Profile = {
   username: Username;
   avatarUrl: string;
   themeMode: 'Light' | 'Dark' | 'System';
+};
+
+export type FrontendModel_ = {
+  profiles: {
+    [userId: UserId]: Profile;
+  };
+  requests: {
+    [key in Req[0]]: RemoteData<Problem, null>;
+  };
 };
 
 export type FrontendModel = null;
@@ -42,12 +51,14 @@ export type ToBackend = Req;
 //
 //
 
-type Problem = ['database_error', string];
+type Problem = ['database_error', string] | ['unknown_shape'];
 
 export type Req =
-  | ['find_many', { userId: UserId[] }]
+  | ['find-many', { userId: UserId[] }]
   | ['search', { query: string }];
 
 export type Res =
-  | ['find_many', { userId: UserId[] }, Result<Problem, Profile[]>]
-  | ['search', { userId: UserId[] }, Result<Problem, Profile[]>];
+  | ['find-many', { userId: UserId[] }, Result<Problem, Profile[]>]
+  | ['search', { userId: UserId[] }, Result<Problem, Profile[]>]
+  | ['create', { userId: UserId }, Result<Problem, null>]
+  | ['destroy-forever', { userId: UserId }, Result<Problem, null>];
