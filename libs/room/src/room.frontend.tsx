@@ -5,7 +5,6 @@ import {
   ActionButton,
   Avatar,
   AvatarGroup,
-  Badge,
   Box,
   Button,
   ButtonBase,
@@ -648,16 +647,6 @@ export const View = ({
         open={model.modal === 'users'}
         onClose={() => $send(['modal-closed'])}
         anchor="bottom"
-        PaperProps={{
-          sx: {
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            maxWidth: 'xs',
-          },
-          variant: 'outlined',
-        }}
       >
         {room && (
           <ViewRoomPeople room={room} ctx={ctx} $send={$send} model={model} />
@@ -668,16 +657,6 @@ export const View = ({
         open={model.modal === 'user-preview'}
         onClose={() => $send(['modal-closed'])}
         anchor="bottom"
-        PaperProps={{
-          sx: {
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            maxWidth: 'xs',
-          },
-          variant: 'outlined',
-        }}
       >
         {model.previewUserId && (
           <ButtonBase
@@ -1062,12 +1041,13 @@ const ViewRoom = ({
         <ActionButton
           sx={{ width: 72 }}
           icon={
-            <Badge
-              badgeContent={toRoomUsers(room.roomId, model).length}
-              color="primary"
-            >
-              <Icons.People />
-            </Badge>
+            <Icons.People />
+            // <Badge
+            //   badgeContent={toRoomUsers(room.roomId, model).length}
+            //   color="primary"
+            // >
+            //   <Icons.People />
+            // </Badge>
           }
           label={`People`}
           onClick={() => {
@@ -1371,15 +1351,15 @@ const ViewRoomPeople = ({
   return (
     <FillBox>
       <Header
-        left={
-          <Button
-            size="small"
-            sx={{ marginLeft: -1 }}
-            onClick={() => $send(['modal-closed'])}
-          >
-            Close
-          </Button>
-        }
+        // left={
+        //   <Button
+        //     size="small"
+        //     sx={{ marginLeft: -1 }}
+        //     onClick={() => $send(['modal-closed'])}
+        //   >
+        //     Close
+        //   </Button>
+        // }
         title={`People (${userCount})`}
       />
       <Divider />
