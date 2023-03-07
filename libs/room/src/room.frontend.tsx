@@ -1017,7 +1017,6 @@ const ViewRoom = ({
   $send: (msg: Msg) => void;
 }) => {
   const game = model.games[room.roomId];
-  const theme = useTheme();
   return (
     <FillBox>
       {game ? (
