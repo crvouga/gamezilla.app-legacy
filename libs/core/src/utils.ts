@@ -18,12 +18,12 @@ export const andThen_ =
 
 export const andThen =
   <Msg, Model, Action>(
+    msg: Msg,
     update: (input: { msg: Msg; model: Model }) => {
       model: Model;
       cmd?: Cmd<Msg>;
       actions?: Action[];
-    },
-    msg: Msg
+    }
   ) =>
   (output: { actions?: Action[]; cmd?: Cmd<Msg>; model: Model }) => {
     const updated = update({ msg, model: output.model });

@@ -54,6 +54,28 @@ export type Model =
   | ['room-list']
   | ['party'];
 
+export type Model_ = {
+  ['login']: PageLogin.Model;
+  ['logout']: Logout.Model;
+  ['account']: Account.Model;
+  //
+  ['profile']: PageProfile.Model;
+  ['profile-create']: PageProfileCreate.Model;
+  ['profile-delete']: PageProfileDelete.Model;
+  ['profile-update']: PageProfileUpdate.Model;
+  //
+  ['chat']: Chat.Model;
+  ['chat-new']: ChatNew.Model;
+  ['chat-conversation']: ChatConversation.Model;
+  //
+  ['search']: PageProfileSearch.Model;
+  //
+  ['room']: null;
+  ['room-list']: null;
+  //
+  ['party']: null;
+};
+
 //
 //
 //
