@@ -236,9 +236,9 @@ const updateInitPage = ({
   const key = ProfileStore.toFindManyKey([model.auth.session.userId]);
 
   if (
-    !model.profileStore.profiles[model.auth.session.userId] &&
-    model.profileStore.findMany[key]?.type !== 'Loading' &&
-    prev.profileStore.findMany[key]?.type === 'Loading'
+    !prev.profileStore.profiles[model.auth.session.userId] &&
+    model.profileStore.profiles[model.auth.session.userId] &&
+    model.profileStore.findMany[key]?.type === 'Ok'
   ) {
     return initPage({ model });
   }
