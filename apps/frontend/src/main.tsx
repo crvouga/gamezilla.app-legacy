@@ -148,6 +148,7 @@ const update = ({
     andThen((input) => updateFetchProfile({ ...input, prev: model }), msg),
     andThen((input) => updateInitPage({ ...input, prev: model }), msg),
     andThen((input) => updateAutoCreateProfile({ ...input, prev: model }), msg),
+    andThen((input) => updateInitPageLoggedOut({ ...input, prev: model }), msg),
     (output) => {
       return output.actions.reduce(
         (acc, action) => {
@@ -235,9 +236,24 @@ const updateInitPage = ({
   const key = ProfileStore.toFindManyKey([model.auth.session.userId]);
 
   if (
+    !model.profileStore.profiles[model.auth.session.userId] &&
     model.profileStore.findMany[key]?.type !== 'Loading' &&
     prev.profileStore.findMany[key]?.type === 'Loading'
   ) {
+    return initPage({ model });
+  }
+  return { model };
+};
+
+const updateInitPageLoggedOut = ({
+  model,
+  prev,
+}: {
+  prev: Model;
+  msg: Msg;
+  model: Model;
+}): { model: Model; cmd?: Cmd<Msg> } => {
+  if (prev.auth.type === 'logged-in' && model.auth.type !== 'logged-in') {
     return initPage({ model });
   }
   return { model };
