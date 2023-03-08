@@ -105,7 +105,6 @@ type Msg = FrontendMsg;
 
 type OutAction<Msg = FrontendMsg> =
   | Alerts.Action<Msg>
-  | Room.Action
   | ChatStore.Action
   | Auth.Action
   | Party.Action
@@ -470,30 +469,6 @@ const runAction =
       case 'alerts': {
         const [alertsNew, alertsCmd] = Alerts.runAction(action, model.alerts);
         return [{ ...model, alerts: alertsNew }, Cmd.tag('alerts', alertsCmd)];
-      }
-
-      case 'room': {
-        if (model.auth.type !== 'logged-in') {
-          return [model, Cmd.None];
-        }
-
-        const updated = Room.runAction({
-          ctx: {
-            currentUserId: model.auth.session.userId,
-            profiles: model.profileStore.profiles,
-            now: Date.now(),
-            $push: () => {
-              //
-            },
-          },
-          sendToBackend: (msg) => sendToBackend(['room', msg]),
-          action,
-          model: model.gameRoom,
-        });
-        return [
-          { ...model, gameRoom: updated.model },
-          Cmd.tag('room', updated.cmd ?? Cmd.None),
-        ];
       }
 
       case 'auth': {

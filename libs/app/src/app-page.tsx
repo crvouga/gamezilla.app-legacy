@@ -73,7 +73,6 @@ export type Msg =
 export type OutAction =
   | ChatStore.Action
   | Alerts.Action
-  | RoomFrontend.Action
   | Auth.Action
   | Party.Action
   | Route.Action

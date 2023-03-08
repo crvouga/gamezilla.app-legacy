@@ -70,8 +70,6 @@ export const init: [Model, Cmd<Msg>] = [
 
 export type Msg = FrontendMsg;
 
-export type Action = ['room', ['Msg', Msg]];
-
 type OutAction = Alerts.Action<Msg> | ProfileStore.Action | Route.Action;
 
 //
@@ -570,25 +568,6 @@ const mergeWithBackendModel = ({
     },
     gamesNew[1],
   ];
-};
-
-export const runAction = ({
-  ctx,
-  sendToBackend,
-  model,
-  action,
-}: {
-  ctx: Ctx;
-  sendToBackend: (msg: ToBackend) => Cmd;
-  action: Action;
-  model: Model;
-}): { model: Model; cmd?: Cmd<Msg> } => {
-  switch (action[1][0]) {
-    case 'Msg': {
-      const msg = action[1][1];
-      return update({ sendToBackend, ctx, msg, model });
-    }
-  }
 };
 
 //
