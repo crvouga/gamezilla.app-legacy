@@ -121,7 +121,7 @@ const ViewColumnsSvg = ({
   disabled,
   visual,
 }: ViewColumnsProps) => {
-  const ref = useRef(Uuid.generatesync());
+  const ref = useRef(Uuid.generateSync());
   const ids = {
     playerOneGradient: `playerOneGradient${ref.current}`,
     playerTwoGradient: `playerTwoGradient${ref.current}`,
@@ -412,7 +412,7 @@ const paint = ({
 };
 
 export const ViewCoverArt = () => {
-  const ref = useRef(Uuid.generatesync());
+  const ref = useRef(Uuid.generateSync());
   const ids = {
     playerOneGradient: `playerOneGradient${ref.current}`,
     playerTwoGradient: `playerTwoGradient${ref.current}`,
@@ -516,7 +516,7 @@ export const PlayerIcon = ({
 };
 
 export const PlayerOneIcon = ({ key, sx }: { key?: string; sx?: Sx }) => {
-  const ref = useRef(Uuid.generatesync());
+  const ref = useRef(Uuid.generateSync());
   return (
     <SvgIcon key={key} viewBox="-1 -1 2 2" sx={{ ...sx }}>
       <ViewPlayerOneGradientDef cx={0} cy={0} r={1} gradientId={ref.current} />
@@ -526,7 +526,7 @@ export const PlayerOneIcon = ({ key, sx }: { key?: string; sx?: Sx }) => {
 };
 
 export const PlayerTwoIcon = ({ key, sx }: { key?: string; sx?: Sx }) => {
-  const ref = useRef(Uuid.generatesync());
+  const ref = useRef(Uuid.generateSync());
   return (
     <SvgIcon key={key} viewBox="-1 -1 2 2" sx={{ ...sx }}>
       <ViewPlayerTwoGradientDef gradientId={ref.current} />

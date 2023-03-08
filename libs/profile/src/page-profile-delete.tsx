@@ -1,5 +1,5 @@
 import { Cmd, RemoteData } from '@gamezilla/core';
-import { Route, UserId } from '@gamezilla/shared';
+import { Ctx, Route, UserId } from '@gamezilla/shared';
 import * as UI from '@gamezilla/shared/ui';
 import * as ProfileStore from './profile-store';
 
@@ -31,11 +31,15 @@ export type Msg =
 
 export type OutAction = ProfileStore.Action;
 
-export const update = (
-  { userId }: { userId: UserId },
-  msg: Msg,
-  model: Model
-): [Model, Cmd<Msg>, OutAction[]] => {
+export const update = ({
+  currentUserId,
+  msg,
+  model,
+}: {
+  currentUserId: UserId;
+  msg: Msg;
+  model: Model;
+}): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
     case 'clicked-cancel':
       return [model, Route.back, []];
@@ -44,7 +48,11 @@ export const update = (
       return [model, Route.back, []];
 
     case 'clicked-delete':
-      return [model, Cmd.None, [['profile', ['delete-forever', { userId }]]]];
+      return [
+        model,
+        Cmd.None,
+        [['profile', ['delete-forever', { userId: currentUserId }]]],
+      ];
 
     case 'clicked-close-error':
       return [model, Cmd.None, [['profile', ['reset-mutations']]]];
@@ -61,15 +69,16 @@ export const update = (
 
 export const View = ({
   profileStore,
-  userId,
   $send,
+  ctx,
 }: {
   profileStore: ProfileStore.Model;
-  userId: UserId;
+  ctx: Ctx;
   model: Model;
   $send: (msg: Msg) => void;
 }) => {
-  const mutation = profileStore.deleteForever[userId] ?? RemoteData.NotAsked;
+  const mutation =
+    profileStore.deleteForever[ctx.currentUserId] ?? RemoteData.NotAsked;
 
   switch (mutation.type) {
     case 'Loading':

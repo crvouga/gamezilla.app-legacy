@@ -358,10 +358,14 @@ httpServer.listen(port, () => {
 //
 //
 
+const initial = init();
 const program = Program.create({
-  init: init(),
+  init: { model: initial[0], cmd: initial[1] },
   subscriptions,
-  update,
+  update: (input) => {
+    const [model, cmd] = update(input.msg, input.model);
+    return { model, cmd };
+  },
 });
 
 program.state$.subscribe((state) => {

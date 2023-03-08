@@ -1,5 +1,5 @@
 import { Cmd } from '@gamezilla/core';
-import { Alerts, Route, UserId } from '@gamezilla/shared';
+import { Alerts, Ctx, Route, UserId } from '@gamezilla/shared';
 import { ProfileStore } from '..';
 import { Profile } from '../profile-store';
 import * as PageProfileUpdate from './page-profile-update';
@@ -204,7 +204,9 @@ export const View = ({
   model,
   $send,
   currentUserProfile,
+  ctx,
 }: {
+  ctx: Ctx;
   model: Model;
   currentUserProfile: Profile;
   $send: (m: Msg) => void;
@@ -213,7 +215,7 @@ export const View = ({
     case 'profile-update':
       return (
         <PageProfileUpdate.View
-          profile={currentUserProfile}
+          ctx={ctx}
           model={model.child}
           $send={(m) => $send(['profile-update', m])}
         />

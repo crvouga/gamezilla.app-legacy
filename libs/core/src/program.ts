@@ -1,7 +1,6 @@
-
-import * as Rx from "rxjs"
-import { Cmd } from "./cmd"
-import { Sub } from "./sub"
+import * as Rx from 'rxjs';
+import { Cmd } from './cmd';
+import { Sub } from './sub';
 
 //
 //
@@ -12,18 +11,18 @@ import { Sub } from "./sub"
 //
 
 export type State<Model, Msg> = {
-  model: Model & { _debugId: number }
-  cmd: Cmd<Msg>
-  msg?: Msg
-}
+  model: Model & { _debugId: number };
+  cmd: Cmd<Msg>;
+  msg?: Msg;
+};
 
 export type Program<Model, Msg> = {
-  $send: $send<Msg>
-  sub$: Sub<Msg>
-  state$: Rx.BehaviorSubject<State<Model, Msg>>
-}
+  $send: $send<Msg>;
+  sub$: Sub<Msg>;
+  state$: Rx.BehaviorSubject<State<Model, Msg>>;
+};
 
-export type $send<Msg> = (msg: Msg) => void
+export type $send<Msg> = (msg: Msg) => void;
 
 //
 //
@@ -38,81 +37,85 @@ const create = <Model, Msg>({
   update,
   subscriptions,
 }: {
-  init: [Model, Cmd<Msg>]
-  update: (msg: Msg, model: Model) => [Model, Cmd<Msg>]
-  subscriptions: (model: Model) => Sub<Msg>
+  init: { model: Model; cmd?: Cmd<Msg> };
+  update: (input: { msg: Msg; model: Model }) => {
+    model: Model;
+    cmd?: Cmd<Msg>;
+  };
+  subscriptions: (model: Model) => Sub<Msg>;
 }): Program<Model, Msg> => {
-  let runningDebugId = 0
+  let runningDebugId = 0;
 
   const state$ = new Rx.BehaviorSubject<State<Model, Msg>>({
     model: {
-      ...init[0],
-      _debugId: runningDebugId
+      ...init.model,
+      _debugId: runningDebugId,
     },
-    cmd: init[1],
-  })
-
-
+    cmd: init.cmd ?? Cmd.None,
+  });
 
   const $send = (msg: Msg) => {
-    const prev = state$.getValue()
-    const [model, cmd] = update(msg, prev.model)
-    const debugIdNext = prev.model._debugId + 1
+    const current = state$.getValue();
+    const updated = update({ msg, model: current.model });
+    const debugIdNext = current.model._debugId + 1;
 
-    runningDebugId = debugIdNext
+    runningDebugId = debugIdNext;
     state$.next({
       model: {
-        ...model,
-        _debugId: debugIdNext
+        ...updated.model,
+        _debugId: debugIdNext,
       },
-      cmd,
+      cmd: updated.cmd ?? Cmd.None,
       msg,
-    })
-  }
+    });
+  };
 
-  const sub$ = state$.pipe(Rx.switchMap((state) => {
-    if (runningDebugId === state.model._debugId) {
-      return subscriptions(state.model)
-    }
-    console.log("[program] skip subscription")
-    return Rx.EMPTY
-  }))
+  const sub$ = state$.pipe(
+    Rx.switchMap((state) => {
+      if (runningDebugId === state.model._debugId) {
+        return subscriptions(state.model);
+      }
+      console.log('[program] skip subscription');
+      return Rx.EMPTY;
+    })
+  );
 
   return {
     $send,
     sub$,
     state$,
-  }
-}
+  };
+};
 
-
-const run = <Model, Msg>(program: Program<Model, Msg>): () => void => {
+const run = <Model, Msg>(program: Program<Model, Msg>): (() => void) => {
   const subSub = program.sub$.subscribe((msg) => {
-    program.$send(msg)
-  })
+    program.$send(msg);
+  });
 
   const cmdSub = program.state$.subscribe(({ cmd }) => {
-    cmd(program.$send)
-  })
+    cmd(program.$send);
+  });
 
   return () => {
-    subSub.unsubscribe()
-    cmdSub.unsubscribe()
-  }
-}
+    subSub.unsubscribe();
+    cmdSub.unsubscribe();
+  };
+};
 
-
-const subscribe = <Model, Msg>(program: Program<Model, Msg>, subscriber: (state: State<Model, Msg>) => void): () => void => {
+const subscribe = <Model, Msg>(
+  program: Program<Model, Msg>,
+  subscriber: (state: State<Model, Msg>) => void
+): (() => void) => {
   const sub = program.state$.subscribe((state) => {
-    subscriber(state)
-  })
+    subscriber(state);
+  });
   return () => {
-    sub.unsubscribe()
-  }
-}
+    sub.unsubscribe();
+  };
+};
 
 export const Program = {
   create,
   run,
   subscribe,
-}
+};

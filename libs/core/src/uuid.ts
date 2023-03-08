@@ -7,10 +7,10 @@ const is = (id: unknown): id is Uuid => {
 };
 
 const generate: Task<Uuid> = async () => {
-  return generatesync();
+  return generateSync();
 };
 
-const generatesync = (): Uuid => {
+const generateSync = (): Uuid => {
   let d = new Date().getTime();
   let d2 = (performance && performance.now && performance.now() * 1000) || 0;
 
@@ -35,6 +35,6 @@ const generatesync = (): Uuid => {
 
 export const Uuid = {
   generate,
-  generatesync,
+  generateSync,
   is,
 };

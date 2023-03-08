@@ -8,6 +8,7 @@ export type Ctx = {
       userId: UserId;
       username: Username;
       avatarUrl: string;
+      themeMode?: string;
     };
   };
   currentUserId: UserId;
