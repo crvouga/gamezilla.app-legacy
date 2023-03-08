@@ -13,6 +13,16 @@ import { initialStore, Store } from './types';
 
 export type Model = Store;
 
+export type Model_ = {
+  chats: {
+    chatId: string;
+  };
+  users: {
+    userId: string;
+    chatId: string;
+  };
+};
+
 export const init = initialStore;
 
 //
@@ -63,4 +73,22 @@ export const runAction = (action: Action, model: Model): [Model, Cmd<Msg>] => {
       return [modelNew, p(cmd, Cmd.map(t('Message')))];
     }
   }
+};
+
+export const ViewPageChat = ({
+  model,
+}: {
+  model: Model;
+  $send: (m: Msg) => void;
+}) => {
+  return <div>hello</div>;
+};
+
+export const ViewPageChatNew = ({
+  model,
+}: {
+  model: Model;
+  $send: (m: Msg) => void;
+}) => {
+  return <div>hello</div>;
 };
