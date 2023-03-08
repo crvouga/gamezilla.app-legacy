@@ -90,7 +90,7 @@ export const updateFromFrontend = ({
 
 export const msgToQuery = (msg: Req) => {
   switch (msg[0]) {
-    case 'find_many': {
+    case 'find-many': {
       const userIds = msg[1].userId.map((x) => `'${x}'`).join(',');
       return `SELECT * FROM profile WHERE user_id IN (${userIds})`;
     }
