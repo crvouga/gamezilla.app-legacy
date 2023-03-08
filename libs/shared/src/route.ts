@@ -40,14 +40,14 @@ export type Route =
   | ['chat', RouteChat]
   | ['search'];
 
-type RouteAuth =
+export type RouteAuth =
   | ['login']
   | ['login-email-link']
   | ['login-phone', { isSelectingCountry: boolean }]
   | ['login-phone-verify', { phoneNumber: PhoneNumber }]
   | ['logout'];
 
-type RouteProfile =
+export type RouteProfile =
   | ['profile', { userId: UserId }]
   | ['profile-create']
   | ['profile-delete']
@@ -57,9 +57,9 @@ type RouteProfile =
   | ['profile-update-username']
   | ['profile-update-theme'];
 
-type RouteRoom = ['room', RoomId] | ['room-list'];
+export type RouteRoom = ['room', RoomId] | ['room-list'];
 
-type RouteChat =
+export type RouteChat =
   | ['chat']
   | ['chat-new']
   | ['chat-conversation', { conversationId: string }];
