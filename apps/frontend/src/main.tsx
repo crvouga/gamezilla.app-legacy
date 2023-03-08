@@ -18,6 +18,7 @@ import {
   exhaustive,
   Option,
   p,
+  andThen,
   Program,
   Sub,
   t,
@@ -25,7 +26,7 @@ import {
 import { PartyFrontend as Party } from '@gamezilla/party';
 import { ProfileStore } from '@gamezilla/profile';
 import { RoomFrontend as Room } from '@gamezilla/room';
-import { Alerts, Ctx, Route } from '@gamezilla/shared';
+import { Alerts, Ctx, ProfileAvatar, Route, Username } from '@gamezilla/shared';
 import {
   AppContainer,
   Box,
@@ -141,57 +142,122 @@ const update = ({
   msg: Msg;
   model: Model;
 }): { model: Model; cmd?: Cmd<Msg> } => {
-  const updated = update_({ sendToBackend, msg, model });
+  return p(
+    { model },
+    andThen((input) => update_({ ...input, sendToBackend }), msg),
+    andThen((input) => updateFetchProfile({ ...input, prev: model }), msg),
+    andThen((input) => updateInitPage({ ...input, prev: model }), msg),
+    andThen((input) => updateAutoCreateProfile({ ...input, prev: model }), msg),
+    (output) => {
+      return output.actions.reduce(
+        (acc, action) => {
+          const ran = runAction({
+            sendToBackend,
+            msg: action,
+            model: acc.model,
+          });
+          return {
+            ...ran,
+            cmd: Cmd.batch([acc.cmd, ran.cmd]),
+          };
+        },
+        {
+          model: output.model,
+          cmd: output.cmd,
+        }
+      );
+    }
+  );
+};
 
-  const actions = updated.actions ?? [];
+const updateAutoCreateProfile = ({
+  model,
+  prev,
+}: {
+  prev: Model;
+  msg: Msg;
+  model: Model;
+}): { model: Model; actions?: OutAction[] } => {
+  if (model.auth.type !== 'logged-in') {
+    return { model };
+  }
+
+  const key = ProfileStore.toFindManyKey([model.auth.session.userId]);
+
+  const findMany = model.profileStore.findMany[key];
+  const findManyPrev = prev.profileStore.findMany[key];
+  if (
+    findManyPrev?.type !== 'Ok' &&
+    findMany?.type === 'Ok' &&
+    findMany.value.length === 0
+  ) {
+    return {
+      model,
+      actions: [
+        [
+          'profile',
+          [
+            'create-one',
+            {
+              profile: {
+                userId: model.auth.session.userId,
+                avatarUrl: ProfileAvatar.toUrl({
+                  seed: ProfileAvatar.toSeed(model.auth.session.userId),
+                  style: 'adventurer-neutral',
+                }),
+                name: '',
+                themeMode: 'System',
+                // TODO generate username
+                username: Username.fromString('some username'),
+              },
+            },
+          ],
+        ],
+      ],
+    };
+  }
+  return { model };
+};
+
+const updateInitPage = ({
+  model,
+  prev,
+}: {
+  prev: Model;
+  msg: Msg;
+  model: Model;
+}): { model: Model; cmd?: Cmd<Msg> } => {
+  if (model.auth.type !== 'logged-in') {
+    return { model };
+  }
+
+  const key = ProfileStore.toFindManyKey([model.auth.session.userId]);
 
   if (
-    updated.model.auth.type === 'logged-in' &&
-    model.auth.type !== 'logged-in'
+    model.profileStore.findMany[key]?.type !== 'Loading' &&
+    prev.profileStore.findMany[key]?.type === 'Loading'
   ) {
-    actions.push([
-      'profile',
-      ['find-many', { userIds: [updated.model.auth.session.userId] }],
-    ]);
+    return initPage({ model });
   }
+  return { model };
+};
 
-  const didFetchCurrentUserProfile =
-    updated.model.auth.type === 'logged-in' &&
-    updated.model.profileStore.findMany[
-      ProfileStore.toFindManyKey([updated.model.auth.session.userId])
-    ]?.type !== 'Loading' &&
-    model.profileStore.findMany[
-      ProfileStore.toFindManyKey([updated.model.auth.session.userId])
-    ]?.type === 'Loading';
-
-  if (didFetchCurrentUserProfile) {
-    //
-    const updatedPage = initPage({
-      model: updated.model,
-    });
-
-    const ranActions = [...(updatedPage.actions ?? []), ...actions].reduce(
-      (acc, action) => {
-        const ran = runAction({ sendToBackend, msg: action, model: acc.model });
-        return {
-          ...ran,
-          cmd: Cmd.batch([acc.cmd, ran.cmd]),
-        };
-      },
-      updatedPage
-    );
-
-    return ranActions;
-  }
-  const ranActions = actions.reduce((acc, action) => {
-    const ran = runAction({ sendToBackend, msg: action, model: acc.model });
+const updateFetchProfile = ({
+  prev,
+  model,
+}: {
+  prev: Model;
+  model: Model;
+}): { model: Model; actions?: OutAction[] } => {
+  if (model.auth.type === 'logged-in' && prev.auth.type !== 'logged-in') {
     return {
-      ...ran,
-      cmd: Cmd.batch([acc.cmd, ran.cmd]),
+      model,
+      actions: [
+        ['profile', ['find-many', { userIds: [model.auth.session.userId] }]],
+      ],
     };
-  }, updated);
-
-  return ranActions;
+  }
+  return { model };
 };
 
 const update_ = ({

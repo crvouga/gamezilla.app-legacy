@@ -17,14 +17,21 @@ export const andThen_ =
   };
 
 export const andThen =
-  <Msg, Model>(
-    update: (msg: Msg, model: Model) => [Model, Cmd<Msg>],
+  <Msg, Model, Action>(
+    update: (input: { msg: Msg; model: Model }) => {
+      model: Model;
+      cmd?: Cmd<Msg>;
+      actions?: Action[];
+    },
     msg: Msg
   ) =>
-  ([model, cmdPrev]: [Model, Cmd<Msg>]): [Model, Cmd<Msg>] => {
-    const [modelNew, cmdNew] = update(msg, model);
-
-    return [modelNew, Cmd.batch([cmdNew, cmdPrev])];
+  (output: { actions?: Action[]; cmd?: Cmd<Msg>; model: Model }) => {
+    const updated = update({ msg, model: output.model });
+    return {
+      model: updated.model,
+      cmd: Cmd.batch([updated.cmd, output.cmd]),
+      actions: [...(output.actions || []), ...(updated.actions || [])],
+    };
   };
 
 export const andThenMany =
