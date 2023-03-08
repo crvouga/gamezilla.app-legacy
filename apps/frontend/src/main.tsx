@@ -148,7 +148,10 @@ const update = ({
     andThen((input) => updateFetchProfile({ ...input, prev: model }), msg),
     andThen((input) => updateInitPage({ ...input, prev: model }), msg),
     andThen((input) => updateAutoCreateProfile({ ...input, prev: model }), msg),
-    andThen((input) => updateInitPageLoggedOut({ ...input, prev: model }), msg),
+    andThen(
+      (input) => updateInitPageAuthChanged({ ...input, prev: model }),
+      msg
+    ),
     (output) => {
       return output.actions.reduce(
         (acc, action) => {
@@ -245,7 +248,7 @@ const updateInitPage = ({
   return { model };
 };
 
-const updateInitPageLoggedOut = ({
+const updateInitPageAuthChanged = ({
   model,
   prev,
 }: {
@@ -253,7 +256,7 @@ const updateInitPageLoggedOut = ({
   msg: Msg;
   model: Model;
 }): { model: Model; cmd?: Cmd<Msg> } => {
-  if (prev.auth.type === 'logged-in' && model.auth.type !== 'logged-in') {
+  if (prev.auth.type !== model.auth.type) {
     return initPage({ model });
   }
   return { model };
