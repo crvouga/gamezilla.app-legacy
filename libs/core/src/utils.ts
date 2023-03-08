@@ -4,17 +4,6 @@ export const exhaustive = (discriminatedUnionType: 'Missing Case!'): never => {
   throw new Error(`Missing case for: ${discriminatedUnionType}`);
 };
 
-export const andThen_ =
-  <Msg, Model>(
-    msg: Msg,
-    update: (msg: Msg, model: Model) => [Model, Cmd<Msg>]
-  ) =>
-  ([model, cmdPrev]: [Model, Cmd<Msg>]): [Model, Cmd<Msg>] => {
-    const [modelNew, cmdNew] = update(msg, model);
-
-    return [modelNew, Cmd.batch([cmdNew, cmdPrev])];
-  };
-
 export const andThen =
   <Msg, Model, Action>(
     msg: Msg,
