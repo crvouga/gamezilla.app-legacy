@@ -1,5 +1,5 @@
 import { Sub } from '@gamezilla/core';
-import { Ctx, Route, SharedMsg } from '@gamezilla/shared';
+import { SharedMsg } from '@gamezilla/shared';
 import { FrontendModel, FrontendMsg, ToFrontend } from './profile.types';
 
 //
