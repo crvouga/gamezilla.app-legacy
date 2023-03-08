@@ -1,4 +1,5 @@
 import { Sub } from '@gamezilla/core';
+import { Ctx, Route, SharedMsg } from '@gamezilla/shared';
 import { FrontendModel, FrontendMsg, ToFrontend } from './profile.types';
 
 //
@@ -45,6 +46,28 @@ export const updateFromBackend = ({
   model: Model;
 }): { model: Model } => {
   switch (msg[0]) {
+    default: {
+      return { model };
+    }
+  }
+};
+
+export const updateShared = ({
+  msg,
+  model,
+}: {
+  msg: SharedMsg;
+  model: Model;
+}) => {
+  switch (msg[0]) {
+    case 'route-changed': {
+      const route = msg[1];
+      if (route[0] !== 'profile') {
+        return { model };
+      }
+      return { model };
+    }
+
     default: {
       return { model };
     }

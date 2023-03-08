@@ -33,6 +33,37 @@ export type Model =
   | ['chat-conversation', { conversationId: string }]
   | ['search'];
 
+type Route =
+  | ['auth', RouteAuth]
+  | ['profile', RouteProfile]
+  | ['room', RouteRoom]
+  | ['chat', RouteChat]
+  | ['search'];
+
+type RouteAuth =
+  | ['login']
+  | ['login-email-link']
+  | ['login-phone', { isSelectingCountry: boolean }]
+  | ['login-phone-verify', { phoneNumber: PhoneNumber }]
+  | ['logout'];
+
+type RouteProfile =
+  | ['profile', { userId: UserId }]
+  | ['profile-create']
+  | ['profile-delete']
+  | ['profile-update']
+  | ['profile-update-avatar']
+  | ['profile-update-name']
+  | ['profile-update-username']
+  | ['profile-update-theme'];
+
+type RouteRoom = ['room', RoomId] | ['room-list'];
+
+type RouteChat =
+  | ['chat']
+  | ['chat-new']
+  | ['chat-conversation', { conversationId: string }];
+
 //
 //
 //
