@@ -33,7 +33,7 @@ export type Model =
   | ['chat-conversation', { conversationId: string }]
   | ['search'];
 
-type Route =
+export type Route =
   | ['auth', RouteAuth]
   | ['profile', RouteProfile]
   | ['room', RouteRoom]
