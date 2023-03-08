@@ -41,10 +41,13 @@ const tag = <Tag extends string, Msg>(
   );
 };
 
-const batch = <Msg>(cmdList: Cmd<Msg>[]): Cmd<Msg> => {
+const batch = <Msg>(cmdList: (Cmd<Msg> | undefined | null)[]): Cmd<Msg> => {
   return ($send) => {
     for (let i = 0; i < cmdList.length; i++) {
-      cmdList[i]?.($send);
+      const cmd = cmdList[i];
+      if (cmd) {
+        cmd($send);
+      }
     }
   };
 };

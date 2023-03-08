@@ -1,5 +1,5 @@
 import { Cmd } from '@gamezilla/core';
-import { Route } from '@gamezilla/shared';
+import { Ctx, Route } from '@gamezilla/shared';
 import {
   Avatar,
   Button,
@@ -9,7 +9,6 @@ import {
   HeaderBackButton,
   List,
 } from '@gamezilla/shared/ui';
-import * as ProfileStore from '../profile-store';
 
 //
 //
@@ -76,49 +75,52 @@ export const update = ({
 //
 
 export const View = ({
-  profile,
+  ctx,
   $send,
 }: {
-  profile: ProfileStore.Profile;
+  ctx: Ctx;
   model: Model;
   $send: (msg: Msg) => void;
-}) => (
-  <FillBox>
-    <Header
-      left={<HeaderBackButton onClick={() => $send(['clicked-back'])} />}
-      title="Update Profile"
-    />
-
-    <Avatar
-      src={profile.avatarUrl}
-      sx={{
-        marginX: 'auto',
-        width: '150px',
-        height: '150px',
-        marginBottom: 1,
-      }}
-      onClick={() => $send(['clicked-avatar'])}
-    />
-
-    <Button
-      sx={{ display: 'block', marginX: 'auto', marginBottom: 2 }}
-      onClick={() => $send(['clicked-change-avatar'])}
-    >
-      Change Avatar
-    </Button>
-
-    <List>
-      <Field
-        label="Username"
-        value={profile.username}
-        onClick={() => $send(['clicked-username'])}
+}) => {
+  const profile = ctx.profiles[ctx.currentUserId];
+  return (
+    <FillBox>
+      <Header
+        left={<HeaderBackButton onClick={() => $send(['clicked-back'])} />}
+        title="Update Profile"
       />
 
-      <Field
-        label="Theme"
-        value={profile.themeMode}
-        onClick={() => $send(['clicked-theme'])}
+      <Avatar
+        src={profile?.avatarUrl ?? '...'}
+        sx={{
+          marginX: 'auto',
+          width: '150px',
+          height: '150px',
+          marginBottom: 1,
+        }}
+        onClick={() => $send(['clicked-avatar'])}
       />
-    </List>
-  </FillBox>
-);
+
+      <Button
+        sx={{ display: 'block', marginX: 'auto', marginBottom: 2 }}
+        onClick={() => $send(['clicked-change-avatar'])}
+      >
+        Change Avatar
+      </Button>
+
+      <List>
+        <Field
+          label="Username"
+          value={profile?.username ?? '...'}
+          onClick={() => $send(['clicked-username'])}
+        />
+
+        <Field
+          label="Theme"
+          value={profile?.themeMode ?? '...'}
+          onClick={() => $send(['clicked-theme'])}
+        />
+      </List>
+    </FillBox>
+  );
+};

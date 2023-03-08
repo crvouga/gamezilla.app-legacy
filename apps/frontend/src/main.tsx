@@ -12,8 +12,6 @@ import {
 import { Auth } from '@gamezilla/auth';
 import { ChatStore } from '@gamezilla/chat';
 import {
-  andThen,
-  andThenMany,
   Browser,
   Cmd,
   Debug,
@@ -21,16 +19,14 @@ import {
   Option,
   p,
   Program,
-  RemoteData,
   Sub,
   t,
 } from '@gamezilla/core';
 import { PartyFrontend as Party } from '@gamezilla/party';
 import { ProfileStore } from '@gamezilla/profile';
 import { RoomFrontend as Room } from '@gamezilla/room';
-import { Alerts, Route } from '@gamezilla/shared';
+import { Alerts, Ctx, Route } from '@gamezilla/shared';
 import {
-  Alert,
   AppContainer,
   Box,
   CircularProgress,
@@ -52,46 +48,53 @@ import { io, Socket } from 'socket.io-client';
 
 type Model = FrontendModel;
 
-const init =
-  ({ sendToBackend }: { sendToBackend: (m: ToBackend) => Cmd }) =>
-  (location: Browser.Location): [Model, Cmd<Msg>] => {
-    const route = p(
-      location,
-      Route.decode,
-      Option.withDefault<Route.Model>(['room-list'])
-    );
-    const [auth, authCmd] = Auth.init();
-    const alerts = Alerts.init;
-    const chatStore = ChatStore.init;
-    const [gameRoom, roomCmd] = Room.init;
-    const page = Page.initLoading();
-    const [party, partyCmd] = Party.init({
-      sendToBackend: (msg) => sendToBackend(['party', msg]),
-    });
-    const profileStore = ProfileStore.init;
+const init = ({
+  sendToBackend,
+  location,
+}: {
+  sendToBackend: (m: ToBackend) => Cmd;
+  location: Browser.Location;
+}): {
+  model: Model;
+  cmd: Cmd<Msg>;
+} => {
+  const route = p(
+    location,
+    Route.decode,
+    Option.withDefault<Route.Model>(['room-list'])
+  );
+  const [auth, authCmd] = Auth.init();
+  const alerts = Alerts.init;
+  const chatStore = ChatStore.init;
+  const [gameRoom, roomCmd] = Room.init;
+  const page = Page.initLoading();
+  const [party, partyCmd] = Party.init({
+    sendToBackend: (msg) => sendToBackend(['party', msg]),
+  });
+  const profileStore = ProfileStore.init;
 
-    return [
-      {
-        route,
-        alerts,
-        chatStore,
-        gameRoom,
-        auth,
-        page,
-        party,
-        profileStore,
-        wire: {
-          type: 'connecting',
-        },
+  return {
+    model: {
+      route,
+      alerts,
+      chatStore,
+      gameRoom,
+      auth,
+      page,
+      party,
+      profileStore,
+      wire: {
+        type: 'connecting',
       },
-      Cmd.batch<Msg>([
-        Route.replace(route),
-        Cmd.tag('auth', authCmd),
-        Cmd.tag('room', roomCmd),
-        Cmd.tag('party', partyCmd),
-      ]),
-    ];
+    },
+    cmd: Cmd.batch<Msg>([
+      Route.replace(route),
+      Cmd.tag('auth', authCmd),
+      Cmd.tag('room', roomCmd),
+      Cmd.tag('party', partyCmd),
+    ]),
   };
+};
 
 //
 //
@@ -129,246 +132,317 @@ const mapAction = <A, B>(
 //
 //
 
-const update =
-  (wire: { sendToBackend: (m: ToBackend) => Cmd }) =>
-  (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
-    return p(
-      [model, Cmd.None],
-      andThen(updateMain(wire), msg),
-      andThen(updateStatusChanged(wire, model), msg)
+const update = ({
+  sendToBackend,
+  msg,
+  model,
+}: {
+  sendToBackend: (m: ToBackend) => Cmd;
+  msg: Msg;
+  model: Model;
+}): { model: Model; cmd?: Cmd<Msg> } => {
+  const updated = update_({ sendToBackend, msg, model });
+
+  const actions = updated.actions ?? [];
+
+  if (
+    updated.model.auth.type === 'logged-in' &&
+    model.auth.type !== 'logged-in'
+  ) {
+    actions.push([
+      'profile',
+      ['find-many', { userIds: [updated.model.auth.session.userId] }],
+    ]);
+  }
+
+  const didFetchCurrentUserProfile =
+    updated.model.auth.type === 'logged-in' &&
+    updated.model.profileStore.findMany[
+      ProfileStore.toFindManyKey([updated.model.auth.session.userId])
+    ]?.type !== 'Loading' &&
+    model.profileStore.findMany[
+      ProfileStore.toFindManyKey([updated.model.auth.session.userId])
+    ]?.type === 'Loading';
+
+  if (didFetchCurrentUserProfile) {
+    //
+    const updatedPage = initPage({
+      model: updated.model,
+    });
+
+    const ranActions = [...(updatedPage.actions ?? []), ...actions].reduce(
+      (acc, action) => {
+        const ran = runAction({ sendToBackend, msg: action, model: acc.model });
+        return {
+          ...ran,
+          cmd: Cmd.batch([acc.cmd, ran.cmd]),
+        };
+      },
+      updatedPage
     );
-  };
 
-const updateMain =
-  ({ sendToBackend }: { sendToBackend: (m: ToBackend) => Cmd }) =>
-  (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
-    switch (msg[0]) {
-      case '→': {
-        return updateFromBackend({ sendToBackend }, msg[1], model);
-      }
+    return ranActions;
+  }
+  const ranActions = actions.reduce((acc, action) => {
+    const ran = runAction({ sendToBackend, msg: action, model: acc.model });
+    return {
+      ...ran,
+      cmd: Cmd.batch([acc.cmd, ran.cmd]),
+    };
+  }, updated);
 
-      case 'chat-store': {
-        const [storeNew, storeCmd] = ChatStore.update(msg[1], model.chatStore);
+  return ranActions;
+};
 
-        return [
-          { ...model, chatStore: storeNew },
-          Cmd.tag('chat-store', storeCmd),
-        ];
-      }
+const update_ = ({
+  sendToBackend,
+  msg,
+  model,
+}: {
+  sendToBackend: (m: ToBackend) => Cmd;
+  msg: Msg;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+  actions?: OutAction[];
+} => {
+  switch (msg[0]) {
+    case '→': {
+      return updateFromBackend({ sendToBackend, msg: msg[1], model });
+    }
 
-      case 'auth': {
-        const [authNew, authCmd] = Auth.update(
-          { sendToBackend: (msg) => sendToBackend(['auth', msg]) },
-          msg[1],
-          model.auth
-        );
+    case 'chat-store': {
+      const updated = ChatStore.update(msg[1], model.chatStore);
+      return {
+        model: { ...model, chatStore: updated[0] },
+        cmd: Cmd.tag('chat-store', updated[1]),
+      };
+    }
 
-        return [{ ...model, auth: authNew }, Cmd.tag('auth', authCmd)];
-      }
+    case 'auth': {
+      const updated = Auth.update(
+        { sendToBackend: (msg) => sendToBackend(['auth', msg]) },
+        msg[1],
+        model.auth
+      );
+      return {
+        model: { ...model, auth: updated[0] },
+        cmd: Cmd.tag('auth', updated[1]),
+      };
+    }
 
-      case 'alerts': {
-        const [alertsNew, alertsCmd, msgs] = Alerts.update(
-          msg[1],
-          model.alerts
-        );
-
-        return p(
-          [{ ...model, alerts: alertsNew }, Cmd.tag('alerts', alertsCmd)],
-          andThenMany(update({ sendToBackend }), msgs)
-        );
-      }
-
-      case 'party': {
-        const [child, childCmd] = Party.update(
-          { sendToBackend: (msg) => sendToBackend(['party', msg]) },
-          msg[1],
-          model.party
-        );
-        return [{ ...model, party: child }, Cmd.tag('party', childCmd)];
-      }
-
-      case 'route': {
-        const updated = Route.update({ msg: msg[1], model: model.route });
-        const modelNew: Model = { ...model, route: updated.model };
-        const initialize = initPage({ sendToBackend }, modelNew);
-        return [
-          initialize[0],
-          Cmd.batch([initialize[1], Cmd.tag('route', updated.cmd)]),
-        ];
-      }
-
-      case 'wire': {
-        if (msg[1] === 'connect-error') {
-          const wireNew: Model['wire'] = {
-            type: 'connect-error',
-            errorCount:
-              model.wire.type === 'connect-error'
-                ? model.wire.errorCount + 1
-                : 1,
+    case 'alerts': {
+      const updatedAlerts = Alerts.update(msg[1], model.alerts);
+      const updated = updatedAlerts[2].reduce<ReturnType<typeof update>>(
+        (acc, msg) => {
+          const updated = update({ sendToBackend, msg, model: acc.model });
+          return {
+            model: updated.model,
+            cmd: Cmd.batch([acc?.cmd ?? Cmd.None, updated?.cmd ?? Cmd.None]),
           };
-
-          return [{ ...model, wire: wireNew }, Cmd.None];
+        },
+        {
+          model: { ...model, alerts: updatedAlerts[0] },
+          cmd: Cmd.tag('alerts', updatedAlerts[1]),
         }
-        return [{ ...model, wire: { type: msg[1] } }, Cmd.None];
-      }
+      );
 
-      case 'room': {
-        const status = toStatus(model);
+      return {
+        model: updated.model,
+        cmd: updated.cmd,
+        actions: [],
+      };
+    }
 
-        if (status[0] !== 'ready') {
-          return [model, Cmd.None];
-        }
+    case 'party': {
+      const updated = Party.update(
+        { sendToBackend: (msg) => sendToBackend(['party', msg]) },
+        msg[1],
+        model.party
+      );
+      return {
+        model: { ...model, party: updated[0] },
+        cmd: Cmd.tag('party', updated[1]),
+      };
+    }
 
-        const { profile } = status[1];
+    case 'route': {
+      const updated = Route.update({
+        msg: msg[1],
+        model: model.route,
+      });
+      const updatedPage = initPage({
+        model: { ...model, route: updated.model },
+      });
+      return {
+        model: updatedPage.model,
+        cmd: Cmd.batch([
+          Cmd.tag('route', updated.cmd),
+          updatedPage.cmd ?? Cmd.None,
+        ]),
+        actions: updatedPage.actions,
+      };
+    }
 
-        const updated = Room.update({
-          ctx: {
-            currentUserId: profile.userId,
-            profiles: model.profileStore.profiles,
-            now: Date.now(),
-            $push: () => {
-              //
+    case 'wire': {
+      if (msg[1] === 'connect-error') {
+        return {
+          model: {
+            ...model,
+            wire: {
+              type: 'connect-error',
+              errorCount:
+                model.wire.type === 'connect-error'
+                  ? model.wire.errorCount + 1
+                  : 1,
             },
           },
-          sendToBackend: (m) => sendToBackend(['room', m]),
-          msg: msg[1],
-          model: model.gameRoom,
-        });
-
-        return [
-          { ...model, gameRoom: updated.model },
-          Cmd.tag('room', updated.cmd ?? Cmd.None),
-        ];
+        };
       }
-
-      case 'page': {
-        const [modelNew, cmd, actions] = updatePage(msg[1], model);
-        return p(
-          [modelNew, cmd],
-          andThenMany(runAction({ sendToBackend }), actions)
-        );
-      }
-
-      case 'profile-store': {
-        const [modelNew, cmd] = ProfileStore.update(msg[1], model.profileStore);
-        return [
-          { ...model, profileStore: modelNew },
-          Cmd.tag('profile-store', cmd),
-        ];
-      }
-
-      default:
-        return exhaustive(msg);
+      return { model: { ...model, wire: { type: msg[1] } } };
     }
-  };
 
-const updatePage = (
-  msg: Page.Msg,
-  model: Model
-): [Model, Cmd<Msg>, OutAction[]] => {
-  const status = toStatus(model);
+    case 'room': {
+      if (model.auth.type !== 'logged-in') {
+        return { model };
+      }
 
-  switch (status[0]) {
-    case 'auth-loading':
-    case 'profile-error':
-    case 'profile-loading':
-      return [model, Cmd.None, []];
+      const ctx: Ctx = {
+        currentUserId: model.auth.session.userId,
+        profiles: model.profileStore.profiles,
+        now: Date.now(),
+        $push: () => {
+          /* */
+        },
+      };
 
-    case 'auth-missing': {
-      const updated = Page.updateLoggedOut({
-        msg: msg,
-        model: model.page,
+      const updated = Room.update({
+        ctx: ctx,
+        sendToBackend: (m) => sendToBackend(['room', m]),
+        msg: msg[1],
+        model: model.gameRoom,
       });
 
-      return [
-        { ...model, page: updated.model },
-        Cmd.tag('page', updated.cmd ?? Cmd.None),
-        [],
-      ];
+      return {
+        model: { ...model, gameRoom: updated.model },
+        cmd: Cmd.tag('room', updated.cmd ?? Cmd.None),
+      };
     }
 
-    case 'profile-missing': {
-      const [pageNew, pageCmd, actions] = Page.updateProfileMissing(
-        status[1].authSession,
-        msg,
-        model.page
-      );
+    case 'page': {
+      switch (model.auth.type) {
+        case 'loading':
+          return { model };
 
-      return [{ ...model, page: pageNew }, Cmd.tag('page', pageCmd), actions];
+        case 'logged-out': {
+          const updated = Page.updateLoggedOut({
+            msg: msg[1],
+            model: model.page,
+          });
+
+          return {
+            model: { ...model, page: updated.model },
+            cmd: Cmd.tag('page', updated.cmd ?? Cmd.None),
+          };
+        }
+
+        case 'logged-in': {
+          const updated = Page.updateReady({
+            profileStore: model.profileStore,
+            currentUserId: model.auth.session.userId,
+            msg: msg[1],
+            model: model.page,
+          });
+          return {
+            model: { ...model, page: updated[0] },
+            cmd: Cmd.tag('page', updated[1]),
+            actions: updated[2],
+          };
+        }
+        default: {
+          return exhaustive(model.auth);
+        }
+      }
     }
 
-    case 'ready': {
-      const [pageNew, pageCmd, actions] = Page.updateReady(
-        {
-          ...model,
-          profile: status[1].profile,
-        },
-        msg,
-        model.page
-      );
-      return [{ ...model, page: pageNew }, Cmd.tag('page', pageCmd), actions];
+    case 'profile-store': {
+      const updated = ProfileStore.update(msg[1], model.profileStore);
+      return {
+        model: { ...model, profileStore: updated[0] },
+        cmd: Cmd.tag('profile-store', updated[1]),
+      };
     }
 
     default:
-      return exhaustive(status[0]);
+      return exhaustive(msg);
   }
 };
 
-const updateFromBackend = (
-  { sendToBackend }: { sendToBackend: (m: ToBackend) => Cmd },
-  msg: ToFrontend,
-  model: Model
-): [Model, Cmd<Msg>] => {
+const updateFromBackend = ({
+  sendToBackend,
+  msg,
+  model,
+}: {
+  sendToBackend: (m: ToBackend) => Cmd;
+  msg: ToFrontend;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+  actions?: OutAction[];
+} => {
   switch (msg[0]) {
     case 'party': {
       if (model.auth.type !== 'logged-in') {
-        return [model, Cmd.None];
+        return { model };
       }
 
       const currentUserId = model.auth.session.userId;
 
-      const [party, partyCmd, actions] = Party.updateFromBackend(
+      const updated = Party.updateFromBackend(
         { currentUserId },
         msg[1],
         model.party
       );
 
-      return p(
-        [{ ...model, party }, Cmd.tag('party', partyCmd)],
-        andThenMany(runAction({ sendToBackend }), actions)
-      );
+      return {
+        model: { ...model, party: updated[0] },
+        cmd: Cmd.tag('party', updated[1]),
+        actions: updated[2],
+      };
     }
 
     case 'room': {
       if (model.auth.type !== 'logged-in') {
-        return [model, Cmd.None];
+        return { model };
       }
 
       const currentUserId = model.auth.session.userId;
 
-      const [gameRoom, gameRoomCmd, actions] = Room.updateFromBackend(
+      const ctx: Ctx = {
+        currentUserId,
+        profiles: model.profileStore.profiles,
+        now: Date.now(),
+        $push: () => {
+          /* */
+        },
+      };
+
+      const updated = Room.updateFromBackend(
         {
-          ctx: {
-            currentUserId,
-            profiles: model.profileStore.profiles,
-            now: Date.now(),
-            $push: () => {
-              //
-            },
-          },
+          ctx,
           sendToBackend: (msg) => sendToBackend(['room', msg]),
         },
         msg[1],
         model.gameRoom
       );
 
-      return p(
-        [{ ...model, gameRoom }, Cmd.tag('room', gameRoomCmd)],
-        andThenMany(
-          runAction({ sendToBackend }),
-          actions.map((a) => mapAction(t('room'), a))
-        )
-      );
+      return {
+        model: { ...model, gameRoom: updated[0] },
+        cmd: Cmd.tag('room', updated[1] ?? Cmd.None),
+        actions: updated[2].map((a) => mapAction(t('room'), a)),
+      };
     }
 
     default: {
@@ -377,135 +451,116 @@ const updateFromBackend = (
   }
 };
 
-const initPage = (
-  { sendToBackend }: { sendToBackend: (m: ToBackend) => Cmd },
-  model: Model
-): [Model, Cmd<Msg>] => {
-  const status = toStatus(model);
-
-  switch (status[0]) {
-    case 'profile-error': {
-      return [model, Cmd.None];
+const initPage = ({
+  model,
+}: {
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+  actions?: OutAction[];
+} => {
+  switch (model.auth.type) {
+    case 'loading': {
+      return { model };
     }
 
-    case 'auth-loading': {
-      return [model, Cmd.None];
-    }
-
-    case 'profile-loading': {
-      const action: OutAction = [
-        'profile',
-        ['find-many', { userIds: [status[1].authSession.userId] }],
-      ];
-
-      return p(
-        [model, Cmd.None],
-        andThenMany(runAction({ sendToBackend }), [action])
-      );
-    }
-
-    case 'profile-missing': {
-      const [page, pageCmd] = Page.initProfileMissing(
-        model.route,
-        status[1].authSession
-      );
-
-      return [{ ...model, page }, Cmd.tag('page', pageCmd)];
-    }
-
-    case 'auth-missing': {
+    case 'logged-out': {
       const initial = Page.initLoggedOut({
         route: model.route,
         model: model.page,
       });
-      return [
-        { ...model, page: initial.model },
-        Cmd.tag('page', initial.cmd ?? Cmd.None),
-      ];
+      return {
+        model: { ...model, page: initial.model },
+        cmd: Cmd.tag('page', initial.cmd ?? Cmd.None),
+      };
     }
 
-    case 'ready': {
-      const [page, pageCmd, actions] = Page.initReady(
-        model.route,
-        status[1].profile
-      );
-      return p(
-        [{ ...model, page }, Cmd.tag('page', pageCmd)],
-        andThenMany(runAction({ sendToBackend }), actions)
-      );
-    }
-
-    default: {
-      return exhaustive(status);
+    case 'logged-in': {
+      const initial = Page.initReady({
+        currentUserId: model.auth.session.userId,
+        profileStore: model.profileStore,
+        route: model.route,
+      });
+      return {
+        model: { ...model, page: initial[0] },
+        cmd: Cmd.tag('page', initial[1]),
+        actions: initial[2],
+      };
     }
   }
 };
 
-const updateStatusChanged =
-  (wire: { sendToBackend: (m: ToBackend) => Cmd }, modelPrev: Model) =>
-  (_msg: Msg, model: Model): [Model, Cmd<Msg>] => {
-    const statusPrev = toStatus(modelPrev);
-    const statusNew = toStatus(model);
-
-    if (statusNew[0] === statusPrev[0]) {
-      return [model, Cmd.None];
+const runAction = ({
+  sendToBackend,
+  msg: action,
+  model,
+}: {
+  msg: OutAction;
+  model: Model;
+  sendToBackend: (msg: ToBackend) => Cmd;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  switch (action[0]) {
+    case 'chat': {
+      const updated = ChatStore.runAction(action, model.chatStore);
+      return {
+        model: { ...model, chatStore: updated[0] },
+        cmd: Cmd.tag('chat-store', updated[1]),
+      };
     }
 
-    return initPage(wire, model);
-  };
-
-const runAction =
-  ({ sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd }) =>
-  (action: OutAction, model: Model): [Model, Cmd<Msg>] => {
-    switch (action[0]) {
-      case 'chat': {
-        const [chatNew, chatCmd] = ChatStore.runAction(action, model.chatStore);
-        return [
-          { ...model, chatStore: chatNew },
-          Cmd.tag('chat-store', chatCmd),
-        ];
-      }
-
-      case 'alerts': {
-        const [alertsNew, alertsCmd] = Alerts.runAction(action, model.alerts);
-        return [{ ...model, alerts: alertsNew }, Cmd.tag('alerts', alertsCmd)];
-      }
-
-      case 'auth': {
-        const [authNew, authCmd] = Auth.runAction(action, model.auth);
-        return [{ ...model, auth: authNew }, Cmd.tag('auth', authCmd)];
-      }
-
-      case 'party': {
-        const [party, partyCmd] = Party.runAction(
-          { sendToBackend: (msg) => sendToBackend(['party', msg]) },
-          action,
-          model.party
-        );
-        return [{ ...model, party }, Cmd.tag('party', partyCmd)];
-      }
-
-      case 'route': {
-        const [route, routeCmd] = Route.runAction(action, model.route);
-
-        return [{ ...model, route }, Cmd.tag('route', routeCmd)];
-      }
-
-      case 'profile': {
-        const [profileStore, profileStoreCmd] = ProfileStore.runAction(
-          action,
-          model.profileStore
-        );
-        return [
-          { ...model, profileStore },
-          Cmd.tag('profile-store', profileStoreCmd),
-        ];
-      }
-
-      default:
-        return exhaustive(action[0]);
+    case 'alerts': {
+      const updated = Alerts.runAction(action, model.alerts);
+      return {
+        model: { ...model, alerts: updated[0] },
+        cmd: Cmd.tag('alerts', updated[1]),
+      };
     }
-  };
+
+    case 'auth': {
+      const updated = Auth.runAction(action, model.auth);
+      return {
+        model: { ...model, auth: updated[0] },
+        cmd: Cmd.tag('auth', updated[1]),
+      };
+    }
+
+    case 'party': {
+      const updated = Party.runAction(
+        { sendToBackend: (msg) => sendToBackend(['party', msg]) },
+        action,
+        model.party
+      );
+      return {
+        model: { ...model, party: updated[0] },
+        cmd: Cmd.tag('party', updated[1]),
+      };
+    }
+
+    case 'route': {
+      const updated = Route.runAction(action, model.route);
+
+      return {
+        model: { ...model, route: updated[0] },
+        cmd: Cmd.tag('route', updated[1]),
+      };
+    }
+
+    case 'profile': {
+      const updated = ProfileStore.runAction(action, model.profileStore);
+      return {
+        model: { ...model, profileStore: updated[0] },
+        cmd: Cmd.tag('profile-store', updated[1]),
+      };
+    }
+
+    default:
+      return exhaustive(action[0]);
+  }
+};
 
 //
 //
@@ -573,21 +628,6 @@ const onLocationChange = (location: Browser.Location): Msg => {
 //
 //
 
-const toThemeMode = (model: Model): ThemeMode => {
-  const status = toStatus(model);
-
-  switch (status[0]) {
-    case 'auth-loading':
-    case 'auth-missing':
-    case 'profile-loading':
-    case 'profile-missing':
-    case 'profile-error':
-      return 'System';
-    case 'ready':
-      return status[1].profile.themeMode;
-  }
-};
-
 const View = ({
   model,
   $send,
@@ -597,7 +637,33 @@ const View = ({
 }) => {
   return (
     <AppContainer themeMode={toThemeMode(model)}>
-      <ViewMain model={model} $send={$send} />
+      {model.auth.type === 'loading' && (
+        <FillBox sx={{ justifyContent: 'center', alignItems: 'center' }}>
+          <CircularProgress sx={{ marginBottom: 2 }} />
+        </FillBox>
+      )}
+
+      {model.auth.type === 'logged-out' && (
+        <Page.ViewLoggedOut
+          $send={(m) => $send(['page', m])}
+          model={model.page}
+        />
+      )}
+
+      {model.auth.type === 'logged-in' && (
+        <Page.ViewReady
+          {...model}
+          ctx={{
+            currentUserId: model.auth.session.userId,
+            profiles: model.profileStore.profiles,
+            now: Date.now(),
+            $push: (route) => $send(['route', ['clicked-link', route]]),
+          }}
+          $send={(msg) => $send(['page', msg])}
+          $sendRoom={(msg) => $send(['room', msg])}
+          model={model.page}
+        />
+      )}
 
       <Alerts.View
         model={model.alerts}
@@ -629,156 +695,18 @@ const View = ({
   );
 };
 
-const ViewMain = ({
-  model,
-  $send,
-}: {
-  model: Model;
-  $send: (msg: Msg) => void;
-}) => {
-  const status = toStatus(model);
-
-  switch (status[0]) {
-    case 'auth-loading':
-      return <ViewLoading reason="Authenticating..." />;
-
-    case 'profile-loading':
-      return <ViewLoading reason="Loading your profile..." />;
-
-    case 'profile-error':
-      return <ViewError reason="Failed to load profile." />;
-
-    case 'auth-missing':
-      return (
-        <Page.ViewLoggedOut
-          model={model.page}
-          $send={(msg) => $send(['page', msg])}
-        />
-      );
-
-    case 'profile-missing':
-      return (
-        <Page.ViewProfileMissing
-          authSession={status[1].authSession}
-          model={model.page}
-          $send={(msg) => $send(['page', msg])}
-        />
-      );
-
-    case 'ready': {
-      const { profile } = status[1];
-      return (
-        <Page.ViewReady
-          {...model}
-          ctx={{
-            currentUserId: profile.userId,
-            profiles: model.profileStore.profiles,
-            now: Date.now(),
-            $push: (route) => $send(['route', ['clicked-link', route]]),
-          }}
-          profile={status[1].profile}
-          $send={(msg) => $send(['page', msg])}
-          $sendRoom={(msg) => $send(['room', msg])}
-          model={model.page}
-        />
-      );
-    }
-  }
-};
-
-const ViewLoading = (_props: { reason: string }) => (
-  <FillBox sx={{ justifyContent: 'center', alignItems: 'center' }}>
-    <CircularProgress sx={{ marginBottom: 2 }} />
-  </FillBox>
-);
-
-const ViewError = ({ reason }: { reason: string }) => (
-  <FillBox sx={{ justifyContent: 'center', alignItems: 'center', p: 2 }}>
-    <Alert severity="error">{reason}</Alert>
-  </FillBox>
-);
-
-//
-//
-//
-// Status
-//
-//
-//
-
-type Status =
-  | ['auth-loading']
-  | ['auth-missing']
-  | ['profile-loading', { authSession: Auth.Session }]
-  | ['profile-missing', { authSession: Auth.Session }]
-  | ['profile-error', { authSession: Auth.Session }]
-  | ['ready', { profile: ProfileStore.Profile; authSession: Auth.Session }];
-
-const toStatus = ({
-  auth,
-  profileStore,
-}: {
-  profileStore: ProfileStore.Model;
-  auth: Auth.Model;
-}): Status => {
-  switch (auth.type) {
+const toThemeMode = (model: Model): ThemeMode => {
+  switch (model.auth.type) {
     case 'loading':
-      return ['auth-loading'];
-
-    case 'logged-out':
-      return ['auth-missing'];
-
+    case 'logged-out': {
+      return 'System';
+    }
     case 'logged-in': {
-      const authSession = auth.session;
-
-      const profile = profileStore.profiles[authSession.userId];
-
-      if (profile) {
-        return [
-          'ready',
-          {
-            authSession,
-            profile,
-          },
-        ];
+      const profile = model.profileStore.profiles[model.auth.session.userId];
+      if (!profile) {
+        return 'System';
       }
-
-      const key = ProfileStore.toFindManyKey([authSession.userId]);
-
-      const query = profileStore.findMany[key] ?? RemoteData.NotAsked;
-
-      switch (query.type) {
-        case 'NotAsked':
-          return ['profile-loading', { authSession }];
-
-        case 'Loading':
-          return ['profile-loading', { authSession }];
-
-        case 'Err':
-          return ['profile-error', { authSession }];
-
-        case 'Ok': {
-          const userIds = query.value;
-
-          const profiles = userIds
-            .map((userId) => profileStore.profiles[userId])
-            .flatMap((item) => (item ? [item] : []));
-
-          const profile = profiles[0];
-
-          if (!profile) {
-            return ['profile-missing', { authSession }];
-          }
-
-          return [
-            'ready',
-            {
-              authSession,
-              profile,
-            },
-          ];
-        }
-      }
+      return profile.themeMode;
     }
   }
 };
@@ -847,9 +775,9 @@ const main = () => {
 
   const { program } = p(
     Program.create({
-      init: init({ sendToBackend })(Browser.getLocation()),
+      init: init({ sendToBackend, location: Browser.getLocation() }),
+      update: (input) => update({ ...input, sendToBackend }),
       subscriptions,
-      update: update({ sendToBackend }),
     }),
     Debug.ReduxDevTools.withDebugger
   );

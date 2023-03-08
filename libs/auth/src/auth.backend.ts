@@ -38,7 +38,7 @@ export const updateFromFrontend = (
   switch (msg[0]) {
     case 'LoginWithCode': {
       const code = generateRandomCode();
-      const requestId = Uuid.generatesync();
+      const requestId = Uuid.generateSync();
       return [
         {
           ...model,

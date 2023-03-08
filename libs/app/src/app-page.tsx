@@ -11,7 +11,14 @@ import {
   ProfileStore,
 } from '@gamezilla/profile';
 import { RoomFrontend } from '@gamezilla/room';
-import { Alerts, Ctx, RoomId, Route, UserId } from '@gamezilla/shared';
+import {
+  Alerts,
+  Ctx,
+  RoomId,
+  Route,
+  UserId,
+  Username,
+} from '@gamezilla/shared';
 import {
   Box,
   ButtonBase,
@@ -90,16 +97,23 @@ export const initLoading = (): Model => {
   return ['loading'];
 };
 
-export const initReady = (
-  route: Route.Model,
-  profile: ProfileStore.Profile
-): [Model, Cmd<Msg>, OutAction[]] => {
+export const initReady = ({
+  route,
+  profileStore,
+  currentUserId,
+}: {
+  route: Route.Model;
+  profileStore: ProfileStore.Model;
+  currentUserId: UserId;
+}): [Model, Cmd<Msg>, OutAction[]] => {
   switch (route[0]) {
     case 'account':
       return [['account', Account.init], Cmd.None, []];
 
     case 'chat': {
-      const [model, cmd, actions] = Chat.init(profile);
+      const [model, cmd, actions] = Chat.init({
+        userId: currentUserId,
+      });
       return [['chat', model], p(cmd, Cmd.map(t('chat'))), actions];
     }
 
@@ -141,6 +155,15 @@ export const initReady = (
     case 'profile-update-username':
     case 'profile-update-theme':
     case 'profile-update': {
+      const profile: ProfileStore.Profile = profileStore.profiles[
+        currentUserId
+      ] ?? {
+        userId: currentUserId,
+        name: '...',
+        username: Username.fromString('...'),
+        avatarUrl: '...',
+        themeMode: 'Light',
+      };
       const initial = PageProfileUpdate.init({
         currentUserProfile: profile,
         route: route,
@@ -188,42 +211,6 @@ export const initReady = (
       return [['room-list'], Route.push(['room-list']), []];
     }
 
-    default:
-      return exhaustive(route);
-  }
-};
-
-export const initProfileMissing = (
-  route: Route.Model,
-  auth: Auth.Session
-): [Model, Cmd<Msg>] => {
-  switch (route[0]) {
-    case 'profile-create':
-      return [['profile-create', PageProfileCreate.init(auth)], Cmd.None];
-
-    case 'logout':
-      return [['logout', Logout.init], Cmd.None];
-
-    case 'account':
-    case 'chat':
-    case 'chat-conversation':
-    case 'chat-new':
-    case 'search':
-    case 'profile':
-    case 'profile-delete':
-    case 'profile-update':
-    case 'profile-update-avatar':
-    case 'profile-update-theme':
-    case 'profile-update-name':
-    case 'profile-update-username':
-    case 'login':
-    case 'login-email-link':
-    case 'login-phone':
-    case 'login-phone-verify':
-    case 'room':
-    case 'room-list':
-    case 'party':
-      return [['profile-create', PageProfileCreate.init(auth)], Cmd.None];
     default:
       return exhaustive(route);
   }
@@ -281,18 +268,17 @@ export const initLoggedOut = ({
 //
 //
 
-export const updateReady = (
-  {
-    profile,
-    profileStore,
-  }: {
-    profileStore: ProfileStore.Model;
-    profile: ProfileStore.Profile;
-    gameRoom: RoomFrontend.Model;
-  },
-  msg: Msg,
-  model: Model
-): [Model, Cmd<Msg>, OutAction[]] => {
+export const updateReady = ({
+  profileStore,
+  currentUserId,
+  msg,
+  model,
+}: {
+  currentUserId: UserId;
+  profileStore: ProfileStore.Model;
+  msg: Msg;
+  model: Model;
+}): [Model, Cmd<Msg>, OutAction[]] => {
   if (msg[0] === 'clicked-bottom-nav-link') {
     return [model, Route.push(msg[1]), []];
   }
@@ -315,7 +301,11 @@ export const updateReady = (
       if (msg[0] === 'profile-delete') {
         return tag(
           'profile-delete',
-          PageProfileDelete.update(profile, msg[1], model[1])
+          PageProfileDelete.update({
+            currentUserId,
+            msg: msg[1],
+            model: model[1],
+          })
         );
       }
       return [model, Cmd.None, []];
@@ -327,7 +317,7 @@ export const updateReady = (
       const updated = PageProfileUpdate.update({
         msg: msg[1],
         model: model[1],
-        currentUserId: profile.userId,
+        currentUserId,
       });
       return [
         ['profile-update', updated.model],
@@ -347,7 +337,7 @@ export const updateReady = (
         return tag(
           'chat-new',
           ChatNew.update(
-            { profileStore: profileStore, currentUserId: profile.userId },
+            { profileStore: profileStore, currentUserId },
             msg[1],
             model[1]
           )
@@ -358,7 +348,7 @@ export const updateReady = (
     case 'chat-conversation':
       if (msg[0] === 'chat-conversation') {
         const [child, cmd, actions] = ChatConversation.update(
-          { userId: profile.userId, conversationId: model[1].conversationId },
+          { userId: currentUserId, conversationId: model[1].conversationId },
           msg[1],
           model[2]
         );
@@ -417,47 +407,6 @@ export const updateReady = (
     default: {
       return exhaustive(model);
     }
-  }
-};
-
-export const updateProfileMissing = (
-  auth: Auth.Session,
-  msg: Msg,
-  model: Model
-): [Model, Cmd<Msg>, OutAction[]] => {
-  switch (model[0]) {
-    case 'logout':
-      if (msg[0] === 'logout') {
-        return tag('logout', Logout.update(msg[1], model[1]));
-      }
-      return [model, Cmd.None, []];
-
-    case 'profile-create':
-      if (msg[0] === 'profile-create') {
-        return tag(
-          'profile-create',
-          PageProfileCreate.update(auth, msg[1], model[1])
-        );
-      }
-      return [model, Cmd.None, []];
-
-    case 'account':
-    case 'login':
-    case 'profile':
-    case 'profile-delete':
-    case 'profile-update':
-    case 'chat':
-    case 'chat-new':
-    case 'chat-conversation':
-    case 'room':
-    case 'search':
-    case 'party':
-    case 'loading':
-    case 'room-list':
-      return [model, Route.push(['profile-create']), []];
-
-    default:
-      return exhaustive(model);
   }
 };
 
@@ -529,7 +478,6 @@ export const subscriptions = (model: Model): Sub<Msg> => {
 //
 
 export const ViewReady = ({
-  profile,
   gameRoom,
   chatStore,
   route,
@@ -543,7 +491,6 @@ export const ViewReady = ({
   ctx: Ctx;
   route: Route.Model;
   gameRoom: RoomFrontend.Model;
-  profile: ProfileStore.Profile;
   chatStore: ChatStore.Model;
   profileStore: ProfileStore.Model;
   party: Party.Model;
@@ -556,7 +503,9 @@ export const ViewReady = ({
       return (
         <>
           <Account.View
-            username={profile.username}
+            username={
+              profileStore.profiles[ctx.currentUserId]?.username ?? '...'
+            }
             model={model[1]}
             $send={(msg) => $send(['account', msg])}
           />
@@ -648,7 +597,7 @@ export const ViewReady = ({
       return (
         <PageProfileDelete.View
           profileStore={profileStore}
-          userId={profile.userId}
+          ctx={ctx}
           model={model[1]}
           $send={(msg) => $send(['profile-delete', msg])}
         />
@@ -658,7 +607,16 @@ export const ViewReady = ({
       return (
         <>
           <PageProfileUpdate.View
-            currentUserProfile={profile}
+            ctx={ctx}
+            currentUserProfile={
+              profileStore.profiles[ctx.currentUserId] ?? {
+                username: Username.fromString('...'),
+                avatarUrl: '...',
+                name: '...',
+                themeMode: 'System',
+                userId: ctx.currentUserId,
+              }
+            }
             model={model[1]}
             $send={(msg) => $send(['profile-update', msg])}
           />
@@ -678,7 +636,7 @@ export const ViewReady = ({
           <PageProfile.View
             userId={model[1].userId}
             profileStore={profileStore}
-            currentUserId={profile.userId}
+            currentUserId={ctx.currentUserId}
             model={model[2]}
             $send={(msg) => $send(['profile', msg])}
           />
@@ -769,48 +727,6 @@ export const ViewLoggedOut = ({
     default: {
       return <LoadingPage />;
     }
-  }
-};
-
-export const ViewProfileMissing = ({
-  model,
-  $send,
-}: {
-  authSession: Auth.Session;
-  model: Model;
-  $send: (msg: Msg) => void;
-}) => {
-  switch (model[0]) {
-    case 'logout':
-      return (
-        <Logout.View model={model[1]} $send={(msg) => $send(['logout', msg])} />
-      );
-
-    case 'profile-create':
-      return (
-        <PageProfileCreate.View
-          model={model[1]}
-          $send={(msg) => $send(['profile-create', msg])}
-        />
-      );
-
-    case 'account':
-    case 'chat':
-    case 'chat-conversation':
-    case 'chat-new':
-    case 'profile-delete':
-    case 'profile-update':
-    case 'login':
-    case 'search':
-    case 'profile':
-    case 'room':
-    case 'room-list':
-    case 'party':
-    case 'loading':
-      return <LoadingPage />;
-
-    default:
-      return exhaustive(model);
   }
 };
 
