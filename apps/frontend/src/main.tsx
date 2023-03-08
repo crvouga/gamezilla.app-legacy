@@ -12,13 +12,13 @@ import {
 import { Auth } from '@gamezilla/auth';
 import { ChatStore } from '@gamezilla/chat';
 import {
+  andThen,
   Browser,
   Cmd,
   Debug,
   exhaustive,
   Option,
   p,
-  andThen,
   Program,
   Sub,
   t,
@@ -191,6 +191,8 @@ const updateAutoCreateProfile = ({
     findMany?.type === 'Ok' &&
     findMany.value.length === 0
   ) {
+    const username = Username.generate('-');
+
     return {
       model,
       actions: [
@@ -202,13 +204,12 @@ const updateAutoCreateProfile = ({
               profile: {
                 userId: model.auth.session.userId,
                 avatarUrl: ProfileAvatar.toUrl({
-                  seed: ProfileAvatar.toSeed(model.auth.session.userId),
+                  seed: ProfileAvatar.toSeed(username),
                   style: 'adventurer-neutral',
                 }),
                 name: '',
                 themeMode: 'System',
-                // TODO generate username
-                username: Username.fromString('some username'),
+                username: username,
               },
             },
           ],
