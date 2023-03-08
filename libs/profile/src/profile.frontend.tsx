@@ -12,7 +12,10 @@ import { FrontendModel, FrontendMsg, ToFrontend } from './profile.types';
 
 export type Model = FrontendModel;
 
-export const init: Model = null;
+export const init: Model = {
+  profiles: {},
+  requests: {},
+};
 
 //
 //
@@ -94,6 +97,23 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 //
 //
 
-export const View = ({ model }: { model: Model }) => {
+type RouteProfile = 'profile' | 'profile-update-username';
+
+export const View = ({
+  model,
+  route,
+}: {
+  model: Model;
+  route: RouteProfile;
+}) => {
+  switch (route) {
+    case 'profile-update-username': {
+      return <ViewPageProfileUpdateUsername />;
+    }
+  }
   return <pre>{JSON.stringify(model, null, 2)}</pre>;
+};
+
+const ViewPageProfileUpdateUsername = () => {
+  return <pre>ViewPageProfileUpdateUsername</pre>;
 };
