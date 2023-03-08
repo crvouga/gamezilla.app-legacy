@@ -1,5 +1,5 @@
 import { RemoteData, Result } from '@gamezilla/core';
-import { UserId, Username } from '@gamezilla/shared';
+import { ProfileAvatar, UserId, Username } from '@gamezilla/shared';
 
 //
 //
@@ -21,11 +21,17 @@ export type FrontendModel_ = {
     [userId: UserId]: Profile;
   };
   requests: {
-    [key in Req[0]]: RemoteData<Problem, null>;
+    [key in Req[0]]?: RemoteData<Problem, null>;
+  };
+  draft?: {
+    username: string;
+    avatarSeed: ProfileAvatar.Seed;
+    avatarStyle: ProfileAvatar.Style;
+    themeMode: 'Light' | 'Dark' | 'System';
   };
 };
 
-export type FrontendModel = null;
+export type FrontendModel = FrontendModel_;
 
 export type BackendModel = null;
 
