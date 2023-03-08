@@ -123,7 +123,14 @@ export const View = ({
         Send Message
       </Fab>
 
-      <Box sx={{ flex: 1, overflowY: 'scroll' }}>
+      <Box
+        sx={{
+          flex: 1,
+          overflowY: 'scroll',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
         <Header title="Chat" />
 
         {query.type === 'Loading' ? (
