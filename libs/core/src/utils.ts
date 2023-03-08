@@ -34,26 +34,6 @@ export const andThen =
     };
   };
 
-export const andThenMany =
-  <Action, Model, Msg>(
-    update: (msg: Action, model: Model) => [Model, Cmd<Msg>],
-    msgs: Action[]
-  ) =>
-  ([modelPrev, cmdPrev]: [Model, Cmd<Msg>]): [Model, Cmd<Msg>] => {
-    const [msg, ...msgsRest] = msgs;
-
-    if (!msg) {
-      return [modelPrev, cmdPrev];
-    }
-
-    const [modelNew, cmdNew] = update(msg, modelPrev);
-
-    return p(
-      [modelNew, Cmd.batch([cmdPrev, cmdNew])],
-      andThenMany(update, msgsRest)
-    );
-  };
-
 export const t =
   <Tag extends string>(tag: Tag) =>
   <Value>(value: Value): [Tag, Value] =>
