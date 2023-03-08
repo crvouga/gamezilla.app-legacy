@@ -144,13 +144,12 @@ const update = ({
 }): { model: Model; cmd?: Cmd<Msg> } => {
   return p(
     { model },
-    andThen((input) => update_({ ...input, sendToBackend }), msg),
-    andThen((input) => updateFetchProfile({ ...input, prev: model }), msg),
-    andThen((input) => updateInitPage({ ...input, prev: model }), msg),
-    andThen((input) => updateAutoCreateProfile({ ...input, prev: model }), msg),
-    andThen(
-      (input) => updateInitPageAuthChanged({ ...input, prev: model }),
-      msg
+    andThen(msg, (input) => update_({ ...input, sendToBackend })),
+    andThen(msg, (input) => updateFetchProfile({ ...input, prev: model })),
+    andThen(msg, (input) => updateInitPage({ ...input, prev: model })),
+    andThen(msg, (input) => updateAutoCreateProfile({ ...input, prev: model })),
+    andThen(msg, (input) =>
+      updateInitPageAuthChanged({ ...input, prev: model })
     ),
     (output) => {
       return output.actions.reduce(
