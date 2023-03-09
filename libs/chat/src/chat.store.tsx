@@ -1,4 +1,4 @@
-import { Cmd, p, t } from '@gamezilla/core';
+import { Cmd, p, Sub, t } from '@gamezilla/core';
 import { Ctx } from '@gamezilla/shared';
 import {
   Avatar,
@@ -107,6 +107,12 @@ export const runAction = (action: Action, model: Model): [Model, Cmd<Msg>] => {
     }
   }
 };
+
+//
+//
+// View
+//
+//
 
 export const View = ({
   model,

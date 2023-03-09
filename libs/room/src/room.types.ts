@@ -29,7 +29,7 @@ export type Room_ = {
   roomId: RoomId;
   hostId: UserId;
   userIds: {
-    [userId: UserId]: UserId;
+    [userId: UserId]: UserId
   };
 };
 
