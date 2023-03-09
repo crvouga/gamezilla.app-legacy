@@ -1,0 +1,74 @@
+import { Result } from '@gamezilla/core';
+import { UserId } from '@gamezilla/shared';
+
+//
+//
+//
+// Model
+//
+//
+//
+
+export type FrontendModel = {
+  chats: {
+    [chatId: string]: {
+      chatId: string;
+    };
+  };
+  users: {
+    [userId: UserId]: {
+      userId: UserId;
+      chatId: string;
+    };
+  };
+  messages: {
+    [messageId: string]: {
+      messageId: string;
+      chatId: string;
+    };
+  };
+  messageDrafts: {
+    [chatId: string]: {
+      chatId: string;
+      text: string;
+    };
+  };
+  userSearch: string;
+};
+
+export type BackendModel = null;
+
+//
+//
+//
+// Msg
+//
+//
+//
+
+export type FrontendMsg = Req;
+
+export type Req =
+  | ['chat-list', { userId: UserId }]
+  | ['chat-start', { userId: UserId[] }]
+  | ['message-send', { chatId: string; text: string }]
+  | ['message-unsend', { chatId: string; text: string }]
+  | ['message-list', { chatId: string }];
+
+type Problem = '';
+
+export type Res = [...Req, Result<Problem, Partial<FrontendModel>>];
+
+export const update = ({
+  msg,
+  model,
+}: {
+  msg: FrontendMsg;
+  model: FrontendModel;
+}) => {
+  switch (msg[0]) {
+    default: {
+      return null;
+    }
+  }
+};
