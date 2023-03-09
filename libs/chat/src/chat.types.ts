@@ -59,13 +59,7 @@ type Problem = '';
 
 export type Res = [...Req, Result<Problem, Partial<FrontendModel>>];
 
-export const update = ({
-  msg,
-  model,
-}: {
-  msg: FrontendMsg;
-  model: FrontendModel;
-}) => {
+export const update = ({ msg }: { msg: FrontendMsg; model: FrontendModel }) => {
   switch (msg[0]) {
     default: {
       return null;
