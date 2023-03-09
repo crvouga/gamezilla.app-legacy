@@ -51,13 +51,13 @@ export const init = ({
 
 export type Msg =
   | ['clicked-back']
-  | ['ClickedSend']
-  | ['ClickedMessage', { messageId: string }]
-  | ['ClosedMessageMenu', { messageId: string }]
-  | ['clicked-deleteMessage', { messageId: string }]
-  | ['ClickedCopyMessageText', string]
-  | ['InputtedText', string]
-  | ['ClipboardCopy_Done', Browser.Clipboard.CopyResult];
+  | ['clicked-send']
+  | ['clicked-message', { messageId: string }]
+  | ['closed-message-menu', { messageId: string }]
+  | ['clicked-delete-message', { messageId: string }]
+  | ['clicked-copy-message-text', string]
+  | ['inputted-text', string]
+  | ['clipboard-copy-done', Browser.Clipboard.CopyResult];
 
 export type OutAction = ChatStore.Action;
 
@@ -67,15 +67,15 @@ export const update = (
   model: Model
 ): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-    case 'ClipboardCopy_Done':
+    case 'clipboard-copy-done':
       return [{ ...model, focused: { type: 'Blurred' } }, Cmd.None, []];
 
-    case 'ClickedCopyMessageText':
+    case 'clicked-copy-message-text':
       return [
         model,
         p(
           Browser.Clipboard.copy(msg[1]),
-          Cmd.perform((result) => ['ClipboardCopy_Done', result])
+          Cmd.perform((result) => ['clipboard-copy-done', result])
         ),
         [],
       ];
@@ -83,7 +83,7 @@ export const update = (
     case 'clicked-back':
       return [model, Route.back, []];
 
-    case 'ClickedSend': {
+    case 'clicked-send': {
       const payload = {
         userId,
         conversationId,
@@ -93,10 +93,10 @@ export const update = (
       return [model, Cmd.None, [['chat', ['Message', ['Send', payload]]]]];
     }
 
-    case 'InputtedText':
+    case 'inputted-text':
       return [{ ...model, text: msg[1] }, Cmd.None, []];
 
-    case 'ClickedMessage':
+    case 'clicked-message':
       return [
         {
           ...model,
@@ -110,7 +110,7 @@ export const update = (
         [],
       ];
 
-    case 'ClosedMessageMenu':
+    case 'closed-message-menu':
       return [
         {
           ...model,
@@ -122,7 +122,7 @@ export const update = (
         [],
       ];
 
-    case 'clicked-deleteMessage': {
+    case 'clicked-delete-message': {
       const { messageId } = msg[1];
 
       return [
@@ -227,8 +227,8 @@ export const View = ({
 
       <ChatInput
         value={model.text}
-        onChange={(text) => $send(['InputtedText', text])}
-        onSend={() => $send(['ClickedSend'])}
+        onChange={(text) => $send(['inputted-text', text])}
+        onSend={() => $send(['clicked-send'])}
         isSending={messageInsertMutation.type === 'Loading'}
       />
     </UI.FillBox>
@@ -375,7 +375,7 @@ const ChatMessage = ({
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     event.stopPropagation();
-    $send(['ClickedMessage', message]);
+    $send(['clicked-message', message]);
   };
 
   const variant = currentUserId === message.userId ? 'sent' : 'received';
@@ -425,7 +425,7 @@ const ChatMessage = ({
           model.focused.type === 'Focused' &&
           model.focused.messageId === message.messageId
         }
-        onClose={() => $send(['ClosedMessageMenu', message])}
+        onClose={() => $send(['closed-message-menu', message])}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: variant === 'sent' ? 'left' : 'right',
@@ -441,7 +441,9 @@ const ChatMessage = ({
               model.focused.type === 'Focused' &&
               model.focused.copyStatus === 'Loading'
             }
-            onClick={() => $send(['ClickedCopyMessageText', message.message])}
+            onClick={() =>
+              $send(['clicked-copy-message-text', message.message])
+            }
           >
             {model.focused.type === 'Focused' &&
             model.focused.copyStatus === 'Succeeded'
@@ -454,7 +456,7 @@ const ChatMessage = ({
                 store.mutations.Message.Unsend[message.messageId]?.type ===
                 'Loading'
               }
-              onClick={() => $send(['clicked-deleteMessage', message])}
+              onClick={() => $send(['clicked-delete-message', message])}
             >
               Delete Forever
             </UI.Button>
