@@ -75,18 +75,14 @@ export const runAction = (action: Action, model: Model): [Model, Cmd<Msg>] => {
   }
 };
 
-export const ViewPageChat = ({
-  model,
-}: {
+export const ViewPageChat = (_props: {
   model: Model;
   $send: (m: Msg) => void;
 }) => {
   return <div>hello</div>;
 };
 
-export const ViewPageChatNew = ({
-  model,
-}: {
+export const ViewPageChatNew = (_props: {
   model: Model;
   $send: (m: Msg) => void;
 }) => {
