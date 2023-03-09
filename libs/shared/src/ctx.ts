@@ -15,4 +15,8 @@ export type Ctx = {
   $push: (route: Route.Model) => void;
 };
 
+export type ViewCtx = Ctx & {
+  $push: (route: Route.Model) => void;
+};
+
 export type SharedMsg = ['route-changed', Route.Model];
