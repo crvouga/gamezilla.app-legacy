@@ -1,4 +1,4 @@
-import { Cmd, Result } from '@gamezilla/core';
+import { Cmd, RemoteData, Result } from '@gamezilla/core';
 import { UserId } from '@gamezilla/shared';
 
 //
@@ -13,6 +13,13 @@ export type FrontendModel = {
   chats: {
     [chatId: string]: {
       chatId: string;
+    };
+  };
+  chatsUsers: {
+    [chatsUsersId: string]: {
+      chatsUsersId: string;
+      chatId: string;
+      userId: UserId;
     };
   };
   users: {
@@ -34,6 +41,9 @@ export type FrontendModel = {
     };
   };
   userSearch: string;
+  requests: {
+    [key in Req[0]]?: RemoteData<Problem, null>;
+  };
 };
 
 export type BackendModel = null;
