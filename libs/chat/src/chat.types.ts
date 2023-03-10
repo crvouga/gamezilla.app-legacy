@@ -1,4 +1,4 @@
-import { Result } from '@gamezilla/core';
+import { Cmd, Result } from '@gamezilla/core';
 import { UserId } from '@gamezilla/shared';
 
 //
@@ -55,7 +55,7 @@ export type Req =
   | ['message-unsend', { chatId: string; text: string }]
   | ['message-list', { chatId: string }];
 
-type Problem = '';
+type Problem = ['database-error', string];
 
 export type Res = [...Req, Result<Problem, Partial<FrontendModel>>];
 
@@ -63,6 +63,29 @@ export const update = ({ msg }: { msg: FrontendMsg; model: FrontendModel }) => {
   switch (msg[0]) {
     default: {
       return null;
+    }
+  }
+};
+
+type ToBackend = Req;
+
+type BackendMsg = Res;
+
+export const updateFromFrontend = ({
+  msg,
+}: {
+  msg: ToBackend;
+  model: BackendModel;
+}): {
+  cmd: Cmd<BackendMsg>;
+} => {
+  switch (msg[0]) {
+    default: {
+      return {
+        cmd: () => {
+          //
+        },
+      };
     }
   }
 };
