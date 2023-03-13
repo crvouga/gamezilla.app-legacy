@@ -1,5 +1,5 @@
 import { Cmd, RemoteData } from '@gamezilla/core';
-import { Ctx } from '@gamezilla/shared';
+import { Ctx, SharedMsg } from '@gamezilla/shared';
 import {
   Box,
   FillBox,
@@ -8,7 +8,7 @@ import {
   ViewLoadingState,
 } from '@gamezilla/shared/ui';
 import { Fab } from '@mui/material';
-import { FrontendModel, FrontendMsg } from './chat.types';
+import { ToBackend, FrontendModel, FrontendMsg } from './chat.types';
 
 //
 //
@@ -65,28 +65,32 @@ export const update = ({
   }
 };
 
-type SharedMsg = [
-  'route-changed',
-  { route: 'chat' | 'chat-new' | 'chat-list' }
-];
 export const updateShared = ({
   msg,
   model,
+  sendToBackend,
 }: {
   msg: SharedMsg;
   model: Model;
-}) => {
+  sendToBackend: (m: ToBackend) => Cmd;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
   switch (msg[0]) {
     case 'route-changed': {
-      switch (msg[1].route) {
-        case 'chat': {
-          return { model, cmd: Cmd.None };
+      switch (msg[1].route[0]) {
+        case 'chat-conversation': {
+          return {
+            model,
+            cmd: sendToBackend(['chat-join', { chatId: 'todo' }]),
+          };
         }
-        case 'chat-new': {
-          return { model, cmd: Cmd.None };
-        }
-        case 'chat-list': {
-          return { model, cmd: Cmd.None };
+        default: {
+          return {
+            model,
+            cmd: sendToBackend(['chat-leave', { chatId: 'todo' }]),
+          };
         }
       }
     }
@@ -143,12 +147,12 @@ const ViewChatList = ({
   $send: (m: Msg) => void;
 }) => {
   const query = model.requests['chat-list'] ?? RemoteData.Loading;
-  const chats = Object.values(model.chats).filter((chat) => {
-    const chatsUsersId = `${chat.chatId},${ctx.currentUserId}`;
-    const chatsUsers = model.chatsUsers[chatsUsersId];
+  // const chats = Object.values(model.chats).filter((chat) => {
+  //   const chatsUsersId = `${chat.chatId},${ctx.currentUserId}`;
+  //   const chatsUsers = model.chatsUsers[chatsUsersId];
 
-    return chatsUsers;
-  });
+  //   return chatsUsers;
+  // });
 
   return (
     <FillBox sx={{ position: 'relative' }}>
