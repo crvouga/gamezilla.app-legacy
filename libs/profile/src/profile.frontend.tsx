@@ -108,12 +108,12 @@ export const View = ({
 }) => {
   switch (route) {
     case 'profile-update-username': {
-      return <ViewPageProfileUpdateUsername />;
+      return <ViewProfileUpdate />;
     }
   }
   return <pre>{JSON.stringify(model, null, 2)}</pre>;
 };
 
-const ViewPageProfileUpdateUsername = () => {
+const ViewProfileUpdate = () => {
   return <pre>ViewPageProfileUpdateUsername</pre>;
 };

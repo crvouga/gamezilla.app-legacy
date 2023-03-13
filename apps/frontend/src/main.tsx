@@ -25,7 +25,7 @@ import {
 } from '@gamezilla/core';
 import { PartyFrontend as Party } from '@gamezilla/party';
 import { ProfileStore } from '@gamezilla/profile';
-import { RoomFrontend as Room } from '@gamezilla/room';
+import { RoomFrontend as Room, RoomFrontend } from '@gamezilla/room';
 import {
   Alerts,
   Ctx,
@@ -37,10 +37,15 @@ import {
 import {
   AppContainer,
   Box,
+  ButtonBase,
   CircularProgress,
   Collapse,
   FillBox,
+  Icons,
   ThemeMode,
+  Typography,
+  useTheme,
+  ViewNode,
 } from '@gamezilla/shared/ui';
 import * as ReactDOM from 'react-dom/client';
 import { Subject } from 'rxjs';
@@ -468,7 +473,6 @@ const update_ = ({
 
         case 'logged-in': {
           const updated = Page.updateReady({
-            profileStore: model.profileStore,
             currentUserId: model.auth.session.userId,
             msg: msg[1],
             model: model.page,
@@ -604,6 +608,12 @@ const initPage = ({
     }
 
     case 'logged-in': {
+      if (
+        ['chat-conversation', 'chat-list', 'chat-new'].includes(model.route[0])
+      ) {
+        return { model };
+      }
+
       const initial = Page.initReady({
         currentUserId: model.auth.session.userId,
         profileStore: model.profileStore,
@@ -777,20 +787,47 @@ const View = ({
         />
       )}
 
-      {model.auth.type === 'logged-in' && (
-        <Page.ViewReady
-          {...model}
-          ctx={{
-            currentUserId: model.auth.session.userId,
-            profiles: model.profileStore.profiles,
-            now: Date.now(),
-            $push: (route) => $send(['route', ['clicked-link', route]]),
-          }}
-          $send={(msg) => $send(['page', msg])}
-          $sendRoom={(msg) => $send(['room', msg])}
-          model={model.page}
-        />
-      )}
+      {model.auth.type === 'logged-in' &&
+        (['chat-conversation', 'chat-new', 'chat-list'].includes(
+          model.route[0]
+        ) ? (
+          <>
+            <ChatFrontend.View
+              $send={(m) => $send(['chat', m])}
+              model={model.chat}
+              ctx={{
+                currentUserId: model.auth.session.userId,
+                profiles: model.profileStore.profiles,
+                now: Date.now(),
+                $push: (route) => $send(['route', ['clicked-link', route]]),
+              }}
+              route={model.route}
+            />
+            <ViewBottomBar
+              $send={$send}
+              model={model}
+              ctx={{
+                currentUserId: model.auth.session.userId,
+                profiles: model.profileStore.profiles,
+                now: Date.now(),
+                $push: (route) => $send(['route', ['clicked-link', route]]),
+              }}
+            />
+          </>
+        ) : (
+          <Page.ViewReady
+            {...model}
+            ctx={{
+              currentUserId: model.auth.session.userId,
+              profiles: model.profileStore.profiles,
+              now: Date.now(),
+              $push: (route) => $send(['route', ['clicked-link', route]]),
+            }}
+            $send={(msg) => $send(['page', msg])}
+            $sendRoom={(msg) => $send(['room', msg])}
+            model={model.page}
+          />
+        ))}
 
       <Alerts.View
         model={model.alerts}
@@ -836,6 +873,118 @@ const toThemeMode = (model: Model): ThemeMode => {
       return profile.themeMode;
     }
   }
+};
+
+const ViewBottomBar = ({
+  ctx,
+  model,
+  $send,
+}: {
+  ctx: Ctx;
+  model: Model;
+  $send: (msg: Msg) => void;
+}) => {
+  return (
+    <Box
+      sx={{
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <RoomFrontend.ViewBar
+        ctx={ctx}
+        model={model.gameRoom}
+        $send={(m) => $send(['room', m])}
+      />
+      <ViewBottomNavigation ctx={ctx} route={model.route} />
+    </Box>
+  );
+};
+
+const ViewBottomNavigation = ({
+  route,
+  ctx,
+}: {
+  ctx: Ctx;
+  route: Route.Model;
+}) => {
+  const items: {
+    route: Route.Model;
+    label: string;
+    filled: ViewNode;
+    outlined: ViewNode;
+  }[] = [
+    {
+      route: ['room-list'],
+      label: 'Rooms',
+      filled: <Icons.SportsEsports />,
+      outlined: <Icons.SportsEsportsOutlined />,
+    },
+    // {
+    //   route: ['party'],
+    //   filled: <Icons.Group />,
+    //   outlined: <Icons.GroupOutlined />,
+    // },
+    {
+      route: ['search'],
+      label: 'Search',
+      filled: <Icons.Search />,
+      outlined: <Icons.SearchOutlined />,
+    },
+    {
+      route: ['chat-list'],
+      label: 'Chat',
+      filled: <Icons.Chat />,
+      outlined: <Icons.ChatOutlined />,
+    },
+    {
+      route: ['profile', { userId: ctx.currentUserId }],
+      label: 'Profile',
+      filled: <Icons.AccountCircle />,
+      outlined: <Icons.AccountCircleOutlined />,
+    },
+  ];
+
+  const theme = useTheme();
+
+  return (
+    <Box
+      sx={{
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: 52,
+        borderTop: `1.5px solid ${theme.palette.divider}`,
+      }}
+    >
+      {items.map((item) => {
+        const isSelected = Route.equals(route, item.route);
+
+        return (
+          <ButtonBase
+            key={Route.encode(item.route)}
+            onClick={() => ctx.$push(item.route)}
+            sx={{
+              color: isSelected ? 'primary.main' : 'text.secondary',
+              paddingY: 0,
+              paddingX: 2,
+              display: 'flex',
+              flexDirection: 'column',
+              flex: 1,
+              width: '100%',
+            }}
+          >
+            {isSelected ? item.filled : item.outlined}
+            <Typography variant="caption">{item.label}</Typography>
+          </ButtonBase>
+        );
+      })}
+    </Box>
+  );
 };
 
 //
