@@ -6,15 +6,14 @@ export const exhaustive = (discriminatedUnionType: 'Missing Case!'): never => {
 
 export const andThen =
   <Msg, Model, Action>(
-    msg: Msg,
-    update: (input: { msg: Msg; model: Model }) => {
+    update: (input: { model: Model }) => {
       model: Model;
       cmd?: Cmd<Msg>;
       actions?: Action[];
     }
   ) =>
   (output: { actions?: Action[]; cmd?: Cmd<Msg>; model: Model }) => {
-    const updated = update({ msg, model: output.model });
+    const updated = update({ model: output.model });
     return {
       model: updated.model,
       cmd: Cmd.batch([updated.cmd, output.cmd]),
