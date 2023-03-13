@@ -132,11 +132,11 @@ export const View = ({
 };
 
 const ViewChat = (_props: { model: Model; $send: (m: Msg) => void }) => {
-  return <div>hello</div>;
+  return <FillBox>ViewChat</FillBox>;
 };
 
 const ViewChatNew = (_props: { model: Model; $send: (m: Msg) => void }) => {
-  return <div>hello</div>;
+  return <FillBox>ViewChatNew</FillBox>;
 };
 
 const ViewChatList = ({

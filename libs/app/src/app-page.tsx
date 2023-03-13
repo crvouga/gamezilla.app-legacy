@@ -1,5 +1,4 @@
 import { Account, Auth, Logout, PageLogin } from '@gamezilla/auth';
-import { Chat, ChatConversation, ChatNew, ChatStore } from '@gamezilla/chat';
 import { Cmd, exhaustive, p, Sub, t } from '@gamezilla/core';
 import { PartyFrontend as Party } from '@gamezilla/party';
 import {
@@ -46,10 +45,7 @@ export type Model =
   | ['profile', { userId: UserId }, PageProfile.Model]
   | ['profile-delete', PageProfileDelete.Model]
   | ['profile-update', PageProfileUpdate.Model]
-  | ['chat', Chat.Model]
-  | ['chat-new', ChatNew.Model]
   | ['search', PageProfileSearch.Model]
-  | ['chat-conversation', { conversationId: string }, ChatConversation.Model]
   | ['room', RoomId]
   | ['room-list']
   | ['party'];
@@ -63,10 +59,6 @@ export type Model_ = {
   ['profile-create']: PageProfileCreate.Model;
   ['profile-delete']: PageProfileDelete.Model;
   ['profile-update']: PageProfileUpdate.Model;
-  //
-  ['chat']: Chat.Model;
-  ['chat-new']: ChatNew.Model;
-  ['chat-conversation']: ChatConversation.Model;
   //
   ['search']: PageProfileSearch.Model;
   //
@@ -93,14 +85,10 @@ export type Msg =
   | ['profile-delete', PageProfileDelete.Msg]
   | ['profile-update', PageProfileUpdate.Msg]
   | ['search', PageProfileSearch.Msg]
-  | ['chat', Chat.Msg]
   | ['party', Party.Msg]
-  | ['chat-new', ChatNew.Msg]
-  | ['chat-conversation', ChatConversation.Msg]
   | ['clicked-bottom-nav-link', Route.Model];
 
 export type OutAction =
-  | ChatStore.Action
   | Alerts.Action
   | Auth.Action
   | Party.Action
@@ -131,34 +119,6 @@ export const initReady = ({
   switch (route[0]) {
     case 'account':
       return [['account', Account.init], Cmd.None, []];
-
-    case 'chat-list': {
-      const [model, cmd, actions] = Chat.init({
-        userId: currentUserId,
-      });
-      return [['chat', model], p(cmd, Cmd.map(t('chat'))), actions];
-    }
-
-    case 'chat-new': {
-      const [chatNew, chatNewCmd, actions] = ChatNew.init();
-
-      return [
-        ['chat-new', chatNew],
-        p(chatNewCmd, Cmd.map(t('chat-new'))),
-        actions,
-      ];
-    }
-
-    case 'chat-conversation': {
-      const [child, cmd, actions] = ChatConversation.init({
-        conversationId: route[1].conversationId,
-      });
-      return [
-        ['chat-conversation', route[1], child],
-        Cmd.tag('chat-conversation', cmd),
-        actions,
-      ];
-    }
 
     case 'logout':
       return [['logout', Logout.init], Cmd.None, []];
@@ -225,16 +185,9 @@ export const initReady = ({
       return [['room-list'], Cmd.None, []];
     }
 
-    case 'profile-create':
-    case 'login':
-    case 'login-phone':
-    case 'login-phone-verify':
-    case 'login-email-link': {
+    default: {
       return [['room-list'], Route.push(['room-list']), []];
     }
-
-    default:
-      return exhaustive(route);
   }
 };
 
@@ -291,13 +244,11 @@ export const initLoggedOut = ({
 //
 
 export const updateReady = ({
-  profileStore,
   currentUserId,
   msg,
   model,
 }: {
   currentUserId: UserId;
-  profileStore: ProfileStore.Model;
   msg: Msg;
   model: Model;
 }): [Model, Cmd<Msg>, OutAction[]] => {
@@ -347,40 +298,6 @@ export const updateReady = ({
         updated.actions ?? [],
       ];
     }
-
-    case 'chat':
-      if (msg[0] === 'chat') {
-        return tag('chat', Chat.update(msg[1], model[1]));
-      }
-      return [model, Cmd.None, []];
-
-    case 'chat-new':
-      if (msg[0] === 'chat-new') {
-        return tag(
-          'chat-new',
-          ChatNew.update(
-            { profileStore: profileStore, currentUserId },
-            msg[1],
-            model[1]
-          )
-        );
-      }
-      return [model, Cmd.None, []];
-
-    case 'chat-conversation':
-      if (msg[0] === 'chat-conversation') {
-        const [child, cmd, actions] = ChatConversation.update(
-          { userId: currentUserId, conversationId: model[1].conversationId },
-          msg[1],
-          model[2]
-        );
-        return [
-          ['chat-conversation', model[1], child],
-          Cmd.tag('chat-conversation', cmd),
-          actions,
-        ];
-      }
-      return [model, Cmd.None, []];
 
     case 'profile':
       if (msg[0] === 'profile') {
@@ -465,30 +382,8 @@ export const updateLoggedOut = ({
 //
 //
 
-export const subscriptions = (model: Model): Sub<Msg> => {
-  switch (model[0]) {
-    case 'chat-new':
-      return Sub.tag('chat-new', ChatNew.subscriptions(model[1]));
-
-    case 'account':
-    case 'chat':
-    case 'chat-conversation':
-    case 'login':
-    case 'logout':
-    case 'profile-create':
-    case 'profile-delete':
-    case 'profile-update':
-    case 'profile':
-    case 'search':
-    case 'room':
-    case 'room-list':
-    case 'party':
-    case 'loading':
-      return Sub.None;
-
-    default:
-      return exhaustive(model);
-  }
+export const subscriptions = (_model: Model): Sub<Msg> => {
+  return Sub.None;
 };
 
 //
@@ -501,7 +396,6 @@ export const subscriptions = (model: Model): Sub<Msg> => {
 
 export const ViewReady = ({
   gameRoom,
-  chatStore,
   route,
   party,
   model,
@@ -513,7 +407,6 @@ export const ViewReady = ({
   ctx: Ctx;
   route: Route.Model;
   gameRoom: RoomFrontend.Model;
-  chatStore: ChatStore.Model;
   profileStore: ProfileStore.Model;
   party: Party.Model;
   model: Model;
@@ -530,25 +423,6 @@ export const ViewReady = ({
             }
             model={model[1]}
             $send={(msg) => $send(['account', msg])}
-          />
-          <ViewBottomBar
-            $sendRoom={$sendRoom}
-            gameRoom={gameRoom}
-            ctx={ctx}
-            route={route}
-            $send={$send}
-          />
-        </>
-      );
-
-    case 'chat':
-      return (
-        <>
-          <Chat.View
-            ctx={ctx}
-            model={model[1]}
-            $send={(msg) => $send(['chat', msg])}
-            chatStore={chatStore}
           />
           <ViewBottomBar
             $sendRoom={$sendRoom}
@@ -577,37 +451,6 @@ export const ViewReady = ({
             $send={$send}
           />
         </>
-      );
-
-    case 'chat-new':
-      return (
-        <>
-          <ChatNew.View
-            profileStore={profileStore}
-            chatStore={chatStore}
-            ctx={ctx}
-            model={model[1]}
-            $send={(msg) => $send(['chat-new', msg])}
-          />
-          <ViewBottomBar
-            $sendRoom={$sendRoom}
-            gameRoom={gameRoom}
-            ctx={ctx}
-            route={route}
-            $send={$send}
-          />{' '}
-        </>
-      );
-
-    case 'chat-conversation':
-      return (
-        <ChatConversation.View
-          ctx={ctx}
-          chatStore={chatStore}
-          model={model[2]}
-          conversationId={model[1].conversationId}
-          $send={(msg) => $send(['chat-conversation', msg])}
-        />
       );
 
     case 'logout':
@@ -791,13 +634,6 @@ const ViewBottomBar = ({
   );
 };
 
-type BottomNavigationItem = {
-  route: Route.Model;
-  label: string;
-  filled: ViewNode;
-  outlined: ViewNode;
-};
-
 const ViewBottomNavigation = ({
   route,
   $send,
@@ -807,7 +643,12 @@ const ViewBottomNavigation = ({
   route: Route.Model;
   $send: (msg: Msg) => void;
 }) => {
-  const items: BottomNavigationItem[] = [
+  const items: {
+    route: Route.Model;
+    label: string;
+    filled: ViewNode;
+    outlined: ViewNode;
+  }[] = [
     {
       route: ['room-list'],
       label: 'Rooms',
