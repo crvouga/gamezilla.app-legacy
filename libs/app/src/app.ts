@@ -1,5 +1,5 @@
 import { Auth } from '@gamezilla/auth';
-import { ChatStore } from '@gamezilla/chat';
+import { ChatFrontend, ChatStore } from '@gamezilla/chat';
 import { Option } from '@gamezilla/core';
 import { Party } from '@gamezilla/party';
 import { ProfileStore } from '@gamezilla/profile';
@@ -39,6 +39,7 @@ export type FrontendModel = {
   party: Party.FrontendModel;
   wire: WireModel;
   profileStore: ProfileStore.Model;
+  chat: ChatFrontend.Model;
 };
 
 export type WireModel =
@@ -71,6 +72,7 @@ export type FrontendMsg =
   | ['alerts', Alerts.Msg]
   | ['room', GameRoom.FrontendMsg]
   | ['chat-store', ChatStore.Msg]
+  | ['chat', ChatFrontend.Msg]
   | ['auth', Auth.Msg]
   | ['page', Page.Msg]
   | ['party', Party.FrontendMsg]

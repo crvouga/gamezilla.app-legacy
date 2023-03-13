@@ -80,10 +80,12 @@ const init = ({
     sendToBackend: (msg) => sendToBackend(['party', msg]),
   });
   const profileStore = ProfileStore.init;
+  const chat = ChatFrontend.init;
 
   return {
     model: {
       route,
+      chat,
       alerts,
       chatStore,
       gameRoom,
@@ -151,13 +153,11 @@ const update = ({
 }): { model: Model; cmd?: Cmd<Msg> } => {
   return p(
     { model },
-    andThen(msg, (input) => update_({ ...input, sendToBackend })),
-    andThen(msg, (input) => updateFetchProfile({ ...input, prev: model })),
-    andThen(msg, (input) => updateInitPage({ ...input, prev: model })),
-    andThen(msg, (input) => updateAutoCreateProfile({ ...input, prev: model })),
-    andThen(msg, (input) =>
-      updateInitPageAuthChanged({ ...input, prev: model })
-    ),
+    andThen((input) => update_({ ...input, msg, sendToBackend })),
+    andThen((input) => updateFetchProfile({ ...input, prev: model })),
+    andThen((input) => updateInitPage({ ...input, prev: model })),
+    andThen((input) => updateAutoCreateProfile({ ...input, prev: model })),
+    andThen((input) => updateInitPageAuthChanged({ ...input, prev: model })),
     (output) => {
       return output.actions.reduce(
         (acc, action) => {
@@ -185,7 +185,6 @@ const updateAutoCreateProfile = ({
   prev,
 }: {
   prev: Model;
-  msg: Msg;
   model: Model;
 }): { model: Model; actions?: OutAction[] } => {
   if (model.auth.type !== 'logged-in') {
@@ -235,7 +234,6 @@ const updateInitPage = ({
   prev,
 }: {
   prev: Model;
-  msg: Msg;
   model: Model;
 }): { model: Model; cmd?: Cmd<Msg> } => {
   if (model.auth.type !== 'logged-in') {
@@ -259,7 +257,6 @@ const updateInitPageAuthChanged = ({
   prev,
 }: {
   prev: Model;
-  msg: Msg;
   model: Model;
 }): { model: Model; cmd?: Cmd<Msg> } => {
   if (prev.auth.type !== model.auth.type) {
@@ -292,9 +289,28 @@ export const updateShared = ({
 }: {
   model: Model;
   msg: SharedMsg;
-}): { model: Model; cmd?: Cmd<Msg> } => {
-  ChatFrontend.updateShared({ model: ChatFrontend.init, msg });
-  return { model };
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  const chat = ChatFrontend.updateShared({
+    model: ChatFrontend.init,
+    msg,
+    sendToBackend: (m) => () => {
+      console.log('todo send to backend', m);
+    },
+  });
+  return {
+    model: {
+      ...model,
+      chat: chat.model,
+    },
+    cmd: Cmd.batch([
+      //
+      Cmd.tag('chat', chat.cmd ?? Cmd.None),
+      Cmd.None,
+    ]),
+  };
 };
 
 const update_ = ({
@@ -474,6 +490,14 @@ const update_ = ({
       return {
         model: { ...model, profileStore: updated[0] },
         cmd: Cmd.tag('profile-store', updated[1]),
+      };
+    }
+
+    case 'chat': {
+      const updated = ChatFrontend.update({ msg: msg[1], model: model.chat });
+      return {
+        model: { ...model, chat: updated.model },
+        cmd: Cmd.tag('chat', updated.cmd),
       };
     }
 

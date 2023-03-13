@@ -1,5 +1,5 @@
 import { Cmd, RemoteData } from '@gamezilla/core';
-import { Ctx, SharedMsg } from '@gamezilla/shared';
+import { Ctx, Route, SharedMsg } from '@gamezilla/shared';
 import {
   Box,
   FillBox,
@@ -114,10 +114,10 @@ export const View = ({
   model: Model;
   $send: (m: Msg) => void;
   ctx: Ctx;
-  route: 'chat' | 'chat-new' | 'chat-list';
+  route: Route.Model;
 }) => {
-  switch (route) {
-    case 'chat': {
+  switch (route[0]) {
+    case 'chat-conversation': {
       return <ViewChat model={model} $send={$send} />;
     }
     case 'chat-new': {
@@ -126,6 +126,8 @@ export const View = ({
     case 'chat-list': {
       return <ViewChatList model={model} $send={$send} ctx={ctx} />;
     }
+    default:
+      return null;
   }
 };
 
