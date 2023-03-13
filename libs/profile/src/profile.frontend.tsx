@@ -64,7 +64,7 @@ export const updateShared = ({
 }) => {
   switch (msg[0]) {
     case 'route-changed': {
-      const route = msg[1];
+      const route = msg[1].route;
       if (route[0] !== 'profile') {
         return { model };
       }

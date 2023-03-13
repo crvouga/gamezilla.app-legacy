@@ -57,7 +57,7 @@ export type ToBackend = Req;
 //
 //
 
-type Problem = ['database_error', string] | ['unknown_shape'];
+type Problem = ['database-error', string] | ['unknown-shape'];
 
 export type Req =
   | ['find-many', { userId: UserId[] }]
