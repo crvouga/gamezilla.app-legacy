@@ -132,7 +132,7 @@ export const initReady = ({
     case 'account':
       return [['account', Account.init], Cmd.None, []];
 
-    case 'chat': {
+    case 'chat-list': {
       const [model, cmd, actions] = Chat.init({
         userId: currentUserId,
       });
@@ -826,7 +826,7 @@ const ViewBottomNavigation = ({
       outlined: <Icons.SearchOutlined />,
     },
     {
-      route: ['chat'],
+      route: ['chat-list'],
       label: 'Chat',
       filled: <Icons.Chat />,
       outlined: <Icons.ChatOutlined />,

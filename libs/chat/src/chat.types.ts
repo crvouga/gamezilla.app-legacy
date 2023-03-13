@@ -59,6 +59,8 @@ export type BackendModel = null;
 export type FrontendMsg = Req;
 
 export type Req =
+  | ['chat-join', { chatId: string }]
+  | ['chat-leave', { chatId: string }]
   | ['chat-list', { userId: UserId }]
   | ['chat-start', { userId: UserId[] }]
   | ['message-send', { chatId: string; text: string }]
@@ -77,9 +79,9 @@ export const update = ({ msg }: { msg: FrontendMsg; model: FrontendModel }) => {
   }
 };
 
-type ToBackend = Req;
+export type ToBackend = Req;
 
-type BackendMsg = Res;
+export type BackendMsg = Res;
 
 export const updateFromFrontend = ({
   msg,

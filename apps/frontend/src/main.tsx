@@ -10,7 +10,7 @@ import {
   ToFrontend,
 } from '@gamezilla/app';
 import { Auth } from '@gamezilla/auth';
-import { ChatStore } from '@gamezilla/chat';
+import { ChatFrontend, ChatStore } from '@gamezilla/chat';
 import {
   andThen,
   Browser,
@@ -26,7 +26,14 @@ import {
 import { PartyFrontend as Party } from '@gamezilla/party';
 import { ProfileStore } from '@gamezilla/profile';
 import { RoomFrontend as Room } from '@gamezilla/room';
-import { Alerts, Ctx, ProfileAvatar, Route, Username } from '@gamezilla/shared';
+import {
+  Alerts,
+  Ctx,
+  ProfileAvatar,
+  Route,
+  SharedMsg,
+  Username,
+} from '@gamezilla/shared';
 import {
   AppContainer,
   Box,
@@ -276,6 +283,17 @@ const updateFetchProfile = ({
       ],
     };
   }
+  return { model };
+};
+
+export const updateShared = ({
+  model,
+  msg,
+}: {
+  model: Model;
+  msg: SharedMsg;
+}): { model: Model; cmd?: Cmd<Msg> } => {
+  ChatFrontend.updateShared({ model: ChatFrontend.init, msg });
   return { model };
 };
 
