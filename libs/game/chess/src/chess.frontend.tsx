@@ -1,8 +1,8 @@
 import { Audio, Cmd, p, RemoteData, Sub, Unit } from '@gamezilla/core';
 import { GameRoomCtx, viewSelectModeScreen } from '@gamezilla/game-shared';
 import { Alerts, Ctx } from '@gamezilla/shared';
-import { viewCoverArt } from './chess-board';
-import Sounds from './chess-sounds';
+import { viewCoverArt } from './chess/chess-board';
+import Sounds from './chess/chess-sounds';
 import {
   BackendModel,
   FrontendModel,
