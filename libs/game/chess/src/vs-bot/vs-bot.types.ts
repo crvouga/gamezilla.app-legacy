@@ -1,6 +1,6 @@
 import { Audio, Option, Result } from '@gamezilla/core';
 import { UserId } from '@gamezilla/shared';
-import * as Board from '../chess-board';
+import * as Board from '../chess/chess-board';
 
 //
 //

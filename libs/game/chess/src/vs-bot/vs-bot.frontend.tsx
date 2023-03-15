@@ -2,10 +2,10 @@ import { Audio, Cmd, exhaustive, Option, Sub, t } from '@gamezilla/core';
 import { viewVsBotSetupScreen } from '@gamezilla/game-shared';
 import { Alerts, Ctx } from '@gamezilla/shared';
 import * as UI from '@gamezilla/shared/ui';
-import * as Board from '../chess-board';
-import { viewCoverArt } from '../chess-board';
-import Sounds from '../chess-sounds';
-import { PawnIcon } from '../chess-views';
+import * as Board from '../chess/chess-board';
+import { viewCoverArt } from '../chess/chess-board';
+import Sounds from '../chess/chess-sounds';
+import { PawnIcon } from '../chess/chess-views';
 import {
   BackendModel,
   FrontendModel,
