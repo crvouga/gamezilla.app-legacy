@@ -313,7 +313,6 @@ export const updateShared = ({
     cmd: Cmd.batch([
       //
       Cmd.tag('chat', chat.cmd ?? Cmd.None),
-      Cmd.None,
     ]),
   };
 };
