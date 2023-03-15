@@ -501,7 +501,7 @@ const update_ = ({
       const updated = ChatFrontend.update({ msg: msg[1], model: model.chat });
       return {
         model: { ...model, chat: updated.model },
-        cmd: Cmd.tag('chat', updated.cmd),
+        cmd: Cmd.tag('chat', updated?.cmd ?? Cmd.None),
       };
     }
 
@@ -802,6 +802,14 @@ const View = ({
                 $push: (route) => $send(['route', ['clicked-link', route]]),
               }}
               route={model.route}
+              userSearch={{
+                loading:
+                  model.profileStore.search[model.chat.userSearch]?.type ===
+                  'Loading',
+                onInput: (searchText) => {
+                  $send(['profile-store', ['search', { searchText }]]);
+                },
+              }}
             />
             <ViewBottomBar
               $send={$send}

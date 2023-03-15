@@ -119,7 +119,7 @@ export type Res =
   | ['create-one-done', { userId: UserId; result: Result<Problem, Profile> }]
   | ['search-done', { searchText: string; result: Result<Problem, Profile[]> }];
 
-export type Msg = Res;
+export type Msg = Res | Req;
 
 export type Action = ['profile', Req];
 
@@ -264,7 +264,8 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     }
 
     default:
-      return exhaustive(msg);
+      return runAction(['profile', msg], model);
+    // return exhaustive(msg);
   }
 };
 
