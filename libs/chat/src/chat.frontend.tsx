@@ -1,14 +1,31 @@
-import { Cmd, RemoteData } from '@gamezilla/core';
+import { Browser, Cmd, p, RemoteData } from '@gamezilla/core';
 import { Ctx, Route, SharedMsg } from '@gamezilla/shared';
 import {
+  Avatar,
   Box,
+  Button,
+  Checkbox,
+  Chip,
+  CircularProgress,
+  Divider,
   FillBox,
   Header,
+  HeaderBackButton,
+  IconButton,
   Icons,
+  InputAdornment,
+  InputBase,
+  List,
+  ListItemAvatar,
+  ListItemButton,
+  ListItemSecondaryAction,
+  ListItemText,
+  Typography,
   ViewLoadingState,
 } from '@gamezilla/shared/ui';
 import { Fab } from '@mui/material';
-import { ToBackend, FrontendModel, FrontendMsg } from './chat.types';
+import { matchSorter } from 'match-sorter';
+import { FrontendModel, FrontendMsg, ToBackend } from './chat.types';
 
 //
 //
@@ -26,8 +43,9 @@ export const init: Model = {
   users: {},
   messageDrafts: {},
   messages: {},
-  userSearch: '',
   requests: {},
+  userSearch: '',
+  userSelected: {},
 };
 
 //
@@ -48,14 +66,58 @@ export type Msg = FrontendMsg;
 //
 //
 
+const userSearchInputId = 'user-search-input';
+
 export const update = ({
   msg,
   model,
 }: {
   msg: Msg;
   model: Model;
-}): { model: Model; cmd: Cmd<Msg> } => {
+}): { model: Model; cmd?: Cmd<Msg> } => {
   switch (msg[0]) {
+    case 'clicked-user-search-result': {
+      return {
+        model: {
+          ...model,
+          userSelected: toggleKey(model.userSelected, msg[1].userId),
+          userSearch: '',
+        },
+      };
+    }
+
+    case 'clicked-user-selected-delete-button': {
+      return {
+        model: {
+          ...model,
+          userSelected: removeKey(model.userSelected, msg[1].userId),
+        },
+      };
+    }
+
+    case 'inputted-user-search': {
+      return {
+        model: {
+          ...model,
+          userSearch: msg[1].userSearch,
+        },
+      };
+    }
+
+    case 'clicked-user-search-clear-button': {
+      return {
+        model: {
+          ...model,
+          userSelected: {},
+          userSearch: '',
+        },
+        cmd: p(
+          Browser.focus(userSearchInputId),
+          Cmd.perform((result) => ['focused', result])
+        ),
+      };
+    }
+
     default: {
       return {
         model,
@@ -63,6 +125,23 @@ export const update = ({
       };
     }
   }
+};
+
+const toggleKey = <T extends object>(obj: T, key: keyof T) => {
+  const newObj: T = { ...obj };
+  if (key in newObj) {
+    delete newObj[key];
+  } else {
+    newObj[key] = key as T[keyof T];
+  }
+  return newObj;
+};
+const removeKey = <T extends object>(obj: T, key: keyof T) => {
+  const newObj: T = { ...obj };
+  if (key in newObj) {
+    delete newObj[key];
+  }
+  return newObj;
 };
 
 export const updateShared = ({
@@ -86,6 +165,14 @@ export const updateShared = ({
             cmd: sendToBackend(['chat-join', { chatId: 'todo' }]),
           };
         }
+
+        case 'chat-new': {
+          return {
+            model,
+            cmd: sendToBackend(['chat-join', { chatId: 'todo' }]),
+          };
+        }
+
         default: {
           return {
             model,
@@ -110,18 +197,30 @@ export const View = ({
   $send,
   ctx,
   route,
+  userSearch,
 }: {
   model: Model;
   $send: (m: Msg) => void;
   ctx: Ctx;
   route: Route.Model;
+  userSearch: {
+    onInput: (searchText: string) => void;
+    loading: boolean;
+  };
 }) => {
   switch (route[0]) {
     case 'chat-conversation': {
       return <ViewChat model={model} $send={$send} />;
     }
     case 'chat-new': {
-      return <ViewChatNew model={model} $send={$send} />;
+      return (
+        <ViewChatNew
+          model={model}
+          $send={$send}
+          ctx={ctx}
+          userSearch={userSearch}
+        />
+      );
     }
     case 'chat-list': {
       return <ViewChatList model={model} $send={$send} ctx={ctx} />;
@@ -135,8 +234,123 @@ const ViewChat = (_props: { model: Model; $send: (m: Msg) => void }) => {
   return <FillBox>ViewChat</FillBox>;
 };
 
-const ViewChatNew = (_props: { model: Model; $send: (m: Msg) => void }) => {
-  return <FillBox>ViewChatNew</FillBox>;
+const ViewChatNew = ({
+  ctx,
+  model,
+  $send,
+  userSearch,
+}: {
+  ctx: Ctx;
+  model: Model;
+  $send: (m: Msg) => void;
+  userSearch: {
+    onInput: (searchText: string) => void;
+    loading: boolean;
+  };
+}) => {
+  const profiles = matchSorter(Object.values(ctx.profiles), model.userSearch, {
+    keys: ['name', 'username'],
+  });
+  return (
+    <FillBox>
+      <Header
+        left={<HeaderBackButton onClick={() => ctx.$push(['chat-list'])} />}
+        title="New Message"
+        right={<Button sx={{ marginRight: -1 }}>Chat</Button>}
+      />
+
+      <Typography variant="h6" sx={{ fontWeight: 'bold', paddingX: 2 }}>
+        To
+      </Typography>
+
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          paddingBottom: 2,
+          paddingTop: 1,
+          overflowX: 'scroll',
+        }}
+      >
+        {Object.values(model.userSelected).map((userId) => {
+          const profile = ctx.profiles[userId];
+          if (!profile) {
+            return null;
+          }
+          return (
+            <Chip
+              sx={{ marginLeft: 1 }}
+              key={profile.userId}
+              label={profile.username}
+              onDelete={() => {
+                $send([
+                  'clicked-user-selected-delete-button',
+                  {
+                    userId: profile.userId,
+                  },
+                ]);
+              }}
+            />
+          );
+        })}
+        <InputBase
+          id={userSearchInputId}
+          sx={{ paddingX: 2, flex: 1 }}
+          autoFocus
+          placeholder={
+            Object.values(model.userSelected).length === 0 ? 'Search' : ''
+          }
+          value={model.userSearch}
+          onChange={(event) => {
+            const searchText = event.currentTarget.value;
+            $send(['inputted-user-search', { userSearch: searchText }]);
+            userSearch.onInput(searchText);
+          }}
+          endAdornment={
+            <InputAdornment position="end">
+              {userSearch.loading && <CircularProgress size={24} />}
+              <IconButton
+                edge="end"
+                onClick={() => {
+                  $send(['clicked-user-search-clear-button']);
+                }}
+              >
+                <Icons.Close />
+              </IconButton>
+            </InputAdornment>
+          }
+        />
+      </Box>
+
+      <Divider />
+
+      <List sx={{ overflowY: 'scroll', flex: 1 }}>
+        {profiles.map((profile) => {
+          return (
+            <ListItemButton
+              key={profile.userId}
+              onClick={() => {
+                $send([
+                  'clicked-user-search-result',
+                  { userId: profile.userId },
+                ]);
+              }}
+            >
+              <ListItemAvatar>
+                <Avatar src={profile.avatarUrl} />
+              </ListItemAvatar>
+              <ListItemText primary={profile.username} />
+              <ListItemSecondaryAction>
+                <Checkbox
+                  checked={Boolean(model.userSelected[profile.userId])}
+                />
+              </ListItemSecondaryAction>
+            </ListItemButton>
+          );
+        })}
+      </List>
+    </FillBox>
+  );
 };
 
 const ViewChatList = ({

@@ -1,4 +1,4 @@
-import { Cmd, RemoteData, Result } from '@gamezilla/core';
+import { Browser, Cmd, RemoteData, Result } from '@gamezilla/core';
 import { UserId } from '@gamezilla/shared';
 
 //
@@ -40,9 +40,12 @@ export type FrontendModel = {
       text: string;
     };
   };
-  userSearch: string;
   requests: {
     [key in Req[0]]?: RemoteData<Problem, null>;
+  };
+  userSearch: string;
+  userSelected: {
+    [userId: UserId]: UserId;
   };
 };
 
@@ -56,7 +59,13 @@ export type BackendModel = null;
 //
 //
 
-export type FrontendMsg = Req;
+export type FrontendMsg =
+  | ['inputted-user-search', { userSearch: string }]
+  | ['clicked-user-search-result', { userId: UserId }]
+  | ['clicked-user-selected-delete-button', { userId: UserId }]
+  | ['clicked-user-search-clear-button']
+  | ['focused', Browser.FocusResult]
+  | Req;
 
 export type Req =
   | ['chat-join', { chatId: string }]
