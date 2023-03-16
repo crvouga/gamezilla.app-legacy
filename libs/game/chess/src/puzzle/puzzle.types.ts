@@ -1,7 +1,6 @@
-// source https://database.lichess.org/#puzzles
-
 import { Result } from '@gamezilla/core';
-import { z } from 'zod';
+
+// source https://database.lichess.org/#puzzles
 
 export type PuzzleQuery = {
   puzzleId?: string;
@@ -19,19 +18,6 @@ export type Puzzle = {
   game_URL: string;
   opening_tags: string[];
 };
-
-const Puzzle = z.object({
-  puzzle_id: z.string(),
-  FEN: z.string(),
-  moves: z.array(z.string()),
-  rating: z.number(),
-  rating_deviation: z.number(),
-  popularity: z.number(),
-  number_of_plays: z.number(),
-  themes: z.array(z.string()),
-  game_URL: z.string(),
-  opening_tags: z.array(z.string()),
-});
 
 export type PuzzleCompleted = {
   puzzleId: string;
