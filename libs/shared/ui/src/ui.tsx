@@ -10,7 +10,7 @@ import * as Mui from '@mui/material';
 import { keyframes, TypographyProps } from '@mui/material';
 import { blue } from '@mui/material/colors';
 import Slide, { SlideProps } from '@mui/material/Slide';
-import { createElement, ReactNode, useEffect, useMemo, useRef } from 'react';
+import { ReactNode, useEffect, useMemo, useRef } from 'react';
 import * as Icons from './ui-icons';
 
 const SlideTransition = (props: SlideProps) => {
