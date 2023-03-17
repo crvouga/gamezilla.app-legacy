@@ -1,34 +1,63 @@
 import { Cmd, p, Result, Task } from '@gamezilla/core';
+import { ClientId, RoomId, UserId } from '@gamezilla/shared';
 import { z } from 'zod';
-import { Problem, Puzzle, Req, Res, ToFrontend } from './puzzle.types';
+import {
+  Problem,
+  Puzzle,
+  Req,
+  Res,
+  SharedModel,
+  ToFrontend,
+} from './puzzle.types';
 
 const { Err, Ok } = Result;
 
+//
+//
+// Model
+//
+//
+
+export type Model = SharedModel;
+
+export type Msg = Req;
+
 type Database = (sql: string) => Promise<Result<string, unknown>>;
+
+export type Topic = ['client', ClientId] | ['room', RoomId] | ['user', UserId];
 
 export const updateFromFrontend = ({
   msg,
+  model,
   db,
-  sendToFrontend,
-}: {
-  msg: Req;
+}: // emit,
+{
+  msg: Msg;
+  model: Model;
+  emit: (topic: Topic, msg: ToFrontend) => Cmd;
   db: Database;
-  sendToFrontend: (msg: ToFrontend) => Cmd;
-  broadcast: (m: ToFrontend) => Cmd;
-}): { cmd?: Cmd } => {
+  // sendToFrontend: (msg: ToFrontend) => Cmd;
+  // broadcast: (m: ToFrontend) => Cmd;
+}): {
+  model: Model;
+  cmd?: Cmd;
+} => {
   switch (msg[0]) {
     case 'find-many': {
       return {
-        cmd: p(
-          findMany({ db, puzzleId: msg[1].puzzleId }),
-          Cmd.perform((res): Res => [...msg, res]),
-          Cmd.chain(sendToFrontend)
-        ),
+        model,
+        // cmd: p(
+        //   findMany({ db, puzzleId: msg[1].puzzleId }),
+        //   Cmd.perform((res): Res => [...msg, res])
+        //   // Cmd.chain((res) => emit(['client', clientId], res))
+        // ),
       };
     }
 
-    case 'input-move': {
-      return {};
+    default: {
+      return {
+        model,
+      };
     }
   }
 };
