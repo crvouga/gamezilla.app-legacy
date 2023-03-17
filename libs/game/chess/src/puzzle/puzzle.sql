@@ -1,7 +1,12 @@
 create table chess_puzzle (
-    id int not null auto_increment,
-    name varchar(255) not null,
-    fen varchar(255) not null,
-    solution varchar(255) not null,
-    primary key (id)
+  puzzle_id TEXT PRIMARY KEY,
+  rating NUMERIC
+  rating_deviation NUMERIC
+  opening_tags ARRAY
+  FEN TEXT
+  moves ARRAY
+  popularity NUMERIC
+  number_of_plays NUMERIC
+  themes ARRAY
+  game_URL TEXT
 );

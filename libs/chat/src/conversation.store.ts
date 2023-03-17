@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Cmd, Option, p, RemoteData, Result, Task } from '@gamezilla/core';
 import { client, definitions, Route, UserId } from '@gamezilla/shared';
-import produce from 'immer';
 import * as Types from './types';
 
 //
@@ -78,39 +77,39 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case 'FindOne_Done': {
       const { conversationId, result } = msg[1];
-      const modelNew = produce(model, (model) => {
-        model.queries.Conversation.FindOne[conversationId] = p(
-          result,
-          RemoteData.map((item) => ({
-            conversation: item.conversation.conversationId,
-            message: item.messages.map((item) => item.messageId),
-          }))
-        );
+      const modelNew: Model = JSON.parse(JSON.stringify(model));
 
-        switch (result.type) {
-          case 'Err':
-            break;
+      modelNew.queries.Conversation.FindOne[conversationId] = p(
+        result,
+        RemoteData.map((item) => ({
+          conversation: item.conversation.conversationId,
+          message: item.messages.map((item) => item.messageId),
+        }))
+      );
 
-          case 'Ok': {
-            const data = result.value;
-            model.Conversation[data.conversation.conversationId] =
-              data.conversation;
+      switch (result.type) {
+        case 'Err':
+          break;
 
-            for (const message of data.messages) {
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              model.Message[message.messageId] = message;
-            }
+        case 'Ok': {
+          const data = result.value;
+          modelNew.Conversation[data.conversation.conversationId] =
+            data.conversation;
 
-            for (const userConversation of data.usersConversations) {
-              const id = Types.toUsersConversationsId(userConversation);
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              model.UsersConversations[id] = userConversation;
-            }
+          for (const message of data.messages) {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            modelNew.Message[message.messageId] = message;
+          }
+
+          for (const userConversation of data.usersConversations) {
+            const id = Types.toUsersConversationsId(userConversation);
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            modelNew.UsersConversations[id] = userConversation;
           }
         }
-      });
+      }
 
       return [modelNew, Cmd.None];
     }
@@ -176,34 +175,34 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     case 'FindOneElseInsert_Done': {
       const { result } = msg[1];
 
-      const modelNew = produce(model, (model) => {
-        model.mutations.Conversation.FindElseInsert = p(
-          result,
-          RemoteData.map((item) => item.conversation.conversationId)
-        );
+      const modelNew: Model = JSON.parse(JSON.stringify(model));
 
-        switch (result.type) {
-          case 'Err':
-            break;
+      modelNew.mutations.Conversation.FindElseInsert = p(
+        result,
+        RemoteData.map((item) => item.conversation.conversationId)
+      );
 
-          case 'Ok': {
-            const data = result.value;
+      switch (result.type) {
+        case 'Err':
+          break;
 
-            model.Conversation[data.conversation.conversationId] =
-              data.conversation;
+        case 'Ok': {
+          const data = result.value;
 
-            for (const item of data.usersConversations) {
-              const id = Types.toUsersConversationsId(item);
-              // @ts-ignore
-              model.UsersConversations[id] = item;
-            }
-            break;
+          modelNew.Conversation[data.conversation.conversationId] =
+            data.conversation;
+
+          for (const item of data.usersConversations) {
+            const id = Types.toUsersConversationsId(item);
+            // @ts-ignore
+            modelNew.UsersConversations[id] = item;
           }
-          default: {
-            break;
-          }
+          break;
         }
-      });
+        default: {
+          break;
+        }
+      }
 
       // todo put this logic elsewhere
       const cmdNew: Cmd<Msg> =
@@ -220,9 +219,10 @@ export const runAction = (action: Action, model: Model): [Model, Cmd<Msg>] => {
   switch (action[0]) {
     case 'FindOne': {
       const { conversationId } = action[1];
-      const modelNew = produce(model, (model) => {
-        model.queries.Conversation.FindOne[conversationId] = RemoteData.Loading;
-      });
+      const modelNew: Model = JSON.parse(JSON.stringify(model));
+
+      modelNew.queries.Conversation.FindOne[conversationId] =
+        RemoteData.Loading;
 
       return [
         modelNew,
@@ -246,10 +246,10 @@ export const runAction = (action: Action, model: Model): [Model, Cmd<Msg>] => {
         return [model, Cmd.None];
       }
 
-      const modelNew = produce(model, (model) => {
-        model.queries.Conversation.FindManyByUserId[userId] =
-          RemoteData.Loading;
-      });
+      const modelNew: Model = JSON.parse(JSON.stringify(model));
+
+      modelNew.queries.Conversation.FindManyByUserId[userId] =
+        RemoteData.Loading;
 
       return [
         modelNew,
@@ -265,9 +265,9 @@ export const runAction = (action: Action, model: Model): [Model, Cmd<Msg>] => {
     case 'FindOneElseInsert': {
       const { userIds } = action[1];
 
-      const modelNew = produce(model, (model) => {
-        model.mutations.Conversation.FindElseInsert = RemoteData.Loading;
-      });
+      const modelNew = JSON.parse(JSON.stringify(model));
+
+      modelNew.mutations.Conversation.FindElseInsert = RemoteData.Loading;
 
       return [
         modelNew,
