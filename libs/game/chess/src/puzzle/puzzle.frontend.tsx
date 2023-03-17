@@ -1,5 +1,5 @@
 import { PuzzleId } from './puzzle-id';
-import { Puzzle } from './puzzle.types';
+import { ToFrontend, Puzzle } from './puzzle.types';
 
 export type Model = {
   puzzles: {
@@ -22,6 +22,24 @@ export const update = ({
       return {
         model,
       };
+    }
+  }
+};
+
+export const updateFromBackend = ({
+  msg,
+  model,
+}: {
+  msg: ToFrontend;
+  model: Model;
+}) => {
+  switch (msg[0]) {
+    case 'find-many': {
+      return { model };
+    }
+
+    case 'input-move': {
+      return { model };
     }
   }
 };
