@@ -1,6 +1,5 @@
 import { Cmd, p, RemoteData, Result, Task } from '@gamezilla/core';
 import { client, definitions, UserId } from '@gamezilla/shared';
-import produce from 'immer';
 import type { Problem, Store } from './types';
 import * as Types from './types';
 
@@ -51,22 +50,25 @@ export type Unsend_Done = [
 //
 //
 
-export const update = (msg: Msg, model: Store): [Store, Cmd<Msg>] => {
+type Model = Store;
+
+export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case 'Unsend_Done': {
       const { messageId, result } = msg[1];
-      const modelNew = produce(model, (model) => {
-        model.mutations.Message.Unsend[messageId] = result;
+      const modelNew: Model = JSON.parse(JSON.stringify(model));
 
-        switch (result.type) {
-          case 'Err':
-            break;
+      model.mutations.Message.Unsend[messageId] = result;
 
-          case 'Ok':
-            delete model.Message[messageId];
-            break;
-        }
-      });
+      switch (result.type) {
+        case 'Err':
+          break;
+
+        case 'Ok':
+          delete model.Message[messageId];
+          break;
+      }
+
       return [modelNew, Cmd.None];
     }
 
@@ -106,9 +108,9 @@ export const runAction = (action: Action, model: Store): [Store, Cmd<Msg>] => {
   switch (action[0]) {
     case 'Unsend': {
       const { messageId } = action[1];
-      const modelNew = produce(model, (modelNew) => {
-        modelNew.mutations.Message.Unsend[messageId] = RemoteData.Loading;
-      });
+      const modelNew: Model = JSON.parse(JSON.stringify(model));
+
+      modelNew.mutations.Message.Unsend[messageId] = RemoteData.Loading;
 
       return [
         modelNew,
@@ -121,9 +123,9 @@ export const runAction = (action: Action, model: Store): [Store, Cmd<Msg>] => {
 
     case 'Send': {
       const { conversationId, userId, messageText } = action[1];
-      const modelNew = produce(model, (model) => {
-        model.mutations.Message.Send[conversationId] = RemoteData.Loading;
-      });
+      const modelNew: Model = JSON.parse(JSON.stringify(model));
+
+      modelNew.mutations.Message.Send[conversationId] = RemoteData.Loading;
 
       return [
         modelNew,
