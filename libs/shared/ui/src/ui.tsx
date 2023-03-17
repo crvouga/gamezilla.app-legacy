@@ -10,7 +10,7 @@ import * as Mui from '@mui/material';
 import { keyframes, TypographyProps } from '@mui/material';
 import { blue } from '@mui/material/colors';
 import Slide, { SlideProps } from '@mui/material/Slide';
-import { ReactNode, useEffect, useMemo, useRef } from 'react';
+import { createElement, ReactNode, useEffect, useMemo, useRef } from 'react';
 import * as Icons from './ui-icons';
 
 const SlideTransition = (props: SlideProps) => {
@@ -321,6 +321,27 @@ export const paper = (
 };
 
 export const Button = MuiLab.LoadingButton;
+
+export type ButtonProps = {
+  size?: 'large' | 'medium' | 'small';
+  variant?: 'outlined' | 'contained' | 'text';
+  startIcon?: IconName;
+  onPress?: () => void;
+  loading?: boolean;
+  disabled: boolean;
+  fullWidth?: boolean;
+};
+
+export const Button_ = (props: ButtonProps) => {
+  return (
+    <MuiLab.LoadingButton
+      variant={props.variant}
+      onClick={props.onPress}
+      size={props.size}
+      startIcon={props.startIcon ? icon(props.startIcon) : undefined}
+    ></MuiLab.LoadingButton>
+  );
+};
 
 export const button = (
   {
