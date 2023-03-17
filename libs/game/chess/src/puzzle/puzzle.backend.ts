@@ -1,62 +1,60 @@
-import { Cmd, Result } from '@gamezilla/core';
+import { Cmd, p, Result, Task } from '@gamezilla/core';
 import { z } from 'zod';
-import { Problem, Puzzle, Req, Res } from './puzzle.types';
+import { Problem, Puzzle, Req, Res, ToFrontend } from './puzzle.types';
 
-export const updateFromFrontend = (_props: {
-  msg: Req;
-  db: (sql: string) => Promise<Result<string, unknown>>;
-}): { cmd?: Cmd } => {
-  return {
-    // cmd: p(
-    //   handler({ db, req: msg }),
-    //   Cmd.perform((res) => {
-    //     //
-    //   })
-    // ),
-  };
-};
+const { Err, Ok } = Result;
 
-export const handler =
-  ({
-    db,
-    req,
-  }: {
-    db: (sql: string) => Promise<Result<string, unknown>>;
-    req: Req;
-  }) =>
-  async (): Promise<Res> => {
-    switch (req[0]) {
-      default: {
-        const result = await handleQuery({ db, req });
-        return [...req, result];
-      }
-    }
-  };
+type Database = (sql: string) => Promise<Result<string, unknown>>;
 
-const handleQuery = async ({
-  req,
+export const updateFromFrontend = ({
+  msg,
   db,
+  sendToFrontend,
 }: {
-  db: (sql: string) => Promise<Result<string, unknown>>;
-  req: Req;
-}): Promise<Result<Problem, Puzzle[]>> => {
-  switch (req[0]) {
+  msg: Req;
+  db: Database;
+  sendToFrontend: (msg: ToFrontend) => Cmd;
+}): { cmd?: Cmd } => {
+  switch (msg[0]) {
     case 'find-many': {
-      const found = await db(`SELECT * WHERE puzzle_id = ${req[1].puzzleId}`);
-      if (found.type === 'Err') {
-        return Result.Err({ type: 'database-error', message: found.error });
-      }
-      const parsed = z.array(PuzzleRow).safeParse(found.value);
-      if (!parsed.success) {
-        return Result.Err({
-          type: 'parsing-error',
-          message: parsed.error.message,
-        });
-      }
-      return Result.Ok(parsed.data);
+      return {
+        cmd: p(
+          findMany({ db, puzzleId: msg[1].puzzleId }),
+          Cmd.perform((res): Res => [...msg, res]),
+          Cmd.chain(sendToFrontend)
+        ),
+      };
+    }
+
+    case 'input-move': {
+      return {};
     }
   }
 };
+
+const findMany =
+  ({
+    db,
+    puzzleId,
+  }: {
+    db: Database;
+    puzzleId?: string;
+  }): Task<Result<Problem, Puzzle[]>> =>
+  async () => {
+    const queried = await db(`select * where puzzle_id = ${puzzleId}`);
+
+    if (queried.type === 'Err') {
+      return Err({ type: 'database-error', message: queried.error });
+    }
+
+    const parsed = z.array(PuzzleRow).safeParse(queried.value);
+
+    if (!parsed.success) {
+      return Err({ type: 'parsing-error', message: parsed.error.message });
+    }
+
+    return Ok(parsed.data);
+  };
 
 export const PuzzleRow = z.object({
   puzzle_id: z.string(),

@@ -1,6 +1,13 @@
 import { Result } from '@gamezilla/core';
+import { PuzzleId } from './puzzle-id';
 
 // source https://database.lichess.org/#puzzles
+
+export type SharedModel = {
+  activePuzzleId: PuzzleId;
+  fen: string;
+  moves: string[];
+};
 
 export type PuzzleQuery = {
   puzzleId?: string;
@@ -29,5 +36,9 @@ export type Problem =
   | { type: 'database-error'; message: string }
   | { type: 'parsing-error'; message: string };
 
-export type Req = ['find-many', PuzzleQuery];
-export type Res = ['find-many', PuzzleQuery, Result<Problem, Puzzle[]>];
+export type Req = ['find-many', PuzzleQuery] | ['input-move', string];
+export type Res = [...Req, Result<Problem, Puzzle[]>];
+
+export type ToBackend = Req;
+
+export type ToFrontend = Res;
