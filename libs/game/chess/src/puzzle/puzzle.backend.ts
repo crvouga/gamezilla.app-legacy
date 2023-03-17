@@ -14,6 +14,7 @@ export const updateFromFrontend = ({
   msg: Req;
   db: Database;
   sendToFrontend: (msg: ToFrontend) => Cmd;
+  broadcast: (m: ToFrontend) => Cmd;
 }): { cmd?: Cmd } => {
   switch (msg[0]) {
     case 'find-many': {
@@ -44,13 +45,13 @@ const findMany =
     const queried = await db(`select * where puzzle_id = ${puzzleId}`);
 
     if (queried.type === 'Err') {
-      return Err({ type: 'database-error', message: queried.error });
+      return Err(['database', queried.error]);
     }
 
     const parsed = z.array(PuzzleRow).safeParse(queried.value);
 
     if (!parsed.success) {
-      return Err({ type: 'parsing-error', message: parsed.error.message });
+      return Err(['parsing', parsed.error.message]);
     }
 
     return Ok(parsed.data);
