@@ -75,6 +75,18 @@ export const findMany = async ({
   return queried;
 };
 
+export const initTables = async ({
+  databaseConnection,
+}: {
+  databaseConnection: DatabaseConnection;
+}) => {
+  await databaseConnection.query(
+    z.object({}),
+    `CREATE TABLE IF NOT EXISTS puzzles (
+      puzzle_id STRING PRIMARY KEY,`
+  );
+};
+
 export const PuzzleRow = z.object({
   puzzle_id: z.string(),
   rating: z.number(),
