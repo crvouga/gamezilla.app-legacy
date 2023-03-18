@@ -32,10 +32,8 @@ export type PuzzleCompleted = {
   seconds: number;
 };
 
-export type Problem = ['database', string] | ['parsing', string];
-
 export type Req = ['find-many', PuzzleQuery] | ['input-move', string];
-export type Res = [...Req, Result<Problem, Puzzle[]>];
+export type Res = [...Req, Result<string, Puzzle[]>];
 
 export type ToBackend = Req;
 

@@ -1,16 +1,12 @@
-import { Cmd, p, Result, Task } from '@gamezilla/core';
-import { ClientId, RoomId, UserId } from '@gamezilla/shared';
-import { z } from 'zod';
+import { Cmd } from '@gamezilla/core';
 import {
-  Problem,
-  Puzzle,
-  Req,
-  Res,
-  SharedModel,
-  ToFrontend,
-} from './puzzle.types';
-
-const { Err, Ok } = Result;
+  ClientId,
+  DatabaseConnection,
+  RoomId,
+  UserId,
+} from '@gamezilla/shared';
+import { z } from 'zod';
+import { Req, SharedModel, ToFrontend } from './puzzle.types';
 
 //
 //
@@ -22,20 +18,17 @@ export type Model = SharedModel;
 
 export type Msg = Req;
 
-type Database = (sql: string) => Promise<Result<string, unknown>>;
-
 export type Topic = ['client', ClientId] | ['room', RoomId] | ['user', UserId];
 
 export const updateFromFrontend = ({
   msg,
   model,
-}: // db,
-// emit,
+}: // databaseConnection,
 {
   msg: Msg;
   model: Model;
   emit: (topic: Topic, msg: ToFrontend) => Cmd;
-  db: Database;
+  databaseConnection: DatabaseConnection;
   // sendToFrontend: (msg: ToFrontend) => Cmd;
   // broadcast: (m: ToFrontend) => Cmd;
 }): {
@@ -47,7 +40,12 @@ export const updateFromFrontend = ({
       return {
         model,
         // cmd: p(
-        //   findMany({ db, puzzleId: msg[1].puzzleId }),
+        //   () => {
+        //     return databaseConnection.query(
+        //       PuzzleRow,
+        //       `SELECT * WHERE puzzle_id = ${msg[1].puzzleId}`
+        //     );
+        //   },
         //   Cmd.perform((res): Res => [...msg, res])
         //   // Cmd.chain((res) => emit(['client', clientId], res))
         // ),
@@ -62,29 +60,20 @@ export const updateFromFrontend = ({
   }
 };
 
-export const findMany =
-  ({
-    db,
-    puzzleId,
-  }: {
-    db: Database;
-    puzzleId?: string;
-  }): Task<Result<Problem, Puzzle[]>> =>
-  async () => {
-    const queried = await db(`select * where puzzle_id = ${puzzleId}`);
+export const findMany = async ({
+  databaseConnection,
+  puzzleId,
+}: {
+  databaseConnection: DatabaseConnection;
+  puzzleId?: string;
+}) => {
+  const queried = await databaseConnection.query(
+    PuzzleRow,
+    `SELECT * WHERE puzzle_id = ${puzzleId}`
+  );
 
-    if (queried.type === 'Err') {
-      return Err(['database', queried.error]);
-    }
-
-    const parsed = z.array(PuzzleRow).safeParse(queried.value);
-
-    if (!parsed.success) {
-      return Err(['parsing', parsed.error.message]);
-    }
-
-    return Ok(parsed.data);
-  };
+  return queried;
+};
 
 export const PuzzleRow = z.object({
   puzzle_id: z.string(),
