@@ -1,5 +1,6 @@
-import { Result, Cmd, exhaustive, Sub } from '@gamezilla/core';
+import { Cmd, exhaustive, Result, Sub } from '@gamezilla/core';
 import { UserId } from '@gamezilla/shared';
+import { DatabaseConnection } from '@gamezilla/shared/backend';
 import {
   BackendModel,
   BackendMsg,
@@ -7,6 +8,7 @@ import {
   ToBackend,
   ToFrontend,
 } from './chess.types';
+import * as Puzzle from './puzzle/puzzle.backend';
 import * as VsBot from './vs-bot/vs-bot.backend';
 import * as VsUser from './vs-user/vs-user.backend';
 
@@ -72,6 +74,22 @@ export const update = (
       return [model, Cmd.None];
     }
 
+    case 'puzzle': {
+      if (msg[0] !== 'puzzle') {
+        return [model, Cmd.None];
+      }
+
+      const updated = Puzzle.update({
+        model: model[1],
+        msg: msg[1],
+      });
+
+      return [
+        ['puzzle', updated.model],
+        Cmd.tag('puzzle', updated.cmd ?? Cmd.None),
+      ];
+    }
+
     default: {
       return exhaustive(model[0]);
     }
@@ -83,10 +101,12 @@ export const updateFromFrontend = (
     hostId,
     sendToClient,
     broadcast,
+    dbConn,
   }: {
     hostId: UserId;
     sendToClient: (msg: ToFrontend) => Cmd;
     broadcast: (msg: ToFrontend) => Cmd;
+    dbConn: DatabaseConnection;
   },
   msg: ToBackend,
   model: Model
@@ -139,6 +159,23 @@ export const updateFromFrontend = (
 
       return [model, Cmd.None];
     }
+
+    case 'puzzle': {
+      if (model[0] !== 'puzzle') {
+        return [model, Cmd.None];
+      }
+
+      const updated = Puzzle.updateFromFrontend({
+        model: model[1],
+        msg: msg[1],
+        dbConn,
+      });
+
+      return [
+        ['puzzle', updated.model],
+        Cmd.tag('puzzle', updated.cmd ?? Cmd.None),
+      ];
+    }
   }
 };
 
@@ -168,6 +205,18 @@ export const updateRoomLeave = (
         model[1]
       );
       return [['vs-user', child], Cmd.tag('vs-user', cmd)];
+    }
+
+    case 'puzzle': {
+      const updated = Puzzle.updateFromRoom({
+        model: model[1],
+        msg: ['user-left', { userId }],
+      });
+
+      return [
+        ['puzzle', updated.model],
+        Cmd.tag('puzzle', updated.cmd ?? Cmd.None),
+      ];
     }
   }
 };
@@ -206,6 +255,12 @@ const initMode = ({
 
       return Ok(modelNew);
     }
+
+    case 'puzzle': {
+      const modelNew: BackendModel = ['puzzle', Puzzle.init];
+
+      return Ok(modelNew);
+    }
   }
 };
 
@@ -229,6 +284,10 @@ export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
 
     case 'vs-bot': {
       return Sub.tag('vs-bot', VsBot.subscriptions(intervalId, model[1]));
+    }
+
+    case 'puzzle': {
+      return Sub.tag('puzzle', Puzzle.subscriptions(intervalId, model[1]));
     }
   }
 };

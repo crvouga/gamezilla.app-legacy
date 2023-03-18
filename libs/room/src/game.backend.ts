@@ -9,6 +9,7 @@ import { SnakeBackend } from '@gamezilla/game/snake';
 import { TetrisBackend } from '@gamezilla/game/tetris';
 import { TicTacToeBackend } from '@gamezilla/game/tic-tac-toe';
 import { UserId } from '@gamezilla/shared';
+import { DatabaseConnection } from '@gamezilla/shared/backend';
 import { BackendModel, BackendMsg, ToBackend, ToFrontend } from './game.types';
 
 //
@@ -199,12 +200,14 @@ export const updateFromFrontend = (
     hostId,
     currentUserId,
     sendToClient,
+    dbConn,
     broadcast,
   }: {
     hostId: UserId;
     currentUserId: UserId;
     sendToClient: (msg: ToFrontend) => Cmd;
     broadcast: (msg: ToFrontend) => Cmd;
+    dbConn: DatabaseConnection;
   },
   msg: ToBackend,
   model: Model
@@ -248,6 +251,7 @@ export const updateFromFrontend = (
             hostId: hostId,
             sendToClient: (msg) => sendToClient(['chess', msg]),
             broadcast: (msg) => broadcast(['chess', msg]),
+            dbConn,
           },
           msg[1],
           model.child

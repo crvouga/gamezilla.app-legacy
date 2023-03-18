@@ -5,6 +5,10 @@
     "declaration": true,
     "types": []
   },
-  "include": ["src/**/*.ts"],
+  "include": [
+    "src/**/*.ts",
+    "backend/src/database-connection.ts",
+    "backend/src/database-connection.ts"
+  ],
   "exclude": ["jest.config.ts", "src/**/*.spec.ts"]
 }

@@ -1,13 +1,14 @@
 import { Cmd, exhaustive, p, Result, Sub } from '@gamezilla/core';
 import { RoomId, UserId } from '@gamezilla/shared';
+import { DatabaseConnection } from '@gamezilla/shared/backend';
 import * as Game from './game.backend';
 import {
   BackendModel,
   BackendMsg,
   handle,
   Problem,
-  Res,
   Req,
+  Res,
   ToBackend,
   ToFrontend,
 } from './room.types';
@@ -94,7 +95,10 @@ type Wire = {
 };
 
 export const updateFromFrontend = (
-  ctx: { currentUserId: UserId },
+  ctx: {
+    currentUserId: UserId;
+    dbConn: DatabaseConnection;
+  },
   wire: Wire,
   msg: ToBackend,
   model: Model
@@ -123,8 +127,8 @@ export const updateFromFrontend = (
 
       const [gameNew, gameCmd] = Game.updateFromFrontend(
         {
+          ...ctx,
           hostId: room.hostId,
-          currentUserId: ctx.currentUserId,
           sendToClient: (msg) => wire.sendToClient(['game', msg]),
           broadcast: (msg) =>
             sendToRoom({

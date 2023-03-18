@@ -13,6 +13,7 @@ import { Cmd, exhaustive, Option, p, Program, Sub } from '@gamezilla/core';
 import { PartyBackend as Party } from '@gamezilla/party';
 import { RoomBackend as GameRoom } from '@gamezilla/room';
 import { ClientId, SessionId, UserId } from '@gamezilla/shared';
+import { DatabaseConnection } from '@gamezilla/shared/backend';
 import * as Http from 'http';
 import * as Rx from 'rxjs';
 import * as Socket from 'socket.io';
@@ -51,13 +52,15 @@ type Msg = BackendMsg;
 export const update = ({
   msg,
   model,
+  dbConn,
 }: {
   msg: Msg;
   model: Model;
+  dbConn: DatabaseConnection;
 }): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case '→':
-      return updateFromFrontend(msg[1], msg[2], msg[3], model);
+      return updateFromFrontend(dbConn, msg[1], msg[2], msg[3], model);
 
     case 'client-connected': {
       const sessionId = msg[1];
@@ -80,7 +83,9 @@ export const update = ({
 
       const gameRoomCmd = GameRoom.onClientConnected(
         {
-          sendToClient: (msg) => sendToFrontend([clientId], ['room', msg]),
+          sendToClient: (msg) => {
+            return sendToFrontend([clientId], ['room', msg]);
+          },
         },
         model.gameRoom
       );
@@ -143,6 +148,7 @@ export const update = ({
 };
 
 const updateFromFrontend = (
+  dbConn: DatabaseConnection,
   sessionId: SessionId,
   clientId: ClientId,
   msg: ToBackend,
@@ -209,7 +215,10 @@ const updateFromFrontend = (
       }
 
       const [child, childCmd] = GameRoom.updateFromFrontend(
-        { currentUserId: session.userId.value },
+        {
+          currentUserId: session.userId.value,
+          dbConn,
+        },
         {
           broadcast: (msg) => broadcast(['room', msg]),
           sendToClient: (msg) => sendToClient(['room', msg]),
@@ -292,7 +301,7 @@ export const subscriptions = (model: Model): Sub<Msg> => {
 
 //
 //
-//
+// Wire
 //
 //
 
@@ -300,67 +309,20 @@ export const fromFrontend = new Rx.Subject<[SessionId, ClientId, ToBackend]>();
 export const onConnect = new Rx.Subject<[SessionId, ClientId]>();
 export const onDisconnect = new Rx.Subject<[SessionId, ClientId]>();
 
-const requestListener: Http.RequestListener = (_request, response) => {
-  const state = program.state$.getValue();
-  response.end(JSON.stringify({ msgType: state.msg, model: state.model }));
-};
-
-const httpServer = Http.createServer(requestListener);
-
-const socketServer = new Socket.Server<
-  ClientToServerEvents,
-  ServerToClientEvents
->(httpServer, {
-  cors: {
-    origin: '*',
-    credentials: true,
-  },
-  cookie: true,
-});
-
-socketServer.on('connection', (socket) => {
-  const maybeSessionId: unknown = socket.handshake.auth[sessionIdKey];
-
-  const sessionId = SessionId.is(maybeSessionId)
-    ? maybeSessionId
-    : SessionId.generate();
-
-  socket.emit('session-id', sessionId);
-
-  if (ClientId.is(socket.id)) {
-    onConnect.next([sessionId, socket.id]);
-  }
-
-  socket.on('disconnect', () => {
-    if (ClientId.is(socket.id)) {
-      onDisconnect.next([sessionId, socket.id]);
-    }
-  });
-
-  socket.on('to-backend', (msg) => {
-    if (ClientId.is(socket.id)) {
-      fromFrontend.next([sessionId, socket.id, msg]);
-    }
-  });
-});
+const $sendToFrontend = new Rx.Subject<[ClientId[], ToFrontend]>();
+const $broadcast = new Rx.Subject<[ToFrontend]>();
 
 const sendToFrontend =
   (clientIds: ClientId[], msg: ToFrontend): Cmd =>
   () => {
-    socketServer.to(clientIds).emit('to-frontend', msg);
+    $sendToFrontend.next([clientIds, msg]);
   };
 
 const broadcast =
   (msg: ToFrontend): Cmd =>
   () => {
-    socketServer.emit('to-frontend', msg);
+    $broadcast.next([msg]);
   };
-
-const port = Number(process.env['PORT']) || backendServerPort;
-
-httpServer.listen(port, () => {
-  console.log(`[backend] http server listening: http://localhost:${port}/`);
-});
 
 //
 //
@@ -370,30 +332,100 @@ httpServer.listen(port, () => {
 //
 //
 
-const initial = init();
-const program = Program.create({
-  init: { model: initial[0], cmd: initial[1] },
-  subscriptions,
-  update: (input) => {
-    const [model, cmd] = update(input);
-    return { model, cmd };
-  },
-});
+const main = async () => {
+  console.log('connecting to database...');
+  const dbConn = DatabaseConnection.create();
+  console.log('connected.');
 
-program.state$.subscribe((state) => {
-  const msg = state.msg?.flat(Infinity);
-  const msgType = msg?.reduce<string | null>(
-    (msgType, subMsgType) =>
-      typeof subMsgType === 'string'
-        ? msgType
-          ? `${msgType}.${subMsgType}`
-          : subMsgType
-        : msgType,
-    null
-  );
-  if (msgType) {
-    console.log(msgType);
-  }
-});
+  const requestListener: Http.RequestListener = (_request, response) => {
+    const state = program.state$.getValue();
+    response.end(JSON.stringify({ msgType: state.msg, model: state.model }));
+  };
 
-Program.run(program);
+  const httpServer = Http.createServer(requestListener);
+
+  const socketServer = new Socket.Server<
+    ClientToServerEvents,
+    ServerToClientEvents
+  >(httpServer, {
+    cors: {
+      origin: '*',
+      credentials: true,
+    },
+    cookie: true,
+  });
+
+  socketServer.on('connection', (socket) => {
+    const maybeSessionId: unknown = socket.handshake.auth[sessionIdKey];
+
+    const sessionId = SessionId.is(maybeSessionId)
+      ? maybeSessionId
+      : SessionId.generate();
+
+    socket.emit('session-id', sessionId);
+
+    if (ClientId.is(socket.id)) {
+      onConnect.next([sessionId, socket.id]);
+    }
+
+    socket.on('to-backend', (msg) => {
+      if (ClientId.is(socket.id)) {
+        fromFrontend.next([sessionId, socket.id, msg]);
+      }
+    });
+
+    socket.on('disconnect', () => {
+      if (ClientId.is(socket.id)) {
+        onDisconnect.next([sessionId, socket.id]);
+      }
+    });
+  });
+
+  $broadcast.subscribe(([msg]) => {
+    socketServer.emit('to-frontend', msg);
+  });
+
+  $sendToFrontend.subscribe(([clientIds, msg]) => {
+    socketServer.to(clientIds).emit('to-frontend', msg);
+  });
+
+  const port = Number(process.env['PORT']) || backendServerPort;
+
+  httpServer.listen(port, () => {
+    console.log(`[backend] http server listening: http://localhost:${port}/`);
+  });
+
+  const initial = init();
+
+  const program = Program.create({
+    init: {
+      model: initial[0],
+      cmd: initial[1],
+    },
+    subscriptions,
+    update: (input) => {
+      const [model, cmd] = update({ ...input, dbConn });
+      return { model, cmd };
+    },
+  });
+
+  program.state$.subscribe((state) => {
+    const msg = state.msg?.flat(Infinity);
+    const msgType = msg?.reduce<string | null>(
+      (msgType, subMsgType) =>
+        typeof subMsgType === 'string'
+          ? msgType
+            ? `${msgType}.${subMsgType}`
+            : subMsgType
+          : msgType,
+      null
+    );
+    if (msgType) {
+      console.log(msgType);
+    }
+  });
+
+  Program.run(program);
+};
+
+main();

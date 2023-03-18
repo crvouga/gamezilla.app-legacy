@@ -4,10 +4,10 @@ import { PuzzleId } from './puzzle-id';
 // source https://database.lichess.org/#puzzles
 
 export type SharedModel = {
-  activePuzzleId: PuzzleId;
-  fen: string;
-  moves: string[];
+  activePuzzleId?: PuzzleId;
 };
+
+export const initShared: SharedModel = {};
 
 export type PuzzleQuery = {
   puzzleId?: string;
@@ -35,6 +35,18 @@ export type PuzzleCompleted = {
 export type Req = ['find-many', PuzzleQuery] | ['input-move', string];
 export type Res = [...Req, Result<string, Puzzle[]>];
 
+export type BackendMsg = ['noop'];
+
+export type FrontendMsg = Req;
+
 export type ToBackend = Req;
 
 export type ToFrontend = Res;
+
+export type BackendModel = SharedModel;
+
+export type FrontendModel = SharedModel & {
+  puzzles: {
+    [puzzleId: PuzzleId]: Puzzle;
+  };
+};

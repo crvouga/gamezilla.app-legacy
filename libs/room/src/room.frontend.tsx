@@ -1000,7 +1000,8 @@ const ViewRoom = ({
     <FillBox>
       {game ? (
         <Game.View
-          gameRoomCtx={{
+          ctx={{
+            ...ctx,
             hostId: room.hostId,
             onQuit: () =>
               $send([
@@ -1008,7 +1009,6 @@ const ViewRoom = ({
                 { userId: ctx.currentUserId, gameName: undefined },
               ]),
           }}
-          ctx={ctx}
           $send={(msg) => $send(['game', msg])}
           model={game}
         />

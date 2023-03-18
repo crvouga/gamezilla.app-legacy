@@ -399,12 +399,10 @@ export const subscriptions = (
 
 export const View = ({
   ctx,
-  gameRoomCtx,
   model,
   $send,
 }: {
-  ctx: Ctx;
-  gameRoomCtx: GameRoomCtx;
+  ctx: GameRoomCtx;
   model: Model;
   $send: (msg: Msg) => void;
 }) => {
@@ -412,7 +410,7 @@ export const View = ({
     case 'connect-four': {
       return (
         <ConnectFourFrontend.View
-          gameRoomCtx={gameRoomCtx}
+          gameRoomCtx={ctx}
           ctx={ctx}
           model={model.child}
           $send={(msg) => $send(['connect-four', msg])}
@@ -423,7 +421,7 @@ export const View = ({
     case 'tic-tac-toe': {
       return (
         <TicTacToeFrontend.View
-          gameRoomCtx={gameRoomCtx}
+          gameRoomCtx={ctx}
           ctx={ctx}
           model={model.child}
           $send={(msg) => $send(['tic-tac-toe', msg])}
@@ -437,7 +435,7 @@ export const View = ({
           ctx={ctx}
           model={model.child}
           $send={(msg) => $send(['chess', msg])}
-          gameRoomCtx={gameRoomCtx}
+          gameRoomCtx={ctx}
         />
       );
     }
@@ -446,8 +444,8 @@ export const View = ({
       return GomokuFrontend.view({
         $send: (msg) => $send(['gomoku', msg]),
         model: model.child,
-        gameRoomCtx,
         ctx,
+        gameRoomCtx: ctx,
       });
     }
 
@@ -473,7 +471,7 @@ export const View = ({
     case 'maze': {
       return (
         <MazeFrontend.View
-          gameRoomCtx={gameRoomCtx}
+          gameRoomCtx={ctx}
           $send={(m) => $send(['maze', m])}
           model={model.child}
           ctx={ctx}
@@ -482,7 +480,7 @@ export const View = ({
     }
 
     case 'flow': {
-      return FlowFrontend.view({ model: model.child, gameRoomCtx });
+      return FlowFrontend.view({ model: model.child, gameRoomCtx: ctx });
     }
 
     default: {
