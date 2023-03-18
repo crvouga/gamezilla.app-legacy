@@ -29,8 +29,8 @@ export type Topic = ['client', ClientId] | ['room', RoomId] | ['user', UserId];
 export const updateFromFrontend = ({
   msg,
   model,
-  db,
-}: // emit,
+}: // db,
+// emit,
 {
   msg: Msg;
   model: Model;
