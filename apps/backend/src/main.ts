@@ -10,14 +10,9 @@ import {
   ToFrontend,
 } from '@gamezilla/app';
 import { Cmd, exhaustive, Option, p, Program, Sub } from '@gamezilla/core';
-import {
-  ClientId,
-  DatabaseConnection,
-  SessionId,
-  UserId,
-} from '@gamezilla/shared';
 import { PartyBackend as Party } from '@gamezilla/party';
 import { RoomBackend as GameRoom } from '@gamezilla/room';
+import { ClientId, SessionId, UserId } from '@gamezilla/shared';
 import * as Http from 'http';
 import * as Rx from 'rxjs';
 import * as Socket from 'socket.io';
