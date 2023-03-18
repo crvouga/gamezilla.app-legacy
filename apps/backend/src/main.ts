@@ -10,7 +10,12 @@ import {
   ToFrontend,
 } from '@gamezilla/app';
 import { Cmd, exhaustive, Option, p, Program, Sub } from '@gamezilla/core';
-import { ClientId, SessionId, UserId } from '@gamezilla/shared';
+import {
+  ClientId,
+  DatabaseConnection,
+  SessionId,
+  UserId,
+} from '@gamezilla/shared';
 import { PartyBackend as Party } from '@gamezilla/party';
 import { RoomBackend as GameRoom } from '@gamezilla/room';
 import * as Http from 'http';
@@ -48,7 +53,13 @@ export const init = (): [Model, Cmd<Msg>] => {
 
 type Msg = BackendMsg;
 
-export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
+export const update = ({
+  msg,
+  model,
+}: {
+  msg: Msg;
+  model: Model;
+}): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case '→':
       return updateFromFrontend(msg[1], msg[2], msg[3], model);
@@ -284,6 +295,12 @@ export const subscriptions = (model: Model): Sub<Msg> => {
   ]);
 };
 
+//
+//
+//
+//
+//
+
 export const fromFrontend = new Rx.Subject<[SessionId, ClientId, ToBackend]>();
 export const onConnect = new Rx.Subject<[SessionId, ClientId]>();
 export const onDisconnect = new Rx.Subject<[SessionId, ClientId]>();
@@ -363,7 +380,7 @@ const program = Program.create({
   init: { model: initial[0], cmd: initial[1] },
   subscriptions,
   update: (input) => {
-    const [model, cmd] = update(input.msg, input.model);
+    const [model, cmd] = update(input);
     return { model, cmd };
   },
 });
