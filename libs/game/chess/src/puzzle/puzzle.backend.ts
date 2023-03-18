@@ -62,7 +62,7 @@ export const updateFromFrontend = ({
   }
 };
 
-const findMany =
+export const findMany =
   ({
     db,
     puzzleId,
