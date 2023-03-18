@@ -1,54 +1,75 @@
-import { Cmd } from '@gamezilla/core';
-import {
-  ClientId,
-  DatabaseConnection,
-  RoomId,
-  UserId,
-} from '@gamezilla/shared';
+import { Cmd, Sub } from '@gamezilla/core';
+import { SharedMsg } from '@gamezilla/game-shared';
+import { DatabaseConnection } from '@gamezilla/shared/backend';
 import { z } from 'zod';
-import { Req, SharedModel, ToFrontend } from './puzzle.types';
+import {
+  BackendModel,
+  BackendMsg,
+  initShared,
+  ToBackend,
+} from './puzzle.types';
 
+//
 //
 //
 // Model
 //
 //
+//
 
-export type Model = SharedModel;
+export type Model = BackendModel;
 
-export type Msg = Req;
+export const init = initShared;
 
-export type Topic = ['client', ClientId] | ['room', RoomId] | ['user', UserId];
+//
+//
+//
+// Update
+//
+//
+//
+
+export type Msg = BackendMsg;
+
+export const update = ({
+  msg,
+  model,
+}: {
+  msg: Msg;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd;
+} => {
+  switch (msg[0]) {
+    default: {
+      return {
+        model,
+      };
+    }
+  }
+};
 
 export const updateFromFrontend = ({
   msg,
   model,
-}: // databaseConnection,
+}: // dbConn,
 {
-  msg: Msg;
+  msg: ToBackend;
   model: Model;
-  emit: (topic: Topic, msg: ToFrontend) => Cmd;
-  databaseConnection: DatabaseConnection;
-  // sendToFrontend: (msg: ToFrontend) => Cmd;
-  // broadcast: (m: ToFrontend) => Cmd;
+  dbConn: DatabaseConnection;
 }): {
   model: Model;
   cmd?: Cmd;
 } => {
   switch (msg[0]) {
     case 'find-many': {
+      // const puzzleId = msg[1].puzzleId;
+
+      // dbConn.query(`SELECT * WHERE puzzle_id = ${puzzleId}`, PuzzleRow);
+
       return {
         model,
-        // cmd: p(
-        //   () => {
-        //     return databaseConnection.query(
-        //       PuzzleRow,
-        //       `SELECT * WHERE puzzle_id = ${msg[1].puzzleId}`
-        //     );
-        //   },
-        //   Cmd.perform((res): Res => [...msg, res])
-        //   // Cmd.chain((res) => emit(['client', clientId], res))
-        // ),
       };
     }
 
@@ -60,32 +81,40 @@ export const updateFromFrontend = ({
   }
 };
 
-export const findMany = async ({
-  databaseConnection,
-  puzzleId,
+export const updateFromRoom = ({
+  msg,
+  model,
 }: {
-  databaseConnection: DatabaseConnection;
-  puzzleId?: string;
-}) => {
-  const queried = await databaseConnection.query(
-    PuzzleRow,
-    `SELECT * WHERE puzzle_id = ${puzzleId}`
-  );
-
-  return queried;
+  msg: SharedMsg;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd;
+} => {
+  switch (msg[0]) {
+    case 'user-left': {
+      return {
+        model,
+      };
+    }
+  }
 };
 
-export const initTables = async ({
-  databaseConnection,
-}: {
-  databaseConnection: DatabaseConnection;
-}) => {
-  await databaseConnection.query(
-    z.object({}),
-    `CREATE TABLE IF NOT EXISTS puzzles (
-      puzzle_id STRING PRIMARY KEY,`
-  );
+//
+//
+// Subscriptions
+//
+//
+
+export const subscriptions = (_intervalId: string, _model: Model): Sub<Msg> => {
+  return Sub.None;
 };
+
+//
+//
+//
+//
+//
 
 export const PuzzleRow = z.object({
   puzzle_id: z.string(),

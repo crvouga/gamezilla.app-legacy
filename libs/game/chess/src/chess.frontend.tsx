@@ -1,8 +1,6 @@
 import { Audio, Cmd, p, RemoteData, Sub, Unit } from '@gamezilla/core';
-import { GameRoomCtx, viewSelectModeScreen } from '@gamezilla/game-shared';
+import { GameRoomCtx, ViewMainMenu } from '@gamezilla/game-shared';
 import { Alerts, Ctx } from '@gamezilla/shared';
-import { viewCoverArt } from './chess/chess-board';
-import Sounds from './chess/chess-sounds';
 import {
   BackendModel,
   FrontendModel,
@@ -10,6 +8,9 @@ import {
   ToBackend,
   ToFrontend,
 } from './chess.types';
+import { viewCoverArt } from './chess/chess-board';
+import Sounds from './chess/chess-sounds';
+import * as Puzzle from './puzzle/puzzle.frontend';
 import * as VsBot from './vs-bot/vs-bot.frontend';
 import * as VsUser from './vs-user/vs-user.frontend';
 
@@ -100,6 +101,25 @@ export const update = (
 
       return [model, Cmd.None];
     }
+
+    case 'puzzle': {
+      if (model.mode[0] !== 'puzzle') {
+        return [model, Cmd.None];
+      }
+
+      const updated = Puzzle.update({
+        model: model.mode[1],
+        msg: msg[1],
+      });
+
+      return [
+        {
+          ...model,
+          mode: ['puzzle', updated.model],
+        },
+        Cmd.tag('puzzle', updated?.cmd ?? Cmd.None),
+      ];
+    }
   }
 };
 
@@ -176,6 +196,23 @@ export const updateFromBackend = (
 
       return [model, Cmd.None, []];
     }
+
+    case 'puzzle': {
+      if (model.mode[0] !== 'puzzle') {
+        return [model, Cmd.None, []];
+      }
+
+      const updated = Puzzle.updateFromBackend({
+        model: model.mode[1],
+        msg: msg[1],
+      });
+
+      return [
+        { ...model, mode: ['puzzle', updated.model] },
+        Cmd.tag('puzzle', updated?.cmd ?? Cmd.None),
+        [],
+      ];
+    }
   }
 };
 //
@@ -204,23 +241,53 @@ export const View = ({
   $send,
   gameRoomCtx,
 }: {
-  ctx: Ctx;
+  ctx: GameRoomCtx;
   model: Model;
   $send: (msg: Msg) => void;
   gameRoomCtx: GameRoomCtx;
 }) => {
   switch (model.mode[0]) {
     case 'none': {
-      return viewSelectModeScreen({
-        ctx: ctx,
-        gameRoomCtx: gameRoomCtx,
-        coverArt: viewCoverArt(),
-        onUserVsComputer: () =>
-          $send(['input-mode', { mode: 'vs-bot', userId: ctx.currentUserId }]),
-        onVsUser: () =>
-          $send(['input-mode', { mode: 'vs-user', userId: ctx.currentUserId }]),
-        title: 'Chess',
-      });
+      return (
+        <ViewMainMenu
+          title="Chess"
+          ctx={ctx}
+          gameRoomCtx={gameRoomCtx}
+          coverArt={viewCoverArt()}
+          actions={[
+            [
+              'smart-toy',
+              'Play Computer',
+              () => {
+                $send([
+                  'input-mode',
+                  { mode: 'vs-bot', userId: ctx.currentUserId },
+                ]);
+              },
+            ],
+            [
+              'friends',
+              'Play Friend',
+              () => {
+                $send([
+                  'input-mode',
+                  { mode: 'vs-user', userId: ctx.currentUserId },
+                ]);
+              },
+            ],
+            [
+              'puzzle',
+              'Puzzles',
+              () => {
+                $send([
+                  'input-mode',
+                  { mode: 'puzzle', userId: ctx.currentUserId },
+                ]);
+              },
+            ],
+          ]}
+        />
+      );
     }
 
     case 'vs-bot': {
@@ -242,6 +309,19 @@ export const View = ({
           ctx={ctx}
           model={model.mode[1]}
           $send={(msg) => $send(['vs-user', msg])}
+          onClose={() =>
+            $send(['input-mode', { mode: 'none', userId: ctx.currentUserId }])
+          }
+        />
+      );
+    }
+
+    case 'puzzle': {
+      return (
+        <Puzzle.View
+          ctx={ctx}
+          model={model.mode[1]}
+          $send={(m) => $send(['puzzle', m])}
           onClose={() =>
             $send(['input-mode', { mode: 'none', userId: ctx.currentUserId }])
           }
@@ -270,6 +350,38 @@ export const mergeWithBackend = ({
   switch (backendModel[0]) {
     case 'none': {
       return [{ ...frontendModel, mode: ['none'] }, Cmd.None];
+    }
+
+    case 'puzzle': {
+      if (frontendModel.mode[0] === 'puzzle') {
+        return [
+          {
+            ...frontendModel,
+            mode: [
+              'puzzle',
+              Puzzle.mergeWithBackend({
+                frontendModel: frontendModel.mode[1],
+                backendModel: backendModel[1],
+              }),
+            ],
+          },
+          Cmd.None,
+        ];
+      }
+
+      return [
+        {
+          ...frontendModel,
+          mode: [
+            'puzzle',
+            Puzzle.mergeWithBackend({
+              frontendModel: Puzzle.init,
+              backendModel: backendModel[1],
+            }),
+          ],
+        },
+        Cmd.None,
+      ];
     }
 
     case 'vs-user': {

@@ -1,17 +1,19 @@
 import { Ctx, UserId } from '@gamezilla/shared';
 import {
   avatar,
+  Icon,
   Box,
   box,
   Button,
   FillBox,
+  IconName,
   Icons,
   text,
   Typography,
   ViewNode,
 } from '@gamezilla/shared/ui';
 
-export type GameRoomCtx = {
+export type GameRoomCtx = Ctx & {
   onQuit: () => void;
   hostId: UserId;
 };
@@ -19,6 +21,95 @@ export type GameRoomCtx = {
 export type SharedMsg = ['user-left', { userId: UserId }];
 
 export const bannerArtAspectRatio = Math.pow(3 / 4, 4);
+
+export const ViewMainMenu = ({
+  ctx,
+  title,
+  coverArt,
+  actions,
+  gameRoomCtx,
+}: {
+  gameRoomCtx: GameRoomCtx;
+  ctx: Ctx;
+  title: string;
+  coverArt: ViewNode;
+  actions: [IconName, string, () => void][];
+}) => {
+  if (ctx.currentUserId !== gameRoomCtx.hostId) {
+    return (
+      <FillBox
+        sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+      >
+        <Box
+          sx={{
+            height: 120,
+            width: 120,
+            mx: 'auto',
+            borderRadius: 2,
+            overflow: 'hidden',
+            mb: 1,
+          }}
+        >
+          {coverArt}
+        </Box>
+
+        <Typography variant="h2" align="center" sx={{ mb: 1 }}>
+          {title}
+        </Typography>
+      </FillBox>
+    );
+  }
+
+  return (
+    <FillBox sx={{ p: 2 }}>
+      <Box
+        sx={{
+          height: 120,
+          width: 120,
+          mx: 'auto',
+          borderRadius: 2,
+          overflow: 'hidden',
+          mt: 4,
+          mb: 2,
+        }}
+      >
+        {coverArt}
+      </Box>
+
+      <Typography variant="h2" align="center" sx={{ mb: 3 }}>
+        {title}
+      </Typography>
+
+      {actions.map(([iconName, label, onClick]) => {
+        return (
+          <Button
+            onClick={onClick}
+            size="large"
+            fullWidth
+            variant="contained"
+            color="primary"
+            startIcon={<Icon name={iconName} />}
+            sx={{ mb: 2 }}
+          >
+            {label}
+          </Button>
+        );
+      })}
+
+      <Box sx={{ flex: 1 }} />
+
+      <Button
+        onClick={gameRoomCtx.onQuit}
+        size="large"
+        fullWidth
+        variant="outlined"
+        startIcon={<Icons.ArrowLeft />}
+      >
+        Back
+      </Button>
+    </FillBox>
+  );
+};
 
 export const viewSelectModeScreen = ({
   ctx,

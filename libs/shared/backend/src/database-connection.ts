@@ -14,9 +14,7 @@ export type DatabaseConnection = {
 
 const create = (): DatabaseConnection => {
   const pool = new Pool();
-  pool.on('error', (err) => {
-    console.log('database connection error', err);
-  });
+
   return {
     query: async (rowParser, text) => {
       try {

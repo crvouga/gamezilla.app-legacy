@@ -1,6 +1,9 @@
+import { exhaustive } from '@gamezilla/core';
 import {
   ExitToApp,
+  Extension,
   Flag,
+  People,
   RestartAlt,
   SmartToy,
   SwapHorizSharp,
@@ -783,7 +786,49 @@ export const ActionButton = ({
 //
 //
 
-export type IconName = 'smart-toy' | 'exit' | 'swap' | 'restart' | 'flag';
+export type IconName =
+  | 'smart-toy'
+  | 'exit'
+  | 'swap'
+  | 'restart'
+  | 'flag'
+  | 'puzzle'
+  | 'friends';
+
+export const Icon = ({ name, sx }: { name: IconName; sx?: Sx }) => {
+  switch (name) {
+    case 'smart-toy': {
+      return <SmartToy key="smart-toy" sx={sx} />;
+    }
+
+    case 'exit': {
+      return <ExitToApp sx={{ ...sx, transform: 'rotate(180deg)' }} />;
+    }
+    case 'swap': {
+      return <SwapHorizSharp sx={sx} />;
+    }
+
+    case 'restart': {
+      return <RestartAlt sx={sx} />;
+    }
+
+    case 'flag': {
+      return <Flag sx={sx} />;
+    }
+
+    case 'puzzle': {
+      return <Extension sx={sx} />;
+    }
+
+    case 'friends': {
+      return <People sx={sx} />;
+    }
+
+    default: {
+      return exhaustive(name);
+    }
+  }
+};
 
 export const icon = (name: IconName, sx?: Sx) => {
   switch (name) {
@@ -803,6 +848,10 @@ export const icon = (name: IconName, sx?: Sx) => {
     }
 
     case 'flag': {
+      return <Flag sx={sx} />;
+    }
+
+    default: {
       return <Flag sx={sx} />;
     }
   }
