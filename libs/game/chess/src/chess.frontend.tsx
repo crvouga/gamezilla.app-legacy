@@ -1,6 +1,6 @@
 import { Audio, Cmd, p, RemoteData, Sub, Unit } from '@gamezilla/core';
 import { GameRoomCtx, ViewMainMenu } from '@gamezilla/game-shared';
-import { Alerts, Ctx } from '@gamezilla/shared';
+import { Alerts } from '@gamezilla/shared';
 import {
   BackendModel,
   FrontendModel,
@@ -128,17 +128,17 @@ export const update = ({
   }
 };
 
-export const updateFromBackend = (
-  {
-    ctx,
-    sendToBackend,
-  }: {
-    sendToBackend: (msg: ToBackend) => Cmd;
-    ctx: Ctx;
-  },
-  msg: ToFrontend,
-  model: Model
-): [Model, Cmd<Msg>, OutAction[]] => {
+export const updateFromBackend = ({
+  ctx,
+  msg,
+  model,
+  sendToBackend,
+}: {
+  sendToBackend: (msg: ToBackend) => Cmd;
+  ctx: GameRoomCtx;
+  msg: ToFrontend;
+  model: Model;
+}): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
     case 'input-mode-done': {
       const result = msg[2];
@@ -208,6 +208,7 @@ export const updateFromBackend = (
       }
 
       const updated = Puzzle.updateFromBackend({
+        ctx,
         model: model.mode[1],
         msg: msg[1],
       });
@@ -229,8 +230,32 @@ export const updateFromBackend = (
 //
 //
 
-export const subscriptions = (_model: Model): Sub<Msg> => {
-  return Sub.None;
+export const subscriptions = ({
+  intervalId,
+  now,
+  model,
+}: {
+  intervalId: string;
+  now: number;
+  model: Model;
+}): Sub<Msg> => {
+  switch (model.mode[0]) {
+    case 'vs-user': {
+      return Sub.None;
+    }
+    case 'none': {
+      return Sub.None;
+    }
+    case 'vs-bot': {
+      return Sub.None;
+    }
+    case 'puzzle': {
+      return Sub.tag(
+        'puzzle',
+        Puzzle.subscriptions({ intervalId, now, model: model.mode[1] })
+      );
+    }
+  }
 };
 
 //
@@ -375,7 +400,9 @@ export const mergeWithBackend = ({
         ];
       }
 
-      const initial = Puzzle.init();
+      const initial = Puzzle.init({
+        sendToBackend: (m) => sendToBackend(['puzzle', m]),
+      });
 
       return [
         {

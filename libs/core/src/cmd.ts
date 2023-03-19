@@ -61,7 +61,6 @@ const perform =
   (task: Task<A>): Cmd<Msg> => {
     return async ($send) => {
       const value = await task();
-
       $send(f(value));
     };
   };

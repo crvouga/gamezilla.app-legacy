@@ -207,17 +207,17 @@ export const update = (
   }
 };
 
-export const updateFromBackend = (
-  {
-    ctx,
-    sendToBackend,
-  }: {
-    ctx: Ctx;
-    sendToBackend: (msg: ToBackend) => Cmd;
-  },
-  msg: ToFrontend,
-  model: Model
-): [Model, Cmd<Msg>, OutAction[]] => {
+export const updateFromBackend = ({
+  ctx,
+  sendToBackend,
+  msg,
+  model,
+}: {
+  ctx: GameRoomCtx;
+  sendToBackend: (msg: ToBackend) => Cmd;
+  msg: ToFrontend;
+  model: Model;
+}): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
     case 'connect-four': {
       if (model.type === 'connect-four') {
@@ -254,14 +254,12 @@ export const updateFromBackend = (
 
     case 'chess': {
       if (model.type === 'chess') {
-        const [child, cmd, actions] = ChessFrontend.updateFromBackend(
-          {
-            ctx,
-            sendToBackend: (msg) => sendToBackend(['chess', msg]),
-          },
-          msg[1],
-          model.child
-        );
+        const [child, cmd, actions] = ChessFrontend.updateFromBackend({
+          ctx,
+          msg: msg[1],
+          model: model.child,
+          sendToBackend: (msg) => sendToBackend(['chess', msg]),
+        });
 
         return [{ type: 'chess', child }, Cmd.tag('chess', cmd), actions];
       }
@@ -361,7 +359,14 @@ export const subscriptions = (
     }
 
     case 'chess': {
-      return Sub.tag('chess', ChessFrontend.subscriptions(model.child));
+      return Sub.tag(
+        'chess',
+        ChessFrontend.subscriptions({
+          now: ctx.now,
+          intervalId,
+          model: model.child,
+        })
+      );
     }
 
     case 'gomoku': {

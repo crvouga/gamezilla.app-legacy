@@ -1,4 +1,4 @@
-import { Cmd, p, Sub } from '@gamezilla/core';
+import { Cmd, p, Result, Sub } from '@gamezilla/core';
 import { SharedMsg } from '@gamezilla/game-shared';
 import { DatabaseConnection } from '@gamezilla/shared/backend';
 import { GameMsg } from '../chess-shared';
@@ -7,7 +7,6 @@ import {
   BackendModel,
   BackendMsg,
   initShared,
-  PuzzleQuery,
   ToBackend,
   ToFrontend,
 } from './puzzle.types';
@@ -24,29 +23,15 @@ export type Model = BackendModel;
 
 export const init = ({
   dbConn,
-  broadcast,
 }: {
   dbConn: DatabaseConnection;
   broadcast: (m: ToFrontend) => Cmd;
 }): { model: Model; cmd: Cmd<Msg> } => {
-  const query: PuzzleQuery = {
-    pageIndex: 0,
-    pageSize: 25,
-    popularity: {
-      direction: 'descend',
-      value: 5000,
-    },
-    ratingRange: {
-      direction: 'descend',
-      value: 1000,
-    },
-  };
   return {
     model: initShared,
     cmd: p(
-      PuzzleDatabase.runQuery(dbConn, query),
-      Cmd.perform((a) => a),
-      Cmd.chain((result) => broadcast(['query', query, result]))
+      PuzzleDatabase.runQuery(dbConn, initShared.activeQuery),
+      Cmd.perform((result) => ['initialize', result])
     ),
   };
 };
@@ -64,22 +49,31 @@ export type Msg = BackendMsg;
 export const update = ({
   msg,
   model,
+  broadcast,
 }: {
   msg: Msg;
   model: Model;
+  broadcast: (m: ToFrontend) => Cmd;
 }): {
   model: Model;
   cmd?: Cmd;
 } => {
   switch (msg[0]) {
-    case 'upload-lichess-db-puzzle-done': {
+    case 'initialize': {
+      if (msg[1].type === 'Err') {
+        return { model, cmd: broadcast(['initialize', msg[1]]) };
+      }
+      const puzzles = msg[1].value;
+      const modelNew: Model = {
+        ...model,
+        activePuzzle: puzzles[0],
+      };
       return {
-        model: {
-          ...model,
-          isUploadingLichessDbPuzzle: false,
-        },
+        model: modelNew,
+        cmd: broadcast(['initialize', Result.Ok(modelNew)]),
       };
     }
+
     default: {
       return {
         model,
@@ -91,41 +85,23 @@ export const update = ({
 export const updateFromFrontend = ({
   msg,
   model,
+  sendToClient,
 }: {
   msg: ToBackend;
   model: Model;
   dbConn: DatabaseConnection;
+  sendToClient: (m: ToFrontend) => Cmd;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
   switch (msg[0]) {
-    case 'query': {
-      // const puzzleId = msg[1].puzzleId;
-
-      // dbConn.query(`SELECT * WHERE puzzle_id = ${puzzleId}`, PuzzleRow);
-
+    case 'initialize': {
       return {
         model,
+        cmd: sendToClient(['initialize', Result.Ok(model)]),
       };
     }
-
-    case 'upload-lichess-db-puzzle': {
-      if (model.isUploadingLichessDbPuzzle) {
-        return { model };
-      }
-      return {
-        model: {
-          ...model,
-          isUploadingLichessDbPuzzle: true,
-        },
-        // cmd: p(
-        //   () => uploadLichessDbPuzzleCsv({ dbConn }),
-        //   Cmd.perform(() => ['upload-lichess-db-puzzle-done'])
-        // ),
-      };
-    }
-
     default: {
       return {
         model,
