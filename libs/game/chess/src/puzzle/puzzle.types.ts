@@ -14,13 +14,13 @@ export const initShared: SharedModel = {
   activeQuery: {
     ratingRange: {
       direction: 'descend',
-      value: 1000,
+      value: 300,
     },
     popularity: {
       direction: 'descend',
-      value: 5000,
+      value: 100,
     },
-    pageSize: 25,
+    pageSize: 10,
     pageIndex: 0,
   },
 };
@@ -99,6 +99,15 @@ export const toCurrentBoard = ({
   }, ChessBoard.initFromFen({ fen: activePuzzle.fen }));
 
   return currentBoard;
+};
+
+export const toOpponentColor = (puzzle: Puzzle): ChessBoard.Color => {
+  const board = ChessBoard.initFromFen({ fen: puzzle.fen });
+  return ChessBoard.toTurn(board);
+};
+
+export const toPlayerColor = (puzzle: Puzzle): ChessBoard.Color => {
+  return ChessBoard.toOppositeColor(toOpponentColor(puzzle));
 };
 
 const interleave = <T>(a: T[], b: T[]): T[] => {
