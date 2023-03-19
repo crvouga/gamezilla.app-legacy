@@ -1,7 +1,6 @@
 import { Cmd, Sub } from '@gamezilla/core';
 import { SharedMsg } from '@gamezilla/game-shared';
 import { DatabaseConnection } from '@gamezilla/shared/backend';
-import { z } from 'zod';
 import {
   BackendModel,
   BackendMsg,
@@ -42,6 +41,14 @@ export const update = ({
   cmd?: Cmd;
 } => {
   switch (msg[0]) {
+    case 'upload-lichess-db-puzzle-done': {
+      return {
+        model: {
+          ...model,
+          isUploadingLichessDbPuzzle: false,
+        },
+      };
+    }
     default: {
       return {
         model,
@@ -53,14 +60,13 @@ export const update = ({
 export const updateFromFrontend = ({
   msg,
   model,
-}: // dbConn,
-{
+}: {
   msg: ToBackend;
   model: Model;
   dbConn: DatabaseConnection;
 }): {
   model: Model;
-  cmd?: Cmd;
+  cmd?: Cmd<Msg>;
 } => {
   switch (msg[0]) {
     case 'find-many': {
@@ -70,6 +76,22 @@ export const updateFromFrontend = ({
 
       return {
         model,
+      };
+    }
+
+    case 'upload-lichess-db-puzzle': {
+      if (model.isUploadingLichessDbPuzzle) {
+        return { model };
+      }
+      return {
+        model: {
+          ...model,
+          isUploadingLichessDbPuzzle: true,
+        },
+        // cmd: p(
+        //   () => uploadLichessDbPuzzleCsv({ dbConn }),
+        //   Cmd.perform(() => ['upload-lichess-db-puzzle-done'])
+        // ),
       };
     }
 
@@ -109,22 +131,3 @@ export const updateFromRoom = ({
 export const subscriptions = (_intervalId: string, _model: Model): Sub<Msg> => {
   return Sub.None;
 };
-
-//
-//
-//
-//
-//
-
-export const PuzzleRow = z.object({
-  puzzle_id: z.string(),
-  rating: z.number(),
-  rating_deviation: z.number(),
-  opening_tags: z.array(z.string()),
-  FEN: z.string(),
-  moves: z.array(z.string()),
-  popularity: z.number(),
-  number_of_plays: z.number(),
-  themes: z.array(z.string()),
-  game_URL: z.string(),
-});

@@ -333,9 +333,12 @@ const broadcast =
 //
 
 const main = async () => {
-  console.log('connecting to database...');
-  const dbConn = DatabaseConnection.create();
-  console.log('connected.');
+  console.log('[backend] connecting to database...');
+  const dbConn = DatabaseConnection.create({
+    connectionString:
+      'postgresql://postgres:JTPtysQIb0RXHj7QKRxm@containers-us-west-105.railway.app:7893/railway',
+  });
+  console.log('[backend] connected.');
 
   const requestListener: Http.RequestListener = (_request, response) => {
     const state = program.state$.getValue();

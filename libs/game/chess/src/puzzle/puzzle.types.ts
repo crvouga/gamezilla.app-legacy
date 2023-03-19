@@ -32,10 +32,13 @@ export type PuzzleCompleted = {
   seconds: number;
 };
 
-export type Req = ['find-many', PuzzleQuery] | ['input-move', string];
+export type Req =
+  | ['find-many', PuzzleQuery]
+  | ['input-move', string]
+  | ['upload-lichess-db-puzzle'];
 export type Res = [...Req, Result<string, Puzzle[]>];
 
-export type BackendMsg = ['noop'];
+export type BackendMsg = ['upload-lichess-db-puzzle-done'];
 
 export type FrontendMsg = Req;
 
@@ -43,7 +46,9 @@ export type ToBackend = Req;
 
 export type ToFrontend = Res;
 
-export type BackendModel = SharedModel;
+export type BackendModel = SharedModel & {
+  isUploadingLichessDbPuzzle?: boolean;
+};
 
 export type FrontendModel = SharedModel & {
   puzzles: {
