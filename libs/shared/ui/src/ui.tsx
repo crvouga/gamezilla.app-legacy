@@ -2,6 +2,7 @@ import { exhaustive } from '@gamezilla/core';
 import {
   ExitToApp,
   Extension,
+  ChevronRight,
   Flag,
   People,
   RestartAlt,
@@ -793,6 +794,7 @@ export type IconName =
   | 'restart'
   | 'flag'
   | 'puzzle'
+  | 'chevron-right'
   | 'friends';
 
 export const Icon = ({ name, sx }: { name: IconName; sx?: Sx }) => {
@@ -822,6 +824,10 @@ export const Icon = ({ name, sx }: { name: IconName; sx?: Sx }) => {
 
     case 'friends': {
       return <People sx={sx} />;
+    }
+
+    case 'chevron-right': {
+      return <ChevronRight sx={sx} />;
     }
 
     default: {

@@ -158,13 +158,13 @@ export const updateFromBackend = (
         return [modelNew, Cmd.None, []];
       }
 
-      const [merged, mergedCmd] = mergeWithBackend({
+      const merged = mergeWithBackend({
         frontendModel: modelNew,
         backendModel: result.value,
         sendToBackend,
       });
 
-      return [merged, mergedCmd, []];
+      return [...merged, []];
     }
 
     case 'vs-user': {
@@ -220,6 +220,7 @@ export const updateFromBackend = (
     }
   }
 };
+
 //
 //
 //
@@ -374,18 +375,20 @@ export const mergeWithBackend = ({
         ];
       }
 
+      const initial = Puzzle.init();
+
       return [
         {
           ...frontendModel,
           mode: [
             'puzzle',
             Puzzle.mergeWithBackend({
-              frontendModel: Puzzle.init,
+              frontendModel: initial.model,
               backendModel: backendModel[1],
             }),
           ],
         },
-        Cmd.None,
+        Cmd.tag('puzzle', initial.cmd),
       ];
     }
 
