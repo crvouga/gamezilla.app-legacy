@@ -246,16 +246,14 @@ export const updateFromFrontend = (
 
     case 'chess': {
       if (model.type === 'chess') {
-        const [child, cmd] = ChessBackend.updateFromFrontend(
-          {
-            hostId: hostId,
-            sendToClient: (msg) => sendToClient(['chess', msg]),
-            broadcast: (msg) => broadcast(['chess', msg]),
-            dbConn,
-          },
-          msg[1],
-          model.child
-        );
+        const [child, cmd] = ChessBackend.updateFromFrontend({
+          hostId: hostId,
+          sendToClient: (msg) => sendToClient(['chess', msg]),
+          broadcast: (msg) => broadcast(['chess', msg]),
+          dbConn,
+          msg: msg[1],
+          model: model.child,
+        });
         return [{ type: 'chess', child }, Cmd.tag('chess', cmd)];
       }
       return [model, Cmd.None];

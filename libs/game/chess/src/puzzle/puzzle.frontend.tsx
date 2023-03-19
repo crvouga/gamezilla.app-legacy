@@ -19,7 +19,6 @@ import {
 export type Model = FrontendModel;
 
 export const init = (): { model: Model; cmd: Cmd<Msg> } => {
-  console.log('init puzzle');
   return {
     model: {
       puzzles: {},
@@ -116,14 +115,14 @@ export const View = ({
         />
         <ActionButton
           disabled={ctx.hostId !== ctx.currentUserId}
-          icon={<Icon name="puzzle" />}
-          label="Update"
+          icon={<Icon name="tune" />}
+          label="Tune"
           onClick={onClose}
         />
         <ActionButton
           disabled={ctx.hostId !== ctx.currentUserId}
           icon={<Icon name="chevron-right" />}
-          label="Next"
+          label="Skip"
           onClick={onClose}
         />
       </Box>

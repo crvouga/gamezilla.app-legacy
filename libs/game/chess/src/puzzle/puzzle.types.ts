@@ -1,6 +1,6 @@
 import { Result } from '@gamezilla/core';
-import { PuzzleId } from './puzzle-id';
 import * as ChessBoard from '../chess/chess-board';
+import { PuzzleId } from './puzzle-id';
 
 // source https://database.lichess.org/#puzzles
 
@@ -10,21 +10,32 @@ export type SharedModel = {
 
 export const initShared: SharedModel = {};
 
+type SortDirection = 'ascend' | 'descend';
+
 export type PuzzleQuery = {
-  rating: number;
+  ratingRange: {
+    direction: SortDirection;
+    value: number;
+  };
+  popularity: {
+    direction: SortDirection;
+    value: number;
+  };
+  pageSize: number;
+  pageIndex: number;
 };
 
 export type Puzzle = {
-  puzzle_id: string;
-  FEN: string;
+  puzzleId: string;
+  fen: string;
   moves: string[];
   rating: number;
-  rating_deviation: number;
+  ratingDeviation: number;
   popularity: number;
-  number_of_plays: number;
+  numberOfPlays: number;
   themes: string[];
-  game_URL: string;
-  opening_tags: string[];
+  gameUrl: string;
+  openingTags: string[];
 };
 
 export type PuzzleCompleted = {
@@ -34,9 +45,10 @@ export type PuzzleCompleted = {
 };
 
 export type Req =
-  | ['find-many', PuzzleQuery]
+  | ['query', PuzzleQuery]
   | ['input-move', string]
   | ['upload-lichess-db-puzzle'];
+
 export type Res = [...Req, Result<string, Puzzle[]>];
 
 export type BackendMsg = ['upload-lichess-db-puzzle-done'];

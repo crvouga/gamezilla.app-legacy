@@ -36,6 +36,8 @@ const create = ({
     query: async (rowParser, text, values) => {
       try {
         const start = Date.now();
+        console.log(text);
+        console.log(values);
         const queried = await pool.query(text, values);
         const parsed = queried.rows.map(rowParser.parse, values);
         const duration = Date.now() - start;
