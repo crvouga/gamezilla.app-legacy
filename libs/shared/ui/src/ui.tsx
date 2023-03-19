@@ -1,5 +1,6 @@
 import { exhaustive } from '@gamezilla/core';
 import {
+  Lightbulb,
   ChevronRight,
   ExitToApp,
   Extension,
@@ -776,7 +777,9 @@ export const ActionButton = ({
       }}
     >
       {icon}
-      <Typography variant="caption">{label}</Typography>
+      <Typography variant="caption" sx={{ fontSize: '0.75rem' }}>
+        {label}
+      </Typography>
     </ButtonBase>
   );
 };
@@ -797,10 +800,15 @@ export type IconName =
   | 'puzzle'
   | 'tune'
   | 'chevron-right'
-  | 'friends';
+  | 'friends'
+  | 'lightbulb';
 
 export const Icon = ({ name, sx }: { name: IconName; sx?: Sx }) => {
   switch (name) {
+    case 'lightbulb': {
+      return <Lightbulb sx={sx} />;
+    }
+
     case 'smart-toy': {
       return <SmartToy key="smart-toy" sx={sx} />;
     }

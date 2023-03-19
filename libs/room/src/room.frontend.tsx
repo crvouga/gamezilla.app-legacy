@@ -247,6 +247,12 @@ export const updateFromBackend = (
         return [model, Cmd.None, []];
       }
 
+      const room = model.rooms[user.roomId];
+
+      if (!room) {
+        return [model, Cmd.None, []];
+      }
+
       const game = model.games[user.roomId];
 
       if (!game) {
@@ -255,14 +261,18 @@ export const updateFromBackend = (
 
       const gameMsg = msg[1];
 
-      const [gameNew, gameCmd, actions] = Game.updateFromBackend(
-        {
-          ctx,
-          sendToBackend: (msg) => sendToBackend(['game', msg]),
+      const [gameNew, gameCmd, actions] = Game.updateFromBackend({
+        ctx: {
+          ...ctx,
+          hostId: room.hostId,
+          onQuit: () => {
+            //
+          },
         },
-        gameMsg,
-        game
-      );
+        sendToBackend: (msg) => sendToBackend(['game', msg]),
+        model: game,
+        msg: gameMsg,
+      });
 
       const modelNew: Model = {
         ...model,

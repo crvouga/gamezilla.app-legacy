@@ -83,6 +83,7 @@ export const update = (
       const updated = Puzzle.update({
         model: model[1],
         msg: msg[1],
+        broadcast: (m) => broadcast(['puzzle', m]),
       });
 
       return [
@@ -187,6 +188,7 @@ export const updateFromFrontend = ({
         model: model[1],
         msg: msg[1],
         dbConn,
+        sendToClient: (m) => sendToClient(['puzzle', m]),
       });
 
       return [

@@ -505,6 +505,44 @@ export type PieceType = 'P' | 'B' | 'N' | 'R' | 'Q' | 'K';
 
 export type PieceSymbol = 'p' | 'b' | 'n' | 'r' | 'q' | 'k';
 
+const allPieceSymbols: { [pieceSymbol in PieceSymbol]: PieceSymbol } = {
+  b: 'b',
+  k: 'k',
+  n: 'n',
+  p: 'p',
+  q: 'q',
+  r: 'r',
+};
+
+export const isPieceSymbol = (
+  pieceSymbol: unknown
+): pieceSymbol is PieceSymbol => {
+  return (
+    typeof pieceSymbol === 'string' &&
+    Object.keys(allPieceSymbols).includes(pieceSymbol)
+  );
+};
+
+export type PromotionPieceSymbol = 'b' | 'n' | 'r' | 'q';
+
+const allPromotionPieceSymbols: {
+  [promotionPieceSymbol in PromotionPieceSymbol]: PromotionPieceSymbol;
+} = {
+  b: 'b',
+  n: 'n',
+  q: 'q',
+  r: 'r',
+};
+
+export const isPromotionPieceSymbol = (
+  pieceSymbol: unknown
+): pieceSymbol is PromotionPieceSymbol => {
+  return (
+    typeof pieceSymbol === 'string' &&
+    Object.keys(allPromotionPieceSymbols).includes(pieceSymbol)
+  );
+};
+
 export type Color = 'w' | 'b';
 
 export const colors: { [color in Color]: Color } = {
@@ -696,7 +734,7 @@ export const toGameOver = (model: Model): GameOver | { type: 'none' } => {
 export type MoveInput = {
   from: Square;
   to: Square;
-  promotion: PieceSymbol;
+  promotion: PromotionPieceSymbol;
 };
 
 export type MoveProblem = 'invalid_move';
@@ -737,11 +775,16 @@ export const toLegalMoveInputs = (model: Model): MoveInput[] => {
 
 export const chessTsMoveToMove = (move: ChessTs.Move): MoveInput[] => {
   if (isLowercaseSquare(move.from) && isLowercaseSquare(move.to)) {
+    const promotion: PromotionPieceSymbol = isPromotionPieceSymbol(
+      move.promotion
+    )
+      ? move.promotion
+      : 'q';
     return [
       {
         from: fromLowercase(move.from),
         to: fromLowercase(move.to),
-        promotion: move.promotion ?? 'q',
+        promotion,
       },
     ];
   }
