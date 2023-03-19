@@ -1,13 +1,14 @@
 import { exhaustive } from '@gamezilla/core';
 import {
+  ChevronRight,
   ExitToApp,
   Extension,
-  ChevronRight,
   Flag,
   People,
   RestartAlt,
   SmartToy,
   SwapHorizSharp,
+  Tune,
 } from '@mui/icons-material';
 import * as MuiLab from '@mui/lab';
 import * as Mui from '@mui/material';
@@ -794,6 +795,7 @@ export type IconName =
   | 'restart'
   | 'flag'
   | 'puzzle'
+  | 'tune'
   | 'chevron-right'
   | 'friends';
 
@@ -806,6 +808,11 @@ export const Icon = ({ name, sx }: { name: IconName; sx?: Sx }) => {
     case 'exit': {
       return <ExitToApp sx={{ ...sx, transform: 'rotate(180deg)' }} />;
     }
+
+    case 'tune': {
+      return <Tune sx={{ ...sx }} />;
+    }
+
     case 'swap': {
       return <SwapHorizSharp sx={sx} />;
     }

@@ -97,24 +97,26 @@ export const update = (
   }
 };
 
-export const updateFromFrontend = (
-  {
-    hostId,
-    sendToClient,
-    broadcast,
-    dbConn,
-  }: {
-    hostId: UserId;
-    sendToClient: (msg: ToFrontend) => Cmd;
-    broadcast: (msg: ToFrontend) => Cmd;
-    dbConn: DatabaseConnection;
-  },
-  msg: ToBackend,
-  model: Model
-): [Model, Cmd<Msg>] => {
+export const updateFromFrontend = ({
+  hostId,
+  sendToClient,
+  broadcast,
+  msg,
+  model,
+  dbConn,
+}: {
+  hostId: UserId;
+  sendToClient: (msg: ToFrontend) => Cmd;
+  broadcast: (msg: ToFrontend) => Cmd;
+  dbConn: DatabaseConnection;
+  msg: ToBackend;
+  model: Model;
+}): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case 'input-mode': {
       const { result, cmd } = initMode({
+        dbConn,
+        broadcast,
         hostId,
         mode: msg[1].mode,
         userId: msg[1].userId,
@@ -278,7 +280,11 @@ const initMode = ({
   hostId,
   mode,
   userId,
+  dbConn,
+  broadcast,
 }: {
+  dbConn: DatabaseConnection;
+  broadcast: (m: ToFrontend) => Cmd;
   hostId: UserId;
   mode: BackendModel[0];
   userId: UserId;
@@ -310,7 +316,10 @@ const initMode = ({
     }
 
     case 'puzzle': {
-      const initial = Puzzle.init();
+      const initial = Puzzle.init({
+        dbConn,
+        broadcast: (m) => broadcast(['puzzle', m]),
+      });
 
       const modelNew: BackendModel = ['puzzle', initial.model];
 

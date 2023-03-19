@@ -10,3 +10,18 @@ CREATE TABLE game_chess_puzzle (
   themes VARCHAR(255)[] NOT NULL,
   game_url VARCHAR(255)
 );
+
+CREATE TABLE game_chess_puzzle_completion (
+  id SERIAL PRIMARY KEY,
+  user_id VARCHAR(255) NOT NULL,
+  puzzle_id VARCHAR(255) NOT NULL,
+  FOREIGN KEY (puzzle_id) REFERENCES game_chess_puzzle(puzzle_id),
+);
+
+SELECT DISTINCT UNNEST(opening_tags) AS unique_opening_tags
+FROM game_chess_puzzle ORDER BY popularity LIMIT 10;
+
+
+SELECT COUNT(*) FROM game_chess_puzzle
+
+

@@ -1,12 +1,15 @@
-import { Cmd, Sub } from '@gamezilla/core';
+import { Cmd, p, Sub } from '@gamezilla/core';
 import { SharedMsg } from '@gamezilla/game-shared';
 import { DatabaseConnection } from '@gamezilla/shared/backend';
 import { GameMsg } from '../chess-shared';
+import { PuzzleDatabase } from './puzzle-database';
 import {
   BackendModel,
   BackendMsg,
   initShared,
+  PuzzleQuery,
   ToBackend,
+  ToFrontend,
 } from './puzzle.types';
 
 //
@@ -19,11 +22,32 @@ import {
 
 export type Model = BackendModel;
 
-export const init = (): { model: Model; cmd: Cmd<Msg> } => {
-  console.log('SEND puzzles');
+export const init = ({
+  dbConn,
+  broadcast,
+}: {
+  dbConn: DatabaseConnection;
+  broadcast: (m: ToFrontend) => Cmd;
+}): { model: Model; cmd: Cmd<Msg> } => {
+  const query: PuzzleQuery = {
+    pageIndex: 0,
+    pageSize: 25,
+    popularity: {
+      direction: 'descend',
+      value: 5000,
+    },
+    ratingRange: {
+      direction: 'ascend',
+      value: 1000,
+    },
+  };
   return {
     model: initShared,
-    cmd: Cmd.None,
+    cmd: p(
+      PuzzleDatabase.runQuery(dbConn, query),
+      Cmd.perform((a) => a),
+      Cmd.chain((result) => broadcast(['query', query, result]))
+    ),
   };
 };
 
@@ -76,7 +100,7 @@ export const updateFromFrontend = ({
   cmd?: Cmd<Msg>;
 } => {
   switch (msg[0]) {
-    case 'find-many': {
+    case 'query': {
       // const puzzleId = msg[1].puzzleId;
 
       // dbConn.query(`SELECT * WHERE puzzle_id = ${puzzleId}`, PuzzleRow);
