@@ -572,6 +572,17 @@ export const init = (): Model => {
   };
 };
 
+export const initFromFen = ({ fen }: { fen: string }): Model => {
+  const chessInstance = new ChessTs.Chess();
+
+  chessInstance.load(fen);
+
+  return {
+    fen: chessInstance.fen(),
+    pgn: chessInstance.pgn(),
+  };
+};
+
 //
 //
 //
