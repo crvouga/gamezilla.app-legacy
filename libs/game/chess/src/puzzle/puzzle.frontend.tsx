@@ -3,11 +3,12 @@ import { GameRoomCtx } from '@gamezilla/game-shared';
 import {
   ActionButton,
   Box,
-  Chip,
   CircularProgress,
+  Divider,
   FillBox,
   Header,
   Icon,
+  Typography,
 } from '@gamezilla/shared/ui';
 import { Paper } from '@mui/material';
 import * as ChessBoard from '../chess/chess-board';
@@ -21,6 +22,7 @@ import {
   toCurrentBoard,
   ToFrontend,
   toOpponentMoves,
+  toPlayerColor,
 } from './puzzle.types';
 
 //
@@ -134,7 +136,7 @@ export const subscriptions = ({
   intervalId: string;
 }): Sub<Msg> => {
   if (isAnimating({ now, model })) {
-    return Time.every(intervalId, 1000, () => ['animate']);
+    return Time.every(intervalId, 100, () => ['animate']);
   }
   return Sub.None;
 };
@@ -201,18 +203,21 @@ export const View = ({
   });
   return (
     <FillBox>
-      <Header title={'Puzzle'} />
+      <HeadsUpBar activePuzzle={activePuzzle} model={model} />
 
-      <Box sx={{ flex: 1 }}>
-        <Box sx={{ display: 'flex', gap: 1, px: 2, overflowX: 'scroll' }}>
-          {activePuzzle.themes.map((theme) => {
-            return <Chip key={theme} label={camelCaseToCapitalized(theme)} />;
-          })}
-        </Box>
-      </Box>
+      <Divider />
+
+      <Box sx={{ flex: 1 }}></Box>
       <ChessBoard.View
         model={visualBoard}
-        boardOrientation="w"
+        isDraggablePiece={({ piece }) => {
+          const color = ChessBoard.toColor(piece);
+          return (
+            color === toPlayerColor(activePuzzle) &&
+            ctx.hostId === ctx.currentUserId
+          );
+        }}
+        boardOrientation={toPlayerColor(activePuzzle)}
         onPieceDrop={(moveInput) => {
           $send(['input-move', { moveInput }]);
 
@@ -260,6 +265,36 @@ export const View = ({
   );
 };
 
+const HeadsUpBar = ({
+  activePuzzle,
+}: {
+  activePuzzle: Puzzle;
+  model: Model;
+}) => {
+  const playerColor = toPlayerColor(activePuzzle);
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        p: 1,
+      }}
+    >
+      <Box
+        sx={{
+          width: '1rem',
+          height: '1rem',
+          background: playerColor === 'b' ? '#000' : '#fff',
+          border: '1px solid #000',
+          mr: 1,
+        }}
+      ></Box>
+      <Typography>{ChessBoard.colorToString(playerColor)} to move</Typography>
+    </Box>
+  );
+};
+
 const toVisualBoard = ({
   activePuzzle,
   model,
@@ -269,18 +304,20 @@ const toVisualBoard = ({
   now: number;
   model: Model;
 }): ChessBoard.Model => {
-  if (
-    model.playerMoves.length === 0 &&
-    now - (model.initializedAt ?? now) > 1000
-  ) {
-    console.log("I'm here");
-    const firstMove = activePuzzle.moves[0];
-    const board = ChessBoard.initFromFen({ fen: activePuzzle.fen });
-    const moved = ChessBoard.move(firstMove, board);
-    if (moved.type === 'Err') {
-      return board;
+  if (model.playerMoves.length === 0) {
+    const showFirstMove = now - (model.initializedAt ?? now) > 1000 / 3;
+
+    if (showFirstMove) {
+      const firstMove = activePuzzle.moves[0];
+      const board = ChessBoard.initFromFen({ fen: activePuzzle.fen });
+      const moved = ChessBoard.move(firstMove, board);
+      if (moved.type === 'Err') {
+        return board;
+      }
+      return moved.value;
     }
-    return moved.value;
+
+    return ChessBoard.initFromFen({ fen: activePuzzle.fen });
   }
 
   const opponentMoves = toOpponentMoves(activePuzzle);
