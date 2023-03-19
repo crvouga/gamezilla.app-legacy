@@ -6,9 +6,23 @@ import { PuzzleId } from './puzzle-id';
 
 export type SharedModel = {
   activePuzzleId?: PuzzleId;
+  activeQuery: PuzzleQuery;
 };
 
-export const initShared: SharedModel = {};
+export const initShared: SharedModel = {
+  activeQuery: {
+    ratingRange: {
+      direction: 'descend',
+      value: 1000,
+    },
+    popularity: {
+      direction: 'descend',
+      value: 5000,
+    },
+    pageSize: 25,
+    pageIndex: 0,
+  },
+};
 
 type SortDirection = 'ascend' | 'descend';
 
@@ -65,7 +79,7 @@ export type BackendModel = SharedModel & {
 
 export type FrontendModel = SharedModel & {
   puzzles: {
-    [puzzleId: PuzzleId]: Puzzle;
+    [puzzleId: string]: Puzzle;
   };
   board: ChessBoard.Model;
 };

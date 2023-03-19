@@ -37,7 +37,7 @@ export const init = ({
       value: 5000,
     },
     ratingRange: {
-      direction: 'ascend',
+      direction: 'descend',
       value: 1000,
     },
   };
