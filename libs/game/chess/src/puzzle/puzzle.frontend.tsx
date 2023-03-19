@@ -5,6 +5,7 @@ import {
   BackendModel,
   FrontendModel,
   FrontendMsg,
+  ToBackend,
   ToFrontend,
 } from './puzzle.types';
 
@@ -31,9 +32,11 @@ type Msg = FrontendMsg;
 export const update = ({
   msg,
   model,
+  sendToBackend,
 }: {
   msg: Msg;
   model: Model;
+  sendToBackend: (m: ToBackend) => Cmd;
 }): {
   model: Model;
   cmd?: Cmd;
@@ -42,6 +45,7 @@ export const update = ({
     default: {
       return {
         model,
+        cmd: sendToBackend(msg),
       };
     }
   }
@@ -58,11 +62,7 @@ export const updateFromBackend = ({
   cmd?: Cmd<Msg>;
 } => {
   switch (msg[0]) {
-    case 'find-many': {
-      return { model };
-    }
-
-    case 'input-move': {
+    default: {
       return { model };
     }
   }
@@ -87,6 +87,7 @@ export const mergeWithBackend = ({
 export const View = ({
   model,
   onClose,
+  $send,
 }: {
   ctx: GameRoomCtx;
   model: Model;
@@ -98,6 +99,9 @@ export const View = ({
       puzzles
       <pre>{JSON.stringify(model, null, 2)}</pre>
       <Box sx={{ flex: 1 }}></Box>
+      <Button onClick={() => $send(['upload-lichess-db-puzzle'])}>
+        upload-lichess-db-puzzle
+      </Button>
       <Box sx={{ p: 2 }}>
         <Button onClick={onClose}>Close</Button>
       </Box>

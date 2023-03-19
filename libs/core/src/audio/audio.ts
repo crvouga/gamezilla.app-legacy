@@ -10,11 +10,10 @@ export type PlayResult = Result<Problem, Unit>;
 export type PreloadResult = Result<Problem, Unit>;
 
 export const preload = <msg>(
-  srcList: string[],
+  _srcList: string[],
   mapper: (result: PreloadResult) => msg
 ) =>
   p(async () => {
-    console.log('play sounds', srcList);
     // for (const src of srcList) {
     // getSoundInstance(src)
     // }

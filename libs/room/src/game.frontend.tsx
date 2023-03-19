@@ -133,11 +133,11 @@ export const update = (
 
     case 'chess': {
       if (msg[0] === 'chess') {
-        const [child, cmd] = ChessFrontend.update(
-          { sendToBackend: (msg) => sendToBackend(['chess', msg]) },
-          msg[1],
-          model.child
-        );
+        const [child, cmd] = ChessFrontend.update({
+          sendToBackend: (msg) => sendToBackend(['chess', msg]),
+          msg: msg[1],
+          model: model.child,
+        });
         return [{ type: 'chess', child }, Cmd.tag('chess', cmd)];
       }
       return [model, Cmd.None];

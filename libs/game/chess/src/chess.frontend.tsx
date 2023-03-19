@@ -51,11 +51,15 @@ export type Msg = FrontendMsg;
 
 export type OutAction = Alerts.Action;
 
-export const update = (
-  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd },
-  msg: Msg,
-  model: Model
-): [Model, Cmd<Msg>] => {
+export const update = ({
+  msg,
+  model,
+  sendToBackend,
+}: {
+  sendToBackend: (msg: ToBackend) => Cmd;
+  msg: Msg;
+  model: Model;
+}): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case 'preload-audio-done': {
       return [model, Cmd.None];
@@ -108,6 +112,7 @@ export const update = (
       }
 
       const updated = Puzzle.update({
+        sendToBackend: (m) => sendToBackend(['puzzle', m]),
         model: model.mode[1],
         msg: msg[1],
       });

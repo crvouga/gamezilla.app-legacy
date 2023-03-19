@@ -3,10 +3,10 @@ CREATE TABLE game_chess_puzzle (
   rating NUMERIC,
   rating_deviation NUMERIC,
   opening_tags VARCHAR(255)[] NOT NULL,
-  FEN VARCHAR(255),
+  fen VARCHAR(255),
   moves VARCHAR(255)[] NOT NULL,
   popularity NUMERIC,
   number_of_plays INTEGER,
   themes VARCHAR(255)[] NOT NULL,
-  game_URL VARCHAR(255)
+  game_url VARCHAR(255)
 );
