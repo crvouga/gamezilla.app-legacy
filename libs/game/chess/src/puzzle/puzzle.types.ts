@@ -1,5 +1,6 @@
 import { Result } from '@gamezilla/core';
 import { PuzzleId } from './puzzle-id';
+import * as ChessBoard from '../chess/chess-board';
 
 // source https://database.lichess.org/#puzzles
 
@@ -10,7 +11,7 @@ export type SharedModel = {
 export const initShared: SharedModel = {};
 
 export type PuzzleQuery = {
-  puzzleId?: string;
+  rating: number;
 };
 
 export type Puzzle = {
@@ -54,4 +55,5 @@ export type FrontendModel = SharedModel & {
   puzzles: {
     [puzzleId: PuzzleId]: Puzzle;
   };
+  board: ChessBoard.Model;
 };

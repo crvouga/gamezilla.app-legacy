@@ -1,6 +1,7 @@
 import { Cmd, Sub } from '@gamezilla/core';
 import { SharedMsg } from '@gamezilla/game-shared';
 import { DatabaseConnection } from '@gamezilla/shared/backend';
+import { GameMsg } from '../chess-shared';
 import {
   BackendModel,
   BackendMsg,
@@ -18,7 +19,13 @@ import {
 
 export type Model = BackendModel;
 
-export const init = initShared;
+export const init = (): { model: Model; cmd: Cmd<Msg> } => {
+  console.log('SEND puzzles');
+  return {
+    model: initShared,
+    cmd: Cmd.None,
+  };
+};
 
 //
 //
@@ -98,6 +105,26 @@ export const updateFromFrontend = ({
     default: {
       return {
         model,
+      };
+    }
+  }
+};
+
+export const updateFromGame = ({
+  msg,
+  model,
+}: {
+  msg: GameMsg;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd;
+} => {
+  switch (msg[0]) {
+    case 'mode-changed': {
+      return {
+        model,
+        cmd: Cmd.None,
       };
     }
   }

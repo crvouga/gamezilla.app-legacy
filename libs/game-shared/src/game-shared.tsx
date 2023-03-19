@@ -80,9 +80,10 @@ export const ViewMainMenu = ({
         {title}
       </Typography>
 
-      {actions.map(([iconName, label, onClick]) => {
+      {actions.map(([iconName, label, onClick], index) => {
         return (
           <Button
+            key={index}
             onClick={onClick}
             size="large"
             fullWidth

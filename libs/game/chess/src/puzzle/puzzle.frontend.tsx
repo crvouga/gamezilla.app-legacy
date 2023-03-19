@@ -1,6 +1,7 @@
 import { Cmd } from '@gamezilla/core';
 import { GameRoomCtx } from '@gamezilla/game-shared';
-import { Box, Button, FillBox } from '@gamezilla/shared/ui';
+import { ActionButton, Box, FillBox, Header, Icon } from '@gamezilla/shared/ui';
+import * as ChessBoard from '../chess/chess-board';
 import {
   BackendModel,
   FrontendModel,
@@ -17,8 +18,15 @@ import {
 
 export type Model = FrontendModel;
 
-export const init: Model = {
-  puzzles: {},
+export const init = (): { model: Model; cmd: Cmd<Msg> } => {
+  console.log('init puzzle');
+  return {
+    model: {
+      puzzles: {},
+      board: ChessBoard.init(),
+    },
+    cmd: Cmd.None,
+  };
 };
 
 //
@@ -87,7 +95,7 @@ export const mergeWithBackend = ({
 export const View = ({
   model,
   onClose,
-  $send,
+  ctx,
 }: {
   ctx: GameRoomCtx;
   model: Model;
@@ -96,14 +104,28 @@ export const View = ({
 }) => {
   return (
     <FillBox>
-      puzzles
-      <pre>{JSON.stringify(model, null, 2)}</pre>
+      <Header title={'Puzzle'} />
+      <ChessBoard.View model={model.board} boardOrientation="w" />
       <Box sx={{ flex: 1 }}></Box>
-      <Button onClick={() => $send(['upload-lichess-db-puzzle'])}>
-        upload-lichess-db-puzzle
-      </Button>
-      <Box sx={{ p: 2 }}>
-        <Button onClick={onClose}>Close</Button>
+      <Box sx={{ px: 2, display: 'flex' }}>
+        <ActionButton
+          disabled={ctx.hostId !== ctx.currentUserId}
+          icon={<Icon name="exit" />}
+          label="Exit"
+          onClick={onClose}
+        />
+        <ActionButton
+          disabled={ctx.hostId !== ctx.currentUserId}
+          icon={<Icon name="puzzle" />}
+          label="Update"
+          onClick={onClose}
+        />
+        <ActionButton
+          disabled={ctx.hostId !== ctx.currentUserId}
+          icon={<Icon name="chevron-right" />}
+          label="Next"
+          onClick={onClose}
+        />
       </Box>
     </FillBox>
   );

@@ -1,6 +1,7 @@
 import { Cmd, exhaustive, Result, Sub } from '@gamezilla/core';
 import { UserId } from '@gamezilla/shared';
 import { DatabaseConnection } from '@gamezilla/shared/backend';
+import { GameMsg } from './chess-shared';
 import {
   BackendModel,
   BackendMsg,
@@ -113,17 +114,32 @@ export const updateFromFrontend = (
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case 'input-mode': {
-      const result = initMode({
+      const { result, cmd } = initMode({
         hostId,
         mode: msg[1].mode,
         userId: msg[1].userId,
       });
 
       if (result.type === 'Err') {
-        return [model, sendToClient(['input-mode-done', msg[1], result])];
+        return [
+          model,
+          Cmd.batch([cmd, sendToClient(['input-mode-done', msg[1], result])]),
+        ];
       }
 
-      return [result.value, broadcast(['input-mode-done', msg[1], result])];
+      const updated = updateFromGame({
+        msg: ['mode-changed', result.value[0]],
+        model: result.value,
+      });
+
+      return [
+        updated.model,
+        Cmd.batch([
+          broadcast(['input-mode-done', msg[1], result]),
+          updated.cmd,
+          cmd,
+        ]),
+      ];
     }
 
     case 'vs-bot': {
@@ -221,6 +237,43 @@ export const updateRoomLeave = (
   }
 };
 
+export const updateFromGame = ({
+  msg,
+  model,
+}: {
+  msg: GameMsg;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  switch (model[0]) {
+    case 'none': {
+      return { model };
+    }
+
+    case 'puzzle': {
+      const updated = Puzzle.updateFromGame({
+        model: model[1],
+        msg,
+      });
+
+      return {
+        model: ['puzzle', updated.model],
+        cmd: Cmd.tag('puzzle', updated.cmd ?? Cmd.None),
+      };
+    }
+
+    case 'vs-bot': {
+      return { model };
+    }
+
+    case 'vs-user': {
+      return { model };
+    }
+  }
+};
+
 const initMode = ({
   hostId,
   mode,
@@ -229,22 +282,22 @@ const initMode = ({
   hostId: UserId;
   mode: BackendModel[0];
   userId: UserId;
-}): InputMode_Done[2] => {
+}): { result: InputMode_Done[2]; cmd?: Cmd<Msg> } => {
   if (hostId !== userId) {
-    return Err('must_be_the_host');
+    return { result: Err('must_be_the_host') };
   }
 
   switch (mode) {
     case 'none': {
       const modelNew: BackendModel = ['none'];
 
-      return Ok(modelNew);
+      return { result: Ok(modelNew) };
     }
 
     case 'vs-bot': {
       const modelNew: BackendModel = ['vs-bot', VsBot.init({ userId: userId })];
 
-      return Ok(modelNew);
+      return { result: Ok(modelNew) };
     }
 
     case 'vs-user': {
@@ -253,13 +306,15 @@ const initMode = ({
         VsUser.init({ userId: userId }),
       ];
 
-      return Ok(modelNew);
+      return { result: Ok(modelNew) };
     }
 
     case 'puzzle': {
-      const modelNew: BackendModel = ['puzzle', Puzzle.init];
+      const initial = Puzzle.init();
 
-      return Ok(modelNew);
+      const modelNew: BackendModel = ['puzzle', initial.model];
+
+      return { result: Ok(modelNew), cmd: Cmd.tag('puzzle', initial.cmd) };
     }
   }
 };
