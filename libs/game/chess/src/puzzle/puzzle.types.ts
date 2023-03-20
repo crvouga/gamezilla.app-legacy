@@ -198,3 +198,20 @@ export const handle = ({
     }
   }
 };
+
+export const toCorrectMove = (
+  model: SharedModel
+): ChessBoard.MoveInput | null => {
+  const { activePuzzle, activeMoves } = model;
+  if (!activePuzzle) {
+    return null;
+  }
+
+  const correctMove = activePuzzle.moves[activeMoves.length * 2 + 1];
+
+  if (!correctMove) {
+    return null;
+  }
+
+  return correctMove;
+};

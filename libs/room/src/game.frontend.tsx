@@ -94,17 +94,17 @@ export type Msg = FrontendMsg;
 
 export type OutAction = Alerts.Action | ProfileStore.Action;
 
-export const update = (
-  {
-    ctx,
-    sendToBackend,
-  }: {
-    ctx: GameRoomCtx;
-    sendToBackend: (msg: ToBackend) => Cmd;
-  },
-  msg: Msg,
-  model: Model
-): [Model, Cmd<Msg>] => {
+export const update = ({
+  ctx,
+  sendToBackend,
+  msg,
+  model,
+}: {
+  ctx: GameRoomCtx;
+  sendToBackend: (msg: ToBackend) => Cmd;
+  msg: Msg;
+  model: Model;
+}): [Model, Cmd<Msg>] => {
   switch (model.type) {
     case 'connect-four': {
       if (msg[0] === 'connect-four') {

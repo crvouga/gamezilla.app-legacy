@@ -25,7 +25,7 @@ import {
 } from '@gamezilla/core';
 import { PartyFrontend as Party } from '@gamezilla/party';
 import { ProfileStore } from '@gamezilla/profile';
-import { RoomFrontend as Room, RoomFrontend } from '@gamezilla/room';
+import { RoomFrontend } from '@gamezilla/room';
 import {
   Alerts,
   Ctx,
@@ -79,7 +79,7 @@ const init = ({
   const [auth, authCmd] = Auth.init();
   const alerts = Alerts.init;
   const chatStore = ChatStore.init;
-  const [gameRoom, roomCmd] = Room.init;
+  const [gameRoom, roomCmd] = RoomFrontend.init;
   const page = Page.initLoading();
   const [party, partyCmd] = Party.init({
     sendToBackend: (msg) => sendToBackend(['party', msg]),
@@ -440,7 +440,7 @@ const update_ = ({
         },
       };
 
-      const updated = Room.update({
+      const updated = RoomFrontend.update({
         ctx: ctx,
         sendToBackend: (m) => sendToBackend(['room', m]),
         msg: msg[1],
@@ -559,7 +559,7 @@ const updateFromBackend = ({
         },
       };
 
-      const updated = Room.updateFromBackend(
+      const updated = RoomFrontend.updateFromBackend(
         {
           ctx,
           sendToBackend: (msg) => sendToBackend(['room', msg]),
@@ -731,7 +731,7 @@ const gameRoomSub = (model: Model): Sub<Msg> => {
     case 'logged-in': {
       return Sub.tag(
         'room',
-        Room.subscriptions(
+        RoomFrontend.subscriptions(
           {
             currentUserId: model.auth.session.userId,
             now: Date.now(),
