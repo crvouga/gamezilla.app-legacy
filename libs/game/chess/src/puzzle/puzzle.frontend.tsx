@@ -5,6 +5,7 @@ import {
   Box,
   CircularProgress,
   Divider,
+  Fade,
   FillBox,
   Header,
   Icon,
@@ -159,71 +160,94 @@ export const View = ({
   onClose: () => void;
 }) => {
   const activePuzzle = model.activePuzzle;
-  if (!activePuzzle) {
-    return (
-      <FillBox>
-        <Header title={'Puzzle'} />
-        <Box
-          sx={{
-            flex: 1,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <CircularProgress />
-        </Box>
-        <Box sx={{ px: 2, display: 'flex' }}>
-          <ActionButton
-            disabled={ctx.hostId !== ctx.currentUserId}
-            icon={<Icon name="exit" />}
-            label="Exit"
-            onClick={onClose}
-          />
-          <ActionButton
-            disabled
-            icon={<Icon name="tune" />}
-            label="Tune"
-            onClick={onClose}
-          />
-          <ActionButton
-            disabled
-            icon={<Icon name="chevron-right" />}
-            label="Skip"
-            onClick={onClose}
-          />
-        </Box>
-      </FillBox>
-    );
-  }
-  const visualBoard = toVisualBoard({
-    activePuzzle,
-    now: ctx.now,
-    model,
-  });
+
+  const visualBoard: ChessBoard.Model = activePuzzle
+    ? toVisualBoard({
+        activePuzzle,
+        now: ctx.now,
+        model,
+      })
+    : {
+        fen: '',
+        pgn: '',
+      };
+
   return (
     <FillBox>
-      <HeadsUpBar activePuzzle={activePuzzle} model={model} />
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          p: 1,
+        }}
+      >
+        {activePuzzle && (
+          <Box
+            sx={{
+              width: '1rem',
+              height: '1rem',
+              background: toPlayerColor(activePuzzle) === 'b' ? '#000' : '#fff',
+              border: `1px solid ${
+                toPlayerColor(activePuzzle) === 'b' ? '#ababab' : '#000'
+              }`,
+              mr: 1,
+            }}
+          />
+        )}
+        <Typography>
+          {activePuzzle
+            ? `${ChessBoard.colorToString(toPlayerColor(activePuzzle))} to move`
+            : '...'}
+        </Typography>
+      </Box>
 
       <Divider />
 
       <Box sx={{ flex: 1 }}></Box>
-      <ChessBoard.View
-        model={visualBoard}
-        isDraggablePiece={({ piece }) => {
-          const color = ChessBoard.toColor(piece);
-          return (
-            color === toPlayerColor(activePuzzle) &&
-            ctx.hostId === ctx.currentUserId
-          );
-        }}
-        boardOrientation={toPlayerColor(activePuzzle)}
-        onPieceDrop={(moveInput) => {
-          $send(['input-move', { moveInput }]);
+      <Box sx={{ position: 'relative' }}>
+        <ChessBoard.View
+          model={visualBoard}
+          isDraggablePiece={({ piece }) => {
+            if (!activePuzzle) {
+              return false;
+            }
+            const color = ChessBoard.toColor(piece);
+            return (
+              color === toPlayerColor(activePuzzle) &&
+              ctx.hostId === ctx.currentUserId
+            );
+          }}
+          boardOrientation={activePuzzle ? toPlayerColor(activePuzzle) : 'w'}
+          onPieceDrop={(moveInput) => {
+            if (!activePuzzle) {
+              return false;
+            }
+            $send(['input-move', { moveInput }]);
 
-          return false;
-        }}
-      />
+            return false;
+          }}
+        />
+        <Fade in={!activePuzzle}>
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              height: '100%',
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#fff',
+              backgroundColor: 'rgba(0,0,0,0.5)',
+            }}
+          >
+            <CircularProgress color="inherit" />
+          </Box>
+        </Fade>
+      </Box>
+
       <Box sx={{ flex: 1 }}></Box>
       <Paper
         sx={{
@@ -245,7 +269,7 @@ export const View = ({
           }}
         />
         <ActionButton
-          disabled={ctx.hostId !== ctx.currentUserId}
+          disabled={!activePuzzle && ctx.hostId !== ctx.currentUserId}
           icon={<Icon name="lightbulb" />}
           label="Hint"
           onClick={() => {
@@ -253,7 +277,7 @@ export const View = ({
           }}
         />
         <ActionButton
-          disabled={ctx.hostId !== ctx.currentUserId}
+          disabled={!activePuzzle && ctx.hostId !== ctx.currentUserId}
           icon={<Icon name="chevron-right" />}
           label="Skip"
           onClick={() => {
@@ -262,36 +286,6 @@ export const View = ({
         />
       </Paper>
     </FillBox>
-  );
-};
-
-const HeadsUpBar = ({
-  activePuzzle,
-}: {
-  activePuzzle: Puzzle;
-  model: Model;
-}) => {
-  const playerColor = toPlayerColor(activePuzzle);
-  return (
-    <Box
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        p: 1,
-      }}
-    >
-      <Box
-        sx={{
-          width: '1rem',
-          height: '1rem',
-          background: playerColor === 'b' ? '#000' : '#fff',
-          border: '1px solid #000',
-          mr: 1,
-        }}
-      ></Box>
-      <Typography>{ChessBoard.colorToString(playerColor)} to move</Typography>
-    </Box>
   );
 };
 
