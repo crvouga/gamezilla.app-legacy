@@ -14,7 +14,7 @@ export const initShared: SharedModel = {
   activeQuery: {
     ratingRange: {
       direction: 'descend',
-      value: 300,
+      value: 1000,
     },
     popularity: {
       direction: 'descend',
