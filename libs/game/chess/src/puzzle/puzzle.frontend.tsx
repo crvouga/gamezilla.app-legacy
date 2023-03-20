@@ -368,9 +368,9 @@ const interleave = <T,>(a: T[], b: T[]): T[] => {
   return [head, ...interleave(b, tail)];
 };
 
-const camelCaseToCapitalized = (s: string) => {
-  return s
-    .split(/(?=[A-Z0-9])/)
-    .map((w) => (w[0]?.toUpperCase() ?? '') + w.slice(1))
-    .join(' ');
-};
+// const camelCaseToCapitalized = (s: string) => {
+//   return s
+//     .split(/(?=[A-Z0-9])/)
+//     .map((w) => (w[0]?.toUpperCase() ?? '') + w.slice(1))
+//     .join(' ');
+// };
