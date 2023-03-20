@@ -7,7 +7,6 @@ import {
   Divider,
   Fade,
   FillBox,
-  Header,
   Icon,
   Typography,
 } from '@gamezilla/shared/ui';
