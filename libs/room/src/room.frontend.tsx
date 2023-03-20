@@ -1,4 +1,5 @@
 import { Cmd, exhaustive, p, RemoteData, Sub } from '@gamezilla/core';
+import { GameRoomCtx } from '@gamezilla/game-shared';
 import { ProfileStore } from '@gamezilla/profile';
 import { Alerts, Ctx, RoomId, Route, UserId } from '@gamezilla/shared';
 import {
@@ -166,6 +167,12 @@ export const update_: Update = ({ ctx, sendToBackend, msg, model }) => {
         return { model };
       }
 
+      const room = model.rooms[user.roomId];
+
+      if (!room) {
+        return { model };
+      }
+
       const game = model.games[user.roomId];
 
       if (!game) {
@@ -174,14 +181,20 @@ export const update_: Update = ({ ctx, sendToBackend, msg, model }) => {
 
       const gameMsg = msg[1];
 
-      const [gameNew, gameCmd] = Game.update(
-        {
-          ctx,
-          sendToBackend: (msg) => sendToBackend(['game', msg]),
+      const gameRoomCtx: GameRoomCtx = {
+        ...ctx,
+        hostId: room.hostId,
+        onQuit: () => {
+          //
         },
-        gameMsg,
-        game
-      );
+      };
+
+      const [gameNew, gameCmd] = Game.update({
+        ctx: gameRoomCtx,
+        sendToBackend: (msg) => sendToBackend(['game', msg]),
+        msg: gameMsg,
+        model: game,
+      });
 
       const modelNew: Model = {
         ...model,
