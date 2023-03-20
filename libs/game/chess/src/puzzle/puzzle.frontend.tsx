@@ -297,7 +297,7 @@ const toVisualBoard = ({
   now: number;
   model: Model;
 }): ChessBoard.Model => {
-  if (model.playerMoves.length === 0) {
+  if (model.activeMoves.length === 0) {
     const showFirstMove = now - (model.initializedAt ?? now) > 1000 / 3;
 
     if (showFirstMove) {
@@ -314,7 +314,7 @@ const toVisualBoard = ({
   }
 
   const opponentMoves = toOpponentMoves(activePuzzle);
-  const allMoves = interleave(opponentMoves, model.playerMoves);
+  const allMoves = interleave(opponentMoves, model.activeMoves);
 
   const currentBoard = allMoves.reduce((board, move) => {
     const moved = ChessBoard.move(move, board);
