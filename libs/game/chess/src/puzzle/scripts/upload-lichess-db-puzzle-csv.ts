@@ -27,11 +27,11 @@ type LichessRow = z.infer<typeof LichessRow>;
 
 export const uploadLichessDbPuzzleCsv = async ({
   dbConn,
-  lichessDbPuzzleCsxPath,
+  lichessDbPuzzleCsvPath,
   batchSize = 10_000,
 }: {
   dbConn: DatabaseConnection;
-  lichessDbPuzzleCsxPath: string;
+  lichessDbPuzzleCsvPath: string;
   batchSize?: number;
 }) => {
   if (typeof window !== 'undefined') {
@@ -43,9 +43,9 @@ export const uploadLichessDbPuzzleCsv = async ({
   const fs: Awaited<typeof import('fs')> = await require('fs');
   const csv: Awaited<typeof import('csv-parser')> = await require('csv-parser');
 
-  console.log(`reading ${lichessDbPuzzleCsxPath}`);
+  console.log(`reading ${lichessDbPuzzleCsvPath}`);
 
-  const stream = fs.createReadStream(lichessDbPuzzleCsxPath).pipe(csv());
+  const stream = fs.createReadStream(lichessDbPuzzleCsvPath).pipe(csv());
 
   let batch: PuzzleRow[] = [];
 
