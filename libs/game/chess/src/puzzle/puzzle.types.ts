@@ -6,11 +6,11 @@ const { Err, Ok } = Result;
 export type SharedModel = {
   activePuzzle?: Puzzle;
   activeQuery: PuzzleQuery;
-  playerMoves: ChessBoard.MoveInput[];
+  activeMoves: ChessBoard.MoveInput[];
 };
 
 export const initShared: SharedModel = {
-  playerMoves: [],
+  activeMoves: [],
   activeQuery: {
     ratingRange: {
       direction: 'descend',
@@ -88,7 +88,7 @@ export const toCurrentBoard = ({
   model: SharedModel;
 }): ChessBoard.Model => {
   const opponentMoves = toOpponentMoves(activePuzzle);
-  const allMoves = interleave(opponentMoves, model.playerMoves);
+  const allMoves = interleave(opponentMoves, model.activeMoves);
 
   const currentBoard = allMoves.reduce((board, move) => {
     const moved = ChessBoard.move(move, board);
