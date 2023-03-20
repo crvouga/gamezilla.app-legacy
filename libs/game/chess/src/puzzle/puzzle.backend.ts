@@ -32,7 +32,7 @@ export const init = ({
   return {
     model: initShared,
     cmd: p(
-      PuzzleDatabase.runQuery(dbConn, initShared.activeQuery),
+      PuzzleDatabase.runQuery(dbConn, initShared.query),
       Cmd.perform((result) => ['initialize', result])
     ),
   };

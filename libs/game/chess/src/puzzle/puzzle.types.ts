@@ -5,13 +5,22 @@ const { Err, Ok } = Result;
 
 export type SharedModel = {
   activePuzzle?: Puzzle;
-  activeQuery: PuzzleQuery;
-  activeMoves: ChessBoard.MoveInput[];
+  query: PuzzleQuery;
+  moves: ChessBoard.MoveInput[];
+  puzzleState:
+    | { type: 'solving' }
+    | { type: 'solved' }
+    | { type: 'solved-with-hint' }
+    | { type: 'incorrect' };
+  puzzle:
+    | { type: 'loading' }
+    | { type: 'error'; error: string }
+    | { type: 'ready'; puzzle: Puzzle };
 };
 
 export const initShared: SharedModel = {
-  activeMoves: [],
-  activeQuery: {
+  moves: [],
+  query: {
     ratingRange: {
       direction: 'descend',
       value: 1000,
@@ -23,6 +32,8 @@ export const initShared: SharedModel = {
     pageSize: 10,
     pageIndex: 0,
   },
+  puzzleState: { type: 'solving' },
+  puzzle: { type: 'loading' },
 };
 
 type SortDirection = 'ascend' | 'descend';
@@ -88,7 +99,7 @@ export const toCurrentBoard = ({
   model: SharedModel;
 }): ChessBoard.Model => {
   const opponentMoves = toOpponentMoves(activePuzzle);
-  const allMoves = interleave(opponentMoves, model.activeMoves);
+  const allMoves = interleave(opponentMoves, model.moves);
 
   const currentBoard = allMoves.reduce((board, move) => {
     const moved = ChessBoard.move(move, board);
@@ -146,6 +157,7 @@ type Problem =
   | 'must-be-host'
   | 'no-active-puzzle'
   | 'must-be-turn'
+  | 'must-be-solving'
   | ChessBoard.MoveProblem;
 
 export const handle = ({
@@ -161,6 +173,10 @@ export const handle = ({
     case 'input-move': {
       if (ctx.currentUserId !== ctx.hostId) {
         return Err('must-be-host');
+      }
+
+      if (model.puzzleState.type !== 'solving') {
+        return Err('must-be-solving');
       }
 
       const { activePuzzle } = model;
@@ -187,7 +203,7 @@ export const handle = ({
 
       const modelNew: SharedModel = {
         ...model,
-        activeMoves: [...model.activeMoves, msg[1].moveInput],
+        moves: [...model.moves, msg[1].moveInput],
       };
 
       return Ok(modelNew);
@@ -202,7 +218,7 @@ export const handle = ({
 export const toCorrectMove = (
   model: SharedModel
 ): ChessBoard.MoveInput | null => {
-  const { activePuzzle, activeMoves } = model;
+  const { activePuzzle, moves: activeMoves } = model;
   if (!activePuzzle) {
     return null;
   }
