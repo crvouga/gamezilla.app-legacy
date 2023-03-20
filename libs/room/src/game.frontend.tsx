@@ -99,7 +99,7 @@ export const update = (
     ctx,
     sendToBackend,
   }: {
-    ctx: Ctx;
+    ctx: GameRoomCtx;
     sendToBackend: (msg: ToBackend) => Cmd;
   },
   msg: Msg,
@@ -134,6 +134,7 @@ export const update = (
     case 'chess': {
       if (msg[0] === 'chess') {
         const [child, cmd] = ChessFrontend.update({
+          ctx,
           sendToBackend: (msg) => sendToBackend(['chess', msg]),
           msg: msg[1],
           model: model.child,

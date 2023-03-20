@@ -11,11 +11,13 @@ import {
   Typography,
 } from '@gamezilla/shared/ui';
 import { Paper } from '@mui/material';
+import { useMemo } from 'react';
 import * as ChessBoard from '../chess/chess-board';
 import {
   BackendModel,
   FrontendModel,
   FrontendMsg,
+  handle,
   initShared,
   Puzzle,
   ToBackend,
@@ -56,10 +58,12 @@ export const update = ({
   msg,
   model,
   sendToBackend,
+  ctx,
 }: {
   msg: Msg;
   model: Model;
   sendToBackend: (m: ToBackend) => Cmd;
+  ctx: GameRoomCtx;
 }): {
   model: Model;
   cmd?: Cmd;
@@ -68,6 +72,16 @@ export const update = ({
     case 'animate': {
       return { model };
     }
+
+    case 'input-move': {
+      const handled = handle({ msg, model, ctx });
+      const modelNew = handled.type === 'Err' ? model : handled.value;
+      return {
+        model: modelNew,
+        cmd: sendToBackend(msg),
+      };
+    }
+
     default: {
       return {
         model,
@@ -104,6 +118,18 @@ export const updateFromBackend = ({
         model: { ...merged, initializedAt: ctx.now },
       };
     }
+
+    case 'input-move': {
+      if (msg[1].type === 'Err') {
+        return { model };
+      }
+      const merged = mergeWithBackend({
+        frontendModel: model,
+        backendModel: msg[1].value,
+      });
+      return { model: merged };
+    }
+
     default: {
       return { model };
     }
@@ -160,16 +186,18 @@ export const View = ({
 }) => {
   const activePuzzle = model.activePuzzle;
 
-  const visualBoard: ChessBoard.Model = activePuzzle
-    ? toVisualBoard({
-        activePuzzle,
-        now: ctx.now,
-        model,
-      })
-    : {
-        fen: '',
-        pgn: '',
-      };
+  const visualBoard = useMemo<ChessBoard.Model>(() => {
+    return activePuzzle
+      ? toVisualBoard({
+          activePuzzle,
+          now: ctx.now,
+          model,
+        })
+      : {
+          fen: '',
+          pgn: '',
+        };
+  }, [activePuzzle, ctx.now, model]);
 
   return (
     <FillBox>

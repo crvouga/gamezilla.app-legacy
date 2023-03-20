@@ -55,7 +55,9 @@ export const update = ({
   msg,
   model,
   sendToBackend,
+  ctx,
 }: {
+  ctx: GameRoomCtx;
   sendToBackend: (msg: ToBackend) => Cmd;
   msg: Msg;
   model: Model;
@@ -112,6 +114,7 @@ export const update = ({
       }
 
       const updated = Puzzle.update({
+        ctx,
         sendToBackend: (m) => sendToBackend(['puzzle', m]),
         model: model.mode[1],
         msg: msg[1],

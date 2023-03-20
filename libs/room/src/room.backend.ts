@@ -125,22 +125,24 @@ export const updateFromFrontend = (
 
       const gameMsg = msg[1];
 
-      const [gameNew, gameCmd] = Game.updateFromFrontend(
-        {
-          ...ctx,
+      const [gameNew, gameCmd] = Game.updateFromFrontend({
+        ...ctx,
+        ctx: {
+          currentUserId: ctx.currentUserId,
           hostId: room.hostId,
-          sendToClient: (msg) => wire.sendToClient(['game', msg]),
-          broadcast: (msg) =>
-            sendToRoom({
-              sendToUser: wire.sendToUser,
-              model,
-              roomId: room.roomId,
-              msg: ['game', msg],
-            }),
         },
-        gameMsg,
-        game
-      );
+        hostId: room.hostId,
+        sendToClient: (msg) => wire.sendToClient(['game', msg]),
+        broadcast: (msg) =>
+          sendToRoom({
+            sendToUser: wire.sendToUser,
+            model,
+            roomId: room.roomId,
+            msg: ['game', msg],
+          }),
+        msg: gameMsg,
+        model: game,
+      });
 
       const modelNew: Model = {
         ...model,

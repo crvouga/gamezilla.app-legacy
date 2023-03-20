@@ -126,7 +126,7 @@ export type PuzzleCompleted = {
 
 export type Req = ['input-move', { moveInput: ChessBoard.MoveInput }];
 
-export type Res = [...Req, Result<string, Puzzle[]>];
+export type Res = [Req[0], Result<string, SharedModel>];
 
 export type BackendMsg = ['initialize', Result<string, Puzzle[]>];
 
@@ -142,9 +142,13 @@ export type FrontendModel = SharedModel & {
   initializedAt?: number;
 };
 
-type Problem = 'must-be-host' | 'puzzle-not-found';
+type Problem =
+  | 'must-be-host'
+  | 'no-active-puzzle'
+  | 'must-be-turn'
+  | ChessBoard.MoveProblem;
 
-export const handle = async ({
+export const handle = ({
   ctx,
   msg,
   model,
@@ -152,20 +156,41 @@ export const handle = async ({
   ctx: { currentUserId: UserId; hostId: UserId };
   msg: Req;
   model: SharedModel;
-}): Promise<Result<Problem, SharedModel>> => {
+}): Result<Problem, SharedModel> => {
   switch (msg[0]) {
     case 'input-move': {
       if (ctx.currentUserId !== ctx.hostId) {
         return Err('must-be-host');
       }
 
-      // const { moveInput, puzzle } = msg[1];
+      const { activePuzzle } = model;
 
-      // const boardModel = ChessBoard.initFromFen({ fen: puzzle.fen });
+      if (!activePuzzle) {
+        return Err('no-active-puzzle');
+      }
 
-      // const _moved = ChessBoard.move(moveInput, boardModel);
+      const currentBoard = toCurrentBoard({ activePuzzle, model });
 
-      return Ok(model);
+      const turn = ChessBoard.toTurn(currentBoard);
+
+      const playerTurn = toPlayerColor(activePuzzle);
+
+      if (turn !== playerTurn) {
+        return Err('must-be-turn');
+      }
+
+      const moved = ChessBoard.move(msg[1].moveInput, currentBoard);
+
+      if (moved.type === 'Err') {
+        return moved;
+      }
+
+      const modelNew: SharedModel = {
+        ...model,
+        activeMoves: [...model.activeMoves, msg[1].moveInput],
+      };
+
+      return Ok(modelNew);
     }
 
     default: {
