@@ -1028,7 +1028,7 @@ const ViewRoom = ({
 
       <Divider />
 
-      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+      <Paper sx={{ display: 'flex', alignItems: 'center' }}>
         <ActionButton
           sx={{ width: 80 }}
           icon={<Icons.ChevronLeft />}
@@ -1071,7 +1071,7 @@ const ViewRoom = ({
             {room.hostId === ctx.currentUserId ? 'End' : 'Leave'}
           </Button>
         </Box>
-      </Box>
+      </Paper>
     </FillBox>
   );
 };
