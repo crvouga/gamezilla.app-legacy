@@ -105,7 +105,12 @@ export const updateFromFrontend = ({
   msg,
   model,
   dbConn,
+  ctx,
 }: {
+  ctx: {
+    hostId: UserId;
+    currentUserId: UserId;
+  };
   hostId: UserId;
   sendToClient: (msg: ToFrontend) => Cmd;
   broadcast: (msg: ToFrontend) => Cmd;
@@ -189,6 +194,8 @@ export const updateFromFrontend = ({
         msg: msg[1],
         dbConn,
         sendToClient: (m) => sendToClient(['puzzle', m]),
+        broadcast: (m) => broadcast(['puzzle', m]),
+        ctx,
       });
 
       return [

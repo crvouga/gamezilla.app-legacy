@@ -195,23 +195,28 @@ export const update = (
   }
 };
 
-export const updateFromFrontend = (
-  {
-    hostId,
-    currentUserId,
-    sendToClient,
-    dbConn,
-    broadcast,
-  }: {
-    hostId: UserId;
+export const updateFromFrontend = ({
+  hostId,
+  currentUserId,
+  sendToClient,
+  dbConn,
+  broadcast,
+  ctx,
+  msg,
+  model,
+}: {
+  ctx: {
     currentUserId: UserId;
-    sendToClient: (msg: ToFrontend) => Cmd;
-    broadcast: (msg: ToFrontend) => Cmd;
-    dbConn: DatabaseConnection;
-  },
-  msg: ToBackend,
-  model: Model
-): [Model, Cmd<Msg>] => {
+    hostId: UserId;
+  };
+  hostId: UserId;
+  currentUserId: UserId;
+  sendToClient: (msg: ToFrontend) => Cmd;
+  broadcast: (msg: ToFrontend) => Cmd;
+  dbConn: DatabaseConnection;
+  msg: ToBackend;
+  model: Model;
+}): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case 'connect-four': {
       if (model.type === 'connect-four') {
@@ -253,6 +258,7 @@ export const updateFromFrontend = (
           dbConn,
           msg: msg[1],
           model: model.child,
+          ctx,
         });
         return [{ type: 'chess', child }, Cmd.tag('chess', cmd)];
       }

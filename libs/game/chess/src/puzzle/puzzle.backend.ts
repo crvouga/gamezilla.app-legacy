@@ -1,11 +1,13 @@
 import { Cmd, p, Result, Sub } from '@gamezilla/core';
 import { SharedMsg } from '@gamezilla/game-shared';
+import { UserId } from '@gamezilla/shared';
 import { DatabaseConnection } from '@gamezilla/shared/backend';
 import { GameMsg } from '../chess-shared';
 import { PuzzleDatabase } from './puzzle-database';
 import {
   BackendModel,
   BackendMsg,
+  handle,
   initShared,
   ToBackend,
   ToFrontend,
@@ -86,11 +88,15 @@ export const updateFromFrontend = ({
   msg,
   model,
   sendToClient,
+  broadcast,
+  ctx,
 }: {
+  ctx: { currentUserId: UserId; hostId: UserId };
   msg: ToBackend;
   model: Model;
   dbConn: DatabaseConnection;
   sendToClient: (m: ToFrontend) => Cmd;
+  broadcast: (m: ToFrontend) => Cmd;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -102,9 +108,19 @@ export const updateFromFrontend = ({
         cmd: sendToClient(['initialize', Result.Ok(model)]),
       };
     }
-    default: {
-      return {
+
+    case 'input-move': {
+      const handled = handle({
+        ctx,
+        msg,
         model,
+      });
+
+      const modelNew = handled.type === 'Ok' ? handled.value : model;
+
+      return {
+        model: modelNew,
+        cmd: broadcast(['input-move', handled]),
       };
     }
   }
