@@ -1,4 +1,4 @@
-import { Result } from '@gamezilla/core';
+import { exhaustive, Result } from '@gamezilla/core';
 import { UserId } from '@gamezilla/shared';
 import * as ChessBoard from '../chess/chess-board';
 const { Err, Ok } = Result;
@@ -7,47 +7,21 @@ export type SharedModel = {
   puzzle?: Puzzle;
   query: PuzzleQuery;
   moves: ChessBoard.MoveInput[];
-  puzzleState:
-    | { type: 'solving' }
-    | { type: 'solved' }
-    | { type: 'solved-with-hint' }
-    | { type: 'incorrect' };
 };
 
 const initQuery: PuzzleQuery = {
-  ratingRange: {
-    direction: 'descend',
-    value: 600,
-  },
-  popularity: {
-    direction: 'descend',
-    value: 100,
-  },
-  pageSize: 10,
-  pageIndex: 0,
+  rating: 600,
+  index: 0,
 };
 
 export const initShared: SharedModel = {
   moves: [],
   query: initQuery,
-  puzzleState: {
-    type: 'solving',
-  },
 };
 
-type SortDirection = 'ascend' | 'descend';
-
 export type PuzzleQuery = {
-  ratingRange: {
-    direction: SortDirection;
-    value: number;
-  };
-  popularity: {
-    direction: SortDirection;
-    value: number;
-  };
-  pageSize: number;
-  pageIndex: number;
+  rating: number;
+  index: number;
 };
 
 export type Puzzle = {
@@ -167,45 +141,6 @@ const isMoveEqual = (
   return a.from === b.from && a.to === b.to;
 };
 
-export const toCurrentBoard = ({
-  puzzle,
-  model,
-}: {
-  puzzle: Puzzle;
-  model: SharedModel;
-}): ChessBoard.Model => {
-  const opponentMoves = puzzle.opponentMoves.slice(0, model.moves.length + 1);
-
-  const allMoves = interleave(opponentMoves, model.moves);
-
-  const currentBoard = allMoves.reduce(
-    moveReducer,
-    ChessBoard.initFromFen({ fen: puzzle.fen })
-  );
-
-  return currentBoard;
-};
-
-const moveReducer = (
-  board: ChessBoard.Model,
-  move: ChessBoard.MoveInput
-): ChessBoard.Model => {
-  const moved = ChessBoard.move(move, board);
-  if (moved.type === 'Err') {
-    return board;
-  }
-  return moved.value;
-};
-
-const zip = <T>(a: T[], b: T[]): [T, T][] => {
-  const [headA, ...tailA] = a;
-  const [headB, ...tailB] = b;
-  if (!headA || !headB) {
-    return [];
-  }
-  return [[headA, headB], ...zip(tailA, tailB)];
-};
-
 export const toOpponentColor = (puzzle: Puzzle): ChessBoard.Color => {
   const board = ChessBoard.initFromFen({ fen: puzzle.fen });
   return ChessBoard.toTurn(board);
@@ -229,17 +164,25 @@ export type PuzzleCompleted = {
   seconds: number;
 };
 
-export type Req = ['input-move', { moveInput: ChessBoard.MoveInput }];
+export type Req =
+  | ['input-move', { moveInput: ChessBoard.MoveInput }]
+  | ['next-puzzle']
+  | ['retry-puzzle'];
 
 export type Res = [Req[0], Result<string, SharedModel>];
 
-export type BackendMsg = ['initialize', Result<string, Puzzle[]>];
+export type BackendMsg =
+  | ['initialize', Result<string, Puzzle[]>]
+  | ['next-puzzle-done', Result<string, Puzzle[]>];
 
 export type FrontendMsg = Req | ['animate'];
 
 export type ToBackend = Req | ['initialize'];
 
-export type ToFrontend = Res | ['initialize', Result<string, SharedModel>];
+export type ToFrontend =
+  | Res
+  | ['initialize', Result<string, SharedModel>]
+  | ['next-puzzle-done', Result<string, SharedModel>];
 
 export type BackendModel = SharedModel;
 
@@ -252,6 +195,8 @@ type Problem =
   | 'no-active-puzzle'
   | 'must-be-turn'
   | 'must-be-solving'
+  | 'must-be-solved'
+  | 'must-be-incorrect'
   | 'no-correct-move-found'
   | ChessBoard.MoveProblem;
 
@@ -290,8 +235,51 @@ export const handle = ({
       return Ok(modelNew);
     }
 
+    case 'next-puzzle': {
+      if (ctx.currentUserId !== ctx.hostId) {
+        return Err('must-be-host');
+      }
+
+      const status = toStatus(model);
+
+      if (status.type !== 'solved') {
+        return Err('must-be-solved');
+      }
+
+      const modelNew: SharedModel = {
+        ...model,
+        moves: [],
+        puzzle: undefined,
+        query: {
+          ...model.query,
+          index: model.query.index + 1,
+        },
+      };
+
+      return Ok(modelNew);
+    }
+
+    case 'retry-puzzle': {
+      if (ctx.currentUserId !== ctx.hostId) {
+        return Err('must-be-host');
+      }
+
+      const status = toStatus(model);
+
+      if (status.type !== 'incorrect') {
+        return Err('must-be-incorrect');
+      }
+
+      const modelNew: SharedModel = {
+        ...model,
+        moves: model.moves.slice(0, -1),
+      };
+
+      return Ok(modelNew);
+    }
+
     default: {
-      return Ok(model);
+      return exhaustive(msg);
     }
   }
 };

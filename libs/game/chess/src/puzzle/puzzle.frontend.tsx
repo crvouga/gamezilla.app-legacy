@@ -15,11 +15,11 @@ import { Paper } from '@mui/material';
 import { useMemo } from 'react';
 import * as ChessBoard from '../chess/chess-board';
 import {
-  BackendModel,
   FrontendModel,
   FrontendMsg,
   handle,
   initShared,
+  SharedModel,
   Status,
   ToBackend,
   ToFrontend,
@@ -94,7 +94,6 @@ export const update = ({
 export const updateFromBackend = ({
   msg,
   model,
-  ctx,
 }: {
   ctx: GameRoomCtx;
   msg: ToFrontend;
@@ -104,34 +103,19 @@ export const updateFromBackend = ({
   cmd?: Cmd<Msg>;
 } => {
   switch (msg[0]) {
-    case 'initialize': {
-      if (msg[1].type === 'Err') {
-        return { model };
-      }
-
-      const merged = mergeWithBackend({
-        frontendModel: model,
-        backendModel: msg[1].value,
-      });
-
-      return {
-        model: { ...merged, initializedAt: ctx.now },
-      };
-    }
-
-    case 'input-move': {
-      if (msg[1].type === 'Err') {
-        return { model };
-      }
-      const merged = mergeWithBackend({
-        frontendModel: model,
-        backendModel: msg[1].value,
-      });
-      return { model: merged };
-    }
-
     default: {
-      return { model };
+      const result = msg[1];
+
+      if (result.type === 'Err') {
+        return { model };
+      }
+
+      const merged = mergeWithBackend({
+        frontendModel: model,
+        backendModel: result.value,
+      });
+
+      return { model: merged };
     }
   }
 };
@@ -141,7 +125,7 @@ export const mergeWithBackend = ({
   backendModel,
 }: {
   frontendModel: Model;
-  backendModel: BackendModel;
+  backendModel: SharedModel;
 }): Model => {
   return { ...frontendModel, ...backendModel };
 };
@@ -253,7 +237,7 @@ export const View = ({
 
       {ctx.currentUserId == ctx.hostId && (
         <Paper sx={{ display: 'flex' }}>
-          <ViewActionButtons model={model} onClose={onClose} />
+          <ViewActionButtons model={model} onClose={onClose} $send={$send} />
         </Paper>
       )}
     </FillBox>
@@ -263,9 +247,11 @@ export const View = ({
 const ViewActionButtons = ({
   model,
   onClose,
+  $send,
 }: {
   model: Model;
   onClose: () => void;
+  $send: (m: Msg) => void;
 }) => {
   const status = toStatus(model);
   switch (status.type) {
@@ -323,7 +309,7 @@ const ViewActionButtons = ({
             icon={<Icon name="restart" />}
             label="Retry"
             onClick={() => {
-              //
+              $send(['retry-puzzle']);
             }}
           />
           <ActionButton
@@ -357,7 +343,7 @@ const ViewActionButtons = ({
             icon={<Icon name="arrow-circle-right" />}
             label="Next"
             onClick={() => {
-              //
+              $send(['next-puzzle']);
             }}
           />
         </>

@@ -77,27 +77,6 @@ const insertMany = async ({
   }
 };
 
-const runQuery =
-  (
-    dbConn: DatabaseConnection,
-    query: PuzzleQuery
-  ): Task<Result<string, Puzzle[]>> =>
-  async () => {
-    const queryStr = buildQuery(query);
-
-    const queried = await dbConn.query(puzzleRowSchema, queryStr);
-
-    if (queried.type === 'Err') {
-      return queried;
-    }
-
-    const rows = queried.value;
-
-    const result = Result.combine(rows.map(rowToPuzzle));
-
-    return result;
-  };
-
 const rowToPuzzle = (row: PuzzleRow): Result<string, Puzzle> => {
   const puzzleMoves = uciMovesToPuzzleMoves(row.moves);
   if (puzzleMoves.type === 'Err') {
@@ -200,33 +179,51 @@ export const uciMoveToMoveInput = (
   });
 };
 
-const buildQuery = (query: PuzzleQuery) => {
-  const { ratingRange, popularity, pageSize, pageIndex } = query;
+export const findNext =
+  ({
+    dbConn,
+    query,
+  }: {
+    dbConn: DatabaseConnection;
+    query: PuzzleQuery;
+  }): Task<Result<string, Puzzle[]>> =>
+  async () => {
+    const { rating, index } = query;
 
-  const offset = pageIndex * pageSize;
+    const limit = 1;
 
-  const ratingOrderBy = ratingRange.direction === 'ascend' ? 'ASC' : 'DESC';
+    const offset = index * limit;
 
-  const popularityOrderBy = popularity.direction === 'ascend' ? 'ASC' : 'DESC';
+    const found = await dbConn.query(
+      puzzleRowSchema,
+      `
+      SELECT
+        *
+      FROM
+        ${tableName}
+      WHERE
+        rating BETWEEN ${rating - 100} AND ${rating + 100}
+      ORDER BY
+        rating DESC
+      LIMIT ${limit}
+      OFFSET ${offset}
+    `
+    );
 
-  return `
-    SELECT
-      *
-    FROM
-      ${tableName}
-    WHERE
-      rating BETWEEN ${ratingRange.value - 100} AND ${ratingRange.value + 100}
-    ORDER BY
-      popularity ${popularityOrderBy},
-      rating ${ratingOrderBy}
-    LIMIT ${pageSize}
-    OFFSET ${offset}
-  `;
-};
+    if (found.type === 'Err') {
+      return found;
+    }
+
+    const rows = found.value;
+
+    const result = Result.combine(rows.map(rowToPuzzle));
+
+    return result;
+  };
 
 export const PuzzleDatabase = {
   insertMany,
-  runQuery,
+  findNext,
 };
 
 const deinterleave = <T>(xs: T[]): [T[], T[]] => {
