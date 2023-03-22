@@ -19,12 +19,10 @@ import {
   FrontendMsg,
   handle,
   initShared,
-  Puzzle,
   ToBackend,
-  toCurrentBoard,
   ToFrontend,
-  toOpponentMoves,
   toPlayerColor,
+  toStatus,
 } from './puzzle.types';
 
 //
@@ -184,20 +182,18 @@ export const View = ({
   $send: (m: Msg) => void;
   onClose: () => void;
 }) => {
-  const activePuzzle = model.activePuzzle;
+  const activePuzzle = model.puzzle;
+
+  const status = toStatus(model);
 
   const visualBoard = useMemo<ChessBoard.Model>(() => {
-    return activePuzzle
-      ? toVisualBoard({
-          activePuzzle,
-          now: ctx.now,
-          model,
-        })
-      : {
-          fen: '',
-          pgn: '',
-        };
-  }, [activePuzzle, ctx.now, model]);
+    return toVisualBoard({
+      now: ctx.now,
+      model,
+    });
+  }, [ctx.now, model]);
+
+  console.log('status', status);
 
   return (
     <FillBox>
@@ -209,22 +205,25 @@ export const View = ({
           p: 1,
         }}
       >
-        {activePuzzle && (
+        {status.type !== 'loading' && (
           <Box
             sx={{
               width: '1rem',
               height: '1rem',
-              background: toPlayerColor(activePuzzle) === 'b' ? '#000' : '#fff',
+              background:
+                toPlayerColor(status.puzzle) === 'b' ? '#000' : '#fff',
               border: `1px solid ${
-                toPlayerColor(activePuzzle) === 'b' ? '#ababab' : '#000'
+                toPlayerColor(status.puzzle) === 'b' ? '#ababab' : '#000'
               }`,
               mr: 1,
             }}
           />
         )}
         <Typography>
-          {activePuzzle
-            ? `${ChessBoard.colorToString(toPlayerColor(activePuzzle))} to move`
+          {status.type !== 'loading'
+            ? `${ChessBoard.colorToString(
+                toPlayerColor(status.puzzle)
+              )} to move`
             : '...'}
         </Typography>
       </Box>
@@ -317,42 +316,34 @@ export const View = ({
 };
 
 const toVisualBoard = ({
-  activePuzzle,
   model,
-  now,
 }: {
-  activePuzzle: Puzzle;
   now: number;
   model: Model;
 }): ChessBoard.Model => {
-  if (model.moves.length === 0) {
-    const showFirstMove = now - (model.initializedAt ?? now) > 1000 / 3;
+  const status = toStatus(model);
 
-    if (showFirstMove) {
-      const firstMove = activePuzzle.moves[0];
-      const board = ChessBoard.initFromFen({ fen: activePuzzle.fen });
-      const moved = ChessBoard.move(firstMove, board);
-      if (moved.type === 'Err') {
-        return board;
-      }
-      return moved.value;
-    }
-
-    return ChessBoard.initFromFen({ fen: activePuzzle.fen });
+  if (status.type === 'loading') {
+    return { fen: '', pgn: '' };
   }
 
-  const opponentMoves = toOpponentMoves(activePuzzle);
-  const allMoves = interleave(opponentMoves, model.moves);
+  // if (model.moves.length === 0) {
+  //   const showFirstMove = now - (model.initializedAt ?? now) > 1000 / 3;
 
-  const currentBoard = allMoves.reduce((board, move) => {
-    const moved = ChessBoard.move(move, board);
-    if (moved.type === 'Err') {
-      return board;
-    }
-    return moved.value;
-  }, ChessBoard.initFromFen({ fen: activePuzzle.fen }));
+  //   if (showFirstMove) {
+  //     const firstMove = status.puzzle.opponentMoves[0];
+  //     const board = ChessBoard.initFromFen(status.puzzle);
+  //     const moved = ChessBoard.move(firstMove, board);
+  //     if (moved.type === 'Err') {
+  //       return board;
+  //     }
+  //     return moved.value;
+  //   }
 
-  return currentBoard;
+  //   return ChessBoard.initFromFen(status.puzzle);
+  // }
+
+  return status.board;
 };
 
 const isAnimating = ({
@@ -362,21 +353,18 @@ const isAnimating = ({
   now: number;
   model: Model;
 }): boolean => {
-  const activePuzzle = model.activePuzzle;
-  if (!activePuzzle) {
+  if (!model.puzzle) {
     return false;
   }
-
   const visualBoard = toVisualBoard({
-    activePuzzle,
     now,
     model,
   });
 
-  const currentBoard = toCurrentBoard({
-    activePuzzle,
-    model,
-  });
+  const status = toStatus(model);
+
+  const currentBoard: ChessBoard.Model =
+    status.type === 'loading' ? { fen: '', pgn: '' } : status.board;
 
   return visualBoard.fen !== currentBoard.fen;
 };

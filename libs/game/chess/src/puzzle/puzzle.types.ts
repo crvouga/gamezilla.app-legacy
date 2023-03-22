@@ -4,7 +4,7 @@ import * as ChessBoard from '../chess/chess-board';
 const { Err, Ok } = Result;
 
 export type SharedModel = {
-  activePuzzle?: Puzzle;
+  puzzle?: Puzzle;
   query: PuzzleQuery;
   moves: ChessBoard.MoveInput[];
   puzzleState:
@@ -12,28 +12,27 @@ export type SharedModel = {
     | { type: 'solved' }
     | { type: 'solved-with-hint' }
     | { type: 'incorrect' };
-  puzzle:
-    | { type: 'loading' }
-    | { type: 'error'; error: string }
-    | { type: 'ready'; puzzle: Puzzle };
+};
+
+const initQuery: PuzzleQuery = {
+  ratingRange: {
+    direction: 'descend',
+    value: 600,
+  },
+  popularity: {
+    direction: 'descend',
+    value: 100,
+  },
+  pageSize: 10,
+  pageIndex: 0,
 };
 
 export const initShared: SharedModel = {
   moves: [],
-  query: {
-    ratingRange: {
-      direction: 'descend',
-      value: 1000,
-    },
-    popularity: {
-      direction: 'descend',
-      value: 100,
-    },
-    pageSize: 10,
-    pageIndex: 0,
+  query: initQuery,
+  puzzleState: {
+    type: 'solving',
   },
-  puzzleState: { type: 'solving' },
-  puzzle: { type: 'loading' },
 };
 
 type SortDirection = 'ascend' | 'descend';
@@ -54,11 +53,8 @@ export type PuzzleQuery = {
 export type Puzzle = {
   puzzleId: string;
   fen: string;
-  moves: [
-    ChessBoard.MoveInput,
-    ChessBoard.MoveInput,
-    ...ChessBoard.MoveInput[]
-  ];
+  opponentMoves: [ChessBoard.MoveInput, ...ChessBoard.MoveInput[]];
+  correctMoves: [ChessBoard.MoveInput, ...ChessBoard.MoveInput[]];
   rating: number;
   ratingDeviation: number;
   popularity: number;
@@ -68,48 +64,146 @@ export type Puzzle = {
   openingTags: string[];
 };
 
-export const toOpponentMoves = (
-  puzzle: Puzzle
-): [ChessBoard.MoveInput, ...ChessBoard.MoveInput[]] => {
-  const [firstMove, ...rest] = puzzle.moves;
-  return [firstMove, ...toOddElements(rest)];
+export type Status =
+  | {
+      type: 'loading';
+    }
+  | {
+      type: 'solving';
+      puzzle: Puzzle;
+      board: ChessBoard.Model;
+    }
+  | {
+      type: 'solved';
+      puzzle: Puzzle;
+      board: ChessBoard.Model;
+    }
+  | {
+      type: 'incorrect';
+      puzzle: Puzzle;
+      board: ChessBoard.Model;
+    };
+
+export const toStatus = (model: SharedModel): Status => {
+  if (!model.puzzle) {
+    return {
+      type: 'loading',
+    };
+  }
+
+  const puzzle = model.puzzle;
+
+  if (isMovesEqual(model.puzzle.correctMoves, model.moves)) {
+    const allMoves = interleave(puzzle.opponentMoves, model.moves);
+    const board = moveMany(allMoves, ChessBoard.initFromFen(puzzle));
+
+    return {
+      type: 'solved',
+      puzzle,
+      board,
+    };
+  }
+
+  if (didMakeWrongMove(model)) {
+    const opponentMoves = puzzle.opponentMoves.slice(0, model.moves.length);
+    const allMoves = interleave(opponentMoves, model.moves);
+    const board = moveMany(allMoves, ChessBoard.initFromFen(puzzle));
+
+    return {
+      type: 'incorrect',
+      puzzle,
+      board,
+    };
+  }
+
+  const opponentMoves = puzzle.opponentMoves.slice(0, model.moves.length + 1);
+  const allMoves = interleave(opponentMoves, model.moves);
+  const board = moveMany(allMoves, ChessBoard.initFromFen(puzzle));
+
+  return {
+    type: 'solving',
+    puzzle,
+    board,
+  };
 };
 
-const toOddElements = <T>(arr: T[]): T[] => {
-  const oddElements: T[] = [];
-  for (let i = 0; i < arr.length; i += 2) {
-    const element = arr[i];
-    if (!element) {
-      continue;
-    }
-    const isOddIndex = i % 2 !== 0;
-    if (!isOddIndex) {
-      continue;
-    }
-    oddElements.push(element);
-  }
-  return oddElements;
+const moveMany = (
+  moves: ChessBoard.MoveInput[],
+  board: ChessBoard.Model
+): ChessBoard.Model => {
+  return moves.reduce((board, move) => {
+    const moved = ChessBoard.move(move, board);
+    return moved.type === 'Ok' ? moved.value : board;
+  }, board);
+};
+
+const didMakeWrongMove = (model: SharedModel): boolean => {
+  return (
+    model.moves.length > 0 &&
+    model.moves.every((move, index) => {
+      const correctMove = model.puzzle?.correctMoves[index];
+      return correctMove && !isMoveEqual(move, correctMove);
+    })
+  );
+};
+
+const isMovesEqual = (
+  a: ChessBoard.MoveInput[],
+  b: ChessBoard.MoveInput[]
+): boolean => {
+  return (
+    a.length === b.length &&
+    a.every((move, index) => {
+      const bi = b[index];
+      return bi && isMoveEqual(move, bi);
+    })
+  );
+};
+
+const isMoveEqual = (
+  a: ChessBoard.MoveInput,
+  b: ChessBoard.MoveInput
+): boolean => {
+  return a.from === b.from && a.to === b.to;
 };
 
 export const toCurrentBoard = ({
-  activePuzzle,
+  puzzle,
   model,
 }: {
-  activePuzzle: Puzzle;
+  puzzle: Puzzle;
   model: SharedModel;
 }): ChessBoard.Model => {
-  const opponentMoves = toOpponentMoves(activePuzzle);
+  const opponentMoves = puzzle.opponentMoves.slice(0, model.moves.length + 1);
+
   const allMoves = interleave(opponentMoves, model.moves);
 
-  const currentBoard = allMoves.reduce((board, move) => {
-    const moved = ChessBoard.move(move, board);
-    if (moved.type === 'Err') {
-      return board;
-    }
-    return moved.value;
-  }, ChessBoard.initFromFen({ fen: activePuzzle.fen }));
+  const currentBoard = allMoves.reduce(
+    moveReducer,
+    ChessBoard.initFromFen({ fen: puzzle.fen })
+  );
 
   return currentBoard;
+};
+
+const moveReducer = (
+  board: ChessBoard.Model,
+  move: ChessBoard.MoveInput
+): ChessBoard.Model => {
+  const moved = ChessBoard.move(move, board);
+  if (moved.type === 'Err') {
+    return board;
+  }
+  return moved.value;
+};
+
+const zip = <T>(a: T[], b: T[]): [T, T][] => {
+  const [headA, ...tailA] = a;
+  const [headB, ...tailB] = b;
+  if (!headA || !headB) {
+    return [];
+  }
+  return [[headA, headB], ...zip(tailA, tailB)];
 };
 
 export const toOpponentColor = (puzzle: Puzzle): ChessBoard.Color => {
@@ -158,6 +252,7 @@ type Problem =
   | 'no-active-puzzle'
   | 'must-be-turn'
   | 'must-be-solving'
+  | 'no-correct-move-found'
   | ChessBoard.MoveProblem;
 
 export const handle = ({
@@ -175,27 +270,13 @@ export const handle = ({
         return Err('must-be-host');
       }
 
-      if (model.puzzleState.type !== 'solving') {
+      const status = toStatus(model);
+
+      if (status.type !== 'solving') {
         return Err('must-be-solving');
       }
 
-      const { activePuzzle } = model;
-
-      if (!activePuzzle) {
-        return Err('no-active-puzzle');
-      }
-
-      const currentBoard = toCurrentBoard({ activePuzzle, model });
-
-      const turn = ChessBoard.toTurn(currentBoard);
-
-      const playerTurn = toPlayerColor(activePuzzle);
-
-      if (turn !== playerTurn) {
-        return Err('must-be-turn');
-      }
-
-      const moved = ChessBoard.move(msg[1].moveInput, currentBoard);
+      const moved = ChessBoard.move(msg[1].moveInput, status.board);
 
       if (moved.type === 'Err') {
         return moved;
@@ -213,21 +294,4 @@ export const handle = ({
       return Ok(model);
     }
   }
-};
-
-export const toCorrectMove = (
-  model: SharedModel
-): ChessBoard.MoveInput | null => {
-  const { activePuzzle, moves: activeMoves } = model;
-  if (!activePuzzle) {
-    return null;
-  }
-
-  const correctMove = activePuzzle.moves[activeMoves.length * 2 + 1];
-
-  if (!correctMove) {
-    return null;
-  }
-
-  return correctMove;
 };

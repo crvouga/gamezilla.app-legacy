@@ -103,10 +103,22 @@ const rowToPuzzle = (row: PuzzleRow): Result<string, Puzzle> => {
   if (puzzleMoves.type === 'Err') {
     return puzzleMoves;
   }
+
+  const [opponentMoves, correctMoves] = deinterleave(puzzleMoves.value);
+
+  if (!isNonEmpty(opponentMoves)) {
+    return Result.Err('Opponent moves is empty');
+  }
+
+  if (!isNonEmpty(correctMoves)) {
+    return Result.Err('Correct moves is empty');
+  }
+
   return Result.Ok({
+    opponentMoves,
+    correctMoves,
     puzzleId: row.puzzle_id,
     fen: row.fen,
-    moves: puzzleMoves.value,
     rating: row.rating,
     ratingDeviation: row.rating_deviation,
     popularity: row.popularity,
@@ -117,9 +129,13 @@ const rowToPuzzle = (row: PuzzleRow): Result<string, Puzzle> => {
   });
 };
 
+const isNonEmpty = <T>(arr: T[]): arr is [T, ...T[]] => {
+  return arr.length > 0;
+};
+
 export const uciMovesToPuzzleMoves = (
   moves: string[]
-): Result<string, Puzzle['moves']> => {
+): Result<string, [MoveInput, MoveInput, ...MoveInput[]]> => {
   const [move1, move2, ...rest] = moves;
   if (!(move1 && move2)) {
     return Result.Err('Missing first two moves');
@@ -211,4 +227,21 @@ const buildQuery = (query: PuzzleQuery) => {
 export const PuzzleDatabase = {
   insertMany,
   runQuery,
+};
+
+const deinterleave = <T>(xs: T[]): [T[], T[]] => {
+  const ys: T[] = [];
+  const zs: T[] = [];
+  for (let i = 0; i < xs.length; i++) {
+    const x = xs[i];
+    if (!x) {
+      continue;
+    }
+    if (i % 2 === 0) {
+      ys.push(x);
+    } else {
+      zs.push(x);
+    }
+  }
+  return [ys, zs];
 };

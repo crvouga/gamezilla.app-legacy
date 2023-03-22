@@ -68,7 +68,7 @@ export const update = ({
       const puzzles = msg[1].value;
       const modelNew: Model = {
         ...model,
-        activePuzzle: puzzles[0],
+        puzzle: puzzles[0],
       };
       return {
         model: modelNew,
