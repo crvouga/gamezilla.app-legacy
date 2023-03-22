@@ -115,7 +115,7 @@ const moveMany = (
 const didMakeWrongMove = (model: SharedModel): boolean => {
   return (
     model.moves.length > 0 &&
-    model.moves.every((move, index) => {
+    model.moves.some((move, index) => {
       const correctMove = model.puzzle?.correctMoves[index];
       return correctMove && !isMoveEqual(move, correctMove);
     })
