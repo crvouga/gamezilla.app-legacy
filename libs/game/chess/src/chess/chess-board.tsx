@@ -767,6 +767,21 @@ export const move = (
   });
 };
 
+export const moveMany = (moveInputs: MoveInput[], model: Model) => {
+  return moveInputs.reduce<
+    Result<MoveProblem, Model & { didCapture: boolean }>
+  >((acc, moveInput) => {
+    if (acc.type === 'Err') {
+      return acc;
+    }
+    const moved = move(moveInput, acc.value);
+    if (moved.type === 'Err') {
+      return moved;
+    }
+    return Result.Ok(moved.value);
+  }, Result.Ok({ ...model, didCapture: false }));
+};
+
 export const toLegalMoveInputs = (model: Model): MoveInput[] => {
   const instance = createInstance(model);
   const moves = instance.moves({ verbose: true });
