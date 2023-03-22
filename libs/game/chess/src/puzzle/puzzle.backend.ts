@@ -9,6 +9,7 @@ import {
   BackendMsg,
   handle,
   initShared,
+  Res,
   ToBackend,
   ToFrontend,
 } from './puzzle.types';
@@ -32,7 +33,7 @@ export const init = ({
   return {
     model: initShared,
     cmd: p(
-      PuzzleDatabase.runQuery(dbConn, initShared.query),
+      PuzzleDatabase.findNext({ dbConn, query: initShared.query }),
       Cmd.perform((result) => ['initialize', result])
     ),
   };
@@ -76,9 +77,21 @@ export const update = ({
       };
     }
 
-    default: {
+    case 'next-puzzle-done': {
+      if (msg[1].type === 'Err') {
+        return { model, cmd: broadcast(['next-puzzle-done', msg[1]]) };
+      }
+
+      const puzzles = msg[1].value;
+
+      const modelNew: Model = {
+        ...model,
+        puzzle: puzzles[0],
+      };
+
       return {
-        model,
+        model: modelNew,
+        cmd: broadcast(['next-puzzle-done', Result.Ok(modelNew)]),
       };
     }
   }
@@ -90,6 +103,7 @@ export const updateFromFrontend = ({
   sendToClient,
   broadcast,
   ctx,
+  dbConn,
 }: {
   ctx: { currentUserId: UserId; hostId: UserId };
   msg: ToBackend;
@@ -109,6 +123,29 @@ export const updateFromFrontend = ({
       };
     }
 
+    case 'next-puzzle': {
+      const handled = handle({
+        ctx,
+        msg,
+        model,
+      });
+
+      const modelNew = handled.type === 'Ok' ? handled.value : model;
+      const res: Res = [msg[0], handled];
+
+      return {
+        model: modelNew,
+        cmd: Cmd.batch([
+          broadcast(res),
+          p(
+            PuzzleDatabase.findNext({ dbConn, query: modelNew.query }),
+            Cmd.perform((result) => ['next-puzzle-done', result])
+          ),
+        ]),
+      };
+    }
+
+    case 'retry-puzzle':
     case 'input-move': {
       const handled = handle({
         ctx,
@@ -117,10 +154,11 @@ export const updateFromFrontend = ({
       });
 
       const modelNew = handled.type === 'Ok' ? handled.value : model;
+      const res: Res = [msg[0], handled];
 
       return {
         model: modelNew,
-        cmd: broadcast(['input-move', handled]),
+        cmd: broadcast(res),
       };
     }
   }
