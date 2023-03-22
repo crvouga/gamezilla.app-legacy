@@ -1,5 +1,6 @@
 import { exhaustive } from '@gamezilla/core';
 import {
+  ArrowCircleRight,
   Check,
   Lightbulb,
   ChevronRight,
@@ -754,7 +755,7 @@ export const ActionButton = ({
   sx,
 }: {
   sx?: Sx;
-  color?: 'error';
+  color?: 'error' | 'success';
   label: string;
   icon: ReactNode;
   onClick: () => void;
@@ -774,6 +775,8 @@ export const ActionButton = ({
           ? theme.palette.action.disabled
           : color === 'error'
           ? theme.palette.error.main
+          : color === 'success'
+          ? theme.palette.success.light
           : theme.palette.action.active,
         ...sx,
       }}
@@ -805,7 +808,8 @@ export type IconName =
   | 'friends'
   | 'check'
   | 'lightbulb'
-  | 'close';
+  | 'close'
+  | 'arrow-circle-right';
 
 export const Icon = ({ name, sx }: { name: IconName; sx?: Sx }) => {
   switch (name) {
@@ -855,6 +859,10 @@ export const Icon = ({ name, sx }: { name: IconName; sx?: Sx }) => {
 
     case 'chevron-right': {
       return <ChevronRight sx={sx} />;
+    }
+
+    case 'arrow-circle-right': {
+      return <ArrowCircleRight sx={sx} />;
     }
 
     default: {

@@ -20,6 +20,7 @@ import {
   FrontendMsg,
   handle,
   initShared,
+  Status,
   ToBackend,
   ToFrontend,
   toPlayerColor,
@@ -185,7 +186,7 @@ export const View = ({
 }) => {
   const activePuzzle = model.puzzle;
 
-  const status = toStatus(model);
+  const status = useMemo(() => toStatus(model), [model]);
 
   const visualBoard = useMemo<ChessBoard.Model>(() => {
     return toVisualBoard({
@@ -194,11 +195,9 @@ export const View = ({
     });
   }, [ctx.now, model]);
 
-  console.log('status', status);
-
   return (
     <FillBox>
-      <ViewStatusBar model={model} />
+      <ViewStatusBar status={status} />
 
       <Divider />
 
@@ -249,49 +248,159 @@ export const View = ({
       </Box>
 
       <Box sx={{ flex: 1 }}></Box>
-      <Paper
-        sx={{
-          display: 'flex',
-        }}
-      >
-        <ActionButton
-          disabled={ctx.hostId !== ctx.currentUserId}
-          icon={<Icon name="exit" />}
-          label="Exit"
-          onClick={onClose}
-        />
-        <ActionButton
-          disabled={ctx.hostId !== ctx.currentUserId}
-          icon={<Icon name="tune" />}
-          label="Tune"
-          onClick={() => {
-            //
-          }}
-        />
-        <ActionButton
-          disabled={!activePuzzle && ctx.hostId !== ctx.currentUserId}
-          icon={<Icon name="lightbulb" />}
-          label="Hint"
-          onClick={() => {
-            //
-          }}
-        />
-        <ActionButton
-          disabled={!activePuzzle && ctx.hostId !== ctx.currentUserId}
-          icon={<Icon name="chevron-right" />}
-          label="Skip"
-          onClick={() => {
-            //
-          }}
-        />
-      </Paper>
+
+      <Divider />
+
+      {ctx.currentUserId == ctx.hostId && (
+        <Paper sx={{ display: 'flex' }}>
+          <ViewActionButtons model={model} onClose={onClose} />
+        </Paper>
+      )}
     </FillBox>
   );
 };
 
-const ViewStatusBar = ({ model }: { model: Model }) => {
-  const theme = useTheme();
+const ViewActionButtons = ({
+  model,
+  onClose,
+}: {
+  model: Model;
+  onClose: () => void;
+}) => {
   const status = toStatus(model);
+  switch (status.type) {
+    case 'loading': {
+      return (
+        <>
+          <ActionButton
+            icon={<Icon name="exit" />}
+            label="Exit"
+            onClick={onClose}
+          />
+          <ActionButton
+            icon={<Icon name="tune" />}
+            label="Tune"
+            onClick={() => {
+              //
+            }}
+          />
+          <ActionButton
+            disabled
+            icon={<Icon name="lightbulb" />}
+            label="Hint"
+            onClick={() => {
+              //
+            }}
+          />
+          <ActionButton
+            disabled
+            icon={<Icon name="chevron-right" />}
+            label="Skip"
+            onClick={() => {
+              //
+            }}
+          />
+        </>
+      );
+    }
+
+    case 'incorrect': {
+      return (
+        <>
+          <ActionButton
+            icon={<Icon name="exit" />}
+            label="Exit"
+            onClick={onClose}
+          />
+          <ActionButton
+            icon={<Icon name="tune" />}
+            label="Tune"
+            onClick={() => {
+              //
+            }}
+          />
+          <ActionButton
+            icon={<Icon name="restart" />}
+            label="Retry"
+            onClick={() => {
+              //
+            }}
+          />
+          <ActionButton
+            icon={<Icon name="chevron-right" />}
+            label="Skip"
+            onClick={() => {
+              //
+            }}
+          />
+        </>
+      );
+    }
+
+    case 'solved': {
+      return (
+        <>
+          <ActionButton
+            icon={<Icon name="exit" />}
+            label="Exit"
+            onClick={onClose}
+          />
+          <ActionButton
+            icon={<Icon name="tune" />}
+            label="Tune"
+            onClick={() => {
+              //
+            }}
+          />
+          <ActionButton
+            color="success"
+            icon={<Icon name="arrow-circle-right" />}
+            label="Next"
+            onClick={() => {
+              //
+            }}
+          />
+        </>
+      );
+    }
+
+    case 'solving': {
+      return (
+        <>
+          <ActionButton
+            icon={<Icon name="exit" />}
+            label="Exit"
+            onClick={onClose}
+          />
+          <ActionButton
+            icon={<Icon name="tune" />}
+            label="Tune"
+            onClick={() => {
+              //
+            }}
+          />
+          <ActionButton
+            icon={<Icon name="lightbulb" />}
+            label="Hint"
+            onClick={() => {
+              //
+            }}
+          />
+          <ActionButton
+            icon={<Icon name="chevron-right" />}
+            label="Skip"
+            onClick={() => {
+              //
+            }}
+          />
+        </>
+      );
+    }
+  }
+};
+
+const ViewStatusBar = ({ status }: { status: Status }) => {
+  const theme = useTheme();
   switch (status.type) {
     case 'loading': {
       return (
