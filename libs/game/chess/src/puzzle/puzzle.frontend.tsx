@@ -278,14 +278,6 @@ const ViewActionButtons = ({
               //
             }}
           />
-          <ActionButton
-            disabled
-            icon={<Icon name="chevron-right" />}
-            label="Skip"
-            onClick={() => {
-              //
-            }}
-          />
         </>
       );
     }
@@ -316,7 +308,7 @@ const ViewActionButtons = ({
             icon={<Icon name="chevron-right" />}
             label="Skip"
             onClick={() => {
-              //
+              $send(['skip-puzzle']);
             }}
           />
         </>
@@ -368,13 +360,6 @@ const ViewActionButtons = ({
           <ActionButton
             icon={<Icon name="lightbulb" />}
             label="Hint"
-            onClick={() => {
-              //
-            }}
-          />
-          <ActionButton
-            icon={<Icon name="chevron-right" />}
-            label="Skip"
             onClick={() => {
               //
             }}
