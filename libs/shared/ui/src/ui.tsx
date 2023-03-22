@@ -1,5 +1,6 @@
 import { exhaustive } from '@gamezilla/core';
 import {
+  Check,
   Lightbulb,
   ChevronRight,
   ExitToApp,
@@ -10,6 +11,7 @@ import {
   SmartToy,
   SwapHorizSharp,
   Tune,
+  Close,
 } from '@mui/icons-material';
 import * as MuiLab from '@mui/lab';
 import * as Mui from '@mui/material';
@@ -801,10 +803,20 @@ export type IconName =
   | 'tune'
   | 'chevron-right'
   | 'friends'
-  | 'lightbulb';
+  | 'check'
+  | 'lightbulb'
+  | 'close';
 
 export const Icon = ({ name, sx }: { name: IconName; sx?: Sx }) => {
   switch (name) {
+    case 'close': {
+      return <Close sx={sx} />;
+    }
+
+    case 'check': {
+      return <Check sx={sx} />;
+    }
+
     case 'lightbulb': {
       return <Lightbulb sx={sx} />;
     }

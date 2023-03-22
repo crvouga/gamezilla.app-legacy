@@ -9,6 +9,7 @@ import {
   FillBox,
   Icon,
   Typography,
+  useTheme,
 } from '@gamezilla/shared/ui';
 import { Paper } from '@mui/material';
 import { useMemo } from 'react';
@@ -197,36 +198,7 @@ export const View = ({
 
   return (
     <FillBox>
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          p: 1,
-        }}
-      >
-        {status.type !== 'loading' && (
-          <Box
-            sx={{
-              width: '1rem',
-              height: '1rem',
-              background:
-                toPlayerColor(status.puzzle) === 'b' ? '#000' : '#fff',
-              border: `1px solid ${
-                toPlayerColor(status.puzzle) === 'b' ? '#ababab' : '#000'
-              }`,
-              mr: 1,
-            }}
-          />
-        )}
-        <Typography>
-          {status.type !== 'loading'
-            ? `${ChessBoard.colorToString(
-                toPlayerColor(status.puzzle)
-              )} to move`
-            : '...'}
-        </Typography>
-      </Box>
+      <ViewStatusBar model={model} />
 
       <Divider />
 
@@ -244,9 +216,11 @@ export const View = ({
               ctx.hostId === ctx.currentUserId
             );
           }}
-          boardOrientation={activePuzzle ? toPlayerColor(activePuzzle) : 'w'}
+          boardOrientation={
+            status.type === 'loading' ? 'w' : toPlayerColor(status.puzzle)
+          }
           onPieceDrop={(moveInput) => {
-            if (!activePuzzle) {
+            if (status.type === 'loading') {
               return false;
             }
             $send(['input-move', { moveInput }]);
@@ -254,7 +228,7 @@ export const View = ({
             return false;
           }}
         />
-        <Fade in={!activePuzzle}>
+        <Fade in={status.type === 'loading'}>
           <Box
             sx={{
               position: 'absolute',
@@ -313,6 +287,92 @@ export const View = ({
       </Paper>
     </FillBox>
   );
+};
+
+const ViewStatusBar = ({ model }: { model: Model }) => {
+  const theme = useTheme();
+  const status = toStatus(model);
+  switch (status.type) {
+    case 'loading': {
+      return (
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            p: 1,
+          }}
+        >
+          <Typography>...</Typography>
+        </Box>
+      );
+    }
+
+    case 'incorrect': {
+      return (
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            p: 1,
+            backgroundColor: theme.palette.error.main,
+            color: '#fff',
+          }}
+        >
+          <Icon name="close" />
+          <Typography sx={{ ml: 1 }}>Incorrect</Typography>
+        </Box>
+      );
+    }
+
+    case 'solved': {
+      return (
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            p: 1,
+            backgroundColor: theme.palette.success.light,
+            color: '#fff',
+          }}
+        >
+          <Icon name="check" />
+          <Typography sx={{ ml: 1 }}>Correct</Typography>
+        </Box>
+      );
+    }
+
+    case 'solving': {
+      return (
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            p: 1,
+          }}
+        >
+          <Box
+            sx={{
+              width: '1rem',
+              height: '1rem',
+              background:
+                toPlayerColor(status.puzzle) === 'b' ? '#000' : '#fff',
+              border: `1px solid ${
+                toPlayerColor(status.puzzle) === 'b' ? '#ababab' : '#000'
+              }`,
+              mr: 1,
+            }}
+          />
+          <Typography>
+            {ChessBoard.colorToString(toPlayerColor(status.puzzle))} to move
+          </Typography>
+        </Box>
+      );
+    }
+  }
 };
 
 const toVisualBoard = ({
