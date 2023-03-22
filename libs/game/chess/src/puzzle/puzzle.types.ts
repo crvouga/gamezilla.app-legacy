@@ -4,7 +4,7 @@ import * as ChessBoard from '../chess/chess-board';
 const { Err, Ok } = Result;
 
 export type SharedModel = {
-  puzzle?: Puzzle;
+  puzzle: Puzzle | null;
   query: PuzzleQuery;
   moves: ChessBoard.MoveInput[];
 };
@@ -15,6 +15,7 @@ const initQuery: PuzzleQuery = {
 };
 
 export const initShared: SharedModel = {
+  puzzle: null,
   moves: [],
   query: initQuery,
 };
@@ -167,7 +168,8 @@ export type PuzzleCompleted = {
 export type Req =
   | ['input-move', { moveInput: ChessBoard.MoveInput }]
   | ['next-puzzle']
-  | ['retry-puzzle'];
+  | ['retry-puzzle']
+  | ['skip-puzzle'];
 
 export type Res = [Req[0], Result<string, SharedModel>];
 
@@ -249,7 +251,7 @@ export const handle = ({
       const modelNew: SharedModel = {
         ...model,
         moves: [],
-        puzzle: undefined,
+        puzzle: null,
         query: {
           ...model.query,
           index: model.query.index + 1,
@@ -273,6 +275,30 @@ export const handle = ({
       const modelNew: SharedModel = {
         ...model,
         moves: model.moves.slice(0, -1),
+      };
+
+      return Ok(modelNew);
+    }
+
+    case 'skip-puzzle': {
+      if (ctx.currentUserId !== ctx.hostId) {
+        return Err('must-be-host');
+      }
+
+      const status = toStatus(model);
+
+      if (status.type !== 'incorrect') {
+        return Err('must-be-incorrect');
+      }
+
+      const modelNew: SharedModel = {
+        ...model,
+        moves: [],
+        puzzle: null,
+        query: {
+          ...model.query,
+          index: model.query.index + 1,
+        },
       };
 
       return Ok(modelNew);

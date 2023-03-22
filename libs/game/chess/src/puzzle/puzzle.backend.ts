@@ -69,7 +69,7 @@ export const update = ({
       const puzzles = msg[1].value;
       const modelNew: Model = {
         ...model,
-        puzzle: puzzles[0],
+        puzzle: puzzles[0] ?? null,
       };
       return {
         model: modelNew,
@@ -86,7 +86,7 @@ export const update = ({
 
       const modelNew: Model = {
         ...model,
-        puzzle: puzzles[0],
+        puzzle: puzzles[0] ?? null,
       };
 
       return {
@@ -123,6 +123,7 @@ export const updateFromFrontend = ({
       };
     }
 
+    case 'skip-puzzle':
     case 'next-puzzle': {
       const handled = handle({
         ctx,
