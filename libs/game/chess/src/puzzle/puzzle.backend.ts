@@ -12,6 +12,7 @@ import {
   Res,
   ToBackend,
   ToFrontend,
+  toStatus,
 } from './puzzle.types';
 
 //
@@ -97,24 +98,40 @@ export const update = ({
   }
 };
 
-export const updateFromFrontend = ({
-  msg,
-  model,
-  sendToClient,
-  broadcast,
-  ctx,
-  dbConn,
-}: {
+type UpdateFromFrontend = (input: {
   ctx: { currentUserId: UserId; hostId: UserId };
   msg: ToBackend;
   model: Model;
   dbConn: DatabaseConnection;
   sendToClient: (m: ToFrontend) => Cmd;
   broadcast: (m: ToFrontend) => Cmd;
-}): {
+}) => {
   model: Model;
   cmd?: Cmd<Msg>;
-} => {
+};
+
+export const updateFromFrontend: UpdateFromFrontend = (input) => {
+  const output = updateFromFrontend_(input);
+
+  const statusOld = toStatus(input.model);
+  const statusNew = toStatus(output.model);
+
+  if (statusOld.type !== 'solved' && statusNew.type === 'solved') {
+    // TODO: update user stats
+    return output;
+  }
+
+  return output;
+};
+
+const updateFromFrontend_: UpdateFromFrontend = ({
+  msg,
+  model,
+  sendToClient,
+  broadcast,
+  ctx,
+  dbConn,
+}) => {
   switch (msg[0]) {
     case 'initialize': {
       return {
