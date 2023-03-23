@@ -186,8 +186,10 @@ export const View = ({
       <Divider />
 
       <Box sx={{ flex: 1 }}></Box>
-      <Box sx={{ position: 'relative' }}>
+
+      {status.type !== 'loading' ? (
         <ChessBoard.View
+          key="chess"
           model={visualBoard}
           isDraggablePiece={({ piece }) => {
             if (!activePuzzle) {
@@ -199,19 +201,23 @@ export const View = ({
               ctx.hostId === ctx.currentUserId
             );
           }}
-          boardOrientation={
-            status.type === 'loading' ? 'w' : toPlayerColor(status.puzzle)
-          }
+          boardOrientation={toPlayerColor(status.puzzle)}
           onPieceDrop={(moveInput) => {
-            if (status.type === 'loading') {
-              return false;
-            }
             $send(['input-move', { moveInput }]);
 
             return false;
           }}
         />
-        <Fade in={status.type === 'loading'}>
+      ) : (
+        <Box sx={{ position: 'relative' }}>
+          <ChessBoard.View
+            key="chess"
+            model={{
+              fen: '',
+              pgn: '',
+            }}
+            boardOrientation="w"
+          />
           <Box
             sx={{
               position: 'absolute',
@@ -228,8 +234,8 @@ export const View = ({
           >
             <CircularProgress color="inherit" />
           </Box>
-        </Fade>
-      </Box>
+        </Box>
+      )}
 
       <Box sx={{ flex: 1 }}></Box>
 
