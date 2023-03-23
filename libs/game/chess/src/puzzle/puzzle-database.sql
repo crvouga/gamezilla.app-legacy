@@ -11,10 +11,11 @@ CREATE TABLE game_chess_puzzle (
   game_url VARCHAR(255)
 );
 
-CREATE TABLE game_chess_puzzle_completion (
+CREATE TABLE game_chess_puzzle_completed (
   id SERIAL PRIMARY KEY,
-  user_id VARCHAR(255) NOT NULL,
   puzzle_id VARCHAR(255) NOT NULL,
+  user_id VARCHAR(255) NOT NULL,
+  status ENUM('solved', 'skipped') NOT NULL,
   FOREIGN KEY (puzzle_id) REFERENCES game_chess_puzzle(puzzle_id),
 );
 

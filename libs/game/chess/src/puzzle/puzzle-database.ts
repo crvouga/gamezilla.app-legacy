@@ -28,6 +28,14 @@ export const puzzleRowSchema = z.object({
 
 export type PuzzleRow = z.infer<typeof puzzleRowSchema>;
 
+export const completedRowSchema = z.object({
+  puzzle_id: z.string(),
+  user_id: z.string(),
+  status: z.enum(['solved', 'skipped']),
+});
+
+export type CompletedRow = z.infer<typeof completedRowSchema>;
+
 const tableName = 'game_chess_puzzle';
 
 const insertMany = async ({
