@@ -29,7 +29,7 @@ export type Room_ = {
   roomId: RoomId;
   hostId: UserId;
   userIds: {
-    [userId: UserId]: UserId
+    [userId: UserId]: UserId;
   };
 };
 
@@ -233,6 +233,8 @@ export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
 
       const roomsNew = removeKey(room.roomId, model.rooms);
 
+      const gamesNew = removeKey(room.roomId, model.games);
+
       const usersNew = filterObject(
         model.users,
         (entry) => entry[1].roomId !== user.roomId
@@ -240,6 +242,7 @@ export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
 
       const modelNew: Model = {
         ...model,
+        games: gamesNew,
         rooms: roomsNew,
         users: usersNew,
       };
