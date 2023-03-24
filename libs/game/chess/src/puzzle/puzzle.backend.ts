@@ -1,4 +1,4 @@
-import { Cmd, eq, p, Result, Sub } from '@gamezilla/core';
+import { andThen, Cmd, eq, p, Result, Sub } from '@gamezilla/core';
 import { SharedMsg } from '@gamezilla/game-shared';
 import { UserId } from '@gamezilla/shared';
 import { DatabaseConnection } from '@gamezilla/shared/backend';
@@ -11,6 +11,7 @@ import {
   initShared,
   ToBackend,
   ToFrontend,
+  toStatus,
 } from './puzzle.types';
 
 //
@@ -110,24 +111,41 @@ export const updateFromFrontend = (input: {
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  const output = updateFromFrontend_(input);
+  return p(
+    input,
+    andThen(({ model }) => updateFromFrontend_({ ...input, model })),
+    andThen(({ model }) =>
+      updateNextPuzzle({ ...input, modelPrev: input.model, model })
+    )
+  );
+};
 
-  if (!eq(output.model.query, input.model.query)) {
-    const findNextPuzzleCmd = p(
-      PuzzleDatabase.findNext({
-        dbConn: input.dbConn,
-        query: output.model.query,
-      }),
-      Cmd.perform((result): Msg => ['next-puzzle-done', result])
-    );
-
-    return {
-      ...output,
-      cmd: Cmd.batch([output.cmd, findNextPuzzleCmd]),
-    };
+const updateNextPuzzle = ({
+  model,
+  modelPrev,
+  dbConn,
+}: {
+  model: Model;
+  modelPrev: Model;
+  dbConn: DatabaseConnection;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  if (eq(model.query, modelPrev.query)) {
+    return { model };
   }
 
-  return output;
+  return {
+    model,
+    cmd: p(
+      PuzzleDatabase.findNext({
+        dbConn,
+        query: modelPrev.query,
+      }),
+      Cmd.perform((result): Msg => ['next-puzzle-done', result])
+    ),
+  };
 };
 
 const updateFromFrontend_: typeof updateFromFrontend = ({
