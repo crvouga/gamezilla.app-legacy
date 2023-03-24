@@ -132,20 +132,20 @@ const updateNextPuzzle = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (eq(model.query, modelPrev.query)) {
-    return { model };
+  if (!eq(model.query, modelPrev.query)) {
+    return {
+      model,
+      cmd: p(
+        PuzzleDatabase.findNext({
+          dbConn,
+          query: modelPrev.query,
+        }),
+        Cmd.perform((result): Msg => ['next-puzzle-done', result])
+      ),
+    };
   }
 
-  return {
-    model,
-    cmd: p(
-      PuzzleDatabase.findNext({
-        dbConn,
-        query: modelPrev.query,
-      }),
-      Cmd.perform((result): Msg => ['next-puzzle-done', result])
-    ),
-  };
+  return { model };
 };
 
 const updateFromFrontend_: typeof updateFromFrontend = ({
