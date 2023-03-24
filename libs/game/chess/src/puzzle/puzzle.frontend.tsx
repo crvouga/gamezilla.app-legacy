@@ -370,6 +370,7 @@ const ViewActionButtons = ({
 
 const ViewStatusBar = ({ status }: { status: Status }) => {
   const theme = useTheme();
+
   switch (status.type) {
     case 'loading': {
       return (
@@ -381,7 +382,7 @@ const ViewStatusBar = ({ status }: { status: Status }) => {
             p: 1,
           }}
         >
-          <Typography>...</Typography>
+          <Typography variant="h6">...</Typography>
         </Box>
       );
     }
@@ -399,7 +400,9 @@ const ViewStatusBar = ({ status }: { status: Status }) => {
           }}
         >
           <Icon name="close" />
-          <Typography sx={{ ml: 1 }}>Incorrect</Typography>
+          <Typography variant="h6" sx={{ ml: 1 }}>
+            Incorrect
+          </Typography>
         </Box>
       );
     }
@@ -412,12 +415,14 @@ const ViewStatusBar = ({ status }: { status: Status }) => {
             alignItems: 'center',
             justifyContent: 'center',
             p: 1,
-            backgroundColor: theme.palette.success.light,
+            backgroundColor: theme.palette.success.main,
             color: '#fff',
           }}
         >
           <Icon name="check" />
-          <Typography sx={{ ml: 1 }}>Correct</Typography>
+          <Typography variant="h6" sx={{ ml: 1 }}>
+            Correct
+          </Typography>
         </Box>
       );
     }
@@ -444,7 +449,7 @@ const ViewStatusBar = ({ status }: { status: Status }) => {
               mr: 1,
             }}
           />
-          <Typography>
+          <Typography variant="h6">
             {ChessBoard.colorToString(toPlayerColor(status.puzzle))} to move
           </Typography>
         </Box>
