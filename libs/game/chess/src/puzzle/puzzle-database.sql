@@ -29,6 +29,8 @@ CREATE TABLE game_chess_puzzle_interaction (
   FOREIGN KEY (puzzle_id) REFERENCES game_chess_puzzle (puzzle_id)
 );
 
+CREATE INDEX game_chess_puzzle_interaction_puzzle_id_idx ON game_chess_puzzle_interaction (puzzle_id);
+
 --
 --
 --
@@ -42,5 +44,11 @@ SELECT DISTINCT UNNEST(opening_tags) AS unique_opening_tags
 FROM game_chess_puzzle ORDER BY popularity LIMIT 10;
 --
 SELECT COUNT(*) FROM game_chess_puzzle
-
-
+-- select all puzzles not in interaction table
+SELECT * FROM game_chess_puzzle
+WHERE puzzle_id NOT IN (SELECT puzzle_id FROM game_chess_puzzle_interaction);
+--
+SELECT gcp.*
+FROM game_chess_puzzle gcp
+LEFT JOIN game_chess_puzzle_interaction gcpi ON gcp.puzzle_id = gcpi.puzzle_id
+WHERE gcpi.puzzle_id IS NULL;
