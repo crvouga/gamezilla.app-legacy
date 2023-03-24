@@ -1021,26 +1021,6 @@ const ViewRoom = ({
   const game = model.games[room.roomId];
   return (
     <FillBox>
-      {game ? (
-        <Game.View
-          ctx={{
-            ...ctx,
-            hostId: room.hostId,
-            onQuit: () =>
-              $send([
-                'input-game',
-                { userId: ctx.currentUserId, gameName: undefined },
-              ]),
-          }}
-          $send={(msg) => $send(['game', msg])}
-          model={game}
-        />
-      ) : (
-        <ViewNotInGame model={model} ctx={ctx} room={room} $send={$send} />
-      )}
-
-      <Divider />
-
       <Paper sx={{ display: 'flex', alignItems: 'center' }}>
         <ActionButton
           sx={{ width: 80 }}
@@ -1085,6 +1065,26 @@ const ViewRoom = ({
           </Button>
         </Box>
       </Paper>
+
+      <Divider />
+
+      {game ? (
+        <Game.View
+          ctx={{
+            ...ctx,
+            hostId: room.hostId,
+            onQuit: () =>
+              $send([
+                'input-game',
+                { userId: ctx.currentUserId, gameName: undefined },
+              ]),
+          }}
+          $send={(msg) => $send(['game', msg])}
+          model={game}
+        />
+      ) : (
+        <ViewNotInGame model={model} ctx={ctx} room={room} $send={$send} />
+      )}
     </FillBox>
   );
 };

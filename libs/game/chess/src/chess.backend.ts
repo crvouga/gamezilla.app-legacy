@@ -327,6 +327,9 @@ const initMode = ({
     case 'puzzle': {
       const initial = Puzzle.init({
         dbConn,
+        ctx: {
+          currentUserId: userId,
+        },
         broadcast: (m) => broadcast(['puzzle', m]),
       });
 

@@ -233,7 +233,7 @@ export const View = ({
 
       <Divider />
 
-      {ctx.currentUserId == ctx.hostId && (
+      {ctx.currentUserId === ctx.hostId && (
         <Paper sx={{ display: 'flex' }}>
           <ViewActionButtons model={model} onClose={onClose} $send={$send} />
         </Paper>
@@ -505,14 +505,6 @@ const isAnimating = ({
     status.type === 'loading' ? { fen: '', pgn: '' } : status.board;
 
   return visualBoard.fen !== currentBoard.fen;
-};
-
-const interleave = <T,>(a: T[], b: T[]): T[] => {
-  const [head, ...tail] = a;
-  if (!head) {
-    return b;
-  }
-  return [head, ...interleave(b, tail)];
 };
 
 // const camelCaseToCapitalized = (s: string) => {

@@ -26,9 +26,11 @@ export type Model = BackendModel;
 
 export const init = ({
   dbConn,
+  ctx,
 }: {
   dbConn: DatabaseConnection;
   broadcast: (m: ToFrontend) => Cmd;
+  ctx: { currentUserId: UserId };
 }): {
   model: Model;
   cmd: Cmd<Msg>;
@@ -36,7 +38,11 @@ export const init = ({
   return {
     model: initShared,
     cmd: p(
-      PuzzleDatabase.findNext({ dbConn, query: initShared.query }),
+      PuzzleDatabase.findMany({
+        dbConn,
+        userId: ctx.currentUserId,
+        query: initShared.query,
+      }),
       Cmd.perform((result): Msg => ['next-puzzle-done', result])
     ),
   };
@@ -97,6 +103,19 @@ export const update = ({
         cmd: broadcast(['next-puzzle-done', Result.Ok(modelNew)]),
       };
     }
+
+    case 'puzzle-interaction-insert-done': {
+      return {
+        model,
+        cmd: broadcast([
+          'puzzle-interaction-insert-done',
+          p(
+            msg[1],
+            Result.map(() => model)
+          ),
+        ]),
+      };
+    }
   }
 };
 
@@ -115,19 +134,63 @@ export const updateFromFrontend = (input: {
     input,
     andThen(({ model }) => updateFromFrontend_({ ...input, model })),
     andThen(({ model }) =>
-      updateNextPuzzle({ ...input, modelPrev: input.model, model })
+      updatePuzzleNext({ ...input, modelPrev: input.model, model })
+    ),
+    andThen(({ model }) =>
+      updatePuzzleCompleted({ ...input, modelPrev: input.model, model })
     )
   );
 };
 
-const updateNextPuzzle = ({
+const updatePuzzleCompleted = ({
+  modelPrev,
+  model,
+  dbConn,
+  ctx,
+}: {
+  modelPrev: Model;
+  model: Model;
+  dbConn: DatabaseConnection;
+  ctx: { currentUserId: UserId };
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  const statusPrev = toStatus(modelPrev);
+  const status = toStatus(model);
+  if (statusPrev.type === status.type) {
+    return { model };
+  }
+
+  if (!(status.type === 'incorrect' || status.type === 'solved')) {
+    return { model };
+  }
+
+  return {
+    model,
+    cmd: p(
+      PuzzleDatabase.insertManyInteractions(dbConn, [
+        {
+          puzzleId: status.puzzle.puzzleId,
+          userId: ctx.currentUserId,
+          type: status.type,
+        },
+      ]),
+      Cmd.perform((result) => ['puzzle-interaction-insert-done', result])
+    ),
+  };
+};
+
+const updatePuzzleNext = ({
   model,
   modelPrev,
   dbConn,
+  ctx,
 }: {
   model: Model;
   modelPrev: Model;
   dbConn: DatabaseConnection;
+  ctx: { currentUserId: UserId };
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -136,9 +199,10 @@ const updateNextPuzzle = ({
     return {
       model,
       cmd: p(
-        PuzzleDatabase.findNext({
+        PuzzleDatabase.findMany({
           dbConn,
-          query: modelPrev.query,
+          userId: ctx.currentUserId,
+          query: model.query,
         }),
         Cmd.perform((result): Msg => ['next-puzzle-done', result])
       ),
