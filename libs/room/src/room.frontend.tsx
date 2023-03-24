@@ -1021,7 +1021,7 @@ const ViewRoom = ({
   const game = model.games[room.roomId];
   return (
     <FillBox>
-      <Paper sx={{ display: 'flex', alignItems: 'center' }}>
+      <Paper elevation={0} sx={{ display: 'flex', alignItems: 'center' }}>
         <ActionButton
           sx={{ width: 80 }}
           icon={<Icons.ChevronLeft />}
