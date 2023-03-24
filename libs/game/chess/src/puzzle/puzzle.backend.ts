@@ -1,4 +1,4 @@
-import { Cmd, p, Result, Sub } from '@gamezilla/core';
+import { Cmd, eq, p, Result, Sub } from '@gamezilla/core';
 import { SharedMsg } from '@gamezilla/game-shared';
 import { UserId } from '@gamezilla/shared';
 import { DatabaseConnection } from '@gamezilla/shared/backend';
@@ -9,10 +9,8 @@ import {
   BackendMsg,
   handle,
   initShared,
-  Res,
   ToBackend,
   ToFrontend,
-  toStatus,
 } from './puzzle.types';
 
 //
@@ -30,12 +28,15 @@ export const init = ({
 }: {
   dbConn: DatabaseConnection;
   broadcast: (m: ToFrontend) => Cmd;
-}): { model: Model; cmd: Cmd<Msg> } => {
+}): {
+  model: Model;
+  cmd: Cmd<Msg>;
+} => {
   return {
     model: initShared,
     cmd: p(
       PuzzleDatabase.findNext({ dbConn, query: initShared.query }),
-      Cmd.perform((result) => ['initialize', result])
+      Cmd.perform((result): Msg => ['next-puzzle-done', result])
     ),
   };
 };
@@ -98,39 +99,43 @@ export const update = ({
   }
 };
 
-type UpdateFromFrontend = (input: {
+export const updateFromFrontend = (input: {
   ctx: { currentUserId: UserId; hostId: UserId };
   msg: ToBackend;
   model: Model;
   dbConn: DatabaseConnection;
   sendToClient: (m: ToFrontend) => Cmd;
   broadcast: (m: ToFrontend) => Cmd;
-}) => {
+}): {
   model: Model;
   cmd?: Cmd<Msg>;
-};
-
-export const updateFromFrontend: UpdateFromFrontend = (input) => {
+} => {
   const output = updateFromFrontend_(input);
 
-  const statusOld = toStatus(input.model);
-  const statusNew = toStatus(output.model);
+  if (!eq(output.model.query, input.model.query)) {
+    const findNextPuzzleCmd = p(
+      PuzzleDatabase.findNext({
+        dbConn: input.dbConn,
+        query: output.model.query,
+      }),
+      Cmd.perform((result): Msg => ['next-puzzle-done', result])
+    );
 
-  if (statusOld.type !== 'solved' && statusNew.type === 'solved') {
-    // TODO: update user stats
-    return output;
+    return {
+      ...output,
+      cmd: Cmd.batch([output.cmd, findNextPuzzleCmd]),
+    };
   }
 
   return output;
 };
 
-const updateFromFrontend_: UpdateFromFrontend = ({
+const updateFromFrontend_: typeof updateFromFrontend = ({
   msg,
   model,
   sendToClient,
   broadcast,
   ctx,
-  dbConn,
 }) => {
   switch (msg[0]) {
     case 'initialize': {
@@ -140,43 +145,16 @@ const updateFromFrontend_: UpdateFromFrontend = ({
       };
     }
 
-    case 'skip-puzzle':
-    case 'next-puzzle': {
+    default: {
       const handled = handle({
         ctx,
         msg,
         model,
       });
 
-      const modelNew = handled.type === 'Ok' ? handled.value : model;
-      const res: Res = [msg[0], handled];
-
       return {
-        model: modelNew,
-        cmd: Cmd.batch([
-          broadcast(res),
-          p(
-            PuzzleDatabase.findNext({ dbConn, query: modelNew.query }),
-            Cmd.perform((result) => ['next-puzzle-done', result])
-          ),
-        ]),
-      };
-    }
-
-    case 'retry-puzzle':
-    case 'input-move': {
-      const handled = handle({
-        ctx,
-        msg,
-        model,
-      });
-
-      const modelNew = handled.type === 'Ok' ? handled.value : model;
-      const res: Res = [msg[0], handled];
-
-      return {
-        model: modelNew,
-        cmd: broadcast(res),
+        model: handled.type === 'Ok' ? handled.value : model,
+        cmd: broadcast([msg[0], handled]),
       };
     }
   }

@@ -72,18 +72,11 @@ export const update = ({
       return { model };
     }
 
-    case 'input-move': {
+    default: {
       const handled = handle({ msg, model, ctx });
       const modelNew = handled.type === 'Err' ? model : handled.value;
       return {
         model: modelNew,
-        cmd: sendToBackend(msg),
-      };
-    }
-
-    default: {
-      return {
-        model,
         cmd: sendToBackend(msg),
       };
     }
