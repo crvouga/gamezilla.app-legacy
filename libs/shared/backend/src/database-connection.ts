@@ -48,6 +48,7 @@ const create = ({
         return Result.Ok(parsed);
       } catch (error) {
         log('error executing query', { text, error });
+        console.log(error);
         return Result.Err(String(error));
       }
     },

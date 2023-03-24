@@ -39,6 +39,18 @@ export type Puzzle = {
   openingTags: string[];
 };
 
+export type PuzzleInteraction =
+  | {
+      type: 'solved';
+      puzzleId: string;
+      userId: UserId;
+    }
+  | {
+      type: 'incorrect';
+      puzzleId: string;
+      userId: UserId;
+    };
+
 export type Status =
   | {
       type: 'loading';
@@ -175,7 +187,8 @@ export type Res = [Req[0], Result<string, SharedModel>];
 
 export type BackendMsg =
   | ['initialize', Result<string, Puzzle[]>]
-  | ['next-puzzle-done', Result<string, Puzzle[]>];
+  | ['next-puzzle-done', Result<string, Puzzle[]>]
+  | ['puzzle-interaction-insert-done', Result<string, null>];
 
 export type FrontendMsg = Req | ['animate'];
 
@@ -184,7 +197,8 @@ export type ToBackend = Req | ['initialize'];
 export type ToFrontend =
   | Res
   | ['initialize', Result<string, SharedModel>]
-  | ['next-puzzle-done', Result<string, SharedModel>];
+  | ['next-puzzle-done', Result<string, SharedModel>]
+  | ['puzzle-interaction-insert-done', Result<string, SharedModel>];
 
 export type BackendModel = SharedModel;
 

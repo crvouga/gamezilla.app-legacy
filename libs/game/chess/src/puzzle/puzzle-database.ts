@@ -1,4 +1,5 @@
-import { Result, Task } from '@gamezilla/core';
+import { p, Result, Task } from '@gamezilla/core';
+import { UserId } from '@gamezilla/shared';
 import { DatabaseConnection } from '@gamezilla/shared/backend';
 import { z } from 'zod';
 import {
@@ -7,11 +8,11 @@ import {
   MoveInput,
   PromotionPieceSymbol,
 } from '../chess/chess-board';
-import { Puzzle, PuzzleQuery } from './puzzle.types';
+import { Puzzle, PuzzleInteraction, PuzzleQuery } from './puzzle.types';
 
 // source https://database.lichess.org/#puzzles
 
-export const puzzleRowSchema = z.object({
+export const PuzzleRow = z.object({
   puzzle_id: z.string(),
   rating: z.string().transform((s) => parseInt(s)),
   rating_deviation: z.string().transform((s) => parseInt(s)),
@@ -26,17 +27,27 @@ export const puzzleRowSchema = z.object({
   game_url: z.string(),
 });
 
-export type PuzzleRow = z.infer<typeof puzzleRowSchema>;
+export type PuzzleRow = z.infer<typeof PuzzleRow>;
 
-export const completedRowSchema = z.object({
+export const PuzzleInteractionRow = z.object({
+  id: z.string(),
   puzzle_id: z.string(),
   user_id: z.string(),
-  status: z.enum(['solved', 'skipped']),
+  interaction: z.discriminatedUnion('type', [
+    z.object({
+      type: z.literal('correct'),
+    }),
+    z.object({
+      type: z.literal('incorrect'),
+    }),
+  ]),
 });
 
-export type CompletedRow = z.infer<typeof completedRowSchema>;
+export type PuzzleInteractionRow = z.infer<typeof PuzzleInteractionRow>;
 
-const tableName = 'game_chess_puzzle';
+const puzzleTableName = 'game_chess_puzzle';
+
+const puzzleInteractionTableName = 'game_chess_puzzle_interaction';
 
 const insertMany = async ({
   dbConn,
@@ -62,9 +73,9 @@ const insertMany = async ({
       .join(', ');
 
     const inserted = await dbConn.query(
-      puzzleRowSchema,
+      PuzzleRow,
       `
-        INSERT INTO ${tableName} (
+        INSERT INTO ${puzzleTableName} (
             puzzle_id,
             rating,
             rating_deviation,
@@ -187,12 +198,14 @@ export const uciMoveToMoveInput = (
   });
 };
 
-export const findNext =
+export const findMany =
   ({
     dbConn,
+    userId,
     query,
   }: {
     dbConn: DatabaseConnection;
+    userId: UserId;
     query: PuzzleQuery;
   }): Task<Result<string, Puzzle[]>> =>
   async () => {
@@ -203,14 +216,20 @@ export const findNext =
     const offset = index * limit;
 
     const found = await dbConn.query(
-      puzzleRowSchema,
+      PuzzleRow,
       `
       SELECT
-        *
+        p.*
       FROM
-        ${tableName}
+        ${puzzleTableName} p
+      LEFT JOIN
+        ${puzzleInteractionTableName} pi
+      ON
+        p.puzzle_id = pi.puzzle_id
+        AND pi.user_id = '${userId}'
       WHERE
         rating BETWEEN ${rating - 100} AND ${rating + 100}
+        AND pi.puzzle_id IS NULL
       ORDER BY
         rating DESC
       LIMIT ${limit}
@@ -229,10 +248,53 @@ export const findNext =
     return result;
   };
 
+const insertManyInteractions =
+  (
+    dbConn: DatabaseConnection,
+    interactions: PuzzleInteraction[]
+  ): Task<Result<string, null>> =>
+  async () => {
+    const result = await dbConn.query(
+      PuzzleInteractionRow,
+      `
+        INSERT INTO ${puzzleInteractionTableName} (
+          puzzle_id,
+          user_id,
+          type
+        ) VALUES ${interactions
+          .map(
+            (interaction) =>
+              `('${interaction.puzzleId}', '${interaction.userId}', '${interaction.type}')`
+          )
+          .join(', ')}
+      `
+    );
+    return p(
+      result,
+      Result.map(() => null)
+    );
+  };
+
+//
+//
+//
+//
+//
+//
+
 export const PuzzleDatabase = {
   insertMany,
-  findNext,
+  findMany,
+  insertManyInteractions,
 };
+
+//
+//
+//
+// Helpers
+//
+//
+//
 
 const deinterleave = <T>(xs: T[]): [T[], T[]] => {
   const ys: T[] = [];
