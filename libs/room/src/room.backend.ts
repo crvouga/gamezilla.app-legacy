@@ -1,4 +1,4 @@
-import { Cmd, exhaustive, p, Result, Sub } from '@gamezilla/core';
+import { Cmd, exhaustive, p, Sub } from '@gamezilla/core';
 import { RoomId, UserId } from '@gamezilla/shared';
 import { DatabaseConnection } from '@gamezilla/shared/backend';
 import * as Game from './game.backend';
@@ -6,8 +6,6 @@ import {
   BackendModel,
   BackendMsg,
   handle,
-  Problem,
-  Req,
   Res,
   ToBackend,
   ToFrontend,
@@ -94,33 +92,58 @@ type Wire = {
   broadcast: (msg: ToFrontend) => Cmd;
 };
 
-export const updateFromFrontend = (
+export const updateFromFrontend = ({
+  ctx,
+  wire,
+  msg,
+  model,
+}: {
   ctx: {
     currentUserId: UserId;
     dbConn: DatabaseConnection;
-  },
-  wire: Wire,
-  msg: ToBackend,
-  model: Model
-): [Model, Cmd<BackendMsg>] => {
+  };
+  wire: Wire;
+  msg: ToBackend;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd<BackendMsg>;
+} => {
   switch (msg[0]) {
+    case 'input-game':
+    case 'join':
+    case 'destroy':
+    case 'create': {
+      const res: Res = [...msg, handle({ ctx, model, msg })];
+
+      if (res[2].type === 'Err') {
+        return { model, cmd: wire.sendToClient(res) };
+      }
+
+      return { model: res[2].value, cmd: wire.broadcast(res) };
+    }
+
+    case 'leave': {
+      return updateRoomLeave({ ctx, wire, model, msg });
+    }
+
     case 'game': {
       const user = model.users[ctx.currentUserId];
 
       if (!user) {
-        return [model, Cmd.None];
+        return { model };
       }
 
       const room = model.rooms[user.roomId];
 
       if (!room) {
-        return [model, Cmd.None];
+        return { model };
       }
 
       const game = model.games[user.roomId];
 
       if (!game) {
-        return [model, Cmd.None];
+        return { model };
       }
 
       const gameMsg = msg[1];
@@ -132,13 +155,13 @@ export const updateFromFrontend = (
           hostId: room.hostId,
         },
         hostId: room.hostId,
-        sendToClient: (msg) => wire.sendToClient(['game', msg]),
-        broadcast: (msg) =>
+        sendToClient: (m) => wire.sendToClient(['game', m]),
+        broadcast: (m) =>
           sendToRoom({
             sendToUser: wire.sendToUser,
             model,
             roomId: room.roomId,
-            msg: ['game', msg],
+            msg: ['game', m],
           }),
         msg: gameMsg,
         model: game,
@@ -152,90 +175,13 @@ export const updateFromFrontend = (
         },
       };
 
-      return [
-        modelNew,
-        p(
+      return {
+        model: modelNew,
+        cmd: p(
           gameCmd,
           Cmd.map((msg): Msg => ['game', room.roomId, msg])
         ),
-      ];
-    }
-
-    case 'input-game':
-    case 'change-host':
-    case 'room-join':
-    case 'room-destroy':
-    case 'room-create': {
-      const res: Res = [...msg, handle(msg, model)];
-
-      if (res[2].type === 'Err') {
-        return [model, wire.sendToClient(res)];
-      }
-
-      return [res[2].value, wire.broadcast(res)];
-    }
-
-    case 'room-leave': {
-      const roomLeaveResult = handle(
-        ['room-leave', { userId: msg[1].userId }],
-        model
-      );
-      return updateRoomLeave(wire, msg[1].userId, roomLeaveResult, model);
-    }
-
-    case 'room-leave-then-join': {
-      const roomLeft = handle(['room-leave', { userId: msg[1].userId }], model);
-      const roomLeftUpdate = updateRoomLeave(
-        wire,
-        msg[1].userId,
-        roomLeft,
-        model
-      );
-      if (roomLeft.type === 'Err') {
-        return roomLeftUpdate;
-      }
-      const roomJoined = handle(['room-join', msg[1]], roomLeftUpdate[0]);
-      if (roomJoined.type === 'Err') {
-        return [
-          roomLeftUpdate[0],
-          wire.sendToClient(['room-join', msg[1], roomJoined]),
-        ];
-      }
-      return [
-        roomJoined.value,
-        Cmd.batch([
-          wire.broadcast(['room-leave', msg[1], roomJoined]),
-          roomLeftUpdate[1],
-        ]),
-      ];
-    }
-
-    case 'room-end-then-join': {
-      const roomDestroyed = handle(
-        ['room-destroy', { userId: msg[1].userId }],
-        model
-      );
-
-      if (roomDestroyed.type === 'Err') {
-        return [
-          model,
-          wire.sendToClient(['room-destroy', msg[1], roomDestroyed]),
-        ];
-      }
-
-      const roomJoined = handle(['room-join', msg[1]], roomDestroyed.value);
-
-      if (roomJoined.type === 'Err') {
-        return [model, wire.sendToClient(['room-join', msg[1], roomJoined])];
-      }
-
-      return [
-        roomJoined.value,
-        Cmd.batch([
-          wire.broadcast(['room-destroy', msg[1], roomDestroyed]),
-          wire.broadcast(['room-join', msg[1], roomJoined]),
-        ]),
-      ];
+      };
     }
 
     default:
@@ -243,102 +189,52 @@ export const updateFromFrontend = (
   }
 };
 
-export const handler = async ({
-  req,
-  roomRepo,
-  now,
+const updateRoomLeave = ({
+  wire,
+  model,
+  msg,
+  ctx,
 }: {
-  req: Req;
-  now: number;
-  roomRepo: {
-    findOneByUserId: (args: {
-      now: number;
-      userId: UserId;
-    }) => Promise<Result<null, null>>;
-    findOneByRoomId: (args: {
-      now: number;
-      roomId: RoomId;
-    }) => Promise<Result<null, null>>;
-  };
-}) => {
-  //
-  switch (req[0]) {
-    case 'room-join': {
-      const { userId, roomId } = req[1];
-
-      const foundByUserId = await roomRepo.findOneByUserId({ now, userId });
-
-      if (foundByUserId.type === 'Err') {
-        return foundByUserId;
-      }
-
-      if (foundByUserId.value) {
-        return ['err', 'already-in-room'];
-      }
-
-      const foundByRoomId = await roomRepo.findOneByRoomId({ now, roomId });
-
-      if (foundByRoomId.type === 'Err') {
-        return foundByRoomId;
-      }
-
-      if (!foundByRoomId.value) {
-        return ['err', 'room-not-found'];
-      }
-
-      return ['ok'];
-    }
-    default: {
-      return;
-    }
+  msg: ToBackend;
+  wire: Wire;
+  model: Model;
+  ctx: { currentUserId: UserId };
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  if (msg[0] !== 'leave') {
+    return { model };
   }
-};
 
-const updateRoomLeave = (
-  wire: Wire,
-  userId: UserId,
-  result: Result<Problem, Model>,
-  model: Model
-): [Model, Cmd<Msg>] => {
-  const res: Res = ['room-leave', { userId }, result];
+  const result = handle({ ctx, model, msg });
+  const res: Res = [...msg, result];
 
   if (result.type === 'Err') {
-    return [model, wire.sendToClient(res)];
+    return { model, cmd: wire.sendToClient(res) };
   }
 
   const modelAfter = result.value;
 
-  const user = model.users[userId];
+  const user = model.users[ctx.currentUserId];
 
   if (!user) {
-    return [modelAfter, wire.broadcast(res)];
+    return { model: modelAfter, cmd: wire.broadcast(res) };
   }
 
   const room = model.rooms[user.roomId];
 
   if (!room) {
-    return [modelAfter, wire.broadcast(res)];
+    return { model: modelAfter, cmd: wire.broadcast(res) };
   }
 
   const game = model.games[room.roomId];
 
   if (!game) {
-    return [modelAfter, wire.broadcast(res)];
+    return { model: modelAfter, cmd: wire.broadcast(res) };
   }
 
-  // const updated_ = Game.updateShared({
-  //   broadcast: (m) =>
-  //     sendToRoom({
-  //       sendToUser: wire.sendToUser,
-  //       model: modelAfter,
-  //       roomId: room.roomId,
-  //       msg: ['game', m],
-  //     }),
-  //   msg: ['user-left', user],
-  //   model: game,
-  // });
-
-  const [gameNew, cmd] = Game.updateRoomLeave(
+  const gameUpdated = Game.updateRoomLeave(
     {
       broadcast: (msg) =>
         sendToRoom({
@@ -356,20 +252,20 @@ const updateRoomLeave = (
     ...modelAfter,
     games: {
       ...modelAfter.games,
-      [user.roomId]: gameNew,
+      [user.roomId]: gameUpdated[0],
     },
   };
 
-  return [
-    modelNew,
-    Cmd.batch([
+  return {
+    model: modelNew,
+    cmd: Cmd.batch([
       wire.broadcast(res),
       p(
-        cmd,
+        gameUpdated[1],
         Cmd.map((msg): Msg => ['game', room.roomId, msg])
       ),
     ]),
-  ];
+  };
 };
 
 const sendToRoom = ({

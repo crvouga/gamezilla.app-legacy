@@ -87,24 +87,18 @@ export type ToFrontend =
   | ['game', Game.ToFrontend]
   | Res;
 
-export type ToBackend =
-  | Req
-  | ['room-end-then-join', { roomId: RoomId; userId: UserId }]
-  | ['game', Game.ToBackend]
-  | ['room-leave-then-join', { roomId: RoomId; userId: UserId }];
+export type ToBackend = Req | ['game', Game.ToBackend];
 
 export type BackendMsg = ['game', RoomId, Game.BackendMsg];
 
 export type FrontendMsg =
+  | Req
+  | ['game', Game.FrontendMsg]
   | ['modal-closed']
   | ['modal-open', ModalModel]
   | ['clicked-room', { roomId: RoomId }]
   | ['clicked-user', { userId: UserId }]
-  | ['clicked-user-link', { userId: UserId }]
-  | ['game', Game.FrontendMsg]
-  | ['room-end-then-join', { roomId: RoomId; userId: UserId }]
-  | ['room-leave-then-join', { roomId: RoomId; userId: UserId }]
-  | Req;
+  | ['clicked-user-link', { userId: UserId }];
 
 //
 //
@@ -115,35 +109,13 @@ export type FrontendMsg =
 type Model = BackendModel;
 
 export type Req =
-  | [
-      'room-create',
-      { userId: UserId; roomId: RoomId; gameName?: Game.GameName }
-    ]
-  | ['room-destroy', { userId: UserId }]
-  | ['room-join', { userId: UserId; roomId: RoomId }]
-  | ['room-leave', { userId: UserId }]
-  | ['input-game', { userId: UserId; gameName?: Game.GameName }]
-  | ['change-host', { userId: UserId; nextHostId: UserId }];
+  | ['create', { roomId: RoomId; gameName?: Game.GameName }]
+  | ['destroy', { userId: UserId }]
+  | ['join', { userId: UserId; roomId: RoomId }]
+  | ['leave', { userId: UserId }]
+  | ['input-game', { gameName?: Game.GameName }];
 
-export type Res =
-  | [
-      'room-create',
-      { userId: UserId; roomId: RoomId; gameName?: Game.GameName },
-      Result<Problem, Model>
-    ]
-  | ['room-destroy', { userId: UserId }, Result<Problem, Model>]
-  | ['room-join', { userId: UserId; roomId: RoomId }, Result<Problem, Model>]
-  | ['room-leave', { userId: UserId }, Result<Problem, Model>]
-  | [
-      'input-game',
-      { userId: UserId; gameName?: Game.GameName },
-      Result<Problem, Model>
-    ]
-  | [
-      'change-host',
-      { userId: UserId; nextHostId: UserId },
-      Result<Problem, Model>
-    ];
+export type Res = [...Req, Result<Problem, Model>];
 
 export type Problem =
   | 'must_be_host'
@@ -159,10 +131,18 @@ type ChangeHostProblem =
   | 'next_host_room_not_found'
   | 'next_host_must_be_in_same_room';
 
-export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
+export const handle = ({
+  ctx,
+  msg,
+  model,
+}: {
+  ctx: { currentUserId: UserId };
+  msg: Req;
+  model: Model;
+}): Result<Problem, Model> => {
   switch (msg[0]) {
-    case 'room-create': {
-      const user = model.users[msg[1].userId];
+    case 'create': {
+      const user = model.users[ctx.currentUserId];
 
       if (user) {
         return Err('already_in_room');
@@ -180,19 +160,19 @@ export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
         ? GameBackend.init({
             gameName,
             ctx: {
-              currentUserId: msg[1].userId,
+              currentUserId: ctx.currentUserId,
             },
           })
         : undefined;
 
       const roomNew: Room = {
         roomId: msg[1].roomId,
-        hostId: msg[1].userId,
+        hostId: ctx.currentUserId,
       };
 
       const userNew: RoomUser = {
         roomId: msg[1].roomId,
-        userId: msg[1].userId,
+        userId: ctx.currentUserId,
       };
 
       const modelNew: Model = {
@@ -214,8 +194,8 @@ export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
       return Ok(modelNew);
     }
 
-    case 'room-destroy': {
-      const user = model.users[msg[1].userId];
+    case 'destroy': {
+      const user = model.users[ctx.currentUserId];
 
       if (!user) {
         return Err('not_in_room');
@@ -250,8 +230,8 @@ export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
       return Ok(modelNew);
     }
 
-    case 'room-join': {
-      const user = model.users[msg[1].userId];
+    case 'join': {
+      const user = model.users[ctx.currentUserId];
 
       if (user) {
         return Err('already_in_room');
@@ -259,22 +239,22 @@ export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
 
       const userNew: RoomUser = {
         roomId: msg[1].roomId,
-        userId: msg[1].userId,
+        userId: ctx.currentUserId,
       };
 
       const modelNew: Model = {
         ...model,
         users: {
           ...model.users,
-          [msg[1].userId]: userNew,
+          [ctx.currentUserId]: userNew,
         },
       };
 
       return Ok(modelNew);
     }
 
-    case 'room-leave': {
-      const user = model.users[msg[1].userId];
+    case 'leave': {
+      const user = model.users[ctx.currentUserId];
 
       if (!user) {
         return Err('not_in_room');
@@ -301,9 +281,9 @@ export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
     }
 
     case 'input-game': {
-      const { userId, gameName } = msg[1];
+      const { gameName } = msg[1];
 
-      const user = model.users[userId];
+      const user = model.users[ctx.currentUserId];
 
       if (!user) {
         return Err('not_in_room');
@@ -330,9 +310,7 @@ export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
 
       const gameNew = GameBackend.init({
         gameName,
-        ctx: {
-          currentUserId: userId,
-        },
+        ctx,
       });
 
       const modelNew: BackendModel = {
@@ -340,55 +318,6 @@ export const handle = (msg: Req, model: Model): Result<Problem, Model> => {
         games: {
           ...model.games,
           [room.roomId]: gameNew,
-        },
-      };
-
-      return Ok(modelNew);
-    }
-
-    case 'change-host': {
-      const user = model.users[msg[1].userId];
-
-      if (!user) {
-        return Err('not_in_room');
-      }
-
-      const room = model.rooms[user.roomId];
-
-      if (!room) {
-        return Err('room_not_found');
-      }
-
-      if (room.hostId !== user.userId) {
-        return Err('must_be_host');
-      }
-
-      const nextHost = model.users[msg[1].nextHostId];
-
-      if (!nextHost) {
-        return Err('next_host_not_in_room');
-      }
-
-      const nextHostRoom = model.rooms[nextHost.roomId];
-
-      if (!nextHostRoom) {
-        return Err('next_host_room_not_found');
-      }
-
-      if (nextHostRoom.roomId !== room.roomId) {
-        return Err('next_host_must_be_in_same_room');
-      }
-
-      const roomNew: Room = {
-        ...room,
-        hostId: nextHost.userId,
-      };
-
-      const modelNew: Model = {
-        ...model,
-        rooms: {
-          ...model.rooms,
-          [roomNew.roomId]: roomNew,
         },
       };
 

@@ -125,7 +125,7 @@ export const update_: Update = ({ ctx, sendToBackend, msg, model }) => {
       };
     }
 
-    case 'room-destroy': {
+    case 'destroy': {
       return {
         model: {
           ...model,
@@ -138,15 +138,12 @@ export const update_: Update = ({ ctx, sendToBackend, msg, model }) => {
       };
     }
 
-    case 'room-create':
-    case 'room-join':
-    case 'room-leave':
-    case 'change-host':
+    case 'create':
+    case 'join':
+    case 'leave':
     case 'input-game': {
       const routeCmd =
-        msg[0] === 'room-create'
-          ? Route.push(['room', msg[1].roomId])
-          : Cmd.None;
+        msg[0] === 'create' ? Route.push(['room', msg[1].roomId]) : Cmd.None;
 
       return {
         model: {
@@ -211,14 +208,6 @@ export const update_: Update = ({ ctx, sendToBackend, msg, model }) => {
           Cmd.map((msg): Msg => ['game', msg])
         ),
       };
-    }
-
-    case 'room-leave-then-join': {
-      return { model, cmd: sendToBackend(msg) };
-    }
-
-    case 'room-end-then-join': {
-      return { model, cmd: sendToBackend(msg) };
     }
 
     default:
@@ -305,13 +294,12 @@ export const updateFromBackend = (
       ];
     }
 
-    case 'room-create':
-    case 'input-game':
-    case 'change-host': {
+    case 'create':
+    case 'input-game': {
       return updateResponse({ ctx, sendToBackend }, msg, model);
     }
 
-    case 'room-destroy': {
+    case 'destroy': {
       const handled = updateResponse({ ctx, sendToBackend }, msg, model);
 
       const user = model.users[ctx.currentUserId];
@@ -338,7 +326,7 @@ export const updateFromBackend = (
                 {
                   message: toRoomEndMessage({
                     ctx,
-                    hostId: msg[1].userId,
+                    hostId: room.hostId,
                   }),
                   tag: 'Snack',
                 },
@@ -349,7 +337,7 @@ export const updateFromBackend = (
       return [handled[0], handled[1], [...handled[2], ...alertActions]];
     }
 
-    case 'room-leave': {
+    case 'leave': {
       const handled = updateResponse({ ctx, sendToBackend }, msg, model);
 
       if (msg[2].type === 'Err') {
@@ -375,43 +363,11 @@ export const updateFromBackend = (
       return [handled[0], handled[1], [...handled[2], ...alertActions]];
     }
 
-    case 'room-join': {
+    case 'join': {
       const handled = updateResponse({ ctx, sendToBackend }, msg, model);
 
       if (msg[2].type === 'Err') {
-        const currentRoomId = model.users[ctx.currentUserId]?.roomId;
-        const currentRoom = currentRoomId
-          ? model.rooms[currentRoomId]
-          : undefined;
-
-        const alertActions: Alerts.Action<Msg>[] =
-          msg[2].error === 'already_in_room' &&
-          currentRoomId !== msg[1].roomId &&
-          msg[1].userId === ctx.currentUserId
-            ? ctx.currentUserId === currentRoom?.hostId
-              ? [
-                  [
-                    'alerts',
-                    {
-                      title: 'End your current room to join this room?',
-                      tag: 'Conformation',
-                      onConfirm: ['room-end-then-join', msg[1]],
-                    },
-                  ],
-                ]
-              : [
-                  [
-                    'alerts',
-                    {
-                      title: 'Leave your current room then join this room?',
-                      tag: 'Conformation',
-                      onConfirm: ['room-leave-then-join', msg[1]],
-                    },
-                  ],
-                ]
-            : [];
-
-        return [handled[0], handled[1], [...handled[2], ...alertActions]];
+        return handled;
       }
 
       const routeActions: OutAction[] =
@@ -815,7 +771,7 @@ export const ViewPageRoomList = ({
 
       {!(
         currentRoom !== undefined ||
-        model.requests['room-create'] === RemoteData.Loading
+        model.requests['create'] === RemoteData.Loading
       ) && (
         <Box sx={{ width: '100%', px: 2, py: 2 }}>
           <Button
@@ -823,10 +779,7 @@ export const ViewPageRoomList = ({
             fullWidth
             size="large"
             onClick={() => {
-              $send([
-                'room-create',
-                { userId: ctx.currentUserId, roomId: RoomId.generate() },
-              ]);
+              $send(['create', { roomId: RoomId.generate() }]);
             }}
           >
             Create Room
@@ -1055,9 +1008,9 @@ const ViewRoom = ({
             variant="contained"
             onClick={() => {
               if (room.hostId === ctx.currentUserId) {
-                $send(['room-destroy', { userId: ctx.currentUserId }]);
+                $send(['destroy', { userId: ctx.currentUserId }]);
               } else {
-                $send(['room-leave', { userId: ctx.currentUserId }]);
+                $send(['leave', { userId: ctx.currentUserId }]);
               }
             }}
           >
@@ -1073,11 +1026,7 @@ const ViewRoom = ({
           ctx={{
             ...ctx,
             hostId: room.hostId,
-            onQuit: () =>
-              $send([
-                'input-game',
-                { userId: ctx.currentUserId, gameName: undefined },
-              ]),
+            onQuit: () => $send(['input-game', { gameName: undefined }]),
           }}
           $send={(msg) => $send(['game', msg])}
           model={game}
@@ -1141,9 +1090,7 @@ export const ViewNotInGame = ({
           <CardActionArea
             key={gameName}
             disabled={room.hostId !== ctx.currentUserId}
-            onClick={() =>
-              $send(['input-game', { gameName, userId: ctx.currentUserId }])
-            }
+            onClick={() => $send(['input-game', { gameName }])}
           >
             <ViewGameArtCard gameName={gameName} />
           </CardActionArea>
@@ -1259,13 +1206,10 @@ export const ViewNotInRoom = ({
           fullWidth
           endIcon={<Icons.ChevronRight />}
           variant="contained"
-          loading={model.requests['room-join']?.type === 'Loading'}
-          onClick={() =>
-            $send([
-              'room-join',
-              { userId: ctx.currentUserId, roomId: room.roomId },
-            ])
-          }
+          loading={model.requests['join']?.type === 'Loading'}
+          onClick={() => {
+            $send(['join', { userId: ctx.currentUserId, roomId: room.roomId }]);
+          }}
         >
           Join Room
         </Button>
@@ -1484,10 +1428,10 @@ export const ViewBar = ({
       <IconButton
         onClick={() => {
           if (ctx.currentUserId === room.hostId) {
-            $send(['room-destroy', { userId: ctx.currentUserId }]);
+            $send(['destroy', { userId: ctx.currentUserId }]);
             return;
           }
-          $send(['room-leave', { userId: ctx.currentUserId }]);
+          $send(['leave', { userId: ctx.currentUserId }]);
         }}
         sx={{ marginRight: 1 }}
       >

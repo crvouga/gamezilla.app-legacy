@@ -1,11 +1,12 @@
 import * as Chess from '@gamezilla/game/chess';
 import * as ConnectFour from '@gamezilla/game/connect-four';
+import * as Flow from '@gamezilla/game/flow';
 import * as Gomoku from '@gamezilla/game/gomoku';
 import * as Maze from '@gamezilla/game/maze';
 import * as Snake from '@gamezilla/game/snake';
 import * as Tetris from '@gamezilla/game/tetris';
 import * as TicTacToe from '@gamezilla/game/tic-tac-toe';
-import * as Flow from '@gamezilla/game/flow';
+import { z } from 'zod';
 
 //
 //
@@ -34,6 +35,20 @@ export type BackendModel =
   | { type: 'snake'; child: Snake.BackendModel }
   | { type: 'maze'; child: Maze.BackendModel }
   | { type: 'flow'; child: Flow.BackendModel };
+
+export const BackendModel = z.discriminatedUnion('type', [
+  z.object({ type: z.literal('tic-tac-toe'), child: TicTacToe.BackendModel }),
+  // z.object({
+  //   type: z.literal('connect-four'),
+  //   child: ConnectFour.BackendModel,
+  // }),
+  // z.object({ type: z.literal('chess'), child: Chess.BackendModel }),
+  // z.object({ type: z.literal('gomoku'), child: Gomoku.BackendModel }),
+  // z.object({ type: z.literal('tetris'), child: Tetris.BackendModel }),
+  // z.object({ type: z.literal('snake'), child: Snake.BackendModel }),
+  // z.object({ type: z.literal('maze'), child: Maze.BackendModel }),
+  // z.object({ type: z.literal('flow'), child: Flow.BackendModel }),
+]);
 
 export type GameName = BackendModel['type'];
 
