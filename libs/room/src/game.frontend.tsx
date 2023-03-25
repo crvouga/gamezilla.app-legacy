@@ -1,5 +1,5 @@
 import { Cmd, exhaustive, Sub } from '@gamezilla/core';
-import { GameRoomCtx } from '@gamezilla/game-shared';
+import { RoomCtx } from '@gamezilla/game-shared';
 import { ChessFrontend } from '@gamezilla/game/chess';
 import { ConnectFourFrontend } from '@gamezilla/game/connect-four';
 import { FlowFrontend } from '@gamezilla/game/flow';
@@ -100,7 +100,7 @@ export const update = ({
   msg,
   model,
 }: {
-  ctx: GameRoomCtx;
+  ctx: RoomCtx;
   sendToBackend: (msg: ToBackend) => Cmd;
   msg: Msg;
   model: Model;
@@ -214,7 +214,7 @@ export const updateFromBackend = ({
   msg,
   model,
 }: {
-  ctx: GameRoomCtx;
+  ctx: RoomCtx;
   sendToBackend: (msg: ToBackend) => Cmd;
   msg: ToFrontend;
   model: Model;
@@ -408,7 +408,7 @@ export const View = ({
   model,
   $send,
 }: {
-  ctx: GameRoomCtx;
+  ctx: RoomCtx;
   model: Model;
   $send: (msg: Msg) => void;
 }) => {

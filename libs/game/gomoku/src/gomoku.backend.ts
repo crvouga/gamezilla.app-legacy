@@ -1,4 +1,5 @@
 import { Cmd, Result, Sub } from '@gamezilla/core';
+import { RoomMsg } from '@gamezilla/game-shared';
 import { UserId } from '@gamezilla/shared';
 import {
   BackendModel,
@@ -15,7 +16,7 @@ const { Ok } = Result;
 //
 //
 //
-// model
+// Model
 //
 //
 //
@@ -121,21 +122,41 @@ export const updateFromFrontend = (
   }
 };
 
-export const updateRoomLeave = (
-  userId: UserId,
-  model: Model
-): [Model, Cmd<Msg>] => {
+export const updateFromRoom = ({
+  msg,
+  model,
+}: {
+  msg: RoomMsg;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
   switch (model.type) {
     case 'vs-bot': {
-      const [child, cmd] = VsBot.updateRoomLeave(userId, model.child);
-      return [{ type: 'vs-bot', child }, Cmd.tag('vs-bot', cmd)];
+      const updated = VsBot.updateFromRoom({
+        msg,
+        model: model.child,
+      });
+
+      return {
+        model: { type: 'vs-bot', child: updated.model },
+        cmd: Cmd.tag('vs-bot', updated.cmd ?? Cmd.None),
+      };
     }
+
     case 'vs-user': {
-      const [child, cmd] = VsUser.updateRoomLeave(userId, model.child);
-      return [{ type: 'vs-user', child }, Cmd.tag('vs-user', cmd)];
+      const updated = VsUser.updateFromRoom({ msg, model: model.child });
+      return {
+        model: { type: 'vs-user', child: updated.model },
+        cmd: Cmd.tag('vs-user', updated.cmd ?? Cmd.None),
+      };
     }
+
     case 'none': {
-      return [model, Cmd.None];
+      return {
+        model,
+      };
     }
   }
 };

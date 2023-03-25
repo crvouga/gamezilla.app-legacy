@@ -1,5 +1,5 @@
 import { Cmd, Sub } from '@gamezilla/core';
-import { GameRoomCtx } from '@gamezilla/game-shared';
+import { RoomCtx } from '@gamezilla/game-shared';
 import { UserId } from '@gamezilla/shared';
 import { box, button, fillBox, text } from '@gamezilla/shared/ui';
 import { FrontendModel, FrontendMsg, SharedModel } from './flow.types';
@@ -67,7 +67,7 @@ export const view = ({
   gameRoomCtx,
 }: {
   model: Model;
-  gameRoomCtx: GameRoomCtx;
+  gameRoomCtx: RoomCtx;
 }) => {
   return fillBox({}, [
     text({}, `hello world ${model?.playerId ?? 'missing'}`),

@@ -13,12 +13,12 @@ import {
   ViewNode,
 } from '@gamezilla/shared/ui';
 
-export type GameRoomCtx = Ctx & {
+export type RoomCtx = Ctx & {
   onQuit: () => void;
   hostId: UserId;
 };
 
-export type SharedMsg = ['user-left', { userId: UserId }];
+export type RoomMsg = ['user-left', { userId: UserId }];
 
 export const bannerArtAspectRatio = Math.pow(3 / 4, 4);
 
@@ -29,7 +29,7 @@ export const ViewMainMenu = ({
   actions,
   gameRoomCtx,
 }: {
-  gameRoomCtx: GameRoomCtx;
+  gameRoomCtx: RoomCtx;
   ctx: Ctx;
   title: string;
   coverArt: ViewNode;
@@ -120,7 +120,7 @@ export const viewSelectModeScreen = ({
   onVsUser,
   gameRoomCtx,
 }: {
-  gameRoomCtx: GameRoomCtx;
+  gameRoomCtx: RoomCtx;
   ctx: Ctx;
   title: string;
   coverArt: ViewNode;

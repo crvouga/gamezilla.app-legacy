@@ -1,5 +1,5 @@
 import { Cmd, Keyboard, p, Sub } from '@gamezilla/core';
-import { GameRoomCtx } from '@gamezilla/game-shared';
+import { RoomCtx } from '@gamezilla/game-shared';
 import { Ctx } from '@gamezilla/shared';
 import {
   ActionButton,
@@ -210,7 +210,7 @@ export const View = ({
   $send,
   gameRoomCtx,
 }: {
-  gameRoomCtx: GameRoomCtx;
+  gameRoomCtx: RoomCtx;
   ctx: Ctx;
   model: Model;
   $send: (msg: Msg) => void;

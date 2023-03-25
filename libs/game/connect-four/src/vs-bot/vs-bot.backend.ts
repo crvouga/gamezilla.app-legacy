@@ -1,4 +1,5 @@
 import { Cmd, p, Sub } from '@gamezilla/core';
+import { RoomMsg } from '@gamezilla/game-shared';
 import { UserId } from '@gamezilla/shared';
 import { getBestMove, opposite } from '../connect-four/connect-four';
 import {
@@ -119,27 +120,34 @@ const updateFromFrontend_ = (
   }
 };
 
-export const updateRoomLeave = ({
-  userId,
+export const updateFromRoom = ({
+  msg,
   model,
   broadcast,
 }: {
   broadcast: (m: ToFrontend) => Cmd;
-  userId: UserId;
+  msg: RoomMsg;
   model: Model;
-}): [Model, Cmd<Msg>] => {
-  if (model.player !== userId) {
-    return [model, Cmd.None];
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  switch (msg[0]) {
+    case 'user-left': {
+      if (model.player !== msg[1].userId) {
+        return { model };
+      }
+
+      const modelNew: Model = {
+        type: 'Setup',
+        botLevel: model.botLevel,
+        userPlayerType: model.userPlayerType,
+        player: 'none',
+      };
+
+      return { model: modelNew, cmd: broadcast(['player-left', modelNew]) };
+    }
   }
-
-  const modelNew: Model = {
-    type: 'Setup',
-    botLevel: model.botLevel,
-    userPlayerType: model.userPlayerType,
-    player: 'none',
-  };
-
-  return [modelNew, broadcast(['player-left', modelNew])];
 };
 
 //

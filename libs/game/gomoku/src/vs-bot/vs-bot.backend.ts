@@ -1,4 +1,5 @@
 import { Cmd, Sub } from '@gamezilla/core';
+import { RoomMsg } from '@gamezilla/game-shared';
 import { UserId } from '@gamezilla/shared';
 import {
   BackendModel,
@@ -88,11 +89,23 @@ const updateFromFrontend_: UpdateFromFrontend = (
   }
 };
 
-export const updateRoomLeave = (
-  _userId: UserId,
-  model: Model
-): [Model, Cmd<Msg>] => {
-  return [init({ userId: model.userId }), Cmd.None];
+export const updateFromRoom = ({
+  msg,
+  model,
+}: {
+  msg: RoomMsg;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  switch (msg[0]) {
+    case 'user-left': {
+      return {
+        model: init({ userId: model.userId }),
+      };
+    }
+  }
 };
 
 //

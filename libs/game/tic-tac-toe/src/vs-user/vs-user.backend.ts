@@ -1,6 +1,5 @@
 import { Cmd, exhaustive, Sub, Time } from '@gamezilla/core';
-import { SharedMsg } from '@gamezilla/game-shared';
-import { UserId } from '@gamezilla/shared';
+import { RoomMsg } from '@gamezilla/game-shared';
 import { PlayerType, toOpposite, toTurn } from '../tic-tic-toe/tic-tac-toe';
 import * as Round from './vs-user-round';
 import {
@@ -234,21 +233,22 @@ export const updateFromFrontend = (
   }
 };
 
-export const updateShared = ({
+export const updateFromRoom = ({
   msg,
   model,
   broadcast,
 }: {
   broadcast: (m: ToFrontend) => Cmd;
-  msg: SharedMsg;
+  msg: RoomMsg;
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd;
+  cmd?: Cmd<Msg>;
 } => {
   switch (msg[0]) {
     case 'user-left': {
       const { userId } = msg[1];
+
       const player: PlayerType | 'none' =
         model.O === userId ? 'O' : model.X === userId ? 'X' : 'none';
 
@@ -271,33 +271,6 @@ export const updateShared = ({
       return { model: modelNew, cmd: broadcast(['player-left', modelNew]) };
     }
   }
-};
-
-export const updateRoomLeave = (
-  { broadcast }: { broadcast: (m: ToFrontend) => Cmd },
-  userId: UserId,
-  model: Model
-): [Model, Cmd<Msg>] => {
-  const player: PlayerType | 'none' =
-    model.O === userId ? 'O' : model.X === userId ? 'X' : 'none';
-
-  if (player === 'none') {
-    return [model, Cmd.None];
-  }
-
-  const other = toOpposite(player);
-
-  const modelNew: Model = {
-    type: 'Setup',
-    maxRoundCount: model.maxRoundCount,
-    moveTimeLimit: model.moveTimeLimit,
-    X: model.X,
-    O: model.O,
-    [player]: 'none',
-    [other]: model[other],
-  };
-
-  return [modelNew, broadcast(['player-left', modelNew])];
 };
 
 //

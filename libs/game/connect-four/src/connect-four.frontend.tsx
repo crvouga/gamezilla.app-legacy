@@ -2,7 +2,7 @@ import { Alerts } from '@gamezilla/shared';
 import { Cmd, Sub } from '@gamezilla/core';
 import {
   bannerArtAspectRatio,
-  GameRoomCtx,
+  RoomCtx,
   viewSelectModeScreen,
 } from '@gamezilla/game-shared';
 import { Ctx } from '@gamezilla/shared';
@@ -155,7 +155,7 @@ export const View = ({
   model: Model;
   $send: (msg: Msg) => void;
   ctx: Ctx;
-  gameRoomCtx: GameRoomCtx;
+  gameRoomCtx: RoomCtx;
 }) => {
   const goBack = () =>
     $send(['input-mode', { userId: ctx.currentUserId, mode: 'none' }]);

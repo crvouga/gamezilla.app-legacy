@@ -1,5 +1,5 @@
 import { Cmd, exhaustive, Sub, Time } from '@gamezilla/core';
-import { UserId } from '@gamezilla/shared';
+import { RoomMsg } from '@gamezilla/game-shared';
 import {
   BackendModel,
   BackendMsg,
@@ -84,30 +84,41 @@ export const updateFromFrontend = (
   }
 };
 
-export const updateRoomLeave = ({
+export const updateFromRoom = ({
   broadcast,
-  userId,
+  msg,
   model,
 }: {
   broadcast: (m: ToFrontend) => Cmd;
-  userId: UserId;
+  msg: RoomMsg;
   model: Model;
-}): [Model, Cmd<Msg>] => {
-  const player = toPlayerType(userId, model);
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  switch (msg[0]) {
+    case 'user-left': {
+      const userId = msg[1].userId;
+      const player = toPlayerType(userId, model);
 
-  if (player === 'none') {
-    return [model, Cmd.None];
+      if (player === 'none') {
+        return { model };
+      }
+
+      const modelNew: Model = {
+        type: 'Setup',
+        moveTimeLimit: model.moveTimeLimit,
+        PlayerOne: model.PlayerOne,
+        PlayerTwo: model.PlayerTwo,
+        [player]: 'none',
+      };
+
+      return {
+        model: modelNew,
+        cmd: broadcast(['player-left', modelNew]),
+      };
+    }
   }
-
-  const modelNew: Model = {
-    type: 'Setup',
-    moveTimeLimit: model.moveTimeLimit,
-    PlayerOne: model.PlayerOne,
-    PlayerTwo: model.PlayerTwo,
-    [player]: 'none',
-  };
-
-  return [modelNew, broadcast(['player-left', modelNew])];
 };
 
 //

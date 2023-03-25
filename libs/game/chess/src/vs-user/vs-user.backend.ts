@@ -1,5 +1,5 @@
 import { Cmd, exhaustive, Sub, Time } from '@gamezilla/core';
-import { UserId } from '@gamezilla/shared';
+import { RoomMsg } from '@gamezilla/game-shared';
 import * as Board from '../chess/chess-board';
 import {
   BackendModel,
@@ -182,45 +182,56 @@ const sendResponse = (
   ];
 };
 
-export const updateRoomLeave = (
-  { broadcast }: { broadcast: (m: ToFrontend) => Cmd },
-  userId: UserId,
-  model: Model
-): [Model, Cmd<Msg>] => {
-  switch (model.type) {
-    case 'Setup': {
-      const color: Board.Color | 'none' =
-        model.b === userId ? 'b' : model.w === userId ? 'w' : 'none';
+export const updateFromRoom = ({
+  broadcast,
+  msg,
+  model,
+}: {
+  broadcast: (m: ToFrontend) => Cmd;
+  msg: RoomMsg;
+  model: Model;
+}): { model: Model; cmd?: Cmd<Msg> } => {
+  switch (msg[0]) {
+    case 'user-left': {
+      switch (model.type) {
+        case 'Setup': {
+          const { userId } = msg[1];
+          const color: Board.Color | 'none' =
+            model.b === userId ? 'b' : model.w === userId ? 'w' : 'none';
 
-      if (color === 'none') {
-        return [model, Cmd.None];
+          if (color === 'none') {
+            return { model };
+          }
+
+          const modelNew: Model = { ...model, [color]: 'none' };
+
+          return { model: modelNew, cmd: broadcast(['player-left', modelNew]) };
+        }
+
+        case 'game':
+        case 'GameOver': {
+          const { userId } = msg[1];
+
+          const color: Board.Color | 'none' =
+            model.b === userId ? 'b' : model.w === userId ? 'w' : 'none';
+
+          if (color === 'none') {
+            return { model };
+          }
+
+          const otherColor = Board.toOppositeColor(color);
+
+          const modelNew: Model = {
+            ...model,
+            type: 'Setup',
+            clockPreset: model.clock.preset,
+            [otherColor]: model[otherColor],
+            [color]: 'none',
+          };
+
+          return { model: modelNew, cmd: broadcast(['player-left', modelNew]) };
+        }
       }
-
-      const modelNew: Model = { ...model, [color]: 'none' };
-
-      return [modelNew, broadcast(['player-left', modelNew])];
-    }
-
-    case 'game':
-    case 'GameOver': {
-      const color: Board.Color | 'none' =
-        model.b === userId ? 'b' : model.w === userId ? 'w' : 'none';
-
-      if (color === 'none') {
-        return [model, Cmd.None];
-      }
-
-      const otherColor = Board.toOppositeColor(color);
-
-      const modelNew: Model = {
-        ...model,
-        type: 'Setup',
-        clockPreset: model.clock.preset,
-        [otherColor]: model[otherColor],
-        [color]: 'none',
-      };
-
-      return [modelNew, broadcast(['player-left', modelNew])];
     }
   }
 };
