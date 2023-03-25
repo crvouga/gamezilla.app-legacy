@@ -1,5 +1,4 @@
 import { Cmd, Sub, Time } from '@gamezilla/core';
-import { UserId } from '@gamezilla/shared';
 import {
   BackendModel,
   BackendMsg,
@@ -109,14 +108,6 @@ export const updateFromFrontend = (
       return [modelNew, broadcast(['InputRotate_Done', result])];
     }
   }
-};
-
-export const updateRoomLeave = (
-  userId: UserId,
-  model: Model
-): [Model, Cmd<Msg>] => {
-  console.log('handle leave room', userId);
-  return [model, Cmd.None];
 };
 
 //

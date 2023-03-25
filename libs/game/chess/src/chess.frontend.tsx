@@ -1,5 +1,5 @@
 import { Audio, Cmd, p, RemoteData, Sub, Unit } from '@gamezilla/core';
-import { GameRoomCtx, ViewMainMenu } from '@gamezilla/game-shared';
+import { RoomCtx, ViewMainMenu } from '@gamezilla/game-shared';
 import { Alerts } from '@gamezilla/shared';
 import {
   BackendModel,
@@ -57,7 +57,7 @@ export const update = ({
   sendToBackend,
   ctx,
 }: {
-  ctx: GameRoomCtx;
+  ctx: RoomCtx;
   sendToBackend: (msg: ToBackend) => Cmd;
   msg: Msg;
   model: Model;
@@ -138,7 +138,7 @@ export const updateFromBackend = ({
   sendToBackend,
 }: {
   sendToBackend: (msg: ToBackend) => Cmd;
-  ctx: GameRoomCtx;
+  ctx: RoomCtx;
   msg: ToFrontend;
   model: Model;
 }): [Model, Cmd<Msg>, OutAction[]] => {
@@ -275,10 +275,10 @@ export const View = ({
   $send,
   gameRoomCtx,
 }: {
-  ctx: GameRoomCtx;
+  ctx: RoomCtx;
   model: Model;
   $send: (msg: Msg) => void;
-  gameRoomCtx: GameRoomCtx;
+  gameRoomCtx: RoomCtx;
 }) => {
   switch (model.mode[0]) {
     case 'none': {

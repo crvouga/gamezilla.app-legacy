@@ -1,5 +1,4 @@
 import { Cmd, Result, Sub, Time } from '@gamezilla/core';
-import { UserId } from '@gamezilla/shared';
 import * as Snake from './snake';
 import {
   BackendModel,
@@ -124,14 +123,6 @@ const updateRequest = (
     modelNew,
     Cmd.batch([broadcast(response), broadcast(['sync', modelNew])]),
   ];
-};
-
-export const updateRoomLeave = (
-  userId: UserId,
-  model: Model
-): [Model, Cmd<Msg>] => {
-  console.log('handle room leave', userId);
-  return [model, Cmd.None];
 };
 
 //

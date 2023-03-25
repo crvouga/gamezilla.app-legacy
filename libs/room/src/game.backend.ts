@@ -1,5 +1,5 @@
 import { Cmd, exhaustive, Sub } from '@gamezilla/core';
-import { SharedMsg } from '@gamezilla/game-shared';
+import { RoomMsg } from '@gamezilla/game-shared';
 import { ChessBackend } from '@gamezilla/game/chess';
 import { ConnectFourBackend } from '@gamezilla/game/connect-four';
 import { FlowBackend } from '@gamezilla/game/flow';
@@ -349,110 +349,81 @@ export const updateFromFrontend = ({
   }
 };
 
-export const updateShared = ({
-  model,
-  msg,
+export const updateFromRoom = ({
   broadcast,
+  msg,
+  model,
 }: {
-  msg: SharedMsg;
-  model: Model;
   broadcast: (m: ToFrontend) => Cmd;
+  msg: RoomMsg;
+  model: Model;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
   switch (model.type) {
-    case 'gomoku': {
-      return { model };
-    }
-    case 'tetris': {
-      return { model };
-    }
     case 'chess': {
-      return { model };
-    }
-    case 'snake': {
-      return { model };
-    }
-    case 'connect-four': {
-      return { model };
-    }
-    case 'tic-tac-toe': {
-      const updated = TicTacToeBackend.updateShared({
-        broadcast: (m) => broadcast(['tic-tac-toe', m]),
-        model: model.child,
+      const updated = ChessBackend.updateFromRoom({
+        broadcast: (m) => broadcast(['chess', m]),
         msg,
+        model: model.child,
+      });
+
+      return {
+        model: { type: 'chess', child: updated.model },
+        cmd: Cmd.tag('chess', updated.cmd ?? Cmd.None),
+      };
+    }
+
+    case 'connect-four': {
+      const updated = ConnectFourBackend.updateFromRoom({
+        msg,
+        model: model.child,
+        broadcast: (m) => broadcast(['connect-four', m]),
+      });
+      return {
+        model: { type: 'connect-four', child: updated.model },
+        cmd: Cmd.tag('connect-four', updated.cmd ?? Cmd.None),
+      };
+    }
+
+    case 'tic-tac-toe': {
+      const updated = TicTacToeBackend.updateFromRoom({
+        broadcast: (msg) => broadcast(['tic-tac-toe', msg]),
+        msg,
+        model: model.child,
       });
       return {
         model: { type: 'tic-tac-toe', child: updated.model },
-        cmd: Cmd.tag('tic-tac-toe', updated?.cmd ?? Cmd.None),
+        cmd: Cmd.tag('tic-tac-toe', updated.cmd ?? Cmd.None),
       };
-    }
-    case 'maze': {
-      return { model };
-    }
-
-    case 'flow': {
-      return { model };
-    }
-  }
-};
-
-export const updateRoomLeave = (
-  { broadcast }: { broadcast: (msg: ToFrontend) => Cmd },
-  userId: UserId,
-  model: Model
-): [Model, Cmd<Msg>] => {
-  switch (model.type) {
-    case 'chess': {
-      const [child, cmd] = ChessBackend.updateRoomLeave(
-        { broadcast: (msg) => broadcast(['chess', msg]) },
-        userId,
-        model.child
-      );
-      return [{ type: 'chess', child }, Cmd.tag('chess', cmd)];
-    }
-
-    case 'connect-four': {
-      const [child, cmd] = ConnectFourBackend.updateRoomLeave({
-        userId,
-        model: model.child,
-        broadcast: (msg) => broadcast(['connect-four', msg]),
-      });
-      return [{ type: 'connect-four', child }, Cmd.tag('connect-four', cmd)];
-    }
-
-    case 'tic-tac-toe': {
-      const [child, cmd] = TicTacToeBackend.updateRoomLeave(
-        { broadcast: (msg) => broadcast(['tic-tac-toe', msg]) },
-        userId,
-        model.child
-      );
-      return [{ type: 'tic-tac-toe', child }, Cmd.tag('tic-tac-toe', cmd)];
     }
 
     case 'gomoku': {
-      const [child, cmd] = GomokuBackend.updateRoomLeave(userId, model.child);
-      return [{ type: 'gomoku', child }, Cmd.tag('gomoku', cmd)];
+      const updated = GomokuBackend.updateFromRoom({
+        msg,
+        model: model.child,
+      });
+      return {
+        model: { type: 'gomoku', child: updated.model },
+        cmd: Cmd.tag('gomoku', updated.cmd ?? Cmd.None),
+      };
     }
 
     case 'tetris': {
-      const [child, cmd] = TetrisBackend.updateRoomLeave(userId, model.child);
-      return [{ type: 'tetris', child }, Cmd.tag('tetris', cmd)];
+      return { model };
     }
 
     case 'snake': {
-      const [child, cmd] = SnakeBackend.updateRoomLeave(userId, model.child);
-      return [{ type: 'snake', child }, Cmd.tag('snake', cmd)];
+      return { model };
     }
 
     case 'maze': {
-      const [child, cmd] = MazeBackend.updateRoomLeave(userId, model.child);
-      return [{ type: 'maze', child }, Cmd.tag('maze', cmd)];
+      return { model };
     }
 
     case 'flow': {
-      return [model, Cmd.None];
+      return { model };
     }
   }
 };

@@ -1,5 +1,5 @@
 import { Cmd, Sub } from '@gamezilla/core';
-import { GameRoomCtx, viewSelectModeScreen } from '@gamezilla/game-shared';
+import { RoomCtx, viewSelectModeScreen } from '@gamezilla/game-shared';
 import { Ctx } from '@gamezilla/shared';
 import {
   BackendModel,
@@ -216,7 +216,7 @@ export const view = ({
 }: {
   model: Model;
   ctx: Ctx;
-  gameRoomCtx: GameRoomCtx;
+  gameRoomCtx: RoomCtx;
   $send: (m: Msg) => void;
 }) => {
   switch (model.type) {

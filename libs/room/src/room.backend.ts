@@ -127,7 +127,7 @@ export const updateFromFrontend = ({
     }
 
     case 'leave': {
-      return updateRoomLeave({ ctx, wire, model, msg });
+      return updateLeave({ ctx, wire, model, msg });
     }
 
     case 'game': {
@@ -192,7 +192,7 @@ export const updateFromFrontend = ({
   }
 };
 
-const updateRoomLeave = ({
+const updateLeave = ({
   wire,
   model,
   msg,
@@ -237,25 +237,24 @@ const updateRoomLeave = ({
     return { model: modelAfter, cmd: wire.broadcast(res) };
   }
 
-  const gameUpdated = Game.updateRoomLeave(
-    {
-      broadcast: (msg) =>
-        sendToRoom({
-          sendToUser: wire.sendToUser,
-          model: modelAfter,
-          roomId: room.roomId,
-          msg: ['game', msg],
-        }),
+  const updated = Game.updateFromRoom({
+    broadcast: (msg) => {
+      return sendToRoom({
+        sendToUser: wire.sendToUser,
+        model: modelAfter,
+        roomId: room.roomId,
+        msg: ['game', msg],
+      });
     },
-    user.userId,
-    game
-  );
+    model: game,
+    msg: ['user-left', { userId: ctx.currentUserId }],
+  });
 
   const modelNew: Model = {
     ...modelAfter,
     games: {
       ...modelAfter.games,
-      [user.roomId]: gameUpdated[0],
+      [user.roomId]: updated.model,
     },
   };
 
@@ -264,7 +263,7 @@ const updateRoomLeave = ({
     cmd: Cmd.batch([
       wire.broadcast(res),
       p(
-        gameUpdated[1],
+        updated.cmd ?? Cmd.None,
         Cmd.map((msg): Msg => ['game', room.roomId, msg])
       ),
     ]),

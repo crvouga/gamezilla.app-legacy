@@ -1,7 +1,6 @@
 import { Cmd, p, Sub } from '@gamezilla/core';
-import { SharedMsg } from '@gamezilla/game-shared';
-import { UserId } from '@gamezilla/shared';
-import { toDepth, findBestMove, toOpposite } from '../tic-tic-toe/tic-tac-toe';
+import { RoomMsg } from '@gamezilla/game-shared';
+import { findBestMove, toDepth, toOpposite } from '../tic-tic-toe/tic-tac-toe';
 import {
   BackendModel,
   BackendMsg,
@@ -199,12 +198,12 @@ const updateFromFrontend_: UpdateFromFrontend = (
   }
 };
 
-export const updateShared = ({
+export const updateFromRoom = ({
+  broadcast,
   msg,
   model,
-  broadcast,
 }: {
-  msg: SharedMsg;
+  msg: RoomMsg;
   model: Model;
   broadcast: (m: ToFrontend) => Cmd;
 }): {
@@ -213,9 +212,7 @@ export const updateShared = ({
 } => {
   switch (msg[0]) {
     case 'user-left': {
-      const { userId } = msg[1];
-
-      if (model.player !== userId) {
+      if (model.player !== msg[1].userId) {
         return { model };
       }
 
@@ -226,32 +223,12 @@ export const updateShared = ({
         userPlayerType: model.userPlayerType,
       };
 
-      return { model: modelNew, cmd: broadcast(['player-left', modelNew]) };
+      return {
+        model: modelNew,
+        cmd: broadcast(['player-left', modelNew]),
+      };
     }
   }
-};
-
-export const updateRoomLeave = ({
-  broadcast,
-  userId,
-  model,
-}: {
-  userId: UserId;
-  model: Model;
-  broadcast: (m: ToFrontend) => Cmd;
-}): [Model, Cmd<Msg>] => {
-  if (model.player !== userId) {
-    return [model, Cmd.None];
-  }
-
-  const modelNew: Model = {
-    type: 'Setup',
-    botLevel: model.botLevel,
-    player: 'none',
-    userPlayerType: model.userPlayerType,
-  };
-
-  return [modelNew, broadcast(['player-left', modelNew])];
 };
 
 //

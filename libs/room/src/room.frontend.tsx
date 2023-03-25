@@ -1,5 +1,5 @@
 import { Cmd, exhaustive, p, RemoteData, Sub } from '@gamezilla/core';
-import { GameRoomCtx } from '@gamezilla/game-shared';
+import { RoomCtx } from '@gamezilla/game-shared';
 import { ProfileStore } from '@gamezilla/profile';
 import { Alerts, Ctx, RoomId, Route, UserId } from '@gamezilla/shared';
 import {
@@ -175,7 +175,7 @@ export const update_: Update = ({ ctx, sendToBackend, msg, model }) => {
 
       const gameMsg = msg[1];
 
-      const gameRoomCtx: GameRoomCtx = {
+      const gameRoomCtx: RoomCtx = {
         ...ctx,
         hostId: room.hostId,
         onQuit: () => {

@@ -30,7 +30,7 @@ import {
   Ctx,
   ProfileAvatar,
   Route,
-  SharedMsg,
+  AppMsg,
   Username,
 } from '@gamezilla/shared';
 import {
@@ -275,17 +275,17 @@ const updateFetchProfile = ({
   return { model };
 };
 
-export const updateShared = ({
+export const updateFromApp = ({
   model,
   msg,
 }: {
   model: Model;
-  msg: SharedMsg;
+  msg: AppMsg;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  const chat = ChatFrontend.updateShared({
+  const chat = ChatFrontend.updateFromApp({
     model: ChatFrontend.init,
     msg,
     sendToBackend: (m) => () => {

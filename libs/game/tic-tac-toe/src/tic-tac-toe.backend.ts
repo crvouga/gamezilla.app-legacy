@@ -1,5 +1,5 @@
 import { Cmd, exhaustive, Result, Sub } from '@gamezilla/core';
-import { SharedMsg } from '@gamezilla/game-shared';
+import { RoomMsg } from '@gamezilla/game-shared';
 import { UserId } from '@gamezilla/shared';
 import {
   BackendModel,
@@ -128,14 +128,14 @@ export const updateFromFrontend = (
   }
 };
 
-export const updateShared = ({
+export const updateFromRoom = ({
   broadcast,
   msg,
   model,
 }: {
   broadcast: (m: ToFrontend) => Cmd;
-  msg: SharedMsg;
   model: Model;
+  msg: RoomMsg;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -146,9 +146,9 @@ export const updateShared = ({
     }
 
     case 'vs-bot': {
-      const updated = VsBot.updateShared({
-        msg,
+      const updated = VsBot.updateFromRoom({
         broadcast: (m) => broadcast(['vs-bot', m]),
+        msg,
         model: model.child,
       });
       return {
@@ -158,45 +158,15 @@ export const updateShared = ({
     }
 
     case 'vs-user': {
-      const updated = VsUser.updateShared({
-        msg,
+      const updated = VsUser.updateFromRoom({
         broadcast: (m) => broadcast(['vs-user', m]),
+        msg,
         model: model.child,
       });
       return {
         model: { mode: 'vs-user', child: updated.model },
         cmd: updated.cmd ? Cmd.tag('vs-user', updated.cmd) : undefined,
       };
-    }
-  }
-};
-
-export const updateRoomLeave = (
-  { broadcast }: { broadcast: (m: ToFrontend) => Cmd },
-  userId: UserId,
-  model: Model
-): [Model, Cmd<Msg>] => {
-  switch (model.mode) {
-    case 'none': {
-      return [model, Cmd.None];
-    }
-
-    case 'vs-bot': {
-      const [child, cmd] = VsBot.updateRoomLeave({
-        broadcast: (m) => broadcast(['vs-bot', m]),
-        userId,
-        model: model.child,
-      });
-      return [{ mode: 'vs-bot', child }, Cmd.tag('vs-bot', cmd)];
-    }
-
-    case 'vs-user': {
-      const [child, cmd] = VsUser.updateRoomLeave(
-        { broadcast: (m) => broadcast(['vs-user', m]) },
-        userId,
-        model.child
-      );
-      return [{ mode: 'vs-user', child }, Cmd.tag('vs-user', cmd)];
     }
   }
 };

@@ -1,5 +1,5 @@
 import { andThen, Cmd, eq, p, Result, Sub } from '@gamezilla/core';
-import { SharedMsg } from '@gamezilla/game-shared';
+import { RoomMsg } from '@gamezilla/game-shared';
 import { UserId } from '@gamezilla/shared';
 import { DatabaseConnection } from '@gamezilla/shared/backend';
 import { GameMsg } from '../chess-shared';
@@ -266,7 +266,7 @@ export const updateFromRoom = ({
   msg,
   model,
 }: {
-  msg: SharedMsg;
+  msg: RoomMsg;
   model: Model;
 }): {
   model: Model;

@@ -1,5 +1,5 @@
 import { Browser, Cmd, p, RemoteData } from '@gamezilla/core';
-import { Ctx, Route, SharedMsg } from '@gamezilla/shared';
+import { Ctx, Route, AppMsg } from '@gamezilla/shared';
 import {
   Avatar,
   Box,
@@ -144,12 +144,12 @@ const removeKey = <T extends object>(obj: T, key: keyof T) => {
   return newObj;
 };
 
-export const updateShared = ({
+export const updateFromApp = ({
   msg,
   model,
   sendToBackend,
 }: {
-  msg: SharedMsg;
+  msg: AppMsg;
   model: Model;
   sendToBackend: (m: ToBackend) => Cmd;
 }): {

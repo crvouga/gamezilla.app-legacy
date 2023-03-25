@@ -1,4 +1,5 @@
 import { Cmd, exhaustive, Result, Sub } from '@gamezilla/core';
+import { RoomMsg } from '@gamezilla/game-shared';
 import { UserId } from '@gamezilla/shared';
 import { DatabaseConnection } from '@gamezilla/shared/backend';
 import { GameMsg } from './chess-shared';
@@ -206,44 +207,57 @@ export const updateFromFrontend = ({
   }
 };
 
-export const updateRoomLeave = (
-  { broadcast }: { broadcast: (msg: ToFrontend) => Cmd },
-  userId: UserId,
-  model: Model
-): [Model, Cmd<Msg>] => {
+export const updateFromRoom = ({
+  broadcast,
+  msg,
+  model,
+}: {
+  broadcast: (msg: ToFrontend) => Cmd;
+  model: Model;
+  msg: RoomMsg;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
   switch (model[0]) {
     case 'none': {
-      return [model, Cmd.None];
+      return { model };
     }
 
     case 'vs-bot': {
-      const [child, cmd] = VsBot.updateRoomLeave(
-        { broadcast: (msg) => broadcast(['vs-bot', msg]) },
-        userId,
-        model[1]
-      );
-      return [['vs-bot', child], Cmd.tag('vs-bot', cmd)];
+      const updated = VsBot.updateFromRoom({
+        broadcast: (m) => broadcast(['vs-bot', m]),
+        msg,
+        model: model[1],
+      });
+      return {
+        model: ['vs-bot', updated.model],
+        cmd: Cmd.tag('vs-bot', updated.cmd ?? Cmd.None),
+      };
     }
 
     case 'vs-user': {
-      const [child, cmd] = VsUser.updateRoomLeave(
-        { broadcast: (msg) => broadcast(['vs-user', msg]) },
-        userId,
-        model[1]
-      );
-      return [['vs-user', child], Cmd.tag('vs-user', cmd)];
+      const updated = VsUser.updateFromRoom({
+        broadcast: (m) => broadcast(['vs-user', m]),
+        msg,
+        model: model[1],
+      });
+      return {
+        model: ['vs-user', updated.model],
+        cmd: Cmd.tag('vs-user', updated.cmd ?? Cmd.None),
+      };
     }
 
     case 'puzzle': {
       const updated = Puzzle.updateFromRoom({
         model: model[1],
-        msg: ['user-left', { userId }],
+        msg,
       });
 
-      return [
-        ['puzzle', updated.model],
-        Cmd.tag('puzzle', updated.cmd ?? Cmd.None),
-      ];
+      return {
+        model: ['puzzle', updated.model],
+        cmd: Cmd.tag('puzzle', updated.cmd ?? Cmd.None),
+      };
     }
   }
 };

@@ -1,5 +1,5 @@
 import { Cmd, Sub, Time } from '@gamezilla/core';
-import { GameRoomCtx } from '@gamezilla/game-shared';
+import { RoomCtx } from '@gamezilla/game-shared';
 import {
   ActionButton,
   Box,
@@ -62,7 +62,7 @@ export const update = ({
   msg: Msg;
   model: Model;
   sendToBackend: (m: ToBackend) => Cmd;
-  ctx: GameRoomCtx;
+  ctx: RoomCtx;
 }): {
   model: Model;
   cmd?: Cmd;
@@ -87,7 +87,7 @@ export const updateFromBackend = ({
   msg,
   model,
 }: {
-  ctx: GameRoomCtx;
+  ctx: RoomCtx;
   msg: ToFrontend;
   model: Model;
 }): {
@@ -155,7 +155,7 @@ export const View = ({
   ctx,
   $send,
 }: {
-  ctx: GameRoomCtx;
+  ctx: RoomCtx;
   model: Model;
   $send: (m: Msg) => void;
   onClose: () => void;

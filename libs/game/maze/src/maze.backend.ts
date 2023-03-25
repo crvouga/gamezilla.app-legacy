@@ -1,5 +1,4 @@
-import { Time, Cmd, Sub } from '@gamezilla/core';
-import { UserId } from '@gamezilla/shared';
+import { Cmd, Sub, Time } from '@gamezilla/core';
 import {
   BackendModel,
   BackendMsg,
@@ -63,13 +62,6 @@ export const updateFromFrontend = (
       return [modelNew, broadcast(res)];
     }
   }
-};
-
-export const updateRoomLeave = (
-  _userId: UserId,
-  model: Model
-): [Model, Cmd<Msg>] => {
-  return [model, Cmd.None];
 };
 
 //

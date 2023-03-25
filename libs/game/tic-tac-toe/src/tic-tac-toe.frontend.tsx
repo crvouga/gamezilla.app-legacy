@@ -1,5 +1,5 @@
 import { Sub, Cmd, exhaustive } from '@gamezilla/core';
-import { GameRoomCtx, viewSelectModeScreen } from '@gamezilla/game-shared';
+import { RoomCtx, viewSelectModeScreen } from '@gamezilla/game-shared';
 import { ProfileStore } from '@gamezilla/profile';
 import { Alerts, Ctx } from '@gamezilla/shared';
 import {
@@ -210,7 +210,7 @@ export const View = ({
   ctx: Ctx;
   model: Model;
   $send: (msg: Msg) => void;
-  gameRoomCtx: GameRoomCtx;
+  gameRoomCtx: RoomCtx;
 }) => {
   switch (model.mode) {
     case 'none': {

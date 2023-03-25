@@ -1,5 +1,5 @@
 import { Cmd, p, Sub } from '@gamezilla/core';
-import { UserId } from '@gamezilla/shared';
+import { RoomMsg } from '@gamezilla/game-shared';
 import * as Board from '../chess/chess-board';
 import {
   BackendModel,
@@ -148,22 +148,33 @@ const updateFromFrontend_ = (
   }
 };
 
-export const updateRoomLeave = (
-  { broadcast }: { broadcast: (msg: ToFrontend) => Cmd },
-  userId: UserId,
-  model: Model
-): [Model, Cmd<Msg>] => {
-  if (model.userId === userId) {
-    const modelNew: Model = {
-      type: 'Setup',
-      botLevel: model.botLevel,
-      userColor: model.userColor,
-      userId: 'none',
-    };
-    return [modelNew, broadcast(['player-left', modelNew])];
-  }
+export const updateFromRoom = ({
+  msg,
+  model,
+  broadcast,
+}: {
+  msg: RoomMsg;
+  broadcast: (m: ToFrontend) => Cmd;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd;
+} => {
+  switch (msg[0]) {
+    case 'user-left': {
+      if (model.userId === msg[1].userId) {
+        const modelNew: Model = {
+          type: 'Setup',
+          botLevel: model.botLevel,
+          userColor: model.userColor,
+          userId: 'none',
+        };
+        return { model: modelNew, cmd: broadcast(['player-left', modelNew]) };
+      }
 
-  return [model, Cmd.None];
+      return { model };
+    }
+  }
 };
 
 //
