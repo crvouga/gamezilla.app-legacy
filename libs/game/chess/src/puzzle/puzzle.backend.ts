@@ -43,7 +43,7 @@ export const init = ({
         userId: ctx.currentUserId,
         query: initShared.query,
       }),
-      Cmd.perform((result): Msg => ['next-puzzle-done', result])
+      Cmd.perform((result): Msg => ['next-done', result])
     ),
   };
 };
@@ -86,9 +86,9 @@ export const update = ({
       };
     }
 
-    case 'next-puzzle-done': {
+    case 'next-done': {
       if (msg[1].type === 'Err') {
-        return { model, cmd: broadcast(['next-puzzle-done', msg[1]]) };
+        return { model, cmd: broadcast(['next-done', msg[1]]) };
       }
 
       const puzzles = msg[1].value;
@@ -100,15 +100,15 @@ export const update = ({
 
       return {
         model: modelNew,
-        cmd: broadcast(['next-puzzle-done', Result.Ok(modelNew)]),
+        cmd: broadcast(['next-done', Result.Ok(modelNew)]),
       };
     }
 
-    case 'puzzle-interaction-insert-done': {
+    case 'interaction-insert-done': {
       return {
         model,
         cmd: broadcast([
-          'puzzle-interaction-insert-done',
+          'interaction-insert-done',
           p(
             msg[1],
             Result.map(() => model)
@@ -176,7 +176,7 @@ const updatePuzzleCompleted = ({
           type: status.type,
         },
       ]),
-      Cmd.perform((result) => ['puzzle-interaction-insert-done', result])
+      Cmd.perform((result) => ['interaction-insert-done', result])
     ),
   };
 };
@@ -204,7 +204,7 @@ const updatePuzzleNext = ({
           userId: ctx.currentUserId,
           query: model.query,
         }),
-        Cmd.perform((result): Msg => ['next-puzzle-done', result])
+        Cmd.perform((result): Msg => ['next-done', result])
       ),
     };
   }

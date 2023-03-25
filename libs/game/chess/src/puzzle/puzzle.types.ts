@@ -185,17 +185,17 @@ export type PuzzleCompleted = {
 
 export type Req =
   | ['input-move', { moveInput: ChessBoard.MoveInput }]
-  | ['next-puzzle']
-  | ['retry-puzzle']
-  | ['skip-puzzle']
+  | ['next']
+  | ['retry']
+  | ['skip']
   | ['show-hint'];
 
 export type Res = [Req[0], Result<string, SharedModel>];
 
 export type BackendMsg =
   | ['initialize', Result<string, Puzzle[]>]
-  | ['next-puzzle-done', Result<string, Puzzle[]>]
-  | ['puzzle-interaction-insert-done', Result<string, null>];
+  | ['next-done', Result<string, Puzzle[]>]
+  | ['interaction-insert-done', Result<string, null>];
 
 export type FrontendMsg = Req | ['animate'];
 
@@ -204,8 +204,8 @@ export type ToBackend = Req | ['initialize'];
 export type ToFrontend =
   | Res
   | ['initialize', Result<string, SharedModel>]
-  | ['next-puzzle-done', Result<string, SharedModel>]
-  | ['puzzle-interaction-insert-done', Result<string, SharedModel>];
+  | ['next-done', Result<string, SharedModel>]
+  | ['interaction-insert-done', Result<string, SharedModel>];
 
 export type BackendModel = SharedModel;
 
@@ -258,7 +258,7 @@ export const handle = ({
       return Ok(modelNew);
     }
 
-    case 'next-puzzle': {
+    case 'next': {
       if (ctx.currentUserId !== ctx.hostId) {
         return Err('must-be-host');
       }
@@ -282,7 +282,7 @@ export const handle = ({
       return Ok(modelNew);
     }
 
-    case 'retry-puzzle': {
+    case 'retry': {
       if (ctx.currentUserId !== ctx.hostId) {
         return Err('must-be-host');
       }
@@ -301,7 +301,7 @@ export const handle = ({
       return Ok(modelNew);
     }
 
-    case 'skip-puzzle': {
+    case 'skip': {
       if (ctx.currentUserId !== ctx.hostId) {
         return Err('must-be-host');
       }
