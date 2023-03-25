@@ -273,7 +273,7 @@ const ViewActionButtons = ({
             icon={<Icon name="lightbulb" />}
             label="Hint"
             onClick={() => {
-              //
+              $send(['show-hint']);
             }}
           />
         </>

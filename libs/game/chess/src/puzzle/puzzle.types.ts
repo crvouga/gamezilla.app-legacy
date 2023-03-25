@@ -7,7 +7,10 @@ export type SharedModel = {
   puzzle: Puzzle | null;
   query: PuzzleQuery;
   moves: ChessBoard.MoveInput[];
+  hint: Hint;
 };
+
+type Hint = 'none' | 'from' | 'from-and-to';
 
 const initQuery: PuzzleQuery = {
   rating: 600,
@@ -18,6 +21,7 @@ export const initShared: SharedModel = {
   puzzle: null,
   moves: [],
   query: initQuery,
+  hint: 'none',
 };
 
 export type PuzzleQuery = {
@@ -181,7 +185,8 @@ export type Req =
   | ['input-move', { moveInput: ChessBoard.MoveInput }]
   | ['next-puzzle']
   | ['retry-puzzle']
-  | ['skip-puzzle'];
+  | ['skip-puzzle']
+  | ['show-hint'];
 
 export type Res = [Req[0], Result<string, SharedModel>];
 
@@ -313,6 +318,25 @@ export const handle = ({
           ...model.query,
           index: model.query.index + 1,
         },
+      };
+
+      return Ok(modelNew);
+    }
+
+    case 'show-hint': {
+      if (ctx.currentUserId !== ctx.hostId) {
+        return Err('must-be-host');
+      }
+
+      const toNext: { [key in Hint]: Hint } = {
+        none: 'from',
+        from: 'from-and-to',
+        'from-and-to': 'from-and-to',
+      };
+
+      const modelNew: SharedModel = {
+        ...model,
+        hint: toNext[model.hint],
       };
 
       return Ok(modelNew);

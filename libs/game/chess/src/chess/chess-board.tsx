@@ -927,7 +927,7 @@ export const View = ({
   }, [model.fen]);
 
   return (
-    <div ref={ref}>
+    <div style={{ position: 'relative', width: '100%' }} ref={ref}>
       <Chessboard
         ref={boardRef}
         showBoardNotation
@@ -942,9 +942,6 @@ export const View = ({
         customLightSquareStyle={{
           backgroundColor: theme.light,
         }}
-        // onSquareClick={() => {
-        //   clearPremoves()
-        // }}
         onMouseOverSquare={(square) => {
           setHoveredSquare(fromLowercase(square));
         }}
