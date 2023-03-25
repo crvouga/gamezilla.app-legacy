@@ -8,6 +8,7 @@ export type SharedModel = {
   query: PuzzleQuery;
   moves: ChessBoard.MoveInput[];
   hint: Hint;
+  puzzles: Puzzle[];
 };
 
 type Hint = 'none' | 'from' | 'from-and-to';
@@ -22,6 +23,7 @@ export const initShared: SharedModel = {
   moves: [],
   query: initQuery,
   hint: 'none',
+  puzzles: [],
 };
 
 export type PuzzleQuery = {
