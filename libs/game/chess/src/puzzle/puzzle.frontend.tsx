@@ -299,14 +299,14 @@ const ViewActionButtons = ({
             icon={<Icon name="restart" />}
             label="Retry"
             onClick={() => {
-              $send(['retry-puzzle']);
+              $send(['retry']);
             }}
           />
           <ActionButton
             icon={<Icon name="chevron-right" />}
             label="Skip"
             onClick={() => {
-              $send(['skip-puzzle']);
+              $send(['skip']);
             }}
           />
         </>
@@ -333,7 +333,7 @@ const ViewActionButtons = ({
             icon={<Icon name="arrow-circle-right" />}
             label="Next"
             onClick={() => {
-              $send(['next-puzzle']);
+              $send(['next']);
             }}
           />
         </>
