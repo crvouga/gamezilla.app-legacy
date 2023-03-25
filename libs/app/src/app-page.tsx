@@ -1,6 +1,5 @@
 import { Account, Auth, Logout, PageLogin } from '@gamezilla/auth';
 import { Cmd, exhaustive, p, Sub, t } from '@gamezilla/core';
-import { PartyFrontend as Party } from '@gamezilla/party';
 import {
   PageProfile,
   PageProfileCreate,
@@ -47,26 +46,7 @@ export type Model =
   | ['profile-update', PageProfileUpdate.Model]
   | ['search', PageProfileSearch.Model]
   | ['room', RoomId]
-  | ['room-list']
-  | ['party'];
-
-export type Model_ = {
-  ['login']: PageLogin.Model;
-  ['logout']: Logout.Model;
-  ['account']: Account.Model;
-  //
-  ['profile']: PageProfile.Model;
-  ['profile-create']: PageProfileCreate.Model;
-  ['profile-delete']: PageProfileDelete.Model;
-  ['profile-update']: PageProfileUpdate.Model;
-  //
-  ['search']: PageProfileSearch.Model;
-  //
-  ['room']: null;
-  ['room-list']: null;
-  //
-  ['party']: null;
-};
+  | ['room-list'];
 
 //
 //
@@ -85,13 +65,11 @@ export type Msg =
   | ['profile-delete', PageProfileDelete.Msg]
   | ['profile-update', PageProfileUpdate.Msg]
   | ['search', PageProfileSearch.Msg]
-  | ['party', Party.Msg]
   | ['clicked-bottom-nav-link', Route.Model];
 
 export type OutAction =
   | Alerts.Action
   | Auth.Action
-  | Party.Action
   | Route.Action
   | ProfileStore.Action;
 
@@ -175,10 +153,6 @@ export const initReady = ({
 
     case 'room': {
       return [['room', route[1]], Cmd.None, []];
-    }
-
-    case 'party': {
-      return [['party'], Cmd.None, []];
     }
 
     case 'room-list': {
@@ -325,14 +299,6 @@ export const updateReady = ({
       return [model, Cmd.None, []];
     }
 
-    case 'party': {
-      if (msg[0] === 'party') {
-        return [['party'], Cmd.None, [['party', ['Msg', msg[1]]]]];
-      }
-
-      return [model, Cmd.None, []];
-    }
-
     case 'room-list': {
       return [model, Cmd.None, []];
     }
@@ -395,9 +361,8 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 //
 
 export const ViewReady = ({
-  gameRoom,
+  room,
   route,
-  party,
   model,
   profileStore,
   $send,
@@ -406,9 +371,8 @@ export const ViewReady = ({
 }: {
   ctx: Ctx;
   route: Route.Model;
-  gameRoom: RoomFrontend.Model;
+  room: RoomFrontend.Model;
   profileStore: ProfileStore.Model;
-  party: Party.Model;
   model: Model;
   $sendRoom: (msg: RoomFrontend.Msg) => void;
   $send: (msg: Msg) => void;
@@ -426,7 +390,7 @@ export const ViewReady = ({
           />
           <ViewBottomBar
             $sendRoom={$sendRoom}
-            gameRoom={gameRoom}
+            room={room}
             ctx={ctx}
             route={route}
             $send={$send}
@@ -445,7 +409,7 @@ export const ViewReady = ({
 
           <ViewBottomBar
             $sendRoom={$sendRoom}
-            gameRoom={gameRoom}
+            room={room}
             ctx={ctx}
             route={route}
             $send={$send}
@@ -487,7 +451,7 @@ export const ViewReady = ({
           />
           <ViewBottomBar
             $sendRoom={$sendRoom}
-            gameRoom={gameRoom}
+            room={room}
             ctx={ctx}
             route={route}
             $send={$send}
@@ -507,7 +471,7 @@ export const ViewReady = ({
           />
           <ViewBottomBar
             $sendRoom={$sendRoom}
-            gameRoom={gameRoom}
+            room={room}
             ctx={ctx}
             route={route}
             $send={$send}
@@ -520,28 +484,9 @@ export const ViewReady = ({
         <RoomFrontend.View
           roomId={model[1]}
           ctx={ctx}
-          model={gameRoom}
+          model={room}
           $send={$sendRoom}
         />
-      );
-    }
-
-    case 'party': {
-      return (
-        <>
-          <Party.ViewPage
-            ctx={ctx}
-            model={party}
-            $send={(msg) => $send(['party', msg])}
-          />
-          <ViewBottomBar
-            $sendRoom={$sendRoom}
-            gameRoom={gameRoom}
-            ctx={ctx}
-            route={route}
-            $send={$send}
-          />{' '}
-        </>
       );
     }
 
@@ -551,11 +496,11 @@ export const ViewReady = ({
           <RoomFrontend.ViewPageRoomList
             $send={$sendRoom}
             ctx={ctx}
-            model={gameRoom}
+            model={room}
           />
           <ViewBottomBar
             $sendRoom={$sendRoom}
-            gameRoom={gameRoom}
+            room={room}
             ctx={ctx}
             route={route}
             $send={$send}
@@ -607,14 +552,14 @@ export const ViewLoggedOut = ({
 const ViewBottomBar = ({
   ctx,
   route,
-  gameRoom,
+  room,
   $send,
   $sendRoom,
 }: {
   ctx: Ctx;
   route: Route.Model;
   $send: (m: Msg) => void;
-  gameRoom: RoomFrontend.Model;
+  room: RoomFrontend.Model;
   $sendRoom: (m: RoomFrontend.Msg) => void;
 }) => {
   return (
@@ -627,7 +572,7 @@ const ViewBottomBar = ({
         justifyContent: 'center',
       }}
     >
-      <RoomFrontend.ViewBar ctx={ctx} model={gameRoom} $send={$sendRoom} />
+      <RoomFrontend.ViewBar ctx={ctx} model={room} $send={$sendRoom} />
 
       <ViewBottomNavigation ctx={ctx} route={route} $send={$send} />
     </Box>
@@ -655,11 +600,6 @@ const ViewBottomNavigation = ({
       filled: <Icons.SportsEsports />,
       outlined: <Icons.SportsEsportsOutlined />,
     },
-    // {
-    //   route: ['party'],
-    //   filled: <Icons.Group />,
-    //   outlined: <Icons.GroupOutlined />,
-    // },
     {
       route: ['search'],
       label: 'Search',

@@ -1,9 +1,7 @@
 import { Auth } from '@gamezilla/auth';
 import { ChatFrontend, ChatStore } from '@gamezilla/chat';
-import { Option } from '@gamezilla/core';
-import { Party } from '@gamezilla/party';
 import { ProfileStore } from '@gamezilla/profile';
-import * as GameRoom from '@gamezilla/room';
+import * as Room from '@gamezilla/room';
 import { Alerts, ClientId, Route, SessionId, UserId } from '@gamezilla/shared';
 import * as Page from './app-page';
 
@@ -16,8 +14,7 @@ import * as Page from './app-page';
 //
 
 export type BackendModel = {
-  party: Party.BackendModel;
-  gameRoom: GameRoom.BackendModel;
+  room: Room.BackendModel;
   sessions: {
     [sessionId: SessionId]: Session;
   };
@@ -25,8 +22,8 @@ export type BackendModel = {
 
 export type Session = {
   sessionId: SessionId;
-  userId: Option<UserId>;
-  clientId: Option<ClientId>;
+  userId?: UserId;
+  clientId?: ClientId;
 };
 
 export type FrontendModel = {
@@ -35,8 +32,7 @@ export type FrontendModel = {
   auth: Auth.Model;
   page: Page.Model;
   route: Route.Model;
-  gameRoom: GameRoom.FrontendModel;
-  party: Party.FrontendModel;
+  room: Room.FrontendModel;
   wire: WireModel;
   profileStore: ProfileStore.Model;
   chat: ChatFrontend.Model;
@@ -56,34 +52,27 @@ export type WireModel =
 //
 //
 
-export type ToBackend =
-  | ['room', GameRoom.ToBackend]
-  | ['party', Party.ToBackend]
-  | ['auth', Auth.ToBackend];
+export type ToBackend = ['room', Room.ToBackend] | ['auth', Auth.ToBackend];
 
-export type ToFrontend =
-  | ['room', GameRoom.ToFrontend]
-  | ['party', Party.ToFrontend];
+export type ToFrontend = ['room', Room.ToFrontend];
 
 export type FrontendMsg =
   | ['→', ToFrontend]
   | ['wire', WireModel['type']]
   | ['route', Route.Msg]
   | ['alerts', Alerts.Msg]
-  | ['room', GameRoom.FrontendMsg]
+  | ['room', Room.FrontendMsg]
   | ['chat-store', ChatStore.Msg]
   | ['chat', ChatFrontend.Msg]
   | ['auth', Auth.Msg]
   | ['page', Page.Msg]
-  | ['party', Party.FrontendMsg]
   | ['profile-store', ProfileStore.Msg];
 
 export type BackendMsg =
   | ['→', SessionId, ClientId, ToBackend]
   | ['client-connected', SessionId, ClientId]
   | ['client-disconnected', SessionId, ClientId]
-  | ['room', GameRoom.BackendMsg]
-  | ['party', Party.BackendMsg];
+  | ['room', Room.BackendMsg];
 
 //
 //

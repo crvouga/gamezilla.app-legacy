@@ -37,15 +37,18 @@ export const init: Model = {
 
 export type Msg = BackendMsg;
 
-export const update = (
-  {
-    sendToUser,
-  }: {
-    sendToUser: (userIds: UserId[], msg: ToFrontend) => Cmd;
-  },
-  msg: Msg,
-  model: Model
-): [Model, Cmd<Msg>] => {
+export const update = ({
+  model,
+  msg,
+  sendToUser,
+}: {
+  sendToUser: (userIds: UserId[], msg: ToFrontend) => Cmd;
+  msg: Msg;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
   switch (msg[0]) {
     case 'game': {
       const roomId = msg[1];
@@ -53,15 +56,15 @@ export const update = (
       const game = model.games[roomId];
 
       if (!game) {
-        return [model, Cmd.None];
+        return { model };
       }
 
       const gameMsg = msg[2];
 
-      const [gameNew, gameCmd] = Game.update(
+      const updated = Game.update(
         {
-          broadcast: (msg) =>
-            sendToRoom({ sendToUser, model, roomId, msg: ['game', msg] }),
+          broadcast: (m) =>
+            sendToRoom({ sendToUser, model, roomId, msg: ['game', m] }),
         },
         gameMsg,
         game
@@ -71,17 +74,17 @@ export const update = (
         ...model,
         games: {
           ...model.games,
-          [roomId]: gameNew,
+          [roomId]: updated[0],
         },
       };
 
-      return [
-        modelNew,
-        p(
-          gameCmd,
-          Cmd.map((msg): Msg => ['game', roomId, msg])
+      return {
+        model: modelNew,
+        cmd: p(
+          updated[1],
+          Cmd.map((m): Msg => ['game', roomId, m])
         ),
-      ];
+      };
     }
   }
 };
@@ -298,21 +301,6 @@ const sendToRoom = ({
   }
 
   return sendToUser(userIds, msg);
-};
-
-//
-//
-//
-//
-//
-//
-//
-
-export const onClientConnected = (
-  { sendToClient }: { sendToClient: (msg: ToFrontend) => Cmd<Msg> },
-  model: Model
-): Cmd<Msg> => {
-  return sendToClient(['sync', model]);
 };
 
 //

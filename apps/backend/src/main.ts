@@ -9,9 +9,8 @@ import {
   ToBackend,
   ToFrontend,
 } from '@gamezilla/app';
-import { Cmd, exhaustive, Option, p, Program, Sub } from '@gamezilla/core';
-import { PartyBackend as Party } from '@gamezilla/party';
-import { RoomBackend as GameRoom } from '@gamezilla/room';
+import { Cmd, exhaustive, p, Program, Sub } from '@gamezilla/core';
+import { RoomBackend } from '@gamezilla/room';
 import { ClientId, SessionId, UserId } from '@gamezilla/shared';
 import { DatabaseConnection } from '@gamezilla/shared/backend';
 import * as Http from 'http';
@@ -28,15 +27,11 @@ import * as Socket from 'socket.io';
 
 type Model = BackendModel;
 
-export const init = (): [Model, Cmd<Msg>] => {
-  return [
-    {
-      gameRoom: GameRoom.init,
-      party: Party.init,
-      sessions: {},
-    },
-    Cmd.None,
-  ];
+export const init: { model: Model; cmd?: Cmd<Msg> } = {
+  model: {
+    room: RoomBackend.init,
+    sessions: {},
+  },
 };
 
 //
@@ -57,88 +52,75 @@ export const update = ({
   msg: Msg;
   model: Model;
   dbConn: DatabaseConnection;
-}): [Model, Cmd<Msg>] => {
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
   switch (msg[0]) {
-    case '→':
-      return updateFromFrontend(dbConn, msg[1], msg[2], msg[3], model);
+    case '→': {
+      return updateFromFrontend({
+        dbConn,
+        sessionId: msg[1],
+        clientId: msg[2],
+        msg: msg[3],
+        model,
+      });
+    }
+
+    case 'room': {
+      const updated = RoomBackend.update({
+        sendToUser: (userIds, m) => sendToUser(model, userIds, ['room', m]),
+        msg: msg[1],
+        model: model.room,
+      });
+
+      return {
+        model: { ...model, room: updated.model },
+        cmd: Cmd.tag('room', updated.cmd ?? Cmd.None),
+      };
+    }
 
     case 'client-connected': {
       const sessionId = msg[1];
       const clientId = msg[2];
+
       const sessionPrev = model.sessions[sessionId];
-      const maybeUserId = sessionPrev ? sessionPrev.userId : Option.None;
-      const session: Session = {
+      const sessionNew: Session = {
         sessionId,
-        clientId: Option.Some(clientId),
-        userId: maybeUserId,
+        clientId: clientId,
+        userId: sessionPrev?.userId,
       };
 
       const modelNew: Model = {
         ...model,
         sessions: {
           ...model.sessions,
-          [sessionId]: session,
+          [sessionId]: sessionNew,
         },
       };
 
-      const gameRoomCmd = GameRoom.onClientConnected(
-        {
-          sendToClient: (msg) => {
-            return sendToFrontend([clientId], ['room', msg]);
-          },
-        },
-        model.gameRoom
-      );
-
-      return [modelNew, Cmd.batch<Msg>([Cmd.tag('room', gameRoomCmd)])];
+      return {
+        model: modelNew,
+      };
     }
 
     case 'client-disconnected': {
       const sessionId = msg[1];
       const sessionPrev = model.sessions[sessionId];
-      const maybeUserId = sessionPrev ? sessionPrev.userId : Option.None;
       const sessionNew: Session = {
-        clientId: Option.None,
+        clientId: undefined,
         sessionId,
-        userId: maybeUserId,
+        userId: sessionPrev?.userId,
       };
-      return [
-        {
+      return {
+        model: {
           ...model,
           sessions: {
             ...model.sessions,
             [sessionId]: sessionNew,
           },
         },
-        Cmd.None,
-      ];
-    }
-
-    case 'party': {
-      const [child, childCmd] = Party.update(
-        {
-          broadcast: (msg) => broadcast(['party', msg]),
-          sendToUser: (userId, msg) =>
-            sendToUser(model, userId, ['party', msg]),
-        },
-        msg[1],
-        model.party
-      );
-
-      return [{ ...model, party: child }, Cmd.tag('party', childCmd)];
-    }
-
-    case 'room': {
-      const [child, childCmd] = GameRoom.update(
-        {
-          sendToUser: (userIds, msg) =>
-            sendToUser(model, userIds, ['room', msg]),
-        },
-        msg[1],
-        model.gameRoom
-      );
-
-      return [{ ...model, gameRoom: child }, Cmd.tag('room', childCmd)];
+      };
     }
 
     default: {
@@ -147,14 +129,23 @@ export const update = ({
   }
 };
 
-const updateFromFrontend = (
-  dbConn: DatabaseConnection,
-  sessionId: SessionId,
-  clientId: ClientId,
-  msg: ToBackend,
-  model: Model
-): [Model, Cmd<Msg>] => {
-  const sendToClient = (msg: ToFrontend) => sendToFrontend([clientId], msg);
+const updateFromFrontend = ({
+  dbConn,
+  sessionId,
+  clientId,
+  msg,
+  model,
+}: {
+  dbConn: DatabaseConnection;
+  sessionId: SessionId;
+  clientId: ClientId;
+  msg: ToBackend;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  const sendToClient = (m: ToFrontend) => sendToFrontend([clientId], m);
 
   switch (msg[0]) {
     case 'auth': {
@@ -164,77 +155,64 @@ const updateFromFrontend = (
 
           const session: Session = {
             sessionId,
-            clientId: Option.Some(clientId),
-            userId: Option.Some(userId),
+            clientId,
+            userId,
           };
 
-          return [
-            {
+          return {
+            model: {
               ...model,
               sessions: {
                 ...model.sessions,
                 [sessionId]: session,
               },
             },
-            Cmd.None,
-          ];
+          };
         }
 
         default: {
-          return [model, Cmd.None];
+          return { model };
         }
       }
-    }
-
-    case 'party': {
-      const [child, childCmd] = Party.updateFromFrontend(
-        {
-          sendToClient: (msg) => sendToFrontend([clientId], ['party', msg]),
-          broadcast: (msg) => broadcast(['party', msg]),
-          sendToUser: (userIds, msg) =>
-            sendToUser(model, userIds, ['party', msg]),
-        },
-        msg[1],
-        model.party
-      );
-
-      return [{ ...model, party: child }, Cmd.tag('party', childCmd)];
     }
 
     case 'room': {
       const session = model.sessions[sessionId];
 
       if (!session) {
-        // TODO: error feedback
-        return [model, Cmd.None];
+        return { model };
       }
 
-      if (session.userId.type === 'none') {
-        // TODO: error feedback
-        return [model, Cmd.None];
+      if (!session.userId) {
+        return { model };
       }
 
-      const [child, childCmd] = GameRoom.updateFromFrontend(
-        {
-          currentUserId: session.userId.value,
+      const updated = RoomBackend.updateFromFrontend({
+        ctx: {
+          currentUserId: session.userId,
           dbConn,
         },
-        {
-          broadcast: (msg) => broadcast(['room', msg]),
-          sendToClient: (msg) => sendToClient(['room', msg]),
-          sendToUser: (userIds, msg) =>
-            sendToUser(model, userIds, ['room', msg]),
+        wire: {
+          broadcast: (m) => broadcast(['room', m]),
+          sendToClient: (m) => sendToClient(['room', m]),
+          sendToUser: (userIds, m) => sendToUser(model, userIds, ['room', m]),
         },
-        msg[1],
-        model.gameRoom
-      );
+        msg: msg[1],
+        model: model.room,
+      });
 
-      return [{ ...model, gameRoom: child }, Cmd.tag('room', childCmd)];
+      return {
+        model: {
+          ...model,
+          room: updated.model,
+        },
+        cmd: Cmd.tag('room', updated.cmd ?? Cmd.None),
+      };
     }
   }
 };
 
-const sendToUser = (model: Model, userIds: UserId[], msg: ToFrontend) => {
+const sendToUser = (model: Model, userIds: UserId[], msg: ToFrontend): Cmd => {
   const clientIds: ClientId[] = [];
 
   const userIdSet = new Set<UserId>(userIds);
@@ -248,11 +226,11 @@ const sendToUser = (model: Model, userIds: UserId[], msg: ToFrontend) => {
 
     if (
       session &&
-      session.userId.type !== 'none' &&
-      session.clientId.type !== 'none' &&
-      userIdSet.has(session.userId.value)
+      session.userId &&
+      session.clientId &&
+      userIdSet.has(session.userId)
     ) {
-      clientIds.push(session.clientId.value);
+      clientIds.push(session.clientId);
     }
   }
 
@@ -269,7 +247,7 @@ const sendToUser = (model: Model, userIds: UserId[], msg: ToFrontend) => {
 
 export const subscriptions = (model: Model): Sub<Msg> => {
   return Sub.batch([
-    Sub.tag('room', GameRoom.subscriptions(model.gameRoom)),
+    Sub.tag('room', RoomBackend.subscriptions(model.room)),
     p(
       onConnect,
       Sub.map(
@@ -398,17 +376,19 @@ const main = async () => {
     console.log(`[backend] http server listening: http://localhost:${port}/`);
   });
 
-  const initial = init();
-
   const program = Program.create({
-    init: {
-      model: initial[0],
-      cmd: initial[1],
-    },
+    init,
     subscriptions,
     update: (input) => {
-      const [model, cmd] = update({ ...input, dbConn });
-      return { model, cmd };
+      try {
+        return update({ ...input, dbConn });
+      } catch (error) {
+        console.error('Backend Crashed!', error);
+        return {
+          model: input.model,
+          cmd: Cmd.None,
+        };
+      }
     },
   });
 
