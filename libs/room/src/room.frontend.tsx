@@ -49,17 +49,14 @@ import {
 
 export type Model = FrontendModel;
 
-export const init: [Model, Cmd<Msg>] = [
-  {
-    games: {},
-    rooms: {},
-    users: {},
-    requests: {},
-    modal: 'none',
-    previewUserId: null,
-  },
-  Cmd.None,
-];
+export const init: Model = {
+  games: {},
+  rooms: {},
+  users: {},
+  requests: {},
+  modal: 'none',
+  previewUserId: null,
+};
 
 //
 //

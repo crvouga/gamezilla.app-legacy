@@ -23,7 +23,6 @@ import {
   Sub,
   t,
 } from '@gamezilla/core';
-import { PartyFrontend as Party } from '@gamezilla/party';
 import { ProfileStore } from '@gamezilla/profile';
 import { RoomFrontend } from '@gamezilla/room';
 import {
@@ -62,10 +61,8 @@ import { io, Socket } from 'socket.io-client';
 type Model = FrontendModel;
 
 const init = ({
-  sendToBackend,
   location,
 }: {
-  sendToBackend: (m: ToBackend) => Cmd;
   location: Browser.Location;
 }): {
   model: Model;
@@ -79,11 +76,9 @@ const init = ({
   const [auth, authCmd] = Auth.init();
   const alerts = Alerts.init;
   const chatStore = ChatStore.init;
-  const [gameRoom, roomCmd] = RoomFrontend.init;
+  const room = RoomFrontend.init;
   const page = Page.initLoading();
-  const [party, partyCmd] = Party.init({
-    sendToBackend: (msg) => sendToBackend(['party', msg]),
-  });
+
   const profileStore = ProfileStore.init;
   const chat = ChatFrontend.init;
 
@@ -93,21 +88,15 @@ const init = ({
       chat,
       alerts,
       chatStore,
-      gameRoom,
+      room,
       auth,
       page,
-      party,
       profileStore,
       wire: {
         type: 'connecting',
       },
     },
-    cmd: Cmd.batch<Msg>([
-      Route.replace(route),
-      Cmd.tag('auth', authCmd),
-      Cmd.tag('room', roomCmd),
-      Cmd.tag('party', partyCmd),
-    ]),
+    cmd: Cmd.batch<Msg>([Route.replace(route), Cmd.tag('auth', authCmd)]),
   };
 };
 
@@ -125,7 +114,6 @@ type OutAction<Msg = FrontendMsg> =
   | Alerts.Action<Msg>
   | ChatStore.Action
   | Auth.Action
-  | Party.Action
   | Route.Action
   | ProfileStore.Action;
 
@@ -167,7 +155,6 @@ const update = ({
       return output.actions.reduce(
         (acc, action) => {
           const ran = runAction({
-            sendToBackend,
             msg: action,
             model: acc.model,
           });
@@ -378,18 +365,6 @@ const update_ = ({
       };
     }
 
-    case 'party': {
-      const updated = Party.update(
-        { sendToBackend: (msg) => sendToBackend(['party', msg]) },
-        msg[1],
-        model.party
-      );
-      return {
-        model: { ...model, party: updated[0] },
-        cmd: Cmd.tag('party', updated[1]),
-      };
-    }
-
     case 'route': {
       const updated = Route.update({
         msg: msg[1],
@@ -444,11 +419,11 @@ const update_ = ({
         ctx: ctx,
         sendToBackend: (m) => sendToBackend(['room', m]),
         msg: msg[1],
-        model: model.gameRoom,
+        model: model.room,
       });
 
       return {
-        model: { ...model, gameRoom: updated.model },
+        model: { ...model, room: updated.model },
         cmd: Cmd.tag('room', updated.cmd ?? Cmd.None),
       };
     }
@@ -523,26 +498,6 @@ const updateFromBackend = ({
   actions?: OutAction[];
 } => {
   switch (msg[0]) {
-    case 'party': {
-      if (model.auth.type !== 'logged-in') {
-        return { model };
-      }
-
-      const currentUserId = model.auth.session.userId;
-
-      const updated = Party.updateFromBackend(
-        { currentUserId },
-        msg[1],
-        model.party
-      );
-
-      return {
-        model: { ...model, party: updated[0] },
-        cmd: Cmd.tag('party', updated[1]),
-        actions: updated[2],
-      };
-    }
-
     case 'room': {
       if (model.auth.type !== 'logged-in') {
         return { model };
@@ -565,11 +520,11 @@ const updateFromBackend = ({
           sendToBackend: (msg) => sendToBackend(['room', msg]),
         },
         msg[1],
-        model.gameRoom
+        model.room
       );
 
       return {
-        model: { ...model, gameRoom: updated[0] },
+        model: { ...model, room: updated[0] },
         cmd: Cmd.tag('room', updated[1] ?? Cmd.None),
         actions: updated[2].map((a) => mapAction(t('room'), a)),
       };
@@ -628,13 +583,11 @@ const initPage = ({
 };
 
 const runAction = ({
-  sendToBackend,
   msg: action,
   model,
 }: {
   msg: OutAction;
   model: Model;
-  sendToBackend: (msg: ToBackend) => Cmd;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -661,18 +614,6 @@ const runAction = ({
       return {
         model: { ...model, auth: updated[0] },
         cmd: Cmd.tag('auth', updated[1]),
-      };
-    }
-
-    case 'party': {
-      const updated = Party.runAction(
-        { sendToBackend: (msg) => sendToBackend(['party', msg]) },
-        action,
-        model.party
-      );
-      return {
-        model: { ...model, party: updated[0] },
-        cmd: Cmd.tag('party', updated[1]),
       };
     }
 
@@ -708,17 +649,16 @@ const runAction = ({
 
 const subscriptions = (model: Model): Sub<Msg> => {
   return Sub.batch<Msg>([
-    Sub.tag('wire', wireStatus$),
     Sub.tag('→', toFrontend$),
-    Browser.onLocation(onLocationChange),
-    Sub.tag('party', Party.subscriptions(model.party)),
+    Sub.tag('wire', wireStatus$),
     Sub.tag('page', Page.subscriptions(model.page)),
     Sub.tag('auth', Auth.subscriptions),
-    gameRoomSub(model),
+    roomSub(model),
+    Browser.onLocation(onLocationChange),
   ]);
 };
 
-const gameRoomSub = (model: Model): Sub<Msg> => {
+const roomSub = (model: Model): Sub<Msg> => {
   switch (model.auth.type) {
     case 'loading': {
       return Sub.None;
@@ -740,7 +680,7 @@ const gameRoomSub = (model: Model): Sub<Msg> => {
               //
             },
           },
-          model.gameRoom
+          model.room
         )
       );
     }
@@ -903,7 +843,7 @@ const ViewBottomBar = ({
     >
       <RoomFrontend.ViewBar
         ctx={ctx}
-        model={model.gameRoom}
+        model={model.room}
         $send={(m) => $send(['room', m])}
       />
       <ViewBottomNavigation ctx={ctx} route={model.route} />
@@ -1058,7 +998,7 @@ const main = () => {
 
   const { program } = p(
     Program.create({
-      init: init({ sendToBackend, location: Browser.getLocation() }),
+      init: init({ location: Browser.getLocation() }),
       update: (input) => update({ ...input, sendToBackend }),
       subscriptions,
     }),
