@@ -1,7 +1,7 @@
 import { Sub, Cmd, exhaustive } from '@gamezilla/core';
 import { RoomCtx, viewSelectModeScreen } from '@gamezilla/game-shared';
 import { ProfileStore } from '@gamezilla/profile';
-import { Alerts, Ctx } from '@gamezilla/shared';
+import { Alerts, Ctx } from '@gamezilla/temp-shared';
 import {
   BackendModel,
   FrontendModel,

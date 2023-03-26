@@ -1,6 +1,12 @@
 import { Cmd, p, t } from '@gamezilla/core';
-import { Route } from '@gamezilla/shared';
-import { Box, Button, Icons, Typography, useTheme } from '@gamezilla/shared/ui';
+import { Route } from '@gamezilla/temp-shared';
+import {
+  Box,
+  Button,
+  Icons,
+  Typography,
+  useTheme,
+} from '@gamezilla/temp-shared/ui';
 import { AuthResult, loginWithProvider } from '../auth';
 
 //

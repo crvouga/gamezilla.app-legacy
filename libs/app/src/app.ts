@@ -2,7 +2,13 @@ import { Auth } from '@gamezilla/auth';
 import { ChatFrontend, ChatStore } from '@gamezilla/chat';
 import { ProfileStore } from '@gamezilla/profile';
 import * as Room from '@gamezilla/room';
-import { Alerts, ClientId, Route, SessionId, UserId } from '@gamezilla/shared';
+import {
+  Alerts,
+  ClientId,
+  Route,
+  SessionId,
+  UserId,
+} from '@gamezilla/temp-shared';
 import * as Page from './app-page';
 
 //

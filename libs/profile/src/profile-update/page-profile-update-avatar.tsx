@@ -1,5 +1,5 @@
 import { Cmd, p } from '@gamezilla/core';
-import { Alerts, ProfileAvatar, Route, UserId } from '@gamezilla/shared';
+import { Alerts, ProfileAvatar, Route, UserId } from '@gamezilla/temp-shared';
 import {
   Avatar,
   Box,
@@ -11,7 +11,7 @@ import {
   Select,
   TextField,
   Typography,
-} from '@gamezilla/shared/ui';
+} from '@gamezilla/temp-shared/ui';
 import * as ProfileStore from '../profile-store';
 
 //

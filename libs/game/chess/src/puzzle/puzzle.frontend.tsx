@@ -9,7 +9,7 @@ import {
   Icon,
   Typography,
   useTheme,
-} from '@gamezilla/shared/ui';
+} from '@gamezilla/temp-shared/ui';
 import { Paper } from '@mui/material';
 import { useMemo } from 'react';
 import * as ChessBoard from '../chess/chess-board';

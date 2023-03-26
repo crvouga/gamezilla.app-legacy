@@ -6,7 +6,7 @@ import * as Tetris from '@gamezilla/game/tetris';
 import * as Snake from '@gamezilla/game/snake';
 import * as Maze from '@gamezilla/game/maze';
 import { GameName } from './game.types';
-import { ViewNode } from '@gamezilla/shared/ui';
+import { ViewNode } from '@gamezilla/temp-shared/ui';
 import { exhaustive } from '@gamezilla/core';
 import * as Flow from '@gamezilla/game/flow';
 

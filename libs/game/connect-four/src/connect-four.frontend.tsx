@@ -1,12 +1,12 @@
-import { Alerts } from '@gamezilla/shared';
+import { Alerts } from '@gamezilla/temp-shared';
 import { Cmd, Sub } from '@gamezilla/core';
 import {
   bannerArtAspectRatio,
   RoomCtx,
   viewSelectModeScreen,
 } from '@gamezilla/game-shared';
-import { Ctx } from '@gamezilla/shared';
-import * as UI from '@gamezilla/shared/ui';
+import { Ctx } from '@gamezilla/temp-shared';
+import * as UI from '@gamezilla/temp-shared/ui';
 import {
   BackendModel,
   FrontendModel,

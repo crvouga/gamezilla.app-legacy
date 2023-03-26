@@ -1,6 +1,6 @@
 import { Cmd, exhaustive, p, t } from '@gamezilla/core';
-import { Route } from '@gamezilla/shared';
-import * as UI from '@gamezilla/shared/ui';
+import { Route } from '@gamezilla/temp-shared';
+import * as UI from '@gamezilla/temp-shared/ui';
 import * as Auth from '../auth';
 
 //

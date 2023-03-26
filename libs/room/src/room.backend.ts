@@ -1,6 +1,6 @@
 import { Cmd, exhaustive, p, Sub } from '@gamezilla/core';
-import { RoomId, UserId } from '@gamezilla/shared';
-import { AppMsg, DatabaseConnection } from '@gamezilla/shared/backend';
+import { RoomId, UserId } from '@gamezilla/temp-shared';
+import { AppMsg, DatabaseConnection } from '@gamezilla/temp-shared/backend';
 import * as Game from './game.backend';
 import {
   BackendModel,

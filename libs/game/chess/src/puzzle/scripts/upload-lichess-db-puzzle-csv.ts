@@ -1,4 +1,4 @@
-import { DatabaseConnection } from '@gamezilla/shared/backend';
+import { DatabaseConnection } from '@gamezilla/temp-shared/backend';
 import { z } from 'zod';
 import { PuzzleDatabase, PuzzleRow } from '../puzzle-database';
 

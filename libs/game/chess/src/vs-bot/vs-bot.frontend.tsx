@@ -1,7 +1,7 @@
 import { Audio, Cmd, exhaustive, Option, Sub, t } from '@gamezilla/core';
 import { viewVsBotSetupScreen } from '@gamezilla/game-shared';
-import { Alerts, Ctx } from '@gamezilla/shared';
-import * as UI from '@gamezilla/shared/ui';
+import { Alerts, Ctx } from '@gamezilla/temp-shared';
+import * as UI from '@gamezilla/temp-shared/ui';
 import * as Board from '../chess/chess-board';
 import { viewCoverArt } from '../chess/chess-board';
 import Sounds from '../chess/chess-sounds';

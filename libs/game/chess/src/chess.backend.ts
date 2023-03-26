@@ -1,7 +1,7 @@
 import { Cmd, exhaustive, Result, Sub } from '@gamezilla/core';
 import { RoomMsg } from '@gamezilla/game-shared';
-import { UserId } from '@gamezilla/shared';
-import { DatabaseConnection } from '@gamezilla/shared/backend';
+import { UserId } from '@gamezilla/temp-shared';
+import { DatabaseConnection } from '@gamezilla/temp-shared/backend';
 import { GameMsg } from './chess-shared';
 import {
   BackendModel,

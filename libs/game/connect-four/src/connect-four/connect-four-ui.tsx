@@ -1,5 +1,5 @@
 import { Ease, rescale, Uuid } from '@gamezilla/core';
-import { SvgIcon, Sx } from '@gamezilla/shared/ui';
+import { SvgIcon, Sx } from '@gamezilla/temp-shared/ui';
 import { useLayoutEffect, useRef } from 'react';
 import {
   ColumnIndex,

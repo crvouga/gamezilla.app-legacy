@@ -1,5 +1,5 @@
 import { Cmd } from '@gamezilla/core';
-import { Ctx, Route } from '@gamezilla/shared';
+import { Ctx, Route } from '@gamezilla/temp-shared';
 import {
   Avatar,
   Button,
@@ -8,7 +8,7 @@ import {
   Header,
   HeaderBackButton,
   List,
-} from '@gamezilla/shared/ui';
+} from '@gamezilla/temp-shared/ui';
 
 //
 //

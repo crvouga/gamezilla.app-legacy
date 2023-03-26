@@ -1,5 +1,5 @@
 import { Ease, Hex } from '@gamezilla/core';
-import { SvgIcon, Sx } from '@gamezilla/shared/ui';
+import { SvgIcon, Sx } from '@gamezilla/temp-shared/ui';
 import { allPositions, Board, Bounds, bounds, Stone } from './gomoku';
 import { Position } from './gomoku-position';
 

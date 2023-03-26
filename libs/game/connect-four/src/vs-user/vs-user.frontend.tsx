@@ -1,8 +1,8 @@
 import { keyframes } from '@emotion/react';
-import { Alerts } from '@gamezilla/shared';
+import { Alerts } from '@gamezilla/temp-shared';
 import { Cmd, exhaustive, Sub } from '@gamezilla/core';
-import { UserId } from '@gamezilla/shared';
-import { Ctx } from '@gamezilla/shared';
+import { UserId } from '@gamezilla/temp-shared';
+import { Ctx } from '@gamezilla/temp-shared';
 import {
   ActionButton,
   Avatar,
@@ -21,7 +21,7 @@ import {
   Tooltip,
   Typography,
   useTheme,
-} from '@gamezilla/shared/ui';
+} from '@gamezilla/temp-shared/ui';
 import {
   PlayerType,
   playerTypeToColor,

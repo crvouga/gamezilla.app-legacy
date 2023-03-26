@@ -3,7 +3,7 @@ import {
   viewUserPlayerSlotBar,
   viewVsUserSetupScreen,
 } from '@gamezilla/game-shared';
-import { Ctx } from '@gamezilla/shared';
+import { Ctx } from '@gamezilla/temp-shared';
 import {
   actionButton,
   box,
@@ -11,7 +11,7 @@ import {
   conformation,
   fillBox,
   text,
-} from '@gamezilla/shared/ui';
+} from '@gamezilla/temp-shared/ui';
 import { viewCoverArt, viewStoneIcon } from '../gomoku/gomoku-ui';
 import {
   BackendModel,

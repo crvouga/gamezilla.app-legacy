@@ -1,5 +1,5 @@
 import { Cmd } from '@gamezilla/core';
-import { Alerts, Ctx, Route, UserId } from '@gamezilla/shared';
+import { Alerts, Ctx, Route, UserId } from '@gamezilla/temp-shared';
 import { ProfileStore } from '..';
 import { Profile } from '../profile-store';
 import * as PageProfileUpdate from './page-profile-update';

@@ -1,6 +1,6 @@
 import { Audio, Cmd, p, RemoteData, Sub, Unit } from '@gamezilla/core';
 import { RoomCtx, ViewMainMenu } from '@gamezilla/game-shared';
-import { Alerts } from '@gamezilla/shared';
+import { Alerts } from '@gamezilla/temp-shared';
 import {
   BackendModel,
   FrontendModel,

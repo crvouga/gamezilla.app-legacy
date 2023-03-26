@@ -8,8 +8,8 @@ import { MazeBackend } from '@gamezilla/game/maze';
 import { SnakeBackend } from '@gamezilla/game/snake';
 import { TetrisBackend } from '@gamezilla/game/tetris';
 import { TicTacToeBackend } from '@gamezilla/game/tic-tac-toe';
-import { UserId } from '@gamezilla/shared';
-import { DatabaseConnection } from '@gamezilla/shared/backend';
+import { UserId } from '@gamezilla/temp-shared';
+import { DatabaseConnection } from '@gamezilla/temp-shared/backend';
 import { BackendModel, BackendMsg, ToBackend, ToFrontend } from './game.types';
 
 //
