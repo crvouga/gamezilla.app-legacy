@@ -1,10 +1,10 @@
-import * as Position from "./position"
+import * as Position from './position';
 
-export type Piece = Position.Position[]
+export type Piece = Position.Position[];
 
-export type Name = "I" | "T" | "O" | "J" | "L" | "S" | "Z"
+export type Name = 'I' | 'T' | 'O' | 'J' | 'L' | 'S' | 'Z';
 
-export const allNames: Name[] = ["I", "T", "O", "J", "L", "S", "Z"]
+export const allNames: Name[] = ['I', 'T', 'O', 'J', 'L', 'S', 'Z'];
 
 export const pieces: { [name in Name]: Piece } = {
   I: [
@@ -49,30 +49,30 @@ export const pieces: { [name in Name]: Piece } = {
     { x: 0, y: 0 },
     { x: 1, y: 0 },
   ],
-}
+};
 
 export const toUnit = (name: Name): Piece => {
-  return pieces[name]
-}
+  return pieces[name];
+};
 
 export const colors: { [name in Name]: string } = {
-  I: "cyan",
-  J: "blue",
-  L: "orange",
-  O: "yellow",
-  S: "green",
-  T: "magenta",
-  Z: "red",
-}
+  I: 'cyan',
+  J: 'blue',
+  L: 'orange',
+  O: 'yellow',
+  S: 'green',
+  T: 'magenta',
+  Z: 'red',
+};
 
 export const View = ({ name }: { name: Name }) => {
   switch (name) {
-    case "I": {
+    case 'I': {
       return (
         <svg>
           {pieces.I.map((position) => (
             <rect
-              key={[position.x, position.y].join("-")}
+              key={[position.x, position.y].join('-')}
               x={position.x}
               y={position.x}
               width={1}
@@ -80,31 +80,31 @@ export const View = ({ name }: { name: Name }) => {
             />
           ))}
         </svg>
-      )
+      );
     }
 
-    case "J": {
-      return null
+    case 'J': {
+      return null;
     }
 
-    case "L": {
-      return null
+    case 'L': {
+      return null;
     }
 
-    case "O": {
-      return null
+    case 'O': {
+      return null;
     }
 
-    case "S": {
-      return null
+    case 'S': {
+      return null;
     }
 
-    case "T": {
-      return null
+    case 'T': {
+      return null;
     }
 
-    case "Z": {
-      return null
+    case 'Z': {
+      return null;
     }
   }
-}
+};
