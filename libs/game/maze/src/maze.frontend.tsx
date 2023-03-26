@@ -1,6 +1,6 @@
 import { Cmd, Keyboard, p, Sub } from '@gamezilla/core';
 import { RoomCtx } from '@gamezilla/game-shared';
-import { Ctx } from '@gamezilla/temp-shared';
+import { Ctx } from '@gamezilla/shared';
 import {
   ActionButton,
   Avatar,
@@ -12,7 +12,7 @@ import {
   InputAdornment,
   TextField,
   Typography,
-} from '@gamezilla/temp-shared/ui';
+} from '@gamezilla/shared/ui';
 import { Maze } from './maze';
 import {
   BackendModel,

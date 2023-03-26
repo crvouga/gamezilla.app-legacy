@@ -1,4 +1,4 @@
-import { UserId } from '@gamezilla/temp-shared';
+import { UserId } from '@gamezilla/shared';
 
 export * from './database-connection';
 

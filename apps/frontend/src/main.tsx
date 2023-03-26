@@ -32,7 +32,7 @@ import {
   Route,
   AppMsg,
   Username,
-} from '@gamezilla/temp-shared';
+} from '@gamezilla/shared';
 import {
   AppContainer,
   Box,
@@ -45,7 +45,7 @@ import {
   Typography,
   useTheme,
   ViewNode,
-} from '@gamezilla/temp-shared/ui';
+} from '@gamezilla/shared/ui';
 import * as ReactDOM from 'react-dom/client';
 import { Subject } from 'rxjs';
 import { io, Socket } from 'socket.io-client';

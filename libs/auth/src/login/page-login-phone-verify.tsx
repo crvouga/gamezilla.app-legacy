@@ -1,5 +1,5 @@
 import { Browser, Cmd, p, t, Task, Time, Unit } from '@gamezilla/core';
-import { PhoneNumber, Route } from '@gamezilla/temp-shared';
+import { PhoneNumber, Route } from '@gamezilla/shared';
 import {
   Alert,
   Box,
@@ -7,7 +7,7 @@ import {
   FillBox,
   Header,
   TextField,
-} from '@gamezilla/temp-shared/ui';
+} from '@gamezilla/shared/ui';
 import * as Auth from '../auth';
 
 //

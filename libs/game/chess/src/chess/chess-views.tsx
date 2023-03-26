@@ -1,7 +1,7 @@
-import { UserId } from '@gamezilla/temp-shared';
-import * as UI from '@gamezilla/temp-shared/ui';
+import { UserId } from '@gamezilla/shared';
+import * as UI from '@gamezilla/shared/ui';
 import { bannerArtAspectRatio } from '@gamezilla/game-shared';
-import { Ctx } from '@gamezilla/temp-shared';
+import { Ctx } from '@gamezilla/shared';
 
 export const theme = {
   lightSquare: '#EBEBD0',

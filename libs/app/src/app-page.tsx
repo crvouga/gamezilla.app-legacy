@@ -16,7 +16,7 @@ import {
   Route,
   UserId,
   Username,
-} from '@gamezilla/temp-shared';
+} from '@gamezilla/shared';
 import {
   Box,
   ButtonBase,
@@ -25,7 +25,7 @@ import {
   Typography,
   useTheme,
   ViewNode,
-} from '@gamezilla/temp-shared/ui';
+} from '@gamezilla/shared/ui';
 
 //
 //

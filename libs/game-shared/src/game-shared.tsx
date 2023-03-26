@@ -1,4 +1,4 @@
-import { Ctx, UserId } from '@gamezilla/temp-shared';
+import { Ctx, UserId } from '@gamezilla/shared';
 import {
   avatar,
   Icon,
@@ -11,7 +11,7 @@ import {
   text,
   Typography,
   ViewNode,
-} from '@gamezilla/temp-shared/ui';
+} from '@gamezilla/shared/ui';
 
 export type RoomCtx = Ctx & {
   onQuit: () => void;

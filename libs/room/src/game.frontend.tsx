@@ -9,7 +9,7 @@ import { SnakeFrontend } from '@gamezilla/game/snake';
 import { TetrisFrontend } from '@gamezilla/game/tetris';
 import { TicTacToeFrontend } from '@gamezilla/game/tic-tac-toe';
 import { ProfileStore } from '@gamezilla/profile';
-import { Alerts, Ctx } from '@gamezilla/temp-shared';
+import { Alerts, Ctx } from '@gamezilla/shared';
 import {
   BackendModel,
   FrontendModel,

@@ -1,4 +1,4 @@
-import { UserId } from '@gamezilla/temp-shared';
+import { UserId } from '@gamezilla/shared';
 import * as VsBot from './vs-bot/vs-bot.types';
 import * as VsUser from './vs-user/vs-user.types';
 

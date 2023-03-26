@@ -1,7 +1,7 @@
 import { Cmd, exhaustive, p, RemoteData, Sub } from '@gamezilla/core';
 import { RoomCtx } from '@gamezilla/game-shared';
 import { ProfileStore } from '@gamezilla/profile';
-import { Alerts, Ctx, RoomId, Route, UserId } from '@gamezilla/temp-shared';
+import { Alerts, Ctx, RoomId, Route, UserId } from '@gamezilla/shared';
 import {
   ActionButton,
   Avatar,
@@ -23,7 +23,7 @@ import {
   Typography,
   useTheme,
   ViewEmptyState,
-} from '@gamezilla/temp-shared/ui';
+} from '@gamezilla/shared/ui';
 import { BadgeProps, styled } from '@mui/material';
 import { gameNameToString, viewCoverArt } from './game';
 import * as Game from './game.frontend';

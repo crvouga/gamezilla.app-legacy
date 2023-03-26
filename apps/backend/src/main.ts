@@ -11,8 +11,8 @@ import {
 } from '@gamezilla/app';
 import { andThen, Cmd, exhaustive, p, Program, Sub } from '@gamezilla/core';
 import { RoomBackend } from '@gamezilla/room';
-import { ClientId, SessionId, UserId } from '@gamezilla/temp-shared';
-import { DatabaseConnection } from '@gamezilla/temp-shared/backend';
+import { ClientId, SessionId, UserId } from '@gamezilla/shared';
+import { DatabaseConnection } from '@gamezilla/shared/backend';
 import * as Http from 'http';
 import * as Rx from 'rxjs';
 import * as Socket from 'socket.io';

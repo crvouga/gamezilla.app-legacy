@@ -1,5 +1,5 @@
 import { Cmd, RemoteData } from '@gamezilla/core';
-import { Ctx, Route, UserId } from '@gamezilla/temp-shared';
+import { Ctx, Route, UserId } from '@gamezilla/shared';
 import {
   Avatar,
   AvatarGroup,
@@ -13,7 +13,7 @@ import {
   ListItemText,
   ViewEmptyState,
   ViewLoadingState,
-} from '@gamezilla/temp-shared/ui';
+} from '@gamezilla/shared/ui';
 import { Fab } from '@mui/material';
 import * as ChatStore from './chat.store';
 //
