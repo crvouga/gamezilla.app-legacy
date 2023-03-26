@@ -1,7 +1,7 @@
 import { Cmd, Sub } from '@gamezilla/core';
 import { RoomCtx } from '@gamezilla/game-shared';
-import { UserId } from '@gamezilla/shared';
-import { box, button, fillBox, text } from '@gamezilla/shared/ui';
+import { UserId } from '@gamezilla/temp-shared';
+import { box, button, fillBox, text } from '@gamezilla/temp-shared/ui';
 import { FrontendModel, FrontendMsg, SharedModel } from './flow.types';
 
 type Model = FrontendModel;

@@ -1,5 +1,5 @@
 import { Browser, Cmd, p, RemoteData } from '@gamezilla/core';
-import { Ctx, Route, AppMsg } from '@gamezilla/shared';
+import { Ctx, Route, AppMsg } from '@gamezilla/temp-shared';
 import {
   Avatar,
   Box,
@@ -22,7 +22,7 @@ import {
   ListItemText,
   Typography,
   ViewLoadingState,
-} from '@gamezilla/shared/ui';
+} from '@gamezilla/temp-shared/ui';
 import { Fab } from '@mui/material';
 import { matchSorter } from 'match-sorter';
 import { FrontendModel, FrontendMsg, ToBackend } from './chat.types';

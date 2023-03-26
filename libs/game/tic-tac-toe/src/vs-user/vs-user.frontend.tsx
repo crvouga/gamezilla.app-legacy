@@ -1,7 +1,7 @@
 import { Cmd, exhaustive } from '@gamezilla/core';
 import { ProfileStore } from '@gamezilla/profile';
-import { Alerts, Ctx, UserId } from '@gamezilla/shared';
-import * as UI from '@gamezilla/shared/ui';
+import { Alerts, Ctx, UserId } from '@gamezilla/temp-shared';
+import * as UI from '@gamezilla/temp-shared/ui';
 import {
   emptyBoard,
   PlayerType,

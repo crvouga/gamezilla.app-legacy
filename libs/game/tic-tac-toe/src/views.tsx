@@ -1,7 +1,7 @@
-import { UserId } from '@gamezilla/shared';
+import { UserId } from '@gamezilla/temp-shared';
 import { bannerArtAspectRatio } from '@gamezilla/game-shared';
-import { Ctx } from '@gamezilla/shared';
-import * as UI from '@gamezilla/shared/ui';
+import { Ctx } from '@gamezilla/temp-shared';
+import * as UI from '@gamezilla/temp-shared/ui';
 import { gameTheme, PlayerTypeIcon } from './tic-tic-toe/tic-tac-toe-ui';
 
 export const BannerArt = ({ title }: { title: string }) => {

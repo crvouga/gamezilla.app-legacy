@@ -1,5 +1,5 @@
 import { Cmd, Sub } from '@gamezilla/core';
-import { AppMsg } from '@gamezilla/shared';
+import { AppMsg } from '@gamezilla/temp-shared';
 import { FrontendModel, FrontendMsg, ToFrontend } from './profile.types';
 
 //

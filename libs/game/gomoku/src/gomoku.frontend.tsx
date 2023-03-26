@@ -1,6 +1,6 @@
 import { Cmd, Sub } from '@gamezilla/core';
 import { RoomCtx, viewSelectModeScreen } from '@gamezilla/game-shared';
-import { Ctx } from '@gamezilla/shared';
+import { Ctx } from '@gamezilla/temp-shared';
 import {
   BackendModel,
   FrontendModel,

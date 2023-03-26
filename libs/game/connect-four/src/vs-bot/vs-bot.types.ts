@@ -1,5 +1,5 @@
 import { exhaustive, Result } from '@gamezilla/core';
-import { UserId } from '@gamezilla/shared';
+import { UserId } from '@gamezilla/temp-shared';
 import { z } from 'zod';
 import {
   BestMoveProblem,

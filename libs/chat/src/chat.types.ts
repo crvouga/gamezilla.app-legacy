@@ -1,5 +1,5 @@
 import { Browser, Cmd, RemoteData, Result } from '@gamezilla/core';
-import { UserId } from '@gamezilla/shared';
+import { UserId } from '@gamezilla/temp-shared';
 
 //
 //

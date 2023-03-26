@@ -1,5 +1,5 @@
 import { Browser, Cmd, exhaustive, p, t } from '@gamezilla/core';
-import { Iso3166Alpha2Code, PhoneNumber, Route } from '@gamezilla/shared';
+import { Iso3166Alpha2Code, PhoneNumber, Route } from '@gamezilla/temp-shared';
 import {
   Alert,
   Box,
@@ -18,7 +18,7 @@ import {
   ListItemText,
   TextField,
   Typography,
-} from '@gamezilla/shared/ui';
+} from '@gamezilla/temp-shared/ui';
 import { matchSorter } from 'match-sorter';
 import * as Auth from '../auth';
 

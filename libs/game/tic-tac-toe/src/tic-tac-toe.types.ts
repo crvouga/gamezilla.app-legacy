@@ -1,5 +1,5 @@
 import { Result } from '@gamezilla/core';
-import { UserId } from '@gamezilla/shared';
+import { UserId } from '@gamezilla/temp-shared';
 import { z } from 'zod';
 import * as VsBot from './vs-bot/vs-bot.types';
 import * as VsUser from './vs-user/vs-user.types';

@@ -1,5 +1,5 @@
 import { Cmd, p, t } from '@gamezilla/core';
-import { Ctx } from '@gamezilla/shared';
+import { Ctx } from '@gamezilla/temp-shared';
 import {
   Avatar,
   AvatarGroup,
@@ -13,7 +13,7 @@ import {
   ListItemText,
   ViewEmptyState,
   ViewLoadingState,
-} from '@gamezilla/shared/ui';
+} from '@gamezilla/temp-shared/ui';
 import { Fab } from '@mui/material';
 import * as Conversation from './conversation.store';
 import * as Message from './message.store';

@@ -3,7 +3,7 @@ import {
   viewVsBotGameScreen,
   viewVsBotSetupScreen,
 } from '@gamezilla/game-shared';
-import { Alerts, Ctx } from '@gamezilla/shared';
+import { Alerts, Ctx } from '@gamezilla/temp-shared';
 import {
   opposite,
   PlayerType,
