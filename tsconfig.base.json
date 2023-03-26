@@ -44,10 +44,8 @@
       "@gamezilla/profile": ["libs/profile/src/index.ts"],
       "@gamezilla/room": ["libs/room/src/index.ts"],
       "@gamezilla/shared": ["libs/shared/src/index.ts"],
-      "@gamezilla/temp-shared/backend": [
-        "libs/temp-shared/backend/src/index.ts"
-      ],
-      "@gamezilla/temp-shared/ui": ["libs/temp-shared/ui/src/index.ts"]
+      "@gamezilla/shared/backend": ["libs/shared/backend/src/index.ts"],
+      "@gamezilla/shared/ui": ["libs/shared/ui/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
