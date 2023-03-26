@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'temp-shared-backend',
+  displayName: 'shared-backend',
   preset: '../../../jest.preset.js',
   globals: {
     'ts-jest': {
@@ -12,5 +12,5 @@ export default {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../coverage/libs/temp-shared/backend',
+  coverageDirectory: '../../../coverage/libs/shared/backend',
 };
