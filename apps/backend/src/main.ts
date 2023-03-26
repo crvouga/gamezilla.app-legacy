@@ -9,7 +9,7 @@ import {
   ToBackend,
   ToFrontend,
 } from '@gamezilla/app';
-import { Cmd, exhaustive, p, Program, Sub } from '@gamezilla/core';
+import { andThen, Cmd, exhaustive, p, Program, Sub } from '@gamezilla/core';
 import { RoomBackend } from '@gamezilla/room';
 import { ClientId, SessionId, UserId } from '@gamezilla/shared';
 import { DatabaseConnection } from '@gamezilla/shared/backend';
@@ -44,7 +44,22 @@ export const init: { model: Model; cmd?: Cmd<Msg> } = {
 
 type Msg = BackendMsg;
 
-export const update = ({
+export const update = (input: {
+  msg: Msg;
+  model: Model;
+  dbConn: DatabaseConnection;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  return p(
+    input,
+    andThen(({ model }) => update_({ ...input, model })),
+    andThen(({ model }) => updateFromApp({ ...input, model }))
+  );
+};
+
+export const update_ = ({
   msg,
   model,
   dbConn,
@@ -83,14 +98,12 @@ export const update = ({
     case 'client-connected': {
       const sessionId = msg[1];
       const clientId = msg[2];
-
       const sessionPrev = model.sessions[sessionId];
       const sessionNew: Session = {
         sessionId,
         clientId: clientId,
         userId: sessionPrev?.userId,
       };
-
       const modelNew: Model = {
         ...model,
         sessions: {
@@ -98,7 +111,6 @@ export const update = ({
           [sessionId]: sessionNew,
         },
       };
-
       return {
         model: modelNew,
       };
@@ -125,6 +137,39 @@ export const update = ({
 
     default: {
       return exhaustive(msg[0]);
+    }
+  }
+};
+
+const updateFromApp: typeof update = ({ msg, model }) => {
+  switch (msg[0]) {
+    case 'client-connected': {
+      const session = model.sessions[msg[1]];
+
+      if (!session) {
+        return { model };
+      }
+
+      const { userId } = session;
+
+      if (!userId) {
+        return { model };
+      }
+
+      const roomUpdated = RoomBackend.updateFromApp({
+        msg: ['user-connected', { userId }],
+        model: model.room,
+        sendToUser: (userIds, m) => sendToUser(model, userIds, ['room', m]),
+      });
+
+      return {
+        model: { ...model, room: roomUpdated.model },
+        cmd: Cmd.tag('room', roomUpdated.cmd ?? Cmd.None),
+      };
+    }
+
+    default: {
+      return { model };
     }
   }
 };

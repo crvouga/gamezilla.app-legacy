@@ -1,8 +1,6 @@
-import { Alerts } from '@gamezilla/shared';
 import { Audio, Cmd, exhaustive, Option, p, Sub, t } from '@gamezilla/core';
-import { UserId } from '@gamezilla/shared';
+import { Alerts, Ctx, UserId } from '@gamezilla/shared';
 import * as UI from '@gamezilla/shared/ui';
-import { Ctx } from '@gamezilla/shared';
 import * as Board from '../chess/chess-board';
 import * as Clock from '../chess/chess-clock';
 import Sounds from '../chess/chess-sounds';
@@ -33,7 +31,6 @@ import {
 export type Model = FrontendModel;
 
 export const init = ({
-  sendToBackend,
   userId,
 }: {
   sendToBackend: (msg: ToBackend) => Cmd;
@@ -46,7 +43,7 @@ export const init = ({
       openedModal: 'none',
       isFlipped: false,
     },
-    sendToBackend(['Init']),
+    Cmd.None,
   ];
 };
 
@@ -161,17 +158,6 @@ export const updateFromBackend = (
   const model: Model = { ..._model, openedMenuId: Option.None };
 
   switch (msg[0]) {
-    case 'sync': {
-      return [
-        {
-          ...model,
-          sharedModel: msg[1],
-        },
-        Cmd.None,
-        [],
-      ];
-    }
-
     case 'InputClock_Done': {
       if (msg[1].type === 'Err') {
         return [model, Cmd.None, []];

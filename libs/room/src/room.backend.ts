@@ -1,6 +1,6 @@
 import { Cmd, exhaustive, p, Sub } from '@gamezilla/core';
 import { RoomId, UserId } from '@gamezilla/shared';
-import { DatabaseConnection } from '@gamezilla/shared/backend';
+import { AppMsg, DatabaseConnection } from '@gamezilla/shared/backend';
 import * as Game from './game.backend';
 import {
   BackendModel,
@@ -268,6 +268,30 @@ const updateLeave = ({
       ),
     ]),
   };
+};
+
+export const updateFromApp = ({
+  msg,
+  model,
+  sendToUser,
+}: {
+  msg: AppMsg;
+  model: Model;
+  sendToUser: (userIds: UserId[], msg: ToFrontend) => Cmd;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  switch (msg[0]) {
+    case 'user-connected': {
+      const { userId } = msg[1];
+
+      return {
+        model,
+        cmd: sendToUser([userId], ['initialize', model]),
+      };
+    }
+  }
 };
 
 const sendToRoom = ({

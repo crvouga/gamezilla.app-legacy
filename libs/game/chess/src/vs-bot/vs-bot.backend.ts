@@ -89,15 +89,11 @@ const toBotMoveCmd = (modelPrev: Model, modelNext: Model): Cmd<Msg> => {
 };
 
 const updateFromFrontend_ = (
-  { sendToClient, broadcast }: Wire,
+  { broadcast }: Wire,
   msg: ToBackend,
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'Init': {
-      return [model, sendToClient(['sync', model])];
-    }
-
     case 'start-game': {
       const result = startGame(msg[1], model);
 
