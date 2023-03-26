@@ -1,80 +1,104 @@
 export type Position = {
-    x: number,
-    y: number
-}
+  x: number;
+  y: number;
+};
 
-export type Direction = "vertical" | "horizontal" | "left_diagonal" | "right_diagonal"
+export type Direction =
+  | 'vertical'
+  | 'horizontal'
+  | 'left_diagonal'
+  | 'right_diagonal';
 
 const directions: { [direction in Direction]: Direction } = {
-    vertical: "vertical",
-    horizontal: "horizontal",
-    left_diagonal: "left_diagonal",
-    right_diagonal: "right_diagonal"
-}
+  vertical: 'vertical',
+  horizontal: 'horizontal',
+  left_diagonal: 'left_diagonal',
+  right_diagonal: 'right_diagonal',
+};
 
 const toVector = (direction: Direction): Position => {
-    switch (direction) {
-        case 'horizontal': {
-            return { x: 1, y: 0 }
-        }
-
-        case 'vertical': {
-            return { x: 0, y: 1 }
-        }
-
-        case 'left_diagonal': {
-            return { x: 1, y: 1 }
-        }
-
-        case 'right_diagonal': {
-            return { x: 1, y: -1 }
-        }
+  switch (direction) {
+    case 'horizontal': {
+      return { x: 1, y: 0 };
     }
-}
+
+    case 'vertical': {
+      return { x: 0, y: 1 };
+    }
+
+    case 'left_diagonal': {
+      return { x: 1, y: 1 };
+    }
+
+    case 'right_diagonal': {
+      return { x: 1, y: -1 };
+    }
+  }
+};
 
 export const Direction = {
-    all: Object.values(directions),
-    toVector: toVector,
-}
+  all: Object.values(directions),
+  toVector: toVector,
+};
 
-// source:https://stackoverflow.com/questions/17410809/how-to-calculate-rotation-in-2d-in-javascript 
-const rotate = ({ theta, center: { x: cx, y: cy }, position: { x, y } }: { theta: number, center: Position, position: Position }): Position => {
-    return {
-        x: (x - cx) * Math.cos(theta) - (y - cy) * Math.sin(theta) + cx,
-        y: (y - cy) * Math.cos(theta) + (x - cx) * Math.sin(theta) + cy
-    }
-}
+// source:https://stackoverflow.com/questions/17410809/how-to-calculate-rotation-in-2d-in-javascript
+const rotate = ({
+  theta,
+  center: { x: cx, y: cy },
+  position: { x, y },
+}: {
+  theta: number;
+  center: Position;
+  position: Position;
+}): Position => {
+  return {
+    x: (x - cx) * Math.cos(theta) - (y - cy) * Math.sin(theta) + cx,
+    y: (y - cy) * Math.cos(theta) + (x - cx) * Math.sin(theta) + cy,
+  };
+};
 
 const add = (a: Position, b: Position): Position => {
-    return {
-        x: a.x + b.x,
-        y: a.y + b.y,
-    }
-}
+  return {
+    x: a.x + b.x,
+    y: a.y + b.y,
+  };
+};
 
-export const rangeInclusive = ({ lower, upper }: { lower: Position, upper: Position }): Position[] => {
-    const positions: Position[] = []
-    for (let x = lower.x; x <= upper.x; x++) {
-        for (let y = lower.y; y <= upper.y; y++) {
-            positions.push({ x, y })
-        }
+export const rangeInclusive = ({
+  lower,
+  upper,
+}: {
+  lower: Position;
+  upper: Position;
+}): Position[] => {
+  const positions: Position[] = [];
+  for (let x = lower.x; x <= upper.x; x++) {
+    for (let y = lower.y; y <= upper.y; y++) {
+      positions.push({ x, y });
     }
-    return positions
-}
+  }
+  return positions;
+};
 
-export const rangeExclusive = ({ lower, upper }: { lower: Position, upper: Position }): Position[] => {
-    const positions: Position[] = []
-    for (let x = lower.x; x < upper.x; x++) {
-        for (let y = lower.y; y < upper.y; y++) {
-            positions.push({ x, y })
-        }
+export const rangeExclusive = ({
+  lower,
+  upper,
+}: {
+  lower: Position;
+  upper: Position;
+}): Position[] => {
+  const positions: Position[] = [];
+  for (let x = lower.x; x < upper.x; x++) {
+    for (let y = lower.y; y < upper.y; y++) {
+      positions.push({ x, y });
     }
-    return positions
-}
+  }
+  return positions;
+};
 
 export const Position = {
-    rotate,
-    add,
-    rangeInclusive,
-    rangeExclusive
-}
+  rotate,
+  add,
+  rangeInclusive,
+  rangeExclusive,
+};
