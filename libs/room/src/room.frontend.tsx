@@ -78,20 +78,20 @@ type OutAction = Alerts.Action<Msg> | ProfileStore.Action | Route.Action;
 //
 //
 
-type Update = (input: {
+export const update = ({
+  ctx,
+  sendToBackend,
+  msg,
+  model,
+}: {
   ctx: Ctx;
   sendToBackend: (msg: ToBackend) => Cmd;
   msg: Msg;
   model: Model;
-}) => { model: Model; cmd?: Cmd<Msg> };
-
-export const update: Update = (input) => {
-  const updated = update_(input);
-
-  return updated;
-};
-
-export const update_: Update = ({ ctx, sendToBackend, msg, model }) => {
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
   switch (msg[0]) {
     case 'clicked-room': {
       return { model, cmd: Route.push(['room', msg[1].roomId]) };
@@ -212,50 +212,55 @@ export const update_: Update = ({ ctx, sendToBackend, msg, model }) => {
   }
 };
 
-export const updateFromBackend = (
-  {
-    ctx,
-    sendToBackend,
-  }: {
-    ctx: Ctx;
-    sendToBackend: (msg: ToBackend) => Cmd;
-  },
-  msg: ToFrontend,
-  model: Model
-): [Model, Cmd<Msg>, OutAction[]] => {
+export const updateFromBackend = ({
+  ctx,
+  sendToBackend,
+  msg,
+  model,
+}: {
+  ctx: Ctx;
+  sendToBackend: (msg: ToBackend) => Cmd;
+  msg: ToFrontend;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+  actions?: OutAction[];
+} => {
   switch (msg[0]) {
-    case 'sync': {
-      const userIds = Object.values(msg[1].users).map((user) => user.userId);
-
-      const actions: OutAction[] = [['profile', ['find-many', { userIds }]]];
-
-      const merged = mergeWithBackendModel({
+    case 'initialize': {
+      const merged = mergeWithBackend({
         ctx,
         backendModel: msg[1],
         frontendModel: model,
         sendToBackend,
       });
 
-      return [merged[0], merged[1], actions];
+      const userIds = Object.values(msg[1].users).map((user) => user.userId);
+
+      return {
+        ...merged,
+        actions: [['profile', ['find-many', { userIds }]]],
+      };
     }
 
     case 'game': {
       const user = model.users[ctx.currentUserId];
 
       if (!user) {
-        return [model, Cmd.None, []];
+        return { model };
       }
 
       const room = model.rooms[user.roomId];
 
       if (!room) {
-        return [model, Cmd.None, []];
+        return { model };
       }
 
       const game = model.games[user.roomId];
 
       if (!game) {
-        return [model, Cmd.None, []];
+        return { model };
       }
 
       const gameMsg = msg[1];
@@ -281,23 +286,20 @@ export const updateFromBackend = (
         },
       };
 
-      return [
-        modelNew,
-        p(
-          gameCmd,
-          Cmd.map((msg) => ['game', msg])
-        ),
+      return {
+        model: modelNew,
+        cmd: Cmd.tag('game', gameCmd),
         actions,
-      ];
+      };
     }
 
     case 'create':
     case 'input-game': {
-      return updateResponse({ ctx, sendToBackend }, msg, model);
+      return updateResponse({ ctx, sendToBackend, msg, model });
     }
 
     case 'destroy': {
-      const handled = updateResponse({ ctx, sendToBackend }, msg, model);
+      const handled = updateResponse({ ctx, sendToBackend, msg, model });
 
       const user = model.users[ctx.currentUserId];
 
@@ -331,11 +333,15 @@ export const updateFromBackend = (
             ]
           : [];
 
-      return [handled[0], handled[1], [...handled[2], ...alertActions]];
+      return {
+        model: handled.model,
+        cmd: handled.cmd,
+        actions: [...(handled?.actions ?? []), ...alertActions],
+      };
     }
 
     case 'leave': {
-      const handled = updateResponse({ ctx, sendToBackend }, msg, model);
+      const handled = updateResponse({ ctx, sendToBackend, msg, model });
 
       if (msg[2].type === 'Err') {
         return handled;
@@ -357,11 +363,15 @@ export const updateFromBackend = (
             ]
           : [];
 
-      return [handled[0], handled[1], [...handled[2], ...alertActions]];
+      return {
+        model: handled.model,
+        cmd: handled.cmd,
+        actions: [...(handled?.actions ?? []), ...alertActions],
+      };
     }
 
     case 'join': {
-      const handled = updateResponse({ ctx, sendToBackend }, msg, model);
+      const handled = updateResponse({ ctx, sendToBackend, msg, model });
 
       if (msg[2].type === 'Err') {
         return handled;
@@ -388,11 +398,15 @@ export const updateFromBackend = (
             ]
           : [];
 
-      return [
-        handled[0],
-        handled[1],
-        [...handled[2], ...routeActions, ...alertActions],
-      ];
+      return {
+        model: handled.model,
+        cmd: handled.cmd,
+        actions: [
+          ...(handled?.actions ?? []),
+          ...routeActions,
+          ...alertActions,
+        ],
+      };
     }
   }
 };
@@ -421,44 +435,55 @@ const toRoomLeaveMessage = ({ ctx, userId }: { userId: UserId; ctx: Ctx }) => {
   return 'A user left the room';
 };
 
-const updateResponse = (
-  { ctx, sendToBackend }: { ctx: Ctx; sendToBackend: (msg: ToBackend) => Cmd },
-  msg: Res,
-  model: Model
-): [Model, Cmd<Msg>, OutAction[]] => {
+const updateResponse = ({
+  sendToBackend,
+  ctx,
+  msg,
+  model,
+}: {
+  msg: Res;
+  model: Model;
+  ctx: Ctx;
+  sendToBackend: (msg: ToBackend) => Cmd;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+  actions?: OutAction[];
+} => {
   if (msg[2].type === 'Err') {
-    return [
-      {
+    return {
+      model: {
         ...model,
-        requests: { ...model.requests, [msg[0]]: RemoteData.Err(msg[2].error) },
+        requests: {
+          ...model.requests,
+          [msg[0]]: RemoteData.Err(msg[2].error),
+        },
       },
-      Cmd.None,
-      [],
-    ];
+      cmd: Cmd.None,
+      actions: [],
+    };
   }
 
-  const merged = mergeWithBackendModel({
+  const merged = mergeWithBackend({
     ctx,
     frontendModel: model,
     backendModel: msg[2].value,
     sendToBackend,
   });
 
-  const userIds = Object.values(merged[0].users).map((user) => user.userId);
+  const userIds = Object.values(merged.model.users).map((user) => user.userId);
 
-  const storeActions: OutAction[] = [['profile', ['find-many', { userIds }]]];
-
-  return [
-    {
-      ...merged[0],
-      requests: { ...merged[0].requests, [msg[0]]: RemoteData.Ok('none') },
+  return {
+    model: {
+      ...merged.model,
+      requests: { ...merged.model.requests, [msg[0]]: RemoteData.Ok('none') },
     },
-    merged[1],
-    storeActions,
-  ];
+    cmd: merged.cmd,
+    actions: [['profile', ['find-many', { userIds }]]],
+  };
 };
 
-const mergeWithBackendModel = ({
+const mergeWithBackend = ({
   ctx,
   frontendModel,
   backendModel,
@@ -468,7 +493,10 @@ const mergeWithBackendModel = ({
   sendToBackend: (msg: ToBackend) => Cmd;
   frontendModel: FrontendModel;
   backendModel: BackendModel;
-}): [FrontendModel, Cmd<FrontendMsg>] => {
+}): {
+  model: FrontendModel;
+  cmd: Cmd<FrontendMsg>;
+} => {
   const gamesNew = Object.entries(backendModel.games).reduce<
     [FrontendModel['games'], Cmd<FrontendMsg>]
   >(
@@ -535,15 +563,15 @@ const mergeWithBackendModel = ({
     [{}, Cmd.None]
   );
 
-  return [
-    {
+  return {
+    model: {
       ...frontendModel,
       games: gamesNew[0],
       rooms: backendModel.rooms,
       users: backendModel.users,
     },
-    gamesNew[1],
-  ];
+    cmd: gamesNew[1],
+  };
 };
 
 //

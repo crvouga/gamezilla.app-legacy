@@ -464,9 +464,7 @@ export const mergeWithBackend = ({
         ];
       }
 
-      const [child, childCmd] = VsBot.init({
-        sendToBackend: (msg) => sendToBackend(['vs-bot', msg]),
-      });
+      const [child, childCmd] = VsBot.init();
 
       return [
         {

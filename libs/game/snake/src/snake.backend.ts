@@ -51,7 +51,7 @@ export const update = (
         gameStatus: model.gameStatus,
       };
 
-      return [modelNew, broadcast(['sync', modelNew])];
+      return [modelNew, broadcast(['tick', modelNew])];
     }
   }
 };
@@ -121,7 +121,7 @@ const updateRequest = (
 
   return [
     modelNew,
-    Cmd.batch([broadcast(response), broadcast(['sync', modelNew])]),
+    Cmd.batch([broadcast(response), broadcast(['tick', modelNew])]),
   ];
 };
 

@@ -104,14 +104,13 @@ export type FrontendMsg =
 export type BackendMsg = ClockTicked;
 
 export type ToFrontend =
-  | ['sync', SharedModel]
   | ['GameOver']
   | ['GameStarted']
   | ['player-left', SharedModel]
   | ClockTicked_Done
   | Res;
 
-export type ToBackend = ['Init'] | Req;
+export type ToBackend = Req;
 
 export type Req =
   | InputPlayer

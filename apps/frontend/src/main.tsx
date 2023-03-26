@@ -514,19 +514,17 @@ const updateFromBackend = ({
         },
       };
 
-      const updated = RoomFrontend.updateFromBackend(
-        {
-          ctx,
-          sendToBackend: (msg) => sendToBackend(['room', msg]),
-        },
-        msg[1],
-        model.room
-      );
+      const updated = RoomFrontend.updateFromBackend({
+        ctx,
+        sendToBackend: (msg) => sendToBackend(['room', msg]),
+        msg: msg[1],
+        model: model.room,
+      });
 
       return {
-        model: { ...model, room: updated[0] },
-        cmd: Cmd.tag('room', updated[1] ?? Cmd.None),
-        actions: updated[2].map((a) => mapAction(t('room'), a)),
+        model: { ...model, room: updated.model },
+        cmd: Cmd.tag('room', updated.cmd ?? Cmd.None),
+        actions: (updated.actions ?? []).map((a) => mapAction(t('room'), a)),
       };
     }
 

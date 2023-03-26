@@ -80,22 +80,18 @@ export const isBotTurn = (model: SharedModel) => {
 //
 
 export type FrontendMsg =
+  | Req
   | ['audio-done', Audio.PlayResult]
   | ['OpenedMenu', string]
   | ['ClosedMenu']
   | ['ClickedFlip']
-  | ['ClosedModal']
-  | Req;
+  | ['ClosedModal'];
 
 export type BackendMsg = BotMoved;
 
-export type ToBackend = ['Init'] | Req;
+export type ToBackend = Req;
 
-export type ToFrontend =
-  | ['sync', SharedModel]
-  | Res
-  | BotMoved_Done
-  | ['player-left', SharedModel];
+export type ToFrontend = Res | BotMoved_Done | ['player-left', SharedModel];
 
 export type Req =
   | InputUser

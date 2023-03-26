@@ -29,11 +29,7 @@ import {
 
 export type Model = FrontendModel;
 
-export const init = ({
-  sendToBackend,
-}: {
-  sendToBackend: (msg: ToBackend) => Cmd;
-}): [FrontendModel, Cmd<Msg>] => {
+export const init = (): [FrontendModel, Cmd<Msg>] => {
   return [
     {
       sharedModel: initShared,
@@ -41,7 +37,7 @@ export const init = ({
       openedModal: 'none',
       isFlipped: false,
     },
-    sendToBackend(['Init']),
+    Cmd.None,
   ];
 };
 
@@ -163,10 +159,6 @@ const updateFromBackend_ = (
   model: Model
 ): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-    case 'sync': {
-      return [model, Cmd.None, []];
-    }
-
     case 'bot-moved_Done': {
       const result = msg[1];
 

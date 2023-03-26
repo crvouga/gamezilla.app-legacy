@@ -66,7 +66,7 @@ export type BackendMsg = ['tick'];
 
 export type ToBackend = Request;
 
-export type ToFrontend = ['sync', SharedModel] | Response;
+export type ToFrontend = ['tick', SharedModel] | Response;
 
 export type Request = ToggleStatus | InputPlayer | InputDirection | StartGame;
 

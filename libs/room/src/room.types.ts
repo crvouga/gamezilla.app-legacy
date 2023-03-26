@@ -25,20 +25,6 @@ export type SharedModel = {
   };
 };
 
-export type Room_ = {
-  roomId: RoomId;
-  hostId: UserId;
-  userIds: {
-    [userId: UserId]: UserId;
-  };
-};
-
-export type FrontendModel_ = {
-  rooms: {
-    [roomId: RoomId]: Room_;
-  };
-};
-
 export type BackendModel = SharedModel & {
   games: {
     [roomId: RoomId]: Game.BackendModel;
@@ -83,8 +69,8 @@ export type Room = {
 //
 
 export type ToFrontend =
-  | ['sync', BackendModel]
   | ['game', Game.ToFrontend]
+  | ['initialize', BackendModel]
   | Res;
 
 export type ToBackend = Req | ['game', Game.ToBackend];
