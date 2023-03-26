@@ -27,13 +27,13 @@
 // import uiUnlock from "./assets/ui_unlock.wav"
 
 export default {
-  capture: "sound",
-  castling: "sound",
-  check: "sound",
-  gameOver: "sound",
-  gameStart: "sound",
-  move: "sound",
-  navigationCancel: "sound",
-  navigationForwardSelection: "sound",
-  uiUnlock: "sound",
-}
+  capture: 'sound',
+  castling: 'sound',
+  check: 'sound',
+  gameOver: 'sound',
+  gameStart: 'sound',
+  move: 'sound',
+  navigationCancel: 'sound',
+  navigationForwardSelection: 'sound',
+  uiUnlock: 'sound',
+};
