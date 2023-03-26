@@ -5,7 +5,7 @@ import {
   EmailAddress,
   Password,
   UserId,
-} from '@gamezilla/temp-shared';
+} from '@gamezilla/shared';
 
 //
 //

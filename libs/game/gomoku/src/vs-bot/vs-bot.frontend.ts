@@ -3,7 +3,7 @@ import {
   viewVsBotGameScreen,
   viewVsBotSetupScreen,
 } from '@gamezilla/game-shared';
-import { Ctx } from '@gamezilla/temp-shared';
+import { Ctx } from '@gamezilla/shared';
 import {
   BotLevel,
   botLevels,

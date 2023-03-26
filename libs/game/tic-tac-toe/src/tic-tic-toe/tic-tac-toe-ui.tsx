@@ -1,5 +1,5 @@
 import { Ease, rescale } from '@gamezilla/core';
-import { SvgIcon, Sx } from '@gamezilla/temp-shared/ui';
+import { SvgIcon, Sx } from '@gamezilla/shared/ui';
 import {
   allPositions,
   Board,

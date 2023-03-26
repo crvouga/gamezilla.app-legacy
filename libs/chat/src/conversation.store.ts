@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Cmd, Option, p, RemoteData, Result, Task } from '@gamezilla/core';
-import { client, definitions, Route, UserId } from '@gamezilla/temp-shared';
+import { client, definitions, Route, UserId } from '@gamezilla/shared';
 import * as Types from './types';
 
 //

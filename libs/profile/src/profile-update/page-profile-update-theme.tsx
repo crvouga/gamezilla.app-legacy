@@ -1,12 +1,12 @@
 import { Cmd } from '@gamezilla/core';
-import { Route, UserId } from '@gamezilla/temp-shared';
+import { Route, UserId } from '@gamezilla/shared';
 import {
   FillBox,
   Header,
   HeaderBackButton,
   LoadingDialog,
   ThemeModeToggleButtons,
-} from '@gamezilla/temp-shared/ui';
+} from '@gamezilla/shared/ui';
 import { Box } from '@mui/material';
 import * as ProfileStore from '../profile-store';
 

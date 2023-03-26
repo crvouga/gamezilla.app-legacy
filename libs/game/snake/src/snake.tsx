@@ -1,4 +1,4 @@
-import { NonNegInt, PosNum } from '@gamezilla/temp-shared';
+import { NonNegInt, PosNum } from '@gamezilla/shared';
 import { Direction } from './direction';
 import { Position } from './position';
 

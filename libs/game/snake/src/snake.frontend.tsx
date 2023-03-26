@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef } from 'react';
-import { Ctx, Alerts, Route } from '@gamezilla/temp-shared';
+import { Ctx, Alerts, Route } from '@gamezilla/shared';
 import {
   Cmd,
   exhaustive,
@@ -8,7 +8,7 @@ import {
   Result,
   Sub,
 } from '@gamezilla/core';
-import * as UI from '@gamezilla/temp-shared/ui';
+import * as UI from '@gamezilla/shared/ui';
 import { Direction } from './direction';
 import * as Snake from './snake';
 import {

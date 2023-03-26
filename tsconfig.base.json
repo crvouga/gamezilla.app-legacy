@@ -43,7 +43,7 @@
       "@gamezilla/party": ["libs/party/src/index.ts"],
       "@gamezilla/profile": ["libs/profile/src/index.ts"],
       "@gamezilla/room": ["libs/room/src/index.ts"],
-      "@gamezilla/temp-shared": ["libs/temp-shared/src/index.ts"],
+      "@gamezilla/shared": ["libs/shared/src/index.ts"],
       "@gamezilla/temp-shared/backend": [
         "libs/temp-shared/backend/src/index.ts"
       ],

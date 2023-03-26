@@ -1,5 +1,5 @@
 import { NonEmpty, Result } from '@gamezilla/core';
-import { UserId } from '@gamezilla/temp-shared';
+import { UserId } from '@gamezilla/shared';
 import {
   Board,
   initBoard,

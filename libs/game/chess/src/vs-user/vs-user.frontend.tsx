@@ -1,6 +1,6 @@
 import { Audio, Cmd, exhaustive, Option, p, Sub, t } from '@gamezilla/core';
-import { Alerts, Ctx, UserId } from '@gamezilla/temp-shared';
-import * as UI from '@gamezilla/temp-shared/ui';
+import { Alerts, Ctx, UserId } from '@gamezilla/shared';
+import * as UI from '@gamezilla/shared/ui';
 import * as Board from '../chess/chess-board';
 import * as Clock from '../chess/chess-clock';
 import Sounds from '../chess/chess-sounds';

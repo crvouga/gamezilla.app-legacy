@@ -1,5 +1,5 @@
 import { Cmd } from '@gamezilla/core';
-import { PhoneNumber, Route } from '@gamezilla/temp-shared';
+import { PhoneNumber, Route } from '@gamezilla/shared';
 import * as PageLogin from './page-login';
 import * as PageLoginEmailLink from './page-login-email-link';
 import * as PageLoginPhone from './page-login-phone';

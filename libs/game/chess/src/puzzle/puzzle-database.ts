@@ -1,6 +1,6 @@
 import { p, Result, Task } from '@gamezilla/core';
-import { UserId } from '@gamezilla/temp-shared';
-import { DatabaseConnection } from '@gamezilla/temp-shared/backend';
+import { UserId } from '@gamezilla/shared';
+import { DatabaseConnection } from '@gamezilla/shared/backend';
 import { z } from 'zod';
 import {
   isPromotionPieceSymbol,

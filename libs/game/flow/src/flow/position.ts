@@ -1,4 +1,4 @@
-import { NonNegInt } from '@gamezilla/temp-shared';
+import { NonNegInt } from '@gamezilla/shared';
 
 export type Position = {
   x: NonNegInt;

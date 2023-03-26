@@ -1,7 +1,7 @@
 import { Cmd, exhaustive, p, RemoteData, Sub } from '@gamezilla/core';
-import { PartyId, UserId } from '@gamezilla/temp-shared';
+import { PartyId, UserId } from '@gamezilla/shared';
 import { ProfileStore } from '@gamezilla/profile';
-import { Ctx, Route } from '@gamezilla/temp-shared';
+import { Ctx, Route } from '@gamezilla/shared';
 import {
   Avatar,
   Box,
@@ -15,7 +15,7 @@ import {
   Typography,
   useTheme,
   ViewEmptyState,
-} from '@gamezilla/temp-shared/ui';
+} from '@gamezilla/shared/ui';
 import { Mic } from './mic';
 import {
   FrontendModel,

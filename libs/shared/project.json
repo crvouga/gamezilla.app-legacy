@@ -1,7 +1,7 @@
 {
-  "name": "temp-shared",
+  "name": "shared",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/temp-shared/src",
+  "sourceRoot": "libs/shared/src",
   "projectType": "library",
   "tags": [],
   "targets": {
@@ -9,7 +9,7 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/temp-shared/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["libs/shared/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "build": {
@@ -17,7 +17,7 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/libs/temp-shared"
+        "outputPath": "dist/libs/shared"
       },
       "configurations": {
         "development": {
@@ -30,10 +30,10 @@
     },
     "test": {
       "executor": "@nrwl/vite:test",
-      "outputs": ["coverage/libs/temp-shared"],
+      "outputs": ["coverage/libs/shared"],
       "options": {
         "passWithNoTests": true,
-        "reportsDirectory": "../../coverage/libs/temp-shared"
+        "reportsDirectory": "../../coverage/libs/shared"
       }
     }
   }

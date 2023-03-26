@@ -1,4 +1,4 @@
-import { Ctx, UserId } from '@gamezilla/temp-shared';
+import { Ctx, UserId } from '@gamezilla/shared';
 import {
   ActionButton,
   Avatar,
@@ -17,7 +17,7 @@ import {
   ToggleButtonGroup,
   Typography,
   ViewNode,
-} from '@gamezilla/temp-shared/ui';
+} from '@gamezilla/shared/ui';
 
 export const viewVsBotSetupScreen = <BotLevel, PlayerType>({
   // title,

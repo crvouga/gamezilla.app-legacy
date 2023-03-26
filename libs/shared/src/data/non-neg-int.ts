@@ -1,32 +1,32 @@
-export type NonNegInt = number & { _opaque: "NonNegInt" }
+export type NonNegInt = number & { _opaque: 'NonNegInt' };
 
 const is = (number: unknown): number is NonNegInt => {
   return (
-    typeof number === "number" && number >= 0 && Math.floor(number) === number
-  )
-}
+    typeof number === 'number' && number >= 0 && Math.floor(number) === number
+  );
+};
 
 const floor = (number: number): NonNegInt => {
-  const naturalNumber = Math.floor(Math.abs(number))
+  const naturalNumber = Math.floor(Math.abs(number));
 
   if (is(naturalNumber)) {
-    return naturalNumber
+    return naturalNumber;
   }
 
-  throw new Error("impossible case")
-}
+  throw new Error('impossible case');
+};
 
 const add = (a: NonNegInt, b: NonNegInt): NonNegInt => {
-  return floor(a + b)
-}
+  return floor(a + b);
+};
 
 const sub = (a: NonNegInt, b: NonNegInt): NonNegInt => {
-  return floor(a - b)
-}
+  return floor(a - b);
+};
 
 const inc = (a: NonNegInt): NonNegInt => {
-  return floor(a + 1)
-}
+  return floor(a + 1);
+};
 
 export const NonNegInt = {
   sub,
@@ -34,4 +34,4 @@ export const NonNegInt = {
   floor,
   is,
   inc,
-}
+};

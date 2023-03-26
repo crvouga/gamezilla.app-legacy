@@ -1,5 +1,5 @@
 import { RemoteData } from '@gamezilla/core';
-import { UserId } from '@gamezilla/temp-shared';
+import { UserId } from '@gamezilla/shared';
 
 //
 //

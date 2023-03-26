@@ -1,5 +1,5 @@
 import { Result } from '@gamezilla/core';
-import { PhoneNumber, SessionId, UserId } from '@gamezilla/temp-shared';
+import { PhoneNumber, SessionId, UserId } from '@gamezilla/shared';
 
 export type FrontendModel = {
   session:
