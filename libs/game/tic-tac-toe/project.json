@@ -12,6 +12,22 @@
         "lintFilePatterns": ["libs/game/tic-tac-toe/**/*.{ts,tsx,js,jsx}"]
       }
     },
+    "build": {
+      "executor": "@nrwl/vite:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/libs/game/tic-tac-toe"
+      },
+      "configurations": {
+        "development": {
+          "mode": "development"
+        },
+        "production": {
+          "mode": "production"
+        }
+      }
+    },
     "test": {
       "executor": "@nrwl/vite:test",
       "outputs": ["coverage/libs/game/tic-tac-toe"],
