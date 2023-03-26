@@ -1,29 +1,29 @@
 // Source: https://github.com/gcanti/fp-ts/blob/master/src/function.ts
 
-export function p<A>(a: A): A
-export function p<A, B>(a: A, ab: (a: A) => B): B
-export function p<A, B, C>(a: A, ab: (a: A) => B, bc: (b: B) => C): C
+export function p<A>(a: A): A;
+export function p<A, B>(a: A, ab: (a: A) => B): B;
+export function p<A, B, C>(a: A, ab: (a: A) => B, bc: (b: B) => C): C;
 export function p<A, B, C, D>(
   a: A,
   ab: (a: A) => B,
   bc: (b: B) => C,
-  cd: (c: C) => D,
-): D
+  cd: (c: C) => D
+): D;
 export function p<A, B, C, D, E>(
   a: A,
   ab: (a: A) => B,
   bc: (b: B) => C,
   cd: (c: C) => D,
-  de: (d: D) => E,
-): E
+  de: (d: D) => E
+): E;
 export function p<A, B, C, D, E, F>(
   a: A,
   ab: (a: A) => B,
   bc: (b: B) => C,
   cd: (c: C) => D,
   de: (d: D) => E,
-  ef: (e: E) => F,
-): F
+  ef: (e: E) => F
+): F;
 export function p<A, B, C, D, E, F, G>(
   a: A,
   ab: (a: A) => B,
@@ -31,8 +31,8 @@ export function p<A, B, C, D, E, F, G>(
   cd: (c: C) => D,
   de: (d: D) => E,
   ef: (e: E) => F,
-  fg: (f: F) => G,
-): G
+  fg: (f: F) => G
+): G;
 export function p<A, B, C, D, E, F, G, H>(
   a: A,
   ab: (a: A) => B,
@@ -41,8 +41,8 @@ export function p<A, B, C, D, E, F, G, H>(
   de: (d: D) => E,
   ef: (e: E) => F,
   fg: (f: F) => G,
-  gh: (g: G) => H,
-): H
+  gh: (g: G) => H
+): H;
 export function p<A, B, C, D, E, F, G, H, I>(
   a: A,
   ab: (a: A) => B,
@@ -52,8 +52,8 @@ export function p<A, B, C, D, E, F, G, H, I>(
   ef: (e: E) => F,
   fg: (f: F) => G,
   gh: (g: G) => H,
-  hi: (h: H) => I,
-): I
+  hi: (h: H) => I
+): I;
 export function p<A, B, C, D, E, F, G, H, I, J>(
   a: A,
   ab: (a: A) => B,
@@ -64,8 +64,8 @@ export function p<A, B, C, D, E, F, G, H, I, J>(
   fg: (f: F) => G,
   gh: (g: G) => H,
   hi: (h: H) => I,
-  ij: (i: I) => J,
-): J
+  ij: (i: I) => J
+): J;
 export function p<A, B, C, D, E, F, G, H, I, J, K>(
   a: A,
   ab: (a: A) => B,
@@ -77,8 +77,8 @@ export function p<A, B, C, D, E, F, G, H, I, J, K>(
   gh: (g: G) => H,
   hi: (h: H) => I,
   ij: (i: I) => J,
-  jk: (j: J) => K,
-): K
+  jk: (j: J) => K
+): K;
 export function p<A, B, C, D, E, F, G, H, I, J, K, L>(
   a: A,
   ab: (a: A) => B,
@@ -91,8 +91,8 @@ export function p<A, B, C, D, E, F, G, H, I, J, K, L>(
   hi: (h: H) => I,
   ij: (i: I) => J,
   jk: (j: J) => K,
-  kl: (k: K) => L,
-): L
+  kl: (k: K) => L
+): L;
 export function p<A, B, C, D, E, F, G, H, I, J, K, L, M>(
   a: A,
   ab: (a: A) => B,
@@ -106,8 +106,8 @@ export function p<A, B, C, D, E, F, G, H, I, J, K, L, M>(
   ij: (i: I) => J,
   jk: (j: J) => K,
   kl: (k: K) => L,
-  lm: (l: L) => M,
-): M
+  lm: (l: L) => M
+): M;
 export function p<A, B, C, D, E, F, G, H, I, J, K, L, M, N>(
   a: A,
   ab: (a: A) => B,
@@ -122,8 +122,8 @@ export function p<A, B, C, D, E, F, G, H, I, J, K, L, M, N>(
   jk: (j: J) => K,
   kl: (k: K) => L,
   lm: (l: L) => M,
-  mn: (m: M) => N,
-): N
+  mn: (m: M) => N
+): N;
 export function p<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O>(
   a: A,
   ab: (a: A) => B,
@@ -139,8 +139,8 @@ export function p<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O>(
   kl: (k: K) => L,
   lm: (l: L) => M,
   mn: (m: M) => N,
-  no: (n: N) => O,
-): O
+  no: (n: N) => O
+): O;
 
 export function p<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P>(
   a: A,
@@ -158,8 +158,8 @@ export function p<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P>(
   lm: (l: L) => M,
   mn: (m: M) => N,
   no: (n: N) => O,
-  op: (o: O) => P,
-): P
+  op: (o: O) => P
+): P;
 
 export function p<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q>(
   a: A,
@@ -178,8 +178,8 @@ export function p<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q>(
   mn: (m: M) => N,
   no: (n: N) => O,
   op: (o: O) => P,
-  pq: (p: P) => Q,
-): Q
+  pq: (p: P) => Q
+): Q;
 
 export function p<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R>(
   a: A,
@@ -199,8 +199,8 @@ export function p<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R>(
   no: (n: N) => O,
   op: (o: O) => P,
   pq: (p: P) => Q,
-  qr: (q: Q) => R,
-): R
+  qr: (q: Q) => R
+): R;
 
 export function p<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S>(
   a: A,
@@ -221,8 +221,8 @@ export function p<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S>(
   op: (o: O) => P,
   pq: (p: P) => Q,
   qr: (q: Q) => R,
-  rs: (r: R) => S,
-): S
+  rs: (r: R) => S
+): S;
 
 export function p<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T>(
   a: A,
@@ -244,8 +244,8 @@ export function p<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T>(
   pq: (p: P) => Q,
   qr: (q: Q) => R,
   rs: (r: R) => S,
-  st: (s: S) => T,
-): T
+  st: (s: S) => T
+): T;
 export function p(
   a: unknown,
   ab?: Function,
@@ -255,32 +255,32 @@ export function p(
   ef?: Function,
   fg?: Function,
   gh?: Function,
-  hi?: Function,
+  hi?: Function
 ): unknown {
   switch (arguments.length) {
     case 1:
-      return a
+      return a;
     case 2:
-      return ab!(a)
+      return ab!(a);
     case 3:
-      return bc!(ab!(a))
+      return bc!(ab!(a));
     case 4:
-      return cd!(bc!(ab!(a)))
+      return cd!(bc!(ab!(a)));
     case 5:
-      return de!(cd!(bc!(ab!(a))))
+      return de!(cd!(bc!(ab!(a))));
     case 6:
-      return ef!(de!(cd!(bc!(ab!(a)))))
+      return ef!(de!(cd!(bc!(ab!(a)))));
     case 7:
-      return fg!(ef!(de!(cd!(bc!(ab!(a))))))
+      return fg!(ef!(de!(cd!(bc!(ab!(a))))));
     case 8:
-      return gh!(fg!(ef!(de!(cd!(bc!(ab!(a)))))))
+      return gh!(fg!(ef!(de!(cd!(bc!(ab!(a)))))));
     case 9:
-      return hi!(gh!(fg!(ef!(de!(cd!(bc!(ab!(a))))))))
+      return hi!(gh!(fg!(ef!(de!(cd!(bc!(ab!(a))))))));
     default:
-      let ret = arguments[0]
+      let ret = arguments[0];
       for (let i = 1; i < arguments.length; i++) {
-        ret = arguments[i](ret)
+        ret = arguments[i](ret);
       }
-      return ret
+      return ret;
   }
 }

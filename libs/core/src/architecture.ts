@@ -1,5 +1,5 @@
-import { Cmd } from "./cmd"
-import { Sub } from "./sub"
+import { Cmd } from './cmd';
+import { Sub } from './sub';
 
 //
 //
@@ -10,19 +10,18 @@ import { Sub } from "./sub"
 //
 
 export type Input<Msg, Model> = {
-  msg: Msg
-  model: Model
-}
+  msg: Msg;
+  model: Model;
+};
 
 export type Output<Msg, Model> = {
-  model: Model
-  cmd?: Cmd<Msg>
-}
+  model: Model;
+  cmd?: Cmd<Msg>;
+};
 
 export interface Update<Msg, Model> {
-  (input: Input<Msg, Model>): Output<Msg, Model>
+  (input: Input<Msg, Model>): Output<Msg, Model>;
 }
-
 
 //
 //
@@ -32,24 +31,24 @@ export interface Update<Msg, Model> {
 //
 //
 
-export type Subscriptions = <Msg, Model>(model: Model) => Sub<Msg>
+export type Subscriptions = <Msg, Model>(model: Model) => Sub<Msg>;
 
-type Model = number
+type Model = number;
 
-type Msg = "Increment" | "Decrement"
+type Msg = 'Increment' | 'Decrement';
 
 export const update: Update<Msg, Model> = ({ msg, model }) => {
   switch (msg) {
-    case "Decrement": {
+    case 'Decrement': {
       return {
         model: model - 1,
-      }
+      };
     }
 
-    case "Increment": {
+    case 'Increment': {
       return {
         model: model + 1,
-      }
+      };
     }
   }
-}
+};

@@ -1,10 +1,10 @@
-import * as Rx from "rxjs"
-import { Option } from "../option"
-import { p } from "../pipe"
-import { Task } from "../task"
-import { DebuggerDeps, Global } from "./debugger-commons"
-import * as Console from "./debugger-console"
-import * as ReduxDevtool from "./debugger-redux-devtool"
+import * as Rx from 'rxjs';
+import { Option } from '../option';
+import { p } from '../pipe';
+import { Task } from '../task';
+import { DebuggerDeps, Global } from './debugger-commons';
+import * as Console from './debugger-console';
+import * as ReduxDevtool from './debugger-redux-devtool';
 
 /**
  * Checks which type of debugger can be used (standard `console` or _Redux DevTool Extension_) based on provided `window` and prepares the subscription to the "debug" stream
@@ -16,24 +16,24 @@ import * as ReduxDevtool from "./debugger-redux-devtool"
 
 export const RunDebugger =
   <Model, Msg extends {}>(global: Global, stopSignal: Rx.Observable<unknown>) =>
-    (deps: DebuggerDeps<Model, Msg>): Task<void> => {
-      return p(
-        ReduxDevtool.getConnection<Model, Msg>(global),
-        Task.map(
-          Option.fold(
-            () => Console.makeDebugger<Model, Msg>(),
-            ReduxDevtool.makeDebugger,
-          ),
-        ),
-        Task.chain((debuggerInstance) => async () => {
-          console.info("[debugger] starting")
+  (deps: DebuggerDeps<Model, Msg>): Task<void> => {
+    return p(
+      ReduxDevtool.getConnection<Model, Msg>(global),
+      Task.map(
+        Option.fold(
+          () => Console.makeDebugger<Model, Msg>(),
+          ReduxDevtool.makeDebugger
+        )
+      ),
+      Task.chain((debuggerInstance) => async () => {
+        console.info('[debugger] starting');
 
-          const { debug, stop } = debuggerInstance(deps)
+        const { debug, stop } = debuggerInstance(deps);
 
-          deps.debug$.pipe(Rx.takeUntil(stopSignal)).subscribe({
-            next: debug,
-            complete: stop,
-          })
-        }),
-      )
-    }
+        deps.debug$.pipe(Rx.takeUntil(stopSignal)).subscribe({
+          next: debug,
+          complete: stop,
+        });
+      })
+    );
+  };
