@@ -122,22 +122,10 @@ export const update = ({
       };
     }
 
-    case 'destroy': {
-      return {
-        model: {
-          ...model,
-          requests: {
-            ...model.requests,
-            [msg[0]]: RemoteData.Loading,
-          },
-        },
-        cmd: sendToBackend(msg),
-      };
-    }
-
     case 'create':
     case 'join':
     case 'leave':
+    case 'destroy':
     case 'input-game': {
       const routeCmd =
         msg[0] === 'create' ? Route.push(['room', msg[1].roomId]) : Cmd.None;
