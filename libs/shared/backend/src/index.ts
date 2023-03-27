@@ -1,5 +1,5 @@
-import { UserId } from '@gamezilla/shared';
+import { ClientId } from '@gamezilla/shared';
 
 export * from './database-connection';
 
-export type AppMsg = ['user-connected', { userId: UserId }];
+export type AppMsg = ['client-connected', { clientId: ClientId }];

@@ -144,22 +144,12 @@ export const update_ = ({
 const updateFromApp: typeof update = ({ msg, model }) => {
   switch (msg[0]) {
     case 'client-connected': {
-      const session = model.sessions[msg[1]];
-
-      if (!session) {
-        return { model };
-      }
-
-      const { userId } = session;
-
-      if (!userId) {
-        return { model };
-      }
-
+      const clientId = msg[2];
       const roomUpdated = RoomBackend.updateFromApp({
-        msg: ['user-connected', { userId }],
+        msg: ['client-connected', { clientId }],
         model: model.room,
-        sendToUser: (userIds, m) => sendToUser(model, userIds, ['room', m]),
+        sendToFrontend: (clientIds, m) =>
+          sendToFrontend(clientIds, ['room', m]),
       });
 
       return {
