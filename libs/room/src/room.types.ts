@@ -40,6 +40,7 @@ export type FrontendModel = SharedModel & {
   };
   previewUserId: UserId | null;
   modal: ModalModel;
+  initialized?: boolean;
 };
 
 type ModalModel = 'none' | 'user-preview' | 'users';
@@ -73,7 +74,7 @@ export type ToFrontend =
   | ['initialize', BackendModel]
   | Res;
 
-export type ToBackend = Req | ['game', Game.ToBackend];
+export type ToBackend = Req | ['game', Game.ToBackend] | ['initialize'];
 
 export type BackendMsg = ['game', RoomId, Game.BackendMsg];
 

@@ -130,6 +130,10 @@ export const updateFromFrontend = ({
       return updateLeave({ ctx, wire, model, msg });
     }
 
+    case 'initialize': {
+      return { model, cmd: wire.sendToClient(['initialize', model]) };
+    }
+
     case 'game': {
       const user = model.users[ctx.currentUserId];
 

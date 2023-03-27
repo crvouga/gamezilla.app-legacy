@@ -52,3 +52,6 @@ SELECT gcp.*
 FROM game_chess_puzzle gcp
 LEFT JOIN game_chess_puzzle_interaction gcpi ON gcp.puzzle_id = gcpi.puzzle_id
 WHERE gcpi.puzzle_id IS NULL;
+
+SELECT DISTINCT unnest(themes)
+FROM game_chess_puzzle;

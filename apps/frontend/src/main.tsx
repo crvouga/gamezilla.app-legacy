@@ -76,7 +76,7 @@ const init = ({
   const [auth, authCmd] = Auth.init();
   const alerts = Alerts.init;
   const chatStore = ChatStore.init;
-  const room = RoomFrontend.init;
+  const room = RoomFrontend.init();
   const page = Page.initLoading();
 
   const profileStore = ProfileStore.init;
@@ -88,7 +88,7 @@ const init = ({
       chat,
       alerts,
       chatStore,
-      room,
+      room: room.model,
       auth,
       page,
       profileStore,
