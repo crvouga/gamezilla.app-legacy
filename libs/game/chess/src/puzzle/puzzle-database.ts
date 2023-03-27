@@ -248,6 +248,17 @@ export const findMany =
     return result;
   };
 
+const findAllThemes =
+  (dbConn: DatabaseConnection): Task<Result<string, string[]>> =>
+  async () => {
+    const found = await dbConn.query(
+      z.string(),
+      `SELECT DISTINCT unnest(themes) FROM ${puzzleTableName};`
+    );
+
+    return found;
+  };
+
 const insertManyInteractions =
   (
     dbConn: DatabaseConnection,
@@ -286,6 +297,7 @@ export const PuzzleDatabase = {
   insertMany,
   findMany,
   insertManyInteractions,
+  findAllThemes,
 };
 
 //

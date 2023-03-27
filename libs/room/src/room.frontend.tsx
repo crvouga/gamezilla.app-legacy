@@ -12,6 +12,7 @@ import {
   ButtonBase,
   CardActionArea,
   Chip,
+  CircularProgress,
   Divider,
   Drawer,
   FillBox,
@@ -49,13 +50,17 @@ import {
 
 export type Model = FrontendModel;
 
-export const init: Model = {
-  games: {},
-  rooms: {},
-  users: {},
-  requests: {},
-  modal: 'none',
-  previewUserId: null,
+export const init = (): { model: Model } => {
+  return {
+    model: {
+      games: {},
+      rooms: {},
+      users: {},
+      requests: {},
+      modal: 'none',
+      previewUserId: null,
+    },
+  };
 };
 
 //
@@ -227,7 +232,11 @@ export const updateFromBackend = ({
       const userIds = Object.values(msg[1].users).map((user) => user.userId);
 
       return {
-        ...merged,
+        model: {
+          ...merged.model,
+          initialized: true,
+        },
+        cmd: merged.cmd,
         actions: [['profile', ['find-many', { userIds }]]],
       };
     }
@@ -675,6 +684,14 @@ const ViewPage = ({
   ctx: Ctx;
   $send: (m: Msg) => void;
 }) => {
+  if (!model.initialized) {
+    return (
+      <FillBox sx={{ alignItems: 'center', justifyContent: 'center' }}>
+        <CircularProgress />
+      </FillBox>
+    );
+  }
+
   const room = model.rooms[roomId];
 
   if (!room) {
@@ -726,6 +743,24 @@ export const ViewPageRoomList = ({
   const user = model.users[ctx.currentUserId];
   const currentRoom = user ? model.rooms[user.roomId] : undefined;
   const rooms = Object.values(model.rooms);
+
+  if (!model.initialized) {
+    return (
+      <FillBox>
+        <Header title={'Rooms'} />
+        <Box
+          sx={{
+            flex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      </FillBox>
+    );
+  }
 
   return (
     <FillBox>
