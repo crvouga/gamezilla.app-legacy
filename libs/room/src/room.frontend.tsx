@@ -684,7 +684,11 @@ const ViewPage = ({
   ctx: Ctx;
   $send: (m: Msg) => void;
 }) => {
-  if (!model.initialized) {
+  if (
+    !model.initialized ||
+    model.requests.create?.type === 'Loading' ||
+    model.requests.join?.type === 'Loading'
+  ) {
     return (
       <FillBox sx={{ alignItems: 'center', justifyContent: 'center' }}>
         <CircularProgress />
@@ -817,14 +821,12 @@ export const ViewPageRoomList = ({
 
       <Box sx={{ flex: 1 }} />
 
-      {!(
-        currentRoom !== undefined ||
-        model.requests['create'] === RemoteData.Loading
-      ) && (
+      {currentRoom === undefined && (
         <Box sx={{ width: '100%', px: 2, py: 2 }}>
           <Button
             variant="contained"
             fullWidth
+            loading={model.requests['create'] === RemoteData.Loading}
             size="large"
             onClick={() => {
               $send(['create', { roomId: RoomId.generate() }]);
