@@ -15,4 +15,6 @@ export type Ctx = {
   $push: (route: Route.Model) => void;
 };
 
-export type AppMsg = ['route-changed', { route: Route.Model }];
+export type AppMsg =
+  | { t: 'route-changed'; route: Route.Model }
+  | { t: 'wire-connected' };

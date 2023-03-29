@@ -49,9 +49,9 @@ export const update = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  switch (msg[0]) {
+  switch (msg.t) {
     case 'game': {
-      const roomId = msg[1];
+      const { roomId } = msg;
 
       const game = model.games[roomId];
 
@@ -59,12 +59,12 @@ export const update = ({
         return { model };
       }
 
-      const gameMsg = msg[2];
+      const gameMsg = msg.c;
 
       const updated = Game.update(
         {
           broadcast: (m) =>
-            sendToRoom({ sendToUser, model, roomId, msg: ['game', m] }),
+            sendToRoom({ sendToUser, model, roomId, msg: { t: 'game', c: m } }),
         },
         gameMsg,
         game
@@ -82,7 +82,7 @@ export const update = ({
         model: modelNew,
         cmd: p(
           updated[1],
-          Cmd.map((m): Msg => ['game', roomId, m])
+          Cmd.map((m): Msg => ({ t: 'game', roomId, c: m }))
         ),
       };
     }
@@ -112,27 +112,23 @@ export const updateFromFrontend = ({
   model: Model;
   cmd?: Cmd<BackendMsg>;
 } => {
-  switch (msg[0]) {
+  switch (msg.t) {
     case 'list':
     case 'input-game':
     case 'join':
     case 'destroy':
     case 'create': {
-      const res: Res = [...msg, handle({ ctx, model, msg })];
+      const res: Res = { ...msg, result: handle({ ctx, model, msg }) };
 
-      if (res[2].type === 'Err') {
+      if (res.result.type === 'Err') {
         return { model, cmd: wire.sendToClient(res) };
       }
 
-      return { model: res[2].value, cmd: wire.broadcast(res) };
+      return { model: res.result.value, cmd: wire.broadcast(res) };
     }
 
     case 'leave': {
       return updateLeave({ ctx, wire, model, msg });
-    }
-
-    case 'initialize': {
-      return { model, cmd: wire.sendToClient(['initialize', model]) };
     }
 
     case 'game': {
@@ -154,7 +150,7 @@ export const updateFromFrontend = ({
         return { model };
       }
 
-      const gameMsg = msg[1];
+      const gameMsg = msg.c;
 
       const [gameNew, gameCmd] = Game.updateFromFrontend({
         ...ctx,
@@ -163,13 +159,13 @@ export const updateFromFrontend = ({
           hostId: room.hostId,
         },
         hostId: room.hostId,
-        sendToClient: (m) => wire.sendToClient(['game', m]),
+        sendToClient: (m) => wire.sendToClient({ t: 'game', c: m }),
         broadcast: (m) =>
           sendToRoom({
             sendToUser: wire.sendToUser,
             model,
             roomId: room.roomId,
-            msg: ['game', m],
+            msg: { t: 'game', c: m },
           }),
         msg: gameMsg,
         model: game,
@@ -187,7 +183,7 @@ export const updateFromFrontend = ({
         model: modelNew,
         cmd: p(
           gameCmd,
-          Cmd.map((msg): Msg => ['game', room.roomId, msg])
+          Cmd.map((msg): Msg => ({ t: 'game', roomId: room.roomId, c: msg }))
         ),
       };
     }
@@ -211,12 +207,12 @@ const updateLeave = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (msg[0] !== 'leave') {
+  if (msg.t !== 'leave') {
     return { model };
   }
 
   const result = handle({ ctx, model, msg });
-  const res: Res = [...msg, result];
+  const res: Res = { ...msg, result };
 
   if (result.type === 'Err') {
     return { model, cmd: wire.sendToClient(res) };
@@ -248,7 +244,7 @@ const updateLeave = ({
         sendToUser: wire.sendToUser,
         model: modelAfter,
         roomId: room.roomId,
-        msg: ['game', msg],
+        msg: { t: 'game', c: msg },
       });
     },
     model: game,
@@ -269,7 +265,7 @@ const updateLeave = ({
       wire.broadcast(res),
       p(
         updated.cmd ?? Cmd.None,
-        Cmd.map((msg): Msg => ['game', room.roomId, msg])
+        Cmd.map((msg): Msg => ({ t: 'game', roomId: room.roomId, c: msg }))
       ),
     ]),
   };
@@ -278,7 +274,6 @@ const updateLeave = ({
 export const updateFromApp = ({
   msg,
   model,
-  sendToFrontend,
 }: {
   msg: AppMsg;
   model: Model;
@@ -289,11 +284,8 @@ export const updateFromApp = ({
 } => {
   switch (msg[0]) {
     case 'client-connected': {
-      const { clientId } = msg[1];
-
       return {
         model,
-        cmd: sendToFrontend([clientId], ['initialize', model]),
       };
     }
   }
@@ -355,7 +347,7 @@ export const subscriptions = (model: Model): Sub<Msg> => {
 
     const sub = p(
       Game.subscriptions(`room/${roomId}`, game),
-      Sub.map((msg): Msg => ['game', roomId, msg])
+      Sub.map((msg): Msg => ({ t: 'game', roomId, c: msg }))
     );
 
     subs.push(sub);

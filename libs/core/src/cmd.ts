@@ -41,6 +41,16 @@ const tag = <Tag extends string, Msg>(
   );
 };
 
+const tag_ = <Tag extends string, Msg>(
+  tagName: Tag,
+  cmd: Cmd<Msg>
+): Cmd<{ t: Tag; c: Msg }> => {
+  return p(
+    cmd,
+    map((msg) => ({ t: tagName, c: msg }))
+  );
+};
+
 const batch = <Msg>(cmdList: (Cmd<Msg> | undefined | null)[]): Cmd<Msg> => {
   return ($send) => {
     for (let i = 0; i < cmdList.length; i++) {
@@ -70,6 +80,7 @@ export const Cmd = {
   perform,
   batch,
   tag,
+  tag_,
   chain,
   map,
   of,
