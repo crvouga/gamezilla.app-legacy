@@ -45,6 +45,16 @@ export const tag = <Tag extends string, Msg>(
   return p(sub, Sub.map(t(tagName)));
 };
 
+const tag_ = <Tag extends string, Msg>(
+  t: Tag,
+  sub: Sub<Msg>
+): Sub<{ t: Tag; c: Msg }> => {
+  return p(
+    sub,
+    Sub.map((c) => ({ t, c }))
+  );
+};
+
 const of = <T>(msg: T): Sub<T> => {
   return Rx.of(msg);
 };
@@ -57,4 +67,5 @@ export const Sub = {
   None,
   tag,
   chain,
+  tag_,
 };

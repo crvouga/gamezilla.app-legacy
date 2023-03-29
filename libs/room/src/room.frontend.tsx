@@ -557,7 +557,7 @@ const mergeWithBackend = ({
       }
 
       const initial = Game.init({
-        gameName: backendGame.type,
+        gameName: backendGame.t,
         ctx,
       });
 
@@ -826,7 +826,7 @@ export const ViewPageRoomList = ({
                   }
                   return [];
                 });
-              const gameName = model.games[room.roomId]?.type;
+              const gameName = model.games[room.roomId]?.t;
               const currentRoomId = model.users[ctx.currentUserId]?.roomId;
               return (
                 <ViewRoomCard
@@ -1231,7 +1231,7 @@ export const ViewNotInRoom = ({
             }}
           >
             {game ? (
-              viewCoverArt(game.type)
+              viewCoverArt(game.t)
             ) : (
               <Icons.SportsEsports
                 sx={{
@@ -1243,7 +1243,7 @@ export const ViewNotInRoom = ({
             )}
           </Box>
           <Typography variant="h4" color="text.secondary">
-            {game ? gameNameToString(game.type) : '...'}
+            {game ? gameNameToString(game.t) : '...'}
           </Typography>
         </Box>
 
@@ -1492,7 +1492,7 @@ export const ViewBar = ({
                 height: 48,
               }}
             >
-              {viewCoverArt(game.type)}
+              {viewCoverArt(game.t)}
             </Box>
           )}
         </Box>
