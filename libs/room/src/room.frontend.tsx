@@ -1,7 +1,7 @@
 import { Cmd, exhaustive, p, RemoteData, Sub } from '@gamezilla/core';
 import { RoomCtx } from '@gamezilla/game-shared';
 import { ProfileStore } from '@gamezilla/profile';
-import { Alerts, Ctx, RoomId, Route, UserId } from '@gamezilla/shared';
+import { Alerts, AppMsg, Ctx, RoomId, Route, UserId } from '@gamezilla/shared';
 import {
   ActionButton,
   Avatar,
@@ -127,6 +127,7 @@ export const update = ({
       };
     }
 
+    case 'list':
     case 'create':
     case 'join':
     case 'leave':
@@ -290,6 +291,7 @@ export const updateFromBackend = ({
       };
     }
 
+    case 'list':
     case 'create':
     case 'input-game': {
       return updateResponse({ ctx, sendToBackend, msg, model });
@@ -404,6 +406,39 @@ export const updateFromBackend = ({
           ...alertActions,
         ],
       };
+    }
+  }
+};
+
+export const updateFromApp = ({
+  msg,
+  model,
+  sendToBackend,
+}: {
+  msg: AppMsg;
+  model: Model;
+  sendToBackend: (m: ToBackend) => Cmd;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  switch (msg[0]) {
+    case 'route-changed': {
+      const { route } = msg[1];
+      switch (route[0]) {
+        case 'room-list': {
+          return {
+            model,
+            cmd: sendToBackend(['list', null]),
+          };
+        }
+
+        default: {
+          return {
+            model,
+          };
+        }
+      }
     }
   }
 };

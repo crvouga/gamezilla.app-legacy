@@ -113,6 +113,7 @@ export const updateFromFrontend = ({
   cmd?: Cmd<BackendMsg>;
 } => {
   switch (msg[0]) {
+    case 'list':
     case 'input-game':
     case 'join':
     case 'destroy':

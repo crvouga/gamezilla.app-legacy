@@ -373,10 +373,19 @@ const update_ = ({
       const updatedPage = initPage({
         model: { ...model, route: updated.model },
       });
+      const roomUpdated = RoomFrontend.updateFromApp({
+        msg: ['route-changed', { route: updated.model }],
+        model: model.room,
+        sendToBackend: (m) => sendToBackend(['room', m]),
+      });
       return {
-        model: updatedPage.model,
+        model: {
+          ...updatedPage.model,
+          room: roomUpdated.model,
+        },
         cmd: Cmd.batch([
           Cmd.tag('route', updated.cmd),
+          Cmd.tag('room', roomUpdated.cmd ?? Cmd.None),
           updatedPage.cmd ?? Cmd.None,
         ]),
         actions: updatedPage.actions,
