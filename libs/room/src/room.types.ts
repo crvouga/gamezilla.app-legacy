@@ -96,6 +96,7 @@ export type FrontendMsg =
 type Model = BackendModel;
 
 export type Req =
+  | ['list', null]
   | ['create', { roomId: RoomId; gameName?: Game.GameName }]
   | ['destroy', { userId: UserId }]
   | ['join', { userId: UserId; roomId: RoomId }]
@@ -128,6 +129,10 @@ export const handle = ({
   model: Model;
 }): Result<Problem, Model> => {
   switch (msg[0]) {
+    case 'list': {
+      return Ok(model);
+    }
+
     case 'create': {
       const user = model.users[ctx.currentUserId];
 
