@@ -156,9 +156,9 @@ export const updateFromApp = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  switch (msg[0]) {
+  switch (msg.t) {
     case 'route-changed': {
-      switch (msg[1].route[0]) {
+      switch (msg.route[0]) {
         case 'chat-conversation': {
           return {
             model,
@@ -180,6 +180,9 @@ export const updateFromApp = ({
           };
         }
       }
+    }
+    default: {
+      return { model };
     }
   }
 };

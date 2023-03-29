@@ -36,11 +36,10 @@ export type FrontendModel = SharedModel & {
     [roomId: RoomId]: Game.FrontendModel;
   };
   requests: {
-    [key in Req[0]]?: RemoteData<Problem, 'none'>;
+    [key in Req['t']]?: RemoteData<Problem, 'none'>;
   };
   previewUserId: UserId | null;
   modal: ModalModel;
-  initialized?: boolean;
 };
 
 type ModalModel = 'none' | 'user-preview' | 'users';
@@ -69,23 +68,20 @@ export type Room = {
 //
 //
 
-export type ToFrontend =
-  | ['game', Game.ToFrontend]
-  | ['initialize', BackendModel]
-  | Res;
+export type ToFrontend = Res | { t: 'game'; c: Game.ToFrontend };
 
-export type ToBackend = Req | ['game', Game.ToBackend] | ['initialize'];
+export type ToBackend = Req | { t: 'game'; c: Game.ToBackend };
 
-export type BackendMsg = ['game', RoomId, Game.BackendMsg];
+export type BackendMsg = { t: 'game'; roomId: RoomId; c: Game.BackendMsg };
 
 export type FrontendMsg =
   | Req
-  | ['game', Game.FrontendMsg]
-  | ['modal-closed']
-  | ['modal-open', ModalModel]
-  | ['clicked-room', { roomId: RoomId }]
-  | ['clicked-user', { userId: UserId }]
-  | ['clicked-user-link', { userId: UserId }];
+  | { t: 'game'; c: Game.FrontendMsg }
+  | { t: 'modal-closed' }
+  | { t: 'modal-open'; c: ModalModel }
+  | { t: 'clicked-room'; roomId: RoomId }
+  | { t: 'clicked-user'; userId: UserId }
+  | { t: 'clicked-user-link'; userId: UserId };
 
 //
 //
@@ -96,14 +92,14 @@ export type FrontendMsg =
 type Model = BackendModel;
 
 export type Req =
-  | ['list', null]
-  | ['create', { roomId: RoomId; gameName?: Game.GameName }]
-  | ['destroy', { userId: UserId }]
-  | ['join', { userId: UserId; roomId: RoomId }]
-  | ['leave', { userId: UserId }]
-  | ['input-game', { gameName?: Game.GameName }];
+  | { t: 'list' }
+  | { t: 'create'; roomId: RoomId; gameName?: Game.GameName }
+  | { t: 'destroy'; userId: UserId }
+  | { t: 'join'; userId: UserId; roomId: RoomId }
+  | { t: 'leave'; userId: UserId }
+  | { t: 'input-game'; gameName?: Game.GameName };
 
-export type Res = [...Req, Result<Problem, Model>];
+export type Res = Req & { result: Result<Problem, Model> };
 
 export type Problem =
   | 'must_be_host'
@@ -111,13 +107,7 @@ export type Problem =
   | 'not_in_room'
   | 'already_in_room'
   | 'room_not_found'
-  | 'impossible_state_room_id_taken'
-  | ChangeHostProblem;
-
-type ChangeHostProblem =
-  | 'next_host_not_in_room'
-  | 'next_host_room_not_found'
-  | 'next_host_must_be_in_same_room';
+  | 'impossible_state_room_id_taken';
 
 export const handle = ({
   ctx,
@@ -128,7 +118,7 @@ export const handle = ({
   msg: Req;
   model: Model;
 }): Result<Problem, Model> => {
-  switch (msg[0]) {
+  switch (msg.t) {
     case 'list': {
       return Ok(model);
     }
@@ -140,13 +130,13 @@ export const handle = ({
         return Err('already_in_room');
       }
 
-      const room = model.rooms[msg[1].roomId];
+      const room = model.rooms[msg.roomId];
 
       if (room) {
         return Err('impossible_state_room_id_taken');
       }
 
-      const { gameName } = msg[1];
+      const { gameName } = msg;
 
       const gameNew = gameName
         ? GameBackend.init({
@@ -158,12 +148,12 @@ export const handle = ({
         : undefined;
 
       const roomNew: Room = {
-        roomId: msg[1].roomId,
+        roomId: msg.roomId,
         hostId: ctx.currentUserId,
       };
 
       const userNew: RoomUser = {
-        roomId: msg[1].roomId,
+        roomId: msg.roomId,
         userId: ctx.currentUserId,
       };
 
@@ -230,7 +220,7 @@ export const handle = ({
       }
 
       const userNew: RoomUser = {
-        roomId: msg[1].roomId,
+        roomId: msg.roomId,
         userId: ctx.currentUserId,
       };
 
@@ -273,7 +263,7 @@ export const handle = ({
     }
 
     case 'input-game': {
-      const { gameName } = msg[1];
+      const { gameName } = msg;
 
       const user = model.users[ctx.currentUserId];
 

@@ -374,7 +374,7 @@ const update_ = ({
         model: { ...model, route: updated.model },
       });
       const roomUpdated = RoomFrontend.updateFromApp({
-        msg: ['route-changed', { route: updated.model }],
+        msg: { t: 'route-changed', route: updated.model },
         model: model.room,
         sendToBackend: (m) => sendToBackend(['room', m]),
       });
@@ -407,6 +407,23 @@ const update_ = ({
           },
         };
       }
+
+      if (msg[1] === 'connected') {
+        const roomUpdated = RoomFrontend.updateFromApp({
+          msg: { t: 'wire-connected' },
+          model: model.room,
+          sendToBackend: (m) => sendToBackend(['room', m]),
+        });
+        return {
+          model: {
+            ...model,
+            room: roomUpdated.model,
+            wire: { type: msg[1] },
+          },
+          cmd: Cmd.tag('room', roomUpdated.cmd ?? Cmd.None),
+        };
+      }
+
       return { model: { ...model, wire: { type: msg[1] } } };
     }
 

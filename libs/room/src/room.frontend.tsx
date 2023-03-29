@@ -97,9 +97,9 @@ export const update = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  switch (msg[0]) {
+  switch (msg.t) {
     case 'clicked-room': {
-      return { model, cmd: Route.push(['room', msg[1].roomId]) };
+      return { model, cmd: Route.push(['room', msg.roomId]) };
     }
 
     case 'modal-closed': {
@@ -107,13 +107,13 @@ export const update = ({
     }
 
     case 'modal-open': {
-      return { model: { ...model, modal: msg[1] } };
+      return { model: { ...model, modal: msg.c } };
     }
 
     case 'clicked-user-link': {
       return {
         model: { ...model, modal: 'none' },
-        cmd: Route.push(['profile', msg[1]]),
+        cmd: Route.push(['profile', msg]),
       };
     }
 
@@ -121,7 +121,7 @@ export const update = ({
       return {
         model: {
           ...model,
-          previewUserId: msg[1].userId,
+          previewUserId: msg.userId,
           modal: 'user-preview',
         },
       };
@@ -134,14 +134,14 @@ export const update = ({
     case 'destroy':
     case 'input-game': {
       const routeCmd =
-        msg[0] === 'create' ? Route.push(['room', msg[1].roomId]) : Cmd.None;
+        msg.t === 'create' ? Route.push(['room', msg.roomId]) : Cmd.None;
 
       return {
         model: {
           ...model,
           requests: {
             ...model.requests,
-            [msg[0]]: RemoteData.Loading,
+            [msg.t]: RemoteData.Loading,
           },
         },
         cmd: Cmd.batch([routeCmd, sendToBackend(msg)]),
@@ -167,7 +167,7 @@ export const update = ({
         return { model };
       }
 
-      const gameMsg = msg[1];
+      const gameMsg = msg.c;
 
       const gameRoomCtx: RoomCtx = {
         ...ctx,
@@ -179,7 +179,7 @@ export const update = ({
 
       const [gameNew, gameCmd] = Game.update({
         ctx: gameRoomCtx,
-        sendToBackend: (msg) => sendToBackend(['game', msg]),
+        sendToBackend: (msg) => sendToBackend({ t: 'game', c: msg }),
         msg: gameMsg,
         model: game,
       });
@@ -196,7 +196,7 @@ export const update = ({
         model: modelNew,
         cmd: p(
           gameCmd,
-          Cmd.map((msg): Msg => ['game', msg])
+          Cmd.map((msg): Msg => ({ t: 'game', c: msg }))
         ),
       };
     }
@@ -221,27 +221,7 @@ export const updateFromBackend = ({
   cmd?: Cmd<Msg>;
   actions?: OutAction[];
 } => {
-  switch (msg[0]) {
-    case 'initialize': {
-      const merged = mergeWithBackend({
-        ctx,
-        backendModel: msg[1],
-        frontendModel: model,
-        sendToBackend,
-      });
-
-      const userIds = Object.values(msg[1].users).map((user) => user.userId);
-
-      return {
-        model: {
-          ...merged.model,
-          initialized: true,
-        },
-        cmd: merged.cmd,
-        actions: [['profile', ['find-many', { userIds }]]],
-      };
-    }
-
+  switch (msg.t) {
     case 'game': {
       const user = model.users[ctx.currentUserId];
 
@@ -261,7 +241,7 @@ export const updateFromBackend = ({
         return { model };
       }
 
-      const gameMsg = msg[1];
+      const gameMsg = msg.c;
 
       const [gameNew, gameCmd, actions] = Game.updateFromBackend({
         ctx: {
@@ -271,7 +251,7 @@ export const updateFromBackend = ({
             //
           },
         },
-        sendToBackend: (msg) => sendToBackend(['game', msg]),
+        sendToBackend: (msg) => sendToBackend({ t: 'game', c: msg }),
         model: game,
         msg: gameMsg,
       });
@@ -286,7 +266,7 @@ export const updateFromBackend = ({
 
       return {
         model: modelNew,
-        cmd: Cmd.tag('game', gameCmd),
+        cmd: Cmd.tag_('game', gameCmd),
         actions,
       };
     }
@@ -317,7 +297,7 @@ export const updateFromBackend = ({
       }
 
       const alertActions: OutAction[] =
-        msg[2].type === 'Ok'
+        msg.result.type === 'Ok'
           ? [
               [
                 'alerts',
@@ -342,19 +322,19 @@ export const updateFromBackend = ({
     case 'leave': {
       const handled = updateResponse({ ctx, sendToBackend, msg, model });
 
-      if (msg[2].type === 'Err') {
+      if (msg.result.type === 'Err') {
         return handled;
       }
 
       const alertActions: OutAction[] =
-        msg[1].userId !== ctx.currentUserId
+        msg.userId !== ctx.currentUserId
           ? [
               [
                 'alerts',
                 {
                   tag: 'Snack',
                   message: toRoomLeaveMessage({
-                    userId: msg[1].userId,
+                    userId: msg.userId,
                     ctx,
                   }),
                 },
@@ -372,24 +352,24 @@ export const updateFromBackend = ({
     case 'join': {
       const handled = updateResponse({ ctx, sendToBackend, msg, model });
 
-      if (msg[2].type === 'Err') {
+      if (msg.result.type === 'Err') {
         return handled;
       }
 
       const routeActions: OutAction[] =
-        msg[1].userId === ctx.currentUserId
-          ? [['route', ['Replace', ['room', msg[1].roomId]]]]
+        msg.userId === ctx.currentUserId
+          ? [['route', ['Replace', ['room', msg.roomId]]]]
           : [];
 
       const alertActions: OutAction[] =
-        msg[1].userId !== ctx.currentUserId
+        msg.userId !== ctx.currentUserId
           ? [
               [
                 'alerts',
                 {
                   tag: 'Snack',
                   message: toRoomJoinMessage({
-                    userId: msg[1].userId,
+                    userId: msg.userId,
                     ctx,
                   }),
                 },
@@ -422,14 +402,15 @@ export const updateFromApp = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  switch (msg[0]) {
+  switch (msg.t) {
     case 'route-changed': {
-      const { route } = msg[1];
+      const { route } = msg;
       switch (route[0]) {
+        case 'room':
         case 'room-list': {
           return {
             model,
-            cmd: sendToBackend(['list', null]),
+            cmd: sendToBackend({ t: 'list' }),
           };
         }
 
@@ -439,6 +420,19 @@ export const updateFromApp = ({
           };
         }
       }
+    }
+
+    case 'wire-connected': {
+      return {
+        model,
+        cmd: sendToBackend({ t: 'list' }),
+      };
+    }
+
+    default: {
+      return {
+        model,
+      };
     }
   }
 };
@@ -482,13 +476,13 @@ const updateResponse = ({
   cmd?: Cmd<Msg>;
   actions?: OutAction[];
 } => {
-  if (msg[2].type === 'Err') {
+  if (msg.result.type === 'Err') {
     return {
       model: {
         ...model,
         requests: {
           ...model.requests,
-          [msg[0]]: RemoteData.Err(msg[2].error),
+          [msg.t]: RemoteData.Err(msg.result.error),
         },
       },
       cmd: Cmd.None,
@@ -499,7 +493,7 @@ const updateResponse = ({
   const merged = mergeWithBackend({
     ctx,
     frontendModel: model,
-    backendModel: msg[2].value,
+    backendModel: msg.result.value,
     sendToBackend,
   });
 
@@ -508,7 +502,7 @@ const updateResponse = ({
   return {
     model: {
       ...merged.model,
-      requests: { ...merged.model.requests, [msg[0]]: RemoteData.Ok('none') },
+      requests: { ...merged.model.requests, [msg.t]: RemoteData.Ok('none') },
     },
     cmd: merged.cmd,
     actions: [['profile', ['find-many', { userIds }]]],
@@ -544,7 +538,7 @@ const mergeWithBackend = ({
           ctx,
           backendModel: backendGame,
           frontendModel: frontendGame,
-          sendToBackend: (msg) => sendToBackend(['game', msg]),
+          sendToBackend: (msg) => sendToBackend({ t: 'game', c: msg }),
         });
 
         return [
@@ -556,7 +550,7 @@ const mergeWithBackend = ({
             gamesNew[1],
             p(
               merged[1],
-              Cmd.map((m): Msg => ['game', m])
+              Cmd.map((m): Msg => ({ t: 'game', c: m }))
             ),
           ]),
         ];
@@ -571,7 +565,7 @@ const mergeWithBackend = ({
         ctx,
         backendModel: backendGame,
         frontendModel: initial[0],
-        sendToBackend: (msg) => sendToBackend(['game', msg]),
+        sendToBackend: (msg) => sendToBackend({ t: 'game', c: msg }),
       });
 
       return [
@@ -583,11 +577,11 @@ const mergeWithBackend = ({
           gamesNew[1],
           p(
             initial[1],
-            Cmd.map((msg) => ['game', msg])
+            Cmd.map((msg) => ({ t: 'game', c: msg }))
           ),
           p(
             merged[1],
-            Cmd.map((msg) => ['game', msg])
+            Cmd.map((msg) => ({ t: 'game', c: msg }))
           ),
         ]),
       ];
@@ -631,7 +625,7 @@ export const subscriptions = (ctx: Ctx, model: Model): Sub<Msg> => {
 
   return p(
     Game.subscriptions(`room/${user.roomId}`, ctx, game),
-    Sub.map((msg) => ['game', msg])
+    Sub.map((msg) => ({ t: 'game', c: msg }))
   );
 };
 
@@ -662,7 +656,7 @@ export const View = ({
       <ViewPage roomId={roomId} ctx={ctx} $send={$send} model={model} />
       <Drawer
         open={model.modal === 'users'}
-        onClose={() => $send(['modal-closed'])}
+        onClose={() => $send({ t: 'modal-closed' })}
         anchor="bottom"
       >
         {room && (
@@ -672,7 +666,7 @@ export const View = ({
 
       <Drawer
         open={model.modal === 'user-preview'}
-        onClose={() => $send(['modal-closed'])}
+        onClose={() => $send({ t: 'modal-closed' })}
         anchor="bottom"
       >
         {model.previewUserId && (
@@ -685,7 +679,7 @@ export const View = ({
             }}
             onClick={() => {
               if (model.previewUserId) {
-                $send(['clicked-user-link', { userId: model.previewUserId }]);
+                $send({ t: 'clicked-user-link', userId: model.previewUserId });
               }
             }}
           >
@@ -720,7 +714,7 @@ const ViewPage = ({
   $send: (m: Msg) => void;
 }) => {
   if (
-    !model.initialized ||
+    model.requests.list?.type === 'Loading' ||
     model.requests.create?.type === 'Loading' ||
     model.requests.join?.type === 'Loading'
   ) {
@@ -783,7 +777,7 @@ export const ViewPageRoomList = ({
   const currentRoom = user ? model.rooms[user.roomId] : undefined;
   const rooms = Object.values(model.rooms);
 
-  if (!model.initialized) {
+  if (model.requests.list?.type === 'Loading') {
     return (
       <FillBox>
         <Header title={'Rooms'} />
@@ -864,7 +858,7 @@ export const ViewPageRoomList = ({
             loading={model.requests['create'] === RemoteData.Loading}
             size="large"
             onClick={() => {
-              $send(['create', { roomId: RoomId.generate() }]);
+              $send({ t: 'create', roomId: RoomId.generate() });
             }}
           >
             Create Room
@@ -1081,7 +1075,7 @@ const ViewRoom = ({
           }
           label={`People`}
           onClick={() => {
-            $send(['modal-open', 'users']);
+            $send({ t: 'modal-open', c: 'users' });
           }}
         />
         <Box sx={{ flex: 1 }}></Box>
@@ -1093,9 +1087,9 @@ const ViewRoom = ({
             variant="contained"
             onClick={() => {
               if (room.hostId === ctx.currentUserId) {
-                $send(['destroy', { userId: ctx.currentUserId }]);
+                $send({ t: 'destroy', userId: ctx.currentUserId });
               } else {
-                $send(['leave', { userId: ctx.currentUserId }]);
+                $send({ t: 'leave', userId: ctx.currentUserId });
               }
             }}
           >
@@ -1111,9 +1105,9 @@ const ViewRoom = ({
           ctx={{
             ...ctx,
             hostId: room.hostId,
-            onQuit: () => $send(['input-game', { gameName: undefined }]),
+            onQuit: () => $send({ t: 'input-game', gameName: undefined }),
           }}
-          $send={(msg) => $send(['game', msg])}
+          $send={(msg) => $send({ t: 'game', c: msg })}
           model={game}
         />
       ) : (
@@ -1175,7 +1169,7 @@ export const ViewNotInGame = ({
           <CardActionArea
             key={gameName}
             disabled={room.hostId !== ctx.currentUserId}
-            onClick={() => $send(['input-game', { gameName }])}
+            onClick={() => $send({ t: 'input-game', gameName })}
           >
             <ViewGameArtCard gameName={gameName} />
           </CardActionArea>
@@ -1267,7 +1261,9 @@ export const ViewNotInRoom = ({
             key={room.hostId}
             userId={room.hostId}
             ctx={ctx}
-            onClick={() => $send(['clicked-user', { userId: room.hostId }])}
+            onClick={() => {
+              $send({ t: 'clicked-user', userId: room.hostId });
+            }}
           />
 
           {usersInRoom.map((user) => {
@@ -1279,7 +1275,9 @@ export const ViewNotInRoom = ({
                 key={user.userId}
                 userId={user.userId}
                 ctx={ctx}
-                onClick={() => $send(['clicked-user', { userId: user.userId }])}
+                onClick={() => {
+                  $send({ t: 'clicked-user', userId: user.userId });
+                }}
               />
             );
           })}
@@ -1293,7 +1291,11 @@ export const ViewNotInRoom = ({
           variant="contained"
           loading={model.requests['join']?.type === 'Loading'}
           onClick={() => {
-            $send(['join', { userId: ctx.currentUserId, roomId: room.roomId }]);
+            $send({
+              t: 'join',
+              userId: ctx.currentUserId,
+              roomId: room.roomId,
+            });
           }}
         >
           Join Room
@@ -1413,7 +1415,7 @@ const ViewRoomPeople = ({
               key={user.userId}
               userId={user.userId}
               ctx={ctx}
-              onClick={() => $send(['clicked-user', { userId: user.userId }])}
+              onClick={() => $send({ t: 'clicked-user', userId: user.userId })}
             />
           );
         })}
@@ -1513,10 +1515,10 @@ export const ViewBar = ({
       <IconButton
         onClick={() => {
           if (ctx.currentUserId === room.hostId) {
-            $send(['destroy', { userId: ctx.currentUserId }]);
+            $send({ t: 'destroy', userId: ctx.currentUserId });
             return;
           }
-          $send(['leave', { userId: ctx.currentUserId }]);
+          $send({ t: 'leave', userId: ctx.currentUserId });
         }}
         sx={{ marginRight: 1 }}
       >
