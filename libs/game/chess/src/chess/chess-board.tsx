@@ -926,12 +926,43 @@ export const View = ({
     setSelectedSquare(null);
   }, [model.fen]);
 
+  const customPieces: {
+    [piece: string]: ({
+      squareWidth,
+    }: {
+      // from docs: https://www.npmjs.com/package/react-chessboard
+      isDragging: boolean;
+      squareWidth: number;
+      droppedPiece: string;
+      targetSquare: string;
+      sourceSquare: string;
+    }) => ReactNode;
+  } = {};
+
+  for (const p of pieces) {
+    customPieces[p] = ({ squareWidth, isDragging }) => {
+      return (
+        <img
+          src={toChessPieceIconURL(p) ?? ''}
+          alt={p}
+          style={{
+            transform: isDragging ? 'scale(2)' : 'scale(1)',
+            width: squareWidth,
+            height: squareWidth,
+            backgroundSize: '100%',
+          }}
+        />
+      );
+    };
+  }
+
   return (
     <div style={{ position: 'relative', width: '100%' }} ref={ref}>
       <Chessboard
         ref={boardRef}
         showBoardNotation
         snapToCursor
+        customPieces={customPieces}
         boardOrientation={boardOrientation === 'w' ? 'white' : 'black'}
         position={model.fen}
         boardWidth={boardWidth}
@@ -955,7 +986,6 @@ export const View = ({
           ...lastMoveStyles,
           ...legalMovesStyles,
         }}
-        // customPieces={customPieces}
         isDraggablePiece={
           isDraggablePiece
             ? ({ piece }) => {
@@ -995,22 +1025,25 @@ const pieces = [
   'bQ',
   'bK',
 ];
-const customPieces: {
-  [piece: string]: ({ squareWidth }: { squareWidth: number }) => ReactNode;
-} = {};
-pieces.map((p) => {
-  customPieces[p] = ({ squareWidth }) => (
-    <div
-      style={{
-        width: squareWidth,
-        height: squareWidth,
-        backgroundImage: `url(/media/${p}.png)`,
-        backgroundSize: '100%',
-      }}
-    />
-  );
-  return null;
-});
+
+const toChessPieceIconURL = (piece: string) => {
+  const icons: { [key: string]: string } = {
+    wP: 'https://upload.wikimedia.org/wikipedia/commons/4/45/Chess_plt45.svg',
+    wN: 'https://upload.wikimedia.org/wikipedia/commons/7/70/Chess_nlt45.svg',
+    wB: 'https://upload.wikimedia.org/wikipedia/commons/b/b1/Chess_blt45.svg',
+    wR: 'https://upload.wikimedia.org/wikipedia/commons/7/72/Chess_rlt45.svg',
+    wQ: 'https://upload.wikimedia.org/wikipedia/commons/1/15/Chess_qlt45.svg',
+    wK: 'https://upload.wikimedia.org/wikipedia/commons/4/42/Chess_klt45.svg',
+    bP: 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Chess_pdt45.svg',
+    bN: 'https://upload.wikimedia.org/wikipedia/commons/e/ef/Chess_ndt45.svg',
+    bB: 'https://upload.wikimedia.org/wikipedia/commons/9/98/Chess_bdt45.svg',
+    bR: 'https://upload.wikimedia.org/wikipedia/commons/f/ff/Chess_rdt45.svg',
+    bQ: 'https://upload.wikimedia.org/wikipedia/commons/4/47/Chess_qdt45.svg',
+    bK: 'https://upload.wikimedia.org/wikipedia/commons/f/f0/Chess_kdt45.svg',
+  };
+
+  return `${icons[piece]}`;
+};
 
 //
 //
