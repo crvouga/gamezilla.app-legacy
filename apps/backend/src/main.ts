@@ -48,6 +48,7 @@ export const update = (input: {
   msg: Msg;
   model: Model;
   dbConn: DatabaseConnection;
+  now: number;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -63,10 +64,12 @@ export const update_ = ({
   msg,
   model,
   dbConn,
+  now,
 }: {
   msg: Msg;
   model: Model;
   dbConn: DatabaseConnection;
+  now: number;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -74,6 +77,7 @@ export const update_ = ({
   switch (msg[0]) {
     case '→': {
       return updateFromFrontend({
+        now,
         dbConn,
         sessionId: msg[1],
         clientId: msg[2],
@@ -87,6 +91,16 @@ export const update_ = ({
         sendToUser: (userIds, m) => sendToUser(model, userIds, ['room', m]),
         msg: msg[1],
         model: model.room,
+        ctx: {
+          $push: () => {
+            //
+          },
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          currentUserId: '',
+          now,
+          profiles: {},
+        },
       });
 
       return {
@@ -170,7 +184,9 @@ const updateFromFrontend = ({
   clientId,
   msg,
   model,
+  now,
 }: {
+  now: number;
   dbConn: DatabaseConnection;
   sessionId: SessionId;
   clientId: ClientId;
@@ -226,6 +242,7 @@ const updateFromFrontend = ({
         ctx: {
           currentUserId: session.userId,
           dbConn,
+          now,
         },
         wire: {
           broadcast: (m) => broadcast(['room', m]),
@@ -280,7 +297,7 @@ const sendToUser = (model: Model, userIds: UserId[], msg: ToFrontend): Cmd => {
 //
 //
 
-export const subscriptions = (model: Model): Sub<Msg> => {
+export const subscriptions = (_now: number, model: Model): Sub<Msg> => {
   return Sub.batch([
     Sub.tag('room', RoomBackend.subscriptions(model.room)),
     p(

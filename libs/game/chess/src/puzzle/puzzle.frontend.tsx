@@ -1,16 +1,15 @@
-import { Cmd, Sub, Time } from '@gamezilla/core';
-import { RoomCtx } from '@gamezilla/game-shared';
+import { Animation, Cmd, Ease, Sub } from '@gamezilla/core';
+import { RoomCtx, ViewGameBox } from '@gamezilla/game-shared';
 import {
   ActionButton,
   Box,
   CircularProgress,
   Divider,
-  FillBox,
   Icon,
+  Paper,
   Typography,
   useTheme,
 } from '@gamezilla/shared/ui';
-import { Paper } from '@mui/material';
 import { useMemo } from 'react';
 import * as ChessBoard from '../chess/chess-board';
 import {
@@ -131,14 +130,13 @@ export const mergeWithBackend = ({
 export const subscriptions = ({
   model,
   now,
-  intervalId,
 }: {
   model: Model;
   now: number;
   intervalId: string;
 }): Sub<Msg> => {
   if (isAnimating({ now, model })) {
-    return Time.every(intervalId, 100, () => ['animate']);
+    return Animation.onFrame(() => ['animate']);
   }
   return Sub.None;
 };
@@ -148,6 +146,21 @@ export const subscriptions = ({
 // View
 //
 //
+
+export type VisualModel = {
+  slideLeft: Ease.Model;
+  puzzlePrev?: string;
+  puzzleNex?: string;
+};
+
+export const step = ({
+  visual,
+}: {
+  model: Model;
+  visual: VisualModel;
+}): VisualModel => {
+  return visual;
+};
 
 export const View = ({
   model,
@@ -172,19 +185,33 @@ export const View = ({
   }, [ctx.now, model]);
 
   return (
-    <FillBox>
+    <ViewGameBox isSpectating={ctx.currentUserId !== ctx.hostId}>
       <ViewStatusBar status={status} />
 
       <Divider />
 
       <Box sx={{ flex: 1 }}></Box>
 
+      <ViewClock
+        duration={
+          !model.startedAt
+            ? null
+            : status.type === 'loading'
+            ? null
+            : !model.startedAt
+            ? null
+            : status.type === 'solving'
+            ? ctx.now - model.startedAt
+            : status.endedAt - model.startedAt
+        }
+      />
+
       {status.type !== 'loading' ? (
         <ChessBoard.View
           key="chess"
           model={visualBoard}
           isDraggablePiece={({ piece }) => {
-            if (!activePuzzle) {
+            if (!activePuzzle || status.type === 'solved') {
               return false;
             }
             const color = ChessBoard.toColor(piece);
@@ -238,7 +265,41 @@ export const View = ({
           <ViewActionButtons model={model} onClose={onClose} $send={$send} />
         </Paper>
       )}
-    </FillBox>
+    </ViewGameBox>
+  );
+};
+
+const formatDuration = (duration: number): string => {
+  const minutes = Math.floor(duration / 60000);
+  const seconds = Math.floor((duration % 60000) / 1000);
+  const milliseconds = duration % 1000;
+  return `${minutes.toString().padStart(2, '0')}:${seconds
+    .toString()
+    .padStart(2, '0')}:${milliseconds.toString().padStart(3, '0')}`;
+};
+
+const ViewClock = ({ duration }: { duration?: number | null }) => {
+  return (
+    <Box
+      sx={{
+        mb: 2,
+        fontFamily: 'monospace',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <Typography
+        variant="h3"
+        sx={{
+          fontWeight: 900,
+          fontFamily: 'inherit',
+        }}
+        color={duration ? 'text.primary' : 'text.secondary'}
+      >
+        {duration ? formatDuration(duration) : '--:--'}
+      </Typography>
+    </Box>
   );
 };
 
@@ -298,6 +359,9 @@ const ViewActionButtons = ({
           <ActionButton
             icon={<Icon name="restart" />}
             label="Retry"
+            sx={{
+              color: 'error.main',
+            }}
             onClick={() => {
               $send(['retry']);
             }}
@@ -499,12 +563,16 @@ const isAnimating = ({
   if (!model.puzzle) {
     return false;
   }
+  const status = toStatus(model);
+
+  if (status.type === 'solving') {
+    return true;
+  }
+
   const visualBoard = toVisualBoard({
     now,
     model,
   });
-
-  const status = toStatus(model);
 
   const currentBoard: ChessBoard.Model =
     status.type === 'loading' ? { fen: '', pgn: '' } : status.board;

@@ -946,7 +946,7 @@ export const View = ({
           src={toChessPieceIconURL(p) ?? ''}
           alt={p}
           style={{
-            transform: isDragging ? 'scale(2)' : 'scale(1)',
+            transform: isDragging ? 'scale(2.5)' : 'scale(1)',
             width: squareWidth,
             height: squareWidth,
             backgroundSize: '100%',

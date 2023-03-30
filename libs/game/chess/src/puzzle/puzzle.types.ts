@@ -5,6 +5,8 @@ const { Err, Ok } = Result;
 
 export type SharedModel = {
   puzzle: Puzzle | null;
+  startedAt: number | null;
+  lastMoveAt: number | null;
   query: PuzzleQuery;
   moves: ChessBoard.MoveInput[];
   hint: Hint;
@@ -24,6 +26,8 @@ export const initShared: SharedModel = {
   query: initQuery,
   hint: 'none',
   puzzles: [],
+  lastMoveAt: null,
+  startedAt: null,
 };
 
 export type PuzzleQuery = {
@@ -70,11 +74,13 @@ export type Status =
       type: 'solved';
       puzzle: Puzzle;
       board: ChessBoard.Model;
+      endedAt: number;
     }
   | {
       type: 'incorrect';
       puzzle: Puzzle;
       board: ChessBoard.Model;
+      endedAt: number;
     };
 
 export const toStatus = (model: SharedModel): Status => {
@@ -94,6 +100,7 @@ export const toStatus = (model: SharedModel): Status => {
       type: 'solved',
       puzzle,
       board,
+      endedAt: model.lastMoveAt ?? 0,
     };
   }
 
@@ -106,6 +113,7 @@ export const toStatus = (model: SharedModel): Status => {
       type: 'incorrect',
       puzzle,
       board,
+      endedAt: model.lastMoveAt ?? 0,
     };
   }
 
@@ -151,6 +159,14 @@ const isMovesEqual = (
       return bi && isMoveEqual(move, bi);
     })
   );
+};
+
+export const toEndedAt = (model: SharedModel): number | null => {
+  const status = toStatus(model);
+  if (status.type === 'solved' || status.type === 'incorrect') {
+    return model.lastMoveAt ?? null;
+  }
+  return null;
 };
 
 const isMoveEqual = (
@@ -228,7 +244,7 @@ export const handle = ({
   msg,
   model,
 }: {
-  ctx: { currentUserId: UserId; hostId: UserId };
+  ctx: { now: number; currentUserId: UserId; hostId: UserId };
   msg: Req;
   model: SharedModel;
 }): Result<Problem, SharedModel> => {
@@ -253,6 +269,7 @@ export const handle = ({
       const modelNew: SharedModel = {
         ...model,
         moves: [...model.moves, msg[1].moveInput],
+        lastMoveAt: ctx.now,
       };
 
       return Ok(modelNew);
@@ -295,7 +312,9 @@ export const handle = ({
 
       const modelNew: SharedModel = {
         ...model,
-        moves: model.moves.slice(0, -1),
+        moves: [],
+        lastMoveAt: null,
+        startedAt: ctx.now,
       };
 
       return Ok(modelNew);

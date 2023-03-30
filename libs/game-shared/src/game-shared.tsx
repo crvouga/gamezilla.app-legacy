@@ -11,6 +11,8 @@ import {
   text,
   Typography,
   ViewNode,
+  Sx,
+  useTheme,
 } from '@gamezilla/shared/ui';
 
 export type RoomCtx = Ctx & {
@@ -108,6 +110,45 @@ export const ViewMainMenu = ({
       >
         Back
       </Button>
+    </FillBox>
+  );
+};
+
+export const ViewGameBox = ({
+  sx,
+  children,
+  isSpectating,
+}: {
+  isSpectating?: boolean;
+  sx?: Sx;
+  children?: ViewNode;
+}) => {
+  const theme = useTheme();
+
+  return (
+    <FillBox
+      sx={{
+        ...sx,
+        ...(isSpectating
+          ? {
+              border: `3px solid ${theme.palette.primary.main}`,
+            }
+          : {}),
+      }}
+    >
+      {isSpectating && (
+        <Typography
+          sx={{
+            backgroundColor: theme.palette.primary.main,
+            color: '#fff',
+            textAlign: 'center',
+            paddingY: 0.5,
+          }}
+        >
+          You're Spectating
+        </Typography>
+      )}
+      {children}
     </FillBox>
   );
 };

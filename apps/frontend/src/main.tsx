@@ -139,14 +139,16 @@ const update = ({
   sendToBackend,
   msg,
   model,
+  now,
 }: {
+  now: number;
   sendToBackend: (m: ToBackend) => Cmd;
   msg: Msg;
   model: Model;
 }): { model: Model; cmd?: Cmd<Msg> } => {
   return p(
     { model },
-    andThen((input) => update_({ ...input, msg, sendToBackend })),
+    andThen((input) => update_({ ...input, now, msg, sendToBackend })),
     andThen((input) => updateFetchProfile({ ...input, prev: model })),
     andThen((input) => updateInitPage({ ...input, prev: model })),
     andThen((input) => updateAutoCreateProfile({ ...input, prev: model })),
@@ -308,7 +310,9 @@ const update_ = ({
   sendToBackend,
   msg,
   model,
+  now,
 }: {
+  now: number;
   sendToBackend: (m: ToBackend) => Cmd;
   msg: Msg;
   model: Model;
@@ -319,7 +323,7 @@ const update_ = ({
 } => {
   switch (msg[0]) {
     case '→': {
-      return updateFromBackend({ sendToBackend, msg: msg[1], model });
+      return updateFromBackend({ now, sendToBackend, msg: msg[1], model });
     }
 
     case 'chat-store': {
@@ -346,7 +350,12 @@ const update_ = ({
       const updatedAlerts = Alerts.update(msg[1], model.alerts);
       const updated = updatedAlerts[2].reduce<ReturnType<typeof update>>(
         (acc, msg) => {
-          const updated = update({ sendToBackend, msg, model: acc.model });
+          const updated = update({
+            now,
+            sendToBackend,
+            msg,
+            model: acc.model,
+          });
           return {
             model: updated.model,
             cmd: Cmd.batch([acc?.cmd ?? Cmd.None, updated?.cmd ?? Cmd.None]),
@@ -435,7 +444,7 @@ const update_ = ({
       const ctx: Ctx = {
         currentUserId: model.auth.session.userId,
         profiles: model.profileStore.profiles,
-        now: Date.now(),
+        now,
         $push: () => {
           /* */
         },
@@ -513,11 +522,13 @@ const update_ = ({
 const updateFromBackend = ({
   sendToBackend,
   msg,
+  now,
   model,
 }: {
   sendToBackend: (m: ToBackend) => Cmd;
   msg: ToFrontend;
   model: Model;
+  now: number;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -534,7 +545,7 @@ const updateFromBackend = ({
       const ctx: Ctx = {
         currentUserId,
         profiles: model.profileStore.profiles,
-        now: Date.now(),
+        now,
         $push: () => {
           /* */
         },
@@ -671,18 +682,18 @@ const runAction = ({
 //
 //
 
-const subscriptions = (model: Model): Sub<Msg> => {
+const subscriptions = (now: number, model: Model): Sub<Msg> => {
   return Sub.batch<Msg>([
     Sub.tag('→', toFrontend$),
     Sub.tag('wire', wireStatus$),
     Sub.tag('page', Page.subscriptions(model.page)),
     Sub.tag('auth', Auth.subscriptions),
-    roomSub(model),
+    roomSub(now, model),
     Browser.onLocation(onLocationChange),
   ]);
 };
 
-const roomSub = (model: Model): Sub<Msg> => {
+const roomSub = (now: number, model: Model): Sub<Msg> => {
   switch (model.auth.type) {
     case 'loading': {
       return Sub.None;
@@ -697,8 +708,8 @@ const roomSub = (model: Model): Sub<Msg> => {
         'room',
         RoomFrontend.subscriptions(
           {
+            now,
             currentUserId: model.auth.session.userId,
-            now: Date.now(),
             profiles: model.profileStore.profiles,
             $push: () => {
               //
@@ -731,7 +742,9 @@ const onLocationChange = (location: Browser.Location): Msg => {
 const View = ({
   model,
   $send,
+  now,
 }: {
+  now: number;
   model: Model;
   $send: (msg: Msg) => void;
 }) => {
@@ -761,7 +774,7 @@ const View = ({
               ctx={{
                 currentUserId: model.auth.session.userId,
                 profiles: model.profileStore.profiles,
-                now: Date.now(),
+                now,
                 $push: (route) => $send(['route', ['clicked-link', route]]),
               }}
               route={model.route}
@@ -780,7 +793,7 @@ const View = ({
               ctx={{
                 currentUserId: model.auth.session.userId,
                 profiles: model.profileStore.profiles,
-                now: Date.now(),
+                now,
                 $push: (route) => $send(['route', ['clicked-link', route]]),
               }}
             />
@@ -791,7 +804,7 @@ const View = ({
             ctx={{
               currentUserId: model.auth.session.userId,
               profiles: model.profileStore.profiles,
-              now: Date.now(),
+              now,
               $push: (route) => $send(['route', ['clicked-link', route]]),
             }}
             $send={(msg) => $send(['page', msg])}
@@ -1035,8 +1048,8 @@ const main = () => {
     document.getElementById('root') as HTMLElement
   );
 
-  program.state$.subscribe(({ model }) => {
-    root.render(<View model={model} $send={program.$send} />);
+  program.state$.subscribe(({ now, model }) => {
+    root.render(<View now={now} model={model} $send={program.$send} />);
   });
 };
 

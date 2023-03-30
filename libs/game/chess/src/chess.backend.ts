@@ -1,5 +1,5 @@
 import { Cmd, exhaustive, Result, Sub } from '@gamezilla/core';
-import { RoomMsg } from '@gamezilla/game-shared';
+import { RoomCtx, RoomMsg } from '@gamezilla/game-shared';
 import { UserId } from '@gamezilla/shared';
 import { DatabaseConnection } from '@gamezilla/shared/backend';
 import { GameMsg } from './chess-shared';
@@ -38,11 +38,17 @@ export const init: Model = ['none'];
 
 export type Msg = BackendMsg;
 
-export const update = (
-  { broadcast }: { broadcast: (msg: ToFrontend) => Cmd },
-  msg: Msg,
-  model: Model
-): [Model, Cmd<Msg>] => {
+export const update = ({
+  broadcast,
+  ctx,
+  msg,
+  model,
+}: {
+  broadcast: (msg: ToFrontend) => Cmd;
+  msg: Msg;
+  model: Model;
+  ctx: RoomCtx;
+}): [Model, Cmd<Msg>] => {
   switch (model[0]) {
     case 'none': {
       return [model, Cmd.None];
@@ -85,6 +91,7 @@ export const update = (
         model: model[1],
         msg: msg[1],
         broadcast: (m) => broadcast(['puzzle', m]),
+        ctx,
       });
 
       return [
@@ -100,7 +107,6 @@ export const update = (
 };
 
 export const updateFromFrontend = ({
-  hostId,
   sendToClient,
   broadcast,
   msg,
@@ -108,11 +114,7 @@ export const updateFromFrontend = ({
   dbConn,
   ctx,
 }: {
-  ctx: {
-    hostId: UserId;
-    currentUserId: UserId;
-  };
-  hostId: UserId;
+  ctx: RoomCtx;
   sendToClient: (msg: ToFrontend) => Cmd;
   broadcast: (msg: ToFrontend) => Cmd;
   dbConn: DatabaseConnection;
@@ -124,7 +126,7 @@ export const updateFromFrontend = ({
       const { result, cmd } = initMode({
         dbConn,
         broadcast,
-        hostId,
+        hostId: ctx.hostId,
         mode: msg[1].mode,
         userId: msg[1].userId,
       });
