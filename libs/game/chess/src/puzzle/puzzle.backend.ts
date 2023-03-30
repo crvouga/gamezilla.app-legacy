@@ -62,10 +62,12 @@ export const update = ({
   msg,
   model,
   broadcast,
+  ctx,
 }: {
   msg: Msg;
   model: Model;
   broadcast: (m: ToFrontend) => Cmd;
+  ctx: { now: number };
 }): {
   model: Model;
   cmd?: Cmd;
@@ -79,6 +81,7 @@ export const update = ({
       const modelNew: Model = {
         ...model,
         puzzle: puzzles[0] ?? null,
+        startedAt: ctx.now,
       };
       return {
         model: modelNew,
@@ -96,6 +99,7 @@ export const update = ({
       const modelNew: Model = {
         ...model,
         puzzle: puzzles[0] ?? null,
+        startedAt: ctx.now,
       };
 
       return {
@@ -120,7 +124,7 @@ export const update = ({
 };
 
 export const updateFromFrontend = (input: {
-  ctx: { currentUserId: UserId; hostId: UserId };
+  ctx: { currentUserId: UserId; hostId: UserId; now: number };
   msg: ToBackend;
   model: Model;
   dbConn: DatabaseConnection;

@@ -1,5 +1,6 @@
 import { Cmd, exhaustive, p, Sub } from '@gamezilla/core';
-import { ClientId, RoomId, UserId } from '@gamezilla/shared';
+import { RoomCtx } from '@gamezilla/game-shared';
+import { ClientId, Ctx, RoomId, UserId } from '@gamezilla/shared';
 import { AppMsg, DatabaseConnection } from '@gamezilla/shared/backend';
 import * as Game from './game.backend';
 import {
@@ -41,7 +42,9 @@ export const update = ({
   model,
   msg,
   sendToUser,
+  ctx,
 }: {
+  ctx: Ctx;
   sendToUser: (userIds: UserId[], msg: ToFrontend) => Cmd;
   msg: Msg;
   model: Model;
@@ -61,14 +64,27 @@ export const update = ({
 
       const gameMsg = msg.c;
 
-      const updated = Game.update(
-        {
-          broadcast: (m) =>
-            sendToRoom({ sendToUser, model, roomId, msg: { t: 'game', c: m } }),
+      const room = model.rooms[roomId];
+
+      if (!room) {
+        return { model };
+      }
+
+      const roomCtx: RoomCtx = {
+        ...ctx,
+        hostId: room.hostId,
+        onQuit: () => {
+          //
         },
-        gameMsg,
-        game
-      );
+      };
+
+      const updated = Game.update({
+        broadcast: (m) =>
+          sendToRoom({ sendToUser, model, roomId, msg: { t: 'game', c: m } }),
+        msg: gameMsg,
+        model: game,
+        ctx: roomCtx,
+      });
 
       const modelNew: Model = {
         ...model,
@@ -102,6 +118,7 @@ export const updateFromFrontend = ({
   model,
 }: {
   ctx: {
+    now: number;
     currentUserId: UserId;
     dbConn: DatabaseConnection;
   };
@@ -152,12 +169,22 @@ export const updateFromFrontend = ({
 
       const gameMsg = msg.c;
 
+      const roomCtx: RoomCtx = {
+        $push: () => {
+          //
+        },
+        currentUserId: ctx.currentUserId,
+        hostId: room.hostId,
+        onQuit: () => {
+          //
+        },
+        now: ctx.now,
+        profiles: {},
+      };
+
       const [gameNew, gameCmd] = Game.updateFromFrontend({
         ...ctx,
-        ctx: {
-          currentUserId: ctx.currentUserId,
-          hostId: room.hostId,
-        },
+        ctx: roomCtx,
         hostId: room.hostId,
         sendToClient: (m) => wire.sendToClient({ t: 'game', c: m }),
         broadcast: (m) =>

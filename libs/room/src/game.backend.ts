@@ -1,5 +1,5 @@
 import { Cmd, exhaustive, Sub } from '@gamezilla/core';
-import { RoomMsg } from '@gamezilla/game-shared';
+import { RoomCtx, RoomMsg } from '@gamezilla/game-shared';
 import { ChessBackend } from '@gamezilla/game/chess';
 import { ConnectFourBackend } from '@gamezilla/game/connect-four';
 import { FlowBackend } from '@gamezilla/game/flow';
@@ -83,11 +83,17 @@ export const init = ({
 
 export type Msg = BackendMsg;
 
-export const update = (
-  { broadcast }: { broadcast: (m: ToFrontend) => Cmd },
-  msg: Msg,
-  model: Model
-): [Model, Cmd<Msg>] => {
+export const update = ({
+  broadcast,
+  msg,
+  model,
+  ctx,
+}: {
+  ctx: RoomCtx;
+  broadcast: (m: ToFrontend) => Cmd;
+  msg: Msg;
+  model: Model;
+}): [Model, Cmd<Msg>] => {
   switch (msg.t) {
     case 'connect-four': {
       if (model.t === 'connect-four') {
@@ -115,11 +121,12 @@ export const update = (
 
     case 'chess': {
       if (model.t === 'chess') {
-        const [child, cmd] = ChessBackend.update(
-          { broadcast: (m) => broadcast({ t: 'chess', c: m }) },
-          msg.c,
-          model.c
-        );
+        const [child, cmd] = ChessBackend.update({
+          broadcast: (m) => broadcast({ t: 'chess', c: m }),
+          ctx,
+          msg: msg.c,
+          model: model.c,
+        });
         return [{ t: 'chess', c: child }, Cmd.tag_('chess', cmd)];
       }
       return [model, Cmd.None];
@@ -196,7 +203,6 @@ export const update = (
 };
 
 export const updateFromFrontend = ({
-  hostId,
   currentUserId,
   sendToClient,
   dbConn,
@@ -205,10 +211,7 @@ export const updateFromFrontend = ({
   msg,
   model,
 }: {
-  ctx: {
-    currentUserId: UserId;
-    hostId: UserId;
-  };
+  ctx: RoomCtx;
   hostId: UserId;
   currentUserId: UserId;
   sendToClient: (msg: ToFrontend) => Cmd;
@@ -252,7 +255,6 @@ export const updateFromFrontend = ({
     case 'chess': {
       if (model.t === 'chess') {
         const [child, cmd] = ChessBackend.updateFromFrontend({
-          hostId: hostId,
           sendToClient: (msg) => sendToClient({ t: 'chess', c: msg }),
           broadcast: (msg) => broadcast({ t: 'chess', c: msg }),
           dbConn,
