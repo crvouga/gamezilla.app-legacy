@@ -66,8 +66,8 @@ export const ViewMainMenu = ({
     <FillBox sx={{ p: 2 }}>
       <Box
         sx={{
-          height: 120,
-          width: 120,
+          height: 144,
+          width: 144,
           mx: 'auto',
           borderRadius: 2,
           overflow: 'hidden',
