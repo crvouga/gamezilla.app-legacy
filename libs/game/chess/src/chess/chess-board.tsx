@@ -939,22 +939,22 @@ export const View = ({
     }) => ReactNode;
   } = {};
 
-  for (const p of pieces) {
-    customPieces[p] = ({ squareWidth, isDragging }) => {
-      return (
-        <img
-          src={toChessPieceIconURL(p) ?? ''}
-          alt={p}
-          style={{
-            transform: isDragging ? 'scale(2.5)' : 'scale(1)',
-            width: squareWidth,
-            height: squareWidth,
-            backgroundSize: '100%',
-          }}
-        />
-      );
-    };
-  }
+  // for (const p of pieces) {
+  //   customPieces[p] = ({ squareWidth, isDragging }) => {
+  //     return (
+  //       <img
+  //         src={toChessPieceIconURL(p) ?? ''}
+  //         alt={p}
+  //         style={{
+  //           transform: isDragging ? 'scale(2.5)' : 'scale(1)',
+  //           width: squareWidth,
+  //           height: squareWidth,
+  //           backgroundSize: '100%',
+  //         }}
+  //       />
+  //     );
+  //   };
+  // }
 
   return (
     <div style={{ position: 'relative', width: '100%' }} ref={ref}>
@@ -962,7 +962,7 @@ export const View = ({
         ref={boardRef}
         showBoardNotation
         snapToCursor
-        customPieces={customPieces}
+        // customPieces={customPieces}
         boardOrientation={boardOrientation === 'w' ? 'white' : 'black'}
         position={model.fen}
         boardWidth={boardWidth}
