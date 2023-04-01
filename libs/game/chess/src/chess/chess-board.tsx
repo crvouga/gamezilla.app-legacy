@@ -4,7 +4,6 @@ import * as ChessTs from 'chess.ts';
 // @ts-ignore
 import { aiMove } from 'js-chess-engine';
 import {
-  ReactNode,
   useCallback,
   useEffect,
   useLayoutEffect,
