@@ -404,14 +404,10 @@ export const updateFromApp = ({
 } => {
   switch (msg.t) {
     case 'route-changed': {
-      const { route } = msg;
-      switch (route[0]) {
+      switch (msg.route[0]) {
         case 'room':
         case 'room-list': {
-          return {
-            model,
-            cmd: sendToBackend({ t: 'list' }),
-          };
+          return updateListRooms({ model, initiatorMsg: msg, sendToBackend });
         }
 
         default: {
@@ -423,10 +419,7 @@ export const updateFromApp = ({
     }
 
     case 'wire-connected': {
-      return {
-        model,
-        cmd: sendToBackend({ t: 'list' }),
-      };
+      return updateListRooms({ model, initiatorMsg: msg, sendToBackend });
     }
 
     default: {
@@ -435,6 +428,27 @@ export const updateFromApp = ({
       };
     }
   }
+};
+
+const updateListRooms = ({
+  model,
+  initiatorMsg,
+  sendToBackend,
+}: {
+  model: Model;
+  initiatorMsg: unknown;
+  sendToBackend: (m: ToBackend) => Cmd;
+}) => {
+  if (model.requests?.list?.type === 'Loading') {
+    return { model };
+  }
+  return {
+    model: {
+      ...model,
+      requests: { ...model.requests, list: RemoteData.Loading },
+    },
+    cmd: sendToBackend({ t: 'list', initiatorMsg }),
+  };
 };
 
 const toRoomEndMessage = ({ ctx, hostId }: { hostId: UserId; ctx: Ctx }) => {
@@ -783,10 +797,10 @@ export const ViewPageRoomList = ({
         <Header title={'Rooms'} />
         <Box
           sx={{
-            flex: 1,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            flex: 1,
           }}
         >
           <CircularProgress />
@@ -1448,7 +1462,6 @@ export const ViewBar = ({
   }
 
   const game = model.games[room.roomId];
-
   const hostProfile = ctx.profiles[room.hostId];
   const userCount = Object.values(model.users).filter(
     (user) => user.roomId === room.roomId
@@ -1456,6 +1469,7 @@ export const ViewBar = ({
 
   return (
     <Box
+      key={room.roomId}
       sx={{
         width: '100%',
         display: 'flex',
