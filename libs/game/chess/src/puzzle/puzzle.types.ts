@@ -100,7 +100,7 @@ export const toStatus = (model: SharedModel): Status => {
       type: 'solved',
       puzzle,
       board,
-      endedAt: model.lastMoveAt ?? 0,
+      endedAt: model.lastMoveAt ?? model.startedAt ?? 0,
     };
   }
 
@@ -113,7 +113,7 @@ export const toStatus = (model: SharedModel): Status => {
       type: 'incorrect',
       puzzle,
       board,
-      endedAt: model.lastMoveAt ?? 0,
+      endedAt: model.lastMoveAt ?? model.startedAt ?? 0,
     };
   }
 
