@@ -63,20 +63,12 @@ export const uploadLichessDbPuzzleCsv = async ({
 
     console.log('insert started');
 
-    const start = Date.now();
-
     const inserted = await PuzzleDatabase.insertMany({
       dbConn,
       rows: batch,
     });
 
-    const duration = Date.now() - start;
-
-    console.log(
-      `${inserted.type} - ${batch.length} rows - ${formatMilliseconds(
-        duration
-      )}`
-    );
+    console.log(`${inserted.type} - ${batch.length} rows -`);
 
     batch = [];
 
@@ -100,14 +92,6 @@ export const uploadLichessDbPuzzleCsv = async ({
   }
 
   console.log('upload done');
-};
-
-const formatMilliseconds = (milliseconds: number): string => {
-  const minutes = Math.floor(milliseconds / 60000);
-  const seconds = Math.floor((milliseconds % 60000) / 1000);
-  const ms = milliseconds % 1000;
-
-  return `${minutes} min ${seconds} sec ${ms} ms`;
 };
 
 const lichessRowToRow = (lichessRow: LichessRow): PuzzleRow => {

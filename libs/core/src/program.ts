@@ -11,9 +11,8 @@ import { Sub } from './sub';
 //
 
 export type State<Model, Msg> = {
-  model: Model & { _debugId: number };
+  model: Model & { _debugId: number; _now: number };
   cmd: Cmd<Msg>;
-  now: number;
   msg?: Msg;
 };
 
@@ -51,23 +50,28 @@ const create = <Model, Msg>({
     model: {
       ...init.model,
       _debugId: runningDebugId,
+      _now: Date.now(),
     },
-    now: Date.now(),
     cmd: init.cmd ?? Cmd.None,
   });
 
   const $send = (msg: Msg) => {
     const current = state$.getValue();
-    const updated = update({ now: current.now, msg, model: current.model });
+    const updated = update({
+      now: current.model._now,
+      msg,
+      model: current.model,
+    });
     const debugIdNext = current.model._debugId + 1;
+    const nowNext = Date.now();
 
     runningDebugId = debugIdNext;
     state$.next({
       model: {
         ...updated.model,
         _debugId: debugIdNext,
+        _now: nowNext,
       },
-      now: Date.now(),
       cmd: updated.cmd ?? Cmd.None,
       msg,
     });
@@ -76,7 +80,7 @@ const create = <Model, Msg>({
   const sub$ = state$.pipe(
     Rx.switchMap((state) => {
       if (runningDebugId === state.model._debugId) {
-        return subscriptions(state.now, state.model);
+        return subscriptions(state.model._now, state.model);
       }
       console.log('[program] skip subscription');
       return Rx.EMPTY;

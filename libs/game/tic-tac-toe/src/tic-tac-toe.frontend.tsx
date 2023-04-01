@@ -1,4 +1,4 @@
-import { Sub, Cmd, exhaustive } from '@gamezilla/core';
+import { Cmd, exhaustive, Sub } from '@gamezilla/core';
 import { RoomCtx, viewSelectModeScreen } from '@gamezilla/game-shared';
 import { ProfileStore } from '@gamezilla/profile';
 import { Alerts, Ctx } from '@gamezilla/shared';
@@ -38,15 +38,17 @@ export type Msg = FrontendMsg;
 
 export type OutAction = ProfileStore.Action | Alerts.Action;
 
-export const update = (
-  {
-    sendToBackend,
-  }: {
-    sendToBackend: (msg: ToBackend) => Cmd;
-  },
-  msg: Msg,
-  model: Model
-): [Model, Cmd<Msg>] => {
+export const update = ({
+  sendToBackend,
+  msg,
+  model,
+  ctx,
+}: {
+  sendToBackend: (msg: ToBackend) => Cmd;
+  ctx: RoomCtx;
+  msg: Msg;
+  model: Model;
+}): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case 'input-mode': {
       return [model, sendToBackend(msg)];
@@ -70,6 +72,7 @@ export const update = (
       if (model.mode === 'vs-bot') {
         const updated = VsBot.update({
           // currentUserId,
+          ctx,
           sendToBackend: (msg) => sendToBackend(['vs-bot', msg]),
           msg: msg[1],
           model: model.child,
@@ -101,7 +104,11 @@ export const updateFromBackend = (
         return [model, Cmd.None, []];
       }
 
-      const modelNew = mergeWithBackend(model, result.value);
+      const modelNew = mergeWithBackend({
+        ctx,
+        frontendModel: model,
+        backendModel: result.value,
+      });
 
       return [modelNew, Cmd.None, []];
     }
@@ -121,10 +128,11 @@ export const updateFromBackend = (
 
     case 'vs-bot': {
       if (model.mode === 'vs-bot') {
-        const [child, cmd, actions] = VsBot.updateFromBackend(
-          msg[1],
-          model.child
-        );
+        const [child, cmd, actions] = VsBot.updateFromBackend({
+          ctx,
+          msg: msg[1],
+          model: model.child,
+        });
         return [{ mode: 'vs-bot', child }, Cmd.tag('vs-bot', cmd), actions];
       }
 
@@ -137,10 +145,15 @@ export const updateFromBackend = (
   }
 };
 
-export const mergeWithBackend = (
-  frontendModel: FrontendModel,
-  backendModel: BackendModel
-): FrontendModel => {
+export const mergeWithBackend = ({
+  frontendModel,
+  backendModel,
+  ctx,
+}: {
+  ctx: Ctx;
+  frontendModel: FrontendModel;
+  backendModel: BackendModel;
+}): FrontendModel => {
   switch (backendModel.mode) {
     case 'none': {
       return {
@@ -165,7 +178,11 @@ export const mergeWithBackend = (
 
       return {
         mode: 'vs-bot',
-        child: VsBot.mergeWithBackend(frontendModelChild, backendModel.child),
+        child: VsBot.mergeWithBackend({
+          now: ctx.now,
+          frontendModel: frontendModelChild,
+          backendModel: backendModel.child,
+        }),
       };
     }
   }

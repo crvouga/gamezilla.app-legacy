@@ -1048,8 +1048,8 @@ const main = () => {
     document.getElementById('root') as HTMLElement
   );
 
-  program.state$.subscribe(({ now, model }) => {
-    root.render(<View now={now} model={model} $send={program.$send} />);
+  program.state$.subscribe(({ model }) => {
+    root.render(<View now={model._now} model={model} $send={program.$send} />);
   });
 };
 

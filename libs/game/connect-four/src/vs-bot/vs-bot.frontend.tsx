@@ -42,6 +42,7 @@ import {
 export type Model = FrontendModel;
 
 export const init = (
+  now: number,
   ...params: Parameters<typeof initShared>
 ): FrontendModel => {
   const shared = initShared(...params);
@@ -53,7 +54,7 @@ export const init = (
   return {
     ...shared,
     ghostIndex: 'none',
-    visual: initVisual({ nowMs: Date.now(), columns: shared.columns }),
+    visual: initVisual({ nowMs: now, columns: shared.columns }),
   };
 };
 
@@ -87,7 +88,7 @@ export const update = (
         return { model };
       }
       const visualNew = step({
-        nowMs: Date.now(),
+        nowMs: ctx.now,
         columns: model.columns,
         current: model.visual,
       });
@@ -207,7 +208,7 @@ export const mergeWithBackend = ({
 
   const columnsNew = backendModel.columns;
   const visualNew = step({
-    nowMs: Date.now(),
+    nowMs: ctx.now,
     columns: columnsNew,
     current: frontendModel.visual,
   });
@@ -227,10 +228,14 @@ export const mergeWithBackend = ({
 //
 //
 
-export const subscriptions = (_intervalId: string, model: Model): Sub<Msg> => {
+export const subscriptions = (
+  _intervalId: string,
+  now: number,
+  model: Model
+): Sub<Msg> => {
   switch (model.type) {
     case 'game': {
-      if (isDone(Date.now(), model.visual)) {
+      if (isDone(now, model.visual)) {
         return Sub.None;
       }
       return Animation.onFrame(() => ['animate']);

@@ -488,7 +488,6 @@ export const withDebugger = <Model, Msg extends {}>(
 
           case '__DebugUpdateModel__':
             program.state$.next({
-              now: program.state$.getValue().now,
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore
               model: msg.payload,

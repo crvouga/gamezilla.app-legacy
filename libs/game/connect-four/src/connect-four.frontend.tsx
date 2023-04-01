@@ -280,7 +280,7 @@ export const mergeWithBackend = ({
         type: 'vs-bot',
         child: VsBot.mergeWithBackend({
           ctx,
-          frontendModel: VsBot.init(backendModel.child),
+          frontendModel: VsBot.init(ctx.now, backendModel.child),
           backendModel: backendModel.child,
         }),
       };
@@ -316,14 +316,21 @@ export const mergeWithBackend = ({
 //
 //
 
-export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
+export const subscriptions = (
+  intervalId: string,
+  now: number,
+  model: Model
+): Sub<Msg> => {
   switch (model.type) {
     case 'none': {
       return Sub.None;
     }
 
     case 'vs-bot': {
-      return Sub.tag('vs-bot', VsBot.subscriptions(intervalId, model.child));
+      return Sub.tag(
+        'vs-bot',
+        VsBot.subscriptions(intervalId, now, model.child)
+      );
     }
 
     case 'vs-user': {
