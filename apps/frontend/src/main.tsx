@@ -19,6 +19,7 @@ import {
   exhaustive,
   Option,
   p,
+  Posix,
   Program,
   Sub,
   t,
@@ -27,10 +28,10 @@ import { ProfileStore } from '@gamezilla/profile';
 import { RoomFrontend } from '@gamezilla/room';
 import {
   Alerts,
+  AppMsg,
   Ctx,
   ProfileAvatar,
   Route,
-  AppMsg,
   Username,
 } from '@gamezilla/shared';
 import {
@@ -141,7 +142,7 @@ const update = ({
   model,
   now,
 }: {
-  now: number;
+  now: Posix;
   sendToBackend: (m: ToBackend) => Cmd;
   msg: Msg;
   model: Model;
@@ -312,7 +313,7 @@ const update_ = ({
   model,
   now,
 }: {
-  now: number;
+  now: Posix;
   sendToBackend: (m: ToBackend) => Cmd;
   msg: Msg;
   model: Model;
@@ -528,7 +529,7 @@ const updateFromBackend = ({
   sendToBackend: (m: ToBackend) => Cmd;
   msg: ToFrontend;
   model: Model;
-  now: number;
+  now: Posix;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -682,7 +683,13 @@ const runAction = ({
 //
 //
 
-const subscriptions = (now: number, model: Model): Sub<Msg> => {
+const subscriptions = ({
+  now,
+  model,
+}: {
+  now: Posix;
+  model: Model;
+}): Sub<Msg> => {
   return Sub.batch<Msg>([
     Sub.tag('→', toFrontend$),
     Sub.tag('wire', wireStatus$),
@@ -693,7 +700,7 @@ const subscriptions = (now: number, model: Model): Sub<Msg> => {
   ]);
 };
 
-const roomSub = (now: number, model: Model): Sub<Msg> => {
+const roomSub = (now: Posix, model: Model): Sub<Msg> => {
   switch (model.auth.type) {
     case 'loading': {
       return Sub.None;
@@ -744,7 +751,7 @@ const View = ({
   $send,
   now,
 }: {
-  now: number;
+  now: Posix;
   model: Model;
   $send: (msg: Msg) => void;
 }) => {

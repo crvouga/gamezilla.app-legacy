@@ -253,7 +253,7 @@ export const View = ({
           <PlayerSlotBar model={model} ctx={ctx} />
 
           <ViewColumns
-            visual={initVisual({ nowMs: ctx.now, columns: model.columns })}
+            visual={initVisual({ now: ctx.now, columns: model.columns })}
             columns={model.columns}
             onClick={(columnIndex) =>
               $send(['input-move', { userId: ctx.currentUserId, columnIndex }])
@@ -304,7 +304,7 @@ export const View = ({
 
       <Box sx={{ position: 'relative' }}>
         <ViewColumns
-          visual={initVisual({ nowMs: ctx.now, columns: model.columns })}
+          visual={initVisual({ now: ctx.now, columns: model.columns })}
           columns={model.columns}
           disabled
         />

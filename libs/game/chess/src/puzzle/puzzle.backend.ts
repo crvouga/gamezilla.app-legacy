@@ -1,4 +1,4 @@
-import { andThen, Cmd, eq, p, Result, Sub } from '@gamezilla/core';
+import { andThen, Cmd, eq, p, Posix, Result, Sub } from '@gamezilla/core';
 import { RoomMsg } from '@gamezilla/game-shared';
 import { UserId } from '@gamezilla/shared';
 import { DatabaseConnection } from '@gamezilla/shared/backend';
@@ -67,7 +67,7 @@ export const update = ({
   msg: Msg;
   model: Model;
   broadcast: (m: ToFrontend) => Cmd;
-  ctx: { now: number };
+  ctx: { now: Posix };
 }): {
   model: Model;
   cmd?: Cmd;
@@ -124,7 +124,7 @@ export const update = ({
 };
 
 export const updateFromFrontend = (input: {
-  ctx: { currentUserId: UserId; hostId: UserId; now: number };
+  ctx: { currentUserId: UserId; hostId: UserId; now: Posix };
   msg: ToBackend;
   model: Model;
   dbConn: DatabaseConnection;

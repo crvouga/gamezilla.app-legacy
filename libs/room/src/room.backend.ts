@@ -1,4 +1,4 @@
-import { Cmd, exhaustive, p, Sub } from '@gamezilla/core';
+import { Cmd, exhaustive, p, Posix, Sub } from '@gamezilla/core';
 import { RoomCtx } from '@gamezilla/game-shared';
 import { ClientId, Ctx, RoomId, UserId } from '@gamezilla/shared';
 import { AppMsg, DatabaseConnection } from '@gamezilla/shared/backend';
@@ -118,7 +118,7 @@ export const updateFromFrontend = ({
   model,
 }: {
   ctx: {
-    now: number;
+    now: Posix;
     currentUserId: UserId;
     dbConn: DatabaseConnection;
   };

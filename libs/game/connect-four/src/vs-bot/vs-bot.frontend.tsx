@@ -1,4 +1,4 @@
-import { Animation, Cmd, Sub } from '@gamezilla/core';
+import { Animation, Cmd, Posix, Sub } from '@gamezilla/core';
 import {
   viewVsBotGameScreen,
   viewVsBotSetupScreen,
@@ -42,7 +42,7 @@ import {
 export type Model = FrontendModel;
 
 export const init = (
-  now: number,
+  now: Posix,
   ...params: Parameters<typeof initShared>
 ): FrontendModel => {
   const shared = initShared(...params);
@@ -54,7 +54,7 @@ export const init = (
   return {
     ...shared,
     ghostIndex: 'none',
-    visual: initVisual({ nowMs: now, columns: shared.columns }),
+    visual: initVisual({ now: now, columns: shared.columns }),
   };
 };
 
@@ -88,7 +88,7 @@ export const update = (
         return { model };
       }
       const visualNew = step({
-        nowMs: ctx.now,
+        now: ctx.now,
         columns: model.columns,
         current: model.visual,
       });
@@ -202,13 +202,13 @@ export const mergeWithBackend = ({
     return {
       ...backendModel,
       ghostIndex: 'none',
-      visual: initVisual({ nowMs: ctx.now, columns: backendModel.columns }),
+      visual: initVisual({ now: ctx.now, columns: backendModel.columns }),
     };
   }
 
   const columnsNew = backendModel.columns;
   const visualNew = step({
-    nowMs: ctx.now,
+    now: ctx.now,
     columns: columnsNew,
     current: frontendModel.visual,
   });
@@ -230,7 +230,7 @@ export const mergeWithBackend = ({
 
 export const subscriptions = (
   _intervalId: string,
-  now: number,
+  now: Posix,
   model: Model
 ): Sub<Msg> => {
   switch (model.type) {

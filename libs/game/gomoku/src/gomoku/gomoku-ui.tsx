@@ -1,4 +1,4 @@
-import { Ease, Hex } from '@gamezilla/core';
+import { Posix, Ease, Hex } from '@gamezilla/core';
 import { SvgIcon, Sx } from '@gamezilla/shared/ui';
 import { allPositions, Board, Bounds, bounds, Stone } from './gomoku';
 import { Position } from './gomoku-position';
@@ -17,10 +17,10 @@ export type VisualModel = {
 
 export const initVisual = ({
   board,
-  nowMs,
+  now,
   skipAnimation,
 }: {
-  nowMs: number;
+  now: Posix;
   board: Board;
   skipAnimation?: boolean;
 }): VisualModel => {
@@ -41,9 +41,9 @@ export const initVisual = ({
       model = setStone(model, position, {
         type: 'enter',
         radius: skipAnimation
-          ? Ease.initConstant(0.45)
+          ? Ease.initConstant(now, 0.45)
           : Ease.init({
-              startMs: nowMs,
+              startMs: now,
               from: 0,
               to: 0.45,
               durationMs: 100,
@@ -129,7 +129,7 @@ const coverArtVisual = initVisual({
     3: { 2: 'black', 3: 'white' },
     4: { 2: 'white', 3: 'black' },
   },
-  nowMs: 0,
+  now: Posix.fromNumber(0),
   skipAnimation: true,
 });
 
@@ -270,11 +270,11 @@ const rangeInclusive = ({
 };
 
 export const step = ({
-  nowMs,
+  now,
   board,
   model,
 }: {
-  nowMs: number;
+  now: Posix;
   board: Board;
   model: VisualModel;
 }): VisualModel => {
@@ -296,7 +296,7 @@ export const step = ({
             type: 'enter',
             stone: stoneTrue,
             radius: Ease.init({
-              startMs: nowMs,
+              startMs: now,
               durationMs: 1000 / 4,
               from: 0,
               to: 0.45,
@@ -318,7 +318,7 @@ export const step = ({
             type: 'exit',
             stone: stoneVisual.stone,
             radius: Ease.init({
-              startMs: nowMs,
+              startMs: now,
               durationMs: 1000 / 4,
               delayMs: x * 20 + y * 20,
               from: 0.45,
@@ -335,7 +335,7 @@ export const step = ({
       //
       if (
         stoneVisual &&
-        !Ease.isAnimating(nowMs, stoneVisual.radius) &&
+        !Ease.isAnimating(now, stoneVisual.radius) &&
         stoneVisual.type === 'exit'
       ) {
         continue;
@@ -350,7 +350,7 @@ export const step = ({
           { x, y },
           {
             ...stoneVisual,
-            radius: Ease.step(nowMs, stoneVisual.radius),
+            radius: Ease.step(now, stoneVisual.radius),
           }
         );
         continue;
@@ -362,16 +362,16 @@ export const step = ({
 };
 
 export const isAnimating = ({
-  nowMs,
+  now,
   model,
 }: {
-  nowMs: number;
+  now: Posix;
   model: VisualModel;
 }): boolean => {
   for (const xKey in model) {
     for (const yKey in model?.[xKey] ?? {}) {
       const stone = model[xKey]?.[yKey];
-      if (stone && Ease.isAnimating(nowMs, stone.radius)) {
+      if (stone && Ease.isAnimating(now, stone.radius)) {
         return true;
       }
     }

@@ -1,4 +1,4 @@
-import { Audio, Cmd, p, RemoteData, Sub, Unit } from '@gamezilla/core';
+import { Audio, Cmd, p, Posix, RemoteData, Sub, Unit } from '@gamezilla/core';
 import { RoomCtx, ViewMainMenu } from '@gamezilla/game-shared';
 import { Alerts } from '@gamezilla/shared';
 import {
@@ -239,7 +239,7 @@ export const subscriptions = ({
   model,
 }: {
   intervalId: string;
-  now: number;
+  now: Posix;
   model: Model;
 }): Sub<Msg> => {
   switch (model.mode[0]) {

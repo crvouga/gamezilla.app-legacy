@@ -1,3 +1,5 @@
+import { Posix } from '../unix-time';
+
 type Easing =
   | { type: 'ease-out-bounce'; n1?: number; d1?: number }
   | { type: 'ease-out-quint' }
@@ -7,7 +9,7 @@ type Easing =
   | { type: 'ease-out-back' };
 
 export type Model = {
-  startMs: number;
+  startMs: Posix;
   durationMs: number;
   value: number;
   from: number;
@@ -16,9 +18,9 @@ export type Model = {
   delayMs: number;
 };
 
-export const initConstant = (value: number): Model => {
+export const initConstant = (now: Posix, value: number): Model => {
   return {
-    startMs: 0,
+    startMs: now,
     durationMs: 0,
     value,
     from: value,
@@ -28,8 +30,8 @@ export const initConstant = (value: number): Model => {
   };
 };
 
-export const isAnimating = (nowMs: number, model: Model): boolean => {
-  return nowMs < model.startMs + model.durationMs + model.delayMs;
+export const isAnimating = (now: Posix, model: Model): boolean => {
+  return now < model.startMs + model.durationMs + model.delayMs;
 };
 
 export const easeOutBounce = (
@@ -95,8 +97,8 @@ const ease = (easing: Easing, x: number): number => {
   }
 };
 
-export const step = (nowMs: number, model: Model): Model => {
-  const elapsedMs = nowMs - model.startMs;
+export const step = (now: Posix, model: Model): Model => {
+  const elapsedMs = now - model.startMs;
   if (elapsedMs < model.delayMs) {
     return model;
   }
@@ -124,7 +126,7 @@ export const init = ({
   from: number;
   to: number;
   durationMs: number;
-  startMs: number;
+  startMs: Posix;
 }): Model => {
   return {
     startMs,

@@ -10,6 +10,7 @@ export * as LocalStorage from './local-storage';
 export { NonEmpty } from './non-empty';
 export { Option } from './option';
 export * from './pipe';
+export { Posix } from './unix-time';
 export { Program } from './program';
 export { Random, shuffle } from './random';
 export { RemoteData } from './remote-data';

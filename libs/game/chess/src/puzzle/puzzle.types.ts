@@ -1,4 +1,4 @@
-import { exhaustive, Result } from '@gamezilla/core';
+import { exhaustive, Posix, Result } from '@gamezilla/core';
 import { UserId } from '@gamezilla/shared';
 import * as ChessBoard from '../chess/chess-board';
 const { Err, Ok } = Result;
@@ -244,7 +244,7 @@ export const handle = ({
   msg,
   model,
 }: {
-  ctx: { now: number; currentUserId: UserId; hostId: UserId };
+  ctx: { now: Posix; currentUserId: UserId; hostId: UserId };
   msg: Req;
   model: SharedModel;
 }): Result<Problem, SharedModel> => {

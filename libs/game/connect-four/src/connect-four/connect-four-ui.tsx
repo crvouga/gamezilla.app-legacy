@@ -1,4 +1,4 @@
-import { Ease, rescale, Uuid } from '@gamezilla/core';
+import { Ease, Posix, rescale, Uuid } from '@gamezilla/core';
 import { SvgIcon, Sx } from '@gamezilla/shared/ui';
 import { useLayoutEffect, useRef } from 'react';
 import {
@@ -536,11 +536,11 @@ export const PlayerTwoIcon = ({ key, sx }: { key?: string; sx?: Sx }) => {
 };
 
 export const step = ({
-  nowMs,
+  now,
   columns,
   current,
 }: {
-  nowMs: number;
+  now: Posix;
   columns: Columns;
   current: VisualModel;
 }): VisualModel => {
@@ -562,7 +562,7 @@ export const step = ({
           yPosition_: Ease.init({
             from: MAX_COLUMN_HEIGHT + 1,
             to: y,
-            startMs: nowMs,
+            startMs: now,
             durationMs: (0.2 + 0.1 * (1 - y / MAX_COLUMN_HEIGHT)) * 1000,
             easing: { type: 'ease-out-quint' },
           }),
@@ -578,7 +578,7 @@ export const step = ({
           ...discVisual,
           type: 'exit',
           yPosition_: Ease.init({
-            startMs: nowMs,
+            startMs: now,
             from: y,
             to: -(MAX_COLUMN_HEIGHT - y),
             delayMs: (x / COLUMN_COUNT) * 0.33 * 1000,
@@ -592,12 +592,12 @@ export const step = ({
       const shouldRemove =
         discVisual &&
         discVisual.type === 'exit' &&
-        !Ease.isAnimating(nowMs, discVisual.yPosition_);
+        !Ease.isAnimating(now, discVisual.yPosition_);
 
       if (discVisual && !shouldRemove) {
         next_i.push({
           ...discVisual,
-          yPosition_: Ease.step(nowMs, discVisual.yPosition_),
+          yPosition_: Ease.step(now, discVisual.yPosition_),
         });
         continue;
       }
@@ -610,10 +610,10 @@ export const step = ({
 };
 
 export const initVisual = ({
-  nowMs,
+  now,
   columns,
 }: {
-  nowMs: number;
+  now: Posix;
   columns: Columns;
 }): VisualModel => {
   const ret: VisualModel = [];
@@ -627,7 +627,7 @@ export const initVisual = ({
           type: 'entry',
           playerType: discTrue,
           yPosition_: Ease.init({
-            startMs: nowMs,
+            startMs: now,
             from: j,
             to: j,
             durationMs: 0,
@@ -641,7 +641,7 @@ export const initVisual = ({
   return ret;
 };
 
-export const isDone = (nowMs: number, model: VisualModel): boolean => {
+export const isDone = (now: Posix, model: VisualModel): boolean => {
   for (let x = 0; x < model.length; x++) {
     const column = model[x];
     if (!column) {
@@ -650,7 +650,7 @@ export const isDone = (nowMs: number, model: VisualModel): boolean => {
     for (let y = 0; y < column.length; y++) {
       const discVisual = column[y];
 
-      if (discVisual && Ease.isAnimating(nowMs, discVisual.yPosition_)) {
+      if (discVisual && Ease.isAnimating(now, discVisual.yPosition_)) {
         return false;
       }
     }
