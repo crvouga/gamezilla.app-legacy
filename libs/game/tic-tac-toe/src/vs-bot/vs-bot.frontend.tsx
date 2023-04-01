@@ -1,5 +1,6 @@
 import { Animation, Cmd, Sub } from '@gamezilla/core';
 import {
+  RoomCtx,
   viewVsBotGameScreen,
   viewVsBotSetupScreen,
 } from '@gamezilla/game-shared';
@@ -64,7 +65,9 @@ export const update = ({
   sendToBackend,
   msg,
   model,
+  ctx,
 }: {
+  ctx: RoomCtx;
   sendToBackend: (msg: ToBackend) => Cmd;
   msg: Msg;
   model: Model;
@@ -75,7 +78,7 @@ export const update = ({
         return { model };
       }
       const visualNew = step({
-        nowMs: Date.now(),
+        nowMs: ctx.now,
         model: model.visual,
         board: model.board,
       });
@@ -87,7 +90,11 @@ export const update = ({
       if (result.type === 'Err') {
         return { model, cmd: sendToBackend(msg) };
       }
-      const merged = mergeWithBackend(model, result.value);
+      const merged = mergeWithBackend({
+        ...ctx,
+        frontendModel: model,
+        backendModel: result.value,
+      });
       return { model: merged, cmd: sendToBackend(msg) };
     }
 
@@ -97,13 +104,22 @@ export const update = ({
   }
 };
 
-export const updateFromBackend = (
-  msg: ToFrontend,
-  model: Model
-): [Model, Cmd<Msg>, OutAction[]] => {
+export const updateFromBackend = ({
+  msg,
+  model,
+  ctx,
+}: {
+  ctx: Ctx;
+  msg: ToFrontend;
+  model: Model;
+}): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
     case 'player-left': {
-      const modelNew = mergeWithBackend(model, msg[1]);
+      const modelNew = mergeWithBackend({
+        ...ctx,
+        frontendModel: model,
+        backendModel: msg[1],
+      });
       return [modelNew, Cmd.None, []];
     }
 
@@ -111,16 +127,25 @@ export const updateFromBackend = (
       if (msg[1].type === 'Err') {
         return [model, Cmd.None, []];
       }
-      const modelNew = mergeWithBackend(model, msg[1].value);
+      const modelNew = mergeWithBackend({
+        ...ctx,
+        frontendModel: model,
+        backendModel: msg[1].value,
+      });
       return [modelNew, Cmd.None, []];
     }
   }
 };
 
-export const mergeWithBackend = (
-  frontendModel: FrontendModel,
-  backendModel: BackendModel
-): FrontendModel => {
+export const mergeWithBackend = ({
+  now,
+  frontendModel,
+  backendModel,
+}: {
+  now: number;
+  frontendModel: FrontendModel;
+  backendModel: BackendModel;
+}): FrontendModel => {
   switch (backendModel.type) {
     case 'Setup': {
       return {
@@ -133,7 +158,7 @@ export const mergeWithBackend = (
       const visualNew = step({
         board: backendModel.board,
         model: frontendModel.visual,
-        nowMs: Date.now(),
+        nowMs: now,
       });
       return {
         ...backendModel,

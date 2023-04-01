@@ -35,13 +35,10 @@ const create = ({
     pool,
     query: async (rowParser, text, values) => {
       try {
-        const start = Date.now();
         const queried = await pool.query(text, values);
         const parsed = queried.rows.map(rowParser.parse, values);
-        const duration = Date.now() - start;
         log('executed query', {
           text,
-          duration,
           values,
           rows: queried.rowCount,
         });

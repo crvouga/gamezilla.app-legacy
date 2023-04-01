@@ -122,13 +122,12 @@ export const update = ({
 
     case 'tic-tac-toe': {
       if (msg.t === 'tic-tac-toe') {
-        const [child, cmd] = TicTacToeFrontend.update(
-          {
-            sendToBackend: (msg) => sendToBackend({ t: 'tic-tac-toe', c: msg }),
-          },
-          msg.c,
-          model.c
-        );
+        const [child, cmd] = TicTacToeFrontend.update({
+          sendToBackend: (msg) => sendToBackend({ t: 'tic-tac-toe', c: msg }),
+          ctx,
+          msg: msg.c,
+          model: model.c,
+        });
         return [{ t: 'tic-tac-toe', c: child }, Cmd.tag_('tic-tac-toe', cmd)];
       }
       return [model, Cmd.None];
@@ -354,7 +353,7 @@ export const subscriptions = (
     case 'connect-four': {
       return Sub.tag_(
         'connect-four',
-        ConnectFourFrontend.subscriptions(intervalId, model.c)
+        ConnectFourFrontend.subscriptions(intervalId, ctx.now, model.c)
       );
     }
 
@@ -579,10 +578,11 @@ export const mergeWithBackend = ({
         return [
           {
             t: 'tic-tac-toe',
-            c: TicTacToeFrontend.mergeWithBackend(
-              frontendModel.c,
-              backendModel.c
-            ),
+            c: TicTacToeFrontend.mergeWithBackend({
+              ctx,
+              frontendModel: frontendModel.c,
+              backendModel: backendModel.c,
+            }),
           },
           Cmd.None,
         ];
@@ -593,7 +593,11 @@ export const mergeWithBackend = ({
       return [
         {
           t: 'tic-tac-toe',
-          c: TicTacToeFrontend.mergeWithBackend(initial, backendModel.c),
+          c: TicTacToeFrontend.mergeWithBackend({
+            ctx,
+            frontendModel: initial,
+            backendModel: backendModel.c,
+          }),
         },
         Cmd.None,
       ];
