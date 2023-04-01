@@ -162,6 +162,8 @@ export const step = ({
   return visual;
 };
 
+const expectedLatency = 1_000;
+
 export const View = ({
   model,
   onClose,
@@ -201,7 +203,7 @@ export const View = ({
             : !model.startedAt
             ? null
             : status.type === 'solving'
-            ? ctx.now - model.startedAt
+            ? Math.max(0, ctx.now - model.startedAt)
             : status.endedAt - model.startedAt
         }
       />
