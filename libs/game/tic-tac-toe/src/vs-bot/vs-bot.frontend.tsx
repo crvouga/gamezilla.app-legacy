@@ -1,4 +1,4 @@
-import { Animation, Cmd, Sub } from '@gamezilla/core';
+import { Animation, Cmd, Posix, Sub } from '@gamezilla/core';
 import {
   RoomCtx,
   viewVsBotGameScreen,
@@ -78,7 +78,7 @@ export const update = ({
         return { model };
       }
       const visualNew = step({
-        nowMs: ctx.now,
+        now: ctx.now,
         model: model.visual,
         board: model.board,
       });
@@ -142,7 +142,7 @@ export const mergeWithBackend = ({
   frontendModel,
   backendModel,
 }: {
-  now: number;
+  now: Posix;
   frontendModel: FrontendModel;
   backendModel: BackendModel;
 }): FrontendModel => {
@@ -158,7 +158,7 @@ export const mergeWithBackend = ({
       const visualNew = step({
         board: backendModel.board,
         model: frontendModel.visual,
-        nowMs: now,
+        now: now,
       });
       return {
         ...backendModel,
@@ -177,7 +177,7 @@ export const mergeWithBackend = ({
 //
 
 export const subscriptions = (ctx: Ctx, model: Model): Sub<Msg> => {
-  if (isAnimating({ nowMs: ctx.now, model: model.visual })) {
+  if (isAnimating({ now: ctx.now, model: model.visual })) {
     return Animation.onFrame(() => ['animate']);
   }
   return Sub.None;

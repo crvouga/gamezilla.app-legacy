@@ -71,7 +71,7 @@ export const update = ({
     case 'animate': {
       if (model.type === 'game') {
         const { board, visual } = model;
-        const visualNew = step({ nowMs: ctx.now, board, model: visual });
+        const visualNew = step({ now: ctx.now, board, model: visual });
         return {
           model: { ...model, visual: visualNew },
         };
@@ -170,8 +170,8 @@ export const mergeWithBackend = ({
         model:
           frontendModel.type === 'game'
             ? frontendModel.visual
-            : initVisual({ nowMs: ctx.now, board: backendModel.board }),
-        nowMs: ctx.now,
+            : initVisual({ now: ctx.now, board: backendModel.board }),
+        now: ctx.now,
       });
       return { ...backendModel, visual: visualNew };
     }
@@ -189,7 +189,7 @@ export const mergeWithBackend = ({
 export const subscriptions = (ctx: Ctx, model: Model): Sub<Msg> => {
   switch (model.type) {
     case 'game': {
-      if (isAnimating({ nowMs: ctx.now, model: model.visual })) {
+      if (isAnimating({ now: ctx.now, model: model.visual })) {
         return Animation.onFrame(() => ['animate']);
       }
 

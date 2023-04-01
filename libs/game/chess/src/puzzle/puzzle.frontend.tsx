@@ -1,4 +1,4 @@
-import { Animation, Cmd, Ease, Sub } from '@gamezilla/core';
+import { Animation, Cmd, Ease, Posix, Sub } from '@gamezilla/core';
 import { RoomCtx, ViewGameBox } from '@gamezilla/game-shared';
 import {
   ActionButton,
@@ -132,7 +132,7 @@ export const subscriptions = ({
   now,
 }: {
   model: Model;
-  now: number;
+  now: Posix;
   intervalId: string;
 }): Sub<Msg> => {
   if (isAnimating({ now, model })) {
@@ -525,7 +525,7 @@ const ViewStatusBar = ({ status }: { status: Status }) => {
 const toVisualBoard = ({
   model,
 }: {
-  now: number;
+  now: Posix;
   model: Model;
 }): ChessBoard.Model => {
   const status = toStatus(model);
@@ -553,13 +553,7 @@ const toVisualBoard = ({
   return status.board;
 };
 
-const isAnimating = ({
-  model,
-  now,
-}: {
-  now: number;
-  model: Model;
-}): boolean => {
+const isAnimating = ({ model, now }: { now: Posix; model: Model }): boolean => {
   if (!model.puzzle) {
     return false;
   }

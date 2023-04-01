@@ -1,4 +1,4 @@
-import { Ease, rescale } from '@gamezilla/core';
+import { Posix, Ease, rescale } from '@gamezilla/core';
 import { SvgIcon, Sx } from '@gamezilla/shared/ui';
 import {
   allPositions,
@@ -33,9 +33,9 @@ export const initVisual = ({ board }: { board: Board }) => {
 export const step = ({
   board,
   model,
-  nowMs,
+  now,
 }: {
-  nowMs: number;
+  now: Posix;
   board: Board;
   model: VisualModel;
 }): VisualModel => {
@@ -59,7 +59,7 @@ export const step = ({
             durationMs: 200,
             from: 0,
             to: 1,
-            startMs: nowMs,
+            startMs: now,
           }),
         });
         continue;
@@ -81,7 +81,7 @@ export const step = ({
             durationMs: 200,
             from: 1,
             to: 0,
-            startMs: nowMs,
+            startMs: now,
           }),
         });
         continue;
@@ -94,12 +94,12 @@ export const step = ({
       const shouldRemove =
         slotVisual &&
         slotVisual.type === 'exit' &&
-        !Ease.isAnimating(nowMs, slotVisual.percentageDrew);
+        !Ease.isAnimating(now, slotVisual.percentageDrew);
 
       if (slotVisual && !shouldRemove) {
         modelNewX.push({
           ...slotVisual,
-          percentageDrew: Ease.step(nowMs, slotVisual.percentageDrew),
+          percentageDrew: Ease.step(now, slotVisual.percentageDrew),
         });
         continue;
       }
@@ -118,15 +118,15 @@ export const step = ({
 
 export const isAnimating = ({
   model,
-  nowMs,
+  now,
 }: {
-  nowMs: number;
+  now: Posix;
   model: VisualModel;
 }) => {
   for (let x = 0; x < MAX_X; x++) {
     for (let y = 0; y < MAX_Y; y++) {
       const slotVisual = model[x]?.[y];
-      if (slotVisual && Ease.isAnimating(nowMs, slotVisual.percentageDrew)) {
+      if (slotVisual && Ease.isAnimating(now, slotVisual.percentageDrew)) {
         return true;
       }
     }

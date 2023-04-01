@@ -1,5 +1,5 @@
 import { Alerts } from '@gamezilla/shared';
-import { Cmd, Sub } from '@gamezilla/core';
+import { Cmd, Posix, Sub } from '@gamezilla/core';
 import {
   bannerArtAspectRatio,
   RoomCtx,
@@ -318,7 +318,7 @@ export const mergeWithBackend = ({
 
 export const subscriptions = (
   intervalId: string,
-  now: number,
+  now: Posix,
   model: Model
 ): Sub<Msg> => {
   switch (model.type) {

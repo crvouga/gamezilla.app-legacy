@@ -9,7 +9,15 @@ import {
   ToBackend,
   ToFrontend,
 } from '@gamezilla/app';
-import { andThen, Cmd, exhaustive, p, Program, Sub } from '@gamezilla/core';
+import {
+  andThen,
+  Cmd,
+  exhaustive,
+  p,
+  Posix,
+  Program,
+  Sub,
+} from '@gamezilla/core';
 import { RoomBackend } from '@gamezilla/room';
 import { ClientId, SessionId, UserId } from '@gamezilla/shared';
 import { DatabaseConnection } from '@gamezilla/shared/backend';
@@ -48,7 +56,7 @@ export const update = (input: {
   msg: Msg;
   model: Model;
   dbConn: DatabaseConnection;
-  now: number;
+  now: Posix;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -69,7 +77,7 @@ export const update_ = ({
   msg: Msg;
   model: Model;
   dbConn: DatabaseConnection;
-  now: number;
+  now: Posix;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -186,7 +194,7 @@ const updateFromFrontend = ({
   model,
   now,
 }: {
-  now: number;
+  now: Posix;
   dbConn: DatabaseConnection;
   sessionId: SessionId;
   clientId: ClientId;
@@ -297,7 +305,7 @@ const sendToUser = (model: Model, userIds: UserId[], msg: ToFrontend): Cmd => {
 //
 //
 
-export const subscriptions = (_now: number, model: Model): Sub<Msg> => {
+export const subscriptions = ({ model }: { model: Model }): Sub<Msg> => {
   return Sub.batch([
     Sub.tag('room', RoomBackend.subscriptions(model.room)),
     p(

@@ -1,8 +1,9 @@
-import * as Route from './route';
+import { Posix } from '@gamezilla/core';
 import { UserId, Username } from './data';
+import * as Route from './route';
 
 export type Ctx = {
-  now: number;
+  now: Posix;
   profiles: {
     [userId: UserId]: {
       userId: UserId;
