@@ -270,12 +270,12 @@ export const View = ({
 };
 
 const formatDuration = (duration: number): string => {
-  const minutes = Math.floor(duration / 60000);
-  const seconds = Math.floor((duration % 60000) / 1000);
-  const milliseconds = duration % 1000;
+  const minutes = Math.floor(duration / 60_000);
+  const seconds = Math.floor((duration % 60_000) / 1_000);
+  const milliseconds = duration % 1_000;
   return `${minutes.toString().padStart(2, '0')}:${seconds
     .toString()
-    .padStart(2, '0')}:${milliseconds.toString().padStart(3, '0')}`;
+    .padStart(2, '0')}:${milliseconds.toString().padStart(2, '0').slice(0, 2)}`;
 };
 
 const ViewClock = ({ duration }: { duration?: number | null }) => {
@@ -290,14 +290,14 @@ const ViewClock = ({ duration }: { duration?: number | null }) => {
       }}
     >
       <Typography
-        variant="h3"
         sx={{
+          fontSize: '2rem',
           fontWeight: 900,
           fontFamily: 'inherit',
         }}
-        color={duration ? 'text.primary' : 'text.secondary'}
+        color={'text.secondary'}
       >
-        {duration ? formatDuration(duration) : '--:--'}
+        {duration ? formatDuration(duration) : '--:--:--'}
       </Typography>
     </Box>
   );
