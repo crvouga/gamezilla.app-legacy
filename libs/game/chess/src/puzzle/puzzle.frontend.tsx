@@ -94,6 +94,10 @@ export const updateFromBackend = ({
   cmd?: Cmd<Msg>;
 } => {
   switch (msg.t) {
+    case 'clock-tick': {
+      return { model: { ...model, backendNow: msg.now } };
+    }
+
     default: {
       const result = msg.result;
 
@@ -195,7 +199,7 @@ export const View = ({
             : !model.startedAt
             ? null
             : status.type === 'solving'
-            ? Math.max(0, ctx.now - model.startedAt)
+            ? Math.max(0, (model.backendNow ?? ctx.now) - model.startedAt)
             : status.endedAt - model.startedAt
         }
       />
@@ -282,7 +286,7 @@ const ViewClock = ({ duration }: { duration?: number | null }) => {
         justifyContent: 'center',
       }}
     >
-      <Icon name="clock" />
+      <Icon name="clock" sx={{ mr: 1 }} />
       <Typography
         sx={{
           fontSize: '2rem',
@@ -291,7 +295,7 @@ const ViewClock = ({ duration }: { duration?: number | null }) => {
         }}
         color={'text.secondary'}
       >
-        {duration ? formatDuration(duration) : '--:--'}
+        {duration ? formatDuration(duration) : '-:--'}
       </Typography>
     </Box>
   );

@@ -84,7 +84,7 @@ export const update = ({
       };
       return {
         model: modelNew,
-        cmd: broadcast({ t: 'clock-tick', result: Result.Ok(modelNew) }),
+        cmd: broadcast({ t: 'clock-tick', now: ctx.now }),
       };
     }
 
@@ -317,7 +317,7 @@ export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
 
   switch (status.type) {
     case 'solving': {
-      return Time.every(intervalId, 1000, () => ({ t: 'clock-tick' }));
+      return Time.every(intervalId, 500, () => ({ t: 'clock-tick' }));
     }
 
     default: {
