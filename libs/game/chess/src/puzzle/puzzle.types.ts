@@ -221,7 +221,7 @@ export type ToBackend = Req | { t: 'initialize' };
 
 export type ToFrontend =
   | Res
-  | { t: 'clock-tick'; result: Result<string, SharedModel> }
+  | { t: 'clock-tick'; now: Posix }
   | { t: 'initialize'; result: Result<string, SharedModel> }
   | { t: 'next-done'; result: Result<string, SharedModel> }
   | { t: 'interaction-insert-done'; result: Result<string, SharedModel> };
@@ -230,6 +230,7 @@ export type BackendModel = SharedModel;
 
 export type FrontendModel = SharedModel & {
   initializedAt?: number;
+  backendNow?: Posix;
 };
 
 type Problem =
