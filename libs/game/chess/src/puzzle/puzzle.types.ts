@@ -1,6 +1,7 @@
 import { exhaustive, Posix, Result } from '@gamezilla/core';
 import { UserId } from '@gamezilla/shared';
 import * as ChessBoard from '../chess/chess-board';
+
 const { Err, Ok } = Result;
 
 export type SharedModel = {
@@ -200,28 +201,30 @@ export type PuzzleCompleted = {
 };
 
 export type Req =
-  | ['input-move', { moveInput: ChessBoard.MoveInput }]
-  | ['next']
-  | ['retry']
-  | ['skip']
-  | ['show-hint'];
+  | { t: 'input-move'; moveInput: ChessBoard.MoveInput }
+  | { t: 'next' }
+  | { t: 'retry' }
+  | { t: 'skip' }
+  | { t: 'show-hint' };
 
-export type Res = [Req[0], Result<string, SharedModel>];
+export type Res = Req & { result: Result<Problem, SharedModel> };
 
 export type BackendMsg =
-  | ['initialize', Result<string, Puzzle[]>]
-  | ['next-done', Result<string, Puzzle[]>]
-  | ['interaction-insert-done', Result<string, null>];
+  | { t: 'clock-tick' }
+  | { t: 'initialize'; result: Result<string, Puzzle[]> }
+  | { t: 'next-done'; result: Result<string, Puzzle[]> }
+  | { t: 'interaction-insert-done'; result: Result<string, null> };
 
-export type FrontendMsg = Req | ['animate'];
+export type FrontendMsg = Req | { t: 'animate' };
 
-export type ToBackend = Req | ['initialize'];
+export type ToBackend = Req | { t: 'initialize' };
 
 export type ToFrontend =
   | Res
-  | ['initialize', Result<string, SharedModel>]
-  | ['next-done', Result<string, SharedModel>]
-  | ['interaction-insert-done', Result<string, SharedModel>];
+  | { t: 'clock-tick'; result: Result<string, SharedModel> }
+  | { t: 'initialize'; result: Result<string, SharedModel> }
+  | { t: 'next-done'; result: Result<string, SharedModel> }
+  | { t: 'interaction-insert-done'; result: Result<string, SharedModel> };
 
 export type BackendModel = SharedModel;
 
@@ -248,7 +251,7 @@ export const handle = ({
   msg: Req;
   model: SharedModel;
 }): Result<Problem, SharedModel> => {
-  switch (msg[0]) {
+  switch (msg.t) {
     case 'input-move': {
       if (ctx.currentUserId !== ctx.hostId) {
         return Err('must-be-host');
@@ -260,7 +263,7 @@ export const handle = ({
         return Err('must-be-solving');
       }
 
-      const moved = ChessBoard.move(msg[1].moveInput, status.board);
+      const moved = ChessBoard.move(msg.moveInput, status.board);
 
       if (moved.type === 'Err') {
         return moved;
@@ -268,7 +271,7 @@ export const handle = ({
 
       const modelNew: SharedModel = {
         ...model,
-        moves: [...model.moves, msg[1].moveInput],
+        moves: [...model.moves, msg.moveInput],
         lastMoveAt: ctx.now,
       };
 

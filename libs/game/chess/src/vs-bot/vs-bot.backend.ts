@@ -156,9 +156,9 @@ export const updateFromRoom = ({
   model: Model;
   cmd?: Cmd;
 } => {
-  switch (msg[0]) {
+  switch (msg.t) {
     case 'user-left': {
-      if (model.userId === msg[1].userId) {
+      if (model.userId === msg.userId) {
         const modelNew: Model = {
           type: 'Setup',
           botLevel: model.botLevel,

@@ -245,9 +245,9 @@ export const updateFromRoom = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  switch (msg[0]) {
+  switch (msg.t) {
     case 'user-left': {
-      const { userId } = msg[1];
+      const { userId } = msg;
 
       const player: PlayerType | 'none' =
         model.O === userId ? 'O' : model.X === userId ? 'X' : 'none';

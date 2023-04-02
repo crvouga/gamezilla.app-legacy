@@ -275,7 +275,7 @@ const updateLeave = ({
       });
     },
     model: game,
-    msg: ['user-left', { userId: ctx.currentUserId }],
+    msg: { t: 'user-left', userId: ctx.currentUserId },
   });
 
   const modelNew: Model = {

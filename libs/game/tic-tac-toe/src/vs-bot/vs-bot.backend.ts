@@ -210,9 +210,9 @@ export const updateFromRoom = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  switch (msg[0]) {
+  switch (msg.t) {
     case 'user-left': {
-      if (model.player !== msg[1].userId) {
+      if (model.player !== msg.userId) {
         return { model };
       }
 

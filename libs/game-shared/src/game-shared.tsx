@@ -20,7 +20,7 @@ export type RoomCtx = Ctx & {
   hostId: UserId;
 };
 
-export type RoomMsg = ['user-left', { userId: UserId }];
+export type RoomMsg = {t: 'user-left',  userId: UserId };
 
 export const bannerArtAspectRatio = Math.pow(3 / 4, 4);
 
