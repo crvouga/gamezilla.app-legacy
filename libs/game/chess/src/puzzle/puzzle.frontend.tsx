@@ -1,4 +1,4 @@
-import { Animation, Cmd, Ease, Posix, Sub } from '@gamezilla/core';
+import { Cmd, Ease, Posix, Sub } from '@gamezilla/core';
 import { RoomCtx, ViewGameBox } from '@gamezilla/game-shared';
 import {
   ActionButton,
@@ -40,7 +40,7 @@ export const init = ({
 }): { model: Model; cmd: Cmd<Msg> } => {
   return {
     model: initShared,
-    cmd: sendToBackend(['initialize']),
+    cmd: sendToBackend({ t: 'initialize' }),
   };
 };
 
@@ -66,7 +66,7 @@ export const update = ({
   model: Model;
   cmd?: Cmd;
 } => {
-  switch (msg[0]) {
+  switch (msg.t) {
     case 'animate': {
       return { model };
     }
@@ -93,9 +93,9 @@ export const updateFromBackend = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  switch (msg[0]) {
+  switch (msg.t) {
     default: {
-      const result = msg[1];
+      const result = msg.result;
 
       if (result.type === 'Err') {
         return { model };
@@ -127,17 +127,11 @@ export const mergeWithBackend = ({
 //
 //
 
-export const subscriptions = ({
-  model,
-  now,
-}: {
+export const subscriptions = (_args: {
   model: Model;
   now: Posix;
   intervalId: string;
 }): Sub<Msg> => {
-  if (isAnimating({ now, model })) {
-    return Animation.onFrame(() => ['animate']);
-  }
   return Sub.None;
 };
 
@@ -161,8 +155,6 @@ export const step = ({
 }): VisualModel => {
   return visual;
 };
-
-const expectedLatency = 1_000;
 
 export const View = ({
   model,
@@ -224,7 +216,7 @@ export const View = ({
           }}
           boardOrientation={toPlayerColor(status.puzzle)}
           onPieceDrop={(moveInput) => {
-            $send(['input-move', { moveInput }]);
+            $send({ t: 'input-move', moveInput });
 
             return false;
           }}
@@ -274,10 +266,9 @@ export const View = ({
 const formatDuration = (duration: number): string => {
   const minutes = Math.floor(duration / 60_000);
   const seconds = Math.floor((duration % 60_000) / 1_000);
-  const milliseconds = duration % 1_000;
-  return `${minutes.toString().padStart(2, '0')}:${seconds
+  return `${minutes.toString().padStart(1, '0')}:${seconds
     .toString()
-    .padStart(2, '0')}:${milliseconds.toString().padStart(2, '0').slice(0, 2)}`;
+    .padStart(2, '0')}`;
 };
 
 const ViewClock = ({ duration }: { duration?: number | null }) => {
@@ -291,6 +282,7 @@ const ViewClock = ({ duration }: { duration?: number | null }) => {
         justifyContent: 'center',
       }}
     >
+      <Icon name="clock" />
       <Typography
         sx={{
           fontSize: '2rem',
@@ -299,7 +291,7 @@ const ViewClock = ({ duration }: { duration?: number | null }) => {
         }}
         color={'text.secondary'}
       >
-        {duration ? formatDuration(duration) : '--:--:--'}
+        {duration ? formatDuration(duration) : '--:--'}
       </Typography>
     </Box>
   );
@@ -336,7 +328,7 @@ const ViewActionButtons = ({
             icon={<Icon name="lightbulb" />}
             label="Hint"
             onClick={() => {
-              $send(['show-hint']);
+              $send({ t: 'show-hint' });
             }}
           />
         </>
@@ -365,14 +357,14 @@ const ViewActionButtons = ({
               color: 'error.main',
             }}
             onClick={() => {
-              $send(['retry']);
+              $send({ t: 'retry' });
             }}
           />
           <ActionButton
             icon={<Icon name="chevron-right" />}
             label="Skip"
             onClick={() => {
-              $send(['skip']);
+              $send({ t: 'skip' });
             }}
           />
         </>
@@ -399,7 +391,7 @@ const ViewActionButtons = ({
             icon={<Icon name="arrow-circle-right" />}
             label="Next"
             onClick={() => {
-              $send(['next']);
+              $send({ t: 'next' });
             }}
           />
         </>
@@ -555,7 +547,13 @@ const toVisualBoard = ({
   return status.board;
 };
 
-const isAnimating = ({ model, now }: { now: Posix; model: Model }): boolean => {
+export const isAnimating = ({
+  model,
+  now,
+}: {
+  now: Posix;
+  model: Model;
+}): boolean => {
   if (!model.puzzle) {
     return false;
   }

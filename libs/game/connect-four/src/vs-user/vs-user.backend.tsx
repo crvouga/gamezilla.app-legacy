@@ -96,9 +96,9 @@ export const updateFromRoom = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  switch (msg[0]) {
+  switch (msg.t) {
     case 'user-left': {
-      const userId = msg[1].userId;
+      const userId = msg.userId;
       const player = toPlayerType(userId, model);
 
       if (player === 'none') {

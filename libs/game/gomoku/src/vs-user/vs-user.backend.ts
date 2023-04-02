@@ -78,7 +78,7 @@ export const updateFromRoom = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  switch (msg[0]) {
+  switch (msg.t) {
     case 'user-left': {
       return { model: init(model) };
     }

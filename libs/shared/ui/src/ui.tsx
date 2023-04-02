@@ -1,18 +1,19 @@
 import { exhaustive } from '@gamezilla/core';
 import {
+  AccessTime,
   ArrowCircleRight,
   Check,
-  Lightbulb,
   ChevronRight,
+  Close,
   ExitToApp,
   Extension,
   Flag,
+  Lightbulb,
   People,
   RestartAlt,
   SmartToy,
   SwapHorizSharp,
   Tune,
-  Close,
 } from '@mui/icons-material';
 import * as MuiLab from '@mui/lab';
 import * as Mui from '@mui/material';
@@ -808,11 +809,15 @@ export type IconName =
   | 'friends'
   | 'check'
   | 'lightbulb'
+  | 'clock'
   | 'close'
   | 'arrow-circle-right';
 
 export const Icon = ({ name, sx }: { name: IconName; sx?: Sx }) => {
   switch (name) {
+    case 'clock': {
+      return <AccessTime sx={sx} />;
+    }
     case 'close': {
       return <Close sx={sx} />;
     }

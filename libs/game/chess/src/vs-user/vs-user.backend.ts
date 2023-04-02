@@ -184,11 +184,11 @@ export const updateFromRoom = ({
   msg: RoomMsg;
   model: Model;
 }): { model: Model; cmd?: Cmd<Msg> } => {
-  switch (msg[0]) {
+  switch (msg.t) {
     case 'user-left': {
       switch (model.type) {
         case 'Setup': {
-          const { userId } = msg[1];
+          const { userId } = msg;
           const color: Board.Color | 'none' =
             model.b === userId ? 'b' : model.w === userId ? 'w' : 'none';
 
@@ -203,7 +203,7 @@ export const updateFromRoom = ({
 
         case 'game':
         case 'GameOver': {
-          const { userId } = msg[1];
+          const { userId } = msg;
 
           const color: Board.Color | 'none' =
             model.b === userId ? 'b' : model.w === userId ? 'w' : 'none';

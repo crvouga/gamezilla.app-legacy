@@ -1,4 +1,4 @@
-import { andThen, Cmd, eq, p, Posix, Result, Sub } from '@gamezilla/core';
+import { andThen, Cmd, eq, p, Posix, Result, Sub, Time } from '@gamezilla/core';
 import { RoomMsg } from '@gamezilla/game-shared';
 import { UserId } from '@gamezilla/shared';
 import { DatabaseConnection } from '@gamezilla/shared/backend';
@@ -43,7 +43,12 @@ export const init = ({
         userId: ctx.currentUserId,
         query: initShared.query,
       }),
-      Cmd.perform((result): Msg => ['next-done', result])
+      Cmd.perform(
+        (result): Msg => ({
+          t: 'next-done',
+          result,
+        })
+      )
     ),
   };
 };
@@ -72,12 +77,25 @@ export const update = ({
   model: Model;
   cmd?: Cmd;
 } => {
-  switch (msg[0]) {
+  switch (msg.t) {
+    case 'clock-tick': {
+      const modelNew: Model = {
+        ...model,
+      };
+      return {
+        model: modelNew,
+        cmd: broadcast({ t: 'clock-tick', result: Result.Ok(modelNew) }),
+      };
+    }
+
     case 'initialize': {
-      if (msg[1].type === 'Err') {
-        return { model, cmd: broadcast(['initialize', msg[1]]) };
+      if (msg.result.type === 'Err') {
+        return {
+          model,
+          cmd: broadcast({ t: 'initialize', result: msg.result }),
+        };
       }
-      const puzzles = msg[1].value;
+      const puzzles = msg.result.value;
       const modelNew: Model = {
         ...model,
         puzzle: puzzles[0] ?? null,
@@ -85,16 +103,19 @@ export const update = ({
       };
       return {
         model: modelNew,
-        cmd: broadcast(['initialize', Result.Ok(modelNew)]),
+        cmd: broadcast({ t: 'initialize', result: Result.Ok(modelNew) }),
       };
     }
 
     case 'next-done': {
-      if (msg[1].type === 'Err') {
-        return { model, cmd: broadcast(['next-done', msg[1]]) };
+      if (msg.result.type === 'Err') {
+        return {
+          model,
+          cmd: broadcast({ t: 'next-done', result: msg.result }),
+        };
       }
 
-      const puzzles = msg[1].value;
+      const puzzles = msg.result.value;
 
       const modelNew: Model = {
         ...model,
@@ -104,20 +125,20 @@ export const update = ({
 
       return {
         model: modelNew,
-        cmd: broadcast(['next-done', Result.Ok(modelNew)]),
+        cmd: broadcast({ t: 'next-done', result: Result.Ok(modelNew) }),
       };
     }
 
     case 'interaction-insert-done': {
       return {
         model,
-        cmd: broadcast([
-          'interaction-insert-done',
-          p(
-            msg[1],
+        cmd: broadcast({
+          t: 'interaction-insert-done',
+          result: p(
+            msg.result,
             Result.map(() => model)
           ),
-        ]),
+        }),
       };
     }
   }
@@ -180,7 +201,7 @@ const updatePuzzleCompleted = ({
           type: status.type,
         },
       ]),
-      Cmd.perform((result) => ['interaction-insert-done', result])
+      Cmd.perform((result): Msg => ({ t: 'interaction-insert-done', result }))
     ),
   };
 };
@@ -208,7 +229,7 @@ const updatePuzzleNext = ({
           userId: ctx.currentUserId,
           query: model.query,
         }),
-        Cmd.perform((result): Msg => ['next-done', result])
+        Cmd.perform((result): Msg => ({ t: 'next-done', result }))
       ),
     };
   }
@@ -223,11 +244,11 @@ const updateFromFrontend_: typeof updateFromFrontend = ({
   broadcast,
   ctx,
 }) => {
-  switch (msg[0]) {
+  switch (msg.t) {
     case 'initialize': {
       return {
         model,
-        cmd: sendToClient(['initialize', Result.Ok(model)]),
+        cmd: sendToClient({ t: 'initialize', result: Result.Ok(model) }),
       };
     }
 
@@ -240,7 +261,7 @@ const updateFromFrontend_: typeof updateFromFrontend = ({
 
       return {
         model: handled.type === 'Ok' ? handled.value : model,
-        cmd: broadcast([msg[0], handled]),
+        cmd: broadcast({ ...msg, result: handled }),
       };
     }
   }
@@ -256,7 +277,7 @@ export const updateFromGame = ({
   model: Model;
   cmd?: Cmd;
 } => {
-  switch (msg[0]) {
+  switch (msg.t) {
     case 'mode-changed': {
       return {
         model,
@@ -276,7 +297,7 @@ export const updateFromRoom = ({
   model: Model;
   cmd?: Cmd;
 } => {
-  switch (msg[0]) {
+  switch (msg.t) {
     case 'user-left': {
       return {
         model,
@@ -291,6 +312,16 @@ export const updateFromRoom = ({
 //
 //
 
-export const subscriptions = (_intervalId: string, _model: Model): Sub<Msg> => {
-  return Sub.None;
+export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
+  const status = toStatus(model);
+
+  switch (status.type) {
+    case 'solving': {
+      return Time.every(intervalId, 1000, () => ({ t: 'clock-tick' }));
+    }
+
+    default: {
+      return Sub.None;
+    }
+  }
 };

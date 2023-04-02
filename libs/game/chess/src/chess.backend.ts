@@ -139,7 +139,7 @@ export const updateFromFrontend = ({
       }
 
       const updated = updateFromGame({
-        msg: ['mode-changed', result.value[0]],
+        msg: { t: 'mode-changed', mode: result.value[0] },
         model: result.value,
       });
 
