@@ -1,4 +1,4 @@
-import { Cmd, exhaustive, Result, Sub } from '@gamezilla/core';
+import { Cmd, Result, Sub } from '@gamezilla/core';
 import { RoomCtx, RoomMsg } from '@gamezilla/game-shared';
 import { UserId } from '@gamezilla/shared';
 import { DatabaseConnection } from '@gamezilla/shared/backend';
@@ -6,7 +6,7 @@ import { GameMsg } from './chess-shared';
 import {
   BackendModel,
   BackendMsg,
-  InputMode_Done,
+  Res,
   ToBackend,
   ToFrontend,
 } from './chess.types';
@@ -26,7 +26,7 @@ const { Err, Ok } = Result;
 
 export type Model = BackendModel;
 
-export const init: Model = ['none'];
+export const init: Model = { t: 'none' };
 
 //
 //
@@ -49,59 +49,55 @@ export const update = ({
   model: Model;
   ctx: RoomCtx;
 }): [Model, Cmd<Msg>] => {
-  switch (model[0]) {
+  switch (model.t) {
     case 'none': {
       return [model, Cmd.None];
     }
 
     case 'vs-user': {
-      if (msg[0] === 'vs-user') {
+      if (msg.t === 'vs-user') {
         const [child, cmd] = VsUser.update(
-          { broadcast: (msg) => broadcast(['vs-user', msg]) },
-          msg[1],
-          model[1]
+          { broadcast: (msg) => broadcast({ t: 'vs-user', c: msg }) },
+          msg.c,
+          model.c
         );
 
-        return [['vs-user', child], Cmd.tag('vs-user', cmd)];
+        return [{ t: 'vs-user', c: child }, Cmd.tag_('vs-user', cmd)];
       }
 
       return [model, Cmd.None];
     }
 
     case 'vs-bot': {
-      if (msg[0] === 'vs-bot') {
+      if (msg.t === 'vs-bot') {
         const [child, cmd] = VsBot.update(
-          { broadcast: (msg) => broadcast(['vs-bot', msg]) },
-          msg[1],
-          model[1]
+          { broadcast: (msg) => broadcast({ t: 'vs-bot', c: msg }) },
+          msg.c,
+          model.c
         );
 
-        return [['vs-bot', child], Cmd.tag('vs-bot', cmd)];
+        return [{ t: 'vs-bot', c: child }, Cmd.tag_('vs-bot', cmd)];
       }
 
       return [model, Cmd.None];
     }
 
     case 'puzzle': {
-      if (msg[0] !== 'puzzle') {
+      if (msg.t !== 'puzzle') {
         return [model, Cmd.None];
       }
 
       const updated = Puzzle.update({
-        model: model[1],
-        msg: msg[1],
-        broadcast: (m) => broadcast(['puzzle', m]),
+        model: model.c,
+        msg: msg.c,
+        broadcast: (m) => broadcast({ t: 'puzzle', c: m }),
         ctx,
       });
 
       return [
-        ['puzzle', updated.model],
-        Cmd.tag('puzzle', updated.cmd ?? Cmd.None),
+        { t: 'puzzle', c: updated.model },
+        Cmd.tag_('puzzle', updated.cmd ?? Cmd.None),
       ];
-    }
-
-    default: {
-      return exhaustive(model[0]);
     }
   }
 };
@@ -121,89 +117,82 @@ export const updateFromFrontend = ({
   msg: ToBackend;
   model: Model;
 }): [Model, Cmd<Msg>] => {
-  switch (msg[0]) {
+  switch (msg.t) {
     case 'input-mode': {
       const { result, cmd } = initMode({
         dbConn,
         broadcast,
         hostId: ctx.hostId,
-        mode: msg[1].mode,
-        userId: msg[1].userId,
+        mode: msg.mode,
+        userId: msg.userId,
       });
 
       if (result.type === 'Err') {
-        return [
-          model,
-          Cmd.batch([cmd, sendToClient(['input-mode-done', msg[1], result])]),
-        ];
+        return [model, Cmd.batch([cmd, sendToClient({ ...msg, result })])];
       }
 
       const updated = updateFromGame({
-        msg: { t: 'mode-changed', mode: result.value[0] },
+        msg: { t: 'mode-changed', mode: result.value.t },
         model: result.value,
       });
 
       return [
         updated.model,
-        Cmd.batch([
-          broadcast(['input-mode-done', msg[1], result]),
-          updated.cmd,
-          cmd,
-        ]),
+        Cmd.batch([broadcast({ ...msg, result }), updated.cmd, cmd]),
       ];
     }
 
     case 'vs-bot': {
-      if (model[0] === 'vs-bot') {
+      if (model.t === 'vs-bot') {
         const [child, cmd] = VsBot.updateFromFrontend(
           {
-            sendToClient: (msg) => sendToClient(['vs-bot', msg]),
-            broadcast: (msg) => broadcast(['vs-bot', msg]),
+            sendToClient: (msg) => sendToClient({ t: 'vs-bot', c: msg }),
+            broadcast: (msg) => broadcast({ t: 'vs-bot', c: msg }),
           },
-          msg[1],
-          model[1]
+          msg.c,
+          model.c
         );
 
-        return [['vs-bot', child], Cmd.tag('vs-bot', cmd)];
+        return [{ t: 'vs-bot', c: child }, Cmd.tag_('vs-bot', cmd)];
       }
 
       return [model, Cmd.None];
     }
 
     case 'vs-user': {
-      if (model[0] === 'vs-user') {
+      if (model.t === 'vs-user') {
         const [child, cmd] = VsUser.updateFromFrontend(
           {
-            sendToClient: (msg) => sendToClient(['vs-user', msg]),
-            broadcast: (msg) => broadcast(['vs-user', msg]),
+            sendToClient: (msg) => sendToClient({ t: 'vs-user', c: msg }),
+            broadcast: (msg) => broadcast({ t: 'vs-user', c: msg }),
           },
-          msg[1],
-          model[1]
+          msg.c,
+          model.c
         );
 
-        return [['vs-user', child], Cmd.tag('vs-user', cmd)];
+        return [{ t: 'vs-user', c: child }, Cmd.tag_('vs-user', cmd)];
       }
 
       return [model, Cmd.None];
     }
 
     case 'puzzle': {
-      if (model[0] !== 'puzzle') {
+      if (model.t !== 'puzzle') {
         return [model, Cmd.None];
       }
 
       const updated = Puzzle.updateFromFrontend({
-        model: model[1],
-        msg: msg[1],
+        model: model.c,
+        msg: msg.c,
         dbConn,
-        sendToClient: (m) => sendToClient(['puzzle', m]),
-        broadcast: (m) => broadcast(['puzzle', m]),
+        sendToClient: (m) => sendToClient({ t: 'puzzle', c: m }),
+        broadcast: (m) => broadcast({ t: 'puzzle', c: m }),
         ctx,
       });
 
       return [
-        ['puzzle', updated.model],
-        Cmd.tag('puzzle', updated.cmd ?? Cmd.None),
+        { t: 'puzzle', c: updated.model },
+        Cmd.tag_('puzzle', updated.cmd ?? Cmd.None),
       ];
     }
   }
@@ -221,44 +210,44 @@ export const updateFromRoom = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  switch (model[0]) {
+  switch (model.t) {
     case 'none': {
       return { model };
     }
 
     case 'vs-bot': {
       const updated = VsBot.updateFromRoom({
-        broadcast: (m) => broadcast(['vs-bot', m]),
+        broadcast: (m) => broadcast({ t: 'vs-bot', c: m }),
         msg,
-        model: model[1],
+        model: model.c,
       });
       return {
-        model: ['vs-bot', updated.model],
-        cmd: Cmd.tag('vs-bot', updated.cmd ?? Cmd.None),
+        model: { t: 'vs-bot', c: updated.model },
+        cmd: Cmd.tag_('vs-bot', updated.cmd ?? Cmd.None),
       };
     }
 
     case 'vs-user': {
       const updated = VsUser.updateFromRoom({
-        broadcast: (m) => broadcast(['vs-user', m]),
+        broadcast: (m) => broadcast({ t: 'vs-user', c: m }),
         msg,
-        model: model[1],
+        model: model.c,
       });
       return {
-        model: ['vs-user', updated.model],
-        cmd: Cmd.tag('vs-user', updated.cmd ?? Cmd.None),
+        model: { t: 'vs-user', c: updated.model },
+        cmd: Cmd.tag_('vs-user', updated.cmd ?? Cmd.None),
       };
     }
 
     case 'puzzle': {
       const updated = Puzzle.updateFromRoom({
-        model: model[1],
+        model: model.c,
         msg,
       });
 
       return {
-        model: ['puzzle', updated.model],
-        cmd: Cmd.tag('puzzle', updated.cmd ?? Cmd.None),
+        model: { t: 'puzzle', c: updated.model },
+        cmd: Cmd.tag_('puzzle', updated.cmd ?? Cmd.None),
       };
     }
   }
@@ -274,20 +263,20 @@ export const updateFromGame = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  switch (model[0]) {
+  switch (model.t) {
     case 'none': {
       return { model };
     }
 
     case 'puzzle': {
       const updated = Puzzle.updateFromGame({
-        model: model[1],
+        model: model.c,
         msg,
       });
 
       return {
-        model: ['puzzle', updated.model],
-        cmd: Cmd.tag('puzzle', updated.cmd ?? Cmd.None),
+        model: { t: 'puzzle', c: updated.model },
+        cmd: Cmd.tag_('puzzle', updated.cmd ?? Cmd.None),
       };
     }
 
@@ -311,31 +300,34 @@ const initMode = ({
   dbConn: DatabaseConnection;
   broadcast: (m: ToFrontend) => Cmd;
   hostId: UserId;
-  mode: BackendModel[0];
+  mode: BackendModel['t'];
   userId: UserId;
-}): { result: InputMode_Done[2]; cmd?: Cmd<Msg> } => {
+}): { result: Res['result']; cmd?: Cmd<Msg> } => {
   if (hostId !== userId) {
     return { result: Err('must_be_the_host') };
   }
 
   switch (mode) {
     case 'none': {
-      const modelNew: BackendModel = ['none'];
+      const modelNew: BackendModel = { t: 'none' };
 
       return { result: Ok(modelNew) };
     }
 
     case 'vs-bot': {
-      const modelNew: BackendModel = ['vs-bot', VsBot.init({ userId: userId })];
+      const modelNew: BackendModel = {
+        t: 'vs-bot',
+        c: VsBot.init({ userId: userId }),
+      };
 
       return { result: Ok(modelNew) };
     }
 
     case 'vs-user': {
-      const modelNew: BackendModel = [
-        'vs-user',
-        VsUser.init({ userId: userId }),
-      ];
+      const modelNew: BackendModel = {
+        t: 'vs-user',
+        c: VsUser.init({ userId: userId }),
+      };
 
       return { result: Ok(modelNew) };
     }
@@ -346,12 +338,12 @@ const initMode = ({
         ctx: {
           currentUserId: userId,
         },
-        broadcast: (m) => broadcast(['puzzle', m]),
+        broadcast: (m) => broadcast({ t: 'puzzle', c: m }),
       });
 
-      const modelNew: BackendModel = ['puzzle', initial.model];
+      const modelNew: BackendModel = { t: 'puzzle', c: initial.model };
 
-      return { result: Ok(modelNew), cmd: Cmd.tag('puzzle', initial.cmd) };
+      return { result: Ok(modelNew), cmd: Cmd.tag_('puzzle', initial.cmd) };
     }
   }
 };
@@ -365,21 +357,21 @@ const initMode = ({
 //
 
 export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
-  switch (model[0]) {
+  switch (model.t) {
     case 'none': {
       return Sub.None;
     }
 
     case 'vs-user': {
-      return Sub.tag('vs-user', VsUser.subscriptions(intervalId, model[1]));
+      return Sub.tag_('vs-user', VsUser.subscriptions(intervalId, model.c));
     }
 
     case 'vs-bot': {
-      return Sub.tag('vs-bot', VsBot.subscriptions(intervalId, model[1]));
+      return Sub.tag_('vs-bot', VsBot.subscriptions(intervalId, model.c));
     }
 
     case 'puzzle': {
-      return Sub.tag('puzzle', Puzzle.subscriptions(intervalId, model[1]));
+      return Sub.tag_('puzzle', Puzzle.subscriptions(intervalId, model.c));
     }
   }
 };
