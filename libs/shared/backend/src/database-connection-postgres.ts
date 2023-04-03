@@ -1,17 +1,13 @@
 import { Result } from '@gamezilla/core';
 import { Pool } from 'pg';
+import { ParserMyZodEsque } from './shared';
 
-export type ParserMyZodEsque<TInput> = {
-  parse: (input: unknown) => TInput;
-};
-
-export type DatabaseConnection = {
+export type DatabaseConnectionPostgres = {
   query: <TRow>(
     rowParser: ParserMyZodEsque<TRow>,
     text: string,
     params?: unknown[]
   ) => Promise<Result<string, TRow[]>>;
-  pool: Pool;
 };
 
 const debugging = false;
@@ -26,13 +22,12 @@ const create = ({
   connectionString,
 }: {
   connectionString: string;
-}): DatabaseConnection => {
+}): DatabaseConnectionPostgres => {
   const pool = new Pool({
     connectionString,
   });
 
   return {
-    pool,
     query: async (rowParser, text, values) => {
       try {
         const queried = await pool.query(text, values);
@@ -52,6 +47,6 @@ const create = ({
   };
 };
 
-export const DatabaseConnection = {
+export const DatabaseConnectionPostgres = {
   create,
 };

@@ -1,6 +1,6 @@
-import { DatabaseConnection } from '@gamezilla/shared/backend';
+import { DatabaseConnectionPostgres } from '@gamezilla/shared/backend';
 import { z } from 'zod';
-import { PuzzleDatabase, PuzzleRow } from '../puzzle-database';
+import { PuzzleDatabase, PuzzleRow } from '../puzzle-database.postgres';
 
 //
 //
@@ -30,7 +30,7 @@ export const uploadLichessDbPuzzleCsv = async ({
   lichessDbPuzzleCsvPath,
   batchSize = 10_000,
 }: {
-  dbConn: DatabaseConnection;
+  dbConn: DatabaseConnectionPostgres;
   lichessDbPuzzleCsvPath: string;
   batchSize?: number;
 }) => {

@@ -1,9 +1,9 @@
 import { andThen, Cmd, eq, p, Posix, Result, Sub, Time } from '@gamezilla/core';
 import { RoomMsg } from '@gamezilla/game-shared';
 import { UserId } from '@gamezilla/shared';
-import { DatabaseConnection } from '@gamezilla/shared/backend';
+import { DatabaseConnectionPostgres } from '@gamezilla/shared/backend';
 import { GameMsg } from '../chess-shared';
-import { PuzzleDatabase } from './puzzle-database';
+import { PuzzleDatabase } from './puzzle-database.postgres';
 import {
   BackendModel,
   BackendMsg,
@@ -28,7 +28,7 @@ export const init = ({
   dbConn,
   ctx,
 }: {
-  dbConn: DatabaseConnection;
+  dbConn: DatabaseConnectionPostgres;
   broadcast: (m: ToFrontend) => Cmd;
   ctx: { currentUserId: UserId };
 }): {
@@ -148,7 +148,7 @@ export const updateFromFrontend = (input: {
   ctx: { currentUserId: UserId; hostId: UserId; now: Posix };
   msg: ToBackend;
   model: Model;
-  dbConn: DatabaseConnection;
+  dbConn: DatabaseConnectionPostgres;
   sendToClient: (m: ToFrontend) => Cmd;
   broadcast: (m: ToFrontend) => Cmd;
 }): {
@@ -175,7 +175,7 @@ const updatePuzzleCompleted = ({
 }: {
   modelPrev: Model;
   model: Model;
-  dbConn: DatabaseConnection;
+  dbConn: DatabaseConnectionPostgres;
   ctx: { currentUserId: UserId };
 }): {
   model: Model;
@@ -214,7 +214,7 @@ const updatePuzzleNext = ({
 }: {
   model: Model;
   modelPrev: Model;
-  dbConn: DatabaseConnection;
+  dbConn: DatabaseConnectionPostgres;
   ctx: { currentUserId: UserId };
 }): {
   model: Model;

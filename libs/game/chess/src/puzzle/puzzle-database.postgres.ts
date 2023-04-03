@@ -1,6 +1,6 @@
 import { p, Result, Task } from '@gamezilla/core';
 import { UserId } from '@gamezilla/shared';
-import { DatabaseConnection } from '@gamezilla/shared/backend';
+import { DatabaseConnectionPostgres } from '@gamezilla/shared/backend';
 import { z } from 'zod';
 import {
   isPromotionPieceSymbol,
@@ -53,7 +53,7 @@ const insertMany = async ({
   dbConn,
   rows,
 }: {
-  dbConn: DatabaseConnection;
+  dbConn: DatabaseConnectionPostgres;
   rows: PuzzleRow[];
 }) => {
   try {
@@ -204,7 +204,7 @@ export const findMany =
     userId,
     query,
   }: {
-    dbConn: DatabaseConnection;
+    dbConn: DatabaseConnectionPostgres;
     userId: UserId;
     query: PuzzleQuery;
   }): Task<Result<string, Puzzle[]>> =>
@@ -249,7 +249,7 @@ export const findMany =
   };
 
 const findAllThemes =
-  (dbConn: DatabaseConnection): Task<Result<string, string[]>> =>
+  (dbConn: DatabaseConnectionPostgres): Task<Result<string, string[]>> =>
   async () => {
     const found = await dbConn.query(
       z.string(),
@@ -261,7 +261,7 @@ const findAllThemes =
 
 const insertManyInteractions =
   (
-    dbConn: DatabaseConnection,
+    dbConn: DatabaseConnectionPostgres,
     interactions: PuzzleInteraction[]
   ): Task<Result<string, null>> =>
   async () => {
