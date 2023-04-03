@@ -1,7 +1,11 @@
-import { Cmd, exhaustive, p, Posix, Sub } from '@gamezilla/core';
-import { RoomCtx } from '@gamezilla/game-shared';
-import { ClientId, Ctx, RoomId, UserId } from '@gamezilla/shared';
-import { AppMsg, DatabaseConnection } from '@gamezilla/shared/backend';
+import { Cmd, exhaustive, p, Sub } from '@gamezilla/core';
+import { RoomCtx, RoomRequestCtx } from '@gamezilla/game-shared/backend';
+import { ClientId, RoomId, UserId } from '@gamezilla/shared';
+import {
+  AppMsg,
+  AuthenticatedRequestCtx,
+  Ctx,
+} from '@gamezilla/shared/backend';
 import * as Game from './game.backend';
 import {
   BackendModel,
@@ -73,9 +77,6 @@ export const update = ({
       const roomCtx: RoomCtx = {
         ...ctx,
         hostId: room.hostId,
-        onQuit: () => {
-          //
-        },
       };
 
       const updated = Game.update({
@@ -117,11 +118,7 @@ export const updateFromFrontend = ({
   msg,
   model,
 }: {
-  ctx: {
-    now: Posix;
-    currentUserId: UserId;
-    dbConn: DatabaseConnection;
-  };
+  ctx: AuthenticatedRequestCtx;
   wire: Wire;
   msg: ToBackend;
   model: Model;
@@ -169,23 +166,14 @@ export const updateFromFrontend = ({
 
       const gameMsg = msg.c;
 
-      const roomCtx: RoomCtx = {
-        $push: () => {
-          //
-        },
-        currentUserId: ctx.currentUserId,
+      const roomCtx: RoomRequestCtx = {
+        ...ctx,
         hostId: room.hostId,
-        onQuit: () => {
-          //
-        },
-        now: ctx.now,
-        profiles: {},
       };
 
       const [gameNew, gameCmd] = Game.updateFromFrontend({
         ...ctx,
         ctx: roomCtx,
-        hostId: room.hostId,
         sendToClient: (m) => wire.sendToClient({ t: 'game', c: m }),
         broadcast: (m) =>
           sendToRoom({
