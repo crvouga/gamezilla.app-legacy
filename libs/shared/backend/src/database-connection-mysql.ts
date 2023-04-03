@@ -1,5 +1,5 @@
 import { Result } from '@gamezilla/core';
-import mysql from 'mysql2/promise';
+import * as mysql from 'mysql2/promise';
 import { ParserMyZodEsque } from './shared';
 
 export type DatabaseConnectionMySQL = {

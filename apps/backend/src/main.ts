@@ -9,18 +9,15 @@ import {
   ToBackend,
   ToFrontend,
 } from '@gamezilla/app';
-import {
-  andThen,
-  Cmd,
-  exhaustive,
-  p,
-  Posix,
-  Program,
-  Sub,
-} from '@gamezilla/core';
+import { andThen, Cmd, exhaustive, p, Program, Sub } from '@gamezilla/core';
 import { RoomBackend } from '@gamezilla/room';
 import { ClientId, SessionId, UserId } from '@gamezilla/shared';
-import { DatabaseConnectionPostgres } from '@gamezilla/shared/backend';
+import {
+  Ctx,
+  DatabaseConnectionMySQL,
+  DatabaseConnectionPostgres,
+  RequestCtx,
+} from '@gamezilla/shared/backend';
 import * as Http from 'http';
 import * as Rx from 'rxjs';
 import * as Socket from 'socket.io';
@@ -55,8 +52,7 @@ type Msg = BackendMsg;
 export const update = (input: {
   msg: Msg;
   model: Model;
-  dbConn: DatabaseConnectionPostgres;
-  now: Posix;
+  ctx: Ctx;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -68,27 +64,15 @@ export const update = (input: {
   );
 };
 
-export const update_ = ({
-  msg,
-  model,
-  dbConn,
-  now,
-}: {
-  msg: Msg;
-  model: Model;
-  dbConn: DatabaseConnectionPostgres;
-  now: Posix;
-}): {
-  model: Model;
-  cmd?: Cmd<Msg>;
-} => {
+export const update_: typeof update = ({ msg, model, ctx }) => {
   switch (msg[0]) {
     case '→': {
       return updateFromFrontend({
-        now,
-        dbConn,
-        sessionId: msg[1],
-        clientId: msg[2],
+        ctx: {
+          ...ctx,
+          sessionId: msg[1],
+          clientId: msg[2],
+        },
         msg: msg[3],
         model,
       });
@@ -99,16 +83,7 @@ export const update_ = ({
         sendToUser: (userIds, m) => sendToUser(model, userIds, ['room', m]),
         msg: msg[1],
         model: model.room,
-        ctx: {
-          $push: () => {
-            //
-          },
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          currentUserId: '',
-          now,
-          profiles: {},
-        },
+        ctx,
       });
 
       return {
@@ -187,24 +162,18 @@ const updateFromApp: typeof update = ({ msg, model }) => {
 };
 
 const updateFromFrontend = ({
-  dbConn,
-  sessionId,
-  clientId,
   msg,
   model,
-  now,
+  ctx,
 }: {
-  now: Posix;
-  dbConn: DatabaseConnectionPostgres;
-  sessionId: SessionId;
-  clientId: ClientId;
+  ctx: RequestCtx;
   msg: ToBackend;
   model: Model;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  const sendToClient = (m: ToFrontend) => sendToFrontend([clientId], m);
+  const sendToClient = (m: ToFrontend) => sendToFrontend([ctx.clientId], m);
 
   switch (msg[0]) {
     case 'auth': {
@@ -213,8 +182,8 @@ const updateFromFrontend = ({
           const userId = msg[1][1];
 
           const session: Session = {
-            sessionId,
-            clientId,
+            sessionId: ctx.sessionId,
+            clientId: ctx.clientId,
             userId,
           };
 
@@ -223,7 +192,7 @@ const updateFromFrontend = ({
               ...model,
               sessions: {
                 ...model.sessions,
-                [sessionId]: session,
+                [ctx.sessionId]: session,
               },
             },
           };
@@ -236,7 +205,7 @@ const updateFromFrontend = ({
     }
 
     case 'room': {
-      const session = model.sessions[sessionId];
+      const session = model.sessions[ctx.sessionId];
 
       if (!session) {
         return { model };
@@ -248,9 +217,8 @@ const updateFromFrontend = ({
 
       const updated = RoomBackend.updateFromFrontend({
         ctx: {
+          ...ctx,
           currentUserId: session.userId,
-          dbConn,
-          now,
         },
         wire: {
           broadcast: (m) => broadcast(['room', m]),
@@ -371,12 +339,21 @@ const broadcast =
 //
 
 const main = async () => {
-  console.log('[backend] connecting to database...');
+  console.log('[backend] connecting to postgres...');
   const dbConn = DatabaseConnectionPostgres.create({
     connectionString:
       'postgresql://postgres:JTPtysQIb0RXHj7QKRxm@containers-us-west-105.railway.app:7893/railway',
   });
-  console.log('[backend] connected.');
+  console.log('[backend] ✅ postgres connected.');
+
+  console.log('[backend] planet scale connecting...');
+
+  const mySql = DatabaseConnectionMySQL.create({
+    connectionString:
+      'mysql://bqq0a6yh6utnnblg4jmn:pscale_pw_T40tzXRco1THYTqZJs4NlinDPD7nKgjy3I6bY1SIRP9@aws.connect.psdb.cloud:3306/gamezilla?serverVersion=8.0',
+  });
+
+  console.log('[backend] ✅ planet scale connected.');
 
   const requestListener: Http.RequestListener = (_request, response) => {
     const state = program.state$.getValue();
@@ -441,7 +418,15 @@ const main = async () => {
     subscriptions,
     update: (input) => {
       try {
-        return update({ ...input, dbConn });
+        return update({
+          model: input.model,
+          msg: input.msg,
+          ctx: {
+            dbConn,
+            mySql,
+            now: input.now,
+          },
+        });
       } catch (error) {
         console.error('Backend Crashed!', error);
         return {
