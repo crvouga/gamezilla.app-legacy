@@ -1,5 +1,6 @@
 import { Cmd, exhaustive, Sub } from '@gamezilla/core';
-import { RoomCtx, RoomMsg } from '@gamezilla/game-shared';
+import { RoomMsg } from '@gamezilla/game-shared';
+import { RoomCtx, RoomRequestCtx } from '@gamezilla/game-shared/backend';
 import { ChessBackend } from '@gamezilla/game/chess';
 import { ConnectFourBackend } from '@gamezilla/game/connect-four';
 import { FlowBackend } from '@gamezilla/game/flow';
@@ -9,7 +10,6 @@ import { SnakeBackend } from '@gamezilla/game/snake';
 import { TetrisBackend } from '@gamezilla/game/tetris';
 import { TicTacToeBackend } from '@gamezilla/game/tic-tac-toe';
 import { UserId } from '@gamezilla/shared';
-import { DatabaseConnection } from '@gamezilla/shared/backend';
 import { BackendModel, BackendMsg, ToBackend, ToFrontend } from './game.types';
 
 //
@@ -203,20 +203,15 @@ export const update = ({
 };
 
 export const updateFromFrontend = ({
-  currentUserId,
   sendToClient,
-  dbConn,
   broadcast,
   ctx,
   msg,
   model,
 }: {
-  ctx: RoomCtx;
-  hostId: UserId;
-  currentUserId: UserId;
+  ctx: RoomRequestCtx;
   sendToClient: (msg: ToFrontend) => Cmd;
   broadcast: (msg: ToFrontend) => Cmd;
-  dbConn: DatabaseConnection;
   msg: ToBackend;
   model: Model;
 }): [Model, Cmd<Msg>] => {
@@ -225,7 +220,7 @@ export const updateFromFrontend = ({
       if (model.t === 'connect-four') {
         const [child, cmd] = ConnectFourBackend.updateFromFrontend(
           {
-            currentUserId,
+            currentUserId: ctx.currentUserId,
             sendToClient: (msg) => sendToClient({ t: 'connect-four', c: msg }),
             broadcast: (msg) => broadcast({ t: 'connect-four', c: msg }),
           },
@@ -257,7 +252,6 @@ export const updateFromFrontend = ({
         const [child, cmd] = ChessBackend.updateFromFrontend({
           sendToClient: (msg) => sendToClient({ t: 'chess', c: msg }),
           broadcast: (msg) => broadcast({ t: 'chess', c: msg }),
-          dbConn,
           msg: msg.c,
           model: model.c,
           ctx,
@@ -271,7 +265,7 @@ export const updateFromFrontend = ({
       if (model.t === 'gomoku') {
         const [child, cmd] = GomokuBackend.updateFromFrontend(
           {
-            ctx: { currentUserId },
+            ctx,
             broadcast: (m) => broadcast({ t: 'gomoku', c: m }),
             sendToClient: (m) => sendToClient({ t: 'gomoku', c: m }),
           },

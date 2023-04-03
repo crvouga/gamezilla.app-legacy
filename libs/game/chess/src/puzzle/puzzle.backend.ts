@@ -1,7 +1,6 @@
-import { andThen, Cmd, eq, p, Posix, Result, Sub, Time } from '@gamezilla/core';
+import { andThen, Cmd, eq, p, Result, Sub, Time } from '@gamezilla/core';
 import { RoomMsg } from '@gamezilla/game-shared';
-import { UserId } from '@gamezilla/shared';
-import { DatabaseConnectionPostgres } from '@gamezilla/shared/backend';
+import { RoomCtx, RoomRequestCtx } from '@gamezilla/game-shared/backend';
 import { GameMsg } from '../chess-shared';
 import { PuzzleDatabase } from './puzzle-database.postgres';
 import {
@@ -25,12 +24,10 @@ import {
 export type Model = BackendModel;
 
 export const init = ({
-  dbConn,
   ctx,
 }: {
-  dbConn: DatabaseConnectionPostgres;
   broadcast: (m: ToFrontend) => Cmd;
-  ctx: { currentUserId: UserId };
+  ctx: RoomRequestCtx;
 }): {
   model: Model;
   cmd: Cmd<Msg>;
@@ -39,7 +36,7 @@ export const init = ({
     model: initShared,
     cmd: p(
       PuzzleDatabase.findMany({
-        dbConn,
+        dbConn: ctx.dbConn,
         userId: ctx.currentUserId,
         query: initShared.query,
       }),
@@ -72,7 +69,7 @@ export const update = ({
   msg: Msg;
   model: Model;
   broadcast: (m: ToFrontend) => Cmd;
-  ctx: { now: Posix };
+  ctx: RoomCtx;
 }): {
   model: Model;
   cmd?: Cmd;
@@ -145,10 +142,9 @@ export const update = ({
 };
 
 export const updateFromFrontend = (input: {
-  ctx: { currentUserId: UserId; hostId: UserId; now: Posix };
+  ctx: RoomRequestCtx;
   msg: ToBackend;
   model: Model;
-  dbConn: DatabaseConnectionPostgres;
   sendToClient: (m: ToFrontend) => Cmd;
   broadcast: (m: ToFrontend) => Cmd;
 }): {
@@ -170,13 +166,11 @@ export const updateFromFrontend = (input: {
 const updatePuzzleCompleted = ({
   modelPrev,
   model,
-  dbConn,
   ctx,
 }: {
   modelPrev: Model;
   model: Model;
-  dbConn: DatabaseConnectionPostgres;
-  ctx: { currentUserId: UserId };
+  ctx: RoomRequestCtx;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -194,10 +188,10 @@ const updatePuzzleCompleted = ({
   return {
     model,
     cmd: p(
-      PuzzleDatabase.insertManyInteractions(dbConn, [
+      PuzzleDatabase.insertManyInteractions(ctx.dbConn, [
         {
           puzzleId: status.puzzle.puzzleId,
-          userId: ctx.currentUserId,
+          userId: ctx.hostId,
           type: status.type,
         },
       ]),
@@ -209,13 +203,11 @@ const updatePuzzleCompleted = ({
 const updatePuzzleNext = ({
   model,
   modelPrev,
-  dbConn,
   ctx,
 }: {
   model: Model;
   modelPrev: Model;
-  dbConn: DatabaseConnectionPostgres;
-  ctx: { currentUserId: UserId };
+  ctx: RoomCtx;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -225,8 +217,8 @@ const updatePuzzleNext = ({
       model,
       cmd: p(
         PuzzleDatabase.findMany({
-          dbConn,
-          userId: ctx.currentUserId,
+          dbConn: ctx.dbConn,
+          userId: ctx.hostId,
           query: model.query,
         }),
         Cmd.perform((result): Msg => ({ t: 'next-done', result }))
