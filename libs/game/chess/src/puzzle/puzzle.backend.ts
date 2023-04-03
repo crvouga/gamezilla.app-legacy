@@ -12,6 +12,7 @@ import {
   ToFrontend,
   toStatus,
 } from './puzzle.types';
+import { uploadLichessDbPuzzleCsv } from './scripts/upload-lichess-db-puzzle-csv.mysql';
 
 //
 //
@@ -241,6 +242,29 @@ const updateFromFrontend_: typeof updateFromFrontend = ({
       return {
         model,
         cmd: sendToClient({ t: 'initialize', result: Result.Ok(model) }),
+      };
+    }
+
+    case 'upload-lichess-puzzles': {
+      return {
+        model: {
+          ...model,
+          isUploading: true,
+        },
+        cmd: p(
+          () =>
+            uploadLichessDbPuzzleCsv({
+              dbConn: ctx.mySql,
+              lichessDbPuzzleCsvPath:
+                '/Users/chrisvouga/Documents/GitHub/gamezilla/libs/game/chess/src/puzzle/scripts/lichess_db_puzzle.csv',
+            }),
+          Cmd.chain(() =>
+            sendToClient({
+              t: 'upload-lichess-puzzles',
+              result: Result.Ok(model),
+            })
+          )
+        ),
       };
     }
 
