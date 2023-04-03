@@ -1,7 +1,7 @@
 import { Cmd, Result, Sub } from '@gamezilla/core';
 import { RoomCtx, RoomMsg } from '@gamezilla/game-shared';
 import { UserId } from '@gamezilla/shared';
-import { DatabaseConnection } from '@gamezilla/shared/backend';
+import { DatabaseConnectionPostgres } from '@gamezilla/shared/backend';
 import { GameMsg } from './chess-shared';
 import {
   BackendModel,
@@ -113,7 +113,7 @@ export const updateFromFrontend = ({
   ctx: RoomCtx;
   sendToClient: (msg: ToFrontend) => Cmd;
   broadcast: (msg: ToFrontend) => Cmd;
-  dbConn: DatabaseConnection;
+  dbConn: DatabaseConnectionPostgres;
   msg: ToBackend;
   model: Model;
 }): [Model, Cmd<Msg>] => {
@@ -297,7 +297,7 @@ const initMode = ({
   dbConn,
   broadcast,
 }: {
-  dbConn: DatabaseConnection;
+  dbConn: DatabaseConnectionPostgres;
   broadcast: (m: ToFrontend) => Cmd;
   hostId: UserId;
   mode: BackendModel['t'];
