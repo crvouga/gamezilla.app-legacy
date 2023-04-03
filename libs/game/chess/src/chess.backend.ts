@@ -1,7 +1,7 @@
 import { Cmd, Result, Sub } from '@gamezilla/core';
-import { RoomCtx, RoomMsg } from '@gamezilla/game-shared';
+import { RoomMsg } from '@gamezilla/game-shared';
+import { RoomCtx, RoomRequestCtx } from '@gamezilla/game-shared/backend';
 import { UserId } from '@gamezilla/shared';
-import { DatabaseConnectionPostgres } from '@gamezilla/shared/backend';
 import { GameMsg } from './chess-shared';
 import {
   BackendModel,
@@ -107,22 +107,19 @@ export const updateFromFrontend = ({
   broadcast,
   msg,
   model,
-  dbConn,
   ctx,
 }: {
-  ctx: RoomCtx;
+  ctx: RoomRequestCtx;
   sendToClient: (msg: ToFrontend) => Cmd;
   broadcast: (msg: ToFrontend) => Cmd;
-  dbConn: DatabaseConnectionPostgres;
   msg: ToBackend;
   model: Model;
 }): [Model, Cmd<Msg>] => {
   switch (msg.t) {
     case 'input-mode': {
       const { result, cmd } = initMode({
-        dbConn,
+        ctx,
         broadcast,
-        hostId: ctx.hostId,
         mode: msg.mode,
         userId: msg.userId,
       });
@@ -184,7 +181,6 @@ export const updateFromFrontend = ({
       const updated = Puzzle.updateFromFrontend({
         model: model.c,
         msg: msg.c,
-        dbConn,
         sendToClient: (m) => sendToClient({ t: 'puzzle', c: m }),
         broadcast: (m) => broadcast({ t: 'puzzle', c: m }),
         ctx,
@@ -291,19 +287,17 @@ export const updateFromGame = ({
 };
 
 const initMode = ({
-  hostId,
   mode,
   userId,
-  dbConn,
   broadcast,
+  ctx,
 }: {
-  dbConn: DatabaseConnectionPostgres;
+  ctx: RoomRequestCtx;
   broadcast: (m: ToFrontend) => Cmd;
-  hostId: UserId;
   mode: BackendModel['t'];
   userId: UserId;
 }): { result: Res['result']; cmd?: Cmd<Msg> } => {
-  if (hostId !== userId) {
+  if (ctx.hostId !== userId) {
     return { result: Err('must_be_the_host') };
   }
 
@@ -334,10 +328,7 @@ const initMode = ({
 
     case 'puzzle': {
       const initial = Puzzle.init({
-        dbConn,
-        ctx: {
-          currentUserId: userId,
-        },
+        ctx,
         broadcast: (m) => broadcast({ t: 'puzzle', c: m }),
       });
 

@@ -20,7 +20,7 @@ import {
 } from '@gamezilla/core';
 import { RoomBackend } from '@gamezilla/room';
 import { ClientId, SessionId, UserId } from '@gamezilla/shared';
-import { DatabaseConnection } from '@gamezilla/shared/backend';
+import { DatabaseConnectionPostgres } from '@gamezilla/shared/backend';
 import * as Http from 'http';
 import * as Rx from 'rxjs';
 import * as Socket from 'socket.io';
@@ -55,7 +55,7 @@ type Msg = BackendMsg;
 export const update = (input: {
   msg: Msg;
   model: Model;
-  dbConn: DatabaseConnection;
+  dbConn: DatabaseConnectionPostgres;
   now: Posix;
 }): {
   model: Model;
@@ -76,7 +76,7 @@ export const update_ = ({
 }: {
   msg: Msg;
   model: Model;
-  dbConn: DatabaseConnection;
+  dbConn: DatabaseConnectionPostgres;
   now: Posix;
 }): {
   model: Model;
@@ -195,7 +195,7 @@ const updateFromFrontend = ({
   now,
 }: {
   now: Posix;
-  dbConn: DatabaseConnection;
+  dbConn: DatabaseConnectionPostgres;
   sessionId: SessionId;
   clientId: ClientId;
   msg: ToBackend;
@@ -372,7 +372,7 @@ const broadcast =
 
 const main = async () => {
   console.log('[backend] connecting to database...');
-  const dbConn = DatabaseConnection.create({
+  const dbConn = DatabaseConnectionPostgres.create({
     connectionString:
       'postgresql://postgres:JTPtysQIb0RXHj7QKRxm@containers-us-west-105.railway.app:7893/railway',
   });
