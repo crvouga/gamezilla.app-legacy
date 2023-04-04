@@ -57,31 +57,14 @@ FROM game_chess_puzzle;
 
 
 --
-
-
-CREATE TABLE `game_chess_puzzle` (
-	`puzzle_id` varchar(255) NOT NULL,
-	`rating` int,
-	`rating_deviation` int,
-	`opening_tags` text NOT NULL,
-	`fen` text,
-	`moves` text NOT NULL,
-	`popularity` int,
-	`number_of_plays` int,
-	`themes` text NOT NULL,
-	`game_url` varchar(255),
-	PRIMARY KEY (`puzzle_id`)
-) ENGINE InnoDB,
-  CHARSET utf8mb4,
-  COLLATE utf8mb4_0900_ai_ci;
-
-  CREATE TABLE `game_chess_puzzle_interaction` (
-	`id` int NOT NULL AUTO_INCREMENT,
-	`puzzle_id` varchar(255) NOT NULL,
-	`user_id` varchar(255) NOT NULL,
-	`type` enum('solved', 'incorrect') NOT NULL,
-	PRIMARY KEY (`id`),
-	KEY `game_chess_puzzle_interaction_puzzle_id_idx` (`puzzle_id`)
-) ENGINE InnoDB,
+ CREATE TABLE `game_chess_puzzle_interaction` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `puzzle_id` varchar(255) NOT NULL,
+  `user_id` varchar(255) NOT NULL,
+  `type` enum('solved', 'incorrect') NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `game_chess_puzzle_interaction_puzzle_id_idx` (`puzzle_id`),
++ KEY `game_chess_puzzle_interaction_puzzle_id_user_id_idx` (`puzzle_id`, `user_id`)
+ ) ENGINE InnoDB,
   CHARSET utf8mb4,
   COLLATE utf8mb4_0900_ai_ci;
