@@ -15,7 +15,6 @@ import { ClientId, SessionId, UserId } from '@gamezilla/shared';
 import {
   Ctx,
   DatabaseConnectionMySQL,
-  DatabaseConnectionPostgres,
   RequestCtx,
 } from '@gamezilla/shared/backend';
 import * as Http from 'http';
@@ -339,21 +338,16 @@ const broadcast =
 //
 
 const main = async () => {
-  console.log('[backend] connecting to postgres...');
-  const dbConn = DatabaseConnectionPostgres.create({
-    connectionString:
-      'postgresql://postgres:JTPtysQIb0RXHj7QKRxm@containers-us-west-105.railway.app:7893/railway',
-  });
-  console.log('[backend] ✅ postgres connected.');
-
   console.log('[backend] planet scale connecting...');
 
-  const mySql = DatabaseConnectionMySQL.create({
-    connectionString:
-      'mysql://bqq0a6yh6utnnblg4jmn:pscale_pw_T40tzXRco1THYTqZJs4NlinDPD7nKgjy3I6bY1SIRP9@aws.connect.psdb.cloud:3306/gamezilla?serverVersion=8.0',
+  const DATABASE_URL =
+    'mysql://scuu9usphxh6zuxltqbe:pscale_pw_lkZooGgR8H09Uc59IVrcZEt8avVQ54VObBfoFwbCIa3@aws.connect.psdb.cloud/gamezilla?ssl={"rejectUnauthorized":true}';
+
+  const mySql = await DatabaseConnectionMySQL.create({
+    connectionString: DATABASE_URL,
   });
 
-  console.log('[backend] ✅ planet scale connected.');
+  console.log('[backend] planet scale connected.');
 
   const requestListener: Http.RequestListener = (_request, response) => {
     const state = program.state$.getValue();
@@ -422,7 +416,6 @@ const main = async () => {
           model: input.model,
           msg: input.msg,
           ctx: {
-            dbConn,
             mySql,
             now: input.now,
           },

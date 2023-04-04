@@ -18,17 +18,17 @@ const log = (...args: unknown[]) => {
   }
 };
 
-const create = ({
+const create = async ({
   connectionString,
 }: {
   connectionString: string;
-}): DatabaseConnectionMySQL => {
-  const pool = mysql.createPool(connectionString);
+}): Promise<DatabaseConnectionMySQL> => {
+  const conn = await mysql.createConnection(connectionString);
 
   return {
     query: async (rowParser, text, values) => {
       try {
-        const [rows, _fields] = await pool.query(text, values);
+        const [rows, _fields] = await conn.query(text, values);
 
         const parsed = Array.isArray(rows)
           ? rows.map(rowParser.parse, values)

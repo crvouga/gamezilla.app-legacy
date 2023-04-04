@@ -142,7 +142,7 @@ export const uciMoveToMoveInput = (
   });
 };
 
-export const findMany =
+const findMany =
   ({
     dbConn,
     userId,
@@ -275,4 +275,5 @@ export const PuzzleDatabase = {
 
     return inserted;
   },
+  findMany,
 };
