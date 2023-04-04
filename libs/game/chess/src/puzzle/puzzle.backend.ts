@@ -2,7 +2,7 @@ import { andThen, Cmd, eq, p, Result, Sub, Time } from '@gamezilla/core';
 import { RoomMsg } from '@gamezilla/game-shared';
 import { RoomCtx, RoomRequestCtx } from '@gamezilla/game-shared/backend';
 import { GameMsg } from '../chess-shared';
-import { PuzzleDatabase } from './puzzle-database.postgres';
+import { PuzzleDatabase } from './puzzle-database.mysql';
 import {
   BackendModel,
   BackendMsg,
@@ -12,7 +12,6 @@ import {
   ToFrontend,
   toStatus,
 } from './puzzle.types';
-import { uploadLichessDbPuzzleCsv } from './scripts/upload-lichess-db-puzzle-csv.mysql';
 
 //
 //
@@ -37,7 +36,8 @@ export const init = ({
     model: initShared,
     cmd: p(
       PuzzleDatabase.findMany({
-        dbConn: ctx.dbConn,
+        // dbConn: ctx.dbConn,
+        dbConn: ctx.mySql,
         userId: ctx.currentUserId,
         query: initShared.query,
       }),
@@ -189,7 +189,7 @@ const updatePuzzleCompleted = ({
   return {
     model,
     cmd: p(
-      PuzzleDatabase.insertManyInteractions(ctx.dbConn, [
+      PuzzleDatabase.insertManyInteractions(ctx.mySql, [
         {
           puzzleId: status.puzzle.puzzleId,
           userId: ctx.hostId,
@@ -218,7 +218,7 @@ const updatePuzzleNext = ({
       model,
       cmd: p(
         PuzzleDatabase.findMany({
-          dbConn: ctx.dbConn,
+          dbConn: ctx.mySql,
           userId: ctx.hostId,
           query: model.query,
         }),
@@ -242,29 +242,6 @@ const updateFromFrontend_: typeof updateFromFrontend = ({
       return {
         model,
         cmd: sendToClient({ t: 'initialize', result: Result.Ok(model) }),
-      };
-    }
-
-    case 'upload-lichess-puzzles': {
-      return {
-        model: {
-          ...model,
-          isUploading: true,
-        },
-        cmd: p(
-          () =>
-            uploadLichessDbPuzzleCsv({
-              dbConn: ctx.mySql,
-              lichessDbPuzzleCsvPath:
-                '/Users/chrisvouga/Documents/GitHub/gamezilla/libs/game/chess/src/puzzle/scripts/lichess_db_puzzle.csv',
-            }),
-          Cmd.chain(() =>
-            sendToClient({
-              t: 'upload-lichess-puzzles',
-              result: Result.Ok(model),
-            })
-          )
-        ),
       };
     }
 

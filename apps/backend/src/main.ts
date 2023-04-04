@@ -15,7 +15,6 @@ import { ClientId, SessionId, UserId } from '@gamezilla/shared';
 import {
   Ctx,
   DatabaseConnectionMySQL,
-  DatabaseConnectionPostgres,
   RequestCtx,
 } from '@gamezilla/shared/backend';
 import * as Http from 'http';
@@ -339,12 +338,12 @@ const broadcast =
 //
 
 const main = async () => {
-  console.log('[backend] connecting to postgres...');
-  const dbConn = DatabaseConnectionPostgres.create({
-    connectionString:
-      'postgresql://postgres:JTPtysQIb0RXHj7QKRxm@containers-us-west-105.railway.app:7893/railway',
-  });
-  console.log('[backend] ✅ postgres connected.');
+  // console.log('[backend] connecting to postgres...');
+  // const dbConn = DatabaseConnectionPostgres.create({
+  //   connectionString:
+  //     'postgresql://postgres:JTPtysQIb0RXHj7QKRxm@containers-us-west-105.railway.app:7893/railway',
+  // });
+  // console.log('[backend] ✅ postgres connected.');
 
   console.log('[backend] planet scale connecting...');
 
@@ -422,7 +421,7 @@ const main = async () => {
           model: input.model,
           msg: input.msg,
           ctx: {
-            dbConn,
+            // dbConn,
             mySql,
             now: input.now,
           },
