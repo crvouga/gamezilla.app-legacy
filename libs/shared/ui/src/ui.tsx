@@ -81,6 +81,7 @@ const createTheme = ({ mode }: { mode: 'light' | 'dark' }) =>
         MuiButton: {
           defaultProps: {
             disableElevation: true,
+            disableRipple: true,
             size: 'large',
             variant: 'contained',
           },
@@ -110,7 +111,7 @@ const createTheme = ({ mode }: { mode: 'light' | 'dark' }) =>
             },
           },
           defaultProps: {
-            // disableTouchRipple: true,
+            disableTouchRipple: true,
           },
         },
       },
