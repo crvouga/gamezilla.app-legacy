@@ -110,20 +110,19 @@ const findMany =
         p.*
       FROM
         game_chess_puzzle p
-      LEFT JOIN
-        game_chess_puzzle_interaction pi
-      ON
-        p.puzzle_id = pi.puzzle_id
-        AND pi.user_id = '${userId}'
       WHERE
-        pi.puzzle_id IS NULL
-        AND rating BETWEEN ${rating - 100} AND ${rating + 100}
+        rating BETWEEN ${rating - 100} AND ${rating + 100}
       ORDER BY
         rating DESC
       LIMIT ${limit}
       OFFSET ${offset}
     `;
+
+    console.log('FIND', { rating, index, limit, offset, userId, sql });
+
     const found = await dbConn.query(PuzzleRow, sql);
+
+    console.log('FOUND', found);
 
     if (found.type === 'Err') {
       return found;
