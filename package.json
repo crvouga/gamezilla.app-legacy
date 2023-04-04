@@ -2,9 +2,7 @@
   "name": "gamezilla",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {
-    "db:connect": "pscale shell gamezilla main"
-  },
+  "scripts": {},
   "private": true,
   "devDependencies": {
     "@babel/preset-react": "^7.14.5",

@@ -26,6 +26,7 @@ CREATE TABLE game_chess_puzzle_interaction (
   puzzle_id VARCHAR(255) NOT NULL,
   user_id VARCHAR(255) NOT NULL,
   type game_chess_puzzle_interaction_type NOT NULL,
+  FOREIGN KEY (puzzle_id) REFERENCES game_chess_puzzle (puzzle_id)
 );
 
 CREATE INDEX game_chess_puzzle_interaction_puzzle_id_idx ON game_chess_puzzle_interaction (puzzle_id);
@@ -54,34 +55,3 @@ WHERE gcpi.puzzle_id IS NULL;
 
 SELECT DISTINCT unnest(themes)
 FROM game_chess_puzzle;
-
-
---
-
-
-CREATE TABLE `game_chess_puzzle` (
-	`puzzle_id` varchar(255) NOT NULL,
-	`rating` int,
-	`rating_deviation` int,
-	`opening_tags` text NOT NULL,
-	`fen` text,
-	`moves` text NOT NULL,
-	`popularity` int,
-	`number_of_plays` int,
-	`themes` text NOT NULL,
-	`game_url` varchar(255),
-	PRIMARY KEY (`puzzle_id`)
-) ENGINE InnoDB,
-  CHARSET utf8mb4,
-  COLLATE utf8mb4_0900_ai_ci;
-
-  CREATE TABLE `game_chess_puzzle_interaction` (
-	`id` int NOT NULL AUTO_INCREMENT,
-	`puzzle_id` varchar(255) NOT NULL,
-	`user_id` varchar(255) NOT NULL,
-	`type` enum('solved', 'incorrect') NOT NULL,
-	PRIMARY KEY (`id`),
-	KEY `game_chess_puzzle_interaction_puzzle_id_idx` (`puzzle_id`)
-) ENGINE InnoDB,
-  CHARSET utf8mb4,
-  COLLATE utf8mb4_0900_ai_ci;

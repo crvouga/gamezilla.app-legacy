@@ -48,12 +48,17 @@ export const uploadLichessDbPuzzleCsv = async ({
   const stream = fs.createReadStream(lichessDbPuzzleCsvPath).pipe(csv());
 
   let batch: PuzzleRow[] = [];
+  const set = new Set<string>();
 
   console.log('starting upload');
   for await (const lichessRow of stream) {
     const parsed = LichessRow.parse(lichessRow);
 
     const row = lichessRowToRow(parsed);
+    if (set.has(row.puzzle_id)) {
+      throw new Error('duplicate puzzle id: ' + row.puzzle_id);
+    }
+    set.add(row.puzzle_id);
 
     batch.push(row);
 
@@ -63,7 +68,7 @@ export const uploadLichessDbPuzzleCsv = async ({
 
     console.log('insert started');
 
-    const inserted = await PuzzleDatabase.replaceMany({
+    const inserted = await PuzzleDatabase.insertMany({
       dbConn,
       rows: batch,
     });
@@ -79,7 +84,7 @@ export const uploadLichessDbPuzzleCsv = async ({
   }
 
   if (batch.length > 0) {
-    const inserted = await PuzzleDatabase.replaceMany({
+    const inserted = await PuzzleDatabase.insertMany({
       dbConn,
       rows: batch,
     });

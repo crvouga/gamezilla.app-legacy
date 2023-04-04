@@ -205,7 +205,8 @@ export type Req =
   | { t: 'next' }
   | { t: 'retry' }
   | { t: 'skip' }
-  | { t: 'show-hint' };
+  | { t: 'show-hint' }
+  | { t: 'upload-lichess-puzzles' };
 
 export type Res = Req & { result: Result<Problem, SharedModel> };
 
@@ -367,6 +368,10 @@ export const handle = ({
       };
 
       return Ok(modelNew);
+    }
+
+    case 'upload-lichess-puzzles': {
+      return Ok(model);
     }
 
     default: {

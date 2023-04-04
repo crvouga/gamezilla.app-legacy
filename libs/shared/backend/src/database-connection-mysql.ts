@@ -10,7 +10,7 @@ export type DatabaseConnectionMySQL = {
   ) => Promise<Result<string, TRow[]>>;
 };
 
-const debugging = true;
+const debugging = false;
 
 const log = (...args: unknown[]) => {
   if (debugging) {
@@ -28,20 +28,19 @@ const create = async ({
   return {
     query: async (rowParser, text, values) => {
       try {
-        const [rows, fields] = await connection.query(text, values);
+        const [rows, _fields] = await connection.query(text, values);
 
         const parsed = Array.isArray(rows)
           ? rows.map(rowParser.parse, values)
           : [];
         log('executed query', {
           text,
-          fields,
           values,
         });
         return Result.Ok(parsed);
       } catch (error) {
         log('error executing query', { text, error });
-        console.log(String(error));
+        console.log(error);
         return Result.Err(String(error));
       }
     },
