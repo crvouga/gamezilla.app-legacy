@@ -348,9 +348,9 @@ const main = async () => {
 
   console.log('[backend] planet scale connecting...');
 
-  const mySql = await DatabaseConnectionMySQL.create({
+  const mySql = DatabaseConnectionMySQL.create({
     connectionString:
-      'mysql://m0ne4xcnrx1qdaqafjo1:pscale_pw_xElvDtXK5l2Z4T5p3Q0Yq99xq2FN2pNsyGMabdRBSJD@aws.connect.psdb.cloud/gamezilla?ssl={"rejectUnauthorized":true}',
+      'mysql://bqq0a6yh6utnnblg4jmn:pscale_pw_T40tzXRco1THYTqZJs4NlinDPD7nKgjy3I6bY1SIRP9@aws.connect.psdb.cloud:3306/gamezilla?serverVersion=8.0',
   });
 
   console.log('[backend] ✅ planet scale connected.');

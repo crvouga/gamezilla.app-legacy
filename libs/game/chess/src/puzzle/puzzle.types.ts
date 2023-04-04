@@ -205,8 +205,7 @@ export type Req =
   | { t: 'next' }
   | { t: 'retry' }
   | { t: 'skip' }
-  | { t: 'show-hint' }
-  | { t: 'upload-lichess-puzzles' };
+  | { t: 'show-hint' };
 
 export type Res = Req & { result: Result<Problem, SharedModel> };
 
@@ -227,9 +226,7 @@ export type ToFrontend =
   | { t: 'next-done'; result: Result<string, SharedModel> }
   | { t: 'interaction-insert-done'; result: Result<string, SharedModel> };
 
-export type BackendModel = SharedModel & {
-  isUploading?: boolean;
-};
+export type BackendModel = SharedModel;
 
 export type FrontendModel = SharedModel & {
   initializedAt?: number;
@@ -368,10 +365,6 @@ export const handle = ({
       };
 
       return Ok(modelNew);
-    }
-
-    case 'upload-lichess-puzzles': {
-      return Ok(model);
     }
 
     default: {

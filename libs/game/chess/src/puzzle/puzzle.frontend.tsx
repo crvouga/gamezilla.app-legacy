@@ -3,7 +3,6 @@ import { RoomCtx, ViewGameBox } from '@gamezilla/game-shared';
 import {
   ActionButton,
   Box,
-  Button,
   CircularProgress,
   Divider,
   Icon,
@@ -185,9 +184,6 @@ export const View = ({
 
   return (
     <ViewGameBox isSpectating={ctx.currentUserId !== ctx.hostId}>
-      {/* <Button onClick={() => $send({ t: 'upload-lichess-puzzles' })}>
-        Upload Puzzles
-      </Button> */}
       <ViewStatusBar status={status} />
 
       <Divider />
