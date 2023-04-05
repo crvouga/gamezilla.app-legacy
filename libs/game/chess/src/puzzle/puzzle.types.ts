@@ -186,6 +186,13 @@ export const toPlayerColor = (puzzle: Puzzle): ChessBoard.Color => {
   return ChessBoard.toOppositeColor(toOpponentColor(puzzle));
 };
 
+export const toCorrectMove = (
+  model: SharedModel
+): ChessBoard.MoveInput | null => {
+  const move = model.puzzle?.correctMoves[model.moves.length];
+  return move ?? null;
+};
+
 const interleave = <T>(a: T[], b: T[]): T[] => {
   const [head, ...tail] = a;
   if (!head) {
@@ -294,6 +301,7 @@ export const handle = ({
         ...model,
         moves: [],
         puzzle: null,
+        hint: 'none',
         query: {
           ...model.query,
           index: model.query.index + 1,

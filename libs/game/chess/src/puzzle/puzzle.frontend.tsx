@@ -20,6 +20,7 @@ import {
   SharedModel,
   Status,
   ToBackend,
+  toCorrectMove,
   ToFrontend,
   toPlayerColor,
   toStatus,
@@ -145,21 +146,6 @@ export const subscriptions = (_args: {
 //
 //
 
-export type VisualModel = {
-  slideLeft: Ease.Model;
-  puzzlePrev?: string;
-  puzzleNex?: string;
-};
-
-export const step = ({
-  visual,
-}: {
-  model: Model;
-  visual: VisualModel;
-}): VisualModel => {
-  return visual;
-};
-
 export const View = ({
   model,
   onClose,
@@ -218,6 +204,7 @@ export const View = ({
               ctx.hostId === ctx.currentUserId
             );
           }}
+          customSquareStyles={toCustomSquareStyle(model)}
           boardOrientation={toPlayerColor(status.puzzle)}
           onPieceDrop={(moveInput) => {
             $send({ t: 'input-move', moveInput });
@@ -265,6 +252,30 @@ export const View = ({
       )}
     </ViewGameBox>
   );
+};
+
+const toCustomSquareStyle = (model: Model): ChessBoard.CustomSquareStyles => {
+  const correctMove = toCorrectMove(model);
+  return !correctMove
+    ? {}
+    : model.hint === 'from'
+    ? {
+        [ChessBoard.toLowercaseSquare(correctMove.from)]: {
+          backgroundColor: 'skyblue',
+        },
+      }
+    : model.hint === 'from-and-to'
+    ? {
+        [ChessBoard.toLowercaseSquare(correctMove.from)]: {
+          backgroundColor: 'skyblue',
+        },
+        [ChessBoard.toLowercaseSquare(correctMove.to)]: {
+          backgroundColor: 'skyblue',
+        },
+      }
+    : model.hint === 'none'
+    ? {}
+    : {};
 };
 
 const formatDuration = (duration: number): string => {
@@ -421,7 +432,7 @@ const ViewActionButtons = ({
             icon={<Icon name="lightbulb" />}
             label="Hint"
             onClick={() => {
-              //
+              $send({ t: 'show-hint' });
             }}
           />
         </>
@@ -578,9 +589,17 @@ export const isAnimating = ({
   return visualBoard.fen !== currentBoard.fen;
 };
 
-// const camelCaseToCapitalized = (s: string) => {
-//   return s
-//     .split(/(?=[A-Z0-9])/)
-//     .map((w) => (w[0]?.toUpperCase() ?? '') + w.slice(1))
-//     .join(' ');
-// };
+export type VisualModel = {
+  slideLeft: Ease.Model;
+  puzzlePrev?: string;
+  puzzleNex?: string;
+};
+
+export const step = ({
+  visual,
+}: {
+  model: Model;
+  visual: VisualModel;
+}): VisualModel => {
+  return visual;
+};

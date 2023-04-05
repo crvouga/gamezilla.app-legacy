@@ -12,6 +12,8 @@ import {
 } from 'react';
 import { Chessboard, CustomSquareStyles } from 'react-chessboard';
 
+export type { CustomSquareStyles } from 'react-chessboard';
+
 export type BotLevel = 0 | 1 | 2 | 3 | 4;
 
 export const allBotLevels: BotLevel[] = [0, 1, 2, 3, 4];
@@ -825,11 +827,13 @@ export const View = ({
   model,
   onPieceDrop,
   isDraggablePiece,
+  customSquareStyles: customSquareStylesProps,
 }: {
   boardOrientation: Color;
   model: Model;
   onPieceDrop?: (move: MoveInput) => boolean;
   isDraggablePiece?: ({ piece }: { piece: Piece }) => boolean;
+  customSquareStyles?: CustomSquareStyles;
 }) => {
   const boardRef = useRef<HTMLDivElement | null>(null);
   const ref = useRef<HTMLDivElement | null>(null);
@@ -953,6 +957,7 @@ export const View = ({
         customSquareStyles={{
           ...lastMoveStyles,
           ...legalMovesStyles,
+          ...customSquareStylesProps,
         }}
         isDraggablePiece={
           isDraggablePiece
