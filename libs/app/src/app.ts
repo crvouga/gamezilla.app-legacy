@@ -52,27 +52,29 @@ export type WireModel =
 //
 //
 
-export type ToBackend = ['room', Room.ToBackend] | ['auth', Auth.ToBackend];
+export type ToBackend =
+  | { t: 'room'; c: Room.ToBackend }
+  | { t: 'auth'; c: Auth.ToBackend };
 
-export type ToFrontend = ['room', Room.ToFrontend];
+export type ToFrontend = { t: 'room'; c: Room.ToFrontend };
 
 export type FrontendMsg =
-  | ['→', ToFrontend]
-  | ['wire', WireModel['type']]
-  | ['route', Route.Msg]
-  | ['alerts', Alerts.Msg]
-  | ['room', Room.FrontendMsg]
-  | ['chat-store', ChatStore.Msg]
-  | ['chat', ChatFrontend.Msg]
-  | ['auth', Auth.Msg]
-  | ['page', Page.Msg]
-  | ['profile-store', ProfileStore.Msg];
+  | { t: '→'; c: ToFrontend }
+  | { t: 'wire'; c: WireModel['type'] }
+  | { t: 'route'; c: Route.Msg }
+  | { t: 'alerts'; c: Alerts.Msg }
+  | { t: 'room'; c: Room.FrontendMsg }
+  | { t: 'chat-store'; c: ChatStore.Msg }
+  | { t: 'chat'; c: ChatFrontend.Msg }
+  | { t: 'auth'; c: Auth.Msg }
+  | { t: 'page'; c: Page.Msg }
+  | { t: 'profile-store'; c: ProfileStore.Msg };
 
 export type BackendMsg =
-  | ['→', SessionId, ClientId, ToBackend]
-  | ['client-connected', SessionId, ClientId]
-  | ['client-disconnected', SessionId, ClientId]
-  | ['room', Room.BackendMsg];
+  | { t: '→'; sessionId: SessionId; clientId: ClientId; c: ToBackend }
+  | { t: 'client-connected'; sessionId: SessionId; clientId: ClientId }
+  | { t: 'client-disconnected'; sessionId: SessionId; clientId: ClientId }
+  | { t: 'room'; c: Room.BackendMsg };
 
 //
 //

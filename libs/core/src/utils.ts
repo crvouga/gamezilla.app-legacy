@@ -129,3 +129,30 @@ export const filterObject = <T extends object>(
   const filtered = (Object.entries(obj) as Entry<T>[]).filter(predicate);
   return Object.fromEntries(filtered) as T;
 };
+
+export type AnyMsg = Record<string, unknown> & {
+  t: string;
+  c?: unknown;
+};
+
+export const isAnyMsg = (msg: unknown): msg is AnyMsg => {
+  return typeof msg === 'object' && msg !== null && 't' in msg;
+};
+
+export const toMsgType = (msg: AnyMsg): string => {
+  if (isAnyMsg(msg.c)) {
+    return `${msg.t}.${toMsgType(msg.c)}`;
+  }
+  return msg.t;
+};
+
+export const toMsgPayload = (
+  msg: AnyMsg,
+  acc: Record<string, unknown>
+): Record<string, unknown> => {
+  const { t, c, ...payload } = msg;
+  if (isAnyMsg(msg.c)) {
+    return toMsgPayload(msg.c, { ...acc, ...payload });
+  }
+  return { ...acc, ...payload };
+};

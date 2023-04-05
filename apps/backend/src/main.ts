@@ -9,7 +9,15 @@ import {
   ToBackend,
   ToFrontend,
 } from '@gamezilla/app';
-import { andThen, Cmd, exhaustive, p, Program, Sub } from '@gamezilla/core';
+import {
+  andThen,
+  Cmd,
+  exhaustive,
+  p,
+  Program,
+  Sub,
+  toMsgType,
+} from '@gamezilla/core';
 import { RoomBackend } from '@gamezilla/room';
 import { ClientId, SessionId, UserId } from '@gamezilla/shared';
 import {
@@ -64,36 +72,37 @@ export const update = (input: {
 };
 
 export const update_: typeof update = ({ msg, model, ctx }) => {
-  switch (msg[0]) {
+  switch (msg.t) {
     case '→': {
       return updateFromFrontend({
         ctx: {
           ...ctx,
-          sessionId: msg[1],
-          clientId: msg[2],
+          sessionId: msg.sessionId,
+          clientId: msg.clientId,
         },
-        msg: msg[3],
+        msg: msg.c,
         model,
       });
     }
 
     case 'room': {
       const updated = RoomBackend.update({
-        sendToUser: (userIds, m) => sendToUser(model, userIds, ['room', m]),
-        msg: msg[1],
+        sendToUser: (userIds, m) =>
+          sendToUser(model, userIds, { t: 'room', c: m }),
+        msg: msg.c,
         model: model.room,
         ctx,
       });
 
       return {
         model: { ...model, room: updated.model },
-        cmd: Cmd.tag('room', updated.cmd ?? Cmd.None),
+        cmd: Cmd.tag_('room', updated.cmd ?? Cmd.None),
       };
     }
 
     case 'client-connected': {
-      const sessionId = msg[1];
-      const clientId = msg[2];
+      const sessionId = msg.sessionId;
+      const clientId = msg.clientId;
       const sessionPrev = model.sessions[sessionId];
       const sessionNew: Session = {
         sessionId,
@@ -113,7 +122,7 @@ export const update_: typeof update = ({ msg, model, ctx }) => {
     }
 
     case 'client-disconnected': {
-      const sessionId = msg[1];
+      const sessionId = msg.sessionId;
       const sessionPrev = model.sessions[sessionId];
       const sessionNew: Session = {
         clientId: undefined,
@@ -132,25 +141,25 @@ export const update_: typeof update = ({ msg, model, ctx }) => {
     }
 
     default: {
-      return exhaustive(msg[0]);
+      return exhaustive(msg);
     }
   }
 };
 
 const updateFromApp: typeof update = ({ msg, model }) => {
-  switch (msg[0]) {
+  switch (msg.t) {
     case 'client-connected': {
-      const clientId = msg[2];
+      const clientId = msg.clientId;
       const roomUpdated = RoomBackend.updateFromApp({
         msg: ['client-connected', { clientId }],
         model: model.room,
         sendToFrontend: (clientIds, m) =>
-          sendToFrontend(clientIds, ['room', m]),
+          sendToFrontend(clientIds, { t: 'room', c: m }),
       });
 
       return {
         model: { ...model, room: roomUpdated.model },
-        cmd: Cmd.tag('room', roomUpdated.cmd ?? Cmd.None),
+        cmd: Cmd.tag_('room', roomUpdated.cmd ?? Cmd.None),
       };
     }
 
@@ -174,11 +183,11 @@ const updateFromFrontend = ({
 } => {
   const sendToClient = (m: ToFrontend) => sendToFrontend([ctx.clientId], m);
 
-  switch (msg[0]) {
+  switch (msg.t) {
     case 'auth': {
-      switch (msg[1][0]) {
+      switch (msg.c[0]) {
         case 'user-logged-in': {
-          const userId = msg[1][1];
+          const userId = msg.c[1];
 
           const session: Session = {
             sessionId: ctx.sessionId,
@@ -220,11 +229,12 @@ const updateFromFrontend = ({
           currentUserId: session.userId,
         },
         wire: {
-          broadcast: (m) => broadcast(['room', m]),
-          sendToClient: (m) => sendToClient(['room', m]),
-          sendToUser: (userIds, m) => sendToUser(model, userIds, ['room', m]),
+          broadcast: (m) => broadcast({ t: 'room', c: m }),
+          sendToClient: (m) => sendToClient({ t: 'room', c: m }),
+          sendToUser: (userIds, m) =>
+            sendToUser(model, userIds, { t: 'room', c: m }),
         },
-        msg: msg[1],
+        msg: msg.c,
         model: model.room,
       });
 
@@ -233,7 +243,7 @@ const updateFromFrontend = ({
           ...model,
           room: updated.model,
         },
-        cmd: Cmd.tag('room', updated.cmd ?? Cmd.None),
+        cmd: Cmd.tag_('room', updated.cmd ?? Cmd.None),
       };
     }
   }
@@ -274,31 +284,36 @@ const sendToUser = (model: Model, userIds: UserId[], msg: ToFrontend): Cmd => {
 
 export const subscriptions = ({ model }: { model: Model }): Sub<Msg> => {
   return Sub.batch([
-    Sub.tag('room', RoomBackend.subscriptions(model.room)),
+    Sub.tag_('room', RoomBackend.subscriptions(model.room)),
     p(
       onConnect,
       Sub.map(
-        ([sessionId, clientId]): Msg => [
-          'client-connected',
+        ([sessionId, clientId]): Msg => ({
+          t: 'client-connected',
           sessionId,
           clientId,
-        ]
+        })
       )
     ),
     p(
       onDisconnect,
       Sub.map(
-        ([sessionId, clientId]): Msg => [
-          'client-disconnected',
+        ([sessionId, clientId]): Msg => ({
+          t: 'client-disconnected',
           sessionId,
           clientId,
-        ]
+        })
       )
     ),
     p(
       fromFrontend,
       Sub.map(
-        ([sessionId, clientId, msg]): Msg => ['→', sessionId, clientId, msg]
+        ([sessionId, clientId, msg]): Msg => ({
+          t: '→',
+          sessionId,
+          clientId,
+          c: msg,
+        })
       )
     ),
   ]);
@@ -431,18 +446,10 @@ const main = async () => {
   });
 
   program.state$.subscribe((state) => {
-    const msg = state.msg?.flat(Infinity);
-    const msgType = msg?.reduce<string | null>(
-      (msgType, subMsgType) =>
-        typeof subMsgType === 'string'
-          ? msgType
-            ? `${msgType}.${subMsgType}`
-            : subMsgType
-          : msgType,
-      null
-    );
-    if (msgType) {
-      console.log(msgType);
+    if (state.msg) {
+      const type = toMsgType(state.msg);
+      // const _payload = toMsgType(state.msg);
+      console.log(type);
     }
   });
 

@@ -75,7 +75,7 @@ interface LiftedState<Model> {
   isPaused: boolean;
 }
 
-interface DevToolHandlerR<Model, Msg extends Record<string, never>> {
+interface DevToolHandlerR<Model, Msg extends object> {
   init: Model;
   //   debug$: Rx.BehaviorSubject<DebugData<Model, Msg>>
   $send: Platform.$send<MsgWithDebug<Model, Msg>>;
@@ -111,7 +111,7 @@ const hasExtension = (
  * @category constructors
  * @since 0.5.4
  */
-export const makeDebugger = <Model, Msg extends Record<string, never>>(
+export const makeDebugger = <Model, Msg extends object>(
   connection: Connection<Model, Msg>
 ): Debugger<Model, Msg> => {
   return (d) => {
@@ -131,7 +131,7 @@ export const makeDebugger = <Model, Msg extends Record<string, never>>(
  * **[UNSAFE]** Handles the execution of an effect related to an incoming messages sent from extension monitor.
  * @since 0.5.0
  */
-const handleSubscription = <Model, Msg extends Record<string, never>>(
+const handleSubscription = <Model, Msg extends object>(
   deps: DevToolHandlerR<Model, Msg>
 ): ((msg: DevToolMsg) => void) => {
   const handler = handleIncomingMsg(deps);
@@ -156,7 +156,7 @@ const handleSubscription = <Model, Msg extends Record<string, never>>(
  * **Note:** the monitor can $send messages of any shape that will be re-$sended into the application; these messages **are not validated** and can lead to unexpected behaviors.
  * @since 0.5.0
  */
-const handleIncomingMsg = <Model, Msg extends Record<string, never>>({
+const handleIncomingMsg = <Model, Msg extends object>({
   connection,
   init,
   //   debug$,
@@ -282,7 +282,7 @@ const handleIncomingMsg = <Model, Msg extends Record<string, never>>({
  * The `MESSAGE` action will send the message payload and state to the connected extension (`connection`).
  * @since 0.5.0
  */
-const handleActions = <Model, Msg extends Record<string, never>>({
+const handleActions = <Model, Msg extends object>({
   connection,
 }: DevToolHandlerR<Model, Msg>): Debug<Model, Msg> => {
   return ([action, model]) =>
@@ -384,9 +384,7 @@ const parseToggleAction = <Model>(
  */
 
 const toggleAction =
-  <Model, Msg extends Record<string, never>>(
-    $send: $send<MsgWithDebug<Model, Msg>>
-  ) =>
+  <Model, Msg extends object>($send: $send<MsgWithDebug<Model, Msg>>) =>
   (id: number, liftedState: LiftedState<Model>): Task<LiftedState<Model>> =>
   async () => {
     const state = unsafeCopy(liftedState);
@@ -454,7 +452,7 @@ const unsafeCopy = <A>(a: A): A => {
  *
  */
 
-export const withDebugger = <Model, Msg extends Record<string, never>>(
+export const withDebugger = <Model, Msg extends object>(
   program: Platform.Program<Model, Msg>
 ): { program: Platform.Program<Model, Msg>; stopDebugger: () => void } => {
   const maybeConnection = getConnection<Model, Msg>(window);
@@ -556,7 +554,11 @@ const isAnyMsg = (msg: unknown): msg is AnyMsg => {
 
 const toMsgType = (msg: AnyMsg): string => {
   if (msg.c) {
-    return `${msg.t}.${toMsgType(msg.c)}`;
+    const next = toMsgType(msg.c);
+    if (next) {
+      return `${msg.t}.${toMsgType(msg.c)}`;
+    }
+    return msg.t;
   }
   return msg.t;
 };

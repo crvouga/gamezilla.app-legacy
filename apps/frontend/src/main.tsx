@@ -7,7 +7,7 @@ import {
   ServerToClientEvents,
   sessionIdKey,
   ToBackend,
-  ToFrontend,
+  ToFrontend
 } from '@gamezilla/app';
 import { Auth } from '@gamezilla/auth';
 import { ChatFrontend, ChatStore } from '@gamezilla/chat';
@@ -21,8 +21,7 @@ import {
   p,
   Posix,
   Program,
-  Sub,
-  t,
+  Sub
 } from '@gamezilla/core';
 import { ProfileStore } from '@gamezilla/profile';
 import { RoomFrontend } from '@gamezilla/room';
@@ -32,7 +31,7 @@ import {
   Ctx,
   ProfileAvatar,
   Route,
-  Username,
+  Username
 } from '@gamezilla/shared';
 import {
   AppContainer,
@@ -45,7 +44,7 @@ import {
   ThemeMode,
   Typography,
   useTheme,
-  ViewNode,
+  ViewNode
 } from '@gamezilla/shared/ui';
 import * as ReactDOM from 'react-dom/client';
 import { Subject } from 'rxjs';
@@ -97,7 +96,7 @@ const init = ({
         type: 'connecting',
       },
     },
-    cmd: Cmd.batch<Msg>([Route.replace(route), Cmd.tag('auth', authCmd)]),
+    cmd: Cmd.batch<Msg>([Route.replace(route), Cmd.tag_('auth', authCmd)]),
   };
 };
 
@@ -302,7 +301,7 @@ export const updateFromApp = ({
     },
     cmd: Cmd.batch([
       //
-      Cmd.tag('chat', chat.cmd ?? Cmd.None),
+      Cmd.tag_('chat', chat.cmd ?? Cmd.None),
     ]),
   };
 };
@@ -322,33 +321,33 @@ const update_ = ({
   cmd?: Cmd<Msg>;
   actions?: OutAction[];
 } => {
-  switch (msg[0]) {
+  switch (msg.t) {
     case '→': {
-      return updateFromBackend({ now, sendToBackend, msg: msg[1], model });
+      return updateFromBackend({ now, sendToBackend, msg: msg.c, model });
     }
 
     case 'chat-store': {
-      const updated = ChatStore.update(msg[1], model.chatStore);
+      const updated = ChatStore.update(msg.c, model.chatStore);
       return {
         model: { ...model, chatStore: updated[0] },
-        cmd: Cmd.tag('chat-store', updated[1]),
+        cmd: Cmd.tag_('chat-store', updated[1]),
       };
     }
 
     case 'auth': {
       const updated = Auth.update(
-        { sendToBackend: (msg) => sendToBackend(['auth', msg]) },
-        msg[1],
+        { sendToBackend: (msg) => sendToBackend({ t: 'auth', c: msg }) },
+        msg.c,
         model.auth
       );
       return {
         model: { ...model, auth: updated[0] },
-        cmd: Cmd.tag('auth', updated[1]),
+        cmd: Cmd.tag_('auth', updated[1]),
       };
     }
 
     case 'alerts': {
-      const updatedAlerts = Alerts.update(msg[1], model.alerts);
+      const updatedAlerts = Alerts.update(msg.c, model.alerts);
       const updated = updatedAlerts[2].reduce<ReturnType<typeof update>>(
         (acc, msg) => {
           const updated = update({
@@ -364,7 +363,7 @@ const update_ = ({
         },
         {
           model: { ...model, alerts: updatedAlerts[0] },
-          cmd: Cmd.tag('alerts', updatedAlerts[1]),
+          cmd: Cmd.tag_('alerts', updatedAlerts[1]),
         }
       );
 
@@ -377,7 +376,7 @@ const update_ = ({
 
     case 'route': {
       const updated = Route.update({
-        msg: msg[1],
+        msg: msg.c,
         model: model.route,
       });
       const updatedPage = initPage({
@@ -386,7 +385,7 @@ const update_ = ({
       const roomUpdated = RoomFrontend.updateFromApp({
         msg: { t: 'route-changed', route: updated.model },
         model: model.room,
-        sendToBackend: (m) => sendToBackend(['room', m]),
+        sendToBackend: (m) => sendToBackend({ t: 'room', c: m }),
       });
       return {
         model: {
@@ -394,8 +393,8 @@ const update_ = ({
           room: roomUpdated.model,
         },
         cmd: Cmd.batch([
-          Cmd.tag('route', updated.cmd),
-          Cmd.tag('room', roomUpdated.cmd ?? Cmd.None),
+          Cmd.tag_('route', updated.cmd),
+          Cmd.tag_('room', roomUpdated.cmd ?? Cmd.None),
           updatedPage.cmd ?? Cmd.None,
         ]),
         actions: updatedPage.actions,
@@ -403,7 +402,7 @@ const update_ = ({
     }
 
     case 'wire': {
-      if (msg[1] === 'connect-error') {
+      if (msg.c === 'connect-error') {
         return {
           model: {
             ...model,
@@ -418,23 +417,23 @@ const update_ = ({
         };
       }
 
-      if (msg[1] === 'connected') {
+      if (msg.c === 'connected') {
         const roomUpdated = RoomFrontend.updateFromApp({
           msg: { t: 'wire-connected' },
           model: model.room,
-          sendToBackend: (m) => sendToBackend(['room', m]),
+          sendToBackend: (m) => sendToBackend({ t: 'room', c: m }),
         });
         return {
           model: {
             ...model,
             room: roomUpdated.model,
-            wire: { type: msg[1] },
+            wire: { type: msg.c },
           },
-          cmd: Cmd.tag('room', roomUpdated.cmd ?? Cmd.None),
+          cmd: Cmd.tag_('room', roomUpdated.cmd ?? Cmd.None),
         };
       }
 
-      return { model: { ...model, wire: { type: msg[1] } } };
+      return { model: { ...model, wire: { type: msg.c } } };
     }
 
     case 'room': {
@@ -453,14 +452,14 @@ const update_ = ({
 
       const updated = RoomFrontend.update({
         ctx: ctx,
-        sendToBackend: (m) => sendToBackend(['room', m]),
-        msg: msg[1],
+        sendToBackend: (m) => sendToBackend({ t: 'room', c: m }),
+        msg: msg.c,
         model: model.room,
       });
 
       return {
         model: { ...model, room: updated.model },
-        cmd: Cmd.tag('room', updated.cmd ?? Cmd.None),
+        cmd: Cmd.tag_('room', updated.cmd ?? Cmd.None),
       };
     }
 
@@ -471,25 +470,25 @@ const update_ = ({
 
         case 'logged-out': {
           const updated = Page.updateLoggedOut({
-            msg: msg[1],
+            msg: msg.c,
             model: model.page,
           });
 
           return {
             model: { ...model, page: updated.model },
-            cmd: Cmd.tag('page', updated.cmd ?? Cmd.None),
+            cmd: Cmd.tag_('page', updated.cmd ?? Cmd.None),
           };
         }
 
         case 'logged-in': {
           const updated = Page.updateReady({
             currentUserId: model.auth.session.userId,
-            msg: msg[1],
+            msg: msg.c,
             model: model.page,
           });
           return {
             model: { ...model, page: updated[0] },
-            cmd: Cmd.tag('page', updated[1]),
+            cmd: Cmd.tag_('page', updated[1]),
             actions: updated[2],
           };
         }
@@ -500,18 +499,18 @@ const update_ = ({
     }
 
     case 'profile-store': {
-      const updated = ProfileStore.update(msg[1], model.profileStore);
+      const updated = ProfileStore.update(msg.c, model.profileStore);
       return {
         model: { ...model, profileStore: updated[0] },
-        cmd: Cmd.tag('profile-store', updated[1]),
+        cmd: Cmd.tag_('profile-store', updated[1]),
       };
     }
 
     case 'chat': {
-      const updated = ChatFrontend.update({ msg: msg[1], model: model.chat });
+      const updated = ChatFrontend.update({ msg: msg.c, model: model.chat });
       return {
         model: { ...model, chat: updated.model },
-        cmd: Cmd.tag('chat', updated?.cmd ?? Cmd.None),
+        cmd: Cmd.tag_('chat', updated?.cmd ?? Cmd.None),
       };
     }
 
@@ -535,7 +534,7 @@ const updateFromBackend = ({
   cmd?: Cmd<Msg>;
   actions?: OutAction[];
 } => {
-  switch (msg[0]) {
+  switch (msg.t) {
     case 'room': {
       if (model.auth.type !== 'logged-in') {
         return { model };
@@ -554,20 +553,22 @@ const updateFromBackend = ({
 
       const updated = RoomFrontend.updateFromBackend({
         ctx,
-        sendToBackend: (msg) => sendToBackend(['room', msg]),
-        msg: msg[1],
+        sendToBackend: (msg) => sendToBackend({ t: 'room', c: msg }),
+        msg: msg.c,
         model: model.room,
       });
 
       return {
         model: { ...model, room: updated.model },
-        cmd: Cmd.tag('room', updated.cmd ?? Cmd.None),
-        actions: (updated.actions ?? []).map((a) => mapAction(t('room'), a)),
+        cmd: Cmd.tag_('room', updated.cmd ?? Cmd.None),
+        actions: (updated.actions ?? []).map((a) =>
+          mapAction((c) => ({ t: 'room', c }), a)
+        ),
       };
     }
 
     default: {
-      return exhaustive(msg[0]);
+      return exhaustive(msg.t);
     }
   }
 };
@@ -593,7 +594,7 @@ const initPage = ({
       });
       return {
         model: { ...model, page: initial.model },
-        cmd: Cmd.tag('page', initial.cmd ?? Cmd.None),
+        cmd: Cmd.tag_('page', initial.cmd ?? Cmd.None),
       };
     }
 
@@ -611,7 +612,7 @@ const initPage = ({
       });
       return {
         model: { ...model, page: initial[0] },
-        cmd: Cmd.tag('page', initial[1]),
+        cmd: Cmd.tag_('page', initial[1]),
         actions: initial[2],
       };
     }
@@ -633,7 +634,7 @@ const runAction = ({
       const updated = ChatStore.runAction(action, model.chatStore);
       return {
         model: { ...model, chatStore: updated[0] },
-        cmd: Cmd.tag('chat-store', updated[1]),
+        cmd: Cmd.tag_('chat-store', updated[1]),
       };
     }
 
@@ -641,7 +642,7 @@ const runAction = ({
       const updated = Alerts.runAction(action, model.alerts);
       return {
         model: { ...model, alerts: updated[0] },
-        cmd: Cmd.tag('alerts', updated[1]),
+        cmd: Cmd.tag_('alerts', updated[1]),
       };
     }
 
@@ -649,7 +650,7 @@ const runAction = ({
       const updated = Auth.runAction(action, model.auth);
       return {
         model: { ...model, auth: updated[0] },
-        cmd: Cmd.tag('auth', updated[1]),
+        cmd: Cmd.tag_('auth', updated[1]),
       };
     }
 
@@ -658,7 +659,7 @@ const runAction = ({
 
       return {
         model: { ...model, route: updated[0] },
-        cmd: Cmd.tag('route', updated[1]),
+        cmd: Cmd.tag_('route', updated[1]),
       };
     }
 
@@ -666,7 +667,7 @@ const runAction = ({
       const updated = ProfileStore.runAction(action, model.profileStore);
       return {
         model: { ...model, profileStore: updated[0] },
-        cmd: Cmd.tag('profile-store', updated[1]),
+        cmd: Cmd.tag_('profile-store', updated[1]),
       };
     }
 
@@ -691,10 +692,10 @@ const subscriptions = ({
   model: Model;
 }): Sub<Msg> => {
   return Sub.batch<Msg>([
-    Sub.tag('→', toFrontend$),
-    Sub.tag('wire', wireStatus$),
-    Sub.tag('page', Page.subscriptions(model.page)),
-    Sub.tag('auth', Auth.subscriptions),
+    Sub.tag_('→', toFrontend$),
+    Sub.tag_('wire', wireStatus$),
+    Sub.tag_('page', Page.subscriptions(model.page)),
+    Sub.tag_('auth', Auth.subscriptions),
     roomSub(now, model),
     Browser.onLocation(onLocationChange),
   ]);
@@ -711,7 +712,7 @@ const roomSub = (now: Posix, model: Model): Sub<Msg> => {
     }
 
     case 'logged-in': {
-      return Sub.tag(
+      return Sub.tag_(
         'room',
         RoomFrontend.subscriptions(
           {
@@ -734,7 +735,7 @@ const onLocationChange = (location: Browser.Location): Msg => {
     location,
     Route.decode,
     Option.withDefault<Route.Model>(['room-list']),
-    (route) => ['route', ['got-route', route]]
+    (route) => ({ t: 'route', c: ['got-route', route] })
   );
 };
 
@@ -765,7 +766,7 @@ const View = ({
 
       {model.auth.type === 'logged-out' && (
         <Page.ViewLoggedOut
-          $send={(m) => $send(['page', m])}
+          $send={(m) => $send({ t: 'page', c: m })}
           model={model.page}
         />
       )}
@@ -776,13 +777,14 @@ const View = ({
         ) ? (
           <>
             <ChatFrontend.View
-              $send={(m) => $send(['chat', m])}
+              $send={(m) => $send({ t: 'chat', c: m })}
               model={model.chat}
               ctx={{
                 currentUserId: model.auth.session.userId,
                 profiles: model.profileStore.profiles,
                 now,
-                $push: (route) => $send(['route', ['clicked-link', route]]),
+                $push: (route) =>
+                  $send({ t: 'route', c: ['clicked-link', route] }),
               }}
               route={model.route}
               userSearch={{
@@ -790,7 +792,7 @@ const View = ({
                   model.profileStore.search[model.chat.userSearch]?.type ===
                   'Loading',
                 onInput: (searchText) => {
-                  $send(['profile-store', ['search', { searchText }]]);
+                  $send({ t: 'profile-store', c: ['search', { searchText }] });
                 },
               }}
             />
@@ -801,7 +803,8 @@ const View = ({
                 currentUserId: model.auth.session.userId,
                 profiles: model.profileStore.profiles,
                 now,
-                $push: (route) => $send(['route', ['clicked-link', route]]),
+                $push: (route) =>
+                  $send({ t: 'route', c: ['clicked-link', route] }),
               }}
             />
           </>
@@ -812,17 +815,18 @@ const View = ({
               currentUserId: model.auth.session.userId,
               profiles: model.profileStore.profiles,
               now,
-              $push: (route) => $send(['route', ['clicked-link', route]]),
+              $push: (route) =>
+                $send({ t: 'route', c: ['clicked-link', route] }),
             }}
-            $send={(msg) => $send(['page', msg])}
-            $sendRoom={(msg) => $send(['room', msg])}
+            $send={(msg) => $send({ t: 'page', c: msg })}
+            $sendRoom={(msg) => $send({ t: 'room', c: msg })}
             model={model.page}
           />
         ))}
 
       <Alerts.View
         model={model.alerts}
-        $send={(msg) => $send(['alerts', msg])}
+        $send={(msg) => $send({ t: 'alerts', c: msg })}
       />
 
       <Collapse
@@ -888,7 +892,7 @@ const ViewBottomBar = ({
       <RoomFrontend.ViewBar
         ctx={ctx}
         model={model.room}
-        $send={(m) => $send(['room', m])}
+        $send={(m) => $send({ t: 'room', c: m })}
       />
       <ViewBottomNavigation ctx={ctx} route={model.route} />
     </Box>
