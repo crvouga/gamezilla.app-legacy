@@ -1,1 +1,1 @@
-export * from './lib/game-battleship';
+export * from './battleship.types';
