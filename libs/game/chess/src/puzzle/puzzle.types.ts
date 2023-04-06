@@ -4,6 +4,11 @@ import * as ChessBoard from '../chess/chess-board';
 
 const { Err, Ok } = Result;
 
+export const maxRating = 3212;
+export const minRating = 545;
+export const maxRatingDeviation = 500;
+export const minRatingDeviation = 50;
+
 export type SharedModel = {
   puzzle: Puzzle | null;
   startedAt: number | null;
@@ -17,8 +22,36 @@ export type SharedModel = {
 type Hint = 'none' | 'from' | 'from-and-to';
 
 const initQuery: PuzzleQuery = {
-  rating: 600,
+  rating: 1500,
+  ratingDeviation: 250,
   index: 0,
+};
+
+export type ChessLevel =
+  | 'Beginner'
+  | 'Intermediate'
+  | 'Advanced'
+  | 'Expert'
+  | 'Master'
+  | 'Grandmaster';
+
+export const toChessLevel = (rating: number): ChessLevel => {
+  if (rating < 800) {
+    return 'Beginner';
+  }
+  if (rating < 1200) {
+    return 'Intermediate';
+  }
+  if (rating < 1600) {
+    return 'Advanced';
+  }
+  if (rating < 2000) {
+    return 'Expert';
+  }
+  if (rating < 2400) {
+    return 'Master';
+  }
+  return 'Grandmaster';
 };
 
 export const initShared: SharedModel = {
@@ -33,6 +66,7 @@ export const initShared: SharedModel = {
 
 export type PuzzleQuery = {
   rating: number;
+  ratingDeviation: number;
   index: number;
 };
 
@@ -208,6 +242,7 @@ export type PuzzleCompleted = {
 };
 
 export type Req =
+  | { t: 'input-query'; query: PuzzleQuery }
   | { t: 'input-move'; moveInput: ChessBoard.MoveInput }
   | { t: 'next' }
   | { t: 'retry' }
@@ -222,7 +257,12 @@ export type BackendMsg =
   | { t: 'next-done'; result: Result<string, Puzzle[]> }
   | { t: 'interaction-insert-done'; result: Result<string, null> };
 
-export type FrontendMsg = Req | { t: 'animate' };
+export type FrontendMsg =
+  | Req
+  | { t: 'animate' }
+  | { t: 'opened-modal'; modal: 'tune' }
+  | { t: 'closed-modal' }
+  | { t: 'input-draft-query'; query: PuzzleQuery };
 
 export type ToBackend = Req | { t: 'initialize' };
 
@@ -238,6 +278,8 @@ export type BackendModel = SharedModel;
 export type FrontendModel = SharedModel & {
   initializedAt?: number;
   backendNow?: Posix;
+  openedModal?: 'tune' | null;
+  draftQuery: PuzzleQuery;
 };
 
 type Problem =
@@ -370,6 +412,22 @@ export const handle = ({
       const modelNew: SharedModel = {
         ...model,
         hint: toNext[model.hint],
+      };
+
+      return Ok(modelNew);
+    }
+
+    case 'input-query': {
+      if (ctx.currentUserId !== ctx.hostId) {
+        return Err('must-be-host');
+      }
+
+      const modelNew: SharedModel = {
+        ...model,
+        moves: [],
+        puzzle: null,
+        hint: 'none',
+        query: msg.query,
       };
 
       return Ok(modelNew);

@@ -332,6 +332,8 @@ export const ListItemSecondaryAction = Mui.ListItemSecondaryAction;
 
 export const Paper = Mui.Paper;
 
+export const Slider = Mui.Slider;
+
 export const paper = (
   { key, ...sx }: Sx & { key?: string },
   children: ViewNode[]

@@ -153,7 +153,7 @@ const findMany =
     query: PuzzleQuery;
   }): Task<Result<string, Puzzle[]>> =>
   async () => {
-    const { rating, index } = query;
+    const { ratingDeviation, rating, index } = query;
 
     const limit = 1;
 
@@ -172,7 +172,9 @@ const findMany =
         p.puzzle_id = pi.puzzle_id
         AND pi.user_id = '${userId}'
       WHERE
-        rating BETWEEN ${rating - 100} AND ${rating + 100}
+        rating BETWEEN ${rating - ratingDeviation} AND ${
+        rating + ratingDeviation
+      }
         AND pi.puzzle_id IS NULL
       ORDER BY
         rating DESC

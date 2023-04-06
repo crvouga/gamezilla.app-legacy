@@ -1,22 +1,30 @@
-import { Cmd, Ease, Posix, Sub } from '@gamezilla/core';
+import { Cmd, Ease, eq, Posix, Sub } from '@gamezilla/core';
 import { RoomCtx, ViewGameBox } from '@gamezilla/game-shared';
 import {
   ActionButton,
   Box,
+  Button,
   CircularProgress,
   Divider,
+  Drawer,
   Icon,
   Paper,
+  Slider,
   Typography,
   useTheme,
 } from '@gamezilla/shared/ui';
 import { useMemo } from 'react';
 import * as ChessBoard from '../chess/chess-board';
 import {
+  toChessLevel,
   FrontendModel,
   FrontendMsg,
   handle,
   initShared,
+  maxRating,
+  maxRatingDeviation,
+  minRating,
+  minRatingDeviation,
   SharedModel,
   Status,
   ToBackend,
@@ -38,9 +46,15 @@ export const init = ({
   sendToBackend,
 }: {
   sendToBackend: (m: ToBackend) => Cmd;
-}): { model: Model; cmd: Cmd<Msg> } => {
+}): {
+  model: Model;
+  cmd: Cmd<Msg>;
+} => {
   return {
-    model: initShared,
+    model: {
+      ...initShared,
+      draftQuery: initShared.query,
+    },
     cmd: sendToBackend({ t: 'initialize' }),
   };
 };
@@ -72,9 +86,36 @@ export const update = ({
       return { model };
     }
 
+    case 'input-query': {
+      const handled = handle({ msg, model, ctx });
+      const modelNew = mergeWithBackend({
+        frontendModel: model,
+        backendModel: handled.type === 'Err' ? model : handled.value,
+      });
+      return {
+        model: { ...modelNew, openedModal: null },
+        cmd: sendToBackend(msg),
+      };
+    }
+
+    case 'opened-modal': {
+      return { model: { ...model, openedModal: msg.modal } };
+    }
+
+    case 'closed-modal': {
+      return { model: { ...model, openedModal: null } };
+    }
+
+    case 'input-draft-query': {
+      return { model: { ...model, draftQuery: msg.query } };
+    }
+
     default: {
       const handled = handle({ msg, model, ctx });
-      const modelNew = handled.type === 'Err' ? model : handled.value;
+      const modelNew = mergeWithBackend({
+        frontendModel: model,
+        backendModel: handled.type === 'Err' ? model : handled.value,
+      });
       return {
         model: modelNew,
         cmd: sendToBackend(msg),
@@ -250,6 +291,72 @@ export const View = ({
           <ViewActionButtons model={model} onClose={onClose} $send={$send} />
         </Paper>
       )}
+
+      <Drawer
+        open={model.openedModal === 'tune'}
+        onClose={() => $send({ t: 'closed-modal' })}
+        anchor="bottom"
+        PaperProps={{
+          sx: { p: 2, px: 4, display: 'flex', flexDirection: 'column', gap: 2 },
+        }}
+      >
+        <Box sx={{ display: 'flex' }}>
+          <Typography variant="h3" sx={{ flex: 1 }}>
+            Tune
+          </Typography>
+          <Button
+            size="small"
+            variant="contained"
+            onClick={() => {
+              $send({ t: 'input-query', query: model.draftQuery });
+            }}
+            disabled={eq(model.query, model.draftQuery)}
+          >
+            Save
+          </Button>
+        </Box>
+        <Box>
+          <Box sx={{ display: 'flex' }}>
+            <Typography sx={{ mr: 2 }}>Rating</Typography>
+            <Typography sx={{ flex: 1 }}>
+              {toChessLevel(model.draftQuery.rating)}
+            </Typography>
+            <Typography>{String(model.draftQuery.rating)}</Typography>
+          </Box>
+          <Slider
+            min={minRating}
+            max={maxRating}
+            value={model.draftQuery.rating}
+            onChange={(_, value) => {
+              if (typeof value === 'number') {
+                $send({
+                  t: 'input-draft-query',
+                  query: { ...model.draftQuery, rating: value },
+                });
+              }
+            }}
+          />
+        </Box>
+        <Box>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Typography>Rating Deviation</Typography>
+            <Typography>{String(model.draftQuery.ratingDeviation)}</Typography>
+          </Box>
+          <Slider
+            min={minRatingDeviation}
+            max={maxRatingDeviation}
+            value={model.draftQuery.ratingDeviation}
+            onChange={(_, value) => {
+              if (typeof value === 'number') {
+                $send({
+                  t: 'input-draft-query',
+                  query: { ...model.draftQuery, ratingDeviation: value },
+                });
+              }
+            }}
+          />
+        </Box>
+      </Drawer>
     </ViewGameBox>
   );
 };
@@ -322,6 +429,7 @@ const ViewActionButtons = ({
   $send: (m: Msg) => void;
 }) => {
   const status = toStatus(model);
+
   switch (status.type) {
     case 'loading': {
       return (
@@ -335,7 +443,7 @@ const ViewActionButtons = ({
             icon={<Icon name="tune" />}
             label="Tune"
             onClick={() => {
-              //
+              $send({ t: 'opened-modal', modal: 'tune' });
             }}
           />
           <ActionButton
@@ -362,7 +470,7 @@ const ViewActionButtons = ({
             icon={<Icon name="tune" />}
             label="Tune"
             onClick={() => {
-              //
+              $send({ t: 'opened-modal', modal: 'tune' });
             }}
           />
           <ActionButton
@@ -398,7 +506,7 @@ const ViewActionButtons = ({
             icon={<Icon name="tune" />}
             label="Tune"
             onClick={() => {
-              //
+              $send({ t: 'opened-modal', modal: 'tune' });
             }}
           />
           <ActionButton
@@ -425,7 +533,7 @@ const ViewActionButtons = ({
             icon={<Icon name="tune" />}
             label="Tune"
             onClick={() => {
-              //
+              $send({ t: 'opened-modal', modal: 'tune' });
             }}
           />
           <ActionButton
