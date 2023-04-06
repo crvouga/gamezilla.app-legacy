@@ -1,14 +1,14 @@
-import { Result, Task, p } from '@gamezilla/core';
+import { p, Result, Task } from '@gamezilla/core';
+import { UserId } from '@gamezilla/shared';
 import { DatabaseConnectionMySQL } from '@gamezilla/shared/backend';
 import { z } from 'zod';
-import { Puzzle, PuzzleInteraction, PuzzleQuery } from './puzzle.types';
-import { UserId } from '@gamezilla/shared';
 import {
-  MoveInput,
-  PromotionPieceSymbol,
   isPromotionPieceSymbol,
   isSquare,
+  MoveInput,
+  PromotionPieceSymbol,
 } from '../chess/chess-board';
+import { Puzzle, PuzzleInteraction, PuzzleQuery } from './puzzle.types';
 
 // source https://database.lichess.org/#puzzles
 
@@ -39,6 +39,12 @@ export const PuzzleInteractionRow = z.object({
 });
 
 export type PuzzleInteractionRow = z.infer<typeof PuzzleInteractionRow>;
+
+export const PuzzleProfileRow = z.object({
+  id: z.string(),
+  user_id: z.string(),
+  query: PuzzleQuery.transform((q) => JSON.stringify(q)),
+});
 
 const rowToPuzzle = (row: PuzzleRow): Result<string, Puzzle> => {
   const puzzleMoves = uciMovesToPuzzleMoves(row.moves.split(' '));
@@ -141,6 +147,16 @@ export const uciMoveToMoveInput = (
     promotion: promotionPiece,
   });
 };
+
+// const findOneProfile =
+//   (_props: {
+//     dbConn: DatabaseConnectionMySQL;
+
+//     userId: UserId;
+//   }): Task<Result<string, PuzzleInteraction[]>> =>
+//   async () => {
+//     return Result.Err('');
+//   };
 
 const findMany =
   ({

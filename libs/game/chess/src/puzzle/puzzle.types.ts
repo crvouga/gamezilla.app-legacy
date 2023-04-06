@@ -1,5 +1,6 @@
 import { exhaustive, Posix, Result } from '@gamezilla/core';
 import { UserId } from '@gamezilla/shared';
+import { z } from 'zod';
 import * as ChessBoard from '../chess/chess-board';
 
 const { Err, Ok } = Result;
@@ -66,11 +67,12 @@ export const initShared: SharedModel = {
   startedAt: null,
 };
 
-export type PuzzleQuery = {
-  rating: number;
-  ratingDeviation: number;
-  index: number;
-};
+export const PuzzleQuery = z.object({
+  rating: z.number().min(minRating).max(maxRating),
+  ratingDeviation: z.number().min(minRatingDeviation).max(maxRatingDeviation),
+  index: z.number().min(0).max(100),
+});
+export type PuzzleQuery = z.infer<typeof PuzzleQuery>;
 
 export type Puzzle = {
   puzzleId: string;
