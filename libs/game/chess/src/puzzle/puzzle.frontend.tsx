@@ -1,4 +1,4 @@
-import { Cmd, Ease, eq, Posix, Sub } from '@gamezilla/core';
+import { Cmd, Ease, eq, p, Posix, Sub, Time } from '@gamezilla/core';
 import { RoomCtx, ViewGameBox } from '@gamezilla/game-shared';
 import {
   ActionButton,
@@ -100,6 +100,18 @@ export const update = ({
       return {
         model: { ...modelNew, openedModal: null },
         cmd: sendToBackend(msg),
+      };
+    }
+
+    case 'input-draft-query': {
+      const handled = handle({ msg, model, ctx });
+      const modelNew = mergeWithBackend({
+        frontendModel: model,
+        backendModel: handled.type === 'Err' ? model : handled.value,
+      });
+      return {
+        model: modelNew,
+        cmd: Cmd.debounce(1_000, sendToBackend(msg)),
       };
     }
 
