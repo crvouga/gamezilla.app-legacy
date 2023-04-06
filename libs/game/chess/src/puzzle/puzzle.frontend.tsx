@@ -51,10 +51,7 @@ export const init = ({
   cmd: Cmd<Msg>;
 } => {
   return {
-    model: {
-      ...initShared,
-      draftQuery: initShared.query,
-    },
+    model: initShared,
     cmd: sendToBackend({ t: 'initialize' }),
   };
 };
@@ -86,6 +83,14 @@ export const update = ({
       return { model };
     }
 
+    case 'opened-modal': {
+      return { model: { ...model, openedModal: msg.modal } };
+    }
+
+    case 'closed-modal': {
+      return { model: { ...model, openedModal: null } };
+    }
+
     case 'input-query': {
       const handled = handle({ msg, model, ctx });
       const modelNew = mergeWithBackend({
@@ -96,18 +101,6 @@ export const update = ({
         model: { ...modelNew, openedModal: null },
         cmd: sendToBackend(msg),
       };
-    }
-
-    case 'opened-modal': {
-      return { model: { ...model, openedModal: msg.modal } };
-    }
-
-    case 'closed-modal': {
-      return { model: { ...model, openedModal: null } };
-    }
-
-    case 'input-draft-query': {
-      return { model: { ...model, draftQuery: msg.query } };
     }
 
     default: {
@@ -282,7 +275,25 @@ export const View = ({
         </Box>
       )}
 
-      <Box sx={{ flex: 1 }}></Box>
+      <Box
+        sx={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Box>
+          <Typography color="text.secondary" sx={{ fontSize: '1rem' }}>
+            Puzzle Rating
+          </Typography>
+
+          <Typography sx={{ fontSize: '2rem', mr: 1 }}>
+            {model.puzzle?.rating ?? '...'}
+          </Typography>
+        </Box>
+      </Box>
 
       <Divider />
 
@@ -297,23 +308,36 @@ export const View = ({
         onClose={() => $send({ t: 'closed-modal' })}
         anchor="bottom"
         PaperProps={{
-          sx: { p: 2, px: 4, display: 'flex', flexDirection: 'column', gap: 2 },
+          sx: { p: 2, px: 4, display: 'flex', flexDirection: 'column', gap: 3 },
         }}
       >
         <Box sx={{ display: 'flex' }}>
           <Typography variant="h3" sx={{ flex: 1 }}>
             Tune
           </Typography>
-          <Button
-            size="small"
-            variant="contained"
-            onClick={() => {
-              $send({ t: 'input-query', query: model.draftQuery });
-            }}
-            disabled={eq(model.query, model.draftQuery)}
-          >
-            Save
-          </Button>
+          <Box>
+            <Button
+              sx={{ mr: 2 }}
+              size="small"
+              variant="outlined"
+              disabled={eq(model.query, model.draftQuery)}
+              onClick={() => {
+                $send({ t: 'input-draft-query', query: model.query });
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              size="small"
+              variant="contained"
+              onClick={() => {
+                $send({ t: 'input-query', query: model.draftQuery });
+              }}
+              disabled={eq(model.query, model.draftQuery)}
+            >
+              Save
+            </Button>
+          </Box>
         </Box>
         <Box>
           <Box sx={{ display: 'flex' }}>

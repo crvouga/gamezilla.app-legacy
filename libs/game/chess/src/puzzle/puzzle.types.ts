@@ -14,6 +14,7 @@ export type SharedModel = {
   startedAt: number | null;
   lastMoveAt: number | null;
   query: PuzzleQuery;
+  draftQuery: PuzzleQuery;
   moves: ChessBoard.MoveInput[];
   hint: Hint;
   puzzles: Puzzle[];
@@ -58,6 +59,7 @@ export const initShared: SharedModel = {
   puzzle: null,
   moves: [],
   query: initQuery,
+  draftQuery: initQuery,
   hint: 'none',
   puzzles: [],
   lastMoveAt: null,
@@ -242,6 +244,7 @@ export type PuzzleCompleted = {
 };
 
 export type Req =
+  | { t: 'input-draft-query'; query: PuzzleQuery }
   | { t: 'input-query'; query: PuzzleQuery }
   | { t: 'input-move'; moveInput: ChessBoard.MoveInput }
   | { t: 'next' }
@@ -261,8 +264,7 @@ export type FrontendMsg =
   | Req
   | { t: 'animate' }
   | { t: 'opened-modal'; modal: 'tune' }
-  | { t: 'closed-modal' }
-  | { t: 'input-draft-query'; query: PuzzleQuery };
+  | { t: 'closed-modal' };
 
 export type ToBackend = Req | { t: 'initialize' };
 
@@ -279,7 +281,6 @@ export type FrontendModel = SharedModel & {
   initializedAt?: number;
   backendNow?: Posix;
   openedModal?: 'tune' | null;
-  draftQuery: PuzzleQuery;
 };
 
 type Problem =
@@ -428,6 +429,19 @@ export const handle = ({
         puzzle: null,
         hint: 'none',
         query: msg.query,
+      };
+
+      return Ok(modelNew);
+    }
+
+    case 'input-draft-query': {
+      if (ctx.currentUserId !== ctx.hostId) {
+        return Err('must-be-host');
+      }
+
+      const modelNew: SharedModel = {
+        ...model,
+        draftQuery: msg.query,
       };
 
       return Ok(modelNew);
