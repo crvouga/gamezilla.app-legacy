@@ -35,6 +35,8 @@ const SlideTransition = (props: SlideProps) => {
 //
 //
 
+const baseTheme = Mui.createTheme();
+
 const createTheme = ({ mode }: { mode: 'light' | 'dark' }) =>
   Mui.responsiveFontSizes(
     Mui.createTheme({
@@ -56,6 +58,16 @@ const createTheme = ({ mode }: { mode: 'light' | 'dark' }) =>
             },
           },
         },
+
+        MuiDrawer: {
+          styleOverrides: {
+            paper: {
+              maxWidth: baseTheme.breakpoints.values.sm,
+              margin: 'auto',
+            },
+          },
+        },
+
         MuiSnackbar: {
           defaultProps: {
             anchorOrigin: {
