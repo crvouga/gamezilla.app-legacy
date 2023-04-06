@@ -33,6 +33,7 @@
       "@gamezilla/game-shared/backend": [
         "libs/game-shared/backend/src/index.ts"
       ],
+      "@gamezilla/game/battleship": ["libs/game/battleship/src/index.ts"],
       "@gamezilla/game/chess": ["libs/game/chess/src/index.ts"],
       "@gamezilla/game/connect-four": ["libs/game/connect-four/src/index.ts"],
       "@gamezilla/game/flow": ["libs/game/flow/src/index.ts"],
