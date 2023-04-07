@@ -135,10 +135,12 @@ const lightTheme = createTheme({ mode: 'light' });
 
 export const AppContainer = ({
   children,
+  sx,
   themeMode,
 }: {
   children: React.ReactNode;
   themeMode: ThemeMode;
+  sx?: Sx;
 }) => {
   const prefersDarkMode = Mui.useMediaQuery('(prefers-color-scheme: dark)');
 
@@ -163,6 +165,7 @@ export const AppContainer = ({
       <Mui.CssBaseline enableColorScheme />
       <Mui.Box
         sx={{
+          ...sx,
           maxWidth: 'sm',
           maxHeight: '100%',
 

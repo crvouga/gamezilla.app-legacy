@@ -754,6 +754,7 @@ const View = ({
   $send,
   now,
 }: {
+  isTimeTravelDebugging: boolean;
   now: Posix;
   model: Model;
   $send: (msg: Msg) => void;
@@ -1060,8 +1061,15 @@ const main = () => {
     document.getElementById('root') as HTMLElement
   );
 
-  program.state$.subscribe(({ model }) => {
-    root.render(<View now={model._now} model={model} $send={program.$send} />);
+  program.state$.subscribe((state) => {
+    root.render(
+      <View
+        isTimeTravelDebugging={state.model._debugId < state.runningDebugId}
+        now={state.model._now}
+        model={state.model}
+        $send={program.$send}
+      />
+    );
   });
 };
 

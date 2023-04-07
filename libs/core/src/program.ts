@@ -1,7 +1,7 @@
 import * as Rx from 'rxjs';
 import { Cmd } from './cmd';
-import { Posix } from './unix-time';
 import { Sub } from './sub';
+import { Posix } from './unix-time';
 
 //
 //
@@ -15,6 +15,7 @@ export type State<Model, Msg> = {
   model: Model & { _debugId: number; _now: Posix };
   cmd: Cmd<Msg>;
   msg?: Msg;
+  runningDebugId: number;
 };
 
 export type Program<Model, Msg> = {
@@ -45,28 +46,32 @@ const create = <Model, Msg>({
   };
   subscriptions: (input: { now: Posix; model: Model }) => Sub<Msg>;
 }): Program<Model, Msg> => {
-  let runningDebugId = 0;
-
   const state$ = new Rx.BehaviorSubject<State<Model, Msg>>({
+    runningDebugId: 0,
     model: {
       ...init.model,
-      _debugId: runningDebugId,
+      _debugId: 0,
       _now: Posix.fromNumber(Date.now()),
     },
     cmd: init.cmd ?? Cmd.None,
   });
 
   const $send = (msg: Msg) => {
-    const current = state$.getValue();
+    const state = state$.getValue();
+    if (state.model._debugId < state.runningDebugId) {
+      console.log('[program] skip msg');
+      return;
+    }
     const updated = update({
-      now: current.model._now,
+      now: state.model._now,
       msg,
-      model: current.model,
+      model: state.model,
     });
-    const debugIdNext = current.model._debugId + 1;
 
-    runningDebugId = debugIdNext;
+    const debugIdNext = state.model._debugId + 1;
+
     state$.next({
+      runningDebugId: debugIdNext,
       model: {
         ...updated.model,
         _debugId: debugIdNext,
@@ -79,14 +84,10 @@ const create = <Model, Msg>({
 
   const sub$ = state$.pipe(
     Rx.switchMap((state) => {
-      if (runningDebugId === state.model._debugId) {
-        return subscriptions({
-          now: state.model._now,
-          model: state.model,
-        });
-      }
-      console.log('[program] skip subscription');
-      return Rx.EMPTY;
+      return subscriptions({
+        now: state.model._now,
+        model: state.model,
+      });
     })
   );
 

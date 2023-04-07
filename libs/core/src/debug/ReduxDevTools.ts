@@ -480,22 +480,27 @@ export const withDebugger = <Model, Msg extends object>(
         }
 
         switch (msg.type) {
-          case '__DebugApplyMsg__':
+          case '__DebugApplyMsg__': {
             program.$send(msg.payload);
             return;
+          }
 
-          case '__DebugStarted__':
+          case '__DebugStarted__': {
             debuggerStarted$.next('STARTED');
             return;
+          }
 
-          case '__DebugUpdateModel__':
+          case '__DebugUpdateModel__': {
+            const current = program.state$.getValue();
             program.state$.next({
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore
               model: msg.payload,
               cmd: Cmd.None,
+              runningDebugId: current.runningDebugId,
             });
             return;
+          }
         }
       },
     })
