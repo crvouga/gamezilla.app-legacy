@@ -41,7 +41,7 @@ export const initVisual = ({
       model = setStone(model, position, {
         type: 'enter',
         radius: skipAnimation
-          ? Ease.initConstant(now, 0.45)
+          ? Ease.initConstant(0.45)
           : Ease.init({
               startMs: now,
               from: 0,

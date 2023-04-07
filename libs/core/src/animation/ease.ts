@@ -18,9 +18,9 @@ export type Model = {
   delayMs: number;
 };
 
-export const initConstant = (now: Posix, value: number): Model => {
+export const initConstant = (value: number): Model => {
   return {
-    startMs: now,
+    startMs: Posix.fromNumber(0),
     durationMs: 0,
     value,
     from: value,
