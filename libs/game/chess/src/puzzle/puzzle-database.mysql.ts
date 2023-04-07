@@ -127,7 +127,7 @@ const fetchNeverSeen =
         rating BETWEEN ${ratingRange[0]} AND ${ratingRange[1]}
         AND pi.puzzle_id IS NULL
       ORDER BY
-        rating DESC
+        popularity DESC
       LIMIT 10
     `
     );

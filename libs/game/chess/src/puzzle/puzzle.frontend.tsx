@@ -45,7 +45,9 @@ const toDraftQuery = (model: Model): PuzzleQuery => {
   return model.draftQuery ?? model.query;
 };
 
-export const init = (_args: {
+export const init = ({
+  sendToBackend,
+}: {
   sendToBackend: (m: ToBackend) => Cmd;
 }): {
   model: Model;
@@ -53,7 +55,7 @@ export const init = (_args: {
 } => {
   return {
     model: initShared,
-    cmd: Cmd.None,
+    cmd: sendToBackend({ t: 'init' }),
   };
 };
 
@@ -400,6 +402,9 @@ export const View = ({
             <Slider
               min={minRating}
               max={maxRating}
+              valueLabelDisplay="auto"
+              step={10}
+              marks
               value={toDraftQuery(model).ratingRange}
               onChange={(_, value) => {
                 if (Array.isArray(value) && value[0] && value[1]) {

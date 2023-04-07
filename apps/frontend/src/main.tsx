@@ -15,12 +15,14 @@ import {
   andThen,
   Browser,
   Cmd,
+  Debug,
   exhaustive,
   Option,
   p,
   Posix,
   Program,
   Sub,
+  toMsgPayload,
   toMsgType,
 } from '@gamezilla/core';
 import { ProfileStore } from '@gamezilla/profile';
@@ -1050,21 +1052,13 @@ const main = () => {
     subscriptions,
   });
 
-  Program.run(program);
+  const attached = Debug.ReduxDevTools.withDebugger(program);
+
+  Program.run(attached.program);
 
   const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
   );
-
-  program.state$.subscribe(({ msg }) => {
-    if (!msg) {
-      return;
-    }
-    const msgType = toMsgType(msg);
-    // const msgPayload = toMsgPayload(msg, {});
-    console.log(msgType);
-    // console.dir(msgPayload);
-  });
 
   program.state$.subscribe(({ model }) => {
     root.render(<View now={model._now} model={model} $send={program.$send} />);

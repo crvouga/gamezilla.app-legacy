@@ -241,6 +241,7 @@ export type PuzzleCompleted = {
 };
 
 export type Req =
+  | { t: 'init' }
   | { t: 'input-query'; query: PuzzleQuery }
   | { t: 'input-move'; moveInput: ChessBoard.MoveInput }
   | { t: 'next' }
@@ -425,6 +426,10 @@ export const handle = ({
       };
 
       return Ok(modelNew);
+    }
+
+    case 'init': {
+      return Ok(model);
     }
 
     default: {
