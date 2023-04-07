@@ -31,6 +31,17 @@ CREATE TABLE game_chess_puzzle_interaction (
 
 CREATE INDEX game_chess_puzzle_interaction_puzzle_id_idx ON game_chess_puzzle_interaction (puzzle_id);
 
+
+CREATE TABLE game_chess_puzzle_profile (
+    id VARCHAR(255) NOT NULL,
+    user_id VARCHAR(255) NOT NULL,
+    query JSON NOT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE INDEX idx_game_chess_puzzle_profile_user_id ON game_chess_puzzle_profile(user_id);
+
+
 --
 --
 --

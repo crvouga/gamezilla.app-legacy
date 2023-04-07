@@ -38,7 +38,7 @@ export type PuzzleInteractionRow = z.infer<typeof PuzzleInteractionRow>;
 export const PuzzleProfileRow = z.object({
   id: z.string(),
   user_id: z.string(),
-  query: PuzzleQuery.transform((q) => JSON.stringify(q)),
+  queryJSON: z.string(),
 });
 
 const rowToPuzzle = (row: PuzzleRow): Result<string, Puzzle> => {
@@ -103,17 +103,7 @@ export const uciMovesToPuzzleMoves = (
   ]);
 };
 
-// const findOneProfile =
-//   (_props: {
-//     dbConn: DatabaseConnectionMySQL;
-
-//     userId: UserId;
-//   }): Task<Result<string, PuzzleInteraction[]>> =>
-//   async () => {
-//     return Result.Err('');
-//   };
-
-const findMany =
+const fetchNeverSeen =
   (
     dbConn: DatabaseConnectionMySQL,
     query: PuzzleQuery & { userId: UserId }
@@ -170,49 +160,14 @@ const deinterleave = <T>(xs: T[]): [T[], T[]] => {
   return [ys, zs];
 };
 
-//
-//
-//
-//
-//
-//
-
-export const PuzzleDatabase = {
-  insertManyInteractions:
-    (
-      dbConn: DatabaseConnectionMySQL,
-      interactions: PuzzleInteraction[]
-    ): Task<Result<string, null>> =>
-    async () => {
-      const result = await dbConn.query(
-        PuzzleInteractionRow,
-        `
-        INSERT INTO game_chess_puzzle_interaction (
-          puzzle_id,
-          user_id,
-          type
-        ) VALUES ${interactions
-          .map(
-            (interaction) =>
-              `('${interaction.puzzleId}', '${interaction.userId}', '${interaction.type}')`
-          )
-          .join(', ')}
-      `
-      );
-      return p(
-        result,
-        Result.map(() => null)
-      );
-    },
-
-  replaceMany: async ({
-    dbConn,
-    rows,
-  }: {
-    dbConn: DatabaseConnectionMySQL;
-    rows: PuzzleRow[];
-  }) => {
-    const queryString = `
+const replaceMany = async ({
+  dbConn,
+  rows,
+}: {
+  dbConn: DatabaseConnectionMySQL;
+  rows: PuzzleRow[];
+}) => {
+  const queryString = `
     REPLACE INTO game_chess_puzzle (
       puzzle_id,
       rating,
@@ -232,9 +187,40 @@ export const PuzzleDatabase = {
       )}
   `;
 
-    const inserted = await dbConn.query(PuzzleRow, queryString);
+  const inserted = await dbConn.query(PuzzleRow, queryString);
 
-    return inserted;
-  },
-  findMany,
+  return inserted;
+};
+
+const insertManyInteractions =
+  (
+    dbConn: DatabaseConnectionMySQL,
+    interactions: PuzzleInteraction[]
+  ): Task<Result<string, null>> =>
+  async () => {
+    const result = await dbConn.query(
+      PuzzleInteractionRow,
+      `
+        INSERT INTO game_chess_puzzle_interaction (
+          puzzle_id,
+          user_id,
+          type
+        ) VALUES ${interactions
+          .map(
+            (interaction) =>
+              `('${interaction.puzzleId}', '${interaction.userId}', '${interaction.type}')`
+          )
+          .join(', ')}
+      `
+    );
+    return p(
+      result,
+      Result.map(() => null)
+    );
+  };
+
+export const PuzzleDatabase = {
+  insertManyInteractions,
+  replaceMany,
+  fetchNeverSeen,
 };

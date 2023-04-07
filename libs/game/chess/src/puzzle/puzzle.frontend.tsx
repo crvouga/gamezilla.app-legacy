@@ -45,9 +45,7 @@ const toDraftQuery = (model: Model): PuzzleQuery => {
   return model.draftQuery ?? model.query;
 };
 
-export const init = ({
-  sendToBackend,
-}: {
+export const init = (_args: {
   sendToBackend: (m: ToBackend) => Cmd;
 }): {
   model: Model;
@@ -55,7 +53,7 @@ export const init = ({
 } => {
   return {
     model: initShared,
-    cmd: sendToBackend({ t: 'initialize' }),
+    cmd: Cmd.None,
   };
 };
 
@@ -220,28 +218,66 @@ export const View = ({
     });
   }, [ctx.now, model]);
 
+  const duration = useMemo(() => {
+    return !model.startedAt
+      ? null
+      : status.type === 'loading'
+      ? null
+      : status.type === 'solving'
+      ? Math.max(0, (model.backendNow ?? ctx.now) - model.startedAt)
+      : status.endedAt - model.startedAt;
+  }, [ctx.now, status, model]);
+
   return (
     <ViewGameBox isSpectating={ctx.currentUserId !== ctx.hostId}>
-      {/* <pre>{JSON.stringify(model, null, 4)}</pre> */}
       <ViewStatusBar status={status} />
 
       <Divider />
 
       <Box sx={{ flex: 1 }}></Box>
 
-      <ViewClock
-        duration={
-          !model.startedAt
-            ? null
-            : status.type === 'loading'
-            ? null
-            : !model.startedAt
-            ? null
-            : status.type === 'solving'
-            ? Math.max(0, (model.backendNow ?? ctx.now) - model.startedAt)
-            : status.endedAt - model.startedAt
-        }
-      />
+      <Box
+        sx={{
+          fontSize: '1.5rem',
+          display: 'flex',
+          alignItems: 'center',
+          p: 2,
+          b: 0,
+        }}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Typography color="text.secondary" sx={{ mr: 1 }}>
+            Rating
+          </Typography>
+          <Typography>
+            {status.type === 'loading' ? '...' : status.puzzle.rating}
+          </Typography>
+        </Box>
+        <Typography color="text.secondary" sx={{ flex: 1 }} align="center">
+          {status.type === 'loading'
+            ? ''
+            : `${model.moves.length}  /  ${status.puzzle.correctMoves.length}`}
+        </Typography>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Icon name="clock" sx={{ mr: 1 }} />
+          <Typography
+            sx={{
+              fontFamily: 'monospace',
+              fontWeight: 900,
+              fontSize: '1.25rem',
+            }}
+            color={'text.secondary'}
+          >
+            {duration ? formatDuration(duration) : '-:--'}
+          </Typography>
+        </Box>
+      </Box>
 
       {status.type !== 'loading' ? (
         <ChessBoard.View
@@ -297,22 +333,8 @@ export const View = ({
       <Box
         sx={{
           flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
         }}
-      >
-        <Box>
-          <Typography color="text.secondary" sx={{ fontSize: '1rem' }}>
-            Puzzle Rating
-          </Typography>
-
-          <Typography sx={{ fontSize: '2rem', mr: 1 }}>
-            {status.type === 'loading' ? '...' : status.puzzle.rating}
-          </Typography>
-        </Box>
-      </Box>
+      ></Box>
 
       <Divider />
 
@@ -327,11 +349,18 @@ export const View = ({
         onClose={() => $send({ t: 'closed-modal' })}
         anchor="bottom"
         PaperProps={{
-          sx: { p: 2, px: 4, display: 'flex', flexDirection: 'column', gap: 3 },
+          sx: {
+            p: 2,
+            px: 3,
+            pb: 4,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 3,
+          },
         }}
       >
         <Box sx={{ display: 'flex' }}>
-          <Typography variant="h3" sx={{ flex: 1 }}>
+          <Typography variant="h4" sx={{ flex: 1 }}>
             Tune
           </Typography>
           <Box>
@@ -367,22 +396,24 @@ export const View = ({
               {String(toDraftQuery(model).ratingRange[1])}
             </Typography>
           </Box>
-          <Slider
-            min={minRating}
-            max={maxRating}
-            value={toDraftQuery(model).ratingRange}
-            onChange={(_, value) => {
-              if (Array.isArray(value) && value[0] && value[1]) {
-                $send({
-                  t: 'input-draft-query',
-                  query: {
-                    ...toDraftQuery(model),
-                    ratingRange: [value[0], value[1]],
-                  },
-                });
-              }
-            }}
-          />
+          <Box sx={{ paddingX: 2 }}>
+            <Slider
+              min={minRating}
+              max={maxRating}
+              value={toDraftQuery(model).ratingRange}
+              onChange={(_, value) => {
+                if (Array.isArray(value) && value[0] && value[1]) {
+                  $send({
+                    t: 'input-draft-query',
+                    query: {
+                      ...toDraftQuery(model),
+                      ratingRange: [value[0], value[1]],
+                    },
+                  });
+                }
+              }}
+            />
+          </Box>
         </Box>
       </Drawer>
     </ViewGameBox>
@@ -419,32 +450,6 @@ const formatDuration = (duration: number): string => {
   return `${minutes.toString().padStart(1, '0')}:${seconds
     .toString()
     .padStart(2, '0')}`;
-};
-
-const ViewClock = ({ duration }: { duration?: number | null }) => {
-  return (
-    <Box
-      sx={{
-        mb: 2,
-        fontFamily: 'monospace',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <Icon name="clock" sx={{ mr: 1 }} />
-      <Typography
-        sx={{
-          fontSize: '2rem',
-          fontWeight: 900,
-          fontFamily: 'inherit',
-        }}
-        color={'text.secondary'}
-      >
-        {duration ? formatDuration(duration) : '-:--'}
-      </Typography>
-    </Box>
-  );
 };
 
 const ViewActionButtons = ({
@@ -643,7 +648,10 @@ const ViewStatusBar = ({ status }: { status: Status }) => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            p: 1,
+            p: 2,
+            py: 1,
+            background: toPlayerColor(status.puzzle) === 'b' ? '#000' : '#fff',
+            color: toPlayerColor(status.puzzle) === 'b' ? '#fefefe' : '#000',
           }}
         >
           <Box

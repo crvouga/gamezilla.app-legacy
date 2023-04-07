@@ -35,16 +35,11 @@ export const init = ({
   return {
     model: initShared,
     cmd: p(
-      PuzzleDatabase.findMany(ctx.mySql, {
+      PuzzleDatabase.fetchNeverSeen(ctx.mySql, {
         ...initShared.query,
         userId: ctx.currentUserId,
       }),
-      Cmd.perform(
-        (result): Msg => ({
-          t: 'next-done',
-          result,
-        })
-      )
+      Cmd.perform((result): Msg => ({ t: 'fetched-puzzles', result }))
     ),
   };
 };
@@ -84,30 +79,11 @@ export const update = ({
       };
     }
 
-    case 'initialize': {
+    case 'fetched-puzzles': {
       if (msg.result.type === 'Err') {
         return {
           model,
-          cmd: broadcast({ t: 'initialize', result: msg.result }),
-        };
-      }
-      const puzzles = msg.result.value;
-      const modelNew: Model = {
-        ...model,
-        startedAt: ctx.now,
-        puzzles,
-      };
-      return {
-        model: modelNew,
-        cmd: broadcast({ t: 'initialize', result: Result.Ok(modelNew) }),
-      };
-    }
-
-    case 'next-done': {
-      if (msg.result.type === 'Err') {
-        return {
-          model,
-          cmd: broadcast({ t: 'next-done', result: msg.result }),
+          cmd: broadcast({ t: 'fetched-puzzles', result: msg.result }),
         };
       }
 
@@ -121,7 +97,7 @@ export const update = ({
 
       return {
         model: modelNew,
-        cmd: broadcast({ t: 'next-done', result: Result.Ok(modelNew) }),
+        cmd: broadcast({ t: 'fetched-puzzles', result: Result.Ok(modelNew) }),
       };
     }
 
@@ -154,7 +130,7 @@ export const updateFromFrontend = (input: {
     input,
     andThen(({ model }) => updateFromFrontend_({ ...input, model })),
     andThen(({ model }) =>
-      updatePuzzleNext({ ...input, modelPrev: input.model, model })
+      updateFetchMore({ ...input, modelPrev: input.model, model })
     ),
     andThen(({ model }) =>
       updatePuzzleCompleted({ ...input, modelPrev: input.model, model })
@@ -180,7 +156,7 @@ const updatePuzzleCompleted = ({
     return { model };
   }
 
-  if (!(status.type === 'incorrect' || status.type === 'solved')) {
+  if (status.type !== 'incorrect' && status.type !== 'solved') {
     return { model };
   }
 
@@ -199,7 +175,7 @@ const updatePuzzleCompleted = ({
   };
 };
 
-const updatePuzzleNext = ({
+const updateFetchMore = ({
   model,
   modelPrev,
   ctx,
@@ -211,15 +187,15 @@ const updatePuzzleNext = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (!eq(model.query, modelPrev.query)) {
+  if (!eq(model.query, modelPrev.query) || model.puzzles.length <= 1) {
     return {
       model,
       cmd: p(
-        PuzzleDatabase.findMany(ctx.mySql, {
+        PuzzleDatabase.fetchNeverSeen(ctx.mySql, {
           ...model.query,
           userId: ctx.hostId,
         }),
-        Cmd.perform((result): Msg => ({ t: 'next-done', result }))
+        Cmd.perform((result): Msg => ({ t: 'fetched-puzzles', result }))
       ),
     };
   }
@@ -230,18 +206,11 @@ const updatePuzzleNext = ({
 const updateFromFrontend_: typeof updateFromFrontend = ({
   msg,
   model,
-  sendToClient,
+  // sendToClient,
   broadcast,
   ctx,
 }) => {
   switch (msg.t) {
-    case 'initialize': {
-      return {
-        model,
-        cmd: sendToClient({ t: 'initialize', result: Result.Ok(model) }),
-      };
-    }
-
     default: {
       const handled = handle({
         ctx,

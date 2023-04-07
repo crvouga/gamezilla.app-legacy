@@ -189,6 +189,7 @@ const isMovesEqual = (
     a.length === b.length &&
     a.every((move, index) => {
       const bi = b[index];
+
       return bi && isMoveEqual(move, bi);
     })
   );
@@ -251,8 +252,7 @@ export type Res = Req & { result: Result<Problem, SharedModel> };
 
 export type BackendMsg =
   | { t: 'clock-tick' }
-  | { t: 'initialize'; result: Result<string, Puzzle[]> }
-  | { t: 'next-done'; result: Result<string, Puzzle[]> }
+  | { t: 'fetched-puzzles'; result: Result<string, Puzzle[]> }
   | { t: 'interaction-insert-done'; result: Result<string, null> };
 
 export type FrontendMsg =
@@ -263,13 +263,12 @@ export type FrontendMsg =
   | { t: 'closed-modal' }
   | { t: 'clicked-save' };
 
-export type ToBackend = Req | { t: 'initialize' };
+export type ToBackend = Req;
 
 export type ToFrontend =
   | Res
   | { t: 'clock-tick'; now: Posix }
-  | { t: 'initialize'; result: Result<string, SharedModel> }
-  | { t: 'next-done'; result: Result<string, SharedModel> }
+  | { t: 'fetched-puzzles'; result: Result<string, SharedModel> }
   | { t: 'interaction-insert-done'; result: Result<string, SharedModel> };
 
 export type BackendModel = SharedModel;
@@ -385,6 +384,9 @@ export const handle = ({
         ...model,
         moves: [],
         puzzles: model.puzzles.slice(1),
+        lastMoveAt: null,
+        startedAt: ctx.now,
+        hint: 'none',
       };
 
       return Ok(modelNew);
