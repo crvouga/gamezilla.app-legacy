@@ -1,13 +1,8 @@
-import { p, Result, Task } from '@gamezilla/core';
+import { NonEmpty, p, Result, Task } from '@gamezilla/core';
 import { UserId } from '@gamezilla/shared';
 import { DatabaseConnectionMySQL } from '@gamezilla/shared/backend';
 import { z } from 'zod';
-import {
-  isPromotionPieceSymbol,
-  isSquare,
-  MoveInput,
-  PromotionPieceSymbol,
-} from '../chess/chess-board';
+import { MoveInput, uciMoveToMoveInput } from '../chess/chess-board';
 import { Puzzle, PuzzleInteraction, PuzzleQuery } from './puzzle.types';
 
 // source https://database.lichess.org/#puzzles
@@ -54,11 +49,11 @@ const rowToPuzzle = (row: PuzzleRow): Result<string, Puzzle> => {
 
   const [opponentMoves, correctMoves] = deinterleave(puzzleMoves.value);
 
-  if (!isNonEmpty(opponentMoves)) {
+  if (!NonEmpty.is(opponentMoves)) {
     return Result.Err('Opponent moves is empty');
   }
 
-  if (!isNonEmpty(correctMoves)) {
+  if (!NonEmpty.is(correctMoves)) {
     return Result.Err('Correct moves is empty');
   }
 
@@ -75,10 +70,6 @@ const rowToPuzzle = (row: PuzzleRow): Result<string, Puzzle> => {
     gameUrl: row.game_url,
     openingTags: row.opening_tags.split(' '),
   });
-};
-
-const isNonEmpty = <T>(arr: T[]): arr is [T, ...T[]] => {
-  return arr.length > 0;
 };
 
 export const uciMovesToPuzzleMoves = (
@@ -112,42 +103,6 @@ export const uciMovesToPuzzleMoves = (
   ]);
 };
 
-export const uciMoveToMoveInput = (
-  uciMove: string
-): Result<string, MoveInput> => {
-  const uciMoveRegex = /^([a-h][1-8])([a-h][1-8])([qrbn])?$/;
-  const match = uciMove.match(uciMoveRegex);
-
-  if (!match) {
-    return Result.Err(
-      `uci move did not match regex. uciMove: ${uciMove} regex: ${uciMoveRegex}`
-    );
-  }
-
-  const [, from, to, promotion] = match;
-
-  if (!(from && to)) {
-    return Result.Err('failed to extract from and to from uci move');
-  }
-
-  const upperCaseFrom = from.toUpperCase();
-  const upperCaseTo = to.toUpperCase();
-
-  if (!(isSquare(upperCaseFrom) && isSquare(upperCaseTo))) {
-    return Result.Err('from or to is not a valid square');
-  }
-
-  const promotionPiece: PromotionPieceSymbol = isPromotionPieceSymbol(promotion)
-    ? promotion
-    : 'q';
-
-  return Result.Ok({
-    from: upperCaseFrom,
-    to: upperCaseTo,
-    promotion: promotionPiece,
-  });
-};
-
 // const findOneProfile =
 //   (_props: {
 //     dbConn: DatabaseConnectionMySQL;
@@ -159,21 +114,12 @@ export const uciMoveToMoveInput = (
 //   };
 
 const findMany =
-  ({
-    dbConn,
-    userId,
-    query,
-  }: {
-    dbConn: DatabaseConnectionMySQL;
-    userId: UserId;
-    query: PuzzleQuery;
-  }): Task<Result<string, Puzzle[]>> =>
+  (
+    dbConn: DatabaseConnectionMySQL,
+    query: PuzzleQuery & { userId: UserId }
+  ): Task<Result<string, Puzzle[]>> =>
   async () => {
-    const { ratingDeviation, rating, index } = query;
-
-    const limit = 1;
-
-    const offset = index * limit;
+    const { userId, ratingRange } = query;
 
     const found = await dbConn.query(
       PuzzleRow,
@@ -186,16 +132,13 @@ const findMany =
         game_chess_puzzle_interaction pi
       ON
         p.puzzle_id = pi.puzzle_id
-        AND pi.user_id = '${userId}'
+        AND pi.user_id = "${userId}"
       WHERE
-        rating BETWEEN ${rating - ratingDeviation} AND ${
-        rating + ratingDeviation
-      }
+        rating BETWEEN ${ratingRange[0]} AND ${ratingRange[1]}
         AND pi.puzzle_id IS NULL
       ORDER BY
         rating DESC
-      LIMIT ${limit}
-      OFFSET ${offset}
+      LIMIT 10
     `
     );
 

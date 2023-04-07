@@ -21,15 +21,12 @@ import {
   handle,
   initShared,
   maxRating,
-  maxRatingDeviation,
   minRating,
-  minRatingDeviation,
   PuzzleQuery,
   Req,
   SharedModel,
   Status,
   ToBackend,
-  toChessLevel,
   toCorrectMove,
   ToFrontend,
   toPlayerColor,
@@ -214,8 +211,6 @@ export const View = ({
   $send: (m: Msg) => void;
   onClose: () => void;
 }) => {
-  const activePuzzle = model.puzzle;
-
   const status = useMemo(() => toStatus(model), [model]);
 
   const visualBoard = useMemo<ChessBoard.Model>(() => {
@@ -227,6 +222,7 @@ export const View = ({
 
   return (
     <ViewGameBox isSpectating={ctx.currentUserId !== ctx.hostId}>
+      {/* <pre>{JSON.stringify(model, null, 4)}</pre> */}
       <ViewStatusBar status={status} />
 
       <Divider />
@@ -249,15 +245,15 @@ export const View = ({
 
       {status.type !== 'loading' ? (
         <ChessBoard.View
-          key="chess"
+          key={model.puzzles[0]?.puzzleId}
           model={visualBoard}
           isDraggablePiece={({ piece }) => {
-            if (!activePuzzle || status.type === 'solved') {
+            if (status.type === 'solved') {
               return false;
             }
             const color = ChessBoard.toColor(piece);
             return (
-              color === toPlayerColor(activePuzzle) &&
+              color === toPlayerColor(status.puzzle) &&
               ctx.hostId === ctx.currentUserId
             );
           }}
@@ -313,7 +309,7 @@ export const View = ({
           </Typography>
 
           <Typography sx={{ fontSize: '2rem', mr: 1 }}>
-            {model.puzzle?.rating ?? '...'}
+            {status.type === 'loading' ? '...' : status.puzzle.rating}
           </Typography>
         </Box>
       </Box>
@@ -363,41 +359,26 @@ export const View = ({
         <Box>
           <Box sx={{ display: 'flex' }}>
             <Typography sx={{ mr: 2 }}>Rating</Typography>
-            <Typography sx={{ flex: 1 }}>
-              {toChessLevel(toDraftQuery(model).rating)}
+            {/* <Typography sx={{ flex: 1 }}>
+              {toChessLevel(toDraftQuery(model).ratingRange[1])}
+            </Typography> */}
+            <Typography>
+              {String(toDraftQuery(model).ratingRange[0])}-
+              {String(toDraftQuery(model).ratingRange[1])}
             </Typography>
-            <Typography>{String(toDraftQuery(model).rating)}</Typography>
           </Box>
           <Slider
             min={minRating}
             max={maxRating}
-            value={toDraftQuery(model).rating}
+            value={toDraftQuery(model).ratingRange}
             onChange={(_, value) => {
-              if (typeof value === 'number') {
+              if (Array.isArray(value) && value[0] && value[1]) {
                 $send({
                   t: 'input-draft-query',
-                  query: { ...toDraftQuery(model), rating: value },
-                });
-              }
-            }}
-          />
-        </Box>
-        <Box>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Typography>Rating Deviation</Typography>
-            <Typography>
-              {String(toDraftQuery(model).ratingDeviation)}
-            </Typography>
-          </Box>
-          <Slider
-            min={minRatingDeviation}
-            max={maxRatingDeviation}
-            value={toDraftQuery(model).ratingDeviation}
-            onChange={(_, value) => {
-              if (typeof value === 'number') {
-                $send({
-                  t: 'input-draft-query',
-                  query: { ...toDraftQuery(model), ratingDeviation: value },
+                  query: {
+                    ...toDraftQuery(model),
+                    ratingRange: [value[0], value[1]],
+                  },
                 });
               }
             }}
@@ -724,7 +705,7 @@ export const isAnimating = ({
   now: Posix;
   model: Model;
 }): boolean => {
-  if (!model.puzzle) {
+  if (!model.puzzles[0]) {
     return false;
   }
   const status = toStatus(model);

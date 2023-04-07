@@ -7,7 +7,7 @@ import {
   ServerToClientEvents,
   sessionIdKey,
   ToBackend,
-  ToFrontend
+  ToFrontend,
 } from '@gamezilla/app';
 import { Auth } from '@gamezilla/auth';
 import { ChatFrontend, ChatStore } from '@gamezilla/chat';
@@ -21,7 +21,9 @@ import {
   p,
   Posix,
   Program,
-  Sub
+  Sub,
+  toMsgPayload,
+  toMsgType,
 } from '@gamezilla/core';
 import { ProfileStore } from '@gamezilla/profile';
 import { RoomFrontend } from '@gamezilla/room';
@@ -31,7 +33,7 @@ import {
   Ctx,
   ProfileAvatar,
   Route,
-  Username
+  Username,
 } from '@gamezilla/shared';
 import {
   AppContainer,
@@ -44,7 +46,7 @@ import {
   ThemeMode,
   Typography,
   useTheme,
-  ViewNode
+  ViewNode,
 } from '@gamezilla/shared/ui';
 import * as ReactDOM from 'react-dom/client';
 import { Subject } from 'rxjs';
@@ -1044,20 +1046,27 @@ const main = () => {
       socketClient.emit('to-backend', msg);
     };
 
-  const { program } = p(
-    Program.create({
-      init: init({ location: Browser.getLocation() }),
-      update: (input) => update({ ...input, sendToBackend }),
-      subscriptions,
-    }),
-    Debug.ReduxDevTools.withDebugger
-  );
+  const program = Program.create({
+    init: init({ location: Browser.getLocation() }),
+    update: (input) => update({ ...input, sendToBackend }),
+    subscriptions,
+  });
 
   Program.run(program);
 
   const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
   );
+
+  program.state$.subscribe(({ msg }) => {
+    if (!msg) {
+      return;
+    }
+    const msgType = toMsgType(msg);
+    // const msgPayload = toMsgPayload(msg, {});
+    console.log(msgType);
+    // console.dir(msgPayload);
+  });
 
   program.state$.subscribe(({ model }) => {
     root.render(<View now={model._now} model={model} $send={program.$send} />);

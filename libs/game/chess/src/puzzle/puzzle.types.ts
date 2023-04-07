@@ -11,7 +11,6 @@ export const maxRatingDeviation = 500;
 export const minRatingDeviation = 50;
 
 export type SharedModel = {
-  puzzle: Puzzle | null;
   startedAt: number | null;
   lastMoveAt: number | null;
   query: PuzzleQuery;
@@ -23,9 +22,7 @@ export type SharedModel = {
 type Hint = 'none' | 'from' | 'from-and-to';
 
 const initQuery: PuzzleQuery = {
-  rating: 1500,
-  ratingDeviation: 250,
-  index: 0,
+  ratingRange: [1000, 1500],
 };
 
 export type ChessLevel =
@@ -56,7 +53,6 @@ export const toChessLevel = (rating: number): ChessLevel => {
 };
 
 export const initShared: SharedModel = {
-  puzzle: null,
   moves: [],
   query: initQuery,
   hint: 'none',
@@ -66,9 +62,10 @@ export const initShared: SharedModel = {
 };
 
 export const PuzzleQuery = z.object({
-  rating: z.number().min(minRating).max(maxRating),
-  ratingDeviation: z.number().min(minRatingDeviation).max(maxRatingDeviation),
-  index: z.number().min(0).max(100),
+  ratingRange: z.tuple([
+    z.number().min(minRating).max(maxRating),
+    z.number().min(minRating).max(maxRating),
+  ]),
 });
 export type PuzzleQuery = z.infer<typeof PuzzleQuery>;
 
@@ -121,15 +118,14 @@ export type Status =
     };
 
 export const toStatus = (model: SharedModel): Status => {
-  if (!model.puzzle) {
+  const puzzle = model.puzzles[0];
+  if (!puzzle) {
     return {
       type: 'loading',
     };
   }
 
-  const puzzle = model.puzzle;
-
-  if (isMovesEqual(model.puzzle.correctMoves, model.moves)) {
+  if (isMovesEqual(puzzle.correctMoves, model.moves)) {
     const allMoves = interleave(puzzle.opponentMoves, model.moves);
     const board = moveMany(allMoves, ChessBoard.initFromFen(puzzle));
 
@@ -179,7 +175,7 @@ const didMakeWrongMove = (model: SharedModel): boolean => {
   return (
     model.moves.length > 0 &&
     model.moves.some((move, index) => {
-      const correctMove = model.puzzle?.correctMoves[index];
+      const correctMove = model.puzzles[0]?.correctMoves[index];
       return correctMove && !isMoveEqual(move, correctMove);
     })
   );
@@ -225,7 +221,7 @@ export const toPlayerColor = (puzzle: Puzzle): ChessBoard.Color => {
 export const toCorrectMove = (
   model: SharedModel
 ): ChessBoard.MoveInput | null => {
-  const move = model.puzzle?.correctMoves[model.moves.length];
+  const move = model.puzzles[0]?.correctMoves[model.moves.length];
   return move ?? null;
 };
 
@@ -345,12 +341,9 @@ export const handle = ({
       const modelNew: SharedModel = {
         ...model,
         moves: [],
-        puzzle: null,
+        puzzles: model.puzzles.slice(1),
         hint: 'none',
-        query: {
-          ...model.query,
-          index: model.query.index + 1,
-        },
+        query: model.query,
       };
 
       return Ok(modelNew);
@@ -391,11 +384,7 @@ export const handle = ({
       const modelNew: SharedModel = {
         ...model,
         moves: [],
-        puzzle: null,
-        query: {
-          ...model.query,
-          index: model.query.index + 1,
-        },
+        puzzles: model.puzzles.slice(1),
       };
 
       return Ok(modelNew);
@@ -428,7 +417,7 @@ export const handle = ({
       const modelNew: SharedModel = {
         ...model,
         moves: [],
-        puzzle: null,
+        puzzles: [],
         hint: 'none',
         query: msg.query,
       };

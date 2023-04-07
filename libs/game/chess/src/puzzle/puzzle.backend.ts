@@ -35,10 +35,9 @@ export const init = ({
   return {
     model: initShared,
     cmd: p(
-      PuzzleDatabase.findMany({
-        dbConn: ctx.mySql,
+      PuzzleDatabase.findMany(ctx.mySql, {
+        ...initShared.query,
         userId: ctx.currentUserId,
-        query: initShared.query,
       }),
       Cmd.perform(
         (result): Msg => ({
@@ -95,8 +94,8 @@ export const update = ({
       const puzzles = msg.result.value;
       const modelNew: Model = {
         ...model,
-        puzzle: puzzles[0] ?? null,
         startedAt: ctx.now,
+        puzzles,
       };
       return {
         model: modelNew,
@@ -116,7 +115,7 @@ export const update = ({
 
       const modelNew: Model = {
         ...model,
-        puzzle: puzzles[0] ?? null,
+        puzzles,
         startedAt: ctx.now,
       };
 
@@ -216,10 +215,9 @@ const updatePuzzleNext = ({
     return {
       model,
       cmd: p(
-        PuzzleDatabase.findMany({
-          dbConn: ctx.mySql,
+        PuzzleDatabase.findMany(ctx.mySql, {
+          ...model.query,
           userId: ctx.hostId,
-          query: model.query,
         }),
         Cmd.perform((result): Msg => ({ t: 'next-done', result }))
       ),

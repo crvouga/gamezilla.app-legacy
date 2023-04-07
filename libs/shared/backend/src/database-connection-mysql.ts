@@ -28,7 +28,7 @@ const create = async ({
   return {
     query: async (rowParser, text, values) => {
       try {
-        const [rows, _fields] = await conn.query(text, values);
+        const [rows, fields] = await conn.query(text, values);
 
         const parsed = Array.isArray(rows)
           ? rows.map(rowParser.parse, values)
@@ -36,6 +36,7 @@ const create = async ({
         log('executed query', {
           text,
           values,
+          fields,
         });
         return Result.Ok(parsed);
       } catch (error) {
