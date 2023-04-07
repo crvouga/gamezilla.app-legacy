@@ -1,4 +1,4 @@
-import { Cmd, Ease, eq, p, Posix, Sub, Time } from '@gamezilla/core';
+import { Cmd, Ease, eq, Posix, Sub } from '@gamezilla/core';
 import { RoomCtx, ViewGameBox } from '@gamezilla/game-shared';
 import {
   ActionButton,
@@ -16,7 +16,6 @@ import {
 import { useMemo } from 'react';
 import * as ChessBoard from '../chess/chess-board';
 import {
-  toChessLevel,
   FrontendModel,
   FrontendMsg,
   handle,
@@ -25,9 +24,12 @@ import {
   maxRatingDeviation,
   minRating,
   minRatingDeviation,
+  PuzzleQuery,
+  Req,
   SharedModel,
   Status,
   ToBackend,
+  toChessLevel,
   toCorrectMove,
   ToFrontend,
   toPlayerColor,
@@ -41,6 +43,10 @@ import {
 //
 
 export type Model = FrontendModel;
+
+const toDraftQuery = (model: Model): PuzzleQuery => {
+  return model.draftQuery ?? model.query;
+};
 
 export const init = ({
   sendToBackend,
@@ -91,42 +97,47 @@ export const update = ({
       return { model: { ...model, openedModal: null } };
     }
 
-    case 'input-query': {
-      const handled = handle({ msg, model, ctx });
-      const modelNew = mergeWithBackend({
-        frontendModel: model,
-        backendModel: handled.type === 'Err' ? model : handled.value,
-      });
+    case 'input-draft-query': {
       return {
-        model: { ...modelNew, openedModal: null },
-        cmd: sendToBackend(msg),
+        model: { ...model, draftQuery: msg.query },
       };
     }
 
-    case 'input-draft-query': {
-      const handled = handle({ msg, model, ctx });
-      const modelNew = mergeWithBackend({
-        frontendModel: model,
-        backendModel: handled.type === 'Err' ? model : handled.value,
+    case 'clicked-save': {
+      return updateRequest({
+        msg: { t: 'input-query', query: toDraftQuery(model) },
+        model: { ...model, openedModal: null },
+        sendToBackend,
+        ctx,
       });
-      return {
-        model: modelNew,
-        cmd: Cmd.debounce(1_000, sendToBackend(msg)),
-      };
     }
 
     default: {
-      const handled = handle({ msg, model, ctx });
-      const modelNew = mergeWithBackend({
-        frontendModel: model,
-        backendModel: handled.type === 'Err' ? model : handled.value,
-      });
-      return {
-        model: modelNew,
-        cmd: sendToBackend(msg),
-      };
+      return updateRequest({ msg, model, sendToBackend, ctx });
     }
   }
+};
+
+const updateRequest = ({
+  msg,
+  model,
+  sendToBackend,
+  ctx,
+}: {
+  msg: Req;
+  model: Model;
+  sendToBackend: (m: ToBackend) => Cmd;
+  ctx: RoomCtx;
+}) => {
+  const handled = handle({ msg, model, ctx });
+  const modelNew = mergeWithBackend({
+    frontendModel: model,
+    backendModel: handled.type === 'Err' ? model : handled.value,
+  });
+  return {
+    model: modelNew,
+    cmd: sendToBackend(msg),
+  };
 };
 
 export const updateFromBackend = ({
@@ -333,18 +344,16 @@ export const View = ({
               size="small"
               variant="outlined"
               disabled={eq(model.query, model.draftQuery)}
-              onClick={() => {
-                $send({ t: 'input-draft-query', query: model.query });
-              }}
+              onClick={() =>
+                $send({ t: 'input-draft-query', query: model.query })
+              }
             >
               Cancel
             </Button>
             <Button
               size="small"
               variant="contained"
-              onClick={() => {
-                $send({ t: 'input-query', query: model.draftQuery });
-              }}
+              onClick={() => $send({ t: 'clicked-save' })}
               disabled={eq(model.query, model.draftQuery)}
             >
               Save
@@ -355,19 +364,19 @@ export const View = ({
           <Box sx={{ display: 'flex' }}>
             <Typography sx={{ mr: 2 }}>Rating</Typography>
             <Typography sx={{ flex: 1 }}>
-              {toChessLevel(model.draftQuery.rating)}
+              {toChessLevel(toDraftQuery(model).rating)}
             </Typography>
-            <Typography>{String(model.draftQuery.rating)}</Typography>
+            <Typography>{String(toDraftQuery(model).rating)}</Typography>
           </Box>
           <Slider
             min={minRating}
             max={maxRating}
-            value={model.draftQuery.rating}
+            value={toDraftQuery(model).rating}
             onChange={(_, value) => {
               if (typeof value === 'number') {
                 $send({
                   t: 'input-draft-query',
-                  query: { ...model.draftQuery, rating: value },
+                  query: { ...toDraftQuery(model), rating: value },
                 });
               }
             }}
@@ -376,17 +385,19 @@ export const View = ({
         <Box>
           <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <Typography>Rating Deviation</Typography>
-            <Typography>{String(model.draftQuery.ratingDeviation)}</Typography>
+            <Typography>
+              {String(toDraftQuery(model).ratingDeviation)}
+            </Typography>
           </Box>
           <Slider
             min={minRatingDeviation}
             max={maxRatingDeviation}
-            value={model.draftQuery.ratingDeviation}
+            value={toDraftQuery(model).ratingDeviation}
             onChange={(_, value) => {
               if (typeof value === 'number') {
                 $send({
                   t: 'input-draft-query',
-                  query: { ...model.draftQuery, ratingDeviation: value },
+                  query: { ...toDraftQuery(model), ratingDeviation: value },
                 });
               }
             }}

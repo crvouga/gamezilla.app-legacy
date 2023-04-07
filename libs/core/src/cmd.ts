@@ -75,17 +75,6 @@ const perform =
     };
   };
 
-const debounce = <Msg>(ms: number, cmd: Cmd<Msg>): Cmd<Msg> => {
-  let timeoutId: ReturnType<typeof setTimeout> | undefined = undefined;
-  return ($send) => {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => {
-      timeoutId = undefined;
-      cmd($send);
-    }, ms);
-  };
-};
-
 export const Cmd = {
   None,
   perform,
@@ -95,5 +84,4 @@ export const Cmd = {
   chain,
   map,
   of,
-  debounce,
 };
