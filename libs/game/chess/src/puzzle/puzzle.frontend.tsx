@@ -1,10 +1,10 @@
-import { Cmd, Ease, eq, Posix, Sub } from '@gamezilla/core';
+import { Cmd, eq, Posix, Sub, Time } from '@gamezilla/core';
 import { RoomCtx, ViewGameBox } from '@gamezilla/game-shared';
 import {
   ActionButton,
+  AspectRatio,
   Box,
   Button,
-  CircularProgress,
   Divider,
   Drawer,
   Icon,
@@ -13,6 +13,7 @@ import {
   Typography,
   useTheme,
 } from '@gamezilla/shared/ui';
+import { Skeleton } from '@mui/material';
 import { useMemo } from 'react';
 import * as Chess from '../chess/chess';
 import {
@@ -186,11 +187,18 @@ export const mergeWithBackend = ({
 //
 //
 
-export const subscriptions = (_args: {
+export const subscriptions = ({
+  model,
+  now,
+  intervalId,
+}: {
   model: Model;
   now: Posix;
   intervalId: string;
 }): Sub<Msg> => {
+  if (isAnimating({ model, now })) {
+    return Time.every(intervalId, 100, () => ({ t: 'animate' }));
+  }
   return Sub.None;
 };
 
@@ -213,13 +221,6 @@ export const View = ({
 }) => {
   const status = useMemo(() => toStatus(model), [model]);
 
-  const visualBoard = useMemo<Chess.Model>(() => {
-    return toVisualBoard({
-      now: ctx.now,
-      model,
-    });
-  }, [ctx.now, model]);
-
   const duration = useMemo(() => {
     return !model.startedAt
       ? null
@@ -237,6 +238,16 @@ export const View = ({
       <Divider />
 
       <Box sx={{ flex: 1 }}></Box>
+
+      {/*
+
+
+
+      Game Status
+
+
+
+      */}
 
       <Box
         sx={{
@@ -281,56 +292,38 @@ export const View = ({
         </Box>
       </Box>
 
-      {status.type !== 'loading' ? (
-        <Chess.View
-          key={model.puzzles[0]?.puzzleId}
-          model={visualBoard}
-          isDraggablePiece={({ piece }) => {
-            if (status.type === 'solved') {
-              return false;
-            }
-            const color = Chess.toColor(piece);
-            return (
-              color === toPlayerColor(status.puzzle) &&
-              ctx.hostId === ctx.currentUserId
-            );
-          }}
-          customSquareStyles={toCustomSquareStyle(model)}
-          boardOrientation={toPlayerColor(status.puzzle)}
-          onPieceDrop={(moveInput) => {
-            $send({ t: 'input-move', moveInput });
-
-            return false;
-          }}
+      <AspectRatio aspectRatio={1}>
+        <Skeleton
+          sx={{ position: 'absolute' }}
+          width="100%"
+          height="100%"
+          variant="rectangular"
         />
-      ) : (
-        <Box sx={{ position: 'relative' }}>
+
+        {status.type !== 'loading' && (
           <Chess.View
-            key="chess"
-            model={{
-              fen: '',
-              pgn: '',
+            key={status.puzzle.puzzleId}
+            model={status.board}
+            isDraggablePiece={({ piece }) => {
+              if (status.type === 'solved') {
+                return false;
+              }
+              const color = Chess.toColor(piece);
+              return (
+                color === toPlayerColor(status.puzzle) &&
+                ctx.hostId === ctx.currentUserId
+              );
             }}
-            boardOrientation="w"
+            customSquareStyles={toCustomSquareStyle(model)}
+            boardOrientation={toPlayerColor(status.puzzle)}
+            onPieceDrop={(moveInput) => {
+              $send({ t: 'input-move', moveInput });
+
+              return false;
+            }}
           />
-          <Box
-            sx={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              height: '100%',
-              width: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#fff',
-              backgroundColor: 'rgba(0,0,0,0.5)',
-            }}
-          >
-            <CircularProgress color="inherit" />
-          </Box>
-        </Box>
-      )}
+        )}
+      </AspectRatio>
 
       <Box
         sx={{
@@ -682,6 +675,7 @@ const ViewStatusBar = ({ status }: { status: Status }) => {
 
 const toVisualBoard = ({
   model,
+  now,
 }: {
   now: Posix;
   model: Model;
@@ -692,63 +686,21 @@ const toVisualBoard = ({
     return { fen: '', pgn: '' };
   }
 
-  // if (model.moves.length === 0) {
-  //   const showFirstMove = now - (model.initializedAt ?? now) > 1000 / 3;
+  if (model.moves.length === 0) {
+    const showFirstMove = now - (model.initializedAt ?? now) > 1000 / 3;
 
-  //   if (showFirstMove) {
-  //     const firstMove = status.puzzle.opponentMoves[0];
-  //     const board = ChessBoard.initFromFen(status.puzzle);
-  //     const moved = ChessBoard.move(firstMove, board);
-  //     if (moved.type === 'Err') {
-  //       return board;
-  //     }
-  //     return moved.value;
-  //   }
+    if (showFirstMove) {
+      const firstMove = status.puzzle.opponentMoves[0];
+      const board = Chess.initFromFen(status.puzzle);
+      const moved = Chess.move(firstMove, board);
+      if (moved.type === 'Err') {
+        return board;
+      }
+      return moved.value;
+    }
 
-  //   return ChessBoard.initFromFen(status.puzzle);
-  // }
+    return Chess.initFromFen(status.puzzle);
+  }
 
   return status.board;
-};
-
-export const isAnimating = ({
-  model,
-  now,
-}: {
-  now: Posix;
-  model: Model;
-}): boolean => {
-  if (!model.puzzles[0]) {
-    return false;
-  }
-  const status = toStatus(model);
-
-  if (status.type === 'solving') {
-    return true;
-  }
-
-  const visualBoard = toVisualBoard({
-    now,
-    model,
-  });
-
-  const currentBoard: Chess.Model =
-    status.type === 'loading' ? { fen: '', pgn: '' } : status.board;
-
-  return visualBoard.fen !== currentBoard.fen;
-};
-
-export type VisualModel = {
-  slideLeft: Ease.Model;
-  puzzlePrev?: string;
-  puzzleNex?: string;
-};
-
-export const step = ({
-  visual,
-}: {
-  model: Model;
-  visual: VisualModel;
-}): VisualModel => {
-  return visual;
 };
