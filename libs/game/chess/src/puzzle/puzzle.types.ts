@@ -1,7 +1,7 @@
 import { exhaustive, Posix, Result } from '@gamezilla/core';
 import { UserId } from '@gamezilla/shared';
 import { z } from 'zod';
-import * as ChessBoard from '../chess/chess-board';
+import * as Chess from '../chess/chess-board';
 
 const { Err, Ok } = Result;
 
@@ -14,7 +14,7 @@ export type SharedModel = {
   startedAt: number | null;
   lastMoveAt: number | null;
   query: PuzzleQuery;
-  moves: ChessBoard.MoveInput[];
+  moves: Chess.MoveInput[];
   hint: Hint;
   puzzles: Puzzle[];
 };
@@ -72,8 +72,8 @@ export type PuzzleQuery = z.infer<typeof PuzzleQuery>;
 export type Puzzle = {
   puzzleId: string;
   fen: string;
-  opponentMoves: [ChessBoard.MoveInput, ...ChessBoard.MoveInput[]];
-  correctMoves: [ChessBoard.MoveInput, ...ChessBoard.MoveInput[]];
+  opponentMoves: [Chess.MoveInput, ...Chess.MoveInput[]];
+  correctMoves: [Chess.MoveInput, ...Chess.MoveInput[]];
   rating: number;
   ratingDeviation: number;
   popularity: number;
@@ -102,18 +102,18 @@ export type Status =
   | {
       type: 'solving';
       puzzle: Puzzle;
-      board: ChessBoard.Model;
+      board: Chess.Model;
     }
   | {
       type: 'solved';
       puzzle: Puzzle;
-      board: ChessBoard.Model;
+      board: Chess.Model;
       endedAt: number;
     }
   | {
       type: 'incorrect';
       puzzle: Puzzle;
-      board: ChessBoard.Model;
+      board: Chess.Model;
       endedAt: number;
     };
 
@@ -127,7 +127,7 @@ export const toStatus = (model: SharedModel): Status => {
 
   if (isMovesEqual(puzzle.correctMoves, model.moves)) {
     const allMoves = interleave(puzzle.opponentMoves, model.moves);
-    const board = moveMany(allMoves, ChessBoard.initFromFen(puzzle));
+    const board = moveMany(allMoves, Chess.initFromFen(puzzle));
 
     return {
       type: 'solved',
@@ -140,7 +140,7 @@ export const toStatus = (model: SharedModel): Status => {
   if (didMakeWrongMove(model)) {
     const opponentMoves = puzzle.opponentMoves.slice(0, model.moves.length);
     const allMoves = interleave(opponentMoves, model.moves);
-    const board = moveMany(allMoves, ChessBoard.initFromFen(puzzle));
+    const board = moveMany(allMoves, Chess.initFromFen(puzzle));
 
     return {
       type: 'incorrect',
@@ -152,7 +152,7 @@ export const toStatus = (model: SharedModel): Status => {
 
   const opponentMoves = puzzle.opponentMoves.slice(0, model.moves.length + 1);
   const allMoves = interleave(opponentMoves, model.moves);
-  const board = moveMany(allMoves, ChessBoard.initFromFen(puzzle));
+  const board = moveMany(allMoves, Chess.initFromFen(puzzle));
 
   return {
     type: 'solving',
@@ -162,11 +162,11 @@ export const toStatus = (model: SharedModel): Status => {
 };
 
 const moveMany = (
-  moves: ChessBoard.MoveInput[],
-  board: ChessBoard.Model
-): ChessBoard.Model => {
+  moves: Chess.MoveInput[],
+  board: Chess.Model
+): Chess.Model => {
   return moves.reduce((board, move) => {
-    const moved = ChessBoard.move(move, board);
+    const moved = Chess.move(move, board);
     return moved.type === 'Ok' ? moved.value : board;
   }, board);
 };
@@ -181,10 +181,7 @@ const didMakeWrongMove = (model: SharedModel): boolean => {
   );
 };
 
-const isMovesEqual = (
-  a: ChessBoard.MoveInput[],
-  b: ChessBoard.MoveInput[]
-): boolean => {
+const isMovesEqual = (a: Chess.MoveInput[], b: Chess.MoveInput[]): boolean => {
   return (
     a.length === b.length &&
     a.every((move, index) => {
@@ -203,25 +200,20 @@ export const toEndedAt = (model: SharedModel): number | null => {
   return null;
 };
 
-const isMoveEqual = (
-  a: ChessBoard.MoveInput,
-  b: ChessBoard.MoveInput
-): boolean => {
+const isMoveEqual = (a: Chess.MoveInput, b: Chess.MoveInput): boolean => {
   return a.from === b.from && a.to === b.to;
 };
 
-export const toOpponentColor = (puzzle: Puzzle): ChessBoard.Color => {
-  const board = ChessBoard.initFromFen({ fen: puzzle.fen });
-  return ChessBoard.toTurn(board);
+export const toOpponentColor = (puzzle: Puzzle): Chess.Color => {
+  const board = Chess.initFromFen({ fen: puzzle.fen });
+  return Chess.toTurn(board);
 };
 
-export const toPlayerColor = (puzzle: Puzzle): ChessBoard.Color => {
-  return ChessBoard.toOppositeColor(toOpponentColor(puzzle));
+export const toPlayerColor = (puzzle: Puzzle): Chess.Color => {
+  return Chess.toOppositeColor(toOpponentColor(puzzle));
 };
 
-export const toCorrectMove = (
-  model: SharedModel
-): ChessBoard.MoveInput | null => {
+export const toCorrectMove = (model: SharedModel): Chess.MoveInput | null => {
   const move = model.puzzles[0]?.correctMoves[model.moves.length];
   return move ?? null;
 };
@@ -243,7 +235,7 @@ export type PuzzleCompleted = {
 export type Req =
   | { t: 'init' }
   | { t: 'input-query'; query: PuzzleQuery }
-  | { t: 'input-move'; moveInput: ChessBoard.MoveInput }
+  | { t: 'input-move'; moveInput: Chess.MoveInput }
   | { t: 'next' }
   | { t: 'retry' }
   | { t: 'skip' }
@@ -289,7 +281,7 @@ type Problem =
   | 'must-be-solved'
   | 'must-be-incorrect'
   | 'no-correct-move-found'
-  | ChessBoard.MoveProblem;
+  | Chess.MoveProblem;
 
 export const handle = ({
   ctx,
@@ -312,7 +304,7 @@ export const handle = ({
         return Err('must-be-solving');
       }
 
-      const moved = ChessBoard.move(msg.moveInput, status.board);
+      const moved = Chess.move(msg.moveInput, status.board);
 
       if (moved.type === 'Err') {
         return moved;
@@ -338,13 +330,10 @@ export const handle = ({
         return Err('must-be-solved');
       }
 
-      const modelNew: SharedModel = {
-        ...model,
-        moves: [],
-        puzzles: model.puzzles.slice(1),
-        hint: 'none',
-        query: model.query,
-      };
+      const modelNew = nextPuzzle({
+        model,
+        ctx,
+      });
 
       return Ok(modelNew);
     }
@@ -381,14 +370,10 @@ export const handle = ({
         return Err('must-be-incorrect');
       }
 
-      const modelNew: SharedModel = {
-        ...model,
-        moves: [],
-        puzzles: model.puzzles.slice(1),
-        lastMoveAt: null,
-        startedAt: ctx.now,
-        hint: 'none',
-      };
+      const modelNew: SharedModel = nextPuzzle({
+        model,
+        ctx,
+      });
 
       return Ok(modelNew);
     }
@@ -417,13 +402,13 @@ export const handle = ({
         return Err('must-be-host');
       }
 
-      const modelNew: SharedModel = {
-        ...model,
-        moves: [],
-        puzzles: [],
-        hint: 'none',
-        query: msg.query,
-      };
+      const modelNew = nextPuzzle({
+        ctx,
+        model: {
+          ...model,
+          query: msg.query,
+        },
+      });
 
       return Ok(modelNew);
     }
@@ -436,4 +421,21 @@ export const handle = ({
       return exhaustive(msg);
     }
   }
+};
+
+const nextPuzzle = ({
+  ctx,
+  model,
+}: {
+  ctx: { now: Posix };
+  model: SharedModel;
+}): SharedModel => {
+  return {
+    startedAt: ctx.now,
+    lastMoveAt: null,
+    moves: [],
+    puzzles: model.puzzles.slice(1),
+    hint: 'none',
+    query: model.query,
+  };
 };
