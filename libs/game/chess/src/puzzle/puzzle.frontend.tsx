@@ -1,4 +1,4 @@
-import { Cmd, eq, Posix, Sub, Time } from '@gamezilla/core';
+import { Cmd, eq, Posix, Sub } from '@gamezilla/core';
 import { RoomCtx, ViewGameBox } from '@gamezilla/game-shared';
 import {
   ActionButton,
@@ -187,18 +187,11 @@ export const mergeWithBackend = ({
 //
 //
 
-export const subscriptions = ({
-  model,
-  now,
-  intervalId,
-}: {
+export const subscriptions = (_args: {
   model: Model;
   now: Posix;
   intervalId: string;
 }): Sub<Msg> => {
-  if (isAnimating({ model, now })) {
-    return Time.every(intervalId, 100, () => ({ t: 'animate' }));
-  }
   return Sub.None;
 };
 
@@ -671,36 +664,4 @@ const ViewStatusBar = ({ status }: { status: Status }) => {
       );
     }
   }
-};
-
-const toVisualBoard = ({
-  model,
-  now,
-}: {
-  now: Posix;
-  model: Model;
-}): Chess.Model => {
-  const status = toStatus(model);
-
-  if (status.type === 'loading') {
-    return { fen: '', pgn: '' };
-  }
-
-  if (model.moves.length === 0) {
-    const showFirstMove = now - (model.initializedAt ?? now) > 1000 / 3;
-
-    if (showFirstMove) {
-      const firstMove = status.puzzle.opponentMoves[0];
-      const board = Chess.initFromFen(status.puzzle);
-      const moved = Chess.move(firstMove, board);
-      if (moved.type === 'Err') {
-        return board;
-      }
-      return moved.value;
-    }
-
-    return Chess.initFromFen(status.puzzle);
-  }
-
-  return status.board;
 };
