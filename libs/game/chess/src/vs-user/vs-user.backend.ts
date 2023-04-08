@@ -1,6 +1,6 @@
 import { Cmd, exhaustive, Sub, Time } from '@gamezilla/core';
 import { RoomMsg } from '@gamezilla/game-shared';
-import * as Board from '../chess/chess-board';
+import * as Board from '../chess/chess';
 import {
   BackendModel,
   BackendMsg,

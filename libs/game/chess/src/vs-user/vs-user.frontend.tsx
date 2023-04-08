@@ -1,7 +1,7 @@
 import { Audio, Cmd, exhaustive, Option, p, Sub, t } from '@gamezilla/core';
 import { Alerts, Ctx, UserId } from '@gamezilla/shared';
 import * as UI from '@gamezilla/shared/ui';
-import * as Board from '../chess/chess-board';
+import * as Chess from '../chess/chess';
 import * as Clock from '../chess/chess-clock';
 import Sounds from '../chess/chess-sounds';
 import { PawnIcon, VersusHeader } from '../chess/chess-views';
@@ -176,7 +176,7 @@ export const updateFromBackend = (
         return [model, Cmd.None, []];
       }
 
-      const soundCmd = Board.inCheck(sharedModelNew.board)
+      const soundCmd = Chess.inCheck(sharedModelNew.board)
         ? playAudio(Sounds.check)
         : sharedModelNew.didCapture
         ? playAudio(Sounds.capture)
@@ -442,7 +442,7 @@ export const View = ({
                   ])
                 }
               >
-                Play As {Board.colorToString('w')}
+                Play As {Chess.colorToString('w')}
               </UI.Button>
             ) : (
               <ViewInputUserPlayerSlot
@@ -478,7 +478,7 @@ export const View = ({
                   ])
                 }
               >
-                Play As {Board.colorToString('b')}
+                Play As {Chess.colorToString('b')}
               </UI.Button>
             ) : (
               <ViewInputUserPlayerSlot
@@ -553,7 +553,7 @@ export const View = ({
 
   const { w, b, board, clock } = model.sharedModel;
 
-  const currentUserColor: Board.Color | 'none' | 'Both' =
+  const currentUserColor: Chess.Color | 'none' | 'Both' =
     ctx.currentUserId === w && ctx.currentUserId === b
       ? 'Both'
       : ctx.currentUserId === w
@@ -562,14 +562,14 @@ export const View = ({
       ? 'b'
       : 'none';
 
-  const boardOrientation: Board.Color = p(
+  const boardOrientation: Chess.Color = p(
     currentUserColor === 'none' || currentUserColor === 'Both'
       ? 'w'
       : currentUserColor,
-    (color) => (model.isFlipped ? Board.toOppositeColor(color) : color)
+    (color) => (model.isFlipped ? Chess.toOppositeColor(color) : color)
   );
 
-  const turn = Board.toTurn(board);
+  const turn = Chess.toTurn(board);
 
   const whiteSlot: ViewUserPlayerSlotProps = {
     src: ctx.profiles[w]?.avatarUrl,
@@ -593,12 +593,12 @@ export const View = ({
     <UI.FillBox sx={{ overflowY: 'scroll' }}>
       <ViewUserPlayerSlot position="top" {...topSlot} />
 
-      <Board.View
+      <Chess.View
         model={board}
         boardOrientation={boardOrientation}
         isDraggablePiece={({ piece }) => {
           return (
-            Board.toColor(piece) === currentUserColor ||
+            Chess.toColor(piece) === currentUserColor ||
             currentUserColor === 'Both'
           );
         }}
@@ -698,7 +698,7 @@ export const View = ({
                     model.sharedModel.type === 'game' &&
                     model.sharedModel.drawAgreement.type === 'Asking' &&
                     model.sharedModel.drawAgreement.asker ===
-                      Board.toOppositeColor(currentUserColor)
+                      Chess.toOppositeColor(currentUserColor)
                   }
                   headerIcon={
                     <UI.Icons.HandshakeTwoTone
@@ -792,7 +792,7 @@ const ViewInputUserPlayerSlot = ({
   $send: (msg: Msg) => void;
   userId: UserId;
   ctx: Ctx;
-  color: Board.Color;
+  color: Chess.Color;
 }) => {
   return (
     <UI.Box
@@ -830,7 +830,7 @@ const toGameText = (model: SharedModel): string => {
     case 'GameOver': {
       switch (model.gameOver.type) {
         case 'Checkmate': {
-          const colorStr = Board.colorToString(model.gameOver.winner);
+          const colorStr = Chess.colorToString(model.gameOver.winner);
           return `${colorStr} won by checkmate`;
         }
 
@@ -839,7 +839,7 @@ const toGameText = (model: SharedModel): string => {
         }
 
         case 'Resignation': {
-          return `${Board.colorToString(model.gameOver.resigner)} resigned`;
+          return `${Chess.colorToString(model.gameOver.resigner)} resigned`;
         }
 
         case 'Stalemate': {
@@ -847,7 +847,7 @@ const toGameText = (model: SharedModel): string => {
         }
 
         case 'WinOnTime': {
-          return `${Board.colorToString(model.gameOver.winner)} won on time`;
+          return `${Chess.colorToString(model.gameOver.winner)} won on time`;
         }
 
         default:
@@ -860,11 +860,11 @@ const toGameText = (model: SharedModel): string => {
     }
 
     case 'game': {
-      if (Board.inCheck(model.board)) {
-        return `${Board.colorToString(Board.toTurn(model.board))} is in check`;
+      if (Chess.inCheck(model.board)) {
+        return `${Chess.colorToString(Chess.toTurn(model.board))} is in check`;
       }
 
-      return `${Board.colorToString(Board.toTurn(model.board))}'s turn`;
+      return `${Chess.colorToString(Chess.toTurn(model.board))}'s turn`;
     }
 
     default:

@@ -1,6 +1,6 @@
 import { Cmd, p, Sub } from '@gamezilla/core';
 import { RoomMsg } from '@gamezilla/game-shared';
-import * as Board from '../chess/chess-board';
+import * as Chess from '../chess/chess';
 import {
   BackendModel,
   BackendMsg,
@@ -81,7 +81,7 @@ const toBotMoveCmd = (modelPrev: Model, modelNext: Model): Cmd<Msg> => {
   }
 
   const cmd = p(
-    Board.getBestMove(modelNext.botLevel, modelNext.board),
+    Chess.getBestMove(modelNext.botLevel, modelNext.board),
     Cmd.perform((result): Msg => ['bot-moved', result])
   );
 

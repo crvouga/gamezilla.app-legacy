@@ -1,6 +1,6 @@
 import { Audio, Option, Result } from '@gamezilla/core';
 import { UserId } from '@gamezilla/shared';
-import * as Board from '../chess/chess-board';
+import * as Chess from '../chess/chess';
 
 //
 //
@@ -23,29 +23,29 @@ export type SharedModel = SetupModel | GameModel | GameOverModel;
 
 export type SetupModel = {
   type: 'Setup';
-  userColor: Board.Color;
+  userColor: Chess.Color;
   userId: UserId | 'none';
-  botLevel: Board.BotLevel;
+  botLevel: Chess.BotLevel;
 };
 
 export type GameModel = {
   type: 'game';
-  userColor: Board.Color;
+  userColor: Chess.Color;
   userId: UserId;
-  board: Board.Model;
-  botLevel: Board.BotLevel;
+  board: Chess.Model;
+  botLevel: Chess.BotLevel;
 };
 
 export type GameOverModel = {
   type: 'GameOver';
   gameOver: GameOver;
-  userColor: Board.Color;
+  userColor: Chess.Color;
   userId: UserId;
-  board: Board.Model;
-  botLevel: Board.BotLevel;
+  board: Chess.Model;
+  botLevel: Chess.BotLevel;
 };
 
-export type GameOver = Board.GameOver;
+export type GameOver = Chess.GameOver;
 
 export const initShared: SharedModel = {
   type: 'Setup',
@@ -68,7 +68,7 @@ export const initBackend = ({
 };
 
 export const isBotTurn = (model: SharedModel) => {
-  return model.type === 'game' && Board.toTurn(model.board) !== model.userColor;
+  return model.type === 'game' && Chess.toTurn(model.board) !== model.userColor;
 };
 
 //
@@ -137,7 +137,7 @@ export const inputUser = (
 
 export type InputColor = [
   'InputColor',
-  { userColor: Board.Color; userId: UserId }
+  { userColor: Chess.Color; userId: UserId }
 ];
 export type InputColor_Done = [
   'InputColor_Done',
@@ -191,7 +191,7 @@ export const inputColor = (
 
 export type InputBot = [
   'InputBot',
-  { botLevel: Board.BotLevel; userId: UserId }
+  { botLevel: Chess.BotLevel; userId: UserId }
 ];
 export type InputBot_Done = [
   'InputBot_Done',
@@ -278,7 +278,7 @@ export const startGame = (
 
   const modelNew: SharedModel = {
     type: 'game',
-    board: Board.init(),
+    board: Chess.init(),
     botLevel: model.botLevel,
     userColor: model.userColor,
     userId: model.userId,
@@ -338,7 +338,7 @@ export const stopGame = (
 //
 //
 
-export type InputMove = ['input-move', Board.MoveInput & { userId: UserId }];
+export type InputMove = ['input-move', Chess.MoveInput & { userId: UserId }];
 
 export type InputMove_Done = [
   'input-move-done',
@@ -346,7 +346,7 @@ export type InputMove_Done = [
 ];
 
 export type InputMoveProblem =
-  | Board.MoveProblem
+  | Chess.MoveProblem
   | 'must_be_started'
   | 'must_be_playing'
   | 'must_be_turn';
@@ -363,11 +363,11 @@ export const inputMove = (
     return Result.Err('must_be_playing');
   }
 
-  if (Board.toTurn(model.board) !== model.userColor) {
+  if (Chess.toTurn(model.board) !== model.userColor) {
     return Result.Err('must_be_turn');
   }
 
-  const result = Board.move(moveInput, model.board);
+  const result = Chess.move(moveInput, model.board);
 
   if (result.type === 'Err') {
     return result;
@@ -375,7 +375,7 @@ export const inputMove = (
 
   const boardNew = result.value;
 
-  const gameOver = Board.toGameOver(boardNew);
+  const gameOver = Chess.toGameOver(boardNew);
 
   if (gameOver.type !== 'none') {
     const modelNew: SharedModel = {
@@ -410,14 +410,14 @@ export const inputMove = (
 //
 //
 
-export type BotMoved = ['bot-moved', Board.BestMoveInputResult];
+export type BotMoved = ['bot-moved', Chess.BestMoveInputResult];
 export type BotMoved_Done = [
   'bot-moved_Done',
   Result<BotMovedProblem, SharedModel & { didCapture: boolean }>
 ];
 export type BotMovedProblem =
-  | Board.MoveProblem
-  | Board.BestMoveInputProblem
+  | Chess.MoveProblem
+  | Chess.BestMoveInputProblem
   | 'must_be_started'
   | 'must_be_turn';
 
@@ -435,13 +435,13 @@ export const botMoved = (
 
   const botMoveInput = botMoveResult.value;
 
-  const botColor = Board.toOppositeColor(model.userColor);
+  const botColor = Chess.toOppositeColor(model.userColor);
 
-  if (Board.toTurn(model.board) !== botColor) {
+  if (Chess.toTurn(model.board) !== botColor) {
     return Result.Err('must_be_turn');
   }
 
-  const result = Board.move(botMoveInput, model.board);
+  const result = Chess.move(botMoveInput, model.board);
 
   if (result.type === 'Err') {
     return result;
@@ -449,7 +449,7 @@ export const botMoved = (
 
   const { didCapture, ...boardNew } = result.value;
 
-  const gameOver = Board.toGameOver(boardNew);
+  const gameOver = Chess.toGameOver(boardNew);
 
   if (gameOver.type !== 'none') {
     const modelNew: SharedModel = {

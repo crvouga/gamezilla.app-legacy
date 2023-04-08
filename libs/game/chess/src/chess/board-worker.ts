@@ -1,12 +1,12 @@
 import { expose } from 'threads/worker';
-import * as Board from './chess-board';
+import * as Chess from './chess';
 
 export type BoardWorker = {
-  toBestMove: typeof Board.toBestMoveInput;
+  toBestMove: typeof Chess.toBestMoveInput;
 };
 
 const worker: BoardWorker = {
-  toBestMove: Board.toBestMoveInput,
+  toBestMove: Chess.toBestMoveInput,
 };
 
 expose(worker);

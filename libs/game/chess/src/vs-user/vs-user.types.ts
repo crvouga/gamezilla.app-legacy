@@ -1,6 +1,6 @@
 import { Audio, eq, Option, Result } from '@gamezilla/core';
 import { UserId } from '@gamezilla/shared';
-import * as Board from '../chess/chess-board';
+import * as Chess from '../chess/chess';
 import * as Clock from '../chess/chess-clock';
 
 const { Ok, Err } = Result;
@@ -37,7 +37,7 @@ export type SharedModel =
       w: UserId;
       b: UserId;
       clock: Clock.Clock;
-      board: Board.Model;
+      board: Chess.Model;
     }
   | {
       type: 'GameOver';
@@ -45,7 +45,7 @@ export type SharedModel =
       w: UserId;
       b: UserId;
       clock: Clock.Clock;
-      board: Board.Model;
+      board: Chess.Model;
     };
 
 export type DrawAgreement =
@@ -54,21 +54,21 @@ export type DrawAgreement =
     }
   | {
       type: 'Asking';
-      asker: Board.Color;
+      asker: Chess.Color;
     };
 
 export type GameOver =
-  | Board.GameOver
+  | Chess.GameOver
   | {
       type: 'Resignation';
-      resigner: Board.Color;
+      resigner: Chess.Color;
     }
   | {
       type: 'DrawByAgreement';
     }
   | {
       type: 'WinOnTime';
-      winner: Board.Color;
+      winner: Chess.Color;
     };
 
 export const initShared = ({
@@ -141,7 +141,7 @@ export type Res =
 //
 //
 
-export type InputMove = ['input-move', Board.MoveInput & { userId: UserId }];
+export type InputMove = ['input-move', Chess.MoveInput & { userId: UserId }];
 
 export type InputMove_Done = [
   'input-move-done',
@@ -149,7 +149,7 @@ export type InputMove_Done = [
 ];
 
 export type MoveProblem =
-  | Board.MoveProblem
+  | Chess.MoveProblem
   | 'game_must_be_started'
   | 'user_must_be_a_player';
 
@@ -165,7 +165,7 @@ export const inputMove = (
     return Err('user_must_be_a_player');
   }
 
-  const result = Board.move(moveInput, model.board);
+  const result = Chess.move(moveInput, model.board);
 
   if (result.type === 'Err') {
     return result;
@@ -173,7 +173,7 @@ export const inputMove = (
 
   const boardNew = result.value;
 
-  const gameOver = Board.toGameOver(boardNew);
+  const gameOver = Chess.toGameOver(boardNew);
 
   if (gameOver.type !== 'none') {
     const modelNew: SharedModel = {
@@ -209,7 +209,7 @@ export const inputMove = (
 export type InputPlayer = [
   'InputPlayer',
   {
-    color: Board.Color;
+    color: Chess.Color;
     userId: UserId | 'none';
   }
 ];
@@ -239,7 +239,7 @@ export const inputPlayer = (
     return Err('player_is_taken');
   }
 
-  const otherColor = Board.toOppositeColor(color);
+  const otherColor = Chess.toOppositeColor(color);
   const otherPlayer = model[otherColor];
 
   const otherPlayerNew =
@@ -378,7 +378,7 @@ export const startGame = (
     type: 'game',
     w: model.w,
     b: model.b,
-    board: Board.init(),
+    board: Chess.init(),
     clock: Clock.presetToClock(model.clockPreset),
     drawAgreement: { type: 'NotAsking' },
   });
@@ -392,14 +392,14 @@ export const startGame = (
 //
 //
 
-export type RequestToDraw = ['RequestToDraw', Board.Color];
+export type RequestToDraw = ['RequestToDraw', Chess.Color];
 export type RequestToDraw_Done = [
   'RequestToDraw_Done',
   Result<'game_must_be_started', SharedModel>
 ];
 
 export const requestToDraw = (
-  color: Board.Color,
+  color: Chess.Color,
   model: SharedModel
 ): RequestToDraw_Done[1] => {
   if (model.type !== 'game') {
@@ -479,7 +479,7 @@ export const cancelDraw = (
     return Err('must_be_asking_for_a_draw');
   }
 
-  const color: Board.Color | 'none' =
+  const color: Chess.Color | 'none' =
     model.b === userId ? 'b' : model.w === userId ? 'w' : 'none';
 
   if (color === 'none') {
@@ -508,7 +508,7 @@ export const cancelDraw = (
 //
 //
 
-export type Resign = ['Resign', Board.Color];
+export type Resign = ['Resign', Chess.Color];
 export type Resign_Done = [
   'Resign_Done',
   Result<'can_not_resign', SharedModel>
@@ -576,7 +576,7 @@ export const clockTicked = (model: SharedModel): SharedModel => {
     return model;
   }
 
-  const turn = Board.toTurn(model.board);
+  const turn = Chess.toTurn(model.board);
 
   if (
     model.drawAgreement.type === 'Asking' &&
@@ -598,7 +598,7 @@ export const clockTicked = (model: SharedModel): SharedModel => {
       clock: result.clock,
       gameOver: {
         type: 'WinOnTime',
-        winner: Board.toOppositeColor(loser),
+        winner: Chess.toOppositeColor(loser),
       },
     };
   }

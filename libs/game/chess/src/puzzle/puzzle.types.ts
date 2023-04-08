@@ -1,7 +1,7 @@
 import { exhaustive, Posix, Result } from '@gamezilla/core';
 import { UserId } from '@gamezilla/shared';
 import { z } from 'zod';
-import * as Chess from '../chess/chess-board';
+import * as Chess from '../chess/chess';
 
 const { Err, Ok } = Result;
 

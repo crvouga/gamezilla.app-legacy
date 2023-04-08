@@ -1,4 +1,4 @@
-import * as Board from './chess-board';
+import * as Board from './chess';
 
 export type Clock = {
   preset: Preset;

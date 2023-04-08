@@ -2,8 +2,8 @@ import { Audio, Cmd, exhaustive, Option, Sub, t } from '@gamezilla/core';
 import { viewVsBotSetupScreen } from '@gamezilla/game-shared';
 import { Alerts, Ctx } from '@gamezilla/shared';
 import * as UI from '@gamezilla/shared/ui';
-import * as Board from '../chess/chess-board';
-import { viewCoverArt } from '../chess/chess-board';
+import * as Chess from '../chess/chess';
+import { viewCoverArt } from '../chess/chess';
 import Sounds from '../chess/chess-sounds';
 import { PawnIcon } from '../chess/chess-views';
 import {
@@ -169,7 +169,7 @@ const updateFromBackend_ = (
       const { didCapture, ...sharedModel } = result.value;
 
       const soundCmd =
-        sharedModel.type === 'game' && Board.inCheck(sharedModel.board)
+        sharedModel.type === 'game' && Chess.inCheck(sharedModel.board)
           ? playAudio(Sounds.check)
           : didCapture
           ? playAudio(Sounds.capture)
@@ -195,7 +195,7 @@ const updateFromBackend_ = (
       const modelNew = mergeWithBackend(model, sharedModelNew);
 
       const soundCmd =
-        sharedModelNew.type === 'game' && Board.inCheck(sharedModelNew.board)
+        sharedModelNew.type === 'game' && Chess.inCheck(sharedModelNew.board)
           ? playAudio(Sounds.check)
           : sharedModelNew.didCapture
           ? playAudio(Sounds.capture)
@@ -291,9 +291,9 @@ export const View = ({
   onClose: () => void;
 }) => {
   if (model.sharedModel.type === 'Setup') {
-    return viewVsBotSetupScreen<Board.BotLevel, Board.Color>({
+    return viewVsBotSetupScreen<Chess.BotLevel, Chess.Color>({
       botLevel: {
-        values: Board.allBotLevels,
+        values: Chess.allBotLevels,
         selected: model.sharedModel.botLevel,
         onInput: (botLevel) =>
           $send(['InputBot', { botLevel, userId: ctx.currentUserId }]),
@@ -305,7 +305,7 @@ export const View = ({
       onStartPlaying: () => $send(['InputUser', { userId: ctx.currentUserId }]),
       onStopPlaying: () => $send(['InputUser', { userId: 'none' }]),
       player: {
-        values: Object.values(Board.colors),
+        values: Object.values(Chess.colors),
         selected: model.sharedModel.userColor,
         onInput: (color) =>
           $send([
@@ -338,7 +338,7 @@ export const View = ({
 
       <UI.Box sx={{ flex: 1 }}>
         <UI.Typography variant="h6">
-          {Board.botLevelToString(model.sharedModel.botLevel)}
+          {Chess.botLevelToString(model.sharedModel.botLevel)}
         </UI.Typography>
       </UI.Box>
 
@@ -360,7 +360,7 @@ export const View = ({
   );
 
   const boardOrientation = model.isFlipped
-    ? Board.toOppositeColor(model.sharedModel.userColor)
+    ? Chess.toOppositeColor(model.sharedModel.userColor)
     : model.sharedModel.userColor;
 
   const topSlot = (
@@ -379,11 +379,11 @@ export const View = ({
     <UI.FillBox>
       {topSlot}
 
-      <Board.View
+      <Chess.View
         boardOrientation={boardOrientation}
         isDraggablePiece={({ piece }) => {
           return (
-            Board.toColor(piece) === model.sharedModel.userColor &&
+            Chess.toColor(piece) === model.sharedModel.userColor &&
             model.sharedModel.userId === ctx.currentUserId
           );
         }}
@@ -443,7 +443,7 @@ export const View = ({
         >
           {model.sharedModel.gameOver.type === 'Checkmate' && (
             <UI.DialogTitle>
-              {Board.colorToString(model.sharedModel.gameOver.winner)} won by
+              {Chess.colorToString(model.sharedModel.gameOver.winner)} won by
               checkmate
             </UI.DialogTitle>
           )}
@@ -466,7 +466,7 @@ export const toGameText = (model: SharedModel): string => {
     case 'GameOver': {
       switch (model.gameOver.type) {
         case 'Checkmate': {
-          const color = Board.colorToString(model.gameOver.winner);
+          const color = Chess.colorToString(model.gameOver.winner);
           return `${color} won by checkmate`;
         }
 
@@ -484,11 +484,11 @@ export const toGameText = (model: SharedModel): string => {
     }
 
     case 'game': {
-      if (Board.inCheck(model.board)) {
-        return `${Board.colorToString(Board.toTurn(model.board))} is in check`;
+      if (Chess.inCheck(model.board)) {
+        return `${Chess.colorToString(Chess.toTurn(model.board))} is in check`;
       }
 
-      return `${Board.colorToString(Board.toTurn(model.board))}'s turn`;
+      return `${Chess.colorToString(Chess.toTurn(model.board))}'s turn`;
     }
 
     default:

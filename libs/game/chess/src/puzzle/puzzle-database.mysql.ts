@@ -2,7 +2,7 @@ import { NonEmpty, p, Result, Task } from '@gamezilla/core';
 import { UserId } from '@gamezilla/shared';
 import { DatabaseConnectionMySQL } from '@gamezilla/shared/backend';
 import { z } from 'zod';
-import { MoveInput, uciMoveToMoveInput } from '../chess/chess-board';
+import { MoveInput, uciMoveToMoveInput } from '../chess/chess';
 import { Puzzle, PuzzleInteraction, PuzzleQuery } from './puzzle.types';
 
 // source https://database.lichess.org/#puzzles

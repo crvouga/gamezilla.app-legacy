@@ -8,7 +8,7 @@ import {
   ToBackend,
   ToFrontend,
 } from './chess.types';
-import { viewCoverArt } from './chess/chess-board';
+import { viewCoverArt } from './chess/chess';
 import Sounds from './chess/chess-sounds';
 import * as Puzzle from './puzzle/puzzle.frontend';
 import * as VsBot from './vs-bot/vs-bot.frontend';

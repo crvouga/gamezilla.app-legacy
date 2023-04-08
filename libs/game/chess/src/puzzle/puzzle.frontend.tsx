@@ -14,7 +14,7 @@ import {
   useTheme,
 } from '@gamezilla/shared/ui';
 import { useMemo } from 'react';
-import * as ChessBoard from '../chess/chess-board';
+import * as Chess from '../chess/chess';
 import {
   FrontendModel,
   FrontendMsg,
@@ -213,7 +213,7 @@ export const View = ({
 }) => {
   const status = useMemo(() => toStatus(model), [model]);
 
-  const visualBoard = useMemo<ChessBoard.Model>(() => {
+  const visualBoard = useMemo<Chess.Model>(() => {
     return toVisualBoard({
       now: ctx.now,
       model,
@@ -282,14 +282,14 @@ export const View = ({
       </Box>
 
       {status.type !== 'loading' ? (
-        <ChessBoard.View
+        <Chess.View
           key={model.puzzles[0]?.puzzleId}
           model={visualBoard}
           isDraggablePiece={({ piece }) => {
             if (status.type === 'solved') {
               return false;
             }
-            const color = ChessBoard.toColor(piece);
+            const color = Chess.toColor(piece);
             return (
               color === toPlayerColor(status.puzzle) &&
               ctx.hostId === ctx.currentUserId
@@ -305,7 +305,7 @@ export const View = ({
         />
       ) : (
         <Box sx={{ position: 'relative' }}>
-          <ChessBoard.View
+          <Chess.View
             key="chess"
             model={{
               fen: '',
@@ -425,22 +425,22 @@ export const View = ({
   );
 };
 
-const toCustomSquareStyle = (model: Model): ChessBoard.CustomSquareStyles => {
+const toCustomSquareStyle = (model: Model): Chess.CustomSquareStyles => {
   const correctMove = toCorrectMove(model);
   return !correctMove
     ? {}
     : model.hint === 'from'
     ? {
-        [ChessBoard.toLowercaseSquare(correctMove.from)]: {
+        [Chess.toLowercaseSquare(correctMove.from)]: {
           backgroundColor: 'skyblue',
         },
       }
     : model.hint === 'from-and-to'
     ? {
-        [ChessBoard.toLowercaseSquare(correctMove.from)]: {
+        [Chess.toLowercaseSquare(correctMove.from)]: {
           backgroundColor: 'skyblue',
         },
-        [ChessBoard.toLowercaseSquare(correctMove.to)]: {
+        [Chess.toLowercaseSquare(correctMove.to)]: {
           backgroundColor: 'skyblue',
         },
       }
@@ -672,7 +672,7 @@ const ViewStatusBar = ({ status }: { status: Status }) => {
             }}
           />
           <Typography variant="h6">
-            {ChessBoard.colorToString(toPlayerColor(status.puzzle))} to move
+            {Chess.colorToString(toPlayerColor(status.puzzle))} to move
           </Typography>
         </Box>
       );
@@ -685,7 +685,7 @@ const toVisualBoard = ({
 }: {
   now: Posix;
   model: Model;
-}): ChessBoard.Model => {
+}): Chess.Model => {
   const status = toStatus(model);
 
   if (status.type === 'loading') {
@@ -732,7 +732,7 @@ export const isAnimating = ({
     model,
   });
 
-  const currentBoard: ChessBoard.Model =
+  const currentBoard: Chess.Model =
     status.type === 'loading' ? { fen: '', pgn: '' } : status.board;
 
   return visualBoard.fen !== currentBoard.fen;
