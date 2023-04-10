@@ -63,7 +63,7 @@ export const ViewMainMenu = ({
   return (
     <div className="w-full h-full flex flex-col">
       <div className="w-full flex-1 flex flex-col items-center justify-center p-4 overflow-y-scroll">
-        <div className="aspect-square w-32 h-32 max-w-full max-h-full  rounded mt-4">
+        <div className="aspect-square w-32 h-32 max-w-full max-h-full rounded overflow-hidden mt-4">
           {coverArt}
         </div>
 
@@ -86,7 +86,7 @@ export const ViewMainMenu = ({
       <div className="p-4">
         <button onClick={gameRoomCtx.onQuit} className="btn w-full">
           <Icons.ArrowLeft className="mr-2" />
-          Back
+          Quit
         </button>
       </div>
     </div>

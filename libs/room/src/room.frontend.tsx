@@ -18,6 +18,7 @@ import {
   FillBox,
   Header,
   HeaderBackButton,
+  Icon,
   IconButton,
   Icons,
   Paper,
@@ -1062,50 +1063,37 @@ const ViewRoom = ({
   const game = model.games[room.roomId];
   return (
     <FillBox>
-      <Paper elevation={0} sx={{ display: 'flex', alignItems: 'center' }}>
-        <ActionButton
-          sx={{ width: 80 }}
-          icon={<Icons.ChevronLeft />}
-          label="Back"
-          onClick={() => {
-            ctx.$push(['room-list']);
-          }}
-        />
-        <ActionButton
-          sx={{ width: 72 }}
-          icon={
-            // <Icons.People />
-            <StyledBadge
-              badgeContent={toRoomUsers(room.roomId, model).length}
-              color="primary"
-            >
-              <Icons.Groups />
-            </StyledBadge>
-          }
-          label={`People`}
-          onClick={() => {
-            $send({ t: 'modal-open', c: 'users' });
-          }}
-        />
-        <Box sx={{ flex: 1 }}></Box>
+      <div className="flex items-center w-full p-2">
+        <button
+          className="btn btn-sm mr-2"
+          onClick={() => ctx.$push(['room-list'])}
+        >
+          <Icon className="mr-2" name="exit" />
+          Exit
+        </button>
+        <button
+          className="btn btn-sm"
+          onClick={() => $send({ t: 'modal-open', c: 'users' })}
+        >
+          <Icon className="mr-2" name="puzzle" />
+          People
+        </button>
 
-        <Box sx={{ pr: 2 }}>
-          <Button
-            size="small"
-            color="error"
-            variant="contained"
-            onClick={() => {
-              if (room.hostId === ctx.currentUserId) {
-                $send({ t: 'destroy', userId: ctx.currentUserId });
-              } else {
-                $send({ t: 'leave', userId: ctx.currentUserId });
-              }
-            }}
-          >
-            {room.hostId === ctx.currentUserId ? 'End' : 'Leave'}
-          </Button>
-        </Box>
-      </Paper>
+        <div className="flex-1" />
+
+        <button
+          className="btn btn-sm btn-error"
+          onClick={() => {
+            if (room.hostId === ctx.currentUserId) {
+              $send({ t: 'destroy', userId: ctx.currentUserId });
+            } else {
+              $send({ t: 'leave', userId: ctx.currentUserId });
+            }
+          }}
+        >
+          {room.hostId === ctx.currentUserId ? 'End' : 'Leave'}
+        </button>
+      </div>
 
       <Divider />
 
