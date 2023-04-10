@@ -1,5 +1,6 @@
 import { exhaustive } from '@gamezilla/core';
 import {
+  People,
   AccessTime,
   ArrowCircleRight,
   Check,
@@ -832,6 +833,7 @@ export type IconName =
   | 'lightbulb'
   | 'clock'
   | 'close'
+  | 'people'
   | 'arrow-circle-right';
 
 export const Icon = ({
@@ -844,6 +846,9 @@ export const Icon = ({
   sx?: Sx;
 }) => {
   switch (name) {
+    case 'people': {
+      return <People sx={sx} className={className} />;
+    }
     case 'clock': {
       return <AccessTime sx={sx} className={className} />;
     }

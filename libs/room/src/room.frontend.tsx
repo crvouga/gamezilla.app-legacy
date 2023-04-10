@@ -3,10 +3,8 @@ import { RoomCtx } from '@gamezilla/game-shared';
 import { ProfileStore } from '@gamezilla/profile';
 import { Alerts, AppMsg, Ctx, RoomId, Route, UserId } from '@gamezilla/shared';
 import {
-  ActionButton,
   Avatar,
   AvatarGroup,
-  Badge,
   Box,
   Button,
   ButtonBase,
@@ -26,7 +24,6 @@ import {
   useTheme,
   ViewEmptyState,
 } from '@gamezilla/shared/ui';
-import { BadgeProps, styled } from '@mui/material';
 import { gameNameToString, viewCoverArt } from './game';
 import * as Game from './game.frontend';
 import { GameName, gameNameList } from './game.types';
@@ -756,7 +753,56 @@ const ViewPage = ({
     return <ViewNotInRoom room={room} $send={$send} ctx={ctx} model={model} />;
   }
 
-  return <ViewRoom room={room} ctx={ctx} $send={$send} model={model} />;
+  const game = model.games[room.roomId];
+  return (
+    <div className="w-full h-full flex-1 flex flex-col">
+      <div className="flex items-center w-full p-2 border-b">
+        <button
+          className="btn btn-sm mr-2"
+          onClick={() => ctx.$push(['room-list'])}
+        >
+          <Icon className="mr-2" name="exit" />
+          Exit
+        </button>
+        <button
+          className="btn btn-sm"
+          onClick={() => $send({ t: 'modal-open', c: 'users' })}
+        >
+          <Icon className="mr-2" name="people" />
+          People
+        </button>
+
+        <div className="flex-1" />
+
+        <button
+          className="btn btn-sm btn-error"
+          onClick={() => {
+            if (room.hostId === ctx.currentUserId) {
+              $send({ t: 'destroy', userId: ctx.currentUserId });
+            } else {
+              $send({ t: 'leave', userId: ctx.currentUserId });
+            }
+          }}
+        >
+          {room.hostId === ctx.currentUserId ? 'End' : 'Leave'}
+        </button>
+      </div>
+
+      {game ? (
+        <Game.View
+          ctx={{
+            ...ctx,
+            hostId: room.hostId,
+            onQuit: () => $send({ t: 'input-game', gameName: undefined }),
+          }}
+          $send={(msg) => $send({ t: 'game', c: msg })}
+          model={game}
+        />
+      ) : (
+        <ViewNotInGame model={model} ctx={ctx} room={room} $send={$send} />
+      )}
+    </div>
+  );
 };
 
 export const ViewRoomNotFound = ({ ctx }: { ctx: Ctx }) => {
@@ -1038,80 +1084,6 @@ const formatUsernames = (usernames: string[]) => {
     return `${formatted.slice(0, 3).join(', ')} & ${formatted.length - 3} more`;
   }
   return formatted.join(', ');
-};
-
-const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
-  '& .MuiBadge-badge': {
-    right: -4,
-    top: 13,
-    border: `2px solid ${theme.palette.background.paper}`,
-    padding: '0 4px',
-  },
-}));
-
-const ViewRoom = ({
-  ctx,
-  model,
-  $send,
-  room,
-}: {
-  room: { roomId: RoomId; hostId: UserId };
-  ctx: Ctx;
-  model: Model;
-  $send: (msg: Msg) => void;
-}) => {
-  const game = model.games[room.roomId];
-  return (
-    <FillBox>
-      <div className="flex items-center w-full p-2">
-        <button
-          className="btn btn-sm mr-2"
-          onClick={() => ctx.$push(['room-list'])}
-        >
-          <Icon className="mr-2" name="exit" />
-          Exit
-        </button>
-        <button
-          className="btn btn-sm"
-          onClick={() => $send({ t: 'modal-open', c: 'users' })}
-        >
-          <Icon className="mr-2" name="puzzle" />
-          People
-        </button>
-
-        <div className="flex-1" />
-
-        <button
-          className="btn btn-sm btn-error"
-          onClick={() => {
-            if (room.hostId === ctx.currentUserId) {
-              $send({ t: 'destroy', userId: ctx.currentUserId });
-            } else {
-              $send({ t: 'leave', userId: ctx.currentUserId });
-            }
-          }}
-        >
-          {room.hostId === ctx.currentUserId ? 'End' : 'Leave'}
-        </button>
-      </div>
-
-      <Divider />
-
-      {game ? (
-        <Game.View
-          ctx={{
-            ...ctx,
-            hostId: room.hostId,
-            onQuit: () => $send({ t: 'input-game', gameName: undefined }),
-          }}
-          $send={(msg) => $send({ t: 'game', c: msg })}
-          model={game}
-        />
-      ) : (
-        <ViewNotInGame model={model} ctx={ctx} room={room} $send={$send} />
-      )}
-    </FillBox>
-  );
 };
 
 export const ViewNotInGame = ({
