@@ -864,20 +864,15 @@ export const ViewPageRoomList = ({
 
       <Box sx={{ flex: 1 }} />
 
-      {currentRoom === undefined && (
-        <Box sx={{ width: '100%', px: 2, py: 2 }}>
-          <Button
-            variant="contained"
-            fullWidth
-            loading={model.requests['create'] === RemoteData.Loading}
-            size="large"
-            onClick={() => {
-              $send({ t: 'create', roomId: RoomId.generate() });
-            }}
+      {!currentRoom && (
+        <div className="w-full p-4">
+          <button
+            className="btn btn-primary w-full"
+            onClick={() => $send({ t: 'create', roomId: RoomId.generate() })}
           >
             Create Room
-          </Button>
-        </Box>
+          </button>
+        </div>
       )}
     </FillBox>
   );

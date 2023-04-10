@@ -834,61 +834,74 @@ export type IconName =
   | 'close'
   | 'arrow-circle-right';
 
-export const Icon = ({ name, sx }: { name: IconName; sx?: Sx }) => {
+export const Icon = ({
+  name,
+  sx,
+  className,
+}: {
+  className?: string;
+  name: IconName;
+  sx?: Sx;
+}) => {
   switch (name) {
     case 'clock': {
-      return <AccessTime sx={sx} />;
+      return <AccessTime sx={sx} className={className} />;
     }
     case 'close': {
-      return <Close sx={sx} />;
+      return <Close sx={sx} className={className} />;
     }
 
     case 'check': {
-      return <Check sx={sx} />;
+      return <Check sx={sx} className={className} />;
     }
 
     case 'lightbulb': {
-      return <Lightbulb sx={sx} />;
+      return <Lightbulb sx={sx} className={className} />;
     }
 
     case 'smart-toy': {
-      return <SmartToy key="smart-toy" sx={sx} />;
+      return <SmartToy key="smart-toy" sx={sx} className={className} />;
     }
 
     case 'exit': {
-      return <ExitToApp sx={{ ...sx, transform: 'rotate(180deg)' }} />;
+      return (
+        <ExitToApp
+          sx={{ ...sx, transform: 'rotate(180deg)' }}
+          className={className}
+        />
+      );
     }
 
     case 'tune': {
-      return <Tune sx={{ ...sx }} />;
+      return <Tune sx={{ ...sx }} className={className} />;
     }
 
     case 'swap': {
-      return <SwapHorizSharp sx={sx} />;
+      return <SwapHorizSharp sx={sx} className={className} />;
     }
 
     case 'restart': {
-      return <RestartAlt sx={sx} />;
+      return <RestartAlt sx={sx} className={className} />;
     }
 
     case 'flag': {
-      return <Flag sx={sx} />;
+      return <Flag sx={sx} className={className} />;
     }
 
     case 'puzzle': {
-      return <Extension sx={sx} />;
+      return <Extension sx={sx} className={className} />;
     }
 
     case 'friends': {
-      return <People sx={sx} />;
+      return <People sx={sx} className={className} />;
     }
 
     case 'chevron-right': {
-      return <ChevronRight sx={sx} />;
+      return <ChevronRight sx={sx} className={className} />;
     }
 
     case 'arrow-circle-right': {
-      return <ArrowCircleRight sx={sx} />;
+      return <ArrowCircleRight sx={sx} className={className} />;
     }
 
     default: {

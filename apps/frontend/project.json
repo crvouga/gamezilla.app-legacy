@@ -29,7 +29,7 @@
       "configurations": {
         "development": {
           "buildTarget": "frontend:build:development",
-          "hmr": true
+          "hmr": false
         },
         "production": {
           "buildTarget": "frontend:build:production",

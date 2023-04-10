@@ -20,7 +20,7 @@ export type RoomCtx = Ctx & {
   hostId: UserId;
 };
 
-export type RoomMsg = {t: 'user-left',  userId: UserId };
+export type RoomMsg = { t: 'user-left'; userId: UserId };
 
 export const bannerArtAspectRatio = Math.pow(3 / 4, 4);
 
@@ -39,9 +39,7 @@ export const ViewMainMenu = ({
 }) => {
   if (ctx.currentUserId !== gameRoomCtx.hostId) {
     return (
-      <FillBox
-        sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-      >
+      <div className="w-full h-full">
         <Box
           sx={{
             height: 120,
@@ -58,59 +56,40 @@ export const ViewMainMenu = ({
         <Typography variant="h2" align="center" sx={{ mb: 1 }}>
           {title}
         </Typography>
-      </FillBox>
+      </div>
     );
   }
 
   return (
-    <FillBox sx={{ p: 2 }}>
-      <Box
-        sx={{
-          height: 144,
-          width: 144,
-          mx: 'auto',
-          borderRadius: 2,
-          overflow: 'hidden',
-          mt: 4,
-          mb: 2,
-        }}
-      >
-        {coverArt}
-      </Box>
+    <div className="w-full h-full flex flex-col">
+      <div className="w-full flex-1 flex flex-col items-center justify-center p-4 overflow-y-scroll">
+        <div className="aspect-square w-32 h-32 max-w-full max-h-full  rounded mt-4">
+          {coverArt}
+        </div>
 
-      <Typography variant="h2" align="center" sx={{ mb: 3 }}>
-        {title}
-      </Typography>
+        <h1 className="text-4xl text-center mt-4 font-bold">{title}</h1>
 
-      {actions.map(([iconName, label, onClick], index) => {
-        return (
-          <Button
-            key={index}
-            onClick={onClick}
-            size="large"
-            fullWidth
-            variant="contained"
-            color="primary"
-            startIcon={<Icon name={iconName} />}
-            sx={{ mb: 2 }}
-          >
-            {label}
-          </Button>
-        );
-      })}
+        <div className="w-full flex flex-col gap-4 mt-4 mb-5">
+          {actions.map(([iconName, label, onClick], index) => (
+            <button
+              key={index}
+              onClick={onClick}
+              className="btn w-full btn-primary"
+            >
+              <Icon name={iconName} className="mr-2" />
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
 
-      <Box sx={{ flex: 1 }} />
-
-      <Button
-        onClick={gameRoomCtx.onQuit}
-        size="large"
-        fullWidth
-        variant="outlined"
-        startIcon={<Icons.ArrowLeft />}
-      >
-        Back
-      </Button>
-    </FillBox>
+      <div className="p-4">
+        <button onClick={gameRoomCtx.onQuit} className="btn w-full">
+          <Icons.ArrowLeft className="mr-2" />
+          Back
+        </button>
+      </div>
+    </div>
   );
 };
 
