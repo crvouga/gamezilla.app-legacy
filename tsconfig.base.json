@@ -48,6 +48,7 @@
       "@gamezilla/room": ["libs/room/src/index.ts"],
       "@gamezilla/shared": ["libs/shared/src/index.ts"],
       "@gamezilla/shared/backend": ["libs/shared/backend/src/index.ts"],
+      "@gamezilla/shared/frontend": ["libs/shared/frontend/src/index.ts"],
       "@gamezilla/shared/ui": ["libs/shared/ui/src/index.ts"]
     }
   },
