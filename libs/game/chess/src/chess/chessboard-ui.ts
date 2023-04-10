@@ -50,7 +50,7 @@ const make = ({ theme = defaultTheme }: { theme?: Theme }) => {
     }
   }
 
-  const setFEN = (_fen: string) => {
+  const setFEN = (_fen: string, _animate: boolean = true) => {
     // const matrixPrev = fenToMatrix(currentFen);
     // const matrixNew = fenToMatrix(fen);
     // console.log(fen, matrix);
