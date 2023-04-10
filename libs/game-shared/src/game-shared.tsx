@@ -1,17 +1,17 @@
 import { Ctx, UserId } from '@gamezilla/shared';
 import {
-  avatar,
-  Icon,
   Box,
-  box,
   Button,
   FillBox,
+  Icon,
   IconName,
   Icons,
-  text,
+  Sx,
   Typography,
   ViewNode,
-  Sx,
+  avatar,
+  box,
+  text,
   useTheme,
 } from '@gamezilla/shared/ui';
 
@@ -25,7 +25,6 @@ export type RoomMsg = { t: 'user-left'; userId: UserId };
 export const bannerArtAspectRatio = Math.pow(3 / 4, 4);
 
 export const ViewMainMenu = ({
-  ctx,
   title,
   coverArt,
   actions,
@@ -37,25 +36,11 @@ export const ViewMainMenu = ({
   coverArt: ViewNode;
   actions: [IconName, string, () => void][];
 }) => {
-  if (ctx.currentUserId !== gameRoomCtx.hostId) {
+  if (gameRoomCtx.currentUserId !== gameRoomCtx.hostId) {
     return (
       <div className="w-full h-full">
-        <Box
-          sx={{
-            height: 120,
-            width: 120,
-            mx: 'auto',
-            borderRadius: 2,
-            overflow: 'hidden',
-            mb: 1,
-          }}
-        >
-          {coverArt}
-        </Box>
-
-        <Typography variant="h2" align="center" sx={{ mb: 1 }}>
-          {title}
-        </Typography>
+        <div className="w-24 h-24 rounded overflow-hidden mb-2">{coverArt}</div>
+        <h2 className="text-center text-3xl">{title}</h2>
       </div>
     );
   }
@@ -85,7 +70,7 @@ export const ViewMainMenu = ({
 
       <div className="p-4">
         <button onClick={gameRoomCtx.onQuit} className="btn w-full">
-          <Icons.ArrowLeft className="mr-2" />
+          <Icon name="exit" className="mr-2" />
           Quit
         </button>
       </div>
