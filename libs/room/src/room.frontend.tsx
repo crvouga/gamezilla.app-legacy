@@ -756,16 +756,16 @@ const ViewPage = ({
   const game = model.games[room.roomId];
   return (
     <div className="w-full h-full flex-1 flex flex-col">
-      <div className="flex items-center w-full p-2 border-b">
+      <div className="flex items-center w-full p-2">
         <button
-          className="btn btn-sm mr-2"
+          className="btn btn-sm btn-outline mr-2"
           onClick={() => ctx.$push(['room-list'])}
         >
           <Icon className="mr-2" name="exit" />
           Exit
         </button>
         <button
-          className="btn btn-sm"
+          className="btn btn-sm btn-outline"
           onClick={() => $send({ t: 'modal-open', c: 'users' })}
         >
           <Icon className="mr-2" name="people" />
@@ -1125,26 +1125,24 @@ export const ViewNotInGame = ({
   }
 
   return (
-    <FillBox>
-      <Box
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr 1fr',
-          gap: 1,
-          p: 2,
-        }}
-      >
-        {gameNameList.map((gameName) => (
-          <CardActionArea
-            key={gameName}
-            disabled={room.hostId !== ctx.currentUserId}
-            onClick={() => $send({ t: 'input-game', gameName })}
-          >
-            <ViewGameArtCard gameName={gameName} />
-          </CardActionArea>
-        ))}
-      </Box>
-    </FillBox>
+    <div className="grid grid-cols-3 gap-y-6 gap-x-3 p-4">
+      {gameNameList.map((gameName) => (
+        <button
+          className=""
+          key={gameName}
+          onClick={() => $send({ t: 'input-game', gameName })}
+        >
+          <div className="px-4">
+            <div className="rounded-lg overflow-hidden">
+              {viewCoverArt(gameName)}
+            </div>
+          </div>
+          <p className="text-sm py-1 w-full whitespace-nowrap overflow-hidden text-ellipsis">
+            {gameNameToString(gameName)}
+          </p>
+        </button>
+      ))}
+    </div>
   );
 };
 
