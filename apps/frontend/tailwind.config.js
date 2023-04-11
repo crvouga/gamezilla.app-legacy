@@ -13,7 +13,10 @@ module.exports = {
   theme: {
     extend: {},
   },
-  plugins: [require('daisyui')],
+  corePlugins: {
+    aspectRatio: false, //<- this prevents conflict with @tailwindcss/aspect-ratio
+  },
+  plugins: [require('daisyui'), require('@tailwindcss/aspect-ratio')],
   daisyui: {
     themes: [
       {

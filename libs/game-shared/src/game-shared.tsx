@@ -48,9 +48,7 @@ export const ViewMainMenu = ({
   return (
     <div className="w-full h-full flex flex-col overflow-hidden">
       <div className="w-full flex-1 flex flex-col items-center justify-center p-4 overflow-y-scroll">
-        <div className="w-48 h-48 min-h-fit rounded overflow-hidden mt-4">
-          {coverArt}
-        </div>
+        <div className="w-24 rounded overflow-hidden">{coverArt}</div>
 
         <h1 className="text-4xl font-bold mt-4">{title}</h1>
 
