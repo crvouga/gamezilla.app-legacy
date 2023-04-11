@@ -64,7 +64,7 @@ const letterToColor = (letter: 'b' | 'r' | 'o' | 'g' | 'y'): string => {
 
 export const viewCoverArt = () => {
   return (
-    <svg viewBox="0 0 5 5">
+    <svg width="100%" className="border border-gray-700" viewBox="0 0 5 5">
       <rect width="100%" height="100%" fill="black" />
       {board.map((row, y) =>
         row.map((letter, x) => {

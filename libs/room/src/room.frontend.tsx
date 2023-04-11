@@ -1124,22 +1124,21 @@ export const ViewNotInGame = ({
   }
 
   return (
-    <div className="grid grid-cols-3 gap-y-6 gap-x-3 p-4">
+    <div className="grid grid-cols-3 gap-y-6 gap-x-3 p-4 py-6">
       {gameNameList.map((gameName) => (
-        <button
-          className=""
-          key={gameName}
-          onClick={() => $send({ t: 'input-game', gameName })}
-        >
-          <div className="px-4">
-            <div className="rounded-lg overflow-hidden">
+        <div key={gameName}>
+          <div className="px-2">
+            <button
+              onClick={() => $send({ t: 'input-game', gameName })}
+              className="flex rounded-lg overflow-hidden focus:ring"
+            >
               {viewCoverArt(gameName)}
-            </div>
+            </button>
           </div>
-          <p className="text-sm py-1 w-full whitespace-nowrap overflow-hidden text-ellipsis">
+          <p className="text-sm mt-2 w-full text-center whitespace-nowrap overflow-hidden text-ellipsis">
             {gameNameToString(gameName)}
           </p>
-        </button>
+        </div>
       ))}
     </div>
   );
