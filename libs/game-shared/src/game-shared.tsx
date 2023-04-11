@@ -38,28 +38,28 @@ export const ViewMainMenu = ({
 }) => {
   if (gameRoomCtx.currentUserId !== gameRoomCtx.hostId) {
     return (
-      <div className="w-full h-full">
-        <div className="w-24 h-24 rounded overflow-hidden mb-2">{coverArt}</div>
-        <h2 className="text-center text-3xl">{title}</h2>
+      <div className="w-full h-full flex items-center justify-center flex-col">
+        <div className="w-24 h-24 rounded overflow-hidden">{coverArt}</div>
+        <p className="text-center text-3xl mt-3">{title}</p>
       </div>
     );
   }
 
   return (
-    <div className="w-full h-full flex flex-col">
+    <div className="w-full h-full flex flex-col overflow-hidden">
       <div className="w-full flex-1 flex flex-col items-center justify-center p-4 overflow-y-scroll">
-        <div className="aspect-square w-32 h-32 max-w-full max-h-full rounded overflow-hidden mt-4">
+        <div className="w-48 h-48 min-h-fit rounded overflow-hidden mt-4">
           {coverArt}
         </div>
 
-        <h1 className="text-4xl text-center mt-4 font-bold">{title}</h1>
+        <h1 className="text-4xl font-bold mt-4">{title}</h1>
 
-        <div className="w-full flex flex-col gap-4 mt-4 mb-5">
+        <div className="w-full flex flex-col gap-4 mt-6">
           {actions.map(([iconName, label, onClick], index) => (
             <button
               key={index}
               onClick={onClick}
-              className="btn w-full btn-primary"
+              className="btn w-full btn-outline"
             >
               <Icon name={iconName} className="mr-2" />
               {label}
@@ -68,8 +68,8 @@ export const ViewMainMenu = ({
         </div>
       </div>
 
-      <div className="p-4">
-        <button onClick={gameRoomCtx.onQuit} className="btn w-full">
+      <div className="p-4 flex justify-center">
+        <button onClick={gameRoomCtx.onQuit} className="btn btn-outline">
           <Icon name="exit" className="mr-2" />
           Quit
         </button>

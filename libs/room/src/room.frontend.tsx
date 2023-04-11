@@ -1097,7 +1097,7 @@ export const ViewNotInGame = ({
 }) => {
   if (room.hostId !== ctx.currentUserId) {
     return (
-      <FillBox>
+      <div>
         <Box
           sx={{
             width: '100%',
@@ -1119,7 +1119,7 @@ export const ViewNotInGame = ({
             No game selected
           </Typography>
         </Box>
-      </FillBox>
+      </div>
     );
   }
 
@@ -1130,7 +1130,7 @@ export const ViewNotInGame = ({
           <div className="px-2">
             <button
               onClick={() => $send({ t: 'input-game', gameName })}
-              className="flex rounded-lg overflow-hidden focus:ring"
+              className="flex rounded-lg overflow-hidden focus:outline-none focus:ring focus:ring-primary"
             >
               {viewCoverArt(gameName)}
             </button>

@@ -70,7 +70,9 @@ export type Room = {
 
 export type ToFrontend = Res | { t: 'game'; c: Game.ToFrontend };
 
-export type ToBackend = (Req | { t: 'game'; c: Game.ToBackend }) & {[key: string]: unknown};
+export type ToBackend = (Req | { t: 'game'; c: Game.ToBackend }) & {
+  [key: string]: unknown;
+};
 
 export type BackendMsg = { t: 'game'; roomId: RoomId; c: Game.BackendMsg };
 
