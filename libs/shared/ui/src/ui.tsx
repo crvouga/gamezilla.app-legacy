@@ -10,7 +10,6 @@ import {
   Extension,
   Flag,
   Lightbulb,
-  People,
   RestartAlt,
   SmartToy,
   SwapHorizSharp,
