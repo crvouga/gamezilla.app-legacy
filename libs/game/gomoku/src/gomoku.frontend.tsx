@@ -1,10 +1,7 @@
 import { Cmd, Sub } from '@gamezilla/core';
-import {
-  RoomCtx,
-  ViewMainMenu,
-  viewSelectModeScreen,
-} from '@gamezilla/game-shared';
+import { RoomCtx, ViewMainMenu } from '@gamezilla/game-shared';
 import { Ctx } from '@gamezilla/shared';
+import { IconComputerDesktop, IconUsers } from '@gamezilla/shared/ui';
 import {
   BackendModel,
   FrontendModel,
@@ -15,7 +12,6 @@ import {
 import { viewCoverArt } from './gomoku/gomoku-ui';
 import * as VsBot from './vs-bot/vs-bot.frontend';
 import * as VsUser from './vs-user/vs-user.frontend';
-import { IconComputerDesktop, IconUsers } from '@gamezilla/shared/ui';
 
 //
 //
