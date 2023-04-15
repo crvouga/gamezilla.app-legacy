@@ -2,6 +2,11 @@ import { Audio, Cmd, p, Posix, RemoteData, Sub, Unit } from '@gamezilla/core';
 import { RoomCtx, ViewMainMenu } from '@gamezilla/game-shared';
 import { Alerts } from '@gamezilla/shared';
 import {
+  IconComputerDesktop,
+  IconPuzzlePiece,
+  IconUsers,
+} from '@gamezilla/shared/ui';
+import {
   BackendModel,
   FrontendModel,
   FrontendMsg,
@@ -286,43 +291,39 @@ export const View = ({
       return (
         <ViewMainMenu
           title="Chess"
-          ctx={ctx}
-          gameRoomCtx={gameRoomCtx}
+          roomCtx={gameRoomCtx}
           coverArt={viewCoverArt()}
-          actions={[
-            [
-              'smart-toy',
-              'Play Computer',
-              () => {
+          buttons={[
+            {
+              label: 'Play Computer',
+              icon: <IconComputerDesktop />,
+              onClick: () =>
                 $send({
                   t: 'input-mode',
                   mode: 'vs-bot',
                   userId: ctx.currentUserId,
-                });
-              },
-            ],
-            [
-              'friends',
-              'Play Friend',
-              () => {
+                }),
+            },
+            {
+              label: 'Play Friend',
+              icon: <IconUsers />,
+              onClick: () =>
                 $send({
                   t: 'input-mode',
                   mode: 'vs-user',
                   userId: ctx.currentUserId,
-                });
-              },
-            ],
-            [
-              'puzzle',
-              'Puzzles',
-              () => {
+                }),
+            },
+            {
+              label: 'Puzzles',
+              icon: <IconPuzzlePiece />,
+              onClick: () =>
                 $send({
                   t: 'input-mode',
                   mode: 'puzzle',
                   userId: ctx.currentUserId,
-                });
-              },
-            ],
+                }),
+            },
           ]}
         />
       );

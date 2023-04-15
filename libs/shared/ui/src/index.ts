@@ -1,2 +1,5 @@
-export * as Icons from './ui-icons';
+export * from './button';
+export * from './button-vertical';
+export * from './icon';
 export * from './ui';
+export * as Icons from './ui-icons';

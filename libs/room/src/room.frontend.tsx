@@ -3,6 +3,7 @@ import { RoomCtx } from '@gamezilla/game-shared';
 import { ProfileStore } from '@gamezilla/profile';
 import { Alerts, AppMsg, Ctx, RoomId, Route, UserId } from '@gamezilla/shared';
 import {
+  ButtonVertical,
   Avatar,
   AvatarGroup,
   Box,
@@ -18,10 +19,13 @@ import {
   Icon,
   IconButton,
   Icons,
+  MyButton,
   Paper,
   Typography,
   useTheme,
   ViewEmptyState,
+  IconHome,
+  IconUserGroup,
 } from '@gamezilla/shared/ui';
 import { gameNameToString, viewCoverArt } from './game';
 import * as Game from './game.frontend';
@@ -755,26 +759,29 @@ const ViewPage = ({
   const game = model.games[room.roomId];
   return (
     <div className="w-full h-full flex-1 flex flex-col">
-      <div className="flex items-center w-full p-2">
-        <button
-          className="btn btn-sm btn-outline mr-2"
-          onClick={() => ctx.$push(['room-list'])}
-        >
-          <Icon className="mr-2" name="exit" />
-          Exit
-        </button>
-        <button
-          className="btn btn-sm btn-outline"
-          onClick={() => $send({ t: 'modal-open', c: 'users' })}
-        >
-          <Icon className="mr-2" name="people" />
-          People
-        </button>
+      <nav className="flex items-center w-full p-2">
+        <div className="gap-2 flex-1 flex items-center overflow-x-auto">
+          <MyButton
+            variant="contained"
+            size="sm"
+            onClick={() => ctx.$push(['room-list'])}
+          >
+            <IconHome /> Home
+          </MyButton>
+          <MyButton
+            variant="contained"
+            size="sm"
+            onClick={() => $send({ t: 'modal-open', c: 'users' })}
+          >
+            <IconUserGroup />
+            People
+          </MyButton>
+        </div>
 
-        <div className="flex-1" />
-
-        <button
-          className="btn btn-sm btn-error"
+        <MyButton
+          color="danger"
+          variant="contained"
+          size="sm"
           onClick={() => {
             if (room.hostId === ctx.currentUserId) {
               $send({ t: 'destroy', userId: ctx.currentUserId });
@@ -784,8 +791,8 @@ const ViewPage = ({
           }}
         >
           {room.hostId === ctx.currentUserId ? 'End' : 'Leave'}
-        </button>
-      </div>
+        </MyButton>
+      </nav>
 
       {game ? (
         <Game.View

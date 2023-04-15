@@ -3,9 +3,9 @@ import {
   Box,
   Button,
   FillBox,
-  Icon,
-  IconName,
+  IconArrowLeftOnRect,
   Icons,
+  MyButton,
   Sx,
   Typography,
   ViewNode,
@@ -27,16 +27,15 @@ export const bannerArtAspectRatio = Math.pow(3 / 4, 4);
 export const ViewMainMenu = ({
   title,
   coverArt,
-  actions,
-  gameRoomCtx,
+  buttons,
+  roomCtx,
 }: {
-  gameRoomCtx: RoomCtx;
-  ctx: Ctx;
+  roomCtx: RoomCtx;
   title: string;
   coverArt: ViewNode;
-  actions: [IconName, string, () => void][];
+  buttons: { icon: ViewNode; label: string; onClick: () => void }[];
 }) => {
-  if (gameRoomCtx.currentUserId !== gameRoomCtx.hostId) {
+  if (roomCtx.currentUserId !== roomCtx.hostId) {
     return (
       <div className="w-full h-full flex items-center justify-center flex-col">
         <div className="w-24 h-24 rounded overflow-hidden">{coverArt}</div>
@@ -47,30 +46,35 @@ export const ViewMainMenu = ({
 
   return (
     <div className="w-full h-full flex flex-col overflow-hidden">
-      <div className="w-full flex-1 flex flex-col items-center justify-center p-4 overflow-y-scroll">
-        <div className="w-24 rounded overflow-hidden">{coverArt}</div>
+      <div className="w-full max-h-max flex-1 flex flex-col items-center p-4 overflow-y-auto">
+        <div className="h-32"></div>
+
+        <div className="w-32  rounded overflow-hidden">{coverArt}</div>
 
         <h1 className="text-4xl font-bold mt-4">{title}</h1>
 
-        <div className="w-full flex flex-col gap-4 mt-6">
-          {actions.map(([iconName, label, onClick], index) => (
-            <button
+        <div className="w-full flex flex-col gap-6 mt-6">
+          {buttons.map(({ icon, label, onClick }, index) => (
+            <MyButton
               key={index}
               onClick={onClick}
-              className="btn w-full btn-outline"
+              variant="contained"
+              color="default"
+              size="lg"
+              className="w-full"
             >
-              <Icon name={iconName} className="mr-2" />
+              {icon}
               {label}
-            </button>
+            </MyButton>
           ))}
         </div>
       </div>
 
       <div className="p-4 flex justify-center">
-        <button onClick={gameRoomCtx.onQuit} className="btn btn-outline">
-          <Icon name="exit" className="mr-2" />
+        <MyButton onClick={roomCtx.onQuit} size="lg">
+          <IconArrowLeftOnRect />
           Quit
-        </button>
+        </MyButton>
       </div>
     </div>
   );

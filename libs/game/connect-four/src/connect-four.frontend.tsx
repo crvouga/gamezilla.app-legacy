@@ -1,12 +1,12 @@
-import { Alerts } from '@gamezilla/shared';
 import { Cmd, Posix, Sub } from '@gamezilla/core';
 import {
-  bannerArtAspectRatio,
   RoomCtx,
-  viewSelectModeScreen,
+  ViewMainMenu,
+  bannerArtAspectRatio,
 } from '@gamezilla/game-shared';
-import { Ctx } from '@gamezilla/shared';
+import { Alerts, Ctx } from '@gamezilla/shared';
 import * as UI from '@gamezilla/shared/ui';
+import { IconComputerDesktop, IconUsers } from '@gamezilla/shared/ui';
 import {
   BackendModel,
   FrontendModel,
@@ -15,9 +15,9 @@ import {
   ToFrontend,
 } from './connect-four.types';
 import {
-  gameTheme,
   PlayerIcon,
   ViewCoverArt,
+  gameTheme,
 } from './connect-four/connect-four-ui';
 import * as VsBot from './vs-bot/vs-bot.frontend';
 import * as VsUser from './vs-user/vs-user.frontend';
@@ -162,16 +162,33 @@ export const View = ({
 
   switch (model.type) {
     case 'none': {
-      return viewSelectModeScreen({
-        ctx: ctx,
-        gameRoomCtx: gameRoomCtx,
-        coverArt: <ViewCoverArt />,
-        title: 'Connect Four',
-        onVsUser: () =>
-          $send(['input-mode', { mode: 'vs-user', userId: ctx.currentUserId }]),
-        onUserVsComputer: () =>
-          $send(['input-mode', { mode: 'vs-bot', userId: ctx.currentUserId }]),
-      });
+      return (
+        <ViewMainMenu
+          roomCtx={gameRoomCtx}
+          title="Connect Four"
+          coverArt={<ViewCoverArt />}
+          buttons={[
+            {
+              icon: <IconUsers />,
+              label: 'Play Friend',
+              onClick: () =>
+                $send([
+                  'input-mode',
+                  { mode: 'vs-user', userId: ctx.currentUserId },
+                ]),
+            },
+            {
+              icon: <IconComputerDesktop className="w-6 h-6" />,
+              label: 'Vs Computer',
+              onClick: () =>
+                $send([
+                  'input-mode',
+                  { mode: 'vs-bot', userId: ctx.currentUserId },
+                ]),
+            },
+          ]}
+        />
+      );
     }
 
     case 'vs-user': {
