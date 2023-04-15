@@ -163,29 +163,9 @@ export const AppContainer = ({
   return (
     <Mui.ThemeProvider theme={theme}>
       <Mui.CssBaseline enableColorScheme />
-      <Mui.Box
-        sx={{
-          ...sx,
-          maxWidth: 'sm',
-          maxHeight: '100%',
-
-          // userSelect: "none",
-          marginX: 'auto',
-          position: 'fixed',
-          width: '100%',
-          height: '100%',
-          overflow: 'hidden',
-          //
-          display: 'flex',
-          flexDirection: 'column',
-          left: '50%',
-          top: '50%',
-          transform: 'translate(-50%, -50%)',
-          border: `1px solid ${theme.palette.divider}`,
-        }}
-      >
+      <div className="max-w-sm max-h-full mx-auto fixed w-full h-full overflow-hidden flex flex-col left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 border border-neutral-600 bg-black">
         {children}
-      </Mui.Box>
+      </div>
     </Mui.ThemeProvider>
   );
 };

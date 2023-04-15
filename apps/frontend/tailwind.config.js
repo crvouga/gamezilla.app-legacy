@@ -11,49 +11,6 @@ module.exports = {
     ...createGlobPatternsForDependencies(__dirname),
   ],
   theme: {
-    extend: {
-      grey: {
-        50: '#f7f7f7',
-        100: '#e3e3e3',
-        200: '#c8c8c8',
-        300: '#a4a4a4',
-        400: '#818181',
-        500: '#666666',
-        600: '#515151',
-        700: '#434343',
-        800: '#383838',
-        900: '#313131',
-        950: '#101010',
-      },
-    },
-  },
-  corePlugins: {
-    aspectRatio: false, //<- this prevents conflict with @tailwindcss/aspect-ratio
-  },
-  plugins: [require('daisyui'), require('@tailwindcss/aspect-ratio')],
-  daisyui: {
-    themes: [
-      {
-        myTheme: {
-          primary: '#3b82f6',
-
-          secondary: '#3b82f6',
-
-          accent: '#c026d3',
-
-          neutral: '#f5f5f4',
-
-          'base-100': '#000',
-
-          info: '#11B3EE',
-
-          success: '#84cc16',
-
-          warning: '#facc15',
-
-          error: '#dc2626',
-        },
-      },
-    ],
+    extend: {},
   },
 };

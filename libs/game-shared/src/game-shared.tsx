@@ -46,7 +46,7 @@ export const ViewMainMenu = ({
 
   return (
     <div className="w-full h-full flex flex-col overflow-hidden">
-      <div className="w-full max-h-max flex-1 flex flex-col items-center p-4 overflow-y-auto">
+      <div className="w-full flex-1 flex flex-col items-center p-4 overflow-y-scroll">
         <div className="h-32"></div>
 
         <div className="w-32  rounded overflow-hidden">{coverArt}</div>

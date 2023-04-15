@@ -1,5 +1,9 @@
 import { Cmd, exhaustive, Sub } from '@gamezilla/core';
-import { RoomCtx, viewSelectModeScreen } from '@gamezilla/game-shared';
+import {
+  RoomCtx,
+  ViewMainMenu,
+  viewSelectModeScreen,
+} from '@gamezilla/game-shared';
 import { ProfileStore } from '@gamezilla/profile';
 import { Alerts, Ctx } from '@gamezilla/shared';
 import {
@@ -12,6 +16,7 @@ import {
 import { viewCoverArt } from './tic-tic-toe/tic-tac-toe-ui';
 import * as VsBot from './vs-bot/vs-bot.frontend';
 import * as VsUser from './vs-user/vs-user.frontend';
+import { IconComputerDesktop, IconUsers } from '@gamezilla/shared/ui';
 
 //
 //
@@ -231,16 +236,33 @@ export const View = ({
 }) => {
   switch (model.mode) {
     case 'none': {
-      return viewSelectModeScreen({
-        title: 'Tic-Tac-Toe',
-        ctx,
-        gameRoomCtx,
-        coverArt: viewCoverArt(),
-        onVsUser: () =>
-          $send(['input-mode', { mode: 'vs-user', userId: ctx.currentUserId }]),
-        onUserVsComputer: () =>
-          $send(['input-mode', { mode: 'vs-bot', userId: ctx.currentUserId }]),
-      });
+      return (
+        <ViewMainMenu
+          title="Tic-Tac-Toe"
+          roomCtx={gameRoomCtx}
+          coverArt={viewCoverArt()}
+          buttons={[
+            {
+              label: 'Play Friend',
+              icon: <IconUsers />,
+              onClick: () =>
+                $send([
+                  'input-mode',
+                  { mode: 'vs-user', userId: ctx.currentUserId },
+                ]),
+            },
+            {
+              label: 'Play Computer',
+              icon: <IconComputerDesktop />,
+              onClick: () =>
+                $send([
+                  'input-mode',
+                  { mode: 'vs-bot', userId: ctx.currentUserId },
+                ]),
+            },
+          ]}
+        />
+      );
     }
 
     case 'vs-user': {

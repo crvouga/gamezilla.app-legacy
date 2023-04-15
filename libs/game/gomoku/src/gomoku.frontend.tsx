@@ -1,5 +1,9 @@
 import { Cmd, Sub } from '@gamezilla/core';
-import { RoomCtx, viewSelectModeScreen } from '@gamezilla/game-shared';
+import {
+  RoomCtx,
+  ViewMainMenu,
+  viewSelectModeScreen,
+} from '@gamezilla/game-shared';
 import { Ctx } from '@gamezilla/shared';
 import {
   BackendModel,
@@ -11,6 +15,7 @@ import {
 import { viewCoverArt } from './gomoku/gomoku-ui';
 import * as VsBot from './vs-bot/vs-bot.frontend';
 import * as VsUser from './vs-user/vs-user.frontend';
+import { IconComputerDesktop, IconUsers } from '@gamezilla/shared/ui';
 
 //
 //
@@ -221,16 +226,34 @@ export const view = ({
 }) => {
   switch (model.type) {
     case 'none': {
-      return viewSelectModeScreen({
-        coverArt: viewCoverArt(),
-        ctx,
-        gameRoomCtx,
-        onUserVsComputer: () =>
-          $send(['input-mode', { userId: ctx.currentUserId, mode: 'vs-bot' }]),
-        onVsUser: () =>
-          $send(['input-mode', { userId: ctx.currentUserId, mode: 'vs-user' }]),
-        title: 'Gomoku',
-      });
+      return (
+        <ViewMainMenu
+          title="Gomoku"
+          coverArt={viewCoverArt()}
+          roomCtx={gameRoomCtx}
+          buttons={[
+            {
+              label: 'Play Computer',
+              icon: <IconComputerDesktop />,
+              onClick: () =>
+                $send([
+                  'input-mode',
+                  { userId: ctx.currentUserId, mode: 'vs-bot' },
+                ]),
+            },
+
+            {
+              label: 'Play Friend',
+              icon: <IconUsers />,
+              onClick: () =>
+                $send([
+                  'input-mode',
+                  { userId: ctx.currentUserId, mode: 'vs-user' },
+                ]),
+            },
+          ]}
+        />
+      );
     }
 
     case 'vs-bot': {

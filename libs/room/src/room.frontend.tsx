@@ -919,12 +919,13 @@ export const ViewPageRoomList = ({
 
       {!currentRoom && (
         <div className="w-full p-4">
-          <button
-            className="btn btn-primary w-full"
+          <MyButton
+            className="w-full"
+            color="primary"
             onClick={() => $send({ t: 'create', roomId: RoomId.generate() })}
           >
             Create Room
-          </button>
+          </MyButton>
         </div>
       )}
     </FillBox>
