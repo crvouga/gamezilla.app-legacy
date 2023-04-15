@@ -26,10 +26,13 @@ export const MyButton = ({
     <button
       className={[
         className ? className : '',
-        'font-bold flex items-center justify-center gap-2 active:opacity-60',
+        'font-bold flex items-center justify-center gap-2 active:opacity-60 select-none ',
+        combo === 'contained-primary'
+          ? 'bg-blue-500 text-white rounded-md'
+          : '',
         combo === 'contained-danger' ? 'bg-red-500 text-white rounded-md' : '',
         combo === 'contained-default'
-          ? 'bg-neutral-900 border-neutral-700 text-white rounded-md'
+          ? 'bg-white/10 border-neutral-700 text-white rounded-md'
           : '',
         combo === 'outlined-default'
           ? 'border border-neutral-700 text-inherit rounded-md'

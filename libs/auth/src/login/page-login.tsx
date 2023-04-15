@@ -1,33 +1,24 @@
-import { Cmd, p, t } from '@gamezilla/core';
+import { Cmd, p } from '@gamezilla/core';
 import { Route } from '@gamezilla/shared';
-import { Box, Button, Icons, Typography, useTheme } from '@gamezilla/shared/ui';
+import {
+  IconMobilePhone,
+  IconEnvelope,
+  IconGoogle,
+  IconPhone,
+  IconSpinner,
+  MyButton,
+} from '@gamezilla/shared/ui';
 import { AuthResult, loginWithProvider } from '../auth';
-
-//
-//
-//
-// Model
-//
-//
-//
 
 export type Model = 'idle' | 'signing-in-with-google';
 
 export const init: Model = 'idle';
 
-//
-//
-//
-// Update
-//
-//
-//
-
 export type Msg =
-  | ['clicked-email']
-  | ['clicked-text']
-  | ['clicked-google']
-  | ['login-done', AuthResult];
+  | { t: 'clicked-email' }
+  | { t: 'clicked-text' }
+  | { t: 'clicked-google' }
+  | { t: 'login-done'; result: AuthResult };
 
 export const update = ({
   msg,
@@ -35,42 +26,33 @@ export const update = ({
 }: {
   msg: Msg;
   model: Model;
-}): { model: Model; cmd: Cmd<Msg> } => {
-  switch (msg[0]) {
-    case 'clicked-text': {
-      return {
-        model,
-        cmd: Route.push(['login-phone', { isSelectingCountry: false }]),
-      };
-    }
-
-    case 'clicked-email': {
-      return { model, cmd: Route.push(['login-email-link']) };
-    }
-
-    case 'clicked-google': {
-      return {
-        model: 'signing-in-with-google',
-        cmd: p(
-          loginWithProvider({ provider: 'Google' }),
-          Cmd.perform(t('login-done'))
-        ),
-      };
-    }
-
-    case 'login-done': {
-      return { model, cmd: Cmd.None };
-    }
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  if (msg.t === 'clicked-email') {
+    return { model, cmd: Route.push(['login-email-link']) };
   }
-};
 
-//
-//
-//
-// View
-//
-//
-//
+  if (msg.t === 'clicked-text') {
+    return {
+      model,
+      cmd: Route.push(['login-phone', { isSelectingCountry: false }]),
+    };
+  }
+
+  if (msg.t === 'clicked-google') {
+    return {
+      model: 'signing-in-with-google',
+      cmd: p(
+        loginWithProvider({ provider: 'Google' }),
+        Cmd.perform((result) => ({ t: 'login-done', result }))
+      ),
+    };
+  }
+
+  return { model };
+};
 
 export const View = ({
   model,
@@ -79,72 +61,47 @@ export const View = ({
   model: Model;
   $send: (msg: Msg) => void;
 }) => {
-  const theme = useTheme();
   return (
-    <Box
-      sx={{
-        p: 2,
-        width: '100%',
-        height: '100%',
-        display: 'grid',
-        placeItems: 'center',
-      }}
-    >
-      <Box sx={{ width: '100%' }}>
-        <Typography variant="h2">Sign Into</Typography>
+    <div className="w-full h-full flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col justify-center items-center p-4 gap-8">
+        <span className="text-5xl" role="img" aria-label="logo">
+          🦕
+        </span>
 
-        <Typography
-          variant="h2"
-          sx={{
-            fontWeight: 800,
-            mb: 3,
-          }}
-        >
-          <Box
-            component={'span'}
-            sx={{
-              background: `linear-gradient(${theme.palette.primary.light}, ${theme.palette.primary.dark})`,
-              backgroundClip: 'text',
-              textFillColor: 'transparent',
-            }}
+        <div className="text-xl">Sign in to your account</div>
+
+        <div className="flex flex-col gap-6 w-full">
+          <MyButton
+            onClick={() => $send({ t: 'clicked-google' })}
+            size="lg"
+            className="w-full"
           >
-            Gamezilla
-          </Box>
-        </Typography>
+            {model === 'signing-in-with-google' && (
+              <IconSpinner className="animate-spin" />
+            )}
+            <IconGoogle />
+            Continue With Google
+          </MyButton>
 
-        <Button
-          onClick={() => $send(['clicked-google'])}
-          startIcon={<Icons.Google />}
-          fullWidth
-          variant="contained"
-          size="large"
-          loading={model === 'signing-in-with-google'}
-          sx={{ mb: 3 }}
-        >
-          Continue With Google
-        </Button>
+          <MyButton
+            onClick={() => $send({ t: 'clicked-text' })}
+            size="lg"
+            className="w-full"
+          >
+            <IconMobilePhone />
+            Continue With Text
+          </MyButton>
 
-        <Button
-          onClick={() => $send(['clicked-text'])}
-          startIcon={<Icons.Textsms />}
-          fullWidth
-          variant="contained"
-          size="large"
-          sx={{ mb: 3 }}
-        >
-          Continue With Text
-        </Button>
-
-        <Button
-          onClick={() => $send(['clicked-email'])}
-          startIcon={<Icons.Email />}
-          fullWidth
-          variant="contained"
-          size="large"
-        >
-          Continue With Email
-        </Button>
-      </Box>
-    </Box>
+          <MyButton
+            onClick={() => $send({ t: 'clicked-email' })}
+            size="lg"
+            className="w-full"
+          >
+            <IconEnvelope />
+            Continue With Email
+          </MyButton>
+        </div>
+      </div>
+    </div>
   );
 };

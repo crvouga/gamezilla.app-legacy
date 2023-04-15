@@ -3,7 +3,6 @@ import { RoomCtx } from '@gamezilla/game-shared';
 import { ProfileStore } from '@gamezilla/profile';
 import { Alerts, AppMsg, Ctx, RoomId, Route, UserId } from '@gamezilla/shared';
 import {
-  ButtonVertical,
   Avatar,
   AvatarGroup,
   Box,
@@ -16,16 +15,16 @@ import {
   FillBox,
   Header,
   HeaderBackButton,
-  Icon,
   IconButton,
+  IconGamepad,
+  IconHome,
   Icons,
+  IconUserGroup,
+  MyAvatar,
   MyButton,
   Paper,
   Typography,
   useTheme,
-  ViewEmptyState,
-  IconHome,
-  IconUserGroup,
 } from '@gamezilla/shared/ui';
 import { gameNameToString, viewCoverArt } from './game';
 import * as Game from './game.frontend';
@@ -863,14 +862,16 @@ export const ViewPageRoomList = ({
   }
 
   return (
-    <FillBox>
-      <Header title={'Rooms'} />
+    <div className="flex-1 flex flex-col">
+      <h1 className="w-full text-center p-3 text-xl">Rooms</h1>
+
       {rooms.length === 0 && (
-        <ViewEmptyState
-          title="No active rooms"
-          renderIcon={({ sx }) => <Icons.SportsEsports sx={sx} />}
-        />
+        <div className="flex-1 flex flex-col items-center justify-center opacity-60">
+          <IconGamepad className="w-12 h-12" />
+          <p className="text-lg">No active rooms</p>
+        </div>
       )}
+
       {rooms.length > 0 && (
         <Box sx={{ overflowY: 'scroll', pb: 2 }}>
           <Box
@@ -915,11 +916,10 @@ export const ViewPageRoomList = ({
         </Box>
       )}
 
-      <Box sx={{ flex: 1 }} />
-
       {!currentRoom && (
         <div className="w-full p-4">
           <MyButton
+            size="lg"
             className="w-full"
             color="primary"
             onClick={() => $send({ t: 'create', roomId: RoomId.generate() })}
@@ -928,7 +928,7 @@ export const ViewPageRoomList = ({
           </MyButton>
         </div>
       )}
-    </FillBox>
+    </div>
   );
 };
 
@@ -948,133 +948,37 @@ const ViewRoomCard = ({
     avatarUrl: string;
   };
 }) => {
-  const theme = useTheme();
   return (
-    <ButtonBase
+    <button
       onClick={onClick}
-      sx={{
-        width: '100%',
-        background: theme.palette.primary.main,
-        borderRadius: '8px',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'start',
-        color: '#fff',
-        overflow: 'hidden',
-        textAlign: 'start',
-      }}
+      className="bg-blue-500 rounded-md flex flex-col gap-3 p-4"
     >
-      <Box
-        sx={{
-          px: 2,
-          pt: 1,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 1,
-        }}
-      >
-        <Typography sx={{ fontWeight: 900 }}>LIVE</Typography>
+      <div className="w-full flex items-center justify-start">
+        <p className="block uppercase text-left font-bold animate-pulse flex-1">
+          LIVE
+        </p>
         {isCurrentRoom && (
-          <>
-            <Typography>•</Typography>
-            <Typography sx={{ fontStyle: 'italic' }}>Current Room</Typography>
-          </>
+          <p className="block text-xs font-thin opacity-50 italic">
+            Current Room
+          </p>
         )}
-      </Box>
+      </div>
+      {gameName && (
+        <div className="flex items-center justify-start gap-2">
+          <div className="w-12 h-12 rounded overflow-hidden">
+            {viewCoverArt(gameName)}
+          </div>
+          <p className="text-xl">{gameNameToString(gameName)}</p>
+        </div>
+      )}
 
-      <Box sx={{ px: 2, pb: 2, width: '100%', overflow: 'hidden' }}>
-        {gameName && (
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              mt: 2,
-            }}
-          >
-            <Box
-              sx={{
-                width: 32,
-                height: 32,
-                border: '2px solid',
-                borderRadius: '3px',
-                marginRight: 1,
-              }}
-            >
-              {viewCoverArt(gameName)}
-            </Box>
+      <div className="flex items-center justify-start gap-2">
+        <MyAvatar src={host.avatarUrl} alt="avatar" className="w-12 h-12" />
 
-            <Typography variant="h4">{gameNameToString(gameName)}</Typography>
-          </Box>
-        )}
-
-        <Box
-          sx={{
-            width: '100%',
-            mt: 2,
-            overflow: 'hidden',
-            display: 'flex',
-            alignItems: 'center',
-          }}
-        >
-          <AvatarGroup
-            sx={{
-              marginRight: 1,
-            }}
-          >
-            {users.slice(0, 3).map((user) => (
-              <Avatar
-                sx={{
-                  width: 24,
-                  height: 24,
-                }}
-                style={{
-                  borderColor: theme.palette.primary.main,
-                }}
-                key={user.avatarUrl}
-                src={user.avatarUrl}
-              />
-            ))}
-          </AvatarGroup>
-          <Typography variant="h6">{users.length} in room</Typography>
-        </Box>
-
-        <Typography variant="subtitle2" noWrap sx={{ width: '100%' }}>
-          {formatUsernames(users.map((user) => user.username))}
-        </Typography>
-      </Box>
-
-      <Box
-        sx={{
-          background: theme.palette.primary.dark,
-          width: '100%',
-          padding: 2,
-        }}
-      >
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            overflow: 'hidden',
-            flex: 1,
-          }}
-        >
-          <Avatar
-            sx={{ width: '1.25rem', height: '1.25rem', marginRight: 1 }}
-            src={host.avatarUrl}
-          />
-          <Typography noWrap>{host.username}</Typography>
-          <Chip
-            sx={{ ml: 1 }}
-            color="primary"
-            label="Host"
-            variant="filled"
-            size="small"
-          />
-        </Box>
-      </Box>
-    </ButtonBase>
+        <p className="text-xl">{host.username}</p>
+        <span className="bg-white/30 rounded-full p-1 px-2 text-xs">Host</span>
+      </div>
+    </button>
   );
 };
 

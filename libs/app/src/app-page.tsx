@@ -504,7 +504,7 @@ export const ViewReady = ({
             ctx={ctx}
             route={route}
             $send={$send}
-          />{' '}
+          />
         </>
       );
     }
