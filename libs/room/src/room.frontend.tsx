@@ -4,7 +4,6 @@ import { ProfileStore } from '@gamezilla/profile';
 import { Alerts, AppMsg, Ctx, RoomId, Route, UserId } from '@gamezilla/shared';
 import {
   Avatar,
-  AvatarGroup,
   Box,
   Button,
   ButtonBase,
@@ -935,7 +934,6 @@ export const ViewPageRoomList = ({
 };
 
 const ViewRoomCard = ({
-  users,
   gameName,
   onClick,
   isCurrentRoom,
@@ -985,14 +983,14 @@ const ViewRoomCard = ({
   );
 };
 
-const formatUsername = (username: string) => {
+export const formatUsername = (username: string) => {
   if (username.length > 12) {
     return username.slice(0, 12) + '...';
   }
   return username;
 };
 
-const formatUsernames = (usernames: string[]) => {
+export const formatUsernames = (usernames: string[]) => {
   const formatted = usernames.map(formatUsername);
   if (formatted.length > 3) {
     return `${formatted.slice(0, 3).join(', ')} & ${formatted.length - 3} more`;

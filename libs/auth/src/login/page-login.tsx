@@ -1,12 +1,6 @@
 import { Cmd, p } from '@gamezilla/core';
 import { Route } from '@gamezilla/shared';
-import {
-  IconEnvelope,
-  IconGoogle,
-  IconMobilePhone,
-  IconSpinner,
-  MyButton,
-} from '@gamezilla/shared/ui';
+import { IconMobilePhone, MyButton } from '@gamezilla/shared/ui';
 import { AuthResult, loginWithProvider } from '../auth';
 
 export type Model = 'idle' | 'signing-in-with-google';
@@ -54,7 +48,6 @@ export const update = ({
 };
 
 export const View = ({
-  model,
   $send,
 }: {
   model: Model;

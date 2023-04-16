@@ -1,4 +1,3 @@
-import { matchSorter } from 'match-sorter';
 import { Cmd } from './cmd';
 
 export const exhaustive = (discriminatedUnionType: 'Missing Case!'): never => {

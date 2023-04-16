@@ -1,21 +1,14 @@
-import {
-  Browser,
-  Cmd,
-  ascend,
-  editDistance,
-  matchSort,
-  p,
-} from '@gamezilla/core';
+import { Browser, Cmd, p } from '@gamezilla/core';
 import { Iso3166Alpha2Code, PhoneNumber, Route } from '@gamezilla/shared';
 import {
   Autocomplete,
-  Button,
-  HeaderBackButton,
+  IconPhone,
   IconSpinner,
   MyButton,
   MyTextField,
   TopBar,
 } from '@gamezilla/shared/ui';
+import { matchSorter } from 'match-sorter';
 import * as Auth from '../auth';
 
 //
@@ -177,6 +170,11 @@ export const update = ({
 //
 //
 
+const allOptions = Iso3166Alpha2Code.all.map((country) => ({
+  value: country,
+  name: Iso3166Alpha2Code.toName(country),
+}));
+
 export const View = ({
   model,
   $send,
@@ -185,6 +183,9 @@ export const View = ({
   model: Model;
   $send: (msg: Msg) => void;
 }) => {
+  const filteredOptions = matchSorter(allOptions, model.countryQuery, {
+    keys: ['value', 'name'],
+  }).map((option) => option.value);
   return (
     <div className="flex-1 w-full">
       <TopBar
@@ -205,31 +206,37 @@ export const View = ({
       >
         <Autocomplete
           label="Country"
+          startIcon={
+            <span className="ml-2" role="img" aria-describedby="flag">
+              {Iso3166Alpha2Code.toEmoji(model.country)}
+            </span>
+          }
           value={model.country}
           onChange={(country) => $send({ t: 'inputted-country', country })}
-          options={matchSort(
-            Iso3166Alpha2Code.all,
-            (x) => x,
-            model.countryQuery
-          )}
+          onClear={() => $send({ t: 'inputted-country-query', value: '' })}
+          options={filteredOptions}
           onChangeQuery={(value) =>
             $send({ t: 'inputted-country-query', value })
           }
           toKey={(x) => x}
-          toLabel={(x) => Iso3166Alpha2Code.toName(x)}
+          toLabel={(x) => Iso3166Alpha2Code.toNameWithEmoji(x)}
           valueQuery={model.countryQuery}
           className="w-full"
         />
 
         <MyTextField
           id="phone-number"
+          startIcon={<IconPhone className="w-6 h-6 mr-2 opacity-80" />}
           label="Phone Number"
           onChange={(phoneNumber) =>
-            $send({ t: 'inputted-phone-number', phoneNumber })
+            $send({
+              t: 'inputted-phone-number',
+              phoneNumber: phoneNumber.replace(/\D/g, ''),
+            })
           }
           onClear={() => $send({ t: 'inputted-phone-number', phoneNumber: '' })}
           type="tel"
-          value={model.phoneNumber}
+          value={model.phoneNumber.replace(/\D/g, '')}
           error={
             model.validation === 'invalid-phone-number' ||
             model.validation === 'empty-phone-number'

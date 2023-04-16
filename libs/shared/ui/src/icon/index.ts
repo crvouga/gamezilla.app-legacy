@@ -11,3 +11,4 @@ export * from './icon-puzzle-piece';
 export * from './icon-spinner';
 export * from './icon-user-group';
 export * from './icon-users';
+export * from './icon-x-mark';
