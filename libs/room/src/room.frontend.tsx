@@ -18,10 +18,12 @@ import {
   IconGamepad,
   IconHome,
   Icons,
+  IconSpinner,
   IconUserGroup,
   MyAvatar,
   MyButton,
   Paper,
+  TopBar,
   Typography,
   useTheme,
 } from '@gamezilla/shared/ui';
@@ -844,44 +846,27 @@ export const ViewPageRoomList = ({
 
   if (model.requests.list?.type === 'Loading') {
     return (
-      <FillBox>
-        <Header title={'Rooms'} />
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flex: 1,
-          }}
-        >
-          <CircularProgress />
-        </Box>
-      </FillBox>
+      <div className="w-full h-full flex flex-col">
+        <TopBar title="Rooms" />
+        <div className="flex-1 flex items-center justify-center">
+          <IconSpinner className="w-12 h-12 animate-spin" />
+        </div>
+      </div>
     );
   }
 
   return (
-    <div className="flex-1 flex flex-col">
-      <h1 className="w-full text-center p-3 text-xl">Rooms</h1>
+    <div className="flex-1 flex flex-col w-full h-full">
+      <TopBar title="Rooms" />
 
-      {rooms.length === 0 && (
+      {rooms.length === 0 ? (
         <div className="flex-1 flex flex-col items-center justify-center opacity-60">
           <IconGamepad className="w-12 h-12" />
           <p className="text-lg">No active rooms</p>
         </div>
-      )}
-
-      {rooms.length > 0 && (
-        <Box sx={{ overflowY: 'scroll', pb: 2 }}>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 2,
-              paddingX: 2,
-              // paddingTop: 3,
-            }}
-          >
+      ) : (
+        <div className="flex-1 overflow-y-auto pb-4">
+          <div className="flex flex-col gap-2 px-5">
             {rooms.map((room) => {
               const host = ctx.profiles[room.hostId];
               const users = Object.values(model.users)
@@ -911,11 +896,9 @@ export const ViewPageRoomList = ({
                 />
               );
             })}
-          </Box>
-        </Box>
+          </div>
+        </div>
       )}
-
-      <div className="flex-1"></div>
 
       {!currentRoom && (
         <div className="w-full p-4">
