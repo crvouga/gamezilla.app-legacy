@@ -43,8 +43,11 @@ const tag = <Tag extends string, Msg>(
 
 const tag_ = <Tag extends string, Msg>(
   tagName: Tag,
-  cmd: Cmd<Msg>
+  cmd: Cmd<Msg> | undefined | null
 ): Cmd<{ t: Tag; c: Msg }> => {
+  if (!cmd) {
+    return None;
+  }
   return p(
     cmd,
     map((msg) => ({ t: tagName, c: msg }))

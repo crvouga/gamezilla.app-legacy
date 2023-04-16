@@ -949,7 +949,7 @@ const ViewRoomCard = ({
 
       {gameName && (
         <div className="flex items-center justify-start gap-2">
-          <div className="w-12 h-12 rounded overflow-hidden">
+          <div className="w-12 h-12 rounded overflow-hidden border border-white/40">
             {viewCoverArt(gameName)}
           </div>
           <p className="text-xl">{gameNameToString(gameName)}</p>

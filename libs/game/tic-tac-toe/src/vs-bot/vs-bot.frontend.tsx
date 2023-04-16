@@ -227,12 +227,16 @@ export const View = ({
         icon: ({ playerType, sx }) => (
           <PlayerTypeIcon sx={sx} playerType={playerType} />
         ),
+        render: ({ playerType }) => <PlayerTypeIcon playerType={playerType} />,
+        toName: (player) => player,
       },
       botLevel: {
         onInput: (botLevel) =>
           $send(['InputBot', { userId: ctx.currentUserId, botLevel }]),
         selected: model.botLevel,
         values: Object.values(botLevels),
+        toName: (botLevel) => botLevel,
+        render: ({ botLevel }) => botLevel,
       },
     });
   }

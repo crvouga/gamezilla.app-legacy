@@ -295,6 +295,7 @@ export const View = ({
       botLevel: {
         values: Chess.allBotLevels,
         selected: model.sharedModel.botLevel,
+        toName: (level) => String(level),
         onInput: (botLevel) =>
           $send(['InputBot', { botLevel, userId: ctx.currentUserId }]),
       },
@@ -305,8 +306,9 @@ export const View = ({
       onStartPlaying: () => $send(['InputUser', { userId: ctx.currentUserId }]),
       onStopPlaying: () => $send(['InputUser', { userId: 'none' }]),
       player: {
-        values: Object.values(Chess.colors),
+        values: [Chess.colors.w, Chess.colors.b],
         selected: model.sharedModel.userColor,
+        toName: (color) => (color === 'w' ? 'White' : 'Black'),
         onInput: (color) =>
           $send([
             'InputColor',

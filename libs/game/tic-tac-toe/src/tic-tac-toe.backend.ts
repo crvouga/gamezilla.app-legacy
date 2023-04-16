@@ -1,6 +1,7 @@
-import { Cmd, exhaustive, Result, Sub } from '@gamezilla/core';
+import { Cmd, Result, Sub } from '@gamezilla/core';
 import { RoomMsg } from '@gamezilla/game-shared';
 import { UserId } from '@gamezilla/shared';
+import { RoomRequestCtx } from '@gamezilla/shared/backend';
 import {
   BackendModel,
   BackendMsg,
@@ -10,7 +11,7 @@ import {
 import * as VsBot from './vs-bot/vs-bot.backend';
 import * as VsUser from './vs-user/vs-user.backend';
 
-const { Ok } = Result;
+const { Err, Ok } = Result;
 
 //
 //
@@ -22,7 +23,7 @@ const { Ok } = Result;
 
 export type Model = BackendModel;
 
-export const init: Model = { mode: 'none' };
+export const init: Model = { t: 'none' };
 
 //
 //
@@ -34,98 +35,110 @@ export const init: Model = { mode: 'none' };
 
 export type Msg = BackendMsg;
 
-export const update = (
-  {
-    broadcast,
-  }: {
-    broadcast: (msg: ToFrontend) => Cmd;
-  },
-  msg: Msg,
-  model: Model
-): [Model, Cmd<Msg>] => {
-  switch (msg[0]) {
-    case 'vs-user': {
-      if (model.mode === 'vs-user') {
-        const [child, cmd] = VsUser.update(
-          { broadcast: (msg) => broadcast(['vs-user', msg]) },
-          msg[1],
-          model.child
-        );
-        return [{ mode: 'vs-user', child }, Cmd.tag('vs-user', cmd)];
-      }
-      return [model, Cmd.None];
-    }
-
-    case 'vs-bot': {
-      if (model.mode === 'vs-bot') {
-        const [child, cmd] = VsBot.update(
-          { broadcast: (msg) => broadcast(['vs-bot', msg]) },
-          msg[1],
-          model.child
-        );
-        return [{ mode: 'vs-bot', child }, Cmd.tag('vs-bot', cmd)];
-      }
-      return [model, Cmd.None];
-    }
+export const update = ({
+  broadcast,
+  msg,
+  model,
+}: {
+  broadcast: (msg: ToFrontend) => Cmd;
+  msg: Msg;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  if (msg.t === 'vs-user' && model.t === 'vs-user') {
+    const updated = VsUser.update(
+      { broadcast: (c) => broadcast({ t: 'vs-user', c }) },
+      msg.c,
+      model.c
+    );
+    return {
+      model: { t: 'vs-user', c: updated[0] },
+      cmd: Cmd.tag_('vs-user', updated[1]),
+    };
   }
+
+  if (msg.t === 'vs-bot' && model.t === 'vs-bot') {
+    const updated = VsBot.update(
+      { broadcast: (c) => broadcast({ t: 'vs-bot', c }) },
+      msg.c,
+      model.c
+    );
+    return {
+      model: { t: 'vs-bot', c: updated[0] },
+      cmd: Cmd.tag_('vs-bot', updated[1]),
+    };
+  }
+
+  return { model };
 };
 
-export const updateFromFrontend = (
-  {
-    sendToClient,
-    broadcast,
-  }: {
-    sendToClient: (msg: ToFrontend) => Cmd;
-    broadcast: (msg: ToFrontend) => Cmd;
-  },
-  msg: ToBackend,
-  model: Model
-): [Model, Cmd<Msg>] => {
-  switch (msg[0]) {
-    case 'input-mode': {
-      const modelNew: BackendModel = initMode(msg[1]);
-
-      return [modelNew, broadcast(['input-mode-done', Ok(modelNew)])];
+export const updateFromFrontend = ({
+  sendToClient,
+  broadcast,
+  msg,
+  model,
+  ctx,
+}: {
+  sendToClient: (msg: ToFrontend) => Cmd;
+  broadcast: (msg: ToFrontend) => Cmd;
+  ctx: RoomRequestCtx;
+  msg: ToBackend;
+  model: Model;
+}): { model: Model; cmd?: Cmd<Msg> } => {
+  if (msg.t === 'input-mode') {
+    if (ctx.currentUserId !== ctx.hostId) {
+      return {
+        model,
+        cmd: sendToClient({ ...msg, result: Err('must-be-host') }),
+      };
     }
 
-    case 'vs-user': {
-      if (model.mode === 'vs-user') {
-        const [child, cmd] = VsUser.updateFromFrontend(
-          {
-            sendToClient: (msg) => sendToClient(['vs-user', msg]),
-            broadcast: (msg) => broadcast(['vs-user', msg]),
-          },
-          msg[1],
-          model.child
-        );
+    const modelNew: BackendModel = initMode({
+      mode: msg.mode,
+      userId: ctx.hostId,
+    });
 
-        return [{ mode: 'vs-user', child }, Cmd.tag('vs-user', cmd)];
-      }
-
-      return [model, Cmd.None];
-    }
-
-    case 'vs-bot': {
-      if (model.mode === 'vs-bot') {
-        const [child, cmd] = VsBot.updateFromFrontend(
-          {
-            sendToClient: (msg) => sendToClient(['vs-bot', msg]),
-            broadcast: (msg) => broadcast(['vs-bot', msg]),
-          },
-          msg[1],
-          model.child
-        );
-
-        return [{ mode: 'vs-bot', child }, Cmd.tag('vs-bot', cmd)];
-      }
-
-      return [model, Cmd.None];
-    }
-
-    default: {
-      return exhaustive(msg[0]);
-    }
+    return {
+      model: modelNew,
+      cmd: broadcast({ ...msg, result: Ok(modelNew) }),
+    };
   }
+
+  if (msg.t === 'vs-user' && model.t === 'vs-user') {
+    const updated = VsUser.updateFromFrontend(
+      {
+        sendToClient: (c) => sendToClient({ t: 'vs-user', c }),
+        broadcast: (c) => broadcast({ t: 'vs-user', c }),
+      },
+      msg.c,
+      model.c
+    );
+
+    return {
+      model: { ...model, c: updated[0] },
+      cmd: Cmd.tag_('vs-user', updated[1]),
+    };
+  }
+
+  if (msg.t === 'vs-bot' && model.t === 'vs-bot') {
+    const updated = VsBot.updateFromFrontend(
+      {
+        sendToClient: (c) => sendToClient({ t: 'vs-bot', c }),
+        broadcast: (c) => broadcast({ t: 'vs-bot', c }),
+      },
+      msg.c,
+      model.c
+    );
+
+    return {
+      model: { ...model, c: updated[0] },
+      cmd: Cmd.tag_('vs-bot', updated[1]),
+    };
+  }
+
+  return { model };
 };
 
 export const updateFromRoom = ({
@@ -140,65 +153,63 @@ export const updateFromRoom = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  switch (model.mode) {
-    case 'none': {
-      return { model };
-    }
-
-    case 'vs-bot': {
-      const updated = VsBot.updateFromRoom({
-        broadcast: (m) => broadcast(['vs-bot', m]),
-        msg,
-        model: model.child,
-      });
-      return {
-        model: { mode: 'vs-bot', child: updated.model },
-        cmd: updated.cmd ? Cmd.tag('vs-bot', updated.cmd) : undefined,
-      };
-    }
-
-    case 'vs-user': {
-      const updated = VsUser.updateFromRoom({
-        broadcast: (m) => broadcast(['vs-user', m]),
-        msg,
-        model: model.child,
-      });
-      return {
-        model: { mode: 'vs-user', child: updated.model },
-        cmd: updated.cmd ? Cmd.tag('vs-user', updated.cmd) : undefined,
-      };
-    }
+  if (model.t === 'none') {
+    return { model };
   }
+
+  if (model.t === 'vs-bot') {
+    const updated = VsBot.updateFromRoom({
+      broadcast: (c) => broadcast({ t: 'vs-bot', c }),
+      msg,
+      model: model.c,
+    });
+    return {
+      model: { t: 'vs-bot', c: updated.model },
+      cmd: updated.cmd ? Cmd.tag_('vs-bot', updated.cmd) : undefined,
+    };
+  }
+
+  if (model.t === 'vs-user') {
+    const updated = VsUser.updateFromRoom({
+      broadcast: (c) => broadcast({ t: 'vs-user', c }),
+      msg,
+      model: model.c,
+    });
+    return {
+      model: { t: 'vs-user', c: updated.model },
+      cmd: updated.cmd ? Cmd.tag_('vs-user', updated.cmd) : undefined,
+    };
+  }
+
+  return { model };
 };
 
 const initMode = ({
   mode,
   userId,
 }: {
-  mode: BackendModel['mode'];
+  mode: BackendModel['t'];
   userId: UserId;
 }): BackendModel => {
-  switch (mode) {
-    case 'none': {
-      return {
-        mode: 'none',
-      };
-    }
-
-    case 'vs-user': {
-      return {
-        mode: 'vs-user',
-        child: VsUser.init({ X: userId, O: 'none' }),
-      };
-    }
-
-    case 'vs-bot': {
-      return {
-        mode: 'vs-bot',
-        child: VsBot.init({ userId }),
-      };
-    }
+  if (mode === 'none') {
+    return { t: 'none' };
   }
+
+  if (mode === 'vs-user') {
+    return {
+      t: 'vs-user',
+      c: VsUser.init({ X: userId, O: 'none' }),
+    };
+  }
+
+  if (mode === 'vs-bot') {
+    return {
+      t: 'vs-bot',
+      c: VsBot.init({ userId }),
+    };
+  }
+
+  return { t: 'none' };
 };
 
 //
@@ -210,17 +221,13 @@ const initMode = ({
 //
 
 export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
-  switch (model.mode) {
-    case 'none': {
-      return Sub.None;
-    }
-
-    case 'vs-user': {
-      return Sub.tag('vs-user', VsUser.subscriptions(intervalId, model.child));
-    }
-
-    case 'vs-bot': {
-      return Sub.tag('vs-bot', VsBot.subscriptions(model.child));
-    }
+  if (model.t === 'vs-user') {
+    return Sub.tag_('vs-user', VsUser.subscriptions(intervalId, model.c));
   }
+
+  if (model.t === 'vs-bot') {
+    return Sub.tag_('vs-bot', VsBot.subscriptions(model.c));
+  }
+
+  return Sub.None;
 };

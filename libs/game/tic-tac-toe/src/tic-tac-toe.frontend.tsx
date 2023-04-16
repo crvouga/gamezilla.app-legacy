@@ -1,4 +1,4 @@
-import { Cmd, exhaustive, Sub } from '@gamezilla/core';
+import { Cmd, Sub } from '@gamezilla/core';
 import { RoomCtx, ViewMainMenu } from '@gamezilla/game-shared';
 import { ProfileStore } from '@gamezilla/profile';
 import { Alerts, Ctx } from '@gamezilla/shared';
@@ -25,7 +25,7 @@ import * as VsUser from './vs-user/vs-user.frontend';
 export type Model = FrontendModel;
 
 export const init: Model = {
-  mode: 'none',
+  t: 'none',
 };
 
 //
@@ -49,101 +49,95 @@ export const update = ({
   ctx: RoomCtx;
   msg: Msg;
   model: Model;
-}): [Model, Cmd<Msg>] => {
-  switch (msg[0]) {
-    case 'input-mode': {
-      return [model, sendToBackend(msg)];
-    }
-
-    case 'vs-user': {
-      if (model.mode === 'vs-user') {
-        const [child, cmd] = VsUser.update(
-          {
-            sendToBackend: (msg) => sendToBackend(['vs-user', msg]),
-          },
-          msg[1],
-          model.child
-        );
-        return [{ mode: 'vs-user', child }, Cmd.tag('vs-user', cmd)];
-      }
-      return [model, Cmd.None];
-    }
-
-    case 'vs-bot': {
-      if (model.mode === 'vs-bot') {
-        const updated = VsBot.update({
-          // currentUserId,
-          ctx,
-          sendToBackend: (msg) => sendToBackend(['vs-bot', msg]),
-          msg: msg[1],
-          model: model.child,
-        });
-        return [
-          { mode: 'vs-bot', child: updated.model },
-          Cmd.tag('vs-bot', updated?.cmd ?? Cmd.None),
-        ];
-      }
-      return [model, Cmd.None];
-    }
-
-    default: {
-      return exhaustive(msg[0]);
-    }
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  if (msg.t === 'input-mode') {
+    return { model, cmd: sendToBackend(msg) };
   }
+
+  if (msg.t === 'vs-user' && model.t === 'vs-user') {
+    const updated = VsUser.update(
+      {
+        sendToBackend: (c) => sendToBackend({ t: 'vs-user', c }),
+      },
+      msg.c,
+      model.c
+    );
+    return {
+      model: { t: 'vs-user', c: updated[0] },
+      cmd: Cmd.tag_('vs-user', updated[1]),
+    };
+  }
+
+  if (msg.t === 'vs-bot' && model.t === 'vs-bot') {
+    const updated = VsBot.update({
+      ctx,
+      sendToBackend: (c) => sendToBackend({ t: 'vs-bot', c }),
+      msg: msg.c,
+      model: model.c,
+    });
+    return {
+      model: { t: 'vs-bot', c: updated.model },
+      cmd: Cmd.tag_('vs-bot', updated.cmd),
+    };
+  }
+
+  return { model };
 };
 
-export const updateFromBackend = (
-  { ctx }: { ctx: Ctx },
-  msg: ToFrontend,
-  model: Model
-): [Model, Cmd<Msg>, OutAction[]] => {
-  switch (msg[0]) {
-    case 'input-mode-done': {
-      const result = msg[1];
+export const updateFromBackend = ({
+  ctx,
+  msg,
+  model,
+}: {
+  ctx: Ctx;
+  msg: ToFrontend;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+  actions?: OutAction[];
+} => {
+  if (msg.t === 'input-mode') {
+    const { result } = msg;
 
-      if (result.type === 'Err') {
-        return [model, Cmd.None, []];
-      }
-
-      const modelNew = mergeWithBackend({
-        ctx,
-        frontendModel: model,
-        backendModel: result.value,
-      });
-
-      return [modelNew, Cmd.None, []];
+    if (result.type === 'Err') {
+      return { model };
     }
 
-    case 'vs-user': {
-      if (model.mode === 'vs-user') {
-        const [child, actions] = VsUser.updateFromBackend(
-          { ctx },
-          msg[1],
-          model.child
-        );
-        return [{ mode: 'vs-user', child }, Cmd.None, actions];
-      }
+    const modelNew = mergeWithBackend({
+      ctx,
+      frontendModel: model,
+      backendModel: result.value,
+    });
 
-      return [model, Cmd.None, []];
-    }
-
-    case 'vs-bot': {
-      if (model.mode === 'vs-bot') {
-        const [child, cmd, actions] = VsBot.updateFromBackend({
-          ctx,
-          msg: msg[1],
-          model: model.child,
-        });
-        return [{ mode: 'vs-bot', child }, Cmd.tag('vs-bot', cmd), actions];
-      }
-
-      return [model, Cmd.None, []];
-    }
-
-    default: {
-      return exhaustive(msg[0]);
-    }
+    return { model: modelNew };
   }
+
+  if (msg.t === 'vs-user' && model.t === 'vs-user') {
+    const updated = VsUser.updateFromBackend({ ctx }, msg.c, model.c);
+    return {
+      model: { t: 'vs-user', c: updated[0] },
+      actions: updated[1],
+    };
+  }
+
+  if (msg.t === 'vs-bot' && model.t === 'vs-bot') {
+    const updated = VsBot.updateFromBackend({
+      ctx,
+      msg: msg.c,
+      model: model.c,
+    });
+    return {
+      model: { t: 'vs-bot', c: updated[0] },
+      cmd: Cmd.tag_('vs-bot', updated[1]),
+      actions: updated[2],
+    };
+  }
+
+  return { model };
 };
 
 export const mergeWithBackend = ({
@@ -155,38 +149,37 @@ export const mergeWithBackend = ({
   frontendModel: FrontendModel;
   backendModel: BackendModel;
 }): FrontendModel => {
-  switch (backendModel.mode) {
-    case 'none': {
-      return {
-        mode: 'none',
-      };
-    }
-    case 'vs-user': {
-      const frontendModelChild =
-        frontendModel.mode === 'vs-user' ? frontendModel.child : VsUser.init;
-
-      return {
-        mode: 'vs-user',
-        child: VsUser.mergeWithBackend(frontendModelChild, backendModel.child),
-      };
-    }
-
-    case 'vs-bot': {
-      const frontendModelChild =
-        frontendModel.mode === 'vs-bot'
-          ? frontendModel.child
-          : VsBot.init({ userId: 'none' });
-
-      return {
-        mode: 'vs-bot',
-        child: VsBot.mergeWithBackend({
-          now: ctx.now,
-          frontendModel: frontendModelChild,
-          backendModel: backendModel.child,
-        }),
-      };
-    }
+  if (backendModel.t === 'none') {
+    return { t: 'none' };
   }
+
+  if (backendModel.t === 'vs-user') {
+    const frontendModelChild =
+      frontendModel.t === 'vs-user' ? frontendModel.c : VsUser.init;
+
+    return {
+      t: 'vs-user',
+      c: VsUser.mergeWithBackend(frontendModelChild, backendModel.c),
+    };
+  }
+
+  if (backendModel.t === 'vs-bot') {
+    const frontendModelChild =
+      frontendModel.t === 'vs-bot'
+        ? frontendModel.c
+        : VsBot.init({ userId: 'none' });
+
+    return {
+      t: 'vs-bot',
+      c: VsBot.mergeWithBackend({
+        now: ctx.now,
+        frontendModel: frontendModelChild,
+        backendModel: backendModel.c,
+      }),
+    };
+  }
+
+  return frontendModel;
 };
 
 //
@@ -196,19 +189,11 @@ export const mergeWithBackend = ({
 //
 
 export const subscriptions = (ctx: Ctx, model: Model): Sub<Msg> => {
-  switch (model.mode) {
-    case 'none': {
-      return Sub.None;
-    }
-
-    case 'vs-user': {
-      return Sub.None;
-    }
-
-    case 'vs-bot': {
-      return Sub.tag('vs-bot', VsBot.subscriptions(ctx, model.child));
-    }
+  if (model.t === 'vs-bot') {
+    return Sub.tag_('vs-bot', VsBot.subscriptions(ctx, model.c));
   }
+
+  return Sub.None;
 };
 
 //
@@ -230,61 +215,52 @@ export const View = ({
   $send: (msg: Msg) => void;
   gameRoomCtx: RoomCtx;
 }) => {
-  switch (model.mode) {
-    case 'none': {
-      return (
-        <ViewMainMenu
-          title="Tic-Tac-Toe"
-          roomCtx={gameRoomCtx}
-          coverArt={viewCoverArt()}
-          buttons={[
-            {
-              label: 'Play Friend',
-              icon: <IconUsers />,
-              onClick: () =>
-                $send([
-                  'input-mode',
-                  { mode: 'vs-user', userId: ctx.currentUserId },
-                ]),
-            },
-            {
-              label: 'Play Computer',
-              icon: <IconComputerDesktop />,
-              onClick: () =>
-                $send([
-                  'input-mode',
-                  { mode: 'vs-bot', userId: ctx.currentUserId },
-                ]),
-            },
-          ]}
-        />
-      );
-    }
+  const onQuit = () => $send({ t: 'input-mode', mode: 'none' });
 
-    case 'vs-user': {
-      return (
-        <VsUser.View
-          onCloseGame={() => {
-            $send(['input-mode', { mode: 'none', userId: ctx.currentUserId }]);
-          }}
-          ctx={ctx}
-          model={model.child}
-          $send={(msg) => $send(['vs-user', msg])}
-        />
-      );
-    }
-
-    case 'vs-bot': {
-      return (
-        <VsBot.View
-          goBack={() => {
-            $send(['input-mode', { mode: 'none', userId: ctx.currentUserId }]);
-          }}
-          ctx={ctx}
-          model={model.child}
-          $send={(msg) => $send(['vs-bot', msg])}
-        />
-      );
-    }
+  if (model.t === 'none') {
+    return (
+      <ViewMainMenu
+        title="Tic-Tac-Toe"
+        roomCtx={gameRoomCtx}
+        coverArt={viewCoverArt()}
+        buttons={[
+          {
+            label: 'Play Friend',
+            icon: <IconUsers />,
+            onClick: () => $send({ t: 'input-mode', mode: 'vs-user' }),
+          },
+          {
+            label: 'Play Computer',
+            icon: <IconComputerDesktop />,
+            onClick: () => $send({ t: 'input-mode', mode: 'vs-bot' }),
+          },
+        ]}
+      />
+    );
   }
+
+  if (model.t === 'vs-user') {
+    return (
+      <VsUser.View
+        onCloseGame={onQuit}
+        ctx={ctx}
+        model={model.c}
+        $send={(c) => $send({ t: 'vs-user', c })}
+      />
+    );
+  }
+
+  if (model.t === 'vs-bot') {
+    return (
+      <VsBot.View
+        goBack={onQuit}
+        ctx={ctx}
+        model={model.c}
+        $send={(c) => $send({ t: 'vs-bot', c })}
+      />
+    );
+  }
+
+  const check: never = model;
+  return check;
 };

@@ -3,7 +3,7 @@ export const MyAvatar = ({
   src,
   alt,
 }: {
-  src?: string;
+  src?: string | null;
   alt: string;
   className?: string;
 }) => {

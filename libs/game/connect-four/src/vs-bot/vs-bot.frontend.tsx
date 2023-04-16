@@ -279,6 +279,8 @@ export const View = ({
         values: Object.values(botLevel),
         selected: model.botLevel,
         onInput: (level) => $send(['input-bot-level', { botLevel: level }]),
+        toName: (level) => level,
+        render: ({ botLevel }) => <div>{botLevel}</div>,
       },
       player: {
         values: Object.values(playerTypes),
@@ -289,6 +291,13 @@ export const View = ({
             playerType={playerType}
             sx={{ width: '1.5rem', height: '1.5rem', ...sx }}
           />
+        ),
+        toName: (playerType) => (playerType === 'PlayerOne' ? 'Red' : 'Yellow'),
+        render: ({ playerType }) => (
+          <div>
+            <PlayerIcon playerType={playerType} />
+            <div>{playerType === 'PlayerOne' ? 'Red' : 'Yellow'}</div>
+          </div>
         ),
       },
       leftPlayerType: 'PlayerOne',

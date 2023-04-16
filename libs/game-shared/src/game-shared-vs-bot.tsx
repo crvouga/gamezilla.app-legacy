@@ -7,17 +7,19 @@ import {
   CircularProgress,
   Divider,
   FillBox,
-  fragment,
-  icon,
   IconName,
   Icons,
+  MyAvatar,
+  MyButton,
   Paper,
   Sx,
-  ToggleButton,
-  ToggleButtonGroup,
   Typography,
   ViewNode,
+  classNames,
+  fragment,
+  icon,
 } from '@gamezilla/shared/ui';
+import { ReactNode } from 'react';
 
 export const viewVsBotSetupScreen = <BotLevel, PlayerType>({
   // title,
@@ -43,12 +45,16 @@ export const viewVsBotSetupScreen = <BotLevel, PlayerType>({
     values: BotLevel[];
     selected: BotLevel;
     onInput: (value: BotLevel) => void;
+    toName: (value: BotLevel) => string;
+    render: (props: { botLevel: BotLevel }) => ReactNode;
   };
   player: {
     selected: PlayerType;
     values: PlayerType[];
     onInput: (value: PlayerType) => void;
     icon: (props: { sx?: Sx; playerType: PlayerType }) => ViewNode;
+    toName: (value: PlayerType) => string;
+    render: (props: { playerType: PlayerType }) => ReactNode;
   };
   onCancel: () => void;
   onStartGame: () => void;
@@ -56,7 +62,7 @@ export const viewVsBotSetupScreen = <BotLevel, PlayerType>({
   onStopPlaying: () => void;
 }) => {
   return (
-    <FillBox sx={{ overflowY: 'scroll', pb: 2 }}>
+    <div className="w-full h-full flex-1 flex flex-col overflow-y-auto">
       {viewVersusBlock({
         viewPlayerIcon: ({ sx, playerType }) => player.icon({ sx, playerType }),
         playerId,
@@ -70,125 +76,126 @@ export const viewVsBotSetupScreen = <BotLevel, PlayerType>({
 
       <Divider />
 
-      <Typography color="text.secondary" sx={{ mt: 2, px: 2, mb: 1 }}>
-        Human
-      </Typography>
+      <div className="flex flex-col flex-1 p-4 gap-8">
+        <section className="flex flex-col gap-2">
+          <div className="text-white/80 text-lg">Human</div>
 
-      {playerId ? (
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            px: 2,
-            mb: 3,
-          }}
-        >
-          <Avatar
-            sx={{ mr: 1 }}
-            src={playerId ? ctx.profiles[playerId]?.avatarUrl : ''}
-          />
-          <Typography noWrap sx={{ flex: 1 }}>
-            {playerId ? ctx.profiles[playerId]?.username ?? '...' : '...'}
-          </Typography>
-          {ctx.currentUserId === playerId && (
-            <Button onClick={onStopPlaying}>Stop Playing</Button>
+          {playerId ? (
+            <div className="flex items-center gap-2 w-full">
+              <MyAvatar
+                className="w-12 h-12"
+                alt="avatar"
+                src={playerId ? ctx.profiles[playerId]?.avatarUrl : null}
+              />
+              <div className="flex-1 text-lg">
+                {playerId ? ctx.profiles[playerId]?.username ?? '...' : '...'}
+              </div>
+              {ctx.currentUserId === playerId && (
+                <MyButton
+                  size="sm"
+                  variant="text"
+                  color="primary"
+                  onClick={onStopPlaying}
+                >
+                  Stop Playing
+                </MyButton>
+              )}
+            </div>
+          ) : (
+            <MyButton
+              className="w-full"
+              color="primary"
+              variant="contained"
+              onClick={onStartPlaying}
+            >
+              Start Playing
+            </MyButton>
           )}
-        </Box>
-      ) : (
-        <Box
-          sx={{
-            px: 2,
-            mb: 3,
-          }}
-        >
-          <Button fullWidth variant="contained" onClick={onStartPlaying}>
-            Start Playing
-          </Button>
-        </Box>
-      )}
+        </section>
 
-      {ctx.currentUserId === playerId && (
-        <>
-          <Typography color="text.secondary" sx={{ px: 2, mb: 1 }}>
-            Computer
-          </Typography>
+        {ctx.currentUserId === playerId && (
+          <>
+            <section className="flex flex-col gap-2">
+              <div className="text-white/80 text-lg"> Play As</div>
+              <ChoiceChips
+                choices={player.values}
+                onSelect={player.onInput}
+                selected={player.selected}
+                toKey={player.toName}
+                renderChoice={(choice) => player.render({ playerType: choice })}
+              />
+            </section>
 
-          <Box
-            sx={{
-              width: '100%',
-              px: 2,
-              mb: 3,
-            }}
-          >
-            <ToggleButtonGroup
-              disabled={ctx.currentUserId !== playerId}
-              fullWidth
-              value={String(botLevel.selected)}
-            >
-              {botLevel.values.map((value) => (
-                <ToggleButton
-                  key={String(value)}
-                  value={String(value)}
-                  onClick={() => botLevel.onInput(value)}
-                >
-                  {String(value)}
-                </ToggleButton>
-              ))}
-            </ToggleButtonGroup>
-          </Box>
+            <section className="flex flex-col gap-2">
+              <div className="text-white/80 text-lg"> Computer</div>
 
-          <Typography color="text.secondary" sx={{ px: 2, mb: 1 }}>
-            Play As
-          </Typography>
+              <div className="w-full">
+                <ChoiceChips
+                  choices={botLevel.values}
+                  onSelect={botLevel.onInput}
+                  selected={botLevel.selected}
+                  toKey={botLevel.toName}
+                  renderChoice={(choice) =>
+                    botLevel.render({ botLevel: choice })
+                  }
+                />
+              </div>
+            </section>
+          </>
+        )}
+      </div>
 
-          <Box
-            sx={{
-              width: '100%',
-              px: 2,
-              mb: 3,
-            }}
-          >
-            <ToggleButtonGroup
-              disabled={ctx.currentUserId !== playerId}
-              fullWidth
-              value={String(player.selected)}
-            >
-              {player.values.map((value) => (
-                <ToggleButton
-                  key={String(value)}
-                  value={String(value)}
-                  onClick={() => player.onInput(value)}
-                >
-                  {player.icon({ playerType: value, sx: {} })}
-                </ToggleButton>
-              ))}
-            </ToggleButtonGroup>
-          </Box>
-        </>
-      )}
-
-      <Box sx={{ flex: 1, py: 2 }} />
-
-      <Box sx={{ px: 2, gap: 2, mt: 2, display: 'flex' }}>
-        <Button
-          fullWidth
-          variant="outlined"
-          startIcon={<Icons.ArrowLeft />}
-          onClick={onCancel}
-        >
+      <div className="flex items-center gap-4 p-4">
+        <MyButton className="w-full" onClick={onCancel}>
           Back
-        </Button>
-        <Button
-          disabled={ctx.currentUserId !== playerId}
-          fullWidth
-          variant="contained"
-          endIcon={<Icons.ArrowRight />}
+        </MyButton>
+        <MyButton
+          disabled={!playerId}
+          className="w-full"
+          color="primary"
           onClick={onStartGame}
         >
-          Start Game
-        </Button>
-      </Box>
-    </FillBox>
+          Start
+        </MyButton>
+      </div>
+    </div>
+  );
+};
+
+const ChoiceChips = <TChoice,>({
+  selected,
+  choices,
+  toKey,
+  onSelect,
+  renderChoice,
+}: {
+  selected: TChoice;
+  choices: TChoice[];
+  onSelect: (choice: TChoice) => void;
+  toKey: (choice: TChoice) => string;
+  renderChoice: (choice: TChoice) => ReactNode;
+}) => {
+  return (
+    <div className="grid grid-cols-3 gap-2 place-items-stretch">
+      {choices.map((choice) => {
+        const isSelected = toKey(selected) === toKey(choice);
+        return (
+          <button
+            onClick={() => onSelect(choice)}
+            key={toKey(choice)}
+            disabled={isSelected}
+            className={classNames(
+              'px-2 py-1 rounded-full text-lg overflow-hidden',
+              isSelected && 'bg-white text-black',
+              !isSelected &&
+                'bg-neutral-900 border border-neutral-800 active:opacity-50'
+            )}
+          >
+            {renderChoice(choice)}
+          </button>
+        );
+      })}
+    </div>
   );
 };
 
@@ -562,6 +569,5 @@ const viewGameOverMessage = <PlayerType,>({
       </Typography>
     );
   }
-
   return <Typography variant="h1">Game Over</Typography>;
 };

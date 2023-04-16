@@ -1,6 +1,4 @@
 import { Result } from '@gamezilla/core';
-import { UserId } from '@gamezilla/shared';
-import { z } from 'zod';
 import * as VsBot from './vs-bot/vs-bot.types';
 import * as VsUser from './vs-user/vs-user.types';
 
@@ -13,19 +11,14 @@ import * as VsUser from './vs-user/vs-user.types';
 //
 
 export type FrontendModel =
-  | { mode: 'none' }
-  | { mode: 'vs-user'; child: VsUser.FrontendModel }
-  | { mode: 'vs-bot'; child: VsBot.FrontendModel };
+  | { t: 'none' }
+  | { t: 'vs-user'; c: VsUser.FrontendModel }
+  | { t: 'vs-bot'; c: VsBot.FrontendModel };
 
 export type BackendModel =
-  | { mode: 'none' }
-  | { mode: 'vs-user'; child: VsUser.BackendModel }
-  | { mode: 'vs-bot'; child: VsBot.BackendModel };
-
-export const BackendModel = z.discriminatedUnion('mode', [
-  z.object({ mode: z.literal('none') }),
-  // todo
-]);
+  | { t: 'none' }
+  | { t: 'vs-user'; c: VsUser.BackendModel }
+  | { t: 'vs-bot'; c: VsBot.BackendModel };
 
 //
 //
@@ -36,34 +29,31 @@ export const BackendModel = z.discriminatedUnion('mode', [
 //
 
 export type FrontendMsg =
-  | ['vs-user', VsUser.FrontendMsg]
-  | ['vs-bot', VsBot.FrontendMsg]
-  | InputMode;
+  | { t: 'vs-user'; c: VsUser.FrontendMsg }
+  | { t: 'vs-bot'; c: VsBot.FrontendMsg }
+  | Req;
 
 export type BackendMsg =
-  | ['vs-user', VsUser.BackendMsg]
-  | ['vs-bot', VsBot.BackendMsg];
+  | { t: 'vs-user'; c: VsUser.BackendMsg }
+  | { t: 'vs-bot'; c: VsBot.BackendMsg };
 
 export type ToBackend =
-  | ['vs-user', VsUser.ToBackend]
-  | ['vs-bot', VsBot.ToBackend]
-  | InputMode;
+  | { t: 'vs-user'; c: VsUser.ToBackend }
+  | { t: 'vs-bot'; c: VsBot.ToBackend }
+  | Req;
 
 export type ToFrontend =
-  | ['vs-user', VsUser.ToFrontend]
-  | ['vs-bot', VsBot.ToFrontend]
-  | InputMode_Done;
+  | { t: 'vs-user'; c: VsUser.ToFrontend }
+  | { t: 'vs-bot'; c: VsBot.ToFrontend }
+  | Res;
 
-//
-//
-//
-//
-//
-//
+export type Req = {
+  t: 'input-mode';
+  mode: BackendModel['t'];
+};
 
-type InputMode = ['input-mode', { mode: BackendModel['mode']; userId: UserId }];
-type InputMode_Done = [
-  'input-mode-done',
-  Result<InputModeProblem, BackendModel>
-];
-type InputModeProblem = 'unknown';
+export type Res = Req & {
+  result: Result<Problem, BackendModel>;
+};
+
+type Problem = 'must-be-host';

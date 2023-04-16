@@ -229,6 +229,7 @@ export const view = ({
           onInput: (botLevel) => $send(['input-bot-level', { botLevel }]),
           selected: model.botLevel,
           values: Object.values(botLevels),
+          toName: (botLevel) => botLevel,
         },
         coverArt: viewCoverArt(),
         player: {
@@ -236,6 +237,7 @@ export const view = ({
           selected: model.userStone,
           values: Object.values(stones),
           icon: ({ sx, playerType: stone }) => viewStoneIcon({ ...sx, stone }),
+          toName: (stone) => stone,
         },
         ctx,
         title: 'gomoku',

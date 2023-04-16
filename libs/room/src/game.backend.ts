@@ -1,6 +1,5 @@
 import { Cmd, exhaustive, Sub } from '@gamezilla/core';
 import { RoomMsg } from '@gamezilla/game-shared';
-import { RoomCtx, RoomRequestCtx } from '@gamezilla/game-shared/backend';
 import { ChessBackend } from '@gamezilla/game/chess';
 import { ConnectFourBackend } from '@gamezilla/game/connect-four';
 import { FlowBackend } from '@gamezilla/game/flow';
@@ -10,6 +9,7 @@ import { SnakeBackend } from '@gamezilla/game/snake';
 import { TetrisBackend } from '@gamezilla/game/tetris';
 import { TicTacToeBackend } from '@gamezilla/game/tic-tac-toe';
 import { UserId } from '@gamezilla/shared';
+import { RoomCtx, RoomRequestCtx } from '@gamezilla/shared/backend';
 import { BackendModel, BackendMsg, ToBackend, ToFrontend } from './game.types';
 
 //
@@ -109,12 +109,15 @@ export const update = ({
 
     case 'tic-tac-toe': {
       if (model.t === 'tic-tac-toe') {
-        const [child, cmd] = TicTacToeBackend.update(
-          { broadcast: (m) => broadcast({ t: 'tic-tac-toe', c: m }) },
-          msg.c,
-          model.c
-        );
-        return [{ t: 'tic-tac-toe', c: child }, Cmd.tag_('tic-tac-toe', cmd)];
+        const updated = TicTacToeBackend.update({
+          broadcast: (m) => broadcast({ t: 'tic-tac-toe', c: m }),
+          msg: msg.c,
+          model: model.c,
+        });
+        return [
+          { t: 'tic-tac-toe', c: updated.model },
+          Cmd.tag_('tic-tac-toe', updated.cmd ?? Cmd.None),
+        ];
       }
       return [model, Cmd.None];
     }
@@ -234,15 +237,17 @@ export const updateFromFrontend = ({
 
     case 'tic-tac-toe': {
       if (model.t === 'tic-tac-toe') {
-        const [child, cmd] = TicTacToeBackend.updateFromFrontend(
-          {
-            sendToClient: (msg) => sendToClient({ t: 'tic-tac-toe', c: msg }),
-            broadcast: (msg) => broadcast({ t: 'tic-tac-toe', c: msg }),
-          },
-          msg.c,
-          model.c
-        );
-        return [{ t: 'tic-tac-toe', c: child }, Cmd.tag_('tic-tac-toe', cmd)];
+        const updated = TicTacToeBackend.updateFromFrontend({
+          sendToClient: (msg) => sendToClient({ t: 'tic-tac-toe', c: msg }),
+          broadcast: (msg) => broadcast({ t: 'tic-tac-toe', c: msg }),
+          msg: msg.c,
+          model: model.c,
+          ctx,
+        });
+        return [
+          { t: 'tic-tac-toe', c: updated.model },
+          Cmd.tag_('tic-tac-toe', updated.cmd ?? Cmd.None),
+        ];
       }
       return [model, Cmd.None];
     }
