@@ -916,6 +916,8 @@ export const ViewPageRoomList = ({
         </Box>
       )}
 
+      <div className="flex-1"></div>
+
       {!currentRoom && (
         <div className="w-full p-4">
           <MyButton
