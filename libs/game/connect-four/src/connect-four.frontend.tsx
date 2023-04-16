@@ -179,7 +179,7 @@ export const View = ({
             },
             {
               icon: <IconComputerDesktop className="w-6 h-6" />,
-              label: 'Vs Computer',
+              label: 'Play Computer',
               onClick: () =>
                 $send([
                   'input-mode',

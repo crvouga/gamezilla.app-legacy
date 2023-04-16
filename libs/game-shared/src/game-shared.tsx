@@ -45,9 +45,11 @@ export const ViewMainMenu = ({
   }
 
   return (
-    <div className="w-full h-full flex flex-col">
-      <div className="w-full flex-1 flex flex-col items-center p-4 overflow-y-scroll">
-        <div className="w-32 h-32 rounded overflow-hidden">{coverArt}</div>
+    <div className="w-full h-full flex flex-col overflow-y-hidden">
+      <div className="w-full flex-1 flex flex-col items-center justify-center px-4 py-8 overflow-y-auto">
+        <div>
+          <div className="w-32 h-32 rounded-md overflow-hidden">{coverArt}</div>
+        </div>
 
         <h1 className="text-4xl font-bold mt-4">{title}</h1>
 
@@ -69,7 +71,7 @@ export const ViewMainMenu = ({
       </div>
 
       <div className="p-4 flex justify-center">
-        <MyButton onClick={roomCtx.onQuit} size="lg">
+        <MyButton onClick={roomCtx.onQuit} size="lg" className="px-4">
           <IconArrowLeftOnRect />
           Quit
         </MyButton>

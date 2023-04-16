@@ -270,7 +270,7 @@ export const View = ({
     return viewVsBotSetupScreen<BotLevel, PlayerType>({
       coverArt: <ViewCoverArt />,
       title: 'Connect Four',
-      subtitle: 'Vs Computer',
+      subtitle: 'Play Computer',
       ctx,
       playerId: model.player === 'none' ? null : model.player,
       onStartPlaying: () => $send(['start-playing']),

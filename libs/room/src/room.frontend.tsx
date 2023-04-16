@@ -993,28 +993,9 @@ export const ViewNotInGame = ({
 }) => {
   if (room.hostId !== ctx.currentUserId) {
     return (
-      <div>
-        <Box
-          sx={{
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Icons.SportsEsports
-            sx={{
-              width: 72,
-              height: 72,
-              color: 'text.secondary',
-            }}
-          />
-          <Typography variant="h6" color="text.secondary">
-            No game selected
-          </Typography>
-        </Box>
+      <div className="w-full h-full flex flex-col items-center justify-center opacity-60">
+        <IconGamepad className="w-12 h-12" />
+        <div className="text-lg">No game selected</div>
       </div>
     );
   }
