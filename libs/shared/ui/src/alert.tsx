@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import { IconExclamationCircle, IconInfoCircle } from './icon';
+import { IconCheckmarkCircle } from './icon/icon-checkmark-circle';
 import { classNames } from './utils';
 
 export const AlertError = ({
@@ -12,11 +13,14 @@ export const AlertError = ({
   return (
     <div
       className={classNames(
-        'bg-red-500 text-white rounded-md p-4 flex items-center w-full',
+        'bg-red-500 text-white rounded-md p-4 flex items-center w-full gap-2',
         className
       )}
     >
-      <IconExclamationCircle className="w-6 h-6 mr-2" />
+      <div>
+        <IconExclamationCircle />
+      </div>
+
       {children}
     </div>
   );
@@ -33,10 +37,34 @@ export const AlertInfo = ({
     <div
       className={classNames(
         className,
-        'bg-blue-500 text-white p-4 rounded-md flex items-center w-full'
+        'bg-blue-500 text-white p-4 rounded-md flex items-center w-full gap-2'
       )}
     >
-      <IconInfoCircle className="w-6 h-6 mr-2" />
+      <div>
+        <IconInfoCircle />
+      </div>
+      {children}
+    </div>
+  );
+};
+
+export const AlertSuccess = ({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) => {
+  return (
+    <div
+      className={classNames(
+        className,
+        'bg-green-500 text-white p-4 rounded-md flex items-center w-full gap-2'
+      )}
+    >
+      <div>
+        <IconCheckmarkCircle />
+      </div>
       {children}
     </div>
   );

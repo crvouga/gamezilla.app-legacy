@@ -35,20 +35,15 @@ export type Model = {
     | { type: 'Ok' };
 };
 
-export const init = ({
-  country,
-  phoneNumber,
-}: {
-  country: Iso3166Alpha2Code;
-  countryQuery: string;
-  phoneNumber: string;
-  isSelectingCountry: boolean;
-}): { model: Model; cmd: Cmd<Msg> } => {
+export const init = (): {
+  model: Model;
+  cmd: Cmd<Msg>;
+} => {
   return {
     model: {
-      country,
-      phoneNumber,
-      countryQuery: Iso3166Alpha2Code.toName(country),
+      country: 'US',
+      phoneNumber: '',
+      countryQuery: Iso3166Alpha2Code.toName('US'),
       validation: 'not-validated',
       submission: {
         type: 'idle',
@@ -179,7 +174,6 @@ export const View = ({
   model,
   $send,
 }: {
-  isSelectingCountry: boolean;
   model: Model;
   $send: (msg: Msg) => void;
 }) => {

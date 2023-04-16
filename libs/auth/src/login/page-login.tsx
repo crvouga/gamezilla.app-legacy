@@ -1,6 +1,12 @@
 import { Cmd, p } from '@gamezilla/core';
 import { Route } from '@gamezilla/shared';
-import { IconMobilePhone, MyButton } from '@gamezilla/shared/ui';
+import {
+  IconEnvelope,
+  IconGoogle,
+  IconMobilePhone,
+  IconSpinner,
+  MyButton,
+} from '@gamezilla/shared/ui';
 import { AuthResult, loginWithProvider } from '../auth';
 
 export type Model = 'idle' | 'signing-in-with-google';
@@ -49,6 +55,7 @@ export const update = ({
 
 export const View = ({
   $send,
+  model,
 }: {
   model: Model;
   $send: (msg: Msg) => void;
@@ -64,7 +71,7 @@ export const View = ({
         </div>
 
         <div className="flex flex-col gap-6 w-full">
-          {/* <MyButton
+          <MyButton
             onClick={() => $send({ t: 'clicked-google' })}
             size="lg"
             className="w-full"
@@ -74,7 +81,7 @@ export const View = ({
             )}
             <IconGoogle />
             Continue With Google
-          </MyButton> */}
+          </MyButton>
 
           <MyButton
             onClick={() => $send({ t: 'clicked-text' })}
@@ -85,14 +92,14 @@ export const View = ({
             Continue With Text
           </MyButton>
 
-          {/* <MyButton
+          <MyButton
             onClick={() => $send({ t: 'clicked-email' })}
             size="lg"
             className="w-full"
           >
             <IconEnvelope />
             Continue With Email
-          </MyButton> */}
+          </MyButton>
         </div>
       </div>
     </div>

@@ -1,6 +1,13 @@
-import { Cmd, exhaustive, p, t } from '@gamezilla/core';
+import { Cmd, exhaustive, p } from '@gamezilla/core';
 import { Route } from '@gamezilla/shared';
-import * as UI from '@gamezilla/shared/ui';
+import {
+  AlertError,
+  AlertSuccess,
+  IconSpinner,
+  MyButton,
+  MyTextField,
+  TopBar,
+} from '@gamezilla/shared/ui';
 import * as Auth from '../auth';
 
 //
@@ -13,11 +20,12 @@ import * as Auth from '../auth';
 
 export type Model = {
   emailAddress: string;
+  validation?: 'invalid-email' | null;
   submission:
     | { type: 'idle' }
-    | { type: 'Loading'; sentToEmailAddress: string }
-    | { type: 'Problem'; message: string }
-    | { type: 'Ok'; sentToEmailAddress: string };
+    | { type: 'loading'; sentToEmailAddress: string }
+    | { type: 'problem'; message: string }
+    | { type: 'ok'; sentToEmailAddress: string };
 };
 
 export const init: Model = {
@@ -45,67 +53,73 @@ export const update = ({
 }: {
   msg: Msg;
   model: Model;
-}): { model: Model; cmd?: Cmd<Msg> } => {
-  switch (msg.t) {
-    case 'inputted-email-address':
-      return { model: { ...model, emailAddress: msg.emailAddress } };
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  if (msg.t === 'inputted-email-address') {
+    return {
+      model: { ...model, validation: null, emailAddress: msg.emailAddress },
+    };
+  }
 
-    case 'login-done': {
-      switch (msg.result.type) {
-        case 'Err': {
-          return {
-            model: {
-              ...model,
-              submission: {
-                type: 'Problem',
-                message: msg.result.error.message,
-              },
-            },
-          };
-        }
-
-        case 'Ok': {
-          const emailAddress =
-            model.submission.type === 'Loading'
-              ? model.submission.sentToEmailAddress
-              : model.emailAddress;
-          return {
-            model: {
-              ...model,
-              emailAddress: '',
-              submission: { type: 'Ok', sentToEmailAddress: emailAddress },
-            },
-          };
-        }
-        default: {
-          return { model };
-        }
-      }
-    }
-
-    case 'clicked-send-login-link': {
+  if (msg.t === 'login-done') {
+    if (msg.result.type === 'Err') {
       return {
         model: {
           ...model,
           submission: {
-            type: 'Loading',
-            sentToEmailAddress: model.emailAddress,
+            type: 'problem',
+            message: msg.result.error.message,
           },
         },
-        cmd: p(
-          Auth.loginWithEmailLink({ emailAddress: model.emailAddress }),
-          Cmd.perform((result) => ({ t: 'login-done', result }))
-        ),
       };
     }
 
-    case 'clicked-back': {
-      return { model: model, cmd: Route.back };
+    const emailAddress =
+      model.submission.type === 'loading'
+        ? model.submission.sentToEmailAddress
+        : model.emailAddress;
+
+    return {
+      model: {
+        ...model,
+        emailAddress: '',
+        submission: { type: 'ok', sentToEmailAddress: emailAddress },
+      },
+    };
+  }
+
+  if (msg.t === 'clicked-send-login-link') {
+    if (model.emailAddress.length === 0) {
+      return {
+        model: {
+          ...model,
+          validation: 'invalid-email',
+        },
+      };
     }
 
-    default:
-      return exhaustive(msg[0]);
+    return {
+      model: {
+        ...model,
+        submission: {
+          type: 'loading',
+          sentToEmailAddress: model.emailAddress,
+        },
+      },
+      cmd: p(
+        Auth.loginWithEmailLink({ emailAddress: model.emailAddress }),
+        Cmd.perform((result) => ({ t: 'login-done', result }))
+      ),
+    };
   }
+
+  if (msg.t === 'clicked-back') {
+    return { model: model, cmd: Route.back };
+  }
+
+  return exhaustive(msg);
 };
 
 //
@@ -124,65 +138,70 @@ export const View = ({
   $send: (msg: Msg) => void;
 }) => {
   return (
-    <UI.FillBox>
-      <UI.Header
+    <div className="w-full h-full flex flex-col">
+      <TopBar
         left={
-          <UI.HeaderBackButton onClick={() => $send({ t: 'clicked-back' })} />
+          <MyButton onClick={() => $send({ t: 'clicked-back' })}>Back</MyButton>
         }
         title="Login With Email"
       />
 
-      <UI.Box
-        sx={{
-          padding: 2,
+      <form
+        className="p-4 flex flex-col gap-6"
+        onSubmit={(event) => {
+          event.preventDefault();
+          $send({ t: 'clicked-send-login-link' });
         }}
       >
-        <UI.TextField
+        <MyTextField
           autoFocus
-          sx={{ marginBottom: 2 }}
+          id="email-address"
           type="email"
-          fullWidth
-          inputMode="email"
           label="Email Address"
           value={model.emailAddress}
-          onChange={(event) => {
-            $send({
-              t: 'inputted-email-address',
-              emailAddress: event.target.value,
-            });
+          onChange={(emailAddress) => {
+            $send({ t: 'inputted-email-address', emailAddress });
           }}
+          onClear={() =>
+            $send({ t: 'inputted-email-address', emailAddress: '' })
+          }
+          error={model.validation === 'invalid-email'}
+          helperText={
+            model.validation === 'invalid-email'
+              ? 'Please enter a valid email address'
+              : undefined
+          }
         />
 
-        <UI.Button
+        <MyButton
           variant="contained"
-          size="large"
-          fullWidth
-          loading={model.submission.type === 'Loading'}
-          onClick={() => $send({ t: 'clicked-send-login-link' })}
-          sx={{ marginBottom: 2 }}
+          size="lg"
+          className="w-full"
+          color="primary"
+          type="submit"
         >
+          {model.submission.type === 'loading' && <IconSpinner />}
           Send Login Link
-        </UI.Button>
+        </MyButton>
 
-        {model.submission.type === 'Problem' && (
-          <UI.Alert severity="error">{model.submission.message}</UI.Alert>
+        {model.submission.type === 'problem' && (
+          <AlertError>{model.submission.message}</AlertError>
         )}
 
-        {model.submission.type === 'Ok' && (
-          <UI.Alert severity="success">
-            <UI.AlertTitle>Check your email</UI.AlertTitle>
-            <UI.Typography color="text.secondary" variant="body2">
-              An email was sent to{' '}
-              <UI.Box component="span" sx={{ color: 'text.primary' }}>
-                {model.submission.type === 'Ok'
-                  ? model.submission.sentToEmailAddress
-                  : 'the provider email address'}
-              </UI.Box>
-              . It has a link that will log you in.
-            </UI.Typography>
-          </UI.Alert>
+        {model.submission.type === 'ok' && (
+          <AlertSuccess>
+            <div className="flex flex-col gap-2">
+              <div className="text-lg">Check your email</div>
+              <div className="text-white/80">
+                Login link was send to{' '}
+                <span className="text-white">
+                  {model.submission.sentToEmailAddress}
+                </span>
+              </div>
+            </div>
+          </AlertSuccess>
         )}
-      </UI.Box>
-    </UI.FillBox>
+      </form>
+    </div>
   );
 };
