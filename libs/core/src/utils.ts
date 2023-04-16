@@ -1,3 +1,4 @@
+import { matchSorter } from 'match-sorter';
 import { Cmd } from './cmd';
 
 export const exhaustive = (discriminatedUnionType: 'Missing Case!'): never => {
@@ -155,4 +156,121 @@ export const toMsgPayload = (
     return toMsgPayload(msg.c, { ...acc, ...payload });
   }
   return { ...acc, ...payload };
+};
+
+export function descend<T>(keyFn: (value: T) => string) {
+  return (a: T, b: T): number => {
+    const aValue = keyFn(a);
+    const bValue = keyFn(b);
+
+    if (aValue > bValue) {
+      return -1;
+    } else if (aValue < bValue) {
+      return 1;
+    } else {
+      return 0;
+    }
+  };
+}
+
+export function ascend<T>(keyFn: (value: T) => number) {
+  return (a: T, b: T): number => {
+    const aValue = keyFn(a);
+    const bValue = keyFn(b);
+
+    if (aValue < bValue) {
+      return -1;
+    } else if (aValue > bValue) {
+      return 1;
+    } else {
+      return 0;
+    }
+  };
+}
+
+export function editDistance(s1: string, s2: string): number {
+  const m = s1.length;
+  const n = s2.length;
+  const dp: number[][] = [];
+
+  for (let i = 0; i <= m; i++) {
+    dp[i] = [i];
+  }
+
+  for (let j = 0; j <= n; j++) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    dp[0][j] = j;
+  }
+
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      const cost = s1[i - 1] === s2[j - 1] ? 0 : 1;
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      dp[i][j] = Math.min(
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        dp[i - 1][j] + 1,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        dp[i][j - 1] + 1,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        dp[i - 1][j - 1] + cost
+      );
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  return dp[m][n];
+}
+
+export function minBy<T, K>(arr: T[], keyFn: (value: T) => K): T | undefined {
+  let min = arr[0];
+
+  if (!min) {
+    return undefined;
+  }
+
+  let minKey: K = keyFn(min);
+
+  for (let i = 1; i < arr.length; i++) {
+    const value = arr[i];
+
+    if (!value) {
+      return;
+    }
+    const key = keyFn(value);
+
+    if (key < minKey) {
+      min = value;
+      minKey = key;
+    }
+  }
+
+  return min;
+}
+
+export const matchSort = <T>(
+  items: T[],
+  toValue: (item: T) => string,
+  value: string
+): T[] => {
+  return items
+    .flatMap((item) => {
+      const distance = editDistance(toValue(item), value);
+
+      if (distance > 5) {
+        return [];
+      }
+
+      return [item];
+    })
+    .sort(
+      ascend((item) => {
+        return editDistance(toValue(item), value);
+      })
+    );
 };

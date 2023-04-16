@@ -1,6 +1,5 @@
 import { exhaustive } from '@gamezilla/core';
 import {
-  People,
   AccessTime,
   ArrowCircleRight,
   Check,
@@ -10,6 +9,7 @@ import {
   Extension,
   Flag,
   Lightbulb,
+  People,
   RestartAlt,
   SmartToy,
   SwapHorizSharp,
@@ -17,9 +17,9 @@ import {
 } from '@mui/icons-material';
 import * as MuiLab from '@mui/lab';
 import * as Mui from '@mui/material';
-import { keyframes, TypographyProps } from '@mui/material';
-import { blue } from '@mui/material/colors';
+import { TypographyProps, keyframes } from '@mui/material';
 import Slide, { SlideProps } from '@mui/material/Slide';
+import { blue } from '@mui/material/colors';
 import { ReactNode, useEffect, useMemo, useRef } from 'react';
 import * as Icons from './ui-icons';
 
@@ -446,7 +446,7 @@ export const Menu = Mui.Menu;
 
 export const MenuItem = Mui.MenuItem;
 
-export const Autocomplete = Mui.Autocomplete;
+// export const Autocomplete = Mui.Autocomplete;
 
 export const Select = Mui.Select;
 
@@ -499,33 +499,13 @@ export const Header = ({
   right?: React.ReactNode;
 }) => {
   return (
-    <Mui.Toolbar>
-      <Box
-        sx={{
-          flex: 1,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'flex-start',
-        }}
-      >
-        {left}
-      </Box>
-
-      <Typography noWrap sx={{ flex: 4 }} align="center" variant="h6">
+    <header className="flex items-center justify-center w-full px-3 py-2">
+      <div className="flex items-center justify-start flex-1">{left}</div>
+      <p className="text-lg text-center" style={{ flex: 4 }}>
         {title}
-      </Typography>
-
-      <Box
-        sx={{
-          flex: 1,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'flex-end',
-        }}
-      >
-        {right}
-      </Box>
-    </Mui.Toolbar>
+      </p>
+      <div className="flex items-center justify-end flex-1">{right}</div>
+    </header>
   );
 };
 

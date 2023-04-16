@@ -39,8 +39,8 @@ export const init = ({
 
     case 'login-phone': {
       const init = PageLoginPhone.init({
-        countrySearchText:
-          model.type === 'login-phone' ? model.child.countrySearchText : '',
+        countryQuery:
+          model.type === 'login-phone' ? model.child.countryQuery : '',
         phoneNumber:
           model.type === 'login-phone' ? model.child.phoneNumber : '',
         country: model.type === 'login-phone' ? model.child.country : 'US',
@@ -107,7 +107,7 @@ export const update = ({
       });
       return {
         model: { ...model, child: updated.model },
-        cmd: Cmd.tag('login', updated.cmd),
+        cmd: Cmd.tag('login', updated.cmd ?? Cmd.None),
       };
     }
 

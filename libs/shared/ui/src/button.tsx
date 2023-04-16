@@ -7,6 +7,7 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
 type VariantColor = `${ButtonVariant}-${ButtonColor}`;
 
 export const MyButton = ({
+  type,
   children,
   className,
   onClick,
@@ -14,6 +15,7 @@ export const MyButton = ({
   color = 'default',
   size = 'md',
 }: {
+  type?: 'button' | 'submit' | 'reset';
   className?: string;
   onClick?: () => void;
   children?: React.ReactNode;
@@ -24,15 +26,16 @@ export const MyButton = ({
   const combo: VariantColor = `${variant}-${color}`;
   return (
     <button
+      type={type}
       className={[
         className ? className : '',
-        'font-bold flex items-center justify-center gap-2 active:opacity-60 select-none ',
+        'font-bolder flex items-center justify-center gap-2 active:opacity-60 select-none ',
         combo === 'contained-primary'
           ? 'bg-blue-500 text-white rounded-md'
           : '',
         combo === 'contained-danger' ? 'bg-red-500 text-white rounded-md' : '',
         combo === 'contained-default'
-          ? 'bg-white/10 border-neutral-700 text-white rounded-md'
+          ? 'bg-white/10 border border-neutral-700 text-white rounded-md'
           : '',
         combo === 'outlined-default'
           ? 'border border-neutral-700 text-inherit rounded-md'

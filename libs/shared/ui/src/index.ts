@@ -1,6 +1,10 @@
-export * from './button';
 export * from './avatar';
+export * from './button';
 export * from './button-vertical';
 export * from './icon';
+export * from './text-field';
+export * from './top-bar';
 export * from './ui';
+export * from './utils';
+export * from './autocomplete';
 export * as Icons from './ui-icons';

@@ -951,7 +951,7 @@ const ViewRoomCard = ({
   return (
     <button
       onClick={onClick}
-      className="bg-blue-500 rounded-md flex flex-col gap-3 p-4"
+      className="bg-blue-500 rounded-md flex flex-col gap-3 p-4 active:opacity-70"
     >
       <div className="w-full flex items-center justify-start">
         <p className="block uppercase text-left font-bold animate-pulse flex-1">
@@ -963,6 +963,7 @@ const ViewRoomCard = ({
           </p>
         )}
       </div>
+
       {gameName && (
         <div className="flex items-center justify-start gap-2">
           <div className="w-12 h-12 rounded overflow-hidden">

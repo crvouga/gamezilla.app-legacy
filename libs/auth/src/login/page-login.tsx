@@ -1,10 +1,9 @@
 import { Cmd, p } from '@gamezilla/core';
 import { Route } from '@gamezilla/shared';
 import {
-  IconMobilePhone,
   IconEnvelope,
   IconGoogle,
-  IconPhone,
+  IconMobilePhone,
   IconSpinner,
   MyButton,
 } from '@gamezilla/shared/ui';
@@ -64,14 +63,15 @@ export const View = ({
   return (
     <div className="w-full h-full flex-1 flex flex-col">
       <div className="flex-1 flex flex-col justify-center items-center p-4 gap-8">
-        <span className="text-5xl" role="img" aria-label="logo">
-          🦕
-        </span>
-
-        <div className="text-xl">Sign in to your account</div>
+        <div className="w-full flex flex-col items-start justify-center">
+          <p className="text-2xl">Sign in to</p>
+          <h1 className="bg-gradient-to-b from-blue-400 to-blue-600 text-transparent bg-clip-text text-5xl font-extrabold pb-2">
+            gamezilla.app
+          </h1>
+        </div>
 
         <div className="flex flex-col gap-6 w-full">
-          <MyButton
+          {/* <MyButton
             onClick={() => $send({ t: 'clicked-google' })}
             size="lg"
             className="w-full"
@@ -81,7 +81,7 @@ export const View = ({
             )}
             <IconGoogle />
             Continue With Google
-          </MyButton>
+          </MyButton> */}
 
           <MyButton
             onClick={() => $send({ t: 'clicked-text' })}
@@ -92,14 +92,14 @@ export const View = ({
             Continue With Text
           </MyButton>
 
-          <MyButton
+          {/* <MyButton
             onClick={() => $send({ t: 'clicked-email' })}
             size="lg"
             className="w-full"
           >
             <IconEnvelope />
             Continue With Email
-          </MyButton>
+          </MyButton> */}
         </div>
       </div>
     </div>

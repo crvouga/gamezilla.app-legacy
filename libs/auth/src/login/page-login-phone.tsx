@@ -1,25 +1,21 @@
-import { Browser, Cmd, exhaustive, p, t } from '@gamezilla/core';
+import {
+  Browser,
+  Cmd,
+  ascend,
+  editDistance,
+  matchSort,
+  p,
+} from '@gamezilla/core';
 import { Iso3166Alpha2Code, PhoneNumber, Route } from '@gamezilla/shared';
 import {
-  Alert,
-  Box,
+  Autocomplete,
   Button,
-  Divider,
-  FillBox,
-  Header,
   HeaderBackButton,
-  IconButton,
-  Icons,
-  InputAdornment,
-  InputBase,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  TextField,
-  Typography,
+  IconSpinner,
+  MyButton,
+  MyTextField,
+  TopBar,
 } from '@gamezilla/shared/ui';
-import { matchSorter } from 'match-sorter';
 import * as Auth from '../auth';
 
 //
@@ -33,8 +29,12 @@ import * as Auth from '../auth';
 export type Model = {
   phoneNumber: string;
   country: Iso3166Alpha2Code;
-  countrySearchText: string;
-  validation: 'not-validated' | 'invalid-phone-number' | 'empty-phone-number';
+  countryQuery: string;
+  validation:
+    | 'not-validated'
+    | 'invalid-phone-number'
+    | 'empty-phone-number'
+    | 'invalid-timezone';
   submission:
     | { type: 'idle' }
     | { type: 'Loading' }
@@ -42,17 +42,12 @@ export type Model = {
     | { type: 'Ok' };
 };
 
-const phoneNumberInputId = 'phoneNumberInputId';
-const countrySelectInputId = 'countrySelectInputId';
-
 export const init = ({
   country,
   phoneNumber,
-  countrySearchText,
-  isSelectingCountry,
 }: {
   country: Iso3166Alpha2Code;
-  countrySearchText: string;
+  countryQuery: string;
   phoneNumber: string;
   isSelectingCountry: boolean;
 }): { model: Model; cmd: Cmd<Msg> } => {
@@ -60,18 +55,15 @@ export const init = ({
     model: {
       country,
       phoneNumber,
-      countrySearchText,
+      countryQuery: Iso3166Alpha2Code.toName(country),
       validation: 'not-validated',
       submission: {
         type: 'idle',
       },
     },
     cmd: p(
-      Browser.focus(
-        isSelectingCountry ? countrySelectInputId : phoneNumberInputId,
-        100
-      ),
-      Cmd.perform(t('focus-done'))
+      Browser.focus('phone-number'),
+      Cmd.perform((result) => ({ t: 'focus-done', result }))
     ),
   };
 };
@@ -85,16 +77,13 @@ export const init = ({
 //
 
 export type Msg =
-  | ['clicked-back']
-  | ['clicked-send-code']
-  | ['inputted-phone-number', string]
-  | ['clicked-change-country']
-  | ['inputted-country-search-text', string]
-  | ['cleared-country-search-text']
-  | ['closed-country-search']
-  | ['send-code-done', PhoneNumber, Auth.AuthResult]
-  | ['clicked-country-search-result', Iso3166Alpha2Code]
-  | ['focus-done', Browser.FocusResult];
+  | { t: 'clicked-back' }
+  | { t: 'clicked-send-code' }
+  | { t: 'inputted-phone-number'; phoneNumber: string }
+  | { t: 'send-code-done'; phoneNumber: PhoneNumber; result: Auth.AuthResult }
+  | { t: 'inputted-country'; country: Iso3166Alpha2Code }
+  | { t: 'inputted-country-query'; value: string }
+  | { t: 'focus-done'; result: Browser.FocusResult };
 
 export const update = ({
   msg,
@@ -102,103 +91,82 @@ export const update = ({
 }: {
   msg: Msg;
   model: Model;
-}): { model: Model; cmd?: Cmd<Msg> } => {
-  switch (msg[0]) {
-    case 'clicked-back': {
-      return { model, cmd: Route.back };
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  if (msg.t === 'clicked-send-code') {
+    if (model.phoneNumber.length === 0) {
+      return { model: { ...model, validation: 'empty-phone-number' } };
     }
 
-    case 'clicked-send-code': {
-      if (model.phoneNumber.length === 0) {
-        return { model: { ...model, validation: 'empty-phone-number' } };
-      }
+    const decoded = PhoneNumber.decode(model.country, model.phoneNumber);
 
-      const decoded = PhoneNumber.decode(model.country, model.phoneNumber);
-
-      if (decoded.type === 'Err') {
-        return { model: { ...model, validation: 'invalid-phone-number' } };
-      }
-
-      const phoneNumber = decoded.value;
-
-      return {
-        model: { ...model, submission: { type: 'Loading' } },
-        cmd: p(
-          Auth.sendCode({ phoneNumber: phoneNumber }),
-          Cmd.perform((result): Msg => ['send-code-done', phoneNumber, result])
-        ),
-      };
+    if (decoded.type === 'Err') {
+      return { model: { ...model, validation: 'invalid-phone-number' } };
     }
 
-    case 'inputted-phone-number': {
-      return {
-        model: { ...model, phoneNumber: msg[1], validation: 'not-validated' },
-      };
-    }
+    const phoneNumber = decoded.value;
 
-    case 'clicked-country-search-result': {
-      return {
-        model: { ...model, country: msg[1], validation: 'not-validated' },
-        cmd: Route.back,
-      };
-    }
-
-    case 'send-code-done': {
-      const phoneNumber = msg[1];
-      const result = msg[2];
-
-      if (result.type === 'Err') {
-        return {
-          model: {
-            ...model,
-            submission: { type: 'Problem', message: result.error.message },
-          },
-        };
-      }
-
-      return {
-        model: { ...model, submission: { type: 'Ok' } },
-        cmd: Route.push(['login-phone-verify', { phoneNumber: phoneNumber }]),
-      };
-    }
-
-    case 'clicked-change-country': {
-      return {
-        model,
-        cmd: Route.push(['login-phone', { isSelectingCountry: true }]),
-      };
-    }
-
-    case 'closed-country-search': {
-      return {
-        model,
-        cmd: Route.back,
-      };
-    }
-
-    case 'inputted-country-search-text': {
-      return {
-        model: { ...model, countrySearchText: msg[1] },
-      };
-    }
-    case 'cleared-country-search-text': {
-      return {
-        model: { ...model, countrySearchText: '' },
-        cmd: p(
-          Browser.focus(countrySelectInputId, 10),
-          Cmd.perform(t('focus-done'))
-        ),
-      };
-    }
-
-    case 'focus-done': {
-      return { model };
-    }
-
-    default: {
-      return exhaustive(msg[0]);
-    }
+    return {
+      model: { ...model, submission: { type: 'Loading' } },
+      cmd: p(
+        Auth.sendCode({ phoneNumber: phoneNumber }),
+        Cmd.perform(
+          (result): Msg => ({ t: 'send-code-done', phoneNumber, result })
+        )
+      ),
+    };
   }
+
+  if (msg.t === 'clicked-back') {
+    return { model, cmd: Route.back };
+  }
+
+  if (msg.t === 'inputted-country') {
+    return {
+      model: {
+        ...model,
+        country: msg.country,
+        countryQuery: Iso3166Alpha2Code.toName(msg.country),
+        validation: 'not-validated',
+      },
+    };
+  }
+
+  if (msg.t === 'inputted-phone-number') {
+    return {
+      model: {
+        ...model,
+        phoneNumber: msg.phoneNumber,
+        validation: 'not-validated',
+      },
+    };
+  }
+
+  if (msg.t === 'send-code-done') {
+    const { phoneNumber, result } = msg;
+
+    if (result.type === 'Err') {
+      return {
+        model: {
+          ...model,
+          submission: { type: 'Problem', message: result.error.message },
+        },
+      };
+    }
+
+    return {
+      model: { ...model, submission: { type: 'Ok' } },
+      cmd: Route.push(['login-phone-verify', { phoneNumber: phoneNumber }]),
+    };
+  }
+
+  if (msg.t === 'inputted-country-query') {
+    return { model: { ...model, countryQuery: msg.value } };
+  }
+
+  return { model };
 };
 
 //
@@ -212,188 +180,88 @@ export const update = ({
 export const View = ({
   model,
   $send,
-  isSelectingCountry,
 }: {
   isSelectingCountry: boolean;
   model: Model;
   $send: (msg: Msg) => void;
 }) => {
-  if (isSelectingCountry) {
-    return (
-      <CountrySelectScreen
-        inputId={countrySelectInputId}
-        searchText={model.countrySearchText}
-        onChange={(text) => $send(['inputted-country-search-text', text])}
-        onClear={() => $send(['cleared-country-search-text'])}
-        selected={model.country}
-        onSelect={(country) =>
-          $send(['clicked-country-search-result', country])
-        }
-        onClose={() => $send(['closed-country-search'])}
-      />
-    );
-  }
-
   return (
-    <FillBox>
-      <Header
-        left={<HeaderBackButton onClick={() => $send(['clicked-back'])} />}
+    <div className="flex-1 w-full">
+      <TopBar
+        left={
+          <MyButton size="sm" onClick={() => $send({ t: 'clicked-back' })}>
+            Back
+          </MyButton>
+        }
         title="Login With Phone"
       />
-      <Box
-        sx={{
-          padding: 2,
+
+      <form
+        className="p-4 flex gap-4 flex-col"
+        onSubmit={(e) => {
+          e.preventDefault();
+          $send({ t: 'clicked-send-code' });
         }}
       >
-        <Typography color="text.secondary">Country</Typography>
-        <Box
-          role="button"
-          sx={{
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginBottom: 2,
-          }}
-          onClick={() => $send(['clicked-change-country'])}
-        >
-          <Box sx={{ fontSize: '2rem', marginRight: 1 }}>
-            {Iso3166Alpha2Code.toEmoji(model.country)}
-          </Box>
-          <Typography sx={{ flex: 1 }} color="text.secondary">
-            {Iso3166Alpha2Code.toName(model.country)}
-          </Typography>
+        <Autocomplete
+          label="Country"
+          value={model.country}
+          onChange={(country) => $send({ t: 'inputted-country', country })}
+          options={matchSort(
+            Iso3166Alpha2Code.all,
+            (x) => x,
+            model.countryQuery
+          )}
+          onChangeQuery={(value) =>
+            $send({ t: 'inputted-country-query', value })
+          }
+          toKey={(x) => x}
+          toLabel={(x) => Iso3166Alpha2Code.toName(x)}
+          valueQuery={model.countryQuery}
+          className="w-full"
+        />
 
-          <Button onClick={() => $send(['clicked-change-country'])}>
-            Change
-          </Button>
-        </Box>
-
-        <TextField
-          id={phoneNumberInputId}
-          autoFocus
-          sx={{ marginBottom: 2 }}
-          type="tel"
-          fullWidth
-          inputMode="tel"
+        <MyTextField
+          id="phone-number"
           label="Phone Number"
+          onChange={(phoneNumber) =>
+            $send({ t: 'inputted-phone-number', phoneNumber })
+          }
+          onClear={() => $send({ t: 'inputted-phone-number', phoneNumber: '' })}
+          type="tel"
           value={model.phoneNumber}
-          onChange={(event) => {
-            $send(['inputted-phone-number', event.target.value]);
-          }}
           error={
             model.validation === 'invalid-phone-number' ||
             model.validation === 'empty-phone-number'
           }
           helperText={
             model.validation === 'invalid-phone-number'
-              ? `Invalid phone number for ${Iso3166Alpha2Code.toName(
-                  model.country
-                )}`
+              ? 'Invalid phone number'
               : model.validation === 'empty-phone-number'
               ? 'Phone number is required'
               : undefined
           }
         />
 
-        <Button
+        <MyButton
+          type="submit"
           variant="contained"
-          size="large"
-          fullWidth
-          loading={model.submission.type === 'Loading'}
-          onClick={() => $send(['clicked-send-code'])}
+          color="primary"
+          size="lg"
+          className="w-full mt-2"
         >
+          {model.submission.type === 'Loading' && (
+            <IconSpinner className="text-white" />
+          )}
           Send Code
-        </Button>
+        </MyButton>
 
         {model.submission.type === 'Problem' && (
-          <Alert severity="error" sx={{ marginTop: 2 }}>
+          <div className="bg-red-500 text-white p-4 mt-2 rounded-md">
             {model.submission.message}
-          </Alert>
+          </div>
         )}
-      </Box>
-    </FillBox>
-  );
-};
-
-export const CountrySelectScreen = ({
-  searchText,
-  inputId,
-  onChange,
-  onClear,
-  selected,
-  onSelect,
-  onClose,
-}: {
-  searchText: string;
-  inputId: string;
-  onChange: (s: string) => void;
-  onClear: () => void;
-  selected: Iso3166Alpha2Code;
-  onSelect: (country: Iso3166Alpha2Code) => void;
-  onClose: () => void;
-}) => {
-  const matched = matchSorter(Iso3166Alpha2Code.all, searchText, {
-    keys: [(iso) => Iso3166Alpha2Code.toName(iso)],
-  });
-  return (
-    <FillBox>
-      <Typography variant="h3" sx={{ px: 2, pt: 2 }}>
-        Select country
-      </Typography>
-
-      <InputBase
-        sx={{ p: 2 }}
-        id={inputId}
-        placeholder="Search country"
-        value={searchText}
-        onChange={(e) => onChange(e.target.value)}
-        startAdornment={
-          <InputAdornment position="start">
-            <Icons.Search sx={{ color: 'text.secondary' }} />
-          </InputAdornment>
-        }
-        endAdornment={
-          <InputAdornment position="end">
-            <IconButton edge="end" onClick={onClear}>
-              <Icons.Clear />
-            </IconButton>
-          </InputAdornment>
-        }
-      />
-
-      <Divider />
-
-      {matched.length === 0 && (
-        <Typography color="text.secondary" sx={{ p: 2 }}>
-          No countries match
-        </Typography>
-      )}
-
-      <List disablePadding sx={{ overflowY: 'scroll', flex: 1 }}>
-        {matched.map((iso) => (
-          <ListItemButton
-            key={iso}
-            selected={iso === selected}
-            onClick={() => onSelect(iso)}
-          >
-            <ListItemIcon sx={{ fontSize: '2rem' }}>
-              {Iso3166Alpha2Code.toEmoji(iso)}
-            </ListItemIcon>
-            <ListItemText primary={Iso3166Alpha2Code.toName(iso)} />
-          </ListItemButton>
-        ))}
-      </List>
-      <Box sx={{ p: 2 }}>
-        <Button
-          fullWidth
-          variant="outlined"
-          onClick={onClose}
-          // startIcon={<Icons.Close />}
-        >
-          Cancel
-        </Button>
-      </Box>
-    </FillBox>
+      </form>
+    </div>
   );
 };

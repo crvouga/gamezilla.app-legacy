@@ -300,10 +300,19 @@ const toEmoji = (country: Iso3166Alpha2Code): string | undefined => {
   return String.fromCodePoint(f + offset) + String.fromCodePoint(s + offset);
 };
 
+const toNameWithEmoji = (code: Iso3166Alpha2Code): string => {
+  const emoji = toEmoji(code);
+  if (emoji) {
+    return `${emoji} ${toName(code)}`;
+  }
+  return toName(code);
+};
+
 export const Iso3166Alpha2Code = {
   of,
   toEmoji,
   toName,
   is,
+  toNameWithEmoji,
   all,
 };
