@@ -1,8 +1,8 @@
 import { Browser, Cmd, p, Task, Time, Unit } from '@gamezilla/core';
 import { PhoneNumber, Route } from '@gamezilla/shared';
 import {
-  IconExclamationCircle,
-  IconInfoCircle,
+  AlertError,
+  AlertInfo,
   IconSpinner,
   MyButton,
   MyTextField,
@@ -154,10 +154,9 @@ export const View = ({
         title="Verify Code"
       />
       <div className="p-4 flex flex-col w-full gap-4">
-        <div className="bg-blue-500 text-white p-4 rounded-md flex items-center">
-          <IconInfoCircle className="w-6 h-6 mr-2" />
+        <AlertInfo>
           The code was sent to {PhoneNumber.format(phoneNumber)}.
-        </div>
+        </AlertInfo>
 
         <MyTextField
           id={codeInputId}
@@ -182,10 +181,7 @@ export const View = ({
         </MyButton>
 
         {model.submission.type === 'Problem' && (
-          <div className="bg-red-500 text-white rounded-md p-4 flex items-center mt-4">
-            <IconExclamationCircle className="w-6 h-6 mr-2" />
-            {model.submission.message}
-          </div>
+          <AlertError className="mt-4">{model.submission.message}</AlertError>
         )}
       </div>
     </div>

@@ -41,7 +41,7 @@ export const Autocomplete = <TValue,>({
             {startIcon}
             <Combobox.Input
               ref={inputRef}
-              className="flex-1 p-2 bg-transparent outline-none"
+              className="flex-1 p-3 bg-transparent outline-none"
               value={valueQuery}
               onChange={(event) => onChangeQuery(event.target.value)}
               displayValue={(selected: TValue) => {

@@ -37,7 +37,7 @@ export const MyTextField = ({
 
       <div
         className={classNames(
-          'flex items-center border border-white/40 rounded-md text-lg p-2 bg-white/10 outline-none',
+          'flex items-center border border-white/30 rounded-md text-lg p-3 bg-white/10 outline-none',
           error && 'border-red-500',
           !error && 'ring-blue-500 focus:ring-2'
         )}

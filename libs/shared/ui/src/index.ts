@@ -4,6 +4,7 @@ export * from './button-vertical';
 export * from './icon';
 export * from './text-field';
 export * from './top-bar';
+export * from './alert';
 export * from './ui';
 export * from './utils';
 export * from './autocomplete';

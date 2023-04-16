@@ -34,10 +34,10 @@ export const init: Model = {
 //
 
 export type Msg =
-  | ['clicked-back']
-  | ['clicked-send-login-link']
-  | ['inputted-email-address', string]
-  | ['login-done', Auth.AuthResult];
+  | { t: 'clicked-back' }
+  | { t: 'clicked-send-login-link' }
+  | { t: 'inputted-email-address'; emailAddress: string }
+  | { t: 'login-done'; result: Auth.AuthResult };
 
 export const update = ({
   msg,
@@ -46,19 +46,19 @@ export const update = ({
   msg: Msg;
   model: Model;
 }): { model: Model; cmd?: Cmd<Msg> } => {
-  switch (msg[0]) {
+  switch (msg.t) {
     case 'inputted-email-address':
-      return { model: { ...model, emailAddress: msg[1] } };
+      return { model: { ...model, emailAddress: msg.emailAddress } };
 
     case 'login-done': {
-      switch (msg[1].type) {
+      switch (msg.result.type) {
         case 'Err': {
           return {
             model: {
               ...model,
               submission: {
                 type: 'Problem',
-                message: msg[1].error.message,
+                message: msg.result.error.message,
               },
             },
           };
@@ -94,7 +94,7 @@ export const update = ({
         },
         cmd: p(
           Auth.loginWithEmailLink({ emailAddress: model.emailAddress }),
-          Cmd.perform(t('login-done'))
+          Cmd.perform((result) => ({ t: 'login-done', result }))
         ),
       };
     }
@@ -126,7 +126,9 @@ export const View = ({
   return (
     <UI.FillBox>
       <UI.Header
-        left={<UI.HeaderBackButton onClick={() => $send(['clicked-back'])} />}
+        left={
+          <UI.HeaderBackButton onClick={() => $send({ t: 'clicked-back' })} />
+        }
         title="Login With Email"
       />
 
@@ -144,7 +146,10 @@ export const View = ({
           label="Email Address"
           value={model.emailAddress}
           onChange={(event) => {
-            $send(['inputted-email-address', event.target.value]);
+            $send({
+              t: 'inputted-email-address',
+              emailAddress: event.target.value,
+            });
           }}
         />
 
@@ -153,7 +158,7 @@ export const View = ({
           size="large"
           fullWidth
           loading={model.submission.type === 'Loading'}
-          onClick={() => $send(['clicked-send-login-link'])}
+          onClick={() => $send({ t: 'clicked-send-login-link' })}
           sx={{ marginBottom: 2 }}
         >
           Send Login Link
