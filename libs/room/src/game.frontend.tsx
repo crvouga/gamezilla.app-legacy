@@ -122,13 +122,16 @@ export const update = ({
 
     case 'tic-tac-toe': {
       if (msg.t === 'tic-tac-toe') {
-        const [child, cmd] = TicTacToeFrontend.update({
+        const updated = TicTacToeFrontend.update({
           sendToBackend: (msg) => sendToBackend({ t: 'tic-tac-toe', c: msg }),
           ctx,
           msg: msg.c,
           model: model.c,
         });
-        return [{ t: 'tic-tac-toe', c: child }, Cmd.tag_('tic-tac-toe', cmd)];
+        return [
+          { t: 'tic-tac-toe', c: updated.model },
+          Cmd.tag_('tic-tac-toe', updated.cmd),
+        ];
       }
       return [model, Cmd.None];
     }
@@ -227,113 +230,93 @@ export const updateFromBackend = ({
   msg: ToFrontend;
   model: Model;
 }): [Model, Cmd<Msg>, OutAction[]] => {
-  switch (msg.t) {
-    case 'connect-four': {
-      if (model.t === 'connect-four') {
-        const [child, cmd, actions] = ConnectFourFrontend.updateFromBackend({
-          msg: msg.c,
-          ctx,
-          model: model.c,
-        });
+  if (msg.t === 'connect-four' && model.t === 'connect-four') {
+    const [child, cmd, actions] = ConnectFourFrontend.updateFromBackend({
+      msg: msg.c,
+      ctx,
+      model: model.c,
+    });
 
-        return [
-          { t: 'connect-four', c: child },
-          Cmd.tag_('connect-four', cmd),
-          actions,
-        ];
-      }
-      return [model, Cmd.None, []];
-    }
-
-    case 'tic-tac-toe': {
-      if (model.t === 'tic-tac-toe') {
-        const [child, cmd, actions] = TicTacToeFrontend.updateFromBackend(
-          { ctx },
-          msg.c,
-          model.c
-        );
-        return [
-          { t: 'tic-tac-toe', c: child },
-          Cmd.tag_('tic-tac-toe', cmd),
-          actions,
-        ];
-      }
-      return [model, Cmd.None, []];
-    }
-
-    case 'chess': {
-      if (model.t === 'chess') {
-        const [child, cmd, actions] = ChessFrontend.updateFromBackend({
-          ctx,
-          msg: msg.c,
-          model: model.c,
-          sendToBackend: (msg) => sendToBackend({ t: 'chess', c: msg }),
-        });
-
-        return [{ t: 'chess', c: child }, Cmd.tag_('chess', cmd), actions];
-      }
-      return [model, Cmd.None, []];
-    }
-
-    case 'gomoku': {
-      if (model.t === 'gomoku') {
-        const [child, cmd] = GomokuFrontend.updateFromBackend({
-          ctx,
-          msg: msg.c,
-          model: model.c,
-        });
-        return [{ t: 'gomoku', c: child }, Cmd.tag_('gomoku', cmd), []];
-      }
-      return [model, Cmd.None, []];
-    }
-
-    case 'tetris': {
-      if (model.t === 'tetris') {
-        const [child, cmd] = TetrisFrontend.updateFromBackend(msg.c, model.c);
-        return [{ t: 'tetris', c: child }, Cmd.tag_('tetris', cmd), []];
-      }
-      return [model, Cmd.None, []];
-    }
-
-    case 'snake': {
-      if (model.t === 'snake') {
-        const [child, cmd] = SnakeFrontend.updateFromBackend(
-          // { ctx, sendToBackend: (msg) => sendToBackend(['snake', msg]) },
-          msg.c,
-          model.c
-        );
-        return [{ t: 'snake', c: child }, Cmd.tag_('snake', cmd), []];
-      }
-      return [model, Cmd.None, []];
-    }
-
-    case 'maze': {
-      if (model.t === 'maze') {
-        const [child, cmd] = MazeFrontend.updateFromBackend(
-          // { ctx, sendToBackend: (msg) => sendToBackend(['maze', msg]) },
-          msg.c,
-          model.c
-        );
-        return [{ t: 'maze', c: child }, Cmd.tag_('maze', cmd), []];
-      }
-      return [model, Cmd.None, []];
-    }
-
-    case 'flow': {
-      if (model.t !== 'flow') {
-        return [model, Cmd.None, []];
-      }
-      const updated = FlowFrontend.updateFromBackend({
-        msg: msg.c,
-        model: model.c,
-      });
-      return [
-        { t: 'flow', c: updated.model },
-        Cmd.tag_('flow', updated?.cmd ?? Cmd.None),
-        [],
-      ];
-    }
+    return [
+      { t: 'connect-four', c: child },
+      Cmd.tag_('connect-four', cmd),
+      actions,
+    ];
   }
+
+  if (msg.t === 'gomoku' && model.t === 'gomoku') {
+    const [child, cmd] = GomokuFrontend.updateFromBackend({
+      msg: msg.c,
+      ctx,
+      model: model.c,
+    });
+
+    return [{ t: 'gomoku', c: child }, Cmd.tag_('gomoku', cmd), []];
+  }
+
+  if (msg.t === 'tic-tac-toe' && model.t === 'tic-tac-toe') {
+    const updated = TicTacToeFrontend.updateFromBackend({
+      ctx,
+      msg: msg.c,
+      model: model.c,
+    });
+    return [
+      {
+        t: 'tic-tac-toe',
+        c: updated.model,
+      },
+      Cmd.tag_('tic-tac-toe', updated.cmd),
+      updated.actions ?? [],
+    ];
+  }
+
+  if (msg.t === 'chess' && model.t === 'chess') {
+    const [child, cmd, actions] = ChessFrontend.updateFromBackend({
+      ctx,
+      msg: msg.c,
+      model: model.c,
+      sendToBackend: (msg) => sendToBackend({ t: 'chess', c: msg }),
+    });
+
+    return [{ t: 'chess', c: child }, Cmd.tag_('chess', cmd), actions];
+  }
+
+  if (msg.t === 'tetris' && model.t === 'tetris') {
+    const [child, cmd] = TetrisFrontend.updateFromBackend(msg.c, model.c);
+    return [{ t: 'tetris', c: child }, Cmd.tag_('tetris', cmd), []];
+  }
+
+  if (msg.t === 'snake' && model.t === 'snake') {
+    const [child, cmd] = SnakeFrontend.updateFromBackend(
+      // { ctx, sendToBackend: (msg) => sendToBackend(['snake', msg]) },
+      msg.c,
+      model.c
+    );
+    return [{ t: 'snake', c: child }, Cmd.tag_('snake', cmd), []];
+  }
+
+  if (msg.t === 'maze' && model.t === 'maze') {
+    const [child, cmd] = MazeFrontend.updateFromBackend(
+      // { ctx, sendToBackend: (msg) => sendToBackend(['maze', msg]) },
+      msg.c,
+      model.c
+    );
+    return [{ t: 'maze', c: child }, Cmd.tag_('maze', cmd), []];
+  }
+
+  if (msg.t === 'flow' && model.t === 'flow') {
+    const updated = FlowFrontend.updateFromBackend({
+      msg: msg.c,
+      model: model.c,
+    });
+    return [
+      { t: 'flow', c: updated.model },
+      Cmd.tag_('flow', updated?.cmd ?? Cmd.None),
+      [],
+    ];
+  }
+
+  return [model, Cmd.None, []];
 };
 
 //
@@ -349,55 +332,53 @@ export const subscriptions = (
   ctx: Ctx,
   model: Model
 ): Sub<Msg> => {
-  switch (model.t) {
-    case 'connect-four': {
-      return Sub.tag_(
-        'connect-four',
-        ConnectFourFrontend.subscriptions(intervalId, ctx.now, model.c)
-      );
-    }
-
-    case 'tic-tac-toe': {
-      return Sub.tag_(
-        'tic-tac-toe',
-        TicTacToeFrontend.subscriptions(ctx, model.c)
-      );
-    }
-
-    case 'chess': {
-      return Sub.tag_(
-        'chess',
-        ChessFrontend.subscriptions({
-          now: ctx.now,
-          intervalId,
-          model: model.c,
-        })
-      );
-    }
-
-    case 'gomoku': {
-      return Sub.tag_('gomoku', GomokuFrontend.subscriptions(ctx, model.c));
-    }
-
-    case 'tetris': {
-      return Sub.tag_('tetris', TetrisFrontend.subscriptions(model.c));
-    }
-
-    case 'snake': {
-      return Sub.tag_(
-        'snake',
-        SnakeFrontend.subscriptions(intervalId, model.c)
-      );
-    }
-
-    case 'maze': {
-      return Sub.tag_('maze', MazeFrontend.subscriptions(model.c));
-    }
-
-    case 'flow': {
-      return Sub.tag_('flow', FlowFrontend.subscriptions(model.c));
-    }
+  if (model.t === 'connect-four') {
+    return Sub.tag_(
+      'connect-four',
+      ConnectFourFrontend.subscriptions(intervalId, ctx.now, model.c)
+    );
   }
+
+  if (model.t === 'tic-tac-toe') {
+    return Sub.tag_(
+      'tic-tac-toe',
+      TicTacToeFrontend.subscriptions(ctx, model.c)
+    );
+  }
+
+  if (model.t === 'chess') {
+    return Sub.tag_(
+      'chess',
+      ChessFrontend.subscriptions({
+        now: ctx.now,
+        intervalId,
+        model: model.c,
+      })
+    );
+  }
+
+  if (model.t === 'gomoku') {
+    return Sub.tag_('gomoku', GomokuFrontend.subscriptions(ctx, model.c));
+  }
+
+  if (model.t === 'tetris') {
+    return Sub.tag_('tetris', TetrisFrontend.subscriptions(model.c));
+  }
+
+  if (model.t === 'snake') {
+    return Sub.tag_('snake', SnakeFrontend.subscriptions(intervalId, model.c));
+  }
+
+  if (model.t === 'maze') {
+    return Sub.tag_('maze', MazeFrontend.subscriptions(model.c));
+  }
+
+  if (model.t === 'flow') {
+    return Sub.tag_('flow', FlowFrontend.subscriptions(model.c));
+  }
+
+  const exhaustiveCheck: never = model;
+  return exhaustiveCheck;
 };
 
 //

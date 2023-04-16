@@ -296,6 +296,9 @@ export const View = ({
         values: Chess.allBotLevels,
         selected: model.sharedModel.botLevel,
         toName: (level) => String(level),
+        render: (props) => {
+          return <div>{props.botLevel}</div>;
+        },
         onInput: (botLevel) =>
           $send(['InputBot', { botLevel, userId: ctx.currentUserId }]),
       },
@@ -309,6 +312,17 @@ export const View = ({
         values: [Chess.colors.w, Chess.colors.b],
         selected: model.sharedModel.userColor,
         toName: (color) => (color === 'w' ? 'White' : 'Black'),
+        render: (props) => {
+          return (
+            <div>
+              <PawnIcon
+                sx={{ color: props.playerType === 'w' ? '#fff' : '#000' }}
+                stroke={props.playerType === 'w' ? '#000' : '#fff'}
+              />
+              {props.playerType === 'w' ? 'White' : 'Black'}
+            </div>
+          );
+        },
         onInput: (color) =>
           $send([
             'InputColor',

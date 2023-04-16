@@ -6,8 +6,8 @@ import {
 import { Ctx } from '@gamezilla/shared';
 import {
   BotLevel,
-  botLevels,
   Stone,
+  botLevels,
   stones,
   toOppositeStone,
   toStatus,
@@ -25,10 +25,10 @@ import {
   BackendModel,
   FrontendModel,
   FrontendMsg,
-  handle,
-  initShared,
   ToBackend,
   ToFrontend,
+  handle,
+  initShared,
 } from './vs-bot.types';
 
 //
@@ -230,6 +230,7 @@ export const view = ({
           selected: model.botLevel,
           values: Object.values(botLevels),
           toName: (botLevel) => botLevel,
+          render: (props) => props.botLevel,
         },
         coverArt: viewCoverArt(),
         player: {
@@ -238,6 +239,12 @@ export const view = ({
           values: Object.values(stones),
           icon: ({ sx, playerType: stone }) => viewStoneIcon({ ...sx, stone }),
           toName: (stone) => stone,
+          render: (props) => (
+            <div className="flex items-center justify-center gap-2">
+              {viewStoneIcon({ stone: props.playerType })}
+              {props.playerType === 'white' ? 'White' : 'Black'}
+            </div>
+          ),
         },
         ctx,
         title: 'gomoku',

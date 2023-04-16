@@ -294,7 +294,7 @@ export const View = ({
         ),
         toName: (playerType) => (playerType === 'PlayerOne' ? 'Red' : 'Yellow'),
         render: ({ playerType }) => (
-          <div>
+          <div className="flex items-center justify-center gap-2">
             <PlayerIcon playerType={playerType} />
             <div>{playerType === 'PlayerOne' ? 'Red' : 'Yellow'}</div>
           </div>
