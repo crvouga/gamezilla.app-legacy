@@ -1,4 +1,4 @@
-import { Browser, Cmd, p, t, Task, Time, Unit } from '@gamezilla/core';
+import { Browser, Cmd, p, Task, Time, Unit } from '@gamezilla/core';
 import { PhoneNumber, Route } from '@gamezilla/shared';
 import {
   Alert,
@@ -47,7 +47,7 @@ export const init = (): { model: Model; cmd: Cmd<Msg> } => {
     cmd: p(
       Time.delay(100, () => Unit),
       Task.chain(() => Browser.focus(codeInputId)),
-      Cmd.perform(t('focus-done'))
+      Cmd.perform((result) => ({ t: 'focus-done', result }))
     ),
   };
 };
@@ -61,11 +61,11 @@ export const init = (): { model: Model; cmd: Cmd<Msg> } => {
 //
 
 export type Msg =
-  | ['clicked-back']
-  | ['clicked-verify-code']
-  | ['inputted-code', string]
-  | ['verify-code-done', Auth.AuthResult]
-  | ['focus-done', Browser.FocusResult];
+  | { t: 'clicked-back' }
+  | { t: 'clicked-verify-code' }
+  | { t: 'inputted-code'; code: string }
+  | { t: 'verify-code-done'; result: Auth.AuthResult }
+  | { t: 'focus-done'; result: Browser.FocusResult };
 
 export const update = ({
   phoneNumber,
@@ -75,54 +75,57 @@ export const update = ({
   phoneNumber: PhoneNumber;
   msg: Msg;
   model: Model;
-}): { model: Model; cmd?: Cmd<Msg> } => {
-  switch (msg[0]) {
-    case 'clicked-back': {
-      return { model, cmd: Route.back };
-    }
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  if (msg.t === 'clicked-back') {
+    return { model, cmd: Route.back };
+  }
 
-    case 'clicked-verify-code': {
+  if (msg.t === 'clicked-verify-code') {
+    return {
+      model: {
+        code: model.code,
+        submission: { type: 'Loading' },
+      },
+      cmd: p(
+        Auth.verifyCode({ code: model.code, phoneNumber }),
+        Cmd.perform((result): Msg => ({ t: 'verify-code-done', result }))
+      ),
+    };
+  }
+
+  if (msg.t === 'inputted-code') {
+    return { model: { ...model, code: msg.code } };
+  }
+
+  if (msg.t === 'verify-code-done') {
+    const result = msg.result;
+
+    if (result.type === 'Ok') {
       return {
         model: {
           code: model.code,
-          submission: { type: 'Loading' },
-        },
-        cmd: p(
-          Auth.verifyCode({ code: model.code, phoneNumber }),
-          Cmd.perform((result): Msg => ['verify-code-done', result])
-        ),
-      };
-    }
-
-    case 'inputted-code': {
-      return { model: { ...model, code: msg[1] } };
-    }
-
-    case 'verify-code-done': {
-      const result = msg[1];
-
-      if (result.type === 'Err') {
-        return {
-          model: {
-            code: '',
-            submission: { type: 'Problem', message: result.error.message },
-          },
-          cmd: p(Browser.focus(codeInputId), Cmd.perform(t('focus-done'))),
-        };
-      }
-
-      return {
-        model: {
-          ...model,
           submission: { type: 'Ok' },
         },
+        cmd: Route.replace(['room-list']),
       };
     }
 
-    case 'focus-done': {
-      return { model };
-    }
+    return {
+      model: {
+        code: model.code,
+        submission: { type: 'Problem', message: result.error.message },
+      },
+    };
   }
+
+  if (msg.t === 'focus-done') {
+    return { model };
+  }
+
+  return { model };
 };
 
 //
@@ -148,7 +151,7 @@ export const View = ({
         left={
           <Button
             sx={{ marginLeft: -1 }}
-            onClick={() => $send(['clicked-back'])}
+            onClick={() => $send({ t: 'clicked-back' })}
           >
             Cancel
           </Button>
@@ -172,7 +175,7 @@ export const View = ({
           inputMode="tel"
           label="Code"
           value={model.code}
-          onChange={(e) => $send(['inputted-code', e.target.value])}
+          onChange={(e) => $send({ t: 'inputted-code', code: e.target.value })}
           // helperText={`The code was sent to ${PhoneNumber.format(phoneNumber)}`}
         />
 
@@ -181,7 +184,7 @@ export const View = ({
           size="large"
           fullWidth
           loading={model.submission.type === 'Loading'}
-          onClick={() => $send(['clicked-verify-code'])}
+          onClick={() => $send({ t: 'clicked-verify-code' })}
         >
           Verify Code
         </Button>
