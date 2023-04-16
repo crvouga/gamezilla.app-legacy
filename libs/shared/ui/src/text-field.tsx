@@ -14,10 +14,9 @@ export const MyTextField = ({
   autoFocus,
   startIcon,
 }: {
-  startIcon: ReactNode;
+  startIcon?: ReactNode;
   type?: 'text' | 'password' | 'email' | 'number' | 'search' | 'tel' | 'url';
   autoFocus?: boolean;
-
   id: string;
   label: string;
   value: string;

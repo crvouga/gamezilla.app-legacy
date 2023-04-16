@@ -1,12 +1,12 @@
 import { Browser, Cmd, p, Task, Time, Unit } from '@gamezilla/core';
 import { PhoneNumber, Route } from '@gamezilla/shared';
 import {
-  Alert,
-  Box,
-  Button,
-  FillBox,
-  Header,
-  TextField,
+  IconExclamationCircle,
+  IconInfoCircle,
+  IconSpinner,
+  MyButton,
+  MyTextField,
+  TopBar,
 } from '@gamezilla/shared/ui';
 import * as Auth from '../auth';
 
@@ -146,55 +146,48 @@ export const View = ({
   $send: (msg: Msg) => void;
 }) => {
   return (
-    <FillBox>
-      <Header
+    <div className="w-full h-full flex flex-col">
+      <TopBar
         left={
-          <Button
-            sx={{ marginLeft: -1 }}
-            onClick={() => $send({ t: 'clicked-back' })}
-          >
-            Cancel
-          </Button>
+          <MyButton onClick={() => $send({ t: 'clicked-back' })}>Back</MyButton>
         }
         title="Verify Code"
       />
-      <Box
-        sx={{
-          padding: 2,
-        }}
-      >
-        <Alert severity="info" sx={{ marginBottom: 2 }}>
+      <div className="p-4 flex flex-col w-full gap-4">
+        <div className="bg-blue-500 text-white p-4 rounded-md flex items-center">
+          <IconInfoCircle className="w-6 h-6 mr-2" />
           The code was sent to {PhoneNumber.format(phoneNumber)}.
-        </Alert>
-        <TextField
+        </div>
+
+        <MyTextField
           id={codeInputId}
+          startIcon
           autoFocus
-          sx={{ marginBottom: 2 }}
           type="tel"
-          fullWidth
-          inputMode="tel"
           label="Code"
           value={model.code}
-          onChange={(e) => $send({ t: 'inputted-code', code: e.target.value })}
-          // helperText={`The code was sent to ${PhoneNumber.format(phoneNumber)}`}
+          onChange={(code) => $send({ t: 'inputted-code', code })}
+          onClear={() => $send({ t: 'inputted-code', code: '' })}
         />
 
-        <Button
+        <MyButton
           variant="contained"
-          size="large"
-          fullWidth
-          loading={model.submission.type === 'Loading'}
+          size="lg"
+          className="w-full"
+          color="primary"
           onClick={() => $send({ t: 'clicked-verify-code' })}
         >
+          {model.submission.type === 'Loading' && <IconSpinner />}
           Verify Code
-        </Button>
+        </MyButton>
 
         {model.submission.type === 'Problem' && (
-          <Alert severity="error" sx={{ marginTop: 2 }}>
+          <div className="bg-red-500 text-white rounded-md p-4 flex items-center mt-4">
+            <IconExclamationCircle className="w-6 h-6 mr-2" />
             {model.submission.message}
-          </Alert>
+          </div>
         )}
-      </Box>
-    </FillBox>
+      </div>
+    </div>
   );
 };
