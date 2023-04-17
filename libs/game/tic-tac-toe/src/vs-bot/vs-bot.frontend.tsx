@@ -1,7 +1,7 @@
 import { Animation, Cmd, Posix, Sub } from '@gamezilla/core';
 import {
   RoomCtx,
-  viewVsBotGameScreen,
+  ViewVsBotGameScreen,
   ViewVsBotSetupScreen,
 } from '@gamezilla/game-shared';
 import { Alerts, Ctx } from '@gamezilla/shared';
@@ -242,7 +242,7 @@ export const View = ({
   }
   const gameOver = toGameOver(model.board);
 
-  return viewVsBotGameScreen<PlayerType>({
+  return ViewVsBotGameScreen<PlayerType>({
     leftPlayer: 'X',
     actions: [
       [

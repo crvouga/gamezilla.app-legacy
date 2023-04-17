@@ -1,6 +1,6 @@
 import { Animation, Cmd, Sub } from '@gamezilla/core';
 import {
-  viewVsBotGameScreen,
+  ViewVsBotGameScreen,
   ViewVsBotSetupScreen,
 } from '@gamezilla/game-shared';
 import { Ctx } from '@gamezilla/shared';
@@ -259,7 +259,7 @@ export const view = ({
 
     case 'game': {
       const status = toStatus(model.board);
-      return viewVsBotGameScreen<Stone>({
+      return ViewVsBotGameScreen<Stone>({
         ctx,
         actions: [
           ['Exit', 'exit', () => $send(['stop-game'])],

@@ -5,7 +5,6 @@ import {
   Box,
   Button,
   CircularProgress,
-  Divider,
   FillBox,
   IconName,
   Icons,
@@ -63,20 +62,19 @@ export const ViewVsBotSetupScreen = <BotLevel, PlayerType>({
 }) => {
   return (
     <div className="w-full h-full flex-1 flex flex-col overflow-y-auto">
-      {viewVersusBlock({
-        viewPlayerIcon: ({ sx, playerType }) => player.icon({ sx, playerType }),
-        playerId,
-        botName: String(botLevel.selected),
-        ctx,
-        userPlayerType: player.selected,
-        botPlayerType:
-          player.values.find((p) => p !== player.selected) ?? player.selected,
-        leftPlayerType: leftPlayerType,
-      })}
+      <ViewVersusBlock
+        viewPlayerIcon={({ sx, playerType }) => player.icon({ sx, playerType })}
+        playerId={playerId}
+        botName={String(botLevel.selected)}
+        ctx={ctx}
+        userPlayerType={player.selected}
+        botPlayerType={
+          player.values.find((p) => p !== player.selected) ?? player.selected
+        }
+        leftPlayerType={leftPlayerType}
+      />
 
-      <Divider />
-
-      <div className="flex flex-col flex-1 p-4 gap-8">
+      <div className="flex flex-col flex-1 p-4 gap-8 border-t border-neutral-700">
         <section className="flex flex-col gap-2">
           <div className="text-white/80 text-lg">Human</div>
 
@@ -199,7 +197,7 @@ const ChoiceChips = <TChoice,>({
   );
 };
 
-const viewVersusBlock = <PlayerType,>({
+const ViewVersusBlock = <PlayerType,>({
   playerId,
   botName,
   ctx,
@@ -308,7 +306,7 @@ type GameOver<PlayerType> =
       type: 'none';
     };
 
-export const viewVsBotGameScreen = <PlayerType,>({
+export const ViewVsBotGameScreen = <PlayerType,>({
   botPlayer,
   userPlayer,
   botName,

@@ -1,6 +1,6 @@
 import { Animation, Cmd, Posix, Sub } from '@gamezilla/core';
 import {
-  viewVsBotGameScreen,
+  ViewVsBotGameScreen,
   ViewVsBotSetupScreen,
 } from '@gamezilla/game-shared';
 import { Alerts, Ctx } from '@gamezilla/shared';
@@ -308,7 +308,7 @@ export const View = ({
 
   const status = toStatus(model.columns);
 
-  return viewVsBotGameScreen<PlayerType>({
+  return ViewVsBotGameScreen<PlayerType>({
     gameOver:
       status.type === 'Tie'
         ? { type: 'draw' }
