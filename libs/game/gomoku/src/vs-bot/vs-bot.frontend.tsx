@@ -1,7 +1,7 @@
 import { Animation, Cmd, Sub } from '@gamezilla/core';
 import {
   viewVsBotGameScreen,
-  viewVsBotSetupScreen,
+  ViewVsBotSetupScreen,
 } from '@gamezilla/game-shared';
 import { Ctx } from '@gamezilla/shared';
 import {
@@ -223,7 +223,7 @@ export const view = ({
 }) => {
   switch (model.type) {
     case 'setup': {
-      return viewVsBotSetupScreen<BotLevel, Stone>({
+      return ViewVsBotSetupScreen<BotLevel, Stone>({
         leftPlayerType: 'white',
         botLevel: {
           onInput: (botLevel) => $send(['input-bot-level', { botLevel }]),

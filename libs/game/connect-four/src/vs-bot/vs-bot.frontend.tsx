@@ -1,7 +1,7 @@
 import { Animation, Cmd, Posix, Sub } from '@gamezilla/core';
 import {
   viewVsBotGameScreen,
-  viewVsBotSetupScreen,
+  ViewVsBotSetupScreen,
 } from '@gamezilla/game-shared';
 import { Alerts, Ctx } from '@gamezilla/shared';
 import {
@@ -267,7 +267,7 @@ export const View = ({
   ctx: Ctx;
 }) => {
   if (model.type === 'Setup') {
-    return viewVsBotSetupScreen<BotLevel, PlayerType>({
+    return ViewVsBotSetupScreen<BotLevel, PlayerType>({
       coverArt: <ViewCoverArt />,
       title: 'Connect Four',
       subtitle: 'Play Computer',

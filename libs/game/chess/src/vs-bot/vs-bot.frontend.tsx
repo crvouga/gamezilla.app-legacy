@@ -1,5 +1,5 @@
 import { Audio, Cmd, exhaustive, Option, Sub, t } from '@gamezilla/core';
-import { viewVsBotSetupScreen } from '@gamezilla/game-shared';
+import { ViewVsBotSetupScreen } from '@gamezilla/game-shared';
 import { Alerts, Ctx } from '@gamezilla/shared';
 import * as UI from '@gamezilla/shared/ui';
 import * as Chess from '../chess/chess';
@@ -291,7 +291,7 @@ export const View = ({
   onClose: () => void;
 }) => {
   if (model.sharedModel.type === 'Setup') {
-    return viewVsBotSetupScreen<Chess.BotLevel, Chess.Color>({
+    return ViewVsBotSetupScreen<Chess.BotLevel, Chess.Color>({
       botLevel: {
         values: Chess.allBotLevels,
         selected: model.sharedModel.botLevel,

@@ -2,7 +2,7 @@ import { Animation, Cmd, Posix, Sub } from '@gamezilla/core';
 import {
   RoomCtx,
   viewVsBotGameScreen,
-  viewVsBotSetupScreen,
+  ViewVsBotSetupScreen,
 } from '@gamezilla/game-shared';
 import { Alerts, Ctx } from '@gamezilla/shared';
 import {
@@ -203,7 +203,7 @@ export const View = ({
   $send: (msg: Msg) => void;
 }) => {
   if (model.type === 'Setup') {
-    return viewVsBotSetupScreen<BotLevel, PlayerType>({
+    return ViewVsBotSetupScreen<BotLevel, PlayerType>({
       leftPlayerType: 'X',
       playerId: model.player === 'none' ? null : model.player,
       subtitle: 'Vs Computer',
