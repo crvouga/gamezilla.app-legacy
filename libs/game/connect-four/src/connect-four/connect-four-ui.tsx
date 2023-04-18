@@ -2,9 +2,9 @@ import { Ease, Posix, rescale, Uuid } from '@gamezilla/core';
 import { SvgIcon, Sx } from '@gamezilla/shared/ui';
 import { useLayoutEffect, useRef } from 'react';
 import {
+  COLUMN_COUNT,
   ColumnIndex,
   Columns,
-  COLUMN_COUNT,
   isColumnIndex,
   MAX_COLUMN_HEIGHT,
   PlayerType,
@@ -117,9 +117,7 @@ const ViewColumnsSvg = ({
   columns,
   onClick,
   onHover,
-  // ghost,
   disabled,
-  visual,
 }: ViewColumnsProps) => {
   const ref = useRef(Uuid.generateSync());
   const ids = {
@@ -186,48 +184,18 @@ const ViewColumnsSvg = ({
 
       <rect x={0} y={0} width={7} height={6} fill={gameTheme.primary.darker} />
 
-      {/* {columns.map((column, columnIndex) =>
-        column.map((player, rowIndex) => (
-          <circle
-            key={[columnIndex, rowIndex].join(", ")}
-            cx={columnIndex + 0.5}
-            cy={MAX_COLUMN_HEIGHT - (rowIndex + 0.5)}
-            r={0.5}
-            fill={player === "PlayerOne" ? playerOneFill : playerTwoFill}
-          />
-        )),
-      )} */}
-
-      {visual.map((columnVisual, columnIndex) =>
-        columnVisual.map((disc, rowIndex) => (
+      <Trans
+      {columns.map((column, columnIndex) =>
+        column.map((disc, rowIndex) => (
           <circle
             key={[columnIndex, rowIndex].join(', ')}
             cx={columnIndex + 0.5}
-            cy={MAX_COLUMN_HEIGHT - disc.yPosition_.value - 0.5}
+            cy={MAX_COLUMN_HEIGHT - rowIndex - 0.5}
             r={0.5}
-            fill={
-              disc.playerType === 'PlayerOne' ? playerOneFill : playerTwoFill
-            }
+            fill={disc === 'PlayerOne' ? playerOneFill : playerTwoFill}
           />
         ))
       )}
-
-      {/* {!disabled && ghost &&  (
-        <circle
-          cx={ghost.columnIndex + 0.5}
-          cy={
-            MAX_COLUMN_HEIGHT -
-            (columns[ghost.columnIndex]?.length ?? 0) +
-            0.5 -
-            1
-          }
-          r={0.5}
-          style={{ opacity: 2 / 3 }}
-          fill={
-            ghost.playerType === "PlayerOne" ? playerOneFill : playerTwoFill
-          }
-        />
-      )} */}
 
       <rect
         x={0}
