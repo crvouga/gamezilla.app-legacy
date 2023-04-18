@@ -1,5 +1,5 @@
 import { Account, Auth, Logout, PageLogin } from '@gamezilla/auth';
-import { Cmd, exhaustive, p, Sub, t } from '@gamezilla/core';
+import { Cmd, Sub, exhaustive, p, t } from '@gamezilla/core';
 import {
   PageProfile,
   PageProfileCreate,
@@ -19,12 +19,12 @@ import {
 } from '@gamezilla/shared';
 import {
   Box,
-  ButtonBase,
-  Icons,
+  IconGamepad,
+  IconMagnifyingGlass,
+  IconUserCircle,
   LoadingPage,
-  Typography,
-  useTheme,
   ViewNode,
+  classNames,
 } from '@gamezilla/shared/ui';
 
 //
@@ -591,71 +591,44 @@ const ViewBottomNavigation = ({
   const items: {
     route: Route.Model;
     label: string;
-    filled: ViewNode;
-    outlined: ViewNode;
+    icon: ViewNode;
   }[] = [
     {
       route: ['room-list'],
       label: 'Rooms',
-      filled: <Icons.SportsEsports />,
-      outlined: <Icons.SportsEsportsOutlined />,
+      icon: <IconGamepad />,
     },
     {
       route: ['search'],
       label: 'Search',
-      filled: <Icons.Search />,
-      outlined: <Icons.SearchOutlined />,
-    },
-    {
-      route: ['chat-list'],
-      label: 'Chat',
-      filled: <Icons.Chat />,
-      outlined: <Icons.ChatOutlined />,
+      icon: <IconMagnifyingGlass />,
     },
     {
       route: ['profile', { userId: ctx.currentUserId }],
       label: 'Profile',
-      filled: <Icons.AccountCircle />,
-      outlined: <Icons.AccountCircleOutlined />,
+      icon: <IconUserCircle />,
     },
   ];
 
-  const theme = useTheme();
-
   return (
-    <Box
-      sx={{
-        width: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: 52,
-        borderTop: `1.5px solid ${theme.palette.divider}`,
-      }}
-    >
+    <div className="w-full flex items-center justify-center border-t border-neutral-600">
       {items.map((item) => {
         const isSelected = Route.equals(route, item.route);
-
         return (
-          <ButtonBase
+          <button
             key={Route.encode(item.route)}
             onClick={() => $send(['clicked-bottom-nav-link', item.route])}
-            sx={{
-              color: isSelected ? 'primary.main' : 'text.secondary',
-              paddingY: 0,
-              paddingX: 2,
-              display: 'flex',
-              flexDirection: 'column',
-              flex: 1,
-              width: '100%',
-            }}
+            className={classNames(
+              'flex items-center justify-center flex-col flex-1 pt-1 pb-2 gap-0.5',
+              isSelected ? 'text-blue-500' : 'opacity-80'
+            )}
           >
-            {isSelected ? item.filled : item.outlined}
-            <Typography variant="caption">{item.label}</Typography>
-          </ButtonBase>
+            {item.icon}
+            <div className="text-xs">{item.label}</div>
+          </button>
         );
       })}
-    </Box>
+    </div>
   );
 };
 

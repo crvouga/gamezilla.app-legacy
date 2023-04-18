@@ -256,7 +256,7 @@ export const View = ({
         () => $send(['restart', { userId: ctx.currentUserId }]),
       ],
       [
-        'Swap Sides',
+        'Swap',
         'swap',
         () => $send(['swap-sides', { userId: ctx.currentUserId }]),
       ],

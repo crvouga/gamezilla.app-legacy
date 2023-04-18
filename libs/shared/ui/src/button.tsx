@@ -35,7 +35,7 @@ export const MyButton = ({
       type={type}
       className={classNames(
         className,
-        'font-bolder flex items-center justify-center gap-2 select-none',
+        'font-bolder flex items-center justify-center gap-2 select-none flex-nowrap',
         combo === 'contained-primary' && 'bg-blue-500 text-white rounded-md',
         combo === 'contained-danger' && 'bg-red-500 text-white rounded-md',
         combo === 'contained-default' &&

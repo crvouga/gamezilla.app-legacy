@@ -5,30 +5,30 @@ import {
 } from '@gamezilla/game-shared';
 import { Alerts, Ctx } from '@gamezilla/shared';
 import {
-  opposite,
   PlayerType,
+  opposite,
   playerTypes,
   toStatus,
   toTurn,
 } from '../connect-four/connect-four';
 import {
-  initVisual,
-  isDone,
   PlayerIcon,
-  step,
   ViewColumns,
   ViewCoverArt,
+  initVisual,
+  isDone,
+  step,
 } from '../connect-four/connect-four-ui';
 import {
   BackendModel,
   BotLevel,
-  botLevel,
   FrontendModel,
   FrontendMsg,
-  handle,
-  initShared,
   ToBackend,
   ToFrontend,
+  botLevel,
+  handle,
+  initShared,
 } from './vs-bot.types';
 
 //
@@ -267,43 +267,46 @@ export const View = ({
   ctx: Ctx;
 }) => {
   if (model.type === 'Setup') {
-    return ViewVsBotSetupScreen<BotLevel, PlayerType>({
-      coverArt: <ViewCoverArt />,
-      title: 'Connect Four',
-      subtitle: 'Play Computer',
-      ctx,
-      playerId: model.player === 'none' ? null : model.player,
-      onStartPlaying: () => $send(['start-playing']),
-      onStopPlaying: () => $send(['stop-playing']),
-      botLevel: {
-        values: Object.values(botLevel),
-        selected: model.botLevel,
-        onInput: (level) => $send(['input-bot-level', { botLevel: level }]),
-        toName: (level) => level,
-        render: ({ botLevel }) => <div>{botLevel}</div>,
-      },
-      player: {
-        values: Object.values(playerTypes),
-        selected: model.userPlayerType,
-        onInput: (playerType) => $send(['input-player-type', { playerType }]),
-        icon: ({ sx, playerType }) => (
-          <PlayerIcon
-            playerType={playerType}
-            sx={{ width: '1.5rem', height: '1.5rem', ...sx }}
-          />
-        ),
-        toName: (playerType) => (playerType === 'PlayerOne' ? 'Red' : 'Yellow'),
-        render: ({ playerType }) => (
-          <div className="flex items-center justify-center gap-2">
-            <PlayerIcon playerType={playerType} />
-            <div>{playerType === 'PlayerOne' ? 'Red' : 'Yellow'}</div>
-          </div>
-        ),
-      },
-      leftPlayerType: 'PlayerOne',
-      onCancel: goBack,
-      onStartGame: () => $send(['start-game']),
-    });
+    return (
+      <ViewVsBotSetupScreen<BotLevel, PlayerType>
+        coverArt={<ViewCoverArt />}
+        title="Connect Four"
+        subtitle="Play Computer"
+        ctx={ctx}
+        playerId={model.player === 'none' ? null : model.player}
+        leftPlayerType="PlayerOne"
+        onCancel={goBack}
+        onStartGame={() => $send(['start-game'])}
+        onStartPlaying={() => $send(['start-playing'])}
+        onStopPlaying={() => $send(['stop-playing'])}
+        botLevel={{
+          values: Object.values(botLevel),
+          selected: model.botLevel,
+          onInput: (level) => $send(['input-bot-level', { botLevel: level }]),
+          toName: (level) => level,
+          render: ({ botLevel }) => <div>{botLevel}</div>,
+        }}
+        player={{
+          values: Object.values(playerTypes),
+          selected: model.userPlayerType,
+          onInput: (playerType) => $send(['input-player-type', { playerType }]),
+          icon: ({ sx, playerType }) => (
+            <PlayerIcon
+              playerType={playerType}
+              sx={{ width: '1.5rem', height: '1.5rem', ...sx }}
+            />
+          ),
+          toName: (playerType) =>
+            playerType === 'PlayerOne' ? 'Red' : 'Yellow',
+          render: ({ playerType }) => (
+            <div className="flex items-center justify-center gap-2">
+              <PlayerIcon playerType={playerType} />
+              <div>{playerType === 'PlayerOne' ? 'Red' : 'Yellow'}</div>
+            </div>
+          ),
+        }}
+      />
+    );
   }
 
   const status = toStatus(model.columns);

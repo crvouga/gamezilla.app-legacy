@@ -1,11 +1,8 @@
 import { Ctx, UserId } from '@gamezilla/shared';
 import {
-  ActionButton,
   Avatar,
   Box,
-  Button,
   CircularProgress,
-  FillBox,
   IconName,
   Icons,
   MyAvatar,
@@ -15,7 +12,6 @@ import {
   Typography,
   ViewNode,
   classNames,
-  fragment,
   icon,
 } from '@gamezilla/shared/ui';
 import { ReactNode } from 'react';
@@ -411,125 +407,70 @@ export const ViewVsBotGameScreen = <PlayerType,>({
   const isSpectating = ctx.currentUserId !== playerUserId;
 
   const feedback =
-    gameOver.type !== 'none'
-      ? fragment(['Game Over'])
-      : fragment([
-          viewPlayerIcon({
-            playerType: turn,
-            sx: { width: '1rem', height: '1rem', mr: 1 / 2 },
-          }),
-          turn === userPlayer && !isSpectating ? 'Your Turn' : 'Turn',
-        ]);
-
-  const sx: Sx = isSpectating
-    ? {
-        // borderStyle: 'solid',
-        // borderWidth: 4,
-        // borderColor: 'primary.main',
-      }
-    : {};
-
-  const overlaySx: Sx = {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
-    maxHeight: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    color: '#fff',
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    // aspectRatio: "1",
-    ...(gameOver.type !== 'none' ? {} : { display: 'none' }),
-  };
+    gameOver.type !== 'none' ? (
+      <>Game Over</>
+    ) : (
+      <>
+        {viewPlayerIcon({
+          playerType: turn,
+          sx: { width: '1rem', height: '1rem', mr: 1 / 2 },
+        })}
+        {turn === userPlayer && !isSpectating ? 'Your Turn' : 'Turn'}
+      </>
+    );
 
   return (
-    <FillBox sx={sx}>
+    <div
+      className={classNames(
+        'w-full h-full flex flex-col',
+        isSpectating && 'border-4 border-blue-500'
+      )}
+    >
       {isSpectating && (
-        <Typography
-          sx={{ backgroundColor: 'primary.main' }}
-          color="#fff"
-          textAlign="center"
-          variant="subtitle2"
-        >
+        <div className="bg-blue-500 text-white text-center text-sm">
           Spectating
-        </Typography>
+        </div>
       )}
-      <Box
-        px={1}
-        pt={1}
-        display="flex"
-        gap={1}
-        justifyContent="center"
-        alignItems="center"
-      >
-        {leftSlot}
-        {rightSlot}
-      </Box>
-      <Typography
-        sx={{
-          px: 2,
-          pt: 1,
-          pb: 1,
-          textAlign: 'center',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        {feedback}
-      </Typography>
 
-      <Box position="relative" display="flex">
-        {viewBoard()}
-        {/* <Fade in={gameOver.type !== 'none'}> */}
-        <Box sx={overlaySx}>
-          {viewGameOverMessage({
-            viewPlayerIcon,
-            gameOver,
-          })}
-        </Box>
-        {/* </Fade> */}
-      </Box>
+      <div className="flex-1 flex flex-col items-center w-full justify-center">
+        <div className="px-2 pt-2 flex gap-2 justify-center items-center w-full">
+          {leftSlot}
+          {rightSlot}
+        </div>
+        <p className="px-4 py-2 text-center flex items-center justify-center w-full">
+          {feedback}
+        </p>
 
-      {gameOver.type !== 'none' && (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, p: 2 }}>
-          {gameOverActions.map(([label, iconName, onPress]) => {
-            return (
-              <Button
-                key={label}
-                startIcon={icon(iconName)}
-                fullWidth
-                variant="contained"
-                color="primary"
-                size="large"
-                onClick={onPress}
-              >
+        <div className="relative flex w-full">
+          {viewBoard()}
+          <div
+            className={classNames(
+              `absolute inset-0 w-full h-full max-h-full flex
+              flex-col justify-center items-center text-white bg-black/40`,
+              gameOver.type === 'none' && 'hidden'
+            )}
+          >
+            {viewGameOverMessage({
+              viewPlayerIcon,
+              gameOver,
+            })}
+          </div>
+        </div>
+      </div>
+
+      {!isSpectating && (
+        <div className="grid grid-cols-3 gap-2 p-4">
+          {(gameOver.type === 'none' ? actions : gameOverActions).map(
+            ([label, iconName, onClick]) => (
+              <MyButton key={iconName} size="md" onClick={onClick}>
+                {icon(iconName)}
                 {label}
-              </Button>
-            );
-          })}
-        </Box>
+              </MyButton>
+            )
+          )}
+        </div>
       )}
-
-      <Box flex={1} />
-
-      {!isSpectating && gameOver.type === 'none' && (
-        <Box display="flex" alignItems="center" width="100%">
-          {actions.map(([label, iconName, onPress]) => (
-            <ActionButton
-              key={iconName}
-              label={label}
-              icon={icon(iconName)}
-              onClick={onPress}
-            />
-          ))}
-        </Box>
-      )}
-    </FillBox>
+    </div>
   );
 };
 

@@ -14,3 +14,5 @@ export * from './icon-spinner';
 export * from './icon-user-group';
 export * from './icon-users';
 export * from './icon-x-mark';
+export * from './icon-magnifying-glass';
+export * from './icon-user-circle';
