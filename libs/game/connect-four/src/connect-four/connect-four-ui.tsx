@@ -1,6 +1,7 @@
 import { Ease, Posix, rescale, Uuid } from '@gamezilla/core';
 import { SvgIcon, Sx } from '@gamezilla/shared/ui';
 import { useLayoutEffect, useRef } from 'react';
+import { Transition, TransitionGroup } from 'react-transition-group';
 import {
   COLUMN_COUNT,
   ColumnIndex,
@@ -113,6 +114,71 @@ export const ViewColumns = ({
   }
 };
 
+const exitHandler =
+  ({
+    startY,
+    endY,
+    durationMs,
+  }: {
+    startY: number;
+    endY: number;
+    durationMs: number;
+    delayMs?: number;
+  }) =>
+  (circle: HTMLElement) => {
+    const startTime = performance.now();
+
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / durationMs, 1);
+
+      const newY =
+        startY +
+        (endY - startY) * Ease.ease({ type: 'ease-in-back' }, progress);
+
+      circle.setAttribute('cy', String(newY));
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+
+    requestAnimationFrame(animate);
+  };
+
+const enterHandler =
+  ({
+    startY,
+    endY,
+    durationMs,
+    delayMs = 0,
+  }: {
+    startY: number;
+    endY: number;
+    durationMs: number;
+    delayMs?: number;
+  }) =>
+  (circle: HTMLElement) => {
+    const startTime = performance.now() + delayMs;
+
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / durationMs, 1);
+
+      const newY =
+        startY +
+        (endY - startY) * Ease.ease({ type: 'ease-out-bounce' }, progress);
+
+      circle.setAttribute('cy', String(newY));
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+
+    requestAnimationFrame(animate);
+  };
+
 const ViewColumnsSvg = ({
   columns,
   onClick,
@@ -181,21 +247,39 @@ const ViewColumnsSvg = ({
           <stop offset="100%" stopColor={gameTheme.PlayerTwo.dark} />
         </linearGradient>
       </defs>
-
       <rect x={0} y={0} width={7} height={6} fill={gameTheme.primary.darker} />
 
-      {columns.map((column, columnIndex) =>
-        column.map((disc, rowIndex) => (
-          <circle
-            key={[columnIndex, rowIndex].join(', ')}
-            cx={columnIndex + 0.5}
-            cy={MAX_COLUMN_HEIGHT - rowIndex - 0.5}
-            r={0.5}
-            fill={disc === 'PlayerOne' ? playerOneFill : playerTwoFill}
-          />
-        ))
-      )}
-
+      {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+      {/* @ts-ignore */}
+      <TransitionGroup component={'g'}>
+        {columns.map((column, columnIndex) =>
+          column.map((disc, rowIndex) => (
+            <Transition
+              component="g"
+              key={[columnIndex, rowIndex].join(', ')}
+              timeout={1000}
+              onEnter={enterHandler({
+                startY: -1,
+                endY: MAX_COLUMN_HEIGHT - rowIndex - 0.5,
+                durationMs: 200 + 300 * (1 - rowIndex / MAX_COLUMN_HEIGHT),
+              })}
+              onExit={exitHandler({
+                startY: MAX_COLUMN_HEIGHT - rowIndex - 0.5,
+                endY: (MAX_COLUMN_HEIGHT - rowIndex - 0.5) * 2,
+                durationMs: 500,
+                delayMs: (columnIndex / COLUMN_COUNT) * 500,
+              })}
+            >
+              <circle
+                cx={columnIndex + 0.5}
+                cy={MAX_COLUMN_HEIGHT - rowIndex - 0.5}
+                r={0.5}
+                fill={disc === 'PlayerOne' ? playerOneFill : playerTwoFill}
+              />
+            </Transition>
+          ))
+        )}
+      </TransitionGroup>
       <rect
         x={0}
         y={0}
@@ -204,7 +288,6 @@ const ViewColumnsSvg = ({
         fill={`url(#${ids.columnGradient})`}
         mask={`url(#${ids.holeMask})`}
       />
-
       {[...new Array(COLUMN_COUNT)].map((_, columnIndex) => (
         <rect
           style={{

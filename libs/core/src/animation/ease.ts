@@ -75,7 +75,7 @@ function easeOutBack(x: number): number {
   return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
 }
 
-const ease = (easing: Easing, x: number): number => {
+export const ease = (easing: Easing, x: number): number => {
   switch (easing.type) {
     case 'ease-out-back':
       return easeOutBack(x);
