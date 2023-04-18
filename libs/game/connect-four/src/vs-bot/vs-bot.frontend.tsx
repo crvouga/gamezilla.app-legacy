@@ -1,4 +1,4 @@
-import { Animation, Cmd, Posix, Sub } from '@gamezilla/core';
+import { Cmd, Posix, Sub } from '@gamezilla/core';
 import {
   ViewVsBotGameScreen,
   ViewVsBotSetupScreen,
@@ -16,7 +16,6 @@ import {
   ViewColumns,
   ViewCoverArt,
   initVisual,
-  isDone,
   step,
 } from '../connect-four/connect-four-ui';
 import {
@@ -230,21 +229,10 @@ export const mergeWithBackend = ({
 
 export const subscriptions = (
   _intervalId: string,
-  now: Posix,
-  model: Model
+  _now: Posix,
+  _model: Model
 ): Sub<Msg> => {
-  switch (model.type) {
-    case 'game': {
-      if (isDone(now, model.visual)) {
-        return Sub.None;
-      }
-      return Animation.onFrame(() => ['animate']);
-    }
-
-    case 'Setup': {
-      return Sub.None;
-    }
-  }
+  return Sub.None;
 };
 
 //

@@ -184,7 +184,6 @@ const ViewColumnsSvg = ({
 
       <rect x={0} y={0} width={7} height={6} fill={gameTheme.primary.darker} />
 
-      <Trans
       {columns.map((column, columnIndex) =>
         column.map((disc, rowIndex) => (
           <circle
