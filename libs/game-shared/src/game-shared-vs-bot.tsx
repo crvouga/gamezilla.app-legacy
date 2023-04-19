@@ -462,7 +462,7 @@ export const ViewVsBotGameScreen = <PlayerType,>({
         <div className="grid grid-cols-3 gap-2 p-4">
           {(gameOver.type === 'none' ? actions : gameOverActions).map(
             ([label, iconName, onClick]) => (
-              <MyButton key={iconName} size="md" onClick={onClick}>
+              <MyButton key={iconName} size="sm" onClick={onClick}>
                 {icon(iconName)}
                 {label}
               </MyButton>
