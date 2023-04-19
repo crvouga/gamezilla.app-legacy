@@ -167,7 +167,7 @@ const enterHandler =
 
       const newY =
         startY +
-        (endY - startY) * Ease.ease({ type: 'ease-out-back' }, progress);
+        (endY - startY) * Ease.ease({ type: 'ease-out-quint' }, progress);
 
       circle.setAttribute('cy', String(newY));
 
@@ -256,7 +256,7 @@ const ViewColumnsSvg = ({
           column.map((disc, rowIndex) => (
             <Transition
               component="g"
-              key={[columnIndex, rowIndex].join(', ')}
+              key={[columnIndex, rowIndex, disc].join(', ')}
               timeout={1000}
               onEnter={enterHandler({
                 startY: -1,
@@ -265,9 +265,9 @@ const ViewColumnsSvg = ({
               })}
               onExit={exitHandler({
                 startY: MAX_COLUMN_HEIGHT - rowIndex - 0.5,
-                endY: (MAX_COLUMN_HEIGHT - rowIndex - 0.5) * 2,
-                durationMs: 500,
-                delayMs: (columnIndex / COLUMN_COUNT) * 500,
+                endY: MAX_COLUMN_HEIGHT - rowIndex - 0.5 + MAX_COLUMN_HEIGHT,
+                durationMs: 750,
+                delayMs: 0,
               })}
             >
               <circle
