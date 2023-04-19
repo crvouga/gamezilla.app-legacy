@@ -1,4 +1,4 @@
-import { UserId } from '@gamezilla/shared';
+import { Result } from '@gamezilla/core';
 import * as VsBot from './vs-bot/vs-bot.types';
 import * as VsUser from './vs-user/vs-user.types';
 
@@ -11,32 +11,16 @@ import * as VsUser from './vs-user/vs-user.types';
 //
 
 export type FrontendModel =
-  | {
-      type: 'none';
-    }
-  | {
-      type: 'vs-user';
-      child: VsUser.FrontendModel;
-    }
-  | {
-      type: 'vs-bot';
-      child: VsBot.FrontendModel;
-    };
+  | { t: 'none' }
+  | { t: 'vs-user'; c: VsUser.FrontendModel }
+  | { t: 'vs-bot'; c: VsBot.FrontendModel };
 
 export type BackendModel =
-  | {
-      type: 'none';
-    }
-  | {
-      type: 'vs-user';
-      child: VsUser.BackendModel;
-    }
-  | {
-      type: 'vs-bot';
-      child: VsBot.BackendModel;
-    };
+  | { t: 'none' }
+  | { t: 'vs-user'; c: VsUser.BackendModel }
+  | { t: 'vs-bot'; c: VsBot.BackendModel };
 
-export type Mode = BackendModel['type'];
+export type Mode = BackendModel['t'];
 
 //
 //
@@ -47,23 +31,23 @@ export type Mode = BackendModel['type'];
 //
 
 export type FrontendMsg =
-  | ['vs-user', VsUser.FrontendMsg]
-  | ['vs-bot', VsBot.FrontendMsg]
-  | InputMode;
+  | { t: 'vs-user'; c: VsUser.FrontendMsg }
+  | { t: 'vs-bot'; c: VsBot.FrontendMsg }
+  | Req;
 
 export type BackendMsg =
-  | ['vs-user', VsUser.BackendMsg]
-  | ['vs-bot', VsBot.BackendMsg];
+  | { t: 'vs-user'; c: VsUser.BackendMsg }
+  | { t: 'vs-bot'; c: VsBot.BackendMsg };
 
 export type ToFrontend =
-  | ['vs-user', VsUser.ToFrontend]
-  | ['vs-bot', VsBot.ToFrontend]
-  | InputMode_Done;
+  | { t: 'vs-user'; c: VsUser.ToFrontend }
+  | { t: 'vs-bot'; c: VsBot.ToFrontend }
+  | Res;
 
 export type ToBackend =
-  | ['vs-user', VsUser.ToBackend]
-  | ['vs-bot', VsBot.ToBackend]
-  | InputMode;
+  | { t: 'vs-user'; c: VsUser.ToBackend }
+  | { t: 'vs-bot'; c: VsBot.ToBackend }
+  | Req;
 
 //
 //
@@ -71,5 +55,5 @@ export type ToBackend =
 //
 //
 
-type InputMode = ['input-mode', { mode: Mode; userId: UserId }];
-type InputMode_Done = ['input-mode-done', BackendModel];
+export type Req = { t: 'input-mode'; mode: Mode };
+export type Res = Req & { result: Result<string, BackendModel> };

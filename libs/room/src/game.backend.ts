@@ -97,12 +97,15 @@ export const update = ({
   switch (msg.t) {
     case 'connect-four': {
       if (model.t === 'connect-four') {
-        const [child, cmd] = ConnectFourBackend.update(
-          { broadcast: (m) => broadcast({ t: 'connect-four', c: m }) },
-          msg.c,
-          model.c
-        );
-        return [{ t: 'connect-four', c: child }, Cmd.tag_('connect-four', cmd)];
+        const updated = ConnectFourBackend.update({
+          broadcast: (m) => broadcast({ t: 'connect-four', c: m }),
+          msg: msg.c,
+          model: model.c,
+        });
+        return [
+          { t: 'connect-four', c: updated.model },
+          Cmd.tag_('connect-four', updated.cmd),
+        ];
       }
       return [model, Cmd.None];
     }
@@ -221,16 +224,17 @@ export const updateFromFrontend = ({
   switch (msg.t) {
     case 'connect-four': {
       if (model.t === 'connect-four') {
-        const [child, cmd] = ConnectFourBackend.updateFromFrontend(
-          {
-            currentUserId: ctx.currentUserId,
-            sendToClient: (msg) => sendToClient({ t: 'connect-four', c: msg }),
-            broadcast: (msg) => broadcast({ t: 'connect-four', c: msg }),
-          },
-          msg.c,
-          model.c
-        );
-        return [{ t: 'connect-four', c: child }, Cmd.tag_('connect-four', cmd)];
+        const updated = ConnectFourBackend.updateFromFrontend({
+          ctx,
+          sendToClient: (msg) => sendToClient({ t: 'connect-four', c: msg }),
+          broadcast: (msg) => broadcast({ t: 'connect-four', c: msg }),
+          msg: msg.c,
+          model: model.c,
+        });
+        return [
+          { t: 'connect-four', c: updated.model },
+          Cmd.tag_('connect-four', updated.cmd),
+        ];
       }
       return [model, Cmd.None];
     }

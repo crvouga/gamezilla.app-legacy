@@ -167,7 +167,7 @@ const enterHandler =
 
       const newY =
         startY +
-        (endY - startY) * Ease.ease({ type: 'ease-out-bounce' }, progress);
+        (endY - startY) * Ease.ease({ type: 'ease-out-back' }, progress);
 
       circle.setAttribute('cy', String(newY));
 

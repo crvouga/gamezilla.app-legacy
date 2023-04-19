@@ -105,16 +105,16 @@ export const update = ({
   switch (model.t) {
     case 'connect-four': {
       if (msg.t === 'connect-four') {
-        const [child, cmd] = ConnectFourFrontend.update(
-          {
-            ctx,
-            sendToBackend: (msg) =>
-              sendToBackend({ t: 'connect-four', c: msg }),
-          },
-          msg.c,
-          model.c
-        );
-        return [{ t: 'connect-four', c: child }, Cmd.tag_('connect-four', cmd)];
+        const updated = ConnectFourFrontend.update({
+          ctx,
+          sendToBackend: (msg) => sendToBackend({ t: 'connect-four', c: msg }),
+          msg: msg.c,
+          model: model.c,
+        });
+        return [
+          { t: 'connect-four', c: updated.model },
+          Cmd.tag_('connect-four', updated.cmd),
+        ];
       }
 
       return [model, Cmd.None];

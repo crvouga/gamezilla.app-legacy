@@ -36,18 +36,22 @@ export const init = initShared;
 
 export type Msg = BackendMsg;
 
-export const update = (
-  { broadcast }: { broadcast: (m: ToFrontend) => Cmd },
-  msg: Msg,
-  model: Model
-): [Model, Cmd<Msg>] => {
+export const update = ({
+  broadcast,
+  msg,
+  model,
+}: {
+  broadcast: (m: ToFrontend) => Cmd;
+  msg: Msg;
+  model: Model;
+}): { model: Model; cmd: Cmd<Msg> } => {
   switch (msg[0]) {
     case 'bot-move': {
       const result = botMove(msg[1], model);
       if (result.type === 'Err') {
-        return [model, broadcast(['bot-move', result])];
+        return { model, cmd: broadcast(['bot-move', result]) };
       }
-      return [result.value, broadcast(['bot-move', result])];
+      return { model: result.value, cmd: broadcast(['bot-move', result]) };
     }
   }
 };
@@ -99,25 +103,13 @@ const updateFromFrontend_ = (
   msg: ToBackend,
   model: Model
 ): [Model, Cmd<Msg>] => {
-  switch (msg[0]) {
-    case 'restart':
-    case 'start-game':
-    case 'start-playing':
-    case 'stop-game':
-    case 'stop-playing':
-    case 'swap-sides':
-    case 'input-player-type':
-    case 'input-move':
-    case 'input-bot-level': {
-      const res: Res = [msg[0], handle({ currentUserId }, msg, model)];
+  const res: Res = [msg[0], handle({ currentUserId }, msg, model)];
 
-      if (res[1].type === 'Err') {
-        return [model, sendToClient(res)];
-      }
-
-      return [res[1].value, broadcast(res)];
-    }
+  if (res[1].type === 'Err') {
+    return [model, sendToClient(res)];
   }
+
+  return [res[1].value, broadcast(res)];
 };
 
 export const updateFromRoom = ({
