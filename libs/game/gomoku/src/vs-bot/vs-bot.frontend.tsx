@@ -1,4 +1,4 @@
-import { Animation, Cmd, Sub } from '@gamezilla/core';
+import { Cmd, Sub } from '@gamezilla/core';
 import {
   ViewVsBotGameScreen,
   ViewVsBotSetupScreen,
@@ -14,10 +14,9 @@ import {
   toTurn,
 } from '../gomoku/gomoku';
 import {
-  initVisual,
-  isAnimating,
-  step,
   ViewBoard,
+  initVisual,
+  step,
   viewCoverArt,
   viewStoneIcon,
 } from '../gomoku/gomoku-ui';
