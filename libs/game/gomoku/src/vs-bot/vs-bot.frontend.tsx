@@ -17,7 +17,7 @@ import {
   initVisual,
   isAnimating,
   step,
-  viewBoard,
+  ViewBoard,
   viewCoverArt,
   viewStoneIcon,
 } from '../gomoku/gomoku-ui';
@@ -186,13 +186,9 @@ export const mergeWithBackend = ({
 //
 //
 
-export const subscriptions = (ctx: Ctx, model: Model): Sub<Msg> => {
+export const subscriptions = (_ctx: Ctx, model: Model): Sub<Msg> => {
   switch (model.type) {
     case 'game': {
-      if (isAnimating({ now: ctx.now, model: model.visual })) {
-        return Animation.onFrame(() => ['animate']);
-      }
-
       return Sub.None;
     }
 
@@ -283,11 +279,12 @@ export const view = ({
         playerUserId: model.userId,
         turn: toTurn(model.board),
         userPlayer: model.userStone,
-        viewBoard: () =>
-          viewBoard({
-            onPress: (position) => $send(['input-move', { position }]),
-            model: model.visual,
-          }),
+        viewBoard: () => (
+          <ViewBoard
+            onPress={(p) => $send(['input-move', { position: p }])}
+            board={model.board}
+          />
+        ),
         viewPlayerIcon: ({ sx, playerType: stone }) =>
           viewStoneIcon({ ...sx, stone }),
       });

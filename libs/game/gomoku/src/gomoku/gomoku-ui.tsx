@@ -1,6 +1,7 @@
-import { Posix, Ease, Hex } from '@gamezilla/core';
+import { Ease, Hex, Posix } from '@gamezilla/core';
 import { SvgIcon, Sx } from '@gamezilla/shared/ui';
-import { allPositions, Board, Bounds, bounds, Stone } from './gomoku';
+import { Transition, TransitionGroup } from 'react-transition-group';
+import { Board, Bounds, Stone, allPositions, bounds } from './gomoku';
 import { Position } from './gomoku-position';
 
 //
@@ -123,34 +124,28 @@ export const viewStoneIcon = ({ stone, ...sx }: { stone: Stone } & Sx) => {
   );
 };
 
-const coverArtVisual = initVisual({
-  board: {
-    2: { 2: 'black', 3: 'white' },
-    3: { 2: 'black', 3: 'white' },
-    4: { 2: 'white', 3: 'black' },
-  },
-  now: Posix.fromNumber(0),
-  skipAnimation: true,
-});
-
 export const viewCoverArt = () => {
-  return viewBoard({
+  return ViewBoard({
     viewBoxOffset: 0.5,
     bounds: {
       lower: { x: 0, y: 0 },
       upper: { x: 6, y: 6 },
     },
-    model: coverArtVisual,
+    board: {
+      2: { 2: 'black', 3: 'white' },
+      3: { 2: 'black', 3: 'white' },
+      4: { 2: 'white', 3: 'black' },
+    },
   });
 };
 
-export const viewBoard = ({
-  model,
+export const ViewBoard = ({
   onPress,
+  board,
   bounds: bounds_ = bounds,
   viewBoxOffset = 0.8,
 }: {
-  model: VisualModel;
+  board: Board;
   onPress?: (position: Position) => void;
   bounds?: Bounds;
   viewBoxOffset?: number;
@@ -192,7 +187,7 @@ export const viewBoard = ({
             height={bounds_.upper.y - 1 - bounds_.lower.y}
             fill={gameTheme.background}
           />
-          {rangeInclusive({ lower: 1, upper: bounds_.upper.y - 1 }).map((x) => (
+          {rangeExclusive({ lower: 1, upper: bounds_.upper.y }).map((x) => (
             <line
               key={`x${x}`}
               x1={x}
@@ -202,7 +197,7 @@ export const viewBoard = ({
             />
           ))}
 
-          {rangeInclusive({ lower: 1, upper: bounds.upper.x - 1 }).map((y) => (
+          {rangeExclusive({ lower: 1, upper: bounds.upper.x }).map((y) => (
             <line
               key={`y${y}`}
               x1={bounds_.lower.x}
@@ -213,46 +208,95 @@ export const viewBoard = ({
           ))}
         </g>
 
-        <g>
-          {allPositions.map(({ x, y }) => {
-            const stone = toStone(model, { x, y });
+        <TransitionGroup component={'g'}>
+          {allPositions.flatMap(({ x, y }) => {
+            const stone = board[x]?.[y] ?? null;
             if (!stone) {
-              return (
-                <circle
-                  key={[x, y].join('-')}
-                  onMouseDown={
-                    onPress
-                      ? () => {
-                          onPress({ x, y });
-                        }
-                      : undefined
-                  }
-                  cx={x}
-                  cy={y}
-                  r={1 / 2}
-                  fill="transparent"
-                  stroke="none"
-                  style={
-                    onPress ? { cursor: 'pointer' } : { cursor: 'default' }
-                  }
-                />
-              );
+              return [];
             }
 
-            return (
-              <circle
-                key={[x, y, stone.stone].join('-')}
-                cx={x}
-                cy={y}
-                r={stone.radius.value}
-                fill={stoneToColor(stone.stone)}
-              />
-            );
+            return [
+              <Transition
+                component="g"
+                key={[x, y, stone].join(', ')}
+                timeout={1000}
+                onEnter={easeRadius({
+                  r: { from: 0, to: 0.45 },
+                  durationMs: 200,
+                })}
+                onExit={easeRadius({
+                  r: { from: 0.45, to: 0 },
+                  durationMs: 200,
+                })}
+              >
+                <circle
+                  key={[x, y, stone].join('-')}
+                  cx={x}
+                  cy={y}
+                  r={0.45}
+                  fill={stoneToColor(stone)}
+                />
+              </Transition>,
+            ];
           })}
+        </TransitionGroup>
+
+        <g>
+          {allPositions.map(({ x, y }) => (
+            <circle
+              key={[x, y].join(', ')}
+              cx={x}
+              cy={y}
+              r={0.5}
+              fill="transparent"
+              onClick={() => onPress?.({ x, y })}
+              style={{ cursor: 'pointer' }}
+            />
+          ))}
         </g>
       </g>
     </svg>
   );
+};
+
+const easeRadius =
+  ({
+    r,
+    durationMs,
+  }: {
+    r: { from: number; to: number };
+    durationMs: number;
+  }) =>
+  (circle: HTMLElement) => {
+    const startTime = performance.now();
+    const step = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / durationMs, 1);
+      const rNew =
+        r.from +
+        (r.to - r.from) * Ease.ease({ type: 'ease-out-back' }, progress);
+
+      circle.setAttribute('r', String(rNew));
+
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      }
+    };
+    requestAnimationFrame(step);
+  };
+
+const rangeExclusive = ({
+  lower,
+  upper,
+}: {
+  lower: number;
+  upper: number;
+}): number[] => {
+  const range: number[] = [];
+  for (let n = lower; n < upper; n++) {
+    range.push(n);
+  }
+  return range;
 };
 
 const rangeInclusive = ({

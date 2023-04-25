@@ -427,7 +427,7 @@ export const ViewVsBotGameScreen = <PlayerType,>({
       )}
     >
       {isSpectating && (
-        <div className="bg-blue-500 text-white text-center text-sm">
+        <div className="bg-blue-500 text-white text-center text-sm ">
           Spectating
         </div>
       )}
