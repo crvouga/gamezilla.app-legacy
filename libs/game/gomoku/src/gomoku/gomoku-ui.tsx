@@ -79,13 +79,6 @@ const setStone = (
   };
 };
 
-const toStone = (
-  model: VisualModel,
-  { x, y }: { x: number; y: number }
-): VisualStone | null => {
-  return model[x]?.[y] ?? null;
-};
-
 //
 //
 //
@@ -294,20 +287,6 @@ const rangeExclusive = ({
 }): number[] => {
   const range: number[] = [];
   for (let n = lower; n < upper; n++) {
-    range.push(n);
-  }
-  return range;
-};
-
-const rangeInclusive = ({
-  lower,
-  upper,
-}: {
-  lower: number;
-  upper: number;
-}): number[] => {
-  const range: number[] = [];
-  for (let n = lower; n <= upper; n++) {
     range.push(n);
   }
   return range;
