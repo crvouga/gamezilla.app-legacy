@@ -261,7 +261,7 @@ const ViewColumnsSvg = ({
               onEnter={enterHandler({
                 startY: -1,
                 endY: MAX_COLUMN_HEIGHT - rowIndex - 0.5,
-                durationMs: 200 + 300 * (1 - rowIndex / MAX_COLUMN_HEIGHT),
+                durationMs: 100 + 200 * (1 - rowIndex / MAX_COLUMN_HEIGHT),
               })}
               onExit={exitHandler({
                 startY: MAX_COLUMN_HEIGHT - rowIndex - 0.5,
