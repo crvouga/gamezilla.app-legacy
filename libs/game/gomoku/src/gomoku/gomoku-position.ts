@@ -1,3 +1,5 @@
+import { rescale } from '@gamezilla/core';
+
 export type Position = {
   x: number;
   y: number;
@@ -96,9 +98,38 @@ export const rangeExclusive = ({
   return positions;
 };
 
+type Bounds = {
+  lower: Position;
+  upper: Position;
+};
+
+const rescalePosition = ({
+  value,
+  from,
+  to,
+}: {
+  value: Position;
+  from: Bounds;
+  to: Bounds;
+}): Position => {
+  return {
+    x: rescale({
+      value: value.x,
+      from: [from.lower.x, from.upper.x],
+      to: [to.upper.x, to.upper.x],
+    }),
+    y: rescale({
+      value: value.y,
+      from: [from.lower.y, from.upper.y],
+      to: [to.upper.y, to.upper.y],
+    }),
+  };
+};
+
 export const Position = {
   rotate,
   add,
   rangeInclusive,
   rangeExclusive,
+  rescale: rescalePosition,
 };

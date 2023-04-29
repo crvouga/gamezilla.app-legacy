@@ -11,7 +11,7 @@ import {
   Sx,
   Typography,
   ViewNode,
-  classNames,
+  cn as cn,
   icon,
 } from '@gamezilla/shared/ui';
 import { ReactNode } from 'react';
@@ -178,7 +178,7 @@ const ChoiceChips = <TChoice,>({
             onClick={() => onSelect(choice)}
             key={toKey(choice)}
             disabled={isSelected}
-            className={classNames(
+            className={cn(
               'px-2 py-1 rounded-full text-lg overflow-hidden',
               isSelected && 'bg-white text-black',
               !isSelected &&
@@ -302,6 +302,27 @@ type GameOver<PlayerType> =
       type: 'none';
     };
 
+export const ViewBottomButtonBar = ({
+  actions,
+}: {
+  actions: [string, IconName, () => void][];
+}) => {
+  return (
+    <div className="flex items-center border-t border-neutral-700">
+      {actions.map(([label, iconName, onClick]) => (
+        <button
+          key={label}
+          onClick={onClick}
+          className="flex-1 flex flex-col p-1 gap-0.5 text-sm items-center active:opacity-50"
+        >
+          {icon(iconName)}
+          <p className="text-xs">{label}</p>
+        </button>
+      ))}
+    </div>
+  );
+};
+
 export const ViewVsBotGameScreen = <PlayerType,>({
   botPlayer,
   userPlayer,
@@ -421,14 +442,14 @@ export const ViewVsBotGameScreen = <PlayerType,>({
 
   return (
     <div
-      className={classNames(
+      className={cn(
         'w-full h-full flex flex-col',
-        isSpectating && 'border-4 border-blue-500'
+        isSpectating && 'border-4 border-purple-500'
       )}
     >
       {isSpectating && (
-        <div className="bg-blue-500 text-white text-center text-sm ">
-          Spectating
+        <div className="bg-purple-500 text-white text-center p-1">
+          You are spectating
         </div>
       )}
 
@@ -443,32 +464,25 @@ export const ViewVsBotGameScreen = <PlayerType,>({
 
         <div className="relative flex w-full">
           {viewBoard()}
-          <div
-            className={classNames(
-              `absolute inset-0 w-full h-full max-h-full flex
-              flex-col justify-center items-center text-white bg-black/40`,
-              gameOver.type === 'none' && 'hidden'
-            )}
-          >
-            {viewGameOverMessage({
-              viewPlayerIcon,
-              gameOver,
-            })}
-          </div>
+          {gameOver.type !== 'none' && (
+            <div
+              className={
+                'absolute inset-0 w-full h-full max-h-full flex flex-col justify-center items-center text-white bg-black/40'
+              }
+            >
+              {viewGameOverMessage({
+                viewPlayerIcon,
+                gameOver,
+              })}
+            </div>
+          )}
         </div>
       </div>
 
       {!isSpectating && (
-        <div className="grid grid-cols-3 gap-2 p-4">
-          {(gameOver.type === 'none' ? actions : gameOverActions).map(
-            ([label, iconName, onClick]) => (
-              <MyButton key={iconName} size="sm" onClick={onClick}>
-                {icon(iconName)}
-                {label}
-              </MyButton>
-            )
-          )}
-        </div>
+        <ViewBottomButtonBar
+          actions={gameOver.type === 'none' ? actions : gameOverActions}
+        />
       )}
     </div>
   );

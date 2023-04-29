@@ -9,7 +9,7 @@ import {
   ToBackend,
   ToFrontend,
 } from './gomoku.types';
-import { viewCoverArt } from './gomoku/gomoku-ui';
+import { ViewCoverArt } from './gomoku/gomoku-ui';
 import * as VsBot from './vs-bot/vs-bot.frontend';
 import * as VsUser from './vs-user/vs-user.frontend';
 
@@ -225,7 +225,7 @@ export const view = ({
       return (
         <ViewMainMenu
           title="Gomoku"
-          coverArt={viewCoverArt()}
+          coverArt={ViewCoverArt()}
           roomCtx={gameRoomCtx}
           buttons={[
             {
@@ -274,4 +274,4 @@ export const view = ({
   }
 };
 
-export const coverArt = viewCoverArt;
+export const coverArt = ViewCoverArt;

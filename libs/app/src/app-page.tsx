@@ -24,7 +24,7 @@ import {
   IconUserCircle,
   LoadingPage,
   ViewNode,
-  classNames,
+  cn,
 } from '@gamezilla/shared/ui';
 
 //
@@ -618,7 +618,7 @@ const ViewBottomNavigation = ({
           <button
             key={Route.encode(item.route)}
             onClick={() => $send(['clicked-bottom-nav-link', item.route])}
-            className={classNames(
+            className={cn(
               'flex items-center justify-center flex-col flex-1 pt-1 pb-2 gap-0.5',
               isSelected ? 'text-blue-500' : 'opacity-80'
             )}

@@ -45,7 +45,7 @@ export type Bounds = {
 
 export type Preset = '9x9' | '13x13' | '19x19';
 
-export const presetToBound: { [preset in Preset]: Bounds } = {
+export const presetToBound = {
   '9x9': {
     lower: { x: 0, y: 0 },
     upper: { x: 8, y: 8 },
@@ -64,6 +64,34 @@ export const presetToAllPositions = {
   '9x9': Position.rangeExclusive(presetToBound['9x9']),
   '13x13': Position.rangeExclusive(presetToBound['13x13']),
   '19x19': Position.rangeExclusive(presetToBound['19x19']),
+};
+
+export const presetToStars = {
+  '9x9': [
+    { x: 2, y: 2 },
+    { x: 6, y: 2 },
+    { x: 4, y: 4 },
+    { x: 2, y: 6 },
+    { x: 6, y: 6 },
+  ],
+  '13x13': [
+    { x: 3, y: 3 },
+    { x: 9, y: 3 },
+    { x: 6, y: 6 },
+    { x: 3, y: 9 },
+    { x: 9, y: 9 },
+  ],
+  '19x19': [
+    { x: 3, y: 3 },
+    { x: 9, y: 3 },
+    { x: 15, y: 3 },
+    { x: 3, y: 9 },
+    { x: 9, y: 9 },
+    { x: 15, y: 9 },
+    { x: 3, y: 15 },
+    { x: 9, y: 15 },
+    { x: 15, y: 15 },
+  ],
 };
 
 export const bounds: Bounds = {

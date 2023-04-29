@@ -12,7 +12,7 @@ import {
   fillBox,
   text,
 } from '@gamezilla/shared/ui';
-import { viewCoverArt, viewStoneIcon } from '../gomoku/gomoku-ui';
+import { ViewCoverArt, viewStoneIcon } from '../gomoku/gomoku-ui';
 import {
   BackendModel,
   FrontendModel,
@@ -146,7 +146,7 @@ export const view = ({
       return viewVsUserSetupScreen({
         title: 'gomoku',
         subtitle: 'Player Vs Player',
-        coverArt: viewCoverArt(),
+        coverArt: ViewCoverArt(),
         ctx,
         playerOne: {
           label: 'White',

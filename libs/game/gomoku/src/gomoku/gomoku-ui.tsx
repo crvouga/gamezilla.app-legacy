@@ -1,87 +1,15 @@
-import { Ease, Hex, Posix } from '@gamezilla/core';
+import { Ease, Hex } from '@gamezilla/core';
 import { SvgIcon, Sx } from '@gamezilla/shared/ui';
 import { Transition, TransitionGroup } from 'react-transition-group';
-import { Board, Bounds, Stone, allPositions, bounds } from './gomoku';
+import {
+  Board,
+  Bounds,
+  Stone,
+  allPositions,
+  bounds,
+  presetToStars,
+} from './gomoku';
 import { Position } from './gomoku-position';
-
-//
-//
-// Model
-//
-//
-
-export type VisualModel = {
-  [x: string]: {
-    [y: string]: VisualStone;
-  };
-};
-
-export const initVisual = ({
-  board,
-  now,
-  skipAnimation,
-}: {
-  now: Posix;
-  board: Board;
-  skipAnimation?: boolean;
-}): VisualModel => {
-  let model: VisualModel = {};
-  for (const x in board) {
-    const slice = board[x];
-    if (!slice) {
-      continue;
-    }
-    for (const y in slice) {
-      const stone = slice[y];
-      if (!stone) {
-        continue;
-      }
-
-      const position = { x: parseInt(x), y: parseInt(y) };
-
-      model = setStone(model, position, {
-        type: 'enter',
-        radius: skipAnimation
-          ? Ease.initConstant(0.45)
-          : Ease.init({
-              startMs: now,
-              from: 0,
-              to: 0.45,
-              durationMs: 100,
-              delayMs: 20 * position.x + 20 * position.y + 100,
-              easing: { type: 'ease-out-quint' },
-            }),
-        stone: stone,
-      });
-    }
-  }
-
-  return model;
-};
-
-export type VisualStone = {
-  type: 'enter' | 'exit';
-  radius: Ease.Model;
-  stone: Stone;
-};
-
-const setStone = (
-  model: VisualModel,
-  { x, y }: { x: number; y: number },
-  stone: VisualStone
-): VisualModel => {
-  return {
-    ...model,
-    [x]: {
-      ...(model[x] || {}),
-      [y]: stone,
-    },
-  };
-};
-
-//
-//
-//
 
 const backgroundColor = '#C88655';
 const lineColor = Hex.darken(backgroundColor, 0.3);
@@ -117,7 +45,7 @@ export const viewStoneIcon = ({ stone, ...sx }: { stone: Stone } & Sx) => {
   );
 };
 
-export const viewCoverArt = () => {
+export const ViewCoverArt = () => {
   return ViewBoard({
     viewBoxOffset: 0.5,
     bounds: {
@@ -154,6 +82,8 @@ export const ViewBoard = ({
     },
   };
 
+  const stars = presetToStars['9x9'].map((pos) => pos);
+
   const width = boundsView.upper.x - boundsView.lower.x;
   const height = boundsView.upper.y - boundsView.lower.y;
 
@@ -180,7 +110,7 @@ export const ViewBoard = ({
             height={bounds_.upper.y - 1 - bounds_.lower.y}
             fill={gameTheme.background}
           />
-          {rangeExclusive({ lower: 1, upper: bounds_.upper.y }).map((x) => (
+          {range({ lower: 1, upper: bounds_.upper.y }).map((x) => (
             <line
               key={`x${x}`}
               x1={x}
@@ -190,7 +120,7 @@ export const ViewBoard = ({
             />
           ))}
 
-          {rangeExclusive({ lower: 1, upper: bounds.upper.x }).map((y) => (
+          {range({ lower: 1, upper: bounds.upper.x }).map((y) => (
             <line
               key={`y${y}`}
               x1={bounds_.lower.x}
@@ -199,6 +129,20 @@ export const ViewBoard = ({
               y2={y}
             />
           ))}
+        </g>
+
+        <g>
+          {stars.map((pos) => {
+            return (
+              <circle
+                key={[pos.x, pos.y].join(', ')}
+                cx={pos.x}
+                cy={pos.y}
+                r={0.12}
+                fill={gameTheme.line}
+              />
+            );
+          })}
         </g>
 
         <TransitionGroup component={'g'}>
@@ -278,7 +222,7 @@ const easeRadius =
     requestAnimationFrame(step);
   };
 
-const rangeExclusive = ({
+const range = ({
   lower,
   upper,
 }: {
@@ -290,114 +234,4 @@ const rangeExclusive = ({
     range.push(n);
   }
   return range;
-};
-
-export const step = ({
-  now,
-  board,
-  model,
-}: {
-  now: Posix;
-  board: Board;
-  model: VisualModel;
-}): VisualModel => {
-  let modelNew: VisualModel = {};
-
-  for (let x = bounds.lower.x; x < bounds.upper.x; x++) {
-    for (let y = bounds.lower.y; y < bounds.upper.y; y++) {
-      const stoneTrue = board[x]?.[y];
-      const stoneVisual = model[x]?.[y];
-
-      //
-      // Enter
-      //
-      if (stoneTrue && !stoneVisual) {
-        modelNew = setStone(
-          modelNew,
-          { x, y },
-          {
-            type: 'enter',
-            stone: stoneTrue,
-            radius: Ease.init({
-              startMs: now,
-              durationMs: 1000 / 4,
-              from: 0,
-              to: 0.45,
-              easing: { type: 'ease-out-back' },
-            }),
-          }
-        );
-        continue;
-      }
-
-      //
-      // Exit
-      //
-      if (!stoneTrue && stoneVisual && stoneVisual.type === 'enter') {
-        modelNew = setStone(
-          modelNew,
-          { x, y },
-          {
-            type: 'exit',
-            stone: stoneVisual.stone,
-            radius: Ease.init({
-              startMs: now,
-              durationMs: 1000 / 4,
-              delayMs: x * 20 + y * 20,
-              from: 0.45,
-              to: 0,
-              easing: { type: 'ease-in-back' },
-            }),
-          }
-        );
-        continue;
-      }
-
-      //
-      // Remove
-      //
-      if (
-        stoneVisual &&
-        !Ease.isAnimating(now, stoneVisual.radius) &&
-        stoneVisual.type === 'exit'
-      ) {
-        continue;
-      }
-
-      //
-      // Step
-      //
-      if (stoneVisual) {
-        modelNew = setStone(
-          modelNew,
-          { x, y },
-          {
-            ...stoneVisual,
-            radius: Ease.step(now, stoneVisual.radius),
-          }
-        );
-        continue;
-      }
-    }
-  }
-
-  return modelNew;
-};
-
-export const isAnimating = ({
-  now,
-  model,
-}: {
-  now: Posix;
-  model: VisualModel;
-}): boolean => {
-  for (const xKey in model) {
-    for (const yKey in model?.[xKey] ?? {}) {
-      const stone = model[xKey]?.[yKey];
-      if (stone && Ease.isAnimating(now, stone.radius)) {
-        return true;
-      }
-    }
-  }
-  return false;
 };

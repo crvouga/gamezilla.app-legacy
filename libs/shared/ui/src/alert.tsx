@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { IconExclamationCircle, IconInfoCircle } from './icon';
 import { IconCheckmarkCircle } from './icon/icon-checkmark-circle';
-import { classNames } from './utils';
+import { cn } from './utils';
 
 export const AlertError = ({
   className,
@@ -12,7 +12,7 @@ export const AlertError = ({
 }) => {
   return (
     <div
-      className={classNames(
+      className={cn(
         'bg-red-500 text-white rounded-md p-4 flex items-center w-full gap-2',
         className
       )}
@@ -35,7 +35,7 @@ export const AlertInfo = ({
 }) => {
   return (
     <div
-      className={classNames(
+      className={cn(
         className,
         'bg-blue-500 text-white p-4 rounded-md flex items-center w-full gap-2'
       )}
@@ -57,7 +57,7 @@ export const AlertSuccess = ({
 }) => {
   return (
     <div
-      className={classNames(
+      className={cn(
         className,
         'bg-green-500 text-white p-4 rounded-md flex items-center w-full gap-2'
       )}

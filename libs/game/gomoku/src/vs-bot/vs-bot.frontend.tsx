@@ -13,13 +13,7 @@ import {
   toStatus,
   toTurn,
 } from '../gomoku/gomoku';
-import {
-  ViewBoard,
-  initVisual,
-  step,
-  viewCoverArt,
-  viewStoneIcon,
-} from '../gomoku/gomoku-ui';
+import { ViewBoard, ViewCoverArt, viewStoneIcon } from '../gomoku/gomoku-ui';
 import {
   BackendModel,
   FrontendModel,
@@ -68,18 +62,10 @@ export const update = ({
 } => {
   switch (msg[0]) {
     case 'animate': {
-      if (model.type === 'game') {
-        const { board, visual } = model;
-        const visualNew = step({ now: ctx.now, board, model: visual });
-        return {
-          model: { ...model, visual: visualNew },
-        };
-      }
-
       return { model };
     }
 
-    case 'input-move': {
+    default: {
       const result = handle(ctx, msg, model);
 
       if (result.type === 'Err') {
@@ -97,13 +83,6 @@ export const update = ({
 
       return {
         model: merged,
-        cmd: sendToBackend(msg),
-      };
-    }
-
-    default: {
-      return {
-        model,
         cmd: sendToBackend(msg),
       };
     }
@@ -150,7 +129,6 @@ export const updateFromBackend = ({
 };
 
 export const mergeWithBackend = ({
-  ctx,
   backendModel,
   frontendModel,
 }: {
@@ -158,23 +136,7 @@ export const mergeWithBackend = ({
   frontendModel: FrontendModel;
   backendModel: BackendModel;
 }): FrontendModel => {
-  switch (backendModel.type) {
-    case 'setup': {
-      return backendModel;
-    }
-
-    case 'game': {
-      const visualNew = step({
-        board: backendModel.board,
-        model:
-          frontendModel.type === 'game'
-            ? frontendModel.visual
-            : initVisual({ now: ctx.now, board: backendModel.board }),
-        now: ctx.now,
-      });
-      return { ...backendModel, visual: visualNew };
-    }
-  }
+  return { ...frontendModel, ...backendModel };
 };
 
 //
@@ -227,7 +189,7 @@ export const view = ({
           toName: (botLevel) => botLevel,
           render: (props) => props.botLevel,
         },
-        coverArt: viewCoverArt(),
+        coverArt: ViewCoverArt(),
         player: {
           onInput: (userStone) => $send(['inputted-user-stone', { userStone }]),
           selected: model.userStone,
@@ -254,6 +216,7 @@ export const view = ({
 
     case 'game': {
       const status = toStatus(model.board);
+
       return ViewVsBotGameScreen<Stone>({
         ctx,
         actions: [
@@ -271,8 +234,8 @@ export const view = ({
             : { type: 'none' },
 
         gameOverActions: [
-          ['Play Again', 'restart', () => $send(['restart'])],
           ['Exit', 'exit', () => $send(['stop-game'])],
+          ['Play Again', 'restart', () => $send(['restart'])],
         ],
         leftPlayer: 'white',
         playerUserId: model.userId,

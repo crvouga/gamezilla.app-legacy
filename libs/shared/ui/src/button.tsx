@@ -1,4 +1,4 @@
-import { classNames } from './utils';
+import { cn } from './utils';
 
 export type ButtonVariant = 'contained' | 'outlined' | 'text';
 
@@ -33,7 +33,7 @@ export const MyButton = ({
     <button
       disabled={disabled}
       type={type}
-      className={classNames(
+      className={cn(
         className,
         'font-bolder flex items-center justify-center gap-2 select-none flex-nowrap',
         combo === 'contained-primary' && 'bg-blue-500 text-white rounded-md',

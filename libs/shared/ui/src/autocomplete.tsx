@@ -1,6 +1,6 @@
 import { Combobox } from '@headlessui/react';
 import { Fragment, ReactNode, useRef } from 'react';
-import { classNames } from './utils';
+import { cn } from './utils';
 import { IconXMark } from './icon';
 
 export const Autocomplete = <TValue,>({
@@ -72,10 +72,7 @@ export const Autocomplete = <TValue,>({
                 >
                   {({ active }) => (
                     <li
-                      className={classNames(
-                        'p-4',
-                        active && 'text-white bg-blue-500'
-                      )}
+                      className={cn('p-4', active && 'text-white bg-blue-500')}
                     >
                       {toLabel(option)}
                     </li>

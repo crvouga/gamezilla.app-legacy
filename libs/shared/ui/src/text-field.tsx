@@ -1,6 +1,6 @@
 import { ReactNode, useRef } from 'react';
 import { IconXMark } from './icon';
-import { classNames } from './utils';
+import { cn } from './utils';
 
 export const MyTextField = ({
   label,
@@ -28,15 +28,12 @@ export const MyTextField = ({
   const inputRef = useRef<HTMLInputElement | null>(null);
   return (
     <div className="flex flex-col gap-2">
-      <label
-        htmlFor={id}
-        className={classNames('text-sm', error && 'text-red-500')}
-      >
+      <label htmlFor={id} className={cn('text-sm', error && 'text-red-500')}>
         {label}
       </label>
 
       <div
-        className={classNames(
+        className={cn(
           'flex items-center rounded-md text-lg p-3 bg-white/10 outline-none',
           error && 'border border-red-500',
           !error && 'border border-white/30 ring-blue-500 focus:ring-2'
@@ -67,7 +64,7 @@ export const MyTextField = ({
       </div>
 
       {helperText && (
-        <div className={classNames('text-sm', error && 'text-red-500')}>
+        <div className={cn('text-sm', error && 'text-red-500')}>
           {helperText}
         </div>
       )}
