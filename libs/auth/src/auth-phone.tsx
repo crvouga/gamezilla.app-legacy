@@ -1,4 +1,4 @@
-import { Browser, Cmd, p } from '@gamezilla/core';
+import { Browser, Cmd, Result, Task, p } from '@gamezilla/core';
 import { Iso3166Alpha2Code, PhoneNumber, Route } from '@gamezilla/shared';
 import {
   Autocomplete,
@@ -9,7 +9,6 @@ import {
   TopBar,
 } from '@gamezilla/shared/ui';
 import { matchSorter } from 'match-sorter';
-import * as Auth from '../auth';
 
 //
 //
@@ -68,7 +67,11 @@ export type Msg =
   | { t: 'clicked-back' }
   | { t: 'clicked-send-code' }
   | { t: 'inputted-phone-number'; phoneNumber: string }
-  | { t: 'send-code-done'; phoneNumber: PhoneNumber; result: Auth.AuthResult }
+  | {
+      t: 'send-code-done';
+      phoneNumber: PhoneNumber;
+      result: Result<string, null>;
+    }
   | { t: 'inputted-country'; country: Iso3166Alpha2Code }
   | { t: 'inputted-country-query'; value: string }
   | { t: 'focus-done'; result: Browser.FocusResult };
@@ -76,9 +79,11 @@ export type Msg =
 export const update = ({
   msg,
   model,
+  sendCode,
 }: {
   msg: Msg;
   model: Model;
+  sendCode: (input: { phoneNumber: PhoneNumber }) => Task<Result<string, null>>;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -99,7 +104,7 @@ export const update = ({
     return {
       model: { ...model, submission: { type: 'Loading' } },
       cmd: p(
-        Auth.sendCode({ phoneNumber: phoneNumber }),
+        sendCode({ phoneNumber: phoneNumber }),
         Cmd.perform(
           (result): Msg => ({ t: 'send-code-done', phoneNumber, result })
         )
@@ -139,14 +144,17 @@ export const update = ({
       return {
         model: {
           ...model,
-          submission: { type: 'Problem', message: result.error.message },
+          submission: { type: 'Problem', message: result.error },
         },
       };
     }
 
     return {
       model: { ...model, submission: { type: 'Ok' } },
-      cmd: Route.push(['login-phone-verify', { phoneNumber: phoneNumber }]),
+      cmd: Route.push({
+        t: 'auth',
+        c: { t: 'login-phone-verify', phoneNumber: phoneNumber },
+      }),
     };
   }
 

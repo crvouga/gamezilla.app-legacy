@@ -1,7 +1,7 @@
 import { keyframes } from '@emotion/react';
 import { Cmd, exhaustive, Sub } from '@gamezilla/core';
 import { ChoiceChips } from '@gamezilla/shared';
-import { Alerts, Ctx, UserId } from '@gamezilla/shared';
+import { Alerts, ViewCtx, UserId } from '@gamezilla/shared';
 import {
   ActionButton,
   Avatar,
@@ -219,7 +219,7 @@ export const View = ({
   goBack,
 }: {
   model: Model;
-  ctx: Ctx;
+  ctx: ViewCtx;
   $send: (msg: Msg) => void;
   goBack: () => void;
 }) => {
@@ -344,7 +344,7 @@ const ViewGameOverMessage = ({
   $send,
 }: {
   model: GameOverModel;
-  ctx: Ctx;
+  ctx: ViewCtx;
   $send: (msg: Msg) => void;
 }) => {
   const size = { width: 84, height: 84 };
@@ -500,7 +500,7 @@ const ViewSetup = ({
 }: {
   goBack: () => void;
   model: SetupModel;
-  ctx: Ctx;
+  ctx: ViewCtx;
   $send: (msg: Msg) => void;
 }) => {
   const startGameResult = handle(
@@ -575,7 +575,7 @@ const PlayerSlotBar = ({
   ctx,
 }: {
   model: GameModel | GameOverModel;
-  ctx: Ctx;
+  ctx: ViewCtx;
 }) => {
   return (
     <Box sx={{ paddingTop: 2, paddingBottom: 1 }}>
@@ -607,7 +607,7 @@ const Feedback = ({
   ctx,
   model,
 }: {
-  ctx: Ctx;
+  ctx: ViewCtx;
   model: GameModel | GameOverModel;
 }) => {
   if (model.type === 'GameOver') {
@@ -679,7 +679,7 @@ const PlayerSlot = ({
 }: {
   model: GameModel | GameOverModel;
   playerType: PlayerType;
-  ctx: Ctx;
+  ctx: ViewCtx;
 }) => {
   const size = { width: '1.5rem', height: '1.5rem' };
   const status = toStatus(model.columns);
@@ -721,7 +721,7 @@ const ViewSetupPlayerSlot = ({
   $send: (msg: Msg) => void;
   playerType: PlayerType;
   userId: 'none' | UserId;
-  ctx: Ctx;
+  ctx: ViewCtx;
 }) => {
   return (
     <Box
@@ -777,7 +777,13 @@ const ViewSetupPlayerSlot = ({
   );
 };
 
-const ViewVersusHeader = ({ model, ctx }: { model: SetupModel; ctx: Ctx }) => {
+const ViewVersusHeader = ({
+  model,
+  ctx,
+}: {
+  model: SetupModel;
+  ctx: ViewCtx;
+}) => {
   const avatarSx: Sx = {
     // width: 36,
     // height: 36,

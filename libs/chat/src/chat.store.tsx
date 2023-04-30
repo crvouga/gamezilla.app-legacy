@@ -1,5 +1,5 @@
 import { Cmd, p, t } from '@gamezilla/core';
-import { Ctx } from '@gamezilla/shared';
+import { ViewCtx } from '@gamezilla/shared';
 import {
   Avatar,
   AvatarGroup,
@@ -122,7 +122,7 @@ export const View = ({
 }: {
   model: Model;
   $send: (m: Msg) => void;
-  ctx: Ctx;
+  ctx: ViewCtx;
   route: 'chat' | 'chat-new' | 'chat-list';
 }) => {
   switch (route) {
@@ -151,7 +151,7 @@ const ViewPageChatList = ({
   // $send,
   ctx,
 }: {
-  ctx: Ctx;
+  ctx: ViewCtx;
   model: Model;
   $send: (m: Msg) => void;
 }) => {

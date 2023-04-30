@@ -1,10 +1,12 @@
 import { Cmd, Posix, Sub } from '@gamezilla/core';
 import {
+  Alerts,
+  Ctx,
   RoomCtx,
+  ViewCtx,
   ViewVsBotGameScreen,
   ViewVsBotSetupScreen,
 } from '@gamezilla/shared';
-import { Alerts, Ctx } from '@gamezilla/shared';
 import {
   BotLevel,
   PlayerType,
@@ -102,7 +104,7 @@ export const updateFromBackend = ({
   model,
   ctx,
 }: {
-  ctx: Ctx;
+  ctx: ViewCtx;
   msg: ToFrontend;
   model: Model;
 }): [Model, Cmd<Msg>, OutAction[]] => {
@@ -178,7 +180,7 @@ export const View = ({
   $send,
   ctx,
 }: {
-  ctx: Ctx;
+  ctx: ViewCtx;
   goBack: () => void;
   model: Model;
   $send: (msg: Msg) => void;

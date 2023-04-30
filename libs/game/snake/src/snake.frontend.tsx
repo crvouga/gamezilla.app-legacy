@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef } from 'react';
-import { Ctx, Alerts, Route } from '@gamezilla/shared';
+import { ViewCtx, Alerts, Route, RoomCtx } from '@gamezilla/shared';
 import {
   Cmd,
   exhaustive,
@@ -55,7 +55,7 @@ export const update = (
     ctx,
   }: {
     sendToBackend: (msg: ToBackend) => Cmd;
-    ctx: Ctx;
+    ctx: RoomCtx;
   },
   msg: Msg,
   _model: Model
@@ -206,7 +206,7 @@ export const View = ({
   model,
   $send,
 }: {
-  ctx: Ctx;
+  ctx: ViewCtx;
   model: Model;
   $send: (msg: Msg) => void;
 }) => {

@@ -1,6 +1,11 @@
 import { Cmd, Posix, Sub } from '@gamezilla/core';
-import { ViewVsBotGameScreen, ViewVsBotSetupScreen } from '@gamezilla/shared';
-import { Alerts, Ctx } from '@gamezilla/shared';
+import {
+  Ctx,
+  RoomCtx,
+  ViewVsBotGameScreen,
+  ViewVsBotSetupScreen,
+} from '@gamezilla/shared';
+import { Alerts, ViewCtx } from '@gamezilla/shared';
 import {
   PlayerType,
   opposite,
@@ -63,7 +68,13 @@ export type Msg = FrontendMsg;
 type OutAction = Alerts.Action;
 
 export const update = (
-  { sendToBackend, ctx }: { ctx: Ctx; sendToBackend: (msg: ToBackend) => Cmd },
+  {
+    sendToBackend,
+    ctx,
+  }: {
+    ctx: RoomCtx;
+    sendToBackend: (msg: ToBackend) => Cmd;
+  },
   msg: Msg,
   model: Model
 ): { model: Model; cmd?: Cmd<Msg> } => {
@@ -117,7 +128,7 @@ export const updateFromBackend = ({
   msg,
   model,
 }: {
-  ctx: Ctx;
+  ctx: RoomCtx;
   msg: ToFrontend;
   model: Model;
 }): {
@@ -231,7 +242,7 @@ export const View = ({
   model: Model;
   $send: (msg: Msg) => void;
   goBack: () => void;
-  ctx: Ctx;
+  ctx: ViewCtx;
 }) => {
   if (model.type === 'Setup') {
     return (

@@ -185,31 +185,31 @@ const updateFromFrontend = ({
 
   switch (msg.t) {
     case 'auth': {
-      switch (msg.c[0]) {
-        case 'user-logged-in': {
-          const userId = msg.c[1];
-
-          const session: Session = {
-            sessionId: ctx.sessionId,
-            clientId: ctx.clientId,
-            userId,
-          };
-
-          return {
-            model: {
-              ...model,
-              sessions: {
-                ...model.sessions,
-                [ctx.sessionId]: session,
-              },
-            },
-          };
-        }
-
-        default: {
-          return { model };
-        }
+      if (msg.c.t !== 'got-current-user') {
+        return { model };
       }
+
+      if (msg.c.currentUser.t !== 'logged-in') {
+        return { model };
+      }
+
+      const userId = msg.c.currentUser.currentUserId;
+
+      const session: Session = {
+        sessionId: ctx.sessionId,
+        clientId: ctx.clientId,
+        userId,
+      };
+
+      return {
+        model: {
+          ...model,
+          sessions: {
+            ...model.sessions,
+            [ctx.sessionId]: session,
+          },
+        },
+      };
     }
 
     case 'room': {

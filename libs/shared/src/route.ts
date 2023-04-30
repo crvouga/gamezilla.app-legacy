@@ -1,6 +1,5 @@
-import { Browser, Cmd, Option } from '@gamezilla/core';
+import { Browser, Cmd } from '@gamezilla/core';
 import { Iso3166Alpha2Code, PhoneNumber, RoomId, UserId } from './data';
-const { Some } = Option;
 
 //
 //
@@ -10,201 +9,247 @@ const { Some } = Option;
 //
 //
 
-export type Model =
-  | ['account']
-  | ['login']
-  | ['login-email-link']
-  | ['login-phone', { isSelectingCountry: boolean }]
-  | ['login-phone-verify', { phoneNumber: PhoneNumber }]
-  | ['logout']
-  | ['profile', { userId: UserId }]
-  | ['profile-create']
-  | ['profile-delete']
-  | ['profile-update']
-  | ['profile-update-avatar']
-  | ['profile-update-name']
-  | ['profile-update-username']
-  | ['profile-update-theme']
-  | ['room', RoomId]
-  | ['room-list']
-  | ['chat-list']
-  | ['chat-new']
-  | ['chat-conversation', { conversationId: string }]
-  | ['search'];
-
 export type Route =
-  | ['auth', RouteAuth]
-  | ['profile', RouteProfile]
-  | ['room', RouteRoom]
-  | ['chat', RouteChat]
-  | ['search'];
+  | { t: 'auth'; c: RouteAuth }
+  | { t: 'profile'; c: RouteProfile }
+  | { t: 'room'; c: RouteRoom }
+  | { t: 'chat'; c: RouteChat }
+  | { t: 'search' };
+
+export const encode = (route: Route): string => {
+  switch (route.t) {
+    case 'auth':
+      return encodeAuth(route.c);
+    case 'profile':
+      return encodeProfile(route.c);
+    case 'room':
+      return encodeRoom(route.c);
+    case 'chat':
+      return encodeChat(route.c);
+    case 'search':
+      return '/search';
+  }
+};
+
+export const decode = (pathname: string): Route | null => {
+  if (pathname.startsWith('/login')) {
+    const auth = decodeAuth(pathname);
+    if (auth === null) {
+      return null;
+    }
+    return { t: 'auth', c: auth };
+  }
+  if (pathname.startsWith('/profile')) {
+    const profile = decodeProfile(pathname);
+    if (profile === null) {
+      return null;
+    }
+    return { t: 'profile', c: profile };
+  }
+  if (pathname.startsWith('/room')) {
+    const room = decodeRoom(pathname);
+    if (room === null) {
+      return null;
+    }
+    return { t: 'room', c: room };
+  }
+  if (pathname.startsWith('/chat')) {
+    const chat = decodeChat(pathname);
+    if (chat === null) {
+      return null;
+    }
+    return { t: 'chat', c: chat };
+  }
+  if (pathname.startsWith('/search')) {
+    return { t: 'search' };
+  }
+  return null;
+};
+
+//
+//
+// Auth
+//
+//
 
 export type RouteAuth =
-  | ['login']
-  | ['login-email-link']
-  | ['login-phone', { isSelectingCountry: boolean }]
-  | ['login-phone-verify', { phoneNumber: PhoneNumber }]
-  | ['logout'];
+  | { t: 'login' }
+  | { t: 'login-email-link' }
+  | { t: 'login-phone'; isSelectingCountry: boolean }
+  | { t: 'login-phone-verify'; phoneNumber: PhoneNumber }
+  | { t: 'logout' };
+
+export const encodeAuth = (route: RouteAuth): string => {
+  switch (route.t) {
+    case 'login':
+      return '/login';
+    case 'login-email-link':
+      return '/login/email-link';
+    case 'login-phone':
+      return '/login/phone';
+    case 'login-phone-verify':
+      return `/login/phone/verify/${route.phoneNumber._country}/${route.phoneNumber}`;
+    case 'logout':
+      return '/logout';
+  }
+};
+export const decodeAuth = (pathname: string): RouteAuth | null => {
+  if (pathname === '/login') {
+    return { t: 'login' };
+  }
+  if (pathname === '/login/email-link') {
+    return { t: 'login-email-link' };
+  }
+  if (pathname === '/login/phone') {
+    return { t: 'login-phone', isSelectingCountry: false };
+  }
+  if (pathname === '/login/phone/select-country') {
+    return { t: 'login-phone', isSelectingCountry: true };
+  }
+  if (pathname.startsWith('/login/phone/verify/')) {
+    const split = pathname.split('/');
+    const country = split[1];
+    const phoneNumber = split[2];
+    if (!country || !phoneNumber) {
+      return null;
+    }
+    if (!Iso3166Alpha2Code.is(country)) {
+      return null;
+    }
+    const decoded = PhoneNumber.decode(country, phoneNumber);
+    if (decoded.type === 'Err') {
+      return null;
+    }
+    return {
+      t: 'login-phone-verify',
+      phoneNumber: decoded.value,
+    };
+  }
+
+  if (pathname === '/logout') {
+    return { t: 'logout' };
+  }
+  return null;
+};
+
+//
+//
+// Profile
+//
+//
 
 export type RouteProfile =
-  | ['profile', { userId: UserId }]
-  | ['profile-create']
-  | ['profile-delete']
-  | ['profile-update']
-  | ['profile-update-avatar']
-  | ['profile-update-name']
-  | ['profile-update-username']
-  | ['profile-update-theme'];
+  | { t: 'profile'; userId: UserId }
+  | { t: 'profile-delete' }
+  | { t: 'profile-update' }
+  | { t: 'profile-update-avatar' }
+  | { t: 'profile-update-username' }
+  | { t: 'profile-update-theme' };
 
-export type RouteRoom = ['room', RoomId] | ['room-list'];
-
-export type RouteChat =
-  | ['chat']
-  | ['chat-new']
-  | ['chat-conversation', { conversationId: string }];
-
-//
-//
-//
-// Encode/Decode
-//
-//
-//
-
-export const routesTypes: { [routeType in Model[0]]: string } = {
-  ['account']: 'account',
-  ['login']: 'login',
-  ['login-email-link']: 'login-email-link',
-  ['login-phone']: 'login-phone',
-  ['login-phone-verify']: 'login-phone-verify',
-  ['logout']: 'logout',
-  ['profile']: 'profile',
-  ['profile-create']: 'profile-create',
-  ['profile-delete']: 'profile-delete',
-  ['profile-update']: 'profile-update',
-  ['profile-update-avatar']: 'profile-update-avatar',
-  ['profile-update-name']: 'profile-update-name',
-  ['profile-update-username']: 'profile-update-username',
-  ['profile-update-theme']: 'profile-update-theme',
-  ['room']: 'room',
-  ['chat-list']: 'chat-list',
-  ['chat-new']: 'chat-new',
-  ['chat-conversation']: 'chat-conversation',
-  ['search']: 'search',
-  ['room-list']: 'room-list',
-};
-
-export const isRouteType = (routeType: unknown): routeType is Model[0] => {
-  return typeof routeType === 'string' && routeType in routesTypes;
-};
-
-export const decode = ({
-  pathname,
-  query,
-}: Browser.Location): Option<Model> => {
-  const [first, second] = pathname.substring(1).split('/');
-
-  if (!isRouteType(first)) {
-    return Option.None;
-  }
-
-  switch (first) {
-    case 'chat-conversation': {
-      if (typeof second === 'string') {
-        return Some(['chat-conversation', { conversationId: second }]);
-      }
-
-      return Option.None;
-    }
-
-    case 'profile': {
-      const userId = UserId.decode(second);
-
-      if (userId.type === 'Ok') {
-        return Some(['profile', { userId: userId.value }]);
-      }
-
-      return Option.None;
-    }
-
-    case 'login-phone': {
-      const isSelectingCountry = query['isSelectingCountry'] === 'true';
-      return Some(['login-phone', { isSelectingCountry }]);
-    }
-
-    case 'login-phone-verify': {
-      const phoneNumberDirty = query['phoneNumber'];
-      const country = query['country'];
-
-      if (!phoneNumberDirty) {
-        return Option.None;
-      }
-
-      if (!Iso3166Alpha2Code.is(country)) {
-        return Option.None;
-      }
-
-      const decoded = PhoneNumber.decode(country, phoneNumberDirty);
-
-      if (decoded.type === 'Err') {
-        return Option.None;
-      }
-
-      const phoneNumber = decoded.value;
-
-      return Some(['login-phone-verify', { phoneNumber: phoneNumber }]);
-    }
-
-    case 'room': {
-      if (!second) {
-        return Option.None;
-      }
-
-      const decoded = RoomId.decode(second);
-
-      if (decoded.type === 'Err') {
-        return Option.None;
-      }
-
-      const roomId = decoded.value;
-
-      return Some([first, roomId]);
-    }
-
-    default: {
-      return Some([first]);
-    }
-  }
-};
-
-export const encode = (route: Model): string => {
-  switch (route[0]) {
-    case 'chat-conversation':
-      return `/${route[0]}/${route[1].conversationId}`;
-
+export const encodeProfile = (route: RouteProfile): string => {
+  switch (route.t) {
     case 'profile':
-      return `/${route[0]}/${route[1].userId}`;
-
-    case 'login-phone': {
-      const params = new URLSearchParams({
-        isSelectingCountry: route[1].isSelectingCountry.toString(),
-      });
-      return `/${route[0]}?${params.toString()}`;
-    }
-
-    case 'login-phone-verify': {
-      const phoneNumber = PhoneNumber.toString(route[1].phoneNumber);
-      const country = PhoneNumber.toCountry(route[1].phoneNumber);
-      const params = new URLSearchParams({ phoneNumber, country });
-      return `/${route[0]}?${params.toString()}`;
-    }
-    case 'room': {
-      return `/${route[0]}/${route[1]}`;
-    }
-
-    default:
-      return `/${route[0]}`;
+      return `/profile/${route.userId}`;
+    case 'profile-delete':
+      return '/profile/delete';
+    case 'profile-update':
+      return '/profile/update';
+    case 'profile-update-avatar':
+      return '/profile/update/avatar';
+    case 'profile-update-username':
+      return '/profile/update/username';
+    case 'profile-update-theme':
+      return '/profile/update/theme';
   }
+};
+export const decodeProfile = (pathname: string): RouteProfile | null => {
+  if (pathname.startsWith('/profile/')) {
+    const userId = pathname.slice('/profile/'.length);
+    if (UserId.is(userId)) {
+      return { t: 'profile', userId };
+    }
+    return null;
+  }
+  if (pathname === '/profile/delete') {
+    return { t: 'profile-delete' };
+  }
+  if (pathname === '/profile/update') {
+    return { t: 'profile-update' };
+  }
+  if (pathname === '/profile/update/avatar') {
+    return { t: 'profile-update-avatar' };
+  }
+  if (pathname === '/profile/update/username') {
+    return { t: 'profile-update-username' };
+  }
+  if (pathname === '/profile/update/theme') {
+    return { t: 'profile-update-theme' };
+  }
+  return null;
+};
+
+//
+//
+// Room
+//
+//
+
+export type RouteRoom = { t: 'room'; roomId: RoomId } | { t: 'room-list' };
+
+export const encodeRoom = (route: RouteRoom): string => {
+  switch (route.t) {
+    case 'room':
+      return `/room/${route.roomId}`;
+    case 'room-list':
+      return '/room';
+  }
+};
+export const decodeRoom = (pathname: string): RouteRoom | null => {
+  if (pathname.startsWith('/room/')) {
+    const roomId = pathname.slice('/room/'.length);
+    if (RoomId.is(roomId)) {
+      return { t: 'room', roomId };
+    }
+    return null;
+  }
+  if (pathname === '/room') {
+    return { t: 'room-list' };
+  }
+  return null;
+};
+
+//
+//
+// Chat
+//
+//
+export type RouteChat =
+  | { t: 'chat' }
+  | { t: 'chat-new' }
+  | { t: 'chat-conversation'; conversationId: string };
+
+export const encodeChat = (route: RouteChat): string => {
+  switch (route.t) {
+    case 'chat':
+      return '/chat';
+    case 'chat-new':
+      return '/chat/new';
+    case 'chat-conversation':
+      return `/chat/conversation/${route.conversationId}`;
+  }
+};
+export const decodeChat = (pathname: string): RouteChat | null => {
+  if (pathname === '/chat') {
+    return { t: 'chat' };
+  }
+  if (pathname === '/chat/new') {
+    return { t: 'chat-new' };
+  }
+  if (pathname.startsWith('/chat/conversation/')) {
+    const conversationId = pathname.slice('/chat/conversation/'.length);
+    return { t: 'chat-conversation', conversationId };
+  }
+  return null;
 };
 
 //
@@ -215,13 +260,13 @@ export const encode = (route: Model): string => {
 //
 //
 
-export const push = (route: Model) => {
+export const push = (route: Route) => {
   return Browser.push(encode(route));
 };
 
 export const back = Browser.back;
 
-export const replace = (route: Model) => {
+export const replace = (route: Route) => {
   return Browser.replace(encode(route));
 };
 
@@ -233,55 +278,37 @@ export const replace = (route: Model) => {
 //
 //
 
-export type Msg = ['got-route', Model] | ['clicked-link', Model];
-
-export type Action = ['route', ['Push', Model] | ['Replace', Model] | ['Back']];
+export type Msg =
+  | { t: 'route-changed'; c: Route }
+  | { t: 'clicked-link'; c: Route }
+  | { t: 'clicked-back' };
 
 export const update = ({
   msg,
   model,
 }: {
   msg: Msg;
-  model: Model;
+  model: Route;
 }): {
-  model: Model;
-  cmd: Cmd<Msg>;
+  model: Route;
+  cmd?: Cmd<Msg>;
 } => {
-  switch (msg[0]) {
-    case 'got-route': {
-      return { model: msg[1], cmd: Cmd.None };
-    }
-
-    case 'clicked-link': {
-      return { model, cmd: push(msg[1]) };
-    }
+  if (msg.t === 'clicked-back') {
+    return { model, cmd: back };
   }
+
+  if (msg.t === 'clicked-link') {
+    return { model, cmd: push(msg.c) };
+  }
+
+  if (msg.t === 'route-changed') {
+    return { model: msg.c };
+  }
+
+  const check: never = msg;
+  return check;
 };
 
-export const runAction = (action: Action, model: Model): [Model, Cmd<Msg>] => {
-  switch (action[1][0]) {
-    case 'Back': {
-      return [model, Browser.back];
-    }
-
-    case 'Push': {
-      return [model, Browser.push(encode(action[1][1]))];
-    }
-
-    case 'Replace': {
-      return [model, Browser.replace(encode(action[1][1]))];
-    }
-  }
-};
-
-//
-//
-//
-// Helpers
-//
-//
-//
-
-export const equals = (a: Model, b: Model): boolean => {
+export const eq = (a: Route, b: Route): boolean => {
   return encode(a) === encode(b);
 };

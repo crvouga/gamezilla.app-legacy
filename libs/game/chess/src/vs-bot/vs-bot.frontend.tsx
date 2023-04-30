@@ -1,6 +1,6 @@
 import { Audio, Cmd, exhaustive, Option, Sub, t } from '@gamezilla/core';
 import { ViewVsBotSetupScreen } from '@gamezilla/shared';
-import { Alerts, Ctx } from '@gamezilla/shared';
+import { Alerts, ViewCtx } from '@gamezilla/shared';
 import * as UI from '@gamezilla/shared/ui';
 import * as Chess from '../chess/chess';
 import { viewCoverArt } from '../chess/chess';
@@ -285,7 +285,7 @@ export const View = ({
   $send,
   onClose,
 }: {
-  ctx: Ctx;
+  ctx: ViewCtx;
   model: Model;
   $send: (msg: Msg) => void;
   onClose: () => void;

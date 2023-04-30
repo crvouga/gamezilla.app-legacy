@@ -29,8 +29,10 @@ export const update = ({
 }: {
   msg: Msg;
   model: Model;
-}): { model: Model } => {
-  switch (msg[0]) {
+}): {
+  model: Model;
+} => {
+  switch (msg.t) {
     case 'none': {
       return { model };
     }
@@ -46,7 +48,7 @@ export const updateFromFrontend = ({
   model: Model;
   // database: Database;
 }): { model: Model; cmd: Cmd<Msg> } => {
-  switch (msg[0]) {
+  switch (msg.t) {
     default: {
       return {
         model,
@@ -89,14 +91,14 @@ export const updateFromFrontend = ({
 // };
 
 export const msgToQuery = (msg: Req) => {
-  switch (msg[0]) {
+  switch (msg.t) {
     case 'find-many': {
-      const userIds = msg[1].userId.map((x) => `'${x}'`).join(',');
+      const userIds = msg.userId.map((x) => `'${x}'`).join(',');
       return `SELECT * FROM profile WHERE user_id IN (${userIds})`;
     }
 
     case 'search': {
-      return `SELECT * FROM profile WHERE username LIKE '%${msg[1].query}%'`;
+      return `SELECT * FROM profile WHERE username LIKE '%${msg.query}%'`;
     }
   }
 };

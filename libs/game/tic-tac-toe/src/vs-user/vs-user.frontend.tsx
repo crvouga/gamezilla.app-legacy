@@ -1,6 +1,6 @@
 import { Cmd, exhaustive } from '@gamezilla/core';
 import { ProfileStore } from '@gamezilla/profile';
-import { Alerts, Ctx, UserId } from '@gamezilla/shared';
+import { Alerts, RoomCtx, UserId, ViewCtx } from '@gamezilla/shared';
 import * as UI from '@gamezilla/shared/ui';
 import {
   PlayerType,
@@ -123,7 +123,7 @@ export const update = (
 };
 
 export const updateFromBackend = (
-  _: { ctx: Ctx },
+  _: { ctx: RoomCtx },
   msg: ToFrontend,
   model: Model
 ): [Model, OutAction[]] => {
@@ -197,7 +197,7 @@ export const View = ({
   $send,
   onCloseGame,
 }: {
-  ctx: Ctx;
+  ctx: ViewCtx;
   model: Model;
   $send: (msg: Msg) => void;
   onCloseGame: () => void;
@@ -479,7 +479,7 @@ const ViewGameOverMessage = ({
   model,
   $send,
 }: {
-  ctx: Ctx;
+  ctx: ViewCtx;
   model: GameOverModel;
   $send: (msg: Msg) => void;
 }) => {
@@ -732,7 +732,7 @@ export const ViewRoundStartingMessage = ({
   ctx,
   model,
 }: {
-  ctx: Ctx;
+  ctx: ViewCtx;
   model: GameModel;
 }) => {
   const currentRound = Round.toCurrent(model.round);
@@ -1008,7 +1008,7 @@ const ViewResignButton = ({
   model,
   $send,
 }: {
-  ctx: Ctx;
+  ctx: ViewCtx;
   model: Model;
   $send: (msg: Msg) => void;
 }) => {
@@ -1111,7 +1111,7 @@ const ViewPlayerSetupSlot = ({
   $send,
   sx,
 }: {
-  ctx: Ctx;
+  ctx: ViewCtx;
   userId: UserId | 'none';
   playerType: PlayerType;
   $send: (msg: Msg) => void;
@@ -1175,7 +1175,7 @@ const ViewPlayerGameSlot = ({
   model,
   playerType,
 }: {
-  ctx: Ctx;
+  ctx: ViewCtx;
   model: GameModel | GameOverModel;
   playerType: PlayerType;
 }) => {

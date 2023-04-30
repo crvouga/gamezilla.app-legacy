@@ -1,7 +1,15 @@
 import { Cmd, exhaustive, p, RemoteData, Sub } from '@gamezilla/core';
-import { RoomCtx } from '@gamezilla/shared';
 import { ProfileStore } from '@gamezilla/profile';
-import { Alerts, AppMsg, Ctx, RoomId, Route, UserId } from '@gamezilla/shared';
+import {
+  Alerts,
+  AppMsg,
+  Ctx,
+  RoomCtx,
+  RoomId,
+  Route,
+  UserId,
+  ViewCtx,
+} from '@gamezilla/shared';
 import {
   Avatar,
   Box,
@@ -26,6 +34,7 @@ import {
   TopBar,
   Typography,
   useTheme,
+  ViewNode,
 } from '@gamezilla/shared/ui';
 import { gameNameToString, viewCoverArt } from './game';
 import * as Game from './game.frontend';
@@ -74,7 +83,7 @@ export const init = (): { model: Model } => {
 
 export type Msg = FrontendMsg;
 
-type OutAction = Alerts.Action<Msg> | ProfileStore.Action | Route.Action;
+type OutAction = Alerts.Action<Msg> | ProfileStore.Action;
 
 //
 //
@@ -100,7 +109,10 @@ export const update = ({
 } => {
   switch (msg.t) {
     case 'clicked-room': {
-      return { model, cmd: Route.push(['room', msg.roomId]) };
+      return {
+        model,
+        cmd: Route.push({ t: 'room', c: { t: 'room', roomId: msg.roomId } }),
+      };
     }
 
     case 'modal-closed': {
@@ -114,7 +126,10 @@ export const update = ({
     case 'clicked-user-link': {
       return {
         model: { ...model, modal: 'none' },
-        cmd: Route.push(['profile', msg]),
+        cmd: Route.push({
+          t: 'profile',
+          c: { t: 'profile', userId: msg.userId },
+        }),
       };
     }
 
@@ -135,7 +150,9 @@ export const update = ({
     case 'destroy':
     case 'input-game': {
       const routeCmd =
-        msg.t === 'create' ? Route.push(['room', msg.roomId]) : Cmd.None;
+        msg.t === 'create'
+          ? Route.push({ t: 'room', c: { t: 'room', roomId: msg.roomId } })
+          : Cmd.None;
 
       return {
         model: {
@@ -170,16 +187,13 @@ export const update = ({
 
       const gameMsg = msg.c;
 
-      const gameRoomCtx: RoomCtx = {
+      const roomCtx: RoomCtx = {
         ...ctx,
         hostId: room.hostId,
-        onQuit: () => {
-          //
-        },
       };
 
       const [gameNew, gameCmd] = Game.update({
-        ctx: gameRoomCtx,
+        ctx: roomCtx,
         sendToBackend: (msg) => sendToBackend({ t: 'game', c: msg }),
         msg: gameMsg,
         model: game,
@@ -248,9 +262,6 @@ export const updateFromBackend = ({
         ctx: {
           ...ctx,
           hostId: room.hostId,
-          onQuit: () => {
-            //
-          },
         },
         sendToBackend: (msg) => sendToBackend({ t: 'game', c: msg }),
         model: game,
@@ -357,10 +368,10 @@ export const updateFromBackend = ({
         return handled;
       }
 
-      const routeActions: OutAction[] =
+      const routeCmd =
         msg.userId === ctx.currentUserId
-          ? [['route', ['Replace', ['room', msg.roomId]]]]
-          : [];
+          ? Route.push({ t: 'room', c: { t: 'room', roomId: msg.roomId } })
+          : Cmd.None;
 
       const alertActions: OutAction[] =
         msg.userId !== ctx.currentUserId
@@ -380,12 +391,8 @@ export const updateFromBackend = ({
 
       return {
         model: handled.model,
-        cmd: handled.cmd,
-        actions: [
-          ...(handled?.actions ?? []),
-          ...routeActions,
-          ...alertActions,
-        ],
+        cmd: Cmd.batch([handled.cmd, routeCmd]),
+        actions: [...(handled?.actions ?? []), ...alertActions],
       };
     }
   }
@@ -405,7 +412,11 @@ export const updateFromApp = ({
 } => {
   switch (msg.t) {
     case 'route-changed': {
-      switch (msg.route[0]) {
+      if (msg.route.t !== 'room') {
+        return { model };
+      }
+
+      switch (msg.route.c.t) {
         case 'room':
         case 'room-list': {
           return updateListRooms({ model, initiatorMsg: msg, sendToBackend });
@@ -658,10 +669,42 @@ export const View = ({
   ctx,
   $send,
   model,
+  route,
+  viewBottomBar,
+}: {
+  model: Model;
+  ctx: ViewCtx;
+  $send: (m: Msg) => void;
+  route: Route.RouteRoom;
+  viewBottomBar: ViewNode;
+}) => {
+  if (route.t === 'room') {
+    return (
+      <ViewRoomScreen
+        roomId={route.roomId}
+        ctx={ctx}
+        $send={$send}
+        model={model}
+      />
+    );
+  }
+
+  return (
+    <>
+      <ViewRoomListScreen $send={$send} ctx={ctx} model={model} />
+      {viewBottomBar}
+    </>
+  );
+};
+
+const ViewRoomScreen = ({
+  ctx,
+  $send,
+  model,
   roomId,
 }: {
   model: Model;
-  ctx: Ctx;
+  ctx: ViewCtx;
   $send: (m: Msg) => void;
   roomId: RoomId;
 }) => {
@@ -725,7 +768,7 @@ const ViewPage = ({
 }: {
   roomId: RoomId;
   model: Model;
-  ctx: Ctx;
+  ctx: ViewCtx;
   $send: (m: Msg) => void;
 }) => {
   if (
@@ -764,7 +807,7 @@ const ViewPage = ({
           <MyButton
             variant="contained"
             size="sm"
-            onClick={() => ctx.$push(['room-list'])}
+            onClick={() => ctx.$push({ t: 'room', c: { t: 'room-list' } })}
           >
             <IconHome /> Home
           </MyButton>
@@ -811,7 +854,7 @@ const ViewPage = ({
   );
 };
 
-export const ViewRoomNotFound = ({ ctx }: { ctx: Ctx }) => {
+export const ViewRoomNotFound = ({ ctx }: { ctx: ViewCtx }) => {
   return (
     <FillBox
       sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
@@ -820,7 +863,7 @@ export const ViewRoomNotFound = ({ ctx }: { ctx: Ctx }) => {
         Room not found
       </Typography>
       <Button
-        onClick={() => ctx.$push(['room-list'])}
+        onClick={() => ctx.$push({ t: 'room', c: { t: 'room-list' } })}
         size="large"
         variant="contained"
         startIcon={<Icons.ChevronLeft />}
@@ -831,13 +874,13 @@ export const ViewRoomNotFound = ({ ctx }: { ctx: Ctx }) => {
   );
 };
 
-export const ViewPageRoomList = ({
+export const ViewRoomListScreen = ({
   ctx,
   $send,
   model,
 }: {
   model: Model;
-  ctx: Ctx;
+  ctx: ViewCtx;
   $send: (m: Msg) => void;
 }) => {
   const user = model.users[ctx.currentUserId];
@@ -891,7 +934,10 @@ export const ViewPageRoomList = ({
                   users={users}
                   gameName={gameName}
                   onClick={() => {
-                    ctx.$push(['room', room.roomId]);
+                    ctx.$push({
+                      t: 'room',
+                      c: { t: 'room', roomId: room.roomId },
+                    });
                   }}
                 />
               );
@@ -988,7 +1034,7 @@ export const ViewNotInGame = ({
 }: {
   model: Model;
   room: FrontendRoom;
-  ctx: Ctx;
+  ctx: ViewCtx;
   $send: (m: Msg) => void;
 }) => {
   if (room.hostId !== ctx.currentUserId) {
@@ -1028,7 +1074,7 @@ export const ViewNotInRoom = ({
   $send,
 }: {
   room: { roomId: RoomId; hostId: UserId };
-  ctx: Ctx;
+  ctx: ViewCtx;
   model: Model;
   $send: (msg: Msg) => void;
 }) => {
@@ -1040,7 +1086,11 @@ export const ViewNotInRoom = ({
   return (
     <FillBox>
       <Header
-        left={<HeaderBackButton onClick={() => ctx.$push(['room-list'])} />}
+        left={
+          <HeaderBackButton
+            onClick={() => ctx.$push({ t: 'room', c: { t: 'room-list' } })}
+          />
+        }
         title={title}
       />
 
@@ -1153,7 +1203,7 @@ const ViewRoomUserListItem = ({
   onClick,
   isHost,
 }: {
-  ctx: Ctx;
+  ctx: ViewCtx;
   userId: UserId;
   onClick: () => void;
   isHost?: boolean;
@@ -1226,7 +1276,7 @@ const ViewRoomPeople = ({
   room,
 }: {
   room: { roomId: RoomId; hostId: UserId };
-  ctx: Ctx;
+  ctx: ViewCtx;
   model: Model;
   $send: (msg: Msg) => void;
 }) => {
@@ -1271,7 +1321,7 @@ export const ViewBar = ({
   model,
   $send,
 }: {
-  ctx: Ctx;
+  ctx: ViewCtx;
   model: Model;
   $send: (msg: Msg) => void;
 }) => {
@@ -1314,7 +1364,12 @@ export const ViewBar = ({
           alignItems: 'center',
           overflow: 'hidden',
         }}
-        onClick={() => ctx.$push(['room', room.roomId])}
+        onClick={() => {
+          ctx.$push({
+            t: 'room',
+            c: { t: 'room', roomId: room.roomId },
+          });
+        }}
       >
         <Box sx={{ p: 1, mr: 1 }}>
           {!game && (

@@ -1,5 +1,5 @@
 import { Browser, Cmd, p, RemoteData } from '@gamezilla/core';
-import { Ctx, Route, UserId } from '@gamezilla/shared';
+import { ViewCtx, Route, UserId } from '@gamezilla/shared';
 import * as UI from '@gamezilla/shared/ui';
 import { ReactNode, useLayoutEffect, useRef, useState } from 'react';
 import * as ChatStore from './chat.store';
@@ -150,7 +150,7 @@ export const View = ({
   conversationId,
 }: {
   chatStore: ChatStore.Model;
-  ctx: Ctx;
+  ctx: ViewCtx;
   model: Model;
   conversationId: string;
   $send: (msg: Msg) => void;

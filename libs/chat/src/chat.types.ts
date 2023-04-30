@@ -92,6 +92,8 @@ export type ToBackend = Req;
 
 export type BackendMsg = Res;
 
+export type ToFrontend = Res;
+
 export const updateFromFrontend = ({
   msg,
 }: {

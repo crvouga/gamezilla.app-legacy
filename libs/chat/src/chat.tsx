@@ -1,5 +1,5 @@
 import { Cmd, RemoteData } from '@gamezilla/core';
-import { Ctx, Route, UserId } from '@gamezilla/shared';
+import { ViewCtx, Route, UserId } from '@gamezilla/shared';
 import {
   Avatar,
   AvatarGroup,
@@ -79,7 +79,7 @@ export const View = ({
   ctx,
 }: {
   chatStore: ChatStore.Model;
-  ctx: Ctx;
+  ctx: ViewCtx;
   model: Model;
   $send: (msg: Msg) => void;
 }) => {

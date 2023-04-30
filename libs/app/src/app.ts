@@ -1,9 +1,8 @@
-import { Auth } from '@gamezilla/auth';
-import { ChatFrontend, ChatStore } from '@gamezilla/chat';
-import { ProfileStore } from '@gamezilla/profile';
+import * as Auth from '@gamezilla/auth';
+import * as Chat from '@gamezilla/chat';
+import * as Profile from '@gamezilla/profile';
 import * as Room from '@gamezilla/room';
 import { Alerts, ClientId, Route, SessionId, UserId } from '@gamezilla/shared';
-import * as Page from './app-page';
 
 //
 //
@@ -27,15 +26,13 @@ export type Session = {
 };
 
 export type FrontendModel = {
+  route: Route.Route;
   alerts: Alerts.Model<FrontendMsg>;
-  chatStore: ChatStore.Model;
-  auth: Auth.Model;
-  page: Page.Model;
-  route: Route.Model;
-  room: Room.FrontendModel;
   wire: WireModel;
-  profileStore: ProfileStore.Model;
-  chat: ChatFrontend.Model;
+  auth: Auth.FrontendModel;
+  room: Room.FrontendModel;
+  profile: Profile.FrontendModel;
+  chat: Chat.FrontendModel;
 };
 
 export type WireModel =
@@ -60,15 +57,13 @@ export type ToFrontend = { t: 'room'; c: Room.ToFrontend };
 
 export type FrontendMsg =
   | { t: '→'; c: ToFrontend }
-  | { t: 'wire'; c: WireModel['type'] }
+  | { t: 'wire'; wire: WireModel['type'] }
   | { t: 'route'; c: Route.Msg }
   | { t: 'alerts'; c: Alerts.Msg }
   | { t: 'room'; c: Room.FrontendMsg }
-  | { t: 'chat-store'; c: ChatStore.Msg }
-  | { t: 'chat'; c: ChatFrontend.Msg }
-  | { t: 'auth'; c: Auth.Msg }
-  | { t: 'page'; c: Page.Msg }
-  | { t: 'profile-store'; c: ProfileStore.Msg };
+  | { t: 'chat'; c: Chat.FrontendMsg }
+  | { t: 'auth'; c: Auth.FrontendMsg }
+  | { t: 'profile'; c: Profile.FrontendMsg };
 
 export type BackendMsg =
   | { t: '→'; sessionId: SessionId; clientId: ClientId; c: ToBackend }

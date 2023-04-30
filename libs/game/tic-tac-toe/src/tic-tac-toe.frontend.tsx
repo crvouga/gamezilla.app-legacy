@@ -1,7 +1,13 @@
 import { Cmd, Sub } from '@gamezilla/core';
-import { RoomCtx, ViewMainMenu } from '@gamezilla/shared';
 import { ProfileStore } from '@gamezilla/profile';
-import { Alerts, Ctx } from '@gamezilla/shared';
+import {
+  Alerts,
+  Ctx,
+  RoomCtx,
+  RoomViewCtx,
+  ViewCtx,
+  ViewMainMenu,
+} from '@gamezilla/shared';
 import { IconComputerDesktop, IconUsers } from '@gamezilla/shared/ui';
 import {
   BackendModel,
@@ -92,7 +98,7 @@ export const updateFromBackend = ({
   msg,
   model,
 }: {
-  ctx: Ctx;
+  ctx: RoomCtx;
   msg: ToFrontend;
   model: Model;
 }): {
@@ -210,10 +216,10 @@ export const View = ({
   $send,
   gameRoomCtx,
 }: {
-  ctx: Ctx;
+  ctx: ViewCtx;
   model: Model;
   $send: (msg: Msg) => void;
-  gameRoomCtx: RoomCtx;
+  gameRoomCtx: RoomViewCtx;
 }) => {
   const onQuit = () => $send({ t: 'input-mode', mode: 'none' });
 

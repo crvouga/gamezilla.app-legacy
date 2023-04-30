@@ -3,49 +3,40 @@ import {
   ClientToServerEvents,
   FrontendModel,
   FrontendMsg,
-  Page,
   ServerToClientEvents,
   sessionIdKey,
   ToBackend,
   ToFrontend,
 } from '@gamezilla/app';
-import { Auth } from '@gamezilla/auth';
-import { ChatFrontend, ChatStore } from '@gamezilla/chat';
+import { AuthFrontend } from '@gamezilla/auth';
+import { ChatFrontend } from '@gamezilla/chat';
 import {
   andThen,
   Browser,
   Cmd,
   Debug,
   exhaustive,
-  Option,
   p,
   Posix,
   Program,
   Sub,
-  toMsgPayload,
-  toMsgType,
 } from '@gamezilla/core';
-import { ProfileStore } from '@gamezilla/profile';
+import { ProfileFrontend } from '@gamezilla/profile';
 import { RoomFrontend } from '@gamezilla/room';
 import {
   Alerts,
   AppMsg,
   Ctx,
-  ProfileAvatar,
   Route,
-  Username,
+  UnauthenticatedViewCtx,
+  ViewCtx,
 } from '@gamezilla/shared';
 import {
-  AppContainer,
-  Box,
-  ButtonBase,
-  CircularProgress,
-  Collapse,
-  FillBox,
-  Icons,
-  ThemeMode,
-  Typography,
-  useTheme,
+  cn,
+  IconGamepad,
+  IconMagnifyingGlass,
+  IconSpinner,
+  IconUserCircle,
   ViewNode,
 } from '@gamezilla/shared/ui';
 import * as ReactDOM from 'react-dom/client';
@@ -71,17 +62,15 @@ const init = ({
   cmd: Cmd<Msg>;
 } => {
   const route = p(
-    location,
+    location.pathname,
     Route.decode,
-    Option.withDefault<Route.Model>(['room-list'])
+    (route): Route.Route =>
+      route ? route : { t: 'room', c: { t: 'room-list' } }
   );
-  const [auth, authCmd] = Auth.init();
+  const auth = AuthFrontend.init();
   const alerts = Alerts.init;
-  const chatStore = ChatStore.init;
   const room = RoomFrontend.init();
-  const page = Page.initLoading();
-
-  const profileStore = ProfileStore.init;
+  const profile = ProfileFrontend.init;
   const chat = ChatFrontend.init;
 
   return {
@@ -89,16 +78,14 @@ const init = ({
       route,
       chat,
       alerts,
-      chatStore,
       room: room.model,
-      auth,
-      page,
-      profileStore,
+      auth: auth.model,
+      profile,
       wire: {
         type: 'connecting',
       },
     },
-    cmd: Cmd.batch<Msg>([Route.replace(route), Cmd.tag_('auth', authCmd)]),
+    cmd: Cmd.batch<Msg>([Route.replace(route), Cmd.tag_('auth', auth.cmd)]),
   };
 };
 
@@ -112,22 +99,7 @@ const init = ({
 
 type Msg = FrontendMsg;
 
-type OutAction<Msg = FrontendMsg> =
-  | Alerts.Action<Msg>
-  | ChatStore.Action
-  | Auth.Action
-  | Route.Action
-  | ProfileStore.Action;
-
-const mapAction = <A, B>(
-  mapper: (a: A) => B,
-  action: OutAction<A>
-): OutAction<B> => {
-  if (action[0] === 'alerts') {
-    return Alerts.mapAction(mapper, action);
-  }
-  return action;
-};
+type OutAction<Msg = FrontendMsg> = Alerts.Action<Msg>;
 
 //
 //
@@ -151,159 +123,57 @@ const update = ({
   return p(
     { model },
     andThen((input) => update_({ ...input, now, msg, sendToBackend })),
-    andThen((input) => updateFetchProfile({ ...input, prev: model })),
-    andThen((input) => updateInitPage({ ...input, prev: model })),
-    andThen((input) => updateAutoCreateProfile({ ...input, prev: model })),
-    andThen((input) => updateInitPageAuthChanged({ ...input, prev: model })),
+
     (output) => {
-      return output.actions.reduce(
-        (acc, action) => {
-          const ran = runAction({
-            msg: action,
-            model: acc.model,
-          });
-          return {
-            ...ran,
-            cmd: Cmd.batch([acc.cmd, ran.cmd]),
-          };
-        },
-        {
-          model: output.model,
-          cmd: output.cmd,
-        }
-      );
+      return {
+        model: output.model,
+        cmd: output.cmd,
+      };
     }
   );
-};
-
-const updateAutoCreateProfile = ({
-  model,
-  prev,
-}: {
-  prev: Model;
-  model: Model;
-}): { model: Model; actions?: OutAction[] } => {
-  if (model.auth.type !== 'logged-in') {
-    return { model };
-  }
-
-  const key = ProfileStore.toFindManyKey([model.auth.session.userId]);
-
-  const findMany = model.profileStore.findMany[key];
-  const findManyPrev = prev.profileStore.findMany[key];
-  if (
-    findManyPrev?.type !== 'Ok' &&
-    findMany?.type === 'Ok' &&
-    findMany.value.length === 0
-  ) {
-    const username = Username.generate('-');
-
-    return {
-      model,
-      actions: [
-        [
-          'profile',
-          [
-            'create-one',
-            {
-              profile: {
-                userId: model.auth.session.userId,
-                avatarUrl: ProfileAvatar.toUrl({
-                  seed: ProfileAvatar.toSeed(username),
-                  style: 'adventurer-neutral',
-                }),
-                name: '',
-                themeMode: 'System',
-                username: username,
-              },
-            },
-          ],
-        ],
-      ],
-    };
-  }
-  return { model };
-};
-
-const updateInitPage = ({
-  model,
-  prev,
-}: {
-  prev: Model;
-  model: Model;
-}): { model: Model; cmd?: Cmd<Msg> } => {
-  if (model.auth.type !== 'logged-in') {
-    return { model };
-  }
-
-  const key = ProfileStore.toFindManyKey([model.auth.session.userId]);
-
-  if (
-    !prev.profileStore.profiles[model.auth.session.userId] &&
-    model.profileStore.profiles[model.auth.session.userId] &&
-    model.profileStore.findMany[key]?.type === 'Ok'
-  ) {
-    return initPage({ model });
-  }
-  return { model };
-};
-
-const updateInitPageAuthChanged = ({
-  model,
-  prev,
-}: {
-  prev: Model;
-  model: Model;
-}): { model: Model; cmd?: Cmd<Msg> } => {
-  if (prev.auth.type !== model.auth.type) {
-    return initPage({ model });
-  }
-  return { model };
-};
-
-const updateFetchProfile = ({
-  prev,
-  model,
-}: {
-  prev: Model;
-  model: Model;
-}): { model: Model; actions?: OutAction[] } => {
-  if (model.auth.type === 'logged-in' && prev.auth.type !== 'logged-in') {
-    return {
-      model,
-      actions: [
-        ['profile', ['find-many', { userIds: [model.auth.session.userId] }]],
-      ],
-    };
-  }
-  return { model };
 };
 
 export const updateFromApp = ({
   model,
   msg,
+  sendToBackend,
 }: {
   model: Model;
   msg: AppMsg;
+  sendToBackend: (m: ToBackend) => Cmd;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
   const chat = ChatFrontend.updateFromApp({
-    model: ChatFrontend.init,
+    model: model.chat,
     msg,
     sendToBackend: (m) => () => {
       console.log('todo send to backend', m);
     },
   });
+
+  const room = RoomFrontend.updateFromApp({
+    model: model.room,
+    msg,
+    sendToBackend: (c) => sendToBackend({ t: 'room', c }),
+  });
+
+  const profile = ProfileFrontend.updateFromApp({
+    model: model.profile,
+    msg,
+  });
   return {
     model: {
       ...model,
       chat: chat.model,
+      profile: profile.model,
+      room: room.model,
     },
-    cmd: Cmd.batch([
-      //
-      Cmd.tag_('chat', chat.cmd ?? Cmd.None),
+    cmd: Cmd.batch<Msg>([
+      Cmd.tag_('chat', chat.cmd),
+      Cmd.tag_('profile', profile.cmd),
+      Cmd.tag_('room', room.cmd),
     ]),
   };
 };
@@ -328,23 +198,18 @@ const update_ = ({
       return updateFromBackend({ now, sendToBackend, msg: msg.c, model });
     }
 
-    case 'chat-store': {
-      const updated = ChatStore.update(msg.c, model.chatStore);
-      return {
-        model: { ...model, chatStore: updated[0] },
-        cmd: Cmd.tag_('chat-store', updated[1]),
-      };
-    }
-
     case 'auth': {
-      const updated = Auth.update(
-        { sendToBackend: (msg) => sendToBackend({ t: 'auth', c: msg }) },
-        msg.c,
-        model.auth
-      );
+      const updated = AuthFrontend.update({
+        route: model.route,
+        sendToBackend: () => () => {
+          //
+        },
+        msg: msg.c,
+        model: model.auth,
+      });
       return {
-        model: { ...model, auth: updated[0] },
-        cmd: Cmd.tag_('auth', updated[1]),
+        model: { ...model, auth: updated.model },
+        cmd: Cmd.tag_('auth', updated.cmd),
       };
     }
 
@@ -377,34 +242,29 @@ const update_ = ({
     }
 
     case 'route': {
-      const updated = Route.update({
+      const routeUpdated = Route.update({
         msg: msg.c,
         model: model.route,
       });
-      const updatedPage = initPage({
-        model: { ...model, route: updated.model },
-      });
-      const roomUpdated = RoomFrontend.updateFromApp({
-        msg: { t: 'route-changed', route: updated.model },
-        model: model.room,
-        sendToBackend: (m) => sendToBackend({ t: 'room', c: m }),
+
+      const updated: Model = {
+        ...model,
+        route: routeUpdated.model,
+      };
+
+      const appUpdated = updateFromApp({
+        msg: { t: 'route-changed', route: updated.route },
+        model: updated,
+        sendToBackend,
       });
       return {
-        model: {
-          ...updatedPage.model,
-          room: roomUpdated.model,
-        },
-        cmd: Cmd.batch([
-          Cmd.tag_('route', updated.cmd),
-          Cmd.tag_('room', roomUpdated.cmd ?? Cmd.None),
-          updatedPage.cmd ?? Cmd.None,
-        ]),
-        actions: updatedPage.actions,
+        model: appUpdated.model,
+        cmd: Cmd.batch([Cmd.tag_('route', routeUpdated.cmd), appUpdated.cmd]),
       };
     }
 
     case 'wire': {
-      if (msg.c === 'connect-error') {
+      if (msg.wire === 'connect-error') {
         return {
           model: {
             ...model,
@@ -419,7 +279,7 @@ const update_ = ({
         };
       }
 
-      if (msg.c === 'connected') {
+      if (msg.wire === 'connected') {
         const roomUpdated = RoomFrontend.updateFromApp({
           msg: { t: 'wire-connected' },
           model: model.room,
@@ -429,27 +289,24 @@ const update_ = ({
           model: {
             ...model,
             room: roomUpdated.model,
-            wire: { type: msg.c },
+            wire: { type: msg.wire },
           },
           cmd: Cmd.tag_('room', roomUpdated.cmd ?? Cmd.None),
         };
       }
 
-      return { model: { ...model, wire: { type: msg.c } } };
+      return { model: { ...model, wire: { type: msg.wire } } };
     }
 
     case 'room': {
-      if (model.auth.type !== 'logged-in') {
+      if (model.auth.currentUser.t !== 'logged-in') {
         return { model };
       }
 
       const ctx: Ctx = {
-        currentUserId: model.auth.session.userId,
-        profiles: model.profileStore.profiles,
+        currentUserId: model.auth.currentUser.currentUserId,
+        profiles: model.profile.profiles,
         now,
-        $push: () => {
-          /* */
-        },
       };
 
       const updated = RoomFrontend.update({
@@ -465,46 +322,14 @@ const update_ = ({
       };
     }
 
-    case 'page': {
-      switch (model.auth.type) {
-        case 'loading':
-          return { model };
-
-        case 'logged-out': {
-          const updated = Page.updateLoggedOut({
-            msg: msg.c,
-            model: model.page,
-          });
-
-          return {
-            model: { ...model, page: updated.model },
-            cmd: Cmd.tag_('page', updated.cmd ?? Cmd.None),
-          };
-        }
-
-        case 'logged-in': {
-          const updated = Page.updateReady({
-            currentUserId: model.auth.session.userId,
-            msg: msg.c,
-            model: model.page,
-          });
-          return {
-            model: { ...model, page: updated[0] },
-            cmd: Cmd.tag_('page', updated[1]),
-            actions: updated[2],
-          };
-        }
-        default: {
-          return exhaustive(model.auth);
-        }
-      }
-    }
-
-    case 'profile-store': {
-      const updated = ProfileStore.update(msg.c, model.profileStore);
+    case 'profile': {
+      const updated = ProfileFrontend.update({
+        msg: msg.c,
+        model: model.profile,
+      });
       return {
-        model: { ...model, profileStore: updated[0] },
-        cmd: Cmd.tag_('profile-store', updated[1]),
+        model: { ...model, profile: updated.model },
+        cmd: Cmd.tag_('profile', updated.cmd),
       };
     }
 
@@ -516,8 +341,9 @@ const update_ = ({
       };
     }
 
-    default:
+    default: {
       return exhaustive(msg);
+    }
   }
 };
 
@@ -538,19 +364,16 @@ const updateFromBackend = ({
 } => {
   switch (msg.t) {
     case 'room': {
-      if (model.auth.type !== 'logged-in') {
+      if (model.auth.currentUser.t !== 'logged-in') {
         return { model };
       }
 
-      const currentUserId = model.auth.session.userId;
+      const currentUserId = model.auth.currentUser.currentUserId;
 
       const ctx: Ctx = {
         currentUserId,
-        profiles: model.profileStore.profiles,
+        profiles: model.profile.profiles,
         now,
-        $push: () => {
-          /* */
-        },
       };
 
       const updated = RoomFrontend.updateFromBackend({
@@ -563,118 +386,13 @@ const updateFromBackend = ({
       return {
         model: { ...model, room: updated.model },
         cmd: Cmd.tag_('room', updated.cmd ?? Cmd.None),
-        actions: (updated.actions ?? []).map((a) =>
-          mapAction((c) => ({ t: 'room', c }), a)
-        ),
+        actions: [],
       };
     }
 
     default: {
       return exhaustive(msg.t);
     }
-  }
-};
-
-const initPage = ({
-  model,
-}: {
-  model: Model;
-}): {
-  model: Model;
-  cmd?: Cmd<Msg>;
-  actions?: OutAction[];
-} => {
-  switch (model.auth.type) {
-    case 'loading': {
-      return { model };
-    }
-
-    case 'logged-out': {
-      const initial = Page.initLoggedOut({
-        route: model.route,
-        model: model.page,
-      });
-      return {
-        model: { ...model, page: initial.model },
-        cmd: Cmd.tag_('page', initial.cmd ?? Cmd.None),
-      };
-    }
-
-    case 'logged-in': {
-      if (
-        ['chat-conversation', 'chat-list', 'chat-new'].includes(model.route[0])
-      ) {
-        return { model };
-      }
-
-      const initial = Page.initReady({
-        currentUserId: model.auth.session.userId,
-        profileStore: model.profileStore,
-        route: model.route,
-      });
-      return {
-        model: { ...model, page: initial[0] },
-        cmd: Cmd.tag_('page', initial[1]),
-        actions: initial[2],
-      };
-    }
-  }
-};
-
-const runAction = ({
-  msg: action,
-  model,
-}: {
-  msg: OutAction;
-  model: Model;
-}): {
-  model: Model;
-  cmd?: Cmd<Msg>;
-} => {
-  switch (action[0]) {
-    case 'chat': {
-      const updated = ChatStore.runAction(action, model.chatStore);
-      return {
-        model: { ...model, chatStore: updated[0] },
-        cmd: Cmd.tag_('chat-store', updated[1]),
-      };
-    }
-
-    case 'alerts': {
-      const updated = Alerts.runAction(action, model.alerts);
-      return {
-        model: { ...model, alerts: updated[0] },
-        cmd: Cmd.tag_('alerts', updated[1]),
-      };
-    }
-
-    case 'auth': {
-      const updated = Auth.runAction(action, model.auth);
-      return {
-        model: { ...model, auth: updated[0] },
-        cmd: Cmd.tag_('auth', updated[1]),
-      };
-    }
-
-    case 'route': {
-      const updated = Route.runAction(action, model.route);
-
-      return {
-        model: { ...model, route: updated[0] },
-        cmd: Cmd.tag_('route', updated[1]),
-      };
-    }
-
-    case 'profile': {
-      const updated = ProfileStore.runAction(action, model.profileStore);
-      return {
-        model: { ...model, profileStore: updated[0] },
-        cmd: Cmd.tag_('profile-store', updated[1]),
-      };
-    }
-
-    default:
-      return exhaustive(action[0]);
   }
 };
 
@@ -694,50 +412,42 @@ const subscriptions = ({
   model: Model;
 }): Sub<Msg> => {
   return Sub.batch<Msg>([
-    Sub.tag_('→', toFrontend$),
-    Sub.tag_('wire', wireStatus$),
-    Sub.tag_('page', Page.subscriptions(model.page)),
-    Sub.tag_('auth', Auth.subscriptions),
-    roomSub(now, model),
     Browser.onLocation(onLocationChange),
+    Sub.tag_('→', toFrontend$),
+    p(
+      wireStatus$,
+      Sub.map((wire) => ({ t: 'wire', wire }))
+    ),
+    Sub.tag_('auth', AuthFrontend.subscriptions),
+    roomSub(now, model),
   ]);
 };
 
 const roomSub = (now: Posix, model: Model): Sub<Msg> => {
-  switch (model.auth.type) {
-    case 'loading': {
-      return Sub.None;
-    }
-
-    case 'logged-out': {
-      return Sub.None;
-    }
-
-    case 'logged-in': {
-      return Sub.tag_(
-        'room',
-        RoomFrontend.subscriptions(
-          {
-            now,
-            currentUserId: model.auth.session.userId,
-            profiles: model.profileStore.profiles,
-            $push: () => {
-              //
-            },
-          },
-          model.room
-        )
-      );
-    }
+  if (model.auth.currentUser.t === 'logged-in') {
+    return Sub.tag_(
+      'room',
+      RoomFrontend.subscriptions(
+        {
+          now,
+          currentUserId: model.auth.currentUser.currentUserId,
+          profiles: model.profile.profiles,
+        },
+        model.room
+      )
+    );
   }
+
+  return Sub.None;
 };
 
 const onLocationChange = (location: Browser.Location): Msg => {
   return p(
-    location,
+    location.pathname,
     Route.decode,
-    Option.withDefault<Route.Model>(['room-list']),
-    (route) => ({ t: 'route', c: ['got-route', route] })
+    (route): Route.Route =>
+      route ? route : { t: 'room', c: { t: 'room-list' } },
+    (route): Msg => ({ t: 'route', c: { t: 'route-changed', c: route } })
   );
 };
 
@@ -760,228 +470,223 @@ const View = ({
   $send: (msg: Msg) => void;
 }) => {
   return (
-    <AppContainer themeMode={toThemeMode(model)}>
-      {model.auth.type === 'loading' && (
-        <FillBox sx={{ justifyContent: 'center', alignItems: 'center' }}>
-          <CircularProgress sx={{ marginBottom: 2 }} />
-        </FillBox>
+    <div className="max-w-md max-h-full mx-auto fixed w-full h-full overflow-hidden flex flex-col left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 border border-neutral-600 bg-black text-white">
+      {model.auth.currentUser.t === 'not-asked' && (
+        <div className="w-full h-full flex items-center justify-center">
+          <IconSpinner />
+        </div>
       )}
 
-      {model.auth.type === 'logged-out' && (
-        <Page.ViewLoggedOut
-          $send={(m) => $send({ t: 'page', c: m })}
-          model={model.page}
+      {model.auth.currentUser.t === 'loading' && (
+        <div className="w-full h-full flex items-center justify-center">
+          <IconSpinner />
+        </div>
+      )}
+
+      {model.auth.currentUser.t === 'logged-out' && (
+        <ViewLoggedOut
+          $send={$send}
+          model={model}
+          ctx={{
+            now,
+            profiles: model.profile.profiles,
+            $back: () => $send({ t: 'route', c: { t: 'clicked-back' } }),
+            $push: (route) =>
+              $send({ t: 'route', c: { t: 'clicked-link', c: route } }),
+          }}
         />
       )}
 
-      {model.auth.type === 'logged-in' &&
-        (['chat-conversation', 'chat-new', 'chat-list'].includes(
-          model.route[0]
-        ) ? (
-          <>
-            <ChatFrontend.View
-              $send={(m) => $send({ t: 'chat', c: m })}
-              model={model.chat}
-              ctx={{
-                currentUserId: model.auth.session.userId,
-                profiles: model.profileStore.profiles,
-                now,
-                $push: (route) =>
-                  $send({ t: 'route', c: ['clicked-link', route] }),
-              }}
-              route={model.route}
-              userSearch={{
-                loading:
-                  model.profileStore.search[model.chat.userSearch]?.type ===
-                  'Loading',
-                onInput: (searchText) => {
-                  $send({ t: 'profile-store', c: ['search', { searchText }] });
-                },
-              }}
-            />
-            <ViewBottomBar
-              $send={$send}
-              model={model}
-              ctx={{
-                currentUserId: model.auth.session.userId,
-                profiles: model.profileStore.profiles,
-                now,
-                $push: (route) =>
-                  $send({ t: 'route', c: ['clicked-link', route] }),
-              }}
-            />
-          </>
-        ) : (
-          <Page.ViewReady
-            {...model}
-            ctx={{
-              currentUserId: model.auth.session.userId,
-              profiles: model.profileStore.profiles,
-              now,
-              $push: (route) =>
-                $send({ t: 'route', c: ['clicked-link', route] }),
-            }}
-            $send={(msg) => $send({ t: 'page', c: msg })}
-            $sendRoom={(msg) => $send({ t: 'room', c: msg })}
-            model={model.page}
-          />
-        ))}
+      {model.auth.currentUser.t === 'logged-in' && (
+        <ViewLoggedIn
+          model={model}
+          $send={$send}
+          ctx={{
+            now,
+            currentUserId: model.auth.currentUser.currentUserId,
+            profiles: model.profile.profiles,
+            $push: (route) =>
+              $send({ t: 'route', c: { t: 'clicked-link', c: route } }),
+            $back: () => $send({ t: 'route', c: { t: 'clicked-back' } }),
+          }}
+        />
+      )}
 
       <Alerts.View
         model={model.alerts}
         $send={(msg) => $send({ t: 'alerts', c: msg })}
       />
 
-      <Collapse
-        in={model.wire.type === 'connect-error' && model.wire.errorCount > 2}
-      >
-        <Box
-          sx={{
-            width: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: '#fff',
-            backgroundColor: 'primary.main',
-            // animation: `${flicker} 0.5s infinite ease`,
-          }}
-        >
-          <CircularProgress
-            size="1rem"
-            sx={{ color: '#fff', marginRight: 1 }}
-          />
+      {model.wire.type === 'connect-error' && model.wire.errorCount > 2 && (
+        <div className="w-full flex items-center justify-center text-white bg-blue-500 gap-2">
+          <IconSpinner className="text-xs text-white" />
           Connecting to backend...
-        </Box>
-      </Collapse>
-    </AppContainer>
+        </div>
+      )}
+    </div>
   );
 };
 
-const toThemeMode = (model: Model): ThemeMode => {
-  switch (model.auth.type) {
-    case 'loading':
-    case 'logged-out': {
-      return 'System';
-    }
-    case 'logged-in': {
-      const profile = model.profileStore.profiles[model.auth.session.userId];
-      if (!profile) {
-        return 'System';
-      }
-      return profile.themeMode;
-    }
+const ViewLoggedOut = ({
+  model,
+  ctx,
+  $send,
+}: {
+  model: Model;
+  $send: (m: Msg) => void;
+  ctx: UnauthenticatedViewCtx;
+}) => {
+  if (model.route.t === 'auth') {
+    return (
+      <AuthFrontend.View
+        $send={(m) => $send({ t: 'auth', c: m })}
+        model={model.auth}
+        ctx={ctx}
+        route={model.route.c}
+      />
+    );
   }
+
+  return (
+    <div className="w-full h-full flex items-center justify-center">
+      <IconSpinner />
+    </div>
+  );
+};
+
+const ViewLoggedIn = ({
+  model,
+  ctx,
+  $send,
+}: {
+  ctx: ViewCtx;
+  model: Model;
+  $send: (m: Msg) => void;
+}) => {
+  if (model.route.t === 'chat') {
+    return (
+      <ChatFrontend.View
+        $send={(m) => $send({ t: 'chat', c: m })}
+        model={model.chat}
+        ctx={ctx}
+        route={model.route}
+        viewBottomBar={<ViewBottomBar model={model} $send={$send} ctx={ctx} />}
+        userSearch={{
+          loading: model.profile.requests.search?.type === 'Loading',
+          onInput: (query) => {
+            $send({
+              t: 'profile',
+              c: { t: 'search', query },
+            });
+          },
+        }}
+      />
+    );
+  }
+
+  if (model.route.t === 'room') {
+    return (
+      <RoomFrontend.View
+        $send={(m) => $send({ t: 'room', c: m })}
+        model={model.room}
+        ctx={ctx}
+        route={model.route.c}
+        viewBottomBar={<ViewBottomBar model={model} $send={$send} ctx={ctx} />}
+      />
+    );
+  }
+
+  if (model.route.t === 'profile') {
+    return (
+      <ProfileFrontend.View
+        $send={(m) => $send({ t: 'profile', c: m })}
+        model={model.profile}
+        ctx={ctx}
+        route={model.route.c}
+        viewBottomBar={<ViewBottomBar model={model} $send={$send} ctx={ctx} />}
+      />
+    );
+  }
+
+  if (model.route.t === 'auth') {
+    return (
+      <AuthFrontend.View
+        $send={(m) => $send({ t: 'auth', c: m })}
+        ctx={ctx}
+        model={model.auth}
+        route={model.route.c}
+      />
+    );
+  }
+
+  if (model.route.t === 'search') {
+    return <div>searching</div>;
+  }
+
+  const check: never = model.route;
+  return check;
 };
 
 const ViewBottomBar = ({
-  ctx,
   model,
   $send,
-}: {
-  ctx: Ctx;
-  model: Model;
-  $send: (msg: Msg) => void;
-}) => {
-  return (
-    <Box
-      sx={{
-        width: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <RoomFrontend.ViewBar
-        ctx={ctx}
-        model={model.room}
-        $send={(m) => $send({ t: 'room', c: m })}
-      />
-      <ViewBottomNavigation ctx={ctx} route={model.route} />
-    </Box>
-  );
-};
-
-const ViewBottomNavigation = ({
-  route,
   ctx,
 }: {
-  ctx: Ctx;
-  route: Route.Model;
+  ctx: ViewCtx;
+  model: Model;
+  $send: (m: Msg) => void;
 }) => {
   const items: {
-    route: Route.Model;
+    route: Route.Route;
     label: string;
-    filled: ViewNode;
-    outlined: ViewNode;
+    icon: ViewNode;
   }[] = [
     {
-      route: ['room-list'],
+      route: {
+        t: 'room',
+        c: { t: 'room-list' },
+      },
       label: 'Rooms',
-      filled: <Icons.SportsEsports />,
-      outlined: <Icons.SportsEsportsOutlined />,
+      icon: <IconGamepad />,
     },
-    // {
-    //   route: ['party'],
-    //   filled: <Icons.Group />,
-    //   outlined: <Icons.GroupOutlined />,
-    // },
     {
-      route: ['search'],
+      route: { t: 'search' },
       label: 'Search',
-      filled: <Icons.Search />,
-      outlined: <Icons.SearchOutlined />,
+      icon: <IconMagnifyingGlass />,
     },
     {
-      route: ['chat-list'],
-      label: 'Chat',
-      filled: <Icons.Chat />,
-      outlined: <Icons.ChatOutlined />,
-    },
-    {
-      route: ['profile', { userId: ctx.currentUserId }],
+      route: { t: 'profile', c: { t: 'profile', userId: ctx.currentUserId } },
       label: 'Profile',
-      filled: <Icons.AccountCircle />,
-      outlined: <Icons.AccountCircleOutlined />,
+      icon: <IconUserCircle />,
     },
   ];
 
-  const theme = useTheme();
-
   return (
-    <Box
-      sx={{
-        width: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: 52,
-        borderTop: `1.5px solid ${theme.palette.divider}`,
-      }}
-    >
-      {items.map((item) => {
-        const isSelected = Route.equals(route, item.route);
-
-        return (
-          <ButtonBase
-            key={Route.encode(item.route)}
-            onClick={() => ctx.$push(item.route)}
-            sx={{
-              color: isSelected ? 'primary.main' : 'text.secondary',
-              paddingY: 0,
-              paddingX: 2,
-              display: 'flex',
-              flexDirection: 'column',
-              flex: 1,
-              width: '100%',
-            }}
-          >
-            {isSelected ? item.filled : item.outlined}
-            <Typography variant="caption">{item.label}</Typography>
-          </ButtonBase>
-        );
-      })}
-    </Box>
+    <div className="w-full flex flex-col items-center justify-center">
+      <RoomFrontend.ViewBar
+        ctx={ctx}
+        model={model.room}
+        $send={(c) => $send({ t: 'room', c })}
+      />
+      <div className="w-full flex items-center justify-center border-t border-neutral-600">
+        {items.map((item) => {
+          const isSelected = Route.eq(model.route, item.route);
+          return (
+            <button
+              key={Route.encode(item.route)}
+              onClick={() => ctx.$push(item.route)}
+              className={cn(
+                'flex items-center justify-center flex-col flex-1 pt-1 pb-2 gap-0.5',
+                isSelected ? 'text-blue-400' : 'opacity-80'
+              )}
+            >
+              {item.icon}
+              <div className="text-xs">{item.label}</div>
+            </button>
+          );
+        })}
+      </div>
+    </div>
   );
 };
 

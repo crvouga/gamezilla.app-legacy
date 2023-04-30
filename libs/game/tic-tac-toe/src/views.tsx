@@ -1,6 +1,6 @@
 import { UserId } from '@gamezilla/shared';
 import { bannerArtAspectRatio } from '@gamezilla/shared';
-import { Ctx } from '@gamezilla/shared';
+import { ViewCtx } from '@gamezilla/shared';
 import * as UI from '@gamezilla/shared/ui';
 import { gameTheme, PlayerTypeIcon } from './tic-tic-toe/tic-tac-toe-ui';
 
@@ -68,7 +68,7 @@ export const VersusHeader = ({
 }: {
   X: Player;
   O: Player;
-  ctx: Ctx;
+  ctx: ViewCtx;
 }) => {
   const largeIconSx = { width: 72, height: 72 };
 
@@ -123,7 +123,7 @@ const ViewHeaderPlayerSlot = ({
   player,
 }: {
   player: Player;
-  ctx: Ctx;
+  ctx: ViewCtx;
 }) => {
   const iconSx = { width: 42, height: 42 };
   const wrapperSx: UI.Sx = {

@@ -1,5 +1,5 @@
 import { Cmd, eq, Posix, Sub } from '@gamezilla/core';
-import { RoomCtx, ViewGameBox } from '@gamezilla/shared';
+import { RoomCtx, RoomViewCtx, ViewGameBox } from '@gamezilla/shared';
 import {
   ActionButton,
   AspectRatio,
@@ -206,7 +206,7 @@ export const View = ({
   ctx,
   $send,
 }: {
-  ctx: RoomCtx;
+  ctx: RoomViewCtx;
   model: Model;
   $send: (m: Msg) => void;
   onClose: () => void;

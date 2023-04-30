@@ -1,5 +1,5 @@
 import { Audio, Cmd, p, Posix, RemoteData, Sub, Unit } from '@gamezilla/core';
-import { RoomCtx, ViewMainMenu } from '@gamezilla/shared';
+import { RoomCtx, RoomViewCtx, ViewMainMenu } from '@gamezilla/shared';
 import { Alerts } from '@gamezilla/shared';
 import {
   IconComputerDesktop,
@@ -281,10 +281,10 @@ export const View = ({
   $send,
   gameRoomCtx,
 }: {
-  ctx: RoomCtx;
+  ctx: RoomViewCtx;
   model: Model;
   $send: (msg: Msg) => void;
-  gameRoomCtx: RoomCtx;
+  gameRoomCtx: RoomViewCtx;
 }) => {
   switch (model.mode.t) {
     case 'none': {

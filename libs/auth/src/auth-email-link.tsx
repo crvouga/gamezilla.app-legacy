@@ -1,4 +1,4 @@
-import { Cmd, exhaustive, p } from '@gamezilla/core';
+import { Cmd, Result, Task, exhaustive, p } from '@gamezilla/core';
 import { Route } from '@gamezilla/shared';
 import {
   AlertError,
@@ -8,7 +8,6 @@ import {
   MyTextField,
   TopBar,
 } from '@gamezilla/shared/ui';
-import * as Auth from '../auth';
 
 //
 //
@@ -45,14 +44,18 @@ export type Msg =
   | { t: 'clicked-back' }
   | { t: 'clicked-send-login-link' }
   | { t: 'inputted-email-address'; emailAddress: string }
-  | { t: 'login-done'; result: Auth.AuthResult };
+  | { t: 'login-done'; result: Result<string, null> };
 
 export const update = ({
   msg,
   model,
+  sendEmailLink,
 }: {
   msg: Msg;
   model: Model;
+  sendEmailLink: (input: {
+    emailAddress: string;
+  }) => Task<Result<string, null>>;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -70,7 +73,7 @@ export const update = ({
           ...model,
           submission: {
             type: 'problem',
-            message: msg.result.error.message,
+            message: msg.result.error,
           },
         },
       };
@@ -109,7 +112,7 @@ export const update = ({
         },
       },
       cmd: p(
-        Auth.loginWithEmailLink({ emailAddress: model.emailAddress }),
+        sendEmailLink({ emailAddress: model.emailAddress }),
         Cmd.perform((result) => ({ t: 'login-done', result }))
       ),
     };

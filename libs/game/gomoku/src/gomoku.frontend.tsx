@@ -1,6 +1,11 @@
 import { Cmd, Sub } from '@gamezilla/core';
-import { RoomCtx, ViewMainMenu } from '@gamezilla/shared';
-import { Ctx } from '@gamezilla/shared';
+import {
+  Ctx,
+  RoomCtx,
+  RoomViewCtx,
+  ViewCtx,
+  ViewMainMenu,
+} from '@gamezilla/shared';
 import { IconComputerDesktop, IconUsers } from '@gamezilla/shared/ui';
 import {
   BackendModel,
@@ -88,7 +93,7 @@ export const updateFromBackend = ({
   model,
   msg,
 }: {
-  ctx: Ctx;
+  ctx: RoomCtx;
   msg: ToFrontend;
   model: Model;
 }): {
@@ -228,8 +233,8 @@ export const view = ({
   $send,
 }: {
   model: Model;
-  ctx: Ctx;
-  gameRoomCtx: RoomCtx;
+  ctx: ViewCtx;
+  gameRoomCtx: RoomViewCtx;
   $send: (m: Msg) => void;
 }) => {
   switch (model.t) {

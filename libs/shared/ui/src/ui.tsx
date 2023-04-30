@@ -161,7 +161,7 @@ export const AppContainer = ({
   return (
     <Mui.ThemeProvider theme={darkTheme}>
       {/* <Mui.CssBaseline enableColorScheme /> */}
-      <div className="max-w-md max-h-full mx-auto fixed w-full h-full overflow-hidden flex flex-col left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 border border-neutral-600 bg-black">
+      <div className="max-w-md max-h-full mx-auto fixed w-full h-full overflow-hidden flex flex-col left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 border border-neutral-600 bg-black text-white">
         {children}
       </div>
     </Mui.ThemeProvider>

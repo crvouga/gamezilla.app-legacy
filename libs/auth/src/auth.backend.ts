@@ -1,4 +1,4 @@
-import { Cmd, Uuid } from '@gamezilla/core';
+import { Cmd } from '@gamezilla/core';
 import { BackendModel, BackendMsg, ToBackend } from './auth.types';
 
 //
@@ -23,44 +23,25 @@ export const init: Model = { sessions: {}, verifications: {} };
 
 export type Msg = BackendMsg;
 
-export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
-  switch (msg[0]) {
-    case 'LoginCodeSent': {
-      return [model, Cmd.None];
-    }
-  }
+export const update = ({
+  model,
+}: {
+  msg: Msg;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  return { model };
 };
 
-export const updateFromFrontend = (
-  msg: ToBackend,
-  model: Model
-): [Model, Cmd<Msg>] => {
-  switch (msg[0]) {
-    case 'LoginWithCode': {
-      const code = generateRandomCode();
-      const requestId = Uuid.generateSync();
-      return [
-        {
-          ...model,
-          verifications: {
-            ...model.verifications,
-            [requestId]: {
-              code,
-              requestId,
-              phoneNumber: msg[1].phoneNumber,
-            },
-          },
-        },
-        Cmd.None,
-      ];
-    }
-
-    case 'VerifyCode': {
-      return [model, Cmd.None];
-    }
-  }
-};
-
-const generateRandomCode = () => {
-  return Math.floor(Math.random() * 100_000);
+export const updateFromFrontend = ({
+  model,
+}: {
+  msg: ToBackend;
+  model: Model;
+}): { model: Model; cmd?: Cmd<Msg> } => {
+  return {
+    model,
+  };
 };

@@ -21,7 +21,7 @@ export type FrontendModel_ = {
     [userId: UserId]: Profile;
   };
   requests: {
-    [key in Req[0]]?: RemoteData<Problem, null>;
+    [key in Req['t']]?: RemoteData<Problem, null>;
   };
   draft?: {
     username: string;
@@ -45,26 +45,19 @@ export type BackendModel = null;
 
 export type FrontendMsg = Req;
 
-export type BackendMsg = ['none'];
+export type BackendMsg = { t: 'none' };
 
 export type ToFrontend = Res;
 
 export type ToBackend = Req;
 
-//
-//
-// Req/Res
-//
-//
-
-type Problem = ['database-error', string] | ['unknown-shape'];
-
 export type Req =
-  | ['find-many', { userId: UserId[] }]
-  | ['search', { query: string }];
+  | { t: 'find-many'; userId: UserId[] }
+  | { t: 'search'; query: string }
+  | { t: 'delete-forever'; query: string };
 
-export type Res =
-  | ['find-many', { userId: UserId[] }, Result<Problem, Profile[]>]
-  | ['search', { userId: UserId[] }, Result<Problem, Profile[]>]
-  | ['create', { userId: UserId }, Result<Problem, null>]
-  | ['destroy-forever', { userId: UserId }, Result<Problem, null>];
+export type Res = Req & { result: Result<Problem, Profile[]> };
+
+type Problem =
+  | { t: 'database-error'; message: string }
+  | { t: 'unknown-shape' };

@@ -1,6 +1,5 @@
 import { Cmd, Keyboard, p, Sub } from '@gamezilla/core';
-import { RoomCtx } from '@gamezilla/shared';
-import { Ctx } from '@gamezilla/shared';
+import { RoomCtx, RoomViewCtx, ViewCtx } from '@gamezilla/shared';
 import {
   ActionButton,
   Avatar,
@@ -49,7 +48,10 @@ export const init = initShared;
 export type Msg = FrontendMsg;
 
 export const update = (
-  { ctx, sendToBackend }: { ctx: Ctx; sendToBackend: (m: ToBackend) => Cmd },
+  {
+    ctx,
+    sendToBackend,
+  }: { ctx: RoomCtx; sendToBackend: (m: ToBackend) => Cmd },
   msg: Msg,
   model: Model
 ): [Model, Cmd<Msg>] => {
@@ -210,8 +212,8 @@ export const View = ({
   $send,
   gameRoomCtx,
 }: {
-  gameRoomCtx: RoomCtx;
-  ctx: Ctx;
+  gameRoomCtx: RoomViewCtx;
+  ctx: ViewCtx;
   model: Model;
   $send: (msg: Msg) => void;
 }) => {

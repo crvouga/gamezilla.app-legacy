@@ -1,7 +1,7 @@
 import { UserId } from '@gamezilla/shared';
 import * as UI from '@gamezilla/shared/ui';
 import { bannerArtAspectRatio } from '@gamezilla/shared';
-import { Ctx } from '@gamezilla/shared';
+import { ViewCtx } from '@gamezilla/shared';
 
 export const theme = {
   lightSquare: '#EBEBD0',
@@ -121,7 +121,7 @@ export const VersusHeader = ({
   white,
   black,
 }: {
-  ctx: Ctx;
+  ctx: ViewCtx;
   white: Player;
   black: Player;
 }) => {
@@ -195,7 +195,7 @@ export const VersusHeader = ({
   );
 };
 
-const PlayerSlot = ({ player, ctx }: { player: Player; ctx: Ctx }) => {
+const PlayerSlot = ({ player, ctx }: { player: Player; ctx: ViewCtx }) => {
   const iconSx = { width: 48, height: 48 };
   const boxSx: UI.Sx = {
     display: 'flex',

@@ -3,7 +3,7 @@ import {
   viewUserPlayerSlotBar,
   viewVsUserSetupScreen,
 } from '@gamezilla/shared';
-import { Ctx } from '@gamezilla/shared';
+import { ViewCtx } from '@gamezilla/shared';
 import {
   actionButton,
   box,
@@ -142,7 +142,7 @@ export const view = ({
   $send,
 }: {
   $send: (m: Msg) => void;
-  ctx: Ctx;
+  ctx: ViewCtx;
   model: Model;
   onCancel: () => void;
 }) => {
@@ -239,7 +239,7 @@ export const viewOverlay = ({
   ctx,
 }: {
   model: ModelGameOver;
-  ctx: Ctx;
+  ctx: ViewCtx;
 }) => {
   return box(
     {
@@ -266,7 +266,7 @@ export const viewOverlay_ = ({
   ctx,
 }: {
   model: ModelGameOver;
-  ctx: Ctx;
+  ctx: ViewCtx;
 }) => {
   const currentUserStone =
     ctx.currentUserId === model.white ? 'white' : 'black';

@@ -60,7 +60,14 @@ export const update = (
       ];
 
     case 'clicked-result':
-      return [model, Route.push(['profile', msg[1]]), []];
+      return [
+        model,
+        Route.push({
+          t: 'profile',
+          c: { t: 'profile', userId: msg[1].userId },
+        }),
+        [],
+      ];
 
     case 'InputtedSearchText': {
       const searchTextNew = msg[1];

@@ -1,4 +1,4 @@
-import { Browser, Cmd, p, Task, Time, Unit } from '@gamezilla/core';
+import { Browser, Cmd, p, Result, Task, Time, Unit } from '@gamezilla/core';
 import { PhoneNumber, Route } from '@gamezilla/shared';
 import {
   AlertError,
@@ -8,7 +8,6 @@ import {
   MyTextField,
   TopBar,
 } from '@gamezilla/shared/ui';
-import * as Auth from '../auth';
 
 //
 //
@@ -25,14 +24,14 @@ export type Model = {
         type: 'idle';
       }
     | {
-        type: 'Loading';
+        type: 'loading';
       }
     | {
-        type: 'Problem';
+        type: 'problem';
         message: string;
       }
     | {
-        type: 'Ok';
+        type: 'ok';
       };
 };
 
@@ -64,17 +63,22 @@ export type Msg =
   | { t: 'clicked-back' }
   | { t: 'clicked-verify-code' }
   | { t: 'inputted-code'; code: string }
-  | { t: 'verify-code-done'; result: Auth.AuthResult }
+  | { t: 'verify-code-done'; result: Result<string, null> }
   | { t: 'focus-done'; result: Browser.FocusResult };
 
 export const update = ({
   phoneNumber,
   msg,
   model,
+  verifyCode,
 }: {
   phoneNumber: PhoneNumber;
   msg: Msg;
   model: Model;
+  verifyCode: (input: {
+    code: string;
+    phoneNumber: PhoneNumber;
+  }) => Task<Result<string, null>>;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -87,10 +91,10 @@ export const update = ({
     return {
       model: {
         code: model.code,
-        submission: { type: 'Loading' },
+        submission: { type: 'loading' },
       },
       cmd: p(
-        Auth.verifyCode({ code: model.code, phoneNumber }),
+        verifyCode({ code: model.code, phoneNumber }),
         Cmd.perform((result): Msg => ({ t: 'verify-code-done', result }))
       ),
     };
@@ -107,16 +111,16 @@ export const update = ({
       return {
         model: {
           code: model.code,
-          submission: { type: 'Ok' },
+          submission: { type: 'ok' },
         },
-        cmd: Route.replace(['room-list']),
+        cmd: Route.replace({ t: 'room', c: { t: 'room-list' } }),
       };
     }
 
     return {
       model: {
         code: model.code,
-        submission: { type: 'Problem', message: result.error.message },
+        submission: { type: 'problem', message: result.error },
       },
     };
   }
@@ -176,11 +180,11 @@ export const View = ({
           color="primary"
           onClick={() => $send({ t: 'clicked-verify-code' })}
         >
-          {model.submission.type === 'Loading' && <IconSpinner />}
+          {model.submission.type === 'loading' && <IconSpinner />}
           Verify Code
         </MyButton>
 
-        {model.submission.type === 'Problem' && (
+        {model.submission.type === 'problem' && (
           <AlertError className="mt-4">{model.submission.message}</AlertError>
         )}
       </div>

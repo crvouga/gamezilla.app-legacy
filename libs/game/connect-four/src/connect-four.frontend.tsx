@@ -1,6 +1,13 @@
 import { Cmd, Posix, Sub } from '@gamezilla/core';
-import { RoomCtx, ViewMainMenu, bannerArtAspectRatio } from '@gamezilla/shared';
-import { Alerts, Ctx } from '@gamezilla/shared';
+import {
+  Alerts,
+  Ctx,
+  RoomCtx,
+  RoomViewCtx,
+  ViewCtx,
+  ViewMainMenu,
+  bannerArtAspectRatio,
+} from '@gamezilla/shared';
 import * as UI from '@gamezilla/shared/ui';
 import { IconComputerDesktop, IconUsers } from '@gamezilla/shared/ui';
 import {
@@ -49,7 +56,7 @@ export const update = ({
   model,
 }: {
   sendToBackend: (msg: ToBackend) => Cmd;
-  ctx: Ctx;
+  ctx: RoomCtx;
   msg: Msg;
   model: Model;
 }): {
@@ -97,7 +104,7 @@ export const updateFromBackend = ({
   model,
   msg,
 }: {
-  ctx: Ctx;
+  ctx: RoomCtx;
   msg: ToFrontend;
   model: Model;
 }): [Model, Cmd<Msg>, OutAction[]] => {
@@ -157,8 +164,8 @@ export const View = ({
 }: {
   model: Model;
   $send: (msg: Msg) => void;
-  ctx: Ctx;
-  gameRoomCtx: RoomCtx;
+  ctx: ViewCtx;
+  gameRoomCtx: RoomViewCtx;
 }) => {
   const goBack = () => $send({ t: 'input-mode', mode: 'none' });
 

@@ -1,5 +1,4 @@
 import { Cmd, exhaustive, Sub } from '@gamezilla/core';
-import { RoomCtx } from '@gamezilla/shared';
 import { ChessFrontend } from '@gamezilla/game/chess';
 import { ConnectFourFrontend } from '@gamezilla/game/connect-four';
 import { FlowFrontend } from '@gamezilla/game/flow';
@@ -9,7 +8,7 @@ import { SnakeFrontend } from '@gamezilla/game/snake';
 import { TetrisFrontend } from '@gamezilla/game/tetris';
 import { TicTacToeFrontend } from '@gamezilla/game/tic-tac-toe';
 import { ProfileStore } from '@gamezilla/profile';
-import { Alerts, Ctx } from '@gamezilla/shared';
+import { Alerts, Ctx, RoomCtx, RoomViewCtx } from '@gamezilla/shared';
 import {
   BackendModel,
   FrontendModel,
@@ -399,7 +398,7 @@ export const View = ({
   model,
   $send,
 }: {
-  ctx: RoomCtx;
+  ctx: RoomViewCtx;
   model: Model;
   $send: (msg: Msg) => void;
 }) => {

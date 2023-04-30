@@ -1,4 +1,4 @@
-import { Ctx, UserId } from '@gamezilla/shared';
+import { ViewCtx, UserId } from '@gamezilla/shared';
 import {
   Avatar,
   Box,
@@ -30,7 +30,7 @@ export const ViewVsBotSetupScreen = <BotLevel, PlayerType>({
   onStopPlaying,
   onStartPlaying,
 }: {
-  ctx: Ctx;
+  ctx: ViewCtx;
   title: string;
   subtitle: string;
   coverArt: ViewNode;
@@ -202,7 +202,7 @@ const ViewVersusBlock = <PlayerType,>({
   botPlayerType,
   leftPlayerType,
 }: {
-  ctx: Ctx;
+  ctx: ViewCtx;
   botName: string;
   playerId: UserId | null;
   leftPlayerType: PlayerType;
@@ -344,7 +344,7 @@ export const ViewVsBotGameScreen = <PlayerType,>({
   userPlayer: PlayerType;
   leftPlayer: PlayerType;
   playerUserId: UserId;
-  ctx: Ctx;
+  ctx: ViewCtx;
   actions: [string, IconName, () => void][];
   gameOverActions: [string, IconName, () => void][];
   viewPlayerIcon: (props: { playerType: PlayerType; sx: Sx }) => ViewNode;

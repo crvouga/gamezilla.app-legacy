@@ -1,5 +1,5 @@
 import { Audio, Cmd, exhaustive, Option, p, Sub, t } from '@gamezilla/core';
-import { Alerts, Ctx, UserId } from '@gamezilla/shared';
+import { Alerts, ViewCtx, UserId, RoomCtx } from '@gamezilla/shared';
 import * as UI from '@gamezilla/shared/ui';
 import * as Chess from '../chess/chess';
 import * as Clock from '../chess/chess-clock';
@@ -151,7 +151,7 @@ export const update = (
 };
 
 export const updateFromBackend = (
-  { ctx }: { ctx: Ctx },
+  { ctx }: { ctx: RoomCtx },
   msg: ToFrontend,
   _model: Model
 ): [Model, Cmd<Msg>, OutAction[]] => {
@@ -380,7 +380,7 @@ export const View = ({
   $send,
   onClose,
 }: {
-  ctx: Ctx;
+  ctx: ViewCtx;
   model: Model;
   $send: (msg: Msg) => void;
   onClose: () => void;
@@ -791,7 +791,7 @@ const ViewInputUserPlayerSlot = ({
 }: {
   $send: (msg: Msg) => void;
   userId: UserId;
-  ctx: Ctx;
+  ctx: ViewCtx;
   color: Chess.Color;
 }) => {
   return (

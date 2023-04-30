@@ -13,10 +13,14 @@ import {
   text,
   useTheme,
 } from '@gamezilla/shared/ui';
-import { Ctx } from '../ctx';
+import { Ctx, ViewCtx } from '../ctx';
 import { UserId } from '../data';
 
 export type RoomCtx = Ctx & {
+  hostId: UserId;
+};
+
+export type RoomViewCtx = ViewCtx & {
   onQuit: () => void;
   hostId: UserId;
 };
@@ -31,7 +35,7 @@ export const ViewMainMenu = ({
   buttons,
   roomCtx,
 }: {
-  roomCtx: RoomCtx;
+  roomCtx: RoomViewCtx;
   title: string;
   coverArt: ViewNode;
   buttons: { icon: ViewNode; label: string; onClick: () => void }[];
@@ -128,8 +132,8 @@ export const viewSelectModeScreen = ({
   onVsUser,
   gameRoomCtx,
 }: {
-  gameRoomCtx: RoomCtx;
-  ctx: Ctx;
+  gameRoomCtx: RoomViewCtx;
+  ctx: ViewCtx;
   title: string;
   coverArt: ViewNode;
   onVsUser: () => void;
@@ -234,7 +238,7 @@ export const viewUserPlayerSlot = ({
   userId,
 }: {
   userId: UserId;
-  ctx: Ctx;
+  ctx: ViewCtx;
 }) => {
   return box(
     {
@@ -263,7 +267,7 @@ export const viewUserPlayerSlotBar = ({
 }: {
   left: UserId;
   right: UserId;
-  ctx: Ctx;
+  ctx: ViewCtx;
 }) => {
   return box(
     {

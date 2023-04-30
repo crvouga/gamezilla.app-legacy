@@ -1,4 +1,4 @@
-import { Ctx, UserId } from '@gamezilla/shared';
+import { ViewCtx, UserId } from '@gamezilla/shared';
 import {
   Avatar,
   Box,
@@ -20,7 +20,7 @@ export const viewVsUserSetupScreen = ({
   onStartGame,
   onCancel,
 }: {
-  ctx: Ctx;
+  ctx: ViewCtx;
   title: string;
   subtitle: string;
   coverArt: ViewNode;
@@ -118,7 +118,7 @@ const viewPlayerSlot = ({
   onStartPlaying,
   onStopPlaying,
 }: {
-  ctx: Ctx;
+  ctx: ViewCtx;
   label: string;
   userId: UserId | null;
   onStartPlaying: () => void;
