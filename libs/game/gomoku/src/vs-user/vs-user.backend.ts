@@ -1,14 +1,14 @@
 import { Cmd, Sub } from '@gamezilla/core';
 import { RoomMsg } from '@gamezilla/game-shared';
-import { UserId } from '@gamezilla/shared';
+import { RoomRequestCtx } from '@gamezilla/shared/backend';
 import {
   BackendModel,
   BackendMsg,
-  handle,
-  initShared,
   Res,
   ToBackend,
   ToFrontend,
+  handle,
+  initShared,
 } from './vs-user.types';
 
 //
@@ -33,12 +33,16 @@ export const init = initShared;
 
 export type Msg = BackendMsg;
 
-export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
-  switch (msg[0]) {
-    case 'none': {
-      return [model, Cmd.None];
-    }
-  }
+export const update = ({
+  model,
+}: {
+  msg: Msg;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  return { model };
 };
 
 export const updateFromFrontend = ({
@@ -48,24 +52,21 @@ export const updateFromFrontend = ({
   model,
   ctx,
 }: {
-  ctx: { currentUserId: UserId };
+  ctx: RoomRequestCtx;
   msg: ToBackend;
   model: Model;
   broadcast: (m: ToFrontend) => Cmd;
   sendToClient: (m: ToFrontend) => Cmd;
-}): [Model, Cmd<Msg>] => {
-  switch (msg[0]) {
-    default: {
-      const res: Res = [
-        msg[0],
-        handle({ msg, model, currentUserId: ctx.currentUserId }),
-      ];
-      if (res[1].type === 'Err') {
-        return [model, sendToClient(res)];
-      }
-      return [res[1].value, broadcast(res)];
-    }
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  const res: Res = { ...msg, result: handle({ msg, model, ctx }) };
+
+  if (res.result.type === 'Err') {
+    return { model, cmd: sendToClient(res) };
   }
+  return { model: res.result.value, cmd: broadcast(res) };
 };
 
 export const updateFromRoom = ({
@@ -78,11 +79,11 @@ export const updateFromRoom = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  switch (msg.t) {
-    case 'user-left': {
-      return { model: init(model) };
-    }
+  if (msg.t === 'user-left') {
+    return { model: init(model) };
   }
+
+  return { model };
 };
 
 //

@@ -1,15 +1,15 @@
-import { Cmd, Sub } from '@gamezilla/core';
+import { Cmd, Sub, andThen, p } from '@gamezilla/core';
 import { RoomMsg } from '@gamezilla/game-shared';
-import { UserId } from '@gamezilla/shared';
+import { RoomRequestCtx } from '@gamezilla/shared/backend';
 import {
   BackendModel,
   BackendMsg,
-  handle,
-  handleBotMove,
-  initShared,
   Res,
   ToBackend,
   ToFrontend,
+  handle,
+  handleBotMove,
+  initShared,
 } from './vs-bot.types';
 
 //
@@ -34,57 +34,78 @@ export const init = initShared;
 
 export type Msg = BackendMsg;
 
-export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
-  switch (msg[0]) {
+export const update = ({
+  msg,
+  model,
+}: {
+  msg: Msg;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  switch (msg.t) {
     case 'none': {
-      return [model, Cmd.None];
+      return { model };
     }
   }
 };
 
-type UpdateFromFrontend = (
-  params: {
-    ctx: { currentUserId: UserId };
-    sendToClient: (m: ToFrontend) => Cmd;
-    broadcast: (m: ToFrontend) => Cmd;
-  },
-  msg: ToBackend,
-  model: Model
-) => [Model, Cmd<Msg>];
+type UpdateFromFrontend = (input: {
+  ctx: RoomRequestCtx;
+  sendToClient: (m: ToFrontend) => Cmd;
+  broadcast: (m: ToFrontend) => Cmd;
+  msg: ToBackend;
+  model: Model;
+}) => {
+  model: Model;
+  cmd?: Cmd<Msg>;
+};
 
-export const updateFromFrontend: UpdateFromFrontend = (
-  params,
-  msg,
-  modelPrev
-) => {
-  const [model, cmd] = updateFromFrontend_(params, msg, modelPrev);
+export const updateFromFrontend: UpdateFromFrontend = (input) => {
+  return p(
+    input,
+    andThen(({ model }) => updateFromFrontend_({ ...input, model })),
+    andThen(({ model }) => updateBotMove({ ...input, model }))
+  );
+};
 
+const updateBotMove: UpdateFromFrontend = ({ broadcast, model }) => {
   const handled = handleBotMove(model);
 
   if (handled.type === 'Err') {
-    return [model, cmd];
+    return {
+      model,
+      cmd: broadcast({ t: 'bot-moved', result: handled }),
+    };
   }
 
   const modelNew = handled.value;
 
-  return [
-    modelNew,
-    Cmd.batch([cmd, params.broadcast(['bot-moved', modelNew])]),
-  ];
+  return {
+    model: modelNew,
+    // cmd: p(
+    //   Time.delay(2000),
+    //   Cmd.perform(() => null),
+    //   Cmd.chain(() => broadcast({ t: 'bot-moved', result: Ok(modelNew) }))
+    // ),
+  };
 };
 
-const updateFromFrontend_: UpdateFromFrontend = (
-  { ctx, sendToClient, broadcast },
+const updateFromFrontend_: UpdateFromFrontend = ({
+  ctx,
+  sendToClient,
+  broadcast,
   msg,
-  model
-) => {
-  switch (msg[0]) {
+  model,
+}) => {
+  switch (msg.t) {
     default: {
-      const res: Res = [msg[0], handle(ctx, msg, model)];
-      if (res[1].type === 'Err') {
-        return [model, sendToClient(res)];
+      const res: Res = { ...msg, result: handle({ ctx, msg, model }) };
+      if (res.result.type === 'Err') {
+        return { model, cmd: sendToClient(res) };
       }
-      return [res[1].value, broadcast(res)];
+      return { model: res.result.value, cmd: broadcast(res) };
     }
   }
 };

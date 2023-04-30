@@ -12,7 +12,6 @@ import {
   toOpposite,
   toStatus,
 } from '../tic-tic-toe/tic-tac-toe';
-import { VisualModel } from '../tic-tic-toe/tic-tac-toe-ui';
 
 const { Err, Ok } = Result;
 
@@ -41,9 +40,7 @@ export type GameModel = {
   board: Board;
 };
 
-export type FrontendModel = SharedModel & {
-  visual: VisualModel;
-};
+export type FrontendModel = SharedModel
 
 export type BackendModel = SharedModel;
 

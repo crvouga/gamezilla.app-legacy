@@ -60,13 +60,9 @@ export const update = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  switch (msg[0]) {
-    case 'animate': {
-      return { model };
-    }
-
+  switch (msg.t) {
     default: {
-      const result = handle(ctx, msg, model);
+      const result = handle({ ctx, msg, model });
 
       if (result.type === 'Err') {
         return {
@@ -101,31 +97,17 @@ export const updateFromBackend = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  switch (msg[0]) {
-    case 'bot-moved': {
-      const merged = mergeWithBackend({
-        ctx,
-        frontendModel: model,
-        backendModel: msg[1],
-      });
-
-      return {
-        model: merged,
-      };
-    }
-
-    default: {
-      if (msg[1].type === 'Err') {
-        return { model };
-      }
-      const merged = mergeWithBackend({
-        ctx,
-        frontendModel: model,
-        backendModel: msg[1].value,
-      });
-      return { model: merged };
-    }
+  if (msg.result.type === 'Err') {
+    return { model };
   }
+
+  const merged = mergeWithBackend({
+    ctx,
+    frontendModel: model,
+    backendModel: msg.result.value,
+  });
+
+  return { model: merged };
 };
 
 export const mergeWithBackend = ({
@@ -183,7 +165,7 @@ export const view = ({
       return ViewVsBotSetupScreen<BotLevel, Stone>({
         leftPlayerType: 'white',
         botLevel: {
-          onInput: (botLevel) => $send(['input-bot-level', { botLevel }]),
+          onInput: (botLevel) => $send({ t: 'input-bot-level', botLevel }),
           selected: model.botLevel,
           values: Object.values(botLevels),
           toName: (botLevel) => botLevel,
@@ -191,7 +173,8 @@ export const view = ({
         },
         coverArt: ViewCoverArt(),
         player: {
-          onInput: (userStone) => $send(['inputted-user-stone', { userStone }]),
+          onInput: (userStone) =>
+            $send({ t: 'inputted-user-stone', userStone }),
           selected: model.userStone,
           values: Object.values(stones),
           icon: ({ sx, playerType: stone }) => viewStoneIcon({ ...sx, stone }),
@@ -207,9 +190,9 @@ export const view = ({
         title: 'gomoku',
         subtitle: 'Vs Computer',
         onCancel: onBack,
-        onStartPlaying: () => $send(['start-playing']),
-        onStopPlaying: () => $send(['stop-playing']),
-        onStartGame: () => $send(['start-game']),
+        onStartPlaying: () => $send({ t: 'start-playing' }),
+        onStopPlaying: () => $send({ t: 'stop-playing' }),
+        onStartGame: () => $send({ t: 'start-game' }),
         playerId: model.userId,
       });
     }
@@ -220,9 +203,9 @@ export const view = ({
       return ViewVsBotGameScreen<Stone>({
         ctx,
         actions: [
-          ['Exit', 'exit', () => $send(['stop-game'])],
-          ['Restart', 'restart', () => $send(['restart'])],
-          ['Swap Sides', 'swap', () => $send(['swap-sides'])],
+          ['Exit', 'exit', () => $send({ t: 'stop-game' })],
+          ['Restart', 'restart', () => $send({ t: 'restart' })],
+          ['Swap Sides', 'swap', () => $send({ t: 'swap-sides' })],
         ],
         botName: model.botLevel,
         botPlayer: toOppositeStone(model.userStone),
@@ -234,8 +217,8 @@ export const view = ({
             : { type: 'none' },
 
         gameOverActions: [
-          ['Exit', 'exit', () => $send(['stop-game'])],
-          ['Play Again', 'restart', () => $send(['restart'])],
+          ['Exit', 'exit', () => $send({ t: 'stop-game' })],
+          ['Play Again', 'restart', () => $send({ t: 'restart' })],
         ],
         leftPlayer: 'white',
         playerUserId: model.userId,
@@ -243,7 +226,7 @@ export const view = ({
         userPlayer: model.userStone,
         viewBoard: () => (
           <ViewBoard
-            onPress={(p) => $send(['input-move', { position: p }])}
+            onPress={(position) => $send({ t: 'input-move', position })}
             board={model.board}
           />
         ),

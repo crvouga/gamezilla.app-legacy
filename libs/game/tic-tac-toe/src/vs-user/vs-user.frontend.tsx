@@ -3,43 +3,43 @@ import { ProfileStore } from '@gamezilla/profile';
 import { Alerts, Ctx, UserId } from '@gamezilla/shared';
 import * as UI from '@gamezilla/shared/ui';
 import {
-  emptyBoard,
   PlayerType,
   Position,
   Slot,
+  emptyBoard,
   toTurn,
 } from '../tic-tic-toe/tic-tac-toe';
 import {
-  gameTheme,
   PlayerTypeIcon,
-  viewBoard,
   ViewSlot,
+  gameTheme,
+  viewBoard,
 } from '../tic-tic-toe/tic-tac-toe-ui';
 import { VersusHeader } from '../views';
 import * as Round from './vs-user-round';
 import {
-  allBestOutOf,
-  allMoveTimeLimit,
   BackendModel,
-  bestOutOfToString,
   FrontendModel,
   FrontendMsg,
   GameModel,
   GameOverModel,
+  InputMoveTimeLimit,
+  InputMoveTimeLimitToString,
+  NewGame,
+  NewGameToString,
+  Res,
+  ToBackend,
+  ToFrontend,
+  allBestOutOf,
+  allMoveTimeLimit,
+  bestOutOfToString,
   initSharedModel,
   inputBestOutOf,
   inputBestOutOfToString,
-  inputMoveTimeLimit,
-  inputMoveTimeLimitToString,
   moveTimeLimitToString,
-  newGame,
-  newGameToString,
   rematchAsk,
   rematchAskToString,
-  Res,
   startGame,
-  ToBackend,
-  ToFrontend,
   toWinCount,
 } from './vs-user.types';
 
@@ -85,7 +85,7 @@ export const update = (
     //
     //
 
-    case 'CloseModal': {
+    case 'close-modal': {
       return [{ ...model, openedModal: 'none' }, Cmd.None];
     }
 
@@ -108,7 +108,7 @@ export const update = (
     case 'InputBestOutOf':
     case 'InputMoveTimeLimit':
     case 'input-move':
-    case 'Resign':
+    case 'resign':
     case 'InputPlayer':
     case 'stop-playing':
     case 'start-game':
@@ -144,7 +144,7 @@ export const updateFromBackend = (
     case 'StopPlaying_Done':
     case 'StartGame_Done':
     case 'RematchDecline_Done':
-    case 'Resign_Done': {
+    case 'resign_Done': {
       const res: Res = msg;
 
       if (res[1].type === 'Err') {
@@ -208,7 +208,7 @@ export const View = ({
       { bestOutOf: model.maxRoundCount, userId: ctx.currentUserId },
       model
     );
-    const inputMoveTimeLimitResult = inputMoveTimeLimit(
+    const InputMoveTimeLimitResult = InputMoveTimeLimit(
       { moveTimeLimit: model.moveTimeLimit, userId: ctx.currentUserId },
       model
     );
@@ -289,10 +289,10 @@ export const View = ({
             </UI.Typography>
 
             <UI.Tooltip
-              title={inputMoveTimeLimitToString(inputMoveTimeLimitResult)}
+              title={InputMoveTimeLimitToString(InputMoveTimeLimitResult)}
             >
               <UI.ToggleButtonGroup
-                disabled={inputMoveTimeLimitResult.type === 'Err'}
+                disabled={InputMoveTimeLimitResult.type === 'Err'}
                 fullWidth
                 value={model.moveTimeLimit}
               >
@@ -346,7 +346,6 @@ export const View = ({
 
           <UI.Box sx={{ width: '100%', position: 'relative' }}>
             {viewBoard({
-              model: [],
               board,
               onClick: (position) =>
                 $send(['input-move', { position, userId: ctx.currentUserId }]),
@@ -383,7 +382,7 @@ export const View = ({
   const board = Round.toCurrentBoard(model.round) ?? emptyBoard;
 
   const rematchAskResult = rematchAsk({ userId: ctx.currentUserId }, model);
-  const newGameResult = newGame({ userId: ctx.currentUserId }, model);
+  const NewGameResult = NewGame({ userId: ctx.currentUserId }, model);
 
   const currentPlayerType: PlayerType | 'none' =
     model.X === ctx.currentUserId
@@ -401,7 +400,6 @@ export const View = ({
 
       <UI.Box sx={{ width: '100%', position: 'relative' }}>
         {viewBoard({
-          model: [],
           board,
           onClick: (position) =>
             $send(['input-move', { position, userId: ctx.currentUserId }]),
@@ -430,7 +428,7 @@ export const View = ({
 
       <UI.Box sx={{ display: 'flex', width: '100%', padding: 2, gap: 2 }}>
         <UI.Box sx={{ flex: 1 }}>
-          <UI.Tooltip title={newGameToString(newGameResult)}>
+          <UI.Tooltip title={NewGameToString(NewGameResult)}>
             <span>
               <UI.Button
                 fullWidth
@@ -438,7 +436,7 @@ export const View = ({
                 onClick={() =>
                   $send(['NewGame', { userId: ctx.currentUserId }])
                 }
-                disabled={newGameResult.type === 'Err'}
+                disabled={NewGameResult.type === 'Err'}
               >
                 Back
               </UI.Button>
@@ -609,7 +607,7 @@ const ViewGameOverMessage = ({
     );
   }
 
-  if (model.gameOver.type === 'Resignation') {
+  if (model.gameOver.type === 'resignation') {
     return (
       <>
         <UI.Box
@@ -1019,13 +1017,13 @@ const ViewResignButton = ({
       <UI.ActionButton
         icon={<UI.Icons.Flag />}
         label="Resign"
-        onClick={() => $send(['OpenModal', 'Resignation'])}
+        onClick={() => $send(['OpenModal', 'resignation'])}
       />
       <UI.ConformationDialog
-        open={model.openedModal === 'Resignation'}
-        onCancel={() => $send(['CloseModal'])}
-        onClose={() => $send(['CloseModal'])}
-        onConfirm={() => $send(['Resign', { userId: ctx.currentUserId }])}
+        open={model.openedModal === 'resignation'}
+        onCancel={() => $send(['close-modal'])}
+        onClose={() => $send(['close-modal'])}
+        onConfirm={() => $send(['resign', { userId: ctx.currentUserId }])}
         headerIcon={<UI.Icons.Flag sx={{ width: 64, height: 64 }} />}
         title="Resign from game?"
         confirmTitle="Resign"
@@ -1048,7 +1046,7 @@ export const toGameText = ({
 
     case 'GameOver': {
       switch (model.gameOver.type) {
-        case 'Resignation': {
+        case 'resignation': {
           return `${
             store.profiles[model[model.gameOver.resigner]]?.username ?? '...'
           } resigned`;

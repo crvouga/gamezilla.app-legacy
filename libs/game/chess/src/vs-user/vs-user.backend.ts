@@ -10,7 +10,7 @@ import {
   inputClock,
   inputMove,
   inputPlayer,
-  newGame,
+  NewGame,
   requestToDraw,
   Res,
   resign,
@@ -84,8 +84,8 @@ export const updateFromFrontend = (
       );
     }
 
-    case 'Resign': {
-      return sendResponse(wire, ['Resign_Done', resign(msg[1], model)], model);
+    case 'resign': {
+      return sendResponse(wire, ['resign_Done', resign(msg[1], model)], model);
     }
 
     case 'InputClock': {
@@ -129,7 +129,7 @@ export const updateFromFrontend = (
     }
 
     case 'NewGame': {
-      return sendResponse(wire, ['NewGame_Done', newGame(model)], model);
+      return sendResponse(wire, ['NewGame_Done', NewGame(model)], model);
     }
 
     case 'CancelDraw': {

@@ -56,7 +56,7 @@ const initCountDown = 5;
 
 export type GameOver =
   | {
-      type: 'Resignation';
+      type: 'resignation';
       resigner: TicTacToe.PlayerType;
     }
   | {
@@ -135,9 +135,9 @@ export type BackendModel = SharedModel;
 //
 //
 
-type ModalName = 'Resignation';
+type ModalName = 'resignation';
 
-export type FrontendMsg = Req | ['OpenModal', ModalName] | ['CloseModal'];
+export type FrontendMsg = Req | ['OpenModal', ModalName] | ['close-modal'];
 
 export type BackendMsg = RoundCountDown | MoveCountDown;
 
@@ -316,8 +316,8 @@ export const startGame = (
 //
 //
 
-type Resign = ['Resign', { userId: UserId }];
-type Resign_Done = ['Resign_Done', Result<ResignProblem, SharedModel>];
+type Resign = ['resign', { userId: UserId }];
+type Resign_Done = ['resign_Done', Result<ResignProblem, SharedModel>];
 type ResignProblem = 'not_in_game_mode' | 'not_playing';
 
 export const resign = (
@@ -339,7 +339,7 @@ export const resign = (
     ...model,
     type: 'GameOver',
     gameOver: {
-      type: 'Resignation',
+      type: 'resignation',
       resigner,
     },
     rematch: {
@@ -522,7 +522,7 @@ type NewGame = ['NewGame', { userId: UserId }];
 type NewGame_Done = ['NewGame_Done', Result<NewGameProblem, SharedModel>];
 type NewGameProblem = 'not_playing' | 'not_game_over';
 
-export const newGame = (
+export const NewGame = (
   { userId }: NewGame[1],
   model: SharedModel
 ): NewGame_Done[1] => {
@@ -545,7 +545,7 @@ export const newGame = (
   return Ok(modelNew);
 };
 
-export const newGameToString = (result: NewGame_Done[1]): string => {
+export const NewGameToString = (result: NewGame_Done[1]): string => {
   if (result.type === 'Ok') {
     return '';
   }
@@ -633,7 +633,7 @@ type InputMoveTimeLimit_Done = [
 ];
 type InputMoveTimeLimitProblem = 'not_in_setup_mode' | 'not_playing';
 
-export const inputMoveTimeLimit = (
+export const InputMoveTimeLimit = (
   { userId, moveTimeLimit }: InputMoveTimeLimit[1],
   model: SharedModel
 ): InputMoveTimeLimit_Done[1] => {
@@ -653,7 +653,7 @@ export const inputMoveTimeLimit = (
   return Ok(modelNew);
 };
 
-export const inputMoveTimeLimitToString = (
+export const InputMoveTimeLimitToString = (
   result: InputMoveTimeLimit_Done[1]
 ): string => {
   if (result.type === 'Ok') {

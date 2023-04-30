@@ -140,8 +140,14 @@ export const update = ({
 
     case 'gomoku': {
       if (model.t === 'gomoku') {
-        const [child, cmd] = GomokuBackend.update(msg.c, model.c);
-        return [{ t: 'gomoku', c: child }, Cmd.tag_('gomoku', cmd)];
+        const updated = GomokuBackend.update({
+          msg: msg.c,
+          model: model.c,
+        });
+        return [
+          { t: 'gomoku', c: updated.model },
+          Cmd.tag_('gomoku', updated.cmd),
+        ];
       }
       return [model, Cmd.None];
     }
@@ -272,16 +278,18 @@ export const updateFromFrontend = ({
 
     case 'gomoku': {
       if (model.t === 'gomoku') {
-        const [child, cmd] = GomokuBackend.updateFromFrontend(
-          {
-            ctx,
-            broadcast: (m) => broadcast({ t: 'gomoku', c: m }),
-            sendToClient: (m) => sendToClient({ t: 'gomoku', c: m }),
-          },
-          msg.c,
-          model.c
-        );
-        return [{ t: 'gomoku', c: child }, Cmd.tag_('gomoku', cmd)];
+        const updated = GomokuBackend.updateFromFrontend({
+          ctx,
+          broadcast: (m) => broadcast({ t: 'gomoku', c: m }),
+          sendToClient: (m) => sendToClient({ t: 'gomoku', c: m }),
+          msg: msg.c,
+          model: model.c,
+        });
+
+        return [
+          { t: 'gomoku', c: updated.model },
+          Cmd.tag_('gomoku', updated.cmd),
+        ];
       }
       return [model, Cmd.None];
     }

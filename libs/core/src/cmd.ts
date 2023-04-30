@@ -33,8 +33,11 @@ const chain =
 
 const tag = <Tag extends string, Msg>(
   tagName: Tag,
-  cmd: Cmd<Msg>
+  cmd: Cmd<Msg> | undefined | null
 ): Cmd<[Tag, Msg]> => {
+  if (!cmd) {
+    return None;
+  }
   return p(
     cmd,
     map((msg) => [tagName, msg])

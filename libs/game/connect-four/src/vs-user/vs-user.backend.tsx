@@ -59,10 +59,10 @@ export const updateFromFrontend = (
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'Resign':
-    case 'NewGame':
+    case 'resign':
+    case 'new-game':
     case 'Rematch_Cancel':
-    case 'Rematch_Request':
+    case 'rematch-request':
     case 'Rematch_Respond':
     case 'InputMoveTimeLimit':
     case 'input-move':

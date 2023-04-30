@@ -295,7 +295,7 @@ export const mergeWithBackend = ({
         t: 'vs-bot',
         c: VsBot.mergeWithBackend({
           ctx,
-          frontendModel: VsBot.init(ctx.now, backendModel.c),
+          frontendModel: VsBot.init(backendModel.c),
           backendModel: backendModel.c,
         }),
       };

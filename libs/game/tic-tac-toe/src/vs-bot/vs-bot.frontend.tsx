@@ -1,4 +1,4 @@
-import { Animation, Cmd, Posix, Sub } from '@gamezilla/core';
+import { Cmd, Posix, Sub } from '@gamezilla/core';
 import {
   RoomCtx,
   ViewVsBotGameScreen,
@@ -7,17 +7,15 @@ import {
 import { Alerts, Ctx } from '@gamezilla/shared';
 import {
   BotLevel,
-  botLevels,
   PlayerType,
+  botLevels,
   playerTypes,
   toGameOver,
   toOpposite,
   toTurn,
 } from '../tic-tic-toe/tic-tac-toe';
 import {
-  isAnimating,
   PlayerTypeIcon,
-  step,
   viewBoard,
   viewCoverArt,
 } from '../tic-tic-toe/tic-tac-toe-ui';
@@ -25,10 +23,10 @@ import {
   BackendModel,
   FrontendModel,
   FrontendMsg,
-  initSharedModel,
-  inputMove,
   ToBackend,
   ToFrontend,
+  initSharedModel,
+  inputMove,
 } from './vs-bot.types';
 
 //
@@ -45,7 +43,6 @@ export const init = (...params: Parameters<typeof initSharedModel>): Model => {
   const model = initSharedModel(...params);
   return {
     ...model,
-    visual: [],
   };
 };
 
@@ -77,12 +74,8 @@ export const update = ({
       if (model.type !== 'game') {
         return { model };
       }
-      const visualNew = step({
-        now: ctx.now,
-        model: model.visual,
-        board: model.board,
-      });
-      return { model: { ...model, visual: visualNew } };
+
+      return { model };
     }
 
     case 'input-move': {
@@ -138,8 +131,6 @@ export const updateFromBackend = ({
 };
 
 export const mergeWithBackend = ({
-  now,
-  frontendModel,
   backendModel,
 }: {
   now: Posix;
@@ -150,19 +141,12 @@ export const mergeWithBackend = ({
     case 'Setup': {
       return {
         ...backendModel,
-        visual: frontendModel.visual,
       };
     }
 
     case 'game': {
-      const visualNew = step({
-        board: backendModel.board,
-        model: frontendModel.visual,
-        now: now,
-      });
       return {
         ...backendModel,
-        visual: visualNew,
       };
     }
   }
@@ -176,10 +160,7 @@ export const mergeWithBackend = ({
 //
 //
 
-export const subscriptions = (ctx: Ctx, model: Model): Sub<Msg> => {
-  if (isAnimating({ now: ctx.now, model: model.visual })) {
-    return Animation.onFrame(() => ['animate']);
-  }
+export const subscriptions = (_ctx: Ctx, _model: Model): Sub<Msg> => {
   return Sub.None;
 };
 
@@ -287,7 +268,6 @@ export const View = ({
     userPlayer: model.userPlayerType,
     viewBoard: () =>
       viewBoard({
-        model: model.visual,
         board: model.board,
         onClick: (position) =>
           $send(['input-move', { userId: ctx.currentUserId, position }]),

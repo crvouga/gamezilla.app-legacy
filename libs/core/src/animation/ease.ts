@@ -1,6 +1,6 @@
 import { Posix } from '../unix-time';
 
-type Easing =
+export type Easing =
   | { type: 'ease-out-bounce'; n1?: number; d1?: number }
   | { type: 'ease-out-quint' }
   | { type: 'linear' }
@@ -18,7 +18,7 @@ export type Model = {
   delayMs: number;
 };
 
-export const initConstant = (value: number): Model => {
+const initConstant = (value: number): Model => {
   return {
     startMs: Posix.fromNumber(0),
     durationMs: 0,
@@ -30,11 +30,7 @@ export const initConstant = (value: number): Model => {
   };
 };
 
-export const isAnimating = (now: Posix, model: Model): boolean => {
-  return now < model.startMs + model.durationMs + model.delayMs;
-};
-
-export const easeOutBounce = (
+const easeOutBounce = (
   { n1 = 7.5625, d1 = 2.75 }: { n1?: number; d1?: number },
   x: number
 ): number => {
@@ -53,11 +49,11 @@ export const easeOutBounce = (
   return n1 * (x -= 2.625 / d1) * x + 0.984375;
 };
 
-export function easeOutQuint(x: number): number {
+function easeOutQuint(x: number): number {
   return 1 - Math.pow(1 - x, 5);
 }
 
-export function easeInBack(x: number): number {
+function easeInBack(x: number): number {
   const c1 = 1.70158;
   const c3 = c1 + 1;
 
@@ -75,7 +71,7 @@ function easeOutBack(x: number): number {
   return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
 }
 
-export const ease = (easing: Easing, x: number): number => {
+const ease = (easing: Easing, x: number): number => {
   switch (easing.type) {
     case 'ease-out-back':
       return easeOutBack(x);
@@ -97,7 +93,7 @@ export const ease = (easing: Easing, x: number): number => {
   }
 };
 
-export const step = (now: Posix, model: Model): Model => {
+const step = (now: Posix, model: Model): Model => {
   const elapsedMs = now - model.startMs;
   if (elapsedMs < model.delayMs) {
     return model;
@@ -113,7 +109,7 @@ export const step = (now: Posix, model: Model): Model => {
   return { ...model, value: valueNew };
 };
 
-export const init = ({
+const init = ({
   from,
   to,
   durationMs,
@@ -137,4 +133,11 @@ export const init = ({
     easing,
     delayMs,
   };
+};
+
+export const Ease = {
+  init,
+  initConstant,
+  step,
+  ease,
 };

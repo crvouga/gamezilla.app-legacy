@@ -13,31 +13,31 @@ import * as VsUser from './vs-user/vs-user.types';
 
 export type FrontendModel =
   | {
-      type: 'none';
+      t: 'none';
     }
   | {
-      type: 'vs-user';
-      child: VsUser.FrontendModel;
+      t: 'vs-user';
+      c: VsUser.FrontendModel;
     }
   | {
-      type: 'vs-bot';
-      child: VsBot.FrontendModel;
+      t: 'vs-bot';
+      c: VsBot.FrontendModel;
     };
 
 export type BackendModel =
   | {
-      type: 'none';
+      t: 'none';
     }
   | {
-      type: 'vs-user';
-      child: VsUser.BackendModel;
+      t: 'vs-user';
+      c: VsUser.BackendModel;
     }
   | {
-      type: 'vs-bot';
-      child: VsBot.BackendModel;
+      t: 'vs-bot';
+      c: VsBot.BackendModel;
     };
 
-export type Mode = BackendModel['type'];
+export type Mode = BackendModel['t'];
 
 //
 //
@@ -49,35 +49,27 @@ export type Mode = BackendModel['type'];
 
 export type FrontendMsg =
   | Req
-  | ['vs-user', VsUser.FrontendMsg]
-  | ['vs-bot', VsBot.FrontendMsg];
+  | { t: 'vs-user'; c: VsUser.FrontendMsg }
+  | { t: 'vs-bot'; c: VsBot.FrontendMsg };
 
 export type BackendMsg =
-  | ['vs-user', VsUser.BackendMsg]
-  | ['vs-bot', VsBot.BackendMsg];
+  | { t: 'vs-user'; c: VsUser.BackendMsg }
+  | { t: 'vs-bot'; c: VsBot.BackendMsg };
 
 export type ToFrontend =
   | Res
-  | ['vs-user', VsUser.ToFrontend]
-  | ['vs-bot', VsBot.ToFrontend];
+  | { t: 'vs-user'; c: VsUser.ToFrontend }
+  | { t: 'vs-bot'; c: VsBot.ToFrontend };
 
 export type ToBackend =
   | Req
-  | ['vs-user', VsUser.ToBackend]
-  | ['vs-bot', VsBot.ToBackend];
+  | { t: 'vs-user'; c: VsUser.ToBackend }
+  | { t: 'vs-bot'; c: VsBot.ToBackend };
 
-//
-//
-//
-//
-//
+export type Req = { t: 'input-mode'; userId: UserId; mode: Mode };
 
-export type Req = ['input-mode', { userId: UserId; mode: Mode }];
+export type Res = Req & {
+  result: Result<Problem, BackendModel>;
+};
 
-export type Res = [
-  'input-mode',
-  { userId: UserId; mode: Mode },
-  Result<Problem, BackendModel>
-];
-
-export type Problem = 'must_be_host';
+export type Problem = 'must-be-host';

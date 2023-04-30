@@ -20,7 +20,7 @@ export type FrontendModel = {
   isFlipped: boolean;
 };
 
-export type Modal = 'RequestToDraw' | 'AskedToDraw' | 'Resign' | 'GameOver';
+export type Modal = 'RequestToDraw' | 'AskedToDraw' | 'resign' | 'GameOver';
 
 export type BackendModel = SharedModel;
 
@@ -60,7 +60,7 @@ export type DrawAgreement =
 export type GameOver =
   | Chess.GameOver
   | {
-      type: 'Resignation';
+      type: 'resignation';
       resigner: Chess.Color;
     }
   | {
@@ -508,9 +508,9 @@ export const cancelDraw = (
 //
 //
 
-export type Resign = ['Resign', Chess.Color];
+export type Resign = ['resign', Chess.Color];
 export type Resign_Done = [
-  'Resign_Done',
+  'resign_Done',
   Result<'can_not_resign', SharedModel>
 ];
 
@@ -529,7 +529,7 @@ export const resign = (
     board: model.board,
     clock: model.clock,
     gameOver: {
-      type: 'Resignation',
+      type: 'resignation',
       resigner: color,
     },
   };
@@ -547,7 +547,7 @@ export type NewGame_Done = [
   'NewGame_Done',
   Result<'game_must_be_over', SharedModel>
 ];
-export const newGame = (model: SharedModel): NewGame_Done[1] => {
+export const NewGame = (model: SharedModel): NewGame_Done[1] => {
   if (model.type !== 'GameOver') {
     return Err('game_must_be_over');
   }

@@ -1,8 +1,6 @@
 import { keyframes } from '@emotion/react';
-import { Alerts } from '@gamezilla/shared';
 import { Cmd, exhaustive, Sub } from '@gamezilla/core';
-import { UserId } from '@gamezilla/shared';
-import { Ctx } from '@gamezilla/shared';
+import { Alerts, Ctx, UserId } from '@gamezilla/shared';
 import {
   ActionButton,
   Avatar,
@@ -30,7 +28,6 @@ import {
 } from '../connect-four/connect-four';
 import {
   gameTheme,
-  initVisual,
   PlayerIcon,
   PlayerOneIcon,
   PlayerTwoIcon,
@@ -91,34 +88,22 @@ export const update = (
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    //
-    //
-    //
-    //
-    //
-
-    case 'ClickedResign': {
+    case 'clicked-resign': {
       return [{ ...model, openedModal: 'ConfirmResign' }, Cmd.None];
     }
 
-    case 'HoveredOverColumns': {
+    case 'hovered-over-columns': {
       const { columnIndex } = msg[1];
       return [{ ...model, ghostIndex: columnIndex }, Cmd.None];
     }
 
-    case 'CloseModal': {
+    case 'close-modal': {
       return [{ ...model, openedModal: 'none' }, Cmd.None];
     }
 
-    //
-    //
-    //
-    //
-    //
-
-    case 'Resign':
-    case 'NewGame':
-    case 'Rematch_Request':
+    case 'resign':
+    case 'new-game':
+    case 'rematch-request':
     case 'Rematch_Respond':
     case 'Rematch_Cancel':
     case 'InputMoveTimeLimit':
@@ -147,13 +132,13 @@ export const updateFromBackend = (
   model: Model
 ): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
-    case 'NewGame':
+    case 'new-game':
     case 'InputMoveTimeLimit':
     case 'start-game':
     case 'stop-playing':
     case 'Rematch_Cancel':
-    case 'Resign':
-    case 'Rematch_Request':
+    case 'resign':
+    case 'rematch-request':
     case 'Rematch_Respond':
     case 'start-playing': {
       const modelNew = msg[1].type === 'Err' ? model : msg[1].value;
@@ -253,13 +238,12 @@ export const View = ({
           <PlayerSlotBar model={model} ctx={ctx} />
 
           <ViewColumns
-            visual={initVisual({ now: ctx.now, columns: model.columns })}
             columns={model.columns}
             onClick={(columnIndex) =>
               $send(['input-move', { userId: ctx.currentUserId, columnIndex }])
             }
             onHover={(columnIndex) =>
-              $send(['HoveredOverColumns', { columnIndex }])
+              $send(['hovered-over-columns', { columnIndex }])
             }
             disabled={toTurn(model.columns) !== currentUserPlayerType}
             ghost={
@@ -279,7 +263,7 @@ export const View = ({
               icon={<Icons.Flag />}
               label="Resign"
               onClick={() =>
-                $send(['ClickedResign', { userId: ctx.currentUserId }])
+                $send(['clicked-resign', { userId: ctx.currentUserId }])
               }
             />
           </Box>
@@ -288,10 +272,10 @@ export const View = ({
         <ConformationDialog
           headerIcon={<Icons.Flag sx={{ width: 52, height: 52 }} />}
           title="Resign from game?"
-          onCancel={() => $send(['CloseModal'])}
-          onClose={() => $send(['CloseModal'])}
+          onCancel={() => $send(['close-modal'])}
+          onClose={() => $send(['close-modal'])}
           confirmTitle="Resign"
-          onConfirm={() => $send(['Resign', { userId: ctx.currentUserId }])}
+          onConfirm={() => $send(['resign', { userId: ctx.currentUserId }])}
           open={model.openedModal === 'ConfirmResign'}
         />
       </>
@@ -303,11 +287,7 @@ export const View = ({
       <PlayerSlotBar model={model} ctx={ctx} />
 
       <Box sx={{ position: 'relative' }}>
-        <ViewColumns
-          visual={initVisual({ now: ctx.now, columns: model.columns })}
-          columns={model.columns}
-          disabled
-        />
+        <ViewColumns columns={model.columns} disabled />
 
         {model.type === 'GameOver' && (
           <Fade in>
@@ -340,7 +320,7 @@ export const View = ({
         <Button
           variant="outlined"
           fullWidth
-          onClick={() => $send(['NewGame', { userId: ctx.currentUserId }])}
+          onClick={() => $send(['new-game', { userId: ctx.currentUserId }])}
         >
           Back
         </Button>
@@ -350,7 +330,7 @@ export const View = ({
           fullWidth
           disabled={model.rematch.type === 'Asking'}
           onClick={() =>
-            $send(['Rematch_Request', { userId: ctx.currentUserId }])
+            $send(['rematch-request', { userId: ctx.currentUserId }])
           }
         >
           Rematch
@@ -441,7 +421,7 @@ const ViewGameOverMessage = ({
     return <Typography sx={{ fontSize: '3rem' }}>Tie</Typography>;
   }
 
-  if (model.gameOver.type === 'Resignation') {
+  if (model.gameOver.type === 'resignation') {
     const { resigner } = model.gameOver;
 
     const winner: PlayerType =
@@ -529,7 +509,7 @@ const ViewSetup = ({
     ['start-game', { userId: ctx.currentUserId }],
     model
   );
-  const inputMoveTimeLimitResult = handle(
+  const InputMoveTimeLimitResult = handle(
     [
       'InputMoveTimeLimit',
       { moveTimeLimit: model.moveTimeLimit, userId: ctx.currentUserId },
@@ -572,11 +552,11 @@ const ViewSetup = ({
       </Typography>
 
       <Box sx={{ paddingX: 2 }}>
-        <Tooltip title={resultToString(inputMoveTimeLimitResult)}>
+        <Tooltip title={resultToString(InputMoveTimeLimitResult)}>
           <ToggleButtonGroup
             fullWidth
             value={model.moveTimeLimit}
-            disabled={inputMoveTimeLimitResult.type === 'Err'}
+            disabled={InputMoveTimeLimitResult.type === 'Err'}
           >
             {Object.values(allMoveTimeLimit).map((moveTimeLimit) => (
               <ToggleButton

@@ -68,7 +68,7 @@ type GameOver =
       winner: PlayerType;
     }
   | {
-      type: 'Resignation';
+      type: 'resignation';
       resigner: PlayerType;
     };
 
@@ -131,9 +131,9 @@ export type BackendMsg = Tick;
 
 export type FrontendMsg =
   | Req
-  | ['HoveredOverColumns', { columnIndex: ColumnIndex }]
-  | ['ClickedResign', { userId: UserId }]
-  | ['CloseModal'];
+  | ['hovered-over-columns', { columnIndex: ColumnIndex }]
+  | ['clicked-resign', { userId: UserId }]
+  | ['close-modal'];
 
 export type ToBackend = Req;
 
@@ -147,12 +147,12 @@ export type Req =
   | ['input-move', { columnIndex: ColumnIndex; userId: UserId }]
   | ['start-game', { userId: UserId }]
   //
-  | ['Rematch_Request', { userId: UserId }]
+  | ['rematch-request', { userId: UserId }]
   | ['Rematch_Respond', { userId: UserId; response: 'Accept' | 'Decline' }]
   | ['Rematch_Cancel', { userId: UserId }]
   //
-  | ['NewGame', { userId: UserId }]
-  | ['Resign', { userId: UserId }];
+  | ['new-game', { userId: UserId }]
+  | ['resign', { userId: UserId }];
 
 export type Res = [Req[0], Result<Problem, SharedModel>];
 
@@ -281,7 +281,7 @@ export const handle = (
       return Ok(modelNew);
     }
 
-    case 'Rematch_Request': {
+    case 'rematch-request': {
       const { userId } = req[1];
 
       if (model.type !== 'GameOver') {
@@ -338,7 +338,7 @@ export const handle = (
       return Ok(modelNew);
     }
 
-    case 'NewGame': {
+    case 'new-game': {
       if (model.type !== 'GameOver') {
         return Err('not_game_over');
       }
@@ -390,7 +390,7 @@ export const handle = (
       return Ok(modelNew);
     }
 
-    case 'Resign': {
+    case 'resign': {
       if (model.type !== 'game') {
         return Err('not_in_game');
       }
@@ -410,7 +410,7 @@ export const handle = (
         PlayerTwo: model.PlayerTwo,
         rematch: { type: 'NotAsking' },
         moveTimeLimit: model.moveTimeLimit,
-        gameOver: { type: 'Resignation', resigner: playerType },
+        gameOver: { type: 'resignation', resigner: playerType },
       };
 
       return Ok(modelNew);

@@ -119,7 +119,7 @@ export const update = (
       return [model, sendToBackend(msg)];
     }
 
-    case 'Resign': {
+    case 'resign': {
       return [{ ...model, openedModal: 'none' }, sendToBackend(msg)];
     }
 
@@ -291,7 +291,7 @@ export const updateFromBackend = (
     //
     //
 
-    case 'Resign_Done': {
+    case 'resign_Done': {
       if (msg[1].type === 'Err') {
         return [model, Cmd.None, []];
       }
@@ -716,7 +716,7 @@ export const View = ({
                 <UI.ActionButton
                   icon={<UI.Icons.FlagOutlined />}
                   label="Resign"
-                  onClick={() => $send(['OpenedModal', 'Resign'])}
+                  onClick={() => $send(['OpenedModal', 'resign'])}
                 />
 
                 <UI.ConformationDialog
@@ -725,8 +725,8 @@ export const View = ({
                   }
                   onCancel={() => $send(['ClosedModal'])}
                   onClose={() => $send(['ClosedModal'])}
-                  onConfirm={() => $send(['Resign', currentUserColor])}
-                  open={model.openedModal === 'Resign'}
+                  onConfirm={() => $send(['resign', currentUserColor])}
+                  open={model.openedModal === 'resign'}
                   title="Resign from game?"
                   confirmTitle="Resign"
                 />
@@ -838,7 +838,7 @@ const toGameText = (model: SharedModel): string => {
           return 'Drawn by agreement';
         }
 
-        case 'Resignation': {
+        case 'resignation': {
           return `${Chess.colorToString(model.gameOver.resigner)} resigned`;
         }
 

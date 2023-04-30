@@ -1,5 +1,6 @@
 import { Ctx, UserId } from '@gamezilla/shared';
 import {
+  cn,
   Avatar,
   Box,
   CircularProgress,
@@ -11,7 +12,6 @@ import {
   Sx,
   Typography,
   ViewNode,
-  cn as cn,
   icon,
 } from '@gamezilla/shared/ui';
 import { ReactNode } from 'react';
@@ -156,7 +156,7 @@ export const ViewVsBotSetupScreen = <BotLevel, PlayerType>({
   );
 };
 
-const ChoiceChips = <TChoice,>({
+export const ChoiceChips = <TChoice,>({
   selected,
   choices,
   toKey,

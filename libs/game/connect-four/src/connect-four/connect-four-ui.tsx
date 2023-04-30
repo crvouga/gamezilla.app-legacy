@@ -1,4 +1,4 @@
-import { Ease, Posix, rescale, Uuid } from '@gamezilla/core';
+import { Ease, rescale, Uuid } from '@gamezilla/core';
 import { SvgIcon, Sx } from '@gamezilla/shared/ui';
 import { useLayoutEffect, useRef } from 'react';
 import { Transition, TransitionGroup } from 'react-transition-group';
@@ -10,29 +10,6 @@ import {
   MAX_COLUMN_HEIGHT,
   PlayerType,
 } from './connect-four';
-
-//
-//
-//
-// Model
-//
-//
-//
-
-export type VisualModel = Disc[][];
-
-export type Disc = {
-  type: 'entry' | 'exit';
-  yPosition_: Ease.Model;
-  playerType: PlayerType;
-};
-
-//
-//
-//
-//
-//
-//
 
 export const gameTheme = {
   primary: {
@@ -94,7 +71,6 @@ type ViewColumnsProps = {
   onClick?: (columnIndex: ColumnIndex) => void;
   onHover?: (columnINdex: ColumnIndex) => void;
   disabled?: boolean;
-  visual: VisualModel;
 };
 
 export const ViewColumns = ({
@@ -324,7 +300,7 @@ function isCanvas(i: unknown): i is HTMLCanvasElement {
   return i instanceof HTMLCanvasElement;
 }
 
-const ViewColumnsCanvas = ({ columns, onClick, visual }: ViewColumnsProps) => {
+const ViewColumnsCanvas = ({ columns, onClick }: ViewColumnsProps) => {
   useLayoutEffect(() => {
     const canvas = document.getElementById('view-columns-canvas');
 
@@ -345,7 +321,7 @@ const ViewColumnsCanvas = ({ columns, onClick, visual }: ViewColumnsProps) => {
     context.canvas.height =
       (MAX_COLUMN_HEIGHT / COLUMN_COUNT) * context.canvas.width;
 
-    paint({ context, columns, visual });
+    paint({ context, columns });
   });
 
   return (
@@ -376,9 +352,8 @@ const ViewColumnsCanvas = ({ columns, onClick, visual }: ViewColumnsProps) => {
 
 const paint = ({
   context,
-  visual,
+  columns,
 }: {
-  visual: VisualModel;
   context: CanvasRenderingContext2D;
   columns: Columns;
 }): void => {
@@ -397,8 +372,8 @@ const paint = ({
 
   let x, y, cx, cy, r, gradient;
 
-  for (x = 0; x < visual.length; x++) {
-    const column = visual[x];
+  for (x = 0; x < columns.length; x++) {
+    const column = columns[x];
     if (!column) {
       continue;
     }
@@ -410,18 +385,18 @@ const paint = ({
       }
 
       cx = (x + 1 / 2) * cellWidth;
-      cy = (disc.yPosition_.value + 1 / 2) * cellHeight;
+      cy = (y + 1 / 2) * cellHeight;
       r = cellWidth / 2;
 
       context.beginPath();
       context.arc(cx, cy, r, 0, Math.PI * 2);
       try {
         gradient = context.createRadialGradient(cx, cy, 0, cx, cy, r * 0.74);
-        gradient.addColorStop(0, gameTheme[disc.playerType].light);
-        gradient.addColorStop(1, gameTheme[disc.playerType].dark);
+        gradient.addColorStop(0, gameTheme[disc].light);
+        gradient.addColorStop(1, gameTheme[disc].dark);
         context.fillStyle = gradient;
       } catch (error) {
-        context.fillStyle = gameTheme[disc.playerType].light;
+        context.fillStyle = gameTheme[disc].light;
       }
       context.fill();
       context.closePath();
@@ -583,127 +558,4 @@ export const PlayerTwoIcon = ({ key, sx }: { key?: string; sx?: Sx }) => {
       <circle cx={0} cy={0} r={1} fill={`url(#${ref.current})`} />
     </SvgIcon>
   );
-};
-
-export const step = ({
-  now,
-  columns,
-  current,
-}: {
-  now: Posix;
-  columns: Columns;
-  current: VisualModel;
-}): VisualModel => {
-  const next: VisualModel = [];
-
-  for (let x = 0; x < COLUMN_COUNT; x++) {
-    const next_i: Disc[] = [];
-    for (let y = 0; y < MAX_COLUMN_HEIGHT; y++) {
-      const discTrue = columns[x]?.[y];
-      const discVisual = current[x]?.[y];
-
-      //
-      // entry
-      //
-      if (!discVisual && discTrue) {
-        next_i.push({
-          type: 'entry',
-          playerType: discTrue,
-          yPosition_: Ease.init({
-            from: MAX_COLUMN_HEIGHT + 1,
-            to: y,
-            startMs: now,
-            durationMs: (0.2 + 0.1 * (1 - y / MAX_COLUMN_HEIGHT)) * 1000,
-            easing: { type: 'ease-out-quint' },
-          }),
-        });
-        continue;
-      }
-
-      //
-      // exit
-      //
-      if (!discTrue && discVisual && discVisual.type !== 'exit') {
-        next_i.push({
-          ...discVisual,
-          type: 'exit',
-          yPosition_: Ease.init({
-            startMs: now,
-            from: y,
-            to: -(MAX_COLUMN_HEIGHT - y),
-            delayMs: (x / COLUMN_COUNT) * 0.33 * 1000,
-            durationMs: 500,
-            easing: { type: 'ease-in-back' },
-          }),
-        });
-        continue;
-      }
-
-      const shouldRemove =
-        discVisual &&
-        discVisual.type === 'exit' &&
-        !Ease.isAnimating(now, discVisual.yPosition_);
-
-      if (discVisual && !shouldRemove) {
-        next_i.push({
-          ...discVisual,
-          yPosition_: Ease.step(now, discVisual.yPosition_),
-        });
-        continue;
-      }
-    }
-
-    next.push(next_i);
-  }
-
-  return next;
-};
-
-export const initVisual = ({
-  now,
-  columns,
-}: {
-  now: Posix;
-  columns: Columns;
-}): VisualModel => {
-  const ret: VisualModel = [];
-
-  for (let i = 0; i < COLUMN_COUNT; i++) {
-    const ret_i: Disc[] = [];
-    for (let j = 0; j < MAX_COLUMN_HEIGHT; j++) {
-      const discTrue = columns[i]?.[j];
-      if (discTrue) {
-        ret_i.push({
-          type: 'entry',
-          playerType: discTrue,
-          yPosition_: Ease.init({
-            startMs: now,
-            from: j,
-            to: j,
-            durationMs: 0,
-          }),
-        });
-      }
-    }
-    ret.push(ret_i);
-  }
-
-  return ret;
-};
-
-export const isDone = (now: Posix, model: VisualModel): boolean => {
-  for (let x = 0; x < model.length; x++) {
-    const column = model[x];
-    if (!column) {
-      continue;
-    }
-    for (let y = 0; y < column.length; y++) {
-      const discVisual = column[y];
-
-      if (discVisual && Ease.isAnimating(now, discVisual.yPosition_)) {
-        return false;
-      }
-    }
-  }
-  return true;
 };

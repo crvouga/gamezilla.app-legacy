@@ -24,7 +24,7 @@ import * as VsUser from './vs-user/vs-user.frontend';
 export type Model = FrontendModel;
 
 export const init: Model = {
-  type: 'none',
+  t: 'none',
 };
 
 //
@@ -37,42 +37,50 @@ export const init: Model = {
 
 export type Msg = FrontendMsg;
 
-export const update = (
-  { sendToBackend, ctx }: { ctx: Ctx; sendToBackend: (m: ToBackend) => Cmd },
-  msg: Msg,
-  model: Model
-): [Model, Cmd<Msg>] => {
-  switch (msg[0]) {
-    case 'input-mode': {
-      return [model, sendToBackend(msg)];
-    }
-    case 'vs-bot': {
-      if (model.type === 'vs-bot') {
-        const updated = VsBot.update({
-          ctx,
-          sendToBackend: (m) => sendToBackend(['vs-bot', m]),
-          msg: msg[1],
-          model: model.child,
-        });
-        return [
-          { type: 'vs-bot', child: updated.model },
-          Cmd.tag('vs-bot', updated?.cmd ?? Cmd.None),
-        ];
-      }
-      return [model, Cmd.None];
-    }
-    case 'vs-user': {
-      if (model.type === 'vs-user') {
-        const [child, cmd] = VsUser.update({
-          sendToBackend: (m) => sendToBackend(['vs-user', m]),
-          msg: msg[1],
-          model: model.child,
-        });
-        return [{ type: 'vs-user', child }, Cmd.tag('vs-user', cmd)];
-      }
-      return [model, Cmd.None];
-    }
+export const update = ({
+  sendToBackend,
+  ctx,
+  msg,
+  model,
+}: {
+  ctx: RoomCtx;
+  sendToBackend: (m: ToBackend) => Cmd;
+  msg: Msg;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  if (msg.t === 'input-mode') {
+    return { model, cmd: sendToBackend(msg) };
   }
+
+  if (model.t === 'vs-bot' && msg.t === 'vs-bot') {
+    const updated = VsBot.update({
+      ctx,
+      sendToBackend: (c) => sendToBackend({ t: 'vs-bot', c }),
+      msg: msg.c,
+      model: model.c,
+    });
+    return {
+      model: { t: 'vs-bot', c: updated.model },
+      cmd: Cmd.tag_('vs-bot', updated.cmd),
+    };
+  }
+
+  if (model.t === 'vs-user' && msg.t === 'vs-user') {
+    const updated = VsUser.update({
+      sendToBackend: (c) => sendToBackend({ t: 'vs-user', c }),
+      msg: msg.c,
+      model: model.c,
+    });
+    return {
+      model: { t: 'vs-user', c: updated.model },
+      cmd: Cmd.tag_('vs-user', updated.cmd),
+    };
+  }
+
+  return { model };
 };
 
 export const updateFromBackend = ({
@@ -83,42 +91,46 @@ export const updateFromBackend = ({
   ctx: Ctx;
   msg: ToFrontend;
   model: Model;
-}): [Model, Cmd<Msg>] => {
-  switch (msg[0]) {
-    case 'input-mode': {
-      if (msg[2].type === 'Err') {
-        return [model, Cmd.None];
-      }
-      const merged = mergeWithBackend({
-        ctx,
-        frontendModel: model,
-        backendModel: msg[2].value,
-      });
-      return [merged, Cmd.None];
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  if (msg.t === 'input-mode') {
+    if (msg.result.type === 'Err') {
+      return { model };
     }
-
-    case 'vs-bot': {
-      if (model.type === 'vs-bot') {
-        const updated = VsBot.updateFromBackend({
-          ctx,
-          msg: msg[1],
-          model: model.child,
-        });
-        return [
-          { type: 'vs-bot', child: updated.model },
-          Cmd.tag('vs-bot', updated.cmd ?? Cmd.None),
-        ];
-      }
-      return [model, Cmd.None];
-    }
-    case 'vs-user': {
-      if (model.type === 'vs-user') {
-        const [child, cmd] = VsUser.updateFromBackend(msg[1], model.child);
-        return [{ type: 'vs-user', child }, Cmd.tag('vs-user', cmd)];
-      }
-      return [model, Cmd.None];
-    }
+    const merged = mergeWithBackend({
+      ctx,
+      frontendModel: model,
+      backendModel: msg.result.value,
+    });
+    return { model: merged };
   }
+
+  if (model.t === 'vs-bot' && msg.t === 'vs-bot') {
+    const updated = VsBot.updateFromBackend({
+      ctx,
+      msg: msg.c,
+      model: model.c,
+    });
+    return {
+      model: { t: 'vs-bot', c: updated.model },
+      cmd: Cmd.tag_('vs-bot', updated.cmd),
+    };
+  }
+
+  if (model.t === 'vs-user' && msg.t === 'vs-user') {
+    const updated = VsUser.updateFromBackend({
+      model: model.c,
+      msg: msg.c,
+    });
+    return {
+      model: { t: 'vs-user', c: updated.model },
+      cmd: Cmd.tag_('vs-user', updated.cmd),
+    };
+  }
+
+  return { model };
 };
 
 export const mergeWithBackend = ({
@@ -130,47 +142,47 @@ export const mergeWithBackend = ({
   frontendModel: FrontendModel;
   backendModel: BackendModel;
 }): FrontendModel => {
-  switch (backendModel.type) {
+  switch (backendModel.t) {
     case 'none': {
-      return { type: 'none' };
+      return { t: 'none' };
     }
 
     case 'vs-bot': {
-      if (frontendModel.type === 'vs-bot') {
+      if (frontendModel.t === 'vs-bot') {
         return {
-          type: 'vs-bot',
-          child: VsBot.mergeWithBackend({
+          t: 'vs-bot',
+          c: VsBot.mergeWithBackend({
             ctx,
-            frontendModel: frontendModel.child,
-            backendModel: backendModel.child,
+            frontendModel: frontendModel.c,
+            backendModel: backendModel.c,
           }),
         };
       }
       return {
-        type: 'vs-bot',
-        child: VsBot.mergeWithBackend({
+        t: 'vs-bot',
+        c: VsBot.mergeWithBackend({
           ctx,
           frontendModel: VsBot.init({ userId: null }),
-          backendModel: backendModel.child,
+          backendModel: backendModel.c,
         }),
       };
     }
 
     case 'vs-user': {
-      if (frontendModel.type === 'vs-user') {
+      if (frontendModel.t === 'vs-user') {
         return {
-          type: 'vs-user',
-          child: VsUser.mergeWithBackend({
-            frontendModel: frontendModel.child,
-            backendModel: backendModel.child,
+          t: 'vs-user',
+          c: VsUser.mergeWithBackend({
+            frontendModel: frontendModel.c,
+            backendModel: backendModel.c,
           }),
         };
       }
       return {
-        type: 'vs-user',
-        child: VsUser.mergeWithBackend({
+        t: 'vs-user',
+        c: VsUser.mergeWithBackend({
           frontendModel: VsUser.init({ white: null, black: null }),
-          backendModel: backendModel.child,
+          backendModel: backendModel.c,
         }),
       };
     }
@@ -186,9 +198,9 @@ export const mergeWithBackend = ({
 //
 
 export const subscriptions = (ctx: Ctx, model: Model): Sub<Msg> => {
-  switch (model.type) {
+  switch (model.t) {
     case 'vs-bot': {
-      return Sub.tag('vs-bot', VsBot.subscriptions(ctx, model.child));
+      return Sub.tag_('vs-bot', VsBot.subscriptions(ctx, model.c));
     }
 
     case 'vs-user': {
@@ -220,7 +232,7 @@ export const view = ({
   gameRoomCtx: RoomCtx;
   $send: (m: Msg) => void;
 }) => {
-  switch (model.type) {
+  switch (model.t) {
     case 'none': {
       return (
         <ViewMainMenu
@@ -232,20 +244,22 @@ export const view = ({
               label: 'Play Computer',
               icon: <IconComputerDesktop />,
               onClick: () =>
-                $send([
-                  'input-mode',
-                  { userId: ctx.currentUserId, mode: 'vs-bot' },
-                ]),
+                $send({
+                  t: 'input-mode',
+                  userId: ctx.currentUserId,
+                  mode: 'vs-bot',
+                }),
             },
 
             {
               label: 'Play Friend',
               icon: <IconUsers />,
               onClick: () =>
-                $send([
-                  'input-mode',
-                  { userId: ctx.currentUserId, mode: 'vs-user' },
-                ]),
+                $send({
+                  t: 'input-mode',
+                  userId: ctx.currentUserId,
+                  mode: 'vs-user',
+                }),
             },
           ]}
         />
@@ -254,21 +268,21 @@ export const view = ({
 
     case 'vs-bot': {
       return VsBot.view({
-        model: model.child,
+        model: model.c,
         ctx,
         onBack: () =>
-          $send(['input-mode', { mode: 'none', userId: ctx.currentUserId }]),
-        $send: (m) => $send(['vs-bot', m]),
+          $send({ t: 'input-mode', mode: 'none', userId: ctx.currentUserId }),
+        $send: (c) => $send({ t: 'vs-bot', c }),
       });
     }
 
     case 'vs-user': {
       return VsUser.view({
-        model: model.child,
+        model: model.c,
         ctx,
         onCancel: () =>
-          $send(['input-mode', { mode: 'none', userId: ctx.currentUserId }]),
-        $send: (m) => $send(['vs-user', m]),
+          $send({ t: 'input-mode', mode: 'none', userId: ctx.currentUserId }),
+        $send: (c) => $send({ t: 'vs-user', c }),
       });
     }
   }

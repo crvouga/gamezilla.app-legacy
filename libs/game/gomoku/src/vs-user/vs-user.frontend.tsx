@@ -17,10 +17,10 @@ import {
   BackendModel,
   FrontendModel,
   FrontendMsg,
-  initShared,
   ModelGameOver,
   ToBackend,
   ToFrontend,
+  initShared,
 } from './vs-user.types';
 
 //
@@ -53,52 +53,57 @@ export const update = ({
   sendToBackend: (m: ToBackend) => Cmd;
   msg: Msg;
   model: Model;
-}): [Model, Cmd<Msg>] => {
-  switch (msg[0]) {
-    case 'clicked-cancel': {
-      return [{ ...model, confirming: undefined }, Cmd.None];
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  if (msg.t === 'clicked-cancel') {
+    return { model: { ...model, confirming: undefined } };
+  }
+
+  if (msg.t === 'resign') {
+    if (model.confirming === 'resign') {
+      return { model, cmd: sendToBackend(msg) };
     }
 
-    case 'Resign': {
-      if (model.confirming === 'Resign') {
-        return [model, sendToBackend(msg)];
-      }
-      return [{ ...model, confirming: 'Resign' }, Cmd.None];
-    }
-    default: {
-      return [model, sendToBackend(msg)];
-    }
+    return { model: { ...model, confirming: 'resign' } };
   }
+
+  return { model, cmd: sendToBackend(msg) };
 };
 
-export const updateFromBackend = (
-  msg: ToFrontend,
-  model: Model
-): [Model, Cmd<Msg>] => {
-  switch (msg[0]) {
-    case 'input-move': {
-      if (msg[1].type === 'Err') {
-        return [model, Cmd.None];
-      }
-      const merged = mergeWithBackend({
-        backendModel: msg[1].value,
-        frontendModel: model,
-      });
-
-      return [merged, Cmd.None];
+export const updateFromBackend = ({
+  msg,
+  model,
+}: {
+  msg: ToFrontend;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  if (msg.t === 'input-move') {
+    if (msg.result.type === 'Err') {
+      return { model };
     }
+    const merged = mergeWithBackend({
+      backendModel: msg.result.value,
+      frontendModel: model,
+    });
 
-    default: {
-      if (msg[1].type === 'Err') {
-        return [model, Cmd.None];
-      }
-      const merged = mergeWithBackend({
-        backendModel: msg[1].value,
-        frontendModel: model,
-      });
-      return [merged, Cmd.None];
-    }
+    return { model: merged };
   }
+
+  if (msg.result.type === 'Err') {
+    return { model };
+  }
+
+  const merged = mergeWithBackend({
+    backendModel: msg.result.value,
+    frontendModel: model,
+  });
+
+  return { model: merged };
 };
 
 export const mergeWithBackend = ({
@@ -151,19 +156,19 @@ export const view = ({
         playerOne: {
           label: 'White',
           userId: model.white,
-          onStartPlaying: () => $send(['start-playing', { stone: 'white' }]),
-          onStopPlaying: () => $send(['stop-playing', { stone: 'white' }]),
+          onStartPlaying: () => $send({ t: 'start-playing', stone: 'white' }),
+          onStopPlaying: () => $send({ t: 'stop-playing', stone: 'white' }),
           icon: (sx) => viewStoneIcon({ ...sx, stone: 'white' }),
         },
         playerTwo: {
           label: 'Black',
           userId: model.black,
-          onStartPlaying: () => $send(['start-playing', { stone: 'black' }]),
-          onStopPlaying: () => $send(['stop-playing', { stone: 'black' }]),
+          onStartPlaying: () => $send({ t: 'start-playing', stone: 'black' }),
+          onStopPlaying: () => $send({ t: 'stop-playing', stone: 'black' }),
           icon: (sx) => viewStoneIcon({ ...sx, stone: 'black' }),
         },
         onCancel,
-        onStartGame: () => $send(['start-game']),
+        onStartGame: () => $send({ t: 'start-game' }),
       });
     }
 
@@ -177,19 +182,19 @@ export const view = ({
         box({ sx: { flex: 1 } }, []),
         box({ sx: { display: 'flex', p: 2 } }, [
           actionButton({
-            label: 'Resign',
+            label: 'resign',
             iconName: 'flag',
-            onPress: () => $send(['Resign']),
+            onPress: () => $send({ t: 'resign' }),
           }),
         ]),
         conformation({
-          open: 'Resign' === model.confirming,
-          title: 'Resign from game?',
+          open: 'resign' === model.confirming,
+          title: 'resign from game?',
           iconName: 'flag',
-          confirmTitle: 'Resign',
-          onConfirm: () => $send(['Resign']),
-          onCancel: () => $send(['clicked-cancel']),
-          onClose: () => $send(['clicked-cancel']),
+          confirmTitle: 'resign',
+          onConfirm: () => $send({ t: 'resign' }),
+          onCancel: () => $send({ t: 'clicked-cancel' }),
+          onClose: () => $send({ t: 'clicked-cancel' }),
         }),
       ]);
     }
@@ -206,7 +211,7 @@ export const view = ({
           [
             button(
               {
-                onPress: () => $send(['RematchRequest']),
+                onPress: () => $send({ t: 'rematch-request' }),
                 variant: 'contained',
                 startIcon: 'restart',
                 width: '100%',
@@ -215,7 +220,7 @@ export const view = ({
             ),
             button(
               {
-                onPress: () => $send(['stop-game']),
+                onPress: () => $send({ t: 'stop-game' }),
                 variant: 'contained',
                 startIcon: 'exit',
                 width: '100%',
@@ -266,13 +271,13 @@ export const viewOverlay_ = ({
   const currentUserStone =
     ctx.currentUserId === model.white ? 'white' : 'black';
   if (
-    model.gameOver.type === 'Resigned' &&
+    model.gameOver.type === 'resigned' &&
     model.gameOver.resigner === currentUserStone
   ) {
     return text({ color: 'white', variant: 'h2' }, ['You resigned']);
   }
 
-  if (model.gameOver.type === 'Resigned') {
+  if (model.gameOver.type === 'resigned') {
     return box({ sx: { display: 'flex', alignItems: 'center' } }, [
       viewStoneIcon({
         stone: model.gameOver.resigner,
@@ -280,7 +285,7 @@ export const viewOverlay_ = ({
         height: 64,
         mr: 2,
       }),
-      text({ color: 'white', variant: 'h1' }, 'Resigned'),
+      text({ color: 'white', variant: 'h1' }, 'resigned'),
     ]);
   }
 

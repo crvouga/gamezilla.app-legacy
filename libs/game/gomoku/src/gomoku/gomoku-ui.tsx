@@ -1,4 +1,4 @@
-import { Ease, Hex } from '@gamezilla/core';
+import { Ease, Easing, Hex } from '@gamezilla/core';
 import { SvgIcon, Sx } from '@gamezilla/shared/ui';
 import { Transition, TransitionGroup } from 'react-transition-group';
 import {
@@ -157,14 +157,27 @@ export const ViewBoard = ({
                 component="g"
                 key={[x, y, stone].join(', ')}
                 timeout={1000}
-                onEnter={easeRadius({
-                  r: { from: 0, to: 0.45 },
-                  durationMs: 200,
-                })}
-                onExit={easeRadius({
-                  r: { from: 0.45, to: 0 },
-                  durationMs: 200,
-                })}
+                onEnter={(node: HTMLElement) =>
+                  easeHtmlAttrs(node, {
+                    r: {
+                      min: 0,
+                      from: 0,
+                      to: 0.45,
+                      duration: 200,
+                      easing: { type: 'ease-out-back' },
+                    },
+                  })
+                }
+                onExit={(node: HTMLElement) =>
+                  easeHtmlAttrs(node, {
+                    r: {
+                      from: 0.45,
+                      to: 0,
+                      duration: 200,
+                      easing: { type: 'ease-in-expo' },
+                    },
+                  })
+                }
               >
                 <circle
                   key={[x, y, stone].join('-')}
@@ -196,31 +209,56 @@ export const ViewBoard = ({
   );
 };
 
-const easeRadius =
-  ({
-    r,
-    durationMs,
-  }: {
-    r: { from: number; to: number };
-    durationMs: number;
-  }) =>
-  (circle: HTMLElement) => {
-    const startTime = performance.now();
-    const step = (currentTime: number) => {
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / durationMs, 1);
-      const rNew =
-        r.from +
-        (r.to - r.from) * Ease.ease({ type: 'ease-out-back' }, progress);
+const easeHtmlAttrs = (
+  node: HTMLElement,
+  attributes: {
+    [attribute: string]: {
+      min?: number;
+      max?: number;
+      from: number;
+      to: number;
+      duration: number;
+      easing: Easing;
+    };
+  }
+) => {
+  const startTime = performance.now();
+  const step = (currentTime: number) => {
+    let loop = false;
+    for (const attribute in attributes) {
+      const config = attributes[attribute];
 
-      circle.setAttribute('r', String(rNew));
+      if (!config) {
+        continue;
+      }
+
+      const {
+        from,
+        to,
+        min = -Infinity,
+        max = Infinity,
+        duration,
+        easing,
+      } = config;
+
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = from + (to - from) * Ease.ease(easing, progress);
+      const clamped = Math.min(max, Math.max(min, eased));
+
+      node.setAttribute(attribute, String(clamped));
 
       if (progress < 1) {
-        requestAnimationFrame(step);
+        loop = true;
       }
-    };
-    requestAnimationFrame(step);
+    }
+
+    if (loop) {
+      requestAnimationFrame(step);
+    }
   };
+  requestAnimationFrame(step);
+};
 
 const range = ({
   lower,

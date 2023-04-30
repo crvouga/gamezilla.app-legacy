@@ -8,10 +8,10 @@ import {
   initSharedModel,
   inputBestOutOf,
   inputMove,
-  inputMoveTimeLimit,
+  InputMoveTimeLimit,
   inputPlayer,
   moveCountDown,
-  newGame,
+  NewGame,
   rematchAccept,
   rematchAsk,
   rematchCancel,
@@ -123,16 +123,16 @@ export const updateFromFrontend = (
       return [modelNew, broadcast(['StartGame_Done', result])];
     }
 
-    case 'Resign': {
+    case 'resign': {
       const result = resign(msg[1], model);
 
       if (result.type === 'Err') {
-        return [model, sendToClient(['Resign_Done', result])];
+        return [model, sendToClient(['resign_Done', result])];
       }
 
       const modelNew = result.value;
 
-      return [modelNew, broadcast(['Resign_Done', result])];
+      return [modelNew, broadcast(['resign_Done', result])];
     }
 
     case 'input-move': {
@@ -148,7 +148,7 @@ export const updateFromFrontend = (
     }
 
     case 'NewGame': {
-      const result = newGame(msg[1], model);
+      const result = NewGame(msg[1], model);
 
       if (result.type === 'Err') {
         return [model, sendToClient(['NewGame_Done', result])];
@@ -172,7 +172,7 @@ export const updateFromFrontend = (
     }
 
     case 'InputMoveTimeLimit': {
-      const result = inputMoveTimeLimit(msg[1], model);
+      const result = InputMoveTimeLimit(msg[1], model);
 
       if (result.type === 'Err') {
         return [model, sendToClient(['InputMoveTimeLimit_Done', result])];

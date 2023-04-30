@@ -151,15 +151,16 @@ export const update = ({
 
     case 'gomoku': {
       if (msg.t === 'gomoku') {
-        const [child, cmd] = GomokuFrontend.update(
-          {
-            ctx,
-            sendToBackend: (msg) => sendToBackend({ t: 'gomoku', c: msg }),
-          },
-          msg.c,
-          model.c
-        );
-        return [{ t: 'gomoku', c: child }, Cmd.tag_('gomoku', cmd)];
+        const updated = GomokuFrontend.update({
+          ctx,
+          sendToBackend: (msg) => sendToBackend({ t: 'gomoku', c: msg }),
+          msg: msg.c,
+          model: model.c,
+        });
+        return [
+          { t: 'gomoku', c: updated.model },
+          Cmd.tag_('gomoku', updated.cmd),
+        ];
       }
       return [model, Cmd.None];
     }
@@ -245,13 +246,17 @@ export const updateFromBackend = ({
   }
 
   if (msg.t === 'gomoku' && model.t === 'gomoku') {
-    const [child, cmd] = GomokuFrontend.updateFromBackend({
+    const updated = GomokuFrontend.updateFromBackend({
       msg: msg.c,
       ctx,
       model: model.c,
     });
 
-    return [{ t: 'gomoku', c: child }, Cmd.tag_('gomoku', cmd), []];
+    return [
+      { t: 'gomoku', c: updated.model },
+      Cmd.tag_('gomoku', updated.cmd),
+      [],
+    ];
   }
 
   if (msg.t === 'tic-tac-toe' && model.t === 'tic-tac-toe') {

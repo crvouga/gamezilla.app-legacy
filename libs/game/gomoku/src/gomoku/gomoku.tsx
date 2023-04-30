@@ -1,7 +1,5 @@
-import { NonEmpty, Result, shuffle } from '@gamezilla/core';
+import { Err, NonEmpty, Ok, Result, shuffle } from '@gamezilla/core';
 import { Direction, Position } from './gomoku-position';
-
-const { Ok, Err } = Result;
 
 export type Board = {
   [x: number]: {
@@ -108,10 +106,10 @@ export const bounds: Bounds = {
 export const allPositions = Position.rangeExclusive(bounds);
 
 export type MoveProblem =
-  | 'out_of_bounds'
-  | 'not_turn'
-  | 'position_occupied'
-  | 'game_over';
+  | 'out-of-bounds'
+  | 'not-turn'
+  | 'position-occupied'
+  | 'game-over';
 
 const inBounds = (position: Position): boolean => {
   return (
@@ -132,25 +130,26 @@ export const move = ({
   board: Board;
 }): Result<MoveProblem, Board> => {
   if (!inBounds(position)) {
-    return Err('out_of_bounds');
+    return Err('out-of-bounds');
   }
 
   const status = toStatus(board);
 
   if (status.type === 'win') {
-    return Err('game_over');
+    return Err('game-over');
   }
 
   if (status.type === 'draw') {
-    return Err('game_over');
+    return Err('game-over');
   }
 
+  console.log({ status });
   if (status.turn !== stone) {
-    return Err('not_turn');
+    return Err('not-turn');
   }
 
   if (toStone(position, board)) {
-    return Err('position_occupied');
+    return Err('position-occupied');
   }
 
   const boardNew = setStone(position, stone, board);
@@ -264,6 +263,70 @@ export const toWins = (board: Board): Win[] => {
   const wins: Win[] = [];
   const visited = new Set<string>();
 
+  for (const { x, y, stone } of yieldPositions(board)) {
+    for (const direction of Direction.all) {
+      let current: Position = { x, y };
+
+      if (visited.has(toKey({ position: current, direction }))) {
+        continue;
+      }
+
+      const win: Position[] = [current];
+
+      const vector = Direction.toVector(direction);
+
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        const next = Position.add(vector, current);
+        const nextStone = toStone(next, board);
+        if (!nextStone) {
+          break;
+        }
+        if (nextStone !== stone) {
+          break;
+        }
+        win.push(next);
+        current = next;
+      }
+
+      const oppositeVector = Position.rotate({
+        theta: 180,
+        center: { x: 0, y: 0 },
+        position: vector,
+      });
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        const next = Position.add(oppositeVector, current);
+        const nextStone = toStone(next, board);
+        if (!nextStone) {
+          break;
+        }
+        if (nextStone !== stone) {
+          break;
+        }
+        win.push(next);
+        current = next;
+      }
+
+      for (const position of win) {
+        visited.add(toKey({ position, direction }));
+      }
+
+      if (win.length >= minWinLength) {
+        wins.push({
+          stone,
+          positions: win,
+        });
+      }
+    }
+  }
+
+  return wins;
+};
+
+const yieldPositions = function* (
+  board: Board
+): Generator<Position & { stone: Stone }> {
   for (const xKey in board) {
     for (const yKey in board[xKey]) {
       const x = Number(xKey);
@@ -274,63 +337,7 @@ export const toWins = (board: Board): Win[] => {
         continue;
       }
 
-      for (const direction of Direction.all) {
-        let current: Position = { x, y };
-
-        if (visited.has(toKey({ position: current, direction }))) {
-          continue;
-        }
-
-        const win: Position[] = [current];
-
-        const vector = Direction.toVector(direction);
-
-        // eslint-disable-next-line no-constant-condition
-        while (true) {
-          const next = Position.add(vector, current);
-          const nextStone = toStone(next, board);
-          if (!nextStone) {
-            break;
-          }
-          if (nextStone !== stone) {
-            break;
-          }
-          win.push(next);
-          current = next;
-        }
-
-        const oppositeVector = Position.rotate({
-          theta: 180,
-          center: { x: 0, y: 0 },
-          position: vector,
-        });
-        // eslint-disable-next-line no-constant-condition
-        while (true) {
-          const next = Position.add(oppositeVector, current);
-          const nextStone = toStone(next, board);
-          if (!nextStone) {
-            break;
-          }
-          if (nextStone !== stone) {
-            break;
-          }
-          win.push(next);
-          current = next;
-        }
-
-        for (const position of win) {
-          visited.add(toKey({ position, direction }));
-        }
-
-        if (win.length >= minWinLength) {
-          wins.push({
-            stone,
-            positions: win,
-          });
-        }
-      }
+      yield { x, y, stone };
     }
   }
-
-  return wins;
 };

@@ -14,7 +14,7 @@ export { Posix } from './unix-time';
 export { Program } from './program';
 export { Random, shuffle } from './random';
 export { RemoteData } from './remote-data';
-export { Result } from './result';
+export * from './result';
 export { Set } from './set';
 export { Sub } from './sub';
 export { Task } from './task';

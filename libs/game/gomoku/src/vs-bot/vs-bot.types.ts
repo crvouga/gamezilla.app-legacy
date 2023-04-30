@@ -1,20 +1,17 @@
-import { Result } from '@gamezilla/core';
+import { Err, Ok, Result } from '@gamezilla/core';
 import { UserId } from '@gamezilla/shared';
 import {
   Board,
   BotLevel,
-  initBoard,
-  move,
   MoveProblem,
   Stone,
+  initBoard,
+  move,
   toBestMove,
   toOppositeStone,
   toTurn,
 } from '../gomoku/gomoku';
 import { Position } from '../gomoku/gomoku-position';
-import { VisualModel } from '../gomoku/gomoku-ui';
-
-const { Err, Ok } = Result;
 
 //
 //
@@ -39,7 +36,6 @@ export type GameModel = {
   userStone: Stone;
   botLevel: BotLevel;
   board: Board;
-  visual: VisualModel;
 };
 
 export type FrontendModel = Model;
@@ -63,13 +59,15 @@ export const initShared = ({ userId }: { userId: UserId | null }): Model => {
 //
 //
 
-export type FrontendMsg = Req | ['animate'];
+export type FrontendMsg = Req;
 
-export type BackendMsg = ['none'];
+export type BackendMsg = { t: 'none' };
 
 export type ToBackend = Req;
 
-export type ToFrontend = Res | ['bot-moved', Model];
+export type ToFrontend =
+  | Res
+  | { t: 'bot-moved'; result: Result<string, Model> };
 
 //
 //
@@ -79,79 +77,83 @@ export type ToFrontend = Res | ['bot-moved', Model];
 
 export type Req =
   // setup
-  | ['start-playing']
-  | ['stop-playing']
-  | ['inputted-user-stone', { userStone: Stone }]
-  | ['input-bot-level', { botLevel: BotLevel }]
-  | ['start-game']
+  | { t: 'start-playing' }
+  | { t: 'stop-playing' }
+  | { t: 'inputted-user-stone'; userStone: Stone }
+  | { t: 'input-bot-level'; botLevel: BotLevel }
+  | { t: 'start-game' }
   // game
-  | ['input-move', { position: Position }]
-  | ['stop-game']
-  | ['restart']
-  | ['swap-sides'];
+  | { t: 'input-move'; position: Position }
+  | { t: 'stop-game' }
+  | { t: 'restart' }
+  | { t: 'swap-sides' };
 
-export type Res = [Req[0], Result<Problem, Model>];
+export type Res = Req & { result: Result<Problem, Model> };
 
 export type Problem =
-  | 'not_bot_turn'
-  | 'must_be_player'
-  | 'must_be_setup'
-  | 'must_be_no_player'
-  | 'must_be_game'
-  | 'no_position'
+  | 'not-bot-turn'
+  | 'must-be-player'
+  | 'must-be-setup'
+  | 'must-be-no-player'
+  | 'must-be-game'
+  | 'no-position'
   | MoveProblem;
 
-export const handle = (
-  { currentUserId }: { currentUserId: UserId },
-  msg: Req,
-  model: Model
-): Result<Problem, Model> => {
-  switch (msg[0]) {
+export const handle = ({
+  ctx,
+  msg,
+  model,
+}: {
+  ctx: { currentUserId: UserId };
+  msg: Req;
+  model: Model;
+}): Result<Problem, Model> => {
+  switch (msg.t) {
     case 'input-bot-level': {
       if (model.type !== 'setup') {
-        return Err('must_be_setup');
+        return Err('must-be-setup');
       }
-      if (model.userId !== currentUserId) {
-        return Err('must_be_player');
+      if (model.userId !== ctx.currentUserId) {
+        return Err('must-be-player');
       }
       return Ok({
         ...model,
-        botLevel: msg[1].botLevel,
+        botLevel: msg.botLevel,
       });
     }
 
     case 'inputted-user-stone': {
       if (model.type !== 'setup') {
-        return Err('must_be_setup');
+        return Err('must-be-setup');
       }
-      if (model.userId !== currentUserId) {
-        return Err('must_be_player');
+      if (model.userId !== ctx.currentUserId) {
+        return Err('must-be-player');
       }
       return Ok({
         ...model,
-        userStone: msg[1].userStone,
+        userStone: msg.userStone,
       });
     }
 
     case 'start-playing': {
       if (model.type !== 'setup') {
-        return Err('must_be_setup');
+        return Err('must-be-setup');
       }
       if (model.userId) {
-        return Err('must_be_no_player');
+        return Err('must-be-no-player');
       }
       return Ok({
         ...model,
-        userId: currentUserId,
+        userId: ctx.currentUserId,
       });
     }
 
     case 'stop-playing': {
       if (model.type !== 'setup') {
-        return Err('must_be_setup');
+        return Err('must-be-setup');
       }
-      if (model.userId !== currentUserId) {
-        return Err('must_be_player');
+      if (model.userId !== ctx.currentUserId) {
+        return Err('must-be-player');
       }
       return Ok({
         ...model,
@@ -161,10 +163,10 @@ export const handle = (
 
     case 'start-game': {
       if (model.type !== 'setup') {
-        return Err('must_be_setup');
+        return Err('must-be-setup');
       }
-      if (model.userId !== currentUserId) {
-        return Err('must_be_player');
+      if (model.userId !== ctx.currentUserId) {
+        return Err('must-be-player');
       }
       return Ok({
         type: 'game',
@@ -178,31 +180,32 @@ export const handle = (
 
     case 'input-move': {
       if (model.type !== 'game') {
-        return Err('must_be_game');
+        return Err('must-be-game');
       }
-      if (model.userId !== currentUserId) {
-        return Err('must_be_player');
+
+      if (model.userId !== ctx.currentUserId) {
+        return Err('must-be-player');
       }
+
       const moved = move({
-        position: msg[1].position,
+        position: msg.position,
         stone: model.userStone,
         board: model.board,
       });
+
       if (moved.type === 'Err') {
         return moved;
       }
-      return Ok({
-        ...model,
-        board: moved.value,
-      });
+
+      return Ok({ ...model, board: moved.value });
     }
 
     case 'stop-game': {
       if (model.type !== 'game') {
-        return Err('must_be_game');
+        return Err('must-be-game');
       }
-      if (model.userId !== currentUserId) {
-        return Err('must_be_player');
+      if (model.userId !== ctx.currentUserId) {
+        return Err('must-be-player');
       }
       return Ok({
         type: 'setup',
@@ -214,10 +217,10 @@ export const handle = (
 
     case 'restart': {
       if (model.type !== 'game') {
-        return Err('must_be_game');
+        return Err('must-be-game');
       }
-      if (model.userId !== currentUserId) {
-        return Err('must_be_player');
+      if (model.userId !== ctx.currentUserId) {
+        return Err('must-be-player');
       }
       return Ok({
         ...model,
@@ -227,10 +230,10 @@ export const handle = (
 
     case 'swap-sides': {
       if (model.type !== 'game') {
-        return Err('must_be_game');
+        return Err('must-be-game');
       }
-      if (model.userId !== currentUserId) {
-        return Err('must_be_player');
+      if (model.userId !== ctx.currentUserId) {
+        return Err('must-be-player');
       }
       return Ok({
         ...model,
@@ -243,13 +246,13 @@ export const handle = (
 
 export const handleBotMove = (model: Model): Result<Problem, Model> => {
   if (model.type !== 'game') {
-    return Err('must_be_game');
+    return Err('must-be-game');
   }
 
   const isBotTurn = toTurn(model.board) === toOppositeStone(model.userStone);
 
   if (!isBotTurn) {
-    return Err('not_bot_turn');
+    return Err('not-bot-turn');
   }
 
   const botStone = toOppositeStone(model.userStone);
@@ -257,7 +260,7 @@ export const handleBotMove = (model: Model): Result<Problem, Model> => {
   const position = toBestMove({ stone: botStone, board: model.board });
 
   if (!position) {
-    return Err('no_position');
+    return Err('no-position');
   }
 
   const moved = move({ stone: botStone, position, board: model.board });

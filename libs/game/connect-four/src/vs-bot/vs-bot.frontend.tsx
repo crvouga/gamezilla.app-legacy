@@ -15,8 +15,6 @@ import {
   PlayerIcon,
   ViewColumns,
   ViewCoverArt,
-  initVisual,
-  step,
 } from '../connect-four/connect-four-ui';
 import {
   BackendModel,
@@ -41,7 +39,6 @@ import {
 export type Model = FrontendModel;
 
 export const init = (
-  now: Posix,
   ...params: Parameters<typeof initShared>
 ): FrontendModel => {
   const shared = initShared(...params);
@@ -53,7 +50,6 @@ export const init = (
   return {
     ...shared,
     ghostIndex: 'none',
-    visual: initVisual({ now: now, columns: shared.columns }),
   };
 };
 
@@ -86,12 +82,8 @@ export const update = (
       if (model.type !== 'game') {
         return { model };
       }
-      const visualNew = step({
-        now: ctx.now,
-        columns: model.columns,
-        current: model.visual,
-      });
-      return { model: { ...model, visual: visualNew } };
+
+      return { model };
     }
 
     case 'input-move': {
@@ -185,7 +177,6 @@ export const updateFromBackend = ({
 };
 
 export const mergeWithBackend = ({
-  ctx,
   backendModel,
   frontendModel,
 }: {
@@ -201,20 +192,11 @@ export const mergeWithBackend = ({
     return {
       ...backendModel,
       ghostIndex: 'none',
-      visual: initVisual({ now: ctx.now, columns: backendModel.columns }),
     };
   }
 
-  const columnsNew = backendModel.columns;
-  const visualNew = step({
-    now: ctx.now,
-    columns: columnsNew,
-    current: frontendModel.visual,
-  });
-
   return {
     ...backendModel,
-    visual: visualNew,
     ghostIndex: frontendModel.ghostIndex,
   };
 };
@@ -338,7 +320,6 @@ export const View = ({
         columns={model.columns}
         onHover={(columnIndex) => $send(['hovered', { columnIndex }])}
         onClick={(columnIndex) => $send(['input-move', { columnIndex }])}
-        visual={model.visual}
       />
     ),
   });

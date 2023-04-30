@@ -1,7 +1,5 @@
-import { Posix, Ease, rescale } from '@gamezilla/core';
 import { SvgIcon, Sx } from '@gamezilla/shared/ui';
 import {
-  allPositions,
   Board,
   Empty,
   MAX_X,
@@ -9,136 +7,9 @@ import {
   PlayerType,
   Position,
   Slot,
+  allPositions,
   toSlot,
 } from './tic-tac-toe';
-
-//
-//
-// Model
-//
-//
-
-export type VisualModel = (VisualSlot | null)[][];
-
-export type VisualSlot = {
-  type: 'enter' | 'exit';
-  percentageDrew: Ease.Model;
-  playerType: PlayerType;
-};
-
-export const initVisual = ({ board }: { board: Board }) => {
-  return board;
-};
-
-export const step = ({
-  board,
-  model,
-  now,
-}: {
-  now: Posix;
-  board: Board;
-  model: VisualModel;
-}): VisualModel => {
-  const modelNew: VisualModel = [];
-
-  for (let x = 0; x < MAX_X; x++) {
-    const modelNewX: (VisualSlot | null)[] = [];
-    for (let y = 0; y < MAX_Y; y++) {
-      const slotTrue = board[x]?.[y];
-      const slotVisual = model[x]?.[y];
-
-      //
-      // Enter
-      //
-      if (slotTrue && slotTrue !== '_' && !slotVisual) {
-        modelNewX.push({
-          type: 'enter',
-          playerType: slotTrue,
-          percentageDrew: Ease.init({
-            easing: { type: 'ease-out-quint' },
-            durationMs: 200,
-            from: 0,
-            to: 1,
-            startMs: now,
-          }),
-        });
-        continue;
-      }
-
-      //
-      // Exit
-      //
-      if (
-        (!slotTrue || slotTrue === '_') &&
-        slotVisual &&
-        slotVisual.type === 'enter'
-      ) {
-        modelNewX.push({
-          type: 'exit',
-          playerType: slotVisual.playerType,
-          percentageDrew: Ease.init({
-            easing: { type: 'ease-out-quint' },
-            durationMs: 200,
-            from: 1,
-            to: 0,
-            startMs: now,
-          }),
-        });
-        continue;
-      }
-
-      //
-      // Update
-      //
-
-      const shouldRemove =
-        slotVisual &&
-        slotVisual.type === 'exit' &&
-        !Ease.isAnimating(now, slotVisual.percentageDrew);
-
-      if (slotVisual && !shouldRemove) {
-        modelNewX.push({
-          ...slotVisual,
-          percentageDrew: Ease.step(now, slotVisual.percentageDrew),
-        });
-        continue;
-      }
-
-      //
-      //
-      //
-      modelNewX.push(null);
-    }
-
-    modelNew.push(modelNewX);
-  }
-
-  return modelNew;
-};
-
-export const isAnimating = ({
-  model,
-  now,
-}: {
-  now: Posix;
-  model: VisualModel;
-}) => {
-  for (let x = 0; x < MAX_X; x++) {
-    for (let y = 0; y < MAX_Y; y++) {
-      const slotVisual = model[x]?.[y];
-      if (slotVisual && Ease.isAnimating(now, slotVisual.percentageDrew)) {
-        return true;
-      }
-    }
-  }
-  return false;
-};
-
-//
-//
-//
-//
-//
 
 export const gameTheme = {
   background: '#14BDAC',
@@ -152,10 +23,9 @@ const scale = 1_000;
 
 export const viewBoard = ({
   board,
-  model,
+
   onClick,
 }: {
-  model: VisualModel;
   board: Board;
   onClick: (position: Position) => void;
 }) => {
@@ -181,20 +51,19 @@ export const viewBoard = ({
         ))}
       </g>
 
-      {model.map((modelX, x) =>
-        modelX.map(
-          (slot, y) =>
-            slot &&
-            viewSlotVisual({
-              key: [x, y, slot.playerType].join(' '),
-              cx: (Number(x) + 0.5) * scale,
-              cy: (Number(y) + 0.5) * scale,
-              strokeWidth: 0.1 * scale,
-              r: 0.3 * scale,
-              slot: slot,
-              percentageDrew: slot.percentageDrew.value,
-            })
-        )
+      {board.map((slots, x) =>
+        slots.flatMap((slot, y) => {
+          return (
+            <ViewSlot
+              cx={x * scale + scale / 2}
+              cy={y * scale + scale / 2}
+              r={0.3 * scale}
+              slot={slot}
+              key={[x, y, slot].join(' ')}
+              strokeWidth={0.1 * scale}
+            />
+          );
+        })
       )}
 
       {allPositions.map((position) => (
@@ -224,99 +93,6 @@ const lines = [
   { x1: 0, y1: 2, x2: 3, y2: 2 },
 ];
 
-const distance = (
-  a: { x: number; y: number },
-  b: { x: number; y: number }
-): number => {
-  return Math.sqrt(Math.pow(b.x - a.x, 2) + Math.pow(b.y - a.y, 2));
-};
-
-export const viewSlotVisual = ({
-  key,
-  slot,
-  cx,
-  cy,
-  r,
-
-  strokeWidth,
-  percentageDrew,
-}: {
-  key: string;
-  strokeWidth?: number;
-  slot: VisualSlot;
-  r: number;
-  cx: number;
-  cy: number;
-  percentageDrew: number;
-}) => {
-  switch (slot.playerType) {
-    case 'X': {
-      const length = distance(
-        { x: cx - r, y: cy - r },
-        { x: cx + r, y: cy + r }
-      );
-
-      const dashoffset = rescale({
-        value: percentageDrew,
-        from: [0, 1],
-        to: [length, 0],
-      });
-
-      return (
-        <g key={key} strokeWidth={strokeWidth} stroke={gameTheme.cross}>
-          {/*
-
-          direction: \
-
-          */}
-          <line
-            x1={cx - r}
-            y1={cy - r}
-            x2={cx + r}
-            y2={cy + r}
-            strokeDasharray={length}
-            strokeDashoffset={dashoffset}
-          />
-          {/*
-
-          direction: /
-
-          */}
-          <line
-            x1={cx - r}
-            y1={cy + r}
-            x2={cx + r}
-            y2={cy - r}
-            strokeDasharray={length}
-            strokeDashoffset={dashoffset}
-          />
-        </g>
-      );
-    }
-
-    case 'O': {
-      const circumference = 2 * Math.PI * r;
-      const dashoffset = rescale({
-        value: percentageDrew,
-        from: [0, 1],
-        to: [circumference, 0],
-      });
-      return (
-        <circle
-          key={key}
-          r={r}
-          cx={cx}
-          cy={cy}
-          stroke={gameTheme.naught}
-          strokeWidth={strokeWidth}
-          strokeDasharray={circumference}
-          strokeDashoffset={dashoffset}
-          fill="transparent"
-        />
-      );
-    }
-  }
-};
 export const ViewSlot = ({
   slot,
   cx,

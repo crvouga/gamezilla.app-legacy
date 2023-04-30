@@ -1,18 +1,16 @@
-import { NonEmpty, Result } from '@gamezilla/core';
+import { Err, NonEmpty, Ok, Result } from '@gamezilla/core';
 import { UserId } from '@gamezilla/shared';
 import {
   Board,
-  initBoard,
-  move,
   MoveProblem,
   Stone,
+  Win,
+  initBoard,
+  move,
   toOppositeStone,
   toStatus,
-  Win,
 } from '../gomoku/gomoku';
 import { Position } from '../gomoku/gomoku-position';
-
-const { Err, Ok } = Result;
 
 //
 //
@@ -56,7 +54,7 @@ type Rematch =
 
 type GameOver =
   | {
-      type: 'Resigned';
+      type: 'resigned';
       resigner: Stone;
     }
   | {
@@ -69,7 +67,7 @@ type GameOver =
     };
 
 export type FrontendModel = Model & {
-  confirming?: FrontendMsg[0];
+  confirming?: FrontendMsg['t'];
 };
 
 export type BackendModel = Model;
@@ -121,9 +119,9 @@ const initSetup = (model: Model): ModelSetup => {
 //
 //
 
-export type FrontendMsg = Req | ['clicked-cancel'];
+export type FrontendMsg = Req | { t: 'clicked-cancel' };
 
-export type BackendMsg = ['none'];
+export type BackendMsg = { t: 'none' };
 
 export type ToFrontend = Res;
 
@@ -136,52 +134,52 @@ export type ToBackend = Req;
 //
 
 export type Req =
-  | ['start-playing', { stone: Stone }]
-  | ['stop-playing', { stone: Stone }]
-  | ['start-game']
+  | { t: 'start-playing'; stone: Stone }
+  | { t: 'stop-playing'; stone: Stone }
+  | { t: 'start-game' }
   //
-  | ['input-move', { position: Position }]
-  | ['Resign']
-  | ['RematchRequest']
-  | ['RematchRespond', { response: 'Accept' | 'Decline' }]
-  | ['stop-game'];
+  | { t: 'input-move'; position: Position }
+  | { t: 'resign' }
+  | { t: 'rematch-request' }
+  | { t: 'rematch-respond'; response: 'Accept' | 'Decline' }
+  | { t: 'stop-game' };
 
-export type Res = [Req[0], Result<Problem, Model>];
+export type Res = Req & { result: Result<Problem, Model> };
 
 type Problem =
-  | 'must_be_setup'
-  | 'player_taken'
-  | 'must_be_player'
-  | 'missing_player'
-  | 'must_be_playing'
+  | 'must-be-setup'
+  | 'player-taken'
+  | 'must-be-player'
+  | 'missing-player'
+  | 'must-be-playing'
   | MoveProblem;
 
 export const handle = ({
-  currentUserId,
+  ctx,
   msg,
   model,
 }: {
-  currentUserId: UserId;
+  ctx: { currentUserId: UserId };
   msg: Req;
   model: Model;
 }): Result<Problem, Model> => {
-  switch (msg[0]) {
+  switch (msg.t) {
     case 'start-playing': {
       if (model.type !== 'setup') {
-        return Err('must_be_setup');
+        return Err('must-be-setup');
       }
 
-      const { stone } = msg[1];
+      const { stone } = msg;
 
       if (model[stone]) {
-        return Err('player_taken');
+        return Err('player-taken');
       }
 
       const modelNew: Model = {
         ...model,
-        [stone]: currentUserId,
+        [stone]: ctx.currentUserId,
         [toOppositeStone(stone)]:
-          model[toOppositeStone(stone)] === currentUserId
+          model[toOppositeStone(stone)] === ctx.currentUserId
             ? null
             : model[toOppositeStone(stone)],
       };
@@ -191,13 +189,13 @@ export const handle = ({
 
     case 'stop-playing': {
       if (model.type !== 'setup') {
-        return Err('must_be_setup');
+        return Err('must-be-setup');
       }
 
-      const { stone } = msg[1];
+      const { stone } = msg;
 
-      if (model[stone] !== currentUserId) {
-        return Err('must_be_player');
+      if (model[stone] !== ctx.currentUserId) {
+        return Err('must-be-player');
       }
 
       const modelNew: Model = {
@@ -210,11 +208,11 @@ export const handle = ({
 
     case 'start-game': {
       if (model.type !== 'setup') {
-        return Err('must_be_setup');
+        return Err('must-be-setup');
       }
 
       if (!(model.white && model.black)) {
-        return Err('missing_player');
+        return Err('missing-player');
       }
 
       const modelNew: Model = {
@@ -229,13 +227,13 @@ export const handle = ({
 
     case 'input-move': {
       if (model.type !== 'playing') {
-        return Err('must_be_playing');
+        return Err('must-be-playing');
       }
 
-      const { position } = msg[1];
+      const { position } = msg;
 
       const currentUserStone =
-        model.white === currentUserId ? 'white' : 'black';
+        model.white === ctx.currentUserId ? 'white' : 'black';
 
       const moved = move({
         board: model.board,
@@ -269,37 +267,43 @@ export const handle = ({
       return Ok(modelNew);
     }
 
-    case 'Resign': {
+    case 'resign': {
       if (model.type !== 'playing') {
-        return Err('must_be_playing');
+        return Err('must-be-playing');
       }
 
-      if (model.white !== currentUserId && model.black !== currentUserId) {
-        return Err('must_be_player');
+      if (
+        model.white !== ctx.currentUserId &&
+        model.black !== ctx.currentUserId
+      ) {
+        return Err('must-be-player');
       }
 
       const currentUserStone =
-        model.white === currentUserId ? 'white' : 'black';
+        model.white === ctx.currentUserId ? 'white' : 'black';
 
       const modelNew = initGameOver({
         model,
-        gameOver: { type: 'Resigned', resigner: currentUserStone },
+        gameOver: { type: 'resigned', resigner: currentUserStone },
       });
 
       return Ok(modelNew);
     }
 
-    case 'RematchRequest': {
+    case 'rematch-request': {
       return Ok(model);
     }
 
-    case 'RematchRespond': {
+    case 'rematch-respond': {
       return Ok(model);
     }
 
     case 'stop-game': {
-      if (model.black !== currentUserId && model.white !== currentUserId) {
-        return Err('must_be_player');
+      if (
+        model.black !== ctx.currentUserId &&
+        model.white !== ctx.currentUserId
+      ) {
+        return Err('must-be-player');
       }
 
       return Ok(initSetup(model));

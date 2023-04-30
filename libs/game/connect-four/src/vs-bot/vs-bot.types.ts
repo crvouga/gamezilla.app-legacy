@@ -13,7 +13,6 @@ import {
   PlayerType,
   toStatus,
 } from '../connect-four/connect-four';
-import { VisualModel } from '../connect-four/connect-four-ui';
 
 const { Err, Ok } = Result;
 
@@ -82,7 +81,6 @@ export type BackendModel = SharedModel;
 
 export type FrontendGameModel = GameModel & {
   ghostIndex: ColumnIndex | 'none';
-  visual: VisualModel;
 };
 
 export type FrontendModel = SetupModel | FrontendGameModel;
