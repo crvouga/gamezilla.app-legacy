@@ -1,5 +1,5 @@
-import { Browser, Cmd, p, RemoteData } from '@gamezilla/core';
-import { Ctx, Route, AppMsg } from '@gamezilla/shared';
+import { Browser, Cmd, exhaustive, p, RemoteData } from '@gamezilla/core';
+import { AppMsg, Route, ViewCtx } from '@gamezilla/shared';
 import {
   Avatar,
   Box,
@@ -22,6 +22,7 @@ import {
   ListItemText,
   Typography,
   ViewLoadingState,
+  ViewNode,
 } from '@gamezilla/shared/ui';
 import { Fab } from '@mui/material';
 import { matchSorter } from 'match-sorter';
@@ -158,7 +159,11 @@ export const updateFromApp = ({
 } => {
   switch (msg.t) {
     case 'route-changed': {
-      switch (msg.route[0]) {
+      if (msg.route.t !== 'chat') {
+        return { model };
+      }
+
+      switch (msg.route.c.t) {
         case 'chat-conversation': {
           return {
             model,
@@ -201,20 +206,23 @@ export const View = ({
   ctx,
   route,
   userSearch,
+  viewBottomBar,
 }: {
   model: Model;
   $send: (m: Msg) => void;
-  ctx: Ctx;
-  route: Route.Model;
+  ctx: ViewCtx;
+  route: Route.RouteChat;
   userSearch: {
     onInput: (searchText: string) => void;
     loading: boolean;
   };
+  viewBottomBar: ViewNode;
 }) => {
-  switch (route[0]) {
+  switch (route.t) {
     case 'chat-conversation': {
       return <ViewChat model={model} $send={$send} />;
     }
+
     case 'chat-new': {
       return (
         <ViewChatNew
@@ -225,11 +233,19 @@ export const View = ({
         />
       );
     }
-    case 'chat-list': {
-      return <ViewChatList model={model} $send={$send} ctx={ctx} />;
+
+    case 'chat': {
+      return (
+        <>
+          <ViewChatList model={model} $send={$send} ctx={ctx} />
+          {viewBottomBar}
+        </>
+      );
     }
-    default:
-      return null;
+
+    default: {
+      return exhaustive(route);
+    }
   }
 };
 
@@ -243,7 +259,7 @@ const ViewChatNew = ({
   $send,
   userSearch,
 }: {
-  ctx: Ctx;
+  ctx: ViewCtx;
   model: Model;
   $send: (m: Msg) => void;
   userSearch: {
@@ -257,7 +273,11 @@ const ViewChatNew = ({
   return (
     <FillBox>
       <Header
-        left={<HeaderBackButton onClick={() => ctx.$push(['chat-list'])} />}
+        left={
+          <HeaderBackButton
+            onClick={() => ctx.$push({ t: 'chat', c: { t: 'chat' } })}
+          />
+        }
         title="New Message"
         right={<Button sx={{ marginRight: -1 }}>Chat</Button>}
       />
@@ -361,7 +381,7 @@ const ViewChatList = ({
   // $send,
   ctx,
 }: {
-  ctx: Ctx;
+  ctx: ViewCtx;
   model: Model;
   $send: (m: Msg) => void;
 }) => {
@@ -383,7 +403,7 @@ const ViewChatList = ({
         }}
         color="primary"
         variant="extended"
-        onClick={() => ctx.$push(['chat-new'])}
+        onClick={() => ctx.$push({ t: 'chat', c: { t: 'chat-new' } })}
       >
         <Icons.Send sx={{ mr: 1 }} />
         Send Message
