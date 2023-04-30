@@ -20,7 +20,7 @@ import * as Mui from '@mui/material';
 import { TypographyProps, keyframes } from '@mui/material';
 import Slide, { SlideProps } from '@mui/material/Slide';
 import { blue } from '@mui/material/colors';
-import { ReactNode, useEffect, useMemo, useRef } from 'react';
+import { ReactNode, useEffect, useRef } from 'react';
 import * as Icons from './ui-icons';
 import { cn } from './utils';
 
@@ -132,37 +132,35 @@ const createTheme = ({ mode }: { mode: 'light' | 'dark' }) =>
   );
 
 const darkTheme = createTheme({ mode: 'dark' });
-const lightTheme = createTheme({ mode: 'light' });
 
 export const AppContainer = ({
   children,
-  themeMode,
 }: {
   children: React.ReactNode;
   themeMode: ThemeMode;
   sx?: Sx;
 }) => {
-  const prefersDarkMode = Mui.useMediaQuery('(prefers-color-scheme: dark)');
+  // const prefersDarkMode = Mui.useMediaQuery('(prefers-color-scheme: dark)');
 
-  const theme = useMemo(() => {
-    switch (themeMode) {
-      case 'Dark':
-        return darkTheme;
+  // const theme = useMemo(() => {
+  //   switch (themeMode) {
+  //     case 'Dark':
+  //       return darkTheme;
 
-      case 'Light':
-        return lightTheme;
+  //     case 'Light':
+  //       return lightTheme;
 
-      case 'System':
-        if (prefersDarkMode) {
-          return darkTheme;
-        }
-        return lightTheme;
-    }
-  }, [themeMode, prefersDarkMode]);
+  //     case 'System':
+  //       if (prefersDarkMode) {
+  //         return darkTheme;
+  //       }
+  //       return lightTheme;
+  //   }
+  // }, [themeMode, prefersDarkMode]);
 
   return (
-    <Mui.ThemeProvider theme={theme}>
-      <Mui.CssBaseline enableColorScheme />
+    <Mui.ThemeProvider theme={darkTheme}>
+      {/* <Mui.CssBaseline enableColorScheme /> */}
       <div className="max-w-md max-h-full mx-auto fixed w-full h-full overflow-hidden flex flex-col left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 border border-neutral-600 bg-black">
         {children}
       </div>
@@ -329,27 +327,6 @@ export const paper = (
 };
 
 export const Button = MuiLab.LoadingButton;
-
-export type ButtonProps = {
-  size?: 'large' | 'medium' | 'small';
-  variant?: 'outlined' | 'contained' | 'text';
-  startIcon?: IconName;
-  onPress?: () => void;
-  loading?: boolean;
-  disabled: boolean;
-  fullWidth?: boolean;
-};
-
-export const Button_ = (props: ButtonProps) => {
-  return (
-    <MuiLab.LoadingButton
-      variant={props.variant}
-      onClick={props.onPress}
-      size={props.size}
-      startIcon={props.startIcon ? icon(props.startIcon) : undefined}
-    ></MuiLab.LoadingButton>
-  );
-};
 
 export const button = (
   {

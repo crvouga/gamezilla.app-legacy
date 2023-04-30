@@ -1,5 +1,5 @@
 import { Cmd, Sub } from '@gamezilla/core';
-import { RoomCtx, ViewMainMenu } from '@gamezilla/game-shared';
+import { RoomCtx, ViewMainMenu } from '@gamezilla/shared';
 import { Ctx } from '@gamezilla/shared';
 import { IconComputerDesktop, IconUsers } from '@gamezilla/shared/ui';
 import {

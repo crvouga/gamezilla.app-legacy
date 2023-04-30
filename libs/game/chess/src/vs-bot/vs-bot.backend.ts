@@ -1,5 +1,5 @@
 import { Cmd, p, Sub } from '@gamezilla/core';
-import { RoomMsg } from '@gamezilla/game-shared';
+import { RoomMsg } from '@gamezilla/shared';
 import * as Chess from '../chess/chess';
 import {
   BackendModel,

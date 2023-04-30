@@ -1,5 +1,5 @@
 import { Audio, Cmd, p, Posix, RemoteData, Sub, Unit } from '@gamezilla/core';
-import { RoomCtx, ViewMainMenu } from '@gamezilla/game-shared';
+import { RoomCtx, ViewMainMenu } from '@gamezilla/shared';
 import { Alerts } from '@gamezilla/shared';
 import {
   IconComputerDesktop,

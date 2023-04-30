@@ -1,5 +1,5 @@
 import { Cmd, exhaustive, Sub, Time } from '@gamezilla/core';
-import { RoomMsg } from '@gamezilla/game-shared';
+import { RoomMsg } from '@gamezilla/shared';
 import {
   BackendModel,
   BackendMsg,

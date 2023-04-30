@@ -1,5 +1,5 @@
 import { Cmd, eq, Posix, Sub } from '@gamezilla/core';
-import { RoomCtx, ViewGameBox } from '@gamezilla/game-shared';
+import { RoomCtx, ViewGameBox } from '@gamezilla/shared';
 import {
   ActionButton,
   AspectRatio,

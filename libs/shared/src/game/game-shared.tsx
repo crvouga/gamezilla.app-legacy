@@ -1,4 +1,3 @@
-import { Ctx, UserId } from '@gamezilla/shared';
 import {
   Box,
   Button,
@@ -14,6 +13,8 @@ import {
   text,
   useTheme,
 } from '@gamezilla/shared/ui';
+import { Ctx } from '../ctx';
+import { UserId } from '../data';
 
 export type RoomCtx = Ctx & {
   onQuit: () => void;

@@ -65,9 +65,9 @@ export const updateFromApp = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  switch (msg[0]) {
+  switch (msg.t) {
     case 'route-changed': {
-      const route = msg[1].route;
+      const route = msg.route;
       if (route[0] !== 'profile') {
         return { model };
       }

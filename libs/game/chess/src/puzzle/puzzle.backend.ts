@@ -1,6 +1,6 @@
 import { andThen, Cmd, eq, p, Result, Sub, Time } from '@gamezilla/core';
-import { RoomMsg } from '@gamezilla/game-shared';
-import { RoomCtx, RoomRequestCtx } from '@gamezilla/game-shared/backend';
+import { RoomMsg } from '@gamezilla/shared';
+import { RoomCtx, RoomRequestCtx } from '@gamezilla/shared/backend';
 import { GameMsg } from '../chess-shared';
 import { PuzzleDatabase } from './puzzle-database.mysql';
 import {

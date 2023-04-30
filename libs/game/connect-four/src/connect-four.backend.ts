@@ -1,5 +1,5 @@
 import { Cmd, Result, Sub } from '@gamezilla/core';
-import { RoomMsg } from '@gamezilla/game-shared';
+import { RoomMsg } from '@gamezilla/shared';
 import { UserId } from '@gamezilla/shared';
 import { RoomRequestCtx } from '@gamezilla/shared/backend';
 import {

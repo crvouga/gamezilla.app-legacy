@@ -1,5 +1,5 @@
 import { Cmd, exhaustive, p, Sub } from '@gamezilla/core';
-import { RoomCtx, RoomRequestCtx } from '@gamezilla/game-shared/backend';
+import { RoomCtx, RoomRequestCtx } from '@gamezilla/shared/backend';
 import { ClientId, RoomId, UserId } from '@gamezilla/shared';
 import {
   AppMsg,

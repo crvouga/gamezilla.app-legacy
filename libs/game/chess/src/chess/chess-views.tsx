@@ -1,6 +1,6 @@
 import { UserId } from '@gamezilla/shared';
 import * as UI from '@gamezilla/shared/ui';
-import { bannerArtAspectRatio } from '@gamezilla/game-shared';
+import { bannerArtAspectRatio } from '@gamezilla/shared';
 import { Ctx } from '@gamezilla/shared';
 
 export const theme = {

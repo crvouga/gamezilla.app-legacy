@@ -1,8 +1,5 @@
 import { Cmd, Posix, Sub } from '@gamezilla/core';
-import {
-  ViewVsBotGameScreen,
-  ViewVsBotSetupScreen,
-} from '@gamezilla/game-shared';
+import { ViewVsBotGameScreen, ViewVsBotSetupScreen } from '@gamezilla/shared';
 import { Alerts, Ctx } from '@gamezilla/shared';
 import {
   PlayerType,

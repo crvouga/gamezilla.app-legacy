@@ -1,5 +1,5 @@
 import { Cmd, p, Sub } from '@gamezilla/core';
-import { RoomMsg } from '@gamezilla/game-shared';
+import { RoomMsg } from '@gamezilla/shared';
 import { findBestMove, toDepth, toOpposite } from '../tic-tic-toe/tic-tac-toe';
 import {
   BackendModel,
@@ -10,7 +10,7 @@ import {
   inputMove,
   inputPlayerType,
   isBotTurn,
-  Response,
+  Res,
   restart,
   startGame,
   startPlaying,
@@ -116,7 +116,7 @@ const updateFromFrontend_: UpdateFromFrontend = (
 ) => {
   switch (msg[0]) {
     case 'start-game': {
-      const response: Response = ['StartGame_Done', startGame(msg[1], model)];
+      const response: Res = ['StartGame_Done', startGame(msg[1], model)];
       if (response[1].type === 'Err') {
         return [model, sendToClient(response)];
       }
@@ -124,10 +124,7 @@ const updateFromFrontend_: UpdateFromFrontend = (
     }
 
     case 'stop-playing': {
-      const response: Response = [
-        'StopPlaying_Done',
-        stopPlaying(msg[1], model),
-      ];
+      const response: Res = ['StopPlaying_Done', stopPlaying(msg[1], model)];
       if (response[1].type === 'Err') {
         return [model, sendToClient(response)];
       }
@@ -135,10 +132,7 @@ const updateFromFrontend_: UpdateFromFrontend = (
     }
 
     case 'start-playing': {
-      const response: Response = [
-        'StartPlaying_Done',
-        startPlaying(msg[1], model),
-      ];
+      const response: Res = ['StartPlaying_Done', startPlaying(msg[1], model)];
       if (response[1].type === 'Err') {
         return [model, sendToClient(response)];
       }
@@ -146,7 +140,7 @@ const updateFromFrontend_: UpdateFromFrontend = (
     }
 
     case 'InputBot': {
-      const response: Response = ['InputBot_Done', inputBot(msg[1], model)];
+      const response: Res = ['InputBot_Done', inputBot(msg[1], model)];
       if (response[1].type === 'Err') {
         return [model, sendToClient(response)];
       }
@@ -154,7 +148,7 @@ const updateFromFrontend_: UpdateFromFrontend = (
     }
 
     case 'input-player-type': {
-      const response: Response = [
+      const response: Res = [
         'InputPlayerType_Done',
         inputPlayerType(msg[1], model),
       ];
@@ -165,7 +159,7 @@ const updateFromFrontend_: UpdateFromFrontend = (
     }
 
     case 'stop-game': {
-      const response: Response = ['StopGame_Done', stopGame(msg[1], model)];
+      const response: Res = ['StopGame_Done', stopGame(msg[1], model)];
       if (response[1].type === 'Err') {
         return [model, sendToClient(response)];
       }
@@ -173,7 +167,7 @@ const updateFromFrontend_: UpdateFromFrontend = (
     }
 
     case 'input-move': {
-      const response: Response = ['input-move-done', inputMove(msg[1], model)];
+      const response: Res = ['input-move-done', inputMove(msg[1], model)];
       if (response[1].type === 'Err') {
         return [model, sendToClient(response)];
       }
@@ -181,7 +175,7 @@ const updateFromFrontend_: UpdateFromFrontend = (
     }
 
     case 'swap-sides': {
-      const response: Response = ['swap-sides-done', swapSides(msg[1], model)];
+      const response: Res = ['swap-sides-done', swapSides(msg[1], model)];
       if (response[1].type === 'Err') {
         return [model, sendToClient(response)];
       }
@@ -189,7 +183,7 @@ const updateFromFrontend_: UpdateFromFrontend = (
     }
 
     case 'restart': {
-      const response: Response = ['restart-done', restart(msg[1], model)];
+      const response: Res = ['restart-done', restart(msg[1], model)];
       if (response[1].type === 'Err') {
         return [model, sendToClient(response)];
       }

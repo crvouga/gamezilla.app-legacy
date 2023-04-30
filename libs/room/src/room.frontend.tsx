@@ -1,5 +1,5 @@
 import { Cmd, exhaustive, p, RemoteData, Sub } from '@gamezilla/core';
-import { RoomCtx } from '@gamezilla/game-shared';
+import { RoomCtx } from '@gamezilla/shared';
 import { ProfileStore } from '@gamezilla/profile';
 import { Alerts, AppMsg, Ctx, RoomId, Route, UserId } from '@gamezilla/shared';
 import {

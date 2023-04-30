@@ -2,7 +2,7 @@ import { Cmd, Sub } from '@gamezilla/core';
 import {
   viewUserPlayerSlotBar,
   viewVsUserSetupScreen,
-} from '@gamezilla/game-shared';
+} from '@gamezilla/shared';
 import { Ctx } from '@gamezilla/shared';
 import {
   actionButton,
