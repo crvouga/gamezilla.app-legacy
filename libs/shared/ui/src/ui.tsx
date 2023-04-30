@@ -22,6 +22,7 @@ import Slide, { SlideProps } from '@mui/material/Slide';
 import { blue } from '@mui/material/colors';
 import { ReactNode, useEffect, useMemo, useRef } from 'react';
 import * as Icons from './ui-icons';
+import { cn } from './utils';
 
 const SlideTransition = (props: SlideProps) => {
   return <Slide {...props} direction="down" />;
@@ -733,7 +734,6 @@ export const ActionButton = ({
   onClick,
   disabled = false,
   color,
-  sx,
 }: {
   sx?: Sx;
   color?: 'error' | 'success';
@@ -742,31 +742,21 @@ export const ActionButton = ({
   onClick: () => void;
   disabled?: boolean;
 }) => {
-  const theme = useTheme();
   return (
-    <ButtonBase
+    <button
+      key={label}
       onClick={onClick}
-      sx={{
-        width: '100%',
-        paddingY: 1 / 2,
-        paddingX: 2,
-        display: 'flex',
-        flexDirection: 'column',
-        color: disabled
-          ? theme.palette.action.disabled
-          : color === 'error'
-          ? theme.palette.error.main
-          : color === 'success'
-          ? theme.palette.success.light
-          : theme.palette.action.active,
-        ...sx,
-      }}
+      disabled={disabled}
+      className={cn(
+        'flex-1 flex flex-col p-1 gap-0.5 text-sm items-center active:opacity-50',
+        disabled && 'opacity-50',
+        color === 'error' && 'text-red-500',
+        color === 'success' && 'text-green-500'
+      )}
     >
       {icon}
-      <Typography variant="caption" sx={{ fontSize: '0.75rem' }}>
-        {label}
-      </Typography>
-    </ButtonBase>
+      <p className="text-xs">{label}</p>
+    </button>
   );
 };
 

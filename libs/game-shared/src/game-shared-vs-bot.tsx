@@ -302,7 +302,7 @@ type GameOver<PlayerType> =
       type: 'none';
     };
 
-export const ViewBottomButtonBar = ({
+const ViewBottomButtonBar = ({
   actions,
 }: {
   actions: [string, IconName, () => void][];

@@ -280,3 +280,24 @@ export const viewUserPlayerSlotBar = ({
     ]
   );
 };
+
+export const ViewBottomButtonBar = ({
+  actions,
+}: {
+  actions: [string, ViewNode, () => void][];
+}) => {
+  return (
+    <div className="flex items-center border-t border-neutral-700 w-full">
+      {actions.map(([label, myIcon, onClick]) => (
+        <button
+          key={label}
+          onClick={onClick}
+          className="flex-1 flex flex-col p-1 gap-0.5 text-sm items-center active:opacity-50"
+        >
+          {myIcon}
+          <p className="text-xs">{label}</p>
+        </button>
+      ))}
+    </div>
+  );
+};

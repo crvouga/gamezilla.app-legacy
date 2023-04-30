@@ -1,5 +1,6 @@
 import { keyframes } from '@emotion/react';
 import { Cmd, exhaustive, Sub } from '@gamezilla/core';
+import { ChoiceChips } from '@gamezilla/game-shared';
 import { Alerts, Ctx, UserId } from '@gamezilla/shared';
 import {
   ActionButton,
@@ -15,9 +16,6 @@ import {
   MyButton,
   Paper,
   Sx,
-  ToggleButton,
-  ToggleButtonGroup,
-  Tooltip,
   Typography,
   useTheme,
 } from '@gamezilla/shared/ui';
@@ -43,13 +41,11 @@ import {
   GameOverModel,
   handle,
   initShared,
-  resultToString,
   SetupModel,
   ToBackend,
   ToFrontend,
   toPlayerType,
 } from './vs-user.types';
-import { ChoiceChips } from '@gamezilla/game-shared';
 
 //
 //
