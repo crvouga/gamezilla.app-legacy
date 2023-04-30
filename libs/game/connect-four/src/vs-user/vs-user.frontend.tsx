@@ -12,6 +12,7 @@ import {
   Fade,
   FillBox,
   Icons,
+  MyButton,
   Paper,
   Sx,
   ToggleButton,
@@ -48,6 +49,7 @@ import {
   ToFrontend,
   toPlayerType,
 } from './vs-user.types';
+import { ChoiceChips } from '@gamezilla/game-shared';
 
 //
 //
@@ -544,53 +546,37 @@ const ViewSetup = ({
 
       <Divider sx={{ paddingBottom: 2 }} />
 
-      <Typography
-        color="text.secondary"
-        sx={{ paddingX: 2, paddingTop: 2, paddingBottom: 1 }}
-      >
-        Time Limit
-      </Typography>
+      <div className="px-4">
+        <p className="pb-2 text-neutral-300">Move Time Limit</p>
+        <ChoiceChips
+          choices={Object.values(allMoveTimeLimit)}
+          onSelect={(moveTimeLimit) =>
+            $send([
+              'InputMoveTimeLimit',
+              { moveTimeLimit, userId: ctx.currentUserId },
+            ])
+          }
+          toKey={(moveTimeLimit) => String(moveTimeLimit)}
+          renderChoice={(moveTimeLimit) => `${moveTimeLimit} sec`}
+          selected={model.moveTimeLimit}
+        />
+      </div>
 
-      <Box sx={{ paddingX: 2 }}>
-        <Tooltip title={resultToString(InputMoveTimeLimitResult)}>
-          <ToggleButtonGroup
-            fullWidth
-            value={model.moveTimeLimit}
-            disabled={InputMoveTimeLimitResult.type === 'Err'}
-          >
-            {Object.values(allMoveTimeLimit).map((moveTimeLimit) => (
-              <ToggleButton
-                key={moveTimeLimit}
-                value={moveTimeLimit}
-                onClick={() =>
-                  $send([
-                    'InputMoveTimeLimit',
-                    { moveTimeLimit, userId: ctx.currentUserId },
-                  ])
-                }
-              >
-                {`${moveTimeLimit} sec`}
-              </ToggleButton>
-            ))}
-          </ToggleButtonGroup>
-        </Tooltip>
-      </Box>
+      <div className="flex-1"></div>
 
-      <Box sx={{ flex: 1 }} />
-
-      <Box sx={{ padding: 2, gap: 2, display: 'flex' }}>
-        <Button variant="outlined" fullWidth onClick={goBack}>
+      <div className="flex gap-4 p-4">
+        <MyButton className="flex-1" onClick={goBack}>
           Back
-        </Button>
-        <Button
-          variant="contained"
-          fullWidth
+        </MyButton>
+        <MyButton
+          color="primary"
+          className="flex-1"
           disabled={startGameResult.type === 'Err'}
           onClick={() => $send(['start-game', { userId: ctx.currentUserId }])}
         >
           Start Game
-        </Button>
-      </Box>
+        </MyButton>
+      </div>
     </FillBox>
   );
 };

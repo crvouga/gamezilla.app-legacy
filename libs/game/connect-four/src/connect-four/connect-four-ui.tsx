@@ -175,6 +175,7 @@ const ViewColumnsSvg = ({
                   ? 'not-allowed'
                   : 'pointer',
             }}
+
             onMouseOver={() => {
               if (!disabled && isColumnIndex(columnIndex) && onHover) {
                 onHover(columnIndex);
@@ -248,7 +249,7 @@ const ViewWins = ({ columns }: { columns: Columns }) => {
                 rx={n / 2}
                 stroke="white"
                 fill="transparent"
-                strokeWidth={n / 10}
+                strokeWidth={n / 8}
                 className="pointer-events-none"
               />
             </Transition>,
@@ -269,12 +270,12 @@ const draw = (node: HTMLElement) => {
     'stroke-dasharray': {
       from: length,
       to: length,
-      duration: 700,
+      duration: 500,
     },
     'stroke-dashoffset': {
       from: length,
       to: 0,
-      duration: 700,
+      duration: 500,
     },
   });
 };
@@ -289,12 +290,12 @@ const undraw = (node: HTMLElement) => {
     'stroke-dasharray': {
       from: length,
       to: length,
-      duration: 700,
+      duration: 500,
     },
     'stroke-dashoffset': {
       from: 0,
       to: length,
-      duration: 700,
+      duration: 500,
     },
   });
 };

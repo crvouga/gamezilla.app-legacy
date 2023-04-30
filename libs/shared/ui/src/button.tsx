@@ -43,9 +43,9 @@ export const MyButton = ({
         combo === 'outlined-default' &&
           'border border-neutral-700 text-inherit rounded-md',
         !disabled && combo === 'text-primary' && 'text-blue-500',
-        size === 'lg' && 'text-xl py-3 px-3',
-        size === 'md' && 'text-lg py-1 px-3',
-        size === 'sm' && 'text-md py-1 px-3',
+        size === 'lg' && 'text-xl py-4 px-4',
+        size === 'md' && 'text-lg py-2 px-4',
+        size === 'sm' && 'text-md py-1 px-4',
         disabled && 'opacity-50 cursor-not-allowed bg-neutral-600',
         !disabled && ' active:opacity-60'
       )}
