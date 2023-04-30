@@ -8,7 +8,6 @@ import {
   Divider,
   Drawer,
   Icon,
-  Paper,
   Slider,
   Typography,
   useTheme,
@@ -242,48 +241,23 @@ export const View = ({
 
       */}
 
-      <Box
-        sx={{
-          fontSize: '1.5rem',
-          display: 'flex',
-          alignItems: 'center',
-          p: 2,
-          b: 0,
-        }}
-      >
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Typography color="text.secondary" sx={{ mr: 1 }}>
-            Rating
-          </Typography>
-          <Typography>
-            {status.type === 'loading' ? '...' : status.puzzle.rating}
-          </Typography>
-        </Box>
-        <Typography color="text.secondary" sx={{ flex: 1 }} align="center">
+      <div className="font-sm flex items-center p-4">
+        <div className="flex items-center gap-2">
+          <p className="text-neutral-300">Rating</p>
+          <p>{status.type === 'loading' ? '...' : status.puzzle.rating}</p>
+        </div>
+        <p className="text-neutral-300 flex-1 text-center">
           {status.type === 'loading'
             ? ''
             : `${model.moves.length}  /  ${status.puzzle.correctMoves.length}`}
-        </Typography>
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
+        </p>
+        <div className="flex items-center justify-center gap-2">
           <Icon name="clock" sx={{ mr: 1 }} />
-          <Typography
-            sx={{
-              fontFamily: 'monospace',
-              fontWeight: 900,
-              fontSize: '1.25rem',
-            }}
-            color={'text.secondary'}
-          >
+          <p className="font-mono font-bold text-lg  text-neutral-300">
             {duration ? formatDuration(duration) : '-:--'}
-          </Typography>
-        </Box>
-      </Box>
+          </p>
+        </div>
+      </div>
 
       <AspectRatio aspectRatio={1}>
         <Skeleton
@@ -318,18 +292,12 @@ export const View = ({
         )}
       </AspectRatio>
 
-      <Box
-        sx={{
-          flex: 1,
-        }}
-      ></Box>
-
-      <Divider />
+      <div className="flex-1"></div>
 
       {ctx.currentUserId === ctx.hostId && (
-        <Paper sx={{ display: 'flex' }}>
+        <div className="w-full flex items-center border-t border-neutral-700">
           <ViewActionButtons model={model} onClose={onClose} $send={$send} />
-        </Paper>
+        </div>
       )}
 
       <Drawer
@@ -500,9 +468,7 @@ const ViewActionButtons = ({
           <ActionButton
             icon={<Icon name="restart" />}
             label="Retry"
-            sx={{
-              color: 'error.main',
-            }}
+            color="error"
             onClick={() => {
               $send({ t: 'retry' });
             }}
