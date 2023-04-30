@@ -507,13 +507,6 @@ const ViewSetup = ({
     ['start-game', { userId: ctx.currentUserId }],
     model
   );
-  const InputMoveTimeLimitResult = handle(
-    [
-      'InputMoveTimeLimit',
-      { moveTimeLimit: model.moveTimeLimit, userId: ctx.currentUserId },
-    ],
-    model
-  );
 
   return (
     <FillBox>
