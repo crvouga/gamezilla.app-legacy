@@ -30,24 +30,20 @@ const initConstant = (value: number): Model => {
   };
 };
 
-const easeOutBounce = (
-  { n1 = 7.5625, d1 = 2.75 }: { n1?: number; d1?: number },
-  x: number
-): number => {
+function easeOutBounce(x: number): number {
+  const n1 = 7.5625;
+  const d1 = 2.75;
+
   if (x < 1 / d1) {
     return n1 * x * x;
-  }
-
-  if (x < 2 / d1) {
+  } else if (x < 2 / d1) {
     return n1 * (x -= 1.5 / d1) * x + 0.75;
-  }
-
-  if (x < 2.5 / d1) {
+  } else if (x < 2.5 / d1) {
     return n1 * (x -= 2.25 / d1) * x + 0.9375;
+  } else {
+    return n1 * (x -= 2.625 / d1) * x + 0.984375;
   }
-
-  return n1 * (x -= 2.625 / d1) * x + 0.984375;
-};
+}
 
 function easeOutQuint(x: number): number {
   return 1 - Math.pow(1 - x, 5);
@@ -77,7 +73,7 @@ const ease = (easing: Easing, x: number): number => {
       return easeOutBack(x);
 
     case 'ease-out-bounce':
-      return easeOutBounce(easing, x);
+      return 1 - bounceIn(1 - x);
 
     case 'ease-out-quint':
       return easeOutQuint(x);
@@ -92,6 +88,22 @@ const ease = (easing: Easing, x: number): number => {
       return x;
   }
 };
+
+function bounceIn(timeFraction: number): number {
+  let a = 0;
+  let b = 1;
+
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    if (timeFraction >= (7 - 4 * a) / 11) {
+      return (
+        -Math.pow((11 - 6 * a - 11 * timeFraction) / 4, 2) + Math.pow(b, 2)
+      );
+    }
+    a += b;
+    b /= 2;
+  }
+}
 
 const step = (now: Posix, model: Model): Model => {
   const elapsedMs = now - model.startMs;
@@ -140,4 +152,60 @@ export const Ease = {
   initConstant,
   step,
   ease,
+};
+
+type AttributeEaseConfig = {
+  min?: number;
+  max?: number;
+  from: number;
+  to: number;
+  duration: number;
+  easing?: Easing;
+  delay?: number;
+};
+export const easeAttrs = (
+  node: { setAttribute: (attribute: string, value: string) => void },
+  attributes: {
+    [attribute: string]: AttributeEaseConfig;
+  }
+) => {
+  const startTime = performance.now();
+  const keys = Object.keys(attributes);
+  const keyLength = keys.length;
+  let loop = false;
+  let i = 0;
+  let elapsed: number;
+  let progress: number;
+  let eased: number;
+  let clamped: number;
+  let c: AttributeEaseConfig;
+
+  function step(currentTime: number) {
+    loop = false;
+    for (i = 0; i < keyLength; i++) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      c = attributes[keys[i]];
+      elapsed = currentTime - startTime - (c.delay || 0);
+      progress = Math.max(0, Math.min(elapsed / c.duration, 1));
+      eased =
+        c.from +
+        (c.to - c.from) * ease(c.easing || { type: 'linear' }, progress);
+      clamped = Math.min(
+        c.max || Infinity,
+        Math.max(c.min || -Infinity, eased)
+      );
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      node.setAttribute(keys[i], String(clamped));
+
+      loop = loop || progress < 1;
+    }
+
+    if (loop) {
+      requestAnimationFrame(step);
+    }
+  }
+
+  requestAnimationFrame(step);
 };

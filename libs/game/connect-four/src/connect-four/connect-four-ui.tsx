@@ -1,4 +1,4 @@
-import { Ease, rescale, Uuid } from '@gamezilla/core';
+import { easeAttrs, rescale, Uuid } from '@gamezilla/core';
 import { SvgIcon, Sx } from '@gamezilla/shared/ui';
 import { useLayoutEffect, useRef } from 'react';
 import { Transition, TransitionGroup } from 'react-transition-group';
@@ -90,70 +90,13 @@ export const ViewColumns = ({
   }
 };
 
-const exitHandler =
-  ({
-    startY,
-    endY,
-    durationMs,
-  }: {
-    startY: number;
-    endY: number;
-    durationMs: number;
-    delayMs?: number;
-  }) =>
-  (circle: HTMLElement) => {
-    const startTime = performance.now();
-
-    const animate = (currentTime: number) => {
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / durationMs, 1);
-
-      const newY =
-        startY +
-        (endY - startY) * Ease.ease({ type: 'ease-in-back' }, progress);
-
-      circle.setAttribute('cy', String(newY));
-
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      }
-    };
-
-    requestAnimationFrame(animate);
-  };
-
-const enterHandler =
-  ({
-    startY,
-    endY,
-    durationMs,
-    delayMs = 0,
-  }: {
-    startY: number;
-    endY: number;
-    durationMs: number;
-    delayMs?: number;
-  }) =>
-  (circle: HTMLElement) => {
-    const startTime = performance.now() + delayMs;
-
-    const animate = (currentTime: number) => {
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / durationMs, 1);
-
-      const newY =
-        startY +
-        (endY - startY) * Ease.ease({ type: 'ease-out-quint' }, progress);
-
-      circle.setAttribute('cy', String(newY));
-
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      }
-    };
-
-    requestAnimationFrame(animate);
-  };
+type SvgIds = {
+  playerOneGradient: string;
+  playerTwoGradient: string;
+  holePattern: string;
+  columnGradient: string;
+  holeMask: string;
+};
 
 const ViewColumnsSvg = ({
   columns,
@@ -174,81 +117,31 @@ const ViewColumnsSvg = ({
   const playerTwoFill = `url(#${ids.playerTwoGradient})`;
 
   return (
-    <svg width="100%" viewBox={'0 0 7 6'}>
-      <defs>
-        <pattern
-          id={ids.holePattern}
-          patternUnits="userSpaceOnUse"
-          width={1}
-          height={1}
-        >
-          <circle cx={0.5} cy={0.5} r={0.425} fill="black"></circle>
-        </pattern>
+    <svg width="100%" viewBox={`0 0 ${COLUMN_COUNT} ${MAX_COLUMN_HEIGHT}`}>
+      <SvgDefs ids={ids} />
+      <rect
+        x={0}
+        y={0}
+        width={COLUMN_COUNT}
+        height={MAX_COLUMN_HEIGHT}
+        fill={gameTheme.primary.darker}
+      />
 
-        <mask id={ids.holeMask}>
-          <rect
-            x={0}
-            y={0}
-            width={COLUMN_COUNT}
-            height={MAX_COLUMN_HEIGHT}
-            fill="white"
-          ></rect>
-          <rect
-            x={0}
-            y={0}
-            width={COLUMN_COUNT}
-            height={MAX_COLUMN_HEIGHT}
-            fill={`url(#${ids.holePattern})`}
-          ></rect>
-        </mask>
-
-        <linearGradient id={ids.columnGradient} gradientTransform="rotate(90)">
-          <stop offset="0%" stopColor={gameTheme.primary.light} />
-          <stop offset="100%" stopColor={gameTheme.primary.dark} />
-        </linearGradient>
-
-        <linearGradient
-          id={ids.playerOneGradient}
-          gradientTransform="rotate(90)"
-        >
-          <stop offset="0%" stopColor={gameTheme.PlayerOne.light} />
-          <stop offset="100%" stopColor={gameTheme.PlayerOne.dark} />
-        </linearGradient>
-
-        <linearGradient
-          id={ids.playerTwoGradient}
-          gradientTransform="rotate(90)"
-        >
-          <stop offset="0%" stopColor={gameTheme.PlayerTwo.light} />
-          <stop offset="100%" stopColor={gameTheme.PlayerTwo.dark} />
-        </linearGradient>
-      </defs>
-      <rect x={0} y={0} width={7} height={6} fill={gameTheme.primary.darker} />
-
-      {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-      {/* @ts-ignore */}
       <TransitionGroup component={'g'}>
-        {columns.map((column, columnIndex) =>
-          column.map((disc, rowIndex) => (
+        {columns.flatMap((column, x) =>
+          column.map((disc, y) => (
             <Transition
               component="g"
-              key={[columnIndex, rowIndex, disc].join(', ')}
-              timeout={1000}
-              onEnter={enterHandler({
-                startY: -1,
-                endY: MAX_COLUMN_HEIGHT - rowIndex - 0.5,
-                durationMs: 100 + 200 * (1 - rowIndex / MAX_COLUMN_HEIGHT),
-              })}
-              onExit={exitHandler({
-                startY: MAX_COLUMN_HEIGHT - rowIndex - 0.5,
-                endY: MAX_COLUMN_HEIGHT - rowIndex - 0.5 + MAX_COLUMN_HEIGHT,
-                durationMs: 750,
-                delayMs: 0,
-              })}
+              key={`${x} ${y} ${disc}`}
+              addEndListener={() => {
+                //
+              }}
+              onEnter={onEnter({ y })}
+              onExit={onExit({ x, y })}
             >
               <circle
-                cx={columnIndex + 0.5}
-                cy={MAX_COLUMN_HEIGHT - rowIndex - 0.5}
+                cx={x + 0.5}
+                cy={MAX_COLUMN_HEIGHT - y - 0.5}
                 r={0.5}
                 fill={disc === 'PlayerOne' ? playerOneFill : playerTwoFill}
               />
@@ -256,6 +149,7 @@ const ViewColumnsSvg = ({
           ))
         )}
       </TransitionGroup>
+
       <rect
         x={0}
         y={0}
@@ -293,6 +187,80 @@ const ViewColumnsSvg = ({
         />
       ))}
     </svg>
+  );
+};
+
+const onEnter =
+  ({ y }: { y: number }) =>
+  (node: HTMLElement) => {
+    easeAttrs(node, {
+      cy: {
+        from: -1,
+        to: MAX_COLUMN_HEIGHT - y - 0.5,
+        duration: 200 + 300 * (1 - y / MAX_COLUMN_HEIGHT),
+        easing: { type: 'ease-out-bounce' },
+      },
+    });
+  };
+
+const onExit =
+  ({ x, y }: { x: number; y: number }) =>
+  (node: HTMLElement) => {
+    easeAttrs(node, {
+      cy: {
+        from: MAX_COLUMN_HEIGHT - y - 0.5,
+        to: MAX_COLUMN_HEIGHT - y - 0.5 + MAX_COLUMN_HEIGHT,
+        duration: 750,
+        easing: { type: 'ease-in-back' },
+        delay: (x / COLUMN_COUNT) * 500,
+      },
+    });
+  };
+
+const SvgDefs = ({ ids }: { ids: SvgIds }) => {
+  return (
+    <defs>
+      <pattern
+        id={ids.holePattern}
+        patternUnits="userSpaceOnUse"
+        width={1}
+        height={1}
+      >
+        <circle cx={0.5} cy={0.5} r={0.425} fill="black"></circle>
+      </pattern>
+
+      <mask id={ids.holeMask}>
+        <rect
+          x={0}
+          y={0}
+          width={COLUMN_COUNT}
+          height={MAX_COLUMN_HEIGHT}
+          fill="white"
+        ></rect>
+        <rect
+          x={0}
+          y={0}
+          width={COLUMN_COUNT}
+          height={MAX_COLUMN_HEIGHT}
+          fill={`url(#${ids.holePattern})`}
+        ></rect>
+      </mask>
+
+      <linearGradient id={ids.columnGradient} gradientTransform="rotate(90)">
+        <stop offset="0%" stopColor={gameTheme.primary.light} />
+        <stop offset="100%" stopColor={gameTheme.primary.dark} />
+      </linearGradient>
+
+      <linearGradient id={ids.playerOneGradient} gradientTransform="rotate(90)">
+        <stop offset="0%" stopColor={gameTheme.PlayerOne.light} />
+        <stop offset="100%" stopColor={gameTheme.PlayerOne.dark} />
+      </linearGradient>
+
+      <linearGradient id={ids.playerTwoGradient} gradientTransform="rotate(90)">
+        <stop offset="0%" stopColor={gameTheme.PlayerTwo.light} />
+        <stop offset="100%" stopColor={gameTheme.PlayerTwo.dark} />
+      </linearGradient>
+    </defs>
   );
 };
 

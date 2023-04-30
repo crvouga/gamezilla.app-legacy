@@ -1,4 +1,4 @@
-import { Ease, Easing, Hex } from '@gamezilla/core';
+import { Hex, easeAttrs } from '@gamezilla/core';
 import { SvgIcon, Sx } from '@gamezilla/shared/ui';
 import { Transition, TransitionGroup } from 'react-transition-group';
 import {
@@ -158,7 +158,7 @@ export const ViewBoard = ({
                 key={[x, y, stone].join(', ')}
                 timeout={1000}
                 onEnter={(node: HTMLElement) =>
-                  easeHtmlAttrs(node, {
+                  easeAttrs(node, {
                     r: {
                       min: 0,
                       from: 0,
@@ -169,7 +169,7 @@ export const ViewBoard = ({
                   })
                 }
                 onExit={(node: HTMLElement) =>
-                  easeHtmlAttrs(node, {
+                  easeAttrs(node, {
                     r: {
                       from: 0.45,
                       to: 0,
@@ -207,57 +207,6 @@ export const ViewBoard = ({
       </g>
     </svg>
   );
-};
-
-const easeHtmlAttrs = (
-  node: HTMLElement,
-  attributes: {
-    [attribute: string]: {
-      min?: number;
-      max?: number;
-      from: number;
-      to: number;
-      duration: number;
-      easing: Easing;
-    };
-  }
-) => {
-  const startTime = performance.now();
-  const step = (currentTime: number) => {
-    let loop = false;
-    for (const attribute in attributes) {
-      const config = attributes[attribute];
-
-      if (!config) {
-        continue;
-      }
-
-      const {
-        from,
-        to,
-        min = -Infinity,
-        max = Infinity,
-        duration,
-        easing,
-      } = config;
-
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const eased = from + (to - from) * Ease.ease(easing, progress);
-      const clamped = Math.min(max, Math.max(min, eased));
-
-      node.setAttribute(attribute, String(clamped));
-
-      if (progress < 1) {
-        loop = true;
-      }
-    }
-
-    if (loop) {
-      requestAnimationFrame(step);
-    }
-  };
-  requestAnimationFrame(step);
 };
 
 const range = ({
