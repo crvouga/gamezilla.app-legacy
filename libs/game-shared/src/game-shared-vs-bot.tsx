@@ -1,6 +1,5 @@
 import { Ctx, UserId } from '@gamezilla/shared';
 import {
-  cn,
   Avatar,
   Box,
   CircularProgress,
@@ -12,6 +11,7 @@ import {
   Sx,
   Typography,
   ViewNode,
+  cn,
   icon,
 } from '@gamezilla/shared/ui';
 import { ReactNode } from 'react';
@@ -462,21 +462,7 @@ export const ViewVsBotGameScreen = <PlayerType,>({
           {feedback}
         </p>
 
-        <div className="relative flex w-full">
-          {viewBoard()}
-          {gameOver.type !== 'none' && (
-            <div
-              className={
-                'absolute inset-0 w-full h-full max-h-full flex flex-col justify-center items-center text-white bg-black/40'
-              }
-            >
-              {viewGameOverMessage({
-                viewPlayerIcon,
-                gameOver,
-              })}
-            </div>
-          )}
-        </div>
+        {viewBoard()}
       </div>
 
       {!isSpectating && (
@@ -486,41 +472,4 @@ export const ViewVsBotGameScreen = <PlayerType,>({
       )}
     </div>
   );
-};
-
-const viewGameOverMessage = <PlayerType,>({
-  gameOver,
-  viewPlayerIcon,
-}: {
-  gameOver: GameOver<PlayerType>;
-  viewPlayerIcon: (props: { playerType: PlayerType; sx: Sx }) => ViewNode;
-}) => {
-  if (gameOver.type === 'draw') {
-    return <Typography variant="h1">Draw</Typography>;
-  }
-
-  if (gameOver.type === 'winner') {
-    return (
-      <Typography
-        variant="h1"
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 2,
-          fontSize: '4rem',
-        }}
-      >
-        {viewPlayerIcon({
-          sx: {
-            width: '4rem',
-            height: '4rem',
-          },
-          playerType: gameOver.winner,
-        })}
-        Won
-      </Typography>
-    );
-  }
-  return <Typography variant="h1">Game Over</Typography>;
 };

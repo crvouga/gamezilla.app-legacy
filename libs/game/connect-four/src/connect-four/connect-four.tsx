@@ -1,6 +1,13 @@
-import { eq, isSubset, Result, shuffle, Task, unique } from '@gamezilla/core';
-
-const { Err, Ok } = Result;
+import {
+  Err,
+  Ok,
+  Result,
+  Task,
+  eq,
+  isSubset,
+  shuffle,
+  unique,
+} from '@gamezilla/core';
 
 //
 //
@@ -249,7 +256,7 @@ export const toStatus = (columns: Columns): Status => {
 //
 //
 
-type Position = { x: number; y: number };
+export type Position = { x: number; y: number };
 
 const toKey = ({
   x,
@@ -282,9 +289,9 @@ const directions: [number, number][] = [
   [-1, 1],
 ];
 
-type Win = Position[];
+export type Win = [Position, Position, Position, Position, ...Position[]];
 
-export const toWins = (columns: Columns): Position[][] => {
+export const toWins = (columns: Columns): Win[] => {
   const wins: Win[] = [];
 
   const visited = new Set<string>();
@@ -320,7 +327,7 @@ export const toWins = (columns: Columns): Position[][] => {
           position = { x: position.x + dx, y: position.y + dy };
         }
 
-        if (win.length >= minWinLength) {
+        if (isWin(win)) {
           wins.push(win);
         }
       }
@@ -328,6 +335,10 @@ export const toWins = (columns: Columns): Position[][] => {
   }
 
   return unique(isSameWin, wins);
+};
+
+const isWin = (positions: Position[]): positions is Win => {
+  return positions.length >= minWinLength;
 };
 
 const isSameWin = (a: Win, b: Win) => isSubset(eq, a, b) && isSubset(eq, b, a);

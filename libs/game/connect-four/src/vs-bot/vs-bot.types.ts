@@ -1,20 +1,17 @@
-import { exhaustive, Result } from '@gamezilla/core';
+import { Err, Ok, Result, exhaustive } from '@gamezilla/core';
 import { UserId } from '@gamezilla/shared';
-import { z } from 'zod';
 import {
   BestMoveProblem,
   BestMoveResult,
   ColumnIndex,
   Columns,
+  MoveProblem,
+  PlayerType,
   emptyColumns,
   move,
-  MoveProblem,
   opposite,
-  PlayerType,
   toStatus,
 } from '../connect-four/connect-four';
-
-const { Err, Ok } = Result;
 
 //
 //
@@ -30,34 +27,6 @@ export type SetupModel = {
   botLevel: BotLevel;
   player: UserId | 'none';
 };
-
-const PlayerType = z.union([z.literal('PlayerOne'), z.literal('PlayerTwo')]);
-
-const BotLevel = z.union([
-  z.literal('Easy'),
-  z.literal('Medium'),
-  z.literal('Hard'),
-]);
-
-const SetupModel = z.object({
-  type: z.literal('Setup'),
-  userPlayerType: PlayerType,
-  botLevel: BotLevel,
-  player: z.union([z.string(), z.literal('none')]),
-});
-
-const Slot = z.union([PlayerType, z.literal('none')]);
-
-const Columns = z.array(z.array(Slot));
-
-const GameModel = z.object({
-  type: z.literal('game'),
-  userPlayerType: PlayerType,
-  botLevel: BotLevel,
-  // player: UserId,
-  columns: Columns,
-});
-const SharedModel = z.discriminatedUnion('type', [SetupModel, GameModel]);
 
 export type GameModel = {
   type: 'game';
@@ -160,11 +129,6 @@ export type ToFrontend =
   | ['bot-move', BotMoveResult];
 
 export type ToBackend = Req;
-
-const Req = z.union([
-  z.tuple([z.literal('start-playing'), z.object({ userId: z.string() })]),
-  z.tuple([z.literal('stop-playing'), z.object({ userId: z.string() })]),
-]);
 
 export type Req =
   | ['start-playing']

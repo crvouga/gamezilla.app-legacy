@@ -1,6 +1,6 @@
 import { easeAttrs, rescale, Uuid } from '@gamezilla/core';
 import { SvgIcon, Sx } from '@gamezilla/shared/ui';
-import { useLayoutEffect, useRef } from 'react';
+import { useLayoutEffect, useMemo, useRef } from 'react';
 import { Transition, TransitionGroup } from 'react-transition-group';
 import {
   COLUMN_COUNT,
@@ -9,6 +9,8 @@ import {
   isColumnIndex,
   MAX_COLUMN_HEIGHT,
   PlayerType,
+  Position,
+  toWins,
 } from './connect-four';
 
 export const gameTheme = {
@@ -119,75 +121,182 @@ const ViewColumnsSvg = ({
   return (
     <svg width="100%" viewBox={`0 0 ${COLUMN_COUNT} ${MAX_COLUMN_HEIGHT}`}>
       <SvgDefs ids={ids} />
-      <rect
-        x={0}
-        y={0}
-        width={COLUMN_COUNT}
-        height={MAX_COLUMN_HEIGHT}
-        fill={gameTheme.primary.darker}
-      />
 
-      <TransitionGroup component={'g'}>
-        {columns.flatMap((column, x) =>
-          column.map((disc, y) => (
+      <g transform={`translate(0, ${MAX_COLUMN_HEIGHT}) scale(1,-1)`}>
+        <rect
+          x={0}
+          y={0}
+          width={COLUMN_COUNT}
+          height={MAX_COLUMN_HEIGHT}
+          fill={gameTheme.primary.darker}
+        />
+
+        <TransitionGroup component={'g'} transform="translate(0.5, 0.5)">
+          {columns.flatMap((column, x) =>
+            column.map((disc, y) => (
+              <Transition
+                component="g"
+                key={`${x} ${y} ${disc}`}
+                addEndListener={() => {
+                  //
+                }}
+                onEnter={onEnter({ y })}
+                onExit={onExit({ x, y })}
+              >
+                <circle
+                  cx={x}
+                  cy={y}
+                  r={0.5}
+                  fill={disc === 'PlayerOne' ? playerOneFill : playerTwoFill}
+                />
+              </Transition>
+            ))
+          )}
+        </TransitionGroup>
+
+        <rect
+          x={0}
+          y={0}
+          width={COLUMN_COUNT}
+          height={MAX_COLUMN_HEIGHT}
+          fill={`url(#${ids.columnGradient})`}
+          mask={`url(#${ids.holeMask})`}
+        />
+
+        <ViewWins columns={columns} />
+
+        {[...new Array(COLUMN_COUNT)].map((_, columnIndex) => (
+          <rect
+            style={{
+              cursor:
+                disabled || !onClick
+                  ? undefined
+                  : (columns[columnIndex]?.length ?? 0) >= MAX_COLUMN_HEIGHT
+                  ? 'not-allowed'
+                  : 'pointer',
+            }}
+            onMouseOver={() => {
+              if (!disabled && isColumnIndex(columnIndex) && onHover) {
+                onHover(columnIndex);
+              }
+            }}
+            onClick={() => {
+              if (!disabled && isColumnIndex(columnIndex) && onClick) {
+                onClick(columnIndex);
+              }
+            }}
+            key={columnIndex}
+            x={columnIndex}
+            y={0}
+            width={1}
+            height={MAX_COLUMN_HEIGHT}
+            fill="transparent"
+          />
+        ))}
+      </g>
+    </svg>
+  );
+};
+
+/* Have to increase the viewBox so that the draw animation is smooth >:-{ */
+const n = 1000;
+
+const distance = (a: Position, b: Position): number =>
+  ((a.x - b.x) ** 2 + (a.y - b.y) ** 2) ** 0.5;
+
+const angleBetween = (a: Position, b: Position): number =>
+  (Math.atan2(b.y - a.y, b.x - a.x) * 180) / Math.PI;
+
+const ViewWins = ({ columns }: { columns: Columns }) => {
+  const wins = useMemo(() => toWins(columns), [columns]);
+
+  return (
+    <svg
+      x={0}
+      y={0}
+      width={COLUMN_COUNT}
+      height={MAX_COLUMN_HEIGHT}
+      viewBox={`0 0 ${COLUMN_COUNT * n} ${MAX_COLUMN_HEIGHT * n}`}
+    >
+      <TransitionGroup component="g">
+        {wins.flatMap((win, i) => {
+          const westMost = win[0];
+          const eastMost = win[win.length - 1];
+          if (!eastMost) {
+            return [];
+          }
+
+          const theta = angleBetween(westMost, eastMost);
+          const originX = (westMost.x + 0.5) * n;
+          const originY = (westMost.y + 0.5) * n;
+          const width = (distance(westMost, eastMost) + 1) * n;
+          return [
             <Transition
-              component="g"
-              key={`${x} ${y} ${disc}`}
+              key={i}
               addEndListener={() => {
                 //
               }}
-              onEnter={onEnter({ y })}
-              onExit={onExit({ x, y })}
+              onEnter={draw}
+              onExit={undraw}
             >
-              <circle
-                cx={x + 0.5}
-                cy={MAX_COLUMN_HEIGHT - y - 0.5}
-                r={0.5}
-                fill={disc === 'PlayerOne' ? playerOneFill : playerTwoFill}
+              <rect
+                transform={`rotate(${theta} ${originX} ${originY})`}
+                x={westMost.x * n}
+                y={westMost.y * n}
+                width={width}
+                height={n}
+                rx={n / 2}
+                stroke="white"
+                fill="transparent"
+                strokeWidth={n / 10}
+                className="pointer-events-none"
               />
-            </Transition>
-          ))
-        )}
+            </Transition>,
+          ];
+        })}
       </TransitionGroup>
-
-      <rect
-        x={0}
-        y={0}
-        width={COLUMN_COUNT}
-        height={MAX_COLUMN_HEIGHT}
-        fill={`url(#${ids.columnGradient})`}
-        mask={`url(#${ids.holeMask})`}
-      />
-      {[...new Array(COLUMN_COUNT)].map((_, columnIndex) => (
-        <rect
-          style={{
-            cursor:
-              disabled || !onClick
-                ? undefined
-                : (columns[columnIndex]?.length ?? 0) >= MAX_COLUMN_HEIGHT
-                ? 'not-allowed'
-                : 'pointer',
-          }}
-          onMouseOver={() => {
-            if (!disabled && isColumnIndex(columnIndex) && onHover) {
-              onHover(columnIndex);
-            }
-          }}
-          onClick={() => {
-            if (!disabled && isColumnIndex(columnIndex) && onClick) {
-              onClick(columnIndex);
-            }
-          }}
-          key={columnIndex}
-          x={columnIndex}
-          y={0}
-          width={1}
-          height={MAX_COLUMN_HEIGHT}
-          fill="transparent"
-        />
-      ))}
     </svg>
   );
+};
+
+const draw = (node: HTMLElement) => {
+  if (!(node instanceof SVGRectElement)) {
+    return;
+  }
+
+  const length = node.getTotalLength();
+  easeAttrs(node, {
+    'stroke-dasharray': {
+      from: length,
+      to: length,
+      duration: 700,
+    },
+    'stroke-dashoffset': {
+      from: length,
+      to: 0,
+      duration: 700,
+    },
+  });
+};
+
+const undraw = (node: HTMLElement) => {
+  if (!(node instanceof SVGRectElement)) {
+    return;
+  }
+
+  const length = node.getTotalLength();
+  easeAttrs(node, {
+    'stroke-dasharray': {
+      from: length,
+      to: length,
+      duration: 700,
+    },
+    'stroke-dashoffset': {
+      from: 0,
+      to: length,
+      duration: 700,
+    },
+  });
 };
 
 const onEnter =
@@ -195,8 +304,8 @@ const onEnter =
   (node: HTMLElement) => {
     easeAttrs(node, {
       cy: {
-        from: -1,
-        to: MAX_COLUMN_HEIGHT - y - 0.5,
+        from: MAX_COLUMN_HEIGHT + 1,
+        to: y,
         duration: 200 + 300 * (1 - y / MAX_COLUMN_HEIGHT),
         easing: { type: 'ease-out-bounce' },
       },
@@ -208,8 +317,8 @@ const onExit =
   (node: HTMLElement) => {
     easeAttrs(node, {
       cy: {
-        from: MAX_COLUMN_HEIGHT - y - 0.5,
-        to: MAX_COLUMN_HEIGHT - y - 0.5 + MAX_COLUMN_HEIGHT,
+        from: y,
+        to: y - MAX_COLUMN_HEIGHT,
         duration: 750,
         easing: { type: 'ease-in-back' },
         delay: (x / COLUMN_COUNT) * 500,
