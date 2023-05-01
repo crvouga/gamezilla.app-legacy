@@ -1,10 +1,10 @@
 import { Cmd, RemoteData, Sub } from '@gamezilla/core';
 import {
   AppMsg,
-  ViewCtx,
   ProfileAvatar,
   Route,
   UserId,
+  ViewCtx,
 } from '@gamezilla/shared';
 import {
   Alert,
@@ -30,7 +30,13 @@ import {
   ViewNode,
 } from '@gamezilla/shared/ui';
 import { AlertTitle } from '@mui/material';
-import { FrontendModel, FrontendMsg, ToFrontend } from './profile.types';
+import {
+  FrontendModel,
+  FrontendMsg,
+  Profile,
+  ToBackend,
+  ToFrontend,
+} from './profile.types';
 
 //
 //
@@ -82,10 +88,35 @@ export const updateFromBackend = ({
   model: Model;
 }): {
   model: Model;
+  cmd?: Cmd<Msg>;
 } => {
   switch (msg.t) {
     default: {
-      return { model };
+      if (msg.result.type === 'Err') {
+        return { model };
+      }
+
+      const byId = msg.result.value.reduce<{ [userId: UserId]: Profile }>(
+        (acc, profile) => {
+          return {
+            ...acc,
+            [profile.userId]: profile,
+          };
+        },
+        {}
+      );
+
+      const modelNew: Model = {
+        ...model,
+        profiles: {
+          ...model.profiles,
+          ...byId,
+        },
+      };
+
+      return {
+        model: modelNew,
+      };
     }
   }
 };
@@ -93,9 +124,11 @@ export const updateFromBackend = ({
 export const updateFromApp = ({
   msg,
   model,
+  sendToBackend,
 }: {
   msg: AppMsg;
   model: Model;
+  sendToBackend: (m: ToBackend) => Cmd<Msg>;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -109,7 +142,10 @@ export const updateFromApp = ({
   }
 
   if (msg.t === 'user-logged-in') {
-    return { model };
+    return {
+      model,
+      cmd: sendToBackend({ t: 'find-else-create', userId: msg.currentUserId }),
+    };
   }
 
   return { model };
