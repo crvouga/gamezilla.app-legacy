@@ -1,4 +1,4 @@
-import { Cmd, RemoteData, Sub } from '@gamezilla/core';
+import { Cmd, RemoteData } from '@gamezilla/core';
 import {
   AppMsg,
   ProfileAvatar,
@@ -138,6 +138,14 @@ export const updateFromApp = ({
     if (route.t !== 'profile') {
       return { model };
     }
+
+    if (route.c.t === 'profile') {
+      return {
+        model,
+        cmd: sendToBackend({ t: 'find-many', userIds: [route.c.userId] }),
+      };
+    }
+
     return { model };
   }
 
@@ -154,19 +162,7 @@ export const updateFromApp = ({
 //
 //
 //
-// subscriptions
-//
-//
-//
-
-export const subscriptions = (_model: Model): Sub<Msg> => {
-  return Sub.None;
-};
-
-//
-//
-//
-// view
+// View
 //
 //
 //
@@ -237,7 +233,7 @@ const ViewProfileScreen = ({
   if (!profile) {
     return (
       <div className="w-full h-full flex items-center justify-center">
-        <IconSpinner />
+        <IconSpinner className="w-12 h-12" />
       </div>
     );
   }

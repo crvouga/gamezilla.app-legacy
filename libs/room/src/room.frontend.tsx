@@ -22,12 +22,12 @@ import {
   FillBox,
   Header,
   HeaderBackButton,
-  IconButton,
   IconGamepad,
   IconHome,
   Icons,
   IconSpinner,
   IconUserGroup,
+  IconXMark,
   MyAvatar,
   MyButton,
   Paper,
@@ -987,7 +987,7 @@ const ViewRoomCard = ({
           LIVE
         </p>
         {isCurrentRoom && (
-          <p className="block text-xs font-thin opacity-50 italic">
+          <p className="block text-xs font-light opacity-50 italic">
             Current Room
           </p>
         )}
@@ -1316,7 +1316,7 @@ const ViewRoomPeople = ({
   );
 };
 
-export const ViewBar = ({
+export const ViewBottomBar = ({
   ctx,
   model,
   $send,
@@ -1325,8 +1325,6 @@ export const ViewBar = ({
   model: Model;
   $send: (msg: Msg) => void;
 }) => {
-  const theme = useTheme();
-
   const user = model.users[ctx.currentUserId];
 
   if (!user) {
@@ -1346,70 +1344,39 @@ export const ViewBar = ({
   ).length;
 
   return (
-    <Box
-      key={room.roomId}
-      sx={{
-        width: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        borderTop: `3px solid ${theme.palette.primary.main}`,
-        maxWidth: '100%',
-        overflow: 'hidden',
-      }}
-    >
-      <ButtonBase
-        sx={{
-          flex: 1,
-          display: 'flex',
-          alignItems: 'center',
-          overflow: 'hidden',
-        }}
+    <div className="text-inherit border-t-2 border-blue-500 overflow-hidden w-full flex items-center">
+      <button
+        className="flex-1 flex items-center overflow-hidden"
         onClick={() => {
-          ctx.$push({
-            t: 'room',
-            c: { t: 'room', roomId: room.roomId },
-          });
+          ctx.$push({ t: 'room', c: { t: 'room', roomId: room.roomId } });
         }}
       >
-        <Box sx={{ p: 1, mr: 1 }}>
+        <div className="p-2 mr-2">
           {!game && (
-            <Avatar
+            <MyAvatar
               src={hostProfile?.avatarUrl ?? ''}
-              variant="rounded"
-              sx={{ width: 48, height: 48 }}
+              alt="Host Avatar"
+              className="w-12 h-12"
             />
           )}
-
           {game && (
-            <Box
-              sx={{
-                borderRadius: 1,
-                overflow: 'hidden',
-                width: 48,
-                height: 48,
-              }}
-            >
+            <div className="rounded overflow-hidden w-12 h-12">
               {viewCoverArt(game.t)}
-            </Box>
+            </div>
           )}
-        </Box>
+        </div>
 
-        <Box sx={{ overflow: 'hidden', flex: 1 }}>
-          <Typography noWrap align="left" color="primary.main">
+        <div className="overflow-hidden flex-1 flex flex-col gap-1">
+          <p className="text-left">
             {hostProfile ? `${hostProfile.username}'s room` : '...'}
-          </Typography>
-          <Typography
-            noWrap
-            align="left"
-            color="text.secondary"
-            variant="subtitle2"
-          >
+          </p>
+          <p className="text-xs text-left text-neutral-300">
             {userCount} in room
-          </Typography>
-        </Box>
-      </ButtonBase>
+          </p>
+        </div>
+      </button>
 
-      <IconButton
+      <button
         onClick={() => {
           if (ctx.currentUserId === room.hostId) {
             $send({ t: 'destroy', userId: ctx.currentUserId });
@@ -1417,10 +1384,10 @@ export const ViewBar = ({
           }
           $send({ t: 'leave', userId: ctx.currentUserId });
         }}
-        sx={{ marginRight: 1 }}
+        className="mr-4"
       >
-        <Icons.Close />
-      </IconButton>
-    </Box>
+        <IconXMark className="w-8 h-8" />
+      </button>
+    </div>
   );
 };

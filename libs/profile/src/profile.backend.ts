@@ -66,26 +66,30 @@ export const updateFromFrontend = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (msg.t === 'find-else-create') {
-    return {
-      model,
-      cmd: p(
-        handler({ msg }),
-        Cmd.perform((result) => ({
-          ...msg,
-          result,
-        })),
-        Cmd.chain((res) => sendToClient(res))
-      ),
-    };
-  }
-
-  return { model };
+  return {
+    model,
+    cmd: p(
+      handler({ msg }),
+      Cmd.perform((result) => ({
+        ...msg,
+        result,
+      })),
+      Cmd.chain((res) => sendToClient(res))
+    ),
+  };
 };
 
 const handler =
   ({ msg }: { msg: Req }): Task<Result<string, Profile[]>> =>
   async () => {
+    if (msg.t === 'find-many') {
+      const found = await findMany({
+        userIds: msg.userIds,
+      })();
+
+      return found;
+    }
+
     if (msg.t === 'find-else-create') {
       const found = await client
         .from<definitions['user_profile']>('user_profile')

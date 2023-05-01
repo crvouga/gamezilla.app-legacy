@@ -53,7 +53,7 @@ export type ToBackend = Req;
 
 export type Req =
   | { t: 'find-else-create'; userId: UserId }
-  | { t: 'find-many'; userId: UserId[] }
+  | { t: 'find-many'; userIds: UserId[] }
   | { t: 'search'; query: string }
   | { t: 'delete-forever'; query: string };
 

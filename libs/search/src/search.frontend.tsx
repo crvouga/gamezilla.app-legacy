@@ -38,7 +38,7 @@ export const init: {
 
 export type Msg = FrontendMsg;
 
-const searchInputId = 'SearchInput';
+const searchInputId = 'search-input';
 
 export const update = ({
   msg,
@@ -126,6 +126,7 @@ export const View = ({
           <div className="w-full flex items-center bg-neutral-700 rounded-full px-4 py-2 gap-2">
             <IconMagnifyingGlass />
             <input
+              id={searchInputId}
               className="bg-transparent text-lg outline-none flex-1"
               placeholder="Search"
               value={model.searchText}
