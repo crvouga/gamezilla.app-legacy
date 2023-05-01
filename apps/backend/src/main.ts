@@ -259,14 +259,14 @@ const updateFromFrontend = ({
           ...model,
           sessions: {
             ...model.sessions,
-            [ctx.sessionId]: session,
+            [session.sessionId]: session,
           },
         },
       };
     }
 
     case 'profile': {
-      const currentUserId = model.auth.sessions[ctx.sessionId]?.userId;
+      const currentUserId = model.sessions[ctx.sessionId]?.userId;
 
       if (!currentUserId) {
         return { model };
