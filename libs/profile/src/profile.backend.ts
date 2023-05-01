@@ -6,7 +6,7 @@ import {
   client,
   definitions,
 } from '@gamezilla/shared';
-import { AuthenticatedRequestCtx, Ctx } from '@gamezilla/shared/backend';
+import { AuthenticatedRequestCtx } from '@gamezilla/shared/backend';
 import { Profile } from './profile-store';
 import {
   BackendModel,
