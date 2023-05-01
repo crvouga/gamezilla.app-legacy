@@ -17,6 +17,7 @@ export type BackendModel = {
   sessions: {
     [sessionId: SessionId]: Session;
   };
+  profile: Profile.BackendModel;
 };
 
 export type Session = {
@@ -51,9 +52,12 @@ export type WireModel =
 
 export type ToBackend =
   | { t: 'room'; c: Room.ToBackend }
-  | { t: 'auth'; c: Auth.ToBackend };
+  | { t: 'auth'; c: Auth.ToBackend }
+  | { t: 'profile'; c: Profile.ToBackend };
 
-export type ToFrontend = { t: 'room'; c: Room.ToFrontend };
+export type ToFrontend =
+  | { t: 'room'; c: Room.ToFrontend }
+  | { t: 'profile'; c: Profile.ToFrontend };
 
 export type FrontendMsg =
   | { t: '→'; c: ToFrontend }
@@ -69,7 +73,8 @@ export type BackendMsg =
   | { t: '→'; sessionId: SessionId; clientId: ClientId; c: ToBackend }
   | { t: 'client-connected'; sessionId: SessionId; clientId: ClientId }
   | { t: 'client-disconnected'; sessionId: SessionId; clientId: ClientId }
-  | { t: 'room'; c: Room.BackendMsg };
+  | { t: 'room'; c: Room.BackendMsg }
+  | { t: 'profile'; c: Profile.BackendMsg };
 
 //
 //

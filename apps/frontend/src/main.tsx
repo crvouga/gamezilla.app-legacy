@@ -123,6 +123,27 @@ const update = ({
   return p(
     { model },
     andThen((input) => update_({ ...input, now, msg, sendToBackend })),
+    andThen((input) => {
+      if (
+        msg.t === 'auth' &&
+        msg.c.t === 'got-current-user' &&
+        msg.c.currentUser.t === 'logged-in'
+      ) {
+        const updated = updateFromApp({
+          model: input.model,
+          sendToBackend,
+          msg: {
+            t: 'user-logged-in',
+            currentUserId: msg.c.currentUser.currentUserId,
+          },
+        });
+        return {
+          model: updated.model,
+          cmd: updated.cmd,
+        };
+      }
+      return { model: input.model };
+    }),
 
     (output) => {
       return {
@@ -131,51 +152,6 @@ const update = ({
       };
     }
   );
-};
-
-export const updateFromApp = ({
-  model,
-  msg,
-  sendToBackend,
-}: {
-  model: Model;
-  msg: AppMsg;
-  sendToBackend: (m: ToBackend) => Cmd;
-}): {
-  model: Model;
-  cmd?: Cmd<Msg>;
-} => {
-  const chat = ChatFrontend.updateFromApp({
-    model: model.chat,
-    msg,
-    sendToBackend: (m) => () => {
-      console.log('todo send to backend', m);
-    },
-  });
-
-  const room = RoomFrontend.updateFromApp({
-    model: model.room,
-    msg,
-    sendToBackend: (c) => sendToBackend({ t: 'room', c }),
-  });
-
-  const profile = ProfileFrontend.updateFromApp({
-    model: model.profile,
-    msg,
-  });
-  return {
-    model: {
-      ...model,
-      chat: chat.model,
-      profile: profile.model,
-      room: room.model,
-    },
-    cmd: Cmd.batch<Msg>([
-      Cmd.tag_('chat', chat.cmd),
-      Cmd.tag_('profile', profile.cmd),
-      Cmd.tag_('room', room.cmd),
-    ]),
-  };
 };
 
 const update_ = ({
@@ -201,9 +177,7 @@ const update_ = ({
     case 'auth': {
       const updated = AuthFrontend.update({
         route: model.route,
-        sendToBackend: () => () => {
-          //
-        },
+        sendToBackend: (c) => sendToBackend({ t: 'auth', c }),
         msg: msg.c,
         model: model.auth,
       });
@@ -390,10 +364,68 @@ const updateFromBackend = ({
       };
     }
 
+    case 'profile': {
+      const updated = ProfileFrontend.updateFromBackend({
+        msg: msg.c,
+        model: model.profile,
+      });
+      return {
+        model: { ...model, profile: updated.model },
+        cmd: Cmd.tag_('profile', updated.cmd),
+        actions: [],
+      };
+    }
+
     default: {
-      return exhaustive(msg.t);
+      return exhaustive(msg);
     }
   }
+};
+
+export const updateFromApp = ({
+  model,
+  msg,
+  sendToBackend,
+}: {
+  model: Model;
+  msg: AppMsg;
+  sendToBackend: (m: ToBackend) => Cmd;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  const chat = ChatFrontend.updateFromApp({
+    model: model.chat,
+    msg,
+    sendToBackend: (m) => () => {
+      console.log('todo send to backend', m);
+    },
+  });
+
+  const room = RoomFrontend.updateFromApp({
+    model: model.room,
+    msg,
+    sendToBackend: (c) => sendToBackend({ t: 'room', c }),
+  });
+
+  const profile = ProfileFrontend.updateFromApp({
+    model: model.profile,
+    msg,
+    sendToBackend: (c) => sendToBackend({ t: 'profile', c }),
+  });
+  return {
+    model: {
+      ...model,
+      chat: chat.model,
+      profile: profile.model,
+      room: room.model,
+    },
+    cmd: Cmd.batch<Msg>([
+      Cmd.tag_('chat', chat.cmd),
+      Cmd.tag_('profile', profile.cmd),
+      Cmd.tag_('room', room.cmd),
+    ]),
+  };
 };
 
 //

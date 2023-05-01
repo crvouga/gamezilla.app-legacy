@@ -104,7 +104,7 @@ export const updateFromBackend = ({
   model,
   ctx,
 }: {
-  ctx: ViewCtx;
+  ctx: Ctx;
   msg: ToFrontend;
   model: Model;
 }): [Model, Cmd<Msg>, OutAction[]] => {

@@ -17,7 +17,7 @@ import {
 import { Fab } from '@mui/material';
 import * as Conversation from './conversation.store';
 import * as Message from './message.store';
-import { initialStore, Store } from './types';
+import { Store, initialStore } from './types';
 
 //
 //
@@ -188,7 +188,7 @@ const ViewPageChatList = ({
         }}
         color="primary"
         variant="extended"
-        onClick={() => ctx.$push(['chat-new'])}
+        onClick={() => ctx.$push({ t: 'chat', c: { t: 'chat-new' } })}
       >
         <Icons.Send sx={{ mr: 1 }} />
         Send Message
@@ -220,12 +220,9 @@ const ViewPageChatList = ({
                 {conversations.map((item) => (
                   <ListItemButton
                     key={item.conversationId}
-                    onClick={() =>
-                      ctx.$push([
-                        'chat-conversation',
-                        { conversationId: item.conversationId },
-                      ])
-                    }
+                    onClick={() => {
+                      //
+                    }}
                   >
                     <ListItemAvatar>
                       <AvatarGroup max={2}>

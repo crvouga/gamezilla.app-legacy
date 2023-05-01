@@ -147,6 +147,7 @@ export const update = ({
   }
 
   if (msg.t === 'got-current-user') {
+    console.log('got-current-user', msg.currentUser);
     return {
       model: { ...model, currentUser: msg.currentUser },
       cmd: sendToBackend(msg),

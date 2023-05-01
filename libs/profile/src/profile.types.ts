@@ -21,7 +21,7 @@ export type FrontendModel_ = {
     [userId: UserId]: Profile;
   };
   requests: {
-    [key in Req['t']]?: RemoteData<Problem, null>;
+    [key in Req['t']]?: RemoteData<string, null>;
   };
   draft?: {
     username: string;
@@ -52,12 +52,9 @@ export type ToFrontend = Res;
 export type ToBackend = Req;
 
 export type Req =
+  | { t: 'find-else-create'; userId: UserId }
   | { t: 'find-many'; userId: UserId[] }
   | { t: 'search'; query: string }
   | { t: 'delete-forever'; query: string };
 
-export type Res = Req & { result: Result<Problem, Profile[]> };
-
-type Problem =
-  | { t: 'database-error'; message: string }
-  | { t: 'unknown-shape' };
+export type Res = Req & { result: Result<string, Profile[]> };

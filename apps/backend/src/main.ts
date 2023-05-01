@@ -18,6 +18,7 @@ import {
   Sub,
   toMsgType,
 } from '@gamezilla/core';
+import { ProfileBackend } from '@gamezilla/profile';
 import { RoomBackend } from '@gamezilla/room';
 import { ClientId, SessionId, UserId } from '@gamezilla/shared';
 import {
@@ -43,6 +44,7 @@ export const init: { model: Model; cmd?: Cmd<Msg> } = {
   model: {
     room: RoomBackend.init,
     sessions: {},
+    profile: ProfileBackend.init,
   },
 };
 
@@ -140,6 +142,17 @@ export const update_: typeof update = ({ msg, model, ctx }) => {
       };
     }
 
+    case 'profile': {
+      const updated = ProfileBackend.update({
+        model: model.profile,
+        msg: msg.c,
+      });
+      return {
+        model: { ...model, profile: updated.model },
+        cmd: Cmd.tag_('profile', updated.cmd),
+      };
+    }
+
     default: {
       return exhaustive(msg);
     }
@@ -212,6 +225,18 @@ const updateFromFrontend = ({
       };
     }
 
+    case 'profile': {
+      const updated = ProfileBackend.updateFromFrontend({
+        model: model.profile,
+        msg: msg.c,
+        sendToClient: (c) => sendToClient({ t: 'profile', c }),
+      });
+      return {
+        model: { ...model, profile: updated.model },
+        cmd: Cmd.tag_('profile', updated.cmd),
+      };
+    }
+
     case 'room': {
       const session = model.sessions[ctx.sessionId];
 
@@ -229,10 +254,10 @@ const updateFromFrontend = ({
           currentUserId: session.userId,
         },
         wire: {
-          broadcast: (m) => broadcast({ t: 'room', c: m }),
-          sendToClient: (m) => sendToClient({ t: 'room', c: m }),
-          sendToUser: (userIds, m) =>
-            sendToUser(model, userIds, { t: 'room', c: m }),
+          broadcast: (c) => broadcast({ t: 'room', c }),
+          sendToClient: (c) => sendToClient({ t: 'room', c }),
+          sendToUser: (userIds, c) =>
+            sendToUser(model, userIds, { t: 'room', c }),
         },
         msg: msg.c,
         model: model.room,

@@ -1,10 +1,10 @@
 import { Cmd, Sub } from '@gamezilla/core';
 import {
   Ctx,
+  ViewCtx,
   ViewVsBotGameScreen,
   ViewVsBotSetupScreen,
 } from '@gamezilla/shared';
-import { ViewCtx } from '@gamezilla/shared';
 import {
   BotLevel,
   Stone,
@@ -53,7 +53,7 @@ export const update = ({
   msg,
   model,
 }: {
-  ctx: ViewCtx;
+  ctx: Ctx;
   sendToBackend: (m: ToBackend) => Cmd;
   msg: Msg;
   model: Model;
@@ -91,7 +91,7 @@ export const updateFromBackend = ({
   model,
   ctx,
 }: {
-  ctx: ViewCtx;
+  ctx: Ctx;
   msg: ToFrontend;
   model: Model;
 }): {
@@ -115,7 +115,7 @@ export const mergeWithBackend = ({
   backendModel,
   frontendModel,
 }: {
-  ctx: ViewCtx;
+  ctx: Ctx;
   frontendModel: FrontendModel;
   backendModel: BackendModel;
 }): FrontendModel => {
