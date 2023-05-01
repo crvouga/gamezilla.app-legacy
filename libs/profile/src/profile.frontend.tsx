@@ -1,4 +1,4 @@
-import { Cmd, RemoteData } from '@gamezilla/core';
+import { Cmd, RemoteData, andThen, p } from '@gamezilla/core';
 import {
   AppMsg,
   ProfileAvatar,
@@ -141,30 +141,46 @@ export const updateFromApp = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (msg.t === 'route-changed') {
-    const route = msg.route;
-    if (route.t !== 'profile') {
+  return p(
+    { model },
+    andThen(({ model }) => {
+      if (msg.t === 'route-changed') {
+        const route = msg.route;
+
+        if (route.t !== 'profile') {
+          return { model };
+        }
+
+        if (route.c.t === 'profile') {
+          return {
+            model,
+            cmd: sendToBackend({ t: 'find-many', userIds: [route.c.userId] }),
+          };
+        }
+
+        return { model };
+      }
+
+      if (msg.t === 'user-logged-in') {
+        return {
+          model,
+          cmd: sendToBackend({
+            t: 'find-else-create',
+            userId: msg.currentUserId,
+          }),
+        };
+      }
+
       return { model };
-    }
+    }),
+    andThen(({ model }) => {
+      if (msg.t === 'route-changed') {
+        return { model: { ...model, opened: null } };
+      }
 
-    if (route.c.t === 'profile') {
-      return {
-        model,
-        cmd: sendToBackend({ t: 'find-many', userIds: [route.c.userId] }),
-      };
-    }
-
-    return { model };
-  }
-
-  if (msg.t === 'user-logged-in') {
-    return {
-      model,
-      cmd: sendToBackend({ t: 'find-else-create', userId: msg.currentUserId }),
-    };
-  }
-
-  return { model };
+      return { model };
+    })
+  );
 };
 
 //
@@ -213,7 +229,12 @@ export const View = ({
                 console.log('');
               }}
             >
-              <button className="flex items-center justify-start w-full p-4 gap-2">
+              <button
+                className="flex items-center justify-start w-full p-4 gap-2"
+                onClick={() =>
+                  ctx.$push({ t: 'profile', c: { t: 'profile-update' } })
+                }
+              >
                 Edit Profile
               </button>
             </div>
