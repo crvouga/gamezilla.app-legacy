@@ -303,6 +303,7 @@ const update_ = ({
       const updated = ProfileFrontend.update({
         msg: msg.c,
         model: model.profile,
+        sendToBackend: (m) => sendToBackend({ t: 'profile', c: m }),
       });
       return {
         model: { ...model, profile: updated.model },
