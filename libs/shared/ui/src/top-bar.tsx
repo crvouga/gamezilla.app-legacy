@@ -1,3 +1,6 @@
+import { IconChevronLeft } from './icon';
+import { IconButton } from './icon-button';
+
 export const TopBar = ({
   left,
   title,
@@ -15,5 +18,13 @@ export const TopBar = ({
       </p>
       <div className="flex items-center justify-end flex-1">{right}</div>
     </header>
+  );
+};
+
+export const TopBarBackButton = ({ onClick }: { onClick: () => void }) => {
+  return (
+    <IconButton onClick={onClick}>
+      <IconChevronLeft />
+    </IconButton>
   );
 };

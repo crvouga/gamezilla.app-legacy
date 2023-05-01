@@ -182,7 +182,7 @@ export const View = ({
     <UI.FillBox>
       <UI.Toolbar>
         <UI.Box sx={{ flex: 1 }}>
-          <UI.HeaderBackButton onClick={() => $send(['clicked-back'])} />
+          <UI.TopBarBackButton onClick={() => $send(['clicked-back'])} />
         </UI.Box>
 
         <UI.Box

@@ -19,8 +19,6 @@ import {
   Divider,
   Drawer,
   FillBox,
-  Header,
-  HeaderBackButton,
   IconGamepad,
   IconHome,
   Icons,
@@ -31,6 +29,7 @@ import {
   MyButton,
   Paper,
   TopBar,
+  TopBarBackButton,
   Typography,
   useTheme,
   ViewNode,
@@ -1084,9 +1083,9 @@ export const ViewNotInRoom = ({
   const theme = useTheme();
   return (
     <FillBox>
-      <Header
+      <TopBar
         left={
-          <HeaderBackButton
+          <TopBarBackButton
             onClick={() => ctx.$push({ t: 'room', c: { t: 'room-list' } })}
           />
         }
@@ -1284,7 +1283,7 @@ const ViewRoomPeople = ({
 
   return (
     <FillBox>
-      <Header
+      <TopBar
         // left={
         //   <Button
         //     size="small"

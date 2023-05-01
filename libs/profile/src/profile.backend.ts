@@ -1,4 +1,4 @@
-import { Cmd, Err, NonEmpty, Result, Task, p } from '@gamezilla/core';
+import { Cmd, Err, NonEmpty, Ok, Result, Task, p } from '@gamezilla/core';
 import {
   ProfileAvatar,
   UserId,
@@ -6,6 +6,7 @@ import {
   client,
   definitions,
 } from '@gamezilla/shared';
+import { AuthenticatedRequestCtx, Ctx } from '@gamezilla/shared/backend';
 import { Profile } from './profile-store';
 import {
   BackendModel,
@@ -57,11 +58,13 @@ export const update = ({
 export const updateFromFrontend = ({
   msg,
   model,
+  ctx,
   sendToClient,
 }: {
   msg: ToBackend;
   model: Model;
   sendToClient: (m: ToFrontend) => Cmd<Msg>;
+  ctx: AuthenticatedRequestCtx;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -69,7 +72,7 @@ export const updateFromFrontend = ({
   return {
     model,
     cmd: p(
-      handler({ msg }),
+      handler({ msg, ctx }),
       Cmd.perform((result) => ({
         ...msg,
         result,
@@ -80,7 +83,13 @@ export const updateFromFrontend = ({
 };
 
 const handler =
-  ({ msg }: { msg: Req }): Task<Result<string, Profile[]>> =>
+  ({
+    msg,
+    ctx,
+  }: {
+    ctx: AuthenticatedRequestCtx;
+    msg: Req;
+  }): Task<Result<string, Profile[]>> =>
   async () => {
     if (msg.t === 'find-many') {
       const found = await findMany({
@@ -88,6 +97,28 @@ const handler =
       })();
 
       return found;
+    }
+
+    if (msg.t === 'change-username') {
+      const parsed = Username.decode(msg.username);
+
+      if (parsed.type === 'Err') {
+        return parsed;
+      }
+
+      const updated = await client
+        .from<definitions['user_profile']>('user_profile')
+        .update({
+          username: parsed.value,
+        })
+        .eq('id', ctx.currentUserId)
+        .single();
+
+      if (updated.error) {
+        return Err(updated.error.message);
+      }
+
+      return Ok([]);
     }
 
     if (msg.t === 'find-else-create') {

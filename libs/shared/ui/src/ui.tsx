@@ -18,15 +18,9 @@ import {
 import * as MuiLab from '@mui/lab';
 import * as Mui from '@mui/material';
 import { TypographyProps, keyframes } from '@mui/material';
-import Slide, { SlideProps } from '@mui/material/Slide';
-import { blue } from '@mui/material/colors';
 import { ReactNode, useEffect, useRef } from 'react';
 import * as Icons from './ui-icons';
 import { cn } from './utils';
-
-const SlideTransition = (props: SlideProps) => {
-  return <Slide {...props} direction="down" />;
-};
 
 //
 //
@@ -35,138 +29,6 @@ const SlideTransition = (props: SlideProps) => {
 //
 //
 //
-
-const baseTheme = Mui.createTheme();
-
-const createTheme = ({ mode }: { mode: 'light' | 'dark' }) =>
-  Mui.responsiveFontSizes(
-    Mui.createTheme({
-      palette: {
-        mode: mode,
-        primary: blue,
-      },
-      typography: {
-        fontFamily: ['Inter', 'Verdana'].join(','),
-      },
-      components: {
-        MuiCircularProgress: {
-          defaultProps: {
-            disableShrink: true,
-          },
-          styleOverrides: {
-            root: {
-              animationDuration: `${1 / 2.5}s`,
-            },
-          },
-        },
-
-        MuiDrawer: {
-          styleOverrides: {
-            paper: {
-              maxWidth: baseTheme.breakpoints.values.sm,
-              margin: 'auto',
-            },
-          },
-        },
-
-        MuiSnackbar: {
-          defaultProps: {
-            anchorOrigin: {
-              horizontal: 'center',
-              vertical: 'top',
-            },
-            TransitionComponent: SlideTransition,
-          },
-        },
-        MuiTooltip: {
-          defaultProps: {
-            enterTouchDelay: 0,
-            enterDelay: 0,
-          },
-        },
-        MuiToggleButton: {
-          styleOverrides: {
-            root: {
-              textTransform: 'capitalize',
-            },
-          },
-        },
-        MuiButton: {
-          defaultProps: {
-            disableElevation: true,
-            disableRipple: true,
-            size: 'large',
-            variant: 'contained',
-          },
-          styleOverrides: {
-            root: {
-              textTransform: 'capitalize',
-            },
-          },
-        },
-        MuiAvatar: {
-          defaultProps: {
-            variant: 'rounded',
-          },
-        },
-        MuiAvatarGroup: {
-          defaultProps: {
-            max: 3,
-            // spacing: "medium",
-            variant: 'rounded',
-          },
-        },
-
-        MuiButtonBase: {
-          styleOverrides: {
-            root: {
-              cursor: 'pointer',
-            },
-          },
-          defaultProps: {
-            disableTouchRipple: true,
-          },
-        },
-      },
-    })
-  );
-
-const darkTheme = createTheme({ mode: 'dark' });
-
-export const AppContainer = ({
-  children,
-}: {
-  children: React.ReactNode;
-  themeMode: ThemeMode;
-  sx?: Sx;
-}) => {
-  // const prefersDarkMode = Mui.useMediaQuery('(prefers-color-scheme: dark)');
-
-  // const theme = useMemo(() => {
-  //   switch (themeMode) {
-  //     case 'Dark':
-  //       return darkTheme;
-
-  //     case 'Light':
-  //       return lightTheme;
-
-  //     case 'System':
-  //       if (prefersDarkMode) {
-  //         return darkTheme;
-  //       }
-  //       return lightTheme;
-  //   }
-  // }, [themeMode, prefersDarkMode]);
-
-  return (
-    <Mui.ThemeProvider theme={darkTheme}>
-      {/* <Mui.CssBaseline enableColorScheme /> */}
-      <div className="max-w-md max-h-full mx-auto fixed w-full h-full overflow-hidden flex flex-col left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 border border-neutral-600 bg-black text-white">
-        {children}
-      </div>
-    </Mui.ThemeProvider>
-  );
-};
 
 export const useTheme = () => {
   return Mui.useTheme();
@@ -424,8 +286,6 @@ export const Menu = Mui.Menu;
 
 export const MenuItem = Mui.MenuItem;
 
-// export const Autocomplete = Mui.Autocomplete;
-
 export const Select = Mui.Select;
 
 export const List = Mui.List;
@@ -433,8 +293,6 @@ export const List = Mui.List;
 export const ButtonBase = Mui.ButtonBase;
 
 export const Toolbar = Mui.Toolbar;
-
-export const IconButton = Mui.IconButton;
 
 export const ToggleButtonGroup = Mui.ToggleButtonGroup;
 
@@ -466,34 +324,6 @@ export const Field = ({
     </ListItemSecondaryAction>
   </ListItemButton>
 );
-
-export const Header = ({
-  left,
-  title,
-  right,
-}: {
-  left?: React.ReactNode;
-  title: React.ReactNode;
-  right?: React.ReactNode;
-}) => {
-  return (
-    <header className="flex items-center justify-center w-full px-3 py-2">
-      <div className="flex items-center justify-start flex-1">{left}</div>
-      <p className="text-lg text-center" style={{ flex: 4 }}>
-        {title}
-      </p>
-      <div className="flex items-center justify-end flex-1">{right}</div>
-    </header>
-  );
-};
-
-export const HeaderBackButton = ({ onClick }: { onClick: () => void }) => {
-  return (
-    <Mui.IconButton edge="start" onClick={onClick}>
-      <Icons.ChevronLeft />
-    </Mui.IconButton>
-  );
-};
 
 export const fillBox = ({ sx }: { sx?: Sx }, children: ViewNode[]) => {
   return box(

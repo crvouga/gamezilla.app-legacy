@@ -5,7 +5,7 @@ import {
   AvatarGroup,
   Box,
   FillBox,
-  Header,
+  TopBar,
   Icons,
   List,
   ListItemAvatar,
@@ -131,7 +131,7 @@ export const View = ({
           flexDirection: 'column',
         }}
       >
-        <Header title="Chat" />
+        <TopBar title="Chat" />
 
         {query.type === 'Loading' ? (
           <ViewLoadingState title="Loading conversations..." />

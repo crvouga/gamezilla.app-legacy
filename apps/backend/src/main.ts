@@ -266,10 +266,20 @@ const updateFromFrontend = ({
     }
 
     case 'profile': {
+      const currentUserId = model.auth.sessions[ctx.sessionId]?.userId;
+
+      if (!currentUserId) {
+        return { model };
+      }
+
       const updated = ProfileBackend.updateFromFrontend({
         model: model.profile,
         msg: msg.c,
         sendToClient: (c) => sendToClient({ t: 'profile', c }),
+        ctx: {
+          ...ctx,
+          currentUserId,
+        },
       });
       return {
         model: { ...model, profile: updated.model },

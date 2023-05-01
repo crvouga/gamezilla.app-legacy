@@ -6,7 +6,7 @@ import {
   Box,
   Button,
   FillBox,
-  Header,
+  TopBar,
   Icons,
   ListItemAvatar,
   ListItemButton,
@@ -323,7 +323,7 @@ const ViewNotInParty = ({
   if (parties.length === 0) {
     return (
       <FillBox>
-        <Header title="Party" />
+        <TopBar title="Party" />
         <ViewEmptyState
           renderIcon={({ sx }) => <Icons.People sx={sx} />}
           title="No Active Parties"
@@ -334,7 +334,7 @@ const ViewNotInParty = ({
 
   return (
     <FillBox>
-      <Header title="Party" />
+      <TopBar title="Party" />
       <Box sx={{ paddingX: 2 }}>
         <Button
           fullWidth

@@ -151,15 +151,15 @@ export const encodeProfile = (route: RouteProfile): string => {
     case 'profile':
       return `/profile/${route.userId}`;
     case 'profile-delete':
-      return '/profile/delete';
+      return '/profile-delete';
     case 'profile-update':
-      return '/profile/update';
+      return '/profile-update';
     case 'profile-update-avatar':
-      return '/profile/update/avatar';
+      return '/profile-update-avatar';
     case 'profile-update-username':
-      return '/profile/update/username';
+      return '/profile-update-username';
     case 'profile-update-theme':
-      return '/profile/update/theme';
+      return '/profile-update-theme';
   }
 };
 export const decodeProfile = (pathname: string): RouteProfile | null => {
@@ -170,19 +170,19 @@ export const decodeProfile = (pathname: string): RouteProfile | null => {
     }
     return null;
   }
-  if (pathname === '/profile/delete') {
+  if (pathname === '/profile-delete') {
     return { t: 'profile-delete' };
   }
-  if (pathname === '/profile/update') {
+  if (pathname === '/profile-update') {
     return { t: 'profile-update' };
   }
-  if (pathname === '/profile/update/avatar') {
+  if (pathname === '/profile-update-avatar') {
     return { t: 'profile-update-avatar' };
   }
-  if (pathname === '/profile/update/username') {
+  if (pathname === '/profile-update-username') {
     return { t: 'profile-update-username' };
   }
-  if (pathname === '/profile/update/theme') {
+  if (pathname === '/profile-update-theme') {
     return { t: 'profile-update-theme' };
   }
   return null;

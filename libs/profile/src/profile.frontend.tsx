@@ -13,19 +13,23 @@ import {
   Box,
   Button,
   ConformationDialog,
-  Field,
   FillBox,
-  Header,
-  HeaderBackButton,
+  IconArrowLeftOnRect,
+  IconBars3,
   IconButton,
+  IconChevronRight,
   IconSpinner,
   Icons,
-  List,
   LoadingDialog,
   MenuItem,
+  MyAvatar,
+  MyButton,
+  MyTextField,
   Select,
   TextField,
   ThemeModeToggleButtons,
+  TopBar,
+  TopBarBackButton,
   Typography,
   ViewNode,
 } from '@gamezilla/shared/ui';
@@ -33,7 +37,6 @@ import { AlertTitle } from '@mui/material';
 import {
   FrontendModel,
   FrontendMsg,
-  Profile,
   ToBackend,
   ToFrontend,
 } from './profile.types';
@@ -66,18 +69,30 @@ export type Msg = FrontendMsg;
 export const update = ({
   msg,
   model,
+  sendToBackend,
 }: {
   msg: Msg;
   model: Model;
+  sendToBackend: (m: ToBackend) => Cmd;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  switch (msg.t) {
-    default: {
-      return { model };
-    }
+  if (msg.t === 'inputted-username') {
+    return {
+      model: { ...model, draft: { ...model.draft, username: msg.username } },
+    };
   }
+
+  if (msg.t === 'clicked-toggle-menu') {
+    return { model: { ...model, opened: 'menu' } };
+  }
+
+  if (msg.t === 'closed-menu') {
+    return { model: { ...model, opened: null } };
+  }
+
+  return { model, cmd: sendToBackend(msg) };
 };
 
 export const updateFromBackend = ({
@@ -90,35 +105,28 @@ export const updateFromBackend = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  switch (msg.t) {
-    default: {
-      if (msg.result.type === 'Err') {
-        return { model };
-      }
-
-      const byId = msg.result.value.reduce<{ [userId: UserId]: Profile }>(
-        (acc, profile) => {
-          return {
-            ...acc,
-            [profile.userId]: profile,
-          };
-        },
-        {}
-      );
-
-      const modelNew: Model = {
-        ...model,
-        profiles: {
-          ...model.profiles,
-          ...byId,
-        },
-      };
-
-      return {
-        model: modelNew,
-      };
-    }
+  if (msg.result.type === 'Err') {
+    return { model };
   }
+
+  const profilesNew = msg.result.value.reduce<Model['profiles']>(
+    (acc, profile) => {
+      return {
+        ...acc,
+        [profile.userId]: profile,
+      };
+    },
+    model.profiles
+  );
+
+  const modelNew: Model = {
+    ...model,
+    profiles: profilesNew,
+  };
+
+  return {
+    model: modelNew,
+  };
 };
 
 export const updateFromApp = ({
@@ -182,15 +190,61 @@ export const View = ({
 }) => {
   if (route.t === 'profile') {
     return (
-      <>
+      <div className="relative w-full h-full flex flex-col">
         <ViewProfileScreen
           model={model}
           ctx={ctx}
           $send={$send}
           userId={route.userId}
         />
+
         {viewBottomBar}
-      </>
+
+        {model.opened === 'menu' && (
+          <div
+            tabIndex={0}
+            className="absolute top-0 left-0 w-full h-full bg-black/50 flex flex-col justify-end z-10 "
+            onClick={() => $send({ t: 'closed-menu' })}
+          >
+            <div
+              className="bg-neutral-800"
+              onClick={(event) => {
+                event.stopPropagation();
+                console.log('');
+              }}
+            >
+              <button className="flex items-center justify-start w-full p-4 gap-2">
+                Edit Profile
+              </button>
+            </div>
+
+            <div
+              className="bg-neutral-800"
+              onClick={(event) => {
+                event.stopPropagation();
+                console.log('');
+              }}
+            >
+              <button className="flex items-center justify-start text-red-500 w-full p-4 gap-2">
+                Delete Profile
+              </button>
+            </div>
+
+            <div
+              className="bg-neutral-800"
+              onClick={(event) => {
+                event.stopPropagation();
+                console.log('');
+              }}
+            >
+              <button className="flex items-center justify-start text-red-500 w-full p-4 gap-2">
+                <IconArrowLeftOnRect />
+                Logout
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     );
   }
 
@@ -222,6 +276,7 @@ const ViewProfileScreen = ({
   model,
   ctx,
   userId,
+  $send,
 }: {
   ctx: ViewCtx;
   userId: UserId;
@@ -240,85 +295,50 @@ const ViewProfileScreen = ({
 
   if (profile.userId === ctx.currentUserId) {
     return (
-      <FillBox>
-        <Header
+      <div className="w-full h-full">
+        <TopBar
           title={profile.username}
           right={
-            <IconButton edge="end">
-              <Icons.Menu />
+            <IconButton onClick={() => $send({ t: 'clicked-toggle-menu' })}>
+              <IconBars3 />
             </IconButton>
           }
         />
 
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            p: 2,
-            overflowX: 'hidden',
-          }}
-        >
-          <Avatar
-            sx={{ width: 120, height: 120, marginBottom: 1 }}
+        <div className="flex flex-col items-center justify-center p-4 gap-4 overflow-x-hidden">
+          <MyAvatar
+            className="w-28 h-28"
             src={profile.avatarUrl}
+            alt="profile avatar"
           />
-          <Typography
-            variant="h4"
-            sx={{ maxWidth: '100%', marginBottom: 2 }}
-            noWrap
-          >
-            {profile.username}
-          </Typography>
-          <Button
-            fullWidth
-            variant="contained"
-            size="small"
-            sx={{ marginBottom: 2 }}
+          <p className="text-3xl w-full text-center overflow-hidden text-ellipsis">
+            @{profile.username}
+          </p>
+          <MyButton
+            onClick={() =>
+              ctx.$push({ t: 'profile', c: { t: 'profile-update' } })
+            }
+            className="w-full"
           >
             Edit Profile
-          </Button>
-        </Box>
-      </FillBox>
+          </MyButton>
+        </div>
+      </div>
     );
   }
 
   return (
-    <div>
-      <Header
-        left={
-          <HeaderBackButton
-            onClick={() => {
-              //
-            }}
-          />
-        }
+    <div className="w-full h-full flex flex-col">
+      <TopBar
+        left={<TopBarBackButton onClick={ctx.$back} />}
         title={profile.username}
       />
-
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          overflowX: 'hidden',
-          p: 2,
-        }}
-      >
-        <Avatar
-          sx={{ width: 120, height: 120, marginBottom: 1 }}
-          src={profile.avatarUrl}
-        />
-        <Typography
-          variant="h4"
-          sx={{ maxWidth: '100%', marginBottom: 2 }}
-          noWrap
-        >
+      <div className="flex flex-col items-center justify-center gap-4 p-4 overflow-x-hidden">
+        <MyAvatar alt="profile avatar" src={profile.avatarUrl} />
+        <p className="text-xl w-full overflow-hidden text-ellipsis">
           {profile.username}
-        </Typography>
-      </Box>
+        </p>
+      </div>
     </div>
   );
 };
@@ -392,57 +412,137 @@ const ViewUpdateScreen = ({
 }) => {
   const profile = ctx.profiles[ctx.currentUserId];
   return (
-    <FillBox>
-      <Header
+    <div className="w-full h-full flex flex-col items-center gap-3">
+      <TopBar
         left={
-          <HeaderBackButton
-            onClick={() => {
-              //
-            }}
+          <TopBarBackButton
+            onClick={() =>
+              ctx.$push({
+                t: 'profile',
+                c: { t: 'profile', userId: ctx.currentUserId },
+              })
+            }
           />
         }
         title="Update Profile"
       />
 
-      <Avatar
+      <MyAvatar
         src={profile?.avatarUrl ?? '...'}
-        sx={{
-          marginX: 'auto',
-          width: '150px',
-          height: '150px',
-          marginBottom: 1,
-        }}
+        className="w-28 h-28"
+        alt="profile avatar"
+        onClick={() =>
+          ctx.$push({ t: 'profile', c: { t: 'profile-update-avatar' } })
+        }
       />
 
-      <Button sx={{ display: 'block', marginX: 'auto', marginBottom: 2 }}>
+      <MyButton
+        size="sm"
+        color="primary"
+        variant="text"
+        className="block"
+        onClick={() =>
+          ctx.$push({ t: 'profile', c: { t: 'profile-update-avatar' } })
+        }
+      >
         Change Avatar
-      </Button>
+      </MyButton>
 
-      <List>
-        <Field label="Username" value={profile?.username ?? '...'} />
-        <Field label="Theme" value={profile?.themeMode ?? '...'} />
-      </List>
-    </FillBox>
+      <div className="w-full flex flex-col gap-2">
+        <ViewField
+          onClick={() =>
+            ctx.$push({ t: 'profile', c: { t: 'profile-update-username' } })
+          }
+          label="Username"
+          value={profile?.username ?? '...'}
+        />
+        <ViewField
+          onClick={() =>
+            ctx.$push({ t: 'profile', c: { t: 'profile-update-theme' } })
+          }
+          label="Theme"
+          value={profile?.themeMode ?? '...'}
+        />
+      </div>
+    </div>
   );
 };
 
-const ViewUpdateUsernameScreen = (_props: {
+export const ViewField = ({
+  label,
+  value,
+  onClick,
+}: {
+  label: string;
+  value: string;
+  onClick?: () => void;
+}) => (
+  <button
+    onClick={onClick}
+    className="w-full flex justify-start items-center px-4 py-2"
+  >
+    <div className="flex-1 flex flex-col items-start">
+      <p className="text-sm text-neutral-300">{label}</p>
+      <p className="text-lg">{value}</p>
+    </div>
+
+    <IconChevronRight />
+  </button>
+);
+
+const ViewUpdateUsernameScreen = ({
+  ctx,
+  model,
+  $send,
+}: {
   model: Model;
   $send: (msg: Msg) => void;
   ctx: ViewCtx;
-}) => (
-  <FillBox>
-    <Header
-      left={<Button sx={{ marginLeft: -1 }}>Cancel</Button>}
-      title="Username"
-      right={<Button sx={{ marginRight: -1 }}>Done</Button>}
-    />
+}) => {
+  const inputVal =
+    model.draft?.username ?? model.profiles[ctx.currentUserId]?.username ?? '';
+  return (
+    <div className="w-full h-full flex flex-col">
+      <TopBar
+        left={
+          <MyButton
+            variant="text"
+            color="primary"
+            onClick={() =>
+              ctx.$push({ t: 'profile', c: { t: 'profile-update' } })
+            }
+          >
+            Cancel
+          </MyButton>
+        }
+        title="Username"
+        right={
+          <MyButton
+            variant="text"
+            color="primary"
+            onClick={() => {
+              const username = model.draft?.username;
+              if (username) {
+                $send({ t: 'change-username', username });
+              }
+            }}
+          >
+            Done
+          </MyButton>
+        }
+      />
 
-    <Box sx={{ p: 2, width: '100%' }}>
-      <TextField sx={{ marginBottom: 4 }} label="Username" fullWidth />
-    </Box>
-  </FillBox>
-);
+      <div className="w-full p-4">
+        <MyTextField
+          label="Username"
+          value={inputVal}
+          id={'username'}
+          onChange={(username) => $send({ t: 'inputted-username', username })}
+        />
+      </div>
+    </div>
+  );
+};
 
 const ViewUpdateThemeScreen = (_props: {
   ctx: ViewCtx;
@@ -450,9 +550,9 @@ const ViewUpdateThemeScreen = (_props: {
   $send: (msg: Msg) => void;
 }) => (
   <FillBox>
-    <Header
+    <TopBar
       left={
-        <HeaderBackButton
+        <TopBarBackButton
           onClick={() => {
             //
           }}
@@ -481,7 +581,7 @@ const ViewUpdateAvatarScreen = (_props: {
 }) => {
   return (
     <FillBox>
-      <Header
+      <TopBar
         left={<Button sx={{ marginLeft: -1 }}>Cancel</Button>}
         title="Avatar"
         right={<Button sx={{ marginRight: -1 }}>Done</Button>}

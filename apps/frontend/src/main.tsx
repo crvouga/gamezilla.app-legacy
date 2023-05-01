@@ -553,7 +553,7 @@ const View = ({
   $send: (msg: Msg) => void;
 }) => {
   return (
-    <div className="max-w-md max-h-full mx-auto fixed w-full h-full overflow-hidden flex flex-col left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 border border-neutral-600 bg-black text-white">
+    <div className="max-w-md max-h-full mx-auto fixed w-full h-full overflow-hidden flex flex-col left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 border border-neutral-800 bg-black text-white">
       {model.auth.currentUser.t === 'not-asked' && (
         <div className="w-full h-full flex items-center justify-center">
           <IconSpinner />

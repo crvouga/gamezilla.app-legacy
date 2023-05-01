@@ -35,11 +35,11 @@ export const MyButton = ({
       type={type}
       className={cn(
         className,
-        'font-bolder flex items-center justify-center gap-2 select-none flex-nowrap',
+        'font-semibold flex items-center justify-center gap-2 select-none flex-nowrap',
         combo === 'contained-primary' && 'bg-blue-500 text-white rounded-md',
         combo === 'contained-danger' && 'bg-red-500 text-white rounded-md',
         combo === 'contained-default' &&
-          'bg-white/10 border border-neutral-700 text-white rounded-md',
+          'bg-white/10 border border-neutral-900 text-white rounded-md',
         combo === 'outlined-default' &&
           'border border-neutral-700 text-inherit rounded-md',
         !disabled && combo === 'text-primary' && 'text-blue-500',

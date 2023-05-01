@@ -1,11 +1,12 @@
+export * from './alert';
+export * from './autocomplete';
 export * from './avatar';
 export * from './button';
 export * from './button-vertical';
 export * from './icon';
+export * from './icon-button';
 export * from './text-field';
 export * from './top-bar';
-export * from './alert';
 export * from './ui';
-export * from './utils';
-export * from './autocomplete';
 export * as Icons from './ui-icons';
+export * from './utils';

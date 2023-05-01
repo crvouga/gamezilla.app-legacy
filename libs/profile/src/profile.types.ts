@@ -24,11 +24,12 @@ export type FrontendModel_ = {
     [key in Req['t']]?: RemoteData<string, null>;
   };
   draft?: {
-    username: string;
-    avatarSeed: ProfileAvatar.Seed;
-    avatarStyle: ProfileAvatar.Style;
-    themeMode: 'Light' | 'Dark' | 'System';
+    username?: string;
+    avatarSeed?: ProfileAvatar.Seed;
+    avatarStyle?: ProfileAvatar.Style;
+    themeMode?: 'Light' | 'Dark' | 'System';
   };
+  opened?: 'menu' | null;
 };
 
 export type FrontendModel = FrontendModel_;
@@ -43,7 +44,11 @@ export type BackendModel = null;
 //
 //
 
-export type FrontendMsg = Req;
+export type FrontendMsg =
+  | Req
+  | { t: 'inputted-username'; username: string }
+  | { t: 'clicked-toggle-menu' }
+  | { t: 'closed-menu' };
 
 export type BackendMsg = { t: 'none' };
 
@@ -54,6 +59,7 @@ export type ToBackend = Req;
 export type Req =
   | { t: 'find-else-create'; userId: UserId }
   | { t: 'find-many'; userIds: UserId[] }
+  | { t: 'change-username'; username: string }
   | { t: 'search'; query: string }
   | { t: 'delete-forever'; query: string };
 

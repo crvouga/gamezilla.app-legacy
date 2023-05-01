@@ -9,8 +9,6 @@ import {
   CircularProgress,
   Divider,
   FillBox,
-  Header,
-  HeaderBackButton,
   IconButton,
   Icons,
   InputAdornment,
@@ -20,6 +18,8 @@ import {
   ListItemButton,
   ListItemSecondaryAction,
   ListItemText,
+  TopBar,
+  TopBarBackButton,
   Typography,
   ViewLoadingState,
   ViewNode,
@@ -289,9 +289,9 @@ const ViewChatNew = ({
   });
   return (
     <FillBox>
-      <Header
+      <TopBar
         left={
-          <HeaderBackButton
+          <TopBarBackButton
             onClick={() => ctx.$push({ t: 'chat', c: { t: 'chat' } })}
           />
         }
@@ -350,7 +350,6 @@ const ViewChatNew = ({
             <InputAdornment position="end">
               {userSearch.loading && <CircularProgress size={24} />}
               <IconButton
-                edge="end"
                 onClick={() => {
                   $send(['clicked-user-search-clear-button']);
                 }}
@@ -434,7 +433,7 @@ const ViewChatList = ({
           flexDirection: 'column',
         }}
       >
-        <Header title="Chat" />
+        <TopBar title="Chat" />
 
         {query.type === 'Loading' ? (
           <ViewLoadingState title="Loading conversations..." />
