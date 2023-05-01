@@ -68,7 +68,8 @@ export type ToFrontend =
   | { t: 'profile'; c: Profile.ToFrontend }
   | { t: 'search'; c: Search.ToFrontend }
   | { t: 'chat'; c: Chat.ToFrontend }
-  | { t: 'auth'; c: Auth.ToFrontend };
+  | { t: 'auth'; c: Auth.ToFrontend }
+  | { t: 'access-denied'; msg: ToBackend };
 
 export type FrontendMsg =
   | { t: '→'; c: ToFrontend }

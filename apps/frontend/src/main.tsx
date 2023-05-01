@@ -428,6 +428,10 @@ const updateFromBackend = ({
       };
     }
 
+    case 'access-denied': {
+      return { model };
+    }
+
     default: {
       return exhaustive(msg);
     }
@@ -767,7 +771,7 @@ const ViewBottomBar = ({
               onClick={() => ctx.$push(item.route)}
               className={cn(
                 'flex items-center justify-center flex-col flex-1 pt-1 pb-2 gap-0.5',
-                isSelected ? 'text-blue-400' : 'opacity-80'
+                isSelected ? 'text-blue-500' : 'opacity-80'
               )}
             >
               {item.icon}

@@ -269,7 +269,7 @@ const updateFromFrontend = ({
       const currentUserId = model.sessions[ctx.sessionId]?.userId;
 
       if (!currentUserId) {
-        return { model };
+        return { model, cmd: sendToClient({ t: 'access-denied', msg }) };
       }
 
       const updated = ProfileBackend.updateFromFrontend({
