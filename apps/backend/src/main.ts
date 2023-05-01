@@ -9,6 +9,8 @@ import {
   ToBackend,
   ToFrontend,
 } from '@gamezilla/app';
+import { AuthBackend } from '@gamezilla/auth';
+import { ChatBackend } from '@gamezilla/chat';
 import {
   andThen,
   Cmd,
@@ -43,10 +45,12 @@ type Model = BackendModel;
 
 export const init: { model: Model; cmd?: Cmd<Msg> } = {
   model: {
-    room: RoomBackend.init,
     sessions: {},
+    room: RoomBackend.init,
     profile: ProfileBackend.init,
     search: SearchBackend.init.model,
+    chat: ChatBackend.init.model,
+    auth: AuthBackend.init,
   },
 };
 
@@ -166,6 +170,29 @@ export const update_: typeof update = ({ msg, model, ctx }) => {
       };
     }
 
+    case 'auth': {
+      const updated = AuthBackend.update({
+        model: model.auth,
+        msg: msg.c,
+      });
+      return {
+        model: { ...model, auth: updated.model },
+        cmd: Cmd.tag_('auth', updated.cmd),
+      };
+    }
+
+    case 'chat': {
+      const updated = ChatBackend.update({
+        model: model.chat,
+        msg: msg.c,
+      });
+
+      return {
+        model: { ...model, chat: updated.model },
+        cmd: Cmd.tag_('chat', updated.cmd),
+      };
+    }
+
     default: {
       return exhaustive(msg);
     }
@@ -258,6 +285,18 @@ const updateFromFrontend = ({
       return {
         model: { ...model, search: updated.model },
         cmd: Cmd.tag_('search', updated.cmd),
+      };
+    }
+
+    case 'chat': {
+      const updated = ChatBackend.updateFromFrontend({
+        model: model.chat,
+        msg: msg.c,
+        sendToClient: (c) => sendToClient({ t: 'chat', c }),
+      });
+      return {
+        model: { ...model, chat: updated.model },
+        cmd: Cmd.tag_('chat', updated.cmd),
       };
     }
 

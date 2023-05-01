@@ -20,6 +20,8 @@ export type BackendModel = {
   };
   profile: Profile.BackendModel;
   search: Search.BackendModel;
+  chat: Chat.BackendModel;
+  auth: Auth.BackendModel;
 };
 
 export type Session = {
@@ -57,12 +59,16 @@ export type ToBackend =
   | { t: 'room'; c: Room.ToBackend }
   | { t: 'auth'; c: Auth.ToBackend }
   | { t: 'profile'; c: Profile.ToBackend }
-  | { t: 'search'; c: Search.ToBackend };
+  | { t: 'search'; c: Search.ToBackend }
+  | { t: 'chat'; c: Chat.ToBackend }
+  | { t: 'auth'; c: Auth.ToBackend };
 
 export type ToFrontend =
   | { t: 'room'; c: Room.ToFrontend }
   | { t: 'profile'; c: Profile.ToFrontend }
-  | { t: 'search'; c: Search.ToFrontend };
+  | { t: 'search'; c: Search.ToFrontend }
+  | { t: 'chat'; c: Chat.ToFrontend }
+  | { t: 'auth'; c: Auth.ToFrontend };
 
 export type FrontendMsg =
   | { t: '→'; c: ToFrontend }
@@ -81,7 +87,9 @@ export type BackendMsg =
   | { t: 'client-disconnected'; sessionId: SessionId; clientId: ClientId }
   | { t: 'room'; c: Room.BackendMsg }
   | { t: 'profile'; c: Profile.BackendMsg }
-  | { t: 'search'; c: Search.BackendMsg };
+  | { t: 'search'; c: Search.BackendMsg }
+  | { t: 'chat'; c: Chat.BackendMsg }
+  | { t: 'auth'; c: Auth.BackendMsg };
 
 //
 //

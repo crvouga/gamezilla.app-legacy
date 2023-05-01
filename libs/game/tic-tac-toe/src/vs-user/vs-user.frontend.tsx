@@ -1040,9 +1040,7 @@ export const toGameText = ({ model }: { model: Model }): string => {
     case 'GameOver': {
       switch (model.gameOver.type) {
         case 'resignation': {
-          return `${
-            store.profiles[model[model.gameOver.resigner]]?.username ?? '...'
-          } resigned`;
+          return `Resigned`;
         }
 
         case 'Winner': {

@@ -522,7 +522,7 @@ const updateResponse = ({
     sendToBackend,
   });
 
-  const userIds = Object.values(merged.model.users).map((user) => user.userId);
+  // const userIds = Object.values(merged.model.users).map((user) => user.userId);
 
   return {
     model: {
@@ -530,7 +530,7 @@ const updateResponse = ({
       requests: { ...merged.model.requests, [msg.t]: RemoteData.Ok('none') },
     },
     cmd: merged.cmd,
-    actions: [['profile', ['find-many', { userIds }]]],
+    actions: [],
   };
 };
 

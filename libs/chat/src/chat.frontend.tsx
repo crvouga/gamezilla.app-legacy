@@ -26,7 +26,12 @@ import {
 } from '@gamezilla/shared/ui';
 import { Fab } from '@mui/material';
 import { matchSorter } from 'match-sorter';
-import { FrontendModel, FrontendMsg, ToBackend } from './chat.types';
+import {
+  FrontendModel,
+  FrontendMsg,
+  ToBackend,
+  ToFrontend,
+} from './chat.types';
 
 //
 //
@@ -143,6 +148,18 @@ const removeKey = <T extends object>(obj: T, key: keyof T) => {
     delete newObj[key];
   }
   return newObj;
+};
+
+export const updateFromBackend = ({
+  model,
+}: {
+  msg: ToFrontend;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  return { model };
 };
 
 export const updateFromApp = ({

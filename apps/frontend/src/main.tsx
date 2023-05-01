@@ -403,6 +403,30 @@ const updateFromBackend = ({
       };
     }
 
+    case 'auth': {
+      const updated = AuthFrontend.updateFromBackend({
+        msg: msg.c,
+        model: model.auth,
+      });
+      return {
+        model: { ...model, auth: updated.model },
+        cmd: Cmd.tag_('auth', updated.cmd),
+        actions: [],
+      };
+    }
+
+    case 'chat': {
+      const updated = ChatFrontend.updateFromBackend({
+        msg: msg.c,
+        model: model.chat,
+      });
+      return {
+        model: { ...model, chat: updated.model },
+        cmd: Cmd.tag_('chat', updated.cmd),
+        actions: [],
+      };
+    }
+
     default: {
       return exhaustive(msg);
     }
