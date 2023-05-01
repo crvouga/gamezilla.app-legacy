@@ -132,7 +132,6 @@ export const updateFromFrontend = ({
     case 'join':
     case 'destroy':
     case 'create': {
-      console.log('updateFromFrontend', msg.t);
       const res: Res = { ...msg, result: handle({ ctx, model, msg }) };
 
       if (res.result.type === 'Err') {

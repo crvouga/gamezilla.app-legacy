@@ -20,6 +20,7 @@ import {
 } from '@gamezilla/core';
 import { ProfileBackend } from '@gamezilla/profile';
 import { RoomBackend } from '@gamezilla/room';
+import { SearchBackend } from '@gamezilla/search';
 import { ClientId, SessionId, UserId } from '@gamezilla/shared';
 import {
   Ctx,
@@ -45,6 +46,7 @@ export const init: { model: Model; cmd?: Cmd<Msg> } = {
     room: RoomBackend.init,
     sessions: {},
     profile: ProfileBackend.init,
+    search: SearchBackend.init.model,
   },
 };
 
@@ -153,6 +155,17 @@ export const update_: typeof update = ({ msg, model, ctx }) => {
       };
     }
 
+    case 'search': {
+      const updated = SearchBackend.update({
+        model: model.search,
+        msg: msg.c,
+      });
+      return {
+        model: { ...model, search: updated.model },
+        cmd: Cmd.tag_('search', updated.cmd),
+      };
+    }
+
     default: {
       return exhaustive(msg);
     }
@@ -234,6 +247,17 @@ const updateFromFrontend = ({
       return {
         model: { ...model, profile: updated.model },
         cmd: Cmd.tag_('profile', updated.cmd),
+      };
+    }
+
+    case 'search': {
+      const updated = SearchBackend.updateFromFrontend({
+        model: model.search,
+        msg: msg.c,
+      });
+      return {
+        model: { ...model, search: updated.model },
+        cmd: Cmd.tag_('search', updated.cmd),
       };
     }
 

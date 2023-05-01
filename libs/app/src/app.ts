@@ -2,6 +2,7 @@ import * as Auth from '@gamezilla/auth';
 import * as Chat from '@gamezilla/chat';
 import * as Profile from '@gamezilla/profile';
 import * as Room from '@gamezilla/room';
+import * as Search from '@gamezilla/search';
 import { Alerts, ClientId, Route, SessionId, UserId } from '@gamezilla/shared';
 
 //
@@ -18,6 +19,7 @@ export type BackendModel = {
     [sessionId: SessionId]: Session;
   };
   profile: Profile.BackendModel;
+  search: Search.BackendModel;
 };
 
 export type Session = {
@@ -34,6 +36,7 @@ export type FrontendModel = {
   room: Room.FrontendModel;
   profile: Profile.FrontendModel;
   chat: Chat.FrontendModel;
+  search: Search.FrontendModel;
 };
 
 export type WireModel =
@@ -53,11 +56,13 @@ export type WireModel =
 export type ToBackend =
   | { t: 'room'; c: Room.ToBackend }
   | { t: 'auth'; c: Auth.ToBackend }
-  | { t: 'profile'; c: Profile.ToBackend };
+  | { t: 'profile'; c: Profile.ToBackend }
+  | { t: 'search'; c: Search.ToBackend };
 
 export type ToFrontend =
   | { t: 'room'; c: Room.ToFrontend }
-  | { t: 'profile'; c: Profile.ToFrontend };
+  | { t: 'profile'; c: Profile.ToFrontend }
+  | { t: 'search'; c: Search.ToFrontend };
 
 export type FrontendMsg =
   | { t: '→'; c: ToFrontend }
@@ -67,14 +72,16 @@ export type FrontendMsg =
   | { t: 'room'; c: Room.FrontendMsg }
   | { t: 'chat'; c: Chat.FrontendMsg }
   | { t: 'auth'; c: Auth.FrontendMsg }
-  | { t: 'profile'; c: Profile.FrontendMsg };
+  | { t: 'profile'; c: Profile.FrontendMsg }
+  | { t: 'search'; c: Search.FrontendMsg };
 
 export type BackendMsg =
   | { t: '→'; sessionId: SessionId; clientId: ClientId; c: ToBackend }
   | { t: 'client-connected'; sessionId: SessionId; clientId: ClientId }
   | { t: 'client-disconnected'; sessionId: SessionId; clientId: ClientId }
   | { t: 'room'; c: Room.BackendMsg }
-  | { t: 'profile'; c: Profile.BackendMsg };
+  | { t: 'profile'; c: Profile.BackendMsg }
+  | { t: 'search'; c: Search.BackendMsg };
 
 //
 //

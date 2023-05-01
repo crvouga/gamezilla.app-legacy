@@ -1,7 +1,12 @@
 import { Browser, Cmd, matchSort, p } from '@gamezilla/core';
 import { Route } from '@gamezilla/shared';
-import * as UI from '@gamezilla/shared/ui';
-import { FrontendModel, FrontendMsg, ToBackend } from './search.types';
+import { IconMagnifyingGlass, IconXMark, ViewNode } from '@gamezilla/shared/ui';
+import {
+  FrontendModel,
+  FrontendMsg,
+  ToBackend,
+  ToFrontend,
+} from './search.types';
 
 //
 //
@@ -80,6 +85,15 @@ export const update = ({
   return { model, cmd: sendToBackend(msg) };
 };
 
+export const updateFromBackend = ({
+  model,
+}: {
+  msg: ToFrontend;
+  model: Model;
+}): { model: Model; cmd?: Cmd<Msg> } => {
+  return { model };
+};
+
 //
 //
 //
@@ -91,9 +105,11 @@ export const update = ({
 export const View = ({
   model,
   $send,
+  viewBottomBar,
 }: {
   model: Model;
   $send: (msg: Msg) => void;
+  viewBottomBar: ViewNode;
 }) => {
   const request = model.requests[model.searchText] ?? { type: 'NotAsked' };
   const results = matchSort(
@@ -103,57 +119,45 @@ export const View = ({
   );
 
   return (
-    <UI.FillBox>
-      <UI.InputBase
-        sx={{ width: '100%', paddingY: 1, paddingX: 2 }}
-        placeholder="Search"
-        value={model.searchText}
-        onChange={(event) =>
-          $send({ t: 'inputted-search-text', searchText: event.target.value })
-        }
-        endAdornment={
-          <UI.InputAdornment position="end">
-            {request.type === 'Loading' && <UI.CircularProgress size={24} />}
-            <UI.IconButton
-              edge="end"
-              onClick={() => $send({ t: 'clicked-clear' })}
-            >
-              <UI.Icons.Close />
-            </UI.IconButton>
-          </UI.InputAdornment>
-        }
-      />
-
-      <UI.Divider />
-
-      {results.length === 0 && (
-        <UI.Typography sx={{ paddingX: 2 }} color="text.secondary">
-          {request.type === 'Loading' ? 'Searching...' : 'No results found'}
-        </UI.Typography>
-      )}
-
-      <UI.List sx={{ overflowY: 'scroll' }}>
-        {results.map((result) => (
-          <UI.ListItemButton
-            key={result.userId}
-            sx={{ width: '100%' }}
-            onClick={() =>
-              $send({ t: 'clicked-result', userId: result.userId })
-            }
-          >
-            <UI.ListItemAvatar>
-              <UI.Avatar src={result.avatarUrl} />
-            </UI.ListItemAvatar>
-            <UI.ListItemText
-              primaryTypographyProps={{ noWrap: true }}
-              primary={result.username}
-            />
-            <UI.ListItemSecondaryAction>
-              <UI.Icons.ChevronRight />
-            </UI.ListItemSecondaryAction>
-          </UI.ListItemButton>
-        ))}
-      </UI.List>
-    </UI.FillBox>
+    <>
+      <div className="w-full h-full flex flex-col">
+        {/* input */}
+        <div className="w-full p-4">
+          <div className="w-full flex items-center bg-neutral-700 rounded-full px-4 py-2 gap-2">
+            <IconMagnifyingGlass />
+            <input
+              className="bg-transparent text-lg outline-none flex-1"
+              placeholder="Search"
+              value={model.searchText}
+              onChange={(event) =>
+                $send({
+                  t: 'inputted-search-text',
+                  searchText: event.target.value,
+                })
+              }
+            ></input>
+            <button onClick={() => $send({ t: 'clicked-clear' })}>
+              <IconXMark />
+            </button>
+          </div>
+        </div>
+        {/* results */}
+        <ul>
+          {results.map((result) => (
+            <li key={result.userId}>
+              <button
+                className="w-full flex items-center gap-4 p-4 hover:bg-neutral-700"
+                onClick={() =>
+                  $send({ t: 'clicked-result', userId: result.userId })
+                }
+              >
+                {result.username}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+      {viewBottomBar}
+    </>
   );
 };

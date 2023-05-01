@@ -23,6 +23,7 @@ import {
 } from '@gamezilla/core';
 import { ProfileFrontend } from '@gamezilla/profile';
 import { RoomFrontend } from '@gamezilla/room';
+import { SearchFrontend } from '@gamezilla/search';
 import {
   Alerts,
   AppMsg,
@@ -72,6 +73,7 @@ const init = ({
   const room = RoomFrontend.init();
   const profile = ProfileFrontend.init;
   const chat = ChatFrontend.init;
+  const search = SearchFrontend.init;
 
   return {
     model: {
@@ -80,6 +82,7 @@ const init = ({
       alerts,
       room: room.model,
       auth: auth.model,
+      search: search.model,
       profile,
       wire: {
         type: 'connecting',
@@ -315,6 +318,18 @@ const update_ = ({
       };
     }
 
+    case 'search': {
+      const updated = SearchFrontend.update({
+        msg: msg.c,
+        model: model.search,
+        sendToBackend: (m) => sendToBackend({ t: 'search', c: m }),
+      });
+      return {
+        model: { ...model, search: updated.model },
+        cmd: Cmd.tag_('search', updated.cmd),
+      };
+    }
+
     default: {
       return exhaustive(msg);
     }
@@ -372,6 +387,18 @@ const updateFromBackend = ({
       return {
         model: { ...model, profile: updated.model },
         cmd: Cmd.tag_('profile', updated.cmd),
+        actions: [],
+      };
+    }
+
+    case 'search': {
+      const updated = SearchFrontend.updateFromBackend({
+        msg: msg.c,
+        model: model.search,
+      });
+      return {
+        model: { ...model, search: updated.model },
+        cmd: Cmd.tag_('search', updated.cmd),
         actions: [],
       };
     }
@@ -652,7 +679,13 @@ const ViewLoggedIn = ({
   }
 
   if (model.route.t === 'search') {
-    return <div>searching</div>;
+    return (
+      <SearchFrontend.View
+        $send={(m) => $send({ t: 'search', c: m })}
+        model={model.search}
+        viewBottomBar={<ViewBottomBar model={model} $send={$send} ctx={ctx} />}
+      />
+    );
   }
 
   const check: never = model.route;
