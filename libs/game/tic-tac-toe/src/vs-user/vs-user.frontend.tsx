@@ -1,5 +1,4 @@
 import { Cmd, exhaustive } from '@gamezilla/core';
-import { ProfileStore } from '@gamezilla/profile';
 import { Alerts, RoomCtx, UserId, ViewCtx } from '@gamezilla/shared';
 import * as UI from '@gamezilla/shared/ui';
 import {
@@ -67,7 +66,7 @@ export const init: Model = {
 
 export type Msg = FrontendMsg;
 
-export type OutAction = ProfileStore.Action | Alerts.Action;
+export type OutAction = Alerts.Action;
 
 export const update = (
   {
@@ -1032,13 +1031,7 @@ const ViewResignButton = ({
   );
 };
 
-export const toGameText = ({
-  model,
-  store,
-}: {
-  model: Model;
-  store: ProfileStore.Model;
-}): string => {
+export const toGameText = ({ model }: { model: Model }): string => {
   switch (model.type) {
     case 'Setup': {
       return 'Setting up';
@@ -1053,9 +1046,9 @@ export const toGameText = ({
         }
 
         case 'Winner': {
-          const userId = model[model.gameOver.winner];
+          // const userId = model[model.gameOver.winner];
 
-          return `${store.profiles[userId]?.username ?? '...'} won`;
+          return `won`;
         }
 
         case 'Tie': {

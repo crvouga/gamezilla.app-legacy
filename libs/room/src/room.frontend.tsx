@@ -1,5 +1,4 @@
 import { Cmd, exhaustive, p, RemoteData, Sub } from '@gamezilla/core';
-import { ProfileStore } from '@gamezilla/profile';
 import {
   Alerts,
   AppMsg,
@@ -83,7 +82,7 @@ export const init = (): { model: Model } => {
 
 export type Msg = FrontendMsg;
 
-type OutAction = Alerts.Action<Msg> | ProfileStore.Action;
+type OutAction = Alerts.Action<Msg>;
 
 //
 //

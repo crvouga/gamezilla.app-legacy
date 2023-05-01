@@ -1,5 +1,4 @@
 import { Cmd, Sub } from '@gamezilla/core';
-import { ProfileStore } from '@gamezilla/profile';
 import {
   Alerts,
   Ctx,
@@ -43,7 +42,7 @@ export const init: Model = {
 
 export type Msg = FrontendMsg;
 
-export type OutAction = ProfileStore.Action | Alerts.Action;
+export type OutAction = Alerts.Action;
 
 export const update = ({
   sendToBackend,

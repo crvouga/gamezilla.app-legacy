@@ -1,6 +1,5 @@
 import { Cmd, exhaustive, p, RemoteData, Sub } from '@gamezilla/core';
-import { PartyId, UserId } from '@gamezilla/shared';
-import { ProfileStore } from '@gamezilla/profile';
+import { PartyId, UserId, ViewCtx } from '@gamezilla/shared';
 import { Ctx, Route } from '@gamezilla/shared';
 import {
   Avatar,
@@ -61,8 +60,6 @@ export const init = ({
 
 export type Msg = FrontendMsg;
 
-export type OutAction = ProfileStore.Action;
-
 export const update = (
   { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd },
   msg: Msg,
@@ -70,7 +67,7 @@ export const update = (
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case 'clicked-banner': {
-      return [model, Route.push(['party'])];
+      return [model, Cmd.None];
     }
 
     case 'MicSound': {
@@ -106,7 +103,7 @@ export const updateFromBackend = (
   { currentUserId }: { currentUserId: UserId },
   msg: ToFrontend,
   model: Model
-): [Model, Cmd<Msg>, OutAction[]] => {
+): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case 'party-get':
     case 'PartyDestroy':
@@ -122,7 +119,7 @@ export const updateFromBackend = (
       };
 
       if (msg[2].type === 'Err') {
-        return [{ ...model, requests: requestsNew }, Cmd.None, []];
+        return [{ ...model, requests: requestsNew }, Cmd.None];
       }
 
       const modelNext: Model = {
@@ -131,17 +128,13 @@ export const updateFromBackend = (
         ...msg[2].value,
       };
 
-      const userIds = Object.values(modelNext.users).map((user) => user.userId);
-
-      const action: OutAction = ['profile', ['find-many', { userIds }]];
-
       const cmd = toLifecycleCmd({
         currentUserId,
         modelNext: modelNext,
         modelPrev: model,
       });
 
-      return [modelNext, cmd, [action]];
+      return [modelNext, cmd];
     }
     default: {
       return exhaustive(msg[0]);
@@ -398,22 +391,15 @@ const countUsersInParty = (partyId: PartyId, model: Model): number => {
 
 export const ViewBanner = ({
   $send,
-  route,
-  currentUserId,
   model,
-}: // store,
-{
-  store: ProfileStore.Model;
-  route: Route.Model;
-  currentUserId: UserId;
+  ctx,
+}: {
+  ctx: ViewCtx;
+  route: Route.Route;
   model: Model;
   $send: (msg: Msg) => void;
 }) => {
-  if (route[0] === 'party') {
-    return null;
-  }
-
-  const user = model.users[currentUserId];
+  const user = model.users[ctx.currentUserId];
 
   if (!user) {
     return null;

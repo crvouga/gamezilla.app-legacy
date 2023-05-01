@@ -7,7 +7,6 @@ import { MazeFrontend } from '@gamezilla/game/maze';
 import { SnakeFrontend } from '@gamezilla/game/snake';
 import { TetrisFrontend } from '@gamezilla/game/tetris';
 import { TicTacToeFrontend } from '@gamezilla/game/tic-tac-toe';
-import { ProfileStore } from '@gamezilla/profile';
 import { Alerts, Ctx, RoomCtx, RoomViewCtx } from '@gamezilla/shared';
 import {
   BackendModel,
@@ -88,7 +87,7 @@ export const init = ({
 
 export type Msg = FrontendMsg;
 
-export type OutAction = Alerts.Action | ProfileStore.Action;
+export type OutAction = Alerts.Action;
 
 export const update = ({
   ctx,
