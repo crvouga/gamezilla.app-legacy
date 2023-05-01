@@ -84,7 +84,7 @@ export const update = ({
     };
   }
 
-  if (msg.t === 'clicked-toggle-menu') {
+  if (msg.t === 'clicked-menu-button') {
     return { model: { ...model, opened: 'menu' } };
   }
 
@@ -299,7 +299,7 @@ const ViewProfileScreen = ({
         <TopBar
           title={profile.username}
           right={
-            <IconButton onClick={() => $send({ t: 'clicked-toggle-menu' })}>
+            <IconButton onClick={() => $send({ t: 'clicked-menu-button' })}>
               <IconBars3 />
             </IconButton>
           }

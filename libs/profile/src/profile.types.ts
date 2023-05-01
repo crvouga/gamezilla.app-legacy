@@ -47,7 +47,7 @@ export type BackendModel = null;
 export type FrontendMsg =
   | Req
   | { t: 'inputted-username'; username: string }
-  | { t: 'clicked-toggle-menu' }
+  | { t: 'clicked-menu-button' }
   | { t: 'closed-menu' };
 
 export type BackendMsg = { t: 'none' };
