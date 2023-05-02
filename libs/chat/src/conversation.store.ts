@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Cmd, Option, p, RemoteData, Result, Task } from '@gamezilla/core';
+import { Cmd, Option, p, RemoteResult, Result, Task } from '@gamezilla/core';
 import { client, definitions, Route, UserId } from '@gamezilla/shared';
 import * as Types from './types';
 
@@ -81,7 +81,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
       modelNew.queries.Conversation.FindOne[conversationId] = p(
         result,
-        RemoteData.map((item) => ({
+        RemoteResult.map((item) => ({
           conversation: item.conversation.conversationId,
           message: item.messages.map((item) => item.messageId),
         }))
@@ -127,7 +127,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
               ...model.queries.Conversation.FindManyByUserId,
               [userId]: p(
                 result,
-                RemoteData.map((data) => ({
+                RemoteResult.map((data) => ({
                   conversation: data.conversations.map(
                     (item) => item.conversationId
                   ),
@@ -179,7 +179,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
       modelNew.mutations.Conversation.FindElseInsert = p(
         result,
-        RemoteData.map((item) => item.conversation.conversationId)
+        RemoteResult.map((item) => item.conversation.conversationId)
       );
 
       switch (result.type) {
@@ -222,7 +222,7 @@ export const runAction = (action: Action, model: Model): [Model, Cmd<Msg>] => {
       const modelNew: Model = JSON.parse(JSON.stringify(model));
 
       modelNew.queries.Conversation.FindOne[conversationId] =
-        RemoteData.Loading;
+        RemoteResult.Loading;
 
       return [
         modelNew,
@@ -240,7 +240,7 @@ export const runAction = (action: Action, model: Model): [Model, Cmd<Msg>] => {
 
       const query =
         model.queries.Conversation.FindManyByUserId[userId] ??
-        RemoteData.NotAsked;
+        RemoteResult.NotAsked;
 
       if (query.type === 'Ok') {
         return [model, Cmd.None];
@@ -249,7 +249,7 @@ export const runAction = (action: Action, model: Model): [Model, Cmd<Msg>] => {
       const modelNew: Model = JSON.parse(JSON.stringify(model));
 
       modelNew.queries.Conversation.FindManyByUserId[userId] =
-        RemoteData.Loading;
+        RemoteResult.Loading;
 
       return [
         modelNew,
@@ -267,7 +267,7 @@ export const runAction = (action: Action, model: Model): [Model, Cmd<Msg>] => {
 
       const modelNew = JSON.parse(JSON.stringify(model));
 
-      modelNew.mutations.Conversation.FindElseInsert = RemoteData.Loading;
+      modelNew.mutations.Conversation.FindElseInsert = RemoteResult.Loading;
 
       return [
         modelNew,

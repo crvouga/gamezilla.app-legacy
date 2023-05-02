@@ -1,4 +1,4 @@
-import { Audio, Cmd, p, Posix, RemoteData, Sub, Unit } from '@gamezilla/core';
+import { Audio, Cmd, p, Posix, RemoteResult, Sub, Unit } from '@gamezilla/core';
 import { RoomCtx, RoomViewCtx, ViewMainMenu } from '@gamezilla/shared';
 import { Alerts } from '@gamezilla/shared';
 import {
@@ -74,7 +74,7 @@ export const update = ({
       return [
         {
           ...model,
-          requests: { ...model.requests, [msg.t]: RemoteData.Loading },
+          requests: { ...model.requests, [msg.t]: RemoteResult.Loading },
         },
         sendToBackend(msg),
       ];
@@ -158,7 +158,7 @@ export const updateFromBackend = ({
           ...model.requests,
           [msg.t]: p(
             result,
-            RemoteData.map(() => Unit)
+            RemoteResult.map(() => Unit)
           ),
         },
       };

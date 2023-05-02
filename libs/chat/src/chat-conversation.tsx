@@ -1,4 +1,4 @@
-import { Browser, Cmd, p, RemoteData } from '@gamezilla/core';
+import { Browser, Cmd, p, RemoteResult } from '@gamezilla/core';
 import { ViewCtx, Route, UserId } from '@gamezilla/shared';
 import * as UI from '@gamezilla/shared/ui';
 import { ReactNode, useLayoutEffect, useRef, useState } from 'react';
@@ -158,7 +158,7 @@ export const View = ({
   const { currentUserId, profiles } = ctx;
   const query =
     chatStore.queries.Conversation.FindOne[conversationId] ??
-    RemoteData.NotAsked;
+    RemoteResult.NotAsked;
 
   const filtered = Object.values(chatStore.UsersConversations)
     .filter((conversation) => conversation.conversationId === conversationId)
@@ -176,7 +176,7 @@ export const View = ({
   );
 
   const messageInsertMutation =
-    chatStore.mutations.Message.Send[conversationId] ?? RemoteData.NotAsked;
+    chatStore.mutations.Message.Send[conversationId] ?? RemoteResult.NotAsked;
 
   return (
     <UI.FillBox>

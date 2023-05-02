@@ -1,7 +1,7 @@
 import { p } from './pipe';
 import { Err, Ok, Result } from './result';
 
-export type RemoteData<TError, TValue> =
+export type RemoteResult<TError, TValue> =
   | NotAsked
   | Loading
   | Result<TError, TValue>;
@@ -14,19 +14,19 @@ export const Loading: Loading = { type: 'Loading' };
 
 export const map =
   <E, A, B>(mapper: (a: A) => B) =>
-  (remoteData: RemoteData<E, A>): RemoteData<E, B> => {
-    switch (remoteData.type) {
+  (RemoteResult: RemoteResult<E, A>): RemoteResult<E, B> => {
+    switch (RemoteResult.type) {
       case 'NotAsked':
       case 'Loading':
-        return remoteData;
+        return RemoteResult;
 
       case 'Err':
       case 'Ok':
-        return p(remoteData, Result.map(mapper));
+        return p(RemoteResult, Result.map(mapper));
     }
   };
 
-export const RemoteData = {
+export const RemoteResult = {
   map,
   Loading,
   NotAsked,

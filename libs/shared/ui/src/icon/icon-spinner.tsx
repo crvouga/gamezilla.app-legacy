@@ -7,7 +7,7 @@ export const IconSpinner = ({ className, ...props }: IconProps) => {
       fill="currentColor"
       stroke="currentColor"
       viewBox="0 0 24 24"
-      className={`w-6 h-6 animate-spin ${className ? className : ''}`}
+      className={`w-10 h-10 animate-spin ${className ? className : ''}`}
       {...props}
     >
       <path

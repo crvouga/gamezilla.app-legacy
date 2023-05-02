@@ -1,4 +1,4 @@
-import { Cmd, exhaustive, p, RemoteData, Sub } from '@gamezilla/core';
+import { Cmd, exhaustive, p, RemoteResult, Sub } from '@gamezilla/core';
 import { PartyId, UserId, ViewCtx } from '@gamezilla/shared';
 import { Ctx, Route } from '@gamezilla/shared';
 import {
@@ -87,7 +87,7 @@ export const update = (
       return [
         {
           ...model,
-          requests: { ...model.requests, [msg[0]]: RemoteData.Loading },
+          requests: { ...model.requests, [msg[0]]: RemoteResult.Loading },
         },
         sendToBackend(msg),
       ];
@@ -114,7 +114,7 @@ export const updateFromBackend = (
         ...model.requests,
         [msg[0]]: p(
           msg[2],
-          RemoteData.map(() => null)
+          RemoteResult.map(() => null)
         ),
       };
 

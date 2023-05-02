@@ -1,4 +1,4 @@
-import { RemoteData, Result } from '@gamezilla/core';
+import { RemoteResult, Result } from '@gamezilla/core';
 import { RoomId, UserId, Username } from '@gamezilla/shared';
 import * as GameBackend from './game.backend';
 import * as Game from './game.types';
@@ -43,7 +43,7 @@ export type FrontendModel = SharedModel & {
     [roomId: RoomId]: Game.FrontendModel;
   };
   requests: {
-    [key in Req['t']]?: RemoteData<Problem, 'none'>;
+    [key in Req['t']]?: RemoteResult<Problem, 'none'>;
   };
   previewUserId: UserId | null;
   modal: ModalModel;

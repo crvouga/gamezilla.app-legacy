@@ -1,4 +1,4 @@
-import { Cmd, RemoteData, andThen, p } from '@gamezilla/core';
+import { Cmd, RemoteResult, andThen, p } from '@gamezilla/core';
 import {
   AppMsg,
   ProfileAvatar,
@@ -374,7 +374,7 @@ const ViewDeleteScreen = (_props: {
 }) => {
   const mutation = {
     type: 'NotAsked',
-  } as RemoteData<string, null>;
+  } as RemoteResult<string, null>;
 
   switch (mutation.type) {
     case 'Loading':

@@ -2,7 +2,7 @@ import {
   Cmd,
   exhaustive,
   p,
-  RemoteData,
+  RemoteResult,
   Result,
   Task,
   Unit,
@@ -23,19 +23,19 @@ export type Model = {
     [id: UserId]: Profile;
   };
   findMany: {
-    [key: FindManyKey]: RemoteData<Problem, UserId[]>;
+    [key: FindManyKey]: RemoteResult<Problem, UserId[]>;
   };
   search: {
-    [searchText: string]: RemoteData<Problem, UserId[]>;
+    [searchText: string]: RemoteResult<Problem, UserId[]>;
   };
   edit: {
-    [userId: UserId]: RemoteData<Problem, UserId>;
+    [userId: UserId]: RemoteResult<Problem, UserId>;
   };
   deleteForever: {
-    [userId: UserId]: RemoteData<Problem, Unit>;
+    [userId: UserId]: RemoteResult<Problem, Unit>;
   };
   create: {
-    [userId: UserId]: RemoteData<Problem, UserId>;
+    [userId: UserId]: RemoteResult<Problem, UserId>;
   };
 };
 
@@ -142,7 +142,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
           profiles: removeKey(userId, model.profiles),
           edit: {
             ...model.edit,
-            [userId]: RemoteData.Err(result.error),
+            [userId]: RemoteResult.Err(result.error),
           },
         };
 
@@ -157,7 +157,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
         },
         edit: {
           ...model.edit,
-          [userId]: RemoteData.Ok(userId),
+          [userId]: RemoteResult.Ok(userId),
         },
       };
 
@@ -186,7 +186,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
           ...model.findMany,
           [key]: p(
             result,
-            RemoteData.map((profiles) =>
+            RemoteResult.map((profiles) =>
               profiles.map((profile) => profile.userId)
             )
           ),
@@ -220,7 +220,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
           ...model.create,
           [userId]: p(
             result,
-            RemoteData.map((profile) => profile.userId)
+            RemoteResult.map((profile) => profile.userId)
           ),
         },
 
@@ -249,7 +249,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
           ...model.search,
           [searchText]: p(
             result,
-            RemoteData.map((profiles) =>
+            RemoteResult.map((profiles) =>
               profiles.map((profile) => profile.userId)
             )
           ),
@@ -284,7 +284,7 @@ export const runAction = (msg: Action, model: Model): [Model, Cmd<Msg>] => {
         ...model,
         edit: {
           ...model.edit,
-          [userId]: RemoteData.Loading,
+          [userId]: RemoteResult.Loading,
         },
         profiles: {
           ...model.profiles,
@@ -319,7 +319,7 @@ export const runAction = (msg: Action, model: Model): [Model, Cmd<Msg>] => {
         ...model,
         findMany: {
           ...model.findMany,
-          [key]: RemoteData.Loading,
+          [key]: RemoteResult.Loading,
         },
       };
 
@@ -339,7 +339,7 @@ export const runAction = (msg: Action, model: Model): [Model, Cmd<Msg>] => {
         ...model,
         deleteForever: {
           ...model.deleteForever,
-          [userId]: RemoteData.Loading,
+          [userId]: RemoteResult.Loading,
         },
       };
 
@@ -360,7 +360,7 @@ export const runAction = (msg: Action, model: Model): [Model, Cmd<Msg>] => {
         ...model,
         create: {
           ...model.create,
-          [profile.userId]: RemoteData.Loading,
+          [profile.userId]: RemoteResult.Loading,
         },
         profiles: {
           ...model.profiles,
@@ -389,7 +389,7 @@ export const runAction = (msg: Action, model: Model): [Model, Cmd<Msg>] => {
         ...model,
         search: {
           ...model.search,
-          [searchText]: RemoteData.Loading,
+          [searchText]: RemoteResult.Loading,
         },
       };
 

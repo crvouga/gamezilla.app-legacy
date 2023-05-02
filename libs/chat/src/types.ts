@@ -1,4 +1,4 @@
-import { RemoteData } from '@gamezilla/core';
+import { RemoteResult } from '@gamezilla/core';
 import { UserId } from '@gamezilla/shared';
 
 //
@@ -66,7 +66,7 @@ export type Message = {
 export type Queries = {
   Conversation: {
     FindOne: {
-      [id: string]: RemoteData<
+      [id: string]: RemoteResult<
         Problem,
         {
           conversation: string;
@@ -75,7 +75,7 @@ export type Queries = {
       >;
     };
     FindManyByUserId: {
-      [userId: UserId]: RemoteData<
+      [userId: UserId]: RemoteResult<
         Problem,
         {
           conversation: string[];
@@ -96,14 +96,14 @@ export type Queries = {
 
 export type Mutations = {
   Conversation: {
-    FindElseInsert: RemoteData<Problem, string>;
+    FindElseInsert: RemoteResult<Problem, string>;
   };
   Message: {
     Send: {
-      [conversationId: string]: RemoteData<Problem, string>;
+      [conversationId: string]: RemoteResult<Problem, string>;
     };
     Unsend: {
-      [messageId: string]: RemoteData<Problem, string>;
+      [messageId: string]: RemoteResult<Problem, string>;
     };
   };
 };
@@ -138,7 +138,7 @@ export const initialStore: Store = {
   },
   mutations: {
     Conversation: {
-      FindElseInsert: RemoteData.NotAsked,
+      FindElseInsert: RemoteResult.NotAsked,
     },
     Message: {
       Send: {},

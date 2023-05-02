@@ -1,4 +1,4 @@
-import { filterObject, RemoteData, removeKey, Result } from '@gamezilla/core';
+import { filterObject, RemoteResult, removeKey, Result } from '@gamezilla/core';
 import { PartyId, UserId } from '@gamezilla/shared';
 import { MicLoadResult, MicUnloadResult } from './mic';
 const { Err, Ok } = Result;
@@ -31,7 +31,7 @@ export type BackendModel = SharedModel;
 export type FrontendModel = SharedModel & {
   volume: number;
   requests: {
-    [key in Req[0]]?: RemoteData<Problem, null>;
+    [key in Req[0]]?: RemoteResult<Problem, null>;
   };
 };
 

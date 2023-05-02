@@ -1,4 +1,4 @@
-import { RemoteData, Result } from '@gamezilla/core';
+import { RemoteResult, Result } from '@gamezilla/core';
 import { PhoneNumber, SessionId, UserId } from '@gamezilla/shared';
 import * as AuthEmailLink from './auth-email-link';
 import * as AuthPhone from './auth-phone';
@@ -11,7 +11,7 @@ export type FrontendModel = {
     | { t: 'logged-out' }
     | { t: 'logged-in'; currentUserId: UserId; name?: string };
   requests: {
-    [key in Req['t']]?: RemoteData<string, null>;
+    [key in Req['t']]?: RemoteResult<string, null>;
   };
   phone: AuthPhone.Model;
   phoneVerify: AuthPhoneVerify.Model;

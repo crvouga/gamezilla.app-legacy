@@ -1,4 +1,4 @@
-import { Cmd, p, RemoteData, Result, Task } from '@gamezilla/core';
+import { Cmd, p, RemoteResult, Result, Task } from '@gamezilla/core';
 import { client, definitions, UserId } from '@gamezilla/shared';
 import type { Problem, Store } from './types';
 import * as Types from './types';
@@ -85,7 +85,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
               ...model.mutations.Message.Send,
               [conversationId]: p(
                 result,
-                RemoteData.map((message) => message.messageId)
+                RemoteResult.map((message) => message.messageId)
               ),
             },
           },
@@ -110,7 +110,7 @@ export const runAction = (action: Action, model: Store): [Store, Cmd<Msg>] => {
       const { messageId } = action[1];
       const modelNew: Model = JSON.parse(JSON.stringify(model));
 
-      modelNew.mutations.Message.Unsend[messageId] = RemoteData.Loading;
+      modelNew.mutations.Message.Unsend[messageId] = RemoteResult.Loading;
 
       return [
         modelNew,
@@ -125,7 +125,7 @@ export const runAction = (action: Action, model: Store): [Store, Cmd<Msg>] => {
       const { conversationId, userId, messageText } = action[1];
       const modelNew: Model = JSON.parse(JSON.stringify(model));
 
-      modelNew.mutations.Message.Send[conversationId] = RemoteData.Loading;
+      modelNew.mutations.Message.Send[conversationId] = RemoteResult.Loading;
 
       return [
         modelNew,

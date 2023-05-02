@@ -1,4 +1,4 @@
-import { RemoteData, Result } from '@gamezilla/core';
+import { RemoteResult, Result } from '@gamezilla/core';
 import { ProfileAvatar, UserId, Username } from '@gamezilla/shared';
 
 //
@@ -21,7 +21,7 @@ export type FrontendModel_ = {
     [userId: UserId]: Profile;
   };
   requests: {
-    [key in Req['t']]?: RemoteData<string, null>;
+    [key in Req['t']]?: RemoteResult<string, null>;
   };
   draft?: {
     username?: string;

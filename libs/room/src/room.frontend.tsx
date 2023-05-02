@@ -1,4 +1,4 @@
-import { Cmd, exhaustive, p, RemoteData, Sub } from '@gamezilla/core';
+import { Cmd, exhaustive, p, RemoteResult, Sub } from '@gamezilla/core';
 import {
   Alerts,
   AppMsg,
@@ -165,7 +165,7 @@ export const update = ({
           ...model,
           requests: {
             ...model.requests,
-            [msg.t]: RemoteData.Loading,
+            [msg.t]: RemoteResult.Loading,
           },
         },
         cmd: Cmd.batch([
@@ -488,7 +488,7 @@ const updateListRooms = ({
   return {
     model: {
       ...model,
-      requests: { ...model.requests, list: RemoteData.Loading },
+      requests: { ...model.requests, list: RemoteResult.Loading },
     },
     cmd: sendToBackend({
       t: 'list',
@@ -542,7 +542,7 @@ const updateResponse = ({
         ...model,
         requests: {
           ...model.requests,
-          [msg.t]: RemoteData.Err(msg.result.error),
+          [msg.t]: RemoteResult.Err(msg.result.error),
         },
       },
       cmd: Cmd.None,
@@ -562,7 +562,7 @@ const updateResponse = ({
   return {
     model: {
       ...merged.model,
-      requests: { ...merged.model.requests, [msg.t]: RemoteData.Ok('none') },
+      requests: { ...merged.model.requests, [msg.t]: RemoteResult.Ok('none') },
     },
     cmd: merged.cmd,
     actions: [],

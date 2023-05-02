@@ -1,4 +1,4 @@
-import { Browser, RemoteData, Result } from '@gamezilla/core';
+import { Browser, RemoteResult, Result } from '@gamezilla/core';
 import { UserId, Username } from '@gamezilla/shared';
 
 type SearchResult = {
@@ -15,7 +15,7 @@ export type FrontendModel = {
     [id: string]: SearchResult;
   };
   requests: {
-    [searchText: string]: RemoteData<string, null>;
+    [searchText: string]: RemoteResult<string, null>;
   };
 };
 

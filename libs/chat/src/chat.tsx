@@ -1,4 +1,4 @@
-import { Cmd, RemoteData } from '@gamezilla/core';
+import { Cmd, RemoteResult } from '@gamezilla/core';
 import { ViewCtx, Route, UserId } from '@gamezilla/shared';
 import {
   Avatar,
@@ -86,7 +86,7 @@ export const View = ({
   const { currentUserId, profiles } = ctx;
   const query =
     chatStore.queries.Conversation.FindManyByUserId[currentUserId] ??
-    RemoteData.NotAsked;
+    RemoteResult.NotAsked;
 
   const conversations = Object.values(chatStore.UsersConversations)
     .filter((item) => item.userId === currentUserId)

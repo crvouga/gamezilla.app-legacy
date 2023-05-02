@@ -1,4 +1,4 @@
-import { Browser, Cmd, exhaustive, p, RemoteData } from '@gamezilla/core';
+import { Browser, Cmd, exhaustive, p, RemoteResult } from '@gamezilla/core';
 import { AppMsg, Route, ViewCtx } from '@gamezilla/shared';
 import {
   Avatar,
@@ -401,7 +401,7 @@ const ViewChatList = ({
   model: Model;
   $send: (m: Msg) => void;
 }) => {
-  const query = model.requests['chat-list'] ?? RemoteData.Loading;
+  const query = model.requests['chat-list'] ?? RemoteResult.Loading;
   // const chats = Object.values(model.chats).filter((chat) => {
   //   const chatsUsersId = `${chat.chatId},${ctx.currentUserId}`;
   //   const chatsUsers = model.chatsUsers[chatsUsersId];

@@ -1,4 +1,13 @@
-import { Cmd, Err, Ok, Result, Sub, Task, p } from '@gamezilla/core';
+import {
+  Cmd,
+  Err,
+  Ok,
+  RemoteResult,
+  Result,
+  Sub,
+  Task,
+  p,
+} from '@gamezilla/core';
 import {
   PhoneNumber,
   Route,
@@ -82,7 +91,13 @@ export const update = ({
 } => {
   if (msg.t === 'login-with-google') {
     return {
-      model,
+      model: {
+        ...model,
+        requests: {
+          ...model.requests,
+          'login-with-google': RemoteResult.Loading,
+        },
+      },
       cmd: p(
         loginWithProvider({ provider: 'Google' }),
         Cmd.perform((result) => ({ t: 'login-done', result }))

@@ -1,4 +1,4 @@
-import { Browser, Cmd, RemoteData, Result } from '@gamezilla/core';
+import { Browser, Cmd, RemoteResult, Result } from '@gamezilla/core';
 import { UserId } from '@gamezilla/shared';
 
 //
@@ -41,7 +41,7 @@ export type FrontendModel = {
     };
   };
   requests: {
-    [key in Req[0]]?: RemoteData<Problem, null>;
+    [key in Req[0]]?: RemoteResult<Problem, null>;
   };
   userSearch: string;
   userSelected: {
