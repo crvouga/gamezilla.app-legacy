@@ -1,5 +1,13 @@
 import { p } from '@gamezilla/core';
 
+//
+//
+//
+// Model
+//
+//
+//
+
 type Position = { x: number; y: number };
 
 type Color =
@@ -39,57 +47,58 @@ export type Puzzle = {
   };
 };
 
-type Bounds = {
-  minX: number;
-  maxX: number;
-  minY: number;
-  maxY: number;
+export type Bounds = {
+  min: Position;
+  max: Position;
 };
 
+//
+//
+//
+// Init
+//
+//
+//
+
 export const initGrid = ({ bounds }: { bounds: Bounds }): Puzzle => {
-  const puzzle: Puzzle = {
+  let puzzle: Puzzle = {
     edges: {},
     nodes: {},
   };
 
-  const deltas = [
-    [-1, 0],
-    [1, 0],
-    [0, -1],
-    [0, 1],
-  ] as const;
+  const deltas: Position[] = [
+    { x: -1, y: 0 },
+    { x: 1, y: 0 },
+    { x: 0, y: 1 },
+    { x: 0, y: -1 },
+  ];
 
-  for (let x = bounds.minX; x < bounds.maxX; x++) {
-    for (let y = bounds.minY; y < bounds.maxY; y++) {
-      const node: Node = {
-        position: {
-          x,
-          y,
-        },
-      };
-      puzzle.nodes[id(node)] = node;
+  for (let x = bounds.min.x; x < bounds.max.x; x++) {
+    for (let y = bounds.min.y; y < bounds.max.y; y++) {
+      const node: Node = { position: { x, y } };
+      puzzle = setNode(puzzle, node);
+    }
+  }
 
-      for (const [dx, dy] of deltas) {
-        const to: Node = {
-          position: {
-            x: x + dx,
-            y: y + dy,
-          },
-        };
+  for (let nodeId in puzzle.nodes) {
+    const node = puzzle.nodes[nodeId];
 
-        const edge: Edge = {
-          from: id(node),
-          to: id(to),
-        };
+    if (!node) {
+      continue;
+    }
 
-        puzzle.edges = {
-          ...puzzle.edges,
-          [edge.from]: {
-            ...puzzle.edges[edge.from],
-            [edge.to]: edge,
-          },
-        };
+    const { x, y } = node.position;
+
+    for (const delta of deltas) {
+      const to: Node = { position: { x: x + delta.x, y: y + delta.y } };
+
+      if (!puzzle.nodes[id(to)]) {
+        continue;
       }
+
+      const edge: Edge = { from: id(node), to: id(to) };
+
+      puzzle = setEdge(puzzle, edge);
     }
   }
 
@@ -97,10 +106,8 @@ export const initGrid = ({ bounds }: { bounds: Bounds }): Puzzle => {
 };
 
 const bounds8x8: Bounds = {
-  minX: 0,
-  maxX: 8,
-  minY: 0,
-  maxY: 8,
+  min: { x: 0, y: 0 },
+  max: { x: 0, y: 0 },
 };
 
 export const demoGrid = p(
@@ -112,8 +119,77 @@ export const demoGrid = p(
 );
 
 const setNode = (puzzle: Puzzle, node: Node): Puzzle => {
-  return { ...puzzle, nodes: { ...puzzle.nodes, [id(node)]: { ...node } } };
+  return {
+    ...puzzle,
+    nodes: {
+      ...puzzle.nodes,
+      [id(node)]: {
+        ...node,
+      },
+    },
+  };
 };
+
+const setEdge = (puzzle: Puzzle, edge: Edge): Puzzle => {
+  return {
+    ...puzzle,
+    edges: {
+      ...puzzle.edges,
+      [edge.from]: {
+        ...puzzle.edges[edge.from],
+        [edge.to]: {
+          ...edge,
+        },
+      },
+    },
+  };
+};
+
+//
+//
+//
+// Solver
+//
+//
+//
+
+type SolvedPuzzle = Puzzle & {
+  nodes: {
+    [id: string]: Node & { color: Color };
+  };
+};
+
+export const isSolved = (puzzle: Puzzle): puzzle is SolvedPuzzle => {
+  // TODO: check if all nodes are colored
+  for (const id in puzzle.nodes) {
+    const node = puzzle.nodes[id];
+
+    if (!node) {
+      continue;
+    }
+
+    if (!node.color) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
+export const solve = function* (puzzle: Puzzle): Generator<SolvedPuzzle> {
+  if (isSolved(puzzle)) {
+    yield puzzle;
+    return;
+  }
+};
+
+//
+//
+//
+// View
+//
+//
+//
 
 export const paint = (ctx: CanvasRenderingContext2D, puzzle: Puzzle) => {
   const n = 50;
