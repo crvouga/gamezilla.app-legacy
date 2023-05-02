@@ -1,5 +1,5 @@
 import { RemoteData, Result } from '@gamezilla/core';
-import { RoomId, UserId } from '@gamezilla/shared';
+import { RoomId, UserId, Username } from '@gamezilla/shared';
 import * as GameBackend from './game.backend';
 import * as Game from './game.types';
 
@@ -21,6 +21,13 @@ export type SharedModel = {
     [userId: UserId]: {
       userId: UserId;
       roomId: RoomId;
+    };
+  };
+  profiles: {
+    [userId: UserId]: {
+      userId: UserId;
+      username: Username;
+      avatarUrl: string;
     };
   };
 };
@@ -71,6 +78,11 @@ export type Room = {
 export type ToFrontend = Res | { t: 'game'; c: Game.ToFrontend };
 
 export type ToBackend = (Req | { t: 'game'; c: Game.ToBackend }) & {
+  profile?: {
+    userId: UserId;
+    username: Username;
+    avatarUrl: string;
+  };
   [key: string]: unknown;
 };
 

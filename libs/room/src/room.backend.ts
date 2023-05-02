@@ -1,4 +1,4 @@
-import { Cmd, exhaustive, p, Sub } from '@gamezilla/core';
+import { andThen, Cmd, exhaustive, p, Sub } from '@gamezilla/core';
 import { RoomCtx, RoomRequestCtx } from '@gamezilla/shared/backend';
 import { ClientId, RoomId, UserId } from '@gamezilla/shared';
 import {
@@ -30,6 +30,7 @@ export const init: Model = {
   rooms: {},
   users: {},
   games: {},
+  profiles: {},
 };
 
 //
@@ -112,20 +113,42 @@ type Wire = {
   broadcast: (msg: ToFrontend) => Cmd;
 };
 
-export const updateFromFrontend = ({
-  ctx,
-  wire,
-  msg,
-  model,
-}: {
+type UpdateFromFrontend = (input: {
   ctx: AuthenticatedRequestCtx;
   wire: Wire;
   msg: ToBackend;
   model: Model;
-}): {
-  model: Model;
-  cmd?: Cmd<BackendMsg>;
-} => {
+}) => { model: Model; cmd?: Cmd<BackendMsg> };
+
+export const updateFromFrontend: UpdateFromFrontend = (input) => {
+  return p(
+    input,
+    andThen(({ model }) => updateProfiles({ ...input, model })),
+    andThen(({ model }) => updateFromFrontend_({ ...input, model }))
+  );
+};
+
+const updateProfiles: UpdateFromFrontend = ({ msg, model }) => {
+  if (msg.profile) {
+    return {
+      model: {
+        ...model,
+        profiles: {
+          ...model.profiles,
+          [msg.profile.userId]: msg.profile,
+        },
+      },
+    };
+  }
+  return { model };
+};
+
+export const updateFromFrontend_: UpdateFromFrontend = ({
+  ctx,
+  wire,
+  msg,
+  model,
+}) => {
   switch (msg.t) {
     case 'list':
     case 'input-game':
@@ -138,7 +161,10 @@ export const updateFromFrontend = ({
         return { model, cmd: wire.sendToClient(res) };
       }
 
-      return { model: res.result.value, cmd: wire.broadcast(res) };
+      return {
+        model: res.result.value,
+        cmd: wire.broadcast(res),
+      };
     }
 
     case 'leave': {

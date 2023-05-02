@@ -64,6 +64,7 @@ export const init = (): { model: Model } => {
       games: {},
       rooms: {},
       users: {},
+      profiles: {},
       requests: {},
       modal: 'none',
       previewUserId: null,
@@ -92,7 +93,7 @@ type OutAction = Alerts.Action<Msg>;
 //
 
 export const update = ({
-  ctx,
+  ctx: ctxPrev,
   sendToBackend,
   msg,
   model,
@@ -105,6 +106,13 @@ export const update = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
+  const ctx: Ctx = {
+    ...ctxPrev,
+    profiles: {
+      ...ctxPrev.profiles,
+      ...model.profiles,
+    },
+  };
   switch (msg.t) {
     case 'clicked-room': {
       return {
@@ -160,7 +168,10 @@ export const update = ({
             [msg.t]: RemoteData.Loading,
           },
         },
-        cmd: Cmd.batch([routeCmd, sendToBackend(msg)]),
+        cmd: Cmd.batch([
+          routeCmd,
+          sendToBackend({ ...msg, profile: ctx.profiles[ctx.currentUserId] }),
+        ]),
       };
     }
 
@@ -220,7 +231,7 @@ export const update = ({
 };
 
 export const updateFromBackend = ({
-  ctx,
+  ctx: ctxPrev,
   sendToBackend,
   msg,
   model,
@@ -234,6 +245,13 @@ export const updateFromBackend = ({
   cmd?: Cmd<Msg>;
   actions?: OutAction[];
 } => {
+  const ctx: Ctx = {
+    ...ctxPrev,
+    profiles: {
+      ...ctxPrev.profiles,
+      ...model.profiles,
+    },
+  };
   switch (msg.t) {
     case 'game': {
       const user = model.users[ctx.currentUserId];
@@ -619,6 +637,10 @@ const mergeWithBackend = ({
       games: gamesNew[0],
       rooms: backendModel.rooms,
       users: backendModel.users,
+      profiles: {
+        ...frontendModel.profiles,
+        ...backendModel.profiles,
+      },
     },
     cmd: gamesNew[1],
   };
@@ -664,7 +686,7 @@ export const subscriptions = (ctx: Ctx, model: Model): Sub<Msg> => {
 //
 
 export const View = ({
-  ctx,
+  ctx: ctxPrev,
   $send,
   model,
   route,
@@ -676,6 +698,14 @@ export const View = ({
   route: Route.RouteRoom;
   viewBottomBar: ViewNode;
 }) => {
+  const ctx: ViewCtx = {
+    ...ctxPrev,
+    profiles: {
+      ...ctxPrev.profiles,
+      ...model.profiles,
+    },
+  };
+
   if (route.t === 'room') {
     return (
       <ViewRoomScreen
@@ -1315,7 +1345,7 @@ const ViewRoomPeople = ({
 };
 
 export const ViewBottomBar = ({
-  ctx,
+  ctx: ctxPrev,
   model,
   $send,
 }: {
@@ -1323,6 +1353,13 @@ export const ViewBottomBar = ({
   model: Model;
   $send: (msg: Msg) => void;
 }) => {
+  const ctx: ViewCtx = {
+    ...ctxPrev,
+    profiles: {
+      ...ctxPrev.profiles,
+      ...model.profiles,
+    },
+  };
   const user = model.users[ctx.currentUserId];
 
   if (!user) {
