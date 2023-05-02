@@ -203,7 +203,12 @@ export const update = ({
 
       const [gameNew, gameCmd] = Game.update({
         ctx: roomCtx,
-        sendToBackend: (msg) => sendToBackend({ t: 'game', c: msg }),
+        sendToBackend: (msg) =>
+          sendToBackend({
+            t: 'game',
+            c: msg,
+            profile: ctx.profiles[ctx.currentUserId],
+          }),
         msg: gameMsg,
         model: game,
       });
@@ -279,7 +284,12 @@ export const updateFromBackend = ({
           ...ctx,
           hostId: room.hostId,
         },
-        sendToBackend: (msg) => sendToBackend({ t: 'game', c: msg }),
+        sendToBackend: (msg) =>
+          sendToBackend({
+            t: 'game',
+            c: msg,
+            profile: ctx.profiles[ctx.currentUserId],
+          }),
         model: game,
         msg: gameMsg,
       });
@@ -435,7 +445,11 @@ export const updateFromApp = ({
       switch (msg.route.c.t) {
         case 'room':
         case 'room-list': {
-          return updateListRooms({ model, initiatorMsg: msg, sendToBackend });
+          return updateListRooms({
+            model,
+            initiatorMsg: msg,
+            sendToBackend,
+          });
         }
 
         default: {
@@ -460,6 +474,7 @@ export const updateFromApp = ({
 
 const updateListRooms = ({
   model,
+
   initiatorMsg,
   sendToBackend,
 }: {
@@ -475,7 +490,10 @@ const updateListRooms = ({
       ...model,
       requests: { ...model.requests, list: RemoteData.Loading },
     },
-    cmd: sendToBackend({ t: 'list', initiatorMsg }),
+    cmd: sendToBackend({
+      t: 'list',
+      initiatorMsg,
+    }),
   };
 };
 
