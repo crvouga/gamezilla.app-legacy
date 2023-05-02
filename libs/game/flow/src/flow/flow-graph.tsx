@@ -190,8 +190,14 @@ export const isSolved = (puzzle: Puzzle): puzzle is SolvedPuzzle => {
 };
 
 const puzzleToKey = (puzzle: Puzzle): string => {
-  // TODO this must be deterministic and it's not
-  return JSON.stringify(puzzle);
+  const nodeIds = Object.keys(puzzle.nodes).sort();
+  const edgeIds = Object.entries(puzzle.edges)
+    .reduce<string[]>((acc, [from, nodes]) => {
+      const nodeIds = Object.keys(nodes).sort();
+      return [...acc, ...nodeIds.map((to) => `${from}-${to}`)];
+    }, [])
+    .sort();
+  return `${nodeIds.join(',')}|${edgeIds.join(',')}`;
 };
 
 export const yieldSolutions = function* (
@@ -222,7 +228,7 @@ export const yieldSolutions = function* (
     }
 
     for (const path of yieldUncoloredPaths(puzzle, startNode, endNode)) {
-      const colored = colorPath(puzzle, startNode.color, path);
+      const colored = colorUncoloredPath(puzzle, startNode.color, path);
       yield* yieldSolutions(colored, solutions);
     }
   }
@@ -230,12 +236,9 @@ export const yieldSolutions = function* (
   return Ok(null);
 };
 
-type UncoloredPath = {
-  node: UncoloredNode;
-  next: UncoloredPath | null;
-};
+type UncoloredPath = [ColoredNode, ...UncoloredNode[], ColoredNode];
 
-const colorPath = (
+const colorUncoloredPath = (
   puzzle: Puzzle,
   _color: Color,
   _path: UncoloredPath
