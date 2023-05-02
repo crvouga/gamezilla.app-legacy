@@ -1,4 +1,4 @@
-import { p } from '@gamezilla/core';
+import { Err, Ok, Result, p } from '@gamezilla/core';
 
 //
 //
@@ -22,9 +22,23 @@ type Color =
   | 'black'
   | 'white';
 
-export type Node = {
+export type ColoredNode = {
   position: Position;
-  color?: Color | null;
+  color: Color;
+};
+
+export type UncoloredNode = {
+  position: Position;
+};
+
+export type Node = ColoredNode | UncoloredNode;
+
+export const isColored = (node: Node): node is ColoredNode => {
+  return 'color' in node;
+};
+
+export const isUncolored = (node: Node): node is UncoloredNode => {
+  return !isColored(node);
 };
 
 const id = (node: { position: Position }) => {
@@ -160,7 +174,6 @@ type SolvedPuzzle = Puzzle & {
 };
 
 export const isSolved = (puzzle: Puzzle): puzzle is SolvedPuzzle => {
-  // TODO: check if all nodes are colored
   for (const id in puzzle.nodes) {
     const node = puzzle.nodes[id];
 
@@ -176,11 +189,147 @@ export const isSolved = (puzzle: Puzzle): puzzle is SolvedPuzzle => {
   return true;
 };
 
-export const solve = function* (puzzle: Puzzle): Generator<SolvedPuzzle> {
-  if (isSolved(puzzle)) {
-    yield puzzle;
-    return;
+const puzzleToKey = (puzzle: Puzzle): string => {
+  // TODO this must be deterministic and it's not
+  return JSON.stringify(puzzle);
+};
+
+export const yieldSolutions = function* (
+  puzzle: Puzzle,
+  solutions = new Set<string>()
+): Generator<SolvedPuzzle, Result<string, null>> {
+  if (solutions.add(puzzleToKey(puzzle))) {
+    return Ok(null);
   }
+
+  if (isSolved(puzzle)) {
+    solutions.add(puzzleToKey(puzzle));
+    yield puzzle;
+    return Ok(null);
+  }
+
+  for (const startNode of yieldColoredNodes(puzzle)) {
+    const endNode = findEndNode(puzzle, startNode);
+
+    if (!endNode) {
+      return Err(
+        'Invalid puzzle. There must be exactly two nodes of each color.'
+      );
+    }
+
+    if (isConnected(puzzle, startNode, endNode)) {
+      continue;
+    }
+
+    for (const path of yieldUncoloredPaths(puzzle, startNode, endNode)) {
+      const colored = colorPath(puzzle, startNode.color, path);
+      yield* yieldSolutions(colored, solutions);
+    }
+  }
+
+  return Ok(null);
+};
+
+type UncoloredPath = {
+  node: UncoloredNode;
+  next: UncoloredPath | null;
+};
+
+const colorPath = (
+  puzzle: Puzzle,
+  _color: Color,
+  _path: UncoloredPath
+): Puzzle => {
+  return puzzle;
+};
+
+const yieldUncoloredPaths = function* (
+  _puzzle: Puzzle,
+  _startNode: ColoredNode,
+  _endNode: ColoredNode
+): Generator<UncoloredPath> {};
+
+const isConnected = (
+  puzzle: Puzzle,
+  node: ColoredNode,
+  target: ColoredNode,
+  visited = new Set<string>()
+): boolean => {
+  if (visited.has(id(node))) {
+    return false;
+  }
+
+  visited.add(id(node));
+
+  if (id(node) === id(target)) {
+    return true;
+  }
+
+  for (const neighbor of yieldColoredNeighbors(puzzle, node)) {
+    if (isConnected(puzzle, neighbor, target, visited)) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
+const yieldColoredNeighbors = function* (
+  puzzle: Puzzle,
+  node: ColoredNode
+): Generator<ColoredNode> {
+  for (const neighbor of yieldNeighbors(puzzle, node)) {
+    if (isColored(neighbor)) {
+      yield neighbor;
+    }
+  }
+};
+
+const yieldNeighbors = function* (puzzle: Puzzle, node: Node): Generator<Node> {
+  for (const neighborId in puzzle.edges[id(node)]) {
+    const neighbor = puzzle.nodes[neighborId];
+
+    if (!neighbor) {
+      continue;
+    }
+
+    yield neighbor;
+  }
+};
+
+const yieldColoredNodes = function* (puzzle: Puzzle): Generator<ColoredNode> {
+  for (const node of yieldNodes(puzzle)) {
+    if (isColored(node)) {
+      yield node;
+    }
+  }
+};
+
+const yieldNodes = function* (puzzle: Puzzle): Generator<Node> {
+  for (const id in puzzle.nodes) {
+    const node = puzzle.nodes[id];
+    if (!node) {
+      continue;
+    }
+    yield node;
+  }
+};
+
+const findEndNode = (
+  puzzle: Puzzle,
+  startNode: ColoredNode
+): ColoredNode | null => {
+  for (const node of yieldColoredNodes(puzzle)) {
+    if (id(node) === id(startNode)) {
+      continue;
+    }
+
+    if (node.color === startNode.color) {
+      return node;
+    }
+  }
+
+  return null;
 };
 
 //
@@ -199,17 +348,9 @@ export const paint = (ctx: CanvasRenderingContext2D, puzzle: Puzzle) => {
   ctx.fillStyle = 'black';
   ctx.fillRect(0, 0, width, height);
 
-  for (const id in puzzle.nodes) {
-    const node = puzzle.nodes[id];
-
-    if (!node) {
-      continue;
-    }
-
-    if (node.color) {
-      ctx.fillStyle = node.color ?? 'white';
-      ctx.fillRect(node.position.x * n, node.position.y * n, n, n);
-    }
+  for (const node of yieldColoredNodes(puzzle)) {
+    ctx.fillStyle = node.color;
+    ctx.fillRect(node.position.x * n, node.position.y * n, n, n);
   }
   return;
 };
