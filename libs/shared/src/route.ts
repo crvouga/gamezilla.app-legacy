@@ -32,7 +32,7 @@ export const encode = (route: Route): string => {
 };
 
 export const decode = (pathname: string): Route | null => {
-  if (pathname.startsWith('/login')) {
+  if (pathname.startsWith('/auth')) {
     const auth = decodeAuth(pathname);
     if (auth === null) {
       return null;
@@ -82,31 +82,31 @@ export type RouteAuth =
 export const encodeAuth = (route: RouteAuth): string => {
   switch (route.t) {
     case 'login':
-      return '/login';
+      return '/auth/login';
     case 'login-email-link':
-      return '/login/email-link';
+      return '/auth/login/email-link';
     case 'login-phone':
-      return '/login/phone';
+      return '/auth/login/phone';
     case 'login-phone-verify':
-      return `/login/phone/verify/${route.phoneNumber._country}/${route.phoneNumber}`;
+      return `/auth/login/phone/verify/${route.phoneNumber._country}/${route.phoneNumber}`;
     case 'logout':
-      return '/logout';
+      return '/auth/logout';
   }
 };
 export const decodeAuth = (pathname: string): RouteAuth | null => {
-  if (pathname === '/login') {
+  if (pathname === '/auth/login') {
     return { t: 'login' };
   }
-  if (pathname === '/login/email-link') {
+  if (pathname === '/auth/login/email-link') {
     return { t: 'login-email-link' };
   }
-  if (pathname === '/login/phone') {
+  if (pathname === '/auth/login/phone') {
     return { t: 'login-phone', isSelectingCountry: false };
   }
-  if (pathname === '/login/phone/select-country') {
+  if (pathname === '/auth/login/phone/select-country') {
     return { t: 'login-phone', isSelectingCountry: true };
   }
-  if (pathname.startsWith('/login/phone/verify/')) {
+  if (pathname.startsWith('/auth/login/phone/verify/')) {
     const split = pathname.split('/');
     const country = split[1];
     const phoneNumber = split[2];
@@ -126,7 +126,7 @@ export const decodeAuth = (pathname: string): RouteAuth | null => {
     };
   }
 
-  if (pathname === '/logout') {
+  if (pathname === '/auth/logout') {
     return { t: 'logout' };
   }
   return null;

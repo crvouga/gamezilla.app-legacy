@@ -561,13 +561,13 @@ const View = ({
     <div className="max-w-md max-h-full mx-auto fixed w-full h-full overflow-hidden flex flex-col left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 border border-neutral-800 bg-black text-white">
       {model.auth.currentUser.t === 'not-asked' && (
         <div className="w-full h-full flex items-center justify-center">
-          <IconSpinner />
+          <IconSpinner className="w-12 h-12" />
         </div>
       )}
 
       {model.auth.currentUser.t === 'loading' && (
         <div className="w-full h-full flex items-center justify-center">
-          <IconSpinner />
+          <IconSpinner className="w-12 h-12" />
         </div>
       )}
 
@@ -626,7 +626,7 @@ const ViewLoggedOut = ({
 }) => {
   if (model.route.t === 'auth') {
     return (
-      <AuthFrontend.View
+      <AuthFrontend.ViewLoggedOut
         $send={(m) => $send({ t: 'auth', c: m })}
         model={model.auth}
         ctx={ctx}
@@ -636,9 +636,12 @@ const ViewLoggedOut = ({
   }
 
   return (
-    <div className="w-full h-full flex items-center justify-center">
-      <IconSpinner />
-    </div>
+    <AuthFrontend.ViewLoggedOut
+      $send={(m) => $send({ t: 'auth', c: m })}
+      model={model.auth}
+      ctx={ctx}
+      route={{ t: 'login' }}
+    />
   );
 };
 
@@ -698,7 +701,7 @@ const ViewLoggedIn = ({
 
   if (model.route.t === 'auth') {
     return (
-      <AuthFrontend.View
+      <AuthFrontend.ViewLoggedIn
         $send={(m) => $send({ t: 'auth', c: m })}
         ctx={ctx}
         model={model.auth}

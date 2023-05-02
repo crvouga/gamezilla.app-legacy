@@ -49,7 +49,10 @@ export const init = (): { model: Model; cmd: Cmd<Msg> } => {
       phoneVerify: phoneVerify.model,
       emailLink,
     },
-    cmd: Cmd.None,
+    cmd: p(
+      loadCurrentUser,
+      Cmd.perform((msg) => msg)
+    ),
   };
 };
 
@@ -173,7 +176,25 @@ export const updateFromBackend = ({
 //
 //
 
-export const View = ({
+export const ViewLoggedIn = ({
+  route,
+  model,
+  ctx,
+  $send,
+}: {
+  route: Route.RouteAuth;
+  model: Model;
+  $send: (m: Msg) => void;
+  ctx: UnauthenticatedViewCtx;
+}) => {
+  if (route.t === 'logout') {
+    return <ViewLogoutScreen ctx={ctx} model={model} $send={$send} />;
+  }
+
+  return <ViewLogoutScreen ctx={ctx} model={model} $send={$send} />;
+};
+
+export const ViewLoggedOut = ({
   route,
   model,
   ctx,
@@ -216,12 +237,7 @@ export const View = ({
     );
   }
 
-  if (route.t === 'logout') {
-    return <ViewLogoutScreen ctx={ctx} model={model} $send={$send} />;
-  }
-
-  const exhaustiveCheck: never = route;
-  return exhaustiveCheck;
+  return <ViewLoginScreen ctx={ctx} model={model} $send={$send} />;
 };
 
 const ViewLoginScreen = ({
@@ -364,6 +380,12 @@ const fromSupabaseSession = (auth: SupabaseSession | null): Msg => {
 };
 
 export const subscriptions: Sub<Msg> = subject;
+
+const loadCurrentUser: Task<Msg> = async () => {
+  const session = client.auth.session();
+  const msg = fromSupabaseSession(session);
+  return msg;
+};
 
 //
 //

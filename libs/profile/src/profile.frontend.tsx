@@ -258,7 +258,10 @@ export const View = ({
                 console.log('');
               }}
             >
-              <button className="flex items-center justify-start text-red-500 w-full p-4 gap-2">
+              <button
+                className="flex items-center justify-start text-red-500 w-full p-4 gap-2"
+                onClick={() => ctx.$push({ t: 'auth', c: { t: 'logout' } })}
+              >
                 <IconArrowLeftOnRect />
                 Logout
               </button>
