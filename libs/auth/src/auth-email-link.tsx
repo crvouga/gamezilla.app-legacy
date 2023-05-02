@@ -7,6 +7,7 @@ import {
   MyButton,
   MyTextField,
   TopBar,
+  TopBarBackButton,
 } from '@gamezilla/shared/ui';
 
 //
@@ -143,9 +144,7 @@ export const View = ({
   return (
     <div className="w-full h-full flex flex-col">
       <TopBar
-        left={
-          <MyButton onClick={() => $send({ t: 'clicked-back' })}>Back</MyButton>
-        }
+        left={<TopBarBackButton onClick={() => $send({ t: 'clicked-back' })} />}
         title="Login With Email"
       />
 
@@ -183,7 +182,9 @@ export const View = ({
           color="primary"
           type="submit"
         >
-          {model.submission.type === 'loading' && <IconSpinner />}
+          {model.submission.type === 'loading' && (
+            <IconSpinner className="w-6 h-6 animate-spin" />
+          )}
           Send Login Link
         </MyButton>
 
@@ -193,11 +194,11 @@ export const View = ({
 
         {model.submission.type === 'ok' && (
           <AlertSuccess>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1">
               <div className="text-lg">Check your email</div>
-              <div className="text-white/80">
+              <div className="font-light">
                 Login link was send to{' '}
-                <span className="text-white">
+                <span className="text-white font-semibold">
                   {model.submission.sentToEmailAddress}
                 </span>
               </div>

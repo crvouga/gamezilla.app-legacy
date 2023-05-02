@@ -2,11 +2,12 @@ import { Browser, Cmd, p, Result, Task, Time, Unit } from '@gamezilla/core';
 import { PhoneNumber, Route } from '@gamezilla/shared';
 import {
   AlertError,
-  AlertInfo,
+  AlertSuccess,
   IconSpinner,
   MyButton,
   MyTextField,
   TopBar,
+  TopBarBackButton,
 } from '@gamezilla/shared/ui';
 
 //
@@ -152,15 +153,18 @@ export const View = ({
   return (
     <div className="w-full h-full flex flex-col">
       <TopBar
-        left={
-          <MyButton onClick={() => $send({ t: 'clicked-back' })}>Back</MyButton>
-        }
+        left={<TopBarBackButton onClick={() => $send({ t: 'clicked-back' })} />}
         title="Verify Code"
       />
       <div className="p-4 flex flex-col w-full gap-4">
-        <AlertInfo>
-          The code was sent to {PhoneNumber.format(phoneNumber)}.
-        </AlertInfo>
+        <AlertSuccess>
+          <p className="font-light flex items-center flex-wrap gap-1">
+            The code was sent to
+            <span className="font-semibold inline-block">
+              {PhoneNumber.format(phoneNumber)}.
+            </span>
+          </p>
+        </AlertSuccess>
 
         <MyTextField
           id={codeInputId}

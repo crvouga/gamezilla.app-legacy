@@ -1,13 +1,13 @@
 import { IconProps } from '../icon-shared';
 
-export const IconSpinner = ({ className, ...props }: IconProps) => {
+export const IconSpinner = (props: IconProps) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       fill="currentColor"
       stroke="currentColor"
       viewBox="0 0 24 24"
-      className={`w-10 h-10 animate-spin ${className ? className : ''}`}
+      className={`w-6 h-6 animate-spin`}
       {...props}
     >
       <path

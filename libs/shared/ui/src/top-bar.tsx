@@ -1,5 +1,5 @@
+import { MyButton } from './button';
 import { IconChevronLeft } from './icon';
-import { IconButton } from './icon-button';
 
 export const TopBar = ({
   left,
@@ -13,7 +13,7 @@ export const TopBar = ({
   return (
     <header className="flex items-center justify-center w-full px-3 py-2">
       <div className="flex items-center justify-start flex-1">{left}</div>
-      <p className="text-lg text-center" style={{ flex: 4 }}>
+      <p className="text-lg text-center" style={{ flex: 5 }}>
         {title}
       </p>
       <div className="flex items-center justify-end flex-1">{right}</div>
@@ -23,8 +23,9 @@ export const TopBar = ({
 
 export const TopBarBackButton = ({ onClick }: { onClick: () => void }) => {
   return (
-    <IconButton onClick={onClick}>
-      <IconChevronLeft />
-    </IconButton>
+    <MyButton size="sm" onClick={onClick} className="flex items-center gap-2">
+      <IconChevronLeft className="w-4 h-4" />
+      Back
+    </MyButton>
   );
 };

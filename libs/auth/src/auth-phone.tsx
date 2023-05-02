@@ -7,6 +7,7 @@ import {
   MyButton,
   MyTextField,
   TopBar,
+  TopBarBackButton,
 } from '@gamezilla/shared/ui';
 import { matchSorter } from 'match-sorter';
 
@@ -191,11 +192,7 @@ export const View = ({
   return (
     <div className="flex-1 w-full">
       <TopBar
-        left={
-          <MyButton size="sm" onClick={() => $send({ t: 'clicked-back' })}>
-            Back
-          </MyButton>
-        }
+        left={<TopBarBackButton onClick={() => $send({ t: 'clicked-back' })} />}
         title="Login With Phone"
       />
 
@@ -228,7 +225,9 @@ export const View = ({
 
         <MyTextField
           id="phone-number"
-          startIcon={<IconPhone className="w-6 h-6 mr-2 opacity-80" />}
+          startIcon={
+            <IconPhone className="w-6 h-6 mr-2 opacity-80 text-inherit" />
+          }
           label="Phone Number"
           onChange={(phoneNumber) =>
             $send({
@@ -260,7 +259,7 @@ export const View = ({
           className="w-full mt-2"
         >
           {model.submission.type === 'Loading' && (
-            <IconSpinner className="text-white" />
+            <IconSpinner className="w-6 h-6 animate-spin" />
           )}
           Send Code
         </MyButton>

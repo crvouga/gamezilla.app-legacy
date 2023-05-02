@@ -88,7 +88,9 @@ export const encodeAuth = (route: RouteAuth): string => {
     case 'login-phone':
       return '/auth/login/phone';
     case 'login-phone-verify':
-      return `/auth/login/phone/verify/${route.phoneNumber._country}/${route.phoneNumber}`;
+      return `/auth/login/phone/verify/${
+        route.phoneNumber._country
+      }/${PhoneNumber.toString(route.phoneNumber)}`;
     case 'logout':
       return '/auth/logout';
   }
@@ -108,8 +110,8 @@ export const decodeAuth = (pathname: string): RouteAuth | null => {
   }
   if (pathname.startsWith('/auth/login/phone/verify/')) {
     const split = pathname.split('/');
-    const country = split[1];
-    const phoneNumber = split[2];
+    const country = split[split.length - 2];
+    const phoneNumber = split[split.length - 1];
     if (!country || !phoneNumber) {
       return null;
     }

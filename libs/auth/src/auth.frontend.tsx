@@ -281,7 +281,7 @@ const ViewLoginScreen = ({
             className="w-full"
           >
             {model.requests['login-with-google']?.type === 'Loading' && (
-              <IconSpinner className="animate-spin" />
+              <IconSpinner className="w-6 h-6 animate-spin" />
             )}
             <IconGoogle />
             Continue With Google

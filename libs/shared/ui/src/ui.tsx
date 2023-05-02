@@ -21,6 +21,7 @@ import { TypographyProps, keyframes } from '@mui/material';
 import { ReactNode, useEffect, useRef } from 'react';
 import * as Icons from './ui-icons';
 import { cn } from './utils';
+import { MyButton } from './button';
 
 //
 //
@@ -442,8 +443,6 @@ export const ConformationDialog = ({
   title,
   confirmTitle,
   cancelTitle = 'Cancel',
-  headerIcon,
-  subtitle,
 }: {
   open: boolean;
   onCancel: () => void;
@@ -456,23 +455,31 @@ export const ConformationDialog = ({
   headerIcon?: ViewNode;
 }) => {
   return (
-    <Dialog open={open} onClose={onClose}>
-      {headerIcon && (
-        <Box sx={{ margin: 'auto', paddingTop: 2, marginBottom: -1 }}>
-          {headerIcon}
-        </Box>
+    <div
+      className={cn(
+        'absolute top-0 left-0 w-full h-full grid place-items-center',
+        open ? 'block' : 'hidden'
       )}
-      <DialogTitle>{title}</DialogTitle>
-      {subtitle && (
-        <DialogTitle variant="subtitle2" color="text.secondary">
-          {subtitle}
-        </DialogTitle>
-      )}
-      <DialogActions>
-        <Button onClick={onCancel}>{cancelTitle}</Button>
-        <Button onClick={onConfirm}>{confirmTitle}</Button>
-      </DialogActions>
-    </Dialog>
+      onClick={onClose}
+    >
+      <div className="bg-neutral-900 p-6 w-80 rounded-lg flex flex-col gap-6">
+        <p className="text-xl font-semibold text-center">{title}</p>
+
+        <div className="flex items-center gap-4 w-full">
+          <MyButton variant="outlined" onClick={onCancel} className="flex-1">
+            {cancelTitle}
+          </MyButton>
+          <MyButton
+            variant="contained"
+            color="danger"
+            onClick={onConfirm}
+            className="flex-1"
+          >
+            {confirmTitle}
+          </MyButton>
+        </div>
+      </div>
+    </div>
   );
 };
 
