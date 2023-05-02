@@ -174,18 +174,16 @@ type SolvedPuzzle = Puzzle & {
 };
 
 export const isSolved = (puzzle: Puzzle): puzzle is SolvedPuzzle => {
-  for (const id in puzzle.nodes) {
-    const node = puzzle.nodes[id];
-
-    if (!node) {
-      continue;
-    }
-
-    if (!node.color) {
-      return false;
+  for (const nodeA of yieldColoredNodes(puzzle)) {
+    for (const nodeB of yieldColoredNodes(puzzle)) {
+      if (
+        nodeA.color === nodeB.color &&
+        !isColorConnected(puzzle, nodeA, nodeB)
+      ) {
+        return false;
+      }
     }
   }
-
   return true;
 };
 
@@ -223,7 +221,7 @@ export const yieldSolutions = function* (
       );
     }
 
-    if (isConnected(puzzle, startNode, endNode)) {
+    if (isColorConnected(puzzle, startNode, endNode)) {
       continue;
     }
 
@@ -236,23 +234,48 @@ export const yieldSolutions = function* (
   return Ok(null);
 };
 
-type UncoloredPath = [ColoredNode, ...UncoloredNode[], ColoredNode];
-
 const colorUncoloredPath = (
   puzzle: Puzzle,
   _color: Color,
-  _path: UncoloredPath
+  _path: UncoloredNode[]
 ): Puzzle => {
   return puzzle;
 };
 
 const yieldUncoloredPaths = function* (
-  _puzzle: Puzzle,
-  _startNode: ColoredNode,
-  _endNode: ColoredNode
-): Generator<UncoloredPath> {};
+  puzzle: Puzzle,
+  node: UncoloredNode,
+  target: ColoredNode,
+  path: UncoloredNode[] = [],
+  visited = new Set<string>()
+): Generator<UncoloredNode[]> {
+  path.push(node);
+  visited.add(id(node));
 
-const isConnected = (
+  if (id(node) === id(target)) {
+    yield [...path];
+    return;
+  }
+
+  for (const neighbor of yieldNeighbors(puzzle, node)) {
+    if (visited.has(id(neighbor))) {
+      continue;
+    }
+
+    if (isColored(neighbor) && neighbor.color !== target.color) {
+      continue;
+    }
+
+    visited.add(id(neighbor));
+
+    yield* yieldUncoloredPaths(puzzle, neighbor, target, path, visited);
+  }
+
+  path.pop();
+  visited.delete(id(node));
+};
+
+const isColorConnected = (
   puzzle: Puzzle,
   node: ColoredNode,
   target: ColoredNode,
@@ -269,7 +292,7 @@ const isConnected = (
   }
 
   for (const neighbor of yieldColoredNeighbors(puzzle, node)) {
-    if (isConnected(puzzle, neighbor, target, visited)) {
+    if (isColorConnected(puzzle, neighbor, target, visited)) {
       return true;
     }
   }
