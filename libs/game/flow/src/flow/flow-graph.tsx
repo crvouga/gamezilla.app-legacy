@@ -127,9 +127,9 @@ const bounds8x8: Bounds = {
 export const demoGrid = p(
   initGrid({ bounds: bounds8x8 }),
   (x) => setNode(x, { position: { x: 0, y: 0 }, color: 'red' }),
-  (x) => setNode(x, { position: { x: 0, y: 0 }, color: 'blue' }),
-  (x) => setNode(x, { position: { x: 0, y: 0 }, color: 'yellow' }),
-  (x) => setNode(x, { position: { x: 0, y: 0 }, color: 'green' })
+  (x) => setNode(x, { position: { x: 1, y: 0 }, color: 'blue' }),
+  (x) => setNode(x, { position: { x: 2, y: 0 }, color: 'yellow' }),
+  (x) => setNode(x, { position: { x: 3, y: 0 }, color: 'green' })
 );
 
 const setNode = (puzzle: Puzzle, node: Node): Puzzle => {
@@ -169,7 +169,7 @@ const setEdge = (puzzle: Puzzle, edge: Edge): Puzzle => {
 
 type SolvedPuzzle = Puzzle & {
   nodes: {
-    [id: string]: Node & { color: Color };
+    [id: string]: ColoredNode;
   };
 };
 
