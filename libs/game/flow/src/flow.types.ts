@@ -1,4 +1,3 @@
-import { p } from '@gamezilla/core';
 import { UserId } from '@gamezilla/shared';
 import { Flow } from './flow';
 
@@ -17,14 +16,8 @@ export type SharedModel = {
   flowView: Flow.ViewModel;
 };
 
-const puzzle = p(
-  Flow.initGrid({ bounds: Flow.bounds8x8 }),
-  (_) => Flow.setNode(_, { x: 0, y: 0, color: 'red' }),
-  (_) => Flow.setNode(_, { x: 6, y: 6, color: 'red' })
-);
-
 export const initShared: SharedModel = {
-  flowView: Flow.initViewModel(puzzle),
+  flowView: Flow.initViewModel(Flow.puzzles['5x5']),
 };
 
 //

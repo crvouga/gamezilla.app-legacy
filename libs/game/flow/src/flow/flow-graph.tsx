@@ -39,6 +39,7 @@ export type Edge = {
 };
 
 export type Puzzle = {
+  bounds: Bounds;
   nodes: {
     [id: string]: Node;
   };
@@ -90,6 +91,7 @@ export const addNodeToPath = (path: Path, nodeId: string): Path => {
 
 export const initGrid = ({ bounds }: { bounds: Bounds }): Puzzle => {
   let puzzle: Puzzle = {
+    bounds,
     edges: {},
     nodes: {},
   };
@@ -390,12 +392,12 @@ export const paint = (
   ctx: CanvasRenderingContext2D,
   { puzzle, pathByColor }: ViewModel
 ) => {
-  const bounds = toBounds(puzzle);
-  const squareLength = ctx.canvas.width / (bounds.max.x - bounds.min.x);
+  const squareLength =
+    ctx.canvas.width / (puzzle.bounds.max.x - puzzle.bounds.min.x);
 
   ctx.fillStyle = '#202020';
   ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.width);
-  paintGrid(ctx, bounds);
+  paintGrid(ctx, puzzle.bounds);
   for (const node of yieldColoredNodes(puzzle)) {
     ctx.fillStyle = node.color;
 
@@ -567,7 +569,7 @@ export const View = ({
       id="flow-canvas"
       style={{
         width: '100%',
-        cursor: 'pointer',
+        cursor: model.mouseStatus === 'up' ? 'grab' : 'grabbing',
         touchAction: 'none',
       }}
       onMouseLeave={() => {
@@ -575,7 +577,6 @@ export const View = ({
       }}
       onMouseDown={(event) => {
         event.stopPropagation();
-        event.preventDefault();
         const bounds = toBounds(model.puzzle);
         const pos = canvasEventToPosition(bounds, { t: 'mouse', c: event });
         $send({ t: 'mouse-down', nodeId: id(pos) });
@@ -589,7 +590,11 @@ export const View = ({
       }}
       onMouseMove={(event) => {
         event.stopPropagation();
-        event.preventDefault();
+        try {
+          event.preventDefault();
+        } catch (error) {
+          //
+        }
 
         const bounds = toBounds(model.puzzle);
         const pos = canvasEventToPosition(bounds, { t: 'mouse', c: event });
@@ -597,7 +602,11 @@ export const View = ({
       }}
       onTouchMove={(event) => {
         event.stopPropagation();
-        event.preventDefault();
+        try {
+          event.preventDefault();
+        } catch (error) {
+          //
+        }
 
         const bounds = toBounds(model.puzzle);
         const pos = canvasEventToPosition(bounds, { t: 'touch', c: event });
@@ -605,7 +614,11 @@ export const View = ({
       }}
       onTouchCancel={(event) => {
         event.stopPropagation();
-        event.preventDefault();
+        try {
+          event.preventDefault();
+        } catch (error) {
+          //
+        }
 
         const bounds = toBounds(model.puzzle);
         const pos = canvasEventToPosition(bounds, { t: 'touch', c: event });
@@ -613,7 +626,11 @@ export const View = ({
       }}
       onTouchEnd={(event) => {
         event.stopPropagation();
-        event.preventDefault();
+        try {
+          event.preventDefault();
+        } catch (error) {
+          //
+        }
 
         const bounds = toBounds(model.puzzle);
         const pos = canvasEventToPosition(bounds, { t: 'touch', c: event });
@@ -621,7 +638,11 @@ export const View = ({
       }}
       onTouchStart={(event) => {
         event.stopPropagation();
-        event.preventDefault();
+        try {
+          event.preventDefault();
+        } catch (error) {
+          //
+        }
 
         const bounds = toBounds(model.puzzle);
         const pos = canvasEventToPosition(bounds, { t: 'touch', c: event });
@@ -650,7 +671,6 @@ const canvasEventToPosition = (
     elementRelativeX = touch.clientX - rect.left;
     elementRelativeY = touch.clientY - rect.top;
   } else {
-    console.log(event);
     throw new Error('Unknown event');
   }
   const elementWidth = event.c.currentTarget.width;
@@ -676,3 +696,69 @@ const canvasEventToPosition = (
 };
 
 //
+
+//
+//
+//
+// Shorthand
+//
+//
+//
+
+type Shorthand = (string | null)[][];
+
+const emojiToColor = (emoji: string): Color | null => {
+  return (
+    { '🟡': 'yellow', '🔵': 'blue', '🟢': 'green', '🔴': 'red' }[emoji] ?? null
+  );
+};
+
+export const fromShorthand = (puzzle: Shorthand) => {
+  let grid = initGrid({
+    bounds: {
+      min: {
+        x: 0,
+        y: 0,
+      },
+      max: {
+        x: puzzle[0]?.length ?? puzzle.length + 2,
+        y: puzzle.length + 2,
+      },
+    },
+  });
+
+  for (let y = 0; y < puzzle.length; y++) {
+    const row = puzzle[y];
+    if (!row) {
+      continue;
+    }
+    for (let x = 0; x < row.length; x++) {
+      const emoji = row[x];
+      if (!emoji) {
+        continue;
+      }
+      const color = emojiToColor(emoji);
+      if (!color) {
+        continue;
+      }
+
+      grid = setNode(grid, {
+        x: y,
+        y,
+        color,
+      });
+    }
+  }
+
+  return grid;
+};
+
+export const puzzles = {
+  '5x5': fromShorthand([
+    [null, '🟡', '🔵', null, null],
+    [null, '🟢', null, null, null],
+    [null, '🟡', '🔴', null, null],
+    ['🟢', '🔴', null, null, null],
+    [null, null, null, null, '🔵'],
+  ]),
+};
