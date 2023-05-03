@@ -475,7 +475,13 @@ export const View = ({
     }
 
     case 'flow': {
-      return FlowFrontend.view({ model: model.c, gameRoomCtx: ctx });
+      return (
+        <FlowFrontend.View
+          model={model.c}
+          ctx={ctx}
+          $send={(c) => $send({ t: 'flow', c })}
+        />
+      );
     }
 
     default: {

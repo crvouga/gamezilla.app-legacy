@@ -1,11 +1,12 @@
 import { Cmd, Sub } from '@gamezilla/core';
 import { UserId } from '@gamezilla/shared';
-import { BackendModel, BackendMsg, ToBackend } from './flow.types';
+import { BackendModel, BackendMsg, ToBackend, initShared } from './flow.types';
 
 type Model = BackendModel;
 
 export const init = ({ playerId }: { playerId?: UserId }): Model => {
   return {
+    ...initShared,
     playerId,
   };
 };

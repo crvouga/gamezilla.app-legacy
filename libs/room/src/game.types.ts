@@ -109,7 +109,7 @@ export const gameNameList: GameName[] = [
   'connect-four',
   'tic-tac-toe',
   'gomoku',
-  // 'flow',
+  'flow',
   // 'snake',
   // 'tetris',
   // 'maze',

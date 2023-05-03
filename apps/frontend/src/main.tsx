@@ -606,8 +606,8 @@ const View = ({
       />
 
       {model.wire.type === 'connect-error' && model.wire.errorCount > 2 && (
-        <div className="w-full flex items-center justify-center text-white bg-blue-500 gap-2">
-          <IconSpinner className="text-xs text-white" />
+        <div className="w-full flex items-center justify-center text-white bg-blue-500 gap-2 h-6">
+          <IconSpinner className="w-5 h-5 text-white animate-spin" />
           Connecting to backend...
         </div>
       )}

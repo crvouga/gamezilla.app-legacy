@@ -1,5 +1,5 @@
-import { Err, Ok, Result, p } from '@gamezilla/core';
-import { useRef } from 'react';
+import { Err, NonEmpty, Ok, Result, rescale } from '@gamezilla/core';
+import { useLayoutEffect } from 'react';
 
 //
 //
@@ -13,14 +13,11 @@ type Position = { x: number; y: number };
 
 type Color = string;
 
-export type ColoredNode = {
-  position: Position;
+export type ColoredNode = Position & {
   color: Color;
 };
 
-export type UncoloredNode = {
-  position: Position;
-};
+export type UncoloredNode = Position;
 
 export type Node = ColoredNode | UncoloredNode;
 
@@ -32,8 +29,8 @@ export const isUncolored = (node: Node): node is UncoloredNode => {
   return !isColored(node);
 };
 
-const id = (node: { position: Position }) => {
-  return `${node.position.x},${node.position.y}`;
+const id = (node: UncoloredNode) => {
+  return `${node.x},${node.y}`;
 };
 
 export type Edge = {
@@ -55,6 +52,32 @@ export type Puzzle = {
 export type Bounds = {
   min: Position;
   max: Position;
+};
+
+export type Path = string[];
+
+export const addNodeToPath = (path: Path, nodeId: string): Path => {
+  if (!NonEmpty.is(path)) {
+    return [nodeId];
+  }
+
+  const endNodeId = path[path.length - 1];
+
+  if (!endNodeId) {
+    return [nodeId];
+  }
+
+  if (endNodeId === nodeId) {
+    return path;
+  }
+
+  const nodeIndex = path.indexOf(nodeId);
+
+  if (nodeIndex !== -1) {
+    return path.slice(0, nodeIndex + 1);
+  }
+
+  return [...path, nodeId];
 };
 
 //
@@ -80,7 +103,7 @@ export const initGrid = ({ bounds }: { bounds: Bounds }): Puzzle => {
 
   for (let x = bounds.min.x; x < bounds.max.x; x++) {
     for (let y = bounds.min.y; y < bounds.max.y; y++) {
-      const node: Node = { position: { x, y } };
+      const node: Node = { x, y };
       puzzle = setNode(puzzle, node);
     }
   }
@@ -92,10 +115,10 @@ export const initGrid = ({ bounds }: { bounds: Bounds }): Puzzle => {
       continue;
     }
 
-    const { x, y } = node.position;
+    const { x, y } = node;
 
     for (const delta of deltas) {
-      const to: Node = { position: { x: x + delta.x, y: y + delta.y } };
+      const to: Node = { x: x + delta.x, y: y + delta.y };
 
       if (!puzzle.nodes[id(to)]) {
         continue;
@@ -341,6 +364,20 @@ export const findEndNode = (
   return null;
 };
 
+const toBounds = (puzzle: Puzzle): Bounds => {
+  const min = { x: Infinity, y: Infinity };
+  const max = { x: -Infinity, y: -Infinity };
+
+  for (const node of yieldNodes(puzzle)) {
+    min.x = Math.min(min.x, node.x);
+    min.y = Math.min(min.y, node.y);
+    max.x = Math.max(max.x, node.x);
+    max.y = Math.max(max.y, node.y);
+  }
+
+  return { max, min };
+};
+
 //
 //
 //
@@ -349,35 +386,167 @@ export const findEndNode = (
 //
 //
 
-export const paint = (ctx: CanvasRenderingContext2D, puzzle: Puzzle) => {
-  const n = 50;
-  const width = ctx.canvas.width;
-  const height = ctx.canvas.height;
+export const paint = (
+  ctx: CanvasRenderingContext2D,
+  {
+    puzzle,
+    pathByColor,
+  }: {
+    puzzle: Puzzle;
+    pathByColor: { [color: string]: Path };
+  }
+) => {
+  const bounds = toBounds(puzzle);
+  const squareLength = ctx.canvas.width / (bounds.max.x - bounds.min.x);
 
-  ctx.fillStyle = 'black';
-  ctx.fillRect(0, 0, width, height);
-
+  ctx.fillStyle = '#202020';
+  ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.width);
+  paintGrid(ctx, bounds);
   for (const node of yieldColoredNodes(puzzle)) {
     ctx.fillStyle = node.color;
-    ctx.fillRect(node.position.x * n, node.position.y * n, n, n);
+
+    ctx.fillRect(
+      node.x * squareLength,
+      node.y * squareLength,
+      squareLength,
+      squareLength
+    );
   }
-  return;
+
+  for (const color in pathByColor) {
+    ctx.fillStyle = color;
+
+    const path = pathByColor[color];
+
+    if (!path) {
+      continue;
+    }
+
+    for (const nodeId of path) {
+      const node = puzzle.nodes[nodeId];
+
+      if (!node) {
+        continue;
+      }
+
+      ctx.fillRect(
+        node.x * squareLength,
+        node.y * squareLength,
+        squareLength,
+        squareLength
+      );
+    }
+  }
 };
 
-export const View = (_props: { puzzle: Puzzle }) => {
-  const ref = useRef<HTMLCanvasElement | null>(null);
+const paintGrid = (ctx: CanvasRenderingContext2D, bounds: Bounds) => {
+  const squareLength = ctx.canvas.width / (bounds.max.x - bounds.min.x);
+  for (let x = 0; x < bounds.max.x; x++) {
+    for (let y = 0; y < bounds.max.y; y++) {
+      ctx.strokeStyle = '#676767';
+      ctx.strokeRect(
+        x * squareLength,
+        y * squareLength,
+        squareLength,
+        squareLength
+      );
+    }
+  }
+};
 
-  // useLayoutEffect(() => {}, []);
+export type ViewMsg =
+  | { t: 'mouse-move'; nodeId: string }
+  | { t: 'mouse-down'; nodeId: string }
+  | { t: 'mouse-up'; nodeId: string }
+  | { t: 'mouse-leave' };
 
-  return <canvas ref={ref} width="100%" height={'100%'}></canvas>;
+export const View = ({
+  puzzle,
+  pathByColor,
+  $send,
+}: {
+  puzzle: Puzzle;
+  pathByColor: { [color: string]: Path };
+  $send: (msg: ViewMsg) => void;
+}) => {
+  useLayoutEffect(() => {
+    const canvas = document.getElementById('flow-canvas');
+
+    if (!canvas) {
+      return;
+    }
+
+    if (!(canvas instanceof HTMLCanvasElement)) {
+      return;
+    }
+
+    const context = canvas.getContext('2d');
+
+    if (!context) {
+      return;
+    }
+
+    context.canvas.height = context.canvas.width;
+
+    paint(context, { pathByColor, puzzle });
+  });
+
+  return (
+    <canvas
+      id="flow-canvas"
+      style={{
+        width: '100%',
+        cursor: 'pointer',
+      }}
+      onMouseLeave={() => {
+        $send({ t: 'mouse-leave' });
+      }}
+      onMouseDown={(event) => {
+        const bounds = toBounds(puzzle);
+        const pos = canvasEventToPosition(bounds, event);
+        $send({ t: 'mouse-down', nodeId: id(pos) });
+      }}
+      onMouseUp={(event) => {
+        const bounds = toBounds(puzzle);
+        const pos = canvasEventToPosition(bounds, event);
+        $send({ t: 'mouse-up', nodeId: id(pos) });
+      }}
+      onMouseMove={(event) => {
+        const bounds = toBounds(puzzle);
+        const pos = canvasEventToPosition(bounds, event);
+        $send({ t: 'mouse-move', nodeId: id(pos) });
+      }}
+    />
+  );
+};
+
+const canvasEventToPosition = (
+  bounds: Bounds,
+  event: React.MouseEvent<HTMLCanvasElement, MouseEvent>
+) => {
+  const rect = event.currentTarget.getBoundingClientRect();
+  const elementRelativeX = event.clientX - rect.left;
+  const elementRelativeY = event.clientY - rect.top;
+  const elementWidth = event.currentTarget.width;
+  const elementHeight = event.currentTarget.height;
+  const canvasRelativeX = (elementRelativeX * elementWidth) / rect.width;
+  const canvasRelativeY = (elementRelativeY * elementHeight) / rect.height;
+
+  const x = Math.floor(
+    rescale({
+      value: canvasRelativeX,
+      from: [0, elementWidth],
+      to: [bounds.min.x, bounds.max.x],
+    })
+  );
+  const y = Math.floor(
+    rescale({
+      value: canvasRelativeY,
+      from: [0, elementWidth],
+      to: [bounds.min.y, bounds.max.y],
+    })
+  );
+  return { x, y };
 };
 
 //
-
-export const demoGrid = p(
-  initGrid({ bounds: bounds8x8 }),
-  (x) => setNode(x, { position: { x: 0, y: 0 }, color: 'red' }),
-  (x) => setNode(x, { position: { x: 1, y: 0 }, color: 'blue' }),
-  (x) => setNode(x, { position: { x: 2, y: 0 }, color: 'yellow' }),
-  (x) => setNode(x, { position: { x: 3, y: 0 }, color: 'green' })
-);

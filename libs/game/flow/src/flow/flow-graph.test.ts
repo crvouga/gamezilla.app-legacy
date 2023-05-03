@@ -20,7 +20,7 @@ describe('flow graph', () => {
   it('finds the end position', () => {
     const graph = testModelToGraph(puzzle);
 
-    const startNode = { position: { x: 0, y: 0 }, color: '🔴' };
+    const startNode = { x: 0, y: 0, color: '🔴' };
     const actual = findEndNode(graph, startNode);
     const expected = { position: { x: 2, y: 2 }, color: '🔴' };
     expect(actual).toEqual(expected);
@@ -60,10 +60,8 @@ const testModelToGraph = (puzzle: TestModel) => {
       }
 
       grid = setNode(grid, {
-        position: {
-          x,
-          y,
-        },
+        x,
+        y,
         color,
       });
     }
