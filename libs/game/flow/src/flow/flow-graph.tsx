@@ -503,32 +503,62 @@ export const View = ({
       }}
       onMouseDown={(event) => {
         const bounds = toBounds(puzzle);
-        const pos = canvasEventToPosition(bounds, event);
+        const pos = canvasEventToPosition(bounds, { t: 'mouse', c: event });
         $send({ t: 'mouse-down', nodeId: id(pos) });
       }}
       onMouseUp={(event) => {
         const bounds = toBounds(puzzle);
-        const pos = canvasEventToPosition(bounds, event);
+        const pos = canvasEventToPosition(bounds, { t: 'mouse', c: event });
         $send({ t: 'mouse-up', nodeId: id(pos) });
       }}
       onMouseMove={(event) => {
         const bounds = toBounds(puzzle);
-        const pos = canvasEventToPosition(bounds, event);
+        const pos = canvasEventToPosition(bounds, { t: 'mouse', c: event });
         $send({ t: 'mouse-move', nodeId: id(pos) });
+      }}
+      onTouchMove={(event) => {
+        const bounds = toBounds(puzzle);
+        const pos = canvasEventToPosition(bounds, { t: 'touch', c: event });
+        $send({ t: 'mouse-move', nodeId: id(pos) });
+      }}
+      onTouchCancel={(event) => {
+        const bounds = toBounds(puzzle);
+        const pos = canvasEventToPosition(bounds, { t: 'touch', c: event });
+        $send({ t: 'mouse-up', nodeId: id(pos) });
+      }}
+      onTouchStart={(event) => {
+        const bounds = toBounds(puzzle);
+        const pos = canvasEventToPosition(bounds, { t: 'touch', c: event });
+        $send({ t: 'mouse-down', nodeId: id(pos) });
       }}
     />
   );
 };
-
 const canvasEventToPosition = (
   bounds: Bounds,
-  event: React.MouseEvent<HTMLCanvasElement, MouseEvent>
+  event:
+    | { t: 'mouse'; c: React.MouseEvent<HTMLCanvasElement, MouseEvent> }
+    | { t: 'touch'; c: React.TouchEvent<HTMLCanvasElement> }
 ) => {
-  const rect = event.currentTarget.getBoundingClientRect();
-  const elementRelativeX = event.clientX - rect.left;
-  const elementRelativeY = event.clientY - rect.top;
-  const elementWidth = event.currentTarget.width;
-  const elementHeight = event.currentTarget.height;
+  const rect = event.c.currentTarget.getBoundingClientRect();
+  let elementRelativeX: number;
+  let elementRelativeY: number;
+  if (event.t === 'mouse') {
+    elementRelativeX = event.c.clientX - rect.left;
+    elementRelativeY = event.c.clientY - rect.top;
+  } else if (event.t === 'touch') {
+    const touch = event.c.touches[0];
+    if (!touch) {
+      throw new Error('No touch');
+    }
+    elementRelativeX = touch.clientX - rect.left;
+    elementRelativeY = touch.clientY - rect.top;
+  } else {
+    console.log(event);
+    throw new Error('Unknown event');
+  }
+  const elementWidth = event.c.currentTarget.width;
+  const elementHeight = event.c.currentTarget.height;
   const canvasRelativeX = (elementRelativeX * elementWidth) / rect.width;
   const canvasRelativeY = (elementRelativeY * elementHeight) / rect.height;
 
