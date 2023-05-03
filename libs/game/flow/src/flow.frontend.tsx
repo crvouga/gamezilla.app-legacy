@@ -1,7 +1,5 @@
 import { Cmd, Sub } from '@gamezilla/core';
-import { RoomViewCtx } from '@gamezilla/shared';
-import { UserId } from '@gamezilla/shared';
-import { box, button, fillBox, text } from '@gamezilla/shared/ui';
+import { RoomViewCtx, UserId } from '@gamezilla/shared';
 import { FrontendModel, FrontendMsg, SharedModel } from './flow.types';
 
 type Model = FrontendModel;
@@ -62,35 +60,17 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
   return Sub.None;
 };
 
-export const view = ({
-  model,
-  gameRoomCtx,
-}: {
-  model: Model;
-  gameRoomCtx: RoomViewCtx;
-}) => {
-  return fillBox({}, [
-    text({}, `hello world ${model?.playerId ?? 'missing'}`),
-    box({ sx: { flex: 1 } }, []),
-    box(
-      {
-        sx: {
-          padding: 2,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        },
-      },
-      [
-        button(
-          {
-            variant: 'outlined',
-            startIcon: 'exit',
-            onPress: () => gameRoomCtx.onQuit(),
-          },
-          'Back'
-        ),
-      ]
-    ),
-  ]);
+//
+//
+// View
+//
+//
+
+export const View = ({ model, ctx }: { model: Model; ctx: RoomViewCtx }) => {
+  return (
+    <div className="w-full h-full">
+      <pre>{JSON.stringify(model, null, 2)}</pre>
+      <pre>{JSON.stringify(ctx, null, 2)}</pre>
+    </div>
+  );
 };

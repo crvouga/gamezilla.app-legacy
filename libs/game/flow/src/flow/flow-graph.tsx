@@ -1,4 +1,5 @@
 import { Err, Ok, Result, p } from '@gamezilla/core';
+import { useRef } from 'react';
 
 //
 //
@@ -94,7 +95,7 @@ export const initGrid = ({ bounds }: { bounds: Bounds }): Puzzle => {
     }
   }
 
-  for (let nodeId in puzzle.nodes) {
+  for (const nodeId in puzzle.nodes) {
     const node = puzzle.nodes[nodeId];
 
     if (!node) {
@@ -382,5 +383,9 @@ export const paint = (ctx: CanvasRenderingContext2D, puzzle: Puzzle) => {
 };
 
 export const View = (_props: { puzzle: Puzzle }) => {
-  return <canvas width="100%" height={'100%'}></canvas>;
+  const ref = useRef<HTMLCanvasElement | null>(null);
+
+  // useLayoutEffect(() => {}, []);
+
+  return <canvas ref={ref} width="100%" height={'100%'}></canvas>;
 };
