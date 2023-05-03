@@ -11,17 +11,7 @@ import { useRef } from 'react';
 
 type Position = { x: number; y: number };
 
-type Color =
-  | 'red'
-  | 'blue'
-  | 'green'
-  | 'yellow'
-  | 'purple'
-  | 'orange'
-  | 'pink'
-  | 'brown'
-  | 'black'
-  | 'white';
+type Color = string;
 
 export type ColoredNode = {
   position: Position;
@@ -120,20 +110,12 @@ export const initGrid = ({ bounds }: { bounds: Bounds }): Puzzle => {
   return puzzle;
 };
 
-const bounds8x8: Bounds = {
+export const bounds8x8: Bounds = {
   min: { x: 0, y: 0 },
-  max: { x: 0, y: 0 },
+  max: { x: 8, y: 8 },
 };
 
-export const demoGrid = p(
-  initGrid({ bounds: bounds8x8 }),
-  (x) => setNode(x, { position: { x: 0, y: 0 }, color: 'red' }),
-  (x) => setNode(x, { position: { x: 1, y: 0 }, color: 'blue' }),
-  (x) => setNode(x, { position: { x: 2, y: 0 }, color: 'yellow' }),
-  (x) => setNode(x, { position: { x: 3, y: 0 }, color: 'green' })
-);
-
-const setNode = (puzzle: Puzzle, node: Node): Puzzle => {
+export const setNode = (puzzle: Puzzle, node: Node): Puzzle => {
   return {
     ...puzzle,
     nodes: {
@@ -145,7 +127,7 @@ const setNode = (puzzle: Puzzle, node: Node): Puzzle => {
   };
 };
 
-const setEdge = (puzzle: Puzzle, edge: Edge): Puzzle => {
+export const setEdge = (puzzle: Puzzle, edge: Edge): Puzzle => {
   return {
     ...puzzle,
     edges: {
@@ -342,7 +324,7 @@ const yieldNodes = function* (puzzle: Puzzle): Generator<Node> {
   }
 };
 
-const findEndNode = (
+export const findEndNode = (
   puzzle: Puzzle,
   startNode: ColoredNode
 ): ColoredNode | null => {
@@ -389,3 +371,13 @@ export const View = (_props: { puzzle: Puzzle }) => {
 
   return <canvas ref={ref} width="100%" height={'100%'}></canvas>;
 };
+
+//
+
+export const demoGrid = p(
+  initGrid({ bounds: bounds8x8 }),
+  (x) => setNode(x, { position: { x: 0, y: 0 }, color: 'red' }),
+  (x) => setNode(x, { position: { x: 1, y: 0 }, color: 'blue' }),
+  (x) => setNode(x, { position: { x: 2, y: 0 }, color: 'yellow' }),
+  (x) => setNode(x, { position: { x: 3, y: 0 }, color: 'green' })
+);
