@@ -31,60 +31,15 @@ export const update = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (
-    msg.t === 'mouse-move' &&
-    model.mouseStatus === 'down' &&
-    typeof model.activeColor === 'string'
-  ) {
+  if (msg.t === 'flow-view') {
+    const updated = Flow.update({
+      msg: msg.c,
+      model: model.flowView,
+    });
     return {
-      model: {
-        ...model,
-        pathByColor: {
-          ...model.pathByColor,
-          [model.activeColor]: Flow.addNodeToPath(
-            model.pathByColor[model.activeColor] ?? [],
-            msg.nodeId
-          ),
-        },
-      },
+      model: { ...model, flowView: updated.model },
     };
   }
-
-  if (msg.t === 'mouse-down') {
-    const node = model.puzzle.nodes[msg.nodeId];
-    if (node && Flow.isColored(node)) {
-      return {
-        model: {
-          ...model,
-          mouseStatus: 'down',
-          activeColor: node.color,
-          pathByColor: {
-            ...model.pathByColor,
-            [node.color]: Flow.addNodeToPath(
-              model.pathByColor[node.color] ?? [],
-              msg.nodeId
-            ),
-          },
-        },
-      };
-    }
-    return {
-      model: {
-        ...model,
-        mouseStatus: 'down',
-        activeColor: null,
-      },
-    };
-  }
-
-  if (msg.t === 'mouse-up') {
-    return { model: { ...model, mouseStatus: 'up', activeColor: null } };
-  }
-
-  if (msg.t === 'mouse-leave') {
-    return { model: { ...model, mouseStatus: 'up', activeColor: null } };
-  }
-
   return { model };
 };
 
@@ -136,9 +91,8 @@ export const View = ({
     <div className="w-full h-full flex flex-col items-center justify-center">
       <div className="w-full flex-1 flex flex-col items-center justify-center">
         <Flow.View
-          puzzle={model.puzzle}
-          pathByColor={model.pathByColor}
-          $send={$send}
+          model={model.flowView}
+          $send={(c) => $send({ t: 'flow-view', c })}
         />
       </div>
       <ViewBottomButtonBar

@@ -14,22 +14,17 @@ export type BackendModel = SharedModel;
 
 export type SharedModel = {
   playerId?: UserId;
-  puzzle: Flow.Puzzle;
-  mouseStatus: 'up' | 'down';
-  activeColor?: string | null;
-  pathByColor: {
-    [color: string]: Flow.Path;
-  };
+  flowView: Flow.ViewModel;
 };
 
+const puzzle = p(
+  Flow.initGrid({ bounds: Flow.bounds8x8 }),
+  (_) => Flow.setNode(_, { x: 0, y: 0, color: 'red' }),
+  (_) => Flow.setNode(_, { x: 6, y: 6, color: 'red' })
+);
+
 export const initShared: SharedModel = {
-  puzzle: p(
-    Flow.initGrid({ bounds: Flow.bounds8x8 }),
-    (_) => Flow.setNode(_, { x: 0, y: 0, color: 'red' }),
-    (_) => Flow.setNode(_, { x: 6, y: 6, color: 'red' })
-  ),
-  mouseStatus: 'up',
-  pathByColor: {},
+  flowView: Flow.initViewModel(puzzle),
 };
 
 //
@@ -38,7 +33,7 @@ export const initShared: SharedModel = {
 //
 //
 
-export type FrontendMsg = Flow.ViewMsg;
+export type FrontendMsg = { t: 'flow-view'; c: Flow.ViewMsg };
 
 export type BackendMsg = ['none'];
 

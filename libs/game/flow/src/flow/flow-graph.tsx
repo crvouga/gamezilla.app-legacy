@@ -388,13 +388,7 @@ const toBounds = (puzzle: Puzzle): Bounds => {
 
 export const paint = (
   ctx: CanvasRenderingContext2D,
-  {
-    puzzle,
-    pathByColor,
-  }: {
-    puzzle: Puzzle;
-    pathByColor: { [color: string]: Path };
-  }
+  { puzzle, pathByColor }: ViewModel
 ) => {
   const bounds = toBounds(puzzle);
   const squareLength = ctx.canvas.width / (bounds.max.x - bounds.min.x);
@@ -460,13 +454,90 @@ export type ViewMsg =
   | { t: 'mouse-up'; nodeId: string }
   | { t: 'mouse-leave' };
 
-export const View = ({
-  puzzle,
-  pathByColor,
-  $send,
-}: {
+export type ViewModel = {
   puzzle: Puzzle;
   pathByColor: { [color: string]: Path };
+  mouseStatus: 'up' | 'down';
+  activeColor?: string | null;
+};
+
+export const initViewModel = (puzzle: Puzzle): ViewModel => ({
+  puzzle,
+  pathByColor: {},
+  mouseStatus: 'up',
+});
+
+export const update = ({
+  msg,
+  model,
+}: {
+  msg: ViewMsg;
+  model: ViewModel;
+}): {
+  model: ViewModel;
+} => {
+  if (
+    msg.t === 'mouse-move' &&
+    model.mouseStatus === 'down' &&
+    typeof model.activeColor === 'string'
+  ) {
+    return {
+      model: {
+        ...model,
+        pathByColor: {
+          ...model.pathByColor,
+          [model.activeColor]: addNodeToPath(
+            model.pathByColor[model.activeColor] ?? [],
+            msg.nodeId
+          ),
+        },
+      },
+    };
+  }
+
+  if (msg.t === 'mouse-down') {
+    const node = model.puzzle.nodes[msg.nodeId];
+    if (node && isColored(node)) {
+      return {
+        model: {
+          ...model,
+          mouseStatus: 'down',
+          activeColor: node.color,
+          pathByColor: {
+            ...model.pathByColor,
+            [node.color]: addNodeToPath(
+              model.pathByColor[node.color] ?? [],
+              msg.nodeId
+            ),
+          },
+        },
+      };
+    }
+    return {
+      model: {
+        ...model,
+        mouseStatus: 'down',
+        activeColor: null,
+      },
+    };
+  }
+
+  if (msg.t === 'mouse-up') {
+    return { model: { ...model, mouseStatus: 'up', activeColor: null } };
+  }
+
+  if (msg.t === 'mouse-leave') {
+    return { model: { ...model, mouseStatus: 'up', activeColor: null } };
+  }
+
+  return { model };
+};
+
+export const View = ({
+  model,
+  $send,
+}: {
+  model: ViewModel;
   $send: (msg: ViewMsg) => void;
 }) => {
   useLayoutEffect(() => {
@@ -488,7 +559,7 @@ export const View = ({
 
     context.canvas.height = context.canvas.width;
 
-    paint(context, { pathByColor, puzzle });
+    paint(context, model);
   });
 
   return (
@@ -504,41 +575,41 @@ export const View = ({
       onMouseDown={(event) => {
         event.stopPropagation();
         event.preventDefault();
-        const bounds = toBounds(puzzle);
+        const bounds = toBounds(model.puzzle);
         const pos = canvasEventToPosition(bounds, { t: 'mouse', c: event });
         $send({ t: 'mouse-down', nodeId: id(pos) });
       }}
       onMouseUp={(event) => {
         event.stopPropagation();
 
-        const bounds = toBounds(puzzle);
+        const bounds = toBounds(model.puzzle);
         const pos = canvasEventToPosition(bounds, { t: 'mouse', c: event });
         $send({ t: 'mouse-up', nodeId: id(pos) });
       }}
       onMouseMove={(event) => {
         event.stopPropagation();
 
-        const bounds = toBounds(puzzle);
+        const bounds = toBounds(model.puzzle);
         const pos = canvasEventToPosition(bounds, { t: 'mouse', c: event });
         $send({ t: 'mouse-move', nodeId: id(pos) });
       }}
       onTouchMove={(event) => {
         event.stopPropagation();
-        const bounds = toBounds(puzzle);
+        const bounds = toBounds(model.puzzle);
         const pos = canvasEventToPosition(bounds, { t: 'touch', c: event });
         $send({ t: 'mouse-move', nodeId: id(pos) });
       }}
       onTouchCancel={(event) => {
         event.stopPropagation();
 
-        const bounds = toBounds(puzzle);
+        const bounds = toBounds(model.puzzle);
         const pos = canvasEventToPosition(bounds, { t: 'touch', c: event });
         $send({ t: 'mouse-up', nodeId: id(pos) });
       }}
       onTouchStart={(event) => {
         event.stopPropagation();
 
-        const bounds = toBounds(puzzle);
+        const bounds = toBounds(model.puzzle);
         const pos = canvasEventToPosition(bounds, { t: 'touch', c: event });
         $send({ t: 'mouse-down', nodeId: id(pos) });
       }}
