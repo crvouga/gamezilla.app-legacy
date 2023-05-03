@@ -502,31 +502,42 @@ export const View = ({
         $send({ t: 'mouse-leave' });
       }}
       onMouseDown={(event) => {
+        event.stopPropagation();
+        event.preventDefault();
         const bounds = toBounds(puzzle);
         const pos = canvasEventToPosition(bounds, { t: 'mouse', c: event });
         $send({ t: 'mouse-down', nodeId: id(pos) });
       }}
       onMouseUp={(event) => {
+        event.stopPropagation();
+
         const bounds = toBounds(puzzle);
         const pos = canvasEventToPosition(bounds, { t: 'mouse', c: event });
         $send({ t: 'mouse-up', nodeId: id(pos) });
       }}
       onMouseMove={(event) => {
+        event.stopPropagation();
+
         const bounds = toBounds(puzzle);
         const pos = canvasEventToPosition(bounds, { t: 'mouse', c: event });
         $send({ t: 'mouse-move', nodeId: id(pos) });
       }}
       onTouchMove={(event) => {
+        event.stopPropagation();
         const bounds = toBounds(puzzle);
         const pos = canvasEventToPosition(bounds, { t: 'touch', c: event });
         $send({ t: 'mouse-move', nodeId: id(pos) });
       }}
       onTouchCancel={(event) => {
+        event.stopPropagation();
+
         const bounds = toBounds(puzzle);
         const pos = canvasEventToPosition(bounds, { t: 'touch', c: event });
         $send({ t: 'mouse-up', nodeId: id(pos) });
       }}
       onTouchStart={(event) => {
+        event.stopPropagation();
+
         const bounds = toBounds(puzzle);
         const pos = canvasEventToPosition(bounds, { t: 'touch', c: event });
         $send({ t: 'mouse-down', nodeId: id(pos) });
