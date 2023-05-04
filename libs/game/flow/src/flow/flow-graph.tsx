@@ -395,14 +395,6 @@ export const paint = (
 ) => {
   const squareLength =
     ctx.canvas.width / (puzzle.bounds.max.x - puzzle.bounds.min.x);
-  console.log({
-    'ctx.canvas.width': ctx.canvas.width,
-    squareLength,
-    'puzzle.bounds.max.x - puzzle.bounds.min.x':
-      puzzle.bounds.max.x - puzzle.bounds.min.x,
-  });
-
-  console.log(puzzle);
 
   ctx.fillStyle = '#202020';
   ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.width);
