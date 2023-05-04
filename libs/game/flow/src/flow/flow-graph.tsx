@@ -1,5 +1,6 @@
 import { Err, NonEmpty, Ok, Result, rescale } from '@gamezilla/core';
-import { useLayoutEffect } from 'react';
+import { cn } from '@gamezilla/shared/ui';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 
 //
 //
@@ -394,10 +395,37 @@ export const paint = (
 ) => {
   const squareLength =
     ctx.canvas.width / (puzzle.bounds.max.x - puzzle.bounds.min.x);
+  console.log({
+    'ctx.canvas.width': ctx.canvas.width,
+    squareLength,
+    'puzzle.bounds.max.x - puzzle.bounds.min.x':
+      puzzle.bounds.max.x - puzzle.bounds.min.x,
+  });
+
+  console.log(puzzle);
 
   ctx.fillStyle = '#202020';
   ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.width);
-  paintGrid(ctx, puzzle.bounds);
+
+  //
+  //  Grid
+  //
+
+  for (let x = 0; x < puzzle.bounds.max.x; x++) {
+    for (let y = 0; y < puzzle.bounds.max.y; y++) {
+      ctx.strokeStyle = '#676767';
+      ctx.strokeRect(
+        x * squareLength,
+        y * squareLength,
+        squareLength,
+        squareLength
+      );
+    }
+  }
+
+  //
+  //
+  //
   for (const node of yieldColoredNodes(puzzle)) {
     ctx.fillStyle = node.color;
 
@@ -433,18 +461,15 @@ export const paint = (
       );
     }
   }
-};
 
-const paintGrid = (ctx: CanvasRenderingContext2D, bounds: Bounds) => {
-  const squareLength = ctx.canvas.width / (bounds.max.x - bounds.min.x);
-  for (let x = 0; x < bounds.max.x; x++) {
-    for (let y = 0; y < bounds.max.y; y++) {
-      ctx.strokeStyle = '#676767';
-      ctx.strokeRect(
-        x * squareLength,
-        y * squareLength,
-        squareLength,
-        squareLength
+  const showPositions = false;
+  if (showPositions) {
+    for (const node of yieldNodes(puzzle)) {
+      ctx.fillStyle = '#ffffff';
+      ctx.fillText(
+        `x: ${node.x}, y: ${node.y}`,
+        node.x * squareLength,
+        node.y * squareLength
       );
     }
   }
@@ -542,115 +567,86 @@ export const View = ({
   model: ViewModel;
   $send: (msg: ViewMsg) => void;
 }) => {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
   useLayoutEffect(() => {
-    const canvas = document.getElementById('flow-canvas');
+    const canvas = canvasRef.current;
 
     if (!canvas) {
       return;
     }
-
-    if (!(canvas instanceof HTMLCanvasElement)) {
-      return;
-    }
-
     const context = canvas.getContext('2d');
 
     if (!context) {
       return;
     }
 
-    context.canvas.height = context.canvas.width;
+    canvas.height = canvas.width;
 
     paint(context, model);
   });
 
   return (
     <canvas
-      id="flow-canvas"
-      style={{
-        width: '100%',
-        cursor: model.mouseStatus === 'up' ? 'grab' : 'grabbing',
-        touchAction: 'none',
-      }}
-      onMouseLeave={() => {
-        $send({ t: 'mouse-leave' });
-      }}
-      onMouseDown={(event) => {
-        event.stopPropagation();
-        const bounds = toBounds(model.puzzle);
-        const pos = canvasEventToPosition(bounds, { t: 'mouse', c: event });
-        $send({ t: 'mouse-down', nodeId: id(pos) });
-      }}
-      onMouseUp={(event) => {
-        event.stopPropagation();
-
-        const bounds = toBounds(model.puzzle);
-        const pos = canvasEventToPosition(bounds, { t: 'mouse', c: event });
-        $send({ t: 'mouse-up', nodeId: id(pos) });
-      }}
-      onMouseMove={(event) => {
-        event.stopPropagation();
-        try {
-          event.preventDefault();
-        } catch (error) {
-          //
-        }
-
-        const bounds = toBounds(model.puzzle);
-        const pos = canvasEventToPosition(bounds, { t: 'mouse', c: event });
-        $send({ t: 'mouse-move', nodeId: id(pos) });
-      }}
-      onTouchMove={(event) => {
-        event.stopPropagation();
-        try {
-          event.preventDefault();
-        } catch (error) {
-          //
-        }
-
-        const bounds = toBounds(model.puzzle);
-        const pos = canvasEventToPosition(bounds, { t: 'touch', c: event });
-        $send({ t: 'mouse-move', nodeId: id(pos) });
-      }}
-      onTouchCancel={(event) => {
-        event.stopPropagation();
-        try {
-          event.preventDefault();
-        } catch (error) {
-          //
-        }
-
-        const bounds = toBounds(model.puzzle);
-        const pos = canvasEventToPosition(bounds, { t: 'touch', c: event });
-        $send({ t: 'mouse-up', nodeId: id(pos) });
-      }}
-      onTouchEnd={(event) => {
-        event.stopPropagation();
-        try {
-          event.preventDefault();
-        } catch (error) {
-          //
-        }
-
-        const bounds = toBounds(model.puzzle);
-        const pos = canvasEventToPosition(bounds, { t: 'touch', c: event });
-        $send({ t: 'mouse-up', nodeId: id(pos) });
-      }}
-      onTouchStart={(event) => {
-        event.stopPropagation();
-        try {
-          event.preventDefault();
-        } catch (error) {
-          //
-        }
-
-        const bounds = toBounds(model.puzzle);
-        const pos = canvasEventToPosition(bounds, { t: 'touch', c: event });
-        $send({ t: 'mouse-down', nodeId: id(pos) });
-      }}
+      ref={canvasRef}
+      className={cn(
+        'select-none touch-none w-full',
+        model.mouseStatus === 'up' ? 'cursor-grab' : 'cursor-grabbing'
+      )}
+      onMouseLeave={handleMouse({ model, $send, t: 'mouse-leave' })}
+      onMouseDown={handleMouse({ model, $send, t: 'mouse-down' })}
+      onMouseUp={handleMouse({ model, $send, t: 'mouse-up' })}
+      onMouseMove={handleMouse({ model, $send, t: 'mouse-move' })}
+      onTouchMove={handleTouch({ model, $send, t: 'mouse-move' })}
+      onTouchStart={handleTouch({ model, $send, t: 'mouse-down' })}
+      onTouchCancel={handleTouch({ model, $send, t: 'mouse-up' })}
+      onTouchEnd={handleTouch({ model, $send, t: 'mouse-up' })}
     />
   );
 };
+
+const handleMouse =
+  ({
+    model,
+    t,
+    $send,
+  }: {
+    model: ViewModel;
+    t: ViewMsg['t'];
+    $send: (m: ViewMsg) => void;
+  }) =>
+  (event: React.MouseEvent<HTMLCanvasElement>) => {
+    event.stopPropagation();
+
+    const bounds = toBounds(model.puzzle);
+    const pos = canvasEventToPosition(bounds, { t: 'mouse', c: event });
+    if (pos) {
+      $send({ t, nodeId: id(pos) });
+    }
+  };
+
+const handleTouch =
+  ({
+    model,
+    t,
+    $send,
+  }: {
+    model: ViewModel;
+    t: ViewMsg['t'];
+    $send: (m: ViewMsg) => void;
+  }) =>
+  (event: React.TouchEvent<HTMLCanvasElement>) => {
+    event.stopPropagation();
+
+    const pos = canvasEventToPosition(model.puzzle.bounds, {
+      t: 'touch',
+      c: event,
+    });
+    if (pos) {
+      $send({ t, nodeId: id(pos) });
+    }
+  };
+
 const canvasEventToPosition = (
   bounds: Bounds,
   event:
@@ -666,12 +662,12 @@ const canvasEventToPosition = (
   } else if (event.t === 'touch') {
     const touch = event.c.touches[0];
     if (!touch) {
-      throw new Error('No touch');
+      return null;
     }
     elementRelativeX = touch.clientX - rect.left;
     elementRelativeY = touch.clientY - rect.top;
   } else {
-    throw new Error('Unknown event');
+    return null;
   }
   const elementWidth = event.c.currentTarget.width;
   const elementHeight = event.c.currentTarget.height;
@@ -705,7 +701,7 @@ const canvasEventToPosition = (
 //
 //
 
-type Shorthand = (string | null)[][];
+type Shorthand = NonEmpty<NonEmpty<string | null>>;
 
 const emojiToColor = (emoji: string): Color | null => {
   return (
@@ -721,8 +717,8 @@ export const fromShorthand = (puzzle: Shorthand) => {
         y: 0,
       },
       max: {
-        x: puzzle[0]?.length ?? puzzle.length + 2,
-        y: puzzle.length + 2,
+        x: puzzle[0].length,
+        y: puzzle.length,
       },
     },
   });
@@ -743,7 +739,7 @@ export const fromShorthand = (puzzle: Shorthand) => {
       }
 
       grid = setNode(grid, {
-        x: y,
+        x,
         y,
         color,
       });
