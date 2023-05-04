@@ -1,6 +1,6 @@
 import { Err, NonEmpty, Ok, Result, rescale } from '@gamezilla/core';
 import { cn } from '@gamezilla/shared/ui';
-import { useEffect, useLayoutEffect, useRef } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 
 //
 //
