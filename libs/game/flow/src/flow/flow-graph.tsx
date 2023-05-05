@@ -610,8 +610,10 @@ const handleMouse =
   (event: React.MouseEvent<HTMLCanvasElement>) => {
     event.stopPropagation();
 
-    const bounds = toBounds(model.puzzle);
-    const pos = canvasEventToPosition(bounds, { t: 'mouse', c: event });
+    const pos = canvasEventToPosition(model.puzzle.bounds, {
+      t: 'mouse',
+      c: event,
+    });
     if (pos) {
       $send({ t, nodeId: id(pos) });
     }
