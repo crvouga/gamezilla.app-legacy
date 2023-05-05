@@ -369,7 +369,6 @@ export const findEndNode = (
 
 //
 //
-//
 // View
 //
 //
@@ -402,43 +401,144 @@ export const paint = (
   }
 
   //
+  // Paths
   //
-  //
-  for (const node of yieldColoredNodes(puzzle)) {
-    ctx.fillStyle = node.color;
-
-    ctx.fillRect(
-      node.x * squareLength,
-      node.y * squareLength,
-      squareLength,
-      squareLength
-    );
-  }
-
   for (const color in pathByColor) {
-    ctx.fillStyle = color;
-
     const path = pathByColor[color];
 
     if (!path) {
       continue;
     }
 
-    for (const nodeId of path) {
+    ctx.strokeStyle = color;
+    ctx.lineWidth = squareLength / 4;
+    ctx.beginPath();
+
+    for (let nodeIndex = 0; nodeIndex < path.length - 1; nodeIndex++) {
+      const nodeId = path[nodeIndex];
+
+      if (!nodeId) {
+        continue;
+      }
+
       const node = puzzle.nodes[nodeId];
 
       if (!node) {
         continue;
       }
 
-      ctx.fillRect(
-        node.x * squareLength,
-        node.y * squareLength,
-        squareLength,
-        squareLength
+      const nextNodeId = path[nodeIndex + 1];
+
+      if (!nextNodeId) {
+        continue;
+      }
+
+      const nextNode = puzzle.nodes[nextNodeId];
+
+      if (!nextNode) {
+        continue;
+      }
+
+      ctx.moveTo(
+        node.x * squareLength + squareLength / 2,
+        node.y * squareLength + squareLength / 2
+      );
+      ctx.lineTo(
+        nextNode.x * squareLength + squareLength / 2,
+        nextNode.y * squareLength + squareLength / 2
       );
     }
+    ctx.stroke();
+    ctx.closePath();
   }
+
+  //
+  // Path round corners
+  //
+  for (const color in pathByColor) {
+    const path = pathByColor[color];
+
+    if (!path) {
+      continue;
+    }
+
+    ctx.fillStyle = color;
+    ctx.beginPath();
+
+    for (let nodeIndex = 0; nodeIndex < path.length - 1; nodeIndex++) {
+      const nodeId = path[nodeIndex];
+
+      if (!nodeId) {
+        continue;
+      }
+
+      const node = puzzle.nodes[nodeId];
+
+      if (!node) {
+        continue;
+      }
+
+      const nextNodeId = path[nodeIndex + 1];
+
+      if (!nextNodeId) {
+        continue;
+      }
+
+      const nextNode = puzzle.nodes[nextNodeId];
+
+      if (!nextNode) {
+        continue;
+      }
+
+      const previousNodeId = path[nodeIndex - 1];
+
+      if (!previousNodeId) {
+        continue;
+      }
+
+      const previousNode = puzzle.nodes[previousNodeId];
+
+      if (!previousNode) {
+        continue;
+      }
+
+      const didChangeX = node.x - previousNode.x !== node.x - nextNode.x;
+      const didChangeY = node.y - previousNode.y !== node.y - nextNode.y;
+      if (didChangeX || didChangeY) {
+        ctx.arc(
+          node.x * squareLength + squareLength / 2,
+          node.y * squareLength + squareLength / 2,
+          squareLength / 9,
+          0,
+          2 * Math.PI
+        );
+      }
+      ctx.fill();
+      ctx.closePath();
+    }
+  }
+
+  //
+  // Nodes
+  //
+  for (const node of yieldColoredNodes(puzzle)) {
+    ctx.fillStyle = node.color;
+
+    ctx.beginPath();
+    ctx.arc(
+      node.x * squareLength + squareLength / 2,
+      node.y * squareLength + squareLength / 2,
+      squareLength / 3,
+      0,
+      2 * Math.PI
+    );
+    ctx.fill();
+    ctx.closePath();
+  }
+
+  //
+  // Debug
+  //
 
   const showPositions = false;
   if (showPositions) {
