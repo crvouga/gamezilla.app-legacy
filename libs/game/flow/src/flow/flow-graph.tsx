@@ -771,6 +771,48 @@ const canvasEventToPosition = (
   return { x, y };
 };
 
+export const canvasEventToRealPosition = (
+  bounds: Bounds,
+  event:
+    | { t: 'mouse'; c: React.MouseEvent<HTMLCanvasElement, MouseEvent> }
+    | { t: 'touch'; c: React.TouchEvent<HTMLCanvasElement> }
+) => {
+  const rect = event.c.currentTarget.getBoundingClientRect();
+  let elementRelativeX: number;
+  let elementRelativeY: number;
+  if (event.t === 'mouse') {
+    elementRelativeX = event.c.clientX - rect.left;
+    elementRelativeY = event.c.clientY - rect.top;
+  } else if (event.t === 'touch') {
+    const touch = event.c.touches[0];
+    if (!touch) {
+      return null;
+    }
+    elementRelativeX = touch.clientX - rect.left;
+    elementRelativeY = touch.clientY - rect.top;
+  } else {
+    return null;
+  }
+  const elementWidth = event.c.currentTarget.width;
+  const elementHeight = event.c.currentTarget.height;
+  const canvasRelativeX = (elementRelativeX * elementWidth) / rect.width;
+  const canvasRelativeY = (elementRelativeY * elementHeight) / rect.height;
+
+  const x = rescale({
+    value: canvasRelativeX,
+    from: [0, elementWidth],
+    to: [bounds.min.x, bounds.max.x],
+  });
+
+  const y = rescale({
+    value: canvasRelativeY,
+    from: [0, elementWidth],
+    to: [bounds.min.y, bounds.max.y],
+  });
+
+  return { x, y };
+};
+
 //
 
 //
