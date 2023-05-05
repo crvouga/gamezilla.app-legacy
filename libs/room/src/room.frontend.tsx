@@ -10,6 +10,7 @@ import {
   ViewCtx,
 } from '@gamezilla/shared';
 import {
+  ActionButton,
   Avatar,
   Box,
   Button,
@@ -849,23 +850,23 @@ const ViewPage = ({
   return (
     <div className="w-full h-full flex-1 flex flex-col">
       <nav className="flex items-center w-full p-2">
-        <div className="gap-2 flex-1 flex items-center overflow-x-auto">
-          <MyButton
-            variant="contained"
-            size="sm"
+        <div className="w-20 flex items-center">
+          <ActionButton
+            label="Home"
+            icon={<IconHome />}
             onClick={() => ctx.$push({ t: 'room', c: { t: 'room-list' } })}
-          >
-            <IconHome /> Home
-          </MyButton>
-          <MyButton
-            variant="contained"
-            size="sm"
-            onClick={() => $send({ t: 'modal-open', c: 'users' })}
-          >
-            <IconUserGroup />
-            People
-          </MyButton>
+          />
         </div>
+
+        <div className="w-20 flex items-center">
+          <ActionButton
+            label="People"
+            icon={<IconUserGroup />}
+            onClick={() => $send({ t: 'modal-open', c: 'users' })}
+          />
+        </div>
+
+        <div className="flex-1"></div>
 
         <MyButton
           color="danger"

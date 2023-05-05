@@ -367,20 +367,6 @@ export const findEndNode = (
   return null;
 };
 
-const toBounds = (puzzle: Puzzle): Bounds => {
-  const min = { x: Infinity, y: Infinity };
-  const max = { x: -Infinity, y: -Infinity };
-
-  for (const node of yieldNodes(puzzle)) {
-    min.x = Math.min(min.x, node.x);
-    min.y = Math.min(min.y, node.y);
-    max.x = Math.max(max.x, node.x);
-    max.y = Math.max(max.y, node.y);
-  }
-
-  return { max, min };
-};
-
 //
 //
 //
