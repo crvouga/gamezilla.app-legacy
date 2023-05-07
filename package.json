@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "backend": "node ./dist/apps/backend/main.js"
+    "backend": "node ./dist/apps/app/backend/main.js"
   },
   "private": true,
   "devDependencies": {
