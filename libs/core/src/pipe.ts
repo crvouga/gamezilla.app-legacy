@@ -1,3 +1,6 @@
+/* eslint-disable prefer-rest-params */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable @typescript-eslint/ban-types */
 // Source: https://github.com/gcanti/fp-ts/blob/master/src/function.ts
 
 export function p<A>(a: A): A;
@@ -276,11 +279,12 @@ export function p(
       return gh!(fg!(ef!(de!(cd!(bc!(ab!(a)))))));
     case 9:
       return hi!(gh!(fg!(ef!(de!(cd!(bc!(ab!(a))))))));
-    default:
+    default: {
       let ret = arguments[0];
       for (let i = 1; i < arguments.length; i++) {
         ret = arguments[i](ret);
       }
       return ret;
+    }
   }
 }

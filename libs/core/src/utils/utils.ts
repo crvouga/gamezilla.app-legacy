@@ -1,4 +1,4 @@
-import { Cmd } from './cmd';
+import { Cmd } from '../cmd';
 
 export const exhaustive = (discriminatedUnionType: 'Missing Case!'): never => {
   throw new Error(`Missing case for: ${discriminatedUnionType}`);
