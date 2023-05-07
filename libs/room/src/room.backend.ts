@@ -323,13 +323,15 @@ export const updateFromApp = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  switch (msg[0]) {
-    case 'client-connected': {
-      return {
-        model,
-      };
-    }
+  if (msg.t === 'client-connected') {
+    return {
+      model,
+    };
   }
+
+  return {
+    model,
+  };
 };
 
 const sendToRoom = ({

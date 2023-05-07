@@ -11,20 +11,13 @@ import {
 } from '@gamezilla/app';
 import { AuthBackend } from '@gamezilla/auth';
 import { ChatBackend } from '@gamezilla/chat';
-import {
-  andThen,
-  Cmd,
-  exhaustive,
-  p,
-  Program,
-  Sub,
-  toMsgType,
-} from '@gamezilla/core';
+import { Cmd, exhaustive, p, Program, Sub, toMsgType } from '@gamezilla/core';
 import { ProfileBackend } from '@gamezilla/profile';
 import { RoomBackend } from '@gamezilla/room';
 import { SearchBackend } from '@gamezilla/search';
 import { ClientId, SessionId, UserId } from '@gamezilla/shared';
 import {
+  AppMsg,
   Ctx,
   DatabaseConnectionMySQL,
   RequestCtx,
@@ -64,7 +57,11 @@ export const init: { model: Model; cmd?: Cmd<Msg> } = {
 
 type Msg = BackendMsg;
 
-export const update = (input: {
+export const update = ({
+  msg,
+  model,
+  ctx,
+}: {
   msg: Msg;
   model: Model;
   ctx: Ctx;
@@ -72,14 +69,6 @@ export const update = (input: {
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  return p(
-    input,
-    andThen(({ model }) => update_({ ...input, model })),
-    andThen(({ model }) => updateFromApp({ ...input, model }))
-  );
-};
-
-export const update_: typeof update = ({ msg, model, ctx }) => {
   switch (msg.t) {
     case '→': {
       return updateFromFrontend({
@@ -124,9 +113,18 @@ export const update_: typeof update = ({ msg, model, ctx }) => {
           [sessionId]: sessionNew,
         },
       };
-      return {
+
+      const appUpdated = updateFromApp({
         model: modelNew,
-      };
+        msg: {
+          t: 'client-connected',
+          sessionId,
+          clientId,
+          userId: sessionPrev?.userId,
+        },
+      });
+
+      return { model: appUpdated.model, cmd: appUpdated.cmd };
     }
 
     case 'client-disconnected': {
@@ -199,27 +197,45 @@ export const update_: typeof update = ({ msg, model, ctx }) => {
   }
 };
 
-const updateFromApp: typeof update = ({ msg, model }) => {
-  switch (msg.t) {
-    case 'client-connected': {
-      const clientId = msg.clientId;
-      const roomUpdated = RoomBackend.updateFromApp({
-        msg: ['client-connected', { clientId }],
-        model: model.room,
-        sendToFrontend: (clientIds, m) =>
-          sendToFrontend(clientIds, { t: 'room', c: m }),
-      });
+const updateFromApp = ({
+  msg,
+  model,
+}: {
+  msg: AppMsg;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  if (msg.t === 'client-connected') {
+    const roomUpdated = RoomBackend.updateFromApp({
+      msg,
+      model: model.room,
+      sendToFrontend: (clientIds, m) =>
+        sendToFrontend(clientIds, { t: 'room', c: m }),
+    });
 
-      return {
-        model: { ...model, room: roomUpdated.model },
-        cmd: Cmd.tag_('room', roomUpdated.cmd ?? Cmd.None),
-      };
-    }
+    const profileUpdated = ProfileBackend.updateFromApp({
+      msg,
+      model: model.profile,
+    });
 
-    default: {
-      return { model };
-    }
+    return {
+      model: {
+        ...model,
+        room: roomUpdated.model,
+        profile: profileUpdated.model,
+      },
+      cmd: Cmd.batch<Msg>([
+        Cmd.tag_('room', roomUpdated.cmd),
+        Cmd.tag_('profile', profileUpdated.cmd),
+      ]),
+    };
   }
+
+  return {
+    model,
+  };
 };
 
 const updateFromFrontend = ({

@@ -6,7 +6,7 @@ import {
   client,
   definitions,
 } from '@gamezilla/shared';
-import { AuthenticatedRequestCtx } from '@gamezilla/shared/backend';
+import { AppMsg, AuthenticatedRequestCtx } from '@gamezilla/shared/backend';
 import { Profile } from './profile-store';
 import {
   BackendModel,
@@ -80,6 +80,25 @@ export const updateFromFrontend = ({
       Cmd.chain((res) => sendToClient(res))
     ),
   };
+};
+
+export const updateFromApp = ({
+  msg,
+  model,
+}: {
+  msg: AppMsg;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  if (msg.t === 'client-connected' && msg.userId) {
+    return {
+      model,
+    };
+  }
+
+  return { model };
 };
 
 const handler =
