@@ -1,5 +1,5 @@
-import { Result } from '@gamezilla/shared/core';
 import { UserId } from '@gamezilla/shared';
+import { Result } from '@gamezilla/shared/core';
 import * as TicTacToe from '../tic-tic-toe/tic-tac-toe';
 import * as Round from './vs-user-round';
 

@@ -5,7 +5,7 @@ import {
   RoomViewCtx,
   ViewCtx,
   ViewMainMenu,
-} from '@gamezilla/shared';
+} from '@gamezilla/shared/frontend';
 import { IconComputerDesktop, IconUsers } from '@gamezilla/shared/ui';
 import {
   BackendModel,

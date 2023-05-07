@@ -8,13 +8,8 @@ import {
   Task,
   p,
 } from '@gamezilla/shared/core';
-import {
-  PhoneNumber,
-  Route,
-  UnauthenticatedViewCtx,
-  UserId,
-  client,
-} from '@gamezilla/shared';
+import { PhoneNumber, UserId, client } from '@gamezilla/shared';
+import { Route, UnauthenticatedViewCtx } from '@gamezilla/shared/frontend';
 import {
   ConformationDialog,
   IconEnvelope,

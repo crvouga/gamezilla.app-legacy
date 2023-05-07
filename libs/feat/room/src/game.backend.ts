@@ -1,5 +1,5 @@
 import { Cmd, exhaustive, Sub } from '@gamezilla/shared/core';
-import { RoomMsg } from '@gamezilla/shared';
+import { RoomMsg } from '@gamezilla/shared/frontend';
 import { ChessBackend } from '@gamezilla/game/chess';
 import { ConnectFourBackend } from '@gamezilla/game/connect-four';
 import { FlowBackend } from '@gamezilla/game/flow';

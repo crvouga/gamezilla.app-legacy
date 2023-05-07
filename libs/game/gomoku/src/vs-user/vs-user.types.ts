@@ -1,5 +1,5 @@
-import { Err, NonEmpty, Ok, Result } from '@gamezilla/shared/core';
 import { UserId } from '@gamezilla/shared';
+import { Err, NonEmpty, Ok, Result } from '@gamezilla/shared/core';
 import {
   Board,
   MoveProblem,

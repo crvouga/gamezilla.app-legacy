@@ -4,7 +4,7 @@ import {
   ViewCtx,
   ViewVsBotGameScreen,
   ViewVsBotSetupScreen,
-} from '@gamezilla/shared';
+} from '@gamezilla/shared/frontend';
 import {
   BotLevel,
   Stone,

@@ -1,5 +1,6 @@
+import { Iso3166Alpha2Code, PhoneNumber } from '@gamezilla/shared';
 import { Browser, Cmd, Result, Task, p } from '@gamezilla/shared/core';
-import { Iso3166Alpha2Code, PhoneNumber, Route } from '@gamezilla/shared';
+import { Route } from '@gamezilla/shared/frontend';
 import {
   Autocomplete,
   IconPhone,

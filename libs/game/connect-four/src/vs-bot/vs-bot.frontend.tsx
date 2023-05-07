@@ -1,12 +1,12 @@
+import { Cmd, Posix, Sub } from '@gamezilla/shared/core';
 import {
+  Alerts,
   Ctx,
   RoomCtx,
   ViewCtx,
   ViewVsBotGameScreen,
   ViewVsBotSetupScreen,
-} from '@gamezilla/shared';
-import { Cmd, Posix, Sub } from '@gamezilla/shared/core';
-import { Alerts } from '@gamezilla/shared/frontend';
+} from '@gamezilla/shared/frontend';
 import {
   PlayerType,
   opposite,

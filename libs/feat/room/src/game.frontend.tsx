@@ -6,9 +6,8 @@ import { MazeFrontend } from '@gamezilla/game/maze';
 import { SnakeFrontend } from '@gamezilla/game/snake';
 import { TetrisFrontend } from '@gamezilla/game/tetris';
 import { TicTacToeFrontend } from '@gamezilla/game/tic-tac-toe';
-import { Ctx, RoomCtx, RoomViewCtx } from '@gamezilla/shared';
-import { Cmd, exhaustive, Sub } from '@gamezilla/shared/core';
-import { Alerts } from '@gamezilla/shared/frontend';
+import { Cmd, Sub, exhaustive } from '@gamezilla/shared/core';
+import { Alerts, Ctx, RoomCtx, RoomViewCtx } from '@gamezilla/shared/frontend';
 import {
   BackendModel,
   FrontendModel,

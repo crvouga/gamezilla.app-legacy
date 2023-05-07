@@ -31,7 +31,7 @@ const toChecker = (x: number, y: number) => {
 };
 
 const make = ({ theme = defaultTheme }: { theme?: Theme }) => {
-  let currentFen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+  const currentFen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
   const svg = document.createElement('svg');
   svg.setAttribute('viewBox', '0 0 8 8');
@@ -50,7 +50,7 @@ const make = ({ theme = defaultTheme }: { theme?: Theme }) => {
     }
   }
 
-  const setFEN = (_fen: string, _animate: boolean = true) => {
+  const setFEN = (_fen: string) => {
     // const matrixPrev = fenToMatrix(currentFen);
     // const matrixNew = fenToMatrix(fen);
     // console.log(fen, matrix);

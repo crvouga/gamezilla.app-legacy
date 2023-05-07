@@ -1,6 +1,6 @@
 import { Cmd, exhaustive } from '@gamezilla/shared/core';
-import { Alerts } from '@gamezilla/shared/frontend';
-import { RoomCtx, UserId, ViewCtx } from '@gamezilla/shared';
+import { Alerts, RoomCtx, ViewCtx } from '@gamezilla/shared/frontend';
+import { UserId } from '@gamezilla/shared';
 import * as UI from '@gamezilla/shared/ui';
 import {
   PlayerType,

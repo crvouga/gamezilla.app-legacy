@@ -1,7 +1,7 @@
 import { keyframes } from '@emotion/react';
-import { ChoiceChips, UserId, ViewCtx } from '@gamezilla/shared';
-import { Cmd, exhaustive, Sub } from '@gamezilla/shared/core';
-import { Alerts } from '@gamezilla/shared/frontend';
+import { UserId } from '@gamezilla/shared';
+import { Cmd, Sub, exhaustive } from '@gamezilla/shared/core';
+import { Alerts, ChoiceChips, ViewCtx } from '@gamezilla/shared/frontend';
 import {
   ActionButton,
   Avatar,
@@ -26,24 +26,24 @@ import {
   toTurn,
 } from '../connect-four/connect-four';
 import {
-  gameTheme,
   PlayerIcon,
   PlayerOneIcon,
   PlayerTwoIcon,
   ViewColumns,
+  gameTheme,
 } from '../connect-four/connect-four-ui';
 import {
-  allMoveTimeLimit,
   BackendModel,
   FrontendModel,
   FrontendMsg,
   GameModel,
   GameOverModel,
-  handle,
-  initShared,
   SetupModel,
   ToBackend,
   ToFrontend,
+  allMoveTimeLimit,
+  handle,
+  initShared,
   toPlayerType,
 } from './vs-user.types';
 

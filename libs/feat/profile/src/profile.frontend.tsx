@@ -1,11 +1,6 @@
+import { ProfileAvatar, UserId } from '@gamezilla/shared';
 import { Cmd, RemoteResult, andThen, p } from '@gamezilla/shared/core';
-import {
-  AppMsg,
-  ProfileAvatar,
-  Route,
-  UserId,
-  ViewCtx,
-} from '@gamezilla/shared';
+import { AppMsg, Route, ViewCtx } from '@gamezilla/shared/frontend';
 import {
   Alert,
   Avatar,

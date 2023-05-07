@@ -1,5 +1,5 @@
 import { Cmd, Keyboard, p, Sub } from '@gamezilla/shared/core';
-import { RoomCtx, RoomViewCtx, ViewCtx } from '@gamezilla/shared';
+import { RoomCtx, RoomViewCtx, ViewCtx } from '@gamezilla/shared/frontend';
 import {
   ActionButton,
   Avatar,

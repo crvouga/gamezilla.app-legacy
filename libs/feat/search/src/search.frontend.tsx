@@ -1,5 +1,5 @@
 import { Browser, Cmd, matchSort, p } from '@gamezilla/shared/core';
-import { Route } from '@gamezilla/shared';
+import { Route } from '@gamezilla/shared/frontend';
 import { IconMagnifyingGlass, IconXMark, ViewNode } from '@gamezilla/shared/ui';
 import {
   FrontendModel,

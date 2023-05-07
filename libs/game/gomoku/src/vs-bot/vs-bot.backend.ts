@@ -1,6 +1,6 @@
-import { Cmd, Sub, andThen, p } from '@gamezilla/shared/core';
-import { RoomMsg } from '@gamezilla/shared';
 import { RoomRequestCtx } from '@gamezilla/shared/backend';
+import { Cmd, Sub, andThen, p } from '@gamezilla/shared/core';
+import { RoomMsg } from '@gamezilla/shared/frontend';
 import {
   BackendModel,
   BackendMsg,

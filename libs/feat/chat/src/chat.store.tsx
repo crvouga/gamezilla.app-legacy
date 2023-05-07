@@ -1,16 +1,16 @@
 import { Cmd, p, t } from '@gamezilla/shared/core';
-import { ViewCtx } from '@gamezilla/shared';
+import { ViewCtx } from '@gamezilla/shared/frontend';
 import {
   Avatar,
   AvatarGroup,
   Box,
   FillBox,
-  TopBar,
   Icons,
   List,
   ListItemAvatar,
   ListItemButton,
   ListItemText,
+  TopBar,
   ViewEmptyState,
   ViewLoadingState,
 } from '@gamezilla/shared/ui';

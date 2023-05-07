@@ -1,12 +1,12 @@
 import { Cmd, Sub } from '@gamezilla/shared/core';
-import { Alerts } from '@gamezilla/shared/frontend';
 import {
+  Alerts,
   Ctx,
   RoomCtx,
   RoomViewCtx,
   ViewCtx,
   ViewMainMenu,
-} from '@gamezilla/shared';
+} from '@gamezilla/shared/frontend';
 import { IconComputerDesktop, IconUsers } from '@gamezilla/shared/ui';
 import {
   BackendModel,

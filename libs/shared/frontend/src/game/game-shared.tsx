@@ -1,3 +1,4 @@
+import { UserId } from '@gamezilla/shared';
 import {
   Box,
   Button,
@@ -14,7 +15,6 @@ import {
   useTheme,
 } from '@gamezilla/shared/ui';
 import { Ctx, ViewCtx } from '../ctx';
-import { UserId } from '../data';
 
 export type RoomCtx = Ctx & {
   hostId: UserId;

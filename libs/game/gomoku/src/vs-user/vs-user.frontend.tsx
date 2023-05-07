@@ -1,9 +1,9 @@
 import { Cmd, Sub } from '@gamezilla/shared/core';
 import {
+  ViewCtx,
   viewUserPlayerSlotBar,
   viewVsUserSetupScreen,
-} from '@gamezilla/shared';
-import { ViewCtx } from '@gamezilla/shared';
+} from '@gamezilla/shared/frontend';
 import {
   actionButton,
   box,

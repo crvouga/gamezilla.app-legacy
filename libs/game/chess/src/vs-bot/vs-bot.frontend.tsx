@@ -1,6 +1,9 @@
-import { ViewCtx, ViewVsBotSetupScreen } from '@gamezilla/shared';
-import { Audio, Cmd, exhaustive, Option, Sub, t } from '@gamezilla/shared/core';
-import { Alerts } from '@gamezilla/shared/frontend';
+import { Audio, Cmd, Option, Sub, exhaustive, t } from '@gamezilla/shared/core';
+import {
+  Alerts,
+  ViewCtx,
+  ViewVsBotSetupScreen,
+} from '@gamezilla/shared/frontend';
 import * as UI from '@gamezilla/shared/ui';
 import * as Chess from '../chess/chess';
 import { viewCoverArt } from '../chess/chess';
@@ -10,13 +13,13 @@ import {
   BackendModel,
   FrontendModel,
   FrontendMsg,
-  initShared,
-  inputMove,
-  isBotTurn,
   Res,
   SharedModel,
   ToBackend,
   ToFrontend,
+  initShared,
+  inputMove,
+  isBotTurn,
 } from './vs-bot.types';
 
 //

@@ -1,26 +1,25 @@
-import { useLayoutEffect, useRef } from 'react';
-import { ViewCtx, Route, RoomCtx } from '@gamezilla/shared';
-import { Alerts } from '@gamezilla/shared/frontend';
 import {
   Cmd,
-  exhaustive,
   Keyboard,
   Option,
   Result,
   Sub,
+  exhaustive,
 } from '@gamezilla/shared/core';
+import { Alerts, RoomCtx, Route, ViewCtx } from '@gamezilla/shared/frontend';
 import * as UI from '@gamezilla/shared/ui';
+import { useLayoutEffect, useRef } from 'react';
 import { Direction } from './direction';
 import * as Snake from './snake';
 import {
   BackendModel,
-  canStartGame,
   FrontendModel,
   FrontendMsg,
-  initSharedModel,
   SharedModel,
   ToBackend,
   ToFrontend,
+  canStartGame,
+  initSharedModel,
 } from './snake.types';
 
 //

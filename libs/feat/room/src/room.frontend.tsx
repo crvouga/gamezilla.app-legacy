@@ -1,14 +1,13 @@
+import { RoomId, UserId } from '@gamezilla/shared';
+import { Cmd, RemoteResult, Sub, exhaustive, p } from '@gamezilla/shared/core';
 import {
+  Alerts,
   AppMsg,
   Ctx,
   RoomCtx,
-  RoomId,
   Route,
-  UserId,
   ViewCtx,
-} from '@gamezilla/shared';
-import { Cmd, exhaustive, p, RemoteResult, Sub } from '@gamezilla/shared/core';
-import { Alerts } from '@gamezilla/shared/frontend';
+} from '@gamezilla/shared/frontend';
 import {
   ActionButton,
   Avatar,
@@ -22,18 +21,18 @@ import {
   FillBox,
   IconGamepad,
   IconHome,
-  Icons,
   IconSpinner,
   IconUserGroup,
   IconXMark,
+  Icons,
   MyAvatar,
   MyButton,
   Paper,
   TopBar,
   TopBarBackButton,
   Typography,
-  useTheme,
   ViewNode,
+  useTheme,
 } from '@gamezilla/shared/ui';
 import { gameNameToString, viewCoverArt } from './game';
 import * as Game from './game.frontend';

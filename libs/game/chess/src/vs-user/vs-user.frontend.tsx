@@ -1,14 +1,14 @@
-import { RoomCtx, UserId, ViewCtx } from '@gamezilla/shared';
+import { UserId } from '@gamezilla/shared';
 import {
   Audio,
   Cmd,
-  exhaustive,
   Option,
-  p,
   Sub,
+  exhaustive,
+  p,
   t,
 } from '@gamezilla/shared/core';
-import { Alerts } from '@gamezilla/shared/frontend';
+import { Alerts, RoomCtx, ViewCtx } from '@gamezilla/shared/frontend';
 import * as UI from '@gamezilla/shared/ui';
 import * as Chess from '../chess/chess';
 import * as Clock from '../chess/chess-clock';
@@ -18,15 +18,15 @@ import {
   BackendModel,
   FrontendModel,
   FrontendMsg,
+  InputMove,
+  SharedModel,
+  ToBackend,
+  ToFrontend,
   initShared,
   inputClock,
   inputClockProblemToString,
   inputMove,
-  InputMove,
-  SharedModel,
   startGame,
-  ToBackend,
-  ToFrontend,
 } from './vs-user.types';
 
 //

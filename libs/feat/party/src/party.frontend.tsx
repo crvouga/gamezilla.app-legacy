@@ -1,16 +1,16 @@
+import { PartyId, UserId } from '@gamezilla/shared';
 import { Cmd, exhaustive, p, RemoteResult, Sub } from '@gamezilla/shared/core';
-import { PartyId, UserId, ViewCtx } from '@gamezilla/shared';
-import { Ctx, Route } from '@gamezilla/shared';
+import { Ctx, Route, ViewCtx } from '@gamezilla/shared/frontend';
 import {
   Avatar,
   Box,
   Button,
   FillBox,
-  TopBar,
   Icons,
   ListItemAvatar,
   ListItemButton,
   ListItemText,
+  TopBar,
   Typography,
   useTheme,
   ViewEmptyState,

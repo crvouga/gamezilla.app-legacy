@@ -1,5 +1,5 @@
 import { Cmd, Result, Sub } from '@gamezilla/shared/core';
-import { RoomMsg } from '@gamezilla/shared';
+import { RoomMsg } from '@gamezilla/shared/frontend';
 import { RoomCtx, RoomRequestCtx } from '@gamezilla/shared/backend';
 import { UserId } from '@gamezilla/shared';
 import { GameMsg } from './chess-shared';

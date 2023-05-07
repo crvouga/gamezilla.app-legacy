@@ -1,6 +1,5 @@
 import { UserId } from '@gamezilla/shared';
-import { bannerArtAspectRatio } from '@gamezilla/shared';
-import { ViewCtx } from '@gamezilla/shared';
+import { bannerArtAspectRatio, ViewCtx } from '@gamezilla/shared/frontend';
 import * as UI from '@gamezilla/shared/ui';
 import { gameTheme, PlayerTypeIcon } from './tic-tic-toe/tic-tac-toe-ui';
 

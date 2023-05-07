@@ -1,3 +1,4 @@
+import { PhoneNumber } from '@gamezilla/shared';
 import {
   Browser,
   Cmd,
@@ -7,7 +8,7 @@ import {
   Time,
   Unit,
 } from '@gamezilla/shared/core';
-import { PhoneNumber, Route } from '@gamezilla/shared';
+import { Route } from '@gamezilla/shared/frontend';
 import {
   AlertError,
   AlertSuccess,

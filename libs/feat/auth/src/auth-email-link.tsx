@@ -1,5 +1,5 @@
 import { Cmd, Result, Task, exhaustive, p } from '@gamezilla/shared/core';
-import { Route } from '@gamezilla/shared';
+import { Route } from '@gamezilla/shared/frontend';
 import {
   AlertError,
   AlertSuccess,

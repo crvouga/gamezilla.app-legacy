@@ -1,4 +1,4 @@
 export * from './alerts';
 export * from './game';
 export * from './ctx';
-export * from './route';
+export * as Route from './route';
