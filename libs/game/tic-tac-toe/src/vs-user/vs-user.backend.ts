@@ -1,4 +1,4 @@
-import { Cmd, exhaustive, Sub, Time } from '@gamezilla/core';
+import { Cmd, exhaustive, Sub, Time } from '@gamezilla/shared/core';
 import { RoomMsg } from '@gamezilla/shared';
 import { PlayerType, toOpposite, toTurn } from '../tic-tic-toe/tic-tac-toe';
 import * as Round from './vs-user-round';

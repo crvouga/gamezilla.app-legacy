@@ -1,4 +1,4 @@
-import { Cmd, Sub } from '@gamezilla/core';
+import { Cmd, Sub } from '@gamezilla/shared/core';
 import { UserId } from '@gamezilla/shared';
 import { BackendModel, BackendMsg, ToBackend, initShared } from './flow.types';
 

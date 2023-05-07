@@ -1,4 +1,12 @@
-import { Audio, Cmd, p, Posix, RemoteResult, Sub, Unit } from '@gamezilla/core';
+import {
+  Audio,
+  Cmd,
+  p,
+  Posix,
+  RemoteResult,
+  Sub,
+  Unit,
+} from '@gamezilla/shared/core';
 import { RoomCtx, RoomViewCtx, ViewMainMenu } from '@gamezilla/shared';
 import { Alerts } from '@gamezilla/shared';
 import {

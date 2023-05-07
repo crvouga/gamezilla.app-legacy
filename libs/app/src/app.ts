@@ -1,8 +1,8 @@
-import * as Auth from '@gamezilla/auth';
-import * as Chat from '@gamezilla/chat';
-import * as Profile from '@gamezilla/profile';
-import * as Room from '@gamezilla/room';
-import * as Search from '@gamezilla/search';
+import * as Auth from '@gamezilla/feat/auth';
+import * as Chat from '@gamezilla/feat/chat';
+import * as Profile from '@gamezilla/feat/profile';
+import * as Room from '@gamezilla/feat/room';
+import * as Search from '@gamezilla/feat/search';
 import { Alerts, ClientId, Route, SessionId, UserId } from '@gamezilla/shared';
 
 //

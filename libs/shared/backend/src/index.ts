@@ -1,4 +1,4 @@
-import { Posix } from '@gamezilla/core';
+import { Posix } from '@gamezilla/shared/core';
 import { ClientId, SessionId, UserId } from '@gamezilla/shared';
 import { DatabaseConnectionMySQL } from './database-connection-mysql';
 

@@ -1,4 +1,4 @@
-import { Posix } from '@gamezilla/core';
+import { Posix } from '@gamezilla/shared/core';
 import { UserId, Username } from './data';
 import * as Route from './route';
 

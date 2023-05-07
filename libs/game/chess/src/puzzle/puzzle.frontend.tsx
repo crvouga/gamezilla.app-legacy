@@ -1,4 +1,4 @@
-import { Cmd, eq, Posix, Sub } from '@gamezilla/core';
+import { Cmd, eq, Posix, Sub } from '@gamezilla/shared/core';
 import { RoomCtx, RoomViewCtx, ViewGameBox } from '@gamezilla/shared';
 import {
   ActionButton,

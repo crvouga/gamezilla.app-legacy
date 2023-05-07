@@ -1,4 +1,4 @@
-import { exhaustive, Result } from '@gamezilla/core';
+import { exhaustive, Result } from '@gamezilla/shared/core';
 import { UserId } from '@gamezilla/shared';
 import {
   allColumnIndexes,

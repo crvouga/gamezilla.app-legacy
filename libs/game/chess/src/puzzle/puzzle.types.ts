@@ -1,4 +1,4 @@
-import { exhaustive, Posix, Result } from '@gamezilla/core';
+import { exhaustive, Posix, Result } from '@gamezilla/shared/core';
 import { UserId } from '@gamezilla/shared';
 import { z } from 'zod';
 import * as Chess from '../chess/chess';

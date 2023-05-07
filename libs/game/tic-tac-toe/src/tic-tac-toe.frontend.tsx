@@ -1,4 +1,4 @@
-import { Cmd, Sub } from '@gamezilla/core';
+import { Cmd, Sub } from '@gamezilla/shared/core';
 import {
   Alerts,
   Ctx,

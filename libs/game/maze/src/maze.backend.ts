@@ -1,4 +1,4 @@
-import { Cmd, Sub, Time } from '@gamezilla/core';
+import { Cmd, Sub, Time } from '@gamezilla/shared/core';
 import {
   BackendModel,
   BackendMsg,

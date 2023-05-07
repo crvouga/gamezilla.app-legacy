@@ -1,4 +1,4 @@
-import { Cmd, exhaustive } from '@gamezilla/core';
+import { Cmd, exhaustive } from '@gamezilla/shared/core';
 import { Alerts, RoomCtx, UserId, ViewCtx } from '@gamezilla/shared';
 import * as UI from '@gamezilla/shared/ui';
 import {

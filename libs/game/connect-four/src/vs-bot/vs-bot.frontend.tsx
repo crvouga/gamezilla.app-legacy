@@ -1,4 +1,4 @@
-import { Cmd, Posix, Sub } from '@gamezilla/core';
+import { Cmd, Posix, Sub } from '@gamezilla/shared/core';
 import {
   Ctx,
   RoomCtx,

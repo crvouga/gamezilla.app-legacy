@@ -1,4 +1,4 @@
-import { easeAttrs, rescale, Uuid } from '@gamezilla/core';
+import { easeAttrs, rescale, Uuid } from '@gamezilla/shared/core';
 import { SvgIcon, Sx } from '@gamezilla/shared/ui';
 import { useLayoutEffect, useMemo, useRef } from 'react';
 import { Transition, TransitionGroup } from 'react-transition-group';
@@ -175,7 +175,6 @@ const ViewColumnsSvg = ({
                   ? 'not-allowed'
                   : 'pointer',
             }}
-
             onMouseOver={() => {
               if (!disabled && isColumnIndex(columnIndex) && onHover) {
                 onHover(columnIndex);

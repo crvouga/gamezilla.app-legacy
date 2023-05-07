@@ -1,4 +1,4 @@
-import { Err, NonEmpty, Ok, Result } from '@gamezilla/core';
+import { Err, NonEmpty, Ok, Result } from '@gamezilla/shared/core';
 
 //
 //

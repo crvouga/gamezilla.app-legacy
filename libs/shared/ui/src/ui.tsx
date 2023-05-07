@@ -1,4 +1,4 @@
-import { exhaustive } from '@gamezilla/core';
+import { exhaustive } from '@gamezilla/shared/core';
 import {
   AccessTime,
   ArrowCircleRight,

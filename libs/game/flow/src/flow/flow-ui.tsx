@@ -1,4 +1,4 @@
-import { rescale } from '@gamezilla/core';
+import { rescale } from '@gamezilla/shared/core';
 import { cn } from '@gamezilla/shared/ui';
 import { useLayoutEffect, useRef } from 'react';
 import {

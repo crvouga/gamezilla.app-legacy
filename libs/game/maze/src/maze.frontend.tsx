@@ -1,4 +1,4 @@
-import { Cmd, Keyboard, p, Sub } from '@gamezilla/core';
+import { Cmd, Keyboard, p, Sub } from '@gamezilla/shared/core';
 import { RoomCtx, RoomViewCtx, ViewCtx } from '@gamezilla/shared';
 import {
   ActionButton,

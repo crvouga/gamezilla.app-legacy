@@ -1,4 +1,4 @@
-import { Result } from '@gamezilla/core';
+import { Result } from '@gamezilla/shared/core';
 
 export type RoomId = string & { _opaque: 'RoomId' };
 

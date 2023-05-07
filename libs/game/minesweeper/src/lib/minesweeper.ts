@@ -1,4 +1,4 @@
-import { p, shuffle } from '@gamezilla/core';
+import { p, shuffle } from '@gamezilla/shared/core';
 import { Position } from './position';
 import { PositionSet } from './position-set';
 

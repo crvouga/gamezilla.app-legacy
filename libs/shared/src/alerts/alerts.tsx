@@ -1,4 +1,4 @@
-import { Cmd, Time, Uuid } from '@gamezilla/core';
+import { Cmd, Time, Uuid } from '@gamezilla/shared/core';
 import { ConformationDialog, Portal, Snackbar } from '@gamezilla/shared/ui';
 
 //

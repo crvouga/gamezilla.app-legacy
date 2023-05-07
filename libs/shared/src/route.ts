@@ -1,4 +1,4 @@
-import { Browser, Cmd } from '@gamezilla/core';
+import { Browser, Cmd } from '@gamezilla/shared/core';
 import { Iso3166Alpha2Code, PhoneNumber, RoomId, UserId } from './data';
 
 //

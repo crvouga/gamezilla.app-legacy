@@ -1,4 +1,4 @@
-import { Audio, Cmd, exhaustive, Option, Sub, t } from '@gamezilla/core';
+import { Audio, Cmd, exhaustive, Option, Sub, t } from '@gamezilla/shared/core';
 import { ViewVsBotSetupScreen } from '@gamezilla/shared';
 import { Alerts, ViewCtx } from '@gamezilla/shared';
 import * as UI from '@gamezilla/shared/ui';

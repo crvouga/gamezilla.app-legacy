@@ -1,4 +1,4 @@
-import { Err, NonEmpty, Ok, Result, shuffle } from '@gamezilla/core';
+import { Err, NonEmpty, Ok, Result, shuffle } from '@gamezilla/shared/core';
 import { Direction, Position } from './gomoku-position';
 
 export type Board = {

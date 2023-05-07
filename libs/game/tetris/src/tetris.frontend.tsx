@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef } from 'react';
-import { Cmd, exhaustive, Keyboard, Option, Sub } from '@gamezilla/core';
+import { Cmd, exhaustive, Keyboard, Option, Sub } from '@gamezilla/shared/core';
 import * as UI from '@gamezilla/shared/ui';
 import * as Board from './board';
 import * as Direction from './direction';

@@ -7,7 +7,7 @@ import {
   Option,
   Result,
   Sub,
-} from '@gamezilla/core';
+} from '@gamezilla/shared/core';
 import * as UI from '@gamezilla/shared/ui';
 import { Direction } from './direction';
 import * as Snake from './snake';

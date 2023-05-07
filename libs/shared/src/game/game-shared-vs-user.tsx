@@ -1,4 +1,3 @@
-import { ViewCtx, UserId } from '@gamezilla/shared';
 import {
   Avatar,
   Box,
@@ -9,6 +8,8 @@ import {
   Typography,
   ViewNode,
 } from '@gamezilla/shared/ui';
+import { ViewCtx } from '../ctx';
+import { UserId } from '../data';
 
 export const viewVsUserSetupScreen = ({
   title,

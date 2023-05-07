@@ -1,4 +1,4 @@
-import { Result } from '@gamezilla/core';
+import { Result } from '@gamezilla/shared/core';
 import * as mysql from 'mysql2/promise';
 import { ParserMyZodEsque } from './shared';
 

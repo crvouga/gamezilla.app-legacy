@@ -1,4 +1,4 @@
-import { Cmd, p, Sub } from '@gamezilla/core';
+import { Cmd, p, Sub } from '@gamezilla/shared/core';
 import { RoomMsg } from '@gamezilla/shared';
 import * as Chess from '../chess/chess';
 import {

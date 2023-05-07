@@ -119,7 +119,7 @@ export const step = (model: Model): Model => {
 
   const queuedDirection = model.directionQueue[0] ?? model.direction;
 
-  const [_, ...directionQueueNew] = model.directionQueue;
+  const directionQueueNew = model.directionQueue.slice(1);
 
   const directionNew = Direction.isOpposite(queuedDirection, model.direction)
     ? model.direction

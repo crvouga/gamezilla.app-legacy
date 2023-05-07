@@ -1,4 +1,4 @@
-import { Cmd, Result, Sub, Time } from '@gamezilla/core';
+import { Cmd, Result, Sub, Time } from '@gamezilla/shared/core';
 import * as Snake from './snake';
 import {
   BackendModel,

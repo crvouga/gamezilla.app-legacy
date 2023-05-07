@@ -1,4 +1,4 @@
-import { Audio, eq, Option, Result } from '@gamezilla/core';
+import { Audio, eq, Option, Result } from '@gamezilla/shared/core';
 import { UserId } from '@gamezilla/shared';
 import * as Chess from '../chess/chess';
 import * as Clock from '../chess/chess-clock';

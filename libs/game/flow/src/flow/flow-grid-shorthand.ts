@@ -1,4 +1,4 @@
-import { NonEmpty } from '@gamezilla/core';
+import { NonEmpty } from '@gamezilla/shared/core';
 import { Color, Puzzle, initGrid, setNode } from './flow';
 
 export type GridShorthand = NonEmpty<NonEmpty<string | null>>;

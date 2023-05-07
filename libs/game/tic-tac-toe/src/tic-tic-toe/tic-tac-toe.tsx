@@ -1,4 +1,4 @@
-import { memoize, Result, shuffle, Task } from '@gamezilla/core';
+import { memoize, Result, shuffle, Task } from '@gamezilla/shared/core';
 
 const { Err, Ok } = Result;
 

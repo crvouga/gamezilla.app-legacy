@@ -1,4 +1,4 @@
-import { NonEmpty, p, Result, Task } from '@gamezilla/core';
+import { NonEmpty, p, Result, Task } from '@gamezilla/shared/core';
 import { UserId } from '@gamezilla/shared';
 import { DatabaseConnectionMySQL } from '@gamezilla/shared/backend';
 import { z } from 'zod';

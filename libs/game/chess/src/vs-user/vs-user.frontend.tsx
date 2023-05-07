@@ -1,4 +1,12 @@
-import { Audio, Cmd, exhaustive, Option, p, Sub, t } from '@gamezilla/core';
+import {
+  Audio,
+  Cmd,
+  exhaustive,
+  Option,
+  p,
+  Sub,
+  t,
+} from '@gamezilla/shared/core';
 import { Alerts, ViewCtx, UserId, RoomCtx } from '@gamezilla/shared';
 import * as UI from '@gamezilla/shared/ui';
 import * as Chess from '../chess/chess';

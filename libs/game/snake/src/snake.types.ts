@@ -1,4 +1,4 @@
-import { Keyboard, Option, Result } from '@gamezilla/core';
+import { Keyboard, Option, Result } from '@gamezilla/shared/core';
 import { UserId } from '@gamezilla/shared';
 import * as Direction from './direction';
 import * as Snake from './snake';

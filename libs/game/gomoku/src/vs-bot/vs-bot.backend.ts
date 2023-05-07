@@ -1,4 +1,4 @@
-import { Cmd, Sub, andThen, p } from '@gamezilla/core';
+import { Cmd, Sub, andThen, p } from '@gamezilla/shared/core';
 import { RoomMsg } from '@gamezilla/shared';
 import { RoomRequestCtx } from '@gamezilla/shared/backend';
 import {
