@@ -14,13 +14,6 @@ import { ProfileFrontend } from '@gamezilla/feat/profile';
 import { RoomFrontend } from '@gamezilla/feat/room';
 import { SearchFrontend } from '@gamezilla/feat/search';
 import {
-  AppMsg,
-  Ctx,
-  Route,
-  UnauthenticatedViewCtx,
-  ViewCtx,
-} from '@gamezilla/shared/app';
-import {
   andThen,
   Browser,
   Cmd,
@@ -31,7 +24,14 @@ import {
   Program,
   Sub,
 } from '@gamezilla/shared/core';
-import { Alerts } from '@gamezilla/shared/frontend';
+import {
+  Alerts,
+  AppMsg,
+  Ctx,
+  Route,
+  UnauthenticatedViewCtx,
+  ViewCtx,
+} from '@gamezilla/shared/frontend';
 import {
   cn,
   IconGamepad,
