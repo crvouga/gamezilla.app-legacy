@@ -1,7 +1,7 @@
 import { Cmd, Sub } from '@gamezilla/core';
 import { RoomViewCtx, UserId, ViewBottomButtonBar } from '@gamezilla/shared';
 import { IconArrowLeftOnRect } from '@gamezilla/shared/ui';
-import { Flow } from './flow';
+import { FlowUI } from './flow';
 import {
   FrontendModel,
   FrontendMsg,
@@ -32,7 +32,7 @@ export const update = ({
   cmd?: Cmd<Msg>;
 } => {
   if (msg.t === 'flow-view') {
-    const updated = Flow.update({
+    const updated = FlowUI.update({
       msg: msg.c,
       model: model.flowView,
     });
@@ -90,7 +90,7 @@ export const View = ({
   return (
     <div className="w-full h-full flex flex-col items-center justify-center">
       <div className="w-full flex-1 flex flex-col items-center justify-center">
-        <Flow.View
+        <FlowUI.View
           model={model.flowView}
           $send={(c) => $send({ t: 'flow-view', c })}
         />

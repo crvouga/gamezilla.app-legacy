@@ -1,10 +1,4 @@
-import {
-  ColoredNode,
-  bounds8x8,
-  findEndNode,
-  initGrid,
-  setNode,
-} from './flow-graph';
+import { ColoredNode, bounds8x8, findEndNode, initGrid, setNode } from './flow';
 
 type TestModel = (string | null)[][];
 

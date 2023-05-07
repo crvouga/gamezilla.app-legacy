@@ -102,7 +102,7 @@ export const handle = ({
   }
 };
 
-const toNextPlayer = (player: PlayerType): PlayerType => {
+export const toNextPlayer = (player: PlayerType): PlayerType => {
   switch (player) {
     case 'player-one': {
       return 'player-two';
@@ -119,7 +119,7 @@ const toNextPlayer = (player: PlayerType): PlayerType => {
   }
 };
 
-const isNonEmpty = <T>(arr: T[]): arr is [T, ...T[]] => arr.length > 0;
+export const isNonEmpty = <T>(arr: T[]): arr is [T, ...T[]] => arr.length > 0;
 
 export const toTurn = (model: SharedModel): PlayerType => {
   switch (model.shotRule.t) {
@@ -137,6 +137,6 @@ export const toTurn = (model: SharedModel): PlayerType => {
   }
 };
 
-const toTurnRuleCount = (model: SharedModel): PlayerType => {
+const toTurnRuleCount = (_model: SharedModel): PlayerType => {
   return 'player-one';
 };
