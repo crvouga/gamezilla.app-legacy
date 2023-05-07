@@ -3,7 +3,8 @@ import * as Chat from '@gamezilla/feat/chat';
 import * as Profile from '@gamezilla/feat/profile';
 import * as Room from '@gamezilla/feat/room';
 import * as Search from '@gamezilla/feat/search';
-import { Alerts, ClientId, Route, SessionId, UserId } from '@gamezilla/shared';
+import { Alerts } from '@gamezilla/shared/frontend';
+import { ClientId, Route, SessionId, UserId } from '@gamezilla/shared';
 
 //
 //

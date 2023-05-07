@@ -1,6 +1,6 @@
+import { ViewCtx, ViewVsBotSetupScreen } from '@gamezilla/shared';
 import { Audio, Cmd, exhaustive, Option, Sub, t } from '@gamezilla/shared/core';
-import { ViewVsBotSetupScreen } from '@gamezilla/shared';
-import { Alerts, ViewCtx } from '@gamezilla/shared';
+import { Alerts } from '@gamezilla/shared/frontend';
 import * as UI from '@gamezilla/shared/ui';
 import * as Chess from '../chess/chess';
 import { viewCoverArt } from '../chess/chess';

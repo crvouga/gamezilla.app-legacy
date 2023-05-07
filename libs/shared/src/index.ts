@@ -1,4 +1,3 @@
-export * from './alerts';
 export * from './ctx';
 export * from './data';
 export * from './game';

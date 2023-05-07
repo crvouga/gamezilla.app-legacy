@@ -1,4 +1,3 @@
-import { Cmd, exhaustive, Sub } from '@gamezilla/shared/core';
 import { ChessFrontend } from '@gamezilla/game/chess';
 import { ConnectFourFrontend } from '@gamezilla/game/connect-four';
 import { FlowFrontend } from '@gamezilla/game/flow';
@@ -7,7 +6,9 @@ import { MazeFrontend } from '@gamezilla/game/maze';
 import { SnakeFrontend } from '@gamezilla/game/snake';
 import { TetrisFrontend } from '@gamezilla/game/tetris';
 import { TicTacToeFrontend } from '@gamezilla/game/tic-tac-toe';
-import { Alerts, Ctx, RoomCtx, RoomViewCtx } from '@gamezilla/shared';
+import { Ctx, RoomCtx, RoomViewCtx } from '@gamezilla/shared';
+import { Cmd, exhaustive, Sub } from '@gamezilla/shared/core';
+import { Alerts } from '@gamezilla/shared/frontend';
 import {
   BackendModel,
   FrontendModel,

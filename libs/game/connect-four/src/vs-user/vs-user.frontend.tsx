@@ -1,7 +1,7 @@
 import { keyframes } from '@emotion/react';
+import { ChoiceChips, UserId, ViewCtx } from '@gamezilla/shared';
 import { Cmd, exhaustive, Sub } from '@gamezilla/shared/core';
-import { ChoiceChips } from '@gamezilla/shared';
-import { Alerts, ViewCtx, UserId } from '@gamezilla/shared';
+import { Alerts } from '@gamezilla/shared/frontend';
 import {
   ActionButton,
   Avatar,

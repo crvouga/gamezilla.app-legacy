@@ -1,3 +1,4 @@
+import { RoomCtx, RoomViewCtx, ViewMainMenu } from '@gamezilla/shared';
 import {
   Audio,
   Cmd,
@@ -7,8 +8,7 @@ import {
   Sub,
   Unit,
 } from '@gamezilla/shared/core';
-import { RoomCtx, RoomViewCtx, ViewMainMenu } from '@gamezilla/shared';
-import { Alerts } from '@gamezilla/shared';
+import { Alerts } from '@gamezilla/shared/frontend';
 import {
   IconComputerDesktop,
   IconPuzzlePiece,

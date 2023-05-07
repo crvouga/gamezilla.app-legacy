@@ -10,6 +10,16 @@ import {
 } from '@gamezilla/app';
 import { AuthFrontend } from '@gamezilla/feat/auth';
 import { ChatFrontend } from '@gamezilla/feat/chat';
+import { ProfileFrontend } from '@gamezilla/feat/profile';
+import { RoomFrontend } from '@gamezilla/feat/room';
+import { SearchFrontend } from '@gamezilla/feat/search';
+import {
+  AppMsg,
+  Ctx,
+  Route,
+  UnauthenticatedViewCtx,
+  ViewCtx,
+} from '@gamezilla/shared';
 import {
   andThen,
   Browser,
@@ -21,17 +31,7 @@ import {
   Program,
   Sub,
 } from '@gamezilla/shared/core';
-import { ProfileFrontend } from '@gamezilla/feat/profile';
-import { RoomFrontend } from '@gamezilla/feat/room';
-import { SearchFrontend } from '@gamezilla/feat/search';
-import {
-  Alerts,
-  AppMsg,
-  Ctx,
-  Route,
-  UnauthenticatedViewCtx,
-  ViewCtx,
-} from '@gamezilla/shared';
+import { Alerts } from '@gamezilla/shared/frontend';
 import {
   cn,
   IconGamepad,

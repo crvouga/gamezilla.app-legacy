@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef } from 'react';
-import { ViewCtx, Alerts, Route, RoomCtx } from '@gamezilla/shared';
+import { ViewCtx, Route, RoomCtx } from '@gamezilla/shared';
+import { Alerts } from '@gamezilla/shared/frontend';
 import {
   Cmd,
   exhaustive,

@@ -1,3 +1,4 @@
+import { RoomCtx, UserId, ViewCtx } from '@gamezilla/shared';
 import {
   Audio,
   Cmd,
@@ -7,7 +8,7 @@ import {
   Sub,
   t,
 } from '@gamezilla/shared/core';
-import { Alerts, ViewCtx, UserId, RoomCtx } from '@gamezilla/shared';
+import { Alerts } from '@gamezilla/shared/frontend';
 import * as UI from '@gamezilla/shared/ui';
 import * as Chess from '../chess/chess';
 import * as Clock from '../chess/chess-clock';

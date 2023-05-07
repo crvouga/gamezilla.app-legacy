@@ -1,6 +1,4 @@
-import { Cmd, Posix, Sub } from '@gamezilla/shared/core';
 import {
-  Alerts,
   Ctx,
   RoomCtx,
   RoomViewCtx,
@@ -8,6 +6,8 @@ import {
   ViewMainMenu,
   bannerArtAspectRatio,
 } from '@gamezilla/shared';
+import { Cmd, Posix, Sub } from '@gamezilla/shared/core';
+import { Alerts } from '@gamezilla/shared/frontend';
 import * as UI from '@gamezilla/shared/ui';
 import { IconComputerDesktop, IconUsers } from '@gamezilla/shared/ui';
 import {

@@ -1,6 +1,4 @@
-import { Cmd, exhaustive, p, RemoteResult, Sub } from '@gamezilla/shared/core';
 import {
-  Alerts,
   AppMsg,
   Ctx,
   RoomCtx,
@@ -9,6 +7,8 @@ import {
   UserId,
   ViewCtx,
 } from '@gamezilla/shared';
+import { Cmd, exhaustive, p, RemoteResult, Sub } from '@gamezilla/shared/core';
+import { Alerts } from '@gamezilla/shared/frontend';
 import {
   ActionButton,
   Avatar,

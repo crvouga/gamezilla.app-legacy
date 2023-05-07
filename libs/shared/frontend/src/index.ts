@@ -1,1 +1,1 @@
-export * from './lib/shared-frontend';
+export * from './alerts';

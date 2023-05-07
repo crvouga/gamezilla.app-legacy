@@ -1,6 +1,6 @@
 import { Cmd, Sub } from '@gamezilla/shared/core';
+import { Alerts } from '@gamezilla/shared/frontend';
 import {
-  Alerts,
   Ctx,
   RoomCtx,
   RoomViewCtx,
