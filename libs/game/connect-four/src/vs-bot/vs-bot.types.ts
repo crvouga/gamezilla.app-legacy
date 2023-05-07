@@ -1,5 +1,5 @@
 import { Err, Ok, Result, exhaustive } from '@gamezilla/shared/core';
-import { UserId } from '@gamezilla/shared';
+import { UserId } from '@gamezilla/shared/app';
 import {
   BestMoveProblem,
   BestMoveResult,

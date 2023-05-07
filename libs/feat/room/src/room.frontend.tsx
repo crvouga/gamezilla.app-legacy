@@ -1,4 +1,4 @@
-import { RoomId, UserId } from '@gamezilla/shared';
+import { RoomId, UserId } from '@gamezilla/shared/app';
 import { Cmd, RemoteResult, Sub, exhaustive, p } from '@gamezilla/shared/core';
 import {
   Alerts,

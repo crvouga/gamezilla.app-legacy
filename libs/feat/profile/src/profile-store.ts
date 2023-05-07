@@ -7,7 +7,7 @@ import {
   Task,
   Unit,
 } from '@gamezilla/shared/core';
-import { client, definitions, UserId, Username } from '@gamezilla/shared';
+import { client, definitions, UserId, Username } from '@gamezilla/shared/app';
 import { matchSorter } from 'match-sorter';
 
 //

@@ -1,5 +1,5 @@
 import { Cmd, p, RemoteResult, Result, Task } from '@gamezilla/shared/core';
-import { client, definitions, UserId } from '@gamezilla/shared';
+import { client, definitions, UserId } from '@gamezilla/shared/app';
 import type { Problem, Store } from './types';
 import * as Types from './types';
 

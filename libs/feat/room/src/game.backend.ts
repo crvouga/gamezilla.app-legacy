@@ -8,7 +8,7 @@ import { MazeBackend } from '@gamezilla/game/maze';
 import { SnakeBackend } from '@gamezilla/game/snake';
 import { TetrisBackend } from '@gamezilla/game/tetris';
 import { TicTacToeBackend } from '@gamezilla/game/tic-tac-toe';
-import { UserId } from '@gamezilla/shared';
+import { UserId } from '@gamezilla/shared/app';
 import { RoomCtx, RoomRequestCtx } from '@gamezilla/shared/backend';
 import { BackendModel, BackendMsg, ToBackend, ToFrontend } from './game.types';
 

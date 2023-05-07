@@ -1,4 +1,4 @@
-import { UserId } from '@gamezilla/shared';
+import { UserId } from '@gamezilla/shared/app';
 import { RoomRequestCtx } from '@gamezilla/shared/backend';
 import { Cmd, Result, Sub } from '@gamezilla/shared/core';
 import { RoomMsg } from '@gamezilla/shared/frontend';

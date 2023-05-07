@@ -1,4 +1,4 @@
-import { UserId } from '@gamezilla/shared';
+import { UserId } from '@gamezilla/shared/app';
 
 export type ParserMyZodEsque<TInput> = {
   parse: (input: unknown) => TInput;

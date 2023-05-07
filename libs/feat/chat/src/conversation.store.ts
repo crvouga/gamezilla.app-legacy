@@ -7,7 +7,7 @@ import {
   Result,
   Task,
 } from '@gamezilla/shared/core';
-import { client, definitions, Route, UserId } from '@gamezilla/shared';
+import { client, definitions, Route, UserId } from '@gamezilla/shared/app';
 import * as Types from './types';
 
 //

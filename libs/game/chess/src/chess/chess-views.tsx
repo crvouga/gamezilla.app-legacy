@@ -1,4 +1,4 @@
-import { UserId } from '@gamezilla/shared';
+import { UserId } from '@gamezilla/shared/app';
 import { ViewCtx, bannerArtAspectRatio } from '@gamezilla/shared/frontend';
 import * as UI from '@gamezilla/shared/ui';
 

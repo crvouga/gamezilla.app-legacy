@@ -9,7 +9,7 @@ import {
   ViewNode,
 } from '@gamezilla/shared/ui';
 import { ViewCtx } from '../ctx';
-import { UserId } from '@gamezilla/shared';
+import { UserId } from '@gamezilla/shared/app';
 
 export const viewVsUserSetupScreen = ({
   title,

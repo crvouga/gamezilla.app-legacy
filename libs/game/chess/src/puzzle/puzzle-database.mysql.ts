@@ -1,5 +1,5 @@
 import { NonEmpty, p, Result, Task } from '@gamezilla/shared/core';
-import { UserId } from '@gamezilla/shared';
+import { UserId } from '@gamezilla/shared/app';
 import { DatabaseConnectionMySQL } from '@gamezilla/shared/backend';
 import { z } from 'zod';
 import { MoveInput, uciMoveToMoveInput } from '../chess/chess';

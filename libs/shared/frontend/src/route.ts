@@ -3,7 +3,7 @@ import {
   PhoneNumber,
   RoomId,
   UserId,
-} from '@gamezilla/shared';
+} from '@gamezilla/shared/app';
 import { Browser, Cmd } from '@gamezilla/shared/core';
 
 //

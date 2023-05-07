@@ -15,7 +15,7 @@ import {
 } from '@gamezilla/shared/ui';
 import { ReactNode } from 'react';
 import { ViewCtx } from '../ctx';
-import { UserId } from '@gamezilla/shared';
+import { UserId } from '@gamezilla/shared/app';
 
 export const ViewVsBotSetupScreen = <BotLevel, PlayerType>({
   // title,

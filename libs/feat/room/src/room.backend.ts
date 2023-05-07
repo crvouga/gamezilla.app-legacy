@@ -1,6 +1,6 @@
 import { andThen, Cmd, exhaustive, p, Sub } from '@gamezilla/shared/core';
 import { RoomCtx, RoomRequestCtx } from '@gamezilla/shared/backend';
-import { ClientId, RoomId, UserId } from '@gamezilla/shared';
+import { ClientId, RoomId, UserId } from '@gamezilla/shared/app';
 import {
   AppMsg,
   AuthenticatedRequestCtx,

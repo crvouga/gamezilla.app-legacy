@@ -13,7 +13,7 @@ import {
   Username,
   client,
   definitions,
-} from '@gamezilla/shared';
+} from '@gamezilla/shared/app';
 import { AppMsg, AuthenticatedRequestCtx } from '@gamezilla/shared/backend';
 import { Profile } from './profile-store';
 import {

@@ -1,5 +1,5 @@
 import { RemoteResult, Result } from '@gamezilla/shared/core';
-import { PhoneNumber, SessionId, UserId } from '@gamezilla/shared';
+import { PhoneNumber, SessionId, UserId } from '@gamezilla/shared/app';
 import * as AuthEmailLink from './auth-email-link';
 import * as AuthPhone from './auth-phone';
 import * as AuthPhoneVerify from './auth-phone-verify';

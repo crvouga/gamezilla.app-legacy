@@ -1,4 +1,4 @@
-import { PhoneNumber } from '@gamezilla/shared';
+import { PhoneNumber } from '@gamezilla/shared/app';
 import {
   Browser,
   Cmd,

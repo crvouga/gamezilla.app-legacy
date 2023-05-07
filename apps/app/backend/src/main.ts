@@ -22,7 +22,7 @@ import {
 import { ProfileBackend } from '@gamezilla/feat/profile';
 import { RoomBackend } from '@gamezilla/feat/room';
 import { SearchBackend } from '@gamezilla/feat/search';
-import { ClientId, SessionId, UserId } from '@gamezilla/shared';
+import { ClientId, SessionId, UserId } from '@gamezilla/shared/app';
 import {
   AppMsg,
   Ctx,

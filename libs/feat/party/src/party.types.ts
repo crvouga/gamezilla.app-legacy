@@ -4,7 +4,7 @@ import {
   removeKey,
   Result,
 } from '@gamezilla/shared/core';
-import { PartyId, UserId } from '@gamezilla/shared';
+import { PartyId, UserId } from '@gamezilla/shared/app';
 import { MicLoadResult, MicUnloadResult } from './mic';
 const { Err, Ok } = Result;
 

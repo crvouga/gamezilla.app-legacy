@@ -19,7 +19,7 @@ import {
   Route,
   UnauthenticatedViewCtx,
   ViewCtx,
-} from '@gamezilla/shared';
+} from '@gamezilla/shared/app';
 import {
   andThen,
   Browser,

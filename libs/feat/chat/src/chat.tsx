@@ -1,4 +1,4 @@
-import { UserId } from '@gamezilla/shared';
+import { UserId } from '@gamezilla/shared/app';
 import { Cmd, RemoteResult } from '@gamezilla/shared/core';
 import { Route, ViewCtx } from '@gamezilla/shared/frontend';
 import {

@@ -8,7 +8,7 @@ import {
   Task,
   p,
 } from '@gamezilla/shared/core';
-import { PhoneNumber, UserId, client } from '@gamezilla/shared';
+import { PhoneNumber, UserId, client } from '@gamezilla/shared/app';
 import { Route, UnauthenticatedViewCtx } from '@gamezilla/shared/frontend';
 import {
   ConformationDialog,

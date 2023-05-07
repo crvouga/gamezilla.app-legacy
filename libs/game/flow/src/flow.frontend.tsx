@@ -1,6 +1,6 @@
 import { Cmd, Sub } from '@gamezilla/shared/core';
 import { RoomViewCtx, ViewBottomButtonBar } from '@gamezilla/shared/frontend';
-import { UserId } from '@gamezilla/shared';
+import { UserId } from '@gamezilla/shared/app';
 import { IconArrowLeftOnRect } from '@gamezilla/shared/ui';
 import { FlowUI } from './flow';
 import {

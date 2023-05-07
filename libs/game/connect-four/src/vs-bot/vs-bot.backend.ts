@@ -1,4 +1,4 @@
-import { UserId } from '@gamezilla/shared';
+import { UserId } from '@gamezilla/shared/app';
 import { Cmd, p, Sub } from '@gamezilla/shared/core';
 import { RoomMsg } from '@gamezilla/shared/frontend';
 import { getBestMove, opposite } from '../connect-four/connect-four';

@@ -42,7 +42,6 @@
       "@gamezilla/game/snake": ["libs/game/snake/src/index.ts"],
       "@gamezilla/game/tetris": ["libs/game/tetris/src/index.ts"],
       "@gamezilla/game/tic-tac-toe": ["libs/game/tic-tac-toe/src/index.ts"],
-      "@gamezilla/shared": ["libs/shared/src/index.ts"],
       "@gamezilla/shared/app": ["libs/shared/app/src/index.ts"],
       "@gamezilla/shared/backend": ["libs/shared/backend/src/index.ts"],
       "@gamezilla/shared/core": ["libs/shared/core/src/index.ts"],

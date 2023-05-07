@@ -1,5 +1,5 @@
 import { RemoteResult, Result, Unit } from '@gamezilla/shared/core';
-import { UserId } from '@gamezilla/shared';
+import { UserId } from '@gamezilla/shared/app';
 import * as Puzzle from './puzzle/puzzle.types';
 import * as VsBot from './vs-bot/vs-bot.types';
 import * as VsUser from './vs-user/vs-user.types';

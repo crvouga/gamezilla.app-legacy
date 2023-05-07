@@ -1,5 +1,5 @@
 import { RemoteResult, Result } from '@gamezilla/shared/core';
-import { RoomId, UserId, Username } from '@gamezilla/shared';
+import { RoomId, UserId, Username } from '@gamezilla/shared/app';
 import * as GameBackend from './game.backend';
 import * as Game from './game.types';
 

@@ -1,4 +1,4 @@
-import { UserId } from '@gamezilla/shared';
+import { UserId } from '@gamezilla/shared/app';
 import { FlowGridShorthand, FlowUI } from './flow';
 
 //
