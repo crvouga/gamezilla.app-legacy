@@ -1,4 +1,12 @@
 import {
+  ProfileAvatar,
+  UserId,
+  Username,
+  client,
+  definitions,
+} from '@gamezilla/shared/app';
+import { AppMsg, AuthenticatedRequestCtx } from '@gamezilla/shared/backend';
+import {
   Cmd,
   Err,
   NonEmpty,
@@ -8,17 +16,9 @@ import {
   p,
 } from '@gamezilla/shared/core';
 import {
-  ProfileAvatar,
-  UserId,
-  Username,
-  client,
-  definitions,
-} from '@gamezilla/shared/app';
-import { AppMsg, AuthenticatedRequestCtx } from '@gamezilla/shared/backend';
-import { Profile } from './profile-store';
-import {
   BackendModel,
   BackendMsg,
+  Profile,
   Req,
   ToBackend,
   ToFrontend,

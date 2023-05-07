@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
+import { client, definitions, UserId } from '@gamezilla/shared/app';
 import {
   Cmd,
   Option,
@@ -7,7 +8,6 @@ import {
   Result,
   Task,
 } from '@gamezilla/shared/core';
-import { client, definitions, Route, UserId } from '@gamezilla/shared/app';
 import * as Types from './types';
 
 //
@@ -212,10 +212,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       }
 
       // todo put this logic elsewhere
-      const cmdNew: Cmd<Msg> =
-        result.type === 'Ok'
-          ? Route.push(['chat-conversation', result.value.conversation])
-          : Cmd.None;
+      const cmdNew: Cmd<Msg> = Cmd.None;
 
       return [modelNew, cmdNew];
     }

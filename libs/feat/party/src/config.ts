@@ -1,5 +1,9 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+//@ts-ignore
 import type { RtpCodecCapability } from 'mediasoup/node/lib/RtpParameters';
+//@ts-ignore
 import type { TransportListenIp } from 'mediasoup/node/lib/Transport';
+//@ts-ignore
 import type { WorkerLogTag } from 'mediasoup/node/lib/Worker';
 
 // source: https://github.com/benawad/dogehouse/blob/staging/shawarma/src/config.ts#L2
