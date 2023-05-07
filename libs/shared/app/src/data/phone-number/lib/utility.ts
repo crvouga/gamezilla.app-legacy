@@ -1,6 +1,6 @@
 import countryPhoneData from '../data/country_phone_data';
 
-type GetArrayElementType<T extends readonly any[]> =
+type GetArrayElementType<T extends readonly unknown[]> =
   T extends readonly (infer U)[] ? U : never;
 export type CountryPhoneDataItem = GetArrayElementType<typeof countryPhoneData>;
 
@@ -124,6 +124,8 @@ export function findPossibleCountryPhoneData(
   ) {
     return countryPhoneDatum;
   }
+
+  return null;
 }
 
 /**
