@@ -5,6 +5,7 @@ import {
   Bounds,
   Puzzle,
   id,
+  isColored,
   yieldColoredNodes,
   yieldEdges,
   yieldNodes,
@@ -71,7 +72,17 @@ export const updateModel = ({
 }): Model => {
   if (model.t === 'idle') {
     if (msg.t === 'pressed-down') {
-      return model;
+      const node = model.puzzle.nodes[msg.nodeId];
+
+      if (!node) {
+        return model;
+      }
+
+      if (isColored(node)) {
+        return { ...model, t: 'dragging', color: node.color };
+      }
+
+      return { ...model, t: 'dragging', color: msg.nodeId };
     }
 
     return model;
@@ -223,6 +234,7 @@ export const View = ({
       onMouseDown={handleMouse({ model, $send, t: 'pressed-down' })}
       onMouseUp={handleMouse({ model, $send, t: 'pressed-up' })}
       onMouseMove={handleMouse({ model, $send, t: 'dragged-over' })}
+      onMouseEnter={handleMouse({ model, $send, t: 'dragged-over' })}
       onTouchMove={handleTouch({ model, $send, t: 'dragged-over' })}
       onTouchStart={handleTouch({ model, $send, t: 'pressed-down' })}
       onTouchCancel={handleTouch({ model, $send, t: 'pressed-up' })}
