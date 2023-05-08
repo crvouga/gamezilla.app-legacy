@@ -1,4 +1,4 @@
-import { Err, NonEmpty, Ok, Result } from '@gamezilla/shared/core';
+import { Err, Ok, Result } from '@gamezilla/shared/core';
 
 //
 //
@@ -35,6 +35,7 @@ export const id = (node: UncoloredNode) => {
 export type Edge = {
   from: string;
   to: string;
+  color?: Color;
 };
 
 export type Puzzle = {
@@ -55,30 +56,6 @@ export type Bounds = {
 };
 
 export type Path = string[];
-
-export const addNodeToPath = (path: Path, nodeId: string): Path => {
-  if (!NonEmpty.is(path)) {
-    return [nodeId];
-  }
-
-  const endNodeId = path[path.length - 1];
-
-  if (!endNodeId) {
-    return [nodeId];
-  }
-
-  if (endNodeId === nodeId) {
-    return path;
-  }
-
-  const nodeIndex = path.indexOf(nodeId);
-
-  if (nodeIndex !== -1) {
-    return path.slice(0, nodeIndex + 1);
-  }
-
-  return [...path, nodeId];
-};
 
 //
 //
@@ -350,6 +327,38 @@ export const yieldNodes = function* (puzzle: Puzzle): Generator<Node> {
       continue;
     }
     yield node;
+  }
+};
+
+export const yieldEdges = function* (
+  puzzle: Puzzle
+): Generator<{ from: Node; to: Node; color?: string }> {
+  for (const fromId in puzzle.edges) {
+    for (const toId in puzzle.edges[fromId]) {
+      const from = puzzle.nodes[fromId];
+
+      if (!from) {
+        continue;
+      }
+
+      const to = puzzle.nodes[toId];
+
+      if (!to) {
+        continue;
+      }
+
+      if (!from || !to) {
+        continue;
+      }
+
+      const edge = puzzle.edges[fromId]?.[toId];
+
+      if (!edge) {
+        continue;
+      }
+
+      yield { from, to, color: edge.color };
+    }
   }
 };
 

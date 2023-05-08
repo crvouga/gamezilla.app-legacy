@@ -3,12 +3,10 @@ import { cn } from '@gamezilla/shared/ui';
 import { useLayoutEffect, useRef } from 'react';
 import {
   Bounds,
-  Path,
   Puzzle,
-  addNodeToPath,
   id,
-  isColored,
   yieldColoredNodes,
+  yieldEdges,
   yieldNodes,
 } from './flow';
 
@@ -20,17 +18,22 @@ import {
 //
 //
 
-export type Model = {
+export type Model = ModelState & {
   puzzle: Puzzle;
-  pathByColor: { [color: string]: Path };
-  mouseStatus: 'up' | 'down';
-  activeColor?: string | null;
 };
 
+type ModelState =
+  | {
+      t: 'idle';
+    }
+  | {
+      t: 'dragging';
+      color: string;
+    };
+
 export const init = (puzzle: Puzzle): Model => ({
+  t: 'idle',
   puzzle,
-  pathByColor: {},
-  mouseStatus: 'up',
 });
 
 //
@@ -42,9 +45,9 @@ export const init = (puzzle: Puzzle): Model => ({
 //
 
 export type Msg =
-  | { t: 'mouse-move'; nodeId: string }
-  | { t: 'mouse-down'; nodeId: string }
-  | { t: 'mouse-up'; nodeId: string }
+  | { t: 'dragged-over'; nodeId: string }
+  | { t: 'pressed-down'; nodeId: string }
+  | { t: 'pressed-up'; nodeId: string }
   | { t: 'mouse-leave' };
 
 export const update = ({
@@ -56,61 +59,41 @@ export const update = ({
 }): {
   model: Model;
 } => {
-  if (
-    msg.t === 'mouse-move' &&
-    model.mouseStatus === 'down' &&
-    typeof model.activeColor === 'string'
-  ) {
-    return {
-      model: {
-        ...model,
-        pathByColor: {
-          ...model.pathByColor,
-          [model.activeColor]: addNodeToPath(
-            model.pathByColor[model.activeColor] ?? [],
-            msg.nodeId
-          ),
-        },
-      },
-    };
-  }
+  return { model: updateModel({ msg, model }) };
+};
 
-  if (msg.t === 'mouse-down') {
-    const node = model.puzzle.nodes[msg.nodeId];
-    if (node && isColored(node)) {
-      return {
-        model: {
-          ...model,
-          mouseStatus: 'down',
-          activeColor: node.color,
-          pathByColor: {
-            ...model.pathByColor,
-            [node.color]: addNodeToPath(
-              model.pathByColor[node.color] ?? [],
-              msg.nodeId
-            ),
-          },
-        },
-      };
+export const updateModel = ({
+  msg,
+  model,
+}: {
+  msg: Msg;
+  model: Model;
+}): Model => {
+  if (model.t === 'idle') {
+    if (msg.t === 'pressed-down') {
+      return model;
     }
-    return {
-      model: {
-        ...model,
-        mouseStatus: 'down',
-        activeColor: null,
-      },
-    };
+
+    return model;
   }
 
-  if (msg.t === 'mouse-up') {
-    return { model: { ...model, mouseStatus: 'up', activeColor: null } };
+  if (model.t === 'dragging') {
+    if (msg.t === 'dragged-over') {
+      return model;
+    }
+    if (msg.t === 'pressed-up') {
+      return model;
+    }
+    if (msg.t === 'pressed-down') {
+      return model;
+    }
+
+    return model;
   }
 
-  if (msg.t === 'mouse-leave') {
-    return { model: { ...model, mouseStatus: 'up', activeColor: null } };
-  }
+  const check: never = model;
 
-  return { model };
+  return check;
 };
 
 //
@@ -121,10 +104,7 @@ export const update = ({
 //
 //
 
-export const paint = (
-  ctx: CanvasRenderingContext2D,
-  { puzzle, pathByColor }: Model
-) => {
+export const paint = (ctx: CanvasRenderingContext2D, { puzzle }: Model) => {
   const squareLength =
     ctx.canvas.width / (puzzle.bounds.max.x - puzzle.bounds.min.x);
 
@@ -138,6 +118,7 @@ export const paint = (
   for (let x = 0; x < puzzle.bounds.max.x; x++) {
     for (let y = 0; y < puzzle.bounds.max.y; y++) {
       ctx.strokeStyle = '#676767';
+      ctx.lineWidth = squareLength / 200;
       ctx.strokeRect(
         x * squareLength,
         y * squareLength,
@@ -148,121 +129,26 @@ export const paint = (
   }
 
   //
-  // Paths
+  // Colored Edges
   //
-  for (const color in pathByColor) {
-    const path = pathByColor[color];
 
-    if (!path) {
+  for (const edge of yieldEdges(puzzle)) {
+    if (!edge.color) {
       continue;
     }
-
-    ctx.strokeStyle = color;
+    ctx.strokeStyle = edge.color;
     ctx.lineWidth = squareLength / 4;
     ctx.beginPath();
-
-    for (let nodeIndex = 0; nodeIndex < path.length - 1; nodeIndex++) {
-      const nodeId = path[nodeIndex];
-
-      if (!nodeId) {
-        continue;
-      }
-
-      const node = puzzle.nodes[nodeId];
-
-      if (!node) {
-        continue;
-      }
-
-      const nextNodeId = path[nodeIndex + 1];
-
-      if (!nextNodeId) {
-        continue;
-      }
-
-      const nextNode = puzzle.nodes[nextNodeId];
-
-      if (!nextNode) {
-        continue;
-      }
-
-      ctx.moveTo(
-        node.x * squareLength + squareLength / 2,
-        node.y * squareLength + squareLength / 2
-      );
-      ctx.lineTo(
-        nextNode.x * squareLength + squareLength / 2,
-        nextNode.y * squareLength + squareLength / 2
-      );
-    }
+    ctx.moveTo(
+      edge.from.x * squareLength + squareLength / 2,
+      edge.from.y * squareLength + squareLength / 2
+    );
+    ctx.lineTo(
+      edge.to.x * squareLength + squareLength / 2,
+      edge.to.y * squareLength + squareLength / 2
+    );
     ctx.stroke();
     ctx.closePath();
-  }
-
-  //
-  // Path round corners
-  //
-  for (const color in pathByColor) {
-    const path = pathByColor[color];
-
-    if (!path) {
-      continue;
-    }
-
-    ctx.fillStyle = color;
-    ctx.beginPath();
-
-    for (let nodeIndex = 0; nodeIndex < path.length - 1; nodeIndex++) {
-      const nodeId = path[nodeIndex];
-
-      if (!nodeId) {
-        continue;
-      }
-
-      const node = puzzle.nodes[nodeId];
-
-      if (!node) {
-        continue;
-      }
-
-      const nextNodeId = path[nodeIndex + 1];
-
-      if (!nextNodeId) {
-        continue;
-      }
-
-      const nextNode = puzzle.nodes[nextNodeId];
-
-      if (!nextNode) {
-        continue;
-      }
-
-      const previousNodeId = path[nodeIndex - 1];
-
-      if (!previousNodeId) {
-        continue;
-      }
-
-      const previousNode = puzzle.nodes[previousNodeId];
-
-      if (!previousNode) {
-        continue;
-      }
-
-      const didChangeX = node.x - previousNode.x !== node.x - nextNode.x;
-      const didChangeY = node.y - previousNode.y !== node.y - nextNode.y;
-      if (didChangeX || didChangeY) {
-        ctx.arc(
-          node.x * squareLength + squareLength / 2,
-          node.y * squareLength + squareLength / 2,
-          squareLength / 9,
-          0,
-          2 * Math.PI
-        );
-      }
-      ctx.fill();
-      ctx.closePath();
-    }
   }
 
   //
@@ -331,16 +217,16 @@ export const View = ({
       ref={canvasRef}
       className={cn(
         'select-none touch-none w-full',
-        model.mouseStatus === 'up' ? 'cursor-grab' : 'cursor-grabbing'
+        model.t === 'dragging' ? 'cursor-grabbing' : 'cursor-grab'
       )}
       onMouseLeave={handleMouse({ model, $send, t: 'mouse-leave' })}
-      onMouseDown={handleMouse({ model, $send, t: 'mouse-down' })}
-      onMouseUp={handleMouse({ model, $send, t: 'mouse-up' })}
-      onMouseMove={handleMouse({ model, $send, t: 'mouse-move' })}
-      onTouchMove={handleTouch({ model, $send, t: 'mouse-move' })}
-      onTouchStart={handleTouch({ model, $send, t: 'mouse-down' })}
-      onTouchCancel={handleTouch({ model, $send, t: 'mouse-up' })}
-      onTouchEnd={handleTouch({ model, $send, t: 'mouse-up' })}
+      onMouseDown={handleMouse({ model, $send, t: 'pressed-down' })}
+      onMouseUp={handleMouse({ model, $send, t: 'pressed-up' })}
+      onMouseMove={handleMouse({ model, $send, t: 'dragged-over' })}
+      onTouchMove={handleTouch({ model, $send, t: 'dragged-over' })}
+      onTouchStart={handleTouch({ model, $send, t: 'pressed-down' })}
+      onTouchCancel={handleTouch({ model, $send, t: 'pressed-up' })}
+      onTouchEnd={handleTouch({ model, $send, t: 'pressed-up' })}
     />
   );
 };
@@ -358,12 +244,12 @@ const handleMouse =
   (event: React.MouseEvent<HTMLCanvasElement>) => {
     event.stopPropagation();
 
-    const pos = canvasEventToPosition(model.puzzle.bounds, {
+    const position = canvasEventToPosition(model.puzzle.bounds, {
       t: 'mouse',
       c: event,
     });
-    if (pos) {
-      $send({ t, nodeId: id(pos) });
+    if (position) {
+      $send({ t, nodeId: id(position) });
     }
   };
 
