@@ -8,15 +8,16 @@ import { Err, Ok, Result } from '@gamezilla/shared/core';
 //
 //
 
-export type Position = { x: number; y: number };
-
 export type Color = string;
 
-export type ColoredNode = Position & {
+export type ColoredNode = {
+  id: string;
   color: Color;
 };
 
-export type UncoloredNode = Position;
+export type UncoloredNode = {
+  id: string;
+};
 
 export type Node = ColoredNode | UncoloredNode;
 
@@ -28,10 +29,6 @@ export const isUncolored = (node: Node): node is UncoloredNode => {
   return !isColored(node);
 };
 
-export const id = (node: UncoloredNode) => {
-  return `${node.x},${node.y}`;
-};
-
 export type Edge = {
   from: string;
   to: string;
@@ -39,7 +36,6 @@ export type Edge = {
 };
 
 export type Puzzle = {
-  bounds: Bounds;
   nodes: {
     [id: string]: Node;
   };
@@ -50,85 +46,21 @@ export type Puzzle = {
   };
 };
 
-export type Bounds = {
-  min: Position;
-  max: Position;
-};
-
 export type Path = string[];
 
-//
-//
-//
-// Init
-//
-//
-//
-
-export const initGrid = ({ bounds }: { bounds: Bounds }): Puzzle => {
-  let puzzle: Puzzle = {
-    bounds,
-    edges: {},
-    nodes: {},
-  };
-
-  const deltas: Position[] = [
-    { x: -1, y: 0 },
-    { x: 1, y: 0 },
-    { x: 0, y: 1 },
-    { x: 0, y: -1 },
-  ];
-
-  for (let x = bounds.min.x; x < bounds.max.x; x++) {
-    for (let y = bounds.min.y; y < bounds.max.y; y++) {
-      const node: Node = { x, y };
-      puzzle = setNode(puzzle, node);
-    }
-  }
-
-  for (const nodeId in puzzle.nodes) {
-    const node = puzzle.nodes[nodeId];
-
-    if (!node) {
-      continue;
-    }
-
-    const { x, y } = node;
-
-    for (const delta of deltas) {
-      const to: Node = { x: x + delta.x, y: y + delta.y };
-
-      if (!puzzle.nodes[id(to)]) {
-        continue;
-      }
-
-      const edge: Edge = { from: id(node), to: id(to) };
-
-      puzzle = setEdge(puzzle, edge);
-    }
-  }
-
-  return puzzle;
-};
-
-export const bounds8x8: Bounds = {
-  min: { x: 0, y: 0 },
-  max: { x: 8, y: 8 },
-};
-
-export const setNode = (puzzle: Puzzle, node: Node): Puzzle => {
+export const setNode = <T extends Puzzle>(puzzle: T, node: Node): T => {
   return {
     ...puzzle,
     nodes: {
       ...puzzle.nodes,
-      [id(node)]: {
+      [node.id]: {
         ...node,
       },
     },
   };
 };
 
-export const setEdge = (puzzle: Puzzle, edge: Edge): Puzzle => {
+export const setEdge = <T extends Puzzle>(puzzle: T, edge: Edge): T => {
   return {
     ...puzzle,
     edges: {
@@ -234,15 +166,15 @@ export const yieldUncoloredPaths = function* (
   visited = new Set<string>()
 ): Generator<UncoloredNode[]> {
   path.push(node);
-  visited.add(id(node));
+  visited.add(node.id);
 
-  if (id(node) === id(target)) {
+  if (node.id === target.id) {
     yield [...path];
     return;
   }
 
   for (const neighbor of yieldNeighbors(puzzle, node)) {
-    if (visited.has(id(neighbor))) {
+    if (visited.has(neighbor.id)) {
       continue;
     }
 
@@ -250,13 +182,13 @@ export const yieldUncoloredPaths = function* (
       continue;
     }
 
-    visited.add(id(neighbor));
+    visited.add(neighbor.id);
 
     yield* yieldUncoloredPaths(puzzle, neighbor, target, path, visited);
   }
 
   path.pop();
-  visited.delete(id(node));
+  visited.delete(node.id);
 };
 
 export const isColorConnected = (
@@ -265,13 +197,13 @@ export const isColorConnected = (
   target: ColoredNode,
   visited = new Set<string>()
 ): boolean => {
-  if (visited.has(id(node))) {
+  if (visited.has(node.id)) {
     return false;
   }
 
-  visited.add(id(node));
+  visited.add(node.id);
 
-  if (id(node) === id(target)) {
+  if (node.id === target.id) {
     return true;
   }
 
@@ -299,7 +231,7 @@ export const yieldNeighbors = function* (
   puzzle: Puzzle,
   node: Node
 ): Generator<Node> {
-  for (const neighborId in puzzle.edges[id(node)]) {
+  for (const neighborId in puzzle.edges[node.id]) {
     const neighbor = puzzle.nodes[neighborId];
 
     if (!neighbor) {
@@ -367,7 +299,7 @@ export const findEndNode = (
   startNode: ColoredNode
 ): ColoredNode | null => {
   for (const node of yieldColoredNodes(puzzle)) {
-    if (id(node) === id(startNode)) {
+    if (node.id === startNode.id) {
       continue;
     }
 

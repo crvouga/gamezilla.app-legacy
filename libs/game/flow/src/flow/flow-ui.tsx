@@ -1,15 +1,15 @@
 import { rescale } from '@gamezilla/shared/core';
 import { cn } from '@gamezilla/shared/ui';
 import { useLayoutEffect, useRef } from 'react';
+import { isColored } from './flow';
 import {
   Bounds,
-  Puzzle,
-  id,
-  isColored,
+  GridPuzzle,
+  positionToId,
   yieldColoredNodes,
   yieldEdges,
   yieldNodes,
-} from './flow';
+} from './flow-grid';
 
 //
 //
@@ -20,7 +20,7 @@ import {
 //
 
 export type Model = ModelState & {
-  puzzle: Puzzle;
+  puzzle: GridPuzzle;
 };
 
 type ModelState =
@@ -32,7 +32,7 @@ type ModelState =
       color: string;
     };
 
-export const init = (puzzle: Puzzle): Model => ({
+export const init = (puzzle: GridPuzzle): Model => ({
   t: 'idle',
   puzzle,
 });
@@ -92,11 +92,13 @@ export const updateModel = ({
     if (msg.t === 'dragged-over') {
       return model;
     }
+
     if (msg.t === 'pressed-up') {
-      return model;
+      return { ...model, t: 'idle' };
     }
+
     if (msg.t === 'pressed-down') {
-      return model;
+      return { ...model, t: 'idle' };
     }
 
     return model;
@@ -261,7 +263,7 @@ const handleMouse =
       c: event,
     });
     if (position) {
-      $send({ t, nodeId: id(position) });
+      $send({ t, nodeId: positionToId(position) });
     }
   };
 
@@ -283,7 +285,7 @@ const handleTouch =
       c: event,
     });
     if (pos) {
-      $send({ t, nodeId: id(pos) });
+      $send({ t, nodeId: positionToId(pos) });
     }
   };
 

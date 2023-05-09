@@ -1,16 +1,43 @@
 import { NonEmpty } from '@gamezilla/shared/core';
-import { Color, Puzzle, initGrid, setNode } from './flow';
+import { Color, ColoredNode } from './flow';
+import {
+  GridNode,
+  GridPuzzle,
+  Position,
+  init,
+  positionToId,
+  setNode,
+} from './flow-grid';
 
-export type GridShorthand = NonEmpty<NonEmpty<string | null>>;
+export type GridPuzzleShorthand = NonEmpty<NonEmpty<string | null>>;
 
-const emojiToColor = (emoji: string): Color | null => {
-  return (
-    { '🟡': 'yellow', '🔵': 'blue', '🟢': 'green', '🔴': 'red' }[emoji] ?? null
-  );
+type Emoji = '🟡' | '🔵' | '🟢' | '🔴';
+
+const isEmoji = (value: string): value is Emoji => {
+  return ['🟡', '🔵', '🟢', '🔴'].includes(value);
 };
 
-export const fromShorthand = (puzzle: GridShorthand): Puzzle => {
-  let grid = initGrid({
+export const emojiToColor = (emoji: Emoji): Color => {
+  return {
+    '🟡': 'yellow',
+    '🔵': 'blue',
+    '🟢': 'green',
+    '🔴': 'red',
+  }[emoji];
+};
+
+export const fromShorthandNode = (
+  node: Position & { color: Emoji }
+): GridNode & ColoredNode => {
+  return {
+    ...node,
+    id: positionToId(node),
+    color: emojiToColor(node.color),
+  };
+};
+
+export const fromShorthand = (puzzle: GridPuzzleShorthand): GridPuzzle => {
+  let grid = init({
     bounds: {
       min: {
         x: 0,
@@ -25,15 +52,24 @@ export const fromShorthand = (puzzle: GridShorthand): Puzzle => {
 
   for (let y = 0; y < puzzle.length; y++) {
     const row = puzzle[y];
+
     if (!row) {
       continue;
     }
+
     for (let x = 0; x < row.length; x++) {
       const emoji = row[x];
+
       if (!emoji) {
         continue;
       }
+
+      if (!isEmoji(emoji)) {
+        continue;
+      }
+
       const color = emojiToColor(emoji);
+
       if (!color) {
         continue;
       }
