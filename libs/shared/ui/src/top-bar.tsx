@@ -1,5 +1,5 @@
-import { MyButton } from './button';
 import { IconChevronLeft } from './icon';
+import { IconButton } from './icon-button';
 
 export const TopBar = ({
   left,
@@ -23,9 +23,8 @@ export const TopBar = ({
 
 export const TopBarBackButton = ({ onClick }: { onClick: () => void }) => {
   return (
-    <MyButton size="sm" onClick={onClick} className="flex items-center gap-2">
-      <IconChevronLeft className="w-4 h-4" />
-      Back
-    </MyButton>
+    <IconButton onClick={onClick}>
+      <IconChevronLeft className="w-6 h-6" />
+    </IconButton>
   );
 };
