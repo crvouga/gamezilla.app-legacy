@@ -561,13 +561,13 @@ const View = ({
     <div className="max-w-md max-h-full mx-auto fixed w-full h-full overflow-hidden flex flex-col left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 border border-neutral-800 bg-black text-white">
       {model.auth.currentUser.t === 'not-asked' && (
         <div className="w-full h-full flex items-center justify-center">
-          <IconSpinner className="w-12 h-12" />
+          <IconSpinner className="w-12 h-12 animate-spin" />
         </div>
       )}
 
       {model.auth.currentUser.t === 'loading' && (
         <div className="w-full h-full flex items-center justify-center">
-          <IconSpinner className="w-12 h-12" />
+          <IconSpinner className="w-12 h-12 animate-spin" />
         </div>
       )}
 

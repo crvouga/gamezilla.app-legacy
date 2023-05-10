@@ -193,7 +193,9 @@ export const View = ({
           color="primary"
           onClick={() => $send({ t: 'clicked-verify-code' })}
         >
-          {model.submission.type === 'loading' && <IconSpinner />}
+          {model.submission.type === 'loading' && (
+            <IconSpinner className="w-6 h-6 animate-spin" />
+          )}
           Verify Code
         </MyButton>
 

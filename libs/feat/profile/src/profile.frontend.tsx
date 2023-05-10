@@ -156,16 +156,6 @@ export const updateFromApp = ({
         return { model };
       }
 
-      if (msg.t === 'user-logged-in') {
-        return {
-          model,
-          cmd: sendToBackend({
-            t: 'find-else-create',
-            userId: msg.currentUserId,
-          }),
-        };
-      }
-
       return { model };
     }),
     andThen(({ model }) => {
@@ -307,7 +297,7 @@ const ViewProfileScreen = ({
   if (!profile) {
     return (
       <div className="w-full h-full flex items-center justify-center">
-        <IconSpinner className="w-12 h-12" />
+        <IconSpinner className="w-12 h-12 animate-spin" />
       </div>
     );
   }

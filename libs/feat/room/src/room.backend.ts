@@ -1,11 +1,12 @@
-import { andThen, Cmd, exhaustive, p, Sub } from '@gamezilla/shared/core';
-import { RoomCtx, RoomRequestCtx } from '@gamezilla/shared/backend';
 import { ClientId, RoomId, UserId } from '@gamezilla/shared/app';
 import {
   AppMsg,
   AuthenticatedRequestCtx,
   Ctx,
+  RoomCtx,
+  RoomRequestCtx,
 } from '@gamezilla/shared/backend';
+import { andThen, Cmd, exhaustive, Ok, p, Sub } from '@gamezilla/shared/core';
 import * as Game from './game.backend';
 import {
   BackendModel,
@@ -315,6 +316,7 @@ const updateLeave = ({
 export const updateFromApp = ({
   msg,
   model,
+  sendToFrontend,
 }: {
   msg: AppMsg;
   model: Model;
@@ -323,9 +325,10 @@ export const updateFromApp = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (msg.t === 'client-connected') {
+  if (msg.t === 'client-connected' && msg.userId) {
     return {
       model,
+      cmd: sendToFrontend([msg.clientId], { t: 'list', result: Ok(model) }),
     };
   }
 

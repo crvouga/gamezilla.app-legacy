@@ -1,4 +1,5 @@
 import {
+  ClientId,
   ProfileAvatar,
   UserId,
   Username,
@@ -91,9 +92,11 @@ export const updateFromFrontend = ({
 };
 
 export const updateFromApp = ({
+  sendToFrontend,
   msg,
   model,
 }: {
+  sendToFrontend: (clientId: ClientId[], m: ToFrontend) => Cmd<Msg>;
   msg: AppMsg;
   model: Model;
 }): {
@@ -101,8 +104,17 @@ export const updateFromApp = ({
   cmd?: Cmd<Msg>;
 } => {
   if (msg.t === 'client-connected' && msg.userId) {
+    const userId = msg.userId;
+
     return {
       model,
+      cmd: p(
+        () => findElseCreate({ userId }),
+        Cmd.perform(
+          (result): ToFrontend => ({ t: 'current-user-profile', result })
+        ),
+        Cmd.chain((res) => sendToFrontend([msg.clientId], res))
+      ),
     };
   }
 
@@ -114,8 +126,8 @@ const handler =
     msg,
     ctx,
   }: {
-    ctx: AuthenticatedRequestCtx;
     msg: Req;
+    ctx: { currentUserId: UserId };
   }): Task<Result<string, Profile[]>> =>
   async () => {
     if (msg.t === 'find-many') {
@@ -148,55 +160,55 @@ const handler =
       return Ok([]);
     }
 
-    if (msg.t === 'find-else-create') {
-      const found = await client
-        .from<definitions['user_profile']>('user_profile')
-        .select('*')
-        .eq('id', msg.userId);
-
-      if (found.error) {
-        return Err(found.error.message);
-      }
-
-      if (NonEmpty.is(found.data)) {
-        const row = found.data[0];
-        const decoded = decodeRow(row);
-        return p(
-          decoded,
-          Result.map((p) => [p])
-        );
-      }
-
-      const seed = await ProfileAvatar.generateRandomSeed();
-      const created = await client
-        .from<definitions['user_profile']>('user_profile')
-        .insert([
-          {
-            id: msg.userId,
-            avatar_url: ProfileAvatar.toUrl({
-              seed,
-              style: 'adventurer-neutral',
-            }),
-            theme_mode: 'DARK',
-            name: 'todo',
-            username: 'todo',
-          },
-        ])
-        .single();
-
-      if (created.error) {
-        return Err(created.error.message);
-      }
-
-      const decoded = decodeRow(created.data);
-      return p(
-        decoded,
-        Result.map((p) => [p])
-      );
-    }
-
     return Err('not-implemented');
   };
+
+const findElseCreate = async ({ userId }: { userId: UserId }) => {
+  const found = await client
+    .from<definitions['user_profile']>('user_profile')
+    .select('*')
+    .eq('id', userId);
+
+  if (found.error) {
+    return Err(found.error.message);
+  }
+
+  if (NonEmpty.is(found.data)) {
+    const row = found.data[0];
+    const decoded = decodeRow(row);
+    return p(
+      decoded,
+      Result.map((p) => [p])
+    );
+  }
+
+  const seed = await ProfileAvatar.generateRandomSeed();
+  const created = await client
+    .from<definitions['user_profile']>('user_profile')
+    .insert([
+      {
+        id: userId,
+        avatar_url: ProfileAvatar.toUrl({
+          seed,
+          style: 'adventurer-neutral',
+        }),
+        theme_mode: 'DARK',
+        name: 'todo',
+        username: 'todo',
+      },
+    ])
+    .single();
+
+  if (created.error) {
+    return Err(created.error.message);
+  }
+
+  const decoded = decodeRow(created.data);
+  return p(
+    decoded,
+    Result.map((p) => [p])
+  );
+};
 
 export const decodeRow = (
   row: definitions['user_profile']

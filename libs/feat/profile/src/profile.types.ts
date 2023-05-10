@@ -52,12 +52,13 @@ export type FrontendMsg =
 
 export type BackendMsg = { t: 'none' };
 
-export type ToFrontend = Res;
+export type ToFrontend =
+  | { t: 'current-user-profile'; result: Result<string, Profile[]> }
+  | Res;
 
 export type ToBackend = Req;
 
 export type Req =
-  | { t: 'find-else-create'; userId: UserId }
   | { t: 'find-many'; userIds: UserId[] }
   | { t: 'change-username'; username: string }
   | { t: 'search'; query: string }

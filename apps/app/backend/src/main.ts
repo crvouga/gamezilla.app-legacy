@@ -11,14 +11,6 @@ import {
 } from '@gamezilla/app';
 import { AuthBackend } from '@gamezilla/feat/auth';
 import { ChatBackend } from '@gamezilla/feat/chat';
-import {
-  Cmd,
-  exhaustive,
-  p,
-  Program,
-  Sub,
-  toMsgType,
-} from '@gamezilla/shared/core';
 import { ProfileBackend } from '@gamezilla/feat/profile';
 import { RoomBackend } from '@gamezilla/feat/room';
 import { SearchBackend } from '@gamezilla/feat/search';
@@ -29,6 +21,14 @@ import {
   DatabaseConnectionMySQL,
   RequestCtx,
 } from '@gamezilla/shared/backend';
+import {
+  Cmd,
+  exhaustive,
+  p,
+  Program,
+  Sub,
+  toMsgType,
+} from '@gamezilla/shared/core';
 import * as Http from 'http';
 import * as Rx from 'rxjs';
 import * as Socket from 'socket.io';
@@ -225,6 +225,8 @@ const updateFromApp = ({
     const profileUpdated = ProfileBackend.updateFromApp({
       msg,
       model: model.profile,
+      sendToFrontend: (clientIds, c) =>
+        sendToFrontend(clientIds, { t: 'profile', c }),
     });
 
     return {

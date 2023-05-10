@@ -15,7 +15,7 @@ import {
   Button,
   ButtonBase,
   Chip,
-  CircularProgress,
+  LoadingScreen,
   Divider,
   Drawer,
   FillBox,
@@ -445,11 +445,19 @@ export const updateFromApp = ({
       switch (msg.route.c.t) {
         case 'room':
         case 'room-list': {
-          return updateListRooms({
-            model,
-            initiatorMsg: msg,
-            sendToBackend,
-          });
+          if (model.requests?.list?.type === 'Loading') {
+            return { model };
+          }
+          return {
+            model: {
+              ...model,
+              requests: { ...model.requests, list: RemoteResult.Loading },
+            },
+            cmd: sendToBackend({
+              t: 'list',
+              initiatorMsg: msg,
+            }),
+          };
         }
 
         default: {
@@ -460,41 +468,12 @@ export const updateFromApp = ({
       }
     }
 
-    case 'wire-connected': {
-      return updateListRooms({ model, initiatorMsg: msg, sendToBackend });
-    }
-
     default: {
       return {
         model,
       };
     }
   }
-};
-
-const updateListRooms = ({
-  model,
-
-  initiatorMsg,
-  sendToBackend,
-}: {
-  model: Model;
-  initiatorMsg: unknown;
-  sendToBackend: (m: ToBackend) => Cmd;
-}) => {
-  if (model.requests?.list?.type === 'Loading') {
-    return { model };
-  }
-  return {
-    model: {
-      ...model,
-      requests: { ...model.requests, list: RemoteResult.Loading },
-    },
-    cmd: sendToBackend({
-      t: 'list',
-      initiatorMsg,
-    }),
-  };
 };
 
 const toRoomEndMessage = ({ ctx, hostId }: { hostId: UserId; ctx: Ctx }) => {
@@ -822,11 +801,7 @@ const ViewPage = ({
     model.requests.create?.type === 'Loading' ||
     model.requests.join?.type === 'Loading'
   ) {
-    return (
-      <FillBox sx={{ alignItems: 'center', justifyContent: 'center' }}>
-        <CircularProgress />
-      </FillBox>
-    );
+    return <LoadingScreen />;
   }
 
   const room = model.rooms[roomId];

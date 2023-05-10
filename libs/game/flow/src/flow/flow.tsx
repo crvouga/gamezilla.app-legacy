@@ -8,6 +8,23 @@ import { Err, Ok, Result } from '@gamezilla/shared/core';
 //
 //
 
+export type Edge = {
+  from: string;
+  to: string;
+  color?: Color;
+};
+
+export type Puzzle = {
+  nodes: {
+    [id: string]: Node;
+  };
+  edges: {
+    [from: string]: {
+      [to: string]: Edge;
+    };
+  };
+};
+
 export type Color = string;
 
 export type ColoredNode = {
@@ -27,23 +44,6 @@ export const isColored = (node: Node): node is ColoredNode => {
 
 export const isUncolored = (node: Node): node is UncoloredNode => {
   return !isColored(node);
-};
-
-export type Edge = {
-  from: string;
-  to: string;
-  color?: Color;
-};
-
-export type Puzzle = {
-  nodes: {
-    [id: string]: Node;
-  };
-  edges: {
-    [from: string]: {
-      [to: string]: Edge;
-    };
-  };
 };
 
 export type Path = string[];

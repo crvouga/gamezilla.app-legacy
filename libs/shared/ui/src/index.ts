@@ -5,6 +5,7 @@ export * from './button';
 export * from './button-vertical';
 export * from './icon';
 export * from './icon-button';
+export * from './loading-screen';
 export * from './text-field';
 export * from './top-bar';
 export * from './ui';
