@@ -902,21 +902,16 @@ const ViewPage = ({
 
 export const ViewRoomNotFound = ({ ctx }: { ctx: ViewCtx }) => {
   return (
-    <FillBox
-      sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-    >
-      <Typography variant="h5" sx={{ textAlign: 'center', marginBottom: 1 }}>
-        Room not found
-      </Typography>
-      <Button
+    <div className="flex items-center justify-center w-full h-full flex-col gap-4">
+      <p className="text-center text-xl mb-1">Room not found</p>
+      <MyButton
         onClick={() => ctx.$push({ t: 'room', c: { t: 'room-list' } })}
-        size="large"
         variant="contained"
-        startIcon={<Icons.ChevronLeft />}
       >
-        Go Back
-      </Button>
-    </FillBox>
+        <IconHome />
+        Go Home
+      </MyButton>
+    </div>
   );
 };
 
