@@ -11,10 +11,10 @@ import {
 
 export type GridPuzzleShorthand = NonEmpty<NonEmpty<string | null>>;
 
-type Emoji = '🟡' | '🔵' | '🟢' | '🔴';
+type Emoji = '🟡' | '🔵' | '🟢' | '🔴' | '🟠';
 
 const isEmoji = (value: string): value is Emoji => {
-  return ['🟡', '🔵', '🟢', '🔴'].includes(value);
+  return ['🟡', '🔵', '🟢', '🔴', '🟠'].includes(value);
 };
 
 export const emojiToColor = (emoji: Emoji): Color => {
@@ -23,6 +23,7 @@ export const emojiToColor = (emoji: Emoji): Color => {
     '🔵': 'blue',
     '🟢': 'green',
     '🔴': 'red',
+    '🟠': 'orange',
   }[emoji];
 };
 
@@ -86,12 +87,26 @@ export const fromShorthand = (puzzle: GridPuzzleShorthand): GridPuzzle => {
   return grid;
 };
 
+export type Size = '5x5' | '6x6' | '7x7' | '8x8';
+
 export const samples = {
-  '5x5': fromShorthand([
-    [null, '🟡', '🔵', null, null],
-    [null, '🟢', null, null, null],
-    [null, '🟡', '🔴', null, null],
-    ['🟢', '🔴', null, null, null],
-    [null, null, null, null, '🔵'],
-  ]),
+  '5x5': {
+    '1': fromShorthand([
+      [null, '🟡', '🔵', null, null],
+      [null, '🟢', null, null, null],
+      [null, '🟡', '🔴', null, null],
+      ['🟢', '🔴', null, null, null],
+      [null, null, null, null, '🔵'],
+    ]),
+    '2': fromShorthand([
+      ['🔴', null, '🟢', null, '🟡'],
+      [null, null, '🔵', null, '🟠'],
+      [null, null, null, null, null],
+      [null, '🟢', null, '🟡', null],
+      [null, '🔴', '🔵', '🟠', null],
+    ]),
+  },
+  '6x6': {},
+  '7x7': {},
+  '8x8': {},
 };

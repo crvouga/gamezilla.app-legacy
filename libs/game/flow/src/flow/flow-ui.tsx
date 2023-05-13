@@ -111,6 +111,10 @@ export const updateModel = ({
       return { ...model, t: 'idle' };
     }
 
+    if (msg.t === 'mouse-leave') {
+      return { ...model, t: 'idle' };
+    }
+
     return model;
   }
 
@@ -245,9 +249,21 @@ export const View = ({
       onMouseLeave={handleMouse({ model, $send, t: 'mouse-leave' })}
       onMouseDown={handleMouse({ model, $send, t: 'pressed-down' })}
       onMouseUp={handleMouse({ model, $send, t: 'pressed-up' })}
-      onMouseMove={handleMouse({ model, $send, t: 'dragged-over' })}
-      onMouseEnter={handleMouse({ model, $send, t: 'dragged-over' })}
-      onTouchMove={handleTouch({ model, $send, t: 'dragged-over' })}
+      onMouseMove={
+        model.t === 'dragging'
+          ? handleMouse({ model, $send, t: 'dragged-over' })
+          : undefined
+      }
+      onMouseEnter={
+        model.t === 'dragging'
+          ? handleMouse({ model, $send, t: 'dragged-over' })
+          : undefined
+      }
+      onTouchMove={
+        model.t === 'dragging'
+          ? handleTouch({ model, $send, t: 'dragged-over' })
+          : undefined
+      }
       onTouchStart={handleTouch({ model, $send, t: 'pressed-down' })}
       onTouchCancel={handleTouch({ model, $send, t: 'pressed-up' })}
       onTouchEnd={handleTouch({ model, $send, t: 'pressed-up' })}

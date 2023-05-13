@@ -10,7 +10,7 @@ export type Bounds = {
 export type GridPuzzle = Flow.Puzzle & {
   bounds: Bounds;
   positions: {
-    [nodeId: string]: Position;
+    [nodeId: Flow.NodeId]: Position;
   };
 };
 

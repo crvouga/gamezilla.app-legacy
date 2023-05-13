@@ -8,9 +8,9 @@ import { Err, Ok, Result } from '@gamezilla/shared/core';
 //
 //
 
-type NodeId = string;
+export type NodeId = string;
 
-type EdgeId = string;
+export type EdgeId = string;
 
 export const toEdgeId = (a: NodeId, b: NodeId): EdgeId => {
   if (a < b) {
