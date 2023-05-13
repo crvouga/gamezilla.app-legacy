@@ -28,7 +28,7 @@ export const init = ({ bounds }: { bounds: Bounds }): GridPuzzle => {
 
   for (const position of yieldPositionRange({ bounds })) {
     const id = positionToId(position);
-    puzzle = Flow.setNode(puzzle, { id });
+    puzzle = Flow.setNode(puzzle, { t: 'empty', id });
     puzzle.positions[id] = position;
   }
 
@@ -131,8 +131,8 @@ export const yieldEdges = function* (puzzle: GridPuzzle): Generator<GridEdge> {
       }
 
       yield {
-        from: { ...fromPosition, id: fromId },
-        to: { ...toPosition, id: toId },
+        from: { ...fromPosition, id: fromId, t: 'empty' },
+        to: { ...toPosition, id: toId, t: 'empty' },
       };
     }
   }
@@ -150,9 +150,9 @@ export const yieldNodes = function* (puzzle: GridPuzzle): Generator<GridNode> {
 
 export const yieldColoredNodes = function* (
   puzzle: GridPuzzle
-): Generator<GridNode & Flow.ColoredNode> {
+): Generator<GridNode & Flow.TerminalNode> {
   for (const node of yieldNodes(puzzle)) {
-    if (Flow.isColored(node)) {
+    if (Flow.isTerminalNode(node)) {
       yield node;
     }
   }
@@ -167,7 +167,29 @@ export const setNode = (
     ...puzzle,
     nodes: {
       ...puzzle.nodes,
-      [id]: { id, color: node.color },
+      [id]: node.color
+        ? { t: 'terminal', id, color: node.color }
+        : { t: 'empty', id },
+    },
+    positions: {
+      ...puzzle.positions,
+      [id]: node,
+    },
+  };
+};
+
+export const addEdge = (
+  puzzle: GridPuzzle,
+  node: Position & { color?: Flow.Color }
+): GridPuzzle => {
+  const id = positionToId(node);
+  return {
+    ...puzzle,
+    nodes: {
+      ...puzzle.nodes,
+      [id]: node.color
+        ? { id, color: node.color, t: 'terminal' }
+        : { id, t: 'empty' },
     },
     positions: {
       ...puzzle.positions,

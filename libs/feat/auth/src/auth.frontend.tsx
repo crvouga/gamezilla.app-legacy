@@ -363,7 +363,6 @@ client.auth.onAuthStateChange((event, supabaseSession) => {
     case 'USER_UPDATED': {
       const msg = fromSupabaseSession(supabaseSession);
       subject.next(msg);
-      console.log('onAuthStateChange', msg);
     }
   }
 });

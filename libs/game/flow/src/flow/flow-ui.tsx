@@ -1,7 +1,7 @@
 import { rescale } from '@gamezilla/shared/core';
 import { cn } from '@gamezilla/shared/ui';
 import { useLayoutEffect, useRef } from 'react';
-import { isColored } from './flow';
+import { isTerminalNode } from './flow';
 import {
   Bounds,
   GridPuzzle,
@@ -23,14 +23,7 @@ export type Model = ModelState & {
   puzzle: GridPuzzle;
 };
 
-type ModelState =
-  | {
-      t: 'idle';
-    }
-  | {
-      t: 'dragging';
-      color: string;
-    };
+type ModelState = { t: 'idle' } | { t: 'dragging'; color: string };
 
 export const init = (puzzle: GridPuzzle): Model => ({
   t: 'idle',
@@ -60,7 +53,9 @@ export const update = ({
 }): {
   model: Model;
 } => {
-  return { model: updateModel({ msg, model }) };
+  return {
+    model: updateModel({ msg, model }),
+  };
 };
 
 export const updateModel = ({
@@ -78,7 +73,7 @@ export const updateModel = ({
         return model;
       }
 
-      if (isColored(node)) {
+      if (isTerminalNode(node)) {
         return { ...model, t: 'dragging', color: node.color };
       }
 
@@ -90,7 +85,22 @@ export const updateModel = ({
 
   if (model.t === 'dragging') {
     if (msg.t === 'dragged-over') {
-      return model;
+      const node = model.puzzle.nodes[msg.nodeId];
+
+      if (!node) {
+        return model;
+      }
+
+      if (isTerminalNode(node)) {
+        //
+        return {
+          ...model,
+        };
+      }
+
+      return {
+        ...model,
+      };
     }
 
     if (msg.t === 'pressed-up') {

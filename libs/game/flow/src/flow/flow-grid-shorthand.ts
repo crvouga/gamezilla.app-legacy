@@ -1,5 +1,5 @@
 import { NonEmpty } from '@gamezilla/shared/core';
-import { Color, ColoredNode } from './flow';
+import { Color, TerminalNode } from './flow';
 import {
   GridNode,
   GridPuzzle,
@@ -28,7 +28,7 @@ export const emojiToColor = (emoji: Emoji): Color => {
 
 export const fromShorthandNode = (
   node: Position & { color: Emoji }
-): GridNode & ColoredNode => {
+): GridNode & TerminalNode => {
   return {
     ...node,
     id: positionToId(node),

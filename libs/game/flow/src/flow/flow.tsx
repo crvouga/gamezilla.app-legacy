@@ -8,45 +8,71 @@ import { Err, Ok, Result } from '@gamezilla/shared/core';
 //
 //
 
-export type Edge = {
-  from: string;
-  to: string;
-  color?: Color;
-};
+type NodeId = string;
 
 export type Puzzle = {
   nodes: {
-    [id: string]: Node;
+    [id: NodeId]: Node;
   };
   edges: {
-    [from: string]: {
-      [to: string]: Edge;
+    [from: NodeId]: {
+      [to: NodeId]: Edge;
     };
   };
 };
 
+export type Edge = {
+  from: string;
+  to: string;
+};
+
 export type Color = string;
 
-export type ColoredNode = {
-  id: string;
+export type TerminalNode = {
+  t: 'terminal';
+  id: NodeId;
   color: Color;
 };
 
-export type UncoloredNode = {
-  id: string;
+export type PathNode = {
+  t: 'path';
+  id: NodeId;
+  color: Color;
 };
 
-export type Node = ColoredNode | UncoloredNode;
+export const cutoffPath = (node: PathNode, path: Path): Path => {
+  const index = path.path.findIndex((n) => n.id === node.id);
 
-export const isColored = (node: Node): node is ColoredNode => {
-  return 'color' in node;
+  if (index === -1) {
+    return path;
+  }
+  const pathNew: PathNode[] = path.path.slice(0, index + 1);
+
+  return {
+    t: 'invalid',
+    start: path.start,
+    path: pathNew,
+  };
 };
 
-export const isUncolored = (node: Node): node is UncoloredNode => {
-  return !isColored(node);
+export type EmptyNode = {
+  t: 'empty';
+  id: NodeId;
 };
 
-export type Path = string[];
+export type Node = EmptyNode | TerminalNode | PathNode;
+
+export const isTerminalNode = (node: Node): node is TerminalNode => {
+  return node.t === 'terminal';
+};
+
+export const isEmptyNode = (node: Node): node is EmptyNode => {
+  return node.t === 'empty';
+};
+
+export const isPathNode = (node: Node): node is PathNode => {
+  return node.t === 'path';
+};
 
 export const setNode = <T extends Puzzle>(puzzle: T, node: Node): T => {
   return {
@@ -85,7 +111,7 @@ export const setEdge = <T extends Puzzle>(puzzle: T, edge: Edge): T => {
 
 type SolvedPuzzle = Puzzle & {
   nodes: {
-    [id: string]: ColoredNode;
+    [id: string]: TerminalNode;
   };
 };
 
@@ -133,7 +159,7 @@ export const yieldSolutions = function* (
 
     if (!endNode) {
       return Err(
-        'Invalid puzzle. There must be exactly two nodes of each color.'
+        'Invalid puzzle. There must be exactly two terminal nodes of the same color'
       );
     }
 
@@ -141,60 +167,117 @@ export const yieldSolutions = function* (
       continue;
     }
 
-    for (const path of yieldUncoloredPaths(puzzle, startNode, endNode)) {
-      const colored = colorUncoloredPath(puzzle, startNode.color, path);
-      yield* yieldSolutions(colored, solutions);
+    for (const path of yieldValidPaths(puzzle, startNode, endNode)) {
+      const added = addPath(puzzle, path);
+      if (added.type === 'Err') {
+        return added;
+      }
+      yield* yieldSolutions(added.value, solutions);
     }
   }
 
   return Ok(null);
 };
 
-const colorUncoloredPath = (
-  puzzle: Puzzle,
-  _color: Color,
-  _path: UncoloredNode[]
-): Puzzle => {
-  return puzzle;
+const addPath = (puzzle: Puzzle, path: ValidPath): Result<string, Puzzle> => {
+  const start = puzzle.nodes[path.start.id];
+
+  if (!start) {
+    return Err("Invalid puzzle. Start node doesn't exist");
+  }
+
+  const end = puzzle.nodes[path.end.id];
+
+  if (!end) {
+    return Err("Invalid puzzle. End node doesn't exist");
+  }
+
+  const puzzleNew = path.path.reduce<Puzzle>(
+    (acc, node) => setNode(acc, node),
+    puzzle
+  );
+
+  return Ok(puzzleNew);
 };
 
-export const yieldUncoloredPaths = function* (
+type InvalidPath = {
+  t: 'invalid';
+  start: TerminalNode;
+  path: PathNode[];
+};
+
+type ValidPath = {
+  t: 'valid';
+  start: TerminalNode;
+  path: PathNode[];
+  end: TerminalNode;
+};
+
+type Path = ValidPath | InvalidPath;
+
+const appendPath = (
+  _model: Puzzle,
+  path: InvalidPath,
+  node: EmptyNode
+): InvalidPath => {
+  return {
+    t: 'invalid',
+    start: path.start,
+    path: [...path.path, { ...node, t: 'path', color: path.start.color }],
+  };
+};
+
+export const yieldValidPaths = function* (
   puzzle: Puzzle,
-  node: UncoloredNode,
-  target: ColoredNode,
-  path: UncoloredNode[] = [],
-  visited = new Set<string>()
-): Generator<UncoloredNode[]> {
-  path.push(node);
-  visited.add(node.id);
+  start: TerminalNode,
+  target: TerminalNode
+): Generator<ValidPath> {
+  const visited = new Set<string>();
 
-  if (node.id === target.id) {
-    yield [...path];
-    return;
-  }
-
-  for (const neighbor of yieldNeighbors(puzzle, node)) {
-    if (visited.has(neighbor.id)) {
-      continue;
+  const recur = function* (
+    node: Node,
+    path: InvalidPath
+  ): Generator<ValidPath> {
+    if (isTerminalNode(node) && node.id === target.id) {
+      yield {
+        t: 'valid',
+        start: path.start,
+        path: path.path,
+        end: node,
+      };
+      return;
     }
 
-    if (isColored(neighbor) && neighbor.color !== target.color) {
-      continue;
+    for (const neighbor of yieldNeighbors(puzzle, node)) {
+      if (visited.has(neighbor.id)) {
+        continue;
+      }
+
+      if (isTerminalNode(neighbor) && neighbor.color !== target.color) {
+        continue;
+      }
+
+      if (isPathNode(neighbor) && neighbor.color !== path.start.color) {
+        continue;
+      }
+
+      visited.add(neighbor.id);
+
+      if (isEmptyNode(neighbor)) {
+        const pathNew = appendPath(puzzle, path, neighbor);
+
+        yield* recur(neighbor, pathNew);
+      }
     }
+  };
 
-    visited.add(neighbor.id);
-
-    yield* yieldUncoloredPaths(puzzle, neighbor, target, path, visited);
-  }
-
-  path.pop();
-  visited.delete(node.id);
+  yield* recur(start, { t: 'invalid', start, path: [] });
 };
 
 export const isColorConnected = (
   puzzle: Puzzle,
-  node: ColoredNode,
-  target: ColoredNode,
+  node: TerminalNode,
+  target: TerminalNode,
   visited = new Set<string>()
 ): boolean => {
   if (visited.has(node.id)) {
@@ -218,10 +301,10 @@ export const isColorConnected = (
 
 export const yieldColoredNeighbors = function* (
   puzzle: Puzzle,
-  node: ColoredNode
-): Generator<ColoredNode> {
+  node: TerminalNode
+): Generator<TerminalNode> {
   for (const neighbor of yieldNeighbors(puzzle, node)) {
-    if (isColored(neighbor)) {
+    if (isTerminalNode(neighbor)) {
       yield neighbor;
     }
   }
@@ -244,9 +327,9 @@ export const yieldNeighbors = function* (
 
 export const yieldColoredNodes = function* (
   puzzle: Puzzle
-): Generator<ColoredNode> {
+): Generator<TerminalNode> {
   for (const node of yieldNodes(puzzle)) {
-    if (isColored(node)) {
+    if (isTerminalNode(node)) {
       yield node;
     }
   }
@@ -264,7 +347,7 @@ export const yieldNodes = function* (puzzle: Puzzle): Generator<Node> {
 
 export const yieldEdges = function* (
   puzzle: Puzzle
-): Generator<{ from: Node; to: Node; color?: string }> {
+): Generator<{ from: Node; to: Node }> {
   for (const fromId in puzzle.edges) {
     for (const toId in puzzle.edges[fromId]) {
       const from = puzzle.nodes[fromId];
@@ -289,15 +372,15 @@ export const yieldEdges = function* (
         continue;
       }
 
-      yield { from, to, color: edge.color };
+      yield { from, to };
     }
   }
 };
 
 export const findEndNode = (
   puzzle: Puzzle,
-  startNode: ColoredNode
-): ColoredNode | null => {
+  startNode: TerminalNode
+): TerminalNode | null => {
   for (const node of yieldColoredNodes(puzzle)) {
     if (node.id === startNode.id) {
       continue;
