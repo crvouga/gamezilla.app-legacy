@@ -10,9 +10,19 @@ import { Err, Ok, Result } from '@gamezilla/shared/core';
 
 type NodeId = string;
 
+type EdgeId = string;
+
+export const toEdgeId = (a: NodeId, b: NodeId): EdgeId => {
+  if (a < b) {
+    return `${a}-${b}`;
+  }
+
+  return `${b}-${a}`;
+};
+
 export type Puzzle = {
   nodes: {
-    [id: NodeId]: Node;
+    [nodeId: NodeId]: Node;
   };
   edges: {
     [from: NodeId]: {
