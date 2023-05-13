@@ -33,6 +33,7 @@ export const fromShorthandNode = (
     ...node,
     id: positionToId(node),
     color: emojiToColor(node.color),
+    t: 'terminal',
   };
 };
 
