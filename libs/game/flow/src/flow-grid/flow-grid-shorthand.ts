@@ -1,15 +1,9 @@
 import { NonEmpty } from '@gamezilla/shared/core';
-import { Color, TerminalNode } from './flow';
-import {
-  GridNode,
-  GridPuzzle,
-  Position,
-  init,
-  positionToId,
-  setNode,
-} from './flow-grid';
+import { Flow } from '../flow';
+import * as FlowGrid from './flow-grid';
+import { Position } from './flow-grid-position';
 
-export type GridPuzzleShorthand = NonEmpty<NonEmpty<string | null>>;
+export type Model = NonEmpty<NonEmpty<string | null>>;
 
 type Emoji = '🟡' | '🔵' | '🟢' | '🔴' | '🟠';
 
@@ -17,7 +11,7 @@ const isEmoji = (value: string): value is Emoji => {
   return ['🟡', '🔵', '🟢', '🔴', '🟠'].includes(value);
 };
 
-export const emojiToColor = (emoji: Emoji): Color => {
+export const emojiToColor = (emoji: Emoji): Flow.Color => {
   return {
     '🟡': 'yellow',
     '🔵': 'blue',
@@ -29,31 +23,30 @@ export const emojiToColor = (emoji: Emoji): Color => {
 
 export const fromShorthandNode = (
   node: Position & { color: Emoji }
-): GridNode & TerminalNode => {
+): FlowGrid.Node => {
   return {
     ...node,
-    id: positionToId(node),
+    id: FlowGrid.positionToId(node),
     color: emojiToColor(node.color),
-    t: 'terminal',
   };
 };
 
-export const fromShorthand = (puzzle: GridPuzzleShorthand): GridPuzzle => {
-  let grid = init({
+export const fromShorthand = (model: Model): FlowGrid.Model => {
+  let grid = FlowGrid.init({
     bounds: {
       min: {
         x: 0,
         y: 0,
       },
       max: {
-        x: puzzle[0].length,
-        y: puzzle.length,
+        x: model[0].length,
+        y: model.length,
       },
     },
   });
 
-  for (let y = 0; y < puzzle.length; y++) {
-    const row = puzzle[y];
+  for (let y = 0; y < model.length; y++) {
+    const row = model[y];
 
     if (!row) {
       continue;
@@ -76,7 +69,7 @@ export const fromShorthand = (puzzle: GridPuzzleShorthand): GridPuzzle => {
         continue;
       }
 
-      grid = setNode(grid, {
+      grid = FlowGrid.addNode(grid, {
         x,
         y,
         color,

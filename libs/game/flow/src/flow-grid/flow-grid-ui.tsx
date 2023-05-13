@@ -1,15 +1,9 @@
 import { rescale } from '@gamezilla/shared/core';
 import { cn } from '@gamezilla/shared/ui';
 import { useLayoutEffect, useRef } from 'react';
-import { isTerminalNode } from './flow';
-import {
-  Bounds,
-  GridPuzzle,
-  positionToId,
-  yieldColoredNodes,
-  yieldEdges,
-  yieldNodes,
-} from './flow-grid';
+import { Flow } from '../flow';
+import * as FlowGrid from './flow-grid';
+import * as FlowGridPosition from './flow-grid-position';
 
 //
 //
@@ -19,15 +13,15 @@ import {
 //
 //
 
-export type Model = ModelState & {
-  puzzle: GridPuzzle;
+export type Model = State & {
+  grid: FlowGrid.Model;
 };
 
-type ModelState = { t: 'idle' } | { t: 'dragging'; color: string };
+type State = { t: 'idle' } | { t: 'dragging'; color: Flow.Color };
 
-export const init = (puzzle: GridPuzzle): Model => ({
+export const init = (grid: FlowGrid.Model): Model => ({
   t: 'idle',
-  puzzle,
+  grid,
 });
 
 //
@@ -39,9 +33,9 @@ export const init = (puzzle: GridPuzzle): Model => ({
 //
 
 export type Msg =
-  | { t: 'dragged-over'; nodeId: string }
-  | { t: 'pressed-down'; nodeId: string }
-  | { t: 'pressed-up'; nodeId: string }
+  | { t: 'dragged-over'; nodeId: Flow.NodeId }
+  | { t: 'pressed-down'; nodeId: Flow.NodeId }
+  | { t: 'pressed-up'; nodeId: Flow.NodeId }
   | { t: 'mouse-leave' };
 
 export const update = ({
@@ -67,13 +61,13 @@ export const updateModel = ({
 }): Model => {
   if (model.t === 'idle') {
     if (msg.t === 'pressed-down') {
-      const node = model.puzzle.nodes[msg.nodeId];
+      const node = FlowGrid.toNode(model.grid, msg.nodeId);
 
       if (!node) {
         return model;
       }
 
-      if (isTerminalNode(node)) {
+      if (Flow.isTerminal(node)) {
         return { ...model, t: 'dragging', color: node.color };
       }
 
@@ -85,13 +79,13 @@ export const updateModel = ({
 
   if (model.t === 'dragging') {
     if (msg.t === 'dragged-over') {
-      const node = model.puzzle.nodes[msg.nodeId];
+      const node = Flow.toNode(model.grid, msg.nodeId);
 
       if (!node) {
         return model;
       }
 
-      if (isTerminalNode(node)) {
+      if (Flow.isTerminal(node)) {
         //
         return {
           ...model,
@@ -131,9 +125,11 @@ export const updateModel = ({
 //
 //
 
-export const paint = (ctx: CanvasRenderingContext2D, { puzzle }: Model) => {
+export const paint = (ctx: CanvasRenderingContext2D, model: Model) => {
+  const { grid } = model;
+
   const squareLength =
-    ctx.canvas.width / (puzzle.bounds.max.x - puzzle.bounds.min.x);
+    ctx.canvas.width / (grid.bounds.max.x - grid.bounds.min.x);
 
   ctx.fillStyle = '#202020';
   ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.width);
@@ -142,24 +138,22 @@ export const paint = (ctx: CanvasRenderingContext2D, { puzzle }: Model) => {
   //  Grid
   //
 
-  for (let x = 0; x < puzzle.bounds.max.x; x++) {
-    for (let y = 0; y < puzzle.bounds.max.y; y++) {
-      ctx.strokeStyle = '#676767';
-      ctx.lineWidth = squareLength / 200;
-      ctx.strokeRect(
-        x * squareLength,
-        y * squareLength,
-        squareLength,
-        squareLength
-      );
-    }
+  for (const position of FlowGrid.yieldPositions(grid)) {
+    ctx.strokeStyle = '#676767';
+    ctx.lineWidth = squareLength / 200;
+    ctx.strokeRect(
+      position.x * squareLength,
+      position.y * squareLength,
+      squareLength,
+      squareLength
+    );
   }
 
   //
   // Colored Edges
   //
 
-  for (const edge of yieldEdges(puzzle)) {
+  for (const edge of FlowGrid.yieldEdges(grid)) {
     if (!edge.color) {
       continue;
     }
@@ -181,7 +175,11 @@ export const paint = (ctx: CanvasRenderingContext2D, { puzzle }: Model) => {
   //
   // Nodes
   //
-  for (const node of yieldColoredNodes(puzzle)) {
+  for (const node of FlowGrid.yieldNodes(grid)) {
+    if (!Flow.isTerminal(node)) {
+      continue;
+    }
+
     ctx.fillStyle = node.color;
 
     ctx.beginPath();
@@ -202,7 +200,7 @@ export const paint = (ctx: CanvasRenderingContext2D, { puzzle }: Model) => {
 
   const showPositions = false;
   if (showPositions) {
-    for (const node of yieldNodes(puzzle)) {
+    for (const node of FlowGrid.yieldPositions(grid)) {
       ctx.fillStyle = '#ffffff';
       ctx.fillText(
         `x: ${node.x}, y: ${node.y}`,
@@ -212,6 +210,12 @@ export const paint = (ctx: CanvasRenderingContext2D, { puzzle }: Model) => {
     }
   }
 };
+
+//
+//
+//
+//
+//
 
 export const View = ({
   model,
@@ -237,6 +241,7 @@ export const View = ({
     canvas.height = canvas.width;
 
     paint(context, model);
+    console.log(model);
   });
 
   return (
@@ -284,12 +289,12 @@ const handleMouse =
   (event: React.MouseEvent<HTMLCanvasElement>) => {
     event.stopPropagation();
 
-    const position = canvasEventToPosition(model.puzzle.bounds, {
+    const position = canvasEventToPosition(model.grid.bounds, {
       t: 'mouse',
       c: event,
     });
     if (position) {
-      $send({ t, nodeId: positionToId(position) });
+      $send({ t, nodeId: FlowGrid.positionToId(position) });
     }
   };
 
@@ -306,17 +311,17 @@ const handleTouch =
   (event: React.TouchEvent<HTMLCanvasElement>) => {
     event.stopPropagation();
 
-    const pos = canvasEventToPosition(model.puzzle.bounds, {
+    const pos = canvasEventToPosition(model.grid.bounds, {
       t: 'touch',
       c: event,
     });
     if (pos) {
-      $send({ t, nodeId: positionToId(pos) });
+      $send({ t, nodeId: FlowGrid.positionToId(pos) });
     }
   };
 
 const canvasEventToPosition = (
-  bounds: Bounds,
+  bounds: FlowGridPosition.Bounds,
   event:
     | { t: 'mouse'; c: React.MouseEvent<HTMLCanvasElement, MouseEvent> }
     | { t: 'touch'; c: React.TouchEvent<HTMLCanvasElement> }
@@ -360,7 +365,7 @@ const canvasEventToPosition = (
 };
 
 export const canvasEventToRealPosition = (
-  bounds: Bounds,
+  bounds: FlowGridPosition.Bounds,
   event:
     | { t: 'mouse'; c: React.MouseEvent<HTMLCanvasElement, MouseEvent> }
     | { t: 'touch'; c: React.TouchEvent<HTMLCanvasElement> }
@@ -399,77 +404,4 @@ export const canvasEventToRealPosition = (
   });
 
   return { x, y };
-};
-
-//
-//
-// Cover Art
-//
-//
-
-const board = [
-  ['b', 'r', 'r', 'r', 'o'],
-  ['b', 'r', 'y', 'y', 'o'],
-  ['b', 'r', 'y', 'o', 'o'],
-  ['b', 'r', 'o', 'o', 'g'],
-  ['b', 'b', 'g', 'g', 'g'],
-] as const;
-
-const letterToColor = (letter: 'b' | 'r' | 'o' | 'g' | 'y'): string => {
-  switch (letter) {
-    case 'b':
-      return 'blue';
-    case 'r':
-      return 'red';
-    case 'o':
-      return 'orange';
-    case 'g':
-      return 'green';
-    case 'y':
-      return 'yellow';
-  }
-};
-
-export const viewCoverArt = () => {
-  return (
-    <svg width="100%" className="border border-gray-700" viewBox="0 0 5 5">
-      <rect width="100%" height="100%" fill="black" />
-      {board.map((row, y) =>
-        row.map((letter, x) => {
-          const fill = letterToColor(letter);
-
-          const isNorth = board[y - 1]?.[x] === letter;
-          const isSouth = board[y + 1]?.[x] === letter;
-          const isEast = board[y]?.[x + 1] === letter;
-          const isWest = board[y]?.[x - 1] === letter;
-
-          const isEndpoint =
-            [isNorth, isSouth, isEast, isWest].filter((flag) => flag).length ===
-            1;
-
-          return (
-            <g
-              key={`${x}-${y}-${fill}`}
-              transform="translate(0.5, 0.5)"
-              strokeWidth={0.3}
-            >
-              <circle cx={x} cy={y} r={isEndpoint ? 0.3 : 0.15} fill={fill} />
-              {isNorth && (
-                <line x1={x} y1={y} x2={x} y2={y - 0.6} stroke={fill} />
-              )}
-              {isSouth && (
-                <line x1={x} y1={y} x2={x} y2={y + 0.6} stroke={fill} />
-              )}
-              {isWest && (
-                <line x1={x} y1={y} x2={x - 0.6} y2={y} stroke={fill} />
-              )}
-              {isEast && (
-                <line x1={x} y1={y} x2={x + 0.6} y2={y} stroke={fill} />
-              )}
-            </g>
-          );
-        })
-      )}
-    </svg>
-  );
 };

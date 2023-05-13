@@ -1,5 +1,5 @@
 import { UserId } from '@gamezilla/shared/app';
-import { FlowGridShorthand, FlowUI } from './flow';
+import { FlowGridShorthand, FlowGridUI } from './flow-grid';
 
 //
 //
@@ -13,11 +13,11 @@ export type BackendModel = SharedModel;
 
 export type SharedModel = {
   playerId?: UserId;
-  flowView: FlowUI.Model;
+  gridUI: FlowGridUI.Model;
 };
 
 export const initShared: SharedModel = {
-  flowView: FlowUI.init(FlowGridShorthand.samples['5x5']['2']),
+  gridUI: FlowGridUI.init(FlowGridShorthand.samples['5x5']['1']),
 };
 
 //
@@ -26,7 +26,7 @@ export const initShared: SharedModel = {
 //
 //
 
-export type FrontendMsg = { t: 'flow-view'; c: FlowUI.Msg };
+export type FrontendMsg = { t: 'flow-grid-ui'; c: FlowGridUI.Msg };
 
 export type BackendMsg = ['none'];
 
