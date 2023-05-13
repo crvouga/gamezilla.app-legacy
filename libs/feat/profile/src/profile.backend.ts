@@ -103,8 +103,8 @@ export const updateFromApp = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (msg.t === 'client-connected' && msg.userId) {
-    const userId = msg.userId;
+  if (msg.t === 'client-authenticated') {
+    const { userId } = msg;
 
     return {
       model,

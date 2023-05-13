@@ -1,3 +1,4 @@
+import { PhoneNumber, UserId, client } from '@gamezilla/shared/app';
 import {
   Cmd,
   Err,
@@ -8,7 +9,6 @@ import {
   Task,
   p,
 } from '@gamezilla/shared/core';
-import { PhoneNumber, UserId, client } from '@gamezilla/shared/app';
 import { Route, UnauthenticatedViewCtx } from '@gamezilla/shared/frontend';
 import {
   ConformationDialog,
@@ -41,7 +41,7 @@ import {
 
 export type Model = FrontendModel;
 
-export const init = (): { model: Model; cmd: Cmd<Msg> } => {
+export const init = (): { model: Model; cmd?: Cmd<Msg> } => {
   const phone = AuthPhone.init();
   const phoneVerify = AuthPhoneVerify.init();
   const emailLink = AuthEmailLink.init;
@@ -53,10 +53,10 @@ export const init = (): { model: Model; cmd: Cmd<Msg> } => {
       phoneVerify: phoneVerify.model,
       emailLink,
     },
-    cmd: p(
-      loadCurrentUser,
-      Cmd.perform((msg) => msg)
-    ),
+    // cmd: p(
+    //   loadCurrentUser,
+    //   Cmd.perform((msg) => msg)
+    // ),
   };
 };
 
@@ -363,6 +363,7 @@ client.auth.onAuthStateChange((event, supabaseSession) => {
     case 'USER_UPDATED': {
       const msg = fromSupabaseSession(supabaseSession);
       subject.next(msg);
+      console.log('onAuthStateChange', msg);
     }
   }
 });
@@ -390,12 +391,6 @@ const fromSupabaseSession = (auth: SupabaseSession | null): Msg => {
 };
 
 export const subscriptions: Sub<Msg> = subject;
-
-const loadCurrentUser: Task<Msg> = async () => {
-  const session = client.auth.session();
-  const msg = fromSupabaseSession(session);
-  return msg;
-};
 
 //
 //

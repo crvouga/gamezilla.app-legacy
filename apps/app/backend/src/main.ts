@@ -214,36 +214,30 @@ const updateFromApp = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (msg.t === 'client-connected') {
-    const roomUpdated = RoomBackend.updateFromApp({
-      msg,
-      model: model.room,
-      sendToFrontend: (clientIds, m) =>
-        sendToFrontend(clientIds, { t: 'room', c: m }),
-    });
+  const roomUpdated = RoomBackend.updateFromApp({
+    msg,
+    model: model.room,
+    sendToFrontend: (clientIds, m) =>
+      sendToFrontend(clientIds, { t: 'room', c: m }),
+  });
 
-    const profileUpdated = ProfileBackend.updateFromApp({
-      msg,
-      model: model.profile,
-      sendToFrontend: (clientIds, c) =>
-        sendToFrontend(clientIds, { t: 'profile', c }),
-    });
-
-    return {
-      model: {
-        ...model,
-        room: roomUpdated.model,
-        profile: profileUpdated.model,
-      },
-      cmd: Cmd.batch<Msg>([
-        Cmd.tag_('room', roomUpdated.cmd),
-        Cmd.tag_('profile', profileUpdated.cmd),
-      ]),
-    };
-  }
+  const profileUpdated = ProfileBackend.updateFromApp({
+    msg,
+    model: model.profile,
+    sendToFrontend: (clientIds, c) =>
+      sendToFrontend(clientIds, { t: 'profile', c }),
+  });
 
   return {
-    model,
+    model: {
+      ...model,
+      room: roomUpdated.model,
+      profile: profileUpdated.model,
+    },
+    cmd: Cmd.batch<Msg>([
+      Cmd.tag_('room', roomUpdated.cmd),
+      Cmd.tag_('profile', profileUpdated.cmd),
+    ]),
   };
 };
 
@@ -279,14 +273,24 @@ const updateFromFrontend = ({
         userId,
       };
 
+      const updated = updateFromApp({
+        model,
+        msg: {
+          t: 'client-authenticated',
+          clientId: ctx.clientId,
+          userId: msg.c.currentUser.currentUserId,
+        },
+      });
+
       return {
         model: {
-          ...model,
+          ...updated.model,
           sessions: {
             ...model.sessions,
             [session.sessionId]: session,
           },
         },
+        cmd: updated.cmd,
       };
     }
 

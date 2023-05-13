@@ -325,10 +325,13 @@ export const updateFromApp = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (msg.t === 'client-connected' && msg.userId) {
+  if (msg.t === 'client-authenticated') {
     return {
       model,
-      cmd: sendToFrontend([msg.clientId], { t: 'list', result: Ok(model) }),
+      cmd: sendToFrontend([msg.clientId], {
+        t: 'list',
+        result: Ok(model),
+      }),
     };
   }
 

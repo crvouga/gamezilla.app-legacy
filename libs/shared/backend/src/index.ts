@@ -6,12 +6,18 @@ export * from './database-connection-mysql';
 export * from './database-connection-postgres';
 export * from './shared';
 
-export type AppMsg = {
-  t: 'client-connected';
-  clientId: ClientId;
-  sessionId: SessionId;
-  userId?: UserId;
-};
+export type AppMsg =
+  | {
+      t: 'client-connected';
+      clientId: ClientId;
+      sessionId: SessionId;
+      userId?: UserId;
+    }
+  | {
+      t: 'client-authenticated';
+      userId: UserId;
+      clientId: ClientId;
+    };
 
 export type Ctx = {
   mySql: DatabaseConnectionMySQL;
