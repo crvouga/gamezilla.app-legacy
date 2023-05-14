@@ -735,7 +735,7 @@ const ViewRoomScreen = ({
 }) => {
   const room = model.rooms[roomId];
   return (
-    <FillBox>
+    <div className="w-full h-full flex flex-col flex-1 relative">
       <ViewPage roomId={roomId} ctx={ctx} $send={$send} model={model} />
       <Drawer
         open={model.modal === 'users'}
@@ -781,7 +781,7 @@ const ViewRoomScreen = ({
           </Button>
         </Box>
       </Drawer>
-    </FillBox>
+    </div>
   );
 };
 
