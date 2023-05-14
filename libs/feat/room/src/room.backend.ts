@@ -331,6 +331,7 @@ export const updateFromApp = ({
       cmd: sendToFrontend([msg.clientId], {
         t: 'list',
         result: Ok(model),
+        initiatorMsg: msg,
       }),
     };
   }

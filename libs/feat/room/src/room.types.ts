@@ -75,16 +75,9 @@ export type Room = {
 //
 //
 
-export type ToFrontend = Res | { t: 'game'; c: Game.ToFrontend };
+export type ToFrontend = (Res | { t: 'game'; c: Game.ToFrontend }) & Extra;
 
-export type ToBackend = (Req | { t: 'game'; c: Game.ToBackend }) & {
-  profile?: {
-    userId: UserId;
-    username: Username;
-    avatarUrl: string;
-  };
-  [key: string]: unknown;
-};
+export type ToBackend = (Req | { t: 'game'; c: Game.ToBackend }) & Extra;
 
 export type BackendMsg = { t: 'game'; roomId: RoomId; c: Game.BackendMsg };
 
@@ -96,6 +89,15 @@ export type FrontendMsg =
   | { t: 'clicked-room'; roomId: RoomId }
   | { t: 'clicked-user'; userId: UserId }
   | { t: 'clicked-user-link'; userId: UserId };
+
+type Extra = {
+  profile?: {
+    userId: UserId;
+    username: Username;
+    avatarUrl: string;
+  };
+  initiatorMsg?: unknown;
+};
 
 //
 //

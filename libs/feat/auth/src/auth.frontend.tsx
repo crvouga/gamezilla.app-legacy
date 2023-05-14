@@ -47,16 +47,13 @@ export const init = (): { model: Model; cmd?: Cmd<Msg> } => {
   const emailLink = AuthEmailLink.init;
   return {
     model: {
-      currentUser: { t: 'not-asked' },
       requests: {},
       phone: phone.model,
       phoneVerify: phoneVerify.model,
       emailLink,
+      currentUser: { t: 'loading' },
     },
-    // cmd: p(
-    //   loadCurrentUser,
-    //   Cmd.perform((msg) => msg)
-    // ),
+    cmd: loadCurrentUser,
   };
 };
 
@@ -390,6 +387,12 @@ const fromSupabaseSession = (auth: SupabaseSession | null): Msg => {
 };
 
 export const subscriptions: Sub<Msg> = subject;
+
+const loadCurrentUser: Cmd<Msg> = ($send) => {
+  const supabaseSession = client.auth.session();
+  const msg = fromSupabaseSession(supabaseSession);
+  $send(msg);
+};
 
 //
 //
