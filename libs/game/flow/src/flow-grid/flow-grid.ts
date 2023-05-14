@@ -28,16 +28,16 @@ export const positionToId = (position: Position): Flow.NodeId => {
 //
 //
 
-export const init = ({ bounds }: { bounds: Bounds }): Model => {
+export const initEmpty = ({ bounds }: { bounds: Bounds }): Model => {
   let model: Model = {
-    ...Flow.empty,
+    ...Flow.initEmpty,
     bounds,
     positions: {},
   };
 
   for (const position of yieldRange({ bounds })) {
     const id = positionToId(position);
-    model = Flow.addNode(model, { id });
+    model = Flow.setNode(model, { id });
     model.positions[id] = position;
   }
 
@@ -75,7 +75,7 @@ export const init = ({ bounds }: { bounds: Bounds }): Model => {
 export type Node = Flow.Node & Position;
 
 export type Edge = {
-  color?: Flow.Color;
+  color?: Flow.Color | null;
   from: Node;
   to: Node;
 };
@@ -106,13 +106,13 @@ export const toEdge = (model: Model, edgeId: Flow.EdgeId): Edge | null => {
     return null;
   }
 
-  const from = toNode(model, edge.from.id);
+  const from = toNode(model, edge.from);
 
   if (!from) {
     return null;
   }
 
-  const to = toNode(model, edge.to.id);
+  const to = toNode(model, edge.to);
 
   if (!to) {
     return null;
@@ -137,7 +137,7 @@ export const addNode = (
   { color, ...position }: Position & { color?: Flow.Color }
 ): Model => {
   const id = positionToId(position);
-  const modelNew = Flow.addNode(model, { color, id });
+  const modelNew = Flow.setNode(model, { color, id });
   return {
     ...modelNew,
     positions: {
@@ -167,13 +167,13 @@ export const yieldPositions = function* (model: Model): Generator<Position> {
 
 export const yieldEdges = function* (model: Model): Generator<Edge> {
   for (const edge of Flow.yieldEdges(model)) {
-    const from = toNode(model, edge.from.id);
+    const from = toNode(model, edge.from);
 
     if (!from) {
       continue;
     }
 
-    const to = toNode(model, edge.to.id);
+    const to = toNode(model, edge.to);
 
     if (!to) {
       continue;

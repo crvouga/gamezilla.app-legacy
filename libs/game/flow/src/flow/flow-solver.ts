@@ -11,7 +11,7 @@ export type SolvedModel = Model & { _opaque: 'SolvedPuzzle' };
 export const isSolved = (model: Model): model is SolvedModel => {
   for (const nodeA of yieldTerminalNodes(model)) {
     for (const nodeB of yieldTerminalNodes(model)) {
-      if (!doesColoredPathExist(model, nodeA, nodeB)) {
+      if (!doesColoredPathExist(model, nodeA.id, nodeB)) {
         return false;
       }
     }
@@ -40,7 +40,7 @@ export const yieldSolutions = function* (
       return; //invalid model
     }
 
-    if (doesColoredPathExist(puzzle, startNode, endNode)) {
+    if (doesColoredPathExist(puzzle, startNode.id, endNode)) {
       continue;
     }
   }

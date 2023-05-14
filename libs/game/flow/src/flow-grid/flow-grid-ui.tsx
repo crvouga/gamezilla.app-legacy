@@ -68,10 +68,15 @@ export const updateModel = ({
       }
 
       if (Flow.isTerminal(node)) {
-        return { ...model, t: 'dragging', color: node.color };
+        return {
+          ...model,
+          grid: Flow.initPath(model.grid, node),
+          t: 'dragging',
+          color: node.color,
+        };
       }
 
-      return { ...model, t: 'dragging', color: msg.nodeId };
+      return model;
     }
 
     return model;
@@ -79,21 +84,11 @@ export const updateModel = ({
 
   if (model.t === 'dragging') {
     if (msg.t === 'dragged-over') {
-      const node = Flow.toNode(model.grid, msg.nodeId);
-
-      if (!node) {
-        return model;
-      }
-
-      if (Flow.isTerminal(node)) {
-        //
-        return {
-          ...model,
-        };
-      }
+      const gridNew = Flow.extendPath(model.grid, model.color, msg.nodeId);
 
       return {
         ...model,
+        grid: gridNew,
       };
     }
 
@@ -131,7 +126,7 @@ export const paint = (ctx: CanvasRenderingContext2D, model: Model) => {
   const squareLength =
     ctx.canvas.width / (grid.bounds.max.x - grid.bounds.min.x);
 
-  ctx.fillStyle = '#202020';
+  ctx.fillStyle = '#000000';
   ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.width);
 
   //
@@ -241,7 +236,6 @@ export const View = ({
     canvas.height = canvas.width;
 
     paint(context, model);
-    console.log(model);
   });
 
   return (

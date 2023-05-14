@@ -2,11 +2,8 @@ export type NodeId = string & { readonly __brand: unique symbol };
 
 export type EdgeId = string & { readonly __brand: unique symbol };
 
-export const toEdgeId = (a: NodeId, b: NodeId): EdgeId => {
-  if (a < b) {
-    return `${a}-${b}` as EdgeId;
-  }
-  return `${b}-${a}` as EdgeId;
+export const toEdgeId = (edge: Edge): EdgeId => {
+  return `${edge.from}-${edge.to}` as EdgeId;
 };
 
 export const isEdgeId = (model: Model, id: string): id is EdgeId => {
@@ -52,17 +49,18 @@ export type Model = {
 export type Edge = {
   from: NodeId;
   to: NodeId;
-  color?: Color;
+  color?: Color | null;
 };
 
-export type Node = TerminalNode | ConnectorNode;
+export type Node = TerminalNode | EmptyNode;
 
 export type TerminalNode = {
   id: NodeId;
   color: Color;
+  type?: 'start' | 'end' | null;
 };
 
-export type ConnectorNode = {
+export type EmptyNode = {
   id: NodeId;
 };
 
@@ -70,7 +68,7 @@ export const isTerminal = (node: Node): node is TerminalNode => {
   return 'color' in node;
 };
 
-export const isConnector = (node: Node): node is ConnectorNode => {
+export const isEmpty = (node: Node): node is EmptyNode => {
   return !isTerminal(node);
 };
 
@@ -82,7 +80,7 @@ export const isConnector = (node: Node): node is ConnectorNode => {
 //
 //
 
-export const empty: Model = {
+export const initEmpty: Model = {
   nodes: {},
   edges: {},
   edgesIn: {},
@@ -101,10 +99,9 @@ export const toNode = (model: Model, id: NodeId): Node | null => {
   return model.nodes[id] ?? null;
 };
 
-export type EdgeFull = {
-  from: Node;
-  to: Node;
-  color?: Color;
+export type EdgeFull = Edge & {
+  nodeFrom: Node;
+  nodeTo: Node;
 };
 
 export const toEdge = (model: Model, edgeId: EdgeId): EdgeFull | null => {
@@ -114,22 +111,22 @@ export const toEdge = (model: Model, edgeId: EdgeId): EdgeFull | null => {
     return null;
   }
 
-  const from = model.nodes[edge.from];
+  const nodeFrom = model.nodes[edge.from];
 
-  if (!from) {
+  if (!nodeFrom) {
     return null;
   }
 
-  const to = model.nodes[edge.to];
+  const nodeTo = model.nodes[edge.to];
 
-  if (!to) {
+  if (!nodeTo) {
     return null;
   }
 
-  return { from, to, color: edge.color };
+  return { ...edge, nodeFrom, nodeTo };
 };
 
-export const addNode = <T extends Model>(model: T, node: Node): T => {
+export const setNode = <T extends Model>(model: T, node: Node): T => {
   return {
     ...model,
     nodes: {
@@ -139,25 +136,43 @@ export const addNode = <T extends Model>(model: T, node: Node): T => {
   };
 };
 
-export const addEdge = <T extends Model>(graph: T, edge: Edge): T => {
+export const addEdge = <T extends Model>(model: T, edge: Edge): T => {
   return {
-    ...graph,
+    ...model,
     edges: {
-      ...graph.edges,
-      [toEdgeId(edge.from, edge.to)]: edge,
+      ...model.edges,
+      [toEdgeId(edge)]: edge,
     },
     edgesIn: {
-      ...graph.edgesIn,
+      ...model.edgesIn,
       [edge.to]: {
-        ...graph.edgesIn[edge.to],
-        [edge.from]: toEdgeId(edge.from, edge.to),
+        ...model.edgesIn[edge.to],
+        [edge.from]: toEdgeId(edge),
       },
     },
     edgesOut: {
-      ...graph.edgesOut,
+      ...model.edgesOut,
       [edge.from]: {
-        ...graph.edgesOut[edge.from],
-        [edge.to]: toEdgeId(edge.from, edge.to),
+        ...model.edgesOut[edge.from],
+        [edge.to]: toEdgeId(edge),
+      },
+    },
+  };
+};
+
+export const updateEdge = <T extends Model>(model: T, edge: Edge): T => {
+  const exists = model.edges[toEdgeId(edge)];
+
+  if (!exists) {
+    return model;
+  }
+
+  return {
+    ...model,
+    edges: {
+      ...model.edges,
+      [toEdgeId(edge)]: {
+        ...edge,
       },
     },
   };
@@ -222,11 +237,9 @@ export const yieldTerminalNodes = function* (
   }
 };
 
-export const yieldConnectorNodes = function* (
-  model: Model
-): Generator<ConnectorNode> {
+export const yieldEmptyNodes = function* (model: Model): Generator<EmptyNode> {
   for (const node of yieldNodes(model)) {
-    if (isConnector(node)) {
+    if (isEmpty(node)) {
       yield node;
     }
   }
@@ -251,10 +264,16 @@ export const findEndNode = (
 
 export const yieldOutEdges = function* (
   model: Model,
-  node: Node
+  nodeId: NodeId
 ): Generator<EdgeFull> {
-  for (const edgeId in model.edgesOut[node.id]) {
-    if (!isEdgeId(model, edgeId)) {
+  for (const outNodeId in model.edgesOut[nodeId]) {
+    if (!isNodeId(model, outNodeId)) {
+      continue;
+    }
+
+    const edgeId = model.edgesOut[nodeId]?.[outNodeId];
+
+    if (!edgeId) {
       continue;
     }
 
@@ -270,10 +289,16 @@ export const yieldOutEdges = function* (
 
 export const yieldInEdges = function* (
   model: Model,
-  node: Node
+  nodeId: NodeId
 ): Generator<EdgeFull> {
-  for (const edgeId in model.edgesIn[node.id]) {
-    if (!isEdgeId(model, edgeId)) {
+  for (const inNodeId in model.edgesIn[nodeId]) {
+    if (!isNodeId(model, inNodeId)) {
+      continue;
+    }
+
+    const edgeId = model.edgesIn[nodeId]?.[inNodeId];
+
+    if (!edgeId) {
       continue;
     }
 
@@ -286,24 +311,23 @@ export const yieldInEdges = function* (
     yield edge;
   }
 };
-
 export const doesColoredPathExist = (
   model: Model,
-  node: Node,
+  nodeId: NodeId,
   target: TerminalNode,
   visited = new Set<NodeId>()
 ): boolean => {
-  if (visited.has(node.id)) {
+  if (visited.has(nodeId)) {
     return false;
   }
 
-  visited.add(node.id);
+  visited.add(nodeId);
 
-  if (node.id === target.id) {
+  if (nodeId === target.id) {
     return true;
   }
 
-  for (const outEdge of yieldOutEdges(model, node)) {
+  for (const outEdge of yieldOutEdges(model, nodeId)) {
     if (outEdge.color !== target.color) {
       continue;
     }
@@ -315,3 +339,176 @@ export const doesColoredPathExist = (
 
   return false;
 };
+
+//
+//
+//
+// Initial Path
+//
+//
+//
+
+export const initPath = <T extends Model>(
+  model: T,
+  terminal: TerminalNode
+): T => {
+  const cleared = clearPath(model, terminal.color);
+  const startNode: TerminalNode = {
+    id: terminal.id,
+    color: terminal.color,
+    type: 'start',
+  };
+  return setNode(cleared, startNode);
+};
+
+const clearEdges = <T extends Model>(model: T, color: Color): T => {
+  let modelNew: T = { ...model };
+  for (const edge of yieldEdges(model)) {
+    if (edge.color === color) {
+      modelNew = removeEdgeColor(modelNew, edge);
+    }
+  }
+
+  return modelNew;
+};
+
+const clearPath = <T extends Model>(model: T, color: Color): T => {
+  let modelNew: T = clearEdges(model, color);
+
+  for (const terminal of yieldTerminalNodes(model)) {
+    if (terminal.color === color) {
+      modelNew = setNode(modelNew, {
+        ...terminal,
+        type: null,
+      });
+    }
+  }
+
+  return modelNew;
+};
+
+const removeEdgeColor = <T extends Model>(model: T, edge: Edge): T => {
+  return {
+    ...model,
+    edges: {
+      ...model.edges,
+      [toEdgeId(edge)]: {
+        ...model.edges[toEdgeId(edge)],
+        color: null,
+      },
+    },
+  };
+};
+
+//
+//
+//
+// Extend Path
+//
+//
+//
+
+export const extendPath = <T extends Model>(
+  model: T,
+  color: Color,
+  nodeId: NodeId
+): T => {
+  const pathStartId = findPathStart(model, color);
+
+  if (!pathStartId) {
+    return model;
+  }
+
+  const walked = extendPathWalk(
+    model,
+    nodeId,
+    color,
+    clearEdges(model, color),
+    pathStartId
+  );
+
+  return walked;
+};
+
+const extendPathWalk = <T extends Model>(
+  modelPrev: T,
+  nodeId: NodeId,
+  color: Color,
+  modelNew: T,
+  currentNodeId: NodeId
+): T => {
+  if (nodeId === currentNodeId) {
+    return modelNew;
+  }
+
+  const outEdge = findOutEdgeByColor(modelPrev, currentNodeId, color);
+
+  if (!outEdge) {
+    const updated = updateEdge(modelNew, {
+      from: currentNodeId,
+      to: nodeId,
+      color,
+    });
+    return updated;
+  }
+
+  const nextNodeId = outEdge.to;
+
+  const updated = updateEdge(modelNew, {
+    from: currentNodeId,
+    to: nextNodeId,
+    color,
+  });
+
+  return extendPathWalk(modelPrev, nodeId, color, updated, nextNodeId);
+};
+
+const findOutEdgeByColor = <T extends Model>(
+  model: T,
+  nodeId: NodeId,
+  color: Color
+): EdgeFull | null => {
+  for (const outEdge of yieldOutEdges(model, nodeId)) {
+    if (outEdge.color === color) {
+      return outEdge;
+    }
+  }
+  return null;
+};
+
+export const findPathStart = (model: Model, color: Color): NodeId | null => {
+  for (const terminal of yieldTerminalNodes(model)) {
+    if (terminal.color === color && terminal.type === 'start') {
+      return terminal.id;
+    }
+  }
+  return null;
+};
+
+export const findPathEnd = (
+  model: Model,
+  color: Color,
+  nodeId: NodeId
+): NodeId => {
+  for (const outEdge of yieldOutEdges(model, nodeId)) {
+    if (outEdge.color !== color) {
+      continue;
+    }
+
+    if (outEdge.to === nodeId) {
+      return nodeId;
+    }
+
+    return findPathEnd(model, color, outEdge.to);
+  }
+
+  return nodeId;
+};
+
+//
+//
+//
+//
+//
+//
+//

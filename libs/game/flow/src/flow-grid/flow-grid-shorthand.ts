@@ -32,7 +32,7 @@ export const fromShorthandNode = (
 };
 
 export const fromShorthand = (model: Model): FlowGrid.Model => {
-  let grid = FlowGrid.init({
+  let grid = FlowGrid.initEmpty({
     bounds: {
       min: {
         x: 0,
