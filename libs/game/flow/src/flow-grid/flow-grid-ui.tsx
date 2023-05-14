@@ -163,9 +163,9 @@ export const paint = (ctx: CanvasRenderingContext2D, model: Model) => {
       continue;
     }
 
-    if (model.t === 'dragging' && model.color === nodeColor) {
-      continue;
-    }
+    // if (model.t === 'dragging' && model.color === nodeColor) {
+    //   continue;
+    // }
 
     ctx.globalAlpha = 0.2;
     ctx.fillStyle = nodeColor;
