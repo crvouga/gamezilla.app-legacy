@@ -1,6 +1,6 @@
 import { rescale } from '@gamezilla/shared/core';
 import { cn } from '@gamezilla/shared/ui';
-import { useLayoutEffect, useRef } from 'react';
+import { memo, useLayoutEffect, useRef } from 'react';
 import { Flow } from '../flow';
 import * as FlowGrid from './flow-grid';
 import * as FlowGridPosition from './flow-grid-position';
@@ -267,70 +267,72 @@ export const paint = (ctx: CanvasRenderingContext2D, model: Model) => {
 //
 //
 
-export const View = ({
-  model,
-  $send,
-}: {
-  model: Model;
-  $send: (msg: Msg) => void;
-}) => {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+export const View = memo(
+  ({ model, $send }: { model: Model; $send: (msg: Msg) => void }) => {
+    const canvasRef = useRef<HTMLCanvasElement | null>(null);
+    const renderCount = useRef(0);
 
-  useLayoutEffect(() => {
-    const canvas = canvasRef.current;
+    useLayoutEffect(() => {
+      const canvas = canvasRef.current;
 
-    if (!canvas) {
-      return;
-    }
-    const context = canvas.getContext('2d');
-
-    if (!context) {
-      return;
-    }
-
-    canvas.height = canvas.width;
-
-    paint(context, model);
-  });
-
-  return (
-    <canvas
-      ref={canvasRef}
-      onContextMenu={(event) => {
-        event.preventDefault();
-      }}
-      className={cn(
-        'select-none touch-none w-full',
-        model.t === 'dragging' ? 'cursor-grabbing' : 'cursor-grab'
-      )}
-      onMouseLeave={handleMouse({ model, $send, t: 'mouse-leave' })}
-      onMouseDown={handleMouse({ model, $send, t: 'pressed-down' })}
-      onMouseUp={handleMouse({ model, $send, t: 'pressed-up' })}
-      onMouseMove={
-        model.t === 'dragging'
-          ? handleMouse({ model, $send, t: 'dragged-over' })
-          : undefined
+      if (!canvas) {
+        return;
       }
-      onMouseEnter={
-        model.t === 'dragging'
-          ? handleMouse({ model, $send, t: 'dragged-over' })
-          : undefined
+      const context = canvas.getContext('2d');
+
+      if (!context) {
+        return;
       }
-      //
-      onTouchMove={
-        model.t === 'dragging'
-          ? handleTouch({ model, $send, t: 'dragged-over' })
-          : undefined
-      }
-      //
-      onTouchStart={handleTouch({ model, $send, t: 'pressed-down' })}
-      //
-      onTouchCancel={handleTouch({ model, $send, t: 'pressed-up' })}
-      //
-      onTouchEnd={handleTouch({ model, $send, t: 'pressed-up' })}
-    />
-  );
-};
+
+      canvas.height = canvas.width;
+
+      paint(context, model);
+      renderCount.current += 1;
+    });
+
+    return (
+      <>
+        {renderCount.current}
+
+        <canvas
+          ref={canvasRef}
+          onContextMenu={(event) => {
+            event.preventDefault();
+          }}
+          className={cn(
+            'select-none touch-none w-full',
+            model.t === 'dragging' ? 'cursor-grabbing' : 'cursor-grab'
+          )}
+          onMouseLeave={handleMouse({ model, $send, t: 'mouse-leave' })}
+          onMouseDown={handleMouse({ model, $send, t: 'pressed-down' })}
+          onMouseUp={handleMouse({ model, $send, t: 'pressed-up' })}
+          onMouseMove={
+            model.t === 'dragging'
+              ? handleMouse({ model, $send, t: 'dragged-over' })
+              : undefined
+          }
+          onMouseEnter={
+            model.t === 'dragging'
+              ? handleMouse({ model, $send, t: 'dragged-over' })
+              : undefined
+          }
+          //
+          onTouchMove={
+            model.t === 'dragging'
+              ? handleTouch({ model, $send, t: 'dragged-over' })
+              : undefined
+          }
+          //
+          onTouchStart={handleTouch({ model, $send, t: 'pressed-down' })}
+          //
+          onTouchCancel={handleTouch({ model, $send, t: 'pressed-up' })}
+          //
+          onTouchEnd={handleTouch({ model, $send, t: 'pressed-up' })}
+        />
+      </>
+    );
+  }
+);
 
 const handleMouse =
   ({

@@ -68,6 +68,10 @@ export const isTerminal = (node: Node): node is TerminalNode => {
   return 'color' in node;
 };
 
+export const isStart = (node: Node): node is TerminalNode => {
+  return isTerminal(node) && node.type === 'start';
+};
+
 export const isEmpty = (node: Node): node is EmptyNode => {
   return !isTerminal(node);
 };
@@ -160,10 +164,14 @@ export const addEdge = <T extends Model>(model: T, edge: Edge): T => {
   };
 };
 
-export const updateEdge = <T extends Model>(model: T, edge: Edge): T => {
-  const exists = model.edges[toEdgeId(edge)];
+export const setEdgeColor = <T extends Model>(
+  model: T,
+  edgeId: EdgeId,
+  color: Color
+): T => {
+  const edge = model.edges[edgeId];
 
-  if (!exists) {
+  if (!edge) {
     return model;
   }
 
@@ -171,8 +179,9 @@ export const updateEdge = <T extends Model>(model: T, edge: Edge): T => {
     ...model,
     edges: {
       ...model.edges,
-      [toEdgeId(edge)]: {
+      [edgeId]: {
         ...edge,
+        color: color,
       },
     },
   };
@@ -434,11 +443,8 @@ export const extendPath = <T extends Model>(
     const outEdge = findOutEdgeByColor(model, currentNodeId, color);
 
     if (!outEdge) {
-      const updated = updateEdge(modelNew, {
-        from: currentNodeId,
-        to: nodeId,
-        color,
-      });
+      const edgeId = toEdgeId({ from: currentNodeId, to: nodeId });
+      const updated = setEdgeColor(modelNew, edgeId, color);
       return updated;
     }
 
@@ -448,11 +454,9 @@ export const extendPath = <T extends Model>(
       return modelNew;
     }
 
-    const updated = updateEdge(modelNew, {
-      from: currentNodeId,
-      to: nextNodeId,
-      color,
-    });
+    const edgeId = toEdgeId({ from: currentNodeId, to: nextNodeId });
+
+    const updated = setEdgeColor(modelNew, edgeId, color);
 
     return walk(updated, nextNodeId);
   };
@@ -463,31 +467,11 @@ export const extendPath = <T extends Model>(
     return model;
   }
 
-  const walked = walk(clearEdges(model, color), pathStartId);
+  const cleared = clearEdges(model, color);
+
+  const walked = walk(cleared, pathStartId);
 
   return walked;
-};
-
-export const isPathComplete = (model: Model, color: Color): boolean => {
-  const pathStartId = findPathStart(model, color);
-
-  if (!pathStartId) {
-    return false;
-  }
-
-  const pathEndId = findPathEnd(model, color, pathStartId);
-
-  if (!pathEndId) {
-    return false;
-  }
-
-  const pathEnd = toNode(model, pathEndId);
-
-  if (!pathEnd) {
-    return false;
-  }
-
-  return isTerminal(pathEnd);
 };
 
 export const isNodeColored = (model: Model, nodeId: NodeId): boolean => {
@@ -570,4 +554,26 @@ export const toPathColor = (model: Model, nodeId: NodeId): Color | null => {
   }
 
   return null;
+};
+
+export const isPathComplete = (model: Model, color: Color): boolean => {
+  const pathStartId = findPathStart(model, color);
+
+  if (!pathStartId) {
+    return false;
+  }
+
+  const pathEndId = findPathEnd(model, color, pathStartId);
+
+  if (!pathEndId) {
+    return false;
+  }
+
+  const pathEnd = toNode(model, pathEndId);
+
+  if (!pathEnd) {
+    return false;
+  }
+
+  return isTerminal(pathEnd);
 };

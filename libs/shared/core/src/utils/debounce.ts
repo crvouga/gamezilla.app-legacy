@@ -31,7 +31,6 @@ export const debounce = <F extends (...args: any[]) => any>(
       clearTimeout(timeoutId);
     }
     timeoutId = setTimeout(() => {
-      timeoutId = undefined;
       return func(...args);
     }, delay);
 
