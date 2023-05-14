@@ -61,22 +61,7 @@ export const updateModel = ({
 }): Model => {
   if (model.t === 'idle') {
     if (msg.t === 'pressed-down') {
-      const node = FlowGrid.toNode(model.grid, msg.nodeId);
-
-      if (!node) {
-        return model;
-      }
-
-      if (Flow.isTerminal(node)) {
-        return {
-          ...model,
-          grid: Flow.initPath(model.grid, node),
-          t: 'dragging',
-          color: node.color,
-        };
-      }
-
-      return model;
+      return updatePressedDown({ model, nodeId: msg.nodeId });
     }
 
     return model;
@@ -97,7 +82,7 @@ export const updateModel = ({
     }
 
     if (msg.t === 'pressed-down') {
-      return { ...model, t: 'idle' };
+      return updatePressedDown({ model, nodeId: msg.nodeId });
     }
 
     if (msg.t === 'mouse-leave') {
@@ -110,6 +95,31 @@ export const updateModel = ({
   const check: never = model;
 
   return check;
+};
+
+const updatePressedDown = ({
+  model,
+  nodeId,
+}: {
+  nodeId: Flow.NodeId;
+  model: Model;
+}): Model => {
+  const node = FlowGrid.toNode(model.grid, nodeId);
+
+  if (!node) {
+    return model;
+  }
+
+  if (Flow.isTerminal(node)) {
+    return {
+      ...model,
+      grid: Flow.initPath(model.grid, node),
+      t: 'dragging',
+      color: node.color,
+    };
+  }
+
+  return model;
 };
 
 //
@@ -142,6 +152,30 @@ export const paint = (ctx: CanvasRenderingContext2D, model: Model) => {
       squareLength,
       squareLength
     );
+  }
+
+  for (const position of FlowGrid.yieldPositions(grid)) {
+    const nodeId = FlowGrid.positionToId(position);
+
+    const nodeColor = Flow.toPathColor(grid, nodeId);
+
+    if (!nodeColor) {
+      continue;
+    }
+
+    if (model.t === 'dragging' && model.color === nodeColor) {
+      continue;
+    }
+
+    ctx.globalAlpha = 0.2;
+    ctx.fillStyle = nodeColor;
+    ctx.fillRect(
+      position.x * squareLength,
+      position.y * squareLength,
+      squareLength,
+      squareLength
+    );
+    ctx.globalAlpha = 1;
   }
 
   //
@@ -262,6 +296,9 @@ export const View = ({
   return (
     <canvas
       ref={canvasRef}
+      onContextMenu={(event) => {
+        event.preventDefault();
+      }}
       className={cn(
         'select-none touch-none w-full',
         model.t === 'dragging' ? 'cursor-grabbing' : 'cursor-grab'
@@ -279,13 +316,17 @@ export const View = ({
           ? handleMouse({ model, $send, t: 'dragged-over' })
           : undefined
       }
+      //
       onTouchMove={
         model.t === 'dragging'
           ? handleTouch({ model, $send, t: 'dragged-over' })
           : undefined
       }
+      //
       onTouchStart={handleTouch({ model, $send, t: 'pressed-down' })}
+      //
       onTouchCancel={handleTouch({ model, $send, t: 'pressed-up' })}
+      //
       onTouchEnd={handleTouch({ model, $send, t: 'pressed-up' })}
     />
   );

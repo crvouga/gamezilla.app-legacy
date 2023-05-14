@@ -57,7 +57,7 @@ export type Node = TerminalNode | EmptyNode;
 export type TerminalNode = {
   id: NodeId;
   color: Color;
-  type?: 'start' | 'end' | null;
+  type?: 'start' | null;
 };
 
 export type EmptyNode = {
@@ -352,7 +352,10 @@ export const initPath = <T extends Model>(
   model: T,
   terminal: TerminalNode
 ): T => {
-  const cleared = clearPath(model, terminal.color);
+  const cleared = clearEdges(
+    clearTerminalNodes(model, terminal.color),
+    terminal.color
+  );
   const startNode: TerminalNode = {
     id: terminal.id,
     color: terminal.color,
@@ -372,8 +375,8 @@ const clearEdges = <T extends Model>(model: T, color: Color): T => {
   return modelNew;
 };
 
-const clearPath = <T extends Model>(model: T, color: Color): T => {
-  let modelNew: T = clearEdges(model, color);
+const clearTerminalNodes = <T extends Model>(model: T, color: Color): T => {
+  let modelNew: T = model;
 
   for (const terminal of yieldTerminalNodes(model)) {
     if (terminal.color === color) {
@@ -413,54 +416,94 @@ export const extendPath = <T extends Model>(
   color: Color,
   nodeId: NodeId
 ): T => {
+  const walk = <T extends Model>(modelNew: T, currentNodeId: NodeId): T => {
+    if (nodeId === currentNodeId) {
+      return modelNew;
+    }
+
+    const currentNode = toNode(modelNew, currentNodeId);
+
+    if (!currentNode) {
+      return modelNew;
+    }
+
+    if (isTerminal(currentNode) && currentNode.type !== 'start') {
+      return modelNew;
+    }
+
+    const outEdge = findOutEdgeByColor(model, currentNodeId, color);
+
+    if (!outEdge) {
+      const updated = updateEdge(modelNew, {
+        from: currentNodeId,
+        to: nodeId,
+        color,
+      });
+      return updated;
+    }
+
+    const nextNodeId = outEdge.to;
+
+    if (isNodeColored(modelNew, nextNodeId)) {
+      return modelNew;
+    }
+
+    const updated = updateEdge(modelNew, {
+      from: currentNodeId,
+      to: nextNodeId,
+      color,
+    });
+
+    return walk(updated, nextNodeId);
+  };
+
   const pathStartId = findPathStart(model, color);
 
   if (!pathStartId) {
     return model;
   }
 
-  const walked = extendPathWalk(
-    model,
-    nodeId,
-    color,
-    clearEdges(model, color),
-    pathStartId
-  );
+  const walked = walk(clearEdges(model, color), pathStartId);
 
   return walked;
 };
 
-const extendPathWalk = <T extends Model>(
-  modelPrev: T,
-  nodeId: NodeId,
-  color: Color,
-  modelNew: T,
-  currentNodeId: NodeId
-): T => {
-  if (nodeId === currentNodeId) {
-    return modelNew;
+export const isPathComplete = (model: Model, color: Color): boolean => {
+  const pathStartId = findPathStart(model, color);
+
+  if (!pathStartId) {
+    return false;
   }
 
-  const outEdge = findOutEdgeByColor(modelPrev, currentNodeId, color);
+  const pathEndId = findPathEnd(model, color, pathStartId);
 
-  if (!outEdge) {
-    const updated = updateEdge(modelNew, {
-      from: currentNodeId,
-      to: nodeId,
-      color,
-    });
-    return updated;
+  if (!pathEndId) {
+    return false;
   }
 
-  const nextNodeId = outEdge.to;
+  const pathEnd = toNode(model, pathEndId);
 
-  const updated = updateEdge(modelNew, {
-    from: currentNodeId,
-    to: nextNodeId,
-    color,
-  });
+  if (!pathEnd) {
+    return false;
+  }
 
-  return extendPathWalk(modelPrev, nodeId, color, updated, nextNodeId);
+  return isTerminal(pathEnd);
+};
+
+export const isNodeColored = (model: Model, nodeId: NodeId): boolean => {
+  for (const edge of yieldOutEdges(model, nodeId)) {
+    if (edge.color) {
+      return true;
+    }
+  }
+
+  for (const edge of yieldInEdges(model, nodeId)) {
+    if (edge.color) {
+      return true;
+    }
+  }
+
+  return false;
 };
 
 const findOutEdgeByColor = <T extends Model>(
@@ -512,3 +555,19 @@ export const findPathEnd = (
 //
 //
 //
+
+export const toPathColor = (model: Model, nodeId: NodeId): Color | null => {
+  for (const edge of yieldInEdges(model, nodeId)) {
+    if (edge.color) {
+      return edge.color;
+    }
+  }
+
+  for (const edge of yieldOutEdges(model, nodeId)) {
+    if (edge.color) {
+      return edge.color;
+    }
+  }
+
+  return null;
+};
