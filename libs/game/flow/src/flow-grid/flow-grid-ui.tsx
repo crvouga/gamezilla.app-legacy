@@ -152,6 +152,11 @@ export const paint = (ctx: CanvasRenderingContext2D, model: Model) => {
     if (!edge.color) {
       continue;
     }
+
+    //
+    // Line
+    //
+
     ctx.strokeStyle = edge.color;
     ctx.lineWidth = squareLength / 4;
     ctx.beginPath();
@@ -164,6 +169,22 @@ export const paint = (ctx: CanvasRenderingContext2D, model: Model) => {
       edge.to.y * squareLength + squareLength / 2
     );
     ctx.stroke();
+    ctx.closePath();
+
+    //
+    // Rounded Line Cap
+    //
+
+    ctx.beginPath();
+    ctx.arc(
+      edge.to.x * squareLength + squareLength / 2,
+      edge.to.y * squareLength + squareLength / 2,
+      squareLength / 8,
+      0,
+      2 * Math.PI
+    );
+    ctx.fillStyle = edge.color;
+    ctx.fill();
     ctx.closePath();
   }
 
