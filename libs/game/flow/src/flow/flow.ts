@@ -167,7 +167,7 @@ export const addEdge = <T extends Model>(model: T, edge: Edge): T => {
 export const setEdgeColor = <T extends Model>(
   model: T,
   edgeId: EdgeId,
-  color: Color
+  color: Color | null
 ): T => {
   const edge = model.edges[edgeId];
 
@@ -377,10 +377,9 @@ const clearEdges = <T extends Model>(model: T, color: Color): T => {
   let modelNew: T = { ...model };
   for (const edge of yieldEdges(model)) {
     if (edge.color === color) {
-      modelNew = removeEdgeColor(modelNew, edge);
+      modelNew = setEdgeColor(modelNew, toEdgeId(edge), null);
     }
   }
-
   return modelNew;
 };
 
@@ -399,19 +398,6 @@ const clearTerminalNodes = <T extends Model>(model: T, color: Color): T => {
   return modelNew;
 };
 
-const removeEdgeColor = <T extends Model>(model: T, edge: Edge): T => {
-  return {
-    ...model,
-    edges: {
-      ...model.edges,
-      [toEdgeId(edge)]: {
-        ...model.edges[toEdgeId(edge)],
-        color: null,
-      },
-    },
-  };
-};
-
 //
 //
 //
@@ -420,61 +406,92 @@ const removeEdgeColor = <T extends Model>(model: T, edge: Edge): T => {
 //
 //
 
+/*
+
+Algorithm:
+1. Find the path start for the color.
+2.
+
+
+*/
+
 export const extendPath = <T extends Model>(
   model: T,
   color: Color,
-  nodeId: NodeId
+  targetNodeId: NodeId
 ): T => {
-  const walk = <T extends Model>(modelNew: T, currentNodeId: NodeId): T => {
-    if (nodeId === currentNodeId) {
-      return modelNew;
-    }
+  if (hasPathColor(model, targetNodeId)) {
+    return model;
+  }
 
-    const currentNode = toNode(modelNew, currentNodeId);
+  const node = toNode(model, targetNodeId);
 
-    if (!currentNode) {
-      return modelNew;
-    }
+  if (!node) {
+    return model;
+  }
 
-    if (isTerminal(currentNode) && currentNode.type !== 'start') {
-      return modelNew;
-    }
+  if (isTerminal(node) && node.color !== color) {
+    return model;
+  }
 
-    const outEdge = findOutEdgeByColor(model, currentNodeId, color);
+  const pathStart = findPathStart(model, color);
 
-    if (!outEdge) {
-      const edgeId = toEdgeId({ from: currentNodeId, to: nodeId });
-      const updated = setEdgeColor(modelNew, edgeId, color);
-      return updated;
-    }
-
-    const nextNodeId = outEdge.to;
-
-    if (isNodeColored(modelNew, nextNodeId)) {
-      return modelNew;
-    }
-
-    const edgeId = toEdgeId({ from: currentNodeId, to: nextNodeId });
-
-    const updated = setEdgeColor(modelNew, edgeId, color);
-
-    return walk(updated, nextNodeId);
-  };
-
-  const pathStartId = findPathStart(model, color);
-
-  if (!pathStartId) {
+  if (!pathStart) {
     return model;
   }
 
   const cleared = clearEdges(model, color);
 
-  const walked = walk(cleared, pathStartId);
+  const walked = extendPathWalk(
+    { targetNodeId, color, model },
+    cleared,
+    pathStart
+  );
 
   return walked;
 };
 
-export const isNodeColored = (model: Model, nodeId: NodeId): boolean => {
+const extendPathWalk = <T extends Model>(
+  ctx: { targetNodeId: NodeId; color: Color; model: T },
+  model: T,
+  node: Node
+): T => {
+  if (ctx.targetNodeId === node.id) {
+    return model;
+  }
+
+  if (isTerminal(node) && !isStart(node)) {
+    return model;
+  }
+
+  const edge = findOutEdgeByColor(model, node.id, ctx.color);
+
+  if (!edge) {
+    const edgeId = toEdgeId({ from: node.id, to: ctx.targetNodeId });
+    return setEdgeColor(model, edgeId, ctx.color);
+  }
+
+  if (hasPathColor(model, edge.to)) {
+    return model;
+  }
+
+  const edgeId = toEdgeId({ from: node.id, to: edge.to });
+
+  const updated = setEdgeColor(model, edgeId, ctx.color);
+
+  return extendPathWalk(ctx, updated, edge.nodeTo);
+};
+
+export const findShortestEmptyPath = <T extends Model>(
+  _model: T,
+  _color: Color,
+  _start: NodeId,
+  _end: NodeId
+): EdgeId[] => {
+  return [];
+};
+
+export const hasPathColor = (model: Model, nodeId: NodeId): boolean => {
   for (const edge of yieldOutEdges(model, nodeId)) {
     if (edge.color) {
       return true;
@@ -503,10 +520,10 @@ const findOutEdgeByColor = <T extends Model>(
   return null;
 };
 
-export const findPathStart = (model: Model, color: Color): NodeId | null => {
+export const findPathStart = (model: Model, color: Color): Node | null => {
   for (const terminal of yieldTerminalNodes(model)) {
     if (terminal.color === color && terminal.type === 'start') {
-      return terminal.id;
+      return terminal;
     }
   }
   return null;
@@ -556,14 +573,14 @@ export const toPathColor = (model: Model, nodeId: NodeId): Color | null => {
   return null;
 };
 
-export const isPathComplete = (model: Model, color: Color): boolean => {
-  const pathStartId = findPathStart(model, color);
+export const isPathDone = (model: Model, color: Color): boolean => {
+  const pathStart = findPathStart(model, color);
 
-  if (!pathStartId) {
+  if (!pathStart) {
     return false;
   }
 
-  const pathEndId = findPathEnd(model, color, pathStartId);
+  const pathEndId = findPathEnd(model, color, pathStart.id);
 
   if (!pathEndId) {
     return false;
