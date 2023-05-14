@@ -464,7 +464,7 @@ const extendPathWalk = <T extends Model>(
     return model;
   }
 
-  const edge = findOutEdgeByColor(model, node.id, ctx.color);
+  const edge = findOutEdgeByColor(ctx.model, node.id, ctx.color);
 
   if (!edge) {
     const edgeId = toEdgeId({ from: node.id, to: ctx.targetNodeId });
