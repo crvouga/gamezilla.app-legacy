@@ -119,6 +119,17 @@ const updatePressedDown = ({
     };
   }
 
+  const pathColor = Flow.toPathColor(model.grid, nodeId);
+
+  if (pathColor) {
+    return {
+      ...model,
+      grid: Flow.extendPath(model.grid, pathColor, node.id),
+      t: 'dragging',
+      color: pathColor,
+    };
+  }
+
   return model;
 };
 
