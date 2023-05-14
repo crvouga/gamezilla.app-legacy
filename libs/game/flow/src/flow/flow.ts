@@ -420,7 +420,8 @@ export const extendPath = <T extends Model>(
   color: Color,
   targetNodeId: NodeId
 ): T => {
-  if (hasPathColor(model, targetNodeId)) {
+  const targetNodePathColor = toPathColor(model, targetNodeId);
+  if (targetNodePathColor && targetNodePathColor !== color) {
     return model;
   }
 
@@ -456,7 +457,7 @@ const extendPathWalk = <T extends Model>(
   model: T,
   node: Node
 ): T => {
-  if (ctx.targetNodeId === node.id) {
+  if (node.id === ctx.targetNodeId) {
     return model;
   }
 
