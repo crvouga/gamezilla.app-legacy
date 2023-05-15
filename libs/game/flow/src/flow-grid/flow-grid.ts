@@ -76,8 +76,10 @@ export type Node = Flow.Node & Position;
 
 export type Edge = {
   color?: Color | null;
-  from: Node;
-  to: Node;
+  from: Flow.NodeId;
+  to: Flow.NodeId;
+  nodeFrom: Node;
+  nodeTo: Node;
 };
 
 export const toNode = (model: Model, nodeId: Flow.NodeId): Node | null => {
@@ -120,8 +122,8 @@ export const toEdge = (model: Model, edgeId: Flow.EdgeId): Edge | null => {
 
   return {
     ...edge,
-    from,
-    to,
+    nodeFrom: from,
+    nodeTo: to,
   };
 };
 
@@ -181,8 +183,8 @@ export const yieldEdges = function* (model: Model): Generator<Edge> {
 
     yield {
       ...edge,
-      from,
-      to,
+      nodeFrom: from,
+      nodeTo: to,
     };
   }
 };
