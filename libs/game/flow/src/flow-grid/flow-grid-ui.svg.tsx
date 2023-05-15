@@ -16,7 +16,7 @@ import { Model, Msg } from './flow-grid-ui';
 
 const TERMINAL_NODE_RADIUS = 0.33;
 const TERMINAL_NODE_RADIUS_ACTIVE = 0.4;
-const TERMINAL_NODE_ACTIVE_ANIMATION_DURATION = 200;
+
 const EDGE_STROKE_WIDTH = 0.3;
 
 export const View = ({
@@ -46,7 +46,6 @@ export const View = ({
       <g>
         {map(FlowGrid.yieldNodes(model.grid), (node) => {
           const pathColor = Flow.toPathColor(model.grid, node.id);
-
           const fill = !pathColor
             ? 'transparent'
             : model.t === 'dragging' && model.activePathColor === pathColor
@@ -60,12 +59,50 @@ export const View = ({
               width={1}
               height={1}
               fill={fill}
-              fillOpacity={0.3}
-              stroke="green"
-              strokeWidth={0.003}
+              fillOpacity={0.2}
             />
           );
         })}
+      </g>
+
+      {/* grid lines */}
+      <g stroke="green" strokeWidth={0.01}>
+        <rect
+          x={model.grid.bounds.min.x}
+          y={model.grid.bounds.min.y}
+          width={model.grid.bounds.max.x - model.grid.bounds.min.x}
+          height={model.grid.bounds.max.y - model.grid.bounds.min.y}
+          strokeWidth={0.02}
+          fill="transparent"
+        />
+        {map(
+          yieldRange(model.grid.bounds.min.x + 1, model.grid.bounds.max.x),
+          (x) => {
+            return (
+              <line
+                key={x}
+                x1={x}
+                y1={model.grid.bounds.min.y}
+                x2={x}
+                y2={model.grid.bounds.max.y}
+              />
+            );
+          }
+        )}
+        {map(
+          yieldRange(model.grid.bounds.min.y + 1, model.grid.bounds.max.y),
+          (y) => {
+            return (
+              <line
+                key={y}
+                x1={model.grid.bounds.min.x}
+                y1={y}
+                x2={model.grid.bounds.max.x}
+                y2={y}
+              />
+            );
+          }
+        )}
       </g>
 
       <g transform="translate(0.5, 0.5)">
@@ -277,4 +314,10 @@ const map = <T, TY>(iterable: Iterable<T>, fn: (x: T) => TY): TY[] => {
   }
 
   return result;
+};
+
+const yieldRange = function* (lower: number, upper: number) {
+  for (let i = lower; i < upper; i++) {
+    yield i;
+  }
 };
