@@ -148,6 +148,20 @@ type AttributeEaseConfig = {
   easing?: Easing;
   delay?: number;
 };
+/**
+ * Applies easing function-based animations to specified attributes of an HTML/SVG node.
+ *
+ * @param {Object} node - An object representing an HTML/SVG node with a `setAttribute` function.
+ * @param {Object} attributes - An object mapping attribute names to their animation configurations.
+ *
+ * @example
+ *   const node = document.querySelector('#myElement');
+ *   const attributes = {
+ *     'attribute1': { from: 0, to: 100, duration: 2000 },
+ *     'attribute2': { from: 50, to: 0, duration: 1500, easing: { type: 'linear' }, delay: 500 },
+ *   };
+ *   easeAttrs(node, attributes);
+ */
 export const easeAttrs = (
   node: { setAttribute: (attribute: string, value: string) => void },
   attributes: {

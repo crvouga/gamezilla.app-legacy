@@ -3,6 +3,8 @@ import { Color, Flow } from '../flow';
 import * as FlowGrid from './flow-grid';
 import * as FlowGridPosition from './flow-grid-position';
 import { Model, Msg } from './flow-grid-ui';
+import { Transition } from 'react-transition-group';
+import { easeAttrs } from '@gamezilla/shared/core';
 
 //
 //
@@ -12,7 +14,9 @@ import { Model, Msg } from './flow-grid-ui';
 //
 //
 
-const TERMINAL_NODE_RADIUS = 0.35;
+const TERMINAL_NODE_RADIUS = 0.33;
+const TERMINAL_NODE_RADIUS_ACTIVE = 0.4;
+const TERMINAL_NODE_ACTIVE_ANIMATION_DURATION = 200;
 const EDGE_STROKE_WIDTH = 0.3;
 
 export const View = ({
@@ -76,6 +80,52 @@ export const View = ({
                 $send({ t: 'pressed-down', nodeId: node.id });
               }}
             />
+          );
+        })}
+
+        {map(FlowGrid.yieldNodes(model.grid), (node) => {
+          if (!Flow.isTerminal(node)) {
+            return null;
+          }
+
+          return (
+            <Transition
+              key={node.id}
+              in={model.t === 'dragging' && model.color === node.color}
+              addEndListener={() => {
+                //
+              }}
+              onEnter={(node: HTMLElement) => {
+                easeAttrs(node, {
+                  r: {
+                    from: TERMINAL_NODE_RADIUS,
+                    to: TERMINAL_NODE_RADIUS_ACTIVE,
+                    duration: TERMINAL_NODE_ACTIVE_ANIMATION_DURATION,
+                    easing: { type: 'ease-in-back' },
+                  },
+                });
+              }}
+              onExit={(node: HTMLElement) => {
+                easeAttrs(node, {
+                  r: {
+                    from: TERMINAL_NODE_RADIUS_ACTIVE,
+                    to: TERMINAL_NODE_RADIUS,
+                    duration: TERMINAL_NODE_ACTIVE_ANIMATION_DURATION,
+                    easing: { type: 'ease-in-back' },
+                  },
+                });
+              }}
+            >
+              <circle
+                cx={node.x}
+                cy={node.y}
+                r={TERMINAL_NODE_RADIUS}
+                fill={Color.toHex(node.color)}
+                onClick={() => {
+                  $send({ t: 'pressed-down', nodeId: node.id });
+                }}
+              />
+            </Transition>
           );
         })}
 
