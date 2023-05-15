@@ -1,7 +1,7 @@
 import { rescale } from '@gamezilla/shared/core';
 import { cn } from '@gamezilla/shared/ui';
-import { memo, useLayoutEffect, useRef } from 'react';
-import { Flow } from '../flow';
+import { useLayoutEffect, useRef } from 'react';
+import { Color, Flow } from '../flow';
 import * as FlowGrid from './flow-grid';
 import * as FlowGridPosition from './flow-grid-position';
 
@@ -17,7 +17,7 @@ export type Model = State & {
   grid: FlowGrid.Model;
 };
 
-type State = { t: 'idle' } | { t: 'dragging'; color: Flow.Color };
+type State = { t: 'idle' } | { t: 'dragging'; color: Color };
 
 export const init = (grid: FlowGrid.Model): Model => ({
   t: 'idle',
@@ -179,7 +179,7 @@ export const paint = (ctx: CanvasRenderingContext2D, model: Model) => {
     // }
 
     ctx.globalAlpha = 0.2;
-    ctx.fillStyle = nodeColor;
+    ctx.fillStyle = Color.toHex(nodeColor);
     ctx.fillRect(
       position.x * squareLength,
       position.y * squareLength,
@@ -202,7 +202,7 @@ export const paint = (ctx: CanvasRenderingContext2D, model: Model) => {
     // Line
     //
 
-    ctx.strokeStyle = edge.color;
+    ctx.strokeStyle = Color.toHex(edge.color);
     ctx.lineWidth = squareLength / 4;
     ctx.beginPath();
     ctx.moveTo(
@@ -228,7 +228,7 @@ export const paint = (ctx: CanvasRenderingContext2D, model: Model) => {
       0,
       2 * Math.PI
     );
-    ctx.fillStyle = edge.color;
+    ctx.fillStyle = Color.toHex(edge.color);
     ctx.fill();
     ctx.closePath();
   }
@@ -241,7 +241,7 @@ export const paint = (ctx: CanvasRenderingContext2D, model: Model) => {
       continue;
     }
 
-    ctx.fillStyle = node.color;
+    ctx.fillStyle = Color.toHex(node.color);
 
     ctx.beginPath();
     ctx.arc(
@@ -272,12 +272,6 @@ export const paint = (ctx: CanvasRenderingContext2D, model: Model) => {
   }
 };
 
-//
-//
-//
-//
-//
-
 export const View = ({
   model,
   $send,
@@ -304,7 +298,7 @@ export const View = ({
 
     paint(context, model);
     renderCount.current += 1;
-  });
+  }, [model]);
 
   return (
     <>

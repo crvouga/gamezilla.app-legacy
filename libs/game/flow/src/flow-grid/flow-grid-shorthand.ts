@@ -1,25 +1,9 @@
 import { NonEmpty } from '@gamezilla/shared/core';
-import { Flow } from '../flow';
+import { Color, Emoji } from '../flow';
 import * as FlowGrid from './flow-grid';
 import { Position } from './flow-grid-position';
 
 export type Model = NonEmpty<NonEmpty<string | null>>;
-
-type Emoji = '🟡' | '🔵' | '🟢' | '🔴' | '🟠';
-
-const isEmoji = (value: string): value is Emoji => {
-  return ['🟡', '🔵', '🟢', '🔴', '🟠'].includes(value);
-};
-
-export const emojiToColor = (emoji: Emoji): Flow.Color => {
-  return {
-    '🟡': 'yellow',
-    '🔵': 'blue',
-    '🟢': 'green',
-    '🔴': 'red',
-    '🟠': 'orange',
-  }[emoji];
-};
 
 export const fromShorthandNode = (
   node: Position & { color: Emoji }
@@ -27,7 +11,7 @@ export const fromShorthandNode = (
   return {
     ...node,
     id: FlowGrid.positionToId(node),
-    color: emojiToColor(node.color),
+    color: Color.fromEmoji(node.color),
   };
 };
 
@@ -59,11 +43,11 @@ export const fromShorthand = (model: Model): FlowGrid.Model => {
         continue;
       }
 
-      if (!isEmoji(emoji)) {
+      if (!Emoji.is(emoji)) {
         continue;
       }
 
-      const color = emojiToColor(emoji);
+      const color = Color.fromEmoji(emoji);
 
       if (!color) {
         continue;

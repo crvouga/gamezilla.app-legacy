@@ -1,4 +1,4 @@
-import { Flow } from '../flow';
+import { Color, Flow } from '../flow';
 import { Bounds, Position, deltas, yieldRange } from './flow-grid-position';
 
 //
@@ -75,7 +75,7 @@ export const initEmpty = ({ bounds }: { bounds: Bounds }): Model => {
 export type Node = Flow.Node & Position;
 
 export type Edge = {
-  color?: Flow.Color | null;
+  color?: Color | null;
   from: Node;
   to: Node;
 };
@@ -134,7 +134,7 @@ export const toEdge = (model: Model, edgeId: Flow.EdgeId): Edge | null => {
 
 export const addNode = (
   model: Model,
-  { color, ...position }: Position & { color?: Flow.Color }
+  { color, ...position }: Position & { color?: Color }
 ): Model => {
   const id = positionToId(position);
   const modelNew = Flow.setNode(model, { color, id });

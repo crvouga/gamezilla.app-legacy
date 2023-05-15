@@ -1,3 +1,5 @@
+import { Color } from './flow-color';
+
 export type NodeId = string & { readonly __brand: unique symbol };
 
 export type EdgeId = string & { readonly __brand: unique symbol };
@@ -13,8 +15,6 @@ export const isEdgeId = (model: Model, id: string): id is EdgeId => {
 export const isNodeId = (model: Model, id: string): id is NodeId => {
   return id in model.nodes;
 };
-
-export type Color = string;
 
 //
 //
