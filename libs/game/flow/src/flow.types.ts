@@ -17,7 +17,7 @@ export type SharedModel = {
 };
 
 export const initShared: SharedModel = {
-  gridUI: FlowGridUI.init(FlowGridShorthand.samples['5x5']['1']),
+  gridUI: FlowGridUI.init(FlowGridShorthand.samples['6x6']['1']),
 };
 
 //

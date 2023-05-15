@@ -83,7 +83,16 @@ export const samples = {
       [null, '🔴', '🔵', '🟠', null],
     ]),
   },
-  '6x6': {},
+  '6x6': {
+    '1': fromShorthand([
+      [null, null, null, null, null, '🟠'],
+      [null, '🟢', null, '🔵', '🟡', null],
+      [null, null, null, null, null, null],
+      ['🔴', null, null, null, null, null],
+      [null, null, '🟠', '🟢', '🔵', null],
+      [null, null, null, '🔴', '🟡', null],
+    ]),
+  },
   '7x7': {},
   '8x8': {},
 };
