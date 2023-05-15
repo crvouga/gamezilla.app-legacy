@@ -12,7 +12,7 @@ import { Model, Msg } from './flow-grid-ui';
 //
 //
 
-const TERMINAL_NODE_RADIUS = 0.4;
+const TERMINAL_NODE_RADIUS = 0.35;
 const EDGE_STROKE_WIDTH = 0.3;
 
 export const View = ({
