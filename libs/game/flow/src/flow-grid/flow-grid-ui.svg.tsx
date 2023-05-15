@@ -1,10 +1,10 @@
+import { easeAttrs } from '@gamezilla/shared/core';
 import { cn } from '@gamezilla/shared/ui';
+import { useEffect, useRef } from 'react';
 import { Color, Flow } from '../flow';
 import * as FlowGrid from './flow-grid';
 import * as FlowGridPosition from './flow-grid-position';
 import { Model, Msg } from './flow-grid-ui';
-import { Transition } from 'react-transition-group';
-import { easeAttrs } from '@gamezilla/shared/core';
 
 //
 //
@@ -89,43 +89,13 @@ export const View = ({
           }
 
           return (
-            <Transition
+            <ViewTerminalNode
+              color={node.color}
+              x={node.x}
+              y={node.y}
+              isActive={model.t === 'dragging' && model.color === node.color}
               key={node.id}
-              in={model.t === 'dragging' && model.color === node.color}
-              addEndListener={() => {
-                //
-              }}
-              onEnter={(node: HTMLElement) => {
-                easeAttrs(node, {
-                  r: {
-                    from: TERMINAL_NODE_RADIUS,
-                    to: TERMINAL_NODE_RADIUS_ACTIVE,
-                    duration: TERMINAL_NODE_ACTIVE_ANIMATION_DURATION,
-                    easing: { type: 'ease-in-back' },
-                  },
-                });
-              }}
-              onExit={(node: HTMLElement) => {
-                easeAttrs(node, {
-                  r: {
-                    from: TERMINAL_NODE_RADIUS_ACTIVE,
-                    to: TERMINAL_NODE_RADIUS,
-                    duration: TERMINAL_NODE_ACTIVE_ANIMATION_DURATION,
-                    easing: { type: 'ease-in-back' },
-                  },
-                });
-              }}
-            >
-              <circle
-                cx={node.x}
-                cy={node.y}
-                r={TERMINAL_NODE_RADIUS}
-                fill={Color.toHex(node.color)}
-                onClick={() => {
-                  $send({ t: 'pressed-down', nodeId: node.id });
-                }}
-              />
-            </Transition>
+            />
           );
         })}
 
@@ -191,6 +161,64 @@ export const View = ({
         })}
       </g>
     </svg>
+  );
+};
+
+const ViewTerminalNode = ({
+  color,
+  x,
+  y,
+  isActive,
+}: {
+  color: Color;
+  x: number;
+  y: number;
+  isActive: boolean;
+}) => {
+  const ref = useRef<SVGCircleElement | null>(null);
+  const previousIsActive = useRef(isActive);
+  useEffect(() => {
+    if (previousIsActive.current === isActive) {
+      return;
+    }
+    previousIsActive.current = isActive;
+
+    const node = ref.current;
+
+    if (!node) {
+      return;
+    }
+
+    if (isActive) {
+      easeAttrs(node, {
+        r: {
+          from: TERMINAL_NODE_RADIUS,
+          to: TERMINAL_NODE_RADIUS_ACTIVE,
+          duration: TERMINAL_NODE_ACTIVE_ANIMATION_DURATION,
+          easing: { type: 'ease-out-back' },
+        },
+      });
+      return;
+    }
+
+    easeAttrs(node, {
+      r: {
+        from: TERMINAL_NODE_RADIUS_ACTIVE,
+        to: TERMINAL_NODE_RADIUS,
+        duration: TERMINAL_NODE_ACTIVE_ANIMATION_DURATION,
+        easing: { type: 'ease-out-back' },
+      },
+    });
+  }, [isActive]);
+
+  return (
+    <circle
+      ref={ref}
+      cx={x}
+      cy={y}
+      r={TERMINAL_NODE_RADIUS}
+      fill={Color.toHex(color)}
+    />
   );
 };
 

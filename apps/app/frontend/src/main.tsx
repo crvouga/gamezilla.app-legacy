@@ -7,6 +7,7 @@ import {
   sessionIdKey,
 } from '@gamezilla/app';
 import { Browser, Cmd, Debug, Program } from '@gamezilla/shared/core';
+import * as React from 'react';
 import * as ReactDOM from 'react-dom/client';
 import { Socket, io } from 'socket.io-client';
 
@@ -77,12 +78,14 @@ const main = () => {
 
   program.state$.subscribe((state) => {
     root.render(
-      <AppFrontend.View
-        isTimeTravelDebugging={state.model._debugId < state.runningDebugId}
-        now={state.model._now}
-        model={state.model}
-        $send={program.$send}
-      />
+      <React.StrictMode>
+        <AppFrontend.View
+          isTimeTravelDebugging={state.model._debugId < state.runningDebugId}
+          now={state.model._now}
+          model={state.model}
+          $send={program.$send}
+        />
+      </React.StrictMode>
     );
   });
 };
