@@ -14,7 +14,7 @@ export type Model = State & {
   grid: FlowGrid.Model;
 };
 
-type State = { t: 'idle' } | { t: 'dragging'; color: Color };
+type State = { t: 'idle' } | { t: 'dragging'; activePathColor: Color };
 
 export const init = (grid: FlowGrid.Model): Model => ({
   t: 'idle',
@@ -66,7 +66,11 @@ export const updateModel = ({
 
   if (model.t === 'dragging') {
     if (msg.t === 'dragged-over') {
-      const gridNew = Flow.extendPath(model.grid, model.color, msg.nodeId);
+      const gridNew = Flow.extendPath(
+        model.grid,
+        model.activePathColor,
+        msg.nodeId
+      );
 
       return {
         ...model,
@@ -110,9 +114,9 @@ const updatePressedDown = ({
   if (Flow.isTerminal(node)) {
     return {
       ...model,
-      grid: Flow.initPath(model.grid, node),
+      grid: Flow.startPath(model.grid, node),
       t: 'dragging',
-      color: node.color,
+      activePathColor: node.color,
     };
   }
 
@@ -123,7 +127,7 @@ const updatePressedDown = ({
       ...model,
       grid: Flow.extendPath(model.grid, pathColor, node.id),
       t: 'dragging',
-      color: pathColor,
+      activePathColor: pathColor,
     };
   }
 

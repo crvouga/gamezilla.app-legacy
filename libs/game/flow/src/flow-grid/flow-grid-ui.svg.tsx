@@ -49,7 +49,7 @@ export const View = ({
 
           const fill = !pathColor
             ? 'transparent'
-            : model.t === 'dragging' && model.color === pathColor
+            : model.t === 'dragging' && model.activePathColor === pathColor
             ? 'transparent'
             : Color.toHex(pathColor);
           return (
@@ -98,7 +98,9 @@ export const View = ({
               color={node.color}
               x={node.x}
               y={node.y}
-              isActive={model.t === 'dragging' && model.color === node.color}
+              isActive={
+                model.t === 'dragging' && model.activePathColor === node.color
+              }
               key={node.id}
             />
           );

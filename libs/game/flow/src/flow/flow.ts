@@ -352,12 +352,12 @@ export const doesColoredPathExist = (
 //
 //
 //
-// Initial Path
+//  Path
 //
 //
 //
 
-export const initPath = <T extends Model>(
+export const startPath = <T extends Model>(
   model: T,
   terminal: TerminalNode
 ): T => {
@@ -406,22 +406,13 @@ const clearTerminalNodes = <T extends Model>(model: T, color: Color): T => {
 //
 //
 
-/*
-
-Algorithm:
-1. Find the path start for the color.
-2.
-
-
-*/
-
 export const extendPath = <T extends Model>(
   model: T,
-  color: Color,
+  pathColor: Color,
   targetNodeId: NodeId
 ): T => {
   const targetNodePathColor = toPathColor(model, targetNodeId);
-  if (targetNodePathColor && targetNodePathColor !== color) {
+  if (targetNodePathColor && targetNodePathColor !== pathColor) {
     return model;
   }
 
@@ -431,56 +422,72 @@ export const extendPath = <T extends Model>(
     return model;
   }
 
-  if (isTerminal(node) && node.color !== color) {
+  if (isTerminal(node) && node.color !== pathColor) {
     return model;
   }
 
-  const pathStart = findPathStart(model, color);
+  const pathStart = findPathStart(model, pathColor);
 
   if (!pathStart) {
     return model;
   }
 
-  const cleared = clearEdges(model, color);
+  const modelWithoutPath = clearEdges(model, pathColor);
 
-  const walked = extendPathWalk(
-    { targetNodeId, color, model },
-    cleared,
-    pathStart
-  );
+  const walked = extendPathWalk({
+    targetNodeId,
+    pathColor,
+    modelWithPath: model,
+    model: modelWithoutPath,
+    currentNode: pathStart,
+  });
 
   return walked;
 };
 
-const extendPathWalk = <T extends Model>(
-  ctx: { targetNodeId: NodeId; color: Color; model: T },
-  model: T,
-  node: Node
-): T => {
-  if (node.id === ctx.targetNodeId) {
+const extendPathWalk = <T extends Model>({
+  targetNodeId,
+  pathColor,
+  modelWithPath,
+  model,
+  currentNode,
+}: {
+  targetNodeId: NodeId;
+  pathColor: Color;
+  modelWithPath: T;
+  model: T;
+  currentNode: Node;
+}): T => {
+  if (currentNode.id === targetNodeId) {
     return model;
   }
 
-  if (isTerminal(node) && !isStart(node)) {
+  if (isTerminal(currentNode) && !isStart(currentNode)) {
     return model;
   }
 
-  const edge = findOutEdgeByColor(ctx.model, node.id, ctx.color);
+  const edge = findOutEdgeByColor(modelWithPath, currentNode.id, pathColor);
 
   if (!edge) {
-    const edgeId = toEdgeId({ from: node.id, to: ctx.targetNodeId });
-    return setEdgeColor(model, edgeId, ctx.color);
+    const edgeId = toEdgeId({ from: currentNode.id, to: targetNodeId });
+    return setEdgeColor(model, edgeId, pathColor);
   }
 
   if (hasPathColor(model, edge.to)) {
     return model;
   }
 
-  const edgeId = toEdgeId({ from: node.id, to: edge.to });
+  const edgeId = toEdgeId({ from: currentNode.id, to: edge.to });
 
-  const updated = setEdgeColor(model, edgeId, ctx.color);
+  const updated = setEdgeColor(model, edgeId, pathColor);
 
-  return extendPathWalk(ctx, updated, edge.nodeTo);
+  return extendPathWalk({
+    modelWithPath,
+    pathColor,
+    targetNodeId,
+    currentNode: edge.nodeTo,
+    model: updated,
+  });
 };
 
 export const findShortestEmptyPath = <T extends Model>(

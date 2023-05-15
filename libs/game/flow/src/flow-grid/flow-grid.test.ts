@@ -19,7 +19,7 @@ describe('flow-grid', () => {
       color: Color.fromEmoji('🟡'),
       id: positionToId({ x: 0, y: 0 }),
     };
-    const modelNew = Flow.initPath(model, startNode);
+    const modelNew = Flow.startPath(model, startNode);
     const pathStart = Flow.findPathStart(modelNew, Color.fromEmoji('🟡'));
     expect(pathStart).toEqual(startNode.id);
   });
@@ -30,7 +30,7 @@ describe('flow-grid', () => {
     };
 
     const modelNew = p(
-      Flow.initPath(model, startNode),
+      Flow.startPath(model, startNode),
       (m) =>
         Flow.extendPath(m, Color.fromEmoji('🟡'), positionToId({ x: 0, y: 1 })),
       (m) =>
