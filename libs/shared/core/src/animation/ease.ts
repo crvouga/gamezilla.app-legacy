@@ -162,12 +162,12 @@ type AttributeEaseConfig = {
  *   };
  *   easeAttrs(node, attributes);
  */
-export const easeAttrs = (
+export const easeAttrs = async (
   node: { setAttribute: (attribute: string, value: string) => void },
   attributes: {
     [attribute: string]: AttributeEaseConfig;
   }
-) => {
+): Promise<void> => {
   const startTime = performance.now();
   const keys = Object.keys(attributes);
   const keyLength = keys.length;
@@ -179,32 +179,37 @@ export const easeAttrs = (
   let clamped: number;
   let c: AttributeEaseConfig;
 
-  function step(currentTime: number) {
-    loop = false;
-    for (i = 0; i < keyLength; i++) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      c = attributes[keys[i]];
-      elapsed = currentTime - startTime - (c.delay || 0);
-      progress = Math.max(0, Math.min(elapsed / c.duration, 1));
-      eased =
-        c.from +
-        (c.to - c.from) * ease(c.easing || { type: 'linear' }, progress);
-      clamped = Math.min(
-        c.max || Infinity,
-        Math.max(c.min || -Infinity, eased)
-      );
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      node.setAttribute(keys[i], String(clamped));
+  return new Promise((resolve) => {
+    function step(currentTime: number) {
+      loop = false;
+      for (i = 0; i < keyLength; i++) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        c = attributes[keys[i]];
+        elapsed = currentTime - startTime - (c.delay || 0);
+        progress = Math.max(0, Math.min(elapsed / c.duration, 1));
+        eased =
+          c.from +
+          (c.to - c.from) * ease(c.easing || { type: 'linear' }, progress);
+        clamped = Math.min(
+          c.max || Infinity,
+          Math.max(c.min || -Infinity, eased)
+        );
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        node.setAttribute(keys[i], String(clamped));
 
-      loop = loop || progress < 1;
+        loop = loop || progress < 1;
+      }
+
+      if (loop) {
+        requestAnimationFrame(step);
+        return;
+      }
+
+      resolve();
     }
 
-    if (loop) {
-      requestAnimationFrame(step);
-    }
-  }
-
-  requestAnimationFrame(step);
+    requestAnimationFrame(step);
+  });
 };

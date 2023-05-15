@@ -182,6 +182,7 @@ const ViewTerminalNode = ({
 }) => {
   const ref = useRef<SVGCircleElement | null>(null);
   const previousIsActive = useRef(isActive);
+  const isAnimating = useRef(false);
   useEffect(() => {
     if (previousIsActive.current === isActive) {
       return;
@@ -189,31 +190,40 @@ const ViewTerminalNode = ({
     previousIsActive.current = isActive;
 
     const node = ref.current;
-
     if (!node) {
       return;
     }
 
-    if (isActive) {
-      easeAttrs(node, {
+    const animate = async () => {
+      if (!isActive) {
+        return;
+      }
+
+      if (isAnimating.current) {
+        return;
+      }
+      isAnimating.current = true;
+
+      await easeAttrs(node, {
         r: {
           from: TERMINAL_NODE_RADIUS,
           to: TERMINAL_NODE_RADIUS_ACTIVE,
-          duration: TERMINAL_NODE_ACTIVE_ANIMATION_DURATION,
+          duration: 200,
           easing: { type: 'ease-out-back' },
         },
       });
-      return;
-    }
+      await easeAttrs(node, {
+        r: {
+          from: TERMINAL_NODE_RADIUS_ACTIVE,
+          to: TERMINAL_NODE_RADIUS,
+          duration: 400,
+          easing: { type: 'ease-out-back' },
+        },
+      });
+      isAnimating.current = false;
+    };
 
-    easeAttrs(node, {
-      r: {
-        from: TERMINAL_NODE_RADIUS_ACTIVE,
-        to: TERMINAL_NODE_RADIUS,
-        duration: TERMINAL_NODE_ACTIVE_ANIMATION_DURATION,
-        easing: { type: 'ease-out-back' },
-      },
-    });
+    animate();
   }, [isActive]);
 
   return (
