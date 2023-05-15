@@ -47,6 +47,11 @@ export const View = ({
         {map(FlowGrid.yieldNodes(model.grid), (node) => {
           const pathColor = Flow.toPathColor(model.grid, node.id);
 
+          const fill = !pathColor
+            ? 'transparent'
+            : model.t === 'dragging' && model.color === pathColor
+            ? 'transparent'
+            : Color.toHex(pathColor);
           return (
             <rect
               key={node.id}
@@ -54,8 +59,8 @@ export const View = ({
               y={node.y}
               width={1}
               height={1}
-              fill={pathColor ? Color.toHex(pathColor) : 'transparent'}
-              fillOpacity={0.4}
+              fill={fill}
+              fillOpacity={0.3}
               stroke="green"
               strokeWidth={0.003}
             />
