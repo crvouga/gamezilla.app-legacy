@@ -164,10 +164,10 @@ export const addEdge = <T extends Model>(model: T, edge: Edge): T => {
   };
 };
 
-export const setEdgeColor = <T extends Model>(
+export const setEdgePathColor = <T extends Model>(
   model: T,
   edgeId: EdgeId,
-  color: Color | null
+  pathColor: Color | null
 ): T => {
   const edge = model.edges[edgeId];
 
@@ -181,7 +181,7 @@ export const setEdgeColor = <T extends Model>(
       ...model.edges,
       [edgeId]: {
         ...edge,
-        pathColor: color,
+        pathColor: pathColor,
       },
     },
   };
@@ -377,7 +377,7 @@ const clearEdges = <T extends Model>(model: T, color: Color): T => {
   let modelNew: T = { ...model };
   for (const edge of yieldEdges(model)) {
     if (edge.pathColor === color) {
-      modelNew = setEdgeColor(modelNew, toEdgeId(edge), null);
+      modelNew = setEdgePathColor(modelNew, toEdgeId(edge), null);
     }
   }
   return modelNew;
@@ -473,8 +473,18 @@ const extendPathWalk = <T extends Model>({
   });
 
   if (!edge) {
-    const edgeId = toEdgeId({ from: currentNode.id, to: targetNodeId });
-    return setEdgeColor(model, edgeId, pathColor);
+    const shortestPath = findShortestEmptyPath({
+      model: modelWithPath,
+      start: currentNode.id,
+      target: targetNodeId,
+    });
+
+    const updated = shortestPath.reduce(
+      (acc, edgeId) => setEdgePathColor(acc, edgeId, pathColor),
+      model
+    );
+
+    return updated;
   }
 
   if (hasPathColor(model, edge.to)) {
@@ -483,7 +493,7 @@ const extendPathWalk = <T extends Model>({
 
   const edgeId = toEdgeId({ from: currentNode.id, to: edge.to });
 
-  const updated = setEdgeColor(model, edgeId, pathColor);
+  const updated = setEdgePathColor(model, edgeId, pathColor);
 
   return extendPathWalk({
     modelWithPath,
@@ -494,13 +504,118 @@ const extendPathWalk = <T extends Model>({
   });
 };
 
-export const findShortestEmptyPath = <T extends Model>(
-  _model: T,
-  _color: Color,
-  _start: NodeId,
-  _end: NodeId
-): EdgeId[] => {
-  return [];
+type BreadthFirstTree = {
+  [id: NodeId]: {
+    parent?: NodeId;
+  };
+};
+
+const findShortestEmptyPath = ({
+  model,
+  start,
+  target,
+}: {
+  model: Model;
+  start: NodeId;
+  target: NodeId;
+}): EdgeId[] => {
+  //
+  // Construct the breadth first tree from target to start
+  //
+
+  const queue: NodeId[] = [];
+  const visited = new Set<NodeId>();
+  const tree: BreadthFirstTree = { [start]: {} };
+
+  visited.add(start);
+  queue.push(start);
+
+  while (queue.length > 0) {
+    const current = queue.shift();
+
+    if (!current) {
+      break;
+    }
+
+    visited.add(current);
+
+    if (current === target) {
+      break;
+    }
+
+    for (const outEdge of yieldOutEdges(model, current)) {
+      const adjacent = outEdge.nodeTo;
+
+      if (visited.has(adjacent.id)) {
+        continue;
+      }
+
+      if (hasPathColor(model, adjacent.id)) {
+        continue;
+      }
+
+      if (
+        isTerminal(adjacent) &&
+        adjacent.color !== toPathColor(model, start)
+      ) {
+        continue;
+      }
+
+      queue.push(adjacent.id);
+      tree[adjacent.id] = { parent: current };
+    }
+  }
+
+  //
+  // Construct the path from the breadth first tree
+  //
+
+  let current = target;
+  const nodePath: NodeId[] = [current];
+
+  while (current !== start) {
+    const parent = tree[current]?.parent;
+
+    if (!parent) {
+      break;
+    }
+
+    nodePath.push(parent);
+    current = parent;
+  }
+
+  nodePath.reverse();
+
+  //
+  // Convert node path to edge path
+  //
+
+  const path: EdgeId[] = [];
+
+  for (let i = 0; i < nodePath.length; i++) {
+    const from = nodePath[i];
+    if (!from) {
+      continue;
+    }
+    const to = nodePath[i + 1];
+    if (!to) {
+      continue;
+    }
+    path.push(toEdgeId({ from, to }));
+  }
+
+  console.log(path);
+
+  // const edgeId = toEdgeId({ from: start, to: target });
+  // if (doesEdgeExist(model, edgeId)) {
+  //   return [edgeId];
+  // }
+
+  return path;
+};
+
+const doesEdgeExist = (model: Model, edgeId: EdgeId): boolean => {
+  return edgeId in model.edges;
 };
 
 export const hasPathColor = (model: Model, nodeId: NodeId): boolean => {
