@@ -14,7 +14,13 @@ export type Model = State & {
   grid: FlowGrid.Model;
 };
 
-type State = { t: 'idle' } | { t: 'dragging'; activePathColor: Color };
+type State =
+  | { t: 'idle' }
+  | {
+      t: 'dragging';
+      activePathColor: Color;
+      autocompleteEdge?: Flow.Edge | null;
+    };
 
 export const init = (grid: FlowGrid.Model): Model => ({
   t: 'idle',
@@ -72,22 +78,28 @@ export const updateModel = ({
         msg.nodeId
       );
 
+      const autocompleteEdge = Flow.toAutocompleteEdge(
+        gridNew,
+        model.activePathColor
+      );
+
       return {
         ...model,
+        autocompleteEdge,
         grid: gridNew,
       };
-    }
-
-    if (msg.t === 'pressed-up') {
-      return { ...model, t: 'idle' };
     }
 
     if (msg.t === 'pressed-down') {
       return updatePressedDown({ model, nodeId: msg.nodeId });
     }
 
+    if (msg.t === 'pressed-up') {
+      return { ...addAutocompleteEdge(model), t: 'idle' };
+    }
+
     if (msg.t === 'mouse-leave') {
-      return { ...model, t: 'idle' };
+      return { ...addAutocompleteEdge(model), t: 'idle' };
     }
 
     return model;
@@ -96,6 +108,21 @@ export const updateModel = ({
   const check: never = model;
 
   return check;
+};
+
+const addAutocompleteEdge = (model: Model): Model => {
+  if (model.t === 'dragging' && model.autocompleteEdge) {
+    const gridNew = Flow.extendPath(
+      model.grid,
+      model.activePathColor,
+      model.autocompleteEdge.to
+    );
+    return {
+      ...model,
+      grid: gridNew,
+    };
+  }
+  return model;
 };
 
 const updatePressedDown = ({
@@ -117,6 +144,7 @@ const updatePressedDown = ({
       grid: Flow.startPath(model.grid, node),
       t: 'dragging',
       activePathColor: node.color,
+      autocompleteEdge: null,
     };
   }
 
@@ -127,6 +155,7 @@ const updatePressedDown = ({
       ...model,
       grid: Flow.extendPath(model.grid, pathColor, node.id),
       t: 'dragging',
+      autocompleteEdge: null,
       activePathColor: pathColor,
     };
   }

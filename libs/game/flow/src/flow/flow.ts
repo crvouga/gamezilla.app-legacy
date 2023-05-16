@@ -504,12 +504,6 @@ const extendPathWalk = <T extends Model>({
   });
 };
 
-type BreadthFirstTree = {
-  [id: NodeId]: {
-    parent?: NodeId;
-  };
-};
-
 const findShortestEmptyPath = ({
   model,
   start,
@@ -520,12 +514,13 @@ const findShortestEmptyPath = ({
   target: NodeId;
 }): EdgeId[] => {
   //
-  // Construct the breadth first tree from target to start
   //
-
+  // Construct the breadth first tree
+  //
+  //
   const queue: NodeId[] = [];
   const visited = new Set<NodeId>();
-  const tree: BreadthFirstTree = { [start]: {} };
+  const tree: { [id: NodeId]: { parent?: NodeId } } = {};
 
   visited.add(start);
   queue.push(start);
@@ -604,18 +599,11 @@ const findShortestEmptyPath = ({
     path.push(toEdgeId({ from, to }));
   }
 
-  console.log(path);
-
-  // const edgeId = toEdgeId({ from: start, to: target });
-  // if (doesEdgeExist(model, edgeId)) {
-  //   return [edgeId];
-  // }
+  //
+  // Done
+  //
 
   return path;
-};
-
-const doesEdgeExist = (model: Model, edgeId: EdgeId): boolean => {
-  return edgeId in model.edges;
 };
 
 export const hasPathColor = (model: Model, nodeId: NodeId): boolean => {
@@ -660,13 +648,13 @@ export const findPathStart = (model: Model, color: Color): Node | null => {
   return null;
 };
 
-export const findPathEnd = (
+export const findPathEndId = (
   model: Model,
-  color: Color,
+  pathColor: Color,
   nodeId: NodeId
 ): NodeId => {
   for (const outEdge of yieldOutEdges(model, nodeId)) {
-    if (outEdge.pathColor !== color) {
+    if (outEdge.pathColor !== pathColor) {
       continue;
     }
 
@@ -674,7 +662,7 @@ export const findPathEnd = (
       return nodeId;
     }
 
-    return findPathEnd(model, color, outEdge.to);
+    return findPathEndId(model, pathColor, outEdge.to);
   }
 
   return nodeId;
@@ -711,7 +699,7 @@ export const isPathDone = (model: Model, color: Color): boolean => {
     return false;
   }
 
-  const pathEndId = findPathEnd(model, color, pathStart.id);
+  const pathEndId = findPathEndId(model, color, pathStart.id);
 
   if (!pathEndId) {
     return false;
@@ -724,4 +712,29 @@ export const isPathDone = (model: Model, color: Color): boolean => {
   }
 
   return isTerminal(pathEnd);
+};
+
+export const toAutocompleteEdge = (
+  model: Model,
+  pathColor: Color
+): Edge | null => {
+  const pathStart = findPathStart(model, pathColor);
+
+  if (!pathStart) {
+    return null;
+  }
+
+  const pathEndId = findPathEndId(model, pathColor, pathStart.id);
+
+  if (!pathEndId) {
+    return null;
+  }
+
+  for (const edge of yieldOutEdges(model, pathEndId)) {
+    if (isTerminal(edge.nodeTo) && edge.nodeTo.color === pathColor) {
+      return edge;
+    }
+  }
+
+  return null;
 };

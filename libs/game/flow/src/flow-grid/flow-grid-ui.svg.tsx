@@ -26,6 +26,10 @@ export const View = ({
   model: Model;
   $send: (msg: Msg) => void;
 }) => {
+  const autocompleteEdge =
+    model.t === 'dragging' && model.autocompleteEdge
+      ? FlowGrid.toEdge(model.grid, Flow.toEdgeId(model.autocompleteEdge))
+      : null;
   return (
     <svg
       className={cn(
@@ -43,6 +47,13 @@ export const View = ({
         }
       }}
     >
+      {/*
+
+
+      Colored background tiles
+
+
+      */}
       <g>
         {map(FlowGrid.yieldNodes(model.grid), (node) => {
           const pathColor = Flow.toPathColor(model.grid, node.id);
@@ -65,7 +76,13 @@ export const View = ({
         })}
       </g>
 
-      {/* grid lines */}
+      {/*
+
+
+      Grid lines
+
+
+      */}
       <g stroke="green" strokeWidth={0.01}>
         <rect
           x={model.grid.bounds.min.x}
@@ -105,26 +122,14 @@ export const View = ({
         )}
       </g>
 
+      {/*
+
+
+      Nodes
+
+
+      */}
       <g transform="translate(0.5, 0.5)">
-        {map(FlowGrid.yieldNodes(model.grid), (node) => {
-          if (!Flow.isTerminal(node)) {
-            return null;
-          }
-
-          return (
-            <circle
-              key={node.id}
-              cx={node.x}
-              cy={node.y}
-              r={TERMINAL_NODE_RADIUS}
-              fill={Color.toHex(node.color)}
-              onClick={() => {
-                $send({ t: 'pressed-down', nodeId: node.id });
-              }}
-            />
-          );
-        })}
-
         {map(FlowGrid.yieldNodes(model.grid), (node) => {
           if (!Flow.isTerminal(node)) {
             return null;
@@ -142,7 +147,37 @@ export const View = ({
             />
           );
         })}
+      </g>
 
+      {/*
+
+
+      Autocomplete edge
+
+
+      */}
+      <g transform="translate(0.5, 0.5)">
+        {model.t === 'dragging' && autocompleteEdge && (
+          <line
+            x1={autocompleteEdge.nodeFrom.x}
+            y1={autocompleteEdge.nodeFrom.y}
+            x2={autocompleteEdge.nodeTo.x}
+            y2={autocompleteEdge.nodeTo.y}
+            stroke={Color.toHex(model.activePathColor)}
+            strokeWidth={EDGE_STROKE_WIDTH}
+            strokeOpacity={0.5}
+          />
+        )}
+      </g>
+
+      {/*
+
+
+      Edges
+
+
+      */}
+      <g transform="translate(0.5, 0.5)">
         {map(FlowGrid.yieldEdges(model.grid), (edge) => {
           if (!edge.pathColor) {
             return null;
@@ -168,6 +203,13 @@ export const View = ({
         })}
       </g>
 
+      {/*
+
+
+      Clickable
+
+
+      */}
       <g>
         {map(FlowGrid.yieldNodes(model.grid), (node) => {
           const nodeId = node.id;

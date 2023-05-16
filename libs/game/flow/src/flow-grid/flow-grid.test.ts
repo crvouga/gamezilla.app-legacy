@@ -37,7 +37,7 @@ describe('flow-grid', () => {
         Flow.extendPath(m, Color.fromEmoji('🟡'), positionToId({ x: 0, y: 2 }))
     );
 
-    const actualEndId = Flow.findPathEnd(
+    const actualEndId = Flow.findPathEndId(
       modelNew,
       Color.fromEmoji('🟡'),
       startNode.id
