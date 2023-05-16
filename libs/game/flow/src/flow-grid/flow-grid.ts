@@ -74,10 +74,7 @@ export const initEmpty = ({ bounds }: { bounds: Bounds }): Model => {
 
 export type Node = Flow.Node & Position;
 
-export type Edge = {
-  color?: Color | null;
-  from: Flow.NodeId;
-  to: Flow.NodeId;
+export type Edge = Flow.Edge & {
   nodeFrom: Node;
   nodeTo: Node;
 };

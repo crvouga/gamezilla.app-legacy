@@ -49,7 +49,7 @@ export type Model = {
 export type Edge = {
   from: NodeId;
   to: NodeId;
-  color?: Color | null;
+  pathColor?: Color | null;
 };
 
 export type Node = TerminalNode | EmptyNode;
@@ -181,7 +181,7 @@ export const setEdgeColor = <T extends Model>(
       ...model.edges,
       [edgeId]: {
         ...edge,
-        color: color,
+        pathColor: color,
       },
     },
   };
@@ -337,7 +337,7 @@ export const doesColoredPathExist = (
   }
 
   for (const outEdge of yieldOutEdges(model, nodeId)) {
-    if (outEdge.color !== target.color) {
+    if (outEdge.pathColor !== target.color) {
       continue;
     }
 
@@ -376,7 +376,7 @@ export const startPath = <T extends Model>(
 const clearEdges = <T extends Model>(model: T, color: Color): T => {
   let modelNew: T = { ...model };
   for (const edge of yieldEdges(model)) {
-    if (edge.color === color) {
+    if (edge.pathColor === color) {
       modelNew = setEdgeColor(modelNew, toEdgeId(edge), null);
     }
   }
@@ -466,7 +466,11 @@ const extendPathWalk = <T extends Model>({
     return model;
   }
 
-  const edge = findOutEdgeByColor(modelWithPath, currentNode.id, pathColor);
+  const edge = findOutEdgeByPathColor({
+    model: modelWithPath,
+    nodeId: currentNode.id,
+    pathColor: pathColor,
+  });
 
   if (!edge) {
     const edgeId = toEdgeId({ from: currentNode.id, to: targetNodeId });
@@ -501,13 +505,13 @@ export const findShortestEmptyPath = <T extends Model>(
 
 export const hasPathColor = (model: Model, nodeId: NodeId): boolean => {
   for (const edge of yieldOutEdges(model, nodeId)) {
-    if (edge.color) {
+    if (edge.pathColor) {
       return true;
     }
   }
 
   for (const edge of yieldInEdges(model, nodeId)) {
-    if (edge.color) {
+    if (edge.pathColor) {
       return true;
     }
   }
@@ -515,13 +519,17 @@ export const hasPathColor = (model: Model, nodeId: NodeId): boolean => {
   return false;
 };
 
-const findOutEdgeByColor = <T extends Model>(
-  model: T,
-  nodeId: NodeId,
-  color: Color
-): EdgeFull | null => {
+const findOutEdgeByPathColor = <T extends Model>({
+  model,
+  nodeId,
+  pathColor,
+}: {
+  model: T;
+  nodeId: NodeId;
+  pathColor: Color;
+}): EdgeFull | null => {
   for (const outEdge of yieldOutEdges(model, nodeId)) {
-    if (outEdge.color === color) {
+    if (outEdge.pathColor === pathColor) {
       return outEdge;
     }
   }
@@ -543,7 +551,7 @@ export const findPathEnd = (
   nodeId: NodeId
 ): NodeId => {
   for (const outEdge of yieldOutEdges(model, nodeId)) {
-    if (outEdge.color !== color) {
+    if (outEdge.pathColor !== color) {
       continue;
     }
 
@@ -567,14 +575,14 @@ export const findPathEnd = (
 
 export const toPathColor = (model: Model, nodeId: NodeId): Color | null => {
   for (const edge of yieldInEdges(model, nodeId)) {
-    if (edge.color) {
-      return edge.color;
+    if (edge.pathColor) {
+      return edge.pathColor;
     }
   }
 
   for (const edge of yieldOutEdges(model, nodeId)) {
-    if (edge.color) {
-      return edge.color;
+    if (edge.pathColor) {
+      return edge.pathColor;
     }
   }
 

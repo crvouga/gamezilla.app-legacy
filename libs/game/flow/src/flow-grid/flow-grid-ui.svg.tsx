@@ -144,7 +144,7 @@ export const View = ({
         })}
 
         {map(FlowGrid.yieldEdges(model.grid), (edge) => {
-          if (!edge.color) {
+          if (!edge.pathColor) {
             return null;
           }
           return (
@@ -154,14 +154,14 @@ export const View = ({
                 y1={edge.nodeFrom.y}
                 x2={edge.nodeTo.x}
                 y2={edge.nodeTo.y}
-                stroke={Color.toHex(edge.color)}
+                stroke={Color.toHex(edge.pathColor)}
                 strokeWidth={EDGE_STROKE_WIDTH}
               />
               <circle
                 cx={edge.nodeTo.x}
                 cy={edge.nodeTo.y}
                 r={EDGE_STROKE_WIDTH / 2}
-                fill={Color.toHex(edge.color)}
+                fill={Color.toHex(edge.pathColor)}
               />
             </g>
           );

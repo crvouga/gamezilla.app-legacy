@@ -67,7 +67,7 @@ export const paint = (ctx: CanvasRenderingContext2D, model: Model) => {
   //
 
   for (const edge of FlowGrid.yieldEdges(grid)) {
-    if (!edge.color) {
+    if (!edge.pathColor) {
       continue;
     }
 
@@ -75,7 +75,7 @@ export const paint = (ctx: CanvasRenderingContext2D, model: Model) => {
     // Line
     //
 
-    ctx.strokeStyle = Color.toHex(edge.color);
+    ctx.strokeStyle = Color.toHex(edge.pathColor);
     ctx.lineWidth = squareLength / 4;
     ctx.beginPath();
     ctx.moveTo(
@@ -101,7 +101,7 @@ export const paint = (ctx: CanvasRenderingContext2D, model: Model) => {
       0,
       2 * Math.PI
     );
-    ctx.fillStyle = Color.toHex(edge.color);
+    ctx.fillStyle = Color.toHex(edge.pathColor);
     ctx.fill();
     ctx.closePath();
   }
