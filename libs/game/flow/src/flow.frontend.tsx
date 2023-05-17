@@ -92,7 +92,7 @@ export const View = ({
     <div className="w-full h-full flex flex-col items-center justify-center">
       <div className="w-full flex-1 flex flex-col items-center justify-center">
         <FlowGridUI.View
-          model={model.gridUI}
+          model={model}
           $send={(c) => $send({ t: 'flow-grid-ui', c })}
         />
       </div>
