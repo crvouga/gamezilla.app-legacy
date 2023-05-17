@@ -15,7 +15,7 @@ import {
   Button,
   ButtonBase,
   Chip,
-  LoadingScreen,
+  CircularProgress,
   Divider,
   Drawer,
   FillBox,
@@ -445,19 +445,11 @@ export const updateFromApp = ({
       switch (msg.route.c.t) {
         case 'room':
         case 'room-list': {
-          if (model.requests?.list?.type === 'Loading') {
-            return { model };
-          }
-          return {
-            model: {
-              ...model,
-              requests: { ...model.requests, list: RemoteResult.Loading },
-            },
-            cmd: sendToBackend({
-              t: 'list',
-              initiatorMsg: msg,
-            }),
-          };
+          return updateListRooms({
+            model,
+            initiatorMsg: msg,
+            sendToBackend,
+          });
         }
 
         default: {
@@ -468,12 +460,41 @@ export const updateFromApp = ({
       }
     }
 
+    case 'wire-connected': {
+      return updateListRooms({ model, initiatorMsg: msg, sendToBackend });
+    }
+
     default: {
       return {
         model,
       };
     }
   }
+};
+
+const updateListRooms = ({
+  model,
+
+  initiatorMsg,
+  sendToBackend,
+}: {
+  model: Model;
+  initiatorMsg: unknown;
+  sendToBackend: (m: ToBackend) => Cmd;
+}) => {
+  if (model.requests?.list?.type === 'Loading') {
+    return { model };
+  }
+  return {
+    model: {
+      ...model,
+      requests: { ...model.requests, list: RemoteResult.Loading },
+    },
+    cmd: sendToBackend({
+      t: 'list',
+      initiatorMsg,
+    }),
+  };
 };
 
 const toRoomEndMessage = ({ ctx, hostId }: { hostId: UserId; ctx: Ctx }) => {
@@ -735,7 +756,7 @@ const ViewRoomScreen = ({
 }) => {
   const room = model.rooms[roomId];
   return (
-    <div className="w-full h-full flex flex-col flex-1 relative">
+    <FillBox>
       <ViewPage roomId={roomId} ctx={ctx} $send={$send} model={model} />
       <Drawer
         open={model.modal === 'users'}
@@ -781,7 +802,7 @@ const ViewRoomScreen = ({
           </Button>
         </Box>
       </Drawer>
-    </div>
+    </FillBox>
   );
 };
 
@@ -801,7 +822,11 @@ const ViewPage = ({
     model.requests.create?.type === 'Loading' ||
     model.requests.join?.type === 'Loading'
   ) {
-    return <LoadingScreen />;
+    return (
+      <FillBox sx={{ alignItems: 'center', justifyContent: 'center' }}>
+        <CircularProgress />
+      </FillBox>
+    );
   }
 
   const room = model.rooms[roomId];
@@ -877,16 +902,21 @@ const ViewPage = ({
 
 export const ViewRoomNotFound = ({ ctx }: { ctx: ViewCtx }) => {
   return (
-    <div className="flex items-center justify-center w-full h-full flex-col gap-4">
-      <p className="text-center text-xl mb-1">Room not found</p>
-      <MyButton
+    <FillBox
+      sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+    >
+      <Typography variant="h5" sx={{ textAlign: 'center', marginBottom: 1 }}>
+        Room not found
+      </Typography>
+      <Button
         onClick={() => ctx.$push({ t: 'room', c: { t: 'room-list' } })}
+        size="large"
         variant="contained"
+        startIcon={<Icons.ChevronLeft />}
       >
-        <IconHome />
-        Go Home
-      </MyButton>
-    </div>
+        Go Back
+      </Button>
+    </FillBox>
   );
 };
 
@@ -915,7 +945,7 @@ export const ViewRoomListScreen = ({
   }
 
   return (
-    <div className="flex-1 flex flex-col w-full h-full">
+    <div className="flex-1 flex flex-col w-full h-full max-h-full overflow-hidden">
       <TopBar title="Rooms" />
 
       {rooms.length === 0 ? (
@@ -925,18 +955,19 @@ export const ViewRoomListScreen = ({
         </div>
       ) : (
         <div className="flex-1 overflow-y-auto pb-4">
-          <div className="flex flex-col gap-2 px-5">
+          <div className="flex flex-col gap-4 px-5">
             {rooms.map((room) => {
               const host = ctx.profiles[room.hostId];
-              const users = Object.values(model.users)
-                .filter((user) => user.roomId === room.roomId)
-                .flatMap((user) => {
-                  const profile = ctx.profiles[user.userId];
-                  if (profile) {
-                    return [profile];
-                  }
+              const users = Object.values(model.users).flatMap((user) => {
+                if (user.roomId !== room.roomId) {
                   return [];
-                });
+                }
+                const profile = ctx.profiles[user.userId];
+                if (!profile) {
+                  return [];
+                }
+                return [profile];
+              });
               const gameName = model.games[room.roomId]?.t;
               const currentRoomId = model.users[ctx.currentUserId]?.roomId;
               return (
@@ -1011,7 +1042,7 @@ const ViewRoomCard = ({
 
       {gameName && (
         <div className="flex items-center justify-start gap-2">
-          <div className="w-12 h-12 rounded overflow-hidden border border-white/40">
+          <div className="w-12 h-12 rounded overflow-hidden border-2 border-white/40">
             {viewCoverArt(gameName)}
           </div>
           <p className="text-xl">{gameNameToString(gameName)}</p>

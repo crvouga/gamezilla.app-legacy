@@ -203,7 +203,7 @@ export const View = ({
 
         {model.opened === 'menu' && (
           <div
-            tabIndex={0}
+            tabIndex={1}
             className="absolute top-0 left-0 w-full h-full bg-black/50 flex flex-col justify-end z-10 "
             onClick={() => $send({ t: 'closed-menu' })}
           >

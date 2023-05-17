@@ -260,7 +260,7 @@ const ViewLoginScreen = ({
     <div className="w-full h-full flex-1 flex flex-col">
       <div className="flex-1 flex flex-col justify-center items-center p-4 gap-8">
         <div className="w-full flex flex-col items-start justify-center">
-          <p className="text-2xl">Sign in to</p>
+          <p className="text-2xl text-neutral-200">Sign in to</p>
           <h1 className="bg-gradient-to-b from-blue-400 to-blue-600 text-transparent bg-clip-text text-5xl font-extrabold pb-2">
             gamezilla.app
           </h1>
