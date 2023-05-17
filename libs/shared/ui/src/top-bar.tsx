@@ -11,13 +11,13 @@ export const TopBar = ({
   right?: React.ReactNode;
 }) => {
   return (
-    <header className="flex items-center justify-center w-full h-12">
+    <nav className="flex items-center justify-center w-full h-14">
       <div className="flex items-center justify-start flex-1">{left}</div>
       <p className="text-lg text-center" style={{ flex: 5 }}>
         {title}
       </p>
       <div className="flex items-center justify-end flex-1">{right}</div>
-    </header>
+    </nav>
   );
 };
 
