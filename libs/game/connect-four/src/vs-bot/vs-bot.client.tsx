@@ -29,7 +29,7 @@ import {
   botLevel,
   handle,
   initShared,
-} from './vs-bot.types';
+} from './vs-bot.shared';
 
 //
 //

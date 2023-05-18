@@ -16,14 +16,14 @@ import {
   ClientMsg,
   ToServer,
   ToClient,
-} from './connect-four.types';
+} from './connect-four.shared';
 import {
   PlayerIcon,
   ViewCoverArt,
   gameTheme,
 } from './connect-four/connect-four-ui';
-import * as VsBot from './vs-bot/vs-bot.frontend';
-import * as VsUser from './vs-user/vs-user.frontend';
+import * as VsBot from './vs-bot/vs-bot.client';
+import * as VsUser from './vs-user/vs-user.client';
 
 //
 //

@@ -45,7 +45,7 @@ import {
   handle,
   initShared,
   toPlayerType,
-} from './vs-user.types';
+} from './vs-user.shared';
 
 //
 //

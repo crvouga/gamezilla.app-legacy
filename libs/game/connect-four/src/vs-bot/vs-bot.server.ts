@@ -12,7 +12,7 @@ import {
   Res,
   ToServer,
   ToClient,
-} from './vs-bot.types';
+} from './vs-bot.shared';
 
 //
 //

@@ -8,9 +8,9 @@ import {
   Mode,
   ToServer,
   ToClient,
-} from './connect-four.types';
-import * as VsBot from './vs-bot/vs-bot.backend';
-import * as VsUser from './vs-user/vs-user.backend';
+} from './connect-four.shared';
+import * as VsBot from './vs-bot/vs-bot.server';
+import * as VsUser from './vs-user/vs-user.server';
 
 //
 //
