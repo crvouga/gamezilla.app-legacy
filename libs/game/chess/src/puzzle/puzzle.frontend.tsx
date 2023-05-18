@@ -137,7 +137,7 @@ const updateRequest = ({
   };
 };
 
-export const updateFromBackend = ({
+export const updateFromServer = ({
   msg,
   model,
 }: {

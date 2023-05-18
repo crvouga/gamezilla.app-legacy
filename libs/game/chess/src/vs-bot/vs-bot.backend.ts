@@ -60,12 +60,12 @@ type Wire = {
   broadcast: (msg: ToFrontend) => Cmd;
 };
 
-export const updateFromFrontend = (
+export const updateFromClient = (
   wire: Wire,
   msg: ToBackend,
   model: Model
 ): [Model, Cmd<Msg>] => {
-  const [modelNew, cmd] = updateFromFrontend_(wire, msg, model);
+  const [modelNew, cmd] = updateFromClient_(wire, msg, model);
 
   return [modelNew, Cmd.batch([cmd, toBotMoveCmd(model, modelNew)])];
 };
@@ -88,7 +88,7 @@ const toBotMoveCmd = (modelPrev: Model, modelNext: Model): Cmd<Msg> => {
   return cmd;
 };
 
-const updateFromFrontend_ = (
+const updateFromClient_ = (
   { broadcast }: Wire,
   msg: ToBackend,
   model: Model

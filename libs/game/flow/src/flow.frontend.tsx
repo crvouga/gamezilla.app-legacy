@@ -44,7 +44,7 @@ export const update = ({
   return { model };
 };
 
-export const updateFromBackend = ({
+export const updateFromServer = ({
   model,
 }: {
   msg: ToFrontend;

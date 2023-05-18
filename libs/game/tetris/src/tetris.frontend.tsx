@@ -158,7 +158,7 @@ const keyToDirection = (key: Keyboard.Key): Direction.Direction | 'none' => {
   }
 };
 
-export const updateFromBackend = (
+export const updateFromServer = (
   msg: ToFrontend,
   model: Model
 ): [Model, Cmd<Msg>] => {

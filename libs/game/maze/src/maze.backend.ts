@@ -45,7 +45,7 @@ export const update = (
   }
 };
 
-export const updateFromFrontend = (
+export const updateFromClient = (
   { broadcast }: { broadcast: (m: ToFrontend) => Cmd },
   msg: ToBackend,
   model: Model

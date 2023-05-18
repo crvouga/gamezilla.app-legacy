@@ -56,7 +56,7 @@ export const update = ({
   }
 };
 
-export const updateFromFrontend = (
+export const updateFromClient = (
   wire: {
     broadcast: (msg: ToFrontend) => Cmd;
     sendToClient: (msg: ToFrontend) => Cmd;
@@ -65,7 +65,7 @@ export const updateFromFrontend = (
   msg: ToBackend,
   modelPrev: Model
 ): [Model, Cmd<Msg>] => {
-  const [modelNext, cmd] = updateFromFrontend_(wire, msg, modelPrev);
+  const [modelNext, cmd] = updateFromClient_(wire, msg, modelPrev);
 
   if (
     !isBotTurn(modelPrev) &&
@@ -90,7 +90,7 @@ export const updateFromFrontend = (
   return [modelNext, cmd];
 };
 
-const updateFromFrontend_ = (
+const updateFromClient_ = (
   {
     broadcast,
     sendToClient,

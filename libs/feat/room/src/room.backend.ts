@@ -114,22 +114,22 @@ type Wire = {
   broadcast: (msg: ToFrontend) => Cmd;
 };
 
-type UpdateFromFrontend = (input: {
+type updateFromClient = (input: {
   ctx: AuthenticatedRequestCtx;
   wire: Wire;
   msg: ToBackend;
   model: Model;
 }) => { model: Model; cmd?: Cmd<BackendMsg> };
 
-export const updateFromFrontend: UpdateFromFrontend = (input) => {
+export const updateFromClient: updateFromClient = (input) => {
   return p(
     input,
     andThen(({ model }) => updateProfiles({ ...input, model })),
-    andThen(({ model }) => updateFromFrontend_({ ...input, model }))
+    andThen(({ model }) => updateFromClient_({ ...input, model }))
   );
 };
 
-const updateProfiles: UpdateFromFrontend = ({ msg, model }) => {
+const updateProfiles: updateFromClient = ({ msg, model }) => {
   if (msg.profile) {
     return {
       model: {
@@ -144,7 +144,7 @@ const updateProfiles: UpdateFromFrontend = ({ msg, model }) => {
   return { model };
 };
 
-export const updateFromFrontend_: UpdateFromFrontend = ({
+export const updateFromClient_: updateFromClient = ({
   ctx,
   wire,
   msg,
@@ -198,7 +198,7 @@ export const updateFromFrontend_: UpdateFromFrontend = ({
         hostId: room.hostId,
       };
 
-      const [gameNew, gameCmd] = Game.updateFromFrontend({
+      const [gameNew, gameCmd] = Game.updateFromClient({
         ...ctx,
         ctx: roomCtx,
         sendToClient: (m) => wire.sendToClient({ t: 'game', c: m }),

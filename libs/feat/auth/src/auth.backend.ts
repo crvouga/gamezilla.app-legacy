@@ -35,7 +35,7 @@ export const update = ({
   return { model };
 };
 
-export const updateFromFrontend = ({
+export const updateFromClient = ({
   model,
 }: {
   msg: ToBackend;

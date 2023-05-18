@@ -99,7 +99,7 @@ export const update = ({
   return { model };
 };
 
-export const updateFromBackend = ({
+export const updateFromServer = ({
   ctx,
   model,
   msg,
@@ -124,7 +124,7 @@ export const updateFromBackend = ({
 
     case 'vs-user': {
       if (model.t === 'vs-user') {
-        const [c, cmd, actions] = VsUser.updateFromBackend(msg.c, model.c);
+        const [c, cmd, actions] = VsUser.updateFromServer(msg.c, model.c);
         return [{ t: 'vs-user', c }, Cmd.tag_('vs-user', cmd), actions];
       }
       return [model, Cmd.None, []];
@@ -132,7 +132,7 @@ export const updateFromBackend = ({
 
     case 'vs-bot': {
       if (model.t === 'vs-bot') {
-        const updated = VsBot.updateFromBackend({
+        const updated = VsBot.updateFromServer({
           ctx,
           msg: msg.c,
           model: model.c,

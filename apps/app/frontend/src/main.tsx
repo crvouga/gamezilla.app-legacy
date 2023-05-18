@@ -52,14 +52,14 @@ const main = () => {
     AppFrontend.wireStatus$.next('connect-error');
   });
 
-  socketClient.on('to-frontend', (msg) => {
+  socketClient.on('to-client', (msg) => {
     AppFrontend.toFrontend$.next(msg);
   });
 
   const sendToBackend =
     (msg: ToBackend): Cmd =>
     () => {
-      socketClient.emit('to-backend', msg);
+      socketClient.emit('to-server', msg);
     };
 
   const program = Program.create({

@@ -72,7 +72,7 @@ export const update = ({
   return { model, cmd: sendToBackend(msg) };
 };
 
-export const updateFromBackend = ({
+export const updateFromServer = ({
   msg,
   model,
 }: {

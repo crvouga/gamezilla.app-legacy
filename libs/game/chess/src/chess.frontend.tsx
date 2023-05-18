@@ -149,7 +149,7 @@ export const update = ({
   }
 };
 
-export const updateFromBackend = ({
+export const updateFromServer = ({
   ctx,
   msg,
   model,
@@ -190,7 +190,7 @@ export const updateFromBackend = ({
 
     case 'vs-user': {
       if (model.mode.t === 'vs-user') {
-        const [child, cmd, actions] = VsUser.updateFromBackend(
+        const [child, cmd, actions] = VsUser.updateFromServer(
           { ctx },
           msg.c,
           model.mode.c
@@ -208,7 +208,7 @@ export const updateFromBackend = ({
 
     case 'vs-bot': {
       if (model.mode.t === 'vs-bot') {
-        const [child, cmd, actions] = VsBot.updateFromBackend(
+        const [child, cmd, actions] = VsBot.updateFromServer(
           msg.c,
           model.mode.c
         );
@@ -228,7 +228,7 @@ export const updateFromBackend = ({
         return [model, Cmd.None, []];
       }
 
-      const updated = Puzzle.updateFromBackend({
+      const updated = Puzzle.updateFromServer({
         ctx,
         model: model.mode.c,
         msg: msg.c,

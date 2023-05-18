@@ -214,7 +214,7 @@ export const update = ({
   }
 };
 
-export const updateFromFrontend = ({
+export const updateFromClient = ({
   sendToClient,
   broadcast,
   ctx,
@@ -230,7 +230,7 @@ export const updateFromFrontend = ({
   switch (msg.t) {
     case 'connect-four': {
       if (model.t === 'connect-four') {
-        const updated = ConnectFourBackend.updateFromFrontend({
+        const updated = ConnectFourBackend.updateFromClient({
           ctx,
           sendToClient: (msg) => sendToClient({ t: 'connect-four', c: msg }),
           broadcast: (msg) => broadcast({ t: 'connect-four', c: msg }),
@@ -247,7 +247,7 @@ export const updateFromFrontend = ({
 
     case 'tic-tac-toe': {
       if (model.t === 'tic-tac-toe') {
-        const updated = TicTacToeBackend.updateFromFrontend({
+        const updated = TicTacToeBackend.updateFromClient({
           sendToClient: (msg) => sendToClient({ t: 'tic-tac-toe', c: msg }),
           broadcast: (msg) => broadcast({ t: 'tic-tac-toe', c: msg }),
           msg: msg.c,
@@ -264,7 +264,7 @@ export const updateFromFrontend = ({
 
     case 'chess': {
       if (model.t === 'chess') {
-        const [child, cmd] = ChessBackend.updateFromFrontend({
+        const [child, cmd] = ChessBackend.updateFromClient({
           sendToClient: (msg) => sendToClient({ t: 'chess', c: msg }),
           broadcast: (msg) => broadcast({ t: 'chess', c: msg }),
           msg: msg.c,
@@ -278,7 +278,7 @@ export const updateFromFrontend = ({
 
     case 'gomoku': {
       if (model.t === 'gomoku') {
-        const updated = GomokuBackend.updateFromFrontend({
+        const updated = GomokuBackend.updateFromClient({
           ctx,
           broadcast: (m) => broadcast({ t: 'gomoku', c: m }),
           sendToClient: (m) => sendToClient({ t: 'gomoku', c: m }),
@@ -296,7 +296,7 @@ export const updateFromFrontend = ({
 
     case 'tetris': {
       if (model.t === 'tetris') {
-        const [child, cmd] = TetrisBackend.updateFromFrontend(
+        const [child, cmd] = TetrisBackend.updateFromClient(
           {
             // ctx,
             broadcast: (m) => broadcast({ t: 'tetris', c: m }),
@@ -312,7 +312,7 @@ export const updateFromFrontend = ({
 
     case 'snake': {
       if (model.t === 'snake') {
-        const [child, cmd] = SnakeBackend.updateFromFrontend(
+        const [child, cmd] = SnakeBackend.updateFromClient(
           {
             // ctx,
             broadcast: (m) => broadcast({ t: 'snake', c: m }),
@@ -328,7 +328,7 @@ export const updateFromFrontend = ({
 
     case 'maze': {
       if (model.t === 'maze') {
-        const [child, cmd] = MazeBackend.updateFromFrontend(
+        const [child, cmd] = MazeBackend.updateFromClient(
           {
             // ctx,
             broadcast: (m) => broadcast({ t: 'maze', c: m }),
@@ -346,7 +346,7 @@ export const updateFromFrontend = ({
       if (model.t !== 'flow') {
         return [model, Cmd.None];
       }
-      const updated = FlowBackend.updateFromFrontend({
+      const updated = FlowBackend.updateFromClient({
         model: model.c,
         msg: msg.c,
       });

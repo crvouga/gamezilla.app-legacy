@@ -107,7 +107,7 @@ export const update = (
   }
 };
 
-export const updateFromBackend = (
+export const updateFromServer = (
   msg: ToFrontend,
   model: Model
 ): [Model, Cmd<Msg>] => {

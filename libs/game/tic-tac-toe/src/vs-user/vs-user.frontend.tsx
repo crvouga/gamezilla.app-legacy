@@ -122,7 +122,7 @@ export const update = (
   }
 };
 
-export const updateFromBackend = (
+export const updateFromServer = (
   _: { ctx: RoomCtx },
   msg: ToFrontend,
   model: Model

@@ -48,7 +48,7 @@ export const update = (
   }
 };
 
-export const updateFromFrontend = (
+export const updateFromClient = (
   {
     broadcast,
     sendToClient,

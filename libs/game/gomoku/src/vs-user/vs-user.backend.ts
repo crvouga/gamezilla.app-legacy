@@ -45,7 +45,7 @@ export const update = ({
   return { model };
 };
 
-export const updateFromFrontend = ({
+export const updateFromClient = ({
   sendToClient,
   broadcast,
   msg,

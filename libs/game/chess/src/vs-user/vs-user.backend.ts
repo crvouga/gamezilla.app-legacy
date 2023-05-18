@@ -67,7 +67,7 @@ export const update = (
   }
 };
 
-export const updateFromFrontend = (
+export const updateFromClient = (
   wire: {
     sendToClient: (msg: ToFrontend) => Cmd;
     broadcast: (msg: ToFrontend) => Cmd;

@@ -1,3 +1,3 @@
-export * as ProfileBackend from './profile.backend';
-export * as ProfileFrontend from './profile.frontend';
-export * from './profile.types';
+export * as ProfileServer from './profile.server';
+export * as ProfileClient from './profile.client';
+export * from './profile.shared';

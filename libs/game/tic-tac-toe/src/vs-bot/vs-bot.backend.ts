@@ -73,7 +73,7 @@ export const update_: Update = ({ broadcast }, msg, model) => {
 //
 //
 
-type UpdateFromFrontend = (
+type updateFromClient = (
   wire: {
     sendToClient: (m: ToFrontend) => Cmd;
     broadcast: (m: ToFrontend) => Cmd;
@@ -82,12 +82,8 @@ type UpdateFromFrontend = (
   model: Model
 ) => [Model, Cmd<Msg>];
 
-export const updateFromFrontend: UpdateFromFrontend = (
-  wire,
-  msg,
-  modelPrev
-) => {
-  const [modelNext, cmd] = updateFromFrontend_(wire, msg, modelPrev);
+export const updateFromClient: updateFromClient = (wire, msg, modelPrev) => {
+  const [modelNext, cmd] = updateFromClient_(wire, msg, modelPrev);
 
   if (!isBotTurn(modelPrev) && isBotTurn(modelNext)) {
     return [
@@ -109,7 +105,7 @@ export const updateFromFrontend: UpdateFromFrontend = (
   return [modelNext, cmd];
 };
 
-const updateFromFrontend_: UpdateFromFrontend = (
+const updateFromClient_: updateFromClient = (
   { sendToClient, broadcast },
   msg,
   model

@@ -218,7 +218,7 @@ export const update = ({
   }
 };
 
-export const updateFromBackend = ({
+export const updateFromServer = ({
   ctx,
   sendToBackend,
   msg,
@@ -230,7 +230,7 @@ export const updateFromBackend = ({
   model: Model;
 }): [Model, Cmd<Msg>, OutAction[]] => {
   if (msg.t === 'connect-four' && model.t === 'connect-four') {
-    const [child, cmd, actions] = ConnectFourFrontend.updateFromBackend({
+    const [child, cmd, actions] = ConnectFourFrontend.updateFromServer({
       msg: msg.c,
       ctx,
       model: model.c,
@@ -244,7 +244,7 @@ export const updateFromBackend = ({
   }
 
   if (msg.t === 'gomoku' && model.t === 'gomoku') {
-    const updated = GomokuFrontend.updateFromBackend({
+    const updated = GomokuFrontend.updateFromServer({
       msg: msg.c,
       ctx,
       model: model.c,
@@ -258,7 +258,7 @@ export const updateFromBackend = ({
   }
 
   if (msg.t === 'tic-tac-toe' && model.t === 'tic-tac-toe') {
-    const updated = TicTacToeFrontend.updateFromBackend({
+    const updated = TicTacToeFrontend.updateFromServer({
       ctx,
       msg: msg.c,
       model: model.c,
@@ -274,7 +274,7 @@ export const updateFromBackend = ({
   }
 
   if (msg.t === 'chess' && model.t === 'chess') {
-    const [child, cmd, actions] = ChessFrontend.updateFromBackend({
+    const [child, cmd, actions] = ChessFrontend.updateFromServer({
       ctx,
       msg: msg.c,
       model: model.c,
@@ -285,12 +285,12 @@ export const updateFromBackend = ({
   }
 
   if (msg.t === 'tetris' && model.t === 'tetris') {
-    const [child, cmd] = TetrisFrontend.updateFromBackend(msg.c, model.c);
+    const [child, cmd] = TetrisFrontend.updateFromServer(msg.c, model.c);
     return [{ t: 'tetris', c: child }, Cmd.tag_('tetris', cmd), []];
   }
 
   if (msg.t === 'snake' && model.t === 'snake') {
-    const [child, cmd] = SnakeFrontend.updateFromBackend(
+    const [child, cmd] = SnakeFrontend.updateFromServer(
       // { ctx, sendToBackend: (msg) => sendToBackend(['snake', msg]) },
       msg.c,
       model.c
@@ -299,7 +299,7 @@ export const updateFromBackend = ({
   }
 
   if (msg.t === 'maze' && model.t === 'maze') {
-    const [child, cmd] = MazeFrontend.updateFromBackend(
+    const [child, cmd] = MazeFrontend.updateFromServer(
       // { ctx, sendToBackend: (msg) => sendToBackend(['maze', msg]) },
       msg.c,
       model.c
@@ -308,7 +308,7 @@ export const updateFromBackend = ({
   }
 
   if (msg.t === 'flow' && model.t === 'flow') {
-    const updated = FlowFrontend.updateFromBackend({
+    const updated = FlowFrontend.updateFromServer({
       msg: msg.c,
       model: model.c,
     });

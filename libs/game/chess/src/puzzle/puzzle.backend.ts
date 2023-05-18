@@ -116,7 +116,7 @@ export const update = ({
   }
 };
 
-export const updateFromFrontend = (input: {
+export const updateFromClient = (input: {
   ctx: RoomRequestCtx;
   msg: ToBackend;
   model: Model;
@@ -128,7 +128,7 @@ export const updateFromFrontend = (input: {
 } => {
   return p(
     input,
-    andThen(({ model }) => updateFromFrontend_({ ...input, model })),
+    andThen(({ model }) => updateFromClient_({ ...input, model })),
     andThen(({ model }) =>
       updateFetchMore({ ...input, modelPrev: input.model, model })
     ),
@@ -203,7 +203,7 @@ const updateFetchMore = ({
   return { model };
 };
 
-const updateFromFrontend_: typeof updateFromFrontend = ({
+const updateFromClient_: typeof updateFromClient = ({
   msg,
   model,
   // sendToClient,

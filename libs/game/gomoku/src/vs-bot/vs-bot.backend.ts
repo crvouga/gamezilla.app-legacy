@@ -51,7 +51,7 @@ export const update = ({
   }
 };
 
-type UpdateFromFrontend = (input: {
+type updateFromClient = (input: {
   ctx: RoomRequestCtx;
   sendToClient: (m: ToFrontend) => Cmd;
   broadcast: (m: ToFrontend) => Cmd;
@@ -62,15 +62,15 @@ type UpdateFromFrontend = (input: {
   cmd?: Cmd<Msg>;
 };
 
-export const updateFromFrontend: UpdateFromFrontend = (input) => {
+export const updateFromClient: updateFromClient = (input) => {
   return p(
     input,
-    andThen(({ model }) => updateFromFrontend_({ ...input, model })),
+    andThen(({ model }) => updateFromClient_({ ...input, model })),
     andThen(({ model }) => updateBotMove({ ...input, model }))
   );
 };
 
-const updateBotMove: UpdateFromFrontend = ({ broadcast, model }) => {
+const updateBotMove: updateFromClient = ({ broadcast, model }) => {
   const handled = handleBotMove(model);
 
   if (handled.type === 'Err') {
@@ -92,7 +92,7 @@ const updateBotMove: UpdateFromFrontend = ({ broadcast, model }) => {
   };
 };
 
-const updateFromFrontend_: UpdateFromFrontend = ({
+const updateFromClient_: updateFromClient = ({
   ctx,
   sendToClient,
   broadcast,

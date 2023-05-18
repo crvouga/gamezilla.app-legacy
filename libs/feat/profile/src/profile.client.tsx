@@ -29,12 +29,7 @@ import {
   ViewNode,
 } from '@gamezilla/shared/ui';
 import { AlertTitle } from '@mui/material';
-import {
-  FrontendModel,
-  FrontendMsg,
-  ToBackend,
-  ToFrontend,
-} from './profile.types';
+import { ClientModel, ClientMsg, ToServer, ToClient } from './profile.shared';
 
 //
 //
@@ -44,7 +39,7 @@ import {
 //
 //
 
-export type Model = FrontendModel;
+export type Model = ClientModel;
 
 export const init: Model = {
   profiles: {},
@@ -59,7 +54,7 @@ export const init: Model = {
 //
 //
 
-export type Msg = FrontendMsg;
+export type Msg = ClientMsg;
 
 export const update = ({
   msg,
@@ -68,7 +63,7 @@ export const update = ({
 }: {
   msg: Msg;
   model: Model;
-  sendToBackend: (m: ToBackend) => Cmd;
+  sendToBackend: (m: ToServer) => Cmd;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -90,11 +85,11 @@ export const update = ({
   return { model, cmd: sendToBackend(msg) };
 };
 
-export const updateFromBackend = ({
+export const updateFromServer = ({
   msg,
   model,
 }: {
-  msg: ToFrontend;
+  msg: ToClient;
   model: Model;
 }): {
   model: Model;
@@ -131,7 +126,7 @@ export const updateFromApp = ({
 }: {
   msg: AppMsg;
   model: Model;
-  sendToBackend: (m: ToBackend) => Cmd<Msg>;
+  sendToBackend: (m: ToServer) => Cmd<Msg>;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;

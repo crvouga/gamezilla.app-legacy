@@ -7,7 +7,7 @@ export const init: { model: Model } = { model: null };
 
 type Msg = BackendMsg;
 
-export const updateFromFrontend = ({
+export const updateFromClient = ({
   model,
 }: {
   msg: ToBackend;

@@ -62,7 +62,7 @@ const main = async () => {
       AppBackend.onConnect.next([sessionId, socket.id]);
     }
 
-    socket.on('to-backend', (msg) => {
+    socket.on('to-server', (msg) => {
       if (ClientId.is(socket.id)) {
         AppBackend.fromFrontend.next([sessionId, socket.id, msg]);
       }
@@ -76,11 +76,11 @@ const main = async () => {
   });
 
   AppBackend.$broadcast.subscribe(([msg]) => {
-    socketServer.emit('to-frontend', msg);
+    socketServer.emit('to-client', msg);
   });
 
   AppBackend.$sendToFrontend.subscribe(([clientIds, msg]) => {
-    socketServer.to(clientIds).emit('to-frontend', msg);
+    socketServer.to(clientIds).emit('to-client', msg);
   });
 
   const port = Number(process.env['PORT']) || backendServerPort;

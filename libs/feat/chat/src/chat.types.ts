@@ -94,7 +94,7 @@ export type BackendMsg = Res;
 
 export type ToFrontend = Res;
 
-export const updateFromFrontend = ({
+export const updateFromClient = ({
   msg,
 }: {
   msg: ToBackend;

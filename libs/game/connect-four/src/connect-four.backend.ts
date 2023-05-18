@@ -73,7 +73,7 @@ export const update = ({
   return { model };
 };
 
-export const updateFromFrontend = ({
+export const updateFromClient = ({
   sendToClient,
   broadcast,
   msg,
@@ -99,7 +99,7 @@ export const updateFromFrontend = ({
   }
 
   if (msg.t === 'vs-bot' && model.t === 'vs-bot') {
-    const updated = VsBot.updateFromFrontend(
+    const updated = VsBot.updateFromClient(
       {
         sendToClient: (c) => sendToClient({ t: 'vs-bot', c }),
         broadcast: (c) => broadcast({ t: 'vs-bot', c }),
@@ -116,7 +116,7 @@ export const updateFromFrontend = ({
   }
 
   if (msg.t === 'vs-user' && model.t === 'vs-user') {
-    const updated = VsUser.updateFromFrontend(
+    const updated = VsUser.updateFromClient(
       {
         sendToClient: (c) => sendToClient({ t: 'vs-user', c }),
         broadcast: (c) => broadcast({ t: 'vs-user', c }),

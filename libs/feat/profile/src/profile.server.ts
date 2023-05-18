@@ -17,13 +17,13 @@ import {
   p,
 } from '@gamezilla/shared/core';
 import {
-  BackendModel,
-  BackendMsg,
+  ServerModel,
+  ServerMsg,
   Profile,
   Req,
-  ToBackend,
-  ToFrontend,
-} from './profile.types';
+  ToServer,
+  ToClient,
+} from './profile.shared';
 
 //
 //
@@ -33,7 +33,7 @@ import {
 //
 //
 
-export type Model = BackendModel;
+export type Model = ServerModel;
 
 export const init: Model = null;
 
@@ -45,7 +45,7 @@ export const init: Model = null;
 //
 //
 
-export type Msg = BackendMsg;
+export type Msg = ServerMsg;
 
 export const update = ({
   msg,
@@ -64,15 +64,15 @@ export const update = ({
   }
 };
 
-export const updateFromFrontend = ({
+export const updateFromClient = ({
   msg,
   model,
   ctx,
   sendToClient,
 }: {
-  msg: ToBackend;
+  msg: ToServer;
   model: Model;
-  sendToClient: (m: ToFrontend) => Cmd<Msg>;
+  sendToClient: (m: ToClient) => Cmd<Msg>;
   ctx: AuthenticatedRequestCtx;
 }): {
   model: Model;
@@ -96,7 +96,7 @@ export const updateFromApp = ({
   msg,
   model,
 }: {
-  sendToFrontend: (clientId: ClientId[], m: ToFrontend) => Cmd<Msg>;
+  sendToFrontend: (clientId: ClientId[], m: ToClient) => Cmd<Msg>;
   msg: AppMsg;
   model: Model;
 }): {
@@ -111,7 +111,7 @@ export const updateFromApp = ({
       cmd: p(
         () => findElseCreate({ userId }),
         Cmd.perform(
-          (result): ToFrontend => ({ t: 'current-user-profile', result })
+          (result): ToClient => ({ t: 'current-user-profile', result })
         ),
         Cmd.chain((res) => sendToFrontend([msg.clientId], res))
       ),

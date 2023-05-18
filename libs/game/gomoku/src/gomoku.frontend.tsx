@@ -88,7 +88,7 @@ export const update = ({
   return { model };
 };
 
-export const updateFromBackend = ({
+export const updateFromServer = ({
   ctx,
   model,
   msg,
@@ -113,7 +113,7 @@ export const updateFromBackend = ({
   }
 
   if (model.t === 'vs-bot' && msg.t === 'vs-bot') {
-    const updated = VsBot.updateFromBackend({
+    const updated = VsBot.updateFromServer({
       ctx,
       msg: msg.c,
       model: model.c,
@@ -125,7 +125,7 @@ export const updateFromBackend = ({
   }
 
   if (model.t === 'vs-user' && msg.t === 'vs-user') {
-    const updated = VsUser.updateFromBackend({
+    const updated = VsUser.updateFromServer({
       model: model.c,
       msg: msg.c,
     });

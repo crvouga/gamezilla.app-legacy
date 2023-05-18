@@ -19,7 +19,7 @@ export type BackendModel = {
   sessions: {
     [sessionId: SessionId]: Session;
   };
-  profile: Profile.BackendModel;
+  profile: Profile.ServerModel;
   search: Search.BackendModel;
   chat: Chat.BackendModel;
   auth: Auth.BackendModel;
@@ -37,7 +37,7 @@ export type FrontendModel = {
   wire: WireModel;
   auth: Auth.FrontendModel;
   room: Room.FrontendModel;
-  profile: Profile.FrontendModel;
+  profile: Profile.ServerModel;
   chat: Chat.FrontendModel;
   search: Search.FrontendModel;
 };
@@ -59,14 +59,14 @@ export type WireModel =
 export type ToBackend =
   | { t: 'room'; c: Room.ToBackend }
   | { t: 'auth'; c: Auth.ToBackend }
-  | { t: 'profile'; c: Profile.ToBackend }
+  | { t: 'profile'; c: Profile.ToServer }
   | { t: 'search'; c: Search.ToBackend }
   | { t: 'chat'; c: Chat.ToBackend }
   | { t: 'auth'; c: Auth.ToBackend };
 
 export type ToFrontend =
   | { t: 'room'; c: Room.ToFrontend }
-  | { t: 'profile'; c: Profile.ToFrontend }
+  | { t: 'profile'; c: Profile.ToClient }
   | { t: 'search'; c: Search.ToFrontend }
   | { t: 'chat'; c: Chat.ToFrontend }
   | { t: 'auth'; c: Auth.ToFrontend }
@@ -80,7 +80,7 @@ export type FrontendMsg =
   | { t: 'room'; c: Room.FrontendMsg }
   | { t: 'chat'; c: Chat.FrontendMsg }
   | { t: 'auth'; c: Auth.FrontendMsg }
-  | { t: 'profile'; c: Profile.FrontendMsg }
+  | { t: 'profile'; c: Profile.ClientMsg }
   | { t: 'search'; c: Search.FrontendMsg };
 
 export type BackendMsg =
@@ -88,7 +88,7 @@ export type BackendMsg =
   | { t: 'client-connected'; sessionId: SessionId; clientId: ClientId }
   | { t: 'client-disconnected'; sessionId: SessionId; clientId: ClientId }
   | { t: 'room'; c: Room.BackendMsg }
-  | { t: 'profile'; c: Profile.BackendMsg }
+  | { t: 'profile'; c: Profile.ServerMsg }
   | { t: 'search'; c: Search.BackendMsg }
   | { t: 'chat'; c: Chat.BackendMsg }
   | { t: 'auth'; c: Auth.BackendMsg };
@@ -102,12 +102,12 @@ export type BackendMsg =
 //
 
 export type ServerToClientEvents = {
-  ['to-frontend']: (msg: ToFrontend) => void;
+  ['to-client']: (msg: ToFrontend) => void;
   ['session-id']: (sessionId: SessionId) => void;
 };
 
 export type ClientToServerEvents = {
-  ['to-backend']: (msg: ToBackend) => void;
+  ['to-server']: (msg: ToBackend) => void;
 };
 
 export const backendServerPort = 5000;

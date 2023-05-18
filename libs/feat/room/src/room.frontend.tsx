@@ -235,7 +235,7 @@ export const update = ({
   }
 };
 
-export const updateFromBackend = ({
+export const updateFromServer = ({
   ctx: ctxPrev,
   sendToBackend,
   msg,
@@ -279,7 +279,7 @@ export const updateFromBackend = ({
 
       const gameMsg = msg.c;
 
-      const [gameNew, gameCmd, actions] = Game.updateFromBackend({
+      const [gameNew, gameCmd, actions] = Game.updateFromServer({
         ctx: {
           ...ctx,
           hostId: room.hostId,

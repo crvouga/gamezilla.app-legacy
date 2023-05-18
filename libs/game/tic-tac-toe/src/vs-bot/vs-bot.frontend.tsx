@@ -99,7 +99,7 @@ export const update = ({
   }
 };
 
-export const updateFromBackend = ({
+export const updateFromServer = ({
   msg,
   model,
   ctx,

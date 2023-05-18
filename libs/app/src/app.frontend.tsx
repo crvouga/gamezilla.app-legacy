@@ -163,7 +163,7 @@ const update_ = ({
 } => {
   switch (msg.t) {
     case '→': {
-      return updateFromBackend({ now, sendToBackend, msg: msg.c, model });
+      return updateFromServer({ now, sendToBackend, msg: msg.c, model });
     }
 
     case 'auth': {
@@ -326,7 +326,7 @@ const update_ = ({
   }
 };
 
-const updateFromBackend = ({
+const updateFromServer = ({
   sendToBackend,
   msg,
   now,
@@ -355,7 +355,7 @@ const updateFromBackend = ({
         now,
       };
 
-      const updated = RoomFrontend.updateFromBackend({
+      const updated = RoomFrontend.updateFromServer({
         ctx,
         sendToBackend: (msg) => sendToBackend({ t: 'room', c: msg }),
         msg: msg.c,
@@ -370,7 +370,7 @@ const updateFromBackend = ({
     }
 
     case 'profile': {
-      const updated = ProfileFrontend.updateFromBackend({
+      const updated = ProfileFrontend.updateFromServer({
         msg: msg.c,
         model: model.profile,
       });
@@ -382,7 +382,7 @@ const updateFromBackend = ({
     }
 
     case 'search': {
-      const updated = SearchFrontend.updateFromBackend({
+      const updated = SearchFrontend.updateFromServer({
         msg: msg.c,
         model: model.search,
       });
@@ -394,7 +394,7 @@ const updateFromBackend = ({
     }
 
     case 'auth': {
-      const updated = AuthFrontend.updateFromBackend({
+      const updated = AuthFrontend.updateFromServer({
         msg: msg.c,
         model: model.auth,
       });
@@ -406,7 +406,7 @@ const updateFromBackend = ({
     }
 
     case 'chat': {
-      const updated = ChatFrontend.updateFromBackend({
+      const updated = ChatFrontend.updateFromServer({
         msg: msg.c,
         model: model.chat,
       });

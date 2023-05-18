@@ -124,7 +124,7 @@ export const update = (
   }
 };
 
-export const updateFromBackend = ({
+export const updateFromServer = ({
   ctx,
   msg,
   model,

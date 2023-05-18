@@ -1,6 +1,6 @@
 import { AuthBackend } from '@gamezilla/feat/auth';
 import { ChatBackend } from '@gamezilla/feat/chat';
-import { ProfileBackend } from '@gamezilla/feat/profile';
+import { ProfileServer } from '@gamezilla/feat/profile';
 import { RoomBackend } from '@gamezilla/feat/room';
 import { SearchBackend } from '@gamezilla/feat/search';
 import { ClientId, SessionId, UserId } from '@gamezilla/shared/app';
@@ -29,7 +29,7 @@ export const init: { model: Model; cmd?: Cmd<Msg> } = {
   model: {
     sessions: {},
     room: RoomBackend.init,
-    profile: ProfileBackend.init,
+    profile: ProfileServer.init,
     search: SearchBackend.init.model,
     chat: ChatBackend.init.model,
     auth: AuthBackend.init,
@@ -60,7 +60,7 @@ export const update = ({
 } => {
   switch (msg.t) {
     case '→': {
-      return updateFromFrontend({
+      return updateFromClient({
         ctx: {
           ...ctx,
           sessionId: msg.sessionId,
@@ -136,7 +136,7 @@ export const update = ({
     }
 
     case 'profile': {
-      const updated = ProfileBackend.update({
+      const updated = ProfileServer.update({
         model: model.profile,
         msg: msg.c,
       });
@@ -203,7 +203,7 @@ const updateFromApp = ({
       sendToFrontend(clientIds, { t: 'room', c: m }),
   });
 
-  const profileUpdated = ProfileBackend.updateFromApp({
+  const profileUpdated = ProfileServer.updateFromApp({
     msg,
     model: model.profile,
     sendToFrontend: (clientIds, c) =>
@@ -223,7 +223,7 @@ const updateFromApp = ({
   };
 };
 
-const updateFromFrontend = ({
+const updateFromClient = ({
   msg,
   model,
   ctx,
@@ -283,7 +283,7 @@ const updateFromFrontend = ({
         return { model, cmd: sendToClient({ t: 'access-denied', msg }) };
       }
 
-      const updated = ProfileBackend.updateFromFrontend({
+      const updated = ProfileServer.updateFromClient({
         model: model.profile,
         msg: msg.c,
         sendToClient: (c) => sendToClient({ t: 'profile', c }),
@@ -299,7 +299,7 @@ const updateFromFrontend = ({
     }
 
     case 'search': {
-      const updated = SearchBackend.updateFromFrontend({
+      const updated = SearchBackend.updateFromClient({
         model: model.search,
         msg: msg.c,
       });
@@ -310,7 +310,7 @@ const updateFromFrontend = ({
     }
 
     case 'chat': {
-      const updated = ChatBackend.updateFromFrontend({
+      const updated = ChatBackend.updateFromClient({
         model: model.chat,
         msg: msg.c,
         sendToClient: (c) => sendToClient({ t: 'chat', c }),
@@ -332,7 +332,7 @@ const updateFromFrontend = ({
         return { model };
       }
 
-      const updated = RoomBackend.updateFromFrontend({
+      const updated = RoomBackend.updateFromClient({
         ctx: {
           ...ctx,
           currentUserId: session.userId,

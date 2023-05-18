@@ -16,7 +16,7 @@ export type Profile = {
   themeMode: 'Light' | 'Dark' | 'System';
 };
 
-export type FrontendModel_ = {
+export type ClientModel = {
   profiles: {
     [userId: UserId]: Profile;
   };
@@ -32,9 +32,7 @@ export type FrontendModel_ = {
   opened?: 'menu' | null;
 };
 
-export type FrontendModel = FrontendModel_;
-
-export type BackendModel = null;
+export type ServerModel = null;
 
 //
 //
@@ -44,19 +42,19 @@ export type BackendModel = null;
 //
 //
 
-export type FrontendMsg =
+export type ClientMsg =
   | Req
   | { t: 'inputted-username'; username: string }
   | { t: 'clicked-menu-button' }
   | { t: 'closed-menu' };
 
-export type BackendMsg = { t: 'none' };
+export type ServerMsg = { t: 'none' };
 
-export type ToFrontend =
+export type ToClient =
   | { t: 'current-user-profile'; result: Result<string, Profile[]> }
   | Res;
 
-export type ToBackend = Req;
+export type ToServer = Req;
 
 export type Req =
   | { t: 'find-many'; userIds: UserId[] }

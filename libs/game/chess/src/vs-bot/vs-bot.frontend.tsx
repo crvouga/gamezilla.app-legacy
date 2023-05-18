@@ -130,11 +130,11 @@ export const update = (
   }
 };
 
-export const updateFromBackend = (
+export const updateFromServer = (
   msg: ToFrontend,
   modelPrev: Model
 ): [Model, Cmd<Msg>, OutAction[]] => {
-  const [modelNext, cmd, actions] = updateFromBackend_(msg, modelPrev);
+  const [modelNext, cmd, actions] = updateFromServer_(msg, modelPrev);
 
   if (
     modelPrev.sharedModel.type !== 'GameOver' &&
@@ -157,7 +157,7 @@ export const updateFromBackend = (
   return [modelNext, cmd, actions];
 };
 
-const updateFromBackend_ = (
+const updateFromServer_ = (
   msg: ToFrontend,
   model: Model
 ): [Model, Cmd<Msg>, OutAction[]] => {

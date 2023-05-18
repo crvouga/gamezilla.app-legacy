@@ -102,7 +102,7 @@ export const update = ({
   }
 };
 
-export const updateFromFrontend = ({
+export const updateFromClient = ({
   sendToClient,
   broadcast,
   msg,
@@ -141,7 +141,7 @@ export const updateFromFrontend = ({
 
     case 'vs-bot': {
       if (model.t === 'vs-bot') {
-        const [child, cmd] = VsBot.updateFromFrontend(
+        const [child, cmd] = VsBot.updateFromClient(
           {
             sendToClient: (msg) => sendToClient({ t: 'vs-bot', c: msg }),
             broadcast: (msg) => broadcast({ t: 'vs-bot', c: msg }),
@@ -158,7 +158,7 @@ export const updateFromFrontend = ({
 
     case 'vs-user': {
       if (model.t === 'vs-user') {
-        const [child, cmd] = VsUser.updateFromFrontend(
+        const [child, cmd] = VsUser.updateFromClient(
           {
             sendToClient: (msg) => sendToClient({ t: 'vs-user', c: msg }),
             broadcast: (msg) => broadcast({ t: 'vs-user', c: msg }),
@@ -178,7 +178,7 @@ export const updateFromFrontend = ({
         return [model, Cmd.None];
       }
 
-      const updated = Puzzle.updateFromFrontend({
+      const updated = Puzzle.updateFromClient({
         model: model.c,
         msg: msg.c,
         sendToClient: (m) => sendToClient({ t: 'puzzle', c: m }),
