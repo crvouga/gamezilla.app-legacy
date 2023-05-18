@@ -1,5 +1,5 @@
 import { Cmd } from '@gamezilla/shared/core';
-import { ServerModel, ServerMsg, ToServer } from './auth.types';
+import { ServerModel, ServerMsg, ToServer } from './auth.shared';
 
 //
 //
