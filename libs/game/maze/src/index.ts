@@ -1,4 +1,4 @@
-export * as MazeServer from './maze.backend';
-export * as MazeClient from './maze.frontend';
-export * from './maze.types';
+export * as MazeServer from './maze.server';
+export * as MazeClient from './maze.client';
+export * from './maze.shared';
 export { viewCoverArt } from './maze';

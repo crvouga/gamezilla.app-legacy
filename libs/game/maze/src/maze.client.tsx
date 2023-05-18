@@ -22,7 +22,7 @@ import {
   initShared,
   ToServer,
   ToClient,
-} from './maze.types';
+} from './maze.shared';
 import { Direction, Position } from './position';
 
 //
