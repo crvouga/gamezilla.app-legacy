@@ -1,42 +1,75 @@
-import { Cmd, Sub } from '@gamezilla/shared/core';
-import { UserId } from '@gamezilla/shared/app';
-import { BackendModel, BackendMsg, ToBackend, initShared } from './flow.types';
+import { Cmd } from '@gamezilla/shared/core';
+import { BackendModel, BackendMsg, ToBackend } from './flow.types';
+import { RoomRequestCtx } from '@gamezilla/shared/backend';
+import * as ModeBuilderBackend from './mode-builder/mode-builder.backend';
 
 type Model = BackendModel;
 
-export const init = ({ playerId }: { playerId?: UserId }): Model => {
-  return {
-    ...initShared,
-    playerId,
-  };
+export const init: Model = {
+  t: 'none',
 };
 
 type Msg = BackendMsg;
 
-type Update<Msg, Model> = (input: { msg: Msg; model: Model }) => {
+export const update = ({
+  model,
+}: {
+  msg: Msg;
+  model: Model;
+}): {
   model: Model;
   cmd?: Cmd<Msg>;
+} => {
+  return { model };
 };
 
-export const update: Update<Msg, Model> = ({ msg, model }) => {
-  switch (msg[0]) {
-    case 'none': {
-      return { model };
-    }
-  }
-};
-
-export const updateFromFrontend: Update<ToBackend, Model> = ({
+export const updateFromFrontend = ({
   msg,
   model,
-}) => {
-  switch (msg[0]) {
-    case 'none': {
+  ctx,
+}: {
+  ctx: RoomRequestCtx;
+  msg: ToBackend;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  if (msg.t === 'input-mode') {
+    return updateInputMode({ msg, ctx, model });
+  }
+
+  return { model };
+};
+
+const updateInputMode = ({
+  msg,
+  model,
+  ctx,
+}: {
+  ctx: RoomRequestCtx;
+  msg: ToBackend;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  if (msg.t !== 'input-mode') {
+    return { model };
+  }
+
+  if (msg.mode === 'mode-builder') {
+    return { model: { t: 'mode-builder', c: ModeBuilderBackend.init } };
+  }
+
+  if (msg.mode === 'none') {
+    return { model: { t: 'none' } };
+  }
+
+  if (ctx.hostId === ctx.currentUserId) {
+    if (msg.mode === 'mode-builder') {
       return { model };
     }
   }
-};
-
-export const subscriptions = (_model: Model): Sub<Msg> => {
-  return Sub.None;
+  return { model };
 };

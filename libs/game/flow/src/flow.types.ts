@@ -1,24 +1,29 @@
-import { UserId } from '@gamezilla/shared/app';
-import { FlowGridShorthand, FlowGridUI } from './flow-grid';
-
+import { Result } from '@gamezilla/shared/core';
+import { FlowGridUI } from './flow-grid';
+import * as ModeBuilder from './mode-builder/mode-builder.types';
 //
 //
 // Model
 //
 //
 
-export type FrontendModel = SharedModel;
+export type FrontendModel =
+  | {
+      t: 'none';
+    }
+  | {
+      t: 'mode-builder';
+      c: ModeBuilder.FrontendModel;
+    };
 
-export type BackendModel = SharedModel;
-
-export type SharedModel = {
-  playerId?: UserId;
-  gridUI: FlowGridUI.Model;
-};
-
-export const initShared: SharedModel = {
-  gridUI: FlowGridUI.init(FlowGridShorthand.samples['6x6']['1']),
-};
+export type BackendModel =
+  | {
+      t: 'none';
+    }
+  | {
+      t: 'mode-builder';
+      c: ModeBuilder.BackendModel;
+    };
 
 //
 //
@@ -28,8 +33,17 @@ export const initShared: SharedModel = {
 
 export type FrontendMsg = { t: 'flow-grid-ui'; c: FlowGridUI.Msg };
 
-export type BackendMsg = ['none'];
+export type BackendMsg = { t: 'none' };
 
-export type ToBackend = ['none'];
+export type ToBackend = Req;
 
-export type ToFrontend = ['none'];
+export type ToFrontend = Res;
+
+export type Req = {
+  t: 'input-mode';
+  mode: BackendModel['t'];
+};
+
+export type Res = Req & {
+  result: Result<string, BackendModel>;
+};
