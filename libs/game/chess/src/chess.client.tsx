@@ -24,12 +24,12 @@ import {
   ClientMsg,
   ToServer,
   ToClient,
-} from './chess.types';
+} from './chess.shared';
 import { viewCoverArt } from './chess/chess';
 import Sounds from './chess/chess-sounds';
-import * as Puzzle from './puzzle/puzzle.frontend';
-import * as VsBot from './vs-bot/vs-bot.frontend';
-import * as VsUser from './vs-user/vs-user.frontend';
+import * as Puzzle from './puzzle/puzzle.client';
+import * as VsBot from './vs-bot/vs-bot.server';
+import * as VsUser from './vs-user/vs-user.client';
 
 //
 //

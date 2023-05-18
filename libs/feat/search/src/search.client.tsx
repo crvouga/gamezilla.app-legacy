@@ -1,7 +1,7 @@
-import { Browser, Cmd, matchSort, p } from '@gamezilla/shared/core';
 import { Route } from '@gamezilla/shared/client';
+import { Browser, Cmd, matchSort, p } from '@gamezilla/shared/core';
 import { IconMagnifyingGlass, IconXMark, ViewNode } from '@gamezilla/shared/ui';
-import { ClientModel, ClientMsg, ToServer, ToClient } from './search.shared';
+import { ClientModel, ClientMsg, ToClient, ToServer } from './search.shared';
 
 //
 //

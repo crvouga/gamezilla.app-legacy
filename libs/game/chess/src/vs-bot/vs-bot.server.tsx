@@ -20,7 +20,7 @@ import {
   initShared,
   inputMove,
   isBotTurn,
-} from './vs-bot.types';
+} from './vs-bot.shared';
 
 //
 //

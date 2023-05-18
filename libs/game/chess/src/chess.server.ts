@@ -3,10 +3,16 @@ import { RoomMsg } from '@gamezilla/shared/client';
 import { RoomCtx, RoomRequestCtx } from '@gamezilla/shared/server';
 import { UserId } from '@gamezilla/shared/app';
 import { GameMsg } from './chess-shared';
-import { ServerModel, ServerMsg, Res, ToServer, ToClient } from './chess.types';
-import * as Puzzle from './puzzle/puzzle.backend';
-import * as VsBot from './vs-bot/vs-bot.backend';
-import * as VsUser from './vs-user/vs-user.backend';
+import {
+  ServerModel,
+  ServerMsg,
+  Res,
+  ToServer,
+  ToClient,
+} from './chess.shared';
+import * as Puzzle from './puzzle/puzzle.server';
+import * as VsBot from './vs-bot/vs-bot.client';
+import * as VsUser from './vs-user/vs-user.server';
 
 const { Err, Ok } = Result;
 

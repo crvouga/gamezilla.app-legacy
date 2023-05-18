@@ -31,7 +31,7 @@ import {
   ToClient,
   toPlayerColor,
   toStatus,
-} from './puzzle.types';
+} from './puzzle.shared';
 
 //
 //

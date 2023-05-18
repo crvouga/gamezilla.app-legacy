@@ -18,7 +18,7 @@ import {
   startGame,
   ToServer,
   ToClient,
-} from './vs-user.types';
+} from './vs-user.shared';
 
 //
 //

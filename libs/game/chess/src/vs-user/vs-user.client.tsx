@@ -27,7 +27,7 @@ import {
   inputClockProblemToString,
   inputMove,
   startGame,
-} from './vs-user.types';
+} from './vs-user.shared';
 
 //
 //

@@ -3,7 +3,7 @@ import { UserId } from '@gamezilla/shared/app';
 import { DatabaseConnectionMySQL } from '@gamezilla/shared/server';
 import { z } from 'zod';
 import { MoveInput, uciMoveToMoveInput } from '../chess/chess';
-import { Puzzle, PuzzleInteraction, PuzzleQuery } from './puzzle.types';
+import { Puzzle, PuzzleInteraction, PuzzleQuery } from './puzzle.shared';
 
 // source https://database.lichess.org/#puzzles
 

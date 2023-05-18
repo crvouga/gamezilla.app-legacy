@@ -2,7 +2,7 @@ import { andThen, Cmd, eq, p, Result, Sub, Time } from '@gamezilla/shared/core';
 import { RoomMsg } from '@gamezilla/shared/client';
 import { RoomCtx, RoomRequestCtx } from '@gamezilla/shared/server';
 import { GameMsg } from '../chess-shared';
-import { PuzzleDatabase } from './puzzle-database.mysql';
+import { PuzzleDatabase } from './puzzle-db';
 import {
   ServerModel,
   ServerMsg,
@@ -11,7 +11,7 @@ import {
   ToServer,
   ToClient,
   toStatus,
-} from './puzzle.types';
+} from './puzzle.shared';
 
 //
 //

@@ -1,4 +1,4 @@
 export { viewCoverArt } from './chess/chess';
-export * as ChessServer from './chess.backend';
-export * as ChessClient from './chess.frontend';
-export * from './chess.types';
+export * as ChessServer from './chess.server';
+export * as ChessClient from './chess.client';
+export * from './chess.shared';
