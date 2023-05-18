@@ -1,5 +1,5 @@
 import { Cmd } from '@gamezilla/shared/core';
-import { ServerModel, ServerMsg, ToServer } from './search.types';
+import { ServerModel, ServerMsg, ToServer } from './search.shared';
 
 type Model = ServerModel;
 
