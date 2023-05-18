@@ -48,7 +48,7 @@ export type FrontendModel = SharedModel & {
 //
 //
 
-export type BackendMsg = ['none'];
+export type ServerMsg = ['none'];
 
 export type FrontendMsg =
   | Req

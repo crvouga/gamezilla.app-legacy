@@ -121,7 +121,7 @@ const initSetup = (model: Model): ModelSetup => {
 
 export type FrontendMsg = Req | { t: 'clicked-cancel' };
 
-export type BackendMsg = { t: 'none' };
+export type ServerMsg = { t: 'none' };
 
 export type ToFrontend = Res;
 

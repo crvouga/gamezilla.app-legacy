@@ -2,7 +2,7 @@ import { Cmd, Result, Sub, Time } from '@gamezilla/shared/core';
 import * as Snake from './snake';
 import {
   BackendModel,
-  BackendMsg,
+  ServerMsg,
   initSharedModel,
   InputDirection,
   InputDirection_Done,
@@ -37,7 +37,7 @@ export const init = initSharedModel;
 //
 //
 
-export type Msg = BackendMsg;
+export type Msg = ServerMsg;
 
 export const update = (
   { broadcast }: { broadcast: (msg: ToFrontend) => Cmd },

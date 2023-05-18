@@ -1,5 +1,5 @@
-import { Cmd } from '@gamezilla/shared/core';
-import { BackendModel, BackendMsg, ToBackend } from './flow.types';
+import { Cmd, Sub } from '@gamezilla/shared/core';
+import { BackendModel, ServerMsg, ToBackend } from './flow.types';
 import { RoomRequestCtx } from '@gamezilla/shared/backend';
 import * as ModeBuilderBackend from './mode-builder/mode-builder.backend';
 
@@ -9,7 +9,7 @@ export const init: Model = {
   t: 'none',
 };
 
-type Msg = BackendMsg;
+type Msg = ServerMsg;
 
 export const update = ({
   model,
@@ -72,4 +72,8 @@ const updateInputMode = ({
     }
   }
   return { model };
+};
+
+export const subscriptions = (_model: Model): Sub<Msg> => {
+  return Sub.None;
 };

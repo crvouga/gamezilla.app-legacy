@@ -243,7 +243,7 @@ export type Req =
 
 export type Res = Req & { result: Result<Problem, SharedModel> };
 
-export type BackendMsg =
+export type ServerMsg =
   | { t: 'clock-tick' }
   | { t: 'fetched-puzzles'; result: Result<string, Puzzle[]> }
   | { t: 'interaction-insert-done'; result: Result<string, null> };

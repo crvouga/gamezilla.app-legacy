@@ -55,7 +55,7 @@ export type FrontendMsg =
   | { t: 'phone-verify'; c: AuthPhoneVerify.Msg }
   | { t: 'email-link'; c: AuthEmailLink.Msg };
 
-export type BackendMsg = { t: 'none' };
+export type ServerMsg = { t: 'none' };
 
 export type ToBackend = Req | Event;
 

@@ -10,7 +10,7 @@ import { andThen, Cmd, exhaustive, Ok, p, Sub } from '@gamezilla/shared/core';
 import * as Game from './game.backend';
 import {
   BackendModel,
-  BackendMsg,
+  ServerMsg,
   handle,
   Res,
   ToBackend,
@@ -42,7 +42,7 @@ export const init: Model = {
 //
 //
 
-export type Msg = BackendMsg;
+export type Msg = ServerMsg;
 
 export const update = ({
   model,
@@ -119,7 +119,7 @@ type updateFromClient = (input: {
   wire: Wire;
   msg: ToBackend;
   model: Model;
-}) => { model: Model; cmd?: Cmd<BackendMsg> };
+}) => { model: Model; cmd?: Cmd<ServerMsg> };
 
 export const updateFromClient: updateFromClient = (input) => {
   return p(

@@ -62,7 +62,7 @@ export type FrontendMsg =
   | ['ClosedMenu']
   | Request;
 
-export type BackendMsg = ['tick'];
+export type ServerMsg = ['tick'];
 
 export type ToBackend = Request;
 

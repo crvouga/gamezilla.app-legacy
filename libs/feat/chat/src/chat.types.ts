@@ -90,7 +90,7 @@ export const update = ({ msg }: { msg: FrontendMsg; model: FrontendModel }) => {
 
 export type ToBackend = Req;
 
-export type BackendMsg = Res;
+export type ServerMsg = Res;
 
 export type ToFrontend = Res;
 
@@ -100,7 +100,7 @@ export const updateFromClient = ({
   msg: ToBackend;
   model: BackendModel;
 }): {
-  cmd: Cmd<BackendMsg>;
+  cmd: Cmd<ServerMsg>;
 } => {
   switch (msg[0]) {
     default: {

@@ -61,7 +61,7 @@ export const initShared = ({ userId }: { userId: UserId | null }): Model => {
 
 export type FrontendMsg = Req;
 
-export type BackendMsg = { t: 'none' };
+export type ServerMsg = { t: 'none' };
 
 export type ToBackend = Req;
 

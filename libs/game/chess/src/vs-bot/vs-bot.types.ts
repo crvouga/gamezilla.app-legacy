@@ -87,7 +87,7 @@ export type FrontendMsg =
   | ['ClickedFlip']
   | ['ClosedModal'];
 
-export type BackendMsg = BotMoved;
+export type ServerMsg = BotMoved;
 
 export type ToBackend = Req;
 

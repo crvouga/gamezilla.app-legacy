@@ -25,7 +25,7 @@ export type ToBackend = Req;
 
 export type ToFrontend = Res;
 
-export type BackendMsg = { t: 'none' };
+export type ServerMsg = { t: 'none' };
 
 export type FrontendMsg =
   | Req

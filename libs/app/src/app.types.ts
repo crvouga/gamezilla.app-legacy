@@ -83,15 +83,15 @@ export type FrontendMsg =
   | { t: 'profile'; c: Profile.ClientMsg }
   | { t: 'search'; c: Search.FrontendMsg };
 
-export type BackendMsg =
+export type ServerMsg =
   | { t: '→'; sessionId: SessionId; clientId: ClientId; c: ToBackend }
   | { t: 'client-connected'; sessionId: SessionId; clientId: ClientId }
   | { t: 'client-disconnected'; sessionId: SessionId; clientId: ClientId }
-  | { t: 'room'; c: Room.BackendMsg }
+  | { t: 'room'; c: Room.ServerMsg }
   | { t: 'profile'; c: Profile.ServerMsg }
-  | { t: 'search'; c: Search.BackendMsg }
-  | { t: 'chat'; c: Chat.BackendMsg }
-  | { t: 'auth'; c: Auth.BackendMsg };
+  | { t: 'search'; c: Search.ServerMsg }
+  | { t: 'chat'; c: Chat.ServerMsg }
+  | { t: 'auth'; c: Auth.ServerMsg };
 
 //
 //

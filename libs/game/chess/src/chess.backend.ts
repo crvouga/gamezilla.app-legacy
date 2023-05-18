@@ -5,7 +5,7 @@ import { UserId } from '@gamezilla/shared/app';
 import { GameMsg } from './chess-shared';
 import {
   BackendModel,
-  BackendMsg,
+  ServerMsg,
   Res,
   ToBackend,
   ToFrontend,
@@ -36,7 +36,7 @@ export const init: Model = { t: 'none' };
 //
 //
 
-export type Msg = BackendMsg;
+export type Msg = ServerMsg;
 
 export const update = ({
   broadcast,

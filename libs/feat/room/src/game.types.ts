@@ -43,15 +43,15 @@ export type BackendModel =
 //
 //
 
-export type BackendMsg =
-  | { t: 'tic-tac-toe'; c: TicTacToe.BackendMsg }
-  | { t: 'connect-four'; c: ConnectFour.BackendMsg }
-  | { t: 'chess'; c: Chess.BackendMsg }
-  | { t: 'gomoku'; c: Gomoku.BackendMsg }
-  | { t: 'tetris'; c: Tetris.BackendMsg }
-  | { t: 'snake'; c: Snake.BackendMsg }
-  | { t: 'maze'; c: Maze.BackendMsg }
-  | { t: 'flow'; c: Flow.BackendMsg };
+export type ServerMsg =
+  | { t: 'tic-tac-toe'; c: TicTacToe.ServerMsg }
+  | { t: 'connect-four'; c: ConnectFour.ServerMsg }
+  | { t: 'chess'; c: Chess.ServerMsg }
+  | { t: 'gomoku'; c: Gomoku.ServerMsg }
+  | { t: 'tetris'; c: Tetris.ServerMsg }
+  | { t: 'snake'; c: Snake.ServerMsg }
+  | { t: 'maze'; c: Maze.ServerMsg }
+  | { t: 'flow'; c: Flow.ServerMsg };
 
 export type FrontendMsg =
   | { t: 'tic-tac-toe'; c: TicTacToe.FrontendMsg }

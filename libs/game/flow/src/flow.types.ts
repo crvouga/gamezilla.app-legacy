@@ -33,7 +33,7 @@ export type BackendModel =
 
 export type FrontendMsg = { t: 'flow-grid-ui'; c: FlowGridUI.Msg };
 
-export type BackendMsg = { t: 'none' };
+export type ServerMsg = { t: 'none' };
 
 export type ToBackend = Req;
 

@@ -79,7 +79,7 @@ export const isBotTurn = (model: SharedModel): model is GameModel => {
 
 export type FrontendMsg = Req | ['animate'];
 
-export type BackendMsg = BotMove;
+export type ServerMsg = BotMove;
 
 export type ToBackend = Req;
 

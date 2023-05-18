@@ -1,11 +1,11 @@
 import { Cmd } from '@gamezilla/shared/core';
-import { BackendModel, BackendMsg, ToBackend, ToFrontend } from './chat.types';
+import { BackendModel, ServerMsg, ToBackend, ToFrontend } from './chat.types';
 
 type Model = BackendModel;
 
 export const init: { model: Model } = { model: null };
 
-type Msg = BackendMsg;
+type Msg = ServerMsg;
 
 export const updateFromClient = ({
   model,

@@ -1,7 +1,7 @@
 import { Cmd, Sub, Time } from '@gamezilla/shared/core';
 import {
   BackendModel,
-  BackendMsg,
+  ServerMsg,
   initShared,
   inputDrop,
   inputRotate,
@@ -32,7 +32,7 @@ export const init: Model = initShared;
 //
 //
 
-export type Msg = BackendMsg;
+export type Msg = ServerMsg;
 
 export const update = (
   { broadcast }: { broadcast: (msg: ToFrontend) => Cmd },

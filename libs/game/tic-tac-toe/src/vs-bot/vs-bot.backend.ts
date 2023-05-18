@@ -3,7 +3,7 @@ import { RoomMsg } from '@gamezilla/shared/frontend';
 import { findBestMove, toDepth, toOpposite } from '../tic-tic-toe/tic-tac-toe';
 import {
   BackendModel,
-  BackendMsg,
+  ServerMsg,
   botMove,
   initSharedModel,
   inputBot,
@@ -41,7 +41,7 @@ export const init = initSharedModel;
 //
 //
 
-export type Msg = BackendMsg;
+export type Msg = ServerMsg;
 
 type Update = (
   wire: { broadcast: (msg: ToFrontend) => Cmd },

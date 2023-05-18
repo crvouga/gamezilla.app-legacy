@@ -31,10 +31,10 @@ export type FrontendMsg =
   | { t: 'vs-bot'; c: VsBot.FrontendMsg }
   | { t: 'puzzle'; c: Puzzle.FrontendMsg };
 
-export type BackendMsg =
-  | { t: 'vs-user'; c: VsUser.BackendMsg }
-  | { t: 'vs-bot'; c: VsBot.BackendMsg }
-  | { t: 'puzzle'; c: Puzzle.BackendMsg };
+export type ServerMsg =
+  | { t: 'vs-user'; c: VsUser.ServerMsg }
+  | { t: 'vs-bot'; c: VsBot.ServerMsg }
+  | { t: 'puzzle'; c: Puzzle.ServerMsg };
 
 export type ToFrontend =
   | Res

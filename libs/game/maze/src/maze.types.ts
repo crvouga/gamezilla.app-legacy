@@ -59,7 +59,7 @@ export type FrontendMsg =
   | ['key-down', Keyboard.Key]
   | ['key-up', Keyboard.Key];
 
-export type BackendMsg = ['tick'];
+export type ServerMsg = ['tick'];
 
 export type ToBackend = Req;
 

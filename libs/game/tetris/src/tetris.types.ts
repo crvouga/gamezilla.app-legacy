@@ -105,7 +105,7 @@ export type FrontendMsg =
   | ['ClickedBoard', Position.Position]
   | MouseMove;
 
-export type BackendMsg = Tick;
+export type ServerMsg = Tick;
 
 export type ToBackend = InputTranslate | InputRotate | InputDrop | MouseMove;
 

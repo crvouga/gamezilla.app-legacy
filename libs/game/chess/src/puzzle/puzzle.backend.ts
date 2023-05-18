@@ -5,7 +5,7 @@ import { GameMsg } from '../chess-shared';
 import { PuzzleDatabase } from './puzzle-database.mysql';
 import {
   BackendModel,
-  BackendMsg,
+  ServerMsg,
   handle,
   initShared,
   ToBackend,
@@ -52,7 +52,7 @@ export const init = ({
 //
 //
 
-export type Msg = BackendMsg;
+export type Msg = ServerMsg;
 
 export const update = ({
   msg,

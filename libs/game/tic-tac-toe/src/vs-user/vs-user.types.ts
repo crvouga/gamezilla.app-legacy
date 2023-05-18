@@ -139,7 +139,7 @@ type ModalName = 'resignation';
 
 export type FrontendMsg = Req | ['OpenModal', ModalName] | ['close-modal'];
 
-export type BackendMsg = RoundCountDown | MoveCountDown;
+export type ServerMsg = RoundCountDown | MoveCountDown;
 
 export type ToBackend = Req;
 

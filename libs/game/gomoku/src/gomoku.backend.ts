@@ -4,7 +4,7 @@ import { Cmd, Result, Sub } from '@gamezilla/shared/core';
 import { RoomMsg } from '@gamezilla/shared/frontend';
 import {
   BackendModel,
-  BackendMsg,
+  ServerMsg,
   Mode,
   ToBackend,
   ToFrontend,
@@ -58,7 +58,7 @@ const initMode = ({ mode, userId }: { mode: Mode; userId: UserId }): Model => {
 //
 //
 
-export type Msg = BackendMsg;
+export type Msg = ServerMsg;
 
 export const update = ({
   msg,

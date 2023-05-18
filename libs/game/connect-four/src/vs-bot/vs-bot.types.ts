@@ -121,7 +121,7 @@ export type FrontendMsg =
   | ['hovered', { columnIndex: ColumnIndex }]
   | ['animate'];
 
-export type BackendMsg = ['bot-move', BestMoveResult];
+export type ServerMsg = ['bot-move', BestMoveResult];
 
 export type ToFrontend =
   | Res

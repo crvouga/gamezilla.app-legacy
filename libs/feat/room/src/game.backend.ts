@@ -1,5 +1,3 @@
-import { Cmd, exhaustive, Sub } from '@gamezilla/shared/core';
-import { RoomMsg } from '@gamezilla/shared/frontend';
 import { ChessBackend } from '@gamezilla/game/chess';
 import { ConnectFourBackend } from '@gamezilla/game/connect-four';
 import { FlowBackend } from '@gamezilla/game/flow';
@@ -10,7 +8,9 @@ import { TetrisBackend } from '@gamezilla/game/tetris';
 import { TicTacToeBackend } from '@gamezilla/game/tic-tac-toe';
 import { UserId } from '@gamezilla/shared/app';
 import { RoomCtx, RoomRequestCtx } from '@gamezilla/shared/backend';
-import { BackendModel, BackendMsg, ToBackend, ToFrontend } from './game.types';
+import { Cmd, exhaustive, Sub } from '@gamezilla/shared/core';
+import { RoomMsg } from '@gamezilla/shared/frontend';
+import { BackendModel, ServerMsg, ToBackend, ToFrontend } from './game.types';
 
 //
 //
@@ -64,7 +64,7 @@ export const init = ({
     }
 
     case 'flow': {
-      return { t: 'flow', c: FlowBackend.init({}) };
+      return { t: 'flow', c: FlowBackend.init };
     }
 
     default: {
@@ -81,7 +81,7 @@ export const init = ({
 //
 //
 
-export type Msg = BackendMsg;
+export type Msg = ServerMsg;
 
 export const update = ({
   broadcast,
@@ -349,6 +349,7 @@ export const updateFromClient = ({
       const updated = FlowBackend.updateFromClient({
         model: model.c,
         msg: msg.c,
+        ctx,
       });
       return [
         { t: 'flow', c: updated.model },

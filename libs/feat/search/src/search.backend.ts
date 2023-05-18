@@ -1,5 +1,5 @@
 import { Cmd } from '@gamezilla/shared/core';
-import { BackendModel, BackendMsg, ToBackend } from './search.types';
+import { BackendModel, ServerMsg, ToBackend } from './search.types';
 
 type Model = BackendModel;
 
@@ -7,7 +7,7 @@ export const init: { model: Model } = {
   model: null,
 };
 
-type Msg = BackendMsg;
+type Msg = ServerMsg;
 
 export const update = ({
   model,

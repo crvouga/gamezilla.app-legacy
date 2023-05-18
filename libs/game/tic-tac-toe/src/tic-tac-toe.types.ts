@@ -33,9 +33,9 @@ export type FrontendMsg =
   | { t: 'vs-bot'; c: VsBot.FrontendMsg }
   | Req;
 
-export type BackendMsg =
-  | { t: 'vs-user'; c: VsUser.BackendMsg }
-  | { t: 'vs-bot'; c: VsBot.BackendMsg };
+export type ServerMsg =
+  | { t: 'vs-user'; c: VsUser.ServerMsg }
+  | { t: 'vs-bot'; c: VsBot.ServerMsg };
 
 export type ToBackend =
   | { t: 'vs-user'; c: VsUser.ToBackend }

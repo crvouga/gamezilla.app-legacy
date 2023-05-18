@@ -127,7 +127,7 @@ export type BackendModel = SharedModel;
 //
 //
 
-export type BackendMsg = Tick;
+export type ServerMsg = Tick;
 
 export type FrontendMsg =
   | Req

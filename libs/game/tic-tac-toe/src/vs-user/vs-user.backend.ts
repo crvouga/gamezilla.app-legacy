@@ -4,7 +4,7 @@ import { PlayerType, toOpposite, toTurn } from '../tic-tic-toe/tic-tac-toe';
 import * as Round from './vs-user-round';
 import {
   BackendModel,
-  BackendMsg,
+  ServerMsg,
   initSharedModel,
   inputBestOutOf,
   inputMove,
@@ -45,7 +45,7 @@ export const init = initSharedModel;
 //
 //
 
-export type Msg = BackendMsg;
+export type Msg = ServerMsg;
 
 export const update = (
   {

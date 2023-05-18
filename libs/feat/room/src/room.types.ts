@@ -79,7 +79,7 @@ export type ToFrontend = (Res | { t: 'game'; c: Game.ToFrontend }) & Extra;
 
 export type ToBackend = (Req | { t: 'game'; c: Game.ToBackend }) & Extra;
 
-export type BackendMsg = { t: 'game'; roomId: RoomId; c: Game.BackendMsg };
+export type ServerMsg = { t: 'game'; roomId: RoomId; c: Game.ServerMsg };
 
 export type FrontendMsg =
   | Req

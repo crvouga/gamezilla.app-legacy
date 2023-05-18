@@ -2,7 +2,7 @@ import { Cmd, exhaustive } from '@gamezilla/shared/core';
 import { PartyId, UserId } from '@gamezilla/shared/app';
 import {
   BackendModel,
-  BackendMsg,
+  ServerMsg,
   handle,
   Res,
   ToBackend,
@@ -32,7 +32,7 @@ export const init: Model = {
 //
 //
 
-export type Msg = BackendMsg;
+export type Msg = ServerMsg;
 
 export const update = (
   _wire: {

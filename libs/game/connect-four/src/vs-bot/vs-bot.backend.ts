@@ -4,7 +4,7 @@ import { RoomMsg } from '@gamezilla/shared/frontend';
 import { getBestMove, opposite } from '../connect-four/connect-four';
 import {
   BackendModel,
-  BackendMsg,
+  ServerMsg,
   botMove,
   handle,
   initShared,
@@ -34,7 +34,7 @@ export const init = initShared;
 //
 //
 
-export type Msg = BackendMsg;
+export type Msg = ServerMsg;
 
 export const update = ({
   broadcast,

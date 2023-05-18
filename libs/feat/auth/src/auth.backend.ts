@@ -1,5 +1,5 @@
 import { Cmd } from '@gamezilla/shared/core';
-import { BackendModel, BackendMsg, ToBackend } from './auth.types';
+import { BackendModel, ServerMsg, ToBackend } from './auth.types';
 
 //
 //
@@ -21,7 +21,7 @@ export const init: Model = { sessions: {}, verifications: {} };
 //
 //
 
-export type Msg = BackendMsg;
+export type Msg = ServerMsg;
 
 export const update = ({
   model,

@@ -22,7 +22,7 @@ export type BackendModel = SharedModel;
 
 export type FrontendMsg = { t: 'flow-grid-ui'; c: FlowGridUI.Msg };
 
-export type BackendMsg = { t: 'none' };
+export type ServerMsg = { t: 'none' };
 
 export type ToBackend = { t: 'none' };
 

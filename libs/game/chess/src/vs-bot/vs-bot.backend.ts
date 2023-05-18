@@ -3,7 +3,7 @@ import { RoomMsg } from '@gamezilla/shared/frontend';
 import * as Chess from '../chess/chess';
 import {
   BackendModel,
-  BackendMsg,
+  ServerMsg,
   botMoved,
   initBackend,
   inputBot,
@@ -37,7 +37,7 @@ export const init = initBackend;
 //
 //
 
-export type Msg = BackendMsg;
+export type Msg = ServerMsg;
 
 export const update = (
   { broadcast }: { broadcast: (msg: ToFrontend) => Cmd },

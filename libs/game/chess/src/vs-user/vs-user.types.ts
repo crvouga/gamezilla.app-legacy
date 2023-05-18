@@ -101,7 +101,7 @@ export type FrontendMsg =
   | ['ClickedFlip']
   | Req;
 
-export type BackendMsg = ClockTicked;
+export type ServerMsg = ClockTicked;
 
 export type ToFrontend =
   | ['GameOver']

@@ -9,7 +9,7 @@ import { Cmd, Sub, exhaustive, p } from '@gamezilla/shared/core';
 import * as Rx from 'rxjs';
 import {
   BackendModel,
-  BackendMsg,
+  ServerMsg,
   Session,
   ToBackend,
   ToFrontend,
@@ -44,7 +44,7 @@ export const init: { model: Model; cmd?: Cmd<Msg> } = {
 //
 //
 
-type Msg = BackendMsg;
+type Msg = ServerMsg;
 
 export const update = ({
   msg,
