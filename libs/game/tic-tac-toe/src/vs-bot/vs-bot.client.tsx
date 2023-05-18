@@ -29,7 +29,7 @@ import {
   ToClient,
   initSharedModel,
   inputMove,
-} from './vs-bot.types';
+} from './vs-bot.shared';
 
 //
 //

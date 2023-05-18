@@ -1,4 +1,4 @@
-export * as TicTacToeServer from './tic-tac-toe.backend';
-export * as TicTacToeClient from './tic-tac-toe.frontend';
-export * from './tic-tac-toe.types';
+export * as TicTacToeServer from './tic-tac-toe.server';
+export * as TicTacToeClient from './tic-tac-toe.client';
+export * from './tic-tac-toe.shared';
 export { viewCoverArt } from './tic-tic-toe/tic-tac-toe-ui';

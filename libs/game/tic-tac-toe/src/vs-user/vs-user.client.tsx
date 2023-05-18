@@ -41,7 +41,7 @@ import {
   rematchAskToString,
   startGame,
   toWinCount,
-} from './vs-user.types';
+} from './vs-user.shared';
 
 //
 //

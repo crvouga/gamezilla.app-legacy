@@ -23,7 +23,7 @@ import {
   stopPlaying,
   ToServer,
   ToClient,
-} from './vs-user.types';
+} from './vs-user.shared';
 
 //
 //

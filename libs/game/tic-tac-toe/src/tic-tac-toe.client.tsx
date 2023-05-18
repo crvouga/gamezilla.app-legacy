@@ -14,10 +14,10 @@ import {
   ClientMsg,
   ToServer,
   ToClient,
-} from './tic-tac-toe.types';
+} from './tic-tac-toe.shared';
 import { viewCoverArt } from './tic-tic-toe/tic-tac-toe-ui';
-import * as VsBot from './vs-bot/vs-bot.frontend';
-import * as VsUser from './vs-user/vs-user.frontend';
+import * as VsBot from './vs-bot/vs-bot.client';
+import * as VsUser from './vs-user/vs-user.client';
 
 //
 //

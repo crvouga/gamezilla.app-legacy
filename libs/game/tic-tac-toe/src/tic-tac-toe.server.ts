@@ -7,9 +7,9 @@ import {
   ServerMsg,
   ToServer,
   ToClient,
-} from './tic-tac-toe.types';
-import * as VsBot from './vs-bot/vs-bot.backend';
-import * as VsUser from './vs-user/vs-user.backend';
+} from './tic-tac-toe.shared';
+import * as VsBot from './vs-bot/vs-bot.server';
+import * as VsUser from './vs-user/vs-user.server';
 
 const { Err, Ok } = Result;
 
