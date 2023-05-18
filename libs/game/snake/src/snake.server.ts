@@ -15,7 +15,7 @@ import {
   ToClient,
   ToggleStatus,
   ToggleStatusResult,
-} from './snake.types';
+} from './snake.shared';
 
 //
 //

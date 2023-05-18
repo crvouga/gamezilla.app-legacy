@@ -20,7 +20,7 @@ import {
   ToClient,
   canStartGame,
   initSharedModel,
-} from './snake.types';
+} from './snake.shared';
 
 //
 //
