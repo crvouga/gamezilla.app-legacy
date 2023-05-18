@@ -10,7 +10,7 @@ import {
   tick,
   ToServer,
   ToClient,
-} from './tetris.types';
+} from './tetris.shared';
 
 //
 //

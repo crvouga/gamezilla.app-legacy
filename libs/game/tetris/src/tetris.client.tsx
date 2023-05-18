@@ -16,7 +16,7 @@ import {
   ToClient,
   toGhostPiece,
   toPiece,
-} from './tetris.types';
+} from './tetris.shared';
 
 //
 //
