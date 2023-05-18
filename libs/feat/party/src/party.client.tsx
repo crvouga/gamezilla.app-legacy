@@ -16,7 +16,7 @@ import {
   ViewEmptyState,
 } from '@gamezilla/shared/ui';
 import { Mic } from './mic';
-import { ClientModel, ClientMsg, ToServer, ToClient } from './party.types';
+import { ClientModel, ClientMsg, ToServer, ToClient } from './party.shared';
 
 //
 //

@@ -1,3 +1,3 @@
-export * as PartyServer from './party.backend';
-export * as PartyClient from './party.frontend';
-export * as Party from './party.types';
+export * as PartyServer from './party.server';
+export * as PartyClient from './party.client';
+export * as Party from './party.shared';
