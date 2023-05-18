@@ -29,7 +29,7 @@ import {
   ViewNode,
 } from '@gamezilla/shared/ui';
 import { Subject } from 'rxjs';
-import { ClientModel, ClientMsg, ToServer, ToClient } from './app.types';
+import { ClientModel, ClientMsg, ToServer, ToClient } from './app.shared';
 
 //
 //

@@ -13,7 +13,7 @@ import {
   Session,
   ToServer,
   ToClient,
-} from './app.types';
+} from './app.shared';
 
 //
 //

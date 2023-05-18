@@ -1,3 +1,3 @@
-export * from './app.types';
-export * as AppClient from './app.frontend';
-export * as AppServer from './app.backend';
+export * from './app.shared';
+export * as AppClient from './app.client';
+export * as AppServer from './app.server';
