@@ -2,7 +2,7 @@ import {
   AppServer,
   ClientToServerEvents,
   ServerToClientEvents,
-  backendServerPort,
+  serverPort,
   sessionIdKey,
 } from '@gamezilla/app';
 import { ClientId, SessionId } from '@gamezilla/shared/app';
@@ -20,7 +20,7 @@ import * as Socket from 'socket.io';
 //
 
 const main = async () => {
-  console.log('[backend] planet scale connecting...');
+  console.log('[server] planet scale connecting...');
 
   const DATABASE_URL =
     'mysql://scuu9usphxh6zuxltqbe:pscale_pw_lkZooGgR8H09Uc59IVrcZEt8avVQ54VObBfoFwbCIa3@aws.connect.psdb.cloud/gamezilla?ssl={"rejectUnauthorized":true}';
@@ -29,7 +29,7 @@ const main = async () => {
     connectionString: DATABASE_URL,
   });
 
-  console.log('[backend] planet scale connected.');
+  console.log('[server] planet scale connected.');
 
   const requestListener: Http.RequestListener = (_request, response) => {
     const state = program.state$.getValue();
@@ -83,10 +83,10 @@ const main = async () => {
     socketServer.to(clientIds).emit('to-client', msg);
   });
 
-  const port = Number(process.env['PORT']) || backendServerPort;
+  const port = Number(process.env['PORT']) || serverPort;
 
   httpServer.listen(port, () => {
-    console.log(`[backend] http server listening: http://localhost:${port}/`);
+    console.log(`[server] http server listening: http://localhost:${port}/`);
   });
 
   const program = Program.create({

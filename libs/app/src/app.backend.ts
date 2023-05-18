@@ -235,8 +235,6 @@ const updateFromClient = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  const sendToClient = (m: ToClient) => sendToClient([ctx.clientId], m);
-
   switch (msg.t) {
     case 'auth': {
       if (msg.c.t !== 'got-current-user') {
@@ -280,13 +278,16 @@ const updateFromClient = ({
       const currentUserId = model.sessions[ctx.sessionId]?.userId;
 
       if (!currentUserId) {
-        return { model, cmd: sendToClient({ t: 'access-denied', msg }) };
+        return {
+          model,
+          cmd: sendToClient([ctx.clientId], { t: 'access-denied', msg }),
+        };
       }
 
       const updated = ProfileServer.updateFromClient({
         model: model.profile,
         msg: msg.c,
-        sendToClient: (c) => sendToClient({ t: 'profile', c }),
+        sendToClient: (c) => sendToClient([ctx.clientId], { t: 'profile', c }),
         ctx: {
           ...ctx,
           currentUserId,
@@ -313,7 +314,7 @@ const updateFromClient = ({
       const updated = ChatServer.updateFromClient({
         model: model.chat,
         msg: msg.c,
-        sendToClient: (c) => sendToClient({ t: 'chat', c }),
+        sendToClient: (c) => sendToClient([ctx.clientId], { t: 'chat', c }),
       });
       return {
         model: { ...model, chat: updated.model },
@@ -339,7 +340,7 @@ const updateFromClient = ({
         },
         wire: {
           broadcast: (c) => broadcast({ t: 'room', c }),
-          sendToClient: (c) => sendToClient({ t: 'room', c }),
+          sendToClient: (c) => sendToClient([ctx.clientId], { t: 'room', c }),
           sendToUser: (userIds, c) =>
             sendToUser(model, userIds, { t: 'room', c }),
         },

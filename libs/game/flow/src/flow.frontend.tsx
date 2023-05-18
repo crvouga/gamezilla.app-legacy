@@ -40,14 +40,12 @@ export const updateFromServer = ({
 
 export const mergeWithServer = ({
   clientModel,
-  serverModel,
 }: {
   clientModel: ClientModel;
   serverModel: ServerModel;
-}) => {
+}): ClientModel => {
   return {
     ...clientModel,
-    ...serverModel,
   };
 };
 

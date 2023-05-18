@@ -3,7 +3,7 @@ import {
   ClientToServerEvents,
   ServerToClientEvents,
   ToServer,
-  backendServerPort,
+  serverPort,
   sessionIdKey,
 } from '@gamezilla/app';
 import { Browser, Cmd, Debug, Program } from '@gamezilla/shared/core';
@@ -22,12 +22,12 @@ import { Socket, io } from 'socket.io-client';
 const main = () => {
   const isProduction = process.env.NODE_ENV === 'production';
 
-  const backendUrl = isProduction
-    ? 'https://backend.gamezilla.app/'
-    : `http://localhost:${backendServerPort}/`;
+  const serverUrl = isProduction
+    ? 'https://server.gamezilla.app/'
+    : `http://localhost:${serverPort}/`;
 
   const socketClient: Socket<ServerToClientEvents, ClientToServerEvents> = io(
-    backendUrl,
+    serverUrl,
     {
       auth: {
         [sessionIdKey]: localStorage.getItem(sessionIdKey) ?? undefined,

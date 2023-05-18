@@ -37,7 +37,7 @@ export type ClientModel = {
   wire: WireModel;
   auth: Auth.ClientModel;
   room: Room.ClientModel;
-  profile: Profile.ServerModel;
+  profile: Profile.ClientModel;
   chat: Chat.ClientModel;
   search: Search.ClientModel;
 };
@@ -110,6 +110,6 @@ export type ClientToServerEvents = {
   ['to-server']: (msg: ToServer) => void;
 };
 
-export const backendServerPort = 5000;
+export const serverPort = 5000;
 
 export const sessionIdKey = 'gamezilla_session_id';
