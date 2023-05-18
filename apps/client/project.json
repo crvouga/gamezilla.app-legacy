@@ -1,7 +1,7 @@
 {
-  "name": "app-frontend",
-  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/app/frontend/src",
+  "name": "client",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/client/src",
   "projectType": "application",
   "targets": {
     "build": {
@@ -9,7 +9,7 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/apps/app/frontend"
+        "outputPath": "dist/apps/client"
       },
       "configurations": {
         "development": {
@@ -24,32 +24,32 @@
       "executor": "@nx/vite:dev-server",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "app-frontend:build"
+        "buildTarget": "client:build"
       },
       "configurations": {
         "development": {
-          "buildTarget": "app-frontend:build:development",
+          "buildTarget": "client:build:development",
           "hmr": false
         },
         "production": {
-          "buildTarget": "app-frontend:build:production",
+          "buildTarget": "client:build:production",
           "hmr": false
         }
       }
     },
     "test": {
       "executor": "@nx/vite:test",
-      "outputs": ["coverage/apps/app/frontend"],
+      "outputs": ["coverage/apps/client"],
       "options": {
         "passWithNoTests": true,
-        "reportsDirectory": "../../../coverage/apps/app/frontend"
+        "reportsDirectory": "../../coverage/apps/client"
       }
     },
     "lint": {
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["apps/app/frontend/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["apps/client/**/*.{ts,tsx,js,jsx}"]
       }
     }
   },

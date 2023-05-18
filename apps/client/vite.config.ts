@@ -12,7 +12,7 @@ export default defineConfig({
   plugins: [
     react(),
     viteTsConfigPaths({
-      root: '../../../',
+      root: '../../',
       projects: ['tsconfig.base.json'],
     }),
   ],
@@ -21,7 +21,7 @@ export default defineConfig({
   // worker: {
   //  plugins: [
   //    viteTsConfigPaths({
-  //      root: '../../../',
+  //      root: '../../',
   //    }),
   //  ],
   // },
@@ -29,7 +29,7 @@ export default defineConfig({
   test: {
     globals: true,
     cache: {
-      dir: '../../../node_modules/.vitest',
+      dir: '../../node_modules/.vitest',
     },
     environment: 'jsdom',
     include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],

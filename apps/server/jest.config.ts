@@ -1,7 +1,7 @@
 /* eslint-disable */
 export default {
-  displayName: 'app-backend',
-  preset: '../../../jest.preset.js',
+  displayName: 'server',
+  preset: '../../jest.preset.js',
   globals: {},
   testEnvironment: 'node',
   transform: {
@@ -13,5 +13,5 @@ export default {
     ],
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../../coverage/apps/app/backend',
+  coverageDirectory: '../../coverage/apps/server',
 };
