@@ -1,7 +1,7 @@
 import { Result } from '@gamezilla/shared/core';
 import { UserId } from '@gamezilla/shared/app';
-import * as VsBot from './vs-bot/vs-bot.types';
-import * as VsUser from './vs-user/vs-user.types';
+import * as VsBot from './vs-bot/vs-bot.shared';
+import * as VsUser from './vs-user/vs-user.shared';
 
 //
 //

@@ -21,7 +21,7 @@ import {
   ToServer,
   ToClient,
   initShared,
-} from './vs-user.types';
+} from './vs-user.shared';
 
 //
 //

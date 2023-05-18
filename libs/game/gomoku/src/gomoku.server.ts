@@ -8,9 +8,9 @@ import {
   Mode,
   ToServer,
   ToClient,
-} from './gomoku.types';
-import * as VsBot from './vs-bot/vs-bot.backend';
-import * as VsUser from './vs-user/vs-user.backend';
+} from './gomoku.shared';
+import * as VsBot from './vs-bot/vs-bot.server';
+import * as VsUser from './vs-user/vs-user.server';
 
 const { Ok } = Result;
 

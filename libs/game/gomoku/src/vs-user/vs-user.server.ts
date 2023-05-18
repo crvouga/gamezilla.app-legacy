@@ -9,7 +9,7 @@ import {
   ToClient,
   handle,
   initShared,
-} from './vs-user.types';
+} from './vs-user.shared';
 
 //
 //
