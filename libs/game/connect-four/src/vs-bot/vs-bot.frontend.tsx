@@ -100,7 +100,7 @@ export const update = (
         return { model };
       }
 
-      const modelNext = mergeWithBackend({
+      const modelNext = mergeWithServer({
         ctx,
         serverModel: result.value,
         clientModel: model,
@@ -137,7 +137,7 @@ export const updateFromServer = ({
 } => {
   switch (msg[0]) {
     case 'player-left': {
-      const modelNew = mergeWithBackend({
+      const modelNew = mergeWithServer({
         ctx,
         clientModel: model,
         serverModel: msg[1],
@@ -151,7 +151,7 @@ export const updateFromServer = ({
         return { model };
       }
 
-      const modelNew = mergeWithBackend({
+      const modelNew = mergeWithServer({
         ctx,
         clientModel: model,
         serverModel: msg[1].value,
@@ -172,7 +172,7 @@ export const updateFromServer = ({
         return { model };
       }
 
-      const modelNew = mergeWithBackend({
+      const modelNew = mergeWithServer({
         ctx,
         clientModel: model,
         serverModel: msg[1].value,
@@ -183,7 +183,7 @@ export const updateFromServer = ({
   }
 };
 
-export const mergeWithBackend = ({
+export const mergeWithServer = ({
   serverModel,
   clientModel,
 }: {

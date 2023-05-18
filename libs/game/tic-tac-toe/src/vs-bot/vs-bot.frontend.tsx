@@ -85,7 +85,7 @@ export const update = ({
       if (result.type === 'Err') {
         return { model, cmd: sendToServer(msg) };
       }
-      const merged = mergeWithBackend({
+      const merged = mergeWithServer({
         ...ctx,
         clientModel: model,
         serverModel: result.value,
@@ -110,7 +110,7 @@ export const updateFromServer = ({
 }): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
     case 'player-left': {
-      const modelNew = mergeWithBackend({
+      const modelNew = mergeWithServer({
         ...ctx,
         clientModel: model,
         serverModel: msg[1],
@@ -122,7 +122,7 @@ export const updateFromServer = ({
       if (msg[1].type === 'Err') {
         return [model, Cmd.None, []];
       }
-      const modelNew = mergeWithBackend({
+      const modelNew = mergeWithServer({
         ...ctx,
         clientModel: model,
         serverModel: msg[1].value,
@@ -132,7 +132,7 @@ export const updateFromServer = ({
   }
 };
 
-export const mergeWithBackend = ({
+export const mergeWithServer = ({
   serverModel,
 }: {
   now: Posix;

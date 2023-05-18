@@ -127,7 +127,7 @@ const updateRequest = ({
   ctx: RoomCtx;
 }) => {
   const handled = handle({ msg, model, ctx });
-  const modelNew = mergeWithBackend({
+  const modelNew = mergeWithServer({
     clientModel: model,
     serverModel: handled.type === 'Err' ? model : handled.value,
   });
@@ -160,7 +160,7 @@ export const updateFromServer = ({
         return { model };
       }
 
-      const merged = mergeWithBackend({
+      const merged = mergeWithServer({
         clientModel: model,
         serverModel: result.value,
       });
@@ -170,7 +170,7 @@ export const updateFromServer = ({
   }
 };
 
-export const mergeWithBackend = ({
+export const mergeWithServer = ({
   clientModel,
   serverModel,
 }: {

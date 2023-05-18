@@ -402,7 +402,7 @@ export const ViewBoard = ({
   );
 };
 
-export const mergeWithBackend = ({
+export const mergeWithServer = ({
   clientModel,
   serverModel,
 }: {

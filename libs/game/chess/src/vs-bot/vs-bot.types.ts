@@ -54,7 +54,7 @@ export const initShared: SharedModel = {
   botLevel: 1,
 };
 
-export const initBackend = ({
+export const initServer = ({
   userId,
 }: {
   userId: UserId | 'none';

@@ -1,8 +1,8 @@
-import { AuthBackend } from '@gamezilla/feat/auth';
-import { ChatBackend } from '@gamezilla/feat/chat';
+import { AuthServer } from '@gamezilla/feat/auth';
+import { ChatServer } from '@gamezilla/feat/chat';
 import { ProfileServer } from '@gamezilla/feat/profile';
-import { RoomBackend } from '@gamezilla/feat/room';
-import { SearchBackend } from '@gamezilla/feat/search';
+import { RoomServer } from '@gamezilla/feat/room';
+import { SearchServer } from '@gamezilla/feat/search';
 import { ClientId, SessionId, UserId } from '@gamezilla/shared/app';
 import { AppMsg, Ctx, RequestCtx } from '@gamezilla/shared/backend';
 import { Cmd, Sub, exhaustive, p } from '@gamezilla/shared/core';
@@ -28,11 +28,11 @@ type Model = ServerModel;
 export const init: { model: Model; cmd?: Cmd<Msg> } = {
   model: {
     sessions: {},
-    room: RoomBackend.init,
+    room: RoomServer.init,
     profile: ProfileServer.init,
-    search: SearchBackend.init.model,
-    chat: ChatBackend.init.model,
-    auth: AuthBackend.init,
+    search: SearchServer.init.model,
+    chat: ChatServer.init.model,
+    auth: AuthServer.init,
   },
 };
 
@@ -72,7 +72,7 @@ export const update = ({
     }
 
     case 'room': {
-      const updated = RoomBackend.update({
+      const updated = RoomServer.update({
         sendToUser: (userIds, m) =>
           sendToUser(model, userIds, { t: 'room', c: m }),
         msg: msg.c,
@@ -147,7 +147,7 @@ export const update = ({
     }
 
     case 'search': {
-      const updated = SearchBackend.update({
+      const updated = SearchServer.update({
         model: model.search,
         msg: msg.c,
       });
@@ -158,7 +158,7 @@ export const update = ({
     }
 
     case 'auth': {
-      const updated = AuthBackend.update({
+      const updated = AuthServer.update({
         model: model.auth,
         msg: msg.c,
       });
@@ -169,7 +169,7 @@ export const update = ({
     }
 
     case 'chat': {
-      const updated = ChatBackend.update({
+      const updated = ChatServer.update({
         model: model.chat,
         msg: msg.c,
       });
@@ -196,7 +196,7 @@ const updateFromApp = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  const roomUpdated = RoomBackend.updateFromApp({
+  const roomUpdated = RoomServer.updateFromApp({
     msg,
     model: model.room,
     sendToClient: (clientIds, m) =>
@@ -299,7 +299,7 @@ const updateFromClient = ({
     }
 
     case 'search': {
-      const updated = SearchBackend.updateFromClient({
+      const updated = SearchServer.updateFromClient({
         model: model.search,
         msg: msg.c,
       });
@@ -310,7 +310,7 @@ const updateFromClient = ({
     }
 
     case 'chat': {
-      const updated = ChatBackend.updateFromClient({
+      const updated = ChatServer.updateFromClient({
         model: model.chat,
         msg: msg.c,
         sendToClient: (c) => sendToClient({ t: 'chat', c }),
@@ -332,7 +332,7 @@ const updateFromClient = ({
         return { model };
       }
 
-      const updated = RoomBackend.updateFromClient({
+      const updated = RoomServer.updateFromClient({
         ctx: {
           ...ctx,
           currentUserId: session.userId,
@@ -393,7 +393,7 @@ const sendToUser = (model: Model, userIds: UserId[], msg: ToClient): Cmd => {
 
 export const subscriptions = ({ model }: { model: Model }): Sub<Msg> => {
   return Sub.batch([
-    Sub.tag_('room', RoomBackend.subscriptions(model.room)),
+    Sub.tag_('room', RoomServer.subscriptions(model.room)),
     p(
       onConnect,
       Sub.map(
@@ -415,7 +415,7 @@ export const subscriptions = ({ model }: { model: Model }): Sub<Msg> => {
       )
     ),
     p(
-      fromFrontend,
+      fromClient,
       Sub.map(
         ([sessionId, clientId, msg]): Msg => ({
           t: '→',
@@ -434,7 +434,7 @@ export const subscriptions = ({ model }: { model: Model }): Sub<Msg> => {
 //
 //
 
-export const fromFrontend = new Rx.Subject<[SessionId, ClientId, ToServer]>();
+export const fromClient = new Rx.Subject<[SessionId, ClientId, ToServer]>();
 export const onConnect = new Rx.Subject<[SessionId, ClientId]>();
 export const onDisconnect = new Rx.Subject<[SessionId, ClientId]>();
 

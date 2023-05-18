@@ -61,15 +61,15 @@ export const updateFromClient = (
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case 'MouseMove': {
-      const toFrontend = mouseMove(msg, model);
+      const toClient = mouseMove(msg, model);
 
-      if (toFrontend[1].type === 'Err') {
-        return [model, sendToClient(toFrontend)];
+      if (toClient[1].type === 'Err') {
+        return [model, sendToClient(toClient)];
       }
 
-      const modelNew = toFrontend[1].value;
+      const modelNew = toClient[1].value;
 
-      return [modelNew, broadcast(toFrontend)];
+      return [modelNew, broadcast(toClient)];
     }
 
     case 'InputDrop': {

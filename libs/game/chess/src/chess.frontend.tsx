@@ -179,7 +179,7 @@ export const updateFromServer = ({
         return [modelNew, Cmd.None, []];
       }
 
-      const merged = mergeWithBackend({
+      const merged = mergeWithServer({
         clientModel: modelNew,
         serverModel: result.value,
         sendToServer,
@@ -389,7 +389,7 @@ export const View = ({
 //
 //
 
-export const mergeWithBackend = ({
+export const mergeWithServer = ({
   clientModel,
   serverModel,
   sendToServer,
@@ -410,7 +410,7 @@ export const mergeWithBackend = ({
             ...clientModel,
             mode: {
               t: 'puzzle',
-              c: Puzzle.mergeWithBackend({
+              c: Puzzle.mergeWithServer({
                 clientModel: clientModel.mode.c,
                 serverModel: serverModel.c,
               }),
@@ -429,7 +429,7 @@ export const mergeWithBackend = ({
           ...clientModel,
           mode: {
             t: 'puzzle',
-            c: Puzzle.mergeWithBackend({
+            c: Puzzle.mergeWithServer({
               clientModel: initial.model,
               serverModel: serverModel.c,
             }),
@@ -446,7 +446,7 @@ export const mergeWithBackend = ({
             ...clientModel,
             mode: {
               t: 'vs-user',
-              c: VsUser.mergeWithBackend(clientModel.mode.c, serverModel.c),
+              c: VsUser.mergeWithServer(clientModel.mode.c, serverModel.c),
             },
           },
           Cmd.None,
@@ -463,7 +463,7 @@ export const mergeWithBackend = ({
           ...clientModel,
           mode: {
             t: 'vs-user',
-            c: VsUser.mergeWithBackend(child, serverModel.c),
+            c: VsUser.mergeWithServer(child, serverModel.c),
           },
         },
         Cmd.tag_('vs-user', childCmd),
@@ -477,7 +477,7 @@ export const mergeWithBackend = ({
             ...clientModel,
             mode: {
               t: 'vs-bot',
-              c: VsBot.mergeWithBackend(clientModel.mode.c, serverModel.c),
+              c: VsBot.mergeWithServer(clientModel.mode.c, serverModel.c),
             },
           },
           Cmd.None,
@@ -491,7 +491,7 @@ export const mergeWithBackend = ({
           ...clientModel,
           mode: {
             t: 'vs-bot',
-            c: VsBot.mergeWithBackend(child, serverModel.c),
+            c: VsBot.mergeWithServer(child, serverModel.c),
           },
         },
         Cmd.tag_('vs-bot', childCmd),

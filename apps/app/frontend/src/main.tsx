@@ -1,5 +1,5 @@
 import {
-  AppFrontend,
+  AppClient,
   ClientToServerEvents,
   ServerToClientEvents,
   ToServer,
@@ -41,19 +41,19 @@ const main = () => {
   });
 
   socketClient.on('connect', () => {
-    AppFrontend.wireStatus$.next('connected');
+    AppClient.wireStatus$.next('connected');
   });
 
   socketClient.on('disconnect', () => {
-    AppFrontend.wireStatus$.next('disconnected');
+    AppClient.wireStatus$.next('disconnected');
   });
 
   socketClient.on('connect_error', () => {
-    AppFrontend.wireStatus$.next('connect-error');
+    AppClient.wireStatus$.next('connect-error');
   });
 
   socketClient.on('to-client', (msg) => {
-    AppFrontend.toFrontend$.next(msg);
+    AppClient.toClient$.next(msg);
   });
 
   const sendToServer =
@@ -63,9 +63,9 @@ const main = () => {
     };
 
   const program = Program.create({
-    init: AppFrontend.init({ location: Browser.getLocation() }),
-    update: (input) => AppFrontend.update({ ...input, sendToServer }),
-    subscriptions: AppFrontend.subscriptions,
+    init: AppClient.init({ location: Browser.getLocation() }),
+    update: (input) => AppClient.update({ ...input, sendToServer }),
+    subscriptions: AppClient.subscriptions,
   });
 
   const attached = Debug.ReduxDevTools.withDebugger(program);
@@ -79,7 +79,7 @@ const main = () => {
   program.state$.subscribe((state) => {
     root.render(
       <React.StrictMode>
-        <AppFrontend.View
+        <AppClient.View
           isTimeTravelDebugging={state.model._debugId < state.runningDebugId}
           now={state.model._now}
           model={state.model}

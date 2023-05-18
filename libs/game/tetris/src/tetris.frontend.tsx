@@ -218,7 +218,7 @@ export const updateFromServer = (
   }
 };
 
-export const mergeWithBackend = ({
+export const mergeWithServer = ({
   clientModel,
   serverModel,
 }: {

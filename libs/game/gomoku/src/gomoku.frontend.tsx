@@ -104,7 +104,7 @@ export const updateFromServer = ({
     if (msg.result.type === 'Err') {
       return { model };
     }
-    const merged = mergeWithBackend({
+    const merged = mergeWithServer({
       ctx,
       clientModel: model,
       serverModel: msg.result.value,
@@ -138,7 +138,7 @@ export const updateFromServer = ({
   return { model };
 };
 
-export const mergeWithBackend = ({
+export const mergeWithServer = ({
   ctx,
   clientModel,
   serverModel,
@@ -156,7 +156,7 @@ export const mergeWithBackend = ({
       if (clientModel.t === 'vs-bot') {
         return {
           t: 'vs-bot',
-          c: VsBot.mergeWithBackend({
+          c: VsBot.mergeWithServer({
             ctx,
             clientModel: clientModel.c,
             serverModel: serverModel.c,
@@ -165,7 +165,7 @@ export const mergeWithBackend = ({
       }
       return {
         t: 'vs-bot',
-        c: VsBot.mergeWithBackend({
+        c: VsBot.mergeWithServer({
           ctx,
           clientModel: VsBot.init({ userId: null }),
           serverModel: serverModel.c,
@@ -177,7 +177,7 @@ export const mergeWithBackend = ({
       if (clientModel.t === 'vs-user') {
         return {
           t: 'vs-user',
-          c: VsUser.mergeWithBackend({
+          c: VsUser.mergeWithServer({
             clientModel: clientModel.c,
             serverModel: serverModel.c,
           }),
@@ -185,7 +185,7 @@ export const mergeWithBackend = ({
       }
       return {
         t: 'vs-user',
-        c: VsUser.mergeWithBackend({
+        c: VsUser.mergeWithServer({
           clientModel: VsUser.init({ white: null, black: null }),
           serverModel: serverModel.c,
         }),

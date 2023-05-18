@@ -1,8 +1,8 @@
-import { AuthFrontend } from '@gamezilla/feat/auth';
-import { ChatFrontend } from '@gamezilla/feat/chat';
-import { ProfileFrontend } from '@gamezilla/feat/profile';
-import { RoomFrontend } from '@gamezilla/feat/room';
-import { SearchFrontend } from '@gamezilla/feat/search';
+import { AuthClient } from '@gamezilla/feat/auth';
+import { ChatClient } from '@gamezilla/feat/chat';
+import { ProfileClient } from '@gamezilla/feat/profile';
+import { RoomClient } from '@gamezilla/feat/room';
+import { SearchClient } from '@gamezilla/feat/search';
 import {
   andThen,
   Browser,
@@ -57,12 +57,12 @@ export const init = ({
     (route): Route.Route =>
       route ? route : { t: 'room', c: { t: 'room-list' } }
   );
-  const auth = AuthFrontend.init();
+  const auth = AuthClient.init();
   const alerts = Alerts.init;
-  const room = RoomFrontend.init();
-  const profile = ProfileFrontend.init;
-  const chat = ChatFrontend.init;
-  const search = SearchFrontend.init;
+  const room = RoomClient.init();
+  const profile = ProfileClient.init;
+  const chat = ChatClient.init;
+  const search = SearchClient.init;
 
   return {
     model: {
@@ -167,7 +167,7 @@ const update_ = ({
     }
 
     case 'auth': {
-      const updated = AuthFrontend.update({
+      const updated = AuthClient.update({
         route: model.route,
         sendToServer: (c) => sendToServer({ t: 'auth', c }),
         msg: msg.c,
@@ -246,7 +246,7 @@ const update_ = ({
       }
 
       if (msg.wire === 'connected') {
-        const roomUpdated = RoomFrontend.updateFromApp({
+        const roomUpdated = RoomClient.updateFromApp({
           msg: { t: 'wire-connected' },
           model: model.room,
           sendToServer: (m) => sendToServer({ t: 'room', c: m }),
@@ -275,7 +275,7 @@ const update_ = ({
         now,
       };
 
-      const updated = RoomFrontend.update({
+      const updated = RoomClient.update({
         ctx: ctx,
         sendToServer: (m) => sendToServer({ t: 'room', c: m }),
         msg: msg.c,
@@ -289,7 +289,7 @@ const update_ = ({
     }
 
     case 'profile': {
-      const updated = ProfileFrontend.update({
+      const updated = ProfileClient.update({
         msg: msg.c,
         model: model.profile,
         sendToServer: (m) => sendToServer({ t: 'profile', c: m }),
@@ -301,7 +301,7 @@ const update_ = ({
     }
 
     case 'chat': {
-      const updated = ChatFrontend.update({ msg: msg.c, model: model.chat });
+      const updated = ChatClient.update({ msg: msg.c, model: model.chat });
       return {
         model: { ...model, chat: updated.model },
         cmd: Cmd.tag_('chat', updated?.cmd ?? Cmd.None),
@@ -309,7 +309,7 @@ const update_ = ({
     }
 
     case 'search': {
-      const updated = SearchFrontend.update({
+      const updated = SearchClient.update({
         msg: msg.c,
         model: model.search,
         sendToServer: (m) => sendToServer({ t: 'search', c: m }),
@@ -355,7 +355,7 @@ const updateFromServer = ({
         now,
       };
 
-      const updated = RoomFrontend.updateFromServer({
+      const updated = RoomClient.updateFromServer({
         ctx,
         sendToServer: (msg) => sendToServer({ t: 'room', c: msg }),
         msg: msg.c,
@@ -370,7 +370,7 @@ const updateFromServer = ({
     }
 
     case 'profile': {
-      const updated = ProfileFrontend.updateFromServer({
+      const updated = ProfileClient.updateFromServer({
         msg: msg.c,
         model: model.profile,
       });
@@ -382,7 +382,7 @@ const updateFromServer = ({
     }
 
     case 'search': {
-      const updated = SearchFrontend.updateFromServer({
+      const updated = SearchClient.updateFromServer({
         msg: msg.c,
         model: model.search,
       });
@@ -394,7 +394,7 @@ const updateFromServer = ({
     }
 
     case 'auth': {
-      const updated = AuthFrontend.updateFromServer({
+      const updated = AuthClient.updateFromServer({
         msg: msg.c,
         model: model.auth,
       });
@@ -406,7 +406,7 @@ const updateFromServer = ({
     }
 
     case 'chat': {
-      const updated = ChatFrontend.updateFromServer({
+      const updated = ChatClient.updateFromServer({
         msg: msg.c,
         model: model.chat,
       });
@@ -439,7 +439,7 @@ export const updateFromApp = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  const chat = ChatFrontend.updateFromApp({
+  const chat = ChatClient.updateFromApp({
     model: model.chat,
     msg,
     sendToServer: (m) => () => {
@@ -447,13 +447,13 @@ export const updateFromApp = ({
     },
   });
 
-  const room = RoomFrontend.updateFromApp({
+  const room = RoomClient.updateFromApp({
     model: model.room,
     msg,
     sendToServer: (c) => sendToServer({ t: 'room', c }),
   });
 
-  const profile = ProfileFrontend.updateFromApp({
+  const profile = ProfileClient.updateFromApp({
     model: model.profile,
     msg,
     sendToServer: (c) => sendToServer({ t: 'profile', c }),
@@ -490,12 +490,12 @@ export const subscriptions = ({
 }): Sub<Msg> => {
   return Sub.batch<Msg>([
     Browser.onLocation(onLocationChange),
-    Sub.tag_('→', toFrontend$),
+    Sub.tag_('→', toClient$),
     p(
       wireStatus$,
       Sub.map((wire) => ({ t: 'wire', wire }))
     ),
-    Sub.tag_('auth', AuthFrontend.subscriptions),
+    Sub.tag_('auth', AuthClient.subscriptions),
     roomSub(now, model),
   ]);
 };
@@ -504,7 +504,7 @@ const roomSub = (now: Posix, model: Model): Sub<Msg> => {
   if (model.auth.currentUser.t === 'logged-in') {
     return Sub.tag_(
       'room',
-      RoomFrontend.subscriptions(
+      RoomClient.subscriptions(
         {
           now,
           currentUserId: model.auth.currentUser.currentUserId,
@@ -615,7 +615,7 @@ const ViewLoggedOut = ({
 }) => {
   if (model.route.t === 'auth') {
     return (
-      <AuthFrontend.ViewLoggedOut
+      <AuthClient.ViewLoggedOut
         $send={(m) => $send({ t: 'auth', c: m })}
         model={model.auth}
         ctx={ctx}
@@ -625,7 +625,7 @@ const ViewLoggedOut = ({
   }
 
   return (
-    <AuthFrontend.ViewLoggedOut
+    <AuthClient.ViewLoggedOut
       $send={(m) => $send({ t: 'auth', c: m })}
       model={model.auth}
       ctx={ctx}
@@ -645,7 +645,7 @@ const ViewLoggedIn = ({
 }) => {
   if (model.route.t === 'chat') {
     return (
-      <ChatFrontend.View
+      <ChatClient.View
         $send={(m) => $send({ t: 'chat', c: m })}
         model={model.chat}
         ctx={ctx}
@@ -666,7 +666,7 @@ const ViewLoggedIn = ({
 
   if (model.route.t === 'room') {
     return (
-      <RoomFrontend.View
+      <RoomClient.View
         $send={(m) => $send({ t: 'room', c: m })}
         model={model.room}
         ctx={ctx}
@@ -678,7 +678,7 @@ const ViewLoggedIn = ({
 
   if (model.route.t === 'profile') {
     return (
-      <ProfileFrontend.View
+      <ProfileClient.View
         $send={(m) => $send({ t: 'profile', c: m })}
         model={model.profile}
         ctx={ctx}
@@ -690,7 +690,7 @@ const ViewLoggedIn = ({
 
   if (model.route.t === 'auth') {
     return (
-      <AuthFrontend.ViewLoggedIn
+      <AuthClient.ViewLoggedIn
         $send={(m) => $send({ t: 'auth', c: m })}
         ctx={ctx}
         model={model.auth}
@@ -701,7 +701,7 @@ const ViewLoggedIn = ({
 
   if (model.route.t === 'search') {
     return (
-      <SearchFrontend.View
+      <SearchClient.View
         $send={(m) => $send({ t: 'search', c: m })}
         model={model.search}
         viewBottomBar={<ViewBottomBar model={model} $send={$send} ctx={ctx} />}
@@ -749,7 +749,7 @@ const ViewBottomBar = ({
 
   return (
     <div className="w-full flex flex-col items-center justify-center">
-      <RoomFrontend.ViewBottomBar
+      <RoomClient.ViewBottomBar
         ctx={ctx}
         model={model.room}
         $send={(c) => $send({ t: 'room', c })}
@@ -785,4 +785,4 @@ const ViewBottomBar = ({
 //
 
 export const wireStatus$ = new Subject<Model['wire']['type']>();
-export const toFrontend$ = new Subject<ToClient>();
+export const toClient$ = new Subject<ToClient>();

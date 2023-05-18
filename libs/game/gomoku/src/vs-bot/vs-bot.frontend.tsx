@@ -72,7 +72,7 @@ export const update = ({
         };
       }
 
-      const merged = mergeWithBackend({
+      const merged = mergeWithServer({
         ctx,
         serverModel: result.value,
         clientModel: model,
@@ -102,7 +102,7 @@ export const updateFromServer = ({
     return { model };
   }
 
-  const merged = mergeWithBackend({
+  const merged = mergeWithServer({
     ctx,
     clientModel: model,
     serverModel: msg.result.value,
@@ -111,7 +111,7 @@ export const updateFromServer = ({
   return { model: merged };
 };
 
-export const mergeWithBackend = ({
+export const mergeWithServer = ({
   serverModel,
   clientModel,
 }: {

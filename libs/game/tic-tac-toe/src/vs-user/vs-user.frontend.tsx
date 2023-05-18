@@ -81,7 +81,7 @@ export const update = (
   switch (msg[0]) {
     //
     //
-    // Frontend Msg
+    // Client Msg
     //
     //
 
@@ -129,7 +129,7 @@ export const updateFromServer = (
 ): [Model, OutAction[]] => {
   switch (msg[0]) {
     case 'player-left': {
-      const modelNew = mergeWithBackend(model, msg[1]);
+      const modelNew = mergeWithServer(model, msg[1]);
       return [modelNew, []];
     }
 
@@ -151,7 +151,7 @@ export const updateFromServer = (
         return [model, []];
       }
 
-      const modelNew = mergeWithBackend(model, res[1].value);
+      const modelNew = mergeWithServer(model, res[1].value);
 
       return [{ ...modelNew, openedModal: 'none' }, []];
     }
@@ -162,7 +162,7 @@ export const updateFromServer = (
         return [model, []];
       }
 
-      const modelNew = mergeWithBackend(model, msg[1].value);
+      const modelNew = mergeWithServer(model, msg[1].value);
 
       return [modelNew, []];
     }
@@ -173,7 +173,7 @@ export const updateFromServer = (
   }
 };
 
-export const mergeWithBackend = (
+export const mergeWithServer = (
   clientModel: ClientModel,
   serverModel: ServerModel
 ): ClientModel => {

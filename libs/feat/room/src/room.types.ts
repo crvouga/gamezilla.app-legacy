@@ -1,6 +1,6 @@
 import { RemoteResult, Result } from '@gamezilla/shared/core';
 import { RoomId, UserId, Username } from '@gamezilla/shared/app';
-import * as GameBackend from './game.backend';
+import * as GameServer from './game.backend';
 import * as Game from './game.types';
 
 const { Ok, Err } = Result;
@@ -51,7 +51,7 @@ export type ClientModel = SharedModel & {
 
 type ModalModel = 'none' | 'user-preview' | 'users';
 
-export type FrontendRoom = {
+export type ClientRoom = {
   roomId: RoomId;
   hostId: UserId;
   game?: Game.ClientModel;
@@ -155,7 +155,7 @@ export const handle = ({
       const { gameName } = msg;
 
       const gameNew = gameName
-        ? GameBackend.init({
+        ? GameServer.init({
             gameName,
             ctx: {
               currentUserId: ctx.currentUserId,
@@ -306,7 +306,7 @@ export const handle = ({
         return Ok(modelNew);
       }
 
-      const gameNew = GameBackend.init({
+      const gameNew = GameServer.init({
         gameName,
         ctx,
       });

@@ -118,7 +118,7 @@ export const updateFromServer = (
       if (msg[2].type === 'Err') {
         return [model, Cmd.None];
       }
-      const merged = mergeWithBackend({
+      const merged = mergeWithServer({
         clientModel: model,
         serverModel: msg[2].value,
       });
@@ -126,7 +126,7 @@ export const updateFromServer = (
     }
 
     case 'tick': {
-      const merged = mergeWithBackend({
+      const merged = mergeWithServer({
         clientModel: model,
         serverModel: msg[1],
       });
@@ -135,7 +135,7 @@ export const updateFromServer = (
   }
 };
 
-export const mergeWithBackend = ({
+export const mergeWithServer = ({
   serverModel,
 }: {
   clientModel: ClientModel;

@@ -1,3 +1,3 @@
-export * as AuthBackend from './auth.backend';
-export * as AuthFrontend from './auth.frontend';
+export * as AuthServer from './auth.backend';
+export * as AuthClient from './auth.frontend';
 export * from './auth.types';

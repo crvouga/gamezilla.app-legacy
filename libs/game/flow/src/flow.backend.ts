@@ -1,7 +1,7 @@
 import { Cmd, Sub } from '@gamezilla/shared/core';
 import { ServerModel, ServerMsg, ToServer } from './flow.types';
 import { RoomRequestCtx } from '@gamezilla/shared/backend';
-import * as ModeBuilderBackend from './mode-builder/mode-builder.backend';
+import * as ModeBuilderServer from './mode-builder/mode-builder.backend';
 
 type Model = ServerModel;
 
@@ -59,7 +59,7 @@ const updateInputMode = ({
   }
 
   if (msg.mode === 'mode-builder') {
-    return { model: { t: 'mode-builder', c: ModeBuilderBackend.init } };
+    return { model: { t: 'mode-builder', c: ModeBuilderServer.init } };
   }
 
   if (msg.mode === 'none') {

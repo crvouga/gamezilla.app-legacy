@@ -939,7 +939,7 @@ const ViewUserPlayerSlot = ({
 //
 //
 
-export const mergeWithBackend = (
+export const mergeWithServer = (
   clientModel: ClientModel,
   serverModel: ServerModel
 ): ClientModel => {

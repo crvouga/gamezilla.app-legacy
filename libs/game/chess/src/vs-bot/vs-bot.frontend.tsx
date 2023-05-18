@@ -65,7 +65,7 @@ export const update = (
   switch (msg[0]) {
     //
     //
-    // Frontend Only
+    // Client Only
     //
     //
 
@@ -91,7 +91,7 @@ export const update = (
 
     //
     //
-    // Frontend and Backend
+    // Client and Server
     //
     //
 
@@ -182,7 +182,7 @@ const updateFromServer_ = (
     }
 
     case 'player-left': {
-      const merged = mergeWithBackend(model, msg[1]);
+      const merged = mergeWithServer(model, msg[1]);
       return [merged, Cmd.None, []];
     }
 
@@ -195,7 +195,7 @@ const updateFromServer_ = (
 
       const sharedModelNew = result.value;
 
-      const modelNew = mergeWithBackend(model, sharedModelNew);
+      const modelNew = mergeWithServer(model, sharedModelNew);
 
       const soundCmd =
         sharedModelNew.type === 'game' && Chess.inCheck(sharedModelNew.board)
@@ -233,7 +233,7 @@ const handleResponse = (
 
   const sharedModelNew = result.value;
 
-  const modelNew = mergeWithBackend(model, sharedModelNew);
+  const modelNew = mergeWithServer(model, sharedModelNew);
 
   return [modelNew, Cmd.None, []];
 };
@@ -250,7 +250,7 @@ const playAudio = (src: string): Cmd<Msg> => {
 //
 //
 
-export const mergeWithBackend = (
+export const mergeWithServer = (
   clientModel: ClientModel,
   serverModel: ServerModel
 ): ClientModel => {

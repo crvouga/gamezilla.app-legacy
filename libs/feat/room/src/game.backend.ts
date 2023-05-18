@@ -1,11 +1,11 @@
-import { ChessBackend } from '@gamezilla/game/chess';
-import { ConnectFourBackend } from '@gamezilla/game/connect-four';
-import { FlowBackend } from '@gamezilla/game/flow';
-import { GomokuBackend } from '@gamezilla/game/gomoku';
-import { MazeBackend } from '@gamezilla/game/maze';
-import { SnakeBackend } from '@gamezilla/game/snake';
-import { TetrisBackend } from '@gamezilla/game/tetris';
-import { TicTacToeBackend } from '@gamezilla/game/tic-tac-toe';
+import { ChessServer } from '@gamezilla/game/chess';
+import { ConnectFourServer } from '@gamezilla/game/connect-four';
+import { FlowServer } from '@gamezilla/game/flow';
+import { GomokuServer } from '@gamezilla/game/gomoku';
+import { MazeServer } from '@gamezilla/game/maze';
+import { SnakeServer } from '@gamezilla/game/snake';
+import { TetrisServer } from '@gamezilla/game/tetris';
+import { TicTacToeServer } from '@gamezilla/game/tic-tac-toe';
 import { UserId } from '@gamezilla/shared/app';
 import { RoomCtx, RoomRequestCtx } from '@gamezilla/shared/backend';
 import { Cmd, exhaustive, Sub } from '@gamezilla/shared/core';
@@ -31,40 +31,40 @@ export const init = ({
 }): Model => {
   switch (gameName) {
     case 'connect-four': {
-      return { t: 'connect-four', c: ConnectFourBackend.init };
+      return { t: 'connect-four', c: ConnectFourServer.init };
     }
 
     case 'tic-tac-toe': {
-      return { t: 'tic-tac-toe', c: TicTacToeBackend.init };
+      return { t: 'tic-tac-toe', c: TicTacToeServer.init };
     }
 
     case 'chess': {
-      return { t: 'chess', c: ChessBackend.init };
+      return { t: 'chess', c: ChessServer.init };
     }
 
     case 'gomoku': {
-      return { t: 'gomoku', c: GomokuBackend.init };
+      return { t: 'gomoku', c: GomokuServer.init };
     }
 
     case 'tetris': {
-      return { t: 'tetris', c: TetrisBackend.init };
+      return { t: 'tetris', c: TetrisServer.init };
     }
 
     case 'snake': {
-      return { t: 'snake', c: SnakeBackend.init };
+      return { t: 'snake', c: SnakeServer.init };
     }
 
     case 'maze': {
       return {
         t: 'maze',
-        c: MazeBackend.init({
+        c: MazeServer.init({
           userId: ctx.currentUserId,
         }),
       };
     }
 
     case 'flow': {
-      return { t: 'flow', c: FlowBackend.init };
+      return { t: 'flow', c: FlowServer.init };
     }
 
     default: {
@@ -97,7 +97,7 @@ export const update = ({
   switch (msg.t) {
     case 'connect-four': {
       if (model.t === 'connect-four') {
-        const updated = ConnectFourBackend.update({
+        const updated = ConnectFourServer.update({
           broadcast: (m) => broadcast({ t: 'connect-four', c: m }),
           msg: msg.c,
           model: model.c,
@@ -112,7 +112,7 @@ export const update = ({
 
     case 'tic-tac-toe': {
       if (model.t === 'tic-tac-toe') {
-        const updated = TicTacToeBackend.update({
+        const updated = TicTacToeServer.update({
           broadcast: (m) => broadcast({ t: 'tic-tac-toe', c: m }),
           msg: msg.c,
           model: model.c,
@@ -127,7 +127,7 @@ export const update = ({
 
     case 'chess': {
       if (model.t === 'chess') {
-        const [child, cmd] = ChessBackend.update({
+        const [child, cmd] = ChessServer.update({
           broadcast: (m) => broadcast({ t: 'chess', c: m }),
           ctx,
           msg: msg.c,
@@ -140,7 +140,7 @@ export const update = ({
 
     case 'gomoku': {
       if (model.t === 'gomoku') {
-        const updated = GomokuBackend.update({
+        const updated = GomokuServer.update({
           msg: msg.c,
           model: model.c,
         });
@@ -154,7 +154,7 @@ export const update = ({
 
     case 'tetris': {
       if (model.t === 'tetris') {
-        const [child, cmd] = TetrisBackend.update(
+        const [child, cmd] = TetrisServer.update(
           {
             broadcast: (m) => broadcast({ t: 'tetris', c: m }),
           },
@@ -168,7 +168,7 @@ export const update = ({
 
     case 'snake': {
       if (model.t === 'snake') {
-        const [child, cmd] = SnakeBackend.update(
+        const [child, cmd] = SnakeServer.update(
           {
             broadcast: (m) => broadcast({ t: 'snake', c: m }),
           },
@@ -182,7 +182,7 @@ export const update = ({
 
     case 'maze': {
       if (model.t === 'maze') {
-        const [child, cmd] = MazeBackend.update(
+        const [child, cmd] = MazeServer.update(
           {
             broadcast: (m) => broadcast({ t: 'maze', c: m }),
           },
@@ -198,7 +198,7 @@ export const update = ({
       if (model.t !== 'flow') {
         return [model, Cmd.None];
       }
-      const updated = FlowBackend.update({
+      const updated = FlowServer.update({
         model: model.c,
         msg: msg.c,
       });
@@ -230,7 +230,7 @@ export const updateFromClient = ({
   switch (msg.t) {
     case 'connect-four': {
       if (model.t === 'connect-four') {
-        const updated = ConnectFourBackend.updateFromClient({
+        const updated = ConnectFourServer.updateFromClient({
           ctx,
           sendToClient: (msg) => sendToClient({ t: 'connect-four', c: msg }),
           broadcast: (msg) => broadcast({ t: 'connect-four', c: msg }),
@@ -247,7 +247,7 @@ export const updateFromClient = ({
 
     case 'tic-tac-toe': {
       if (model.t === 'tic-tac-toe') {
-        const updated = TicTacToeBackend.updateFromClient({
+        const updated = TicTacToeServer.updateFromClient({
           sendToClient: (msg) => sendToClient({ t: 'tic-tac-toe', c: msg }),
           broadcast: (msg) => broadcast({ t: 'tic-tac-toe', c: msg }),
           msg: msg.c,
@@ -264,7 +264,7 @@ export const updateFromClient = ({
 
     case 'chess': {
       if (model.t === 'chess') {
-        const [child, cmd] = ChessBackend.updateFromClient({
+        const [child, cmd] = ChessServer.updateFromClient({
           sendToClient: (msg) => sendToClient({ t: 'chess', c: msg }),
           broadcast: (msg) => broadcast({ t: 'chess', c: msg }),
           msg: msg.c,
@@ -278,7 +278,7 @@ export const updateFromClient = ({
 
     case 'gomoku': {
       if (model.t === 'gomoku') {
-        const updated = GomokuBackend.updateFromClient({
+        const updated = GomokuServer.updateFromClient({
           ctx,
           broadcast: (m) => broadcast({ t: 'gomoku', c: m }),
           sendToClient: (m) => sendToClient({ t: 'gomoku', c: m }),
@@ -296,7 +296,7 @@ export const updateFromClient = ({
 
     case 'tetris': {
       if (model.t === 'tetris') {
-        const [child, cmd] = TetrisBackend.updateFromClient(
+        const [child, cmd] = TetrisServer.updateFromClient(
           {
             // ctx,
             broadcast: (m) => broadcast({ t: 'tetris', c: m }),
@@ -312,7 +312,7 @@ export const updateFromClient = ({
 
     case 'snake': {
       if (model.t === 'snake') {
-        const [child, cmd] = SnakeBackend.updateFromClient(
+        const [child, cmd] = SnakeServer.updateFromClient(
           {
             // ctx,
             broadcast: (m) => broadcast({ t: 'snake', c: m }),
@@ -328,7 +328,7 @@ export const updateFromClient = ({
 
     case 'maze': {
       if (model.t === 'maze') {
-        const [child, cmd] = MazeBackend.updateFromClient(
+        const [child, cmd] = MazeServer.updateFromClient(
           {
             // ctx,
             broadcast: (m) => broadcast({ t: 'maze', c: m }),
@@ -346,7 +346,7 @@ export const updateFromClient = ({
       if (model.t !== 'flow') {
         return [model, Cmd.None];
       }
-      const updated = FlowBackend.updateFromClient({
+      const updated = FlowServer.updateFromClient({
         model: model.c,
         msg: msg.c,
         ctx,
@@ -377,7 +377,7 @@ export const updateFromRoom = ({
 } => {
   switch (model.t) {
     case 'chess': {
-      const updated = ChessBackend.updateFromRoom({
+      const updated = ChessServer.updateFromRoom({
         broadcast: (m) => broadcast({ t: 'chess', c: m }),
         msg,
         model: model.c,
@@ -390,7 +390,7 @@ export const updateFromRoom = ({
     }
 
     case 'connect-four': {
-      const updated = ConnectFourBackend.updateFromRoom({
+      const updated = ConnectFourServer.updateFromRoom({
         msg,
         model: model.c,
         broadcast: (m) => broadcast({ t: 'connect-four', c: m }),
@@ -402,7 +402,7 @@ export const updateFromRoom = ({
     }
 
     case 'tic-tac-toe': {
-      const updated = TicTacToeBackend.updateFromRoom({
+      const updated = TicTacToeServer.updateFromRoom({
         broadcast: (msg) => broadcast({ t: 'tic-tac-toe', c: msg }),
         msg,
         model: model.c,
@@ -414,7 +414,7 @@ export const updateFromRoom = ({
     }
 
     case 'gomoku': {
-      const updated = GomokuBackend.updateFromRoom({
+      const updated = GomokuServer.updateFromRoom({
         msg,
         model: model.c,
       });
@@ -455,42 +455,42 @@ export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
     case 'connect-four': {
       return Sub.tag_(
         'connect-four',
-        ConnectFourBackend.subscriptions(intervalId, model.c)
+        ConnectFourServer.subscriptions(intervalId, model.c)
       );
     }
 
     case 'tic-tac-toe': {
       return Sub.tag_(
         'tic-tac-toe',
-        TicTacToeBackend.subscriptions(intervalId, model.c)
+        TicTacToeServer.subscriptions(intervalId, model.c)
       );
     }
 
     case 'chess': {
-      return Sub.tag_('chess', ChessBackend.subscriptions(intervalId, model.c));
+      return Sub.tag_('chess', ChessServer.subscriptions(intervalId, model.c));
     }
 
     case 'gomoku': {
-      return Sub.tag_('gomoku', GomokuBackend.subscriptions(model.c));
+      return Sub.tag_('gomoku', GomokuServer.subscriptions(model.c));
     }
 
     case 'tetris': {
       return Sub.tag_(
         'tetris',
-        TetrisBackend.subscriptions(intervalId, model.c)
+        TetrisServer.subscriptions(intervalId, model.c)
       );
     }
 
     case 'snake': {
-      return Sub.tag_('snake', SnakeBackend.subscriptions(intervalId, model.c));
+      return Sub.tag_('snake', SnakeServer.subscriptions(intervalId, model.c));
     }
 
     case 'maze': {
-      return Sub.tag_('maze', MazeBackend.subscriptions(intervalId, model.c));
+      return Sub.tag_('maze', MazeServer.subscriptions(intervalId, model.c));
     }
 
     case 'flow': {
-      return Sub.tag_('flow', FlowBackend.subscriptions(model.c));
+      return Sub.tag_('flow', FlowServer.subscriptions(model.c));
     }
   }
 };

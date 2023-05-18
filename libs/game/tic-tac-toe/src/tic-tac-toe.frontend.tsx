@@ -112,7 +112,7 @@ export const updateFromServer = ({
       return { model };
     }
 
-    const modelNew = mergeWithBackend({
+    const modelNew = mergeWithServer({
       ctx,
       clientModel: model,
       serverModel: result.value,
@@ -145,7 +145,7 @@ export const updateFromServer = ({
   return { model };
 };
 
-export const mergeWithBackend = ({
+export const mergeWithServer = ({
   clientModel,
   serverModel,
   ctx,
@@ -164,7 +164,7 @@ export const mergeWithBackend = ({
 
     return {
       t: 'vs-user',
-      c: VsUser.mergeWithBackend(clientModelChild, serverModel.c),
+      c: VsUser.mergeWithServer(clientModelChild, serverModel.c),
     };
   }
 
@@ -176,7 +176,7 @@ export const mergeWithBackend = ({
 
     return {
       t: 'vs-bot',
-      c: VsBot.mergeWithBackend({
+      c: VsBot.mergeWithServer({
         now: ctx.now,
         clientModel: clientModelChild,
         serverModel: serverModel.c,

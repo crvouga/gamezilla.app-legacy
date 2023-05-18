@@ -1,5 +1,5 @@
 import {
-  AppBackend,
+  AppServer,
   ClientToServerEvents,
   ServerToClientEvents,
   backendServerPort,
@@ -59,27 +59,27 @@ const main = async () => {
     socket.emit('session-id', sessionId);
 
     if (ClientId.is(socket.id)) {
-      AppBackend.onConnect.next([sessionId, socket.id]);
+      AppServer.onConnect.next([sessionId, socket.id]);
     }
 
     socket.on('to-server', (msg) => {
       if (ClientId.is(socket.id)) {
-        AppBackend.fromFrontend.next([sessionId, socket.id, msg]);
+        AppServer.fromClient.next([sessionId, socket.id, msg]);
       }
     });
 
     socket.on('disconnect', () => {
       if (ClientId.is(socket.id)) {
-        AppBackend.onDisconnect.next([sessionId, socket.id]);
+        AppServer.onDisconnect.next([sessionId, socket.id]);
       }
     });
   });
 
-  AppBackend.$broadcast.subscribe(([msg]) => {
+  AppServer.$broadcast.subscribe(([msg]) => {
     socketServer.emit('to-client', msg);
   });
 
-  AppBackend.$sendToClient.subscribe(([clientIds, msg]) => {
+  AppServer.$sendToClient.subscribe(([clientIds, msg]) => {
     socketServer.to(clientIds).emit('to-client', msg);
   });
 
@@ -90,11 +90,11 @@ const main = async () => {
   });
 
   const program = Program.create({
-    init: AppBackend.init,
-    subscriptions: AppBackend.subscriptions,
+    init: AppServer.init,
+    subscriptions: AppServer.subscriptions,
     update: (input) => {
       try {
-        return AppBackend.update({
+        return AppServer.update({
           model: input.model,
           msg: input.msg,
           ctx: {
@@ -103,7 +103,7 @@ const main = async () => {
           },
         });
       } catch (error) {
-        console.error('Backend Crashed!', error);
+        console.error('Server Crashed!', error);
         return {
           model: input.model,
           cmd: Cmd.None,

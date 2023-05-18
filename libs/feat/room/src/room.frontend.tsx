@@ -41,7 +41,7 @@ import {
   ServerModel,
   ClientModel,
   ClientMsg,
-  FrontendRoom,
+  ClientRoom,
   Res,
   RoomUser,
   ToServer,
@@ -550,7 +550,7 @@ const updateResponse = ({
     };
   }
 
-  const merged = mergeWithBackend({
+  const merged = mergeWithServer({
     ctx,
     clientModel: model,
     serverModel: msg.result.value,
@@ -569,7 +569,7 @@ const updateResponse = ({
   };
 };
 
-const mergeWithBackend = ({
+const mergeWithServer = ({
   ctx,
   clientModel,
   serverModel,
@@ -594,7 +594,7 @@ const mergeWithBackend = ({
       const frontendGame = clientModel.games[roomId];
 
       if (frontendGame) {
-        const merged = Game.mergeWithBackend({
+        const merged = Game.mergeWithServer({
           ctx,
           serverModel: backendGame,
           clientModel: frontendGame,
@@ -621,7 +621,7 @@ const mergeWithBackend = ({
         ctx,
       });
 
-      const merged = Game.mergeWithBackend({
+      const merged = Game.mergeWithServer({
         ctx,
         serverModel: backendGame,
         clientModel: initial[0],
@@ -1080,7 +1080,7 @@ export const ViewNotInGame = ({
   $send,
 }: {
   model: Model;
-  room: FrontendRoom;
+  room: ClientRoom;
   ctx: ViewCtx;
   $send: (m: Msg) => void;
 }) => {

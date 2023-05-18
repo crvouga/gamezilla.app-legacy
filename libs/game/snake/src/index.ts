@@ -1,4 +1,4 @@
-export * as SnakeFrontend from './snake.frontend';
-export * as SnakeBackend from './snake.backend';
+export * as SnakeClient from './snake.frontend';
+export * as SnakeServer from './snake.backend';
 export * from './snake.types';
 export { viewCoverArt } from './snake';

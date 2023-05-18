@@ -43,7 +43,7 @@ export const updateFromServer = ({
   return { model };
 };
 
-export const mergeWithBackend = ({
+export const mergeWithServer = ({
   clientModel,
   serverModel,
 }: {

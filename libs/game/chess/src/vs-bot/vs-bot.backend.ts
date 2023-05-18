@@ -5,7 +5,7 @@ import {
   ServerModel,
   ServerMsg,
   botMoved,
-  initBackend,
+  initServer,
   inputBot,
   inputColor,
   inputMove,
@@ -27,7 +27,7 @@ import {
 
 export type Model = ServerModel;
 
-export const init = initBackend;
+export const init = initServer;
 
 //
 //

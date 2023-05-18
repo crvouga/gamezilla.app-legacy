@@ -140,7 +140,7 @@ export const updateFromServer = (
     case 'Rematch_Respond':
     case 'start-playing': {
       const modelNew = msg[1].type === 'Err' ? model : msg[1].value;
-      const merged = mergeWithBackend({
+      const merged = mergeWithServer({
         clientModel: model,
         serverModel: modelNew,
       });
@@ -149,7 +149,7 @@ export const updateFromServer = (
 
     case 'input-move': {
       const modelNew = msg[1].type === 'Err' ? model : msg[1].value;
-      const merged = mergeWithBackend({
+      const merged = mergeWithServer({
         clientModel: model,
         serverModel: modelNew,
       });
@@ -157,7 +157,7 @@ export const updateFromServer = (
     }
 
     case 'Tick_Done': {
-      const merged = mergeWithBackend({
+      const merged = mergeWithServer({
         clientModel: model,
         serverModel: msg[1],
       });
@@ -165,7 +165,7 @@ export const updateFromServer = (
     }
 
     case 'player-left': {
-      const merged = mergeWithBackend({
+      const merged = mergeWithServer({
         clientModel: model,
         serverModel: msg[1],
       });
@@ -178,7 +178,7 @@ export const updateFromServer = (
   }
 };
 
-export const mergeWithBackend = ({
+export const mergeWithServer = ({
   clientModel,
   serverModel,
 }: {

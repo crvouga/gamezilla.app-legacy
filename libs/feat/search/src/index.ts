@@ -1,3 +1,3 @@
 export * from './search.types';
-export * as SearchBackend from './search.backend';
-export * as SearchFrontend from './search.frontend';
+export * as SearchServer from './search.backend';
+export * as SearchClient from './search.frontend';
