@@ -1,3 +1,3 @@
-export * as ChatClient from './chat.frontend';
-export * as ChatServer from './chat.backend';
-export * from './chat.types';
+export * as ChatClient from './chat.client';
+export * as ChatServer from './chat.server';
+export * from './chat.shared';

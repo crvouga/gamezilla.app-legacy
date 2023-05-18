@@ -32,7 +32,7 @@ import {
 } from '@gamezilla/shared/ui';
 import { Fab } from '@mui/material';
 import { matchSorter } from 'match-sorter';
-import { ClientModel, ClientMsg, ToServer, ToClient } from './chat.types';
+import { ClientModel, ClientMsg, ToServer, ToClient } from './chat.shared';
 
 //
 //
