@@ -7,7 +7,7 @@ import {
   RoomRequestCtx,
 } from '@gamezilla/shared/server';
 import { andThen, Cmd, exhaustive, Ok, p, Sub } from '@gamezilla/shared/core';
-import * as Game from './game.backend';
+import * as Game from './game.server';
 import {
   ServerModel,
   ServerMsg,
@@ -15,7 +15,7 @@ import {
   Res,
   ToServer,
   ToClient,
-} from './room.types';
+} from './room.shared';
 
 //
 //

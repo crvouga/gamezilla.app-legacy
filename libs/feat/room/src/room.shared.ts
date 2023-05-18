@@ -1,7 +1,7 @@
 import { RemoteResult, Result } from '@gamezilla/shared/core';
 import { RoomId, UserId, Username } from '@gamezilla/shared/app';
-import * as GameServer from './game.backend';
-import * as Game from './game.types';
+import * as GameServer from './game.server';
+import * as Game from './game.shared';
 
 const { Ok, Err } = Result;
 

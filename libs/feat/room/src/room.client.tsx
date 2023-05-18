@@ -35,8 +35,8 @@ import {
   useTheme,
 } from '@gamezilla/shared/ui';
 import { gameNameToString, viewCoverArt } from './game';
-import * as Game from './game.frontend';
-import { GameName, gameNameList } from './game.types';
+import * as Game from './game.client';
+import { GameName, gameNameList } from './game.shared';
 import {
   ServerModel,
   ClientModel,
@@ -46,7 +46,7 @@ import {
   RoomUser,
   ToServer,
   ToClient,
-} from './room.types';
+} from './room.shared';
 
 //
 //

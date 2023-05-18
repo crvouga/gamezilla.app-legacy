@@ -7,7 +7,7 @@ import * as Snake from '@gamezilla/game/snake';
 import * as Tetris from '@gamezilla/game/tetris';
 import * as TicTacToe from '@gamezilla/game/tic-tac-toe';
 import { ViewNode } from '@gamezilla/shared/ui';
-import { GameName } from './game.types';
+import { GameName } from './game.shared';
 
 export const viewCoverArt = (gameName: GameName): ViewNode => {
   switch (gameName) {

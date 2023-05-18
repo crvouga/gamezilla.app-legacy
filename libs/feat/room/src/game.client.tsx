@@ -14,7 +14,7 @@ import {
   ClientMsg,
   ToServer,
   ToClient,
-} from './game.types';
+} from './game.shared';
 
 //
 //
