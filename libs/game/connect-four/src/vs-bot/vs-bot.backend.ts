@@ -3,7 +3,7 @@ import { Cmd, p, Sub } from '@gamezilla/shared/core';
 import { RoomMsg } from '@gamezilla/shared/frontend';
 import { getBestMove, opposite } from '../connect-four/connect-four';
 import {
-  BackendModel,
+  ServerModel,
   ServerMsg,
   botMove,
   handle,
@@ -22,7 +22,7 @@ import {
 //
 //
 
-export type Model = BackendModel;
+export type Model = ServerModel;
 
 export const init = initShared;
 

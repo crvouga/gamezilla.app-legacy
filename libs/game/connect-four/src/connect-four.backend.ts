@@ -3,7 +3,7 @@ import { RoomRequestCtx } from '@gamezilla/shared/backend';
 import { Cmd, Result, Sub } from '@gamezilla/shared/core';
 import { RoomMsg } from '@gamezilla/shared/frontend';
 import {
-  BackendModel,
+  ServerModel,
   ServerMsg,
   Mode,
   ToBackend,
@@ -20,7 +20,7 @@ import * as VsUser from './vs-user/vs-user.backend';
 //
 //
 
-export type Model = BackendModel;
+export type Model = ServerModel;
 
 export const init: Model = { t: 'none' };
 

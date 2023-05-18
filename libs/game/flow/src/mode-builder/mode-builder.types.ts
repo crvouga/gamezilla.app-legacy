@@ -12,7 +12,7 @@ export type SharedModel = {
 
 export type FrontendModel = SharedModel & FlowGridUI.Model;
 
-export type BackendModel = SharedModel;
+export type ServerModel = SharedModel;
 
 //
 //

@@ -1,9 +1,9 @@
 import { Cmd, Sub } from '@gamezilla/shared/core';
-import { BackendModel, ServerMsg, ToBackend } from './flow.types';
+import { ServerModel, ServerMsg, ToBackend } from './flow.types';
 import { RoomRequestCtx } from '@gamezilla/shared/backend';
 import * as ModeBuilderBackend from './mode-builder/mode-builder.backend';
 
-type Model = BackendModel;
+type Model = ServerModel;
 
 export const init: Model = {
   t: 'none',

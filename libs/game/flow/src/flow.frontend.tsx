@@ -1,29 +1,25 @@
+import { UserId } from '@gamezilla/shared/app';
 import { Cmd, Sub } from '@gamezilla/shared/core';
 import { RoomViewCtx, ViewBottomButtonBar } from '@gamezilla/shared/frontend';
-import { UserId } from '@gamezilla/shared/app';
 import { IconArrowLeftOnRect } from '@gamezilla/shared/ui';
-import { FlowGridUI } from './flow-grid';
 import {
   FrontendModel,
   FrontendMsg,
-  SharedModel,
+  ServerModel,
   ToFrontend,
-  initShared,
 } from './flow.types';
 
 type Model = FrontendModel;
 
-export const init = ({ playerId }: { playerId?: UserId }): Model => {
+export const init = ({}: { playerId?: UserId }): Model => {
   return {
-    ...initShared,
-    playerId,
+    t: 'none',
   };
 };
 
 type Msg = FrontendMsg;
 
 export const update = ({
-  msg,
   model,
 }: {
   msg: Msg;
@@ -32,15 +28,6 @@ export const update = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (msg.t === 'flow-grid-ui') {
-    const updated = FlowGridUI.update({
-      msg: msg.c,
-      model: model.gridUI,
-    });
-    return {
-      model: { ...model, gridUI: updated.model },
-    };
-  }
   return { model };
 };
 
@@ -58,14 +45,14 @@ export const updateFromServer = ({
 
 export const mergeWithBackend = ({
   frontendModel,
-  backendModel,
+  serverModel,
 }: {
   frontendModel: FrontendModel;
-  backendModel: SharedModel;
+  serverModel: ServerModel;
 }) => {
   return {
     ...frontendModel,
-    ...backendModel,
+    ...serverModel,
   };
 };
 
@@ -80,9 +67,7 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 //
 
 export const View = ({
-  model,
   ctx,
-  $send,
 }: {
   model: Model;
   $send: (m: Msg) => void;
@@ -91,10 +76,10 @@ export const View = ({
   return (
     <div className="w-full h-full flex flex-col items-center justify-center">
       <div className="w-full flex-1 flex flex-col items-center justify-center">
-        <FlowGridUI.View
-          model={model}
+        {/* <FlowGridUI.View
+          model={model.t}
           $send={(c) => $send({ t: 'flow-grid-ui', c })}
-        />
+        /> */}
       </div>
       <ViewBottomButtonBar
         actions={[['Quit', <IconArrowLeftOnRect />, ctx.onQuit]]}

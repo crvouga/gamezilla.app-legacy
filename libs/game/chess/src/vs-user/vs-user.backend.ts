@@ -2,7 +2,7 @@ import { Cmd, exhaustive, Sub, Time } from '@gamezilla/shared/core';
 import { RoomMsg } from '@gamezilla/shared/frontend';
 import * as Board from '../chess/chess';
 import {
-  BackendModel,
+  ServerModel,
   ServerMsg,
   cancelDraw,
   clockTicked,
@@ -28,7 +28,7 @@ import {
 //
 //
 
-export type Model = BackendModel;
+export type Model = ServerModel;
 
 export const init = initShared;
 //

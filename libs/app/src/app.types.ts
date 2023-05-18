@@ -14,15 +14,15 @@ import { Alerts, Route } from '@gamezilla/shared/frontend';
 //
 //
 
-export type BackendModel = {
-  room: Room.BackendModel;
+export type ServerModel = {
+  room: Room.ServerModel;
   sessions: {
     [sessionId: SessionId]: Session;
   };
   profile: Profile.ServerModel;
-  search: Search.BackendModel;
-  chat: Chat.BackendModel;
-  auth: Auth.BackendModel;
+  search: Search.ServerModel;
+  chat: Chat.ServerModel;
+  auth: Auth.ServerModel;
 };
 
 export type Session = {

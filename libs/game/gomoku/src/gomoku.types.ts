@@ -24,20 +24,20 @@ export type FrontendModel =
       c: VsBot.FrontendModel;
     };
 
-export type BackendModel =
+export type ServerModel =
   | {
       t: 'none';
     }
   | {
       t: 'vs-user';
-      c: VsUser.BackendModel;
+      c: VsUser.ServerModel;
     }
   | {
       t: 'vs-bot';
-      c: VsBot.BackendModel;
+      c: VsBot.ServerModel;
     };
 
-export type Mode = BackendModel['t'];
+export type Mode = ServerModel['t'];
 
 //
 //
@@ -69,7 +69,7 @@ export type ToBackend =
 export type Req = { t: 'input-mode'; userId: UserId; mode: Mode };
 
 export type Res = Req & {
-  result: Result<Problem, BackendModel>;
+  result: Result<Problem, ServerModel>;
 };
 
 export type Problem = 'must-be-host';

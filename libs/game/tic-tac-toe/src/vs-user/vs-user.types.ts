@@ -125,7 +125,7 @@ export type FrontendModel = SharedModel & {
   openedModal: 'none' | ModalName;
 };
 
-export type BackendModel = SharedModel;
+export type ServerModel = SharedModel;
 
 //
 //

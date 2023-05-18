@@ -19,7 +19,7 @@ export type FrontendModel = {
   };
 };
 
-export type BackendModel = null;
+export type ServerModel = null;
 
 export type ToBackend = Req;
 

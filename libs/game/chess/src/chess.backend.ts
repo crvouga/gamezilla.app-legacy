@@ -4,7 +4,7 @@ import { RoomCtx, RoomRequestCtx } from '@gamezilla/shared/backend';
 import { UserId } from '@gamezilla/shared/app';
 import { GameMsg } from './chess-shared';
 import {
-  BackendModel,
+  ServerModel,
   ServerMsg,
   Res,
   ToBackend,
@@ -24,7 +24,7 @@ const { Err, Ok } = Result;
 //
 //
 
-export type Model = BackendModel;
+export type Model = ServerModel;
 
 export const init: Model = { t: 'none' };
 
@@ -294,7 +294,7 @@ const initMode = ({
 }: {
   ctx: RoomRequestCtx;
   broadcast: (m: ToFrontend) => Cmd;
-  mode: BackendModel['t'];
+  mode: ServerModel['t'];
   userId: UserId;
 }): { result: Res['result']; cmd?: Cmd<Msg> } => {
   if (ctx.hostId !== userId) {
@@ -303,13 +303,13 @@ const initMode = ({
 
   switch (mode) {
     case 'none': {
-      const modelNew: BackendModel = { t: 'none' };
+      const modelNew: ServerModel = { t: 'none' };
 
       return { result: Ok(modelNew) };
     }
 
     case 'vs-bot': {
-      const modelNew: BackendModel = {
+      const modelNew: ServerModel = {
         t: 'vs-bot',
         c: VsBot.init({ userId: userId }),
       };
@@ -318,7 +318,7 @@ const initMode = ({
     }
 
     case 'vs-user': {
-      const modelNew: BackendModel = {
+      const modelNew: ServerModel = {
         t: 'vs-user',
         c: VsUser.init({ userId: userId }),
       };
@@ -332,7 +332,7 @@ const initMode = ({
         broadcast: (m) => broadcast({ t: 'puzzle', c: m }),
       });
 
-      const modelNew: BackendModel = { t: 'puzzle', c: initial.model };
+      const modelNew: ServerModel = { t: 'puzzle', c: initial.model };
 
       return { result: Ok(modelNew), cmd: Cmd.tag_('puzzle', initial.cmd) };
     }

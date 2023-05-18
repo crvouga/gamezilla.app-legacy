@@ -4,7 +4,7 @@ import { RoomCtx, RoomRequestCtx } from '@gamezilla/shared/backend';
 import { GameMsg } from '../chess-shared';
 import { PuzzleDatabase } from './puzzle-database.mysql';
 import {
-  BackendModel,
+  ServerModel,
   ServerMsg,
   handle,
   initShared,
@@ -21,7 +21,7 @@ import {
 //
 //
 
-export type Model = BackendModel;
+export type Model = ServerModel;
 
 export const init = ({
   ctx,

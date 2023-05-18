@@ -44,7 +44,7 @@ const colorSeq: NonEmpty<Color> = ['Red', 'Blue', 'Green', 'Purple'];
 
 export type FrontendModel = SharedModel;
 
-export type BackendModel = SharedModel;
+export type ServerModel = SharedModel;
 
 //
 //

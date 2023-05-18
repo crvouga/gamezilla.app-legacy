@@ -18,7 +18,7 @@ export type FrontendModel = {
   emailLink: AuthEmailLink.Model;
 };
 
-export type BackendModel = {
+export type ServerModel = {
   sessions: {
     [sessionId: SessionId]: {
       sessionId: SessionId;

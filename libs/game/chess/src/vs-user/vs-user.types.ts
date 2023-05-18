@@ -22,7 +22,7 @@ export type FrontendModel = {
 
 export type Modal = 'RequestToDraw' | 'AskedToDraw' | 'resign' | 'GameOver';
 
-export type BackendModel = SharedModel;
+export type ServerModel = SharedModel;
 
 export type SharedModel =
   | {

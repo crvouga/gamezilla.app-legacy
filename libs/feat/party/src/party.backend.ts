@@ -1,7 +1,7 @@
 import { Cmd, exhaustive } from '@gamezilla/shared/core';
 import { PartyId, UserId } from '@gamezilla/shared/app';
 import {
-  BackendModel,
+  ServerModel,
   ServerMsg,
   handle,
   Res,
@@ -17,7 +17,7 @@ import {
 //
 //
 
-export type Model = BackendModel;
+export type Model = ServerModel;
 
 export const init: Model = {
   parties: {},

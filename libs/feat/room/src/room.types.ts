@@ -32,9 +32,9 @@ export type SharedModel = {
   };
 };
 
-export type BackendModel = SharedModel & {
+export type ServerModel = SharedModel & {
   games: {
-    [roomId: RoomId]: Game.BackendModel;
+    [roomId: RoomId]: Game.ServerModel;
   };
 };
 
@@ -105,7 +105,7 @@ type Extra = {
 //
 //
 
-type Model = BackendModel;
+type Model = ServerModel;
 
 export type Req =
   | { t: 'list' }
@@ -298,7 +298,7 @@ export const handle = ({
       }
 
       if (!gameName) {
-        const modelNew: BackendModel = {
+        const modelNew: ServerModel = {
           ...model,
           games: removeKey(room.roomId, model.games),
         };
@@ -311,7 +311,7 @@ export const handle = ({
         ctx,
       });
 
-      const modelNew: BackendModel = {
+      const modelNew: ServerModel = {
         ...model,
         games: {
           ...model.games,

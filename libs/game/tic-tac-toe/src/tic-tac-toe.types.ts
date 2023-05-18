@@ -15,10 +15,10 @@ export type FrontendModel =
   | { t: 'vs-user'; c: VsUser.FrontendModel }
   | { t: 'vs-bot'; c: VsBot.FrontendModel };
 
-export type BackendModel =
+export type ServerModel =
   | { t: 'none' }
-  | { t: 'vs-user'; c: VsUser.BackendModel }
-  | { t: 'vs-bot'; c: VsBot.BackendModel };
+  | { t: 'vs-user'; c: VsUser.ServerModel }
+  | { t: 'vs-bot'; c: VsBot.ServerModel };
 
 //
 //
@@ -49,11 +49,11 @@ export type ToFrontend =
 
 export type Req = {
   t: 'input-mode';
-  mode: BackendModel['t'];
+  mode: ServerModel['t'];
 };
 
 export type Res = Req & {
-  result: Result<Problem, BackendModel>;
+  result: Result<Problem, ServerModel>;
 };
 
 type Problem = 'must-be-host';

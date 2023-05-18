@@ -2,7 +2,7 @@ import { Cmd, p, Sub } from '@gamezilla/shared/core';
 import { RoomMsg } from '@gamezilla/shared/frontend';
 import { findBestMove, toDepth, toOpposite } from '../tic-tic-toe/tic-tac-toe';
 import {
-  BackendModel,
+  ServerModel,
   ServerMsg,
   botMove,
   initSharedModel,
@@ -29,7 +29,7 @@ import {
 //
 //
 
-export type Model = BackendModel;
+export type Model = ServerModel;
 
 export const init = initSharedModel;
 

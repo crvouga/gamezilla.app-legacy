@@ -20,7 +20,7 @@ import {
   ViewCoverArt,
 } from '../connect-four/connect-four-ui';
 import {
-  BackendModel,
+  ServerModel,
   BotLevel,
   FrontendModel,
   FrontendMsg,
@@ -104,7 +104,7 @@ export const update = (
 
       const modelNext = mergeWithBackend({
         ctx,
-        backendModel: result.value,
+        serverModel: result.value,
         frontendModel: model,
       });
 
@@ -142,7 +142,7 @@ export const updateFromServer = ({
       const modelNew = mergeWithBackend({
         ctx,
         frontendModel: model,
-        backendModel: msg[1],
+        serverModel: msg[1],
       });
       return { model: modelNew };
     }
@@ -156,7 +156,7 @@ export const updateFromServer = ({
       const modelNew = mergeWithBackend({
         ctx,
         frontendModel: model,
-        backendModel: msg[1].value,
+        serverModel: msg[1].value,
       });
 
       return { model: modelNew };
@@ -177,7 +177,7 @@ export const updateFromServer = ({
       const modelNew = mergeWithBackend({
         ctx,
         frontendModel: model,
-        backendModel: msg[1].value,
+        serverModel: msg[1].value,
       });
 
       return { model: modelNew };
@@ -186,26 +186,26 @@ export const updateFromServer = ({
 };
 
 export const mergeWithBackend = ({
-  backendModel,
+  serverModel,
   frontendModel,
 }: {
   ctx: Ctx;
   frontendModel: FrontendModel;
-  backendModel: BackendModel;
+  serverModel: ServerModel;
 }): FrontendModel => {
-  if (backendModel.type === 'Setup') {
-    return backendModel;
+  if (serverModel.type === 'Setup') {
+    return serverModel;
   }
 
   if (frontendModel.type === 'Setup') {
     return {
-      ...backendModel,
+      ...serverModel,
       ghostIndex: 'none',
     };
   }
 
   return {
-    ...backendModel,
+    ...serverModel,
     ghostIndex: frontendModel.ghostIndex,
   };
 };

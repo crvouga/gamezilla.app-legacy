@@ -16,13 +16,13 @@ export type FrontendModel = {
   };
 };
 
-export type BackendModel =
+export type ServerModel =
   | { t: 'none' }
-  | { t: 'vs-user'; c: VsUser.BackendModel }
-  | { t: 'vs-bot'; c: VsBot.BackendModel }
-  | { t: 'puzzle'; c: Puzzle.BackendModel };
+  | { t: 'vs-user'; c: VsUser.ServerModel }
+  | { t: 'vs-bot'; c: VsBot.ServerModel }
+  | { t: 'puzzle'; c: Puzzle.ServerModel };
 
-type Mode = BackendModel['t'];
+type Mode = ServerModel['t'];
 
 export type FrontendMsg =
   | Req
@@ -50,6 +50,6 @@ export type ToBackend =
 
 export type Req = { t: 'input-mode'; mode: Mode; userId: UserId };
 export type Res = Req & {
-  result: Result<Problem, BackendModel>;
+  result: Result<Problem, ServerModel>;
 };
 export type Problem = 'must_be_the_host';

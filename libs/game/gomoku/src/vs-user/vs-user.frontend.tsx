@@ -14,7 +14,7 @@ import {
 } from '@gamezilla/shared/ui';
 import { ViewCoverArt, viewStoneIcon } from '../gomoku/gomoku-ui';
 import {
-  BackendModel,
+  ServerModel,
   FrontendModel,
   FrontendMsg,
   ModelGameOver,
@@ -87,7 +87,7 @@ export const updateFromServer = ({
       return { model };
     }
     const merged = mergeWithBackend({
-      backendModel: msg.result.value,
+      serverModel: msg.result.value,
       frontendModel: model,
     });
 
@@ -99,7 +99,7 @@ export const updateFromServer = ({
   }
 
   const merged = mergeWithBackend({
-    backendModel: msg.result.value,
+    serverModel: msg.result.value,
     frontendModel: model,
   });
 
@@ -107,12 +107,12 @@ export const updateFromServer = ({
 };
 
 export const mergeWithBackend = ({
-  backendModel,
+  serverModel,
 }: {
   frontendModel: FrontendModel;
-  backendModel: BackendModel;
+  serverModel: ServerModel;
 }): FrontendModel => {
-  return backendModel;
+  return serverModel;
 };
 
 //

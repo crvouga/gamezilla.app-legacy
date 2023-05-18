@@ -25,15 +25,15 @@ export type FrontendModel =
   | { t: 'maze'; c: Maze.FrontendModel }
   | { t: 'flow'; c: Flow.FrontendModel };
 
-export type BackendModel =
-  | { t: 'tic-tac-toe'; c: TicTacToe.BackendModel }
-  | { t: 'connect-four'; c: ConnectFour.BackendModel }
-  | { t: 'chess'; c: Chess.BackendModel }
-  | { t: 'gomoku'; c: Gomoku.BackendModel }
-  | { t: 'tetris'; c: Tetris.BackendModel }
-  | { t: 'snake'; c: Snake.BackendModel }
-  | { t: 'maze'; c: Maze.BackendModel }
-  | { t: 'flow'; c: Flow.BackendModel };
+export type ServerModel =
+  | { t: 'tic-tac-toe'; c: TicTacToe.ServerModel }
+  | { t: 'connect-four'; c: ConnectFour.ServerModel }
+  | { t: 'chess'; c: Chess.ServerModel }
+  | { t: 'gomoku'; c: Gomoku.ServerModel }
+  | { t: 'tetris'; c: Tetris.ServerModel }
+  | { t: 'snake'; c: Snake.ServerModel }
+  | { t: 'maze'; c: Maze.ServerModel }
+  | { t: 'flow'; c: Flow.ServerModel };
 
 //
 //
@@ -91,7 +91,7 @@ export type ToBackend =
 //
 //
 
-export type GameName = BackendModel['t'];
+export type GameName = ServerModel['t'];
 
 export const gameNames: { [gameName in GameName]: GameName } = {
   'tic-tac-toe': 'tic-tac-toe',

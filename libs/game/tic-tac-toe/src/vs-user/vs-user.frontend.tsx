@@ -18,7 +18,7 @@ import {
 import { VersusHeader } from '../views';
 import * as Round from './vs-user-round';
 import {
-  BackendModel,
+  ServerModel,
   FrontendModel,
   FrontendMsg,
   GameModel,
@@ -175,10 +175,10 @@ export const updateFromServer = (
 
 export const mergeWithBackend = (
   frontendModel: FrontendModel,
-  backendModel: BackendModel
+  serverModel: ServerModel
 ): FrontendModel => {
   return {
-    ...backendModel,
+    ...serverModel,
     openedModal: frontendModel.openedModal,
   };
 };

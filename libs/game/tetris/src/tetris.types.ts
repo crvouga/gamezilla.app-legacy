@@ -19,7 +19,7 @@ export type FrontendModel = {
   sharedModel: SharedModel;
 };
 
-export type BackendModel = SharedModel;
+export type ServerModel = SharedModel;
 
 export type SharedModel = {
   board: Board.Board;

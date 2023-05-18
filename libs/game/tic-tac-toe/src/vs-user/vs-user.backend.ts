@@ -3,7 +3,7 @@ import { RoomMsg } from '@gamezilla/shared/frontend';
 import { PlayerType, toOpposite, toTurn } from '../tic-tic-toe/tic-tac-toe';
 import * as Round from './vs-user-round';
 import {
-  BackendModel,
+  ServerModel,
   ServerMsg,
   initSharedModel,
   inputBestOutOf,
@@ -33,7 +33,7 @@ import {
 //
 //
 
-export type Model = BackendModel;
+export type Model = ServerModel;
 
 export const init = initSharedModel;
 

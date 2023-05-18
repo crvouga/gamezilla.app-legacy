@@ -42,7 +42,7 @@ export type GameModel = {
 
 export type FrontendModel = SharedModel;
 
-export type BackendModel = SharedModel;
+export type ServerModel = SharedModel;
 
 export const initSharedModel = ({
   userId,

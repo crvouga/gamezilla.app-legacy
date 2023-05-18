@@ -129,7 +129,7 @@ const updateRequest = ({
   const handled = handle({ msg, model, ctx });
   const modelNew = mergeWithBackend({
     frontendModel: model,
-    backendModel: handled.type === 'Err' ? model : handled.value,
+    serverModel: handled.type === 'Err' ? model : handled.value,
   });
   return {
     model: modelNew,
@@ -162,7 +162,7 @@ export const updateFromServer = ({
 
       const merged = mergeWithBackend({
         frontendModel: model,
-        backendModel: result.value,
+        serverModel: result.value,
       });
 
       return { model: merged };
@@ -172,12 +172,12 @@ export const updateFromServer = ({
 
 export const mergeWithBackend = ({
   frontendModel,
-  backendModel,
+  serverModel,
 }: {
   frontendModel: Model;
-  backendModel: SharedModel;
+  serverModel: SharedModel;
 }): Model => {
-  return { ...frontendModel, ...backendModel };
+  return { ...frontendModel, ...serverModel };
 };
 
 //

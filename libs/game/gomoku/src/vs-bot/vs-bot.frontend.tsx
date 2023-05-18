@@ -16,7 +16,7 @@ import {
 } from '../gomoku/gomoku';
 import { ViewBoard, ViewCoverArt, viewStoneIcon } from '../gomoku/gomoku-ui';
 import {
-  BackendModel,
+  ServerModel,
   FrontendModel,
   FrontendMsg,
   ToBackend,
@@ -74,7 +74,7 @@ export const update = ({
 
       const merged = mergeWithBackend({
         ctx,
-        backendModel: result.value,
+        serverModel: result.value,
         frontendModel: model,
       });
 
@@ -105,21 +105,21 @@ export const updateFromServer = ({
   const merged = mergeWithBackend({
     ctx,
     frontendModel: model,
-    backendModel: msg.result.value,
+    serverModel: msg.result.value,
   });
 
   return { model: merged };
 };
 
 export const mergeWithBackend = ({
-  backendModel,
+  serverModel,
   frontendModel,
 }: {
   ctx: Ctx;
   frontendModel: FrontendModel;
-  backendModel: BackendModel;
+  serverModel: ServerModel;
 }): FrontendModel => {
-  return { ...frontendModel, ...backendModel };
+  return { ...frontendModel, ...serverModel };
 };
 
 //

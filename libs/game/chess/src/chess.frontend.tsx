@@ -19,7 +19,7 @@ import {
   IconUsers,
 } from '@gamezilla/shared/ui';
 import {
-  BackendModel,
+  ServerModel,
   FrontendModel,
   FrontendMsg,
   ToBackend,
@@ -181,7 +181,7 @@ export const updateFromServer = ({
 
       const merged = mergeWithBackend({
         frontendModel: modelNew,
-        backendModel: result.value,
+        serverModel: result.value,
         sendToBackend,
       });
 
@@ -391,14 +391,14 @@ export const View = ({
 
 export const mergeWithBackend = ({
   frontendModel,
-  backendModel,
+  serverModel,
   sendToBackend,
 }: {
   sendToBackend: (msg: ToBackend) => Cmd;
   frontendModel: FrontendModel;
-  backendModel: BackendModel;
+  serverModel: ServerModel;
 }): [FrontendModel, Cmd<Msg>] => {
-  switch (backendModel.t) {
+  switch (serverModel.t) {
     case 'none': {
       return [{ ...frontendModel, mode: { t: 'none' } }, Cmd.None];
     }
@@ -412,7 +412,7 @@ export const mergeWithBackend = ({
               t: 'puzzle',
               c: Puzzle.mergeWithBackend({
                 frontendModel: frontendModel.mode.c,
-                backendModel: backendModel.c,
+                serverModel: serverModel.c,
               }),
             },
           },
@@ -431,7 +431,7 @@ export const mergeWithBackend = ({
             t: 'puzzle',
             c: Puzzle.mergeWithBackend({
               frontendModel: initial.model,
-              backendModel: backendModel.c,
+              serverModel: serverModel.c,
             }),
           },
         },
@@ -446,7 +446,7 @@ export const mergeWithBackend = ({
             ...frontendModel,
             mode: {
               t: 'vs-user',
-              c: VsUser.mergeWithBackend(frontendModel.mode.c, backendModel.c),
+              c: VsUser.mergeWithBackend(frontendModel.mode.c, serverModel.c),
             },
           },
           Cmd.None,
@@ -463,7 +463,7 @@ export const mergeWithBackend = ({
           ...frontendModel,
           mode: {
             t: 'vs-user',
-            c: VsUser.mergeWithBackend(child, backendModel.c),
+            c: VsUser.mergeWithBackend(child, serverModel.c),
           },
         },
         Cmd.tag_('vs-user', childCmd),
@@ -477,7 +477,7 @@ export const mergeWithBackend = ({
             ...frontendModel,
             mode: {
               t: 'vs-bot',
-              c: VsBot.mergeWithBackend(frontendModel.mode.c, backendModel.c),
+              c: VsBot.mergeWithBackend(frontendModel.mode.c, serverModel.c),
             },
           },
           Cmd.None,
@@ -491,7 +491,7 @@ export const mergeWithBackend = ({
           ...frontendModel,
           mode: {
             t: 'vs-bot',
-            c: VsBot.mergeWithBackend(child, backendModel.c),
+            c: VsBot.mergeWithBackend(child, serverModel.c),
           },
         },
         Cmd.tag_('vs-bot', childCmd),

@@ -12,7 +12,7 @@ import { useLayoutEffect, useRef } from 'react';
 import { Direction } from './direction';
 import * as Snake from './snake';
 import {
-  BackendModel,
+  ServerModel,
   FrontendModel,
   FrontendMsg,
   SharedModel,
@@ -404,13 +404,13 @@ export const ViewBoard = ({
 
 export const mergeWithBackend = ({
   frontendModel,
-  backendModel,
+  serverModel,
 }: {
   frontendModel: FrontendModel;
-  backendModel: BackendModel;
+  serverModel: ServerModel;
 }): FrontendModel => {
   return {
-    ...backendModel,
+    ...serverModel,
     openedMenuId: frontendModel.openedMenuId,
   };
 };

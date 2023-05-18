@@ -17,7 +17,7 @@ export type FrontendModel = {
   isFlipped: boolean;
 };
 
-export type BackendModel = SharedModel;
+export type ServerModel = SharedModel;
 
 export type SharedModel = SetupModel | GameModel | GameOverModel;
 
@@ -58,7 +58,7 @@ export const initBackend = ({
   userId,
 }: {
   userId: UserId | 'none';
-}): BackendModel => {
+}): ServerModel => {
   return {
     type: 'Setup',
     botLevel: initShared.botLevel,

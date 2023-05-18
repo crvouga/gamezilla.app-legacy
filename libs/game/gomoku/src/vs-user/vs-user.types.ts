@@ -70,7 +70,7 @@ export type FrontendModel = Model & {
   confirming?: FrontendMsg['t'];
 };
 
-export type BackendModel = Model;
+export type ServerModel = Model;
 
 export const initShared = ({
   white,

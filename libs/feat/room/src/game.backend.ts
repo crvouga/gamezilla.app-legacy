@@ -10,7 +10,7 @@ import { UserId } from '@gamezilla/shared/app';
 import { RoomCtx, RoomRequestCtx } from '@gamezilla/shared/backend';
 import { Cmd, exhaustive, Sub } from '@gamezilla/shared/core';
 import { RoomMsg } from '@gamezilla/shared/frontend';
-import { BackendModel, ServerMsg, ToBackend, ToFrontend } from './game.types';
+import { ServerModel, ServerMsg, ToBackend, ToFrontend } from './game.types';
 
 //
 //
@@ -20,7 +20,7 @@ import { BackendModel, ServerMsg, ToBackend, ToFrontend } from './game.types';
 //
 //
 
-export type Model = BackendModel;
+export type Model = ServerModel;
 
 export const init = ({
   gameName,

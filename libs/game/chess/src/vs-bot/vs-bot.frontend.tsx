@@ -10,7 +10,7 @@ import { viewCoverArt } from '../chess/chess';
 import Sounds from '../chess/chess-sounds';
 import { PawnIcon } from '../chess/chess-views';
 import {
-  BackendModel,
+  ServerModel,
   FrontendModel,
   FrontendMsg,
   Res,
@@ -252,13 +252,13 @@ const playAudio = (src: string): Cmd<Msg> => {
 
 export const mergeWithBackend = (
   frontendModel: FrontendModel,
-  backendModel: BackendModel
+  serverModel: ServerModel
 ): FrontendModel => {
   return {
     isFlipped: frontendModel.isFlipped,
     openedMenuId: frontendModel.openedMenuId,
     openedModal: frontendModel.openedModal,
-    sharedModel: backendModel,
+    sharedModel: serverModel,
   };
 };
 

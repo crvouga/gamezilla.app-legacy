@@ -1,7 +1,7 @@
 import { Cmd } from '@gamezilla/shared/core';
-import { BackendModel, ServerMsg, ToBackend, ToFrontend } from './chat.types';
+import { ServerModel, ServerMsg, ToBackend, ToFrontend } from './chat.types';
 
-type Model = BackendModel;
+type Model = ServerModel;
 
 export const init: { model: Model } = { model: null };
 

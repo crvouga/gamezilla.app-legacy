@@ -1,7 +1,7 @@
 import { Cmd, Result, Sub, Time } from '@gamezilla/shared/core';
 import * as Snake from './snake';
 import {
-  BackendModel,
+  ServerModel,
   ServerMsg,
   initSharedModel,
   InputDirection,
@@ -25,7 +25,7 @@ import {
 //
 //
 
-export type Model = BackendModel;
+export type Model = ServerModel;
 
 export const init = initSharedModel;
 

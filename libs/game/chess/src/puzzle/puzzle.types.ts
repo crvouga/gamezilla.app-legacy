@@ -264,7 +264,7 @@ export type ToFrontend =
   | { t: 'fetched-puzzles'; result: Result<string, SharedModel> }
   | { t: 'interaction-insert-done'; result: Result<string, SharedModel> };
 
-export type BackendModel = SharedModel;
+export type ServerModel = SharedModel;
 
 export type FrontendModel = SharedModel & {
   initializedAt?: number;

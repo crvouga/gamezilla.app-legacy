@@ -3,7 +3,7 @@ import { RoomRequestCtx } from '@gamezilla/shared/backend';
 import { Cmd, Result, Sub } from '@gamezilla/shared/core';
 import { RoomMsg } from '@gamezilla/shared/frontend';
 import {
-  BackendModel,
+  ServerModel,
   ServerMsg,
   ToBackend,
   ToFrontend,
@@ -21,7 +21,7 @@ const { Err, Ok } = Result;
 //
 //
 
-export type Model = BackendModel;
+export type Model = ServerModel;
 
 export const init: Model = { t: 'none' };
 
@@ -95,7 +95,7 @@ export const updateFromClient = ({
       };
     }
 
-    const modelNew: BackendModel = initMode({
+    const modelNew: ServerModel = initMode({
       mode: msg.mode,
       userId: ctx.hostId,
     });
@@ -188,9 +188,9 @@ const initMode = ({
   mode,
   userId,
 }: {
-  mode: BackendModel['t'];
+  mode: ServerModel['t'];
   userId: UserId;
-}): BackendModel => {
+}): ServerModel => {
   if (mode === 'none') {
     return { t: 'none' };
   }

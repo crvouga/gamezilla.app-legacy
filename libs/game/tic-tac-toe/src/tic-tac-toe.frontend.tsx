@@ -9,7 +9,7 @@ import {
 } from '@gamezilla/shared/frontend';
 import { IconComputerDesktop, IconUsers } from '@gamezilla/shared/ui';
 import {
-  BackendModel,
+  ServerModel,
   FrontendModel,
   FrontendMsg,
   ToBackend,
@@ -115,7 +115,7 @@ export const updateFromServer = ({
     const modelNew = mergeWithBackend({
       ctx,
       frontendModel: model,
-      backendModel: result.value,
+      serverModel: result.value,
     });
 
     return { model: modelNew };
@@ -147,28 +147,28 @@ export const updateFromServer = ({
 
 export const mergeWithBackend = ({
   frontendModel,
-  backendModel,
+  serverModel,
   ctx,
 }: {
   ctx: Ctx;
   frontendModel: FrontendModel;
-  backendModel: BackendModel;
+  serverModel: ServerModel;
 }): FrontendModel => {
-  if (backendModel.t === 'none') {
+  if (serverModel.t === 'none') {
     return { t: 'none' };
   }
 
-  if (backendModel.t === 'vs-user') {
+  if (serverModel.t === 'vs-user') {
     const frontendModelChild =
       frontendModel.t === 'vs-user' ? frontendModel.c : VsUser.init;
 
     return {
       t: 'vs-user',
-      c: VsUser.mergeWithBackend(frontendModelChild, backendModel.c),
+      c: VsUser.mergeWithBackend(frontendModelChild, serverModel.c),
     };
   }
 
-  if (backendModel.t === 'vs-bot') {
+  if (serverModel.t === 'vs-bot') {
     const frontendModelChild =
       frontendModel.t === 'vs-bot'
         ? frontendModel.c
@@ -179,7 +179,7 @@ export const mergeWithBackend = ({
       c: VsBot.mergeWithBackend({
         now: ctx.now,
         frontendModel: frontendModelChild,
-        backendModel: backendModel.c,
+        serverModel: serverModel.c,
       }),
     };
   }

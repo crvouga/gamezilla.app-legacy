@@ -11,7 +11,7 @@ import * as Snake from './snake';
 //
 //
 
-export type BackendModel = SharedModel;
+export type ServerModel = SharedModel;
 
 export type FrontendModel = SharedModel & {
   openedMenuId: Option<string>;

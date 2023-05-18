@@ -9,7 +9,7 @@ import {
 import { andThen, Cmd, exhaustive, Ok, p, Sub } from '@gamezilla/shared/core';
 import * as Game from './game.backend';
 import {
-  BackendModel,
+  ServerModel,
   ServerMsg,
   handle,
   Res,
@@ -25,7 +25,7 @@ import {
 //
 //
 
-export type Model = BackendModel;
+export type Model = ServerModel;
 
 export const init: Model = {
   rooms: {},

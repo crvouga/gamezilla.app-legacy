@@ -46,7 +46,7 @@ export const isBotTurn = (model: SharedModel): boolean => {
   );
 };
 
-export type BackendModel = SharedModel;
+export type ServerModel = SharedModel;
 
 export type FrontendGameModel = GameModel & {
   ghostIndex: ColumnIndex | 'none';

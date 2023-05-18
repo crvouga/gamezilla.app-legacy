@@ -1,6 +1,6 @@
 import { Cmd, Sub, Time } from '@gamezilla/shared/core';
 import {
-  BackendModel,
+  ServerModel,
   ServerMsg,
   handle,
   initShared,
@@ -18,7 +18,7 @@ import {
 //
 //
 
-export type Model = BackendModel;
+export type Model = ServerModel;
 
 export const init = initShared;
 
@@ -74,7 +74,7 @@ export const updateFromClient = (
 
 export const subscriptions = (
   intervalId: string,
-  model: BackendModel
+  model: ServerModel
 ): Sub<Msg> => {
   if (model.type === 'game') {
     return Time.every(intervalId, 500, () => ['tick']);

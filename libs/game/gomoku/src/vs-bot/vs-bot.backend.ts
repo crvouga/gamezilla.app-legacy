@@ -2,7 +2,7 @@ import { RoomRequestCtx } from '@gamezilla/shared/backend';
 import { Cmd, Sub, andThen, p } from '@gamezilla/shared/core';
 import { RoomMsg } from '@gamezilla/shared/frontend';
 import {
-  BackendModel,
+  ServerModel,
   ServerMsg,
   Res,
   ToBackend,
@@ -20,7 +20,7 @@ import {
 //
 //
 
-export type Model = BackendModel;
+export type Model = ServerModel;
 
 export const init = initShared;
 

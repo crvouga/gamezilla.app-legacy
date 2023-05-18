@@ -49,7 +49,7 @@ export type FrontendModel = {
   };
 };
 
-export type BackendModel = null;
+export type ServerModel = null;
 
 //
 //
@@ -98,7 +98,7 @@ export const updateFromClient = ({
   msg,
 }: {
   msg: ToBackend;
-  model: BackendModel;
+  model: ServerModel;
 }): {
   cmd: Cmd<ServerMsg>;
 } => {

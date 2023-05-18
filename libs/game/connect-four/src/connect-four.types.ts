@@ -15,12 +15,12 @@ export type FrontendModel =
   | { t: 'vs-user'; c: VsUser.FrontendModel }
   | { t: 'vs-bot'; c: VsBot.FrontendModel };
 
-export type BackendModel =
+export type ServerModel =
   | { t: 'none' }
-  | { t: 'vs-user'; c: VsUser.BackendModel }
-  | { t: 'vs-bot'; c: VsBot.BackendModel };
+  | { t: 'vs-user'; c: VsUser.ServerModel }
+  | { t: 'vs-bot'; c: VsBot.ServerModel };
 
-export type Mode = BackendModel['t'];
+export type Mode = ServerModel['t'];
 
 //
 //
@@ -56,4 +56,4 @@ export type ToBackend =
 //
 
 export type Req = { t: 'input-mode'; mode: Mode };
-export type Res = Req & { result: Result<string, BackendModel> };
+export type Res = Req & { result: Result<string, ServerModel> };

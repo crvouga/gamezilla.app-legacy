@@ -40,7 +40,7 @@ export type GameModel = {
 
 export type FrontendModel = Model;
 
-export type BackendModel = Model;
+export type ServerModel = Model;
 
 export const initShared = ({ userId }: { userId: UserId | null }): Model => {
   return {

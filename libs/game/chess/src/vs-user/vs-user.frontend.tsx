@@ -15,7 +15,7 @@ import * as Clock from '../chess/chess-clock';
 import Sounds from '../chess/chess-sounds';
 import { PawnIcon, VersusHeader } from '../chess/chess-views';
 import {
-  BackendModel,
+  ServerModel,
   FrontendModel,
   FrontendMsg,
   InputMove,
@@ -941,12 +941,12 @@ const ViewUserPlayerSlot = ({
 
 export const mergeWithBackend = (
   frontendModel: FrontendModel,
-  backendModel: BackendModel
+  serverModel: ServerModel
 ): FrontendModel => {
   return {
     isFlipped: frontendModel.isFlipped,
     openedMenuId: frontendModel.openedMenuId,
     openedModal: frontendModel.openedModal,
-    sharedModel: backendModel,
+    sharedModel: serverModel,
   };
 };

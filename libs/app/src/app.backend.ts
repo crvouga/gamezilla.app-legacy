@@ -8,7 +8,7 @@ import { AppMsg, Ctx, RequestCtx } from '@gamezilla/shared/backend';
 import { Cmd, Sub, exhaustive, p } from '@gamezilla/shared/core';
 import * as Rx from 'rxjs';
 import {
-  BackendModel,
+  ServerModel,
   ServerMsg,
   Session,
   ToBackend,
@@ -23,7 +23,7 @@ import {
 //
 //
 
-type Model = BackendModel;
+type Model = ServerModel;
 
 export const init: { model: Model; cmd?: Cmd<Msg> } = {
   model: {

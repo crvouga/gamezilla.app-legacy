@@ -14,7 +14,7 @@ import {
 } from '@gamezilla/shared/ui';
 import { Maze } from './maze';
 import {
-  BackendModel,
+  ServerModel,
   Color,
   FrontendModel,
   FrontendMsg,
@@ -123,7 +123,7 @@ export const updateFromServer = (
       }
       const merged = mergeWithBackend({
         frontendModel: model,
-        backendModel: msg[2].value,
+        serverModel: msg[2].value,
       });
       return [merged, Cmd.None];
     }
@@ -131,7 +131,7 @@ export const updateFromServer = (
     case 'tick': {
       const merged = mergeWithBackend({
         frontendModel: model,
-        backendModel: msg[1],
+        serverModel: msg[1],
       });
       return [merged, Cmd.None];
     }
@@ -139,12 +139,12 @@ export const updateFromServer = (
 };
 
 export const mergeWithBackend = ({
-  backendModel,
+  serverModel,
 }: {
   frontendModel: FrontendModel;
-  backendModel: BackendModel;
+  serverModel: ServerModel;
 }): FrontendModel => {
-  return backendModel;
+  return serverModel;
 };
 
 const keyToDirection = (key: Keyboard.Key): Direction | null => {

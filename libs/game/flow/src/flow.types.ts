@@ -16,13 +16,13 @@ export type FrontendModel =
       c: ModeBuilder.FrontendModel;
     };
 
-export type BackendModel =
+export type ServerModel =
   | {
       t: 'none';
     }
   | {
       t: 'mode-builder';
-      c: ModeBuilder.BackendModel;
+      c: ModeBuilder.ServerModel;
     };
 
 //
@@ -41,9 +41,9 @@ export type ToFrontend = Res;
 
 export type Req = {
   t: 'input-mode';
-  mode: BackendModel['t'];
+  mode: ServerModel['t'];
 };
 
 export type Res = Req & {
-  result: Result<string, BackendModel>;
+  result: Result<string, ServerModel>;
 };

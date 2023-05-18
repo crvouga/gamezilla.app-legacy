@@ -33,7 +33,7 @@ import {
   gameTheme,
 } from '../connect-four/connect-four-ui';
 import {
-  BackendModel,
+  ServerModel,
   FrontendModel,
   FrontendMsg,
   GameModel,
@@ -142,7 +142,7 @@ export const updateFromServer = (
       const modelNew = msg[1].type === 'Err' ? model : msg[1].value;
       const merged = mergeWithBackend({
         frontendModel: model,
-        backendModel: modelNew,
+        serverModel: modelNew,
       });
       return [{ ...merged, openedModal: 'none' }, Cmd.None, []];
     }
@@ -151,7 +151,7 @@ export const updateFromServer = (
       const modelNew = msg[1].type === 'Err' ? model : msg[1].value;
       const merged = mergeWithBackend({
         frontendModel: model,
-        backendModel: modelNew,
+        serverModel: modelNew,
       });
       return [{ ...merged, ghostIndex: 'none' }, Cmd.None, []];
     }
@@ -159,7 +159,7 @@ export const updateFromServer = (
     case 'Tick_Done': {
       const merged = mergeWithBackend({
         frontendModel: model,
-        backendModel: msg[1],
+        serverModel: msg[1],
       });
       return [merged, Cmd.None, []];
     }
@@ -167,7 +167,7 @@ export const updateFromServer = (
     case 'player-left': {
       const merged = mergeWithBackend({
         frontendModel: model,
-        backendModel: msg[1],
+        serverModel: msg[1],
       });
       return [merged, Cmd.None, []];
     }
@@ -180,13 +180,13 @@ export const updateFromServer = (
 
 export const mergeWithBackend = ({
   frontendModel,
-  backendModel,
+  serverModel,
 }: {
   frontendModel: FrontendModel;
-  backendModel: BackendModel;
+  serverModel: ServerModel;
 }): FrontendModel => {
   return {
-    ...backendModel,
+    ...serverModel,
     openedModal: frontendModel.openedModal,
     ghostIndex: frontendModel.ghostIndex,
   };

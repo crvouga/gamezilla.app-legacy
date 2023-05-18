@@ -117,7 +117,7 @@ export type FrontendModel = SharedModel & {
   ghostIndex: ColumnIndex | 'none';
 };
 
-export type BackendModel = SharedModel;
+export type ServerModel = SharedModel;
 
 //
 //

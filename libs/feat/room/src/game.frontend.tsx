@@ -9,7 +9,7 @@ import { TicTacToeFrontend } from '@gamezilla/game/tic-tac-toe';
 import { Cmd, Sub, exhaustive } from '@gamezilla/shared/core';
 import { Alerts, Ctx, RoomCtx, RoomViewCtx } from '@gamezilla/shared/frontend';
 import {
-  BackendModel,
+  ServerModel,
   FrontendModel,
   FrontendMsg,
   ToBackend,
@@ -494,20 +494,20 @@ export const mergeWithBackend = ({
   ctx,
   sendToBackend,
   frontendModel,
-  backendModel,
+  serverModel,
 }: {
   ctx: Ctx;
   sendToBackend: (msg: ToBackend) => Cmd;
   frontendModel: FrontendModel;
-  backendModel: BackendModel;
+  serverModel: ServerModel;
 }): [FrontendModel, Cmd<Msg>] => {
-  switch (backendModel.t) {
+  switch (serverModel.t) {
     case 'chess': {
       if (frontendModel.t === 'chess') {
         const merged = ChessFrontend.mergeWithBackend({
           sendToBackend: (msg) => sendToBackend({ t: 'chess', c: msg }),
           frontendModel: frontendModel.c,
-          backendModel: backendModel.c,
+          serverModel: serverModel.c,
         });
 
         return [{ t: 'chess', c: merged[0] }, Cmd.tag_('chess', merged[1])];
@@ -518,7 +518,7 @@ export const mergeWithBackend = ({
       const merged = ChessFrontend.mergeWithBackend({
         sendToBackend: (msg) => sendToBackend({ t: 'chess', c: msg }),
         frontendModel: initial[0],
-        backendModel: backendModel.c,
+        serverModel: serverModel.c,
       });
 
       return [
@@ -541,7 +541,7 @@ export const mergeWithBackend = ({
             c: ConnectFourFrontend.mergeWithBackend({
               ctx,
               frontendModel: frontendModel.c,
-              backendModel: backendModel.c,
+              serverModel: serverModel.c,
             }),
           },
           Cmd.None,
@@ -556,7 +556,7 @@ export const mergeWithBackend = ({
           c: ConnectFourFrontend.mergeWithBackend({
             ctx,
             frontendModel: initial,
-            backendModel: backendModel.c,
+            serverModel: serverModel.c,
           }),
         },
         Cmd.None,
@@ -571,7 +571,7 @@ export const mergeWithBackend = ({
             c: TicTacToeFrontend.mergeWithBackend({
               ctx,
               frontendModel: frontendModel.c,
-              backendModel: backendModel.c,
+              serverModel: serverModel.c,
             }),
           },
           Cmd.None,
@@ -586,7 +586,7 @@ export const mergeWithBackend = ({
           c: TicTacToeFrontend.mergeWithBackend({
             ctx,
             frontendModel: initial,
-            backendModel: backendModel.c,
+            serverModel: serverModel.c,
           }),
         },
         Cmd.None,
@@ -601,7 +601,7 @@ export const mergeWithBackend = ({
             c: GomokuFrontend.mergeWithBackend({
               ctx,
               frontendModel: frontendModel.c,
-              backendModel: backendModel.c,
+              serverModel: serverModel.c,
             }),
           },
           Cmd.None,
@@ -614,7 +614,7 @@ export const mergeWithBackend = ({
           c: GomokuFrontend.mergeWithBackend({
             ctx,
             frontendModel: GomokuFrontend.init,
-            backendModel: backendModel.c,
+            serverModel: serverModel.c,
           }),
         },
         Cmd.None,
@@ -628,7 +628,7 @@ export const mergeWithBackend = ({
             t: 'tetris',
             c: TetrisFrontend.mergeWithBackend({
               frontendModel: frontendModel.c,
-              backendModel: backendModel.c,
+              serverModel: serverModel.c,
             }),
           },
           Cmd.None,
@@ -640,7 +640,7 @@ export const mergeWithBackend = ({
           t: 'tetris',
           c: TetrisFrontend.mergeWithBackend({
             frontendModel: TetrisFrontend.init,
-            backendModel: backendModel.c,
+            serverModel: serverModel.c,
           }),
         },
         Cmd.None,
@@ -654,7 +654,7 @@ export const mergeWithBackend = ({
             t: 'snake',
             c: SnakeFrontend.mergeWithBackend({
               frontendModel: frontendModel.c,
-              backendModel: backendModel.c,
+              serverModel: serverModel.c,
             }),
           },
 
@@ -667,7 +667,7 @@ export const mergeWithBackend = ({
           t: 'snake',
           c: SnakeFrontend.mergeWithBackend({
             frontendModel: SnakeFrontend.init,
-            backendModel: backendModel.c,
+            serverModel: serverModel.c,
           }),
         },
         Cmd.None,
@@ -681,7 +681,7 @@ export const mergeWithBackend = ({
             t: 'maze',
             c: MazeFrontend.mergeWithBackend({
               frontendModel: frontendModel.c,
-              backendModel: backendModel.c,
+              serverModel: serverModel.c,
             }),
           },
           Cmd.None,
@@ -695,7 +695,7 @@ export const mergeWithBackend = ({
             frontendModel: MazeFrontend.init({
               userId: ctx.currentUserId,
             }),
-            backendModel: backendModel.c,
+            serverModel: serverModel.c,
           }),
         },
         Cmd.None,
@@ -709,7 +709,7 @@ export const mergeWithBackend = ({
             t: 'flow',
             c: FlowFrontend.mergeWithBackend({
               frontendModel: frontendModel.c,
-              backendModel: backendModel.c,
+              serverModel: serverModel.c,
             }),
           },
           Cmd.None,
@@ -721,7 +721,7 @@ export const mergeWithBackend = ({
           t: 'flow',
           c: FlowFrontend.mergeWithBackend({
             frontendModel: FlowFrontend.init({}),
-            backendModel: backendModel.c,
+            serverModel: serverModel.c,
           }),
         },
         Cmd.None,

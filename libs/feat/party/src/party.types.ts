@@ -31,7 +31,7 @@ export type SharedModel = {
   };
 };
 
-export type BackendModel = SharedModel;
+export type ServerModel = SharedModel;
 
 export type FrontendModel = SharedModel & {
   volume: number;

@@ -2,7 +2,7 @@ import { Cmd, p, Sub } from '@gamezilla/shared/core';
 import { RoomMsg } from '@gamezilla/shared/frontend';
 import * as Chess from '../chess/chess';
 import {
-  BackendModel,
+  ServerModel,
   ServerMsg,
   botMoved,
   initBackend,
@@ -25,7 +25,7 @@ import {
 //
 //
 
-export type Model = BackendModel;
+export type Model = ServerModel;
 
 export const init = initBackend;
 

@@ -22,7 +22,7 @@ import {
   viewCoverArt,
 } from '../tic-tic-toe/tic-tac-toe-ui';
 import {
-  BackendModel,
+  ServerModel,
   FrontendModel,
   FrontendMsg,
   ToBackend,
@@ -88,7 +88,7 @@ export const update = ({
       const merged = mergeWithBackend({
         ...ctx,
         frontendModel: model,
-        backendModel: result.value,
+        serverModel: result.value,
       });
       return { model: merged, cmd: sendToBackend(msg) };
     }
@@ -113,7 +113,7 @@ export const updateFromServer = ({
       const modelNew = mergeWithBackend({
         ...ctx,
         frontendModel: model,
-        backendModel: msg[1],
+        serverModel: msg[1],
       });
       return [modelNew, Cmd.None, []];
     }
@@ -125,7 +125,7 @@ export const updateFromServer = ({
       const modelNew = mergeWithBackend({
         ...ctx,
         frontendModel: model,
-        backendModel: msg[1].value,
+        serverModel: msg[1].value,
       });
       return [modelNew, Cmd.None, []];
     }
@@ -133,22 +133,22 @@ export const updateFromServer = ({
 };
 
 export const mergeWithBackend = ({
-  backendModel,
+  serverModel,
 }: {
   now: Posix;
   frontendModel: FrontendModel;
-  backendModel: BackendModel;
+  serverModel: ServerModel;
 }): FrontendModel => {
-  switch (backendModel.type) {
+  switch (serverModel.type) {
     case 'Setup': {
       return {
-        ...backendModel,
+        ...serverModel,
       };
     }
 
     case 'game': {
       return {
-        ...backendModel,
+        ...serverModel,
       };
     }
   }

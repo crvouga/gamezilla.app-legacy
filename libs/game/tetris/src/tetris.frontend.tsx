@@ -6,7 +6,7 @@ import * as Direction from './direction';
 import * as Piece from './piece';
 import * as Position from './position';
 import {
-  BackendModel,
+  ServerModel,
   columnCount,
   FrontendModel,
   FrontendMsg,
@@ -220,14 +220,14 @@ export const updateFromServer = (
 
 export const mergeWithBackend = ({
   frontendModel,
-  backendModel,
+  serverModel,
 }: {
   frontendModel: FrontendModel;
-  backendModel: BackendModel;
+  serverModel: ServerModel;
 }): FrontendModel => {
   return {
     ...frontendModel,
-    sharedModel: backendModel,
+    sharedModel: serverModel,
   };
 };
 

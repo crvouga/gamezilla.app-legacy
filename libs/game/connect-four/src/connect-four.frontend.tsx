@@ -11,7 +11,7 @@ import {
 import * as UI from '@gamezilla/shared/ui';
 import { IconComputerDesktop, IconUsers } from '@gamezilla/shared/ui';
 import {
-  BackendModel,
+  ServerModel,
   FrontendModel,
   FrontendMsg,
   ToBackend,
@@ -116,7 +116,7 @@ export const updateFromServer = ({
 
       const merged = mergeWithBackend({
         frontendModel: model,
-        backendModel: msg.result.value,
+        serverModel: msg.result.value,
         ctx,
       });
       return [merged, Cmd.None, []];
@@ -271,15 +271,15 @@ export const BannerArt = () => {
 export const mergeWithBackend = ({
   ctx,
   frontendModel,
-  backendModel,
+  serverModel,
 }: {
   ctx: Ctx;
   frontendModel: FrontendModel;
-  backendModel: BackendModel;
+  serverModel: ServerModel;
 }): FrontendModel => {
-  switch (backendModel.t) {
+  switch (serverModel.t) {
     case 'none': {
-      return backendModel;
+      return serverModel;
     }
 
     case 'vs-bot': {
@@ -289,7 +289,7 @@ export const mergeWithBackend = ({
           c: VsBot.mergeWithBackend({
             ctx,
             frontendModel: frontendModel.c,
-            backendModel: backendModel.c,
+            serverModel: serverModel.c,
           }),
         };
       }
@@ -298,8 +298,8 @@ export const mergeWithBackend = ({
         t: 'vs-bot',
         c: VsBot.mergeWithBackend({
           ctx,
-          frontendModel: VsBot.init(backendModel.c),
-          backendModel: backendModel.c,
+          frontendModel: VsBot.init(serverModel.c),
+          serverModel: serverModel.c,
         }),
       };
     }
@@ -310,7 +310,7 @@ export const mergeWithBackend = ({
           t: 'vs-user',
           c: VsUser.mergeWithBackend({
             frontendModel: frontendModel.c,
-            backendModel: backendModel.c,
+            serverModel: serverModel.c,
           }),
         };
       }
@@ -318,8 +318,8 @@ export const mergeWithBackend = ({
       return {
         t: 'vs-user',
         c: VsUser.mergeWithBackend({
-          frontendModel: VsUser.init(backendModel.c),
-          backendModel: backendModel.c,
+          frontendModel: VsUser.init(serverModel.c),
+          serverModel: serverModel.c,
         }),
       };
     }

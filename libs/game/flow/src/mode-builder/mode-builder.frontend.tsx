@@ -45,14 +45,14 @@ export const updateFromServer = ({
 
 export const mergeWithBackend = ({
   frontendModel,
-  backendModel,
+  serverModel,
 }: {
   frontendModel: FrontendModel;
-  backendModel: SharedModel;
+  serverModel: SharedModel;
 }) => {
   return {
     ...frontendModel,
-    ...backendModel,
+    ...serverModel,
   };
 };
 

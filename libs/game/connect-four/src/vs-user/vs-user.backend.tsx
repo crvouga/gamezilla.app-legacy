@@ -1,7 +1,7 @@
 import { Cmd, exhaustive, Sub, Time } from '@gamezilla/shared/core';
 import { RoomMsg } from '@gamezilla/shared/frontend';
 import {
-  BackendModel,
+  ServerModel,
   ServerMsg,
   handle,
   initShared,
@@ -20,7 +20,7 @@ import {
 //
 //
 
-export type Model = BackendModel;
+export type Model = ServerModel;
 
 export const init = initShared;
 

@@ -38,7 +38,7 @@ import { gameNameToString, viewCoverArt } from './game';
 import * as Game from './game.frontend';
 import { GameName, gameNameList } from './game.types';
 import {
-  BackendModel,
+  ServerModel,
   FrontendModel,
   FrontendMsg,
   FrontendRoom,
@@ -553,7 +553,7 @@ const updateResponse = ({
   const merged = mergeWithBackend({
     ctx,
     frontendModel: model,
-    backendModel: msg.result.value,
+    serverModel: msg.result.value,
     sendToBackend,
   });
 
@@ -572,18 +572,18 @@ const updateResponse = ({
 const mergeWithBackend = ({
   ctx,
   frontendModel,
-  backendModel,
+  serverModel,
   sendToBackend,
 }: {
   ctx: Ctx;
   sendToBackend: (msg: ToBackend) => Cmd;
   frontendModel: FrontendModel;
-  backendModel: BackendModel;
+  serverModel: ServerModel;
 }): {
   model: FrontendModel;
   cmd: Cmd<FrontendMsg>;
 } => {
-  const gamesNew = Object.entries(backendModel.games).reduce<
+  const gamesNew = Object.entries(serverModel.games).reduce<
     [FrontendModel['games'], Cmd<FrontendMsg>]
   >(
     (gamesNew, [roomId, backendGame]) => {
@@ -596,7 +596,7 @@ const mergeWithBackend = ({
       if (frontendGame) {
         const merged = Game.mergeWithBackend({
           ctx,
-          backendModel: backendGame,
+          serverModel: backendGame,
           frontendModel: frontendGame,
           sendToBackend: (msg) => sendToBackend({ t: 'game', c: msg }),
         });
@@ -623,7 +623,7 @@ const mergeWithBackend = ({
 
       const merged = Game.mergeWithBackend({
         ctx,
-        backendModel: backendGame,
+        serverModel: backendGame,
         frontendModel: initial[0],
         sendToBackend: (msg) => sendToBackend({ t: 'game', c: msg }),
       });
@@ -653,11 +653,11 @@ const mergeWithBackend = ({
     model: {
       ...frontendModel,
       games: gamesNew[0],
-      rooms: backendModel.rooms,
-      users: backendModel.users,
+      rooms: serverModel.rooms,
+      users: serverModel.users,
       profiles: {
         ...frontendModel.profiles,
-        ...backendModel.profiles,
+        ...serverModel.profiles,
       },
     },
     cmd: gamesNew[1],
