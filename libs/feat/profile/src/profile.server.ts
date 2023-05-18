@@ -6,7 +6,7 @@ import {
   client,
   definitions,
 } from '@gamezilla/shared/app';
-import { AppMsg, AuthenticatedRequestCtx } from '@gamezilla/shared/backend';
+import { AppMsg, AuthenticatedRequestCtx } from '@gamezilla/shared/server';
 import {
   Cmd,
   Err,

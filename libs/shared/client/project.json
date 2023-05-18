@@ -1,7 +1,7 @@
 {
-  "name": "shared-backend",
+  "name": "shared-client",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/shared/backend/src",
+  "sourceRoot": "libs/shared/client/src",
   "projectType": "library",
   "tags": [],
   "targets": {
@@ -9,7 +9,7 @@
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/shared/backend/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["libs/shared/client/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "build": {
@@ -17,7 +17,7 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/libs/shared/backend"
+        "outputPath": "dist/libs/shared/client"
       },
       "configurations": {
         "development": {
@@ -30,10 +30,10 @@
     },
     "test": {
       "executor": "@nx/vite:test",
-      "outputs": ["coverage/libs/shared/backend"],
+      "outputs": ["coverage/libs/shared/client"],
       "options": {
         "passWithNoTests": true,
-        "reportsDirectory": "../../../coverage/libs/shared/backend"
+        "reportsDirectory": "../../../coverage/libs/shared/client"
       }
     }
   }

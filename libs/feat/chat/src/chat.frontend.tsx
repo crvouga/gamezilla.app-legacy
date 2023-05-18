@@ -5,7 +5,7 @@ import {
   p,
   RemoteResult,
 } from '@gamezilla/shared/core';
-import { AppMsg, Route, ViewCtx } from '@gamezilla/shared/frontend';
+import { AppMsg, Route, ViewCtx } from '@gamezilla/shared/client';
 import {
   Avatar,
   Box,

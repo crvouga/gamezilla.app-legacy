@@ -1,6 +1,6 @@
 import { UserId } from '@gamezilla/shared/app';
 import { Browser, Cmd, p, RemoteResult } from '@gamezilla/shared/core';
-import { Route, ViewCtx } from '@gamezilla/shared/frontend';
+import { Route, ViewCtx } from '@gamezilla/shared/client';
 import * as UI from '@gamezilla/shared/ui';
 import { ReactNode, useLayoutEffect, useRef, useState } from 'react';
 import * as ChatStore from './chat.store';

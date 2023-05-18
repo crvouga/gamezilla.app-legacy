@@ -1,4 +1,4 @@
-import { DatabaseConnectionPostgres } from '@gamezilla/shared/backend';
+import { DatabaseConnectionPostgres } from '@gamezilla/shared/server';
 import { z } from 'zod';
 import { PuzzleDatabase, PuzzleRow } from '../puzzle-database.mysql';
 

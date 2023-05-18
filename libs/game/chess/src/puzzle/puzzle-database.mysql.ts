@@ -1,6 +1,6 @@
 import { NonEmpty, p, Result, Task } from '@gamezilla/shared/core';
 import { UserId } from '@gamezilla/shared/app';
-import { DatabaseConnectionMySQL } from '@gamezilla/shared/backend';
+import { DatabaseConnectionMySQL } from '@gamezilla/shared/server';
 import { z } from 'zod';
 import { MoveInput, uciMoveToMoveInput } from '../chess/chess';
 import { Puzzle, PuzzleInteraction, PuzzleQuery } from './puzzle.types';

@@ -8,7 +8,7 @@ import {
   p,
   t,
 } from '@gamezilla/shared/core';
-import { Alerts, RoomCtx, ViewCtx } from '@gamezilla/shared/frontend';
+import { Alerts, RoomCtx, ViewCtx } from '@gamezilla/shared/client';
 import * as UI from '@gamezilla/shared/ui';
 import * as Chess from '../chess/chess';
 import * as Clock from '../chess/chess-clock';

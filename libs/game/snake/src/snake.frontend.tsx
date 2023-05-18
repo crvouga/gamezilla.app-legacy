@@ -6,7 +6,7 @@ import {
   Sub,
   exhaustive,
 } from '@gamezilla/shared/core';
-import { Alerts, RoomCtx, Route, ViewCtx } from '@gamezilla/shared/frontend';
+import { Alerts, RoomCtx, Route, ViewCtx } from '@gamezilla/shared/client';
 import * as UI from '@gamezilla/shared/ui';
 import { useLayoutEffect, useRef } from 'react';
 import { Direction } from './direction';

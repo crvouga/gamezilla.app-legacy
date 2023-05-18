@@ -1,6 +1,6 @@
 import { PartyId, UserId } from '@gamezilla/shared/app';
 import { Cmd, exhaustive, p, RemoteResult, Sub } from '@gamezilla/shared/core';
-import { Ctx, Route, ViewCtx } from '@gamezilla/shared/frontend';
+import { Ctx, Route, ViewCtx } from '@gamezilla/shared/client';
 import {
   Avatar,
   Box,

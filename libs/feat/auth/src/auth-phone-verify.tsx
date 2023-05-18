@@ -8,7 +8,7 @@ import {
   Time,
   Unit,
 } from '@gamezilla/shared/core';
-import { Route } from '@gamezilla/shared/frontend';
+import { Route } from '@gamezilla/shared/client';
 import {
   AlertError,
   AlertSuccess,

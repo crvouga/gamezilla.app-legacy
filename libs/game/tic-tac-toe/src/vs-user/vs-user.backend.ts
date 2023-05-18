@@ -1,5 +1,5 @@
 import { Cmd, exhaustive, Sub, Time } from '@gamezilla/shared/core';
-import { RoomMsg } from '@gamezilla/shared/frontend';
+import { RoomMsg } from '@gamezilla/shared/client';
 import { PlayerType, toOpposite, toTurn } from '../tic-tic-toe/tic-tac-toe';
 import * as Round from './vs-user-round';
 import {

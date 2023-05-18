@@ -7,7 +7,7 @@ import { SnakeClient } from '@gamezilla/game/snake';
 import { TetrisClient } from '@gamezilla/game/tetris';
 import { TicTacToeClient } from '@gamezilla/game/tic-tac-toe';
 import { Cmd, Sub, exhaustive } from '@gamezilla/shared/core';
-import { Alerts, Ctx, RoomCtx, RoomViewCtx } from '@gamezilla/shared/frontend';
+import { Alerts, Ctx, RoomCtx, RoomViewCtx } from '@gamezilla/shared/client';
 import {
   ServerModel,
   ClientModel,

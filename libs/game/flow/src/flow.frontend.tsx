@@ -1,6 +1,6 @@
 import { UserId } from '@gamezilla/shared/app';
 import { Cmd, Sub } from '@gamezilla/shared/core';
-import { RoomViewCtx, ViewBottomButtonBar } from '@gamezilla/shared/frontend';
+import { RoomViewCtx, ViewBottomButtonBar } from '@gamezilla/shared/client';
 import { IconArrowLeftOnRect } from '@gamezilla/shared/ui';
 import { ClientModel, ClientMsg, ServerModel, ToClient } from './flow.types';
 

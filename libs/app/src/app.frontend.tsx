@@ -19,7 +19,7 @@ import {
   Route,
   UnauthenticatedViewCtx,
   ViewCtx,
-} from '@gamezilla/shared/frontend';
+} from '@gamezilla/shared/client';
 import {
   cn,
   IconGamepad,

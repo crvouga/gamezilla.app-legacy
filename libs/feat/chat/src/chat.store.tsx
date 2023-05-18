@@ -1,5 +1,5 @@
 import { Cmd, p, t } from '@gamezilla/shared/core';
-import { ViewCtx } from '@gamezilla/shared/frontend';
+import { ViewCtx } from '@gamezilla/shared/client';
 import {
   Avatar,
   AvatarGroup,

@@ -6,7 +6,7 @@ import {
   ViewCtx,
   ViewVsBotGameScreen,
   ViewVsBotSetupScreen,
-} from '@gamezilla/shared/frontend';
+} from '@gamezilla/shared/client';
 import {
   PlayerType,
   opposite,

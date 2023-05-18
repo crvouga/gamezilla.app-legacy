@@ -12,7 +12,7 @@ import {
   RoomCtx,
   RoomViewCtx,
   ViewMainMenu,
-} from '@gamezilla/shared/frontend';
+} from '@gamezilla/shared/client';
 import {
   IconComputerDesktop,
   IconPuzzlePiece,

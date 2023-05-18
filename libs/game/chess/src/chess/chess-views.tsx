@@ -1,5 +1,5 @@
 import { UserId } from '@gamezilla/shared/app';
-import { ViewCtx, bannerArtAspectRatio } from '@gamezilla/shared/frontend';
+import { ViewCtx, bannerArtAspectRatio } from '@gamezilla/shared/client';
 import * as UI from '@gamezilla/shared/ui';
 
 export const theme = {

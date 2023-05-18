@@ -1,5 +1,5 @@
 import { Cmd, exhaustive, Sub, Time } from '@gamezilla/shared/core';
-import { RoomMsg } from '@gamezilla/shared/frontend';
+import { RoomMsg } from '@gamezilla/shared/client';
 import * as Board from '../chess/chess';
 import {
   ServerModel,

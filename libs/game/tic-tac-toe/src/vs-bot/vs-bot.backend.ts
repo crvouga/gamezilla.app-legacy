@@ -1,5 +1,5 @@
 import { Cmd, p, Sub } from '@gamezilla/shared/core';
-import { RoomMsg } from '@gamezilla/shared/frontend';
+import { RoomMsg } from '@gamezilla/shared/client';
 import { findBestMove, toDepth, toOpposite } from '../tic-tic-toe/tic-tac-toe';
 import {
   ServerModel,

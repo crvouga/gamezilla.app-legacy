@@ -7,7 +7,7 @@ import {
   RoomCtx,
   Route,
   ViewCtx,
-} from '@gamezilla/shared/frontend';
+} from '@gamezilla/shared/client';
 import {
   ActionButton,
   Avatar,

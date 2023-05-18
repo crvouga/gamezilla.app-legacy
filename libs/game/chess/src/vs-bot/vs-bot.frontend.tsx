@@ -3,7 +3,7 @@ import {
   Alerts,
   ViewCtx,
   ViewVsBotSetupScreen,
-} from '@gamezilla/shared/frontend';
+} from '@gamezilla/shared/client';
 import * as UI from '@gamezilla/shared/ui';
 import * as Chess from '../chess/chess';
 import { viewCoverArt } from '../chess/chess';

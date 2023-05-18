@@ -4,7 +4,7 @@ import { ProfileServer } from '@gamezilla/feat/profile';
 import { RoomServer } from '@gamezilla/feat/room';
 import { SearchServer } from '@gamezilla/feat/search';
 import { ClientId, SessionId, UserId } from '@gamezilla/shared/app';
-import { AppMsg, Ctx, RequestCtx } from '@gamezilla/shared/backend';
+import { AppMsg, Ctx, RequestCtx } from '@gamezilla/shared/server';
 import { Cmd, Sub, exhaustive, p } from '@gamezilla/shared/core';
 import * as Rx from 'rxjs';
 import {

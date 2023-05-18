@@ -6,7 +6,7 @@ import {
   sessionIdKey,
 } from '@gamezilla/app';
 import { ClientId, SessionId } from '@gamezilla/shared/app';
-import { DatabaseConnectionMySQL } from '@gamezilla/shared/backend';
+import { DatabaseConnectionMySQL } from '@gamezilla/shared/server';
 import { Cmd, Program, toMsgType } from '@gamezilla/shared/core';
 import * as Http from 'http';
 import * as Socket from 'socket.io';

@@ -1,6 +1,6 @@
 import { Cmd, Sub } from '@gamezilla/shared/core';
 import { ServerModel, ServerMsg, ToServer } from './flow.types';
-import { RoomRequestCtx } from '@gamezilla/shared/backend';
+import { RoomRequestCtx } from '@gamezilla/shared/server';
 import * as ModeBuilderServer from './mode-builder/mode-builder.backend';
 
 type Model = ServerModel;

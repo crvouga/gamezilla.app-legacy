@@ -1,7 +1,7 @@
 {
-  "name": "shared-frontend",
+  "name": "shared-server",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/shared/frontend/src",
+  "sourceRoot": "libs/shared/server/src",
   "projectType": "library",
   "tags": [],
   "targets": {
@@ -9,7 +9,7 @@
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/shared/frontend/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["libs/shared/server/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "build": {
@@ -17,7 +17,7 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/libs/shared/frontend"
+        "outputPath": "dist/libs/shared/server"
       },
       "configurations": {
         "development": {
@@ -30,10 +30,10 @@
     },
     "test": {
       "executor": "@nx/vite:test",
-      "outputs": ["coverage/libs/shared/frontend"],
+      "outputs": ["coverage/libs/shared/server"],
       "options": {
         "passWithNoTests": true,
-        "reportsDirectory": "../../../coverage/libs/shared/frontend"
+        "reportsDirectory": "../../../coverage/libs/shared/server"
       }
     }
   }

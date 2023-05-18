@@ -3,7 +3,7 @@ import {
   ViewCtx,
   viewUserPlayerSlotBar,
   viewVsUserSetupScreen,
-} from '@gamezilla/shared/frontend';
+} from '@gamezilla/shared/client';
 import {
   actionButton,
   box,

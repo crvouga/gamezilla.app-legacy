@@ -9,7 +9,7 @@ import {
   Task,
   p,
 } from '@gamezilla/shared/core';
-import { Route, UnauthenticatedViewCtx } from '@gamezilla/shared/frontend';
+import { Route, UnauthenticatedViewCtx } from '@gamezilla/shared/client';
 import {
   ConformationDialog,
   IconEnvelope,

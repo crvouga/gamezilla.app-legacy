@@ -5,7 +5,7 @@ import {
   Ctx,
   RoomCtx,
   RoomRequestCtx,
-} from '@gamezilla/shared/backend';
+} from '@gamezilla/shared/server';
 import { andThen, Cmd, exhaustive, Ok, p, Sub } from '@gamezilla/shared/core';
 import * as Game from './game.backend';
 import {

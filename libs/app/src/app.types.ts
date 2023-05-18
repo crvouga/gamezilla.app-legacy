@@ -4,7 +4,7 @@ import * as Profile from '@gamezilla/feat/profile';
 import * as Room from '@gamezilla/feat/room';
 import * as Search from '@gamezilla/feat/search';
 import { ClientId, SessionId, UserId } from '@gamezilla/shared/app';
-import { Alerts, Route } from '@gamezilla/shared/frontend';
+import { Alerts, Route } from '@gamezilla/shared/client';
 
 //
 //
