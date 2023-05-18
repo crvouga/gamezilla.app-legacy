@@ -1,20 +1,20 @@
+import { UserId } from '@gamezilla/shared/app';
 import { Cmd, Sub } from '@gamezilla/shared/core';
 import { RoomViewCtx, ViewBottomButtonBar } from '@gamezilla/shared/client';
 import { IconArrowLeftOnRect } from '@gamezilla/shared/ui';
-import { FlowGridUI } from '../flow-grid';
-import {
-  ClientModel,
-  ClientMsg,
-  SharedModel,
-  ToClient,
-} from './mode-builder.types';
+import { ClientModel, ClientMsg, ServerModel, ToClient } from './flow.shared';
 
 type Model = ClientModel;
+
+export const init = ({}: { playerId?: UserId }): Model => {
+  return {
+    t: 'none',
+  };
+};
 
 type Msg = ClientMsg;
 
 export const update = ({
-  msg,
   model,
 }: {
   msg: Msg;
@@ -23,11 +23,6 @@ export const update = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (msg.t === 'flow-grid-ui') {
-    return {
-      model: { ...model },
-    };
-  }
   return { model };
 };
 
@@ -45,14 +40,12 @@ export const updateFromServer = ({
 
 export const mergeWithServer = ({
   clientModel,
-  serverModel,
 }: {
   clientModel: ClientModel;
-  serverModel: SharedModel;
-}) => {
+  serverModel: ServerModel;
+}): ClientModel => {
   return {
     ...clientModel,
-    ...serverModel,
   };
 };
 
@@ -67,9 +60,7 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 //
 
 export const View = ({
-  model,
   ctx,
-  $send,
 }: {
   model: Model;
   $send: (m: Msg) => void;
@@ -78,10 +69,10 @@ export const View = ({
   return (
     <div className="w-full h-full flex flex-col items-center justify-center">
       <div className="w-full flex-1 flex flex-col items-center justify-center">
-        <FlowGridUI.View
-          model={model}
+        {/* <FlowGridUI.View
+          model={model.t}
           $send={(c) => $send({ t: 'flow-grid-ui', c })}
-        />
+        /> */}
       </div>
       <ViewBottomButtonBar
         actions={[['Quit', <IconArrowLeftOnRect />, ctx.onQuit]]}

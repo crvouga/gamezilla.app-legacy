@@ -1,6 +1,6 @@
 import { Result } from '@gamezilla/shared/core';
 import { FlowGridUI } from './flow-grid';
-import * as ModeBuilder from './mode-builder/mode-builder.types';
+import * as ModeBuilder from './mode-builder/mode-builder.shared';
 //
 //
 // Model
