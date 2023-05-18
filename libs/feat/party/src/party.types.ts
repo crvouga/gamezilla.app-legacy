@@ -33,7 +33,7 @@ export type SharedModel = {
 
 export type ServerModel = SharedModel;
 
-export type FrontendModel = SharedModel & {
+export type ClientModel = SharedModel & {
   volume: number;
   requests: {
     [key in Req[0]]?: RemoteResult<Problem, null>;
@@ -50,16 +50,16 @@ export type FrontendModel = SharedModel & {
 
 export type ServerMsg = ['none'];
 
-export type FrontendMsg =
+export type ClientMsg =
   | Req
   | ['clicked-banner']
   | ['MicSound', { volume: number }]
   | ['MicLoad', MicLoadResult]
   | ['MicUnload', MicUnloadResult];
 
-export type ToBackend = Req;
+export type ToServer = Req;
 
-export type ToFrontend = Res;
+export type ToClient = Res;
 
 //
 //

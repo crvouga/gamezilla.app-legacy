@@ -13,11 +13,11 @@ import { Direction } from './direction';
 import * as Snake from './snake';
 import {
   ServerModel,
-  FrontendModel,
-  FrontendMsg,
+  ClientModel,
+  ClientMsg,
   SharedModel,
-  ToBackend,
-  ToFrontend,
+  ToServer,
+  ToClient,
   canStartGame,
   initSharedModel,
 } from './snake.types';
@@ -30,7 +30,7 @@ import {
 //
 //
 
-export type Model = FrontendModel;
+export type Model = ClientModel;
 
 export const init: Model = {
   ...initSharedModel,
@@ -45,16 +45,16 @@ export const init: Model = {
 //
 //
 
-export type Msg = FrontendMsg;
+export type Msg = ClientMsg;
 
 export type OutAction = Alerts.Action;
 
 export const update = (
   {
-    sendToBackend,
+    sendToServer,
     ctx,
   }: {
-    sendToBackend: (msg: ToBackend) => Cmd;
+    sendToServer: (msg: ToServer) => Cmd;
     ctx: RoomCtx;
   },
   msg: Msg,
@@ -79,7 +79,7 @@ export const update = (
 
       const changeDirectionCmd =
         direction.type === 'Some'
-          ? sendToBackend([
+          ? sendToServer([
               'input-direction',
               { userId: ctx.currentUserId, direction: direction.value },
             ])
@@ -87,26 +87,26 @@ export const update = (
 
       const toggleStatusCmd =
         msg[1] === 'Space'
-          ? sendToBackend(['ToggleStatus', { userId: ctx.currentUserId }])
+          ? sendToServer(['ToggleStatus', { userId: ctx.currentUserId }])
           : Cmd.None;
 
       return [model, Cmd.batch([changeDirectionCmd, toggleStatusCmd])];
     }
 
     case 'ToggleStatus': {
-      return [model, sendToBackend(msg)];
+      return [model, sendToServer(msg)];
     }
 
     case 'InputPlayer': {
-      return [model, sendToBackend(msg)];
+      return [model, sendToServer(msg)];
     }
 
     case 'input-direction': {
-      return [model, sendToBackend(msg)];
+      return [model, sendToServer(msg)];
     }
 
     case 'start-game': {
-      return [model, sendToBackend(msg)];
+      return [model, sendToServer(msg)];
     }
 
     case 'OpenedMenu': {
@@ -124,7 +124,7 @@ export const update = (
 };
 
 export const updateFromServer = (
-  msg: ToFrontend,
+  msg: ToClient,
   model: Model
 ): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
@@ -403,14 +403,14 @@ export const ViewBoard = ({
 };
 
 export const mergeWithBackend = ({
-  frontendModel,
+  clientModel,
   serverModel,
 }: {
-  frontendModel: FrontendModel;
+  clientModel: ClientModel;
   serverModel: ServerModel;
-}): FrontendModel => {
+}): ClientModel => {
   return {
     ...serverModel,
-    openedMenuId: frontendModel.openedMenuId,
+    openedMenuId: clientModel.openedMenuId,
   };
 };

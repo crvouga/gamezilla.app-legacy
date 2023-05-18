@@ -10,7 +10,7 @@ import * as Chess from '../chess/chess';
 //
 //
 
-export type FrontendModel = {
+export type ClientModel = {
   sharedModel: SharedModel;
   openedMenuId: Option<string>;
   openedModal: 'none' | 'GameOver';
@@ -79,7 +79,7 @@ export const isBotTurn = (model: SharedModel) => {
 //
 //
 
-export type FrontendMsg =
+export type ClientMsg =
   | Req
   | ['audio-done', Audio.PlayResult]
   | ['OpenedMenu', string]
@@ -89,9 +89,9 @@ export type FrontendMsg =
 
 export type ServerMsg = BotMoved;
 
-export type ToBackend = Req;
+export type ToServer = Req;
 
-export type ToFrontend = Res | BotMoved_Done | ['player-left', SharedModel];
+export type ToClient = Res | BotMoved_Done | ['player-left', SharedModel];
 
 export type Req =
   | InputUser

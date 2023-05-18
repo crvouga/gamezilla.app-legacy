@@ -8,8 +8,8 @@ import {
   ServerMsg,
   handle,
   initShared,
-  ToBackend,
-  ToFrontend,
+  ToServer,
+  ToClient,
   toStatus,
 } from './puzzle.types';
 
@@ -26,7 +26,7 @@ export type Model = ServerModel;
 export const init = ({
   ctx,
 }: {
-  broadcast: (m: ToFrontend) => Cmd;
+  broadcast: (m: ToClient) => Cmd;
   ctx: RoomRequestCtx;
 }): {
   model: Model;
@@ -62,7 +62,7 @@ export const update = ({
 }: {
   msg: Msg;
   model: Model;
-  broadcast: (m: ToFrontend) => Cmd;
+  broadcast: (m: ToClient) => Cmd;
   ctx: RoomCtx;
 }): {
   model: Model;
@@ -118,10 +118,10 @@ export const update = ({
 
 export const updateFromClient = (input: {
   ctx: RoomRequestCtx;
-  msg: ToBackend;
+  msg: ToServer;
   model: Model;
-  sendToClient: (m: ToFrontend) => Cmd;
-  broadcast: (m: ToFrontend) => Cmd;
+  sendToClient: (m: ToClient) => Cmd;
+  broadcast: (m: ToClient) => Cmd;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;

@@ -92,11 +92,11 @@ export const updateFromClient = ({
 };
 
 export const updateFromApp = ({
-  sendToFrontend,
+  sendToClient,
   msg,
   model,
 }: {
-  sendToFrontend: (clientId: ClientId[], m: ToClient) => Cmd<Msg>;
+  sendToClient: (clientId: ClientId[], m: ToClient) => Cmd<Msg>;
   msg: AppMsg;
   model: Model;
 }): {
@@ -113,7 +113,7 @@ export const updateFromApp = ({
         Cmd.perform(
           (result): ToClient => ({ t: 'current-user-profile', result })
         ),
-        Cmd.chain((res) => sendToFrontend([msg.clientId], res))
+        Cmd.chain((res) => sendToClient([msg.clientId], res))
       ),
     };
   }

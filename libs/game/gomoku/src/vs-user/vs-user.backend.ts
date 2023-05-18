@@ -5,8 +5,8 @@ import {
   ServerModel,
   ServerMsg,
   Res,
-  ToBackend,
-  ToFrontend,
+  ToServer,
+  ToClient,
   handle,
   initShared,
 } from './vs-user.types';
@@ -53,10 +53,10 @@ export const updateFromClient = ({
   ctx,
 }: {
   ctx: RoomRequestCtx;
-  msg: ToBackend;
+  msg: ToServer;
   model: Model;
-  broadcast: (m: ToFrontend) => Cmd;
-  sendToClient: (m: ToFrontend) => Cmd;
+  broadcast: (m: ToClient) => Cmd;
+  sendToClient: (m: ToClient) => Cmd;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;

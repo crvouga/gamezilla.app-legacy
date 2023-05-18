@@ -4,7 +4,7 @@ import * as AuthEmailLink from './auth-email-link';
 import * as AuthPhone from './auth-phone';
 import * as AuthPhoneVerify from './auth-phone-verify';
 
-export type FrontendModel = {
+export type ClientModel = {
   currentUser:
     | { t: 'not-asked' }
     | { t: 'loading' }
@@ -43,10 +43,10 @@ export type ServerModel = {
 
 type Event = {
   t: 'got-current-user';
-  currentUser: FrontendModel['currentUser'];
+  currentUser: ClientModel['currentUser'];
 };
 
-export type FrontendMsg =
+export type ClientMsg =
   | Req
   | Event
   | { t: 'login-done'; result: Result<string, null> }
@@ -57,9 +57,9 @@ export type FrontendMsg =
 
 export type ServerMsg = { t: 'none' };
 
-export type ToBackend = Req | Event;
+export type ToServer = Req | Event;
 
-export type ToFrontend = Res;
+export type ToClient = Res;
 
 export type Req =
   | { t: 'logout' }

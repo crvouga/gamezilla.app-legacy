@@ -59,11 +59,11 @@ export type Msg = ClientMsg;
 export const update = ({
   msg,
   model,
-  sendToBackend,
+  sendToServer,
 }: {
   msg: Msg;
   model: Model;
-  sendToBackend: (m: ToServer) => Cmd;
+  sendToServer: (m: ToServer) => Cmd;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -82,7 +82,7 @@ export const update = ({
     return { model: { ...model, opened: null } };
   }
 
-  return { model, cmd: sendToBackend(msg) };
+  return { model, cmd: sendToServer(msg) };
 };
 
 export const updateFromServer = ({
@@ -122,11 +122,11 @@ export const updateFromServer = ({
 export const updateFromApp = ({
   msg,
   model,
-  sendToBackend,
+  sendToServer,
 }: {
   msg: AppMsg;
   model: Model;
-  sendToBackend: (m: ToServer) => Cmd<Msg>;
+  sendToServer: (m: ToServer) => Cmd<Msg>;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -144,7 +144,7 @@ export const updateFromApp = ({
         if (route.c.t === 'profile') {
           return {
             model,
-            cmd: sendToBackend({ t: 'find-many', userIds: [route.c.userId] }),
+            cmd: sendToServer({ t: 'find-many', userIds: [route.c.userId] }),
           };
         }
 

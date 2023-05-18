@@ -2,7 +2,7 @@ import {
   AppFrontend,
   ClientToServerEvents,
   ServerToClientEvents,
-  ToBackend,
+  ToServer,
   backendServerPort,
   sessionIdKey,
 } from '@gamezilla/app';
@@ -56,15 +56,15 @@ const main = () => {
     AppFrontend.toFrontend$.next(msg);
   });
 
-  const sendToBackend =
-    (msg: ToBackend): Cmd =>
+  const sendToServer =
+    (msg: ToServer): Cmd =>
     () => {
       socketClient.emit('to-server', msg);
     };
 
   const program = Program.create({
     init: AppFrontend.init({ location: Browser.getLocation() }),
-    update: (input) => AppFrontend.update({ ...input, sendToBackend }),
+    update: (input) => AppFrontend.update({ ...input, sendToServer }),
     subscriptions: AppFrontend.subscriptions,
   });
 

@@ -6,8 +6,8 @@ import {
   initShared,
   Res,
   tick,
-  ToBackend,
-  ToFrontend,
+  ToServer,
+  ToClient,
 } from './maze.types';
 
 //
@@ -33,7 +33,7 @@ export const init = initShared;
 export type Msg = ServerMsg;
 
 export const update = (
-  { broadcast }: { broadcast: (msg: ToFrontend) => Cmd },
+  { broadcast }: { broadcast: (msg: ToClient) => Cmd },
   msg: Msg,
   model: Model
 ): [Model, Cmd<Msg>] => {
@@ -46,8 +46,8 @@ export const update = (
 };
 
 export const updateFromClient = (
-  { broadcast }: { broadcast: (m: ToFrontend) => Cmd },
-  msg: ToBackend,
+  { broadcast }: { broadcast: (m: ToClient) => Cmd },
+  msg: ToServer,
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {

@@ -42,7 +42,7 @@ export type Color = 'Red' | 'Blue' | 'Green' | 'Purple' | 'Cyan' | 'Pink';
 
 const colorSeq: NonEmpty<Color> = ['Red', 'Blue', 'Green', 'Purple'];
 
-export type FrontendModel = SharedModel;
+export type ClientModel = SharedModel;
 
 export type ServerModel = SharedModel;
 
@@ -54,16 +54,16 @@ export type ServerModel = SharedModel;
 //
 //
 
-export type FrontendMsg =
+export type ClientMsg =
   | Req
   | ['key-down', Keyboard.Key]
   | ['key-up', Keyboard.Key];
 
 export type ServerMsg = ['tick'];
 
-export type ToBackend = Req;
+export type ToServer = Req;
 
-export type ToFrontend = Res | ['tick', SharedModel];
+export type ToClient = Res | ['tick', SharedModel];
 
 //
 //

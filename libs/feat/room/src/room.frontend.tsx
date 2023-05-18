@@ -39,13 +39,13 @@ import * as Game from './game.frontend';
 import { GameName, gameNameList } from './game.types';
 import {
   ServerModel,
-  FrontendModel,
-  FrontendMsg,
+  ClientModel,
+  ClientMsg,
   FrontendRoom,
   Res,
   RoomUser,
-  ToBackend,
-  ToFrontend,
+  ToServer,
+  ToClient,
 } from './room.types';
 
 //
@@ -56,7 +56,7 @@ import {
 //
 //
 
-export type Model = FrontendModel;
+export type Model = ClientModel;
 
 export const init = (): { model: Model } => {
   return {
@@ -80,7 +80,7 @@ export const init = (): { model: Model } => {
 //
 //
 
-export type Msg = FrontendMsg;
+export type Msg = ClientMsg;
 
 type OutAction = Alerts.Action<Msg>;
 
@@ -94,12 +94,12 @@ type OutAction = Alerts.Action<Msg>;
 
 export const update = ({
   ctx: ctxPrev,
-  sendToBackend,
+  sendToServer,
   msg,
   model,
 }: {
   ctx: Ctx;
-  sendToBackend: (msg: ToBackend) => Cmd;
+  sendToServer: (msg: ToServer) => Cmd;
   msg: Msg;
   model: Model;
 }): {
@@ -170,7 +170,7 @@ export const update = ({
         },
         cmd: Cmd.batch([
           routeCmd,
-          sendToBackend({ ...msg, profile: ctx.profiles[ctx.currentUserId] }),
+          sendToServer({ ...msg, profile: ctx.profiles[ctx.currentUserId] }),
         ]),
       };
     }
@@ -203,8 +203,8 @@ export const update = ({
 
       const [gameNew, gameCmd] = Game.update({
         ctx: roomCtx,
-        sendToBackend: (msg) =>
-          sendToBackend({
+        sendToServer: (msg) =>
+          sendToServer({
             t: 'game',
             c: msg,
             profile: ctx.profiles[ctx.currentUserId],
@@ -237,13 +237,13 @@ export const update = ({
 
 export const updateFromServer = ({
   ctx: ctxPrev,
-  sendToBackend,
+  sendToServer,
   msg,
   model,
 }: {
   ctx: Ctx;
-  sendToBackend: (msg: ToBackend) => Cmd;
-  msg: ToFrontend;
+  sendToServer: (msg: ToServer) => Cmd;
+  msg: ToClient;
   model: Model;
 }): {
   model: Model;
@@ -284,8 +284,8 @@ export const updateFromServer = ({
           ...ctx,
           hostId: room.hostId,
         },
-        sendToBackend: (msg) =>
-          sendToBackend({
+        sendToServer: (msg) =>
+          sendToServer({
             t: 'game',
             c: msg,
             profile: ctx.profiles[ctx.currentUserId],
@@ -312,11 +312,11 @@ export const updateFromServer = ({
     case 'list':
     case 'create':
     case 'input-game': {
-      return updateResponse({ ctx, sendToBackend, msg, model });
+      return updateResponse({ ctx, sendToServer, msg, model });
     }
 
     case 'destroy': {
-      const handled = updateResponse({ ctx, sendToBackend, msg, model });
+      const handled = updateResponse({ ctx, sendToServer, msg, model });
 
       const user = model.users[ctx.currentUserId];
 
@@ -358,7 +358,7 @@ export const updateFromServer = ({
     }
 
     case 'leave': {
-      const handled = updateResponse({ ctx, sendToBackend, msg, model });
+      const handled = updateResponse({ ctx, sendToServer, msg, model });
 
       if (msg.result.type === 'Err') {
         return handled;
@@ -388,7 +388,7 @@ export const updateFromServer = ({
     }
 
     case 'join': {
-      const handled = updateResponse({ ctx, sendToBackend, msg, model });
+      const handled = updateResponse({ ctx, sendToServer, msg, model });
 
       if (msg.result.type === 'Err') {
         return handled;
@@ -427,11 +427,11 @@ export const updateFromServer = ({
 export const updateFromApp = ({
   msg,
   model,
-  sendToBackend,
+  sendToServer,
 }: {
   msg: AppMsg;
   model: Model;
-  sendToBackend: (m: ToBackend) => Cmd;
+  sendToServer: (m: ToServer) => Cmd;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -448,7 +448,7 @@ export const updateFromApp = ({
           return updateListRooms({
             model,
             initiatorMsg: msg,
-            sendToBackend,
+            sendToServer,
           });
         }
 
@@ -461,7 +461,7 @@ export const updateFromApp = ({
     }
 
     case 'wire-connected': {
-      return updateListRooms({ model, initiatorMsg: msg, sendToBackend });
+      return updateListRooms({ model, initiatorMsg: msg, sendToServer });
     }
 
     default: {
@@ -476,11 +476,11 @@ const updateListRooms = ({
   model,
 
   initiatorMsg,
-  sendToBackend,
+  sendToServer,
 }: {
   model: Model;
   initiatorMsg: unknown;
-  sendToBackend: (m: ToBackend) => Cmd;
+  sendToServer: (m: ToServer) => Cmd;
 }) => {
   if (model.requests?.list?.type === 'Loading') {
     return { model };
@@ -490,7 +490,7 @@ const updateListRooms = ({
       ...model,
       requests: { ...model.requests, list: RemoteResult.Loading },
     },
-    cmd: sendToBackend({
+    cmd: sendToServer({
       t: 'list',
       initiatorMsg,
     }),
@@ -522,7 +522,7 @@ const toRoomLeaveMessage = ({ ctx, userId }: { userId: UserId; ctx: Ctx }) => {
 };
 
 const updateResponse = ({
-  sendToBackend,
+  sendToServer,
   ctx,
   msg,
   model,
@@ -530,7 +530,7 @@ const updateResponse = ({
   msg: Res;
   model: Model;
   ctx: Ctx;
-  sendToBackend: (msg: ToBackend) => Cmd;
+  sendToServer: (msg: ToServer) => Cmd;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -552,9 +552,9 @@ const updateResponse = ({
 
   const merged = mergeWithBackend({
     ctx,
-    frontendModel: model,
+    clientModel: model,
     serverModel: msg.result.value,
-    sendToBackend,
+    sendToServer,
   });
 
   // const userIds = Object.values(merged.model.users).map((user) => user.userId);
@@ -571,34 +571,34 @@ const updateResponse = ({
 
 const mergeWithBackend = ({
   ctx,
-  frontendModel,
+  clientModel,
   serverModel,
-  sendToBackend,
+  sendToServer,
 }: {
   ctx: Ctx;
-  sendToBackend: (msg: ToBackend) => Cmd;
-  frontendModel: FrontendModel;
+  sendToServer: (msg: ToServer) => Cmd;
+  clientModel: ClientModel;
   serverModel: ServerModel;
 }): {
-  model: FrontendModel;
-  cmd: Cmd<FrontendMsg>;
+  model: ClientModel;
+  cmd: Cmd<ClientMsg>;
 } => {
   const gamesNew = Object.entries(serverModel.games).reduce<
-    [FrontendModel['games'], Cmd<FrontendMsg>]
+    [ClientModel['games'], Cmd<ClientMsg>]
   >(
     (gamesNew, [roomId, backendGame]) => {
       if (!RoomId.is(roomId)) {
         return gamesNew;
       }
 
-      const frontendGame = frontendModel.games[roomId];
+      const frontendGame = clientModel.games[roomId];
 
       if (frontendGame) {
         const merged = Game.mergeWithBackend({
           ctx,
           serverModel: backendGame,
-          frontendModel: frontendGame,
-          sendToBackend: (msg) => sendToBackend({ t: 'game', c: msg }),
+          clientModel: frontendGame,
+          sendToServer: (msg) => sendToServer({ t: 'game', c: msg }),
         });
 
         return [
@@ -624,8 +624,8 @@ const mergeWithBackend = ({
       const merged = Game.mergeWithBackend({
         ctx,
         serverModel: backendGame,
-        frontendModel: initial[0],
-        sendToBackend: (msg) => sendToBackend({ t: 'game', c: msg }),
+        clientModel: initial[0],
+        sendToServer: (msg) => sendToServer({ t: 'game', c: msg }),
       });
 
       return [
@@ -651,12 +651,12 @@ const mergeWithBackend = ({
 
   return {
     model: {
-      ...frontendModel,
+      ...clientModel,
       games: gamesNew[0],
       rooms: serverModel.rooms,
       users: serverModel.users,
       profiles: {
-        ...frontendModel.profiles,
+        ...clientModel.profiles,
         ...serverModel.profiles,
       },
     },

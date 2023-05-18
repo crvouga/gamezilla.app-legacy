@@ -9,7 +9,7 @@ import { UserId } from '@gamezilla/shared/app';
 //
 //
 
-export type FrontendModel = {
+export type ClientModel = {
   chats: {
     [chatId: string]: {
       chatId: string;
@@ -59,7 +59,7 @@ export type ServerModel = null;
 //
 //
 
-export type FrontendMsg =
+export type ClientMsg =
   | ['inputted-user-search', { userSearch: string }]
   | ['clicked-user-search-result', { userId: UserId }]
   | ['clicked-user-selected-delete-button', { userId: UserId }]
@@ -78,9 +78,9 @@ export type Req =
 
 type Problem = ['database-error', string];
 
-export type Res = [...Req, Result<Problem, Partial<FrontendModel>>];
+export type Res = [...Req, Result<Problem, Partial<ClientModel>>];
 
-export const update = ({ msg }: { msg: FrontendMsg; model: FrontendModel }) => {
+export const update = ({ msg }: { msg: ClientMsg; model: ClientModel }) => {
   switch (msg[0]) {
     default: {
       return null;
@@ -88,16 +88,16 @@ export const update = ({ msg }: { msg: FrontendMsg; model: FrontendModel }) => {
   }
 };
 
-export type ToBackend = Req;
+export type ToServer = Req;
 
 export type ServerMsg = Res;
 
-export type ToFrontend = Res;
+export type ToClient = Res;
 
 export const updateFromClient = ({
   msg,
 }: {
-  msg: ToBackend;
+  msg: ToServer;
   model: ServerModel;
 }): {
   cmd: Cmd<ServerMsg>;

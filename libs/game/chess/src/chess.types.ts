@@ -4,12 +4,12 @@ import * as Puzzle from './puzzle/puzzle.types';
 import * as VsBot from './vs-bot/vs-bot.types';
 import * as VsUser from './vs-user/vs-user.types';
 
-export type FrontendModel = {
+export type ClientModel = {
   mode:
     | { t: 'none' }
-    | { t: 'vs-user'; c: VsUser.FrontendModel }
-    | { t: 'vs-bot'; c: VsBot.FrontendModel }
-    | { t: 'puzzle'; c: Puzzle.FrontendModel };
+    | { t: 'vs-user'; c: VsUser.ClientModel }
+    | { t: 'vs-bot'; c: VsBot.ClientModel }
+    | { t: 'puzzle'; c: Puzzle.ClientModel };
 
   requests: {
     [req in Req['t']]?: RemoteResult<Problem, Unit>;
@@ -24,29 +24,29 @@ export type ServerModel =
 
 type Mode = ServerModel['t'];
 
-export type FrontendMsg =
+export type ClientMsg =
   | Req
   | { t: 'preload-audio-done' }
-  | { t: 'vs-user'; c: VsUser.FrontendMsg }
-  | { t: 'vs-bot'; c: VsBot.FrontendMsg }
-  | { t: 'puzzle'; c: Puzzle.FrontendMsg };
+  | { t: 'vs-user'; c: VsUser.ClientMsg }
+  | { t: 'vs-bot'; c: VsBot.ClientMsg }
+  | { t: 'puzzle'; c: Puzzle.ClientMsg };
 
 export type ServerMsg =
   | { t: 'vs-user'; c: VsUser.ServerMsg }
   | { t: 'vs-bot'; c: VsBot.ServerMsg }
   | { t: 'puzzle'; c: Puzzle.ServerMsg };
 
-export type ToFrontend =
+export type ToClient =
   | Res
-  | { t: 'vs-user'; c: VsUser.ToFrontend }
-  | { t: 'vs-bot'; c: VsBot.ToFrontend }
-  | { t: 'puzzle'; c: Puzzle.ToFrontend };
+  | { t: 'vs-user'; c: VsUser.ToClient }
+  | { t: 'vs-bot'; c: VsBot.ToClient }
+  | { t: 'puzzle'; c: Puzzle.ToClient };
 
-export type ToBackend =
+export type ToServer =
   | Req
-  | { t: 'vs-user'; c: VsUser.ToBackend }
-  | { t: 'vs-bot'; c: VsBot.ToBackend }
-  | { t: 'puzzle'; c: Puzzle.ToBackend };
+  | { t: 'vs-user'; c: VsUser.ToServer }
+  | { t: 'vs-bot'; c: VsBot.ToServer }
+  | { t: 'puzzle'; c: Puzzle.ToServer };
 
 export type Req = { t: 'input-mode'; mode: Mode; userId: UserId };
 export type Res = Req & {

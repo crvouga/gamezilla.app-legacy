@@ -6,8 +6,8 @@ import {
   ServerModel,
   ServerMsg,
   Mode,
-  ToBackend,
-  ToFrontend,
+  ToServer,
+  ToClient,
 } from './gomoku.types';
 import * as VsBot from './vs-bot/vs-bot.backend';
 import * as VsUser from './vs-user/vs-user.backend';
@@ -94,9 +94,9 @@ export const updateFromClient = ({
   model,
 }: {
   ctx: RoomRequestCtx;
-  sendToClient: (m: ToFrontend) => Cmd;
-  broadcast: (m: ToFrontend) => Cmd;
-  msg: ToBackend;
+  sendToClient: (m: ToClient) => Cmd;
+  broadcast: (m: ToClient) => Cmd;
+  msg: ToServer;
   model: Model;
 }): {
   model: Model;

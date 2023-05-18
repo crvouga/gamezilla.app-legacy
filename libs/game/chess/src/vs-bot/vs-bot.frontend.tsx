@@ -11,12 +11,12 @@ import Sounds from '../chess/chess-sounds';
 import { PawnIcon } from '../chess/chess-views';
 import {
   ServerModel,
-  FrontendModel,
-  FrontendMsg,
+  ClientModel,
+  ClientMsg,
   Res,
   SharedModel,
-  ToBackend,
-  ToFrontend,
+  ToServer,
+  ToClient,
   initShared,
   inputMove,
   isBotTurn,
@@ -30,9 +30,9 @@ import {
 //
 //
 
-export type Model = FrontendModel;
+export type Model = ClientModel;
 
-export const init = (): [FrontendModel, Cmd<Msg>] => {
+export const init = (): [ClientModel, Cmd<Msg>] => {
   return [
     {
       sharedModel: initShared,
@@ -52,12 +52,12 @@ export const init = (): [FrontendModel, Cmd<Msg>] => {
 //
 //
 
-export type Msg = FrontendMsg;
+export type Msg = ClientMsg;
 
 export type OutAction = Alerts.Action;
 
 export const update = (
-  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd },
+  { sendToServer }: { sendToServer: (msg: ToServer) => Cmd },
   msg: Msg,
   _model: Model
 ): [Model, Cmd<Msg>] => {
@@ -96,23 +96,23 @@ export const update = (
     //
 
     case 'InputUser': {
-      return [model, sendToBackend(msg)];
+      return [model, sendToServer(msg)];
     }
 
     case 'InputColor': {
-      return [model, sendToBackend(msg)];
+      return [model, sendToServer(msg)];
     }
 
     case 'InputBot': {
-      return [model, sendToBackend(msg)];
+      return [model, sendToServer(msg)];
     }
 
     case 'start-game': {
-      return [model, sendToBackend(msg)];
+      return [model, sendToServer(msg)];
     }
 
     case 'stop-game': {
-      return [model, sendToBackend(msg)];
+      return [model, sendToServer(msg)];
     }
 
     case 'input-move': {
@@ -121,7 +121,7 @@ export const update = (
       const sharedModel =
         result.type === 'Err' ? model.sharedModel : result.value;
 
-      return [{ ...model, sharedModel: sharedModel }, sendToBackend(msg)];
+      return [{ ...model, sharedModel: sharedModel }, sendToServer(msg)];
     }
 
     default: {
@@ -131,7 +131,7 @@ export const update = (
 };
 
 export const updateFromServer = (
-  msg: ToFrontend,
+  msg: ToClient,
   modelPrev: Model
 ): [Model, Cmd<Msg>, OutAction[]] => {
   const [modelNext, cmd, actions] = updateFromServer_(msg, modelPrev);
@@ -158,7 +158,7 @@ export const updateFromServer = (
 };
 
 const updateFromServer_ = (
-  msg: ToFrontend,
+  msg: ToClient,
   model: Model
 ): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
@@ -251,13 +251,13 @@ const playAudio = (src: string): Cmd<Msg> => {
 //
 
 export const mergeWithBackend = (
-  frontendModel: FrontendModel,
+  clientModel: ClientModel,
   serverModel: ServerModel
-): FrontendModel => {
+): ClientModel => {
   return {
-    isFlipped: frontendModel.isFlipped,
-    openedMenuId: frontendModel.openedMenuId,
-    openedModal: frontendModel.openedModal,
+    isFlipped: clientModel.isFlipped,
+    openedMenuId: clientModel.openedMenuId,
+    openedModal: clientModel.openedModal,
     sharedModel: serverModel,
   };
 };

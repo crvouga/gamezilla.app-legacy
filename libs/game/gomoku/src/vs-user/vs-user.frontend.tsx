@@ -15,11 +15,11 @@ import {
 import { ViewCoverArt, viewStoneIcon } from '../gomoku/gomoku-ui';
 import {
   ServerModel,
-  FrontendModel,
-  FrontendMsg,
+  ClientModel,
+  ClientMsg,
   ModelGameOver,
-  ToBackend,
-  ToFrontend,
+  ToServer,
+  ToClient,
   initShared,
 } from './vs-user.types';
 
@@ -31,7 +31,7 @@ import {
 //
 //
 
-export type Model = FrontendModel;
+export type Model = ClientModel;
 
 export const init = initShared;
 
@@ -43,14 +43,14 @@ export const init = initShared;
 //
 //
 
-export type Msg = FrontendMsg;
+export type Msg = ClientMsg;
 
 export const update = ({
   msg,
   model,
-  sendToBackend,
+  sendToServer,
 }: {
-  sendToBackend: (m: ToBackend) => Cmd;
+  sendToServer: (m: ToServer) => Cmd;
   msg: Msg;
   model: Model;
 }): {
@@ -63,20 +63,20 @@ export const update = ({
 
   if (msg.t === 'resign') {
     if (model.confirming === 'resign') {
-      return { model, cmd: sendToBackend(msg) };
+      return { model, cmd: sendToServer(msg) };
     }
 
     return { model: { ...model, confirming: 'resign' } };
   }
 
-  return { model, cmd: sendToBackend(msg) };
+  return { model, cmd: sendToServer(msg) };
 };
 
 export const updateFromServer = ({
   msg,
   model,
 }: {
-  msg: ToFrontend;
+  msg: ToClient;
   model: Model;
 }): {
   model: Model;
@@ -88,7 +88,7 @@ export const updateFromServer = ({
     }
     const merged = mergeWithBackend({
       serverModel: msg.result.value,
-      frontendModel: model,
+      clientModel: model,
     });
 
     return { model: merged };
@@ -100,7 +100,7 @@ export const updateFromServer = ({
 
   const merged = mergeWithBackend({
     serverModel: msg.result.value,
-    frontendModel: model,
+    clientModel: model,
   });
 
   return { model: merged };
@@ -109,9 +109,9 @@ export const updateFromServer = ({
 export const mergeWithBackend = ({
   serverModel,
 }: {
-  frontendModel: FrontendModel;
+  clientModel: ClientModel;
   serverModel: ServerModel;
-}): FrontendModel => {
+}): ClientModel => {
   return serverModel;
 };
 

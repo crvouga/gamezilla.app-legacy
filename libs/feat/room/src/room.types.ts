@@ -38,9 +38,9 @@ export type ServerModel = SharedModel & {
   };
 };
 
-export type FrontendModel = SharedModel & {
+export type ClientModel = SharedModel & {
   games: {
-    [roomId: RoomId]: Game.FrontendModel;
+    [roomId: RoomId]: Game.ClientModel;
   };
   requests: {
     [key in Req['t']]?: RemoteResult<Problem, 'none'>;
@@ -54,7 +54,7 @@ type ModalModel = 'none' | 'user-preview' | 'users';
 export type FrontendRoom = {
   roomId: RoomId;
   hostId: UserId;
-  game?: Game.FrontendModel;
+  game?: Game.ClientModel;
 };
 
 export type RoomUser = {
@@ -75,15 +75,15 @@ export type Room = {
 //
 //
 
-export type ToFrontend = (Res | { t: 'game'; c: Game.ToFrontend }) & Extra;
+export type ToClient = (Res | { t: 'game'; c: Game.ToClient }) & Extra;
 
-export type ToBackend = (Req | { t: 'game'; c: Game.ToBackend }) & Extra;
+export type ToServer = (Req | { t: 'game'; c: Game.ToServer }) & Extra;
 
 export type ServerMsg = { t: 'game'; roomId: RoomId; c: Game.ServerMsg };
 
-export type FrontendMsg =
+export type ClientMsg =
   | Req
-  | { t: 'game'; c: Game.FrontendMsg }
+  | { t: 'game'; c: Game.ClientMsg }
   | { t: 'modal-closed' }
   | { t: 'modal-open'; c: ModalModel }
   | { t: 'clicked-room'; roomId: RoomId }

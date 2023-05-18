@@ -20,10 +20,10 @@ import {
 } from '@gamezilla/shared/ui';
 import {
   ServerModel,
-  FrontendModel,
-  FrontendMsg,
-  ToBackend,
-  ToFrontend,
+  ClientModel,
+  ClientMsg,
+  ToServer,
+  ToClient,
 } from './chess.types';
 import { viewCoverArt } from './chess/chess';
 import Sounds from './chess/chess-sounds';
@@ -39,9 +39,9 @@ import * as VsUser from './vs-user/vs-user.frontend';
 //
 //
 
-export type Model = FrontendModel;
+export type Model = ClientModel;
 
-export const init = (): [FrontendModel, Cmd<Msg>] => {
+export const init = (): [ClientModel, Cmd<Msg>] => {
   return [
     {
       mode: { t: 'none' },
@@ -62,18 +62,18 @@ export const init = (): [FrontendModel, Cmd<Msg>] => {
 //
 //
 
-export type Msg = FrontendMsg;
+export type Msg = ClientMsg;
 
 export type OutAction = Alerts.Action;
 
 export const update = ({
   msg,
   model,
-  sendToBackend,
+  sendToServer,
   ctx,
 }: {
   ctx: RoomCtx;
-  sendToBackend: (msg: ToBackend) => Cmd;
+  sendToServer: (msg: ToServer) => Cmd;
   msg: Msg;
   model: Model;
 }): [Model, Cmd<Msg>] => {
@@ -88,14 +88,14 @@ export const update = ({
           ...model,
           requests: { ...model.requests, [msg.t]: RemoteResult.Loading },
         },
-        sendToBackend(msg),
+        sendToServer(msg),
       ];
     }
 
     case 'vs-user': {
       if (model.mode.t === 'vs-user') {
         const [child, cmd] = VsUser.update(
-          { sendToBackend: (c) => sendToBackend({ t: 'vs-user', c }) },
+          { sendToServer: (c) => sendToServer({ t: 'vs-user', c }) },
           msg.c,
           model.mode.c
         );
@@ -112,7 +112,7 @@ export const update = ({
     case 'vs-bot': {
       if (model.mode.t === 'vs-bot') {
         const [child, cmd] = VsBot.update(
-          { sendToBackend: (c) => sendToBackend({ t: 'vs-bot', c }) },
+          { sendToServer: (c) => sendToServer({ t: 'vs-bot', c }) },
           msg.c,
           model.mode.c
         );
@@ -133,7 +133,7 @@ export const update = ({
 
       const updated = Puzzle.update({
         ctx,
-        sendToBackend: (c) => sendToBackend({ t: 'puzzle', c }),
+        sendToServer: (c) => sendToServer({ t: 'puzzle', c }),
         model: model.mode.c,
         msg: msg.c,
       });
@@ -153,11 +153,11 @@ export const updateFromServer = ({
   ctx,
   msg,
   model,
-  sendToBackend,
+  sendToServer,
 }: {
-  sendToBackend: (msg: ToBackend) => Cmd;
+  sendToServer: (msg: ToServer) => Cmd;
   ctx: RoomCtx;
-  msg: ToFrontend;
+  msg: ToClient;
   model: Model;
 }): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg.t) {
@@ -180,9 +180,9 @@ export const updateFromServer = ({
       }
 
       const merged = mergeWithBackend({
-        frontendModel: modelNew,
+        clientModel: modelNew,
         serverModel: result.value,
-        sendToBackend,
+        sendToServer,
       });
 
       return [...merged, []];
@@ -390,28 +390,28 @@ export const View = ({
 //
 
 export const mergeWithBackend = ({
-  frontendModel,
+  clientModel,
   serverModel,
-  sendToBackend,
+  sendToServer,
 }: {
-  sendToBackend: (msg: ToBackend) => Cmd;
-  frontendModel: FrontendModel;
+  sendToServer: (msg: ToServer) => Cmd;
+  clientModel: ClientModel;
   serverModel: ServerModel;
-}): [FrontendModel, Cmd<Msg>] => {
+}): [ClientModel, Cmd<Msg>] => {
   switch (serverModel.t) {
     case 'none': {
-      return [{ ...frontendModel, mode: { t: 'none' } }, Cmd.None];
+      return [{ ...clientModel, mode: { t: 'none' } }, Cmd.None];
     }
 
     case 'puzzle': {
-      if (frontendModel.mode.t === 'puzzle') {
+      if (clientModel.mode.t === 'puzzle') {
         return [
           {
-            ...frontendModel,
+            ...clientModel,
             mode: {
               t: 'puzzle',
               c: Puzzle.mergeWithBackend({
-                frontendModel: frontendModel.mode.c,
+                clientModel: clientModel.mode.c,
                 serverModel: serverModel.c,
               }),
             },
@@ -421,16 +421,16 @@ export const mergeWithBackend = ({
       }
 
       const initial = Puzzle.init({
-        sendToBackend: (c) => sendToBackend({ t: 'puzzle', c }),
+        sendToServer: (c) => sendToServer({ t: 'puzzle', c }),
       });
 
       return [
         {
-          ...frontendModel,
+          ...clientModel,
           mode: {
             t: 'puzzle',
             c: Puzzle.mergeWithBackend({
-              frontendModel: initial.model,
+              clientModel: initial.model,
               serverModel: serverModel.c,
             }),
           },
@@ -440,13 +440,13 @@ export const mergeWithBackend = ({
     }
 
     case 'vs-user': {
-      if (frontendModel.mode.t === 'vs-user') {
+      if (clientModel.mode.t === 'vs-user') {
         return [
           {
-            ...frontendModel,
+            ...clientModel,
             mode: {
               t: 'vs-user',
-              c: VsUser.mergeWithBackend(frontendModel.mode.c, serverModel.c),
+              c: VsUser.mergeWithBackend(clientModel.mode.c, serverModel.c),
             },
           },
           Cmd.None,
@@ -455,12 +455,12 @@ export const mergeWithBackend = ({
 
       const [child, childCmd] = VsUser.init({
         userId: 'none',
-        sendToBackend: (c) => sendToBackend({ t: 'vs-user', c }),
+        sendToServer: (c) => sendToServer({ t: 'vs-user', c }),
       });
 
       return [
         {
-          ...frontendModel,
+          ...clientModel,
           mode: {
             t: 'vs-user',
             c: VsUser.mergeWithBackend(child, serverModel.c),
@@ -471,13 +471,13 @@ export const mergeWithBackend = ({
     }
 
     case 'vs-bot': {
-      if (frontendModel.mode.t === 'vs-bot') {
+      if (clientModel.mode.t === 'vs-bot') {
         return [
           {
-            ...frontendModel,
+            ...clientModel,
             mode: {
               t: 'vs-bot',
-              c: VsBot.mergeWithBackend(frontendModel.mode.c, serverModel.c),
+              c: VsBot.mergeWithBackend(clientModel.mode.c, serverModel.c),
             },
           },
           Cmd.None,
@@ -488,7 +488,7 @@ export const mergeWithBackend = ({
 
       return [
         {
-          ...frontendModel,
+          ...clientModel,
           mode: {
             t: 'vs-bot',
             c: VsBot.mergeWithBackend(child, serverModel.c),

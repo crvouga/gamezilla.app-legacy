@@ -16,12 +16,12 @@ import { Maze } from './maze';
 import {
   ServerModel,
   Color,
-  FrontendModel,
-  FrontendMsg,
+  ClientModel,
+  ClientMsg,
   handle,
   initShared,
-  ToBackend,
-  ToFrontend,
+  ToServer,
+  ToClient,
 } from './maze.types';
 import { Direction, Position } from './position';
 
@@ -33,7 +33,7 @@ import { Direction, Position } from './position';
 //
 //
 
-export type Model = FrontendModel;
+export type Model = ClientModel;
 
 export const init = initShared;
 
@@ -45,13 +45,10 @@ export const init = initShared;
 //
 //
 
-export type Msg = FrontendMsg;
+export type Msg = ClientMsg;
 
 export const update = (
-  {
-    ctx,
-    sendToBackend,
-  }: { ctx: RoomCtx; sendToBackend: (m: ToBackend) => Cmd },
+  { ctx, sendToServer }: { ctx: RoomCtx; sendToServer: (m: ToServer) => Cmd },
   msg: Msg,
   model: Model
 ): [Model, Cmd<Msg>] => {
@@ -69,7 +66,7 @@ export const update = (
 
       return [
         model,
-        sendToBackend([
+        sendToServer([
           'input-direction',
           { userId: ctx.currentUserId, direction: 'none' },
         ]),
@@ -85,7 +82,7 @@ export const update = (
 
       return [
         model,
-        sendToBackend([
+        sendToServer([
           'input-direction',
           { userId: ctx.currentUserId, direction },
         ]),
@@ -102,13 +99,13 @@ export const update = (
     case 'stop-game':
     case 'stop-playing':
     case 'start-playing': {
-      return [model, sendToBackend(msg)];
+      return [model, sendToServer(msg)];
     }
   }
 };
 
 export const updateFromServer = (
-  msg: ToFrontend,
+  msg: ToClient,
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
@@ -122,7 +119,7 @@ export const updateFromServer = (
         return [model, Cmd.None];
       }
       const merged = mergeWithBackend({
-        frontendModel: model,
+        clientModel: model,
         serverModel: msg[2].value,
       });
       return [merged, Cmd.None];
@@ -130,7 +127,7 @@ export const updateFromServer = (
 
     case 'tick': {
       const merged = mergeWithBackend({
-        frontendModel: model,
+        clientModel: model,
         serverModel: msg[1],
       });
       return [merged, Cmd.None];
@@ -141,9 +138,9 @@ export const updateFromServer = (
 export const mergeWithBackend = ({
   serverModel,
 }: {
-  frontendModel: FrontendModel;
+  clientModel: ClientModel;
   serverModel: ServerModel;
-}): FrontendModel => {
+}): ClientModel => {
   return serverModel;
 };
 

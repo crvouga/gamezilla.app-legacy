@@ -16,8 +16,8 @@ import { Skeleton } from '@mui/material';
 import { useMemo } from 'react';
 import * as Chess from '../chess/chess';
 import {
-  FrontendModel,
-  FrontendMsg,
+  ClientModel,
+  ClientMsg,
   handle,
   initShared,
   maxRating,
@@ -26,9 +26,9 @@ import {
   Req,
   SharedModel,
   Status,
-  ToBackend,
+  ToServer,
   toCorrectMove,
-  ToFrontend,
+  ToClient,
   toPlayerColor,
   toStatus,
 } from './puzzle.types';
@@ -39,23 +39,23 @@ import {
 //
 //
 
-export type Model = FrontendModel;
+export type Model = ClientModel;
 
 const toDraftQuery = (model: Model): PuzzleQuery => {
   return model.draftQuery ?? model.query;
 };
 
 export const init = ({
-  sendToBackend,
+  sendToServer,
 }: {
-  sendToBackend: (m: ToBackend) => Cmd;
+  sendToServer: (m: ToServer) => Cmd;
 }): {
   model: Model;
   cmd: Cmd<Msg>;
 } => {
   return {
     model: initShared,
-    cmd: sendToBackend({ t: 'init' }),
+    cmd: sendToServer({ t: 'init' }),
   };
 };
 
@@ -65,17 +65,17 @@ export const init = ({
 //
 //
 
-type Msg = FrontendMsg;
+type Msg = ClientMsg;
 
 export const update = ({
   msg,
   model,
-  sendToBackend,
+  sendToServer,
   ctx,
 }: {
   msg: Msg;
   model: Model;
-  sendToBackend: (m: ToBackend) => Cmd;
+  sendToServer: (m: ToServer) => Cmd;
   ctx: RoomCtx;
 }): {
   model: Model;
@@ -104,13 +104,13 @@ export const update = ({
       return updateRequest({
         msg: { t: 'input-query', query: toDraftQuery(model) },
         model: { ...model, openedModal: null },
-        sendToBackend,
+        sendToServer,
         ctx,
       });
     }
 
     default: {
-      return updateRequest({ msg, model, sendToBackend, ctx });
+      return updateRequest({ msg, model, sendToServer, ctx });
     }
   }
 };
@@ -118,22 +118,22 @@ export const update = ({
 const updateRequest = ({
   msg,
   model,
-  sendToBackend,
+  sendToServer,
   ctx,
 }: {
   msg: Req;
   model: Model;
-  sendToBackend: (m: ToBackend) => Cmd;
+  sendToServer: (m: ToServer) => Cmd;
   ctx: RoomCtx;
 }) => {
   const handled = handle({ msg, model, ctx });
   const modelNew = mergeWithBackend({
-    frontendModel: model,
+    clientModel: model,
     serverModel: handled.type === 'Err' ? model : handled.value,
   });
   return {
     model: modelNew,
-    cmd: sendToBackend(msg),
+    cmd: sendToServer(msg),
   };
 };
 
@@ -142,7 +142,7 @@ export const updateFromServer = ({
   model,
 }: {
   ctx: RoomCtx;
-  msg: ToFrontend;
+  msg: ToClient;
   model: Model;
 }): {
   model: Model;
@@ -161,7 +161,7 @@ export const updateFromServer = ({
       }
 
       const merged = mergeWithBackend({
-        frontendModel: model,
+        clientModel: model,
         serverModel: result.value,
       });
 
@@ -171,13 +171,13 @@ export const updateFromServer = ({
 };
 
 export const mergeWithBackend = ({
-  frontendModel,
+  clientModel,
   serverModel,
 }: {
-  frontendModel: Model;
+  clientModel: Model;
   serverModel: SharedModel;
 }): Model => {
-  return { ...frontendModel, ...serverModel };
+  return { ...clientModel, ...serverModel };
 };
 
 //

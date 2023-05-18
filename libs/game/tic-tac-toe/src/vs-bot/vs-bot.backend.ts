@@ -17,8 +17,8 @@ import {
   stopGame,
   stopPlaying,
   swapSides,
-  ToBackend,
-  ToFrontend,
+  ToServer,
+  ToClient,
 } from './vs-bot.types';
 
 //
@@ -44,7 +44,7 @@ export const init = initSharedModel;
 export type Msg = ServerMsg;
 
 type Update = (
-  wire: { broadcast: (msg: ToFrontend) => Cmd },
+  wire: { broadcast: (msg: ToClient) => Cmd },
   msg: Msg,
   model: Model
 ) => [Model, Cmd<Msg>];
@@ -60,7 +60,7 @@ export const update: Update = (wire, msg, model) => {
 export const update_: Update = ({ broadcast }, msg, model) => {
   switch (msg[0]) {
     case 'bot-move': {
-      const response: ToFrontend = ['bot-move-done', botMove(msg[1], model)];
+      const response: ToClient = ['bot-move-done', botMove(msg[1], model)];
       const modelNext = response[1].type === 'Ok' ? response[1].value : model;
       return [modelNext, broadcast(response)];
     }
@@ -75,10 +75,10 @@ export const update_: Update = ({ broadcast }, msg, model) => {
 
 type updateFromClient = (
   wire: {
-    sendToClient: (m: ToFrontend) => Cmd;
-    broadcast: (m: ToFrontend) => Cmd;
+    sendToClient: (m: ToClient) => Cmd;
+    broadcast: (m: ToClient) => Cmd;
   },
-  msg: ToBackend,
+  msg: ToServer,
   model: Model
 ) => [Model, Cmd<Msg>];
 
@@ -195,7 +195,7 @@ export const updateFromRoom = ({
 }: {
   msg: RoomMsg;
   model: Model;
-  broadcast: (m: ToFrontend) => Cmd;
+  broadcast: (m: ToClient) => Cmd;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;

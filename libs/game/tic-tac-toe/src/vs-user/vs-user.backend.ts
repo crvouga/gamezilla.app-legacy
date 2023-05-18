@@ -21,8 +21,8 @@ import {
   roundCountDown,
   startGame,
   stopPlaying,
-  ToBackend,
-  ToFrontend,
+  ToServer,
+  ToClient,
 } from './vs-user.types';
 
 //
@@ -51,7 +51,7 @@ export const update = (
   {
     broadcast,
   }: {
-    broadcast: (msg: ToFrontend) => Cmd;
+    broadcast: (msg: ToClient) => Cmd;
   },
   msg: Msg,
   model: Model
@@ -80,10 +80,10 @@ export const updateFromClient = (
     sendToClient,
     broadcast,
   }: {
-    sendToClient: (msg: ToFrontend) => Cmd;
-    broadcast: (msg: ToFrontend) => Cmd;
+    sendToClient: (msg: ToClient) => Cmd;
+    broadcast: (msg: ToClient) => Cmd;
   },
-  msg: ToBackend,
+  msg: ToServer,
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
@@ -238,7 +238,7 @@ export const updateFromRoom = ({
   model,
   broadcast,
 }: {
-  broadcast: (m: ToFrontend) => Cmd;
+  broadcast: (m: ToClient) => Cmd;
   msg: RoomMsg;
   model: Model;
 }): {

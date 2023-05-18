@@ -10,7 +10,7 @@ import { UserId } from '@gamezilla/shared/app';
 import { RoomCtx, RoomRequestCtx } from '@gamezilla/shared/backend';
 import { Cmd, exhaustive, Sub } from '@gamezilla/shared/core';
 import { RoomMsg } from '@gamezilla/shared/frontend';
-import { ServerModel, ServerMsg, ToBackend, ToFrontend } from './game.types';
+import { ServerModel, ServerMsg, ToServer, ToClient } from './game.types';
 
 //
 //
@@ -90,7 +90,7 @@ export const update = ({
   ctx,
 }: {
   ctx: RoomCtx;
-  broadcast: (m: ToFrontend) => Cmd;
+  broadcast: (m: ToClient) => Cmd;
   msg: Msg;
   model: Model;
 }): [Model, Cmd<Msg>] => {
@@ -222,9 +222,9 @@ export const updateFromClient = ({
   model,
 }: {
   ctx: RoomRequestCtx;
-  sendToClient: (msg: ToFrontend) => Cmd;
-  broadcast: (msg: ToFrontend) => Cmd;
-  msg: ToBackend;
+  sendToClient: (msg: ToClient) => Cmd;
+  broadcast: (msg: ToClient) => Cmd;
+  msg: ToServer;
   model: Model;
 }): [Model, Cmd<Msg>] => {
   switch (msg.t) {
@@ -368,7 +368,7 @@ export const updateFromRoom = ({
   msg,
   model,
 }: {
-  broadcast: (m: ToFrontend) => Cmd;
+  broadcast: (m: ToClient) => Cmd;
   msg: RoomMsg;
   model: Model;
 }): {

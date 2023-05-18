@@ -17,10 +17,10 @@ import {
 import { ViewBoard, ViewCoverArt, viewStoneIcon } from '../gomoku/gomoku-ui';
 import {
   ServerModel,
-  FrontendModel,
-  FrontendMsg,
-  ToBackend,
-  ToFrontend,
+  ClientModel,
+  ClientMsg,
+  ToServer,
+  ToClient,
   handle,
   initShared,
 } from './vs-bot.types';
@@ -33,7 +33,7 @@ import {
 //
 //
 
-export type Model = FrontendModel;
+export type Model = ClientModel;
 
 export const init = initShared;
 
@@ -45,16 +45,16 @@ export const init = initShared;
 //
 //
 
-export type Msg = FrontendMsg;
+export type Msg = ClientMsg;
 
 export const update = ({
   ctx,
-  sendToBackend,
+  sendToServer,
   msg,
   model,
 }: {
   ctx: Ctx;
-  sendToBackend: (m: ToBackend) => Cmd;
+  sendToServer: (m: ToServer) => Cmd;
   msg: Msg;
   model: Model;
 }): {
@@ -68,19 +68,19 @@ export const update = ({
       if (result.type === 'Err') {
         return {
           model,
-          cmd: sendToBackend(msg),
+          cmd: sendToServer(msg),
         };
       }
 
       const merged = mergeWithBackend({
         ctx,
         serverModel: result.value,
-        frontendModel: model,
+        clientModel: model,
       });
 
       return {
         model: merged,
-        cmd: sendToBackend(msg),
+        cmd: sendToServer(msg),
       };
     }
   }
@@ -92,7 +92,7 @@ export const updateFromServer = ({
   ctx,
 }: {
   ctx: Ctx;
-  msg: ToFrontend;
+  msg: ToClient;
   model: Model;
 }): {
   model: Model;
@@ -104,7 +104,7 @@ export const updateFromServer = ({
 
   const merged = mergeWithBackend({
     ctx,
-    frontendModel: model,
+    clientModel: model,
     serverModel: msg.result.value,
   });
 
@@ -113,13 +113,13 @@ export const updateFromServer = ({
 
 export const mergeWithBackend = ({
   serverModel,
-  frontendModel,
+  clientModel,
 }: {
   ctx: Ctx;
-  frontendModel: FrontendModel;
+  clientModel: ClientModel;
   serverModel: ServerModel;
-}): FrontendModel => {
-  return { ...frontendModel, ...serverModel };
+}): ClientModel => {
+  return { ...clientModel, ...serverModel };
 };
 
 //

@@ -16,12 +16,7 @@ import {
   ViewEmptyState,
 } from '@gamezilla/shared/ui';
 import { Mic } from './mic';
-import {
-  FrontendModel,
-  FrontendMsg,
-  ToBackend,
-  ToFrontend,
-} from './party.types';
+import { ClientModel, ClientMsg, ToServer, ToClient } from './party.types';
 
 //
 //
@@ -31,12 +26,12 @@ import {
 //
 //
 
-export type Model = FrontendModel;
+export type Model = ClientModel;
 
 export const init = ({
-  sendToBackend,
+  sendToServer,
 }: {
-  sendToBackend: (msg: ToBackend) => Cmd;
+  sendToServer: (msg: ToServer) => Cmd;
 }): [Model, Cmd<Msg>] => {
   return [
     {
@@ -46,7 +41,7 @@ export const init = ({
       requests: {},
       volume: 0,
     },
-    sendToBackend(['party-get', null]),
+    sendToServer(['party-get', null]),
   ];
 };
 
@@ -58,10 +53,10 @@ export const init = ({
 //
 //
 
-export type Msg = FrontendMsg;
+export type Msg = ClientMsg;
 
 export const update = (
-  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd },
+  { sendToServer }: { sendToServer: (msg: ToServer) => Cmd },
   msg: Msg,
   model: Model
 ): [Model, Cmd<Msg>] => {
@@ -89,7 +84,7 @@ export const update = (
           ...model,
           requests: { ...model.requests, [msg[0]]: RemoteResult.Loading },
         },
-        sendToBackend(msg),
+        sendToServer(msg),
       ];
     }
 
@@ -101,7 +96,7 @@ export const update = (
 
 export const updateFromServer = (
   { currentUserId }: { currentUserId: UserId },
-  msg: ToFrontend,
+  msg: ToClient,
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
@@ -176,7 +171,7 @@ const toLifecycleCmd = ({
 export type Action = ['party', ['Msg', Msg]];
 
 export const runAction = (
-  wire: { sendToBackend: (msg: ToBackend) => Cmd },
+  wire: { sendToServer: (msg: ToServer) => Cmd },
   action: Action,
   model: Model
 ): [Model, Cmd<Msg>] => {

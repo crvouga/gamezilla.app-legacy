@@ -6,8 +6,8 @@ import {
   ServerModel,
   ServerMsg,
   Mode,
-  ToBackend,
-  ToFrontend,
+  ToServer,
+  ToClient,
 } from './connect-four.types';
 import * as VsBot from './vs-bot/vs-bot.backend';
 import * as VsUser from './vs-user/vs-user.backend';
@@ -39,7 +39,7 @@ export const update = ({
   msg,
   model,
 }: {
-  broadcast: (msg: ToFrontend) => Cmd;
+  broadcast: (msg: ToClient) => Cmd;
   msg: Msg;
   model: Model;
 }): {
@@ -80,10 +80,10 @@ export const updateFromClient = ({
   model,
   ctx,
 }: {
-  sendToClient: (msg: ToFrontend) => Cmd;
-  broadcast: (msg: ToFrontend) => Cmd;
+  sendToClient: (msg: ToClient) => Cmd;
+  broadcast: (msg: ToClient) => Cmd;
   ctx: RoomRequestCtx;
-  msg: ToBackend;
+  msg: ToServer;
   model: Model;
 }): {
   model: Model;
@@ -140,7 +140,7 @@ export const updateFromRoom = ({
 }: {
   msg: RoomMsg;
   model: Model;
-  broadcast: (m: ToFrontend) => Cmd;
+  broadcast: (m: ToClient) => Cmd;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;

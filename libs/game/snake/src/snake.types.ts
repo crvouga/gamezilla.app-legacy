@@ -13,7 +13,7 @@ import * as Snake from './snake';
 
 export type ServerModel = SharedModel;
 
-export type FrontendModel = SharedModel & {
+export type ClientModel = SharedModel & {
   openedMenuId: Option<string>;
 };
 
@@ -55,7 +55,7 @@ export const initSharedModel: SharedModel = {
 //
 //
 
-export type FrontendMsg =
+export type ClientMsg =
   | ['clicked-back']
   | ['PressedKeyDown', Keyboard.Key]
   | ['OpenedMenu', string]
@@ -64,9 +64,9 @@ export type FrontendMsg =
 
 export type ServerMsg = ['tick'];
 
-export type ToBackend = Request;
+export type ToServer = Request;
 
-export type ToFrontend = ['tick', SharedModel] | Response;
+export type ToClient = ['tick', SharedModel] | Response;
 
 export type Request = ToggleStatus | InputPlayer | InputDirection | StartGame;
 

@@ -10,10 +10,10 @@ import { Cmd, Sub, exhaustive } from '@gamezilla/shared/core';
 import { Alerts, Ctx, RoomCtx, RoomViewCtx } from '@gamezilla/shared/frontend';
 import {
   ServerModel,
-  FrontendModel,
-  FrontendMsg,
-  ToBackend,
-  ToFrontend,
+  ClientModel,
+  ClientMsg,
+  ToServer,
+  ToClient,
 } from './game.types';
 
 //
@@ -24,7 +24,7 @@ import {
 //
 //
 
-export type Model = FrontendModel;
+export type Model = ClientModel;
 
 export const init = ({
   gameName,
@@ -85,18 +85,18 @@ export const init = ({
 //
 //
 
-export type Msg = FrontendMsg;
+export type Msg = ClientMsg;
 
 export type OutAction = Alerts.Action;
 
 export const update = ({
   ctx,
-  sendToBackend,
+  sendToServer,
   msg,
   model,
 }: {
   ctx: RoomCtx;
-  sendToBackend: (msg: ToBackend) => Cmd;
+  sendToServer: (msg: ToServer) => Cmd;
   msg: Msg;
   model: Model;
 }): [Model, Cmd<Msg>] => {
@@ -105,7 +105,7 @@ export const update = ({
       if (msg.t === 'connect-four') {
         const updated = ConnectFourFrontend.update({
           ctx,
-          sendToBackend: (msg) => sendToBackend({ t: 'connect-four', c: msg }),
+          sendToServer: (msg) => sendToServer({ t: 'connect-four', c: msg }),
           msg: msg.c,
           model: model.c,
         });
@@ -121,7 +121,7 @@ export const update = ({
     case 'tic-tac-toe': {
       if (msg.t === 'tic-tac-toe') {
         const updated = TicTacToeFrontend.update({
-          sendToBackend: (msg) => sendToBackend({ t: 'tic-tac-toe', c: msg }),
+          sendToServer: (msg) => sendToServer({ t: 'tic-tac-toe', c: msg }),
           ctx,
           msg: msg.c,
           model: model.c,
@@ -138,7 +138,7 @@ export const update = ({
       if (msg.t === 'chess') {
         const [child, cmd] = ChessFrontend.update({
           ctx,
-          sendToBackend: (msg) => sendToBackend({ t: 'chess', c: msg }),
+          sendToServer: (msg) => sendToServer({ t: 'chess', c: msg }),
           msg: msg.c,
           model: model.c,
         });
@@ -151,7 +151,7 @@ export const update = ({
       if (msg.t === 'gomoku') {
         const updated = GomokuFrontend.update({
           ctx,
-          sendToBackend: (msg) => sendToBackend({ t: 'gomoku', c: msg }),
+          sendToServer: (msg) => sendToServer({ t: 'gomoku', c: msg }),
           msg: msg.c,
           model: model.c,
         });
@@ -166,7 +166,7 @@ export const update = ({
     case 'tetris': {
       if (msg.t === 'tetris') {
         const [child, cmd] = TetrisFrontend.update(
-          { sendToBackend: (msg) => sendToBackend({ t: 'tetris', c: msg }) },
+          { sendToServer: (msg) => sendToServer({ t: 'tetris', c: msg }) },
           msg.c,
           model.c
         );
@@ -180,7 +180,7 @@ export const update = ({
         const [child, cmd] = SnakeFrontend.update(
           {
             ctx,
-            sendToBackend: (msg) => sendToBackend({ t: 'snake', c: msg }),
+            sendToServer: (msg) => sendToServer({ t: 'snake', c: msg }),
           },
           msg.c,
           model.c
@@ -193,7 +193,7 @@ export const update = ({
     case 'maze': {
       if (msg.t === 'maze') {
         const [child, cmd] = MazeFrontend.update(
-          { ctx, sendToBackend: (msg) => sendToBackend({ t: 'maze', c: msg }) },
+          { ctx, sendToServer: (msg) => sendToServer({ t: 'maze', c: msg }) },
           msg.c,
           model.c
         );
@@ -220,13 +220,13 @@ export const update = ({
 
 export const updateFromServer = ({
   ctx,
-  sendToBackend,
+  sendToServer,
   msg,
   model,
 }: {
   ctx: RoomCtx;
-  sendToBackend: (msg: ToBackend) => Cmd;
-  msg: ToFrontend;
+  sendToServer: (msg: ToServer) => Cmd;
+  msg: ToClient;
   model: Model;
 }): [Model, Cmd<Msg>, OutAction[]] => {
   if (msg.t === 'connect-four' && model.t === 'connect-four') {
@@ -278,7 +278,7 @@ export const updateFromServer = ({
       ctx,
       msg: msg.c,
       model: model.c,
-      sendToBackend: (msg) => sendToBackend({ t: 'chess', c: msg }),
+      sendToServer: (msg) => sendToServer({ t: 'chess', c: msg }),
     });
 
     return [{ t: 'chess', c: child }, Cmd.tag_('chess', cmd), actions];
@@ -291,7 +291,7 @@ export const updateFromServer = ({
 
   if (msg.t === 'snake' && model.t === 'snake') {
     const [child, cmd] = SnakeFrontend.updateFromServer(
-      // { ctx, sendToBackend: (msg) => sendToBackend(['snake', msg]) },
+      // { ctx, sendToServer: (msg) => sendToServer(['snake', msg]) },
       msg.c,
       model.c
     );
@@ -300,7 +300,7 @@ export const updateFromServer = ({
 
   if (msg.t === 'maze' && model.t === 'maze') {
     const [child, cmd] = MazeFrontend.updateFromServer(
-      // { ctx, sendToBackend: (msg) => sendToBackend(['maze', msg]) },
+      // { ctx, sendToServer: (msg) => sendToServer(['maze', msg]) },
       msg.c,
       model.c
     );
@@ -492,21 +492,21 @@ export const View = ({
 
 export const mergeWithBackend = ({
   ctx,
-  sendToBackend,
-  frontendModel,
+  sendToServer,
+  clientModel,
   serverModel,
 }: {
   ctx: Ctx;
-  sendToBackend: (msg: ToBackend) => Cmd;
-  frontendModel: FrontendModel;
+  sendToServer: (msg: ToServer) => Cmd;
+  clientModel: ClientModel;
   serverModel: ServerModel;
-}): [FrontendModel, Cmd<Msg>] => {
+}): [ClientModel, Cmd<Msg>] => {
   switch (serverModel.t) {
     case 'chess': {
-      if (frontendModel.t === 'chess') {
+      if (clientModel.t === 'chess') {
         const merged = ChessFrontend.mergeWithBackend({
-          sendToBackend: (msg) => sendToBackend({ t: 'chess', c: msg }),
-          frontendModel: frontendModel.c,
+          sendToServer: (msg) => sendToServer({ t: 'chess', c: msg }),
+          clientModel: clientModel.c,
           serverModel: serverModel.c,
         });
 
@@ -516,8 +516,8 @@ export const mergeWithBackend = ({
       const initial = ChessFrontend.init();
 
       const merged = ChessFrontend.mergeWithBackend({
-        sendToBackend: (msg) => sendToBackend({ t: 'chess', c: msg }),
-        frontendModel: initial[0],
+        sendToServer: (msg) => sendToServer({ t: 'chess', c: msg }),
+        clientModel: initial[0],
         serverModel: serverModel.c,
       });
 
@@ -534,13 +534,13 @@ export const mergeWithBackend = ({
     }
 
     case 'connect-four': {
-      if (frontendModel.t === 'connect-four') {
+      if (clientModel.t === 'connect-four') {
         return [
           {
             t: 'connect-four',
             c: ConnectFourFrontend.mergeWithBackend({
               ctx,
-              frontendModel: frontendModel.c,
+              clientModel: clientModel.c,
               serverModel: serverModel.c,
             }),
           },
@@ -555,7 +555,7 @@ export const mergeWithBackend = ({
           t: 'connect-four',
           c: ConnectFourFrontend.mergeWithBackend({
             ctx,
-            frontendModel: initial,
+            clientModel: initial,
             serverModel: serverModel.c,
           }),
         },
@@ -564,13 +564,13 @@ export const mergeWithBackend = ({
     }
 
     case 'tic-tac-toe': {
-      if (frontendModel.t === 'tic-tac-toe') {
+      if (clientModel.t === 'tic-tac-toe') {
         return [
           {
             t: 'tic-tac-toe',
             c: TicTacToeFrontend.mergeWithBackend({
               ctx,
-              frontendModel: frontendModel.c,
+              clientModel: clientModel.c,
               serverModel: serverModel.c,
             }),
           },
@@ -585,7 +585,7 @@ export const mergeWithBackend = ({
           t: 'tic-tac-toe',
           c: TicTacToeFrontend.mergeWithBackend({
             ctx,
-            frontendModel: initial,
+            clientModel: initial,
             serverModel: serverModel.c,
           }),
         },
@@ -594,13 +594,13 @@ export const mergeWithBackend = ({
     }
 
     case 'gomoku': {
-      if (frontendModel.t === 'gomoku') {
+      if (clientModel.t === 'gomoku') {
         return [
           {
             t: 'gomoku',
             c: GomokuFrontend.mergeWithBackend({
               ctx,
-              frontendModel: frontendModel.c,
+              clientModel: clientModel.c,
               serverModel: serverModel.c,
             }),
           },
@@ -613,7 +613,7 @@ export const mergeWithBackend = ({
           t: 'gomoku',
           c: GomokuFrontend.mergeWithBackend({
             ctx,
-            frontendModel: GomokuFrontend.init,
+            clientModel: GomokuFrontend.init,
             serverModel: serverModel.c,
           }),
         },
@@ -622,12 +622,12 @@ export const mergeWithBackend = ({
     }
 
     case 'tetris': {
-      if (frontendModel.t === 'tetris') {
+      if (clientModel.t === 'tetris') {
         return [
           {
             t: 'tetris',
             c: TetrisFrontend.mergeWithBackend({
-              frontendModel: frontendModel.c,
+              clientModel: clientModel.c,
               serverModel: serverModel.c,
             }),
           },
@@ -639,7 +639,7 @@ export const mergeWithBackend = ({
         {
           t: 'tetris',
           c: TetrisFrontend.mergeWithBackend({
-            frontendModel: TetrisFrontend.init,
+            clientModel: TetrisFrontend.init,
             serverModel: serverModel.c,
           }),
         },
@@ -648,12 +648,12 @@ export const mergeWithBackend = ({
     }
 
     case 'snake': {
-      if (frontendModel.t === 'snake') {
+      if (clientModel.t === 'snake') {
         return [
           {
             t: 'snake',
             c: SnakeFrontend.mergeWithBackend({
-              frontendModel: frontendModel.c,
+              clientModel: clientModel.c,
               serverModel: serverModel.c,
             }),
           },
@@ -666,7 +666,7 @@ export const mergeWithBackend = ({
         {
           t: 'snake',
           c: SnakeFrontend.mergeWithBackend({
-            frontendModel: SnakeFrontend.init,
+            clientModel: SnakeFrontend.init,
             serverModel: serverModel.c,
           }),
         },
@@ -675,12 +675,12 @@ export const mergeWithBackend = ({
     }
 
     case 'maze': {
-      if (frontendModel.t === 'maze') {
+      if (clientModel.t === 'maze') {
         return [
           {
             t: 'maze',
             c: MazeFrontend.mergeWithBackend({
-              frontendModel: frontendModel.c,
+              clientModel: clientModel.c,
               serverModel: serverModel.c,
             }),
           },
@@ -692,7 +692,7 @@ export const mergeWithBackend = ({
         {
           t: 'maze',
           c: MazeFrontend.mergeWithBackend({
-            frontendModel: MazeFrontend.init({
+            clientModel: MazeFrontend.init({
               userId: ctx.currentUserId,
             }),
             serverModel: serverModel.c,
@@ -703,12 +703,12 @@ export const mergeWithBackend = ({
     }
 
     case 'flow': {
-      if (frontendModel.t === 'flow') {
+      if (clientModel.t === 'flow') {
         return [
           {
             t: 'flow',
             c: FlowFrontend.mergeWithBackend({
-              frontendModel: frontendModel.c,
+              clientModel: clientModel.c,
               serverModel: serverModel.c,
             }),
           },
@@ -720,7 +720,7 @@ export const mergeWithBackend = ({
         {
           t: 'flow',
           c: FlowFrontend.mergeWithBackend({
-            frontendModel: FlowFrontend.init({}),
+            clientModel: FlowFrontend.init({}),
             serverModel: serverModel.c,
           }),
         },

@@ -1,12 +1,7 @@
 import { Browser, Cmd, matchSort, p } from '@gamezilla/shared/core';
 import { Route } from '@gamezilla/shared/frontend';
 import { IconMagnifyingGlass, IconXMark, ViewNode } from '@gamezilla/shared/ui';
-import {
-  FrontendModel,
-  FrontendMsg,
-  ToBackend,
-  ToFrontend,
-} from './search.types';
+import { ClientModel, ClientMsg, ToServer, ToClient } from './search.types';
 
 //
 //
@@ -16,7 +11,7 @@ import {
 //
 //
 
-export type Model = FrontendModel;
+export type Model = ClientModel;
 
 export const init: {
   model: Model;
@@ -36,18 +31,18 @@ export const init: {
 //
 //
 
-export type Msg = FrontendMsg;
+export type Msg = ClientMsg;
 
 const searchInputId = 'search-input';
 
 export const update = ({
   msg,
   model,
-  sendToBackend,
+  sendToServer,
 }: {
   msg: Msg;
   model: Model;
-  sendToBackend: (m: ToBackend) => Cmd;
+  sendToServer: (m: ToServer) => Cmd;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -82,13 +77,13 @@ export const update = ({
     };
   }
 
-  return { model, cmd: sendToBackend(msg) };
+  return { model, cmd: sendToServer(msg) };
 };
 
 export const updateFromServer = ({
   model,
 }: {
-  msg: ToFrontend;
+  msg: ToClient;
   model: Model;
 }): { model: Model; cmd?: Cmd<Msg> } => {
   return { model };

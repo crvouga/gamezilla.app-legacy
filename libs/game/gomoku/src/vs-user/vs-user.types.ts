@@ -66,8 +66,8 @@ type GameOver =
       type: 'Draw';
     };
 
-export type FrontendModel = Model & {
-  confirming?: FrontendMsg['t'];
+export type ClientModel = Model & {
+  confirming?: ClientMsg['t'];
 };
 
 export type ServerModel = Model;
@@ -119,13 +119,13 @@ const initSetup = (model: Model): ModelSetup => {
 //
 //
 
-export type FrontendMsg = Req | { t: 'clicked-cancel' };
+export type ClientMsg = Req | { t: 'clicked-cancel' };
 
 export type ServerMsg = { t: 'none' };
 
-export type ToFrontend = Res;
+export type ToClient = Res;
 
-export type ToBackend = Req;
+export type ToServer = Req;
 
 //
 //

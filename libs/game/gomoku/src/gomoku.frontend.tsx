@@ -9,10 +9,10 @@ import {
 import { IconComputerDesktop, IconUsers } from '@gamezilla/shared/ui';
 import {
   ServerModel,
-  FrontendModel,
-  FrontendMsg,
-  ToBackend,
-  ToFrontend,
+  ClientModel,
+  ClientMsg,
+  ToServer,
+  ToClient,
 } from './gomoku.types';
 import { ViewCoverArt } from './gomoku/gomoku-ui';
 import * as VsBot from './vs-bot/vs-bot.frontend';
@@ -26,7 +26,7 @@ import * as VsUser from './vs-user/vs-user.frontend';
 //
 //
 
-export type Model = FrontendModel;
+export type Model = ClientModel;
 
 export const init: Model = {
   t: 'none',
@@ -40,16 +40,16 @@ export const init: Model = {
 //
 //
 
-export type Msg = FrontendMsg;
+export type Msg = ClientMsg;
 
 export const update = ({
-  sendToBackend,
+  sendToServer,
   ctx,
   msg,
   model,
 }: {
   ctx: RoomCtx;
-  sendToBackend: (m: ToBackend) => Cmd;
+  sendToServer: (m: ToServer) => Cmd;
   msg: Msg;
   model: Model;
 }): {
@@ -57,13 +57,13 @@ export const update = ({
   cmd?: Cmd<Msg>;
 } => {
   if (msg.t === 'input-mode') {
-    return { model, cmd: sendToBackend(msg) };
+    return { model, cmd: sendToServer(msg) };
   }
 
   if (model.t === 'vs-bot' && msg.t === 'vs-bot') {
     const updated = VsBot.update({
       ctx,
-      sendToBackend: (c) => sendToBackend({ t: 'vs-bot', c }),
+      sendToServer: (c) => sendToServer({ t: 'vs-bot', c }),
       msg: msg.c,
       model: model.c,
     });
@@ -75,7 +75,7 @@ export const update = ({
 
   if (model.t === 'vs-user' && msg.t === 'vs-user') {
     const updated = VsUser.update({
-      sendToBackend: (c) => sendToBackend({ t: 'vs-user', c }),
+      sendToServer: (c) => sendToServer({ t: 'vs-user', c }),
       msg: msg.c,
       model: model.c,
     });
@@ -94,7 +94,7 @@ export const updateFromServer = ({
   msg,
 }: {
   ctx: RoomCtx;
-  msg: ToFrontend;
+  msg: ToClient;
   model: Model;
 }): {
   model: Model;
@@ -106,7 +106,7 @@ export const updateFromServer = ({
     }
     const merged = mergeWithBackend({
       ctx,
-      frontendModel: model,
+      clientModel: model,
       serverModel: msg.result.value,
     });
     return { model: merged };
@@ -140,25 +140,25 @@ export const updateFromServer = ({
 
 export const mergeWithBackend = ({
   ctx,
-  frontendModel,
+  clientModel,
   serverModel,
 }: {
   ctx: Ctx;
-  frontendModel: FrontendModel;
+  clientModel: ClientModel;
   serverModel: ServerModel;
-}): FrontendModel => {
+}): ClientModel => {
   switch (serverModel.t) {
     case 'none': {
       return { t: 'none' };
     }
 
     case 'vs-bot': {
-      if (frontendModel.t === 'vs-bot') {
+      if (clientModel.t === 'vs-bot') {
         return {
           t: 'vs-bot',
           c: VsBot.mergeWithBackend({
             ctx,
-            frontendModel: frontendModel.c,
+            clientModel: clientModel.c,
             serverModel: serverModel.c,
           }),
         };
@@ -167,18 +167,18 @@ export const mergeWithBackend = ({
         t: 'vs-bot',
         c: VsBot.mergeWithBackend({
           ctx,
-          frontendModel: VsBot.init({ userId: null }),
+          clientModel: VsBot.init({ userId: null }),
           serverModel: serverModel.c,
         }),
       };
     }
 
     case 'vs-user': {
-      if (frontendModel.t === 'vs-user') {
+      if (clientModel.t === 'vs-user') {
         return {
           t: 'vs-user',
           c: VsUser.mergeWithBackend({
-            frontendModel: frontendModel.c,
+            clientModel: clientModel.c,
             serverModel: serverModel.c,
           }),
         };
@@ -186,7 +186,7 @@ export const mergeWithBackend = ({
       return {
         t: 'vs-user',
         c: VsUser.mergeWithBackend({
-          frontendModel: VsUser.init({ white: null, black: null }),
+          clientModel: VsUser.init({ white: null, black: null }),
           serverModel: serverModel.c,
         }),
       };

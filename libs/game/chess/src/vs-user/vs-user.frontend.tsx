@@ -16,12 +16,12 @@ import Sounds from '../chess/chess-sounds';
 import { PawnIcon, VersusHeader } from '../chess/chess-views';
 import {
   ServerModel,
-  FrontendModel,
-  FrontendMsg,
+  ClientModel,
+  ClientMsg,
   InputMove,
   SharedModel,
-  ToBackend,
-  ToFrontend,
+  ToServer,
+  ToClient,
   initShared,
   inputClock,
   inputClockProblemToString,
@@ -37,14 +37,14 @@ import {
 //
 //
 
-export type Model = FrontendModel;
+export type Model = ClientModel;
 
 export const init = ({
   userId,
 }: {
-  sendToBackend: (msg: ToBackend) => Cmd;
+  sendToServer: (msg: ToServer) => Cmd;
   userId: UserId | 'none';
-}): [FrontendModel, Cmd<Msg>] => {
+}): [ClientModel, Cmd<Msg>] => {
   return [
     {
       sharedModel: initShared({ userId }),
@@ -64,19 +64,19 @@ export const init = ({
 //
 //
 
-export type Msg = FrontendMsg;
+export type Msg = ClientMsg;
 
 export type OutAction = Alerts.Action;
 
 export const update = (
-  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd },
+  { sendToServer }: { sendToServer: (msg: ToServer) => Cmd },
   msg: Msg,
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     //
     //
-    // FrontendMsg
+    // ClientMsg
     //
     //
 
@@ -107,37 +107,37 @@ export const update = (
     //
     //
     //
-    // ToBackend
+    // ToServer
     //
     //
     //
 
     case 'InputPlayer': {
-      return [model, sendToBackend(msg)];
+      return [model, sendToServer(msg)];
     }
 
     case 'start-game': {
-      return [model, sendToBackend(msg)];
+      return [model, sendToServer(msg)];
     }
 
     case 'InputClock': {
-      return [model, sendToBackend(msg)];
+      return [model, sendToServer(msg)];
     }
 
     case 'RequestToDraw': {
-      return [model, sendToBackend(msg)];
+      return [model, sendToServer(msg)];
     }
 
     case 'resign': {
-      return [{ ...model, openedModal: 'none' }, sendToBackend(msg)];
+      return [{ ...model, openedModal: 'none' }, sendToServer(msg)];
     }
 
     case 'RespondToDraw': {
-      return [model, sendToBackend(msg)];
+      return [model, sendToServer(msg)];
     }
 
     case 'NewGame': {
-      return [model, sendToBackend(msg)];
+      return [model, sendToServer(msg)];
     }
 
     case 'input-move': {
@@ -147,11 +147,11 @@ export const update = (
         return [model, Cmd.None];
       }
 
-      return [{ ...model, sharedModel: result.value }, sendToBackend(msg)];
+      return [{ ...model, sharedModel: result.value }, sendToServer(msg)];
     }
 
     case 'CancelDraw': {
-      return [model, sendToBackend(msg)];
+      return [model, sendToServer(msg)];
     }
 
     default:
@@ -161,7 +161,7 @@ export const update = (
 
 export const updateFromServer = (
   { ctx }: { ctx: RoomCtx },
-  msg: ToFrontend,
+  msg: ToClient,
   _model: Model
 ): [Model, Cmd<Msg>, OutAction[]] => {
   const model: Model = { ..._model, openedMenuId: Option.None };
@@ -940,13 +940,13 @@ const ViewUserPlayerSlot = ({
 //
 
 export const mergeWithBackend = (
-  frontendModel: FrontendModel,
+  clientModel: ClientModel,
   serverModel: ServerModel
-): FrontendModel => {
+): ClientModel => {
   return {
-    isFlipped: frontendModel.isFlipped,
-    openedMenuId: frontendModel.openedMenuId,
-    openedModal: frontendModel.openedModal,
+    isFlipped: clientModel.isFlipped,
+    openedMenuId: clientModel.openedMenuId,
+    openedModal: clientModel.openedModal,
     sharedModel: serverModel,
   };
 };

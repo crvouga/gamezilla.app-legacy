@@ -5,8 +5,8 @@ import {
   ServerModel,
   ServerMsg,
   Res,
-  ToBackend,
-  ToFrontend,
+  ToServer,
+  ToClient,
   handle,
   handleBotMove,
   initShared,
@@ -53,9 +53,9 @@ export const update = ({
 
 type updateFromClient = (input: {
   ctx: RoomRequestCtx;
-  sendToClient: (m: ToFrontend) => Cmd;
-  broadcast: (m: ToFrontend) => Cmd;
-  msg: ToBackend;
+  sendToClient: (m: ToClient) => Cmd;
+  broadcast: (m: ToClient) => Cmd;
+  msg: ToServer;
   model: Model;
 }) => {
   model: Model;

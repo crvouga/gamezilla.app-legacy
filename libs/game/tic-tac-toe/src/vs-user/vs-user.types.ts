@@ -121,7 +121,7 @@ export const initSharedModel = ({
   };
 };
 
-export type FrontendModel = SharedModel & {
+export type ClientModel = SharedModel & {
   openedModal: 'none' | ModalName;
 };
 
@@ -137,13 +137,13 @@ export type ServerModel = SharedModel;
 
 type ModalName = 'resignation';
 
-export type FrontendMsg = Req | ['OpenModal', ModalName] | ['close-modal'];
+export type ClientMsg = Req | ['OpenModal', ModalName] | ['close-modal'];
 
 export type ServerMsg = RoundCountDown | MoveCountDown;
 
-export type ToBackend = Req;
+export type ToServer = Req;
 
-export type ToFrontend =
+export type ToClient =
   | Res
   | RoundCountDown_Done
   | MoveCountDown_Done

@@ -13,8 +13,8 @@ import {
   isBotTurn,
   startGame,
   stopGame,
-  ToBackend,
-  ToFrontend,
+  ToServer,
+  ToClient,
 } from './vs-bot.types';
 
 //
@@ -40,7 +40,7 @@ export const init = initBackend;
 export type Msg = ServerMsg;
 
 export const update = (
-  { broadcast }: { broadcast: (msg: ToFrontend) => Cmd },
+  { broadcast }: { broadcast: (msg: ToClient) => Cmd },
   msg: Msg,
   model: Model
 ): [Model, Cmd<Msg>] => {
@@ -56,13 +56,13 @@ export const update = (
 };
 
 type Wire = {
-  sendToClient: (msg: ToFrontend) => Cmd;
-  broadcast: (msg: ToFrontend) => Cmd;
+  sendToClient: (msg: ToClient) => Cmd;
+  broadcast: (msg: ToClient) => Cmd;
 };
 
 export const updateFromClient = (
   wire: Wire,
-  msg: ToBackend,
+  msg: ToServer,
   model: Model
 ): [Model, Cmd<Msg>] => {
   const [modelNew, cmd] = updateFromClient_(wire, msg, model);
@@ -90,7 +90,7 @@ const toBotMoveCmd = (modelPrev: Model, modelNext: Model): Cmd<Msg> => {
 
 const updateFromClient_ = (
   { broadcast }: Wire,
-  msg: ToBackend,
+  msg: ToServer,
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
@@ -150,7 +150,7 @@ export const updateFromRoom = ({
   broadcast,
 }: {
   msg: RoomMsg;
-  broadcast: (m: ToFrontend) => Cmd;
+  broadcast: (m: ToClient) => Cmd;
   model: Model;
 }): {
   model: Model;

@@ -1,5 +1,5 @@
 import { Cmd, Sub } from '@gamezilla/shared/core';
-import { ServerModel, ServerMsg, ToBackend } from './flow.types';
+import { ServerModel, ServerMsg, ToServer } from './flow.types';
 import { RoomRequestCtx } from '@gamezilla/shared/backend';
 import * as ModeBuilderBackend from './mode-builder/mode-builder.backend';
 
@@ -29,7 +29,7 @@ export const updateFromClient = ({
   ctx,
 }: {
   ctx: RoomRequestCtx;
-  msg: ToBackend;
+  msg: ToServer;
   model: Model;
 }): {
   model: Model;
@@ -48,7 +48,7 @@ const updateInputMode = ({
   ctx,
 }: {
   ctx: RoomRequestCtx;
-  msg: ToBackend;
+  msg: ToServer;
   model: Model;
 }): {
   model: Model;

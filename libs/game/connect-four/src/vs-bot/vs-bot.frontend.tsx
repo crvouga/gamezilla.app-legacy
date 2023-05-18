@@ -22,10 +22,10 @@ import {
 import {
   ServerModel,
   BotLevel,
-  FrontendModel,
-  FrontendMsg,
-  ToBackend,
-  ToFrontend,
+  ClientModel,
+  ClientMsg,
+  ToServer,
+  ToClient,
   botLevel,
   handle,
   initShared,
@@ -39,11 +39,9 @@ import {
 //
 //
 
-export type Model = FrontendModel;
+export type Model = ClientModel;
 
-export const init = (
-  ...params: Parameters<typeof initShared>
-): FrontendModel => {
+export const init = (...params: Parameters<typeof initShared>): ClientModel => {
   const shared = initShared(...params);
 
   if (shared.type === 'Setup') {
@@ -64,17 +62,17 @@ export const init = (
 //
 //
 
-export type Msg = FrontendMsg;
+export type Msg = ClientMsg;
 
 type OutAction = Alerts.Action;
 
 export const update = (
   {
-    sendToBackend,
+    sendToServer,
     ctx,
   }: {
     ctx: RoomCtx;
-    sendToBackend: (msg: ToBackend) => Cmd;
+    sendToServer: (msg: ToServer) => Cmd;
   },
   msg: Msg,
   model: Model
@@ -105,10 +103,10 @@ export const update = (
       const modelNext = mergeWithBackend({
         ctx,
         serverModel: result.value,
-        frontendModel: model,
+        clientModel: model,
       });
 
-      return { model: modelNext, cmd: sendToBackend(msg) };
+      return { model: modelNext, cmd: sendToServer(msg) };
     }
 
     case 'input-player-type':
@@ -119,7 +117,7 @@ export const update = (
     case 'stop-playing':
     case 'swap-sides':
     case 'input-bot-level': {
-      return { model, cmd: sendToBackend(msg) };
+      return { model, cmd: sendToServer(msg) };
     }
   }
 };
@@ -130,7 +128,7 @@ export const updateFromServer = ({
   model,
 }: {
   ctx: RoomCtx;
-  msg: ToFrontend;
+  msg: ToClient;
   model: Model;
 }): {
   model: Model;
@@ -141,7 +139,7 @@ export const updateFromServer = ({
     case 'player-left': {
       const modelNew = mergeWithBackend({
         ctx,
-        frontendModel: model,
+        clientModel: model,
         serverModel: msg[1],
       });
       return { model: modelNew };
@@ -155,7 +153,7 @@ export const updateFromServer = ({
 
       const modelNew = mergeWithBackend({
         ctx,
-        frontendModel: model,
+        clientModel: model,
         serverModel: msg[1].value,
       });
 
@@ -176,7 +174,7 @@ export const updateFromServer = ({
 
       const modelNew = mergeWithBackend({
         ctx,
-        frontendModel: model,
+        clientModel: model,
         serverModel: msg[1].value,
       });
 
@@ -187,17 +185,17 @@ export const updateFromServer = ({
 
 export const mergeWithBackend = ({
   serverModel,
-  frontendModel,
+  clientModel,
 }: {
   ctx: Ctx;
-  frontendModel: FrontendModel;
+  clientModel: ClientModel;
   serverModel: ServerModel;
-}): FrontendModel => {
+}): ClientModel => {
   if (serverModel.type === 'Setup') {
     return serverModel;
   }
 
-  if (frontendModel.type === 'Setup') {
+  if (clientModel.type === 'Setup') {
     return {
       ...serverModel,
       ghostIndex: 'none',
@@ -206,7 +204,7 @@ export const mergeWithBackend = ({
 
   return {
     ...serverModel,
-    ghostIndex: frontendModel.ghostIndex,
+    ghostIndex: clientModel.ghostIndex,
   };
 };
 

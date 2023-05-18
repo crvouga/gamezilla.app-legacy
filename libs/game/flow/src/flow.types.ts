@@ -7,13 +7,13 @@ import * as ModeBuilder from './mode-builder/mode-builder.types';
 //
 //
 
-export type FrontendModel =
+export type ClientModel =
   | {
       t: 'none';
     }
   | {
       t: 'mode-builder';
-      c: ModeBuilder.FrontendModel;
+      c: ModeBuilder.ClientModel;
     };
 
 export type ServerModel =
@@ -31,13 +31,13 @@ export type ServerModel =
 //
 //
 
-export type FrontendMsg = { t: 'flow-grid-ui'; c: FlowGridUI.Msg };
+export type ClientMsg = { t: 'flow-grid-ui'; c: FlowGridUI.Msg };
 
 export type ServerMsg = { t: 'none' };
 
-export type ToBackend = Req;
+export type ToServer = Req;
 
-export type ToFrontend = Res;
+export type ToClient = Res;
 
 export type Req = {
   t: 'input-mode';

@@ -8,12 +8,12 @@ import * as Position from './position';
 import {
   ServerModel,
   columnCount,
-  FrontendModel,
-  FrontendMsg,
+  ClientModel,
+  ClientMsg,
   initShared,
   rowCount,
-  ToBackend,
-  ToFrontend,
+  ToServer,
+  ToClient,
   toGhostPiece,
   toPiece,
 } from './tetris.types';
@@ -26,7 +26,7 @@ import {
 //
 //
 
-export type Model = FrontendModel;
+export type Model = ClientModel;
 
 export const init: Model = {
   sharedModel: initShared,
@@ -41,16 +41,16 @@ export const init: Model = {
 //
 //
 
-export type Msg = FrontendMsg;
+export type Msg = ClientMsg;
 
 export const update = (
-  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd },
+  { sendToServer }: { sendToServer: (msg: ToServer) => Cmd },
   msg: Msg,
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case 'MouseMove': {
-      return [model, sendToBackend(msg)];
+      return [model, sendToServer(msg)];
     }
 
     case 'TouchStart': {
@@ -72,7 +72,7 @@ export const update = (
         return [model, Cmd.None];
       }
 
-      return [model, sendToBackend(['InputTranslate', { direction }])];
+      return [model, sendToServer(['InputTranslate', { direction }])];
     }
 
     case 'TouchEnd': {
@@ -83,17 +83,17 @@ export const update = (
       const key = msg[1];
 
       if (key === 'Space') {
-        return [model, sendToBackend(['InputDrop'])];
+        return [model, sendToServer(['InputDrop'])];
       }
 
       if (key === 'ArrowUp' || key === 'W' || key === 'w') {
-        return [model, sendToBackend(['InputRotate'])];
+        return [model, sendToServer(['InputRotate'])];
       }
 
       const direction = keyToDirection(key);
 
       if (direction !== 'none') {
-        return [model, sendToBackend(['InputTranslate', { direction }])];
+        return [model, sendToServer(['InputTranslate', { direction }])];
       }
 
       return [model, Cmd.None];
@@ -102,7 +102,7 @@ export const update = (
     case 'ClickedBoard': {
       // const position = msg[1]
 
-      return [model, sendToBackend(['InputDrop'])];
+      return [model, sendToServer(['InputDrop'])];
     }
 
     default: {
@@ -159,7 +159,7 @@ const keyToDirection = (key: Keyboard.Key): Direction.Direction | 'none' => {
 };
 
 export const updateFromServer = (
-  msg: ToFrontend,
+  msg: ToClient,
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
@@ -219,14 +219,14 @@ export const updateFromServer = (
 };
 
 export const mergeWithBackend = ({
-  frontendModel,
+  clientModel,
   serverModel,
 }: {
-  frontendModel: FrontendModel;
+  clientModel: ClientModel;
   serverModel: ServerModel;
-}): FrontendModel => {
+}): ClientModel => {
   return {
-    ...frontendModel,
+    ...clientModel,
     sharedModel: serverModel,
   };
 };

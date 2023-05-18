@@ -3,15 +3,15 @@ import { RoomViewCtx, ViewBottomButtonBar } from '@gamezilla/shared/frontend';
 import { IconArrowLeftOnRect } from '@gamezilla/shared/ui';
 import { FlowGridUI } from '../flow-grid';
 import {
-  FrontendModel,
-  FrontendMsg,
+  ClientModel,
+  ClientMsg,
   SharedModel,
-  ToFrontend,
+  ToClient,
 } from './mode-builder.types';
 
-type Model = FrontendModel;
+type Model = ClientModel;
 
-type Msg = FrontendMsg;
+type Msg = ClientMsg;
 
 export const update = ({
   msg,
@@ -34,7 +34,7 @@ export const update = ({
 export const updateFromServer = ({
   model,
 }: {
-  msg: ToFrontend;
+  msg: ToClient;
   model: Model;
 }): {
   model: Model;
@@ -44,14 +44,14 @@ export const updateFromServer = ({
 };
 
 export const mergeWithBackend = ({
-  frontendModel,
+  clientModel,
   serverModel,
 }: {
-  frontendModel: FrontendModel;
+  clientModel: ClientModel;
   serverModel: SharedModel;
 }) => {
   return {
-    ...frontendModel,
+    ...clientModel,
     ...serverModel,
   };
 };

@@ -248,7 +248,7 @@ export type ServerMsg =
   | { t: 'fetched-puzzles'; result: Result<string, Puzzle[]> }
   | { t: 'interaction-insert-done'; result: Result<string, null> };
 
-export type FrontendMsg =
+export type ClientMsg =
   | Req
   | { t: 'input-draft-query'; query: PuzzleQuery }
   | { t: 'animate' }
@@ -256,9 +256,9 @@ export type FrontendMsg =
   | { t: 'closed-modal' }
   | { t: 'clicked-save' };
 
-export type ToBackend = Req;
+export type ToServer = Req;
 
-export type ToFrontend =
+export type ToClient =
   | Res
   | { t: 'clock-tick'; now: Posix }
   | { t: 'fetched-puzzles'; result: Result<string, SharedModel> }
@@ -266,7 +266,7 @@ export type ToFrontend =
 
 export type ServerModel = SharedModel;
 
-export type FrontendModel = SharedModel & {
+export type ClientModel = SharedModel & {
   initializedAt?: number;
   backendNow?: Posix;
   openedModal?: 'tune' | null;

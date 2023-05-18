@@ -79,7 +79,7 @@ const main = async () => {
     socketServer.emit('to-client', msg);
   });
 
-  AppBackend.$sendToFrontend.subscribe(([clientIds, msg]) => {
+  AppBackend.$sendToClient.subscribe(([clientIds, msg]) => {
     socketServer.to(clientIds).emit('to-client', msg);
   });
 

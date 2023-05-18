@@ -29,7 +29,7 @@ import {
   ViewNode,
 } from '@gamezilla/shared/ui';
 import { Subject } from 'rxjs';
-import { FrontendModel, FrontendMsg, ToBackend, ToFrontend } from './app.types';
+import { ClientModel, ClientMsg, ToServer, ToClient } from './app.types';
 
 //
 //
@@ -41,7 +41,7 @@ import { FrontendModel, FrontendMsg, ToBackend, ToFrontend } from './app.types';
 //
 //
 
-type Model = FrontendModel;
+type Model = ClientModel;
 
 export const init = ({
   location,
@@ -89,9 +89,9 @@ export const init = ({
 //
 //
 
-type Msg = FrontendMsg;
+type Msg = ClientMsg;
 
-type OutAction<Msg = FrontendMsg> = Alerts.Action<Msg>;
+type OutAction<Msg = ClientMsg> = Alerts.Action<Msg>;
 
 //
 //
@@ -102,19 +102,19 @@ type OutAction<Msg = FrontendMsg> = Alerts.Action<Msg>;
 //
 
 export const update = ({
-  sendToBackend,
+  sendToServer,
   msg,
   model,
   now,
 }: {
   now: Posix;
-  sendToBackend: (m: ToBackend) => Cmd;
+  sendToServer: (m: ToServer) => Cmd;
   msg: Msg;
   model: Model;
 }): { model: Model; cmd?: Cmd<Msg> } => {
   return p(
     { model },
-    andThen((input) => update_({ ...input, now, msg, sendToBackend })),
+    andThen((input) => update_({ ...input, now, msg, sendToServer })),
     andThen((input) => {
       if (
         msg.t === 'auth' &&
@@ -123,7 +123,7 @@ export const update = ({
       ) {
         const updated = updateFromApp({
           model: input.model,
-          sendToBackend,
+          sendToServer,
           msg: {
             t: 'user-logged-in',
             currentUserId: msg.c.currentUser.currentUserId,
@@ -147,13 +147,13 @@ export const update = ({
 };
 
 const update_ = ({
-  sendToBackend,
+  sendToServer,
   msg,
   model,
   now,
 }: {
   now: Posix;
-  sendToBackend: (m: ToBackend) => Cmd;
+  sendToServer: (m: ToServer) => Cmd;
   msg: Msg;
   model: Model;
 }): {
@@ -163,13 +163,13 @@ const update_ = ({
 } => {
   switch (msg.t) {
     case '→': {
-      return updateFromServer({ now, sendToBackend, msg: msg.c, model });
+      return updateFromServer({ now, sendToServer, msg: msg.c, model });
     }
 
     case 'auth': {
       const updated = AuthFrontend.update({
         route: model.route,
-        sendToBackend: (c) => sendToBackend({ t: 'auth', c }),
+        sendToServer: (c) => sendToServer({ t: 'auth', c }),
         msg: msg.c,
         model: model.auth,
       });
@@ -185,7 +185,7 @@ const update_ = ({
         (acc, msg) => {
           const updated = update({
             now,
-            sendToBackend,
+            sendToServer,
             msg,
             model: acc.model,
           });
@@ -221,7 +221,7 @@ const update_ = ({
       const appUpdated = updateFromApp({
         msg: { t: 'route-changed', route: updated.route },
         model: updated,
-        sendToBackend,
+        sendToServer,
       });
       return {
         model: appUpdated.model,
@@ -249,7 +249,7 @@ const update_ = ({
         const roomUpdated = RoomFrontend.updateFromApp({
           msg: { t: 'wire-connected' },
           model: model.room,
-          sendToBackend: (m) => sendToBackend({ t: 'room', c: m }),
+          sendToServer: (m) => sendToServer({ t: 'room', c: m }),
         });
         return {
           model: {
@@ -277,7 +277,7 @@ const update_ = ({
 
       const updated = RoomFrontend.update({
         ctx: ctx,
-        sendToBackend: (m) => sendToBackend({ t: 'room', c: m }),
+        sendToServer: (m) => sendToServer({ t: 'room', c: m }),
         msg: msg.c,
         model: model.room,
       });
@@ -292,7 +292,7 @@ const update_ = ({
       const updated = ProfileFrontend.update({
         msg: msg.c,
         model: model.profile,
-        sendToBackend: (m) => sendToBackend({ t: 'profile', c: m }),
+        sendToServer: (m) => sendToServer({ t: 'profile', c: m }),
       });
       return {
         model: { ...model, profile: updated.model },
@@ -312,7 +312,7 @@ const update_ = ({
       const updated = SearchFrontend.update({
         msg: msg.c,
         model: model.search,
-        sendToBackend: (m) => sendToBackend({ t: 'search', c: m }),
+        sendToServer: (m) => sendToServer({ t: 'search', c: m }),
       });
       return {
         model: { ...model, search: updated.model },
@@ -327,13 +327,13 @@ const update_ = ({
 };
 
 const updateFromServer = ({
-  sendToBackend,
+  sendToServer,
   msg,
   now,
   model,
 }: {
-  sendToBackend: (m: ToBackend) => Cmd;
-  msg: ToFrontend;
+  sendToServer: (m: ToServer) => Cmd;
+  msg: ToClient;
   model: Model;
   now: Posix;
 }): {
@@ -357,7 +357,7 @@ const updateFromServer = ({
 
       const updated = RoomFrontend.updateFromServer({
         ctx,
-        sendToBackend: (msg) => sendToBackend({ t: 'room', c: msg }),
+        sendToServer: (msg) => sendToServer({ t: 'room', c: msg }),
         msg: msg.c,
         model: model.room,
       });
@@ -430,11 +430,11 @@ const updateFromServer = ({
 export const updateFromApp = ({
   model,
   msg,
-  sendToBackend,
+  sendToServer,
 }: {
   model: Model;
   msg: AppMsg;
-  sendToBackend: (m: ToBackend) => Cmd;
+  sendToServer: (m: ToServer) => Cmd;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -442,7 +442,7 @@ export const updateFromApp = ({
   const chat = ChatFrontend.updateFromApp({
     model: model.chat,
     msg,
-    sendToBackend: (m) => () => {
+    sendToServer: (m) => () => {
       console.log('todo send to backend', m);
     },
   });
@@ -450,13 +450,13 @@ export const updateFromApp = ({
   const room = RoomFrontend.updateFromApp({
     model: model.room,
     msg,
-    sendToBackend: (c) => sendToBackend({ t: 'room', c }),
+    sendToServer: (c) => sendToServer({ t: 'room', c }),
   });
 
   const profile = ProfileFrontend.updateFromApp({
     model: model.profile,
     msg,
-    sendToBackend: (c) => sendToBackend({ t: 'profile', c }),
+    sendToServer: (c) => sendToServer({ t: 'profile', c }),
   });
   return {
     model: {
@@ -785,4 +785,4 @@ const ViewBottomBar = ({
 //
 
 export const wireStatus$ = new Subject<Model['wire']['type']>();
-export const toFrontend$ = new Subject<ToFrontend>();
+export const toFrontend$ = new Subject<ToClient>();

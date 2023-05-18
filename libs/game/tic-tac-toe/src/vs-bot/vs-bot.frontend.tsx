@@ -23,10 +23,10 @@ import {
 } from '../tic-tic-toe/tic-tac-toe-ui';
 import {
   ServerModel,
-  FrontendModel,
-  FrontendMsg,
-  ToBackend,
-  ToFrontend,
+  ClientModel,
+  ClientMsg,
+  ToServer,
+  ToClient,
   initSharedModel,
   inputMove,
 } from './vs-bot.types';
@@ -39,7 +39,7 @@ import {
 //
 //
 
-export type Model = FrontendModel;
+export type Model = ClientModel;
 
 export const init = (...params: Parameters<typeof initSharedModel>): Model => {
   const model = initSharedModel(...params);
@@ -56,18 +56,18 @@ export const init = (...params: Parameters<typeof initSharedModel>): Model => {
 //
 //
 
-export type Msg = FrontendMsg;
+export type Msg = ClientMsg;
 
 export type OutAction = Alerts.Action;
 
 export const update = ({
-  sendToBackend,
+  sendToServer,
   msg,
   model,
   ctx,
 }: {
   ctx: RoomCtx;
-  sendToBackend: (msg: ToBackend) => Cmd;
+  sendToServer: (msg: ToServer) => Cmd;
   msg: Msg;
   model: Model;
 }): { model: Model; cmd?: Cmd<Msg> } => {
@@ -83,18 +83,18 @@ export const update = ({
     case 'input-move': {
       const result = inputMove(msg[1], model);
       if (result.type === 'Err') {
-        return { model, cmd: sendToBackend(msg) };
+        return { model, cmd: sendToServer(msg) };
       }
       const merged = mergeWithBackend({
         ...ctx,
-        frontendModel: model,
+        clientModel: model,
         serverModel: result.value,
       });
-      return { model: merged, cmd: sendToBackend(msg) };
+      return { model: merged, cmd: sendToServer(msg) };
     }
 
     default: {
-      return { model, cmd: sendToBackend(msg) };
+      return { model, cmd: sendToServer(msg) };
     }
   }
 };
@@ -105,14 +105,14 @@ export const updateFromServer = ({
   ctx,
 }: {
   ctx: Ctx;
-  msg: ToFrontend;
+  msg: ToClient;
   model: Model;
 }): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
     case 'player-left': {
       const modelNew = mergeWithBackend({
         ...ctx,
-        frontendModel: model,
+        clientModel: model,
         serverModel: msg[1],
       });
       return [modelNew, Cmd.None, []];
@@ -124,7 +124,7 @@ export const updateFromServer = ({
       }
       const modelNew = mergeWithBackend({
         ...ctx,
-        frontendModel: model,
+        clientModel: model,
         serverModel: msg[1].value,
       });
       return [modelNew, Cmd.None, []];
@@ -136,9 +136,9 @@ export const mergeWithBackend = ({
   serverModel,
 }: {
   now: Posix;
-  frontendModel: FrontendModel;
+  clientModel: ClientModel;
   serverModel: ServerModel;
-}): FrontendModel => {
+}): ClientModel => {
   switch (serverModel.type) {
     case 'Setup': {
       return {

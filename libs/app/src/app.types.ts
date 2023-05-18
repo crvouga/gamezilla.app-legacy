@@ -31,15 +31,15 @@ export type Session = {
   clientId?: ClientId;
 };
 
-export type FrontendModel = {
+export type ClientModel = {
   route: Route.Route;
-  alerts: Alerts.Model<FrontendMsg>;
+  alerts: Alerts.Model<ClientMsg>;
   wire: WireModel;
-  auth: Auth.FrontendModel;
-  room: Room.FrontendModel;
+  auth: Auth.ClientModel;
+  room: Room.ClientModel;
   profile: Profile.ServerModel;
-  chat: Chat.FrontendModel;
-  search: Search.FrontendModel;
+  chat: Chat.ClientModel;
+  search: Search.ClientModel;
 };
 
 export type WireModel =
@@ -56,35 +56,35 @@ export type WireModel =
 //
 //
 
-export type ToBackend =
-  | { t: 'room'; c: Room.ToBackend }
-  | { t: 'auth'; c: Auth.ToBackend }
+export type ToServer =
+  | { t: 'room'; c: Room.ToServer }
+  | { t: 'auth'; c: Auth.ToServer }
   | { t: 'profile'; c: Profile.ToServer }
-  | { t: 'search'; c: Search.ToBackend }
-  | { t: 'chat'; c: Chat.ToBackend }
-  | { t: 'auth'; c: Auth.ToBackend };
+  | { t: 'search'; c: Search.ToServer }
+  | { t: 'chat'; c: Chat.ToServer }
+  | { t: 'auth'; c: Auth.ToServer };
 
-export type ToFrontend =
-  | { t: 'room'; c: Room.ToFrontend }
+export type ToClient =
+  | { t: 'room'; c: Room.ToClient }
   | { t: 'profile'; c: Profile.ToClient }
-  | { t: 'search'; c: Search.ToFrontend }
-  | { t: 'chat'; c: Chat.ToFrontend }
-  | { t: 'auth'; c: Auth.ToFrontend }
-  | { t: 'access-denied'; msg: ToBackend };
+  | { t: 'search'; c: Search.ToClient }
+  | { t: 'chat'; c: Chat.ToClient }
+  | { t: 'auth'; c: Auth.ToClient }
+  | { t: 'access-denied'; msg: ToServer };
 
-export type FrontendMsg =
-  | { t: '→'; c: ToFrontend }
+export type ClientMsg =
+  | { t: '→'; c: ToClient }
   | { t: 'wire'; wire: WireModel['type'] }
   | { t: 'route'; c: Route.Msg }
   | { t: 'alerts'; c: Alerts.Msg }
-  | { t: 'room'; c: Room.FrontendMsg }
-  | { t: 'chat'; c: Chat.FrontendMsg }
-  | { t: 'auth'; c: Auth.FrontendMsg }
+  | { t: 'room'; c: Room.ClientMsg }
+  | { t: 'chat'; c: Chat.ClientMsg }
+  | { t: 'auth'; c: Auth.ClientMsg }
   | { t: 'profile'; c: Profile.ClientMsg }
-  | { t: 'search'; c: Search.FrontendMsg };
+  | { t: 'search'; c: Search.ClientMsg };
 
 export type ServerMsg =
-  | { t: '→'; sessionId: SessionId; clientId: ClientId; c: ToBackend }
+  | { t: '→'; sessionId: SessionId; clientId: ClientId; c: ToServer }
   | { t: 'client-connected'; sessionId: SessionId; clientId: ClientId }
   | { t: 'client-disconnected'; sessionId: SessionId; clientId: ClientId }
   | { t: 'room'; c: Room.ServerMsg }
@@ -102,12 +102,12 @@ export type ServerMsg =
 //
 
 export type ServerToClientEvents = {
-  ['to-client']: (msg: ToFrontend) => void;
+  ['to-client']: (msg: ToClient) => void;
   ['session-id']: (sessionId: SessionId) => void;
 };
 
 export type ClientToServerEvents = {
-  ['to-server']: (msg: ToBackend) => void;
+  ['to-server']: (msg: ToServer) => void;
 };
 
 export const backendServerPort = 5000;

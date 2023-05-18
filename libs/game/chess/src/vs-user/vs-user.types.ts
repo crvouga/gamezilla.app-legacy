@@ -13,7 +13,7 @@ const { Ok, Err } = Result;
 //
 //
 
-export type FrontendModel = {
+export type ClientModel = {
   sharedModel: SharedModel;
   openedMenuId: Option<string>;
   openedModal: Modal | 'none';
@@ -92,7 +92,7 @@ export const initShared = ({
 //
 //
 
-export type FrontendMsg =
+export type ClientMsg =
   | ['audio-done', Audio.PlayResult]
   | ['OpenedMenu', string]
   | ['ClosedMenu']
@@ -103,14 +103,14 @@ export type FrontendMsg =
 
 export type ServerMsg = ClockTicked;
 
-export type ToFrontend =
+export type ToClient =
   | ['GameOver']
   | ['GameStarted']
   | ['player-left', SharedModel]
   | ClockTicked_Done
   | Res;
 
-export type ToBackend = Req;
+export type ToServer = Req;
 
 export type Req =
   | InputPlayer

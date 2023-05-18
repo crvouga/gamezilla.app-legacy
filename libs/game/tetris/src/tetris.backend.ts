@@ -8,8 +8,8 @@ import {
   inputTranslate,
   mouseMove,
   tick,
-  ToBackend,
-  ToFrontend,
+  ToServer,
+  ToClient,
 } from './tetris.types';
 
 //
@@ -35,7 +35,7 @@ export const init: Model = initShared;
 export type Msg = ServerMsg;
 
 export const update = (
-  { broadcast }: { broadcast: (msg: ToFrontend) => Cmd },
+  { broadcast }: { broadcast: (msg: ToClient) => Cmd },
   msg: Msg,
   model: Model
 ): [Model, Cmd<Msg>] => {
@@ -53,10 +53,10 @@ export const updateFromClient = (
     broadcast,
     sendToClient,
   }: {
-    broadcast: (msg: ToFrontend) => Cmd;
-    sendToClient: (msg: ToFrontend) => Cmd;
+    broadcast: (msg: ToClient) => Cmd;
+    sendToClient: (msg: ToClient) => Cmd;
   },
-  msg: ToBackend,
+  msg: ToServer,
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {

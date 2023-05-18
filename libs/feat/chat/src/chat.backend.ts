@@ -1,5 +1,5 @@
 import { Cmd } from '@gamezilla/shared/core';
-import { ServerModel, ServerMsg, ToBackend, ToFrontend } from './chat.types';
+import { ServerModel, ServerMsg, ToServer, ToClient } from './chat.types';
 
 type Model = ServerModel;
 
@@ -10,9 +10,9 @@ type Msg = ServerMsg;
 export const updateFromClient = ({
   model,
 }: {
-  msg: ToBackend;
+  msg: ToServer;
   model: Model;
-  sendToClient: (m: ToFrontend) => Cmd<Msg>;
+  sendToClient: (m: ToClient) => Cmd<Msg>;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;

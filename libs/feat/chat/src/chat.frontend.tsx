@@ -32,12 +32,7 @@ import {
 } from '@gamezilla/shared/ui';
 import { Fab } from '@mui/material';
 import { matchSorter } from 'match-sorter';
-import {
-  FrontendModel,
-  FrontendMsg,
-  ToBackend,
-  ToFrontend,
-} from './chat.types';
+import { ClientModel, ClientMsg, ToServer, ToClient } from './chat.types';
 
 //
 //
@@ -47,7 +42,7 @@ import {
 //
 //
 
-export type Model = FrontendModel;
+export type Model = ClientModel;
 
 export const init: Model = {
   chats: {},
@@ -68,7 +63,7 @@ export const init: Model = {
 //
 //
 
-export type Msg = FrontendMsg;
+export type Msg = ClientMsg;
 
 //
 //
@@ -159,7 +154,7 @@ const removeKey = <T extends object>(obj: T, key: keyof T) => {
 export const updateFromServer = ({
   model,
 }: {
-  msg: ToFrontend;
+  msg: ToClient;
   model: Model;
 }): {
   model: Model;
@@ -171,11 +166,11 @@ export const updateFromServer = ({
 export const updateFromApp = ({
   msg,
   model,
-  sendToBackend,
+  sendToServer,
 }: {
   msg: AppMsg;
   model: Model;
-  sendToBackend: (m: ToBackend) => Cmd;
+  sendToServer: (m: ToServer) => Cmd;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -190,21 +185,21 @@ export const updateFromApp = ({
         case 'chat-conversation': {
           return {
             model,
-            cmd: sendToBackend(['chat-join', { chatId: 'todo' }]),
+            cmd: sendToServer(['chat-join', { chatId: 'todo' }]),
           };
         }
 
         case 'chat-new': {
           return {
             model,
-            cmd: sendToBackend(['chat-join', { chatId: 'todo' }]),
+            cmd: sendToServer(['chat-join', { chatId: 'todo' }]),
           };
         }
 
         default: {
           return {
             model,
-            cmd: sendToBackend(['chat-leave', { chatId: 'todo' }]),
+            cmd: sendToServer(['chat-leave', { chatId: 'todo' }]),
           };
         }
       }

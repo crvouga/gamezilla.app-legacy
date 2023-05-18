@@ -11,8 +11,8 @@ import {
   Response,
   SharedModel,
   startGame,
-  ToBackend,
-  ToFrontend,
+  ToServer,
+  ToClient,
   ToggleStatus,
   ToggleStatusResult,
 } from './snake.types';
@@ -40,7 +40,7 @@ export const init = initSharedModel;
 export type Msg = ServerMsg;
 
 export const update = (
-  { broadcast }: { broadcast: (msg: ToFrontend) => Cmd },
+  { broadcast }: { broadcast: (msg: ToClient) => Cmd },
   msg: Msg,
   model: Model
 ): [Model, Cmd<Msg>] => {
@@ -61,10 +61,10 @@ export const updateFromClient = (
     sendToClient,
     broadcast,
   }: {
-    sendToClient: (msg: ToFrontend) => Cmd;
-    broadcast: (msg: ToFrontend) => Cmd;
+    sendToClient: (msg: ToClient) => Cmd;
+    broadcast: (msg: ToClient) => Cmd;
   },
-  msg: ToBackend,
+  msg: ToServer,
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
@@ -107,8 +107,8 @@ const updateRequest = (
     sendToClient,
     broadcast,
   }: {
-    sendToClient: (msg: ToFrontend) => Cmd;
-    broadcast: (msg: ToFrontend) => Cmd;
+    sendToClient: (msg: ToClient) => Cmd;
+    broadcast: (msg: ToClient) => Cmd;
   },
   response: Response,
   model: Model

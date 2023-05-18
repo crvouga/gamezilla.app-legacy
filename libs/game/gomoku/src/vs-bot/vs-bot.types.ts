@@ -38,7 +38,7 @@ export type GameModel = {
   board: Board;
 };
 
-export type FrontendModel = Model;
+export type ClientModel = Model;
 
 export type ServerModel = Model;
 
@@ -59,15 +59,13 @@ export const initShared = ({ userId }: { userId: UserId | null }): Model => {
 //
 //
 
-export type FrontendMsg = Req;
+export type ClientMsg = Req;
 
 export type ServerMsg = { t: 'none' };
 
-export type ToBackend = Req;
+export type ToServer = Req;
 
-export type ToFrontend =
-  | Res
-  | { t: 'bot-moved'; result: Result<string, Model> };
+export type ToClient = Res | { t: 'bot-moved'; result: Result<string, Model> };
 
 //
 //

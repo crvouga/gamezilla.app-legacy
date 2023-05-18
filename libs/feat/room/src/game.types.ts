@@ -15,15 +15,15 @@ import * as TicTacToe from '@gamezilla/game/tic-tac-toe';
 //
 //
 
-export type FrontendModel =
-  | { t: 'tic-tac-toe'; c: TicTacToe.FrontendModel }
-  | { t: 'connect-four'; c: ConnectFour.FrontendModel }
-  | { t: 'chess'; c: Chess.FrontendModel }
-  | { t: 'gomoku'; c: Gomoku.FrontendModel }
-  | { t: 'tetris'; c: Tetris.FrontendModel }
-  | { t: 'snake'; c: Snake.FrontendModel }
-  | { t: 'maze'; c: Maze.FrontendModel }
-  | { t: 'flow'; c: Flow.FrontendModel };
+export type ClientModel =
+  | { t: 'tic-tac-toe'; c: TicTacToe.ClientModel }
+  | { t: 'connect-four'; c: ConnectFour.ClientModel }
+  | { t: 'chess'; c: Chess.ClientModel }
+  | { t: 'gomoku'; c: Gomoku.ClientModel }
+  | { t: 'tetris'; c: Tetris.ClientModel }
+  | { t: 'snake'; c: Snake.ClientModel }
+  | { t: 'maze'; c: Maze.ClientModel }
+  | { t: 'flow'; c: Flow.ClientModel };
 
 export type ServerModel =
   | { t: 'tic-tac-toe'; c: TicTacToe.ServerModel }
@@ -53,35 +53,35 @@ export type ServerMsg =
   | { t: 'maze'; c: Maze.ServerMsg }
   | { t: 'flow'; c: Flow.ServerMsg };
 
-export type FrontendMsg =
-  | { t: 'tic-tac-toe'; c: TicTacToe.FrontendMsg }
-  | { t: 'connect-four'; c: ConnectFour.FrontendMsg }
-  | { t: 'chess'; c: Chess.FrontendMsg }
-  | { t: 'gomoku'; c: Gomoku.FrontendMsg }
-  | { t: 'tetris'; c: Tetris.FrontendMsg }
-  | { t: 'snake'; c: Snake.FrontendMsg }
-  | { t: 'maze'; c: Maze.FrontendMsg }
-  | { t: 'flow'; c: Flow.FrontendMsg };
+export type ClientMsg =
+  | { t: 'tic-tac-toe'; c: TicTacToe.ClientMsg }
+  | { t: 'connect-four'; c: ConnectFour.ClientMsg }
+  | { t: 'chess'; c: Chess.ClientMsg }
+  | { t: 'gomoku'; c: Gomoku.ClientMsg }
+  | { t: 'tetris'; c: Tetris.ClientMsg }
+  | { t: 'snake'; c: Snake.ClientMsg }
+  | { t: 'maze'; c: Maze.ClientMsg }
+  | { t: 'flow'; c: Flow.ClientMsg };
 
-export type ToFrontend =
-  | { t: 'tic-tac-toe'; c: TicTacToe.ToFrontend }
-  | { t: 'connect-four'; c: ConnectFour.ToFrontend }
-  | { t: 'chess'; c: Chess.ToFrontend }
-  | { t: 'gomoku'; c: Gomoku.ToFrontend }
-  | { t: 'tetris'; c: Tetris.ToFrontend }
-  | { t: 'snake'; c: Snake.ToFrontend }
-  | { t: 'maze'; c: Maze.ToFrontend }
-  | { t: 'flow'; c: Flow.ToFrontend };
+export type ToClient =
+  | { t: 'tic-tac-toe'; c: TicTacToe.ToClient }
+  | { t: 'connect-four'; c: ConnectFour.ToClient }
+  | { t: 'chess'; c: Chess.ToClient }
+  | { t: 'gomoku'; c: Gomoku.ToClient }
+  | { t: 'tetris'; c: Tetris.ToClient }
+  | { t: 'snake'; c: Snake.ToClient }
+  | { t: 'maze'; c: Maze.ToClient }
+  | { t: 'flow'; c: Flow.ToClient };
 
-export type ToBackend =
-  | { t: 'tic-tac-toe'; c: TicTacToe.ToBackend }
-  | { t: 'connect-four'; c: ConnectFour.ToBackend }
-  | { t: 'chess'; c: Chess.ToBackend }
-  | { t: 'gomoku'; c: Gomoku.ToBackend }
-  | { t: 'tetris'; c: Tetris.ToBackend }
-  | { t: 'snake'; c: Snake.ToBackend }
-  | { t: 'maze'; c: Maze.ToBackend }
-  | { t: 'flow'; c: Flow.ToBackend };
+export type ToServer =
+  | { t: 'tic-tac-toe'; c: TicTacToe.ToServer }
+  | { t: 'connect-four'; c: ConnectFour.ToServer }
+  | { t: 'chess'; c: Chess.ToServer }
+  | { t: 'gomoku'; c: Gomoku.ToServer }
+  | { t: 'tetris'; c: Tetris.ToServer }
+  | { t: 'snake'; c: Snake.ToServer }
+  | { t: 'maze'; c: Maze.ToServer }
+  | { t: 'flow'; c: Flow.ToServer };
 
 //
 //

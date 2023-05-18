@@ -1,5 +1,5 @@
 import { Cmd } from '@gamezilla/shared/core';
-import { ServerModel, ServerMsg, ToBackend } from './search.types';
+import { ServerModel, ServerMsg, ToServer } from './search.types';
 
 type Model = ServerModel;
 
@@ -25,7 +25,7 @@ export const updateFromClient = ({
   model,
   msg,
 }: {
-  msg: ToBackend;
+  msg: ToServer;
   model: Model;
 }): {
   model: Model;

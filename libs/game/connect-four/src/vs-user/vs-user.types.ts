@@ -112,7 +112,7 @@ export const initShared = ({
   };
 };
 
-export type FrontendModel = SharedModel & {
+export type ClientModel = SharedModel & {
   openedModal: 'ConfirmResign' | 'none';
   ghostIndex: ColumnIndex | 'none';
 };
@@ -129,15 +129,15 @@ export type ServerModel = SharedModel;
 
 export type ServerMsg = Tick;
 
-export type FrontendMsg =
+export type ClientMsg =
   | Req
   | ['hovered-over-columns', { columnIndex: ColumnIndex }]
   | ['clicked-resign', { userId: UserId }]
   | ['close-modal'];
 
-export type ToBackend = Req;
+export type ToServer = Req;
 
-export type ToFrontend = Res | Tick_Done | ['player-left', SharedModel];
+export type ToClient = Res | Tick_Done | ['player-left', SharedModel];
 
 export type Req =
   //

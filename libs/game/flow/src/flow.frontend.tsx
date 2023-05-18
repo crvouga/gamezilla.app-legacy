@@ -2,14 +2,9 @@ import { UserId } from '@gamezilla/shared/app';
 import { Cmd, Sub } from '@gamezilla/shared/core';
 import { RoomViewCtx, ViewBottomButtonBar } from '@gamezilla/shared/frontend';
 import { IconArrowLeftOnRect } from '@gamezilla/shared/ui';
-import {
-  FrontendModel,
-  FrontendMsg,
-  ServerModel,
-  ToFrontend,
-} from './flow.types';
+import { ClientModel, ClientMsg, ServerModel, ToClient } from './flow.types';
 
-type Model = FrontendModel;
+type Model = ClientModel;
 
 export const init = ({}: { playerId?: UserId }): Model => {
   return {
@@ -17,7 +12,7 @@ export const init = ({}: { playerId?: UserId }): Model => {
   };
 };
 
-type Msg = FrontendMsg;
+type Msg = ClientMsg;
 
 export const update = ({
   model,
@@ -34,7 +29,7 @@ export const update = ({
 export const updateFromServer = ({
   model,
 }: {
-  msg: ToFrontend;
+  msg: ToClient;
   model: Model;
 }): {
   model: Model;
@@ -44,14 +39,14 @@ export const updateFromServer = ({
 };
 
 export const mergeWithBackend = ({
-  frontendModel,
+  clientModel,
   serverModel,
 }: {
-  frontendModel: FrontendModel;
+  clientModel: ClientModel;
   serverModel: ServerModel;
 }) => {
   return {
-    ...frontendModel,
+    ...clientModel,
     ...serverModel,
   };
 };

@@ -10,7 +10,7 @@ export type SharedModel = {
   grid: FlowGrid.Model;
 };
 
-export type FrontendModel = SharedModel & FlowGridUI.Model;
+export type ClientModel = SharedModel & FlowGridUI.Model;
 
 export type ServerModel = SharedModel;
 
@@ -20,10 +20,10 @@ export type ServerModel = SharedModel;
 //
 //
 
-export type FrontendMsg = { t: 'flow-grid-ui'; c: FlowGridUI.Msg };
+export type ClientMsg = { t: 'flow-grid-ui'; c: FlowGridUI.Msg };
 
 export type ServerMsg = { t: 'none' };
 
-export type ToBackend = { t: 'none' };
+export type ToServer = { t: 'none' };
 
-export type ToFrontend = { t: 'none' };
+export type ToClient = { t: 'none' };

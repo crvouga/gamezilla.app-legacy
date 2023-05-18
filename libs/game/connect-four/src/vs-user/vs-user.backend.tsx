@@ -7,8 +7,8 @@ import {
   initShared,
   Res,
   tick,
-  ToBackend,
-  ToFrontend,
+  ToServer,
+  ToClient,
   toPlayerType,
 } from './vs-user.types';
 
@@ -35,7 +35,7 @@ export const init = initShared;
 export type Msg = ServerMsg;
 
 export const update = (
-  { broadcast }: { broadcast: (msg: ToFrontend) => Cmd },
+  { broadcast }: { broadcast: (msg: ToClient) => Cmd },
   msg: Msg,
   model: Model
 ): [Model, Cmd<Msg>] => {
@@ -52,10 +52,10 @@ export const updateFromClient = (
     sendToClient,
     broadcast,
   }: {
-    sendToClient: (msg: ToFrontend) => Cmd;
-    broadcast: (msg: ToFrontend) => Cmd;
+    sendToClient: (msg: ToClient) => Cmd;
+    broadcast: (msg: ToClient) => Cmd;
   },
-  msg: ToBackend,
+  msg: ToServer,
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
@@ -89,7 +89,7 @@ export const updateFromRoom = ({
   msg,
   model,
 }: {
-  broadcast: (m: ToFrontend) => Cmd;
+  broadcast: (m: ToClient) => Cmd;
   msg: RoomMsg;
   model: Model;
 }): {

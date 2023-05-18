@@ -11,17 +11,17 @@ import * as VsUser from './vs-user/vs-user.types';
 //
 //
 
-export type FrontendModel =
+export type ClientModel =
   | {
       t: 'none';
     }
   | {
       t: 'vs-user';
-      c: VsUser.FrontendModel;
+      c: VsUser.ClientModel;
     }
   | {
       t: 'vs-bot';
-      c: VsBot.FrontendModel;
+      c: VsBot.ClientModel;
     };
 
 export type ServerModel =
@@ -47,24 +47,24 @@ export type Mode = ServerModel['t'];
 //
 //
 
-export type FrontendMsg =
+export type ClientMsg =
   | Req
-  | { t: 'vs-user'; c: VsUser.FrontendMsg }
-  | { t: 'vs-bot'; c: VsBot.FrontendMsg };
+  | { t: 'vs-user'; c: VsUser.ClientMsg }
+  | { t: 'vs-bot'; c: VsBot.ClientMsg };
 
 export type ServerMsg =
   | { t: 'vs-user'; c: VsUser.ServerMsg }
   | { t: 'vs-bot'; c: VsBot.ServerMsg };
 
-export type ToFrontend =
+export type ToClient =
   | Res
-  | { t: 'vs-user'; c: VsUser.ToFrontend }
-  | { t: 'vs-bot'; c: VsBot.ToFrontend };
+  | { t: 'vs-user'; c: VsUser.ToClient }
+  | { t: 'vs-bot'; c: VsBot.ToClient };
 
-export type ToBackend =
+export type ToServer =
   | Req
-  | { t: 'vs-user'; c: VsUser.ToBackend }
-  | { t: 'vs-bot'; c: VsBot.ToBackend };
+  | { t: 'vs-user'; c: VsUser.ToServer }
+  | { t: 'vs-bot'; c: VsBot.ToServer };
 
 export type Req = { t: 'input-mode'; userId: UserId; mode: Mode };
 

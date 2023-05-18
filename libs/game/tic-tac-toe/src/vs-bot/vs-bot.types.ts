@@ -40,7 +40,7 @@ export type GameModel = {
   board: Board;
 };
 
-export type FrontendModel = SharedModel;
+export type ClientModel = SharedModel;
 
 export type ServerModel = SharedModel;
 
@@ -77,13 +77,13 @@ export const isBotTurn = (model: SharedModel): model is GameModel => {
 //
 //
 
-export type FrontendMsg = Req | ['animate'];
+export type ClientMsg = Req | ['animate'];
 
 export type ServerMsg = BotMove;
 
-export type ToBackend = Req;
+export type ToServer = Req;
 
-export type ToFrontend = Res | BotMove_Done | ['player-left', SharedModel];
+export type ToClient = Res | BotMove_Done | ['player-left', SharedModel];
 
 export type Req =
   | InputBot

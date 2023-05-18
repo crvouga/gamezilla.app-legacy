@@ -19,8 +19,8 @@ import { VersusHeader } from '../views';
 import * as Round from './vs-user-round';
 import {
   ServerModel,
-  FrontendModel,
-  FrontendMsg,
+  ClientModel,
+  ClientMsg,
   GameModel,
   GameOverModel,
   InputMoveTimeLimit,
@@ -28,8 +28,8 @@ import {
   NewGame,
   NewGameToString,
   Res,
-  ToBackend,
-  ToFrontend,
+  ToServer,
+  ToClient,
   allBestOutOf,
   allMoveTimeLimit,
   bestOutOfToString,
@@ -51,7 +51,7 @@ import {
 //
 //
 
-export type Model = FrontendModel;
+export type Model = ClientModel;
 
 export const init: Model = {
   ...initSharedModel({ X: 'none', O: 'none' }),
@@ -65,15 +65,15 @@ export const init: Model = {
 //
 //
 
-export type Msg = FrontendMsg;
+export type Msg = ClientMsg;
 
 export type OutAction = Alerts.Action;
 
 export const update = (
   {
-    sendToBackend,
+    sendToServer,
   }: {
-    sendToBackend: (msg: ToBackend) => Cmd;
+    sendToServer: (msg: ToServer) => Cmd;
   },
   msg: Msg,
   model: Model
@@ -113,7 +113,7 @@ export const update = (
     case 'stop-playing':
     case 'start-game':
     case 'NewGame': {
-      return [model, sendToBackend(msg)];
+      return [model, sendToServer(msg)];
     }
 
     default: {
@@ -124,7 +124,7 @@ export const update = (
 
 export const updateFromServer = (
   _: { ctx: RoomCtx },
-  msg: ToFrontend,
+  msg: ToClient,
   model: Model
 ): [Model, OutAction[]] => {
   switch (msg[0]) {
@@ -174,12 +174,12 @@ export const updateFromServer = (
 };
 
 export const mergeWithBackend = (
-  frontendModel: FrontendModel,
+  clientModel: ClientModel,
   serverModel: ServerModel
-): FrontendModel => {
+): ClientModel => {
   return {
     ...serverModel,
-    openedModal: frontendModel.openedModal,
+    openedModal: clientModel.openedModal,
   };
 };
 

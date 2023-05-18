@@ -11,8 +11,8 @@ import {
   ServerModel,
   ServerMsg,
   Session,
-  ToBackend,
-  ToFrontend,
+  ToServer,
+  ToClient,
 } from './app.types';
 
 //
@@ -199,15 +199,15 @@ const updateFromApp = ({
   const roomUpdated = RoomBackend.updateFromApp({
     msg,
     model: model.room,
-    sendToFrontend: (clientIds, m) =>
-      sendToFrontend(clientIds, { t: 'room', c: m }),
+    sendToClient: (clientIds, m) =>
+      sendToClient(clientIds, { t: 'room', c: m }),
   });
 
   const profileUpdated = ProfileServer.updateFromApp({
     msg,
     model: model.profile,
-    sendToFrontend: (clientIds, c) =>
-      sendToFrontend(clientIds, { t: 'profile', c }),
+    sendToClient: (clientIds, c) =>
+      sendToClient(clientIds, { t: 'profile', c }),
   });
 
   return {
@@ -229,13 +229,13 @@ const updateFromClient = ({
   ctx,
 }: {
   ctx: RequestCtx;
-  msg: ToBackend;
+  msg: ToServer;
   model: Model;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  const sendToClient = (m: ToFrontend) => sendToFrontend([ctx.clientId], m);
+  const sendToClient = (m: ToClient) => sendToClient([ctx.clientId], m);
 
   switch (msg.t) {
     case 'auth': {
@@ -358,7 +358,7 @@ const updateFromClient = ({
   }
 };
 
-const sendToUser = (model: Model, userIds: UserId[], msg: ToFrontend): Cmd => {
+const sendToUser = (model: Model, userIds: UserId[], msg: ToClient): Cmd => {
   const clientIds: ClientId[] = [];
 
   const userIdSet = new Set<UserId>(userIds);
@@ -380,7 +380,7 @@ const sendToUser = (model: Model, userIds: UserId[], msg: ToFrontend): Cmd => {
     }
   }
 
-  return sendToFrontend(clientIds, msg);
+  return sendToClient(clientIds, msg);
 };
 
 //
@@ -434,21 +434,21 @@ export const subscriptions = ({ model }: { model: Model }): Sub<Msg> => {
 //
 //
 
-export const fromFrontend = new Rx.Subject<[SessionId, ClientId, ToBackend]>();
+export const fromFrontend = new Rx.Subject<[SessionId, ClientId, ToServer]>();
 export const onConnect = new Rx.Subject<[SessionId, ClientId]>();
 export const onDisconnect = new Rx.Subject<[SessionId, ClientId]>();
 
-export const $sendToFrontend = new Rx.Subject<[ClientId[], ToFrontend]>();
-export const $broadcast = new Rx.Subject<[ToFrontend]>();
+export const $sendToClient = new Rx.Subject<[ClientId[], ToClient]>();
+export const $broadcast = new Rx.Subject<[ToClient]>();
 
-const sendToFrontend =
-  (clientIds: ClientId[], msg: ToFrontend): Cmd =>
+const sendToClient =
+  (clientIds: ClientId[], msg: ToClient): Cmd =>
   () => {
-    $sendToFrontend.next([clientIds, msg]);
+    $sendToClient.next([clientIds, msg]);
   };
 
 const broadcast =
-  (msg: ToFrontend): Cmd =>
+  (msg: ToClient): Cmd =>
   () => {
     $broadcast.next([msg]);
   };

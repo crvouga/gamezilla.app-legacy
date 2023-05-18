@@ -24,12 +24,7 @@ import { Subject } from 'rxjs';
 import * as AuthEmailLink from './auth-email-link';
 import * as AuthPhone from './auth-phone';
 import * as AuthPhoneVerify from './auth-phone-verify';
-import {
-  FrontendModel,
-  FrontendMsg,
-  ToBackend,
-  ToFrontend,
-} from './auth.types';
+import { ClientModel, ClientMsg, ToServer, ToClient } from './auth.types';
 
 //
 //
@@ -39,7 +34,7 @@ import {
 //
 //
 
-export type Model = FrontendModel;
+export type Model = ClientModel;
 
 export const init = (): { model: Model; cmd?: Cmd<Msg> } => {
   const phone = AuthPhone.init();
@@ -65,16 +60,16 @@ export const init = (): { model: Model; cmd?: Cmd<Msg> } => {
 //
 //
 
-export type Msg = FrontendMsg;
+export type Msg = ClientMsg;
 
 export const update = ({
-  sendToBackend,
+  sendToServer,
   msg,
   model,
   route,
 }: {
   route: Route.Route;
-  sendToBackend: (m: ToBackend) => Cmd;
+  sendToServer: (m: ToServer) => Cmd;
   msg: Msg;
   model: Model;
 }): {
@@ -159,17 +154,17 @@ export const update = ({
   if (msg.t === 'got-current-user') {
     return {
       model: { ...model, currentUser: msg.currentUser },
-      cmd: sendToBackend(msg),
+      cmd: sendToServer(msg),
     };
   }
 
-  return { model, cmd: sendToBackend(msg) };
+  return { model, cmd: sendToServer(msg) };
 };
 
 export const updateFromServer = ({
   model,
 }: {
-  msg: ToFrontend;
+  msg: ToClient;
   model: Model;
 }): { model: Model; cmd?: Cmd<Msg> } => {
   return { model };

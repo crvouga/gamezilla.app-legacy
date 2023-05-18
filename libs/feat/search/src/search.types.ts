@@ -9,7 +9,7 @@ type SearchResult = {
   avatarUrl: string;
 };
 
-export type FrontendModel = {
+export type ClientModel = {
   searchText: string;
   searchResults: {
     [id: string]: SearchResult;
@@ -21,13 +21,13 @@ export type FrontendModel = {
 
 export type ServerModel = null;
 
-export type ToBackend = Req;
+export type ToServer = Req;
 
-export type ToFrontend = Res;
+export type ToClient = Res;
 
 export type ServerMsg = { t: 'none' };
 
-export type FrontendMsg =
+export type ClientMsg =
   | Req
   | { t: 'clicked-clear' }
   | { t: 'focus-done'; result: Browser.FocusResult }

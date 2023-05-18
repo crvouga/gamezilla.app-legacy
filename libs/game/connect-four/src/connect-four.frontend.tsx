@@ -12,10 +12,10 @@ import * as UI from '@gamezilla/shared/ui';
 import { IconComputerDesktop, IconUsers } from '@gamezilla/shared/ui';
 import {
   ServerModel,
-  FrontendModel,
-  FrontendMsg,
-  ToBackend,
-  ToFrontend,
+  ClientModel,
+  ClientMsg,
+  ToServer,
+  ToClient,
 } from './connect-four.types';
 import {
   PlayerIcon,
@@ -33,7 +33,7 @@ import * as VsUser from './vs-user/vs-user.frontend';
 //
 //
 
-export type Model = FrontendModel;
+export type Model = ClientModel;
 
 export const init: Model = { t: 'none' };
 
@@ -45,17 +45,17 @@ export const init: Model = { t: 'none' };
 //
 //
 
-export type Msg = FrontendMsg;
+export type Msg = ClientMsg;
 
 type OutAction = Alerts.Action;
 
 export const update = ({
-  sendToBackend,
+  sendToServer,
   ctx,
   msg,
   model,
 }: {
-  sendToBackend: (msg: ToBackend) => Cmd;
+  sendToServer: (msg: ToServer) => Cmd;
   ctx: RoomCtx;
   msg: Msg;
   model: Model;
@@ -64,13 +64,13 @@ export const update = ({
   cmd?: Cmd<Msg>;
 } => {
   if (msg.t === 'input-mode') {
-    return { model, cmd: sendToBackend(msg) };
+    return { model, cmd: sendToServer(msg) };
   }
 
   if (msg.t === 'vs-user' && model.t === 'vs-user') {
     const updated = VsUser.update(
       {
-        sendToBackend: (c) => sendToBackend({ t: 'vs-user', c }),
+        sendToServer: (c) => sendToServer({ t: 'vs-user', c }),
       },
       msg.c,
       model.c
@@ -85,7 +85,7 @@ export const update = ({
     const updated = VsBot.update(
       {
         ctx,
-        sendToBackend: (c) => sendToBackend({ t: 'vs-bot', c }),
+        sendToServer: (c) => sendToServer({ t: 'vs-bot', c }),
       },
       msg.c,
       model.c
@@ -105,7 +105,7 @@ export const updateFromServer = ({
   msg,
 }: {
   ctx: RoomCtx;
-  msg: ToFrontend;
+  msg: ToClient;
   model: Model;
 }): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg.t) {
@@ -115,7 +115,7 @@ export const updateFromServer = ({
       }
 
       const merged = mergeWithBackend({
-        frontendModel: model,
+        clientModel: model,
         serverModel: msg.result.value,
         ctx,
       });
@@ -270,25 +270,25 @@ export const BannerArt = () => {
 
 export const mergeWithBackend = ({
   ctx,
-  frontendModel,
+  clientModel,
   serverModel,
 }: {
   ctx: Ctx;
-  frontendModel: FrontendModel;
+  clientModel: ClientModel;
   serverModel: ServerModel;
-}): FrontendModel => {
+}): ClientModel => {
   switch (serverModel.t) {
     case 'none': {
       return serverModel;
     }
 
     case 'vs-bot': {
-      if (frontendModel.t === 'vs-bot') {
+      if (clientModel.t === 'vs-bot') {
         return {
           t: 'vs-bot',
           c: VsBot.mergeWithBackend({
             ctx,
-            frontendModel: frontendModel.c,
+            clientModel: clientModel.c,
             serverModel: serverModel.c,
           }),
         };
@@ -298,18 +298,18 @@ export const mergeWithBackend = ({
         t: 'vs-bot',
         c: VsBot.mergeWithBackend({
           ctx,
-          frontendModel: VsBot.init(serverModel.c),
+          clientModel: VsBot.init(serverModel.c),
           serverModel: serverModel.c,
         }),
       };
     }
 
     case 'vs-user': {
-      if (frontendModel.t === 'vs-user') {
+      if (clientModel.t === 'vs-user') {
         return {
           t: 'vs-user',
           c: VsUser.mergeWithBackend({
-            frontendModel: frontendModel.c,
+            clientModel: clientModel.c,
             serverModel: serverModel.c,
           }),
         };
@@ -318,7 +318,7 @@ export const mergeWithBackend = ({
       return {
         t: 'vs-user',
         c: VsUser.mergeWithBackend({
-          frontendModel: VsUser.init(serverModel.c),
+          clientModel: VsUser.init(serverModel.c),
           serverModel: serverModel.c,
         }),
       };

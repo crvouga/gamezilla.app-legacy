@@ -14,7 +14,7 @@ const { Err, Ok } = Result;
 //
 //
 
-export type FrontendModel = {
+export type ClientModel = {
   touched: Option<Position.Position>;
   sharedModel: SharedModel;
 };
@@ -97,7 +97,7 @@ export const toGhostPiece = (model: SharedModel): Piece.Piece => {
 //
 //
 
-export type FrontendMsg =
+export type ClientMsg =
   | ['PressedKey', Keyboard.Key]
   | ['TouchStart', Position.Position]
   | ['TouchMove', Position.Position]
@@ -107,9 +107,9 @@ export type FrontendMsg =
 
 export type ServerMsg = Tick;
 
-export type ToBackend = InputTranslate | InputRotate | InputDrop | MouseMove;
+export type ToServer = InputTranslate | InputRotate | InputDrop | MouseMove;
 
-export type ToFrontend =
+export type ToClient =
   | Tick_Done
   | InputTranslate_Done
   | InputRotate_Done

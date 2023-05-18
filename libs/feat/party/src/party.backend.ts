@@ -5,8 +5,8 @@ import {
   ServerMsg,
   handle,
   Res,
-  ToBackend,
-  ToFrontend,
+  ToServer,
+  ToClient,
 } from './party.types';
 
 //
@@ -36,8 +36,8 @@ export type Msg = ServerMsg;
 
 export const update = (
   _wire: {
-    sendToUser: (userIds: UserId[], msg: ToFrontend) => Cmd;
-    broadcast: (msg: ToFrontend) => Cmd;
+    sendToUser: (userIds: UserId[], msg: ToClient) => Cmd;
+    broadcast: (msg: ToClient) => Cmd;
   },
   msg: Msg,
   model: Model
@@ -58,11 +58,11 @@ export const updateFromClient = (
     sendToClient,
     broadcast,
   }: {
-    broadcast: (msg: ToFrontend) => Cmd;
-    sendToUser: (userId: UserId[], msg: ToFrontend) => Cmd;
-    sendToClient: (msg: ToFrontend) => Cmd;
+    broadcast: (msg: ToClient) => Cmd;
+    sendToUser: (userId: UserId[], msg: ToClient) => Cmd;
+    sendToClient: (msg: ToClient) => Cmd;
   },
-  msg: ToBackend,
+  msg: ToServer,
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
@@ -92,8 +92,8 @@ export const sendToParty = ({
 }: {
   model: Model;
   partyId: PartyId;
-  msg: ToFrontend;
-  sendToUser: (userIds: UserId[], msg: ToFrontend) => Cmd;
+  msg: ToClient;
+  sendToUser: (userIds: UserId[], msg: ToClient) => Cmd;
 }): Cmd => {
   const userIds: UserId[] = [];
 

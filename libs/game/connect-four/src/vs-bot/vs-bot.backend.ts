@@ -10,8 +10,8 @@ import {
   initShared,
   isBotTurn,
   Res,
-  ToBackend,
-  ToFrontend,
+  ToServer,
+  ToClient,
 } from './vs-bot.types';
 
 //
@@ -41,7 +41,7 @@ export const update = ({
   msg,
   model,
 }: {
-  broadcast: (m: ToFrontend) => Cmd;
+  broadcast: (m: ToClient) => Cmd;
   msg: Msg;
   model: Model;
 }): { model: Model; cmd: Cmd<Msg> } => {
@@ -58,11 +58,11 @@ export const update = ({
 
 export const updateFromClient = (
   wire: {
-    broadcast: (msg: ToFrontend) => Cmd;
-    sendToClient: (msg: ToFrontend) => Cmd;
+    broadcast: (msg: ToClient) => Cmd;
+    sendToClient: (msg: ToClient) => Cmd;
     currentUserId: UserId;
   },
-  msg: ToBackend,
+  msg: ToServer,
   modelPrev: Model
 ): [Model, Cmd<Msg>] => {
   const [modelNext, cmd] = updateFromClient_(wire, msg, modelPrev);
@@ -96,11 +96,11 @@ const updateFromClient_ = (
     sendToClient,
     currentUserId,
   }: {
-    broadcast: (m: ToFrontend) => Cmd;
-    sendToClient: (m: ToFrontend) => Cmd;
+    broadcast: (m: ToClient) => Cmd;
+    sendToClient: (m: ToClient) => Cmd;
     currentUserId: UserId;
   },
-  msg: ToBackend,
+  msg: ToServer,
   model: Model
 ): [Model, Cmd<Msg>] => {
   const res: Res = [msg[0], handle({ currentUserId }, msg, model)];
@@ -117,7 +117,7 @@ export const updateFromRoom = ({
   model,
   broadcast,
 }: {
-  broadcast: (m: ToFrontend) => Cmd;
+  broadcast: (m: ToClient) => Cmd;
   msg: RoomMsg;
   model: Model;
 }): {

@@ -52,7 +52,7 @@ export type FrontendGameModel = GameModel & {
   ghostIndex: ColumnIndex | 'none';
 };
 
-export type FrontendModel = SetupModel | FrontendGameModel;
+export type ClientModel = SetupModel | FrontendGameModel;
 
 export const initShared = ({
   player,
@@ -116,19 +116,19 @@ export const botLevel: { [botLevel in BotLevel]: BotLevel } = {
 //
 //
 
-export type FrontendMsg =
+export type ClientMsg =
   | Req
   | ['hovered', { columnIndex: ColumnIndex }]
   | ['animate'];
 
 export type ServerMsg = ['bot-move', BestMoveResult];
 
-export type ToFrontend =
+export type ToClient =
   | Res
   | ['player-left', SharedModel]
   | ['bot-move', BotMoveResult];
 
-export type ToBackend = Req;
+export type ToServer = Req;
 
 export type Req =
   | ['start-playing']

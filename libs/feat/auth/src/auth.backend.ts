@@ -1,5 +1,5 @@
 import { Cmd } from '@gamezilla/shared/core';
-import { ServerModel, ServerMsg, ToBackend } from './auth.types';
+import { ServerModel, ServerMsg, ToServer } from './auth.types';
 
 //
 //
@@ -38,7 +38,7 @@ export const update = ({
 export const updateFromClient = ({
   model,
 }: {
-  msg: ToBackend;
+  msg: ToServer;
   model: Model;
 }): { model: Model; cmd?: Cmd<Msg> } => {
   return {

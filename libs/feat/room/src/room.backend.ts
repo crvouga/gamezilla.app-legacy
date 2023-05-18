@@ -13,8 +13,8 @@ import {
   ServerMsg,
   handle,
   Res,
-  ToBackend,
-  ToFrontend,
+  ToServer,
+  ToClient,
 } from './room.types';
 
 //
@@ -51,7 +51,7 @@ export const update = ({
   ctx,
 }: {
   ctx: Ctx;
-  sendToUser: (userIds: UserId[], msg: ToFrontend) => Cmd;
+  sendToUser: (userIds: UserId[], msg: ToClient) => Cmd;
   msg: Msg;
   model: Model;
 }): {
@@ -109,15 +109,15 @@ export const update = ({
 };
 
 type Wire = {
-  sendToClient: (msg: ToFrontend) => Cmd;
-  sendToUser: (userId: UserId[], msg: ToFrontend) => Cmd;
-  broadcast: (msg: ToFrontend) => Cmd;
+  sendToClient: (msg: ToClient) => Cmd;
+  sendToUser: (userId: UserId[], msg: ToClient) => Cmd;
+  broadcast: (msg: ToClient) => Cmd;
 };
 
 type updateFromClient = (input: {
   ctx: AuthenticatedRequestCtx;
   wire: Wire;
-  msg: ToBackend;
+  msg: ToServer;
   model: Model;
 }) => { model: Model; cmd?: Cmd<ServerMsg> };
 
@@ -241,7 +241,7 @@ const updateLeave = ({
   msg,
   ctx,
 }: {
-  msg: ToBackend;
+  msg: ToServer;
   wire: Wire;
   model: Model;
   ctx: { currentUserId: UserId };
@@ -316,11 +316,11 @@ const updateLeave = ({
 export const updateFromApp = ({
   msg,
   model,
-  sendToFrontend,
+  sendToClient,
 }: {
   msg: AppMsg;
   model: Model;
-  sendToFrontend: (clientId: ClientId[], msg: ToFrontend) => Cmd;
+  sendToClient: (clientId: ClientId[], msg: ToClient) => Cmd;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -328,7 +328,7 @@ export const updateFromApp = ({
   if (msg.t === 'client-authenticated') {
     return {
       model,
-      cmd: sendToFrontend([msg.clientId], {
+      cmd: sendToClient([msg.clientId], {
         t: 'list',
         result: Ok(model),
         initiatorMsg: msg,
@@ -348,9 +348,9 @@ const sendToRoom = ({
   msg,
 }: {
   model: Model;
-  sendToUser: (userIds: UserId[], msg: ToFrontend) => Cmd;
+  sendToUser: (userIds: UserId[], msg: ToClient) => Cmd;
   roomId: RoomId;
-  msg: ToFrontend;
+  msg: ToClient;
 }): Cmd => {
   const userIds: UserId[] = [];
 

@@ -3,13 +3,7 @@ import { RoomMsg } from '@gamezilla/shared/frontend';
 import { RoomCtx, RoomRequestCtx } from '@gamezilla/shared/backend';
 import { UserId } from '@gamezilla/shared/app';
 import { GameMsg } from './chess-shared';
-import {
-  ServerModel,
-  ServerMsg,
-  Res,
-  ToBackend,
-  ToFrontend,
-} from './chess.types';
+import { ServerModel, ServerMsg, Res, ToServer, ToClient } from './chess.types';
 import * as Puzzle from './puzzle/puzzle.backend';
 import * as VsBot from './vs-bot/vs-bot.backend';
 import * as VsUser from './vs-user/vs-user.backend';
@@ -44,7 +38,7 @@ export const update = ({
   msg,
   model,
 }: {
-  broadcast: (msg: ToFrontend) => Cmd;
+  broadcast: (msg: ToClient) => Cmd;
   msg: Msg;
   model: Model;
   ctx: RoomCtx;
@@ -110,9 +104,9 @@ export const updateFromClient = ({
   ctx,
 }: {
   ctx: RoomRequestCtx;
-  sendToClient: (msg: ToFrontend) => Cmd;
-  broadcast: (msg: ToFrontend) => Cmd;
-  msg: ToBackend;
+  sendToClient: (msg: ToClient) => Cmd;
+  broadcast: (msg: ToClient) => Cmd;
+  msg: ToServer;
   model: Model;
 }): [Model, Cmd<Msg>] => {
   switch (msg.t) {
@@ -199,7 +193,7 @@ export const updateFromRoom = ({
   msg,
   model,
 }: {
-  broadcast: (msg: ToFrontend) => Cmd;
+  broadcast: (msg: ToClient) => Cmd;
   model: Model;
   msg: RoomMsg;
 }): {
@@ -293,7 +287,7 @@ const initMode = ({
   ctx,
 }: {
   ctx: RoomRequestCtx;
-  broadcast: (m: ToFrontend) => Cmd;
+  broadcast: (m: ToClient) => Cmd;
   mode: ServerModel['t'];
   userId: UserId;
 }): { result: Res['result']; cmd?: Cmd<Msg> } => {

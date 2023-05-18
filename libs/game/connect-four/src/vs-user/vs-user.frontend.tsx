@@ -34,13 +34,13 @@ import {
 } from '../connect-four/connect-four-ui';
 import {
   ServerModel,
-  FrontendModel,
-  FrontendMsg,
+  ClientModel,
+  ClientMsg,
   GameModel,
   GameOverModel,
   SetupModel,
-  ToBackend,
-  ToFrontend,
+  ToServer,
+  ToClient,
   allMoveTimeLimit,
   handle,
   initShared,
@@ -55,12 +55,12 @@ import {
 //
 //
 
-export type Model = FrontendModel;
+export type Model = ClientModel;
 
 export const init = ({
   PlayerOne,
   PlayerTwo,
-}: Pick<FrontendModel, 'PlayerOne' | 'PlayerTwo'>): FrontendModel => {
+}: Pick<ClientModel, 'PlayerOne' | 'PlayerTwo'>): ClientModel => {
   return {
     ...initShared({ PlayerOne, PlayerTwo }),
     ghostIndex: 'none',
@@ -76,12 +76,12 @@ export const init = ({
 //
 //
 
-export type Msg = FrontendMsg;
+export type Msg = ClientMsg;
 
 export type OutAction = Alerts.Action;
 
 export const update = (
-  { sendToBackend }: { sendToBackend: (msg: ToBackend) => Cmd },
+  { sendToServer }: { sendToServer: (msg: ToServer) => Cmd },
   msg: Msg,
   model: Model
 ): [Model, Cmd<Msg>] => {
@@ -108,7 +108,7 @@ export const update = (
     case 'start-game':
     case 'stop-playing':
     case 'start-playing': {
-      return [model, sendToBackend(msg)];
+      return [model, sendToServer(msg)];
     }
     case 'input-move': {
       return [
@@ -116,7 +116,7 @@ export const update = (
           ...model,
           // ghostIndex: "none"
         },
-        sendToBackend(msg),
+        sendToServer(msg),
       ];
     }
     default: {
@@ -126,7 +126,7 @@ export const update = (
 };
 
 export const updateFromServer = (
-  msg: ToFrontend,
+  msg: ToClient,
   model: Model
 ): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg[0]) {
@@ -141,7 +141,7 @@ export const updateFromServer = (
     case 'start-playing': {
       const modelNew = msg[1].type === 'Err' ? model : msg[1].value;
       const merged = mergeWithBackend({
-        frontendModel: model,
+        clientModel: model,
         serverModel: modelNew,
       });
       return [{ ...merged, openedModal: 'none' }, Cmd.None, []];
@@ -150,7 +150,7 @@ export const updateFromServer = (
     case 'input-move': {
       const modelNew = msg[1].type === 'Err' ? model : msg[1].value;
       const merged = mergeWithBackend({
-        frontendModel: model,
+        clientModel: model,
         serverModel: modelNew,
       });
       return [{ ...merged, ghostIndex: 'none' }, Cmd.None, []];
@@ -158,7 +158,7 @@ export const updateFromServer = (
 
     case 'Tick_Done': {
       const merged = mergeWithBackend({
-        frontendModel: model,
+        clientModel: model,
         serverModel: msg[1],
       });
       return [merged, Cmd.None, []];
@@ -166,7 +166,7 @@ export const updateFromServer = (
 
     case 'player-left': {
       const merged = mergeWithBackend({
-        frontendModel: model,
+        clientModel: model,
         serverModel: msg[1],
       });
       return [merged, Cmd.None, []];
@@ -179,16 +179,16 @@ export const updateFromServer = (
 };
 
 export const mergeWithBackend = ({
-  frontendModel,
+  clientModel,
   serverModel,
 }: {
-  frontendModel: FrontendModel;
+  clientModel: ClientModel;
   serverModel: ServerModel;
-}): FrontendModel => {
+}): ClientModel => {
   return {
     ...serverModel,
-    openedModal: frontendModel.openedModal,
-    ghostIndex: frontendModel.ghostIndex,
+    openedModal: clientModel.openedModal,
+    ghostIndex: clientModel.ghostIndex,
   };
 };
 
