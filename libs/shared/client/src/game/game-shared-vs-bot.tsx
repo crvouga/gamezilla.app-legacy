@@ -1,8 +1,8 @@
+import { UserId } from '@gamezilla/shared/app';
 import {
   Avatar,
   Box,
   CircularProgress,
-  IconName,
   Icons,
   MyAvatar,
   MyButton,
@@ -15,7 +15,6 @@ import {
 } from '@gamezilla/shared/ui';
 import { ReactNode } from 'react';
 import { ViewCtx } from '../ctx';
-import { UserId } from '@gamezilla/shared/app';
 import { ViewBottomButtonBar } from './game-shared';
 
 export const ViewVsBotSetupScreen = <BotLevel, PlayerType>({
