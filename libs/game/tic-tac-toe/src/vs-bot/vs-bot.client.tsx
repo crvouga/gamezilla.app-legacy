@@ -1,4 +1,3 @@
-import { Cmd, Posix, Sub } from '@gamezilla/shared/core';
 import {
   Alerts,
   Ctx,
@@ -7,6 +6,12 @@ import {
   ViewVsBotGameScreen,
   ViewVsBotSetupScreen,
 } from '@gamezilla/shared/client';
+import { Cmd, Posix, Sub } from '@gamezilla/shared/core';
+import {
+  IconArrowLeftOnRect,
+  IconArrowRotateLeft,
+  IconRightLeft,
+} from '@gamezilla/shared/ui';
 import {
   BotLevel,
   PlayerType,
@@ -22,11 +27,11 @@ import {
   viewCoverArt,
 } from '../tic-tic-toe/tic-tac-toe-ui';
 import {
-  ServerModel,
   ClientModel,
   ClientMsg,
-  ToServer,
+  ServerModel,
   ToClient,
+  ToServer,
   initSharedModel,
   inputMove,
 } from './vs-bot.shared';
@@ -228,21 +233,21 @@ export const View = ({
   return ViewVsBotGameScreen<PlayerType>({
     leftPlayer: 'X',
     actions: [
-      [
-        'Exit',
-        'exit',
-        () => $send(['stop-game', { userId: ctx.currentUserId }]),
-      ],
-      [
-        'Restart',
-        'restart',
-        () => $send(['restart', { userId: ctx.currentUserId }]),
-      ],
-      [
-        'Swap',
-        'swap',
-        () => $send(['swap-sides', { userId: ctx.currentUserId }]),
-      ],
+      {
+        label: 'Exit',
+        icon: <IconArrowLeftOnRect />,
+        onClick: () => $send(['stop-game', { userId: ctx.currentUserId }]),
+      },
+      {
+        label: 'Restart',
+        icon: <IconArrowRotateLeft />,
+        onClick: () => $send(['restart', { userId: ctx.currentUserId }]),
+      },
+      {
+        label: 'Swap',
+        icon: <IconRightLeft />,
+        onClick: () => $send(['swap-sides', { userId: ctx.currentUserId }]),
+      },
     ],
     ctx,
     botName: model.botLevel,
@@ -254,16 +259,16 @@ export const View = ({
         ? { type: 'winner', winner: gameOver.winner }
         : { type: 'none' },
     gameOverActions: [
-      [
-        'Restart',
-        'restart',
-        () => $send(['restart', { userId: ctx.currentUserId }]),
-      ],
-      [
-        'Exit',
-        'exit',
-        () => $send(['stop-game', { userId: ctx.currentUserId }]),
-      ],
+      {
+        label: 'Exit',
+        icon: <IconArrowLeftOnRect />,
+        onClick: () => $send(['stop-game', { userId: ctx.currentUserId }]),
+      },
+      {
+        label: 'Restart',
+        icon: <IconArrowRotateLeft />,
+        onClick: () => $send(['restart', { userId: ctx.currentUserId }]),
+      },
     ],
     playerUserId: model.player,
     turn: toTurn(model.board),

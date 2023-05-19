@@ -20,3 +20,5 @@ export * from './icon-user-group';
 export * from './icon-users';
 export * from './icon-x-mark';
 export * from './icon-screwdriver-wrench';
+export * from './icon-arrow-rotate-left';
+export * from './icon-right-left';

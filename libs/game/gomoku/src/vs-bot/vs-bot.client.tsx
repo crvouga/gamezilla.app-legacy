@@ -1,10 +1,15 @@
-import { Cmd, Sub } from '@gamezilla/shared/core';
 import {
   Ctx,
   ViewCtx,
   ViewVsBotGameScreen,
   ViewVsBotSetupScreen,
 } from '@gamezilla/shared/client';
+import { Cmd, Sub } from '@gamezilla/shared/core';
+import {
+  IconArrowLeftOnRect,
+  IconArrowRotateLeft,
+  IconRightLeft,
+} from '@gamezilla/shared/ui';
 import {
   BotLevel,
   Stone,
@@ -16,15 +21,14 @@ import {
 } from '../gomoku/gomoku';
 import { ViewBoard, ViewCoverArt, viewStoneIcon } from '../gomoku/gomoku-ui';
 import {
-  ServerModel,
   ClientModel,
   ClientMsg,
-  ToServer,
+  ServerModel,
   ToClient,
+  ToServer,
   handle,
   initShared,
 } from './vs-bot.shared';
-
 //
 //
 //
@@ -204,9 +208,21 @@ export const view = ({
       return ViewVsBotGameScreen<Stone>({
         ctx,
         actions: [
-          ['Exit', 'exit', () => $send({ t: 'stop-game' })],
-          ['Restart', 'restart', () => $send({ t: 'restart' })],
-          ['Swap Sides', 'swap', () => $send({ t: 'swap-sides' })],
+          {
+            label: 'Exit',
+            icon: <IconArrowLeftOnRect />,
+            onClick: () => $send({ t: 'stop-game' }),
+          },
+          {
+            label: 'Restart',
+            icon: <IconArrowRotateLeft />,
+            onClick: () => $send({ t: 'restart' }),
+          },
+          {
+            label: 'Swap',
+            icon: <IconRightLeft />,
+            onClick: () => $send({ t: 'swap-sides' }),
+          },
         ],
         botName: model.botLevel,
         botPlayer: toOppositeStone(model.userStone),
@@ -218,8 +234,16 @@ export const view = ({
             : { type: 'none' },
 
         gameOverActions: [
-          ['Exit', 'exit', () => $send({ t: 'stop-game' })],
-          ['Play Again', 'restart', () => $send({ t: 'restart' })],
+          {
+            label: 'Exit',
+            icon: <IconArrowLeftOnRect />,
+            onClick: () => $send({ t: 'stop-game' }),
+          },
+          {
+            label: 'Restart',
+            icon: <IconArrowRotateLeft />,
+            onClick: () => $send({ t: 'restart' }),
+          },
         ],
         leftPlayer: 'white',
         playerUserId: model.userId,

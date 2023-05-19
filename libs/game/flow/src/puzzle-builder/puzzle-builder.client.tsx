@@ -1,5 +1,5 @@
 import { RoomViewCtx, ViewBottomButtonBar } from '@gamezilla/shared/client';
-import { Cmd, Sub } from '@gamezilla/shared/core';
+import { Cmd } from '@gamezilla/shared/core';
 import { IconArrowLeftOnRect } from '@gamezilla/shared/ui';
 import { FlowGridUI } from '../flow-grid';
 import {
@@ -60,10 +60,6 @@ export const mergeWithServer = ({
   return { ...client_, ...server };
 };
 
-export const subscriptions = (_model: Model): Sub<Msg> => {
-  return Sub.None;
-};
-
 //
 //
 // View
@@ -89,7 +85,9 @@ export const View = ({
         />
       </div>
       <ViewBottomButtonBar
-        actions={[['Exit', <IconArrowLeftOnRect />, onExit]]}
+        actions={[
+          { label: 'Exit', icon: <IconArrowLeftOnRect />, onClick: onExit },
+        ]}
       />
     </div>
   );

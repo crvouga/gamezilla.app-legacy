@@ -16,6 +16,7 @@ import {
 import { ReactNode } from 'react';
 import { ViewCtx } from '../ctx';
 import { UserId } from '@gamezilla/shared/app';
+import { ViewBottomButtonBar } from './game-shared';
 
 export const ViewVsBotSetupScreen = <BotLevel, PlayerType>({
   // title,
@@ -303,27 +304,6 @@ type GameOver<PlayerType> =
       type: 'none';
     };
 
-const ViewBottomButtonBar = ({
-  actions,
-}: {
-  actions: [string, IconName, () => void][];
-}) => {
-  return (
-    <div className="flex items-center border-t border-neutral-700">
-      {actions.map(([label, iconName, onClick]) => (
-        <button
-          key={label}
-          onClick={onClick}
-          className="flex-1 flex flex-col p-1 gap-0.5 text-sm items-center active:opacity-50"
-        >
-          {icon(iconName)}
-          <p className="text-xs">{label}</p>
-        </button>
-      ))}
-    </div>
-  );
-};
-
 export const ViewVsBotGameScreen = <PlayerType,>({
   botPlayer,
   userPlayer,
@@ -346,8 +326,8 @@ export const ViewVsBotGameScreen = <PlayerType,>({
   leftPlayer: PlayerType;
   playerUserId: UserId;
   ctx: ViewCtx;
-  actions: [string, IconName, () => void][];
-  gameOverActions: [string, IconName, () => void][];
+  actions: { label: string; icon: ViewNode; onClick: () => void }[];
+  gameOverActions: { label: string; icon: ViewNode; onClick: () => void }[];
   viewPlayerIcon: (props: { playerType: PlayerType; sx: Sx }) => ViewNode;
   viewBoard: () => ViewNode;
 }) => {

@@ -1,4 +1,3 @@
-import { Cmd, Posix, Sub } from '@gamezilla/shared/core';
 import {
   Alerts,
   Ctx,
@@ -7,6 +6,12 @@ import {
   ViewVsBotGameScreen,
   ViewVsBotSetupScreen,
 } from '@gamezilla/shared/client';
+import { Cmd, Posix, Sub } from '@gamezilla/shared/core';
+import {
+  IconArrowLeftOnRect,
+  IconArrowRotateLeft,
+  IconRightLeft,
+} from '@gamezilla/shared/ui';
 import {
   PlayerType,
   opposite,
@@ -20,12 +25,12 @@ import {
   ViewCoverArt,
 } from '../connect-four/connect-four-ui';
 import {
-  ServerModel,
   BotLevel,
   ClientModel,
   ClientMsg,
-  ToServer,
+  ServerModel,
   ToClient,
+  ToServer,
   botLevel,
   handle,
   initShared,
@@ -296,8 +301,16 @@ export const View = ({
         ? { type: 'winner', winner: status.winner }
         : { type: 'none' },
     gameOverActions: [
-      ['Exit', 'exit', () => $send(['stop-game'])],
-      ['Restart', 'restart', () => $send(['restart'])],
+      {
+        label: 'Exit',
+        icon: <IconArrowLeftOnRect />,
+        onClick: () => $send(['stop-game']),
+      },
+      {
+        label: 'Restart',
+        icon: <IconArrowRotateLeft />,
+        onClick: () => $send(['restart']),
+      },
     ],
     botName: model.botLevel,
     botPlayer: opposite[model.userPlayerType],
@@ -307,9 +320,21 @@ export const View = ({
     userPlayer: model.userPlayerType,
     turn: toTurn(model.columns),
     actions: [
-      ['Stop', 'exit', () => $send(['stop-game'])],
-      ['Restart', 'restart', () => $send(['restart'])],
-      ['Swap', 'swap', () => $send(['swap-sides'])],
+      {
+        label: 'Exit',
+        icon: <IconArrowLeftOnRect />,
+        onClick: () => $send(['stop-game']),
+      },
+      {
+        label: 'Restart',
+        icon: <IconArrowRotateLeft />,
+        onClick: () => $send(['restart']),
+      },
+      {
+        label: 'Swap',
+        icon: <IconRightLeft />,
+        onClick: () => $send(['restart']),
+      },
     ],
     viewPlayerIcon: (props) => <PlayerIcon key={props.playerType} {...props} />,
     viewBoard: () => (
