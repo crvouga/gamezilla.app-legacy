@@ -25,6 +25,7 @@ export type ClientModel =
   | { t: 'maze'; c: Maze.ClientModel }
   | { t: 'flow'; c: Flow.ClientModel };
 
+/** @see {isServerModel} ts-auto-guard:type-guard */
 export type ServerModel =
   | { t: 'tic-tac-toe'; c: TicTacToe.ServerModel }
   | { t: 'connect-four'; c: ConnectFour.ServerModel }

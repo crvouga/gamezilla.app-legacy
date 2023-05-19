@@ -1,5 +1,4 @@
 import { RoomId, UserId } from '@gamezilla/shared/app';
-import { Cmd, RemoteResult, Sub, exhaustive, p } from '@gamezilla/shared/core';
 import {
   Alerts,
   AppMsg,
@@ -8,6 +7,7 @@ import {
   Route,
   ViewCtx,
 } from '@gamezilla/shared/client';
+import { Cmd, RemoteResult, Sub, exhaustive, p } from '@gamezilla/shared/core';
 import {
   ActionButton,
   Avatar,
@@ -15,7 +15,6 @@ import {
   Button,
   ButtonBase,
   Chip,
-  CircularProgress,
   Divider,
   Drawer,
   FillBox,
@@ -38,14 +37,14 @@ import { gameNameToString, viewCoverArt } from './game';
 import * as Game from './game.client';
 import { GameName, gameNameList } from './game.shared';
 import {
-  ServerModel,
   ClientModel,
   ClientMsg,
   ClientRoom,
   Res,
   RoomUser,
-  ToServer,
+  ServerModel,
   ToClient,
+  ToServer,
 } from './room.shared';
 
 //
@@ -823,9 +822,9 @@ const ViewPage = ({
     model.requests.join?.type === 'Loading'
   ) {
     return (
-      <FillBox sx={{ alignItems: 'center', justifyContent: 'center' }}>
-        <CircularProgress />
-      </FillBox>
+      <div className="w-full h-full grid place-items-center">
+        <IconSpinner className="animate-spin w-12 h-12" />
+      </div>
     );
   }
 
@@ -902,21 +901,18 @@ const ViewPage = ({
 
 export const ViewRoomNotFound = ({ ctx }: { ctx: ViewCtx }) => {
   return (
-    <FillBox
-      sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-    >
-      <Typography variant="h5" sx={{ textAlign: 'center', marginBottom: 1 }}>
-        Room not found
-      </Typography>
-      <Button
+    <div className="flex flex-col items-center justify-center flex-1 gap-4">
+      <p className="text-2xl text-center">Room not found</p>
+      <MyButton
         onClick={() => ctx.$push({ t: 'room', c: { t: 'room-list' } })}
-        size="large"
+        size="lg"
         variant="contained"
-        startIcon={<Icons.ChevronLeft />}
+        color="primary"
       >
-        Go Back
-      </Button>
-    </FillBox>
+        <IconHome />
+        Go Home
+      </MyButton>
+    </div>
   );
 };
 

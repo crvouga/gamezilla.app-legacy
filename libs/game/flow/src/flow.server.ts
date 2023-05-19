@@ -1,7 +1,7 @@
-import { Cmd, Sub } from '@gamezilla/shared/core';
-import { ServerModel, ServerMsg, ToServer } from './flow.shared';
+import { Cmd, Err, Ok, Result, Sub } from '@gamezilla/shared/core';
 import { RoomRequestCtx } from '@gamezilla/shared/server';
-import * as ModeBuilderServer from './mode-builder/mode-builder.server';
+import { ServerModel, ServerMsg, ToClient, ToServer } from './flow.shared';
+import { PuzzleBuilderServer } from './puzzle-builder';
 
 type Model = ServerModel;
 
@@ -27,51 +27,47 @@ export const updateFromClient = ({
   msg,
   model,
   ctx,
+  broadcast,
 }: {
   ctx: RoomRequestCtx;
   msg: ToServer;
   model: Model;
+  broadcast: (m: ToClient) => Cmd;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
   if (msg.t === 'input-mode') {
-    return updateInputMode({ msg, ctx, model });
+    const handled = handleInputMode({ mode: msg.mode, ctx });
+    return {
+      model: handled.type === 'Err' ? model : handled.value,
+      cmd: broadcast({ ...msg, result: handled }),
+    };
   }
 
   return { model };
 };
 
-const updateInputMode = ({
-  msg,
-  model,
+const handleInputMode = ({
+  mode,
   ctx,
 }: {
   ctx: RoomRequestCtx;
-  msg: ToServer;
-  model: Model;
-}): {
-  model: Model;
-  cmd?: Cmd<Msg>;
-} => {
-  if (msg.t !== 'input-mode') {
-    return { model };
+  mode: Model['t'];
+}): Result<string, Model> => {
+  if (ctx.hostId !== ctx.currentUserId) {
+    return Err('must-be-host');
   }
 
-  if (msg.mode === 'mode-builder') {
-    return { model: { t: 'mode-builder', c: ModeBuilderServer.init } };
+  if (mode === 'puzzle-builder') {
+    return Ok({ t: 'puzzle-builder', c: PuzzleBuilderServer.init });
   }
 
-  if (msg.mode === 'none') {
-    return { model: { t: 'none' } };
+  if (mode === 'none') {
+    return Ok({ t: 'none' });
   }
 
-  if (ctx.hostId === ctx.currentUserId) {
-    if (msg.mode === 'mode-builder') {
-      return { model };
-    }
-  }
-  return { model };
+  return Err('invalid-mode');
 };
 
 export const subscriptions = (_model: Model): Sub<Msg> => {

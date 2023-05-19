@@ -1,6 +1,5 @@
 import { Result } from '@gamezilla/shared/core';
-import { FlowGridUI } from './flow-grid';
-import * as ModeBuilder from './mode-builder/mode-builder.shared';
+import { PuzzleBuilder } from './puzzle-builder';
 //
 //
 // Model
@@ -8,22 +7,12 @@ import * as ModeBuilder from './mode-builder/mode-builder.shared';
 //
 
 export type ClientModel =
-  | {
-      t: 'none';
-    }
-  | {
-      t: 'mode-builder';
-      c: ModeBuilder.ClientModel;
-    };
+  | { t: 'none' }
+  | { t: 'puzzle-builder'; c: PuzzleBuilder.ClientModel };
 
 export type ServerModel =
-  | {
-      t: 'none';
-    }
-  | {
-      t: 'mode-builder';
-      c: ModeBuilder.ServerModel;
-    };
+  | { t: 'none' }
+  | { t: 'puzzle-builder'; c: PuzzleBuilder.ServerModel };
 
 //
 //
@@ -31,13 +20,17 @@ export type ServerModel =
 //
 //
 
-export type ClientMsg = { t: 'flow-grid-ui'; c: FlowGridUI.Msg };
+export type ClientMsg =
+  | Req
+  | { t: 'puzzle-builder'; c: PuzzleBuilder.ClientMsg };
 
-export type ServerMsg = { t: 'none' };
+export type ServerMsg =
+  | { t: 'none' }
+  | { t: 'puzzle-builder'; c: PuzzleBuilder.ServerMsg };
 
-export type ToServer = Req;
+export type ToServer = Req | { t: 'puzzle-builder'; c: PuzzleBuilder.ToServer };
 
-export type ToClient = Res;
+export type ToClient = Res | { t: 'puzzle-builder'; c: PuzzleBuilder.ToClient };
 
 export type Req = {
   t: 'input-mode';

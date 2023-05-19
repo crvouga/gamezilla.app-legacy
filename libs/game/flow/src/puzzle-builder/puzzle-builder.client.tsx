@@ -1,5 +1,5 @@
-import { Cmd, Sub } from '@gamezilla/shared/core';
 import { RoomViewCtx, ViewBottomButtonBar } from '@gamezilla/shared/client';
+import { Cmd, Sub } from '@gamezilla/shared/core';
 import { IconArrowLeftOnRect } from '@gamezilla/shared/ui';
 import { FlowGridUI } from '../flow-grid';
 import {
@@ -7,11 +7,17 @@ import {
   ClientMsg,
   SharedModel,
   ToClient,
-} from './mode-builder.shared';
+  initShared,
+} from './puzzle-builder.shared';
 
 type Model = ClientModel;
 
 type Msg = ClientMsg;
+
+export const init: Model = {
+  ...initShared,
+  t: 'idle',
+};
 
 export const update = ({
   msg,
@@ -44,16 +50,14 @@ export const updateFromServer = ({
 };
 
 export const mergeWithServer = ({
-  clientModel,
-  serverModel,
+  client,
+  server,
 }: {
-  clientModel: ClientModel;
-  serverModel: SharedModel;
+  client?: ClientModel;
+  server: SharedModel;
 }) => {
-  return {
-    ...clientModel,
-    ...serverModel,
-  };
+  const client_ = client ?? init;
+  return { ...client_, ...server };
 };
 
 export const subscriptions = (_model: Model): Sub<Msg> => {
@@ -68,11 +72,12 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 
 export const View = ({
   model,
-  ctx,
   $send,
+  onExit,
 }: {
   model: Model;
   $send: (m: Msg) => void;
+  onExit: () => void;
   ctx: RoomViewCtx;
 }) => {
   return (
@@ -84,7 +89,7 @@ export const View = ({
         />
       </div>
       <ViewBottomButtonBar
-        actions={[['Quit', <IconArrowLeftOnRect />, ctx.onQuit]]}
+        actions={[['Exit', <IconArrowLeftOnRect />, onExit]]}
       />
     </div>
   );

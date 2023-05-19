@@ -1,6 +1,6 @@
 import { FlowGrid } from '../flow-grid';
 import { bounds8x8 } from '../flow-grid/flow-grid-position';
-import { ServerModel } from './mode-builder.shared';
+import { ServerModel } from './puzzle-builder.shared';
 
 type Model = ServerModel;
 

@@ -350,6 +350,7 @@ export const updateFromClient = ({
         model: model.c,
         msg: msg.c,
         ctx,
+        broadcast: (m) => broadcast({ t: 'flow', c: m }),
       });
       return [
         { t: 'flow', c: updated.model },

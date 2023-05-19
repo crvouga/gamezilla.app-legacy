@@ -1,4 +1,5 @@
 import { FlowGrid, FlowGridUI } from '../flow-grid';
+import { bounds8x8 } from '../flow-grid/flow-grid-position';
 
 //
 //
@@ -13,6 +14,10 @@ export type SharedModel = {
 export type ClientModel = SharedModel & FlowGridUI.Model;
 
 export type ServerModel = SharedModel;
+
+export const initShared: SharedModel = {
+  grid: FlowGrid.initEmpty({ bounds: bounds8x8 }),
+};
 
 //
 //

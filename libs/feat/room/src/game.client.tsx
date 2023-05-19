@@ -207,6 +207,7 @@ export const update = ({
         return [model, Cmd.None];
       }
       const updated = FlowClient.update({
+        sendToServer: (c) => sendToServer({ t: 'flow', c }),
         msg: msg.c,
         model: model.c,
       });
@@ -705,8 +706,8 @@ export const mergeWithServer = ({
           {
             t: 'flow',
             c: FlowClient.mergeWithServer({
-              clientModel: clientModel.c,
-              serverModel: serverModel.c,
+              client: clientModel.c,
+              server: serverModel.c,
             }),
           },
           Cmd.None,
@@ -717,8 +718,8 @@ export const mergeWithServer = ({
         {
           t: 'flow',
           c: FlowClient.mergeWithServer({
-            clientModel: FlowClient.init({}),
-            serverModel: serverModel.c,
+            client: FlowClient.init({}),
+            server: serverModel.c,
           }),
         },
         Cmd.None,

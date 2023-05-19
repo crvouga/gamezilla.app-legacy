@@ -39,7 +39,7 @@ export const MyButton = ({
         combo === 'contained-primary' && 'bg-blue-500 text-white rounded-md',
         combo === 'contained-danger' && 'bg-red-500 text-white rounded-md',
         combo === 'contained-default' &&
-          'bg-white/10 border border-neutral-800 text-blue-500 rounded-md',
+          'bg-neutral-800 border border-neutral-800 text-blue-500 rounded-md',
         combo === 'outlined-default' &&
           'border border-neutral-700 text-inherit rounded-md',
         !disabled && combo === 'text-primary' && 'text-blue-500',
