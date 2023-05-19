@@ -1,5 +1,5 @@
 import { fromShorthand } from './flow-grid-shorthand';
-import { Flow, Color } from '../flow';
+import { Flow, FlowAlgoPath, Color } from '../flow';
 import { positionToId } from './flow-grid';
 import { p } from '@gamezilla/shared/core';
 
@@ -11,7 +11,7 @@ const model = fromShorthand([
 
 describe('flow-grid', () => {
   it('path start is null before path init', () => {
-    const pathStart = Flow.findPathStart(model, Color.fromEmoji('🟡'));
+    const pathStart = FlowAlgoPath.findPathStart(model, Color.fromEmoji('🟡'));
     expect(pathStart).toEqual(null);
   });
   it('should init path start', () => {
@@ -19,8 +19,11 @@ describe('flow-grid', () => {
       color: Color.fromEmoji('🟡'),
       id: positionToId({ x: 0, y: 0 }),
     };
-    const modelNew = Flow.startPath(model, startNode);
-    const pathStart = Flow.findPathStart(modelNew, Color.fromEmoji('🟡'));
+    const modelNew = FlowAlgoPath.startPath(model, startNode);
+    const pathStart = FlowAlgoPath.findPathStart(
+      modelNew,
+      Color.fromEmoji('🟡')
+    );
     expect(pathStart).toEqual(startNode.id);
   });
   it('should extend path', () => {
@@ -30,14 +33,22 @@ describe('flow-grid', () => {
     };
 
     const modelNew = p(
-      Flow.startPath(model, startNode),
+      FlowAlgoPath.startPath(model, startNode),
       (m) =>
-        Flow.extendPath(m, Color.fromEmoji('🟡'), positionToId({ x: 0, y: 1 })),
+        FlowAlgoPath.extendPath(
+          m,
+          Color.fromEmoji('🟡'),
+          positionToId({ x: 0, y: 1 })
+        ),
       (m) =>
-        Flow.extendPath(m, Color.fromEmoji('🟡'), positionToId({ x: 0, y: 2 }))
+        FlowAlgoPath.extendPath(
+          m,
+          Color.fromEmoji('🟡'),
+          positionToId({ x: 0, y: 2 })
+        )
     );
 
-    const actualEndId = Flow.findPathEndId(
+    const actualEndId = FlowAlgoPath.findPathEndId(
       modelNew,
       Color.fromEmoji('🟡'),
       startNode.id

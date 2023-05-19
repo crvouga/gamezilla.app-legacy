@@ -1,4 +1,4 @@
-import { Color, Flow } from '../flow';
+import { Color, Flow, FlowAlgoPath } from '../flow';
 import * as FlowGrid from './flow-grid';
 import * as FlowGridUISvg from './flow-grid-ui.svg';
 
@@ -72,13 +72,13 @@ export const updateModel = ({
 
   if (model.t === 'dragging') {
     if (msg.t === 'dragged-over') {
-      const gridNew = Flow.extendPath(
+      const gridNew = FlowAlgoPath.extendPath(
         model.grid,
         model.activePathColor,
         msg.nodeId
       );
 
-      const autocompleteEdge = Flow.toAutocompleteEdge(
+      const autocompleteEdge = FlowAlgoPath.toAutocompleteEdge(
         gridNew,
         model.activePathColor
       );
@@ -112,7 +112,7 @@ export const updateModel = ({
 
 const addAutocompleteEdge = (model: Model): Model => {
   if (model.t === 'dragging' && model.autocompleteEdge) {
-    const gridNew = Flow.extendPath(
+    const gridNew = FlowAlgoPath.extendPath(
       model.grid,
       model.activePathColor,
       model.autocompleteEdge.to
@@ -141,7 +141,7 @@ const updatePressedDown = ({
   if (Flow.isTerminal(node)) {
     return {
       ...model,
-      grid: Flow.startPath(model.grid, node),
+      grid: FlowAlgoPath.startPath(model.grid, node),
       t: 'dragging',
       activePathColor: node.color,
       autocompleteEdge: null,
@@ -153,7 +153,7 @@ const updatePressedDown = ({
   if (pathColor) {
     return {
       ...model,
-      grid: Flow.extendPath(model.grid, pathColor, node.id),
+      grid: FlowAlgoPath.extendPath(model.grid, pathColor, node.id),
       t: 'dragging',
       autocompleteEdge: null,
       activePathColor: pathColor,
