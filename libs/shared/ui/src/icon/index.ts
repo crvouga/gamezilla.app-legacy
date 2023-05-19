@@ -19,3 +19,4 @@ export * from './icon-user-circle';
 export * from './icon-user-group';
 export * from './icon-users';
 export * from './icon-x-mark';
+export * from './icon-screwdriver-wrench';

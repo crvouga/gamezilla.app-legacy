@@ -1,12 +1,20 @@
 import { UserId } from '@gamezilla/shared/app';
 import { Cmd, Sub } from '@gamezilla/shared/core';
-import { RoomViewCtx, ViewBottomButtonBar } from '@gamezilla/shared/client';
-import { IconArrowLeftOnRect } from '@gamezilla/shared/ui';
+import {
+  RoomViewCtx,
+  ViewBottomButtonBar,
+  ViewMainMenu,
+} from '@gamezilla/shared/client';
+import {
+  IconScrewdriverWrench,
+  IconArrowLeftOnRect,
+} from '@gamezilla/shared/ui';
 import { ClientModel, ClientMsg, ServerModel, ToClient } from './flow.shared';
+import { viewCoverArt } from './flow-cover-art';
 
 type Model = ClientModel;
 
-export const init = ({}: { playerId?: UserId }): Model => {
+export const init = (_args: { playerId?: UserId }): Model => {
   return {
     t: 'none',
   };
@@ -66,6 +74,22 @@ export const View = ({
   $send: (m: Msg) => void;
   ctx: RoomViewCtx;
 }) => {
+  return (
+    <ViewMainMenu
+      coverArt={viewCoverArt()}
+      roomCtx={ctx}
+      title="Flow"
+      buttons={[
+        {
+          icon: <IconScrewdriverWrench />,
+          label: 'Level builder',
+          onClick: () => {
+            //
+          },
+        },
+      ]}
+    />
+  );
   return (
     <div className="w-full h-full flex flex-col items-center justify-center">
       <div className="w-full flex-1 flex flex-col items-center justify-center">
