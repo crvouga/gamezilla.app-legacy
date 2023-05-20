@@ -1,7 +1,7 @@
 import { UserId } from '@gamezilla/shared/app';
 import { Browser, Err, Ok, Result } from '@gamezilla/shared/core';
 import { Flow } from '../flow';
-import { FlowGrid, FlowGridUI } from '../flow-grid';
+import { FlowGrid, FlowGridPlayUI } from '../flow-grid';
 import { bounds8x8 } from '../flow-grid/flow-grid-position';
 import { GroupId } from '../flow/flow';
 
@@ -11,24 +11,26 @@ import { GroupId } from '../flow/flow';
 //
 //
 
-export type SharedModel =
-  | {
-      mode: 'edit-groups';
-      focusedGroupId: Flow.GroupId;
-      grid: FlowGrid.Model;
-    }
-  | {
-      mode: 'play';
-      grid: FlowGrid.Model;
-    };
+export type SharedModel = EditModel | PlayModel;
 
-export type ClientModel = SharedModel & FlowGridUI.Model;
+type EditModel = {
+  mode: 'edit-groups';
+  focusedGroupId: Flow.GroupId;
+  grid: FlowGrid.Model;
+};
+
+type PlayModel = FlowGridPlayUI.Model & {
+  mode: 'play';
+};
+
+export type ClientModel = SharedModel;
 
 export type ServerModel = SharedModel;
 
+const emptyGrid = FlowGrid.initEmpty({ bounds: bounds8x8 });
 export const initShared: SharedModel = {
+  ...FlowGridPlayUI.init(emptyGrid),
   mode: 'play',
-  grid: FlowGrid.initEmpty({ bounds: bounds8x8 }),
 };
 
 //
@@ -38,7 +40,7 @@ export const initShared: SharedModel = {
 //
 
 export type ClientMsg =
-  | FlowGridUI.Msg
+  | FlowGridPlayUI.Msg
   | Req
   | { t: 'scroll-done'; result: Browser.ScrollResult };
 
@@ -109,7 +111,7 @@ const initMode = (
   if (mode === 'play') {
     return {
       mode: 'play',
-      grid: model.grid,
+      ...FlowGridPlayUI.init(model.grid),
     };
   }
 

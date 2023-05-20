@@ -11,7 +11,7 @@ import {
   cn,
 } from '@gamezilla/shared/ui';
 import { Color, Flow, groupIdToColor } from '../flow';
-import { FlowGridUI } from '../flow-grid';
+import { FlowGridPlayUI, FlowGridUI } from '../flow-grid';
 import { GroupId } from '../flow/flow';
 import {
   ClientModel,
@@ -27,10 +27,7 @@ type Model = ClientModel;
 
 type Msg = ClientMsg;
 
-export const init: Model = {
-  ...initShared,
-  t: 'idle',
-};
+export const init: Model = initShared;
 
 const toActiveGroupInputHtmlId = (id: GroupId) => `group-${id}`;
 
@@ -160,7 +157,7 @@ export const View = ({
         <div className="w-full flex-1 gap-3 flex flex-col items-center justify-center">
           <div className="flex-1"></div>
           <div className="flex-1 w-full">
-            <FlowGridUI.View model={model} $send={$send} />
+            <FlowGridPlayUI.View model={model} $send={$send} />
           </div>
           <div className="flex-1"></div>
         </div>
@@ -194,7 +191,7 @@ export const View = ({
         <div className="flex-1"></div>
 
         <div className="flex-1 w-full">
-          <FlowGridUI.View model={model} $send={$send} />
+          <FlowGridUI.View model={model.grid} />
         </div>
 
         <div className="flex-1 flex items-center gap-3 px-4 snap-x w-full overflow-x-auto">
@@ -205,7 +202,9 @@ export const View = ({
                 id={toActiveGroupInputHtmlId(groupId)}
                 className={cn(
                   'snap-mandatory flex items-center justify-center gap-1 flex-col',
-                  model.focusedGroupId === groupId ? '' : 'opacity-50'
+                  model.focusedGroupId === groupId
+                    ? 'text-lg'
+                    : 'opacity-50 text-sm'
                 )}
                 onClick={() => $send({ t: 'input-active-group', groupId })}
               >
