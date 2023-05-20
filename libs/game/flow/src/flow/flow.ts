@@ -1,3 +1,5 @@
+import { removeKey } from '@gamezilla/shared/core';
+
 export type NodeId = string & { readonly __brand: unique symbol };
 
 export type EdgeId = string & { readonly __brand: unique symbol };
@@ -21,7 +23,7 @@ export type GroupId =
   | 'P'
   | 'Q';
 
-export const groupIdOrder: GroupId[] = [
+export const groupIdOrder = [
   'A',
   'B',
   'C',
@@ -39,7 +41,7 @@ export const groupIdOrder: GroupId[] = [
   'O',
   'P',
   'Q',
-];
+] as const;
 
 export const toEdgeId = (edge: Edge): EdgeId => {
   return `${edge.from}-${edge.to}` as EdgeId;
@@ -167,7 +169,7 @@ export const toEdge = (model: Model, edgeId: EdgeId): EdgeFull | null => {
   return { ...edge, nodeFrom, nodeTo };
 };
 
-export const setNode = <T extends Model>(model: T, node: Node): T => {
+export const addNode = <T extends Model>(model: T, node: Node): T => {
   return {
     ...model,
     nodes: {
@@ -199,6 +201,55 @@ export const addEdge = <T extends Model>(model: T, edge: Edge): T => {
       },
     },
   };
+};
+
+export const removeNode = <T extends Model>(model: T, nodeId: NodeId): T => {
+  return {
+    ...model,
+    nodes: removeKey(nodeId, model.nodes),
+  };
+};
+
+export const aaNodeGroup = <T extends Model>(
+  model: T,
+  nodeId: NodeId,
+  groupId: GroupId
+): T => {
+  return addNode(model, { id: nodeId, groupId });
+};
+
+export const removeNodeGroup = <T extends Model>(
+  model: T,
+  nodeId: NodeId
+): T => {
+  return addNode(model, { id: nodeId });
+};
+
+export const isNodeInGroup = (
+  model: Model,
+  nodeId: NodeId,
+  groupId: GroupId
+): boolean => {
+  const node = toNode(model, nodeId);
+  if (node && isTerminal(node) && node.groupId === groupId) {
+    return true;
+  }
+  return false;
+};
+
+export const toggleNodeGroup = <T extends Model>(
+  model: T,
+  nodeId: NodeId,
+  groupId: GroupId
+): T => {
+  if (isNodeInGroup(model, nodeId, groupId)) {
+    return removeNodeGroup(model, nodeId);
+  }
+  return aaNodeGroup(model, nodeId, groupId);
+};
+
+export const includesNode = (model: Model, nodeId: NodeId): boolean => {
+  return nodeId in model.nodes;
 };
 
 export const setEdgeGroup = <T extends Model>(

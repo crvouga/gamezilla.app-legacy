@@ -38,7 +38,7 @@ export const initEmpty = ({ bounds }: { bounds: Bounds }): Model => {
 
   for (const position of yieldRange({ bounds })) {
     const id = positionToId(position);
-    model = Flow.setNode(model, { id });
+    model = Flow.addNode(model, { id });
     model.positions[id] = position;
   }
 
@@ -137,7 +137,7 @@ export const addNode = (
   { groupId, ...position }: Position & { groupId?: GroupId }
 ): Model => {
   const id = positionToId(position);
-  const modelNew = Flow.setNode(model, { groupId: groupId, id });
+  const modelNew = Flow.addNode(model, { groupId: groupId, id });
   return {
     ...modelNew,
     positions: {

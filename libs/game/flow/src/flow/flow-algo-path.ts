@@ -9,7 +9,7 @@ import {
   isStart,
   isTerminal,
   setEdgeGroup,
-  setNode,
+  addNode,
   toEdgeId,
   toNode,
   toGroup,
@@ -33,7 +33,7 @@ export const startPath = <T extends Model>(
     groupId: terminal.groupId,
     type: 'start',
   };
-  return setNode(cleared, startNode);
+  return addNode(cleared, startNode);
 };
 
 const clearEdges = <T extends Model>(model: T, groupId: GroupId): T => {
@@ -51,7 +51,7 @@ const clearTerminalNodes = <T extends Model>(model: T, groupId: GroupId): T => {
 
   for (const terminal of yieldTerminalNodes(model)) {
     if (terminal.groupId === groupId) {
-      modelNew = setNode(modelNew, {
+      modelNew = addNode(modelNew, {
         ...terminal,
         type: null,
       });

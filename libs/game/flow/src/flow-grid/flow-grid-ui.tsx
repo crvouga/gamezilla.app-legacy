@@ -37,7 +37,7 @@ export const init = (grid: FlowGrid.Model): Model => ({
 
 export type Msg =
   | { t: 'dragged-over'; nodeId: Flow.NodeId }
-  | { t: 'pressed-down'; nodeId: Flow.NodeId }
+  | { t: 'pressed-down-node'; nodeId: Flow.NodeId }
   | { t: 'pressed-up'; nodeId: Flow.NodeId }
   | { t: 'mouse-leave' };
 
@@ -63,7 +63,7 @@ export const updateModel = ({
   model: Model;
 }): Model => {
   if (model.t === 'idle') {
-    if (msg.t === 'pressed-down') {
+    if (msg.t === 'pressed-down-node') {
       return updatePressedDown({ model, nodeId: msg.nodeId });
     }
 
@@ -90,7 +90,7 @@ export const updateModel = ({
       };
     }
 
-    if (msg.t === 'pressed-down') {
+    if (msg.t === 'pressed-down-node') {
       return updatePressedDown({ model, nodeId: msg.nodeId });
     }
 

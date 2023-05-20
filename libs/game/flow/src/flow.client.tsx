@@ -1,5 +1,5 @@
 import { UserId } from '@gamezilla/shared/app';
-import { RoomViewCtx, ViewMainMenu } from '@gamezilla/shared/client';
+import { RoomCtx, RoomViewCtx, ViewMainMenu } from '@gamezilla/shared/client';
 import { Cmd, Sub } from '@gamezilla/shared/core';
 import { IconScrewdriverWrench } from '@gamezilla/shared/ui';
 import { viewCoverArt } from './flow-cover-art';
@@ -26,7 +26,9 @@ export const update = ({
   model,
   msg,
   sendToServer,
+  ctx,
 }: {
+  ctx: RoomCtx;
   msg: Msg;
   model: Model;
   sendToServer: (m: ToServer) => Cmd;
@@ -36,8 +38,10 @@ export const update = ({
 } => {
   if (model.t === 'puzzle-builder' && msg.t === 'puzzle-builder') {
     const updated = PuzzleBuilderClient.update({
+      ctx,
       msg: msg.c,
       model: model.c,
+      sendToServer: (c) => sendToServer({ t: 'puzzle-builder', c }),
     });
     return {
       model: { t: 'puzzle-builder', c: updated.model },

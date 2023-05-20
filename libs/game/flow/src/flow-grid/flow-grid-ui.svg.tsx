@@ -224,7 +224,7 @@ export const View = ({
               height={1}
               fill={'transparent'}
               onMouseDown={() => {
-                $send({ t: 'pressed-down', nodeId });
+                $send({ t: 'pressed-down-node', nodeId });
               }}
               onMouseUp={() => {
                 $send({ t: 'pressed-up', nodeId });
@@ -236,7 +236,7 @@ export const View = ({
                 $send({ t: 'dragged-over', nodeId: node.id });
               }}
               onTouchStart={() => {
-                $send({ t: 'pressed-down', nodeId });
+                // $send({ t: 'pressed-down-node', nodeId });
               }}
               onTouchCancel={() => {
                 $send({ t: 'pressed-up', nodeId });

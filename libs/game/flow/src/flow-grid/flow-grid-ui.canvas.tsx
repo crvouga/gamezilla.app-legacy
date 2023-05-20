@@ -187,7 +187,7 @@ export const View = ({
           model.t === 'dragging' ? 'cursor-grabbing' : 'cursor-grab'
         )}
         onMouseLeave={handleMouse({ model, $send, t: 'mouse-leave' })}
-        onMouseDown={handleMouse({ model, $send, t: 'pressed-down' })}
+        onMouseDown={handleMouse({ model, $send, t: 'pressed-down-node' })}
         onMouseUp={handleMouse({ model, $send, t: 'pressed-up' })}
         onMouseMove={
           model.t === 'dragging'
@@ -206,7 +206,7 @@ export const View = ({
             : undefined
         }
         //
-        onTouchStart={handleTouch({ model, $send, t: 'pressed-down' })}
+        onTouchStart={handleTouch({ model, $send, t: 'pressed-down-node' })}
         //
         onTouchCancel={handleTouch({ model, $send, t: 'pressed-up' })}
         //

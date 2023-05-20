@@ -207,6 +207,7 @@ export const update = ({
         return [model, Cmd.None];
       }
       const updated = FlowClient.update({
+        ctx,
         sendToServer: (c) => sendToServer({ t: 'flow', c }),
         msg: msg.c,
         model: model.c,

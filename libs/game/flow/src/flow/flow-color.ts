@@ -137,76 +137,12 @@ export const Emoji = {
   toHex: emojiToHex,
 };
 
-const hexToRgb = (hex: string) => ({
-  r: parseInt(hex.substring(1, 3), 16),
-  g: parseInt(hex.substring(3, 5), 16),
-  b: parseInt(hex.substring(5, 7), 16),
-});
-
-const toColorDistance = (color1: string, color2: string) => {
-  const rgb1 = hexToRgb(color1);
-  const rgb2 = hexToRgb(color2);
-
-  const distance = Math.sqrt(
-    Math.pow(rgb1.r - rgb2.r, 2) +
-      Math.pow(rgb1.g - rgb2.g, 2) +
-      Math.pow(rgb1.b - rgb2.b, 2)
-  );
-
-  return distance;
-};
-
-const toColorOrder = (startingColor: Color): Color[] => {
-  const order: Color[] = [startingColor];
-
-  while (order.length < allColors.length) {
-    const furthestColor = allColors.reduce<Color | null>((acc, color) => {
-      if (acc === null) {
-        return color;
-      }
-
-      if (order.includes(color)) {
-        return acc;
-      }
-
-      const latestColor = order[order.length - 1];
-
-      if (!latestColor) {
-        return acc;
-      }
-
-      const distanceAcc = toColorDistance(
-        colorToHex(acc),
-        colorToHex(latestColor)
-      );
-      const distance = toColorDistance(
-        colorToHex(color),
-        colorToHex(latestColor)
-      );
-
-      if (distanceAcc > distance) {
-        return acc;
-      }
-
-      return color;
-    }, null);
-
-    if (!furthestColor) {
-      break;
-    }
-
-    order.push(furthestColor);
-  }
-
-  return order;
-};
-
 export const Color = {
   is: isColor,
   fromEmoji: emojiToColor,
   all: allColors,
   toHex: colorToHex,
-  toOrder: toColorOrder,
+  groupIdToColor,
   groupIdToHex: (groupId: GroupId): string => {
     return colorToHex(groupIdToColor[groupId]);
   },

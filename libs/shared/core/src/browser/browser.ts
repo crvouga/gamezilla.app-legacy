@@ -105,15 +105,21 @@ export const focus =
     return Result.Err({ type: 'ElementNotFound' });
   };
 
+export type ScrollResult = Result<Problem, null>;
+
 export const scrollIntoView =
-  (htmlId: string): Task<FocusResult> =>
+  (htmlId: string): Task<ScrollResult> =>
   async () => {
     await new Promise((resolve) => setTimeout(resolve, 0));
 
     const element = document.getElementById(htmlId);
 
     if (element) {
-      element.scrollIntoView({ behavior: 'auto' });
+      element.scrollIntoView({
+        behavior: 'auto',
+        // block: 'center',
+        inline: 'center',
+      });
 
       return Result.Ok(null);
     }
