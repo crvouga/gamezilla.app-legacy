@@ -1,6 +1,7 @@
 import { RoomViewCtx, ViewBottomButtonBar } from '@gamezilla/shared/client';
 import { Cmd } from '@gamezilla/shared/core';
 import { IconArrowLeftOnRect } from '@gamezilla/shared/ui';
+import { Color } from '../flow';
 import { FlowGridUI } from '../flow-grid';
 import {
   ClientModel,
@@ -78,17 +79,34 @@ export const View = ({
 }) => {
   return (
     <div className="w-full h-full flex flex-col items-center justify-center">
-      <div className="w-full flex-1 flex flex-col items-center justify-center">
+      <div className="w-full flex-1 gap-3 flex flex-col items-center justify-center">
         <FlowGridUI.View
           model={model}
           $send={(c) => $send({ t: 'flow-grid-ui', c })}
         />
+        <ViewColorSelector />
       </div>
       <ViewBottomButtonBar
         actions={[
           { label: 'Exit', icon: <IconArrowLeftOnRect />, onClick: onExit },
         ]}
       />
+    </div>
+  );
+};
+
+const ViewColorSelector = () => {
+  return (
+    <div className="flex items-center gap-2 pl-2 snap-x w-full overflow-x-auto">
+      {Color.toOrder('red').map((color) => {
+        return (
+          <div key={color} className="snap-mandatory">
+            <svg viewBox="-1 -1 2 2" className="w-14 h-14">
+              <circle cx={0} cy={0} r={1} fill={Color.toHex(color)} />
+            </svg>
+          </div>
+        );
+      })}
     </div>
   );
 };
