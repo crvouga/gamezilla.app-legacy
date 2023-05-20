@@ -1,8 +1,45 @@
-import { Color } from './flow-color';
-
 export type NodeId = string & { readonly __brand: unique symbol };
 
 export type EdgeId = string & { readonly __brand: unique symbol };
+
+export type GroupId =
+  | 'A'
+  | 'B'
+  | 'C'
+  | 'D'
+  | 'E'
+  | 'F'
+  | 'G'
+  | 'H'
+  | 'I'
+  | 'J'
+  | 'K'
+  | 'L'
+  | 'M'
+  | 'N'
+  | 'O'
+  | 'P'
+  | 'Q';
+
+export const groupIdOrder: GroupId[] = [
+  'A',
+  'B',
+  'C',
+  'D',
+  'E',
+  'F',
+  'G',
+  'H',
+  'I',
+  'J',
+  'K',
+  'L',
+  'M',
+  'N',
+  'O',
+  'P',
+  'Q',
+];
 
 export const toEdgeId = (edge: Edge): EdgeId => {
   return `${edge.from}-${edge.to}` as EdgeId;
@@ -49,14 +86,14 @@ export type Model = {
 export type Edge = {
   from: NodeId;
   to: NodeId;
-  pathColor?: Color | null;
+  groupId?: GroupId | null;
 };
 
 export type Node = TerminalNode | EmptyNode;
 
 export type TerminalNode = {
   id: NodeId;
-  color: Color;
+  groupId: GroupId;
   type?: 'start' | null;
 };
 
@@ -65,7 +102,7 @@ export type EmptyNode = {
 };
 
 export const isTerminal = (node: Node): node is TerminalNode => {
-  return 'color' in node;
+  return 'groupId' in node;
 };
 
 export const isStart = (node: Node): node is TerminalNode => {
@@ -164,10 +201,10 @@ export const addEdge = <T extends Model>(model: T, edge: Edge): T => {
   };
 };
 
-export const setEdgePathColor = <T extends Model>(
+export const setEdgeGroup = <T extends Model>(
   model: T,
   edgeId: EdgeId,
-  pathColor: Color | null
+  groupId: GroupId | null
 ): T => {
   const edge = model.edges[edgeId];
 
@@ -181,7 +218,7 @@ export const setEdgePathColor = <T extends Model>(
       ...model.edges,
       [edgeId]: {
         ...edge,
-        pathColor: pathColor,
+        groupId: groupId,
       },
     },
   };
@@ -263,7 +300,7 @@ export const findEndNode = (
       continue;
     }
 
-    if (node.color === start.color) {
+    if (node.groupId === start.groupId) {
       return node;
     }
   }
@@ -320,7 +357,7 @@ export const yieldInEdges = function* (
     yield edge;
   }
 };
-export const doesColoredPathExist = (
+export const doesPathExist = (
   model: Model,
   nodeId: NodeId,
   target: TerminalNode,
@@ -337,11 +374,11 @@ export const doesColoredPathExist = (
   }
 
   for (const outEdge of yieldOutEdges(model, nodeId)) {
-    if (outEdge.pathColor !== target.color) {
+    if (outEdge.groupId !== target.groupId) {
       continue;
     }
 
-    if (doesColoredPathExist(model, outEdge.to, target, visited)) {
+    if (doesPathExist(model, outEdge.to, target, visited)) {
       return true;
     }
   }
@@ -349,16 +386,16 @@ export const doesColoredPathExist = (
   return false;
 };
 
-export const toPathColor = (model: Model, nodeId: NodeId): Color | null => {
+export const toGroup = (model: Model, nodeId: NodeId): GroupId | null => {
   for (const edge of yieldInEdges(model, nodeId)) {
-    if (edge.pathColor) {
-      return edge.pathColor;
+    if (edge.groupId) {
+      return edge.groupId;
     }
   }
 
   for (const edge of yieldOutEdges(model, nodeId)) {
-    if (edge.pathColor) {
-      return edge.pathColor;
+    if (edge.groupId) {
+      return edge.groupId;
     }
   }
 

@@ -8,49 +8,49 @@ import {
   TerminalNode,
   isStart,
   isTerminal,
-  setEdgePathColor,
+  setEdgeGroup,
   setNode,
   toEdgeId,
   toNode,
-  toPathColor,
+  toGroup,
   yieldEdges,
   yieldInEdges,
   yieldOutEdges,
   yieldTerminalNodes,
+  GroupId,
 } from './flow';
-import { Color } from './flow-color';
 
 export const startPath = <T extends Model>(
   model: T,
   terminal: TerminalNode
 ): T => {
   const cleared = clearEdges(
-    clearTerminalNodes(model, terminal.color),
-    terminal.color
+    clearTerminalNodes(model, terminal.groupId),
+    terminal.groupId
   );
   const startNode: TerminalNode = {
     id: terminal.id,
-    color: terminal.color,
+    groupId: terminal.groupId,
     type: 'start',
   };
   return setNode(cleared, startNode);
 };
 
-const clearEdges = <T extends Model>(model: T, color: Color): T => {
+const clearEdges = <T extends Model>(model: T, groupId: GroupId): T => {
   let modelNew: T = { ...model };
   for (const edge of yieldEdges(model)) {
-    if (edge.pathColor === color) {
-      modelNew = setEdgePathColor(modelNew, toEdgeId(edge), null);
+    if (edge.groupId === groupId) {
+      modelNew = setEdgeGroup(modelNew, toEdgeId(edge), null);
     }
   }
   return modelNew;
 };
 
-const clearTerminalNodes = <T extends Model>(model: T, color: Color): T => {
+const clearTerminalNodes = <T extends Model>(model: T, groupId: GroupId): T => {
   let modelNew: T = model;
 
   for (const terminal of yieldTerminalNodes(model)) {
-    if (terminal.color === color) {
+    if (terminal.groupId === groupId) {
       modelNew = setNode(modelNew, {
         ...terminal,
         type: null,
@@ -71,11 +71,12 @@ const clearTerminalNodes = <T extends Model>(model: T, color: Color): T => {
 
 export const extendPath = <T extends Model>(
   model: T,
-  pathColor: Color,
+  groupId: GroupId,
   targetNodeId: NodeId
 ): T => {
-  const targetNodePathColor = toPathColor(model, targetNodeId);
-  if (targetNodePathColor && targetNodePathColor !== pathColor) {
+  const targetNodeGroupId = toGroup(model, targetNodeId);
+
+  if (targetNodeGroupId && targetNodeGroupId !== groupId) {
     return model;
   }
 
@@ -85,21 +86,21 @@ export const extendPath = <T extends Model>(
     return model;
   }
 
-  if (isTerminal(node) && node.color !== pathColor) {
+  if (isTerminal(node) && node.groupId !== groupId) {
     return model;
   }
 
-  const pathStart = findPathStart(model, pathColor);
+  const pathStart = findGroupStart(model, groupId);
 
   if (!pathStart) {
     return model;
   }
 
-  const modelWithoutPath = clearEdges(model, pathColor);
+  const modelWithoutPath = clearEdges(model, groupId);
 
   const walked = extendPathWalk({
     targetNodeId,
-    pathColor,
+    groupId,
     modelWithPath: model,
     model: modelWithoutPath,
     currentNode: pathStart,
@@ -110,13 +111,13 @@ export const extendPath = <T extends Model>(
 
 const extendPathWalk = <T extends Model>({
   targetNodeId,
-  pathColor,
+  groupId,
   modelWithPath,
   model,
   currentNode,
 }: {
   targetNodeId: NodeId;
-  pathColor: Color;
+  groupId: GroupId;
   modelWithPath: T;
   model: T;
   currentNode: Node;
@@ -129,10 +130,10 @@ const extendPathWalk = <T extends Model>({
     return model;
   }
 
-  const edge = findOutEdgeByPathColor({
+  const edge = findOutEdgeByGroupId({
     model: modelWithPath,
     nodeId: currentNode.id,
-    pathColor: pathColor,
+    groupId: groupId,
   });
 
   if (!edge) {
@@ -143,24 +144,24 @@ const extendPathWalk = <T extends Model>({
     });
 
     const updated = shortestPath.reduce(
-      (acc, edgeId) => setEdgePathColor(acc, edgeId, pathColor),
+      (acc, edgeId) => setEdgeGroup(acc, edgeId, groupId),
       model
     );
 
     return updated;
   }
 
-  if (hasPathColor(model, edge.to)) {
+  if (isInGroup(model, edge.to)) {
     return model;
   }
 
   const edgeId = toEdgeId({ from: currentNode.id, to: edge.to });
 
-  const updated = setEdgePathColor(model, edgeId, pathColor);
+  const updated = setEdgeGroup(model, edgeId, groupId);
 
   return extendPathWalk({
     modelWithPath,
-    pathColor,
+    groupId: groupId,
     targetNodeId,
     currentNode: edge.nodeTo,
     model: updated,
@@ -208,14 +209,11 @@ const findShortestEmptyPath = ({
         continue;
       }
 
-      if (hasPathColor(model, adjacent.id)) {
+      if (isInGroup(model, adjacent.id)) {
         continue;
       }
 
-      if (
-        isTerminal(adjacent) &&
-        adjacent.color !== toPathColor(model, start)
-      ) {
+      if (isTerminal(adjacent) && adjacent.groupId !== toGroup(model, start)) {
         continue;
       }
 
@@ -269,15 +267,15 @@ const findShortestEmptyPath = ({
   return path;
 };
 
-export const hasPathColor = (model: Model, nodeId: NodeId): boolean => {
+export const isInGroup = (model: Model, nodeId: NodeId): boolean => {
   for (const edge of yieldOutEdges(model, nodeId)) {
-    if (edge.pathColor) {
+    if (edge.groupId) {
       return true;
     }
   }
 
   for (const edge of yieldInEdges(model, nodeId)) {
-    if (edge.pathColor) {
+    if (edge.groupId) {
       return true;
     }
   }
@@ -285,39 +283,39 @@ export const hasPathColor = (model: Model, nodeId: NodeId): boolean => {
   return false;
 };
 
-const findOutEdgeByPathColor = <T extends Model>({
+const findOutEdgeByGroupId = <T extends Model>({
   model,
   nodeId,
-  pathColor,
+  groupId,
 }: {
   model: T;
   nodeId: NodeId;
-  pathColor: Color;
+  groupId: GroupId;
 }): EdgeFull | null => {
   for (const outEdge of yieldOutEdges(model, nodeId)) {
-    if (outEdge.pathColor === pathColor) {
+    if (outEdge.groupId === groupId) {
       return outEdge;
     }
   }
   return null;
 };
 
-export const findPathStart = (model: Model, color: Color): Node | null => {
+export const findGroupStart = (model: Model, groupId: GroupId): Node | null => {
   for (const terminal of yieldTerminalNodes(model)) {
-    if (terminal.color === color && terminal.type === 'start') {
+    if (terminal.groupId === groupId && terminal.type === 'start') {
       return terminal;
     }
   }
   return null;
 };
 
-export const findPathEndId = (
+export const findGroupEnd = (
   model: Model,
-  pathColor: Color,
+  groupId: GroupId,
   nodeId: NodeId
 ): NodeId => {
   for (const outEdge of yieldOutEdges(model, nodeId)) {
-    if (outEdge.pathColor !== pathColor) {
+    if (outEdge.groupId !== groupId) {
       continue;
     }
 
@@ -325,7 +323,7 @@ export const findPathEndId = (
       return nodeId;
     }
 
-    return findPathEndId(model, pathColor, outEdge.to);
+    return findGroupEnd(model, groupId, outEdge.to);
   }
 
   return nodeId;
@@ -341,22 +339,22 @@ export const findPathEndId = (
 
 export const toAutocompleteEdge = (
   model: Model,
-  pathColor: Color
+  groupId: GroupId
 ): Edge | null => {
-  const pathStart = findPathStart(model, pathColor);
+  const pathStart = findGroupStart(model, groupId);
 
   if (!pathStart) {
     return null;
   }
 
-  const pathEndId = findPathEndId(model, pathColor, pathStart.id);
+  const pathEndId = findGroupEnd(model, groupId, pathStart.id);
 
   if (!pathEndId) {
     return null;
   }
 
   for (const edge of yieldOutEdges(model, pathEndId)) {
-    if (isTerminal(edge.nodeTo) && edge.nodeTo.color === pathColor) {
+    if (isTerminal(edge.nodeTo) && edge.nodeTo.groupId === groupId) {
       return edge;
     }
   }

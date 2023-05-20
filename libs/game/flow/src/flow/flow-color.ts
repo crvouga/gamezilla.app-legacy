@@ -1,3 +1,5 @@
+import { GroupId } from './flow';
+
 // source: https://tailwindcss.com/docs/customizing-colors
 const colorToHexMap = {
   red: '#FE0500',
@@ -18,6 +20,26 @@ const colorToHexMap = {
   pink: '#ec4899',
   rose: '#e11d48',
 } as const;
+
+export const groupIdToColor: { [groupId in GroupId]: Color } = {
+  A: 'red',
+  B: 'blue',
+  C: 'yellow',
+  D: 'green',
+  E: 'pink',
+  F: 'orange',
+  G: 'purple',
+  H: 'amber',
+  I: 'lime',
+  J: 'emerald',
+  K: 'teal',
+  L: 'cyan',
+  M: 'sky',
+  N: 'indigo',
+  O: 'violet',
+  P: 'fuchsia',
+  Q: 'rose',
+};
 
 const colorToHex = (color: Color): string => {
   return colorToHexMap[color];

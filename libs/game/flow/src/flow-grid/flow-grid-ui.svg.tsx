@@ -56,10 +56,10 @@ export const View = ({
       */}
       <g>
         {map(FlowGrid.yieldNodes(model.grid), (node) => {
-          const pathColor = Flow.toPathColor(model.grid, node.id);
+          const pathColor = Flow.toGroup(model.grid, node.id);
           const fill = !pathColor
             ? 'transparent'
-            : model.t === 'dragging' && model.activePathColor === pathColor
+            : model.t === 'dragging' && model.activeGroupId === pathColor
             ? 'transparent'
             : Color.toHex(pathColor);
           return (
@@ -137,11 +137,11 @@ export const View = ({
 
           return (
             <ViewTerminalNode
-              color={node.color}
+              color={node.groupId}
               x={node.x}
               y={node.y}
               isActive={
-                model.t === 'dragging' && model.activePathColor === node.color
+                model.t === 'dragging' && model.activeGroupId === node.groupId
               }
               key={node.id}
             />
@@ -163,7 +163,7 @@ export const View = ({
             y1={autocompleteEdge.nodeFrom.y}
             x2={autocompleteEdge.nodeTo.x}
             y2={autocompleteEdge.nodeTo.y}
-            stroke={Color.toHex(model.activePathColor)}
+            stroke={Color.toHex(model.activeGroupId)}
             strokeWidth={EDGE_STROKE_WIDTH}
             strokeOpacity={0.5}
           />
@@ -179,7 +179,7 @@ export const View = ({
       */}
       <g transform="translate(0.5, 0.5)">
         {map(FlowGrid.yieldEdges(model.grid), (edge) => {
-          if (!edge.pathColor) {
+          if (!edge.groupId) {
             return null;
           }
           return (
@@ -189,14 +189,14 @@ export const View = ({
                 y1={edge.nodeFrom.y}
                 x2={edge.nodeTo.x}
                 y2={edge.nodeTo.y}
-                stroke={Color.toHex(edge.pathColor)}
+                stroke={Color.toHex(edge.groupId)}
                 strokeWidth={EDGE_STROKE_WIDTH}
               />
               <circle
                 cx={edge.nodeTo.x}
                 cy={edge.nodeTo.y}
                 r={EDGE_STROKE_WIDTH / 2}
-                fill={Color.toHex(edge.pathColor)}
+                fill={Color.toHex(edge.groupId)}
               />
             </g>
           );

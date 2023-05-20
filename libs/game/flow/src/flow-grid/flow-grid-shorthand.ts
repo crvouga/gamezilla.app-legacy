@@ -1,17 +1,17 @@
 import { NonEmpty } from '@gamezilla/shared/core';
-import { Color, Emoji } from '../flow';
+import { GroupId } from '../flow/flow';
 import * as FlowGrid from './flow-grid';
 import { Position } from './flow-grid-position';
 
-export type Model = NonEmpty<NonEmpty<string | null>>;
+export type Model = NonEmpty<NonEmpty<GroupId | null>>;
 
 export const fromShorthandNode = (
-  node: Position & { color: Emoji }
+  node: Position & { groupId: GroupId }
 ): FlowGrid.Node => {
   return {
     ...node,
     id: FlowGrid.positionToId(node),
-    color: Color.fromEmoji(node.color),
+    groupId: node.groupId,
   };
 };
 
@@ -37,26 +37,16 @@ export const fromShorthand = (model: Model): FlowGrid.Model => {
     }
 
     for (let x = 0; x < row.length; x++) {
-      const emoji = row[x];
+      const groupId = row[x];
 
-      if (!emoji) {
-        continue;
-      }
-
-      if (!Emoji.is(emoji)) {
-        continue;
-      }
-
-      const color = Color.fromEmoji(emoji);
-
-      if (!color) {
+      if (!groupId) {
         continue;
       }
 
       grid = FlowGrid.addNode(grid, {
         x,
         y,
-        color,
+        groupId,
       });
     }
   }
@@ -69,28 +59,28 @@ export type Size = '5x5' | '6x6' | '7x7' | '8x8';
 export const samples = {
   '5x5': {
     '1': fromShorthand([
-      [null, '🟡', '🔵', null, null],
-      [null, '🟢', null, null, null],
-      [null, '🟡', '🔴', null, null],
-      ['🟢', '🔴', null, null, null],
-      [null, null, null, null, '🔵'],
+      [null, 'C', 'B', null, null],
+      [null, 'D', null, null, null],
+      [null, 'C', 'A', null, null],
+      ['D', 'A', null, null, null],
+      [null, null, null, null, 'B'],
     ]),
     '2': fromShorthand([
-      ['🔴', null, '🟢', null, '🟡'],
-      [null, null, '🔵', null, '🟠'],
+      ['A', null, 'D', null, 'C'],
+      [null, null, 'B', null, 'E'],
       [null, null, null, null, null],
-      [null, '🟢', null, '🟡', null],
-      [null, '🔴', '🔵', '🟠', null],
+      [null, 'D', null, 'C', null],
+      [null, 'A', 'B', 'E', null],
     ]),
   },
   '6x6': {
     '1': fromShorthand([
-      [null, null, null, null, null, '🟠'],
-      [null, '🟢', null, '🔵', '🟡', null],
+      [null, null, null, null, null, 'E'],
+      [null, 'D', null, 'B', 'C', null],
       [null, null, null, null, null, null],
-      ['🔴', null, null, null, null, null],
-      [null, null, '🟠', '🟢', '🔵', null],
-      [null, null, null, '🔴', '🟡', null],
+      ['A', null, null, null, null, null],
+      [null, null, 'E', 'D', 'B', null],
+      [null, null, null, 'A', 'C', null],
     ]),
   },
   '7x7': {},

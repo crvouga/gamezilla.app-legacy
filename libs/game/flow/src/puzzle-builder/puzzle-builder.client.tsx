@@ -1,7 +1,7 @@
 import { RoomViewCtx, ViewBottomButtonBar } from '@gamezilla/shared/client';
 import { Cmd } from '@gamezilla/shared/core';
 import { IconArrowLeftOnRect } from '@gamezilla/shared/ui';
-import { Color } from '../flow';
+import { Color, Flow, groupIdToColor } from '../flow';
 import { FlowGridUI } from '../flow-grid';
 import {
   ClientModel,
@@ -97,12 +97,17 @@ export const View = ({
 
 const ViewColorSelector = () => {
   return (
-    <div className="flex items-center gap-2 pl-2 snap-x w-full overflow-x-auto">
-      {Color.toOrder('red').map((color) => {
+    <div className="flex items-center gap-3 px-4 snap-x w-full overflow-x-auto">
+      {Flow.groupIdOrder.map((groupId) => {
         return (
-          <div key={color} className="snap-mandatory">
+          <div key={groupId} className="snap-mandatory">
             <svg viewBox="-1 -1 2 2" className="w-14 h-14">
-              <circle cx={0} cy={0} r={1} fill={Color.toHex(color)} />
+              <circle
+                cx={0}
+                cy={0}
+                r={1}
+                fill={Color.toHex(groupIdToColor[groupId])}
+              />
             </svg>
           </div>
         );

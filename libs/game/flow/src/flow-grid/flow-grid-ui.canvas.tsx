@@ -1,7 +1,7 @@
 import { rescale } from '@gamezilla/shared/core';
 import { cn } from '@gamezilla/shared/ui';
 import { useLayoutEffect, useRef } from 'react';
-import { Color, Flow } from '../flow';
+import { Color, Flow, groupIdToColor } from '../flow';
 import * as FlowGrid from './flow-grid';
 import * as FlowGridPosition from './flow-grid-position';
 import { Model, Msg } from './flow-grid-ui';
@@ -41,9 +41,9 @@ export const paint = (ctx: CanvasRenderingContext2D, model: Model) => {
   for (const position of FlowGrid.yieldPositions(grid)) {
     const nodeId = FlowGrid.positionToId(position);
 
-    const nodeColor = Flow.toPathColor(grid, nodeId);
+    const groupId = Flow.toGroup(grid, nodeId);
 
-    if (!nodeColor) {
+    if (!groupId) {
       continue;
     }
 
@@ -52,7 +52,7 @@ export const paint = (ctx: CanvasRenderingContext2D, model: Model) => {
     // }
 
     ctx.globalAlpha = 0.2;
-    ctx.fillStyle = Color.toHex(nodeColor);
+    ctx.fillStyle = Color.toHex(groupIdToColor[groupId]);
     ctx.fillRect(
       position.x * squareLength,
       position.y * squareLength,
@@ -67,7 +67,7 @@ export const paint = (ctx: CanvasRenderingContext2D, model: Model) => {
   //
 
   for (const edge of FlowGrid.yieldEdges(grid)) {
-    if (!edge.pathColor) {
+    if (!edge.groupId) {
       continue;
     }
 
@@ -75,7 +75,7 @@ export const paint = (ctx: CanvasRenderingContext2D, model: Model) => {
     // Line
     //
 
-    ctx.strokeStyle = Color.toHex(edge.pathColor);
+    ctx.strokeStyle = Color.toHex(groupIdToColor[edge.groupId]);
     ctx.lineWidth = squareLength / 4;
     ctx.beginPath();
     ctx.moveTo(
@@ -101,7 +101,7 @@ export const paint = (ctx: CanvasRenderingContext2D, model: Model) => {
       0,
       2 * Math.PI
     );
-    ctx.fillStyle = Color.toHex(edge.pathColor);
+    ctx.fillStyle = Color.toHex(groupIdToColor[edge.groupId]);
     ctx.fill();
     ctx.closePath();
   }
@@ -114,7 +114,7 @@ export const paint = (ctx: CanvasRenderingContext2D, model: Model) => {
       continue;
     }
 
-    ctx.fillStyle = Color.toHex(node.color);
+    ctx.fillStyle = Color.toHex(groupIdToColor[node.groupId]);
 
     ctx.beginPath();
     ctx.arc(

@@ -1,4 +1,4 @@
-import { Color, Flow, FlowAlgoPath } from '../flow';
+import { Flow, FlowAlgoPath } from '../flow';
 import * as FlowGrid from './flow-grid';
 import * as FlowGridUISvg from './flow-grid-ui.svg';
 
@@ -18,7 +18,7 @@ type State =
   | { t: 'idle' }
   | {
       t: 'dragging';
-      activePathColor: Color;
+      activeGroupId: Flow.GroupId;
       autocompleteEdge?: Flow.Edge | null;
     };
 
@@ -74,13 +74,13 @@ export const updateModel = ({
     if (msg.t === 'dragged-over') {
       const gridNew = FlowAlgoPath.extendPath(
         model.grid,
-        model.activePathColor,
+        model.activeGroupId,
         msg.nodeId
       );
 
       const autocompleteEdge = FlowAlgoPath.toAutocompleteEdge(
         gridNew,
-        model.activePathColor
+        model.activeGroupId
       );
 
       return {
@@ -114,7 +114,7 @@ const addAutocompleteEdge = (model: Model): Model => {
   if (model.t === 'dragging' && model.autocompleteEdge) {
     const gridNew = FlowAlgoPath.extendPath(
       model.grid,
-      model.activePathColor,
+      model.activeGroupId,
       model.autocompleteEdge.to
     );
     return {
@@ -143,12 +143,12 @@ const updatePressedDown = ({
       ...model,
       grid: FlowAlgoPath.startPath(model.grid, node),
       t: 'dragging',
-      activePathColor: node.color,
+      activeGroupId: node.groupId,
       autocompleteEdge: null,
     };
   }
 
-  const pathColor = Flow.toPathColor(model.grid, nodeId);
+  const pathColor = Flow.toGroup(model.grid, nodeId);
 
   if (pathColor) {
     return {
@@ -156,7 +156,7 @@ const updatePressedDown = ({
       grid: FlowAlgoPath.extendPath(model.grid, pathColor, node.id),
       t: 'dragging',
       autocompleteEdge: null,
-      activePathColor: pathColor,
+      activeGroupId: pathColor,
     };
   }
 
