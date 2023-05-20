@@ -207,4 +207,7 @@ export const Color = {
   all: allColors,
   toHex: colorToHex,
   toOrder: toColorOrder,
+  groupIdToHex: (groupId: GroupId): string => {
+    return colorToHex(groupIdToColor[groupId]);
+  },
 };

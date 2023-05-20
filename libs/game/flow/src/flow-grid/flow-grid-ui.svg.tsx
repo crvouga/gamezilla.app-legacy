@@ -2,6 +2,8 @@ import { easeAttrs } from '@gamezilla/shared/core';
 import { cn } from '@gamezilla/shared/ui';
 import { useEffect, useRef } from 'react';
 import { Color, Flow } from '../flow';
+import { GroupId } from '../flow/flow';
+import { groupIdToColor } from '../flow/flow-color';
 import * as FlowGrid from './flow-grid';
 import * as FlowGridPosition from './flow-grid-position';
 import { Model, Msg } from './flow-grid-ui';
@@ -56,12 +58,12 @@ export const View = ({
       */}
       <g>
         {map(FlowGrid.yieldNodes(model.grid), (node) => {
-          const pathColor = Flow.toGroup(model.grid, node.id);
-          const fill = !pathColor
+          const groupId = Flow.toGroup(model.grid, node.id);
+          const fill = !groupId
             ? 'transparent'
-            : model.t === 'dragging' && model.activeGroupId === pathColor
+            : model.t === 'dragging' && model.activeGroupId === groupId
             ? 'transparent'
-            : Color.toHex(pathColor);
+            : Color.toHex(groupIdToColor[groupId]);
           return (
             <rect
               key={node.id}
@@ -137,7 +139,7 @@ export const View = ({
 
           return (
             <ViewTerminalNode
-              color={node.groupId}
+              groupId={node.groupId}
               x={node.x}
               y={node.y}
               isActive={
@@ -163,7 +165,7 @@ export const View = ({
             y1={autocompleteEdge.nodeFrom.y}
             x2={autocompleteEdge.nodeTo.x}
             y2={autocompleteEdge.nodeTo.y}
-            stroke={Color.toHex(model.activeGroupId)}
+            stroke={Color.groupIdToHex(model.activeGroupId)}
             strokeWidth={EDGE_STROKE_WIDTH}
             strokeOpacity={0.5}
           />
@@ -189,14 +191,14 @@ export const View = ({
                 y1={edge.nodeFrom.y}
                 x2={edge.nodeTo.x}
                 y2={edge.nodeTo.y}
-                stroke={Color.toHex(edge.groupId)}
+                stroke={Color.groupIdToHex(edge.groupId)}
                 strokeWidth={EDGE_STROKE_WIDTH}
               />
               <circle
                 cx={edge.nodeTo.x}
                 cy={edge.nodeTo.y}
                 r={EDGE_STROKE_WIDTH / 2}
-                fill={Color.toHex(edge.groupId)}
+                fill={Color.groupIdToHex(edge.groupId)}
               />
             </g>
           );
@@ -251,12 +253,12 @@ export const View = ({
 };
 
 const ViewTerminalNode = ({
-  color,
+  groupId,
   x,
   y,
   isActive,
 }: {
-  color: Color;
+  groupId: GroupId;
   x: number;
   y: number;
   isActive: boolean;
@@ -313,7 +315,7 @@ const ViewTerminalNode = ({
       cx={x}
       cy={y}
       r={TERMINAL_NODE_RADIUS}
-      fill={Color.toHex(color)}
+      fill={Color.groupIdToHex(groupId)}
     />
   );
 };
