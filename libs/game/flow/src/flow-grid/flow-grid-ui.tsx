@@ -132,31 +132,26 @@ const updatePressedDown = ({
   nodeId: Flow.NodeId;
   model: Model;
 }): Model => {
-  const node = FlowGrid.toNode(model.grid, nodeId);
-
-  if (!node) {
-    return model;
-  }
-
-  if (Flow.isTerminal(node)) {
+  const terminal = Flow.nodeIdToTerminal(model.grid, nodeId);
+  if (terminal) {
     return {
       ...model,
-      grid: FlowAlgoPath.startPath(model.grid, node),
+      grid: FlowAlgoPath.startPath(model.grid, nodeId),
       t: 'dragging',
-      activeGroupId: node.groupId,
+      activeGroupId: terminal.groupId,
       autocompleteEdge: null,
     };
   }
 
-  const pathColor = Flow.toGroup(model.grid, nodeId);
+  const groupId = Flow.toGroup(model.grid, nodeId);
 
-  if (pathColor) {
+  if (groupId) {
     return {
       ...model,
-      grid: FlowAlgoPath.extendPath(model.grid, pathColor, node.id),
+      grid: FlowAlgoPath.extendPath(model.grid, groupId, nodeId),
       t: 'dragging',
       autocompleteEdge: null,
-      activeGroupId: pathColor,
+      activeGroupId: groupId,
     };
   }
 

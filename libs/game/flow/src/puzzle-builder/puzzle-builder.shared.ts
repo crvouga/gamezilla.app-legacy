@@ -3,7 +3,7 @@ import { Browser, Err, Ok, Result } from '@gamezilla/shared/core';
 import { Flow } from '../flow';
 import { FlowGrid, FlowGridUI } from '../flow-grid';
 import { bounds8x8 } from '../flow-grid/flow-grid-position';
-import { GroupId, groupIdOrder } from '../flow/flow';
+import { GroupId } from '../flow/flow';
 
 //
 //
@@ -11,19 +11,23 @@ import { GroupId, groupIdOrder } from '../flow/flow';
 //
 //
 
-export type SharedModel = {
-  mode: 'edit-groups';
-  focusedGroupId: Flow.GroupId;
-  grid: FlowGrid.Model;
-};
+export type SharedModel =
+  | {
+      mode: 'edit-groups';
+      focusedGroupId: Flow.GroupId;
+      grid: FlowGrid.Model;
+    }
+  | {
+      mode: 'play';
+      grid: FlowGrid.Model;
+    };
 
 export type ClientModel = SharedModel & FlowGridUI.Model;
 
 export type ServerModel = SharedModel;
 
 export const initShared: SharedModel = {
-  mode: 'edit-groups',
-  focusedGroupId: groupIdOrder[0],
+  mode: 'play',
   grid: FlowGrid.initEmpty({ bounds: bounds8x8 }),
 };
 
@@ -44,7 +48,9 @@ export type ToServer = Req;
 
 export type ToClient = Res;
 
-export type Req = { t: 'inputted-active-group'; groupId: GroupId };
+export type Req =
+  | { t: 'input-active-group'; groupId: GroupId }
+  | { t: 'input-mode'; mode: ServerModel['mode'] };
 
 export type Res = Req & {
   result: Result<string, SharedModel>;
@@ -59,11 +65,15 @@ export const handle = ({
   msg: Req;
   model: SharedModel;
 }): Result<string, SharedModel> => {
-  if (ctx.currentUserId !== ctx.hostId) {
-    return Err('must-be-host');
-  }
+  if (msg.t === 'input-active-group') {
+    if (ctx.currentUserId !== ctx.hostId) {
+      return Err('must-be-host');
+    }
 
-  if (msg.t === 'inputted-active-group') {
+    if (model.mode !== 'edit-groups') {
+      return Err('must-be-in-edit-groups-mode');
+    }
+
     const modelNew: SharedModel = {
       ...model,
       focusedGroupId: msg.groupId,
@@ -71,5 +81,37 @@ export const handle = ({
     return Ok(modelNew);
   }
 
-  return Err("can't-handle");
+  if (msg.t === 'input-mode') {
+    if (ctx.currentUserId !== ctx.hostId) {
+      return Err('must-be-host');
+    }
+
+    const modelNew = initMode(msg.mode, model);
+
+    return Ok(modelNew);
+  }
+
+  return Err('unimplemented');
+};
+
+const initMode = (
+  mode: ServerModel['mode'],
+  model: SharedModel
+): SharedModel => {
+  if (mode === 'edit-groups') {
+    return {
+      grid: model.grid,
+      mode: 'edit-groups',
+      focusedGroupId: Flow.groupIdOrder[0],
+    };
+  }
+
+  if (mode === 'play') {
+    return {
+      mode: 'play',
+      grid: model.grid,
+    };
+  }
+
+  return model;
 };

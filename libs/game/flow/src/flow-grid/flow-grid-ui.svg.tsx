@@ -58,7 +58,7 @@ export const View = ({
       */}
       <g>
         {map(FlowGrid.yieldNodes(model.grid), (node) => {
-          const groupId = Flow.toGroup(model.grid, node.id);
+          const groupId = Flow.toGroup(model.grid, node.nodeId);
           const fill = !groupId
             ? 'transparent'
             : model.t === 'dragging' && model.activeGroupId === groupId
@@ -66,7 +66,7 @@ export const View = ({
             : Color.toHex(groupIdToColor[groupId]);
           return (
             <rect
-              key={node.id}
+              key={node.nodeId}
               x={node.x}
               y={node.y}
               width={1}
@@ -127,26 +127,43 @@ export const View = ({
       {/*
 
 
-      Nodes
+      Terminals
 
 
       */}
       <g transform="translate(0.5, 0.5)">
-        {map(FlowGrid.yieldNodes(model.grid), (node) => {
-          if (!Flow.isTerminal(node)) {
-            return null;
-          }
-
+        {map(Flow.yieldTerminals(model.grid), (terminal) => {
+          const startNode = FlowGrid.toNode(model.grid, terminal.start);
+          const endNode = terminal.end
+            ? FlowGrid.toNode(model.grid, terminal.end)
+            : null;
           return (
-            <ViewTerminalNode
-              groupId={node.groupId}
-              x={node.x}
-              y={node.y}
-              isActive={
-                model.t === 'dragging' && model.activeGroupId === node.groupId
-              }
-              key={node.id}
-            />
+            <>
+              {startNode && (
+                <ViewTerminalNode
+                  groupId={terminal.groupId}
+                  x={startNode.x}
+                  y={startNode.y}
+                  isActive={
+                    model.t === 'dragging' &&
+                    model.activeGroupId === terminal.groupId
+                  }
+                  key={startNode.nodeId}
+                />
+              )}
+              {endNode && (
+                <ViewTerminalNode
+                  groupId={terminal.groupId}
+                  x={endNode.x}
+                  y={endNode.y}
+                  isActive={
+                    model.t === 'dragging' &&
+                    model.activeGroupId === terminal.groupId
+                  }
+                  key={endNode.nodeId}
+                />
+              )}
+            </>
           );
         })}
       </g>
@@ -214,10 +231,10 @@ export const View = ({
       */}
       <g>
         {map(FlowGrid.yieldNodes(model.grid), (node) => {
-          const nodeId = node.id;
+          const nodeId = node.nodeId;
           return (
             <rect
-              key={node.id}
+              key={node.nodeId}
               x={node.x}
               y={node.y}
               width={1}
@@ -233,7 +250,7 @@ export const View = ({
                 $send({ t: 'dragged-over', nodeId });
               }}
               onMouseMove={() => {
-                $send({ t: 'dragged-over', nodeId: node.id });
+                $send({ t: 'dragged-over', nodeId: node.nodeId });
               }}
               onTouchStart={() => {
                 // $send({ t: 'pressed-down-node', nodeId });

@@ -1,5 +1,4 @@
 import { Flow } from '../flow';
-import { GroupId } from '../flow/flow';
 import { Bounds, Position, deltas, yieldRange } from './flow-grid-position';
 
 //
@@ -37,9 +36,7 @@ export const initEmpty = ({ bounds }: { bounds: Bounds }): Model => {
   };
 
   for (const position of yieldRange({ bounds })) {
-    const id = positionToId(position);
-    model = Flow.addNode(model, { id });
-    model.positions[id] = position;
+    model = addNodeFromPosition(model, position);
   }
 
   for (const nodePosition of yieldPositions(model)) {
@@ -87,7 +84,7 @@ export const toNode = (model: Model, nodeId: Flow.NodeId): Node | null => {
     return null;
   }
 
-  const position = model.positions[node.id];
+  const position = model.positions[node.nodeId];
 
   if (!position) {
     return null;
@@ -132,17 +129,22 @@ export const toEdge = (model: Model, edgeId: Flow.EdgeId): Edge | null => {
 //
 //
 
-export const addNode = (
+export const addNodeFromPosition = (
   model: Model,
-  { groupId, ...position }: Position & { groupId?: GroupId }
+  position: Position
 ): Model => {
-  const id = positionToId(position);
-  const modelNew = Flow.addNode(model, { groupId: groupId, id });
+  const nodeId = positionToId(position);
   return {
-    ...modelNew,
+    ...model,
+    nodes: {
+      ...model.nodes,
+      [nodeId]: {
+        nodeId,
+      },
+    },
     positions: {
-      ...modelNew.positions,
-      [id]: position,
+      ...model.positions,
+      [nodeId]: position,
     },
   };
 };
@@ -157,7 +159,7 @@ export const addNode = (
 
 export const yieldPositions = function* (model: Model): Generator<Position> {
   for (const node of Flow.yieldNodes(model)) {
-    const position = model.positions[node.id];
+    const position = model.positions[node.nodeId];
     if (!position) {
       continue;
     }
@@ -189,7 +191,7 @@ export const yieldEdges = function* (model: Model): Generator<Edge> {
 
 export const yieldNodes = function* (puzzle: Model): Generator<Node> {
   for (const node of Flow.yieldNodes(puzzle)) {
-    const position = puzzle.positions[node.id];
+    const position = puzzle.positions[node.nodeId];
     if (!position) {
       continue;
     }

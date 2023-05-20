@@ -1,19 +1,11 @@
-import {
-  Model,
-  doesPathExist,
-  findEndNode,
-  modelToKey,
-  yieldTerminalNodes,
-} from './flow';
+import { Model, doesPathExist, modelToKey, yieldTerminals } from './flow';
 
 export type SolvedModel = Model & { _opaque: 'SolvedPuzzle' };
 
 export const isSolved = (model: Model): model is SolvedModel => {
-  for (const nodeA of yieldTerminalNodes(model)) {
-    for (const nodeB of yieldTerminalNodes(model)) {
-      if (!doesPathExist(model, nodeA.id, nodeB)) {
-        return false;
-      }
+  for (const terminal of yieldTerminals(model)) {
+    if (terminal.end && !doesPathExist(model, terminal.start, terminal.end)) {
+      return false;
     }
   }
   return true;
@@ -33,14 +25,12 @@ export const yieldSolutions = function* (
     return;
   }
 
-  for (const startNode of yieldTerminalNodes(puzzle)) {
-    const endNode = findEndNode(puzzle, startNode);
-
-    if (!endNode) {
+  for (const terminal of yieldTerminals(puzzle)) {
+    if (!terminal.end) {
       return; //invalid model
     }
 
-    if (doesPathExist(puzzle, startNode.id, endNode)) {
+    if (doesPathExist(puzzle, terminal.start, terminal.end)) {
       continue;
     }
   }

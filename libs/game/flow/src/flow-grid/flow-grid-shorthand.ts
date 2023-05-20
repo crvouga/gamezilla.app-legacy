@@ -1,19 +1,8 @@
 import { NonEmpty } from '@gamezilla/shared/core';
 import { GroupId } from '../flow/flow';
 import * as FlowGrid from './flow-grid';
-import { Position } from './flow-grid-position';
 
 export type Model = NonEmpty<NonEmpty<GroupId | null>>;
-
-export const fromShorthandNode = (
-  node: Position & { groupId: GroupId }
-): FlowGrid.Node => {
-  return {
-    ...node,
-    id: FlowGrid.positionToId(node),
-    groupId: node.groupId,
-  };
-};
 
 export const fromShorthand = (model: Model): FlowGrid.Model => {
   let grid = FlowGrid.initEmpty({
@@ -43,10 +32,9 @@ export const fromShorthand = (model: Model): FlowGrid.Model => {
         continue;
       }
 
-      grid = FlowGrid.addNode(grid, {
+      grid = FlowGrid.addNodeFromPosition(grid, {
         x,
         y,
-        groupId,
       });
     }
   }

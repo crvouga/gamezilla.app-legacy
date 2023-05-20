@@ -3,10 +3,16 @@ import {
   RoomViewCtx,
   ViewBottomButtonBar,
 } from '@gamezilla/shared/client';
-import { Browser, Cmd, p } from '@gamezilla/shared/core';
-import { IconArrowLeftOnRect, cn } from '@gamezilla/shared/ui';
+import { Cmd, andThen, p } from '@gamezilla/shared/core';
+import {
+  IconArrowLeftOnRect,
+  IconPenToSquare,
+  IconPlay,
+  cn,
+} from '@gamezilla/shared/ui';
 import { Color, Flow, groupIdToColor } from '../flow';
 import { FlowGridUI } from '../flow-grid';
+import { GroupId } from '../flow/flow';
 import {
   ClientModel,
   ClientMsg,
@@ -16,7 +22,6 @@ import {
   handle,
   initShared,
 } from './puzzle-builder.shared';
-import { GroupId } from '../flow/flow';
 
 type Model = ClientModel;
 
@@ -38,27 +43,16 @@ export const update = (input: {
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  const updated = update_(input);
-
-  if (updated.model.focusedGroupId !== input.model.focusedGroupId) {
-    const htmlId = toActiveGroupInputHtmlId(input.model.focusedGroupId);
-    return {
-      model: updated.model,
-      cmd: p(
-        Browser.scrollIntoView(htmlId),
-        Cmd.perform((result) => ({ t: 'scroll-done', result }))
-      ),
-    };
-  }
-
-  return updated;
+  return p(
+    input,
+    andThen(({ model }) => updateRequest({ ...input, model })),
+    andThen(({ model }) => updateUI({ ...input, model }))
+  );
 };
 
-const update_ = ({
+const updateUI = ({
   msg,
   model,
-  ctx,
-  sendToServer,
 }: {
   msg: Msg;
   model: Model;
@@ -68,30 +62,52 @@ const update_ = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (msg.t === 'pressed-down-node') {
-    console.log('TOGGLE', msg.t);
-    const toggledGrid = Flow.toggleNodeGroup(
-      model.grid,
-      msg.nodeId,
-      model.focusedGroupId
-    );
+  if (model.mode === 'edit-groups') {
+    if (msg.t === 'pressed-down-node') {
+      const toggledGrid = Flow.toggleNodeGroup(
+        model.grid,
+        msg.nodeId,
+        model.focusedGroupId
+      );
 
-    return {
-      model: {
-        ...model,
-        grid: toggledGrid,
-      },
-    };
-  }
-
-  if (msg.t === 'inputted-active-group') {
-    const handled = handle({ ctx, msg, model });
-    if (handled.type === 'Err') {
-      return { model, cmd: sendToServer(msg) };
+      return {
+        model: {
+          ...model,
+          grid: toggledGrid,
+        },
+      };
     }
-    return { model: { ...model, ...handled.value }, cmd: sendToServer(msg) };
   }
 
+  if (model.mode === 'play') {
+    return { model };
+  }
+
+  return { model };
+};
+
+const updateRequest = ({
+  msg,
+  model,
+  ctx,
+  sendToServer,
+}: {
+  msg: Msg;
+
+  model: Model;
+  ctx: RoomCtx;
+  sendToServer: (m: ToServer) => Cmd;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  if (msg.t === 'input-active-group' || msg.t === 'input-mode') {
+    const handled = handle({ ctx, msg, model });
+
+    const modelNew =
+      handled.type === 'Ok' ? { ...model, ...handled.value } : model;
+    return { model: modelNew, cmd: sendToServer(msg) };
+  }
   return { model };
 };
 
@@ -134,12 +150,54 @@ export const View = ({
   onExit: () => void;
   ctx: RoomViewCtx;
 }) => {
+  if (model.mode === 'play') {
+    return (
+      <div className="w-full h-full flex flex-col items-center justify-center">
+        <div className="w-full p-2 flex gap-2 items-center justify-center text-xl bg-blue-500 text-white">
+          <IconPlay />
+          Play Mode
+        </div>
+        <div className="w-full flex-1 gap-3 flex flex-col items-center justify-center">
+          <div className="flex-1"></div>
+          <div className="flex-1 w-full">
+            <FlowGridUI.View model={model} $send={$send} />
+          </div>
+          <div className="flex-1"></div>
+        </div>
+        <ViewBottomButtonBar
+          actions={[
+            {
+              label: 'Exit Builder',
+              icon: <IconArrowLeftOnRect />,
+              onClick: onExit,
+            },
+            {
+              label: 'Edit Mode',
+              icon: <IconPenToSquare />,
+              onClick: () => {
+                $send({ t: 'input-mode', mode: 'edit-groups' });
+              },
+            },
+          ]}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="w-full h-full flex flex-col items-center justify-center">
-      <div className="w-full flex-1 gap-3 flex flex-col items-center justify-center">
-        <FlowGridUI.View model={model} $send={$send} />
+      <div className="w-full p-2 flex gap-2 items-center justify-center text-xl bg-yellow-500 text-white">
+        <IconPenToSquare />
+        Edit Mode
+      </div>
+      <div className="w-full flex-1 flex flex-col items-center justify-center">
+        <div className="flex-1"></div>
 
-        <div className="flex items-center gap-3 px-4 snap-x w-full overflow-x-auto">
+        <div className="flex-1 w-full">
+          <FlowGridUI.View model={model} $send={$send} />
+        </div>
+
+        <div className="flex-1 flex items-center gap-3 px-4 snap-x w-full overflow-x-auto">
           {Flow.groupIdOrder.map((groupId) => {
             return (
               <button
@@ -149,7 +207,7 @@ export const View = ({
                   'snap-mandatory flex items-center justify-center gap-1 flex-col',
                   model.focusedGroupId === groupId ? '' : 'opacity-50'
                 )}
-                onClick={() => $send({ t: 'inputted-active-group', groupId })}
+                onClick={() => $send({ t: 'input-active-group', groupId })}
               >
                 <svg viewBox="-1 -1 2 2" className={cn('w-16 h-16')}>
                   <circle
@@ -167,7 +225,13 @@ export const View = ({
       </div>
       <ViewBottomButtonBar
         actions={[
-          { label: 'Exit', icon: <IconArrowLeftOnRect />, onClick: onExit },
+          {
+            label: 'Play Mode',
+            icon: <IconPlay />,
+            onClick: () => {
+              $send({ t: 'input-mode', mode: 'play' });
+            },
+          },
         ]}
       />
     </div>

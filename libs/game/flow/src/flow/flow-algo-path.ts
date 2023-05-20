@@ -2,38 +2,39 @@ import {
   Edge,
   EdgeFull,
   EdgeId,
+  GroupId,
   Model,
-  Node,
   NodeId,
-  TerminalNode,
-  isStart,
-  isTerminal,
+  nodeIdToTerminal,
   setEdgeGroup,
-  addNode,
   toEdgeId,
-  toNode,
   toGroup,
+  toNode,
+  toStartNodeId,
   yieldEdges,
   yieldInEdges,
   yieldOutEdges,
-  yieldTerminalNodes,
-  GroupId,
 } from './flow';
 
-export const startPath = <T extends Model>(
-  model: T,
-  terminal: TerminalNode
-): T => {
-  const cleared = clearEdges(
-    clearTerminalNodes(model, terminal.groupId),
-    terminal.groupId
-  );
-  const startNode: TerminalNode = {
-    id: terminal.id,
-    groupId: terminal.groupId,
-    type: 'start',
+export const startPath = <T extends Model>(model: T, nodeId: NodeId): T => {
+  const terminal = nodeIdToTerminal(model, nodeId);
+
+  if (!terminal) {
+    return model;
+  }
+
+  const cleared = clearEdges(model, terminal.groupId);
+
+  return {
+    ...cleared,
+    terminals: {
+      ...cleared.terminals,
+      [terminal.groupId]: {
+        groupId: terminal.groupId,
+        start: nodeId,
+      },
+    },
   };
-  return addNode(cleared, startNode);
 };
 
 const clearEdges = <T extends Model>(model: T, groupId: GroupId): T => {
@@ -43,21 +44,6 @@ const clearEdges = <T extends Model>(model: T, groupId: GroupId): T => {
       modelNew = setEdgeGroup(modelNew, toEdgeId(edge), null);
     }
   }
-  return modelNew;
-};
-
-const clearTerminalNodes = <T extends Model>(model: T, groupId: GroupId): T => {
-  let modelNew: T = model;
-
-  for (const terminal of yieldTerminalNodes(model)) {
-    if (terminal.groupId === groupId) {
-      modelNew = addNode(modelNew, {
-        ...terminal,
-        type: null,
-      });
-    }
-  }
-
   return modelNew;
 };
 
@@ -86,13 +72,15 @@ export const extendPath = <T extends Model>(
     return model;
   }
 
-  if (isTerminal(node) && node.groupId !== groupId) {
+  const terminal = nodeIdToTerminal(model, targetNodeId);
+
+  if (terminal && terminal.groupId !== groupId) {
     return model;
   }
 
-  const pathStart = findGroupStart(model, groupId);
+  const startNode = toStartNodeId(model, groupId);
 
-  if (!pathStart) {
+  if (!startNode) {
     return model;
   }
 
@@ -103,7 +91,7 @@ export const extendPath = <T extends Model>(
     groupId,
     modelWithPath: model,
     model: modelWithoutPath,
-    currentNode: pathStart,
+    currentNodeId: startNode,
   });
 
   return walked;
@@ -114,32 +102,34 @@ const extendPathWalk = <T extends Model>({
   groupId,
   modelWithPath,
   model,
-  currentNode,
+  currentNodeId,
 }: {
   targetNodeId: NodeId;
   groupId: GroupId;
   modelWithPath: T;
   model: T;
-  currentNode: Node;
+  currentNodeId: NodeId;
 }): T => {
-  if (currentNode.id === targetNodeId) {
+  if (currentNodeId === targetNodeId) {
     return model;
   }
 
-  if (isTerminal(currentNode) && !isStart(currentNode)) {
+  const terminal = nodeIdToTerminal(modelWithPath, currentNodeId);
+
+  if (terminal?.end === currentNodeId) {
     return model;
   }
 
   const edge = findOutEdgeByGroupId({
     model: modelWithPath,
-    nodeId: currentNode.id,
+    nodeId: currentNodeId,
     groupId: groupId,
   });
 
   if (!edge) {
     const shortestPath = findShortestEmptyPath({
       model: modelWithPath,
-      start: currentNode.id,
+      start: currentNodeId,
       target: targetNodeId,
     });
 
@@ -155,7 +145,7 @@ const extendPathWalk = <T extends Model>({
     return model;
   }
 
-  const edgeId = toEdgeId({ from: currentNode.id, to: edge.to });
+  const edgeId = toEdgeId({ from: currentNodeId, to: edge.to });
 
   const updated = setEdgeGroup(model, edgeId, groupId);
 
@@ -163,7 +153,7 @@ const extendPathWalk = <T extends Model>({
     modelWithPath,
     groupId: groupId,
     targetNodeId,
-    currentNode: edge.nodeTo,
+    currentNodeId: edge.to,
     model: updated,
   });
 };
@@ -203,22 +193,24 @@ const findShortestEmptyPath = ({
     }
 
     for (const outEdge of yieldOutEdges(model, current)) {
-      const adjacent = outEdge.nodeTo;
+      const adjacentId = outEdge.to;
 
-      if (visited.has(adjacent.id)) {
+      if (visited.has(adjacentId)) {
         continue;
       }
 
-      if (isInGroup(model, adjacent.id)) {
+      if (isInGroup(model, adjacentId)) {
         continue;
       }
 
-      if (isTerminal(adjacent) && adjacent.groupId !== toGroup(model, start)) {
+      const terminal = nodeIdToTerminal(model, adjacentId);
+
+      if (terminal && terminal.groupId === toGroup(model, start)) {
         continue;
       }
 
-      queue.push(adjacent.id);
-      tree[adjacent.id] = { parent: current };
+      queue.push(adjacentId);
+      tree[adjacentId] = { parent: current };
     }
   }
 
@@ -300,16 +292,7 @@ const findOutEdgeByGroupId = <T extends Model>({
   return null;
 };
 
-export const findGroupStart = (model: Model, groupId: GroupId): Node | null => {
-  for (const terminal of yieldTerminalNodes(model)) {
-    if (terminal.groupId === groupId && terminal.type === 'start') {
-      return terminal;
-    }
-  }
-  return null;
-};
-
-export const findGroupEnd = (
+export const findPathEndNode = (
   model: Model,
   groupId: GroupId,
   nodeId: NodeId
@@ -323,7 +306,7 @@ export const findGroupEnd = (
       return nodeId;
     }
 
-    return findGroupEnd(model, groupId, outEdge.to);
+    return findPathEndNode(model, groupId, outEdge.to);
   }
 
   return nodeId;
@@ -341,20 +324,21 @@ export const toAutocompleteEdge = (
   model: Model,
   groupId: GroupId
 ): Edge | null => {
-  const pathStart = findGroupStart(model, groupId);
+  const startId = toStartNodeId(model, groupId);
 
-  if (!pathStart) {
+  if (!startId) {
     return null;
   }
 
-  const pathEndId = findGroupEnd(model, groupId, pathStart.id);
+  const endId = findPathEndNode(model, groupId, startId);
 
-  if (!pathEndId) {
+  if (!endId) {
     return null;
   }
 
-  for (const edge of yieldOutEdges(model, pathEndId)) {
-    if (isTerminal(edge.nodeTo) && edge.nodeTo.groupId === groupId) {
+  for (const edge of yieldOutEdges(model, endId)) {
+    const terminal = nodeIdToTerminal(model, edge.to);
+    if (terminal && terminal.groupId === groupId) {
       return edge;
     }
   }
