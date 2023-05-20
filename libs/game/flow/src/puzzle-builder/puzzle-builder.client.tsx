@@ -155,11 +155,7 @@ export const View = ({
           Play Mode
         </div>
         <div className="w-full flex-1 gap-3 flex flex-col items-center justify-center">
-          <div className="flex-1"></div>
-          <div className="flex-1 w-full">
-            <FlowGridPlayUI.View model={model} $send={$send} />
-          </div>
-          <div className="flex-1"></div>
+          <FlowGridPlayUI.View model={model} $send={$send} />
         </div>
         <ViewBottomButtonBar
           actions={[
@@ -187,14 +183,10 @@ export const View = ({
         <IconPenToSquare />
         Edit Mode
       </div>
-      <div className="w-full flex-1 flex flex-col items-center justify-center">
-        <div className="flex-1"></div>
+      <div className="w-full flex-1 flex flex-col items-center justify-center overflow-y-auto">
+        <FlowGridUI.View model={model.grid} />
 
-        <div className="flex-1 w-full">
-          <FlowGridUI.View model={model.grid} />
-        </div>
-
-        <div className="flex-1 flex items-center gap-3 px-4 snap-x w-full overflow-x-auto">
+        <div className="flex items-center gap-3 px-4 snap-x w-full overflow-x-auto">
           {Flow.groupIdOrder.map((groupId) => {
             return (
               <button
@@ -212,7 +204,7 @@ export const View = ({
                   <circle
                     cx={0}
                     cy={0}
-                    r={model.focusedGroupId === groupId ? 1 : 0.7}
+                    r={model.focusedGroupId === groupId ? 0.9 : 0.6}
                     fill={Color.toHex(groupIdToColor[groupId])}
                   />
                 </svg>
