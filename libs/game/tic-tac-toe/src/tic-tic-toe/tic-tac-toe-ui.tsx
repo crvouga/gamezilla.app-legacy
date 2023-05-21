@@ -21,9 +21,8 @@ export const gameTheme = {
 
 const scale = 1_000;
 
-export const viewBoard = ({
+export const ViewBoard = ({
   board,
-
   onClick,
 }: {
   board: Board;

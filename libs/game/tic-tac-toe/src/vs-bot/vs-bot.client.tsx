@@ -6,7 +6,7 @@ import {
   ViewVsBotGameScreen,
   ViewVsBotSetupScreen,
 } from '@gamezilla/shared/client';
-import { Cmd, Posix, Sub } from '@gamezilla/shared/core';
+import { Cmd, Posix } from '@gamezilla/shared/core';
 import {
   IconArrowLeftOnRect,
   IconArrowRotateLeft,
@@ -23,7 +23,7 @@ import {
 } from '../tic-tic-toe/tic-tac-toe';
 import {
   PlayerTypeIcon,
-  viewBoard,
+  ViewBoard,
   viewCoverArt,
 } from '../tic-tic-toe/tic-tac-toe-ui';
 import {
@@ -32,8 +32,8 @@ import {
   ServerModel,
   ToClient,
   ToServer,
+  handle,
   initSharedModel,
-  inputMove,
 } from './vs-bot.shared';
 
 //
@@ -46,12 +46,7 @@ import {
 
 export type Model = ClientModel;
 
-export const init = (...params: Parameters<typeof initSharedModel>): Model => {
-  const model = initSharedModel(...params);
-  return {
-    ...model,
-  };
-};
+export const init = initSharedModel;
 
 //
 //
@@ -75,33 +70,20 @@ export const update = ({
   sendToServer: (msg: ToServer) => Cmd;
   msg: Msg;
   model: Model;
-}): { model: Model; cmd?: Cmd<Msg> } => {
-  switch (msg[0]) {
-    case 'animate': {
-      if (model.type !== 'game') {
-        return { model };
-      }
-
-      return { model };
-    }
-
-    case 'input-move': {
-      const result = inputMove(msg[1], model);
-      if (result.t === 'err') {
-        return { model, cmd: sendToServer(msg) };
-      }
-      const merged = mergeWithServer({
-        ...ctx,
-        clientModel: model,
-        serverModel: result.value,
-      });
-      return { model: merged, cmd: sendToServer(msg) };
-    }
-
-    default: {
-      return { model, cmd: sendToServer(msg) };
-    }
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  const handled = handle({ ctx, msg, model });
+  if (handled.t === 'err') {
+    return { model, cmd: sendToServer(msg) };
   }
+  const merged = mergeWithServer({
+    ...ctx,
+    client: model,
+    server: handled.value,
+  });
+  return { model: merged, cmd: sendToServer(msg) };
 };
 
 export const updateFromServer = ({
@@ -112,63 +94,37 @@ export const updateFromServer = ({
   ctx: Ctx;
   msg: ToClient;
   model: Model;
-}): [Model, Cmd<Msg>, OutAction[]] => {
-  switch (msg[0]) {
-    case 'player-left': {
-      const modelNew = mergeWithServer({
-        ...ctx,
-        clientModel: model,
-        serverModel: msg[1],
-      });
-      return [modelNew, Cmd.None, []];
-    }
-
-    default: {
-      if (msg[1].t === 'err') {
-        return [model, Cmd.None, []];
-      }
-      const modelNew = mergeWithServer({
-        ...ctx,
-        clientModel: model,
-        serverModel: msg[1].value,
-      });
-      return [modelNew, Cmd.None, []];
-    }
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  if (msg.result.t === 'err') {
+    return { model };
   }
+
+  const modelNew = mergeWithServer({
+    ...ctx,
+    client: model,
+    server: msg.result.value,
+  });
+
+  return {
+    model: modelNew,
+  };
 };
 
 export const mergeWithServer = ({
-  serverModel,
+  server,
+  client,
 }: {
   now: Posix;
-  clientModel: ClientModel;
-  serverModel: ServerModel;
+  client: ClientModel;
+  server: ServerModel;
 }): ClientModel => {
-  switch (serverModel.type) {
-    case 'Setup': {
-      return {
-        ...serverModel,
-      };
-    }
-
-    case 'game': {
-      return {
-        ...serverModel,
-      };
-    }
-  }
-};
-
-//
-//
-//
-// subscriptions
-//
-//
-//
-
-export const subscriptions = (_ctx: Ctx, _model: Model): Sub<Msg> => {
-  return Sub.None;
+  return {
+    ...client,
+    ...server,
+  };
 };
 
 //
@@ -190,97 +146,98 @@ export const View = ({
   model: Model;
   $send: (msg: Msg) => void;
 }) => {
-  if (model.type === 'Setup') {
-    return ViewVsBotSetupScreen<BotLevel, PlayerType>({
-      leftPlayerType: 'X',
-      playerId: model.player === 'none' ? null : model.player,
-      subtitle: 'Vs Computer',
-      title: 'Tic-Tac-Toe',
-      coverArt: viewCoverArt(),
-      ctx,
-      onCancel: goBack,
-      onStartGame: () => $send(['start-game', { userId: ctx.currentUserId }]),
-      onStartPlaying: () =>
-        $send(['start-playing', { userId: ctx.currentUserId }]),
-      onStopPlaying: () =>
-        $send(['stop-playing', { userId: ctx.currentUserId }]),
-      player: {
-        values: Object.values(playerTypes),
-        onInput: (player) =>
-          $send([
-            'input-player-type',
-            { userId: ctx.currentUserId, playerType: player },
-          ]),
-        selected: model.userPlayerType,
-        icon: ({ playerType, sx }) => (
-          <PlayerTypeIcon sx={sx} playerType={playerType} />
-        ),
-        render: ({ playerType }) => <PlayerTypeIcon playerType={playerType} />,
-        toName: (player) => player,
-      },
-      botLevel: {
-        onInput: (botLevel) =>
-          $send(['InputBot', { userId: ctx.currentUserId, botLevel }]),
-        selected: model.botLevel,
-        values: Object.values(botLevels),
-        toName: (botLevel) => botLevel,
-        render: ({ botLevel }) => botLevel,
-      },
-    });
+  if (model.type === 'setup') {
+    return (
+      <ViewVsBotSetupScreen<BotLevel, PlayerType>
+        leftPlayerType="X"
+        playerId={model.player}
+        subtitle="Vs Computer"
+        title="Tic-Tac-Toe"
+        coverArt={viewCoverArt()}
+        ctx={ctx}
+        onCancel={goBack}
+        onStartGame={() => $send({ t: 'start-game' })}
+        onStartPlaying={() => $send({ t: 'start-playing' })}
+        onStopPlaying={() => $send({ t: 'stop-playing' })}
+        player={{
+          values: Object.values(playerTypes),
+          onInput: (player) =>
+            $send({ t: 'input-player-type', playerType: player }),
+          selected: model.userPlayerType,
+          icon: ({ playerType, sx }) => (
+            <PlayerTypeIcon sx={sx} playerType={playerType} />
+          ),
+          render: ({ playerType }) => (
+            <PlayerTypeIcon playerType={playerType} />
+          ),
+          toName: (player) => player,
+        }}
+        botLevel={{
+          onInput: (botLevel) => $send({ t: 'input-bot-level', botLevel }),
+          selected: model.botLevel,
+          values: Object.values(botLevels),
+          toName: (botLevel) => botLevel,
+          render: ({ botLevel }) => botLevel,
+        }}
+      />
+    );
   }
   const gameOver = toGameOver(model.board);
 
-  return ViewVsBotGameScreen<PlayerType>({
-    leftPlayer: 'X',
-    actions: [
-      {
-        label: 'Exit',
-        icon: <IconArrowLeftOnRect />,
-        onClick: () => $send(['stop-game', { userId: ctx.currentUserId }]),
-      },
-      {
-        label: 'Restart',
-        icon: <IconArrowRotateLeft />,
-        onClick: () => $send(['restart', { userId: ctx.currentUserId }]),
-      },
-      {
-        label: 'Swap',
-        icon: <IconRightLeft />,
-        onClick: () => $send(['swap-sides', { userId: ctx.currentUserId }]),
-      },
-    ],
-    ctx,
-    botName: model.botLevel,
-    botPlayer: toOpposite(model.userPlayerType),
-    gameOver:
-      gameOver.type === 'Tie'
-        ? { type: 'draw' }
-        : gameOver.type === 'Win'
-        ? { type: 'winner', winner: gameOver.winner }
-        : { type: 'none' },
-    gameOverActions: [
-      {
-        label: 'Exit',
-        icon: <IconArrowLeftOnRect />,
-        onClick: () => $send(['stop-game', { userId: ctx.currentUserId }]),
-      },
-      {
-        label: 'Restart',
-        icon: <IconArrowRotateLeft />,
-        onClick: () => $send(['restart', { userId: ctx.currentUserId }]),
-      },
-    ],
-    playerUserId: model.player,
-    turn: toTurn(model.board),
-    userPlayer: model.userPlayerType,
-    viewBoard: () =>
-      viewBoard({
-        board: model.board,
-        onClick: (position) =>
-          $send(['input-move', { userId: ctx.currentUserId, position }]),
-      }),
-    viewPlayerIcon: ({ playerType, sx }) => (
-      <PlayerTypeIcon sx={sx} playerType={playerType} />
-    ),
-  });
+  return (
+    <ViewVsBotGameScreen<PlayerType>
+      leftPlayer="X"
+      actions={[
+        {
+          label: 'Exit',
+          icon: <IconArrowLeftOnRect />,
+          onClick: () => $send({ t: 'stop-game' }),
+        },
+        {
+          label: 'Restart',
+          icon: <IconArrowRotateLeft />,
+          onClick: () => $send({ t: 'restart' }),
+        },
+        {
+          label: 'Swap',
+          icon: <IconRightLeft />,
+          onClick: () => $send({ t: 'swap-sides' }),
+        },
+      ]}
+      ctx={ctx}
+      botName={model.botLevel}
+      botPlayer={toOpposite(model.userPlayerType)}
+      gameOver={
+        gameOver.type === 'Tie'
+          ? { type: 'draw' }
+          : gameOver.type === 'Win'
+          ? { type: 'winner', winner: gameOver.winner }
+          : { type: 'none' }
+      }
+      gameOverActions={[
+        {
+          label: 'Exit',
+          icon: <IconArrowLeftOnRect />,
+          onClick: () => $send({ t: 'stop-game' }),
+        },
+        {
+          label: 'Restart',
+          icon: <IconArrowRotateLeft />,
+          onClick: () => $send({ t: 'restart' }),
+        },
+      ]}
+      playerUserId={model.player}
+      turn={toTurn(model.board)}
+      userPlayer={model.userPlayerType}
+      viewBoard={() => (
+        <ViewBoard
+          board={model.board}
+          onClick={(position) => $send({ t: 'input-move', position })}
+        />
+      )}
+      viewPlayerIcon={({ playerType, sx }) => (
+        <PlayerTypeIcon sx={sx} playerType={playerType} />
+      )}
+    />
+  );
 };

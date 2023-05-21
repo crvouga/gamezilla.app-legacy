@@ -176,7 +176,9 @@ export type Worker = {
   toBestMove: typeof toBestMove;
 };
 
-export type GetBestMoveProblem = 'worker_thread_error' | ToBestMoveProblem;
+export type FindBestMoveProblem = 'worker_thread_error' | ToBestMoveProblem;
+
+export type FindBestMoveResult = Result<FindBestMoveProblem, Position>;
 
 export const findBestMove =
   ({
@@ -187,7 +189,7 @@ export const findBestMove =
     depth: number;
     maximizingPlayer: PlayerType;
     board: Board;
-  }): Task<Result<GetBestMoveProblem, Position>> =>
+  }): Task<FindBestMoveResult> =>
   async () => {
     const result = toBestMove({ board, depth, maximizingPlayer });
 

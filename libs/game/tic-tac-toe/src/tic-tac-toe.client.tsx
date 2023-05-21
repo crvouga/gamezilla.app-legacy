@@ -1,4 +1,3 @@
-import { Cmd, Sub } from '@gamezilla/shared/core';
 import {
   Alerts,
   Ctx,
@@ -7,13 +6,14 @@ import {
   ViewCtx,
   ViewMainMenu,
 } from '@gamezilla/shared/client';
+import { Cmd, Sub } from '@gamezilla/shared/core';
 import { IconComputerDesktop, IconUsers } from '@gamezilla/shared/ui';
 import {
-  ServerModel,
   ClientModel,
   ClientMsg,
-  ToServer,
+  ServerModel,
   ToClient,
+  ToServer,
 } from './tic-tac-toe.shared';
 import { viewCoverArt } from './tic-tic-toe/tic-tac-toe-ui';
 import * as VsBot from './vs-bot/vs-bot.client';
@@ -136,9 +136,9 @@ export const updateFromServer = ({
       model: model.c,
     });
     return {
-      model: { t: 'vs-bot', c: updated[0] },
-      cmd: Cmd.tag_('vs-bot', updated[1]),
-      actions: updated[2],
+      model: { t: 'vs-bot', c: updated.model },
+      cmd: Cmd.tag_('vs-bot', updated.cmd),
+      actions: [],
     };
   }
 
@@ -170,16 +170,14 @@ export const mergeWithServer = ({
 
   if (serverModel.t === 'vs-bot') {
     const clientModelChild =
-      clientModel.t === 'vs-bot'
-        ? clientModel.c
-        : VsBot.init({ userId: 'none' });
+      clientModel.t === 'vs-bot' ? clientModel.c : VsBot.init({ userId: null });
 
     return {
       t: 'vs-bot',
       c: VsBot.mergeWithServer({
         now: ctx.now,
-        clientModel: clientModelChild,
-        serverModel: serverModel.c,
+        client: clientModelChild,
+        server: serverModel.c,
       }),
     };
   }
@@ -189,15 +187,13 @@ export const mergeWithServer = ({
 
 //
 //
-// subscriptions
+//
+// Subscriptions
+//
 //
 //
 
-export const subscriptions = (ctx: Ctx, model: Model): Sub<Msg> => {
-  if (model.t === 'vs-bot') {
-    return Sub.tag_('vs-bot', VsBot.subscriptions(ctx, model.c));
-  }
-
+export const subscriptions = (_model: { model: Model }): Sub<Msg> => {
   return Sub.None;
 };
 

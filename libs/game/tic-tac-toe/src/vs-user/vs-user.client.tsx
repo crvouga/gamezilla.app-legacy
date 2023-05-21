@@ -13,7 +13,7 @@ import {
   PlayerTypeIcon,
   ViewSlot,
   gameTheme,
-  viewBoard,
+  ViewBoard,
 } from '../tic-tic-toe/tic-tac-toe-ui';
 import { VersusHeader } from '../views';
 import * as Round from './vs-user-round';
@@ -345,7 +345,7 @@ export const View = ({
           </UI.Box>
 
           <UI.Box sx={{ width: '100%', position: 'relative' }}>
-            {viewBoard({
+            {ViewBoard({
               board,
               onClick: (position) =>
                 $send(['input-move', { position, userId: ctx.currentUserId }]),
@@ -399,7 +399,7 @@ export const View = ({
       </UI.Box>
 
       <UI.Box sx={{ width: '100%', position: 'relative' }}>
-        {viewBoard({
+        {ViewBoard({
           board,
           onClick: (position) =>
             $send(['input-move', { position, userId: ctx.currentUserId }]),

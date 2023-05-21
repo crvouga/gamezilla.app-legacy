@@ -36,7 +36,7 @@ export const ViewVsBotSetupScreen = <BotLevel, PlayerType>({
   subtitle: string;
   coverArt: ViewNode;
   leftPlayerType: PlayerType;
-  playerId: UserId | null;
+  playerId?: UserId | null;
   botLevel: {
     values: BotLevel[];
     selected: BotLevel;
@@ -205,7 +205,7 @@ const ViewVersusBlock = <PlayerType,>({
 }: {
   ctx: ViewCtx;
   botName: string;
-  playerId: UserId | null;
+  playerId?: UserId | null;
   leftPlayerType: PlayerType;
   userPlayerType: PlayerType;
   botPlayerType: PlayerType;

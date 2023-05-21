@@ -1,12 +1,12 @@
 import { UserId } from '@gamezilla/shared/app';
-import { RoomRequestCtx } from '@gamezilla/shared/server';
-import { Cmd, Result, Sub } from '@gamezilla/shared/core';
 import { RoomMsg } from '@gamezilla/shared/client';
+import { Cmd, Result, Sub } from '@gamezilla/shared/core';
+import { RoomRequestCtx } from '@gamezilla/shared/server';
 import {
   ServerModel,
   ServerMsg,
-  ToServer,
   ToClient,
+  ToServer,
 } from './tic-tac-toe.shared';
 import * as VsBot from './vs-bot/vs-bot.server';
 import * as VsUser from './vs-user/vs-user.server';
@@ -60,14 +60,15 @@ export const update = ({
   }
 
   if (msg.t === 'vs-bot' && model.t === 'vs-bot') {
-    const updated = VsBot.update(
-      { broadcast: (c) => broadcast({ t: 'vs-bot', c }) },
-      msg.c,
-      model.c
-    );
+    const updated = VsBot.update({
+      broadcast: (c) => broadcast({ t: 'vs-bot', c }),
+      model: model.c,
+      msg: msg.c,
+    });
+
     return {
-      model: { t: 'vs-bot', c: updated[0] },
-      cmd: Cmd.tag_('vs-bot', updated[1]),
+      model: { t: 'vs-bot', c: updated.model },
+      cmd: Cmd.tag_('vs-bot', updated.cmd),
     };
   }
 
@@ -123,18 +124,17 @@ export const updateFromClient = ({
   }
 
   if (msg.t === 'vs-bot' && model.t === 'vs-bot') {
-    const updated = VsBot.updateFromClient(
-      {
-        sendToClient: (c) => sendToClient({ t: 'vs-bot', c }),
-        broadcast: (c) => broadcast({ t: 'vs-bot', c }),
-      },
-      msg.c,
-      model.c
-    );
+    const updated = VsBot.updateFromClient({
+      sendToClient: (c) => sendToClient({ t: 'vs-bot', c }),
+      broadcast: (c) => broadcast({ t: 'vs-bot', c }),
+      msg: msg.c,
+      model: model.c,
+      ctx,
+    });
 
     return {
-      model: { ...model, c: updated[0] },
-      cmd: Cmd.tag_('vs-bot', updated[1]),
+      model: { ...model, c: updated.model },
+      cmd: Cmd.tag_('vs-bot', updated.cmd),
     };
   }
 

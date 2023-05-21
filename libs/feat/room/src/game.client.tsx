@@ -6,14 +6,14 @@ import { MazeClient } from '@gamezilla/game/maze';
 import { SnakeClient } from '@gamezilla/game/snake';
 import { TetrisClient } from '@gamezilla/game/tetris';
 import { TicTacToeClient } from '@gamezilla/game/tic-tac-toe';
-import { Cmd, Sub, exhaustive } from '@gamezilla/shared/core';
 import { Alerts, Ctx, RoomCtx, RoomViewCtx } from '@gamezilla/shared/client';
+import { Cmd, Sub, exhaustive } from '@gamezilla/shared/core';
 import {
-  ServerModel,
   ClientModel,
   ClientMsg,
-  ToServer,
+  ServerModel,
   ToClient,
+  ToServer,
 } from './game.shared';
 
 //
@@ -345,7 +345,10 @@ export const subscriptions = (
   }
 
   if (model.t === 'tic-tac-toe') {
-    return Sub.tag_('tic-tac-toe', TicTacToeClient.subscriptions(ctx, model.c));
+    return Sub.tag_(
+      'tic-tac-toe',
+      TicTacToeClient.subscriptions({ model: model.c })
+    );
   }
 
   if (model.t === 'chess') {
