@@ -61,18 +61,25 @@ const updateUI = ({
 } => {
   if (model.mode === 'edit-groups') {
     if (msg.t === 'pressed-down-node') {
-      const toggledGrid = Flow.toggleNodeGroup(
+      const terminal = Flow.nodeIdToTerminal(model.grid, msg.nodeId);
+
+      if (!terminal) {
+        const gridNew = Flow.addTerminalStartNode(
+          model.grid,
+          msg.nodeId,
+          model.focusedGroupId
+        );
+
+        return { model: { ...model, grid: gridNew } };
+      }
+
+      const gridNew = Flow.addTerminalEndNode(
         model.grid,
         msg.nodeId,
         model.focusedGroupId
       );
 
-      return {
-        model: {
-          ...model,
-          grid: toggledGrid,
-        },
-      };
+      return { model: { ...model, grid: gridNew } };
     }
   }
 
@@ -155,7 +162,12 @@ export const View = ({
           Play Mode
         </div>
         <div className="w-full flex-1 gap-3 flex flex-col items-center justify-center">
-          <FlowGridPlayUI.View model={model} $send={$send} />
+          <FlowGridPlayUI.View
+            model={model}
+            $send={() => {
+              //
+            }}
+          />
         </div>
         <ViewBottomButtonBar
           actions={[
@@ -184,7 +196,15 @@ export const View = ({
         Edit Mode
       </div>
       <div className="w-full flex-1 flex flex-col items-center justify-center overflow-y-auto">
-        <FlowGridUI.View model={model.grid} />
+        <FlowGridUI.View
+          model={model.grid}
+          onPressDown={(nodeId) => {
+            $send({
+              t: 'pressed-down-node',
+              nodeId,
+            });
+          }}
+        />
 
         <div className="flex items-center gap-3 px-4 snap-x w-full overflow-x-auto">
           {Flow.groupIdOrder.map((groupId) => {

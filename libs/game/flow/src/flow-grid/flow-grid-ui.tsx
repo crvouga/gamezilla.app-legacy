@@ -141,7 +141,7 @@ export const View = ({
             ? FlowGrid.toNode(model, terminal.end)
             : null;
           return (
-            <>
+            <g key={`${terminal.groupId} ${terminal.start} ${terminal.end}`}>
               {startNode && (
                 <ViewTerminalNode
                   groupId={terminal.groupId}
@@ -170,7 +170,7 @@ export const View = ({
                   key={endNode.nodeId}
                 />
               )}
-            </>
+            </g>
           );
         })}
       </g>
@@ -239,6 +239,7 @@ export const View = ({
       <g>
         {map(FlowGrid.yieldNodes(model), (node) => {
           const nodeId = node.nodeId;
+
           return (
             <rect
               key={node.nodeId}

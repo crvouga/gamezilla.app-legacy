@@ -189,9 +189,9 @@ export const yieldEdges = function* (model: Model): Generator<Edge> {
   }
 };
 
-export const yieldNodes = function* (puzzle: Model): Generator<Node> {
-  for (const node of Flow.yieldNodes(puzzle)) {
-    const position = puzzle.positions[node.nodeId];
+export const yieldNodes = function* (model: Model): Generator<Node> {
+  for (const node of Flow.yieldNodes(model)) {
+    const position = model.positions[node.nodeId];
     if (!position) {
       continue;
     }

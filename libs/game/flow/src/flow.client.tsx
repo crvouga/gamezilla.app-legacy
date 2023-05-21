@@ -150,7 +150,7 @@ export const View = ({
       buttons={[
         {
           icon: <IconScrewdriverWrench />,
-          label: 'Level builder',
+          label: 'Puzzle builder',
           onClick: () => {
             $send({ t: 'input-mode', mode: 'puzzle-builder' });
           },

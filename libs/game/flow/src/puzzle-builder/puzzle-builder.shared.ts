@@ -40,8 +40,8 @@ export const initShared: SharedModel = {
 //
 
 export type ClientMsg =
-  | FlowGridPlayUI.Msg
   | Req
+  | { t: 'pressed-down-node'; nodeId: Flow.NodeId }
   | { t: 'scroll-done'; result: Browser.ScrollResult };
 
 export type ServerMsg = { t: 'none' };
@@ -52,7 +52,8 @@ export type ToClient = Res;
 
 export type Req =
   | { t: 'input-active-group'; groupId: GroupId }
-  | { t: 'input-mode'; mode: ServerModel['mode'] };
+  | { t: 'input-mode'; mode: ServerModel['mode'] }
+  | { t: 'toggle-terminal-node'; nodeId: Flow.NodeId; groupId: GroupId };
 
 export type Res = Req & {
   result: Result<string, SharedModel>;
@@ -67,30 +68,36 @@ export const handle = ({
   msg: Req;
   model: SharedModel;
 }): Result<string, SharedModel> => {
-  if (msg.t === 'input-active-group') {
-    if (ctx.currentUserId !== ctx.hostId) {
-      return Err('must-be-host');
-    }
-
-    if (model.mode !== 'edit-groups') {
-      return Err('must-be-in-edit-groups-mode');
-    }
-
-    const modelNew: SharedModel = {
-      ...model,
-      focusedGroupId: msg.groupId,
-    };
-    return Ok(modelNew);
+  if (ctx.currentUserId !== ctx.hostId) {
+    return Err('must-be-host');
   }
 
   if (msg.t === 'input-mode') {
-    if (ctx.currentUserId !== ctx.hostId) {
-      return Err('must-be-host');
-    }
-
     const modelNew = initMode(msg.mode, model);
 
     return Ok(modelNew);
+  }
+
+  if (model.mode === 'edit-groups') {
+    if (msg.t === 'input-active-group') {
+      const modelNew: SharedModel = {
+        ...model,
+        focusedGroupId: msg.groupId,
+      };
+      return Ok(modelNew);
+    }
+
+    return Err('must-be-in-edit-mode');
+  }
+
+  if (model.mode === 'play') {
+    if (msg.t === 'toggle-terminal-node') {
+      const modelNew: SharedModel = { ...model };
+
+      return Ok(modelNew);
+    }
+
+    return Err('must-be-in-play-mode');
   }
 
   return Err('unimplemented');

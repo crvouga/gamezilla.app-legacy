@@ -43,20 +43,20 @@ export const groupIdOrder = [
   'Q',
 ] as const;
 
-export const isGroupId = (id: string): id is GroupId => {
-  return groupIdOrder.includes(id as GroupId);
+export const isGroupId = (groupId: string): groupId is GroupId => {
+  return groupIdOrder.includes(groupId as GroupId);
 };
 
 export const toEdgeId = (edge: Edge): EdgeId => {
-  return `${edge.from}-${edge.to}` as EdgeId;
+  return `${edge.from}->${edge.to}` as EdgeId;
 };
 
-export const isEdgeId = (model: Model, id: string): id is EdgeId => {
-  return id in model.edges;
+export const isEdgeId = (model: Model, edgeId: string): edgeId is EdgeId => {
+  return edgeId in model.edges;
 };
 
-export const isNodeId = (model: Model, id: string): id is NodeId => {
-  return id in model.nodes;
+export const isNodeId = (model: Model, nodeId: string): nodeId is NodeId => {
+  return nodeId in model.nodes;
 };
 
 //
@@ -69,7 +69,7 @@ export const isNodeId = (model: Model, id: string): id is NodeId => {
 
 export type Model = {
   nodes: {
-    [id: NodeId]: Node;
+    [nodeId: NodeId]: Node;
   };
 
   terminals: {
@@ -164,8 +164,8 @@ export const initEmpty: Model = {
 //
 //
 
-export const toNode = (model: Model, id: NodeId): Node | null => {
-  return model.nodes[id] ?? null;
+export const toNode = (model: Model, nodeId: NodeId): Node | null => {
+  return model.nodes[nodeId] ?? null;
 };
 
 export type EdgeFull = Edge & {
@@ -236,7 +236,7 @@ export const removeNode = <T extends Model>(model: T, nodeId: NodeId): T => {
   };
 };
 
-export const addTerminalNode = <T extends Model>(
+export const addTerminalStartNode = <T extends Model>(
   model: T,
   nodeId: NodeId,
   groupId: GroupId
@@ -247,9 +247,33 @@ export const addTerminalNode = <T extends Model>(
     terminals: {
       ...added.terminals,
       [groupId]: {
-        ...added.terminals[groupId],
         groupId,
         start: nodeId,
+        end: added.terminals[groupId]?.end,
+      },
+    },
+  };
+};
+
+export const addTerminalEndNode = <T extends Model>(
+  model: T,
+  nodeId: NodeId,
+  groupId: GroupId
+): T => {
+  const terminal = model.terminals[groupId];
+
+  if (!terminal) {
+    return model;
+  }
+
+  return {
+    ...model,
+    terminals: {
+      ...model.terminals,
+      [groupId]: {
+        groupId: terminal.groupId,
+        start: terminal.start,
+        end: nodeId,
       },
     },
   };
@@ -284,6 +308,13 @@ export const isNodeInGroup = (
   return model.terminals[groupId]?.start === nodeId;
 };
 
+export const groupIdToTerminal = (
+  model: Model,
+  groupId: GroupId
+): Terminal | null => {
+  return model.terminals[groupId] ?? null;
+};
+
 export const toggleNodeGroup = <T extends Model>(
   model: T,
   nodeId: NodeId,
@@ -292,7 +323,7 @@ export const toggleNodeGroup = <T extends Model>(
   if (isNodeInGroup(model, nodeId, groupId)) {
     return removeTerminalNode(model, nodeId);
   }
-  return addTerminalNode(model, nodeId, groupId);
+  return addTerminalStartNode(model, nodeId, groupId);
 };
 
 export const includesNode = (model: Model, nodeId: NodeId): boolean => {
