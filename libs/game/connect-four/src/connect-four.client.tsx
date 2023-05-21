@@ -1,6 +1,4 @@
-import { Cmd, Posix, Sub } from '@gamezilla/shared/core';
 import {
-  Alerts,
   Ctx,
   RoomCtx,
   RoomViewCtx,
@@ -8,14 +6,15 @@ import {
   ViewMainMenu,
   bannerArtAspectRatio,
 } from '@gamezilla/shared/client';
+import { Cmd, Posix, Sub } from '@gamezilla/shared/core';
 import * as UI from '@gamezilla/shared/ui';
 import { IconComputerDesktop, IconUsers } from '@gamezilla/shared/ui';
 import {
-  ServerModel,
   ClientModel,
   ClientMsg,
-  ToServer,
+  ServerModel,
   ToClient,
+  ToServer,
 } from './connect-four.shared';
 import {
   PlayerIcon,
@@ -46,8 +45,6 @@ export const init: Model = { t: 'none' };
 //
 
 export type Msg = ClientMsg;
-
-type OutAction = Alerts.Action;
 
 export const update = ({
   sendToServer,
@@ -107,11 +104,11 @@ export const updateFromServer = ({
   ctx: RoomCtx;
   msg: ToClient;
   model: Model;
-}): [Model, Cmd<Msg>, OutAction[]] => {
+}): [Model, Cmd<Msg>] => {
   switch (msg.t) {
     case 'input-mode': {
       if (msg.result.t === 'err') {
-        return [model, Cmd.None, []];
+        return [model, Cmd.None];
       }
 
       const merged = mergeWithServer({
@@ -119,15 +116,15 @@ export const updateFromServer = ({
         serverModel: msg.result.value,
         ctx,
       });
-      return [merged, Cmd.None, []];
+      return [merged, Cmd.None];
     }
 
     case 'vs-user': {
       if (model.t === 'vs-user') {
-        const [c, cmd, actions] = VsUser.updateFromServer(msg.c, model.c);
-        return [{ t: 'vs-user', c }, Cmd.tag_('vs-user', cmd), actions];
+        const [c, cmd] = VsUser.updateFromServer(msg.c, model.c);
+        return [{ t: 'vs-user', c }, Cmd.tag_('vs-user', cmd)];
       }
-      return [model, Cmd.None, []];
+      return [model, Cmd.None];
     }
 
     case 'vs-bot': {
@@ -140,10 +137,9 @@ export const updateFromServer = ({
         return [
           { t: 'vs-bot', c: updated.model },
           Cmd.tag_('vs-bot', updated.cmd ?? Cmd.None),
-          updated?.actions ?? [],
         ];
       }
-      return [model, Cmd.None, []];
+      return [model, Cmd.None];
     }
   }
 };

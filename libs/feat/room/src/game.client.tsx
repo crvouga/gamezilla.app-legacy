@@ -6,13 +6,7 @@ import { MazeClient } from '@gamezilla/game/maze';
 import { SnakeClient } from '@gamezilla/game/snake';
 import { TetrisClient } from '@gamezilla/game/tetris';
 import { TicTacToeClient } from '@gamezilla/game/tic-tac-toe';
-import {
-  Alerts,
-  AppMsg,
-  Ctx,
-  RoomCtx,
-  RoomViewCtx,
-} from '@gamezilla/shared/client';
+import { AppMsg, Ctx, RoomCtx, RoomViewCtx } from '@gamezilla/shared/client';
 import { Cmd, Sub, exhaustive } from '@gamezilla/shared/core';
 import {
   ClientModel,
@@ -92,8 +86,6 @@ export const init = ({
 //
 
 export type Msg = ClientMsg;
-
-export type OutAction = Alerts.Action;
 
 export const update = ({
   ctx,

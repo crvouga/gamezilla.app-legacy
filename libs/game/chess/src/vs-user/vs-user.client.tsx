@@ -1,4 +1,5 @@
 import { UserId } from '@gamezilla/shared/app';
+import { RoomCtx, ViewCtx } from '@gamezilla/shared/client';
 import {
   Audio,
   Cmd,
@@ -8,20 +9,19 @@ import {
   p,
   t,
 } from '@gamezilla/shared/core';
-import { Alerts, RoomCtx, ViewCtx } from '@gamezilla/shared/client';
 import * as UI from '@gamezilla/shared/ui';
 import * as Chess from '../chess/chess';
 import * as Clock from '../chess/chess-clock';
 import Sounds from '../chess/chess-sounds';
 import { PawnIcon, VersusHeader } from '../chess/chess-views';
 import {
-  ServerModel,
   ClientModel,
   ClientMsg,
   InputMove,
+  ServerModel,
   SharedModel,
-  ToServer,
   ToClient,
+  ToServer,
   initShared,
   inputClock,
   inputClockProblemToString,
@@ -65,8 +65,6 @@ export const init = ({
 //
 
 export type Msg = ClientMsg;
-
-export type OutAction = Alerts.Action;
 
 export const update = (
   { sendToServer }: { sendToServer: (msg: ToServer) => Cmd },
@@ -163,26 +161,26 @@ export const updateFromServer = (
   { ctx }: { ctx: RoomCtx },
   msg: ToClient,
   _model: Model
-): [Model, Cmd<Msg>, OutAction[]] => {
+): [Model, Cmd<Msg>] => {
   const model: Model = { ..._model, openedMenuId: Option.None };
 
   switch (msg[0]) {
     case 'InputClock_Done': {
       if (msg[1].t === 'err') {
-        return [model, Cmd.None, []];
+        return [model, Cmd.None];
       }
-      return [{ ...model, sharedModel: msg[1].value }, Cmd.None, []];
+      return [{ ...model, sharedModel: msg[1].value }, Cmd.None];
     }
 
     case 'input-move-done': {
       if (msg[1].t === 'err') {
-        return [model, Cmd.None, []];
+        return [model, Cmd.None];
       }
 
       const sharedModelNew = msg[1].value;
 
       if (sharedModelNew.type !== 'game') {
-        return [model, Cmd.None, []];
+        return [model, Cmd.None];
       }
 
       const soundCmd = Chess.inCheck(sharedModelNew.board)
@@ -191,27 +189,27 @@ export const updateFromServer = (
         ? playAudio(Sounds.capture)
         : playAudio(Sounds.move);
 
-      return [{ ...model, sharedModel: sharedModelNew }, soundCmd, []];
+      return [{ ...model, sharedModel: sharedModelNew }, soundCmd];
     }
 
     case 'InputPlayer_Done': {
       if (msg[1].t === 'err') {
-        return [model, Cmd.None, []];
+        return [model, Cmd.None];
       }
 
       const sharedModel = msg[1].value;
 
-      return [{ ...model, sharedModel }, Cmd.None, []];
+      return [{ ...model, sharedModel }, Cmd.None];
     }
 
     case 'StartGame_Done': {
       if (msg[1].t === 'err') {
-        return [model, Cmd.None, []];
+        return [model, Cmd.None];
       }
 
       const sharedModel = msg[1].value;
 
-      return [{ ...model, sharedModel }, Cmd.None, []];
+      return [{ ...model, sharedModel }, Cmd.None];
     }
 
     //
@@ -223,32 +221,31 @@ export const updateFromServer = (
     case 'RequestToDraw_Done': {
       switch (msg[1].t) {
         case 'err': {
-          return [model, Cmd.None, []];
+          return [model, Cmd.None];
         }
 
         case 'ok': {
           return [
             { ...model, openedModal: 'AskedToDraw' },
             playAudio(Sounds.uiUnlock),
-            [],
           ];
         }
 
         default: {
-          return [model, Cmd.None, []];
+          return [model, Cmd.None];
         }
       }
     }
 
     case 'RespondToDraw_Done': {
       if (msg[1].t === 'err') {
-        return [model, Cmd.None, []];
+        return [model, Cmd.None];
       }
 
       const sharedModel = msg[1].value;
 
       if (sharedModel.type === 'GameOver') {
-        return [{ ...model, sharedModel }, Cmd.None, []];
+        return [{ ...model, sharedModel }, Cmd.None];
       }
 
       const isNotPlaying =
@@ -257,22 +254,17 @@ export const updateFromServer = (
         sharedModel.b !== ctx.currentUserId;
 
       if (isNotPlaying) {
-        return [{ ...model, sharedModel }, Cmd.None, []];
+        return [{ ...model, sharedModel }, Cmd.None];
       }
 
-      const action: OutAction = [
-        'alerts',
-        { tag: 'Snack', message: 'Draw was declined' },
-      ];
-
-      return [{ ...model, sharedModel }, Cmd.None, [action]];
+      return [{ ...model, sharedModel }, Cmd.None];
     }
 
     case 'CancelDraw_Done': {
       const result = msg[1];
 
       if (result.t === 'err') {
-        return [model, Cmd.None, []];
+        return [model, Cmd.None];
       }
 
       const sharedModel = result.value;
@@ -283,15 +275,10 @@ export const updateFromServer = (
         sharedModel.b !== ctx.currentUserId;
 
       if (isNotPlaying) {
-        return [{ ...model, sharedModel }, Cmd.None, []];
+        return [{ ...model, sharedModel }, Cmd.None];
       }
 
-      const action: OutAction = [
-        'alerts',
-        { tag: 'Snack', message: 'Draw was cancelled' },
-      ];
-
-      return [{ ...model, sharedModel }, Cmd.None, [action]];
+      return [{ ...model, sharedModel }, Cmd.None];
     }
 
     //
@@ -302,21 +289,21 @@ export const updateFromServer = (
 
     case 'resign_Done': {
       if (msg[1].t === 'err') {
-        return [model, Cmd.None, []];
+        return [model, Cmd.None];
       }
 
       const sharedModelNew = msg[1].value;
 
       if (sharedModelNew.type === 'Setup') {
-        return [model, Cmd.None, []];
+        return [model, Cmd.None];
       }
 
-      return [{ ...model, sharedModel: sharedModelNew }, Cmd.None, []];
+      return [{ ...model, sharedModel: sharedModelNew }, Cmd.None];
     }
 
     case 'NewGame_Done': {
       if (msg[1].t === 'err') {
-        return [model, Cmd.None, []];
+        return [model, Cmd.None];
       }
 
       const sharedModelNew = msg[1].value;
@@ -324,7 +311,6 @@ export const updateFromServer = (
       return [
         { ...model, sharedModel: sharedModelNew },
         playAudio(Sounds.navigationCancel),
-        [],
       ];
     }
 
@@ -335,22 +321,21 @@ export const updateFromServer = (
           openedModal: 'GameOver',
         },
         playAudio(Sounds.gameOver),
-        [],
       ];
     }
 
     case 'GameStarted': {
-      return [model, playAudio(Sounds.gameStart), []];
+      return [model, playAudio(Sounds.gameStart)];
     }
 
     case 'ClockTicked': {
       const sharedModel = msg[1];
 
-      return [{ ...model, sharedModel }, Cmd.None, []];
+      return [{ ...model, sharedModel }, Cmd.None];
     }
 
     case 'player-left': {
-      return [{ ...model, sharedModel: msg[1] }, Cmd.None, []];
+      return [{ ...model, sharedModel: msg[1] }, Cmd.None];
     }
 
     default: {

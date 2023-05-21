@@ -1,12 +1,5 @@
 import { RoomId, UserId } from '@gamezilla/shared/app';
-import {
-  Alerts,
-  AppMsg,
-  Ctx,
-  RoomCtx,
-  Route,
-  ViewCtx,
-} from '@gamezilla/shared/client';
+import { AppMsg, Ctx, RoomCtx, Route, ViewCtx } from '@gamezilla/shared/client';
 import { Cmd, RemoteResult, Sub, exhaustive, p } from '@gamezilla/shared/core';
 import {
   ActionButton,
@@ -80,8 +73,6 @@ export const init = (): { model: Model } => {
 //
 
 export type Msg = ClientMsg;
-
-type OutAction = Alerts.Action<Msg>;
 
 //
 //
@@ -456,7 +447,6 @@ const updateResponse = ({
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
-  actions?: OutAction[];
 } => {
   if (msg.result.t === 'err') {
     return {
@@ -468,7 +458,6 @@ const updateResponse = ({
         },
       },
       cmd: Cmd.None,
-      actions: [],
     };
   }
 
@@ -487,7 +476,6 @@ const updateResponse = ({
       requests: { ...merged.model.requests, [msg.t]: RemoteResult.Ok('none') },
     },
     cmd: merged.cmd,
-    actions: [],
   };
 };
 

@@ -1,22 +1,18 @@
+import { ViewCtx, ViewVsBotSetupScreen } from '@gamezilla/shared/client';
 import { Audio, Cmd, Option, Sub, exhaustive, t } from '@gamezilla/shared/core';
-import {
-  Alerts,
-  ViewCtx,
-  ViewVsBotSetupScreen,
-} from '@gamezilla/shared/client';
 import * as UI from '@gamezilla/shared/ui';
 import * as Chess from '../chess/chess';
 import { viewCoverArt } from '../chess/chess';
 import Sounds from '../chess/chess-sounds';
 import { PawnIcon } from '../chess/chess-views';
 import {
-  ServerModel,
   ClientModel,
   ClientMsg,
   Res,
+  ServerModel,
   SharedModel,
-  ToServer,
   ToClient,
+  ToServer,
   initShared,
   inputMove,
   isBotTurn,
@@ -53,8 +49,6 @@ export const init = (): [ClientModel, Cmd<Msg>] => {
 //
 
 export type Msg = ClientMsg;
-
-export type OutAction = Alerts.Action;
 
 export const update = (
   { sendToServer }: { sendToServer: (msg: ToServer) => Cmd },
@@ -132,8 +126,8 @@ export const update = (
 export const updateFromServer = (
   msg: ToClient,
   modelPrev: Model
-): [Model, Cmd<Msg>, OutAction[]] => {
-  const [modelNext, cmd, actions] = updateFromServer_(msg, modelPrev);
+): [Model, Cmd<Msg>] => {
+  const [modelNext, cmd] = updateFromServer_(msg, modelPrev);
 
   if (
     modelPrev.sharedModel.type !== 'GameOver' &&
@@ -142,7 +136,6 @@ export const updateFromServer = (
     return [
       { ...modelNext, openedModal: 'GameOver' },
       Cmd.batch([cmd, playAudio(Sounds.gameOver)]),
-      actions,
     ];
   }
 
@@ -150,22 +143,19 @@ export const updateFromServer = (
     modelPrev.sharedModel.type !== 'game' &&
     modelNext.sharedModel.type === 'game'
   ) {
-    return [modelNext, Cmd.batch([cmd, playAudio(Sounds.gameStart)]), actions];
+    return [modelNext, Cmd.batch([cmd, playAudio(Sounds.gameStart)])];
   }
 
-  return [modelNext, cmd, actions];
+  return [modelNext, cmd];
 };
 
-const updateFromServer_ = (
-  msg: ToClient,
-  model: Model
-): [Model, Cmd<Msg>, OutAction[]] => {
+const updateFromServer_ = (msg: ToClient, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case 'bot-moved_Done': {
       const result = msg[1];
 
       if (result.t === 'err') {
-        return [model, Cmd.None, []];
+        return [model, Cmd.None];
       }
 
       const { didCapture, ...sharedModel } = result.value;
@@ -177,19 +167,19 @@ const updateFromServer_ = (
           ? playAudio(Sounds.capture)
           : playAudio(Sounds.move);
 
-      return [{ ...model, sharedModel }, soundCmd, []];
+      return [{ ...model, sharedModel }, soundCmd];
     }
 
     case 'player-left': {
       const merged = mergeWithServer(model, msg[1]);
-      return [merged, Cmd.None, []];
+      return [merged, Cmd.None];
     }
 
     case 'input-move-done': {
       const result = msg[1];
 
       if (result.t === 'err') {
-        return [model, Cmd.None, []];
+        return [model, Cmd.None];
       }
 
       const sharedModelNew = result.value;
@@ -203,7 +193,7 @@ const updateFromServer_ = (
           ? playAudio(Sounds.capture)
           : playAudio(Sounds.move);
 
-      return [modelNew, soundCmd, []];
+      return [modelNew, soundCmd];
     }
 
     case 'InputUser_Done':
@@ -220,21 +210,18 @@ const updateFromServer_ = (
   }
 };
 
-const handleResponse = (
-  res: Res,
-  model: Model
-): [Model, Cmd<Msg>, OutAction[]] => {
+const handleResponse = (res: Res, model: Model): [Model, Cmd<Msg>] => {
   const result = res[1];
 
   if (result.t === 'err') {
-    return [model, Cmd.None, []];
+    return [model, Cmd.None];
   }
 
   const sharedModelNew = result.value;
 
   const modelNew = mergeWithServer(model, sharedModelNew);
 
-  return [modelNew, Cmd.None, []];
+  return [modelNew, Cmd.None];
 };
 
 const playAudio = (src: string): Cmd<Msg> => {

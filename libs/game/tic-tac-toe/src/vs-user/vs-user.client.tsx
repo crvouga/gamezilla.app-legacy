@@ -1,6 +1,6 @@
-import { Cmd, exhaustive } from '@gamezilla/shared/core';
-import { Alerts, RoomCtx, ViewCtx } from '@gamezilla/shared/client';
 import { UserId } from '@gamezilla/shared/app';
+import { RoomCtx, ViewCtx } from '@gamezilla/shared/client';
+import { Cmd, exhaustive } from '@gamezilla/shared/core';
 import * as UI from '@gamezilla/shared/ui';
 import {
   PlayerType,
@@ -11,14 +11,13 @@ import {
 } from '../tic-tic-toe/tic-tac-toe';
 import {
   PlayerTypeIcon,
+  ViewBoard,
   ViewSlot,
   gameTheme,
-  ViewBoard,
 } from '../tic-tic-toe/tic-tac-toe-ui';
 import { VersusHeader } from '../views';
 import * as Round from './vs-user-round';
 import {
-  ServerModel,
   ClientModel,
   ClientMsg,
   GameModel,
@@ -28,8 +27,9 @@ import {
   NewGame,
   NewGameToString,
   Res,
-  ToServer,
+  ServerModel,
   ToClient,
+  ToServer,
   allBestOutOf,
   allMoveTimeLimit,
   bestOutOfToString,
@@ -66,8 +66,6 @@ export const init: Model = {
 //
 
 export type Msg = ClientMsg;
-
-export type OutAction = Alerts.Action;
 
 export const update = (
   {
@@ -126,11 +124,11 @@ export const updateFromServer = (
   _: { ctx: RoomCtx },
   msg: ToClient,
   model: Model
-): [Model, OutAction[]] => {
+): [Model] => {
   switch (msg[0]) {
     case 'player-left': {
       const modelNew = mergeWithServer(model, msg[1]);
-      return [modelNew, []];
+      return [modelNew];
     }
 
     case 'RematchAccept_Done':
@@ -153,7 +151,7 @@ export const updateFromServer = (
 
       const modelNew = mergeWithServer(model, res[1].value);
 
-      return [{ ...modelNew, openedModal: 'none' }, []];
+      return [{ ...modelNew, openedModal: 'none' }];
     }
 
     case 'MoveCountDown_Done':
@@ -164,7 +162,7 @@ export const updateFromServer = (
 
       const modelNew = mergeWithServer(model, msg[1].value);
 
-      return [modelNew, []];
+      return [modelNew];
     }
 
     default: {

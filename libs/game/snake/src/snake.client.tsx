@@ -1,3 +1,4 @@
+import { RoomCtx, Route, ViewCtx } from '@gamezilla/shared/client';
 import {
   Cmd,
   Keyboard,
@@ -6,18 +7,17 @@ import {
   Sub,
   exhaustive,
 } from '@gamezilla/shared/core';
-import { Alerts, RoomCtx, Route, ViewCtx } from '@gamezilla/shared/client';
 import * as UI from '@gamezilla/shared/ui';
 import { useLayoutEffect, useRef } from 'react';
 import { Direction } from './direction';
 import * as Snake from './snake';
 import {
-  ServerModel,
   ClientModel,
   ClientMsg,
+  ServerModel,
   SharedModel,
-  ToServer,
   ToClient,
+  ToServer,
   canStartGame,
   initSharedModel,
 } from './snake.shared';
@@ -46,8 +46,6 @@ export const init: Model = {
 //
 
 export type Msg = ClientMsg;
-
-export type OutAction = Alerts.Action;
 
 export const update = (
   {
@@ -126,7 +124,7 @@ export const update = (
 export const updateFromServer = (
   msg: ToClient,
   model: Model
-): [Model, Cmd<Msg>, OutAction[]] => {
+): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case 'tick': {
       const sharedModel = msg[1];
@@ -136,7 +134,6 @@ export const updateFromServer = (
           openedMenuId: model.openedMenuId,
         },
         Cmd.None,
-        [],
       ];
     }
 
@@ -168,17 +165,12 @@ const updateResponse = <
 >(
   result: TResult,
   model: Model
-): [Model, Cmd<Msg>, OutAction[]] => {
+): [Model, Cmd<Msg>] => {
   if (result.t === 'err') {
-    const message = result.error.split('_').join(' ');
-    return [
-      model,
-      Cmd.None,
-      [['alerts', { tag: 'Snack', message, variant: 'Error' }]],
-    ];
+    return [model, Cmd.None];
   }
   const sharedModel = result.value;
-  return [{ ...model, ...sharedModel }, Cmd.None, []];
+  return [{ ...model, ...sharedModel }, Cmd.None];
 };
 
 //

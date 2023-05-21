@@ -1,7 +1,7 @@
 import { keyframes } from '@emotion/react';
 import { UserId } from '@gamezilla/shared/app';
+import { ChoiceChips, ViewCtx } from '@gamezilla/shared/client';
 import { Cmd, Sub, exhaustive } from '@gamezilla/shared/core';
-import { Alerts, ChoiceChips, ViewCtx } from '@gamezilla/shared/client';
 import {
   ActionButton,
   Avatar,
@@ -33,14 +33,14 @@ import {
   gameTheme,
 } from '../connect-four/connect-four-ui';
 import {
-  ServerModel,
   ClientModel,
   ClientMsg,
   GameModel,
   GameOverModel,
+  ServerModel,
   SetupModel,
-  ToServer,
   ToClient,
+  ToServer,
   allMoveTimeLimit,
   handle,
   initShared,
@@ -77,8 +77,6 @@ export const init = ({
 //
 
 export type Msg = ClientMsg;
-
-export type OutAction = Alerts.Action;
 
 export const update = (
   { sendToServer }: { sendToServer: (msg: ToServer) => Cmd },
@@ -128,7 +126,7 @@ export const update = (
 export const updateFromServer = (
   msg: ToClient,
   model: Model
-): [Model, Cmd<Msg>, OutAction[]] => {
+): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case 'new-game':
     case 'InputMoveTimeLimit':
@@ -144,7 +142,7 @@ export const updateFromServer = (
         clientModel: model,
         serverModel: modelNew,
       });
-      return [{ ...merged, openedModal: 'none' }, Cmd.None, []];
+      return [{ ...merged, openedModal: 'none' }, Cmd.None];
     }
 
     case 'input-move': {
@@ -153,7 +151,7 @@ export const updateFromServer = (
         clientModel: model,
         serverModel: modelNew,
       });
-      return [{ ...merged, ghostIndex: 'none' }, Cmd.None, []];
+      return [{ ...merged, ghostIndex: 'none' }, Cmd.None];
     }
 
     case 'Tick_Done': {
@@ -161,7 +159,7 @@ export const updateFromServer = (
         clientModel: model,
         serverModel: msg[1],
       });
-      return [merged, Cmd.None, []];
+      return [merged, Cmd.None];
     }
 
     case 'player-left': {
@@ -169,7 +167,7 @@ export const updateFromServer = (
         clientModel: model,
         serverModel: msg[1],
       });
-      return [merged, Cmd.None, []];
+      return [merged, Cmd.None];
     }
 
     default: {

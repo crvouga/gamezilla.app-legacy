@@ -1,5 +1,4 @@
 import {
-  Alerts,
   Ctx,
   RoomCtx,
   ViewCtx,
@@ -69,8 +68,6 @@ export const init = (...params: Parameters<typeof initShared>): ClientModel => {
 
 export type Msg = ClientMsg;
 
-type OutAction = Alerts.Action;
-
 export const update = (
   {
     sendToServer,
@@ -138,7 +135,6 @@ export const updateFromServer = ({
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
-  actions?: OutAction[];
 } => {
   switch (msg[0]) {
     case 'player-left': {

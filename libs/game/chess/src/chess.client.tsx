@@ -1,3 +1,4 @@
+import { RoomCtx, RoomViewCtx, ViewMainMenu } from '@gamezilla/shared/client';
 import {
   Audio,
   Cmd,
@@ -8,22 +9,16 @@ import {
   p,
 } from '@gamezilla/shared/core';
 import {
-  Alerts,
-  RoomCtx,
-  RoomViewCtx,
-  ViewMainMenu,
-} from '@gamezilla/shared/client';
-import {
   IconComputerDesktop,
   IconPuzzlePiece,
   IconUsers,
 } from '@gamezilla/shared/ui';
 import {
-  ServerModel,
   ClientModel,
   ClientMsg,
-  ToServer,
+  ServerModel,
   ToClient,
+  ToServer,
 } from './chess.shared';
 import { viewCoverArt } from './chess/chess';
 import Sounds from './chess/chess-sounds';
@@ -63,8 +58,6 @@ export const init = (): [ClientModel, Cmd<Msg>] => {
 //
 
 export type Msg = ClientMsg;
-
-export type OutAction = Alerts.Action;
 
 export const update = ({
   msg,
@@ -159,7 +152,7 @@ export const updateFromServer = ({
   ctx: RoomCtx;
   msg: ToClient;
   model: Model;
-}): [Model, Cmd<Msg>, OutAction[]] => {
+}): [Model, Cmd<Msg>] => {
   switch (msg.t) {
     case 'input-mode': {
       const { result } = msg;
@@ -176,7 +169,7 @@ export const updateFromServer = ({
       };
 
       if (result.t === 'err') {
-        return [modelNew, Cmd.None, []];
+        return [modelNew, Cmd.None];
       }
 
       const merged = mergeWithServer({
@@ -185,12 +178,12 @@ export const updateFromServer = ({
         sendToServer,
       });
 
-      return [...merged, []];
+      return [...merged];
     }
 
     case 'vs-user': {
       if (model.mode.t === 'vs-user') {
-        const [child, cmd, actions] = VsUser.updateFromServer(
+        const [child, cmd] = VsUser.updateFromServer(
           { ctx },
           msg.c,
           model.mode.c
@@ -199,33 +192,28 @@ export const updateFromServer = ({
         return [
           { ...model, mode: { t: 'vs-user', c: child } },
           Cmd.tag_('vs-user', cmd),
-          actions,
         ];
       }
 
-      return [model, Cmd.None, []];
+      return [model, Cmd.None];
     }
 
     case 'vs-bot': {
       if (model.mode.t === 'vs-bot') {
-        const [child, cmd, actions] = VsBot.updateFromServer(
-          msg.c,
-          model.mode.c
-        );
+        const [child, cmd] = VsBot.updateFromServer(msg.c, model.mode.c);
 
         return [
           { ...model, mode: { t: 'vs-bot', c: child } },
           Cmd.tag_('vs-bot', cmd),
-          actions,
         ];
       }
 
-      return [model, Cmd.None, []];
+      return [model, Cmd.None];
     }
 
     case 'puzzle': {
       if (model.mode.t !== 'puzzle') {
-        return [model, Cmd.None, []];
+        return [model, Cmd.None];
       }
 
       const updated = Puzzle.updateFromServer({
@@ -237,7 +225,6 @@ export const updateFromServer = ({
       return [
         { ...model, mode: { t: 'puzzle', c: updated.model } },
         Cmd.tag_('puzzle', updated?.cmd ?? Cmd.None),
-        [],
       ];
     }
   }
