@@ -146,7 +146,7 @@ export const updateFromServer = (
       const res: Res = msg;
 
       if (res[1].t === 'err') {
-        return [model, []];
+        return [model];
       }
 
       const modelNew = mergeWithServer(model, res[1].value);
@@ -157,7 +157,7 @@ export const updateFromServer = (
     case 'MoveCountDown_Done':
     case 'RoundCountDown_Done': {
       if (msg[1].t === 'err') {
-        return [model, []];
+        return [model];
       }
 
       const modelNew = mergeWithServer(model, msg[1].value);
