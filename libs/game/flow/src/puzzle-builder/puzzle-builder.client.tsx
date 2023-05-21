@@ -3,7 +3,7 @@ import {
   RoomViewCtx,
   ViewBottomButtonBar,
 } from '@gamezilla/shared/client';
-import { Cmd, andThen, p } from '@gamezilla/shared/core';
+import { Cmd } from '@gamezilla/shared/core';
 import {
   IconArrowLeftOnRect,
   IconPenToSquare,
@@ -31,73 +31,13 @@ export const init: Model = initShared;
 
 const toActiveGroupInputHtmlId = (id: GroupId) => `group-${id}`;
 
-export const update = (input: {
-  msg: Msg;
-  model: Model;
-  ctx: RoomCtx;
-  sendToServer: (m: ToServer) => Cmd;
-}): {
-  model: Model;
-  cmd?: Cmd<Msg>;
-} => {
-  return p(
-    input,
-    andThen(({ model }) => updateRequest({ ...input, model })),
-    andThen(({ model }) => updateUI({ ...input, model }))
-  );
-};
-
-const updateUI = ({
-  msg,
-  model,
-}: {
-  msg: Msg;
-  model: Model;
-  ctx: RoomCtx;
-  sendToServer: (m: ToServer) => Cmd;
-}): {
-  model: Model;
-  cmd?: Cmd<Msg>;
-} => {
-  if (model.mode === 'edit-groups') {
-    if (msg.t === 'pressed-down-node') {
-      const terminal = Flow.nodeIdToTerminal(model.grid, msg.nodeId);
-
-      if (!terminal) {
-        const gridNew = Flow.addTerminalStartNode(
-          model.grid,
-          msg.nodeId,
-          model.focusedGroupId
-        );
-
-        return { model: { ...model, grid: gridNew } };
-      }
-
-      const gridNew = Flow.addTerminalEndNode(
-        model.grid,
-        msg.nodeId,
-        model.focusedGroupId
-      );
-
-      return { model: { ...model, grid: gridNew } };
-    }
-  }
-
-  if (model.mode === 'play') {
-    return { model };
-  }
-
-  return { model };
-};
-
-const updateRequest = ({
+export const update = ({
   msg,
   model,
   ctx,
   sendToServer,
 }: {
   msg: Msg;
-
   model: Model;
   ctx: RoomCtx;
   sendToServer: (m: ToServer) => Cmd;
@@ -105,14 +45,12 @@ const updateRequest = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (msg.t === 'input-active-group' || msg.t === 'input-mode') {
-    const handled = handle({ ctx, msg, model });
+  const handled = handle({ ctx, msg, model });
 
-    const modelNew =
-      handled.type === 'Ok' ? { ...model, ...handled.value } : model;
-    return { model: modelNew, cmd: sendToServer(msg) };
-  }
-  return { model };
+  const modelNew =
+    handled.type === 'Ok' ? { ...model, ...handled.value } : model;
+
+  return { model: modelNew, cmd: sendToServer(msg) };
 };
 
 export const updateFromServer = ({
@@ -180,7 +118,7 @@ export const View = ({
               label: 'Edit Mode',
               icon: <IconPenToSquare />,
               onClick: () => {
-                $send({ t: 'input-mode', mode: 'edit-groups' });
+                $send({ t: 'input-mode', mode: 'edit' });
               },
             },
           ]}
