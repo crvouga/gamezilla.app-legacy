@@ -46,6 +46,12 @@ export type DraftTerminal = {
   pair: [Flow.NodeId] | [Flow.NodeId, Flow.NodeId];
 };
 
+export const isDraftTerminalValid = (
+  draftTerminal: DraftTerminal
+): draftTerminal is Flow.Terminal => {
+  return draftTerminal.pair.length === 2;
+};
+
 export const nodeIdToDraftTerminal = (
   model: SharedModel,
   nodeId: Flow.NodeId
@@ -120,23 +126,20 @@ export const handle = ({
     }
 
     if (msg.t === 'pressed-down-node') {
-      const terminal = nodeIdToDraftTerminal(model, msg.nodeId);
+      const modelNew = updateEditModePressedDownNode({
+        model,
+        nodeId: msg.nodeId,
+      });
 
-      if (!terminal) {
-        const modelNew: SharedModel = {
-          ...model,
-          draftTerminals: {
-            ...model.draftTerminals,
-            [model.focusedGroupId]: {
-              groupId: model.focusedGroupId,
-              pair: [msg.nodeId],
-            },
-          },
-        };
-        return Ok(modelNew);
+      const focusedTerminal = model.draftTerminals[model.focusedGroupId];
+      if (focusedTerminal && isDraftTerminalValid(focusedTerminal)) {
+        return Ok({
+          ...modelNew,
+          focusedGroupId: toNextGroupId(model.focusedGroupId),
+        });
       }
 
-      return Ok({ ...model });
+      return Ok(modelNew);
     }
 
     return Err('must-be-in-edit-mode');
@@ -147,6 +150,67 @@ export const handle = ({
   }
 
   return Err('unimplemented');
+};
+
+//
+//
+//
+// Edit Mode
+//
+//
+//
+
+const toNextGroupId = (groupId: Flow.GroupId): Flow.GroupId => {
+  const index = Flow.groupIdOrder.indexOf(groupId);
+  const nextIndex = (index + 1) % Flow.groupIdOrder.length;
+  const groupIdNew = Flow.groupIdOrder[nextIndex];
+
+  if (!groupIdNew) {
+    throw new Error('impossible condition');
+  }
+
+  return groupIdNew;
+};
+
+const updateEditModePressedDownNode = ({
+  model,
+  nodeId,
+}: {
+  model: EditModel;
+  nodeId: Flow.NodeId;
+}): EditModel => {
+  const terminal = nodeIdToDraftTerminal(model, nodeId);
+
+  if (!terminal) {
+    const existing = model.draftTerminals[model.focusedGroupId];
+    const draftTerminals: EditModel['draftTerminals'] = {
+      ...model.draftTerminals,
+      [model.focusedGroupId]: {
+        groupId: model.focusedGroupId,
+        pair: existing ? [nodeId, ...existing.pair].slice(0, 2) : [nodeId],
+      },
+    };
+
+    return { ...model, draftTerminals };
+  }
+
+  if (terminal.groupId !== model.focusedGroupId) {
+    const draftTerminals: EditModel['draftTerminals'] = {
+      ...model.draftTerminals,
+      [terminal.groupId]: {
+        ...terminal,
+        pair: terminal.pair.filter((x) => x !== nodeId),
+      },
+      [model.focusedGroupId]: {
+        groupId: model.focusedGroupId,
+        pair: [...terminal.pair, nodeId].slice(0, 2),
+      },
+    };
+
+    return { ...model, draftTerminals };
+  }
+
+  return { ...model };
 };
 
 const initMode = (

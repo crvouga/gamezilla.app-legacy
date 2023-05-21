@@ -162,7 +162,8 @@ export const View = ({
       */}
       <g transform="translate(0.5, 0.5)">
         {map(yieldTerminals(model), (terminal) => {
-          const startNode = FlowGrid.toNode(model, terminal.pair[0]);
+          const startId = terminal.pair[0];
+          const startNode = FlowGrid.toNode(model, startId);
           const endNode = terminal.pair[1]
             ? FlowGrid.toNode(model, terminal.pair[1])
             : null;
