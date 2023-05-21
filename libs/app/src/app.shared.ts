@@ -34,19 +34,13 @@ export type Session = {
 export type ClientModel = {
   route: Route.Route;
   alerts: Alerts.Model<ClientMsg>;
-  wire: WireModel;
   auth: Auth.ClientModel;
   room: Room.ClientModel;
   profile: Profile.ClientModel;
   chat: Chat.ClientModel;
   search: Search.ClientModel;
+  wire: WireModel;
 };
-
-export type WireModel =
-  | { type: 'connecting' }
-  | { type: 'connect-error'; errorCount: number }
-  | { type: 'disconnected' }
-  | { type: 'connected' };
 
 //
 //
@@ -74,7 +68,7 @@ export type ToClient =
 
 export type ClientMsg =
   | { t: '→'; c: ToClient }
-  | { t: 'wire'; wire: WireModel['type'] }
+  | { t: 'wire'; c: WireMsg }
   | { t: 'route'; c: Route.Msg }
   | { t: 'alerts'; c: Alerts.Msg }
   | { t: 'room'; c: Room.ClientMsg }
@@ -92,6 +86,20 @@ export type ServerMsg =
   | { t: 'search'; c: Search.ServerMsg }
   | { t: 'chat'; c: Chat.ServerMsg }
   | { t: 'auth'; c: Auth.ServerMsg };
+
+//
+//
+// Wire
+//
+//
+
+export type WireModel =
+  | { t: 'connecting' }
+  | { t: 'connect-error'; errorCount: number }
+  | { t: 'disconnected' }
+  | { t: 'connected' };
+
+export type WireMsg = { t: WireModel['t'] };
 
 //
 //

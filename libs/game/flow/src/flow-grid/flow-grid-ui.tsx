@@ -136,12 +136,14 @@ export const View = ({
       */}
       <g transform="translate(0.5, 0.5)">
         {map(Flow.yieldTerminals(model), (terminal) => {
-          const startNode = FlowGrid.toNode(model, terminal.start);
-          const endNode = terminal.end
-            ? FlowGrid.toNode(model, terminal.end)
+          const startNode = FlowGrid.toNode(model, terminal.pair[0]);
+          const endNode = terminal.pair[1]
+            ? FlowGrid.toNode(model, terminal.pair[1])
             : null;
           return (
-            <g key={`${terminal.groupId} ${terminal.start} ${terminal.end}`}>
+            <g
+              key={`${terminal.groupId} ${terminal.pair[0]} ${terminal.pair[1]}`}
+            >
               {startNode && (
                 <ViewTerminalNode
                   groupId={terminal.groupId}

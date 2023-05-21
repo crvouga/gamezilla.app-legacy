@@ -116,7 +116,7 @@ const extendPathWalk = <T extends Model>({
 
   const terminal = nodeIdToTerminal(modelWithPath, currentNodeId);
 
-  if (terminal?.end === currentNodeId) {
+  if (terminal?.pair[1] === currentNodeId) {
     return model;
   }
 

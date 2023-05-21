@@ -14,9 +14,12 @@ import { GroupId } from '../flow/flow';
 export type SharedModel = EditModel | PlayModel;
 
 type EditModel = {
-  mode: 'edit-groups';
+  mode: 'edit';
   focusedGroupId: Flow.GroupId;
   grid: FlowGrid.Model;
+  draftTerminals: {
+    [groupId in Flow.GroupId]?: DraftTerminal;
+  };
 };
 
 type PlayModel = FlowGridPlayUI.Model & {
@@ -35,14 +38,43 @@ export const initShared: SharedModel = {
 
 //
 //
+//
+//
+
+export type DraftTerminal = {
+  groupId: Flow.NodeId;
+  pair: [Flow.NodeId] | [Flow.NodeId, Flow.NodeId];
+};
+
+export const nodeIdToDraftTerminal = (
+  model: SharedModel,
+  nodeId: Flow.NodeId
+): DraftTerminal | null => {
+  if (model.mode !== 'edit') {
+    return null;
+  }
+  for (const groupId in model.draftTerminals) {
+    if (!Flow.isGroupId(groupId)) {
+      continue;
+    }
+    const draftTerminal = model.draftTerminals[groupId];
+    if (!draftTerminal) {
+      continue;
+    }
+    if (draftTerminal.pair.includes(nodeId)) {
+      return draftTerminal;
+    }
+  }
+  return null;
+};
+
+//
+//
 // Msg
 //
 //
 
-export type ClientMsg =
-  | Req
-  | { t: 'pressed-down-node'; nodeId: Flow.NodeId }
-  | { t: 'scroll-done'; result: Browser.ScrollResult };
+export type ClientMsg = Req;
 
 export type ServerMsg = { t: 'none' };
 
@@ -53,7 +85,7 @@ export type ToClient = Res;
 export type Req =
   | { t: 'input-active-group'; groupId: GroupId }
   | { t: 'input-mode'; mode: ServerModel['mode'] }
-  | { t: 'toggle-terminal-node'; nodeId: Flow.NodeId; groupId: GroupId };
+  | { t: 'pressed-down-node'; nodeId: Flow.NodeId };
 
 export type Res = Req & {
   result: Result<string, SharedModel>;
@@ -78,7 +110,7 @@ export const handle = ({
     return Ok(modelNew);
   }
 
-  if (model.mode === 'edit-groups') {
+  if (model.mode === 'edit') {
     if (msg.t === 'input-active-group') {
       const modelNew: SharedModel = {
         ...model,
@@ -91,12 +123,6 @@ export const handle = ({
   }
 
   if (model.mode === 'play') {
-    if (msg.t === 'toggle-terminal-node') {
-      const modelNew: SharedModel = { ...model };
-
-      return Ok(modelNew);
-    }
-
     return Err('must-be-in-play-mode');
   }
 
@@ -107,11 +133,12 @@ const initMode = (
   mode: ServerModel['mode'],
   model: SharedModel
 ): SharedModel => {
-  if (mode === 'edit-groups') {
+  if (mode === 'edit') {
     return {
       grid: model.grid,
-      mode: 'edit-groups',
+      mode: 'edit',
       focusedGroupId: Flow.groupIdOrder[0],
+      draftTerminals: {},
     };
   }
 

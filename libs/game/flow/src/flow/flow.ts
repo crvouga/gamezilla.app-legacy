@@ -105,13 +105,12 @@ export type Node = {
 
 export type Terminal = {
   groupId: GroupId;
-  start: NodeId;
-  end?: NodeId | null;
+  pair: [NodeId, NodeId];
 };
 
 export const isTerminalNode = (model: Model, nodeId: NodeId): boolean => {
   for (const terminal of yieldTerminals(model)) {
-    if (terminal.start === nodeId || terminal.end === nodeId) {
+    if (terminal.pair.includes(nodeId)) {
       return true;
     }
   }
@@ -120,7 +119,7 @@ export const isTerminalNode = (model: Model, nodeId: NodeId): boolean => {
 
 export const isTerminalStartNode = (model: Model, nodeId: NodeId): boolean => {
   for (const terminal of yieldTerminals(model)) {
-    if (terminal.start === nodeId) {
+    if (terminal.pair[0] === nodeId) {
       return true;
     }
   }
@@ -236,7 +235,7 @@ export const removeNode = <T extends Model>(model: T, nodeId: NodeId): T => {
   };
 };
 
-export const addTerminalStartNode = <T extends Model>(
+export const setTerminalStartNode = <T extends Model>(
   model: T,
   nodeId: NodeId,
   groupId: GroupId
@@ -248,14 +247,13 @@ export const addTerminalStartNode = <T extends Model>(
       ...added.terminals,
       [groupId]: {
         groupId,
-        start: nodeId,
-        end: added.terminals[groupId]?.end,
+        pair: [nodeId, added.terminals[groupId]?.pair[1]],
       },
     },
   };
 };
 
-export const addTerminalEndNode = <T extends Model>(
+export const setTerminalEndNode = <T extends Model>(
   model: T,
   nodeId: NodeId,
   groupId: GroupId
@@ -272,8 +270,7 @@ export const addTerminalEndNode = <T extends Model>(
       ...model.terminals,
       [groupId]: {
         groupId: terminal.groupId,
-        start: terminal.start,
-        end: nodeId,
+        pair: [terminal.pair[0], nodeId],
       },
     },
   };
@@ -287,7 +284,7 @@ export const removeTerminalNode = <T extends Model>(
     ...model,
     terminals: Object.entries(model.terminals).reduce(
       (acc, [groupId, terminal]) => {
-        if (terminal.start === nodeId) {
+        if (terminal.pair[0] === nodeId) {
           return acc;
         }
         return {
@@ -305,7 +302,7 @@ export const isNodeInGroup = (
   nodeId: NodeId,
   groupId: GroupId
 ): boolean => {
-  return model.terminals[groupId]?.start === nodeId;
+  return Boolean(model.terminals[groupId]?.pair.includes(nodeId));
 };
 
 export const groupIdToTerminal = (
@@ -323,7 +320,7 @@ export const toggleNodeGroup = <T extends Model>(
   if (isNodeInGroup(model, nodeId, groupId)) {
     return removeTerminalNode(model, nodeId);
   }
-  return addTerminalStartNode(model, nodeId, groupId);
+  return setTerminalStartNode(model, nodeId, groupId);
 };
 
 export const includesNode = (model: Model, nodeId: NodeId): boolean => {
@@ -407,7 +404,7 @@ export const nodeIdToTerminal = (
   nodeId: NodeId
 ): Terminal | null => {
   for (const terminal of yieldTerminals(model)) {
-    if (terminal.start === nodeId || terminal.end === nodeId) {
+    if (terminal.pair.includes(nodeId)) {
       return terminal;
     }
   }
@@ -525,5 +522,5 @@ export const toStartNodeId = (
     return null;
   }
 
-  return terminal.start;
+  return terminal.pair[0];
 };

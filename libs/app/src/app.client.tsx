@@ -4,15 +4,6 @@ import { ProfileClient } from '@gamezilla/feat/profile';
 import { RoomClient } from '@gamezilla/feat/room';
 import { SearchClient } from '@gamezilla/feat/search';
 import {
-  andThen,
-  Browser,
-  Cmd,
-  exhaustive,
-  p,
-  Posix,
-  Sub,
-} from '@gamezilla/shared/core';
-import {
   Alerts,
   AppMsg,
   Ctx,
@@ -21,15 +12,30 @@ import {
   ViewCtx,
 } from '@gamezilla/shared/client';
 import {
-  cn,
+  Browser,
+  Cmd,
+  Posix,
+  Sub,
+  andThen,
+  exhaustive,
+  p,
+} from '@gamezilla/shared/core';
+import {
   IconGamepad,
   IconMagnifyingGlass,
   IconSpinner,
   IconUserCircle,
   ViewNode,
+  cn,
 } from '@gamezilla/shared/ui';
 import { Subject } from 'rxjs';
-import { ClientModel, ClientMsg, ToServer, ToClient } from './app.shared';
+import {
+  ClientModel,
+  ClientMsg,
+  ToClient,
+  ToServer,
+  WireMsg,
+} from './app.shared';
 
 //
 //
@@ -74,7 +80,7 @@ export const init = ({
       search: search.model,
       profile,
       wire: {
-        type: 'connecting',
+        t: 'connecting',
       },
     },
     cmd: Cmd.batch<Msg>([Route.replace(route), Cmd.tag_('auth', auth.cmd)]),
@@ -230,14 +236,14 @@ const update_ = ({
     }
 
     case 'wire': {
-      if (msg.wire === 'connect-error') {
+      if (msg.c.t === 'connect-error') {
         return {
           model: {
             ...model,
             wire: {
-              type: 'connect-error',
+              t: 'connect-error',
               errorCount:
-                model.wire.type === 'connect-error'
+                model.wire.t === 'connect-error'
                   ? model.wire.errorCount + 1
                   : 1,
             },
@@ -245,7 +251,7 @@ const update_ = ({
         };
       }
 
-      if (msg.wire === 'connected') {
+      if (msg.c.t === 'connected') {
         const roomUpdated = RoomClient.updateFromApp({
           msg: { t: 'wire-connected' },
           model: model.room,
@@ -255,13 +261,15 @@ const update_ = ({
           model: {
             ...model,
             room: roomUpdated.model,
-            wire: { type: msg.wire },
+            wire: {
+              t: 'connected',
+            },
           },
           cmd: Cmd.tag_('room', roomUpdated.cmd ?? Cmd.None),
         };
       }
 
-      return { model: { ...model, wire: { type: msg.wire } } };
+      return { model: { ...model, wire: { t: msg.c.t } } };
     }
 
     case 'room': {
@@ -491,10 +499,7 @@ export const subscriptions = ({
   return Sub.batch<Msg>([
     Browser.onLocation(onLocationChange),
     Sub.tag_('→', toClient$),
-    p(
-      wireStatus$,
-      Sub.map((wire) => ({ t: 'wire', wire }))
-    ),
+    Sub.tag_('wire', wireMsg$),
     Sub.tag_('auth', AuthClient.subscriptions),
     roomSub(now, model),
   ]);
@@ -594,7 +599,7 @@ export const View = ({
         $send={(msg) => $send({ t: 'alerts', c: msg })}
       />
 
-      {model.wire.type === 'connect-error' && model.wire.errorCount > 2 && (
+      {model.wire.t === 'connect-error' && model.wire.errorCount > 2 && (
         <div className="w-full flex items-center justify-center text-white bg-blue-500 gap-2 h-6">
           <IconSpinner className="w-5 h-5 text-white animate-spin" />
           Connecting to server...
@@ -784,5 +789,5 @@ const ViewBottomBar = ({
 //
 //
 
-export const wireStatus$ = new Subject<Model['wire']['type']>();
+export const wireMsg$ = new Subject<WireMsg>();
 export const toClient$ = new Subject<ToClient>();
