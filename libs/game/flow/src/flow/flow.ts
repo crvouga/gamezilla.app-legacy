@@ -51,11 +51,17 @@ export const toEdgeId = (edge: Edge): EdgeId => {
   return `${edge.from}->${edge.to}` as EdgeId;
 };
 
-export const isEdgeId = (model: Model, edgeId: string): edgeId is EdgeId => {
+export const isEdgeId = (
+  model: Pick<Model, 'edges'>,
+  edgeId: string
+): edgeId is EdgeId => {
   return edgeId in model.edges;
 };
 
-export const isNodeId = (model: Model, nodeId: string): nodeId is NodeId => {
+export const isNodeId = (
+  model: Pick<Model, 'nodes'>,
+  nodeId: string
+): nodeId is NodeId => {
   return nodeId in model.nodes;
 };
 
@@ -117,7 +123,10 @@ export const isTerminalNode = (model: Model, nodeId: NodeId): boolean => {
   return false;
 };
 
-export const isTerminalStartNode = (model: Model, nodeId: NodeId): boolean => {
+export const isTerminalStartNode = <T extends Model>(
+  model: T,
+  nodeId: NodeId
+): boolean => {
   for (const terminal of yieldTerminals(model)) {
     if (terminal.pair[0] === nodeId) {
       return true;
@@ -126,7 +135,9 @@ export const isTerminalStartNode = (model: Model, nodeId: NodeId): boolean => {
   return false;
 };
 
-export const yieldTerminals = function* (model: Model): Generator<Terminal> {
+export const yieldTerminals = function* <T extends Model>(
+  model: T
+): Generator<Terminal> {
   for (const groupId in model.terminals) {
     if (!isGroupId(groupId)) {
       continue;
@@ -163,7 +174,10 @@ export const initEmpty: Model = {
 //
 //
 
-export const toNode = (model: Model, nodeId: NodeId): Node | null => {
+export const toNode = (
+  model: Pick<Model, 'nodes'>,
+  nodeId: NodeId
+): Node | null => {
   return model.nodes[nodeId] ?? null;
 };
 
@@ -172,7 +186,10 @@ export type EdgeFull = Edge & {
   nodeTo: Node;
 };
 
-export const toEdge = (model: Model, edgeId: EdgeId): EdgeFull | null => {
+export const toEdge = (
+  model: Pick<Model, 'edges' | 'nodes'>,
+  edgeId: EdgeId
+): EdgeFull | null => {
   const edge = model.edges[edgeId];
 
   if (!edge) {
@@ -369,7 +386,9 @@ export const modelToKey = (model: Model): string => {
 //
 //
 
-export const yieldNodes = function* (model: Model): Generator<Node> {
+export const yieldNodes = function* (
+  model: Pick<Model, 'nodes'>
+): Generator<Node> {
   for (const nodeId in model.nodes) {
     if (!isNodeId(model, nodeId)) {
       continue;
@@ -383,7 +402,9 @@ export const yieldNodes = function* (model: Model): Generator<Node> {
   }
 };
 
-export const yieldEdges = function* (model: Model): Generator<EdgeFull> {
+export const yieldEdges = function* (
+  model: Pick<Model, 'nodes' | 'edges'>
+): Generator<EdgeFull> {
   for (const edgeId in model.edges) {
     if (!isEdgeId(model, edgeId)) {
       continue;
@@ -412,7 +433,7 @@ export const nodeIdToTerminal = (
 };
 
 export const yieldOutEdges = function* (
-  model: Model,
+  model: Pick<Model, 'edgesOut' | 'edges' | 'nodes'>,
   nodeId: NodeId
 ): Generator<EdgeFull> {
   for (const outNodeId in model.edgesOut[nodeId]) {
@@ -437,7 +458,7 @@ export const yieldOutEdges = function* (
 };
 
 export const yieldInEdges = function* (
-  model: Model,
+  model: Pick<Model, 'edgesIn' | 'edges' | 'nodes'>,
   nodeId: NodeId
 ): Generator<EdgeFull> {
   for (const inNodeId in model.edgesIn[nodeId]) {
@@ -496,7 +517,10 @@ export const doesPathExist = (
   return false;
 };
 
-export const toGroup = (model: Model, nodeId: NodeId): GroupId | null => {
+export const toGroup = (
+  model: Pick<Model, 'edgesIn' | 'edgesOut' | 'edges' | 'nodes'>,
+  nodeId: NodeId
+): GroupId | null => {
   for (const edge of yieldInEdges(model, nodeId)) {
     if (edge.groupId) {
       return edge.groupId;

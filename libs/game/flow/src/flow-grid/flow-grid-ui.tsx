@@ -21,6 +21,30 @@ const TERMINAL_NODE_RADIUS_ACTIVE = 0.4;
 
 const EDGE_STROKE_WIDTH = 0.3;
 
+type ViewTerminal = {
+  groupId: GroupId;
+  pair: [Flow.NodeId] | [Flow.NodeId, Flow.NodeId];
+};
+
+export type ViewModel = Omit<Model, 'terminals'> & {
+  terminals: {
+    [groupId in GroupId]?: ViewTerminal;
+  };
+};
+
+const yieldTerminals = function* (model: ViewModel): Generator<ViewTerminal> {
+  for (const groupId in model.terminals) {
+    if (!Flow.isGroupId(groupId)) {
+      continue;
+    }
+    const terminal = model.terminals[groupId];
+    if (!terminal) {
+      continue;
+    }
+    yield terminal;
+  }
+};
+
 export const View = ({
   model,
   onDraggedOver,
@@ -31,7 +55,9 @@ export const View = ({
   autocompleteEdge,
 }: {
   className?: string;
-  model: Model;
+  //
+  model: ViewModel;
+  //
   onPressDown?: (nodeId: Flow.NodeId) => void;
   onPressUp?: (nodeId: Flow.NodeId) => void;
   onDraggedOver?: (nodeId: Flow.NodeId) => void;
@@ -135,7 +161,7 @@ export const View = ({
 
       */}
       <g transform="translate(0.5, 0.5)">
-        {map(Flow.yieldTerminals(model), (terminal) => {
+        {map(yieldTerminals(model), (terminal) => {
           const startNode = FlowGrid.toNode(model, terminal.pair[0]);
           const endNode = terminal.pair[1]
             ? FlowGrid.toNode(model, terminal.pair[1])

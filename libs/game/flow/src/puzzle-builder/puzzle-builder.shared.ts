@@ -42,7 +42,7 @@ export const initShared: SharedModel = {
 //
 
 export type DraftTerminal = {
-  groupId: Flow.NodeId;
+  groupId: Flow.GroupId;
   pair: [Flow.NodeId] | [Flow.NodeId, Flow.NodeId];
 };
 
@@ -117,6 +117,26 @@ export const handle = ({
         focusedGroupId: msg.groupId,
       };
       return Ok(modelNew);
+    }
+
+    if (msg.t === 'pressed-down-node') {
+      const terminal = nodeIdToDraftTerminal(model, msg.nodeId);
+
+      if (!terminal) {
+        const modelNew: SharedModel = {
+          ...model,
+          draftTerminals: {
+            ...model.draftTerminals,
+            [model.focusedGroupId]: {
+              groupId: model.focusedGroupId,
+              pair: [msg.nodeId],
+            },
+          },
+        };
+        return Ok(modelNew);
+      }
+
+      return Ok({ ...model });
     }
 
     return Err('must-be-in-edit-mode');

@@ -134,7 +134,10 @@ export const View = ({
       </div>
       <div className="w-full flex-1 flex flex-col items-center justify-center overflow-y-auto">
         <FlowGridUI.View
-          model={model.grid}
+          model={{
+            ...model.grid,
+            terminals: model.draftTerminals,
+          }}
           onPressDown={(nodeId) => {
             $send({
               t: 'pressed-down-node',

@@ -77,7 +77,10 @@ export type Edge = Flow.Edge & {
   nodeTo: Node;
 };
 
-export const toNode = (model: Model, nodeId: Flow.NodeId): Node | null => {
+export const toNode = (
+  model: Pick<Model, 'nodes' | 'positions'>,
+  nodeId: Flow.NodeId
+): Node | null => {
   const node = Flow.toNode(model, nodeId);
 
   if (!node) {
@@ -167,7 +170,9 @@ export const yieldPositions = function* (model: Model): Generator<Position> {
   }
 };
 
-export const yieldEdges = function* (model: Model): Generator<Edge> {
+export const yieldEdges = function* (
+  model: Pick<Model, 'edges' | 'nodes' | 'positions'>
+): Generator<Edge> {
   for (const edge of Flow.yieldEdges(model)) {
     const from = toNode(model, edge.from);
 
@@ -189,7 +194,9 @@ export const yieldEdges = function* (model: Model): Generator<Edge> {
   }
 };
 
-export const yieldNodes = function* (model: Model): Generator<Node> {
+export const yieldNodes = function* (
+  model: Pick<Model, 'nodes' | 'positions'>
+): Generator<Node> {
   for (const node of Flow.yieldNodes(model)) {
     const position = model.positions[node.nodeId];
     if (!position) {
