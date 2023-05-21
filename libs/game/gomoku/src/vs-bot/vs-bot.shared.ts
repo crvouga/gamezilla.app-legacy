@@ -191,7 +191,7 @@ export const handle = ({
         board: model.board,
       });
 
-      if (moved.type === 'Err') {
+      if (moved.t === 'err') {
         return moved;
       }
 
@@ -263,7 +263,7 @@ export const handleBotMove = (model: Model): Result<Problem, Model> => {
 
   const moved = move({ stone: botStone, position, board: model.board });
 
-  if (moved.type === 'Err') {
+  if (moved.t === 'err') {
     return moved;
   }
 

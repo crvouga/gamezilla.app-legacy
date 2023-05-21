@@ -129,7 +129,7 @@ const updateRequest = ({
   const handled = handle({ msg, model, ctx });
   const modelNew = mergeWithServer({
     clientModel: model,
-    serverModel: handled.type === 'Err' ? model : handled.value,
+    serverModel: handled.t === 'err' ? model : handled.value,
   });
   return {
     model: modelNew,
@@ -156,7 +156,7 @@ export const updateFromServer = ({
     default: {
       const result = msg.result;
 
-      if (result.type === 'Err') {
+      if (result.t === 'err') {
         return { model };
       }
 

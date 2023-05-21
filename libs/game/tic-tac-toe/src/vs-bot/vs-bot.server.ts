@@ -61,7 +61,7 @@ export const update_: Update = ({ broadcast }, msg, model) => {
   switch (msg[0]) {
     case 'bot-move': {
       const response: ToClient = ['bot-move-done', botMove(msg[1], model)];
-      const modelNext = response[1].type === 'Ok' ? response[1].value : model;
+      const modelNext = response[1].t === 'ok' ? response[1].value : model;
       return [modelNext, broadcast(response)];
     }
   }
@@ -113,7 +113,7 @@ const updateFromClient_: updateFromClient = (
   switch (msg[0]) {
     case 'start-game': {
       const response: Res = ['StartGame_Done', startGame(msg[1], model)];
-      if (response[1].type === 'Err') {
+      if (response[1].t === 'err') {
         return [model, sendToClient(response)];
       }
       return [response[1].value, broadcast(response)];
@@ -121,7 +121,7 @@ const updateFromClient_: updateFromClient = (
 
     case 'stop-playing': {
       const response: Res = ['StopPlaying_Done', stopPlaying(msg[1], model)];
-      if (response[1].type === 'Err') {
+      if (response[1].t === 'err') {
         return [model, sendToClient(response)];
       }
       return [response[1].value, broadcast(response)];
@@ -129,7 +129,7 @@ const updateFromClient_: updateFromClient = (
 
     case 'start-playing': {
       const response: Res = ['StartPlaying_Done', startPlaying(msg[1], model)];
-      if (response[1].type === 'Err') {
+      if (response[1].t === 'err') {
         return [model, sendToClient(response)];
       }
       return [response[1].value, broadcast(response)];
@@ -137,7 +137,7 @@ const updateFromClient_: updateFromClient = (
 
     case 'InputBot': {
       const response: Res = ['InputBot_Done', inputBot(msg[1], model)];
-      if (response[1].type === 'Err') {
+      if (response[1].t === 'err') {
         return [model, sendToClient(response)];
       }
       return [response[1].value, broadcast(response)];
@@ -148,7 +148,7 @@ const updateFromClient_: updateFromClient = (
         'InputPlayerType_Done',
         inputPlayerType(msg[1], model),
       ];
-      if (response[1].type === 'Err') {
+      if (response[1].t === 'err') {
         return [model, sendToClient(response)];
       }
       return [response[1].value, broadcast(response)];
@@ -156,7 +156,7 @@ const updateFromClient_: updateFromClient = (
 
     case 'stop-game': {
       const response: Res = ['StopGame_Done', stopGame(msg[1], model)];
-      if (response[1].type === 'Err') {
+      if (response[1].t === 'err') {
         return [model, sendToClient(response)];
       }
       return [response[1].value, broadcast(response)];
@@ -164,7 +164,7 @@ const updateFromClient_: updateFromClient = (
 
     case 'input-move': {
       const response: Res = ['input-move-done', inputMove(msg[1], model)];
-      if (response[1].type === 'Err') {
+      if (response[1].t === 'err') {
         return [model, sendToClient(response)];
       }
       return [response[1].value, broadcast(response)];
@@ -172,7 +172,7 @@ const updateFromClient_: updateFromClient = (
 
     case 'swap-sides': {
       const response: Res = ['swap-sides-done', swapSides(msg[1], model)];
-      if (response[1].type === 'Err') {
+      if (response[1].t === 'err') {
         return [model, sendToClient(response)];
       }
       return [response[1].value, broadcast(response)];
@@ -180,7 +180,7 @@ const updateFromClient_: updateFromClient = (
 
     case 'restart': {
       const response: Res = ['restart-done', restart(msg[1], model)];
-      if (response[1].type === 'Err') {
+      if (response[1].t === 'err') {
         return [model, sendToClient(response)];
       }
       return [response[1].value, broadcast(response)];

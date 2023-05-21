@@ -40,7 +40,7 @@ export const updateFromClient = ({
   if (msg.t === 'input-mode') {
     const handled = handleInputMode({ mode: msg.mode, ctx });
     return {
-      model: handled.type === 'Err' ? model : handled.value,
+      model: handled.t === 'err' ? model : handled.value,
       cmd: broadcast({ ...msg, result: handled }),
     };
   }

@@ -1,25 +1,25 @@
 export type Result<TError, TValue> = Err<TError> | Ok<TValue>;
 
-export type Ok<T> = { type: 'Ok'; value: T };
+export type Ok<T> = { t: 'ok'; value: T };
 
-export type Err<T> = { type: 'Err'; error: T };
+export type Err<T> = { t: 'err'; error: T };
 
 export const Ok = <T>(value: T): Ok<T> => {
-  return { type: 'Ok', value };
+  return { t: 'ok', value };
 };
 
 export const Err = <T>(error: T): Err<T> => {
-  return { type: 'Err', error };
+  return { t: 'err', error };
 };
 
 const map =
   <TError, A, B>(mapper: (a: A) => B) =>
   (result: Result<TError, A>): Result<TError, B> => {
-    switch (result.type) {
-      case 'Err':
+    switch (result.t) {
+      case 'err':
         return result;
 
-      case 'Ok':
+      case 'ok':
         return Ok(mapper(result.value));
     }
   };
@@ -27,11 +27,11 @@ const map =
 const mapErr =
   <A, B, TValue>(mapper: (a: A) => B) =>
   (result: Result<A, TValue>): Result<B, TValue> => {
-    switch (result.type) {
-      case 'Err':
+    switch (result.t) {
+      case 'err':
         return Err(mapper(result.error));
 
-      case 'Ok':
+      case 'ok':
         return result;
     }
   };
@@ -53,22 +53,22 @@ const fromNullable =
 const withDefault =
   <T>(fallback: T) =>
   (result: Result<unknown, T>): T => {
-    switch (result.type) {
-      case 'Err':
+    switch (result.t) {
+      case 'err':
         return fallback;
 
-      case 'Ok':
+      case 'ok':
         return result.value;
     }
   };
 
 const combine = <E, A>(results: Result<E, A>[]): Result<E, A[]> => {
   return results.reduce<Result<E, A[]>>((combined, result) => {
-    if (combined.type === 'Err') {
+    if (combined.t === 'err') {
       return combined;
     }
 
-    if (result.type === 'Err') {
+    if (result.t === 'err') {
       return result;
     }
     return Ok([...combined.value, result.value]);

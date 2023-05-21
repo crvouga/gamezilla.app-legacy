@@ -139,7 +139,7 @@ export const updateFromServer = (
     case 'rematch-request':
     case 'Rematch_Respond':
     case 'start-playing': {
-      const modelNew = msg[1].type === 'Err' ? model : msg[1].value;
+      const modelNew = msg[1].t === 'err' ? model : msg[1].value;
       const merged = mergeWithServer({
         clientModel: model,
         serverModel: modelNew,
@@ -148,7 +148,7 @@ export const updateFromServer = (
     }
 
     case 'input-move': {
-      const modelNew = msg[1].type === 'Err' ? model : msg[1].value;
+      const modelNew = msg[1].t === 'err' ? model : msg[1].value;
       const merged = mergeWithServer({
         clientModel: model,
         serverModel: modelNew,
@@ -560,7 +560,7 @@ const ViewSetup = ({
         <MyButton
           color="primary"
           className="flex-1"
-          disabled={startGameResult.type === 'Err'}
+          disabled={startGameResult.t === 'err'}
           onClick={() => $send(['start-game', { userId: ctx.currentUserId }])}
         >
           Start Game

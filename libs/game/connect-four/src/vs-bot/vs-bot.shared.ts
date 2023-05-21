@@ -310,7 +310,7 @@ export const handle = (
         model.userPlayerType
       );
 
-      if (result.type === 'Err') {
+      if (result.t === 'err') {
         return result;
       }
 
@@ -358,7 +358,7 @@ export const botMove = (
     return Err('not_game');
   }
 
-  if (bestMoveResult.type === 'Err') {
+  if (bestMoveResult.t === 'err') {
     return bestMoveResult;
   }
 
@@ -368,7 +368,7 @@ export const botMove = (
     opposite[model.userPlayerType]
   );
 
-  if (moveResult.type === 'Err') {
+  if (moveResult.t === 'err') {
     return moveResult;
   }
 

@@ -6,23 +6,23 @@ export type RemoteResult<TError, TValue> =
   | Loading
   | Result<TError, TValue>;
 
-export type NotAsked = { type: 'NotAsked' };
-export const NotAsked: NotAsked = { type: 'NotAsked' };
+export type NotAsked = { t: 'not-asked' };
+export const NotAsked: NotAsked = { t: 'not-asked' };
 
-export type Loading = { type: 'Loading' };
-export const Loading: Loading = { type: 'Loading' };
+export type Loading = { t: 'loading' };
+export const Loading: Loading = { t: 'loading' };
 
 export const map =
   <E, A, B>(mapper: (a: A) => B) =>
-  (RemoteResult: RemoteResult<E, A>): RemoteResult<E, B> => {
-    switch (RemoteResult.type) {
-      case 'NotAsked':
-      case 'Loading':
-        return RemoteResult;
+  (result: RemoteResult<E, A>): RemoteResult<E, B> => {
+    switch (result.t) {
+      case 'not-asked':
+      case 'loading':
+        return result;
 
-      case 'Err':
-      case 'Ok':
-        return p(RemoteResult, Result.map(mapper));
+      case 'err':
+      case 'ok':
+        return p(result, Result.map(mapper));
     }
   };
 

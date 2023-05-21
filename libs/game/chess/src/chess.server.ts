@@ -124,7 +124,7 @@ export const updateFromClient = ({
         userId: msg.userId,
       });
 
-      if (result.type === 'Err') {
+      if (result.t === 'err') {
         return [model, Cmd.batch([cmd, sendToClient({ ...msg, result })])];
       }
 

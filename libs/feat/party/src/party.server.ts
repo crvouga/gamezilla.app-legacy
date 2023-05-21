@@ -72,7 +72,7 @@ export const updateFromClient = (
     case 'party-get':
     case 'PartyLeave': {
       const res: Res = [...msg, handle(msg, model)];
-      if (res[2].type === 'Err') {
+      if (res[2].t === 'err') {
         return [model, sendToClient(res)];
       }
       return [res[2].value, broadcast(res)];

@@ -334,7 +334,7 @@ export const updateFromServer = ({
       }
 
       const alertActions: OutAction[] =
-        msg.result.type === 'Ok'
+        msg.result.t === 'ok'
           ? [
               [
                 'alerts',
@@ -359,7 +359,7 @@ export const updateFromServer = ({
     case 'leave': {
       const handled = updateResponse({ ctx, sendToServer, msg, model });
 
-      if (msg.result.type === 'Err') {
+      if (msg.result.t === 'err') {
         return handled;
       }
 
@@ -389,7 +389,7 @@ export const updateFromServer = ({
     case 'join': {
       const handled = updateResponse({ ctx, sendToServer, msg, model });
 
-      if (msg.result.type === 'Err') {
+      if (msg.result.t === 'err') {
         return handled;
       }
 
@@ -481,7 +481,7 @@ const updateListRooms = ({
   initiatorMsg: unknown;
   sendToServer: (m: ToServer) => Cmd;
 }) => {
-  if (model.requests?.list?.type === 'Loading') {
+  if (model.requests?.list?.t === 'loading') {
     return { model };
   }
   return {
@@ -535,7 +535,7 @@ const updateResponse = ({
   cmd?: Cmd<Msg>;
   actions?: OutAction[];
 } => {
-  if (msg.result.type === 'Err') {
+  if (msg.result.t === 'err') {
     return {
       model: {
         ...model,
@@ -817,9 +817,9 @@ const ViewPage = ({
   $send: (m: Msg) => void;
 }) => {
   if (
-    model.requests.list?.type === 'Loading' ||
-    model.requests.create?.type === 'Loading' ||
-    model.requests.join?.type === 'Loading'
+    model.requests.list?.t === 'loading' ||
+    model.requests.create?.t === 'loading' ||
+    model.requests.join?.t === 'loading'
   ) {
     return (
       <div className="w-full h-full grid place-items-center">
@@ -929,7 +929,7 @@ export const ViewRoomListScreen = ({
   const currentRoom = user ? model.rooms[user.roomId] : undefined;
   const rooms = Object.values(model.rooms);
 
-  if (model.requests.list?.type === 'Loading') {
+  if (model.requests.list?.t === 'loading') {
     return (
       <div className="w-full h-full flex flex-col">
         <TopBar title="Rooms" />
@@ -1224,7 +1224,7 @@ export const ViewNotInRoom = ({
           fullWidth
           endIcon={<Icons.ChevronRight />}
           variant="contained"
-          loading={model.requests['join']?.type === 'Loading'}
+          loading={model.requests['join']?.t === 'loading'}
           onClick={() => {
             $send({
               t: 'join',

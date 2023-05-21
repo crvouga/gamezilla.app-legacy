@@ -94,11 +94,11 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
         }))
       );
 
-      switch (result.type) {
-        case 'Err':
+      switch (result.t) {
+        case 'err':
           break;
 
-        case 'Ok': {
+        case 'ok': {
           const data = result.value;
           modelNew.Conversation[data.conversation.conversationId] =
             data.conversation;
@@ -150,7 +150,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
         Conversation: {
           ...model.Conversation,
 
-          ...(result.type === 'Ok'
+          ...(result.t === 'ok'
             ? result.value.conversations.reduce(
                 (acc, item) => ({
                   ...acc,
@@ -164,7 +164,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
         UsersConversations: {
           ...model.UsersConversations,
 
-          ...(result.type === 'Ok'
+          ...(result.t === 'ok'
             ? result.value.usersConversations.reduce(
                 (acc, item) => ({
                   ...acc,
@@ -189,11 +189,11 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
         RemoteResult.map((item) => item.conversation.conversationId)
       );
 
-      switch (result.type) {
-        case 'Err':
+      switch (result.t) {
+        case 'err':
           break;
 
-        case 'Ok': {
+        case 'ok': {
           const data = result.value;
 
           modelNew.Conversation[data.conversation.conversationId] =
@@ -246,7 +246,7 @@ export const runAction = (action: Action, model: Model): [Model, Cmd<Msg>] => {
         model.queries.Conversation.FindManyByUserId[userId] ??
         RemoteResult.NotAsked;
 
-      if (query.type === 'Ok') {
+      if (query.t === 'ok') {
         return [model, Cmd.None];
       }
 
@@ -344,9 +344,7 @@ const findOneById =
           userId: UserId.decode(item.id),
         }))
         .flatMap((item) =>
-          item.userId.type === 'Ok'
-            ? [{ ...item, userId: item.userId.value }]
-            : []
+          item.userId.t === 'ok' ? [{ ...item, userId: item.userId.value }] : []
         ),
       messages: messagesResponse.data
         .map((item) => ({
@@ -356,9 +354,7 @@ const findOneById =
           conversationId: item.conversation_id,
         }))
         .flatMap((item) =>
-          item.userId.type === 'Ok'
-            ? [{ ...item, userId: item.userId.value }]
-            : []
+          item.userId.t === 'ok' ? [{ ...item, userId: item.userId.value }] : []
         ),
     });
   };
@@ -434,9 +430,7 @@ const findManyByUserId =
           conversationId: item.conversation_id,
         }))
         .flatMap((item) =>
-          item.userId.type === 'Ok'
-            ? [{ ...item, userId: item.userId.value }]
-            : []
+          item.userId.t === 'ok' ? [{ ...item, userId: item.userId.value }] : []
         ),
       conversations: conversationResponse.data.map((item) => ({
         conversationId: item.id,
@@ -486,13 +480,13 @@ const findOneElseInsert =
   async () => {
     const findIdResult = await findUniqueByUserIds({ userIds })();
 
-    if (findIdResult.type === 'Err') {
+    if (findIdResult.t === 'err') {
       return findIdResult;
     }
     if (findIdResult.value.type === 'none') {
       const insertResult = await insert({ userIds })();
 
-      if (insertResult.type === 'Err') {
+      if (insertResult.t === 'err') {
         return insertResult;
       }
 
@@ -562,9 +556,7 @@ const insert =
         conversationId: conversation_id,
       }))
       .flatMap((item) =>
-        item.userId.type === 'Ok'
-          ? [{ ...item, userId: item.userId.value }]
-          : []
+        item.userId.t === 'ok' ? [{ ...item, userId: item.userId.value }] : []
       );
 
     return Result.Ok({ conversation, usersConversations });

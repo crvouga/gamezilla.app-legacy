@@ -124,7 +124,7 @@ export const decodeAuth = (pathname: string): RouteAuth | null => {
       return null;
     }
     const decoded = PhoneNumber.decode(country, phoneNumber);
-    if (decoded.type === 'Err') {
+    if (decoded.t === 'err') {
       return null;
     }
     return {

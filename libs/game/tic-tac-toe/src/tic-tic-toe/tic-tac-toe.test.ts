@@ -22,9 +22,9 @@ describe('tic-tac-toe', () => {
       board: before,
     });
 
-    expect(found.type).toBe('Ok');
+    expect(found.type).toBe('ok');
 
-    if (found.type === 'Err') {
+    if (found.t === 'err') {
       return;
     }
 
@@ -34,8 +34,8 @@ describe('tic-tac-toe', () => {
       position: found.value,
     });
 
-    expect(moved.type).toBe('Ok');
-    if (moved.type === 'Err') {
+    expect(moved.type).toBe('ok');
+    if (moved.t === 'err') {
       return;
     }
     expect(expected).toEqual(moved.value);
@@ -62,9 +62,9 @@ describe('tic-tac-toe', () => {
       board: before,
     });
 
-    expect(bestMoveResult.type).toBe('Ok');
+    expect(bestMoveResult.type).toBe('ok');
 
-    if (bestMoveResult.type === 'Err') {
+    if (bestMoveResult.t === 'err') {
       return;
     }
 
@@ -74,8 +74,8 @@ describe('tic-tac-toe', () => {
       position: bestMoveResult.value,
     });
 
-    expect(result.type).toBe('Ok');
-    if (result.type === 'Ok') {
+    expect(result.t).toBe('ok');
+    if (result.t === 'ok') {
       expect(expected).toEqual(result.value);
     }
   });

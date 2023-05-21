@@ -71,7 +71,7 @@ export const updateFromClient = (
     case 'start-playing': {
       const res: Res = [msg[0], handle(msg, model)];
 
-      if (res[1].type === 'Err') {
+      if (res[1].t === 'err') {
         return [model, sendToClient(res)];
       }
 

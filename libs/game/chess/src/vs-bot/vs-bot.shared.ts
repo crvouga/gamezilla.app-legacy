@@ -299,7 +299,7 @@ export type StopGame_Done = [
 ];
 
 export const stopGameResultToString = (result: StopGame_Done[1]): string => {
-  if (result.type === 'Ok') {
+  if (result.t === 'ok') {
     return '';
   }
 
@@ -369,7 +369,7 @@ export const inputMove = (
 
   const result = Chess.move(moveInput, model.board);
 
-  if (result.type === 'Err') {
+  if (result.t === 'err') {
     return result;
   }
 
@@ -429,7 +429,7 @@ export const botMoved = (
     return Result.Err('must_be_started');
   }
 
-  if (botMoveResult.type === 'Err') {
+  if (botMoveResult.t === 'err') {
     return botMoveResult;
   }
 
@@ -443,7 +443,7 @@ export const botMoved = (
 
   const result = Chess.move(botMoveInput, model.board);
 
-  if (result.type === 'Err') {
+  if (result.t === 'err') {
     return result;
   }
 

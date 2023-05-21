@@ -110,7 +110,7 @@ export const updateFromServer = ({
 }): [Model, Cmd<Msg>, OutAction[]] => {
   switch (msg.t) {
     case 'input-mode': {
-      if (msg.result.type === 'Err') {
+      if (msg.result.t === 'err') {
         return [model, Cmd.None, []];
       }
 

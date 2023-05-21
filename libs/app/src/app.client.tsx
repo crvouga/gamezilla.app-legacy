@@ -657,7 +657,7 @@ const ViewLoggedIn = ({
         route={model.route}
         viewBottomBar={<ViewBottomBar model={model} $send={$send} ctx={ctx} />}
         userSearch={{
-          loading: model.profile.requests.search?.type === 'Loading',
+          loading: model.profile.requests.search?.t === 'loading',
           onInput: (query) => {
             $send({
               t: 'profile',

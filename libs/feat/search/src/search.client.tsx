@@ -106,7 +106,7 @@ export const View = ({
   $send: (msg: Msg) => void;
   viewBottomBar: ViewNode;
 }) => {
-  //   const request = model.requests[model.searchText] ?? { type: 'NotAsked' };
+  //   const request = model.requests[model.searchText] ?? { type: 'not-asked' };
   const results = matchSort(
     Object.values(model.searchResults),
     (item) => item.username,

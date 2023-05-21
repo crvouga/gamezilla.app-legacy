@@ -134,7 +134,7 @@ export const View = ({
       >
         <TopBar title="Chat" />
 
-        {query.type === 'Loading' ? (
+        {query.type === 'loading' ? (
           <ViewLoadingState title="Loading conversations..." />
         ) : (
           <>

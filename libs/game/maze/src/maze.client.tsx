@@ -115,7 +115,7 @@ export const updateFromServer = (
     case 'start-game':
     case 'stop-playing':
     case 'start-playing': {
-      if (msg[2].type === 'Err') {
+      if (msg[2].t === 'err') {
         return [model, Cmd.None];
       }
       const merged = mergeWithServer({
@@ -223,7 +223,7 @@ export const View = ({
               handle(
                 ['input-seed', { userId: ctx.currentUserId, seed: model.seed }],
                 model
-              ).type === 'Err'
+              ).t === 'err'
             }
             value={model.seed}
             onChange={(e) =>
@@ -312,7 +312,7 @@ export const View = ({
               }
               disabled={
                 handle(['start-playing', { userId: ctx.currentUserId }], model)
-                  .type === 'Err'
+                  .t === 'err'
               }
             >
               Start Playing
@@ -329,8 +329,8 @@ export const View = ({
             variant="contained"
             onClick={() => $send(['start-game', { userId: ctx.currentUserId }])}
             disabled={
-              handle(['start-game', { userId: ctx.currentUserId }], model)
-                .type === 'Err'
+              handle(['start-game', { userId: ctx.currentUserId }], model).t ===
+              'err'
             }
           >
             Start Game

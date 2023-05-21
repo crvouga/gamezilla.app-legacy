@@ -169,7 +169,7 @@ const updateResponse = <
   result: TResult,
   model: Model
 ): [Model, Cmd<Msg>, OutAction[]] => {
-  if (result.type === 'Err') {
+  if (result.t === 'err') {
     const message = result.error.split('_').join(' ');
     return [
       model,

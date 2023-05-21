@@ -80,7 +80,7 @@ export const update = ({
     }
 
     case 'fetched-puzzles': {
-      if (msg.result.type === 'Err') {
+      if (msg.result.t === 'err') {
         return {
           model,
           cmd: broadcast({ t: 'fetched-puzzles', result: msg.result }),
@@ -219,7 +219,7 @@ const updateFromClient_: typeof updateFromClient = ({
       });
 
       return {
-        model: handled.type === 'Ok' ? handled.value : model,
+        model: handled.t === 'ok' ? handled.value : model,
         cmd: broadcast({ ...msg, result: handled }),
       };
     }

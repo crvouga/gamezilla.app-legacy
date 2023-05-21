@@ -73,7 +73,7 @@ export const updateFromClient: updateFromClient = (input) => {
 const updateBotMove: updateFromClient = ({ broadcast, model }) => {
   const handled = handleBotMove(model);
 
-  if (handled.type === 'Err') {
+  if (handled.t === 'err') {
     return {
       model,
       cmd: broadcast({ t: 'bot-moved', result: handled }),
@@ -102,7 +102,7 @@ const updateFromClient_: updateFromClient = ({
   switch (msg.t) {
     default: {
       const res: Res = { ...msg, result: handle({ ctx, msg, model }) };
-      if (res.result.type === 'Err') {
+      if (res.result.t === 'err') {
         return { model, cmd: sendToClient(res) };
       }
       return { model: res.result.value, cmd: broadcast(res) };

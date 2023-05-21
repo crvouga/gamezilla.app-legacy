@@ -48,7 +48,7 @@ export const update = ({
   switch (msg[0]) {
     case 'bot-move': {
       const result = botMove(msg[1], model);
-      if (result.type === 'Err') {
+      if (result.t === 'err') {
         return { model, cmd: broadcast(['bot-move', result]) };
       }
       return { model: result.value, cmd: broadcast(['bot-move', result]) };
@@ -105,7 +105,7 @@ const updateFromClient_ = (
 ): [Model, Cmd<Msg>] => {
   const res: Res = [msg[0], handle({ currentUserId }, msg, model)];
 
-  if (res[1].type === 'Err') {
+  if (res[1].t === 'err') {
     return [model, sendToClient(res)];
   }
 

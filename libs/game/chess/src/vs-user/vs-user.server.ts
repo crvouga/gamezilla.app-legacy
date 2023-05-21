@@ -157,7 +157,7 @@ const sendResponse = (
   response: Res,
   model: Model
 ): [Model, Cmd<Msg>] => {
-  if (response[1].type === 'Err') {
+  if (response[1].t === 'err') {
     return [model, Cmd.batch([sendToClient(response)])];
   }
 

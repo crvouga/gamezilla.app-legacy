@@ -25,7 +25,7 @@ type FocusedModel =
   | {
       type: 'Focused';
       messageId: string;
-      copyStatus: 'Failed' | 'NotAsked' | 'Succeeded' | 'Loading';
+      copyStatus: 'Failed' | 'not-asked' | 'Succeeded' | 'loading';
     };
 
 export const init = ({
@@ -104,7 +104,7 @@ export const update = (
           focused: {
             type: 'Focused',
             messageId: msg[1].messageId,
-            copyStatus: 'NotAsked',
+            copyStatus: 'not-asked',
           },
         },
         Cmd.None,
@@ -209,7 +209,7 @@ export const View = ({
       </UI.Toolbar>
 
       <MessageContainer
-        isLoading={query.type === 'Loading'}
+        isLoading={query.type === 'loading'}
         scrollKey={String(messages.length)}
       >
         <UI.Box sx={{ flex: 1 }}></UI.Box>
@@ -230,7 +230,7 @@ export const View = ({
         value={model.text}
         onChange={(text) => $send(['inputted-text', text])}
         onSend={() => $send(['clicked-send'])}
-        isSending={messageInsertMutation.type === 'Loading'}
+        isSending={messageInsertMutation.type === 'loading'}
       />
     </UI.FillBox>
   );
@@ -440,7 +440,7 @@ const ChatMessage = ({
           <UI.Button
             loading={
               model.focused.type === 'Focused' &&
-              model.focused.copyStatus === 'Loading'
+              model.focused.copyStatus === 'loading'
             }
             onClick={() =>
               $send(['clicked-copy-message-text', message.message])
@@ -455,7 +455,7 @@ const ChatMessage = ({
             <UI.Button
               loading={
                 store.mutations.Message.Unsend[message.messageId]?.type ===
-                'Loading'
+                'loading'
               }
               onClick={() => $send(['clicked-delete-message', message])}
             >

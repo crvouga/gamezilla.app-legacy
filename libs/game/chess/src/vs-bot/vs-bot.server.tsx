@@ -118,8 +118,7 @@ export const update = (
     case 'input-move': {
       const result = inputMove(msg[1], model.sharedModel);
 
-      const sharedModel =
-        result.type === 'Err' ? model.sharedModel : result.value;
+      const sharedModel = result.t === 'err' ? model.sharedModel : result.value;
 
       return [{ ...model, sharedModel: sharedModel }, sendToServer(msg)];
     }
@@ -165,7 +164,7 @@ const updateFromServer_ = (
     case 'bot-moved_Done': {
       const result = msg[1];
 
-      if (result.type === 'Err') {
+      if (result.t === 'err') {
         return [model, Cmd.None, []];
       }
 
@@ -189,7 +188,7 @@ const updateFromServer_ = (
     case 'input-move-done': {
       const result = msg[1];
 
-      if (result.type === 'Err') {
+      if (result.t === 'err') {
         return [model, Cmd.None, []];
       }
 
@@ -227,7 +226,7 @@ const handleResponse = (
 ): [Model, Cmd<Msg>, OutAction[]] => {
   const result = res[1];
 
-  if (result.type === 'Err') {
+  if (result.t === 'err') {
     return [model, Cmd.None, []];
   }
 
@@ -422,7 +421,7 @@ export const View = ({
 
           const result = inputMove(msg[1], model.sharedModel);
 
-          return result.type === 'Ok';
+          return result.t === 'ok';
         }}
       />
 

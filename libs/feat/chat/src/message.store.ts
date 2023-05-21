@@ -60,11 +60,11 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
       model.mutations.Message.Unsend[messageId] = result;
 
-      switch (result.type) {
-        case 'Err':
+      switch (result.t) {
+        case 'err':
           break;
 
-        case 'Ok':
+        case 'ok':
           delete model.Message[messageId];
           break;
       }
@@ -93,7 +93,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
         Message: {
           ...model.Message,
-          ...(result.type === 'Ok'
+          ...(result.t === 'ok'
             ? { [result.value.messageId]: result.value }
             : {}),
         },

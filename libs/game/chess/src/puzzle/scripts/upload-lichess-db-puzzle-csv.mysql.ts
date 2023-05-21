@@ -72,7 +72,7 @@ export const uploadLichessDbPuzzleCsv = async ({
 
     batch = [];
 
-    if (inserted.type === 'Err') {
+    if (inserted.t === 'err') {
       console.log(`insert error ${inserted.error}`);
       continue;
     }
@@ -84,7 +84,7 @@ export const uploadLichessDbPuzzleCsv = async ({
       rows: batch,
     });
 
-    if (inserted.type === 'Err') {
+    if (inserted.t === 'err') {
       console.log(`insert error ${inserted.error}`);
     } else {
       console.log('inserted batch');

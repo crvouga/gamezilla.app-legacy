@@ -95,7 +95,7 @@ export const updateFromServer = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (msg.result.type === 'Err') {
+  if (msg.result.t === 'err') {
     return { model };
   }
 
@@ -353,14 +353,14 @@ const ViewDeleteScreen = (_props: {
   $send: (msg: Msg) => void;
 }) => {
   const mutation = {
-    type: 'NotAsked',
+    t: 'not-asked',
   } as RemoteResult<string, null>;
 
-  switch (mutation.type) {
-    case 'Loading':
+  switch (mutation.t) {
+    case 'loading':
       return <LoadingDialog open title="Deleting profile..." />;
 
-    case 'Err':
+    case 'err':
       return (
         <Backdrop open>
           <Alert variant="filled" severity="error" sx={{ margin: 2 }}>
@@ -386,8 +386,8 @@ const ViewDeleteScreen = (_props: {
         </Backdrop>
       );
 
-    case 'NotAsked':
-    case 'Ok':
+    case 'not-asked':
+    case 'ok':
       return (
         <ConformationDialog
           open

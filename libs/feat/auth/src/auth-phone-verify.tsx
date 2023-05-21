@@ -117,7 +117,7 @@ export const update = ({
   if (msg.t === 'verify-code-done') {
     const result = msg.result;
 
-    if (result.type === 'Ok') {
+    if (result.t === 'ok') {
       return {
         model: {
           code: model.code,

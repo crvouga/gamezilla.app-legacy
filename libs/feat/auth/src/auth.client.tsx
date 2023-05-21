@@ -267,7 +267,7 @@ const ViewLoginScreen = ({
             size="lg"
             className="w-full"
           >
-            {model.requests['login-with-google']?.type === 'Loading' && (
+            {model.requests['login-with-google']?.t === 'loading' && (
               <IconSpinner className="w-6 h-6 animate-spin" />
             )}
             <IconGoogle />
@@ -313,7 +313,7 @@ const ViewLogoutScreen = ({
   model: Model;
   $send: (msg: Msg) => void;
 }) => {
-  if (model.requests.logout?.type === 'Loading') {
+  if (model.requests.logout?.t === 'loading') {
     return <LoadingDialog open title={'Logging out...'} />;
   }
 
@@ -368,7 +368,7 @@ const fromSupabaseSession = (auth: SupabaseSession | null): Msg => {
       ''
   );
 
-  if (userId.type === 'Ok') {
+  if (userId.t === 'ok') {
     return {
       t: 'got-current-user',
       currentUser: { t: 'logged-in', currentUserId: userId.value, name },

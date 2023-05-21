@@ -43,7 +43,7 @@ export const PuzzleProfileRow = z.object({
 
 const rowToPuzzle = (row: PuzzleRow): Result<string, Puzzle> => {
   const puzzleMoves = uciMovesToPuzzleMoves(row.moves.split(' '));
-  if (puzzleMoves.type === 'Err') {
+  if (puzzleMoves.t === 'err') {
     return puzzleMoves;
   }
 
@@ -82,17 +82,17 @@ export const uciMovesToPuzzleMoves = (
   const moveInput1 = uciMoveToMoveInput(move1);
   const moveInput2 = uciMoveToMoveInput(move2);
 
-  if (moveInput1.type === 'Err') {
+  if (moveInput1.t === 'err') {
     return moveInput1;
   }
 
-  if (moveInput2.type === 'Err') {
+  if (moveInput2.t === 'err') {
     return moveInput2;
   }
 
   const moveInputRest = Result.combine(rest.map(uciMoveToMoveInput));
 
-  if (moveInputRest.type === 'Err') {
+  if (moveInputRest.t === 'err') {
     return moveInputRest;
   }
 
@@ -132,7 +132,7 @@ const fetchNeverSeen =
     `
     );
 
-    if (found.type === 'Err') {
+    if (found.t === 'err') {
       return found;
     }
 

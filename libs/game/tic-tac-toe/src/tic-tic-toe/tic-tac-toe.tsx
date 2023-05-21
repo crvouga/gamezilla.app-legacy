@@ -57,7 +57,7 @@ export const toChildren = (board: Board): Board[] => {
   for (const position of allPositions) {
     const result = move({ board, player: turn, position });
 
-    if (result.type === 'Ok') {
+    if (result.t === 'ok') {
       boards.push(result.value);
     }
   }
@@ -127,7 +127,7 @@ export const toBestMove = ({
   for (const position of shuffle(String(Math.random()), allPositions)) {
     const moved = move({ board, player: maximizingPlayer, position });
 
-    if (moved.type === 'Ok') {
+    if (moved.t === 'ok') {
       return Ok(position);
     }
   }
@@ -140,7 +140,7 @@ export const toBestMove = ({
   // const bestMove = maxBy(allPositions, (position) => {
   //   const result = move({ board, player: maximizingPlayer, position });
 
-  //   if (result.type === 'Err') {
+  //   if (result.t === 'err') {
   //     return -Infinity;
   //   }
 
@@ -164,7 +164,7 @@ export const toBestMove_ = ({
 }): Result<ToBestMoveProblem, Position> => {
   for (const position of allPositions) {
     const result = move({ board, player: maximizingPlayer, position });
-    if (result.type === 'Ok') {
+    if (result.t === 'ok') {
       return Ok(position);
     }
   }

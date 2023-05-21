@@ -113,7 +113,7 @@ const updateRequest = (
   response: Response,
   model: Model
 ): [Model, Cmd<Msg>] => {
-  if (response[1].type === 'Err') {
+  if (response[1].t === 'err') {
     return [model, sendToClient(response)];
   }
 

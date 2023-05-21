@@ -147,7 +147,7 @@ export const inputPlayerType = (
 export const inputPlayerTypeToString = (
   result: InputPlayerType_Done[1]
 ): string => {
-  if (result.type === 'Ok') {
+  if (result.t === 'ok') {
     return '';
   }
 
@@ -194,7 +194,7 @@ export const inputBot = (
 };
 
 export const inputBotToString = (result: InputBot_Done[1]): string => {
-  if (result.type === 'Ok') {
+  if (result.t === 'ok') {
     return '';
   }
 
@@ -387,7 +387,7 @@ export const inputMove = (
     position,
   });
 
-  if (result.type === 'Err') {
+  if (result.t === 'err') {
     return result;
   }
 
@@ -447,7 +447,7 @@ export const botMove = (
     return Err('not_in_game');
   }
 
-  if (botMoveResult.type === 'Err') {
+  if (botMoveResult.t === 'err') {
     return botMoveResult;
   }
 
@@ -461,7 +461,7 @@ export const botMove = (
     position,
   });
 
-  if (moveResult.type === 'Err') {
+  if (moveResult.t === 'err') {
     return moveResult;
   }
 

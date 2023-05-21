@@ -141,7 +141,7 @@ const handler =
     if (msg.t === 'change-username') {
       const parsed = Username.decode(msg.username);
 
-      if (parsed.type === 'Err') {
+      if (parsed.t === 'err') {
         return parsed;
       }
 
@@ -216,7 +216,7 @@ export const decodeRow = (
   const userId = UserId.decode(row.id);
   const username = Username.decode(row.username);
 
-  if (userId.type === 'Ok' && username.type === 'Ok') {
+  if (userId.t === 'ok' && username.t === 'ok') {
     return Result.Ok({
       userId: userId.value,
       avatarUrl: row.avatar_url,

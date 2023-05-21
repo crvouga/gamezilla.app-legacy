@@ -101,7 +101,7 @@ export const updateFromServer = ({
   cmd?: Cmd<Msg>;
 } => {
   if (msg.t === 'input-mode') {
-    if (msg.result.type === 'Err') {
+    if (msg.result.t === 'err') {
       return { model };
     }
     const merged = mergeWithServer({

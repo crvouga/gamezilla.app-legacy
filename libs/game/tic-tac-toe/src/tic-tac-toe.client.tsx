@@ -108,7 +108,7 @@ export const updateFromServer = ({
   if (msg.t === 'input-mode') {
     const { result } = msg;
 
-    if (result.type === 'Err') {
+    if (result.t === 'err') {
       return { model };
     }
 

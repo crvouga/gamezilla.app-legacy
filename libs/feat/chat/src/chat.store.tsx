@@ -157,7 +157,7 @@ const ViewPageChatList = ({
 }) => {
   const query = model.queries.Conversation.FindManyByUserId[
     ctx.currentUserId
-  ] ?? { type: 'Loading' };
+  ] ?? { type: 'loading' };
 
   const conversations = Object.values(model.UsersConversations)
     .filter((item) => item.userId === ctx.currentUserId)
@@ -204,7 +204,7 @@ const ViewPageChatList = ({
       >
         <TopBar title="Chat" />
 
-        {query.type === 'Loading' ? (
+        {query.type === 'loading' ? (
           <ViewLoadingState title="Loading conversations..." />
         ) : (
           <>

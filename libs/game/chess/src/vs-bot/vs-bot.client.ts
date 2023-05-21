@@ -48,7 +48,7 @@ export const update = (
     case 'bot-moved': {
       const result = botMoved(msg[1], model);
 
-      const modelNew = result.type === 'Err' ? model : result.value;
+      const modelNew = result.t === 'err' ? model : result.value;
 
       return [modelNew, broadcast(['bot-moved_Done', result])];
     }
@@ -97,7 +97,7 @@ const updateFromClient_ = (
     case 'start-game': {
       const result = startGame(msg[1], model);
 
-      const modelNew = result.type === 'Err' ? model : result.value;
+      const modelNew = result.t === 'err' ? model : result.value;
 
       return [modelNew, broadcast(['StartGame_Done', result])];
     }
@@ -105,7 +105,7 @@ const updateFromClient_ = (
     case 'stop-game': {
       const result = stopGame(msg[1], model);
 
-      const modelNew = result.type === 'Err' ? model : result.value;
+      const modelNew = result.t === 'err' ? model : result.value;
 
       return [modelNew, broadcast(['StopGame_Done', result])];
     }
@@ -113,7 +113,7 @@ const updateFromClient_ = (
     case 'InputUser': {
       const result = inputUser(msg[1], model);
 
-      const modelNew = result.type === 'Err' ? model : result.value;
+      const modelNew = result.t === 'err' ? model : result.value;
 
       return [modelNew, broadcast(['InputUser_Done', result])];
     }
@@ -121,7 +121,7 @@ const updateFromClient_ = (
     case 'InputColor': {
       const result = inputColor(msg[1], model);
 
-      const modelNew = result.type === 'Err' ? model : result.value;
+      const modelNew = result.t === 'err' ? model : result.value;
 
       return [modelNew, broadcast(['InputColor_Done', result])];
     }
@@ -129,7 +129,7 @@ const updateFromClient_ = (
     case 'InputBot': {
       const result = inputBot(msg[1], model);
 
-      const modelNew = result.type === 'Err' ? model : result.value;
+      const modelNew = result.t === 'err' ? model : result.value;
 
       return [modelNew, broadcast(['InputBot_Done', result])];
     }
@@ -137,7 +137,7 @@ const updateFromClient_ = (
     case 'input-move': {
       const result = inputMove(msg[1], model);
 
-      const modelNew = result.type === 'Err' ? model : result.value;
+      const modelNew = result.t === 'err' ? model : result.value;
 
       return [modelNew, broadcast(['input-move-done', result])];
     }

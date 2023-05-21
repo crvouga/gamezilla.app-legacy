@@ -63,7 +63,7 @@ export const updateFromClient = (
     case 'MouseMove': {
       const toClient = mouseMove(msg, model);
 
-      if (toClient[1].type === 'Err') {
+      if (toClient[1].t === 'err') {
         return [model, sendToClient(toClient)];
       }
 
@@ -75,7 +75,7 @@ export const updateFromClient = (
     case 'InputDrop': {
       const result = inputDrop(model);
 
-      if (result.type === 'Err') {
+      if (result.t === 'err') {
         return [model, sendToClient(['InputDrop_Done', result])];
       }
 
@@ -87,7 +87,7 @@ export const updateFromClient = (
     case 'InputTranslate': {
       const result = inputTranslate(msg[1], model);
 
-      if (result.type === 'Err') {
+      if (result.t === 'err') {
         return [model, sendToClient(['InputTranslate_Done', result])];
       }
 
@@ -99,7 +99,7 @@ export const updateFromClient = (
     case 'InputRotate': {
       const result = inputRotate(model);
 
-      if (result.type === 'Err') {
+      if (result.t === 'err') {
         return [model, sendToClient(['InputRotate_Done', result])];
       }
 

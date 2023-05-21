@@ -58,7 +58,7 @@ export const updateFromClient = (
     case 'stop-playing':
     case 'start-playing': {
       const res: Res = [...msg, handle(msg, model)];
-      const modelNew = res[2].type === 'Ok' ? res[2].value : model;
+      const modelNew = res[2].t === 'ok' ? res[2].value : model;
       return [modelNew, broadcast(res)];
     }
   }

@@ -83,7 +83,7 @@ export const updateFromServer = ({
   cmd?: Cmd<Msg>;
 } => {
   if (msg.t === 'input-move') {
-    if (msg.result.type === 'Err') {
+    if (msg.result.t === 'err') {
       return { model };
     }
     const merged = mergeWithServer({
@@ -94,7 +94,7 @@ export const updateFromServer = ({
     return { model: merged };
   }
 
-  if (msg.result.type === 'Err') {
+  if (msg.result.t === 'err') {
     return { model };
   }
 

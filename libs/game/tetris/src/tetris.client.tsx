@@ -166,7 +166,7 @@ export const updateFromServer = (
     case 'MouseMove_Done': {
       const result = msg[1];
 
-      if (result.type === 'Err') {
+      if (result.t === 'err') {
         return [model, Cmd.None];
       }
 
@@ -178,7 +178,7 @@ export const updateFromServer = (
     case 'InputDrop_Done': {
       const result = msg[1];
 
-      if (result.type === 'Err') {
+      if (result.t === 'err') {
         return [model, Cmd.None];
       }
 
@@ -195,7 +195,7 @@ export const updateFromServer = (
     case 'InputRotate_Done': {
       const result = msg[1];
 
-      if (result.type === 'Err') {
+      if (result.t === 'err') {
         return [model, Cmd.None];
       }
 
@@ -207,7 +207,7 @@ export const updateFromServer = (
     case 'InputTranslate_Done': {
       const result = msg[1];
 
-      if (result.type === 'Err') {
+      if (result.t === 'err') {
         return [model, Cmd.None];
       }
 

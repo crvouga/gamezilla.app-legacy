@@ -31,9 +31,9 @@ export type Model = {
     | 'invalid-timezone';
   submission:
     | { type: 'idle' }
-    | { type: 'Loading' }
+    | { type: 'loading' }
     | { type: 'Problem'; message: string }
-    | { type: 'Ok' };
+    | { type: 'ok' };
 };
 
 export const init = (): {
@@ -97,14 +97,14 @@ export const update = ({
 
     const decoded = PhoneNumber.decode(model.country, model.phoneNumber);
 
-    if (decoded.type === 'Err') {
+    if (decoded.t === 'err') {
       return { model: { ...model, validation: 'invalid-phone-number' } };
     }
 
     const phoneNumber = decoded.value;
 
     return {
-      model: { ...model, submission: { type: 'Loading' } },
+      model: { ...model, submission: { type: 'loading' } },
       cmd: p(
         sendCode({ phoneNumber: phoneNumber }),
         Cmd.perform(
@@ -142,7 +142,7 @@ export const update = ({
   if (msg.t === 'send-code-done') {
     const { phoneNumber, result } = msg;
 
-    if (result.type === 'Err') {
+    if (result.t === 'err') {
       return {
         model: {
           ...model,
@@ -152,7 +152,7 @@ export const update = ({
     }
 
     return {
-      model: { ...model, submission: { type: 'Ok' } },
+      model: { ...model, submission: { type: 'ok' } },
       cmd: Route.push({
         t: 'auth',
         c: { t: 'login-phone-verify', phoneNumber: phoneNumber },
@@ -259,7 +259,7 @@ export const View = ({
           size="lg"
           className="w-full mt-2"
         >
-          {model.submission.type === 'Loading' && (
+          {model.submission.type === 'loading' && (
             <IconSpinner className="w-6 h-6 animate-spin" />
           )}
           Send Code

@@ -136,7 +136,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     case 'edit-one-done': {
       const { userId, result } = msg[1];
 
-      if (result.type === 'Err') {
+      if (result.t === 'err') {
         const modelNew: Model = {
           ...model,
           profiles: removeKey(userId, model.profiles),
@@ -170,7 +170,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       const key = toFindManyKey(userIds);
 
       const profilesNew: { [id: UserId]: Profile } = {};
-      if (result.type === 'Ok') {
+      if (result.t === 'ok') {
         for (const profile of result.value) {
           profilesNew[profile.userId] = profile;
         }
@@ -226,7 +226,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
         profiles: {
           ...model.profiles,
-          [userId]: result.type === 'Ok' ? result.value : undefined,
+          [userId]: result.t === 'ok' ? result.value : undefined,
         },
       };
 
@@ -236,7 +236,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     case 'search-done': {
       const { result, searchText } = msg[1];
 
-      const hits: Profile[] = result.type === 'Err' ? [] : result.value;
+      const hits: Profile[] = result.t === 'err' ? [] : result.value;
 
       const byId = hits.reduce((acc, hit) => {
         acc[hit.userId] = hit;
@@ -469,7 +469,7 @@ export const decodeRow = (
   const userId = UserId.decode(row.id);
   const username = Username.decode(row.username);
 
-  if (userId.type === 'Ok' && username.type === 'Ok') {
+  if (userId.t === 'ok' && username.t === 'ok') {
     return Result.Ok({
       userId: userId.value,
       avatarUrl: row.avatar_url,

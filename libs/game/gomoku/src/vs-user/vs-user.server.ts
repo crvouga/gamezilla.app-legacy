@@ -63,7 +63,7 @@ export const updateFromClient = ({
 } => {
   const res: Res = { ...msg, result: handle({ msg, model, ctx }) };
 
-  if (res.result.type === 'Err') {
+  if (res.result.t === 'err') {
     return { model, cmd: sendToClient(res) };
   }
   return { model: res.result.value, cmd: broadcast(res) };

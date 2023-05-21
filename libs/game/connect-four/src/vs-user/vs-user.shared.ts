@@ -186,7 +186,7 @@ export const handle = (
 
       const result = move(model.columns, columnIndex, playerType);
 
-      if (result.type === 'Err') {
+      if (result.t === 'err') {
         return result;
       }
 
@@ -438,7 +438,7 @@ export const toPlayerType = (
 };
 
 export const resultToString = (result: ReturnType<typeof handle>): string => {
-  if (result.type === 'Ok') {
+  if (result.t === 'ok') {
     return '';
   }
 
@@ -531,7 +531,7 @@ export const tick = (model: SharedModel): SharedModel => {
   for (const columnIndex of shuffle(allColumnIndexes)) {
     const result = move(model.columns, columnIndex, turn);
 
-    if (result.type === 'Err') {
+    if (result.t === 'err') {
       continue;
     }
 
@@ -547,7 +547,7 @@ const handleMoveResult = (
   result: MoveResult,
   model: GameModel
 ): GameModel | GameOverModel => {
-  if (result.type === 'Err') {
+  if (result.t === 'err') {
     return model;
   }
 

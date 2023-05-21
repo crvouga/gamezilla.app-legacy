@@ -395,7 +395,7 @@ export const inputMove = (
 
   const result = TicTacToe.move({ board, player: playerType, position });
 
-  if (result.type === 'Err') {
+  if (result.t === 'err') {
     return result;
   }
 
@@ -546,7 +546,7 @@ export const NewGame = (
 };
 
 export const NewGameToString = (result: NewGame_Done[1]): string => {
-  if (result.type === 'Ok') {
+  if (result.t === 'ok') {
     return '';
   }
 
@@ -601,7 +601,7 @@ export const inputBestOutOf = (
 export const inputBestOutOfToString = (
   result: InputBestOutOf_Done[1]
 ): string => {
-  if (result.type === 'Ok') {
+  if (result.t === 'ok') {
     return '';
   }
 
@@ -656,7 +656,7 @@ export const InputMoveTimeLimit = (
 export const InputMoveTimeLimitToString = (
   result: InputMoveTimeLimit_Done[1]
 ): string => {
-  if (result.type === 'Ok') {
+  if (result.t === 'ok') {
     return '';
   }
 
@@ -762,7 +762,7 @@ export const rematchAsk = (
 };
 
 export const rematchAskToString = (result: RematchAsk_Done[1]): string => {
-  if (result.type === 'Ok') {
+  if (result.t === 'ok') {
     return '';
   }
 

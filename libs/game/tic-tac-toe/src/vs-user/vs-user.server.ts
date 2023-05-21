@@ -60,7 +60,7 @@ export const update = (
     case 'RoundCountDown': {
       const result = roundCountDown(model);
 
-      const modelNew = result.type === 'Err' ? model : result.value;
+      const modelNew = result.t === 'err' ? model : result.value;
 
       return [modelNew, broadcast(['RoundCountDown_Done', result])];
     }
@@ -68,7 +68,7 @@ export const update = (
     case 'MoveCountDown': {
       const result = moveCountDown(model);
 
-      const modelNew = result.type === 'Err' ? model : result.value;
+      const modelNew = result.t === 'err' ? model : result.value;
 
       return [modelNew, broadcast(['MoveCountDown_Done', result])];
     }
@@ -90,7 +90,7 @@ export const updateFromClient = (
     case 'InputPlayer': {
       const result = inputPlayer(msg[1], model);
 
-      if (result.type === 'Err') {
+      if (result.t === 'err') {
         return [model, sendToClient(['InputPlayer_Done', result])];
       }
 
@@ -102,7 +102,7 @@ export const updateFromClient = (
     case 'stop-playing': {
       const result = stopPlaying(msg[1], model);
 
-      if (result.type === 'Err') {
+      if (result.t === 'err') {
         return [model, sendToClient(['StopPlaying_Done', result])];
       }
 
@@ -114,7 +114,7 @@ export const updateFromClient = (
     case 'start-game': {
       const result = startGame(msg[1], model);
 
-      if (result.type === 'Err') {
+      if (result.t === 'err') {
         return [model, sendToClient(['StartGame_Done', result])];
       }
 
@@ -126,7 +126,7 @@ export const updateFromClient = (
     case 'resign': {
       const result = resign(msg[1], model);
 
-      if (result.type === 'Err') {
+      if (result.t === 'err') {
         return [model, sendToClient(['resign_Done', result])];
       }
 
@@ -138,7 +138,7 @@ export const updateFromClient = (
     case 'input-move': {
       const result = inputMove(msg[1], model);
 
-      if (result.type === 'Err') {
+      if (result.t === 'err') {
         return [model, sendToClient(['input-move-done', result])];
       }
 
@@ -150,7 +150,7 @@ export const updateFromClient = (
     case 'NewGame': {
       const result = NewGame(msg[1], model);
 
-      if (result.type === 'Err') {
+      if (result.t === 'err') {
         return [model, sendToClient(['NewGame_Done', result])];
       }
 
@@ -162,7 +162,7 @@ export const updateFromClient = (
     case 'InputBestOutOf': {
       const result = inputBestOutOf(msg[1], model);
 
-      if (result.type === 'Err') {
+      if (result.t === 'err') {
         return [model, sendToClient(['InputBestOutOf_Done', result])];
       }
 
@@ -174,7 +174,7 @@ export const updateFromClient = (
     case 'InputMoveTimeLimit': {
       const result = InputMoveTimeLimit(msg[1], model);
 
-      if (result.type === 'Err') {
+      if (result.t === 'err') {
         return [model, sendToClient(['InputMoveTimeLimit_Done', result])];
       }
 
@@ -187,7 +187,7 @@ export const updateFromClient = (
       const result = rematchAccept(msg[1], model);
       const res: Res = ['RematchAccept_Done', result];
 
-      if (result.type === 'Err') {
+      if (result.t === 'err') {
         return [model, sendToClient(res)];
       }
 
@@ -198,7 +198,7 @@ export const updateFromClient = (
       const result = rematchAsk(msg[1], model);
       const res: Res = ['RematchAsk_Done', result];
 
-      if (result.type === 'Err') {
+      if (result.t === 'err') {
         return [model, sendToClient(res)];
       }
 
@@ -209,7 +209,7 @@ export const updateFromClient = (
       const result = rematchDecline(msg[1], model);
       const res: Res = ['RematchDecline_Done', result];
 
-      if (result.type === 'Err') {
+      if (result.t === 'err') {
         return [model, sendToClient(res)];
       }
 
@@ -220,7 +220,7 @@ export const updateFromClient = (
       const result = rematchCancel(msg[1], model);
       const res: Res = ['Rematch_Cancel_Done', result];
 
-      if (result.type === 'Err') {
+      if (result.t === 'err') {
         return [model, sendToClient(res)];
       }
 

@@ -147,7 +147,7 @@ export const updateFromServer = (
     case 'resign_Done': {
       const res: Res = msg;
 
-      if (res[1].type === 'Err') {
+      if (res[1].t === 'err') {
         return [model, []];
       }
 
@@ -158,7 +158,7 @@ export const updateFromServer = (
 
     case 'MoveCountDown_Done':
     case 'RoundCountDown_Done': {
-      if (msg[1].type === 'Err') {
+      if (msg[1].t === 'err') {
         return [model, []];
       }
 
@@ -260,7 +260,7 @@ export const View = ({
 
             <UI.Tooltip title={inputBestOutOfToString(inputBestOutOfResult)}>
               <UI.ToggleButtonGroup
-                disabled={inputBestOutOfResult.type === 'Err'}
+                disabled={inputBestOutOfResult.t === 'err'}
                 fullWidth
                 value={model.maxRoundCount}
               >
@@ -292,7 +292,7 @@ export const View = ({
               title={InputMoveTimeLimitToString(InputMoveTimeLimitResult)}
             >
               <UI.ToggleButtonGroup
-                disabled={InputMoveTimeLimitResult.type === 'Err'}
+                disabled={InputMoveTimeLimitResult.t === 'err'}
                 fullWidth
                 value={model.moveTimeLimit}
               >
@@ -323,7 +323,7 @@ export const View = ({
             variant="contained"
             fullWidth
             onClick={() => $send(['start-game', { userId: ctx.currentUserId }])}
-            disabled={startGameResult.type === 'Err'}
+            disabled={startGameResult.t === 'err'}
           >
             Start
           </UI.Button>
@@ -436,7 +436,7 @@ export const View = ({
                 onClick={() =>
                   $send(['NewGame', { userId: ctx.currentUserId }])
                 }
-                disabled={NewGameResult.type === 'Err'}
+                disabled={NewGameResult.t === 'err'}
               >
                 Back
               </UI.Button>
@@ -453,7 +453,7 @@ export const View = ({
           >
             <span>
               <UI.Button
-                disabled={rematchAskResult.type === 'Err'}
+                disabled={rematchAskResult.t === 'err'}
                 fullWidth
                 variant="contained"
                 loading={

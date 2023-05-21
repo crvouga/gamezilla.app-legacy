@@ -175,7 +175,7 @@ export const updateFromServer = ({
         },
       };
 
-      if (result.type === 'Err') {
+      if (result.t === 'err') {
         return [modelNew, Cmd.None, []];
       }
 

@@ -69,7 +69,7 @@ export const update = ({
     default: {
       const result = handle({ ctx, msg, model });
 
-      if (result.type === 'Err') {
+      if (result.t === 'err') {
         return {
           model,
           cmd: sendToServer(msg),
@@ -102,7 +102,7 @@ export const updateFromServer = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (msg.result.type === 'Err') {
+  if (msg.result.t === 'err') {
     return { model };
   }
 

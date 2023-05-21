@@ -158,7 +158,7 @@ export const updateFromClient_: updateFromClient = ({
     case 'create': {
       const res: Res = { ...msg, result: handle({ ctx, model, msg }) };
 
-      if (res.result.type === 'Err') {
+      if (res.result.t === 'err') {
         return { model, cmd: wire.sendToClient(res) };
       }
 
@@ -256,7 +256,7 @@ const updateLeave = ({
   const result = handle({ ctx, model, msg });
   const res: Res = { ...msg, result };
 
-  if (result.type === 'Err') {
+  if (result.t === 'err') {
     return { model, cmd: wire.sendToClient(res) };
   }
 

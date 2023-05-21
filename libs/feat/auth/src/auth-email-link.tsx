@@ -68,7 +68,7 @@ export const update = ({
   }
 
   if (msg.t === 'login-done') {
-    if (msg.result.type === 'Err') {
+    if (msg.result.t === 'err') {
       return {
         model: {
           ...model,

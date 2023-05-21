@@ -241,7 +241,7 @@ export const handle = ({
         stone: currentUserStone,
       });
 
-      if (moved.type === 'Err') {
+      if (moved.t === 'err') {
         return moved;
       }
 

@@ -101,7 +101,7 @@ export const update = (
     case 'input-move': {
       const result = handle(ctx, msg, model);
 
-      if (result.type === 'Err') {
+      if (result.t === 'err') {
         return { model };
       }
 
@@ -152,7 +152,7 @@ export const updateFromServer = ({
 
     case 'bot-move':
     case 'input-move': {
-      if (msg[1].type === 'Err') {
+      if (msg[1].t === 'err') {
         return { model };
       }
 
@@ -173,7 +173,7 @@ export const updateFromServer = ({
     case 'stop-playing':
     case 'swap-sides':
     case 'input-bot-level': {
-      if (msg[1].type === 'Err') {
+      if (msg[1].t === 'err') {
         return { model };
       }
 

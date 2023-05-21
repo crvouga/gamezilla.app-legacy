@@ -143,7 +143,7 @@ export const update = (
     case 'input-move': {
       const result = inputMove(msg[1], model.sharedModel);
 
-      if (result.type === 'Err') {
+      if (result.t === 'err') {
         return [model, Cmd.None];
       }
 
@@ -168,14 +168,14 @@ export const updateFromServer = (
 
   switch (msg[0]) {
     case 'InputClock_Done': {
-      if (msg[1].type === 'Err') {
+      if (msg[1].t === 'err') {
         return [model, Cmd.None, []];
       }
       return [{ ...model, sharedModel: msg[1].value }, Cmd.None, []];
     }
 
     case 'input-move-done': {
-      if (msg[1].type === 'Err') {
+      if (msg[1].t === 'err') {
         return [model, Cmd.None, []];
       }
 
@@ -195,7 +195,7 @@ export const updateFromServer = (
     }
 
     case 'InputPlayer_Done': {
-      if (msg[1].type === 'Err') {
+      if (msg[1].t === 'err') {
         return [model, Cmd.None, []];
       }
 
@@ -205,7 +205,7 @@ export const updateFromServer = (
     }
 
     case 'StartGame_Done': {
-      if (msg[1].type === 'Err') {
+      if (msg[1].t === 'err') {
         return [model, Cmd.None, []];
       }
 
@@ -221,12 +221,12 @@ export const updateFromServer = (
     //
 
     case 'RequestToDraw_Done': {
-      switch (msg[1].type) {
-        case 'Err': {
+      switch (msg[1].t) {
+        case 'err': {
           return [model, Cmd.None, []];
         }
 
-        case 'Ok': {
+        case 'ok': {
           return [
             { ...model, openedModal: 'AskedToDraw' },
             playAudio(Sounds.uiUnlock),
@@ -241,7 +241,7 @@ export const updateFromServer = (
     }
 
     case 'RespondToDraw_Done': {
-      if (msg[1].type === 'Err') {
+      if (msg[1].t === 'err') {
         return [model, Cmd.None, []];
       }
 
@@ -271,7 +271,7 @@ export const updateFromServer = (
     case 'CancelDraw_Done': {
       const result = msg[1];
 
-      if (result.type === 'Err') {
+      if (result.t === 'err') {
         return [model, Cmd.None, []];
       }
 
@@ -301,7 +301,7 @@ export const updateFromServer = (
     //
 
     case 'resign_Done': {
-      if (msg[1].type === 'Err') {
+      if (msg[1].t === 'err') {
         return [model, Cmd.None, []];
       }
 
@@ -315,7 +315,7 @@ export const updateFromServer = (
     }
 
     case 'NewGame_Done': {
-      if (msg[1].type === 'Err') {
+      if (msg[1].t === 'err') {
         return [model, Cmd.None, []];
       }
 
@@ -511,13 +511,13 @@ export const View = ({
           <UI.Box sx={{ paddingX: 2 }}>
             <UI.Tooltip
               title={
-                inputClockResult.type === 'Err'
+                inputClockResult.t === 'err'
                   ? inputClockProblemToString(inputClockResult.error)
                   : ''
               }
             >
               <UI.ToggleButtonGroup
-                disabled={inputClockResult.type === 'Err'}
+                disabled={inputClockResult.t === 'err'}
                 fullWidth
                 value={model.sharedModel.clockPreset}
               >
@@ -546,7 +546,7 @@ export const View = ({
           </UI.Button>
 
           <UI.Button
-            disabled={startGameResult.type === 'Err'}
+            disabled={startGameResult.t === 'err'}
             fullWidth
             variant="contained"
             onClick={() => {
@@ -624,7 +624,7 @@ export const View = ({
 
           const inputted = inputMove(msg[1], model.sharedModel);
 
-          return inputted.type === 'Ok';
+          return inputted.t === 'ok';
         }}
       />
 

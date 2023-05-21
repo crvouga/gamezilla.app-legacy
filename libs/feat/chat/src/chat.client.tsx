@@ -436,7 +436,7 @@ const ViewChatList = ({
       >
         <TopBar title="Chat" />
 
-        {query.type === 'Loading' ? (
+        {query.t === 'loading' ? (
           <ViewLoadingState title="Loading conversations..." />
         ) : (
           <Box sx={{ flex: 1, overflowY: 'scroll' }}>

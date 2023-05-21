@@ -167,7 +167,7 @@ export const inputMove = (
 
   const result = Chess.move(moveInput, model.board);
 
-  if (result.type === 'Err') {
+  if (result.t === 'err') {
     return result;
   }
 
@@ -585,17 +585,17 @@ export const clockTicked = (model: SharedModel): SharedModel => {
     return model;
   }
 
-  const result = Clock.tick({ turn, clock: model.clock });
+  const ticked = Clock.tick({ turn, clock: model.clock });
 
-  if (result.type === 'TimeIsUp') {
-    const loser = result.timeIsUp;
+  if (ticked.type === 'TimeIsUp') {
+    const loser = ticked.timeIsUp;
 
     return {
       type: 'GameOver',
       w: model.w,
       b: model.b,
       board: model.board,
-      clock: result.clock,
+      clock: ticked.clock,
       gameOver: {
         type: 'WinOnTime',
         winner: Chess.toOppositeColor(loser),
@@ -605,6 +605,6 @@ export const clockTicked = (model: SharedModel): SharedModel => {
 
   return {
     ...model,
-    clock: result.clock,
+    clock: ticked.clock,
   };
 };

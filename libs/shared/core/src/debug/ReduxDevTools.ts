@@ -139,7 +139,7 @@ const handleSubscription = <Model, Msg extends object>(
   return (msg) => {
     const result = handler(msg);
 
-    if (result.type === 'Err') {
+    if (result.t === 'err') {
       console.warn('[REDUX DEV TOOL]', result.error);
       return;
     }
@@ -198,11 +198,11 @@ const handleIncomingMsg = <Model, Msg extends object>({
 
       case 'ACTION': {
         const result = Json.parse(String(msg.payload));
-        switch (result.type) {
-          case 'Err':
+        switch (result.t) {
+          case 'err':
             return Result.Err(result.error.message);
 
-          case 'Ok':
+          case 'ok':
             return Result.Ok($sendToApp(result.value));
 
           default: {
@@ -353,7 +353,7 @@ const parseToggleAction = <Model>(
     Result.map((x) => x as number)
   );
 
-  if (getId.type === 'Err') {
+  if (getId.t === 'err') {
     return getId;
   }
 
@@ -366,7 +366,7 @@ const parseToggleAction = <Model>(
     Result.mapErr((problem) => problem.message)
   );
 
-  if (parseState.type === 'Err') {
+  if (parseState.t === 'err') {
     return parseState;
   }
 

@@ -646,11 +646,11 @@ export const moveMany = (moveInputs: MoveInput[], model: Model) => {
   return moveInputs.reduce<
     Result<MoveProblem, Model & { didCapture: boolean }>
   >((acc, moveInput) => {
-    if (acc.type === 'Err') {
+    if (acc.t === 'err') {
       return acc;
     }
     const moved = move(moveInput, acc.value);
-    if (moved.type === 'Err') {
+    if (moved.t === 'err') {
       return moved;
     }
     return Result.Ok(moved.value);

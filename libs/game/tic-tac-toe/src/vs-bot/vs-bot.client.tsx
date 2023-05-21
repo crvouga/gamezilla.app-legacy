@@ -87,7 +87,7 @@ export const update = ({
 
     case 'input-move': {
       const result = inputMove(msg[1], model);
-      if (result.type === 'Err') {
+      if (result.t === 'err') {
         return { model, cmd: sendToServer(msg) };
       }
       const merged = mergeWithServer({
@@ -124,7 +124,7 @@ export const updateFromServer = ({
     }
 
     default: {
-      if (msg[1].type === 'Err') {
+      if (msg[1].t === 'err') {
         return [model, Cmd.None, []];
       }
       const modelNew = mergeWithServer({

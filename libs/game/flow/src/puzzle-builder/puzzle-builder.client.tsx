@@ -47,8 +47,7 @@ export const update = ({
 } => {
   const handled = handle({ ctx, msg, model });
 
-  const modelNew =
-    handled.type === 'Ok' ? { ...model, ...handled.value } : model;
+  const modelNew = handled.t === 'ok' ? { ...model, ...handled.value } : model;
 
   return { model: modelNew, cmd: sendToServer(msg) };
 };

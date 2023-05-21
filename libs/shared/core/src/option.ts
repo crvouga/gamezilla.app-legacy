@@ -59,11 +59,11 @@ const fromNullable = <T>(value: T | null | undefined): Option<T> => {
 };
 
 const fromResult = <TErr, TOk>(result: Result<TErr, TOk>): Option<TOk> => {
-  switch (result.type) {
-    case 'Err':
+  switch (result.t) {
+    case 'err':
       return None;
 
-    case 'Ok':
+    case 'ok':
       return Some(result.value);
   }
 };

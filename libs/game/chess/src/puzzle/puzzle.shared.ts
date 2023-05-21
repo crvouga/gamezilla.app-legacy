@@ -167,7 +167,7 @@ const moveMany = (
 ): Chess.Model => {
   return moves.reduce((board, move) => {
     const moved = Chess.move(move, board);
-    return moved.type === 'Ok' ? moved.value : board;
+    return moved.t === 'ok' ? moved.value : board;
   }, board);
 };
 
@@ -306,7 +306,7 @@ export const handle = ({
 
       const moved = Chess.move(msg.moveInput, status.board);
 
-      if (moved.type === 'Err') {
+      if (moved.t === 'err') {
         return moved;
       }
 

@@ -113,7 +113,7 @@ export const updateFromServer = (
         ),
       };
 
-      if (msg[2].type === 'Err') {
+      if (msg[2].t === 'err') {
         return [{ ...model, requests: requestsNew }, Cmd.None];
       }
 
@@ -280,7 +280,7 @@ export const ViewPage = ({
             startIcon={<Icons.CallEnd />}
             color="error"
             size="large"
-            loading={model.requests.PartyDestroy?.type === 'Loading'}
+            loading={model.requests.PartyDestroy?.type === 'loading'}
             onClick={() =>
               $send(['PartyDestroy', { userId: ctx.currentUserId }])
             }
@@ -293,7 +293,7 @@ export const ViewPage = ({
             startIcon={<Icons.CallEnd />}
             color="error"
             size="large"
-            loading={model.requests.PartyLeave?.type === 'Loading'}
+            loading={model.requests.PartyLeave?.type === 'loading'}
             onClick={() => $send(['PartyLeave', { userId: ctx.currentUserId }])}
           >
             Leave
@@ -335,7 +335,7 @@ const ViewNotInParty = ({
           fullWidth
           variant="contained"
           size="large"
-          loading={model.requests.PartyCreate?.type === 'Loading'}
+          loading={model.requests.PartyCreate?.type === 'loading'}
           onClick={() =>
             $send([
               'PartyCreate',
