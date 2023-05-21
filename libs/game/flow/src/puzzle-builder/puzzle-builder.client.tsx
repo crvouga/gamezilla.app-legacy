@@ -10,9 +10,8 @@ import {
   IconPlay,
   cn,
 } from '@gamezilla/shared/ui';
-import { Color, Flow, groupIdToColor } from '../flow';
+import { Color, groupIdToColor } from '../flow';
 import { FlowGridPlayUI, FlowGridUI } from '../flow-grid';
-import { GroupId } from '../flow/flow';
 import {
   ClientModel,
   ClientMsg,
@@ -28,8 +27,6 @@ type Model = ClientModel;
 type Msg = ClientMsg;
 
 export const init: Model = initShared;
-
-const toActiveGroupInputHtmlId = (id: GroupId) => `group-${id}`;
 
 export const update = ({
   msg,
@@ -146,8 +143,17 @@ export const View = ({
           }}
         />
 
-        <div className="flex items-center gap-3 px-4 snap-x w-full overflow-x-auto">
-          {Flow.groupIdOrder.map((groupId) => {
+        <div className="flex flex-col items-center px-4 snap-x w-full overflow-x-auto">
+          <svg viewBox="-1 -1 2 2" className={cn('w-12 h-12')}>
+            <circle
+              cx={0}
+              cy={0}
+              r={1}
+              fill={Color.toHex(groupIdToColor[model.focusedGroupId])}
+            />
+          </svg>
+          <p>{capitalize(groupIdToColor[model.focusedGroupId])}</p>
+          {/* {Flow.groupIdOrder.map((groupId) => {
             return (
               <button
                 key={groupId}
@@ -171,11 +177,16 @@ export const View = ({
                 <p>{capitalize(Color.groupIdToColor[groupId])}</p>
               </button>
             );
-          })}
+          })} */}
         </div>
       </div>
       <ViewBottomButtonBar
         actions={[
+          {
+            label: 'Exit Builder',
+            icon: <IconArrowLeftOnRect />,
+            onClick: onExit,
+          },
           {
             label: 'Play Mode',
             icon: <IconPlay />,

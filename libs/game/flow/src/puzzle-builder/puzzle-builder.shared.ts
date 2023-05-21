@@ -201,10 +201,10 @@ const updateEditModePressedDownNode = ({
         ...terminal,
         pair: terminal.pair.filter((x) => x !== nodeId),
       },
-      [model.focusedGroupId]: {
-        groupId: model.focusedGroupId,
-        pair: [...terminal.pair, nodeId].slice(0, 2),
-      },
+      // [model.focusedGroupId]: {
+      //   groupId: model.focusedGroupId,
+      //   pair: [...terminal.pair, nodeId].slice(0, 2),
+      // },
     };
 
     return { ...model, draftTerminals };
