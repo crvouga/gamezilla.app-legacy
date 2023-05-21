@@ -4,8 +4,7 @@ import * as Profile from '@gamezilla/feat/profile';
 import * as Room from '@gamezilla/feat/room';
 import * as Search from '@gamezilla/feat/search';
 import { ClientId, SessionId, UserId } from '@gamezilla/shared/app';
-import { Route } from '@gamezilla/shared/client';
-import * as Toast from './toast';
+import { Routing, Toast, Wire } from './app-client';
 
 //
 //
@@ -33,14 +32,15 @@ export type Session = {
 };
 
 export type ClientModel = {
-  route: Route.Route;
+  routing: Routing.Model;
   toast: Toast.Model;
+  wire: Wire.Model;
+  //
   auth: Auth.ClientModel;
   room: Room.ClientModel;
   profile: Profile.ClientModel;
   chat: Chat.ClientModel;
   search: Search.ClientModel;
-  wire: WireModel;
 };
 
 //
@@ -69,9 +69,11 @@ export type ToClient =
 
 export type ClientMsg =
   | { t: '→'; c: ToClient }
-  | { t: 'wire'; c: WireMsg }
-  | { t: 'route'; c: Route.Msg }
+  //
+  | { t: 'wire'; c: Wire.Msg }
+  | { t: 'routing'; c: Routing.Msg }
   | { t: 'toast'; c: Toast.Msg }
+  //
   | { t: 'room'; c: Room.ClientMsg }
   | { t: 'chat'; c: Chat.ClientMsg }
   | { t: 'auth'; c: Auth.ClientMsg }
@@ -87,20 +89,6 @@ export type ServerMsg =
   | { t: 'search'; c: Search.ServerMsg }
   | { t: 'chat'; c: Chat.ServerMsg }
   | { t: 'auth'; c: Auth.ServerMsg };
-
-//
-//
-// Wire
-//
-//
-
-export type WireModel =
-  | { t: 'connecting' }
-  | { t: 'connect-error'; errorCount: number }
-  | { t: 'disconnected' }
-  | { t: 'connected' };
-
-export type WireMsg = { t: WireModel['t'] };
 
 //
 //

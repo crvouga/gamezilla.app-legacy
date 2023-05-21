@@ -1,6 +1,6 @@
 import { ProfileAvatar, UserId } from '@gamezilla/shared/app';
+import { AppMsg, RouteProfile, ViewCtx } from '@gamezilla/shared/client';
 import { Cmd, RemoteResult, andThen, p } from '@gamezilla/shared/core';
-import { AppMsg, Route, ViewCtx } from '@gamezilla/shared/client';
 import {
   Alert,
   Avatar,
@@ -29,7 +29,7 @@ import {
   ViewNode,
 } from '@gamezilla/shared/ui';
 import { AlertTitle } from '@mui/material';
-import { ClientModel, ClientMsg, ToServer, ToClient } from './profile.shared';
+import { ClientModel, ClientMsg, ToClient, ToServer } from './profile.shared';
 
 //
 //
@@ -180,7 +180,7 @@ export const View = ({
 }: {
   ctx: ViewCtx;
   model: Model;
-  route: Route.RouteProfile;
+  route: RouteProfile;
   $send: (msg: Msg) => void;
   viewBottomBar: ViewNode;
 }) => {

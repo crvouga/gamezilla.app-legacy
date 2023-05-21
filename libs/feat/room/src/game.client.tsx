@@ -127,7 +127,7 @@ export const update = ({
     return {
       model: { t: 'tic-tac-toe', c: updated.model },
       cmd: Cmd.tag_('tic-tac-toe', updated.cmd),
-      msgs: updated.msgs,
+      msgs: AppMsg.tag('tic-tac-toe', updated.msgs),
     };
   }
 

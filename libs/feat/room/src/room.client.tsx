@@ -1,5 +1,12 @@
 import { RoomId, UserId } from '@gamezilla/shared/app';
-import { AppMsg, Ctx, RoomCtx, Route, ViewCtx } from '@gamezilla/shared/client';
+import {
+  AppMsg,
+  Ctx,
+  RoomCtx,
+  Route,
+  RouteRoom,
+  ViewCtx,
+} from '@gamezilla/shared/client';
 import { Cmd, RemoteResult, Sub, exhaustive, p } from '@gamezilla/shared/core';
 import {
   ActionButton,
@@ -215,7 +222,7 @@ export const update = ({
       return {
         model: modelNew,
         cmd: Cmd.tag_('game', updated.cmd),
-        msgs: updated.msgs,
+        msgs: AppMsg.tag('game', updated.msgs),
       };
     }
 
@@ -623,7 +630,7 @@ export const View = ({
   model: Model;
   ctx: ViewCtx;
   $send: (m: Msg) => void;
-  route: Route.RouteRoom;
+  route: RouteRoom;
   viewBottomBar: ViewNode;
 }) => {
   const ctx: ViewCtx = {

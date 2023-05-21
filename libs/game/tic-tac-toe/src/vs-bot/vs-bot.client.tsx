@@ -11,7 +11,6 @@ import {
   IconArrowLeftOnRect,
   IconArrowRotateLeft,
   IconRightLeft,
-  MyButton,
 } from '@gamezilla/shared/ui';
 import {
   BotLevel,
@@ -60,33 +59,26 @@ export const init = initSharedModel;
 export type Msg = ClientMsg;
 
 export const update = ({
-  sendToServer,
   msg,
   model,
   ctx,
+  sendToServer,
 }: {
-  ctx: RoomCtx;
   sendToServer: (msg: ToServer) => Cmd;
+  ctx: RoomCtx;
   msg: Msg;
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
   msgs?: AppMsg[];
+  cmd?: Cmd<Msg>;
 } => {
   if (msg.t === 'toast') {
-    return {
-      model,
-      msgs: [{ t: 'toast-enqueued', message: 'Hello' }],
-    };
+    return { model };
   }
   const handled = handle({ ctx, msg, model });
   if (handled.t === 'err') {
-    return {
-      model,
-      cmd: sendToServer(msg),
-      msgs: [{ t: 'toast-enqueued', message: handled.error }],
-    };
+    return { model, cmd: sendToServer(msg) };
   }
   const merged = mergeWithServer({
     ...ctx,
@@ -162,41 +154,38 @@ export const View = ({
 }) => {
   if (model.type === 'setup') {
     return (
-      <>
-        <MyButton onClick={() => $send({ t: 'toast' })}>Toast</MyButton>
-        <ViewVsBotSetupScreen<BotLevel, PlayerType>
-          leftPlayerType="X"
-          playerId={model.player}
-          subtitle="Vs Computer"
-          title="Tic-Tac-Toe"
-          coverArt={viewCoverArt()}
-          ctx={ctx}
-          onCancel={goBack}
-          onStartGame={() => $send({ t: 'start-game' })}
-          onStartPlaying={() => $send({ t: 'start-playing' })}
-          onStopPlaying={() => $send({ t: 'stop-playing' })}
-          player={{
-            values: Object.values(playerTypes),
-            onInput: (player) =>
-              $send({ t: 'input-player-type', playerType: player }),
-            selected: model.userPlayerType,
-            icon: ({ playerType, sx }) => (
-              <PlayerTypeIcon sx={sx} playerType={playerType} />
-            ),
-            render: ({ playerType }) => (
-              <PlayerTypeIcon playerType={playerType} />
-            ),
-            toName: (player) => player,
-          }}
-          botLevel={{
-            onInput: (botLevel) => $send({ t: 'input-bot-level', botLevel }),
-            selected: model.botLevel,
-            values: Object.values(botLevels),
-            toName: (botLevel) => botLevel,
-            render: ({ botLevel }) => botLevel,
-          }}
-        />
-      </>
+      <ViewVsBotSetupScreen<BotLevel, PlayerType>
+        leftPlayerType="X"
+        playerId={model.player}
+        subtitle="Vs Computer"
+        title="Tic-Tac-Toe"
+        coverArt={viewCoverArt()}
+        ctx={ctx}
+        onCancel={goBack}
+        onStartGame={() => $send({ t: 'start-game' })}
+        onStartPlaying={() => $send({ t: 'start-playing' })}
+        onStopPlaying={() => $send({ t: 'stop-playing' })}
+        player={{
+          values: Object.values(playerTypes),
+          onInput: (player) =>
+            $send({ t: 'input-player-type', playerType: player }),
+          selected: model.userPlayerType,
+          icon: ({ playerType, sx }) => (
+            <PlayerTypeIcon sx={sx} playerType={playerType} />
+          ),
+          render: ({ playerType }) => (
+            <PlayerTypeIcon playerType={playerType} />
+          ),
+          toName: (player) => player,
+        }}
+        botLevel={{
+          onInput: (botLevel) => $send({ t: 'input-bot-level', botLevel }),
+          selected: model.botLevel,
+          values: Object.values(botLevels),
+          toName: (botLevel) => botLevel,
+          render: ({ botLevel }) => botLevel,
+        }}
+      />
     );
   }
   const gameOver = toGameOver(model.board);

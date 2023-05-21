@@ -10,15 +10,7 @@ import {
   UnauthenticatedViewCtx,
   ViewCtx,
 } from '@gamezilla/shared/client';
-import {
-  Browser,
-  Cmd,
-  Posix,
-  Sub,
-  andThen,
-  exhaustive,
-  p,
-} from '@gamezilla/shared/core';
+import { Browser, Cmd, Posix, Sub, exhaustive } from '@gamezilla/shared/core';
 import {
   IconGamepad,
   IconMagnifyingGlass,
@@ -28,14 +20,8 @@ import {
   cn,
 } from '@gamezilla/shared/ui';
 import { Subject } from 'rxjs';
-import {
-  ClientModel,
-  ClientMsg,
-  ToClient,
-  ToServer,
-  WireMsg,
-} from './app.shared';
-import * as Toast from './toast';
+import { ClientModel, ClientMsg, ToClient, ToServer } from './app.shared';
+import { Routing, Toast, Wire } from './app-client';
 
 //
 //
@@ -57,14 +43,11 @@ export const init = ({
   model: Model;
   cmd: Cmd<Msg>;
 } => {
-  const route = p(
-    location.pathname,
-    Route.decode,
-    (route): Route.Route =>
-      route ? route : { t: 'room', c: { t: 'room-list' } }
-  );
+  const routing = Routing.init(location);
+  const toast = Toast.init;
+  const wire = Wire.init;
+  //
   const auth = AuthClient.init();
-  const toasts = Toast.init;
   const room = RoomClient.init();
   const profile = ProfileClient.init;
   const chat = ChatClient.init;
@@ -72,18 +55,17 @@ export const init = ({
 
   return {
     model: {
-      route,
+      routing: routing.model,
+      toast,
+      wire,
+      //
       chat,
-      toast: toasts,
       room: room.model,
       auth: auth.model,
       search: search.model,
       profile,
-      wire: {
-        t: 'connecting',
-      },
     },
-    cmd: Cmd.batch<Msg>([Route.replace(route), Cmd.tag_('auth', auth.cmd)]),
+    cmd: Cmd.batch<Msg>([routing.cmd, Cmd.tag_('auth', auth.cmd)]),
   };
 };
 
@@ -105,68 +87,31 @@ type Msg = ClientMsg;
 //
 //
 
-export const update = ({
-  sendToServer,
-  msg,
-  model,
-  now,
-}: {
+export const update = (input: {
   now: Posix;
   sendToServer: (m: ToServer) => Cmd;
   msg: Msg;
   model: Model;
 }): { model: Model; cmd?: Cmd<Msg> } => {
-  return p(
-    { model },
-    andThen((input) => {
-      const updated = update_({ ...input, now, msg, sendToServer });
+  const updated = update_(input);
 
-      const appUpdated = (updated?.msgs ?? []).reduce<{
-        model: Model;
-        cmd?: Cmd<Msg>;
-      }>((acc, msg) => {
-        const appUpdated = updateFromApp({
-          model: acc.model,
-          msg,
-          sendToServer,
-        });
-        return {
-          model: appUpdated.model,
-          cmd: Cmd.batch([acc.cmd, appUpdated.cmd]),
-        };
-      }, updated);
+  const appUpdated = (updated?.msgs ?? []).reduce<{
+    model: Model;
+    cmd?: Cmd<Msg>;
+  }>((acc, msg) => {
+    const appUpdated = updateFromApp({
+      ...input,
+      model: acc.model,
+      msg,
+    });
 
-      return appUpdated;
-    }),
-    andThen((input) => {
-      if (
-        msg.t === 'auth' &&
-        msg.c.t === 'got-current-user' &&
-        msg.c.currentUser.t === 'logged-in'
-      ) {
-        const updated = updateFromApp({
-          model: input.model,
-          sendToServer,
-          msg: {
-            t: 'user-logged-in',
-            currentUserId: msg.c.currentUser.currentUserId,
-          },
-        });
-        return {
-          model: updated.model,
-          cmd: updated.cmd,
-        };
-      }
-      return { model: input.model };
-    }),
+    return {
+      model: appUpdated.model,
+      cmd: Cmd.batch([acc.cmd, appUpdated.cmd]),
+    };
+  }, updated);
 
-    (output) => {
-      return {
-        model: output.model,
-        cmd: output.cmd,
-      };
-    }
-  );
+  return appUpdated;
 };
 
 const update_ = ({
@@ -191,7 +136,7 @@ const update_ = ({
 
     case 'auth': {
       const updated = AuthClient.update({
-        route: model.route,
+        route: model.routing.route,
         sendToServer: (c) => sendToServer({ t: 'auth', c }),
         msg: msg.c,
         model: model.auth,
@@ -199,6 +144,7 @@ const update_ = ({
       return {
         model: { ...model, auth: updated.model },
         cmd: Cmd.tag_('auth', updated.cmd),
+        msgs: AppMsg.tag('auth', updated.msgs),
       };
     }
 
@@ -210,63 +156,28 @@ const update_ = ({
       };
     }
 
-    case 'route': {
-      const routeUpdated = Route.update({
+    case 'routing': {
+      const updated = Routing.update({
         msg: msg.c,
-        model: model.route,
+        model: model.routing,
       });
 
-      const updated: Model = {
-        ...model,
-        route: routeUpdated.model,
-      };
-
-      const appUpdated = updateFromApp({
-        msg: { t: 'route-changed', route: updated.route },
-        model: updated,
-        sendToServer,
-      });
       return {
-        model: appUpdated.model,
-        cmd: Cmd.batch([Cmd.tag_('route', routeUpdated.cmd), appUpdated.cmd]),
+        model: {
+          ...model,
+          routing: updated.model,
+        },
+        cmd: Cmd.tag_('routing', updated.cmd),
+        msgs: AppMsg.tag('routing', updated.msgs),
       };
     }
 
     case 'wire': {
-      if (msg.c.t === 'connect-error') {
-        return {
-          model: {
-            ...model,
-            wire: {
-              t: 'connect-error',
-              errorCount:
-                model.wire.t === 'connect-error'
-                  ? model.wire.errorCount + 1
-                  : 1,
-            },
-          },
-        };
-      }
-
-      if (msg.c.t === 'connected') {
-        const roomUpdated = RoomClient.updateFromApp({
-          msg: { t: 'wire-connected' },
-          model: model.room,
-          sendToServer: (m) => sendToServer({ t: 'room', c: m }),
-        });
-        return {
-          model: {
-            ...model,
-            room: roomUpdated.model,
-            wire: {
-              t: 'connected',
-            },
-          },
-          cmd: Cmd.tag_('room', roomUpdated.cmd ?? Cmd.None),
-        };
-      }
-
-      return { model: { ...model, wire: { t: msg.c.t } } };
+      const updated = Wire.update({
+        msg: msg.c,
+        model: model.wire,
+      });
+      return { model: { ...model, wire: updated.model }, msgs: updated.msgs };
     }
 
     case 'room': {
@@ -290,7 +201,7 @@ const update_ = ({
       return {
         model: { ...model, room: updated.model },
         cmd: Cmd.tag_('room', updated.cmd ?? Cmd.None),
-        msgs: updated.msgs,
+        msgs: AppMsg.tag('room', updated.msgs),
       };
     }
 
@@ -444,9 +355,7 @@ export const updateFromApp = ({
   const chat = ChatClient.updateFromApp({
     model: model.chat,
     msg,
-    sendToServer: (m) => () => {
-      console.log('todo send to backend', m);
-    },
+    sendToServer: (c) => sendToServer({ t: 'chat', c }),
   });
 
   const room = RoomClient.updateFromApp({
@@ -466,6 +375,12 @@ export const updateFromApp = ({
     msg,
   });
 
+  const wire = Wire.updateFromApp({
+    model: model.wire,
+    msg,
+    sendToServer,
+  });
+
   return {
     model: {
       ...model,
@@ -473,11 +388,16 @@ export const updateFromApp = ({
       chat: chat.model,
       profile: profile.model,
       room: room.model,
+      wire: wire.model,
     },
     cmd: Cmd.batch<Msg>([
+      () => {
+        console.log('[app-msg]', msg);
+      },
       Cmd.tag_('chat', chat.cmd),
       Cmd.tag_('profile', profile.cmd),
       Cmd.tag_('room', room.cmd),
+      Cmd.tag_('wire', wire.cmd),
     ]),
   };
 };
@@ -485,10 +405,15 @@ export const updateFromApp = ({
 //
 //
 //
+//
 // Subscriptions
 //
 //
 //
+//
+
+export const wireMsgs = new Subject<Wire.Msg>();
+export const fromServerMsgs = new Subject<ToClient>();
 
 export const subscriptions = ({
   now,
@@ -498,9 +423,9 @@ export const subscriptions = ({
   model: Model;
 }): Sub<Msg> => {
   return Sub.batch<Msg>([
-    Browser.onLocation(onLocationChange),
-    Sub.tag_('→', toClient$),
-    Sub.tag_('wire', wireMsg$),
+    Sub.tag_('→', fromServerMsgs),
+    Sub.tag_('wire', wireMsgs),
+    Sub.tag_('routing', Routing.subscriptions),
     Sub.tag_('auth', AuthClient.subscriptions),
     roomSub(now, model),
   ]);
@@ -522,16 +447,6 @@ const roomSub = (now: Posix, model: Model): Sub<Msg> => {
   }
 
   return Sub.None;
-};
-
-const onLocationChange = (location: Browser.Location): Msg => {
-  return p(
-    location.pathname,
-    Route.decode,
-    (route): Route.Route =>
-      route ? route : { t: 'room', c: { t: 'room-list' } },
-    (route): Msg => ({ t: 'route', c: { t: 'route-changed', c: route } })
-  );
 };
 
 //
@@ -573,9 +488,9 @@ export const View = ({
           ctx={{
             now,
             profiles: model.profile.profiles,
-            $back: () => $send({ t: 'route', c: { t: 'clicked-back' } }),
+            $back: () => $send({ t: 'routing', c: { t: 'clicked-back' } }),
             $push: (route) =>
-              $send({ t: 'route', c: { t: 'clicked-link', c: route } }),
+              $send({ t: 'routing', c: { t: 'clicked-link', c: route } }),
           }}
         />
       )}
@@ -589,18 +504,13 @@ export const View = ({
             currentUserId: model.auth.currentUser.currentUserId,
             profiles: model.profile.profiles,
             $push: (route) =>
-              $send({ t: 'route', c: { t: 'clicked-link', c: route } }),
-            $back: () => $send({ t: 'route', c: { t: 'clicked-back' } }),
+              $send({ t: 'routing', c: { t: 'clicked-link', c: route } }),
+            $back: () => $send({ t: 'routing', c: { t: 'clicked-back' } }),
           }}
         />
       )}
 
-      {model.wire.t === 'connect-error' && model.wire.errorCount > 2 && (
-        <div className="w-full flex items-center justify-center text-white bg-blue-500 gap-2 h-6">
-          <IconSpinner className="w-5 h-5 text-white animate-spin" />
-          Connecting to server...
-        </div>
-      )}
+      <Wire.View model={model.wire} />
 
       <Toast.View model={model.toast} $send={(c) => $send({ t: 'toast', c })} />
     </div>
@@ -616,13 +526,13 @@ const ViewLoggedOut = ({
   $send: (m: Msg) => void;
   ctx: UnauthenticatedViewCtx;
 }) => {
-  if (model.route.t === 'auth') {
+  if (model.routing.route.t === 'auth') {
     return (
       <AuthClient.ViewLoggedOut
         $send={(m) => $send({ t: 'auth', c: m })}
         model={model.auth}
         ctx={ctx}
-        route={model.route.c}
+        route={model.routing.route.c}
       />
     );
   }
@@ -646,13 +556,13 @@ const ViewLoggedIn = ({
   model: Model;
   $send: (m: Msg) => void;
 }) => {
-  if (model.route.t === 'chat') {
+  if (model.routing.route.t === 'chat') {
     return (
       <ChatClient.View
         $send={(m) => $send({ t: 'chat', c: m })}
         model={model.chat}
         ctx={ctx}
-        route={model.route}
+        route={model.routing.route.c}
         viewBottomBar={<ViewBottomBar model={model} $send={$send} ctx={ctx} />}
         userSearch={{
           loading: model.profile.requests.search?.t === 'loading',
@@ -667,42 +577,42 @@ const ViewLoggedIn = ({
     );
   }
 
-  if (model.route.t === 'room') {
+  if (model.routing.route.t === 'room') {
     return (
       <RoomClient.View
         $send={(m) => $send({ t: 'room', c: m })}
         model={model.room}
         ctx={ctx}
-        route={model.route.c}
+        route={model.routing.route.c}
         viewBottomBar={<ViewBottomBar model={model} $send={$send} ctx={ctx} />}
       />
     );
   }
 
-  if (model.route.t === 'profile') {
+  if (model.routing.route.t === 'profile') {
     return (
       <ProfileClient.View
         $send={(m) => $send({ t: 'profile', c: m })}
         model={model.profile}
         ctx={ctx}
-        route={model.route.c}
+        route={model.routing.route.c}
         viewBottomBar={<ViewBottomBar model={model} $send={$send} ctx={ctx} />}
       />
     );
   }
 
-  if (model.route.t === 'auth') {
+  if (model.routing.route.t === 'auth') {
     return (
       <AuthClient.ViewLoggedIn
         $send={(m) => $send({ t: 'auth', c: m })}
         ctx={ctx}
         model={model.auth}
-        route={model.route.c}
+        route={model.routing.route.c}
       />
     );
   }
 
-  if (model.route.t === 'search') {
+  if (model.routing.route.t === 'search') {
     return (
       <SearchClient.View
         $send={(m) => $send({ t: 'search', c: m })}
@@ -712,7 +622,7 @@ const ViewLoggedIn = ({
     );
   }
 
-  const check: never = model.route;
+  const check: never = model.routing.route;
   return check;
 };
 
@@ -726,7 +636,7 @@ const ViewBottomBar = ({
   $send: (m: Msg) => void;
 }) => {
   const items: {
-    route: Route.Route;
+    route: Route;
     label: string;
     icon: ViewNode;
   }[] = [
@@ -759,7 +669,7 @@ const ViewBottomBar = ({
       />
       <div className="w-full flex items-center justify-center border-t border-neutral-600">
         {items.map((item) => {
-          const isSelected = Route.eq(model.route, item.route);
+          const isSelected = Route.eq(model.routing.route, item.route);
           return (
             <button
               key={Route.encode(item.route)}
@@ -778,14 +688,3 @@ const ViewBottomBar = ({
     </div>
   );
 };
-
-//
-//
-//
-// Socket
-//
-//
-//
-
-export const wireMsg$ = new Subject<WireMsg>();
-export const toClient$ = new Subject<ToClient>();

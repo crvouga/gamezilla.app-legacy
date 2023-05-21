@@ -78,15 +78,15 @@ export const update = ({
   if (msg.t === 'vs-bot' && model.t === 'vs-bot') {
     const updated = VsBot.update({
       ctx,
-      sendToServer: (c) => sendToServer({ t: 'vs-bot', c }),
       msg: msg.c,
       model: model.c,
+      sendToServer: (c) => sendToServer({ t: 'vs-bot', c }),
     });
 
     return {
       model: { t: 'vs-bot', c: updated.model },
       cmd: Cmd.tag_('vs-bot', updated.cmd),
-      msgs: updated.msgs,
+      msgs: AppMsg.tag('vs-bot', updated.msgs),
     };
   }
 

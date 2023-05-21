@@ -1,11 +1,11 @@
+import { AppMsg, RouteChat, ViewCtx } from '@gamezilla/shared/client';
 import {
   Browser,
   Cmd,
+  RemoteResult,
   exhaustive,
   p,
-  RemoteResult,
 } from '@gamezilla/shared/core';
-import { AppMsg, Route, ViewCtx } from '@gamezilla/shared/client';
 import {
   Avatar,
   Box,
@@ -32,7 +32,7 @@ import {
 } from '@gamezilla/shared/ui';
 import { Fab } from '@mui/material';
 import { matchSorter } from 'match-sorter';
-import { ClientModel, ClientMsg, ToServer, ToClient } from './chat.shared';
+import { ClientModel, ClientMsg, ToClient, ToServer } from './chat.shared';
 
 //
 //
@@ -229,7 +229,7 @@ export const View = ({
   model: Model;
   $send: (m: Msg) => void;
   ctx: ViewCtx;
-  route: Route.RouteChat;
+  route: RouteChat;
   userSearch: {
     onInput: (searchText: string) => void;
     loading: boolean;

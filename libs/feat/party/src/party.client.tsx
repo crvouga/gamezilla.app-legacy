@@ -390,7 +390,7 @@ export const ViewBanner = ({
   ctx,
 }: {
   ctx: ViewCtx;
-  route: Route.Route;
+  route: Route;
   model: Model;
   $send: (msg: Msg) => void;
 }) => {

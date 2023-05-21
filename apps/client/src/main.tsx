@@ -41,19 +41,19 @@ const main = () => {
   });
 
   socketClient.on('connect', () => {
-    AppClient.wireMsg$.next({ t: 'connected' });
+    AppClient.wireMsgs.next({ t: 'connected' });
   });
 
   socketClient.on('disconnect', () => {
-    AppClient.wireMsg$.next({ t: 'disconnected' });
+    AppClient.wireMsgs.next({ t: 'disconnected' });
   });
 
   socketClient.on('connect_error', () => {
-    AppClient.wireMsg$.next({ t: 'connect-error' });
+    AppClient.wireMsgs.next({ t: 'connect-error' });
   });
 
   socketClient.on('to-client', (msg) => {
-    AppClient.toClient$.next(msg);
+    AppClient.fromServerMsgs.next(msg);
   });
 
   const sendToServer =

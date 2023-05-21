@@ -4,7 +4,7 @@ import {
   RoomId,
   UserId,
 } from '@gamezilla/shared/app';
-import { Browser, Cmd } from '@gamezilla/shared/core';
+import { Browser } from '@gamezilla/shared/core';
 
 //
 //
@@ -21,7 +21,7 @@ export type Route =
   | { t: 'chat'; c: RouteChat }
   | { t: 'search' };
 
-export const encode = (route: Route): string => {
+const encode = (route: Route): string => {
   switch (route.t) {
     case 'auth':
       return encodeAuth(route.c);
@@ -36,7 +36,7 @@ export const encode = (route: Route): string => {
   }
 };
 
-export const decode = (pathname: string): Route | null => {
+const decode = (pathname: string): Route | null => {
   if (pathname.startsWith('/auth')) {
     const auth = decodeAuth(pathname);
     if (auth === null) {
@@ -267,55 +267,33 @@ export const decodeChat = (pathname: string): RouteChat | null => {
 //
 //
 
-export const push = (route: Route) => {
+const push = (route: Route) => {
   return Browser.push(encode(route));
 };
 
-export const back = Browser.back;
+const back = Browser.back;
 
-export const replace = (route: Route) => {
+const replace = (route: Route) => {
   return Browser.replace(encode(route));
 };
 
-//
-//
-//
-// Update
-//
-//
-//
-
-export type Msg =
-  | { t: 'route-changed'; c: Route }
-  | { t: 'clicked-link'; c: Route }
-  | { t: 'clicked-back' };
-
-export const update = ({
-  msg,
-  model,
-}: {
-  msg: Msg;
-  model: Route;
-}): {
-  model: Route;
-  cmd?: Cmd<Msg>;
-} => {
-  if (msg.t === 'clicked-back') {
-    return { model, cmd: back };
-  }
-
-  if (msg.t === 'clicked-link') {
-    return { model, cmd: push(msg.c) };
-  }
-
-  if (msg.t === 'route-changed') {
-    return { model: msg.c };
-  }
-
-  const check: never = msg;
-  return check;
+const eq = (a: Route, b: Route): boolean => {
+  return encode(a) === encode(b);
 };
 
-export const eq = (a: Route, b: Route): boolean => {
-  return encode(a) === encode(b);
+//
+//
+//
+// Export
+//
+//
+//
+
+export const Route = {
+  push,
+  back,
+  replace,
+  eq,
+  encode,
+  decode,
 };

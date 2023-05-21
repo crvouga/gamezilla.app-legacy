@@ -1,3 +1,4 @@
-export * from './game';
+export * from './app-msg';
 export * from './ctx';
-export * as Route from './route';
+export * from './game';
+export * from './route';

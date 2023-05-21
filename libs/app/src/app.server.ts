@@ -4,15 +4,15 @@ import { ProfileServer } from '@gamezilla/feat/profile';
 import { RoomServer } from '@gamezilla/feat/room';
 import { SearchServer } from '@gamezilla/feat/search';
 import { ClientId, SessionId, UserId } from '@gamezilla/shared/app';
-import { AppMsg, Ctx, RequestCtx } from '@gamezilla/shared/server';
 import { Cmd, Sub, exhaustive, p } from '@gamezilla/shared/core';
-import * as Rx from 'rxjs';
+import { AppMsg, Ctx, RequestCtx } from '@gamezilla/shared/server';
+import { Subject } from 'rxjs';
 import {
   ServerModel,
   ServerMsg,
   Session,
-  ToServer,
   ToClient,
+  ToServer,
 } from './app.shared';
 
 //
@@ -46,17 +46,52 @@ export const init: { model: Model; cmd?: Cmd<Msg> } = {
 
 type Msg = ServerMsg;
 
-export const update = ({
+export const update = (input: {
+  msg: Msg;
+  model: Model;
+  ctx: Ctx;
+  broadcast: (m: ToClient) => Cmd;
+  sendToClient: (clientIds: ClientId[], m: ToClient) => Cmd;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  const updated = update_(input);
+
+  const appUpdated = (updated.msgs ?? []).reduce<{
+    model: Model;
+    cmd?: Cmd<Msg>;
+  }>((acc, msg) => {
+    const appUpdated = updateFromApp({
+      ...input,
+      msg: msg,
+      model: acc.model,
+    });
+    return {
+      model: appUpdated.model,
+      cmd: Cmd.batch<Msg>([acc.cmd ?? Cmd.None, appUpdated.cmd ?? Cmd.None]),
+    };
+  }, updated);
+
+  return appUpdated;
+};
+
+const update_ = ({
   msg,
   model,
   ctx,
+  broadcast,
+  sendToClient,
 }: {
   msg: Msg;
   model: Model;
   ctx: Ctx;
+  broadcast: (m: ToClient) => Cmd;
+  sendToClient: (clientIds: ClientId[], m: ToClient) => Cmd;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
+  msgs?: AppMsg[];
 } => {
   switch (msg.t) {
     case '→': {
@@ -68,13 +103,15 @@ export const update = ({
         },
         msg: msg.c,
         model,
+        broadcast,
+        sendToClient,
       });
     }
 
     case 'room': {
       const updated = RoomServer.update({
         sendToUser: (userIds, m) =>
-          sendToUser(model, userIds, { t: 'room', c: m }),
+          sendToUser(sendToClient, model, userIds, { t: 'room', c: m }),
         msg: msg.c,
         model: model.room,
         ctx,
@@ -103,17 +140,17 @@ export const update = ({
         },
       };
 
-      const appUpdated = updateFromApp({
+      return {
         model: modelNew,
-        msg: {
-          t: 'client-connected',
-          sessionId,
-          clientId,
-          userId: sessionPrev?.userId,
-        },
-      });
-
-      return { model: appUpdated.model, cmd: appUpdated.cmd };
+        msgs: [
+          {
+            t: 'client-connected',
+            sessionId,
+            clientId,
+            userId: sessionPrev?.userId,
+          },
+        ],
+      };
     }
 
     case 'client-disconnected': {
@@ -189,9 +226,12 @@ export const update = ({
 const updateFromApp = ({
   msg,
   model,
+  sendToClient,
 }: {
   msg: AppMsg;
   model: Model;
+  broadcast: (m: ToClient) => Cmd;
+  sendToClient: (clientIds: ClientId[], m: ToClient) => Cmd;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -227,13 +267,18 @@ const updateFromClient = ({
   msg,
   model,
   ctx,
+  broadcast,
+  sendToClient,
 }: {
   ctx: RequestCtx;
   msg: ToServer;
   model: Model;
+  broadcast: (m: ToClient) => Cmd;
+  sendToClient: (clientIds: ClientId[], m: ToClient) => Cmd;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
+  msgs?: AppMsg[];
 } => {
   switch (msg.t) {
     case 'auth': {
@@ -253,24 +298,21 @@ const updateFromClient = ({
         userId,
       };
 
-      const updated = updateFromApp({
-        model,
-        msg: {
-          t: 'client-authenticated',
-          clientId: ctx.clientId,
-          userId: msg.c.currentUser.currentUserId,
-        },
-      });
-
       return {
         model: {
-          ...updated.model,
+          ...model,
           sessions: {
             ...model.sessions,
             [session.sessionId]: session,
           },
         },
-        cmd: updated.cmd,
+        msgs: [
+          {
+            t: 'client-authenticated',
+            clientId: ctx.clientId,
+            userId: msg.c.currentUser.currentUserId,
+          },
+        ],
       };
     }
 
@@ -342,7 +384,7 @@ const updateFromClient = ({
           broadcast: (c) => broadcast({ t: 'room', c }),
           sendToClient: (c) => sendToClient([ctx.clientId], { t: 'room', c }),
           sendToUser: (userIds, c) =>
-            sendToUser(model, userIds, { t: 'room', c }),
+            sendToUser(sendToClient, model, userIds, { t: 'room', c }),
         },
         msg: msg.c,
         model: model.room,
@@ -359,7 +401,12 @@ const updateFromClient = ({
   }
 };
 
-const sendToUser = (model: Model, userIds: UserId[], msg: ToClient): Cmd => {
+const sendToUser = (
+  sendToClient: (clientIds: ClientId[], msg: ToClient) => Cmd,
+  model: Model,
+  userIds: UserId[],
+  msg: ToClient
+): Cmd => {
   const clientIds: ClientId[] = [];
 
   const userIdSet = new Set<UserId>(userIds);
@@ -398,7 +445,7 @@ export const subscriptions = ({ model }: { model: Model }): Sub<Msg> => {
     p(
       onConnect,
       Sub.map(
-        ([sessionId, clientId]): Msg => ({
+        ({ sessionId, clientId }): Msg => ({
           t: 'client-connected',
           sessionId,
           clientId,
@@ -408,7 +455,7 @@ export const subscriptions = ({ model }: { model: Model }): Sub<Msg> => {
     p(
       onDisconnect,
       Sub.map(
-        ([sessionId, clientId]): Msg => ({
+        ({ sessionId, clientId }): Msg => ({
           t: 'client-disconnected',
           sessionId,
           clientId,
@@ -416,9 +463,9 @@ export const subscriptions = ({ model }: { model: Model }): Sub<Msg> => {
       )
     ),
     p(
-      fromClient,
+      fromClientMsgs,
       Sub.map(
-        ([sessionId, clientId, msg]): Msg => ({
+        ({ sessionId, clientId, msg }): Msg => ({
           t: '→',
           sessionId,
           clientId,
@@ -429,27 +476,18 @@ export const subscriptions = ({ model }: { model: Model }): Sub<Msg> => {
   ]);
 };
 
-//
-//
-// Wire
-//
-//
+export const fromClientMsgs = new Subject<{
+  sessionId: SessionId;
+  clientId: ClientId;
+  msg: ToServer;
+}>();
 
-export const fromClient = new Rx.Subject<[SessionId, ClientId, ToServer]>();
-export const onConnect = new Rx.Subject<[SessionId, ClientId]>();
-export const onDisconnect = new Rx.Subject<[SessionId, ClientId]>();
+export const onConnect = new Subject<{
+  sessionId: SessionId;
+  clientId: ClientId;
+}>();
 
-export const $sendToClient = new Rx.Subject<[ClientId[], ToClient]>();
-export const $broadcast = new Rx.Subject<[ToClient]>();
-
-const sendToClient =
-  (clientIds: ClientId[], msg: ToClient): Cmd =>
-  () => {
-    $sendToClient.next([clientIds, msg]);
-  };
-
-const broadcast =
-  (msg: ToClient): Cmd =>
-  () => {
-    $broadcast.next([msg]);
-  };
+export const onDisconnect = new Subject<{
+  sessionId: SessionId;
+  clientId: ClientId;
+}>();

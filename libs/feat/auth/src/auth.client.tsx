@@ -1,5 +1,11 @@
 import { PhoneNumber, UserId, client } from '@gamezilla/shared/app';
 import {
+  AppMsg,
+  Route,
+  RouteAuth,
+  UnauthenticatedViewCtx,
+} from '@gamezilla/shared/client';
+import {
   Cmd,
   Err,
   Ok,
@@ -9,7 +15,6 @@ import {
   Task,
   p,
 } from '@gamezilla/shared/core';
-import { Route, UnauthenticatedViewCtx } from '@gamezilla/shared/client';
 import {
   ConformationDialog,
   IconEnvelope,
@@ -24,7 +29,7 @@ import { Subject } from 'rxjs';
 import * as AuthEmailLink from './auth-email-link';
 import * as AuthPhone from './auth-phone';
 import * as AuthPhoneVerify from './auth-phone-verify';
-import { ClientModel, ClientMsg, ToServer, ToClient } from './auth.shared';
+import { ClientModel, ClientMsg, ToClient, ToServer } from './auth.shared';
 
 //
 //
@@ -68,13 +73,14 @@ export const update = ({
   model,
   route,
 }: {
-  route: Route.Route;
+  route: Route;
   sendToServer: (m: ToServer) => Cmd;
   msg: Msg;
   model: Model;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
+  msgs?: AppMsg[];
 } => {
   if (msg.t === 'login-with-google') {
     return {
@@ -152,9 +158,12 @@ export const update = ({
   }
 
   if (msg.t === 'got-current-user') {
+    const currentUserId =
+      msg.currentUser.t === 'logged-in' ? msg.currentUser.currentUserId : null;
     return {
       model: { ...model, currentUser: msg.currentUser },
       cmd: sendToServer(msg),
+      msgs: currentUserId ? [{ t: 'user-logged-in', currentUserId }] : [],
     };
   }
 
@@ -184,7 +193,7 @@ export const ViewLoggedIn = ({
   ctx,
   $send,
 }: {
-  route: Route.RouteAuth;
+  route: RouteAuth;
   model: Model;
   $send: (m: Msg) => void;
   ctx: UnauthenticatedViewCtx;
@@ -202,7 +211,7 @@ export const ViewLoggedOut = ({
   ctx,
   $send,
 }: {
-  route: Route.RouteAuth;
+  route: RouteAuth;
   model: Model;
   $send: (m: Msg) => void;
   ctx: UnauthenticatedViewCtx;
