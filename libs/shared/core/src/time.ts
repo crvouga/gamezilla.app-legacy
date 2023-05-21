@@ -49,6 +49,8 @@ export const startTimeout = <Msg>(
     setTimeout(() => {
       if (timeouts.has(timeoutId)) {
         $send(msg);
+        timeouts.delete(timeoutId);
+        return;
       }
 
       timeouts.delete(timeoutId);

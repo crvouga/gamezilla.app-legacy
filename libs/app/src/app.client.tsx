@@ -398,6 +398,7 @@ export const updateFromApp = ({
       Cmd.tag_('profile', profile.cmd),
       Cmd.tag_('room', room.cmd),
       Cmd.tag_('wire', wire.cmd),
+      Cmd.tag_('toast', toast.cmd),
     ]),
   };
 };

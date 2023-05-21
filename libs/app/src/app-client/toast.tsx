@@ -67,6 +67,16 @@ export const update = ({
       },
     };
   }
+
+  if (msg.t === 'toast-duration-elapsed') {
+    return {
+      model: {
+        ...model,
+        toasts: model.toasts.filter((t) => t.toastId !== msg.toastId),
+      },
+    };
+  }
+
   return { model };
 };
 
