@@ -209,7 +209,7 @@ export const View = ({
       </UI.Toolbar>
 
       <MessageContainer
-        isLoading={query.type === 'loading'}
+        isLoading={query.t === 'loading'}
         scrollKey={String(messages.length)}
       >
         <UI.Box sx={{ flex: 1 }}></UI.Box>
@@ -230,7 +230,7 @@ export const View = ({
         value={model.text}
         onChange={(text) => $send(['inputted-text', text])}
         onSend={() => $send(['clicked-send'])}
-        isSending={messageInsertMutation.type === 'loading'}
+        isSending={messageInsertMutation.t === 'loading'}
       />
     </UI.FillBox>
   );
@@ -454,7 +454,7 @@ const ChatMessage = ({
           {variant === 'sent' && (
             <UI.Button
               loading={
-                store.mutations.Message.Unsend[message.messageId]?.type ===
+                store.mutations.Message.Unsend[message.messageId]?.t ===
                 'loading'
               }
               onClick={() => $send(['clicked-delete-message', message])}

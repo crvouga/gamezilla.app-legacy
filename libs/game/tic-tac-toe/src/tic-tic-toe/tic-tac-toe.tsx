@@ -1,4 +1,5 @@
 import { memoize, Result, shuffle, Task } from '@gamezilla/shared/core';
+import { spawn, Thread } from 'threads';
 
 const { Err, Ok } = Result;
 
@@ -176,9 +177,11 @@ export type Worker = {
   toBestMove: typeof toBestMove;
 };
 
-export type FindBestMoveProblem = 'worker_thread_error' | ToBestMoveProblem;
+export type FindBestMoveResult = Result<string, Position>;
 
-export type FindBestMoveResult = Result<FindBestMoveProblem, Position>;
+export type WorkerAPI = {
+  toBestMove: typeof toBestMove;
+};
 
 export const findBestMove =
   ({
@@ -191,33 +194,33 @@ export const findBestMove =
     board: Board;
   }): Task<FindBestMoveResult> =>
   async () => {
-    const result = toBestMove({ board, depth, maximizingPlayer });
+    // const result = toBestMove({ board, depth, maximizingPlayer });
 
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    // await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    return result;
+    // return result;
 
-    // try {
-    //   // docs: https://threads.js.org/
-    //   const worker = new Threads.Worker('./worker');
+    try {
+      // docs: https://threads.js.org/
+      const worker = new Worker('./worker');
 
-    //   const spawned = await Threads.spawn<Worker>(worker);
+      const spawned = await spawn<WorkerAPI>(worker);
 
-    //   try {
-    //     const result = await spawned.toBestMove({
-    //       depth,
-    //       maximizingPlayer,
-    //       board,
-    //     });
-    //     return result;
-    //   } catch (error) {
-    //     return Err('worker_thread_error');
-    //   } finally {
-    //     await Threads.Thread.terminate(spawned);
-    //   }
-    // } catch (error) {
-    //   return Err('worker_thread_error');
-    // }
+      try {
+        const result = await spawned.toBestMove({
+          depth,
+          maximizingPlayer,
+          board,
+        });
+        return result;
+      } catch (error) {
+        return Err(`Worker thread error: ${error}`);
+      } finally {
+        await Thread.terminate(spawned);
+      }
+    } catch (error) {
+      return Err(`Worker thread error: ${error}`);
+    }
   };
 
 type NonEmpty<T> = [T, ...T[]];

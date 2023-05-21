@@ -15,7 +15,7 @@ export const MyAvatar = ({
         onClick={onClick}
         src={src}
         alt={alt}
-        className={`inline-block h-12 w-12 overflow-hidden rounded-full bg-white/40 ${className}`}
+        className={`inline-block -z-10 h-12 w-12 overflow-hidden rounded-full bg-white/40 ${className}`}
       ></img>
     );
   }

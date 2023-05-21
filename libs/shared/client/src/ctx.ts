@@ -29,4 +29,5 @@ export type Ctx = {
 export type AppMsg =
   | { t: 'route-changed'; route: Route.Route }
   | { t: 'wire-connected' }
-  | { t: 'user-logged-in'; currentUserId: UserId };
+  | { t: 'user-logged-in'; currentUserId: UserId }
+  | { t: 'toast-enqueued'; message: string };

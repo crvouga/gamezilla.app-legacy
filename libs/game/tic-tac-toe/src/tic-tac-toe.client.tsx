@@ -1,5 +1,5 @@
 import {
-  Alerts,
+  AppMsg,
   Ctx,
   RoomCtx,
   RoomViewCtx,
@@ -42,8 +42,6 @@ export const init: Model = {
 
 export type Msg = ClientMsg;
 
-export type OutAction = Alerts.Action;
-
 export const update = ({
   sendToServer,
   msg,
@@ -57,6 +55,7 @@ export const update = ({
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
+  msgs?: AppMsg[];
 } => {
   if (msg.t === 'input-mode') {
     return { model, cmd: sendToServer(msg) };
@@ -83,9 +82,11 @@ export const update = ({
       msg: msg.c,
       model: model.c,
     });
+
     return {
       model: { t: 'vs-bot', c: updated.model },
       cmd: Cmd.tag_('vs-bot', updated.cmd),
+      msgs: updated.msgs,
     };
   }
 
@@ -103,7 +104,7 @@ export const updateFromServer = ({
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
-  actions?: OutAction[];
+  msgs?: AppMsg[];
 } => {
   if (msg.t === 'input-mode') {
     const { result } = msg;
@@ -125,7 +126,6 @@ export const updateFromServer = ({
     const updated = VsUser.updateFromServer({ ctx }, msg.c, model.c);
     return {
       model: { t: 'vs-user', c: updated[0] },
-      actions: updated[1],
     };
   }
 
@@ -138,7 +138,7 @@ export const updateFromServer = ({
     return {
       model: { t: 'vs-bot', c: updated.model },
       cmd: Cmd.tag_('vs-bot', updated.cmd),
-      actions: [],
+      msgs: updated.msgs,
     };
   }
 

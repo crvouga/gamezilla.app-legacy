@@ -4,7 +4,8 @@ import * as Profile from '@gamezilla/feat/profile';
 import * as Room from '@gamezilla/feat/room';
 import * as Search from '@gamezilla/feat/search';
 import { ClientId, SessionId, UserId } from '@gamezilla/shared/app';
-import { Alerts, Route } from '@gamezilla/shared/client';
+import { Route } from '@gamezilla/shared/client';
+import * as Toast from './toast';
 
 //
 //
@@ -33,7 +34,7 @@ export type Session = {
 
 export type ClientModel = {
   route: Route.Route;
-  alerts: Alerts.Model<ClientMsg>;
+  toast: Toast.Model;
   auth: Auth.ClientModel;
   room: Room.ClientModel;
   profile: Profile.ClientModel;
@@ -70,7 +71,7 @@ export type ClientMsg =
   | { t: '→'; c: ToClient }
   | { t: 'wire'; c: WireMsg }
   | { t: 'route'; c: Route.Msg }
-  | { t: 'alerts'; c: Alerts.Msg }
+  | { t: 'toast'; c: Toast.Msg }
   | { t: 'room'; c: Room.ClientMsg }
   | { t: 'chat'; c: Chat.ClientMsg }
   | { t: 'auth'; c: Auth.ClientMsg }

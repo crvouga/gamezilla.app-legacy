@@ -1,5 +1,5 @@
 import {
-  Alerts,
+  AppMsg,
   Ctx,
   RoomCtx,
   ViewCtx,
@@ -11,6 +11,7 @@ import {
   IconArrowLeftOnRect,
   IconArrowRotateLeft,
   IconRightLeft,
+  MyButton,
 } from '@gamezilla/shared/ui';
 import {
   BotLevel,
@@ -58,8 +59,6 @@ export const init = initSharedModel;
 
 export type Msg = ClientMsg;
 
-export type OutAction = Alerts.Action;
-
 export const update = ({
   sendToServer,
   msg,
@@ -73,10 +72,21 @@ export const update = ({
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
+  msgs?: AppMsg[];
 } => {
+  if (msg.t === 'toast') {
+    return {
+      model,
+      msgs: [{ t: 'toast-enqueued', message: 'Hello' }],
+    };
+  }
   const handled = handle({ ctx, msg, model });
   if (handled.t === 'err') {
-    return { model, cmd: sendToServer(msg) };
+    return {
+      model,
+      cmd: sendToServer(msg),
+      msgs: [{ t: 'toast-enqueued', message: handled.error }],
+    };
   }
   const merged = mergeWithServer({
     ...ctx,
@@ -97,9 +107,13 @@ export const updateFromServer = ({
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
+  msgs?: AppMsg[];
 } => {
   if (msg.result.t === 'err') {
-    return { model };
+    return {
+      model,
+      msgs: [{ t: 'toast-enqueued', message: msg.result.error }],
+    };
   }
 
   const modelNew = mergeWithServer({
@@ -148,38 +162,41 @@ export const View = ({
 }) => {
   if (model.type === 'setup') {
     return (
-      <ViewVsBotSetupScreen<BotLevel, PlayerType>
-        leftPlayerType="X"
-        playerId={model.player}
-        subtitle="Vs Computer"
-        title="Tic-Tac-Toe"
-        coverArt={viewCoverArt()}
-        ctx={ctx}
-        onCancel={goBack}
-        onStartGame={() => $send({ t: 'start-game' })}
-        onStartPlaying={() => $send({ t: 'start-playing' })}
-        onStopPlaying={() => $send({ t: 'stop-playing' })}
-        player={{
-          values: Object.values(playerTypes),
-          onInput: (player) =>
-            $send({ t: 'input-player-type', playerType: player }),
-          selected: model.userPlayerType,
-          icon: ({ playerType, sx }) => (
-            <PlayerTypeIcon sx={sx} playerType={playerType} />
-          ),
-          render: ({ playerType }) => (
-            <PlayerTypeIcon playerType={playerType} />
-          ),
-          toName: (player) => player,
-        }}
-        botLevel={{
-          onInput: (botLevel) => $send({ t: 'input-bot-level', botLevel }),
-          selected: model.botLevel,
-          values: Object.values(botLevels),
-          toName: (botLevel) => botLevel,
-          render: ({ botLevel }) => botLevel,
-        }}
-      />
+      <>
+        <MyButton onClick={() => $send({ t: 'toast' })}>Toast</MyButton>
+        <ViewVsBotSetupScreen<BotLevel, PlayerType>
+          leftPlayerType="X"
+          playerId={model.player}
+          subtitle="Vs Computer"
+          title="Tic-Tac-Toe"
+          coverArt={viewCoverArt()}
+          ctx={ctx}
+          onCancel={goBack}
+          onStartGame={() => $send({ t: 'start-game' })}
+          onStartPlaying={() => $send({ t: 'start-playing' })}
+          onStopPlaying={() => $send({ t: 'stop-playing' })}
+          player={{
+            values: Object.values(playerTypes),
+            onInput: (player) =>
+              $send({ t: 'input-player-type', playerType: player }),
+            selected: model.userPlayerType,
+            icon: ({ playerType, sx }) => (
+              <PlayerTypeIcon sx={sx} playerType={playerType} />
+            ),
+            render: ({ playerType }) => (
+              <PlayerTypeIcon playerType={playerType} />
+            ),
+            toName: (player) => player,
+          }}
+          botLevel={{
+            onInput: (botLevel) => $send({ t: 'input-bot-level', botLevel }),
+            selected: model.botLevel,
+            values: Object.values(botLevels),
+            toName: (botLevel) => botLevel,
+            render: ({ botLevel }) => botLevel,
+          }}
+        />
+      </>
     );
   }
   const gameOver = toGameOver(model.board);

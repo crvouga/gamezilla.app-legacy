@@ -74,7 +74,7 @@ export const isBotTurn = (model: SharedModel): model is GameModel => {
 //
 //
 
-export type ClientMsg = Req;
+export type ClientMsg = Req | { t: 'toast' };
 
 export type ServerMsg = { t: 'bot-moved'; result: FindBestMoveResult };
 

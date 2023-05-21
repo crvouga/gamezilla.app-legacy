@@ -1,8 +1,8 @@
 import { expose } from 'threads/worker';
-import * as TicTacToe from './tic-tac-toe';
+import { WorkerAPI, toBestMove } from './tic-tac-toe';
 
-const worker: TicTacToe.Worker = {
-  toBestMove: TicTacToe.toBestMove,
+const worker: WorkerAPI = {
+  toBestMove,
 };
 
 expose(worker);

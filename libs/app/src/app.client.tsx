@@ -4,7 +4,6 @@ import { ProfileClient } from '@gamezilla/feat/profile';
 import { RoomClient } from '@gamezilla/feat/room';
 import { SearchClient } from '@gamezilla/feat/search';
 import {
-  Alerts,
   AppMsg,
   Ctx,
   Route,
@@ -36,6 +35,7 @@ import {
   ToServer,
   WireMsg,
 } from './app.shared';
+import * as Toast from './toast';
 
 //
 //
@@ -64,7 +64,7 @@ export const init = ({
       route ? route : { t: 'room', c: { t: 'room-list' } }
   );
   const auth = AuthClient.init();
-  const alerts = Alerts.init;
+  const toasts = Toast.init;
   const room = RoomClient.init();
   const profile = ProfileClient.init;
   const chat = ChatClient.init;
@@ -74,7 +74,7 @@ export const init = ({
     model: {
       route,
       chat,
-      alerts,
+      toast: toasts,
       room: room.model,
       auth: auth.model,
       search: search.model,
@@ -97,8 +97,6 @@ export const init = ({
 
 type Msg = ClientMsg;
 
-type OutAction<Msg = ClientMsg> = Alerts.Action<Msg>;
-
 //
 //
 //
@@ -120,7 +118,26 @@ export const update = ({
 }): { model: Model; cmd?: Cmd<Msg> } => {
   return p(
     { model },
-    andThen((input) => update_({ ...input, now, msg, sendToServer })),
+    andThen((input) => {
+      const updated = update_({ ...input, now, msg, sendToServer });
+
+      const appUpdated = (updated?.msgs ?? []).reduce<{
+        model: Model;
+        cmd?: Cmd<Msg>;
+      }>((acc, msg) => {
+        const appUpdated = updateFromApp({
+          model: acc.model,
+          msg,
+          sendToServer,
+        });
+        return {
+          model: appUpdated.model,
+          cmd: Cmd.batch([acc.cmd, appUpdated.cmd]),
+        };
+      }, updated);
+
+      return appUpdated;
+    }),
     andThen((input) => {
       if (
         msg.t === 'auth' &&
@@ -165,7 +182,7 @@ const update_ = ({
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
-  actions?: OutAction[];
+  msgs?: AppMsg[];
 } => {
   switch (msg.t) {
     case '→': {
@@ -185,31 +202,11 @@ const update_ = ({
       };
     }
 
-    case 'alerts': {
-      const updatedAlerts = Alerts.update(msg.c, model.alerts);
-      const updated = updatedAlerts[2].reduce<ReturnType<typeof update>>(
-        (acc, msg) => {
-          const updated = update({
-            now,
-            sendToServer,
-            msg,
-            model: acc.model,
-          });
-          return {
-            model: updated.model,
-            cmd: Cmd.batch([acc?.cmd ?? Cmd.None, updated?.cmd ?? Cmd.None]),
-          };
-        },
-        {
-          model: { ...model, alerts: updatedAlerts[0] },
-          cmd: Cmd.tag_('alerts', updatedAlerts[1]),
-        }
-      );
-
+    case 'toast': {
+      const updated = Toast.update({ msg: msg.c, model: model.toast });
       return {
-        model: updated.model,
-        cmd: updated.cmd,
-        actions: [],
+        model: { ...model, toast: updated.model },
+        cmd: Cmd.tag_('toast', updated.cmd),
       };
     }
 
@@ -293,6 +290,7 @@ const update_ = ({
       return {
         model: { ...model, room: updated.model },
         cmd: Cmd.tag_('room', updated.cmd ?? Cmd.None),
+        msgs: updated.msgs,
       };
     }
 
@@ -347,7 +345,7 @@ const updateFromServer = ({
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
-  actions?: OutAction[];
+  msgs?: AppMsg[];
 } => {
   switch (msg.t) {
     case 'room': {
@@ -373,7 +371,7 @@ const updateFromServer = ({
       return {
         model: { ...model, room: updated.model },
         cmd: Cmd.tag_('room', updated.cmd ?? Cmd.None),
-        actions: [],
+        msgs: updated.msgs,
       };
     }
 
@@ -385,7 +383,6 @@ const updateFromServer = ({
       return {
         model: { ...model, profile: updated.model },
         cmd: Cmd.tag_('profile', updated.cmd),
-        actions: [],
       };
     }
 
@@ -397,7 +394,6 @@ const updateFromServer = ({
       return {
         model: { ...model, search: updated.model },
         cmd: Cmd.tag_('search', updated.cmd),
-        actions: [],
       };
     }
 
@@ -409,7 +405,6 @@ const updateFromServer = ({
       return {
         model: { ...model, auth: updated.model },
         cmd: Cmd.tag_('auth', updated.cmd),
-        actions: [],
       };
     }
 
@@ -421,7 +416,6 @@ const updateFromServer = ({
       return {
         model: { ...model, chat: updated.model },
         cmd: Cmd.tag_('chat', updated.cmd),
-        actions: [],
       };
     }
 
@@ -466,9 +460,16 @@ export const updateFromApp = ({
     msg,
     sendToServer: (c) => sendToServer({ t: 'profile', c }),
   });
+
+  const toast = Toast.updateFromApp({
+    model: model.toast,
+    msg,
+  });
+
   return {
     model: {
       ...model,
+      toast: toast.model,
       chat: chat.model,
       profile: profile.model,
       room: room.model,
@@ -594,17 +595,14 @@ export const View = ({
         />
       )}
 
-      <Alerts.View
-        model={model.alerts}
-        $send={(msg) => $send({ t: 'alerts', c: msg })}
-      />
-
       {model.wire.t === 'connect-error' && model.wire.errorCount > 2 && (
         <div className="w-full flex items-center justify-center text-white bg-blue-500 gap-2 h-6">
           <IconSpinner className="w-5 h-5 text-white animate-spin" />
           Connecting to server...
         </div>
       )}
+
+      <Toast.View model={model.toast} $send={(c) => $send({ t: 'toast', c })} />
     </div>
   );
 };

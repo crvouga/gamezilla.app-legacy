@@ -36,10 +36,10 @@ export const delay =
 //
 //
 
-const timeouts = new Map<string, string>();
+const timeouts = new Map<string | number, string | number>();
 
 export const startTimeout = <Msg>(
-  timeoutId: string,
+  timeoutId: string | number,
   duration: number,
   msg: Msg
 ): Cmd<Msg> => {

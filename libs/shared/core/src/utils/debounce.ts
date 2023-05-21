@@ -20,7 +20,7 @@
  *
  * // Only the last call to the debounced function will be executed after 500ms
  */
-export const debounce = <F extends (...args: any[]) => any>(
+export const debounce = <F extends (...args: unknown[]) => unknown>(
   func: F,
   delay: number
 ): DebouncedFunction<F> => {
@@ -37,6 +37,6 @@ export const debounce = <F extends (...args: any[]) => any>(
     return undefined;
   };
 };
-type DebouncedFunction<F extends (...args: any[]) => any> = (
+type DebouncedFunction<F extends (...args: unknown[]) => unknown> = (
   ...args: Parameters<F>
 ) => ReturnType<F> | undefined;

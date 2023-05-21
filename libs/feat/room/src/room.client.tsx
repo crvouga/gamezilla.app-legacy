@@ -104,6 +104,7 @@ export const update = ({
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
+  msgs?: AppMsg[];
 } => {
   const ctx: Ctx = {
     ...ctxPrev,
@@ -200,7 +201,7 @@ export const update = ({
         hostId: room.hostId,
       };
 
-      const [gameNew, gameCmd] = Game.update({
+      const updated = Game.update({
         ctx: roomCtx,
         sendToServer: (msg) =>
           sendToServer({
@@ -216,16 +217,14 @@ export const update = ({
         ...model,
         games: {
           ...model.games,
-          [user.roomId]: gameNew,
+          [user.roomId]: updated.model,
         },
       };
 
       return {
         model: modelNew,
-        cmd: p(
-          gameCmd,
-          Cmd.map((msg): Msg => ({ t: 'game', c: msg }))
-        ),
+        cmd: Cmd.tag_('game', updated.cmd),
+        msgs: updated.msgs,
       };
     }
 
@@ -247,7 +246,7 @@ export const updateFromServer = ({
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
-  actions?: OutAction[];
+  msgs?: AppMsg[];
 } => {
   const ctx: Ctx = {
     ...ctxPrev,
@@ -278,7 +277,7 @@ export const updateFromServer = ({
 
       const gameMsg = msg.c;
 
-      const [gameNew, gameCmd, actions] = Game.updateFromServer({
+      const updated = Game.updateFromServer({
         ctx: {
           ...ctx,
           hostId: room.hostId,
@@ -297,14 +296,14 @@ export const updateFromServer = ({
         ...model,
         games: {
           ...model.games,
-          [user.roomId]: gameNew,
+          [user.roomId]: updated.model,
         },
       };
 
       return {
         model: modelNew,
-        cmd: Cmd.tag_('game', gameCmd),
-        actions,
+        cmd: Cmd.tag_('game', updated.cmd),
+        msgs: updated.msgs,
       };
     }
 
@@ -333,26 +332,9 @@ export const updateFromServer = ({
         return handled;
       }
 
-      const alertActions: OutAction[] =
-        msg.result.t === 'ok'
-          ? [
-              [
-                'alerts',
-                {
-                  message: toRoomEndMessage({
-                    ctx,
-                    hostId: room.hostId,
-                  }),
-                  tag: 'Snack',
-                },
-              ],
-            ]
-          : [];
-
       return {
         model: handled.model,
         cmd: handled.cmd,
-        actions: [...(handled?.actions ?? []), ...alertActions],
       };
     }
 
@@ -363,26 +345,8 @@ export const updateFromServer = ({
         return handled;
       }
 
-      const alertActions: OutAction[] =
-        msg.userId !== ctx.currentUserId
-          ? [
-              [
-                'alerts',
-                {
-                  tag: 'Snack',
-                  message: toRoomLeaveMessage({
-                    userId: msg.userId,
-                    ctx,
-                  }),
-                },
-              ],
-            ]
-          : [];
-
       return {
         model: handled.model,
-        cmd: handled.cmd,
-        actions: [...(handled?.actions ?? []), ...alertActions],
       };
     }
 
@@ -398,26 +362,9 @@ export const updateFromServer = ({
           ? Route.push({ t: 'room', c: { t: 'room', roomId: msg.roomId } })
           : Cmd.None;
 
-      const alertActions: OutAction[] =
-        msg.userId !== ctx.currentUserId
-          ? [
-              [
-                'alerts',
-                {
-                  tag: 'Snack',
-                  message: toRoomJoinMessage({
-                    userId: msg.userId,
-                    ctx,
-                  }),
-                },
-              ],
-            ]
-          : [];
-
       return {
         model: handled.model,
         cmd: Cmd.batch([handled.cmd, routeCmd]),
-        actions: [...(handled?.actions ?? []), ...alertActions],
       };
     }
   }
@@ -494,30 +441,6 @@ const updateListRooms = ({
       initiatorMsg,
     }),
   };
-};
-
-const toRoomEndMessage = ({ ctx, hostId }: { hostId: UserId; ctx: Ctx }) => {
-  const profile = ctx.profiles[hostId];
-  if (profile) {
-    return `${profile.username} ended the room`;
-  }
-  return 'The host ended the room';
-};
-
-const toRoomJoinMessage = ({ ctx, userId }: { userId: UserId; ctx: Ctx }) => {
-  const profile = ctx.profiles[userId];
-  if (profile) {
-    return `${profile.username} joined the room`;
-  }
-  return 'A user joined the room';
-};
-
-const toRoomLeaveMessage = ({ ctx, userId }: { userId: UserId; ctx: Ctx }) => {
-  const profile = ctx.profiles[userId];
-  if (profile) {
-    return `${profile.username} left the room`;
-  }
-  return 'A user left the room';
 };
 
 const updateResponse = ({

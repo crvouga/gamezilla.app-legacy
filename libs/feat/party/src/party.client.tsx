@@ -280,7 +280,7 @@ export const ViewPage = ({
             startIcon={<Icons.CallEnd />}
             color="error"
             size="large"
-            loading={model.requests.PartyDestroy?.type === 'loading'}
+            loading={model.requests.PartyDestroy?.t === 'loading'}
             onClick={() =>
               $send(['PartyDestroy', { userId: ctx.currentUserId }])
             }
@@ -293,7 +293,7 @@ export const ViewPage = ({
             startIcon={<Icons.CallEnd />}
             color="error"
             size="large"
-            loading={model.requests.PartyLeave?.type === 'loading'}
+            loading={model.requests.PartyLeave?.t === 'loading'}
             onClick={() => $send(['PartyLeave', { userId: ctx.currentUserId }])}
           >
             Leave
@@ -335,7 +335,7 @@ const ViewNotInParty = ({
           fullWidth
           variant="contained"
           size="large"
-          loading={model.requests.PartyCreate?.type === 'loading'}
+          loading={model.requests.PartyCreate?.t === 'loading'}
           onClick={() =>
             $send([
               'PartyCreate',
