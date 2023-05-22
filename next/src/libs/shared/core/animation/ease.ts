@@ -1,0 +1,215 @@
+import { Posix } from '../unix-time';
+
+export type Easing =
+  | { type: 'ease-out-bounce'; n1?: number; d1?: number }
+  | { type: 'ease-out-quint' }
+  | { type: 'linear' }
+  | { type: 'ease-in-back' }
+  | { type: 'ease-in-expo' }
+  | { type: 'ease-out-back' };
+
+export type Model = {
+  startMs: Posix;
+  durationMs: number;
+  value: number;
+  from: number;
+  to: number;
+  easing: Easing;
+  delayMs: number;
+};
+
+const initConstant = (value: number): Model => {
+  return {
+    startMs: Posix.fromNumber(0),
+    durationMs: 0,
+    value,
+    from: value,
+    to: value,
+    easing: { type: 'linear' },
+    delayMs: 0,
+  };
+};
+
+function easeOutQuint(x: number): number {
+  return 1 - Math.pow(1 - x, 5);
+}
+
+function easeInBack(x: number): number {
+  const c1 = 1.70158;
+  const c3 = c1 + 1;
+
+  return c3 * x * x * x - c1 * x * x;
+}
+
+function easeInExpo(x: number): number {
+  return x === 0 ? 0 : Math.pow(2, 10 * x - 10);
+}
+
+function easeOutBack(x: number): number {
+  const c1 = 1.70158;
+  const c3 = c1 + 1;
+
+  return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
+}
+
+const ease = (easing: Easing, x: number): number => {
+  switch (easing.type) {
+    case 'ease-out-back':
+      return easeOutBack(x);
+
+    case 'ease-out-bounce':
+      return 1 - bounceIn(1 - x);
+
+    case 'ease-out-quint':
+      return easeOutQuint(x);
+
+    case 'ease-in-back':
+      return easeInBack(x);
+
+    case 'ease-in-expo':
+      return easeInExpo(x);
+
+    case 'linear':
+      return x;
+  }
+};
+
+function bounceIn(timeFraction: number): number {
+  let a = 0;
+  let b = 1;
+
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    if (timeFraction >= (7 - 4 * a) / 11) {
+      return (
+        -Math.pow((11 - 6 * a - 11 * timeFraction) / 4, 2) + Math.pow(b, 2)
+      );
+    }
+    a += b;
+    b /= 2;
+  }
+}
+
+const step = (now: Posix, model: Model): Model => {
+  const elapsedMs = now - model.startMs;
+  if (elapsedMs < model.delayMs) {
+    return model;
+  }
+  const progress = (elapsedMs - model.delayMs) / model.durationMs;
+  if (progress >= 1) {
+    return { ...model, value: model.to };
+  }
+  const range = Math.abs(model.to - model.from);
+  const sign = Math.sign(model.to - model.from);
+  const easedProgress = sign * ease(model.easing, progress);
+  const valueNew = model.from + range * easedProgress;
+  return { ...model, value: valueNew };
+};
+
+const init = ({
+  from,
+  to,
+  durationMs,
+  startMs,
+  delayMs = 0,
+  easing = { type: 'linear' },
+}: {
+  easing?: Easing;
+  delayMs?: number;
+  from: number;
+  to: number;
+  durationMs: number;
+  startMs: Posix;
+}): Model => {
+  return {
+    startMs,
+    durationMs,
+    value: from,
+    from,
+    to,
+    easing,
+    delayMs,
+  };
+};
+
+export const Ease = {
+  init,
+  initConstant,
+  step,
+  ease,
+};
+
+type AttributeEaseConfig = {
+  min?: number;
+  max?: number;
+  from: number;
+  to: number;
+  duration: number;
+  easing?: Easing;
+  delay?: number;
+};
+/**
+ * Applies easing function-based animations to specified attributes of an HTML/SVG node.
+ *
+ * @param {Object} node - An object representing an HTML/SVG node with a `setAttribute` function.
+ * @param {Object} attributes - An object mapping attribute names to their animation configurations.
+ *
+ * @example
+ *   const node = document.querySelector('#myElement');
+ *   const attributes = {
+ *     'attribute1': { from: 0, to: 100, duration: 2000 },
+ *     'attribute2': { from: 50, to: 0, duration: 1500, easing: { type: 'linear' }, delay: 500 },
+ *   };
+ *   easeAttrs(node, attributes);
+ */
+export const easeAttrs = async (
+  node: { setAttribute: (attribute: string, value: string) => void },
+  attributes: {
+    [attribute: string]: AttributeEaseConfig;
+  }
+): Promise<void> => {
+  const startTime = performance.now();
+  const keys = Object.keys(attributes);
+  const keyLength = keys.length;
+  let loop = false;
+  let i = 0;
+  let elapsed: number;
+  let progress: number;
+  let eased: number;
+  let clamped: number;
+  let c: AttributeEaseConfig;
+
+  return new Promise((resolve) => {
+    function step(currentTime: number) {
+      loop = false;
+      for (i = 0; i < keyLength; i++) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        c = attributes[keys[i]];
+        elapsed = currentTime - startTime - (c.delay || 0);
+        progress = Math.max(0, Math.min(elapsed / c.duration, 1));
+        eased =
+          c.from +
+          (c.to - c.from) * ease(c.easing || { type: 'linear' }, progress);
+        clamped = Math.min(
+          c.max || Infinity,
+          Math.max(c.min || -Infinity, eased)
+        );
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        node.setAttribute(keys[i], String(clamped));
+
+        loop = loop || progress < 1;
+      }
+
+      if (loop) {
+        requestAnimationFrame(step);
+        return;
+      }
+
+      resolve();
+    }
+
+    requestAnimationFrame(step);
+  });
+};

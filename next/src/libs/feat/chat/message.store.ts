@@ -1,0 +1,202 @@
+import { Cmd, p, RemoteResult, Result, Task } from '@gamezilla/shared/core';
+import { client, definitions, UserId } from '@gamezilla/shared/app';
+import type { Problem, Store } from './types';
+import * as Types from './types';
+
+//
+//
+//
+// Model
+//
+//
+//
+
+export type Message = Types.Message;
+
+//
+//
+//
+// Msg
+//
+//
+//
+
+export type Msg = Send_Done | Unsend_Done;
+
+export type Action = Send | Unsend;
+
+export type Send = [
+  'Send',
+  { userId: UserId; conversationId: string; messageText: string }
+];
+
+export type Send_Done = [
+  'Send_Done',
+  { conversationId: string; result: Result<Problem, Message> }
+];
+
+export type Unsend = ['Unsend', { messageId: string }];
+
+export type Unsend_Done = [
+  'Unsend_Done',
+  { messageId: string; result: Result<Problem, string> }
+];
+
+//
+//
+//
+// Update
+//
+//
+//
+
+type Model = Store;
+
+export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
+  switch (msg[0]) {
+    case 'Unsend_Done': {
+      const { messageId, result } = msg[1];
+      const modelNew: Model = JSON.parse(JSON.stringify(model));
+
+      model.mutations.Message.Unsend[messageId] = result;
+
+      switch (result.t) {
+        case 'err':
+          break;
+
+        case 'ok':
+          delete model.Message[messageId];
+          break;
+      }
+
+      return [modelNew, Cmd.None];
+    }
+
+    case 'Send_Done': {
+      const { conversationId, result } = msg[1];
+
+      const modelNew: Store = {
+        ...model,
+        mutations: {
+          ...model.mutations,
+          Message: {
+            ...model.mutations.Message,
+            Send: {
+              ...model.mutations.Message.Send,
+              [conversationId]: p(
+                result,
+                RemoteResult.map((message) => message.messageId)
+              ),
+            },
+          },
+        },
+
+        Message: {
+          ...model.Message,
+          ...(result.t === 'ok'
+            ? { [result.value.messageId]: result.value }
+            : {}),
+        },
+      };
+
+      return [modelNew, Cmd.None];
+    }
+  }
+};
+
+export const runAction = (action: Action, model: Store): [Store, Cmd<Msg>] => {
+  switch (action[0]) {
+    case 'Unsend': {
+      const { messageId } = action[1];
+      const modelNew: Model = JSON.parse(JSON.stringify(model));
+
+      modelNew.mutations.Message.Unsend[messageId] = RemoteResult.Loading;
+
+      return [
+        modelNew,
+        p(
+          deleteForever({ messageId }),
+          Cmd.perform((result): Msg => ['Unsend_Done', { messageId, result }])
+        ),
+      ];
+    }
+
+    case 'Send': {
+      const { conversationId, userId, messageText } = action[1];
+      const modelNew: Model = JSON.parse(JSON.stringify(model));
+
+      modelNew.mutations.Message.Send[conversationId] = RemoteResult.Loading;
+
+      return [
+        modelNew,
+        p(
+          insert({
+            userId,
+            conversationId,
+            message: messageText,
+          }),
+          Cmd.perform(
+            (result): Msg => ['Send_Done', { conversationId, result }]
+          )
+        ),
+      ];
+    }
+  }
+};
+
+//
+//
+//
+// Data Access
+//
+//
+//
+
+const insert =
+  ({
+    message,
+    userId,
+    conversationId,
+  }: {
+    conversationId: string;
+    message: string;
+    userId: UserId;
+  }): Task<Result<Problem, Message>> =>
+  async () => {
+    const messageResponse = await client
+      .from<definitions['message']>('message')
+      .insert({
+        message,
+        user_id: userId,
+        conversation_id: conversationId,
+      })
+      .single();
+
+    if (messageResponse.error) {
+      return Result.Err(messageResponse.error.message);
+    }
+
+    const data = messageResponse.data;
+
+    return Result.Ok({
+      messageId: data.id,
+      conversationId: data.conversation_id,
+      userId,
+      message: data.message,
+    });
+  };
+
+const deleteForever =
+  ({ messageId }: { messageId: string }): Task<Result<Problem, string>> =>
+  async () => {
+    const response = await client
+      .from<definitions['message']>('message')
+      .delete()
+      .eq('id', messageId);
+
+    if (response.error) {
+      return Result.Err(response.error.message);
+    }
+
+    return Result.Ok(messageId);
+  };
