@@ -8,7 +8,7 @@
     "build": "tsc && vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "server:build": "ECHO \"No build step\"",
+    "server:build": "echo 'server build'",
     "server": "npx tsx src/apps/server/main.ts",
     "client:build": "tsc && vite build",
     "client": "vite"
