@@ -1,54 +1,45 @@
-import { UserId } from '@gamezilla/shared/app';
-import { bannerArtAspectRatio, ViewCtx } from '@gamezilla/shared/client';
-import * as UI from '@gamezilla/shared/ui';
-import { gameTheme, PlayerTypeIcon } from './tic-tic-toe/tic-tac-toe-ui';
+import { UserId } from "@gamezilla/shared/app";
+import { bannerArtAspectRatio, ViewCtx } from "@gamezilla/shared/client";
+import * as UI from "@gamezilla/shared/ui";
+import { gameTheme, PlayerTypeIcon } from "./tic-tic-toe/tic-tac-toe-ui";
 
 export const BannerArt = ({ title }: { title: string }) => {
   return (
     <UI.AspectRatio aspectRatio={bannerArtAspectRatio}>
       <UI.Box
         sx={{
-          width: '100%',
-          height: '100%',
+          width: "100%",
+          height: "100%",
           backgroundColor: gameTheme.background,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
           gap: 2,
           paddingY: 2,
           paddingX: 2,
-        }}
-      >
-        <PlayerTypeIcon
-          playerType="X"
-          sx={{ color: gameTheme.cross, width: 120, height: 120 }}
-        />
-        <PlayerTypeIcon
-          playerType="O"
-          sx={{ color: gameTheme.naught, width: 120, height: 120 }}
-        />
+        }}>
+        <PlayerTypeIcon playerType="X" />
+        <PlayerTypeIcon playerType="O" />
       </UI.Box>
 
       <UI.Box
         sx={{
-          position: 'absolute',
+          position: "absolute",
           top: 0,
           left: 0,
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
           background: `linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2))`,
-          color: '#fff',
-        }}
-      >
+          color: "#fff",
+        }}>
         <UI.Box sx={{ flex: 1 }} />
 
         <UI.Typography
           sx={{ paddingX: 2, paddingBottom: 1 }}
           variant="h3"
-          color="inherit"
-        >
+          color="inherit">
           {title}
         </UI.Typography>
       </UI.Box>
@@ -57,8 +48,8 @@ export const BannerArt = ({ title }: { title: string }) => {
 };
 
 type Player =
-  | { type: 'User'; userId?: UserId }
-  | { type: 'Bot'; label: string };
+  | { type: "User"; userId?: UserId }
+  | { type: "Bot"; label: string };
 
 export const VersusHeader = ({
   X,
@@ -69,47 +60,36 @@ export const VersusHeader = ({
   O: Player;
   ctx: ViewCtx;
 }) => {
-  const largeIconSx = { width: 72, height: 72 };
-
   return (
     <UI.Box
       sx={{
-        width: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: '#fff',
+        width: "100%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        color: "#fff",
         backgroundColor: gameTheme.background,
         paddingY: 4,
         paddingX: 2,
-      }}
-    >
+      }}>
       <ViewHeaderPlayerSlot player={X} ctx={ctx} />
 
       <UI.Box
         sx={{
           flex: 1,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <PlayerTypeIcon
-          playerType={'X'}
-          sx={{ ...largeIconSx, marginLeft: 2, color: gameTheme.cross }}
-        />
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}>
+        <PlayerTypeIcon playerType={"X"} />
 
         <UI.Typography
           align="center"
-          sx={{ fontSize: 24, color: 'inherit', paddingX: 2, flex: 1 }}
-        >
+          sx={{ fontSize: 24, color: "inherit", paddingX: 2, flex: 1 }}>
           vs
         </UI.Typography>
 
-        <PlayerTypeIcon
-          playerType={'O'}
-          sx={{ ...largeIconSx, marginRight: 2, color: gameTheme.naught }}
-        />
+        <PlayerTypeIcon playerType={"O"} />
       </UI.Box>
 
       <ViewHeaderPlayerSlot player={O} ctx={ctx} />
@@ -126,17 +106,17 @@ const ViewHeaderPlayerSlot = ({
 }) => {
   const iconSx = { width: 42, height: 42 };
   const wrapperSx: UI.Sx = {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'column',
-    overflow: 'hidden',
-    flexWrap: 'none',
-    textOverflow: 'ellipsis',
-    width: '100%',
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "column",
+    overflow: "hidden",
+    flexWrap: "none",
+    textOverflow: "ellipsis",
+    width: "100%",
   };
 
-  if (player.type === 'Bot') {
+  if (player.type === "Bot") {
     return (
       <UI.Box sx={wrapperSx}>
         <UI.Icons.SmartToy sx={{ ...iconSx }} />
@@ -164,8 +144,7 @@ const ViewHeaderPlayerSlot = ({
     <UI.Box sx={wrapperSx}>
       <UI.Avatar
         src={ctx.profiles[player.userId]?.avatarUrl}
-        sx={{ ...iconSx }}
-      >
+        sx={{ ...iconSx }}>
         <UI.Icons.QuestionMark />
       </UI.Avatar>
       <UI.Typography
@@ -173,9 +152,8 @@ const ViewHeaderPlayerSlot = ({
         color="inherit"
         noWrap
         align="center"
-        sx={{ width: '100%', textOverflow: 'ellipsis' }}
-      >
-        {ctx.profiles[player.userId]?.username ?? '...'}
+        sx={{ width: "100%", textOverflow: "ellipsis" }}>
+        {ctx.profiles[player.userId]?.username ?? "..."}
       </UI.Typography>
     </UI.Box>
   );

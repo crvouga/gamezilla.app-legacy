@@ -3,13 +3,13 @@ import {
   ViewCtx,
   ViewVsBotGameScreen,
   ViewVsBotSetupScreen,
-} from '@gamezilla/shared/client';
-import { Cmd, Sub } from '@gamezilla/shared/core';
+} from "@gamezilla/shared/client";
+import { Cmd, Sub } from "@gamezilla/shared/core";
 import {
   IconArrowLeftOnRect,
   IconArrowRotateLeft,
   IconRightLeft,
-} from '@gamezilla/shared/ui';
+} from "@gamezilla/shared/ui";
 import {
   BotLevel,
   Stone,
@@ -18,8 +18,8 @@ import {
   toOppositeStone,
   toStatus,
   toTurn,
-} from '../gomoku/gomoku';
-import { ViewBoard, ViewCoverArt, viewStoneIcon } from '../gomoku/gomoku-ui';
+} from "../gomoku/gomoku";
+import { ViewBoard, ViewCoverArt, viewStoneIcon } from "../gomoku/gomoku-ui";
 import {
   ClientModel,
   ClientMsg,
@@ -28,7 +28,7 @@ import {
   ToServer,
   handle,
   initShared,
-} from './vs-bot.shared';
+} from "./vs-bot.shared";
 //
 //
 //
@@ -69,7 +69,7 @@ export const update = ({
     default: {
       const result = handle({ ctx, msg, model });
 
-      if (result.t === 'err') {
+      if (result.t === "err") {
         return {
           model,
           cmd: sendToServer(msg),
@@ -102,7 +102,7 @@ export const updateFromServer = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (msg.result.t === 'err') {
+  if (msg.result.t === "err") {
     return { model };
   }
 
@@ -136,11 +136,11 @@ export const mergeWithServer = ({
 
 export const subscriptions = (_ctx: Ctx, model: Model): Sub<Msg> => {
   switch (model.type) {
-    case 'game': {
+    case "game": {
       return Sub.None;
     }
 
-    case 'setup': {
+    case "setup": {
       return Sub.None;
     }
   }
@@ -166,11 +166,11 @@ export const view = ({
   onBack: () => void;
 }) => {
   switch (model.type) {
-    case 'setup': {
+    case "setup": {
       return ViewVsBotSetupScreen<BotLevel, Stone>({
-        leftPlayerType: 'white',
+        leftPlayerType: "white",
         botLevel: {
-          onInput: (botLevel) => $send({ t: 'input-bot-level', botLevel }),
+          onInput: (botLevel) => $send({ t: "input-bot-level", botLevel }),
           selected: model.botLevel,
           values: Object.values(botLevels),
           toName: (botLevel) => botLevel,
@@ -179,7 +179,7 @@ export const view = ({
         coverArt: ViewCoverArt(),
         player: {
           onInput: (userStone) =>
-            $send({ t: 'inputted-user-stone', userStone }),
+            $send({ t: "inputted-user-stone", userStone }),
           selected: model.userStone,
           values: Object.values(stones),
           icon: ({ sx, playerType: stone }) => viewStoneIcon({ ...sx, stone }),
@@ -187,76 +187,75 @@ export const view = ({
           render: (props) => (
             <div className="flex items-center justify-center gap-2">
               {viewStoneIcon({ stone: props.playerType })}
-              {props.playerType === 'white' ? 'White' : 'Black'}
+              {props.playerType === "white" ? "White" : "Black"}
             </div>
           ),
         },
         ctx,
-        title: 'gomoku',
-        subtitle: 'Vs Computer',
+        title: "gomoku",
+        subtitle: "Vs Computer",
         onCancel: onBack,
-        onStartPlaying: () => $send({ t: 'start-playing' }),
-        onStopPlaying: () => $send({ t: 'stop-playing' }),
-        onStartGame: () => $send({ t: 'start-game' }),
+        onStartPlaying: () => $send({ t: "start-playing" }),
+        onStopPlaying: () => $send({ t: "stop-playing" }),
+        onStartGame: () => $send({ t: "start-game" }),
         playerId: model.userId,
       });
     }
 
-    case 'game': {
+    case "game": {
       const status = toStatus(model.board);
 
       return ViewVsBotGameScreen<Stone>({
         ctx,
         actions: [
           {
-            label: 'Exit',
+            label: "Exit",
             icon: <IconArrowLeftOnRect />,
-            onClick: () => $send({ t: 'stop-game' }),
+            onClick: () => $send({ t: "stop-game" }),
           },
           {
-            label: 'Restart',
+            label: "Restart",
             icon: <IconArrowRotateLeft />,
-            onClick: () => $send({ t: 'restart' }),
+            onClick: () => $send({ t: "restart" }),
           },
           {
-            label: 'Swap',
+            label: "Swap",
             icon: <IconRightLeft />,
-            onClick: () => $send({ t: 'swap-sides' }),
+            onClick: () => $send({ t: "swap-sides" }),
           },
         ],
         botName: model.botLevel,
         botPlayer: toOppositeStone(model.userStone),
         gameOver:
-          status.type === 'draw'
-            ? { type: 'draw' }
-            : status.type === 'win'
-            ? { type: 'winner', winner: status.winner }
-            : { type: 'none' },
+          status.type === "draw"
+            ? { type: "draw" }
+            : status.type === "win"
+            ? { type: "winner", winner: status.winner }
+            : { type: "none" },
 
         gameOverActions: [
           {
-            label: 'Exit',
+            label: "Exit",
             icon: <IconArrowLeftOnRect />,
-            onClick: () => $send({ t: 'stop-game' }),
+            onClick: () => $send({ t: "stop-game" }),
           },
           {
-            label: 'Restart',
+            label: "Restart",
             icon: <IconArrowRotateLeft />,
-            onClick: () => $send({ t: 'restart' }),
+            onClick: () => $send({ t: "restart" }),
           },
         ],
-        leftPlayer: 'white',
+        leftPlayer: "white",
         playerUserId: model.userId,
         turn: toTurn(model.board),
         userPlayer: model.userStone,
         viewBoard: () => (
           <ViewBoard
-            onPress={(position) => $send({ t: 'input-move', position })}
+            onPress={(position) => $send({ t: "input-move", position })}
             board={model.board}
           />
         ),
-        viewPlayerIcon: ({ sx, playerType: stone }) =>
-          viewStoneIcon({ ...sx, stone }),
+        viewPlayerIcon: ({ playerType: stone }) => viewStoneIcon({ stone }),
       });
     }
   }

@@ -1,4 +1,3 @@
-import { SvgIcon, Sx } from '@gamezilla/shared/ui';
 import {
   Board,
   Empty,
@@ -9,14 +8,14 @@ import {
   Slot,
   allPositions,
   toSlot,
-} from './tic-tac-toe';
+} from "./tic-tac-toe";
 
 export const gameTheme = {
-  background: '#14BDAC',
-  line: '#0DA192',
-  cross: '#545454',
-  naught: '#F2EBD3',
-  text: '#fff',
+  background: "#14BDAC",
+  line: "#0DA192",
+  cross: "#545454",
+  naught: "#F2EBD3",
+  text: "#fff",
 };
 
 const scale = 1_000;
@@ -30,12 +29,11 @@ export const ViewBoard = ({
 }) => {
   return (
     <svg
-      width={'100%'}
-      viewBox={[0, 0, MAX_X * scale, MAX_Y * scale].join(' ')}
+      width={"100%"}
+      viewBox={[0, 0, MAX_X * scale, MAX_Y * scale].join(" ")}
       style={{
         backgroundColor: gameTheme.background,
-      }}
-    >
+      }}>
       <g>
         {lines.map((line, index) => (
           <line
@@ -58,7 +56,7 @@ export const ViewBoard = ({
               cy={y * scale + scale / 2}
               r={0.3 * scale}
               slot={slot}
-              key={[x, y, slot].join(' ')}
+              key={[x, y, slot].join(" ")}
               strokeWidth={0.1 * scale}
             />
           );
@@ -68,10 +66,10 @@ export const ViewBoard = ({
       {allPositions.map((position) => (
         <rect
           key={[position.column, position.row, toSlot(board, position)].join(
-            ' '
+            " "
           )}
           style={{
-            cursor: 'pointer',
+            cursor: "pointer",
           }}
           x={Number(position.column) * scale}
           y={Number(position.row) * scale}
@@ -111,12 +109,12 @@ export const ViewSlot = ({
     case Empty:
       return <g></g>;
 
-    case 'O':
+    case "O":
       return (
         <Naught strokeWidth={strokeWidth} color={color} r={r} cx={cx} cy={cy} />
       );
 
-    case 'X':
+    case "X":
       return (
         <Cross strokeWidth={strokeWidth} color={color} r={r} cx={cx} cy={cy} />
       );
@@ -173,13 +171,13 @@ const Naught = ({
 
 export const PlayerTypeIcon = ({
   playerType,
-  sx,
+  className,
 }: {
   playerType: PlayerType;
-  sx?: Sx;
+  className?: string;
 }) => {
   return (
-    <SvgIcon viewBox="-1 -1 2 2" sx={sx}>
+    <svg viewBox="-1 -1 2 2" fill="currentColor" className={className}>
       <ViewSlot
         key={playerType}
         cx={0}
@@ -189,16 +187,16 @@ export const PlayerTypeIcon = ({
         color="currentColor"
         strokeWidth={0.33}
       />
-    </SvgIcon>
+    </svg>
   );
 };
 
 export const viewCoverArt = () => {
   const positions: [Position, Slot][] = [
-    [{ row: 0, column: 0 }, 'X'],
+    [{ row: 0, column: 0 }, "X"],
     [{ row: 0, column: 1 }, Empty],
     [{ row: 1, column: 0 }, Empty],
-    [{ row: 1, column: 1 }, 'O'],
+    [{ row: 1, column: 1 }, "O"],
   ];
 
   const LINES = [
