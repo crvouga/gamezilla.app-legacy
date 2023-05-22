@@ -10,6 +10,7 @@ import { Browser, Cmd, Debug, Program } from '@gamezilla/shared/core';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom/client';
 import { Socket, io } from 'socket.io-client';
+import "./main.css";
 
 //
 //

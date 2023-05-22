@@ -17,10 +17,8 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
-  },
-  "include": ["src"],
-  "references": [{ "path": "./tsconfig.node.json" }],
+    "noFallthroughCasesInSwitch": true,
+
   "baseUrl": ".",
   "paths": {
     "@gamezilla/app": ["src/libs/app/index.ts"],
@@ -45,5 +43,8 @@
     "@gamezilla/shared/core": ["src/libs/shared/core/index.ts"],
     "@gamezilla/shared/server": ["src/libs/shared/server/index.ts"],
     "@gamezilla/shared/ui": ["src/libs/shared/ui/index.ts"]
-  }
+  },
+},
+  "include": ["src"],
+  "references": [{ "path": "./tsconfig.node.json" }],
 }
