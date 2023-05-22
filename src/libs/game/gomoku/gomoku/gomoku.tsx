@@ -1,5 +1,5 @@
-import { Err, NonEmpty, Ok, Result, shuffle } from '@gamezilla/shared/core';
-import { Direction, Position } from './gomoku-position';
+import { Err, NonEmpty, Ok, Result, shuffle } from "@gamezilla/shared/core";
+import { Direction, Position } from "./gomoku-position";
 
 export type Board = {
   [x: number]: {
@@ -9,29 +9,29 @@ export type Board = {
 
 export const initBoard: Board = {};
 
-export type BotLevel = 'Easy' | 'Medium' | 'Hard';
+export type BotLevel = "Easy" | "Medium" | "Hard";
 
 export const botLevels: { [botLevel in BotLevel]: BotLevel } = {
-  Easy: 'Easy',
-  Medium: 'Medium',
-  Hard: 'Hard',
+  Easy: "Easy",
+  Medium: "Medium",
+  Hard: "Hard",
 };
 
-export type Stone = 'white' | 'black';
+export type Stone = "white" | "black";
 
 export const stones: { [stone in Stone]: Stone } = {
-  white: 'white',
-  black: 'black',
+  white: "white",
+  black: "black",
 };
 
 export const toOppositeStone = (stone: Stone): Stone => {
   switch (stone) {
-    case 'black': {
-      return 'white';
+    case "black": {
+      return "white";
     }
 
-    case 'white': {
-      return 'black';
+    case "white": {
+      return "black";
     }
   }
 };
@@ -41,45 +41,45 @@ export type Bounds = {
   upper: Position;
 };
 
-export type Preset = '9x9' | '13x13' | '19x19';
+export type Preset = "9x9" | "13x13" | "19x19";
 
 export const presetToBound = {
-  '9x9': {
+  "9x9": {
     lower: { x: 0, y: 0 },
     upper: { x: 8, y: 8 },
   },
-  '13x13': {
+  "13x13": {
     lower: { x: 0, y: 0 },
     upper: { x: 12, y: 12 },
   },
-  '19x19': {
+  "19x19": {
     lower: { x: 0, y: 0 },
     upper: { x: 18, y: 18 },
   },
 };
 
 export const presetToAllPositions = {
-  '9x9': Position.rangeExclusive(presetToBound['9x9']),
-  '13x13': Position.rangeExclusive(presetToBound['13x13']),
-  '19x19': Position.rangeExclusive(presetToBound['19x19']),
+  "9x9": Position.rangeExclusive(presetToBound["9x9"]),
+  "13x13": Position.rangeExclusive(presetToBound["13x13"]),
+  "19x19": Position.rangeExclusive(presetToBound["19x19"]),
 };
 
 export const presetToStars = {
-  '9x9': [
+  "9x9": [
     { x: 2, y: 2 },
     { x: 6, y: 2 },
     { x: 4, y: 4 },
     { x: 2, y: 6 },
     { x: 6, y: 6 },
   ],
-  '13x13': [
+  "13x13": [
     { x: 3, y: 3 },
     { x: 9, y: 3 },
     { x: 6, y: 6 },
     { x: 3, y: 9 },
     { x: 9, y: 9 },
   ],
-  '19x19': [
+  "19x19": [
     { x: 3, y: 3 },
     { x: 9, y: 3 },
     { x: 15, y: 3 },
@@ -106,10 +106,10 @@ export const bounds: Bounds = {
 export const allPositions = Position.rangeExclusive(bounds);
 
 export type MoveProblem =
-  | 'out-of-bounds'
-  | 'not-turn'
-  | 'position-occupied'
-  | 'game-over';
+  | "out-of-bounds"
+  | "not-turn"
+  | "position-occupied"
+  | "game-over";
 
 const inBounds = (position: Position): boolean => {
   return (
@@ -130,26 +130,25 @@ export const move = ({
   board: Board;
 }): Result<MoveProblem, Board> => {
   if (!inBounds(position)) {
-    return Err('out-of-bounds');
+    return Err("out-of-bounds");
   }
 
   const status = toStatus(board);
 
-  if (status.type === 'win') {
-    return Err('game-over');
+  if (status.type === "win") {
+    return Err("game-over");
   }
 
-  if (status.type === 'draw') {
-    return Err('game-over');
+  if (status.type === "draw") {
+    return Err("game-over");
   }
 
-  console.log({ status });
   if (status.turn !== stone) {
-    return Err('not-turn');
+    return Err("not-turn");
   }
 
   if (toStone(position, board)) {
-    return Err('position-occupied');
+    return Err("position-occupied");
   }
 
   const boardNew = setStone(position, stone, board);
@@ -166,7 +165,7 @@ export const toBestMove = ({
 }) => {
   for (const position of shuffle(String(Math.random()), allPositions)) {
     const moved = move({ position, stone, board });
-    if (moved.t === 'ok') {
+    if (moved.t === "ok") {
       return position;
     }
   }
@@ -207,10 +206,10 @@ export const toTurn = (board: Board): Stone => {
   }
 
   if (freq.white <= freq.black) {
-    return 'white';
+    return "white";
   }
 
-  return 'black';
+  return "black";
 };
 
 export const toStatus = (board: Board) => {
@@ -218,7 +217,7 @@ export const toStatus = (board: Board) => {
 
   if (NonEmpty.is(wins)) {
     return {
-      type: 'win',
+      type: "win",
       wins,
       winner: wins[0].stone,
     } as const;
@@ -226,14 +225,14 @@ export const toStatus = (board: Board) => {
 
   if (isDraw(board)) {
     return {
-      type: 'draw',
+      type: "draw",
     } as const;
   }
 
   const turn = toTurn(board);
 
   return {
-    type: 'game',
+    type: "game",
     turn,
   } as const;
 };
@@ -257,7 +256,7 @@ export const toWins = (board: Board): Win[] => {
     position: Position;
     direction: Direction;
   }): string => {
-    return [position.x, position.y, direction].join('-');
+    return [position.x, position.y, direction].join("-");
   };
 
   const wins: Win[] = [];

@@ -6,9 +6,9 @@ import {
   Result,
   Task,
   Unit,
-} from '@gamezilla/shared/core';
-import { client, definitions, UserId, Username } from '@gamezilla/shared/app';
-import { matchSorter } from 'match-sorter';
+  matchSort,
+} from "@gamezilla/shared/core";
+import { client, definitions, UserId, Username } from "@gamezilla/shared/app";
 
 //
 //
@@ -44,18 +44,18 @@ export type Profile = {
   username: Username;
   name: string;
   avatarUrl: string;
-  themeMode: 'Light' | 'Dark' | 'System';
+  themeMode: "Light" | "Dark" | "System";
 };
 
 type Problem = string;
 
-type FindManyKey = string & { _opaque: 'FindManyKey' };
+type FindManyKey = string & { _opaque: "FindManyKey" };
 
-const sep = ',';
+const sep = ",";
 
 const isFindManyKey = (key: unknown): key is FindManyKey => {
   return (
-    typeof key === 'string' && key.split(sep).every((item) => UserId.is(item))
+    typeof key === "string" && key.split(sep).every((item) => UserId.is(item))
   );
 };
 
@@ -66,7 +66,7 @@ export const toFindManyKey = (userIds: UserId[]): FindManyKey => {
     return key;
   }
 
-  throw new Error('Failed to create find many key');
+  throw new Error("Failed to create find many key");
 };
 
 //
@@ -95,33 +95,33 @@ export const init: Model = {
 //
 
 export type Req =
-  | ['reset-mutations']
-  | ['find-many', { userIds: UserId[] }]
-  | ['edit-one', { userId: UserId; edits: Partial<Profile> }]
-  | ['delete-forever', { userId: UserId }]
-  | ['create-one', { profile: Profile }]
-  | ['search', { searchText: string }];
+  | ["reset-mutations"]
+  | ["find-many", { userIds: UserId[] }]
+  | ["edit-one", { userId: UserId; edits: Partial<Profile> }]
+  | ["delete-forever", { userId: UserId }]
+  | ["create-one", { profile: Profile }]
+  | ["search", { searchText: string }];
 
 export type Res =
   | [
-      'find-many-done',
+      "find-many-done",
       { userIds: UserId[]; result: Result<Problem, Profile[]> }
     ]
   | [
-      'edit-one-done',
+      "edit-one-done",
       {
         userId: UserId;
         previous: Profile;
         result: Result<Problem, Profile>;
       }
     ]
-  | ['delete-forever-done', { userId: UserId; result: Result<Problem, Unit> }]
-  | ['create-one-done', { userId: UserId; result: Result<Problem, Profile> }]
-  | ['search-done', { searchText: string; result: Result<Problem, Profile[]> }];
+  | ["delete-forever-done", { userId: UserId; result: Result<Problem, Unit> }]
+  | ["create-one-done", { userId: UserId; result: Result<Problem, Profile> }]
+  | ["search-done", { searchText: string; result: Result<Problem, Profile[]> }];
 
 export type Msg = Res | Req;
 
-export type Action = ['profile', Req];
+export type Action = ["profile", Req];
 
 //
 //
@@ -133,10 +133,10 @@ export type Action = ['profile', Req];
 
 export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'edit-one-done': {
+    case "edit-one-done": {
       const { userId, result } = msg[1];
 
-      if (result.t === 'err') {
+      if (result.t === "err") {
         const modelNew: Model = {
           ...model,
           profiles: removeKey(userId, model.profiles),
@@ -164,13 +164,13 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       return [modelNew, Cmd.None];
     }
 
-    case 'find-many-done': {
+    case "find-many-done": {
       const { userIds, result } = msg[1];
 
       const key = toFindManyKey(userIds);
 
       const profilesNew: { [id: UserId]: Profile } = {};
-      if (result.t === 'ok') {
+      if (result.t === "ok") {
         for (const profile of result.value) {
           profilesNew[profile.userId] = profile;
         }
@@ -196,7 +196,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       return [modelNew, Cmd.None];
     }
 
-    case 'delete-forever-done': {
+    case "delete-forever-done": {
       const { result, userId } = msg[1];
 
       const modelNew: Model = {
@@ -211,7 +211,7 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
       return [modelNew, Cmd.None];
     }
 
-    case 'create-one-done': {
+    case "create-one-done": {
       const { userId, result } = msg[1];
 
       const modelNew: Model = {
@@ -226,17 +226,17 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
 
         profiles: {
           ...model.profiles,
-          [userId]: result.t === 'ok' ? result.value : undefined,
+          [userId]: result.t === "ok" ? result.value : undefined,
         },
       };
 
       return [modelNew, Cmd.None];
     }
 
-    case 'search-done': {
+    case "search-done": {
       const { result, searchText } = msg[1];
 
-      const hits: Profile[] = result.t === 'err' ? [] : result.value;
+      const hits: Profile[] = result.t === "err" ? [] : result.value;
 
       const byId = hits.reduce((acc, hit) => {
         acc[hit.userId] = hit;
@@ -264,14 +264,14 @@ export const update = (msg: Msg, model: Model): [Model, Cmd<Msg>] => {
     }
 
     default:
-      return runAction(['profile', msg], model);
+      return runAction(["profile", msg], model);
     // return exhaustive(msg);
   }
 };
 
 export const runAction = (msg: Action, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[1][0]) {
-    case 'edit-one': {
+    case "edit-one": {
       const { userId, edits } = msg[1][1];
 
       const profile = model.profiles[userId];
@@ -298,7 +298,7 @@ export const runAction = (msg: Action, model: Model): [Model, Cmd<Msg>] => {
           edit(userId, edits),
           Cmd.perform(
             (result): Msg => [
-              'edit-one-done',
+              "edit-one-done",
               { previous: profile, userId, result },
             ]
           )
@@ -306,7 +306,7 @@ export const runAction = (msg: Action, model: Model): [Model, Cmd<Msg>] => {
       ];
     }
 
-    case 'find-many': {
+    case "find-many": {
       const { userIds } = msg[1][1];
 
       if (userIds.length === 0) {
@@ -327,12 +327,12 @@ export const runAction = (msg: Action, model: Model): [Model, Cmd<Msg>] => {
         modelNew,
         p(
           findMany({ userIds }),
-          Cmd.perform((result): Msg => ['find-many-done', { userIds, result }])
+          Cmd.perform((result): Msg => ["find-many-done", { userIds, result }])
         ),
       ];
     }
 
-    case 'delete-forever': {
+    case "delete-forever": {
       const { userId } = msg[1][1];
 
       const modelNew: Model = {
@@ -348,13 +348,13 @@ export const runAction = (msg: Action, model: Model): [Model, Cmd<Msg>] => {
         p(
           deleteForever(userId),
           Cmd.perform(
-            (result): Msg => ['delete-forever-done', { userId, result }]
+            (result): Msg => ["delete-forever-done", { userId, result }]
           )
         ),
       ];
     }
 
-    case 'create-one': {
+    case "create-one": {
       const { profile } = msg[1][1];
       const modelNew: Model = {
         ...model,
@@ -374,7 +374,7 @@ export const runAction = (msg: Action, model: Model): [Model, Cmd<Msg>] => {
           create(profile),
           Cmd.perform(
             (result): Msg => [
-              'create-one-done',
+              "create-one-done",
               { userId: profile.userId, result },
             ]
           )
@@ -382,7 +382,7 @@ export const runAction = (msg: Action, model: Model): [Model, Cmd<Msg>] => {
       ];
     }
 
-    case 'search': {
+    case "search": {
       const { searchText } = msg[1][1];
 
       const modelNew: Model = {
@@ -397,12 +397,12 @@ export const runAction = (msg: Action, model: Model): [Model, Cmd<Msg>] => {
         modelNew,
         p(
           search({ nameOrUsername: searchText }),
-          Cmd.perform((result): Msg => ['search-done', { result, searchText }])
+          Cmd.perform((result): Msg => ["search-done", { result, searchText }])
         ),
       ];
     }
 
-    case 'reset-mutations': {
+    case "reset-mutations": {
       return [{ ...model, create: {}, deleteForever: {}, edit: {} }, Cmd.None];
     }
 
@@ -420,9 +420,11 @@ export const runAction = (msg: Action, model: Model): [Model, Cmd<Msg>] => {
 //
 
 export const toSearch = (nameOrUsername: string, store: Model) => {
-  return matchSorter(Object.values(store.profiles), nameOrUsername, {
-    keys: ['name', 'username'],
-  });
+  return matchSort(
+    Object.values(store.profiles),
+    (x) => x.username,
+    nameOrUsername
+  );
 };
 
 //
@@ -434,42 +436,42 @@ export const toSearch = (nameOrUsername: string, store: Model) => {
 //
 
 export const rowThemeModeToThemeMode = (
-  themeMode: definitions['user_profile']['theme_mode']
-): Profile['themeMode'] => {
+  themeMode: definitions["user_profile"]["theme_mode"]
+): Profile["themeMode"] => {
   switch (themeMode) {
-    case 'DARK':
-      return 'Dark';
+    case "DARK":
+      return "Dark";
 
-    case 'LIGHT':
-      return 'Light';
+    case "LIGHT":
+      return "Light";
 
-    case 'SYSTEM':
-      return 'System';
+    case "SYSTEM":
+      return "System";
   }
 };
 
 const fromThemeMode = (
-  themeMode: Profile['themeMode']
-): definitions['user_profile']['theme_mode'] => {
+  themeMode: Profile["themeMode"]
+): definitions["user_profile"]["theme_mode"] => {
   switch (themeMode) {
-    case 'Dark':
-      return 'DARK';
+    case "Dark":
+      return "DARK";
 
-    case 'Light':
-      return 'LIGHT';
+    case "Light":
+      return "LIGHT";
 
-    case 'System':
-      return 'SYSTEM';
+    case "System":
+      return "SYSTEM";
   }
 };
 
 export const decodeRow = (
-  row: definitions['user_profile']
+  row: definitions["user_profile"]
 ): Result<string, Profile> => {
   const userId = UserId.decode(row.id);
   const username = Username.decode(row.username);
 
-  if (userId.t === 'ok' && username.t === 'ok') {
+  if (userId.t === "ok" && username.t === "ok") {
     return Result.Ok({
       userId: userId.value,
       avatarUrl: row.avatar_url,
@@ -480,16 +482,16 @@ export const decodeRow = (
   }
 
   // todo better error
-  return Result.Err('failed_to_decode_supabase_row');
+  return Result.Err("failed_to_decode_supabase_row");
 };
 
 export const findOne =
   ({ userId }: { userId: UserId }): Task<Result<string, Profile>> =>
   async () => {
     const response = await client
-      .from<definitions['user_profile']>('user_profile')
-      .select('*')
-      .eq('id', userId)
+      .from<definitions["user_profile"]>("user_profile")
+      .select("*")
+      .eq("id", userId)
       .single();
 
     if (response.error) {
@@ -503,9 +505,9 @@ export const findMany =
   ({ userIds }: { userIds: string[] }): Task<Result<string, Profile[]>> =>
   async () => {
     const response = await client
-      .from<definitions['user_profile']>('user_profile')
-      .select('*')
-      .in('id', userIds);
+      .from<definitions["user_profile"]>("user_profile")
+      .select("*")
+      .in("id", userIds);
 
     if (response.error) {
       return Result.Err(response.error.message);
@@ -530,13 +532,13 @@ export const create =
   }): Task<Result<string, Profile>> =>
   async () => {
     const response = await client
-      .from<definitions['user_profile']>('user_profile')
+      .from<definitions["user_profile"]>("user_profile")
       .insert({
         id: userId,
         name,
         username,
         avatar_url: avatarUrl,
-        theme_mode: 'SYSTEM',
+        theme_mode: "SYSTEM",
       })
       .single();
 
@@ -553,7 +555,7 @@ export const deleteForever =
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
     const response = await client
-      .from<definitions['user_profile']>('user_profile')
+      .from<definitions["user_profile"]>("user_profile")
       .delete()
       .match({ id: userId });
 
@@ -572,14 +574,14 @@ export const search =
   }): Task<Result<string, Profile[]>> =>
   async () => {
     const response = await client
-      .from<definitions['user_profile']>('user_profile')
-      .select('*')
+      .from<definitions["user_profile"]>("user_profile")
+      .select("*")
       .ilike(
-        'name',
+        "name",
         `%${nameOrUsername
-          .split(' ')
-          .map((_) => _.replace(' ', ''))
-          .join('%')}%`
+          .split(" ")
+          .map((_) => _.replace(" ", ""))
+          .join("%")}%`
       );
 
     if (response.error) {
@@ -593,7 +595,7 @@ export const edit =
   (userId: UserId, edits: Partial<Profile>): Task<Result<string, Profile>> =>
   async () => {
     const response = await client
-      .from<definitions['user_profile']>('user_profile')
+      .from<definitions["user_profile"]>("user_profile")
       .update({
         username: edits.username,
         name: edits.name,

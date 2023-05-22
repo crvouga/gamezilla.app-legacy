@@ -1,6 +1,13 @@
-import { Iso3166Alpha2Code, PhoneNumber } from '@gamezilla/shared/app';
-import { Browser, Cmd, Result, Task, p } from '@gamezilla/shared/core';
-import { Route } from '@gamezilla/shared/client';
+import { Iso3166Alpha2Code, PhoneNumber } from "@gamezilla/shared/app";
+import { Route } from "@gamezilla/shared/client";
+import {
+  Browser,
+  Cmd,
+  Result,
+  Task,
+  matchSort,
+  p,
+} from "@gamezilla/shared/core";
 import {
   Autocomplete,
   IconPhone,
@@ -9,8 +16,7 @@ import {
   MyTextField,
   TopBar,
   TopBarBackButton,
-} from '@gamezilla/shared/ui';
-import { matchSorter } from 'match-sorter';
+} from "@gamezilla/shared/ui";
 
 //
 //
@@ -25,15 +31,15 @@ export type Model = {
   country: Iso3166Alpha2Code;
   countryQuery: string;
   validation:
-    | 'not-validated'
-    | 'invalid-phone-number'
-    | 'empty-phone-number'
-    | 'invalid-timezone';
+    | "not-validated"
+    | "invalid-phone-number"
+    | "empty-phone-number"
+    | "invalid-timezone";
   submission:
-    | { type: 'idle' }
-    | { type: 'loading' }
-    | { type: 'Problem'; message: string }
-    | { type: 'ok' };
+    | { type: "idle" }
+    | { type: "loading" }
+    | { type: "Problem"; message: string }
+    | { type: "ok" };
 };
 
 export const init = (): {
@@ -42,17 +48,17 @@ export const init = (): {
 } => {
   return {
     model: {
-      country: 'US',
-      phoneNumber: '',
-      countryQuery: Iso3166Alpha2Code.toName('US'),
-      validation: 'not-validated',
+      country: "US",
+      phoneNumber: "",
+      countryQuery: Iso3166Alpha2Code.toName("US"),
+      validation: "not-validated",
       submission: {
-        type: 'idle',
+        type: "idle",
       },
     },
     cmd: p(
-      Browser.focus('phone-number'),
-      Cmd.perform((result) => ({ t: 'focus-done', result }))
+      Browser.focus("phone-number"),
+      Cmd.perform((result) => ({ t: "focus-done", result }))
     ),
   };
 };
@@ -66,17 +72,17 @@ export const init = (): {
 //
 
 export type Msg =
-  | { t: 'clicked-back' }
-  | { t: 'clicked-send-code' }
-  | { t: 'inputted-phone-number'; phoneNumber: string }
+  | { t: "clicked-back" }
+  | { t: "clicked-send-code" }
+  | { t: "inputted-phone-number"; phoneNumber: string }
   | {
-      t: 'send-code-done';
+      t: "send-code-done";
       phoneNumber: PhoneNumber;
       result: Result<string, null>;
     }
-  | { t: 'inputted-country'; country: Iso3166Alpha2Code }
-  | { t: 'inputted-country-query'; value: string }
-  | { t: 'focus-done'; result: Browser.FocusResult };
+  | { t: "inputted-country"; country: Iso3166Alpha2Code }
+  | { t: "inputted-country-query"; value: string }
+  | { t: "focus-done"; result: Browser.FocusResult };
 
 export const update = ({
   msg,
@@ -90,77 +96,77 @@ export const update = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (msg.t === 'clicked-send-code') {
+  if (msg.t === "clicked-send-code") {
     if (model.phoneNumber.length === 0) {
-      return { model: { ...model, validation: 'empty-phone-number' } };
+      return { model: { ...model, validation: "empty-phone-number" } };
     }
 
     const decoded = PhoneNumber.decode(model.country, model.phoneNumber);
 
-    if (decoded.t === 'err') {
-      return { model: { ...model, validation: 'invalid-phone-number' } };
+    if (decoded.t === "err") {
+      return { model: { ...model, validation: "invalid-phone-number" } };
     }
 
     const phoneNumber = decoded.value;
 
     return {
-      model: { ...model, submission: { type: 'loading' } },
+      model: { ...model, submission: { type: "loading" } },
       cmd: p(
         sendCode({ phoneNumber: phoneNumber }),
         Cmd.perform(
-          (result): Msg => ({ t: 'send-code-done', phoneNumber, result })
+          (result): Msg => ({ t: "send-code-done", phoneNumber, result })
         )
       ),
     };
   }
 
-  if (msg.t === 'clicked-back') {
+  if (msg.t === "clicked-back") {
     return { model, cmd: Route.back };
   }
 
-  if (msg.t === 'inputted-country') {
+  if (msg.t === "inputted-country") {
     return {
       model: {
         ...model,
         country: msg.country,
         countryQuery: Iso3166Alpha2Code.toName(msg.country),
-        validation: 'not-validated',
+        validation: "not-validated",
       },
     };
   }
 
-  if (msg.t === 'inputted-phone-number') {
+  if (msg.t === "inputted-phone-number") {
     return {
       model: {
         ...model,
         phoneNumber: msg.phoneNumber,
-        validation: 'not-validated',
+        validation: "not-validated",
       },
     };
   }
 
-  if (msg.t === 'send-code-done') {
+  if (msg.t === "send-code-done") {
     const { phoneNumber, result } = msg;
 
-    if (result.t === 'err') {
+    if (result.t === "err") {
       return {
         model: {
           ...model,
-          submission: { type: 'Problem', message: result.error },
+          submission: { type: "Problem", message: result.error },
         },
       };
     }
 
     return {
-      model: { ...model, submission: { type: 'ok' } },
+      model: { ...model, submission: { type: "ok" } },
       cmd: Route.push({
-        t: 'auth',
-        c: { t: 'login-phone-verify', phoneNumber: phoneNumber },
+        t: "auth",
+        c: { t: "login-phone-verify", phoneNumber: phoneNumber },
       }),
     };
   }
 
-  if (msg.t === 'inputted-country-query') {
+  if (msg.t === "inputted-country-query") {
     return { model: { ...model, countryQuery: msg.value } };
   }
 
@@ -187,13 +193,15 @@ export const View = ({
   model: Model;
   $send: (msg: Msg) => void;
 }) => {
-  const filteredOptions = matchSorter(allOptions, model.countryQuery, {
-    keys: ['value', 'name'],
-  }).map((option) => option.value);
+  const filteredOptions = matchSort(
+    allOptions,
+    (x) => x.name,
+    model.countryQuery
+  ).map((option) => option.value);
   return (
     <div className="flex-1 w-full">
       <TopBar
-        left={<TopBarBackButton onClick={() => $send({ t: 'clicked-back' })} />}
+        left={<TopBarBackButton onClick={() => $send({ t: "clicked-back" })} />}
         title="Login With Phone"
       />
 
@@ -201,9 +209,8 @@ export const View = ({
         className="p-4 flex gap-4 flex-col"
         onSubmit={(e) => {
           e.preventDefault();
-          $send({ t: 'clicked-send-code' });
-        }}
-      >
+          $send({ t: "clicked-send-code" });
+        }}>
         <Autocomplete
           label="Country"
           startIcon={
@@ -212,11 +219,11 @@ export const View = ({
             </span>
           }
           value={model.country}
-          onChange={(country) => $send({ t: 'inputted-country', country })}
-          onClear={() => $send({ t: 'inputted-country-query', value: '' })}
+          onChange={(country) => $send({ t: "inputted-country", country })}
+          onClear={() => $send({ t: "inputted-country-query", value: "" })}
           options={filteredOptions}
           onChangeQuery={(value) =>
-            $send({ t: 'inputted-country-query', value })
+            $send({ t: "inputted-country-query", value })
           }
           toKey={(x) => x}
           toLabel={(x) => Iso3166Alpha2Code.toNameWithEmoji(x)}
@@ -232,22 +239,22 @@ export const View = ({
           label="Phone Number"
           onChange={(phoneNumber) =>
             $send({
-              t: 'inputted-phone-number',
-              phoneNumber: phoneNumber.replace(/\D/g, ''),
+              t: "inputted-phone-number",
+              phoneNumber: phoneNumber.replace(/\D/g, ""),
             })
           }
-          onClear={() => $send({ t: 'inputted-phone-number', phoneNumber: '' })}
+          onClear={() => $send({ t: "inputted-phone-number", phoneNumber: "" })}
           type="tel"
-          value={model.phoneNumber.replace(/\D/g, '')}
+          value={model.phoneNumber.replace(/\D/g, "")}
           error={
-            model.validation === 'invalid-phone-number' ||
-            model.validation === 'empty-phone-number'
+            model.validation === "invalid-phone-number" ||
+            model.validation === "empty-phone-number"
           }
           helperText={
-            model.validation === 'invalid-phone-number'
-              ? 'Invalid phone number'
-              : model.validation === 'empty-phone-number'
-              ? 'Phone number is required'
+            model.validation === "invalid-phone-number"
+              ? "Invalid phone number"
+              : model.validation === "empty-phone-number"
+              ? "Phone number is required"
               : undefined
           }
         />
@@ -257,15 +264,14 @@ export const View = ({
           variant="contained"
           color="primary"
           size="lg"
-          className="w-full mt-2"
-        >
-          {model.submission.type === 'loading' && (
+          className="w-full mt-2">
+          {model.submission.type === "loading" && (
             <IconSpinner className="w-6 h-6 animate-spin" />
           )}
           Send Code
         </MyButton>
 
-        {model.submission.type === 'Problem' && (
+        {model.submission.type === "Problem" && (
           <div className="bg-red-500 text-white p-4 mt-2 rounded-md">
             {model.submission.message}
           </div>
