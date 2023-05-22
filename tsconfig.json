@@ -1,0 +1,51 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "incremental": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+
+    "baseUrl": ".",
+    "paths": {
+      "@gamezilla/app": ["src/libs/app/index.ts"],
+      "@gamezilla/feat/auth": ["src/libs/feat/auth/index.ts"],
+      "@gamezilla/feat/chat": ["src/libs/feat/chat/index.ts"],
+      "@gamezilla/feat/party": ["src/libs/feat/party/index.ts"],
+      "@gamezilla/feat/profile": ["src/libs/feat/profile/index.ts"],
+      "@gamezilla/feat/room": ["src/libs/feat/room/index.ts"],
+      "@gamezilla/feat/search": ["src/libs/feat/search/index.ts"],
+      "@gamezilla/game/battleship": ["src/libs/game/battleship/index.ts"],
+      "@gamezilla/game/chess": ["src/libs/game/chess/index.ts"],
+      "@gamezilla/game/connect-four": ["src/libs/game/connect-four/index.ts"],
+      "@gamezilla/game/flow": ["src/libs/game/flow/index.ts"],
+      "@gamezilla/game/gomoku": ["src/libs/game/gomoku/index.ts"],
+      "@gamezilla/game/maze": ["src/libs/game/maze/index.ts"],
+      "@gamezilla/game/minesweeper": ["src/libs/game/minesweeper/index.ts"],
+      "@gamezilla/game/snake": ["src/libs/game/snake/index.ts"],
+      "@gamezilla/game/tetris": ["src/libs/game/tetris/index.ts"],
+      "@gamezilla/game/tic-tac-toe": ["src/libs/game/tic-tac-toe/index.ts"],
+      "@gamezilla/shared/app": ["src/libs/shared/app/index.ts"],
+      "@gamezilla/shared/client": ["src/libs/shared/client/index.ts"],
+      "@gamezilla/shared/core": ["src/libs/shared/core/index.ts"],
+      "@gamezilla/shared/server": ["src/libs/shared/server/index.ts"],
+      "@gamezilla/shared/ui": ["src/libs/shared/ui/index.ts"]
+    }
+  },
+  "include": ["src"],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}

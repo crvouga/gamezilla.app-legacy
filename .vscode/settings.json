@@ -1,27 +1,3 @@
 {
-  "cSpell.words": [
-    "cssmodule",
-    "daisyui",
-    "deinterleave",
-    "Esports",
-    "Esque",
-    "extralight",
-    "gamezilla",
-    "gomoku",
-    "headlessui",
-    "ilike",
-    "Lichess",
-    "mediasoup",
-    "nrwl",
-    "numberlink",
-    "Premoves",
-    "qrbn",
-    "Supabase",
-    "tailwindcss",
-    "tetris",
-    "tetromino",
-    "Textsms",
-    "Unflip",
-    "unsend"
-  ]
+  "cSpell.words": ["gamezilla", "gomoku", "tailwindcss", "tetris"]
 }
