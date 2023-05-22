@@ -10,7 +10,7 @@
     "importHelpers": true,
     "noFallthroughCasesInSwitch": true,
     "target": "es2015",
-    "module": "esnext",
+    "module": "ESNext",
     "lib": ["es2017", "dom"],
     "skipLibCheck": true,
     "jsx": "react-jsx",

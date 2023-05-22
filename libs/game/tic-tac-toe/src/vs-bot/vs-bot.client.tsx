@@ -76,6 +76,13 @@ export const update = ({
   if (msg.t === 'toast') {
     return { model };
   }
+
+  const debug = true;
+
+  if (debug) {
+    return { model, cmd: sendToServer(msg) };
+  }
+
   const handled = handle({ ctx, msg, model });
   if (handled.t === 'err') {
     return { model, cmd: sendToServer(msg) };
@@ -246,4 +253,11 @@ export const View = ({
       )}
     />
   );
+};
+
+export const ViewMsg = ({ msg }: { msg: Msg | ToClient }) => {
+  if ('result' in msg && msg.result.t === 'err') {
+    return msg.result.error;
+  }
+  return null;
 };

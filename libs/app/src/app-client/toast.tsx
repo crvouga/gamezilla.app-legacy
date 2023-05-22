@@ -92,16 +92,14 @@ export const updateFromApp = ({
 } => {
   if (msg.t === 'toast-enqueued') {
     const toastId = model.runningId;
+    const duration = msg.duration ?? 3000;
     return {
       model: {
         ...model,
         runningId: model.runningId + 1,
-        toasts: [
-          ...model.toasts,
-          { toastId, message: msg.message, duration: 1000 },
-        ],
+        toasts: [...model.toasts, { toastId, message: msg.message, duration }],
       },
-      cmd: Time.startTimeout(toastId, 1000, {
+      cmd: Time.startTimeout(toastId, duration, {
         t: 'toast-duration-elapsed',
         toastId: model.runningId,
       }),
@@ -129,7 +127,7 @@ export const View = ({
     <div className="fixed top-0 left-0 w-screen h-screen flex flex-col items-center p-4 pointer-events-none gap-4">
       {model.toasts.map((toast) => (
         <div
-          className="bg-neutral-800 border-neutral-600 border w-full max-w-md text-lg text-white p-3 shadow-2xl z-40 rounded-lg pointer-events-auto flex items-center justify-between"
+          className="bg-neutral-800 border-neutral-600 border w-full max-w-md text-lg text-white p-3 shadow-2xl z-40 rounded-lg pointer-events-auto flex items-center justify-between overflow-hidden whitespace-nowrap break-words"
           key={toast.toastId}
         >
           {toast.message}

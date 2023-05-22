@@ -2,6 +2,7 @@ import { RoomMsg } from '@gamezilla/shared/client';
 import { Cmd, Err, Ok, Sub, andThen, p } from '@gamezilla/shared/core';
 import { RoomRequestCtx } from '@gamezilla/shared/server';
 import { TicTacToe } from '../tic-tic-toe';
+import { getBestMove } from '../tic-tic-toe/best-move';
 import {
   Res,
   ServerModel,
@@ -122,7 +123,7 @@ const watchBotMove = ({
     return {
       model,
       cmd: p(
-        TicTacToe.findBestMove({
+        getBestMove({
           depth: TicTacToe.toDepth(model.botLevel),
           maximizingPlayer: TicTacToe.toOpposite(model.userPlayerType),
           board: model.board,

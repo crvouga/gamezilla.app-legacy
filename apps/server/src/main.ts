@@ -11,6 +11,7 @@ import { Cmd, Program, toMsgType } from '@gamezilla/shared/core';
 import { DatabaseConnectionMySQL } from '@gamezilla/shared/server';
 import { RequestListener, createServer } from 'http';
 import { Server } from 'socket.io';
+import { isMainThread } from 'node:worker_threads';
 
 //
 //
@@ -130,4 +131,6 @@ const main = async () => {
   Program.run(program);
 };
 
-main();
+if (isMainThread) {
+  main();
+}

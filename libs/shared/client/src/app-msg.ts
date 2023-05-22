@@ -1,11 +1,26 @@
 import { UserId } from '@gamezilla/shared/app';
 import { Route } from './route';
 
+//
+//
+//
+// Model
+//
+//
+//
+
 export type AppMsg<T = unknown> =
   | { t: 'route-changed'; route: Route }
   | { t: 'wire-connected' }
   | { t: 'user-logged-in'; currentUserId: UserId }
-  | { t: 'toast-enqueued'; message: string };
+  | { t: 'toast-enqueued'; message: string; duration?: number };
+
+//
+//
+//
+//
+//
+//
 
 const map = <TA, TB>(appMsg: AppMsg<TA>, _f: (a: TA) => TB): AppMsg<TB> => {
   return appMsg;

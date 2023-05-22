@@ -1,9 +1,9 @@
 import { UserId } from '@gamezilla/shared/app';
 import { Err, Ok, Result } from '@gamezilla/shared/core';
+import { GetBestMoveResult } from '../tic-tic-toe/best-move';
 import {
   Board,
   BotLevel,
-  FindBestMoveResult,
   PlayerType,
   Position,
   emptyBoard,
@@ -20,9 +20,9 @@ import {
 //
 //
 
-export type SharedModel = setupModel | GameModel;
+export type SharedModel = SetupModel | GameModel;
 
-export type setupModel = {
+export type SetupModel = {
   type: 'setup';
   player?: UserId | null;
   userPlayerType: PlayerType;
@@ -44,7 +44,7 @@ export type ServerModel = SharedModel;
 export const initSharedModel = ({
   userId,
 }: {
-  userId: setupModel['player'];
+  userId: SetupModel['player'];
 }): SharedModel => {
   return {
     type: 'setup',
@@ -76,7 +76,7 @@ export const isBotTurn = (model: SharedModel): model is GameModel => {
 
 export type ClientMsg = Req | { t: 'toast' };
 
-export type ServerMsg = { t: 'bot-moved'; result: FindBestMoveResult };
+export type ServerMsg = { t: 'bot-moved'; result: GetBestMoveResult };
 
 export type ToServer = Req;
 
