@@ -39,11 +39,19 @@ const main = async () => {
 
   const httpServer = createServer(requestListener);
 
-  const socketServer = new Server<ClientToServerEvents, ServerToClientEvents>(
-    httpServer
+  const io = new Server<ClientToServerEvents, ServerToClientEvents>(
+    httpServer,
+    {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      cors: {
+        origin: "*",
+        credentials: true,
+      },
+    }
   );
 
-  socketServer.on("connection", (socket) => {
+  io.on("connection", (socket) => {
     const maybeSessionId: unknown = socket.handshake.auth[sessionIdKey];
 
     const sessionId = SessionId.is(maybeSessionId)
@@ -78,13 +86,13 @@ const main = async () => {
   const sendToClient =
     (clientIds: ClientId[], msg: ToClient): Cmd =>
     () => {
-      socketServer.to(clientIds).emit("to-client", msg);
+      io.to(clientIds).emit("to-client", msg);
     };
 
   const broadcast =
     (msg: ToClient): Cmd =>
     () => {
-      socketServer.emit("to-client", msg);
+      io.emit("to-client", msg);
     };
 
   const program = Program.create({

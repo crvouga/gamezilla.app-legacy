@@ -10,6 +10,7 @@
     "preview": "vite preview",
     "server:build": "echo 'server build'",
     "server": "npx tsx src/apps/server/main.ts",
+    "server:watch": "npx tsx watch src/apps/server/main.ts",
     "client:build": "tsc && vite build",
     "client": "vite"
   },
