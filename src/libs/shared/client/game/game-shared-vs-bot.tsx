@@ -332,45 +332,6 @@ export const ViewVsBotGameScreen = <PlayerType,>({
   }) => ViewNode;
   viewBoard: () => ViewNode;
 }) => {
-  const botSlot = (
-    <div className="flex p-2 flex-1 items-center overflow-hidden" key={botName}>
-      <div className="mr-2">
-        {viewPlayerIcon({ playerType: botPlayer, className: "w-8 h-8" })}
-      </div>
-
-      <div className="mr-2">
-        <IconRobot className="w-8 h-8" />
-      </div>
-
-      <p className="flex-1 whitespace-nowrap text-ellipsis overflow-hidden">
-        {botName}
-      </p>
-      <div>
-        {turn === botPlayer && gameOver.type === "none" && (
-          <IconSpinner className="w-8 h-8 animate-spin" />
-        )}
-      </div>
-    </div>
-  );
-
-  const userSlot = (
-    <div
-      className="flex p-2 flex-1 gap-2 items-center overflow-hidden"
-      key={botName}>
-      {viewPlayerIcon({ playerType: userPlayer, className: "w-8 h-8" })}
-      <MyAvatar
-        className="w-8 h-8"
-        alt=""
-        src={ctx.profiles[playerUserId]?.avatarUrl}
-      />
-      <p>{ctx.profiles[playerUserId]?.username}</p>
-    </div>
-  );
-
-  const leftSlot = userPlayer === leftPlayer ? userSlot : botSlot;
-
-  const rightSlot = userPlayer !== leftPlayer ? userSlot : botSlot;
-
   const isSpectating = ctx.currentUserId !== playerUserId;
 
   return (
@@ -386,9 +347,49 @@ export const ViewVsBotGameScreen = <PlayerType,>({
       )}
 
       <div className="flex-1 flex flex-col items-center w-full justify-center">
-        <div className="px-2 pt-2 pb-3 flex justify-center items-center w-full">
-          {leftSlot}
-          {rightSlot}
+        <div
+          className={cn(
+            "px-2 pt-2 pb-3 flex justify-center items-center w-full",
+            userPlayer === leftPlayer ? "flex-row" : "flex-row-reverse"
+          )}>
+          {/*
+
+          user slot
+
+          */}
+          <div className="flex p-2 flex-1 gap-2 items-center overflow-hidden">
+            {viewPlayerIcon({ playerType: userPlayer, className: "w-8 h-8" })}
+            <MyAvatar
+              className="w-8 h-8"
+              alt=""
+              src={ctx.profiles[playerUserId]?.avatarUrl}
+            />
+            <p>{ctx.profiles[playerUserId]?.username}</p>
+          </div>
+
+          {/*
+
+          bot slot
+
+          */}
+          <div className="flex p-2 flex-1 items-center overflow-hidden">
+            <div className="mr-2">
+              {viewPlayerIcon({ playerType: botPlayer, className: "w-8 h-8" })}
+            </div>
+
+            <div className="mr-2">
+              <IconRobot className="w-8 h-8" />
+            </div>
+
+            <p className="flex-1 whitespace-nowrap text-ellipsis overflow-hidden">
+              {botName}
+            </p>
+            <div>
+              {turn === botPlayer && gameOver.type === "none" && (
+                <IconSpinner className="w-8 h-8 animate-spin" />
+              )}
+            </div>
+          </div>
         </div>
 
         {viewBoard()}
