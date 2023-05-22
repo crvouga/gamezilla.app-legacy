@@ -1,8 +1,5 @@
 import { exhaustive, Result, Task } from '@gamezilla/shared/core';
 import * as ChessTs from 'chess.ts';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { aiMove } from 'js-chess-engine';
 import {
   useCallback,
   useEffect,
@@ -58,7 +55,10 @@ export const toBestMoveInput = (
 ): BestMoveInputResult => {
   const fen = toFen(model);
 
-  const move: unknown = aiMove(fen, level);
+  const move: unknown = {
+    fen,
+    level,
+  }
 
   if (!isRecord(move)) {
     return Result.Err('failed_to_calculate_best_move');
