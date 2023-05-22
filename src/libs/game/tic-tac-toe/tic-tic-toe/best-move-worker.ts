@@ -1,9 +1,8 @@
-import { Err, Ok, Result, shuffle } from "@gamezilla/shared/core";
+import { Err, Ok, shuffle } from "@gamezilla/shared/core";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { expose } from "threads/worker";
-
-import { Board, PlayerType, Position, allPositions, move } from "./tic-tac-toe";
+import { Board, PlayerType, allPositions, move } from "./tic-tac-toe";
 
 const toBestMove = ({
   // depth,
@@ -13,11 +12,7 @@ const toBestMove = ({
   depth: number;
   maximizingPlayer: PlayerType;
   board: Board;
-}): Result<string, Position> => {
-  for (let i = 0; i < 500_000; i++) {
-    // working hard
-    console.log("working hard");
-  }
+}) => {
   for (const position of shuffle(String(Math.random()), allPositions)) {
     const moved = move({ board, player: maximizingPlayer, position });
 

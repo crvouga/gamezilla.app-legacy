@@ -18,17 +18,16 @@ export const getBestMove =
       const worker = new threads.Worker("./best-move-worker.ts");
       try {
         const spawned = await threads.spawn<WorkerAPI>(worker);
+
         const moved = await spawned.toBestMove(input);
 
         return moved;
       } catch (error) {
-        console.log(error);
         return Err(`Spawn worker error. ${String(error)}`);
       } finally {
         await worker.terminate();
       }
     } catch (error) {
-      console.log(error);
       return Err(`New worker error. ${String(error)}`);
     }
   };
