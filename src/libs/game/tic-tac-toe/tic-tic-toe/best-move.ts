@@ -1,7 +1,9 @@
-import { Err, Result, Task } from '@gamezilla/shared/core';
-import { Worker as ThreadsWorker, spawn } from 'threads';
-import { WorkerAPI } from './best-move-worker';
-import { Board, PlayerType, Position } from './tic-tac-toe';
+import { Err, Result, Task } from "@gamezilla/shared/core";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { Worker as ThreadsWorker, spawn } from "threads";
+import { WorkerAPI } from "./best-move-worker";
+import { Board, PlayerType, Position } from "./tic-tac-toe";
 
 export type GetBestMoveResult = Result<string, Position>;
 

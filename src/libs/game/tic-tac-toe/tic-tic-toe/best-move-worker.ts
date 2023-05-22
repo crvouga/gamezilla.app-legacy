@@ -1,4 +1,6 @@
 import { Err, Ok, Result, shuffle } from "@gamezilla/shared/core";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { expose } from "threads/worker";
 
 import { Board, PlayerType, Position, allPositions, move } from "./tic-tac-toe";

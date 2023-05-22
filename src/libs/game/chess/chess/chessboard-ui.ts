@@ -15,8 +15,8 @@ export type Theme = {
 };
 
 const defaultTheme: Theme = {
-  light: '#f0d9b5',
-  dark: '#b58863',
+  light: "#f0d9b5",
+  dark: "#b58863",
 };
 
 export const themes = {
@@ -25,27 +25,27 @@ export const themes = {
 
 const toChecker = (x: number, y: number) => {
   if (x % 2 === 0 && y % 2 !== 0) {
-    return 'dark';
+    return "dark";
   }
-  return 'light';
+  return "light";
 };
 
 const make = ({ theme = defaultTheme }: { theme?: Theme }) => {
-  const currentFen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+  const currentFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-  const svg = document.createElement('svg');
-  svg.setAttribute('viewBox', '0 0 8 8');
-  svg.setAttribute('width', '100%');
+  const svg = document.createElement("svg");
+  svg.setAttribute("viewBox", "0 0 8 8");
+  svg.setAttribute("width", "100%");
   for (let x = 0; x < 8; x++) {
     for (let y = 0; y < 8; y++) {
-      const rect = document.createElement('rect');
-      rect.setAttribute('x', x.toString());
-      rect.setAttribute('y', y.toString());
-      rect.setAttribute('width', '1');
-      rect.setAttribute('height', '1');
-      rect.setAttribute('fill', theme[toChecker(x, y)]);
-      rect.setAttribute('data-x', x.toString());
-      rect.setAttribute('data-y', y.toString());
+      const rect = document.createElement("rect");
+      rect.setAttribute("x", x.toString());
+      rect.setAttribute("y", y.toString());
+      rect.setAttribute("width", "1");
+      rect.setAttribute("height", "1");
+      rect.setAttribute("fill", theme[toChecker(x, y)]);
+      rect.setAttribute("data-x", x.toString());
+      rect.setAttribute("data-y", y.toString());
       svg.appendChild(rect);
     }
   }
