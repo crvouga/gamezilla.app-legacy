@@ -1,4 +1,4 @@
-import { RoomId, UserId } from '@gamezilla/shared/app';
+import { RoomId, UserId } from "@gamezilla/shared/app";
 import {
   AppMsg,
   Ctx,
@@ -6,8 +6,8 @@ import {
   Route,
   RouteRoom,
   ViewCtx,
-} from '@gamezilla/shared/client';
-import { Cmd, RemoteResult, Sub, exhaustive, p } from '@gamezilla/shared/core';
+} from "@gamezilla/shared/client";
+import { Cmd, RemoteResult, Sub, exhaustive, p } from "@gamezilla/shared/core";
 import {
   ActionButton,
   Avatar,
@@ -32,10 +32,10 @@ import {
   Typography,
   ViewNode,
   useTheme,
-} from '@gamezilla/shared/ui';
-import { gameNameToString, viewCoverArt } from './game';
-import * as Game from './game.client';
-import { GameName, gameNameList } from './game.shared';
+} from "@gamezilla/shared/ui";
+import { gameNameToString, viewCoverArt } from "./game";
+import * as Game from "./game.client";
+import { GameName, gameNameList } from "./game.shared";
 import {
   ClientModel,
   ClientMsg,
@@ -45,7 +45,7 @@ import {
   ServerModel,
   ToClient,
   ToServer,
-} from './room.shared';
+} from "./room.shared";
 
 //
 //
@@ -65,7 +65,7 @@ export const init = (): { model: Model } => {
       users: {},
       profiles: {},
       requests: {},
-      modal: 'none',
+      modal: "none",
       previewUserId: null,
     },
   };
@@ -112,50 +112,50 @@ export const update = ({
     },
   };
   switch (msg.t) {
-    case 'clicked-room': {
+    case "clicked-room": {
       return {
         model,
-        cmd: Route.push({ t: 'room', c: { t: 'room', roomId: msg.roomId } }),
+        cmd: Route.push({ t: "room", c: { t: "room", roomId: msg.roomId } }),
       };
     }
 
-    case 'modal-closed': {
-      return { model: { ...model, modal: 'none' } };
+    case "modal-closed": {
+      return { model: { ...model, modal: "none" } };
     }
 
-    case 'modal-open': {
+    case "modal-open": {
       return { model: { ...model, modal: msg.c } };
     }
 
-    case 'clicked-user-link': {
+    case "clicked-user-link": {
       return {
-        model: { ...model, modal: 'none' },
+        model: { ...model, modal: "none" },
         cmd: Route.push({
-          t: 'profile',
-          c: { t: 'profile', userId: msg.userId },
+          t: "profile",
+          c: { t: "profile", userId: msg.userId },
         }),
       };
     }
 
-    case 'clicked-user': {
+    case "clicked-user": {
       return {
         model: {
           ...model,
           previewUserId: msg.userId,
-          modal: 'user-preview',
+          modal: "user-preview",
         },
       };
     }
 
-    case 'list':
-    case 'create':
-    case 'join':
-    case 'leave':
-    case 'destroy':
-    case 'input-game': {
+    case "list":
+    case "create":
+    case "join":
+    case "leave":
+    case "destroy":
+    case "input-game": {
       const routeCmd =
-        msg.t === 'create'
-          ? Route.push({ t: 'room', c: { t: 'room', roomId: msg.roomId } })
+        msg.t === "create"
+          ? Route.push({ t: "room", c: { t: "room", roomId: msg.roomId } })
           : Cmd.None;
 
       return {
@@ -173,7 +173,7 @@ export const update = ({
       };
     }
 
-    case 'game': {
+    case "game": {
       const user = model.users[ctx.currentUserId];
 
       if (!user) {
@@ -203,7 +203,7 @@ export const update = ({
         ctx: roomCtx,
         sendToServer: (msg) =>
           sendToServer({
-            t: 'game',
+            t: "game",
             c: msg,
             profile: ctx.profiles[ctx.currentUserId],
           }),
@@ -221,8 +221,8 @@ export const update = ({
 
       return {
         model: modelNew,
-        cmd: Cmd.tag_('game', updated.cmd),
-        msgs: AppMsg.tag('game', updated.msgs),
+        cmd: Cmd.tag_("game", updated.cmd),
+        msgs: AppMsg.tag("game", updated.msgs),
       };
     }
 
@@ -254,7 +254,7 @@ export const updateFromServer = ({
     },
   };
   switch (msg.t) {
-    case 'game': {
+    case "game": {
       const user = model.users[ctx.currentUserId];
 
       if (!user) {
@@ -282,7 +282,7 @@ export const updateFromServer = ({
         },
         sendToServer: (msg) =>
           sendToServer({
-            t: 'game',
+            t: "game",
             c: msg,
             profile: ctx.profiles[ctx.currentUserId],
           }),
@@ -300,18 +300,18 @@ export const updateFromServer = ({
 
       return {
         model: modelNew,
-        cmd: Cmd.tag_('game', updated.cmd),
+        cmd: Cmd.tag_("game", updated.cmd),
         msgs: updated.msgs,
       };
     }
 
-    case 'list':
-    case 'create':
-    case 'input-game': {
+    case "list":
+    case "create":
+    case "input-game": {
       return updateResponse({ ctx, sendToServer, msg, model });
     }
 
-    case 'destroy': {
+    case "destroy": {
       const handled = updateResponse({ ctx, sendToServer, msg, model });
 
       const user = model.users[ctx.currentUserId];
@@ -336,10 +336,10 @@ export const updateFromServer = ({
       };
     }
 
-    case 'leave': {
+    case "leave": {
       const handled = updateResponse({ ctx, sendToServer, msg, model });
 
-      if (msg.result.t === 'err') {
+      if (msg.result.t === "err") {
         return handled;
       }
 
@@ -348,16 +348,16 @@ export const updateFromServer = ({
       };
     }
 
-    case 'join': {
+    case "join": {
       const handled = updateResponse({ ctx, sendToServer, msg, model });
 
-      if (msg.result.t === 'err') {
+      if (msg.result.t === "err") {
         return handled;
       }
 
       const routeCmd =
         msg.userId === ctx.currentUserId
-          ? Route.push({ t: 'room', c: { t: 'room', roomId: msg.roomId } })
+          ? Route.push({ t: "room", c: { t: "room", roomId: msg.roomId } })
           : Cmd.None;
 
       return {
@@ -381,14 +381,14 @@ export const updateFromApp = ({
   cmd?: Cmd<Msg>;
 } => {
   switch (msg.t) {
-    case 'route-changed': {
-      if (msg.route.t !== 'room') {
+    case "route-changed": {
+      if (msg.route.t !== "room") {
         return { model };
       }
 
       switch (msg.route.c.t) {
-        case 'room':
-        case 'room-list': {
+        case "room":
+        case "room-list": {
           return updateListRooms({
             model,
             initiatorMsg: msg,
@@ -404,7 +404,7 @@ export const updateFromApp = ({
       }
     }
 
-    case 'wire-connected': {
+    case "wire-connected": {
       return updateListRooms({ model, initiatorMsg: msg, sendToServer });
     }
 
@@ -426,7 +426,7 @@ const updateListRooms = ({
   initiatorMsg: unknown;
   sendToServer: (m: ToServer) => Cmd;
 }) => {
-  if (model.requests?.list?.t === 'loading') {
+  if (model.requests?.list?.t === "loading") {
     return { model };
   }
   return {
@@ -435,7 +435,7 @@ const updateListRooms = ({
       requests: { ...model.requests, list: RemoteResult.Loading },
     },
     cmd: sendToServer({
-      t: 'list',
+      t: "list",
       initiatorMsg,
     }),
   };
@@ -455,7 +455,7 @@ const updateResponse = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (msg.result.t === 'err') {
+  if (msg.result.t === "err") {
     return {
       model: {
         ...model,
@@ -480,7 +480,7 @@ const updateResponse = ({
   return {
     model: {
       ...merged.model,
-      requests: { ...merged.model.requests, [msg.t]: RemoteResult.Ok('none') },
+      requests: { ...merged.model.requests, [msg.t]: RemoteResult.Ok("none") },
     },
     cmd: merged.cmd,
   };
@@ -501,7 +501,7 @@ const mergeWithServer = ({
   cmd: Cmd<ClientMsg>;
 } => {
   const gamesNew = Object.entries(serverModel.games).reduce<
-    [ClientModel['games'], Cmd<ClientMsg>]
+    [ClientModel["games"], Cmd<ClientMsg>]
   >(
     (gamesNew, [roomId, backendGame]) => {
       if (!RoomId.is(roomId)) {
@@ -515,7 +515,7 @@ const mergeWithServer = ({
           ctx,
           serverModel: backendGame,
           clientModel: frontendGame,
-          sendToServer: (msg) => sendToServer({ t: 'game', c: msg }),
+          sendToServer: (msg) => sendToServer({ t: "game", c: msg }),
         });
 
         return [
@@ -527,7 +527,7 @@ const mergeWithServer = ({
             gamesNew[1],
             p(
               merged[1],
-              Cmd.map((m): Msg => ({ t: 'game', c: m }))
+              Cmd.map((m): Msg => ({ t: "game", c: m }))
             ),
           ]),
         ];
@@ -542,7 +542,7 @@ const mergeWithServer = ({
         ctx,
         serverModel: backendGame,
         clientModel: initial[0],
-        sendToServer: (msg) => sendToServer({ t: 'game', c: msg }),
+        sendToServer: (msg) => sendToServer({ t: "game", c: msg }),
       });
 
       return [
@@ -554,11 +554,11 @@ const mergeWithServer = ({
           gamesNew[1],
           p(
             initial[1],
-            Cmd.map((msg) => ({ t: 'game', c: msg }))
+            Cmd.map((msg) => ({ t: "game", c: msg }))
           ),
           p(
             merged[1],
-            Cmd.map((msg) => ({ t: 'game', c: msg }))
+            Cmd.map((msg) => ({ t: "game", c: msg }))
           ),
         ]),
       ];
@@ -606,7 +606,7 @@ export const subscriptions = (ctx: Ctx, model: Model): Sub<Msg> => {
 
   return p(
     Game.subscriptions(`room/${user.roomId}`, ctx, game),
-    Sub.map((msg) => ({ t: 'game', c: msg }))
+    Sub.map((msg) => ({ t: "game", c: msg }))
   );
 };
 
@@ -641,7 +641,7 @@ export const View = ({
     },
   };
 
-  if (route.t === 'room') {
+  if (route.t === "room") {
     return (
       <ViewRoomScreen
         roomId={route.roomId}
@@ -676,44 +676,41 @@ const ViewRoomScreen = ({
     <FillBox>
       <ViewPage roomId={roomId} ctx={ctx} $send={$send} model={model} />
       <Drawer
-        open={model.modal === 'users'}
-        onClose={() => $send({ t: 'modal-closed' })}
-        anchor="bottom"
-      >
+        open={model.modal === "users"}
+        onClose={() => $send({ t: "modal-closed" })}
+        anchor="bottom">
         {room && (
           <ViewRoomPeople room={room} ctx={ctx} $send={$send} model={model} />
         )}
       </Drawer>
 
       <Drawer
-        open={model.modal === 'user-preview'}
-        onClose={() => $send({ t: 'modal-closed' })}
-        anchor="bottom"
-      >
+        open={model.modal === "user-preview"}
+        onClose={() => $send({ t: "modal-closed" })}
+        anchor="bottom">
         {model.previewUserId && (
           <ButtonBase
             sx={{
-              width: '100%',
-              display: 'flex',
-              flexDirection: 'column',
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
               p: 2,
             }}
             onClick={() => {
               if (model.previewUserId) {
-                $send({ t: 'clicked-user-link', userId: model.previewUserId });
+                $send({ t: "clicked-user-link", userId: model.previewUserId });
               }
-            }}
-          >
+            }}>
             <Avatar
               src={ctx.profiles[model.previewUserId]?.avatarUrl}
               sx={{ width: 80, height: 80, marginBottom: 1 }}
             />
             <Typography variant="h6">
-              @{ctx.profiles[model.previewUserId]?.username ?? '...'}
+              @{ctx.profiles[model.previewUserId]?.username ?? "..."}
             </Typography>
           </ButtonBase>
         )}
-        <Box sx={{ px: 2, paddingBottom: 4, width: '100%' }}>
+        <Box sx={{ px: 2, paddingBottom: 4, width: "100%" }}>
           <Button variant="outlined" fullWidth startIcon={<Icons.Send />}>
             Direct Message
           </Button>
@@ -735,9 +732,9 @@ const ViewPage = ({
   $send: (m: Msg) => void;
 }) => {
   if (
-    model.requests.list?.t === 'loading' ||
-    model.requests.create?.t === 'loading' ||
-    model.requests.join?.t === 'loading'
+    model.requests.list?.t === "loading" ||
+    model.requests.create?.t === "loading" ||
+    model.requests.join?.t === "loading"
   ) {
     return (
       <div className="w-full h-full grid place-items-center">
@@ -770,7 +767,7 @@ const ViewPage = ({
           <ActionButton
             label="Home"
             icon={<IconHome />}
-            onClick={() => ctx.$push({ t: 'room', c: { t: 'room-list' } })}
+            onClick={() => ctx.$push({ t: "room", c: { t: "room-list" } })}
           />
         </div>
 
@@ -778,7 +775,7 @@ const ViewPage = ({
           <ActionButton
             label="People"
             icon={<IconUserGroup />}
-            onClick={() => $send({ t: 'modal-open', c: 'users' })}
+            onClick={() => $send({ t: "modal-open", c: "users" })}
           />
         </div>
 
@@ -790,13 +787,12 @@ const ViewPage = ({
           size="sm"
           onClick={() => {
             if (room.hostId === ctx.currentUserId) {
-              $send({ t: 'destroy', userId: ctx.currentUserId });
+              $send({ t: "destroy", userId: ctx.currentUserId });
             } else {
-              $send({ t: 'leave', userId: ctx.currentUserId });
+              $send({ t: "leave", userId: ctx.currentUserId });
             }
-          }}
-        >
-          {room.hostId === ctx.currentUserId ? 'End' : 'Leave'}
+          }}>
+          {room.hostId === ctx.currentUserId ? "End" : "Leave"}
         </MyButton>
       </nav>
 
@@ -805,9 +801,9 @@ const ViewPage = ({
           ctx={{
             ...ctx,
             hostId: room.hostId,
-            onQuit: () => $send({ t: 'input-game', gameName: undefined }),
+            onQuit: () => $send({ t: "input-game", gameName: undefined }),
           }}
-          $send={(msg) => $send({ t: 'game', c: msg })}
+          $send={(msg) => $send({ t: "game", c: msg })}
           model={game}
         />
       ) : (
@@ -822,11 +818,10 @@ export const ViewRoomNotFound = ({ ctx }: { ctx: ViewCtx }) => {
     <div className="flex flex-col items-center justify-center flex-1 gap-4">
       <p className="text-2xl text-center">Room not found</p>
       <MyButton
-        onClick={() => ctx.$push({ t: 'room', c: { t: 'room-list' } })}
+        onClick={() => ctx.$push({ t: "room", c: { t: "room-list" } })}
         size="lg"
         variant="contained"
-        color="primary"
-      >
+        color="primary">
         <IconHome />
         Go Home
       </MyButton>
@@ -847,29 +842,37 @@ export const ViewRoomListScreen = ({
   const currentRoom = user ? model.rooms[user.roomId] : undefined;
   const rooms = Object.values(model.rooms);
 
-  if (model.requests.list?.t === 'loading') {
-    return (
-      <div className="w-full h-full flex flex-col">
-        <TopBar title="Rooms" />
-        <div className="flex-1 flex items-center justify-center">
-          <IconSpinner className="w-12 h-12 animate-spin" />
-        </div>
-      </div>
-    );
-  }
+  const isLoading = model.requests.list?.t === "loading";
 
   return (
     <div className="flex-1 flex flex-col w-full h-full max-h-full overflow-hidden">
-      <TopBar title="Rooms" />
+      <div>
+        <TopBar title="Rooms" />
+      </div>
 
-      {rooms.length === 0 ? (
-        <div className="flex-1 flex flex-col items-center justify-center opacity-60">
-          <IconGamepad className="w-12 h-12" />
-          <p className="text-lg">No active rooms</p>
-        </div>
-      ) : (
-        <div className="flex-1 overflow-y-auto pb-4">
-          <div className="flex flex-col gap-4 px-5">
+      <div className="flex flex-col flex-1 w-full">
+        {!isLoading && rooms.length === 0 && (
+          <div className="flex-1 flex flex-col items-center justify-center opacity-60">
+            <IconGamepad className="w-12 h-12" />
+            <p className="text-lg">No active rooms</p>
+          </div>
+        )}
+
+        {isLoading && (
+          <div className="flex-1 flex flex-col gap-4 px-5 overflow-hidden">
+            {[1, 2, 3].map((i) => {
+              return (
+                <div
+                  key={i}
+                  className="w-full aspect-video rounded-lg bg-white/20 animate-pulse"
+                />
+              );
+            })}
+          </div>
+        )}
+
+        {rooms.length > 0 && (
+          <div className="flex-1 flex flex-col gap-4 px-5 overflow-y-auto ">
             {rooms.map((room) => {
               const host = ctx.profiles[room.hostId];
               const users = Object.values(model.users).flatMap((user) => {
@@ -887,8 +890,8 @@ export const ViewRoomListScreen = ({
               return (
                 <ViewRoomCard
                   host={{
-                    username: host?.username ?? '...',
-                    avatarUrl: host?.avatarUrl ?? '',
+                    username: host?.username ?? "...",
+                    avatarUrl: host?.avatarUrl ?? "",
                   }}
                   key={room.roomId}
                   isCurrentRoom={currentRoomId === room.roomId}
@@ -896,16 +899,16 @@ export const ViewRoomListScreen = ({
                   gameName={gameName}
                   onClick={() => {
                     ctx.$push({
-                      t: 'room',
-                      c: { t: 'room', roomId: room.roomId },
+                      t: "room",
+                      c: { t: "room", roomId: room.roomId },
                     });
                   }}
                 />
               );
             })}
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {!currentRoom && (
         <div className="w-full p-4">
@@ -913,8 +916,7 @@ export const ViewRoomListScreen = ({
             size="lg"
             className="w-full"
             color="primary"
-            onClick={() => $send({ t: 'create', roomId: RoomId.generate() })}
-          >
+            onClick={() => $send({ t: "create", roomId: RoomId.generate() })}>
             Create Room
           </MyButton>
         </div>
@@ -941,8 +943,7 @@ const ViewRoomCard = ({
   return (
     <button
       onClick={onClick}
-      className="bg-blue-500 rounded-md flex flex-col gap-3 p-4 active:opacity-70"
-    >
+      className="bg-blue-500 rounded-md flex flex-col gap-3 p-4 active:opacity-70">
       <div className="w-full flex items-center justify-start">
         <p className="block uppercase text-left font-bold animate-pulse flex-1">
           LIVE
@@ -975,7 +976,7 @@ const ViewRoomCard = ({
 
 export const formatUsername = (username: string) => {
   if (username.length > 12) {
-    return username.slice(0, 12) + '...';
+    return username.slice(0, 12) + "...";
   }
   return username;
 };
@@ -983,9 +984,9 @@ export const formatUsername = (username: string) => {
 export const formatUsernames = (usernames: string[]) => {
   const formatted = usernames.map(formatUsername);
   if (formatted.length > 3) {
-    return `${formatted.slice(0, 3).join(', ')} & ${formatted.length - 3} more`;
+    return `${formatted.slice(0, 3).join(", ")} & ${formatted.length - 3} more`;
   }
-  return formatted.join(', ');
+  return formatted.join(", ");
 };
 
 export const ViewNotInGame = ({
@@ -1013,9 +1014,8 @@ export const ViewNotInGame = ({
         <div key={gameName}>
           <div className="px-2">
             <button
-              onClick={() => $send({ t: 'input-game', gameName })}
-              className="flex rounded-lg overflow-hidden focus:outline-none focus:ring focus:ring-primary"
-            >
+              onClick={() => $send({ t: "input-game", gameName })}
+              className="flex rounded-lg overflow-hidden focus:outline-none focus:ring focus:ring-primary">
               {viewCoverArt(gameName)}
             </button>
           </div>
@@ -1041,7 +1041,7 @@ export const ViewNotInRoom = ({
 }) => {
   const usersInRoom = toRoomUsers(room.roomId, model);
   const host = ctx.profiles[room.hostId];
-  const title = `${host?.username ?? '...'}'s room`;
+  const title = `${host?.username ?? "..."}'s room`;
   const game = model.games[room.roomId];
   const theme = useTheme();
   return (
@@ -1049,7 +1049,7 @@ export const ViewNotInRoom = ({
       <TopBar
         left={
           <TopBarBackButton
-            onClick={() => ctx.$push({ t: 'room', c: { t: 'room-list' } })}
+            onClick={() => ctx.$push({ t: "room", c: { t: "room-list" } })}
           />
         }
         title={title}
@@ -1058,64 +1058,60 @@ export const ViewNotInRoom = ({
       <Box
         sx={{
           flex: 1,
-          overflow: 'hidden',
-        }}
-      >
+          overflow: "hidden",
+        }}>
         <Box
           sx={{
-            display: 'flex',
-            alignItems: 'center',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            width: '100%',
-            height: '33.3333%',
-            maxHeight: '33.3333%',
-          }}
-        >
+            display: "flex",
+            alignItems: "center",
+            flexDirection: "column",
+            justifyContent: "center",
+            width: "100%",
+            height: "33.3333%",
+            maxHeight: "33.3333%",
+          }}>
           <Box
             sx={{
               width: 72,
               height: 72,
               mb: 1,
-              overflow: 'hidden',
+              overflow: "hidden",
               borderRadius: 1,
               border: `1px solid ${theme.palette.divider}`,
-              backgroundColor: 'background.paper',
-            }}
-          >
+              backgroundColor: "background.paper",
+            }}>
             {game ? (
               viewCoverArt(game.t)
             ) : (
               <Icons.SportsEsports
                 sx={{
-                  color: 'text.secondary',
-                  width: '100%',
-                  height: '100%',
+                  color: "text.secondary",
+                  width: "100%",
+                  height: "100%",
                 }}
               />
             )}
           </Box>
           <Typography variant="h4" color="text.secondary">
-            {game ? gameNameToString(game.t) : '...'}
+            {game ? gameNameToString(game.t) : "..."}
           </Typography>
         </Box>
 
         <Divider />
         <Box
           sx={{
-            width: '100%',
-            height: '66.6666%',
-            maxHeight: '66.6666%',
-            overflowY: 'scroll',
-          }}
-        >
+            width: "100%",
+            height: "66.6666%",
+            maxHeight: "66.6666%",
+            overflowY: "scroll",
+          }}>
           <ViewRoomUserListItem
             isHost
             key={room.hostId}
             userId={room.hostId}
             ctx={ctx}
             onClick={() => {
-              $send({ t: 'clicked-user', userId: room.hostId });
+              $send({ t: "clicked-user", userId: room.hostId });
             }}
           />
 
@@ -1129,7 +1125,7 @@ export const ViewNotInRoom = ({
                 userId={user.userId}
                 ctx={ctx}
                 onClick={() => {
-                  $send({ t: 'clicked-user', userId: user.userId });
+                  $send({ t: "clicked-user", userId: user.userId });
                 }}
               />
             );
@@ -1137,20 +1133,19 @@ export const ViewNotInRoom = ({
         </Box>
       </Box>
 
-      <Box sx={{ display: 'flex', gap: 2, width: '100%', padding: 2 }}>
+      <Box sx={{ display: "flex", gap: 2, width: "100%", padding: 2 }}>
         <Button
           fullWidth
           endIcon={<Icons.ChevronRight />}
           variant="contained"
-          loading={model.requests['join']?.t === 'loading'}
+          loading={model.requests["join"]?.t === "loading"}
           onClick={() => {
             $send({
-              t: 'join',
+              t: "join",
               userId: ctx.currentUserId,
               roomId: room.roomId,
             });
-          }}
-        >
+          }}>
           Join Room
         </Button>
       </Box>
@@ -1175,15 +1170,14 @@ const ViewRoomUserListItem = ({
       sx={{
         px: 2,
         py: 1,
-        display: 'flex',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        width: '100%',
-      }}
-    >
-      <Avatar sx={{ mr: 1 }} src={ctx.profiles[userId]?.avatarUrl ?? ''} />
+        display: "flex",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        width: "100%",
+      }}>
+      <Avatar sx={{ mr: 1 }} src={ctx.profiles[userId]?.avatarUrl ?? ""} />
       <Typography align="left">
-        {ctx.profiles[userId]?.username ?? '...'}
+        {ctx.profiles[userId]?.username ?? "..."}
       </Typography>
       {ctx.currentUserId === userId && <Chip sx={{ ml: 1 }} label="You" />}
       {isHost && <Chip sx={{ ml: 1 }} label="Host" />}
@@ -1193,14 +1187,13 @@ const ViewRoomUserListItem = ({
 
 export const ViewGameArtCard = ({ gameName }: { gameName: GameName }) => {
   return (
-    <Paper variant="outlined" sx={{ overflow: 'hidden', width: '100%' }}>
+    <Paper variant="outlined" sx={{ overflow: "hidden", width: "100%" }}>
       {viewCoverArt(gameName)}
 
       <Typography
         variant="subtitle2"
         noWrap
-        sx={{ width: '100%', px: 1, py: 0.5 }}
-      >
+        sx={{ width: "100%", px: 1, py: 0.5 }}>
         {gameNameToString(gameName)}
       </Typography>
     </Paper>
@@ -1268,7 +1261,7 @@ const ViewRoomPeople = ({
               key={user.userId}
               userId={user.userId}
               ctx={ctx}
-              onClick={() => $send({ t: 'clicked-user', userId: user.userId })}
+              onClick={() => $send({ t: "clicked-user", userId: user.userId })}
             />
           );
         })}
@@ -1316,13 +1309,12 @@ export const ViewBottomBar = ({
       <button
         className="flex-1 flex items-center overflow-hidden"
         onClick={() => {
-          ctx.$push({ t: 'room', c: { t: 'room', roomId: room.roomId } });
-        }}
-      >
+          ctx.$push({ t: "room", c: { t: "room", roomId: room.roomId } });
+        }}>
         <div className="p-2 mr-2">
           {!game && (
             <MyAvatar
-              src={hostProfile?.avatarUrl ?? ''}
+              src={hostProfile?.avatarUrl ?? ""}
               alt="Host Avatar"
               className="w-12 h-12"
             />
@@ -1336,7 +1328,7 @@ export const ViewBottomBar = ({
 
         <div className="overflow-hidden flex-1 flex flex-col gap-1">
           <p className="text-left">
-            {hostProfile ? `${hostProfile.username}'s room` : '...'}
+            {hostProfile ? `${hostProfile.username}'s room` : "..."}
           </p>
           <p className="text-xs text-left text-neutral-300">
             {userCount} in room
@@ -1347,13 +1339,12 @@ export const ViewBottomBar = ({
       <button
         onClick={() => {
           if (ctx.currentUserId === room.hostId) {
-            $send({ t: 'destroy', userId: ctx.currentUserId });
+            $send({ t: "destroy", userId: ctx.currentUserId });
             return;
           }
-          $send({ t: 'leave', userId: ctx.currentUserId });
+          $send({ t: "leave", userId: ctx.currentUserId });
         }}
-        className="mr-4"
-      >
+        className="mr-4">
         <IconXMark className="w-8 h-8" />
       </button>
     </div>

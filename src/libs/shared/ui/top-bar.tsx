@@ -1,5 +1,5 @@
-import { IconChevronLeft } from './icon';
-import { IconButton } from './icon-button';
+import { IconChevronLeft } from "./icon";
+import { IconButton } from "./icon-button";
 
 export const TopBar = ({
   left,
