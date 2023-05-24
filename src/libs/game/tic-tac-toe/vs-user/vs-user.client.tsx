@@ -127,7 +127,7 @@ export const updateFromServer = (
 ): [Model] => {
   switch (msg[0]) {
     case "player-left": {
-      const modelNew = mergeWithServer(model, msg[1]);
+      const modelNew = syncWithServer(model, msg[1]);
       return [modelNew];
     }
 
@@ -149,7 +149,7 @@ export const updateFromServer = (
         return [model];
       }
 
-      const modelNew = mergeWithServer(model, res[1].value);
+      const modelNew = syncWithServer(model, res[1].value);
 
       return [{ ...modelNew, openedModal: "none" }];
     }
@@ -160,7 +160,7 @@ export const updateFromServer = (
         return [model];
       }
 
-      const modelNew = mergeWithServer(model, msg[1].value);
+      const modelNew = syncWithServer(model, msg[1].value);
 
       return [modelNew];
     }
@@ -171,7 +171,7 @@ export const updateFromServer = (
   }
 };
 
-export const mergeWithServer = (
+export const syncWithServer = (
   clientModel: ClientModel,
   serverModel: ServerModel
 ): ClientModel => {
@@ -1062,8 +1062,6 @@ const ViewPlayerSetupSlot = ({
   $send: (msg: Msg) => void;
   sx?: UI.Sx;
 }) => {
-
-
   if (userId === "none") {
     return (
       <UI.Box

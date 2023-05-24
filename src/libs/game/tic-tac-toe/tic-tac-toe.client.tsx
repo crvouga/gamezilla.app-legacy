@@ -5,19 +5,19 @@ import {
   RoomViewCtx,
   ViewCtx,
   ViewMainMenu,
-} from '@gamezilla/shared/client';
-import { Cmd, Sub } from '@gamezilla/shared/core';
-import { IconComputerDesktop, IconUsers } from '@gamezilla/shared/ui';
+} from "@gamezilla/shared/client";
+import { Cmd, Sub } from "@gamezilla/shared/core";
+import { IconComputerDesktop, IconUsers } from "@gamezilla/shared/ui";
 import {
   ClientModel,
   ClientMsg,
   ServerModel,
   ToClient,
   ToServer,
-} from './tic-tac-toe.shared';
-import { viewCoverArt } from './tic-tic-toe/tic-tac-toe-ui';
-import * as VsBot from './vs-bot/vs-bot.client';
-import * as VsUser from './vs-user/vs-user.client';
+} from "./tic-tac-toe.shared";
+import { viewCoverArt } from "./tic-tic-toe/tic-tac-toe-ui";
+import * as VsBot from "./vs-bot/vs-bot.client";
+import * as VsUser from "./vs-user/vs-user.client";
 
 //
 //
@@ -30,7 +30,7 @@ import * as VsUser from './vs-user/vs-user.client';
 export type Model = ClientModel;
 
 export const init: Model = {
-  t: 'none',
+  t: "none",
 };
 
 //
@@ -57,36 +57,36 @@ export const update = ({
   cmd?: Cmd<Msg>;
   msgs?: AppMsg[];
 } => {
-  if (msg.t === 'input-mode') {
+  if (msg.t === "input-mode") {
     return { model, cmd: sendToServer(msg) };
   }
 
-  if (msg.t === 'vs-user' && model.t === 'vs-user') {
+  if (msg.t === "vs-user" && model.t === "vs-user") {
     const updated = VsUser.update(
       {
-        sendToServer: (c) => sendToServer({ t: 'vs-user', c }),
+        sendToServer: (c) => sendToServer({ t: "vs-user", c }),
       },
       msg.c,
       model.c
     );
     return {
-      model: { t: 'vs-user', c: updated[0] },
-      cmd: Cmd.tag_('vs-user', updated[1]),
+      model: { t: "vs-user", c: updated[0] },
+      cmd: Cmd.tag_("vs-user", updated[1]),
     };
   }
 
-  if (msg.t === 'vs-bot' && model.t === 'vs-bot') {
+  if (msg.t === "vs-bot" && model.t === "vs-bot") {
     const updated = VsBot.update({
       ctx,
       msg: msg.c,
       model: model.c,
-      sendToServer: (c) => sendToServer({ t: 'vs-bot', c }),
+      sendToServer: (c) => sendToServer({ t: "vs-bot", c }),
     });
 
     return {
-      model: { t: 'vs-bot', c: updated.model },
-      cmd: Cmd.tag_('vs-bot', updated.cmd),
-      msgs: AppMsg.tag('vs-bot', updated.msgs),
+      model: { t: "vs-bot", c: updated.model },
+      cmd: Cmd.tag_("vs-bot", updated.cmd),
+      msgs: AppMsg.tag("vs-bot", updated.msgs),
     };
   }
 
@@ -106,14 +106,14 @@ export const updateFromServer = ({
   cmd?: Cmd<Msg>;
   msgs?: AppMsg[];
 } => {
-  if (msg.t === 'input-mode') {
+  if (msg.t === "input-mode") {
     const { result } = msg;
 
-    if (result.t === 'err') {
+    if (result.t === "err") {
       return { model };
     }
 
-    const modelNew = mergeWithServer({
+    const modelNew = syncWithServer({
       ctx,
       clientModel: model,
       serverModel: result.value,
@@ -122,22 +122,22 @@ export const updateFromServer = ({
     return { model: modelNew };
   }
 
-  if (msg.t === 'vs-user' && model.t === 'vs-user') {
+  if (msg.t === "vs-user" && model.t === "vs-user") {
     const updated = VsUser.updateFromServer({ ctx }, msg.c, model.c);
     return {
-      model: { t: 'vs-user', c: updated[0] },
+      model: { t: "vs-user", c: updated[0] },
     };
   }
 
-  if (msg.t === 'vs-bot' && model.t === 'vs-bot') {
+  if (msg.t === "vs-bot" && model.t === "vs-bot") {
     const updated = VsBot.updateFromServer({
       ctx,
       msg: msg.c,
       model: model.c,
     });
     return {
-      model: { t: 'vs-bot', c: updated.model },
-      cmd: Cmd.tag_('vs-bot', updated.cmd),
+      model: { t: "vs-bot", c: updated.model },
+      cmd: Cmd.tag_("vs-bot", updated.cmd),
       msgs: updated.msgs,
     };
   }
@@ -145,7 +145,7 @@ export const updateFromServer = ({
   return { model };
 };
 
-export const mergeWithServer = ({
+export const syncWithServer = ({
   clientModel,
   serverModel,
   ctx,
@@ -154,27 +154,27 @@ export const mergeWithServer = ({
   clientModel: ClientModel;
   serverModel: ServerModel;
 }): ClientModel => {
-  if (serverModel.t === 'none') {
-    return { t: 'none' };
+  if (serverModel.t === "none") {
+    return { t: "none" };
   }
 
-  if (serverModel.t === 'vs-user') {
+  if (serverModel.t === "vs-user") {
     const clientModelChild =
-      clientModel.t === 'vs-user' ? clientModel.c : VsUser.init;
+      clientModel.t === "vs-user" ? clientModel.c : VsUser.init;
 
     return {
-      t: 'vs-user',
-      c: VsUser.mergeWithServer(clientModelChild, serverModel.c),
+      t: "vs-user",
+      c: VsUser.syncWithServer(clientModelChild, serverModel.c),
     };
   }
 
-  if (serverModel.t === 'vs-bot') {
+  if (serverModel.t === "vs-bot") {
     const clientModelChild =
-      clientModel.t === 'vs-bot' ? clientModel.c : VsBot.init({ userId: null });
+      clientModel.t === "vs-bot" ? clientModel.c : VsBot.init({ userId: null });
 
     return {
-      t: 'vs-bot',
-      c: VsBot.mergeWithServer({
+      t: "vs-bot",
+      c: VsBot.syncWithServer({
         now: ctx.now,
         client: clientModelChild,
         server: serverModel.c,
@@ -216,9 +216,9 @@ export const View = ({
   $send: (msg: Msg) => void;
   gameRoomCtx: RoomViewCtx;
 }) => {
-  const onQuit = () => $send({ t: 'input-mode', mode: 'none' });
+  const onQuit = () => $send({ t: "input-mode", mode: "none" });
 
-  if (model.t === 'none') {
+  if (model.t === "none") {
     return (
       <ViewMainMenu
         title="Tic-Tac-Toe"
@@ -226,38 +226,38 @@ export const View = ({
         coverArt={viewCoverArt()}
         buttons={[
           {
-            label: 'Play Friend',
+            label: "Play Friend",
             icon: <IconUsers />,
-            onClick: () => $send({ t: 'input-mode', mode: 'vs-user' }),
+            onClick: () => $send({ t: "input-mode", mode: "vs-user" }),
           },
           {
-            label: 'Play Computer',
+            label: "Play Computer",
             icon: <IconComputerDesktop />,
-            onClick: () => $send({ t: 'input-mode', mode: 'vs-bot' }),
+            onClick: () => $send({ t: "input-mode", mode: "vs-bot" }),
           },
         ]}
       />
     );
   }
 
-  if (model.t === 'vs-user') {
+  if (model.t === "vs-user") {
     return (
       <VsUser.View
         onCloseGame={onQuit}
         ctx={ctx}
         model={model.c}
-        $send={(c) => $send({ t: 'vs-user', c })}
+        $send={(c) => $send({ t: "vs-user", c })}
       />
     );
   }
 
-  if (model.t === 'vs-bot') {
+  if (model.t === "vs-bot") {
     return (
       <VsBot.View
         goBack={onQuit}
         ctx={ctx}
         model={model.c}
-        $send={(c) => $send({ t: 'vs-bot', c })}
+        $send={(c) => $send({ t: "vs-bot", c })}
       />
     );
   }

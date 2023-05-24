@@ -2,16 +2,16 @@ import {
   RoomCtx,
   RoomViewCtx,
   ViewBottomButtonBar,
-} from '@gamezilla/shared/client';
-import { Cmd } from '@gamezilla/shared/core';
+} from "@gamezilla/shared/client";
+import { Cmd } from "@gamezilla/shared/core";
 import {
   IconArrowLeftOnRect,
   IconPenToSquare,
   IconPlay,
   cn,
-} from '@gamezilla/shared/ui';
-import { Color, groupIdToColor } from '../flow';
-import { FlowGridPlayUI, FlowGridUI } from '../flow-grid';
+} from "@gamezilla/shared/ui";
+import { Color, groupIdToColor } from "../flow";
+import { FlowGridPlayUI, FlowGridUI } from "../flow-grid";
 import {
   ClientModel,
   ClientMsg,
@@ -20,7 +20,7 @@ import {
   ToServer,
   handle,
   initShared,
-} from './puzzle-builder.shared';
+} from "./puzzle-builder.shared";
 
 type Model = ClientModel;
 
@@ -44,7 +44,7 @@ export const update = ({
 } => {
   const handled = handle({ ctx, msg, model });
 
-  const modelNew = handled.t === 'ok' ? { ...model, ...handled.value } : model;
+  const modelNew = handled.t === "ok" ? { ...model, ...handled.value } : model;
 
   return { model: modelNew, cmd: sendToServer(msg) };
 };
@@ -61,7 +61,7 @@ export const updateFromServer = ({
   return { model };
 };
 
-export const mergeWithServer = ({
+export const syncWithServer = ({
   client,
   server,
 }: {
@@ -88,7 +88,7 @@ export const View = ({
   onExit: () => void;
   ctx: RoomViewCtx;
 }) => {
-  if (model.mode === 'play') {
+  if (model.mode === "play") {
     return (
       <div className="w-full h-full flex flex-col items-center justify-center">
         <div className="w-full p-2 flex gap-2 items-center justify-center text-xl bg-blue-500 text-white">
@@ -106,15 +106,15 @@ export const View = ({
         <ViewBottomButtonBar
           actions={[
             {
-              label: 'Exit Builder',
+              label: "Exit Builder",
               icon: <IconArrowLeftOnRect />,
               onClick: onExit,
             },
             {
-              label: 'Edit Mode',
+              label: "Edit Mode",
               icon: <IconPenToSquare />,
               onClick: () => {
-                $send({ t: 'input-mode', mode: 'edit' });
+                $send({ t: "input-mode", mode: "edit" });
               },
             },
           ]}
@@ -137,14 +137,14 @@ export const View = ({
           }}
           onPressDown={(nodeId) => {
             $send({
-              t: 'pressed-down-node',
+              t: "pressed-down-node",
               nodeId,
             });
           }}
         />
 
         <div className="flex flex-col items-center px-4 snap-x w-full overflow-x-auto">
-          <svg viewBox="-1 -1 2 2" className={cn('w-12 h-12')}>
+          <svg viewBox="-1 -1 2 2" className={cn("w-12 h-12")}>
             <circle
               cx={0}
               cy={0}
@@ -183,15 +183,15 @@ export const View = ({
       <ViewBottomButtonBar
         actions={[
           {
-            label: 'Exit Builder',
+            label: "Exit Builder",
             icon: <IconArrowLeftOnRect />,
             onClick: onExit,
           },
           {
-            label: 'Play Mode',
+            label: "Play Mode",
             icon: <IconPlay />,
             onClick: () => {
-              $send({ t: 'input-mode', mode: 'play' });
+              $send({ t: "input-mode", mode: "play" });
             },
           },
         ]}

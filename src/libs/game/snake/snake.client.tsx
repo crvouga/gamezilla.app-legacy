@@ -1,4 +1,4 @@
-import { RoomCtx, Route, ViewCtx } from '@gamezilla/shared/client';
+import { RoomCtx, Route, ViewCtx } from "@gamezilla/shared/client";
 import {
   Cmd,
   Keyboard,
@@ -6,11 +6,11 @@ import {
   Result,
   Sub,
   exhaustive,
-} from '@gamezilla/shared/core';
-import * as UI from '@gamezilla/shared/ui';
-import { useLayoutEffect, useRef } from 'react';
-import { Direction } from './direction';
-import * as Snake from './snake';
+} from "@gamezilla/shared/core";
+import * as UI from "@gamezilla/shared/ui";
+import { useLayoutEffect, useRef } from "react";
+import { Direction } from "./direction";
+import * as Snake from "./snake";
 import {
   ClientModel,
   ClientMsg,
@@ -20,7 +20,7 @@ import {
   ToServer,
   canStartGame,
   initSharedModel,
-} from './snake.shared';
+} from "./snake.shared";
 
 //
 //
@@ -61,11 +61,11 @@ export const update = (
   const model: Model = { ..._model, openedMenuId: Option.None };
 
   switch (msg[0]) {
-    case 'clicked-back':
+    case "clicked-back":
       return [model, Route.back];
 
-    case 'PressedKeyDown': {
-      if (model.gameStatus.type !== 'GameStarted') {
+    case "PressedKeyDown": {
+      if (model.gameStatus.type !== "GameStarted") {
         return [model, Cmd.None];
       }
 
@@ -76,42 +76,42 @@ export const update = (
       const direction = Direction.fromKey(msg[1]);
 
       const changeDirectionCmd =
-        direction.type === 'Some'
+        direction.type === "Some"
           ? sendToServer([
-              'input-direction',
+              "input-direction",
               { userId: ctx.currentUserId, direction: direction.value },
             ])
           : Cmd.None;
 
       const toggleStatusCmd =
-        msg[1] === 'Space'
-          ? sendToServer(['ToggleStatus', { userId: ctx.currentUserId }])
+        msg[1] === "Space"
+          ? sendToServer(["ToggleStatus", { userId: ctx.currentUserId }])
           : Cmd.None;
 
       return [model, Cmd.batch([changeDirectionCmd, toggleStatusCmd])];
     }
 
-    case 'ToggleStatus': {
+    case "ToggleStatus": {
       return [model, sendToServer(msg)];
     }
 
-    case 'InputPlayer': {
+    case "InputPlayer": {
       return [model, sendToServer(msg)];
     }
 
-    case 'input-direction': {
+    case "input-direction": {
       return [model, sendToServer(msg)];
     }
 
-    case 'start-game': {
+    case "start-game": {
       return [model, sendToServer(msg)];
     }
 
-    case 'OpenedMenu': {
+    case "OpenedMenu": {
       return [{ ...model, openedMenuId: Option.Some(msg[1]) }, Cmd.None];
     }
 
-    case 'ClosedMenu': {
+    case "ClosedMenu": {
       return [{ ...model, openedMenuId: Option.None }, Cmd.None];
     }
 
@@ -126,7 +126,7 @@ export const updateFromServer = (
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'tick': {
+    case "tick": {
       const sharedModel = msg[1];
       return [
         {
@@ -137,19 +137,19 @@ export const updateFromServer = (
       ];
     }
 
-    case 'InputDirection_Done': {
+    case "InputDirection_Done": {
       return updateResponse(msg[1], model);
     }
 
-    case 'ToggleStatus_Done': {
+    case "ToggleStatus_Done": {
       return updateResponse(msg[1], model);
     }
 
-    case 'InputPlayer_Done': {
+    case "InputPlayer_Done": {
       return updateResponse(msg[1], model);
     }
 
-    case 'StartGame_Done': {
+    case "StartGame_Done": {
       return updateResponse(msg[1], model);
     }
 
@@ -166,7 +166,7 @@ const updateResponse = <
   result: TResult,
   model: Model
 ): [Model, Cmd<Msg>] => {
-  if (result.t === 'err') {
+  if (result.t === "err") {
     return [model, Cmd.None];
   }
   const sharedModel = result.value;
@@ -182,7 +182,7 @@ const updateResponse = <
 //
 
 export const subscriptions = (_intervalId: string, _model: Model): Sub<Msg> => {
-  return Keyboard.keyDowns<Msg>((key) => ['PressedKeyDown', key]);
+  return Keyboard.keyDowns<Msg>((key) => ["PressedKeyDown", key]);
 };
 
 //
@@ -202,8 +202,8 @@ export const View = ({
   model: Model;
   $send: (msg: Msg) => void;
 }) => {
-  if (model.gameStatus.type === 'GameSetup') {
-    const menuAnchorId = 'playerSlotMenuId';
+  if (model.gameStatus.type === "GameSetup") {
+    const menuAnchorId = "playerSlotMenuId";
     return (
       <UI.FillBox>
         <UI.Typography sx={{ paddingX: 2 }} color="text.secondary">
@@ -212,24 +212,22 @@ export const View = ({
 
         <UI.Box
           sx={{
-            height: '48px',
-            display: 'flex',
-            alignItems: 'center',
-            width: '100%',
-          }}
-        >
-          {model.gameStatus.player.type === 'none' ? (
-            <UI.Box sx={{ padding: 2, width: '100%' }}>
+            height: "48px",
+            display: "flex",
+            alignItems: "center",
+            width: "100%",
+          }}>
+          {model.gameStatus.player.type === "none" ? (
+            <UI.Box sx={{ padding: 2, width: "100%" }}>
               <UI.Button
                 variant="contained"
                 fullWidth
                 onClick={() =>
                   $send([
-                    'InputPlayer',
-                    Option.Some(['User', ctx.currentUserId]),
+                    "InputPlayer",
+                    Option.Some(["User", ctx.currentUserId]),
                   ])
-                }
-              >
+                }>
                 Play as Snake
               </UI.Button>
             </UI.Box>
@@ -237,8 +235,7 @@ export const View = ({
             <>
               <UI.ListItemButton
                 id={menuAnchorId}
-                onClick={() => $send(['OpenedMenu', menuAnchorId])}
-              >
+                onClick={() => $send(["OpenedMenu", menuAnchorId])}>
                 <UI.ListItemAvatar>
                   <UI.Avatar
                     src={
@@ -257,17 +254,15 @@ export const View = ({
               </UI.ListItemButton>
               <UI.Menu
                 open={
-                  model.openedMenuId.type === 'Some' &&
+                  model.openedMenuId.type === "Some" &&
                   model.openedMenuId.value === menuAnchorId
                 }
-                onClose={() => $send(['ClosedMenu'])}
-                anchorEl={document.getElementById(menuAnchorId)}
-              >
+                onClose={() => $send(["ClosedMenu"])}
+                anchorEl={document.getElementById(menuAnchorId)}>
                 <UI.Button
                   size="large"
                   fullWidth
-                  onClick={() => $send(['InputPlayer', Option.None])}
-                >
+                  onClick={() => $send(["InputPlayer", Option.None])}>
                   Stop Playing
                 </UI.Button>
               </UI.Menu>
@@ -283,9 +278,8 @@ export const View = ({
             fullWidth
             disabled={!canStartGame(model)}
             onClick={() => {
-              $send(['start-game']);
-            }}
-          >
+              $send(["start-game"]);
+            }}>
             Start Game
           </UI.Button>
         </UI.Box>
@@ -299,13 +293,12 @@ export const View = ({
       {model.gameStatus.player[1] === ctx.currentUserId && (
         <UI.Box
           sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '100%',
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: "100%",
             paddingBottom: 2,
-          }}
-        >
+          }}>
           {/*  */}
         </UI.Box>
       )}
@@ -365,7 +358,7 @@ export const ViewBoard = ({
 
   useLayoutEffect(() => {
     const canvas = ref.current;
-    const ctx = canvas?.getContext('2d');
+    const ctx = canvas?.getContext("2d");
 
     if (canvas && ctx) {
       const dpi = 1000;
@@ -379,14 +372,14 @@ export const ViewBoard = ({
   }, [model]);
 
   return (
-    <UI.Box sx={{ flex: 1, width: '100%', userSelect: 'none' }}>
+    <UI.Box sx={{ flex: 1, width: "100%", userSelect: "none" }}>
       <canvas
         style={{
-          userSelect: 'none',
-          width: '100%',
-          height: '100%',
-          maxHeight: '100%',
-          minHeight: '100%',
+          userSelect: "none",
+          width: "100%",
+          height: "100%",
+          maxHeight: "100%",
+          minHeight: "100%",
         }}
         ref={ref}
       />
@@ -394,7 +387,7 @@ export const ViewBoard = ({
   );
 };
 
-export const mergeWithServer = ({
+export const syncWithServer = ({
   clientModel,
   serverModel,
 }: {

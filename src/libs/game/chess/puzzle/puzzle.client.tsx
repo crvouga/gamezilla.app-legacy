@@ -1,5 +1,5 @@
-import { Cmd, eq, Posix, Sub } from '@gamezilla/shared/core';
-import { RoomCtx, RoomViewCtx, ViewGameBox } from '@gamezilla/shared/client';
+import { Cmd, eq, Posix, Sub } from "@gamezilla/shared/core";
+import { RoomCtx, RoomViewCtx, ViewGameBox } from "@gamezilla/shared/client";
 import {
   ActionButton,
   AspectRatio,
@@ -11,10 +11,10 @@ import {
   Slider,
   Typography,
   useTheme,
-} from '@gamezilla/shared/ui';
-import { Skeleton } from '@mui/material';
-import { useMemo } from 'react';
-import * as Chess from '../chess/chess';
+} from "@gamezilla/shared/ui";
+import { Skeleton } from "@mui/material";
+import { useMemo } from "react";
+import * as Chess from "../chess/chess";
 import {
   ClientModel,
   ClientMsg,
@@ -31,7 +31,7 @@ import {
   ToClient,
   toPlayerColor,
   toStatus,
-} from './puzzle.shared';
+} from "./puzzle.shared";
 
 //
 //
@@ -55,7 +55,7 @@ export const init = ({
 } => {
   return {
     model: initShared,
-    cmd: sendToServer({ t: 'init' }),
+    cmd: sendToServer({ t: "init" }),
   };
 };
 
@@ -82,27 +82,27 @@ export const update = ({
   cmd?: Cmd;
 } => {
   switch (msg.t) {
-    case 'animate': {
+    case "animate": {
       return { model };
     }
 
-    case 'opened-modal': {
+    case "opened-modal": {
       return { model: { ...model, openedModal: msg.modal } };
     }
 
-    case 'closed-modal': {
+    case "closed-modal": {
       return { model: { ...model, openedModal: null } };
     }
 
-    case 'input-draft-query': {
+    case "input-draft-query": {
       return {
         model: { ...model, draftQuery: msg.query },
       };
     }
 
-    case 'clicked-save': {
+    case "clicked-save": {
       return updateRequest({
-        msg: { t: 'input-query', query: toDraftQuery(model) },
+        msg: { t: "input-query", query: toDraftQuery(model) },
         model: { ...model, openedModal: null },
         sendToServer,
         ctx,
@@ -127,9 +127,9 @@ const updateRequest = ({
   ctx: RoomCtx;
 }) => {
   const handled = handle({ msg, model, ctx });
-  const modelNew = mergeWithServer({
+  const modelNew = syncWithServer({
     clientModel: model,
-    serverModel: handled.t === 'err' ? model : handled.value,
+    serverModel: handled.t === "err" ? model : handled.value,
   });
   return {
     model: modelNew,
@@ -149,18 +149,18 @@ export const updateFromServer = ({
   cmd?: Cmd<Msg>;
 } => {
   switch (msg.t) {
-    case 'clock-tick': {
+    case "clock-tick": {
       return { model: { ...model, backendNow: msg.now } };
     }
 
     default: {
       const result = msg.result;
 
-      if (result.t === 'err') {
+      if (result.t === "err") {
         return { model };
       }
 
-      const merged = mergeWithServer({
+      const merged = syncWithServer({
         clientModel: model,
         serverModel: result.value,
       });
@@ -170,7 +170,7 @@ export const updateFromServer = ({
   }
 };
 
-export const mergeWithServer = ({
+export const syncWithServer = ({
   clientModel,
   serverModel,
 }: {
@@ -216,9 +216,9 @@ export const View = ({
   const duration = useMemo(() => {
     return !model.startedAt
       ? null
-      : status.type === 'loading'
+      : status.type === "loading"
       ? null
-      : status.type === 'solving'
+      : status.type === "solving"
       ? Math.max(0, (model.backendNow ?? ctx.now) - model.startedAt)
       : status.endedAt - model.startedAt;
   }, [ctx.now, status, model]);
@@ -244,35 +244,35 @@ export const View = ({
       <div className="font-sm flex items-center p-4">
         <div className="flex items-center gap-2">
           <p className="text-neutral-300">Rating</p>
-          <p>{status.type === 'loading' ? '...' : status.puzzle.rating}</p>
+          <p>{status.type === "loading" ? "..." : status.puzzle.rating}</p>
         </div>
         <p className="text-neutral-300 flex-1 text-center">
-          {status.type === 'loading'
-            ? ''
+          {status.type === "loading"
+            ? ""
             : `${model.moves.length}  /  ${status.puzzle.correctMoves.length}`}
         </p>
         <div className="flex items-center justify-center gap-2">
           <Icon name="clock" sx={{ mr: 1 }} />
           <p className="font-mono font-bold text-lg  text-neutral-300">
-            {duration ? formatDuration(duration) : '-:--'}
+            {duration ? formatDuration(duration) : "-:--"}
           </p>
         </div>
       </div>
 
       <AspectRatio aspectRatio={1}>
         <Skeleton
-          sx={{ position: 'absolute' }}
+          sx={{ position: "absolute" }}
           width="100%"
           height="100%"
           variant="rectangular"
         />
 
-        {status.type !== 'loading' && (
+        {status.type !== "loading" && (
           <Chess.View
             key={status.puzzle.puzzleId}
             model={status.board}
             isDraggablePiece={({ piece }) => {
-              if (status.type === 'solved') {
+              if (status.type === "solved") {
                 return false;
               }
               const color = Chess.toColor(piece);
@@ -284,7 +284,7 @@ export const View = ({
             customSquareStyles={toCustomSquareStyle(model)}
             boardOrientation={toPlayerColor(status.puzzle)}
             onPieceDrop={(moveInput) => {
-              $send({ t: 'input-move', moveInput });
+              $send({ t: "input-move", moveInput });
 
               return false;
             }}
@@ -301,21 +301,20 @@ export const View = ({
       )}
 
       <Drawer
-        open={model.openedModal === 'tune'}
-        onClose={() => $send({ t: 'closed-modal' })}
+        open={model.openedModal === "tune"}
+        onClose={() => $send({ t: "closed-modal" })}
         anchor="bottom"
         PaperProps={{
           sx: {
             p: 2,
             px: 3,
             pb: 4,
-            display: 'flex',
-            flexDirection: 'column',
+            display: "flex",
+            flexDirection: "column",
             gap: 3,
           },
-        }}
-      >
-        <Box sx={{ display: 'flex' }}>
+        }}>
+        <Box sx={{ display: "flex" }}>
           <Typography variant="h4" sx={{ flex: 1 }}>
             Tune
           </Typography>
@@ -326,23 +325,21 @@ export const View = ({
               variant="outlined"
               disabled={eq(model.query, model.draftQuery)}
               onClick={() =>
-                $send({ t: 'input-draft-query', query: model.query })
-              }
-            >
+                $send({ t: "input-draft-query", query: model.query })
+              }>
               Cancel
             </Button>
             <Button
               size="small"
               variant="contained"
-              onClick={() => $send({ t: 'clicked-save' })}
-              disabled={eq(model.query, model.draftQuery)}
-            >
+              onClick={() => $send({ t: "clicked-save" })}
+              disabled={eq(model.query, model.draftQuery)}>
               Save
             </Button>
           </Box>
         </Box>
         <Box>
-          <Box sx={{ display: 'flex' }}>
+          <Box sx={{ display: "flex" }}>
             <Typography sx={{ mr: 2 }}>Rating</Typography>
             {/* <Typography sx={{ flex: 1 }}>
               {toChessLevel(toDraftQuery(model).ratingRange[1])}
@@ -363,7 +360,7 @@ export const View = ({
               onChange={(_, value) => {
                 if (Array.isArray(value) && value[0] && value[1]) {
                   $send({
-                    t: 'input-draft-query',
+                    t: "input-draft-query",
                     query: {
                       ...toDraftQuery(model),
                       ratingRange: [value[0], value[1]],
@@ -383,22 +380,22 @@ const toCustomSquareStyle = (model: Model): Chess.CustomSquareStyles => {
   const correctMove = toCorrectMove(model);
   return !correctMove
     ? {}
-    : model.hint === 'from'
+    : model.hint === "from"
     ? {
         [Chess.toLowercaseSquare(correctMove.from)]: {
-          backgroundColor: 'skyblue',
+          backgroundColor: "skyblue",
         },
       }
-    : model.hint === 'from-and-to'
+    : model.hint === "from-and-to"
     ? {
         [Chess.toLowercaseSquare(correctMove.from)]: {
-          backgroundColor: 'skyblue',
+          backgroundColor: "skyblue",
         },
         [Chess.toLowercaseSquare(correctMove.to)]: {
-          backgroundColor: 'skyblue',
+          backgroundColor: "skyblue",
         },
       }
-    : model.hint === 'none'
+    : model.hint === "none"
     ? {}
     : {};
 };
@@ -406,9 +403,9 @@ const toCustomSquareStyle = (model: Model): Chess.CustomSquareStyles => {
 const formatDuration = (duration: number): string => {
   const minutes = Math.floor(duration / 60_000);
   const seconds = Math.floor((duration % 60_000) / 1_000);
-  return `${minutes.toString().padStart(1, '0')}:${seconds
+  return `${minutes.toString().padStart(1, "0")}:${seconds
     .toString()
-    .padStart(2, '0')}`;
+    .padStart(2, "0")}`;
 };
 
 const ViewActionButtons = ({
@@ -423,7 +420,7 @@ const ViewActionButtons = ({
   const status = toStatus(model);
 
   switch (status.type) {
-    case 'loading': {
+    case "loading": {
       return (
         <>
           <ActionButton
@@ -435,7 +432,7 @@ const ViewActionButtons = ({
             icon={<Icon name="tune" />}
             label="Tune"
             onClick={() => {
-              $send({ t: 'opened-modal', modal: 'tune' });
+              $send({ t: "opened-modal", modal: "tune" });
             }}
           />
           <ActionButton
@@ -443,14 +440,14 @@ const ViewActionButtons = ({
             icon={<Icon name="lightbulb" />}
             label="Hint"
             onClick={() => {
-              $send({ t: 'show-hint' });
+              $send({ t: "show-hint" });
             }}
           />
         </>
       );
     }
 
-    case 'incorrect': {
+    case "incorrect": {
       return (
         <>
           <ActionButton
@@ -462,7 +459,7 @@ const ViewActionButtons = ({
             icon={<Icon name="tune" />}
             label="Tune"
             onClick={() => {
-              $send({ t: 'opened-modal', modal: 'tune' });
+              $send({ t: "opened-modal", modal: "tune" });
             }}
           />
           <ActionButton
@@ -470,21 +467,21 @@ const ViewActionButtons = ({
             label="Retry"
             color="error"
             onClick={() => {
-              $send({ t: 'retry' });
+              $send({ t: "retry" });
             }}
           />
           <ActionButton
             icon={<Icon name="chevron-right" />}
             label="Skip"
             onClick={() => {
-              $send({ t: 'skip' });
+              $send({ t: "skip" });
             }}
           />
         </>
       );
     }
 
-    case 'solved': {
+    case "solved": {
       return (
         <>
           <ActionButton
@@ -496,7 +493,7 @@ const ViewActionButtons = ({
             icon={<Icon name="tune" />}
             label="Tune"
             onClick={() => {
-              $send({ t: 'opened-modal', modal: 'tune' });
+              $send({ t: "opened-modal", modal: "tune" });
             }}
           />
           <ActionButton
@@ -504,14 +501,14 @@ const ViewActionButtons = ({
             icon={<Icon name="arrow-circle-right" />}
             label="Next"
             onClick={() => {
-              $send({ t: 'next' });
+              $send({ t: "next" });
             }}
           />
         </>
       );
     }
 
-    case 'solving': {
+    case "solving": {
       return (
         <>
           <ActionButton
@@ -523,14 +520,14 @@ const ViewActionButtons = ({
             icon={<Icon name="tune" />}
             label="Tune"
             onClick={() => {
-              $send({ t: 'opened-modal', modal: 'tune' });
+              $send({ t: "opened-modal", modal: "tune" });
             }}
           />
           <ActionButton
             icon={<Icon name="lightbulb" />}
             label="Hint"
             onClick={() => {
-              $send({ t: 'show-hint' });
+              $send({ t: "show-hint" });
             }}
           />
         </>
@@ -543,33 +540,31 @@ const ViewStatusBar = ({ status }: { status: Status }) => {
   const theme = useTheme();
 
   switch (status.type) {
-    case 'loading': {
+    case "loading": {
       return (
         <Box
           sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
             p: 1,
-          }}
-        >
+          }}>
           <Typography variant="h6">...</Typography>
         </Box>
       );
     }
 
-    case 'incorrect': {
+    case "incorrect": {
       return (
         <Box
           sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
             p: 1,
             backgroundColor: theme.palette.error.main,
-            color: '#fff',
-          }}
-        >
+            color: "#fff",
+          }}>
           <Icon name="close" />
           <Typography variant="h6" sx={{ ml: 1 }}>
             Incorrect
@@ -578,18 +573,17 @@ const ViewStatusBar = ({ status }: { status: Status }) => {
       );
     }
 
-    case 'solved': {
+    case "solved": {
       return (
         <Box
           sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
             p: 1,
             backgroundColor: theme.palette.success.main,
-            color: '#fff',
-          }}
-        >
+            color: "#fff",
+          }}>
           <Icon name="check" />
           <Typography variant="h6" sx={{ ml: 1 }}>
             Correct
@@ -598,27 +592,26 @@ const ViewStatusBar = ({ status }: { status: Status }) => {
       );
     }
 
-    case 'solving': {
+    case "solving": {
       return (
         <Box
           sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
             p: 2,
             py: 1,
-            background: toPlayerColor(status.puzzle) === 'b' ? '#000' : '#fff',
-            color: toPlayerColor(status.puzzle) === 'b' ? '#fefefe' : '#000',
-          }}
-        >
+            background: toPlayerColor(status.puzzle) === "b" ? "#000" : "#fff",
+            color: toPlayerColor(status.puzzle) === "b" ? "#fefefe" : "#000",
+          }}>
           <Box
             sx={{
-              width: '1rem',
-              height: '1rem',
+              width: "1rem",
+              height: "1rem",
               background:
-                toPlayerColor(status.puzzle) === 'b' ? '#000' : '#fff',
+                toPlayerColor(status.puzzle) === "b" ? "#000" : "#fff",
               border: `1px solid ${
-                toPlayerColor(status.puzzle) === 'b' ? '#ababab' : '#000'
+                toPlayerColor(status.puzzle) === "b" ? "#ababab" : "#000"
               }`,
               mr: 1,
             }}

@@ -4,25 +4,25 @@ import {
   ViewCtx,
   ViewVsBotGameScreen,
   ViewVsBotSetupScreen,
-} from '@gamezilla/shared/client';
-import { Cmd, Posix, Sub } from '@gamezilla/shared/core';
+} from "@gamezilla/shared/client";
+import { Cmd, Posix, Sub } from "@gamezilla/shared/core";
 import {
   IconArrowLeftOnRect,
   IconArrowRotateLeft,
   IconRightLeft,
-} from '@gamezilla/shared/ui';
+} from "@gamezilla/shared/ui";
 import {
   PlayerType,
   opposite,
   playerTypes,
   toStatus,
   toTurn,
-} from '../connect-four/connect-four';
+} from "../connect-four/connect-four";
 import {
   PlayerIcon,
   ViewColumns,
   ViewCoverArt,
-} from '../connect-four/connect-four-ui';
+} from "../connect-four/connect-four-ui";
 import {
   BotLevel,
   ClientModel,
@@ -33,7 +33,7 @@ import {
   botLevel,
   handle,
   initShared,
-} from './vs-bot.shared';
+} from "./vs-bot.shared";
 
 //
 //
@@ -48,13 +48,13 @@ export type Model = ClientModel;
 export const init = (...params: Parameters<typeof initShared>): ClientModel => {
   const shared = initShared(...params);
 
-  if (shared.type === 'Setup') {
+  if (shared.type === "Setup") {
     return shared;
   }
 
   return {
     ...shared,
-    ghostIndex: 'none',
+    ghostIndex: "none",
   };
 };
 
@@ -80,29 +80,29 @@ export const update = (
   model: Model
 ): { model: Model; cmd?: Cmd<Msg> } => {
   switch (msg[0]) {
-    case 'hovered': {
-      if (model.type !== 'game') {
+    case "hovered": {
+      if (model.type !== "game") {
         return { model };
       }
       return { model: { ...model, ghostIndex: msg[1].columnIndex } };
     }
 
-    case 'animate': {
-      if (model.type !== 'game') {
+    case "animate": {
+      if (model.type !== "game") {
         return { model };
       }
 
       return { model };
     }
 
-    case 'input-move': {
+    case "input-move": {
       const result = handle(ctx, msg, model);
 
-      if (result.t === 'err') {
+      if (result.t === "err") {
         return { model };
       }
 
-      const modelNext = mergeWithServer({
+      const modelNext = syncWithServer({
         ctx,
         serverModel: result.value,
         clientModel: model,
@@ -111,14 +111,14 @@ export const update = (
       return { model: modelNext, cmd: sendToServer(msg) };
     }
 
-    case 'input-player-type':
-    case 'restart':
-    case 'start-game':
-    case 'start-playing':
-    case 'stop-game':
-    case 'stop-playing':
-    case 'swap-sides':
-    case 'input-bot-level': {
+    case "input-player-type":
+    case "restart":
+    case "start-game":
+    case "start-playing":
+    case "stop-game":
+    case "stop-playing":
+    case "swap-sides":
+    case "input-bot-level": {
       return { model, cmd: sendToServer(msg) };
     }
   }
@@ -137,8 +137,8 @@ export const updateFromServer = ({
   cmd?: Cmd<Msg>;
 } => {
   switch (msg[0]) {
-    case 'player-left': {
-      const modelNew = mergeWithServer({
+    case "player-left": {
+      const modelNew = syncWithServer({
         ctx,
         clientModel: model,
         serverModel: msg[1],
@@ -146,13 +146,13 @@ export const updateFromServer = ({
       return { model: modelNew };
     }
 
-    case 'bot-move':
-    case 'input-move': {
-      if (msg[1].t === 'err') {
+    case "bot-move":
+    case "input-move": {
+      if (msg[1].t === "err") {
         return { model };
       }
 
-      const modelNew = mergeWithServer({
+      const modelNew = syncWithServer({
         ctx,
         clientModel: model,
         serverModel: msg[1].value,
@@ -161,19 +161,19 @@ export const updateFromServer = ({
       return { model: modelNew };
     }
 
-    case 'input-player-type':
-    case 'restart':
-    case 'start-game':
-    case 'start-playing':
-    case 'stop-game':
-    case 'stop-playing':
-    case 'swap-sides':
-    case 'input-bot-level': {
-      if (msg[1].t === 'err') {
+    case "input-player-type":
+    case "restart":
+    case "start-game":
+    case "start-playing":
+    case "stop-game":
+    case "stop-playing":
+    case "swap-sides":
+    case "input-bot-level": {
+      if (msg[1].t === "err") {
         return { model };
       }
 
-      const modelNew = mergeWithServer({
+      const modelNew = syncWithServer({
         ctx,
         clientModel: model,
         serverModel: msg[1].value,
@@ -184,7 +184,7 @@ export const updateFromServer = ({
   }
 };
 
-export const mergeWithServer = ({
+export const syncWithServer = ({
   serverModel,
   clientModel,
 }: {
@@ -192,14 +192,14 @@ export const mergeWithServer = ({
   clientModel: ClientModel;
   serverModel: ServerModel;
 }): ClientModel => {
-  if (serverModel.type === 'Setup') {
+  if (serverModel.type === "Setup") {
     return serverModel;
   }
 
-  if (clientModel.type === 'Setup') {
+  if (clientModel.type === "Setup") {
     return {
       ...serverModel,
-      ghostIndex: 'none',
+      ghostIndex: "none",
     };
   }
 
@@ -244,42 +244,42 @@ export const View = ({
   goBack: () => void;
   ctx: ViewCtx;
 }) => {
-  if (model.type === 'Setup') {
+  if (model.type === "Setup") {
     return (
       <ViewVsBotSetupScreen<BotLevel, PlayerType>
         coverArt={<ViewCoverArt />}
         title="Connect Four"
         subtitle="Play Computer"
         ctx={ctx}
-        playerId={model.player === 'none' ? null : model.player}
+        playerId={model.player === "none" ? null : model.player}
         leftPlayerType="PlayerOne"
         onCancel={goBack}
-        onStartGame={() => $send(['start-game'])}
-        onStartPlaying={() => $send(['start-playing'])}
-        onStopPlaying={() => $send(['stop-playing'])}
+        onStartGame={() => $send(["start-game"])}
+        onStartPlaying={() => $send(["start-playing"])}
+        onStopPlaying={() => $send(["stop-playing"])}
         botLevel={{
           values: Object.values(botLevel),
           selected: model.botLevel,
-          onInput: (level) => $send(['input-bot-level', { botLevel: level }]),
+          onInput: (level) => $send(["input-bot-level", { botLevel: level }]),
           toName: (level) => level,
           render: ({ botLevel }) => <div>{botLevel}</div>,
         }}
         player={{
           values: Object.values(playerTypes),
           selected: model.userPlayerType,
-          onInput: (playerType) => $send(['input-player-type', { playerType }]),
+          onInput: (playerType) => $send(["input-player-type", { playerType }]),
           icon: ({ sx, playerType }) => (
             <PlayerIcon
               playerType={playerType}
-              sx={{ width: '1.5rem', height: '1.5rem', ...sx }}
+              sx={{ width: "1.5rem", height: "1.5rem", ...sx }}
             />
           ),
           toName: (playerType) =>
-            playerType === 'PlayerOne' ? 'Red' : 'Yellow',
+            playerType === "PlayerOne" ? "Red" : "Yellow",
           render: ({ playerType }) => (
             <div className="flex items-center justify-center gap-2">
               <PlayerIcon playerType={playerType} />
-              <div>{playerType === 'PlayerOne' ? 'Red' : 'Yellow'}</div>
+              <div>{playerType === "PlayerOne" ? "Red" : "Yellow"}</div>
             </div>
           ),
         }}
@@ -291,45 +291,45 @@ export const View = ({
 
   return ViewVsBotGameScreen<PlayerType>({
     gameOver:
-      status.type === 'Tie'
-        ? { type: 'draw' }
-        : status.type === 'Winner'
-        ? { type: 'winner', winner: status.winner }
-        : { type: 'none' },
+      status.type === "Tie"
+        ? { type: "draw" }
+        : status.type === "Winner"
+        ? { type: "winner", winner: status.winner }
+        : { type: "none" },
     gameOverActions: [
       {
-        label: 'Exit',
+        label: "Exit",
         icon: <IconArrowLeftOnRect />,
-        onClick: () => $send(['stop-game']),
+        onClick: () => $send(["stop-game"]),
       },
       {
-        label: 'Restart',
+        label: "Restart",
         icon: <IconArrowRotateLeft />,
-        onClick: () => $send(['restart']),
+        onClick: () => $send(["restart"]),
       },
     ],
     botName: model.botLevel,
     botPlayer: opposite[model.userPlayerType],
     ctx,
-    leftPlayer: 'PlayerOne',
+    leftPlayer: "PlayerOne",
     playerUserId: model.player,
     userPlayer: model.userPlayerType,
     turn: toTurn(model.columns),
     actions: [
       {
-        label: 'Exit',
+        label: "Exit",
         icon: <IconArrowLeftOnRect />,
-        onClick: () => $send(['stop-game']),
+        onClick: () => $send(["stop-game"]),
       },
       {
-        label: 'Restart',
+        label: "Restart",
         icon: <IconArrowRotateLeft />,
-        onClick: () => $send(['restart']),
+        onClick: () => $send(["restart"]),
       },
       {
-        label: 'Swap',
+        label: "Swap",
         icon: <IconRightLeft />,
-        onClick: () => $send(['restart']),
+        onClick: () => $send(["restart"]),
       },
     ],
     viewPlayerIcon: (props) => <PlayerIcon key={props.playerType} {...props} />,
@@ -338,7 +338,7 @@ export const View = ({
         ghost={
           ctx.currentUserId === model.player &&
           toTurn(model.columns) === model.userPlayerType &&
-          model.ghostIndex !== 'none'
+          model.ghostIndex !== "none"
             ? {
                 columnIndex: model.ghostIndex,
                 playerType: model.userPlayerType,
@@ -346,8 +346,8 @@ export const View = ({
             : undefined
         }
         columns={model.columns}
-        onHover={(columnIndex) => $send(['hovered', { columnIndex }])}
-        onClick={(columnIndex) => $send(['input-move', { columnIndex }])}
+        onHover={(columnIndex) => $send(["hovered", { columnIndex }])}
+        onClick={(columnIndex) => $send(["input-move", { columnIndex }])}
       />
     ),
   });

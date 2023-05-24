@@ -1,9 +1,9 @@
-import { Cmd, Sub } from '@gamezilla/shared/core';
+import { Cmd, Sub } from "@gamezilla/shared/core";
 import {
   ViewCtx,
   viewUserPlayerSlotBar,
   viewVsUserSetupScreen,
-} from '@gamezilla/shared/client';
+} from "@gamezilla/shared/client";
 import {
   actionButton,
   box,
@@ -11,8 +11,8 @@ import {
   conformation,
   fillBox,
   text,
-} from '@gamezilla/shared/ui';
-import { ViewCoverArt, viewStoneIcon } from '../gomoku/gomoku-ui';
+} from "@gamezilla/shared/ui";
+import { ViewCoverArt, viewStoneIcon } from "../gomoku/gomoku-ui";
 import {
   ServerModel,
   ClientModel,
@@ -21,7 +21,7 @@ import {
   ToServer,
   ToClient,
   initShared,
-} from './vs-user.shared';
+} from "./vs-user.shared";
 
 //
 //
@@ -57,16 +57,16 @@ export const update = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (msg.t === 'clicked-cancel') {
+  if (msg.t === "clicked-cancel") {
     return { model: { ...model, confirming: undefined } };
   }
 
-  if (msg.t === 'resign') {
-    if (model.confirming === 'resign') {
+  if (msg.t === "resign") {
+    if (model.confirming === "resign") {
       return { model, cmd: sendToServer(msg) };
     }
 
-    return { model: { ...model, confirming: 'resign' } };
+    return { model: { ...model, confirming: "resign" } };
   }
 
   return { model, cmd: sendToServer(msg) };
@@ -82,11 +82,11 @@ export const updateFromServer = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (msg.t === 'input-move') {
-    if (msg.result.t === 'err') {
+  if (msg.t === "input-move") {
+    if (msg.result.t === "err") {
       return { model };
     }
-    const merged = mergeWithServer({
+    const merged = syncWithServer({
       serverModel: msg.result.value,
       clientModel: model,
     });
@@ -94,11 +94,11 @@ export const updateFromServer = ({
     return { model: merged };
   }
 
-  if (msg.result.t === 'err') {
+  if (msg.result.t === "err") {
     return { model };
   }
 
-  const merged = mergeWithServer({
+  const merged = syncWithServer({
     serverModel: msg.result.value,
     clientModel: model,
   });
@@ -106,7 +106,7 @@ export const updateFromServer = ({
   return { model: merged };
 };
 
-export const mergeWithServer = ({
+export const syncWithServer = ({
   serverModel,
 }: {
   clientModel: ClientModel;
@@ -147,32 +147,32 @@ export const view = ({
   onCancel: () => void;
 }) => {
   switch (model.type) {
-    case 'setup': {
+    case "setup": {
       return viewVsUserSetupScreen({
-        title: 'gomoku',
-        subtitle: 'Player Vs Player',
+        title: "gomoku",
+        subtitle: "Player Vs Player",
         coverArt: ViewCoverArt(),
         ctx,
         playerOne: {
-          label: 'White',
+          label: "White",
           userId: model.white,
-          onStartPlaying: () => $send({ t: 'start-playing', stone: 'white' }),
-          onStopPlaying: () => $send({ t: 'stop-playing', stone: 'white' }),
-          icon: (sx) => viewStoneIcon({ ...sx, stone: 'white' }),
+          onStartPlaying: () => $send({ t: "start-playing", stone: "white" }),
+          onStopPlaying: () => $send({ t: "stop-playing", stone: "white" }),
+          icon: (sx) => viewStoneIcon({ ...sx, stone: "white" }),
         },
         playerTwo: {
-          label: 'Black',
+          label: "Black",
           userId: model.black,
-          onStartPlaying: () => $send({ t: 'start-playing', stone: 'black' }),
-          onStopPlaying: () => $send({ t: 'stop-playing', stone: 'black' }),
-          icon: (sx) => viewStoneIcon({ ...sx, stone: 'black' }),
+          onStartPlaying: () => $send({ t: "start-playing", stone: "black" }),
+          onStopPlaying: () => $send({ t: "stop-playing", stone: "black" }),
+          icon: (sx) => viewStoneIcon({ ...sx, stone: "black" }),
         },
         onCancel,
-        onStartGame: () => $send({ t: 'start-game' }),
+        onStartGame: () => $send({ t: "start-game" }),
       });
     }
 
-    case 'playing': {
+    case "playing": {
       return fillBox({}, [
         viewUserPlayerSlotBar({ left: model.white, right: model.black, ctx }),
         // viewBoard({
@@ -180,52 +180,52 @@ export const view = ({
         //   onPress: (position) => $send(['input-move', { position }]),
         // }),
         box({ sx: { flex: 1 } }, []),
-        box({ sx: { display: 'flex', p: 2 } }, [
+        box({ sx: { display: "flex", p: 2 } }, [
           actionButton({
-            label: 'resign',
-            iconName: 'flag',
-            onPress: () => $send({ t: 'resign' }),
+            label: "resign",
+            iconName: "flag",
+            onPress: () => $send({ t: "resign" }),
           }),
         ]),
         conformation({
-          open: 'resign' === model.confirming,
-          title: 'resign from game?',
-          iconName: 'flag',
-          confirmTitle: 'resign',
-          onConfirm: () => $send({ t: 'resign' }),
-          onCancel: () => $send({ t: 'clicked-cancel' }),
-          onClose: () => $send({ t: 'clicked-cancel' }),
+          open: "resign" === model.confirming,
+          title: "resign from game?",
+          iconName: "flag",
+          confirmTitle: "resign",
+          onConfirm: () => $send({ t: "resign" }),
+          onCancel: () => $send({ t: "clicked-cancel" }),
+          onClose: () => $send({ t: "clicked-cancel" }),
         }),
       ]);
     }
 
-    case 'gameOver': {
+    case "gameOver": {
       return fillBox({}, [
         viewUserPlayerSlotBar({ left: model.white, right: model.black, ctx }),
-        box({ sx: { position: 'relative', aspectRatio: '1' } }, [
+        box({ sx: { position: "relative", aspectRatio: "1" } }, [
           // viewBoard({ model: {} }),
           viewOverlay({ model, ctx }),
         ]),
         box(
-          { sx: { p: 2, display: 'flex', gap: 2, flexDirection: 'column' } },
+          { sx: { p: 2, display: "flex", gap: 2, flexDirection: "column" } },
           [
             button(
               {
-                onPress: () => $send({ t: 'rematch-request' }),
-                variant: 'contained',
-                startIcon: 'restart',
-                width: '100%',
+                onPress: () => $send({ t: "rematch-request" }),
+                variant: "contained",
+                startIcon: "restart",
+                width: "100%",
               },
-              'Rematch'
+              "Rematch"
             ),
             button(
               {
-                onPress: () => $send({ t: 'stop-game' }),
-                variant: 'contained',
-                startIcon: 'exit',
-                width: '100%',
+                onPress: () => $send({ t: "stop-game" }),
+                variant: "contained",
+                startIcon: "exit",
+                width: "100%",
               },
-              'Back to lobby'
+              "Back to lobby"
             ),
           ]
         ),
@@ -244,17 +244,17 @@ export const viewOverlay = ({
   return box(
     {
       sx: {
-        position: 'absolute',
+        position: "absolute",
         top: 0,
         left: 0,
-        width: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        color: '#fff',
-        backgroundColor: 'rgba(0,0,0,0.66)',
-        aspectRatio: '1',
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        color: "#fff",
+        backgroundColor: "rgba(0,0,0,0.66)",
+        aspectRatio: "1",
       },
     },
     [viewOverlay_({ model, ctx })]
@@ -269,48 +269,48 @@ export const viewOverlay_ = ({
   ctx: ViewCtx;
 }) => {
   const currentUserStone =
-    ctx.currentUserId === model.white ? 'white' : 'black';
+    ctx.currentUserId === model.white ? "white" : "black";
   if (
-    model.gameOver.type === 'resigned' &&
+    model.gameOver.type === "resigned" &&
     model.gameOver.resigner === currentUserStone
   ) {
-    return text({ color: 'white', variant: 'h2' }, ['You resigned']);
+    return text({ color: "white", variant: "h2" }, ["You resigned"]);
   }
 
-  if (model.gameOver.type === 'resigned') {
-    return box({ sx: { display: 'flex', alignItems: 'center' } }, [
+  if (model.gameOver.type === "resigned") {
+    return box({ sx: { display: "flex", alignItems: "center" } }, [
       viewStoneIcon({
         stone: model.gameOver.resigner,
         width: 64,
         height: 64,
         mr: 2,
       }),
-      text({ color: 'white', variant: 'h1' }, 'resigned'),
+      text({ color: "white", variant: "h1" }, "resigned"),
     ]);
   }
 
-  if (model.gameOver.type === 'Draw') {
-    return text({ color: 'white', variant: 'h1' }, ['Draw']);
+  if (model.gameOver.type === "Draw") {
+    return text({ color: "white", variant: "h1" }, ["Draw"]);
   }
 
   if (
-    model.gameOver.type === 'Winner' &&
+    model.gameOver.type === "Winner" &&
     model.gameOver.winner === currentUserStone
   ) {
-    return text({ color: 'white', variant: 'h1' }, ['You won']);
+    return text({ color: "white", variant: "h1" }, ["You won"]);
   }
 
-  if (model.gameOver.type === 'Winner') {
-    return box({ sx: { display: 'flex', alignItems: 'center' } }, [
+  if (model.gameOver.type === "Winner") {
+    return box({ sx: { display: "flex", alignItems: "center" } }, [
       viewStoneIcon({
         stone: model.gameOver.winner,
         width: 64,
         height: 64,
         mr: 2,
       }),
-      text({ color: 'white', variant: 'h1' }, 'Won'),
+      text({ color: "white", variant: "h1" }, "Won"),
     ]);
   }
 
-  return text({ color: 'white', variant: 'h2' }, ['Game Over']);
+  return text({ color: "white", variant: "h2" }, ["Game Over"]);
 };

@@ -468,7 +468,7 @@ const updateResponse = ({
     };
   }
 
-  const merged = mergeWithServer({
+  const merged = syncWithServer({
     ctx,
     clientModel: model,
     serverModel: msg.result.value,
@@ -486,7 +486,7 @@ const updateResponse = ({
   };
 };
 
-const mergeWithServer = ({
+const syncWithServer = ({
   ctx,
   clientModel,
   serverModel,
@@ -511,7 +511,7 @@ const mergeWithServer = ({
       const frontendGame = clientModel.games[roomId];
 
       if (frontendGame) {
-        const merged = Game.mergeWithServer({
+        const merged = Game.syncWithServer({
           ctx,
           serverModel: backendGame,
           clientModel: frontendGame,
@@ -538,7 +538,7 @@ const mergeWithServer = ({
         ctx,
       });
 
-      const merged = Game.mergeWithServer({
+      const merged = Game.syncWithServer({
         ctx,
         serverModel: backendGame,
         clientModel: initial[0],

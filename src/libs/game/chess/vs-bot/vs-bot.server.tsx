@@ -1,10 +1,10 @@
-import { ViewCtx, ViewVsBotSetupScreen } from '@gamezilla/shared/client';
-import { Audio, Cmd, Option, Sub, exhaustive, t } from '@gamezilla/shared/core';
-import * as UI from '@gamezilla/shared/ui';
-import * as Chess from '../chess/chess';
-import { viewCoverArt } from '../chess/chess';
-import Sounds from '../chess/chess-sounds';
-import { PawnIcon } from '../chess/chess-views';
+import { ViewCtx, ViewVsBotSetupScreen } from "@gamezilla/shared/client";
+import { Audio, Cmd, Option, Sub, exhaustive, t } from "@gamezilla/shared/core";
+import * as UI from "@gamezilla/shared/ui";
+import * as Chess from "../chess/chess";
+import { viewCoverArt } from "../chess/chess";
+import Sounds from "../chess/chess-sounds";
+import { PawnIcon } from "../chess/chess-views";
 import {
   ClientModel,
   ClientMsg,
@@ -16,7 +16,7 @@ import {
   initShared,
   inputMove,
   isBotTurn,
-} from './vs-bot.shared';
+} from "./vs-bot.shared";
 
 //
 //
@@ -33,7 +33,7 @@ export const init = (): [ClientModel, Cmd<Msg>] => {
     {
       sharedModel: initShared,
       openedMenuId: Option.None,
-      openedModal: 'none',
+      openedModal: "none",
       isFlipped: false,
     },
     Cmd.None,
@@ -63,23 +63,23 @@ export const update = (
     //
     //
 
-    case 'audio-done': {
+    case "audio-done": {
       return [model, Cmd.None];
     }
 
-    case 'ClosedModal': {
-      return [{ ...model, openedModal: 'none' }, Cmd.None];
+    case "ClosedModal": {
+      return [{ ...model, openedModal: "none" }, Cmd.None];
     }
 
-    case 'ClickedFlip': {
+    case "ClickedFlip": {
       return [{ ...model, isFlipped: !model.isFlipped }, Cmd.None];
     }
 
-    case 'OpenedMenu': {
+    case "OpenedMenu": {
       return [{ ...model, openedMenuId: Option.Some(msg[1]) }, Cmd.None];
     }
 
-    case 'ClosedMenu': {
+    case "ClosedMenu": {
       return [{ ...model, openedMenuId: Option.None }, Cmd.None];
     }
 
@@ -89,30 +89,30 @@ export const update = (
     //
     //
 
-    case 'InputUser': {
+    case "InputUser": {
       return [model, sendToServer(msg)];
     }
 
-    case 'InputColor': {
+    case "InputColor": {
       return [model, sendToServer(msg)];
     }
 
-    case 'InputBot': {
+    case "InputBot": {
       return [model, sendToServer(msg)];
     }
 
-    case 'start-game': {
+    case "start-game": {
       return [model, sendToServer(msg)];
     }
 
-    case 'stop-game': {
+    case "stop-game": {
       return [model, sendToServer(msg)];
     }
 
-    case 'input-move': {
+    case "input-move": {
       const result = inputMove(msg[1], model.sharedModel);
 
-      const sharedModel = result.t === 'err' ? model.sharedModel : result.value;
+      const sharedModel = result.t === "err" ? model.sharedModel : result.value;
 
       return [{ ...model, sharedModel: sharedModel }, sendToServer(msg)];
     }
@@ -130,18 +130,18 @@ export const updateFromServer = (
   const [modelNext, cmd] = updateFromServer_(msg, modelPrev);
 
   if (
-    modelPrev.sharedModel.type !== 'GameOver' &&
-    modelNext.sharedModel.type === 'GameOver'
+    modelPrev.sharedModel.type !== "GameOver" &&
+    modelNext.sharedModel.type === "GameOver"
   ) {
     return [
-      { ...modelNext, openedModal: 'GameOver' },
+      { ...modelNext, openedModal: "GameOver" },
       Cmd.batch([cmd, playAudio(Sounds.gameOver)]),
     ];
   }
 
   if (
-    modelPrev.sharedModel.type !== 'game' &&
-    modelNext.sharedModel.type === 'game'
+    modelPrev.sharedModel.type !== "game" &&
+    modelNext.sharedModel.type === "game"
   ) {
     return [modelNext, Cmd.batch([cmd, playAudio(Sounds.gameStart)])];
   }
@@ -151,17 +151,17 @@ export const updateFromServer = (
 
 const updateFromServer_ = (msg: ToClient, model: Model): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'bot-moved_Done': {
+    case "bot-moved_Done": {
       const result = msg[1];
 
-      if (result.t === 'err') {
+      if (result.t === "err") {
         return [model, Cmd.None];
       }
 
       const { didCapture, ...sharedModel } = result.value;
 
       const soundCmd =
-        sharedModel.type === 'game' && Chess.inCheck(sharedModel.board)
+        sharedModel.type === "game" && Chess.inCheck(sharedModel.board)
           ? playAudio(Sounds.check)
           : didCapture
           ? playAudio(Sounds.capture)
@@ -170,24 +170,24 @@ const updateFromServer_ = (msg: ToClient, model: Model): [Model, Cmd<Msg>] => {
       return [{ ...model, sharedModel }, soundCmd];
     }
 
-    case 'player-left': {
-      const merged = mergeWithServer(model, msg[1]);
+    case "player-left": {
+      const merged = syncWithServer(model, msg[1]);
       return [merged, Cmd.None];
     }
 
-    case 'input-move-done': {
+    case "input-move-done": {
       const result = msg[1];
 
-      if (result.t === 'err') {
+      if (result.t === "err") {
         return [model, Cmd.None];
       }
 
       const sharedModelNew = result.value;
 
-      const modelNew = mergeWithServer(model, sharedModelNew);
+      const modelNew = syncWithServer(model, sharedModelNew);
 
       const soundCmd =
-        sharedModelNew.type === 'game' && Chess.inCheck(sharedModelNew.board)
+        sharedModelNew.type === "game" && Chess.inCheck(sharedModelNew.board)
           ? playAudio(Sounds.check)
           : sharedModelNew.didCapture
           ? playAudio(Sounds.capture)
@@ -196,11 +196,11 @@ const updateFromServer_ = (msg: ToClient, model: Model): [Model, Cmd<Msg>] => {
       return [modelNew, soundCmd];
     }
 
-    case 'InputUser_Done':
-    case 'InputColor_Done':
-    case 'InputBot_Done':
-    case 'StartGame_Done':
-    case 'StopGame_Done': {
+    case "InputUser_Done":
+    case "InputColor_Done":
+    case "InputBot_Done":
+    case "StartGame_Done":
+    case "StopGame_Done": {
       return handleResponse(msg, model);
     }
 
@@ -213,19 +213,19 @@ const updateFromServer_ = (msg: ToClient, model: Model): [Model, Cmd<Msg>] => {
 const handleResponse = (res: Res, model: Model): [Model, Cmd<Msg>] => {
   const result = res[1];
 
-  if (result.t === 'err') {
+  if (result.t === "err") {
     return [model, Cmd.None];
   }
 
   const sharedModelNew = result.value;
 
-  const modelNew = mergeWithServer(model, sharedModelNew);
+  const modelNew = syncWithServer(model, sharedModelNew);
 
   return [modelNew, Cmd.None];
 };
 
 const playAudio = (src: string): Cmd<Msg> => {
-  return Audio.play(src, t('audio-done'));
+  return Audio.play(src, t("audio-done"));
 };
 
 //
@@ -236,7 +236,7 @@ const playAudio = (src: string): Cmd<Msg> => {
 //
 //
 
-export const mergeWithServer = (
+export const syncWithServer = (
   clientModel: ClientModel,
   serverModel: ServerModel
 ): ClientModel => {
@@ -279,7 +279,7 @@ export const View = ({
   $send: (msg: Msg) => void;
   onClose: () => void;
 }) => {
-  if (model.sharedModel.type === 'Setup') {
+  if (model.sharedModel.type === "Setup") {
     return ViewVsBotSetupScreen<Chess.BotLevel, Chess.Color>({
       botLevel: {
         values: Chess.allBotLevels,
@@ -289,54 +289,54 @@ export const View = ({
           return <div>{props.botLevel}</div>;
         },
         onInput: (botLevel) =>
-          $send(['InputBot', { botLevel, userId: ctx.currentUserId }]),
+          $send(["InputBot", { botLevel, userId: ctx.currentUserId }]),
       },
       onCancel: onClose,
       coverArt: viewCoverArt(),
       ctx,
-      onStartGame: () => $send(['start-game', { userId: ctx.currentUserId }]),
-      onStartPlaying: () => $send(['InputUser', { userId: ctx.currentUserId }]),
-      onStopPlaying: () => $send(['InputUser', { userId: 'none' }]),
+      onStartGame: () => $send(["start-game", { userId: ctx.currentUserId }]),
+      onStartPlaying: () => $send(["InputUser", { userId: ctx.currentUserId }]),
+      onStopPlaying: () => $send(["InputUser", { userId: "none" }]),
       player: {
         values: [Chess.colors.w, Chess.colors.b],
         selected: model.sharedModel.userColor,
-        toName: (color) => (color === 'w' ? 'White' : 'Black'),
+        toName: (color) => (color === "w" ? "White" : "Black"),
         render: (props) => {
           return (
             <div>
               <PawnIcon
-                sx={{ color: props.playerType === 'w' ? '#fff' : '#000' }}
-                stroke={props.playerType === 'w' ? '#000' : '#fff'}
+                sx={{ color: props.playerType === "w" ? "#fff" : "#000" }}
+                stroke={props.playerType === "w" ? "#000" : "#fff"}
               />
-              {props.playerType === 'w' ? 'White' : 'Black'}
+              {props.playerType === "w" ? "White" : "Black"}
             </div>
           );
         },
         onInput: (color) =>
           $send([
-            'InputColor',
+            "InputColor",
             { userColor: color, userId: ctx.currentUserId },
           ]),
         icon: ({ sx, playerType: color }) => (
           <PawnIcon
-            sx={{ ...sx, color: color === 'w' ? '#fff' : '#000' }}
-            stroke={color === 'w' ? '#000' : '#fff'}
+            sx={{ ...sx, color: color === "w" ? "#fff" : "#000" }}
+            stroke={color === "w" ? "#000" : "#fff"}
           />
         ),
       },
-      leftPlayerType: 'w',
+      leftPlayerType: "w",
       playerId:
-        model.sharedModel.userId === 'none' ? null : model.sharedModel.userId,
-      title: 'Chess',
-      subtitle: 'Vs Computer',
+        model.sharedModel.userId === "none" ? null : model.sharedModel.userId,
+      title: "Chess",
+      subtitle: "Vs Computer",
     });
   }
 
   const botSlot = (
-    <UI.Box sx={{ paddingX: 2, display: 'flex', alignItems: 'center' }}>
-      <UI.Avatar sx={{ marginRight: 2, backgroundColor: 'transparent' }}>
+    <UI.Box sx={{ paddingX: 2, display: "flex", alignItems: "center" }}>
+      <UI.Avatar sx={{ marginRight: 2, backgroundColor: "transparent" }}>
         <UI.Icons.SmartToy
-          sx={{ color: 'text.primary', width: '100%', height: '100%' }}
+          sx={{ color: "text.primary", width: "100%", height: "100%" }}
           // sx={{ width: 40, height: 40, marginRight: 2 }}
         />
       </UI.Avatar>
@@ -352,7 +352,7 @@ export const View = ({
   );
 
   const userSlot = (
-    <UI.Box sx={{ paddingX: 2, display: 'flex', alignItems: 'center' }}>
+    <UI.Box sx={{ paddingX: 2, display: "flex", alignItems: "center" }}>
       <UI.Avatar
         src={ctx.profiles[model.sharedModel.userId]?.avatarUrl}
         sx={{ marginRight: 2 }}
@@ -395,7 +395,7 @@ export const View = ({
         model={model.sharedModel.board}
         onPieceDrop={(move) => {
           const msg: Msg = [
-            'input-move',
+            "input-move",
             {
               userId: ctx.currentUserId,
               from: move.from,
@@ -408,7 +408,7 @@ export const View = ({
 
           const result = inputMove(msg[1], model.sharedModel);
 
-          return result.t === 'ok';
+          return result.t === "ok";
         }}
       />
 
@@ -416,49 +416,48 @@ export const View = ({
 
       <UI.Box sx={{ flex: 1 }} />
 
-      <UI.Box sx={{ width: '100%', display: 'flex' }}>
+      <UI.Box sx={{ width: "100%", display: "flex" }}>
         <UI.ActionButton
-          icon={<UI.Icons.ExitToApp sx={{ transform: 'rotate(180deg)' }} />}
-          label={'Exit'}
-          onClick={() => $send(['stop-game', { userId: ctx.currentUserId }])}
+          icon={<UI.Icons.ExitToApp sx={{ transform: "rotate(180deg)" }} />}
+          label={"Exit"}
+          onClick={() => $send(["stop-game", { userId: ctx.currentUserId }])}
         />
 
         <UI.ActionButton
           icon={
             <UI.Icons.Flip
               sx={{
-                transform: model.isFlipped ? 'rotate(90deg)' : 'rotate(270deg)',
+                transform: model.isFlipped ? "rotate(90deg)" : "rotate(270deg)",
               }}
             />
           }
-          label={model.isFlipped ? 'Unflip' : 'Flip'}
+          label={model.isFlipped ? "Unflip" : "Flip"}
           onClick={() => {
-            $send(['ClickedFlip']);
+            $send(["ClickedFlip"]);
           }}
         />
       </UI.Box>
 
-      {model.sharedModel.type === 'GameOver' && (
+      {model.sharedModel.type === "GameOver" && (
         <UI.Dialog
           open={
-            model.sharedModel.type === 'GameOver' &&
-            model.openedModal === 'GameOver'
+            model.sharedModel.type === "GameOver" &&
+            model.openedModal === "GameOver"
           }
-          onClose={() => $send(['ClosedModal'])}
-        >
-          {model.sharedModel.gameOver.type === 'Checkmate' && (
+          onClose={() => $send(["ClosedModal"])}>
+          {model.sharedModel.gameOver.type === "Checkmate" && (
             <UI.DialogTitle>
               {Chess.colorToString(model.sharedModel.gameOver.winner)} won by
               checkmate
             </UI.DialogTitle>
           )}
 
-          {model.sharedModel.gameOver.type === 'Stalemate' && (
+          {model.sharedModel.gameOver.type === "Stalemate" && (
             <UI.DialogTitle>Drawn by stalemate</UI.DialogTitle>
           )}
 
           <UI.DialogActions>
-            <UI.Button onClick={() => $send(['ClosedModal'])}>Close</UI.Button>
+            <UI.Button onClick={() => $send(["ClosedModal"])}>Close</UI.Button>
           </UI.DialogActions>
         </UI.Dialog>
       )}
@@ -468,15 +467,15 @@ export const View = ({
 
 export const toGameText = (model: SharedModel): string => {
   switch (model.type) {
-    case 'GameOver': {
+    case "GameOver": {
       switch (model.gameOver.type) {
-        case 'Checkmate': {
+        case "Checkmate": {
           const color = Chess.colorToString(model.gameOver.winner);
           return `${color} won by checkmate`;
         }
 
-        case 'Stalemate': {
-          return 'Stalemate';
+        case "Stalemate": {
+          return "Stalemate";
         }
 
         default:
@@ -484,11 +483,11 @@ export const toGameText = (model: SharedModel): string => {
       }
     }
 
-    case 'Setup': {
-      return 'Setting up game';
+    case "Setup": {
+      return "Setting up game";
     }
 
-    case 'game': {
+    case "game": {
       if (Chess.inCheck(model.board)) {
         return `${Chess.colorToString(Chess.toTurn(model.board))} is in check`;
       }

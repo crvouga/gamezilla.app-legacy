@@ -5,24 +5,24 @@ import {
   ViewCtx,
   ViewMainMenu,
   bannerArtAspectRatio,
-} from '@gamezilla/shared/client';
-import { Cmd, Posix, Sub } from '@gamezilla/shared/core';
-import * as UI from '@gamezilla/shared/ui';
-import { IconComputerDesktop, IconUsers } from '@gamezilla/shared/ui';
+} from "@gamezilla/shared/client";
+import { Cmd, Posix, Sub } from "@gamezilla/shared/core";
+import * as UI from "@gamezilla/shared/ui";
+import { IconComputerDesktop, IconUsers } from "@gamezilla/shared/ui";
 import {
   ClientModel,
   ClientMsg,
   ServerModel,
   ToClient,
   ToServer,
-} from './connect-four.shared';
+} from "./connect-four.shared";
 import {
   PlayerIcon,
   ViewCoverArt,
   gameTheme,
-} from './connect-four/connect-four-ui';
-import * as VsBot from './vs-bot/vs-bot.client';
-import * as VsUser from './vs-user/vs-user.client';
+} from "./connect-four/connect-four-ui";
+import * as VsBot from "./vs-bot/vs-bot.client";
+import * as VsUser from "./vs-user/vs-user.client";
 
 //
 //
@@ -34,7 +34,7 @@ import * as VsUser from './vs-user/vs-user.client';
 
 export type Model = ClientModel;
 
-export const init: Model = { t: 'none' };
+export const init: Model = { t: "none" };
 
 //
 //
@@ -60,36 +60,36 @@ export const update = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (msg.t === 'input-mode') {
+  if (msg.t === "input-mode") {
     return { model, cmd: sendToServer(msg) };
   }
 
-  if (msg.t === 'vs-user' && model.t === 'vs-user') {
+  if (msg.t === "vs-user" && model.t === "vs-user") {
     const updated = VsUser.update(
       {
-        sendToServer: (c) => sendToServer({ t: 'vs-user', c }),
+        sendToServer: (c) => sendToServer({ t: "vs-user", c }),
       },
       msg.c,
       model.c
     );
     return {
-      model: { t: 'vs-user', c: updated[0] },
-      cmd: Cmd.tag_('vs-user', updated[1]),
+      model: { t: "vs-user", c: updated[0] },
+      cmd: Cmd.tag_("vs-user", updated[1]),
     };
   }
 
-  if (msg.t === 'vs-bot' && model.t === 'vs-bot') {
+  if (msg.t === "vs-bot" && model.t === "vs-bot") {
     const updated = VsBot.update(
       {
         ctx,
-        sendToServer: (c) => sendToServer({ t: 'vs-bot', c }),
+        sendToServer: (c) => sendToServer({ t: "vs-bot", c }),
       },
       msg.c,
       model.c
     );
     return {
-      model: { t: 'vs-bot', c: updated.model },
-      cmd: Cmd.tag_('vs-bot', updated.cmd),
+      model: { t: "vs-bot", c: updated.model },
+      cmd: Cmd.tag_("vs-bot", updated.cmd),
     };
   }
 
@@ -106,12 +106,12 @@ export const updateFromServer = ({
   model: Model;
 }): [Model, Cmd<Msg>] => {
   switch (msg.t) {
-    case 'input-mode': {
-      if (msg.result.t === 'err') {
+    case "input-mode": {
+      if (msg.result.t === "err") {
         return [model, Cmd.None];
       }
 
-      const merged = mergeWithServer({
+      const merged = syncWithServer({
         clientModel: model,
         serverModel: msg.result.value,
         ctx,
@@ -119,24 +119,24 @@ export const updateFromServer = ({
       return [merged, Cmd.None];
     }
 
-    case 'vs-user': {
-      if (model.t === 'vs-user') {
+    case "vs-user": {
+      if (model.t === "vs-user") {
         const [c, cmd] = VsUser.updateFromServer(msg.c, model.c);
-        return [{ t: 'vs-user', c }, Cmd.tag_('vs-user', cmd)];
+        return [{ t: "vs-user", c }, Cmd.tag_("vs-user", cmd)];
       }
       return [model, Cmd.None];
     }
 
-    case 'vs-bot': {
-      if (model.t === 'vs-bot') {
+    case "vs-bot": {
+      if (model.t === "vs-bot") {
         const updated = VsBot.updateFromServer({
           ctx,
           msg: msg.c,
           model: model.c,
         });
         return [
-          { t: 'vs-bot', c: updated.model },
-          Cmd.tag_('vs-bot', updated.cmd ?? Cmd.None),
+          { t: "vs-bot", c: updated.model },
+          Cmd.tag_("vs-bot", updated.cmd ?? Cmd.None),
         ];
       }
       return [model, Cmd.None];
@@ -163,10 +163,10 @@ export const View = ({
   ctx: ViewCtx;
   gameRoomCtx: RoomViewCtx;
 }) => {
-  const goBack = () => $send({ t: 'input-mode', mode: 'none' });
+  const goBack = () => $send({ t: "input-mode", mode: "none" });
 
   switch (model.t) {
-    case 'none': {
+    case "none": {
       return (
         <ViewMainMenu
           roomCtx={gameRoomCtx}
@@ -175,35 +175,35 @@ export const View = ({
           buttons={[
             {
               icon: <IconUsers />,
-              label: 'Play Friend',
-              onClick: () => $send({ mode: 'vs-user', t: 'input-mode' }),
+              label: "Play Friend",
+              onClick: () => $send({ mode: "vs-user", t: "input-mode" }),
             },
             {
               icon: <IconComputerDesktop className="w-6 h-6" />,
-              label: 'Play Computer',
-              onClick: () => $send({ mode: 'vs-bot', t: 'input-mode' }),
+              label: "Play Computer",
+              onClick: () => $send({ mode: "vs-bot", t: "input-mode" }),
             },
           ]}
         />
       );
     }
 
-    case 'vs-user': {
+    case "vs-user": {
       return (
         <VsUser.View
           ctx={ctx}
-          $send={(c) => $send({ t: 'vs-user', c })}
+          $send={(c) => $send({ t: "vs-user", c })}
           goBack={goBack}
           model={model.c}
         />
       );
     }
 
-    case 'vs-bot': {
+    case "vs-bot": {
       return (
         <VsBot.View
           ctx={ctx}
-          $send={(c) => $send({ t: 'vs-bot', c })}
+          $send={(c) => $send({ t: "vs-bot", c })}
           model={model.c}
           goBack={goBack}
         />
@@ -221,42 +221,39 @@ export const View = ({
 //
 
 export const BannerArt = () => {
-  const iconSx: UI.Sx = { width: 120, height: 120, maxHeight: '66%' };
+  const iconSx: UI.Sx = { width: 120, height: 120, maxHeight: "66%" };
 
   return (
     <UI.AspectRatio aspectRatio={bannerArtAspectRatio}>
       <UI.List
         sx={{
-          width: '100%',
-          height: '100%',
+          width: "100%",
+          height: "100%",
           background: `linear-gradient(${gameTheme.primary.dark}, ${gameTheme.primary.darker})`,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
           gap: 4,
-        }}
-      >
+        }}>
         <PlayerIcon playerType="PlayerOne" sx={iconSx} />
         <PlayerIcon playerType="PlayerTwo" sx={iconSx} />
       </UI.List>
       <UI.List
         sx={{
-          width: '100%',
-          height: '100%',
-          background: 'rgba(0, 0, 0, 0.1)',
-          position: 'absolute',
+          width: "100%",
+          height: "100%",
+          background: "rgba(0, 0, 0, 0.1)",
+          position: "absolute",
           top: 0,
           left: 0,
-          overflow: 'hidden',
-          display: 'flex',
-          alignItems: 'flex-end',
-        }}
-      >
+          overflow: "hidden",
+          display: "flex",
+          alignItems: "flex-end",
+        }}>
         <UI.Typography
           color="#fff"
           fontSize={36}
-          sx={{ paddingX: 2, paddingY: 1 }}
-        >
+          sx={{ paddingX: 2, paddingY: 1 }}>
           Connect Four
         </UI.Typography>
       </UI.List>
@@ -264,7 +261,7 @@ export const BannerArt = () => {
   );
 };
 
-export const mergeWithServer = ({
+export const syncWithServer = ({
   ctx,
   clientModel,
   serverModel,
@@ -274,15 +271,15 @@ export const mergeWithServer = ({
   serverModel: ServerModel;
 }): ClientModel => {
   switch (serverModel.t) {
-    case 'none': {
+    case "none": {
       return serverModel;
     }
 
-    case 'vs-bot': {
-      if (clientModel.t === 'vs-bot') {
+    case "vs-bot": {
+      if (clientModel.t === "vs-bot") {
         return {
-          t: 'vs-bot',
-          c: VsBot.mergeWithServer({
+          t: "vs-bot",
+          c: VsBot.syncWithServer({
             ctx,
             clientModel: clientModel.c,
             serverModel: serverModel.c,
@@ -291,8 +288,8 @@ export const mergeWithServer = ({
       }
 
       return {
-        t: 'vs-bot',
-        c: VsBot.mergeWithServer({
+        t: "vs-bot",
+        c: VsBot.syncWithServer({
           ctx,
           clientModel: VsBot.init(serverModel.c),
           serverModel: serverModel.c,
@@ -300,11 +297,11 @@ export const mergeWithServer = ({
       };
     }
 
-    case 'vs-user': {
-      if (clientModel.t === 'vs-user') {
+    case "vs-user": {
+      if (clientModel.t === "vs-user") {
         return {
-          t: 'vs-user',
-          c: VsUser.mergeWithServer({
+          t: "vs-user",
+          c: VsUser.syncWithServer({
             clientModel: clientModel.c,
             serverModel: serverModel.c,
           }),
@@ -312,8 +309,8 @@ export const mergeWithServer = ({
       }
 
       return {
-        t: 'vs-user',
-        c: VsUser.mergeWithServer({
+        t: "vs-user",
+        c: VsUser.syncWithServer({
           clientModel: VsUser.init(serverModel.c),
           serverModel: serverModel.c,
         }),
@@ -336,16 +333,16 @@ export const subscriptions = (
   model: Model
 ): Sub<Msg> => {
   switch (model.t) {
-    case 'none': {
+    case "none": {
       return Sub.None;
     }
 
-    case 'vs-bot': {
-      return Sub.tag_('vs-bot', VsBot.subscriptions(intervalId, now, model.c));
+    case "vs-bot": {
+      return Sub.tag_("vs-bot", VsBot.subscriptions(intervalId, now, model.c));
     }
 
-    case 'vs-user': {
-      return Sub.tag_('vs-user', VsUser.subscriptions(model.c));
+    case "vs-user": {
+      return Sub.tag_("vs-user", VsUser.subscriptions(model.c));
     }
   }
 };
