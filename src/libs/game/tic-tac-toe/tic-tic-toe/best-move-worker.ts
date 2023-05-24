@@ -1,4 +1,4 @@
-import { Err, Ok, shuffle } from "@gamezilla/shared/core";
+import { Err, Ok } from "@gamezilla/shared/core";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { expose } from "threads/worker";
@@ -13,7 +13,7 @@ const toBestMove = ({
   maximizingPlayer: PlayerType;
   board: Board;
 }) => {
-  for (const position of shuffle(String(Math.random()), allPositions)) {
+  for (const position of allPositions) {
     const moved = move({ board, player: maximizingPlayer, position });
 
     if (moved.t === "ok") {

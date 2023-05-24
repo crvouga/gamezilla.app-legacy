@@ -73,16 +73,6 @@ export const update = ({
   msgs?: AppMsg[];
   cmd?: Cmd<Msg>;
 } => {
-  if (msg.t === "toast") {
-    return { model };
-  }
-
-  const debug = true;
-
-  if (debug) {
-    return { model, cmd: sendToServer(msg) };
-  }
-
   const handled = handle({ ctx, msg, model });
   if (handled.t === "err") {
     return { model, cmd: sendToServer(msg) };
@@ -111,7 +101,6 @@ export const updateFromServer = ({
   if (msg.result.t === "err") {
     return {
       model,
-      msgs: [{ t: "toast-enqueued", message: msg.result.error }],
     };
   }
 
