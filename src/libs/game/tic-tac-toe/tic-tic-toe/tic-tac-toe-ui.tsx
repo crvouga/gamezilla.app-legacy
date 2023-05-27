@@ -1,5 +1,5 @@
 import {
-  Board,
+  Model,
   Empty,
   MAX_X,
   MAX_Y,
@@ -24,7 +24,7 @@ export const ViewBoard = ({
   board,
   onClick,
 }: {
-  board: Board;
+  board: Model;
   onClick: (position: Position) => void;
 }) => {
   return (

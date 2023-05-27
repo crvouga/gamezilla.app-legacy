@@ -5,8 +5,8 @@ import {
   Username,
   client,
   definitions,
-} from '@gamezilla/shared/app';
-import { AppMsg, AuthenticatedRequestCtx } from '@gamezilla/shared/server';
+} from "@gamezilla/shared/app";
+import { AppMsg, AuthenticatedRequestCtx } from "@gamezilla/shared/server";
 import {
   Cmd,
   Err,
@@ -15,7 +15,7 @@ import {
   Result,
   Task,
   p,
-} from '@gamezilla/shared/core';
+} from "@gamezilla/shared/core";
 import {
   ServerModel,
   ServerMsg,
@@ -23,7 +23,7 @@ import {
   Req,
   ToServer,
   ToClient,
-} from './profile.shared';
+} from "./profile.shared";
 
 //
 //
@@ -58,7 +58,7 @@ export const update = ({
   cmd?: Cmd<Msg>;
 } => {
   switch (msg.t) {
-    case 'none': {
+    case "none": {
       return { model };
     }
   }
@@ -103,7 +103,7 @@ export const updateFromApp = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (msg.t === 'client-authenticated') {
+  if (msg.t === "client-authenticated") {
     const { userId } = msg;
 
     return {
@@ -111,7 +111,11 @@ export const updateFromApp = ({
       cmd: p(
         () => findElseCreate({ userId }),
         Cmd.perform(
-          (result): ToClient => ({ t: 'current-user-profile', result })
+          (result): ToClient => ({
+            t: "current-user-profile",
+            result,
+            initiatorMsg: msg,
+          })
         ),
         Cmd.chain((res) => sendToClient([msg.clientId], res))
       ),
@@ -130,7 +134,7 @@ const handler =
     ctx: { currentUserId: UserId };
   }): Task<Result<string, Profile[]>> =>
   async () => {
-    if (msg.t === 'find-many') {
+    if (msg.t === "find-many") {
       const found = await findMany({
         userIds: msg.userIds,
       })();
@@ -138,19 +142,19 @@ const handler =
       return found;
     }
 
-    if (msg.t === 'change-username') {
+    if (msg.t === "change-username") {
       const parsed = Username.decode(msg.username);
 
-      if (parsed.t === 'err') {
+      if (parsed.t === "err") {
         return parsed;
       }
 
       const updated = await client
-        .from<definitions['user_profile']>('user_profile')
+        .from<definitions["user_profile"]>("user_profile")
         .update({
           username: parsed.value,
         })
-        .eq('id', ctx.currentUserId)
+        .eq("id", ctx.currentUserId)
         .single();
 
       if (updated.error) {
@@ -160,14 +164,14 @@ const handler =
       return Ok([]);
     }
 
-    return Err('not-implemented');
+    return Err("not-implemented");
   };
 
 const findElseCreate = async ({ userId }: { userId: UserId }) => {
   const found = await client
-    .from<definitions['user_profile']>('user_profile')
-    .select('*')
-    .eq('id', userId);
+    .from<definitions["user_profile"]>("user_profile")
+    .select("*")
+    .eq("id", userId);
 
   if (found.error) {
     return Err(found.error.message);
@@ -184,17 +188,17 @@ const findElseCreate = async ({ userId }: { userId: UserId }) => {
 
   const seed = await ProfileAvatar.generateRandomSeed();
   const created = await client
-    .from<definitions['user_profile']>('user_profile')
+    .from<definitions["user_profile"]>("user_profile")
     .insert([
       {
         id: userId,
         avatar_url: ProfileAvatar.toUrl({
           seed,
-          style: 'adventurer-neutral',
+          style: "adventurer-neutral",
         }),
-        theme_mode: 'DARK',
-        name: 'todo',
-        username: 'todo',
+        theme_mode: "DARK",
+        name: "todo",
+        username: "todo",
       },
     ])
     .single();
@@ -211,12 +215,12 @@ const findElseCreate = async ({ userId }: { userId: UserId }) => {
 };
 
 export const decodeRow = (
-  row: definitions['user_profile']
+  row: definitions["user_profile"]
 ): Result<string, Profile> => {
   const userId = UserId.decode(row.id);
   const username = Username.decode(row.username);
 
-  if (userId.t === 'ok' && username.t === 'ok') {
+  if (userId.t === "ok" && username.t === "ok") {
     return Result.Ok({
       userId: userId.value,
       avatarUrl: row.avatar_url,
@@ -227,16 +231,16 @@ export const decodeRow = (
   }
 
   // todo better error
-  return Result.Err('failed_to_decode_supabase_row');
+  return Result.Err("failed_to_decode_supabase_row");
 };
 
 export const findMany =
   ({ userIds }: { userIds: string[] }): Task<Result<string, Profile[]>> =>
   async () => {
     const response = await client
-      .from<definitions['user_profile']>('user_profile')
-      .select('*')
-      .in('id', userIds);
+      .from<definitions["user_profile"]>("user_profile")
+      .select("*")
+      .in("id", userIds);
 
     if (response.error) {
       return Result.Err(response.error.message);
@@ -261,13 +265,13 @@ export const create =
   }): Task<Result<string, Profile>> =>
   async () => {
     const response = await client
-      .from<definitions['user_profile']>('user_profile')
+      .from<definitions["user_profile"]>("user_profile")
       .insert({
         id: userId,
         name,
         username,
         avatar_url: avatarUrl,
-        theme_mode: 'SYSTEM',
+        theme_mode: "SYSTEM",
       })
       .single();
 
@@ -279,31 +283,31 @@ export const create =
   };
 
 export const rowThemeModeToThemeMode = (
-  themeMode: definitions['user_profile']['theme_mode']
-): Profile['themeMode'] => {
+  themeMode: definitions["user_profile"]["theme_mode"]
+): Profile["themeMode"] => {
   switch (themeMode) {
-    case 'DARK':
-      return 'Dark';
+    case "DARK":
+      return "Dark";
 
-    case 'LIGHT':
-      return 'Light';
+    case "LIGHT":
+      return "Light";
 
-    case 'SYSTEM':
-      return 'System';
+    case "SYSTEM":
+      return "System";
   }
 };
 
 export const fromThemeMode = (
-  themeMode: Profile['themeMode']
-): definitions['user_profile']['theme_mode'] => {
+  themeMode: Profile["themeMode"]
+): definitions["user_profile"]["theme_mode"] => {
   switch (themeMode) {
-    case 'Dark':
-      return 'DARK';
+    case "Dark":
+      return "DARK";
 
-    case 'Light':
-      return 'LIGHT';
+    case "Light":
+      return "LIGHT";
 
-    case 'System':
-      return 'SYSTEM';
+    case "System":
+      return "SYSTEM";
   }
 };

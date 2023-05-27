@@ -1,10 +1,10 @@
-import { PhoneNumber, UserId, client } from '@gamezilla/shared/app';
+import { PhoneNumber, UserId, client } from "@gamezilla/shared/app";
 import {
   AppMsg,
   Route,
   RouteAuth,
   UnauthenticatedViewCtx,
-} from '@gamezilla/shared/client';
+} from "@gamezilla/shared/client";
 import {
   Cmd,
   Err,
@@ -14,7 +14,7 @@ import {
   Sub,
   Task,
   p,
-} from '@gamezilla/shared/core';
+} from "@gamezilla/shared/core";
 import {
   ConformationDialog,
   IconEnvelope,
@@ -23,13 +23,13 @@ import {
   IconSpinner,
   LoadingDialog,
   MyButton,
-} from '@gamezilla/shared/ui';
-import { Session as SupabaseSession } from '@supabase/supabase-js';
-import { Subject } from 'rxjs';
-import * as AuthEmailLink from './auth-email-link';
-import * as AuthPhone from './auth-phone';
-import * as AuthPhoneVerify from './auth-phone-verify';
-import { ClientModel, ClientMsg, ToClient, ToServer } from './auth.shared';
+} from "@gamezilla/shared/ui";
+import { Session as SupabaseSession } from "@supabase/supabase-js";
+import { Subject } from "rxjs";
+import * as AuthEmailLink from "./auth-email-link";
+import * as AuthPhone from "./auth-phone";
+import * as AuthPhoneVerify from "./auth-phone-verify";
+import { ClientModel, ClientMsg, ToClient, ToServer } from "./auth.shared";
 
 //
 //
@@ -51,7 +51,7 @@ export const init = (): { model: Model; cmd?: Cmd<Msg> } => {
       phone: phone.model,
       phoneVerify: phoneVerify.model,
       emailLink,
-      currentUser: { t: 'loading' },
+      currentUser: { t: "loading" },
     },
     cmd: loadCurrentUser,
   };
@@ -82,41 +82,41 @@ export const update = ({
   cmd?: Cmd<Msg>;
   msgs?: AppMsg[];
 } => {
-  if (msg.t === 'login-with-google') {
+  if (msg.t === "login-with-google") {
     return {
       model: {
         ...model,
         requests: {
           ...model.requests,
-          'login-with-google': RemoteResult.Loading,
+          "login-with-google": RemoteResult.Loading,
         },
       },
       cmd: p(
-        loginWithProvider({ provider: 'Google' }),
-        Cmd.perform((result) => ({ t: 'login-done', result }))
+        loginWithProvider({ provider: "Google" }),
+        Cmd.perform((result) => ({ t: "login-done", result }))
       ),
     };
   }
 
-  if (msg.t === 'login-done') {
+  if (msg.t === "login-done") {
     return { model };
   }
 
-  if (msg.t === 'logout') {
+  if (msg.t === "logout") {
     return {
       model,
       cmd: p(
         logout,
-        Cmd.perform((result) => ({ t: 'logout-done', result }))
+        Cmd.perform((result) => ({ t: "logout-done", result }))
       ),
     };
   }
 
-  if (msg.t === 'logout-done') {
+  if (msg.t === "logout-done") {
     return { model };
   }
 
-  if (msg.t === 'phone') {
+  if (msg.t === "phone") {
     const updated = AuthPhone.update({
       msg: msg.c,
       model: model.phone,
@@ -124,12 +124,12 @@ export const update = ({
     });
     return {
       model: { ...model, phone: updated.model },
-      cmd: Cmd.tag_('phone', updated.cmd),
+      cmd: Cmd.tag_("phone", updated.cmd),
     };
   }
 
-  if (msg.t === 'phone-verify') {
-    if (!(route.t === 'auth' && route.c.t === 'login-phone-verify')) {
+  if (msg.t === "phone-verify") {
+    if (!(route.t === "auth" && route.c.t === "login-phone-verify")) {
       return { model };
     }
 
@@ -141,11 +141,11 @@ export const update = ({
     });
     return {
       model: { ...model, phoneVerify: updated.model },
-      cmd: Cmd.tag_('phone-verify', updated.cmd),
+      cmd: Cmd.tag_("phone-verify", updated.cmd),
     };
   }
 
-  if (msg.t === 'email-link') {
+  if (msg.t === "email-link") {
     const updated = AuthEmailLink.update({
       msg: msg.c,
       model: model.emailLink,
@@ -153,17 +153,17 @@ export const update = ({
     });
     return {
       model: { ...model, emailLink: updated.model },
-      cmd: Cmd.tag_('email-link', updated.cmd),
+      cmd: Cmd.tag_("email-link", updated.cmd),
     };
   }
 
-  if (msg.t === 'got-current-user') {
+  if (msg.t === "got-current-user") {
     const currentUserId =
-      msg.currentUser.t === 'logged-in' ? msg.currentUser.currentUserId : null;
+      msg.currentUser.t === "logged-in" ? msg.currentUser.currentUserId : null;
     return {
       model: { ...model, currentUser: msg.currentUser },
       cmd: sendToServer(msg),
-      msgs: currentUserId ? [{ t: 'user-logged-in', currentUserId }] : [],
+      msgs: currentUserId ? [{ t: "user-logged-in", currentUserId }] : [],
     };
   }
 
@@ -198,7 +198,7 @@ export const ViewLoggedIn = ({
   $send: (m: Msg) => void;
   ctx: UnauthenticatedViewCtx;
 }) => {
-  if (route.t === 'logout') {
+  if (route.t === "logout") {
     return <ViewLogoutScreen ctx={ctx} model={model} $send={$send} />;
   }
 
@@ -216,34 +216,34 @@ export const ViewLoggedOut = ({
   $send: (m: Msg) => void;
   ctx: UnauthenticatedViewCtx;
 }) => {
-  if (route.t === 'login') {
+  if (route.t === "login") {
     return <ViewLoginScreen ctx={ctx} model={model} $send={$send} />;
   }
 
-  if (route.t === 'login-phone') {
+  if (route.t === "login-phone") {
     return (
       <AuthPhone.View
         model={model.phone}
-        $send={(m) => $send({ t: 'phone', c: m })}
+        $send={(m) => $send({ t: "phone", c: m })}
       />
     );
   }
 
-  if (route.t === 'login-email-link') {
+  if (route.t === "login-email-link") {
     return (
       <AuthEmailLink.View
         model={model.emailLink}
-        $send={(m) => $send({ t: 'email-link', c: m })}
+        $send={(m) => $send({ t: "email-link", c: m })}
       />
     );
   }
 
-  if (route.t === 'login-phone-verify') {
+  if (route.t === "login-phone-verify") {
     return (
       <AuthPhoneVerify.View
         phoneNumber={route.phoneNumber}
         model={model.phoneVerify}
-        $send={(m) => $send({ t: 'phone-verify', c: m })}
+        $send={(m) => $send({ t: "phone-verify", c: m })}
       />
     );
   }
@@ -272,11 +272,10 @@ const ViewLoginScreen = ({
 
         <div className="flex flex-col gap-6 w-full">
           <MyButton
-            onClick={() => $send({ t: 'login-with-google' })}
+            onClick={() => $send({ t: "login-with-google" })}
             size="lg"
-            className="w-full"
-          >
-            {model.requests['login-with-google']?.t === 'loading' && (
+            className="w-full">
+            {model.requests["login-with-google"]?.t === "loading" && (
               <IconSpinner className="w-6 h-6 animate-spin" />
             )}
             <IconGoogle />
@@ -286,24 +285,22 @@ const ViewLoginScreen = ({
           <MyButton
             onClick={() =>
               ctx.$push({
-                t: 'auth',
-                c: { t: 'login-phone', isSelectingCountry: false },
+                t: "auth",
+                c: { t: "login-phone", isSelectingCountry: false },
               })
             }
             size="lg"
-            className="w-full"
-          >
+            className="w-full">
             <IconMobilePhone />
             Continue With Text
           </MyButton>
 
           <MyButton
             onClick={() =>
-              ctx.$push({ t: 'auth', c: { t: 'login-email-link' } })
+              ctx.$push({ t: "auth", c: { t: "login-email-link" } })
             }
             size="lg"
-            className="w-full"
-          >
+            className="w-full">
             <IconEnvelope />
             Continue With Email
           </MyButton>
@@ -322,8 +319,8 @@ const ViewLogoutScreen = ({
   model: Model;
   $send: (msg: Msg) => void;
 }) => {
-  if (model.requests.logout?.t === 'loading') {
-    return <LoadingDialog open title={'Logging out...'} />;
+  if (model.requests.logout?.t === "loading") {
+    return <LoadingDialog open title={"Logging out..."} />;
   }
 
   return (
@@ -332,7 +329,7 @@ const ViewLogoutScreen = ({
       title="Logout of Gamezilla?"
       confirmTitle="Logout"
       onConfirm={() => {
-        $send({ t: 'logout' });
+        $send({ t: "logout" });
       }}
       onClose={() => {
         ctx.$back();
@@ -356,12 +353,12 @@ const subject = new Subject<Msg>();
 
 client.auth.onAuthStateChange((event, supabaseSession) => {
   switch (event) {
-    case 'PASSWORD_RECOVERY':
-    case 'SIGNED_IN':
-    case 'SIGNED_OUT':
-    case 'TOKEN_REFRESHED':
-    case 'USER_DELETED':
-    case 'USER_UPDATED': {
+    case "PASSWORD_RECOVERY":
+    case "SIGNED_IN":
+    case "SIGNED_OUT":
+    case "TOKEN_REFRESHED":
+    case "USER_DELETED":
+    case "USER_UPDATED": {
       const msg = fromSupabaseSession(supabaseSession);
       subject.next(msg);
     }
@@ -372,21 +369,21 @@ const fromSupabaseSession = (auth: SupabaseSession | null): Msg => {
   const userId = UserId.decode(auth?.user?.id);
 
   const name = String(
-    auth?.user?.user_metadata?.['name'] ??
-      auth?.user?.user_metadata?.['full_name'] ??
-      ''
+    auth?.user?.user_metadata?.["name"] ??
+      auth?.user?.user_metadata?.["full_name"] ??
+      ""
   );
 
-  if (userId.t === 'ok') {
+  if (userId.t === "ok") {
     return {
-      t: 'got-current-user',
-      currentUser: { t: 'logged-in', currentUserId: userId.value, name },
+      t: "got-current-user",
+      currentUser: { t: "logged-in", currentUserId: userId.value, name },
     };
   }
 
   return {
-    t: 'got-current-user',
-    currentUser: { t: 'logged-out' },
+    t: "got-current-user",
+    currentUser: { t: "logged-out" },
   };
 };
 
@@ -405,15 +402,15 @@ const loadCurrentUser: Cmd<Msg> = ($send) => {
 //
 //
 
-export type Provider = 'Google';
+export type Provider = "Google";
 
 export const loginWithProvider =
   ({ provider }: { provider: Provider }): Task<Result<string, null>> =>
   async () => {
     switch (provider) {
-      case 'Google': {
+      case "Google": {
         const response = await client.auth.signIn({
-          provider: 'google',
+          provider: "google",
         });
 
         if (response.error) {
@@ -433,10 +430,10 @@ const sendCode =
     });
 
     if (response.error) {
-      return Result.Err(response.error.message);
+      return Err(response.error.message);
     }
 
-    return Result.Ok(null);
+    return Ok(null);
   };
 
 const verifyCode =
@@ -454,10 +451,10 @@ const verifyCode =
     });
 
     if (response.error) {
-      return Result.Err(response.error.message);
+      return Err(response.error.message);
     }
 
-    return Result.Ok(null);
+    return Ok(null);
   };
 
 const sendEmailLink =
@@ -478,8 +475,8 @@ const logout: Task<Result<string, null>> = async () => {
   const { error } = await client.auth.signOut();
 
   if (error) {
-    return Result.Err(error.message);
+    return Err(error.message);
   }
 
-  return Result.Ok(null);
+  return Ok(null);
 };

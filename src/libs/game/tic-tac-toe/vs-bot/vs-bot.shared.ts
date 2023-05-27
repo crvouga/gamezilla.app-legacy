@@ -2,7 +2,7 @@ import { UserId } from "@gamezilla/shared/app";
 import { Err, Ok, Result } from "@gamezilla/shared/core";
 import { GetBestMoveResult } from "../tic-tic-toe/best-move";
 import {
-  Board,
+  Model,
   BotLevel,
   PlayerType,
   Position,
@@ -34,7 +34,7 @@ export type GameModel = {
   player: UserId;
   userPlayerType: PlayerType;
   botLevel: BotLevel;
-  board: Board;
+  board: Model;
 };
 
 export type ClientModel = SharedModel;

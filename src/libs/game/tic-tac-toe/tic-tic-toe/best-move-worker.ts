@@ -2,7 +2,7 @@ import { Err, Ok } from "@gamezilla/shared/core";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { expose } from "threads/worker";
-import { Board, PlayerType, allPositions, move } from "./tic-tac-toe";
+import { Model, PlayerType, allPositions, move } from "./tic-tac-toe";
 
 const toBestMove = ({
   // depth,
@@ -11,7 +11,7 @@ const toBestMove = ({
 }: {
   depth: number;
   maximizingPlayer: PlayerType;
-  board: Board;
+  board: Model;
 }) => {
   for (const position of allPositions) {
     const moved = move({ board, player: maximizingPlayer, position });

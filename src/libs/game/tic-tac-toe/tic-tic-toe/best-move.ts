@@ -3,7 +3,7 @@ import { Err, Result, Task } from "@gamezilla/shared/core";
 // @ts-ignore
 import * as threads from "threads";
 import { WorkerAPI } from "./best-move-worker";
-import { Board, PlayerType, Position } from "./tic-tac-toe";
+import { Model, PlayerType, Position } from "./tic-tac-toe";
 
 export type GetBestMoveResult = Result<string, Position>;
 
@@ -11,7 +11,7 @@ export const getBestMove =
   (input: {
     depth: number;
     maximizingPlayer: PlayerType;
-    board: Board;
+    board: Model;
   }): Task<GetBestMoveResult> =>
   async () => {
     try {
