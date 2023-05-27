@@ -123,7 +123,6 @@ const main = async () => {
   program.state$.subscribe((state) => {
     if (state.msg) {
       const type = toMsgType(state.msg);
-      // const _payload = toMsgType(state.msg);
       console.log(type);
     }
   });

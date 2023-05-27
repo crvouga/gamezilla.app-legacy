@@ -55,6 +55,6 @@
     }
   },
 
-  "include": ["src"],
+  "include": ["src", "deployment-manager"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

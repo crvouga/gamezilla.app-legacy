@@ -1,34 +1,38 @@
-import { Cmd, eq, Posix, Sub } from "@gamezilla/shared/core";
-import { RoomCtx, RoomViewCtx, ViewGameBox } from "@gamezilla/shared/client";
 import {
-  ActionButton,
-  AspectRatio,
-  Box,
-  Button,
-  Divider,
-  Drawer,
-  Icon,
-  Slider,
-  Typography,
-  useTheme,
+  BottomBarButtonAction,
+  RoomCtx,
+  RoomViewCtx,
+  ViewBottomButtonBar,
+  ViewGameBox,
+} from "@gamezilla/shared/client";
+import { Cmd, Posix, Sub, eq } from "@gamezilla/shared/core";
+import {
+  IconArrowLeftOnRect,
+  IconArrowRight,
+  IconCheckmarkCircle,
+  IconClock,
+  IconGear,
+  IconLightbulb,
+  IconXMark,
+  MyButton,
+  MyDrawer,
+  MyTextField,
+  cn,
 } from "@gamezilla/shared/ui";
-import { Skeleton } from "@mui/material";
 import { useMemo } from "react";
 import * as Chess from "../chess/chess";
 import {
   ClientModel,
   ClientMsg,
-  handle,
-  initShared,
-  maxRating,
-  minRating,
   PuzzleQuery,
   Req,
   SharedModel,
   Status,
-  ToServer,
-  toCorrectMove,
   ToClient,
+  ToServer,
+  handle,
+  initShared,
+  toCorrectMove,
   toPlayerColor,
   toStatus,
 } from "./puzzle.shared";
@@ -223,155 +227,141 @@ export const View = ({
       : status.endedAt - model.startedAt;
   }, [ctx.now, status, model]);
 
+  const isSpectating = ctx.currentUserId !== ctx.hostId;
+
   return (
-    <ViewGameBox isSpectating={ctx.currentUserId !== ctx.hostId}>
+    <ViewGameBox isSpectating={isSpectating}>
       <ViewStatusBar status={status} />
 
-      <Divider />
+      <div className="flex-1 w-full flex items-center justify-center flex-col">
+        <div className="font-sm grid grid-cols-3 px-4 py-2 w-full">
+          <div className="flex items-center justify-start gap-2">
+            <p className="text-neutral-300">Rating</p>
+            <p>{status.type === "loading" ? "" : status.puzzle.rating}</p>
+          </div>
 
-      <Box sx={{ flex: 1 }}></Box>
+          <div>
+            <p className="text-neutral-300 flex-1 text-center">
+              {status.type === "loading"
+                ? ""
+                : `${model.moves.length}  /  ${status.puzzle.correctMoves.length}`}
+            </p>
+          </div>
 
-      {/*
-
-
-
-      Game Status
-
-
-
-      */}
-
-      <div className="font-sm flex items-center p-4">
-        <div className="flex items-center gap-2">
-          <p className="text-neutral-300">Rating</p>
-          <p>{status.type === "loading" ? "..." : status.puzzle.rating}</p>
+          <div className="flex items-center justify-center gap-2">
+            <IconClock />
+            <p className="font-mono font-bold text-lg  text-neutral-300">
+              {duration ? formatDuration(duration) : "-:--"}
+            </p>
+          </div>
         </div>
-        <p className="text-neutral-300 flex-1 text-center">
-          {status.type === "loading"
-            ? ""
-            : `${model.moves.length}  /  ${status.puzzle.correctMoves.length}`}
-        </p>
-        <div className="flex items-center justify-center gap-2">
-          <Icon name="clock" sx={{ mr: 1 }} />
-          <p className="font-mono font-bold text-lg  text-neutral-300">
-            {duration ? formatDuration(duration) : "-:--"}
-          </p>
+
+        <div className="w-full re flex items-center justify-end aspect-square bg-neutral-700">
+          {status.type !== "loading" && (
+            <Chess.View
+              key={status.puzzle.puzzleId}
+              model={status.board}
+              isDraggablePiece={({ piece }) => {
+                if (status.type === "solved") {
+                  return false;
+                }
+                const color = Chess.toColor(piece);
+                return (
+                  color === toPlayerColor(status.puzzle) &&
+                  ctx.hostId === ctx.currentUserId
+                );
+              }}
+              customSquareStyles={toCustomSquareStyle(model)}
+              boardOrientation={toPlayerColor(status.puzzle)}
+              onPieceDrop={(moveInput) => {
+                $send({ t: "input-move", moveInput });
+                return false;
+              }}
+            />
+          )}
         </div>
       </div>
 
-      <AspectRatio aspectRatio={1}>
-        <Skeleton
-          sx={{ position: "absolute" }}
-          width="100%"
-          height="100%"
-          variant="rectangular"
-        />
-
-        {status.type !== "loading" && (
-          <Chess.View
-            key={status.puzzle.puzzleId}
-            model={status.board}
-            isDraggablePiece={({ piece }) => {
-              if (status.type === "solved") {
-                return false;
-              }
-              const color = Chess.toColor(piece);
-              return (
-                color === toPlayerColor(status.puzzle) &&
-                ctx.hostId === ctx.currentUserId
-              );
-            }}
-            customSquareStyles={toCustomSquareStyle(model)}
-            boardOrientation={toPlayerColor(status.puzzle)}
-            onPieceDrop={(moveInput) => {
-              $send({ t: "input-move", moveInput });
-
-              return false;
-            }}
+      {!isSpectating && (
+        <>
+          <ViewBottomButtonBar
+            actions={toBottomBarActions({ model, onClose, $send })}
           />
-        )}
-      </AspectRatio>
+          <MyDrawer
+            open={model.openedModal === "tune"}
+            onClose={() => $send({ t: "closed-modal" })}>
+            <div className="p-4 flex flex-col gap-4 pb-8">
+              <div className="flex items-center w-full justify-between">
+                <p className="text-3xl">Settings</p>
+                <div className="flex items-center gap-2">
+                  <MyButton
+                    size="sm"
+                    variant="outlined"
+                    disabled={eq(model.query, model.draftQuery)}
+                    onClick={() =>
+                      $send({ t: "input-draft-query", query: model.query })
+                    }>
+                    Cancel
+                  </MyButton>
+                  <MyButton
+                    size="sm"
+                    variant="contained"
+                    onClick={() => $send({ t: "clicked-save" })}
+                    disabled={eq(model.query, model.draftQuery)}>
+                    Save
+                  </MyButton>
+                </div>
+              </div>
+              <div className="flex flex-col gap-2">
+                <p className="text-lg font-semibold">Rating Range</p>
 
-      <div className="flex-1"></div>
-
-      {ctx.currentUserId === ctx.hostId && (
-        <div className="w-full flex items-center border-t border-neutral-700">
-          <ViewActionButtons model={model} onClose={onClose} $send={$send} />
-        </div>
+                <div className="px-2 w-full flex items-center gap-4">
+                  <div className="flex-1">
+                    <MyTextField
+                      id="min-rating"
+                      onChange={(valueNew) => {
+                        const parsed = parseInt(valueNew);
+                        if (isNaN(parsed)) {
+                          return;
+                        }
+                        $send({
+                          t: "input-draft-query",
+                          query: {
+                            ...model.query,
+                            ratingRange: [parsed, model.query.ratingRange[1]],
+                          },
+                        });
+                      }}
+                      value={toDraftQuery(model).ratingRange[0]}
+                      label="Min"
+                      type="number"></MyTextField>
+                  </div>
+                  <div className="flex-1">
+                    <MyTextField
+                      id="max-rating"
+                      onChange={(valueNew) => {
+                        const parsed = parseInt(valueNew);
+                        if (isNaN(parsed)) {
+                          return;
+                        }
+                        $send({
+                          t: "input-draft-query",
+                          query: {
+                            ...model.query,
+                            ratingRange: [model.query.ratingRange[0], parsed],
+                          },
+                        });
+                      }}
+                      value={toDraftQuery(model).ratingRange[1]}
+                      label="Max"
+                      type="number"></MyTextField>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </MyDrawer>
+        </>
       )}
-
-      <Drawer
-        open={model.openedModal === "tune"}
-        onClose={() => $send({ t: "closed-modal" })}
-        anchor="bottom"
-        PaperProps={{
-          sx: {
-            p: 2,
-            px: 3,
-            pb: 4,
-            display: "flex",
-            flexDirection: "column",
-            gap: 3,
-          },
-        }}>
-        <Box sx={{ display: "flex" }}>
-          <Typography variant="h4" sx={{ flex: 1 }}>
-            Tune
-          </Typography>
-          <Box>
-            <Button
-              sx={{ mr: 2 }}
-              size="small"
-              variant="outlined"
-              disabled={eq(model.query, model.draftQuery)}
-              onClick={() =>
-                $send({ t: "input-draft-query", query: model.query })
-              }>
-              Cancel
-            </Button>
-            <Button
-              size="small"
-              variant="contained"
-              onClick={() => $send({ t: "clicked-save" })}
-              disabled={eq(model.query, model.draftQuery)}>
-              Save
-            </Button>
-          </Box>
-        </Box>
-        <Box>
-          <Box sx={{ display: "flex" }}>
-            <Typography sx={{ mr: 2 }}>Rating</Typography>
-            {/* <Typography sx={{ flex: 1 }}>
-              {toChessLevel(toDraftQuery(model).ratingRange[1])}
-            </Typography> */}
-            <Typography>
-              {String(toDraftQuery(model).ratingRange[0])}-
-              {String(toDraftQuery(model).ratingRange[1])}
-            </Typography>
-          </Box>
-          <Box sx={{ paddingX: 2 }}>
-            <Slider
-              min={minRating}
-              max={maxRating}
-              valueLabelDisplay="auto"
-              step={10}
-              marks
-              value={toDraftQuery(model).ratingRange}
-              onChange={(_, value) => {
-                if (Array.isArray(value) && value[0] && value[1]) {
-                  $send({
-                    t: "input-draft-query",
-                    query: {
-                      ...toDraftQuery(model),
-                      ratingRange: [value[0], value[1]],
-                    },
-                  });
-                }
-              }}
-            />
-          </Box>
-        </Box>
-      </Drawer>
     </ViewGameBox>
   );
 };
@@ -408,7 +398,7 @@ const formatDuration = (duration: number): string => {
     .padStart(2, "0")}`;
 };
 
-const ViewActionButtons = ({
+export const toBottomBarActions = ({
   model,
   onClose,
   $send,
@@ -416,211 +406,120 @@ const ViewActionButtons = ({
   model: Model;
   onClose: () => void;
   $send: (m: Msg) => void;
-}) => {
+}): BottomBarButtonAction[] => {
   const status = toStatus(model);
 
-  switch (status.type) {
-    case "loading": {
-      return (
-        <>
-          <ActionButton
-            icon={<Icon name="exit" />}
-            label="Exit"
-            onClick={onClose}
-          />
-          <ActionButton
-            icon={<Icon name="tune" />}
-            label="Tune"
-            onClick={() => {
-              $send({ t: "opened-modal", modal: "tune" });
-            }}
-          />
-          <ActionButton
-            disabled
-            icon={<Icon name="lightbulb" />}
-            label="Hint"
-            onClick={() => {
-              $send({ t: "show-hint" });
-            }}
-          />
-        </>
-      );
-    }
+  const exit: BottomBarButtonAction = {
+    icon: <IconArrowLeftOnRect />,
+    label: "Exit",
+    onClick: onClose,
+  };
 
-    case "incorrect": {
-      return (
-        <>
-          <ActionButton
-            icon={<Icon name="exit" />}
-            label="Exit"
-            onClick={onClose}
-          />
-          <ActionButton
-            icon={<Icon name="tune" />}
-            label="Tune"
-            onClick={() => {
-              $send({ t: "opened-modal", modal: "tune" });
-            }}
-          />
-          <ActionButton
-            icon={<Icon name="restart" />}
-            label="Retry"
-            color="error"
-            onClick={() => {
-              $send({ t: "retry" });
-            }}
-          />
-          <ActionButton
-            icon={<Icon name="chevron-right" />}
-            label="Skip"
-            onClick={() => {
-              $send({ t: "skip" });
-            }}
-          />
-        </>
-      );
-    }
+  const settings: BottomBarButtonAction = {
+    icon: <IconGear />,
+    label: "Settings",
+    onClick: () => {
+      $send({ t: "opened-modal", modal: "tune" });
+    },
+  };
 
-    case "solved": {
-      return (
-        <>
-          <ActionButton
-            icon={<Icon name="exit" />}
-            label="Exit"
-            onClick={onClose}
-          />
-          <ActionButton
-            icon={<Icon name="tune" />}
-            label="Tune"
-            onClick={() => {
-              $send({ t: "opened-modal", modal: "tune" });
-            }}
-          />
-          <ActionButton
-            color="success"
-            icon={<Icon name="arrow-circle-right" />}
-            label="Next"
-            onClick={() => {
-              $send({ t: "next" });
-            }}
-          />
-        </>
-      );
-    }
+  const hint: BottomBarButtonAction = {
+    icon: <IconLightbulb />,
+    label: "Hint",
+    onClick: () => $send({ t: "show-hint" }),
+  };
 
-    case "solving": {
-      return (
-        <>
-          <ActionButton
-            icon={<Icon name="exit" />}
-            label="Exit"
-            onClick={onClose}
-          />
-          <ActionButton
-            icon={<Icon name="tune" />}
-            label="Tune"
-            onClick={() => {
-              $send({ t: "opened-modal", modal: "tune" });
-            }}
-          />
-          <ActionButton
-            icon={<Icon name="lightbulb" />}
-            label="Hint"
-            onClick={() => {
-              $send({ t: "show-hint" });
-            }}
-          />
-        </>
-      );
-    }
+  const retry: BottomBarButtonAction = {
+    icon: <IconLightbulb />,
+    label: "Retry",
+    onClick: () => $send({ t: "retry" }),
+    color: "danger",
+  };
+
+  const skip: BottomBarButtonAction = {
+    icon: <IconArrowRight />,
+    label: "Skip",
+    onClick: () => $send({ t: "skip" }),
+  };
+
+  const next: BottomBarButtonAction = {
+    icon: <IconArrowRight />,
+    label: "Next",
+    color: "success",
+    onClick: () => $send({ t: "next" }),
+  };
+
+  if (status.type === "loading") {
+    return [exit, settings, { ...hint, disabled: true }];
   }
+
+  if (status.type === "solving") {
+    return [exit, settings, hint];
+  }
+
+  if (status.type === "incorrect") {
+    return [exit, settings, retry, skip];
+  }
+
+  if (status.type === "solved") {
+    return [exit, settings, next];
+  }
+
+  const check: never = status;
+
+  return check;
 };
 
 const ViewStatusBar = ({ status }: { status: Status }) => {
-  const theme = useTheme();
-
-  switch (status.type) {
-    case "loading": {
-      return (
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            p: 1,
-          }}>
-          <Typography variant="h6">...</Typography>
-        </Box>
-      );
-    }
-
-    case "incorrect": {
-      return (
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            p: 1,
-            backgroundColor: theme.palette.error.main,
-            color: "#fff",
-          }}>
-          <Icon name="close" />
-          <Typography variant="h6" sx={{ ml: 1 }}>
-            Incorrect
-          </Typography>
-        </Box>
-      );
-    }
-
-    case "solved": {
-      return (
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            p: 1,
-            backgroundColor: theme.palette.success.main,
-            color: "#fff",
-          }}>
-          <Icon name="check" />
-          <Typography variant="h6" sx={{ ml: 1 }}>
-            Correct
-          </Typography>
-        </Box>
-      );
-    }
-
-    case "solving": {
-      return (
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            p: 2,
-            py: 1,
-            background: toPlayerColor(status.puzzle) === "b" ? "#000" : "#fff",
-            color: toPlayerColor(status.puzzle) === "b" ? "#fefefe" : "#000",
-          }}>
-          <Box
-            sx={{
-              width: "1rem",
-              height: "1rem",
-              background:
-                toPlayerColor(status.puzzle) === "b" ? "#000" : "#fff",
-              border: `1px solid ${
-                toPlayerColor(status.puzzle) === "b" ? "#ababab" : "#000"
-              }`,
-              mr: 1,
-            }}
-          />
-          <Typography variant="h6">
-            {Chess.colorToString(toPlayerColor(status.puzzle))} to move
-          </Typography>
-        </Box>
-      );
-    }
+  if (status.type === "loading") {
+    return (
+      <div className="w-full flex items-center justify-center p-2">
+        <p className="text-xl">...</p>
+      </div>
+    );
   }
+
+  if (status.type === "incorrect") {
+    return (
+      <div className="w-full flex items-center justify-center gap-2 p-2 bg-red-500 text-white">
+        <IconXMark />
+        <p className="text-xl">Incorrect</p>
+      </div>
+    );
+  }
+
+  if (status.type === "solved") {
+    return (
+      <div className="w-full flex items-center justify-center gap-2 p-2 bg-green-500 text-white">
+        <IconCheckmarkCircle />
+        <p className="text-xl">Correct</p>
+      </div>
+    );
+  }
+
+  if (status.type === "solving") {
+    return (
+      <div
+        className={cn(
+          "flex items-center justify-center gap-2 p-2 w-full",
+          toPlayerColor(status.puzzle) === "b"
+            ? "bg-black text-white"
+            : "bg-white text-black"
+        )}>
+        <div
+          className={cn(
+            "w-6 h-6 rounded-full border-2",
+            toPlayerColor(status.puzzle) === "b"
+              ? "bg-black border-[#ababab]"
+              : "bg-white border-black"
+          )}></div>
+        <p className="text-xl text-inherit">
+          {Chess.colorToString(toPlayerColor(status.puzzle))} to move
+        </p>
+      </div>
+    );
+  }
+
+  const check: never = status;
+  return check;
 };

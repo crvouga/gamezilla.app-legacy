@@ -1,4 +1,4 @@
-import { UserId } from '@gamezilla/shared/app';
+import { UserId } from "@gamezilla/shared/app";
 import {
   Box,
   Button,
@@ -6,15 +6,14 @@ import {
   IconArrowLeftOnRect,
   Icons,
   MyButton,
-  Sx,
   Typography,
   ViewNode,
   avatar,
   box,
+  cn,
   text,
-  useTheme,
-} from '@gamezilla/shared/ui';
-import { Ctx, ViewCtx } from '../ctx';
+} from "@gamezilla/shared/ui";
+import { Ctx, ViewCtx } from "../ctx";
 
 export type RoomCtx = Ctx & {
   hostId: UserId;
@@ -25,7 +24,7 @@ export type RoomViewCtx = ViewCtx & {
   hostId: UserId;
 };
 
-export type RoomMsg = { t: 'user-left'; userId: UserId };
+export type RoomMsg = { t: "user-left"; userId: UserId };
 
 export const bannerArtAspectRatio = Math.pow(3 / 4, 4);
 
@@ -68,8 +67,7 @@ export const ViewMainMenu = ({
               variant="contained"
               color="default"
               size="lg"
-              className="w-full"
-            >
+              className="w-full">
               {icon}
               {label}
             </MyButton>
@@ -88,41 +86,25 @@ export const ViewMainMenu = ({
 };
 
 export const ViewGameBox = ({
-  sx,
   children,
   isSpectating,
 }: {
   isSpectating?: boolean;
-  sx?: Sx;
   children?: ViewNode;
 }) => {
-  const theme = useTheme();
-
   return (
-    <FillBox
-      sx={{
-        ...sx,
-        ...(isSpectating
-          ? {
-              border: `3px solid ${theme.palette.primary.main}`,
-            }
-          : {}),
-      }}
-    >
+    <div
+      className={cn(
+        "w-full h-full flex flex-col items-center justify-center",
+        isSpectating && "border-4 border-blue-500"
+      )}>
       {isSpectating && (
-        <Typography
-          sx={{
-            backgroundColor: theme.palette.primary.main,
-            color: '#fff',
-            textAlign: 'center',
-            paddingY: 0.5,
-          }}
-        >
-          You're Spectating
-        </Typography>
+        <p className="bg-blue-500 text-center py-1 text-white w-full">
+          You are spectating
+        </p>
       )}
       {children}
-    </FillBox>
+    </div>
   );
 };
 
@@ -144,18 +126,20 @@ export const viewSelectModeScreen = ({
   if (ctx.currentUserId !== gameRoomCtx.hostId) {
     return (
       <FillBox
-        sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-      >
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}>
         <Box
           sx={{
             height: 100,
             width: 100,
-            mx: 'auto',
+            mx: "auto",
             borderRadius: 2,
-            overflow: 'hidden',
+            overflow: "hidden",
             mb: 1,
-          }}
-        >
+          }}>
           {coverArt}
         </Box>
 
@@ -176,13 +160,12 @@ export const viewSelectModeScreen = ({
         sx={{
           height: 100,
           width: 100,
-          mx: 'auto',
+          mx: "auto",
           borderRadius: 2,
-          overflow: 'hidden',
+          overflow: "hidden",
           mt: 4,
           mb: 2,
-        }}
-      >
+        }}>
         {coverArt}
       </Box>
 
@@ -194,8 +177,7 @@ export const viewSelectModeScreen = ({
         variant="subtitle2"
         color="text.secondary"
         align="center"
-        sx={{ mb: 2 }}
-      >
+        sx={{ mb: 2 }}>
         Select Mode
       </Typography>
 
@@ -205,8 +187,7 @@ export const viewSelectModeScreen = ({
         fullWidth
         variant="outlined"
         startIcon={<Icons.PeopleAlt />}
-        sx={{ mb: 2 }}
-      >
+        sx={{ mb: 2 }}>
         Play Online
       </Button>
 
@@ -215,8 +196,7 @@ export const viewSelectModeScreen = ({
         size="large"
         fullWidth
         variant="outlined"
-        startIcon={<Icons.SmartToy />}
-      >
+        startIcon={<Icons.SmartToy />}>
         Play Computer
       </Button>
 
@@ -227,8 +207,7 @@ export const viewSelectModeScreen = ({
         size="large"
         fullWidth
         variant="outlined"
-        startIcon={<Icons.ArrowLeft />}
-      >
+        startIcon={<Icons.ArrowLeft />}>
         Back
       </Button>
     </FillBox>
@@ -244,11 +223,11 @@ export const viewUserPlayerSlot = ({
 }) => {
   return box(
     {
-      display: 'flex',
-      alignItems: 'center',
+      display: "flex",
+      alignItems: "center",
       gap: 1,
       flex: 1,
-      overflow: 'hidden',
+      overflow: "hidden",
     },
     [
       avatar({
@@ -274,12 +253,12 @@ export const viewUserPlayerSlotBar = ({
   return box(
     {
       p: 2,
-      width: '100%',
-      display: 'flex',
-      alignItems: 'center',
+      width: "100%",
+      display: "flex",
+      alignItems: "center",
       gap: 1,
       flex: 1,
-      overflow: 'hidden',
+      overflow: "hidden",
     },
     [
       viewUserPlayerSlot({ ctx, userId: left }),
@@ -288,19 +267,33 @@ export const viewUserPlayerSlotBar = ({
   );
 };
 
+export type BottomBarButtonAction = {
+  label: string;
+  disabled?: boolean;
+  icon: ViewNode;
+  onClick: () => void;
+  color?: "danger" | "success" | "inherit";
+};
+
 export const ViewBottomButtonBar = ({
   actions,
 }: {
-  actions: { label: string; icon: ViewNode; onClick: () => void }[];
+  actions: BottomBarButtonAction[];
 }) => {
   return (
     <div className="flex items-center border-t border-neutral-700 w-full">
-      {actions.map(({ label, icon, onClick }) => (
+      {actions.map(({ label, disabled, icon, onClick, color = "default" }) => (
         <button
+          disabled={disabled}
           key={label}
           onClick={onClick}
-          className="flex-1 flex flex-col p-1 gap-0.5 text-sm items-center active:opacity-50"
-        >
+          className={cn(
+            "flex-1 flex flex-col p-1 gap-0.5 text-sm items-center active:opacity-50",
+            disabled && "opacity-50",
+            color === "danger" && "text-red-500",
+            color === "success" && "text-green-500",
+            color === "default" && "text-inherit"
+          )}>
           {icon}
           <p className="text-xs">{label}</p>
         </button>

@@ -1,6 +1,6 @@
-import { Result } from '@gamezilla/shared/core';
-import * as mysql from 'mysql2/promise';
-import { ParserMyZodEsque } from './shared';
+import { Err, Ok, Result } from "@gamezilla/shared/core";
+import * as mysql from "mysql2/promise";
+import { ParserMyZodEsque } from "./shared";
 
 export type DatabaseConnectionMySQL = {
   query: <TRow>(
@@ -23,26 +23,40 @@ const create = async ({
 }: {
   connectionString: string;
 }): Promise<DatabaseConnectionMySQL> => {
-  const conn = await mysql.createConnection(connectionString);
+  const pool = mysql.createPool(connectionString);
+
+  const getConnection = async (): Promise<mysql.PoolConnection> => {
+    const conn = await pool.getConnection();
+
+    const [rows] = await conn.query("SELECT 1");
+    if (!rows || (Array.isArray(rows) && rows.length === 0)) {
+      conn.release();
+      return getConnection();
+    }
+
+    return conn;
+  };
 
   return {
     query: async (rowParser, text, values) => {
       try {
+        const conn = await getConnection();
         const [rows, fields] = await conn.query(text, values);
+        conn.release();
 
         const parsed = Array.isArray(rows)
           ? rows.map(rowParser.parse, values)
           : [];
-        log('executed query', {
+        log("executed query", {
           text,
           values,
           fields,
         });
-        return Result.Ok(parsed);
+        return Ok(parsed);
       } catch (error) {
-        log('error executing query', { text, error });
+        log("error executing query", { text, error });
         console.log(error);
-        return Result.Err(String(error));
+        return Err(String(error));
       }
     },
   };
