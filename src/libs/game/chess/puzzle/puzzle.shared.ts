@@ -2,7 +2,7 @@ import { UserId } from "@gamezilla/shared/app";
 import { Err, Ok, Posix, Result } from "@gamezilla/shared/core";
 import * as Chess from "../chess/chess";
 import { EloRating } from "./elo-rating";
-import { interleave } from "./utils";
+import { interleave, zip } from "./utils";
 
 export const maxRating = 3212;
 export const minRating = 545;
@@ -247,12 +247,7 @@ const didMakeWrongMove = (model: SharedModel): boolean => {
 
 const isMovesEqual = (a: Chess.MoveInput[], b: Chess.MoveInput[]): boolean => {
   return (
-    a.length === b.length &&
-    a.every((move, index) => {
-      const bi = b[index];
-
-      return bi && isMoveEqual(move, bi);
-    })
+    a.length === b.length && zip(a, b).every(([a, b]) => isMoveEqual(a, b))
   );
 };
 

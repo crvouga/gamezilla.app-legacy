@@ -231,7 +231,7 @@ export const View = ({
       <div className="flex-1 w-full flex items-center justify-center flex-col">
         <div className="flex items-center gap-2 w-full px-3 py-2">
           <MyAvatar
-            src={ctx.profiles[ctx.hostId].avatarUrl}
+            src={ctx.profiles[ctx.hostId]?.avatarUrl}
             className="w-9 h-9"
             alt=""
           />

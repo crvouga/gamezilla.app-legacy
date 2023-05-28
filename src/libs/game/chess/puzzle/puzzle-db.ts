@@ -306,11 +306,11 @@ const findProfile =
 
     const rows = found.value;
 
-    if (rows.length === 0) {
+    const row = rows[0];
+
+    if (!row) {
       return Ok(null);
     }
-
-    const row = rows[0];
 
     if (!UserId.is(row.user_id)) {
       return Err("Invalid user id");
