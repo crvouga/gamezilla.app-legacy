@@ -13,7 +13,6 @@ import {
   IconArrowRight,
   IconArrowRotateLeft,
   IconCheckmarkCircle,
-  IconClock,
   IconGear,
   IconLightbulb,
   IconXMark,
@@ -211,7 +210,7 @@ export const View = ({
 }) => {
   const status = useMemo(() => toStatus(model), [model]);
 
-  const duration = useMemo(() => {
+  const durationMs = useMemo(() => {
     return !model.startedAt
       ? null
       : status.type === "loading"
@@ -242,10 +241,13 @@ export const View = ({
             </p>
           </div>
 
-          <div className="flex items-center justify-center gap-2">
-            <IconClock />
+          <div className="flex items-center justify-end gap-2">
+            <TickingClock
+              sec={durationMs ? Math.floor(durationMs / 1_000) : 0}
+            />
+            {/* <IconClock /> */}
             <p className="font-mono font-bold text-lg  text-neutral-300">
-              {duration ? formatDuration(duration) : "-:--"}
+              {durationMs ? formatDuration(durationMs) : "-:--"}
             </p>
           </div>
         </div>
@@ -531,4 +533,48 @@ const ViewStatusBar = ({ status }: { status: Status }) => {
 
   const check: never = status;
   return check;
+};
+
+const TickingClock = (input: { sec: number }) => {
+  return (
+    <svg
+      className="w-6 h-6"
+      viewBox="-1 -1 2 2"
+      stroke="currentColor"
+      strokeWidth="0.2">
+      <circle cx="0" cy="0" r="0.9"></circle>
+
+      {/* up */}
+      <line
+        stroke={input.sec % 4 === 0 ? undefined : "transparent"}
+        x1="0"
+        y1="0"
+        x2="0"
+        y2="-1"></line>
+
+      {/* right */}
+      <line
+        stroke={input.sec % 4 === 1 ? undefined : "transparent"}
+        x1="0"
+        y1="0"
+        x2="1"
+        y2="0"></line>
+
+      {/* down */}
+      <line
+        stroke={input.sec % 4 === 2 ? undefined : "transparent"}
+        x1="0"
+        y1="0"
+        x2="0"
+        y2="1"></line>
+
+      {/* left */}
+      <line
+        stroke={input.sec % 4 === 3 ? undefined : "transparent"}
+        x1="0"
+        y1="0"
+        x2="-1"
+        y2="0"></line>
+    </svg>
+  );
 };
