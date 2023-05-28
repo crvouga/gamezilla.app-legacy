@@ -89,12 +89,12 @@ const toNewRating = ({
 const toNextRating = ({
   playerRating,
   opponentRating,
-  kFactor,
+  kFactor = defaultKFactor,
   endGame,
 }: {
   playerRating: EloRating;
   opponentRating: EloRating;
-  kFactor: KFactor;
+  kFactor?: KFactor;
   endGame: EndGame;
 }): EloRating => {
   const expectedScore = toExpectedScore({
@@ -114,7 +114,7 @@ const toNextRating = ({
 
 const initialRating = fromNumber(1200);
 
-const kFactor: KFactor = 20;
+const defaultKFactor: KFactor = 30;
 
 //
 //
@@ -153,7 +153,6 @@ const toChessLevel = (rating: number): ChessLevel => {
 export const EloRating = {
   initialRating,
   toNextRating,
-  kFactor,
   fromNumber,
   is,
   toChessLevel,

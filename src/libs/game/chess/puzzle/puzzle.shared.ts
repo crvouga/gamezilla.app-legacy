@@ -1,6 +1,7 @@
 import { UserId } from "@gamezilla/shared/app";
 import { Err, Ok, Posix, Result } from "@gamezilla/shared/core";
 import * as Chess from "../chess/chess";
+import { EloRating } from "./elo-rating";
 import { interleave } from "./utils";
 
 export const maxRating = 3212;
@@ -58,7 +59,7 @@ export type Puzzle = {
   fen: string;
   opponentMoves: [Chess.MoveInput, ...Chess.MoveInput[]];
   correctMoves: [Chess.MoveInput, ...Chess.MoveInput[]];
-  rating: number;
+  rating: EloRating;
   ratingDeviation: number;
   popularity: number;
   numberOfPlays: number;
@@ -69,7 +70,7 @@ export type Puzzle = {
 
 export type PuzzleProfile = {
   userId: UserId;
-  eloRating: number;
+  eloRating: EloRating;
   query: PuzzleQuery;
 };
 
@@ -132,18 +133,29 @@ export type Status =
       type: "solved";
       puzzle: Puzzle;
       board: Chess.Model;
+      nextEloRating: EloRating;
       endedAt: number;
     }
   | {
       type: "incorrect";
       puzzle: Puzzle;
       board: Chess.Model;
+      nextEloRating: EloRating;
       endedAt: number;
     };
 
 export const toStatus = (model: SharedModel): Status => {
   const puzzle = model.puzzles[0];
+
   if (!puzzle) {
+    return {
+      type: "loading",
+    };
+  }
+
+  const puzzleProfile = model.puzzleProfile;
+
+  if (!puzzleProfile) {
     return {
       type: "loading",
     };
@@ -153,11 +165,18 @@ export const toStatus = (model: SharedModel): Status => {
     const allMoves = interleave(puzzle.opponentMoves, model.playerMoves);
     const board = moveMany(allMoves, Chess.initFromFen(puzzle));
 
+    const nextEloRating = EloRating.toNextRating({
+      playerRating: puzzleProfile.eloRating,
+      opponentRating: puzzle.rating,
+      endGame: "win",
+    });
+
     return {
       type: "solved",
       puzzle,
       board,
       endedAt: model.lastMoveAt ?? model.startedAt ?? 0,
+      nextEloRating,
     };
   }
 
@@ -168,12 +187,17 @@ export const toStatus = (model: SharedModel): Status => {
     );
     const allMoves = interleave(opponentMoves, model.playerMoves);
     const board = moveMany(allMoves, Chess.initFromFen(puzzle));
-
+    const nextEloRating = EloRating.toNextRating({
+      playerRating: puzzleProfile.eloRating,
+      opponentRating: puzzle.rating,
+      endGame: "lost",
+    });
     return {
       type: "incorrect",
       puzzle,
       board,
       endedAt: model.lastMoveAt ?? model.startedAt ?? 0,
+      nextEloRating,
     };
   }
 
@@ -417,6 +441,6 @@ const nextPuzzle = ({
     playerMoves: [],
     puzzles: model.puzzles.slice(1),
     hint: "none",
-    puzzleProfile: null,
+    puzzleProfile: model.puzzleProfile,
   };
 };

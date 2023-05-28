@@ -96,6 +96,10 @@ const rowToPuzzle = (
     return Err("Correct moves is empty");
   }
 
+  if (!EloRating.is(row.rating)) {
+    return Err("Invalid rating. Did not pass as elo rating");
+  }
+
   return Ok({
     opponentMoves,
     correctMoves,

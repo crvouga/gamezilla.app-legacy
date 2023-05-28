@@ -236,11 +236,24 @@ export const View = ({
             alt=""
           />
 
-          <div className="flex items-center gap-2 flex-1">
-            <p className="text-base text-neutral-300">Rating</p>
-            <p className="text-lg font-semibold">
-              {model.puzzleProfile?.eloRating}
-            </p>
+          <div className="flex-1 flex items-center justify-start gap-3">
+            <div className="flex items-center gap-2">
+              <p className="text-base text-neutral-300">Rating</p>
+              <p className="text-lg font-semibold">
+                {model.puzzleProfile?.eloRating}
+              </p>
+            </div>
+
+            {status.type === "solved" && (
+              <div className="bg-green-600 rounded-lg p-1 text-white text-xl font-semibold">
+                +{status.nextEloRating - (model.puzzleProfile?.eloRating ?? 0)}
+              </div>
+            )}
+            {status.type === "incorrect" && (
+              <div className="text-red-500 text-xl font-semibold">
+                {status.nextEloRating - (model.puzzleProfile?.eloRating ?? 0)}
+              </div>
+            )}
           </div>
 
           <div className="flex items-center justify-end gap-2">
