@@ -8,7 +8,7 @@ import {
   Uuid,
   p,
 } from "@gamezilla/shared/core";
-import { DatabaseConnectionMySQL } from "@gamezilla/shared/server";
+import { DbConnMySql } from "@gamezilla/shared/server";
 import { z } from "zod";
 import { MoveInput, uciMoveToMoveInput } from "../chess/chess";
 import { EloRating } from "./elo-rating";
@@ -142,8 +142,8 @@ export const uciMovesToPuzzleMoves = (
   return Ok([moveInput1.value, moveInput2.value, ...moveInputRest.value]);
 };
 
-const findWhereNoInteractions =
-  (dbConn: DatabaseConnectionMySQL, query: PuzzleQuery & { userId: UserId }) =>
+const findWithNoInteraction =
+  (dbConn: DbConnMySql, query: PuzzleQuery & { userId: UserId }) =>
   async (): Promise<Result<string, Puzzle[]>> => {
     const { userId, ratingRange } = query;
 
@@ -179,11 +179,58 @@ const findWhereNoInteractions =
     return result;
   };
 
+const findSuitable =
+  (
+    dbConn: DbConnMySql,
+    {
+      eloRating,
+      userId,
+      maxRatingDeviation,
+    }: {
+      eloRating: EloRating;
+      userId: UserId;
+      maxRatingDeviation: number;
+    }
+  ) =>
+  async (): Promise<Result<string, Puzzle[]>> => {
+    const lowerRating = eloRating - maxRatingDeviation;
+    const upperRating = eloRating + maxRatingDeviation;
+
+    const found = await dbConn.query(
+      PuzzleRow,
+      `
+      SELECT
+        p.*
+      FROM
+        game_chess_puzzle p
+      LEFT JOIN
+        game_chess_puzzle_interaction pi
+      ON
+        p.puzzle_id = pi.puzzle_id
+        AND pi.user_id = "${userId}"
+      WHERE
+        rating BETWEEN ${lowerRating} AND ${upperRating}
+        AND pi.puzzle_id IS NULL
+      LIMIT 10
+    `
+    );
+
+    if (found.t === "err") {
+      return found;
+    }
+
+    const rows = found.value;
+
+    const result = Result.combine(rows.map(rowToPuzzle));
+
+    return result;
+  };
+
 const replaceMany = async ({
   dbConn,
   rows,
 }: {
-  dbConn: DatabaseConnectionMySQL;
+  dbConn: DbConnMySql;
   rows: z.infer<typeof PuzzleRow>[];
 }) => {
   const queryString = `
@@ -213,7 +260,7 @@ const replaceMany = async ({
 
 const insertManyInteractions =
   (
-    dbConn: DatabaseConnectionMySQL,
+    dbConn: DbConnMySql,
     interactions: PuzzleInteraction[]
   ): Task<Result<string, null>> =>
   async () => {
@@ -239,7 +286,7 @@ const insertManyInteractions =
   };
 
 const findProfile =
-  (dbConn: DatabaseConnectionMySQL, userId: UserId) =>
+  (dbConn: DbConnMySql, userId: UserId) =>
   async (): Promise<Result<string, PuzzleProfile | null>> => {
     const found = await dbConn.query(
       PuzzleProfileRow,
@@ -287,10 +334,7 @@ const findProfile =
   };
 
 export const insertProfile =
-  (
-    dbConn: DatabaseConnectionMySQL,
-    profile: PuzzleProfile
-  ): Task<Result<string, null>> =>
+  (dbConn: DbConnMySql, profile: PuzzleProfile): Task<Result<string, null>> =>
   async () => {
     const puzzleProfileId = Uuid.generateSync();
 
@@ -325,7 +369,7 @@ export const insertProfile =
 
 export const findElseInsertProfile =
   (
-    dbConn: DatabaseConnectionMySQL,
+    dbConn: DbConnMySql,
     profile: PuzzleProfile
   ): Task<Result<string, PuzzleProfile>> =>
   async () => {
@@ -349,10 +393,7 @@ export const findElseInsertProfile =
   };
 
 const updateProfile =
-  (
-    dbConn: DatabaseConnectionMySQL,
-    profile: PuzzleProfile
-  ): Task<Result<string, null>> =>
+  (dbConn: DbConnMySql, profile: PuzzleProfile): Task<Result<string, null>> =>
   async () => {
     const mutated = await dbConn.query(
       PuzzleProfileRow,
@@ -363,7 +404,7 @@ const updateProfile =
           elo_rating = ${profile.eloRating},
           query = '${JSON.stringify(profile.query)}'
         WHERE
-          id = '${profile.userId}'
+          user_id = '${profile.userId}'
       `
     );
 
@@ -373,11 +414,12 @@ const updateProfile =
     return Ok(null);
   };
 
-export const PuzzleDatabase = {
+export const PuzzleDb = {
   insertManyInteractions,
   //
   replaceMany,
-  findWhereNoInteractions,
+  findWithNoInteraction,
+  findSuitable,
   //
   findProfile,
   insertProfile,

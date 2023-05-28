@@ -1,6 +1,8 @@
+import { UserId } from "@gamezilla/shared/app";
 import { RoomMsg } from "@gamezilla/shared/client";
 import {
   Cmd,
+  Err,
   Ok,
   Result,
   Sub,
@@ -9,10 +11,9 @@ import {
   eq,
   p,
 } from "@gamezilla/shared/core";
-import { RoomCtx, RoomRequestCtx } from "@gamezilla/shared/server";
+import { DbConnMySql, RoomCtx, RoomRequestCtx } from "@gamezilla/shared/server";
 import { GameMsg } from "../chess-shared";
-import { EloRating } from "./elo-rating";
-import { PuzzleDatabase } from "./puzzle-db";
+import { PuzzleDb } from "./puzzle-db";
 import {
   ServerModel,
   ServerMsg,
@@ -43,28 +44,47 @@ export const init = ({
   model: Model;
   cmd: Cmd<Msg>;
 } => {
-  const fetchPuzzles = p(
-    PuzzleDatabase.findWhereNoInteractions(ctx.mySql, {
-      ...(initShared.puzzleProfile?.query ?? initQuery),
-      userId: ctx.hostId,
-    }),
-    Cmd.perform((result): Msg => ({ t: "got-puzzles", result }))
-  );
-
-  const findProfile = p(
-    PuzzleDatabase.findElseInsertProfile(ctx.mySql, {
-      userId: ctx.hostId,
-      eloRating: EloRating.initialRating,
-      query: initQuery,
-    }),
-    Cmd.perform((result): Msg => ({ t: "got-profile", result }))
-  );
-
   return {
     model: initShared,
-    cmd: Cmd.batch([fetchPuzzles, findProfile]),
+    cmd: p(
+      initialLoad(ctx.mySql, { userId: ctx.hostId }),
+      Cmd.perform((result) => ({ t: "got-initial-load", result }))
+    ),
   };
 };
+
+const initialLoad =
+  (dbConn: DbConnMySql, { userId }: { userId: UserId }) =>
+  async () => {
+    const found = await PuzzleDb.findProfile(dbConn, userId)();
+    if (found.t === "err") {
+      return found;
+    }
+    const puzzleProfile = found.value;
+
+    if (!puzzleProfile) {
+      return Err("Initial load failed. No profile found.");
+    }
+
+    const foundPuzzles = await PuzzleDb.findWithNoInteraction(dbConn, {
+      ratingRange: [
+        puzzleProfile.eloRating - 100,
+        puzzleProfile.eloRating + 100,
+      ],
+      userId,
+    })();
+
+    if (foundPuzzles.t === "err") {
+      return foundPuzzles;
+    }
+
+    const puzzles = foundPuzzles.value;
+
+    return Ok({
+      puzzleProfile,
+      puzzles,
+    });
+  };
 
 //
 //
@@ -113,7 +133,7 @@ export const update = ({
 
       const modelNew: Model = {
         ...model,
-        puzzles,
+        puzzles: [...model.puzzles, ...puzzles],
         startedAt: ctx.now,
       };
 
@@ -141,6 +161,29 @@ export const update = ({
       return {
         model: modelNew,
         cmd: broadcast({ t: "got-profile", result: Ok(modelNew) }),
+      };
+    }
+
+    case "got-initial-load": {
+      if (msg.result.t === "err") {
+        return {
+          model,
+          cmd: broadcast({ t: "got-initial-load", result: msg.result }),
+        };
+      }
+
+      const { puzzleProfile, puzzles } = msg.result.value;
+
+      const modelNew: Model = {
+        ...model,
+        puzzleProfile,
+        puzzles,
+        startedAt: ctx.now,
+      };
+
+      return {
+        model: modelNew,
+        cmd: broadcast({ t: "got-initial-load", result: Ok(modelNew) }),
       };
     }
 
@@ -186,7 +229,7 @@ export const updateFromClient = (input: {
     input,
     andThen(({ model }) => updateFromClient_({ ...input, model })),
     andThen(({ model }) =>
-      watchGetMorePuzzles({ ...input, modelPrev: input.model, model })
+      watchLoadMorePuzzles({ ...input, modelPrev: input.model, model })
     ),
     andThen(({ model }) =>
       watchInsertInteraction({ ...input, modelPrev: input.model, model })
@@ -220,7 +263,7 @@ const watchInsertInteraction = ({
       model,
       cmd: Cmd.batch([
         p(
-          PuzzleDatabase.insertManyInteractions(ctx.mySql, [
+          PuzzleDb.insertManyInteractions(ctx.mySql, [
             {
               puzzleId: status.puzzle.puzzleId,
               userId: ctx.hostId,
@@ -236,9 +279,9 @@ const watchInsertInteraction = ({
   return { model };
 };
 
-const watchGetMorePuzzles = ({
+const watchLoadMorePuzzles = ({
   model,
-  modelPrev,
+  // modelPrev,
   ctx,
 }: {
   model: Model;
@@ -248,16 +291,15 @@ const watchGetMorePuzzles = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (
-    model.puzzleProfile &&
-    (!eq(model.puzzleProfile?.query, modelPrev.puzzleProfile?.query) ||
-      model.puzzles.length <= 1)
-  ) {
+  if (model.puzzleProfile && model.puzzles.length <= 1) {
     return {
       model,
       cmd: p(
-        PuzzleDatabase.findWhereNoInteractions(ctx.mySql, {
-          ...model.puzzleProfile.query,
+        PuzzleDb.findWithNoInteraction(ctx.mySql, {
+          ratingRange: [
+            model.puzzleProfile.eloRating - 100,
+            model.puzzleProfile.eloRating + 100,
+          ],
           userId: ctx.hostId,
         }),
         Cmd.perform((result): Msg => ({ t: "got-puzzles", result }))
@@ -290,7 +332,7 @@ const watchUpdateProfile = ({
     return {
       model,
       cmd: p(
-        PuzzleDatabase.updateProfile(ctx.mySql, {
+        PuzzleDb.updateProfile(ctx.mySql, {
           userId: ctx.hostId,
           eloRating: status.nextEloRating,
           query: model.puzzleProfile?.query ?? initQuery,

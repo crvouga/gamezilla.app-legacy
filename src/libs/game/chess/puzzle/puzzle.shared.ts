@@ -101,6 +101,13 @@ export type ServerMsg =
   | { t: "clock-tick" }
   | { t: "got-puzzles"; result: Result<string, Puzzle[]> }
   | { t: "got-profile"; result: Result<string, PuzzleProfile | null> }
+  | {
+      t: "got-initial-load";
+      result: Result<
+        string,
+        { puzzleProfile: PuzzleProfile; puzzles: Puzzle[] }
+      >;
+    }
   | { t: "put-interaction"; result: Result<string, null> }
   | { t: "put-profile"; result: Result<string, null> };
 
@@ -119,6 +126,7 @@ export type ToClient =
   | { t: "clock-tick"; now: Posix }
   | { t: "got-puzzles"; result: Result<string, SharedModel> }
   | { t: "got-profile"; result: Result<string, SharedModel> }
+  | { t: "got-initial-load"; result: Result<string, SharedModel> }
   | { t: "put-profile"; result: Result<string, SharedModel> }
   | { t: "put-interaction"; result: Result<string, SharedModel> };
 

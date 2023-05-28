@@ -1,6 +1,6 @@
-import { DatabaseConnectionMySQL } from "@gamezilla/shared/server";
+import { DbConnMySql } from "@gamezilla/shared/server";
 import { z } from "zod";
-import { PuzzleDatabase, PuzzleRow } from "../puzzle-db";
+import { PuzzleDb, PuzzleRow } from "../puzzle-db";
 
 //
 //
@@ -61,7 +61,7 @@ export const uploadLichessDbPuzzleCsv = async ({
 
     console.log("insert started");
 
-    const inserted = await PuzzleDatabase.replaceMany({
+    const inserted = await PuzzleDb.replaceMany({
       dbConn,
       rows: batch,
     });
@@ -77,7 +77,7 @@ export const uploadLichessDbPuzzleCsv = async ({
   }
 
   if (batch.length > 0) {
-    const inserted = await PuzzleDatabase.replaceMany({
+    const inserted = await PuzzleDb.replaceMany({
       dbConn,
       rows: batch,
     });

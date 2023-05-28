@@ -2,7 +2,7 @@ import { Err, Ok, Result } from "@gamezilla/shared/core";
 import * as mysql from "mysql2/promise";
 import { ParserMyZodEsque } from "./shared";
 
-export type DatabaseConnectionMySQL = {
+export type DbConnMySql = {
   query: <TRow>(
     rowParser: ParserMyZodEsque<TRow>,
     text: string,
@@ -22,7 +22,7 @@ const create = async ({
   connectionString,
 }: {
   connectionString: string;
-}): Promise<DatabaseConnectionMySQL> => {
+}): Promise<DbConnMySql> => {
   const pool = mysql.createPool(connectionString);
 
   const getConnection = async (): Promise<mysql.PoolConnection> => {
@@ -62,6 +62,6 @@ const create = async ({
   };
 };
 
-export const DatabaseConnectionMySQL = {
+export const DbConnMySql = {
   create,
 };

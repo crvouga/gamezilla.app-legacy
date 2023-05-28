@@ -1,16 +1,16 @@
-import { ClientId, SessionId, UserId } from '@gamezilla/shared/app';
-import { Posix } from '@gamezilla/shared/core';
-import { DatabaseConnectionMySQL } from './database-connection-mysql';
+import { ClientId, SessionId, UserId } from "@gamezilla/shared/app";
+import { Posix } from "@gamezilla/shared/core";
+import { DbConnMySql } from "./database-connection-mysql";
 
 export type AppMsg =
   | {
-      t: 'client-connected';
+      t: "client-connected";
       clientId: ClientId;
       sessionId: SessionId;
       userId?: UserId;
     }
   | {
-      t: 'client-authenticated';
+      t: "client-authenticated";
       userId: UserId;
       clientId: ClientId;
     };

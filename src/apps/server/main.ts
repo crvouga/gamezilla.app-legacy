@@ -8,7 +8,7 @@ import {
 } from "@gamezilla/app";
 import { ClientId, SessionId } from "@gamezilla/shared/app";
 import { Cmd, Program, toMsgType } from "@gamezilla/shared/core";
-import { DatabaseConnectionMySQL } from "@gamezilla/shared/server";
+import { DbConnMySql } from "@gamezilla/shared/server";
 import { RequestListener, createServer } from "http";
 import { Server } from "socket.io";
 
@@ -26,7 +26,7 @@ const main = async () => {
   const DATABASE_URL =
     'mysql://scuu9usphxh6zuxltqbe:pscale_pw_lkZooGgR8H09Uc59IVrcZEt8avVQ54VObBfoFwbCIa3@aws.connect.psdb.cloud/gamezilla?ssl={"rejectUnauthorized":true}';
 
-  const mySql = await DatabaseConnectionMySQL.create({
+  const mySql = await DbConnMySql.create({
     connectionString: DATABASE_URL,
   });
 
