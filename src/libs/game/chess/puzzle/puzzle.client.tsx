@@ -229,31 +229,31 @@ export const View = ({
 
       {/* top heads up */}
       <div className="flex-1 w-full flex items-center justify-center flex-col">
-        <div className="flex items-center gap-2 w-full px-2 py-2">
+        <div className="flex items-center gap-2 w-full px-3 py-2">
           <MyAvatar
             src={ctx.profiles[ctx.hostId].avatarUrl}
-            className="w-8 h-8"
+            className="w-9 h-9"
             alt=""
           />
 
-          <div className="flex-1 flex items-center justify-start gap-3">
-            <div className="flex items-center gap-2">
-              <p className="text-base text-neutral-300">Rating</p>
+          <div className="flex flex-col justify-center flex-1">
+            <p className="text-xs text-neutral-300 -mb-1/2">Rating</p>
+            <div className="flex items-center gap-1">
               <p className="text-lg font-semibold">
                 {model.puzzleProfile?.eloRating}
               </p>
+              {status.type === "solved" && (
+                <div className="text-green-500 rounded-xl  text-lg font-semibold">
+                  +
+                  {status.nextEloRating - (model.puzzleProfile?.eloRating ?? 0)}
+                </div>
+              )}
+              {status.type === "incorrect" && (
+                <div className="text-red-500  rounded-xl   text-lg font-semibold">
+                  {status.nextEloRating - (model.puzzleProfile?.eloRating ?? 0)}
+                </div>
+              )}
             </div>
-
-            {status.type === "solved" && (
-              <div className="bg-green-600 rounded-lg p-1 text-white text-xl font-semibold">
-                +{status.nextEloRating - (model.puzzleProfile?.eloRating ?? 0)}
-              </div>
-            )}
-            {status.type === "incorrect" && (
-              <div className="text-red-500 text-xl font-semibold">
-                {status.nextEloRating - (model.puzzleProfile?.eloRating ?? 0)}
-              </div>
-            )}
           </div>
 
           <div className="flex items-center justify-end gap-2">
@@ -291,19 +291,17 @@ export const View = ({
           )}
         </div>
         <div className="w-full grid grid-cols-2 px-2 py-1">
-          <div className="flex items-center justify-start gap-2 ">
-            <p className="text-neutral-300 text-xs">Puzzle Rating</p>
+          <div className="flex items-center text-xs justify-start gap-1 ">
+            <p className="text-neutral-300">Puzzle Rating</p>
             <p>{status.type === "loading" ? "" : status.puzzle.rating}</p>
           </div>
 
           {status.type !== "loading" && (
             <div className="flex-1 flex items-center justify-end text-right text-xs gap-1">
               <p className="text-neutral-300">Moved</p>
-              <p className="text-inherit text-base">
-                {model.playerMoves.length}
-              </p>
+              <p className="text-inherit">{model.playerMoves.length}</p>
               <p className="text-neutral-300">out of</p>
-              <p className="text-inherit text-base">
+              <p className="text-inherit">
                 {status.puzzle.correctMoves.length}
               </p>
             </div>
@@ -571,7 +569,7 @@ const ViewStatusBar = ({ status }: { status: Status }) => {
 const TickingClock = (input: { sec: number }) => {
   return (
     <svg
-      className="w-6 h-6"
+      className="w-5 h-5"
       viewBox="-1 -1 2 2"
       stroke="currentColor"
       strokeWidth="0.2">

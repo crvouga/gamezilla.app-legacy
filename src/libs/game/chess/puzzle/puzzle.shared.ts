@@ -101,7 +101,8 @@ export type ServerMsg =
   | { t: "clock-tick" }
   | { t: "got-puzzles"; result: Result<string, Puzzle[]> }
   | { t: "got-profile"; result: Result<string, PuzzleProfile | null> }
-  | { t: "put-interaction"; result: Result<string, null> };
+  | { t: "put-interaction"; result: Result<string, null> }
+  | { t: "put-profile"; result: Result<string, null> };
 
 export type ClientMsg =
   | Req
@@ -118,6 +119,7 @@ export type ToClient =
   | { t: "clock-tick"; now: Posix }
   | { t: "got-puzzles"; result: Result<string, SharedModel> }
   | { t: "got-profile"; result: Result<string, SharedModel> }
+  | { t: "put-profile"; result: Result<string, SharedModel> }
   | { t: "put-interaction"; result: Result<string, SharedModel> };
 
 export type Status =
@@ -330,6 +332,7 @@ export const handle = ({
       }
 
       const modelNew = nextPuzzle({
+        nextEloRating: status.nextEloRating,
         model,
         ctx,
       });
@@ -370,6 +373,7 @@ export const handle = ({
       }
 
       const modelNew: SharedModel = nextPuzzle({
+        nextEloRating: status.nextEloRating,
         model,
         ctx,
       });
@@ -431,8 +435,10 @@ export const handle = ({
 const nextPuzzle = ({
   ctx,
   model,
+  nextEloRating,
 }: {
   ctx: { now: Posix };
+  nextEloRating?: EloRating | null;
   model: SharedModel;
 }): SharedModel => {
   return {
@@ -441,6 +447,12 @@ const nextPuzzle = ({
     playerMoves: [],
     puzzles: model.puzzles.slice(1),
     hint: "none",
-    puzzleProfile: model.puzzleProfile,
+    puzzleProfile:
+      model.puzzleProfile && nextEloRating
+        ? {
+            ...model.puzzleProfile,
+            eloRating: nextEloRating,
+          }
+        : model.puzzleProfile,
   };
 };

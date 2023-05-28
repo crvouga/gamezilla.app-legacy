@@ -96,12 +96,12 @@ export const ViewGameBox = ({
     <div
       className={cn(
         "w-full h-full flex flex-col items-center justify-center",
-        isSpectating && "border-4 border-blue-500"
+        isSpectating && "border-4 border-blue-500 border-t-0"
       )}>
       {isSpectating && (
-        <p className="bg-blue-500 text-center py-1 text-white w-full">
+        <div className="bg-blue-500 flex items-center justify-center font-semibold py-1 text-white text-sm w-full">
           You are spectating
-        </p>
+        </div>
       )}
       {children}
     </div>

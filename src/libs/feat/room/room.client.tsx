@@ -763,7 +763,7 @@ const ViewPage = ({
   const game = model.games[room.roomId];
   return (
     <div className="w-full h-full flex-1 flex flex-col">
-      <nav className="flex items-center w-full p-2">
+      <nav className="flex items-center w-full px-2 py-1">
         <div className="w-20 flex items-center">
           <ActionButton
             label="Home"

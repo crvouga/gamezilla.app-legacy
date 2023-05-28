@@ -1,6 +1,6 @@
-import { AppMsg } from '@gamezilla/shared/client';
-import { Cmd } from '@gamezilla/shared/core';
-import { IconSpinner } from '@gamezilla/shared/ui';
+import { AppMsg } from "@gamezilla/shared/client";
+import { Cmd } from "@gamezilla/shared/core";
+import { IconSpinner } from "@gamezilla/shared/ui";
 
 //
 //
@@ -11,13 +11,13 @@ import { IconSpinner } from '@gamezilla/shared/ui';
 //
 
 export type Model =
-  | { t: 'connecting' }
-  | { t: 'connect-error'; errorCount: number }
-  | { t: 'disconnected' }
-  | { t: 'connected' };
+  | { t: "connecting" }
+  | { t: "connect-error"; errorCount: number }
+  | { t: "disconnected" }
+  | { t: "connected" };
 
 export const init: Model = {
-  t: 'connecting',
+  t: "connecting",
 };
 
 //
@@ -28,7 +28,7 @@ export const init: Model = {
 //
 //
 
-export type Msg = { t: Model['t'] };
+export type Msg = { t: Model["t"] };
 
 export const update = ({
   msg,
@@ -40,21 +40,21 @@ export const update = ({
   model: Model;
   msgs?: AppMsg[];
 } => {
-  if (msg.t === 'connect-error') {
+  if (msg.t === "connect-error") {
     return {
       model: {
-        t: 'connect-error',
-        errorCount: model.t === 'connect-error' ? model.errorCount + 1 : 1,
+        t: "connect-error",
+        errorCount: model.t === "connect-error" ? model.errorCount + 1 : 1,
       },
     };
   }
 
-  if (msg.t === 'connected') {
+  if (msg.t === "connected") {
     return {
       model: {
-        t: 'connected',
+        t: "connected",
       },
-      msgs: [{ t: 'wire-connected' }],
+      msgs: [{ t: "wire-connected" }],
     };
   }
 
@@ -81,11 +81,11 @@ export const updateFromApp = <ToServer,>(input: {
 //
 
 export const View = ({ model }: { model: Model }) => {
-  if (model.t === 'connect-error' && model.errorCount > 2) {
+  if (model.t === "connect-error" && model.errorCount > 2) {
     return (
       <div className="w-full flex items-center justify-center text-white bg-blue-500 gap-2 h-6">
         <IconSpinner className="w-5 h-5 text-white animate-spin" />
-        Connecting to server...
+        Server disconnected...
       </div>
     );
   }

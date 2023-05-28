@@ -156,6 +156,19 @@ export const update = ({
         }),
       };
     }
+
+    case "put-profile": {
+      return {
+        model,
+        cmd: broadcast({
+          t: "put-profile",
+          result: p(
+            msg.result,
+            Result.map(() => model)
+          ),
+        }),
+      };
+    }
   }
 };
 
@@ -176,12 +189,15 @@ export const updateFromClient = (input: {
       watchGetMorePuzzles({ ...input, modelPrev: input.model, model })
     ),
     andThen(({ model }) =>
-      watchPuzzleCompleted({ ...input, modelPrev: input.model, model })
+      watchInsertInteraction({ ...input, modelPrev: input.model, model })
+    ),
+    andThen(({ model }) =>
+      watchUpdateProfile({ ...input, modelPrev: input.model, model })
     )
   );
 };
 
-const watchPuzzleCompleted = ({
+const watchInsertInteraction = ({
   modelPrev,
   model,
   ctx,
@@ -202,16 +218,18 @@ const watchPuzzleCompleted = ({
   if (status.type === "incorrect" || status.type === "solved") {
     return {
       model,
-      cmd: p(
-        PuzzleDatabase.insertManyInteractions(ctx.mySql, [
-          {
-            puzzleId: status.puzzle.puzzleId,
-            userId: ctx.hostId,
-            type: status.type,
-          },
-        ]),
-        Cmd.perform((result): Msg => ({ t: "put-interaction", result }))
-      ),
+      cmd: Cmd.batch([
+        p(
+          PuzzleDatabase.insertManyInteractions(ctx.mySql, [
+            {
+              puzzleId: status.puzzle.puzzleId,
+              userId: ctx.hostId,
+              type: status.type,
+            },
+          ]),
+          Cmd.perform((result): Msg => ({ t: "put-interaction", result }))
+        ),
+      ]),
     };
   }
 
@@ -247,6 +265,40 @@ const watchGetMorePuzzles = ({
     };
   }
 
+  return { model };
+};
+
+const watchUpdateProfile = ({
+  model,
+  modelPrev,
+  ctx,
+}: {
+  model: Model;
+  modelPrev: Model;
+  ctx: RoomCtx;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  const statusPrev = toStatus(modelPrev);
+  const status = toStatus(model);
+
+  if (
+    statusPrev.type !== status.type &&
+    (status.type === "incorrect" || status.type === "solved")
+  ) {
+    return {
+      model,
+      cmd: p(
+        PuzzleDatabase.updateProfile(ctx.mySql, {
+          userId: ctx.hostId,
+          eloRating: status.nextEloRating,
+          query: model.puzzleProfile?.query ?? initQuery,
+        }),
+        Cmd.perform((result): Msg => ({ t: "put-profile", result }))
+      ),
+    };
+  }
   return { model };
 };
 

@@ -348,6 +348,31 @@ export const findElseInsertProfile =
     return Ok(profile);
   };
 
+const updateProfile =
+  (
+    dbConn: DatabaseConnectionMySQL,
+    profile: PuzzleProfile
+  ): Task<Result<string, null>> =>
+  async () => {
+    const mutated = await dbConn.query(
+      PuzzleProfileRow,
+      `
+        UPDATE game_chess_puzzle_profile
+        SET
+          user_id = '${profile.userId}',
+          elo_rating = ${profile.eloRating},
+          query = '${JSON.stringify(profile.query)}'
+        WHERE
+          id = '${profile.userId}'
+      `
+    );
+
+    if (mutated.t === "err") {
+      return mutated;
+    }
+    return Ok(null);
+  };
+
 export const PuzzleDatabase = {
   insertManyInteractions,
   //
@@ -357,4 +382,5 @@ export const PuzzleDatabase = {
   findProfile,
   insertProfile,
   findElseInsertProfile,
+  updateProfile,
 };
