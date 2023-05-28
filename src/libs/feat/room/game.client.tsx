@@ -43,8 +43,8 @@ export const init = ({
     }
 
     case "chess": {
-      const [child, cmd] = ChessClient.init();
-      return [{ t: "chess", c: child }, Cmd.tag_("chess", cmd)];
+      const initial = ChessClient.init();
+      return [{ t: "chess", c: initial.model }, Cmd.tag_("chess", initial.cmd)];
     }
 
     case "gomoku": {
@@ -267,7 +267,7 @@ export const updateFromServer = ({
   }
 
   if (msg.t === "chess" && model.t === "chess") {
-    const [child, cmd] = ChessClient.updateFromServer({
+    const updated = ChessClient.updateFromServer({
       ctx,
       msg: msg.c,
       model: model.c,
@@ -275,8 +275,9 @@ export const updateFromServer = ({
     });
 
     return {
-      model: { t: "chess", c: child },
-      cmd: Cmd.tag_("chess", cmd),
+      model: { t: "chess", c: updated.model },
+      cmd: Cmd.tag_("chess", updated.cmd),
+      msgs: updated.msgs,
     };
   }
 
@@ -514,25 +515,25 @@ export const syncWithServer = ({
           serverModel: serverModel.c,
         });
 
-        return [{ t: "chess", c: merged[0] }, Cmd.tag_("chess", merged[1])];
+        return [{ t: "chess", c: merged.model }, Cmd.tag_("chess", merged.cmd)];
       }
 
       const initial = ChessClient.init();
 
       const merged = ChessClient.syncWithServer({
         sendToServer: (msg) => sendToServer({ t: "chess", c: msg }),
-        clientModel: initial[0],
+        clientModel: initial.model,
         serverModel: serverModel.c,
       });
 
       return [
         {
           t: "chess",
-          c: merged[0],
+          c: merged.model,
         },
         Cmd.batch([
-          Cmd.tag_("chess", initial[1]),
-          Cmd.tag_("chess", merged[1]),
+          Cmd.tag_("chess", initial.cmd),
+          Cmd.tag_("chess", merged.cmd),
         ]),
       ];
     }

@@ -1,15 +1,41 @@
-import { NonEmpty, p, Result, Task } from '@gamezilla/shared/core';
-import { UserId } from '@gamezilla/shared/app';
-import { DatabaseConnectionMySQL } from '@gamezilla/shared/server';
-import { z } from 'zod';
-import { MoveInput, uciMoveToMoveInput } from '../chess/chess';
-import { Puzzle, PuzzleInteraction, PuzzleQuery } from './puzzle.shared';
+import { UserId } from "@gamezilla/shared/app";
+import {
+  Err,
+  NonEmpty,
+  Ok,
+  Result,
+  Task,
+  Uuid,
+  p,
+} from "@gamezilla/shared/core";
+import { DatabaseConnectionMySQL } from "@gamezilla/shared/server";
+import { z } from "zod";
+import { MoveInput, uciMoveToMoveInput } from "../chess/chess";
+import { EloRating } from "./elo-rating";
+import {
+  Puzzle,
+  PuzzleInteraction,
+  PuzzleProfile,
+  PuzzleQuery,
+  initQuery,
+  maxRating,
+  minRating,
+} from "./puzzle.shared";
+import { deinterleave } from "./utils";
 
 // source https://database.lichess.org/#puzzles
 
+//
+//
+//
+// Model
+//
+//
+//
+
 const Int = z
   .union([z.string(), z.number()])
-  .transform((s) => (typeof s === 'string' ? parseInt(s) : s));
+  .transform((s) => (typeof s === "string" ? parseInt(s) : s));
 
 export const PuzzleRow = z.object({
   puzzle_id: z.string(),
@@ -24,40 +50,53 @@ export const PuzzleRow = z.object({
   game_url: z.string(),
 });
 
-export type PuzzleRow = z.infer<typeof PuzzleRow>;
-
 export const PuzzleInteractionRow = z.object({
   id: z.string(),
   puzzle_id: z.string(),
   user_id: z.string(),
-  interaction: z.enum(['solved', 'incorrect']),
+  interaction: z.enum(["solved", "incorrect"]),
 });
 
-export type PuzzleInteractionRow = z.infer<typeof PuzzleInteractionRow>;
+export const PuzzleQueryJSON = z.object({
+  ratingRange: z.tuple([
+    z.number().min(minRating).max(maxRating),
+    z.number().min(minRating).max(maxRating),
+  ]),
+});
 
 export const PuzzleProfileRow = z.object({
   id: z.string(),
   user_id: z.string(),
-  queryJSON: z.string(),
+  elo_rating: Int,
+  query: PuzzleQueryJSON,
 });
 
-const rowToPuzzle = (row: PuzzleRow): Result<string, Puzzle> => {
-  const puzzleMoves = uciMovesToPuzzleMoves(row.moves.split(' '));
-  if (puzzleMoves.t === 'err') {
+//
+//
+//
+//
+//
+//
+
+const rowToPuzzle = (
+  row: z.infer<typeof PuzzleRow>
+): Result<string, Puzzle> => {
+  const puzzleMoves = uciMovesToPuzzleMoves(row.moves.split(" "));
+  if (puzzleMoves.t === "err") {
     return puzzleMoves;
   }
 
   const [opponentMoves, correctMoves] = deinterleave(puzzleMoves.value);
 
   if (!NonEmpty.is(opponentMoves)) {
-    return Result.Err('Opponent moves is empty');
+    return Err("Opponent moves is empty");
   }
 
   if (!NonEmpty.is(correctMoves)) {
-    return Result.Err('Correct moves is empty');
+    return Err("Correct moves is empty");
   }
 
-  return Result.Ok({
+  return Ok({
     opponentMoves,
     correctMoves,
     puzzleId: row.puzzle_id,
@@ -66,9 +105,9 @@ const rowToPuzzle = (row: PuzzleRow): Result<string, Puzzle> => {
     ratingDeviation: row.rating_deviation,
     popularity: row.popularity,
     numberOfPlays: row.number_of_plays,
-    themes: row.themes.split(' '),
+    themes: row.themes.split(" "),
     gameUrl: row.game_url,
-    openingTags: row.opening_tags.split(' '),
+    openingTags: row.opening_tags.split(" "),
   });
 };
 
@@ -77,38 +116,31 @@ export const uciMovesToPuzzleMoves = (
 ): Result<string, [MoveInput, MoveInput, ...MoveInput[]]> => {
   const [move1, move2, ...rest] = moves;
   if (!(move1 && move2)) {
-    return Result.Err('Missing first two moves');
+    return Err("Missing first two moves");
   }
   const moveInput1 = uciMoveToMoveInput(move1);
   const moveInput2 = uciMoveToMoveInput(move2);
 
-  if (moveInput1.t === 'err') {
+  if (moveInput1.t === "err") {
     return moveInput1;
   }
 
-  if (moveInput2.t === 'err') {
+  if (moveInput2.t === "err") {
     return moveInput2;
   }
 
   const moveInputRest = Result.combine(rest.map(uciMoveToMoveInput));
 
-  if (moveInputRest.t === 'err') {
+  if (moveInputRest.t === "err") {
     return moveInputRest;
   }
 
-  return Result.Ok([
-    moveInput1.value,
-    moveInput2.value,
-    ...moveInputRest.value,
-  ]);
+  return Ok([moveInput1.value, moveInput2.value, ...moveInputRest.value]);
 };
 
-const fetchNeverSeen =
-  (
-    dbConn: DatabaseConnectionMySQL,
-    query: PuzzleQuery & { userId: UserId }
-  ): Task<Result<string, Puzzle[]>> =>
-  async () => {
+const findWhereNoInteractions =
+  (dbConn: DatabaseConnectionMySQL, query: PuzzleQuery & { userId: UserId }) =>
+  async (): Promise<Result<string, Puzzle[]>> => {
     const { userId, ratingRange } = query;
 
     const found = await dbConn.query(
@@ -132,7 +164,7 @@ const fetchNeverSeen =
     `
     );
 
-    if (found.t === 'err') {
+    if (found.t === "err") {
       return found;
     }
 
@@ -143,29 +175,12 @@ const fetchNeverSeen =
     return result;
   };
 
-const deinterleave = <T>(xs: T[]): [T[], T[]] => {
-  const ys: T[] = [];
-  const zs: T[] = [];
-  for (let i = 0; i < xs.length; i++) {
-    const x = xs[i];
-    if (!x) {
-      continue;
-    }
-    if (i % 2 === 0) {
-      ys.push(x);
-    } else {
-      zs.push(x);
-    }
-  }
-  return [ys, zs];
-};
-
 const replaceMany = async ({
   dbConn,
   rows,
 }: {
   dbConn: DatabaseConnectionMySQL;
-  rows: PuzzleRow[];
+  rows: z.infer<typeof PuzzleRow>[];
 }) => {
   const queryString = `
     REPLACE INTO game_chess_puzzle (
@@ -210,7 +225,7 @@ const insertManyInteractions =
             (interaction) =>
               `('${interaction.puzzleId}', '${interaction.userId}', '${interaction.type}')`
           )
-          .join(', ')}
+          .join(", ")}
       `
     );
     return p(
@@ -219,8 +234,123 @@ const insertManyInteractions =
     );
   };
 
+const findProfile =
+  (dbConn: DatabaseConnectionMySQL, userId: UserId) =>
+  async (): Promise<Result<string, PuzzleProfile | null>> => {
+    const found = await dbConn.query(
+      PuzzleProfileRow,
+      `
+      SELECT
+        *
+      FROM
+        game_chess_puzzle_profile
+      WHERE
+        user_id = "${userId}"
+    `
+    );
+
+    if (found.t === "err") {
+      return found;
+    }
+
+    const rows = found.value;
+
+    if (rows.length === 0) {
+      return Ok(null);
+    }
+
+    const row = rows[0];
+
+    if (!UserId.is(row.user_id)) {
+      return Err("Invalid user id");
+    }
+
+    if (!EloRating.is(row.elo_rating)) {
+      return Err("Invalid elo rating");
+    }
+
+    const parsed = PuzzleQueryJSON.safeParse(row.query);
+
+    const query = parsed.success ? parsed.data : initQuery;
+
+    const profile: PuzzleProfile = {
+      userId: row.user_id,
+      eloRating: row.elo_rating,
+      query,
+    };
+
+    return Ok(profile);
+  };
+
+export const insertProfile =
+  (
+    dbConn: DatabaseConnectionMySQL,
+    profile: PuzzleProfile
+  ): Task<Result<string, null>> =>
+  async () => {
+    const puzzleProfileId = Uuid.generateSync();
+
+    const mutated = await dbConn.query(
+      PuzzleProfileRow,
+      `
+        INSERT INTO game_chess_puzzle_profile (
+          id,
+          user_id,
+          elo_rating,
+          query
+        ) VALUES (
+          ?,
+          ?,
+          ?,
+          ?
+        )
+      `,
+      [
+        puzzleProfileId,
+        profile.userId,
+        profile.eloRating,
+        JSON.stringify(profile.query),
+      ]
+    );
+
+    if (mutated.t === "err") {
+      return mutated;
+    }
+    return Ok(null);
+  };
+
+export const findElseInsertProfile =
+  (
+    dbConn: DatabaseConnectionMySQL,
+    profile: PuzzleProfile
+  ): Task<Result<string, PuzzleProfile>> =>
+  async () => {
+    const found = await findProfile(dbConn, profile.userId)();
+
+    if (found.t === "err") {
+      return found;
+    }
+
+    if (found.value !== null) {
+      return Ok(found.value);
+    }
+
+    const inserted = await insertProfile(dbConn, profile)();
+
+    if (inserted.t === "err") {
+      return inserted;
+    }
+
+    return Ok(profile);
+  };
+
 export const PuzzleDatabase = {
   insertManyInteractions,
+  //
   replaceMany,
-  fetchNeverSeen,
+  findWhereNoInteractions,
+  //
+  findProfile,
+  insertProfile,
+  findElseInsertProfile,
 };

@@ -1,17 +1,28 @@
-import { andThen, Cmd, eq, p, Result, Sub, Time } from '@gamezilla/shared/core';
-import { RoomMsg } from '@gamezilla/shared/client';
-import { RoomCtx, RoomRequestCtx } from '@gamezilla/shared/server';
-import { GameMsg } from '../chess-shared';
-import { PuzzleDatabase } from './puzzle-db';
+import { RoomMsg } from "@gamezilla/shared/client";
+import {
+  Cmd,
+  Ok,
+  Result,
+  Sub,
+  Time,
+  andThen,
+  eq,
+  p,
+} from "@gamezilla/shared/core";
+import { RoomCtx, RoomRequestCtx } from "@gamezilla/shared/server";
+import { GameMsg } from "../chess-shared";
+import { EloRating } from "./elo-rating";
+import { PuzzleDatabase } from "./puzzle-db";
 import {
   ServerModel,
   ServerMsg,
-  handle,
-  initShared,
-  ToServer,
   ToClient,
+  ToServer,
+  handle,
+  initQuery,
+  initShared,
   toStatus,
-} from './puzzle.shared';
+} from "./puzzle.shared";
 
 //
 //
@@ -27,20 +38,31 @@ export const init = ({
   ctx,
 }: {
   broadcast: (m: ToClient) => Cmd;
-  ctx: RoomRequestCtx;
+  ctx: RoomCtx;
 }): {
   model: Model;
   cmd: Cmd<Msg>;
 } => {
+  const fetchPuzzles = p(
+    PuzzleDatabase.findWhereNoInteractions(ctx.mySql, {
+      ...(initShared.puzzleProfile?.query ?? initQuery),
+      userId: ctx.hostId,
+    }),
+    Cmd.perform((result): Msg => ({ t: "got-puzzles", result }))
+  );
+
+  const findProfile = p(
+    PuzzleDatabase.findElseInsertProfile(ctx.mySql, {
+      userId: ctx.hostId,
+      eloRating: EloRating.initialRating,
+      query: initQuery,
+    }),
+    Cmd.perform((result): Msg => ({ t: "got-profile", result }))
+  );
+
   return {
     model: initShared,
-    cmd: p(
-      PuzzleDatabase.fetchNeverSeen(ctx.mySql, {
-        ...initShared.query,
-        userId: ctx.currentUserId,
-      }),
-      Cmd.perform((result): Msg => ({ t: 'fetched-puzzles', result }))
-    ),
+    cmd: Cmd.batch([fetchPuzzles, findProfile]),
   };
 };
 
@@ -69,21 +91,21 @@ export const update = ({
   cmd?: Cmd;
 } => {
   switch (msg.t) {
-    case 'clock-tick': {
+    case "clock-tick": {
       const modelNew: Model = {
         ...model,
       };
       return {
         model: modelNew,
-        cmd: broadcast({ t: 'clock-tick', now: ctx.now }),
+        cmd: broadcast({ t: "clock-tick", now: ctx.now }),
       };
     }
 
-    case 'fetched-puzzles': {
-      if (msg.result.t === 'err') {
+    case "got-puzzles": {
+      if (msg.result.t === "err") {
         return {
           model,
-          cmd: broadcast({ t: 'fetched-puzzles', result: msg.result }),
+          cmd: broadcast({ t: "got-puzzles", result: msg.result }),
         };
       }
 
@@ -97,15 +119,36 @@ export const update = ({
 
       return {
         model: modelNew,
-        cmd: broadcast({ t: 'fetched-puzzles', result: Result.Ok(modelNew) }),
+        cmd: broadcast({ t: "got-puzzles", result: Ok(modelNew) }),
       };
     }
 
-    case 'interaction-insert-done': {
+    case "got-profile": {
+      if (msg.result.t === "err") {
+        return {
+          model,
+          cmd: broadcast({ t: "got-profile", result: msg.result }),
+        };
+      }
+
+      const puzzleProfile = msg.result.value;
+
+      const modelNew: Model = {
+        ...model,
+        puzzleProfile,
+      };
+
+      return {
+        model: modelNew,
+        cmd: broadcast({ t: "got-profile", result: Ok(modelNew) }),
+      };
+    }
+
+    case "put-interaction": {
       return {
         model,
         cmd: broadcast({
-          t: 'interaction-insert-done',
+          t: "put-interaction",
           result: p(
             msg.result,
             Result.map(() => model)
@@ -130,15 +173,15 @@ export const updateFromClient = (input: {
     input,
     andThen(({ model }) => updateFromClient_({ ...input, model })),
     andThen(({ model }) =>
-      updateFetchMore({ ...input, modelPrev: input.model, model })
+      watchGetMorePuzzles({ ...input, modelPrev: input.model, model })
     ),
     andThen(({ model }) =>
-      updatePuzzleCompleted({ ...input, modelPrev: input.model, model })
+      watchPuzzleCompleted({ ...input, modelPrev: input.model, model })
     )
   );
 };
 
-const updatePuzzleCompleted = ({
+const watchPuzzleCompleted = ({
   modelPrev,
   model,
   ctx,
@@ -156,26 +199,26 @@ const updatePuzzleCompleted = ({
     return { model };
   }
 
-  if (status.type !== 'incorrect' && status.type !== 'solved') {
-    return { model };
+  if (status.type === "incorrect" || status.type === "solved") {
+    return {
+      model,
+      cmd: p(
+        PuzzleDatabase.insertManyInteractions(ctx.mySql, [
+          {
+            puzzleId: status.puzzle.puzzleId,
+            userId: ctx.hostId,
+            type: status.type,
+          },
+        ]),
+        Cmd.perform((result): Msg => ({ t: "put-interaction", result }))
+      ),
+    };
   }
 
-  return {
-    model,
-    cmd: p(
-      PuzzleDatabase.insertManyInteractions(ctx.mySql, [
-        {
-          puzzleId: status.puzzle.puzzleId,
-          userId: ctx.hostId,
-          type: status.type,
-        },
-      ]),
-      Cmd.perform((result): Msg => ({ t: 'interaction-insert-done', result }))
-    ),
-  };
+  return { model };
 };
 
-const updateFetchMore = ({
+const watchGetMorePuzzles = ({
   model,
   modelPrev,
   ctx,
@@ -187,15 +230,19 @@ const updateFetchMore = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (!eq(model.query, modelPrev.query) || model.puzzles.length <= 1) {
+  if (
+    model.puzzleProfile &&
+    (!eq(model.puzzleProfile?.query, modelPrev.puzzleProfile?.query) ||
+      model.puzzles.length <= 1)
+  ) {
     return {
       model,
       cmd: p(
-        PuzzleDatabase.fetchNeverSeen(ctx.mySql, {
-          ...model.query,
+        PuzzleDatabase.findWhereNoInteractions(ctx.mySql, {
+          ...model.puzzleProfile.query,
           userId: ctx.hostId,
         }),
-        Cmd.perform((result): Msg => ({ t: 'fetched-puzzles', result }))
+        Cmd.perform((result): Msg => ({ t: "got-puzzles", result }))
       ),
     };
   }
@@ -206,24 +253,19 @@ const updateFetchMore = ({
 const updateFromClient_: typeof updateFromClient = ({
   msg,
   model,
-  // sendToClient,
   broadcast,
   ctx,
 }) => {
-  switch (msg.t) {
-    default: {
-      const handled = handle({
-        ctx,
-        msg,
-        model,
-      });
+  const handled = handle({
+    ctx,
+    msg,
+    model,
+  });
 
-      return {
-        model: handled.t === 'ok' ? handled.value : model,
-        cmd: broadcast({ ...msg, result: handled }),
-      };
-    }
-  }
+  return {
+    model: handled.t === "ok" ? handled.value : model,
+    cmd: broadcast({ ...msg, result: handled }),
+  };
 };
 
 export const updateFromGame = ({
@@ -237,7 +279,7 @@ export const updateFromGame = ({
   cmd?: Cmd;
 } => {
   switch (msg.t) {
-    case 'mode-changed': {
+    case "mode-changed": {
       return {
         model,
         cmd: Cmd.None,
@@ -257,7 +299,7 @@ export const updateFromRoom = ({
   cmd?: Cmd;
 } => {
   switch (msg.t) {
-    case 'user-left': {
+    case "user-left": {
       return {
         model,
       };
@@ -275,8 +317,8 @@ export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
   const status = toStatus(model);
 
   switch (status.type) {
-    case 'solving': {
-      return Time.every(intervalId, 500, () => ({ t: 'clock-tick' }));
+    case "solving": {
+      return Time.every(intervalId, 500, () => ({ t: "clock-tick" }));
     }
 
     default: {

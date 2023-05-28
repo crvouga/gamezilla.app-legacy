@@ -1,14 +1,17 @@
 import {
+  AppMsg,
   BottomBarButtonAction,
   RoomCtx,
   RoomViewCtx,
   ViewBottomButtonBar,
   ViewGameBox,
 } from "@gamezilla/shared/client";
-import { Cmd, Posix, Sub, eq } from "@gamezilla/shared/core";
+import { Cmd, eq } from "@gamezilla/shared/core";
 import {
+  IconArrowCircle,
   IconArrowLeftOnRect,
   IconArrowRight,
+  IconArrowRotateLeft,
   IconCheckmarkCircle,
   IconClock,
   IconGear,
@@ -31,6 +34,7 @@ import {
   ToClient,
   ToServer,
   handle,
+  initQuery,
   initShared,
   toCorrectMove,
   toPlayerColor,
@@ -46,7 +50,7 @@ import {
 export type Model = ClientModel;
 
 const toDraftQuery = (model: Model): PuzzleQuery => {
-  return model.draftQuery ?? model.query;
+  return model.draftQuery ?? model.puzzleProfile?.query ?? initQuery;
 };
 
 export const init = ({
@@ -105,7 +109,7 @@ export const update = ({
     }
 
     case "clicked-save": {
-      return updateRequest({
+      return handleRequest({
         msg: { t: "input-query", query: toDraftQuery(model) },
         model: { ...model, openedModal: null },
         sendToServer,
@@ -114,12 +118,12 @@ export const update = ({
     }
 
     default: {
-      return updateRequest({ msg, model, sendToServer, ctx });
+      return handleRequest({ msg, model, sendToServer, ctx });
     }
   }
 };
 
-const updateRequest = ({
+const handleRequest = ({
   msg,
   model,
   sendToServer,
@@ -151,6 +155,7 @@ export const updateFromServer = ({
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
+  msgs?: AppMsg[];
 } => {
   switch (msg.t) {
     case "clock-tick": {
@@ -161,7 +166,10 @@ export const updateFromServer = ({
       const result = msg.result;
 
       if (result.t === "err") {
-        return { model };
+        return {
+          model,
+          msgs: [{ t: "toast-enqueued", message: result.error }],
+        };
       }
 
       const merged = syncWithServer({
@@ -182,20 +190,6 @@ export const syncWithServer = ({
   serverModel: SharedModel;
 }): Model => {
   return { ...clientModel, ...serverModel };
-};
-
-//
-//
-// Subscriptions
-//
-//
-
-export const subscriptions = (_args: {
-  model: Model;
-  now: Posix;
-  intervalId: string;
-}): Sub<Msg> => {
-  return Sub.None;
 };
 
 //
@@ -244,7 +238,7 @@ export const View = ({
             <p className="text-neutral-300 flex-1 text-center">
               {status.type === "loading"
                 ? ""
-                : `${model.moves.length}  /  ${status.puzzle.correctMoves.length}`}
+                : `${model.playerMoves.length}  /  ${status.puzzle.correctMoves.length}`}
             </p>
           </div>
 
@@ -297,17 +291,22 @@ export const View = ({
                   <MyButton
                     size="sm"
                     variant="outlined"
-                    disabled={eq(model.query, model.draftQuery)}
-                    onClick={() =>
-                      $send({ t: "input-draft-query", query: model.query })
-                    }>
+                    disabled={eq(model.puzzleProfile?.query, model.draftQuery)}
+                    onClick={() => {
+                      if (model.puzzleProfile) {
+                        $send({
+                          t: "input-draft-query",
+                          query: model.puzzleProfile.query,
+                        });
+                      }
+                    }}>
                     Cancel
                   </MyButton>
                   <MyButton
                     size="sm"
                     variant="contained"
                     onClick={() => $send({ t: "clicked-save" })}
-                    disabled={eq(model.query, model.draftQuery)}>
+                    disabled={eq(model.puzzleProfile?.query, model.draftQuery)}>
                     Save
                   </MyButton>
                 </div>
@@ -324,13 +323,18 @@ export const View = ({
                         if (isNaN(parsed)) {
                           return;
                         }
-                        $send({
-                          t: "input-draft-query",
-                          query: {
-                            ...model.query,
-                            ratingRange: [parsed, model.query.ratingRange[1]],
-                          },
-                        });
+                        if (model.puzzleProfile) {
+                          $send({
+                            t: "input-draft-query",
+                            query: {
+                              ...model.puzzleProfile.query,
+                              ratingRange: [
+                                parsed,
+                                model.puzzleProfile.query.ratingRange[1],
+                              ],
+                            },
+                          });
+                        }
                       }}
                       value={toDraftQuery(model).ratingRange[0]}
                       label="Min"
@@ -344,13 +348,18 @@ export const View = ({
                         if (isNaN(parsed)) {
                           return;
                         }
-                        $send({
-                          t: "input-draft-query",
-                          query: {
-                            ...model.query,
-                            ratingRange: [model.query.ratingRange[0], parsed],
-                          },
-                        });
+                        if (model.puzzleProfile) {
+                          $send({
+                            t: "input-draft-query",
+                            query: {
+                              ...model.puzzleProfile.query,
+                              ratingRange: [
+                                model.puzzleProfile.query.ratingRange[0],
+                                parsed,
+                              ],
+                            },
+                          });
+                        }
                       }}
                       value={toDraftQuery(model).ratingRange[1]}
                       label="Max"
@@ -430,7 +439,7 @@ export const toBottomBarActions = ({
   };
 
   const retry: BottomBarButtonAction = {
-    icon: <IconLightbulb />,
+    icon: <IconArrowRotateLeft />,
     label: "Retry",
     onClick: () => $send({ t: "retry" }),
     color: "danger",
@@ -443,7 +452,7 @@ export const toBottomBarActions = ({
   };
 
   const next: BottomBarButtonAction = {
-    icon: <IconArrowRight />,
+    icon: <IconArrowCircle />,
     label: "Next",
     color: "success",
     onClick: () => $send({ t: "next" }),
