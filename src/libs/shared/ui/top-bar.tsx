@@ -1,22 +1,20 @@
-import { IconChevronLeft } from "./icon";
+import { IconChevronLeft, IconSpinner } from "./icon";
 import { IconButton } from "./icon-button";
 
-export const TopBar = ({
-  left,
-  title,
-  right,
-}: {
+export const TopBar = (input: {
   left?: React.ReactNode;
   title: React.ReactNode;
+  loading?: boolean;
   right?: React.ReactNode;
 }) => {
   return (
-    <nav className="flex items-center justify-center w-full h-14">
-      <div className="flex items-center justify-start flex-1">{left}</div>
-      <p className="text-lg text-center" style={{ flex: 5 }}>
-        {title}
-      </p>
-      <div className="flex items-center justify-end flex-1">{right}</div>
+    <nav className="grid grid-cols-3 justify-center w-full h-14">
+      <div className="flex items-center justify-start">{input.left}</div>
+      <div className="flex items-center justify-center">
+        <p className="text-lg text-center">{input.title}</p>
+        {input.loading && <IconSpinner className="w-3 h-3 animate-spin" />}
+      </div>
+      <div className="flex items-center justify-end">{input.right}</div>
     </nav>
   );
 };

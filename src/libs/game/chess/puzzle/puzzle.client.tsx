@@ -16,6 +16,7 @@ import {
   IconGear,
   IconLightbulb,
   IconXMark,
+  MyAvatar,
   MyButton,
   MyDrawer,
   MyTextField,
@@ -226,18 +227,19 @@ export const View = ({
     <ViewGameBox isSpectating={isSpectating}>
       <ViewStatusBar status={status} />
 
+      {/* top heads up */}
       <div className="flex-1 w-full flex items-center justify-center flex-col">
-        <div className="font-sm grid grid-cols-3 px-4 py-2 w-full">
-          <div className="flex items-center justify-start gap-2">
-            <p className="text-neutral-300">Rating</p>
-            <p>{status.type === "loading" ? "" : status.puzzle.rating}</p>
-          </div>
+        <div className="flex items-center gap-2 w-full px-2 py-2">
+          <MyAvatar
+            src={ctx.profiles[ctx.hostId].avatarUrl}
+            className="w-8 h-8"
+            alt=""
+          />
 
-          <div>
-            <p className="text-neutral-300 flex-1 text-center">
-              {status.type === "loading"
-                ? ""
-                : `${model.playerMoves.length}  /  ${status.puzzle.correctMoves.length}`}
+          <div className="flex items-center gap-2 flex-1">
+            <p className="text-base text-neutral-300">Rating</p>
+            <p className="text-lg font-semibold">
+              {model.puzzleProfile?.eloRating}
             </p>
           </div>
 
@@ -245,7 +247,6 @@ export const View = ({
             <TickingClock
               sec={durationMs ? Math.floor(durationMs / 1_000) : 0}
             />
-            {/* <IconClock /> */}
             <p className="font-mono font-bold text-lg  text-neutral-300">
               {durationMs ? formatDuration(durationMs) : "-:--"}
             </p>
@@ -274,6 +275,25 @@ export const View = ({
                 return false;
               }}
             />
+          )}
+        </div>
+        <div className="w-full grid grid-cols-2 px-2 py-1">
+          <div className="flex items-center justify-start gap-2 ">
+            <p className="text-neutral-300 text-xs">Puzzle Rating</p>
+            <p>{status.type === "loading" ? "" : status.puzzle.rating}</p>
+          </div>
+
+          {status.type !== "loading" && (
+            <div className="flex-1 flex items-center justify-end text-right text-xs gap-1">
+              <p className="text-neutral-300">Moved</p>
+              <p className="text-inherit text-base">
+                {model.playerMoves.length}
+              </p>
+              <p className="text-neutral-300">out of</p>
+              <p className="text-inherit text-base">
+                {status.puzzle.correctMoves.length}
+              </p>
+            </div>
           )}
         </div>
       </div>

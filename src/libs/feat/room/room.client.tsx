@@ -31,6 +31,7 @@ import {
   TopBarBackButton,
   Typography,
   ViewNode,
+  cn,
   useTheme,
 } from "@gamezilla/shared/ui";
 import { gameNameToString, viewCoverArt } from "./game";
@@ -858,7 +859,7 @@ export const ViewRoomListScreen = ({
           </div>
         )}
 
-        {isLoading && (
+        {isLoading && rooms.length === 0 && (
           <div className="flex-1 flex flex-col gap-4 px-5 overflow-hidden">
             {[1, 2, 3].map((i) => {
               return (
@@ -872,40 +873,51 @@ export const ViewRoomListScreen = ({
         )}
 
         {rooms.length > 0 && (
-          <div className="flex-1 flex flex-col gap-4 px-5 overflow-y-auto ">
-            {rooms.map((room) => {
-              const host = ctx.profiles[room.hostId];
-              const users = Object.values(model.users).flatMap((user) => {
-                if (user.roomId !== room.roomId) {
-                  return [];
-                }
-                const profile = ctx.profiles[user.userId];
-                if (!profile) {
-                  return [];
-                }
-                return [profile];
-              });
-              const gameName = model.games[room.roomId]?.t;
-              const currentRoomId = model.users[ctx.currentUserId]?.roomId;
-              return (
-                <ViewRoomCard
-                  host={{
-                    username: host?.username ?? "...",
-                    avatarUrl: host?.avatarUrl ?? "",
-                  }}
-                  key={room.roomId}
-                  isCurrentRoom={currentRoomId === room.roomId}
-                  users={users}
-                  gameName={gameName}
-                  onClick={() => {
-                    ctx.$push({
-                      t: "room",
-                      c: { t: "room", roomId: room.roomId },
-                    });
-                  }}
-                />
-              );
-            })}
+          <div className="flex-1 flex flex-col relative">
+            {isLoading && (
+              <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
+                <IconSpinner className="animate-spin w-12 h-12" />
+              </div>
+            )}
+            <div
+              className={cn(
+                isLoading && "opacity-50 pointer-events-none",
+                "w-full flex-1 flex flex-col gap-4 px-5 overflow-y-auto"
+              )}>
+              {rooms.map((room) => {
+                const host = ctx.profiles[room.hostId];
+                const users = Object.values(model.users).flatMap((user) => {
+                  if (user.roomId !== room.roomId) {
+                    return [];
+                  }
+                  const profile = ctx.profiles[user.userId];
+                  if (!profile) {
+                    return [];
+                  }
+                  return [profile];
+                });
+                const gameName = model.games[room.roomId]?.t;
+                const currentRoomId = model.users[ctx.currentUserId]?.roomId;
+                return (
+                  <ViewRoomCard
+                    host={{
+                      username: host?.username ?? "...",
+                      avatarUrl: host?.avatarUrl ?? "",
+                    }}
+                    key={room.roomId}
+                    isCurrentRoom={currentRoomId === room.roomId}
+                    users={users}
+                    gameName={gameName}
+                    onClick={() => {
+                      ctx.$push({
+                        t: "room",
+                        c: { t: "room", roomId: room.roomId },
+                      });
+                    }}
+                  />
+                );
+              })}
+            </div>
           </div>
         )}
       </div>
