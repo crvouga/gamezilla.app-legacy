@@ -25,7 +25,8 @@ export const interleave = <T>(a: T[], b: T[]): T[] => {
 
 export const zip = <A, B>(a: A[], b: B[]): [A, B][] => {
   const result: [A, B][] = [];
-  for (let i = 0; i < Math.min(a.length, b.length); i++) {
+  const length = Math.min(a.length, b.length);
+  for (let i = 0; i < length; i++) {
     const a_ = a[i];
     const b_ = b[i];
     if (a_ && b_) {

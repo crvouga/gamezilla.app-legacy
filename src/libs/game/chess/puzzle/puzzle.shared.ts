@@ -17,52 +17,44 @@ export const minRatingDeviation = 50;
 //
 //
 
-export type SharedModel =
-  | {
-      t: "loading";
-      profile?: PuzzleProfile | null;
-      queue?: Puzzle[];
-    }
+type BaseModel = {
+  puzzle: Puzzle;
+  queue: Puzzle[];
+  profile: PuzzleProfile;
+  hasLost?: boolean;
+  hasUsedHint?: boolean;
+  moves: Chess.MoveInput[];
+};
+
+type MainModel =
   | {
       t: "in-progress";
       startedAt: Posix;
-      moves: Chess.MoveInput[];
-      puzzle: Puzzle;
-      queue: Puzzle[];
-      profile: PuzzleProfile;
-      hasLost?: boolean;
       hint?: Hint | null;
     }
   | {
       t: "solved";
       startedAt: Posix;
       endedAt: Posix;
-      puzzle: Puzzle;
-      moves: Chess.MoveInput[];
-      queue: Puzzle[];
-      profile: PuzzleProfile;
-      hasLost?: boolean;
     }
   | {
       t: "solved-with-hint";
       startedAt: Posix;
       endedAt: Posix;
-      puzzle: Puzzle;
-      moves: Chess.MoveInput[];
-      queue: Puzzle[];
-      profile: PuzzleProfile;
-      hasLost?: boolean;
     }
   | {
       t: "incorrect";
       startedAt: Posix;
       endedAt: Posix;
-      puzzle: Puzzle;
-      moves: Chess.MoveInput[];
-      profile: PuzzleProfile;
-      queue: Puzzle[];
-      hasLost?: boolean;
     };
+
+export type SharedModel =
+  | {
+      t: "loading";
+      profile?: PuzzleProfile | null;
+      queue?: Puzzle[];
+    }
+  | (BaseModel & MainModel);
 
 export type ServerModel = SharedModel;
 
@@ -206,13 +198,15 @@ export const toCurrentBoard = (model: SharedModel): Chess.Model => {
     return Chess.init();
   }
   const moves = interleave(model.puzzle.opponentMoves, model.moves);
-  let board = Chess.initFromFen(model.puzzle);
-  for (const move of moves) {
+
+  const board = moves.reduce((board, move) => {
     const moved = Chess.move(move, board);
     if (moved.t === "ok") {
-      board = moved.value;
+      return moved.value;
     }
-  }
+    return board;
+  }, Chess.initFromFen(model.puzzle));
+
   return board;
 };
 
@@ -269,14 +263,16 @@ export const handle = ({
       const modelNew: SharedModel = {
         ...model,
         moves: [...model.moves, msg.moveInput],
+        hint: null,
       };
 
-      if (didSolvePuzzle(model.puzzle, modelNew.moves) && model.hint) {
+      if (didSolvePuzzle(model.puzzle, modelNew.moves) && model.hasUsedHint) {
         return Ok({
           ...modelNew,
           t: "solved-with-hint",
           endedAt: ctx.now,
           hasLost: true,
+          hasUsedHint: true,
         });
       }
 
@@ -304,6 +300,7 @@ export const handle = ({
       return Ok({
         ...model,
         hint: model.hint ? hintToNextHint[model.hint] : "from",
+        hasUsedHint: true,
       });
     }
   }
