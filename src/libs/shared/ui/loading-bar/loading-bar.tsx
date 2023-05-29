@@ -21,7 +21,7 @@ export const LoadingBar = (props: { className?: string }) => {
 
         .loading-bar {
           width: 50%;
-          animation: loading 0.6s ease-in-out infinite;
+          animation: loading 0.75s ease-in-out infinite;
         }
 
         `}
