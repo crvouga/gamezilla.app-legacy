@@ -1,20 +1,17 @@
 import { ProfileAvatar, UserId } from "@gamezilla/shared/app";
 import { AppMsg, RouteProfile, ViewCtx } from "@gamezilla/shared/client";
-import { Cmd, RemoteResult, andThen, p } from "@gamezilla/shared/core";
+import { Cmd, andThen, p } from "@gamezilla/shared/core";
 import {
-  Alert,
   Avatar,
-  Backdrop,
   Box,
   Button,
-  ConformationDialog,
   FillBox,
   IconArrowLeftOnRect,
   IconChevronRight,
   IconSpinner,
   IconUserPen,
-  Icons,
   LoadingDialog,
+  LoadingScreen,
   MenuItem,
   MyAvatar,
   MyButton,
@@ -27,7 +24,6 @@ import {
   Typography,
   ViewNode,
 } from "@gamezilla/shared/ui";
-import { AlertTitle } from "@mui/material";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./profile.shared";
 
 //
@@ -190,10 +186,6 @@ export const View = ({
     );
   }
 
-  if (route.t === "profile-delete") {
-    return <ViewDeleteScreen $send={$send} ctx={ctx} model={model} />;
-  }
-
   if (route.t === "profile-update") {
     return <ViewUpdateScreen $send={$send} ctx={ctx} model={model} />;
   }
@@ -210,8 +202,7 @@ export const View = ({
     return <ViewUpdateThemeScreen $send={$send} ctx={ctx} model={model} />;
   }
 
-  const check: never = route;
-  return check;
+  return <LoadingScreen />;
 };
 
 const ViewProfileScreen = ({
@@ -281,64 +272,6 @@ const ViewProfileScreen = ({
       </div>
     </div>
   );
-};
-
-const ViewDeleteScreen = (_props: {
-  model: Model;
-  ctx: ViewCtx;
-  $send: (msg: Msg) => void;
-}) => {
-  const mutation = {
-    t: "not-asked",
-  } as RemoteResult<string, null>;
-
-  switch (mutation.t) {
-    case "loading":
-      return <LoadingDialog open title="Deleting profile..." />;
-
-    case "err":
-      return (
-        <Backdrop open>
-          <Alert variant="filled" severity="error" sx={{ margin: 2 }}>
-            <AlertTitle>Failed to delete profile.</AlertTitle>
-            {mutation.error}
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "flex-end",
-                marginTop: 2,
-              }}>
-              <Button
-                variant="outlined"
-                size="large"
-                color="inherit"
-                startIcon={<Icons.Close />}>
-                Close
-              </Button>
-            </Box>
-          </Alert>
-        </Backdrop>
-      );
-
-    case "not-asked":
-    case "ok":
-      return (
-        <ConformationDialog
-          open
-          title="Delete profile forever?"
-          confirmTitle="Delete"
-          onCancel={() => {
-            //
-          }}
-          onClose={() => {
-            //
-          }}
-          onConfirm={() => {
-            //
-          }}
-        />
-      );
-  }
 };
 
 const ViewUpdateScreen = ({
