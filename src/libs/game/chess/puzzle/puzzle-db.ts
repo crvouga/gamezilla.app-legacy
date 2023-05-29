@@ -54,7 +54,7 @@ export const PuzzleInteractionRow = z.object({
   id: z.string(),
   puzzle_id: z.string(),
   user_id: z.string(),
-  interaction: z.enum(["solved", "incorrect"]),
+  interaction: z.enum(["solved", "incorrect", "solved-with-hint"]),
 });
 
 export const PuzzleQueryJSON = z.object({
@@ -320,7 +320,7 @@ const findProfile =
       return Err("Invalid elo rating");
     }
 
-    const parsed = PuzzleQueryJSON.safeParse(row.query);
+    const parsed = PuzzleQueryJSON.safeParse(row.puzzle_query);
 
     const query = parsed.success ? parsed.data : initQuery;
 
