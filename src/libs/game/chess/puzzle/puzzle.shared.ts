@@ -205,6 +205,9 @@ const reducer = (state: PuzzleState, event: PuzzleEvent): PuzzleState => {
   }
 
   if (state.type === "incorrect") {
+    if (event.type === "user-retried") {
+      return state;
+    }
     return state;
   }
 
@@ -220,11 +223,12 @@ const reducer = (state: PuzzleState, event: PuzzleEvent): PuzzleState => {
         return state;
       }
 
-      const puzzleMove = state.puzzle.opponentMoves[state.playerMoves.length];
+      const opponentMove =
+        state.puzzle.opponentMoves[state.playerMoves.length - 1];
 
-      const puzzleMoved = puzzleMove
-        ? Chess.move(puzzleMove, playerMoved.value)
-        : Ok(playerMoved.value);
+      const puzzleMoved = opponentMove
+        ? Chess.move(opponentMove, playerMoved.value)
+        : playerMoved;
 
       if (puzzleMoved.t === "err") {
         return state;
@@ -261,6 +265,20 @@ const reducer = (state: PuzzleState, event: PuzzleEvent): PuzzleState => {
         };
       }
 
+      if (didMakeWrongMove(state.puzzle.correctMoves, playerMovesNew)) {
+        return {
+          ...state,
+          board: boardNew,
+          type: "incorrect",
+          endedAt: event.happenedAt,
+          nextEloRating: EloRating.toNextRating({
+            endGame: "lost",
+            opponentRating: state.puzzle.rating,
+            playerRating: state.puzzleProfile.eloRating,
+          }),
+        };
+      }
+
       return {
         ...state,
         board: boardNew,
@@ -271,6 +289,15 @@ const reducer = (state: PuzzleState, event: PuzzleEvent): PuzzleState => {
   }
 
   return state;
+};
+
+const didMakeWrongMove = (
+  correctMoves: Chess.MoveInput[],
+  playerMoves: Chess.MoveInput[]
+): boolean => {
+  return zip(playerMoves, correctMoves).some(
+    ([playerMove, correctMove]) => !isMoveEqual(playerMove, correctMove)
+  );
 };
 
 export const toState = (model: SharedModel): PuzzleState => {
