@@ -5,11 +5,11 @@ import {
   ToServer,
   serverPort,
   sessionIdKey,
-} from '@gamezilla/app';
-import { Browser, Cmd, Debug, Program } from '@gamezilla/shared/core';
-import * as React from 'react';
-import * as ReactDOM from 'react-dom/client';
-import { Socket, io } from 'socket.io-client';
+} from "@gamezilla/app";
+import { Browser, Cmd, Debug, Program } from "@gamezilla/shared/core";
+import * as React from "react";
+import * as ReactDOM from "react-dom/client";
+import { Socket, io } from "socket.io-client";
 import "./main.css";
 
 //
@@ -21,10 +21,10 @@ import "./main.css";
 //
 
 const main = () => {
-  const isProduction = process.env.NODE_ENV === 'production';
+  const isProduction = process.env.NODE_ENV === "production";
 
   const serverUrl = isProduction
-    ? 'https://server.gamezilla.app/'
+    ? "https://server.gamezilla.app/"
     : `http://localhost:${serverPort}/`;
 
   const socketClient: Socket<ServerToClientEvents, ClientToServerEvents> = io(
@@ -33,34 +33,35 @@ const main = () => {
       auth: {
         [sessionIdKey]: localStorage.getItem(sessionIdKey) ?? undefined,
       },
+      forceNew: true,
     }
   );
 
-  socketClient.on('session-id', (sessionId) => {
+  socketClient.on("session-id", (sessionId) => {
     console.log(`session-id: ${sessionId}`);
     localStorage.setItem(sessionIdKey, sessionId);
   });
 
-  socketClient.on('connect', () => {
-    AppClient.wireMsgs.next({ t: 'connected' });
+  socketClient.on("connect", () => {
+    AppClient.wireMsgs.next({ t: "connected" });
   });
 
-  socketClient.on('disconnect', () => {
-    AppClient.wireMsgs.next({ t: 'disconnected' });
+  socketClient.on("disconnect", () => {
+    AppClient.wireMsgs.next({ t: "disconnected" });
   });
 
-  socketClient.on('connect_error', () => {
-    AppClient.wireMsgs.next({ t: 'connect-error' });
+  socketClient.on("connect_error", () => {
+    AppClient.wireMsgs.next({ t: "connect-error" });
   });
 
-  socketClient.on('to-client', (msg) => {
+  socketClient.on("to-client", (msg) => {
     AppClient.fromServerMsgs.next(msg);
   });
 
   const sendToServer =
     (msg: ToServer): Cmd =>
     () => {
-      socketClient.emit('to-server', msg);
+      socketClient.emit("to-server", msg);
     };
 
   const program = Program.create({
@@ -74,10 +75,10 @@ const main = () => {
   Program.run(attached.program);
 
   const root = ReactDOM.createRoot(
-    document.getElementById('root') as HTMLElement
+    document.getElementById("root") as HTMLElement
   );
 
-  program.state$.subscribe((state) => {
+  Program.subscribe(program, (state) => {
     root.render(
       <React.StrictMode>
         <AppClient.View
@@ -96,14 +97,14 @@ const main = () => {
 if (import.meta.hot) {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  if (!import.meta.hot.data?.['started']) {
-    console.log('[hot] starting app');
+  if (!import.meta.hot.data?.["started"]) {
+    console.log("[hot] starting app");
     main();
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    import.meta.hot.data['started'] = true;
+    import.meta.hot.data["started"] = true;
   } else {
-    console.log('[hot] reload');
+    console.log("[hot] reload");
   }
 } else {
   main();

@@ -75,9 +75,13 @@ export type ClientModel = SharedModel & {
 
 type Hint = "from" | "from-and-to";
 
-export const toNext: { [key in Hint]: Hint } = {
+const hintToNextHint: { [key in Hint]: Hint } = {
   from: "from-and-to",
   "from-and-to": "from-and-to",
+};
+
+export const isNoMoreHints = (model: SharedModel): boolean => {
+  return model.t === "in-progress" && model.hint === "from-and-to";
 };
 
 export const initQuery: PuzzleQuery = {
@@ -299,7 +303,7 @@ export const handle = ({
     if (msg.t === "show-hint") {
       return Ok({
         ...model,
-        hint: model.hint ? toNext[model.hint] : "from",
+        hint: model.hint ? hintToNextHint[model.hint] : "from",
       });
     }
   }

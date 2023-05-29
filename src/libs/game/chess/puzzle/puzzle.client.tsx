@@ -35,6 +35,7 @@ import {
   handle,
   initQuery,
   initShared,
+  isNoMoreHints,
   toCorrectMove,
   toCurrentBoard,
   toNextEloRating,
@@ -234,7 +235,7 @@ export const View = ({
                 {model.profile?.eloRating ?? "..."}
               </p>
 
-              {model.t === "solved" && nextEloRating && (
+              {model.t === "solved" && !model.hasLost && nextEloRating && (
                 <div className="text-green-500 rounded-xl  text-lg font-semibold">
                   +{nextEloRating - model.profile.eloRating}
                 </div>
@@ -464,6 +465,7 @@ export const toBottomBarActions = ({
   const hint: BottomBarButtonAction = {
     icon: <IconLightbulb />,
     label: "Hint",
+    disabled: isNoMoreHints(model),
     onClick: () => $send({ t: "show-hint" }),
   };
 
