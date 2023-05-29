@@ -1,4 +1,5 @@
-import { PhoneNumber } from '@gamezilla/shared/app';
+import { PhoneNumber } from "@gamezilla/shared/app";
+import { Route } from "@gamezilla/shared/client";
 import {
   Browser,
   Cmd,
@@ -7,8 +8,7 @@ import {
   Task,
   Time,
   Unit,
-} from '@gamezilla/shared/core';
-import { Route } from '@gamezilla/shared/client';
+} from "@gamezilla/shared/core";
 import {
   AlertError,
   AlertSuccess,
@@ -17,7 +17,7 @@ import {
   MyTextField,
   TopBar,
   TopBarBackButton,
-} from '@gamezilla/shared/ui';
+} from "@gamezilla/shared/ui";
 
 //
 //
@@ -31,32 +31,32 @@ export type Model = {
   code: string;
   submission:
     | {
-        type: 'idle';
+        type: "idle";
       }
     | {
-        type: 'loading';
+        type: "loading";
       }
     | {
-        type: 'problem';
+        type: "problem";
         message: string;
       }
     | {
-        type: 'ok';
+        type: "ok";
       };
 };
 
-const codeInputId = 'codeInputId';
+const codeInputId = "codeInputId";
 
 export const init = (): { model: Model; cmd: Cmd<Msg> } => {
   return {
     model: {
-      code: '',
-      submission: { type: 'idle' },
+      code: "",
+      submission: { type: "idle" },
     },
     cmd: p(
       Time.delay(100, () => Unit),
       Task.chain(() => Browser.focus(codeInputId)),
-      Cmd.perform((result) => ({ t: 'focus-done', result }))
+      Cmd.perform((result) => ({ t: "focus-done", result }))
     ),
   };
 };
@@ -70,11 +70,11 @@ export const init = (): { model: Model; cmd: Cmd<Msg> } => {
 //
 
 export type Msg =
-  | { t: 'clicked-back' }
-  | { t: 'clicked-verify-code' }
-  | { t: 'inputted-code'; code: string }
-  | { t: 'verify-code-done'; result: Result<string, null> }
-  | { t: 'focus-done'; result: Browser.FocusResult };
+  | { t: "clicked-back" }
+  | { t: "clicked-verify-code" }
+  | { t: "inputted-code"; code: string }
+  | { t: "verify-code-done"; result: Result<string, null> }
+  | { t: "focus-done"; result: Browser.FocusResult };
 
 export const update = ({
   phoneNumber,
@@ -92,50 +92,51 @@ export const update = ({
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
+  shouldLoadCurrentUser?: boolean;
 } => {
-  if (msg.t === 'clicked-back') {
+  if (msg.t === "clicked-back") {
     return { model, cmd: Route.back };
   }
 
-  if (msg.t === 'clicked-verify-code') {
+  if (msg.t === "clicked-verify-code") {
     return {
       model: {
         code: model.code,
-        submission: { type: 'loading' },
+        submission: { type: "loading" },
       },
       cmd: p(
         verifyCode({ code: model.code, phoneNumber }),
-        Cmd.perform((result): Msg => ({ t: 'verify-code-done', result }))
+        Cmd.perform((result): Msg => ({ t: "verify-code-done", result }))
       ),
     };
   }
 
-  if (msg.t === 'inputted-code') {
+  if (msg.t === "inputted-code") {
     return { model: { ...model, code: msg.code } };
   }
 
-  if (msg.t === 'verify-code-done') {
+  if (msg.t === "verify-code-done") {
     const result = msg.result;
 
-    if (result.t === 'ok') {
+    if (result.t === "ok") {
       return {
         model: {
           code: model.code,
-          submission: { type: 'ok' },
+          submission: { type: "ok" },
         },
-        cmd: Route.replace({ t: 'room', c: { t: 'room-list' } }),
+        shouldLoadCurrentUser: true,
       };
     }
 
     return {
       model: {
         code: model.code,
-        submission: { type: 'problem', message: result.error },
+        submission: { type: "problem", message: result.error },
       },
     };
   }
 
-  if (msg.t === 'focus-done') {
+  if (msg.t === "focus-done") {
     return { model };
   }
 
@@ -162,7 +163,7 @@ export const View = ({
   return (
     <div className="w-full h-full flex flex-col">
       <TopBar
-        left={<TopBarBackButton onClick={() => $send({ t: 'clicked-back' })} />}
+        left={<TopBarBackButton onClick={() => $send({ t: "clicked-back" })} />}
         title="Verify Code"
       />
       <div className="p-4 flex flex-col w-full gap-4">
@@ -182,8 +183,8 @@ export const View = ({
           type="tel"
           label="Code"
           value={model.code}
-          onChange={(code) => $send({ t: 'inputted-code', code })}
-          onClear={() => $send({ t: 'inputted-code', code: '' })}
+          onChange={(code) => $send({ t: "inputted-code", code })}
+          onClear={() => $send({ t: "inputted-code", code: "" })}
         />
 
         <MyButton
@@ -191,15 +192,14 @@ export const View = ({
           size="lg"
           className="w-full"
           color="primary"
-          onClick={() => $send({ t: 'clicked-verify-code' })}
-        >
-          {model.submission.type === 'loading' && (
+          onClick={() => $send({ t: "clicked-verify-code" })}>
+          {model.submission.type === "loading" && (
             <IconSpinner className="w-6 h-6 animate-spin" />
           )}
           Verify Code
         </MyButton>
 
-        {model.submission.type === 'problem' && (
+        {model.submission.type === "problem" && (
           <AlertError className="mt-4">{model.submission.message}</AlertError>
         )}
       </div>

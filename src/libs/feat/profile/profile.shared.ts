@@ -1,10 +1,10 @@
-import { RemoteResult, Result } from "@gamezilla/shared/core";
 import {
   MsgMetaData,
   ProfileAvatar,
   UserId,
   Username,
 } from "@gamezilla/shared/app";
+import { RemoteResult, Result } from "@gamezilla/shared/core";
 
 //
 //
@@ -34,7 +34,6 @@ export type ClientModel = {
     avatarStyle?: ProfileAvatar.Style;
     themeMode?: "Light" | "Dark" | "System";
   };
-  opened?: "menu" | null;
 };
 
 export type ServerModel = null;
@@ -47,11 +46,7 @@ export type ServerModel = null;
 //
 //
 
-export type ClientMsg =
-  | Req
-  | { t: "inputted-username"; username: string }
-  | { t: "clicked-menu-button" }
-  | { t: "closed-menu" };
+export type ClientMsg = Req | { t: "inputted-username"; username: string };
 
 export type ServerMsg = { t: "none" };
 

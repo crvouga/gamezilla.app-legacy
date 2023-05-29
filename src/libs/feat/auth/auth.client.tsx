@@ -20,9 +20,10 @@ import {
   IconEnvelope,
   IconGoogle,
   IconMobilePhone,
-  IconSpinner,
+  LoadingBar,
   LoadingDialog,
   MyButton,
+  cn,
 } from "@gamezilla/shared/ui";
 import { Session as SupabaseSession } from "@supabase/supabase-js";
 import { Subject } from "rxjs";
@@ -99,12 +100,20 @@ export const update = ({
   }
 
   if (msg.t === "login-done") {
-    return { model };
+    return {
+      model,
+      cmd: loadCurrentUser,
+    };
   }
 
   if (msg.t === "logout") {
     return {
-      model,
+      model: {
+        ...model,
+        currentUser: {
+          t: "loading",
+        },
+      },
       cmd: p(
         logout,
         Cmd.perform((result) => ({ t: "logout-done", result }))
@@ -113,7 +122,14 @@ export const update = ({
   }
 
   if (msg.t === "logout-done") {
-    return { model };
+    return {
+      model: {
+        ...model,
+        currentUser: {
+          t: "logged-out",
+        },
+      },
+    };
   }
 
   if (msg.t === "phone") {
@@ -136,12 +152,21 @@ export const update = ({
     const updated = AuthPhoneVerify.update({
       msg: msg.c,
       model: model.phoneVerify,
-      verifyCode,
       phoneNumber: route.c.phoneNumber,
+      verifyCode,
     });
     return {
-      model: { ...model, phoneVerify: updated.model },
-      cmd: Cmd.tag_("phone-verify", updated.cmd),
+      model: {
+        ...model,
+        phoneVerify: updated.model,
+        currentUser: updated.shouldLoadCurrentUser
+          ? { t: "loading" }
+          : model.currentUser,
+      },
+      cmd: Cmd.batch([
+        Cmd.tag_("phone-verify", updated.cmd),
+        updated.shouldLoadCurrentUser ? loadCurrentUser : Cmd.None,
+      ]),
     };
   }
 
@@ -163,7 +188,9 @@ export const update = ({
     return {
       model: { ...model, currentUser: msg.currentUser },
       cmd: sendToServer(msg),
-      msgs: currentUserId ? [{ t: "user-logged-in", currentUserId }] : [],
+      msgs: currentUserId
+        ? [{ t: "user-logged-in", currentUserId }]
+        : [{ t: "user-logged-out" }],
     };
   }
 
@@ -179,6 +206,41 @@ export const updateFromServer = ({
   return { model };
 };
 
+export const updateFromApp = ({
+  msg,
+  model,
+  route,
+}: {
+  msg: AppMsg;
+  model: Model;
+  route: Route;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  if (msg.t === "user-logged-in" && route.t === "auth") {
+    return {
+      model,
+      cmd: Route.push({
+        t: "room",
+        c: {
+          t: "room-list",
+        },
+      }),
+    };
+  }
+
+  if (msg.t === "user-logged-out" && route.t !== "auth") {
+    return {
+      model,
+      cmd: Route.push({
+        t: "auth",
+        c: { t: "login" },
+      }),
+    };
+  }
+  return { model };
+};
 //
 //
 //
@@ -188,20 +250,14 @@ export const updateFromServer = ({
 //
 
 export const ViewLoggedIn = ({
-  route,
   model,
   ctx,
   $send,
 }: {
-  route: RouteAuth;
   model: Model;
   $send: (m: Msg) => void;
   ctx: UnauthenticatedViewCtx;
 }) => {
-  if (route.t === "logout") {
-    return <ViewLogoutScreen ctx={ctx} model={model} $send={$send} />;
-  }
-
   return <ViewLogoutScreen ctx={ctx} model={model} $send={$send} />;
 };
 
@@ -260,9 +316,20 @@ const ViewLoginScreen = ({
   model: Model;
   $send: (msg: Msg) => void;
 }) => {
+  const isLoading = model.requests["login-with-google"]?.t === "loading";
   return (
-    <div className="w-full h-full flex-1 flex flex-col">
-      <div className="flex-1 flex flex-col justify-center items-center p-4 gap-8">
+    <div className="w-full h-full flex-1 flex flex-col relative">
+      <LoadingBar
+        className={cn(
+          "absolute top-0 left-0 w-full",
+          isLoading ? "block" : "hidden"
+        )}
+      />
+      <div
+        className={cn(
+          "flex-1 flex flex-col justify-center items-center p-4 gap-8",
+          isLoading && "opacity-50 pointer-events-none"
+        )}>
         <div className="w-full flex flex-col items-start justify-center">
           <p className="text-2xl text-neutral-200">Sign in to</p>
           <h1 className="bg-gradient-to-b from-blue-400 to-blue-600 text-transparent bg-clip-text text-5xl font-extrabold pb-2">
@@ -275,9 +342,6 @@ const ViewLoginScreen = ({
             onClick={() => $send({ t: "login-with-google" })}
             size="lg"
             className="w-full">
-            {model.requests["login-with-google"]?.t === "loading" && (
-              <IconSpinner className="w-6 h-6 animate-spin" />
-            )}
             <IconGoogle />
             Continue With Google
           </MyButton>
@@ -310,7 +374,7 @@ const ViewLoginScreen = ({
   );
 };
 
-const ViewLogoutScreen = ({
+export const ViewLogoutScreen = ({
   model,
   $send,
   ctx,
@@ -351,10 +415,10 @@ const ViewLogoutScreen = ({
 
 const subject = new Subject<Msg>();
 
-client.auth.onAuthStateChange((_event, supabaseSession) => {
-  const msg = fromSupabaseSession(supabaseSession);
-  subject.next(msg);
-});
+// client.auth.onAuthStateChange((_event, supabaseSession) => {
+//   const msg = fromSupabaseSession(supabaseSession);
+//   subject.next(msg);
+// });
 
 const fromSupabaseSession = (auth: SupabaseSession | null): Msg => {
   const userId = UserId.decode(auth?.user?.id);
@@ -381,9 +445,11 @@ const fromSupabaseSession = (auth: SupabaseSession | null): Msg => {
 export const subscriptions: Sub<Msg> = subject;
 
 const loadCurrentUser: Cmd<Msg> = ($send) => {
-  const supabaseSession = client.auth.session();
-  const msg = fromSupabaseSession(supabaseSession);
-  $send(msg);
+  setTimeout(() => {
+    const supabaseSession = client.auth.session();
+    const msg = fromSupabaseSession(supabaseSession);
+    $send(msg);
+  }, 1_000);
 };
 
 //

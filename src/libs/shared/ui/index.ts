@@ -6,6 +6,7 @@ export * from "./button-vertical";
 export * from "./drawer";
 export * from "./icon";
 export * from "./icon-button";
+export * from "./loading-bar";
 export * from "./loading-screen";
 export * from "./text-field";
 export * from "./top-bar";

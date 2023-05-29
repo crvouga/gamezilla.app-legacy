@@ -1,27 +1,28 @@
-import { AuthClient } from '@gamezilla/feat/auth';
-import { ChatClient } from '@gamezilla/feat/chat';
-import { ProfileClient } from '@gamezilla/feat/profile';
-import { RoomClient } from '@gamezilla/feat/room';
-import { SearchClient } from '@gamezilla/feat/search';
+import { AuthClient } from "@gamezilla/feat/auth";
+import { ChatClient } from "@gamezilla/feat/chat";
+import { ProfileClient } from "@gamezilla/feat/profile";
+import { RoomClient } from "@gamezilla/feat/room";
+import { SearchClient } from "@gamezilla/feat/search";
 import {
   AppMsg,
   Ctx,
   Route,
   UnauthenticatedViewCtx,
   ViewCtx,
-} from '@gamezilla/shared/client';
-import { Browser, Cmd, Posix, Sub, exhaustive } from '@gamezilla/shared/core';
+} from "@gamezilla/shared/client";
+import { Browser, Cmd, Posix, Sub, exhaustive } from "@gamezilla/shared/core";
 import {
   IconGamepad,
   IconMagnifyingGlass,
   IconSpinner,
   IconUserCircle,
+  LoadingScreen,
   ViewNode,
   cn,
-} from '@gamezilla/shared/ui';
-import { Subject } from 'rxjs';
-import { ClientModel, ClientMsg, ToClient, ToServer } from './app.shared';
-import { Routing, Toast, Wire } from './app-client';
+} from "@gamezilla/shared/ui";
+import { Subject } from "rxjs";
+import { Routing, Toast, Wire } from "./app-client";
+import { ClientModel, ClientMsg, ToClient, ToServer } from "./app.shared";
 
 //
 //
@@ -65,7 +66,7 @@ export const init = ({
       search: search.model,
       profile,
     },
-    cmd: Cmd.batch<Msg>([routing.cmd, Cmd.tag_('auth', auth.cmd)]),
+    cmd: Cmd.batch<Msg>([routing.cmd, Cmd.tag_("auth", auth.cmd)]),
   };
 };
 
@@ -130,33 +131,33 @@ const update_ = ({
   msgs?: AppMsg[];
 } => {
   switch (msg.t) {
-    case '→': {
+    case "→": {
       return updateFromServer({ now, sendToServer, msg: msg.c, model });
     }
 
-    case 'auth': {
+    case "auth": {
       const updated = AuthClient.update({
         route: model.routing.route,
-        sendToServer: (c) => sendToServer({ t: 'auth', c }),
+        sendToServer: (c) => sendToServer({ t: "auth", c }),
         msg: msg.c,
         model: model.auth,
       });
       return {
         model: { ...model, auth: updated.model },
-        cmd: Cmd.tag_('auth', updated.cmd),
-        msgs: AppMsg.tag('auth', updated.msgs),
+        cmd: Cmd.tag_("auth", updated.cmd),
+        msgs: AppMsg.tag("auth", updated.msgs),
       };
     }
 
-    case 'toast': {
+    case "toast": {
       const updated = Toast.update({ msg: msg.c, model: model.toast });
       return {
         model: { ...model, toast: updated.model },
-        cmd: Cmd.tag_('toast', updated.cmd),
+        cmd: Cmd.tag_("toast", updated.cmd),
       };
     }
 
-    case 'routing': {
+    case "routing": {
       const updated = Routing.update({
         msg: msg.c,
         model: model.routing,
@@ -167,12 +168,12 @@ const update_ = ({
           ...model,
           routing: updated.model,
         },
-        cmd: Cmd.tag_('routing', updated.cmd),
-        msgs: AppMsg.tag('routing', updated.msgs),
+        cmd: Cmd.tag_("routing", updated.cmd),
+        msgs: AppMsg.tag("routing", updated.msgs),
       };
     }
 
-    case 'wire': {
+    case "wire": {
       const updated = Wire.update({
         msg: msg.c,
         model: model.wire,
@@ -180,8 +181,8 @@ const update_ = ({
       return { model: { ...model, wire: updated.model }, msgs: updated.msgs };
     }
 
-    case 'room': {
-      if (model.auth.currentUser.t !== 'logged-in') {
+    case "room": {
+      if (model.auth.currentUser.t !== "logged-in") {
         return { model };
       }
 
@@ -193,47 +194,47 @@ const update_ = ({
 
       const updated = RoomClient.update({
         ctx: ctx,
-        sendToServer: (m) => sendToServer({ t: 'room', c: m }),
+        sendToServer: (m) => sendToServer({ t: "room", c: m }),
         msg: msg.c,
         model: model.room,
       });
 
       return {
         model: { ...model, room: updated.model },
-        cmd: Cmd.tag_('room', updated.cmd ?? Cmd.None),
-        msgs: AppMsg.tag('room', updated.msgs),
+        cmd: Cmd.tag_("room", updated.cmd ?? Cmd.None),
+        msgs: AppMsg.tag("room", updated.msgs),
       };
     }
 
-    case 'profile': {
+    case "profile": {
       const updated = ProfileClient.update({
         msg: msg.c,
         model: model.profile,
-        sendToServer: (m) => sendToServer({ t: 'profile', c: m }),
+        sendToServer: (m) => sendToServer({ t: "profile", c: m }),
       });
       return {
         model: { ...model, profile: updated.model },
-        cmd: Cmd.tag_('profile', updated.cmd),
+        cmd: Cmd.tag_("profile", updated.cmd),
       };
     }
 
-    case 'chat': {
+    case "chat": {
       const updated = ChatClient.update({ msg: msg.c, model: model.chat });
       return {
         model: { ...model, chat: updated.model },
-        cmd: Cmd.tag_('chat', updated?.cmd ?? Cmd.None),
+        cmd: Cmd.tag_("chat", updated?.cmd ?? Cmd.None),
       };
     }
 
-    case 'search': {
+    case "search": {
       const updated = SearchClient.update({
         msg: msg.c,
         model: model.search,
-        sendToServer: (m) => sendToServer({ t: 'search', c: m }),
+        sendToServer: (m) => sendToServer({ t: "search", c: m }),
       });
       return {
         model: { ...model, search: updated.model },
-        cmd: Cmd.tag_('search', updated.cmd),
+        cmd: Cmd.tag_("search", updated.cmd),
       };
     }
 
@@ -259,8 +260,8 @@ const updateFromServer = ({
   msgs?: AppMsg[];
 } => {
   switch (msg.t) {
-    case 'room': {
-      if (model.auth.currentUser.t !== 'logged-in') {
+    case "room": {
+      if (model.auth.currentUser.t !== "logged-in") {
         return { model };
       }
 
@@ -274,63 +275,63 @@ const updateFromServer = ({
 
       const updated = RoomClient.updateFromServer({
         ctx,
-        sendToServer: (msg) => sendToServer({ t: 'room', c: msg }),
+        sendToServer: (msg) => sendToServer({ t: "room", c: msg }),
         msg: msg.c,
         model: model.room,
       });
 
       return {
         model: { ...model, room: updated.model },
-        cmd: Cmd.tag_('room', updated.cmd ?? Cmd.None),
+        cmd: Cmd.tag_("room", updated.cmd ?? Cmd.None),
         msgs: updated.msgs,
       };
     }
 
-    case 'profile': {
+    case "profile": {
       const updated = ProfileClient.updateFromServer({
         msg: msg.c,
         model: model.profile,
       });
       return {
         model: { ...model, profile: updated.model },
-        cmd: Cmd.tag_('profile', updated.cmd),
+        cmd: Cmd.tag_("profile", updated.cmd),
       };
     }
 
-    case 'search': {
+    case "search": {
       const updated = SearchClient.updateFromServer({
         msg: msg.c,
         model: model.search,
       });
       return {
         model: { ...model, search: updated.model },
-        cmd: Cmd.tag_('search', updated.cmd),
+        cmd: Cmd.tag_("search", updated.cmd),
       };
     }
 
-    case 'auth': {
+    case "auth": {
       const updated = AuthClient.updateFromServer({
         msg: msg.c,
         model: model.auth,
       });
       return {
         model: { ...model, auth: updated.model },
-        cmd: Cmd.tag_('auth', updated.cmd),
+        cmd: Cmd.tag_("auth", updated.cmd),
       };
     }
 
-    case 'chat': {
+    case "chat": {
       const updated = ChatClient.updateFromServer({
         msg: msg.c,
         model: model.chat,
       });
       return {
         model: { ...model, chat: updated.model },
-        cmd: Cmd.tag_('chat', updated.cmd),
+        cmd: Cmd.tag_("chat", updated.cmd),
       };
     }
 
-    case 'access-denied': {
+    case "access-denied": {
       return { model };
     }
 
@@ -355,19 +356,25 @@ export const updateFromApp = ({
   const chat = ChatClient.updateFromApp({
     model: model.chat,
     msg,
-    sendToServer: (c) => sendToServer({ t: 'chat', c }),
+    sendToServer: (c) => sendToServer({ t: "chat", c }),
   });
 
   const room = RoomClient.updateFromApp({
     model: model.room,
     msg,
-    sendToServer: (c) => sendToServer({ t: 'room', c }),
+    sendToServer: (c) => sendToServer({ t: "room", c }),
   });
 
   const profile = ProfileClient.updateFromApp({
     model: model.profile,
     msg,
-    sendToServer: (c) => sendToServer({ t: 'profile', c }),
+    sendToServer: (c) => sendToServer({ t: "profile", c }),
+  });
+
+  const auth = AuthClient.updateFromApp({
+    model: model.auth,
+    msg,
+    route: model.routing.route,
   });
 
   const toast = Toast.updateFromApp({
@@ -389,16 +396,18 @@ export const updateFromApp = ({
       profile: profile.model,
       room: room.model,
       wire: wire.model,
+      auth: auth.model,
     },
     cmd: Cmd.batch<Msg>([
       () => {
-        console.log('[app-msg]', msg);
+        console.log("[app-msg]", msg);
       },
-      Cmd.tag_('chat', chat.cmd),
-      Cmd.tag_('profile', profile.cmd),
-      Cmd.tag_('room', room.cmd),
-      Cmd.tag_('wire', wire.cmd),
-      Cmd.tag_('toast', toast.cmd),
+      Cmd.tag_("chat", chat.cmd),
+      Cmd.tag_("profile", profile.cmd),
+      Cmd.tag_("room", room.cmd),
+      Cmd.tag_("wire", wire.cmd),
+      Cmd.tag_("toast", toast.cmd),
+      Cmd.tag_("auth", auth.cmd),
     ]),
   };
 };
@@ -424,18 +433,18 @@ export const subscriptions = ({
   model: Model;
 }): Sub<Msg> => {
   return Sub.batch<Msg>([
-    Sub.tag_('→', fromServerMsgs),
-    Sub.tag_('wire', wireMsgs),
-    Sub.tag_('routing', Routing.subscriptions),
-    Sub.tag_('auth', AuthClient.subscriptions),
+    Sub.tag_("→", fromServerMsgs),
+    Sub.tag_("wire", wireMsgs),
+    Sub.tag_("routing", Routing.subscriptions),
+    Sub.tag_("auth", AuthClient.subscriptions),
     roomSub(now, model),
   ]);
 };
 
 const roomSub = (now: Posix, model: Model): Sub<Msg> => {
-  if (model.auth.currentUser.t === 'logged-in') {
+  if (model.auth.currentUser.t === "logged-in") {
     return Sub.tag_(
-      'room',
+      "room",
       RoomClient.subscriptions(
         {
           now,
@@ -470,33 +479,33 @@ export const View = ({
 }) => {
   return (
     <div className="max-w-md max-h-full mx-auto fixed w-full h-full overflow-hidden flex flex-col left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 border border-neutral-800 bg-black text-white select-none touch-none">
-      {model.auth.currentUser.t === 'not-asked' && (
+      {model.auth.currentUser.t === "not-asked" && (
         <div className="w-full h-full flex items-center justify-center">
           <IconSpinner className="w-12 h-12 animate-spin" />
         </div>
       )}
 
-      {model.auth.currentUser.t === 'loading' && (
+      {model.auth.currentUser.t === "loading" && (
         <div className="w-full h-full flex items-center justify-center">
           <IconSpinner className="w-12 h-12 animate-spin" />
         </div>
       )}
 
-      {model.auth.currentUser.t === 'logged-out' && (
+      {model.auth.currentUser.t === "logged-out" && (
         <ViewLoggedOut
           $send={$send}
           model={model}
           ctx={{
             now,
             profiles: model.profile.profiles,
-            $back: () => $send({ t: 'routing', c: { t: 'clicked-back' } }),
+            $back: () => $send({ t: "routing", c: { t: "clicked-back" } }),
             $push: (route) =>
-              $send({ t: 'routing', c: { t: 'clicked-link', c: route } }),
+              $send({ t: "routing", c: { t: "clicked-link", c: route } }),
           }}
         />
       )}
 
-      {model.auth.currentUser.t === 'logged-in' && (
+      {model.auth.currentUser.t === "logged-in" && (
         <ViewLoggedIn
           model={model}
           $send={$send}
@@ -505,15 +514,15 @@ export const View = ({
             currentUserId: model.auth.currentUser.currentUserId,
             profiles: model.profile.profiles,
             $push: (route) =>
-              $send({ t: 'routing', c: { t: 'clicked-link', c: route } }),
-            $back: () => $send({ t: 'routing', c: { t: 'clicked-back' } }),
+              $send({ t: "routing", c: { t: "clicked-link", c: route } }),
+            $back: () => $send({ t: "routing", c: { t: "clicked-back" } }),
           }}
         />
       )}
 
       <Wire.View model={model.wire} />
 
-      <Toast.View model={model.toast} $send={(c) => $send({ t: 'toast', c })} />
+      <Toast.View model={model.toast} $send={(c) => $send({ t: "toast", c })} />
     </div>
   );
 };
@@ -527,10 +536,10 @@ const ViewLoggedOut = ({
   $send: (m: Msg) => void;
   ctx: UnauthenticatedViewCtx;
 }) => {
-  if (model.routing.route.t === 'auth') {
+  if (model.routing.route.t === "auth") {
     return (
       <AuthClient.ViewLoggedOut
-        $send={(m) => $send({ t: 'auth', c: m })}
+        $send={(m) => $send({ t: "auth", c: m })}
         model={model.auth}
         ctx={ctx}
         route={model.routing.route.c}
@@ -540,10 +549,10 @@ const ViewLoggedOut = ({
 
   return (
     <AuthClient.ViewLoggedOut
-      $send={(m) => $send({ t: 'auth', c: m })}
+      $send={(m) => $send({ t: "auth", c: m })}
       model={model.auth}
       ctx={ctx}
-      route={{ t: 'login' }}
+      route={{ t: "login" }}
     />
   );
 };
@@ -557,20 +566,20 @@ const ViewLoggedIn = ({
   model: Model;
   $send: (m: Msg) => void;
 }) => {
-  if (model.routing.route.t === 'chat') {
+  if (model.routing.route.t === "chat") {
     return (
       <ChatClient.View
-        $send={(m) => $send({ t: 'chat', c: m })}
+        $send={(m) => $send({ t: "chat", c: m })}
         model={model.chat}
         ctx={ctx}
         route={model.routing.route.c}
         viewBottomBar={<ViewBottomBar model={model} $send={$send} ctx={ctx} />}
         userSearch={{
-          loading: model.profile.requests.search?.t === 'loading',
+          loading: model.profile.requests.search?.t === "loading",
           onInput: (query) => {
             $send({
-              t: 'profile',
-              c: { t: 'search', query },
+              t: "profile",
+              c: { t: "search", query },
             });
           },
         }}
@@ -578,10 +587,10 @@ const ViewLoggedIn = ({
     );
   }
 
-  if (model.routing.route.t === 'room') {
+  if (model.routing.route.t === "room") {
     return (
       <RoomClient.View
-        $send={(m) => $send({ t: 'room', c: m })}
+        $send={(m) => $send({ t: "room", c: m })}
         model={model.room}
         ctx={ctx}
         route={model.routing.route.c}
@@ -590,10 +599,10 @@ const ViewLoggedIn = ({
     );
   }
 
-  if (model.routing.route.t === 'profile') {
+  if (model.routing.route.t === "profile") {
     return (
       <ProfileClient.View
-        $send={(m) => $send({ t: 'profile', c: m })}
+        $send={(m) => $send({ t: "profile", c: m })}
         model={model.profile}
         ctx={ctx}
         route={model.routing.route.c}
@@ -602,29 +611,37 @@ const ViewLoggedIn = ({
     );
   }
 
-  if (model.routing.route.t === 'auth') {
+  if (model.routing.route.t === "auth") {
     return (
       <AuthClient.ViewLoggedIn
-        $send={(m) => $send({ t: 'auth', c: m })}
+        $send={(m) => $send({ t: "auth", c: m })}
         ctx={ctx}
         model={model.auth}
-        route={model.routing.route.c}
       />
     );
   }
 
-  if (model.routing.route.t === 'search') {
+  if (model.routing.route.t === "search") {
     return (
       <SearchClient.View
-        $send={(m) => $send({ t: 'search', c: m })}
+        $send={(m) => $send({ t: "search", c: m })}
         model={model.search}
         viewBottomBar={<ViewBottomBar model={model} $send={$send} ctx={ctx} />}
       />
     );
   }
 
-  const check: never = model.routing.route;
-  return check;
+  if (model.routing.route.t === "logout") {
+    return (
+      <AuthClient.ViewLogoutScreen
+        $send={(m) => $send({ t: "auth", c: m })}
+        ctx={ctx}
+        model={model.auth}
+      />
+    );
+  }
+
+  return <LoadingScreen />;
 };
 
 const ViewBottomBar = ({
@@ -643,20 +660,20 @@ const ViewBottomBar = ({
   }[] = [
     {
       route: {
-        t: 'room',
-        c: { t: 'room-list' },
+        t: "room",
+        c: { t: "room-list" },
       },
-      label: 'Rooms',
+      label: "Rooms",
       icon: <IconGamepad />,
     },
     {
-      route: { t: 'search' },
-      label: 'Search',
+      route: { t: "search" },
+      label: "Search",
       icon: <IconMagnifyingGlass />,
     },
     {
-      route: { t: 'profile', c: { t: 'profile', userId: ctx.currentUserId } },
-      label: 'Profile',
+      route: { t: "profile", c: { t: "profile", userId: ctx.currentUserId } },
+      label: "Profile",
       icon: <IconUserCircle />,
     },
   ];
@@ -666,7 +683,7 @@ const ViewBottomBar = ({
       <RoomClient.ViewBottomBar
         ctx={ctx}
         model={model.room}
-        $send={(c) => $send({ t: 'room', c })}
+        $send={(c) => $send({ t: "room", c })}
       />
       <div className="w-full flex items-center justify-center border-t border-neutral-600">
         {items.map((item) => {
@@ -676,10 +693,9 @@ const ViewBottomBar = ({
               key={Route.encode(item.route)}
               onClick={() => ctx.$push(item.route)}
               className={cn(
-                'flex items-center justify-center flex-col flex-1 pt-1 pb-2 gap-0.5',
-                isSelected ? 'text-blue-500' : 'opacity-80'
-              )}
-            >
+                "flex items-center justify-center flex-col flex-1 pt-1 pb-2 gap-0.5",
+                isSelected ? "text-blue-500" : "opacity-80"
+              )}>
               {item.icon}
               <div className="text-xs">{item.label}</div>
             </button>

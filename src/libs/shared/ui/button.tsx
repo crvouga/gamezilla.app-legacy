@@ -21,7 +21,7 @@ export const MyButton = ({
   disabled?: boolean;
   type?: "button" | "submit" | "reset";
   className?: string;
-  onClick?: () => void;
+  onClick?: (event: { stopPropagation: () => void }) => void;
   children?: React.ReactNode;
   variant?: ButtonVariant;
   color?: ButtonColor;
@@ -49,7 +49,9 @@ export const MyButton = ({
         disabled && "opacity-50 cursor-not-allowed bg-neutral-600",
         !disabled && " active:opacity-60"
       )}
-      onClick={onClick}>
+      onClick={(event) =>
+        onClick?.({ stopPropagation: () => event.stopPropagation() })
+      }>
       {children}
     </button>
   );

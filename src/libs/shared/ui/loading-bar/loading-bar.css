@@ -1,0 +1,13 @@
+@keyframes loading {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.loading-bar {
+  width: 50%;
+  animation: loading 0.6s ease-in-out infinite;
+}

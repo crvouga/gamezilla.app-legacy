@@ -1,4 +1,4 @@
-import { exhaustive } from '@gamezilla/shared/core';
+import { exhaustive } from "@gamezilla/shared/core";
 import {
   AccessTime,
   ArrowCircleRight,
@@ -14,14 +14,15 @@ import {
   SmartToy,
   SwapHorizSharp,
   Tune,
-} from '@mui/icons-material';
-import * as MuiLab from '@mui/lab';
-import * as Mui from '@mui/material';
-import { TypographyProps, keyframes } from '@mui/material';
-import { ReactNode, useEffect, useRef } from 'react';
-import * as Icons from './ui-icons';
-import { cn } from './utils';
-import { MyButton } from './button';
+} from "@mui/icons-material";
+import * as MuiLab from "@mui/lab";
+import * as Mui from "@mui/material";
+import { TypographyProps, keyframes } from "@mui/material";
+import { ReactNode, useEffect, useRef } from "react";
+import { IconSpinner } from ".";
+import { MyButton } from "./button";
+import * as Icons from "./ui-icons";
+import { cn } from "./utils";
 
 //
 //
@@ -35,29 +36,29 @@ export const useTheme = () => {
   return Mui.useTheme();
 };
 
-export type ThemeMode = 'Light' | 'Dark' | 'System';
+export type ThemeMode = "Light" | "Dark" | "System";
 
 export const ThemeModeIcon = ({ themeMode }: { themeMode: ThemeMode }) => {
   switch (themeMode) {
-    case 'Dark':
+    case "Dark":
       return <Icons.DarkMode />;
 
-    case 'Light':
+    case "Light":
       return <Icons.LightMode />;
 
-    case 'System':
+    case "System":
       return <Icons.SettingsBrightness />;
   }
 };
 
 const themeModes: { [key in ThemeMode]: ThemeMode } = {
-  Light: 'Light',
-  Dark: 'Dark',
-  System: 'System',
+  Light: "Light",
+  Dark: "Dark",
+  System: "System",
 };
 
 const isThemeMode = (themeMode: unknown): themeMode is ThemeMode => {
-  return typeof themeMode === 'string' && themeMode in themeModes;
+  return typeof themeMode === "string" && themeMode in themeModes;
 };
 
 export const ThemeModeToggleButtons = ({
@@ -77,17 +78,15 @@ export const ThemeModeToggleButtons = ({
         if (isThemeMode(value)) {
           onChange(value);
         }
-      }}
-    >
+      }}>
       {Object.values(themeModes).map((themeMode) => (
         <Mui.ToggleButton key={themeMode} value={themeMode}>
           <Mui.Box
             sx={{
               marginRight: 1,
-              alignItems: 'center',
-              display: 'flex',
-            }}
-          >
+              alignItems: "center",
+              display: "flex",
+            }}>
             <ThemeModeIcon themeMode={themeMode} />
           </Mui.Box>
           {themeMode}
@@ -115,11 +114,10 @@ export const TextField = ({ label, sx, ...props }: Mui.TextFieldProps) => {
   }, [props.autoFocus]);
 
   return (
-    <Box sx={{ color: 'text.secondary', ...sx }}>
+    <Box sx={{ color: "text.secondary", ...sx }}>
       <Typography
-        color={props.disabled ? 'text.disabled' : 'inherit'}
-        sx={{ mb: 1 / 2 }}
-      >
+        color={props.disabled ? "text.disabled" : "inherit"}
+        sx={{ mb: 1 / 2 }}>
         {label}
       </Typography>
       <Mui.TextField ref={ref} {...props} />
@@ -201,8 +199,8 @@ export const button = (
   }: Sx & {
     startIcon: IconName;
     onPress?: () => void;
-    variant: 'outlined' | 'contained' | 'text';
-    size?: 'lg' | 'md' | 'sm';
+    variant: "outlined" | "contained" | "text";
+    size?: "lg" | "md" | "sm";
   },
   text: string
 ) => {
@@ -212,16 +210,15 @@ export const button = (
       onClick={onPress}
       sx={sx}
       size={
-        size === 'lg'
-          ? 'large'
-          : size === 'md'
-          ? 'medium'
-          : size === 'sm'
-          ? 'small'
+        size === "lg"
+          ? "large"
+          : size === "md"
+          ? "medium"
+          : size === "sm"
+          ? "small"
           : undefined
       }
-      startIcon={icon(startIcon)}
-    >
+      startIcon={icon(startIcon)}>
       {text}
     </Button>
   );
@@ -278,7 +275,7 @@ export const MobileStepper = Mui.MobileStepper;
 export const Avatar = Mui.Avatar;
 
 export const avatar = ({ src, ...sx }: { src?: string | null } & Sx) => {
-  return <Mui.Avatar src={src ?? ''} sx={sx} />;
+  return <Mui.Avatar src={src ?? ""} sx={sx} />;
 };
 
 export const AvatarGroup = Mui.AvatarGroup;
@@ -313,11 +310,11 @@ export const Field = ({
   <ListItemButton onClick={onClick}>
     <ListItemText
       primaryTypographyProps={{
-        variant: 'subtitle1',
-        color: 'text.secondary',
+        variant: "subtitle1",
+        color: "text.secondary",
       }}
       primary={label}
-      secondaryTypographyProps={{ variant: 'h6', color: 'text.primary' }}
+      secondaryTypographyProps={{ variant: "h6", color: "text.primary" }}
       secondary={value}
     />
     <ListItemSecondaryAction>
@@ -330,12 +327,12 @@ export const fillBox = ({ sx }: { sx?: Sx }, children: ViewNode[]) => {
   return box(
     {
       sx: {
-        display: 'flex',
-        flexDirection: 'column',
-        width: '100%',
-        height: '100%',
-        overflowX: 'hidden',
-        overflowY: 'scroll',
+        display: "flex",
+        flexDirection: "column",
+        width: "100%",
+        height: "100%",
+        overflowX: "hidden",
+        overflowY: "scroll",
         padding: 0,
         margin: 0,
         ...sx,
@@ -349,12 +346,12 @@ export const FillBox = ({ sx, ...props }: Mui.BoxProps) => {
   return (
     <Box
       sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        width: '100%',
-        height: '100%',
-        overflowX: 'hidden',
-        overflowY: 'hidden',
+        display: "flex",
+        flexDirection: "column",
+        width: "100%",
+        height: "100%",
+        overflowX: "hidden",
+        overflowY: "hidden",
         padding: 0,
         margin: 0,
         ...sx,
@@ -364,14 +361,13 @@ export const FillBox = ({ sx, ...props }: Mui.BoxProps) => {
   );
 };
 
-export const LoadingPage = ({ title }: { title?: string }) => {
+export const LoadingPage = (_input: { title?: string }) => {
   return (
-    <FillBox sx={{ justifyContent: 'center', alignItems: 'center' }}>
-      <CircularProgress sx={{ marginBottom: 2 }} />
-      <Typography align="center" variant="caption" color="text.secondary">
-        {title}
-      </Typography>
-    </FillBox>
+    <div
+      key="loading-page"
+      className="w-full h-full flex-1 flex items-center justify-center">
+      <IconSpinner className="animate-spin w-12 h-12" />
+    </div>
   );
 };
 
@@ -385,25 +381,23 @@ export const AspectRatio = ({
   return (
     <Box
       sx={{
-        width: '100%',
+        width: "100%",
         paddingTop: `${aspectRatio * 100}%`,
-        position: 'relative',
+        position: "relative",
         height: 0,
-        overflow: 'hidden',
-      }}
-    >
+        overflow: "hidden",
+      }}>
       <Box
         sx={{
-          position: 'absolute',
+          position: "absolute",
           top: 0,
           left: 0,
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}>
         {children}
       </Box>
     </Box>
@@ -427,7 +421,7 @@ export const LoadingDialog = ({
 }) => {
   return (
     <Dialog open={open}>
-      <Box sx={{ display: 'flex', alignItems: 'center', p: 2 }}>
+      <Box sx={{ display: "flex", alignItems: "center", p: 2 }}>
         <CircularProgress sx={{ marginRight: 2 }} />
         <Typography variant="h6">{title}</Typography>
       </Box>
@@ -442,7 +436,7 @@ export const ConformationDialog = ({
   onConfirm,
   title,
   confirmTitle,
-  cancelTitle = 'Cancel',
+  cancelTitle = "Cancel",
 }: {
   open: boolean;
   onCancel: () => void;
@@ -457,24 +451,28 @@ export const ConformationDialog = ({
   return (
     <div
       className={cn(
-        'absolute top-0 left-0 w-full h-full grid place-items-center',
-        open ? 'block' : 'hidden'
+        "absolute top-0 left-0 w-full h-full grid place-items-center",
+        open ? "block" : "hidden"
       )}
-      onClick={onClose}
-    >
+      onClick={onClose}>
       <div className="bg-neutral-900 p-6 w-80 rounded-lg flex flex-col gap-6">
         <p className="text-xl font-semibold text-center">{title}</p>
 
         <div className="flex items-center gap-4 w-full">
-          <MyButton variant="outlined" onClick={onCancel} className="flex-1">
+          <MyButton
+            variant="outlined"
+            onClick={(event) => {
+              event.stopPropagation();
+              onCancel();
+            }}
+            className="flex-1">
             {cancelTitle}
           </MyButton>
           <MyButton
             variant="contained"
             color="danger"
             onClick={onConfirm}
-            className="flex-1"
-          >
+            className="flex-1">
             {confirmTitle}
           </MyButton>
         </div>
@@ -527,15 +525,14 @@ export const actionButton = ({
       sx={{
         paddingY: 1 / 2,
         paddingX: 2,
-        display: 'flex',
-        flexDirection: 'column',
+        display: "flex",
+        flexDirection: "column",
         flex: 1,
-        width: '100%',
+        width: "100%",
         // color: disabled
         //   ? theme.palette.action.disabled
         //   : theme.palette.action.active,
-      }}
-    >
+      }}>
       {icon(iconName)}
       <Typography variant="caption">{label}</Typography>
     </ButtonBase>
@@ -550,7 +547,7 @@ export const ActionButton = ({
   color,
 }: {
   sx?: Sx;
-  color?: 'error' | 'success';
+  color?: "error" | "success";
   label: string;
   icon: ReactNode;
   onClick: () => void;
@@ -562,12 +559,11 @@ export const ActionButton = ({
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        'flex-1 flex flex-col p-1 gap-0.5 text-sm items-center active:opacity-50',
-        disabled && 'opacity-50',
-        color === 'error' && 'text-red-500',
-        color === 'success' && 'text-green-500'
-      )}
-    >
+        "flex-1 flex flex-col p-1 gap-0.5 text-sm items-center active:opacity-50",
+        disabled && "opacity-50",
+        color === "error" && "text-red-500",
+        color === "success" && "text-green-500"
+      )}>
       {icon}
       <p className="text-xs">{label}</p>
     </button>
@@ -582,21 +578,21 @@ export const ActionButton = ({
 //
 
 export type IconName =
-  | 'smart-toy'
-  | 'exit'
-  | 'swap'
-  | 'restart'
-  | 'flag'
-  | 'puzzle'
-  | 'tune'
-  | 'chevron-right'
-  | 'friends'
-  | 'check'
-  | 'lightbulb'
-  | 'clock'
-  | 'close'
-  | 'people'
-  | 'arrow-circle-right';
+  | "smart-toy"
+  | "exit"
+  | "swap"
+  | "restart"
+  | "flag"
+  | "puzzle"
+  | "tune"
+  | "chevron-right"
+  | "friends"
+  | "check"
+  | "lightbulb"
+  | "clock"
+  | "close"
+  | "people"
+  | "arrow-circle-right";
 
 export const Icon = ({
   name,
@@ -608,66 +604,66 @@ export const Icon = ({
   sx?: Sx;
 }) => {
   switch (name) {
-    case 'people': {
+    case "people": {
       return <People sx={sx} className={className} />;
     }
-    case 'clock': {
+    case "clock": {
       return <AccessTime sx={sx} className={className} />;
     }
-    case 'close': {
+    case "close": {
       return <Close sx={sx} className={className} />;
     }
 
-    case 'check': {
+    case "check": {
       return <Check sx={sx} className={className} />;
     }
 
-    case 'lightbulb': {
+    case "lightbulb": {
       return <Lightbulb sx={sx} className={className} />;
     }
 
-    case 'smart-toy': {
+    case "smart-toy": {
       return <SmartToy key="smart-toy" sx={sx} className={className} />;
     }
 
-    case 'exit': {
+    case "exit": {
       return (
         <ExitToApp
-          sx={{ ...sx, transform: 'rotate(180deg)' }}
+          sx={{ ...sx, transform: "rotate(180deg)" }}
           className={className}
         />
       );
     }
 
-    case 'tune': {
+    case "tune": {
       return <Tune sx={{ ...sx }} className={className} />;
     }
 
-    case 'swap': {
+    case "swap": {
       return <SwapHorizSharp sx={sx} className={className} />;
     }
 
-    case 'restart': {
+    case "restart": {
       return <RestartAlt sx={sx} className={className} />;
     }
 
-    case 'flag': {
+    case "flag": {
       return <Flag sx={sx} className={className} />;
     }
 
-    case 'puzzle': {
+    case "puzzle": {
       return <Extension sx={sx} className={className} />;
     }
 
-    case 'friends': {
+    case "friends": {
       return <People sx={sx} className={className} />;
     }
 
-    case 'chevron-right': {
+    case "chevron-right": {
       return <ChevronRight sx={sx} className={className} />;
     }
 
-    case 'arrow-circle-right': {
+    case "arrow-circle-right": {
       return <ArrowCircleRight sx={sx} className={className} />;
     }
 
@@ -679,22 +675,22 @@ export const Icon = ({
 
 export const icon = (name: IconName, sx?: Sx) => {
   switch (name) {
-    case 'smart-toy': {
+    case "smart-toy": {
       return <SmartToy key="smart-toy" sx={sx} />;
     }
 
-    case 'exit': {
-      return <ExitToApp sx={{ ...sx, transform: 'rotate(180deg)' }} />;
+    case "exit": {
+      return <ExitToApp sx={{ ...sx, transform: "rotate(180deg)" }} />;
     }
-    case 'swap': {
+    case "swap": {
       return <SwapHorizSharp sx={sx} />;
     }
 
-    case 'restart': {
+    case "restart": {
       return <RestartAlt sx={sx} />;
     }
 
-    case 'flag': {
+    case "flag": {
       return <Flag sx={sx} />;
     }
 
@@ -713,7 +709,7 @@ export const conformation = ({
   title,
   subtitle,
   confirmTitle,
-  cancelTitle = 'Cancel',
+  cancelTitle = "Cancel",
   onConfirm,
   onCancel,
   onClose,
@@ -732,7 +728,7 @@ export const conformation = ({
     <Dialog open={open} onClose={onClose}>
       {iconName &&
         icon(iconName, {
-          margin: 'auto',
+          margin: "auto",
           paddingTop: 2,
           width: 64,
           height: 64,
@@ -761,13 +757,12 @@ export const ViewEmptyState = ({
   return (
     <FillBox
       sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        color: 'text.secondary',
-      }}
-    >
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        color: "text.secondary",
+      }}>
       {renderIcon({ sx: { width: 64, height: 64 } })}
       <Typography variant="h6">{title}</Typography>
     </FillBox>
@@ -779,12 +774,11 @@ export const ViewLoadingState = ({ title }: { title: string }) => {
     <Box
       sx={{
         flex: 1,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexDirection: 'column',
-      }}
-    >
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexDirection: "column",
+      }}>
       <CircularProgress sx={{ mb: 1 }} />
       <Typography color="text.secondary">{title}</Typography>
     </Box>

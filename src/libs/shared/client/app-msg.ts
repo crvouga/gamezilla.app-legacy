@@ -1,5 +1,5 @@
-import { UserId } from '@gamezilla/shared/app';
-import { Route } from './route';
+import { UserId } from "@gamezilla/shared/app";
+import { Route } from "./route";
 
 //
 //
@@ -10,10 +10,11 @@ import { Route } from './route';
 //
 
 export type AppMsg<T = unknown> =
-  | { t: 'route-changed'; route: Route }
-  | { t: 'wire-connected' }
-  | { t: 'user-logged-in'; currentUserId: UserId }
-  | { t: 'toast-enqueued'; message: string; duration?: number };
+  | { t: "route-changed"; route: Route }
+  | { t: "wire-connected" }
+  | { t: "user-logged-in"; currentUserId: UserId }
+  | { t: "user-logged-out" }
+  | { t: "toast-enqueued"; message: string; duration?: number };
 
 //
 //
