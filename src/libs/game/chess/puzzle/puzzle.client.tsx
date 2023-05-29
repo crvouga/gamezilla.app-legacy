@@ -261,6 +261,7 @@ export const View = ({
         <div className="w-full re flex items-center justify-end aspect-square bg-neutral-700">
           {model.t !== "loading" && (
             <Chess.View
+              {...toChessboardPropsForHint(model)}
               key={model.puzzle.puzzleId}
               model={toCurrentBoard(model)}
               isDraggablePiece={({ piece }) => {
@@ -273,7 +274,6 @@ export const View = ({
                   ctx.hostId === ctx.currentUserId
                 );
               }}
-              customSquareStyles={toCustomSquareStyle(model)}
               boardOrientation={toPlayerColor(model.puzzle)}
               onPieceDrop={(moveInput) => {
                 $send({ t: "input-move", moveInput });
@@ -402,7 +402,7 @@ export const View = ({
   );
 };
 
-const toCustomSquareStyle = (model: Model): Chess.CustomSquareStyles => {
+const toChessboardPropsForHint = (model: Model): Partial<Chess.BoardProps> => {
   const correctMove = toCorrectMove(model);
 
   if (!correctMove) {
@@ -413,22 +413,23 @@ const toCustomSquareStyle = (model: Model): Chess.CustomSquareStyles => {
     return {};
   }
 
-  return model.hint === "from"
-    ? {
+  if (model.hint === "from") {
+    return {
+      customSquareStyles: {
         [Chess.toLowercaseSquare(correctMove.from)]: {
-          backgroundColor: "skyblue",
+          backgroundColor: "#91CEBD",
         },
-      }
-    : model.hint === "from-and-to"
-    ? {
-        [Chess.toLowercaseSquare(correctMove.from)]: {
-          backgroundColor: "skyblue",
-        },
-        [Chess.toLowercaseSquare(correctMove.to)]: {
-          backgroundColor: "skyblue",
-        },
-      }
-    : {};
+      },
+    };
+  }
+
+  if (model.hint === "from-and-to") {
+    return {
+      arrows: [correctMove],
+    };
+  }
+
+  return {};
 };
 
 const formatDuration = (duration: number): string => {

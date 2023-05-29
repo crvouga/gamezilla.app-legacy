@@ -4,6 +4,7 @@ import {
   useCallback,
   useEffect,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -696,19 +697,23 @@ export const theme = {
   light: "#EBEBD0",
 };
 
+export type BoardProps = {
+  boardOrientation: Color;
+  model: Model;
+  onPieceDrop?: (move: MoveInput) => boolean;
+  isDraggablePiece?: ({ piece }: { piece: Piece }) => boolean;
+  customSquareStyles?: CustomSquareStyles;
+  arrows?: MoveInput[];
+};
+
 export const View = ({
   boardOrientation,
   model,
   onPieceDrop,
   isDraggablePiece,
   customSquareStyles: customSquareStylesProps,
-}: {
-  boardOrientation: Color;
-  model: Model;
-  onPieceDrop?: (move: MoveInput) => boolean;
-  isDraggablePiece?: ({ piece }: { piece: Piece }) => boolean;
-  customSquareStyles?: CustomSquareStyles;
-}) => {
+  arrows,
+}: BoardProps) => {
   const boardRef = useRef<HTMLDivElement | null>(null);
   const ref = useRef<HTMLDivElement | null>(null);
   const [boardWidth, setBoardWidth] = useState(0);
@@ -803,6 +808,15 @@ export const View = ({
     setSelectedSquare(null);
   }, [model.fen]);
 
+  const customArrows = useMemo(() => {
+    return (
+      arrows?.map((arrow) => [
+        toLowercaseSquare(arrow.from),
+        toLowercaseSquare(arrow.to),
+      ]) ?? []
+    );
+  }, [arrows]);
+
   return (
     <div style={{ position: "relative", width: "100%" }} ref={ref}>
       <Chessboard
@@ -812,7 +826,8 @@ export const View = ({
         boardOrientation={boardOrientation === "w" ? "white" : "black"}
         position={model.fen}
         boardWidth={boardWidth}
-        arePremovesAllowed={true}
+        arePremovesAllowed={false}
+        customArrows={customArrows}
         customDarkSquareStyle={{
           backgroundColor: theme.dark,
         }}

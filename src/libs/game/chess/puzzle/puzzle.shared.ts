@@ -164,8 +164,7 @@ export type ToClient =
   | (Omit<DbMsg, "result"> & { result: Result<string, SharedModel> });
 
 export const toOpponentColor = (puzzle: Puzzle): Chess.Color => {
-  const board = Chess.initFromFen({ fen: puzzle.fen });
-  return Chess.toTurn(board);
+  return Chess.toTurn(Chess.initFromFen({ fen: puzzle.fen }));
 };
 
 export const toPlayerColor = (puzzle: Puzzle): Chess.Color => {
