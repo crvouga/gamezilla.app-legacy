@@ -68,7 +68,7 @@ export const PuzzleProfileRow = z.object({
   id: z.string(),
   user_id: z.string(),
   elo_rating: Int,
-  query: PuzzleQueryJSON,
+  puzzle_query: PuzzleQueryJSON,
 });
 
 //

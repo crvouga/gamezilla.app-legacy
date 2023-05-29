@@ -865,7 +865,7 @@ export const ViewRoomListScreen = ({
               return (
                 <div
                   key={i}
-                  className="w-full aspect-video rounded-lg bg-white/20 animate-pulse"
+                  className="cursor-wait w-full aspect-video rounded-lg bg-white/20 animate-pulse"
                 />
               );
             })}
