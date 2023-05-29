@@ -31,7 +31,7 @@ export type ServerModel = SharedModel;
 export type ClientModel = SharedModel & {
   initializedAt?: number;
   backendNow?: Posix;
-  openedModal?: "tune" | null;
+  openedModal?: "settings" | null;
   draftQuery?: PuzzleQuery;
 };
 
@@ -115,7 +115,7 @@ export type ClientMsg =
   | Req
   | { t: "input-draft-query"; query: PuzzleQuery }
   | { t: "animate" }
-  | { t: "opened-modal"; modal: "tune" }
+  | { t: "opened-modal"; modal: "settings" }
   | { t: "closed-modal" }
   | { t: "clicked-save" };
 

@@ -315,7 +315,7 @@ export const View = ({
             actions={toBottomBarActions({ model, onClose, $send })}
           />
           <MyDrawer
-            open={model.openedModal === "tune"}
+            open={model.openedModal === "settings"}
             onClose={() => $send({ t: "closed-modal" })}>
             <div className="p-4 flex flex-col gap-4 pb-8">
               <div className="flex items-center w-full justify-between">
@@ -461,7 +461,7 @@ export const toBottomBarActions = ({
     icon: <IconGear />,
     label: "Settings",
     onClick: () => {
-      $send({ t: "opened-modal", modal: "tune" });
+      $send({ t: "opened-modal", modal: "settings" });
     },
   };
 
