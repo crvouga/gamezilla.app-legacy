@@ -2,7 +2,7 @@ import { UserId } from "@gamezilla/shared/app";
 import { Err, Ok, Posix, Result } from "@gamezilla/shared/core";
 import * as Chess from "../chess/chess";
 import { EloRating } from "./elo-rating";
-import { zip } from "./utils";
+import { interleave, zip } from "./utils";
 
 export const maxRating = 3212;
 export const minRating = 545;
@@ -17,12 +17,52 @@ export const minRatingDeviation = 50;
 //
 //
 
-export type SharedModel = {
-  startedAt: number | null;
-  puzzleEvents: PuzzleEvent[];
-  puzzles: Puzzle[];
-  puzzleProfile: PuzzleProfile | null;
-};
+export type SharedModel =
+  | {
+      t: "loading";
+      profile?: PuzzleProfile | null;
+      queue?: Puzzle[];
+    }
+  | {
+      t: "in-progress";
+      startedAt: Posix;
+      moves: Chess.MoveInput[];
+      puzzle: Puzzle;
+      queue: Puzzle[];
+      profile: PuzzleProfile;
+      hasLost?: boolean;
+      hint?: Hint | null;
+    }
+  | {
+      t: "solved";
+      startedAt: Posix;
+      endedAt: Posix;
+      puzzle: Puzzle;
+      moves: Chess.MoveInput[];
+      queue: Puzzle[];
+      profile: PuzzleProfile;
+      hasLost?: boolean;
+    }
+  | {
+      t: "solved-with-hint";
+      startedAt: Posix;
+      endedAt: Posix;
+      puzzle: Puzzle;
+      moves: Chess.MoveInput[];
+      queue: Puzzle[];
+      profile: PuzzleProfile;
+      hasLost?: boolean;
+    }
+  | {
+      t: "incorrect";
+      startedAt: Posix;
+      endedAt: Posix;
+      puzzle: Puzzle;
+      moves: Chess.MoveInput[];
+      profile: PuzzleProfile;
+      queue: Puzzle[];
+      hasLost?: boolean;
+    };
 
 export type ServerModel = SharedModel;
 
@@ -33,10 +73,9 @@ export type ClientModel = SharedModel & {
   draftQuery?: PuzzleQuery;
 };
 
-type Hint = "none" | "from" | "from-and-to";
+type Hint = "from" | "from-and-to";
 
 export const toNext: { [key in Hint]: Hint } = {
-  none: "from",
   from: "from-and-to",
   "from-and-to": "from-and-to",
 };
@@ -46,10 +85,7 @@ export const initQuery: PuzzleQuery = {
 };
 
 export const initShared: SharedModel = {
-  puzzleEvents: [],
-  puzzles: [],
-  puzzleProfile: null,
-  startedAt: null,
+  t: "loading",
 };
 
 export type PuzzleQuery = {
@@ -77,7 +113,7 @@ export type PuzzleProfile = {
 };
 
 export type PuzzleInteraction = {
-  type: "solved" | "incorrect" | "solve-with-hint";
+  type: "solved" | "incorrect" | "solved-with-hint";
   puzzleId: string;
   userId: UserId;
 };
@@ -101,19 +137,20 @@ export type Req =
 
 export type Res = Req & { result: Result<string, SharedModel> };
 
-export type ServerMsg =
-  | { t: "clock-tick" }
-  | { t: "got-puzzles"; result: Result<string, Puzzle[]> }
-  | { t: "got-profile"; result: Result<string, PuzzleProfile | null> }
+export type ServerMsg = { t: "clock-tick" } | DbMsg;
+
+type DbMsg =
+  | { t: "db-got-puzzles"; result: Result<string, Puzzle[]> }
+  | { t: "db-got-profile"; result: Result<string, PuzzleProfile | null> }
+  | { t: "db-put-interaction"; result: Result<string, null> }
+  | { t: "db-put-profile"; result: Result<string, null> }
   | {
-      t: "got-initial-load";
+      t: "db-got-initial-load";
       result: Result<
         string,
         { puzzleProfile: PuzzleProfile; puzzles: Puzzle[] }
       >;
-    }
-  | { t: "put-interaction"; result: Result<string, null> }
-  | { t: "put-profile"; result: Result<string, null> };
+    };
 
 export type ClientMsg =
   | Req
@@ -128,229 +165,7 @@ export type ToServer = Req;
 export type ToClient =
   | Res
   | { t: "clock-tick"; now: Posix }
-  | { t: "got-puzzles"; result: Result<string, SharedModel> }
-  | { t: "got-profile"; result: Result<string, SharedModel> }
-  | { t: "got-initial-load"; result: Result<string, SharedModel> }
-  | { t: "put-profile"; result: Result<string, SharedModel> }
-  | { t: "put-interaction"; result: Result<string, SharedModel> };
-
-//
-//
-//
-//
-// Status
-//
-//
-//
-
-type PuzzleEvent =
-  | {
-      type: "user-moved";
-      move: Chess.MoveInput;
-      happenedAt: Posix;
-    }
-  | {
-      type: "user-used-hint";
-      happenedAt: Posix;
-    }
-  | {
-      type: "user-retried";
-      happenedAt: Posix;
-    };
-
-export type PuzzleState =
-  | {
-      type: "loading";
-    }
-  | {
-      type: "solving";
-      puzzle: Puzzle;
-      puzzleProfile: PuzzleProfile;
-      board: Chess.Model;
-      playerMoves: Chess.MoveInput[];
-      hint: Hint;
-    }
-  | {
-      type: "solved";
-      puzzle: Puzzle;
-      puzzleProfile: PuzzleProfile;
-      board: Chess.Model;
-      nextEloRating: EloRating;
-      endedAt: number;
-    }
-  | {
-      type: "solved-with-hint";
-      puzzle: Puzzle;
-      puzzleProfile: PuzzleProfile;
-      board: Chess.Model;
-      nextEloRating: EloRating;
-      endedAt: number;
-    }
-  | {
-      type: "incorrect";
-      puzzle: Puzzle;
-      puzzleProfile: PuzzleProfile;
-      board: Chess.Model;
-      nextEloRating: EloRating;
-      endedAt: number;
-    };
-
-const reducer = (state: PuzzleState, event: PuzzleEvent): PuzzleState => {
-  if (state.type === "loading") {
-    return state;
-  }
-
-  if (state.type === "solved") {
-    return state;
-  }
-
-  if (state.type === "incorrect") {
-    if (event.type === "user-retried") {
-      return state;
-    }
-    return state;
-  }
-
-  if (state.type === "solved-with-hint") {
-    return state;
-  }
-
-  if (state.type === "solving") {
-    if (event.type === "user-moved") {
-      const playerMoved = Chess.move(event.move, state.board);
-
-      if (playerMoved.t === "err") {
-        return state;
-      }
-
-      const opponentMove =
-        state.puzzle.opponentMoves[state.playerMoves.length - 1];
-
-      const puzzleMoved = opponentMove
-        ? Chess.move(opponentMove, playerMoved.value)
-        : playerMoved;
-
-      if (puzzleMoved.t === "err") {
-        return state;
-      }
-
-      const boardNew = puzzleMoved.value;
-      const playerMovesNew = [...state.playerMoves, event.move];
-
-      if (isMovesEqual(state.puzzle.correctMoves, playerMovesNew)) {
-        if (state.hint !== "none") {
-          return {
-            ...state,
-            board: boardNew,
-            type: "solved-with-hint",
-            endedAt: event.happenedAt,
-            nextEloRating: EloRating.toNextRating({
-              endGame: "lost",
-              opponentRating: state.puzzle.rating,
-              playerRating: state.puzzleProfile.eloRating,
-            }),
-          };
-        }
-
-        return {
-          ...state,
-          board: boardNew,
-          type: "solved",
-          endedAt: event.happenedAt,
-          nextEloRating: EloRating.toNextRating({
-            endGame: "win",
-            opponentRating: state.puzzle.rating,
-            playerRating: state.puzzleProfile.eloRating,
-          }),
-        };
-      }
-
-      if (didMakeWrongMove(state.puzzle.correctMoves, playerMovesNew)) {
-        return {
-          ...state,
-          board: boardNew,
-          type: "incorrect",
-          endedAt: event.happenedAt,
-          nextEloRating: EloRating.toNextRating({
-            endGame: "lost",
-            opponentRating: state.puzzle.rating,
-            playerRating: state.puzzleProfile.eloRating,
-          }),
-        };
-      }
-
-      return {
-        ...state,
-        board: boardNew,
-        playerMoves: playerMovesNew,
-      };
-    }
-    return state;
-  }
-
-  return state;
-};
-
-const didMakeWrongMove = (
-  correctMoves: Chess.MoveInput[],
-  playerMoves: Chess.MoveInput[]
-): boolean => {
-  return zip(playerMoves, correctMoves).some(
-    ([playerMove, correctMove]) => !isMoveEqual(playerMove, correctMove)
-  );
-};
-
-export const toState = (model: SharedModel): PuzzleState => {
-  const puzzle = model.puzzles[0];
-
-  if (!puzzle) {
-    return {
-      type: "loading",
-    };
-  }
-
-  const puzzleProfile = model.puzzleProfile;
-
-  if (!puzzleProfile) {
-    return {
-      type: "loading",
-    };
-  }
-
-  const moved = Chess.move(puzzle.opponentMoves[0], Chess.initFromFen(puzzle));
-
-  if (moved.t === "err") {
-    return {
-      type: "loading",
-    };
-  }
-
-  const initialState: PuzzleState = {
-    type: "solving",
-    puzzle,
-    puzzleProfile,
-    board: moved.value,
-    playerMoves: [],
-    hint: "none",
-  };
-
-  const state = model.puzzleEvents.reduce<PuzzleState>(
-    (state, event) => reducer(state, event),
-    initialState
-  );
-
-  return state;
-};
-
-const isMovesEqual = (a: Chess.MoveInput[], b: Chess.MoveInput[]): boolean => {
-  return (
-    a.length === b.length && zip(a, b).every(([a, b]) => isMoveEqual(a, b))
-  );
-};
-
-const isMoveEqual = (a: Chess.MoveInput, b: Chess.MoveInput): boolean => {
-  return a.from === b.from && a.to === b.to;
-};
+  | (Omit<DbMsg, "result"> & { result: Result<string, SharedModel> });
 
 export const toOpponentColor = (puzzle: Puzzle): Chess.Color => {
   const board = Chess.initFromFen({ fen: puzzle.fen });
@@ -362,12 +177,15 @@ export const toPlayerColor = (puzzle: Puzzle): Chess.Color => {
 };
 
 export const toCorrectMove = (model: SharedModel): Chess.MoveInput | null => {
-  const state = toState(model);
-  if (state.type === "solving") {
-    return state.puzzle.correctMoves[state.playerMoves.length] ?? null;
+  if (model.t === "in-progress") {
+    return model.puzzle.correctMoves[model.moves.length] ?? null;
   }
   return null;
 };
+
+export type DbReq = { t: "db-get" } | { t: "db-put"; model: SharedModel };
+
+export type DbRes = DbReq & { result: Result<string, SharedModel> };
 
 //
 //
@@ -379,172 +197,206 @@ export const toCorrectMove = (model: SharedModel): Chess.MoveInput | null => {
 //
 //
 
+export const toCurrentBoard = (model: SharedModel): Chess.Model => {
+  if (model.t === "loading") {
+    return Chess.init();
+  }
+  const moves = interleave(model.puzzle.opponentMoves, model.moves);
+  let board = Chess.initFromFen(model.puzzle);
+  for (const move of moves) {
+    const moved = Chess.move(move, board);
+    if (moved.t === "ok") {
+      board = moved.value;
+    }
+  }
+  return board;
+};
+
+const didSolvePuzzle = (puzzle: Puzzle, moves: Chess.MoveInput[]): boolean => {
+  return (
+    puzzle.correctMoves.length === moves.length &&
+    zip(puzzle.correctMoves, moves).every(
+      ([a, b]) => a.from === b.from && a.to === b.to
+    )
+  );
+};
+
+const didFailPuzzle = (puzzle: Puzzle, moves: Chess.MoveInput[]): boolean => {
+  return zip(puzzle.correctMoves, moves).some(
+    ([a, b]) => !(a.from === b.from && a.to === b.to)
+  );
+};
+
+type Ctx = { now: Posix; currentUserId: UserId; hostId: UserId };
+
 export const handle = ({
   ctx,
   msg,
   model,
 }: {
-  ctx: { now: Posix; currentUserId: UserId; hostId: UserId };
+  ctx: Ctx;
   msg: Req;
   model: SharedModel;
 }): Result<string, SharedModel> => {
-  switch (msg.t) {
-    case "input-move": {
-      if (ctx.currentUserId !== ctx.hostId) {
-        return Err("must-be-host");
-      }
+  //
+  //
+  //
+  //
 
-      const state = toState(model);
+  if (ctx.currentUserId !== ctx.hostId) {
+    return Err("must-be-host");
+  }
 
-      if (state.type !== "solving") {
-        return Err("must-be-solving");
-      }
+  //
+  //
+  //
+  //
 
-      const moved = Chess.move(msg.moveInput, state.board);
+  if (model.t === "in-progress") {
+    if (msg.t === "input-move") {
+      const board = toCurrentBoard(model);
+
+      const moved = Chess.move(msg.moveInput, board);
 
       if (moved.t === "err") {
         return moved;
       }
 
-      const modelNew = appendEvent(model, {
-        type: "user-moved",
-        move: msg.moveInput,
-        happenedAt: ctx.now,
+      const modelNew: SharedModel = {
+        ...model,
+        moves: [...model.moves, msg.moveInput],
+      };
+
+      if (didSolvePuzzle(model.puzzle, modelNew.moves) && model.hint) {
+        return Ok({
+          ...modelNew,
+          t: "solved-with-hint",
+          endedAt: ctx.now,
+          hasLost: true,
+        });
+      }
+
+      if (didSolvePuzzle(model.puzzle, modelNew.moves)) {
+        return Ok({
+          ...modelNew,
+          t: "solved",
+          endedAt: ctx.now,
+        });
+      }
+
+      if (didFailPuzzle(model.puzzle, modelNew.moves)) {
+        return Ok({
+          ...modelNew,
+          t: "incorrect",
+          hasLost: true,
+          endedAt: ctx.now,
+        });
+      }
+
+      return Ok(modelNew);
+    }
+
+    if (msg.t === "show-hint") {
+      return Ok({
+        ...model,
+        hint: model.hint ? toNext[model.hint] : "from",
       });
-
-      return Ok(modelNew);
-    }
-
-    case "next": {
-      if (ctx.currentUserId !== ctx.hostId) {
-        return Err("must-be-host");
-      }
-
-      const status = toState(model);
-
-      if (status.type !== "solved") {
-        return Err("must-be-solved");
-      }
-
-      const modelNew = nextPuzzle({
-        nextEloRating: status.nextEloRating,
-        model,
-        ctx,
-      });
-
-      return Ok(modelNew);
-    }
-
-    case "retry": {
-      if (ctx.currentUserId !== ctx.hostId) {
-        return Err("must-be-host");
-      }
-
-      const modelNew = appendEvent(
-        {
-          ...model,
-          startedAt: ctx.now,
-        },
-        {
-          type: "user-retried",
-          happenedAt: ctx.now,
-        }
-      );
-
-      return Ok(modelNew);
-    }
-
-    case "skip": {
-      if (ctx.currentUserId !== ctx.hostId) {
-        return Err("must-be-host");
-      }
-
-      const status = toState(model);
-
-      if (status.type !== "incorrect") {
-        return Err("must-be-incorrect");
-      }
-
-      const modelNew = nextPuzzle({
-        nextEloRating: status.nextEloRating,
-        model,
-        ctx,
-      });
-
-      return Ok(modelNew);
-    }
-
-    case "show-hint": {
-      if (ctx.currentUserId !== ctx.hostId) {
-        return Err("must-be-host");
-      }
-
-      const modelNew = appendEvent(model, {
-        type: "user-used-hint",
-        happenedAt: ctx.now,
-      });
-
-      return Ok(modelNew);
-    }
-
-    case "input-query": {
-      if (ctx.currentUserId !== ctx.hostId) {
-        return Err("must-be-host");
-      }
-
-      const modelNew = nextPuzzle({
-        ctx,
-        model: {
-          ...model,
-          puzzleProfile: model.puzzleProfile
-            ? {
-                ...model.puzzleProfile,
-                puzzleQuery: msg.query,
-              }
-            : null,
-        },
-      });
-
-      return Ok(modelNew);
-    }
-
-    case "init": {
-      return Ok(model);
-    }
-
-    default: {
-      const check: never = msg;
-      return check;
     }
   }
+
+  if (model.t === "solved") {
+    if (msg.t === "next") {
+      return Ok(transitionNextPuzzle({ ctx, model }));
+    }
+  }
+
+  if (model.t === "solved-with-hint") {
+    if (msg.t === "next") {
+      return Ok(transitionNextPuzzle({ ctx, model }));
+    }
+  }
+
+  if (model.t === "incorrect") {
+    if (msg.t === "next") {
+      return Ok(transitionNextPuzzle({ ctx, model }));
+    }
+
+    if (msg.t === "skip") {
+      return Ok(transitionNextPuzzle({ ctx, model }));
+    }
+
+    if (msg.t === "retry") {
+      return Ok({
+        ...model,
+        moves: [],
+        t: "in-progress",
+        hasLost: true,
+      });
+    }
+  }
+
+  return Err("unhandled");
 };
 
-const appendEvent = (model: SharedModel, event: PuzzleEvent): SharedModel => {
-  return {
-    ...model,
-    puzzleEvents: [...model.puzzleEvents, event],
-  };
-};
-
-const nextPuzzle = ({
-  ctx,
+const transitionNextPuzzle = ({
   model,
-  nextEloRating,
+  ctx,
 }: {
-  ctx: { now: Posix };
-  nextEloRating?: EloRating | null;
+  ctx: Ctx;
   model: SharedModel;
 }): SharedModel => {
+  if (model.t === "loading") {
+    return model;
+  }
+
+  const puzzleNext = model.queue[0];
+
+  if (!puzzleNext) {
+    return { t: "loading" };
+  }
+
+  const eloRating = toNextEloRating(model) ?? model.profile.eloRating;
+
   return {
+    t: "in-progress",
+    hasLost: false,
     startedAt: ctx.now,
-    puzzleEvents: [],
-    puzzles: model.puzzles.slice(1),
-    puzzleProfile:
-      model.puzzleProfile && nextEloRating
-        ? {
-            ...model.puzzleProfile,
-            eloRating: nextEloRating,
-          }
-        : model.puzzleProfile,
+    moves: [],
+    profile: { ...model.profile, eloRating },
+    puzzle: puzzleNext,
+    queue: model.queue.slice(1),
+    hint: null,
   };
+};
+
+export const toNextEloRating = (model: SharedModel): EloRating | null => {
+  if (model.t === "loading") {
+    return null;
+  }
+
+  if (model.hasLost) {
+    return EloRating.toNextRating({
+      endGame: "lost",
+      opponentRating: model.puzzle.rating,
+      playerRating: model.profile.eloRating,
+    });
+  }
+
+  if (model.t === "in-progress") {
+    return model.profile.eloRating;
+  }
+
+  if (model.t === "solved") {
+    return EloRating.toNextRating({
+      endGame: "win",
+      opponentRating: model.puzzle.rating,
+      playerRating: model.profile.eloRating,
+    });
+  }
+
+  return EloRating.toNextRating({
+    endGame: "lost",
+    opponentRating: model.puzzle.rating,
+    playerRating: model.profile.eloRating,
+  });
 };

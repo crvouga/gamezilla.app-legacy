@@ -28,7 +28,6 @@ import {
   ClientModel,
   ClientMsg,
   PuzzleQuery,
-  PuzzleState,
   Req,
   SharedModel,
   ToClient,
@@ -37,8 +36,9 @@ import {
   initQuery,
   initShared,
   toCorrectMove,
+  toCurrentBoard,
+  toNextEloRating,
   toPlayerColor,
-  toState,
 } from "./puzzle.shared";
 
 //
@@ -50,7 +50,7 @@ import {
 export type Model = ClientModel;
 
 const toDraftQuery = (model: Model): PuzzleQuery => {
-  return model.draftQuery ?? model.puzzleProfile?.puzzleQuery ?? initQuery;
+  return model.draftQuery ?? model.profile?.puzzleQuery ?? initQuery;
 };
 
 export const init = ({
@@ -202,48 +202,46 @@ export const View = ({
   $send: (m: Msg) => void;
   onClose: () => void;
 }) => {
-  const status = useMemo(() => toState(model), [model]);
-
   const durationMs = useMemo(() => {
-    return !model.startedAt
-      ? null
-      : status.type === "loading"
-      ? null
-      : status.type === "solving"
-      ? Math.max(0, (model.backendNow ?? ctx.now) - model.startedAt)
-      : status.endedAt - model.startedAt;
-  }, [ctx.now, status, model]);
+    if (model.t === "loading") {
+      return null;
+    }
+    if (model.t === "in-progress") {
+      return Math.max(0, (model.backendNow ?? ctx.now) - model.startedAt);
+    }
+    return model.endedAt - model.startedAt;
+  }, [ctx.now, model]);
 
   const isSpectating = ctx.currentUserId !== ctx.hostId;
-
+  const nextEloRating = toNextEloRating(model);
   return (
     <ViewGameBox isSpectating={isSpectating}>
-      <ViewStatusBar state={status} />
+      <ViewStatusBar model={model} />
 
       {/* top heads up */}
       <div className="flex-1 w-full flex items-center justify-center flex-col">
         <div className="flex items-center gap-2 w-full px-3 py-2">
           <MyAvatar
             src={ctx.profiles[ctx.hostId]?.avatarUrl}
-            className="w-9 h-9"
+            className="w-10 h-10"
             alt=""
           />
 
           <div className="flex flex-col justify-center flex-1">
             <p className="text-xs text-neutral-300 -mb-1/2">Rating</p>
             <div className="flex items-center gap-1">
-              <p className="text-lg font-semibold">
-                {model.puzzleProfile?.eloRating}
+              <p className="text-xl font-semibold">
+                {model.profile?.eloRating ?? "..."}
               </p>
-              {status.type === "solved" && (
+
+              {model.t === "solved" && nextEloRating && (
                 <div className="text-green-500 rounded-xl  text-lg font-semibold">
-                  +
-                  {status.nextEloRating - (model.puzzleProfile?.eloRating ?? 0)}
+                  +{nextEloRating - model.profile.eloRating}
                 </div>
               )}
-              {status.type === "incorrect" && (
+              {model.t !== "loading" && model.hasLost && nextEloRating && (
                 <div className="text-red-500  rounded-xl   text-lg font-semibold">
-                  {status.nextEloRating - (model.puzzleProfile?.eloRating ?? 0)}
+                  {nextEloRating - model.profile.eloRating}
                 </div>
               )}
             </div>
@@ -260,22 +258,22 @@ export const View = ({
         </div>
 
         <div className="w-full re flex items-center justify-end aspect-square bg-neutral-700">
-          {status.type !== "loading" && (
+          {model.t !== "loading" && (
             <Chess.View
-              key={status.puzzle.puzzleId}
-              model={status.board}
+              key={model.puzzle.puzzleId}
+              model={toCurrentBoard(model)}
               isDraggablePiece={({ piece }) => {
-                if (status.type === "solved") {
+                if (model.t !== "in-progress") {
                   return false;
                 }
                 const color = Chess.toColor(piece);
                 return (
-                  color === toPlayerColor(status.puzzle) &&
+                  color === toPlayerColor(model.puzzle) &&
                   ctx.hostId === ctx.currentUserId
                 );
               }}
               customSquareStyles={toCustomSquareStyle(model)}
-              boardOrientation={toPlayerColor(status.puzzle)}
+              boardOrientation={toPlayerColor(model.puzzle)}
               onPieceDrop={(moveInput) => {
                 $send({ t: "input-move", moveInput });
                 return false;
@@ -286,21 +284,21 @@ export const View = ({
         <div className="w-full grid grid-cols-2 px-2 py-1">
           <div className="flex items-center text-xs justify-start gap-1 ">
             <p className="text-neutral-300">Puzzle Rating</p>
-            <p>{status.type === "loading" ? "" : status.puzzle.rating}</p>
+            <p>{model.t === "loading" ? "..." : model.puzzle.rating}</p>
           </div>
 
-          {status.type !== "loading" && (
-            <div className="flex-1 flex items-center justify-end text-right text-xs gap-1">
-              <p className="text-neutral-300">Moved</p>
-              <p className="text-inherit">
-                {status.type === "solving" ? status.playerMoves.length : "-"}
-              </p>
-              <p className="text-neutral-300">out of</p>
-              <p className="text-inherit">
-                {status.puzzle.correctMoves.length}
-              </p>
-            </div>
-          )}
+          <div className="flex-1 flex items-center justify-end text-right text-xs gap-1">
+            <p className="text-neutral-300">Moved</p>
+            <p className="text-inherit">
+              {model.t === "loading" ? "0" : model.moves?.length ?? "0"}
+            </p>
+            <p className="text-neutral-300">out of</p>
+            <p className="text-inherit">
+              {model.t === "loading"
+                ? "0"
+                : model.puzzle?.correctMoves?.length ?? "0"}
+            </p>
+          </div>
         </div>
       </div>
 
@@ -319,15 +317,12 @@ export const View = ({
                   <MyButton
                     size="sm"
                     variant="outlined"
-                    disabled={eq(
-                      model.puzzleProfile?.puzzleQuery,
-                      model.draftQuery
-                    )}
+                    disabled={eq(model.profile?.puzzleQuery, model.draftQuery)}
                     onClick={() => {
-                      if (model.puzzleProfile) {
+                      if (model.profile) {
                         $send({
                           t: "input-draft-query",
-                          query: model.puzzleProfile.puzzleQuery,
+                          query: model.profile.puzzleQuery,
                         });
                       }
                     }}>
@@ -337,10 +332,7 @@ export const View = ({
                     size="sm"
                     variant="contained"
                     onClick={() => $send({ t: "clicked-save" })}
-                    disabled={eq(
-                      model.puzzleProfile?.puzzleQuery,
-                      model.draftQuery
-                    )}>
+                    disabled={eq(model.profile?.puzzleQuery, model.draftQuery)}>
                     Save
                   </MyButton>
                 </div>
@@ -357,14 +349,14 @@ export const View = ({
                         if (isNaN(parsed)) {
                           return;
                         }
-                        if (model.puzzleProfile) {
+                        if (model.profile) {
                           $send({
                             t: "input-draft-query",
                             query: {
-                              ...model.puzzleProfile.puzzleQuery,
+                              ...model.profile.puzzleQuery,
                               ratingRange: [
                                 parsed,
-                                model.puzzleProfile.puzzleQuery.ratingRange[1],
+                                model.profile.puzzleQuery.ratingRange[1],
                               ],
                             },
                           });
@@ -382,13 +374,13 @@ export const View = ({
                         if (isNaN(parsed)) {
                           return;
                         }
-                        if (model.puzzleProfile) {
+                        if (model.profile) {
                           $send({
                             t: "input-draft-query",
                             query: {
-                              ...model.puzzleProfile.puzzleQuery,
+                              ...model.profile.puzzleQuery,
                               ratingRange: [
-                                model.puzzleProfile.puzzleQuery.ratingRange[0],
+                                model.profile.puzzleQuery.ratingRange[0],
                                 parsed,
                               ],
                             },
@@ -416,19 +408,17 @@ const toCustomSquareStyle = (model: Model): Chess.CustomSquareStyles => {
     return {};
   }
 
-  const state = toState(model);
-
-  if (state.type !== "solving") {
+  if (model.t !== "in-progress") {
     return {};
   }
 
-  return state.hint === "from"
+  return model.hint === "from"
     ? {
         [Chess.toLowercaseSquare(correctMove.from)]: {
           backgroundColor: "skyblue",
         },
       }
-    : state.hint === "from-and-to"
+    : model.hint === "from-and-to"
     ? {
         [Chess.toLowercaseSquare(correctMove.from)]: {
           backgroundColor: "skyblue",
@@ -437,8 +427,6 @@ const toCustomSquareStyle = (model: Model): Chess.CustomSquareStyles => {
           backgroundColor: "skyblue",
         },
       }
-    : state.hint === "none"
-    ? {}
     : {};
 };
 
@@ -459,8 +447,6 @@ export const toBottomBarActions = ({
   onClose: () => void;
   $send: (m: Msg) => void;
 }): BottomBarButtonAction[] => {
-  const status = toState(model);
-
   const exit: BottomBarButtonAction = {
     icon: <IconArrowLeftOnRect />,
     label: "Exit",
@@ -501,33 +487,31 @@ export const toBottomBarActions = ({
     onClick: () => $send({ t: "next" }),
   };
 
-  if (status.type === "loading") {
+  if (model.t === "loading") {
     return [exit, settings, { ...hint, disabled: true }];
   }
 
-  if (status.type === "solving") {
+  if (model.t === "in-progress") {
     return [exit, settings, hint];
   }
 
-  if (status.type === "incorrect") {
+  if (model.t === "incorrect") {
     return [exit, settings, retry, skip];
   }
 
-  if (status.type === "solved") {
+  if (model.t === "solved") {
     return [exit, settings, next];
   }
 
-  if (status.type === "solved-with-hint") {
+  if (model.t === "solved-with-hint") {
     return [exit, settings, next];
   }
 
-  const check: never = status;
-
-  return check;
+  return [];
 };
 
-const ViewStatusBar = ({ state }: { state: PuzzleState }) => {
-  if (state.type === "loading") {
+const ViewStatusBar = ({ model }: { model: Model }) => {
+  if (model.t === "loading") {
     return (
       <div className="w-full flex items-center justify-center p-2">
         <p className="text-xl">...</p>
@@ -535,7 +519,7 @@ const ViewStatusBar = ({ state }: { state: PuzzleState }) => {
     );
   }
 
-  if (state.type === "incorrect") {
+  if (model.t === "incorrect") {
     return (
       <div className="w-full flex items-center justify-center gap-2 p-2 bg-red-500 text-white">
         <IconXMark />
@@ -544,7 +528,7 @@ const ViewStatusBar = ({ state }: { state: PuzzleState }) => {
     );
   }
 
-  if (state.type === "solved") {
+  if (model.t === "solved") {
     return (
       <div className="w-full flex items-center justify-center gap-2 p-2 bg-green-500 text-white">
         <IconCheckmarkCircle />
@@ -553,32 +537,32 @@ const ViewStatusBar = ({ state }: { state: PuzzleState }) => {
     );
   }
 
-  if (state.type === "solving") {
+  if (model.t === "in-progress") {
     return (
       <div
         className={cn(
           "flex items-center justify-center gap-2 p-2 w-full",
-          toPlayerColor(state.puzzle) === "b"
+          toPlayerColor(model.puzzle) === "b"
             ? "bg-black text-white"
             : "bg-white text-black"
         )}>
         <div
           className={cn(
             "w-6 h-6 rounded-full border-2",
-            toPlayerColor(state.puzzle) === "b"
+            toPlayerColor(model.puzzle) === "b"
               ? "bg-black border-[#ababab]"
               : "bg-white border-black"
           )}></div>
         <p className="text-xl text-inherit">
-          {Chess.colorToString(toPlayerColor(state.puzzle))} to move
+          {Chess.colorToString(toPlayerColor(model.puzzle))} to move
         </p>
       </div>
     );
   }
 
-  if (state.type === "solved-with-hint") {
+  if (model.t === "solved-with-hint") {
     return (
-      <div className="w-full flex items-center justify-center gap-2 p-2 bg-yellow-500 text-white">
+      <div className="w-full flex items-center justify-center gap-2 p-2 bg-neutral-600 text-white">
         <IconCheckmarkCircle />
         <p className="text-xl">Solved with hint</p>
       </div>

@@ -8,6 +8,7 @@ import {
   Sub,
   Time,
   andThen,
+  eq,
   p,
 } from "@gamezilla/shared/core";
 import { DbConnMySql, RoomCtx, RoomRequestCtx } from "@gamezilla/shared/server";
@@ -19,9 +20,7 @@ import {
   ToClient,
   ToServer,
   handle,
-  initQuery,
   initShared,
-  toState,
 } from "./puzzle.shared";
 
 //
@@ -47,7 +46,7 @@ export const init = ({
     model: initShared,
     cmd: p(
       initialLoad(ctx.mySql, { userId: ctx.hostId }),
-      Cmd.perform((result) => ({ t: "got-initial-load", result }))
+      Cmd.perform((result) => ({ t: "db-got-initial-load", result }))
     ),
   };
 };
@@ -111,86 +110,104 @@ export const update = ({
 } => {
   switch (msg.t) {
     case "clock-tick": {
-      const modelNew: Model = {
-        ...model,
-      };
       return {
-        model: modelNew,
+        model,
         cmd: broadcast({ t: "clock-tick", now: ctx.now }),
       };
     }
 
-    case "got-puzzles": {
+    case "db-got-puzzles": {
       if (msg.result.t === "err") {
         return {
           model,
-          cmd: broadcast({ t: "got-puzzles", result: msg.result }),
+          cmd: broadcast({ t: "db-got-puzzles", result: msg.result }),
         };
       }
 
-      const puzzles = msg.result.value;
-
       const modelNew: Model = {
         ...model,
-        puzzles: [...model.puzzles, ...puzzles],
-        startedAt: ctx.now,
+        queue: msg.result.value,
       };
 
       return {
         model: modelNew,
-        cmd: broadcast({ t: "got-puzzles", result: Ok(modelNew) }),
+        cmd: broadcast({ t: "db-got-puzzles", result: Ok(modelNew) }),
       };
     }
 
-    case "got-profile": {
+    case "db-got-profile": {
       if (msg.result.t === "err") {
         return {
           model,
-          cmd: broadcast({ t: "got-profile", result: msg.result }),
+          cmd: broadcast({ t: "db-got-profile", result: msg.result }),
         };
       }
 
       const puzzleProfile = msg.result.value;
 
+      if (!puzzleProfile) {
+        return {
+          model,
+          cmd: broadcast({
+            t: "db-got-profile",
+            result: Err("No profile found."),
+          }),
+        };
+      }
+
       const modelNew: Model = {
         ...model,
-        puzzleProfile,
+        profile: puzzleProfile,
       };
 
       return {
         model: modelNew,
-        cmd: broadcast({ t: "got-profile", result: Ok(modelNew) }),
+        cmd: broadcast({ t: "db-got-profile", result: Ok(modelNew) }),
       };
     }
 
-    case "got-initial-load": {
+    case "db-got-initial-load": {
       if (msg.result.t === "err") {
         return {
           model,
-          cmd: broadcast({ t: "got-initial-load", result: msg.result }),
+          cmd: broadcast({ t: "db-got-initial-load", result: msg.result }),
         };
       }
 
       const { puzzleProfile, puzzles } = msg.result.value;
 
+      const puzzle = puzzles[0];
+
+      if (!puzzle) {
+        return {
+          model,
+          cmd: broadcast({
+            t: "db-got-initial-load",
+            result: Err("No puzzles found."),
+          }),
+        };
+      }
+
       const modelNew: Model = {
-        ...model,
-        puzzleProfile,
-        puzzles,
+        t: "in-progress",
+        moves: [],
+        profile: puzzleProfile,
+        puzzle,
+        queue: puzzles.slice(1),
         startedAt: ctx.now,
       };
 
       return {
         model: modelNew,
-        cmd: broadcast({ t: "got-initial-load", result: Ok(modelNew) }),
+        cmd: broadcast({ t: "db-got-initial-load", result: Ok(modelNew) }),
       };
     }
 
-    case "put-interaction": {
+    case "db-put-interaction": {
       return {
         model,
         cmd: broadcast({
-          t: "put-interaction",
+          t: "db-put-interaction",
           result: p(
             msg.result,
             Result.map(() => model)
@@ -199,11 +216,11 @@ export const update = ({
       };
     }
 
-    case "put-profile": {
+    case "db-put-profile": {
       return {
         model,
         cmd: broadcast({
-          t: "put-profile",
+          t: "db-put-profile",
           result: p(
             msg.result,
             Result.map(() => model)
@@ -228,7 +245,7 @@ export const updateFromClient = (input: {
     input,
     andThen(({ model }) => updateFromClient_({ ...input, model })),
     andThen(({ model }) =>
-      watchLoadMorePuzzles({ ...input, modelPrev: input.model, model })
+      watchQueueMorePuzzles({ ...input, modelPrev: input.model, model })
     ),
     andThen(({ model }) =>
       watchInsertInteraction({ ...input, modelPrev: input.model, model })
@@ -251,25 +268,24 @@ const watchInsertInteraction = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  const statusPrev = toState(modelPrev);
-  const status = toState(model);
-  if (statusPrev.type === status.type) {
-    return { model };
-  }
-
-  if (status.type === "incorrect" || status.type === "solved") {
+  if (
+    model.t !== modelPrev.t &&
+    (model.t === "solved" ||
+      model.t === "incorrect" ||
+      model.t === "solved-with-hint")
+  ) {
     return {
       model,
       cmd: Cmd.batch([
         p(
           PuzzleDb.insertManyInteractions(ctx.mySql, [
             {
-              puzzleId: status.puzzle.puzzleId,
+              puzzleId: model.puzzle.puzzleId,
               userId: ctx.hostId,
-              type: status.type,
+              type: model.t,
             },
           ]),
-          Cmd.perform((result): Msg => ({ t: "put-interaction", result }))
+          Cmd.perform((result): Msg => ({ t: "db-put-interaction", result }))
         ),
       ]),
     };
@@ -278,9 +294,9 @@ const watchInsertInteraction = ({
   return { model };
 };
 
-const watchLoadMorePuzzles = ({
+const watchQueueMorePuzzles = ({
   model,
-  // modelPrev,
+  modelPrev,
   ctx,
 }: {
   model: Model;
@@ -290,18 +306,23 @@ const watchLoadMorePuzzles = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (model.puzzleProfile && model.puzzles.length <= 1) {
+  if (
+    modelPrev.t !== "loading" &&
+    model.t !== "loading" &&
+    model.queue.length === 0 &&
+    modelPrev.queue.length > 0
+  ) {
     return {
-      model,
+      model: { t: "loading" },
       cmd: p(
         PuzzleDb.findWithNoInteraction(ctx.mySql, {
           ratingRange: [
-            model.puzzleProfile.eloRating - 100,
-            model.puzzleProfile.eloRating + 100,
+            model.profile.eloRating - 100,
+            model.profile.eloRating + 100,
           ],
           userId: ctx.hostId,
         }),
-        Cmd.perform((result): Msg => ({ t: "got-puzzles", result }))
+        Cmd.perform((result): Msg => ({ t: "db-got-puzzles", result }))
       ),
     };
   }
@@ -321,22 +342,12 @@ const watchUpdateProfile = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  const statusPrev = toState(modelPrev);
-  const status = toState(model);
-
-  if (
-    statusPrev.type !== status.type &&
-    (status.type === "incorrect" || status.type === "solved")
-  ) {
+  if (model.profile && !eq(model.profile, modelPrev.profile)) {
     return {
       model,
       cmd: p(
-        PuzzleDb.updateProfile(ctx.mySql, {
-          userId: ctx.hostId,
-          eloRating: status.nextEloRating,
-          puzzleQuery: model.puzzleProfile?.puzzleQuery ?? initQuery,
-        }),
-        Cmd.perform((result): Msg => ({ t: "put-profile", result }))
+        PuzzleDb.updateProfile(ctx.mySql, model.profile),
+        Cmd.perform((result): Msg => ({ t: "db-put-profile", result }))
       ),
     };
   }
@@ -362,7 +373,6 @@ const updateFromClient_: typeof updateFromClient = ({
 };
 
 export const updateFromGame = ({
-  msg,
   model,
 }: {
   msg: GameMsg;
@@ -371,18 +381,10 @@ export const updateFromGame = ({
   model: Model;
   cmd?: Cmd;
 } => {
-  switch (msg.t) {
-    case "mode-changed": {
-      return {
-        model,
-        cmd: Cmd.None,
-      };
-    }
-  }
+  return { model };
 };
 
 export const updateFromRoom = ({
-  msg,
   model,
 }: {
   msg: RoomMsg;
@@ -391,13 +393,7 @@ export const updateFromRoom = ({
   model: Model;
   cmd?: Cmd;
 } => {
-  switch (msg.t) {
-    case "user-left": {
-      return {
-        model,
-      };
-    }
-  }
+  return { model };
 };
 
 //
@@ -407,15 +403,8 @@ export const updateFromRoom = ({
 //
 
 export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
-  const status = toState(model);
-
-  switch (status.type) {
-    case "solving": {
-      return Time.every(intervalId, 500, () => ({ t: "clock-tick" }));
-    }
-
-    default: {
-      return Sub.None;
-    }
+  if (model.t === "in-progress") {
+    return Time.every(intervalId, 500, () => ({ t: "clock-tick" }));
   }
+  return Sub.None;
 };
