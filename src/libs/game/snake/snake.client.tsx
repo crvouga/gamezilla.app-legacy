@@ -252,20 +252,6 @@ export const View = ({
                   <UI.Icons.MoreVert />
                 </UI.ListItemSecondaryAction>
               </UI.ListItemButton>
-              <UI.Menu
-                open={
-                  model.openedMenuId.type === "Some" &&
-                  model.openedMenuId.value === menuAnchorId
-                }
-                onClose={() => $send(["ClosedMenu"])}
-                anchorEl={document.getElementById(menuAnchorId)}>
-                <UI.Button
-                  size="large"
-                  fullWidth
-                  onClick={() => $send(["InputPlayer", Option.None])}>
-                  Stop Playing
-                </UI.Button>
-              </UI.Menu>
             </>
           )}
         </UI.Box>
