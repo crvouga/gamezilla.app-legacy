@@ -21,7 +21,7 @@ import {
   handle,
   initQuery,
   initShared,
-  toStatus,
+  toState,
 } from "./puzzle.shared";
 
 //
@@ -251,8 +251,8 @@ const watchInsertInteraction = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  const statusPrev = toStatus(modelPrev);
-  const status = toStatus(model);
+  const statusPrev = toState(modelPrev);
+  const status = toState(model);
   if (statusPrev.type === status.type) {
     return { model };
   }
@@ -321,8 +321,8 @@ const watchUpdateProfile = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  const statusPrev = toStatus(modelPrev);
-  const status = toStatus(model);
+  const statusPrev = toState(modelPrev);
+  const status = toState(model);
 
   if (
     statusPrev.type !== status.type &&
@@ -407,7 +407,7 @@ export const updateFromRoom = ({
 //
 
 export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
-  const status = toStatus(model);
+  const status = toState(model);
 
   switch (status.type) {
     case "solving": {

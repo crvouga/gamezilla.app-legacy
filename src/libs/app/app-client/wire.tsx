@@ -85,7 +85,7 @@ export const View = ({ model }: { model: Model }) => {
     return (
       <div className="w-full flex items-center justify-center text-white bg-blue-500 gap-2 h-6">
         <IconSpinner className="w-5 h-5 text-white animate-spin" />
-        Server disconnected...
+        Reconnecting to server...
       </div>
     );
   }

@@ -2,7 +2,7 @@ import { UserId } from "@gamezilla/shared/app";
 import { Err, Ok, Posix, Result } from "@gamezilla/shared/core";
 import * as Chess from "../chess/chess";
 import { EloRating } from "./elo-rating";
-import { interleave, zip } from "./utils";
+import { zip } from "./utils";
 
 export const maxRating = 3212;
 export const minRating = 545;
@@ -19,9 +19,7 @@ export const minRatingDeviation = 50;
 
 export type SharedModel = {
   startedAt: number | null;
-  lastMoveAt: number | null;
-  playerMoves: Chess.MoveInput[];
-  hint: Hint;
+  puzzleEvents: PuzzleEvent[];
   puzzles: Puzzle[];
   puzzleProfile: PuzzleProfile | null;
 };
@@ -37,16 +35,20 @@ export type ClientModel = SharedModel & {
 
 type Hint = "none" | "from" | "from-and-to";
 
+export const toNext: { [key in Hint]: Hint } = {
+  none: "from",
+  from: "from-and-to",
+  "from-and-to": "from-and-to",
+};
+
 export const initQuery: PuzzleQuery = {
   ratingRange: [1000, 1500],
 };
 
 export const initShared: SharedModel = {
-  playerMoves: [],
-  hint: "none",
+  puzzleEvents: [],
   puzzles: [],
   puzzleProfile: null,
-  lastMoveAt: null,
   startedAt: null,
 };
 
@@ -74,17 +76,19 @@ export type PuzzleProfile = {
   query: PuzzleQuery;
 };
 
-export type PuzzleInteraction =
-  | {
-      type: "solved";
-      puzzleId: string;
-      userId: UserId;
-    }
-  | {
-      type: "incorrect";
-      puzzleId: string;
-      userId: UserId;
-    };
+export type PuzzleInteraction = {
+  type: "solved" | "incorrect" | "solve-with-hint";
+  puzzleId: string;
+  userId: UserId;
+};
+
+//
+//
+//
+// Msg
+//
+//
+//
 
 export type Req =
   | { t: "init" }
@@ -95,7 +99,7 @@ export type Req =
   | { t: "skip" }
   | { t: "show-hint" };
 
-export type Res = Req & { result: Result<Problem, SharedModel> };
+export type Res = Req & { result: Result<string, SharedModel> };
 
 export type ServerMsg =
   | { t: "clock-tick" }
@@ -130,18 +134,54 @@ export type ToClient =
   | { t: "put-profile"; result: Result<string, SharedModel> }
   | { t: "put-interaction"; result: Result<string, SharedModel> };
 
-export type Status =
+//
+//
+//
+//
+// Status
+//
+//
+//
+
+type PuzzleEvent =
+  | {
+      type: "user-moved";
+      move: Chess.MoveInput;
+      happenedAt: Posix;
+    }
+  | {
+      type: "user-used-hint";
+      happenedAt: Posix;
+    }
+  | {
+      type: "user-retried";
+      happenedAt: Posix;
+    };
+
+export type PuzzleState =
   | {
       type: "loading";
     }
   | {
       type: "solving";
       puzzle: Puzzle;
+      puzzleProfile: PuzzleProfile;
       board: Chess.Model;
+      playerMoves: Chess.MoveInput[];
+      hint: Hint;
     }
   | {
       type: "solved";
       puzzle: Puzzle;
+      puzzleProfile: PuzzleProfile;
+      board: Chess.Model;
+      nextEloRating: EloRating;
+      endedAt: number;
+    }
+  | {
+      type: "solved-with-hint";
+      puzzle: Puzzle;
+      puzzleProfile: PuzzleProfile;
       board: Chess.Model;
       nextEloRating: EloRating;
       endedAt: number;
@@ -149,12 +189,91 @@ export type Status =
   | {
       type: "incorrect";
       puzzle: Puzzle;
+      puzzleProfile: PuzzleProfile;
       board: Chess.Model;
       nextEloRating: EloRating;
       endedAt: number;
     };
 
-export const toStatus = (model: SharedModel): Status => {
+const reducer = (state: PuzzleState, event: PuzzleEvent): PuzzleState => {
+  if (state.type === "loading") {
+    return state;
+  }
+
+  if (state.type === "solved") {
+    return state;
+  }
+
+  if (state.type === "incorrect") {
+    return state;
+  }
+
+  if (state.type === "solved-with-hint") {
+    return state;
+  }
+
+  if (state.type === "solving") {
+    if (event.type === "user-moved") {
+      const playerMoved = Chess.move(event.move, state.board);
+
+      if (playerMoved.t === "err") {
+        return state;
+      }
+
+      const puzzleMove = state.puzzle.opponentMoves[state.playerMoves.length];
+
+      const puzzleMoved = puzzleMove
+        ? Chess.move(puzzleMove, playerMoved.value)
+        : Ok(playerMoved.value);
+
+      if (puzzleMoved.t === "err") {
+        return state;
+      }
+
+      const boardNew = puzzleMoved.value;
+      const playerMovesNew = [...state.playerMoves, event.move];
+
+      if (isMovesEqual(state.puzzle.correctMoves, playerMovesNew)) {
+        if (state.hint !== "none") {
+          return {
+            ...state,
+            board: boardNew,
+            type: "solved-with-hint",
+            endedAt: event.happenedAt,
+            nextEloRating: EloRating.toNextRating({
+              endGame: "lost",
+              opponentRating: state.puzzle.rating,
+              playerRating: state.puzzleProfile.eloRating,
+            }),
+          };
+        }
+
+        return {
+          ...state,
+          board: boardNew,
+          type: "solved",
+          endedAt: event.happenedAt,
+          nextEloRating: EloRating.toNextRating({
+            endGame: "win",
+            opponentRating: state.puzzle.rating,
+            playerRating: state.puzzleProfile.eloRating,
+          }),
+        };
+      }
+
+      return {
+        ...state,
+        board: boardNew,
+        playerMoves: playerMovesNew,
+      };
+    }
+    return state;
+  }
+
+  return state;
+};
+
+export const toState = (model: SharedModel): PuzzleState => {
   const puzzle = model.puzzles[0];
 
   if (!puzzle) {
@@ -171,92 +290,35 @@ export const toStatus = (model: SharedModel): Status => {
     };
   }
 
-  if (isMovesEqual(puzzle.correctMoves, model.playerMoves)) {
-    const allMoves = interleave(puzzle.opponentMoves, model.playerMoves);
-    const board = moveMany(allMoves, Chess.initFromFen(puzzle));
+  const moved = Chess.move(puzzle.opponentMoves[0], Chess.initFromFen(puzzle));
 
-    const nextEloRating = EloRating.toNextRating({
-      playerRating: puzzleProfile.eloRating,
-      opponentRating: puzzle.rating,
-      endGame: "win",
-    });
-
+  if (moved.t === "err") {
     return {
-      type: "solved",
-      puzzle,
-      board,
-      endedAt: model.lastMoveAt ?? model.startedAt ?? 0,
-      nextEloRating,
+      type: "loading",
     };
   }
 
-  if (didMakeWrongMove(model)) {
-    const opponentMoves = puzzle.opponentMoves.slice(
-      0,
-      model.playerMoves.length
-    );
-    const allMoves = interleave(opponentMoves, model.playerMoves);
-    const board = moveMany(allMoves, Chess.initFromFen(puzzle));
-    const nextEloRating = EloRating.toNextRating({
-      playerRating: puzzleProfile.eloRating,
-      opponentRating: puzzle.rating,
-      endGame: "lost",
-    });
-    return {
-      type: "incorrect",
-      puzzle,
-      board,
-      endedAt: model.lastMoveAt ?? model.startedAt ?? 0,
-      nextEloRating,
-    };
-  }
-
-  const opponentMoves = puzzle.opponentMoves.slice(
-    0,
-    model.playerMoves.length + 1
-  );
-  const allMoves = interleave(opponentMoves, model.playerMoves);
-  const board = moveMany(allMoves, Chess.initFromFen(puzzle));
-
-  return {
+  const initialState: PuzzleState = {
     type: "solving",
     puzzle,
-    board,
+    puzzleProfile,
+    board: moved.value,
+    playerMoves: [],
+    hint: "none",
   };
-};
 
-const moveMany = (
-  moves: Chess.MoveInput[],
-  board: Chess.Model
-): Chess.Model => {
-  return moves.reduce((board, move) => {
-    const moved = Chess.move(move, board);
-    return moved.t === "ok" ? moved.value : board;
-  }, board);
-};
-
-const didMakeWrongMove = (model: SharedModel): boolean => {
-  return (
-    model.playerMoves.length > 0 &&
-    model.playerMoves.some((move, index) => {
-      const correctMove = model.puzzles[0]?.correctMoves[index];
-      return correctMove && !isMoveEqual(move, correctMove);
-    })
+  const state = model.puzzleEvents.reduce<PuzzleState>(
+    (state, event) => reducer(state, event),
+    initialState
   );
+
+  return state;
 };
 
 const isMovesEqual = (a: Chess.MoveInput[], b: Chess.MoveInput[]): boolean => {
   return (
     a.length === b.length && zip(a, b).every(([a, b]) => isMoveEqual(a, b))
   );
-};
-
-export const toEndedAt = (model: SharedModel): number | null => {
-  const status = toStatus(model);
-  if (status.type === "solved" || status.type === "incorrect") {
-    return model.lastMoveAt ?? null;
-  }
-  return null;
 };
 
 const isMoveEqual = (a: Chess.MoveInput, b: Chess.MoveInput): boolean => {
@@ -273,19 +335,22 @@ export const toPlayerColor = (puzzle: Puzzle): Chess.Color => {
 };
 
 export const toCorrectMove = (model: SharedModel): Chess.MoveInput | null => {
-  const move = model.puzzles[0]?.correctMoves[model.playerMoves.length];
-  return move ?? null;
+  const state = toState(model);
+  if (state.type === "solving") {
+    return state.puzzle.correctMoves[state.playerMoves.length] ?? null;
+  }
+  return null;
 };
 
-type Problem =
-  | "must-be-host"
-  | "no-active-puzzle"
-  | "must-be-turn"
-  | "must-be-solving"
-  | "must-be-solved"
-  | "must-be-incorrect"
-  | "no-correct-move-found"
-  | Chess.MoveProblem;
+//
+//
+//
+//
+// Handle
+//
+//
+//
+//
 
 export const handle = ({
   ctx,
@@ -295,30 +360,30 @@ export const handle = ({
   ctx: { now: Posix; currentUserId: UserId; hostId: UserId };
   msg: Req;
   model: SharedModel;
-}): Result<Problem, SharedModel> => {
+}): Result<string, SharedModel> => {
   switch (msg.t) {
     case "input-move": {
       if (ctx.currentUserId !== ctx.hostId) {
         return Err("must-be-host");
       }
 
-      const status = toStatus(model);
+      const state = toState(model);
 
-      if (status.type !== "solving") {
+      if (state.type !== "solving") {
         return Err("must-be-solving");
       }
 
-      const moved = Chess.move(msg.moveInput, status.board);
+      const moved = Chess.move(msg.moveInput, state.board);
 
       if (moved.t === "err") {
         return moved;
       }
 
-      const modelNew: SharedModel = {
-        ...model,
-        playerMoves: [...model.playerMoves, msg.moveInput],
-        lastMoveAt: ctx.now,
-      };
+      const modelNew = appendEvent(model, {
+        type: "user-moved",
+        move: msg.moveInput,
+        happenedAt: ctx.now,
+      });
 
       return Ok(modelNew);
     }
@@ -328,7 +393,7 @@ export const handle = ({
         return Err("must-be-host");
       }
 
-      const status = toStatus(model);
+      const status = toState(model);
 
       if (status.type !== "solved") {
         return Err("must-be-solved");
@@ -348,18 +413,16 @@ export const handle = ({
         return Err("must-be-host");
       }
 
-      const status = toStatus(model);
-
-      if (status.type !== "incorrect") {
-        return Err("must-be-incorrect");
-      }
-
-      const modelNew: SharedModel = {
-        ...model,
-        playerMoves: [],
-        lastMoveAt: null,
-        startedAt: ctx.now,
-      };
+      const modelNew = appendEvent(
+        {
+          ...model,
+          startedAt: ctx.now,
+        },
+        {
+          type: "user-retried",
+          happenedAt: ctx.now,
+        }
+      );
 
       return Ok(modelNew);
     }
@@ -369,13 +432,13 @@ export const handle = ({
         return Err("must-be-host");
       }
 
-      const status = toStatus(model);
+      const status = toState(model);
 
       if (status.type !== "incorrect") {
         return Err("must-be-incorrect");
       }
 
-      const modelNew: SharedModel = nextPuzzle({
+      const modelNew = nextPuzzle({
         nextEloRating: status.nextEloRating,
         model,
         ctx,
@@ -389,16 +452,10 @@ export const handle = ({
         return Err("must-be-host");
       }
 
-      const toNext: { [key in Hint]: Hint } = {
-        none: "from",
-        from: "from-and-to",
-        "from-and-to": "from-and-to",
-      };
-
-      const modelNew: SharedModel = {
-        ...model,
-        hint: toNext[model.hint],
-      };
+      const modelNew = appendEvent(model, {
+        type: "user-used-hint",
+        happenedAt: ctx.now,
+      });
 
       return Ok(modelNew);
     }
@@ -435,6 +492,13 @@ export const handle = ({
   }
 };
 
+const appendEvent = (model: SharedModel, event: PuzzleEvent): SharedModel => {
+  return {
+    ...model,
+    puzzleEvents: [...model.puzzleEvents, event],
+  };
+};
+
 const nextPuzzle = ({
   ctx,
   model,
@@ -446,10 +510,8 @@ const nextPuzzle = ({
 }): SharedModel => {
   return {
     startedAt: ctx.now,
-    lastMoveAt: null,
-    playerMoves: [],
+    puzzleEvents: [],
     puzzles: model.puzzles.slice(1),
-    hint: "none",
     puzzleProfile:
       model.puzzleProfile && nextEloRating
         ? {

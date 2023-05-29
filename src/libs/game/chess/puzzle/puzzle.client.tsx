@@ -30,7 +30,7 @@ import {
   PuzzleQuery,
   Req,
   SharedModel,
-  Status,
+  PuzzleState,
   ToClient,
   ToServer,
   handle,
@@ -38,7 +38,7 @@ import {
   initShared,
   toCorrectMove,
   toPlayerColor,
-  toStatus,
+  toState,
 } from "./puzzle.shared";
 
 //
@@ -157,29 +157,22 @@ export const updateFromServer = ({
   cmd?: Cmd<Msg>;
   msgs?: AppMsg[];
 } => {
-  switch (msg.t) {
-    case "clock-tick": {
-      return { model: { ...model, backendNow: msg.now } };
-    }
-
-    default: {
-      const result = msg.result;
-
-      if (result.t === "err") {
-        return {
-          model,
-          msgs: [{ t: "toast-enqueued", message: result.error }],
-        };
-      }
-
-      const merged = syncWithServer({
-        clientModel: model,
-        serverModel: result.value,
-      });
-
-      return { model: merged };
-    }
+  if (msg.t === "clock-tick") {
+    return { model: { ...model, backendNow: msg.now } };
   }
+
+  const result = msg.result;
+
+  if (result.t === "err") {
+    return { model };
+  }
+
+  const merged = syncWithServer({
+    clientModel: model,
+    serverModel: result.value,
+  });
+
+  return { model: merged };
 };
 
 export const syncWithServer = ({
@@ -209,7 +202,7 @@ export const View = ({
   $send: (m: Msg) => void;
   onClose: () => void;
 }) => {
-  const status = useMemo(() => toStatus(model), [model]);
+  const status = useMemo(() => toState(model), [model]);
 
   const durationMs = useMemo(() => {
     return !model.startedAt
@@ -225,7 +218,7 @@ export const View = ({
 
   return (
     <ViewGameBox isSpectating={isSpectating}>
-      <ViewStatusBar status={status} />
+      <ViewStatusBar state={status} />
 
       {/* top heads up */}
       <div className="flex-1 w-full flex items-center justify-center flex-col">
@@ -299,7 +292,9 @@ export const View = ({
           {status.type !== "loading" && (
             <div className="flex-1 flex items-center justify-end text-right text-xs gap-1">
               <p className="text-neutral-300">Moved</p>
-              <p className="text-inherit">{model.playerMoves.length}</p>
+              <p className="text-inherit">
+                {status.type === "solving" ? status.playerMoves.length : "-"}
+              </p>
               <p className="text-neutral-300">out of</p>
               <p className="text-inherit">
                 {status.puzzle.correctMoves.length}
@@ -410,15 +405,24 @@ export const View = ({
 
 const toCustomSquareStyle = (model: Model): Chess.CustomSquareStyles => {
   const correctMove = toCorrectMove(model);
-  return !correctMove
-    ? {}
-    : model.hint === "from"
+
+  if (!correctMove) {
+    return {};
+  }
+
+  const state = toState(model);
+
+  if (state.type !== "solving") {
+    return {};
+  }
+
+  return state.hint === "from"
     ? {
         [Chess.toLowercaseSquare(correctMove.from)]: {
           backgroundColor: "skyblue",
         },
       }
-    : model.hint === "from-and-to"
+    : state.hint === "from-and-to"
     ? {
         [Chess.toLowercaseSquare(correctMove.from)]: {
           backgroundColor: "skyblue",
@@ -427,7 +431,7 @@ const toCustomSquareStyle = (model: Model): Chess.CustomSquareStyles => {
           backgroundColor: "skyblue",
         },
       }
-    : model.hint === "none"
+    : state.hint === "none"
     ? {}
     : {};
 };
@@ -449,7 +453,7 @@ export const toBottomBarActions = ({
   onClose: () => void;
   $send: (m: Msg) => void;
 }): BottomBarButtonAction[] => {
-  const status = toStatus(model);
+  const status = toState(model);
 
   const exit: BottomBarButtonAction = {
     icon: <IconArrowLeftOnRect />,
@@ -507,13 +511,17 @@ export const toBottomBarActions = ({
     return [exit, settings, next];
   }
 
+  if (status.type === "solved-with-hint") {
+    return [exit, settings, next];
+  }
+
   const check: never = status;
 
   return check;
 };
 
-const ViewStatusBar = ({ status }: { status: Status }) => {
-  if (status.type === "loading") {
+const ViewStatusBar = ({ state }: { state: PuzzleState }) => {
+  if (state.type === "loading") {
     return (
       <div className="w-full flex items-center justify-center p-2">
         <p className="text-xl">...</p>
@@ -521,7 +529,7 @@ const ViewStatusBar = ({ status }: { status: Status }) => {
     );
   }
 
-  if (status.type === "incorrect") {
+  if (state.type === "incorrect") {
     return (
       <div className="w-full flex items-center justify-center gap-2 p-2 bg-red-500 text-white">
         <IconXMark />
@@ -530,7 +538,7 @@ const ViewStatusBar = ({ status }: { status: Status }) => {
     );
   }
 
-  if (status.type === "solved") {
+  if (state.type === "solved") {
     return (
       <div className="w-full flex items-center justify-center gap-2 p-2 bg-green-500 text-white">
         <IconCheckmarkCircle />
@@ -539,30 +547,39 @@ const ViewStatusBar = ({ status }: { status: Status }) => {
     );
   }
 
-  if (status.type === "solving") {
+  if (state.type === "solving") {
     return (
       <div
         className={cn(
           "flex items-center justify-center gap-2 p-2 w-full",
-          toPlayerColor(status.puzzle) === "b"
+          toPlayerColor(state.puzzle) === "b"
             ? "bg-black text-white"
             : "bg-white text-black"
         )}>
         <div
           className={cn(
             "w-6 h-6 rounded-full border-2",
-            toPlayerColor(status.puzzle) === "b"
+            toPlayerColor(state.puzzle) === "b"
               ? "bg-black border-[#ababab]"
               : "bg-white border-black"
           )}></div>
         <p className="text-xl text-inherit">
-          {Chess.colorToString(toPlayerColor(status.puzzle))} to move
+          {Chess.colorToString(toPlayerColor(state.puzzle))} to move
         </p>
       </div>
     );
   }
 
-  const check: never = status;
+  if (state.type === "solved-with-hint") {
+    return (
+      <div className="w-full flex items-center justify-center gap-2 p-2 bg-yellow-500 text-white">
+        <IconCheckmarkCircle />
+        <p className="text-xl">Solved with hint</p>
+      </div>
+    );
+  }
+
+  const check: never = state;
   return check;
 };
 
