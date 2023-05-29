@@ -351,18 +351,9 @@ const ViewLogoutScreen = ({
 
 const subject = new Subject<Msg>();
 
-client.auth.onAuthStateChange((event, supabaseSession) => {
-  switch (event) {
-    case "PASSWORD_RECOVERY":
-    case "SIGNED_IN":
-    case "SIGNED_OUT":
-    case "TOKEN_REFRESHED":
-    case "USER_DELETED":
-    case "USER_UPDATED": {
-      const msg = fromSupabaseSession(supabaseSession);
-      subject.next(msg);
-    }
-  }
+client.auth.onAuthStateChange((_event, supabaseSession) => {
+  const msg = fromSupabaseSession(supabaseSession);
+  subject.next(msg);
 });
 
 const fromSupabaseSession = (auth: SupabaseSession | null): Msg => {

@@ -245,7 +245,7 @@ export const updateFromClient = (input: {
     input,
     andThen(({ model }) => updateFromClient_({ ...input, model })),
     andThen(({ model }) =>
-      watchQueueMorePuzzles({ ...input, modelPrev: input.model, model })
+      watchEnqueueMorePuzzles({ ...input, modelPrev: input.model, model })
     ),
     andThen(({ model }) =>
       watchInsertInteraction({ ...input, modelPrev: input.model, model })
@@ -294,7 +294,7 @@ const watchInsertInteraction = ({
   return { model };
 };
 
-const watchQueueMorePuzzles = ({
+const watchEnqueueMorePuzzles = ({
   model,
   modelPrev,
   ctx,
