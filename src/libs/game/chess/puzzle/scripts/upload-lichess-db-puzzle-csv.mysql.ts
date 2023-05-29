@@ -28,7 +28,7 @@ export const uploadLichessDbPuzzleCsv = async ({
   lichessDbPuzzleCsvPath,
   batchSize = 10_000,
 }: {
-  dbConn: DatabaseConnectionMySQL;
+  dbConn: DbConnMySql;
   lichessDbPuzzleCsvPath: string;
   batchSize?: number;
 }) => {

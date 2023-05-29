@@ -16,7 +16,7 @@ export type AppMsg =
     };
 
 export type Ctx = {
-  mySql: DatabaseConnectionMySQL;
+  mySql: DbConnMySql;
   now: Posix;
 };
 

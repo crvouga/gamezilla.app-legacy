@@ -28,9 +28,9 @@ import {
   ClientModel,
   ClientMsg,
   PuzzleQuery,
+  PuzzleState,
   Req,
   SharedModel,
-  PuzzleState,
   ToClient,
   ToServer,
   handle,
@@ -579,8 +579,7 @@ const ViewStatusBar = ({ state }: { state: PuzzleState }) => {
     );
   }
 
-  const check: never = state;
-  return check;
+  return <div></div>;
 };
 
 const TickingClock = (input: { sec: number }) => {
