@@ -73,7 +73,7 @@ export type Puzzle = {
 export type PuzzleProfile = {
   userId: UserId;
   eloRating: EloRating;
-  query: PuzzleQuery;
+  puzzleQuery: PuzzleQuery;
 };
 
 export type PuzzleInteraction = {
@@ -499,7 +499,7 @@ export const handle = ({
           puzzleProfile: model.puzzleProfile
             ? {
                 ...model.puzzleProfile,
-                query: msg.query,
+                puzzleQuery: msg.query,
               }
             : null,
         },

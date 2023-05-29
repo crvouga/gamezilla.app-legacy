@@ -322,12 +322,12 @@ const findProfile =
 
     const parsed = PuzzleQueryJSON.safeParse(row.puzzle_query);
 
-    const query = parsed.success ? parsed.data : initQuery;
+    const puzzleQuery = parsed.success ? parsed.data : initQuery;
 
     const profile: PuzzleProfile = {
       userId: row.user_id,
       eloRating: row.elo_rating,
-      query,
+      puzzleQuery: puzzleQuery,
     };
 
     return Ok(profile);
@@ -345,7 +345,7 @@ export const insertProfile =
           id,
           user_id,
           elo_rating,
-          query
+          puzzle_query
         ) VALUES (
           ?,
           ?,
@@ -357,7 +357,7 @@ export const insertProfile =
         puzzleProfileId,
         profile.userId,
         profile.eloRating,
-        JSON.stringify(profile.query),
+        JSON.stringify(profile.puzzleQuery),
       ]
     );
 
@@ -402,7 +402,7 @@ const updateProfile =
         SET
           user_id = '${profile.userId}',
           elo_rating = ${profile.eloRating},
-          query = '${JSON.stringify(profile.query)}'
+          puzzle_query = '${JSON.stringify(profile.puzzleQuery)}'
         WHERE
           user_id = '${profile.userId}'
       `

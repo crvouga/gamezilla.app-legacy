@@ -334,7 +334,7 @@ const watchUpdateProfile = ({
         PuzzleDb.updateProfile(ctx.mySql, {
           userId: ctx.hostId,
           eloRating: status.nextEloRating,
-          query: model.puzzleProfile?.query ?? initQuery,
+          puzzleQuery: model.puzzleProfile?.puzzleQuery ?? initQuery,
         }),
         Cmd.perform((result): Msg => ({ t: "put-profile", result }))
       ),

@@ -50,7 +50,7 @@ import {
 export type Model = ClientModel;
 
 const toDraftQuery = (model: Model): PuzzleQuery => {
-  return model.draftQuery ?? model.puzzleProfile?.query ?? initQuery;
+  return model.draftQuery ?? model.puzzleProfile?.puzzleQuery ?? initQuery;
 };
 
 export const init = ({
@@ -319,12 +319,15 @@ export const View = ({
                   <MyButton
                     size="sm"
                     variant="outlined"
-                    disabled={eq(model.puzzleProfile?.query, model.draftQuery)}
+                    disabled={eq(
+                      model.puzzleProfile?.puzzleQuery,
+                      model.draftQuery
+                    )}
                     onClick={() => {
                       if (model.puzzleProfile) {
                         $send({
                           t: "input-draft-query",
-                          query: model.puzzleProfile.query,
+                          query: model.puzzleProfile.puzzleQuery,
                         });
                       }
                     }}>
@@ -334,7 +337,10 @@ export const View = ({
                     size="sm"
                     variant="contained"
                     onClick={() => $send({ t: "clicked-save" })}
-                    disabled={eq(model.puzzleProfile?.query, model.draftQuery)}>
+                    disabled={eq(
+                      model.puzzleProfile?.puzzleQuery,
+                      model.draftQuery
+                    )}>
                     Save
                   </MyButton>
                 </div>
@@ -355,10 +361,10 @@ export const View = ({
                           $send({
                             t: "input-draft-query",
                             query: {
-                              ...model.puzzleProfile.query,
+                              ...model.puzzleProfile.puzzleQuery,
                               ratingRange: [
                                 parsed,
-                                model.puzzleProfile.query.ratingRange[1],
+                                model.puzzleProfile.puzzleQuery.ratingRange[1],
                               ],
                             },
                           });
@@ -380,9 +386,9 @@ export const View = ({
                           $send({
                             t: "input-draft-query",
                             query: {
-                              ...model.puzzleProfile.query,
+                              ...model.puzzleProfile.puzzleQuery,
                               ratingRange: [
-                                model.puzzleProfile.query.ratingRange[0],
+                                model.puzzleProfile.puzzleQuery.ratingRange[0],
                                 parsed,
                               ],
                             },
