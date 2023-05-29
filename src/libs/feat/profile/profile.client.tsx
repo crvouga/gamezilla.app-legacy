@@ -218,7 +218,6 @@ const ViewProfileScreen = ({
   model,
   ctx,
   userId,
-  $send,
 }: {
   ctx: ViewCtx;
   userId: UserId;
