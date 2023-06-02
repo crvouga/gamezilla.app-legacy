@@ -14,7 +14,7 @@ export type AppMsg<T = unknown> =
   | { t: "wire-connected" }
   | { t: "user-logged-in"; currentUserId: UserId }
   | { t: "user-logged-out" }
-  | { t: "toast-enqueued"; message: string; duration?: number };
+  | { t: "toast-enqueued"; text: string; duration?: number };
 
 //
 //

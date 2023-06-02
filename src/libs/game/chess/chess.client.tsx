@@ -408,8 +408,8 @@ export const syncWithServer = ({
             mode: {
               t: "puzzle",
               c: Puzzle.syncWithServer({
-                clientModel: clientModel.mode.c,
-                serverModel: serverModel.c,
+                client: clientModel.mode.c,
+                server: serverModel.c,
               }),
             },
           },
@@ -426,8 +426,8 @@ export const syncWithServer = ({
           mode: {
             t: "puzzle",
             c: Puzzle.syncWithServer({
-              clientModel: initial.model,
-              serverModel: serverModel.c,
+              client: initial.model,
+              server: serverModel.c,
             }),
           },
         },

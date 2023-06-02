@@ -1,6 +1,6 @@
-import { AppMsg } from '@gamezilla/shared/client';
-import { Cmd, Time } from '@gamezilla/shared/core';
-import { IconXMark } from '@gamezilla/shared/ui';
+import { AppMsg } from "@gamezilla/shared/client";
+import { Cmd, Time } from "@gamezilla/shared/core";
+import { IconXMark } from "@gamezilla/shared/ui";
 
 //
 //
@@ -38,14 +38,14 @@ export const init: Model = {
 
 export type Msg =
   | {
-      t: 'time';
+      t: "time";
     }
   | {
-      t: 'clicked-dismiss-button';
+      t: "clicked-dismiss-button";
       toastId: number;
     }
   | {
-      t: 'toast-duration-elapsed';
+      t: "toast-duration-elapsed";
       toastId: number;
     };
 
@@ -59,7 +59,7 @@ export const update = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (msg.t === 'clicked-dismiss-button') {
+  if (msg.t === "clicked-dismiss-button") {
     return {
       model: {
         ...model,
@@ -68,7 +68,7 @@ export const update = ({
     };
   }
 
-  if (msg.t === 'toast-duration-elapsed') {
+  if (msg.t === "toast-duration-elapsed") {
     return {
       model: {
         ...model,
@@ -90,17 +90,17 @@ export const updateFromApp = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (msg.t === 'toast-enqueued') {
+  if (msg.t === "toast-enqueued") {
     const toastId = model.runningId;
     const duration = msg.duration ?? 3000;
     return {
       model: {
         ...model,
         runningId: model.runningId + 1,
-        toasts: [...model.toasts, { toastId, message: msg.message, duration }],
+        toasts: [...model.toasts, { toastId, message: msg.text, duration }],
       },
       cmd: Time.startTimeout(toastId, duration, {
-        t: 'toast-duration-elapsed',
+        t: "toast-duration-elapsed",
         toastId: model.runningId,
       }),
     };
@@ -128,14 +128,12 @@ export const View = ({
       {model.toasts.map((toast) => (
         <div
           className="bg-neutral-800 border-neutral-600 border w-full max-w-md text-lg text-white p-3 shadow-2xl z-40 rounded-lg pointer-events-auto flex items-center justify-between overflow-hidden whitespace-nowrap break-words"
-          key={toast.toastId}
-        >
+          key={toast.toastId}>
           {toast.message}
           <button
             onClick={() =>
-              $send({ t: 'clicked-dismiss-button', toastId: toast.toastId })
-            }
-          >
+              $send({ t: "clicked-dismiss-button", toastId: toast.toastId })
+            }>
             <IconXMark />
           </button>
         </div>

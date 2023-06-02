@@ -6,20 +6,16 @@ import {
   ViewBottomButtonBar,
   ViewGameBox,
 } from "@gamezilla/shared/client";
-import { Cmd, eq } from "@gamezilla/shared/core";
+import { Cmd } from "@gamezilla/shared/core";
 import {
   IconArrowCircle,
   IconArrowLeftOnRect,
   IconArrowRight,
   IconArrowRotateLeft,
   IconCheckmarkCircle,
-  IconGear,
   IconLightbulb,
   IconXMark,
   MyAvatar,
-  MyButton,
-  MyDrawer,
-  MyTextField,
   cn,
 } from "@gamezilla/shared/ui";
 import { useMemo } from "react";
@@ -136,10 +132,12 @@ const handleRequest = ({
   ctx: RoomCtx;
 }) => {
   const handled = handle({ msg, model, ctx });
+
   const modelNew = syncWithServer({
-    clientModel: model,
-    serverModel: handled.t === "err" ? model : handled.value,
+    client: model,
+    server: handled.t === "err" ? model : handled.value,
   });
+
   return {
     model: modelNew,
     cmd: sendToServer(msg),
@@ -165,25 +163,47 @@ export const updateFromServer = ({
   const result = msg.result;
 
   if (result.t === "err") {
+    if (msg.t === "db-got-puzzles") {
+      return {
+        model,
+        msgs: [{ t: "toast-enqueued", text: `Failed to load puzzles.` }],
+      };
+    }
+
+    if (msg.t === "db-got-initial-load") {
+      return {
+        model,
+        msgs: [
+          {
+            t: "toast-enqueued",
+            text: `Failed to load puzzles and profile.`,
+          },
+        ],
+      };
+    }
+
     return { model };
   }
 
   const merged = syncWithServer({
-    clientModel: model,
-    serverModel: result.value,
+    client: model,
+    server: result.value,
   });
 
   return { model: merged };
 };
 
 export const syncWithServer = ({
-  clientModel,
-  serverModel,
+  client,
+  server,
 }: {
-  clientModel: Model;
-  serverModel: SharedModel;
+  client: Model;
+  server: SharedModel;
 }): Model => {
-  return { ...clientModel, ...serverModel };
+  return {
+    ...client,
+    ...server,
+  };
 };
 
 //
@@ -308,7 +328,7 @@ export const View = ({
           <ViewBottomButtonBar
             actions={toBottomBarActions({ model, onClose, $send })}
           />
-          <MyDrawer
+          {/* <MyDrawer
             open={model.openedModal === "settings"}
             onClose={() => $send({ t: "closed-modal" })}>
             <div className="p-4 flex flex-col gap-4 pb-8">
@@ -395,7 +415,7 @@ export const View = ({
                 </div>
               </div>
             </div>
-          </MyDrawer>
+          </MyDrawer> */}
         </>
       )}
     </ViewGameBox>
@@ -455,14 +475,6 @@ export const toBottomBarActions = ({
     onClick: onClose,
   };
 
-  const settings: BottomBarButtonAction = {
-    icon: <IconGear />,
-    label: "Settings",
-    onClick: () => {
-      $send({ t: "opened-modal", modal: "settings" });
-    },
-  };
-
   const hint: BottomBarButtonAction = {
     icon: <IconLightbulb />,
     label: "Hint",
@@ -491,23 +503,23 @@ export const toBottomBarActions = ({
   };
 
   if (model.t === "loading") {
-    return [exit, settings, { ...hint, disabled: true }];
+    return [exit, { ...hint, disabled: true }];
   }
 
   if (model.t === "in-progress") {
-    return [exit, settings, hint];
+    return [exit, hint];
   }
 
   if (model.t === "incorrect") {
-    return [exit, settings, retry, skip];
+    return [exit, retry, skip];
   }
 
   if (model.t === "solved") {
-    return [exit, settings, next];
+    return [exit, next];
   }
 
   if (model.t === "solved-with-hint") {
-    return [exit, settings, next];
+    return [exit, next];
   }
 
   return [];

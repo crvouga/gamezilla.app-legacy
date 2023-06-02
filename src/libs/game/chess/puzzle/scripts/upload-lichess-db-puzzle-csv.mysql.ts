@@ -61,7 +61,7 @@ export const uploadLichessDbPuzzleCsv = async ({
 
     console.log("insert started");
 
-    const inserted = await PuzzleDb.replaceMany({
+    const inserted = await PuzzleDb.replacePuzzle({
       dbConn,
       rows: batch,
     });
@@ -77,7 +77,7 @@ export const uploadLichessDbPuzzleCsv = async ({
   }
 
   if (batch.length > 0) {
-    const inserted = await PuzzleDb.replaceMany({
+    const inserted = await PuzzleDb.replacePuzzle({
       dbConn,
       rows: batch,
     });

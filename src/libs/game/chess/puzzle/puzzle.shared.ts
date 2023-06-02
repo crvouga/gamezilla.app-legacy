@@ -1,5 +1,5 @@
 import { UserId } from "@gamezilla/shared/app";
-import { Err, Ok, Posix, Result } from "@gamezilla/shared/core";
+import { Err, Ok, Posix, RemoteResult, Result } from "@gamezilla/shared/core";
 import * as Chess from "../chess/chess";
 import { EloRating } from "./elo-rating";
 import { interleave, zip } from "./utils";
@@ -53,10 +53,13 @@ export type SharedModel =
       t: "loading";
       profile?: PuzzleProfile | null;
       queue?: Puzzle[];
+      puzzle?: Puzzle;
     }
   | (BaseModel & MainModel);
 
-export type ServerModel = SharedModel;
+export type ServerModel = SharedModel & {
+  requests: { getPuzzles?: RemoteResult<string, null> };
+};
 
 export type ClientModel = SharedModel & {
   initializedAt?: number;
@@ -108,7 +111,7 @@ export type PuzzleProfile = {
   puzzleQuery: PuzzleQuery;
 };
 
-export type PuzzleInteraction = {
+export type PuzzleAttempt = {
   type: "solved" | "incorrect" | "solved-with-hint";
   puzzleId: string;
   userId: UserId;
@@ -138,14 +141,11 @@ export type ServerMsg = { t: "clock-tick" } | DbMsg;
 type DbMsg =
   | { t: "db-got-puzzles"; result: Result<string, Puzzle[]> }
   | { t: "db-got-profile"; result: Result<string, PuzzleProfile | null> }
-  | { t: "db-put-interaction"; result: Result<string, null> }
+  | { t: "db-put-attempt"; result: Result<string, null> }
   | { t: "db-put-profile"; result: Result<string, null> }
   | {
       t: "db-got-initial-load";
-      result: Result<
-        string,
-        { puzzleProfile: PuzzleProfile; puzzles: Puzzle[] }
-      >;
+      result: Result<string, { profile: PuzzleProfile; puzzles: Puzzle[] }>;
     };
 
 export type ClientMsg =
@@ -177,10 +177,6 @@ export const toCorrectMove = (model: SharedModel): Chess.MoveInput | null => {
   }
   return null;
 };
-
-export type DbReq = { t: "db-get" } | { t: "db-put"; model: SharedModel };
-
-export type DbRes = DbReq & { result: Result<string, SharedModel> };
 
 //
 //
@@ -352,7 +348,7 @@ const transitionNextPuzzle = ({
   const puzzleNext = model.queue[0];
 
   if (!puzzleNext) {
-    return { t: "loading" };
+    return { ...model, t: "loading" };
   }
 
   const eloRating = toNextEloRating(model) ?? model.profile.eloRating;
@@ -399,4 +395,53 @@ export const toNextEloRating = (model: SharedModel): EloRating | null => {
     opponentRating: model.puzzle.rating,
     playerRating: model.profile.eloRating,
   });
+};
+
+export const transitionToInProgress = ({
+  model,
+  ctx,
+}: {
+  ctx: { now: Posix };
+  model: SharedModel;
+}): SharedModel => {
+  if (model.t === "loading") {
+    const profile = model.profile;
+
+    if (!profile) {
+      return model;
+    }
+
+    const puzzle = model.puzzle;
+    const queue = model.queue;
+
+    if (puzzle) {
+      return {
+        ...model,
+        profile: profile,
+        queue: queue ?? [],
+        puzzle,
+        moves: [],
+        startedAt: ctx.now,
+        t: "in-progress",
+      };
+    }
+
+    const [head, ...tail] = queue ?? [];
+
+    if (!head) {
+      return model;
+    }
+
+    return {
+      ...model,
+      profile: profile,
+      queue: tail,
+      puzzle: head,
+      moves: [],
+      startedAt: ctx.now,
+      t: "in-progress",
+    };
+  }
+
+  return model;
 };

@@ -1,7 +1,7 @@
-import * as Rx from 'rxjs';
-import { Cmd } from './cmd';
-import { Sub } from './sub';
-import { Posix } from './unix-time';
+import * as Rx from "rxjs";
+import { Cmd } from "./cmd";
+import { Sub } from "./sub";
+import { Posix } from "./unix-time";
 
 //
 //
@@ -59,7 +59,7 @@ const create = <Model, Msg>({
   const $send = (msg: Msg) => {
     const state = state$.getValue();
     if (state.model._debugId < state.runningDebugId) {
-      console.log('[program] skip msg');
+      console.log("[program] skip msg");
       return;
     }
     const updated = update({

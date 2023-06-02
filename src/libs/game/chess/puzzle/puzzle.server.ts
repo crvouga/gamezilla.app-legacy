@@ -6,7 +6,6 @@ import {
   Ok,
   Result,
   Sub,
-  Time,
   andThen,
   eq,
   p,
@@ -21,7 +20,9 @@ import {
   ToServer,
   handle,
   initShared,
+  transitionToInProgress,
 } from "./puzzle.shared";
+import { EloRating } from "./elo-rating";
 
 //
 //
@@ -43,7 +44,10 @@ export const init = ({
   cmd: Cmd<Msg>;
 } => {
   return {
-    model: initShared,
+    model: {
+      ...initShared,
+      requests: {},
+    },
     cmd: p(
       initialLoad(ctx.mySql, { userId: ctx.hostId }),
       Cmd.perform((result) => ({ t: "db-got-initial-load", result }))
@@ -54,21 +58,24 @@ export const init = ({
 const initialLoad =
   (dbConn: DbConnMySql, { userId }: { userId: UserId }) =>
   async () => {
-    const found = await PuzzleDb.findProfile(dbConn, userId)();
+    const found = await PuzzleDb.findElseInsertProfile(dbConn, {
+      userId,
+      eloRating: EloRating.initialRating,
+      puzzleQuery: { ratingRange: [1200, 1500] },
+    })();
+
     if (found.t === "err") {
       return found;
     }
-    const puzzleProfile = found.value;
 
-    if (!puzzleProfile) {
+    const profile = found.value;
+
+    if (!profile) {
       return Err("Initial load failed. No profile found.");
     }
 
-    const foundPuzzles = await PuzzleDb.findWithNoInteraction(dbConn, {
-      ratingRange: [
-        puzzleProfile.eloRating - 100,
-        puzzleProfile.eloRating + 100,
-      ],
+    const foundPuzzles = await PuzzleDb.findPuzzlesWithNoAttempt(dbConn, {
+      ratingRange: [profile.eloRating - 100, profile.eloRating + 100],
       userId,
     })();
 
@@ -78,10 +85,7 @@ const initialLoad =
 
     const puzzles = foundPuzzles.value;
 
-    return Ok({
-      puzzleProfile,
-      puzzles,
-    });
+    return Ok({ profile, puzzles });
   };
 
 //
@@ -108,127 +112,103 @@ export const update = ({
   model: Model;
   cmd?: Cmd;
 } => {
-  switch (msg.t) {
-    case "clock-tick": {
+  if (msg.t === "clock-tick") {
+    return {
+      model,
+      cmd: broadcast({ t: "clock-tick", now: ctx.now }),
+    };
+  }
+
+  if (msg.t === "db-got-puzzles") {
+    if (msg.result.t === "err") {
       return {
-        model,
-        cmd: broadcast({ t: "clock-tick", now: ctx.now }),
+        model: {
+          ...model,
+          requests: { ...model.requests, getPuzzles: msg.result },
+        },
+        cmd: broadcast({ t: "db-got-puzzles", result: msg.result }),
       };
     }
 
-    case "db-got-puzzles": {
-      if (msg.result.t === "err") {
-        return {
-          model,
-          cmd: broadcast({ t: "db-got-puzzles", result: msg.result }),
-        };
-      }
-
-      const modelNew: Model = {
+    const modelNew = transitionToInProgress({
+      ctx,
+      model: {
         ...model,
         queue: msg.result.value,
-      };
+      },
+    });
 
-      return {
-        model: modelNew,
-        cmd: broadcast({ t: "db-got-puzzles", result: Ok(modelNew) }),
-      };
-    }
-
-    case "db-got-profile": {
-      if (msg.result.t === "err") {
-        return {
-          model,
-          cmd: broadcast({ t: "db-got-profile", result: msg.result }),
-        };
-      }
-
-      const puzzleProfile = msg.result.value;
-
-      if (!puzzleProfile) {
-        return {
-          model,
-          cmd: broadcast({
-            t: "db-got-profile",
-            result: Err("No profile found."),
-          }),
-        };
-      }
-
-      const modelNew: Model = {
-        ...model,
-        profile: puzzleProfile,
-      };
-
-      return {
-        model: modelNew,
-        cmd: broadcast({ t: "db-got-profile", result: Ok(modelNew) }),
-      };
-    }
-
-    case "db-got-initial-load": {
-      if (msg.result.t === "err") {
-        return {
-          model,
-          cmd: broadcast({ t: "db-got-initial-load", result: msg.result }),
-        };
-      }
-
-      const { puzzleProfile, puzzles } = msg.result.value;
-
-      const puzzle = puzzles[0];
-
-      if (!puzzle) {
-        return {
-          model,
-          cmd: broadcast({
-            t: "db-got-initial-load",
-            result: Err("No puzzles found."),
-          }),
-        };
-      }
-
-      const modelNew: Model = {
-        t: "in-progress",
-        moves: [],
-        profile: puzzleProfile,
-        puzzle,
-        queue: puzzles.slice(1),
-        startedAt: ctx.now,
-      };
-
-      return {
-        model: modelNew,
-        cmd: broadcast({ t: "db-got-initial-load", result: Ok(modelNew) }),
-      };
-    }
-
-    case "db-put-interaction": {
-      return {
-        model,
-        cmd: broadcast({
-          t: "db-put-interaction",
-          result: p(
-            msg.result,
-            Result.map(() => model)
-          ),
-        }),
-      };
-    }
-
-    case "db-put-profile": {
-      return {
-        model,
-        cmd: broadcast({
-          t: "db-put-profile",
-          result: p(
-            msg.result,
-            Result.map(() => model)
-          ),
-        }),
-      };
-    }
+    return {
+      model: {
+        ...modelNew,
+        requests: { ...model.requests, getPuzzles: Ok(null) },
+      },
+      cmd: broadcast({ t: "db-got-puzzles", result: Ok(modelNew) }),
+    };
   }
+
+  if (msg.t === "db-got-initial-load") {
+    if (msg.result.t === "err") {
+      return {
+        model,
+        cmd: broadcast({ t: "db-got-initial-load", result: msg.result }),
+      };
+    }
+
+    const { profile: puzzleProfile, puzzles } = msg.result.value;
+
+    const puzzle = puzzles[0];
+
+    if (!puzzle) {
+      return {
+        model,
+        cmd: broadcast({
+          t: "db-got-initial-load",
+          result: Err("No puzzles found."),
+        }),
+      };
+    }
+
+    const modelNew: Model = {
+      ...model,
+      t: "in-progress",
+      moves: [],
+      profile: puzzleProfile,
+      puzzle,
+      queue: puzzles.slice(1),
+      startedAt: ctx.now,
+    };
+
+    return {
+      model: modelNew,
+      cmd: broadcast({ t: "db-got-initial-load", result: Ok(modelNew) }),
+    };
+  }
+
+  if (msg.t === "db-put-attempt") {
+    return {
+      model,
+      cmd: broadcast({
+        t: "db-put-attempt",
+        result: p(
+          msg.result,
+          Result.map(() => model)
+        ),
+      }),
+    };
+  }
+
+  if (msg.t === "db-put-profile") {
+    return {
+      model,
+      cmd: broadcast({
+        t: "db-put-profile",
+        result: Result.map_(msg.result, () => model),
+      }),
+    };
+  }
+
+  return { model };
 };
 
 export const updateFromClient = (input: {
@@ -245,18 +225,18 @@ export const updateFromClient = (input: {
     input,
     andThen(({ model }) => updateFromClient_({ ...input, model })),
     andThen(({ model }) =>
-      watchEnqueueMorePuzzles({ ...input, modelPrev: input.model, model })
+      watchGetPuzzles({ ...input, modelPrev: input.model, model })
     ),
     andThen(({ model }) =>
-      watchInsertInteraction({ ...input, modelPrev: input.model, model })
+      watchPutAttempt({ ...input, modelPrev: input.model, model })
     ),
     andThen(({ model }) =>
-      watchUpdateProfile({ ...input, modelPrev: input.model, model })
+      watchPutProfile({ ...input, modelPrev: input.model, model })
     )
   );
 };
 
-const watchInsertInteraction = ({
+const watchPutAttempt = ({
   modelPrev,
   model,
   ctx,
@@ -278,14 +258,14 @@ const watchInsertInteraction = ({
       model,
       cmd: Cmd.batch([
         p(
-          PuzzleDb.insertManyInteractions(ctx.mySql, [
+          PuzzleDb.insertAttempt(ctx.mySql, [
             {
               puzzleId: model.puzzle.puzzleId,
               userId: ctx.hostId,
               type: model.t,
             },
           ]),
-          Cmd.perform((result): Msg => ({ t: "db-put-interaction", result }))
+          Cmd.perform((result): Msg => ({ t: "db-put-attempt", result }))
         ),
       ]),
     };
@@ -294,7 +274,7 @@ const watchInsertInteraction = ({
   return { model };
 };
 
-const watchEnqueueMorePuzzles = ({
+const watchGetPuzzles = ({
   model,
   modelPrev,
   ctx,
@@ -307,15 +287,22 @@ const watchEnqueueMorePuzzles = ({
   cmd?: Cmd<Msg>;
 } => {
   if (
-    modelPrev.t !== "loading" &&
     model.t !== "loading" &&
+    modelPrev.t !== "loading" &&
+    model.requests.getPuzzles?.t !== "loading" &&
     model.queue.length === 0 &&
     modelPrev.queue.length > 0
   ) {
     return {
-      model: { t: "loading" },
+      model: {
+        ...model,
+        requests: {
+          ...model.requests,
+          getPuzzles: { t: "loading" },
+        },
+      },
       cmd: p(
-        PuzzleDb.findWithNoInteraction(ctx.mySql, {
+        PuzzleDb.findPuzzlesWithNoAttempt(ctx.mySql, {
           ratingRange: [
             model.profile.eloRating - 100,
             model.profile.eloRating + 100,
@@ -330,7 +317,7 @@ const watchEnqueueMorePuzzles = ({
   return { model };
 };
 
-const watchUpdateProfile = ({
+const watchPutProfile = ({
   model,
   modelPrev,
   ctx,
@@ -360,6 +347,13 @@ const updateFromClient_: typeof updateFromClient = ({
   broadcast,
   ctx,
 }) => {
+  if (msg.t === "init") {
+    return {
+      model,
+      cmd: broadcast({ ...msg, result: Ok(model) }),
+    };
+  }
+
   const handled = handle({
     ctx,
     msg,
@@ -367,7 +361,7 @@ const updateFromClient_: typeof updateFromClient = ({
   });
 
   return {
-    model: handled.t === "ok" ? handled.value : model,
+    model: handled.t === "ok" ? { ...model, ...handled.value } : model,
     cmd: broadcast({ ...msg, result: handled }),
   };
 };
@@ -402,9 +396,10 @@ export const updateFromRoom = ({
 //
 //
 
-export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
+export const subscriptions = (_intervalId: string, model: Model): Sub<Msg> => {
   if (model.t === "in-progress") {
-    return Time.every(intervalId, 500, () => ({ t: "clock-tick" }));
+    // return Time.every(intervalId, 500, () => ({ t: "clock-tick" }));
+    return Sub.None;
   }
   return Sub.None;
 };

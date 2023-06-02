@@ -14,7 +14,7 @@ import { MoveInput, uciMoveToMoveInput } from "../chess/chess";
 import { EloRating } from "./elo-rating";
 import {
   Puzzle,
-  PuzzleInteraction,
+  PuzzleAttempt,
   PuzzleProfile,
   PuzzleQuery,
   initQuery,
@@ -50,7 +50,7 @@ export const PuzzleRow = z.object({
   game_url: z.string(),
 });
 
-export const PuzzleInteractionRow = z.object({
+export const PuzzleAttemptRow = z.object({
   id: z.string(),
   puzzle_id: z.string(),
   user_id: z.string(),
@@ -142,7 +142,7 @@ export const uciMovesToPuzzleMoves = (
   return Ok([moveInput1.value, moveInput2.value, ...moveInputRest.value]);
 };
 
-const findWithNoInteraction =
+const findPuzzlesWithNoAttempt =
   (dbConn: DbConnMySql, query: PuzzleQuery & { userId: UserId }) =>
   async (): Promise<Result<string, Puzzle[]>> => {
     const { userId, ratingRange } = query;
@@ -164,7 +164,7 @@ const findWithNoInteraction =
         AND pi.puzzle_id IS NULL
       ORDER BY
         popularity DESC
-      LIMIT 10
+      LIMIT 2
     `
     );
 
@@ -179,54 +179,7 @@ const findWithNoInteraction =
     return result;
   };
 
-const findSuitable =
-  (
-    dbConn: DbConnMySql,
-    {
-      eloRating,
-      userId,
-      maxRatingDeviation,
-    }: {
-      eloRating: EloRating;
-      userId: UserId;
-      maxRatingDeviation: number;
-    }
-  ) =>
-  async (): Promise<Result<string, Puzzle[]>> => {
-    const lowerRating = eloRating - maxRatingDeviation;
-    const upperRating = eloRating + maxRatingDeviation;
-
-    const found = await dbConn.query(
-      PuzzleRow,
-      `
-      SELECT
-        p.*
-      FROM
-        game_chess_puzzle p
-      LEFT JOIN
-        game_chess_puzzle_interaction pi
-      ON
-        p.puzzle_id = pi.puzzle_id
-        AND pi.user_id = "${userId}"
-      WHERE
-        rating BETWEEN ${lowerRating} AND ${upperRating}
-        AND pi.puzzle_id IS NULL
-      LIMIT 10
-    `
-    );
-
-    if (found.t === "err") {
-      return found;
-    }
-
-    const rows = found.value;
-
-    const result = Result.combine(rows.map(rowToPuzzle));
-
-    return result;
-  };
-
-const replaceMany = async ({
+const replacePuzzle = async ({
   dbConn,
   rows,
 }: {
@@ -258,24 +211,21 @@ const replaceMany = async ({
   return inserted;
 };
 
-const insertManyInteractions =
+const insertAttempt =
   (
     dbConn: DbConnMySql,
-    interactions: PuzzleInteraction[]
+    attempts: PuzzleAttempt[]
   ): Task<Result<string, null>> =>
   async () => {
     const result = await dbConn.query(
-      PuzzleInteractionRow,
+      PuzzleAttemptRow,
       `
         INSERT INTO game_chess_puzzle_interaction (
           puzzle_id,
           user_id,
           type
-        ) VALUES ${interactions
-          .map(
-            (interaction) =>
-              `('${interaction.puzzleId}', '${interaction.userId}', '${interaction.type}')`
-          )
+        ) VALUES ${attempts
+          .map((x) => `('${x.puzzleId}', '${x.userId}', '${x.type}')`)
           .join(", ")}
       `
     );
@@ -415,11 +365,10 @@ const updateProfile =
   };
 
 export const PuzzleDb = {
-  insertManyInteractions,
+  insertAttempt,
   //
-  replaceMany,
-  findWithNoInteraction,
-  findSuitable,
+  replacePuzzle,
+  findPuzzlesWithNoAttempt,
   //
   findProfile,
   insertProfile,
