@@ -6,6 +6,7 @@ import {
   Ok,
   Result,
   Sub,
+  Time,
   andThen,
   eq,
   p,
@@ -327,7 +328,6 @@ const watchGetPuzzles = ({
           profile: model.profile,
           omit: [model.puzzle.puzzleId, ...model.queue.map((x) => x.puzzleId)],
         });
-
         $send({ t: "db-got-puzzles", result });
       },
     };
@@ -368,17 +368,10 @@ const updateFromClient_: typeof updateFromClient = ({
   ctx,
 }) => {
   if (msg.t === "init") {
-    return {
-      model,
-      cmd: broadcast({ ...msg, result: Ok(model) }),
-    };
+    return { model, cmd: broadcast({ ...msg, result: Ok(model) }) };
   }
 
-  const handled = handle({
-    ctx,
-    msg,
-    model,
-  });
+  const handled = handle({ ctx, msg, model });
 
   return {
     model: handled.t === "ok" ? { ...model, ...handled.value } : model,
@@ -415,11 +408,12 @@ export const updateFromRoom = ({
 // Subscriptions
 //
 //
+//
 
-export const subscriptions = (_intervalId: string, model: Model): Sub<Msg> => {
+export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
   if (model.t === "started") {
-    // return Time.every(intervalId, 500, () => ({ t: "clock-tick" }));
-    return Sub.None;
+    return Time.every(intervalId, 500, () => ({ t: "clock-tick" }));
+    // return Sub.None;
   }
   return Sub.None;
 };

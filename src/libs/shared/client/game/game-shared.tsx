@@ -95,7 +95,7 @@ export const ViewGameBox = ({
   return (
     <div
       className={cn(
-        "w-full h-full flex flex-col items-center justify-center",
+        "w-full h-full flex flex-col items-center justify-center overflow-y-auto",
         isSpectating && "border-4 border-blue-500 border-t-0"
       )}>
       {isSpectating && (

@@ -63,9 +63,7 @@ export type ServerModel = SharedModel & {
 
 export type ClientModel = SharedModel & {
   initializedAt?: number;
-  backendNow?: Posix;
-  openedModal?: "settings" | null;
-  draftQuery?: PuzzleQuery;
+  serverNow?: Posix;
 };
 
 type Hint = "from" | "from-and-to";
@@ -148,13 +146,7 @@ type DbMsg =
       result: Result<string, { profile: PuzzleProfile; puzzles: Puzzle[] }>;
     };
 
-export type ClientMsg =
-  | Req
-  | { t: "input-draft-query"; query: PuzzleQuery }
-  | { t: "animate" }
-  | { t: "opened-modal"; modal: "settings" }
-  | { t: "closed-modal" }
-  | { t: "clicked-save" };
+export type ClientMsg = Req;
 
 export type ToServer = Req;
 

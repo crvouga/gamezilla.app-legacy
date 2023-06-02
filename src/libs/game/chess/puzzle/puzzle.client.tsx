@@ -23,13 +23,10 @@ import * as Chess from "../chess/chess";
 import {
   ClientModel,
   ClientMsg,
-  PuzzleQuery,
-  Req,
   SharedModel,
   ToClient,
   ToServer,
   handle,
-  initQuery,
   initShared,
   isNoMoreHints,
   toCorrectMove,
@@ -45,10 +42,6 @@ import {
 //
 
 export type Model = ClientModel;
-
-const toDraftQuery = (model: Model): PuzzleQuery => {
-  return model.draftQuery ?? model.profile?.puzzleQuery ?? initQuery;
-};
 
 export const init = ({
   sendToServer,
@@ -86,51 +79,6 @@ export const update = ({
   model: Model;
   cmd?: Cmd;
 } => {
-  switch (msg.t) {
-    case "animate": {
-      return { model };
-    }
-
-    case "opened-modal": {
-      return { model: { ...model, openedModal: msg.modal } };
-    }
-
-    case "closed-modal": {
-      return { model: { ...model, openedModal: null } };
-    }
-
-    case "input-draft-query": {
-      return {
-        model: { ...model, draftQuery: msg.query },
-      };
-    }
-
-    case "clicked-save": {
-      return handleRequest({
-        msg: { t: "input-query", query: toDraftQuery(model) },
-        model: { ...model, openedModal: null },
-        sendToServer,
-        ctx,
-      });
-    }
-
-    default: {
-      return handleRequest({ msg, model, sendToServer, ctx });
-    }
-  }
-};
-
-const handleRequest = ({
-  msg,
-  model,
-  sendToServer,
-  ctx,
-}: {
-  msg: Req;
-  model: Model;
-  sendToServer: (m: ToServer) => Cmd;
-  ctx: RoomCtx;
-}) => {
   const handled = handle({ msg, model, ctx });
 
   const modelNew = syncWithServer({
@@ -157,7 +105,7 @@ export const updateFromServer = ({
   msgs?: AppMsg[];
 } => {
   if (msg.t === "clock-tick") {
-    return { model: { ...model, backendNow: msg.now } };
+    return { model: { ...model, serverNow: msg.now } };
   }
 
   const result = msg.result;
@@ -228,7 +176,7 @@ export const View = ({
       return null;
     }
     if (model.t === "started") {
-      return Math.max(0, (model.backendNow ?? ctx.now) - model.startedAt);
+      return Math.max(0, (model.serverNow ?? ctx.now) - model.startedAt);
     }
     return model.endedAt - model.startedAt;
   }, [ctx.now, model]);
@@ -324,99 +272,9 @@ export const View = ({
       </div>
 
       {!isSpectating && (
-        <>
-          <ViewBottomButtonBar
-            actions={toBottomBarActions({ model, onClose, $send })}
-          />
-          {/* <MyDrawer
-            open={model.openedModal === "settings"}
-            onClose={() => $send({ t: "closed-modal" })}>
-            <div className="p-4 flex flex-col gap-4 pb-8">
-              <div className="flex items-center w-full justify-between">
-                <p className="text-3xl">Settings</p>
-                <div className="flex items-center gap-2">
-                  <MyButton
-                    size="sm"
-                    variant="outlined"
-                    disabled={eq(model.profile?.puzzleQuery, model.draftQuery)}
-                    onClick={() => {
-                      if (model.profile) {
-                        $send({
-                          t: "input-draft-query",
-                          query: model.profile.puzzleQuery,
-                        });
-                      }
-                    }}>
-                    Cancel
-                  </MyButton>
-                  <MyButton
-                    size="sm"
-                    variant="contained"
-                    onClick={() => $send({ t: "clicked-save" })}
-                    disabled={eq(model.profile?.puzzleQuery, model.draftQuery)}>
-                    Save
-                  </MyButton>
-                </div>
-              </div>
-              <div className="flex flex-col gap-2">
-                <p className="text-lg font-semibold">Rating Range</p>
-
-                <div className="px-2 w-full flex items-center gap-4">
-                  <div className="flex-1">
-                    <MyTextField
-                      id="min-rating"
-                      onChange={(valueNew) => {
-                        const parsed = parseInt(valueNew);
-                        if (isNaN(parsed)) {
-                          return;
-                        }
-                        if (model.profile) {
-                          $send({
-                            t: "input-draft-query",
-                            query: {
-                              ...model.profile.puzzleQuery,
-                              ratingRange: [
-                                parsed,
-                                model.profile.puzzleQuery.ratingRange[1],
-                              ],
-                            },
-                          });
-                        }
-                      }}
-                      value={toDraftQuery(model).ratingRange[0]}
-                      label="Min"
-                      type="number"></MyTextField>
-                  </div>
-                  <div className="flex-1">
-                    <MyTextField
-                      id="max-rating"
-                      onChange={(valueNew) => {
-                        const parsed = parseInt(valueNew);
-                        if (isNaN(parsed)) {
-                          return;
-                        }
-                        if (model.profile) {
-                          $send({
-                            t: "input-draft-query",
-                            query: {
-                              ...model.profile.puzzleQuery,
-                              ratingRange: [
-                                model.profile.puzzleQuery.ratingRange[0],
-                                parsed,
-                              ],
-                            },
-                          });
-                        }
-                      }}
-                      value={toDraftQuery(model).ratingRange[1]}
-                      label="Max"
-                      type="number"></MyTextField>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </MyDrawer> */}
-        </>
+        <ViewBottomButtonBar
+          actions={toBottomBarActions({ model, onClose, $send })}
+        />
       )}
     </ViewGameBox>
   );
