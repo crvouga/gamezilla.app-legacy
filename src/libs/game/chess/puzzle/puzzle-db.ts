@@ -1,22 +1,13 @@
 import { UserId } from "@gamezilla/shared/app";
-import {
-  Err,
-  NonEmpty,
-  Ok,
-  Result,
-  Task,
-  Uuid,
-  p,
-} from "@gamezilla/shared/core";
+import { Err, NonEmpty, Ok, Result, Uuid, p } from "@gamezilla/shared/core";
 import { DbConnMySql } from "@gamezilla/shared/server";
 import { z } from "zod";
 import { MoveInput, uciMoveToMoveInput } from "../chess/chess";
 import { EloRating } from "./elo-rating";
 import {
   Puzzle,
-  PuzzleAttempt,
+  PuzzleInteraction,
   PuzzleProfile,
-  PuzzleQuery,
   initQuery,
   maxRating,
   minRating,
@@ -50,11 +41,11 @@ export const PuzzleRow = z.object({
   game_url: z.string(),
 });
 
-export const PuzzleAttemptRow = z.object({
+export const PuzzleInteractionRow = z.object({
   id: z.string(),
   puzzle_id: z.string(),
   user_id: z.string(),
-  interaction: z.enum(["solved", "incorrect", "solved-with-hint"]),
+  interaction: z.enum(["started", "solved", "incorrect", "solved-with-hint"]),
 });
 
 export const PuzzleQueryJSON = z.object({
@@ -142,44 +133,51 @@ export const uciMovesToPuzzleMoves = (
   return Ok([moveInput1.value, moveInput2.value, ...moveInputRest.value]);
 };
 
-const findPuzzlesWithNoAttempt =
-  (dbConn: DbConnMySql, query: PuzzleQuery & { userId: UserId }) =>
-  async (): Promise<Result<string, Puzzle[]>> => {
-    const { userId, ratingRange } = query;
+const puzzlesFindForProfile = async (
+  dbConn: DbConnMySql,
+  input: { profile: PuzzleProfile; omit?: string[] }
+): Promise<Result<string, Puzzle[]>> => {
+  const delta = 100;
+  const minRating = input.profile.eloRating - delta;
+  const maxRating = input.profile.eloRating + delta;
+  const userId = input.profile.userId;
+  const omit = input.omit?.map((x) => `"${x}"`).join(", ") ?? null;
 
-    const found = await dbConn.query(
-      PuzzleRow,
-      `
-      SELECT
-        p.*
-      FROM
-        game_chess_puzzle p
-      LEFT JOIN
-        game_chess_puzzle_interaction pi
-      ON
-        p.puzzle_id = pi.puzzle_id
-        AND pi.user_id = "${userId}"
-      WHERE
-        rating BETWEEN ${ratingRange[0]} AND ${ratingRange[1]}
-        AND pi.puzzle_id IS NULL
-      ORDER BY
-        popularity DESC
-      LIMIT 2
-    `
-    );
+  const sql = `
+    SELECT
+      p.*
+    FROM
+      game_chess_puzzle p
+    LEFT JOIN
+      game_chess_puzzle_interaction pi
+    ON
+      p.puzzle_id = pi.puzzle_id
+      AND pi.user_id = "${userId}"
+    WHERE
+      rating BETWEEN ${minRating} AND ${maxRating}
+      AND pi.puzzle_id IS NULL
+      ${omit ? `AND p.puzzle_id NOT IN (${omit})` : ""}
+    ORDER BY
+      popularity DESC
+    LIMIT 1
+  `;
 
-    if (found.t === "err") {
-      return found;
-    }
+  console.log(sql);
 
-    const rows = found.value;
+  const found = await dbConn.query(PuzzleRow, sql);
 
-    const result = Result.combine(rows.map(rowToPuzzle));
+  if (found.t === "err") {
+    return found;
+  }
 
-    return result;
-  };
+  const rows = found.value;
 
-const replacePuzzle = async ({
+  const result = Result.combine(rows.map(rowToPuzzle));
+
+  return result;
+};
+
+const puzzlesReplace = async ({
   dbConn,
   rows,
 }: {
@@ -211,36 +209,35 @@ const replacePuzzle = async ({
   return inserted;
 };
 
-const insertAttempt =
-  (
-    dbConn: DbConnMySql,
-    attempts: PuzzleAttempt[]
-  ): Task<Result<string, null>> =>
-  async () => {
-    const result = await dbConn.query(
-      PuzzleAttemptRow,
-      `
+const interactionsInsert = async (
+  dbConn: DbConnMySql,
+  interactions: PuzzleInteraction[]
+): Promise<Result<string, null>> => {
+  const result = await dbConn.query(
+    PuzzleInteractionRow,
+    `
         INSERT INTO game_chess_puzzle_interaction (
           puzzle_id,
           user_id,
           type
-        ) VALUES ${attempts
+        ) VALUES ${interactions
           .map((x) => `('${x.puzzleId}', '${x.userId}', '${x.type}')`)
           .join(", ")}
       `
-    );
-    return p(
-      result,
-      Result.map(() => null)
-    );
-  };
+  );
+  return p(
+    result,
+    Result.map(() => null)
+  );
+};
 
-const findProfile =
-  (dbConn: DbConnMySql, userId: UserId) =>
-  async (): Promise<Result<string, PuzzleProfile | null>> => {
-    const found = await dbConn.query(
-      PuzzleProfileRow,
-      `
+const profilesFind = async (
+  dbConn: DbConnMySql,
+  userId: UserId
+): Promise<Result<string, PuzzleProfile | null>> => {
+  const found = await dbConn.query(
+    PuzzleProfileRow,
+    `
       SELECT
         *
       FROM
@@ -248,49 +245,50 @@ const findProfile =
       WHERE
         user_id = "${userId}"
     `
-    );
+  );
 
-    if (found.t === "err") {
-      return found;
-    }
+  if (found.t === "err") {
+    return found;
+  }
 
-    const rows = found.value;
+  const rows = found.value;
 
-    const row = rows[0];
+  const row = rows[0];
 
-    if (!row) {
-      return Ok(null);
-    }
+  if (!row) {
+    return Ok(null);
+  }
 
-    if (!UserId.is(row.user_id)) {
-      return Err("Invalid user id");
-    }
+  if (!UserId.is(row.user_id)) {
+    return Err("Invalid user id");
+  }
 
-    if (!EloRating.is(row.elo_rating)) {
-      return Err("Invalid elo rating");
-    }
+  if (!EloRating.is(row.elo_rating)) {
+    return Err("Invalid elo rating");
+  }
 
-    const parsed = PuzzleQueryJSON.safeParse(row.puzzle_query);
+  const parsed = PuzzleQueryJSON.safeParse(row.puzzle_query);
 
-    const puzzleQuery = parsed.success ? parsed.data : initQuery;
+  const puzzleQuery = parsed.success ? parsed.data : initQuery;
 
-    const profile: PuzzleProfile = {
-      userId: row.user_id,
-      eloRating: row.elo_rating,
-      puzzleQuery: puzzleQuery,
-    };
-
-    return Ok(profile);
+  const profile: PuzzleProfile = {
+    userId: row.user_id,
+    eloRating: row.elo_rating,
+    puzzleQuery: puzzleQuery,
   };
 
-export const insertProfile =
-  (dbConn: DbConnMySql, profile: PuzzleProfile): Task<Result<string, null>> =>
-  async () => {
-    const puzzleProfileId = Uuid.generateSync();
+  return Ok(profile);
+};
 
-    const mutated = await dbConn.query(
-      PuzzleProfileRow,
-      `
+export const profilesInsert = async (
+  dbConn: DbConnMySql,
+  profile: PuzzleProfile
+): Promise<Result<string, null>> => {
+  const puzzleProfileId = Uuid.generateSync();
+
+  const mutated = await dbConn.query(
+    PuzzleProfileRow,
+    `
         INSERT INTO game_chess_puzzle_profile (
           id,
           user_id,
@@ -303,75 +301,78 @@ export const insertProfile =
           ?
         )
       `,
-      [
-        puzzleProfileId,
-        profile.userId,
-        profile.eloRating,
-        JSON.stringify(profile.puzzleQuery),
-      ]
-    );
+    [
+      puzzleProfileId,
+      profile.userId,
+      profile.eloRating,
+      JSON.stringify(profile.puzzleQuery),
+    ]
+  );
 
-    if (mutated.t === "err") {
-      return mutated;
-    }
-    return Ok(null);
-  };
+  if (mutated.t === "err") {
+    return mutated;
+  }
+  return Ok(null);
+};
 
-export const findElseInsertProfile =
-  (
-    dbConn: DbConnMySql,
-    profile: PuzzleProfile
-  ): Task<Result<string, PuzzleProfile>> =>
-  async () => {
-    const found = await findProfile(dbConn, profile.userId)();
+export const profilesFindElseInsert = async (
+  dbConn: DbConnMySql,
+  profile: PuzzleProfile
+): Promise<Result<string, PuzzleProfile>> => {
+  const found = await profilesFind(dbConn, profile.userId);
 
-    if (found.t === "err") {
-      return found;
-    }
+  if (found.t === "err") {
+    return found;
+  }
 
-    if (found.value !== null) {
-      return Ok(found.value);
-    }
+  if (found.value !== null) {
+    return Ok(found.value);
+  }
 
-    const inserted = await insertProfile(dbConn, profile)();
+  const inserted = await profilesInsert(dbConn, profile);
 
-    if (inserted.t === "err") {
-      return inserted;
-    }
+  if (inserted.t === "err") {
+    return inserted;
+  }
 
-    return Ok(profile);
-  };
+  return Ok(profile);
+};
 
-const updateProfile =
-  (dbConn: DbConnMySql, profile: PuzzleProfile): Task<Result<string, null>> =>
-  async () => {
-    const mutated = await dbConn.query(
-      PuzzleProfileRow,
-      `
-        UPDATE game_chess_puzzle_profile
-        SET
-          user_id = '${profile.userId}',
-          elo_rating = ${profile.eloRating},
-          puzzle_query = '${JSON.stringify(profile.puzzleQuery)}'
-        WHERE
-          user_id = '${profile.userId}'
-      `
-    );
+const profilesUpdate = async (
+  dbConn: DbConnMySql,
+  profile: PuzzleProfile
+): Promise<Result<string, null>> => {
+  const mutated = await dbConn.query(
+    PuzzleProfileRow,
+    `
+      UPDATE game_chess_puzzle_profile
+      SET
+        user_id = '${profile.userId}',
+        elo_rating = ${profile.eloRating},
+        puzzle_query = '${JSON.stringify(profile.puzzleQuery)}'
+      WHERE
+        user_id = '${profile.userId}'
+    `
+  );
 
-    if (mutated.t === "err") {
-      return mutated;
-    }
-    return Ok(null);
-  };
+  if (mutated.t === "err") {
+    return mutated;
+  }
+  return Ok(null);
+};
 
 export const PuzzleDb = {
-  insertAttempt,
-  //
-  replacePuzzle,
-  findPuzzlesWithNoAttempt,
-  //
-  findProfile,
-  insertProfile,
-  findElseInsertProfile,
-  updateProfile,
+  interactions: {
+    insert: interactionsInsert,
+  },
+  puzzles: {
+    replace: puzzlesReplace,
+    findForProfile: puzzlesFindForProfile,
+  },
+  profiles: {
+    find: profilesFind,
+    insert: profilesInsert,
+    findElseInsert: profilesFindElseInsert,
+    update: profilesUpdate,
+  },
 };

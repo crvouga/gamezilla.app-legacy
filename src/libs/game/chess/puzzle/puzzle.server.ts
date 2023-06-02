@@ -14,13 +14,14 @@ import { DbConnMySql, RoomCtx, RoomRequestCtx } from "@gamezilla/shared/server";
 import { GameMsg } from "../chess-shared";
 import { PuzzleDb } from "./puzzle-db";
 import {
+  PuzzleInteraction,
   ServerModel,
   ServerMsg,
   ToClient,
   ToServer,
   handle,
   initShared,
-  transitionToInProgress,
+  transitionLoadingToStarted,
 } from "./puzzle.shared";
 import { EloRating } from "./elo-rating";
 
@@ -48,45 +49,51 @@ export const init = ({
       ...initShared,
       requests: {},
     },
-    cmd: p(
-      initialLoad(ctx.mySql, { userId: ctx.hostId }),
-      Cmd.perform((result) => ({ t: "db-got-initial-load", result }))
-    ),
+    cmd: async ($send) => {
+      const result = await initialLoad({
+        dbConn: ctx.mySql,
+        userId: ctx.hostId,
+      });
+      $send({ t: "db-got-initial-load", result });
+    },
   };
 };
 
-const initialLoad =
-  (dbConn: DbConnMySql, { userId }: { userId: UserId }) =>
-  async () => {
-    const found = await PuzzleDb.findElseInsertProfile(dbConn, {
-      userId,
-      eloRating: EloRating.initialRating,
-      puzzleQuery: { ratingRange: [1200, 1500] },
-    })();
+const initialLoad = async ({
+  dbConn,
+  userId,
+}: {
+  dbConn: DbConnMySql;
+  userId: UserId;
+}) => {
+  const found = await PuzzleDb.profiles.findElseInsert(dbConn, {
+    userId,
+    eloRating: EloRating.initialRating,
+    puzzleQuery: { ratingRange: [1200, 1500] },
+  });
 
-    if (found.t === "err") {
-      return found;
-    }
+  if (found.t === "err") {
+    return found;
+  }
 
-    const profile = found.value;
+  const profile = found.value;
 
-    if (!profile) {
-      return Err("Initial load failed. No profile found.");
-    }
+  if (!profile) {
+    return Err("Initial load failed. No profile found.");
+  }
 
-    const foundPuzzles = await PuzzleDb.findPuzzlesWithNoAttempt(dbConn, {
-      ratingRange: [profile.eloRating - 100, profile.eloRating + 100],
-      userId,
-    })();
+  const foundPuzzles = await PuzzleDb.puzzles.findForProfile(dbConn, {
+    profile,
+  });
 
-    if (foundPuzzles.t === "err") {
-      return foundPuzzles;
-    }
+  if (foundPuzzles.t === "err") {
+    return foundPuzzles;
+  }
 
-    const puzzles = foundPuzzles.value;
+  const puzzles = foundPuzzles.value;
 
-    return Ok({ profile, puzzles });
-  };
+  return Ok({ profile, puzzles });
+};
 
 //
 //
@@ -98,7 +105,24 @@ const initialLoad =
 
 export type Msg = ServerMsg;
 
-export const update = ({
+export const update = (input: {
+  msg: Msg;
+  model: Model;
+  broadcast: (m: ToClient) => Cmd;
+  ctx: RoomCtx;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  return p(
+    input,
+    andThen(({ model }) => update_({ ...input, model })),
+    andThen(({ model }) =>
+      watchPutInteraction({ ctx: input.ctx, modelPrev: input.model, model })
+    )
+  );
+};
+const update_ = ({
   msg,
   model,
   broadcast,
@@ -110,7 +134,7 @@ export const update = ({
   ctx: RoomCtx;
 }): {
   model: Model;
-  cmd?: Cmd;
+  cmd?: Cmd<Msg>;
 } => {
   if (msg.t === "clock-tick") {
     return {
@@ -130,7 +154,7 @@ export const update = ({
       };
     }
 
-    const modelNew = transitionToInProgress({
+    const modelNew = transitionLoadingToStarted({
       ctx,
       model: {
         ...model,
@@ -155,7 +179,7 @@ export const update = ({
       };
     }
 
-    const { profile: puzzleProfile, puzzles } = msg.result.value;
+    const { profile, puzzles } = msg.result.value;
 
     const puzzle = puzzles[0];
 
@@ -171,9 +195,9 @@ export const update = ({
 
     const modelNew: Model = {
       ...model,
-      t: "in-progress",
+      t: "started",
       moves: [],
-      profile: puzzleProfile,
+      profile,
       puzzle,
       queue: puzzles.slice(1),
       startedAt: ctx.now,
@@ -185,15 +209,12 @@ export const update = ({
     };
   }
 
-  if (msg.t === "db-put-attempt") {
+  if (msg.t === "db-put-interaction") {
     return {
       model,
       cmd: broadcast({
-        t: "db-put-attempt",
-        result: p(
-          msg.result,
-          Result.map(() => model)
-        ),
+        t: "db-put-interaction",
+        result: Result.map_(msg.result, () => model),
       }),
     };
   }
@@ -225,49 +246,52 @@ export const updateFromClient = (input: {
     input,
     andThen(({ model }) => updateFromClient_({ ...input, model })),
     andThen(({ model }) =>
-      watchGetPuzzles({ ...input, modelPrev: input.model, model })
-    ),
-    andThen(({ model }) =>
-      watchPutAttempt({ ...input, modelPrev: input.model, model })
+      watchPutInteraction({ ...input, modelPrev: input.model, model })
     ),
     andThen(({ model }) =>
       watchPutProfile({ ...input, modelPrev: input.model, model })
+    ),
+    andThen(({ model }) =>
+      watchGetPuzzles({ ...input, modelPrev: input.model, model })
     )
   );
 };
 
-const watchPutAttempt = ({
+const watchPutInteraction = ({
   modelPrev,
   model,
   ctx,
 }: {
   modelPrev: Model;
   model: Model;
-  ctx: RoomRequestCtx;
+  ctx: RoomCtx;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
+  if (model.t === modelPrev.t) {
+    return { model };
+  }
+
   if (
-    model.t !== modelPrev.t &&
-    (model.t === "solved" ||
-      model.t === "incorrect" ||
-      model.t === "solved-with-hint")
+    model.t === "started" ||
+    model.t === "solved" ||
+    model.t === "incorrect" ||
+    model.t === "solved-with-hint"
   ) {
+    const interaction: PuzzleInteraction = {
+      puzzleId: model.puzzle.puzzleId,
+      userId: ctx.hostId,
+      type: model.t,
+    };
     return {
       model,
-      cmd: Cmd.batch([
-        p(
-          PuzzleDb.insertAttempt(ctx.mySql, [
-            {
-              puzzleId: model.puzzle.puzzleId,
-              userId: ctx.hostId,
-              type: model.t,
-            },
-          ]),
-          Cmd.perform((result): Msg => ({ t: "db-put-attempt", result }))
-        ),
-      ]),
+      cmd: async ($send) => {
+        const result = await PuzzleDb.interactions.insert(ctx.mySql, [
+          interaction,
+        ]);
+        $send({ t: "db-put-interaction", result });
+      },
     };
   }
 
@@ -276,7 +300,6 @@ const watchPutAttempt = ({
 
 const watchGetPuzzles = ({
   model,
-  modelPrev,
   ctx,
 }: {
   model: Model;
@@ -288,10 +311,8 @@ const watchGetPuzzles = ({
 } => {
   if (
     model.t !== "loading" &&
-    modelPrev.t !== "loading" &&
     model.requests.getPuzzles?.t !== "loading" &&
-    model.queue.length === 0 &&
-    modelPrev.queue.length > 0
+    model.queue.length === 0
   ) {
     return {
       model: {
@@ -301,16 +322,14 @@ const watchGetPuzzles = ({
           getPuzzles: { t: "loading" },
         },
       },
-      cmd: p(
-        PuzzleDb.findPuzzlesWithNoAttempt(ctx.mySql, {
-          ratingRange: [
-            model.profile.eloRating - 100,
-            model.profile.eloRating + 100,
-          ],
-          userId: ctx.hostId,
-        }),
-        Cmd.perform((result): Msg => ({ t: "db-got-puzzles", result }))
-      ),
+      cmd: async ($send) => {
+        const result = await PuzzleDb.puzzles.findForProfile(ctx.mySql, {
+          profile: model.profile,
+          omit: [model.puzzle.puzzleId, ...model.queue.map((x) => x.puzzleId)],
+        });
+
+        $send({ t: "db-got-puzzles", result });
+      },
     };
   }
 
@@ -330,12 +349,13 @@ const watchPutProfile = ({
   cmd?: Cmd<Msg>;
 } => {
   if (model.profile && !eq(model.profile, modelPrev.profile)) {
+    const profile = model.profile;
     return {
       model,
-      cmd: p(
-        PuzzleDb.updateProfile(ctx.mySql, model.profile),
-        Cmd.perform((result): Msg => ({ t: "db-put-profile", result }))
-      ),
+      cmd: async ($send) => {
+        const result = await PuzzleDb.profiles.update(ctx.mySql, profile);
+        $send({ t: "db-put-profile", result });
+      },
     };
   }
   return { model };
@@ -397,7 +417,7 @@ export const updateFromRoom = ({
 //
 
 export const subscriptions = (_intervalId: string, model: Model): Sub<Msg> => {
-  if (model.t === "in-progress") {
+  if (model.t === "started") {
     // return Time.every(intervalId, 500, () => ({ t: "clock-tick" }));
     return Sub.None;
   }

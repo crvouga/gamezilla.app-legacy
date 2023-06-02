@@ -28,7 +28,7 @@ type BaseModel = {
 
 type MainModel =
   | {
-      t: "in-progress";
+      t: "started";
       startedAt: Posix;
       hint?: Hint | null;
     }
@@ -76,7 +76,7 @@ const hintToNextHint: { [key in Hint]: Hint } = {
 };
 
 export const isNoMoreHints = (model: SharedModel): boolean => {
-  return model.t === "in-progress" && model.hint === "from-and-to";
+  return model.t === "started" && model.hint === "from-and-to";
 };
 
 export const initQuery: PuzzleQuery = {
@@ -111,8 +111,8 @@ export type PuzzleProfile = {
   puzzleQuery: PuzzleQuery;
 };
 
-export type PuzzleAttempt = {
-  type: "solved" | "incorrect" | "solved-with-hint";
+export type PuzzleInteraction = {
+  type: "started" | "solved" | "incorrect" | "solved-with-hint";
   puzzleId: string;
   userId: UserId;
 };
@@ -141,8 +141,8 @@ export type ServerMsg = { t: "clock-tick" } | DbMsg;
 type DbMsg =
   | { t: "db-got-puzzles"; result: Result<string, Puzzle[]> }
   | { t: "db-got-profile"; result: Result<string, PuzzleProfile | null> }
-  | { t: "db-put-attempt"; result: Result<string, null> }
   | { t: "db-put-profile"; result: Result<string, null> }
+  | { t: "db-put-interaction"; result: Result<string, null> }
   | {
       t: "db-got-initial-load";
       result: Result<string, { profile: PuzzleProfile; puzzles: Puzzle[] }>;
@@ -172,7 +172,7 @@ export const toPlayerColor = (puzzle: Puzzle): Chess.Color => {
 };
 
 export const toCorrectMove = (model: SharedModel): Chess.MoveInput | null => {
-  if (model.t === "in-progress") {
+  if (model.t === "started") {
     return model.puzzle.correctMoves[model.moves.length] ?? null;
   }
   return null;
@@ -245,7 +245,7 @@ export const handle = ({
   //
   //
 
-  if (model.t === "in-progress") {
+  if (model.t === "started") {
     if (msg.t === "input-move") {
       const board = toCurrentBoard(model);
 
@@ -325,7 +325,7 @@ export const handle = ({
       return Ok({
         ...model,
         moves: [],
-        t: "in-progress",
+        t: "started",
         hasLost: true,
       });
     }
@@ -345,23 +345,31 @@ const transitionNextPuzzle = ({
     return model;
   }
 
-  const puzzleNext = model.queue[0];
+  const [puzzleNew, ...queueNew] = model.queue;
 
-  if (!puzzleNext) {
-    return { ...model, t: "loading" };
+  if (!puzzleNew) {
+    return {
+      ...model,
+      puzzle: puzzleNew,
+      t: "loading",
+    };
   }
 
-  const eloRating = toNextEloRating(model) ?? model.profile.eloRating;
+  const profileNew: PuzzleProfile = {
+    ...model.profile,
+    eloRating: toNextEloRating(model) ?? model.profile.eloRating,
+  };
 
   return {
-    t: "in-progress",
+    t: "started",
     hasLost: false,
+    hasUsedHint: false,
+    hint: null,
     startedAt: ctx.now,
     moves: [],
-    profile: { ...model.profile, eloRating },
-    puzzle: puzzleNext,
-    queue: model.queue.slice(1),
-    hint: null,
+    profile: profileNew,
+    puzzle: puzzleNew,
+    queue: queueNew,
   };
 };
 
@@ -378,7 +386,7 @@ export const toNextEloRating = (model: SharedModel): EloRating | null => {
     });
   }
 
-  if (model.t === "in-progress") {
+  if (model.t === "started") {
     return model.profile.eloRating;
   }
 
@@ -397,7 +405,7 @@ export const toNextEloRating = (model: SharedModel): EloRating | null => {
   });
 };
 
-export const transitionToInProgress = ({
+export const transitionLoadingToStarted = ({
   model,
   ctx,
 }: {
@@ -416,13 +424,15 @@ export const transitionToInProgress = ({
 
     if (puzzle) {
       return {
-        ...model,
+        hasLost: false,
+        hasUsedHint: false,
+        hint: null,
         profile: profile,
         queue: queue ?? [],
         puzzle,
         moves: [],
         startedAt: ctx.now,
-        t: "in-progress",
+        t: "started",
       };
     }
 
@@ -439,7 +449,7 @@ export const transitionToInProgress = ({
       puzzle: head,
       moves: [],
       startedAt: ctx.now,
-      t: "in-progress",
+      t: "started",
     };
   }
 

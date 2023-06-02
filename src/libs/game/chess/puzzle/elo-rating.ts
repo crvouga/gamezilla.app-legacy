@@ -10,7 +10,7 @@ import { IntRange } from "@gamezilla/shared/core";
 
 export type EloRating = number & { readonly __brand: unique symbol };
 
-const MIN_ELO_RATING: EloRating = 600 as EloRating;
+const MIN_ELO_RATING: EloRating = 100 as EloRating;
 
 const MAX_ELO_RATING: EloRating = 4000 as EloRating;
 

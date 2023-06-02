@@ -227,7 +227,7 @@ export const View = ({
     if (model.t === "loading") {
       return null;
     }
-    if (model.t === "in-progress") {
+    if (model.t === "started") {
       return Math.max(0, (model.backendNow ?? ctx.now) - model.startedAt);
     }
     return model.endedAt - model.startedAt;
@@ -285,7 +285,7 @@ export const View = ({
               key={model.puzzle.puzzleId}
               model={toCurrentBoard(model)}
               isDraggablePiece={({ piece }) => {
-                if (model.t !== "in-progress") {
+                if (model.t !== "started") {
                   return false;
                 }
                 const color = Chess.toColor(piece);
@@ -429,7 +429,7 @@ const toChessboardPropsForHint = (model: Model): Partial<Chess.BoardProps> => {
     return {};
   }
 
-  if (model.t !== "in-progress") {
+  if (model.t !== "started") {
     return {};
   }
 
@@ -506,7 +506,7 @@ export const toBottomBarActions = ({
     return [exit, { ...hint, disabled: true }];
   }
 
-  if (model.t === "in-progress") {
+  if (model.t === "started") {
     return [exit, hint];
   }
 
@@ -552,7 +552,7 @@ const ViewStatusBar = ({ model }: { model: Model }) => {
     );
   }
 
-  if (model.t === "in-progress") {
+  if (model.t === "started") {
     return (
       <div
         className={cn(
