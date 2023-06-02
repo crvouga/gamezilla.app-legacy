@@ -162,8 +162,6 @@ const puzzlesFindForProfile = async (
     LIMIT 1
   `;
 
-  console.log(sql);
-
   const found = await dbConn.query(PuzzleRow, sql);
 
   if (found.t === "err") {
