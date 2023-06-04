@@ -967,3 +967,7 @@ export const uciMoveToMoveInput = (
     promotion: promotionPiece,
   });
 };
+
+export const isMoveEqual = (a: MoveInput, b: MoveInput): boolean => {
+  return a.from === b.from && a.to === b.to;
+};

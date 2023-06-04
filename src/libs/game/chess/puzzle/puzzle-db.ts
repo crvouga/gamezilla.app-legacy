@@ -12,9 +12,7 @@ import {
   maxRating,
   minRating,
 } from "./puzzle.shared";
-import { deinterleave } from "./utils";
-
-// source https://database.lichess.org/#puzzles
+import { splitEvery } from "./utils";
 
 //
 //
@@ -41,21 +39,21 @@ export const PuzzleRow = z.object({
   game_url: z.string(),
 });
 
-export const PuzzleInteractionRow = z.object({
+const PuzzleInteractionRow = z.object({
   id: z.string(),
   puzzle_id: z.string(),
   user_id: z.string(),
-  interaction: z.enum(["started", "solved", "incorrect", "solved-with-hint"]),
+  type: z.enum(["started", "solved", "incorrect", "solved-with-hint"]),
 });
 
-export const PuzzleQueryJSON = z.object({
+const PuzzleQueryJSON = z.object({
   ratingRange: z.tuple([
     z.number().min(minRating).max(maxRating),
     z.number().min(minRating).max(maxRating),
   ]),
 });
 
-export const PuzzleProfileRow = z.object({
+const PuzzleProfileRow = z.object({
   id: z.string(),
   user_id: z.string(),
   elo_rating: Int,
@@ -72,30 +70,41 @@ export const PuzzleProfileRow = z.object({
 const rowToPuzzle = (
   row: z.infer<typeof PuzzleRow>
 ): Result<string, Puzzle> => {
-  const puzzleMoves = uciMovesToPuzzleMoves(row.moves.split(" "));
-  if (puzzleMoves.t === "err") {
-    return puzzleMoves;
+  const parsedMoves = uciMovesToPuzzleMoves(row.moves.split(" "));
+
+  if (parsedMoves.t === "err") {
+    return parsedMoves;
   }
 
-  const [opponentMoves, correctMoves] = deinterleave(puzzleMoves.value);
+  const moves = splitEvery(2, parsedMoves.value).flatMap(
+    ([opponentMove, correctMove]) => {
+      if (!opponentMove) {
+        return [];
+      }
+      if (!correctMove) {
+        return [];
+      }
+      return [
+        {
+          opponentMove,
+          correctMove,
+        },
+      ];
+    }
+  );
 
-  if (!NonEmpty.is(opponentMoves)) {
-    return Err("Opponent moves is empty");
-  }
-
-  if (!NonEmpty.is(correctMoves)) {
-    return Err("Correct moves is empty");
+  if (!NonEmpty.is(moves)) {
+    return Err("Failed to parse moves from puzzle database record");
   }
 
   if (!EloRating.is(row.rating)) {
-    return Err("Invalid rating. Did not pass as elo rating");
+    return Err("Failed to parse elo rating from puzzle database record");
   }
 
   return Ok({
-    opponentMoves,
-    correctMoves,
     puzzleId: row.puzzle_id,
     fen: row.fen,
+    moves,
     rating: row.rating,
     ratingDeviation: row.rating_deviation,
     popularity: row.popularity,

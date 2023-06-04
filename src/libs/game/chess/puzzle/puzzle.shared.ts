@@ -1,8 +1,15 @@
 import { UserId } from "@gamezilla/shared/app";
-import { Err, Ok, Posix, RemoteResult, Result } from "@gamezilla/shared/core";
+import {
+  Err,
+  NonEmpty,
+  Ok,
+  Posix,
+  RemoteResult,
+  Result,
+} from "@gamezilla/shared/core";
 import * as Chess from "../chess/chess";
 import { EloRating } from "./elo-rating";
-import { interleave, zip } from "./utils";
+import { zip } from "./utils";
 
 export const maxRating = 3212;
 export const minRating = 545;
@@ -89,11 +96,15 @@ export type PuzzleQuery = {
   ratingRange: [number, number];
 };
 
+export type PuzzleMove = {
+  opponentMove: Chess.MoveInput;
+  correctMove: Chess.MoveInput;
+};
+
 export type Puzzle = {
   puzzleId: string;
   fen: string;
-  opponentMoves: [Chess.MoveInput, ...Chess.MoveInput[]];
-  correctMoves: [Chess.MoveInput, ...Chess.MoveInput[]];
+  moves: NonEmpty<PuzzleMove>;
   rating: EloRating;
   ratingDeviation: number;
   popularity: number;
@@ -164,7 +175,7 @@ export const toPlayerColor = (puzzle: Puzzle): Chess.Color => {
 
 export const toCorrectMove = (model: SharedModel): Chess.MoveInput | null => {
   if (model.t === "started") {
-    return model.puzzle.correctMoves[model.moves.length] ?? null;
+    return model.puzzle.moves[model.moves.length]?.correctMove ?? null;
   }
   return null;
 };
@@ -183,31 +194,68 @@ export const toCurrentBoard = (model: SharedModel): Chess.Model => {
   if (model.t === "loading") {
     return Chess.init();
   }
-  const moves = interleave(model.puzzle.opponentMoves, model.moves);
 
-  const board = moves.reduce((board, move) => {
-    const moved = Chess.move(move, board);
-    if (moved.t === "ok") {
-      return moved.value;
+  let board = Chess.initFromFen(model.puzzle);
+  const playerMoves: Chess.MoveInput[] = [];
+
+  for (let i = 0; i < model.puzzle.moves.length; i++) {
+    const puzzleMove = model.puzzle.moves[i];
+
+    if (!puzzleMove) {
+      break;
     }
-    return board;
-  }, Chess.initFromFen(model.puzzle));
+
+    const opponentMoved = Chess.move(puzzleMove.opponentMove, board);
+
+    if (opponentMoved.t === "err") {
+      break;
+    }
+
+    board = opponentMoved.value;
+
+    const playerMove = model.moves[i];
+
+    if (!playerMove) {
+      break;
+    }
+
+    const playerMoved = Chess.move(playerMove, board);
+
+    if (playerMoved.t === "err") {
+      break;
+    }
+
+    board = playerMoved.value;
+
+    playerMoves.push(playerMove);
+
+    if (didFailPuzzle(model.puzzle, playerMoves)) {
+      break;
+    }
+  }
 
   return board;
 };
 
-const didSolvePuzzle = (puzzle: Puzzle, moves: Chess.MoveInput[]): boolean => {
+const didSolvePuzzle = (
+  puzzle: Puzzle,
+  playerMoves: Chess.MoveInput[]
+): boolean => {
   return (
-    puzzle.correctMoves.length === moves.length &&
-    zip(puzzle.correctMoves, moves).every(
-      ([a, b]) => a.from === b.from && a.to === b.to
+    puzzle.moves.length === playerMoves.length &&
+    zip(puzzle.moves, playerMoves).every(([puzzleMove, playerMoves]) =>
+      Chess.isMoveEqual(puzzleMove.correctMove, playerMoves)
     )
   );
 };
 
-const didFailPuzzle = (puzzle: Puzzle, moves: Chess.MoveInput[]): boolean => {
-  return zip(puzzle.correctMoves, moves).some(
-    ([a, b]) => !(a.from === b.from && a.to === b.to)
+const didFailPuzzle = (
+  puzzle: Puzzle,
+  playerMoves: Chess.MoveInput[]
+): boolean => {
+  return zip(puzzle.moves, playerMoves).some(
+    ([puzzleMove, playerMove]) =>
+      !Chess.isMoveEqual(puzzleMove.correctMove, playerMove)
   );
 };
 

@@ -261,9 +261,7 @@ export const View = ({
             </p>
             <p className="text-neutral-300">out of</p>
             <p className="text-inherit">
-              {model.t === "loading"
-                ? "0"
-                : model.puzzle?.correctMoves?.length ?? "0"}
+              {model.t === "loading" ? "0" : model.puzzle?.moves?.length ?? "0"}
             </p>
           </div>
         </div>

@@ -35,3 +35,26 @@ export const zip = <A, B>(a: A[], b: B[]): [A, B][] => {
   }
   return result;
 };
+
+export const splitEvery = <T>(n: number, xs: T[]): T[][] => {
+  const partitions: T[][] = [];
+
+  let partition: T[] = [];
+
+  for (let i = 0; i < xs.length; i++) {
+    const x = xs[i];
+
+    if (!x) {
+      continue;
+    }
+
+    partition.push(x);
+
+    if (partition.length >= n) {
+      partitions.push(partition);
+      partition = [];
+    }
+  }
+
+  return partitions;
+};

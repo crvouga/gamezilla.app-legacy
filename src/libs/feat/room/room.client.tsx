@@ -381,45 +381,29 @@ export const updateFromApp = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  switch (msg.t) {
-    case "route-changed": {
-      if (msg.route.t !== "room") {
-        return { model };
-      }
-
-      switch (msg.route.c.t) {
-        case "room":
-        case "room-list": {
-          return updateListRooms({
-            model,
-            initiatorMsg: msg,
-            sendToServer,
-          });
-        }
-
-        default: {
-          return {
-            model,
-          };
-        }
-      }
-    }
-
-    case "wire-connected": {
-      return updateListRooms({ model, initiatorMsg: msg, sendToServer });
-    }
-
-    default: {
-      return {
-        model,
-      };
-    }
+  if (
+    msg.t === "route-changed" &&
+    msg.route.t === "room" &&
+    msg.route.c.t === "room-list"
+  ) {
+    return updateListRooms({
+      model,
+      initiatorMsg: msg,
+      sendToServer,
+    });
   }
+
+  if (msg.t === "wire-connected") {
+    return updateListRooms({ model, initiatorMsg: msg, sendToServer });
+  }
+
+  return {
+    model,
+  };
 };
 
 const updateListRooms = ({
   model,
-
   initiatorMsg,
   sendToServer,
 }: {
@@ -427,9 +411,6 @@ const updateListRooms = ({
   initiatorMsg: unknown;
   sendToServer: (m: ToServer) => Cmd;
 }) => {
-  if (model.requests?.list?.t === "loading") {
-    return { model };
-  }
   return {
     model: {
       ...model,
