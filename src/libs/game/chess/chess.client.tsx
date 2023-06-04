@@ -3,6 +3,7 @@ import {
   RoomCtx,
   RoomViewCtx,
   ViewMainMenu,
+  mainMenuButtons,
 } from "@gamezilla/shared/client";
 import {
   Audio,
@@ -13,11 +14,7 @@ import {
   Unit,
   p,
 } from "@gamezilla/shared/core";
-import {
-  IconComputerDesktop,
-  IconPuzzlePiece,
-  IconUsers,
-} from "@gamezilla/shared/ui";
+import { IconPuzzlePiece } from "@gamezilla/shared/ui";
 import {
   ClientModel,
   ClientMsg,
@@ -300,29 +297,26 @@ export const View = ({
           roomCtx={gameRoomCtx}
           coverArt={viewCoverArt()}
           buttons={[
-            {
-              label: "Play Computer",
-              icon: <IconComputerDesktop />,
+            mainMenuButtons.playComputer({
               onClick: () =>
                 $send({
                   t: "input-mode",
                   mode: "vs-bot",
                   userId: ctx.currentUserId,
                 }),
-            },
-            {
-              label: "Play Friend",
-              icon: <IconUsers />,
+            }),
+            mainMenuButtons.playFriend({
               onClick: () =>
                 $send({
                   t: "input-mode",
                   mode: "vs-user",
                   userId: ctx.currentUserId,
                 }),
-            },
+            }),
             {
-              label: "Puzzles",
-              icon: <IconPuzzlePiece />,
+              title: "Puzzles",
+              description: "Train with more than 3 mil puzzles",
+              renderIcon: (props) => <IconPuzzlePiece {...props} />,
               onClick: () =>
                 $send({
                   t: "input-mode",

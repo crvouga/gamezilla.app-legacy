@@ -3,9 +3,7 @@ import {
   Box,
   Button,
   FillBox,
-  IconArrowLeftOnRect,
   Icons,
-  MyButton,
   Typography,
   ViewNode,
   avatar,
@@ -27,63 +25,6 @@ export type RoomViewCtx = ViewCtx & {
 export type RoomMsg = { t: "user-left"; userId: UserId };
 
 export const bannerArtAspectRatio = Math.pow(3 / 4, 4);
-
-export const ViewMainMenu = ({
-  title,
-  coverArt,
-  buttons,
-  roomCtx,
-}: {
-  roomCtx: RoomViewCtx;
-  title: string;
-  coverArt: ViewNode;
-  buttons: { icon: ViewNode; label: string; onClick: () => void }[];
-}) => {
-  if (roomCtx.currentUserId !== roomCtx.hostId) {
-    return (
-      <div className="w-full h-full flex items-center justify-center flex-col">
-        <div className="w-24 h-24 rounded overflow-hidden">{coverArt}</div>
-        <p className="text-center text-3xl mt-3">{title}</p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="w-full h-full flex flex-col overflow-y-hidden">
-      <div className="w-full flex-1 flex flex-col items-center px-4 py-12 overflow-y-auto">
-        <div className="pt-8">
-          <div className="w-28 h-28 rounded-lg border border-neutral-600 overflow-hidden">
-            {coverArt}
-          </div>
-        </div>
-
-        <h1 className="text-4xl font-bold mt-4">{title}</h1>
-
-        <div className="w-full flex flex-col gap-6 mt-6">
-          {buttons.map(({ icon, label, onClick }, index) => (
-            <MyButton
-              key={index}
-              onClick={onClick}
-              variant="contained"
-              color="default"
-              size="lg"
-              className="w-full">
-              {icon}
-              {label}
-            </MyButton>
-          ))}
-        </div>
-      </div>
-
-      <div className="p-4 flex justify-center">
-        <MyButton onClick={roomCtx.onQuit} className="w-full">
-          <IconArrowLeftOnRect />
-          Quit
-        </MyButton>
-      </div>
-    </div>
-  );
-};
 
 export const ViewGameBox = ({
   children,

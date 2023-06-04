@@ -149,8 +149,9 @@ export const View = ({
       title="Flow"
       buttons={[
         {
-          icon: <IconScrewdriverWrench />,
-          label: "Puzzle builder",
+          renderIcon: (props) => <IconScrewdriverWrench {...props} />,
+          title: "Puzzle builder",
+          description: "Build puzzles for other players to play",
           onClick: () => {
             $send({ t: "input-mode", mode: "puzzle-builder" });
           },

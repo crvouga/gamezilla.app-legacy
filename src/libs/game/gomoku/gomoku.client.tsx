@@ -1,18 +1,18 @@
-import { Cmd, Sub } from "@gamezilla/shared/core";
 import {
   Ctx,
   RoomCtx,
   RoomViewCtx,
   ViewCtx,
   ViewMainMenu,
+  mainMenuButtons,
 } from "@gamezilla/shared/client";
-import { IconComputerDesktop, IconUsers } from "@gamezilla/shared/ui";
+import { Cmd, Sub } from "@gamezilla/shared/core";
 import {
-  ServerModel,
   ClientModel,
   ClientMsg,
-  ToServer,
+  ServerModel,
   ToClient,
+  ToServer,
 } from "./gomoku.shared";
 import { ViewCoverArt } from "./gomoku/gomoku-ui";
 import * as VsBot from "./vs-bot/vs-bot.client";
@@ -245,27 +245,23 @@ export const view = ({
           coverArt={ViewCoverArt()}
           roomCtx={gameRoomCtx}
           buttons={[
-            {
-              label: "Play Computer",
-              icon: <IconComputerDesktop />,
+            mainMenuButtons.playComputer({
               onClick: () =>
                 $send({
                   t: "input-mode",
                   userId: ctx.currentUserId,
                   mode: "vs-bot",
                 }),
-            },
+            }),
 
-            {
-              label: "Play Friend",
-              icon: <IconUsers />,
+            mainMenuButtons.playFriend({
               onClick: () =>
                 $send({
                   t: "input-mode",
                   userId: ctx.currentUserId,
                   mode: "vs-user",
                 }),
-            },
+            }),
           ]}
         />
       );

@@ -5,9 +5,9 @@ import {
   RoomViewCtx,
   ViewCtx,
   ViewMainMenu,
+  mainMenuButtons,
 } from "@gamezilla/shared/client";
 import { Cmd, Sub } from "@gamezilla/shared/core";
-import { IconComputerDesktop, IconUsers } from "@gamezilla/shared/ui";
 import {
   ClientModel,
   ClientMsg,
@@ -225,16 +225,12 @@ export const View = ({
         roomCtx={gameRoomCtx}
         coverArt={viewCoverArt()}
         buttons={[
-          {
-            label: "Play Friend",
-            icon: <IconUsers />,
+          mainMenuButtons.playFriend({
             onClick: () => $send({ t: "input-mode", mode: "vs-user" }),
-          },
-          {
-            label: "Play Computer",
-            icon: <IconComputerDesktop />,
+          }),
+          mainMenuButtons.playComputer({
             onClick: () => $send({ t: "input-mode", mode: "vs-bot" }),
-          },
+          }),
         ]}
       />
     );

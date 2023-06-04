@@ -5,10 +5,10 @@ import {
   ViewCtx,
   ViewMainMenu,
   bannerArtAspectRatio,
+  mainMenuButtons,
 } from "@gamezilla/shared/client";
 import { Cmd, Posix, Sub } from "@gamezilla/shared/core";
 import * as UI from "@gamezilla/shared/ui";
-import { IconComputerDesktop, IconUsers } from "@gamezilla/shared/ui";
 import {
   ClientModel,
   ClientMsg,
@@ -173,16 +173,12 @@ export const View = ({
           title="Connect Four"
           coverArt={<ViewCoverArt />}
           buttons={[
-            {
-              icon: <IconUsers />,
-              label: "Play Friend",
+            mainMenuButtons.playFriend({
               onClick: () => $send({ mode: "vs-user", t: "input-mode" }),
-            },
-            {
-              icon: <IconComputerDesktop className="w-6 h-6" />,
-              label: "Play Computer",
+            }),
+            mainMenuButtons.playComputer({
               onClick: () => $send({ mode: "vs-bot", t: "input-mode" }),
-            },
+            }),
           ]}
         />
       );
