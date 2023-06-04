@@ -379,7 +379,7 @@ export const toNextEloRating = (model: SharedModel): EloRating | null => {
   }
 
   if (model.t === "started") {
-    return model.profile.eloRating;
+    return null;
   }
 
   if (model.t === "solved") {
@@ -390,11 +390,15 @@ export const toNextEloRating = (model: SharedModel): EloRating | null => {
     });
   }
 
-  return EloRating.toNextRating({
-    endGame: "lost",
-    opponentRating: model.puzzle.rating,
-    playerRating: model.profile.eloRating,
-  });
+  if (model.t === "incorrect" || model.t === "solved-with-hint") {
+    return EloRating.toNextRating({
+      endGame: "lost",
+      opponentRating: model.puzzle.rating,
+      playerRating: model.profile.eloRating,
+    });
+  }
+
+  return null;
 };
 
 export const transitionLoadingToStarted = ({
