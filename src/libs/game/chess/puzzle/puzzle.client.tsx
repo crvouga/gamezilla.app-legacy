@@ -43,9 +43,7 @@ import {
 
 export type Model = ClientModel;
 
-export const init = ({
-  sendToServer,
-}: {
+export const init = (_input: {
   sendToServer: (m: ToServer) => Cmd;
 }): {
   model: Model;
@@ -53,7 +51,7 @@ export const init = ({
 } => {
   return {
     model: initShared,
-    cmd: sendToServer({ t: "init" }),
+    cmd: Cmd.None,
   };
 };
 

@@ -367,10 +367,6 @@ const updateFromClient_: typeof updateFromClient = ({
   broadcast,
   ctx,
 }) => {
-  if (msg.t === "init") {
-    return { model, cmd: broadcast({ ...msg, result: Ok(model) }) };
-  }
-
   const handled = handle({ ctx, msg, model });
 
   return {

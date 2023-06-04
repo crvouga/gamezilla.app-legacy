@@ -124,7 +124,6 @@ export type PuzzleInteraction = {
 //
 
 export type Req =
-  | { t: "init" }
   | { t: "input-query"; query: PuzzleQuery }
   | { t: "input-move"; moveInput: Chess.MoveInput }
   | { t: "next" }
