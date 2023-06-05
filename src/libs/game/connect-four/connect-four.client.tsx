@@ -1,9 +1,8 @@
 import {
   Ctx,
+  MainMenuScreen,
   RoomCtx,
   RoomViewCtx,
-  ViewCtx,
-  MainMenuScreen,
   bannerArtAspectRatio,
   mainMenuButtons,
 } from "@gamezilla/shared/client";
@@ -159,12 +158,10 @@ export const View = ({
   model,
   $send,
   ctx,
-  gameRoomCtx,
 }: {
   model: Model;
   $send: (msg: Msg) => void;
-  ctx: ViewCtx;
-  gameRoomCtx: RoomViewCtx;
+  ctx: RoomViewCtx;
 }) => {
   const goBack = () => $send({ t: "input-mode", mode: "none" });
 
@@ -172,7 +169,7 @@ export const View = ({
     case "none": {
       return (
         <MainMenuScreen
-          roomCtx={gameRoomCtx}
+          roomCtx={ctx}
           title="Connect Four"
           coverArt={<ViewCoverArt />}
           buttons={[
@@ -192,8 +189,8 @@ export const View = ({
         <VsUser.View
           ctx={ctx}
           $send={(c) => $send({ t: "vs-user", c })}
-          goBack={goBack}
           model={model.c}
+          onQuit={goBack}
         />
       );
     }
@@ -220,8 +217,6 @@ export const View = ({
 //
 
 export const BannerArt = () => {
-  const iconSx: UI.Sx = { width: 120, height: 120, maxHeight: "66%" };
-
   return (
     <UI.AspectRatio aspectRatio={bannerArtAspectRatio}>
       <UI.List
@@ -234,8 +229,8 @@ export const BannerArt = () => {
           justifyContent: "center",
           gap: 4,
         }}>
-        <PlayerIcon playerType="PlayerOne" sx={iconSx} />
-        <PlayerIcon playerType="PlayerTwo" sx={iconSx} />
+        <PlayerIcon playerType="PlayerOne" />
+        <PlayerIcon playerType="PlayerTwo" />
       </UI.List>
       <UI.List
         sx={{

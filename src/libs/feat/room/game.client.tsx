@@ -410,7 +410,6 @@ export const View = ({
     case "connect-four": {
       return (
         <ConnectFourClient.View
-          gameRoomCtx={ctx}
           ctx={ctx}
           model={model.c}
           $send={(c) => $send({ t: "connect-four", c })}

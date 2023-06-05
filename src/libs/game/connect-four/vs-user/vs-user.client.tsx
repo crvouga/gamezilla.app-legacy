@@ -1,6 +1,12 @@
 import { keyframes } from "@emotion/react";
 import { UserId } from "@gamezilla/shared/app";
-import { ChoiceChips, RoomCtx, ViewCtx } from "@gamezilla/shared/client";
+import {
+  ChoiceChips,
+  RoomCtx,
+  RoomViewCtx,
+  ViewCtx,
+  VsUserSetupScreen,
+} from "@gamezilla/shared/client";
 import { Cmd, Sub } from "@gamezilla/shared/core";
 import {
   ActionButton,
@@ -15,7 +21,6 @@ import {
   Icons,
   MyButton,
   Paper,
-  Sx,
   Typography,
   useTheme,
 } from "@gamezilla/shared/ui";
@@ -30,6 +35,7 @@ import {
   PlayerOneIcon,
   PlayerTwoIcon,
   ViewColumns,
+  ViewCoverArt,
   gameTheme,
 } from "../connect-four/connect-four-ui";
 import {
@@ -193,15 +199,57 @@ export const View = ({
   ctx,
   model,
   $send,
-  goBack,
+  onQuit,
 }: {
   model: Model;
-  ctx: ViewCtx;
+  ctx: RoomViewCtx;
   $send: (msg: Msg) => void;
-  goBack: () => void;
+  onQuit: () => void;
 }) => {
   if (model.type === "setup") {
-    return <ViewSetup ctx={ctx} goBack={goBack} model={model} $send={$send} />;
+    return (
+      <VsUserSetupScreen
+        ctx={ctx}
+        title="Connect Four"
+        renderCoverArt={(props) => {
+          return (
+            <div {...props}>
+              <ViewCoverArt />
+            </div>
+          );
+        }}
+        onStartGame={() => {
+          $send({ t: "start-game" });
+        }}
+        onQuit={onQuit}
+        playerOne={{
+          label: "Red",
+          onStartPlaying: () => {
+            $send({ t: "start-playing", playerType: "PlayerOne" });
+          },
+          onStopPlaying: () => {
+            $send({ t: "stop-playing" });
+          },
+          renderIcon: (props) => {
+            return <PlayerIcon playerType="PlayerOne" {...props} />;
+          },
+          userId: model.PlayerOne,
+        }}
+        playerTwo={{
+          label: "Yellow",
+          onStartPlaying: () => {
+            $send({ t: "start-playing", playerType: "PlayerTwo" });
+          },
+          onStopPlaying: () => {
+            $send({ t: "stop-playing" });
+          },
+          renderIcon: (props) => {
+            return <PlayerIcon playerType="PlayerTwo" {...props} />;
+          },
+          userId: model.PlayerTwo,
+        }}
+      />
+    );
   }
 
   if (model.type === "game") {
@@ -397,7 +445,7 @@ const ViewGameOverMessage = ({
               width: "100%",
               justifyContent: "center",
             }}>
-            <PlayerIcon sx={{ ...size, marginRight: 2 }} playerType={winner} />
+            <PlayerIcon playerType={winner} />
             <Avatar
               sx={{ ...size }}
               src={ctx.profiles[model[winner]]?.avatarUrl}
@@ -431,7 +479,7 @@ const ViewGameOverMessage = ({
               width: "100%",
               justifyContent: "center",
             }}>
-            <PlayerIcon sx={{ ...size, marginRight: 2 }} playerType={winner} />
+            <PlayerIcon playerType={winner} />
             <Avatar
               sx={{ ...size }}
               src={ctx.profiles[model[winner]]?.avatarUrl}
@@ -452,7 +500,7 @@ const ViewGameOverMessage = ({
   return null;
 };
 
-const ViewSetup = ({
+export const _ViewSetup = ({
   model,
   $send,
   ctx,
@@ -460,7 +508,7 @@ const ViewSetup = ({
 }: {
   goBack: () => void;
   model: SetupModel;
-  ctx: ViewCtx;
+  ctx: RoomViewCtx;
   $send: (msg: Msg) => void;
 }) => {
   const startGameResult = handle({
@@ -531,7 +579,7 @@ const PlayerSlotBar = ({
   ctx,
 }: {
   model: GameModel | GameOverModel;
-  ctx: ViewCtx;
+  ctx: RoomViewCtx;
 }) => {
   return (
     <Box sx={{ paddingTop: 2, paddingBottom: 1 }}>
@@ -562,7 +610,7 @@ const Feedback = ({
   ctx,
   model,
 }: {
-  ctx: ViewCtx;
+  ctx: RoomViewCtx;
   model: GameModel | GameOverModel;
 }) => {
   if (model.type === "game-over") {
@@ -604,10 +652,7 @@ const Feedback = ({
           alignItems: "center",
           animation: `${flicker} 0.75s infinite ease`,
         }}>
-        <PlayerIcon
-          sx={{ width: "1rem", height: "1rem", mr: 1 / 2 }}
-          playerType={turn}
-        />
+        <PlayerIcon playerType={turn} />
         Your Turn
       </Typography>
     );
@@ -618,10 +663,7 @@ const Feedback = ({
       color="text.secondary"
       align="center"
       sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-      <PlayerIcon
-        sx={{ width: "1rem", height: "1rem", mr: 1 / 2 }}
-        playerType={turn}
-      />
+      <PlayerIcon playerType={turn} />
       Turn
     </Typography>
   );
@@ -634,7 +676,7 @@ const PlayerSlot = ({
 }: {
   model: GameModel | GameOverModel;
   playerType: PlayerType;
-  ctx: ViewCtx;
+  ctx: RoomViewCtx;
 }) => {
   const size = { width: "1.5rem", height: "1.5rem" };
   const status = toStatus(model.columns);
@@ -654,7 +696,7 @@ const PlayerSlot = ({
             ? `solid 3px ${gameTheme.primary.dark}`
             : `solid 3px ${uiTheme.palette.divider}`,
       }}>
-      <PlayerIcon playerType={playerType} sx={{ ...size, marginRight: 1 }} />
+      <PlayerIcon playerType={playerType} />
       <Avatar
         src={ctx.profiles[model[playerType]]?.avatarUrl}
         sx={{ ...size, marginRight: 1 }}
@@ -674,8 +716,8 @@ const ViewSetupPlayerSlot = ({
 }: {
   $send: (msg: Msg) => void;
   playerType: PlayerType;
-  userId: "none" | UserId;
-  ctx: ViewCtx;
+  userId: null | UserId;
+  ctx: RoomViewCtx;
 }) => {
   return (
     <Box
@@ -685,10 +727,7 @@ const ViewSetupPlayerSlot = ({
         paddingBottom: 2,
         alignItems: "center",
       }}>
-      <PlayerIcon
-        playerType={playerType}
-        sx={{ width: 42, height: 42, marginRight: 1 }}
-      />
+      <PlayerIcon playerType={playerType} />
       {userId === "none" ? (
         <Button
           fullWidth
@@ -705,11 +744,11 @@ const ViewSetupPlayerSlot = ({
             flex: 1,
           }}>
           <Avatar
-            src={ctx.profiles[userId]?.avatarUrl}
+            src={userId ? ctx.profiles[userId]?.avatarUrl : ""}
             sx={{ marginRight: 1 }}
           />
           <Typography noWrap sx={{ flex: 1 }}>
-            {ctx.profiles[userId]?.username ?? "..."}
+            {userId ? ctx.profiles[userId]?.username ?? "..." : "..."}
           </Typography>
           {userId === ctx.currentUserId && (
             <Button onClick={() => $send({ t: "stop-playing" })}>
@@ -727,17 +766,8 @@ const ViewVersusHeader = ({
   ctx,
 }: {
   model: SetupModel;
-  ctx: ViewCtx;
+  ctx: RoomViewCtx;
 }) => {
-  const avatarSx: Sx = {
-    // width: 36,
-    // height: 36,
-  };
-  const iconSx: Sx = {
-    width: 52,
-    height: 52,
-  };
-
   return (
     <Box
       sx={{
@@ -752,37 +782,33 @@ const ViewVersusHeader = ({
       }}>
       <Box sx={{ width: 72, overflow: "hidden", textAlign: "center" }}>
         <Avatar
-          sx={{ ...avatarSx, marginX: "auto" }}
+          sx={{ marginX: "auto" }}
           src={
-            model.PlayerOne === "none"
-              ? ""
-              : ctx.profiles[model.PlayerOne]?.avatarUrl
+            !model.PlayerOne ? "" : ctx.profiles[model.PlayerOne]?.avatarUrl
           }>
           <Icons.QuestionMark />
         </Avatar>
         <Typography color="#fff" align="center" noWrap>
-          {model.PlayerOne === "none"
+          {!model.PlayerOne
             ? "?"
             : ctx.profiles[model.PlayerOne]?.username ?? "..."}
         </Typography>
       </Box>
-      <PlayerOneIcon sx={{ ...iconSx }} />
+      <PlayerOneIcon />
       <Typography color="#fff" sx={{ fontSize: 32 }}>
         vs
       </Typography>
-      <PlayerTwoIcon sx={{ ...iconSx }} />
+      <PlayerTwoIcon />
       <Box sx={{ width: 72, overflow: "hidden", textAlign: "center" }}>
         <Avatar
-          sx={{ ...avatarSx, marginX: "auto" }}
+          sx={{ marginX: "auto" }}
           src={
-            model.PlayerTwo === "none"
-              ? ""
-              : ctx.profiles[model.PlayerTwo]?.avatarUrl
+            !model.PlayerTwo ? "" : ctx.profiles[model.PlayerTwo]?.avatarUrl
           }>
           <Icons.QuestionMark />
         </Avatar>
         <Typography color="#fff" align="center" noWrap>
-          {model.PlayerTwo === "none"
+          {!model.PlayerTwo
             ? "?"
             : ctx.profiles[model.PlayerTwo]?.username ?? "..."}
         </Typography>

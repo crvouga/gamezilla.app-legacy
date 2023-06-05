@@ -1,7 +1,6 @@
-import { easeAttrs, rescale, Uuid } from '@gamezilla/shared/core';
-import { SvgIcon, Sx } from '@gamezilla/shared/ui';
-import { useLayoutEffect, useMemo, useRef } from 'react';
-import { Transition, TransitionGroup } from 'react-transition-group';
+import { easeAttrs, rescale, Uuid } from "@gamezilla/shared/core";
+import { useLayoutEffect, useMemo, useRef } from "react";
+import { Transition, TransitionGroup } from "react-transition-group";
 import {
   COLUMN_COUNT,
   ColumnIndex,
@@ -11,21 +10,21 @@ import {
   PlayerType,
   Position,
   toWins,
-} from './connect-four';
+} from "./connect-four";
 
 export const gameTheme = {
   primary: {
-    light: '#1976D2',
-    dark: '#2195F2',
-    darker: '#0D47A1',
+    light: "#1976D2",
+    dark: "#2195F2",
+    darker: "#0D47A1",
   },
   PlayerOne: {
-    light: '#f45e55',
-    dark: '#c12521',
+    light: "#f45e55",
+    dark: "#c12521",
   },
   PlayerTwo: {
-    light: '#FFB74D',
-    dark: '#ff9a06',
+    light: "#FFB74D",
+    dark: "#ff9a06",
   },
 };
 
@@ -46,8 +45,7 @@ export const ViewPlayerOneGradientDef = ({
       gradientTransform="rotate(90)"
       cx={cx}
       cy={cy}
-      r={r}
-    >
+      r={r}>
       <stop offset="50%" stopColor={gameTheme.PlayerOne.light} />
       <stop offset="100%" stopColor={gameTheme.PlayerOne.dark} />
     </radialGradient>
@@ -76,17 +74,17 @@ type ViewColumnsProps = {
 };
 
 export const ViewColumns = ({
-  implementation = 'svg',
+  implementation = "svg",
   ...props
 }: ViewColumnsProps & {
-  implementation?: 'svg' | 'canvas';
+  implementation?: "svg" | "canvas";
 }) => {
   switch (implementation) {
-    case 'canvas': {
+    case "canvas": {
       return <ViewColumnsCanvas {...props} />;
     }
 
-    case 'svg': {
+    case "svg": {
       return <ViewColumnsSvg {...props} />;
     }
   }
@@ -131,7 +129,7 @@ const ViewColumnsSvg = ({
           fill={gameTheme.primary.darker}
         />
 
-        <TransitionGroup component={'g'} transform="translate(0.5, 0.5)">
+        <TransitionGroup component={"g"} transform="translate(0.5, 0.5)">
           {columns.flatMap((column, x) =>
             column.map((disc, y) => (
               <Transition
@@ -141,13 +139,12 @@ const ViewColumnsSvg = ({
                   //
                 }}
                 onEnter={onEnter({ y })}
-                onExit={onExit({ x, y })}
-              >
+                onExit={onExit({ x, y })}>
                 <circle
                   cx={x}
                   cy={y}
                   r={0.5}
-                  fill={disc === 'PlayerOne' ? playerOneFill : playerTwoFill}
+                  fill={disc === "PlayerOne" ? playerOneFill : playerTwoFill}
                 />
               </Transition>
             ))
@@ -172,8 +169,8 @@ const ViewColumnsSvg = ({
                 disabled || !onClick
                   ? undefined
                   : (columns[columnIndex]?.length ?? 0) >= MAX_COLUMN_HEIGHT
-                  ? 'not-allowed'
-                  : 'pointer',
+                  ? "not-allowed"
+                  : "pointer",
             }}
             onMouseOver={() => {
               if (!disabled && isColumnIndex(columnIndex) && onHover) {
@@ -216,8 +213,7 @@ const ViewWins = ({ columns }: { columns: Columns }) => {
       y={0}
       width={COLUMN_COUNT}
       height={MAX_COLUMN_HEIGHT}
-      viewBox={`0 0 ${COLUMN_COUNT * n} ${MAX_COLUMN_HEIGHT * n}`}
-    >
+      viewBox={`0 0 ${COLUMN_COUNT * n} ${MAX_COLUMN_HEIGHT * n}`}>
       <TransitionGroup component="g">
         {wins.flatMap((win, i) => {
           const westMost = win[0];
@@ -237,8 +233,7 @@ const ViewWins = ({ columns }: { columns: Columns }) => {
                 //
               }}
               onEnter={draw}
-              onExit={undraw}
-            >
+              onExit={undraw}>
               <rect
                 transform={`rotate(${theta} ${originX} ${originY})`}
                 x={westMost.x * n}
@@ -266,12 +261,12 @@ const draw = (node: HTMLElement) => {
 
   const length = node.getTotalLength();
   easeAttrs(node, {
-    'stroke-dasharray': {
+    "stroke-dasharray": {
       from: length,
       to: length,
       duration: 500,
     },
-    'stroke-dashoffset': {
+    "stroke-dashoffset": {
       from: length,
       to: 0,
       duration: 500,
@@ -286,12 +281,12 @@ const undraw = (node: HTMLElement) => {
 
   const length = node.getTotalLength();
   easeAttrs(node, {
-    'stroke-dasharray': {
+    "stroke-dasharray": {
       from: length,
       to: length,
       duration: 500,
     },
-    'stroke-dashoffset': {
+    "stroke-dashoffset": {
       from: 0,
       to: length,
       duration: 500,
@@ -307,7 +302,7 @@ const onEnter =
         from: MAX_COLUMN_HEIGHT + 1,
         to: y,
         duration: 200 + 300 * (1 - y / MAX_COLUMN_HEIGHT),
-        easing: { type: 'ease-out-bounce' },
+        easing: { type: "ease-out-bounce" },
       },
     });
   };
@@ -320,7 +315,7 @@ const onExit =
         from: y,
         to: y - MAX_COLUMN_HEIGHT,
         duration: 750,
-        easing: { type: 'ease-in-back' },
+        easing: { type: "ease-in-back" },
         delay: (x / COLUMN_COUNT) * 500,
       },
     });
@@ -333,8 +328,7 @@ const SvgDefs = ({ ids }: { ids: SvgIds }) => {
         id={ids.holePattern}
         patternUnits="userSpaceOnUse"
         width={1}
-        height={1}
-      >
+        height={1}>
         <circle cx={0.5} cy={0.5} r={0.425} fill="black"></circle>
       </pattern>
 
@@ -344,15 +338,13 @@ const SvgDefs = ({ ids }: { ids: SvgIds }) => {
           y={0}
           width={COLUMN_COUNT}
           height={MAX_COLUMN_HEIGHT}
-          fill="white"
-        ></rect>
+          fill="white"></rect>
         <rect
           x={0}
           y={0}
           width={COLUMN_COUNT}
           height={MAX_COLUMN_HEIGHT}
-          fill={`url(#${ids.holePattern})`}
-        ></rect>
+          fill={`url(#${ids.holePattern})`}></rect>
       </mask>
 
       <linearGradient id={ids.columnGradient} gradientTransform="rotate(90)">
@@ -379,7 +371,7 @@ function isCanvas(i: unknown): i is HTMLCanvasElement {
 
 const ViewColumnsCanvas = ({ columns, onClick }: ViewColumnsProps) => {
   useLayoutEffect(() => {
-    const canvas = document.getElementById('view-columns-canvas');
+    const canvas = document.getElementById("view-columns-canvas");
 
     if (!canvas) {
       return;
@@ -389,7 +381,7 @@ const ViewColumnsCanvas = ({ columns, onClick }: ViewColumnsProps) => {
       return;
     }
 
-    const context = canvas.getContext('2d');
+    const context = canvas.getContext("2d");
 
     if (!context) {
       return;
@@ -404,7 +396,7 @@ const ViewColumnsCanvas = ({ columns, onClick }: ViewColumnsProps) => {
   return (
     <canvas
       id="view-columns-canvas"
-      style={{ width: '100%', cursor: 'pointer' }}
+      style={{ width: "100%", cursor: "pointer" }}
       onClick={(event) => {
         const rect = event.currentTarget.getBoundingClientRect();
         const elementRelativeX = event.clientX - rect.left;
@@ -489,7 +481,7 @@ const paint = ({
     0,
     Math.PI * 2
   );
-  context.fillStyle = 'purple';
+  context.fillStyle = "purple";
   context.fill();
   context.closePath();
 
@@ -510,7 +502,7 @@ const paint = ({
 
   context.fillStyle = gameTheme.primary.light;
   context.rect(0, 0, width, height);
-  context.fill('evenodd');
+  context.fill("evenodd");
 };
 
 export const ViewCoverArt = () => {
@@ -527,14 +519,13 @@ export const ViewCoverArt = () => {
   const playerTwoFill = `url(#${ids.playerTwoGradient})`;
 
   return (
-    <svg width="100%" viewBox={'0 0 2 2'}>
+    <svg width="100%" viewBox={"0 0 2 2"}>
       <defs>
         <pattern
           id={ids.holePattern}
           patternUnits="userSpaceOnUse"
           width={1}
-          height={1}
-        >
+          height={1}>
           <circle cx={0.5} cy={0.5} r={0.425} fill="black"></circle>
         </pattern>
 
@@ -544,15 +535,13 @@ export const ViewCoverArt = () => {
             y={0}
             width={COLUMN_COUNT}
             height={MAX_COLUMN_HEIGHT}
-            fill="white"
-          ></rect>
+            fill="white"></rect>
           <rect
             x={0}
             y={0}
             width={COLUMN_COUNT}
             height={MAX_COLUMN_HEIGHT}
-            fill={`url(#${ids.holePattern})`}
-          ></rect>
+            fill={`url(#${ids.holePattern})`}></rect>
         </mask>
 
         <linearGradient id={ids.columnGradient} gradientTransform="rotate(90)">
@@ -562,16 +551,14 @@ export const ViewCoverArt = () => {
 
         <linearGradient
           id={ids.playerOneGradient}
-          gradientTransform="rotate(90)"
-        >
+          gradientTransform="rotate(90)">
           <stop offset="0%" stopColor={gameTheme.PlayerOne.light} />
           <stop offset="100%" stopColor={gameTheme.PlayerOne.dark} />
         </linearGradient>
 
         <linearGradient
           id={ids.playerTwoGradient}
-          gradientTransform="rotate(90)"
-        >
+          gradientTransform="rotate(90)">
           <stop offset="0%" stopColor={gameTheme.PlayerTwo.light} />
           <stop offset="100%" stopColor={gameTheme.PlayerTwo.dark} />
         </linearGradient>
@@ -601,38 +588,39 @@ export const ViewCoverArt = () => {
 
 export const PlayerIcon = ({
   playerType,
-  sx,
+  ...props
 }: {
   playerType: PlayerType;
-  sx?: Sx;
+  key?: string;
+  className?: string;
 }) => {
   switch (playerType) {
-    case 'PlayerOne': {
-      return <PlayerOneIcon sx={sx} />;
+    case "PlayerOne": {
+      return <PlayerOneIcon {...props} />;
     }
 
-    case 'PlayerTwo': {
-      return <PlayerTwoIcon sx={sx} />;
+    case "PlayerTwo": {
+      return <PlayerTwoIcon {...props} />;
     }
   }
 };
 
-export const PlayerOneIcon = ({ key, sx }: { key?: string; sx?: Sx }) => {
+export const PlayerOneIcon = (props: { key?: string; className?: string }) => {
   const ref = useRef(Uuid.generateSync());
   return (
-    <SvgIcon key={key} viewBox="-1 -1 2 2" sx={{ ...sx }}>
+    <svg viewBox="-1 -1 2 2" {...props}>
       <ViewPlayerOneGradientDef cx={0} cy={0} r={1} gradientId={ref.current} />
-      <circle cx={0} cy={0} r={1} fill={`url(#${ref.current})`} />
-    </SvgIcon>
+      <circle cx={0} cy={0} r={0.9} fill={`url(#${ref.current})`} />
+    </svg>
   );
 };
 
-export const PlayerTwoIcon = ({ key, sx }: { key?: string; sx?: Sx }) => {
+export const PlayerTwoIcon = (props: { key?: string; className?: string }) => {
   const ref = useRef(Uuid.generateSync());
   return (
-    <SvgIcon key={key} viewBox="-1 -1 2 2" sx={{ ...sx }}>
+    <svg viewBox="-1 -1 2 2" className="w-6 h-6" {...props}>
       <ViewPlayerTwoGradientDef gradientId={ref.current} />
-      <circle cx={0} cy={0} r={1} fill={`url(#${ref.current})`} />
-    </SvgIcon>
+      <circle cx={0} cy={0} r={0.9} fill={`url(#${ref.current})`} />
+    </svg>
   );
 };

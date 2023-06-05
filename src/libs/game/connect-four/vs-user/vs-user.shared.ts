@@ -1,18 +1,18 @@
-import { exhaustive, Result } from "@gamezilla/shared/core";
 import { UserId } from "@gamezilla/shared/app";
+import { Err, Ok, Result, exhaustive } from "@gamezilla/shared/core";
 import {
-  allColumnIndexes,
   ColumnIndex,
   Columns,
+  MoveResult,
+  PlayerType,
+  allColumnIndexes,
   emptyColumns,
   move,
-  MoveResult,
   opposite,
-  PlayerType,
   toStatus,
   toTurn,
 } from "../connect-four/connect-four";
-const { Err, Ok } = Result;
+
 //
 //
 //
@@ -26,8 +26,8 @@ export type SharedModel = SetupModel | GameModel | GameOverModel;
 export type SetupModel = {
   type: "setup";
   moveTimeLimit: MoveTimeLimit;
-  PlayerOne: UserId | "none";
-  PlayerTwo: UserId | "none";
+  PlayerOne: UserId | null;
+  PlayerTwo: UserId | null;
 };
 
 export type GameModel = {
@@ -259,7 +259,7 @@ export const handle = ({
         return Err("not-in-setup");
       }
 
-      if (model.PlayerOne === "none" || model.PlayerTwo === "none") {
+      if (!model.PlayerOne || !model.PlayerTwo) {
         return Err("missing-player");
       }
 

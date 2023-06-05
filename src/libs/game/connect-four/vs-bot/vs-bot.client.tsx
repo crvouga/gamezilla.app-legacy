@@ -264,12 +264,9 @@ export const View = ({
           selected: model.userPlayerType,
           onInput: (playerType) =>
             $send({ t: "input-player-type", playerType }),
-          icon: ({ sx, playerType }) => (
-            <PlayerIcon
-              playerType={playerType}
-              sx={{ width: "1.5rem", height: "1.5rem", ...sx }}
-            />
-          ),
+          icon: ({ playerType }) => {
+            return <PlayerIcon playerType={playerType} />;
+          },
           toName: (playerType) =>
             playerType === "PlayerOne" ? "Red" : "Yellow",
           render: ({ playerType }) => (
