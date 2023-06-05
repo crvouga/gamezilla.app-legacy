@@ -23,6 +23,7 @@ export * from "./icon-phone";
 export * from "./icon-play";
 export * from "./icon-plus";
 export * from "./icon-puzzle-piece";
+export * from "./icon-question-mark";
 export * from "./icon-right-left";
 export * from "./icon-robot";
 export * from "./icon-screwdriver-wrench";
