@@ -2,12 +2,11 @@ import {
   Err,
   Ok,
   Result,
-  Task,
   eq,
   isSubset,
   shuffle,
   unique,
-} from '@gamezilla/shared/core';
+} from "@gamezilla/shared/core";
 
 //
 //
@@ -17,23 +16,23 @@ import {
 //
 //
 
-export type PlayerType = 'PlayerOne' | 'PlayerTwo';
+export type PlayerType = "PlayerOne" | "PlayerTwo";
 
 export const playerTypes: { [playerType in PlayerType]: PlayerType } = {
-  PlayerOne: 'PlayerOne',
-  PlayerTwo: 'PlayerTwo',
+  PlayerOne: "PlayerOne",
+  PlayerTwo: "PlayerTwo",
 };
 
 export const opposite: { [playerType in PlayerType]: PlayerType } = {
-  PlayerOne: 'PlayerTwo',
-  PlayerTwo: 'PlayerOne',
+  PlayerOne: "PlayerTwo",
+  PlayerTwo: "PlayerOne",
 };
 
-type Color = 'Red' | 'Yellow';
+type Color = "Red" | "Yellow";
 
 export const playerTypeToColor: { [key in PlayerType]: Color } = {
-  PlayerOne: 'Red',
-  PlayerTwo: 'Yellow',
+  PlayerOne: "Red",
+  PlayerTwo: "Yellow",
 };
 
 export type Column = readonly PlayerType[];
@@ -73,7 +72,7 @@ for (let x = 0; x < COLUMN_COUNT; x++) {
 
 export const isColumnIndex = (index: unknown): index is ColumnIndex => {
   return (
-    typeof index === 'number' &&
+    typeof index === "number" &&
     (index === 0 ||
       index === 1 ||
       index === 2 ||
@@ -87,11 +86,11 @@ export const isColumnIndex = (index: unknown): index is ColumnIndex => {
 export type RowIndex = 0 | 1 | 2 | 3 | 4 | 5;
 
 export type MoveProblem =
-  | 'game_over_winner'
-  | 'game_over_tie'
-  | 'not_turn'
-  | 'column_is_full'
-  | 'out_of_bounds';
+  | "game_over_winner"
+  | "game_over_tie"
+  | "not_turn"
+  | "column_is_full"
+  | "out_of_bounds";
 
 export type MoveResult = Result<MoveProblem, Columns>;
 
@@ -102,28 +101,28 @@ export const move = (
 ): MoveResult => {
   const status = toStatus(columns);
 
-  if (status.type === 'Winner') {
-    return Err('game_over_winner');
+  if (status.type === "Winner") {
+    return Err("game_over_winner");
   }
 
-  if (status.type === 'Tie') {
-    return Err('game_over_tie');
+  if (status.type === "Tie") {
+    return Err("game_over_tie");
   }
 
   const turn = status.turn;
 
   if (turn !== player) {
-    return Err('not_turn');
+    return Err("not_turn");
   }
 
   const column = columns[columnIndex];
 
   if (!column) {
-    return Err('out_of_bounds');
+    return Err("out_of_bounds");
   }
 
   if (column.length === MAX_COLUMN_HEIGHT) {
-    return Err('column_is_full');
+    return Err("column_is_full");
   }
 
   const columnsNew = mapColumns(columns, (column, index) => {
@@ -136,7 +135,7 @@ export const move = (
   return Ok(columnsNew);
 };
 
-export type BestMoveProblem = 'no_move_available';
+export type BestMoveProblem = "no_move_available";
 
 export type BestMoveResult = Result<BestMoveProblem, ColumnIndex>;
 
@@ -149,44 +148,42 @@ export const toBestMove = ({
 }): BestMoveResult => {
   for (const columnIndex of shuffle(String(Math.random()), allColumnIndexes)) {
     const result = move(columns, columnIndex, maximizingPlayer);
-    if (result.t === 'ok') {
+    if (result.t === "ok") {
       return Ok(columnIndex);
     }
   }
-  return Err('no_move_available');
+  return Err("no_move_available");
 };
 
-export const getBestMove =
-  ({
-    columns,
-    maximizingPlayer,
-  }: {
-    columns: Columns;
-    maximizingPlayer: PlayerType;
-  }): Task<BestMoveResult> =>
-  async () => {
-    const result = toBestMove({ columns, maximizingPlayer });
+export const getBestMove = async ({
+  columns,
+  maximizingPlayer,
+}: {
+  columns: Columns;
+  maximizingPlayer: PlayerType;
+}): Promise<BestMoveResult> => {
+  const result = toBestMove({ columns, maximizingPlayer });
 
-    await new Promise((resolve) => setTimeout(resolve, 1_000));
+  await new Promise((resolve) => setTimeout(resolve, 1_000));
 
-    return result;
-  };
+  return result;
+};
 
 export const toSlot = (
   columns: Columns,
   { x, y }: { x: number; y: number }
-): PlayerType | 'Empty' => {
+): PlayerType | "Empty" => {
   const slot = columns?.[x]?.[y];
 
   if (slot) {
     return slot;
   }
 
-  return 'Empty';
+  return "Empty";
 };
 
 export const toTurn = (columns: Columns): PlayerType => {
-  return columns.flat().length % 2 === 0 ? 'PlayerOne' : 'PlayerTwo';
+  return columns.flat().length % 2 === 0 ? "PlayerOne" : "PlayerTwo";
 };
 
 const isFull = (columns: Columns) => {
@@ -195,15 +192,15 @@ const isFull = (columns: Columns) => {
 
 export type Status =
   | {
-      type: 'Playing';
+      type: "Playing";
       turn: PlayerType;
     }
   | {
-      type: 'Winner';
+      type: "Winner";
       winner: PlayerType;
     }
   | {
-      type: 'Tie';
+      type: "Tie";
     };
 
 export const toStatus = (columns: Columns): Status => {
@@ -216,34 +213,34 @@ export const toStatus = (columns: Columns): Status => {
 
     if (!position) {
       return {
-        type: 'Playing',
+        type: "Playing",
         turn,
       };
     }
 
     const winner = toSlot(columns, position);
 
-    if (winner === 'Empty') {
+    if (winner === "Empty") {
       return {
-        type: 'Playing',
+        type: "Playing",
         turn,
       };
     }
 
     return {
-      type: 'Winner',
+      type: "Winner",
       winner,
     };
   }
 
   if (isFull(columns)) {
     return {
-      type: 'Tie',
+      type: "Tie",
     };
   }
 
   return {
-    type: 'Playing',
+    type: "Playing",
     turn,
   };
 };
@@ -311,7 +308,7 @@ export const toWins = (columns: Columns): Win[] => {
 
         const targetSlot = toSlot(columns, { x, y });
 
-        if (targetSlot === 'Empty') {
+        if (targetSlot === "Empty") {
           continue;
         }
 

@@ -1,18 +1,19 @@
-import { UserId } from '@gamezilla/shared/app';
-import { Cmd, p, Sub } from '@gamezilla/shared/core';
-import { RoomMsg } from '@gamezilla/shared/client';
-import { getBestMove, opposite } from '../connect-four/connect-four';
+import { RoomMsg } from "@gamezilla/shared/client";
+import { andThen, Cmd, p, Sub } from "@gamezilla/shared/core";
+import { RoomRequestCtx } from "@gamezilla/shared/server";
 import {
-  ServerModel,
-  ServerMsg,
   botMove,
   handle,
   initShared,
   isBotTurn,
   Res,
-  ToServer,
+  ServerModel,
+  ServerMsg,
+  toBotPlayer,
   ToClient,
-} from './vs-bot.shared';
+  ToServer,
+} from "./vs-bot.shared";
+import { getBestMove } from "../connect-four/connect-four";
 
 //
 //
@@ -44,72 +45,87 @@ export const update = ({
   broadcast: (m: ToClient) => Cmd;
   msg: Msg;
   model: Model;
-}): { model: Model; cmd: Cmd<Msg> } => {
-  switch (msg[0]) {
-    case 'bot-move': {
-      const result = botMove(msg[1], model);
-      if (result.t === 'err') {
-        return { model, cmd: broadcast(['bot-move', result]) };
-      }
-      return { model: result.value, cmd: broadcast(['bot-move', result]) };
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  if (msg.t === "bot-moved") {
+    const result = botMove(msg.result, model);
+
+    if (result.t === "err") {
+      return { model, cmd: broadcast({ t: "bot-move", result }) };
     }
+
+    return { model: result.value, cmd: broadcast({ t: "bot-move", result }) };
   }
+
+  return { model };
 };
 
-export const updateFromClient = (
-  wire: {
-    broadcast: (msg: ToClient) => Cmd;
-    sendToClient: (msg: ToClient) => Cmd;
-    currentUserId: UserId;
-  },
-  msg: ToServer,
-  modelPrev: Model
-): [Model, Cmd<Msg>] => {
-  const [modelNext, cmd] = updateFromClient_(wire, msg, modelPrev);
-
-  if (
-    !isBotTurn(modelPrev) &&
-    isBotTurn(modelNext) &&
-    modelNext.type === 'game'
-  ) {
-    return [
-      modelNext,
-      Cmd.batch([
-        cmd,
-        p(
-          getBestMove({
-            columns: modelNext.columns,
-            maximizingPlayer: opposite[modelNext.userPlayerType],
-          }),
-          Cmd.perform((result) => ['bot-move', result])
-        ),
-      ]),
-    ];
-  }
-
-  return [modelNext, cmd];
+export const updateFromClient = (input: {
+  broadcast: (msg: ToClient) => Cmd;
+  sendToClient: (msg: ToClient) => Cmd;
+  ctx: RoomRequestCtx;
+  msg: ToServer;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  return p(
+    input,
+    andThen(({ model }) => updateFromClient_({ ...input, model })),
+    andThen(({ model }) => watchBotMove({ model, modelPrev: input.model }))
+  );
 };
 
-const updateFromClient_ = (
-  {
-    broadcast,
-    sendToClient,
-    currentUserId,
-  }: {
-    broadcast: (m: ToClient) => Cmd;
-    sendToClient: (m: ToClient) => Cmd;
-    currentUserId: UserId;
-  },
-  msg: ToServer,
-  model: Model
-): [Model, Cmd<Msg>] => {
-  const res: Res = [msg[0], handle({ currentUserId }, msg, model)];
-
-  if (res[1].t === 'err') {
-    return [model, sendToClient(res)];
+const watchBotMove = ({
+  model,
+  modelPrev,
+}: {
+  model: Model;
+  modelPrev: Model;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  if (!isBotTurn(modelPrev) && isBotTurn(model) && model.type === "game") {
+    const columns = model.columns;
+    const botPlayer = toBotPlayer(model);
+    return {
+      model,
+      cmd: async ($send) => {
+        const result = await getBestMove({
+          columns,
+          maximizingPlayer: botPlayer,
+        });
+        $send({ t: "bot-moved", result });
+      },
+    };
   }
 
-  return [res[1].value, broadcast(res)];
+  return {
+    model,
+  };
+};
+
+const updateFromClient_: typeof updateFromClient = ({
+  broadcast,
+  sendToClient,
+  ctx,
+  msg,
+  model,
+}) => {
+  const res: Res = {
+    ...msg,
+    result: handle({ ctx, msg, model }),
+  };
+
+  if (res.result.t === "err") {
+    return { model, cmd: sendToClient(res) };
+  }
+
+  return { model: res.result.value, cmd: broadcast(res) };
 };
 
 export const updateFromRoom = ({
@@ -124,20 +140,27 @@ export const updateFromRoom = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (msg.t === 'user-left') {
+  if (msg.t === "user-left") {
     if (model.player !== msg.userId) {
       return { model };
     }
 
     const modelNew: Model = {
-      type: 'Setup',
+      type: "setup",
       botLevel: model.botLevel,
       userPlayerType: model.userPlayerType,
-      player: 'none',
+      player: "none",
     };
 
-    return { model: modelNew, cmd: broadcast(['player-left', modelNew]) };
+    return {
+      model: modelNew,
+      cmd: broadcast({
+        t: "player-left",
+        model: modelNew,
+      }),
+    };
   }
+
   return { model };
 };
 

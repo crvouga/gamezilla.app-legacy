@@ -48,7 +48,7 @@ export type Model = ClientModel;
 export const init = (...params: Parameters<typeof initShared>): ClientModel => {
   const shared = initShared(...params);
 
-  if (shared.type === "Setup") {
+  if (shared.type === "setup") {
     return shared;
   }
 
@@ -68,35 +68,30 @@ export const init = (...params: Parameters<typeof initShared>): ClientModel => {
 
 export type Msg = ClientMsg;
 
-export const update = (
-  {
-    sendToServer,
-    ctx,
-  }: {
-    ctx: RoomCtx;
-    sendToServer: (msg: ToServer) => Cmd;
-  },
-  msg: Msg,
-  model: Model
-): { model: Model; cmd?: Cmd<Msg> } => {
-  switch (msg[0]) {
+export const update = ({
+  sendToServer,
+  ctx,
+  msg,
+  model,
+}: {
+  ctx: RoomCtx;
+  sendToServer: (msg: ToServer) => Cmd;
+  msg: Msg;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  switch (msg.t) {
     case "hovered": {
       if (model.type !== "game") {
         return { model };
       }
-      return { model: { ...model, ghostIndex: msg[1].columnIndex } };
-    }
-
-    case "animate": {
-      if (model.type !== "game") {
-        return { model };
-      }
-
-      return { model };
+      return { model: { ...model, ghostIndex: msg.columnIndex } };
     }
 
     case "input-move": {
-      const result = handle(ctx, msg, model);
+      const result = handle({ ctx, msg, model });
 
       if (result.t === "err") {
         return { model };
@@ -136,26 +131,26 @@ export const updateFromServer = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  switch (msg[0]) {
+  switch (msg.t) {
     case "player-left": {
       const modelNew = syncWithServer({
         ctx,
         clientModel: model,
-        serverModel: msg[1],
+        serverModel: msg.model,
       });
       return { model: modelNew };
     }
 
     case "bot-move":
     case "input-move": {
-      if (msg[1].t === "err") {
+      if (msg.result.t === "err") {
         return { model };
       }
 
       const modelNew = syncWithServer({
         ctx,
         clientModel: model,
-        serverModel: msg[1].value,
+        serverModel: msg.result.value,
       });
 
       return { model: modelNew };
@@ -169,14 +164,14 @@ export const updateFromServer = ({
     case "stop-playing":
     case "swap-sides":
     case "input-bot-level": {
-      if (msg[1].t === "err") {
+      if (msg.result.t === "err") {
         return { model };
       }
 
       const modelNew = syncWithServer({
         ctx,
         clientModel: model,
-        serverModel: msg[1].value,
+        serverModel: msg.result.value,
       });
 
       return { model: modelNew };
@@ -192,11 +187,11 @@ export const syncWithServer = ({
   clientModel: ClientModel;
   serverModel: ServerModel;
 }): ClientModel => {
-  if (serverModel.type === "Setup") {
+  if (serverModel.type === "setup") {
     return serverModel;
   }
 
-  if (clientModel.type === "Setup") {
+  if (clientModel.type === "setup") {
     return {
       ...serverModel,
       ghostIndex: "none",
@@ -244,7 +239,7 @@ export const View = ({
   goBack: () => void;
   ctx: ViewCtx;
 }) => {
-  if (model.type === "Setup") {
+  if (model.type === "setup") {
     return (
       <ViewVsBotSetupScreen<BotLevel, PlayerType>
         coverArt={<ViewCoverArt />}
@@ -254,20 +249,21 @@ export const View = ({
         playerId={model.player === "none" ? null : model.player}
         leftPlayerType="PlayerOne"
         onCancel={goBack}
-        onStartGame={() => $send(["start-game"])}
-        onStartPlaying={() => $send(["start-playing"])}
-        onStopPlaying={() => $send(["stop-playing"])}
+        onStartGame={() => $send({ t: "start-game" })}
+        onStartPlaying={() => $send({ t: "start-playing" })}
+        onStopPlaying={() => $send({ t: "stop-playing" })}
         botLevel={{
           values: Object.values(botLevel),
           selected: model.botLevel,
-          onInput: (level) => $send(["input-bot-level", { botLevel: level }]),
+          onInput: (level) => $send({ t: "input-bot-level", botLevel: level }),
           toName: (level) => level,
           render: ({ botLevel }) => <div>{botLevel}</div>,
         }}
         player={{
           values: Object.values(playerTypes),
           selected: model.userPlayerType,
-          onInput: (playerType) => $send(["input-player-type", { playerType }]),
+          onInput: (playerType) =>
+            $send({ t: "input-player-type", playerType }),
           icon: ({ sx, playerType }) => (
             <PlayerIcon
               playerType={playerType}
@@ -300,12 +296,12 @@ export const View = ({
       {
         label: "Exit",
         icon: <IconArrowLeftOnRect />,
-        onClick: () => $send(["stop-game"]),
+        onClick: () => $send({ t: "stop-game" }),
       },
       {
         label: "Restart",
         icon: <IconArrowRotateLeft />,
-        onClick: () => $send(["restart"]),
+        onClick: () => $send({ t: "restart" }),
       },
     ],
     botName: model.botLevel,
@@ -319,17 +315,17 @@ export const View = ({
       {
         label: "Exit",
         icon: <IconArrowLeftOnRect />,
-        onClick: () => $send(["stop-game"]),
+        onClick: () => $send({ t: "stop-game" }),
       },
       {
         label: "Restart",
         icon: <IconArrowRotateLeft />,
-        onClick: () => $send(["restart"]),
+        onClick: () => $send({ t: "restart" }),
       },
       {
         label: "Swap",
         icon: <IconRightLeft />,
-        onClick: () => $send(["restart"]),
+        onClick: () => $send({ t: "restart" }),
       },
     ],
     viewPlayerIcon: (props) => <PlayerIcon key={props.playerType} {...props} />,
@@ -346,8 +342,8 @@ export const View = ({
             : undefined
         }
         columns={model.columns}
-        onHover={(columnIndex) => $send(["hovered", { columnIndex }])}
-        onClick={(columnIndex) => $send(["input-move", { columnIndex }])}
+        onHover={(columnIndex) => $send({ t: "hovered", columnIndex })}
+        onClick={(columnIndex) => $send({ t: "input-move", columnIndex })}
       />
     ),
   });

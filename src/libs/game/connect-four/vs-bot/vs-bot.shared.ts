@@ -1,17 +1,15 @@
-import { Err, Ok, Result, exhaustive } from '@gamezilla/shared/core';
-import { UserId } from '@gamezilla/shared/app';
+import { UserId } from "@gamezilla/shared/app";
+import { Err, Ok, Result, exhaustive } from "@gamezilla/shared/core";
 import {
-  BestMoveProblem,
   BestMoveResult,
   ColumnIndex,
   Columns,
-  MoveProblem,
   PlayerType,
   emptyColumns,
   move,
   opposite,
   toStatus,
-} from '../connect-four/connect-four';
+} from "../connect-four/connect-four";
 
 //
 //
@@ -22,14 +20,14 @@ import {
 export type SharedModel = SetupModel | GameModel;
 
 export type SetupModel = {
-  type: 'Setup';
+  type: "setup";
   userPlayerType: PlayerType;
   botLevel: BotLevel;
-  player: UserId | 'none';
+  player: UserId | "none";
 };
 
 export type GameModel = {
-  type: 'game';
+  type: "game";
   userPlayerType: PlayerType;
   botLevel: BotLevel;
   player: UserId;
@@ -37,19 +35,23 @@ export type GameModel = {
 };
 
 export const isBotTurn = (model: SharedModel): boolean => {
-  if (model.type !== 'game') {
+  if (model.type !== "game") {
     return false;
   }
   const status = toStatus(model.columns);
   return (
-    status.type === 'Playing' && status.turn === opposite[model.userPlayerType]
+    status.type === "Playing" && status.turn === opposite[model.userPlayerType]
   );
+};
+
+export const toBotPlayer = (model: SharedModel): PlayerType => {
+  return opposite[model.userPlayerType];
 };
 
 export type ServerModel = SharedModel;
 
 export type ClientGameModel = GameModel & {
-  ghostIndex: ColumnIndex | 'none';
+  ghostIndex: ColumnIndex | "none";
 };
 
 export type ClientModel = SetupModel | ClientGameModel;
@@ -57,13 +59,13 @@ export type ClientModel = SetupModel | ClientGameModel;
 export const initShared = ({
   player,
 }: {
-  player: UserId | 'none';
+  player: UserId | "none";
 }): SharedModel => {
   return {
-    type: 'Setup',
-    botLevel: 'Medium',
+    type: "setup",
+    botLevel: "Medium",
     player: player,
-    userPlayerType: 'PlayerOne',
+    userPlayerType: "PlayerOne",
   };
 };
 
@@ -72,42 +74,42 @@ export const initShared = ({
 //
 //
 
-export type GameOver = { type: 'Tie' } | { type: 'Winner'; winner: PlayerType };
+export type GameOver = { type: "Tie" } | { type: "Winner"; winner: PlayerType };
 
-export const toGameOver = (model: SharedModel): GameOver | { type: 'none' } => {
+export const toGameOver = (model: SharedModel): GameOver | { type: "none" } => {
   switch (model.type) {
-    case 'game': {
+    case "game": {
       const status = toStatus(model.columns);
       switch (status.type) {
-        case 'Playing': {
-          return { type: 'none' };
+        case "Playing": {
+          return { type: "none" };
         }
-        case 'Tie': {
-          return { type: 'Tie' };
+        case "Tie": {
+          return { type: "Tie" };
         }
 
-        case 'Winner': {
-          return { type: 'Winner', winner: status.winner };
+        case "Winner": {
+          return { type: "Winner", winner: status.winner };
         }
 
         default: {
-          return { type: 'none' };
+          return { type: "none" };
         }
       }
     }
 
-    case 'Setup': {
-      return { type: 'none' };
+    case "setup": {
+      return { type: "none" };
     }
   }
 };
 
-export type BotLevel = 'Easy' | 'Medium' | 'Hard';
+export type BotLevel = "Easy" | "Medium" | "Hard";
 
 export const botLevel: { [botLevel in BotLevel]: BotLevel } = {
-  Easy: 'Easy',
-  Medium: 'Medium',
-  Hard: 'Hard',
+  Easy: "Easy",
+  Medium: "Medium",
+  Hard: "Hard",
 };
 
 //
@@ -116,59 +118,53 @@ export const botLevel: { [botLevel in BotLevel]: BotLevel } = {
 //
 //
 
-export type ClientMsg =
-  | Req
-  | ['hovered', { columnIndex: ColumnIndex }]
-  | ['animate'];
+export type ClientMsg = Req | { t: "hovered"; columnIndex: ColumnIndex };
 
-export type ServerMsg = ['bot-move', BestMoveResult];
+export type ServerMsg = { t: "bot-moved"; result: BestMoveResult };
 
 export type ToClient =
   | Res
-  | ['player-left', SharedModel]
-  | ['bot-move', BotMoveResult];
+  | { t: "player-left"; model: SharedModel }
+  | { t: "bot-move"; result: Result<string, SharedModel> };
 
 export type ToServer = Req;
 
 export type Req =
-  | ['start-playing']
-  | ['stop-playing']
-  | ['input-player-type', { playerType: PlayerType }]
-  | ['input-bot-level', { botLevel: BotLevel }]
-  | ['start-game']
-  | ['input-move', { columnIndex: ColumnIndex }]
-  | ['stop-game']
-  | ['swap-sides']
-  | ['restart'];
+  | { t: "start-playing" }
+  | { t: "stop-playing" }
+  | { t: "input-player-type"; playerType: PlayerType }
+  | { t: "input-bot-level"; botLevel: BotLevel }
+  | { t: "start-game" }
+  | { t: "input-move"; columnIndex: ColumnIndex }
+  | { t: "stop-game" }
+  | { t: "swap-sides" }
+  | { t: "restart" };
 
-export type Res = [Req[0], Result<Problem, SharedModel>];
-
-export type Problem =
-  | 'not_setup'
-  | 'not_game'
-  | 'player_taken'
-  | 'not_playing'
-  | 'missing_player'
-  | MoveProblem;
+export type Res = Req & { result: Result<String, SharedModel> };
 
 //
 //
 //
 //
 
-export const handle = (
-  { currentUserId }: { currentUserId: UserId },
-  msg: Req,
-  model: SharedModel
-): Result<Problem, SharedModel> => {
-  switch (msg[0]) {
-    case 'start-playing': {
-      if (model.type !== 'Setup') {
-        return Err('not_setup');
+export const handle = ({
+  ctx,
+  msg,
+  model,
+}: {
+  ctx: { currentUserId: UserId };
+  msg: Req;
+  model: SharedModel;
+}): Result<String, SharedModel> => {
+  const { currentUserId } = ctx;
+  switch (msg.t) {
+    case "start-playing": {
+      if (model.type !== "setup") {
+        return Err("not-setup");
       }
 
-      if (model.player !== 'none') {
-        return Err('player_taken');
+      if (model.player !== "none") {
+        return Err("player-taken");
       }
 
       const modelNew: SharedModel = {
@@ -179,76 +175,76 @@ export const handle = (
       return Ok(modelNew);
     }
 
-    case 'stop-playing': {
-      if (model.type !== 'Setup') {
-        return Err('not_setup');
+    case "stop-playing": {
+      if (model.type !== "setup") {
+        return Err("not-setup");
       }
 
-      if (model.player === 'none') {
-        return Err('not_playing');
+      if (model.player === "none") {
+        return Err("not-playing");
       }
 
       if (model.player !== currentUserId) {
-        return Err('not_playing');
+        return Err("not-playing");
       }
 
       const modelNew: SharedModel = {
         ...model,
-        player: 'none',
+        player: "none",
       };
 
       return Ok(modelNew);
     }
 
-    case 'input-player-type': {
-      if (model.type !== 'Setup') {
-        return Err('not_setup');
+    case "input-player-type": {
+      if (model.type !== "setup") {
+        return Err("not-setup");
       }
 
       if (model.player !== currentUserId) {
-        return Err('not_playing');
+        return Err("not-playing");
       }
 
       const modelNew: SharedModel = {
         ...model,
-        userPlayerType: msg[1].playerType,
+        userPlayerType: msg.playerType,
       };
 
       return Ok(modelNew);
     }
 
-    case 'input-bot-level': {
-      if (model.type !== 'Setup') {
-        return Err('not_setup');
+    case "input-bot-level": {
+      if (model.type !== "setup") {
+        return Err("not-setup");
       }
 
       if (model.player !== currentUserId) {
-        return Err('not_playing');
+        return Err("not-playing");
       }
 
       const modelNew: SharedModel = {
         ...model,
-        botLevel: msg[1].botLevel,
+        botLevel: msg.botLevel,
       };
 
       return Ok(modelNew);
     }
 
-    case 'start-game': {
-      if (model.type !== 'Setup') {
-        return Err('not_setup');
+    case "start-game": {
+      if (model.type !== "setup") {
+        return Err("not-setup");
       }
 
       if (model.player !== currentUserId) {
-        return Err('not_playing');
+        return Err("not-playing");
       }
 
-      if (model.player === 'none') {
-        return Err('missing_player');
+      if (model.player === "none") {
+        return Err("missing-player");
       }
 
       const modelNew: SharedModel = {
-        type: 'game',
+        type: "game",
         botLevel: model.botLevel,
         player: model.player,
         userPlayerType: model.userPlayerType,
@@ -258,17 +254,17 @@ export const handle = (
       return Ok(modelNew);
     }
 
-    case 'stop-game': {
-      if (model.type !== 'game') {
-        return Err('not_game');
+    case "stop-game": {
+      if (model.type !== "game") {
+        return Err("not-game");
       }
 
       if (model.player !== currentUserId) {
-        return Err('not_playing');
+        return Err("not-playing");
       }
 
       const modelNew: SharedModel = {
-        type: 'Setup',
+        type: "setup",
         botLevel: model.botLevel,
         player: model.player,
         userPlayerType: model.userPlayerType,
@@ -277,13 +273,13 @@ export const handle = (
       return Ok(modelNew);
     }
 
-    case 'swap-sides': {
-      if (model.type !== 'game') {
-        return Err('not_game');
+    case "swap-sides": {
+      if (model.type !== "game") {
+        return Err("not-game");
       }
 
       if (model.player !== currentUserId) {
-        return Err('not_playing');
+        return Err("not-playing");
       }
 
       const modelNew: SharedModel = {
@@ -295,22 +291,18 @@ export const handle = (
       return Ok(modelNew);
     }
 
-    case 'input-move': {
-      if (model.type !== 'game') {
-        return Err('not_game');
+    case "input-move": {
+      if (model.type !== "game") {
+        return Err("not-game");
       }
 
       if (model.player !== currentUserId) {
-        return Err('not_playing');
+        return Err("not-playing");
       }
 
-      const result = move(
-        model.columns,
-        msg[1].columnIndex,
-        model.userPlayerType
-      );
+      const result = move(model.columns, msg.columnIndex, model.userPlayerType);
 
-      if (result.t === 'err') {
+      if (result.t === "err") {
         return result;
       }
 
@@ -322,13 +314,13 @@ export const handle = (
       return Ok(modelNew);
     }
 
-    case 'restart': {
-      if (model.type !== 'game') {
-        return Err('not_game');
+    case "restart": {
+      if (model.type !== "game") {
+        return Err("not-game");
       }
 
       if (model.player !== currentUserId) {
-        return Err('not_playing');
+        return Err("not-playing");
       }
 
       const modelNew: GameModel = {
@@ -345,20 +337,15 @@ export const handle = (
   }
 };
 
-type BotMoveResult = Result<
-  MoveProblem | BestMoveProblem | 'not_game',
-  SharedModel
->;
-
 export const botMove = (
   bestMoveResult: BestMoveResult,
   model: SharedModel
-): BotMoveResult => {
-  if (model.type !== 'game') {
-    return Err('not_game');
+): Result<string, SharedModel> => {
+  if (model.type !== "game") {
+    return Err("not-game");
   }
 
-  if (bestMoveResult.t === 'err') {
+  if (bestMoveResult.t === "err") {
     return bestMoveResult;
   }
 
@@ -368,7 +355,7 @@ export const botMove = (
     opposite[model.userPlayerType]
   );
 
-  if (moveResult.t === 'err') {
+  if (moveResult.t === "err") {
     return moveResult;
   }
 
