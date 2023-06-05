@@ -87,7 +87,7 @@ const Player = ({
     <div className="flex-1 flex flex-col gap-6 p-4">
       <div
         className={cn(
-          "flex items-center w-full justify-center gap-4",
+          "grid grid-cols-2 w-full justify-center gap-4",
           variant === "player-one" ? "flex-row" : "flex-row-reverse"
         )}>
         <div className="flex flex-col items-center justify-center">
