@@ -315,7 +315,7 @@ export const View = ({
             }),
             {
               title: "Puzzles",
-              description: "Train with more than 3 mil puzzles",
+              description: "Train with more than 3 million puzzles",
               renderIcon: (props) => <IconPuzzlePiece {...props} />,
               onClick: () =>
                 $send({
