@@ -1,6 +1,12 @@
 import { UserId } from "@gamezilla/shared/app";
 import { RoomViewCtx, ViewCtx } from "@gamezilla/shared/client";
-import { MyAvatar, MyButton, ViewNode, cn } from "@gamezilla/shared/ui";
+import {
+  IconArrowLeftOnRect,
+  MyAvatar,
+  MyButton,
+  ViewNode,
+  cn,
+} from "@gamezilla/shared/ui";
 
 type IconProps = { className: string };
 
@@ -31,9 +37,9 @@ export const VsUserSetupScreen = ({
 }) => {
   return (
     <div className="w-full h-full flex flex-col">
-      <div className="flex flex-col justify-center items-center w-full gap-4">
+      <div className="flex flex-col justify-center items-center w-full pt-4 gap-4">
         <p className="font-bold text-3xl">{title}</p>
-        {renderCoverArt({ className: "w-20 h-20 overflow-hidden rounded-lg" })}
+        {renderCoverArt({ className: "w-24 h-24 overflow-hidden rounded-lg" })}
       </div>
 
       <div className="flex items-center justify-center w-full py-6">
@@ -50,8 +56,9 @@ export const VsUserSetupScreen = ({
         <MyButton
           variant="contained"
           color="default"
-          className="flex-1"
+          className="flex-1 gap-2"
           onClick={onQuit}>
+          <IconArrowLeftOnRect />
           Quit
         </MyButton>
 

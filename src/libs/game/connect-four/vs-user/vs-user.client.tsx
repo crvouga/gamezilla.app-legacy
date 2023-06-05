@@ -64,11 +64,10 @@ import {
 export type Model = ClientModel;
 
 export const init = ({
-  PlayerOne,
-  PlayerTwo,
-}: Pick<ClientModel, "PlayerOne" | "PlayerTwo">): ClientModel => {
+  players,
+}: Pick<ClientModel, "players">): ClientModel => {
   return {
-    ...initShared({ PlayerOne, PlayerTwo }),
+    ...initShared({ players }),
     ghostIndex: "none",
     openedModal: "none",
   };
@@ -233,7 +232,7 @@ export const View = ({
           renderIcon: (props) => {
             return <PlayerIcon playerType="PlayerOne" {...props} />;
           },
-          userId: model.PlayerOne,
+          userId: model.players.PlayerOne,
         }}
         playerTwo={{
           label: "Yellow",
@@ -246,7 +245,7 @@ export const View = ({
           renderIcon: (props) => {
             return <PlayerIcon playerType="PlayerTwo" {...props} />;
           },
-          userId: model.PlayerTwo,
+          userId: model.players.PlayerTwo,
         }}
       />
     );
@@ -448,7 +447,7 @@ const ViewGameOverMessage = ({
             <PlayerIcon playerType={winner} />
             <Avatar
               sx={{ ...size }}
-              src={ctx.profiles[model[winner]]?.avatarUrl}
+              src={ctx.profiles[model.players[winner]]?.avatarUrl}
             />
           </Box>
           <Typography sx={{ fontSize: "2.5rem" }}>Winner</Typography>
@@ -482,7 +481,7 @@ const ViewGameOverMessage = ({
             <PlayerIcon playerType={winner} />
             <Avatar
               sx={{ ...size }}
-              src={ctx.profiles[model[winner]]?.avatarUrl}
+              src={ctx.profiles[model.players[winner]]?.avatarUrl}
             />
           </Box>
           <Typography sx={{ fontSize: 50 }}>Winner</Typography>
@@ -530,14 +529,14 @@ export const _ViewSetup = ({
       <ViewSetupPlayerSlot
         ctx={ctx}
         playerType={"PlayerOne"}
-        userId={model.PlayerOne}
+        userId={model.players.PlayerOne}
         $send={$send}
       />
 
       <ViewSetupPlayerSlot
         ctx={ctx}
         playerType={"PlayerTwo"}
-        userId={model.PlayerTwo}
+        userId={model.players.PlayerTwo}
         $send={$send}
       />
 
@@ -698,11 +697,11 @@ const PlayerSlot = ({
       }}>
       <PlayerIcon playerType={playerType} />
       <Avatar
-        src={ctx.profiles[model[playerType]]?.avatarUrl}
+        src={ctx.profiles[model.players[playerType]]?.avatarUrl}
         sx={{ ...size, marginRight: 1 }}
       />
       <Typography noWrap color="text.secondary">
-        {ctx.profiles[model[playerType]]?.username ?? "..."}
+        {ctx.profiles[model.players[playerType]]?.username ?? "..."}
       </Typography>
     </Paper>
   );
@@ -784,14 +783,16 @@ const ViewVersusHeader = ({
         <Avatar
           sx={{ marginX: "auto" }}
           src={
-            !model.PlayerOne ? "" : ctx.profiles[model.PlayerOne]?.avatarUrl
+            !model.players.PlayerOne
+              ? ""
+              : ctx.profiles[model.players.PlayerOne]?.avatarUrl
           }>
           <Icons.QuestionMark />
         </Avatar>
         <Typography color="#fff" align="center" noWrap>
-          {!model.PlayerOne
+          {!model.players.PlayerOne
             ? "?"
-            : ctx.profiles[model.PlayerOne]?.username ?? "..."}
+            : ctx.profiles[model.players.PlayerOne]?.username ?? "..."}
         </Typography>
       </Box>
       <PlayerOneIcon />
@@ -803,14 +804,16 @@ const ViewVersusHeader = ({
         <Avatar
           sx={{ marginX: "auto" }}
           src={
-            !model.PlayerTwo ? "" : ctx.profiles[model.PlayerTwo]?.avatarUrl
+            !model.players.PlayerTwo
+              ? ""
+              : ctx.profiles[model.players.PlayerTwo]?.avatarUrl
           }>
           <Icons.QuestionMark />
         </Avatar>
         <Typography color="#fff" align="center" noWrap>
-          {!model.PlayerTwo
+          {!model.players.PlayerTwo
             ? "?"
-            : ctx.profiles[model.PlayerTwo]?.username ?? "..."}
+            : ctx.profiles[model.players.PlayerTwo]?.username ?? "..."}
         </Typography>
       </Box>
     </Box>

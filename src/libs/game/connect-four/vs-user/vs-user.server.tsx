@@ -98,16 +98,17 @@ export const updateFromRoom = ({
     const userId = msg.userId;
     const player = toPlayerType(userId, model);
 
-    if (player === "none") {
+    if (player === null) {
       return { model };
     }
 
     const modelNew: Model = {
       type: "setup",
       moveTimeLimit: model.moveTimeLimit,
-      PlayerOne: model.PlayerOne,
-      PlayerTwo: model.PlayerTwo,
-      [player]: "none",
+      players: {
+        ...model.players,
+        [player]: null,
+      },
     };
 
     return {

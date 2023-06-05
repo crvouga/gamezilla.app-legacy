@@ -26,27 +26,30 @@ export type SharedModel = SetupModel | GameModel | GameOverModel;
 export type SetupModel = {
   type: "setup";
   moveTimeLimit: MoveTimeLimit;
-  PlayerOne: UserId | null;
-  PlayerTwo: UserId | null;
+  players: {
+    [playerType in PlayerType]: UserId | null;
+  };
 };
 
 export type GameModel = {
   type: "game";
-  PlayerOne: UserId;
-  PlayerTwo: UserId;
   moveTimeLimit: MoveTimeLimit;
   moveCountDown: number;
   columns: Columns;
+  players: {
+    [playerType in PlayerType]: UserId;
+  };
 };
 
 export type GameOverModel = {
   type: "game-over";
-  PlayerOne: UserId;
-  PlayerTwo: UserId;
   moveTimeLimit: MoveTimeLimit;
   columns: Columns;
   gameOver: GameOver;
   rematch: Rematch;
+  players: {
+    [playerType in PlayerType]: UserId;
+  };
 };
 
 type Rematch =
@@ -100,14 +103,14 @@ export const allMoveTimeLimit: {
 };
 
 export const initShared = ({
-  PlayerOne,
-  PlayerTwo,
-}: Pick<SharedModel, "PlayerOne" | "PlayerTwo">): SharedModel => {
+  players,
+}: {
+  players: SharedModel["players"];
+}): SharedModel => {
   return {
     type: "setup",
     moveTimeLimit: 7,
-    PlayerOne,
-    PlayerTwo,
+    players,
   };
 };
 
@@ -198,18 +201,19 @@ export const handle = ({
 
       const { playerType } = req;
 
-      if (model[playerType] !== "none") {
+      if (model.players[playerType] !== null) {
         return Err("player-taken");
       }
 
-      const modelNew: SharedModel = {
-        ...model,
+      const playersNew = {
         [opposite[playerType]]:
-          model[opposite[playerType]] === ctx.currentUserId
-            ? "none"
-            : model[opposite[playerType]],
+          model.players[opposite[playerType]] === ctx.currentUserId
+            ? null
+            : model.players[opposite[playerType]],
         [playerType]: ctx.currentUserId,
-      };
+      } as SharedModel["players"];
+
+      const modelNew: SharedModel = { ...model, players: playersNew };
 
       return Ok(modelNew);
     }
@@ -259,7 +263,10 @@ export const handle = ({
         return Err("not-in-setup");
       }
 
-      if (!model.PlayerOne || !model.PlayerTwo) {
+      const playerOne = model.players.PlayerOne;
+      const playerTwo = model.players.PlayerTwo;
+
+      if (!playerOne || !playerTwo) {
         return Err("missing-player");
       }
 
@@ -268,8 +275,10 @@ export const handle = ({
         columns: emptyColumns,
         moveTimeLimit: model.moveTimeLimit,
         moveCountDown: model.moveTimeLimit,
-        PlayerOne: model.PlayerOne,
-        PlayerTwo: model.PlayerTwo,
+        players: {
+          PlayerOne: playerOne,
+          PlayerTwo: playerTwo,
+        },
       };
 
       return Ok(modelNew);
@@ -323,8 +332,7 @@ export const handle = ({
         columns: emptyColumns,
         moveCountDown: model.moveTimeLimit,
         moveTimeLimit: model.moveTimeLimit,
-        PlayerOne: model.PlayerOne,
-        PlayerTwo: model.PlayerTwo,
+        players: model.players,
       };
 
       return Ok(modelNew);
@@ -344,8 +352,7 @@ export const handle = ({
       const modelNew: SharedModel = {
         type: "setup",
         moveTimeLimit: model.moveTimeLimit,
-        PlayerOne: model.PlayerOne,
-        PlayerTwo: model.PlayerTwo,
+        players: model.players,
       };
 
       return Ok(modelNew);
@@ -392,8 +399,7 @@ export const handle = ({
       const modelNew: SharedModel = {
         type: "game-over",
         columns: model.columns,
-        PlayerOne: model.PlayerOne,
-        PlayerTwo: model.PlayerTwo,
+        players: model.players,
         rematch: { type: "NotAsking" },
         moveTimeLimit: model.moveTimeLimit,
         gameOver: { type: "resignation", resigner: playerType },
@@ -412,11 +418,11 @@ export const toPlayerType = (
   userId: UserId,
   model: SharedModel
 ): PlayerType | "none" => {
-  if (model.PlayerOne === userId) {
+  if (model.players.PlayerOne === userId) {
     return "PlayerOne";
   }
 
-  if (model.PlayerTwo === userId) {
+  if (model.players.PlayerTwo === userId) {
     return "PlayerTwo";
   }
 
@@ -495,8 +501,7 @@ const handleMoveResult = (
   const modelNew: SharedModel = {
     type: "game-over",
     moveTimeLimit: model.moveTimeLimit,
-    PlayerOne: model.PlayerOne,
-    PlayerTwo: model.PlayerTwo,
+    players: model.players,
     columns: columnsNew,
     gameOver: gameOver,
     rematch: { type: "NotAsking" },
