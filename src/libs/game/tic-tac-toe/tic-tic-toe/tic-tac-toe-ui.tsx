@@ -191,7 +191,7 @@ export const PlayerTypeIcon = ({
   );
 };
 
-export const viewCoverArt = () => {
+export const ViewCoverArt = (props: { className?: string }) => {
   const positions: [Position, Slot][] = [
     [{ row: 0, column: 0 }, "X"],
     [{ row: 0, column: 1 }, Empty],
@@ -205,7 +205,7 @@ export const viewCoverArt = () => {
   ] as const;
 
   return (
-    <svg width="100%" viewBox="0 0 2 2">
+    <svg width="100%" viewBox="0 0 2 2" {...props}>
       <rect x={0} y={0} width={2} height={2} fill={gameTheme.background} />
 
       {LINES.map((line, index) => (

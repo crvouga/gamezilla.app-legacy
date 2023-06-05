@@ -22,7 +22,7 @@ import {
   ToClient,
   ToServer,
 } from "./chess.shared";
-import { viewCoverArt } from "./chess/chess";
+import { ViewCoverArt } from "./chess/chess";
 import Sounds from "./chess/chess-sounds";
 import * as Puzzle from "./puzzle/puzzle.client";
 import * as VsBot from "./vs-bot/vs-bot.server";
@@ -295,7 +295,7 @@ export const View = ({
         <MainMenuScreen
           title="Chess"
           roomCtx={gameRoomCtx}
-          coverArt={viewCoverArt()}
+          renderCoverArt={(props) => <ViewCoverArt {...props} />}
           buttons={[
             mainMenuButtons.playComputer({
               onClick: () =>

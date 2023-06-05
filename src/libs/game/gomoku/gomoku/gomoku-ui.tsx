@@ -1,6 +1,6 @@
-import { Hex, easeAttrs } from '@gamezilla/shared/core';
-import { SvgIcon, Sx } from '@gamezilla/shared/ui';
-import { Transition, TransitionGroup } from 'react-transition-group';
+import { Hex, easeAttrs } from "@gamezilla/shared/core";
+import { SvgIcon, Sx } from "@gamezilla/shared/ui";
+import { Transition, TransitionGroup } from "react-transition-group";
 import {
   Board,
   Bounds,
@@ -8,24 +8,24 @@ import {
   allPositions,
   bounds,
   presetToStars,
-} from './gomoku';
-import { Position } from './gomoku-position';
+} from "./gomoku";
+import { Position } from "./gomoku-position";
 
-const backgroundColor = '#C88655';
+const backgroundColor = "#C88655";
 const lineColor = Hex.darken(backgroundColor, 0.3);
 const gameTheme = {
-  whiteStone: 'white',
-  blackStone: 'black',
+  whiteStone: "white",
+  blackStone: "black",
   background: backgroundColor,
   line: lineColor,
 };
 
 export const stoneToColor = (stone: Stone): string => {
   switch (stone) {
-    case 'black':
+    case "black":
       return gameTheme.blackStone;
 
-    case 'white':
+    case "white":
       return gameTheme.whiteStone;
   }
 };
@@ -45,19 +45,22 @@ export const viewStoneIcon = ({ stone, ...sx }: { stone: Stone } & Sx) => {
   );
 };
 
-export const ViewCoverArt = () => {
-  return ViewBoard({
-    viewBoxOffset: 0.5,
-    bounds: {
-      lower: { x: 0, y: 0 },
-      upper: { x: 6, y: 6 },
-    },
-    board: {
-      2: { 2: 'black', 3: 'white' },
-      3: { 2: 'black', 3: 'white' },
-      4: { 2: 'white', 3: 'black' },
-    },
-  });
+export const ViewCoverArt = (props: { className?: string }) => {
+  return (
+    <ViewBoard
+      {...props}
+      viewBoxOffset={0.5}
+      bounds={{
+        lower: { x: 0, y: 0 },
+        upper: { x: 6, y: 6 },
+      }}
+      board={{
+        2: { 2: "black", 3: "white" },
+        3: { 2: "black", 3: "white" },
+        4: { 2: "white", 3: "black" },
+      }}
+    />
+  );
 };
 
 export const ViewBoard = ({
@@ -65,7 +68,9 @@ export const ViewBoard = ({
   board,
   bounds: bounds_ = bounds,
   viewBoxOffset = 0.8,
+  className,
 }: {
+  className?: string;
   board: Board;
   onPress?: (position: Position) => void;
   bounds?: Bounds;
@@ -82,17 +87,21 @@ export const ViewBoard = ({
     },
   };
 
-  const stars = presetToStars['9x9'].map((pos) => pos);
+  const stars = presetToStars["9x9"].map((pos) => pos);
 
   const width = boundsView.upper.x - boundsView.lower.x;
   const height = boundsView.upper.y - boundsView.lower.y;
 
   const viewBox = [boundsView.lower.x, boundsView.lower.y, width, height].join(
-    ' '
+    " "
   );
 
   return (
-    <svg style={{ overflow: 'hidden' }} width="100%" viewBox={viewBox}>
+    <svg
+      style={{ overflow: "hidden" }}
+      width="100%"
+      viewBox={viewBox}
+      className={className}>
       <g strokeWidth={0.05}>
         <rect
           x={boundsView.lower.x}
@@ -135,7 +144,7 @@ export const ViewBoard = ({
           {stars.map((pos) => {
             return (
               <circle
-                key={[pos.x, pos.y].join(', ')}
+                key={[pos.x, pos.y].join(", ")}
                 cx={pos.x}
                 cy={pos.y}
                 r={0.12}
@@ -145,7 +154,7 @@ export const ViewBoard = ({
           })}
         </g>
 
-        <TransitionGroup component={'g'}>
+        <TransitionGroup component={"g"}>
           {allPositions.flatMap(({ x, y }) => {
             const stone = board[x]?.[y] ?? null;
             if (!stone) {
@@ -155,7 +164,7 @@ export const ViewBoard = ({
             return [
               <Transition
                 component="g"
-                key={[x, y, stone].join(', ')}
+                key={[x, y, stone].join(", ")}
                 timeout={1000}
                 onEnter={(node: HTMLElement) =>
                   easeAttrs(node, {
@@ -164,7 +173,7 @@ export const ViewBoard = ({
                       from: 0,
                       to: 0.45,
                       duration: 200,
-                      easing: { type: 'ease-out-back' },
+                      easing: { type: "ease-out-back" },
                     },
                   })
                 }
@@ -174,13 +183,12 @@ export const ViewBoard = ({
                       from: 0.45,
                       to: 0,
                       duration: 200,
-                      easing: { type: 'ease-in-expo' },
+                      easing: { type: "ease-in-expo" },
                     },
                   })
-                }
-              >
+                }>
                 <circle
-                  key={[x, y, stone].join('-')}
+                  key={[x, y, stone].join("-")}
                   cx={x}
                   cy={y}
                   r={0.45}
@@ -194,13 +202,13 @@ export const ViewBoard = ({
         <g>
           {allPositions.map(({ x, y }) => (
             <circle
-              key={[x, y].join(', ')}
+              key={[x, y].join(", ")}
               cx={x}
               cy={y}
               r={0.5}
               fill="transparent"
               onClick={() => onPress?.({ x, y })}
-              style={{ cursor: 'pointer' }}
+              style={{ cursor: "pointer" }}
             />
           ))}
         </g>

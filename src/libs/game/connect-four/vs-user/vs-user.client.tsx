@@ -3,6 +3,7 @@ import { UserId } from "@gamezilla/shared/app";
 import {
   ChoiceChips,
   RoomCtx,
+  RoomMsg,
   RoomViewCtx,
   ViewCtx,
   VsUserSetupScreen,
@@ -43,6 +44,7 @@ import {
   ClientMsg,
   GameModel,
   GameOverModel,
+  Res,
   ServerModel,
   SetupModel,
   ToClient,
@@ -172,6 +174,15 @@ export const syncWithServer = ({
     openedModal: clientModel.openedModal,
     ghostIndex: clientModel.ghostIndex,
   };
+};
+
+export const updateFromRoom = (input: {
+  model: Model;
+  msg: RoomMsg;
+}): {
+  model: Model;
+} => {
+  return input;
 };
 
 //
@@ -818,4 +829,20 @@ const ViewVersusHeader = ({
       </Box>
     </Box>
   );
+};
+
+export const resToStr = ({
+  ctx,
+  res,
+}: {
+  ctx: RoomCtx;
+  res: Res;
+}): string | null => {
+  if (res.t === "start-playing" && res.result.t === "ok") {
+    // @ts-ignore
+    const username = ctx.profiles[res.userId]?.username ?? "...";
+    return `${username} started playing`;
+  }
+
+  return null;
 };

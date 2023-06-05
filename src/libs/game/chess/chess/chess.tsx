@@ -892,7 +892,7 @@ export const exampleModel: Model = {
 //
 //
 
-export const viewCoverArt = () => {
+export const ViewCoverArt = (props: { className?: string }) => {
   const theme = {
     // lightSquare: "#EBEBD0",
     // darkSquare: "#779455",
@@ -901,7 +901,7 @@ export const viewCoverArt = () => {
     pawn: "#93BA46",
   };
   return (
-    <svg width="100%" viewBox={"0 0 2 2"}>
+    <svg width="100%" viewBox={"0 0 2 2"} {...props}>
       <rect x={0} y={0} width={1} height={1} fill={theme.lightSquare} />
 
       <rect x={0} y={1} width={1} height={1} fill={theme.darkSquare} />

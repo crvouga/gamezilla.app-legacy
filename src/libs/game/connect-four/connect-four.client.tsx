@@ -171,7 +171,7 @@ export const View = ({
         <MainMenuScreen
           roomCtx={ctx}
           title="Connect Four"
-          coverArt={<ViewCoverArt />}
+          renderCoverArt={(props) => <ViewCoverArt {...props} />}
           buttons={[
             mainMenuButtons.playFriend({
               onClick: () => $send({ mode: "vs-user", t: "input-mode" }),

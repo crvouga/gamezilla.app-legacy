@@ -144,7 +144,7 @@ export const View = ({
   }
   return (
     <MainMenuScreen
-      coverArt={viewCoverArt()}
+      renderCoverArt={() => viewCoverArt()}
       roomCtx={ctx}
       title="Flow"
       buttons={[

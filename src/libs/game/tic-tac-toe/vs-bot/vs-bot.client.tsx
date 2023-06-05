@@ -24,7 +24,7 @@ import {
 import {
   PlayerTypeIcon,
   ViewBoard,
-  viewCoverArt,
+  ViewCoverArt,
 } from "../tic-tic-toe/tic-tac-toe-ui";
 import {
   ClientModel,
@@ -155,7 +155,7 @@ export const View = ({
         playerId={model.player}
         subtitle="Vs Computer"
         title="Tic-Tac-Toe"
-        coverArt={viewCoverArt()}
+        coverArt={<ViewCoverArt />}
         ctx={ctx}
         onCancel={goBack}
         onStartGame={() => $send({ t: "start-game" })}

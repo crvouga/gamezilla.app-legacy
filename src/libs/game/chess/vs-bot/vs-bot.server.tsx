@@ -2,7 +2,7 @@ import { ViewCtx, ViewVsBotSetupScreen } from "@gamezilla/shared/client";
 import { Audio, Cmd, Option, Sub, exhaustive, t } from "@gamezilla/shared/core";
 import * as UI from "@gamezilla/shared/ui";
 import * as Chess from "../chess/chess";
-import { viewCoverArt } from "../chess/chess";
+import { ViewCoverArt } from "../chess/chess";
 import Sounds from "../chess/chess-sounds";
 import { PawnIcon } from "../chess/chess-views";
 import {
@@ -292,7 +292,7 @@ export const View = ({
           $send(["InputBot", { botLevel, userId: ctx.currentUserId }]),
       },
       onCancel: onClose,
-      coverArt: viewCoverArt(),
+      coverArt: <ViewCoverArt />,
       ctx,
       onStartGame: () => $send(["start-game", { userId: ctx.currentUserId }]),
       onStartPlaying: () => $send(["InputUser", { userId: ctx.currentUserId }]),

@@ -151,7 +151,7 @@ export const view = ({
       return viewVsUserSetupScreen({
         title: "gomoku",
         subtitle: "Player Vs Player",
-        coverArt: ViewCoverArt(),
+        coverArt: <ViewCoverArt />,
         ctx,
         playerOne: {
           label: "White",

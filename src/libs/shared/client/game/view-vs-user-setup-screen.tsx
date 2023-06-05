@@ -7,6 +7,7 @@ import {
   ViewNode,
   cn,
 } from "@gamezilla/shared/ui";
+import { ViewGameHeader } from "./view-game-header";
 
 type IconProps = { className: string };
 
@@ -37,22 +38,30 @@ export const VsUserSetupScreen = ({
 }) => {
   return (
     <div className="w-full h-full flex flex-col">
-      <div className="flex flex-col justify-center items-center w-full pt-4 gap-4">
-        <p className="font-bold text-3xl">{title}</p>
-        {renderCoverArt({ className: "w-24 h-24 overflow-hidden rounded-lg" })}
-      </div>
+      <ViewGameHeader title={title} renderCoverArt={renderCoverArt} />
 
       <div className="flex items-center justify-center w-full py-6">
         <Player variant="player-one" player={playerOne} ctx={ctx} />
 
-        <div className="font-black text-3xl">VS</div>
+        <div className="h-full flex flex-col">
+          <div className="flex-1 font-black text-3xl flex items-center justify-center">
+            VS
+          </div>
+          <div className="flex-1"></div>
+        </div>
 
         <Player variant="player-two" player={playerTwo} ctx={ctx} />
       </div>
 
       <div className="flex-1"></div>
 
-      <div className="w-full p-4 gap-4 flex items-center">
+      <div className="px-4">
+        <p className="text-secondary">Settings</p>
+
+        <p className="text-lg">Move Limit Count</p>
+      </div>
+
+      <div className="w-full p-4 pt-8 gap-4 flex items-center">
         <MyButton
           variant="contained"
           color="default"
@@ -85,27 +94,28 @@ const Player = ({
 }) => {
   return (
     <div className="flex-1 flex flex-col gap-6 p-4">
-      <div
-        className={cn(
-          "grid grid-cols-2 w-full justify-center gap-4",
-          variant === "player-one" ? "flex-row" : "flex-row-reverse"
-        )}>
-        <div className="flex flex-col items-center justify-center">
+      <div className="grid grid-cols-2 w-full justify-center gap-4">
+        <div
+          className={cn(
+            "flex flex-col items-center justify-center gap-1",
+            variant === "player-two" ? "order-last" : ""
+          )}>
           <MyAvatar
+            className="w-16 h-16"
             src={
               player.userId ? ctx.profiles[player.userId]?.avatarUrl : undefined
             }
             alt=""
           />
-          <p>
+          <p className="text-sm text-secondary">
             {player.userId
               ? ctx.profiles[player.userId]?.username ?? "..."
               : "?"}
           </p>
         </div>
 
-        <div className="flex flex-col items-center justify-center">
-          {player.renderIcon({ className: "w-14 h-14" })}
+        <div className="flex flex-col items-center justify-center gap-1">
+          {player.renderIcon({ className: "w-16 h-16" })}
 
           <p className="text-sm text-secondary">{player.label}</p>
         </div>
@@ -114,6 +124,7 @@ const Player = ({
       <div className="w-full">
         {player.userId && (
           <MyButton
+            className="w-full"
             variant="text"
             color="primary"
             onClick={player.onStopPlaying}>
@@ -123,6 +134,7 @@ const Player = ({
 
         {!player.userId && (
           <MyButton
+            className="w-full"
             variant="contained"
             color="primary"
             onClick={player.onStartPlaying}>

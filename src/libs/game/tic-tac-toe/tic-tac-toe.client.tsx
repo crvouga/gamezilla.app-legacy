@@ -15,7 +15,7 @@ import {
   ToClient,
   ToServer,
 } from "./tic-tac-toe.shared";
-import { viewCoverArt } from "./tic-tic-toe/tic-tac-toe-ui";
+import { ViewCoverArt } from "./tic-tic-toe/tic-tac-toe-ui";
 import * as VsBot from "./vs-bot/vs-bot.client";
 import * as VsUser from "./vs-user/vs-user.client";
 
@@ -223,7 +223,7 @@ export const View = ({
       <MainMenuScreen
         title="Tic-Tac-Toe"
         roomCtx={gameRoomCtx}
-        coverArt={viewCoverArt()}
+        renderCoverArt={(props) => <ViewCoverArt {...props} />}
         buttons={[
           mainMenuButtons.playFriend({
             onClick: () => $send({ t: "input-mode", mode: "vs-user" }),

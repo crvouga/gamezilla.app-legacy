@@ -505,7 +505,7 @@ const paint = ({
   context.fill("evenodd");
 };
 
-export const ViewCoverArt = () => {
+export const ViewCoverArt = (props: { className?: string }) => {
   const ref = useRef(Uuid.generateSync());
   const ids = {
     playerOneGradient: `playerOneGradient${ref.current}`,
@@ -519,7 +519,7 @@ export const ViewCoverArt = () => {
   const playerTwoFill = `url(#${ids.playerTwoGradient})`;
 
   return (
-    <svg width="100%" viewBox={"0 0 2 2"}>
+    <svg width="100%" viewBox={"0 0 2 2"} {...props}>
       <defs>
         <pattern
           id={ids.holePattern}

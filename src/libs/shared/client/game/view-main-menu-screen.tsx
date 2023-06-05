@@ -6,6 +6,7 @@ import {
   ViewNode,
 } from "@gamezilla/shared/ui";
 import { RoomViewCtx } from "./game-shared";
+import { ViewGameHeader } from "./view-game-header";
 
 type MainMenuButton = {
   renderIcon: (input: { className: string }) => ViewNode;
@@ -16,20 +17,19 @@ type MainMenuButton = {
 
 export const MainMenuScreen = ({
   title,
-  coverArt,
+  renderCoverArt,
   buttons,
   roomCtx,
 }: {
   roomCtx: RoomViewCtx;
   title: string;
-  coverArt: ViewNode;
+  renderCoverArt: (props: { className: string }) => ViewNode;
   buttons: MainMenuButton[];
 }) => {
   if (roomCtx.currentUserId !== roomCtx.hostId) {
     return (
       <div className="w-full h-full flex items-center justify-center flex-col">
-        <div className="w-28 h-28 rounded overflow-hidden">{coverArt}</div>
-        <p className="text-center text-3xl mt-3">{title}</p>
+        <ViewGameHeader title={title} renderCoverArt={renderCoverArt} />
       </div>
     );
   }
@@ -37,13 +37,7 @@ export const MainMenuScreen = ({
   return (
     <div className="w-full h-full flex flex-col overflow-y-hidden">
       <div className="w-full flex-1 flex flex-col items-center px-4 overflow-y-auto">
-        <p className="text-3xl font-bold py-4">{title}</p>
-
-        <div>
-          <div className="w-24 h-24 rounded-lg border border-neutral-600 overflow-hidden">
-            {coverArt}
-          </div>
-        </div>
+        <ViewGameHeader title={title} renderCoverArt={renderCoverArt} />
 
         <div className="w-full flex flex-col gap-6 mt-6">
           {buttons.map(({ renderIcon, title, description, onClick }, index) => (

@@ -176,7 +176,7 @@ export const view = ({
           toName: (botLevel) => botLevel,
           render: (props) => props.botLevel,
         },
-        coverArt: ViewCoverArt(),
+        coverArt: <ViewCoverArt />,
         player: {
           onInput: (userStone) =>
             $send({ t: "inputted-user-stone", userStone }),
