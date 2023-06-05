@@ -2,7 +2,7 @@ import {
   AppMsg,
   RoomCtx,
   RoomViewCtx,
-  ViewMainMenu,
+  MainMenuScreen,
   mainMenuButtons,
 } from "@gamezilla/shared/client";
 import {
@@ -292,7 +292,7 @@ export const View = ({
   switch (model.mode.t) {
     case "none": {
       return (
-        <ViewMainMenu
+        <MainMenuScreen
           title="Chess"
           roomCtx={gameRoomCtx}
           coverArt={viewCoverArt()}

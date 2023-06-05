@@ -3,7 +3,7 @@ import {
   RoomCtx,
   RoomViewCtx,
   ViewCtx,
-  ViewMainMenu,
+  MainMenuScreen,
   mainMenuButtons,
 } from "@gamezilla/shared/client";
 import { Cmd, Sub } from "@gamezilla/shared/core";
@@ -240,7 +240,7 @@ export const view = ({
   switch (model.t) {
     case "none": {
       return (
-        <ViewMainMenu
+        <MainMenuScreen
           title="Gomoku"
           coverArt={ViewCoverArt()}
           roomCtx={gameRoomCtx}

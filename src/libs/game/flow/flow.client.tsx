@@ -1,5 +1,5 @@
 import { UserId } from "@gamezilla/shared/app";
-import { RoomCtx, RoomViewCtx, ViewMainMenu } from "@gamezilla/shared/client";
+import { RoomCtx, RoomViewCtx, MainMenuScreen } from "@gamezilla/shared/client";
 import { Cmd, Sub } from "@gamezilla/shared/core";
 import { IconScrewdriverWrench } from "@gamezilla/shared/ui";
 import { viewCoverArt } from "./flow-cover-art";
@@ -143,7 +143,7 @@ export const View = ({
     );
   }
   return (
-    <ViewMainMenu
+    <MainMenuScreen
       coverArt={viewCoverArt()}
       roomCtx={ctx}
       title="Flow"

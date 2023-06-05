@@ -4,7 +4,7 @@ import {
   RoomCtx,
   RoomViewCtx,
   ViewCtx,
-  ViewMainMenu,
+  MainMenuScreen,
   mainMenuButtons,
 } from "@gamezilla/shared/client";
 import { Cmd, Sub } from "@gamezilla/shared/core";
@@ -220,7 +220,7 @@ export const View = ({
 
   if (model.t === "none") {
     return (
-      <ViewMainMenu
+      <MainMenuScreen
         title="Tic-Tac-Toe"
         roomCtx={gameRoomCtx}
         coverArt={viewCoverArt()}

@@ -14,7 +14,7 @@ type MainMenuButton = {
   onClick: () => void;
 };
 
-export const ViewMainMenu = ({
+export const MainMenuScreen = ({
   title,
   coverArt,
   buttons,

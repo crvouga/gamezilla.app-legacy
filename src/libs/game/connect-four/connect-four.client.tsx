@@ -3,7 +3,7 @@ import {
   RoomCtx,
   RoomViewCtx,
   ViewCtx,
-  ViewMainMenu,
+  MainMenuScreen,
   bannerArtAspectRatio,
   mainMenuButtons,
 } from "@gamezilla/shared/client";
@@ -168,7 +168,7 @@ export const View = ({
   switch (model.t) {
     case "none": {
       return (
-        <ViewMainMenu
+        <MainMenuScreen
           roomCtx={gameRoomCtx}
           title="Connect Four"
           coverArt={<ViewCoverArt />}
