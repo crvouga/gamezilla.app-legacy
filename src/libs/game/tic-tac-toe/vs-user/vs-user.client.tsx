@@ -1,6 +1,6 @@
 import { UserId } from "@gamezilla/shared/app";
 import { RoomCtx, ViewCtx } from "@gamezilla/shared/client";
-import { Cmd, exhaustive } from "@gamezilla/shared/core";
+import { Cmd } from "@gamezilla/shared/core";
 import * as UI from "@gamezilla/shared/ui";
 import {
   PlayerType,
@@ -22,10 +22,6 @@ import {
   ClientMsg,
   GameModel,
   GameOverModel,
-  InputMoveTimeLimit,
-  InputMoveTimeLimitToString,
-  NewGame,
-  NewGameToString,
   Res,
   ServerModel,
   ToClient,
@@ -34,12 +30,9 @@ import {
   allMoveTimeLimit,
   bestOutOfToString,
   initSharedModel,
-  inputBestOutOf,
-  inputBestOutOfToString,
   moveTimeLimitToString,
   rematchAsk,
   rematchAskToString,
-  startGame,
   toWinCount,
 } from "./vs-user.shared";
 
@@ -104,7 +97,6 @@ export const update = (
     case "RematchDecline":
     case "Rematch_Cancel":
     case "InputBestOutOf":
-    case "InputMoveTimeLimit":
     case "input-move":
     case "resign":
     case "InputPlayer":
@@ -115,7 +107,7 @@ export const update = (
     }
 
     default: {
-      return exhaustive(msg[0]);
+      return [model, Cmd.None];
     }
   }
 };
@@ -135,7 +127,6 @@ export const updateFromServer = (
     case "RematchAsk_Done":
     case "Rematch_Cancel_Done":
     case "NewGame_Done":
-    case "InputMoveTimeLimit_Done":
     case "InputBestOutOf_Done":
     case "input-move-done":
     case "InputPlayer_Done":
@@ -166,7 +157,7 @@ export const updateFromServer = (
     }
 
     default: {
-      return exhaustive(msg[0]);
+      return [model];
     }
   }
 };
@@ -200,16 +191,7 @@ export const View = ({
   $send: (msg: Msg) => void;
   onCloseGame: () => void;
 }) => {
-  if (model.type === "Setup") {
-    const startGameResult = startGame({ userId: ctx.currentUserId }, model);
-    const inputBestOutOfResult = inputBestOutOf(
-      { bestOutOf: model.maxRoundCount, userId: ctx.currentUserId },
-      model
-    );
-    const InputMoveTimeLimitResult = InputMoveTimeLimit(
-      { moveTimeLimit: model.moveTimeLimit, userId: ctx.currentUserId },
-      model
-    );
+  if (model.type === "setup") {
     return (
       <UI.FillBox>
         <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
@@ -256,26 +238,21 @@ export const View = ({
               Best Out Of
             </UI.Typography>
 
-            <UI.Tooltip title={inputBestOutOfToString(inputBestOutOfResult)}>
-              <UI.ToggleButtonGroup
-                disabled={inputBestOutOfResult.t === "err"}
-                fullWidth
-                value={model.maxRoundCount}>
-                {allBestOutOf.map((bestOutOf) => (
-                  <UI.ToggleButton
-                    key={bestOutOf}
-                    value={bestOutOf}
-                    onClick={() =>
-                      $send([
-                        "InputBestOutOf",
-                        { userId: ctx.currentUserId, bestOutOf },
-                      ])
-                    }>
-                    {bestOutOfToString(bestOutOf)}
-                  </UI.ToggleButton>
-                ))}
-              </UI.ToggleButtonGroup>
-            </UI.Tooltip>
+            <UI.ToggleButtonGroup fullWidth value={model.maxRoundCount}>
+              {allBestOutOf.map((bestOutOf) => (
+                <UI.ToggleButton
+                  key={bestOutOf}
+                  value={bestOutOf}
+                  onClick={() =>
+                    $send([
+                      "InputBestOutOf",
+                      { userId: ctx.currentUserId, bestOutOf },
+                    ])
+                  }>
+                  {bestOutOfToString(bestOutOf)}
+                </UI.ToggleButton>
+              ))}
+            </UI.ToggleButtonGroup>
 
             <UI.Typography
               color="text.secondary"
@@ -283,27 +260,13 @@ export const View = ({
               Move Time Limit
             </UI.Typography>
 
-            <UI.Tooltip
-              title={InputMoveTimeLimitToString(InputMoveTimeLimitResult)}>
-              <UI.ToggleButtonGroup
-                disabled={InputMoveTimeLimitResult.t === "err"}
-                fullWidth
-                value={model.moveTimeLimit}>
-                {allMoveTimeLimit.map((moveTimeLimit) => (
-                  <UI.ToggleButton
-                    key={moveTimeLimit}
-                    value={moveTimeLimit}
-                    onClick={() =>
-                      $send([
-                        "InputMoveTimeLimit",
-                        { userId: ctx.currentUserId, moveTimeLimit },
-                      ])
-                    }>
-                    {moveTimeLimitToString(moveTimeLimit)}
-                  </UI.ToggleButton>
-                ))}
-              </UI.ToggleButtonGroup>
-            </UI.Tooltip>
+            <UI.ToggleButtonGroup fullWidth value={model.moveTimeLimit}>
+              {allMoveTimeLimit.map((moveTimeLimit) => (
+                <UI.ToggleButton key={moveTimeLimit} value={moveTimeLimit}>
+                  {moveTimeLimitToString(moveTimeLimit)}
+                </UI.ToggleButton>
+              ))}
+            </UI.ToggleButtonGroup>
           </UI.Box>
         </UI.Box>
 
@@ -314,8 +277,9 @@ export const View = ({
           <UI.Button
             variant="contained"
             fullWidth
-            onClick={() => $send(["start-game", { userId: ctx.currentUserId }])}
-            disabled={startGameResult.t === "err"}>
+            onClick={() =>
+              $send(["start-game", { userId: ctx.currentUserId }])
+            }>
             Start
           </UI.Button>
         </UI.Box>
@@ -372,7 +336,6 @@ export const View = ({
   const board = Round.toCurrentBoard(model.round) ?? emptyBoard;
 
   const rematchAskResult = rematchAsk({ userId: ctx.currentUserId }, model);
-  const NewGameResult = NewGame({ userId: ctx.currentUserId }, model);
 
   const currentPlayerType: PlayerType | "none" =
     model.X === ctx.currentUserId
@@ -417,19 +380,14 @@ export const View = ({
 
       <UI.Box sx={{ display: "flex", width: "100%", padding: 2, gap: 2 }}>
         <UI.Box sx={{ flex: 1 }}>
-          <UI.Tooltip title={NewGameToString(NewGameResult)}>
-            <span>
-              <UI.Button
-                fullWidth
-                variant="outlined"
-                onClick={() =>
-                  $send(["NewGame", { userId: ctx.currentUserId }])
-                }
-                disabled={NewGameResult.t === "err"}>
-                Back
-              </UI.Button>
-            </span>
-          </UI.Tooltip>
+          <span>
+            <UI.Button
+              fullWidth
+              variant="outlined"
+              onClick={() => $send(["NewGame", { userId: ctx.currentUserId }])}>
+              Back
+            </UI.Button>
+          </span>
         </UI.Box>
         <UI.Box sx={{ flex: 1 }}>
           <UI.Tooltip
@@ -987,11 +945,11 @@ const ViewResignButton = ({
 
 export const toGameText = ({ model }: { model: Model }): string => {
   switch (model.type) {
-    case "Setup": {
+    case "setup": {
       return "Setting up";
     }
 
-    case "GameOver": {
+    case "game-over": {
       switch (model.gameOver.type) {
         case "resignation": {
           return `Resigned`;

@@ -1,7 +1,7 @@
 import { keyframes } from "@emotion/react";
 import { UserId } from "@gamezilla/shared/app";
-import { ChoiceChips, ViewCtx } from "@gamezilla/shared/client";
-import { Cmd, Sub, exhaustive } from "@gamezilla/shared/core";
+import { ChoiceChips, RoomCtx, ViewCtx } from "@gamezilla/shared/client";
+import { Cmd, Sub } from "@gamezilla/shared/core";
 import {
   ActionButton,
   Avatar,
@@ -78,102 +78,81 @@ export const init = ({
 
 export type Msg = ClientMsg;
 
-export const update = (
-  { sendToServer }: { sendToServer: (msg: ToServer) => Cmd },
-  msg: Msg,
-  model: Model
-): [Model, Cmd<Msg>] => {
-  switch (msg[0]) {
-    case "clicked-resign": {
-      return [{ ...model, openedModal: "ConfirmResign" }, Cmd.None];
-    }
-
-    case "hovered-over-columns": {
-      const { columnIndex } = msg[1];
-      return [{ ...model, ghostIndex: columnIndex }, Cmd.None];
-    }
-
-    case "close-modal": {
-      return [{ ...model, openedModal: "none" }, Cmd.None];
-    }
-
-    case "resign":
-    case "new-game":
-    case "rematch-request":
-    case "Rematch_Respond":
-    case "Rematch_Cancel":
-    case "InputMoveTimeLimit":
-    case "start-game":
-    case "stop-playing":
-    case "start-playing": {
-      return [model, sendToServer(msg)];
-    }
-    case "input-move": {
-      return [
-        {
-          ...model,
-          // ghostIndex: "none"
-        },
-        sendToServer(msg),
-      ];
-    }
-    default: {
-      return exhaustive(msg[0]);
-    }
+export const update = ({
+  sendToServer,
+  msg,
+  model,
+  ctx,
+}: {
+  ctx: RoomCtx;
+  sendToServer: (msg: ToServer) => Cmd;
+  msg: Msg;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  if (msg.t === "clicked-resign") {
+    return { model: { ...model, openedModal: "ConfirmResign" } };
   }
+
+  if (msg.t === "hovered-over-columns") {
+    return { model: { ...model, ghostIndex: msg.columnIndex } };
+  }
+
+  if (msg.t === "close-modal") {
+    return { model: { ...model, openedModal: "none" } };
+  }
+
+  const handled = handle({
+    ctx: ctx,
+    model,
+    req: msg,
+  });
+
+  const modelNew = syncWithServer({
+    clientModel: model,
+    serverModel: handled.t === "ok" ? handled.value : model,
+  });
+
+  return {
+    model: modelNew,
+    cmd: sendToServer(msg),
+  };
 };
 
-export const updateFromServer = (
-  msg: ToClient,
-  model: Model
-): [Model, Cmd<Msg>] => {
-  switch (msg[0]) {
-    case "new-game":
-    case "InputMoveTimeLimit":
-    case "start-game":
-    case "stop-playing":
-    case "Rematch_Cancel":
-    case "resign":
-    case "rematch-request":
-    case "Rematch_Respond":
-    case "start-playing": {
-      const modelNew = msg[1].t === "err" ? model : msg[1].value;
-      const merged = syncWithServer({
-        clientModel: model,
-        serverModel: modelNew,
-      });
-      return [{ ...merged, openedModal: "none" }, Cmd.None];
-    }
-
-    case "input-move": {
-      const modelNew = msg[1].t === "err" ? model : msg[1].value;
-      const merged = syncWithServer({
-        clientModel: model,
-        serverModel: modelNew,
-      });
-      return [{ ...merged, ghostIndex: "none" }, Cmd.None];
-    }
-
-    case "Tick_Done": {
-      const merged = syncWithServer({
-        clientModel: model,
-        serverModel: msg[1],
-      });
-      return [merged, Cmd.None];
-    }
-
-    case "player-left": {
-      const merged = syncWithServer({
-        clientModel: model,
-        serverModel: msg[1],
-      });
-      return [merged, Cmd.None];
-    }
-
-    default: {
-      return exhaustive(msg[0]);
-    }
+export const updateFromServer = ({
+  msg,
+  model,
+}: {
+  msg: ToClient;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  if (msg.t === "tick-done") {
+    const merged = syncWithServer({
+      clientModel: model,
+      serverModel: msg.model,
+    });
+    return { model: merged };
   }
+
+  if (msg.t === "player-left") {
+    const merged = syncWithServer({
+      clientModel: model,
+      serverModel: msg.model,
+    });
+    return { model: merged };
+  }
+
+  const modelNew = msg.result.t === "err" ? model : msg.result.value;
+  const merged = syncWithServer({
+    clientModel: model,
+    serverModel: modelNew,
+  });
+  return { model: { ...merged, openedModal: "none" } };
 };
 
 export const syncWithServer = ({
@@ -221,7 +200,7 @@ export const View = ({
   $send: (msg: Msg) => void;
   goBack: () => void;
 }) => {
-  if (model.type === "Setup") {
+  if (model.type === "setup") {
     return <ViewSetup ctx={ctx} goBack={goBack} model={model} $send={$send} />;
   }
 
@@ -236,10 +215,10 @@ export const View = ({
           <ViewColumns
             columns={model.columns}
             onClick={(columnIndex) =>
-              $send(["input-move", { userId: ctx.currentUserId, columnIndex }])
+              $send({ t: "input-move", userId: ctx.currentUserId, columnIndex })
             }
             onHover={(columnIndex) =>
-              $send(["hovered-over-columns", { columnIndex }])
+              $send({ t: "hovered-over-columns", columnIndex })
             }
             disabled={toTurn(model.columns) !== currentUserPlayerType}
             ghost={
@@ -259,7 +238,7 @@ export const View = ({
               icon={<Icons.Flag />}
               label="Resign"
               onClick={() =>
-                $send(["clicked-resign", { userId: ctx.currentUserId }])
+                $send({ t: "clicked-resign", userId: ctx.currentUserId })
               }
             />
           </Box>
@@ -268,10 +247,10 @@ export const View = ({
         <ConformationDialog
           headerIcon={<Icons.Flag sx={{ width: 52, height: 52 }} />}
           title="Resign from game?"
-          onCancel={() => $send(["close-modal"])}
-          onClose={() => $send(["close-modal"])}
+          onCancel={() => $send({ t: "close-modal" })}
+          onClose={() => $send({ t: "close-modal" })}
           confirmTitle="Resign"
-          onConfirm={() => $send(["resign", { userId: ctx.currentUserId }])}
+          onConfirm={() => $send({ t: "resign" })}
           open={model.openedModal === "ConfirmResign"}
         />
       </>
@@ -285,7 +264,7 @@ export const View = ({
       <Box sx={{ position: "relative" }}>
         <ViewColumns columns={model.columns} disabled />
 
-        {model.type === "GameOver" && (
+        {model.type === "game-over" && (
           <Fade in>
             <Box
               sx={{
@@ -315,7 +294,7 @@ export const View = ({
         <Button
           variant="outlined"
           fullWidth
-          onClick={() => $send(["new-game", { userId: ctx.currentUserId }])}>
+          onClick={() => $send({ t: "new-game" })}>
           Back
         </Button>
 
@@ -323,9 +302,7 @@ export const View = ({
           variant="contained"
           fullWidth
           disabled={model.rematch.type === "Asking"}
-          onClick={() =>
-            $send(["rematch-request", { userId: ctx.currentUserId }])
-          }>
+          onClick={() => $send({ t: "rematch-request" })}>
           Rematch
         </Button>
       </Box>
@@ -358,9 +335,7 @@ const ViewGameOverMessage = ({
         <CircularProgress sx={{ marginBottom: 4 }} />
         <Button
           variant="contained"
-          onClick={() =>
-            $send(["Rematch_Cancel", { userId: ctx.currentUserId }])
-          }>
+          onClick={() => $send({ t: "rematch-cancel" })}>
           Cancel
         </Button>
       </>
@@ -384,22 +359,17 @@ const ViewGameOverMessage = ({
             sx={{ color: "#000" }}
             startIcon={<Icons.Cancel />}
             onClick={() =>
-              $send([
-                "Rematch_Respond",
-                { response: "Decline", userId: ctx.currentUserId },
-              ])
+              $send({
+                t: "rematch-respond",
+                response: "Decline",
+              })
             }>
             Decline
           </Button>
           <Button
             variant="contained"
             startIcon={<Icons.Done />}
-            onClick={() =>
-              $send([
-                "Rematch_Respond",
-                { response: "Accept", userId: ctx.currentUserId },
-              ])
-            }>
+            onClick={() => $send({ t: "rematch-respond", response: "Accept" })}>
             Accept
           </Button>
         </Box>
@@ -493,10 +463,11 @@ const ViewSetup = ({
   ctx: ViewCtx;
   $send: (msg: Msg) => void;
 }) => {
-  const startGameResult = handle(
-    ["start-game", { userId: ctx.currentUserId }],
-    model
-  );
+  const startGameResult = handle({
+    ctx,
+    req: { t: "start-game" },
+    model,
+  });
 
   return (
     <FillBox>
@@ -529,10 +500,7 @@ const ViewSetup = ({
         <ChoiceChips
           choices={Object.values(allMoveTimeLimit)}
           onSelect={(moveTimeLimit) =>
-            $send([
-              "InputMoveTimeLimit",
-              { moveTimeLimit, userId: ctx.currentUserId },
-            ])
+            $send({ t: "input-move-time-limit", moveTimeLimit })
           }
           toKey={(moveTimeLimit) => String(moveTimeLimit)}
           renderChoice={(moveTimeLimit) => `${moveTimeLimit} sec`}
@@ -550,7 +518,7 @@ const ViewSetup = ({
           color="primary"
           className="flex-1"
           disabled={startGameResult.t === "err"}
-          onClick={() => $send(["start-game", { userId: ctx.currentUserId }])}>
+          onClick={() => $send({ t: "start-game" })}>
           Start Game
         </MyButton>
       </div>
@@ -597,7 +565,7 @@ const Feedback = ({
   ctx: ViewCtx;
   model: GameModel | GameOverModel;
 }) => {
-  if (model.type === "GameOver") {
+  if (model.type === "game-over") {
     return (
       <Typography
         color="text.secondary"
@@ -725,9 +693,7 @@ const ViewSetupPlayerSlot = ({
         <Button
           fullWidth
           variant="contained"
-          onClick={() =>
-            $send(["start-playing", { userId: ctx.currentUserId, playerType }])
-          }>
+          onClick={() => $send({ t: "start-playing", playerType })}>
           Play as {playerTypeToColor[playerType]}
         </Button>
       ) : (
@@ -746,10 +712,7 @@ const ViewSetupPlayerSlot = ({
             {ctx.profiles[userId]?.username ?? "..."}
           </Typography>
           {userId === ctx.currentUserId && (
-            <Button
-              onClick={() =>
-                $send(["stop-playing", { userId: ctx.currentUserId }])
-              }>
+            <Button onClick={() => $send({ t: "stop-playing" })}>
               Stop Playing
             </Button>
           )}

@@ -1,6 +1,6 @@
-import { Audio, Option, Result } from '@gamezilla/shared/core';
-import { UserId } from '@gamezilla/shared/app';
-import * as Chess from '../chess/chess';
+import { Audio, Option, Result } from "@gamezilla/shared/core";
+import { UserId } from "@gamezilla/shared/app";
+import * as Chess from "../chess/chess";
 
 //
 //
@@ -13,7 +13,7 @@ import * as Chess from '../chess/chess';
 export type ClientModel = {
   sharedModel: SharedModel;
   openedMenuId: Option<string>;
-  openedModal: 'none' | 'GameOver';
+  openedModal: "none" | "game-over";
   isFlipped: boolean;
 };
 
@@ -22,14 +22,14 @@ export type ServerModel = SharedModel;
 export type SharedModel = SetupModel | GameModel | GameOverModel;
 
 export type SetupModel = {
-  type: 'Setup';
+  type: "setup";
   userColor: Chess.Color;
-  userId: UserId | 'none';
+  userId: UserId | "none";
   botLevel: Chess.BotLevel;
 };
 
 export type GameModel = {
-  type: 'game';
+  type: "game";
   userColor: Chess.Color;
   userId: UserId;
   board: Chess.Model;
@@ -37,7 +37,7 @@ export type GameModel = {
 };
 
 export type GameOverModel = {
-  type: 'GameOver';
+  type: "game-over";
   gameOver: GameOver;
   userColor: Chess.Color;
   userId: UserId;
@@ -48,19 +48,19 @@ export type GameOverModel = {
 export type GameOver = Chess.GameOver;
 
 export const initShared: SharedModel = {
-  type: 'Setup',
-  userColor: 'w',
-  userId: 'none',
+  type: "setup",
+  userColor: "w",
+  userId: "none",
   botLevel: 1,
 };
 
 export const initServer = ({
   userId,
 }: {
-  userId: UserId | 'none';
+  userId: UserId | "none";
 }): ServerModel => {
   return {
-    type: 'Setup',
+    type: "setup",
     botLevel: initShared.botLevel,
     userColor: initShared.userColor,
     userId,
@@ -68,7 +68,7 @@ export const initServer = ({
 };
 
 export const isBotTurn = (model: SharedModel) => {
-  return model.type === 'game' && Chess.toTurn(model.board) !== model.userColor;
+  return model.type === "game" && Chess.toTurn(model.board) !== model.userColor;
 };
 
 //
@@ -81,17 +81,17 @@ export const isBotTurn = (model: SharedModel) => {
 
 export type ClientMsg =
   | Req
-  | ['audio-done', Audio.PlayResult]
-  | ['OpenedMenu', string]
-  | ['ClosedMenu']
-  | ['ClickedFlip']
-  | ['ClosedModal'];
+  | ["audio-done", Audio.PlayResult]
+  | ["OpenedMenu", string]
+  | ["ClosedMenu"]
+  | ["ClickedFlip"]
+  | ["ClosedModal"];
 
 export type ServerMsg = BotMoved;
 
 export type ToServer = Req;
 
-export type ToClient = Res | BotMoved_Done | ['player-left', SharedModel];
+export type ToClient = Res | BotMoved_Done | ["player-left", SharedModel];
 
 export type Req =
   | InputUser
@@ -114,17 +114,17 @@ export type Res =
 //
 //
 
-export type InputUser = ['InputUser', { userId: UserId | 'none' }];
+export type InputUser = ["InputUser", { userId: UserId | "none" }];
 export type InputUser_Done = [
-  'InputUser_Done',
-  Result<'must_be_in_setup_mode', SharedModel>
+  "InputUser_Done",
+  Result<"must_be_in_setup_mode", SharedModel>
 ];
 export const inputUser = (
   { userId }: InputUser[1],
   model: SharedModel
 ): InputUser_Done[1] => {
-  if (model.type !== 'Setup') {
-    return Result.Err('must_be_in_setup_mode');
+  if (model.type !== "setup") {
+    return Result.Err("must_be_in_setup_mode");
   }
 
   const modelNew: SharedModel = {
@@ -136,26 +136,26 @@ export const inputUser = (
 };
 
 export type InputColor = [
-  'InputColor',
+  "InputColor",
   { userColor: Chess.Color; userId: UserId }
 ];
 export type InputColor_Done = [
-  'InputColor_Done',
+  "InputColor_Done",
   Result<InputColorProblem, SharedModel>
 ];
 
-export type InputColorProblem = 'must_be_playing' | 'must_be_in_setup_mode';
+export type InputColorProblem = "must_be_playing" | "must_be_in_setup_mode";
 
 export const inputColorProblemToString = (
   problem: InputColorProblem
 ): string => {
   switch (problem) {
-    case 'must_be_in_setup_mode': {
-      return 'Must be in setup mode';
+    case "must_be_in_setup_mode": {
+      return "Must be in setup mode";
     }
 
-    case 'must_be_playing': {
-      return 'Must be playing to change color';
+    case "must_be_playing": {
+      return "Must be playing to change color";
     }
   }
 };
@@ -164,16 +164,16 @@ export const inputColor = (
   { userColor, userId }: InputColor[1],
   model: SharedModel
 ): InputColor_Done[1] => {
-  if (model.type !== 'Setup') {
-    return Result.Err('must_be_in_setup_mode');
+  if (model.type !== "setup") {
+    return Result.Err("must_be_in_setup_mode");
   }
 
-  if (model.userId === 'none') {
-    return Result.Err('must_be_playing');
+  if (model.userId === "none") {
+    return Result.Err("must_be_playing");
   }
 
   if (model.userId !== userId) {
-    return Result.Err('must_be_playing');
+    return Result.Err("must_be_playing");
   }
 
   const modelNew: SharedModel = {
@@ -190,23 +190,23 @@ export const inputColor = (
 //
 
 export type InputBot = [
-  'InputBot',
+  "InputBot",
   { botLevel: Chess.BotLevel; userId: UserId }
 ];
 export type InputBot_Done = [
-  'InputBot_Done',
+  "InputBot_Done",
   Result<InputBotProblem, SharedModel>
 ];
-export type InputBotProblem = 'must_be_in_setup_mode' | 'must_be_playing';
+export type InputBotProblem = "must_be_in_setup_mode" | "must_be_playing";
 
 export const inputBotProblemToString = (problem: InputBotProblem): string => {
   switch (problem) {
-    case 'must_be_in_setup_mode': {
-      return 'Must be in setup mode';
+    case "must_be_in_setup_mode": {
+      return "Must be in setup mode";
     }
 
-    case 'must_be_playing': {
-      return 'Must be playing to change bot';
+    case "must_be_playing": {
+      return "Must be playing to change bot";
     }
   }
 };
@@ -215,16 +215,16 @@ export const inputBot = (
   { botLevel, userId }: InputBot[1],
   model: SharedModel
 ): InputBot_Done[1] => {
-  if (model.type !== 'Setup') {
-    return Result.Err('must_be_in_setup_mode');
+  if (model.type !== "setup") {
+    return Result.Err("must_be_in_setup_mode");
   }
 
-  if (model.userId === 'none') {
-    return Result.Err('must_be_playing');
+  if (model.userId === "none") {
+    return Result.Err("must_be_playing");
   }
 
   if (model.userId !== userId) {
-    return Result.Err('must_be_playing');
+    return Result.Err("must_be_playing");
   }
 
   const modelNew: SharedModel = {
@@ -234,28 +234,28 @@ export const inputBot = (
   return Result.Ok(modelNew);
 };
 
-export type StartGame = ['start-game', { userId: UserId }];
+export type StartGame = ["start-game", { userId: UserId }];
 export type StartGame_Done = [
-  'StartGame_Done',
+  "StartGame_Done",
   Result<StartGameProblem, SharedModel>
 ];
 export type StartGameProblem =
-  | 'must_be_in_setup_mode'
-  | 'user_is_missing'
-  | 'must_be_the_player';
+  | "must_be_in_setup_mode"
+  | "user_is_missing"
+  | "must_be_the_player";
 
 export const startGameProblemToString = (problem: StartGameProblem): string => {
   switch (problem) {
-    case 'must_be_in_setup_mode': {
-      return 'Game must be in setup mode';
+    case "must_be_in_setup_mode": {
+      return "Game must be in setup mode";
     }
 
-    case 'must_be_the_player': {
-      return 'Must be playing to start game';
+    case "must_be_the_player": {
+      return "Must be playing to start game";
     }
 
-    case 'user_is_missing': {
-      return 'Nobody is playing';
+    case "user_is_missing": {
+      return "Nobody is playing";
     }
   }
 };
@@ -264,20 +264,20 @@ export const startGame = (
   { userId }: StartGame[1],
   model: SharedModel
 ): StartGame_Done[1] => {
-  if (model.type !== 'Setup') {
-    return Result.Err('must_be_in_setup_mode');
+  if (model.type !== "setup") {
+    return Result.Err("must_be_in_setup_mode");
   }
 
-  if (model.userId === 'none') {
-    return Result.Err('user_is_missing');
+  if (model.userId === "none") {
+    return Result.Err("user_is_missing");
   }
 
   if (model.userId !== userId) {
-    return Result.Err('must_be_the_player');
+    return Result.Err("must_be_the_player");
   }
 
   const modelNew: SharedModel = {
-    type: 'game',
+    type: "game",
     board: Chess.init(),
     botLevel: model.botLevel,
     userColor: model.userColor,
@@ -292,22 +292,22 @@ export const startGame = (
 //
 //
 
-export type StopGame = ['stop-game', { userId: UserId }];
+export type StopGame = ["stop-game", { userId: UserId }];
 export type StopGame_Done = [
-  'StopGame_Done',
-  Result<'must_be_playing', SharedModel>
+  "StopGame_Done",
+  Result<"must_be_playing", SharedModel>
 ];
 
 export const stopGameResultToString = (result: StopGame_Done[1]): string => {
-  if (result.t === 'ok') {
-    return '';
+  if (result.t === "ok") {
+    return "";
   }
 
   const problem = result.error;
 
   switch (problem) {
-    case 'must_be_playing': {
-      return 'Must be playing to stop the game';
+    case "must_be_playing": {
+      return "Must be playing to stop the game";
     }
   }
 };
@@ -317,11 +317,11 @@ export const stopGame = (
   model: SharedModel
 ): StopGame_Done[1] => {
   if (model.userId !== userId) {
-    return Result.Err('must_be_playing');
+    return Result.Err("must_be_playing");
   }
 
   const modelNew: SharedModel = {
-    type: 'Setup',
+    type: "setup",
     botLevel: model.botLevel,
     userColor: model.userColor,
     userId: model.userId,
@@ -338,38 +338,38 @@ export const stopGame = (
 //
 //
 
-export type InputMove = ['input-move', Chess.MoveInput & { userId: UserId }];
+export type InputMove = ["input-move", Chess.MoveInput & { userId: UserId }];
 
 export type InputMove_Done = [
-  'input-move-done',
+  "input-move-done",
   Result<InputMoveProblem, SharedModel & { didCapture: boolean }>
 ];
 
 export type InputMoveProblem =
   | Chess.MoveProblem
-  | 'must_be_started'
-  | 'must_be_playing'
-  | 'must_be_turn';
+  | "must_be_started"
+  | "must_be_playing"
+  | "must_be_turn";
 
 export const inputMove = (
   { userId, ...moveInput }: InputMove[1],
   model: SharedModel
 ): InputMove_Done[1] => {
-  if (model.type !== 'game') {
-    return Result.Err('must_be_started');
+  if (model.type !== "game") {
+    return Result.Err("must_be_started");
   }
 
   if (model.userId !== userId) {
-    return Result.Err('must_be_playing');
+    return Result.Err("must_be_playing");
   }
 
   if (Chess.toTurn(model.board) !== model.userColor) {
-    return Result.Err('must_be_turn');
+    return Result.Err("must_be_turn");
   }
 
   const result = Chess.move(moveInput, model.board);
 
-  if (result.t === 'err') {
+  if (result.t === "err") {
     return result;
   }
 
@@ -377,10 +377,10 @@ export const inputMove = (
 
   const gameOver = Chess.toGameOver(boardNew);
 
-  if (gameOver.type !== 'none') {
+  if (gameOver.type !== "none") {
     const modelNew: SharedModel = {
       ...model,
-      type: 'GameOver',
+      type: "game-over",
       board: boardNew,
       gameOver: gameOver,
     };
@@ -410,26 +410,26 @@ export const inputMove = (
 //
 //
 
-export type BotMoved = ['bot-moved', Chess.BestMoveInputResult];
+export type BotMoved = ["bot-moved", Chess.BestMoveInputResult];
 export type BotMoved_Done = [
-  'bot-moved_Done',
+  "bot-moved_Done",
   Result<BotMovedProblem, SharedModel & { didCapture: boolean }>
 ];
 export type BotMovedProblem =
   | Chess.MoveProblem
   | Chess.BestMoveInputProblem
-  | 'must_be_started'
-  | 'must_be_turn';
+  | "must_be_started"
+  | "must_be_turn";
 
 export const botMoved = (
   botMoveResult: BotMoved[1],
   model: SharedModel
 ): BotMoved_Done[1] => {
-  if (model.type !== 'game') {
-    return Result.Err('must_be_started');
+  if (model.type !== "game") {
+    return Result.Err("must_be_started");
   }
 
-  if (botMoveResult.t === 'err') {
+  if (botMoveResult.t === "err") {
     return botMoveResult;
   }
 
@@ -438,12 +438,12 @@ export const botMoved = (
   const botColor = Chess.toOppositeColor(model.userColor);
 
   if (Chess.toTurn(model.board) !== botColor) {
-    return Result.Err('must_be_turn');
+    return Result.Err("must_be_turn");
   }
 
   const result = Chess.move(botMoveInput, model.board);
 
-  if (result.t === 'err') {
+  if (result.t === "err") {
     return result;
   }
 
@@ -451,10 +451,10 @@ export const botMoved = (
 
   const gameOver = Chess.toGameOver(boardNew);
 
-  if (gameOver.type !== 'none') {
+  if (gameOver.type !== "none") {
     const modelNew: SharedModel = {
       ...model,
-      type: 'GameOver',
+      type: "game-over",
       gameOver: gameOver,
       board: boardNew,
     };

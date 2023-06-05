@@ -1,8 +1,8 @@
-import { RoomMsg } from '@gamezilla/shared/client';
-import { Cmd, Err, Ok, Sub, andThen, p } from '@gamezilla/shared/core';
-import { RoomRequestCtx } from '@gamezilla/shared/server';
-import { TicTacToe } from '../tic-tic-toe';
-import { getBestMove } from '../tic-tic-toe/best-move';
+import { RoomMsg } from "@gamezilla/shared/client";
+import { Cmd, Err, Ok, Sub, andThen, p } from "@gamezilla/shared/core";
+import { RoomRequestCtx } from "@gamezilla/shared/server";
+import { TicTacToe } from "../tic-tic-toe";
+import { getBestMove } from "../tic-tic-toe/best-move";
 import {
   Res,
   ServerModel,
@@ -12,7 +12,7 @@ import {
   handle,
   initSharedModel,
   isBotTurn,
-} from './vs-bot.shared';
+} from "./vs-bot.shared";
 
 //
 //
@@ -48,17 +48,17 @@ export const update = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (msg.t === 'bot-moved') {
-    if (msg.result.t === 'err') {
-      return { model, cmd: broadcast({ t: 'bot-moved', result: msg.result }) };
+  if (msg.t === "bot-moved") {
+    if (msg.result.t === "err") {
+      return { model, cmd: broadcast({ t: "bot-moved", result: msg.result }) };
     }
 
-    if (model.type !== 'game') {
+    if (model.type !== "game") {
       return {
         model,
         cmd: broadcast({
-          t: 'bot-moved',
-          result: Err('The bot moved not during game mode'),
+          t: "bot-moved",
+          result: Err("The bot moved not during game mode"),
         }),
       };
     }
@@ -69,8 +69,8 @@ export const update = ({
       player: TicTacToe.toOpposite(model.userPlayerType),
     });
 
-    if (moved.t === 'err') {
-      return { model, cmd: broadcast({ t: 'bot-moved', result: moved }) };
+    if (moved.t === "err") {
+      return { model, cmd: broadcast({ t: "bot-moved", result: moved }) };
     }
 
     const modelNew: Model = {
@@ -80,7 +80,7 @@ export const update = ({
 
     return {
       model: modelNew,
-      cmd: broadcast({ t: 'bot-moved', result: Ok(modelNew) }),
+      cmd: broadcast({ t: "bot-moved", result: Ok(modelNew) }),
     };
   }
   return { model };
@@ -128,7 +128,7 @@ const watchBotMove = ({
           maximizingPlayer: TicTacToe.toOpposite(model.userPlayerType),
           board: model.board,
         }),
-        Cmd.perform((result) => ({ t: 'bot-moved', result }))
+        Cmd.perform((result) => ({ t: "bot-moved", result }))
       ),
     };
   }
@@ -152,7 +152,7 @@ const updateFromClient_ = ({
 } => {
   const handled = handle({ ctx, model, msg });
   const res: Res = { ...msg, result: handled };
-  const modelNew: Model = handled.t === 'ok' ? handled.value : model;
+  const modelNew: Model = handled.t === "ok" ? handled.value : model;
   return {
     model: modelNew,
     cmd: broadcast(res),
@@ -171,13 +171,13 @@ export const updateFromRoom = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (msg.t === 'user-left') {
+  if (msg.t === "user-left") {
     if (model.player !== msg.userId) {
       return { model };
     }
 
     const modelNew: Model = {
-      type: 'setup',
+      type: "setup",
       botLevel: model.botLevel,
       player: null,
       userPlayerType: model.userPlayerType,
@@ -185,7 +185,7 @@ export const updateFromRoom = ({
 
     return {
       model: modelNew,
-      cmd: broadcast({ t: 'player-left', result: Ok(modelNew) }),
+      cmd: broadcast({ t: "player-left", result: Ok(modelNew) }),
     };
   }
 

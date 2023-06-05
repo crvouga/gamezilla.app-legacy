@@ -65,16 +65,15 @@ export const update = ({
   }
 
   if (msg.t === "vs-user" && model.t === "vs-user") {
-    const updated = VsUser.update(
-      {
-        sendToServer: (c) => sendToServer({ t: "vs-user", c }),
-      },
-      msg.c,
-      model.c
-    );
+    const updated = VsUser.update({
+      sendToServer: (c) => sendToServer({ t: "vs-user", c }),
+      msg: msg.c,
+      model: model.c,
+      ctx,
+    });
     return {
-      model: { t: "vs-user", c: updated[0] },
-      cmd: Cmd.tag_("vs-user", updated[1]),
+      model: { t: "vs-user", c: updated.model },
+      cmd: Cmd.tag_("vs-user", updated.cmd),
     };
   }
 
@@ -119,8 +118,14 @@ export const updateFromServer = ({
 
     case "vs-user": {
       if (model.t === "vs-user") {
-        const [c, cmd] = VsUser.updateFromServer(msg.c, model.c);
-        return [{ t: "vs-user", c }, Cmd.tag_("vs-user", cmd)];
+        const updated = VsUser.updateFromServer({
+          msg: msg.c,
+          model: model.c,
+        });
+        return [
+          { t: "vs-user", c: updated.model },
+          Cmd.tag_("vs-user", updated.cmd),
+        ];
       }
       return [model, Cmd.None];
     }

@@ -154,10 +154,7 @@ export const updateFromRoom = ({
 
     return {
       model: modelNew,
-      cmd: broadcast({
-        t: "player-left",
-        model: modelNew,
-      }),
+      cmd: broadcast({ t: "player-left", model: modelNew }),
     };
   }
 

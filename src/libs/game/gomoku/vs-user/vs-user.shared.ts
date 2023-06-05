@@ -1,5 +1,5 @@
-import { UserId } from '@gamezilla/shared/app';
-import { Err, NonEmpty, Ok, Result } from '@gamezilla/shared/core';
+import { UserId } from "@gamezilla/shared/app";
+import { Err, NonEmpty, Ok, Result } from "@gamezilla/shared/core";
 import {
   Board,
   MoveProblem,
@@ -9,8 +9,8 @@ import {
   move,
   toOppositeStone,
   toStatus,
-} from '../gomoku/gomoku';
-import { Position } from '../gomoku/gomoku-position';
+} from "../gomoku/gomoku";
+import { Position } from "../gomoku/gomoku-position";
 
 //
 //
@@ -23,20 +23,20 @@ import { Position } from '../gomoku/gomoku-position';
 export type Model = ModelSetup | ModelPlaying | ModelGameOver;
 
 export type ModelSetup = {
-  type: 'setup';
+  type: "setup";
   white: UserId | null;
   black: UserId | null;
 };
 
 export type ModelPlaying = {
-  type: 'playing';
+  type: "playing";
   white: UserId;
   black: UserId;
   board: Board;
 };
 
 export type ModelGameOver = {
-  type: 'gameOver';
+  type: "game-over";
   white: UserId;
   black: UserId;
   board: Board;
@@ -46,28 +46,28 @@ export type ModelGameOver = {
 
 type Rematch =
   | {
-      type: 'none';
+      type: "none";
     }
   | {
-      type: 'Requested';
+      type: "Requested";
     };
 
 type GameOver =
   | {
-      type: 'resigned';
+      type: "resigned";
       resigner: Stone;
     }
   | {
-      type: 'Winner';
+      type: "Winner";
       winner: Stone;
       wins: NonEmpty<Win>;
     }
   | {
-      type: 'Draw';
+      type: "Draw";
     };
 
 export type ClientModel = Model & {
-  confirming?: ClientMsg['t'];
+  confirming?: ClientMsg["t"];
 };
 
 export type ServerModel = Model;
@@ -80,7 +80,7 @@ export const initShared = ({
   black: UserId | null;
 }): Model => {
   return {
-    type: 'setup',
+    type: "setup",
     white,
     black,
   };
@@ -94,18 +94,18 @@ const initGameOver = ({
   model: ModelPlaying;
 }): ModelGameOver => {
   return {
-    type: 'gameOver',
+    type: "game-over",
     black: model.black,
     white: model.white,
     board: model.board,
-    rematch: { type: 'none' },
+    rematch: { type: "none" },
     gameOver,
   };
 };
 
 const initSetup = (model: Model): ModelSetup => {
   return {
-    type: 'setup',
+    type: "setup",
     black: model.black,
     white: model.white,
   };
@@ -119,9 +119,9 @@ const initSetup = (model: Model): ModelSetup => {
 //
 //
 
-export type ClientMsg = Req | { t: 'clicked-cancel' };
+export type ClientMsg = Req | { t: "clicked-cancel" };
 
-export type ServerMsg = { t: 'none' };
+export type ServerMsg = { t: "none" };
 
 export type ToClient = Res;
 
@@ -134,24 +134,24 @@ export type ToServer = Req;
 //
 
 export type Req =
-  | { t: 'start-playing'; stone: Stone }
-  | { t: 'stop-playing'; stone: Stone }
-  | { t: 'start-game' }
+  | { t: "start-playing"; stone: Stone }
+  | { t: "stop-playing"; stone: Stone }
+  | { t: "start-game" }
   //
-  | { t: 'input-move'; position: Position }
-  | { t: 'resign' }
-  | { t: 'rematch-request' }
-  | { t: 'rematch-respond'; response: 'Accept' | 'Decline' }
-  | { t: 'stop-game' };
+  | { t: "input-move"; position: Position }
+  | { t: "resign" }
+  | { t: "rematch-request" }
+  | { t: "rematch-respond"; response: "Accept" | "Decline" }
+  | { t: "stop-game" };
 
 export type Res = Req & { result: Result<Problem, Model> };
 
 type Problem =
-  | 'must-be-setup'
-  | 'player-taken'
-  | 'must-be-player'
-  | 'missing-player'
-  | 'must-be-playing'
+  | "must-be-setup"
+  | "player-taken"
+  | "must-be-player"
+  | "missing-player"
+  | "must-be-playing"
   | MoveProblem;
 
 export const handle = ({
@@ -164,15 +164,15 @@ export const handle = ({
   model: Model;
 }): Result<Problem, Model> => {
   switch (msg.t) {
-    case 'start-playing': {
-      if (model.type !== 'setup') {
-        return Err('must-be-setup');
+    case "start-playing": {
+      if (model.type !== "setup") {
+        return Err("must-be-setup");
       }
 
       const { stone } = msg;
 
       if (model[stone]) {
-        return Err('player-taken');
+        return Err("player-taken");
       }
 
       const modelNew: Model = {
@@ -187,15 +187,15 @@ export const handle = ({
       return Ok(modelNew);
     }
 
-    case 'stop-playing': {
-      if (model.type !== 'setup') {
-        return Err('must-be-setup');
+    case "stop-playing": {
+      if (model.type !== "setup") {
+        return Err("must-be-setup");
       }
 
       const { stone } = msg;
 
       if (model[stone] !== ctx.currentUserId) {
-        return Err('must-be-player');
+        return Err("must-be-player");
       }
 
       const modelNew: Model = {
@@ -206,17 +206,17 @@ export const handle = ({
       return Ok(modelNew);
     }
 
-    case 'start-game': {
-      if (model.type !== 'setup') {
-        return Err('must-be-setup');
+    case "start-game": {
+      if (model.type !== "setup") {
+        return Err("must-be-setup");
       }
 
       if (!(model.white && model.black)) {
-        return Err('missing-player');
+        return Err("missing-player");
       }
 
       const modelNew: Model = {
-        type: 'playing',
+        type: "playing",
         white: model.white,
         black: model.black,
         board: initBoard,
@@ -225,15 +225,15 @@ export const handle = ({
       return Ok(modelNew);
     }
 
-    case 'input-move': {
-      if (model.type !== 'playing') {
-        return Err('must-be-playing');
+    case "input-move": {
+      if (model.type !== "playing") {
+        return Err("must-be-playing");
       }
 
       const { position } = msg;
 
       const currentUserStone =
-        model.white === ctx.currentUserId ? 'white' : 'black';
+        model.white === ctx.currentUserId ? "white" : "black";
 
       const moved = move({
         board: model.board,
@@ -241,7 +241,7 @@ export const handle = ({
         stone: currentUserStone,
       });
 
-      if (moved.t === 'err') {
+      if (moved.t === "err") {
         return moved;
       }
 
@@ -249,61 +249,61 @@ export const handle = ({
 
       const statusNew = toStatus(modelNew.board);
 
-      if (statusNew.type === 'win') {
+      if (statusNew.type === "win") {
         const gameOver: GameOver = {
-          type: 'Winner',
+          type: "Winner",
           winner: statusNew.winner,
           wins: statusNew.wins,
         };
         return Ok(initGameOver({ model: modelNew, gameOver }));
       }
 
-      if (statusNew.type === 'draw') {
+      if (statusNew.type === "draw") {
         return Ok(
-          initGameOver({ model: modelNew, gameOver: { type: 'Draw' } })
+          initGameOver({ model: modelNew, gameOver: { type: "Draw" } })
         );
       }
 
       return Ok(modelNew);
     }
 
-    case 'resign': {
-      if (model.type !== 'playing') {
-        return Err('must-be-playing');
+    case "resign": {
+      if (model.type !== "playing") {
+        return Err("must-be-playing");
       }
 
       if (
         model.white !== ctx.currentUserId &&
         model.black !== ctx.currentUserId
       ) {
-        return Err('must-be-player');
+        return Err("must-be-player");
       }
 
       const currentUserStone =
-        model.white === ctx.currentUserId ? 'white' : 'black';
+        model.white === ctx.currentUserId ? "white" : "black";
 
       const modelNew = initGameOver({
         model,
-        gameOver: { type: 'resigned', resigner: currentUserStone },
+        gameOver: { type: "resigned", resigner: currentUserStone },
       });
 
       return Ok(modelNew);
     }
 
-    case 'rematch-request': {
+    case "rematch-request": {
       return Ok(model);
     }
 
-    case 'rematch-respond': {
+    case "rematch-respond": {
       return Ok(model);
     }
 
-    case 'stop-game': {
+    case "stop-game": {
       if (
         model.black !== ctx.currentUserId &&
         model.white !== ctx.currentUserId
       ) {
-        return Err('must-be-player');
+        return Err("must-be-player");
       }
 
       return Ok(initSetup(model));

@@ -1,6 +1,6 @@
-import { Cmd, exhaustive, Sub, Time } from '@gamezilla/shared/core';
-import { RoomMsg } from '@gamezilla/shared/client';
-import * as Board from '../chess/chess';
+import { Cmd, exhaustive, Sub, Time } from "@gamezilla/shared/core";
+import { RoomMsg } from "@gamezilla/shared/client";
+import * as Board from "../chess/chess";
 import {
   ServerModel,
   ServerMsg,
@@ -18,7 +18,7 @@ import {
   startGame,
   ToServer,
   ToClient,
-} from './vs-user.shared';
+} from "./vs-user.shared";
 
 //
 //
@@ -47,20 +47,20 @@ export const update = (
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'ClockTicked': {
+    case "ClockTicked": {
       const modelNew: Model = {
         ...model,
         ...clockTicked(model),
       };
 
       const didChangeToGameOver =
-        model.type !== 'GameOver' && modelNew.type === 'GameOver';
+        model.type !== "game-over" && modelNew.type === "game-over";
 
       return [
         modelNew,
         Cmd.batch([
-          broadcast(['ClockTicked', modelNew]),
-          didChangeToGameOver ? broadcast(['GameOver']) : Cmd.None,
+          broadcast(["ClockTicked", modelNew]),
+          didChangeToGameOver ? broadcast(["game-over"]) : Cmd.None,
         ]),
       ];
     }
@@ -76,66 +76,66 @@ export const updateFromClient = (
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'RequestToDraw': {
+    case "RequestToDraw": {
       return sendResponse(
         wire,
-        ['RequestToDraw_Done', requestToDraw(msg[1], model)],
+        ["RequestToDraw_Done", requestToDraw(msg[1], model)],
         model
       );
     }
 
-    case 'resign': {
-      return sendResponse(wire, ['resign_Done', resign(msg[1], model)], model);
+    case "resign": {
+      return sendResponse(wire, ["resign_Done", resign(msg[1], model)], model);
     }
 
-    case 'InputClock': {
+    case "InputClock": {
       return sendResponse(
         wire,
-        ['InputClock_Done', inputClock(msg[1], model)],
+        ["InputClock_Done", inputClock(msg[1], model)],
         model
       );
     }
 
-    case 'InputPlayer': {
+    case "InputPlayer": {
       return sendResponse(
         wire,
-        ['InputPlayer_Done', inputPlayer(msg[1], model)],
+        ["InputPlayer_Done", inputPlayer(msg[1], model)],
         model
       );
     }
 
-    case 'start-game': {
+    case "start-game": {
       return sendResponse(
         wire,
-        ['StartGame_Done', startGame(msg[1], model)],
+        ["StartGame_Done", startGame(msg[1], model)],
         model
       );
     }
 
-    case 'input-move': {
+    case "input-move": {
       return sendResponse(
         wire,
-        ['input-move-done', inputMove(msg[1], model)],
+        ["input-move-done", inputMove(msg[1], model)],
         model
       );
     }
 
-    case 'RespondToDraw': {
+    case "RespondToDraw": {
       return sendResponse(
         wire,
-        ['RespondToDraw_Done', respondToDraw(msg[1], model)],
+        ["RespondToDraw_Done", respondToDraw(msg[1], model)],
         model
       );
     }
 
-    case 'NewGame': {
-      return sendResponse(wire, ['NewGame_Done', NewGame(model)], model);
+    case "NewGame": {
+      return sendResponse(wire, ["NewGame_Done", NewGame(model)], model);
     }
 
-    case 'CancelDraw': {
+    case "CancelDraw": {
       return sendResponse(
         wire,
-        ['CancelDraw_Done', cancelDraw(msg[1], model)],
+        ["CancelDraw_Done", cancelDraw(msg[1], model)],
         model
       );
     }
@@ -157,19 +157,19 @@ const sendResponse = (
   response: Res,
   model: Model
 ): [Model, Cmd<Msg>] => {
-  if (response[1].t === 'err') {
+  if (response[1].t === "err") {
     return [model, Cmd.batch([sendToClient(response)])];
   }
 
   const modelNew: Model = response[1].value;
 
   const didChangeToGameOver =
-    model.type !== 'GameOver' && modelNew.type === 'GameOver';
+    model.type !== "game-over" && modelNew.type === "game-over";
 
   return [
     modelNew,
     Cmd.batch([
-      didChangeToGameOver ? broadcast(['GameOver']) : Cmd.None,
+      didChangeToGameOver ? broadcast(["game-over"]) : Cmd.None,
       broadcast(response),
     ]),
   ];
@@ -185,30 +185,30 @@ export const updateFromRoom = ({
   model: Model;
 }): { model: Model; cmd?: Cmd<Msg> } => {
   switch (msg.t) {
-    case 'user-left': {
+    case "user-left": {
       switch (model.type) {
-        case 'Setup': {
+        case "setup": {
           const { userId } = msg;
-          const color: Board.Color | 'none' =
-            model.b === userId ? 'b' : model.w === userId ? 'w' : 'none';
+          const color: Board.Color | "none" =
+            model.b === userId ? "b" : model.w === userId ? "w" : "none";
 
-          if (color === 'none') {
+          if (color === "none") {
             return { model };
           }
 
-          const modelNew: Model = { ...model, [color]: 'none' };
+          const modelNew: Model = { ...model, [color]: "none" };
 
-          return { model: modelNew, cmd: broadcast(['player-left', modelNew]) };
+          return { model: modelNew, cmd: broadcast(["player-left", modelNew]) };
         }
 
-        case 'game':
-        case 'GameOver': {
+        case "game":
+        case "game-over": {
           const { userId } = msg;
 
-          const color: Board.Color | 'none' =
-            model.b === userId ? 'b' : model.w === userId ? 'w' : 'none';
+          const color: Board.Color | "none" =
+            model.b === userId ? "b" : model.w === userId ? "w" : "none";
 
-          if (color === 'none') {
+          if (color === "none") {
             return { model };
           }
 
@@ -216,13 +216,13 @@ export const updateFromRoom = ({
 
           const modelNew: Model = {
             ...model,
-            type: 'Setup',
+            type: "setup",
             clockPreset: model.clock.preset,
             [otherColor]: model[otherColor],
-            [color]: 'none',
+            [color]: "none",
           };
 
-          return { model: modelNew, cmd: broadcast(['player-left', modelNew]) };
+          return { model: modelNew, cmd: broadcast(["player-left", modelNew]) };
         }
       }
     }
@@ -239,23 +239,23 @@ export const updateFromRoom = ({
 
 export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
   switch (model.type) {
-    case 'Setup': {
+    case "setup": {
       return Sub.None;
     }
 
-    case 'GameOver': {
+    case "game-over": {
       return Sub.None;
     }
 
-    case 'game': {
+    case "game": {
       const turn = Board.toTurn(model.board);
 
       switch (turn) {
-        case 'b': {
-          return Time.every(`${intervalId}-b`, 1000, () => ['ClockTicked']);
+        case "b": {
+          return Time.every(`${intervalId}-b`, 1000, () => ["ClockTicked"]);
         }
-        case 'w': {
-          return Time.every(`${intervalId}-w`, 1000, () => ['ClockTicked']);
+        case "w": {
+          return Time.every(`${intervalId}-w`, 1000, () => ["ClockTicked"]);
         }
       }
     }

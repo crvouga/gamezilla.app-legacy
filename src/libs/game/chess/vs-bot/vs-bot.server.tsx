@@ -130,11 +130,11 @@ export const updateFromServer = (
   const [modelNext, cmd] = updateFromServer_(msg, modelPrev);
 
   if (
-    modelPrev.sharedModel.type !== "GameOver" &&
-    modelNext.sharedModel.type === "GameOver"
+    modelPrev.sharedModel.type !== "game-over" &&
+    modelNext.sharedModel.type === "game-over"
   ) {
     return [
-      { ...modelNext, openedModal: "GameOver" },
+      { ...modelNext, openedModal: "game-over" },
       Cmd.batch([cmd, playAudio(Sounds.gameOver)]),
     ];
   }
@@ -279,7 +279,7 @@ export const View = ({
   $send: (msg: Msg) => void;
   onClose: () => void;
 }) => {
-  if (model.sharedModel.type === "Setup") {
+  if (model.sharedModel.type === "setup") {
     return ViewVsBotSetupScreen<Chess.BotLevel, Chess.Color>({
       botLevel: {
         values: Chess.allBotLevels,
@@ -438,11 +438,11 @@ export const View = ({
         />
       </UI.Box>
 
-      {model.sharedModel.type === "GameOver" && (
+      {model.sharedModel.type === "game-over" && (
         <UI.Dialog
           open={
-            model.sharedModel.type === "GameOver" &&
-            model.openedModal === "GameOver"
+            model.sharedModel.type === "game-over" &&
+            model.openedModal === "game-over"
           }
           onClose={() => $send(["ClosedModal"])}>
           {model.sharedModel.gameOver.type === "Checkmate" && (
@@ -467,7 +467,7 @@ export const View = ({
 
 export const toGameText = (model: SharedModel): string => {
   switch (model.type) {
-    case "GameOver": {
+    case "game-over": {
       switch (model.gameOver.type) {
         case "Checkmate": {
           const color = Chess.colorToString(model.gameOver.winner);
@@ -483,7 +483,7 @@ export const toGameText = (model: SharedModel): string => {
       }
     }
 
-    case "Setup": {
+    case "setup": {
       return "Setting up game";
     }
 

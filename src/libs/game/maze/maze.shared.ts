@@ -1,7 +1,7 @@
-import { Keyboard, NonEmpty, removeKey, Result } from '@gamezilla/shared/core';
-import { UserId } from '@gamezilla/shared/app';
-import { Maze } from './maze';
-import { Direction, Position } from './position';
+import { Keyboard, NonEmpty, removeKey, Result } from "@gamezilla/shared/core";
+import { UserId } from "@gamezilla/shared/app";
+import { Maze } from "./maze";
+import { Direction, Position } from "./position";
 
 const { Err, Ok } = Result;
 
@@ -17,14 +17,14 @@ export type SharedModel = SetupModel;
 
 export type SetupModel =
   | {
-      type: 'Setup';
+      type: "setup";
       players: { [userId: UserId]: { userId: UserId; color: Color } };
       seed: string;
       lower: Position;
       upper: Position;
     }
   | {
-      type: 'game';
+      type: "game";
       players: { [userId: UserId]: Player };
       seed: string;
       lower: Position;
@@ -34,13 +34,13 @@ export type SetupModel =
 type Player = {
   userId: UserId;
   position: Position;
-  direction: Direction | 'none';
+  direction: Direction | "none";
   color: Color;
 };
 
-export type Color = 'Red' | 'Blue' | 'Green' | 'Purple' | 'Cyan' | 'Pink';
+export type Color = "Red" | "Blue" | "Green" | "Purple" | "Cyan" | "Pink";
 
-const colorSeq: NonEmpty<Color> = ['Red', 'Blue', 'Green', 'Purple'];
+const colorSeq: NonEmpty<Color> = ["Red", "Blue", "Green", "Purple"];
 
 export type ClientModel = SharedModel;
 
@@ -56,14 +56,14 @@ export type ServerModel = SharedModel;
 
 export type ClientMsg =
   | Req
-  | ['key-down', Keyboard.Key]
-  | ['key-up', Keyboard.Key];
+  | ["key-down", Keyboard.Key]
+  | ["key-up", Keyboard.Key];
 
-export type ServerMsg = ['tick'];
+export type ServerMsg = ["tick"];
 
 export type ToServer = Req;
 
-export type ToClient = Res | ['tick', SharedModel];
+export type ToClient = Res | ["tick", SharedModel];
 
 //
 //
@@ -71,24 +71,24 @@ export type ToClient = Res | ['tick', SharedModel];
 //
 
 export type Req =
-  | ['start-playing', { userId: UserId }]
-  | ['stop-playing', { userId: UserId }]
-  | ['start-game', { userId: UserId }]
-  | ['stop-game', { userId: UserId }]
-  | ['input-direction', { userId: UserId; direction: Direction | 'none' }]
-  | ['input-seed', { userId: UserId; seed: string }];
+  | ["start-playing", { userId: UserId }]
+  | ["stop-playing", { userId: UserId }]
+  | ["start-game", { userId: UserId }]
+  | ["stop-game", { userId: UserId }]
+  | ["input-direction", { userId: UserId; direction: Direction | "none" }]
+  | ["input-seed", { userId: UserId; seed: string }];
 
 export type Res = [...Req, Result<Problem, SharedModel>];
 
 type Problem =
-  | 'must_be_setup'
-  | 'already_playing'
-  | 'must_have_at_least_one_player'
-  | 'must_be_playing'
-  | 'must_be_game'
-  | 'out_of_bounds'
-  | 'hit_wall'
-  | 'no_next_color';
+  | "must_be_setup"
+  | "already_playing"
+  | "must_have_at_least_one_player"
+  | "must_be_playing"
+  | "must_be_game"
+  | "out_of_bounds"
+  | "hit_wall"
+  | "no_next_color";
 
 const toNextColor = (model: SharedModel): Color | null => {
   for (const color of colorSeq) {
@@ -104,15 +104,15 @@ export const handle = (
   model: SharedModel
 ): Result<Problem, SharedModel> => {
   switch (msg[0]) {
-    case 'input-seed': {
-      if (model.type !== 'Setup') {
-        return Err('must_be_setup');
+    case "input-seed": {
+      if (model.type !== "setup") {
+        return Err("must_be_setup");
       }
 
       const player = model.players[msg[1].userId];
 
       if (!player) {
-        return Err('must_be_playing');
+        return Err("must_be_playing");
       }
 
       const modelNew: SharedModel = {
@@ -123,19 +123,19 @@ export const handle = (
       return Ok(modelNew);
     }
 
-    case 'stop-game': {
-      if (model.type !== 'game') {
-        return Err('must_be_game');
+    case "stop-game": {
+      if (model.type !== "game") {
+        return Err("must_be_game");
       }
 
       const player = model.players[msg[1].userId];
 
       if (!player) {
-        return Err('must_be_playing');
+        return Err("must_be_playing");
       }
 
       const modelNew: SharedModel = {
-        type: 'Setup',
+        type: "setup",
         lower: model.lower,
         players: mapValues(
           (val) => ({ userId: val.userId, color: val.color }),
@@ -148,21 +148,21 @@ export const handle = (
       return Ok(modelNew);
     }
 
-    case 'start-playing': {
-      if (model.type !== 'Setup') {
-        return Err('must_be_setup');
+    case "start-playing": {
+      if (model.type !== "setup") {
+        return Err("must_be_setup");
       }
 
       const player = model.players[msg[1].userId];
 
       if (player) {
-        return Err('already_playing');
+        return Err("already_playing");
       }
 
       const nextColor = toNextColor(model);
 
       if (!nextColor) {
-        return Err('no_next_color');
+        return Err("no_next_color");
       }
 
       const modelNew: SharedModel = {
@@ -178,9 +178,9 @@ export const handle = (
       return Ok(modelNew);
     }
 
-    case 'stop-playing': {
-      if (model.type !== 'Setup') {
-        return Err('must_be_setup');
+    case "stop-playing": {
+      if (model.type !== "setup") {
+        return Err("must_be_setup");
       }
 
       const modelNew: SharedModel = {
@@ -191,13 +191,13 @@ export const handle = (
       return Ok(modelNew);
     }
 
-    case 'start-game': {
-      if (model.type !== 'Setup') {
-        return Err('must_be_setup');
+    case "start-game": {
+      if (model.type !== "setup") {
+        return Err("must_be_setup");
       }
 
       if (Object.values(model.players).length === 0) {
-        return Err('must_have_at_least_one_player');
+        return Err("must_have_at_least_one_player");
       }
 
       const playersNew = Object.values(model.players).reduce<{
@@ -207,13 +207,13 @@ export const handle = (
           userId: player.userId,
           color: player.color,
           position: { x: 0, y: 0 },
-          direction: 'none',
+          direction: "none",
         };
         return { ...byId, [player.userId]: playerNew };
       }, {});
 
       const modelNew: SharedModel = {
-        type: 'game',
+        type: "game",
         seed: model.seed,
         lower: model.lower,
         upper: model.upper,
@@ -223,19 +223,19 @@ export const handle = (
       return Ok(modelNew);
     }
 
-    case 'input-direction': {
-      if (model.type !== 'game') {
-        return Err('must_be_game');
+    case "input-direction": {
+      if (model.type !== "game") {
+        return Err("must_be_game");
       }
 
       const player = model.players[msg[1].userId];
 
       if (!player) {
-        return Err('must_be_playing');
+        return Err("must_be_playing");
       }
 
       const modelNew: SharedModel = {
-        type: 'game',
+        type: "game",
         seed: model.seed,
         upper: model.upper,
         lower: model.lower,
@@ -254,7 +254,7 @@ export const handle = (
 };
 
 export const tick = (model: SharedModel): SharedModel => {
-  if (model.type !== 'game') {
+  if (model.type !== "game") {
     return model;
   }
 
@@ -269,7 +269,7 @@ export const tick = (model: SharedModel): SharedModel => {
 };
 
 const mapPlayer = (maze: Maze, player: Player): Player => {
-  if (player.direction === 'none') {
+  if (player.direction === "none") {
     return player;
   }
 
@@ -287,7 +287,7 @@ const mapPlayer = (maze: Maze, player: Player): Player => {
     !Maze.hasEdge([player.position, playerNew.position], maze) ||
     !Maze.hasVertex(playerNew.position, maze)
   ) {
-    return { ...player, direction: 'none' };
+    return { ...player, direction: "none" };
   }
 
   return playerNew;
@@ -314,14 +314,14 @@ const mapValues = <A, B>(f: (a: A) => B, record: Record<string, A>) => {
 
 export const initShared = ({ userId }: { userId: UserId }): SharedModel => {
   return {
-    type: 'Setup',
+    type: "setup",
     players: {
       [userId]: {
         color: colorSeq[0],
         userId,
       },
     },
-    seed: 'some arbitrary seed',
+    seed: "some arbitrary seed",
     lower: { x: -10, y: -10 },
     upper: { x: 10, y: 10 },
   };

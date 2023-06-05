@@ -244,7 +244,7 @@ export const updateFromServer = (
 
       const sharedModel = msg[1].value;
 
-      if (sharedModel.type === "GameOver") {
+      if (sharedModel.type === "game-over") {
         return [{ ...model, sharedModel }, Cmd.None];
       }
 
@@ -294,7 +294,7 @@ export const updateFromServer = (
 
       const sharedModelNew = msg[1].value;
 
-      if (sharedModelNew.type === "Setup") {
+      if (sharedModelNew.type === "setup") {
         return [model, Cmd.None];
       }
 
@@ -314,11 +314,11 @@ export const updateFromServer = (
       ];
     }
 
-    case "GameOver": {
+    case "game-over": {
       return [
         {
           ...model,
-          openedModal: "GameOver",
+          openedModal: "game-over",
         },
         playAudio(Sounds.gameOver),
       ];
@@ -379,7 +379,7 @@ export const View = ({
   $send: (msg: Msg) => void;
   onClose: () => void;
 }) => {
-  if (model.sharedModel.type === "Setup") {
+  if (model.sharedModel.type === "setup") {
     const startGameResult = startGame(
       { userId: ctx.currentUserId },
       model.sharedModel
@@ -610,7 +610,7 @@ export const View = ({
       <ViewGameOverDialog model={model} $send={$send} />
 
       <UI.Box sx={{ width: "100%", display: "flex" }}>
-        {model.sharedModel.type === "GameOver" &&
+        {model.sharedModel.type === "game-over" &&
           currentUserColor !== "none" && (
             <UI.Box sx={{ padding: 2, width: "100%" }}>
               <UI.Button
@@ -743,7 +743,7 @@ const ViewGameOverDialog = ({
   model: Model;
   $send: (msg: Msg) => void;
 }) => {
-  if (model.sharedModel.type === "Setup") {
+  if (model.sharedModel.type === "setup") {
     return <span></span>;
   }
 
@@ -753,7 +753,7 @@ const ViewGameOverDialog = ({
 
   return (
     <UI.Dialog
-      open={model.openedModal === "GameOver"}
+      open={model.openedModal === "game-over"}
       onClose={() => $send(["ClosedModal"])}>
       <UI.DialogTitle>{toGameText(model.sharedModel)}</UI.DialogTitle>
       <UI.DialogActions>
@@ -805,7 +805,7 @@ const ViewInputUserPlayerSlot = ({
 
 const toGameText = (model: SharedModel): string => {
   switch (model.type) {
-    case "GameOver": {
+    case "game-over": {
       switch (model.gameOver.type) {
         case "Checkmate": {
           const colorStr = Chess.colorToString(model.gameOver.winner);
@@ -833,7 +833,7 @@ const toGameText = (model: SharedModel): string => {
       }
     }
 
-    case "Setup": {
+    case "setup": {
       return "Setting up game";
     }
 

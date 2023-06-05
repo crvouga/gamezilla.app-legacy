@@ -1,16 +1,17 @@
-import { Cmd, exhaustive, Sub, Time } from '@gamezilla/shared/core';
-import { RoomMsg } from '@gamezilla/shared/client';
+import { RoomMsg } from "@gamezilla/shared/client";
+import { Cmd, Sub, Time } from "@gamezilla/shared/core";
+import { RoomRequestCtx } from "@gamezilla/shared/server";
 import {
-  ServerModel,
-  ServerMsg,
   handle,
   initShared,
   Res,
+  ServerModel,
+  ServerMsg,
   tick,
-  ToServer,
   ToClient,
   toPlayerType,
-} from './vs-user.shared';
+  ToServer,
+} from "./vs-user.shared";
 
 //
 //
@@ -34,54 +35,51 @@ export const init = initShared;
 
 export type Msg = ServerMsg;
 
-export const update = (
-  { broadcast }: { broadcast: (msg: ToClient) => Cmd },
-  msg: Msg,
-  model: Model
-): [Model, Cmd<Msg>] => {
-  switch (msg[0]) {
-    case 'tick': {
-      const modelNew = tick(model);
-      return [modelNew, broadcast(['Tick_Done', modelNew])];
-    }
+export const update = ({
+  broadcast,
+  msg,
+  model,
+}: {
+  broadcast: (msg: ToClient) => Cmd;
+  msg: Msg;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  if (msg.t === "tick") {
+    const modelNew = tick(model);
+    return {
+      model: modelNew,
+      cmd: broadcast({ t: "tick-done", model: modelNew }),
+    };
   }
+  return { model };
 };
 
-export const updateFromClient = (
-  {
-    sendToClient,
-    broadcast,
-  }: {
-    sendToClient: (msg: ToClient) => Cmd;
-    broadcast: (msg: ToClient) => Cmd;
-  },
-  msg: ToServer,
-  model: Model
-): [Model, Cmd<Msg>] => {
-  switch (msg[0]) {
-    case 'resign':
-    case 'new-game':
-    case 'Rematch_Cancel':
-    case 'rematch-request':
-    case 'Rematch_Respond':
-    case 'InputMoveTimeLimit':
-    case 'input-move':
-    case 'start-game':
-    case 'stop-playing':
-    case 'start-playing': {
-      const res: Res = [msg[0], handle(msg, model)];
+export const updateFromClient = ({
+  sendToClient,
+  broadcast,
+  msg,
+  model,
+  ctx,
+}: {
+  sendToClient: (msg: ToClient) => Cmd;
+  broadcast: (msg: ToClient) => Cmd;
+  msg: ToServer;
+  model: Model;
+  ctx: RoomRequestCtx;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  const res: Res = { ...msg, result: handle({ req: msg, ctx, model }) };
 
-      if (res[1].t === 'err') {
-        return [model, sendToClient(res)];
-      }
-
-      return [res[1].value, broadcast(res)];
-    }
-
-    default: {
-      return exhaustive(msg[0]);
-    }
+  if (res.result.t === "err") {
+    return { model, cmd: sendToClient(res) };
   }
+
+  return { model: res.result.value, cmd: broadcast(res) };
 };
 
 export const updateFromRoom = ({
@@ -96,25 +94,25 @@ export const updateFromRoom = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (msg.t === 'user-left') {
+  if (msg.t === "user-left") {
     const userId = msg.userId;
     const player = toPlayerType(userId, model);
 
-    if (player === 'none') {
+    if (player === "none") {
       return { model };
     }
 
     const modelNew: Model = {
-      type: 'Setup',
+      type: "setup",
       moveTimeLimit: model.moveTimeLimit,
       PlayerOne: model.PlayerOne,
       PlayerTwo: model.PlayerTwo,
-      [player]: 'none',
+      [player]: "none",
     };
 
     return {
       model: modelNew,
-      cmd: broadcast(['player-left', modelNew]),
+      cmd: broadcast({ t: "player-left", model: modelNew }),
     };
   }
   return { model };
@@ -129,17 +127,9 @@ export const updateFromRoom = ({
 //
 
 export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
-  switch (model.type) {
-    case 'GameOver': {
-      return Sub.None;
-    }
-
-    case 'Setup': {
-      return Sub.None;
-    }
-
-    case 'game': {
-      return Time.every(intervalId, 1000, () => ['tick']);
-    }
+  if (model.type === "game") {
+    return Time.every(intervalId, 1000, () => ({ t: "tick" }));
   }
+
+  return Sub.None;
 };

@@ -1,6 +1,6 @@
-import { Cmd, p, Sub } from '@gamezilla/shared/core';
-import { RoomMsg } from '@gamezilla/shared/client';
-import * as Chess from '../chess/chess';
+import { Cmd, p, Sub } from "@gamezilla/shared/core";
+import { RoomMsg } from "@gamezilla/shared/client";
+import * as Chess from "../chess/chess";
 import {
   ServerModel,
   ServerMsg,
@@ -15,7 +15,7 @@ import {
   stopGame,
   ToServer,
   ToClient,
-} from './vs-bot.shared';
+} from "./vs-bot.shared";
 
 //
 //
@@ -45,12 +45,12 @@ export const update = (
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'bot-moved': {
+    case "bot-moved": {
       const result = botMoved(msg[1], model);
 
-      const modelNew = result.t === 'err' ? model : result.value;
+      const modelNew = result.t === "err" ? model : result.value;
 
-      return [modelNew, broadcast(['bot-moved_Done', result])];
+      return [modelNew, broadcast(["bot-moved_Done", result])];
     }
   }
 };
@@ -76,13 +76,13 @@ const toBotMoveCmd = (modelPrev: Model, modelNext: Model): Cmd<Msg> => {
   if (!didChangeToBotTurn) {
     return Cmd.None;
   }
-  if (modelNext.type !== 'game') {
+  if (modelNext.type !== "game") {
     return Cmd.None;
   }
 
   const cmd = p(
     Chess.getBestMove(modelNext.botLevel, modelNext.board),
-    Cmd.perform((result): Msg => ['bot-moved', result])
+    Cmd.perform((result): Msg => ["bot-moved", result])
   );
 
   return cmd;
@@ -94,52 +94,52 @@ const updateFromClient_ = (
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'start-game': {
+    case "start-game": {
       const result = startGame(msg[1], model);
 
-      const modelNew = result.t === 'err' ? model : result.value;
+      const modelNew = result.t === "err" ? model : result.value;
 
-      return [modelNew, broadcast(['StartGame_Done', result])];
+      return [modelNew, broadcast(["StartGame_Done", result])];
     }
 
-    case 'stop-game': {
+    case "stop-game": {
       const result = stopGame(msg[1], model);
 
-      const modelNew = result.t === 'err' ? model : result.value;
+      const modelNew = result.t === "err" ? model : result.value;
 
-      return [modelNew, broadcast(['StopGame_Done', result])];
+      return [modelNew, broadcast(["StopGame_Done", result])];
     }
 
-    case 'InputUser': {
+    case "InputUser": {
       const result = inputUser(msg[1], model);
 
-      const modelNew = result.t === 'err' ? model : result.value;
+      const modelNew = result.t === "err" ? model : result.value;
 
-      return [modelNew, broadcast(['InputUser_Done', result])];
+      return [modelNew, broadcast(["InputUser_Done", result])];
     }
 
-    case 'InputColor': {
+    case "InputColor": {
       const result = inputColor(msg[1], model);
 
-      const modelNew = result.t === 'err' ? model : result.value;
+      const modelNew = result.t === "err" ? model : result.value;
 
-      return [modelNew, broadcast(['InputColor_Done', result])];
+      return [modelNew, broadcast(["InputColor_Done", result])];
     }
 
-    case 'InputBot': {
+    case "InputBot": {
       const result = inputBot(msg[1], model);
 
-      const modelNew = result.t === 'err' ? model : result.value;
+      const modelNew = result.t === "err" ? model : result.value;
 
-      return [modelNew, broadcast(['InputBot_Done', result])];
+      return [modelNew, broadcast(["InputBot_Done", result])];
     }
 
-    case 'input-move': {
+    case "input-move": {
       const result = inputMove(msg[1], model);
 
-      const modelNew = result.t === 'err' ? model : result.value;
+      const modelNew = result.t === "err" ? model : result.value;
 
-      return [modelNew, broadcast(['input-move-done', result])];
+      return [modelNew, broadcast(["input-move-done", result])];
     }
   }
 };
@@ -157,15 +157,15 @@ export const updateFromRoom = ({
   cmd?: Cmd;
 } => {
   switch (msg.t) {
-    case 'user-left': {
+    case "user-left": {
       if (model.userId === msg.userId) {
         const modelNew: Model = {
-          type: 'Setup',
+          type: "setup",
           botLevel: model.botLevel,
           userColor: model.userColor,
-          userId: 'none',
+          userId: "none",
         };
-        return { model: modelNew, cmd: broadcast(['player-left', modelNew]) };
+        return { model: modelNew, cmd: broadcast(["player-left", modelNew]) };
       }
 
       return { model };

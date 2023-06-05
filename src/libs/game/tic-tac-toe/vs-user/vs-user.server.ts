@@ -1,14 +1,13 @@
-import { Cmd, exhaustive, Sub, Time } from '@gamezilla/shared/core';
-import { RoomMsg } from '@gamezilla/shared/client';
-import { PlayerType, toOpposite, toTurn } from '../tic-tic-toe/tic-tac-toe';
-import * as Round from './vs-user-round';
+import { Cmd, Sub, Time } from "@gamezilla/shared/core";
+import { RoomMsg } from "@gamezilla/shared/client";
+import { PlayerType, toOpposite, toTurn } from "../tic-tic-toe/tic-tac-toe";
+import * as Round from "./vs-user-round";
 import {
   ServerModel,
   ServerMsg,
   initSharedModel,
   inputBestOutOf,
   inputMove,
-  InputMoveTimeLimit,
   inputPlayer,
   moveCountDown,
   NewGame,
@@ -23,7 +22,7 @@ import {
   stopPlaying,
   ToServer,
   ToClient,
-} from './vs-user.shared';
+} from "./vs-user.shared";
 
 //
 //
@@ -57,20 +56,20 @@ export const update = (
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'RoundCountDown': {
+    case "RoundCountDown": {
       const result = roundCountDown(model);
 
-      const modelNew = result.t === 'err' ? model : result.value;
+      const modelNew = result.t === "err" ? model : result.value;
 
-      return [modelNew, broadcast(['RoundCountDown_Done', result])];
+      return [modelNew, broadcast(["RoundCountDown_Done", result])];
     }
 
-    case 'MoveCountDown': {
+    case "MoveCountDown": {
       const result = moveCountDown(model);
 
-      const modelNew = result.t === 'err' ? model : result.value;
+      const modelNew = result.t === "err" ? model : result.value;
 
-      return [modelNew, broadcast(['MoveCountDown_Done', result])];
+      return [modelNew, broadcast(["MoveCountDown_Done", result])];
     }
   }
 };
@@ -87,140 +86,128 @@ export const updateFromClient = (
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'InputPlayer': {
+    case "InputPlayer": {
       const result = inputPlayer(msg[1], model);
 
-      if (result.t === 'err') {
-        return [model, sendToClient(['InputPlayer_Done', result])];
+      if (result.t === "err") {
+        return [model, sendToClient(["InputPlayer_Done", result])];
       }
 
       const modelNew = result.value;
 
-      return [modelNew, broadcast(['InputPlayer_Done', result])];
+      return [modelNew, broadcast(["InputPlayer_Done", result])];
     }
 
-    case 'stop-playing': {
+    case "stop-playing": {
       const result = stopPlaying(msg[1], model);
 
-      if (result.t === 'err') {
-        return [model, sendToClient(['StopPlaying_Done', result])];
+      if (result.t === "err") {
+        return [model, sendToClient(["StopPlaying_Done", result])];
       }
 
       const modelNew = result.value;
 
-      return [modelNew, broadcast(['StopPlaying_Done', result])];
+      return [modelNew, broadcast(["StopPlaying_Done", result])];
     }
 
-    case 'start-game': {
+    case "start-game": {
       const result = startGame(msg[1], model);
 
-      if (result.t === 'err') {
-        return [model, sendToClient(['StartGame_Done', result])];
+      if (result.t === "err") {
+        return [model, sendToClient(["StartGame_Done", result])];
       }
 
       const modelNew = result.value;
 
-      return [modelNew, broadcast(['StartGame_Done', result])];
+      return [modelNew, broadcast(["StartGame_Done", result])];
     }
 
-    case 'resign': {
+    case "resign": {
       const result = resign(msg[1], model);
 
-      if (result.t === 'err') {
-        return [model, sendToClient(['resign_Done', result])];
+      if (result.t === "err") {
+        return [model, sendToClient(["resign_Done", result])];
       }
 
       const modelNew = result.value;
 
-      return [modelNew, broadcast(['resign_Done', result])];
+      return [modelNew, broadcast(["resign_Done", result])];
     }
 
-    case 'input-move': {
+    case "input-move": {
       const result = inputMove(msg[1], model);
 
-      if (result.t === 'err') {
-        return [model, sendToClient(['input-move-done', result])];
+      if (result.t === "err") {
+        return [model, sendToClient(["input-move-done", result])];
       }
 
       const modelNew = result.value;
 
-      return [modelNew, broadcast(['input-move-done', result])];
+      return [modelNew, broadcast(["input-move-done", result])];
     }
 
-    case 'NewGame': {
+    case "NewGame": {
       const result = NewGame(msg[1], model);
 
-      if (result.t === 'err') {
-        return [model, sendToClient(['NewGame_Done', result])];
+      if (result.t === "err") {
+        return [model, sendToClient(["NewGame_Done", result])];
       }
 
       const modelNew = result.value;
 
-      return [modelNew, broadcast(['NewGame_Done', result])];
+      return [modelNew, broadcast(["NewGame_Done", result])];
     }
 
-    case 'InputBestOutOf': {
+    case "InputBestOutOf": {
       const result = inputBestOutOf(msg[1], model);
 
-      if (result.t === 'err') {
-        return [model, sendToClient(['InputBestOutOf_Done', result])];
+      if (result.t === "err") {
+        return [model, sendToClient(["InputBestOutOf_Done", result])];
       }
 
       const modelNew = result.value;
 
-      return [modelNew, broadcast(['InputBestOutOf_Done', result])];
+      return [modelNew, broadcast(["InputBestOutOf_Done", result])];
     }
 
-    case 'InputMoveTimeLimit': {
-      const result = InputMoveTimeLimit(msg[1], model);
-
-      if (result.t === 'err') {
-        return [model, sendToClient(['InputMoveTimeLimit_Done', result])];
-      }
-
-      const modelNew = result.value;
-
-      return [modelNew, broadcast(['InputMoveTimeLimit_Done', result])];
-    }
-
-    case 'RematchAccept': {
+    case "RematchAccept": {
       const result = rematchAccept(msg[1], model);
-      const res: Res = ['RematchAccept_Done', result];
+      const res: Res = ["RematchAccept_Done", result];
 
-      if (result.t === 'err') {
+      if (result.t === "err") {
         return [model, sendToClient(res)];
       }
 
       return [result.value, broadcast(res)];
     }
 
-    case 'RematchAsk': {
+    case "RematchAsk": {
       const result = rematchAsk(msg[1], model);
-      const res: Res = ['RematchAsk_Done', result];
+      const res: Res = ["RematchAsk_Done", result];
 
-      if (result.t === 'err') {
+      if (result.t === "err") {
         return [model, sendToClient(res)];
       }
 
       return [result.value, broadcast(res)];
     }
 
-    case 'RematchDecline': {
+    case "RematchDecline": {
       const result = rematchDecline(msg[1], model);
-      const res: Res = ['RematchDecline_Done', result];
+      const res: Res = ["RematchDecline_Done", result];
 
-      if (result.t === 'err') {
+      if (result.t === "err") {
         return [model, sendToClient(res)];
       }
 
       return [result.value, broadcast(res)];
     }
 
-    case 'Rematch_Cancel': {
+    case "Rematch_Cancel": {
       const result = rematchCancel(msg[1], model);
-      const res: Res = ['Rematch_Cancel_Done', result];
+      const res: Res = ["Rematch_Cancel_Done", result];
 
-      if (result.t === 'err') {
+      if (result.t === "err") {
         return [model, sendToClient(res)];
       }
 
@@ -228,7 +215,7 @@ export const updateFromClient = (
     }
 
     default: {
-      return exhaustive(msg[0]);
+      return [model, Cmd.None];
     }
   }
 };
@@ -246,29 +233,29 @@ export const updateFromRoom = ({
   cmd?: Cmd<Msg>;
 } => {
   switch (msg.t) {
-    case 'user-left': {
+    case "user-left": {
       const { userId } = msg;
 
-      const player: PlayerType | 'none' =
-        model.O === userId ? 'O' : model.X === userId ? 'X' : 'none';
+      const player: PlayerType | "none" =
+        model.O === userId ? "O" : model.X === userId ? "X" : "none";
 
-      if (player === 'none') {
+      if (player === "none") {
         return { model };
       }
 
       const other = toOpposite(player);
 
       const modelNew: Model = {
-        type: 'Setup',
+        type: "setup",
         maxRoundCount: model.maxRoundCount,
         moveTimeLimit: model.moveTimeLimit,
         X: model.X,
         O: model.O,
-        [player]: 'none',
+        [player]: "none",
         [other]: model[other],
       };
 
-      return { model: modelNew, cmd: broadcast(['player-left', modelNew]) };
+      return { model: modelNew, cmd: broadcast(["player-left", modelNew]) };
     }
   }
 };
@@ -283,36 +270,36 @@ export const updateFromRoom = ({
 
 export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
   switch (model.type) {
-    case 'Setup': {
+    case "setup": {
       return Sub.None;
     }
 
-    case 'GameOver': {
+    case "game-over": {
       return Sub.None;
     }
 
-    case 'game': {
+    case "game": {
       const currentRound = Round.toCurrent(model.round);
 
       switch (currentRound.type) {
-        case 'RoundStarted': {
+        case "RoundStarted": {
           const turn = toTurn(currentRound.board);
           return Time.every(
             `${intervalId}-move-count-down-${turn}`,
             1000,
-            (): Msg => ['MoveCountDown']
+            (): Msg => ["MoveCountDown"]
           );
         }
 
-        case 'RoundStarting': {
+        case "RoundStarting": {
           return Time.every(
             `${intervalId}-round-count-down`,
             750,
-            (): Msg => ['RoundCountDown']
+            (): Msg => ["RoundCountDown"]
           );
         }
 
-        case 'RoundOver': {
+        case "RoundOver": {
           return Sub.None;
         }
       }

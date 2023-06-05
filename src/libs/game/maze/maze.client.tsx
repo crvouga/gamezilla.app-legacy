@@ -214,7 +214,7 @@ export const View = ({
   model: Model;
   $send: (msg: Msg) => void;
 }) => {
-  if (model.type === "Setup") {
+  if (model.type === "setup") {
     return (
       <FillBox>
         <Box sx={{ px: 2, pt: 2 }}>

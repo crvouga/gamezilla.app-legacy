@@ -199,7 +199,7 @@ export const view = ({
       ]);
     }
 
-    case "gameOver": {
+    case "game-over": {
       return fillBox({}, [
         viewUserPlayerSlotBar({ left: model.white, right: model.black, ctx }),
         box({ sx: { position: "relative", aspectRatio: "1" } }, [

@@ -16,7 +16,7 @@ const { Err, Ok } = Result;
 export type SharedModel = SetupModel | GameModel | GameOverModel;
 
 export type SetupModel = {
-  type: "Setup";
+  type: "setup";
   X: UserId | "none";
   O: UserId | "none";
   maxRoundCount: BestOutOf;
@@ -33,7 +33,7 @@ export type GameModel = {
 };
 
 export type GameOverModel = {
-  type: "GameOver";
+  type: "game-over";
   X: UserId;
   O: UserId;
   maxRoundCount: BestOutOf;
@@ -113,7 +113,7 @@ export const initSharedModel = ({
   O: SetupModel["O"];
 }): SharedModel => {
   return {
-    type: "Setup",
+    type: "setup",
     O,
     X,
     maxRoundCount: 3,
@@ -157,7 +157,6 @@ export type GameMsg = ["ClickedBoard", TicTacToe.Position];
 
 export type Req =
   | InputPlayer
-  | InputMoveTimeLimit
   | InputBestOutOf
   | StopPlaying
   | StartGame
@@ -172,7 +171,6 @@ export type Req =
 export type Res =
   | InputPlayer_Done
   | InputBestOutOf_Done
-  | InputMoveTimeLimit_Done
   | StopPlaying_Done
   | StartGame_Done
   | Resign_Done
@@ -205,7 +203,7 @@ export const inputPlayer = (
   { userId, playerType }: InputPlayer[1],
   model: SharedModel
 ): InputPlayer_Done[1] => {
-  if (model.type !== "Setup") {
+  if (model.type !== "setup") {
     return Err("must_be_in_setup_mode");
   }
 
@@ -240,7 +238,7 @@ export const stopPlaying = (
   { userId }: StopPlaying[1],
   model: SharedModel
 ): StopPlaying_Done[1] => {
-  if (model.type !== "Setup") {
+  if (model.type !== "setup") {
     return Err("must_be_in_setup_mode");
   }
 
@@ -279,7 +277,7 @@ export const startGame = (
   { userId }: StartGame[1],
   model: SharedModel
 ): StartGame_Done[1] => {
-  if (model.type !== "Setup") {
+  if (model.type !== "setup") {
     return Err("not_in_setup_mode");
   }
 
@@ -341,7 +339,7 @@ export const resign = (
 
   const modelNew: SharedModel = {
     ...model,
-    type: "GameOver",
+    type: "game-over",
     gameOver: {
       type: "resignation",
       resigner,
@@ -440,7 +438,7 @@ export const inputMove = (
   }
 
   return Ok({
-    type: "GameOver",
+    type: "game-over",
     gameOver,
     maxRoundCount: modelNew.maxRoundCount,
     moveTimeLimit: modelNew.moveTimeLimit,
@@ -530,7 +528,7 @@ export const NewGame = (
   { userId }: NewGame[1],
   model: SharedModel
 ): NewGame_Done[1] => {
-  if (model.type !== "GameOver") {
+  if (model.type !== "game-over") {
     return Err("not_game_over");
   }
 
@@ -539,7 +537,7 @@ export const NewGame = (
   }
 
   const modelNew: SharedModel = {
-    type: "Setup",
+    type: "setup",
     moveTimeLimit: model.moveTimeLimit,
     O: model.O,
     X: model.X,
@@ -586,7 +584,7 @@ export const inputBestOutOf = (
   { userId, bestOutOf }: InputBestOutOf[1],
   model: SharedModel
 ): InputBestOutOf_Done[1] => {
-  if (model.type !== "Setup") {
+  if (model.type !== "setup") {
     return Err("not_in_setup_mode");
   }
 
@@ -626,54 +624,6 @@ export const inputBestOutOfToString = (
 //
 //
 //
-
-type InputMoveTimeLimit = [
-  "InputMoveTimeLimit",
-  { userId: UserId; moveTimeLimit: MoveTimeLimit }
-];
-type InputMoveTimeLimit_Done = [
-  "InputMoveTimeLimit_Done",
-  Result<InputMoveTimeLimitProblem, SharedModel>
-];
-type InputMoveTimeLimitProblem = "not_in_setup_mode" | "not_playing";
-
-export const InputMoveTimeLimit = (
-  { userId, moveTimeLimit }: InputMoveTimeLimit[1],
-  model: SharedModel
-): InputMoveTimeLimit_Done[1] => {
-  if (model.type !== "Setup") {
-    return Err("not_in_setup_mode");
-  }
-
-  if (model.X !== userId && model.O !== userId) {
-    return Err("not_playing");
-  }
-
-  const modelNew: SharedModel = {
-    ...model,
-    moveTimeLimit,
-  };
-
-  return Ok(modelNew);
-};
-
-export const InputMoveTimeLimitToString = (
-  result: InputMoveTimeLimit_Done[1]
-): string => {
-  if (result.t === "ok") {
-    return "";
-  }
-
-  switch (result.error) {
-    case "not_in_setup_mode": {
-      return "Must be in setup move to change";
-    }
-
-    case "not_playing": {
-      return "Must be playing to change";
-    }
-  }
-};
 
 //
 //
@@ -746,7 +696,7 @@ export const rematchAsk = (
   { userId }: RematchAsk[1],
   model: SharedModel
 ): RematchAsk_Done[1] => {
-  if (model.type !== "GameOver") {
+  if (model.type !== "game-over") {
     return Err("not_game_over");
   }
 
@@ -800,7 +750,7 @@ export const rematchCancel = (
   { userId }: Rematch_Cancel[1],
   model: SharedModel
 ): Rematch_Cancel_Done[1] => {
-  if (model.type !== "GameOver") {
+  if (model.type !== "game-over") {
     return Err("not_game_over");
   }
 
@@ -837,7 +787,7 @@ export const rematchDecline = (
   { userId }: RematchDecline[1],
   model: SharedModel
 ): RematchDecline_Done[1] => {
-  if (model.type !== "GameOver") {
+  if (model.type !== "game-over") {
     return Err("not_game_over");
   }
 
@@ -871,7 +821,7 @@ export const rematchAccept = (
   { userId }: RematchAccept[1],
   model: SharedModel
 ): RematchAccept_Done[1] => {
-  if (model.type !== "GameOver") {
+  if (model.type !== "game-over") {
     return Err("not_game_over");
   }
 
