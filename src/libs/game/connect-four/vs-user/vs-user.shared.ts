@@ -253,6 +253,10 @@ export const handle = ({
       const modelNew: SharedModel = {
         ...model,
         [playerType]: "none",
+        players: {
+          ...model.players,
+          [playerType]: null,
+        },
       };
 
       return Ok(modelNew);

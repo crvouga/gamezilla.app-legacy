@@ -1,6 +1,6 @@
 import { UserId } from "@gamezilla/shared/app";
 import { RoomMsg } from "@gamezilla/shared/client";
-import { Cmd, Result, Sub } from "@gamezilla/shared/core";
+import { Cmd, Err, Result, Sub } from "@gamezilla/shared/core";
 import { RoomRequestCtx } from "@gamezilla/shared/server";
 import {
   Mode,
@@ -91,7 +91,16 @@ export const updateFromClient = ({
 } => {
   if (msg.t === "input-mode") {
     const { mode } = msg;
+
+    if (ctx.currentUserId !== ctx.hostId) {
+      return {
+        model,
+        cmd: sendToClient({ ...msg, result: Err("must_be_host") }),
+      };
+    }
+
     const modelNew = initMode(mode, ctx.currentUserId);
+
     return {
       model: modelNew,
       cmd: broadcast({ ...msg, result: Result.Ok(modelNew) }),
@@ -127,6 +136,7 @@ export const updateFromClient = ({
       cmd: Cmd.tag_("vs-user", updated.cmd),
     };
   }
+
   return { model };
 };
 
