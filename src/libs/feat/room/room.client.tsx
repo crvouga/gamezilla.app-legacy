@@ -28,11 +28,8 @@ import {
   MyButton,
   Paper,
   TopBar,
-  TopBarBackButton,
   Typography,
   ViewNode,
-  cn,
-  useTheme,
 } from "@gamezilla/shared/ui";
 import { gameNameToString, viewCoverArt } from "./game";
 import * as Game from "./game.client";
@@ -42,11 +39,13 @@ import {
   ClientMsg,
   ClientRoom,
   Res,
-  RoomUser,
   ServerModel,
   ToClient,
   ToServer,
+  toRoomUsers,
 } from "./room.shared";
+import { ViewRoomJoinScreen } from "./views/view-room-join-screen";
+import { ViewRoomListScreen } from "./views/view-room-list-screen";
 
 //
 //
@@ -734,11 +733,15 @@ const ViewPage = ({
   const currentUser = model.users[ctx.currentUserId];
 
   if (!currentUser) {
-    return <ViewNotInRoom room={room} $send={$send} ctx={ctx} model={model} />;
+    return (
+      <ViewRoomJoinScreen room={room} $send={$send} ctx={ctx} model={model} />
+    );
   }
 
   if (currentUser.roomId !== roomId) {
-    return <ViewNotInRoom room={room} $send={$send} ctx={ctx} model={model} />;
+    return (
+      <ViewRoomJoinScreen room={room} $send={$send} ctx={ctx} model={model} />
+    );
   }
 
   const game = model.games[room.roomId];
@@ -811,177 +814,6 @@ export const ViewRoomNotFound = ({ ctx }: { ctx: ViewCtx }) => {
   );
 };
 
-export const ViewRoomListScreen = ({
-  ctx,
-  $send,
-  model,
-}: {
-  model: Model;
-  ctx: ViewCtx;
-  $send: (m: Msg) => void;
-}) => {
-  const user = model.users[ctx.currentUserId];
-  const currentRoom = user ? model.rooms[user.roomId] : undefined;
-  const rooms = Object.values(model.rooms);
-
-  const isLoading = model.requests.list?.t === "loading";
-
-  return (
-    <div className="flex-1 flex flex-col w-full h-full max-h-full overflow-hidden">
-      <div>
-        <TopBar title="Rooms" />
-      </div>
-
-      <div className="flex flex-col flex-1 w-full">
-        {!isLoading && rooms.length === 0 && (
-          <div className="flex-1 flex flex-col items-center justify-center opacity-60">
-            <IconGamepad className="w-12 h-12" />
-            <p className="text-lg">No active rooms</p>
-          </div>
-        )}
-
-        {isLoading && rooms.length === 0 && (
-          <div className="flex-1 flex flex-col gap-4 px-5 overflow-hidden">
-            {[1, 2, 3].map((i) => {
-              return (
-                <div
-                  key={i}
-                  className="cursor-wait w-full aspect-video rounded-lg bg-white/20 animate-pulse"
-                />
-              );
-            })}
-          </div>
-        )}
-
-        {rooms.length > 0 && (
-          <div className="flex-1 flex flex-col relative">
-            {isLoading && (
-              <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
-                <IconSpinner className="animate-spin w-12 h-12" />
-              </div>
-            )}
-            <div
-              className={cn(
-                isLoading && "opacity-50 pointer-events-none",
-                "w-full flex-1 flex flex-col gap-4 px-5 overflow-y-auto"
-              )}>
-              {rooms.map((room) => {
-                const host = ctx.profiles[room.hostId];
-                const users = Object.values(model.users).flatMap((user) => {
-                  if (user.roomId !== room.roomId) {
-                    return [];
-                  }
-                  const profile = ctx.profiles[user.userId];
-                  if (!profile) {
-                    return [];
-                  }
-                  return [profile];
-                });
-                const gameName = model.games[room.roomId]?.t;
-                const currentRoomId = model.users[ctx.currentUserId]?.roomId;
-                return (
-                  <ViewRoomCard
-                    host={{
-                      username: host?.username ?? "...",
-                      avatarUrl: host?.avatarUrl ?? "",
-                    }}
-                    key={room.roomId}
-                    isCurrentRoom={currentRoomId === room.roomId}
-                    users={users}
-                    gameName={gameName}
-                    onClick={() => {
-                      ctx.$push({
-                        t: "room",
-                        c: { t: "room", roomId: room.roomId },
-                      });
-                    }}
-                  />
-                );
-              })}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {!currentRoom && (
-        <div className="w-full p-4">
-          <MyButton
-            size="lg"
-            className="w-full"
-            color="primary"
-            onClick={() => $send({ t: "create", roomId: RoomId.generate() })}>
-            Create Room
-          </MyButton>
-        </div>
-      )}
-    </div>
-  );
-};
-
-const ViewRoomCard = ({
-  gameName,
-  onClick,
-  isCurrentRoom,
-  host,
-}: {
-  gameName?: GameName;
-  users: { avatarUrl: string; username: string }[];
-  onClick: () => void;
-  isCurrentRoom?: boolean;
-  host: {
-    username: string;
-    avatarUrl: string;
-  };
-}) => {
-  return (
-    <button
-      onClick={onClick}
-      className="bg-blue-500 rounded-md flex flex-col gap-3 p-4 active:opacity-70">
-      <div className="w-full flex items-center justify-start">
-        <p className="block uppercase text-left font-bold animate-pulse flex-1">
-          LIVE
-        </p>
-        {isCurrentRoom && (
-          <p className="block text-xs font-light opacity-50 italic">
-            Current Room
-          </p>
-        )}
-      </div>
-
-      {gameName && (
-        <div className="flex items-center justify-start gap-2">
-          <div className="w-12 h-12 rounded overflow-hidden border-2 border-white/40">
-            {viewCoverArt(gameName)}
-          </div>
-          <p className="text-xl">{gameNameToString(gameName)}</p>
-        </div>
-      )}
-
-      <div className="flex items-center justify-start gap-2">
-        <MyAvatar src={host.avatarUrl} alt="avatar" className="w-12 h-12" />
-
-        <p className="text-xl">{host.username}</p>
-        <span className="bg-white/30 rounded-full p-1 px-2 text-xs">Host</span>
-      </div>
-    </button>
-  );
-};
-
-export const formatUsername = (username: string) => {
-  if (username.length > 12) {
-    return username.slice(0, 12) + "...";
-  }
-  return username;
-};
-
-export const formatUsernames = (usernames: string[]) => {
-  const formatted = usernames.map(formatUsername);
-  if (formatted.length > 3) {
-    return `${formatted.slice(0, 3).join(", ")} & ${formatted.length - 3} more`;
-  }
-  return formatted.join(", ");
-};
-
 export const ViewNotInGame = ({
   room,
   ctx,
@@ -1021,163 +853,6 @@ export const ViewNotInGame = ({
   );
 };
 
-export const ViewNotInRoom = ({
-  model,
-  ctx,
-  room,
-  $send,
-}: {
-  room: { roomId: RoomId; hostId: UserId };
-  ctx: ViewCtx;
-  model: Model;
-  $send: (msg: Msg) => void;
-}) => {
-  const usersInRoom = toRoomUsers(room.roomId, model);
-  const host = ctx.profiles[room.hostId];
-  const title = `${host?.username ?? "..."}'s room`;
-  const game = model.games[room.roomId];
-  const theme = useTheme();
-  return (
-    <FillBox>
-      <TopBar
-        left={
-          <TopBarBackButton
-            onClick={() => ctx.$push({ t: "room", c: { t: "room-list" } })}
-          />
-        }
-        title={title}
-      />
-
-      <Box
-        sx={{
-          flex: 1,
-          overflow: "hidden",
-        }}>
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            flexDirection: "column",
-            justifyContent: "center",
-            width: "100%",
-            height: "33.3333%",
-            maxHeight: "33.3333%",
-          }}>
-          <Box
-            sx={{
-              width: 72,
-              height: 72,
-              mb: 1,
-              overflow: "hidden",
-              borderRadius: 1,
-              border: `1px solid ${theme.palette.divider}`,
-              backgroundColor: "background.paper",
-            }}>
-            {game ? (
-              viewCoverArt(game.t)
-            ) : (
-              <Icons.SportsEsports
-                sx={{
-                  color: "text.secondary",
-                  width: "100%",
-                  height: "100%",
-                }}
-              />
-            )}
-          </Box>
-          <Typography variant="h4" color="text.secondary">
-            {game ? gameNameToString(game.t) : "..."}
-          </Typography>
-        </Box>
-
-        <Divider />
-        <Box
-          sx={{
-            width: "100%",
-            height: "66.6666%",
-            maxHeight: "66.6666%",
-            overflowY: "scroll",
-          }}>
-          <ViewRoomUserListItem
-            isHost
-            key={room.hostId}
-            userId={room.hostId}
-            ctx={ctx}
-            onClick={() => {
-              $send({ t: "clicked-user", userId: room.hostId });
-            }}
-          />
-
-          {usersInRoom.map((user) => {
-            if (user.userId === room.hostId) {
-              return null;
-            }
-            return (
-              <ViewRoomUserListItem
-                key={user.userId}
-                userId={user.userId}
-                ctx={ctx}
-                onClick={() => {
-                  $send({ t: "clicked-user", userId: user.userId });
-                }}
-              />
-            );
-          })}
-        </Box>
-      </Box>
-
-      <Box sx={{ display: "flex", gap: 2, width: "100%", padding: 2 }}>
-        <Button
-          fullWidth
-          endIcon={<Icons.ChevronRight />}
-          variant="contained"
-          loading={model.requests["join"]?.t === "loading"}
-          onClick={() => {
-            $send({
-              t: "join",
-              userId: ctx.currentUserId,
-              roomId: room.roomId,
-            });
-          }}>
-          Join Room
-        </Button>
-      </Box>
-    </FillBox>
-  );
-};
-
-const ViewRoomUserListItem = ({
-  ctx,
-  userId,
-  onClick,
-  isHost,
-}: {
-  ctx: ViewCtx;
-  userId: UserId;
-  onClick: () => void;
-  isHost?: boolean;
-}) => {
-  return (
-    <ButtonBase
-      onClick={onClick}
-      sx={{
-        px: 2,
-        py: 1,
-        display: "flex",
-        justifyContent: "flex-start",
-        alignItems: "center",
-        width: "100%",
-      }}>
-      <Avatar sx={{ mr: 1 }} src={ctx.profiles[userId]?.avatarUrl ?? ""} />
-      <Typography align="left">
-        {ctx.profiles[userId]?.username ?? "..."}
-      </Typography>
-      {ctx.currentUserId === userId && <Chip sx={{ ml: 1 }} label="You" />}
-      {isHost && <Chip sx={{ ml: 1 }} label="Host" />}
-    </ButtonBase>
-  );
-};
-
 export const ViewGameArtCard = ({ gameName }: { gameName: GameName }) => {
   return (
     <Paper variant="outlined" sx={{ overflow: "hidden", width: "100%" }}>
@@ -1191,29 +866,6 @@ export const ViewGameArtCard = ({ gameName }: { gameName: GameName }) => {
       </Typography>
     </Paper>
   );
-};
-
-const toRoomUsers = (roomId: RoomId, model: Model): RoomUser[] => {
-  const roomUsers: RoomUser[] = [];
-  for (const userId in model.users) {
-    if (!UserId.is(userId)) {
-      continue;
-    }
-
-    const user = model.users[userId];
-
-    if (!user) {
-      continue;
-    }
-
-    if (user.roomId !== roomId) {
-      continue;
-    }
-
-    roomUsers.push(user);
-  }
-
-  return roomUsers;
 };
 
 const ViewRoomPeople = ({
@@ -1260,6 +912,37 @@ const ViewRoomPeople = ({
         })}
       </Box>
     </FillBox>
+  );
+};
+const ViewRoomUserListItem = ({
+  ctx,
+  userId,
+  onClick,
+  isHost,
+}: {
+  ctx: ViewCtx;
+  userId: UserId;
+  onClick: () => void;
+  isHost?: boolean;
+}) => {
+  return (
+    <ButtonBase
+      onClick={onClick}
+      sx={{
+        px: 2,
+        py: 1,
+        display: "flex",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        width: "100%",
+      }}>
+      <Avatar sx={{ mr: 1 }} src={ctx.profiles[userId]?.avatarUrl ?? ""} />
+      <Typography align="left">
+        {ctx.profiles[userId]?.username ?? "..."}
+      </Typography>
+      {ctx.currentUserId === userId && <Chip sx={{ ml: 1 }} label="You" />}
+      {isHost && <Chip sx={{ ml: 1 }} label="Host" />}
+    </ButtonBase>
   );
 };
 

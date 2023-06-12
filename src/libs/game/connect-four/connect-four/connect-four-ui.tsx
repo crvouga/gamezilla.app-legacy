@@ -59,7 +59,7 @@ export const ViewPlayerTwoGradientDef = ({
 }) => {
   return (
     <radialGradient id={gradientId} gradientTransform="rotate(90)">
-      <stop offset="0%" stopColor={gameTheme.PlayerTwo.light} />
+      <stop offset="50%" stopColor={gameTheme.PlayerTwo.light} />
       <stop offset="100%" stopColor={gameTheme.PlayerTwo.dark} />
     </radialGradient>
   );
@@ -610,7 +610,7 @@ export const PlayerOneIcon = (props: { key?: string; className?: string }) => {
   return (
     <svg viewBox="-1 -1 2 2" {...props}>
       <ViewPlayerOneGradientDef cx={0} cy={0} r={1} gradientId={ref.current} />
-      <circle cx={0} cy={0} r={0.9} fill={`url(#${ref.current})`} />
+      <circle cx={0} cy={0} r={1} fill={`url(#${ref.current})`} />
     </svg>
   );
 };
@@ -620,7 +620,7 @@ export const PlayerTwoIcon = (props: { key?: string; className?: string }) => {
   return (
     <svg viewBox="-1 -1 2 2" className="w-6 h-6" {...props}>
       <ViewPlayerTwoGradientDef gradientId={ref.current} />
-      <circle cx={0} cy={0} r={0.9} fill={`url(#${ref.current})`} />
+      <circle cx={0} cy={0} r={1} fill={`url(#${ref.current})`} />
     </svg>
   );
 };

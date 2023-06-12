@@ -41,7 +41,7 @@ export const VsUserSetupScreen = ({
       <ViewGameHeader title={title} renderCoverArt={renderCoverArt} />
 
       <div className="flex items-center justify-center w-full py-6">
-        <Player variant="player-one" player={playerOne} ctx={ctx} />
+        <Player player={playerOne} ctx={ctx} />
 
         <div className="h-full flex flex-col">
           <div className="flex-1 font-black text-3xl flex items-center justify-center">
@@ -50,16 +50,10 @@ export const VsUserSetupScreen = ({
           <div className="flex-1"></div>
         </div>
 
-        <Player variant="player-two" player={playerTwo} ctx={ctx} />
+        <Player player={playerTwo} ctx={ctx} />
       </div>
 
       <div className="flex-1"></div>
-
-      <div className="px-4">
-        <p className="text-secondary">Settings</p>
-
-        <p className="text-lg">Move Limit Count</p>
-      </div>
 
       <div className="w-full p-4 pt-8 gap-4 flex items-center">
         <MyButton
@@ -83,22 +77,14 @@ export const VsUserSetupScreen = ({
   );
 };
 
-const Player = ({
-  player,
-  ctx,
-  variant,
-}: {
-  ctx: ViewCtx;
-  player: PlayerProp;
-  variant: "player-one" | "player-two";
-}) => {
+const Player = ({ player, ctx }: { ctx: ViewCtx; player: PlayerProp }) => {
   return (
     <div className="flex-1 flex flex-col gap-6 p-4">
       <div className="grid grid-cols-2 w-full justify-center gap-4">
         <div
           className={cn(
-            "flex flex-col items-center justify-center gap-1",
-            variant === "player-two" ? "order-last" : ""
+            "flex flex-col items-center justify-center gap-1"
+            // variant === "player-two" ? "order-last" : ""
           )}>
           <MyAvatar
             className="w-16 h-16"

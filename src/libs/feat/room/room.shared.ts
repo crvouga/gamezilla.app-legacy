@@ -1,7 +1,7 @@
-import { RemoteResult, Result } from '@gamezilla/shared/core';
-import { RoomId, UserId, Username } from '@gamezilla/shared/app';
-import * as GameServer from './game.server';
-import * as Game from './game.shared';
+import { RemoteResult, Result } from "@gamezilla/shared/core";
+import { RoomId, UserId, Username } from "@gamezilla/shared/app";
+import * as GameServer from "./game.server";
+import * as Game from "./game.shared";
 
 const { Ok, Err } = Result;
 
@@ -43,13 +43,13 @@ export type ClientModel = SharedModel & {
     [roomId: RoomId]: Game.ClientModel;
   };
   requests: {
-    [key in Req['t']]?: RemoteResult<Problem, 'none'>;
+    [key in Req["t"]]?: RemoteResult<Problem, "none">;
   };
   previewUserId: UserId | null;
   modal: ModalModel;
 };
 
-type ModalModel = 'none' | 'user-preview' | 'users';
+type ModalModel = "none" | "user-preview" | "users";
 
 export type ClientRoom = {
   roomId: RoomId;
@@ -70,25 +70,55 @@ export type Room = {
 //
 //
 //
+//
+//
+
+export const toRoomUsers = (roomId: RoomId, model: SharedModel): RoomUser[] => {
+  const roomUsers: RoomUser[] = [];
+
+  for (const userId in model.users) {
+    if (!UserId.is(userId)) {
+      continue;
+    }
+
+    const user = model.users[userId];
+
+    if (!user) {
+      continue;
+    }
+
+    if (user.roomId !== roomId) {
+      continue;
+    }
+
+    roomUsers.push(user);
+  }
+
+  return roomUsers;
+};
+
+//
+//
+//
 // Msg
 //
 //
 //
 
-export type ToClient = (Res | { t: 'game'; c: Game.ToClient }) & Extra;
+export type ToClient = (Res | { t: "game"; c: Game.ToClient }) & Extra;
 
-export type ToServer = (Req | { t: 'game'; c: Game.ToServer }) & Extra;
+export type ToServer = (Req | { t: "game"; c: Game.ToServer }) & Extra;
 
-export type ServerMsg = { t: 'game'; roomId: RoomId; c: Game.ServerMsg };
+export type ServerMsg = { t: "game"; roomId: RoomId; c: Game.ServerMsg };
 
 export type ClientMsg =
   | Req
-  | { t: 'game'; c: Game.ClientMsg }
-  | { t: 'modal-closed' }
-  | { t: 'modal-open'; c: ModalModel }
-  | { t: 'clicked-room'; roomId: RoomId }
-  | { t: 'clicked-user'; userId: UserId }
-  | { t: 'clicked-user-link'; userId: UserId };
+  | { t: "game"; c: Game.ClientMsg }
+  | { t: "modal-closed" }
+  | { t: "modal-open"; c: ModalModel }
+  | { t: "clicked-room"; roomId: RoomId }
+  | { t: "clicked-user"; userId: UserId }
+  | { t: "clicked-user-link"; userId: UserId };
 
 type Extra = {
   profile?: {
@@ -108,22 +138,22 @@ type Extra = {
 type Model = ServerModel;
 
 export type Req =
-  | { t: 'list' }
-  | { t: 'create'; roomId: RoomId; gameName?: Game.GameName }
-  | { t: 'destroy'; userId: UserId }
-  | { t: 'join'; userId: UserId; roomId: RoomId }
-  | { t: 'leave'; userId: UserId }
-  | { t: 'input-game'; gameName?: Game.GameName };
+  | { t: "list" }
+  | { t: "create"; roomId: RoomId; gameName?: Game.GameName }
+  | { t: "destroy"; userId: UserId }
+  | { t: "join"; userId: UserId; roomId: RoomId }
+  | { t: "leave"; userId: UserId }
+  | { t: "input-game"; gameName?: Game.GameName };
 
 export type Res = Req & { result: Result<Problem, Model> };
 
 export type Problem =
-  | 'must_be_host'
-  | 'must_be_guest'
-  | 'not_in_room'
-  | 'already_in_room'
-  | 'room_not_found'
-  | 'impossible_state_room_id_taken';
+  | "must_be_host"
+  | "must_be_guest"
+  | "not_in_room"
+  | "already_in_room"
+  | "room_not_found"
+  | "impossible_state_room_id_taken";
 
 export const handle = ({
   ctx,
@@ -135,21 +165,21 @@ export const handle = ({
   model: Model;
 }): Result<Problem, Model> => {
   switch (msg.t) {
-    case 'list': {
+    case "list": {
       return Ok(model);
     }
 
-    case 'create': {
+    case "create": {
       const user = model.users[ctx.currentUserId];
 
       if (user) {
-        return Err('already_in_room');
+        return Err("already_in_room");
       }
 
       const room = model.rooms[msg.roomId];
 
       if (room) {
-        return Err('impossible_state_room_id_taken');
+        return Err("impossible_state_room_id_taken");
       }
 
       const { gameName } = msg;
@@ -192,21 +222,21 @@ export const handle = ({
       return Ok(modelNew);
     }
 
-    case 'destroy': {
+    case "destroy": {
       const user = model.users[ctx.currentUserId];
 
       if (!user) {
-        return Err('not_in_room');
+        return Err("not_in_room");
       }
 
       const room = model.rooms[user.roomId];
 
       if (!room) {
-        return Err('room_not_found');
+        return Err("room_not_found");
       }
 
       if (room.hostId !== user.userId) {
-        return Err('must_be_host');
+        return Err("must_be_host");
       }
 
       const roomsNew = removeKey(room.roomId, model.rooms);
@@ -228,11 +258,11 @@ export const handle = ({
       return Ok(modelNew);
     }
 
-    case 'join': {
+    case "join": {
       const user = model.users[ctx.currentUserId];
 
       if (user) {
-        return Err('already_in_room');
+        return Err("already_in_room");
       }
 
       const userNew: RoomUser = {
@@ -251,21 +281,21 @@ export const handle = ({
       return Ok(modelNew);
     }
 
-    case 'leave': {
+    case "leave": {
       const user = model.users[ctx.currentUserId];
 
       if (!user) {
-        return Err('not_in_room');
+        return Err("not_in_room");
       }
 
       const room = model.rooms[user.roomId];
 
       if (!room) {
-        return Err('room_not_found');
+        return Err("room_not_found");
       }
 
       if (user.userId === room.hostId) {
-        return Err('must_be_guest');
+        return Err("must_be_guest");
       }
 
       const usersNew = removeKey(user.userId, model.users);
@@ -278,23 +308,23 @@ export const handle = ({
       return Ok(modelNew);
     }
 
-    case 'input-game': {
+    case "input-game": {
       const { gameName } = msg;
 
       const user = model.users[ctx.currentUserId];
 
       if (!user) {
-        return Err('not_in_room');
+        return Err("not_in_room");
       }
 
       const room = model.rooms[user.roomId];
 
       if (!room) {
-        return Err('not_in_room');
+        return Err("not_in_room");
       }
 
       if (room.hostId !== user.userId) {
-        return Err('must_be_host');
+        return Err("must_be_host");
       }
 
       if (!gameName) {
