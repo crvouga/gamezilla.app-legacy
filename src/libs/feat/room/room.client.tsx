@@ -769,13 +769,14 @@ const ViewPage = ({
         <MyButton
           color="danger"
           variant="contained"
+          // variant="text"
           size="sm"
           onClick={() => {
             if (room.hostId === ctx.currentUserId) {
               $send({ t: "destroy", userId: ctx.currentUserId });
-            } else {
-              $send({ t: "leave", userId: ctx.currentUserId });
+              return;
             }
+            $send({ t: "leave", userId: ctx.currentUserId });
           }}>
           {room.hostId === ctx.currentUserId ? "End" : "Leave"}
         </MyButton>

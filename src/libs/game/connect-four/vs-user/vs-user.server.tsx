@@ -116,6 +116,10 @@ export const updateFromRoom = ({
       cmd: broadcast({ t: "player-left", model: modelNew }),
     };
   }
+
+  if (msg.t === "user-joined") {
+  }
+
   return { model };
 };
 

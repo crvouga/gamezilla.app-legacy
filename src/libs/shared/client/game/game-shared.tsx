@@ -22,7 +22,9 @@ export type RoomViewCtx = ViewCtx & {
   hostId: UserId;
 };
 
-export type RoomMsg = { t: "user-left"; userId: UserId };
+export type RoomMsg =
+  | { t: "user-left"; userId: UserId }
+  | { t: "user-joined"; userId: UserId };
 
 export const bannerArtAspectRatio = Math.pow(3 / 4, 4);
 
