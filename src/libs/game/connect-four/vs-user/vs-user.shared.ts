@@ -179,7 +179,7 @@ export const handle = ({
 
       const playerType = toPlayerType(ctx.currentUserId, model);
 
-      if (playerType === "none") {
+      if (!playerType) {
         return Err("not-playing");
       }
 
@@ -227,7 +227,7 @@ export const handle = ({
 
       const playerType = toPlayerType(ctx.currentUserId, model);
 
-      if (playerType === "none") {
+      if (!playerType) {
         return Err("not-playing");
       }
 
@@ -246,13 +246,12 @@ export const handle = ({
 
       const playerType = toPlayerType(ctx.currentUserId, model);
 
-      if (playerType === "none") {
+      if (!playerType) {
         return Err("not-playing");
       }
 
       const modelNew: SharedModel = {
         ...model,
-        [playerType]: "none",
         players: {
           ...model.players,
           [playerType]: null,
@@ -299,7 +298,7 @@ export const handle = ({
 
       const playerType = toPlayerType(ctx.currentUserId, model);
 
-      if (playerType === "none") {
+      if (!playerType) {
         return Err("not-playing");
       }
 
@@ -349,7 +348,7 @@ export const handle = ({
 
       const playerType = toPlayerType(ctx.currentUserId, model);
 
-      if (playerType === "none") {
+      if (!playerType) {
         return Err("not-playing");
       }
 
@@ -369,7 +368,7 @@ export const handle = ({
 
       const playerType = toPlayerType(ctx.currentUserId, model);
 
-      if (playerType === "none") {
+      if (!playerType) {
         return Err("not-playing");
       }
 
@@ -396,7 +395,7 @@ export const handle = ({
 
       const playerType = toPlayerType(ctx.currentUserId, model);
 
-      if (playerType === "none") {
+      if (!playerType) {
         return Err("not-playing");
       }
 
@@ -421,7 +420,7 @@ export const handle = ({
 export const toPlayerType = (
   userId: UserId,
   model: SharedModel
-): PlayerType | "none" => {
+): PlayerType | null => {
   if (model.players.PlayerOne === userId) {
     return "PlayerOne";
   }
@@ -430,7 +429,7 @@ export const toPlayerType = (
     return "PlayerTwo";
   }
 
-  return "none";
+  return null;
 };
 
 //

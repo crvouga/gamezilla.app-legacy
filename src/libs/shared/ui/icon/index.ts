@@ -10,6 +10,7 @@ export * from "./icon-clock";
 export * from "./icon-computer-desktop";
 export * from "./icon-envelope";
 export * from "./icon-exclamation-circle";
+export * from "./icon-flag";
 export * from "./icon-gamepad";
 export * from "./icon-gear";
 export * from "./icon-google";

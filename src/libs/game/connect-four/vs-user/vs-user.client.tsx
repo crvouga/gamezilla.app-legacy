@@ -2,20 +2,22 @@ import {
   RoomCtx,
   RoomMsg,
   RoomViewCtx,
+  ViewBottomButtonBar,
   ViewCtx,
+  ViewGameBox,
   VsUserSetupScreen,
 } from "@gamezilla/shared/client";
 import { Cmd, Sub } from "@gamezilla/shared/core";
 import {
-  ActionButton,
-  Avatar,
-  Box,
-  Button,
-  CircularProgress,
   ConformationDialog,
-  Fade,
-  Icons,
+  IconArrowLeftOnRect,
+  IconArrowRotateLeft,
+  IconCheckmarkCircle,
+  IconFlag,
+  IconSpinner,
+  IconXMark,
   MyAvatar,
+  MyButton,
   Typography,
 } from "@gamezilla/shared/ui";
 import { PlayerType, toTurn } from "../connect-four/connect-four";
@@ -249,22 +251,15 @@ export const View = ({
     const currentUserPlayerType = toPlayerType(ctx.currentUserId, model);
 
     return (
-      <div className="w-full h-full flex flex-col items-center justify-center">
-        <Box
-          sx={{
-            paddingX: 1,
-            mb: 1,
-            gap: 1,
-            display: "flex",
-            width: "100%",
-            overflow: "hidden",
-          }}>
-          <PlayerSlot playerType="PlayerOne" model={model} ctx={ctx} />
-          <PlayerSlot playerType="PlayerTwo" model={model} ctx={ctx} />
-        </Box>
-        <Feedback ctx={ctx} model={model} />
+      <ViewGameBox isSpectating={currentUserPlayerType === null}>
+        <div className="flex-1 flex flex-col items-center justify-center w-full gap-2">
+          <div className="w-full flex items-center px-2 gap-2">
+            <PlayerSlot playerType="PlayerOne" model={model} ctx={ctx} />
+            <PlayerSlot playerType="PlayerTwo" model={model} ctx={ctx} />
+          </div>
 
-        <div className="flex-1 flex flex-col items-center justify-center">
+          <Feedback ctx={ctx} model={model} />
+
           <ViewColumns
             columns={model.columns}
             onClick={(columnIndex) =>
@@ -275,7 +270,7 @@ export const View = ({
             }
             disabled={toTurn(model.columns) !== currentUserPlayerType}
             ghost={
-              currentUserPlayerType !== "none" && model.ghostIndex !== "none"
+              currentUserPlayerType !== null && model.ghostIndex !== "none"
                 ? {
                     playerType: currentUserPlayerType,
                     columnIndex: model.ghostIndex,
@@ -285,18 +280,20 @@ export const View = ({
           />
         </div>
 
-        <Box sx={{ display: "flex" }}>
-          <ActionButton
-            icon={<Icons.Flag />}
-            label="Resign"
-            onClick={() =>
-              $send({ t: "clicked-resign", userId: ctx.currentUserId })
-            }
-          />
-        </Box>
+        <ViewBottomButtonBar
+          actions={[
+            {
+              icon: <IconFlag />,
+              label: "Resign",
+              onClick: () => {
+                $send({ t: "clicked-resign", userId: ctx.currentUserId });
+              },
+            },
+          ]}
+        />
 
         <ConformationDialog
-          headerIcon={<Icons.Flag sx={{ width: 52, height: 52 }} />}
+          headerIcon={<IconFlag className="w-10 h-10" />}
           title="Resign from game?"
           onCancel={() => $send({ t: "close-modal" })}
           onClose={() => $send({ t: "close-modal" })}
@@ -304,69 +301,42 @@ export const View = ({
           onConfirm={() => $send({ t: "resign" })}
           open={model.openedModal === "ConfirmResign"}
         />
-      </div>
+      </ViewGameBox>
     );
   }
 
   return (
-    <div className="w-full h-full flex items-center justify-center flex-col">
-      <Box
-        sx={{
-          paddingX: 1,
-          mb: 1,
-          gap: 1,
-          display: "flex",
-          width: "100%",
-          overflow: "hidden",
-        }}>
-        <PlayerSlot playerType="PlayerOne" model={model} ctx={ctx} />
-        <PlayerSlot playerType="PlayerTwo" model={model} ctx={ctx} />
-      </Box>
-      <Feedback ctx={ctx} model={model} />
+    <div className="flex flex-col items-center justify-center flex-1 w-full">
+      <div className="flex flex-col items-center justify-center flex-1 w-full gap-2">
+        <div className="flex items-center justify-center w-full px-2 gap-2">
+          <PlayerSlot playerType="PlayerOne" model={model} ctx={ctx} />
+          <PlayerSlot playerType="PlayerTwo" model={model} ctx={ctx} />
+        </div>
 
-      <div className="flex items-center justify-center flex-1 w-full">
-        <ViewColumns columns={model.columns} disabled />
+        <Feedback ctx={ctx} model={model} />
 
-        {model.type === "game-over" && (
-          <Fade in>
-            <Box
-              sx={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: "100%",
-                maxHeight: "100%",
-                overflow: "hidden",
-                background: "rgba(0, 0, 0, 0.5)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexDirection: "column",
-                color: "#fff",
-              }}>
-              <ViewGameOverMessage $send={$send} ctx={ctx} model={model} />
-            </Box>
-          </Fade>
-        )}
+        <div className="w-full relative">
+          <ViewColumns columns={model.columns} disabled />
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50">
+            <ViewGameOverMessage $send={$send} ctx={ctx} model={model} />
+          </div>
+        </div>
       </div>
 
-      <div className="w-full p-4 flex items-center gap-3">
-        <Button
-          variant="outlined"
-          fullWidth
-          onClick={() => $send({ t: "new-game" })}>
-          Back
-        </Button>
-
-        <Button
-          variant="contained"
-          fullWidth
-          disabled={model.rematch.type === "Asking"}
-          onClick={() => $send({ t: "rematch-request" })}>
-          Rematch
-        </Button>
-      </div>
+      <ViewBottomButtonBar
+        actions={[
+          {
+            icon: <IconArrowLeftOnRect />,
+            label: "Exit",
+            onClick: () => $send({ t: "new-game" }),
+          },
+          {
+            icon: <IconArrowRotateLeft />,
+            label: "Rematch",
+            onClick: () => $send({ t: "rematch-request" }),
+          },
+        ]}
+      />
     </div>
   );
 };
@@ -380,8 +350,6 @@ const ViewGameOverMessage = ({
   ctx: ViewCtx;
   $send: (msg: Msg) => void;
 }) => {
-  const size = { width: 84, height: 84 };
-
   const currentPlayerType = toPlayerType(ctx.currentUserId, model);
 
   if (
@@ -390,15 +358,13 @@ const ViewGameOverMessage = ({
   ) {
     return (
       <>
-        <Typography align="center" sx={{ fontSize: "2rem", marginBottom: 4 }}>
-          Waiting for response
-        </Typography>
-        <CircularProgress sx={{ marginBottom: 4 }} />
-        <Button
+        <p className="text-xl mb-4 text-center">Waiting for response</p>
+        <IconSpinner className="animate-spin mb-4 w-8 h-8" />
+        <MyButton
           variant="contained"
           onClick={() => $send({ t: "rematch-cancel" })}>
           Cancel
-        </Button>
+        </MyButton>
       </>
     );
   }
@@ -413,33 +379,32 @@ const ViewGameOverMessage = ({
         <Typography align="center" sx={{ fontSize: "3rem", marginBottom: 4 }}>
           Rematch?
         </Typography>
-        <Box sx={{ display: "flex", gap: 2 }}>
-          <Button
+        <div className="flex items-center justify-center gap-4 w-full">
+          <MyButton
             variant="contained"
-            color="inherit"
-            sx={{ color: "#000" }}
-            startIcon={<Icons.Cancel />}
             onClick={() =>
               $send({
                 t: "rematch-respond",
                 response: "Decline",
               })
             }>
+            <IconXMark />
             Decline
-          </Button>
-          <Button
+          </MyButton>
+
+          <MyButton
             variant="contained"
-            startIcon={<Icons.Done />}
             onClick={() => $send({ t: "rematch-respond", response: "Accept" })}>
+            <IconCheckmarkCircle />
             Accept
-          </Button>
-        </Box>
+          </MyButton>
+        </div>
       </>
     );
   }
 
   if (model.gameOver.type === "Draw") {
-    return <Typography sx={{ fontSize: "3rem" }}>Tie</Typography>;
+    return <p className="text-xl">Tie</p>;
   }
 
   if (model.gameOver.type === "resignation") {
@@ -448,33 +413,27 @@ const ViewGameOverMessage = ({
     const winner: PlayerType =
       resigner === "PlayerOne" ? "PlayerTwo" : "PlayerOne";
 
-    if (currentPlayerType === "none") {
+    if (currentPlayerType === null) {
       return (
         <>
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              width: "100%",
-              justifyContent: "center",
-            }}>
+          <div className="flex items-center w-full justify-center">
             <PlayerIcon playerType={winner} />
-            <Avatar
-              sx={{ ...size }}
+            <MyAvatar
+              alt=""
               src={ctx.profiles[model.players[winner]]?.avatarUrl}
             />
-          </Box>
-          <Typography sx={{ fontSize: "2.5rem" }}>Winner</Typography>
+          </div>
+          <p>Winner</p>
         </>
       );
     }
 
     return (
       <>
-        <Typography sx={{ fontSize: "3rem" }}>
+        <p className="text-xl">
           {currentPlayerType === winner ? "You Won" : "You Lost"}
-        </Typography>
-        <Typography>by resignation</Typography>
+        </p>
+        <p>by resignation</p>
       </>
     );
   }
@@ -482,23 +441,17 @@ const ViewGameOverMessage = ({
   if (model.gameOver.type === "Winner") {
     const { winner } = model.gameOver;
 
-    if (currentPlayerType === "none") {
+    if (currentPlayerType === null) {
       return (
         <>
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              width: "100%",
-              justifyContent: "center",
-            }}>
+          <div className="w-full flex items-center justify-center gap-2">
             <PlayerIcon playerType={winner} />
-            <Avatar
-              sx={{ ...size }}
+            <MyAvatar
+              alt=""
               src={ctx.profiles[model.players[winner]]?.avatarUrl}
             />
-          </Box>
-          <Typography sx={{ fontSize: 50 }}>Winner</Typography>
+          </div>
+          <p>Winner</p>
         </>
       );
     }
@@ -535,7 +488,7 @@ const Feedback = ({
   if (currentUserPlayerType !== turn) {
     return (
       <p className="text-secondary text-center flex items-center justify-center gap-2">
-        <PlayerIcon className="w-6 h-6" playerType={turn} />
+        <PlayerIcon className="w-4 h-4" playerType={turn} />
         Turn
       </p>
     );
@@ -551,7 +504,7 @@ const Feedback = ({
 
   return (
     <p className="text-center flex items-center justify-center gap-2">
-      <PlayerIcon className="w-6 h-6" playerType={turn} />
+      <PlayerIcon className="w-4 h-4" playerType={turn} />
       Your Turn
     </p>
   );
