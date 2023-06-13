@@ -534,17 +534,15 @@ const PlayerSlot = ({
   );
 };
 
-export const resToStr = ({
-  ctx,
-  res,
-}: {
-  ctx: RoomCtx;
-  res: Res;
-}): string | null => {
+export const resToStr = ({ res }: { ctx: RoomCtx; res: Res }) => {
   if (res.t === "start-playing" && res.result.t === "ok") {
-    // @ts-ignore
-    const username = ctx.profiles[res.userId]?.username ?? "...";
-    return `${username} started playing`;
+    // const username = ctx.profiles[res.user]?.username ?? "...";
+    return `Started playing`;
+  }
+
+  if (res.t === "stop-playing" && res.result.t === "ok") {
+    // const username = ctx.profiles[res.user]?.username ?? "...";
+    return `Stopped playing`;
   }
 
   return null;
