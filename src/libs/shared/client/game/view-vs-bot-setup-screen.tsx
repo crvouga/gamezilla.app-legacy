@@ -16,7 +16,9 @@ export const VsBotSetupScreen = ({
   title,
   renderCoverArt,
 }: {
-  playerOne: PlayerProp;
+  botName: string;
+  userId: UserId | null;
+
   playerTwo: PlayerProp;
   title: string;
   renderCoverArt: (props: { className: string }) => ViewNode;
