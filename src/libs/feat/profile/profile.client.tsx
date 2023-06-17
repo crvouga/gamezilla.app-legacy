@@ -145,6 +145,12 @@ export const updateFromApp = ({
         return { model: { ...model, opened: null } };
       }
 
+      if (msg.t === "got-profiles") {
+        return {
+          model: { ...model, profiles: { ...model.profiles, ...msg.profiles } },
+        };
+      }
+
       return { model };
     })
   );
@@ -173,7 +179,7 @@ export const View = ({
 }) => {
   if (route.t === "profile") {
     return (
-      <div className="relative w-full h-full flex flex-col">
+      <div className="relative flex h-full w-full flex-col">
         <ViewProfileScreen
           model={model}
           ctx={ctx}
@@ -219,24 +225,24 @@ const ViewProfileScreen = ({
 
   if (!profile) {
     return (
-      <div className="w-full h-full flex items-center justify-center">
-        <IconSpinner className="w-12 h-12 animate-spin" />
+      <div className="flex h-full w-full items-center justify-center">
+        <IconSpinner className="h-12 w-12 animate-spin" />
       </div>
     );
   }
 
   if (profile.userId === ctx.currentUserId) {
     return (
-      <div className="w-full h-full">
+      <div className="h-full w-full">
         <TopBar title={profile.username} />
 
-        <div className="flex flex-col items-center justify-center p-4 gap-4 overflow-x-hidden">
+        <div className="flex flex-col items-center justify-center gap-4 overflow-x-hidden p-4">
           <MyAvatar
-            className="w-28 h-28"
+            className="h-28 w-28"
             src={profile.avatarUrl}
             alt="profile avatar"
           />
-          <p className="text-3xl w-full text-center overflow-hidden text-ellipsis">
+          <p className="w-full overflow-hidden text-ellipsis text-center text-3xl">
             @{profile.username}
           </p>
           <MyButton
@@ -259,14 +265,14 @@ const ViewProfileScreen = ({
   }
 
   return (
-    <div className="w-full h-full flex flex-col">
+    <div className="flex h-full w-full flex-col">
       <TopBar
         left={<TopBarBackButton onClick={ctx.$back} />}
         title={profile.username}
       />
-      <div className="flex flex-col items-center justify-center gap-4 p-4 overflow-x-hidden">
+      <div className="flex flex-col items-center justify-center gap-4 overflow-x-hidden p-4">
         <MyAvatar alt="profile avatar" src={profile.avatarUrl} />
-        <p className="text-xl w-full overflow-hidden text-ellipsis">
+        <p className="w-full overflow-hidden text-ellipsis text-xl">
           {profile.username}
         </p>
       </div>
@@ -283,7 +289,7 @@ const ViewUpdateScreen = ({
 }) => {
   const profile = ctx.profiles[ctx.currentUserId];
   return (
-    <div className="w-full h-full flex flex-col items-center gap-3">
+    <div className="flex h-full w-full flex-col items-center gap-3">
       <TopBar
         left={
           <TopBarBackButton
@@ -300,7 +306,7 @@ const ViewUpdateScreen = ({
 
       <MyAvatar
         src={profile?.avatarUrl ?? "..."}
-        className="w-28 h-28"
+        className="h-28 w-28"
         alt="profile avatar"
         onClick={() =>
           ctx.$push({ t: "profile", c: { t: "profile-update-avatar" } })
@@ -318,7 +324,7 @@ const ViewUpdateScreen = ({
         Change Avatar
       </MyButton>
 
-      <div className="w-full flex flex-col gap-2">
+      <div className="flex w-full flex-col gap-2">
         <ViewField
           onClick={() =>
             ctx.$push({ t: "profile", c: { t: "profile-update-username" } })
@@ -349,8 +355,8 @@ export const ViewField = ({
 }) => (
   <button
     onClick={onClick}
-    className="w-full flex justify-start items-center px-4 py-2">
-    <div className="flex-1 flex flex-col items-start">
+    className="flex w-full items-center justify-start px-4 py-2">
+    <div className="flex flex-1 flex-col items-start">
       <p className="text-sm text-neutral-300">{label}</p>
       <p className="text-lg">{value}</p>
     </div>
@@ -371,7 +377,7 @@ const ViewUpdateUsernameScreen = ({
   const inputVal =
     model.draft?.username ?? model.profiles[ctx.currentUserId]?.username ?? "";
   return (
-    <div className="w-full h-full flex flex-col">
+    <div className="flex h-full w-full flex-col">
       <TopBar
         left={
           <MyButton
