@@ -656,6 +656,8 @@ const ViewRoomScreen = ({
     ...ctx,
     hostId: room.hostId,
     room,
+    onViewProfile: (input) =>
+      $send({ t: "clicked-user", userId: input.userId }),
     onQuit: () => $send({ t: "input-game", gameName: undefined }),
   };
 
@@ -672,25 +674,44 @@ const ViewRoomScreen = ({
       <MyDrawer
         open={model.modal === "user-preview"}
         onClose={() => $send({ t: "modal-closed" })}>
-        {model.previewUserId && (
-          <button
-            className="flex w-full flex-col gap-2 p-4"
+        <button
+          className="flex w-full flex-col items-center justify-center gap-2 p-4"
+          onClick={() => {
+            if (model.previewUserId) {
+              $send({
+                t: "clicked-user-link",
+                userId: model.previewUserId,
+              });
+            }
+          }}>
+          <MyAvatar
+            src={
+              model.previewUserId
+                ? ctx.profiles[model.previewUserId]?.avatarUrl
+                : "..."
+            }
+            className="h-24 w-24"
+          />
+          <p className="text-xl font-semibold">
+            {model.previewUserId
+              ? ctx.profiles[model.previewUserId]?.username ?? "..."
+              : "..."}
+          </p>
+        </button>
+
+        <div className="w-full px-4 pb-8">
+          <MyButton
             onClick={() => {
               if (model.previewUserId) {
-                $send({ t: "clicked-user-link", userId: model.previewUserId });
+                $send({
+                  t: "clicked-user-link",
+                  userId: model.previewUserId,
+                });
               }
-            }}>
-            <MyAvatar
-              src={ctx.profiles[model.previewUserId]?.avatarUrl}
-              className="h-24 w-24"
-            />
-            <p className="text-xl font-semibold">
-              {ctx.profiles[model.previewUserId]?.username ?? "..."}
-            </p>
-          </button>
-        )}
-        <div className="w-full p-4 pb-8">
-          <MyButton className="w-full">See profile</MyButton>
+            }}
+            className="w-full">
+            See profile
+          </MyButton>
         </div>
       </MyDrawer>
     </>
@@ -770,7 +791,7 @@ const ViewPage = ({
 export const ViewRoomNotFound = ({ ctx }: { ctx: ViewCtx }) => {
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-4">
-      <p className="text-center text-2xl">Room not found</p>
+      <p className="text-center text-2xl">Space not found</p>
       <MyButton
         onClick={() => ctx.$push({ t: "room", c: { t: "room-list" } })}
         size="lg"

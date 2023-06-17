@@ -27,6 +27,7 @@ export type Room = {
 
 export type RoomViewCtx = ViewCtx & {
   onQuit: () => void;
+  onViewProfile: (input: { userId: UserId }) => void;
   hostId: UserId;
   room: Room;
 };

@@ -5,7 +5,7 @@ import { IconCrown, MyAvatar } from "@gamezilla/shared/ui";
 export const ViewUsersInRoomList = ({ ctx }: { ctx: RoomViewCtx }) => {
   const profiles = toProfilesByRoomId({ ctx });
   return (
-    <section className="w-full">
+    <section className="flex w-full flex-col gap-2">
       <p className="px-4 text-3xl font-semibold">People</p>
 
       <div className="w-full">
@@ -13,7 +13,8 @@ export const ViewUsersInRoomList = ({ ctx }: { ctx: RoomViewCtx }) => {
           return (
             <button
               key={profile.userId}
-              className="flex w-full items-center gap-2 p-4 active:opacity-60">
+              onClick={() => ctx.onViewProfile(profile)}
+              className="flex w-full items-center gap-2 p-2 px-4 active:opacity-60">
               <MyAvatar src={profile.avatarUrl} />
               <p>{profile.username}</p>
               {profile.userId === ctx.hostId && (

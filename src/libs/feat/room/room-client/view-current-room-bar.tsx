@@ -61,10 +61,10 @@ export const ViewCurrentRoomBar = ({
 
         <div className="flex flex-1 flex-col gap-1 overflow-hidden">
           <p className="text-left">
-            {hostProfile ? `${hostProfile.username}'s room` : "..."}
+            {hostProfile ? `${hostProfile.username}'s space` : "..."}
           </p>
           <p className="text-left text-xs text-neutral-300">
-            {userCount} in room
+            {userCount} in space
           </p>
         </div>
       </button>

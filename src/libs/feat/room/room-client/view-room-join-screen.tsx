@@ -27,21 +27,21 @@ export const ViewRoomJoinScreen = ({
             onClick={() => ctx.$push({ t: "room", c: { t: "room-list" } })}
           />
         }
-        title={host?.username ? `${host.username}'s room` : "..."}
+        title={host?.username ? `${host.username}'s space` : "..."}
       />
 
-      {game && (
-        <ViewGameHeader
-          title={gameNameToString(game.t)}
-          renderCoverArt={(props) => (
-            <div {...props}>{viewCoverArt(game.t)}</div>
-          )}
-        />
-      )}
+      <div className="flex w-full flex-1 flex-col gap-6 overflow-y-auto">
+        {game && (
+          <ViewGameHeader
+            title={gameNameToString(game.t)}
+            renderCoverArt={(props) => (
+              <div {...props}>{viewCoverArt(game.t)}</div>
+            )}
+          />
+        )}
 
-      <ViewUsersInRoomList ctx={ctx} />
-
-      <div className="flex-1"></div>
+        <ViewUsersInRoomList ctx={ctx} />
+      </div>
 
       <div className="flex p-4">
         <MyButton
@@ -55,7 +55,7 @@ export const ViewRoomJoinScreen = ({
               roomId: ctx.room.roomId,
             });
           }}>
-          Join Room
+          Join space
         </MyButton>
       </div>
     </div>
