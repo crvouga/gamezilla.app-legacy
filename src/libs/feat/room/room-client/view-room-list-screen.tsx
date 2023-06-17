@@ -28,9 +28,7 @@ export const ViewRoomListScreen = ({
 
   return (
     <div className="flex h-full max-h-full w-full flex-1 flex-col overflow-hidden">
-      <div>
-        <TopBar title="Rooms" />
-      </div>
+      <TopBar title="Rooms" />
 
       <div className="flex w-full flex-1 flex-col">
         {!isLoading && rooms.length === 0 && (

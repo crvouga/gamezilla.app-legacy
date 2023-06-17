@@ -1,4 +1,4 @@
-import { UserId } from "@gamezilla/shared/app";
+import { RoomId, UserId } from "@gamezilla/shared/app";
 import {
   Box,
   Button,
@@ -17,9 +17,18 @@ export type RoomCtx = Ctx & {
   hostId: UserId;
 };
 
+export type Room = {
+  hostId: UserId;
+  roomId: RoomId;
+  users: {
+    [userId: UserId]: UserId;
+  };
+};
+
 export type RoomViewCtx = ViewCtx & {
   onQuit: () => void;
   hostId: UserId;
+  room: Room;
 };
 
 export type RoomMsg =
@@ -38,11 +47,11 @@ export const ViewGameBox = ({
   return (
     <div
       className={cn(
-        "w-full h-full flex flex-col items-center justify-center overflow-y-auto",
-        isSpectating && "border-4 border-blue-500 border-t-0"
+        "flex h-full w-full flex-col items-center justify-center overflow-y-auto",
+        isSpectating && "border-4 border-t-0 border-blue-500"
       )}>
       {isSpectating && (
-        <div className="bg-blue-500 flex items-center justify-center font-semibold py-1 text-white text-sm w-full">
+        <div className="flex w-full items-center justify-center bg-blue-500 py-1 text-sm font-semibold text-white">
           You are spectating
         </div>
       )}
@@ -224,14 +233,14 @@ export const ViewBottomButtonBar = ({
   actions: BottomBarButtonAction[];
 }) => {
   return (
-    <div className="flex items-center border-t border-neutral-700 w-full">
+    <div className="flex w-full items-center border-t border-neutral-700">
       {actions.map(({ label, disabled, icon, onClick, color = "default" }) => (
         <button
           disabled={disabled}
           key={label}
           onClick={onClick}
           className={cn(
-            "flex-1 flex flex-col p-1 gap-0.5 text-sm items-center active:opacity-50",
+            "flex flex-1 flex-col items-center gap-0.5 p-1 text-sm active:opacity-50",
             disabled && "opacity-50",
             color === "danger" && "text-red-500",
             color === "success" && "text-green-500",

@@ -1,5 +1,6 @@
 import { RemoteResult, Result } from "@gamezilla/shared/core";
 import { RoomId, UserId, Username } from "@gamezilla/shared/app";
+import { Room } from "@gamezilla/shared/client";
 import * as GameServer from "./game.server";
 import * as Game from "./game.shared";
 
@@ -62,39 +63,73 @@ export type RoomUser = {
   roomId: RoomId;
 };
 
-export type Room = {
-  roomId: RoomId;
-  hostId: UserId;
-};
-
 //
 //
 //
 //
 //
 
-export const toRoomUsers = (roomId: RoomId, model: SharedModel): RoomUser[] => {
-  const roomUsers: RoomUser[] = [];
-
+export const toUserIds = function* ({
+  model,
+}: {
+  model: SharedModel;
+}): Generator<UserId> {
   for (const userId in model.users) {
     if (!UserId.is(userId)) {
       continue;
     }
+    yield userId;
+  }
+};
 
+export const toUsers = function* ({
+  model,
+}: {
+  model: SharedModel;
+}): Generator<RoomUser> {
+  for (const userId of toUserIds({ model })) {
     const user = model.users[userId];
 
     if (!user) {
       continue;
     }
 
-    if (user.roomId !== roomId) {
-      continue;
-    }
+    yield user;
+  }
+};
 
-    roomUsers.push(user);
+export const toUsersByRoomId = function* ({
+  roomId,
+  model,
+}: {
+  roomId: RoomId;
+  model: SharedModel;
+}): Generator<RoomUser> {
+  for (const user of toUsers({ model })) {
+    if (user.roomId === roomId) {
+      yield user;
+    }
+  }
+};
+
+export const toRoom = ({
+  roomId,
+  model,
+}: {
+  roomId: RoomId;
+  model: SharedModel;
+}): Room | null => {
+  const room = model.rooms[roomId];
+
+  if (!room) {
+    return null;
   }
 
-  return roomUsers;
+  for (const user of toUsersByRoomId({ model, roomId })) {
+    room.users[user.userId] = user.userId;
+  }
+
+  return room;
 };
 
 //
@@ -196,6 +231,9 @@ export const handle = ({
       const roomNew: Room = {
         roomId: msg.roomId,
         hostId: ctx.currentUserId,
+        users: {
+          [ctx.currentUserId]: ctx.currentUserId,
+        },
       };
 
       const userNew: RoomUser = {

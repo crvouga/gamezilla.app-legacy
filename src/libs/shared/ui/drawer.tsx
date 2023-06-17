@@ -17,17 +17,16 @@ export const MyDrawer = ({
     return null;
   }
   return (
-    <div className="absolute top-0 bg-black/60 left-0 w-full h-full flex flex-col justify-end items-end z-40">
+    <div className="absolute left-0 top-0 z-40 flex h-full w-full flex-col items-end justify-end bg-black/60">
       <div
         className={cn(
-          "flex-1 w-full transition-opacity duration-300 ease-in-out",
+          "w-full flex-1 transition-opacity duration-300 ease-in-out",
           open ? "translate-x-0" : "-translate-x-full"
         )}
         onClick={onClose}></div>
       <div
         className={cn(
-          "border border-neutral-600 bg-black w-full h-auto",
-
+          "h-auto w-full border border-neutral-600 bg-black",
           open ? "translate-x-0" : "-translate-x-full"
         )}>
         {children}

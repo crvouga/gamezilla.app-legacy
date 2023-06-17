@@ -163,13 +163,13 @@ export const View = ({
   $send: (msg: Msg) => void;
   ctx: RoomViewCtx;
 }) => {
-  const goBack = () => $send({ t: "input-mode", mode: "none" });
+  const onQuit = () => $send({ t: "input-mode", mode: "none" });
 
   switch (model.t) {
     case "none": {
       return (
         <MainMenuScreen
-          roomCtx={ctx}
+          ctx={ctx}
           title="Connect Four"
           renderCoverArt={(props) => <ViewCoverArt {...props} />}
           buttons={[
@@ -190,7 +190,7 @@ export const View = ({
           ctx={ctx}
           $send={(c) => $send({ t: "vs-user", c })}
           model={model.c}
-          onQuit={goBack}
+          onQuit={onQuit}
         />
       );
     }
@@ -201,7 +201,7 @@ export const View = ({
           ctx={ctx}
           $send={(c) => $send({ t: "vs-bot", c })}
           model={model.c}
-          goBack={goBack}
+          onQuit={onQuit}
         />
       );
     }

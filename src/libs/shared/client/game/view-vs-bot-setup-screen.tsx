@@ -6,6 +6,7 @@ import {
   VDom,
 } from "@gamezilla/shared/ui";
 import { ViewGameHeader } from "./view-game-header";
+import { RoomViewCtx } from ".";
 
 export const VsBotSetupScreen = ({
   title,
@@ -13,7 +14,9 @@ export const VsBotSetupScreen = ({
   onQuit,
   playerOne,
   playerTwo,
+  ctx,
 }: {
+  ctx: RoomViewCtx;
   botName: string;
   userId: UserId | null;
   playerOne: PlayerProp;
@@ -43,12 +46,14 @@ export const VsBotSetupScreen = ({
 
       <div className="flex flex-1 items-center justify-center"></div>
 
-      <div className="p-4">
-        <MyButton className="w-full" onClick={onQuit}>
-          <IconArrowLeftOnRect />
-          Quit
-        </MyButton>
-      </div>
+      {ctx.currentUserId === ctx.hostId && (
+        <div className="p-4">
+          <MyButton className="w-full" onClick={onQuit}>
+            <IconArrowLeftOnRect />
+            Quit
+          </MyButton>
+        </div>
+      )}
     </div>
   );
 };

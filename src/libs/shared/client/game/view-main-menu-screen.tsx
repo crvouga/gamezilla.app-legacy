@@ -7,6 +7,7 @@ import {
 } from "@gamezilla/shared/ui";
 import { RoomViewCtx } from "./game-shared";
 import { ViewGameHeader } from "./view-game-header";
+import { ViewUsersInRoomList } from ".";
 
 type MainMenuButton = {
   renderIcon: (input: { className: string }) => VDom;
@@ -19,30 +20,31 @@ export const MainMenuScreen = ({
   title,
   renderCoverArt,
   buttons,
-  roomCtx,
+  ctx,
 }: {
-  roomCtx: RoomViewCtx;
+  ctx: RoomViewCtx;
   title: string;
   renderCoverArt: (props: { className: string }) => VDom;
   buttons: MainMenuButton[];
 }) => {
-  if (roomCtx.currentUserId !== roomCtx.hostId) {
+  if (ctx.currentUserId !== ctx.hostId) {
     return (
-      <div className="w-full h-full flex items-center justify-center flex-col">
+      <div className="flex h-full w-full flex-col gap-6">
         <ViewGameHeader title={title} renderCoverArt={renderCoverArt} />
+        <ViewUsersInRoomList ctx={ctx} />
       </div>
     );
   }
 
   return (
-    <div className="w-full h-full flex flex-col overflow-y-hidden">
-      <div className="w-full flex-1 flex flex-col items-center px-4 overflow-y-auto">
+    <div className="flex h-full w-full flex-col overflow-y-hidden">
+      <div className="flex w-full flex-1 flex-col items-center overflow-y-auto px-4">
         <ViewGameHeader title={title} renderCoverArt={renderCoverArt} />
 
-        <div className="w-full flex flex-col gap-6 mt-6">
+        <div className="mt-6 flex w-full flex-col gap-6">
           {buttons.map(({ renderIcon, title, description, onClick }, index) => (
             <button
-              className="gap-6 flex w-full p-6 items-center bg-neutral-800 rounded-lg active:opacity-70"
+              className="flex w-full items-center gap-6 rounded-lg bg-neutral-800 p-6 active:opacity-70"
               onClick={onClick}
               key={`${index} ${title}`}>
               {renderIcon({
@@ -57,10 +59,14 @@ export const MainMenuScreen = ({
             </button>
           ))}
         </div>
+
+        <div>
+          <div className="h-24 w-full"></div>
+        </div>
       </div>
 
-      <div className="p-4 flex justify-center">
-        <MyButton onClick={roomCtx.onQuit} className="w-full gap-4">
+      <div className="flex justify-center p-4">
+        <MyButton onClick={ctx.onQuit} className="w-full gap-4">
           <IconArrowLeftOnRect />
           Quit
         </MyButton>

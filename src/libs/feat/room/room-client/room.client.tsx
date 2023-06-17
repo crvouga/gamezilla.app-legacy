@@ -1,34 +1,26 @@
-import { RoomId, UserId } from "@gamezilla/shared/app";
+import { RoomId } from "@gamezilla/shared/app";
 import {
   AppMsg,
   Ctx,
   RoomCtx,
+  RoomViewCtx,
   Route,
   RouteRoom,
   ViewCtx,
+  ViewUsersInRoomList,
 } from "@gamezilla/shared/client";
 import { Cmd, RemoteResult, Sub, exhaustive, p } from "@gamezilla/shared/core";
 import {
   ActionButton,
-  Avatar,
-  Box,
-  Button,
-  ButtonBase,
-  Chip,
-  Drawer,
-  FillBox,
   IconHome,
-  IconSpinner,
   IconUserGroup,
-  Icons,
+  LoadingScreen,
+  MyAvatar,
   MyButton,
-  Paper,
-  TopBar,
-  Typography,
+  MyDrawer,
   VDom,
 } from "@gamezilla/shared/ui";
 import * as Game from "../game.client";
-import { GameName, gameNameToString, viewCoverArt } from "../game.shared";
 import {
   ClientModel,
   ClientMsg,
@@ -36,11 +28,11 @@ import {
   ServerModel,
   ToClient,
   ToServer,
-  toRoomUsers,
+  toRoom,
 } from "../room.shared";
+import { ViewNotInGameScreen } from "./view-not-in-game-screen";
 import { ViewRoomJoinScreen } from "./view-room-join-screen";
 import { ViewRoomListScreen } from "./view-room-list-screen";
-import { ViewNotInGameScreen } from "./view-not-in-game-screen";
 
 //
 //
@@ -375,25 +367,22 @@ export const updateFromApp = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (
-    msg.t === "route-changed" &&
-    msg.route.t === "room" &&
-    msg.route.c.t === "room-list"
-  ) {
-    return updateListRooms({
-      model,
-      initiatorMsg: msg,
-      sendToServer,
-    });
+  if (msg.t === "route-changed") {
+    if (msg.route.t === "room" && msg.route.c.t === "room-list") {
+      return updateListRooms({
+        model,
+        initiatorMsg: msg,
+        sendToServer,
+      });
+    }
+    return { model };
   }
 
   if (msg.t === "wire-connected") {
     return updateListRooms({ model, initiatorMsg: msg, sendToServer });
   }
 
-  return {
-    model,
-  };
+  return { model };
 };
 
 const updateListRooms = ({
@@ -649,52 +638,62 @@ const ViewRoomScreen = ({
   $send: (m: Msg) => void;
   roomId: RoomId;
 }) => {
-  const room = model.rooms[roomId];
-  return (
-    <FillBox>
-      <ViewPage roomId={roomId} ctx={ctx} $send={$send} model={model} />
-      <Drawer
-        open={model.modal === "users"}
-        onClose={() => $send({ t: "modal-closed" })}
-        anchor="bottom">
-        {room && (
-          <ViewRoomPeople room={room} ctx={ctx} $send={$send} model={model} />
-        )}
-      </Drawer>
+  if (
+    model.requests.list?.t === "loading" ||
+    model.requests.create?.t === "loading" ||
+    model.requests.join?.t === "loading"
+  ) {
+    return <LoadingScreen />;
+  }
 
-      <Drawer
+  const room = toRoom({ roomId, model });
+
+  if (!room) {
+    return <ViewRoomNotFound ctx={ctx} />;
+  }
+
+  const roomCtx: RoomViewCtx = {
+    ...ctx,
+    hostId: room.hostId,
+    room,
+    onQuit: () => $send({ t: "input-game", gameName: undefined }),
+  };
+
+  return (
+    <>
+      <ViewPage ctx={roomCtx} $send={$send} model={model} />
+
+      <MyDrawer
+        open={model.modal === "users"}
+        onClose={() => $send({ t: "modal-closed" })}>
+        {roomCtx && <ViewUsersInRoomList ctx={roomCtx} />}
+      </MyDrawer>
+
+      <MyDrawer
         open={model.modal === "user-preview"}
-        onClose={() => $send({ t: "modal-closed" })}
-        anchor="bottom">
+        onClose={() => $send({ t: "modal-closed" })}>
         {model.previewUserId && (
-          <ButtonBase
-            sx={{
-              width: "100%",
-              display: "flex",
-              flexDirection: "column",
-              p: 2,
-            }}
+          <button
+            className="flex w-full flex-col gap-2 p-4"
             onClick={() => {
               if (model.previewUserId) {
                 $send({ t: "clicked-user-link", userId: model.previewUserId });
               }
             }}>
-            <Avatar
+            <MyAvatar
               src={ctx.profiles[model.previewUserId]?.avatarUrl}
-              sx={{ width: 80, height: 80, marginBottom: 1 }}
+              className="h-24 w-24"
             />
-            <Typography variant="h6">
-              @{ctx.profiles[model.previewUserId]?.username ?? "..."}
-            </Typography>
-          </ButtonBase>
+            <p className="text-xl font-semibold">
+              {ctx.profiles[model.previewUserId]?.username ?? "..."}
+            </p>
+          </button>
         )}
-        <Box sx={{ px: 2, paddingBottom: 4, width: "100%" }}>
-          <Button variant="outlined" fullWidth startIcon={<Icons.Send />}>
-            Direct Message
-          </Button>
-        </Box>
-      </Drawer>
-    </FillBox>
+        <div className="w-full p-4 pb-8">
+          <MyButton className="w-full">See profile</MyButton>
+        </div>
+      </MyDrawer>
+    </>
   );
 };
 
@@ -702,46 +701,22 @@ const ViewPage = ({
   ctx,
   $send,
   model,
-  roomId,
 }: {
-  roomId: RoomId;
   model: Model;
-  ctx: ViewCtx;
+  ctx: RoomViewCtx;
   $send: (m: Msg) => void;
 }) => {
-  if (
-    model.requests.list?.t === "loading" ||
-    model.requests.create?.t === "loading" ||
-    model.requests.join?.t === "loading"
-  ) {
-    return (
-      <div className="grid h-full w-full place-items-center">
-        <IconSpinner className="h-12 w-12 animate-spin" />
-      </div>
-    );
-  }
-
-  const room = model.rooms[roomId];
-
-  if (!room) {
-    return <ViewRoomNotFound ctx={ctx} />;
-  }
-
   const currentUser = model.users[ctx.currentUserId];
 
   if (!currentUser) {
-    return (
-      <ViewRoomJoinScreen room={room} $send={$send} ctx={ctx} model={model} />
-    );
+    return <ViewRoomJoinScreen model={model} $send={$send} ctx={ctx} />;
   }
 
-  if (currentUser.roomId !== roomId) {
-    return (
-      <ViewRoomJoinScreen room={room} $send={$send} ctx={ctx} model={model} />
-    );
+  if (currentUser.roomId !== ctx.room.roomId) {
+    return <ViewRoomJoinScreen $send={$send} ctx={ctx} model={model} />;
   }
 
-  const game = model.games[room.roomId];
+  const game = model.games[ctx.room.roomId];
   return (
     <div className="flex h-full w-full flex-1 flex-col">
       <nav className="flex w-full items-center px-2 py-1">
@@ -766,37 +741,28 @@ const ViewPage = ({
         <MyButton
           color="danger"
           variant="contained"
-          // variant="text"
           size="sm"
           onClick={() => {
-            if (room.hostId === ctx.currentUserId) {
+            if (ctx.room.hostId === ctx.currentUserId) {
               $send({ t: "destroy", userId: ctx.currentUserId });
               return;
             }
             $send({ t: "leave", userId: ctx.currentUserId });
           }}>
-          {room.hostId === ctx.currentUserId ? "End" : "Leave"}
+          {ctx.room.hostId === ctx.currentUserId ? "End" : "Leave"}
         </MyButton>
       </nav>
-
-      {game ? (
-        <Game.View
-          ctx={{
-            ...ctx,
-            hostId: room.hostId,
-            onQuit: () => $send({ t: "input-game", gameName: undefined }),
-          }}
-          $send={(msg) => $send({ t: "game", c: msg })}
-          model={game}
-        />
-      ) : (
-        <ViewNotInGameScreen
-          model={model}
-          ctx={ctx}
-          room={room}
-          $send={$send}
-        />
-      )}
+      <div className="w-full flex-1 overflow-y-auto">
+        {game ? (
+          <Game.View
+            ctx={ctx}
+            $send={(msg) => $send({ t: "game", c: msg })}
+            model={game}
+          />
+        ) : (
+          <ViewNotInGameScreen ctx={ctx} $send={$send} />
+        )}
+      </div>
     </div>
   );
 };
@@ -814,85 +780,5 @@ export const ViewRoomNotFound = ({ ctx }: { ctx: ViewCtx }) => {
         Go Home
       </MyButton>
     </div>
-  );
-};
-
-export const ViewGameArtCard = ({ gameName }: { gameName: GameName }) => {
-  return (
-    <Paper variant="outlined" sx={{ overflow: "hidden", width: "100%" }}>
-      {viewCoverArt(gameName)}
-
-      <Typography
-        variant="subtitle2"
-        noWrap
-        sx={{ width: "100%", px: 1, py: 0.5 }}>
-        {gameNameToString(gameName)}
-      </Typography>
-    </Paper>
-  );
-};
-
-const ViewRoomPeople = ({
-  model,
-  $send,
-  ctx,
-  room,
-}: {
-  room: { roomId: RoomId; hostId: UserId };
-  ctx: ViewCtx;
-  model: Model;
-  $send: (msg: Msg) => void;
-}) => {
-  const usersInRoom = toRoomUsers(room.roomId, model);
-  const userCount = usersInRoom.length;
-
-  return (
-    <div className="flex h-full w-full flex-col">
-      <TopBar title={`People (${userCount})`} />
-      <div className="flex flex-col">
-        {usersInRoom.map((user) => {
-          return (
-            <ViewRoomUserListItem
-              isHost={user.userId === room.hostId}
-              key={user.userId}
-              userId={user.userId}
-              ctx={ctx}
-              onClick={() => $send({ t: "clicked-user", userId: user.userId })}
-            />
-          );
-        })}
-      </div>
-    </div>
-  );
-};
-const ViewRoomUserListItem = ({
-  ctx,
-  userId,
-  onClick,
-  isHost,
-}: {
-  ctx: ViewCtx;
-  userId: UserId;
-  onClick: () => void;
-  isHost?: boolean;
-}) => {
-  return (
-    <ButtonBase
-      onClick={onClick}
-      sx={{
-        px: 2,
-        py: 1,
-        display: "flex",
-        justifyContent: "flex-start",
-        alignItems: "center",
-        width: "100%",
-      }}>
-      <Avatar sx={{ mr: 1 }} src={ctx.profiles[userId]?.avatarUrl ?? ""} />
-      <Typography align="left">
-        {ctx.profiles[userId]?.username ?? "..."}
-      </Typography>
-      {ctx.currentUserId === userId && <Chip sx={{ ml: 1 }} label="You" />}
-      {isHost && <Chip sx={{ ml: 1 }} label="Host" />}
-    </ButtonBase>
   );
 };

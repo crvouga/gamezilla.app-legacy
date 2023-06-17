@@ -1,32 +1,26 @@
-import { RoomId, UserId } from "@gamezilla/shared/app";
-import { ViewCtx } from "@gamezilla/shared/client";
 import {
-  MyAvatar,
-  MyButton,
-  TopBar,
-  TopBarBackButton,
-} from "@gamezilla/shared/ui";
+  RoomViewCtx,
+  ViewGameHeader,
+  ViewUsersInRoomList,
+} from "@gamezilla/shared/client";
+import { MyButton, TopBar, TopBarBackButton } from "@gamezilla/shared/ui";
 import { gameNameToString, viewCoverArt } from "../game.shared";
-import { ClientModel, ClientMsg, toRoomUsers } from "../room.shared";
+import { ClientModel, ClientMsg } from "../room.shared";
 
 export const ViewRoomJoinScreen = ({
   model,
   ctx,
-  room,
   $send,
 }: {
-  room: { roomId: RoomId; hostId: UserId };
-  ctx: ViewCtx;
+  ctx: RoomViewCtx;
   model: ClientModel;
   $send: (msg: ClientMsg) => void;
 }) => {
-  const usersInRoom = toRoomUsers(room.roomId, model);
-  const host = ctx.profiles[room.hostId];
-
-  const game = model.games[room.roomId];
+  const host = ctx.profiles[ctx.room.hostId];
+  const game = model.games[ctx.room.roomId];
 
   return (
-    <div className="w-full h-full flex flex-col">
+    <div className="flex h-full w-full flex-col">
       <TopBar
         left={
           <TopBarBackButton
@@ -37,26 +31,15 @@ export const ViewRoomJoinScreen = ({
       />
 
       {game && (
-        <div className="flex items-center justify-center w-full flex-col gap-2">
-          <div className="w-24 h-24 flex items-center justify-center rounded-lg overflow-hidden">
-            {viewCoverArt(game.t)}
-          </div>
-
-          <p className="text-md font-semibold">{gameNameToString(game.t)}</p>
-        </div>
+        <ViewGameHeader
+          title={gameNameToString(game.t)}
+          renderCoverArt={(props) => (
+            <div {...props}>{viewCoverArt(game.t)}</div>
+          )}
+        />
       )}
 
-      <div className="flex items-center justify-center w-full flex-col gap-2">
-        <MyAvatar className="w-24 h-24" src={host?.avatarUrl} alt="..." />
-        <div className="flex items-center gap-1">
-          <p>{`${host?.username ?? "..."}`}</p>
-          <div className="rounded-xl bg-neutral-700 py-1 px-2">Host</div>
-        </div>
-      </div>
-
-      <div className="flex items-center justify-center">
-        <p className="text-lg font-semibold">{usersInRoom.length} players</p>
-      </div>
+      <ViewUsersInRoomList ctx={ctx} />
 
       <div className="flex-1"></div>
 
@@ -69,7 +52,7 @@ export const ViewRoomJoinScreen = ({
             $send({
               t: "join",
               userId: ctx.currentUserId,
-              roomId: room.roomId,
+              roomId: ctx.room.roomId,
             });
           }}>
           Join Room

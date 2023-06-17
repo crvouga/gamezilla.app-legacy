@@ -294,7 +294,7 @@ export const View = ({
       return (
         <MainMenuScreen
           title="Chess"
-          roomCtx={gameRoomCtx}
+          ctx={gameRoomCtx}
           renderCoverArt={(props) => <ViewCoverArt {...props} />}
           buttons={[
             mainMenuButtons.playComputer({

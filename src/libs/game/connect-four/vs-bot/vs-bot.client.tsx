@@ -1,9 +1,8 @@
 import {
   Ctx,
   RoomCtx,
-  ViewCtx,
+  RoomViewCtx,
   ViewVsBotGameScreen,
-  ViewVsBotSetupScreen,
   VsBotSetupScreen,
 } from "@gamezilla/shared/client";
 import { Cmd, Posix, Sub } from "@gamezilla/shared/core";
@@ -15,7 +14,6 @@ import {
 import {
   PlayerType,
   opposite,
-  playerTypes,
   toStatus,
   toTurn,
 } from "../connect-four/connect-four";
@@ -25,13 +23,11 @@ import {
   ViewCoverArt,
 } from "../connect-four/connect-four-ui";
 import {
-  BotLevel,
   ClientModel,
   ClientMsg,
   ServerModel,
   ToClient,
   ToServer,
-  botLevel,
   handle,
   initShared,
 } from "./vs-bot.shared";
@@ -231,18 +227,19 @@ export const subscriptions = (
 
 export const View = ({
   model,
-  goBack,
+  onQuit,
   ctx,
   $send,
 }: {
   model: Model;
   $send: (msg: Msg) => void;
-  goBack: () => void;
-  ctx: ViewCtx;
+  onQuit: () => void;
+  ctx: RoomViewCtx;
 }) => {
   if (model.type === "setup") {
     return (
       <VsBotSetupScreen
+        ctx={ctx}
         botName="Computer"
         playerOne={{
           name: "Computer",
@@ -258,7 +255,7 @@ export const View = ({
             <PlayerIcon playerType="PlayerTwo" {...props} />
           ),
         }}
-        onQuit={goBack}
+        onQuit={onQuit}
         title="Connect Four"
         renderCoverArt={(props) => <ViewCoverArt {...props} />}
         userId={ctx.currentUserId}

@@ -7,3 +7,4 @@ export * from "./view-main-menu-screen";
 export * from "./view-vs-bot-setup-screen";
 export * from "./view-vs-user-game-screen";
 export * from "./view-vs-user-setup-screen";
+export * from "./view-users-in-room-list";

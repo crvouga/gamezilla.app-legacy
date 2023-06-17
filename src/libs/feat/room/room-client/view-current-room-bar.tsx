@@ -38,32 +38,32 @@ export const ViewCurrentRoomBar = ({
   ).length;
 
   return (
-    <div className="text-inherit border-t-2 border-blue-500 overflow-hidden w-full flex items-center">
+    <div className="flex w-full items-center overflow-hidden border-t-2 border-blue-500 text-inherit">
       <button
-        className="flex-1 flex items-center overflow-hidden"
+        className="flex flex-1 items-center overflow-hidden"
         onClick={() => {
           ctx.$push({ t: "room", c: { t: "room", roomId: room.roomId } });
         }}>
-        <div className="p-2 mr-2">
+        <div className="mr-2 p-2">
           {!game && (
             <MyAvatar
               src={hostProfile?.avatarUrl ?? ""}
               alt="Host Avatar"
-              className="w-12 h-12"
+              className="h-12 w-12"
             />
           )}
           {game && (
-            <div className="rounded overflow-hidden w-12 h-12">
+            <div className="h-12 w-12 overflow-hidden rounded">
               {viewCoverArt(game.t)}
             </div>
           )}
         </div>
 
-        <div className="overflow-hidden flex-1 flex flex-col gap-1">
+        <div className="flex flex-1 flex-col gap-1 overflow-hidden">
           <p className="text-left">
             {hostProfile ? `${hostProfile.username}'s room` : "..."}
           </p>
-          <p className="text-xs text-left text-neutral-300">
+          <p className="text-left text-xs text-neutral-300">
             {userCount} in room
           </p>
         </div>
@@ -78,7 +78,7 @@ export const ViewCurrentRoomBar = ({
           $send({ t: "leave", userId: ctx.currentUserId });
         }}
         className="mr-4">
-        <IconXMark className="w-8 h-8" />
+        <IconXMark className="h-8 w-8" />
       </button>
     </div>
   );

@@ -222,7 +222,7 @@ export const View = ({
     return (
       <MainMenuScreen
         title="Tic-Tac-Toe"
-        roomCtx={gameRoomCtx}
+        ctx={gameRoomCtx}
         renderCoverArt={(props) => <ViewCoverArt {...props} />}
         buttons={[
           mainMenuButtons.playFriend({

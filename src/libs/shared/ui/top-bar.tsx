@@ -8,11 +8,11 @@ export const TopBar = (input: {
   right?: React.ReactNode;
 }) => {
   return (
-    <nav className="grid grid-cols-4 justify-center w-full h-14">
+    <nav className="grid h-14 w-full grid-cols-5 justify-center">
       <div className="flex items-center justify-start">{input.left}</div>
-      <div className="flex items-center justify-center col-span-2">
-        <p className="text-lg text-center">{input.title}</p>
-        {input.loading && <IconSpinner className="w-3 h-3 animate-spin" />}
+      <div className="col-span-3 flex items-center justify-center">
+        <p className="text-center text-xl font-semibold">{input.title}</p>
+        {input.loading && <IconSpinner className="h-3 w-3 animate-spin" />}
       </div>
       <div className="flex items-center justify-end">{input.right}</div>
     </nav>
@@ -22,7 +22,7 @@ export const TopBar = (input: {
 export const TopBarBackButton = ({ onClick }: { onClick: () => void }) => {
   return (
     <IconButton onClick={onClick}>
-      <IconChevronLeft className="w-6 h-6" />
+      <IconChevronLeft className="h-6 w-6" />
     </IconButton>
   );
 };

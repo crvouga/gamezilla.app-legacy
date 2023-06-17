@@ -243,7 +243,7 @@ export const view = ({
         <MainMenuScreen
           title="Gomoku"
           renderCoverArt={(props) => <ViewCoverArt {...props} />}
-          roomCtx={gameRoomCtx}
+          ctx={gameRoomCtx}
           buttons={[
             mainMenuButtons.playComputer({
               onClick: () =>
