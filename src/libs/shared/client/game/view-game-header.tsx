@@ -8,10 +8,10 @@ export const ViewGameHeader = ({
   renderCoverArt: (props: { className: string }) => VDom;
 }) => {
   return (
-    <div className="flex flex-col justify-center items-center w-full gap-4">
-      <p className="font-bold text-3xl">{title}</p>
+    <div className="flex w-full flex-col items-center justify-center gap-4">
+      <p className="text-3xl font-bold">{title}</p>
 
-      {renderCoverArt({ className: "w-24 h-24 overflow-hidden rounded-lg" })}
+      {renderCoverArt({ className: "w-28 h-28 overflow-hidden rounded-lg" })}
     </div>
   );
 };

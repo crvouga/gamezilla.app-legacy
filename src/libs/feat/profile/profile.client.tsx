@@ -271,8 +271,12 @@ const ViewProfileScreen = ({
         title={profile.username}
       />
       <div className="flex flex-col items-center justify-center gap-4 overflow-x-hidden p-4">
-        <MyAvatar alt="profile avatar" src={profile.avatarUrl} />
-        <p className="w-full overflow-hidden text-ellipsis text-xl">
+        <MyAvatar
+          className="h-28 w-28"
+          src={profile.avatarUrl}
+          alt="profile avatar"
+        />
+        <p className="w-full overflow-hidden text-ellipsis text-center text-3xl">
           {profile.username}
         </p>
       </div>
