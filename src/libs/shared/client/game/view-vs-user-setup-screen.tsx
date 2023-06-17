@@ -30,11 +30,11 @@ const VersusSection = ({
   ctx: ViewCtx;
 }) => {
   return (
-    <div className="flex items-center justify-center w-full py-6">
+    <div className="flex w-full items-center justify-center py-6">
       <Player player={playerOne} ctx={ctx} />
 
-      <div className="h-full flex flex-col">
-        <div className="flex-1 font-black text-3xl flex items-center justify-center">
+      <div className="flex h-full flex-col">
+        <div className="flex flex-1 items-center justify-center text-3xl font-black">
           VS
         </div>
         <div className="flex-1"></div>
@@ -51,24 +51,18 @@ export const VsUserSetup = {
 
 const Player = ({ player, ctx }: { ctx: ViewCtx; player: PlayerProp }) => {
   return (
-    <div className="flex-1 flex flex-col gap-6 p-4">
-      <div className="grid grid-cols-2 w-full justify-center gap-4">
-        <div className="flex flex-col items-center justify-center gap-2">
-          {player.renderIcon({ className: "w-16 h-16" })}
-
-          <p className="text-sm text-secondary">{player.label}</p>
-        </div>
-
+    <div className="flex flex-1 flex-col gap-6 p-4">
+      <div className="grid w-full grid-cols-2 justify-center gap-4">
         <div className={cn("flex flex-col items-center justify-center gap-2")}>
           {player.userId ? (
             <MyAvatar
-              className="w-16 h-16"
+              className="h-16 w-16"
               src={ctx.profiles[player.userId]?.avatarUrl}
               alt=""
             />
           ) : (
-            <div className="w-16 h-16 rounded-full bg-neutral-600 overflow-hidden grid place-items-center">
-              <IconQuestionMark className="w-10 h-10 text-neutral-300" />
+            <div className="grid h-16 w-16 place-items-center overflow-hidden rounded-full bg-neutral-600">
+              <IconQuestionMark className="h-10 w-10 text-neutral-300" />
             </div>
           )}
           <p className="text-sm text-secondary">
@@ -77,9 +71,14 @@ const Player = ({ player, ctx }: { ctx: ViewCtx; player: PlayerProp }) => {
               : "?"}
           </p>
         </div>
+        <div className="flex flex-col items-center justify-center gap-2">
+          {player.renderIcon({ className: "w-16 h-16" })}
+
+          <p className="text-sm text-secondary">{player.label}</p>
+        </div>
       </div>
 
-      <div className="w-full h-12">
+      <div className="h-12 w-full">
         {player.userId && player.userId === ctx.currentUserId && (
           <MyButton
             className="w-full"
@@ -124,7 +123,7 @@ export const VsUserSetupScreen = ({
   canStartGame?: boolean;
 }) => {
   return (
-    <div className="w-full h-full flex flex-col">
+    <div className="flex h-full w-full flex-col">
       <ViewGameHeader title={title} renderCoverArt={renderCoverArt} />
 
       <VersusSection playerOne={playerOne} playerTwo={playerTwo} ctx={ctx} />
@@ -132,7 +131,7 @@ export const VsUserSetupScreen = ({
       <div className="flex-1"></div>
 
       {ctx.currentUserId === ctx.hostId && (
-        <div className="w-full p-4 pt-8 gap-4 flex items-center">
+        <div className="flex w-full items-center gap-4 p-4 pt-8">
           <MyButton
             variant="contained"
             color="default"

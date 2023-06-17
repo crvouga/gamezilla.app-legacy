@@ -1,5 +1,10 @@
 import { UserId } from "@gamezilla/shared/app";
-import { IconArrowLeftOnRect, MyButton, VDom } from "@gamezilla/shared/ui";
+import {
+  IconArrowLeftOnRect,
+  IconRobot,
+  MyButton,
+  VDom,
+} from "@gamezilla/shared/ui";
 import { ViewGameHeader } from "./view-game-header";
 
 export const VsBotSetupScreen = ({
@@ -21,16 +26,23 @@ export const VsBotSetupScreen = ({
     <div className="flex h-full w-full flex-1 flex-col">
       <ViewGameHeader renderCoverArt={renderCoverArt} title={title} />
 
-      <div className="grid-cols-10">
-        <div className="col-span-5">
+      <div className="flex w-full items-center">
+        <div className="flex flex-1 items-center justify-center p-4">
+          {playerTwo.type === "bot" && <IconRobot className="h-16 w-16" />}
           {playerOne.renderIcon({ className: "w-16 h-16" })}
         </div>
-        <div className="col-span-5">
+        <div>
+          <p className="text-4xl font-bold">vs</p>
+        </div>
+        <div className="flex flex-1 items-center justify-center p-4">
+          {playerTwo.type === "bot" && <IconRobot className="h-16 w-16" />}
+
           {playerTwo.renderIcon({ className: "w-16 h-16" })}
         </div>
       </div>
 
-      <div className="flex-1"></div>
+      <div className="flex flex-1 items-center justify-center"></div>
+
       <div className="p-4">
         <MyButton className="w-full" onClick={onQuit}>
           <IconArrowLeftOnRect />
