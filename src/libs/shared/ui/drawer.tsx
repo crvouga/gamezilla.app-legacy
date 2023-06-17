@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { ViewNode } from "./ui";
+import { VDom } from "./ui";
 import { cn } from "./utils";
 
 export const MyDrawer = ({
@@ -9,7 +9,7 @@ export const MyDrawer = ({
 }: {
   onClose?: () => void;
   open?: boolean;
-  children?: ViewNode;
+  children?: VDom;
 }) => {
   useEscapeKey(onClose);
 

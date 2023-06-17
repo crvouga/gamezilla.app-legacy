@@ -1,6 +1,6 @@
-import { RoomRequestCtx } from '@gamezilla/shared/server';
-import { Cmd, Sub, andThen, p } from '@gamezilla/shared/core';
-import { RoomMsg } from '@gamezilla/shared/client';
+import { RoomRequestCtx } from "@gamezilla/shared/server";
+import { Cmd, Sub, andThen, p } from "@gamezilla/shared/core";
+import { RoomMsg } from "@gamezilla/shared/client";
 import {
   ServerModel,
   ServerMsg,
@@ -10,7 +10,7 @@ import {
   handle,
   handleBotMove,
   initShared,
-} from './vs-bot.shared';
+} from "./vs-bot.shared";
 
 //
 //
@@ -45,7 +45,7 @@ export const update = ({
   cmd?: Cmd<Msg>;
 } => {
   switch (msg.t) {
-    case 'none': {
+    case "none": {
       return { model };
     }
   }
@@ -73,10 +73,10 @@ export const updateFromClient: updateFromClient = (input) => {
 const updateBotMove: updateFromClient = ({ broadcast, model }) => {
   const handled = handleBotMove(model);
 
-  if (handled.t === 'err') {
+  if (handled.t === "err") {
     return {
       model,
-      cmd: broadcast({ t: 'bot-moved', result: handled }),
+      cmd: broadcast({ t: "bot-moved", result: handled }),
     };
   }
 
@@ -102,7 +102,7 @@ const updateFromClient_: updateFromClient = ({
   switch (msg.t) {
     default: {
       const res: Res = { ...msg, result: handle({ ctx, msg, model }) };
-      if (res.result.t === 'err') {
+      if (res.result.t === "err") {
         return { model, cmd: sendToClient(res) };
       }
       return { model: res.result.value, cmd: broadcast(res) };
@@ -120,13 +120,13 @@ export const updateFromRoom = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  switch (msg.t) {
-    case 'user-left': {
-      return {
-        model: init({ userId: model.userId }),
-      };
-    }
+  if (msg.t === "user-joined") {
+    return {
+      model: init({ userId: model.userId }),
+    };
   }
+
+  return { model };
 };
 
 //

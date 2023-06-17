@@ -5,7 +5,7 @@ import {
   FillBox,
   Icons,
   Typography,
-  ViewNode,
+  VDom,
   avatar,
   box,
   cn,
@@ -33,7 +33,7 @@ export const ViewGameBox = ({
   isSpectating,
 }: {
   isSpectating?: boolean;
-  children?: ViewNode;
+  children?: VDom;
 }) => {
   return (
     <div
@@ -62,7 +62,7 @@ export const viewSelectModeScreen = ({
   gameRoomCtx: RoomViewCtx;
   ctx: ViewCtx;
   title: string;
-  coverArt: ViewNode;
+  coverArt: VDom;
   onVsUser: () => void;
   onUserVsComputer: () => void;
 }) => {
@@ -213,7 +213,7 @@ export const viewUserPlayerSlotBar = ({
 export type BottomBarButtonAction = {
   label: string;
   disabled?: boolean;
-  icon: ViewNode;
+  icon: VDom;
   onClick: () => void;
   color?: "danger" | "success" | "inherit";
 };

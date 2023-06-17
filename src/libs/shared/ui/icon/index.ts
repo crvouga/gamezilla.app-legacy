@@ -8,6 +8,7 @@ export * from "./icon-chevron-left";
 export * from "./icon-chevron-right";
 export * from "./icon-clock";
 export * from "./icon-computer-desktop";
+export * from "./icon-crown";
 export * from "./icon-envelope";
 export * from "./icon-exclamation-circle";
 export * from "./icon-flag";

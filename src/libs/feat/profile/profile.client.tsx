@@ -22,7 +22,7 @@ import {
   TopBar,
   TopBarBackButton,
   Typography,
-  ViewNode,
+  VDom,
 } from "@gamezilla/shared/ui";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./profile.shared";
 
@@ -169,7 +169,7 @@ export const View = ({
   model: Model;
   route: RouteProfile;
   $send: (msg: Msg) => void;
-  viewBottomBar: ViewNode;
+  viewBottomBar: VDom;
 }) => {
   if (route.t === "profile") {
     return (

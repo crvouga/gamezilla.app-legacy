@@ -1,5 +1,5 @@
 import { UserId } from "@gamezilla/shared/app";
-import { ViewNode } from "@gamezilla/shared/ui";
+import { VDom } from "@gamezilla/shared/ui";
 import { ViewGameHeader } from "./view-game-header";
 
 type PlayerProp =
@@ -21,7 +21,7 @@ export const VsBotSetupScreen = ({
 
   playerTwo: PlayerProp;
   title: string;
-  renderCoverArt: (props: { className: string }) => ViewNode;
+  renderCoverArt: (props: { className: string }) => VDom;
 }) => {
   return (
     <div className="w-full">

@@ -1,7 +1,7 @@
-import { Route } from '@gamezilla/shared/client';
-import { Browser, Cmd, matchSort, p } from '@gamezilla/shared/core';
-import { IconMagnifyingGlass, IconXMark, ViewNode } from '@gamezilla/shared/ui';
-import { ClientModel, ClientMsg, ToClient, ToServer } from './search.shared';
+import { Route } from "@gamezilla/shared/client";
+import { Browser, Cmd, matchSort, p } from "@gamezilla/shared/core";
+import { IconMagnifyingGlass, IconXMark, VDom } from "@gamezilla/shared/ui";
+import { ClientModel, ClientMsg, ToClient, ToServer } from "./search.shared";
 
 //
 //
@@ -17,7 +17,7 @@ export const init: {
   model: Model;
 } = {
   model: {
-    searchText: '',
+    searchText: "",
     searchResults: {},
     requests: {},
   },
@@ -33,7 +33,7 @@ export const init: {
 
 export type Msg = ClientMsg;
 
-const searchInputId = 'search-input';
+const searchInputId = "search-input";
 
 export const update = ({
   msg,
@@ -47,31 +47,31 @@ export const update = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (msg.t === 'focus-done') {
+  if (msg.t === "focus-done") {
     return { model };
   }
 
-  if (msg.t === 'clicked-clear') {
+  if (msg.t === "clicked-clear") {
     return {
-      model: { ...model, searchText: '' },
+      model: { ...model, searchText: "" },
       cmd: p(
         Browser.focus(searchInputId),
-        Cmd.perform((result) => ({ t: 'focus-done', result }))
+        Cmd.perform((result) => ({ t: "focus-done", result }))
       ),
     };
   }
 
-  if (msg.t === 'clicked-result') {
+  if (msg.t === "clicked-result") {
     return {
       model,
       cmd: Route.push({
-        t: 'profile',
-        c: { t: 'profile', userId: msg.userId },
+        t: "profile",
+        c: { t: "profile", userId: msg.userId },
       }),
     };
   }
 
-  if (msg.t === 'inputted-search-text') {
+  if (msg.t === "inputted-search-text") {
     return {
       model: { ...model, searchText: msg.searchText },
     };
@@ -104,7 +104,7 @@ export const View = ({
 }: {
   model: Model;
   $send: (msg: Msg) => void;
-  viewBottomBar: ViewNode;
+  viewBottomBar: VDom;
 }) => {
   //   const request = model.requests[model.searchText] ?? { type: 'not-asked' };
   const results = matchSort(
@@ -127,12 +127,11 @@ export const View = ({
               value={model.searchText}
               onChange={(event) =>
                 $send({
-                  t: 'inputted-search-text',
+                  t: "inputted-search-text",
                   searchText: event.target.value,
                 })
-              }
-            ></input>
-            <button onClick={() => $send({ t: 'clicked-clear' })}>
+              }></input>
+            <button onClick={() => $send({ t: "clicked-clear" })}>
               <IconXMark />
             </button>
           </div>
@@ -144,9 +143,8 @@ export const View = ({
               <button
                 className="w-full flex items-center gap-4 p-4 hover:bg-neutral-700"
                 onClick={() =>
-                  $send({ t: 'clicked-result', userId: result.userId })
-                }
-              >
+                  $send({ t: "clicked-result", userId: result.userId })
+                }>
                 {result.username}
               </button>
             </li>

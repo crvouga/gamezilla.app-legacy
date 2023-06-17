@@ -1,27 +1,27 @@
-import { Cmd, Sub, Time } from "@gamezilla/shared/core";
 import { RoomMsg } from "@gamezilla/shared/client";
+import { Cmd, Sub, Time } from "@gamezilla/shared/core";
 import { PlayerType, toOpposite, toTurn } from "../tic-tic-toe/tic-tac-toe";
 import * as Round from "./vs-user-round";
 import {
+  NewGame,
+  Res,
   ServerModel,
   ServerMsg,
+  ToClient,
+  ToServer,
   initSharedModel,
   inputBestOutOf,
   inputMove,
   inputPlayer,
   moveCountDown,
-  NewGame,
   rematchAccept,
   rematchAsk,
   rematchCancel,
   rematchDecline,
-  Res,
   resign,
   roundCountDown,
   startGame,
   stopPlaying,
-  ToServer,
-  ToClient,
 } from "./vs-user.shared";
 
 //
@@ -232,32 +232,34 @@ export const updateFromRoom = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  switch (msg.t) {
-    case "user-left": {
-      const { userId } = msg;
+  if (msg.t === "user-left") {
+    const { userId } = msg;
 
-      const player: PlayerType | "none" =
-        model.O === userId ? "O" : model.X === userId ? "X" : "none";
+    const player: PlayerType | "none" =
+      model.O === userId ? "O" : model.X === userId ? "X" : "none";
 
-      if (player === "none") {
-        return { model };
-      }
-
-      const other = toOpposite(player);
-
-      const modelNew: Model = {
-        type: "setup",
-        maxRoundCount: model.maxRoundCount,
-        moveTimeLimit: model.moveTimeLimit,
-        X: model.X,
-        O: model.O,
-        [player]: "none",
-        [other]: model[other],
-      };
-
-      return { model: modelNew, cmd: broadcast(["player-left", modelNew]) };
+    if (player === "none") {
+      return { model };
     }
+
+    const other = toOpposite(player);
+
+    const modelNew: Model = {
+      type: "setup",
+      maxRoundCount: model.maxRoundCount,
+      moveTimeLimit: model.moveTimeLimit,
+      X: model.X,
+      O: model.O,
+      [player]: "none",
+      [other]: model[other],
+    };
+
+    return { model: modelNew, cmd: broadcast(["player-left", modelNew]) };
   }
+
+  return {
+    model,
+  };
 };
 
 //

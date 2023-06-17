@@ -6,10 +6,10 @@ import {
   Icons,
   Sx,
   Typography,
-  ViewNode,
-} from '@gamezilla/shared/ui';
-import { ViewCtx } from '../ctx';
-import { UserId } from '@gamezilla/shared/app';
+  VDom,
+} from "@gamezilla/shared/ui";
+import { ViewCtx } from "../ctx";
+import { UserId } from "@gamezilla/shared/app";
 
 export const viewVsUserSetupScreen = ({
   title,
@@ -24,20 +24,20 @@ export const viewVsUserSetupScreen = ({
   ctx: ViewCtx;
   title: string;
   subtitle: string;
-  coverArt: ViewNode;
+  coverArt: VDom;
   playerOne: {
     label: string;
     userId: UserId | null;
     onStartPlaying: () => void;
     onStopPlaying: () => void;
-    icon: (sx: Sx) => ViewNode;
+    icon: (sx: Sx) => VDom;
   };
   playerTwo: {
     label: string;
     userId: UserId | null;
     onStartPlaying: () => void;
     onStopPlaying: () => void;
-    icon: (sx: Sx) => ViewNode;
+    icon: (sx: Sx) => VDom;
   };
   onStartGame: () => void;
   onCancel: () => void;
@@ -47,20 +47,19 @@ export const viewVsUserSetupScreen = ({
     ctx.currentUserId === playerTwo.userId;
 
   return (
-    <FillBox sx={{ overflowY: 'scroll', py: 2 }}>
+    <FillBox sx={{ overflowY: "scroll", py: 2 }}>
       <Box
         sx={{
           height: 100,
           width: 100,
           minHeight: 100,
           minWidth: 100,
-          mx: 'auto',
+          mx: "auto",
           borderRadius: 2,
-          overflow: 'hidden',
+          overflow: "hidden",
           mt: 2,
           mb: 2,
-        }}
-      >
+        }}>
         {coverArt}
       </Box>
 
@@ -72,8 +71,7 @@ export const viewVsUserSetupScreen = ({
         variant="subtitle2"
         color="text.secondary"
         align="center"
-        sx={{ mb: 2 }}
-      >
+        sx={{ mb: 2 }}>
         {subtitle}
       </Typography>
 
@@ -89,8 +87,7 @@ export const viewVsUserSetupScreen = ({
           fullWidth
           variant="contained"
           endIcon={<Icons.ArrowRight />}
-          onClick={onStartGame}
-        >
+          onClick={onStartGame}>
           Start Game
         </Button>
       </Box>
@@ -102,8 +99,7 @@ export const viewVsUserSetupScreen = ({
           fullWidth
           variant="outlined"
           startIcon={<Icons.ArrowLeft />}
-          onClick={onCancel}
-        >
+          onClick={onCancel}>
           Back
         </Button>
       </Box>
@@ -124,7 +120,7 @@ const viewPlayerSlot = ({
   userId: UserId | null;
   onStartPlaying: () => void;
   onStopPlaying: () => void;
-  icon: (sx: Sx) => ViewNode;
+  icon: (sx: Sx) => VDom;
 }) => {
   const size: Sx = {
     width: 40,
@@ -141,10 +137,9 @@ const viewPlayerSlot = ({
           sx={{
             px: 2,
             mb: 2,
-            display: 'flex',
-            alignItems: 'center',
-          }}
-        >
+            display: "flex",
+            alignItems: "center",
+          }}>
           {icon({ ...size, mr: 1 })}
           <Button fullWidth variant="contained" onClick={onStartPlaying}>
             Play As {label}
@@ -162,19 +157,18 @@ const viewPlayerSlot = ({
 
       <Box
         sx={{
-          display: 'flex',
-          alignItems: 'center',
+          display: "flex",
+          alignItems: "center",
           px: 2,
           mb: 2,
-        }}
-      >
+        }}>
         {icon({ ...size, mr: 1 })}
         <Avatar
           sx={{ ...size, mr: 1 }}
-          src={userId ? ctx.profiles[userId]?.avatarUrl : ''}
+          src={userId ? ctx.profiles[userId]?.avatarUrl : ""}
         />
         <Typography noWrap sx={{ flex: 1 }}>
-          {userId ? ctx.profiles[userId]?.username ?? '...' : '...'}
+          {userId ? ctx.profiles[userId]?.username ?? "..." : "..."}
         </Typography>
         {ctx.currentUserId === userId && (
           <Button onClick={onStopPlaying}>Stop Playing</Button>

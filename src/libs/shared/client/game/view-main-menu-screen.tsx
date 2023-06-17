@@ -3,13 +3,13 @@ import {
   IconRobot,
   IconUsers,
   MyButton,
-  ViewNode,
+  VDom,
 } from "@gamezilla/shared/ui";
 import { RoomViewCtx } from "./game-shared";
 import { ViewGameHeader } from "./view-game-header";
 
 type MainMenuButton = {
-  renderIcon: (input: { className: string }) => ViewNode;
+  renderIcon: (input: { className: string }) => VDom;
   title: string;
   description: string;
   onClick: () => void;
@@ -23,7 +23,7 @@ export const MainMenuScreen = ({
 }: {
   roomCtx: RoomViewCtx;
   title: string;
-  renderCoverArt: (props: { className: string }) => ViewNode;
+  renderCoverArt: (props: { className: string }) => VDom;
   buttons: MainMenuButton[];
 }) => {
   if (roomCtx.currentUserId !== roomCtx.hostId) {

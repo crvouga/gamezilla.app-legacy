@@ -8,8 +8,7 @@ import {
   TopBar,
   cn,
 } from "@gamezilla/shared/ui";
-import { gameNameToString, viewCoverArt } from "../game";
-import { GameName } from "../game.shared";
+import { GameName, gameNameToString, viewCoverArt } from "../game.shared";
 import { ClientModel, ClientMsg } from "../room.shared";
 
 export const ViewRoomListScreen = ({
@@ -28,26 +27,26 @@ export const ViewRoomListScreen = ({
   const isLoading = model.requests.list?.t === "loading";
 
   return (
-    <div className="flex-1 flex flex-col w-full h-full max-h-full overflow-hidden">
+    <div className="flex h-full max-h-full w-full flex-1 flex-col overflow-hidden">
       <div>
         <TopBar title="Rooms" />
       </div>
 
-      <div className="flex flex-col flex-1 w-full">
+      <div className="flex w-full flex-1 flex-col">
         {!isLoading && rooms.length === 0 && (
-          <div className="flex-1 flex flex-col items-center justify-center opacity-60">
-            <IconGamepad className="w-12 h-12" />
+          <div className="flex flex-1 flex-col items-center justify-center opacity-60">
+            <IconGamepad className="h-12 w-12" />
             <p className="text-lg">No active rooms</p>
           </div>
         )}
 
         {isLoading && rooms.length === 0 && (
-          <div className="flex-1 flex flex-col gap-4 px-5 overflow-hidden">
+          <div className="flex flex-1 flex-col gap-4 overflow-hidden px-5">
             {[1, 2, 3].map((i) => {
               return (
                 <div
                   key={i}
-                  className="cursor-wait w-full aspect-video rounded-lg bg-white/20 animate-pulse"
+                  className="aspect-video w-full animate-pulse cursor-wait rounded-lg bg-white/20"
                 />
               );
             })}
@@ -55,16 +54,16 @@ export const ViewRoomListScreen = ({
         )}
 
         {rooms.length > 0 && (
-          <div className="flex-1 flex flex-col relative">
+          <div className="relative flex flex-1 flex-col">
             {isLoading && (
-              <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
-                <IconSpinner className="animate-spin w-12 h-12" />
+              <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center">
+                <IconSpinner className="h-12 w-12 animate-spin" />
               </div>
             )}
             <div
               className={cn(
-                isLoading && "opacity-50 pointer-events-none",
-                "w-full flex-1 flex flex-col gap-4 px-5 overflow-y-auto"
+                isLoading && "pointer-events-none opacity-50",
+                "flex w-full flex-1 flex-col gap-4 overflow-y-auto px-5"
               )}>
               {rooms.map((room) => {
                 const host = ctx.profiles[room.hostId];
@@ -137,13 +136,13 @@ const ViewRoomCard = ({
   return (
     <button
       onClick={onClick}
-      className="bg-blue-500 rounded-md flex flex-col gap-3 p-4 active:opacity-70">
-      <div className="w-full flex items-center justify-start">
-        <p className="block uppercase text-left font-bold animate-pulse flex-1">
+      className="flex flex-col gap-3 rounded-md bg-blue-500 p-4 active:opacity-70">
+      <div className="flex w-full items-center justify-start">
+        <p className="block flex-1 animate-pulse text-left font-bold uppercase">
           LIVE
         </p>
         {isCurrentRoom && (
-          <p className="block text-xs font-light opacity-50 italic">
+          <p className="block text-xs font-light italic opacity-50">
             Current Room
           </p>
         )}
@@ -151,7 +150,7 @@ const ViewRoomCard = ({
 
       {gameName && (
         <div className="flex items-center justify-start gap-2">
-          <div className="w-12 h-12 rounded overflow-hidden border-2 border-white/40">
+          <div className="h-12 w-12 overflow-hidden rounded border-2 border-white/40">
             {viewCoverArt(gameName)}
           </div>
           <p className="text-xl">{gameNameToString(gameName)}</p>
@@ -159,10 +158,10 @@ const ViewRoomCard = ({
       )}
 
       <div className="flex items-center justify-start gap-2">
-        <MyAvatar src={host.avatarUrl} alt="avatar" className="w-12 h-12" />
+        <MyAvatar src={host.avatarUrl} alt="avatar" className="h-12 w-12" />
 
         <p className="text-xl">{host.username}</p>
-        <span className="bg-white/30 rounded-full p-1 px-2 text-xs">Host</span>
+        <span className="rounded-full bg-white/30 p-1 px-2 text-xs">Host</span>
       </div>
     </button>
   );

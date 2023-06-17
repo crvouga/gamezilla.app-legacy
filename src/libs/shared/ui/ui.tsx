@@ -138,7 +138,7 @@ export const Box = Mui.Box;
 
 export const box = (
   { key, sx }: Sx & { key?: string; sx?: Sx },
-  children: ViewNode[]
+  children: VDom[]
 ) => {
   return (
     <Box key={key} sx={sx}>
@@ -175,7 +175,7 @@ export const Slider = Mui.Slider;
 
 export const paper = (
   { key, ...sx }: Sx & { key?: string },
-  children: ViewNode[]
+  children: VDom[]
 ) => {
   return (
     <Paper key={key} sx={sx} variant="outlined">
@@ -225,7 +225,7 @@ export const InputAdornment = Mui.InputAdornment;
 
 export const Typography = Mui.Typography;
 
-export const text = (props: TypographyProps, children: ViewNode) => {
+export const text = (props: TypographyProps, children: VDom) => {
   return <Typography {...props}>{children}</Typography>;
 };
 
@@ -320,7 +320,7 @@ export const Field = ({
   </ListItemButton>
 );
 
-export const fillBox = ({ sx }: { sx?: Sx }, children: ViewNode[]) => {
+export const fillBox = ({ sx }: { sx?: Sx }, children: VDom[]) => {
   return box(
     {
       sx: {
@@ -443,7 +443,7 @@ export const ConformationDialog = ({
   subtitle?: string;
   confirmTitle: string;
   cancelTitle?: string;
-  headerIcon?: ViewNode;
+  headerIcon?: VDom;
 }) => {
   return (
     <div
@@ -501,7 +501,7 @@ export const spin = keyframes`
 
 export const pulseAnimation = `${pulse} 0.5s infinite ease`;
 
-export type ViewNode = ReactNode;
+export type VDom = ReactNode;
 
 export type Sx = Mui.SxProps;
 
@@ -696,7 +696,7 @@ export const icon = (name: IconName, sx?: Sx) => {
     }
   }
 };
-export const fragment = (children: ViewNode[]) => {
+export const fragment = (children: VDom[]) => {
   return children;
 };
 
@@ -749,7 +749,7 @@ export const ViewEmptyState = ({
   title,
 }: {
   title: string;
-  renderIcon: (props: { sx: Sx }) => ViewNode;
+  renderIcon: (props: { sx: Sx }) => VDom;
 }) => {
   return (
     <FillBox

@@ -6,6 +6,7 @@ import * as Maze from "@gamezilla/game/maze";
 import * as Snake from "@gamezilla/game/snake";
 import * as Tetris from "@gamezilla/game/tetris";
 import * as TicTacToe from "@gamezilla/game/tic-tac-toe";
+import { VDom } from "@gamezilla/shared/ui";
 
 //
 //
@@ -114,3 +115,91 @@ export const gameNameList: GameName[] = [
   // "tetris",
   // "maze",
 ];
+
+//
+//
+//
+//
+//
+
+export const viewCoverArt = (gameName: GameName): VDom => {
+  switch (gameName) {
+    case "chess": {
+      return <Chess.ViewCoverArt />;
+    }
+
+    case "connect-four": {
+      return <ConnectFour.ViewCoverArt />;
+    }
+
+    case "gomoku": {
+      return <Gomoku.ViewCoverArt />;
+    }
+
+    case "tic-tac-toe": {
+      return <TicTacToe.ViewCoverArt />;
+    }
+
+    case "tetris": {
+      return Tetris.viewCoverArt();
+    }
+
+    case "snake": {
+      return Snake.viewCoverArt();
+    }
+
+    case "maze": {
+      return Maze.viewCoverArt();
+    }
+
+    case "flow": {
+      return Flow.viewCoverArt();
+    }
+
+    default: {
+      const check: never = gameName;
+      return check;
+    }
+  }
+};
+
+export const gameNameToString = (gameName: GameName) => {
+  switch (gameName) {
+    case "chess": {
+      return "Chess";
+    }
+
+    case "connect-four": {
+      return "Connect Four";
+    }
+
+    case "gomoku": {
+      return "Gomoku";
+    }
+
+    case "tic-tac-toe": {
+      return "Tic-Tac-Toe";
+    }
+
+    case "tetris": {
+      return "Tetris";
+    }
+
+    case "snake": {
+      return "Snake";
+    }
+
+    case "maze": {
+      return "Maze";
+    }
+
+    case "flow": {
+      return "Flow";
+    }
+
+    default: {
+      const check: never = gameName;
+      return check;
+    }
+  }
+};

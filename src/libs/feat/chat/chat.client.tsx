@@ -29,7 +29,7 @@ import {
   TopBarBackButton,
   Typography,
   ViewLoadingState,
-  ViewNode,
+  VDom,
 } from "@gamezilla/shared/ui";
 import { Fab } from "@mui/material";
 
@@ -235,7 +235,7 @@ export const View = ({
     onInput: (searchText: string) => void;
     loading: boolean;
   };
-  viewBottomBar: ViewNode;
+  viewBottomBar: VDom;
 }) => {
   switch (route.t) {
     case "chat-conversation": {

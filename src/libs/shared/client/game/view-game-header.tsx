@@ -1,11 +1,11 @@
-import { ViewNode } from "@gamezilla/shared/ui";
+import { VDom } from "@gamezilla/shared/ui";
 
 export const ViewGameHeader = ({
   title,
   renderCoverArt,
 }: {
   title: string;
-  renderCoverArt: (props: { className: string }) => ViewNode;
+  renderCoverArt: (props: { className: string }) => VDom;
 }) => {
   return (
     <div className="flex flex-col justify-center items-center w-full gap-4">

@@ -15,37 +15,32 @@ import {
   Button,
   ButtonBase,
   Chip,
-  Divider,
   Drawer,
   FillBox,
-  IconGamepad,
   IconHome,
   IconSpinner,
   IconUserGroup,
-  IconXMark,
   Icons,
-  MyAvatar,
   MyButton,
   Paper,
   TopBar,
   Typography,
-  ViewNode,
+  VDom,
 } from "@gamezilla/shared/ui";
-import { gameNameToString, viewCoverArt } from "./game";
-import * as Game from "./game.client";
-import { GameName, gameNameList } from "./game.shared";
+import * as Game from "../game.client";
+import { GameName, gameNameToString, viewCoverArt } from "../game.shared";
 import {
   ClientModel,
   ClientMsg,
-  ClientRoom,
   Res,
   ServerModel,
   ToClient,
   ToServer,
   toRoomUsers,
-} from "./room.shared";
-import { ViewRoomJoinScreen } from "./views/view-room-join-screen";
-import { ViewRoomListScreen } from "./views/view-room-list-screen";
+} from "../room.shared";
+import { ViewRoomJoinScreen } from "./view-room-join-screen";
+import { ViewRoomListScreen } from "./view-room-list-screen";
+import { ViewNotInGameScreen } from "./view-not-in-game-screen";
 
 //
 //
@@ -435,6 +430,7 @@ const updateResponse = ({
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
+  msgs?: AppMsg[];
 } => {
   if (msg.result.t === "err") {
     return {
@@ -464,6 +460,7 @@ const updateResponse = ({
       requests: { ...merged.model.requests, [msg.t]: RemoteResult.Ok("none") },
     },
     cmd: merged.cmd,
+    msgs: [{ t: "got-profiles", profiles: merged.model.profiles }],
   };
 };
 
@@ -612,7 +609,7 @@ export const View = ({
   ctx: ViewCtx;
   $send: (m: Msg) => void;
   route: RouteRoom;
-  viewBottomBar: ViewNode;
+  viewBottomBar: VDom;
 }) => {
   const ctx: ViewCtx = {
     ...ctxPrev,
@@ -718,8 +715,8 @@ const ViewPage = ({
     model.requests.join?.t === "loading"
   ) {
     return (
-      <div className="w-full h-full grid place-items-center">
-        <IconSpinner className="animate-spin w-12 h-12" />
+      <div className="grid h-full w-full place-items-center">
+        <IconSpinner className="h-12 w-12 animate-spin" />
       </div>
     );
   }
@@ -746,9 +743,9 @@ const ViewPage = ({
 
   const game = model.games[room.roomId];
   return (
-    <div className="w-full h-full flex-1 flex flex-col">
-      <nav className="flex items-center w-full px-2 py-1">
-        <div className="w-20 flex items-center">
+    <div className="flex h-full w-full flex-1 flex-col">
+      <nav className="flex w-full items-center px-2 py-1">
+        <div className="flex w-20 items-center">
           <ActionButton
             label="Home"
             icon={<IconHome />}
@@ -756,7 +753,7 @@ const ViewPage = ({
           />
         </div>
 
-        <div className="w-20 flex items-center">
+        <div className="flex w-20 items-center">
           <ActionButton
             label="People"
             icon={<IconUserGroup />}
@@ -793,7 +790,12 @@ const ViewPage = ({
           model={game}
         />
       ) : (
-        <ViewNotInGame model={model} ctx={ctx} room={room} $send={$send} />
+        <ViewNotInGameScreen
+          model={model}
+          ctx={ctx}
+          room={room}
+          $send={$send}
+        />
       )}
     </div>
   );
@@ -801,8 +803,8 @@ const ViewPage = ({
 
 export const ViewRoomNotFound = ({ ctx }: { ctx: ViewCtx }) => {
   return (
-    <div className="flex flex-col items-center justify-center flex-1 gap-4">
-      <p className="text-2xl text-center">Room not found</p>
+    <div className="flex flex-1 flex-col items-center justify-center gap-4">
+      <p className="text-center text-2xl">Room not found</p>
       <MyButton
         onClick={() => ctx.$push({ t: "room", c: { t: "room-list" } })}
         size="lg"
@@ -811,45 +813,6 @@ export const ViewRoomNotFound = ({ ctx }: { ctx: ViewCtx }) => {
         <IconHome />
         Go Home
       </MyButton>
-    </div>
-  );
-};
-
-export const ViewNotInGame = ({
-  room,
-  ctx,
-  $send,
-}: {
-  model: Model;
-  room: ClientRoom;
-  ctx: ViewCtx;
-  $send: (m: Msg) => void;
-}) => {
-  if (room.hostId !== ctx.currentUserId) {
-    return (
-      <div className="w-full h-full flex flex-col items-center justify-center opacity-60">
-        <IconGamepad className="w-12 h-12" />
-        <div className="text-lg">No game selected</div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="grid grid-cols-3 gap-y-6 gap-x-3 p-4 py-6">
-      {gameNameList.map((gameName) => (
-        <div key={gameName}>
-          <div className="px-2">
-            <button
-              onClick={() => $send({ t: "input-game", gameName })}
-              className="flex rounded-lg overflow-hidden focus:outline-none focus:ring focus:ring-primary">
-              {viewCoverArt(gameName)}
-            </button>
-          </div>
-          <p className="text-sm mt-2 w-full text-center whitespace-nowrap overflow-hidden text-ellipsis">
-            {gameNameToString(gameName)}
-          </p>
-        </div>
-      ))}
     </div>
   );
 };
@@ -884,22 +847,9 @@ const ViewRoomPeople = ({
   const userCount = usersInRoom.length;
 
   return (
-    <FillBox>
-      <TopBar
-        // left={
-        //   <Button
-        //     size="small"
-        //     sx={{ marginLeft: -1 }}
-        //     onClick={() => $send(['modal-closed'])}
-        //   >
-        //     Close
-        //   </Button>
-        // }
-        title={`People (${userCount})`}
-      />
-      <Divider />
-
-      <Box>
+    <div className="flex h-full w-full flex-col">
+      <TopBar title={`People (${userCount})`} />
+      <div className="flex flex-col">
         {usersInRoom.map((user) => {
           return (
             <ViewRoomUserListItem
@@ -911,8 +861,8 @@ const ViewRoomPeople = ({
             />
           );
         })}
-      </Box>
-    </FillBox>
+      </div>
+    </div>
   );
 };
 const ViewRoomUserListItem = ({
@@ -944,86 +894,5 @@ const ViewRoomUserListItem = ({
       {ctx.currentUserId === userId && <Chip sx={{ ml: 1 }} label="You" />}
       {isHost && <Chip sx={{ ml: 1 }} label="Host" />}
     </ButtonBase>
-  );
-};
-
-export const ViewBottomBar = ({
-  ctx: ctxPrev,
-  model,
-  $send,
-}: {
-  ctx: ViewCtx;
-  model: Model;
-  $send: (msg: Msg) => void;
-}) => {
-  const ctx: ViewCtx = {
-    ...ctxPrev,
-    profiles: {
-      ...ctxPrev.profiles,
-      ...model.profiles,
-    },
-  };
-  const user = model.users[ctx.currentUserId];
-
-  if (!user) {
-    return null;
-  }
-
-  const room = model.rooms[user.roomId];
-
-  if (!room) {
-    return null;
-  }
-
-  const game = model.games[room.roomId];
-  const hostProfile = ctx.profiles[room.hostId];
-  const userCount = Object.values(model.users).filter(
-    (user) => user.roomId === room.roomId
-  ).length;
-
-  return (
-    <div className="text-inherit border-t-2 border-blue-500 overflow-hidden w-full flex items-center">
-      <button
-        className="flex-1 flex items-center overflow-hidden"
-        onClick={() => {
-          ctx.$push({ t: "room", c: { t: "room", roomId: room.roomId } });
-        }}>
-        <div className="p-2 mr-2">
-          {!game && (
-            <MyAvatar
-              src={hostProfile?.avatarUrl ?? ""}
-              alt="Host Avatar"
-              className="w-12 h-12"
-            />
-          )}
-          {game && (
-            <div className="rounded overflow-hidden w-12 h-12">
-              {viewCoverArt(game.t)}
-            </div>
-          )}
-        </div>
-
-        <div className="overflow-hidden flex-1 flex flex-col gap-1">
-          <p className="text-left">
-            {hostProfile ? `${hostProfile.username}'s room` : "..."}
-          </p>
-          <p className="text-xs text-left text-neutral-300">
-            {userCount} in room
-          </p>
-        </div>
-      </button>
-
-      <button
-        onClick={() => {
-          if (ctx.currentUserId === room.hostId) {
-            $send({ t: "destroy", userId: ctx.currentUserId });
-            return;
-          }
-          $send({ t: "leave", userId: ctx.currentUserId });
-        }}
-        className="mr-4">
-        <IconXMark className="w-8 h-8" />
-      </button>
-    </div>
   );
 };

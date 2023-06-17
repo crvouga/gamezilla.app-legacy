@@ -17,7 +17,7 @@ import {
   IconSpinner,
   IconUserCircle,
   LoadingScreen,
-  ViewNode,
+  VDom,
   cn,
 } from "@gamezilla/shared/ui";
 import { Subject } from "rxjs";
@@ -656,7 +656,7 @@ const ViewBottomBar = ({
   const items: {
     route: Route;
     label: string;
-    icon: ViewNode;
+    icon: VDom;
   }[] = [
     {
       route: {
@@ -680,7 +680,7 @@ const ViewBottomBar = ({
 
   return (
     <div className="w-full flex flex-col items-center justify-center">
-      <RoomClient.ViewBottomBar
+      <RoomClient.ViewCurrentRoomBar
         ctx={ctx}
         model={model.room}
         $send={(c) => $send({ t: "room", c })}

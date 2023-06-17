@@ -1,11 +1,11 @@
-import { ViewNode } from './ui';
+import { VDom } from "./ui";
 
 export const IconButton = ({
   children,
   onClick,
 }: {
   onClick?: () => void;
-  children: ViewNode;
+  children: VDom;
 }) => {
   return (
     <button className="rounded-full p-3" onClick={onClick}>

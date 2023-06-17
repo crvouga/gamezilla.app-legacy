@@ -184,49 +184,48 @@ export const updateFromRoom = ({
   msg: RoomMsg;
   model: Model;
 }): { model: Model; cmd?: Cmd<Msg> } => {
-  switch (msg.t) {
-    case "user-left": {
-      switch (model.type) {
-        case "setup": {
-          const { userId } = msg;
-          const color: Board.Color | "none" =
-            model.b === userId ? "b" : model.w === userId ? "w" : "none";
+  if (msg.t === "user-left") {
+    switch (model.type) {
+      case "setup": {
+        const { userId } = msg;
+        const color: Board.Color | "none" =
+          model.b === userId ? "b" : model.w === userId ? "w" : "none";
 
-          if (color === "none") {
-            return { model };
-          }
-
-          const modelNew: Model = { ...model, [color]: "none" };
-
-          return { model: modelNew, cmd: broadcast(["player-left", modelNew]) };
+        if (color === "none") {
+          return { model };
         }
 
-        case "game":
-        case "game-over": {
-          const { userId } = msg;
+        const modelNew: Model = { ...model, [color]: "none" };
 
-          const color: Board.Color | "none" =
-            model.b === userId ? "b" : model.w === userId ? "w" : "none";
+        return { model: modelNew, cmd: broadcast(["player-left", modelNew]) };
+      }
 
-          if (color === "none") {
-            return { model };
-          }
+      case "game":
+      case "game-over": {
+        const { userId } = msg;
 
-          const otherColor = Board.toOppositeColor(color);
+        const color: Board.Color | "none" =
+          model.b === userId ? "b" : model.w === userId ? "w" : "none";
 
-          const modelNew: Model = {
-            ...model,
-            type: "setup",
-            clockPreset: model.clock.preset,
-            [otherColor]: model[otherColor],
-            [color]: "none",
-          };
-
-          return { model: modelNew, cmd: broadcast(["player-left", modelNew]) };
+        if (color === "none") {
+          return { model };
         }
+
+        const otherColor = Board.toOppositeColor(color);
+
+        const modelNew: Model = {
+          ...model,
+          type: "setup",
+          clockPreset: model.clock.preset,
+          [otherColor]: model[otherColor],
+          [color]: "none",
+        };
+
+        return { model: modelNew, cmd: broadcast(["player-left", modelNew]) };
       }
     }
   }
+  return { model };
 };
 
 //

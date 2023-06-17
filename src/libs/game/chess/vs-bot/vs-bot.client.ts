@@ -156,21 +156,23 @@ export const updateFromRoom = ({
   model: Model;
   cmd?: Cmd;
 } => {
-  switch (msg.t) {
-    case "user-left": {
-      if (model.userId === msg.userId) {
-        const modelNew: Model = {
-          type: "setup",
-          botLevel: model.botLevel,
-          userColor: model.userColor,
-          userId: "none",
-        };
-        return { model: modelNew, cmd: broadcast(["player-left", modelNew]) };
-      }
-
-      return { model };
+  if (msg.t === "user-left") {
+    if (model.userId === msg.userId) {
+      const modelNew: Model = {
+        type: "setup",
+        botLevel: model.botLevel,
+        userColor: model.userColor,
+        userId: "none",
+      };
+      return { model: modelNew, cmd: broadcast(["player-left", modelNew]) };
     }
+
+    return { model };
   }
+
+  return {
+    model,
+  };
 };
 
 //

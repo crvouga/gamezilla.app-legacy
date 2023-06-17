@@ -7,9 +7,8 @@ export const MyAvatar = ({
   onClick,
 }: {
   src?: string | null;
-  alt: string;
+  alt?: string;
   className?: string;
-
   onClick?: () => void;
 }) => {
   if (src) {

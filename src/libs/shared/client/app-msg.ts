@@ -1,4 +1,4 @@
-import { UserId } from "@gamezilla/shared/app";
+import { UserId, Username } from "@gamezilla/shared/app";
 import { Route } from "./route";
 
 //
@@ -14,7 +14,14 @@ export type AppMsg<T = unknown> =
   | { t: "wire-connected" }
   | { t: "user-logged-in"; currentUserId: UserId }
   | { t: "user-logged-out" }
-  | { t: "toast-enqueued"; text: string; duration?: number };
+  | { t: "toast-enqueued"; text: string; duration?: number }
+  | { t: "got-profiles"; profiles: { [userId: string]: Profile } };
+
+export type Profile = {
+  userId: UserId;
+  username: Username;
+  avatarUrl: string;
+};
 
 //
 //

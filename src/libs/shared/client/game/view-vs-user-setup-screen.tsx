@@ -5,7 +5,7 @@ import {
   IconQuestionMark,
   MyAvatar,
   MyButton,
-  ViewNode,
+  VDom,
   cn,
 } from "@gamezilla/shared/ui";
 import { ViewGameHeader } from "./view-game-header";
@@ -17,7 +17,7 @@ type PlayerProp = {
   userId: UserId | null;
   onStartPlaying: () => void;
   onStopPlaying: () => void;
-  renderIcon: (props: IconProps) => ViewNode;
+  renderIcon: (props: IconProps) => VDom;
 };
 
 const VersusSection = ({
@@ -112,14 +112,16 @@ export const VsUserSetupScreen = ({
   renderCoverArt,
   onStartGame,
   onQuit,
+  canStartGame = Boolean(playerOne.userId && playerTwo.userId),
 }: {
   ctx: RoomViewCtx;
   title: string;
-  renderCoverArt: (props: { className: string }) => ViewNode;
+  renderCoverArt: (props: { className: string }) => VDom;
   playerOne: PlayerProp;
   playerTwo: PlayerProp;
   onStartGame: () => void;
   onQuit: () => void;
+  canStartGame?: boolean;
 }) => {
   return (
     <div className="w-full h-full flex flex-col">
@@ -141,6 +143,7 @@ export const VsUserSetupScreen = ({
           </MyButton>
 
           <MyButton
+            disabled={!canStartGame}
             variant="contained"
             color="primary"
             className="flex-1"

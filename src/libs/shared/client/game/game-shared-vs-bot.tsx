@@ -9,7 +9,7 @@ import {
   MyButton,
   Sx,
   Typography,
-  ViewNode,
+  VDom,
   cn,
 } from "@gamezilla/shared/ui";
 import { ReactNode } from "react";
@@ -33,7 +33,7 @@ export const ViewVsBotSetupScreen = <BotLevel, PlayerType>({
   ctx: ViewCtx;
   title: string;
   subtitle: string;
-  coverArt: ViewNode;
+  coverArt: VDom;
   leftPlayerType: PlayerType;
   playerId?: UserId | null;
   botLevel: {
@@ -47,7 +47,7 @@ export const ViewVsBotSetupScreen = <BotLevel, PlayerType>({
     selected: PlayerType;
     values: PlayerType[];
     onInput: (value: PlayerType) => void;
-    icon: (props: { sx?: Sx; playerType: PlayerType }) => ViewNode;
+    icon: (props: { sx?: Sx; playerType: PlayerType }) => VDom;
     toName: (value: PlayerType) => string;
     render: (props: { playerType: PlayerType }) => ReactNode;
   };
@@ -210,7 +210,7 @@ const ViewVersusBlock = <PlayerType,>({
   }: {
     sx?: Sx;
     playerType: PlayerType;
-  }) => ViewNode;
+  }) => VDom;
 }) => {
   const iconSx: Sx = {
     width: 52,
@@ -324,13 +324,13 @@ export const ViewVsBotGameScreen = <PlayerType,>({
   leftPlayer: PlayerType;
   playerUserId: UserId;
   ctx: ViewCtx;
-  actions: { label: string; icon: ViewNode; onClick: () => void }[];
-  gameOverActions: { label: string; icon: ViewNode; onClick: () => void }[];
+  actions: { label: string; icon: VDom; onClick: () => void }[];
+  gameOverActions: { label: string; icon: VDom; onClick: () => void }[];
   viewPlayerIcon: (props: {
     className?: string;
     playerType: PlayerType;
-  }) => ViewNode;
-  viewBoard: () => ViewNode;
+  }) => VDom;
+  viewBoard: () => VDom;
 }) => {
   const isSpectating = ctx.currentUserId !== playerUserId;
 
