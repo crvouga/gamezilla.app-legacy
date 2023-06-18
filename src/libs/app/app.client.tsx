@@ -478,16 +478,16 @@ export const View = ({
   $send: (msg: Msg) => void;
 }) => {
   return (
-    <div className="max-w-md max-h-full mx-auto fixed w-full h-full overflow-hidden flex flex-col left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 border border-neutral-800 bg-black text-white select-none touch-none">
+    <div className="fixed left-1/2 top-1/2 mx-auto flex h-full max-h-full w-full max-w-md -translate-x-1/2 -translate-y-1/2 touch-none select-none flex-col overflow-hidden border border-neutral-800 bg-black text-white">
       {model.auth.currentUser.t === "not-asked" && (
-        <div className="w-full h-full flex items-center justify-center">
-          <IconSpinner className="w-12 h-12 animate-spin" />
+        <div className="flex h-full w-full items-center justify-center">
+          <IconSpinner className="h-12 w-12 animate-spin" />
         </div>
       )}
 
       {model.auth.currentUser.t === "loading" && (
-        <div className="w-full h-full flex items-center justify-center">
-          <IconSpinner className="w-12 h-12 animate-spin" />
+        <div className="flex h-full w-full items-center justify-center">
+          <IconSpinner className="h-12 w-12 animate-spin" />
         </div>
       )}
 
@@ -663,7 +663,7 @@ const ViewBottomBar = ({
         t: "room",
         c: { t: "room-list" },
       },
-      label: "Rooms",
+      label: "Spaces",
       icon: <IconGamepad />,
     },
     {
@@ -679,13 +679,13 @@ const ViewBottomBar = ({
   ];
 
   return (
-    <div className="w-full flex flex-col items-center justify-center">
+    <div className="flex w-full flex-col items-center justify-center">
       <RoomClient.ViewCurrentRoomBar
         ctx={ctx}
         model={model.room}
         $send={(c) => $send({ t: "room", c })}
       />
-      <div className="w-full flex items-center justify-center border-t border-neutral-600">
+      <div className="flex w-full items-center justify-center border-t border-neutral-600">
         {items.map((item) => {
           const isSelected = Route.eq(model.routing.route, item.route);
           return (
@@ -693,7 +693,7 @@ const ViewBottomBar = ({
               key={Route.encode(item.route)}
               onClick={() => ctx.$push(item.route)}
               className={cn(
-                "flex items-center justify-center flex-col flex-1 pt-1 pb-2 gap-0.5",
+                "flex flex-1 flex-col items-center justify-center gap-0.5 pb-2 pt-1",
                 isSelected ? "text-blue-500" : "opacity-80"
               )}>
               {item.icon}

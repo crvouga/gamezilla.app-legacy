@@ -1,9 +1,11 @@
-import { IconSpinner } from './icon';
+import { IconSpinner } from "./icon";
 
 export const LoadingScreen = () => {
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <IconSpinner className="animate-spin w-12 h-12" />
+    <div
+      key="loading-screen"
+      className="flex h-screen flex-col items-center justify-center">
+      <IconSpinner key="loading-spinner" className="h-12 w-12 animate-spin" />
     </div>
   );
 };

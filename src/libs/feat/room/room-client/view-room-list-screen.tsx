@@ -34,7 +34,7 @@ export const ViewRoomListScreen = ({
         {!isLoading && rooms.length === 0 && (
           <div className="flex flex-1 flex-col items-center justify-center opacity-60">
             <IconGamepad className="h-12 w-12" />
-            <p className="text-lg">No active rooms</p>
+            <p className="text-lg">No active spaces</p>
           </div>
         )}
 
