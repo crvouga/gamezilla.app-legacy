@@ -362,8 +362,8 @@ export const LoadingPage = (_input: { title?: string }) => {
   return (
     <div
       key="loading-page"
-      className="w-full h-full flex-1 flex items-center justify-center">
-      <IconSpinner className="animate-spin w-12 h-12" />
+      className="flex h-full w-full flex-1 items-center justify-center">
+      <IconSpinner className="h-12 w-12 animate-spin" />
     </div>
   );
 };
@@ -448,14 +448,14 @@ export const ConformationDialog = ({
   return (
     <div
       className={cn(
-        "absolute top-0 left-0 w-full h-full grid place-items-center",
+        "absolute left-0 top-0 grid h-full w-full place-items-center",
         open ? "block" : "hidden"
       )}
       onClick={onClose}>
-      <div className="bg-neutral-900 p-6 w-80 rounded-lg flex flex-col gap-6">
-        <p className="text-xl font-semibold text-center">{title}</p>
+      <div className="flex w-80 flex-col gap-6 rounded-lg bg-neutral-900 p-6">
+        <p className="text-center text-xl font-semibold">{title}</p>
 
-        <div className="flex items-center gap-4 w-full">
+        <div className="flex w-full items-center gap-4">
           <MyButton
             variant="outlined"
             onClick={(event) => {
@@ -556,7 +556,7 @@ export const ActionButton = ({
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        "flex-1 flex flex-col p-1 gap-0.5 text-sm items-center active:opacity-50",
+        "flex flex-1 flex-col items-center gap-0.5 p-1 text-sm active:opacity-50",
         disabled && "opacity-50",
         color === "error" && "text-red-500",
         color === "success" && "text-green-500"

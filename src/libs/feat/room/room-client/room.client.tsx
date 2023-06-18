@@ -7,7 +7,9 @@ import {
   Route,
   RouteRoom,
   ViewCtx,
+  ViewRoomHostChip,
   ViewUsersInRoomList,
+  ViewYouChip,
 } from "@gamezilla/shared/client";
 import { Cmd, RemoteResult, Sub, exhaustive, p } from "@gamezilla/shared/core";
 import {
@@ -697,6 +699,8 @@ const ViewRoomScreen = ({
               ? ctx.profiles[model.previewUserId]?.username ?? "..."
               : "..."}
           </p>
+          {roomCtx.hostId === model.previewUserId && <ViewRoomHostChip />}
+          {roomCtx.currentUserId === model.previewUserId && <ViewYouChip />}
         </button>
 
         <div className="w-full px-4 pb-8">
@@ -740,7 +744,7 @@ const ViewPage = ({
   const game = model.games[ctx.room.roomId];
   return (
     <div className="flex h-full w-full flex-1 flex-col">
-      <nav className="flex w-full items-center px-2 py-1">
+      <nav className="flex h-14 w-full items-center border-b border-neutral-600 px-2 py-1">
         <div className="flex w-20 items-center">
           <ActionButton
             label="Home"

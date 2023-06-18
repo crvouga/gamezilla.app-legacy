@@ -1,6 +1,6 @@
 import { RemoteResult, Result } from "@gamezilla/shared/core";
 import { RoomId, UserId, Username } from "@gamezilla/shared/app";
-import { Room } from "@gamezilla/shared/client";
+import { Profile, Room, RoomViewCtx } from "@gamezilla/shared/client";
 import * as GameServer from "./game.server";
 import * as Game from "./game.shared";
 
@@ -108,6 +108,24 @@ export const toUsersByRoomId = function* ({
   for (const user of toUsers({ model })) {
     if (user.roomId === roomId) {
       yield user;
+    }
+  }
+};
+
+export const toProfilesByRoomId = function* ({
+  ctx,
+}: {
+  ctx: RoomViewCtx;
+}): Generator<Profile> {
+  for (const userId in ctx.room.users) {
+    if (!UserId.is(userId)) {
+      continue;
+    }
+
+    const profile = ctx.profiles[userId];
+
+    if (profile) {
+      yield profile;
     }
   }
 };

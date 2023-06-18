@@ -1,4 +1,8 @@
-import { RoomViewCtx, ViewUsersInRoomList } from "@gamezilla/shared/client";
+import {
+  RoomViewCtx,
+  ViewGameHeaderEmpty,
+  ViewUsersInRoomList,
+} from "@gamezilla/shared/client";
 import { gameNameList, gameNameToString, viewCoverArt } from "../game.shared";
 import { ClientMsg } from "../room.shared";
 
@@ -12,15 +16,16 @@ export const ViewNotInGameScreen = ({
   if (ctx.room.hostId !== ctx.currentUserId) {
     return (
       <>
+        <ViewGameHeaderEmpty />
         <ViewUsersInRoomList ctx={ctx} />
       </>
     );
   }
 
   return (
-    <div className="flex h-full w-full flex-1 flex-col gap-6">
-      <section className="mb-4 flex flex-col gap-4 px-4">
-        <p className="text-3xl font-semibold">Games</p>
+    <div className="flex h-full w-full flex-1 flex-col">
+      <section className="flex flex-col gap-4 p-4">
+        <p className="text-center text-3xl font-semibold">Games</p>
         <div className="grid grid-cols-3 justify-between gap-6">
           {gameNameList.map((gameName) => (
             <div key={gameName}>

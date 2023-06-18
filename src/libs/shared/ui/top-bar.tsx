@@ -8,7 +8,7 @@ export const TopBar = (input: {
   right?: React.ReactNode;
 }) => {
   return (
-    <nav className="grid h-14 w-full grid-cols-5 justify-center">
+    <nav className="grid h-14 w-full grid-cols-5 justify-center border-b border-neutral-600">
       <div className="flex items-center justify-start">{input.left}</div>
       <div className="col-span-3 flex items-center justify-center">
         <p className="text-center text-xl font-semibold">{input.title}</p>

@@ -29,7 +29,7 @@ export const MainMenuScreen = ({
 }) => {
   if (ctx.currentUserId !== ctx.hostId) {
     return (
-      <div className="flex h-full w-full flex-col gap-6">
+      <div className="flex h-full w-full flex-col">
         <ViewGameHeader title={title} renderCoverArt={renderCoverArt} />
         <ViewUsersInRoomList ctx={ctx} />
       </div>
@@ -38,10 +38,10 @@ export const MainMenuScreen = ({
 
   return (
     <div className="flex h-full w-full flex-col overflow-y-hidden">
-      <div className="flex w-full flex-1 flex-col items-center overflow-y-auto px-4">
+      <div className="flex w-full flex-1 flex-col items-center overflow-y-auto">
         <ViewGameHeader title={title} renderCoverArt={renderCoverArt} />
 
-        <div className="mt-6 flex w-full flex-col gap-6">
+        <div className="flex w-full flex-col gap-6 p-4">
           {buttons.map(({ renderIcon, title, description, onClick }, index) => (
             <button
               className="flex w-full items-center gap-6 rounded-lg bg-neutral-800 p-6 active:opacity-70"
@@ -65,7 +65,7 @@ export const MainMenuScreen = ({
         </div>
       </div>
 
-      <div className="flex justify-center p-4">
+      <div className="flex justify-center border-t border-neutral-600 p-4">
         <MyButton onClick={ctx.onQuit} className="w-full gap-4">
           <IconArrowLeftOnRect />
           Quit

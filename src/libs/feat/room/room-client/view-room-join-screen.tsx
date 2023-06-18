@@ -1,6 +1,7 @@
 import {
   RoomViewCtx,
   ViewGameHeader,
+  ViewGameHeaderEmpty,
   ViewUsersInRoomList,
 } from "@gamezilla/shared/client";
 import { MyButton, TopBar, TopBarBackButton } from "@gamezilla/shared/ui";
@@ -30,14 +31,16 @@ export const ViewRoomJoinScreen = ({
         title={host?.username ? `${host.username}'s space` : "..."}
       />
 
-      <div className="flex w-full flex-1 flex-col gap-6 overflow-y-auto">
-        {game && (
+      <div className="flex w-full flex-1 flex-col overflow-y-auto">
+        {game ? (
           <ViewGameHeader
             title={gameNameToString(game.t)}
             renderCoverArt={(props) => (
               <div {...props}>{viewCoverArt(game.t)}</div>
             )}
           />
+        ) : (
+          <ViewGameHeaderEmpty />
         )}
 
         <ViewUsersInRoomList ctx={ctx} />

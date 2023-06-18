@@ -1,5 +1,5 @@
 import { RoomId } from "@gamezilla/shared/app";
-import { ViewCtx } from "@gamezilla/shared/client";
+import { ViewCtx, ViewRoomHostChip } from "@gamezilla/shared/client";
 import {
   IconGamepad,
   IconSpinner,
@@ -27,7 +27,7 @@ export const ViewRoomListScreen = ({
   const isLoading = model.requests.list?.t === "loading";
 
   return (
-    <div className="flex h-full max-h-full w-full flex-1 flex-col overflow-hidden">
+    <div className="flex h-full max-h-full w-full flex-1 flex-col gap-4 overflow-hidden">
       <TopBar title="Spaces" />
 
       <div className="flex w-full flex-1 flex-col">
@@ -69,12 +69,21 @@ export const ViewRoomListScreen = ({
                   if (user.roomId !== room.roomId) {
                     return [];
                   }
+
                   const profile = ctx.profiles[user.userId];
+
                   if (!profile) {
                     return [];
                   }
-                  return [profile];
+
+                  return [
+                    {
+                      username: profile.username,
+                      avatarUrl: profile.avatarUrl,
+                    },
+                  ];
                 });
+
                 const gameName = model.games[room.roomId]?.t;
                 const currentRoomId = model.users[ctx.currentUserId]?.roomId;
                 return (
@@ -116,10 +125,12 @@ export const ViewRoomListScreen = ({
   );
 };
 
+const MAX_AVATAR_COUNT = 2;
 const ViewRoomCard = ({
   gameName,
   onClick,
   isCurrentRoom,
+  users,
   host,
 }: {
   gameName?: GameName;
@@ -157,8 +168,30 @@ const ViewRoomCard = ({
         <MyAvatar src={host.avatarUrl} alt="avatar" className="h-12 w-12" />
 
         <p className="text-xl">{host.username}</p>
-        <span className="rounded-full bg-white/30 p-1 px-2 text-xs">Host</span>
+        <ViewRoomHostChip />
+        {/* <span className="rounded-full bg-white/30 p-1 px-2 text-xs">Host</span> */}
       </div>
+
+      {users.length > 1 && (
+        <div className="flex items-center justify-start gap-2">
+          <div className="flex items-center">
+            {users.slice(0, MAX_AVATAR_COUNT).map((user, index) => (
+              <MyAvatar
+                key={user.username}
+                src={user.avatarUrl}
+                alt="avatar"
+                className={cn("h-8 w-8", index !== 0 && "-ml-2")}
+              />
+            ))}
+            {users.length > MAX_AVATAR_COUNT && (
+              <div className="-ml-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/30">
+                <p className="text-xs">+{users.length - MAX_AVATAR_COUNT}</p>
+              </div>
+            )}
+          </div>
+          <p className="text-lg">{users.length} people</p>
+        </div>
+      )}
     </button>
   );
 };

@@ -30,7 +30,7 @@ const VersusSection = ({
   ctx: ViewCtx;
 }) => {
   return (
-    <div className="flex w-full items-center justify-center py-6">
+    <div className="flex w-full items-center justify-center">
       <Player player={playerOne} ctx={ctx} />
 
       <div className="flex h-full flex-col">
@@ -52,19 +52,24 @@ export const VsUserSetup = {
 const Player = ({ player, ctx }: { ctx: ViewCtx; player: PlayerProp }) => {
   return (
     <div className="flex flex-1 flex-col gap-6 p-4">
-      <div className="grid w-full grid-cols-2 justify-center gap-4">
+      <div
+        className="grid w-full grid-cols-2 justify-center gap-4"
+        onClick={player.onStartPlaying}>
         <div className={cn("flex flex-col items-center justify-center gap-2")}>
           {player.userId ? (
             <MyAvatar
-              className="h-16 w-16"
+              className="h-16 w-16 flex-shrink-0"
               src={ctx.profiles[player.userId]?.avatarUrl}
               alt=""
             />
           ) : (
-            <div className="grid h-16 w-16 place-items-center overflow-hidden rounded-full bg-neutral-600">
+            <div
+              role="button"
+              className="grid h-16 w-16 place-items-center overflow-hidden rounded-full bg-neutral-600">
               <IconQuestionMark className="h-10 w-10 text-neutral-300" />
             </div>
           )}
+
           <p className="text-sm text-secondary">
             {player.userId
               ? ctx.profiles[player.userId]?.username ?? "..."
@@ -81,6 +86,7 @@ const Player = ({ player, ctx }: { ctx: ViewCtx; player: PlayerProp }) => {
       <div className="h-12 w-full">
         {player.userId && player.userId === ctx.currentUserId && (
           <MyButton
+            size="sm"
             className="w-full"
             variant="text"
             color="primary"
@@ -91,6 +97,7 @@ const Player = ({ player, ctx }: { ctx: ViewCtx; player: PlayerProp }) => {
 
         {!player.userId && (
           <MyButton
+            size="sm"
             className="w-full"
             variant="contained"
             color="primary"
@@ -123,7 +130,7 @@ export const VsUserSetupScreen = ({
   canStartGame?: boolean;
 }) => {
   return (
-    <div className="flex h-full w-full flex-col">
+    <div className="flex h-full w-full flex-1 flex-col">
       <ViewGameHeader title={title} renderCoverArt={renderCoverArt} />
 
       <VersusSection playerOne={playerOne} playerTwo={playerTwo} ctx={ctx} />
