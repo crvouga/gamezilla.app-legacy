@@ -49,7 +49,7 @@ export const ViewGameBox = ({
     <div
       className={cn(
         "flex h-full w-full flex-col items-center justify-center overflow-y-auto",
-        isSpectating && "border-4 border-t-0 border-blue-500"
+        isSpectating && "border-8 border-t-0 border-blue-500"
       )}>
       {isSpectating && (
         <div className="flex w-full items-center justify-center bg-blue-500 py-1 text-sm font-semibold text-white">

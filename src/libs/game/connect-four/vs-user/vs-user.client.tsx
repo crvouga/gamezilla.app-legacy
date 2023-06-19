@@ -18,7 +18,7 @@ import {
   IconXMark,
   MyAvatar,
   MyButton,
-  Typography,
+  Text,
 } from "@gamezilla/shared/ui";
 import { PlayerType, toTurn } from "../connect-four/connect-four";
 import {
@@ -247,19 +247,19 @@ export const View = ({
     );
   }
 
-  if (model.type === "game") {
-    const currentUserPlayerType = toPlayerType(ctx.currentUserId, model);
+  const currentUserPlayerType = toPlayerType(ctx.currentUserId, model);
 
-    return (
-      <ViewGameBox isSpectating={currentUserPlayerType === null}>
-        <div className="flex-1 flex flex-col items-center justify-center w-full gap-2">
-          <div className="w-full flex items-center px-2 gap-2">
-            <PlayerSlot playerType="PlayerOne" model={model} ctx={ctx} />
-            <PlayerSlot playerType="PlayerTwo" model={model} ctx={ctx} />
-          </div>
+  return (
+    <ViewGameBox isSpectating={currentUserPlayerType === null}>
+      <div className="flex w-full flex-1 flex-col items-center justify-center gap-2">
+        <div className="flex w-full items-center gap-2 px-2">
+          <PlayerSlot playerType="PlayerOne" model={model} ctx={ctx} />
+          <PlayerSlot playerType="PlayerTwo" model={model} ctx={ctx} />
+        </div>
 
-          <Feedback ctx={ctx} model={model} />
+        <Feedback ctx={ctx} model={model} />
 
+        <div className="relative w-full">
           <ViewColumns
             columns={model.columns}
             onClick={(columnIndex) =>
@@ -268,7 +268,10 @@ export const View = ({
             onHover={(columnIndex) =>
               $send({ t: "hovered-over-columns", columnIndex })
             }
-            disabled={toTurn(model.columns) !== currentUserPlayerType}
+            disabled={
+              toTurn(model.columns) !== currentUserPlayerType ||
+              model.type === "game-over"
+            }
             ghost={
               currentUserPlayerType !== null && model.ghostIndex !== "none"
                 ? {
@@ -278,66 +281,58 @@ export const View = ({
                 : undefined
             }
           />
-        </div>
-
-        <ViewBottomButtonBar
-          actions={[
-            {
-              icon: <IconFlag />,
-              label: "Resign",
-              onClick: () => {
-                $send({ t: "clicked-resign", userId: ctx.currentUserId });
-              },
-            },
-          ]}
-        />
-
-        <ConformationDialog
-          headerIcon={<IconFlag className="w-10 h-10" />}
-          title="Resign from game?"
-          onCancel={() => $send({ t: "close-modal" })}
-          onClose={() => $send({ t: "close-modal" })}
-          confirmTitle="Resign"
-          onConfirm={() => $send({ t: "resign" })}
-          open={model.openedModal === "ConfirmResign"}
-        />
-      </ViewGameBox>
-    );
-  }
-
-  return (
-    <div className="flex flex-col items-center justify-center flex-1 w-full">
-      <div className="flex flex-col items-center justify-center flex-1 w-full gap-2">
-        <div className="flex items-center justify-center w-full px-2 gap-2">
-          <PlayerSlot playerType="PlayerOne" model={model} ctx={ctx} />
-          <PlayerSlot playerType="PlayerTwo" model={model} ctx={ctx} />
-        </div>
-
-        <Feedback ctx={ctx} model={model} />
-
-        <div className="w-full relative">
-          <ViewColumns columns={model.columns} disabled />
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50">
-            <ViewGameOverMessage $send={$send} ctx={ctx} model={model} />
-          </div>
+          {model.type === "game-over" && (
+            <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center bg-black/50">
+              <ViewGameOverMessage $send={$send} ctx={ctx} model={model} />
+            </div>
+          )}
         </div>
       </div>
 
       <ViewBottomButtonBar
         actions={[
-          {
-            icon: <IconArrowLeftOnRect />,
-            label: "Exit",
-            onClick: () => $send({ t: "new-game" }),
-          },
-          {
-            icon: <IconArrowRotateLeft />,
-            label: "Rematch",
-            onClick: () => $send({ t: "rematch-request" }),
-          },
+          ...(model.type === "game"
+            ? [
+                {
+                  icon: <IconFlag />,
+                  label: "Resign",
+                  onClick: () => {
+                    $send({ t: "clicked-resign", userId: ctx.currentUserId });
+                  },
+                },
+              ]
+            : []),
+          ...(model.type === "game-over" && ctx.currentUserId === ctx.hostId
+            ? [
+                {
+                  icon: <IconArrowLeftOnRect />,
+                  label: "Exit",
+                  onClick: () => {
+                    $send({ t: "new-game" });
+                  },
+                },
+                {
+                  icon: <IconArrowRotateLeft />,
+                  label: "Rematch",
+                  onClick: () => {
+                    $send({ t: "rematch-request" });
+                  },
+                },
+              ]
+            : []),
         ]}
       />
-    </div>
+
+      <ConformationDialog
+        headerIcon={<IconFlag className="h-10 w-10" />}
+        title="Resign from game?"
+        onCancel={() => $send({ t: "close-modal" })}
+        onClose={() => $send({ t: "close-modal" })}
+        confirmTitle="Resign"
+        onConfirm={() => $send({ t: "resign" })}
+        open={model.openedModal === "ConfirmResign"}
+      />
+    </ViewGameBox>
   );
 };
 
@@ -358,8 +353,8 @@ const ViewGameOverMessage = ({
   ) {
     return (
       <>
-        <p className="text-xl mb-4 text-center">Waiting for response</p>
-        <IconSpinner className="animate-spin mb-4 w-8 h-8" />
+        <p className="mb-4 text-center text-xl">Waiting for response</p>
+        <IconSpinner className="mb-4 h-8 w-8 animate-spin" />
         <MyButton
           variant="contained"
           onClick={() => $send({ t: "rematch-cancel" })}>
@@ -376,10 +371,10 @@ const ViewGameOverMessage = ({
   ) {
     return (
       <>
-        <Typography align="center" sx={{ fontSize: "3rem", marginBottom: 4 }}>
+        <Text variant="h3" className="text-center">
           Rematch?
-        </Typography>
-        <div className="flex items-center justify-center gap-4 w-full">
+        </Text>
+        <div className="flex w-full items-center justify-center gap-4">
           <MyButton
             variant="contained"
             onClick={() =>
@@ -416,7 +411,7 @@ const ViewGameOverMessage = ({
     if (currentPlayerType === null) {
       return (
         <>
-          <div className="flex items-center w-full justify-center">
+          <div className="flex w-full items-center justify-center">
             <PlayerIcon playerType={winner} />
             <MyAvatar
               alt=""
@@ -430,9 +425,9 @@ const ViewGameOverMessage = ({
 
     return (
       <>
-        <p className="text-xl">
+        <Text variant="h2">
           {currentPlayerType === winner ? "You Won" : "You Lost"}
-        </p>
+        </Text>
         <p>by resignation</p>
       </>
     );
@@ -443,23 +438,23 @@ const ViewGameOverMessage = ({
 
     if (currentPlayerType === null) {
       return (
-        <>
-          <div className="w-full flex items-center justify-center gap-2">
-            <PlayerIcon playerType={winner} />
+        <div className="flex w-full flex-col items-center justify-center gap-2">
+          <div className="flex w-full items-center justify-center gap-2">
+            <PlayerIcon playerType={winner} className="h-20 w-20" />
             <MyAvatar
-              alt=""
+              className="h-20 w-20"
               src={ctx.profiles[model.players[winner]]?.avatarUrl}
             />
           </div>
-          <p>Winner</p>
-        </>
+          <Text variant="h2">Winner</Text>
+        </div>
       );
     }
 
     return (
-      <Typography sx={{ fontSize: 64 }}>
+      <Text variant="h2">
         {currentPlayerType === winner ? "You Won" : "You Lost"}
-      </Typography>
+      </Text>
     );
   }
 
@@ -475,7 +470,7 @@ const Feedback = ({
 }) => {
   if (model.type === "game-over") {
     return (
-      <p className="text-secondary flex items-center justify-center">
+      <p className="flex items-center justify-center text-secondary">
         Game Over
       </p>
     );
@@ -487,8 +482,8 @@ const Feedback = ({
 
   if (currentUserPlayerType !== turn) {
     return (
-      <p className="text-secondary text-center flex items-center justify-center gap-2">
-        <PlayerIcon className="w-4 h-4" playerType={turn} />
+      <p className="flex items-center justify-center gap-2 text-center text-secondary">
+        <PlayerIcon className="h-4 w-4" playerType={turn} />
         Turn
       </p>
     );
@@ -496,15 +491,15 @@ const Feedback = ({
 
   if (model.moveCountDown <= 5) {
     return (
-      <p className="text-center flex items-center justify-center gap-2">
+      <p className="flex items-center justify-center gap-2 text-center">
         Move in {model.moveCountDown}...
       </p>
     );
   }
 
   return (
-    <p className="text-center flex items-center justify-center gap-2">
-      <PlayerIcon className="w-4 h-4" playerType={turn} />
+    <p className="flex items-center justify-center gap-2 text-center">
+      <PlayerIcon className="h-4 w-4" playerType={turn} />
       Your Turn
     </p>
   );
@@ -520,10 +515,10 @@ const PlayerSlot = ({
   ctx: RoomViewCtx;
 }) => {
   return (
-    <div className="flex items-center gap-2 flex-1 p-2 rounded border border-neutral-600 overflow-hidden">
-      <PlayerIcon className="w-8 h-8" playerType={playerType} />
+    <div className="flex flex-1 items-center gap-2 overflow-hidden rounded border border-neutral-600 p-2">
+      <PlayerIcon className="h-8 w-8" playerType={playerType} />
       <MyAvatar
-        className="w-8 h-8"
+        className="h-8 w-8"
         alt=""
         src={ctx.profiles[model.players[playerType]]?.avatarUrl}
       />
