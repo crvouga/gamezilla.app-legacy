@@ -124,10 +124,10 @@ export const View = ({
   $send: (msg: Msg) => void;
 }) => {
   return (
-    <div className="fixed top-0 left-0 w-screen h-screen flex flex-col items-center p-4 pointer-events-none gap-4">
+    <div className="pointer-events-none fixed left-0 top-0 flex h-screen w-screen flex-col items-center gap-4 p-4">
       {model.toasts.map((toast) => (
         <div
-          className="bg-neutral-800 border-neutral-600 border w-full max-w-md text-lg text-white p-3 shadow-2xl z-40 rounded-lg pointer-events-auto flex items-center justify-between overflow-hidden whitespace-nowrap break-words"
+          className="pointer-events-auto z-40 flex w-full max-w-md items-center justify-between overflow-hidden whitespace-nowrap break-words rounded-lg border border-neutral-700 bg-neutral-800 p-3 text-lg text-white shadow-2xl"
           key={toast.toastId}>
           {toast.message}
           <button

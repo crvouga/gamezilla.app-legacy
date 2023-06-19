@@ -45,11 +45,11 @@ export const MainMenuScreen = ({
         <div className="flex w-full flex-col gap-6 p-4">
           {buttons.map(({ renderIcon, title, description, onClick }, index) => (
             <button
-              className="flex w-full items-center gap-4 rounded-lg bg-neutral-800 p-6 active:opacity-70 sm:gap-6"
+              className="flex w-full items-center  gap-6 rounded-lg bg-neutral-800 p-6 active:opacity-70"
               onClick={onClick}
               key={`${index} ${title}`}>
               {renderIcon({
-                className: "aspect-square w-10 h-10 sm:w-12 sm:h-12",
+                className: "aspect-square w-12 h-12",
               })}
               <div className="flex-1 text-left">
                 <Text variant="h5">{title}</Text>
@@ -69,7 +69,7 @@ export const MainMenuScreen = ({
         </div>
       </div>
 
-      <div className="flex justify-center border-t border-neutral-600 p-4">
+      <div className="flex justify-center border-t border-neutral-700 p-4">
         <MyButton onClick={ctx.onQuit} className="w-full gap-4">
           <IconArrowLeftOnRect />
           Quit

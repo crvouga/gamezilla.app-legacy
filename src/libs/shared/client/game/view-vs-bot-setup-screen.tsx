@@ -2,6 +2,7 @@ import { UserId } from "@gamezilla/shared/app";
 import {
   IconArrowLeftOnRect,
   IconRobot,
+  MyAvatar,
   MyButton,
   VDom,
 } from "@gamezilla/shared/ui";
@@ -19,6 +20,7 @@ export const VsBotSetupScreen = ({
   ctx: RoomViewCtx;
   botName: string;
   userId: UserId | null;
+
   playerOne: PlayerProp;
   playerTwo: PlayerProp;
   title: string;
@@ -29,19 +31,12 @@ export const VsBotSetupScreen = ({
     <div className="flex h-full w-full flex-1 flex-col">
       <ViewGameHeader renderCoverArt={renderCoverArt} title={title} />
 
-      <div className="flex w-full items-center">
-        <div className="flex flex-1 items-center justify-center p-4">
-          {playerTwo.type === "bot" && <IconRobot className="h-16 w-16" />}
-          {playerOne.renderIcon({ className: "w-16 h-16" })}
-        </div>
-        <div>
+      <div className=" grid w-full grid-cols-7">
+        <PlayerIcons player={playerOne} ctx={ctx} />
+        <div className="col-span-1">
           <p className="text-4xl font-bold">vs</p>
         </div>
-        <div className="flex flex-1 items-center justify-center p-4">
-          {playerTwo.type === "bot" && <IconRobot className="h-16 w-16" />}
-
-          {playerTwo.renderIcon({ className: "w-16 h-16" })}
-        </div>
+        <PlayerIcons player={playerTwo} ctx={ctx} />
       </div>
 
       <div className="flex flex-1 items-center justify-center"></div>
@@ -70,6 +65,29 @@ type PlayerProp = BasePlayerProp &
       }
     | {
         type: "bot";
-        name: string;
+        label: string;
       }
   );
+
+const PlayerIcons = ({
+  player,
+  ctx,
+}: {
+  ctx: RoomViewCtx;
+  player: PlayerProp;
+}) => {
+  return (
+    <div className="col-span-3 grid">
+      {player.type === "bot" ? (
+        <IconRobot className="h-16 w-16" />
+      ) : (
+        <MyAvatar
+          className="h-16 w-16"
+          src={ctx.profiles[player.userId]?.avatarUrl}
+        />
+      )}
+
+      {player.renderIcon({ className: "w-16 h-16" })}
+    </div>
+  );
+};

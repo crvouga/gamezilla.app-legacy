@@ -9,12 +9,12 @@ export const ViewGameHeader = ({
 }) => {
   return (
     <section className="flex min-h-fit w-full">
-      <div className="xs:gap-4 xs:h-48 flex h-36 w-full flex-col items-center justify-center gap-2">
-        <Text variant="h3">{title}</Text>
+      <div className="xs:gap-4 flex h-48 w-full flex-col items-center justify-center gap-3">
+        <p className="text-3xl font-bold">{title}</p>
 
         {renderCoverArt({
           key: title,
-          className: "sm:w-24 sm:h-24 w-20 h-20 overflow-hidden rounded-lg",
+          className: "w-24 h-24 overflow-hidden rounded-lg",
         })}
       </div>
     </section>
@@ -24,9 +24,9 @@ export const ViewGameHeader = ({
 export const ViewGameHeaderEmpty = () => {
   return (
     <section className="flex min-h-fit w-full">
-      <div className="flex h-36 w-full flex-col items-center justify-center sm:h-48">
+      <div className="flex h-48 w-full flex-col items-center justify-center">
         <IconGamepad className="h-12 w-12 text-secondary" />
-        <p className="text-xs text-secondary">Host is selecting game</p>
+        <p className="text-secondary">No game selected</p>
       </div>
     </section>
   );

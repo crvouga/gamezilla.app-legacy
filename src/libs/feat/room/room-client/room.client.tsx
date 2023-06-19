@@ -771,7 +771,7 @@ const ViewTopBar = ({
 }) => {
   const peopleCount = Object.values(ctx.room.users).length;
   return (
-    <nav className="flex h-14 w-full items-center border-b border-neutral-600 px-2 py-1">
+    <nav className="flex h-14 w-full items-center border-b border-neutral-700 px-2 py-1">
       <div className="flex w-20 items-center">
         <ActionButton
           label="Home"

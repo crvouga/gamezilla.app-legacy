@@ -26,7 +26,7 @@ export const MyDrawer = ({
         onClick={onClose}></div>
       <div
         className={cn(
-          "h-auto w-full border border-neutral-600 bg-black",
+          "h-auto w-full border border-neutral-700 bg-black",
           open ? "translate-x-0" : "-translate-x-full"
         )}>
         {children}

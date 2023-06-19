@@ -34,7 +34,7 @@ const VersusSection = ({
         <PlayerIcons player={playerOne} ctx={ctx} />
 
         <div className="col-span-1">
-          <p className=" flex h-full flex-1 flex-col items-center justify-center text-2xl font-black sm:text-3xl">
+          <p className=" flex h-full flex-1 flex-col items-center justify-center  text-3xl font-black">
             VS
           </p>
         </div>
@@ -110,19 +110,19 @@ const PlayerIcons = ({ player, ctx }: { ctx: ViewCtx; player: PlayerProp }) => {
       }>
       {player.userId ? (
         <MyAvatar
-          className="h-12 w-12 sm:h-16 sm:w-16"
+          className="h-16 w-16"
           src={ctx.profiles[player.userId]?.avatarUrl}
           alt=""
         />
       ) : (
         <div
           role="button"
-          className="grid h-12 w-12 place-items-center overflow-hidden rounded-full bg-neutral-600 sm:h-16 sm:w-16">
-          <IconQuestionMark className="h-6 w-6 text-neutral-300 sm:h-10 sm:w-10" />
+          className="grid h-16 w-16 place-items-center overflow-hidden rounded-full bg-neutral-600">
+          <IconQuestionMark className="h-10 w-10 text-neutral-300" />
         </div>
       )}
 
-      {player.renderIcon({ className: "h-12 w-12 sm:h-16 sm:w-16" })}
+      {player.renderIcon({ className: "h-16 w-16" })}
     </div>
   );
 };
@@ -175,7 +175,7 @@ export const VsUserSetupScreen = ({
       </div>
 
       {ctx.currentUserId === ctx.hostId && (
-        <div className="flex w-full items-center gap-4 border-t border-neutral-600 p-4">
+        <div className="flex w-full items-center gap-4 border-t border-neutral-700 p-4">
           <MyButton
             variant="contained"
             color="default"

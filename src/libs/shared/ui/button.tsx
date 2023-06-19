@@ -43,9 +43,9 @@ export const MyButton = ({
         combo === "outlined-default" &&
           "rounded-md border border-neutral-700 text-inherit text-neutral-300",
         !disabled && combo === "text-primary" && "text-blue-500",
-        size === "lg" && "px-2 py-1.5 text-lg sm:px-4 sm:py-3 sm:text-xl",
-        size === "md" && "text-md px-2 py-1 sm:px-4 sm:py-2 sm:text-lg",
-        size === "sm" && "sm:text-md px-2 py-0.5 text-sm sm:px-4 sm:py-1",
+        size === "lg" && "px-4 py-3 text-xl",
+        size === "md" && "px-4 py-2 text-lg",
+        size === "sm" && "text-md  px-4 py-1",
         disabled && "cursor-not-allowed bg-neutral-600 opacity-50",
         !disabled && " active:opacity-60"
       )}

@@ -242,14 +242,14 @@ export const View = ({
         ctx={ctx}
         botName="Computer"
         playerOne={{
-          name: "Computer",
+          label: "Bot",
           type: "bot",
           renderIcon: (props) => (
             <PlayerIcon playerType="PlayerOne" {...props} />
           ),
         }}
         playerTwo={{
-          name: "Computer",
+          label: "Computer",
           type: "bot",
           renderIcon: (props) => (
             <PlayerIcon playerType="PlayerTwo" {...props} />
@@ -261,44 +261,6 @@ export const View = ({
         userId={ctx.currentUserId}
       />
     );
-    // return (
-    //   <ViewVsBotSetupScreen<BotLevel, PlayerType>
-    //     coverArt={<ViewCoverArt />}
-    //     title="Connect Four"
-    //     subtitle="Play Computer"
-    //     ctx={ctx}
-    //     playerId={model.player === "none" ? null : model.player}
-    //     leftPlayerType="PlayerOne"
-    //     onCancel={goBack}
-    //     onStartGame={() => $send({ t: "start-game" })}
-    //     onStartPlaying={() => $send({ t: "start-playing" })}
-    //     onStopPlaying={() => $send({ t: "stop-playing" })}
-    //     botLevel={{
-    //       values: Object.values(botLevel),
-    //       selected: model.botLevel,
-    //       onInput: (level) => $send({ t: "input-bot-level", botLevel: level }),
-    //       toName: (level) => level,
-    //       render: ({ botLevel }) => <div>{botLevel}</div>,
-    //     }}
-    //     player={{
-    //       values: Object.values(playerTypes),
-    //       selected: model.userPlayerType,
-    //       onInput: (playerType) =>
-    //         $send({ t: "input-player-type", playerType }),
-    //       icon: ({ playerType }) => {
-    //         return <PlayerIcon playerType={playerType} />;
-    //       },
-    //       toName: (playerType) =>
-    //         playerType === "PlayerOne" ? "Red" : "Yellow",
-    //       render: ({ playerType }) => (
-    //         <div className="flex items-center justify-center gap-2">
-    //           <PlayerIcon playerType={playerType} />
-    //           <div>{playerType === "PlayerOne" ? "Red" : "Yellow"}</div>
-    //         </div>
-    //       ),
-    //     }}
-    //   />
-    // );
   }
 
   const status = toStatus(model.columns);

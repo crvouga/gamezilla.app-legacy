@@ -685,7 +685,7 @@ const ViewBottomBar = ({
         model={model.room}
         $send={(c) => $send({ t: "room", c })}
       />
-      <div className="flex w-full items-center justify-center border-t border-neutral-600">
+      <div className="flex w-full items-center justify-center border-t border-neutral-700">
         {items.map((item) => {
           const isSelected = Route.eq(model.routing.route, item.route);
           return (
