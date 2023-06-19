@@ -1,5 +1,10 @@
 import { UserId } from "@gamezilla/shared/app";
-import { RoomCtx, ViewCtx } from "@gamezilla/shared/client";
+import {
+  RoomCtx,
+  RoomViewCtx,
+  ViewCtx,
+  VsUserSetupScreen,
+} from "@gamezilla/shared/client";
 import { Cmd } from "@gamezilla/shared/core";
 import * as UI from "@gamezilla/shared/ui";
 import {
@@ -12,10 +17,10 @@ import {
 import {
   PlayerTypeIcon,
   ViewBoard,
+  ViewCoverArt,
   ViewSlot,
   gameTheme,
 } from "../tic-tic-toe/tic-tac-toe-ui";
-import { VersusHeader } from "../views";
 import * as Round from "./vs-user-round";
 import {
   ClientModel,
@@ -26,11 +31,7 @@ import {
   ServerModel,
   ToClient,
   ToServer,
-  allBestOutOf,
-  allMoveTimeLimit,
-  bestOutOfToString,
   initSharedModel,
-  moveTimeLimitToString,
   rematchAsk,
   rematchAskToString,
   toWinCount,
@@ -186,104 +187,65 @@ export const View = ({
   $send,
   onCloseGame,
 }: {
-  ctx: ViewCtx;
+  ctx: RoomViewCtx;
   model: Model;
   $send: (msg: Msg) => void;
   onCloseGame: () => void;
 }) => {
   if (model.type === "setup") {
     return (
-      <UI.FillBox>
-        <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
-          <VersusHeader
-            ctx={ctx}
-            X={
-              model.X === "none"
-                ? { type: "User" }
-                : { type: "User", userId: model.X }
-            }
-            O={
-              model.O === "none"
-                ? { type: "User" }
-                : { type: "User", userId: model.O }
-            }
-          />
-
-          <UI.Box sx={{ padding: 2 }}>
-            <UI.Typography color="text.secondary" sx={{ marginBottom: 2 }}>
-              Players
-            </UI.Typography>
-
-            <ViewPlayerSetupSlot
-              playerType="X"
-              ctx={ctx}
-              userId={model.X}
-              $send={$send}
-              sx={{ marginBottom: 3 }}
-            />
-
-            <ViewPlayerSetupSlot
-              playerType="O"
-              ctx={ctx}
-              userId={model.O}
-              $send={$send}
-              sx={{ marginBottom: 1 }}
-            />
-          </UI.Box>
-
-          <UI.Divider />
-
-          <UI.Box sx={{ padding: 2 }}>
-            <UI.Typography color="text.secondary" sx={{ marginBottom: 1 }}>
-              Best Out Of
-            </UI.Typography>
-
-            <UI.ToggleButtonGroup fullWidth value={model.maxRoundCount}>
-              {allBestOutOf.map((bestOutOf) => (
-                <UI.ToggleButton
-                  key={bestOutOf}
-                  value={bestOutOf}
-                  onClick={() =>
-                    $send([
-                      "InputBestOutOf",
-                      { userId: ctx.currentUserId, bestOutOf },
-                    ])
-                  }>
-                  {bestOutOfToString(bestOutOf)}
-                </UI.ToggleButton>
-              ))}
-            </UI.ToggleButtonGroup>
-
-            <UI.Typography
-              color="text.secondary"
-              sx={{ marginTop: 3, marginBottom: 1 }}>
-              Move Time Limit
-            </UI.Typography>
-
-            <UI.ToggleButtonGroup fullWidth value={model.moveTimeLimit}>
-              {allMoveTimeLimit.map((moveTimeLimit) => (
-                <UI.ToggleButton key={moveTimeLimit} value={moveTimeLimit}>
-                  {moveTimeLimitToString(moveTimeLimit)}
-                </UI.ToggleButton>
-              ))}
-            </UI.ToggleButtonGroup>
-          </UI.Box>
-        </UI.Box>
-
-        <UI.Box sx={{ padding: 2, display: "flex", gap: 2 }}>
-          <UI.Button variant="outlined" fullWidth onClick={onCloseGame}>
-            Close
-          </UI.Button>
-          <UI.Button
-            variant="contained"
-            fullWidth
-            onClick={() =>
-              $send(["start-game", { userId: ctx.currentUserId }])
-            }>
-            Start
-          </UI.Button>
-        </UI.Box>
-      </UI.FillBox>
+      <VsUserSetupScreen
+        ctx={ctx}
+        onQuit={onCloseGame}
+        onStartGame={() => $send(["start-game", { userId: ctx.currentUserId }])}
+        renderCoverArt={(props) => {
+          return (
+            <div {...props}>
+              <ViewCoverArt />
+            </div>
+          );
+        }}
+        title={"Tic-Tac-Toe"}
+        canStartGame={model.X !== "none" && model.O !== "none"}
+        playerOne={{
+          label: "Cross",
+          userId: model.X === "none" ? null : model.X,
+          renderIcon: (props) => {
+            return <PlayerTypeIcon playerType="X" {...props} />;
+          },
+          onStartPlaying: () => {
+            $send([
+              "InputPlayer",
+              { playerType: "X", userId: ctx.currentUserId },
+            ]);
+          },
+          onStopPlaying: () => {
+            $send([
+              "InputPlayer",
+              { playerType: "X", userId: ctx.currentUserId },
+            ]);
+          },
+        }}
+        playerTwo={{
+          label: "Naught",
+          userId: model.O === "none" ? null : model.O,
+          renderIcon: (props) => {
+            return <PlayerTypeIcon playerType="O" {...props} />;
+          },
+          onStartPlaying: () => {
+            $send([
+              "InputPlayer",
+              { playerType: "O", userId: ctx.currentUserId },
+            ]);
+          },
+          onStopPlaying: () => {
+            $send([
+              "InputPlayer",
+              { playerType: "O", userId: ctx.currentUserId },
+            ]);
+          },
+        }}
+      />
     );
   }
 
