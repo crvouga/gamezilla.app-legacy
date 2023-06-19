@@ -1,10 +1,9 @@
 import {
   AppMsg,
   Ctx,
+  MainMenuScreen,
   RoomCtx,
   RoomViewCtx,
-  ViewCtx,
-  MainMenuScreen,
   mainMenuButtons,
 } from "@gamezilla/shared/client";
 import { Cmd, Sub } from "@gamezilla/shared/core";
@@ -209,12 +208,10 @@ export const View = ({
   ctx,
   model,
   $send,
-  gameRoomCtx,
 }: {
-  ctx: ViewCtx;
+  ctx: RoomViewCtx;
   model: Model;
   $send: (msg: Msg) => void;
-  gameRoomCtx: RoomViewCtx;
 }) => {
   const onQuit = () => $send({ t: "input-mode", mode: "none" });
 
@@ -222,7 +219,7 @@ export const View = ({
     return (
       <MainMenuScreen
         title="Tic-Tac-Toe"
-        ctx={gameRoomCtx}
+        ctx={ctx}
         renderCoverArt={(props) => <ViewCoverArt {...props} />}
         buttons={[
           mainMenuButtons.playFriend({

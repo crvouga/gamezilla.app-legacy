@@ -420,7 +420,6 @@ export const View = ({
     case "tic-tac-toe": {
       return (
         <TicTacToeClient.View
-          gameRoomCtx={ctx}
           ctx={ctx}
           model={model.c}
           $send={(c) => $send({ t: "tic-tac-toe", c })}

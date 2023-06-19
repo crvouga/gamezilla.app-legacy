@@ -1,4 +1,3 @@
-import { UserId } from "@gamezilla/shared/app";
 import {
   RoomCtx,
   RoomViewCtx,
@@ -257,8 +256,8 @@ export const View = ({
       <UI.FillBox>
         <UI.Box sx={{ flex: 1, overflowY: "scroll" }}>
           <UI.Box sx={{ display: "flex", gap: 2, paddingX: 1, paddingY: 1 }}>
-            <ViewPlayerGameSlot playerType="X" ctx={ctx} model={model} />
-            <ViewPlayerGameSlot playerType="O" ctx={ctx} model={model} />
+            {/* <ViewPlayerGameSlot playerType="X" ctx={ctx} model={model} />
+            <ViewPlayerGameSlot playerType="O" ctx={ctx} model={model} /> */}
           </UI.Box>
 
           <UI.Box sx={{ width: "100%", position: "relative" }}>
@@ -309,8 +308,8 @@ export const View = ({
   return (
     <UI.FillBox>
       <UI.Box sx={{ display: "flex", gap: 2, paddingX: 1, paddingY: 1 }}>
-        <ViewPlayerGameSlot playerType="X" ctx={ctx} model={model} />
-        <ViewPlayerGameSlot playerType="O" ctx={ctx} model={model} />
+        {/* <ViewPlayerGameSlot playerType="X" ctx={ctx} model={model} />
+        <ViewPlayerGameSlot playerType="O" ctx={ctx} model={model} /> */}
       </UI.Box>
 
       <UI.Box sx={{ width: "100%", position: "relative" }}>
@@ -969,162 +968,6 @@ export const toGameText = ({ model }: { model: Model }): string => {
   }
 };
 
-const ViewPlayerSetupSlot = ({
-  ctx,
-  userId,
-  playerType,
-  $send,
-  sx,
-}: {
-  ctx: ViewCtx;
-  userId: UserId | "none";
-  playerType: PlayerType;
-  $send: (msg: Msg) => void;
-  sx?: UI.Sx;
-}) => {
-  if (userId === "none") {
-    return (
-      <UI.Box
-        sx={{ display: "flex", width: "100%", alignItems: "center", ...sx }}>
-        <PlayerTypeIcon playerType={playerType} />
-        <UI.Button
-          sx={{ flex: 1 }}
-          fullWidth
-          variant="contained"
-          onClick={() =>
-            $send(["InputPlayer", { userId: ctx.currentUserId, playerType }])
-          }>
-          Start Playing
-        </UI.Button>
-      </UI.Box>
-    );
-  }
-
-  return (
-    <UI.Box
-      sx={{ display: "flex", alignItems: "center", width: "100%", ...sx }}>
-      <PlayerTypeIcon playerType={playerType} />
-      <UI.Avatar
-        src={ctx.profiles[userId]?.avatarUrl}
-        sx={{ marginRight: 1 }}
-      />
-      <UI.Box sx={{ flex: 1, overflow: "hidden" }}>
-        <UI.Typography noWrap sx={{ textOverflow: "ellipsis" }}>
-          {ctx.profiles[userId]?.username ?? "..."}
-        </UI.Typography>
-      </UI.Box>
-      {ctx.currentUserId === userId && (
-        <UI.Button
-          onClick={() =>
-            $send(["stop-playing", { userId: ctx.currentUserId }])
-          }>
-          Stop Playing
-        </UI.Button>
-      )}
-    </UI.Box>
-  );
-};
-
-const ViewPlayerGameSlot = ({
-  ctx,
-  model,
-  playerType,
-}: {
-  ctx: ViewCtx;
-  model: GameModel | GameOverModel;
-  playerType: PlayerType;
-}) => {
-  const userId = model[playerType];
-  const profile = ctx.profiles[userId];
-  const uiTheme = UI.useTheme();
-
-  const round = Round.toCurrent(model.round);
-
-  const isTurn =
-    model.type === "game" &&
-    round.type === "RoundStarted" &&
-    toTurn(round.board) === playerType;
-
-  const iconSize = {
-    width: 20,
-    height: 20,
-  };
-
-  const timeLeft = round.type === "RoundStarted" ? round.moveCountDown : 0;
-
-  // const progress = isTurn ? rescale({
-  //   value: timeLeft,
-  //   from: [0, model.moveTimeLimit],
-  //   to: [0, 100]
-  // }) : 0
-
-  // const progressColor = !isTurn ? 'inherit' : timeLeft == 2 || timeLeft === 3 ? 'warning' : timeLeft === 1 ? 'error' : "inherit"
-
-  return (
-    <UI.Paper
-      sx={{ flex: 1, overflow: "hidden", height: "100%", width: "100%" }}
-      variant="outlined">
-      <UI.Box
-        sx={{
-          flex: 1,
-          display: "flex",
-          alignItems: "center",
-          overflow: "hidden",
-          borderBottom: `solid 3.5px ${
-            isTurn ? gameTheme.background : uiTheme.palette.divider
-          }`,
-        }}>
-        <UI.Box
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            padding: 1,
-            flex: 2,
-            overflow: "hidden",
-          }}>
-          <UI.SvgIcon
-            sx={{ display: "block", marginRight: 1, ...iconSize }}
-            viewBox="-1 -1 2 2">
-            <ViewSlot
-              strokeWidth={0.3}
-              color={uiTheme.palette.text.primary}
-              slot={playerType}
-              cx={0}
-              cy={0}
-              r={0.8}
-            />
-          </UI.SvgIcon>
-          <UI.Avatar
-            src={profile?.avatarUrl}
-            sx={{ marginRight: 1, ...iconSize }}
-          />
-          <UI.Typography noWrap sx={{ flex: 1 }}>
-            {profile?.username ?? "..."}
-          </UI.Typography>
-        </UI.Box>
-        <UI.Box>
-          {isTurn && (
-            <UI.Typography
-              variant="h6"
-              sx={{ paddingRight: 1 }}
-              color={
-                timeLeft === 3
-                  ? "warning.light"
-                  : timeLeft === 2
-                  ? "warning.dark"
-                  : timeLeft < 2
-                  ? "error.main"
-                  : "text.primary"
-              }>
-              {timeLeft}
-            </UI.Typography>
-          )}
-        </UI.Box>
-      </UI.Box>
-      {/* {isTurn ? <UI.LinearProgress key="isTurn" color={progressColor} variant="determinate" value={progress} /> : <UI.LinearProgress key="isNotTurn" color={"inherit"} variant="determinate" value={0} />} */}
-    </UI.Paper>
-  );
-};
 //
 //
 //
