@@ -9,7 +9,7 @@ export const ViewGameHeader = ({
 }) => {
   return (
     <section className="flex min-h-fit w-full">
-      <div className="xs:gap-4 flex h-48 w-full flex-col items-center justify-center gap-3">
+      <div className="flex h-48 w-full flex-col items-center justify-center gap-4">
         <p className="text-3xl font-bold">{title}</p>
 
         {renderCoverArt({

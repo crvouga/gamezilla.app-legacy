@@ -110,19 +110,19 @@ const PlayerIcons = ({ player, ctx }: { ctx: ViewCtx; player: PlayerProp }) => {
       }>
       {player.userId ? (
         <MyAvatar
-          className="h-16 w-16"
+          className="h-14 w-14"
           src={ctx.profiles[player.userId]?.avatarUrl}
           alt=""
         />
       ) : (
         <div
           role="button"
-          className="grid h-16 w-16 place-items-center overflow-hidden rounded-full bg-neutral-600">
+          className="grid h-14 w-14 place-items-center overflow-hidden rounded-full bg-neutral-600">
           <IconQuestionMark className="h-10 w-10 text-neutral-300" />
         </div>
       )}
 
-      {player.renderIcon({ className: "h-16 w-16" })}
+      {player.renderIcon({ className: "h-14 w-14" })}
     </div>
   );
 };
@@ -179,7 +179,7 @@ export const VsUserSetupScreen = ({
           <MyButton
             variant="contained"
             color="default"
-            className="flex-1 gap-2"
+            className="flex-1"
             onClick={onQuit}>
             <IconArrowLeftOnRect />
             Quit

@@ -70,7 +70,7 @@ export const MainMenuScreen = ({
       </div>
 
       <div className="flex justify-center border-t border-neutral-700 p-4">
-        <MyButton onClick={ctx.onQuit} className="w-full gap-4">
+        <MyButton onClick={ctx.onQuit} className="w-full">
           <IconArrowLeftOnRect />
           Quit
         </MyButton>

@@ -29,7 +29,7 @@ export const ViewNotInGameScreen = ({
         <Text variant="h3" className="text-center">
           Games
         </Text>
-        <div className="grid grid-cols-3 justify-between gap-6">
+        <div className="grid grid-cols-3 justify-between gap-8">
           {gameNameList.map((gameName) => (
             <div key={gameName}>
               <button
@@ -38,11 +38,9 @@ export const ViewNotInGameScreen = ({
                 {viewCoverArt(gameName)}
               </button>
 
-              <Text
-                variant="body-sm"
-                className="mt-2 w-full overflow-hidden text-ellipsis whitespace-nowrap text-center font-semibold">
+              <p className="mt-2 w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-semibold">
                 {gameNameToString(gameName)}
-              </Text>
+              </p>
             </div>
           ))}
         </div>

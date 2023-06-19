@@ -46,7 +46,7 @@ export const ViewRoomJoinScreen = ({
         <ViewUsersInRoomList ctx={ctx} />
       </div>
 
-      <div className="flex p-4">
+      <div className="flex border-t border-neutral-700 p-4">
         <MyButton
           className="w-full"
           variant="contained"
