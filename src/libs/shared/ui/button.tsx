@@ -35,18 +35,18 @@ export const MyButton = ({
       type={type}
       className={cn(
         className,
-        "font-semibold flex items-center justify-center gap-2 select-none flex-nowrap",
-        combo === "contained-primary" && "bg-blue-500 text-white rounded-md",
-        combo === "contained-danger" && "bg-red-500 text-white rounded-md",
+        "flex select-none flex-nowrap items-center justify-center gap-2 font-semibold",
+        combo === "contained-primary" && "rounded-md bg-blue-500 text-white",
+        combo === "contained-danger" && "rounded-md bg-red-500 text-white",
         combo === "contained-default" &&
-          "bg-neutral-800 border border-neutral-800 text-blue-500 rounded-md",
+          "rounded-md border border-neutral-800 bg-neutral-800 text-blue-500",
         combo === "outlined-default" &&
-          "border border-neutral-700 text-neutral-300 text-inherit rounded-md",
+          "rounded-md border border-neutral-700 text-inherit text-neutral-300",
         !disabled && combo === "text-primary" && "text-blue-500",
-        size === "lg" && "text-xl py-3 px-4",
-        size === "md" && "text-lg py-2 px-4",
-        size === "sm" && "text-md py-1 px-4",
-        disabled && "opacity-50 cursor-not-allowed bg-neutral-600",
+        size === "lg" && "px-2 py-1.5 text-lg sm:px-4 sm:py-3 sm:text-xl",
+        size === "md" && "text-md px-2 py-1 sm:px-4 sm:py-2 sm:text-lg",
+        size === "sm" && "sm:text-md px-2 py-0.5 text-sm sm:px-4 sm:py-1",
+        disabled && "cursor-not-allowed bg-neutral-600 opacity-50",
         !disabled && " active:opacity-60"
       )}
       onClick={(event) =>

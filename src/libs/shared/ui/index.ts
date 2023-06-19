@@ -13,3 +13,4 @@ export * from "./top-bar";
 export * from "./ui";
 export * as Icons from "./ui-icons";
 export * from "./utils";
+export * from "./text";

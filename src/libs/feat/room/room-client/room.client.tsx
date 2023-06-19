@@ -699,8 +699,10 @@ const ViewRoomScreen = ({
               ? ctx.profiles[model.previewUserId]?.username ?? "..."
               : "..."}
           </p>
-          {roomCtx.hostId === model.previewUserId && <ViewRoomHostChip />}
-          {roomCtx.currentUserId === model.previewUserId && <ViewYouChip />}
+          <div className="flex items-center gap-2">
+            {roomCtx.hostId === model.previewUserId && <ViewRoomHostChip />}
+            {roomCtx.currentUserId === model.previewUserId && <ViewYouChip />}
+          </div>
         </button>
 
         <div className="w-full px-4 pb-8">
@@ -744,39 +746,7 @@ const ViewPage = ({
   const game = model.games[ctx.room.roomId];
   return (
     <div className="flex h-full w-full flex-1 flex-col">
-      <nav className="flex h-14 w-full items-center border-b border-neutral-600 px-2 py-1">
-        <div className="flex w-20 items-center">
-          <ActionButton
-            label="Home"
-            icon={<IconHome />}
-            onClick={() => ctx.$push({ t: "room", c: { t: "room-list" } })}
-          />
-        </div>
-
-        <div className="flex w-20 items-center">
-          <ActionButton
-            label="People"
-            icon={<IconUserGroup />}
-            onClick={() => $send({ t: "modal-open", c: "users" })}
-          />
-        </div>
-
-        <div className="flex-1"></div>
-
-        <MyButton
-          color="danger"
-          variant="contained"
-          size="sm"
-          onClick={() => {
-            if (ctx.room.hostId === ctx.currentUserId) {
-              $send({ t: "destroy", userId: ctx.currentUserId });
-              return;
-            }
-            $send({ t: "leave", userId: ctx.currentUserId });
-          }}>
-          {ctx.room.hostId === ctx.currentUserId ? "End" : "Leave"}
-        </MyButton>
-      </nav>
+      <ViewTopBar $send={$send} ctx={ctx} />
       <div className="w-full flex-1 overflow-y-auto">
         {game ? (
           <Game.View
@@ -789,6 +759,51 @@ const ViewPage = ({
         )}
       </div>
     </div>
+  );
+};
+
+const ViewTopBar = ({
+  ctx,
+  $send,
+}: {
+  ctx: RoomViewCtx;
+  $send: (m: Msg) => void;
+}) => {
+  const peopleCount = Object.values(ctx.room.users).length;
+  return (
+    <nav className="flex h-14 w-full items-center border-b border-neutral-600 px-2 py-1">
+      <div className="flex w-20 items-center">
+        <ActionButton
+          label="Home"
+          icon={<IconHome />}
+          onClick={() => ctx.$push({ t: "room", c: { t: "room-list" } })}
+        />
+      </div>
+
+      <div className="flex w-20 items-center">
+        <ActionButton
+          label={peopleCount > 1 ? `People (${peopleCount})` : `People`}
+          icon={<IconUserGroup />}
+          onClick={() => $send({ t: "modal-open", c: "users" })}
+        />
+      </div>
+
+      <div className="flex-1"></div>
+
+      <MyButton
+        color="danger"
+        variant="contained"
+        size="sm"
+        onClick={() => {
+          if (ctx.room.hostId === ctx.currentUserId) {
+            $send({ t: "destroy", userId: ctx.currentUserId });
+            return;
+          }
+          $send({ t: "leave", userId: ctx.currentUserId });
+        }}>
+        {ctx.room.hostId === ctx.currentUserId ? "End" : "Leave"}
+      </MyButton>
+    </nav>
   );
 };
 

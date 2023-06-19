@@ -1,4 +1,4 @@
-import { IconGamepad, VDom } from "@gamezilla/shared/ui";
+import { IconGamepad, Text, VDom } from "@gamezilla/shared/ui";
 
 export const ViewGameHeader = ({
   title,
@@ -9,12 +9,12 @@ export const ViewGameHeader = ({
 }) => {
   return (
     <section className="flex min-h-fit w-full">
-      <div className="flex h-48 w-full flex-col items-center justify-center gap-4">
-        <p className="text-3xl font-bold">{title}</p>
+      <div className="xs:gap-4 xs:h-48 flex h-36 w-full flex-col items-center justify-center gap-2">
+        <Text variant="h3">{title}</Text>
 
         {renderCoverArt({
           key: title,
-          className: "w-24 h-24 overflow-hidden rounded-lg",
+          className: "sm:w-24 sm:h-24 w-20 h-20 overflow-hidden rounded-lg",
         })}
       </div>
     </section>
@@ -24,9 +24,9 @@ export const ViewGameHeader = ({
 export const ViewGameHeaderEmpty = () => {
   return (
     <section className="flex min-h-fit w-full">
-      <div className="flex h-48 w-full flex-col items-center justify-center">
+      <div className="flex h-36 w-full flex-col items-center justify-center sm:h-48">
         <IconGamepad className="h-12 w-12 text-secondary" />
-        <p className="text-sm text-secondary">No game selected</p>
+        <p className="text-xs text-secondary">Host is selecting game</p>
       </div>
     </section>
   );

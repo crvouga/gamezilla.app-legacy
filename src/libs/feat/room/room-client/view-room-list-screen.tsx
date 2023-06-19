@@ -169,7 +169,6 @@ const ViewRoomCard = ({
 
         <p className="text-xl">{host.username}</p>
         <ViewRoomHostChip />
-        {/* <span className="rounded-full bg-white/30 p-1 px-2 text-xs">Host</span> */}
       </div>
 
       {users.length > 1 && (
@@ -185,7 +184,9 @@ const ViewRoomCard = ({
             ))}
             {users.length > MAX_AVATAR_COUNT && (
               <div className="-ml-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/30">
-                <p className="text-xs">+{users.length - MAX_AVATAR_COUNT}</p>
+                <p className="text-xs">
+                  +{(users.length - MAX_AVATAR_COUNT).toLocaleString()}
+                </p>
               </div>
             )}
           </div>
@@ -194,19 +195,4 @@ const ViewRoomCard = ({
       )}
     </button>
   );
-};
-
-export const formatUsername = (username: string) => {
-  if (username.length > 12) {
-    return username.slice(0, 12) + "...";
-  }
-  return username;
-};
-
-export const formatUsernames = (usernames: string[]) => {
-  const formatted = usernames.map(formatUsername);
-  if (formatted.length > 3) {
-    return `${formatted.slice(0, 3).join(", ")} & ${formatted.length - 3} more`;
-  }
-  return formatted.join(", ");
 };

@@ -1,12 +1,14 @@
 import { toProfilesByRoomId } from "@gamezilla/feat/room";
 import { RoomViewCtx } from "@gamezilla/shared/client";
-import { IconCrown, MyAvatar } from "@gamezilla/shared/ui";
+import { Text, IconCrown, MyAvatar } from "@gamezilla/shared/ui";
 
 export const ViewUsersInRoomList = ({ ctx }: { ctx: RoomViewCtx }) => {
   const profiles = toProfilesByRoomId({ ctx });
   return (
     <section className="flex w-full flex-col gap-2 py-4">
-      <p className="px-4 text-center text-3xl font-semibold">People</p>
+      <Text variant="h3" className="text-center">
+        People
+      </Text>
 
       <div className="w-full">
         {Array.from(profiles).map((profile) => {

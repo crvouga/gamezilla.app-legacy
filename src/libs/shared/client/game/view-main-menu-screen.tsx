@@ -3,6 +3,7 @@ import {
   IconRobot,
   IconUsers,
   MyButton,
+  Text,
   VDom,
 } from "@gamezilla/shared/ui";
 import { RoomViewCtx } from "./game-shared";
@@ -44,16 +45,19 @@ export const MainMenuScreen = ({
         <div className="flex w-full flex-col gap-6 p-4">
           {buttons.map(({ renderIcon, title, description, onClick }, index) => (
             <button
-              className="flex w-full items-center gap-6 rounded-lg bg-neutral-800 p-6 active:opacity-70"
+              className="flex w-full items-center gap-4 rounded-lg bg-neutral-800 p-6 active:opacity-70 sm:gap-6"
               onClick={onClick}
               key={`${index} ${title}`}>
               {renderIcon({
-                className: "aspect-square w-12 h-12",
+                className: "aspect-square w-10 h-10 sm:w-12 sm:h-12",
               })}
               <div className="flex-1 text-left">
-                <p className="text-xl font-bold">{title}</p>
+                <Text variant="h5">{title}</Text>
+
                 {description && (
-                  <p className="text-sm text-secondary">{description}</p>
+                  <Text color="secondary" variant="body-sm">
+                    {description}
+                  </Text>
                 )}
               </div>
             </button>
