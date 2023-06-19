@@ -6,7 +6,6 @@ import {
   MyAvatar,
   MyButton,
   VDom,
-  cn,
 } from "@gamezilla/shared/ui";
 import { ViewGameHeader } from "./view-game-header";
 
@@ -30,17 +29,34 @@ const VersusSection = ({
   ctx: ViewCtx;
 }) => {
   return (
-    <div className="flex w-full items-center justify-center">
-      <Player player={playerOne} ctx={ctx} />
+    <div className="flex w-full flex-col gap-2 p-4">
+      <div className="grid w-full grid-cols-7">
+        <PlayerIcons player={playerOne} ctx={ctx} />
 
-      <div className="flex h-full flex-col">
-        <div className="flex flex-1 items-center justify-center text-3xl font-black">
-          VS
+        <div className="col-span-1">
+          <p className=" flex h-full flex-1 flex-col items-center justify-center text-2xl font-black sm:text-3xl">
+            VS
+          </p>
         </div>
-        <div className="flex-1"></div>
+
+        <PlayerIcons player={playerTwo} ctx={ctx} />
       </div>
 
-      <Player player={playerTwo} ctx={ctx} />
+      <div className="grid w-full grid-cols-7">
+        <PlayerLabels player={playerOne} ctx={ctx} />
+
+        <div className="col-span-1"></div>
+
+        <PlayerLabels player={playerTwo} ctx={ctx} />
+      </div>
+
+      <div className="mt-2 grid w-full grid-cols-7">
+        <PlayerButtons player={playerOne} ctx={ctx} />
+
+        <div className="col-span-1"></div>
+
+        <PlayerButtons player={playerTwo} ctx={ctx} />
+      </div>
     </div>
   );
 };
@@ -49,63 +65,84 @@ export const VsUserSetup = {
   VersusSection,
 };
 
-const Player = ({ player, ctx }: { ctx: ViewCtx; player: PlayerProp }) => {
+const PlayerButtons = ({
+  player,
+  ctx,
+}: {
+  ctx: ViewCtx;
+  player: PlayerProp;
+}) => {
   return (
-    <div className="flex flex-1 flex-col gap-6 p-4">
-      <div
-        className="grid w-full grid-cols-2 justify-center gap-4"
-        onClick={player.onStartPlaying}>
-        <div className={cn("flex flex-col items-center justify-center gap-2")}>
-          {player.userId ? (
-            <MyAvatar
-              className="h-16 w-16 flex-shrink-0"
-              src={ctx.profiles[player.userId]?.avatarUrl}
-              alt=""
-            />
-          ) : (
-            <div
-              role="button"
-              className="grid h-16 w-16 place-items-center overflow-hidden rounded-full bg-neutral-600">
-              <IconQuestionMark className="h-10 w-10 text-neutral-300" />
-            </div>
-          )}
+    <div className="col-span-3 w-full">
+      {player.userId && player.userId === ctx.currentUserId && (
+        <MyButton
+          key="toggle-play-button"
+          className="w-full"
+          variant="text"
+          color="primary"
+          onClick={player.onStopPlaying}>
+          Stop Playing
+        </MyButton>
+      )}
 
-          <p className="text-sm text-secondary">
-            {player.userId
-              ? ctx.profiles[player.userId]?.username ?? "..."
-              : "?"}
-          </p>
+      {!player.userId && (
+        <MyButton
+          key="toggle-play-button"
+          className="w-full"
+          variant="contained"
+          color="primary"
+          onClick={player.onStartPlaying}>
+          Start Playing
+        </MyButton>
+      )}
+    </div>
+  );
+};
+
+const PlayerIcons = ({ player, ctx }: { ctx: ViewCtx; player: PlayerProp }) => {
+  return (
+    <div
+      className="col-span-3 grid w-full cursor-pointer grid-cols-2 place-items-center text-center"
+      onClick={
+        player.userId === ctx.currentUserId
+          ? player.onStopPlaying
+          : player.onStartPlaying
+      }>
+      {player.userId ? (
+        <MyAvatar
+          className="h-12 w-12 sm:h-16 sm:w-16"
+          src={ctx.profiles[player.userId]?.avatarUrl}
+          alt=""
+        />
+      ) : (
+        <div
+          role="button"
+          className="grid h-12 w-12 place-items-center overflow-hidden rounded-full bg-neutral-600 sm:h-16 sm:w-16">
+          <IconQuestionMark className="h-6 w-6 text-neutral-300 sm:h-10 sm:w-10" />
         </div>
-        <div className="flex flex-col items-center justify-center gap-2">
-          {player.renderIcon({ className: "w-16 h-16" })}
+      )}
 
-          <p className="text-sm text-secondary">{player.label}</p>
-        </div>
-      </div>
+      {player.renderIcon({ className: "h-12 w-12 sm:h-16 sm:w-16" })}
+    </div>
+  );
+};
 
-      <div className="h-12 w-full">
-        {player.userId && player.userId === ctx.currentUserId && (
-          <MyButton
-            size="sm"
-            className="w-full"
-            variant="text"
-            color="primary"
-            onClick={player.onStopPlaying}>
-            Stop Playing
-          </MyButton>
-        )}
+const PlayerLabels = ({
+  player,
+  ctx,
+}: {
+  ctx: ViewCtx;
+  player: PlayerProp;
+}) => {
+  return (
+    <div className="col-span-3 grid w-full grid-cols-2 place-items-center text-center text-sm text-secondary">
+      <p className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-center">
+        {player.userId ? ctx.profiles[player.userId]?.username ?? "..." : "?"}
+      </p>
 
-        {!player.userId && (
-          <MyButton
-            size="sm"
-            className="w-full"
-            variant="contained"
-            color="primary"
-            onClick={player.onStartPlaying}>
-            Start Playing
-          </MyButton>
-        )}
-      </div>
+      <p className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-center">
+        {player.label}
+      </p>
     </div>
   );
 };
@@ -130,15 +167,15 @@ export const VsUserSetupScreen = ({
   canStartGame?: boolean;
 }) => {
   return (
-    <div className="flex h-full w-full flex-1 flex-col">
-      <ViewGameHeader title={title} renderCoverArt={renderCoverArt} />
+    <div className="flex h-full w-full flex-1 flex-col overflow-hidden">
+      <div className="flex w-full flex-1 flex-col overflow-y-auto">
+        <ViewGameHeader title={title} renderCoverArt={renderCoverArt} />
 
-      <VersusSection playerOne={playerOne} playerTwo={playerTwo} ctx={ctx} />
-
-      <div className="flex-1"></div>
+        <VersusSection playerOne={playerOne} playerTwo={playerTwo} ctx={ctx} />
+      </div>
 
       {ctx.currentUserId === ctx.hostId && (
-        <div className="flex w-full items-center gap-4 p-4 pt-8">
+        <div className="flex w-full items-center gap-4 border-t border-neutral-600 p-4">
           <MyButton
             variant="contained"
             color="default"
