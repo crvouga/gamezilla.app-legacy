@@ -479,8 +479,6 @@ export const View = ({
             )}
           </UI.Box>
 
-          <UI.Divider sx={{ marginY: 2 }} />
-
           <UI.Typography
             sx={{ paddingX: 2, marginTop: 2, marginBottom: 1 }}
             color={"text.secondary"}>

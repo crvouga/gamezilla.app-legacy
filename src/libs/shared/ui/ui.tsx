@@ -147,8 +147,6 @@ export const box = (
   );
 };
 
-export const Divider = Mui.Divider;
-
 export const ListItemButton = Mui.ListItemButton;
 
 export const LinearProgress = Mui.LinearProgress;
