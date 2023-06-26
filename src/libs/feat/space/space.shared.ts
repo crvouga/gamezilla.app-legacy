@@ -198,7 +198,7 @@ export type Req =
   | { t: "leave"; userId: UserId }
   | { t: "input-game"; gameName?: Game.GameName };
 
-export type Res = Req & { result: Result<Problem, Model> };
+export type Res = Req & { result: Result<string, Model> };
 
 export type Problem =
   | "must_be_host"

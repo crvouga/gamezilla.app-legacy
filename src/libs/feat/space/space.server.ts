@@ -1,4 +1,14 @@
-import { ClientId, SpaceId, UserId } from "@gamezilla/shared/app";
+import { ClientId, Space, SpaceId, UserId } from "@gamezilla/shared/app";
+import {
+  Cmd,
+  Err,
+  Ok,
+  Result,
+  Sub,
+  andThen,
+  exhaustive,
+  p,
+} from "@gamezilla/shared/core";
 import {
   AppMsg,
   AuthenticatedRequestCtx,
@@ -6,17 +16,17 @@ import {
   SpaceCtx,
   SpaceRequestCtx,
 } from "@gamezilla/shared/server";
-import { andThen, Cmd, exhaustive, Ok, p, Sub } from "@gamezilla/shared/core";
 import * as Game from "./game.server";
+import { SpaceDb } from "./space-db";
 import {
+  Req,
+  Res,
   ServerModel,
   ServerMsg,
-  handle,
-  Res,
-  ToServer,
   ToClient,
+  ToServer,
+  handle,
 } from "./space.shared";
-
 //
 //
 //
@@ -415,4 +425,91 @@ export const subscriptions = (model: Model): Sub<Msg> => {
   }
 
   return Sub.batch(subs);
+};
+
+//
+//
+//
+//
+//
+//
+
+export type Problem =
+  | { t: "must-be-host" }
+  | { t: "not-in-a-space" }
+  | { t: "already-in-a-space" }
+  | { t: "db-problem"; problem: string };
+
+type Res_ = Req & { result: Result<Problem, null> };
+
+export const handler = async ({
+  req,
+  ctx,
+  spaceDb,
+}: {
+  req: Req;
+  ctx: SpaceRequestCtx;
+  spaceDb: SpaceDb;
+}): Promise<Res_> => {
+  if (req.t === "create") {
+    const got = await spaceDb.getByUserId(ctx.currentUserId);
+
+    if (got.t === "err") {
+      return { ...req, result: Err({ t: "db-problem", problem: got.error }) };
+    }
+
+    const space = got.value;
+
+    if (space) {
+      return { ...req, result: Err({ t: "already-in-a-space" }) };
+    }
+
+    const spaceNew: Space = {
+      status: "started",
+      hostId: ctx.currentUserId,
+      spaceId: req.spaceId,
+      users: {},
+    };
+
+    console.log({ spaceNew });
+
+    return { ...req, result: Ok(null) };
+  }
+
+  if (req.t === "destroy") {
+    const got = await spaceDb.getByUserId(ctx.currentUserId);
+
+    if (got.t === "err") {
+      return { ...req, result: Err({ t: "db-problem", problem: got.error }) };
+    }
+
+    const space = got.value;
+
+    if (!space) {
+      return { ...req, result: Err({ t: "not-in-a-space" }) };
+    }
+
+    if (space.hostId !== ctx.currentUserId) {
+      return { ...req, result: Err({ t: "must-be-host" }) };
+    }
+
+    const spaceNew: Space = {
+      ...space,
+      status: "ended",
+    };
+
+    const set = await spaceDb.set(spaceNew);
+
+    if (set.t === "err") {
+      return { ...req, result: Err({ t: "db-problem", problem: set.error }) };
+    }
+
+    return { ...req, result: Ok(null) };
+  }
+
+  if (req.t === "join") {
+    return { ...req, result: Ok(null) };
+  }
+
+  return { ...req, result: Ok(null) };
 };
