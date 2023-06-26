@@ -29,86 +29,68 @@ export const ViewRoomListScreen = ({
   return (
     <div className="flex h-full max-h-full w-full flex-1 flex-col gap-4 overflow-hidden">
       <TopBar title="Spaces" />
+      {!isLoading && rooms.length === 0 ? (
+        <div className="flex h-full w-full flex-1 flex-col items-center justify-center opacity-60">
+          <IconGamepad className="h-12 w-12" />
+          <p className="text-lg">No active spaces</p>
+        </div>
+      ) : (
+        <div className="relative flex h-full w-full flex-1 flex-col">
+          {isLoading && (
+            <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center">
+              <IconSpinner className="h-12 w-12 animate-spin" />
+            </div>
+          )}
+          <div
+            className={cn(
+              isLoading && "pointer-events-none opacity-50",
+              "flex w-full flex-1 flex-col gap-4 overflow-y-auto px-5"
+            )}>
+            {rooms.map((room) => {
+              const host = ctx.profiles[room.hostId];
+              const users = Object.values(model.users).flatMap((user) => {
+                if (user.roomId !== room.roomId) {
+                  return [];
+                }
 
-      <div className="flex w-full flex-1 flex-col">
-        {!isLoading && rooms.length === 0 && (
-          <div className="flex flex-1 flex-col items-center justify-center opacity-60">
-            <IconGamepad className="h-12 w-12" />
-            <p className="text-lg">No active spaces</p>
-          </div>
-        )}
+                const profile = ctx.profiles[user.userId];
 
-        {isLoading && rooms.length === 0 && (
-          <div className="flex flex-1 flex-col gap-4 overflow-hidden px-5">
-            {[1, 2, 3].map((i) => {
+                if (!profile) {
+                  return [];
+                }
+
+                return [
+                  {
+                    username: profile.username,
+                    avatarUrl: profile.avatarUrl,
+                  },
+                ];
+              });
+
+              const gameName = model.games[room.roomId]?.t;
+              const currentRoomId = model.users[ctx.currentUserId]?.roomId;
               return (
-                <div
-                  key={i}
-                  className="aspect-video w-full animate-pulse cursor-wait rounded-lg bg-white/20"
+                <ViewRoomCard
+                  host={{
+                    username: host?.username ?? "...",
+                    avatarUrl: host?.avatarUrl ?? "",
+                  }}
+                  key={room.roomId}
+                  isCurrentRoom={currentRoomId === room.roomId}
+                  users={users}
+                  gameName={gameName}
+                  onClick={() => {
+                    ctx.$push({
+                      t: "room",
+                      c: { t: "room", roomId: room.roomId },
+                    });
+                  }}
                 />
               );
             })}
           </div>
-        )}
-
-        {rooms.length > 0 && (
-          <div className="relative flex flex-1 flex-col">
-            {isLoading && (
-              <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center">
-                <IconSpinner className="h-12 w-12 animate-spin" />
-              </div>
-            )}
-            <div
-              className={cn(
-                isLoading && "pointer-events-none opacity-50",
-                "flex w-full flex-1 flex-col gap-4 overflow-y-auto px-5"
-              )}>
-              {rooms.map((room) => {
-                const host = ctx.profiles[room.hostId];
-                const users = Object.values(model.users).flatMap((user) => {
-                  if (user.roomId !== room.roomId) {
-                    return [];
-                  }
-
-                  const profile = ctx.profiles[user.userId];
-
-                  if (!profile) {
-                    return [];
-                  }
-
-                  return [
-                    {
-                      username: profile.username,
-                      avatarUrl: profile.avatarUrl,
-                    },
-                  ];
-                });
-
-                const gameName = model.games[room.roomId]?.t;
-                const currentRoomId = model.users[ctx.currentUserId]?.roomId;
-                return (
-                  <ViewRoomCard
-                    host={{
-                      username: host?.username ?? "...",
-                      avatarUrl: host?.avatarUrl ?? "",
-                    }}
-                    key={room.roomId}
-                    isCurrentRoom={currentRoomId === room.roomId}
-                    users={users}
-                    gameName={gameName}
-                    onClick={() => {
-                      ctx.$push({
-                        t: "room",
-                        c: { t: "room", roomId: room.roomId },
-                      });
-                    }}
-                  />
-                );
-              })}
-            </div>
-          </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {!currentRoom && (
         <div className="w-full p-4">

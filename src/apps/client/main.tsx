@@ -20,10 +20,13 @@ import "./main.css";
 //
 //
 
-const main = () => {
-  const isProduction = process.env.NODE_ENV === "production";
+const env = {
+  isDev: process.env.NODE_ENV === "development",
+  isProd: process.env.NODE_ENV === "production",
+};
 
-  const serverUrl = isProduction
+const main = () => {
+  const serverUrl = env.isProd
     ? "https://server.gamezilla.app/"
     : `http://localhost:${serverPort}/`;
 
@@ -61,6 +64,13 @@ const main = () => {
   const sendToServer =
     (msg: ToServer): Cmd =>
     () => {
+      if (env.isDev) {
+        setTimeout(() => {
+          socketClient.emit("to-server", msg);
+        }, 50 + 100 * Math.random());
+        return;
+      }
+
       socketClient.emit("to-server", msg);
     };
 
