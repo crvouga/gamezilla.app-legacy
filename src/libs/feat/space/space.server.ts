@@ -14,6 +14,7 @@ import {
   AuthenticatedRequestCtx,
   Ctx,
   SpaceCtx,
+  SpaceMsg,
   SpaceRequestCtx,
 } from "@gamezilla/shared/server";
 import * as Game from "./game.server";
@@ -450,16 +451,26 @@ export const handler = async ({
   req: Req;
   ctx: SpaceRequestCtx;
   spaceDb: SpaceDb;
-}): Promise<Res_> => {
+}): Promise<Res_ & { msgs?: SpaceMsg[] }> => {
+  //
+  //
+  //
+  //
+
+  const got = await spaceDb.getByUserId(ctx.currentUserId);
+
+  if (got.t === "err") {
+    return { ...req, result: Err({ t: "db-problem", problem: got.error }) };
+  }
+
+  const space = got.value;
+
+  //
+  //
+  //
+  //
+
   if (req.t === "create") {
-    const got = await spaceDb.getByUserId(ctx.currentUserId);
-
-    if (got.t === "err") {
-      return { ...req, result: Err({ t: "db-problem", problem: got.error }) };
-    }
-
-    const space = got.value;
-
     if (space) {
       return { ...req, result: Err({ t: "already-in-a-space" }) };
     }
@@ -476,15 +487,11 @@ export const handler = async ({
     return { ...req, result: Ok(null) };
   }
 
+  //
+  //
+  //
+
   if (req.t === "destroy") {
-    const got = await spaceDb.getByUserId(ctx.currentUserId);
-
-    if (got.t === "err") {
-      return { ...req, result: Err({ t: "db-problem", problem: got.error }) };
-    }
-
-    const space = got.value;
-
     if (!space) {
       return { ...req, result: Err({ t: "not-in-a-space" }) };
     }
@@ -507,9 +514,46 @@ export const handler = async ({
     return { ...req, result: Ok(null) };
   }
 
+  //
+  //
+  //
+
   if (req.t === "join") {
-    return { ...req, result: Ok(null) };
+    if (!space) {
+      return { ...req, result: Err({ t: "not-in-a-space" }) };
+    }
+
+    return {
+      ...req,
+      msgs: [{ t: "user-left", userId: ctx.currentUserId }],
+      result: Ok(null),
+    };
   }
+
+  //
+  //
+  //
+
+  if (req.t === "leave") {
+    if (!space) {
+      return { ...req, result: Err({ t: "not-in-a-space" }) };
+    }
+
+    return {
+      ...req,
+      msgs: [{ t: "user-left", userId: ctx.currentUserId }],
+      result: Ok(null),
+    };
+  }
+
+  //
+  //
+  //
+
+  //
+  //
+  //
+  //
 
   return { ...req, result: Ok(null) };
 };
