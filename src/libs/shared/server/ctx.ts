@@ -29,8 +29,8 @@ export type AuthenticatedRequestCtx = RequestCtx & {
   currentUserId: UserId;
 };
 
-export type RoomCtx = Ctx & {
+export type SpaceCtx = Ctx & {
   hostId: UserId;
 };
 
-export type RoomRequestCtx = RoomCtx & AuthenticatedRequestCtx;
+export type SpaceRequestCtx = SpaceCtx & AuthenticatedRequestCtx;

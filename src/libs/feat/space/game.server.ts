@@ -7,9 +7,9 @@ import { SnakeServer } from "@gamezilla/game/snake";
 import { TetrisServer } from "@gamezilla/game/tetris";
 import { TicTacToeServer } from "@gamezilla/game/tic-tac-toe";
 import { UserId } from "@gamezilla/shared/app";
-import { RoomCtx, RoomRequestCtx } from "@gamezilla/shared/server";
+import { SpaceCtx, SpaceRequestCtx } from "@gamezilla/shared/server";
 import { Cmd, exhaustive, Sub } from "@gamezilla/shared/core";
-import { RoomMsg } from "@gamezilla/shared/client";
+import { SpaceMsg } from "@gamezilla/shared/client";
 import { ServerModel, ServerMsg, ToServer, ToClient } from "./game.shared";
 
 //
@@ -89,7 +89,7 @@ export const update = ({
   model,
   ctx,
 }: {
-  ctx: RoomCtx;
+  ctx: SpaceCtx;
   broadcast: (m: ToClient) => Cmd;
   msg: Msg;
   model: Model;
@@ -221,7 +221,7 @@ export const updateFromClient = ({
   msg,
   model,
 }: {
-  ctx: RoomRequestCtx;
+  ctx: SpaceRequestCtx;
   sendToClient: (msg: ToClient) => Cmd;
   broadcast: (msg: ToClient) => Cmd;
   msg: ToServer;
@@ -364,13 +364,13 @@ export const updateFromClient = ({
   }
 };
 
-export const updateFromRoom = ({
+export const updateFromSpace = ({
   broadcast,
   msg,
   model,
 }: {
   broadcast: (m: ToClient) => Cmd;
-  msg: RoomMsg;
+  msg: SpaceMsg;
   model: Model;
 }): {
   model: Model;
@@ -378,7 +378,7 @@ export const updateFromRoom = ({
 } => {
   switch (model.t) {
     case "chess": {
-      const updated = ChessServer.updateFromRoom({
+      const updated = ChessServer.updateFromSpace({
         broadcast: (m) => broadcast({ t: "chess", c: m }),
         msg,
         model: model.c,
@@ -391,7 +391,7 @@ export const updateFromRoom = ({
     }
 
     case "connect-four": {
-      const updated = ConnectFourServer.updateFromRoom({
+      const updated = ConnectFourServer.updateFromSpace({
         msg,
         model: model.c,
         broadcast: (m) => broadcast({ t: "connect-four", c: m }),
@@ -403,7 +403,7 @@ export const updateFromRoom = ({
     }
 
     case "tic-tac-toe": {
-      const updated = TicTacToeServer.updateFromRoom({
+      const updated = TicTacToeServer.updateFromSpace({
         broadcast: (msg) => broadcast({ t: "tic-tac-toe", c: msg }),
         msg,
         model: model.c,
@@ -415,7 +415,7 @@ export const updateFromRoom = ({
     }
 
     case "gomoku": {
-      const updated = GomokuServer.updateFromRoom({
+      const updated = GomokuServer.updateFromSpace({
         msg,
         model: model.c,
       });

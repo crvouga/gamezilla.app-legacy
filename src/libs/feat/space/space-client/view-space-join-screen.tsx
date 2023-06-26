@@ -1,31 +1,31 @@
 import {
-  RoomViewCtx,
+  SpaceViewCtx,
   ViewGameHeader,
   ViewGameHeaderEmpty,
-  ViewUsersInRoomList,
+  ViewUsersInSpaceList,
 } from "@gamezilla/shared/client";
 import { MyButton, TopBar, TopBarBackButton } from "@gamezilla/shared/ui";
 import { gameNameToString, viewCoverArt } from "../game.shared";
-import { ClientModel, ClientMsg } from "../room.shared";
+import { ClientModel, ClientMsg } from "../space.shared";
 
-export const ViewRoomJoinScreen = ({
+export const ViewSpaceJoinScreen = ({
   model,
   ctx,
   $send,
 }: {
-  ctx: RoomViewCtx;
+  ctx: SpaceViewCtx;
   model: ClientModel;
   $send: (msg: ClientMsg) => void;
 }) => {
-  const host = ctx.profiles[ctx.room.hostId];
-  const game = model.games[ctx.room.roomId];
+  const host = ctx.profiles[ctx.space.hostId];
+  const game = model.games[ctx.space.spaceId];
 
   return (
     <div className="flex h-full w-full flex-col">
       <TopBar
         left={
           <TopBarBackButton
-            onClick={() => ctx.$push({ t: "room", c: { t: "room-list" } })}
+            onClick={() => ctx.$push({ t: "space", c: { t: "space-list" } })}
           />
         }
         title={host?.username ? `${host.username}'s space` : "..."}
@@ -43,7 +43,7 @@ export const ViewRoomJoinScreen = ({
           <ViewGameHeaderEmpty />
         )}
 
-        <ViewUsersInRoomList ctx={ctx} />
+        <ViewUsersInSpaceList ctx={ctx} />
       </div>
 
       <div className="flex border-t border-neutral-700 p-4">
@@ -55,7 +55,7 @@ export const ViewRoomJoinScreen = ({
             $send({
               t: "join",
               userId: ctx.currentUserId,
-              roomId: ctx.room.roomId,
+              spaceId: ctx.space.spaceId,
             });
           }}>
           Join space

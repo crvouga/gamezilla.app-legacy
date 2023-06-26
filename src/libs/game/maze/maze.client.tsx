@@ -1,5 +1,5 @@
 import { Cmd, Keyboard, p, Sub } from "@gamezilla/shared/core";
-import { RoomCtx, RoomViewCtx, ViewCtx } from "@gamezilla/shared/client";
+import { SpaceCtx, SpaceViewCtx, ViewCtx } from "@gamezilla/shared/client";
 import {
   ActionButton,
   Avatar,
@@ -48,7 +48,7 @@ export const init = initShared;
 export type Msg = ClientMsg;
 
 export const update = (
-  { ctx, sendToServer }: { ctx: RoomCtx; sendToServer: (m: ToServer) => Cmd },
+  { ctx, sendToServer }: { ctx: SpaceCtx; sendToServer: (m: ToServer) => Cmd },
   msg: Msg,
   model: Model
 ): [Model, Cmd<Msg>] => {
@@ -207,9 +207,9 @@ export const View = ({
   model,
   ctx,
   $send,
-  gameRoomCtx,
+  gameSpaceCtx,
 }: {
-  gameRoomCtx: RoomViewCtx;
+  gameSpaceCtx: SpaceViewCtx;
   ctx: ViewCtx;
   model: Model;
   $send: (msg: Msg) => void;
@@ -316,7 +316,7 @@ export const View = ({
         </Box>
 
         <Box sx={{ display: "flex", gap: 2, p: 2 }}>
-          <Button fullWidth variant="outlined" onClick={gameRoomCtx.onQuit}>
+          <Button fullWidth variant="outlined" onClick={gameSpaceCtx.onQuit}>
             Back
           </Button>
           <Button

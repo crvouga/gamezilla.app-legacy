@@ -1,12 +1,12 @@
-import { Cmd, Err, Ok, Result, Sub } from '@gamezilla/shared/core';
-import { RoomRequestCtx } from '@gamezilla/shared/server';
-import { ServerModel, ServerMsg, ToClient, ToServer } from './flow.shared';
-import { PuzzleBuilderServer } from './puzzle-builder';
+import { Cmd, Err, Ok, Result, Sub } from "@gamezilla/shared/core";
+import { SpaceRequestCtx } from "@gamezilla/shared/server";
+import { ServerModel, ServerMsg, ToClient, ToServer } from "./flow.shared";
+import { PuzzleBuilderServer } from "./puzzle-builder";
 
 type Model = ServerModel;
 
 export const init: Model = {
-  t: 'none',
+  t: "none",
 };
 
 type Msg = ServerMsg;
@@ -29,7 +29,7 @@ export const updateFromClient = ({
   ctx,
   broadcast,
 }: {
-  ctx: RoomRequestCtx;
+  ctx: SpaceRequestCtx;
   msg: ToServer;
   model: Model;
   broadcast: (m: ToClient) => Cmd;
@@ -37,10 +37,10 @@ export const updateFromClient = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (msg.t === 'input-mode') {
+  if (msg.t === "input-mode") {
     const handled = handleInputMode({ mode: msg.mode, ctx });
     return {
-      model: handled.t === 'err' ? model : handled.value,
+      model: handled.t === "err" ? model : handled.value,
       cmd: broadcast({ ...msg, result: handled }),
     };
   }
@@ -52,22 +52,22 @@ const handleInputMode = ({
   mode,
   ctx,
 }: {
-  ctx: RoomRequestCtx;
-  mode: Model['t'];
+  ctx: SpaceRequestCtx;
+  mode: Model["t"];
 }): Result<string, Model> => {
   if (ctx.hostId !== ctx.currentUserId) {
-    return Err('must-be-host');
+    return Err("must-be-host");
   }
 
-  if (mode === 'puzzle-builder') {
-    return Ok({ t: 'puzzle-builder', c: PuzzleBuilderServer.init });
+  if (mode === "puzzle-builder") {
+    return Ok({ t: "puzzle-builder", c: PuzzleBuilderServer.init });
   }
 
-  if (mode === 'none') {
-    return Ok({ t: 'none' });
+  if (mode === "none") {
+    return Ok({ t: "none" });
   }
 
-  return Err('invalid-mode');
+  return Err("invalid-mode");
 };
 
 export const subscriptions = (_model: Model): Sub<Msg> => {

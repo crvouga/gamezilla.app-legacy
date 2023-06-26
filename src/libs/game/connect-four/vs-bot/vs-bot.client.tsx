@@ -1,7 +1,7 @@
 import {
   Ctx,
-  RoomCtx,
-  RoomViewCtx,
+  SpaceCtx,
+  SpaceViewCtx,
   ViewVsBotGameScreen,
   VsBotSetupScreen,
 } from "@gamezilla/shared/client";
@@ -71,7 +71,7 @@ export const update = ({
   msg,
   model,
 }: {
-  ctx: RoomCtx;
+  ctx: SpaceCtx;
   sendToServer: (msg: ToServer) => Cmd;
   msg: Msg;
   model: Model;
@@ -121,7 +121,7 @@ export const updateFromServer = ({
   msg,
   model,
 }: {
-  ctx: RoomCtx;
+  ctx: SpaceCtx;
   msg: ToClient;
   model: Model;
 }): {
@@ -234,7 +234,7 @@ export const View = ({
   model: Model;
   $send: (msg: Msg) => void;
   onQuit: () => void;
-  ctx: RoomViewCtx;
+  ctx: SpaceViewCtx;
 }) => {
   if (model.type === "setup") {
     return (

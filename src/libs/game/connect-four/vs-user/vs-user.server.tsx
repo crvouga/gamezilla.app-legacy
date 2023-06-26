@@ -1,6 +1,6 @@
-import { RoomMsg } from "@gamezilla/shared/client";
+import { SpaceMsg } from "@gamezilla/shared/client";
 import { Cmd, Sub, Time } from "@gamezilla/shared/core";
-import { RoomRequestCtx } from "@gamezilla/shared/server";
+import { SpaceRequestCtx } from "@gamezilla/shared/server";
 import {
   handle,
   initShared,
@@ -68,7 +68,7 @@ export const updateFromClient = ({
   broadcast: (msg: ToClient) => Cmd;
   msg: ToServer;
   model: Model;
-  ctx: RoomRequestCtx;
+  ctx: SpaceRequestCtx;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -82,13 +82,13 @@ export const updateFromClient = ({
   return { model: res.result.value, cmd: broadcast(res) };
 };
 
-export const updateFromRoom = ({
+export const updateFromSpace = ({
   broadcast,
   msg,
   model,
 }: {
   broadcast: (m: ToClient) => Cmd;
-  msg: RoomMsg;
+  msg: SpaceMsg;
   model: Model;
 }): {
   model: Model;

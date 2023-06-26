@@ -222,9 +222,9 @@ export const updateFromApp = ({
     return {
       model,
       cmd: Route.push({
-        t: "room",
+        t: "space",
         c: {
-          t: "room-list",
+          t: "space-list",
         },
       }),
     };
@@ -318,26 +318,26 @@ const ViewLoginScreen = ({
 }) => {
   const isLoading = model.requests["login-with-google"]?.t === "loading";
   return (
-    <div className="w-full h-full flex-1 flex flex-col relative">
+    <div className="relative flex h-full w-full flex-1 flex-col">
       <LoadingBar
         className={cn(
-          "absolute top-0 left-0 w-full",
+          "absolute left-0 top-0 w-full",
           isLoading ? "block" : "hidden"
         )}
       />
       <div
         className={cn(
-          "flex-1 flex flex-col justify-center items-center p-4 gap-8",
-          isLoading && "opacity-50 pointer-events-none"
+          "flex flex-1 flex-col items-center justify-center gap-8 p-4",
+          isLoading && "pointer-events-none opacity-50"
         )}>
-        <div className="w-full flex flex-col items-start justify-center">
+        <div className="flex w-full flex-col items-start justify-center">
           <p className="text-2xl text-neutral-200">Sign in to</p>
-          <h1 className="bg-gradient-to-b from-blue-400 to-blue-600 text-transparent bg-clip-text text-5xl font-extrabold pb-2">
+          <h1 className="bg-gradient-to-b from-blue-400 to-blue-600 bg-clip-text pb-2 text-5xl font-extrabold text-transparent">
             gamezilla.app
           </h1>
         </div>
 
-        <div className="flex flex-col gap-6 w-full">
+        <div className="flex w-full flex-col gap-6">
           <MyButton
             onClick={() => $send({ t: "login-with-google" })}
             size="lg"

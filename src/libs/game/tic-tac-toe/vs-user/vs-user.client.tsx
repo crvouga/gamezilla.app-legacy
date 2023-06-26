@@ -1,6 +1,6 @@
 import {
-  RoomCtx,
-  RoomViewCtx,
+  SpaceCtx,
+  SpaceViewCtx,
   ViewCtx,
   VsUserSetupScreen,
 } from "@gamezilla/shared/client";
@@ -113,7 +113,7 @@ export const update = (
 };
 
 export const updateFromServer = (
-  _: { ctx: RoomCtx },
+  _: { ctx: SpaceCtx },
   msg: ToClient,
   model: Model
 ): [Model] => {
@@ -186,7 +186,7 @@ export const View = ({
   $send,
   onCloseGame,
 }: {
-  ctx: RoomViewCtx;
+  ctx: SpaceViewCtx;
   model: Model;
   $send: (msg: Msg) => void;
   onCloseGame: () => void;

@@ -1,6 +1,6 @@
-import { RoomRequestCtx } from '@gamezilla/shared/server';
-import { Cmd, Sub } from '@gamezilla/shared/core';
-import { RoomMsg } from '@gamezilla/shared/client';
+import { SpaceRequestCtx } from "@gamezilla/shared/server";
+import { Cmd, Sub } from "@gamezilla/shared/core";
+import { SpaceMsg } from "@gamezilla/shared/client";
 import {
   ServerModel,
   ServerMsg,
@@ -9,7 +9,7 @@ import {
   ToClient,
   handle,
   initShared,
-} from './vs-user.shared';
+} from "./vs-user.shared";
 
 //
 //
@@ -52,7 +52,7 @@ export const updateFromClient = ({
   model,
   ctx,
 }: {
-  ctx: RoomRequestCtx;
+  ctx: SpaceRequestCtx;
   msg: ToServer;
   model: Model;
   broadcast: (m: ToClient) => Cmd;
@@ -63,23 +63,23 @@ export const updateFromClient = ({
 } => {
   const res: Res = { ...msg, result: handle({ msg, model, ctx }) };
 
-  if (res.result.t === 'err') {
+  if (res.result.t === "err") {
     return { model, cmd: sendToClient(res) };
   }
   return { model: res.result.value, cmd: broadcast(res) };
 };
 
-export const updateFromRoom = ({
+export const updateFromSpace = ({
   msg,
   model,
 }: {
-  msg: RoomMsg;
+  msg: SpaceMsg;
   model: Model;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (msg.t === 'user-left') {
+  if (msg.t === "user-left") {
     return { model: init(model) };
   }
 

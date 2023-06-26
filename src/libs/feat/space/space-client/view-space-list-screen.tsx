@@ -1,5 +1,5 @@
-import { RoomId } from "@gamezilla/shared/app";
-import { ViewCtx, ViewRoomHostChip } from "@gamezilla/shared/client";
+import { SpaceId } from "@gamezilla/shared/app";
+import { ViewCtx, ViewSpaceHostChip } from "@gamezilla/shared/client";
 import {
   IconGamepad,
   IconSpinner,
@@ -9,9 +9,9 @@ import {
   cn,
 } from "@gamezilla/shared/ui";
 import { GameName, gameNameToString, viewCoverArt } from "../game.shared";
-import { ClientModel, ClientMsg } from "../room.shared";
+import { ClientModel, ClientMsg } from "../space.shared";
 
-export const ViewRoomListScreen = ({
+export const ViewSpaceListScreen = ({
   ctx,
   $send,
   model,
@@ -21,15 +21,15 @@ export const ViewRoomListScreen = ({
   $send: (m: ClientMsg) => void;
 }) => {
   const user = model.users[ctx.currentUserId];
-  const currentRoom = user ? model.rooms[user.roomId] : undefined;
-  const rooms = Object.values(model.rooms);
+  const currentSpace = user ? model.spaces[user.spaceId] : undefined;
+  const spaces = Object.values(model.spaces);
 
   const isLoading = model.requests.list?.t === "loading";
 
   return (
     <div className="flex h-full max-h-full w-full flex-1 flex-col gap-4 overflow-hidden">
       <TopBar title="Spaces" />
-      {!isLoading && rooms.length === 0 ? (
+      {!isLoading && spaces.length === 0 ? (
         <div className="flex h-full w-full flex-1 flex-col items-center justify-center opacity-60">
           <IconGamepad className="h-12 w-12" />
           <p className="text-lg">No active spaces</p>
@@ -46,10 +46,10 @@ export const ViewRoomListScreen = ({
               isLoading && "pointer-events-none opacity-50",
               "flex w-full flex-1 flex-col gap-4 overflow-y-auto px-5"
             )}>
-            {rooms.map((room) => {
-              const host = ctx.profiles[room.hostId];
+            {spaces.map((space) => {
+              const host = ctx.profiles[space.hostId];
               const users = Object.values(model.users).flatMap((user) => {
-                if (user.roomId !== room.roomId) {
+                if (user.spaceId !== space.spaceId) {
                   return [];
                 }
 
@@ -67,22 +67,22 @@ export const ViewRoomListScreen = ({
                 ];
               });
 
-              const gameName = model.games[room.roomId]?.t;
-              const currentRoomId = model.users[ctx.currentUserId]?.roomId;
+              const gameName = model.games[space.spaceId]?.t;
+              const currentSpaceId = model.users[ctx.currentUserId]?.spaceId;
               return (
-                <ViewRoomCard
+                <ViewSpaceCard
                   host={{
                     username: host?.username ?? "...",
                     avatarUrl: host?.avatarUrl ?? "",
                   }}
-                  key={room.roomId}
-                  isCurrentRoom={currentRoomId === room.roomId}
+                  key={space.spaceId}
+                  isCurrentSpace={currentSpaceId === space.spaceId}
                   users={users}
                   gameName={gameName}
                   onClick={() => {
                     ctx.$push({
-                      t: "room",
-                      c: { t: "room", roomId: room.roomId },
+                      t: "space",
+                      c: { t: "space", spaceId: space.spaceId },
                     });
                   }}
                 />
@@ -92,13 +92,13 @@ export const ViewRoomListScreen = ({
         </div>
       )}
 
-      {!currentRoom && (
+      {!currentSpace && (
         <div className="w-full p-4">
           <MyButton
             size="lg"
             className="w-full"
             color="primary"
-            onClick={() => $send({ t: "create", roomId: RoomId.generate() })}>
+            onClick={() => $send({ t: "create", spaceId: SpaceId.generate() })}>
             Create space
           </MyButton>
         </div>
@@ -108,17 +108,17 @@ export const ViewRoomListScreen = ({
 };
 
 const MAX_AVATAR_COUNT = 2;
-const ViewRoomCard = ({
+const ViewSpaceCard = ({
   gameName,
   onClick,
-  isCurrentRoom,
+  isCurrentSpace,
   users,
   host,
 }: {
   gameName?: GameName;
   users: { avatarUrl: string; username: string }[];
   onClick: () => void;
-  isCurrentRoom?: boolean;
+  isCurrentSpace?: boolean;
   host: {
     username: string;
     avatarUrl: string;
@@ -132,7 +132,7 @@ const ViewRoomCard = ({
         <p className="block flex-1 animate-pulse text-left font-bold uppercase">
           LIVE
         </p>
-        {isCurrentRoom && (
+        {isCurrentSpace && (
           <p className="block text-xs italic opacity-70">Current space</p>
         )}
       </div>
@@ -150,7 +150,7 @@ const ViewRoomCard = ({
         <MyAvatar src={host.avatarUrl} alt="avatar" className="h-12 w-12" />
 
         <p className="text-xl">{host.username}</p>
-        <ViewRoomHostChip />
+        <ViewSpaceHostChip />
       </div>
 
       {users.length > 1 && (

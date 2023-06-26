@@ -1,5 +1,9 @@
 import { UserId } from "@gamezilla/shared/app";
-import { RoomCtx, RoomViewCtx, MainMenuScreen } from "@gamezilla/shared/client";
+import {
+  SpaceCtx,
+  SpaceViewCtx,
+  MainMenuScreen,
+} from "@gamezilla/shared/client";
 import { Cmd, Sub } from "@gamezilla/shared/core";
 import { IconScrewdriverWrench } from "@gamezilla/shared/ui";
 import { viewCoverArt } from "./flow-cover-art";
@@ -28,7 +32,7 @@ export const update = ({
   sendToServer,
   ctx,
 }: {
-  ctx: RoomCtx;
+  ctx: SpaceCtx;
   msg: Msg;
   model: Model;
   sendToServer: (m: ToServer) => Cmd;
@@ -130,7 +134,7 @@ export const View = ({
 }: {
   model: Model;
   $send: (m: Msg) => void;
-  ctx: RoomViewCtx;
+  ctx: SpaceViewCtx;
 }) => {
   if (model.t === "puzzle-builder") {
     return (

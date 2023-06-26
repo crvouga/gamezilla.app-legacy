@@ -6,9 +6,9 @@ import {
   Text,
   VDom,
 } from "@gamezilla/shared/ui";
-import { RoomViewCtx } from "./game-shared";
+import { SpaceViewCtx } from "./game-shared";
 import { ViewGameHeader } from "./view-game-header";
-import { ViewUsersInRoomList } from ".";
+import { ViewUsersInSpaceList } from ".";
 
 type MainMenuButton = {
   renderIcon: (input: { className: string }) => VDom;
@@ -23,7 +23,7 @@ export const MainMenuScreen = ({
   buttons,
   ctx,
 }: {
-  ctx: RoomViewCtx;
+  ctx: SpaceViewCtx;
   title: string;
   renderCoverArt: (props: { className: string }) => VDom;
   buttons: MainMenuButton[];
@@ -32,7 +32,7 @@ export const MainMenuScreen = ({
     return (
       <div className="flex h-full w-full flex-col">
         <ViewGameHeader title={title} renderCoverArt={renderCoverArt} />
-        <ViewUsersInRoomList ctx={ctx} />
+        <ViewUsersInSpaceList ctx={ctx} />
       </div>
     );
   }

@@ -1,24 +1,24 @@
 import {
-  RoomViewCtx,
+  SpaceViewCtx,
   ViewGameHeaderEmpty,
-  ViewUsersInRoomList,
+  ViewUsersInSpaceList,
 } from "@gamezilla/shared/client";
 import { gameNameList, gameNameToString, viewCoverArt } from "../game.shared";
-import { ClientMsg } from "../room.shared";
+import { ClientMsg } from "../space.shared";
 import { Text } from "@gamezilla/shared/ui";
 
 export const ViewNotInGameScreen = ({
   ctx,
   $send,
 }: {
-  ctx: RoomViewCtx;
+  ctx: SpaceViewCtx;
   $send: (m: ClientMsg) => void;
 }) => {
-  if (ctx.room.hostId !== ctx.currentUserId) {
+  if (ctx.space.hostId !== ctx.currentUserId) {
     return (
       <>
         <ViewGameHeaderEmpty />
-        <ViewUsersInRoomList ctx={ctx} />
+        <ViewUsersInSpaceList ctx={ctx} />
       </>
     );
   }
@@ -45,8 +45,8 @@ export const ViewNotInGameScreen = ({
           ))}
         </div>
       </section>
-      {Object.values(ctx.room.users).length > 1 && (
-        <ViewUsersInRoomList ctx={ctx} />
+      {Object.values(ctx.space.users).length > 1 && (
+        <ViewUsersInSpaceList ctx={ctx} />
       )}
       <div>
         <div className="h-24 w-full"></div>

@@ -7,7 +7,7 @@ import {
   VDom,
 } from "@gamezilla/shared/ui";
 import { ViewGameHeader } from "./view-game-header";
-import { RoomViewCtx } from ".";
+import { SpaceViewCtx } from ".";
 
 export const VsBotSetupScreen = ({
   title,
@@ -17,7 +17,7 @@ export const VsBotSetupScreen = ({
   playerTwo,
   ctx,
 }: {
-  ctx: RoomViewCtx;
+  ctx: SpaceViewCtx;
   botName: string;
   userId: UserId | null;
 
@@ -75,7 +75,7 @@ const PlayerIcons = ({
   player,
   ctx,
 }: {
-  ctx: RoomViewCtx;
+  ctx: SpaceViewCtx;
   player: PlayerProp;
 }) => {
   return (

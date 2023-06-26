@@ -1,19 +1,19 @@
-import { AuthServer } from '@gamezilla/feat/auth';
-import { ChatServer } from '@gamezilla/feat/chat';
-import { ProfileServer } from '@gamezilla/feat/profile';
-import { RoomServer } from '@gamezilla/feat/room';
-import { SearchServer } from '@gamezilla/feat/search';
-import { ClientId, SessionId, UserId } from '@gamezilla/shared/app';
-import { Cmd, Sub, exhaustive, p } from '@gamezilla/shared/core';
-import { AppMsg, Ctx, RequestCtx } from '@gamezilla/shared/server';
-import { Subject } from 'rxjs';
+import { AuthServer } from "@gamezilla/feat/auth";
+import { ChatServer } from "@gamezilla/feat/chat";
+import { ProfileServer } from "@gamezilla/feat/profile";
+import { SpaceServer } from "@gamezilla/feat/space";
+import { SearchServer } from "@gamezilla/feat/search";
+import { ClientId, SessionId, UserId } from "@gamezilla/shared/app";
+import { Cmd, Sub, exhaustive, p } from "@gamezilla/shared/core";
+import { AppMsg, Ctx, RequestCtx } from "@gamezilla/shared/server";
+import { Subject } from "rxjs";
 import {
   ServerModel,
   ServerMsg,
   Session,
   ToClient,
   ToServer,
-} from './app.shared';
+} from "./app.shared";
 
 //
 //
@@ -28,7 +28,7 @@ type Model = ServerModel;
 export const init: { model: Model; cmd?: Cmd<Msg> } = {
   model: {
     sessions: {},
-    room: RoomServer.init,
+    space: SpaceServer.init,
     profile: ProfileServer.init,
     search: SearchServer.init.model,
     chat: ChatServer.init.model,
@@ -94,7 +94,7 @@ const update_ = ({
   msgs?: AppMsg[];
 } => {
   switch (msg.t) {
-    case '→': {
+    case "→": {
       return updateFromClient({
         ctx: {
           ...ctx,
@@ -108,22 +108,22 @@ const update_ = ({
       });
     }
 
-    case 'room': {
-      const updated = RoomServer.update({
+    case "space": {
+      const updated = SpaceServer.update({
         sendToUser: (userIds, m) =>
-          sendToUser(sendToClient, model, userIds, { t: 'room', c: m }),
+          sendToUser(sendToClient, model, userIds, { t: "space", c: m }),
         msg: msg.c,
-        model: model.room,
+        model: model.space,
         ctx,
       });
 
       return {
-        model: { ...model, room: updated.model },
-        cmd: Cmd.tag_('room', updated.cmd ?? Cmd.None),
+        model: { ...model, space: updated.model },
+        cmd: Cmd.tag_("space", updated.cmd ?? Cmd.None),
       };
     }
 
-    case 'client-connected': {
+    case "client-connected": {
       const sessionId = msg.sessionId;
       const clientId = msg.clientId;
       const sessionPrev = model.sessions[sessionId];
@@ -144,7 +144,7 @@ const update_ = ({
         model: modelNew,
         msgs: [
           {
-            t: 'client-connected',
+            t: "client-connected",
             sessionId,
             clientId,
             userId: sessionPrev?.userId,
@@ -153,7 +153,7 @@ const update_ = ({
       };
     }
 
-    case 'client-disconnected': {
+    case "client-disconnected": {
       const sessionId = msg.sessionId;
       const sessionPrev = model.sessions[sessionId];
       const sessionNew: Session = {
@@ -172,40 +172,40 @@ const update_ = ({
       };
     }
 
-    case 'profile': {
+    case "profile": {
       const updated = ProfileServer.update({
         model: model.profile,
         msg: msg.c,
       });
       return {
         model: { ...model, profile: updated.model },
-        cmd: Cmd.tag_('profile', updated.cmd),
+        cmd: Cmd.tag_("profile", updated.cmd),
       };
     }
 
-    case 'search': {
+    case "search": {
       const updated = SearchServer.update({
         model: model.search,
         msg: msg.c,
       });
       return {
         model: { ...model, search: updated.model },
-        cmd: Cmd.tag_('search', updated.cmd),
+        cmd: Cmd.tag_("search", updated.cmd),
       };
     }
 
-    case 'auth': {
+    case "auth": {
       const updated = AuthServer.update({
         model: model.auth,
         msg: msg.c,
       });
       return {
         model: { ...model, auth: updated.model },
-        cmd: Cmd.tag_('auth', updated.cmd),
+        cmd: Cmd.tag_("auth", updated.cmd),
       };
     }
 
-    case 'chat': {
+    case "chat": {
       const updated = ChatServer.update({
         model: model.chat,
         msg: msg.c,
@@ -213,7 +213,7 @@ const update_ = ({
 
       return {
         model: { ...model, chat: updated.model },
-        cmd: Cmd.tag_('chat', updated.cmd),
+        cmd: Cmd.tag_("chat", updated.cmd),
       };
     }
 
@@ -236,29 +236,29 @@ const updateFromApp = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  const roomUpdated = RoomServer.updateFromApp({
+  const spaceUpdated = SpaceServer.updateFromApp({
     msg,
-    model: model.room,
+    model: model.space,
     sendToClient: (clientIds, m) =>
-      sendToClient(clientIds, { t: 'room', c: m }),
+      sendToClient(clientIds, { t: "space", c: m }),
   });
 
   const profileUpdated = ProfileServer.updateFromApp({
     msg,
     model: model.profile,
     sendToClient: (clientIds, c) =>
-      sendToClient(clientIds, { t: 'profile', c }),
+      sendToClient(clientIds, { t: "profile", c }),
   });
 
   return {
     model: {
       ...model,
-      room: roomUpdated.model,
+      space: spaceUpdated.model,
       profile: profileUpdated.model,
     },
     cmd: Cmd.batch<Msg>([
-      Cmd.tag_('room', roomUpdated.cmd),
-      Cmd.tag_('profile', profileUpdated.cmd),
+      Cmd.tag_("space", spaceUpdated.cmd),
+      Cmd.tag_("profile", profileUpdated.cmd),
     ]),
   };
 };
@@ -281,12 +281,12 @@ const updateFromClient = ({
   msgs?: AppMsg[];
 } => {
   switch (msg.t) {
-    case 'auth': {
-      if (msg.c.t !== 'got-current-user') {
+    case "auth": {
+      if (msg.c.t !== "got-current-user") {
         return { model };
       }
 
-      if (msg.c.currentUser.t !== 'logged-in') {
+      if (msg.c.currentUser.t !== "logged-in") {
         return { model };
       }
 
@@ -308,7 +308,7 @@ const updateFromClient = ({
         },
         msgs: [
           {
-            t: 'client-authenticated',
+            t: "client-authenticated",
             clientId: ctx.clientId,
             userId: msg.c.currentUser.currentUserId,
           },
@@ -316,20 +316,20 @@ const updateFromClient = ({
       };
     }
 
-    case 'profile': {
+    case "profile": {
       const currentUserId = model.sessions[ctx.sessionId]?.userId;
 
       if (!currentUserId) {
         return {
           model,
-          cmd: sendToClient([ctx.clientId], { t: 'access-denied', msg }),
+          cmd: sendToClient([ctx.clientId], { t: "access-denied", msg }),
         };
       }
 
       const updated = ProfileServer.updateFromClient({
         model: model.profile,
         msg: msg.c,
-        sendToClient: (c) => sendToClient([ctx.clientId], { t: 'profile', c }),
+        sendToClient: (c) => sendToClient([ctx.clientId], { t: "profile", c }),
         ctx: {
           ...ctx,
           currentUserId,
@@ -337,34 +337,34 @@ const updateFromClient = ({
       });
       return {
         model: { ...model, profile: updated.model },
-        cmd: Cmd.tag_('profile', updated.cmd),
+        cmd: Cmd.tag_("profile", updated.cmd),
       };
     }
 
-    case 'search': {
+    case "search": {
       const updated = SearchServer.updateFromClient({
         model: model.search,
         msg: msg.c,
       });
       return {
         model: { ...model, search: updated.model },
-        cmd: Cmd.tag_('search', updated.cmd),
+        cmd: Cmd.tag_("search", updated.cmd),
       };
     }
 
-    case 'chat': {
+    case "chat": {
       const updated = ChatServer.updateFromClient({
         model: model.chat,
         msg: msg.c,
-        sendToClient: (c) => sendToClient([ctx.clientId], { t: 'chat', c }),
+        sendToClient: (c) => sendToClient([ctx.clientId], { t: "chat", c }),
       });
       return {
         model: { ...model, chat: updated.model },
-        cmd: Cmd.tag_('chat', updated.cmd),
+        cmd: Cmd.tag_("chat", updated.cmd),
       };
     }
 
-    case 'room': {
+    case "space": {
       const session = model.sessions[ctx.sessionId];
 
       if (!session) {
@@ -375,27 +375,27 @@ const updateFromClient = ({
         return { model };
       }
 
-      const updated = RoomServer.updateFromClient({
+      const updated = SpaceServer.updateFromClient({
         ctx: {
           ...ctx,
           currentUserId: session.userId,
         },
         wire: {
-          broadcast: (c) => broadcast({ t: 'room', c }),
-          sendToClient: (c) => sendToClient([ctx.clientId], { t: 'room', c }),
+          broadcast: (c) => broadcast({ t: "space", c }),
+          sendToClient: (c) => sendToClient([ctx.clientId], { t: "space", c }),
           sendToUser: (userIds, c) =>
-            sendToUser(sendToClient, model, userIds, { t: 'room', c }),
+            sendToUser(sendToClient, model, userIds, { t: "space", c }),
         },
         msg: msg.c,
-        model: model.room,
+        model: model.space,
       });
 
       return {
         model: {
           ...model,
-          room: updated.model,
+          space: updated.model,
         },
-        cmd: Cmd.tag_('room', updated.cmd ?? Cmd.None),
+        cmd: Cmd.tag_("space", updated.cmd ?? Cmd.None),
       };
     }
   }
@@ -441,12 +441,12 @@ const sendToUser = (
 
 export const subscriptions = ({ model }: { model: Model }): Sub<Msg> => {
   return Sub.batch([
-    Sub.tag_('room', RoomServer.subscriptions(model.room)),
+    Sub.tag_("space", SpaceServer.subscriptions(model.space)),
     p(
       onConnect,
       Sub.map(
         ({ sessionId, clientId }): Msg => ({
-          t: 'client-connected',
+          t: "client-connected",
           sessionId,
           clientId,
         })
@@ -456,7 +456,7 @@ export const subscriptions = ({ model }: { model: Model }): Sub<Msg> => {
       onDisconnect,
       Sub.map(
         ({ sessionId, clientId }): Msg => ({
-          t: 'client-disconnected',
+          t: "client-disconnected",
           sessionId,
           clientId,
         })
@@ -466,7 +466,7 @@ export const subscriptions = ({ model }: { model: Model }): Sub<Msg> => {
       fromClientMsgs,
       Sub.map(
         ({ sessionId, clientId, msg }): Msg => ({
-          t: '→',
+          t: "→",
           sessionId,
           clientId,
           c: msg,

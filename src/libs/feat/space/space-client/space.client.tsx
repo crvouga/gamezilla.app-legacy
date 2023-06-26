@@ -1,14 +1,14 @@
-import { RoomId } from "@gamezilla/shared/app";
+import { SpaceId } from "@gamezilla/shared/app";
 import {
   AppMsg,
   Ctx,
-  RoomCtx,
-  RoomViewCtx,
+  SpaceCtx,
+  SpaceViewCtx,
   Route,
-  RouteRoom,
+  RouteSpace,
   ViewCtx,
-  ViewRoomHostChip,
-  ViewUsersInRoomList,
+  ViewSpaceHostChip,
+  ViewUsersInSpaceList,
   ViewYouChip,
 } from "@gamezilla/shared/client";
 import { Cmd, RemoteResult, Sub, exhaustive, p } from "@gamezilla/shared/core";
@@ -30,11 +30,11 @@ import {
   ServerModel,
   ToClient,
   ToServer,
-  toRoom,
-} from "../room.shared";
+  toSpace,
+} from "../space.shared";
 import { ViewNotInGameScreen } from "./view-not-in-game-screen";
-import { ViewRoomJoinScreen } from "./view-room-join-screen";
-import { ViewRoomListScreen } from "./view-room-list-screen";
+import { ViewSpaceJoinScreen } from "./view-space-join-screen";
+import { ViewSpaceListScreen } from "./view-space-list-screen";
 
 //
 //
@@ -50,7 +50,7 @@ export const init = (): { model: Model } => {
   return {
     model: {
       games: {},
-      rooms: {},
+      spaces: {},
       users: {},
       profiles: {},
       requests: {},
@@ -101,10 +101,13 @@ export const update = ({
     },
   };
   switch (msg.t) {
-    case "clicked-room": {
+    case "clicked-space": {
       return {
         model,
-        cmd: Route.push({ t: "room", c: { t: "room", roomId: msg.roomId } }),
+        cmd: Route.push({
+          t: "space",
+          c: { t: "space", spaceId: msg.spaceId },
+        }),
       };
     }
 
@@ -144,7 +147,7 @@ export const update = ({
     case "input-game": {
       const routeCmd =
         msg.t === "create"
-          ? Route.push({ t: "room", c: { t: "room", roomId: msg.roomId } })
+          ? Route.push({ t: "space", c: { t: "space", spaceId: msg.spaceId } })
           : Cmd.None;
 
       return {
@@ -169,13 +172,13 @@ export const update = ({
         return { model };
       }
 
-      const room = model.rooms[user.roomId];
+      const space = model.spaces[user.spaceId];
 
-      if (!room) {
+      if (!space) {
         return { model };
       }
 
-      const game = model.games[user.roomId];
+      const game = model.games[user.spaceId];
 
       if (!game) {
         return { model };
@@ -183,13 +186,13 @@ export const update = ({
 
       const gameMsg = msg.c;
 
-      const roomCtx: RoomCtx = {
+      const spaceCtx: SpaceCtx = {
         ...ctx,
-        hostId: room.hostId,
+        hostId: space.hostId,
       };
 
       const updated = Game.update({
-        ctx: roomCtx,
+        ctx: spaceCtx,
         sendToServer: (msg) =>
           sendToServer({
             t: "game",
@@ -204,7 +207,7 @@ export const update = ({
         ...model,
         games: {
           ...model.games,
-          [user.roomId]: updated.model,
+          [user.spaceId]: updated.model,
         },
       };
 
@@ -250,13 +253,13 @@ export const updateFromServer = ({
         return { model };
       }
 
-      const room = model.rooms[user.roomId];
+      const space = model.spaces[user.spaceId];
 
-      if (!room) {
+      if (!space) {
         return { model };
       }
 
-      const game = model.games[user.roomId];
+      const game = model.games[user.spaceId];
 
       if (!game) {
         return { model };
@@ -267,7 +270,7 @@ export const updateFromServer = ({
       const updated = Game.updateFromServer({
         ctx: {
           ...ctx,
-          hostId: room.hostId,
+          hostId: space.hostId,
         },
         sendToServer: (msg) =>
           sendToServer({
@@ -283,7 +286,7 @@ export const updateFromServer = ({
         ...model,
         games: {
           ...model.games,
-          [user.roomId]: updated.model,
+          [user.spaceId]: updated.model,
         },
       };
 
@@ -309,13 +312,13 @@ export const updateFromServer = ({
         return handled;
       }
 
-      const room = model.rooms[user.roomId];
+      const space = model.spaces[user.spaceId];
 
-      if (!room) {
+      if (!space) {
         return handled;
       }
 
-      if (room.hostId === ctx.currentUserId) {
+      if (space.hostId === ctx.currentUserId) {
         return handled;
       }
 
@@ -346,7 +349,7 @@ export const updateFromServer = ({
 
       const routeCmd =
         msg.userId === ctx.currentUserId
-          ? Route.push({ t: "room", c: { t: "room", roomId: msg.roomId } })
+          ? Route.push({ t: "space", c: { t: "space", spaceId: msg.spaceId } })
           : Cmd.None;
 
       return {
@@ -370,8 +373,8 @@ export const updateFromApp = ({
   cmd?: Cmd<Msg>;
 } => {
   if (msg.t === "route-changed") {
-    if (msg.route.t === "room" && msg.route.c.t === "room-list") {
-      return updateListRooms({
+    if (msg.route.t === "space" && msg.route.c.t === "space-list") {
+      return updateListSpaces({
         model,
         initiatorMsg: msg,
         sendToServer,
@@ -381,13 +384,13 @@ export const updateFromApp = ({
   }
 
   if (msg.t === "wire-connected") {
-    return updateListRooms({ model, initiatorMsg: msg, sendToServer });
+    return updateListSpaces({ model, initiatorMsg: msg, sendToServer });
   }
 
   return { model };
 };
 
-const updateListRooms = ({
+const updateListSpaces = ({
   model,
   initiatorMsg,
   sendToServer,
@@ -472,12 +475,12 @@ const syncWithServer = ({
   const gamesNew = Object.entries(serverModel.games).reduce<
     [ClientModel["games"], Cmd<ClientMsg>]
   >(
-    (gamesNew, [roomId, backendGame]) => {
-      if (!RoomId.is(roomId)) {
+    (gamesNew, [spaceId, backendGame]) => {
+      if (!SpaceId.is(spaceId)) {
         return gamesNew;
       }
 
-      const frontendGame = clientModel.games[roomId];
+      const frontendGame = clientModel.games[spaceId];
 
       if (frontendGame) {
         const merged = Game.syncWithServer({
@@ -490,7 +493,7 @@ const syncWithServer = ({
         return [
           {
             ...gamesNew[0],
-            [roomId]: merged[0],
+            [spaceId]: merged[0],
           },
           Cmd.batch([
             gamesNew[1],
@@ -517,7 +520,7 @@ const syncWithServer = ({
       return [
         {
           ...gamesNew[0],
-          [roomId]: merged[0],
+          [spaceId]: merged[0],
         },
         Cmd.batch([
           gamesNew[1],
@@ -539,7 +542,7 @@ const syncWithServer = ({
     model: {
       ...clientModel,
       games: gamesNew[0],
-      rooms: serverModel.rooms,
+      spaces: serverModel.spaces,
       users: serverModel.users,
       profiles: {
         ...clientModel.profiles,
@@ -567,14 +570,14 @@ export const subscriptions = (ctx: Ctx, model: Model): Sub<Msg> => {
     return Sub.None;
   }
 
-  const game = model.games[user.roomId];
+  const game = model.games[user.spaceId];
 
   if (!game) {
     return Sub.None;
   }
 
   return p(
-    Game.subscriptions(`room/${user.roomId}`, ctx, game),
+    Game.subscriptions(`space/${user.spaceId}`, ctx, game),
     Sub.map((msg) => ({ t: "game", c: msg }))
   );
 };
@@ -599,7 +602,7 @@ export const View = ({
   model: Model;
   ctx: ViewCtx;
   $send: (m: Msg) => void;
-  route: RouteRoom;
+  route: RouteSpace;
   viewBottomBar: VDom;
 }) => {
   const ctx: ViewCtx = {
@@ -610,10 +613,10 @@ export const View = ({
     },
   };
 
-  if (route.t === "room") {
+  if (route.t === "space") {
     return (
-      <ViewRoomScreen
-        roomId={route.roomId}
+      <ViewSpaceScreen
+        spaceId={route.spaceId}
         ctx={ctx}
         $send={$send}
         model={model}
@@ -623,22 +626,22 @@ export const View = ({
 
   return (
     <>
-      <ViewRoomListScreen $send={$send} ctx={ctx} model={model} />
+      <ViewSpaceListScreen $send={$send} ctx={ctx} model={model} />
       {viewBottomBar}
     </>
   );
 };
 
-const ViewRoomScreen = ({
+const ViewSpaceScreen = ({
   ctx,
   $send,
   model,
-  roomId,
+  spaceId,
 }: {
   model: Model;
   ctx: ViewCtx;
   $send: (m: Msg) => void;
-  roomId: RoomId;
+  spaceId: SpaceId;
 }) => {
   if (
     model.requests.list?.t === "loading" ||
@@ -648,16 +651,16 @@ const ViewRoomScreen = ({
     return <LoadingScreen />;
   }
 
-  const room = toRoom({ roomId, model });
+  const space = toSpace({ spaceId, model });
 
-  if (!room) {
-    return <ViewRoomNotFound ctx={ctx} />;
+  if (!space) {
+    return <ViewSpaceNotFound ctx={ctx} />;
   }
 
-  const roomCtx: RoomViewCtx = {
+  const spaceCtx: SpaceViewCtx = {
     ...ctx,
-    hostId: room.hostId,
-    room,
+    hostId: space.hostId,
+    space,
     onViewProfile: (input) =>
       $send({ t: "clicked-user", userId: input.userId }),
     onQuit: () => $send({ t: "input-game", gameName: undefined }),
@@ -665,12 +668,12 @@ const ViewRoomScreen = ({
 
   return (
     <>
-      <ViewPage ctx={roomCtx} $send={$send} model={model} />
+      <ViewPage ctx={spaceCtx} $send={$send} model={model} />
 
       <MyDrawer
         open={model.modal === "users"}
         onClose={() => $send({ t: "modal-closed" })}>
-        {roomCtx && <ViewUsersInRoomList ctx={roomCtx} />}
+        {spaceCtx && <ViewUsersInSpaceList ctx={spaceCtx} />}
       </MyDrawer>
 
       <MyDrawer
@@ -700,8 +703,8 @@ const ViewRoomScreen = ({
               : "..."}
           </p>
           <div className="flex items-center gap-2">
-            {roomCtx.hostId === model.previewUserId && <ViewRoomHostChip />}
-            {roomCtx.currentUserId === model.previewUserId && <ViewYouChip />}
+            {spaceCtx.hostId === model.previewUserId && <ViewSpaceHostChip />}
+            {spaceCtx.currentUserId === model.previewUserId && <ViewYouChip />}
           </div>
         </button>
 
@@ -730,20 +733,20 @@ const ViewPage = ({
   model,
 }: {
   model: Model;
-  ctx: RoomViewCtx;
+  ctx: SpaceViewCtx;
   $send: (m: Msg) => void;
 }) => {
   const currentUser = model.users[ctx.currentUserId];
 
   if (!currentUser) {
-    return <ViewRoomJoinScreen model={model} $send={$send} ctx={ctx} />;
+    return <ViewSpaceJoinScreen model={model} $send={$send} ctx={ctx} />;
   }
 
-  if (currentUser.roomId !== ctx.room.roomId) {
-    return <ViewRoomJoinScreen $send={$send} ctx={ctx} model={model} />;
+  if (currentUser.spaceId !== ctx.space.spaceId) {
+    return <ViewSpaceJoinScreen $send={$send} ctx={ctx} model={model} />;
   }
 
-  const game = model.games[ctx.room.roomId];
+  const game = model.games[ctx.space.spaceId];
   return (
     <div className="flex h-full w-full flex-1 flex-col">
       <ViewTopBar $send={$send} ctx={ctx} />
@@ -766,17 +769,17 @@ const ViewTopBar = ({
   ctx,
   $send,
 }: {
-  ctx: RoomViewCtx;
+  ctx: SpaceViewCtx;
   $send: (m: Msg) => void;
 }) => {
-  const peopleCount = Object.values(ctx.room.users).length;
+  const peopleCount = Object.values(ctx.space.users).length;
   return (
     <nav className="flex h-14 w-full items-center border-b border-neutral-700 px-2 py-1">
       <div className="flex w-20 items-center">
         <ActionButton
           label="Home"
           icon={<IconHome />}
-          onClick={() => ctx.$push({ t: "room", c: { t: "room-list" } })}
+          onClick={() => ctx.$push({ t: "space", c: { t: "space-list" } })}
         />
       </div>
 
@@ -795,24 +798,24 @@ const ViewTopBar = ({
         variant="contained"
         size="sm"
         onClick={() => {
-          if (ctx.room.hostId === ctx.currentUserId) {
+          if (ctx.space.hostId === ctx.currentUserId) {
             $send({ t: "destroy", userId: ctx.currentUserId });
             return;
           }
           $send({ t: "leave", userId: ctx.currentUserId });
         }}>
-        {ctx.room.hostId === ctx.currentUserId ? "End" : "Leave"}
+        {ctx.space.hostId === ctx.currentUserId ? "End" : "Leave"}
       </MyButton>
     </nav>
   );
 };
 
-export const ViewRoomNotFound = ({ ctx }: { ctx: ViewCtx }) => {
+export const ViewSpaceNotFound = ({ ctx }: { ctx: ViewCtx }) => {
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-4">
       <p className="text-center text-2xl">Space not found</p>
       <MyButton
-        onClick={() => ctx.$push({ t: "room", c: { t: "room-list" } })}
+        onClick={() => ctx.$push({ t: "space", c: { t: "space-list" } })}
         size="lg"
         variant="contained"
         color="primary">

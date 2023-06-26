@@ -1,5 +1,5 @@
 import { UserId } from "@gamezilla/shared/app";
-import { RoomViewCtx, ViewCtx } from "@gamezilla/shared/client";
+import { SpaceViewCtx, ViewCtx } from "@gamezilla/shared/client";
 import {
   IconArrowLeftOnRect,
   IconQuestionMark,
@@ -157,7 +157,7 @@ export const VsUserSetupScreen = ({
   onQuit,
   canStartGame = Boolean(playerOne.userId && playerTwo.userId),
 }: {
-  ctx: RoomViewCtx;
+  ctx: SpaceViewCtx;
   title: string;
   renderCoverArt: (props: { className: string }) => VDom;
   playerOne: PlayerProp;

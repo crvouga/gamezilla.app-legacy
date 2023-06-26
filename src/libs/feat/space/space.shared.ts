@@ -1,6 +1,6 @@
 import { RemoteResult, Result } from "@gamezilla/shared/core";
-import { RoomId, UserId, Username } from "@gamezilla/shared/app";
-import { Profile, Room, RoomViewCtx } from "@gamezilla/shared/client";
+import { SpaceId, UserId, Username } from "@gamezilla/shared/app";
+import { Profile, Space, SpaceViewCtx } from "@gamezilla/shared/client";
 import * as GameServer from "./game.server";
 import * as Game from "./game.shared";
 
@@ -15,13 +15,13 @@ const { Ok, Err } = Result;
 //
 
 export type SharedModel = {
-  rooms: {
-    [roomId: RoomId]: Room;
+  spaces: {
+    [spaceId: SpaceId]: Space;
   };
   users: {
     [userId: UserId]: {
       userId: UserId;
-      roomId: RoomId;
+      spaceId: SpaceId;
     };
   };
   profiles: {
@@ -35,13 +35,13 @@ export type SharedModel = {
 
 export type ServerModel = SharedModel & {
   games: {
-    [roomId: RoomId]: Game.ServerModel;
+    [spaceId: SpaceId]: Game.ServerModel;
   };
 };
 
 export type ClientModel = SharedModel & {
   games: {
-    [roomId: RoomId]: Game.ClientModel;
+    [spaceId: SpaceId]: Game.ClientModel;
   };
   requests: {
     [key in Req["t"]]?: RemoteResult<Problem, "none">;
@@ -52,15 +52,15 @@ export type ClientModel = SharedModel & {
 
 type ModalModel = "none" | "user-preview" | "users";
 
-export type ClientRoom = {
-  roomId: RoomId;
+export type ClientSpace = {
+  spaceId: SpaceId;
   hostId: UserId;
   game?: Game.ClientModel;
 };
 
-export type RoomUser = {
+export type SpaceUser = {
   userId: UserId;
-  roomId: RoomId;
+  spaceId: SpaceId;
 };
 
 //
@@ -86,7 +86,7 @@ export const toUsers = function* ({
   model,
 }: {
   model: SharedModel;
-}): Generator<RoomUser> {
+}): Generator<SpaceUser> {
   for (const userId of toUserIds({ model })) {
     const user = model.users[userId];
 
@@ -98,26 +98,26 @@ export const toUsers = function* ({
   }
 };
 
-export const toUsersByRoomId = function* ({
-  roomId,
+export const toUsersBySpaceId = function* ({
+  spaceId,
   model,
 }: {
-  roomId: RoomId;
+  spaceId: SpaceId;
   model: SharedModel;
-}): Generator<RoomUser> {
+}): Generator<SpaceUser> {
   for (const user of toUsers({ model })) {
-    if (user.roomId === roomId) {
+    if (user.spaceId === spaceId) {
       yield user;
     }
   }
 };
 
-export const toProfilesByRoomId = function* ({
+export const toProfilesBySpaceId = function* ({
   ctx,
 }: {
-  ctx: RoomViewCtx;
+  ctx: SpaceViewCtx;
 }): Generator<Profile> {
-  for (const userId in ctx.room.users) {
+  for (const userId in ctx.space.users) {
     if (!UserId.is(userId)) {
       continue;
     }
@@ -130,24 +130,24 @@ export const toProfilesByRoomId = function* ({
   }
 };
 
-export const toRoom = ({
-  roomId,
+export const toSpace = ({
+  spaceId,
   model,
 }: {
-  roomId: RoomId;
+  spaceId: SpaceId;
   model: SharedModel;
-}): Room | null => {
-  const room = model.rooms[roomId];
+}): Space | null => {
+  const space = model.spaces[spaceId];
 
-  if (!room) {
+  if (!space) {
     return null;
   }
 
-  for (const user of toUsersByRoomId({ model, roomId })) {
-    room.users[user.userId] = user.userId;
+  for (const user of toUsersBySpaceId({ model, spaceId })) {
+    space.users[user.userId] = user.userId;
   }
 
-  return room;
+  return space;
 };
 
 //
@@ -162,14 +162,14 @@ export type ToClient = (Res | { t: "game"; c: Game.ToClient }) & Extra;
 
 export type ToServer = (Req | { t: "game"; c: Game.ToServer }) & Extra;
 
-export type ServerMsg = { t: "game"; roomId: RoomId; c: Game.ServerMsg };
+export type ServerMsg = { t: "game"; spaceId: SpaceId; c: Game.ServerMsg };
 
 export type ClientMsg =
   | Req
   | { t: "game"; c: Game.ClientMsg }
   | { t: "modal-closed" }
   | { t: "modal-open"; c: ModalModel }
-  | { t: "clicked-room"; roomId: RoomId }
+  | { t: "clicked-space"; spaceId: SpaceId }
   | { t: "clicked-user"; userId: UserId }
   | { t: "clicked-user-link"; userId: UserId };
 
@@ -192,9 +192,9 @@ type Model = ServerModel;
 
 export type Req =
   | { t: "list" }
-  | { t: "create"; roomId: RoomId; gameName?: Game.GameName }
+  | { t: "create"; spaceId: SpaceId; gameName?: Game.GameName }
   | { t: "destroy"; userId: UserId }
-  | { t: "join"; userId: UserId; roomId: RoomId }
+  | { t: "join"; userId: UserId; spaceId: SpaceId }
   | { t: "leave"; userId: UserId }
   | { t: "input-game"; gameName?: Game.GameName };
 
@@ -203,10 +203,10 @@ export type Res = Req & { result: Result<Problem, Model> };
 export type Problem =
   | "must_be_host"
   | "must_be_guest"
-  | "not_in_room"
-  | "already_in_room"
-  | "room_not_found"
-  | "impossible_state_room_id_taken";
+  | "not_in_space"
+  | "already_in_space"
+  | "space_not_found"
+  | "impossible_state_space_id_taken";
 
 export const handle = ({
   ctx,
@@ -226,13 +226,13 @@ export const handle = ({
       const user = model.users[ctx.currentUserId];
 
       if (user) {
-        return Err("already_in_room");
+        return Err("already_in_space");
       }
 
-      const room = model.rooms[msg.roomId];
+      const space = model.spaces[msg.spaceId];
 
-      if (room) {
-        return Err("impossible_state_room_id_taken");
+      if (space) {
+        return Err("impossible_state_space_id_taken");
       }
 
       const { gameName } = msg;
@@ -246,16 +246,16 @@ export const handle = ({
           })
         : undefined;
 
-      const roomNew: Room = {
-        roomId: msg.roomId,
+      const spaceNew: Space = {
+        spaceId: msg.spaceId,
         hostId: ctx.currentUserId,
         users: {
           [ctx.currentUserId]: ctx.currentUserId,
         },
       };
 
-      const userNew: RoomUser = {
-        roomId: msg.roomId,
+      const userNew: SpaceUser = {
+        spaceId: msg.spaceId,
         userId: ctx.currentUserId,
       };
 
@@ -263,11 +263,11 @@ export const handle = ({
         ...model,
         games: {
           ...model.games,
-          [roomNew.roomId]: gameNew,
+          [spaceNew.spaceId]: gameNew,
         },
-        rooms: {
-          ...model.rooms,
-          [roomNew.roomId]: roomNew,
+        spaces: {
+          ...model.spaces,
+          [spaceNew.spaceId]: spaceNew,
         },
         users: {
           ...model.users,
@@ -282,32 +282,32 @@ export const handle = ({
       const user = model.users[ctx.currentUserId];
 
       if (!user) {
-        return Err("not_in_room");
+        return Err("not_in_space");
       }
 
-      const room = model.rooms[user.roomId];
+      const space = model.spaces[user.spaceId];
 
-      if (!room) {
-        return Err("room_not_found");
+      if (!space) {
+        return Err("space_not_found");
       }
 
-      if (room.hostId !== user.userId) {
+      if (space.hostId !== user.userId) {
         return Err("must_be_host");
       }
 
-      const roomsNew = removeKey(room.roomId, model.rooms);
+      const spacesNew = removeKey(space.spaceId, model.spaces);
 
-      const gamesNew = removeKey(room.roomId, model.games);
+      const gamesNew = removeKey(space.spaceId, model.games);
 
       const usersNew = filterObject(
         model.users,
-        (entry) => entry[1].roomId !== user.roomId
+        (entry) => entry[1].spaceId !== user.spaceId
       );
 
       const modelNew: Model = {
         ...model,
         games: gamesNew,
-        rooms: roomsNew,
+        spaces: spacesNew,
         users: usersNew,
       };
 
@@ -318,11 +318,11 @@ export const handle = ({
       const user = model.users[ctx.currentUserId];
 
       if (user) {
-        return Err("already_in_room");
+        return Err("already_in_space");
       }
 
-      const userNew: RoomUser = {
-        roomId: msg.roomId,
+      const userNew: SpaceUser = {
+        spaceId: msg.spaceId,
         userId: ctx.currentUserId,
       };
 
@@ -341,16 +341,16 @@ export const handle = ({
       const user = model.users[ctx.currentUserId];
 
       if (!user) {
-        return Err("not_in_room");
+        return Err("not_in_space");
       }
 
-      const room = model.rooms[user.roomId];
+      const space = model.spaces[user.spaceId];
 
-      if (!room) {
-        return Err("room_not_found");
+      if (!space) {
+        return Err("space_not_found");
       }
 
-      if (user.userId === room.hostId) {
+      if (user.userId === space.hostId) {
         return Err("must_be_guest");
       }
 
@@ -370,23 +370,23 @@ export const handle = ({
       const user = model.users[ctx.currentUserId];
 
       if (!user) {
-        return Err("not_in_room");
+        return Err("not_in_space");
       }
 
-      const room = model.rooms[user.roomId];
+      const space = model.spaces[user.spaceId];
 
-      if (!room) {
-        return Err("not_in_room");
+      if (!space) {
+        return Err("not_in_space");
       }
 
-      if (room.hostId !== user.userId) {
+      if (space.hostId !== user.userId) {
         return Err("must_be_host");
       }
 
       if (!gameName) {
         const modelNew: ServerModel = {
           ...model,
-          games: removeKey(room.roomId, model.games),
+          games: removeKey(space.spaceId, model.games),
         };
 
         return Ok(modelNew);
@@ -401,7 +401,7 @@ export const handle = ({
         ...model,
         games: {
           ...model.games,
-          [room.roomId]: gameNew,
+          [space.spaceId]: gameNew,
         },
       };
 

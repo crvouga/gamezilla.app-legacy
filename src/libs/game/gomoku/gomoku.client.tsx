@@ -1,7 +1,7 @@
 import {
   Ctx,
-  RoomCtx,
-  RoomViewCtx,
+  SpaceCtx,
+  SpaceViewCtx,
   ViewCtx,
   MainMenuScreen,
   mainMenuButtons,
@@ -48,7 +48,7 @@ export const update = ({
   msg,
   model,
 }: {
-  ctx: RoomCtx;
+  ctx: SpaceCtx;
   sendToServer: (m: ToServer) => Cmd;
   msg: Msg;
   model: Model;
@@ -93,7 +93,7 @@ export const updateFromServer = ({
   model,
   msg,
 }: {
-  ctx: RoomCtx;
+  ctx: SpaceCtx;
   msg: ToClient;
   model: Model;
 }): {
@@ -229,12 +229,12 @@ export const subscriptions = (ctx: Ctx, model: Model): Sub<Msg> => {
 export const view = ({
   model,
   ctx,
-  gameRoomCtx,
+  gameSpaceCtx,
   $send,
 }: {
   model: Model;
   ctx: ViewCtx;
-  gameRoomCtx: RoomViewCtx;
+  gameSpaceCtx: SpaceViewCtx;
   $send: (m: Msg) => void;
 }) => {
   switch (model.t) {
@@ -243,7 +243,7 @@ export const view = ({
         <MainMenuScreen
           title="Gomoku"
           renderCoverArt={(props) => <ViewCoverArt {...props} />}
-          ctx={gameRoomCtx}
+          ctx={gameSpaceCtx}
           buttons={[
             mainMenuButtons.playComputer({
               onClick: () =>

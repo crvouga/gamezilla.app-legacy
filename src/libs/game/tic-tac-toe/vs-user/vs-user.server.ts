@@ -1,4 +1,4 @@
-import { RoomMsg } from "@gamezilla/shared/client";
+import { SpaceMsg } from "@gamezilla/shared/client";
 import { Cmd, Sub, Time } from "@gamezilla/shared/core";
 import { PlayerType, toOpposite, toTurn } from "../tic-tic-toe/tic-tac-toe";
 import * as Round from "./vs-user-round";
@@ -220,13 +220,13 @@ export const updateFromClient = (
   }
 };
 
-export const updateFromRoom = ({
+export const updateFromSpace = ({
   msg,
   model,
   broadcast,
 }: {
   broadcast: (m: ToClient) => Cmd;
-  msg: RoomMsg;
+  msg: SpaceMsg;
   model: Model;
 }): {
   model: Model;

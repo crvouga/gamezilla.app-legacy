@@ -1,9 +1,9 @@
 import { ViewCtx } from "@gamezilla/shared/client";
 import { IconXMark, MyAvatar } from "@gamezilla/shared/ui";
 import { viewCoverArt } from "../game.shared";
-import { ClientModel, ClientMsg } from "../room.shared";
+import { ClientModel, ClientMsg } from "../space.shared";
 
-export const ViewCurrentRoomBar = ({
+export const ViewCurrentSpaceBar = ({
   ctx: ctxPrev,
   model,
   $send,
@@ -25,16 +25,16 @@ export const ViewCurrentRoomBar = ({
     return null;
   }
 
-  const room = model.rooms[user.roomId];
+  const space = model.spaces[user.spaceId];
 
-  if (!room) {
+  if (!space) {
     return null;
   }
 
-  const game = model.games[room.roomId];
-  const hostProfile = ctx.profiles[room.hostId];
+  const game = model.games[space.spaceId];
+  const hostProfile = ctx.profiles[space.hostId];
   const userCount = Object.values(model.users).filter(
-    (user) => user.roomId === room.roomId
+    (user) => user.spaceId === space.spaceId
   ).length;
 
   return (
@@ -42,7 +42,7 @@ export const ViewCurrentRoomBar = ({
       <button
         className="flex flex-1 items-center overflow-hidden"
         onClick={() => {
-          ctx.$push({ t: "room", c: { t: "room", roomId: room.roomId } });
+          ctx.$push({ t: "space", c: { t: "space", spaceId: space.spaceId } });
         }}>
         <div className="mr-2 p-2">
           {!game && (
@@ -71,7 +71,7 @@ export const ViewCurrentRoomBar = ({
 
       <button
         onClick={() => {
-          if (ctx.currentUserId === room.hostId) {
+          if (ctx.currentUserId === space.hostId) {
             $send({ t: "destroy", userId: ctx.currentUserId });
             return;
           }

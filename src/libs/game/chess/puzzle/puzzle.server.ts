@@ -1,5 +1,5 @@
 import { UserId } from "@gamezilla/shared/app";
-import { RoomMsg } from "@gamezilla/shared/client";
+import { SpaceMsg } from "@gamezilla/shared/client";
 import {
   Cmd,
   Err,
@@ -11,7 +11,11 @@ import {
   eq,
   p,
 } from "@gamezilla/shared/core";
-import { DbConnMySql, RoomCtx, RoomRequestCtx } from "@gamezilla/shared/server";
+import {
+  DbConnMySql,
+  SpaceCtx,
+  SpaceRequestCtx,
+} from "@gamezilla/shared/server";
 import { GameMsg } from "../chess-shared";
 import { PuzzleDb } from "./puzzle-db";
 import {
@@ -40,7 +44,7 @@ export const init = ({
   ctx,
 }: {
   broadcast: (m: ToClient) => Cmd;
-  ctx: RoomCtx;
+  ctx: SpaceCtx;
 }): {
   model: Model;
   cmd: Cmd<Msg>;
@@ -110,7 +114,7 @@ export const update = (input: {
   msg: Msg;
   model: Model;
   broadcast: (m: ToClient) => Cmd;
-  ctx: RoomCtx;
+  ctx: SpaceCtx;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -132,7 +136,7 @@ const update_ = ({
   msg: Msg;
   model: Model;
   broadcast: (m: ToClient) => Cmd;
-  ctx: RoomCtx;
+  ctx: SpaceCtx;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -234,7 +238,7 @@ const update_ = ({
 };
 
 export const updateFromClient = (input: {
-  ctx: RoomRequestCtx;
+  ctx: SpaceRequestCtx;
   msg: ToServer;
   model: Model;
   sendToClient: (m: ToClient) => Cmd;
@@ -265,7 +269,7 @@ const watchPutInteraction = ({
 }: {
   modelPrev: Model;
   model: Model;
-  ctx: RoomCtx;
+  ctx: SpaceCtx;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -305,7 +309,7 @@ const watchGetPuzzles = ({
 }: {
   model: Model;
   modelPrev: Model;
-  ctx: RoomCtx;
+  ctx: SpaceCtx;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -343,7 +347,7 @@ const watchPutProfile = ({
 }: {
   model: Model;
   modelPrev: Model;
-  ctx: RoomCtx;
+  ctx: SpaceCtx;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -387,10 +391,10 @@ export const updateFromGame = ({
   return { model };
 };
 
-export const updateFromRoom = ({
+export const updateFromSpace = ({
   model,
 }: {
-  msg: RoomMsg;
+  msg: SpaceMsg;
   model: Model;
 }): {
   model: Model;

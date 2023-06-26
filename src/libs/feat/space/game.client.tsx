@@ -6,7 +6,7 @@ import { MazeClient } from "@gamezilla/game/maze";
 import { SnakeClient } from "@gamezilla/game/snake";
 import { TetrisClient } from "@gamezilla/game/tetris";
 import { TicTacToeClient } from "@gamezilla/game/tic-tac-toe";
-import { AppMsg, Ctx, RoomCtx, RoomViewCtx } from "@gamezilla/shared/client";
+import { AppMsg, Ctx, SpaceCtx, SpaceViewCtx } from "@gamezilla/shared/client";
 import { Cmd, Sub, exhaustive } from "@gamezilla/shared/core";
 import {
   ClientModel,
@@ -93,7 +93,7 @@ export const update = ({
   msg,
   model,
 }: {
-  ctx: RoomCtx;
+  ctx: SpaceCtx;
   sendToServer: (msg: ToServer) => Cmd;
   msg: Msg;
   model: Model;
@@ -218,7 +218,7 @@ export const updateFromServer = ({
   msg,
   model,
 }: {
-  ctx: RoomCtx;
+  ctx: SpaceCtx;
   sendToServer: (msg: ToServer) => Cmd;
   msg: ToClient;
   model: Model;
@@ -402,7 +402,7 @@ export const View = ({
   model,
   $send,
 }: {
-  ctx: RoomViewCtx;
+  ctx: SpaceViewCtx;
   model: Model;
   $send: (msg: Msg) => void;
 }) => {
@@ -432,7 +432,7 @@ export const View = ({
         <ChessClient.View
           ctx={ctx}
           model={model.c}
-          gameRoomCtx={ctx}
+          gameSpaceCtx={ctx}
           $send={(c) => $send({ t: "chess", c })}
         />
       );
@@ -443,7 +443,7 @@ export const View = ({
         $send: (c) => $send({ t: "gomoku", c }),
         model: model.c,
         ctx,
-        gameRoomCtx: ctx,
+        gameSpaceCtx: ctx,
       });
     }
 
@@ -469,7 +469,7 @@ export const View = ({
     case "maze": {
       return (
         <MazeClient.View
-          gameRoomCtx={ctx}
+          gameSpaceCtx={ctx}
           $send={(c) => $send({ t: "maze", c })}
           model={model.c}
           ctx={ctx}

@@ -1,7 +1,7 @@
 import { UserId } from "@gamezilla/shared/app";
-import { RoomMsg } from "@gamezilla/shared/client";
+import { SpaceMsg } from "@gamezilla/shared/client";
 import { Cmd, Err, Result, Sub } from "@gamezilla/shared/core";
-import { RoomRequestCtx } from "@gamezilla/shared/server";
+import { SpaceRequestCtx } from "@gamezilla/shared/server";
 import {
   Mode,
   ServerModel,
@@ -82,7 +82,7 @@ export const updateFromClient = ({
 }: {
   sendToClient: (msg: ToClient) => Cmd;
   broadcast: (msg: ToClient) => Cmd;
-  ctx: RoomRequestCtx;
+  ctx: SpaceRequestCtx;
   msg: ToServer;
   model: Model;
 }): {
@@ -140,12 +140,12 @@ export const updateFromClient = ({
   return { model };
 };
 
-export const updateFromRoom = ({
+export const updateFromSpace = ({
   broadcast,
   msg,
   model,
 }: {
-  msg: RoomMsg;
+  msg: SpaceMsg;
   model: Model;
   broadcast: (m: ToClient) => Cmd;
 }): {
@@ -158,7 +158,7 @@ export const updateFromRoom = ({
     }
 
     case "vs-bot": {
-      const updated = VsBot.updateFromRoom({
+      const updated = VsBot.updateFromSpace({
         msg,
         model: model.c,
         broadcast: (c) => broadcast({ t: "vs-bot", c }),
@@ -170,7 +170,7 @@ export const updateFromRoom = ({
     }
 
     case "vs-user": {
-      const updated = VsUser.updateFromRoom({
+      const updated = VsUser.updateFromSpace({
         msg,
         model: model.c,
         broadcast: (c) => broadcast({ t: "vs-user", c }),

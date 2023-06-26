@@ -1,10 +1,10 @@
-import { ClientId, RoomId, UserId } from "@gamezilla/shared/app";
+import { ClientId, SpaceId, UserId } from "@gamezilla/shared/app";
 import {
   AppMsg,
   AuthenticatedRequestCtx,
   Ctx,
-  RoomCtx,
-  RoomRequestCtx,
+  SpaceCtx,
+  SpaceRequestCtx,
 } from "@gamezilla/shared/server";
 import { andThen, Cmd, exhaustive, Ok, p, Sub } from "@gamezilla/shared/core";
 import * as Game from "./game.server";
@@ -15,7 +15,7 @@ import {
   Res,
   ToServer,
   ToClient,
-} from "./room.shared";
+} from "./space.shared";
 
 //
 //
@@ -28,7 +28,7 @@ import {
 export type Model = ServerModel;
 
 export const init: Model = {
-  rooms: {},
+  spaces: {},
   users: {},
   games: {},
   profiles: {},
@@ -60,9 +60,9 @@ export const update = ({
 } => {
   switch (msg.t) {
     case "game": {
-      const { roomId } = msg;
+      const { spaceId } = msg;
 
-      const game = model.games[roomId];
+      const game = model.games[spaceId];
 
       if (!game) {
         return { model };
@@ -70,30 +70,30 @@ export const update = ({
 
       const gameMsg = msg.c;
 
-      const room = model.rooms[roomId];
+      const space = model.spaces[spaceId];
 
-      if (!room) {
+      if (!space) {
         return { model };
       }
 
-      const roomCtx: RoomCtx = {
+      const spaceCtx: SpaceCtx = {
         ...ctx,
-        hostId: room.hostId,
+        hostId: space.hostId,
       };
 
       const updated = Game.update({
         broadcast: (m) =>
-          sendToRoom({ sendToUser, model, roomId, msg: { t: "game", c: m } }),
+          sendToSpace({ sendToUser, model, spaceId, msg: { t: "game", c: m } }),
         msg: gameMsg,
         model: game,
-        ctx: roomCtx,
+        ctx: spaceCtx,
       });
 
       const modelNew: Model = {
         ...model,
         games: {
           ...model.games,
-          [roomId]: updated[0],
+          [spaceId]: updated[0],
         },
       };
 
@@ -101,7 +101,7 @@ export const update = ({
         model: modelNew,
         cmd: p(
           updated[1],
-          Cmd.map((m): Msg => ({ t: "game", roomId, c: m }))
+          Cmd.map((m): Msg => ({ t: "game", spaceId, c: m }))
         ),
       };
     }
@@ -179,13 +179,13 @@ export const updateFromClient_: updateFromClient = ({
         return { model };
       }
 
-      const room = model.rooms[user.roomId];
+      const space = model.spaces[user.spaceId];
 
-      if (!room) {
+      if (!space) {
         return { model };
       }
 
-      const game = model.games[user.roomId];
+      const game = model.games[user.spaceId];
 
       if (!game) {
         return { model };
@@ -193,20 +193,20 @@ export const updateFromClient_: updateFromClient = ({
 
       const gameMsg = msg.c;
 
-      const roomCtx: RoomRequestCtx = {
+      const spaceCtx: SpaceRequestCtx = {
         ...ctx,
-        hostId: room.hostId,
+        hostId: space.hostId,
       };
 
       const [gameNew, gameCmd] = Game.updateFromClient({
         ...ctx,
-        ctx: roomCtx,
+        ctx: spaceCtx,
         sendToClient: (m) => wire.sendToClient({ t: "game", c: m }),
         broadcast: (m) =>
-          sendToRoom({
+          sendToSpace({
             sendToUser: wire.sendToUser,
             model,
-            roomId: room.roomId,
+            spaceId: space.spaceId,
             msg: { t: "game", c: m },
           }),
         msg: gameMsg,
@@ -217,7 +217,7 @@ export const updateFromClient_: updateFromClient = ({
         ...model,
         games: {
           ...model.games,
-          [room.roomId]: gameNew,
+          [space.spaceId]: gameNew,
         },
       };
 
@@ -225,7 +225,7 @@ export const updateFromClient_: updateFromClient = ({
         model: modelNew,
         cmd: p(
           gameCmd,
-          Cmd.map((msg): Msg => ({ t: "game", roomId: room.roomId, c: msg }))
+          Cmd.map((msg): Msg => ({ t: "game", spaceId: space.spaceId, c: msg }))
         ),
       };
     }
@@ -268,24 +268,24 @@ const updateLeave = ({
     return { model: modelAfter, cmd: wire.broadcast(res) };
   }
 
-  const room = model.rooms[user.roomId];
+  const space = model.spaces[user.spaceId];
 
-  if (!room) {
+  if (!space) {
     return { model: modelAfter, cmd: wire.broadcast(res) };
   }
 
-  const game = model.games[room.roomId];
+  const game = model.games[space.spaceId];
 
   if (!game) {
     return { model: modelAfter, cmd: wire.broadcast(res) };
   }
 
-  const updated = Game.updateFromRoom({
+  const updated = Game.updateFromSpace({
     broadcast: (msg) => {
-      return sendToRoom({
+      return sendToSpace({
         sendToUser: wire.sendToUser,
         model: modelAfter,
-        roomId: room.roomId,
+        spaceId: space.spaceId,
         msg: { t: "game", c: msg },
       });
     },
@@ -297,7 +297,7 @@ const updateLeave = ({
     ...modelAfter,
     games: {
       ...modelAfter.games,
-      [user.roomId]: updated.model,
+      [user.spaceId]: updated.model,
     },
   };
 
@@ -307,7 +307,7 @@ const updateLeave = ({
       wire.broadcast(res),
       p(
         updated.cmd ?? Cmd.None,
-        Cmd.map((msg): Msg => ({ t: "game", roomId: room.roomId, c: msg }))
+        Cmd.map((msg): Msg => ({ t: "game", spaceId: space.spaceId, c: msg }))
       ),
     ]),
   };
@@ -352,15 +352,15 @@ export const updateFromApp = ({
   };
 };
 
-const sendToRoom = ({
+const sendToSpace = ({
   model,
   sendToUser,
-  roomId,
+  spaceId,
   msg,
 }: {
   model: Model;
   sendToUser: (userIds: UserId[], msg: ToClient) => Cmd;
-  roomId: RoomId;
+  spaceId: SpaceId;
   msg: ToClient;
 }): Cmd => {
   const userIds: UserId[] = [];
@@ -376,7 +376,7 @@ const sendToRoom = ({
       continue;
     }
 
-    if (user.roomId === roomId) {
+    if (user.spaceId === spaceId) {
       userIds.push(userId);
     }
   }
@@ -395,20 +395,20 @@ const sendToRoom = ({
 export const subscriptions = (model: Model): Sub<Msg> => {
   const subs: Sub<Msg>[] = [];
 
-  for (const roomId in model.rooms) {
-    if (!RoomId.is(roomId)) {
+  for (const spaceId in model.spaces) {
+    if (!SpaceId.is(spaceId)) {
       continue;
     }
 
-    const game = model.games[roomId];
+    const game = model.games[spaceId];
 
     if (!game) {
       continue;
     }
 
     const sub = p(
-      Game.subscriptions(`room/${roomId}`, game),
-      Sub.map((msg): Msg => ({ t: "game", roomId, c: msg }))
+      Game.subscriptions(`space/${spaceId}`, game),
+      Sub.map((msg): Msg => ({ t: "game", spaceId, c: msg }))
     );
 
     subs.push(sub);

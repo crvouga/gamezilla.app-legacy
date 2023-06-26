@@ -1,4 +1,4 @@
-import { RoomCtx, Route, ViewCtx } from "@gamezilla/shared/client";
+import { SpaceCtx, Route, ViewCtx } from "@gamezilla/shared/client";
 import {
   Cmd,
   Keyboard,
@@ -53,7 +53,7 @@ export const update = (
     ctx,
   }: {
     sendToServer: (msg: ToServer) => Cmd;
-    ctx: RoomCtx;
+    ctx: SpaceCtx;
   },
   msg: Msg,
   _model: Model

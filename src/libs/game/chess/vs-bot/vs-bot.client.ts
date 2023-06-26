@@ -1,5 +1,5 @@
 import { Cmd, p, Sub } from "@gamezilla/shared/core";
-import { RoomMsg } from "@gamezilla/shared/client";
+import { SpaceMsg } from "@gamezilla/shared/client";
 import * as Chess from "../chess/chess";
 import {
   ServerModel,
@@ -144,12 +144,12 @@ const updateFromClient_ = (
   }
 };
 
-export const updateFromRoom = ({
+export const updateFromSpace = ({
   msg,
   model,
   broadcast,
 }: {
-  msg: RoomMsg;
+  msg: SpaceMsg;
   broadcast: (m: ToClient) => Cmd;
   model: Model;
 }): {

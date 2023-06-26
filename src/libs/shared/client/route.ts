@@ -1,7 +1,7 @@
 import {
   Iso3166Alpha2Code,
   PhoneNumber,
-  RoomId,
+  SpaceId,
   UserId,
 } from "@gamezilla/shared/app";
 import { Browser } from "@gamezilla/shared/core";
@@ -18,7 +18,7 @@ export type Route =
   | { t: "auth"; c: RouteAuth }
   | { t: "logout" }
   | { t: "profile"; c: RouteProfile }
-  | { t: "room"; c: RouteRoom }
+  | { t: "space"; c: RouteSpace }
   | { t: "chat"; c: RouteChat }
   | { t: "search" };
 
@@ -30,8 +30,8 @@ const encode = (route: Route): string => {
       return "/logout";
     case "profile":
       return encodeProfile(route.c);
-    case "room":
-      return encodeRoom(route.c);
+    case "space":
+      return encodeSpace(route.c);
     case "chat":
       return encodeChat(route.c);
     case "search":
@@ -54,12 +54,12 @@ const decode = (pathname: string): Route | null => {
     }
     return { t: "profile", c: profile };
   }
-  if (pathname.startsWith("/room")) {
-    const room = decodeRoom(pathname);
-    if (room === null) {
+  if (pathname.startsWith("/space")) {
+    const space = decodeSpace(pathname);
+    if (space === null) {
       return null;
     }
-    return { t: "room", c: room };
+    return { t: "space", c: space };
   }
   if (pathname.startsWith("/chat")) {
     const chat = decodeChat(pathname);
@@ -197,30 +197,30 @@ export const decodeProfile = (pathname: string): RouteProfile | null => {
 
 //
 //
-// Room
+// Space
 //
 //
 
-export type RouteRoom = { t: "room"; roomId: RoomId } | { t: "room-list" };
+export type RouteSpace = { t: "space"; spaceId: SpaceId } | { t: "space-list" };
 
-export const encodeRoom = (route: RouteRoom): string => {
+export const encodeSpace = (route: RouteSpace): string => {
   switch (route.t) {
-    case "room":
-      return `/room/${route.roomId}`;
-    case "room-list":
-      return "/room";
+    case "space":
+      return `/space/${route.spaceId}`;
+    case "space-list":
+      return "/space";
   }
 };
-export const decodeRoom = (pathname: string): RouteRoom | null => {
-  if (pathname.startsWith("/room/")) {
-    const roomId = pathname.slice("/room/".length);
-    if (RoomId.is(roomId)) {
-      return { t: "room", roomId };
+export const decodeSpace = (pathname: string): RouteSpace | null => {
+  if (pathname.startsWith("/space/")) {
+    const spaceId = pathname.slice("/space/".length);
+    if (SpaceId.is(spaceId)) {
+      return { t: "space", spaceId };
     }
     return null;
   }
-  if (pathname === "/room") {
-    return { t: "room-list" };
+  if (pathname === "/space") {
+    return { t: "space-list" };
   }
   return null;
 };

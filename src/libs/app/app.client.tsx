@@ -1,7 +1,7 @@
 import { AuthClient } from "@gamezilla/feat/auth";
 import { ChatClient } from "@gamezilla/feat/chat";
 import { ProfileClient } from "@gamezilla/feat/profile";
-import { RoomClient } from "@gamezilla/feat/room";
+import { SpaceClient } from "@gamezilla/feat/space";
 import { SearchClient } from "@gamezilla/feat/search";
 import {
   AppMsg,
@@ -49,7 +49,7 @@ export const init = ({
   const wire = Wire.init;
   //
   const auth = AuthClient.init();
-  const room = RoomClient.init();
+  const space = SpaceClient.init();
   const profile = ProfileClient.init;
   const chat = ChatClient.init;
   const search = SearchClient.init;
@@ -61,7 +61,7 @@ export const init = ({
       wire,
       //
       chat,
-      room: room.model,
+      space: space.model,
       auth: auth.model,
       search: search.model,
       profile,
@@ -181,7 +181,7 @@ const update_ = ({
       return { model: { ...model, wire: updated.model }, msgs: updated.msgs };
     }
 
-    case "room": {
+    case "space": {
       if (model.auth.currentUser.t !== "logged-in") {
         return { model };
       }
@@ -192,17 +192,17 @@ const update_ = ({
         now,
       };
 
-      const updated = RoomClient.update({
+      const updated = SpaceClient.update({
         ctx: ctx,
-        sendToServer: (m) => sendToServer({ t: "room", c: m }),
+        sendToServer: (m) => sendToServer({ t: "space", c: m }),
         msg: msg.c,
-        model: model.room,
+        model: model.space,
       });
 
       return {
-        model: { ...model, room: updated.model },
-        cmd: Cmd.tag_("room", updated.cmd ?? Cmd.None),
-        msgs: AppMsg.tag("room", updated.msgs),
+        model: { ...model, space: updated.model },
+        cmd: Cmd.tag_("space", updated.cmd ?? Cmd.None),
+        msgs: AppMsg.tag("space", updated.msgs),
       };
     }
 
@@ -260,7 +260,7 @@ const updateFromServer = ({
   msgs?: AppMsg[];
 } => {
   switch (msg.t) {
-    case "room": {
+    case "space": {
       if (model.auth.currentUser.t !== "logged-in") {
         return { model };
       }
@@ -273,16 +273,16 @@ const updateFromServer = ({
         now,
       };
 
-      const updated = RoomClient.updateFromServer({
+      const updated = SpaceClient.updateFromServer({
         ctx,
-        sendToServer: (msg) => sendToServer({ t: "room", c: msg }),
+        sendToServer: (msg) => sendToServer({ t: "space", c: msg }),
         msg: msg.c,
-        model: model.room,
+        model: model.space,
       });
 
       return {
-        model: { ...model, room: updated.model },
-        cmd: Cmd.tag_("room", updated.cmd ?? Cmd.None),
+        model: { ...model, space: updated.model },
+        cmd: Cmd.tag_("space", updated.cmd ?? Cmd.None),
         msgs: updated.msgs,
       };
     }
@@ -359,10 +359,10 @@ export const updateFromApp = ({
     sendToServer: (c) => sendToServer({ t: "chat", c }),
   });
 
-  const room = RoomClient.updateFromApp({
-    model: model.room,
+  const space = SpaceClient.updateFromApp({
+    model: model.space,
     msg,
-    sendToServer: (c) => sendToServer({ t: "room", c }),
+    sendToServer: (c) => sendToServer({ t: "space", c }),
   });
 
   const profile = ProfileClient.updateFromApp({
@@ -394,7 +394,7 @@ export const updateFromApp = ({
       toast: toast.model,
       chat: chat.model,
       profile: profile.model,
-      room: room.model,
+      space: space.model,
       wire: wire.model,
       auth: auth.model,
     },
@@ -404,7 +404,7 @@ export const updateFromApp = ({
       },
       Cmd.tag_("chat", chat.cmd),
       Cmd.tag_("profile", profile.cmd),
-      Cmd.tag_("room", room.cmd),
+      Cmd.tag_("space", space.cmd),
       Cmd.tag_("wire", wire.cmd),
       Cmd.tag_("toast", toast.cmd),
       Cmd.tag_("auth", auth.cmd),
@@ -437,21 +437,21 @@ export const subscriptions = ({
     Sub.tag_("wire", wireMsgs),
     Sub.tag_("routing", Routing.subscriptions),
     Sub.tag_("auth", AuthClient.subscriptions),
-    roomSub(now, model),
+    spaceSub(now, model),
   ]);
 };
 
-const roomSub = (now: Posix, model: Model): Sub<Msg> => {
+const spaceSub = (now: Posix, model: Model): Sub<Msg> => {
   if (model.auth.currentUser.t === "logged-in") {
     return Sub.tag_(
-      "room",
-      RoomClient.subscriptions(
+      "space",
+      SpaceClient.subscriptions(
         {
           now,
           currentUserId: model.auth.currentUser.currentUserId,
           profiles: model.profile.profiles,
         },
-        model.room
+        model.space
       )
     );
   }
@@ -587,11 +587,11 @@ const ViewLoggedIn = ({
     );
   }
 
-  if (model.routing.route.t === "room") {
+  if (model.routing.route.t === "space") {
     return (
-      <RoomClient.View
-        $send={(m) => $send({ t: "room", c: m })}
-        model={model.room}
+      <SpaceClient.View
+        $send={(m) => $send({ t: "space", c: m })}
+        model={model.space}
         ctx={ctx}
         route={model.routing.route.c}
         viewBottomBar={<ViewBottomBar model={model} $send={$send} ctx={ctx} />}
@@ -660,8 +660,8 @@ const ViewBottomBar = ({
   }[] = [
     {
       route: {
-        t: "room",
-        c: { t: "room-list" },
+        t: "space",
+        c: { t: "space-list" },
       },
       label: "Spaces",
       icon: <IconGamepad />,
@@ -680,10 +680,10 @@ const ViewBottomBar = ({
 
   return (
     <div className="flex w-full flex-col items-center justify-center">
-      <RoomClient.ViewCurrentRoomBar
+      <SpaceClient.ViewCurrentSpaceBar
         ctx={ctx}
-        model={model.room}
-        $send={(c) => $send({ t: "room", c })}
+        model={model.space}
+        $send={(c) => $send({ t: "space", c })}
       />
       <div className="flex w-full items-center justify-center border-t border-neutral-700">
         {items.map((item) => {

@@ -1,6 +1,6 @@
 import {
-  RoomCtx,
-  RoomViewCtx,
+  SpaceCtx,
+  SpaceViewCtx,
   ViewBottomButtonBar,
 } from "@gamezilla/shared/client";
 import { Cmd } from "@gamezilla/shared/core";
@@ -36,7 +36,7 @@ export const update = ({
 }: {
   msg: Msg;
   model: Model;
-  ctx: RoomCtx;
+  ctx: SpaceCtx;
   sendToServer: (m: ToServer) => Cmd;
 }): {
   model: Model;
@@ -86,16 +86,16 @@ export const View = ({
   model: Model;
   $send: (m: Msg) => void;
   onExit: () => void;
-  ctx: RoomViewCtx;
+  ctx: SpaceViewCtx;
 }) => {
   if (model.mode === "play") {
     return (
-      <div className="w-full h-full flex flex-col items-center justify-center">
-        <div className="w-full p-2 flex gap-2 items-center justify-center text-xl bg-blue-500 text-white">
+      <div className="flex h-full w-full flex-col items-center justify-center">
+        <div className="flex w-full items-center justify-center gap-2 bg-blue-500 p-2 text-xl text-white">
           <IconPlay />
           Play Mode
         </div>
-        <div className="w-full flex-1 gap-3 flex flex-col items-center justify-center">
+        <div className="flex w-full flex-1 flex-col items-center justify-center gap-3">
           <FlowGridPlayUI.View
             model={model}
             $send={() => {
@@ -124,12 +124,12 @@ export const View = ({
   }
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center">
-      <div className="w-full p-2 flex gap-2 items-center justify-center text-xl bg-yellow-500 text-white">
+    <div className="flex h-full w-full flex-col items-center justify-center">
+      <div className="flex w-full items-center justify-center gap-2 bg-yellow-500 p-2 text-xl text-white">
         <IconPenToSquare />
         Edit Mode
       </div>
-      <div className="w-full flex-1 flex flex-col items-center justify-center overflow-y-auto">
+      <div className="flex w-full flex-1 flex-col items-center justify-center overflow-y-auto">
         <FlowGridUI.View
           model={{
             ...model.grid,
@@ -143,8 +143,8 @@ export const View = ({
           }}
         />
 
-        <div className="flex flex-col items-center px-4 snap-x w-full overflow-x-auto">
-          <svg viewBox="-1 -1 2 2" className={cn("w-12 h-12")}>
+        <div className="flex w-full snap-x flex-col items-center overflow-x-auto px-4">
+          <svg viewBox="-1 -1 2 2" className={cn("h-12 w-12")}>
             <circle
               cx={0}
               cy={0}

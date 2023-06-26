@@ -1,6 +1,6 @@
-import { RoomMsg } from "@gamezilla/shared/client";
+import { SpaceMsg } from "@gamezilla/shared/client";
 import { Cmd, Err, Ok, Sub, andThen, p } from "@gamezilla/shared/core";
-import { RoomRequestCtx } from "@gamezilla/shared/server";
+import { SpaceRequestCtx } from "@gamezilla/shared/server";
 import { TicTacToe } from "../tic-tic-toe";
 import { getBestMove } from "../tic-tic-toe/best-move";
 import {
@@ -97,7 +97,7 @@ export const updateFromClient = (input: {
   broadcast: (m: ToClient) => Cmd;
   msg: ToServer;
   model: Model;
-  ctx: RoomRequestCtx;
+  ctx: SpaceRequestCtx;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -141,7 +141,7 @@ const updateFromClient_ = ({
   model,
   ctx,
 }: {
-  ctx: RoomRequestCtx;
+  ctx: SpaceRequestCtx;
   sendToClient: (m: ToClient) => Cmd;
   broadcast: (m: ToClient) => Cmd;
   msg: ToServer;
@@ -159,12 +159,12 @@ const updateFromClient_ = ({
   };
 };
 
-export const updateFromRoom = ({
+export const updateFromSpace = ({
   broadcast,
   msg,
   model,
 }: {
-  msg: RoomMsg;
+  msg: SpaceMsg;
   model: Model;
   broadcast: (m: ToClient) => Cmd;
 }): {

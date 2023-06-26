@@ -1,7 +1,7 @@
 import {
   AppMsg,
-  RoomCtx,
-  RoomViewCtx,
+  SpaceCtx,
+  SpaceViewCtx,
   MainMenuScreen,
   mainMenuButtons,
 } from "@gamezilla/shared/client";
@@ -67,7 +67,7 @@ export const update = ({
   sendToServer,
   ctx,
 }: {
-  ctx: RoomCtx;
+  ctx: SpaceCtx;
   sendToServer: (msg: ToServer) => Cmd;
   msg: Msg;
   model: Model;
@@ -151,7 +151,7 @@ export const updateFromServer = ({
   sendToServer,
 }: {
   sendToServer: (msg: ToServer) => Cmd;
-  ctx: RoomCtx;
+  ctx: SpaceCtx;
   msg: ToClient;
   model: Model;
 }): {
@@ -282,19 +282,19 @@ export const View = ({
   ctx,
   model,
   $send,
-  gameRoomCtx,
+  gameSpaceCtx,
 }: {
-  ctx: RoomViewCtx;
+  ctx: SpaceViewCtx;
   model: Model;
   $send: (msg: Msg) => void;
-  gameRoomCtx: RoomViewCtx;
+  gameSpaceCtx: SpaceViewCtx;
 }) => {
   switch (model.mode.t) {
     case "none": {
       return (
         <MainMenuScreen
           title="Chess"
-          ctx={gameRoomCtx}
+          ctx={gameSpaceCtx}
           renderCoverArt={(props) => <ViewCoverArt {...props} />}
           buttons={[
             mainMenuButtons.playComputer({

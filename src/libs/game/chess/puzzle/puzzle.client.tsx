@@ -1,8 +1,8 @@
 import {
   AppMsg,
   BottomBarButtonAction,
-  RoomCtx,
-  RoomViewCtx,
+  SpaceCtx,
+  SpaceViewCtx,
   ViewBottomButtonBar,
   ViewGameBox,
 } from "@gamezilla/shared/client";
@@ -72,7 +72,7 @@ export const update = ({
   msg: Msg;
   model: Model;
   sendToServer: (m: ToServer) => Cmd;
-  ctx: RoomCtx;
+  ctx: SpaceCtx;
 }): {
   model: Model;
   cmd?: Cmd;
@@ -94,7 +94,7 @@ export const updateFromServer = ({
   msg,
   model,
 }: {
-  ctx: RoomCtx;
+  ctx: SpaceCtx;
   msg: ToClient;
   model: Model;
 }): {
@@ -164,7 +164,7 @@ export const View = ({
   ctx,
   $send,
 }: {
-  ctx: RoomViewCtx;
+  ctx: SpaceViewCtx;
   model: Model;
   $send: (m: Msg) => void;
   onClose: () => void;
@@ -186,28 +186,28 @@ export const View = ({
       <ViewStatusBar model={model} />
 
       {/* top heads up */}
-      <div className="flex-1 w-full flex items-center justify-center flex-col">
-        <div className="flex items-center gap-2 w-full px-3 py-2">
+      <div className="flex w-full flex-1 flex-col items-center justify-center">
+        <div className="flex w-full items-center gap-2 px-3 py-2">
           <MyAvatar
             src={ctx.profiles[ctx.hostId]?.avatarUrl}
-            className="w-10 h-10"
+            className="h-10 w-10"
             alt=""
           />
 
-          <div className="flex flex-col justify-center flex-1">
-            <p className="text-xs text-neutral-300 -mb-1/2">Rating</p>
+          <div className="flex flex-1 flex-col justify-center">
+            <p className="-mb-1/2 text-xs text-neutral-300">Rating</p>
             <div className="flex items-center gap-1">
               <p className="text-xl font-semibold">
                 {model.profile?.eloRating ?? "..."}
               </p>
 
               {model.t === "solved" && !model.hasLost && nextEloRating && (
-                <div className="text-green-500 rounded-xl  text-lg font-semibold">
+                <div className="rounded-xl text-lg  font-semibold text-green-500">
                   +{nextEloRating - model.profile.eloRating}
                 </div>
               )}
               {model.t !== "loading" && model.hasLost && nextEloRating && (
-                <div className="text-red-500  rounded-xl   text-lg font-semibold">
+                <div className="rounded-xl  text-lg   font-semibold text-red-500">
                   {nextEloRating - model.profile.eloRating}
                 </div>
               )}
@@ -218,13 +218,13 @@ export const View = ({
             <TickingClock
               sec={durationMs ? Math.floor(durationMs / 1_000) : 0}
             />
-            <p className="font-mono font-bold text-lg  text-neutral-300">
+            <p className="font-mono text-lg font-bold  text-neutral-300">
               {durationMs ? formatDuration(durationMs) : "-:--"}
             </p>
           </div>
         </div>
 
-        <div className="w-full re flex items-center justify-end aspect-square bg-neutral-700">
+        <div className="re flex aspect-square w-full items-center justify-end bg-neutral-700">
           {model.t !== "loading" && (
             <Chess.View
               {...toChessboardPropsForHint(model)}
@@ -248,13 +248,13 @@ export const View = ({
             />
           )}
         </div>
-        <div className="w-full grid grid-cols-2 px-2 py-1">
-          <div className="flex items-center text-xs justify-start gap-1 ">
+        <div className="grid w-full grid-cols-2 px-2 py-1">
+          <div className="flex items-center justify-start gap-1 text-xs ">
             <p className="text-neutral-300">Puzzle Rating</p>
             <p>{model.t === "loading" ? "..." : model.puzzle.rating}</p>
           </div>
 
-          <div className="flex-1 flex items-center justify-end text-right text-xs gap-1">
+          <div className="flex flex-1 items-center justify-end gap-1 text-right text-xs">
             <p className="text-neutral-300">Moved</p>
             <p className="text-inherit">
               {model.t === "loading" ? "0" : model.moves?.length ?? "0"}
@@ -382,7 +382,7 @@ export const toBottomBarActions = ({
 const ViewStatusBar = ({ model }: { model: Model }) => {
   if (model.t === "loading") {
     return (
-      <div className="w-full flex items-center justify-center p-2">
+      <div className="flex w-full items-center justify-center p-2">
         <p className="text-xl">...</p>
       </div>
     );
@@ -390,7 +390,7 @@ const ViewStatusBar = ({ model }: { model: Model }) => {
 
   if (model.t === "incorrect") {
     return (
-      <div className="w-full flex items-center justify-center gap-2 p-2 bg-red-500 text-white">
+      <div className="flex w-full items-center justify-center gap-2 bg-red-500 p-2 text-white">
         <IconXMark />
         <p className="text-xl">Incorrect</p>
       </div>
@@ -399,7 +399,7 @@ const ViewStatusBar = ({ model }: { model: Model }) => {
 
   if (model.t === "solved") {
     return (
-      <div className="w-full flex items-center justify-center gap-2 p-2 bg-green-500 text-white">
+      <div className="flex w-full items-center justify-center gap-2 bg-green-500 p-2 text-white">
         <IconCheckmarkCircle />
         <p className="text-xl">Correct</p>
       </div>
@@ -410,17 +410,17 @@ const ViewStatusBar = ({ model }: { model: Model }) => {
     return (
       <div
         className={cn(
-          "flex items-center justify-center gap-2 p-2 w-full",
+          "flex w-full items-center justify-center gap-2 p-2",
           toPlayerColor(model.puzzle) === "b"
             ? "bg-black text-white"
             : "bg-white text-black"
         )}>
         <div
           className={cn(
-            "w-6 h-6 rounded-full border-2",
+            "h-6 w-6 rounded-full border-2",
             toPlayerColor(model.puzzle) === "b"
-              ? "bg-black border-[#ababab]"
-              : "bg-white border-black"
+              ? "border-[#ababab] bg-black"
+              : "border-black bg-white"
           )}></div>
         <p className="text-xl text-inherit">
           {Chess.colorToString(toPlayerColor(model.puzzle))} to move
@@ -431,7 +431,7 @@ const ViewStatusBar = ({ model }: { model: Model }) => {
 
   if (model.t === "solved-with-hint") {
     return (
-      <div className="w-full flex items-center justify-center gap-2 p-2 bg-neutral-600 text-white">
+      <div className="flex w-full items-center justify-center gap-2 bg-neutral-600 p-2 text-white">
         <IconCheckmarkCircle />
         <p className="text-xl">Solved with hint</p>
       </div>
@@ -444,7 +444,7 @@ const ViewStatusBar = ({ model }: { model: Model }) => {
 const TickingClock = (input: { sec: number }) => {
   return (
     <svg
-      className="w-5 h-5"
+      className="h-5 w-5"
       viewBox="-1 -1 2 2"
       stroke="currentColor"
       strokeWidth="0.2">

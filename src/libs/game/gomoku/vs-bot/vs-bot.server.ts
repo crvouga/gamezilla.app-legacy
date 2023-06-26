@@ -1,6 +1,6 @@
-import { RoomRequestCtx } from "@gamezilla/shared/server";
+import { SpaceRequestCtx } from "@gamezilla/shared/server";
 import { Cmd, Sub, andThen, p } from "@gamezilla/shared/core";
-import { RoomMsg } from "@gamezilla/shared/client";
+import { SpaceMsg } from "@gamezilla/shared/client";
 import {
   ServerModel,
   ServerMsg,
@@ -52,7 +52,7 @@ export const update = ({
 };
 
 type updateFromClient = (input: {
-  ctx: RoomRequestCtx;
+  ctx: SpaceRequestCtx;
   sendToClient: (m: ToClient) => Cmd;
   broadcast: (m: ToClient) => Cmd;
   msg: ToServer;
@@ -110,11 +110,11 @@ const updateFromClient_: updateFromClient = ({
   }
 };
 
-export const updateFromRoom = ({
+export const updateFromSpace = ({
   msg,
   model,
 }: {
-  msg: RoomMsg;
+  msg: SpaceMsg;
   model: Model;
 }): {
   model: Model;

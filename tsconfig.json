@@ -36,7 +36,7 @@
       "@gamezilla/feat/chat": ["src/libs/feat/chat/index.ts"],
       "@gamezilla/feat/party": ["src/libs/feat/party/index.ts"],
       "@gamezilla/feat/profile": ["src/libs/feat/profile/index.ts"],
-      "@gamezilla/feat/room": ["src/libs/feat/room/index.ts"],
+      "@gamezilla/feat/space": ["src/libs/feat/space/index.ts"],
       "@gamezilla/feat/search": ["src/libs/feat/search/index.ts"],
       "@gamezilla/game/battleship": ["src/libs/game/battleship/index.ts"],
       "@gamezilla/game/chess": ["src/libs/game/chess/index.ts"],

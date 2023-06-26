@@ -1,5 +1,5 @@
 import { UserId } from "@gamezilla/shared/app";
-import { RoomCtx, ViewCtx } from "@gamezilla/shared/client";
+import { SpaceCtx, ViewCtx } from "@gamezilla/shared/client";
 import {
   Audio,
   Cmd,
@@ -158,7 +158,7 @@ export const update = (
 };
 
 export const updateFromServer = (
-  { ctx }: { ctx: RoomCtx },
+  { ctx }: { ctx: SpaceCtx },
   msg: ToClient,
   _model: Model
 ): [Model, Cmd<Msg>] => {

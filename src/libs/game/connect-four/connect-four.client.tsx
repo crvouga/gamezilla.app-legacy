@@ -1,8 +1,8 @@
 import {
   Ctx,
   MainMenuScreen,
-  RoomCtx,
-  RoomViewCtx,
+  SpaceCtx,
+  SpaceViewCtx,
   bannerArtAspectRatio,
   mainMenuButtons,
 } from "@gamezilla/shared/client";
@@ -52,7 +52,7 @@ export const update = ({
   model,
 }: {
   sendToServer: (msg: ToServer) => Cmd;
-  ctx: RoomCtx;
+  ctx: SpaceCtx;
   msg: Msg;
   model: Model;
 }): {
@@ -97,7 +97,7 @@ export const updateFromServer = ({
   model,
   msg,
 }: {
-  ctx: RoomCtx;
+  ctx: SpaceCtx;
   msg: ToClient;
   model: Model;
 }): [Model, Cmd<Msg>] => {
@@ -161,7 +161,7 @@ export const View = ({
 }: {
   model: Model;
   $send: (msg: Msg) => void;
-  ctx: RoomViewCtx;
+  ctx: SpaceViewCtx;
 }) => {
   const onQuit = () => $send({ t: "input-mode", mode: "none" });
 

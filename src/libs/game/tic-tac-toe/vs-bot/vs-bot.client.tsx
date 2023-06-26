@@ -1,7 +1,7 @@
 import {
   AppMsg,
   Ctx,
-  RoomCtx,
+  SpaceCtx,
   ViewCtx,
   ViewVsBotGameScreen,
   ViewVsBotSetupScreen,
@@ -65,7 +65,7 @@ export const update = ({
   sendToServer,
 }: {
   sendToServer: (msg: ToServer) => Cmd;
-  ctx: RoomCtx;
+  ctx: SpaceCtx;
   msg: Msg;
   model: Model;
 }): {
@@ -167,12 +167,12 @@ export const View = ({
             $send({ t: "input-player-type", playerType: player }),
           selected: model.userPlayerType,
           icon: ({ playerType }) => (
-            <PlayerTypeIcon playerType={playerType} className="w-6 h-6" />
+            <PlayerTypeIcon playerType={playerType} className="h-6 w-6" />
           ),
           render: ({ playerType }) => (
             <PlayerTypeIcon
               playerType={playerType}
-              className="w-6 h-6 mx-auto"
+              className="mx-auto h-6 w-6"
             />
           ),
           toName: (player) => player,

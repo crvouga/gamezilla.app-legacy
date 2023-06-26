@@ -1,4 +1,4 @@
-import { RoomId, UserId } from "@gamezilla/shared/app";
+import { SpaceId, UserId } from "@gamezilla/shared/app";
 import {
   Box,
   Button,
@@ -13,26 +13,26 @@ import {
 } from "@gamezilla/shared/ui";
 import { Ctx, ViewCtx } from "../ctx";
 
-export type RoomCtx = Ctx & {
+export type SpaceCtx = Ctx & {
   hostId: UserId;
 };
 
-export type Room = {
+export type Space = {
   hostId: UserId;
-  roomId: RoomId;
+  spaceId: SpaceId;
   users: {
     [userId: UserId]: UserId;
   };
 };
 
-export type RoomViewCtx = ViewCtx & {
+export type SpaceViewCtx = ViewCtx & {
   onQuit: () => void;
   onViewProfile: (input: { userId: UserId }) => void;
   hostId: UserId;
-  room: Room;
+  space: Space;
 };
 
-export type RoomMsg =
+export type SpaceMsg =
   | { t: "user-left"; userId: UserId }
   | { t: "user-joined"; userId: UserId };
 
@@ -67,16 +67,16 @@ export const viewSelectModeScreen = ({
   coverArt,
   onUserVsComputer,
   onVsUser,
-  gameRoomCtx,
+  gameSpaceCtx,
 }: {
-  gameRoomCtx: RoomViewCtx;
+  gameSpaceCtx: SpaceViewCtx;
   ctx: ViewCtx;
   title: string;
   coverArt: VDom;
   onVsUser: () => void;
   onUserVsComputer: () => void;
 }) => {
-  if (ctx.currentUserId !== gameRoomCtx.hostId) {
+  if (ctx.currentUserId !== gameSpaceCtx.hostId) {
     return (
       <FillBox
         sx={{
@@ -156,7 +156,7 @@ export const viewSelectModeScreen = ({
       <Box sx={{ flex: 1 }} />
 
       <Button
-        onClick={gameRoomCtx.onQuit}
+        onClick={gameSpaceCtx.onQuit}
         size="large"
         fullWidth
         variant="outlined"
