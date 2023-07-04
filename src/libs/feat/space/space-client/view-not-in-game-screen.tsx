@@ -5,7 +5,6 @@ import {
 } from "@gamezilla/shared/client";
 import { gameNameList, gameNameToString, viewCoverArt } from "../game.shared";
 import { ClientMsg } from "../space.shared";
-import { Text } from "@gamezilla/shared/ui";
 
 export const ViewNotInGameScreen = ({
   ctx,
@@ -26,9 +25,10 @@ export const ViewNotInGameScreen = ({
   return (
     <div className="flex h-full w-full flex-1 flex-col">
       <section className="flex flex-col gap-4 p-4">
-        <Text variant="h3" className="text-center">
+        <h1 className="text-center text-3xl font-bold" >
           Games
-        </Text>
+        </h1>
+
         <div className="grid grid-cols-3 justify-between gap-8">
           {gameNameList.map((gameName) => (
             <div key={gameName}>
