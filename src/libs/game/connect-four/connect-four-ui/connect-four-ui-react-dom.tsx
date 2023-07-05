@@ -9,7 +9,7 @@ export const ViewColumnsDOM = (props: ViewColumnsProps) => {
       onClick: props.onClick,
     })
   );
-  console.log("RENDER");
+
   useEffect(() => {
     instanceRef.current.setColumns(props.columns);
   }, [props.columns]);

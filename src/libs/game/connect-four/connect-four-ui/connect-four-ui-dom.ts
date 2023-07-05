@@ -140,6 +140,33 @@ export const create = ({
     //
     //
     //
+    //
+
+    for (let y = 0; y < MAX_COLUMN_HEIGHT; y++) {
+      for (let x = 0; x < COLUMN_COUNT; x++) {
+        const player = previousColumns[x]?.[y];
+        if (!player) {
+          continue;
+        }
+        const disc = document.createElementNS(SVG_NS, "circle");
+        disc.setAttribute("data-position", `${x},${y}`);
+        disc.setAttribute("r", "0.5");
+        if (player === "PlayerOne") {
+          disc.setAttribute("fill", `url(#${svgIds.playerOneGradient})`);
+        }
+        if (player === "PlayerTwo") {
+          disc.setAttribute("fill", `url(#${svgIds.playerTwoGradient})`);
+        }
+        disc.setAttribute("cx", `${x}`);
+        disc.setAttribute("cy", `${y}`);
+        discsGroup.appendChild(disc);
+      }
+    }
+
+    //
+    //
+    //
+    //
     svg.appendChild(rootGroup);
     root.appendChild(svg);
   };
@@ -182,7 +209,7 @@ const addDisc = ({
       from: MAX_COLUMN_HEIGHT + 1,
       to: y,
       duration: 200 + 300 * (1 - y / MAX_COLUMN_HEIGHT),
-      easing: { type: "ease-out-bounce" },
+      easing: { type: "ease-out-quint" },
     },
   });
 };
