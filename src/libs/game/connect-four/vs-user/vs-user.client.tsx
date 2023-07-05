@@ -20,12 +20,8 @@ import {
   MyButton,
   Text,
 } from "@gamezilla/shared/ui";
-import { PlayerType, toTurn } from "../connect-four/connect-four";
-import {
-  PlayerIcon,
-  ViewColumns,
-  ViewCoverArt,
-} from "../connect-four/connect-four-ui";
+import { PlayerType, toTurn } from "../connect-four";
+import { PlayerIcon, ViewColumns, ViewCoverArt } from "../connect-four-ui";
 import {
   ClientModel,
   ClientMsg,

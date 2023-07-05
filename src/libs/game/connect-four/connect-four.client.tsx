@@ -15,11 +15,7 @@ import {
   ToClient,
   ToServer,
 } from "./connect-four.shared";
-import {
-  PlayerIcon,
-  ViewCoverArt,
-  gameTheme,
-} from "./connect-four/connect-four-ui";
+import { PlayerIcon, ViewCoverArt, gameTheme } from "./connect-four-ui";
 import * as VsBot from "./vs-bot/vs-bot.client";
 import * as VsUser from "./vs-user/vs-user.client";
 

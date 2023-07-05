@@ -11,19 +11,14 @@ import {
   IconArrowRotateLeft,
   IconRightLeft,
 } from "@gamezilla/shared/ui";
-import {
-  PlayerType,
-  opposite,
-  toStatus,
-  toTurn,
-} from "../connect-four/connect-four";
+import { PlayerType, opposite, toStatus, toTurn } from "../connect-four";
 import {
   PlayerIcon,
   PlayerOneIcon,
   PlayerTwoIcon,
   ViewColumns,
   ViewCoverArt,
-} from "../connect-four/connect-four-ui";
+} from "../connect-four-ui";
 import {
   ClientModel,
   ClientMsg,
@@ -234,66 +229,72 @@ export const View = ({
 
   const status = toStatus(model.columns);
 
-  return ViewVsBotGameScreen<PlayerType>({
-    gameOver:
-      status.type === "Tie"
-        ? { type: "draw" }
-        : status.type === "Winner"
-        ? { type: "winner", winner: status.winner }
-        : { type: "none" },
-    gameOverActions: [
-      {
-        label: "Exit",
-        icon: <IconArrowLeftOnRect />,
-        onClick: () => $send({ t: "stop-game" }),
-      },
-      {
-        label: "Restart",
-        icon: <IconArrowRotateLeft />,
-        onClick: () => $send({ t: "restart" }),
-      },
-    ],
-    botName: model.botLevel,
-    botPlayer: opposite[model.userPlayerType],
-    ctx,
-    leftPlayer: "PlayerOne",
-    playerUserId: model.player,
-    userPlayer: model.userPlayerType,
-    turn: toTurn(model.columns),
-    actions: [
-      {
-        label: "Exit",
-        icon: <IconArrowLeftOnRect />,
-        onClick: () => $send({ t: "stop-game" }),
-      },
-      {
-        label: "Restart",
-        icon: <IconArrowRotateLeft />,
-        onClick: () => $send({ t: "restart" }),
-      },
-      {
-        label: "Swap",
-        icon: <IconRightLeft />,
-        onClick: () => $send({ t: "swap-sides" }),
-      },
-    ],
-    viewPlayerIcon: (props) => <PlayerIcon key={props.playerType} {...props} />,
-    viewBoard: () => (
-      <ViewColumns
-        ghost={
-          ctx.currentUserId === model.player &&
-          toTurn(model.columns) === model.userPlayerType &&
-          model.ghostIndex !== null
-            ? {
-                columnIndex: model.ghostIndex,
-                playerType: model.userPlayerType,
-              }
-            : undefined
-        }
-        columns={model.columns}
-        onHover={(columnIndex) => $send({ t: "hovered", columnIndex })}
-        onClick={(columnIndex) => $send({ t: "input-move", columnIndex })}
-      />
-    ),
-  });
+  return (
+    <ViewVsBotGameScreen<PlayerType>
+      gameOver={
+        status.type === "Tie"
+          ? { type: "draw" }
+          : status.type === "Winner"
+          ? { type: "winner", winner: status.winner }
+          : { type: "none" }
+      }
+      gameOverActions={[
+        {
+          label: "Exit",
+          icon: <IconArrowLeftOnRect />,
+          onClick: () => $send({ t: "stop-game" }),
+        },
+        {
+          label: "Restart",
+          icon: <IconArrowRotateLeft />,
+          onClick: () => $send({ t: "restart" }),
+        },
+      ]}
+      botName={model.botLevel}
+      botPlayer={opposite[model.userPlayerType]}
+      ctx={ctx}
+      leftPlayer={"PlayerOne"}
+      playerUserId={model.player}
+      userPlayer={model.userPlayerType}
+      turn={toTurn(model.columns)}
+      actions={[
+        {
+          label: "Exit",
+          icon: <IconArrowLeftOnRect />,
+          onClick: () => $send({ t: "stop-game" }),
+        },
+        {
+          label: "Restart",
+          icon: <IconArrowRotateLeft />,
+          onClick: () => $send({ t: "restart" }),
+        },
+        {
+          label: "Swap",
+          icon: <IconRightLeft />,
+          onClick: () => $send({ t: "swap-sides" }),
+        },
+      ]}
+      viewPlayerIcon={(props) => (
+        <PlayerIcon key={props.playerType} {...props} />
+      )}
+      viewBoard={() => (
+        <ViewColumns
+          implementation="svg"
+          ghost={
+            ctx.currentUserId === model.player &&
+            toTurn(model.columns) === model.userPlayerType &&
+            model.ghostIndex !== null
+              ? {
+                  columnIndex: model.ghostIndex,
+                  playerType: model.userPlayerType,
+                }
+              : undefined
+          }
+          columns={model.columns}
+          onHover={(columnIndex) => $send({ t: "hovered", columnIndex })}
+          onClick={(columnIndex) => $send({ t: "input-move", columnIndex })}
+        />
+      )}
+    />
+  );
 };
