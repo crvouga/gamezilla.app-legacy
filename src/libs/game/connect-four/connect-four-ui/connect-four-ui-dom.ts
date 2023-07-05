@@ -6,6 +6,7 @@ import {
   MAX_COLUMN_HEIGHT,
   PlayerType,
   isColumnIndex,
+  toWins,
 } from "../connect-four";
 import { gameTheme } from "./connect-four-ui-shared";
 
@@ -20,6 +21,11 @@ type SvgIds = {
 };
 
 const SVG_NS = "http://www.w3.org/2000/svg";
+
+// type Position = {
+//   x: number;
+//   y: number;
+// };
 
 export const create = ({
   initialColumns,
@@ -65,8 +71,43 @@ export const create = ({
       }
     }
 
+    const wins = toWins(columnsNew);
+
+    for (const win of wins) {
+      const westMost = win[0];
+      const eastMost = win[win.length - 1];
+      if (!westMost || !eastMost) {
+        continue;
+      }
+
+      // const theta = angleBetween(westMost, eastMost);
+      // const originX = (westMost.x + 0.5) * n;
+      // const originY = (westMost.y + 0.5) * n;
+      // const width = (distance(westMost, eastMost) + 1) * n;
+    }
+
     previousColumns = columnsNew;
   };
+
+  // const draw = (node: HTMLElement) => {
+  //   if (!(node instanceof SVGRectElement)) {
+  //     return;
+  //   }
+
+  //   const length = node.getTotalLength();
+  //   easeAttrs(node, {
+  //     "stroke-dasharray": {
+  //       from: length,
+  //       to: length,
+  //       duration: 500,
+  //     },
+  //     "stroke-dashoffset": {
+  //       from: length,
+  //       to: 0,
+  //       duration: 500,
+  //     },
+  //   });
+  // };
 
   const setRoot = (rootNew: HTMLElement | null) => {
     if (!rootNew) {
@@ -105,7 +146,6 @@ export const create = ({
     //
     // holes
     //
-
     const holes = document.createElementNS(SVG_NS, "rect");
     holes.setAttribute("x", "0");
     holes.setAttribute("y", "0");
@@ -114,10 +154,24 @@ export const create = ({
     holes.setAttribute("fill", `url(#${svgIds.columnGradient})`);
     holes.setAttribute("mask", `url(#${svgIds.holeMask})`);
     rootGroup.appendChild(holes);
-    //
-    //
-    //
 
+    //
+    // win lines
+    //
+    const wins = document.createElementNS(SVG_NS, "svg");
+    wins.setAttribute("x", "0");
+    wins.setAttribute("y", "0");
+    wins.setAttribute("width", COLUMN_COUNT.toString());
+    wins.setAttribute("height", MAX_COLUMN_HEIGHT.toString());
+    wins.setAttribute(
+      "viewBox",
+      `0 0 ${COLUMN_COUNT * n} ${MAX_COLUMN_HEIGHT * n}`
+    );
+    rootGroup.appendChild(wins);
+
+    //
+    //
+    //
     for (let columnIndex = 0; columnIndex < COLUMN_COUNT; columnIndex++) {
       const column = document.createElementNS(SVG_NS, "rect");
       column.setAttribute("x", columnIndex.toString());
@@ -171,9 +225,20 @@ export const create = ({
     root.appendChild(svg);
   };
 
+  const cleanUp = () => {
+    if (!root) {
+      return;
+    }
+    root.innerHTML = "";
+    root = null;
+    svg = null;
+    discsGroup = null;
+  };
+
   return {
     setColumns,
     setRoot,
+    cleanUp,
   };
 };
 
@@ -242,6 +307,15 @@ const removeDisc = async ({
 
   disc.remove();
 };
+
+/* Have to increase the viewBox so that the draw animation is smooth >:-{ */
+const n = 1000;
+
+// const distance = (a: Position, b: Position): number =>
+//   ((a.x - b.x) ** 2 + (a.y - b.y) ** 2) ** 0.5;
+
+// const angleBetween = (a: Position, b: Position): number =>
+//   (Math.atan2(b.y - a.y, b.x - a.x) * 180) / Math.PI;
 
 /**
  *
