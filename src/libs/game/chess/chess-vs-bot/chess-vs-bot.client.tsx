@@ -97,7 +97,7 @@ export const update = ({
   });
 
   if (handled.t === "err") {
-    return { model };
+    return { model, cmd: sendToServer(msg) };
   }
 
   const sharedModel = handled.value;

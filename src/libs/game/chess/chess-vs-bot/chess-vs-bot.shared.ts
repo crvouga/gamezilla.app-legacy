@@ -155,8 +155,8 @@ export const handle = ({
     }
 
     if (msg.t === "start-playing") {
-      if (model.userId) {
-        return Err("already-playing");
+      if (model.userId !== null && model.userId !== ctx.currentUserId) {
+        return Err("not-allowed");
       }
       return Ok({
         ...model,
