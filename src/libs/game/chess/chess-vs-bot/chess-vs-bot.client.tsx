@@ -277,7 +277,7 @@ export const View = ({
           return <Chess.ViewCoverArt {...props} />;
         }}
         bot={{
-          label: String(model.sharedModel.botLevel),
+          label: Chess.botLevelToString(model.sharedModel.botLevel),
         }}
         canStartGame={model.sharedModel.userId !== null}
         ctx={ctx}

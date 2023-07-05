@@ -19,24 +19,24 @@ export const allBotLevels: BotLevel[] = [0, 1, 2, 3, 4];
 export const botLevelToString = (level: BotLevel): string => {
   switch (level) {
     case 0: {
-      // return "Monkey"
-      return "Level 0";
+      return "Monkey";
+      // return "Level 0";
     }
     case 1: {
-      // return "Beginner"
-      return "Level 1";
+      return "Beginner";
+      // return "Level 1";
     }
     case 2: {
-      // return "Intermediate"
-      return "Level 2";
+      return "Intermediate";
+      // return "Level 2";
     }
     case 3: {
-      // return "Advanced"
-      return "Level 3";
+      return "Advanced";
+      // return "Level 3";
     }
     case 4: {
-      // return "Experienced"
-      return "Level 4";
+      return "Experienced";
+      // return "Level 4";
     }
   }
 };
