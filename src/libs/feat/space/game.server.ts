@@ -7,10 +7,9 @@ import { SnakeServer } from "@gamezilla/game/snake";
 import { TetrisServer } from "@gamezilla/game/tetris";
 import { TicTacToeServer } from "@gamezilla/game/tic-tac-toe";
 import { UserId } from "@gamezilla/shared/app";
-import { SpaceCtx, SpaceRequestCtx } from "@gamezilla/shared/server";
-import { Cmd, exhaustive, Sub } from "@gamezilla/shared/core";
-import { SpaceMsg } from "@gamezilla/shared/client";
-import { ServerModel, ServerMsg, ToServer, ToClient } from "./game.shared";
+import { Cmd, Sub, exhaustive } from "@gamezilla/shared/core";
+import { SpaceCtx, SpaceMsg, SpaceRequestCtx } from "@gamezilla/shared/server";
+import { ServerModel, ServerMsg, ToClient, ToServer } from "./game.shared";
 
 //
 //
