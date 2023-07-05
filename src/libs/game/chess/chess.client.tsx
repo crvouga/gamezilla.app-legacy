@@ -25,7 +25,7 @@ import {
 import { ViewCoverArt } from "./chess/chess";
 import Sounds from "./chess/chess-sounds";
 import * as Puzzle from "./puzzle/puzzle.client";
-import * as VsBot from "./vs-bot/vs-bot.server";
+import { ChessVsBotClient } from "./chess-vs-bot";
 import * as VsUser from "./vs-user/vs-user.client";
 
 //
@@ -106,15 +106,16 @@ export const update = ({
 
     case "vs-bot": {
       if (model.mode.t === "vs-bot") {
-        const [child, cmd] = VsBot.update(
-          { sendToServer: (c) => sendToServer({ t: "vs-bot", c }) },
-          msg.c,
-          model.mode.c
-        );
+        const updated = ChessVsBotClient.update({
+          sendToServer: (c) => sendToServer({ t: "vs-bot", c }),
+          msg: msg.c,
+          model: model.mode.c,
+          ctx,
+        });
 
         return [
-          { ...model, mode: { t: "vs-bot", c: child } },
-          Cmd.tag_("vs-bot", cmd),
+          { ...model, mode: { t: "vs-bot", c: updated.model } },
+          Cmd.tag_("vs-bot", updated.cmd),
         ];
       }
 
@@ -206,11 +207,14 @@ export const updateFromServer = ({
 
     case "vs-bot": {
       if (model.mode.t === "vs-bot") {
-        const [child, cmd] = VsBot.updateFromServer(msg.c, model.mode.c);
+        const updated = ChessVsBotClient.updateFromServer({
+          msg: msg.c,
+          model: model.mode.c,
+        });
 
         return {
-          model: { ...model, mode: { t: "vs-bot", c: child } },
-          cmd: Cmd.tag_("vs-bot", cmd),
+          model: { ...model, mode: { t: "vs-bot", c: updated.model } },
+          cmd: Cmd.tag_("vs-bot", updated.cmd),
         };
       }
 
@@ -331,7 +335,7 @@ export const View = ({
 
     case "vs-bot": {
       return (
-        <VsBot.View
+        <ChessVsBotClient.View
           ctx={ctx}
           $send={(c) => $send({ t: "vs-bot", c })}
           model={model.mode.c}
@@ -461,29 +465,20 @@ export const syncWithServer = ({
     }
 
     case "vs-bot": {
-      if (clientModel.mode.t === "vs-bot") {
-        return {
-          model: {
-            ...clientModel,
-            mode: {
-              t: "vs-bot",
-              c: VsBot.syncWithServer(clientModel.mode.c, serverModel.c),
-            },
-          },
-        };
-      }
-
-      const [child, childCmd] = VsBot.init();
-
       return {
         model: {
           ...clientModel,
           mode: {
             t: "vs-bot",
-            c: VsBot.syncWithServer(child, serverModel.c),
+            c: ChessVsBotClient.syncWithServer({
+              serverModel: serverModel.c,
+              clientModel:
+                clientModel.mode.t === "vs-bot"
+                  ? clientModel.mode.c
+                  : undefined,
+            }),
           },
         },
-        cmd: Cmd.tag_("vs-bot", childCmd),
       };
     }
   }

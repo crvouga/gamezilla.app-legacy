@@ -1,0 +1,382 @@
+import { UserId } from "@gamezilla/shared/app";
+import { Audio, Err, Ok, Result } from "@gamezilla/shared/core";
+import * as Chess from "../chess/chess";
+
+//
+//
+//
+// Model
+//
+//
+//
+
+export type ClientModel = {
+  sharedModel: SharedModel;
+  openedMenuId: string | null;
+  openedModal: null | "game-over";
+  isFlipped: boolean;
+};
+
+export type ServerModel = SharedModel;
+
+export type SharedModel = SetupModel | GameModel | GameOverModel;
+
+export type SetupModel = {
+  type: "setup";
+  userColor: Chess.Color;
+  userId: UserId | null;
+  botLevel: Chess.BotLevel;
+};
+
+export type GameModel = {
+  type: "game";
+  userColor: Chess.Color;
+  userId: UserId;
+  board: Chess.Model;
+  botLevel: Chess.BotLevel;
+};
+
+export type GameOverModel = {
+  type: "game-over";
+  gameOver: GameOver;
+  userColor: Chess.Color;
+  userId: UserId;
+  board: Chess.Model;
+  botLevel: Chess.BotLevel;
+};
+
+export type GameOver = Chess.GameOver;
+
+export const initShared: SharedModel = {
+  type: "setup",
+  userColor: "w",
+  userId: null,
+  botLevel: 1,
+};
+
+export const initServer = ({
+  userId,
+}: {
+  userId: UserId | null;
+}): ServerModel => {
+  return {
+    type: "setup",
+    botLevel: initShared.botLevel,
+    userColor: initShared.userColor,
+    userId,
+  };
+};
+
+export const isBotTurn = (model: SharedModel) => {
+  return model.type === "game" && Chess.toTurn(model.board) !== model.userColor;
+};
+
+//
+//
+//
+// Msg
+//
+//
+//
+
+export type ClientMsg =
+  | Req
+  | { t: "audio-done"; result: Audio.PlayResult }
+  | { t: "opened-menu"; menuId: string }
+  | { t: "closed-menu" }
+  | { t: "clicked-flip" }
+  | { t: "closed-modal" };
+
+export type ServerMsg = {
+  t: "bot-moved";
+  moved: Chess.BestMoveInputResult;
+};
+
+export type ToServer = Req;
+
+export type ToClient =
+  | Res
+  | {
+      t: "bot-moved";
+      result: Result<string, SharedModel & { didCapture: boolean }>;
+    }
+  | { t: "player-left"; model: SharedModel };
+
+export type Req =
+  | { t: "start-playing"; color: Chess.Color }
+  | { t: "stop-playing" }
+  | { t: "start-game" }
+  | { t: "stop-game" }
+  | { t: "input-move"; move: Chess.MoveInput };
+
+export type Res = Req & {
+  result: Result<string, SharedModel & { didCapture?: boolean }>;
+};
+
+//
+//
+//
+//
+
+export const handle = ({
+  msg,
+  model,
+  ctx,
+}: {
+  ctx: { currentUserId: UserId; hostId: UserId };
+  msg: Req;
+  model: SharedModel;
+}): Result<string, SharedModel & { didCapture?: boolean }> => {
+  if (model.type === "setup") {
+    if (msg.t === "start-game") {
+      if (!model.userId) {
+        return Err("missing-user");
+      }
+      if (model.userId !== ctx.currentUserId || model.userId !== ctx.hostId) {
+        return Err("not-allowed");
+      }
+      return Ok({
+        type: "game",
+        botLevel: model.botLevel,
+        userColor: model.userColor,
+        userId: model.userId,
+        board: Chess.init(),
+      });
+    }
+
+    if (msg.t === "stop-playing") {
+      if (model.userId !== ctx.currentUserId) {
+        return Err("not-allowed");
+      }
+      return Ok({
+        ...model,
+        userId: null,
+      });
+    }
+
+    if (msg.t === "start-playing") {
+      if (model.userId) {
+        return Err("already-playing");
+      }
+      return Ok({
+        ...model,
+        userId: ctx.currentUserId,
+        userColor: msg.color,
+      });
+    }
+
+    return Err("unhandled");
+  }
+
+  if (model.type === "game") {
+    if (msg.t === "input-move") {
+      if (model.userId !== ctx.currentUserId) {
+        return Err("must-be-playing");
+      }
+
+      if (Chess.toTurn(model.board) !== model.userColor) {
+        return Err("must-be-turn");
+      }
+
+      const moved = Chess.move(msg.move, model.board);
+
+      if (moved.t === "err") {
+        return moved;
+      }
+
+      const boardNew = moved.value;
+
+      const gameOver = Chess.toGameOver(boardNew);
+
+      if (gameOver.type !== "none") {
+        return Ok({
+          ...model,
+          type: "game-over",
+          board: boardNew,
+          gameOver: gameOver,
+          didCapture: boardNew.didCapture,
+        });
+      }
+
+      const modelNew: SharedModel = {
+        ...model,
+        board: boardNew,
+      };
+
+      return Result.Ok({
+        ...modelNew,
+        didCapture: boardNew.didCapture,
+      });
+    }
+
+    if (msg.t === "stop-game") {
+      if (
+        model.userId !== ctx.currentUserId ||
+        ctx.currentUserId !== ctx.hostId
+      ) {
+        return Err("not-allowed");
+      }
+      return Ok({
+        type: "setup",
+        botLevel: model.botLevel,
+        userColor: model.userColor,
+        userId: model.userId,
+      });
+    }
+
+    return Err("unhandled");
+  }
+
+  if (model.type === "game-over") {
+    if (msg.t === "stop-game") {
+      if (
+        model.userId !== ctx.currentUserId ||
+        ctx.currentUserId !== ctx.hostId
+      ) {
+        return Err("not-allowed");
+      }
+      return Ok({
+        type: "setup",
+        botLevel: model.botLevel,
+        userColor: model.userColor,
+        userId: model.userId,
+      });
+    }
+
+    return Err("unhandled");
+  }
+
+  return Err("unhandled");
+};
+
+//
+//
+//
+//
+
+//
+//
+//
+//
+//
+//
+//
+
+export type InputMove = ["input-move", Chess.MoveInput & { userId: UserId }];
+
+export type InputMove_Done = [
+  "input-move-done",
+  Result<InputMoveProblem, SharedModel & { didCapture: boolean }>
+];
+
+export type InputMoveProblem =
+  | Chess.MoveProblem
+  | "must_be_started"
+  | "must_be_playing"
+  | "must_be_turn";
+
+export const inputMove = (
+  { userId, ...moveInput }: InputMove[1],
+  model: SharedModel
+): InputMove_Done[1] => {
+  if (model.type !== "game") {
+    return Result.Err("must_be_started");
+  }
+
+  if (model.userId !== userId) {
+    return Result.Err("must_be_playing");
+  }
+
+  if (Chess.toTurn(model.board) !== model.userColor) {
+    return Result.Err("must_be_turn");
+  }
+
+  const result = Chess.move(moveInput, model.board);
+
+  if (result.t === "err") {
+    return result;
+  }
+
+  const boardNew = result.value;
+
+  const gameOver = Chess.toGameOver(boardNew);
+
+  if (gameOver.type !== "none") {
+    const modelNew: SharedModel = {
+      ...model,
+      type: "game-over",
+      board: boardNew,
+      gameOver: gameOver,
+    };
+
+    return Ok({
+      ...modelNew,
+      didCapture: boardNew.didCapture,
+    });
+  }
+
+  const modelNew: SharedModel = {
+    ...model,
+    board: boardNew,
+  };
+
+  return Ok({
+    ...modelNew,
+    didCapture: boardNew.didCapture,
+  });
+};
+
+//
+//
+//
+// Bot Moved
+//
+//
+//
+
+export const botMoved = (
+  botMoveResult: Chess.BestMoveInputResult,
+  model: SharedModel
+): Result<string, SharedModel & { didCapture: boolean }> => {
+  if (model.type !== "game") {
+    return Err("must_be_started");
+  }
+
+  if (botMoveResult.t === "err") {
+    return botMoveResult;
+  }
+
+  const botMoveInput = botMoveResult.value;
+
+  const botColor = Chess.toOppositeColor(model.userColor);
+
+  if (Chess.toTurn(model.board) !== botColor) {
+    return Err("must_be_turn");
+  }
+
+  const result = Chess.move(botMoveInput, model.board);
+
+  if (result.t === "err") {
+    return result;
+  }
+
+  const { didCapture, ...boardNew } = result.value;
+
+  const gameOver = Chess.toGameOver(boardNew);
+
+  if (gameOver.type !== "none") {
+    const modelNew: SharedModel = {
+      ...model,
+      type: "game-over",
+      gameOver: gameOver,
+      board: boardNew,
+    };
+    return Ok({ ...modelNew, didCapture });
+  }
+
+  return Ok({
+    ...model,
+    board: boardNew,
+    didCapture,
+  });
+};

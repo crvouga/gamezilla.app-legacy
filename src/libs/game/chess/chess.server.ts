@@ -1,6 +1,5 @@
 import { Cmd, Result, Sub } from "@gamezilla/shared/core";
-import { SpaceMsg } from "@gamezilla/shared/client";
-import { SpaceCtx, SpaceRequestCtx } from "@gamezilla/shared/server";
+import { SpaceMsg, SpaceCtx, SpaceRequestCtx } from "@gamezilla/shared/server";
 import { UserId } from "@gamezilla/shared/app";
 import { GameMsg } from "./chess-shared";
 import {
@@ -11,7 +10,7 @@ import {
   ToClient,
 } from "./chess.shared";
 import * as Puzzle from "./puzzle/puzzle.server";
-import * as VsBot from "./vs-bot/vs-bot.client";
+import { ChessVsBotServer } from "./chess-vs-bot";
 import * as VsUser from "./vs-user/vs-user.server";
 
 const { Err, Ok } = Result;
@@ -70,13 +69,16 @@ export const update = ({
 
     case "vs-bot": {
       if (msg.t === "vs-bot") {
-        const [child, cmd] = VsBot.update(
-          { broadcast: (msg) => broadcast({ t: "vs-bot", c: msg }) },
-          msg.c,
-          model.c
-        );
+        const updated = ChessVsBotServer.update({
+          broadcast: (msg) => broadcast({ t: "vs-bot", c: msg }),
+          msg: msg.c,
+          model: model.c,
+        });
 
-        return [{ t: "vs-bot", c: child }, Cmd.tag_("vs-bot", cmd)];
+        return [
+          { t: "vs-bot", c: updated.model },
+          Cmd.tag_("vs-bot", updated.cmd),
+        ];
       }
 
       return [model, Cmd.None];
@@ -141,16 +143,18 @@ export const updateFromClient = ({
 
     case "vs-bot": {
       if (model.t === "vs-bot") {
-        const [child, cmd] = VsBot.updateFromClient(
-          {
-            sendToClient: (msg) => sendToClient({ t: "vs-bot", c: msg }),
-            broadcast: (msg) => broadcast({ t: "vs-bot", c: msg }),
-          },
-          msg.c,
-          model.c
-        );
+        const updated = ChessVsBotServer.updateFromClient({
+          ctx,
+          sendToClient: (msg) => sendToClient({ t: "vs-bot", c: msg }),
+          broadcast: (msg) => broadcast({ t: "vs-bot", c: msg }),
+          msg: msg.c,
+          model: model.c,
+        });
 
-        return [{ t: "vs-bot", c: child }, Cmd.tag_("vs-bot", cmd)];
+        return [
+          { t: "vs-bot", c: updated.model },
+          Cmd.tag_("vs-bot", updated.cmd),
+        ];
       }
 
       return [model, Cmd.None];
@@ -212,7 +216,7 @@ export const updateFromSpace = ({
     }
 
     case "vs-bot": {
-      const updated = VsBot.updateFromSpace({
+      const updated = ChessVsBotServer.updateFromSpace({
         broadcast: (m) => broadcast({ t: "vs-bot", c: m }),
         msg,
         model: model.c,
@@ -311,7 +315,7 @@ const initMode = ({
     case "vs-bot": {
       const modelNew: ServerModel = {
         t: "vs-bot",
-        c: VsBot.init({ userId: userId }),
+        c: ChessVsBotServer.init({ userId: userId }),
       };
 
       return { result: Ok(modelNew) };
@@ -358,7 +362,10 @@ export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
     }
 
     case "vs-bot": {
-      return Sub.tag_("vs-bot", VsBot.subscriptions(intervalId, model.c));
+      return Sub.tag_(
+        "vs-bot",
+        ChessVsBotServer.subscriptions(intervalId, model.c)
+      );
     }
 
     case "puzzle": {
