@@ -182,7 +182,7 @@ const addDisc = ({
       from: MAX_COLUMN_HEIGHT + 1,
       to: y,
       duration: 200 + 300 * (1 - y / MAX_COLUMN_HEIGHT),
-      easing: { type: "ease-out-quint" },
+      easing: { type: "ease-out-bounce" },
     },
   });
 };
