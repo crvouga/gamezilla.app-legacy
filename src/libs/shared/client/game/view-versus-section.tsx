@@ -10,8 +10,11 @@ import {
 type IconProps = { className: string };
 
 type PlayerProp = {
-  label: string;
-  userId: UserId | null;
+  playerType:
+    | { t: "human"; userId: UserId }
+    | { t: "bot"; label: string }
+    | { t: null };
+
   onStartPlaying: () => void;
   onStopPlaying: () => void;
   renderIcon: (props: IconProps) => VDom;
@@ -68,18 +71,20 @@ const PlayerButtons = ({
 }) => {
   return (
     <div className="col-span-3 w-full">
-      {player.userId && player.userId === ctx.currentUserId && (
-        <MyButton
-          key="toggle-play-button"
-          className="w-full"
-          variant="text"
-          color="primary"
-          onClick={player.onStopPlaying}>
-          Stop Playing
-        </MyButton>
-      )}
+      {player.playerType.t === "human" &&
+        player.playerType.userId &&
+        player.playerType.userId === ctx.currentUserId && (
+          <MyButton
+            key="toggle-play-button"
+            className="w-full"
+            variant="text"
+            color="primary"
+            onClick={player.onStopPlaying}>
+            Stop Playing
+          </MyButton>
+        )}
 
-      {!player.userId && (
+      {player.playerType.t === "human" && player.playerType.userId && (
         <MyButton
           key="toggle-play-button"
           className="w-full"
@@ -98,14 +103,16 @@ const PlayerIcons = ({ player, ctx }: { ctx: ViewCtx; player: PlayerProp }) => {
     <div
       className="col-span-3 grid w-full cursor-pointer grid-cols-2 place-items-center text-center"
       onClick={
-        player.userId === ctx.currentUserId
+        player.playerType.t === "human" &&
+        player.playerType.userId &&
+        player.playerType.userId === ctx.currentUserId
           ? player.onStopPlaying
           : player.onStartPlaying
       }>
-      {player.userId ? (
+      {player.playerType.t === "human" && player.playerType.userId ? (
         <MyAvatar
           className="h-14 w-14"
-          src={ctx.profiles[player.userId]?.avatarUrl}
+          src={ctx.profiles[player.playerType.userId]?.avatarUrl}
           alt=""
         />
       ) : (
@@ -130,13 +137,15 @@ const PlayerLabels = ({
 }) => {
   return (
     <div className="col-span-3 grid w-full grid-cols-2 place-items-center text-center text-sm text-secondary">
-      <p className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-center">
-        {player.userId ? ctx.profiles[player.userId]?.username ?? "..." : "?"}
+      <p className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-xs">
+        {player.playerType.t === "human" && player.playerType.userId
+          ? ctx.profiles[player.playerType.userId]?.username ?? "..."
+          : "?"}
       </p>
 
-      <p className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-center">
-        {player.label}
-      </p>
+      {/* <p className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-center">
+        {}
+      </p> */}
     </div>
   );
 };

@@ -149,7 +149,7 @@ export const updateFromSpace = ({
       type: "setup",
       botLevel: model.botLevel,
       userPlayerType: model.userPlayerType,
-      player: "none",
+      player: null,
     };
 
     return {
