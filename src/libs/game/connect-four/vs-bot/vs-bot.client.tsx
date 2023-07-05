@@ -279,7 +279,7 @@ export const View = ({
       )}
       viewBoard={() => (
         <ViewColumns
-          implementation="svg"
+          implementation="dom"
           ghost={
             ctx.currentUserId === model.player &&
             toTurn(model.columns) === model.userPlayerType &&

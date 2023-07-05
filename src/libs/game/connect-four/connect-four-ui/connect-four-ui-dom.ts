@@ -1,36 +1,66 @@
-import { Columns, PlayerType } from "../connect-four";
+import { easeAttrs } from "@gamezilla/shared/core";
+import {
+  COLUMN_COUNT,
+  ColumnIndex,
+  Columns,
+  MAX_COLUMN_HEIGHT,
+  PlayerType,
+  isColumnIndex,
+} from "../connect-four";
+import { gameTheme } from "./connect-four-ui-shared";
+
+export type ConnectFourUI = ReturnType<typeof create>;
+
+type SvgIds = {
+  playerOneGradient: string;
+  playerTwoGradient: string;
+  holePattern: string;
+  columnGradient: string;
+  holeMask: string;
+};
+
+const SVG_NS = "http://www.w3.org/2000/svg";
 
 export const create = ({
-  root,
   initialColumns,
+  onClick,
 }: {
-  root: HTMLElement;
   initialColumns: Columns;
-  onClick: (columnIndex: number) => void;
+  onClick?: (columnIndex: ColumnIndex) => void;
 }) => {
-  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  svg.setAttribute("viewBox", "0 0 7 6");
-  svg.setAttribute("width", "100%");
-  root.appendChild(svg);
-
+  let root: HTMLElement | null = null;
   let previousColumns: Columns = initialColumns;
+  let svg: SVGElement | null = null;
+  let discsGroup: SVGGElement | null = null;
+
+  const svgIds: SvgIds = {
+    playerOneGradient: "player-one-gradient",
+    playerTwoGradient: "player-two-gradient",
+    holePattern: "hole-pattern",
+    columnGradient: "column-gradient",
+    holeMask: "hole-mask",
+  };
 
   const setColumns = (columnsNew: Columns) => {
-    for (let y = 0; y < 6; y++) {
-      for (let x = 0; x < 7; x++) {
-        const cellPrev = previousColumns[y]?.[x];
-        const cellNew = columnsNew[y]?.[x];
+    if (!discsGroup) {
+      return;
+    }
+
+    for (let y = 0; y < MAX_COLUMN_HEIGHT; y++) {
+      for (let x = 0; x < COLUMN_COUNT; x++) {
+        const cellPrev = previousColumns[x]?.[y];
+        const cellNew = columnsNew[x]?.[y];
 
         if (cellPrev === cellNew) {
           continue;
         }
 
         if (cellPrev === undefined && cellNew !== undefined) {
-          addDisc({ svg, x, y, player: cellNew });
+          addDisc({ parent: discsGroup, x, y, player: cellNew, svgIds });
         }
 
         if (cellPrev !== undefined && cellNew === undefined) {
-          removeDisc({ svg, x, y });
+          removeDisc({ parent: discsGroup, x, y });
         }
       }
     }
@@ -38,9 +68,85 @@ export const create = ({
     previousColumns = columnsNew;
   };
 
+  const setRoot = (rootNew: HTMLElement | null) => {
+    if (!rootNew) {
+      root = null;
+      return;
+    }
+    root = rootNew;
+    svg = document.createElementNS(SVG_NS, "svg");
+    svg.setAttribute("width", "100%");
+    svg.setAttribute("viewBox", `0 0 ${COLUMN_COUNT} ${MAX_COLUMN_HEIGHT}`);
+
+    svg.appendChild(createSvgDefs(svgIds));
+
+    const rootGroup = document.createElementNS(SVG_NS, "g");
+    rootGroup.setAttribute(
+      "transform",
+      `translate(0, ${MAX_COLUMN_HEIGHT}) scale(1,-1)`
+    );
+
+    //
+    // background
+    //
+    const bg = document.createElementNS(SVG_NS, "rect");
+    bg.setAttribute("width", "7");
+    bg.setAttribute("height", "6");
+    bg.setAttribute("fill", gameTheme.primary.darker);
+    rootGroup.appendChild(bg);
+
+    //
+    // discs group
+    //
+    discsGroup = document.createElementNS(SVG_NS, "g");
+    discsGroup.setAttribute("transform", "translate(0.5, 0.5)");
+    rootGroup.appendChild(discsGroup);
+
+    //
+    // holes
+    //
+
+    const holes = document.createElementNS(SVG_NS, "rect");
+    holes.setAttribute("x", "0");
+    holes.setAttribute("y", "0");
+    holes.setAttribute("width", COLUMN_COUNT.toString());
+    holes.setAttribute("height", MAX_COLUMN_HEIGHT.toString());
+    holes.setAttribute("fill", `url(#${svgIds.columnGradient})`);
+    holes.setAttribute("mask", `url(#${svgIds.holeMask})`);
+    rootGroup.appendChild(holes);
+    //
+    //
+    //
+
+    for (let columnIndex = 0; columnIndex < COLUMN_COUNT; columnIndex++) {
+      const column = document.createElementNS(SVG_NS, "rect");
+      column.setAttribute("x", columnIndex.toString());
+      column.setAttribute("y", "0");
+      column.setAttribute("width", "1");
+      column.setAttribute("height", MAX_COLUMN_HEIGHT.toString());
+      column.setAttribute("fill", "transparent");
+      column.setAttribute("stroke", "transparent");
+      column.setAttribute("stroke-width", "0");
+      column.setAttribute("style", "cursor: pointer;");
+      column.addEventListener("click", () => {
+        if (isColumnIndex(columnIndex)) {
+          onClick?.(columnIndex);
+        }
+      });
+      rootGroup.appendChild(column);
+    }
+
+    //
+    //
+    //
+    //
+    svg.appendChild(rootGroup);
+    root.appendChild(svg);
+  };
+
   return {
-    root,
     setColumns,
+    setRoot,
   };
 };
 
@@ -48,76 +154,157 @@ const addDisc = ({
   x,
   y,
   player,
-  svg,
+  parent,
+  svgIds,
 }: {
-  svg: SVGElement;
+  svgIds: SvgIds;
+  parent: SVGElement;
   x: number;
   y: number;
   player: PlayerType;
 }) => {
-  const discNode = document.createElementNS(
-    "http://www.w3.org/2000/svg",
-    "circle"
-  );
-  discNode.setAttribute("r", "0.4");
+  const disc = document.createElementNS(SVG_NS, "circle");
+  disc.setAttribute("data-position", `${x},${y}`);
+  disc.setAttribute("r", "0.5");
   if (player === "PlayerOne") {
-    discNode.setAttribute("fill", "red");
+    disc.setAttribute("fill", `url(#${svgIds.playerOneGradient})`);
   }
   if (player === "PlayerTwo") {
-    discNode.setAttribute("fill", "yellow");
+    disc.setAttribute("fill", `url(#${svgIds.playerTwoGradient})`);
   }
-  discNode.setAttribute("cx", `${x}`);
-  discNode.setAttribute("cy", `-1`);
+  disc.setAttribute("cx", `${x}`);
+  disc.setAttribute("cy", `-1`);
 
-  svg.appendChild(discNode);
+  parent.appendChild(disc);
 
-  animateFall(discNode, y, 500);
-};
-
-const animateFall = (
-  element: SVGCircleElement,
-  endY: number,
-  duration: number
-) => {
-  const start = performance.now();
-  const startY = parseFloat(element.cy.baseVal.valueAsString);
-
-  requestAnimationFrame(function animate(time) {
-    let timeFraction = (time - start) / duration;
-    if (timeFraction > 1) timeFraction = 1;
-
-    const currentY = startY + (endY - startY) * timeFraction;
-    element.setAttribute("cy", currentY.toString());
-
-    if (timeFraction < 1) {
-      requestAnimationFrame(animate);
-    }
+  easeAttrs(disc, {
+    cy: {
+      from: MAX_COLUMN_HEIGHT + 1,
+      to: y,
+      duration: 200 + 300 * (1 - y / MAX_COLUMN_HEIGHT),
+      easing: { type: "ease-out-quint" },
+    },
   });
 };
 
-const removeDisc = (_input: { svg: SVGElement; x: number; y: number }) => {
-  //
+const removeDisc = async ({
+  parent,
+  x,
+  y,
+}: {
+  parent: SVGElement;
+  x: number;
+  y: number;
+}) => {
+  const disc = parent.querySelector<SVGCircleElement>(
+    `circle[data-position="${x},${y}"]`
+  );
+  if (!disc) {
+    return;
+  }
+
+  await easeAttrs(disc, {
+    cy: {
+      from: y,
+      to: y - MAX_COLUMN_HEIGHT,
+      duration: 750,
+      easing: { type: "ease-in-back" },
+      delay: (x / COLUMN_COUNT) * 500,
+    },
+  });
+
+  disc.remove();
 };
 
-export const initDefs = () => {
-  const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
-  const linearGradient = document.createElementNS(
-    "http://www.w3.org/2000/svg",
-    "linearGradient"
-  );
-  linearGradient.setAttribute("id", "gradient");
-  linearGradient.setAttribute("x1", "0%");
-  linearGradient.setAttribute("y1", "0%");
-  linearGradient.setAttribute("x2", "0%");
-  linearGradient.setAttribute("y2", "100%");
-  const stop1 = document.createElementNS("http://www.w3.org/2000/svg", "stop");
-  stop1.setAttribute("offset", "0%");
-  stop1.setAttribute("stop-color", "#f00");
-  const stop2 = document.createElementNS("http://www.w3.org/2000/svg", "stop");
-  stop2.setAttribute("offset", "100%");
-  stop2.setAttribute("stop-color", "#f00");
-  linearGradient.appendChild(stop1);
-  linearGradient.appendChild(stop2);
-  defs.appendChild(linearGradient);
-  return defs;
+/**
+ *
+ */
+const createSvgDefs = (ids: SvgIds) => {
+  const svgNS = SVG_NS;
+
+  const svgDefs = document.createElementNS(svgNS, "defs");
+
+  //
+  const holePattern = document.createElementNS(svgNS, "pattern");
+  holePattern.setAttribute("id", ids.holePattern);
+  holePattern.setAttribute("patternUnits", "userSpaceOnUse");
+  holePattern.setAttribute("width", "1");
+  holePattern.setAttribute("height", "1");
+
+  //
+  const circle = document.createElementNS(svgNS, "circle");
+  circle.setAttribute("cx", "0.5");
+  circle.setAttribute("cy", "0.5");
+  circle.setAttribute("r", "0.425");
+  circle.setAttribute("fill", "black");
+  holePattern.appendChild(circle);
+  svgDefs.appendChild(holePattern);
+
+  //
+  const holeMask = document.createElementNS(svgNS, "mask");
+  holeMask.setAttribute("id", ids.holeMask);
+  //
+  const maskRect1 = document.createElementNS(svgNS, "rect");
+  maskRect1.setAttribute("x", "0");
+  maskRect1.setAttribute("y", "0");
+  maskRect1.setAttribute("width", COLUMN_COUNT.toString());
+  maskRect1.setAttribute("height", MAX_COLUMN_HEIGHT.toString());
+  maskRect1.setAttribute("fill", "white");
+  holeMask.appendChild(maskRect1);
+  //
+  const maskRect2 = document.createElementNS(svgNS, "rect");
+  maskRect2.setAttribute("x", "0");
+  maskRect2.setAttribute("y", "0");
+  maskRect2.setAttribute("width", COLUMN_COUNT.toString());
+  maskRect2.setAttribute("height", MAX_COLUMN_HEIGHT.toString());
+  maskRect2.setAttribute("fill", `url(#${ids.holePattern})`);
+  holeMask.appendChild(maskRect2);
+  svgDefs.appendChild(holeMask);
+
+  const columnGradient = document.createElementNS(svgNS, "linearGradient");
+  columnGradient.setAttribute("id", ids.columnGradient);
+  columnGradient.setAttribute("gradientTransform", "rotate(90)");
+
+  //
+  const columnStop1 = document.createElementNS(svgNS, "stop");
+  columnStop1.setAttribute("offset", "0%");
+  columnStop1.setAttribute("stop-color", gameTheme.primary.light);
+  columnGradient.appendChild(columnStop1);
+
+  //
+  const columnStop2 = document.createElementNS(svgNS, "stop");
+  columnStop2.setAttribute("offset", "100%");
+  columnStop2.setAttribute("stop-color", gameTheme.primary.dark);
+  columnGradient.appendChild(columnStop2);
+  svgDefs.appendChild(columnGradient);
+
+  // Player One Gradient
+  const playerOneGradient = document.createElementNS(svgNS, "linearGradient");
+  playerOneGradient.setAttribute("id", ids.playerOneGradient);
+  playerOneGradient.setAttribute("gradientTransform", "rotate(90)");
+  const playerOneStop1 = document.createElementNS(svgNS, "stop");
+  playerOneStop1.setAttribute("offset", "0%");
+  playerOneStop1.setAttribute("stop-color", gameTheme.PlayerOne.light);
+  playerOneGradient.appendChild(playerOneStop1);
+  const playerOneStop2 = document.createElementNS(svgNS, "stop");
+  playerOneStop2.setAttribute("offset", "100%");
+  playerOneStop2.setAttribute("stop-color", gameTheme.PlayerOne.dark);
+  playerOneGradient.appendChild(playerOneStop2);
+  svgDefs.appendChild(playerOneGradient);
+
+  // Player Two Gradient
+  const playerTwoGradient = document.createElementNS(svgNS, "linearGradient");
+  playerTwoGradient.setAttribute("id", ids.playerTwoGradient);
+  playerTwoGradient.setAttribute("gradientTransform", "rotate(90)");
+  const playerTwoStop1 = document.createElementNS(svgNS, "stop");
+  playerTwoStop1.setAttribute("offset", "0%");
+  playerTwoStop1.setAttribute("stop-color", gameTheme.PlayerTwo.light);
+  playerTwoGradient.appendChild(playerTwoStop1);
+  const playerTwoStop2 = document.createElementNS(svgNS, "stop");
+  playerTwoStop2.setAttribute("offset", "100%");
+  playerTwoStop2.setAttribute("stop-color", gameTheme.PlayerTwo.dark);
+  playerTwoGradient.appendChild(playerTwoStop2);
+  svgDefs.appendChild(playerTwoGradient);
+
+  return svgDefs;
 };

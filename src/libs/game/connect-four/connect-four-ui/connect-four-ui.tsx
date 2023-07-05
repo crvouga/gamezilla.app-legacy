@@ -4,6 +4,7 @@ import { COLUMN_COUNT, MAX_COLUMN_HEIGHT, PlayerType } from "../connect-four";
 import { ViewColumnsCanvas } from "./connect-four-ui-canvas";
 import { gameTheme, ViewColumnsProps } from "./connect-four-ui-shared";
 import { ViewColumnsSvg } from "./connect-four-ui-svg";
+import { ViewColumnsDOM } from "./connect-four-ui-react-dom";
 
 //
 //
@@ -18,7 +19,7 @@ export const ViewColumns = ({
   implementation = "svg",
   ...props
 }: ViewColumnsProps & {
-  implementation?: "svg" | "canvas";
+  implementation?: "svg" | "canvas" | "dom";
 }) => {
   switch (implementation) {
     case "canvas": {
@@ -27,6 +28,10 @@ export const ViewColumns = ({
 
     case "svg": {
       return <ViewColumnsSvg {...props} />;
+    }
+
+    case "dom": {
+      return <ViewColumnsDOM {...props} />;
     }
   }
 };
