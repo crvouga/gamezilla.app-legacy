@@ -3,7 +3,6 @@ import {
   ClientToServerEvents,
   ServerToClientEvents,
   ToServer,
-  serverPort,
   sessionIdKey,
 } from "@gamezilla/app";
 import { Browser, Cmd, Debug, Program } from "@gamezilla/shared/core";

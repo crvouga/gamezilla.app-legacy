@@ -2,9 +2,9 @@ import { Uuid } from "@gamezilla/shared/core";
 import { useRef } from "react";
 import { COLUMN_COUNT, MAX_COLUMN_HEIGHT, PlayerType } from "../connect-four";
 import { ViewColumnsCanvas } from "./connect-four-ui-canvas";
-import { gameTheme, ViewColumnsProps } from "./connect-four-ui-shared";
-import { ViewColumnsSvg } from "./connect-four-ui-svg";
 import { ViewColumnsDOM } from "./connect-four-ui-react-dom";
+import { ViewColumnsProps, gameTheme } from "./connect-four-ui-shared";
+import { ViewColumnsSvg } from "./connect-four-ui-svg";
 
 //
 //

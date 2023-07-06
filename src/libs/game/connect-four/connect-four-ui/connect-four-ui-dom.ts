@@ -1,10 +1,11 @@
-import { easeAttrs } from "@gamezilla/shared/core";
+import { easeAttrs, eq } from "@gamezilla/shared/core";
 import {
   COLUMN_COUNT,
   ColumnIndex,
   Columns,
   MAX_COLUMN_HEIGHT,
   PlayerType,
+  Win,
   isColumnIndex,
   toWins,
 } from "../connect-four";
@@ -22,10 +23,10 @@ type SvgDefIds = {
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 
-// type Position = {
-//   x: number;
-//   y: number;
-// };
+type Position = {
+  x: number;
+  y: number;
+};
 
 export const create = ({
   initialColumns,
@@ -39,6 +40,7 @@ export const create = ({
   let discsGroup: SVGGElement | null = null;
   //
   let previousColumns: Columns = initialColumns;
+  let previousWins: Win[] = [];
 
   const svgDefIds: SvgDefIds = {
     playerOneGradient: "player-one-gradient",
@@ -71,6 +73,7 @@ export const create = ({
         }
       }
     }
+    previousColumns = columnsNew;
 
     const wins = toWins(columnsNew);
 
@@ -81,41 +84,51 @@ export const create = ({
         continue;
       }
 
-      // const theta = angleBetween(westMost, eastMost);
-      // const originX = (westMost.x + 0.5) * n;
-      // const originY = (westMost.y + 0.5) * n;
-      // const width = (distance(westMost, eastMost) + 1) * n;
+      if (previousWins.some((previousWin) => eq(previousWin, win))) {
+        continue;
+      }
 
-      const rect = document.createElementNS(SVG_NS, "rect");
+      const theta = angleBetween(westMost, eastMost);
+      const originX = (westMost.x + 0.5) * n;
+      const originY = (westMost.y + 0.5) * n;
+      const width = (distance(westMost, eastMost) + 1) * n;
 
-      rect.setAttribute("x", westMost.x.toString());
-      rect.setAttribute("y", westMost.y.toString());
-      rect.setAttribute("width", (eastMost.x - westMost.x + 1).toString());
-      rect.setAttribute("height", (eastMost.y - westMost.y + 1).toString());
+      const rectWin = document.createElementNS(SVG_NS, "rect");
+
+      rectWin.setAttribute(
+        "transform",
+        `rotate(${theta} ${originX} ${originY})`
+      );
+      rectWin.setAttribute("x", (westMost.x * n).toString());
+      rectWin.setAttribute("y", (westMost.y * n).toString());
+      rectWin.setAttribute("rx", (n / 2).toString());
+      rectWin.setAttribute("stroke", "white");
+      rectWin.setAttribute("fill", "transparent");
+      rectWin.setAttribute("stroke-width", (n / 8).toString());
+      rectWin.style.pointerEvents = "none";
+      rectWin.setAttribute("width", width.toString());
+      rectWin.setAttribute("height", n.toString());
+      draw(rectWin);
     }
 
-    previousColumns = columnsNew;
+    previousWins = wins;
   };
 
-  // const draw = (node: HTMLElement) => {
-  //   if (!(node instanceof SVGRectElement)) {
-  //     return;
-  //   }
-
-  //   const length = node.getTotalLength();
-  //   easeAttrs(node, {
-  //     "stroke-dasharray": {
-  //       from: length,
-  //       to: length,
-  //       duration: 500,
-  //     },
-  //     "stroke-dashoffset": {
-  //       from: length,
-  //       to: 0,
-  //       duration: 500,
-  //     },
-  //   });
-  // };
+  const draw = (node: SVGRectElement) => {
+    const length = node.getTotalLength();
+    easeAttrs(node, {
+      "stroke-dasharray": {
+        from: length,
+        to: length,
+        duration: 500,
+      },
+      "stroke-dashoffset": {
+        from: length,
+        to: 0,
+        duration: 500,
+      },
+    });
+  };
 
   const setRoot = (rootNew: HTMLElement | null) => {
     if (!rootNew) {
@@ -318,11 +331,11 @@ const removeDisc = async ({
 /* Have to increase the viewBox so that the draw animation is smooth >:-{ */
 const n = 1000;
 
-// const distance = (a: Position, b: Position): number =>
-//   ((a.x - b.x) ** 2 + (a.y - b.y) ** 2) ** 0.5;
+const distance = (a: Position, b: Position): number =>
+  ((a.x - b.x) ** 2 + (a.y - b.y) ** 2) ** 0.5;
 
-// const angleBetween = (a: Position, b: Position): number =>
-//   (Math.atan2(b.y - a.y, b.x - a.x) * 180) / Math.PI;
+const angleBetween = (a: Position, b: Position): number =>
+  (Math.atan2(b.y - a.y, b.x - a.x) * 180) / Math.PI;
 
 /**
  *
