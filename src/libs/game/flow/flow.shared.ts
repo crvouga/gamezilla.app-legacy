@@ -1,5 +1,5 @@
-import { Result } from '@gamezilla/shared/core';
-import { PuzzleBuilder } from './puzzle-builder';
+import { Result } from "@gamezilla/shared/core";
+import { PuzzleBuilder } from "./puzzle-builder";
 //
 //
 // Model
@@ -7,12 +7,13 @@ import { PuzzleBuilder } from './puzzle-builder';
 //
 
 export type ClientModel =
-  | { t: 'none' }
-  | { t: 'puzzle-builder'; c: PuzzleBuilder.ClientModel };
+  | { t: "none" }
+  | { t: "puzzle-builder"; c: PuzzleBuilder.ClientModel }
+  | { t: "play"; c: PuzzleBuilder.ClientModel };
 
 export type ServerModel =
-  | { t: 'none' }
-  | { t: 'puzzle-builder'; c: PuzzleBuilder.ServerModel };
+  | { t: "none" }
+  | { t: "puzzle-builder"; c: PuzzleBuilder.ServerModel };
 
 //
 //
@@ -22,19 +23,19 @@ export type ServerModel =
 
 export type ClientMsg =
   | Req
-  | { t: 'puzzle-builder'; c: PuzzleBuilder.ClientMsg };
+  | { t: "puzzle-builder"; c: PuzzleBuilder.ClientMsg };
 
 export type ServerMsg =
-  | { t: 'none' }
-  | { t: 'puzzle-builder'; c: PuzzleBuilder.ServerMsg };
+  | { t: "none" }
+  | { t: "puzzle-builder"; c: PuzzleBuilder.ServerMsg };
 
-export type ToServer = Req | { t: 'puzzle-builder'; c: PuzzleBuilder.ToServer };
+export type ToServer = Req | { t: "puzzle-builder"; c: PuzzleBuilder.ToServer };
 
-export type ToClient = Res | { t: 'puzzle-builder'; c: PuzzleBuilder.ToClient };
+export type ToClient = Res | { t: "puzzle-builder"; c: PuzzleBuilder.ToClient };
 
 export type Req = {
-  t: 'input-mode';
-  mode: ServerModel['t'];
+  t: "input-mode";
+  mode: ServerModel["t"];
 };
 
 export type Res = Req & {

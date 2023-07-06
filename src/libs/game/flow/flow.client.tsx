@@ -6,7 +6,7 @@ import {
 } from "@gamezilla/shared/client";
 import { Cmd, Sub } from "@gamezilla/shared/core";
 import { IconScrewdriverWrench } from "@gamezilla/shared/ui";
-import { viewCoverArt } from "./flow-cover-art";
+import { ViewCoverArt } from "./flow-cover-art";
 import {
   ClientModel,
   ClientMsg,
@@ -148,10 +148,18 @@ export const View = ({
   }
   return (
     <MainMenuScreen
-      renderCoverArt={() => viewCoverArt()}
+      renderCoverArt={(props) => <ViewCoverArt {...props} />}
       ctx={ctx}
       title="Flow"
       buttons={[
+        {
+          renderIcon: (props) => <IconScrewdriverWrench {...props} />,
+          title: "Puzzle builder",
+          description: "Build puzzles for other players to play",
+          onClick: () => {
+            $send({ t: "input-mode", mode: "puzzle-builder" });
+          },
+        },
         {
           renderIcon: (props) => <IconScrewdriverWrench {...props} />,
           title: "Puzzle builder",

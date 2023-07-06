@@ -110,7 +110,7 @@ export const gameNameList: GameName[] = [
   "connect-four",
   "tic-tac-toe",
   // "gomoku",
-  // "flow",
+  "flow",
   // "snake",
   // "tetris",
   // "maze",
@@ -153,7 +153,7 @@ export const viewCoverArt = (gameName: GameName): VDom => {
     }
 
     case "flow": {
-      return Flow.viewCoverArt();
+      return <Flow.ViewCoverArt />;
     }
 
     default: {

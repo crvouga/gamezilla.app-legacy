@@ -1,46 +1,46 @@
-import { removeKey } from '@gamezilla/shared/core';
+import { removeKey } from "@gamezilla/shared/core";
 
 export type NodeId = string & { readonly __brand: unique symbol };
 
 export type EdgeId = string & { readonly __brand: unique symbol };
 
 export type GroupId =
-  | 'A'
-  | 'B'
-  | 'C'
-  | 'D'
-  | 'E'
-  | 'F'
-  | 'G'
-  | 'H'
-  | 'I'
-  | 'J'
-  | 'K'
-  | 'L'
-  | 'M'
-  | 'N'
-  | 'O'
-  | 'P'
-  | 'Q';
+  | "A"
+  | "B"
+  | "C"
+  | "D"
+  | "E"
+  | "F"
+  | "G"
+  | "H"
+  | "I"
+  | "J"
+  | "K"
+  | "L"
+  | "M"
+  | "N"
+  | "O"
+  | "P"
+  | "Q";
 
 export const groupIdOrder = [
-  'A',
-  'B',
-  'C',
-  'D',
-  'E',
-  'F',
-  'G',
-  'H',
-  'I',
-  'J',
-  'K',
-  'L',
-  'M',
-  'N',
-  'O',
-  'P',
-  'Q',
+  "A",
+  "B",
+  "C",
+  "D",
+  "E",
+  "F",
+  "G",
+  "H",
+  "I",
+  "J",
+  "K",
+  "L",
+  "M",
+  "N",
+  "O",
+  "P",
+  "Q",
 ] as const;
 
 export const isGroupId = (groupId: string): groupId is GroupId => {
@@ -52,14 +52,14 @@ export const toEdgeId = (edge: Edge): EdgeId => {
 };
 
 export const isEdgeId = (
-  model: Pick<Model, 'edges'>,
+  model: Pick<Model, "edges">,
   edgeId: string
 ): edgeId is EdgeId => {
   return edgeId in model.edges;
 };
 
 export const isNodeId = (
-  model: Pick<Model, 'nodes'>,
+  model: Pick<Model, "nodes">,
   nodeId: string
 ): nodeId is NodeId => {
   return nodeId in model.nodes;
@@ -175,7 +175,7 @@ export const initEmpty: Model = {
 //
 
 export const toNode = (
-  model: Pick<Model, 'nodes'>,
+  model: Pick<Model, "nodes">,
   nodeId: NodeId
 ): Node | null => {
   return model.nodes[nodeId] ?? null;
@@ -187,7 +187,7 @@ export type EdgeFull = Edge & {
 };
 
 export const toEdge = (
-  model: Pick<Model, 'edges' | 'nodes'>,
+  model: Pick<Model, "edges" | "nodes">,
   edgeId: EdgeId
 ): EdgeFull | null => {
   const edge = model.edges[edgeId];
@@ -375,7 +375,7 @@ export const modelToKey = (model: Model): string => {
       return [...acc, ...nodeIds.map((to) => `${from}-${to}`)];
     }, [])
     .sort();
-  return `${nodeIds.join(',')}|${edgeIds.join(',')}`;
+  return `${nodeIds.join(",")}|${edgeIds.join(",")}`;
 };
 
 //
@@ -387,7 +387,7 @@ export const modelToKey = (model: Model): string => {
 //
 
 export const yieldNodes = function* (
-  model: Pick<Model, 'nodes'>
+  model: Pick<Model, "nodes">
 ): Generator<Node> {
   for (const nodeId in model.nodes) {
     if (!isNodeId(model, nodeId)) {
@@ -403,7 +403,7 @@ export const yieldNodes = function* (
 };
 
 export const yieldEdges = function* (
-  model: Pick<Model, 'nodes' | 'edges'>
+  model: Pick<Model, "nodes" | "edges">
 ): Generator<EdgeFull> {
   for (const edgeId in model.edges) {
     if (!isEdgeId(model, edgeId)) {
@@ -433,7 +433,7 @@ export const nodeIdToTerminal = (
 };
 
 export const yieldOutEdges = function* (
-  model: Pick<Model, 'edgesOut' | 'edges' | 'nodes'>,
+  model: Pick<Model, "edgesOut" | "edges" | "nodes">,
   nodeId: NodeId
 ): Generator<EdgeFull> {
   for (const outNodeId in model.edgesOut[nodeId]) {
@@ -458,7 +458,7 @@ export const yieldOutEdges = function* (
 };
 
 export const yieldInEdges = function* (
-  model: Pick<Model, 'edgesIn' | 'edges' | 'nodes'>,
+  model: Pick<Model, "edgesIn" | "edges" | "nodes">,
   nodeId: NodeId
 ): Generator<EdgeFull> {
   for (const inNodeId in model.edgesIn[nodeId]) {
@@ -518,7 +518,7 @@ export const doesPathExist = (
 };
 
 export const toGroup = (
-  model: Pick<Model, 'edgesIn' | 'edgesOut' | 'edges' | 'nodes'>,
+  model: Pick<Model, "edgesIn" | "edgesOut" | "edges" | "nodes">,
   nodeId: NodeId
 ): GroupId | null => {
   for (const edge of yieldInEdges(model, nodeId)) {
