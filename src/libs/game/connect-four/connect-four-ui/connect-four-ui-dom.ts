@@ -12,7 +12,7 @@ import { gameTheme } from "./connect-four-ui-shared";
 
 export type ConnectFourUI = ReturnType<typeof create>;
 
-type SvgIds = {
+type SvgDefIds = {
   playerOneGradient: string;
   playerTwoGradient: string;
   holePattern: string;
@@ -35,11 +35,12 @@ export const create = ({
   onClick?: (columnIndex: ColumnIndex) => void;
 }) => {
   let root: HTMLElement | null = null;
-  let previousColumns: Columns = initialColumns;
   let svg: SVGElement | null = null;
   let discsGroup: SVGGElement | null = null;
+  //
+  let previousColumns: Columns = initialColumns;
 
-  const svgIds: SvgIds = {
+  const svgDefIds: SvgDefIds = {
     playerOneGradient: "player-one-gradient",
     playerTwoGradient: "player-two-gradient",
     holePattern: "hole-pattern",
@@ -62,7 +63,7 @@ export const create = ({
         }
 
         if (cellPrev === undefined && cellNew !== undefined) {
-          addDisc({ parent: discsGroup, x, y, player: cellNew, svgIds });
+          addDisc({ parent: discsGroup, x, y, player: cellNew, svgDefIds });
         }
 
         if (cellPrev !== undefined && cellNew === undefined) {
@@ -84,6 +85,13 @@ export const create = ({
       // const originX = (westMost.x + 0.5) * n;
       // const originY = (westMost.y + 0.5) * n;
       // const width = (distance(westMost, eastMost) + 1) * n;
+
+      const rect = document.createElementNS(SVG_NS, "rect");
+
+      rect.setAttribute("x", westMost.x.toString());
+      rect.setAttribute("y", westMost.y.toString());
+      rect.setAttribute("width", (eastMost.x - westMost.x + 1).toString());
+      rect.setAttribute("height", (eastMost.y - westMost.y + 1).toString());
     }
 
     previousColumns = columnsNew;
@@ -119,7 +127,7 @@ export const create = ({
     svg.setAttribute("width", "100%");
     svg.setAttribute("viewBox", `0 0 ${COLUMN_COUNT} ${MAX_COLUMN_HEIGHT}`);
 
-    svg.appendChild(createSvgDefs(svgIds));
+    svg.appendChild(createSvgDefs(svgDefIds));
 
     const rootGroup = document.createElementNS(SVG_NS, "g");
     rootGroup.setAttribute(
@@ -151,8 +159,8 @@ export const create = ({
     holes.setAttribute("y", "0");
     holes.setAttribute("width", COLUMN_COUNT.toString());
     holes.setAttribute("height", MAX_COLUMN_HEIGHT.toString());
-    holes.setAttribute("fill", `url(#${svgIds.columnGradient})`);
-    holes.setAttribute("mask", `url(#${svgIds.holeMask})`);
+    holes.setAttribute("fill", `url(#${svgDefIds.columnGradient})`);
+    holes.setAttribute("mask", `url(#${svgDefIds.holeMask})`);
     rootGroup.appendChild(holes);
 
     //
@@ -188,6 +196,7 @@ export const create = ({
           onClick?.(columnIndex);
         }
       });
+
       columnsGroup.appendChild(column);
     }
     rootGroup.appendChild(columnsGroup);
@@ -204,17 +213,7 @@ export const create = ({
         if (!player) {
           continue;
         }
-        const disc = document.createElementNS(SVG_NS, "circle");
-        disc.setAttribute("data-position", `${x},${y}`);
-        disc.setAttribute("r", "0.5");
-        if (player === "PlayerOne") {
-          disc.setAttribute("fill", `url(#${svgIds.playerOneGradient})`);
-        }
-        if (player === "PlayerTwo") {
-          disc.setAttribute("fill", `url(#${svgIds.playerTwoGradient})`);
-        }
-        disc.setAttribute("cx", `${x}`);
-        disc.setAttribute("cy", `${y}`);
+        const disc = makeDisc({ x, y, player, svgDefIds });
         discsGroup.appendChild(disc);
       }
     }
@@ -231,10 +230,6 @@ export const create = ({
     if (!root) {
       return;
     }
-    root.innerHTML = "";
-    root = null;
-    svg = null;
-    discsGroup = null;
   };
 
   return {
@@ -244,38 +239,48 @@ export const create = ({
   };
 };
 
-const addDisc = ({
+const makeDisc = ({
   x,
   y,
   player,
-  parent,
-  svgIds,
+  svgDefIds,
 }: {
-  svgIds: SvgIds;
+  x: number;
+  y: number;
+  player: PlayerType;
+  svgDefIds: SvgDefIds;
+}) => {
+  const disc = document.createElementNS(SVG_NS, "circle");
+  disc.setAttribute("data-position", `${x},${y}`);
+  disc.setAttribute("data-player", player);
+  disc.setAttribute("r", "0.5");
+  if (player === "PlayerOne") {
+    disc.setAttribute("fill", `url(#${svgDefIds.playerOneGradient})`);
+  }
+  if (player === "PlayerTwo") {
+    disc.setAttribute("fill", `url(#${svgDefIds.playerTwoGradient})`);
+  }
+  disc.setAttribute("cx", `${x}`);
+  disc.setAttribute("cy", `${y}`);
+  return disc;
+};
+
+const addDisc = (input: {
+  svgDefIds: SvgDefIds;
   parent: SVGElement;
   x: number;
   y: number;
   player: PlayerType;
 }) => {
-  const disc = document.createElementNS(SVG_NS, "circle");
-  disc.setAttribute("data-position", `${x},${y}`);
-  disc.setAttribute("r", "0.5");
-  if (player === "PlayerOne") {
-    disc.setAttribute("fill", `url(#${svgIds.playerOneGradient})`);
-  }
-  if (player === "PlayerTwo") {
-    disc.setAttribute("fill", `url(#${svgIds.playerTwoGradient})`);
-  }
-  disc.setAttribute("cx", `${x}`);
-  disc.setAttribute("cy", `-1`);
+  const disc = makeDisc({ ...input, y: MAX_COLUMN_HEIGHT + 1 });
 
-  parent.appendChild(disc);
+  input.parent.appendChild(disc);
 
   easeAttrs(disc, {
     cy: {
       from: MAX_COLUMN_HEIGHT + 1,
-      to: y,
-      duration: 200 + 300 * (1 - y / MAX_COLUMN_HEIGHT),
+      to: input.y,
+      duration: 200 + 300 * (1 - input.y / MAX_COLUMN_HEIGHT),
       easing: { type: "ease-out-quint" },
     },
   });
@@ -322,7 +327,7 @@ const n = 1000;
 /**
  *
  */
-const createSvgDefs = (ids: SvgIds) => {
+const createSvgDefs = (ids: SvgDefIds) => {
   const svgNS = SVG_NS;
 
   const svgDefs = document.createElementNS(svgNS, "defs");

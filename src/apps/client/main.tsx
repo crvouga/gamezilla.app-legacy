@@ -28,7 +28,8 @@ const env = {
 const main = () => {
   const serverUrl = env.isProd
     ? "https://server.gamezilla.app/"
-    : `http://localhost:${serverPort}/`;
+    : "https://gamezilla-server.ngrok.io";
+  // `http://localhost:${serverPort}/`;
 
   const socketClient: Socket<ServerToClientEvents, ClientToServerEvents> = io(
     serverUrl,

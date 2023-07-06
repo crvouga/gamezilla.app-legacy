@@ -14,5 +14,15 @@ export const ViewColumnsDOM = (props: ViewColumnsProps) => {
     instanceRef.current.setColumns(props.columns);
   }, [props.columns]);
 
+  useEffect(() => {
+    return () => {
+      try {
+        instanceRef.current.cleanUp();
+      } catch (e) {
+        console.error(e);
+      }
+    };
+  }, []);
+
   return <div className="w-full" ref={instanceRef.current.setRoot}></div>;
 };
