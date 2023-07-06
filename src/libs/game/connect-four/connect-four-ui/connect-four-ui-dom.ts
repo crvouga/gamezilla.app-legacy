@@ -172,6 +172,7 @@ export const create = ({
     //
     //
     //
+    const columnsGroup = document.createElementNS(SVG_NS, "g");
     for (let columnIndex = 0; columnIndex < COLUMN_COUNT; columnIndex++) {
       const column = document.createElementNS(SVG_NS, "rect");
       column.setAttribute("x", columnIndex.toString());
@@ -187,8 +188,9 @@ export const create = ({
           onClick?.(columnIndex);
         }
       });
-      rootGroup.appendChild(column);
+      columnsGroup.appendChild(column);
     }
+    rootGroup.appendChild(columnsGroup);
 
     //
     //
