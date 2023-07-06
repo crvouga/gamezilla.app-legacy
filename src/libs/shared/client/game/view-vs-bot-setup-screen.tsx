@@ -216,12 +216,20 @@ const PlayerButtons = ({
         </MyButton>
       )}
       {player.t === "bot" && human.userId === ctx.currentUserId && (
-        <MyButton onClick={player.onStartPlaying} className="w-full">
+        <MyButton
+          onClick={player.onStartPlaying}
+          className="w-full"
+          variant="text"
+          color="primary">
           Swap sides
         </MyButton>
       )}
       {player.t === "user" && ctx.currentUserId === player.userId && (
-        <MyButton onClick={player.onStopPlaying} className="w-full">
+        <MyButton
+          onClick={player.onStopPlaying}
+          className="w-full"
+          variant="text"
+          color="primary">
           Stop playing
         </MyButton>
       )}
