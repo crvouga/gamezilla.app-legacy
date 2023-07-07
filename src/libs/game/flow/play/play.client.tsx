@@ -9,7 +9,7 @@ import {
   initShared,
 } from "./play.shared";
 import { FlowGridPlayUI } from "../flow-grid";
-import { MyButton } from "@gamezilla/shared/ui";
+import { IconArrowLeftOnRect, MyButton } from "@gamezilla/shared/ui";
 
 type Model = ClientModel;
 
@@ -72,12 +72,15 @@ export const View = ({
   ctx: SpaceViewCtx;
 }) => {
   return (
-    <div className="w-full flex-1 flex-col">
-      <div className="flex-1">
+    <div className="flex h-full w-full flex-1 flex-col">
+      <div className="flex flex-1 items-center justify-center">
         <FlowGridPlayUI.View $send={$send} model={model} />
       </div>
-      <div className="w-full">
-        <MyButton onClick={onExit}>Exit</MyButton>
+      <div className="w-full p-4">
+        <MyButton className="w-full" onClick={onExit}>
+          <IconArrowLeftOnRect />
+          Exit
+        </MyButton>
       </div>
     </div>
   );

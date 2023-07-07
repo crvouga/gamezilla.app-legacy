@@ -5,6 +5,7 @@ import {
   GroupId,
   Model,
   NodeId,
+  Terminal,
   nodeIdToTerminal,
   setEdgeGroup,
   toEdgeId,
@@ -25,8 +26,20 @@ export const startPath = <T extends Model>(model: T, nodeId: NodeId): T => {
 
   const cleared = clearEdges(model, terminal.groupId);
 
+  const terminalNew: Terminal = {
+    ...terminal,
+    pair:
+      terminal.pair[0] === nodeId
+        ? [terminal.pair[1], nodeId]
+        : [nodeId, terminal.pair[0]],
+  };
+
   return {
     ...cleared,
+    terminals: {
+      ...cleared.terminals,
+      [terminalNew.groupId]: terminalNew,
+    },
   };
 };
 
@@ -53,21 +66,15 @@ export const extendPath = <T extends Model>(
   groupId: GroupId,
   targetNodeId: NodeId
 ): T => {
+  const targetNode = toNode(model, targetNodeId);
+
+  if (!targetNode) {
+    return model;
+  }
+
   const targetNodeGroupId = toGroup(model, targetNodeId);
 
   if (targetNodeGroupId && targetNodeGroupId !== groupId) {
-    return model;
-  }
-
-  const node = toNode(model, targetNodeId);
-
-  if (!node) {
-    return model;
-  }
-
-  const terminal = nodeIdToTerminal(model, targetNodeId);
-
-  if (terminal && terminal.groupId !== groupId) {
     return model;
   }
 

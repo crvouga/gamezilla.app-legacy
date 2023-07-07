@@ -111,7 +111,7 @@ export type Node = {
 
 export type Terminal = {
   groupId: GroupId;
-  pair: [NodeId, NodeId] | [NodeId];
+  pair: [NodeId, NodeId];
 };
 
 export const isTerminalNode = (model: Model, nodeId: NodeId): boolean => {
@@ -136,7 +136,7 @@ export const isTerminalStartNode = <T extends Model>(
 };
 
 export const yieldTerminals = function* <T extends Model>(
-  model: T
+  model: Pick<T, "terminals">
 ): Generator<Terminal> {
   for (const groupId in model.terminals) {
     if (!isGroupId(groupId)) {
@@ -421,7 +421,7 @@ export const yieldEdges = function* (
 };
 
 export const nodeIdToTerminal = (
-  model: Model,
+  model: Pick<Model, "terminals">,
   nodeId: NodeId
 ): Terminal | null => {
   for (const terminal of yieldTerminals(model)) {
@@ -521,6 +521,8 @@ export const toGroup = (
   model: Pick<Model, "edgesIn" | "edgesOut" | "edges" | "nodes">,
   nodeId: NodeId
 ): GroupId | null => {
+
+
   for (const edge of yieldInEdges(model, nodeId)) {
     if (edge.groupId) {
       return edge.groupId;
