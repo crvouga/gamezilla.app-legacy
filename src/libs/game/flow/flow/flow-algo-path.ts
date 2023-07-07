@@ -14,7 +14,7 @@ import {
   yieldEdges,
   yieldInEdges,
   yieldOutEdges,
-} from './flow';
+} from "./flow";
 
 export const startPath = <T extends Model>(model: T, nodeId: NodeId): T => {
   const terminal = nodeIdToTerminal(model, nodeId);
@@ -27,13 +27,6 @@ export const startPath = <T extends Model>(model: T, nodeId: NodeId): T => {
 
   return {
     ...cleared,
-    terminals: {
-      ...cleared.terminals,
-      [terminal.groupId]: {
-        groupId: terminal.groupId,
-        start: nodeId,
-      },
-    },
   };
 };
 

@@ -1,12 +1,12 @@
-import { easeAttrs } from '@gamezilla/shared/core';
-import { cn } from '@gamezilla/shared/ui';
-import { useEffect, useRef } from 'react';
-import { Color, Flow } from '../flow';
-import { GroupId } from '../flow/flow';
-import { groupIdToColor } from '../flow/flow-color';
-import * as FlowGrid from './flow-grid';
-import { Model } from './flow-grid';
-import * as FlowGridPosition from './flow-grid-position';
+import { easeAttrs } from "@gamezilla/shared/core";
+import { cn } from "@gamezilla/shared/ui";
+import { useEffect, useRef } from "react";
+import { Color, Flow } from "../flow";
+import { GroupId } from "../flow/flow";
+import { groupIdToColor } from "../flow/flow-color";
+import * as FlowGrid from "./flow-grid";
+import { Model } from "./flow-grid";
+import * as FlowGridPosition from "./flow-grid-position";
 
 //
 //
@@ -26,7 +26,7 @@ type ViewTerminal = {
   pair: [Flow.NodeId] | [Flow.NodeId, Flow.NodeId];
 };
 
-export type ViewModel = Omit<Model, 'terminals'> & {
+export type ViewModel = Omit<Model, "terminals"> & {
   terminals: {
     [groupId in GroupId]?: ViewTerminal;
   };
@@ -72,7 +72,7 @@ export const View = ({
 }) => {
   return (
     <svg
-      className={cn('select-none touch-none w-full', className)}
+      className={cn("w-full touch-none select-none", className)}
       viewBox={toViewBox(model)}
       onContextMenu={(event) => {
         event.preventDefault();
@@ -82,8 +82,7 @@ export const View = ({
         if (nodeId) {
           onDraggedOver?.(nodeId);
         }
-      }}
-    >
+      }}>
       {/*
 
 
@@ -95,9 +94,9 @@ export const View = ({
         {map(FlowGrid.yieldNodes(model), (node) => {
           const groupId = Flow.toGroup(model, node.nodeId);
           const fill = !groupId
-            ? 'transparent'
+            ? "transparent"
             : isActive?.({ nodeId: node.nodeId, groupId })
-            ? 'transparent'
+            ? "transparent"
             : Color.toHex(groupIdToColor[groupId]);
           return (
             <rect
@@ -163,14 +162,14 @@ export const View = ({
       <g transform="translate(0.5, 0.5)">
         {map(yieldTerminals(model), (terminal) => {
           const startId = terminal.pair[0];
+
           const startNode = FlowGrid.toNode(model, startId);
           const endNode = terminal.pair[1]
             ? FlowGrid.toNode(model, terminal.pair[1])
             : null;
           return (
             <g
-              key={`${terminal.groupId} ${terminal.pair[0]} ${terminal.pair[1]}`}
-            >
+              key={`${terminal.groupId} ${terminal.pair[0]} ${terminal.pair[1]}`}>
               {startNode && (
                 <ViewTerminalNode
                   groupId={terminal.groupId}
@@ -276,7 +275,7 @@ export const View = ({
               y={node.y}
               width={1}
               height={1}
-              fill={'transparent'}
+              fill={"transparent"}
               onMouseDown={() => {
                 onPressDown?.(nodeId);
               }}
@@ -346,7 +345,7 @@ const ViewTerminalNode = ({
           from: TERMINAL_NODE_RADIUS,
           to: TERMINAL_NODE_RADIUS_ACTIVE,
           duration: 200,
-          easing: { type: 'ease-out-back' },
+          easing: { type: "ease-out-back" },
         },
       });
       await easeAttrs(node, {
@@ -354,7 +353,7 @@ const ViewTerminalNode = ({
           from: TERMINAL_NODE_RADIUS_ACTIVE,
           to: TERMINAL_NODE_RADIUS,
           duration: 400,
-          easing: { type: 'ease-out-back' },
+          easing: { type: "ease-out-back" },
         },
       });
       isAnimating.current = false;

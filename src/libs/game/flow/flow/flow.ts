@@ -111,7 +111,7 @@ export type Node = {
 
 export type Terminal = {
   groupId: GroupId;
-  pair: [NodeId, NodeId];
+  pair: [NodeId, NodeId] | [NodeId];
 };
 
 export const isTerminalNode = (model: Model, nodeId: NodeId): boolean => {

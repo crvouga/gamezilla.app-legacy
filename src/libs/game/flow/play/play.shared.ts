@@ -1,4 +1,4 @@
-import { FlowGrid } from "../flow-grid";
+import { FlowGridPlayUI, flowGridSamples } from "../flow-grid";
 
 //
 //
@@ -7,14 +7,16 @@ import { FlowGrid } from "../flow-grid";
 //
 //
 
-export type SharedModel = {
-  grid: FlowGrid.Model;
-};
+export type SharedModel = FlowGridPlayUI.Model;
 
 export type ClientModel = SharedModel;
 
 export type ServerModel = SharedModel;
 
+export const initShared: SharedModel = FlowGridPlayUI.init(
+  flowGridSamples["6x6"][1]
+);
+
 //
 //
 //
@@ -22,7 +24,7 @@ export type ServerModel = SharedModel;
 //
 //
 
-export type ClientMsg = { t: null };
+export type ClientMsg = FlowGridPlayUI.Msg;
 
 export type ServerMsg = { t: null };
 

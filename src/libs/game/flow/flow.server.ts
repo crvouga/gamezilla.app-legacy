@@ -2,6 +2,7 @@ import { Cmd, Err, Ok, Result, Sub } from "@gamezilla/shared/core";
 import { SpaceRequestCtx } from "@gamezilla/shared/server";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./flow.shared";
 import { PuzzleBuilderServer } from "./puzzle-builder";
+import { PlayServer } from "./play";
 
 type Model = ServerModel;
 
@@ -61,6 +62,10 @@ const handleInputMode = ({
 
   if (mode === "puzzle-builder") {
     return Ok({ t: "puzzle-builder", c: PuzzleBuilderServer.init });
+  }
+
+  if (mode === "play") {
+    return Ok({ t: "play", c: PlayServer.init });
   }
 
   if (mode === "none") {

@@ -5,7 +5,7 @@ import {
   MainMenuScreen,
 } from "@gamezilla/shared/client";
 import { Cmd, Sub } from "@gamezilla/shared/core";
-import { IconScrewdriverWrench } from "@gamezilla/shared/ui";
+import { IconGamepad, IconScrewdriverWrench } from "@gamezilla/shared/ui";
 import { ViewCoverArt } from "./flow-cover-art";
 import {
   ClientModel,
@@ -15,6 +15,7 @@ import {
   ToServer,
 } from "./flow.shared";
 import { PuzzleBuilderClient } from "./puzzle-builder";
+import { PlayClient } from "./play";
 
 type Model = ClientModel;
 
@@ -50,6 +51,19 @@ export const update = ({
     return {
       model: { t: "puzzle-builder", c: updated.model },
       cmd: Cmd.tag_("puzzle-builder", updated.cmd),
+    };
+  }
+
+  if (model.t === "play" && msg.t === "play") {
+    const updated = PlayClient.update({
+      ctx,
+      msg: msg.c,
+      model: model.c,
+      sendToServer: (c) => sendToServer({ t: "play", c }),
+    });
+    return {
+      model: { t: "play", c: updated.model },
+      cmd: Cmd.tag_("play", updated.cmd),
     };
   }
 
@@ -89,6 +103,17 @@ export const updateFromServer = ({
     };
   }
 
+  if (msg.t === "play" && model.t === "play") {
+    const updated = PlayClient.updateFromServer({
+      model: model.c,
+      msg: msg.c,
+    });
+    return {
+      model: { t: "play", c: updated.model },
+      cmd: Cmd.tag_("play", updated.cmd),
+    };
+  }
+
   return { model };
 };
 
@@ -108,6 +133,17 @@ export const syncWithServer = ({
     return {
       t: "puzzle-builder",
       c: PuzzleBuilderClient.syncWithServer({
+        client: client_,
+        server: server.c,
+      }),
+    };
+  }
+
+  if (server.t === "play") {
+    const client_ = client.t === "play" ? client.c : undefined;
+    return {
+      t: "play",
+      c: PlayClient.syncWithServer({
         client: client_,
         server: server.c,
       }),
@@ -146,6 +182,18 @@ export const View = ({
       />
     );
   }
+
+  if (model.t === "play") {
+    return (
+      <PlayClient.View
+        $send={(c) => $send({ t: "play", c })}
+        ctx={ctx}
+        onExit={() => $send({ t: "input-mode", mode: "none" })}
+        model={model.c}
+      />
+    );
+  }
+
   return (
     <MainMenuScreen
       renderCoverArt={(props) => <ViewCoverArt {...props} />}
@@ -153,11 +201,11 @@ export const View = ({
       title="Flow"
       buttons={[
         {
-          renderIcon: (props) => <IconScrewdriverWrench {...props} />,
-          title: "Puzzle builder",
-          description: "Build puzzles for other players to play",
+          renderIcon: (props) => <IconGamepad {...props} />,
+          title: "Play",
+          description: "Start playing puzzles",
           onClick: () => {
-            $send({ t: "input-mode", mode: "puzzle-builder" });
+            $send({ t: "input-mode", mode: "play" });
           },
         },
         {

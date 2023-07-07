@@ -3,6 +3,7 @@ import {
   ClientToServerEvents,
   ServerToClientEvents,
   ToServer,
+  serverPort,
   sessionIdKey,
 } from "@gamezilla/app";
 import { Browser, Cmd, Debug, Program } from "@gamezilla/shared/core";
@@ -27,8 +28,8 @@ const env = {
 const main = () => {
   const serverUrl = env.isProd
     ? "https://server.gamezilla.app/"
-    : "https://gamezilla-server.ngrok.io";
-  // `http://localhost:${serverPort}/`;
+    : // : "https://gamezilla-server.ngrok.io";
+      `http://localhost:${serverPort}/`;
 
   const socketClient: Socket<ServerToClientEvents, ClientToServerEvents> = io(
     serverUrl,
