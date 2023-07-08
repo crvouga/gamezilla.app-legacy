@@ -43,9 +43,9 @@ export const MyButton = ({
         combo === "contained-primary" && "rounded-md bg-blue-500 text-white",
         combo === "contained-danger" && "rounded-md bg-red-500 text-white",
         combo === "contained-default" &&
-          "rounded-md border border-neutral-700 bg-neutral-800 text-blue-500",
+          "rounded-md border border-neutral-800 bg-neutral-800 text-blue-500",
         combo === "outlined-default" &&
-          "rounded-md border border-neutral-700 text-inherit text-neutral-300",
+          "rounded-md border border-neutral-800 text-inherit text-neutral-300",
         !disabled && combo === "text-primary" && "text-blue-500",
         size === "lg" && "px-4 py-3 text-xl",
         size === "md" && "px-4 py-2 text-lg",

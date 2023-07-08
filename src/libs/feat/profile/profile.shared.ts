@@ -32,7 +32,6 @@ export type ClientModel = {
     username?: string;
     avatarSeed?: ProfileAvatar.Seed;
     avatarStyle?: ProfileAvatar.Style;
-    themeMode?: "Light" | "Dark" | "System";
   };
 };
 
@@ -46,7 +45,12 @@ export type ServerModel = null;
 //
 //
 
-export type ClientMsg = Req | { t: "inputted-username"; username: string };
+export type ClientMsg =
+  | Req
+  | { t: "inputted-username"; username: string }
+  | { t: "inputted-avatar-seed"; seed: string }
+  | { t: "inputted-avatar-style"; style: ProfileAvatar.Style }
+  | { t: "clicked-generate-random-seed" };
 
 export type ServerMsg = { t: "none" };
 

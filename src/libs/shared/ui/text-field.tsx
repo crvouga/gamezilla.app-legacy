@@ -33,16 +33,16 @@ export const MyTextField = ({
 }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   return (
-    <div className="flex flex-col gap-1 w-full">
+    <div className="flex w-full flex-col gap-1">
       <label htmlFor={id} className={cn("text-base", error && "text-red-500")}>
         {label}
       </label>
 
       <div
         className={cn(
-          "flex items-center rounded-md text-lg p-3 bg-white/10 outline-none",
+          "flex items-center rounded-md bg-white/10 p-3 text-lg outline-none",
           error && "border border-red-500 text-red-500",
-          !error && "border border-white/30 ring-blue-500 focus:ring-2"
+          !error && " ring-blue-500 focus:ring-2"
         )}>
         {startIcon}
         <input
@@ -60,7 +60,7 @@ export const MyTextField = ({
         />
         {onClear && (
           <button
-            className="outline-none ring-blue-500 focus:ring-2 rounded-md"
+            className="rounded-md outline-none ring-blue-500 focus:ring-2"
             onClick={(event) => {
               event.preventDefault();
               inputRef.current?.focus();

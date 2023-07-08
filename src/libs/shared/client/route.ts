@@ -150,8 +150,7 @@ export type RouteProfile =
   | { t: "profile-delete" }
   | { t: "profile-update" }
   | { t: "profile-update-avatar" }
-  | { t: "profile-update-username" }
-  | { t: "profile-update-theme" };
+  | { t: "profile-update-username" };
 
 export const encodeProfile = (route: RouteProfile): string => {
   switch (route.t) {
@@ -165,8 +164,6 @@ export const encodeProfile = (route: RouteProfile): string => {
       return "/profile-update-avatar";
     case "profile-update-username":
       return "/profile-update-username";
-    case "profile-update-theme":
-      return "/profile-update-theme";
   }
 };
 export const decodeProfile = (pathname: string): RouteProfile | null => {
@@ -189,9 +186,7 @@ export const decodeProfile = (pathname: string): RouteProfile | null => {
   if (pathname === "/profile-update-username") {
     return { t: "profile-update-username" };
   }
-  if (pathname === "/profile-update-theme") {
-    return { t: "profile-update-theme" };
-  }
+
   return null;
 };
 
