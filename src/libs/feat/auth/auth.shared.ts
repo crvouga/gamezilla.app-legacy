@@ -1,17 +1,17 @@
-import { RemoteResult, Result } from '@gamezilla/shared/core';
-import { PhoneNumber, SessionId, UserId } from '@gamezilla/shared/app';
-import * as AuthEmailLink from './auth-email-link';
-import * as AuthPhone from './auth-phone';
-import * as AuthPhoneVerify from './auth-phone-verify';
+import { RemoteResult, Result } from "@gamezilla/shared/core";
+import { PhoneNumber, SessionId, UserId } from "@gamezilla/shared/app";
+import * as AuthEmailLink from "./auth-email-link";
+import * as AuthPhone from "./auth-phone";
+import * as AuthPhoneVerify from "./auth-phone-verify";
 
 export type ClientModel = {
   currentUser:
-    | { t: 'not-asked' }
-    | { t: 'loading' }
-    | { t: 'logged-out' }
-    | { t: 'logged-in'; currentUserId: UserId; name?: string };
+    | { t: "not-asked" }
+    | { t: "loading" }
+    | { t: "logged-out" }
+    | { t: "logged-in"; userId: UserId; name?: string };
   requests: {
-    [key in Req['t']]?: RemoteResult<string, null>;
+    [key in Req["t"]]?: RemoteResult<string, null>;
   };
   phone: AuthPhone.Model;
   phoneVerify: AuthPhoneVerify.Model;
@@ -41,30 +41,34 @@ export type ServerModel = {
 //
 //
 
-type Event = {
-  t: 'got-current-user';
-  currentUser: ClientModel['currentUser'];
-};
+type Event =
+  | {
+      t: "user-authenticated";
+      userId: UserId;
+    }
+  | {
+      t: "user-unauthenticated";
+    };
 
 export type ClientMsg =
   | Req
   | Event
-  | { t: 'login-done'; result: Result<string, null> }
-  | { t: 'logout-done'; result: Result<string, null> }
-  | { t: 'phone'; c: AuthPhone.Msg }
-  | { t: 'phone-verify'; c: AuthPhoneVerify.Msg }
-  | { t: 'email-link'; c: AuthEmailLink.Msg };
+  | { t: "login-done"; result: Result<string, null> }
+  | { t: "logout-done"; result: Result<string, null> }
+  | { t: "phone"; c: AuthPhone.Msg }
+  | { t: "phone-verify"; c: AuthPhoneVerify.Msg }
+  | { t: "email-link"; c: AuthEmailLink.Msg };
 
-export type ServerMsg = { t: 'none' };
+export type ServerMsg = { t: "none" };
 
 export type ToServer = Req | Event;
 
 export type ToClient = Res;
 
 export type Req =
-  | { t: 'logout' }
-  | { t: 'login-with-google' }
-  | { t: 'send-code'; phoneNumber: PhoneNumber }
-  | { t: 'verify-code'; phoneNumber: PhoneNumber; code: number };
+  | { t: "logout" }
+  | { t: "login-with-google" }
+  | { t: "send-code"; phoneNumber: PhoneNumber }
+  | { t: "verify-code"; phoneNumber: PhoneNumber; code: number };
 
 export type Res = Req & { result: Result<string, null> };

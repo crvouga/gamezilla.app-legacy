@@ -1,6 +1,6 @@
 import { SpaceMsg } from "@gamezilla/shared/client";
 import { andThen, Cmd, p, Sub } from "@gamezilla/shared/core";
-import { SpaceRequestCtx } from "@gamezilla/shared/server";
+import { SpaceReqServerCtx } from "@gamezilla/shared/server";
 import {
   botMove,
   handle,
@@ -65,7 +65,7 @@ export const update = ({
 export const updateFromClient = (input: {
   broadcast: (msg: ToClient) => Cmd;
   sendToClient: (msg: ToClient) => Cmd;
-  ctx: SpaceRequestCtx;
+  ctx: SpaceReqServerCtx;
   msg: ToServer;
   model: Model;
 }): {

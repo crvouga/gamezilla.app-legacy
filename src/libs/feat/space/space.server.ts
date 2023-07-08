@@ -10,12 +10,12 @@ import {
   p,
 } from "@gamezilla/shared/core";
 import {
-  AppMsg,
-  AuthenticatedRequestCtx,
-  Ctx,
-  SpaceCtx,
+  ServerAppMsg,
+  AuthReqServerCtx,
+  ServerCtx,
+  SpaceServerCtx,
   SpaceMsg,
-  SpaceRequestCtx,
+  SpaceReqServerCtx,
 } from "@gamezilla/shared/server";
 import * as Game from "./game.server";
 import { SpaceDb } from "./space-db";
@@ -61,7 +61,7 @@ export const update = ({
   sendToUser,
   ctx,
 }: {
-  ctx: Ctx;
+  ctx: ServerCtx;
   sendToUser: (userIds: UserId[], msg: ToClient) => Cmd;
   msg: Msg;
   model: Model;
@@ -87,7 +87,7 @@ export const update = ({
         return { model };
       }
 
-      const spaceCtx: SpaceCtx = {
+      const spaceCtx: SpaceServerCtx = {
         ...ctx,
         hostId: space.hostId,
       };
@@ -119,20 +119,18 @@ export const update = ({
   }
 };
 
-type Wire = {
+type UpdateFromClient = (input: {
+  ctx: AuthReqServerCtx | null;
   sendToClient: (msg: ToClient) => Cmd;
   sendToUser: (userId: UserId[], msg: ToClient) => Cmd;
   broadcast: (msg: ToClient) => Cmd;
-};
-
-type updateFromClient = (input: {
-  ctx: AuthenticatedRequestCtx;
-  wire: Wire;
   msg: ToServer;
   model: Model;
-}) => { model: Model; cmd?: Cmd<ServerMsg> };
-
-export const updateFromClient: updateFromClient = (input) => {
+}) => {
+  model: Model;
+  cmd?: Cmd<ServerMsg>;
+};
+export const updateFromClient: UpdateFromClient = (input) => {
   return p(
     input,
     andThen(({ model }) => updateProfiles({ ...input, model })),
@@ -140,7 +138,7 @@ export const updateFromClient: updateFromClient = (input) => {
   );
 };
 
-const updateProfiles: updateFromClient = ({ msg, model }) => {
+const updateProfiles: UpdateFromClient = ({ msg, model }) => {
   if (msg.profile) {
     return {
       model: {
@@ -155,35 +153,39 @@ const updateProfiles: updateFromClient = ({ msg, model }) => {
   return { model };
 };
 
-export const updateFromClient_: updateFromClient = ({
-  ctx,
-  wire,
-  msg,
-  model,
-}) => {
+export const updateFromClient_: UpdateFromClient = (input) => {
+  const { msg, model, ctx } = input;
   switch (msg.t) {
     case "list":
     case "input-game":
     case "join":
     case "destroy":
     case "create": {
+      if (!ctx) {
+        return { model };
+      }
+
       const res: Res = { ...msg, result: handle({ ctx, model, msg }) };
 
       if (res.result.t === "err") {
-        return { model, cmd: wire.sendToClient(res) };
+        return { model, cmd: input.sendToClient(res) };
       }
 
       return {
         model: res.result.value,
-        cmd: wire.broadcast(res),
+        cmd: input.broadcast(res),
       };
     }
 
     case "leave": {
-      return updateLeave({ ctx, wire, model, msg });
+      return updateLeave(input);
     }
 
     case "game": {
+      if (!ctx) {
+        return { model };
+      }
+
       const user = model.users[ctx.currentUserId];
 
       if (!user) {
@@ -204,7 +206,7 @@ export const updateFromClient_: updateFromClient = ({
 
       const gameMsg = msg.c;
 
-      const spaceCtx: SpaceRequestCtx = {
+      const spaceCtx: SpaceReqServerCtx = {
         ...ctx,
         hostId: space.hostId,
       };
@@ -212,10 +214,10 @@ export const updateFromClient_: updateFromClient = ({
       const [gameNew, gameCmd] = Game.updateFromClient({
         ...ctx,
         ctx: spaceCtx,
-        sendToClient: (m) => wire.sendToClient({ t: "game", c: m }),
+        sendToClient: (m) => input.sendToClient({ t: "game", c: m }),
         broadcast: (m) =>
           sendToSpace({
-            sendToUser: wire.sendToUser,
+            sendToUser: input.sendToUser,
             model,
             spaceId: space.spaceId,
             msg: { t: "game", c: m },
@@ -246,21 +248,19 @@ export const updateFromClient_: updateFromClient = ({
   }
 };
 
-const updateLeave = ({
-  wire,
+const updateLeave: UpdateFromClient = ({
+  broadcast,
+  sendToClient,
+  sendToUser,
   model,
   msg,
   ctx,
-}: {
-  msg: ToServer;
-  wire: Wire;
-  model: Model;
-  ctx: { currentUserId: UserId };
-}): {
-  model: Model;
-  cmd?: Cmd<Msg>;
-} => {
+}) => {
   if (msg.t !== "leave") {
+    return { model };
+  }
+
+  if (!ctx) {
     return { model };
   }
 
@@ -268,7 +268,7 @@ const updateLeave = ({
   const res: Res = { ...msg, result };
 
   if (result.t === "err") {
-    return { model, cmd: wire.sendToClient(res) };
+    return { model, cmd: sendToClient(res) };
   }
 
   const modelAfter = result.value;
@@ -276,25 +276,25 @@ const updateLeave = ({
   const user = model.users[ctx.currentUserId];
 
   if (!user) {
-    return { model: modelAfter, cmd: wire.broadcast(res) };
+    return { model: modelAfter, cmd: broadcast(res) };
   }
 
   const space = model.spaces[user.spaceId];
 
   if (!space) {
-    return { model: modelAfter, cmd: wire.broadcast(res) };
+    return { model: modelAfter, cmd: broadcast(res) };
   }
 
   const game = model.games[space.spaceId];
 
   if (!game) {
-    return { model: modelAfter, cmd: wire.broadcast(res) };
+    return { model: modelAfter, cmd: broadcast(res) };
   }
 
   const updated = Game.updateFromSpace({
     broadcast: (msg) => {
       return sendToSpace({
-        sendToUser: wire.sendToUser,
+        sendToUser: sendToUser,
         model: modelAfter,
         spaceId: space.spaceId,
         msg: { t: "game", c: msg },
@@ -315,7 +315,7 @@ const updateLeave = ({
   return {
     model: modelNew,
     cmd: Cmd.batch([
-      wire.broadcast(res),
+      broadcast(res),
       p(
         updated.cmd ?? Cmd.None,
         Cmd.map((msg): Msg => ({ t: "game", spaceId: space.spaceId, c: msg }))
@@ -329,7 +329,7 @@ export const updateFromApp = ({
   model,
   sendToClient,
 }: {
-  msg: AppMsg;
+  msg: ServerAppMsg;
   model: Model;
   sendToClient: (clientId: ClientId[], msg: ToClient) => Cmd;
 }): {
@@ -449,7 +449,7 @@ export const handler = async ({
   spaceDb,
 }: {
   req: Req;
-  ctx: SpaceRequestCtx;
+  ctx: SpaceReqServerCtx;
   spaceDb: SpaceDb;
 }): Promise<Res_ & { msgs?: SpaceMsg[] }> => {
   //

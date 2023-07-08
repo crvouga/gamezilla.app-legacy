@@ -1,6 +1,6 @@
 import { SpaceMsg } from "@gamezilla/shared/client";
 import { Cmd, Err, Ok, Sub, andThen, p } from "@gamezilla/shared/core";
-import { SpaceRequestCtx } from "@gamezilla/shared/server";
+import { SpaceReqServerCtx } from "@gamezilla/shared/server";
 import { TicTacToe } from "../tic-tic-toe";
 import { getBestMove } from "../tic-tic-toe/best-move";
 import {
@@ -97,7 +97,7 @@ export const updateFromClient = (input: {
   broadcast: (m: ToClient) => Cmd;
   msg: ToServer;
   model: Model;
-  ctx: SpaceRequestCtx;
+  ctx: SpaceReqServerCtx;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -141,7 +141,7 @@ const updateFromClient_ = ({
   model,
   ctx,
 }: {
-  ctx: SpaceRequestCtx;
+  ctx: SpaceReqServerCtx;
   sendToClient: (m: ToClient) => Cmd;
   broadcast: (m: ToClient) => Cmd;
   msg: ToServer;

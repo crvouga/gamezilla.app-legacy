@@ -1,5 +1,6 @@
-import { Cmd } from '@gamezilla/shared/core';
-import { ServerModel, ServerMsg, ToServer } from './auth.shared';
+import { Cmd } from "@gamezilla/shared/core";
+import { ServerModel, ServerMsg, ToServer } from "./auth.shared";
+import { ServerAppMsg, ReqServerCtx } from "@gamezilla/shared/server";
 
 //
 //
@@ -36,12 +37,50 @@ export const update = ({
 };
 
 export const updateFromClient = ({
+  ctx,
   model,
+  msg,
 }: {
+  ctx: ReqServerCtx;
   msg: ToServer;
   model: Model;
-}): { model: Model; cmd?: Cmd<Msg> } => {
-  return {
-    model,
-  };
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+  msgs?: ServerAppMsg[];
+} => {
+  if (msg.t === "user-authenticated") {
+    return {
+      model: {
+        ...model,
+        sessions: {
+          ...model.sessions,
+          [ctx.sessionId]: {
+            sessionId: ctx.sessionId,
+            userId: msg.userId,
+          },
+        },
+      },
+      msgs: [
+        {
+          t: "client-authenticated",
+          clientId: ctx.clientId,
+          userId: msg.userId,
+        },
+      ],
+    };
+  }
+
+  if (msg.t === "user-unauthenticated") {
+    const sessionsNew = { ...model.sessions };
+    delete sessionsNew[ctx.sessionId];
+    return {
+      model: {
+        ...model,
+        sessions: sessionsNew,
+      },
+    };
+  }
+
+  return { model };
 };

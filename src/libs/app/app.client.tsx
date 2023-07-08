@@ -1,8 +1,8 @@
 import { AuthClient } from "@gamezilla/feat/auth";
 import { ChatClient } from "@gamezilla/feat/chat";
 import { ProfileClient } from "@gamezilla/feat/profile";
-import { SpaceClient } from "@gamezilla/feat/space";
 import { SearchClient } from "@gamezilla/feat/search";
+import { SpaceClient } from "@gamezilla/feat/space";
 import {
   AppMsg,
   Ctx,
@@ -10,7 +10,7 @@ import {
   UnauthenticatedViewCtx,
   ViewCtx,
 } from "@gamezilla/shared/client";
-import { Browser, Cmd, Posix, Sub, exhaustive } from "@gamezilla/shared/core";
+import { Browser, Cmd, Posix, Sub, andThen, p } from "@gamezilla/shared/core";
 import {
   IconGamepad,
   IconMagnifyingGlass,
@@ -93,26 +93,24 @@ export const update = (input: {
   sendToServer: (m: ToServer) => Cmd;
   msg: Msg;
   model: Model;
-}): { model: Model; cmd?: Cmd<Msg> } => {
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
   const updated = update_(input);
 
-  const appUpdated = (updated?.msgs ?? []).reduce<{
-    model: Model;
-    cmd?: Cmd<Msg>;
-  }>((acc, msg) => {
-    const appUpdated = updateFromApp({
-      ...input,
-      model: acc.model,
-      msg,
-    });
+  const appMsgs = updated.msgs ?? [];
 
-    return {
-      model: appUpdated.model,
-      cmd: Cmd.batch([acc.cmd, appUpdated.cmd]),
-    };
-  }, updated);
+  const output = appMsgs.reduce(
+    (acc, msg) =>
+      p(
+        acc,
+        andThen(({ model }) => updateFromApp({ ...input, model, msg }))
+      ),
+    updated
+  );
 
-  return appUpdated;
+  return output;
 };
 
 const update_ = ({
@@ -130,118 +128,114 @@ const update_ = ({
   cmd?: Cmd<Msg>;
   msgs?: AppMsg[];
 } => {
-  switch (msg.t) {
-    case "→": {
-      return updateFromServer({ now, sendToServer, msg: msg.c, model });
-    }
+  const ctx = toCtx({ model, now });
 
-    case "auth": {
-      const updated = AuthClient.update({
-        route: model.routing.route,
-        sendToServer: (c) => sendToServer({ t: "auth", c }),
-        msg: msg.c,
-        model: model.auth,
-      });
-      return {
-        model: { ...model, auth: updated.model },
-        cmd: Cmd.tag_("auth", updated.cmd),
-        msgs: AppMsg.tag("auth", updated.msgs),
-      };
-    }
-
-    case "toast": {
-      const updated = Toast.update({ msg: msg.c, model: model.toast });
-      return {
-        model: { ...model, toast: updated.model },
-        cmd: Cmd.tag_("toast", updated.cmd),
-      };
-    }
-
-    case "routing": {
-      const updated = Routing.update({
-        msg: msg.c,
-        model: model.routing,
-      });
-
-      return {
-        model: {
-          ...model,
-          routing: updated.model,
-        },
-        cmd: Cmd.tag_("routing", updated.cmd),
-        msgs: AppMsg.tag("routing", updated.msgs),
-      };
-    }
-
-    case "wire": {
-      const updated = Wire.update({
-        msg: msg.c,
-        model: model.wire,
-      });
-      return { model: { ...model, wire: updated.model }, msgs: updated.msgs };
-    }
-
-    case "space": {
-      if (model.auth.currentUser.t !== "logged-in") {
-        return { model };
-      }
-
-      const ctx: Ctx = {
-        currentUserId: model.auth.currentUser.currentUserId,
-        profiles: model.profile.profiles,
-        now,
-      };
-
-      const updated = SpaceClient.update({
-        ctx: ctx,
-        sendToServer: (m) => sendToServer({ t: "space", c: m }),
-        msg: msg.c,
-        model: model.space,
-      });
-
-      return {
-        model: { ...model, space: updated.model },
-        cmd: Cmd.tag_("space", updated.cmd ?? Cmd.None),
-        msgs: AppMsg.tag("space", updated.msgs),
-      };
-    }
-
-    case "profile": {
-      const updated = ProfileClient.update({
-        msg: msg.c,
-        model: model.profile,
-        sendToServer: (m) => sendToServer({ t: "profile", c: m }),
-      });
-      return {
-        model: { ...model, profile: updated.model },
-        cmd: Cmd.tag_("profile", updated.cmd),
-      };
-    }
-
-    case "chat": {
-      const updated = ChatClient.update({ msg: msg.c, model: model.chat });
-      return {
-        model: { ...model, chat: updated.model },
-        cmd: Cmd.tag_("chat", updated?.cmd ?? Cmd.None),
-      };
-    }
-
-    case "search": {
-      const updated = SearchClient.update({
-        msg: msg.c,
-        model: model.search,
-        sendToServer: (m) => sendToServer({ t: "search", c: m }),
-      });
-      return {
-        model: { ...model, search: updated.model },
-        cmd: Cmd.tag_("search", updated.cmd),
-      };
-    }
-
-    default: {
-      return exhaustive(msg);
-    }
+  if (msg.t === "→") {
+    return updateFromServer({ now, sendToServer, msg: msg.c, model });
   }
+
+  if (msg.t === "auth") {
+    const updated = AuthClient.update({
+      route: model.routing.route,
+      sendToServer: (c) => sendToServer({ t: "auth", c }),
+      msg: msg.c,
+      model: model.auth,
+    });
+    return {
+      model: { ...model, auth: updated.model },
+      cmd: Cmd.tag_("auth", updated.cmd),
+      msgs: AppMsg.tag("auth", updated.msgs),
+    };
+  }
+
+  if (msg.t === "toast") {
+    const updated = Toast.update({ msg: msg.c, model: model.toast });
+    return {
+      model: { ...model, toast: updated.model },
+      cmd: Cmd.tag_("toast", updated.cmd),
+    };
+  }
+
+  if (msg.t === "routing") {
+    const updated = Routing.update({
+      msg: msg.c,
+      model: model.routing,
+    });
+
+    return {
+      model: { ...model, routing: updated.model },
+      cmd: Cmd.tag_("routing", updated.cmd),
+      msgs: AppMsg.tag("routing", updated.msgs),
+    };
+  }
+
+  if (msg.t === "wire") {
+    const updated = Wire.update({
+      msg: msg.c,
+      model: model.wire,
+    });
+    return { model: { ...model, wire: updated.model }, msgs: updated.msgs };
+  }
+
+  if (msg.t === "space") {
+    const updated = SpaceClient.update({
+      ctx: ctx,
+      sendToServer: (m) => sendToServer({ t: "space", c: m }),
+      msg: msg.c,
+      model: model.space,
+    });
+
+    return {
+      model: { ...model, space: updated.model },
+      cmd: Cmd.tag_("space", updated.cmd ?? Cmd.None),
+      msgs: AppMsg.tag("space", updated.msgs),
+    };
+  }
+
+  if (msg.t === "profile") {
+    const updated = ProfileClient.update({
+      msg: msg.c,
+      model: model.profile,
+      sendToServer: (m) => sendToServer({ t: "profile", c: m }),
+    });
+    return {
+      model: { ...model, profile: updated.model },
+      cmd: Cmd.tag_("profile", updated.cmd),
+    };
+  }
+
+  if (msg.t === "chat") {
+    const updated = ChatClient.update({ msg: msg.c, model: model.chat });
+    return {
+      model: { ...model, chat: updated.model },
+      cmd: Cmd.tag_("chat", updated?.cmd ?? Cmd.None),
+    };
+  }
+
+  if (msg.t === "search") {
+    const updated = SearchClient.update({
+      msg: msg.c,
+      model: model.search,
+      sendToServer: (m) => sendToServer({ t: "search", c: m }),
+    });
+    return {
+      model: { ...model, search: updated.model },
+      cmd: Cmd.tag_("search", updated.cmd),
+    };
+  }
+
+  return { model };
+};
+
+const toCtx = (input: { model: Model; now: Posix }): Ctx | null => {
+  if (input.model.auth.currentUser.t === "logged-in") {
+    return {
+      currentUserId: input.model.auth.currentUser.userId,
+      profiles: input.model.profile.profiles,
+      now: input.now,
+    };
+  }
+  return null;
 };
 
 const updateFromServer = ({
@@ -259,93 +253,77 @@ const updateFromServer = ({
   cmd?: Cmd<Msg>;
   msgs?: AppMsg[];
 } => {
-  switch (msg.t) {
-    case "space": {
-      if (model.auth.currentUser.t !== "logged-in") {
-        return { model };
-      }
+  const ctx = toCtx({ model, now });
 
-      const currentUserId = model.auth.currentUser.currentUserId;
-
-      const ctx: Ctx = {
-        currentUserId,
-        profiles: model.profile.profiles,
-        now,
-      };
-
-      const updated = SpaceClient.updateFromServer({
-        ctx,
-        sendToServer: (msg) => sendToServer({ t: "space", c: msg }),
-        msg: msg.c,
-        model: model.space,
-      });
-
-      return {
-        model: { ...model, space: updated.model },
-        cmd: Cmd.tag_("space", updated.cmd ?? Cmd.None),
-        msgs: updated.msgs,
-      };
-    }
-
-    case "profile": {
-      const updated = ProfileClient.updateFromServer({
-        msg: msg.c,
-        model: model.profile,
-      });
-      return {
-        model: { ...model, profile: updated.model },
-        cmd: Cmd.tag_("profile", updated.cmd),
-      };
-    }
-
-    case "search": {
-      const updated = SearchClient.updateFromServer({
-        msg: msg.c,
-        model: model.search,
-      });
-      return {
-        model: { ...model, search: updated.model },
-        cmd: Cmd.tag_("search", updated.cmd),
-      };
-    }
-
-    case "auth": {
-      const updated = AuthClient.updateFromServer({
-        msg: msg.c,
-        model: model.auth,
-      });
-      return {
-        model: { ...model, auth: updated.model },
-        cmd: Cmd.tag_("auth", updated.cmd),
-      };
-    }
-
-    case "chat": {
-      const updated = ChatClient.updateFromServer({
-        msg: msg.c,
-        model: model.chat,
-      });
-      return {
-        model: { ...model, chat: updated.model },
-        cmd: Cmd.tag_("chat", updated.cmd),
-      };
-    }
-
-    case "access-denied": {
-      return { model };
-    }
-
-    default: {
-      return exhaustive(msg);
-    }
+  if (msg.t === "auth") {
+    const updated = AuthClient.updateFromServer({
+      msg: msg.c,
+      model: model.auth,
+    });
+    return {
+      model: { ...model, auth: updated.model },
+      cmd: Cmd.tag_("auth", updated.cmd),
+    };
   }
+
+  if (msg.t === "search") {
+    const updated = SearchClient.updateFromServer({
+      msg: msg.c,
+      model: model.search,
+    });
+    return {
+      model: { ...model, search: updated.model },
+      cmd: Cmd.tag_("search", updated.cmd),
+    };
+  }
+
+  if (msg.t === "chat") {
+    const updated = ChatClient.updateFromServer({
+      msg: msg.c,
+      model: model.chat,
+    });
+    return {
+      model: { ...model, chat: updated.model },
+      cmd: Cmd.tag_("chat", updated.cmd),
+    };
+  }
+
+  if (msg.t === "space") {
+    const updated = SpaceClient.updateFromServer({
+      ctx,
+      sendToServer: (msg) => sendToServer({ t: "space", c: msg }),
+      msg: msg.c,
+      model: model.space,
+    });
+
+    return {
+      model: { ...model, space: updated.model },
+      cmd: Cmd.tag_("space", updated.cmd ?? Cmd.None),
+      msgs: updated.msgs,
+    };
+  }
+
+  if (msg.t === "profile") {
+    const updated = ProfileClient.updateFromServer({
+      msg: msg.c,
+      model: model.profile,
+    });
+    return {
+      model: { ...model, profile: updated.model },
+      cmd: Cmd.tag_("profile", updated.cmd),
+    };
+  }
+
+  return { model };
 };
 
 export const updateFromApp = ({
   model,
   msg,
   sendToServer,
+  now,
 }: {
+  now: Posix;
   model: Model;
   msg: AppMsg;
   sendToServer: (m: ToServer) => Cmd;
@@ -353,6 +331,8 @@ export const updateFromApp = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
+  const ctx = toCtx({ model, now });
+
   const chat = ChatClient.updateFromApp({
     model: model.chat,
     msg,
@@ -368,6 +348,7 @@ export const updateFromApp = ({
   const profile = ProfileClient.updateFromApp({
     model: model.profile,
     msg,
+    ctx,
     sendToServer: (c) => sendToServer({ t: "profile", c }),
   });
 
@@ -399,9 +380,6 @@ export const updateFromApp = ({
       auth: auth.model,
     },
     cmd: Cmd.batch<Msg>([
-      () => {
-        console.log("[app-msg]", msg);
-      },
       Cmd.tag_("chat", chat.cmd),
       Cmd.tag_("profile", profile.cmd),
       Cmd.tag_("space", space.cmd),
@@ -448,7 +426,7 @@ const spaceSub = (now: Posix, model: Model): Sub<Msg> => {
       SpaceClient.subscriptions(
         {
           now,
-          currentUserId: model.auth.currentUser.currentUserId,
+          currentUserId: model.auth.currentUser.userId,
           profiles: model.profile.profiles,
         },
         model.space
@@ -511,7 +489,7 @@ export const View = ({
           $send={$send}
           ctx={{
             now,
-            currentUserId: model.auth.currentUser.currentUserId,
+            currentUserId: model.auth.currentUser.userId,
             profiles: model.profile.profiles,
             $push: (route) =>
               $send({ t: "routing", c: { t: "clicked-link", c: route } }),

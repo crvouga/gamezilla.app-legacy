@@ -1,11 +1,16 @@
 import { AuthServer } from "@gamezilla/feat/auth";
 import { ChatServer } from "@gamezilla/feat/chat";
 import { ProfileServer } from "@gamezilla/feat/profile";
-import { SpaceServer } from "@gamezilla/feat/space";
 import { SearchServer } from "@gamezilla/feat/search";
+import { SpaceServer } from "@gamezilla/feat/space";
 import { ClientId, SessionId, UserId } from "@gamezilla/shared/app";
-import { Cmd, Sub, exhaustive, p } from "@gamezilla/shared/core";
-import { AppMsg, Ctx, RequestCtx } from "@gamezilla/shared/server";
+import { Cmd, Sub, andThen, p } from "@gamezilla/shared/core";
+import {
+  AuthReqServerCtx,
+  ReqServerCtx,
+  ServerAppMsg,
+  ServerCtx,
+} from "@gamezilla/shared/server";
 import { Subject } from "rxjs";
 import {
   ServerModel,
@@ -49,7 +54,7 @@ type Msg = ServerMsg;
 export const update = (input: {
   msg: Msg;
   model: Model;
-  ctx: Ctx;
+  ctx: ServerCtx;
   broadcast: (m: ToClient) => Cmd;
   sendToClient: (clientIds: ClientId[], m: ToClient) => Cmd;
 }): {
@@ -58,20 +63,16 @@ export const update = (input: {
 } => {
   const updated = update_(input);
 
-  const appUpdated = (updated.msgs ?? []).reduce<{
-    model: Model;
-    cmd?: Cmd<Msg>;
-  }>((acc, msg) => {
-    const appUpdated = updateFromApp({
-      ...input,
-      msg: msg,
-      model: acc.model,
-    });
-    return {
-      model: appUpdated.model,
-      cmd: Cmd.batch<Msg>([acc.cmd ?? Cmd.None, appUpdated.cmd ?? Cmd.None]),
-    };
-  }, updated);
+  const appMsgs = updated.msgs ?? [];
+
+  const appUpdated = appMsgs.reduce(
+    (acc, msg) =>
+      p(
+        acc,
+        andThen(({ model }) => updateFromApp({ ...input, model, msg }))
+      ),
+    updated
+  );
 
   return appUpdated;
 };
@@ -85,142 +86,130 @@ const update_ = ({
 }: {
   msg: Msg;
   model: Model;
-  ctx: Ctx;
+  ctx: ServerCtx;
   broadcast: (m: ToClient) => Cmd;
   sendToClient: (clientIds: ClientId[], m: ToClient) => Cmd;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
-  msgs?: AppMsg[];
+  msgs?: ServerAppMsg[];
 } => {
-  switch (msg.t) {
-    case "→": {
-      return updateFromClient({
-        ctx: {
-          ...ctx,
-          sessionId: msg.sessionId,
-          clientId: msg.clientId,
+  if (msg.t === "client-connected") {
+    const sessionId = msg.sessionId;
+    const clientIds = model.sessions[sessionId]?.clientIds ?? [];
+    const sessionNew: Session = {
+      clientIds: [...clientIds, msg.clientId].slice(0, 5),
+      sessionId,
+    };
+
+    return {
+      model: {
+        ...model,
+        sessions: sessionNew,
+      },
+      msgs: [
+        {
+          ...msg,
+          userId: model.auth.sessions[msg.sessionId]?.userId,
+          t: "client-connected",
         },
-        msg: msg.c,
-        model,
-        broadcast,
-        sendToClient,
-      });
-    }
+      ],
+    };
+  }
 
-    case "space": {
-      const updated = SpaceServer.update({
-        sendToUser: (userIds, m) =>
-          sendToUser(sendToClient, model, userIds, { t: "space", c: m }),
-        msg: msg.c,
-        model: model.space,
-        ctx,
-      });
-
-      return {
-        model: { ...model, space: updated.model },
-        cmd: Cmd.tag_("space", updated.cmd ?? Cmd.None),
-      };
-    }
-
-    case "client-connected": {
-      const sessionId = msg.sessionId;
-      const clientId = msg.clientId;
-      const sessionPrev = model.sessions[sessionId];
-      const sessionNew: Session = {
-        sessionId,
-        clientId: clientId,
-        userId: sessionPrev?.userId,
-      };
-      const modelNew: Model = {
+  if (msg.t === "client-disconnected") {
+    const sessionId = msg.sessionId;
+    const clientIds = model.sessions[sessionId]?.clientIds ?? [];
+    const sessionNew: Session = {
+      clientIds: clientIds.filter((clientId) => clientId !== msg.clientId),
+      sessionId,
+    };
+    return {
+      model: {
         ...model,
         sessions: {
           ...model.sessions,
           [sessionId]: sessionNew,
         },
-      };
-
-      return {
-        model: modelNew,
-        msgs: [
-          {
-            t: "client-connected",
-            sessionId,
-            clientId,
-            userId: sessionPrev?.userId,
-          },
-        ],
-      };
-    }
-
-    case "client-disconnected": {
-      const sessionId = msg.sessionId;
-      const sessionPrev = model.sessions[sessionId];
-      const sessionNew: Session = {
-        clientId: undefined,
-        sessionId,
-        userId: sessionPrev?.userId,
-      };
-      return {
-        model: {
-          ...model,
-          sessions: {
-            ...model.sessions,
-            [sessionId]: sessionNew,
-          },
-        },
-      };
-    }
-
-    case "profile": {
-      const updated = ProfileServer.update({
-        model: model.profile,
-        msg: msg.c,
-      });
-      return {
-        model: { ...model, profile: updated.model },
-        cmd: Cmd.tag_("profile", updated.cmd),
-      };
-    }
-
-    case "search": {
-      const updated = SearchServer.update({
-        model: model.search,
-        msg: msg.c,
-      });
-      return {
-        model: { ...model, search: updated.model },
-        cmd: Cmd.tag_("search", updated.cmd),
-      };
-    }
-
-    case "auth": {
-      const updated = AuthServer.update({
-        model: model.auth,
-        msg: msg.c,
-      });
-      return {
-        model: { ...model, auth: updated.model },
-        cmd: Cmd.tag_("auth", updated.cmd),
-      };
-    }
-
-    case "chat": {
-      const updated = ChatServer.update({
-        model: model.chat,
-        msg: msg.c,
-      });
-
-      return {
-        model: { ...model, chat: updated.model },
-        cmd: Cmd.tag_("chat", updated.cmd),
-      };
-    }
-
-    default: {
-      return exhaustive(msg);
-    }
+      },
+    };
   }
+
+  if (msg.t === "→") {
+    return updateFromClient({
+      ctx: {
+        ...ctx,
+        sessionId: msg.sessionId,
+        clientId: msg.clientId,
+      },
+      msg: msg.c,
+      model,
+      broadcast,
+      sendToClient,
+    });
+  }
+
+  if (msg.t === "space") {
+    const updated = SpaceServer.update({
+      sendToUser: (userIds, m) =>
+        sendToUser(sendToClient, model, userIds, { t: "space", c: m }),
+      msg: msg.c,
+      model: model.space,
+      ctx,
+    });
+
+    return {
+      model: { ...model, space: updated.model },
+      cmd: Cmd.tag_("space", updated.cmd ?? Cmd.None),
+    };
+  }
+
+  if (msg.t === "profile") {
+    const updated = ProfileServer.update({
+      model: model.profile,
+      msg: msg.c,
+    });
+    return {
+      model: { ...model, profile: updated.model },
+      cmd: Cmd.tag_("profile", updated.cmd),
+    };
+  }
+
+  if (msg.t === "search") {
+    const updated = SearchServer.update({
+      model: model.search,
+      msg: msg.c,
+    });
+    return {
+      model: { ...model, search: updated.model },
+      cmd: Cmd.tag_("search", updated.cmd),
+    };
+  }
+
+  if (msg.t === "auth") {
+    const updated = AuthServer.update({
+      model: model.auth,
+      msg: msg.c,
+    });
+    return {
+      model: { ...model, auth: updated.model },
+      cmd: Cmd.tag_("auth", updated.cmd),
+    };
+  }
+
+  if (msg.t === "chat") {
+    const updated = ChatServer.update({
+      model: model.chat,
+      msg: msg.c,
+    });
+
+    return {
+      model: { ...model, chat: updated.model },
+      cmd: Cmd.tag_("chat", updated.cmd),
+    };
+  }
+
+  return { model };
 };
 
 const updateFromApp = ({
@@ -228,7 +217,7 @@ const updateFromApp = ({
   model,
   sendToClient,
 }: {
-  msg: AppMsg;
+  msg: ServerAppMsg;
   model: Model;
   broadcast: (m: ToClient) => Cmd;
   sendToClient: (clientIds: ClientId[], m: ToClient) => Cmd;
@@ -270,7 +259,7 @@ const updateFromClient = ({
   broadcast,
   sendToClient,
 }: {
-  ctx: RequestCtx;
+  ctx: ReqServerCtx;
   msg: ToServer;
   model: Model;
   broadcast: (m: ToClient) => Cmd;
@@ -278,127 +267,86 @@ const updateFromClient = ({
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
-  msgs?: AppMsg[];
+  msgs?: ServerAppMsg[];
 } => {
-  switch (msg.t) {
-    case "auth": {
-      if (msg.c.t !== "got-current-user") {
-        return { model };
+  const currentUserId = model.auth.sessions[ctx.sessionId]?.userId;
+  const authReqCtx: AuthReqServerCtx | null = currentUserId
+    ? {
+        ...ctx,
+        currentUserId,
       }
+    : null;
 
-      if (msg.c.currentUser.t !== "logged-in") {
-        return { model };
-      }
-
-      const userId = msg.c.currentUser.currentUserId;
-
-      const session: Session = {
-        sessionId: ctx.sessionId,
-        clientId: ctx.clientId,
-        userId,
-      };
-
-      return {
-        model: {
-          ...model,
-          sessions: {
-            ...model.sessions,
-            [session.sessionId]: session,
-          },
-        },
-        msgs: [
-          {
-            t: "client-authenticated",
-            clientId: ctx.clientId,
-            userId: msg.c.currentUser.currentUserId,
-          },
-        ],
-      };
-    }
-
-    case "profile": {
-      const currentUserId = model.sessions[ctx.sessionId]?.userId;
-
-      if (!currentUserId) {
-        return {
-          model,
-          cmd: sendToClient([ctx.clientId], { t: "access-denied", msg }),
-        };
-      }
-
-      const updated = ProfileServer.updateFromClient({
-        model: model.profile,
-        msg: msg.c,
-        sendToClient: (c) => sendToClient([ctx.clientId], { t: "profile", c }),
-        ctx: {
-          ...ctx,
-          currentUserId,
-        },
-      });
-      return {
-        model: { ...model, profile: updated.model },
-        cmd: Cmd.tag_("profile", updated.cmd),
-      };
-    }
-
-    case "search": {
-      const updated = SearchServer.updateFromClient({
-        model: model.search,
-        msg: msg.c,
-      });
-      return {
-        model: { ...model, search: updated.model },
-        cmd: Cmd.tag_("search", updated.cmd),
-      };
-    }
-
-    case "chat": {
-      const updated = ChatServer.updateFromClient({
-        model: model.chat,
-        msg: msg.c,
-        sendToClient: (c) => sendToClient([ctx.clientId], { t: "chat", c }),
-      });
-      return {
-        model: { ...model, chat: updated.model },
-        cmd: Cmd.tag_("chat", updated.cmd),
-      };
-    }
-
-    case "space": {
-      const session = model.sessions[ctx.sessionId];
-
-      if (!session) {
-        return { model };
-      }
-
-      if (!session.userId) {
-        return { model };
-      }
-
-      const updated = SpaceServer.updateFromClient({
-        ctx: {
-          ...ctx,
-          currentUserId: session.userId,
-        },
-        wire: {
-          broadcast: (c) => broadcast({ t: "space", c }),
-          sendToClient: (c) => sendToClient([ctx.clientId], { t: "space", c }),
-          sendToUser: (userIds, c) =>
-            sendToUser(sendToClient, model, userIds, { t: "space", c }),
-        },
-        msg: msg.c,
-        model: model.space,
-      });
-
-      return {
-        model: {
-          ...model,
-          space: updated.model,
-        },
-        cmd: Cmd.tag_("space", updated.cmd ?? Cmd.None),
-      };
-    }
+  if (msg.t === "auth") {
+    const updated = AuthServer.updateFromClient({
+      ctx,
+      model: model.auth,
+      msg: msg.c,
+    });
+    return {
+      model: { ...model, auth: updated.model },
+      cmd: Cmd.tag_("auth", updated.cmd),
+      msgs: updated.msgs,
+    };
   }
+
+  if (msg.t === "profile") {
+    const updated = ProfileServer.updateFromClient({
+      model: model.profile,
+      msg: msg.c,
+      sendToClient: (c) => sendToClient([ctx.clientId], { t: "profile", c }),
+      ctx: authReqCtx,
+    });
+    return {
+      model: { ...model, profile: updated.model },
+      cmd: Cmd.tag_("profile", updated.cmd),
+    };
+  }
+
+  if (msg.t === "search") {
+    const updated = SearchServer.updateFromClient({
+      model: model.search,
+      msg: msg.c,
+    });
+    return {
+      model: { ...model, search: updated.model },
+      cmd: Cmd.tag_("search", updated.cmd),
+    };
+  }
+
+  if (msg.t === "chat") {
+    const updated = ChatServer.updateFromClient({
+      model: model.chat,
+      msg: msg.c,
+      sendToClient: (c) => sendToClient([ctx.clientId], { t: "chat", c }),
+    });
+    return {
+      model: { ...model, chat: updated.model },
+      cmd: Cmd.tag_("chat", updated.cmd),
+    };
+  }
+
+  if (msg.t === "space") {
+    const updated = SpaceServer.updateFromClient({
+      ctx: authReqCtx,
+      msg: msg.c,
+      model: model.space,
+      broadcast: (c) => broadcast({ t: "space", c }),
+      sendToClient: (c) => sendToClient([ctx.clientId], { t: "space", c }),
+      sendToUser: (userIds, c) =>
+        sendToUser(sendToClient, model, userIds, { t: "space", c }),
+    });
+
+    return {
+      model: {
+        ...model,
+        space: updated.model,
+      },
+      cmd: Cmd.tag_("space", updated.cmd ?? Cmd.None),
+    };
+  }
+
+  return { model };
 };
 
 const sendToUser = (
@@ -418,13 +366,10 @@ const sendToUser = (
 
     const session = model.sessions[sessionId];
 
-    if (
-      session &&
-      session.userId &&
-      session.clientId &&
-      userIdSet.has(session.userId)
-    ) {
-      clientIds.push(session.clientId);
+    const authSession = model.auth.sessions[sessionId];
+
+    if (session && authSession && userIdSet.has(authSession.userId)) {
+      clientIds.push(...session.clientIds);
     }
   }
 

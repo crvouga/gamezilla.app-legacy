@@ -12,8 +12,7 @@ import { Route } from "./route";
 export type AppMsg<T = unknown> =
   | { t: "route-changed"; route: Route }
   | { t: "wire-connected" }
-  | { t: "user-logged-in"; currentUserId: UserId }
-  | { t: "user-logged-out" }
+  | { t: "got-current-user"; userId: UserId | null }
   | { t: "toast-enqueued"; text: string; duration?: number }
   | { t: "got-profiles"; profiles: { [userId: string]: Profile } };
 

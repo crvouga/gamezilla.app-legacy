@@ -6,7 +6,7 @@ import {
   client,
   definitions,
 } from "@gamezilla/shared/app";
-import { AppMsg, AuthenticatedRequestCtx } from "@gamezilla/shared/server";
+import { ServerAppMsg, AuthReqServerCtx } from "@gamezilla/shared/server";
 import {
   Cmd,
   Err,
@@ -73,11 +73,15 @@ export const updateFromClient = ({
   msg: ToServer;
   model: Model;
   sendToClient: (m: ToClient) => Cmd<Msg>;
-  ctx: AuthenticatedRequestCtx;
+  ctx: AuthReqServerCtx | null;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
+  if (!ctx) {
+    return { model };
+  }
+
   return {
     model,
     cmd: p(
@@ -97,19 +101,17 @@ export const updateFromApp = ({
   model,
 }: {
   sendToClient: (clientId: ClientId[], m: ToClient) => Cmd<Msg>;
-  msg: AppMsg;
+  msg: ServerAppMsg;
   model: Model;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
   if (msg.t === "client-authenticated") {
-    const { userId } = msg;
-
     return {
       model,
       cmd: p(
-        () => findElseCreate({ userId }),
+        () => findElseCreate({ userId: msg.userId }),
         Cmd.perform(
           (result): ToClient => ({
             t: "current-user-profile",

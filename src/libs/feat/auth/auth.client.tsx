@@ -182,15 +182,19 @@ export const update = ({
     };
   }
 
-  if (msg.t === "got-current-user") {
-    const currentUserId =
-      msg.currentUser.t === "logged-in" ? msg.currentUser.currentUserId : null;
+  if (msg.t === "user-authenticated") {
     return {
-      model: { ...model, currentUser: msg.currentUser },
+      model: { ...model, currentUser: { t: "logged-in", userId: msg.userId } },
       cmd: sendToServer(msg),
-      msgs: currentUserId
-        ? [{ t: "user-logged-in", currentUserId }]
-        : [{ t: "user-logged-out" }],
+      msgs: [{ t: "got-current-user", userId: msg.userId }],
+    };
+  }
+
+  if (msg.t === "user-unauthenticated") {
+    return {
+      model: { ...model, currentUser: { t: "logged-out" } },
+      cmd: sendToServer(msg),
+      msgs: [{ t: "got-current-user", userId: null }],
     };
   }
 
@@ -218,19 +222,8 @@ export const updateFromApp = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (msg.t === "user-logged-in" && route.t === "auth") {
-    return {
-      model,
-      cmd: Route.push({
-        t: "space",
-        c: {
-          t: "space-list",
-        },
-      }),
-    };
-  }
-
-  if (msg.t === "user-logged-out" && route.t !== "auth") {
+  // redirect to login if not logged in
+  if (msg.t === "got-current-user" && !msg.userId && route.t !== "auth") {
     return {
       model,
       cmd: Route.push({
@@ -239,6 +232,7 @@ export const updateFromApp = ({
       }),
     };
   }
+
   return { model };
 };
 //
@@ -415,30 +409,18 @@ export const ViewLogoutScreen = ({
 
 const subject = new Subject<Msg>();
 
-// client.auth.onAuthStateChange((_event, supabaseSession) => {
-//   const msg = fromSupabaseSession(supabaseSession);
-//   subject.next(msg);
-// });
-
 const fromSupabaseSession = (auth: SupabaseSession | null): Msg => {
   const userId = UserId.decode(auth?.user?.id);
 
-  const name = String(
-    auth?.user?.user_metadata?.["name"] ??
-      auth?.user?.user_metadata?.["full_name"] ??
-      ""
-  );
-
   if (userId.t === "ok") {
     return {
-      t: "got-current-user",
-      currentUser: { t: "logged-in", currentUserId: userId.value, name },
+      t: "user-authenticated",
+      userId: userId.value,
     };
   }
 
   return {
-    t: "got-current-user",
-    currentUser: { t: "logged-out" },
+    t: "user-unauthenticated",
   };
 };
 

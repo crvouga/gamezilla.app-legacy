@@ -1,9 +1,9 @@
 import * as Auth from "@gamezilla/feat/auth";
 import * as Chat from "@gamezilla/feat/chat";
 import * as Profile from "@gamezilla/feat/profile";
-import * as Space from "@gamezilla/feat/space";
 import * as Search from "@gamezilla/feat/search";
-import { ClientId, SessionId, UserId } from "@gamezilla/shared/app";
+import * as Space from "@gamezilla/feat/space";
+import { ClientId, SessionId } from "@gamezilla/shared/app";
 import { Routing, Toast, Wire } from "./app-client";
 
 //
@@ -27,8 +27,7 @@ export type ServerModel = {
 
 export type Session = {
   sessionId: SessionId;
-  userId?: UserId;
-  clientId?: ClientId;
+  clientIds: ClientId[];
 };
 
 export type ClientModel = {

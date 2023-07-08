@@ -2,16 +2,16 @@ import { SpaceId } from "@gamezilla/shared/app";
 import {
   AppMsg,
   Ctx,
-  SpaceCtx,
-  SpaceViewCtx,
   Route,
   RouteSpace,
+  SpaceCtx,
+  SpaceViewCtx,
   ViewCtx,
   ViewSpaceHostChip,
   ViewUsersInSpaceList,
   ViewYouChip,
 } from "@gamezilla/shared/client";
-import { Cmd, RemoteResult, Sub, exhaustive, p } from "@gamezilla/shared/core";
+import { Cmd, RemoteResult, Sub, p } from "@gamezilla/shared/core";
 import {
   ActionButton,
   IconHome,
@@ -26,7 +26,6 @@ import * as Game from "../game.client";
 import {
   ClientModel,
   ClientMsg,
-  Res,
   ServerModel,
   ToClient,
   ToServer,
@@ -79,12 +78,12 @@ export type Msg = ClientMsg;
 //
 
 export const update = ({
-  ctx: ctxPrev,
+  ctx,
   sendToServer,
   msg,
   model,
 }: {
-  ctx: Ctx;
+  ctx: Ctx | null;
   sendToServer: (msg: ToServer) => Cmd;
   msg: Msg;
   model: Model;
@@ -93,143 +92,113 @@ export const update = ({
   cmd?: Cmd<Msg>;
   msgs?: AppMsg[];
 } => {
-  const ctx: Ctx = {
-    ...ctxPrev,
-    profiles: {
-      ...ctxPrev.profiles,
-      ...model.profiles,
-    },
-  };
-  switch (msg.t) {
-    case "clicked-space": {
-      return {
-        model,
-        cmd: Route.push({
-          t: "space",
-          c: { t: "space", spaceId: msg.spaceId },
-        }),
-      };
-    }
-
-    case "modal-closed": {
-      return { model: { ...model, modal: "none" } };
-    }
-
-    case "modal-open": {
-      return { model: { ...model, modal: msg.c } };
-    }
-
-    case "clicked-user-link": {
-      return {
-        model: { ...model, modal: "none" },
-        cmd: Route.push({
-          t: "profile",
-          c: { t: "profile", userId: msg.userId },
-        }),
-      };
-    }
-
-    case "clicked-user": {
-      return {
-        model: {
-          ...model,
-          previewUserId: msg.userId,
-          modal: "user-preview",
-        },
-      };
-    }
-
-    case "list":
-    case "create":
-    case "join":
-    case "leave":
-    case "destroy":
-    case "input-game": {
-      const routeCmd =
-        msg.t === "create"
-          ? Route.push({ t: "space", c: { t: "space", spaceId: msg.spaceId } })
-          : Cmd.None;
-
-      return {
-        model: {
-          ...model,
-          requests: {
-            ...model.requests,
-            [msg.t]: RemoteResult.Loading,
-          },
-        },
-        cmd: Cmd.batch([
-          routeCmd,
-          sendToServer({ ...msg, profile: ctx.profiles[ctx.currentUserId] }),
-        ]),
-      };
-    }
-
-    case "game": {
-      const user = model.users[ctx.currentUserId];
-
-      if (!user) {
-        return { model };
-      }
-
-      const space = model.spaces[user.spaceId];
-
-      if (!space) {
-        return { model };
-      }
-
-      const game = model.games[user.spaceId];
-
-      if (!game) {
-        return { model };
-      }
-
-      const gameMsg = msg.c;
-
-      const spaceCtx: SpaceCtx = {
-        ...ctx,
-        hostId: space.hostId,
-      };
-
-      const updated = Game.update({
-        ctx: spaceCtx,
-        sendToServer: (msg) =>
-          sendToServer({
-            t: "game",
-            c: msg,
-            profile: ctx.profiles[ctx.currentUserId],
-          }),
-        msg: gameMsg,
-        model: game,
-      });
-
-      const modelNew: Model = {
-        ...model,
-        games: {
-          ...model.games,
-          [user.spaceId]: updated.model,
-        },
-      };
-
-      return {
-        model: modelNew,
-        cmd: Cmd.tag_("game", updated.cmd),
-        msgs: AppMsg.tag("game", updated.msgs),
-      };
-    }
-
-    default:
-      return exhaustive(msg[0]);
+  if (msg.t === "modal-closed") {
+    return { model: { ...model, modal: "none" } };
   }
+
+  if (msg.t === "modal-open") {
+    return { model: { ...model, modal: msg.c } };
+  }
+
+  if (msg.t === "clicked-user-link") {
+    return {
+      model: { ...model, modal: "none" },
+      cmd: Route.push({
+        t: "profile",
+        c: { t: "profile", userId: msg.userId },
+      }),
+    };
+  }
+
+  if (msg.t === "clicked-user") {
+    return {
+      model: {
+        ...model,
+        previewUserId: msg.userId,
+        modal: "user-preview",
+      },
+    };
+  }
+
+  if (msg.t === "game") {
+    if (!ctx) {
+      return { model };
+    }
+
+    const user = model.users[ctx.currentUserId];
+
+    if (!user) {
+      return { model };
+    }
+
+    const space = model.spaces[user.spaceId];
+
+    if (!space) {
+      return { model };
+    }
+
+    const game = model.games[user.spaceId];
+
+    if (!game) {
+      return { model };
+    }
+
+    const gameMsg = msg.c;
+
+    const spaceCtx: SpaceCtx = {
+      ...ctx,
+      hostId: space.hostId,
+    };
+
+    const updated = Game.update({
+      ctx: spaceCtx,
+      sendToServer: (msg) =>
+        sendToServer({
+          t: "game",
+          c: msg,
+          profile: ctx.profiles[ctx.currentUserId],
+        }),
+      msg: gameMsg,
+      model: game,
+    });
+
+    const modelNew: Model = {
+      ...model,
+      games: {
+        ...model.games,
+        [user.spaceId]: updated.model,
+      },
+    };
+
+    return {
+      model: modelNew,
+      cmd: Cmd.tag_("game", updated.cmd),
+      msgs: AppMsg.tag("game", updated.msgs),
+    };
+  }
+
+  return {
+    model: {
+      ...model,
+      requests: {
+        ...model.requests,
+        [msg.t]: RemoteResult.Loading,
+      },
+    },
+    cmd: sendToServer({
+      ...msg,
+      profile: ctx ? ctx.profiles[ctx.currentUserId] : undefined,
+    }),
+  };
 };
 
 export const updateFromServer = ({
-  ctx: ctxPrev,
+  ctx,
   sendToServer,
   msg,
   model,
 }: {
-  ctx: Ctx;
+  ctx: Ctx | null;
   sendToServer: (msg: ToServer) => Cmd;
   msg: ToClient;
   model: Model;
@@ -238,126 +207,88 @@ export const updateFromServer = ({
   cmd?: Cmd<Msg>;
   msgs?: AppMsg[];
 } => {
-  const ctx: Ctx = {
-    ...ctxPrev,
-    profiles: {
-      ...ctxPrev.profiles,
-      ...model.profiles,
-    },
-  };
-  switch (msg.t) {
-    case "game": {
-      const user = model.users[ctx.currentUserId];
+  if (msg.t === "game") {
+    if (!ctx) {
+      return { model };
+    }
+    const user = model.users[ctx.currentUserId];
 
-      if (!user) {
-        return { model };
-      }
-
-      const space = model.spaces[user.spaceId];
-
-      if (!space) {
-        return { model };
-      }
-
-      const game = model.games[user.spaceId];
-
-      if (!game) {
-        return { model };
-      }
-
-      const gameMsg = msg.c;
-
-      const updated = Game.updateFromServer({
-        ctx: {
-          ...ctx,
-          hostId: space.hostId,
-        },
-        sendToServer: (msg) =>
-          sendToServer({
-            t: "game",
-            c: msg,
-            profile: ctx.profiles[ctx.currentUserId],
-          }),
-        model: game,
-        msg: gameMsg,
-      });
-
-      const modelNew: Model = {
-        ...model,
-        games: {
-          ...model.games,
-          [user.spaceId]: updated.model,
-        },
-      };
-
-      return {
-        model: modelNew,
-        cmd: Cmd.tag_("game", updated.cmd),
-        msgs: updated.msgs,
-      };
+    if (!user) {
+      return { model };
     }
 
-    case "list":
-    case "create":
-    case "input-game": {
-      return updateResponse({ ctx, sendToServer, msg, model });
+    const space = model.spaces[user.spaceId];
+
+    if (!space) {
+      return { model };
     }
 
-    case "destroy": {
-      const handled = updateResponse({ ctx, sendToServer, msg, model });
+    const game = model.games[user.spaceId];
 
-      const user = model.users[ctx.currentUserId];
-
-      if (!user) {
-        return handled;
-      }
-
-      const space = model.spaces[user.spaceId];
-
-      if (!space) {
-        return handled;
-      }
-
-      if (space.hostId === ctx.currentUserId) {
-        return handled;
-      }
-
-      return {
-        model: handled.model,
-        cmd: handled.cmd,
-      };
+    if (!game) {
+      return { model };
     }
 
-    case "leave": {
-      const handled = updateResponse({ ctx, sendToServer, msg, model });
+    const updated = Game.updateFromServer({
+      ctx: {
+        ...ctx,
+        hostId: space.hostId,
+      },
+      sendToServer: (msg) =>
+        sendToServer({
+          t: "game",
+          c: msg,
+          profile: ctx.profiles[ctx.currentUserId],
+        }),
+      model: game,
+      msg: msg.c,
+    });
 
-      if (msg.result.t === "err") {
-        return handled;
-      }
+    const modelNew: Model = {
+      ...model,
+      games: {
+        ...model.games,
+        [user.spaceId]: updated.model,
+      },
+    };
 
-      return {
-        model: handled.model,
-      };
-    }
-
-    case "join": {
-      const handled = updateResponse({ ctx, sendToServer, msg, model });
-
-      if (msg.result.t === "err") {
-        return handled;
-      }
-
-      const routeCmd =
-        msg.userId === ctx.currentUserId
-          ? Route.push({ t: "space", c: { t: "space", spaceId: msg.spaceId } })
-          : Cmd.None;
-
-      return {
-        model: handled.model,
-        cmd: Cmd.batch([handled.cmd, routeCmd]),
-      };
-    }
+    return {
+      model: modelNew,
+      cmd: Cmd.tag_("game", updated.cmd),
+      msgs: updated.msgs,
+    };
   }
+
+  if (msg.result.t === "err") {
+    return {
+      model: {
+        ...model,
+        requests: {
+          ...model.requests,
+          [msg.t]: msg.result,
+        },
+      },
+    };
+  }
+
+  const merged = syncWithServer({
+    ctx,
+    clientModel: model,
+    serverModel: msg.result.value,
+    sendToServer,
+  });
+
+  return {
+    model: {
+      ...merged.model,
+      requests: {
+        ...merged.model.requests,
+        [msg.t]: RemoteResult.Ok(null),
+      },
+    },
+    cmd: merged.cmd,
+    msgs: [{ t: "got-profiles", profiles: merged.model.profiles }],
+  };
 };
 
 export const updateFromApp = ({
@@ -411,60 +342,13 @@ const updateListSpaces = ({
   };
 };
 
-const updateResponse = ({
-  sendToServer,
-  ctx,
-  msg,
-  model,
-}: {
-  msg: Res;
-  model: Model;
-  ctx: Ctx;
-  sendToServer: (msg: ToServer) => Cmd;
-}): {
-  model: Model;
-  cmd?: Cmd<Msg>;
-  msgs?: AppMsg[];
-} => {
-  if (msg.result.t === "err") {
-    return {
-      model: {
-        ...model,
-        requests: {
-          ...model.requests,
-          [msg.t]: RemoteResult.Err(msg.result.error),
-        },
-      },
-      cmd: Cmd.None,
-    };
-  }
-
-  const merged = syncWithServer({
-    ctx,
-    clientModel: model,
-    serverModel: msg.result.value,
-    sendToServer,
-  });
-
-  // const userIds = Object.values(merged.model.users).map((user) => user.userId);
-
-  return {
-    model: {
-      ...merged.model,
-      requests: { ...merged.model.requests, [msg.t]: RemoteResult.Ok("none") },
-    },
-    cmd: merged.cmd,
-    msgs: [{ t: "got-profiles", profiles: merged.model.profiles }],
-  };
-};
-
 const syncWithServer = ({
   ctx,
   clientModel,
   serverModel,
   sendToServer,
 }: {
-  ctx: Ctx;
+  ctx: Ctx | null;
   sendToServer: (msg: ToServer) => Cmd;
   clientModel: ClientModel;
   serverModel: ServerModel;
@@ -477,6 +361,10 @@ const syncWithServer = ({
   >(
     (gamesNew, [spaceId, backendGame]) => {
       if (!SpaceId.is(spaceId)) {
+        return gamesNew;
+      }
+
+      if (!ctx) {
         return gamesNew;
       }
 

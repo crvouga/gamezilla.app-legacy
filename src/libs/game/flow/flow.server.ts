@@ -1,5 +1,5 @@
 import { Cmd, Err, Ok, Result, Sub } from "@gamezilla/shared/core";
-import { SpaceRequestCtx } from "@gamezilla/shared/server";
+import { SpaceReqServerCtx } from "@gamezilla/shared/server";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./flow.shared";
 import { PuzzleBuilderServer } from "./puzzle-builder";
 import { PlayServer } from "./play";
@@ -30,7 +30,7 @@ export const updateFromClient = ({
   ctx,
   broadcast,
 }: {
-  ctx: SpaceRequestCtx;
+  ctx: SpaceReqServerCtx;
   msg: ToServer;
   model: Model;
   broadcast: (m: ToClient) => Cmd;
@@ -53,7 +53,7 @@ const handleInputMode = ({
   mode,
   ctx,
 }: {
-  ctx: SpaceRequestCtx;
+  ctx: SpaceReqServerCtx;
   mode: Model["t"];
 }): Result<string, Model> => {
   if (ctx.hostId !== ctx.currentUserId) {

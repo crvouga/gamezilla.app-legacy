@@ -1,5 +1,9 @@
 import { Cmd, Result, Sub } from "@gamezilla/shared/core";
-import { SpaceMsg, SpaceCtx, SpaceRequestCtx } from "@gamezilla/shared/server";
+import {
+  SpaceMsg,
+  SpaceServerCtx,
+  SpaceReqServerCtx,
+} from "@gamezilla/shared/server";
 import { UserId } from "@gamezilla/shared/app";
 import { GameMsg } from "./chess-shared";
 import {
@@ -46,7 +50,7 @@ export const update = ({
   broadcast: (msg: ToClient) => Cmd;
   msg: Msg;
   model: Model;
-  ctx: SpaceCtx;
+  ctx: SpaceServerCtx;
 }): [Model, Cmd<Msg>] => {
   switch (model.t) {
     case "none": {
@@ -111,7 +115,7 @@ export const updateFromClient = ({
   model,
   ctx,
 }: {
-  ctx: SpaceRequestCtx;
+  ctx: SpaceReqServerCtx;
   sendToClient: (msg: ToClient) => Cmd;
   broadcast: (msg: ToClient) => Cmd;
   msg: ToServer;
@@ -296,7 +300,7 @@ const initMode = ({
   broadcast,
   ctx,
 }: {
-  ctx: SpaceRequestCtx;
+  ctx: SpaceReqServerCtx;
   broadcast: (m: ToClient) => Cmd;
   mode: ServerModel["t"];
   userId: UserId;

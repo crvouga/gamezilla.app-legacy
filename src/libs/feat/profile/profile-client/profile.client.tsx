@@ -1,5 +1,5 @@
 import { ProfileAvatar } from "@gamezilla/shared/app";
-import { AppMsg, RouteProfile, ViewCtx } from "@gamezilla/shared/client";
+import { AppMsg, Ctx, RouteProfile, ViewCtx } from "@gamezilla/shared/client";
 import { Cmd, andThen, p } from "@gamezilla/shared/core";
 import {
   IconChevronRight,
@@ -87,7 +87,16 @@ export const update = ({
     };
   }
 
-  return { model, cmd: sendToServer(msg) };
+  return {
+    model: {
+      ...model,
+      requests: {
+        ...model.requests,
+        [msg.t]: { t: "loading" },
+      },
+    },
+    cmd: sendToServer(msg),
+  };
 };
 
 export const updateFromServer = ({
@@ -101,7 +110,15 @@ export const updateFromServer = ({
   cmd?: Cmd<Msg>;
 } => {
   if (msg.result.t === "err") {
-    return { model };
+    return {
+      model: {
+        ...model,
+        requests: {
+          ...model.requests,
+          [msg.t]: msg.result,
+        },
+      },
+    };
   }
 
   const profilesNew = msg.result.value.reduce<Model["profiles"]>(
@@ -128,36 +145,40 @@ export const updateFromApp = ({
   msg,
   model,
   sendToServer,
+  ctx,
 }: {
   msg: AppMsg;
   model: Model;
   sendToServer: (m: ToServer) => Cmd<Msg>;
+  ctx: Ctx | null;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
   return p(
     { model },
+
     andThen(({ model }) => {
-      if (msg.t === "route-changed") {
-        const route = msg.route;
+      if (msg.t !== "route-changed") {
+        return { model };
+      }
+      const route = msg.route;
 
-        if (route.t !== "profile") {
-          return { model };
-        }
-
-        if (route.c.t === "profile") {
-          return {
-            model,
-            cmd: sendToServer({ t: "find-many", userIds: [route.c.userId] }),
-          };
-        }
-
+      if (route.t !== "profile") {
         return { model };
       }
 
-      return { model };
+      if (route.c.t !== "profile") {
+        return { model };
+      }
+
+      return {
+        model,
+        cmd: sendToServer({ t: "find-many", userIds: [route.c.userId] }),
+      };
     }),
+    andThen(({ model }) => updateUsernameDraft({ model, msg, ctx })),
+
     andThen(({ model }) => {
       if (msg.t === "route-changed") {
         return { model: { ...model, opened: null } };
@@ -172,6 +193,43 @@ export const updateFromApp = ({
       return { model };
     })
   );
+};
+
+const updateUsernameDraft = ({
+  model,
+  msg,
+  ctx,
+}: {
+  model: Model;
+  msg: AppMsg;
+  ctx: Ctx | null;
+}): { model: Model } => {
+  if (msg.t !== "route-changed") {
+    return { model };
+  }
+  const route = msg.route;
+
+  if (route.t !== "profile") {
+    return { model };
+  }
+
+  if (route.c.t !== "profile-update-username") {
+    return { model };
+  }
+
+  if (!ctx) {
+    return { model };
+  }
+
+  return {
+    model: {
+      ...model,
+      draft: {
+        ...model.draft,
+        username: model.profiles[ctx.currentUserId]?.username ?? "",
+      },
+    },
+  };
 };
 
 //

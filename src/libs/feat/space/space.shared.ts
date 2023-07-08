@@ -1,10 +1,8 @@
-import { RemoteResult, Result } from "@gamezilla/shared/core";
+import { Err, Ok, RemoteResult, Result } from "@gamezilla/shared/core";
 import { SpaceId, UserId, Username } from "@gamezilla/shared/app";
 import { Profile, Space, SpaceViewCtx } from "@gamezilla/shared/client";
 import * as GameServer from "./game.server";
 import * as Game from "./game.shared";
-
-const { Ok, Err } = Result;
 
 //
 //
@@ -44,7 +42,7 @@ export type ClientModel = SharedModel & {
     [spaceId: SpaceId]: Game.ClientModel;
   };
   requests: {
-    [key in Req["t"]]?: RemoteResult<Problem, "none">;
+    [key in Req["t"]]?: RemoteResult<Problem, null>;
   };
   previewUserId: UserId | null;
   modal: ModalModel;
@@ -169,7 +167,6 @@ export type ClientMsg =
   | { t: "game"; c: Game.ClientMsg }
   | { t: "modal-closed" }
   | { t: "modal-open"; c: ModalModel }
-  | { t: "clicked-space"; spaceId: SpaceId }
   | { t: "clicked-user"; userId: UserId }
   | { t: "clicked-user-link"; userId: UserId };
 

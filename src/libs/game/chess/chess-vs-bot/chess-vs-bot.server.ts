@@ -1,5 +1,5 @@
 import { Cmd, p, Sub } from "@gamezilla/shared/core";
-import { SpaceRequestCtx, SpaceMsg } from "@gamezilla/shared/server";
+import { SpaceReqServerCtx, SpaceMsg } from "@gamezilla/shared/server";
 import * as Chess from "../chess/chess";
 import {
   ServerModel,
@@ -65,7 +65,7 @@ export const updateFromClient = (input: {
   broadcast: (msg: ToClient) => Cmd;
   msg: ToServer;
   model: Model;
-  ctx: SpaceRequestCtx;
+  ctx: SpaceReqServerCtx;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;

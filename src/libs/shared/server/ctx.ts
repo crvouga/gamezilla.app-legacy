@@ -2,7 +2,14 @@ import { ClientId, SessionId, UserId } from "@gamezilla/shared/app";
 import { Posix } from "@gamezilla/shared/core";
 import { DbConnMySql } from "./database-connection-mysql";
 
-export type AppMsg =
+//
+//
+//
+//
+//
+//
+
+export type ServerAppMsg =
   | {
       t: "client-connected";
       clientId: ClientId;
@@ -15,22 +22,30 @@ export type AppMsg =
       clientId: ClientId;
     };
 
-export type Ctx = {
+//
+//
+//
+//
+//
+//
+//
+
+export type ServerCtx = {
   mySql: DbConnMySql;
   now: Posix;
 };
 
-export type RequestCtx = Ctx & {
+export type ReqServerCtx = ServerCtx & {
   sessionId: SessionId;
   clientId: ClientId;
 };
 
-export type AuthenticatedRequestCtx = RequestCtx & {
+export type AuthReqServerCtx = ReqServerCtx & {
   currentUserId: UserId;
 };
 
-export type SpaceCtx = Ctx & {
+export type SpaceServerCtx = ServerCtx & {
   hostId: UserId;
 };
 
-export type SpaceRequestCtx = SpaceCtx & AuthenticatedRequestCtx;
+export type SpaceReqServerCtx = SpaceServerCtx & AuthReqServerCtx;

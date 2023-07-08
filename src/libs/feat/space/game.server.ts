@@ -8,7 +8,11 @@ import { TetrisServer } from "@gamezilla/game/tetris";
 import { TicTacToeServer } from "@gamezilla/game/tic-tac-toe";
 import { UserId } from "@gamezilla/shared/app";
 import { Cmd, Sub, exhaustive } from "@gamezilla/shared/core";
-import { SpaceCtx, SpaceMsg, SpaceRequestCtx } from "@gamezilla/shared/server";
+import {
+  SpaceServerCtx,
+  SpaceMsg,
+  SpaceReqServerCtx,
+} from "@gamezilla/shared/server";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./game.shared";
 
 //
@@ -88,7 +92,7 @@ export const update = ({
   model,
   ctx,
 }: {
-  ctx: SpaceCtx;
+  ctx: SpaceServerCtx;
   broadcast: (m: ToClient) => Cmd;
   msg: Msg;
   model: Model;
@@ -220,7 +224,7 @@ export const updateFromClient = ({
   msg,
   model,
 }: {
-  ctx: SpaceRequestCtx;
+  ctx: SpaceReqServerCtx;
   sendToClient: (msg: ToClient) => Cmd;
   broadcast: (msg: ToClient) => Cmd;
   msg: ToServer;
