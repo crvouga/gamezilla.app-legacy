@@ -23,6 +23,7 @@ import {
   initShared,
   inputMove,
 } from "./vs-user.shared";
+import { Chessboard } from "../chess-ui";
 
 //
 //
@@ -397,7 +398,7 @@ export const View = ({
 
   return (
     <div>
-      <Chess.View
+      <Chessboard
         model={board}
         boardOrientation={boardOrientation}
         isDraggablePiece={({ piece }) => {

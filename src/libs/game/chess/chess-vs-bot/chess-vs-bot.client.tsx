@@ -12,9 +12,9 @@ import {
   p,
 } from "@gamezilla/shared/core";
 import { IconRobot, IconSpinner, MyAvatar } from "@gamezilla/shared/ui";
+import { Chessboard, PlayerIcon, ViewCoverArt } from "../chess-ui";
 import * as Chess from "../chess/chess";
 import Sounds from "../chess/chess-sounds";
-import { PlayerIcon } from "../chess/chess-views";
 import {
   ClientModel,
   ClientMsg,
@@ -274,7 +274,7 @@ export const View = ({
       <VsBotSetupScreen
         title="Chess"
         renderCoverArt={(props) => {
-          return <Chess.ViewCoverArt {...props} />;
+          return <ViewCoverArt {...props} />;
         }}
         bot={{
           label: Chess.botLevelToString(model.sharedModel.botLevel),
@@ -326,10 +326,7 @@ export const View = ({
 
   const userSlot = (
     <div>
-      <MyAvatar
-        src={ctx.profiles[model.sharedModel.userId]?.avatarUrl}
-
-      />
+      <MyAvatar src={ctx.profiles[model.sharedModel.userId]?.avatarUrl} />
 
       <p>{ctx.profiles[model.sharedModel.userId]?.username}</p>
     </div>
@@ -355,7 +352,7 @@ export const View = ({
     <div>
       {topSlot}
 
-      <Chess.View
+      <Chessboard
         boardOrientation={boardOrientation}
         isDraggablePiece={({ piece }) => {
           return (

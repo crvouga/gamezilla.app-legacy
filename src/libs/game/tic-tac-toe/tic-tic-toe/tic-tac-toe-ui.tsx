@@ -54,7 +54,7 @@ export const ViewBoard = ({
             <ViewSlot
               cx={x * scale + scale / 2}
               cy={y * scale + scale / 2}
-              r={0.3 * scale}
+              r={0.28 * scale}
               slot={slot}
               key={[x, y, slot].join(" ")}
               strokeWidth={0.1 * scale}

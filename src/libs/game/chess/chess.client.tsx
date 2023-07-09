@@ -22,11 +22,12 @@ import {
   ToClient,
   ToServer,
 } from "./chess.shared";
-import { ViewCoverArt } from "./chess/chess";
+
 import Sounds from "./chess/chess-sounds";
 import * as Puzzle from "./puzzle/puzzle.client";
 import { ChessVsBotClient } from "./chess-vs-bot";
 import * as VsUser from "./vs-user/vs-user.client";
+import { ViewCoverArt } from "./chess-ui";
 
 //
 //

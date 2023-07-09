@@ -1,11 +1,3 @@
-export const theme = {
-  lightSquare: "#EBEBD0",
-  darkSquare: "#779455",
-  // lightSquare: "#7C6141",
-  // darkSquare: "#533F30",
-  pawn: "#93BA46",
-};
-
 export const toChecker = ({
   x,
   y,

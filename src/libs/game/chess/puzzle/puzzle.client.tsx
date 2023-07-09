@@ -34,6 +34,7 @@ import {
   toNextEloRating,
   toPlayerColor,
 } from "./puzzle.shared";
+import { BoardProps, Chessboard } from "../chess-ui";
 
 //
 //
@@ -226,7 +227,7 @@ export const View = ({
 
         <div className="re flex aspect-square w-full items-center justify-end bg-neutral-700">
           {model.t !== "loading" && (
-            <Chess.View
+            <Chessboard
               {...toChessboardPropsForHint(model)}
               key={model.puzzle.puzzleId}
               model={toCurrentBoard(model)}
@@ -276,7 +277,7 @@ export const View = ({
   );
 };
 
-const toChessboardPropsForHint = (model: Model): Partial<Chess.BoardProps> => {
+const toChessboardPropsForHint = (model: Model): Partial<BoardProps> => {
   const correctMove = toCorrectMove(model);
 
   if (!correctMove) {
