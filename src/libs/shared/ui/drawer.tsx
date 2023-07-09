@@ -1,6 +1,5 @@
 import { useEffect } from "react";
-import { VDom } from "./ui";
-import { cn } from "./utils";
+import { VDom, cn } from "./utils";
 
 export const MyDrawer = ({
   open,

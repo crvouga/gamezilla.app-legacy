@@ -1,5 +1,5 @@
 import { Hex, easeAttrs } from "@gamezilla/shared/core";
-import { SvgIcon, Sx } from "@gamezilla/shared/ui";
+
 import { Transition, TransitionGroup } from "react-transition-group";
 import {
   Board,
@@ -30,9 +30,9 @@ export const stoneToColor = (stone: Stone): string => {
   }
 };
 
-export const viewStoneIcon = ({ stone, ...sx }: { stone: Stone } & Sx) => {
+export const viewStoneIcon = ({ stone }: { stone: Stone }) => {
   return (
-    <SvgIcon viewBox="-1 -1 2 2" sx={{ ...sx }}>
+    <svg viewBox="-1 -1 2 2">
       <circle
         cx={0}
         cy={0}
@@ -41,7 +41,7 @@ export const viewStoneIcon = ({ stone, ...sx }: { stone: Stone } & Sx) => {
         strokeWidth={0.1}
         stroke="#454545"
       />
-    </SvgIcon>
+    </svg>
   );
 };
 

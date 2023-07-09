@@ -1,6 +1,6 @@
 import { IconSpinner } from "./icon";
 
-export const LoadingScreen = () => {
+export const LoadingScreen = (_props: { title?: string }) => {
   return (
     <div
       key="loading-screen"

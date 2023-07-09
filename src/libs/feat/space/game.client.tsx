@@ -469,7 +469,6 @@ export const View = ({
     case "maze": {
       return (
         <MazeClient.View
-          gameSpaceCtx={ctx}
           $send={(c) => $send({ t: "maze", c })}
           model={model.c}
           ctx={ctx}

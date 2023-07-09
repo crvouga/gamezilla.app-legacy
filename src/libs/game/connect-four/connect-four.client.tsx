@@ -3,11 +3,10 @@ import {
   MainMenuScreen,
   SpaceCtx,
   SpaceViewCtx,
-  bannerArtAspectRatio,
   mainMenuButtons,
 } from "@gamezilla/shared/client";
 import { Cmd, Posix, Sub } from "@gamezilla/shared/core";
-import * as UI from "@gamezilla/shared/ui";
+import { ViewCoverArt } from "./connect-four-ui";
 import {
   ClientModel,
   ClientMsg,
@@ -15,7 +14,6 @@ import {
   ToClient,
   ToServer,
 } from "./connect-four.shared";
-import { PlayerIcon, ViewCoverArt, gameTheme } from "./connect-four-ui";
 import * as VsBot from "./vs-bot/vs-bot.client";
 import * as VsUser from "./vs-user/vs-user.client";
 
@@ -202,53 +200,6 @@ export const View = ({
       );
     }
   }
-};
-
-//
-//
-//
-// Art
-//
-//
-//
-
-export const BannerArt = () => {
-  return (
-    <UI.AspectRatio aspectRatio={bannerArtAspectRatio}>
-      <UI.List
-        sx={{
-          width: "100%",
-          height: "100%",
-          background: `linear-gradient(${gameTheme.primary.dark}, ${gameTheme.primary.darker})`,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: 4,
-        }}>
-        <PlayerIcon playerType="PlayerOne" />
-        <PlayerIcon playerType="PlayerTwo" />
-      </UI.List>
-      <UI.List
-        sx={{
-          width: "100%",
-          height: "100%",
-          background: "rgba(0, 0, 0, 0.1)",
-          position: "absolute",
-          top: 0,
-          left: 0,
-          overflow: "hidden",
-          display: "flex",
-          alignItems: "flex-end",
-        }}>
-        <UI.Typography
-          color="#fff"
-          fontSize={36}
-          sx={{ paddingX: 2, paddingY: 1 }}>
-          Connect Four
-        </UI.Typography>
-      </UI.List>
-    </UI.AspectRatio>
-  );
 };
 
 export const syncWithServer = ({

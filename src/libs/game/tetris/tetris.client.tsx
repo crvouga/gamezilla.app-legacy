@@ -1,19 +1,18 @@
+import { Cmd, Keyboard, Option, Sub, exhaustive } from "@gamezilla/shared/core";
 import { useLayoutEffect, useRef } from "react";
-import { Cmd, exhaustive, Keyboard, Option, Sub } from "@gamezilla/shared/core";
-import * as UI from "@gamezilla/shared/ui";
 import * as Board from "./board";
 import * as Direction from "./direction";
 import * as Piece from "./piece";
 import * as Position from "./position";
 import {
-  ServerModel,
-  columnCount,
   ClientModel,
   ClientMsg,
+  ServerModel,
+  ToClient,
+  ToServer,
+  columnCount,
   initShared,
   rowCount,
-  ToServer,
-  ToClient,
   toGhostPiece,
   toPiece,
 } from "./tetris.shared";
@@ -295,7 +294,7 @@ export const View = ({
   }, [model]);
 
   return (
-    <UI.FillBox>
+    <div>
       <div
         ref={containerRef}
         style={{
@@ -391,7 +390,7 @@ export const View = ({
             ))}
 
         </svg> */}
-    </UI.FillBox>
+    </div>
   );
 };
 

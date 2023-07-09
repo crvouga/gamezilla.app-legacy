@@ -1,27 +1,15 @@
-import { Cmd, Keyboard, p, Sub } from "@gamezilla/shared/core";
-import { SpaceCtx, SpaceViewCtx, ViewCtx } from "@gamezilla/shared/client";
-import {
-  ActionButton,
-  Avatar,
-  Box,
-  Button,
-  FillBox,
-  IconButton,
-  Icons,
-  InputAdornment,
-  TextField,
-  Typography,
-} from "@gamezilla/shared/ui";
+import { SpaceCtx, SpaceViewCtx } from "@gamezilla/shared/client";
+import { Cmd, Keyboard, Sub, p } from "@gamezilla/shared/core";
+import { ActionButton, IconArrowLeftOnRect } from "@gamezilla/shared/ui";
 import { Maze } from "./maze";
 import {
-  ServerModel,
-  Color,
   ClientModel,
   ClientMsg,
-  handle,
-  initShared,
-  ToServer,
+  Color,
+  ServerModel,
   ToClient,
+  ToServer,
+  initShared,
 } from "./maze.shared";
 import { Direction, Position } from "./position";
 
@@ -207,131 +195,13 @@ export const View = ({
   model,
   ctx,
   $send,
-  gameSpaceCtx,
 }: {
-  gameSpaceCtx: SpaceViewCtx;
-  ctx: ViewCtx;
+  ctx: SpaceViewCtx;
   model: Model;
   $send: (msg: Msg) => void;
 }) => {
   if (model.type === "setup") {
-    return (
-      <FillBox>
-        <Box sx={{ px: 2, pt: 2 }}>
-          <TextField
-            disabled={
-              handle(
-                ["input-seed", { userId: ctx.currentUserId, seed: model.seed }],
-                model
-              ).t === "err"
-            }
-            value={model.seed}
-            onChange={(e) =>
-              $send([
-                "input-seed",
-                { userId: ctx.currentUserId, seed: e.target.value },
-              ])
-            }
-            fullWidth
-            label="Seed"
-            InputProps={{
-              endAdornment: (
-                <InputAdornment
-                  position="end"
-                  onClick={() =>
-                    $send([
-                      "input-seed",
-                      {
-                        userId: ctx.currentUserId,
-                        seed: `s${Math.floor(Math.random() * 1_000_000_000)}`,
-                      },
-                    ])
-                  }>
-                  <IconButton>
-                    <Icons.Shuffle />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Box>
-
-        <Typography sx={{ pt: 2, px: 2, color: "text.secondary" }}>
-          Players
-        </Typography>
-
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 1,
-            px: 2,
-            mt: 1,
-            flex: 1,
-          }}>
-          {Object.values(model.players).map((player) => (
-            <Box
-              key={player.userId}
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                width: "100%",
-              }}>
-              <svg width="36px" viewBox="-1 -1 2 2">
-                <circle cx={0} cy={0} r={1} fill={colorMap[player.color]} />
-              </svg>
-              <Avatar
-                src={ctx.profiles[player.userId]?.avatarUrl}
-                sx={{ ml: 1, mr: 2 }}
-              />
-              <Typography noWrap sx={{ flex: 1 }}>
-                {ctx.profiles[player.userId]?.username ?? "..."}
-              </Typography>
-              {player.userId === ctx.currentUserId && (
-                <Button
-                  onClick={() =>
-                    $send(["stop-playing", { userId: ctx.currentUserId }])
-                  }>
-                  Stop Playing
-                </Button>
-              )}
-            </Box>
-          ))}
-
-          {!model.players[ctx.currentUserId] && (
-            <Button
-              variant="outlined"
-              fullWidth
-              onClick={() =>
-                $send(["start-playing", { userId: ctx.currentUserId }])
-              }
-              disabled={
-                handle(["start-playing", { userId: ctx.currentUserId }], model)
-                  .t === "err"
-              }>
-              Start Playing
-            </Button>
-          )}
-        </Box>
-
-        <Box sx={{ display: "flex", gap: 2, p: 2 }}>
-          <Button fullWidth variant="outlined" onClick={gameSpaceCtx.onQuit}>
-            Back
-          </Button>
-          <Button
-            fullWidth
-            variant="contained"
-            onClick={() => $send(["start-game", { userId: ctx.currentUserId }])}
-            disabled={
-              handle(["start-game", { userId: ctx.currentUserId }], model).t ===
-              "err"
-            }>
-            Start Game
-          </Button>
-        </Box>
-      </FillBox>
-    );
+    return <div></div>;
   }
 
   const viewBox = [
@@ -346,12 +216,8 @@ export const View = ({
   const currentUserPlayer = model.players[ctx.currentUserId];
 
   return (
-    <FillBox sx={{ alignItems: "center" }}>
-      {!currentUserPlayer && (
-        <Typography sx={{ p: 1 }} color="primary.light">
-          Spectating
-        </Typography>
-      )}
+    <div>
+      {!currentUserPlayer && <p>Spectating</p>}
       <svg
         // style={{ maxWidth: "400px", margin: 0 }}
         width="100%"
@@ -409,18 +275,18 @@ export const View = ({
             fill="#000"
             stroke="#bcbcbc"
           />
-          <Box sx={{ width: "100%" }}>
+          <div>
             <ActionButton
-              icon={<Icons.ExitToApp sx={{ transform: "rotate(180deg)" }} />}
+              icon={<IconArrowLeftOnRect />}
               label="Exit"
               onClick={() =>
                 $send(["stop-game", { userId: ctx.currentUserId }])
               }
             />
-          </Box>
+          </div>
         </>
       )}
-    </FillBox>
+    </div>
   );
 };
 
@@ -440,14 +306,7 @@ const ViewJoystick = ({
   activeFill: string;
 }) => {
   return (
-    <Box
-      sx={{
-        maxWidth: "40vw",
-        margin: "auto",
-        transform: "rotate(45deg)",
-        transformOrigin: "center",
-        transformBox: "fill-box",
-      }}>
+    <div>
       <svg
         width="100%"
         viewBox="-1 -1 2 2"
@@ -511,7 +370,7 @@ const ViewJoystick = ({
           />
         </g>
       </svg>
-    </Box>
+    </div>
   );
 };
 

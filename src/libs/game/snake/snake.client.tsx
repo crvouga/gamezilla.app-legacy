@@ -1,4 +1,4 @@
-import { SpaceCtx, Route, ViewCtx } from "@gamezilla/shared/client";
+import { Route, SpaceCtx, ViewCtx } from "@gamezilla/shared/client";
 import {
   Cmd,
   Keyboard,
@@ -7,7 +7,6 @@ import {
   Sub,
   exhaustive,
 } from "@gamezilla/shared/core";
-import * as UI from "@gamezilla/shared/ui";
 import { useLayoutEffect, useRef } from "react";
 import { Direction } from "./direction";
 import * as Snake from "./snake";
@@ -18,7 +17,6 @@ import {
   SharedModel,
   ToClient,
   ToServer,
-  canStartGame,
   initSharedModel,
 } from "./snake.shared";
 
@@ -194,7 +192,6 @@ export const subscriptions = (_intervalId: string, _model: Model): Sub<Msg> => {
 //
 
 export const View = ({
-  ctx,
   model,
   $send,
 }: {
@@ -203,134 +200,13 @@ export const View = ({
   $send: (msg: Msg) => void;
 }) => {
   if (model.gameStatus.type === "GameSetup") {
-    const menuAnchorId = "playerSlotMenuId";
-    return (
-      <UI.FillBox>
-        <UI.Typography sx={{ paddingX: 2 }} color="text.secondary">
-          Snake
-        </UI.Typography>
-
-        <UI.Box
-          sx={{
-            height: "48px",
-            display: "flex",
-            alignItems: "center",
-            width: "100%",
-          }}>
-          {model.gameStatus.player.type === "none" ? (
-            <UI.Box sx={{ padding: 2, width: "100%" }}>
-              <UI.Button
-                variant="contained"
-                fullWidth
-                onClick={() =>
-                  $send([
-                    "InputPlayer",
-                    Option.Some(["User", ctx.currentUserId]),
-                  ])
-                }>
-                Play as Snake
-              </UI.Button>
-            </UI.Box>
-          ) : (
-            <>
-              <UI.ListItemButton
-                id={menuAnchorId}
-                onClick={() => $send(["OpenedMenu", menuAnchorId])}>
-                <UI.ListItemAvatar>
-                  <UI.Avatar
-                    src={
-                      ctx.profiles[model.gameStatus.player.value[1]]?.avatarUrl
-                    }
-                  />
-                </UI.ListItemAvatar>
-                <UI.ListItemText
-                  primary={
-                    ctx.profiles[model.gameStatus.player.value[1]]?.username
-                  }
-                />
-                <UI.ListItemSecondaryAction>
-                  <UI.Icons.MoreVert />
-                </UI.ListItemSecondaryAction>
-              </UI.ListItemButton>
-            </>
-          )}
-        </UI.Box>
-
-        <UI.Box sx={{ flex: 1 }} />
-
-        <UI.Box sx={{ padding: 2 }}>
-          <UI.Button
-            variant="contained"
-            fullWidth
-            disabled={!canStartGame(model)}
-            onClick={() => {
-              $send(["start-game"]);
-            }}>
-            Start Game
-          </UI.Button>
-        </UI.Box>
-      </UI.FillBox>
-    );
+    return <div></div>;
   }
 
   return (
-    <UI.FillBox>
+    <div>
       <ViewBoard model={model} $send={$send} />
-      {model.gameStatus.player[1] === ctx.currentUserId && (
-        <UI.Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            width: "100%",
-            paddingBottom: 2,
-          }}>
-          {/*  */}
-        </UI.Box>
-      )}
-      {/* {model.gameStatus.player[1] === currentUserId && (
-            <UI.Box sx={{ display: "flex", alignItems: "center", width: "100%" }}>
-              <UI.Box
-                sx={{
-                  flex: 1,
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "center",
-                }}
-              >
-                <UI.ButtonBase
-                  sx={leftRight}
-                  onMouseDown={() => $send(["InputDirection", { direction: "left", userId: currentUserId }])}
-                >
-                  <UI.Icons.KeyboardArrowLeft sx={iconSx} />
-                </UI.ButtonBase>
-
-                <UI.Box sx={{ display: "flex", flexDirection: "column" }}>
-                  <UI.ButtonBase
-                    sx={upDown}
-                    onMouseDown={() => $send(["InputDirection", { direction: "up", userId: currentUserId }])}
-                  >
-                    <UI.Icons.KeyboardArrowUp sx={iconSx} />
-                  </UI.ButtonBase>
-
-                  <UI.ButtonBase
-                    sx={upDown}
-                    onMouseDown={() => $send(["InputDirection", { direction: "down", userId: currentUserId }])}
-                  >
-                    <UI.Icons.KeyboardArrowDown sx={iconSx} />
-                  </UI.ButtonBase>
-                </UI.Box>
-
-                <UI.ButtonBase
-                  sx={leftRight}
-                  onMouseDown={() => $send(["InputDirection", { direction: "right", userId: currentUserId }])}
-                >
-                  <UI.Icons.KeyboardArrowRight sx={iconSx} />
-                </UI.ButtonBase>
-              </UI.Box>
-            </UI.Box>
-          )} */}
-    </UI.FillBox>
+    </div>
   );
 };
 
@@ -358,18 +234,16 @@ export const ViewBoard = ({
   }, [model]);
 
   return (
-    <UI.Box sx={{ flex: 1, width: "100%", userSelect: "none" }}>
-      <canvas
-        style={{
-          userSelect: "none",
-          width: "100%",
-          height: "100%",
-          maxHeight: "100%",
-          minHeight: "100%",
-        }}
-        ref={ref}
-      />
-    </UI.Box>
+    <canvas
+      style={{
+        userSelect: "none",
+        width: "100%",
+        height: "100%",
+        maxHeight: "100%",
+        minHeight: "100%",
+      }}
+      ref={ref}
+    />
   );
 };
 

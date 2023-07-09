@@ -1,31 +1,5 @@
-import {
-  AppMsg,
-  Ctx,
-  SpaceCtx,
-  ViewCtx,
-  ViewVsBotGameScreen,
-  ViewVsBotSetupScreen,
-} from "@gamezilla/shared/client";
+import { AppMsg, Ctx, SpaceCtx, ViewCtx } from "@gamezilla/shared/client";
 import { Cmd, Posix } from "@gamezilla/shared/core";
-import {
-  IconArrowLeftOnRect,
-  IconArrowRotateLeft,
-  IconRightLeft,
-} from "@gamezilla/shared/ui";
-import {
-  BotLevel,
-  PlayerType,
-  botLevels,
-  playerTypes,
-  toGameOver,
-  toOpposite,
-  toTurn,
-} from "../tic-tic-toe/tic-tac-toe";
-import {
-  PlayerTypeIcon,
-  ViewBoard,
-  ViewCoverArt,
-} from "../tic-tic-toe/tic-tac-toe-ui";
 import {
   ClientModel,
   ClientMsg,
@@ -139,112 +113,13 @@ export const syncWithServer = ({
 
 export const View = ({
   goBack,
-  model,
-  $send,
-  ctx,
 }: {
   ctx: ViewCtx;
   goBack: () => void;
   model: Model;
   $send: (msg: Msg) => void;
 }) => {
-  if (model.type === "setup") {
-    return (
-      <ViewVsBotSetupScreen<BotLevel, PlayerType>
-        leftPlayerType="X"
-        playerId={model.player}
-        subtitle="Vs Computer"
-        title="Tic-Tac-Toe"
-        coverArt={<ViewCoverArt />}
-        ctx={ctx}
-        onCancel={goBack}
-        onStartGame={() => $send({ t: "start-game" })}
-        onStartPlaying={() => $send({ t: "start-playing" })}
-        onStopPlaying={() => $send({ t: "stop-playing" })}
-        player={{
-          values: Object.values(playerTypes),
-          onInput: (player) =>
-            $send({ t: "input-player-type", playerType: player }),
-          selected: model.userPlayerType,
-          icon: ({ playerType }) => (
-            <PlayerTypeIcon playerType={playerType} className="h-6 w-6" />
-          ),
-          render: ({ playerType }) => (
-            <PlayerTypeIcon
-              playerType={playerType}
-              className="mx-auto h-6 w-6"
-            />
-          ),
-          toName: (player) => player,
-        }}
-        botLevel={{
-          onInput: (botLevel) => $send({ t: "input-bot-level", botLevel }),
-          selected: model.botLevel,
-          values: Object.values(botLevels),
-          toName: (botLevel) => botLevel,
-          render: ({ botLevel }) => botLevel,
-        }}
-      />
-    );
-  }
-  const gameOver = toGameOver(model.board);
-
-  return (
-    <ViewVsBotGameScreen<PlayerType>
-      leftPlayer="X"
-      actions={[
-        {
-          label: "Exit",
-          icon: <IconArrowLeftOnRect />,
-          onClick: () => $send({ t: "stop-game" }),
-        },
-        {
-          label: "Restart",
-          icon: <IconArrowRotateLeft />,
-          onClick: () => $send({ t: "restart" }),
-        },
-        {
-          label: "Swap",
-          icon: <IconRightLeft />,
-          onClick: () => $send({ t: "swap-sides" }),
-        },
-      ]}
-      ctx={ctx}
-      botName={model.botLevel}
-      botPlayer={toOpposite(model.userPlayerType)}
-      gameOver={
-        gameOver.type === "Tie"
-          ? { type: "draw" }
-          : gameOver.type === "Win"
-          ? { type: "winner", winner: gameOver.winner }
-          : { type: "none" }
-      }
-      gameOverActions={[
-        {
-          label: "Exit",
-          icon: <IconArrowLeftOnRect />,
-          onClick: () => $send({ t: "stop-game" }),
-        },
-        {
-          label: "Restart",
-          icon: <IconArrowRotateLeft />,
-          onClick: () => $send({ t: "restart" }),
-        },
-      ]}
-      playerUserId={model.player}
-      turn={toTurn(model.board)}
-      userPlayer={model.userPlayerType}
-      viewBoard={() => (
-        <ViewBoard
-          board={model.board}
-          onClick={(position) => $send({ t: "input-move", position })}
-        />
-      )}
-      viewPlayerIcon={({ playerType, className }) => (
-        <PlayerTypeIcon className={className} playerType={playerType} />
-      )}
-    />
-  );
+  return <div onClick={goBack}></div>;
 };
 
 export const ViewMsg = ({ msg }: { msg: Msg | ToClient }) => {

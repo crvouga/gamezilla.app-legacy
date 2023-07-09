@@ -21,7 +21,7 @@ import {
   IconGoogle,
   IconMobilePhone,
   LoadingBar,
-  LoadingDialog,
+  LoadingScreen,
   MyButton,
   cn,
 } from "@gamezilla/shared/ui";
@@ -378,7 +378,7 @@ export const ViewLogoutScreen = ({
   $send: (msg: Msg) => void;
 }) => {
   if (model.requests.logout?.t === "loading") {
-    return <LoadingDialog open title={"Logging out..."} />;
+    return <LoadingScreen />;
   }
 
   return (

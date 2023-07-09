@@ -11,7 +11,7 @@ import {
   exhaustive,
   p,
 } from "@gamezilla/shared/core";
-import * as UI from "@gamezilla/shared/ui";
+import { IconRobot, IconSpinner, MyAvatar } from "@gamezilla/shared/ui";
 import * as Chess from "../chess/chess";
 import Sounds from "../chess/chess-sounds";
 import { PlayerIcon } from "../chess/chess-views";
@@ -309,35 +309,30 @@ export const View = ({
   }
 
   const botSlot = (
-    <UI.Box sx={{ paddingX: 2, display: "flex", alignItems: "center" }}>
-      <UI.Avatar sx={{ marginRight: 2, backgroundColor: "transparent" }}>
-        <UI.Icons.SmartToy
-          sx={{ color: "text.primary", width: "100%", height: "100%" }}
-          // sx={{ width: 40, height: 40, marginRight: 2 }}
-        />
-      </UI.Avatar>
+    <div>
+      <div>
+        <IconRobot />
+      </div>
 
-      <UI.Box sx={{ flex: 1 }}>
-        <UI.Typography variant="h6">
-          {Chess.botLevelToString(model.sharedModel.botLevel)}
-        </UI.Typography>
-      </UI.Box>
+      <div>
+        <p>{Chess.botLevelToString(model.sharedModel.botLevel)}</p>
+      </div>
 
-      {isBotTurn(model.sharedModel) && <UI.CircularProgress size={24} />}
-    </UI.Box>
+      {isBotTurn(model.sharedModel) && (
+        <IconSpinner className="h-5 w-5 animate-spin" />
+      )}
+    </div>
   );
 
   const userSlot = (
-    <UI.Box sx={{ paddingX: 2, display: "flex", alignItems: "center" }}>
-      <UI.Avatar
+    <div>
+      <MyAvatar
         src={ctx.profiles[model.sharedModel.userId]?.avatarUrl}
-        sx={{ marginRight: 2 }}
+
       />
 
-      <UI.Typography variant="h6">
-        {ctx.profiles[model.sharedModel.userId]?.username}
-      </UI.Typography>
-    </UI.Box>
+      <p>{ctx.profiles[model.sharedModel.userId]?.username}</p>
+    </div>
   );
 
   const boardOrientation = model.isFlipped
@@ -345,19 +340,19 @@ export const View = ({
     : model.sharedModel.userColor;
 
   const topSlot = (
-    <UI.Box sx={{ paddingTop: 1, paddingBottom: 2 }}>
+    <div>
       {boardOrientation === model.sharedModel.userColor ? botSlot : userSlot}
-    </UI.Box>
+    </div>
   );
 
   const bottomSlot = (
-    <UI.Box sx={{ paddingTop: 2, paddingBottom: 1 }}>
+    <div>
       {boardOrientation === model.sharedModel.userColor ? userSlot : botSlot}
-    </UI.Box>
+    </div>
   );
 
   return (
-    <UI.FillBox>
+    <div>
       {topSlot}
 
       <Chess.View
@@ -388,61 +383,8 @@ export const View = ({
 
       {bottomSlot}
 
-      <UI.Box sx={{ flex: 1 }} />
-
-      <UI.Box sx={{ width: "100%", display: "flex" }}>
-        <UI.ActionButton
-          icon={<UI.Icons.ExitToApp sx={{ transform: "rotate(180deg)" }} />}
-          label={"Exit"}
-          onClick={() => $send({ t: "stop-game" })}
-        />
-
-        <UI.ActionButton
-          icon={
-            <UI.Icons.Flip
-              sx={{
-                transform: model.isFlipped ? "rotate(90deg)" : "rotate(270deg)",
-              }}
-            />
-          }
-          label={model.isFlipped ? "Unflip" : "Flip"}
-          onClick={() => {
-            $send({ t: "clicked-flip" });
-          }}
-        />
-      </UI.Box>
-
-      {model.sharedModel.type === "game-over" && (
-        <UI.Dialog
-          open={
-            model.sharedModel.type === "game-over" &&
-            model.openedModal === "game-over"
-          }
-          onClose={() => {
-            $send({ t: "closed-modal" });
-          }}>
-          {model.sharedModel.gameOver.type === "Checkmate" && (
-            <UI.DialogTitle>
-              {Chess.colorToString(model.sharedModel.gameOver.winner)} won by
-              checkmate
-            </UI.DialogTitle>
-          )}
-
-          {model.sharedModel.gameOver.type === "Stalemate" && (
-            <UI.DialogTitle>Drawn by stalemate</UI.DialogTitle>
-          )}
-
-          <UI.DialogActions>
-            <UI.Button
-              onClick={() => {
-                $send({ t: "closed-modal" });
-              }}>
-              Close
-            </UI.Button>
-          </UI.DialogActions>
-        </UI.Dialog>
-      )}
-    </UI.FillBox>
+      <div className="flex-1"></div>
+    </div>
   );
 };
 

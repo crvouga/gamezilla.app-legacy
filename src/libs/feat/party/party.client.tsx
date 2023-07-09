@@ -1,22 +1,8 @@
-import { PartyId, UserId } from '@gamezilla/shared/app';
-import { Cmd, exhaustive, p, RemoteResult, Sub } from '@gamezilla/shared/core';
-import { Ctx, Route, ViewCtx } from '@gamezilla/shared/client';
-import {
-  Avatar,
-  Box,
-  Button,
-  FillBox,
-  Icons,
-  ListItemAvatar,
-  ListItemButton,
-  ListItemText,
-  TopBar,
-  Typography,
-  useTheme,
-  ViewEmptyState,
-} from '@gamezilla/shared/ui';
-import { Mic } from './mic';
-import { ClientModel, ClientMsg, ToServer, ToClient } from './party.shared';
+import { UserId } from "@gamezilla/shared/app";
+import { Ctx, Route, ViewCtx } from "@gamezilla/shared/client";
+import { Cmd, RemoteResult, Sub, exhaustive, p } from "@gamezilla/shared/core";
+import { Mic } from "./mic";
+import { ClientModel, ClientMsg, ToClient, ToServer } from "./party.shared";
 
 //
 //
@@ -41,7 +27,7 @@ export const init = ({
       requests: {},
       volume: 0,
     },
-    sendToServer(['party-get', null]),
+    sendToServer(["party-get", null]),
   ];
 };
 
@@ -61,24 +47,24 @@ export const update = (
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'clicked-banner': {
+    case "clicked-banner": {
       return [model, Cmd.None];
     }
 
-    case 'MicSound': {
+    case "MicSound": {
       return [{ ...model, volume: msg[1].volume }, Cmd.None];
     }
 
-    case 'MicUnload':
-    case 'MicLoad': {
+    case "MicUnload":
+    case "MicLoad": {
       return [model, Cmd.None];
     }
 
-    case 'party-get':
-    case 'PartyCreate':
-    case 'PartyDestroy':
-    case 'PartyLeave':
-    case 'PartyJoin': {
+    case "party-get":
+    case "PartyCreate":
+    case "PartyDestroy":
+    case "PartyLeave":
+    case "PartyJoin": {
       return [
         {
           ...model,
@@ -100,12 +86,12 @@ export const updateFromServer = (
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'party-get':
-    case 'PartyDestroy':
-    case 'PartyCreate':
-    case 'PartyJoin':
-    case 'PartyLeave': {
-      const requestsNew: Model['requests'] = {
+    case "party-get":
+    case "PartyDestroy":
+    case "PartyCreate":
+    case "PartyJoin":
+    case "PartyLeave": {
+      const requestsNew: Model["requests"] = {
         ...model.requests,
         [msg[0]]: p(
           msg[2],
@@ -113,7 +99,7 @@ export const updateFromServer = (
         ),
       };
 
-      if (msg[2].t === 'err') {
+      if (msg[2].t === "err") {
         return [{ ...model, requests: requestsNew }, Cmd.None];
       }
 
@@ -153,7 +139,7 @@ const toLifecycleCmd = ({
   if (userPrev && !userNext) {
     return p(
       Mic.unload,
-      Cmd.perform((result) => ['MicUnload', result])
+      Cmd.perform((result) => ["MicUnload", result])
     );
   }
 
@@ -161,14 +147,14 @@ const toLifecycleCmd = ({
   if (!userPrev && userNext) {
     return p(
       Mic.load,
-      Cmd.perform((result) => ['MicLoad', result])
+      Cmd.perform((result) => ["MicLoad", result])
     );
   }
 
   return Cmd.None;
 };
 
-export type Action = ['party', ['Msg', Msg]];
+export type Action = ["party", ["Msg", Msg]];
 
 export const runAction = (
   wire: { sendToServer: (msg: ToServer) => Cmd },
@@ -176,7 +162,7 @@ export const runAction = (
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (action[1][0]) {
-    case 'Msg': {
+    case "Msg": {
       return update(wire, action[1][1], model);
     }
   }
@@ -199,7 +185,6 @@ export const ViewPage = ({
   model: Model;
   $send: (msg: Msg) => void;
 }) => {
-  const theme = useTheme();
   const user = model.users[ctx.currentUserId];
 
   if (!user) {
@@ -212,180 +197,18 @@ export const ViewPage = ({
     return <ViewNotInParty ctx={ctx} model={model} $send={$send} />;
   }
 
-  return (
-    <FillBox>
-      <Box sx={{ flex: 1, display: 'flex', flexWrap: 'wrap', width: '100%' }}>
-        {Object.values(model.users)
-          .filter((user) => user.partyId === party.partyId)
-          .map((user) => {
-            const isActive =
-              model.volume > 1 && user.userId === ctx.currentUserId;
-
-            return (
-              <Box
-                key={user.userId}
-                sx={{
-                  flex: 1,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexDirection: 'column',
-                  overflow: 'hidden',
-                }}
-              >
-                <Box sx={{ padding: 2 }}>
-                  <Avatar
-                    src={ctx.profiles[user.userId]?.avatarUrl}
-                    sx={{
-                      width: 100,
-                      height: 100,
-                      boxSizing: 'content-box',
-                      border: `solid 8px ${
-                        isActive ? theme.palette.primary.main : 'transparent'
-                      }`,
-                    }}
-                  />
-                </Box>
-                <Typography
-                  variant="h6"
-                  noWrap
-                  sx={{ width: '100%', paddingX: 1 }}
-                  align="center"
-                >
-                  {`${ctx.profiles[user.userId]?.username ?? '...'}`}
-                </Typography>
-                <Typography
-                  variant="subtitle1"
-                  color="text.secondary"
-                  sx={{ height: '1rem' }}
-                >
-                  {party.hostId === user.userId ? 'Host' : ' '}
-                </Typography>
-              </Box>
-            );
-          })}
-      </Box>
-      <Box
-        sx={{
-          paddingX: 2,
-          paddingY: 2,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        {party.hostId === ctx.currentUserId ? (
-          <Button
-            variant="outlined"
-            startIcon={<Icons.CallEnd />}
-            color="error"
-            size="large"
-            loading={model.requests.PartyDestroy?.t === 'loading'}
-            onClick={() =>
-              $send(['PartyDestroy', { userId: ctx.currentUserId }])
-            }
-          >
-            End
-          </Button>
-        ) : (
-          <Button
-            variant="outlined"
-            startIcon={<Icons.CallEnd />}
-            color="error"
-            size="large"
-            loading={model.requests.PartyLeave?.t === 'loading'}
-            onClick={() => $send(['PartyLeave', { userId: ctx.currentUserId }])}
-          >
-            Leave
-          </Button>
-        )}
-      </Box>
-    </FillBox>
-  );
+  return <div></div>;
 };
 
-const ViewNotInParty = ({
-  ctx,
-  model,
-  $send,
-}: {
+const ViewNotInParty = (_props: {
   ctx: Ctx;
   model: Model;
   $send: (msg: Msg) => void;
 }) => {
-  const parties = Object.values(model.parties);
-
-  if (parties.length === 0) {
-    return (
-      <FillBox>
-        <TopBar title="Party" />
-        <ViewEmptyState
-          renderIcon={({ sx }) => <Icons.People sx={sx} />}
-          title="No Active Parties"
-        />
-      </FillBox>
-    );
-  }
-
-  return (
-    <FillBox>
-      <TopBar title="Party" />
-      <Box sx={{ paddingX: 2 }}>
-        <Button
-          fullWidth
-          variant="contained"
-          size="large"
-          loading={model.requests.PartyCreate?.t === 'loading'}
-          onClick={() =>
-            $send([
-              'PartyCreate',
-              { userId: ctx.currentUserId, partyId: PartyId.generate() },
-            ])
-          }
-        >
-          Start Party
-        </Button>
-      </Box>
-      <Box sx={{ flex: 1 }}>
-        {parties.map((party) => (
-          <ListItemButton
-            key={party.partyId}
-            onClick={() =>
-              $send([
-                'PartyJoin',
-                { userId: ctx.currentUserId, partyId: party.partyId },
-              ])
-            }
-          >
-            <ListItemAvatar>
-              <Avatar src={ctx.profiles[party.hostId]?.avatarUrl} />
-            </ListItemAvatar>
-
-            <ListItemText
-              primary={`${
-                ctx.profiles[party.hostId]?.username ?? '...'
-              }'s party`}
-              secondary={`${countUsersInParty(party.partyId, model)} in party`}
-            />
-          </ListItemButton>
-        ))}
-      </Box>
-    </FillBox>
-  );
-};
-
-const countUsersInParty = (partyId: PartyId, model: Model): number => {
-  let count = 0;
-  for (const userId in model.users) {
-    if (UserId.is(userId) && model.users[userId]?.partyId === partyId) {
-      count++;
-    }
-  }
-  return count;
+  return <div></div>;
 };
 
 export const ViewBanner = ({
-  $send,
   model,
   ctx,
 }: {
@@ -406,26 +229,7 @@ export const ViewBanner = ({
     return null;
   }
 
-  return (
-    <Typography
-      variant="caption"
-      align="center"
-      onClick={() => $send(['clicked-banner'])}
-      sx={{
-        width: '100%',
-        paddingX: 2,
-        paddingY: 1 / 2,
-        backgroundColor: 'primary.dark',
-        color: '#fff',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <Icons.Group sx={{ marginRight: 1 / 2 }} />
-      Party
-    </Typography>
-  );
+  return <div></div>;
 };
 
 //
@@ -439,6 +243,6 @@ export const ViewBanner = ({
 export const subscriptions = (_model: Model): Sub<Msg> => {
   return p(
     Mic.volumes,
-    Sub.map((volume) => ['MicSound', { volume }])
+    Sub.map((volume) => ["MicSound", { volume }])
   );
 };

@@ -268,13 +268,16 @@ export const view = ({
     }
 
     case "vs-bot": {
-      return VsBot.view({
-        model: model.c,
-        ctx,
-        onBack: () =>
-          $send({ t: "input-mode", mode: "none", userId: ctx.currentUserId }),
-        $send: (c) => $send({ t: "vs-bot", c }),
-      });
+      return (
+        <VsBot.View
+          model={model.c}
+          ctx={ctx}
+          onBack={() =>
+            $send({ t: "input-mode", mode: "none", userId: ctx.currentUserId })
+          }
+          $send={(c) => $send({ t: "vs-bot", c })}
+        />
+      );
     }
 
     case "vs-user": {

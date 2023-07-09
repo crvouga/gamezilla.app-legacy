@@ -1,38 +1,6 @@
 import { AppMsg, RouteChat, ViewCtx } from "@gamezilla/shared/client";
-import {
-  Browser,
-  Cmd,
-  RemoteResult,
-  exhaustive,
-  p,
-  matchSort,
-} from "@gamezilla/shared/core";
-import {
-  Avatar,
-  Box,
-  Button,
-  Checkbox,
-  Chip,
-  CircularProgress,
-  Divider,
-  FillBox,
-  IconButton,
-  Icons,
-  InputAdornment,
-  InputBase,
-  List,
-  ListItemAvatar,
-  ListItemButton,
-  ListItemSecondaryAction,
-  ListItemText,
-  TopBar,
-  TopBarBackButton,
-  Typography,
-  ViewLoadingState,
-  VDom,
-} from "@gamezilla/shared/ui";
-import { Fab } from "@mui/material";
-
+import { Browser, Cmd, exhaustive, p } from "@gamezilla/shared/core";
+import { VDom } from "@gamezilla/shared/ui";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./chat.shared";
 
 //
@@ -269,15 +237,10 @@ export const View = ({
 };
 
 const ViewChat = (_props: { model: Model; $send: (m: Msg) => void }) => {
-  return <FillBox>ViewChat</FillBox>;
+  return <div>ViewChat</div>;
 };
 
-const ViewChatNew = ({
-  ctx,
-  model,
-  $send,
-  userSearch,
-}: {
+const ViewChatNew = (_props: {
   ctx: ViewCtx;
   model: Model;
   $send: (m: Msg) => void;
@@ -286,186 +249,13 @@ const ViewChatNew = ({
     loading: boolean;
   };
 }) => {
-  const profiles = matchSort(
-    Object.values(ctx.profiles),
-    (x) => x.username,
-    model.userSearch
-  );
-  return (
-    <FillBox>
-      <TopBar
-        left={
-          <TopBarBackButton
-            onClick={() => ctx.$push({ t: "chat", c: { t: "chat" } })}
-          />
-        }
-        title="New Message"
-        right={<Button sx={{ marginRight: -1 }}>Chat</Button>}
-      />
-
-      <Typography variant="h6" sx={{ fontWeight: "bold", paddingX: 2 }}>
-        To
-      </Typography>
-
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          paddingBottom: 2,
-          paddingTop: 1,
-          overflowX: "scroll",
-        }}>
-        {Object.values(model.userSelected).map((userId) => {
-          const profile = ctx.profiles[userId];
-          if (!profile) {
-            return null;
-          }
-          return (
-            <Chip
-              sx={{ marginLeft: 1 }}
-              key={profile.userId}
-              label={profile.username}
-              onDelete={() => {
-                $send([
-                  "clicked-user-selected-delete-button",
-                  {
-                    userId: profile.userId,
-                  },
-                ]);
-              }}
-            />
-          );
-        })}
-        <InputBase
-          id={userSearchInputId}
-          sx={{ paddingX: 2, flex: 1 }}
-          autoFocus
-          placeholder={
-            Object.values(model.userSelected).length === 0 ? "Search" : ""
-          }
-          value={model.userSearch}
-          onChange={(event) => {
-            const searchText = event.currentTarget.value;
-            $send(["inputted-user-search", { userSearch: searchText }]);
-            userSearch.onInput(searchText);
-          }}
-          endAdornment={
-            <InputAdornment position="end">
-              {userSearch.loading && <CircularProgress size={24} />}
-              <IconButton
-                onClick={() => {
-                  $send(["clicked-user-search-clear-button"]);
-                }}>
-                <Icons.Close />
-              </IconButton>
-            </InputAdornment>
-          }
-        />
-      </Box>
-
-      <Divider />
-
-      <List sx={{ overflowY: "scroll", flex: 1 }}>
-        {profiles.map((profile) => {
-          return (
-            <ListItemButton
-              key={profile.userId}
-              onClick={() => {
-                $send([
-                  "clicked-user-search-result",
-                  { userId: profile.userId },
-                ]);
-              }}>
-              <ListItemAvatar>
-                <Avatar src={profile.avatarUrl} />
-              </ListItemAvatar>
-              <ListItemText primary={profile.username} />
-              <ListItemSecondaryAction>
-                <Checkbox
-                  checked={Boolean(model.userSelected[profile.userId])}
-                />
-              </ListItemSecondaryAction>
-            </ListItemButton>
-          );
-        })}
-      </List>
-    </FillBox>
-  );
+  return <div></div>;
 };
 
-const ViewChatList = ({
-  model,
-  // $send,
-  ctx,
-}: {
+const ViewChatList = (_props: {
   ctx: ViewCtx;
   model: Model;
   $send: (m: Msg) => void;
 }) => {
-  const query = model.requests["chat-list"] ?? RemoteResult.Loading;
-  // const chats = Object.values(model.chats).filter((chat) => {
-  //   const chatsUsersId = `${chat.chatId},${ctx.currentUserId}`;
-  //   const chatsUsers = model.chatsUsers[chatsUsersId];
-
-  //   return chatsUsers;
-  // });
-
-  return (
-    <FillBox sx={{ position: "relative" }}>
-      <Fab
-        sx={{
-          position: "absolute",
-          bottom: 16,
-          right: 16,
-        }}
-        color="primary"
-        variant="extended"
-        onClick={() => ctx.$push({ t: "chat", c: { t: "chat-new" } })}>
-        <Icons.Send sx={{ mr: 1 }} />
-        Send Message
-      </Fab>
-
-      <Box
-        sx={{
-          flex: 1,
-          overflowY: "scroll",
-          display: "flex",
-          flexDirection: "column",
-        }}>
-        <TopBar title="Chat" />
-
-        {query.t === "loading" ? (
-          <ViewLoadingState title="Loading conversations..." />
-        ) : (
-          <Box sx={{ flex: 1, overflowY: "scroll" }}>
-            {Object.values(model.chats).map((chat) => {
-              const chatsUsersId = `${chat.chatId},${ctx.currentUserId}`;
-              const chatsUsers = model.chatsUsers[chatsUsersId];
-              if (!chatsUsers) {
-                return null;
-              }
-              const profiles = Object.values(model.chatsUsers).flatMap(
-                (item) => {
-                  if (
-                    item.chatId === chat.chatId &&
-                    ctx.profiles[item.userId]
-                  ) {
-                    return [ctx.profiles[item.userId]];
-                  }
-                  return [];
-                }
-              );
-
-              return (
-                <Box>
-                  {chat.chatId}
-                  <pre>{JSON.stringify(profiles, null, 2)}</pre>
-                </Box>
-              );
-            })}
-          </Box>
-        )}
-      </Box>
-    </FillBox>
-  );
+  return <div></div>;
 };
