@@ -1,6 +1,6 @@
-import { NonNegInt, PosNum } from '@gamezilla/shared/app';
-import { Direction } from './direction';
-import { Position } from './position';
+import { NonNegInt, PosNum } from "@gamezilla/shared/app";
+import { Direction } from "./direction";
+import { Position } from "./position";
 
 //
 //
@@ -26,9 +26,9 @@ export type Model = {
   };
 };
 
-export type Status = 'Paused' | 'Playing';
+export type Status = "Paused" | "Playing";
 
-export type MouseStatus = 'active' | 'inactive';
+export type MouseStatus = "active" | "inactive";
 
 //
 //
@@ -38,7 +38,7 @@ export type MouseStatus = 'active' | 'inactive';
 //
 //
 
-const bounds: Model['bounds'] = {
+const bounds: Model["bounds"] = {
   lower: {
     x: 0,
     y: 0,
@@ -49,27 +49,27 @@ const bounds: Model['bounds'] = {
   },
 };
 
-const head: Model['head'] = {
+const head: Model["head"] = {
   x: Math.floor((bounds.upper.x - bounds.lower.x) / 2) - 3,
   y: Math.floor((bounds.upper.y - bounds.lower.y) / 2),
 };
 
-const tail: Model['tail'] = [
+const tail: Model["tail"] = [
   Position.subtract(head, { x: 1, y: 0 }),
   Position.subtract(head, { x: 2, y: 0 }),
 ];
 
-const food: Model['food'] = Position.add(head, { x: 3, y: 0 });
+const food: Model["food"] = Position.add(head, { x: 3, y: 0 });
 
 export const init: Model = {
-  status: 'Paused',
+  status: "Paused",
   tickRate: PosNum.fromNum(1000 / 6),
   head,
   tail,
   food,
   tailLength: NonNegInt.floor(4),
   foodEatenCount: NonNegInt.floor(0),
-  direction: 'right',
+  direction: "right",
   directionQueue: [],
   bounds,
 };
@@ -179,10 +179,10 @@ const unique = <T,>(as: T[]): T[] => {
 //
 
 export const theme = {
-  light: '#AAD751',
-  dark: '#A2D149',
-  snake: '#4573E8',
-  apple: '#E7471D',
+  light: "#AAD751",
+  dark: "#A2D149",
+  snake: "#4573E8",
+  apple: "#E7471D",
 };
 
 export const draw = (
@@ -237,16 +237,16 @@ export const draw = (
   }
 };
 
-export type TileVariant = 'light' | 'dark';
+export type TileVariant = "light" | "dark";
 
 export const toTileVariant = (position: Position): TileVariant => {
   if (
     (isEven(position.x) && isOdd(position.y)) ||
     (isOdd(position.x) && isEven(position.y))
   ) {
-    return 'light';
+    return "light";
   }
-  return 'dark';
+  return "dark";
 };
 
 const isEven = (x: number) => x % 2 === 0;
@@ -259,11 +259,11 @@ const isOdd = (x: number) => !isEven(x);
 //
 //
 
-const toViewBox = ({ lower, upper }: Model['bounds']) =>
-  [lower.x, lower.y, upper.x, upper.y].join(', ');
+const toViewBox = ({ lower, upper }: Model["bounds"]) =>
+  [lower.x, lower.y, upper.x, upper.y].join(", ");
 
-export const viewCoverArt = () => {
-  const bounds: Model['bounds'] = {
+export const ViewCoverArt = () => {
+  const bounds: Model["bounds"] = {
     lower: {
       x: 0,
       y: 0,
@@ -274,12 +274,12 @@ export const viewCoverArt = () => {
     },
   };
 
-  const tail: Model['tail'] = [
+  const tail: Model["tail"] = [
     { x: 0, y: 1 },
     { x: 1, y: 1 },
   ];
 
-  const food: Model['food'] = { x: 2, y: 2 };
+  const food: Model["food"] = { x: 2, y: 2 };
 
   return (
     <svg width="100%" viewBox={toViewBox(bounds)}>

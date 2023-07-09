@@ -49,7 +49,7 @@ export const init = ({
   const wire = Wire.init;
   //
   const auth = AuthClient.init();
-  const space = SpaceClient.init();
+  const space = SpaceClient.init;
   const profile = ProfileClient.init;
   const chat = ChatClient.init;
   const search = SearchClient.init;

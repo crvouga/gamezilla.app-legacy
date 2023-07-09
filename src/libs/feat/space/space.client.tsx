@@ -11,18 +11,20 @@ import {
   ViewUsersInSpaceList,
   ViewYouChip,
 } from "@gamezilla/shared/client";
-import { Cmd, RemoteResult, Sub, p } from "@gamezilla/shared/core";
+import { Cmd, RemoteResult, Sub, andThen, p } from "@gamezilla/shared/core";
 import {
   ActionButton,
   IconHome,
   IconUserGroup,
+  IconXMark,
   LoadingScreen,
   MyAvatar,
   MyButton,
   MyDrawer,
   VDom,
 } from "@gamezilla/shared/ui";
-import * as Game from "../game.client";
+import * as Game from "./game.client";
+import { ViewCoverArt } from "./game.shared";
 import {
   ClientModel,
   ClientMsg,
@@ -30,10 +32,12 @@ import {
   ToClient,
   ToServer,
   toSpace,
-} from "../space.shared";
-import { ViewNotInGameScreen } from "./view-not-in-game-screen";
-import { ViewSpaceJoinScreen } from "./view-space-join-screen";
-import { ViewSpaceListScreen } from "./view-space-list-screen";
+} from "./space.shared";
+import {
+  ViewNotInGameScreen,
+  ViewSpaceJoinScreen,
+  ViewSpaceListScreen,
+} from "./views";
 
 //
 //
@@ -45,29 +49,17 @@ import { ViewSpaceListScreen } from "./view-space-list-screen";
 
 export type Model = ClientModel;
 
-export const init = (): { model: Model } => {
-  return {
-    model: {
-      games: {},
-      spaces: {},
-      users: {},
-      profiles: {},
-      requests: {},
-      modal: "none",
-      previewUserId: null,
-    },
-  };
+export const init: { model: Model } = {
+  model: {
+    games: {},
+    spaces: {},
+    users: {},
+    profiles: {},
+    requests: {},
+    modal: null,
+    previewUserId: null,
+  },
 };
-
-//
-//
-//
-// Msg
-//
-//
-//
-
-export type Msg = ClientMsg;
 
 //
 //
@@ -77,12 +69,9 @@ export type Msg = ClientMsg;
 //
 //
 
-export const update = ({
-  ctx,
-  sendToServer,
-  msg,
-  model,
-}: {
+export type Msg = ClientMsg;
+
+export const update = (input: {
   ctx: Ctx | null;
   sendToServer: (msg: ToServer) => Cmd;
   msg: Msg;
@@ -92,8 +81,31 @@ export const update = ({
   cmd?: Cmd<Msg>;
   msgs?: AppMsg[];
 } => {
+  return p(
+    input,
+    andThen(({ model }) => update_({ ...input, model })),
+    andThen(({ model }) => watchCreate({ ...input, model }))
+  );
+};
+
+const watchCreate: typeof update = ({ msg, model }) => {
+  if (msg.t === "create") {
+    return {
+      model,
+      msgs: [
+        {
+          t: "route-changed",
+          route: { t: "space", c: { t: "space", spaceId: msg.spaceId } },
+        },
+      ],
+    };
+  }
+  return { model };
+};
+
+const update_: typeof update = ({ ctx, sendToServer, msg, model }) => {
   if (msg.t === "modal-closed") {
-    return { model: { ...model, modal: "none" } };
+    return { model: { ...model, modal: null } };
   }
 
   if (msg.t === "modal-open") {
@@ -102,7 +114,7 @@ export const update = ({
 
   if (msg.t === "clicked-user-link") {
     return {
-      model: { ...model, modal: "none" },
+      model: { ...model, modal: null },
       cmd: Route.push({
         t: "profile",
         c: { t: "profile", userId: msg.userId },
@@ -291,11 +303,7 @@ export const updateFromServer = ({
   };
 };
 
-export const updateFromApp = ({
-  msg,
-  model,
-  sendToServer,
-}: {
+export const updateFromApp = (input: {
   msg: AppMsg;
   model: Model;
   sendToServer: (m: ToServer) => Cmd;
@@ -303,43 +311,7 @@ export const updateFromApp = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (msg.t === "route-changed") {
-    if (msg.route.t === "space" && msg.route.c.t === "space-list") {
-      return updateListSpaces({
-        model,
-        initiatorMsg: msg,
-        sendToServer,
-      });
-    }
-    return { model };
-  }
-
-  if (msg.t === "wire-connected") {
-    return updateListSpaces({ model, initiatorMsg: msg, sendToServer });
-  }
-
-  return { model };
-};
-
-const updateListSpaces = ({
-  model,
-  initiatorMsg,
-  sendToServer,
-}: {
-  model: Model;
-  initiatorMsg: unknown;
-  sendToServer: (m: ToServer) => Cmd;
-}) => {
-  return {
-    model: {
-      ...model,
-      requests: { ...model.requests, list: RemoteResult.Loading },
-    },
-    cmd: sendToServer({
-      t: "list",
-      initiatorMsg,
-    }),
-  };
+  return input;
 };
 
 const syncWithServer = ({
@@ -710,6 +682,87 @@ export const ViewSpaceNotFound = ({ ctx }: { ctx: ViewCtx }) => {
         <IconHome />
         Go Home
       </MyButton>
+    </div>
+  );
+};
+
+export const ViewCurrentSpaceBar = ({
+  ctx: ctxPrev,
+  model,
+  $send,
+}: {
+  ctx: ViewCtx;
+  model: ClientModel;
+  $send: (msg: ClientMsg) => void;
+}) => {
+  const ctx: ViewCtx = {
+    ...ctxPrev,
+    profiles: {
+      ...ctxPrev.profiles,
+      ...model.profiles,
+    },
+  };
+  const user = model.users[ctx.currentUserId];
+
+  if (!user) {
+    return null;
+  }
+
+  const space = model.spaces[user.spaceId];
+
+  if (!space) {
+    return null;
+  }
+
+  const game = model.games[space.spaceId];
+  const hostProfile = ctx.profiles[space.hostId];
+  const userCount = Object.values(model.users).filter(
+    (user) => user.spaceId === space.spaceId
+  ).length;
+
+  return (
+    <div className="flex w-full items-center overflow-hidden border-t-2 border-blue-500 text-inherit">
+      <button
+        className="flex flex-1 items-center overflow-hidden"
+        onClick={() => {
+          ctx.$push({ t: "space", c: { t: "space", spaceId: space.spaceId } });
+        }}>
+        <div className="mr-2 p-2">
+          {!game && (
+            <MyAvatar
+              src={hostProfile?.avatarUrl ?? ""}
+              alt="Host Avatar"
+              className="h-12 w-12"
+            />
+          )}
+          {game && (
+            <div className="h-12 w-12 overflow-hidden rounded border border-neutral-600">
+              <ViewCoverArt gameName={game.t} />
+            </div>
+          )}
+        </div>
+
+        <div className="flex flex-1 flex-col gap-1 overflow-hidden">
+          <p className="text-left">
+            {hostProfile ? `${hostProfile.username}'s space` : "..."}
+          </p>
+          <p className="text-left text-xs text-neutral-300">
+            {userCount} in space
+          </p>
+        </div>
+      </button>
+
+      <button
+        onClick={() => {
+          if (ctx.currentUserId === space.hostId) {
+            $send({ t: "destroy", userId: ctx.currentUserId });
+            return;
+          }
+          $send({ t: "leave", userId: ctx.currentUserId });
+        }}
+        className="mr-4">
+        <IconXMark className="h-8 w-8" />
+      </button>
     </div>
   );
 };

@@ -278,13 +278,16 @@ export const view = ({
     }
 
     case "vs-user": {
-      return VsUser.view({
-        model: model.c,
-        ctx,
-        onCancel: () =>
-          $send({ t: "input-mode", mode: "none", userId: ctx.currentUserId }),
-        $send: (c) => $send({ t: "vs-user", c }),
-      });
+      return (
+        <VsUser.View
+          model={model.c}
+          ctx={ctx}
+          onCancel={() =>
+            $send({ t: "input-mode", mode: "none", userId: ctx.currentUserId })
+          }
+          $send={(c) => $send({ t: "vs-user", c })}
+        />
+      );
     }
   }
 };

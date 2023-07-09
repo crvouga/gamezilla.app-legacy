@@ -14,7 +14,8 @@ export type AppMsg<T = unknown> =
   | { t: "wire-connected" }
   | { t: "got-current-user"; userId: UserId | null }
   | { t: "toast-enqueued"; text: string; duration?: number }
-  | { t: "got-profiles"; profiles: { [userId: string]: Profile } };
+  | { t: "got-profiles"; profiles: { [userId: string]: Profile } }
+
 
 export type Profile = {
   userId: UserId;

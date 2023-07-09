@@ -1,6 +1,6 @@
 /* eslint-disable no-constant-condition */
-import { eq, memoize, Random } from '@gamezilla/shared/core';
-import { Direction, Position } from './position';
+import { eq, memoize, Random } from "@gamezilla/shared/core";
+import { Direction, Position } from "./position";
 
 //
 //
@@ -123,7 +123,7 @@ const remove_dead_ends = (
 
 const makeMemoized = memoize(
   ({ seed, lower, upper }) =>
-    [seed, lower.x, lower.y, upper.x, upper.y].join('-'),
+    [seed, lower.x, lower.y, upper.x, upper.y].join("-"),
   make
 );
 
@@ -176,7 +176,7 @@ export const Maze = {
 //
 
 const coverArtMaze = Maze.make({
-  seed: 'cover art maze!',
+  seed: "cover art maze!",
   lower: { x: 0, y: 0 },
   upper: { x: 8, y: 8 },
 });
@@ -186,24 +186,23 @@ const viewBox = [
   coverArtMaze.lower.y,
   coverArtMaze.upper.x - coverArtMaze.lower.x + 1,
   coverArtMaze.upper.y - coverArtMaze.lower.y + 1,
-].join(' ');
+].join(" ");
 
-export const viewCoverArt = () => {
+export const ViewCoverArt = () => {
   return (
-    <svg viewBox={viewBox} width={'100%'} className="border border-gray-700">
+    <svg viewBox={viewBox} width={"100%"} className="border border-gray-700">
       <rect
         x={coverArtMaze.lower.x}
         y={coverArtMaze.lower.y}
         width="100%"
         height="100%"
-        fill={'#000'}
+        fill={"#000"}
       />
       {coverArtMaze.edges.map(([a, b]) => (
         <g
-          key={[a.x, a.y, b.x, b.y].join('-')}
+          key={[a.x, a.y, b.x, b.y].join("-")}
           strokeWidth="0.1"
-          stroke={'#fff'}
-        >
+          stroke={"#fff"}>
           <line
             x1={a.x + 1 / 2}
             y1={a.y + 1 / 2}

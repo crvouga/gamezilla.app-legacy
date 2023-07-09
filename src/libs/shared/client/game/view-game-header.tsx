@@ -25,8 +25,8 @@ export const ViewGameHeaderEmpty = () => {
   return (
     <section className="flex min-h-fit w-full">
       <div className="flex h-48 w-full flex-col items-center justify-center">
-        <IconGamepad className="h-12 w-12 text-secondary" />
-        <p className="text-secondary">No game selected</p>
+        <IconGamepad className="h-14 w-14 text-secondary" />
+        <p className="text-xs text-secondary">No game selected</p>
       </div>
     </section>
   );

@@ -5,7 +5,7 @@ import {
   ViewUsersInSpaceList,
 } from "@gamezilla/shared/client";
 import { MyButton, TopBar, TopBarBackButton } from "@gamezilla/shared/ui";
-import { gameNameToString, viewCoverArt } from "../game.shared";
+import { gameNameToString, ViewCoverArt } from "../game.shared";
 import { ClientModel, ClientMsg } from "../space.shared";
 
 export const ViewSpaceJoinScreen = ({
@@ -36,7 +36,9 @@ export const ViewSpaceJoinScreen = ({
           <ViewGameHeader
             title={gameNameToString(game.t)}
             renderCoverArt={(props) => (
-              <div {...props}>{viewCoverArt(game.t)}</div>
+              <div {...props}>
+                <ViewCoverArt gameName={game.t} />
+              </div>
             )}
           />
         ) : (

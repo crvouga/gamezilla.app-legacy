@@ -3,7 +3,7 @@ import {
   ViewGameHeaderEmpty,
   ViewUsersInSpaceList,
 } from "@gamezilla/shared/client";
-import { gameNameList, gameNameToString, viewCoverArt } from "../game.shared";
+import { gameNameList, gameNameToString, ViewCoverArt } from "../game.shared";
 import { ClientMsg } from "../space.shared";
 
 export const ViewNotInGameScreen = ({
@@ -25,9 +25,7 @@ export const ViewNotInGameScreen = ({
   return (
     <div className="flex h-full w-full flex-1 flex-col">
       <section className="flex flex-col gap-4 p-4">
-        <h1 className="text-center text-3xl font-bold" >
-          Games
-        </h1>
+        <h1 className="text-center text-3xl font-bold">Games</h1>
 
         <div className="grid grid-cols-3 justify-between gap-8">
           {gameNameList.map((gameName) => (
@@ -35,7 +33,7 @@ export const ViewNotInGameScreen = ({
               <button
                 onClick={() => $send({ t: "input-game", gameName })}
                 className="flex overflow-hidden rounded-lg">
-                {viewCoverArt(gameName)}
+                <ViewCoverArt gameName={gameName} />
               </button>
 
               <p className="mt-2 w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-semibold">

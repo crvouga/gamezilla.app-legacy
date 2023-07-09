@@ -48,7 +48,7 @@ export type ClientModel = SharedModel & {
   modal: ModalModel;
 };
 
-type ModalModel = "none" | "user-preview" | "users";
+type ModalModel = null | "user-preview" | "users";
 
 export type ClientSpace = {
   spaceId: SpaceId;

@@ -8,7 +8,7 @@ import {
   TopBar,
   cn,
 } from "@gamezilla/shared/ui";
-import { GameName, gameNameToString, viewCoverArt } from "../game.shared";
+import { GameName, gameNameToString, ViewCoverArt } from "../game.shared";
 import { ClientModel, ClientMsg } from "../space.shared";
 
 export const ViewSpaceListScreen = ({
@@ -140,7 +140,7 @@ const ViewSpaceCard = ({
       {gameName && (
         <div className="flex items-center justify-start gap-2">
           <div className="h-12 w-12 overflow-hidden rounded border-2 border-white/40">
-            {viewCoverArt(gameName)}
+            <ViewCoverArt gameName={gameName} />
           </div>
           <p className="text-xl">{gameNameToString(gameName)}</p>
         </div>

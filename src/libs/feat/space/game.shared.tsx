@@ -6,7 +6,6 @@ import * as Maze from "@gamezilla/game/maze";
 import * as Snake from "@gamezilla/game/snake";
 import * as Tetris from "@gamezilla/game/tetris";
 import * as TicTacToe from "@gamezilla/game/tic-tac-toe";
-import { VDom } from "@gamezilla/shared/ui";
 
 //
 //
@@ -122,7 +121,7 @@ export const gameNameList: GameName[] = [
 //
 //
 
-export const viewCoverArt = (gameName: GameName): VDom => {
+export const ViewCoverArt = ({ gameName }: { gameName: GameName }) => {
   switch (gameName) {
     case "chess": {
       return <Chess.ViewCoverArt />;
@@ -141,15 +140,15 @@ export const viewCoverArt = (gameName: GameName): VDom => {
     }
 
     case "tetris": {
-      return Tetris.viewCoverArt();
+      return <Tetris.ViewCoverArt />;
     }
 
     case "snake": {
-      return Snake.viewCoverArt();
+      return <Snake.ViewCoverArt />;
     }
 
     case "maze": {
-      return Maze.viewCoverArt();
+      return <Maze.ViewCoverArt />;
     }
 
     case "flow": {
