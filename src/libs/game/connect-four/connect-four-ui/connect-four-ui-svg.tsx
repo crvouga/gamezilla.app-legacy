@@ -1,15 +1,14 @@
-import { easeAttrs, Uuid } from "@gamezilla/shared/core";
-import { useMemo, useRef } from "react";
+import { easeAttrs, memoize } from "@gamezilla/shared/core";
 import { Transition, TransitionGroup } from "react-transition-group";
 import {
   COLUMN_COUNT,
   Columns,
-  isColumnIndex,
   MAX_COLUMN_HEIGHT,
   Position,
+  isColumnIndex,
   toWins,
 } from "../connect-four";
-import { gameTheme, ViewColumnsProps } from "./connect-four-ui-shared";
+import { ViewColumnsProps, gameTheme } from "./connect-four-ui-shared";
 
 type SvgIds = {
   playerOneGradient: string;
@@ -19,21 +18,21 @@ type SvgIds = {
   holeMask: string;
 };
 
+const randomId = Math.random();
+const ids = {
+  playerOneGradient: `playerOneGradient${randomId}`,
+  playerTwoGradient: `playerTwoGradient${randomId}`,
+  holePattern: `holePattern${randomId}`,
+  columnGradient: `columnGradient${randomId}`,
+  holeMask: `holeMask${randomId}`,
+};
+
 export const ViewColumnsSvg = ({
   columns,
   onClick,
   onHover,
   disabled,
 }: ViewColumnsProps) => {
-  const ref = useRef(Uuid.generateSync());
-  const ids = {
-    playerOneGradient: `playerOneGradient${ref.current}`,
-    playerTwoGradient: `playerTwoGradient${ref.current}`,
-    holePattern: `holePattern${ref.current}`,
-    columnGradient: `columnGradient${ref.current}`,
-    holeMask: `holeMask${ref.current}`,
-  };
-
   const playerOneFill = `url(#${ids.playerOneGradient})`;
   const playerTwoFill = `url(#${ids.playerTwoGradient})`;
 
@@ -125,8 +124,13 @@ const distance = (a: Position, b: Position): number =>
 const angleBetween = (a: Position, b: Position): number =>
   (Math.atan2(b.y - a.y, b.x - a.x) * 180) / Math.PI;
 
+const memoizedWins = memoize(
+  (columns) => columns.map((x) => x.join(",")).join(","),
+  toWins
+);
+
 const ViewWins = ({ columns }: { columns: Columns }) => {
-  const wins = useMemo(() => toWins(columns), [columns]);
+  const wins = memoizedWins(columns);
 
   return (
     <svg
