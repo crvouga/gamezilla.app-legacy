@@ -2,10 +2,25 @@ import {
   Ctx,
   SpaceCtx,
   SpaceViewCtx,
+  ViewBottomButtonBar,
+  VsBotPlayerSection,
+  VsBotProps,
   VsBotSetupScreen,
 } from "@gamezilla/shared/client";
 import { Cmd, Posix, Sub } from "@gamezilla/shared/core";
-import { PlayerOneIcon, PlayerTwoIcon, ViewCoverArt } from "../connect-four-ui";
+import {
+  IconArrowLeftOnRect,
+  IconArrowRotateLeft,
+  IconRightLeft,
+  LoadingBar,
+} from "@gamezilla/shared/ui";
+import { toStatus, toTurn } from "../connect-four";
+import {
+  PlayerOneIcon,
+  PlayerTwoIcon,
+  ViewColumns,
+  ViewCoverArt,
+} from "../connect-four-ui";
 import {
   ClientModel,
   ClientMsg,
@@ -15,7 +30,6 @@ import {
   handle,
   initShared,
 } from "./vs-bot.shared";
-import { IconArrowLeftOnRect, MyButton } from "@gamezilla/shared/ui";
 
 //
 //
@@ -180,120 +194,99 @@ export const View = ({
   onQuit: () => void;
   ctx: SpaceViewCtx;
 }) => {
+  const vsBotProps: VsBotProps = {
+    ctx: ctx,
+    onQuit: onQuit,
+    title: "Connect Four",
+    renderCoverArt: (props) => <ViewCoverArt {...props} />,
+    canStartGame: model.player !== null,
+    onStartGame: () => $send({ t: "start-game" }),
+    human: {
+      player:
+        model.userPlayerType === "PlayerOne" ? "player-one" : "player-two",
+      userId: model.player,
+    },
+    bot: {
+      label: model.botLevel,
+    },
+    playerOne: {
+      label: "Red",
+      renderIcon: (props) => <PlayerOneIcon {...props} />,
+      onStartPlaying: () =>
+        $send({ t: "start-playing", playerType: "PlayerOne" }),
+      onStopPlaying: () => $send({ t: "stop-playing" }),
+    },
+    playerTwo: {
+      label: "Yellow",
+      renderIcon: (props) => <PlayerTwoIcon {...props} />,
+      onStartPlaying: () =>
+        $send({ t: "start-playing", playerType: "PlayerTwo" }),
+      onStopPlaying: () => $send({ t: "stop-playing" }),
+    },
+  };
+
   if (model.type === "setup") {
-    return (
-      <VsBotSetupScreen
-        ctx={ctx}
-        onQuit={onQuit}
-        title="Connect Four"
-        renderCoverArt={(props) => <ViewCoverArt {...props} />}
-        canStartGame={model.player !== null}
-        onStartGame={() => $send({ t: "start-game" })}
-        human={{
-          player:
-            model.userPlayerType === "PlayerOne" ? "player-one" : "player-two",
-          userId: model.player,
-        }}
-        bot={{
-          label: model.botLevel,
-        }}
-        playerOne={{
-          label: "Red",
-          renderIcon: (props) => <PlayerOneIcon {...props} />,
-          onStartPlaying: () =>
-            $send({ t: "start-playing", playerType: "PlayerOne" }),
-          onStopPlaying: () => $send({ t: "stop-playing" }),
-        }}
-        playerTwo={{
-          label: "Yellow",
-          renderIcon: (props) => <PlayerTwoIcon {...props} />,
-          onStartPlaying: () =>
-            $send({ t: "start-playing", playerType: "PlayerTwo" }),
-          onStopPlaying: () => $send({ t: "stop-playing" }),
-        }}
-      />
-    );
+    return <VsBotSetupScreen {...vsBotProps} />;
   }
 
-  // const status = toStatus(model.columns);
+  const vsBotGameProps = {
+    ...vsBotProps,
+    human: {
+      ...vsBotProps.human,
+      userId: model.player,
+    },
+  };
+
+  const turn = toTurn(model.columns);
+  const status = toStatus(model.columns);
 
   return (
     <div className="flex h-full w-full flex-col">
-      <div className="flex-1"></div>
-      <div className="p-4">
-        <MyButton className="w-full" onClick={onQuit}>
-          <IconArrowLeftOnRect />
-          Quit
-        </MyButton>
+      <div className="flex flex-1 flex-col items-center justify-center">
+        <VsBotPlayerSection {...vsBotGameProps} />
+
+        <LoadingBar
+          disabled={turn === model.userPlayerType || status.type !== "Playing"}
+          className="w-full"
+        />
+
+        <ViewColumns
+          implementation="svg"
+          ghost={
+            ctx.currentUserId === model.player &&
+            turn === model.userPlayerType &&
+            model.ghostIndex !== null
+              ? {
+                  columnIndex: model.ghostIndex,
+                  playerType: model.userPlayerType,
+                }
+              : undefined
+          }
+          columns={model.columns}
+          onHover={(columnIndex) => $send({ t: "hovered", columnIndex })}
+          onClick={(columnIndex) => $send({ t: "input-move", columnIndex })}
+        />
       </div>
+
+      <ViewBottomButtonBar
+        actions={[
+          {
+            label: "Exit",
+            icon: <IconArrowLeftOnRect />,
+            onClick: () => $send({ t: "stop-game" }),
+          },
+          {
+            label: "Swap sides",
+            icon: <IconRightLeft />,
+            onClick: () => $send({ t: "swap-sides" }),
+          },
+          {
+            label: "Restart",
+            icon: <IconArrowRotateLeft />,
+            onClick: () => $send({ t: "restart" }),
+          },
+        ]}
+      />
     </div>
   );
-  // return (
-  //   <ViewVsBotGameScreen<PlayerType>
-  //     gameOver={
-  //       status.type === "Tie"
-  //         ? { type: "draw" }
-  //         : status.type === "Winner"
-  //         ? { type: "winner", winner: status.winner }
-  //         : { type: "none" }
-  //     }
-  //     gameOverActions={[
-  //       {
-  //         label: "Exit",
-  //         icon: <IconArrowLeftOnRect />,
-  //         onClick: () => $send({ t: "stop-game" }),
-  //       },
-  //       {
-  //         label: "Restart",
-  //         icon: <IconArrowRotateLeft />,
-  //         onClick: () => $send({ t: "restart" }),
-  //       },
-  //     ]}
-  //     botName={model.botLevel}
-  //     botPlayer={opposite[model.userPlayerType]}
-  //     ctx={ctx}
-  //     leftPlayer={"PlayerOne"}
-  //     playerUserId={model.player}
-  //     userPlayer={model.userPlayerType}
-  //     turn={toTurn(model.columns)}
-  //     actions={[
-  //       {
-  //         label: "Exit",
-  //         icon: <IconArrowLeftOnRect />,
-  //         onClick: () => $send({ t: "stop-game" }),
-  //       },
-  //       {
-  //         label: "Restart",
-  //         icon: <IconArrowRotateLeft />,
-  //         onClick: () => $send({ t: "restart" }),
-  //       },
-  //       {
-  //         label: "Swap",
-  //         icon: <IconRightLeft />,
-  //         onClick: () => $send({ t: "swap-sides" }),
-  //       },
-  //     ]}
-  //     viewPlayerIcon={(props) => (
-  //       <PlayerIcon key={props.playerType} {...props} />
-  //     )}
-  //     viewBoard={() => (
-  //       <ViewColumns
-  //         implementation="svg"
-  //         ghost={
-  //           ctx.currentUserId === model.player &&
-  //           toTurn(model.columns) === model.userPlayerType &&
-  //           model.ghostIndex !== null
-  //             ? {
-  //                 columnIndex: model.ghostIndex,
-  //                 playerType: model.userPlayerType,
-  //               }
-  //             : undefined
-  //         }
-  //         columns={model.columns}
-  //         onHover={(columnIndex) => $send({ t: "hovered", columnIndex })}
-  //         onClick={(columnIndex) => $send({ t: "input-move", columnIndex })}
-  //       />
-  //     )}
-  //   />
-  // );
 };

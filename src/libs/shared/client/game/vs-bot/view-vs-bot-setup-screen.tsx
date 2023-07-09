@@ -7,10 +7,10 @@ import {
   MyButton,
   VDom,
 } from "@gamezilla/shared/ui";
-import { ViewGameHeader } from "./view-game-header";
-import { SpaceViewCtx } from ".";
+import { SpaceViewCtx } from "../game-shared";
+import { ViewGameHeader } from "../view-game-header";
+import { VsBotProps } from "./view-vs-bot";
 
-type PlayerType = "player-one" | "player-two";
 type PlayerProp =
   | {
       t: "user";
@@ -40,33 +40,7 @@ export const VsBotSetupScreen = ({
   playerTwo,
   canStartGame,
   onStartGame,
-}: {
-  ctx: SpaceViewCtx;
-  title: string;
-  renderCoverArt: (props: { className: string }) => VDom;
-  onQuit: () => void;
-  canStartGame: boolean;
-  onStartGame: () => void;
-  human: {
-    player: PlayerType;
-    userId: UserId | null;
-  };
-  bot: {
-    label: string;
-  };
-  playerOne: {
-    label: string;
-    renderIcon: (props: { className: string }) => VDom;
-    onStartPlaying: () => void;
-    onStopPlaying: () => void;
-  };
-  playerTwo: {
-    label: string;
-    renderIcon: (props: { className: string }) => VDom;
-    onStartPlaying: () => void;
-    onStopPlaying: () => void;
-  };
-}) => {
+}: VsBotProps) => {
   const playerOneProp: PlayerProp =
     human.player === "player-one"
       ? {

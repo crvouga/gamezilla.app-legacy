@@ -211,7 +211,7 @@ export const View = ({
         {
           renderIcon: (props) => <IconScrewdriverWrench {...props} />,
           title: "Puzzle builder",
-          description: "Build puzzles for other players to play",
+          description: "Build new puzzles to play",
           onClick: () => {
             $send({ t: "input-mode", mode: "puzzle-builder" });
           },

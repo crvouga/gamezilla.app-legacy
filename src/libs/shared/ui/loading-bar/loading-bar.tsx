@@ -1,10 +1,13 @@
 import { cn } from "../utils";
 
-export const LoadingBar = (props: { className?: string }) => {
+export const LoadingBar = (props: {
+  disabled?: boolean;
+  className?: string;
+}) => {
   return (
     <div
       className={cn(
-        "overflow-hidden h-2 mb-4 text-xs flex rounded",
+        "flex h-2  overflow-hidden rounded text-xs",
         props.className
       )}>
       <style>
@@ -26,7 +29,11 @@ export const LoadingBar = (props: { className?: string }) => {
 
         `}
       </style>
-      <div className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-500 loading-bar"></div>
+      <div
+        className={cn(
+          "flex flex-col justify-center whitespace-nowrap bg-blue-500 text-center text-white shadow-none",
+          !props.disabled && "loading-bar"
+        )}></div>
     </div>
   );
 };

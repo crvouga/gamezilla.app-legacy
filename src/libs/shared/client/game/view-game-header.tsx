@@ -14,7 +14,8 @@ export const ViewGameHeader = ({
 
         {renderCoverArt({
           key: title,
-          className: "w-24 h-24 overflow-hidden rounded-lg",
+          className:
+            "w-28 h-28 overflow-hidden rounded-lg border border-white/20",
         })}
       </div>
     </section>
