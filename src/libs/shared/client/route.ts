@@ -4,7 +4,6 @@ import {
   SpaceId,
   UserId,
 } from "@gamezilla/shared/app";
-import { Browser } from "@gamezilla/shared/core";
 
 //
 //
@@ -257,37 +256,16 @@ export const decodeChat = (pathname: string): RouteChat | null => {
 //
 //
 //
-// Cmd
 //
 //
 //
-
-const push = (route: Route) => {
-  return Browser.push(encode(route));
-};
-
-const back = Browser.back;
-
-const replace = (route: Route) => {
-  return Browser.replace(encode(route));
-};
+//
 
 const eq = (a: Route, b: Route): boolean => {
   return encode(a) === encode(b);
 };
 
-//
-//
-//
-// Export
-//
-//
-//
-
 export const Route = {
-  push,
-  back,
-  replace,
   eq,
   encode,
   decode,

@@ -1,4 +1,4 @@
-import { AppMsg, RouteChat, ViewCtx } from "@gamezilla/shared/client";
+import { ClientAppMsg, RouteChat, ViewCtx } from "@gamezilla/shared/client";
 import { Browser, Cmd, exhaustive, p } from "@gamezilla/shared/core";
 import { VDom } from "@gamezilla/shared/ui";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./chat.shared";
@@ -137,7 +137,7 @@ export const updateFromApp = ({
   model,
   sendToServer,
 }: {
-  msg: AppMsg;
+  msg: ClientAppMsg;
   model: Model;
   sendToServer: (m: ToServer) => Cmd;
 }): {

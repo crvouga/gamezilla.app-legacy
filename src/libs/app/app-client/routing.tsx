@@ -1,4 +1,4 @@
-import { AppMsg, Route } from "@gamezilla/shared/client";
+import { ClientAppMsg, Route } from "@gamezilla/shared/client";
 import { Browser, Cmd, p } from "@gamezilla/shared/core";
 
 //
@@ -26,7 +26,7 @@ export const init = (
 
   return {
     model: { route },
-    cmd: Route.replace(route),
+    cmd: Browser.replace(Route.encode(route)),
   };
 };
 
@@ -52,14 +52,14 @@ export const update = ({
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
-  msgs?: AppMsg[];
+  msgs?: ClientAppMsg[];
 } => {
   if (msg.t === "clicked-back") {
-    return { model, cmd: Route.back };
+    return { model, cmd: Browser.back };
   }
 
   if (msg.t === "clicked-link") {
-    return { model, cmd: Route.push(msg.c) };
+    return { model, cmd: Browser.push(Route.encode(msg.c)) };
   }
 
   if (msg.t === "route-changed") {
@@ -70,6 +70,30 @@ export const update = ({
   }
 
   return { model };
+};
+
+export const updateFromApp = (input: {
+  msg: ClientAppMsg;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  if (input.msg.t === "push-route") {
+    return {
+      ...input,
+      cmd: Browser.push(Route.encode(input.msg.route)),
+    };
+  }
+
+  if (input.msg.t === "route-back") {
+    return {
+      ...input,
+      cmd: Browser.back,
+    };
+  }
+
+  return input;
 };
 
 //

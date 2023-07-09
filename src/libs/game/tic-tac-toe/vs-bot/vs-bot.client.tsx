@@ -1,4 +1,4 @@
-import { AppMsg, Ctx, SpaceCtx, ViewCtx } from "@gamezilla/shared/client";
+import { ClientAppMsg, Ctx, SpaceCtx, ViewCtx } from "@gamezilla/shared/client";
 import { Cmd, Posix } from "@gamezilla/shared/core";
 import {
   ClientModel,
@@ -44,7 +44,7 @@ export const update = ({
   model: Model;
 }): {
   model: Model;
-  msgs?: AppMsg[];
+  msgs?: ClientAppMsg[];
   cmd?: Cmd<Msg>;
 } => {
   const handled = handle({ ctx, msg, model });
@@ -70,7 +70,7 @@ export const updateFromServer = ({
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
-  msgs?: AppMsg[];
+  msgs?: ClientAppMsg[];
 } => {
   if (msg.result.t === "err") {
     return {

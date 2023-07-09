@@ -1,4 +1,4 @@
-import { Route, SpaceCtx, ViewCtx } from "@gamezilla/shared/client";
+import { SpaceCtx, ViewCtx } from "@gamezilla/shared/client";
 import {
   Cmd,
   Keyboard,
@@ -59,9 +59,6 @@ export const update = (
   const model: Model = { ..._model, openedMenuId: Option.None };
 
   switch (msg[0]) {
-    case "clicked-back":
-      return [model, Route.back];
-
     case "PressedKeyDown": {
       if (model.gameStatus.type !== "GameStarted") {
         return [model, Cmd.None];

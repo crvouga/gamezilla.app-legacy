@@ -1,4 +1,4 @@
-import { AppMsg } from "@gamezilla/shared/client";
+import { ClientAppMsg } from "@gamezilla/shared/client";
 import { Cmd, Time } from "@gamezilla/shared/core";
 import { IconXMark } from "@gamezilla/shared/ui";
 
@@ -84,7 +84,7 @@ export const updateFromApp = ({
   msg,
   model,
 }: {
-  msg: AppMsg;
+  msg: ClientAppMsg;
   model: Model;
 }): {
   model: Model;

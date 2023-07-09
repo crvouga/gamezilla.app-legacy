@@ -4,7 +4,7 @@ import { ProfileClient } from "@gamezilla/feat/profile";
 import { SearchClient } from "@gamezilla/feat/search";
 import { SpaceClient } from "@gamezilla/feat/space";
 import {
-  AppMsg,
+  ClientAppMsg,
   Ctx,
   Route,
   UnauthenticatedViewCtx,
@@ -126,7 +126,7 @@ const update_ = ({
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
-  msgs?: AppMsg[];
+  msgs?: ClientAppMsg[];
 } => {
   const ctx = toCtx({ model, now });
 
@@ -144,7 +144,7 @@ const update_ = ({
     return {
       model: { ...model, auth: updated.model },
       cmd: Cmd.tag_("auth", updated.cmd),
-      msgs: AppMsg.tag("auth", updated.msgs),
+      msgs: ClientAppMsg.tag("auth", updated.msgs),
     };
   }
 
@@ -165,7 +165,7 @@ const update_ = ({
     return {
       model: { ...model, routing: updated.model },
       cmd: Cmd.tag_("routing", updated.cmd),
-      msgs: AppMsg.tag("routing", updated.msgs),
+      msgs: ClientAppMsg.tag("routing", updated.msgs),
     };
   }
 
@@ -188,7 +188,7 @@ const update_ = ({
     return {
       model: { ...model, space: updated.model },
       cmd: Cmd.tag_("space", updated.cmd ?? Cmd.None),
-      msgs: AppMsg.tag("space", updated.msgs),
+      msgs: ClientAppMsg.tag("space", updated.msgs),
     };
   }
 
@@ -251,7 +251,7 @@ const updateFromServer = ({
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
-  msgs?: AppMsg[];
+  msgs?: ClientAppMsg[];
 } => {
   const ctx = toCtx({ model, now });
 
@@ -325,7 +325,7 @@ export const updateFromApp = ({
 }: {
   now: Posix;
   model: Model;
-  msg: AppMsg;
+  msg: ClientAppMsg;
   sendToServer: (m: ToServer) => Cmd;
 }): {
   model: Model;
@@ -355,7 +355,11 @@ export const updateFromApp = ({
   const auth = AuthClient.updateFromApp({
     model: model.auth,
     msg,
-    route: model.routing.route,
+  });
+
+  const routing = Routing.updateFromApp({
+    model: model.routing,
+    msg,
   });
 
   const toast = Toast.updateFromApp({
@@ -372,6 +376,7 @@ export const updateFromApp = ({
   return {
     model: {
       ...model,
+      routing: routing.model,
       toast: toast.model,
       chat: chat.model,
       profile: profile.model,
@@ -380,6 +385,7 @@ export const updateFromApp = ({
       auth: auth.model,
     },
     cmd: Cmd.batch<Msg>([
+      Cmd.tag_("routing", routing.cmd),
       Cmd.tag_("chat", chat.cmd),
       Cmd.tag_("profile", profile.cmd),
       Cmd.tag_("space", space.cmd),

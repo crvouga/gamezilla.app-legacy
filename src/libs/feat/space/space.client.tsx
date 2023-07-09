@@ -1,8 +1,7 @@
 import { SpaceId } from "@gamezilla/shared/app";
 import {
-  AppMsg,
+  ClientAppMsg,
   Ctx,
-  Route,
   RouteSpace,
   SpaceCtx,
   SpaceViewCtx,
@@ -79,7 +78,7 @@ export const update = (input: {
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
-  msgs?: AppMsg[];
+  msgs?: ClientAppMsg[];
 } => {
   return p(
     input,
@@ -94,7 +93,7 @@ const watchCreate: typeof update = ({ msg, model }) => {
       model,
       msgs: [
         {
-          t: "route-changed",
+          t: "push-route",
           route: { t: "space", c: { t: "space", spaceId: msg.spaceId } },
         },
       ],
@@ -115,10 +114,15 @@ const update_: typeof update = ({ ctx, sendToServer, msg, model }) => {
   if (msg.t === "clicked-user-link") {
     return {
       model: { ...model, modal: null },
-      cmd: Route.push({
-        t: "profile",
-        c: { t: "profile", userId: msg.userId },
-      }),
+      msgs: [
+        {
+          t: "push-route",
+          route: {
+            t: "profile",
+            c: { t: "profile", userId: msg.userId },
+          },
+        },
+      ],
     };
   }
 
@@ -185,7 +189,7 @@ const update_: typeof update = ({ ctx, sendToServer, msg, model }) => {
     return {
       model: modelNew,
       cmd: Cmd.tag_("game", updated.cmd),
-      msgs: AppMsg.tag("game", updated.msgs),
+      msgs: ClientAppMsg.tag("game", updated.msgs),
     };
   }
 
@@ -217,7 +221,7 @@ export const updateFromServer = ({
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
-  msgs?: AppMsg[];
+  msgs?: ClientAppMsg[];
 } => {
   if (msg.t === "game") {
     if (!ctx) {
@@ -304,7 +308,7 @@ export const updateFromServer = ({
 };
 
 export const updateFromApp = (input: {
-  msg: AppMsg;
+  msg: ClientAppMsg;
   model: Model;
   sendToServer: (m: ToServer) => Cmd;
 }): {

@@ -9,13 +9,14 @@ import { Route } from "./route";
 //
 //
 
-export type AppMsg<T = unknown> =
+export type ClientAppMsg<T = unknown> =
   | { t: "route-changed"; route: Route }
+  | { t: "push-route"; route: Route }
+  | { t: "route-back" }
   | { t: "wire-connected" }
   | { t: "got-current-user"; userId: UserId | null }
   | { t: "toast-enqueued"; text: string; duration?: number }
-  | { t: "got-profiles"; profiles: { [userId: string]: Profile } }
-
+  | { t: "got-profiles"; profiles: { [userId: string]: Profile } };
 
 export type Profile = {
   userId: UserId;
@@ -30,22 +31,25 @@ export type Profile = {
 //
 //
 
-const map = <TA, TB>(appMsg: AppMsg<TA>, _f: (a: TA) => TB): AppMsg<TB> => {
+const map = <TA, TB>(
+  appMsg: ClientAppMsg<TA>,
+  _f: (a: TA) => TB
+): ClientAppMsg<TB> => {
   return appMsg;
 };
 
 export const tagOne = <TTag extends string, TMsg>(
   _tag: TTag,
-  appMsg: AppMsg<TMsg>
-): AppMsg<{ t: TTag; c: TMsg }> => {
+  appMsg: ClientAppMsg<TMsg>
+): ClientAppMsg<{ t: TTag; c: TMsg }> => {
   return appMsg;
 };
 
 export const tag = <TTag extends string, TMsg>(
   tag: TTag,
-  appMsgs: AppMsg<TMsg>[] = []
-): AppMsg<{ t: TTag; c: TMsg }>[] => {
-  const mapped: AppMsg<{ t: TTag; c: TMsg }>[] = [];
+  appMsgs: ClientAppMsg<TMsg>[] = []
+): ClientAppMsg<{ t: TTag; c: TMsg }>[] => {
+  const mapped: ClientAppMsg<{ t: TTag; c: TMsg }>[] = [];
   for (let i = 0; i < appMsgs.length; i++) {
     const msg = appMsgs[i];
     if (msg) {
@@ -55,7 +59,7 @@ export const tag = <TTag extends string, TMsg>(
   return mapped;
 };
 
-export const AppMsg = {
+export const ClientAppMsg = {
   map,
   tag,
   tagOne,

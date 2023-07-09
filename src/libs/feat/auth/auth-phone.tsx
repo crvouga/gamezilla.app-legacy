@@ -1,5 +1,5 @@
 import { Iso3166Alpha2Code, PhoneNumber } from "@gamezilla/shared/app";
-import { Route } from "@gamezilla/shared/client";
+import { ClientAppMsg, UnauthenticatedViewCtx } from "@gamezilla/shared/client";
 import {
   Browser,
   Cmd,
@@ -95,6 +95,7 @@ export const update = ({
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
+  msgs?: ClientAppMsg[];
 } => {
   if (msg.t === "clicked-send-code") {
     if (model.phoneNumber.length === 0) {
@@ -118,10 +119,6 @@ export const update = ({
         )
       ),
     };
-  }
-
-  if (msg.t === "clicked-back") {
-    return { model, cmd: Route.back };
   }
 
   if (msg.t === "inputted-country") {
@@ -159,10 +156,15 @@ export const update = ({
 
     return {
       model: { ...model, submission: { type: "ok" } },
-      cmd: Route.push({
-        t: "auth",
-        c: { t: "login-phone-verify", phoneNumber: phoneNumber },
-      }),
+      msgs: [
+        {
+          t: "push-route",
+          route: {
+            t: "auth",
+            c: { t: "login-phone-verify", phoneNumber: phoneNumber },
+          },
+        },
+      ],
     };
   }
 
@@ -189,9 +191,11 @@ const allOptions = Iso3166Alpha2Code.all.map((country) => ({
 export const View = ({
   model,
   $send,
+  ctx,
 }: {
   model: Model;
   $send: (msg: Msg) => void;
+  ctx: UnauthenticatedViewCtx;
 }) => {
   const filteredOptions = matchSort(
     allOptions,
@@ -199,14 +203,14 @@ export const View = ({
     model.countryQuery
   ).map((option) => option.value);
   return (
-    <div className="flex-1 w-full">
+    <div className="w-full flex-1">
       <TopBar
-        left={<TopBarBackButton onClick={() => $send({ t: "clicked-back" })} />}
+        left={<TopBarBackButton onClick={ctx.$back} />}
         title="Login With Phone"
       />
 
       <form
-        className="p-4 flex gap-4 flex-col"
+        className="flex flex-col gap-4 p-4"
         onSubmit={(e) => {
           e.preventDefault();
           $send({ t: "clicked-send-code" });
@@ -234,7 +238,7 @@ export const View = ({
         <MyTextField
           id="phone-number"
           startIcon={
-            <IconPhone className="w-6 h-6 mr-2 opacity-80 text-inherit" />
+            <IconPhone className="mr-2 h-6 w-6 text-inherit opacity-80" />
           }
           label="Phone Number"
           onChange={(phoneNumber) =>
@@ -264,15 +268,15 @@ export const View = ({
           variant="contained"
           color="primary"
           size="lg"
-          className="w-full mt-2">
+          className="mt-2 w-full">
           {model.submission.type === "loading" && (
-            <IconSpinner className="w-6 h-6 animate-spin" />
+            <IconSpinner className="h-6 w-6 animate-spin" />
           )}
           Send Code
         </MyButton>
 
         {model.submission.type === "Problem" && (
-          <div className="bg-red-500 text-white p-4 mt-2 rounded-md">
+          <div className="mt-2 rounded-md bg-red-500 p-4 text-white">
             {model.submission.message}
           </div>
         )}

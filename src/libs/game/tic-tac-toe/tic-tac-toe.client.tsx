@@ -1,5 +1,5 @@
 import {
-  AppMsg,
+  ClientAppMsg,
   Ctx,
   MainMenuScreen,
   SpaceCtx,
@@ -54,7 +54,7 @@ export const update = ({
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
-  msgs?: AppMsg[];
+  msgs?: ClientAppMsg[];
 } => {
   if (msg.t === "input-mode") {
     return { model, cmd: sendToServer(msg) };
@@ -85,7 +85,7 @@ export const update = ({
     return {
       model: { t: "vs-bot", c: updated.model },
       cmd: Cmd.tag_("vs-bot", updated.cmd),
-      msgs: AppMsg.tag("vs-bot", updated.msgs),
+      msgs: ClientAppMsg.tag("vs-bot", updated.msgs),
     };
   }
 
@@ -103,7 +103,7 @@ export const updateFromServer = ({
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
-  msgs?: AppMsg[];
+  msgs?: ClientAppMsg[];
 } => {
   if (msg.t === "input-mode") {
     const { result } = msg;

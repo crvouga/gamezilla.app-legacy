@@ -1,5 +1,5 @@
-import { Cmd, Result, Task, exhaustive, p } from '@gamezilla/shared/core';
-import { Route } from '@gamezilla/shared/client';
+import { ClientAppMsg } from "@gamezilla/shared/client";
+import { Cmd, Result, Task, exhaustive, p } from "@gamezilla/shared/core";
 import {
   AlertError,
   AlertSuccess,
@@ -8,7 +8,7 @@ import {
   MyTextField,
   TopBar,
   TopBarBackButton,
-} from '@gamezilla/shared/ui';
+} from "@gamezilla/shared/ui";
 
 //
 //
@@ -20,17 +20,17 @@ import {
 
 export type Model = {
   emailAddress: string;
-  validation?: 'invalid-email' | null;
+  validation?: "invalid-email" | null;
   submission:
-    | { type: 'idle' }
-    | { type: 'loading'; sentToEmailAddress: string }
-    | { type: 'problem'; message: string }
-    | { type: 'ok'; sentToEmailAddress: string };
+    | { type: "idle" }
+    | { type: "loading"; sentToEmailAddress: string }
+    | { type: "problem"; message: string }
+    | { type: "ok"; sentToEmailAddress: string };
 };
 
 export const init: Model = {
-  emailAddress: '',
-  submission: { type: 'idle' },
+  emailAddress: "",
+  submission: { type: "idle" },
 };
 
 //
@@ -42,10 +42,10 @@ export const init: Model = {
 //
 
 export type Msg =
-  | { t: 'clicked-back' }
-  | { t: 'clicked-send-login-link' }
-  | { t: 'inputted-email-address'; emailAddress: string }
-  | { t: 'login-done'; result: Result<string, null> };
+  | { t: "clicked-back" }
+  | { t: "clicked-send-login-link" }
+  | { t: "inputted-email-address"; emailAddress: string }
+  | { t: "login-done"; result: Result<string, null> };
 
 export const update = ({
   msg,
@@ -60,20 +60,21 @@ export const update = ({
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
+  msgs?: ClientAppMsg[];
 } => {
-  if (msg.t === 'inputted-email-address') {
+  if (msg.t === "inputted-email-address") {
     return {
       model: { ...model, validation: null, emailAddress: msg.emailAddress },
     };
   }
 
-  if (msg.t === 'login-done') {
-    if (msg.result.t === 'err') {
+  if (msg.t === "login-done") {
+    if (msg.result.t === "err") {
       return {
         model: {
           ...model,
           submission: {
-            type: 'problem',
+            type: "problem",
             message: msg.result.error,
           },
         },
@@ -81,25 +82,25 @@ export const update = ({
     }
 
     const emailAddress =
-      model.submission.type === 'loading'
+      model.submission.type === "loading"
         ? model.submission.sentToEmailAddress
         : model.emailAddress;
 
     return {
       model: {
         ...model,
-        emailAddress: '',
-        submission: { type: 'ok', sentToEmailAddress: emailAddress },
+        emailAddress: "",
+        submission: { type: "ok", sentToEmailAddress: emailAddress },
       },
     };
   }
 
-  if (msg.t === 'clicked-send-login-link') {
+  if (msg.t === "clicked-send-login-link") {
     if (model.emailAddress.length === 0) {
       return {
         model: {
           ...model,
-          validation: 'invalid-email',
+          validation: "invalid-email",
         },
       };
     }
@@ -108,19 +109,22 @@ export const update = ({
       model: {
         ...model,
         submission: {
-          type: 'loading',
+          type: "loading",
           sentToEmailAddress: model.emailAddress,
         },
       },
       cmd: p(
         sendEmailLink({ emailAddress: model.emailAddress }),
-        Cmd.perform((result) => ({ t: 'login-done', result }))
+        Cmd.perform((result) => ({ t: "login-done", result }))
       ),
     };
   }
 
-  if (msg.t === 'clicked-back') {
-    return { model: model, cmd: Route.back };
+  if (msg.t === "clicked-back") {
+    return {
+      model: model,
+      msgs: [{ t: "route-back" }],
+    };
   }
 
   return exhaustive(msg);
@@ -142,19 +146,18 @@ export const View = ({
   $send: (msg: Msg) => void;
 }) => {
   return (
-    <div className="w-full h-full flex flex-col">
+    <div className="flex h-full w-full flex-col">
       <TopBar
-        left={<TopBarBackButton onClick={() => $send({ t: 'clicked-back' })} />}
+        left={<TopBarBackButton onClick={() => $send({ t: "clicked-back" })} />}
         title="Login With Email"
       />
 
       <form
-        className="p-4 flex flex-col gap-6"
+        className="flex flex-col gap-6 p-4"
         onSubmit={(event) => {
           event.preventDefault();
-          $send({ t: 'clicked-send-login-link' });
-        }}
-      >
+          $send({ t: "clicked-send-login-link" });
+        }}>
         <MyTextField
           autoFocus
           id="email-address"
@@ -162,15 +165,15 @@ export const View = ({
           label="Email Address"
           value={model.emailAddress}
           onChange={(emailAddress) => {
-            $send({ t: 'inputted-email-address', emailAddress });
+            $send({ t: "inputted-email-address", emailAddress });
           }}
           onClear={() =>
-            $send({ t: 'inputted-email-address', emailAddress: '' })
+            $send({ t: "inputted-email-address", emailAddress: "" })
           }
-          error={model.validation === 'invalid-email'}
+          error={model.validation === "invalid-email"}
           helperText={
-            model.validation === 'invalid-email'
-              ? 'Please enter a valid email address'
+            model.validation === "invalid-email"
+              ? "Please enter a valid email address"
               : undefined
           }
         />
@@ -180,25 +183,24 @@ export const View = ({
           size="lg"
           className="w-full"
           color="primary"
-          type="submit"
-        >
-          {model.submission.type === 'loading' && (
-            <IconSpinner className="w-6 h-6 animate-spin" />
+          type="submit">
+          {model.submission.type === "loading" && (
+            <IconSpinner className="h-6 w-6 animate-spin" />
           )}
           Send Login Link
         </MyButton>
 
-        {model.submission.type === 'problem' && (
+        {model.submission.type === "problem" && (
           <AlertError>{model.submission.message}</AlertError>
         )}
 
-        {model.submission.type === 'ok' && (
+        {model.submission.type === "ok" && (
           <AlertSuccess>
             <div className="flex flex-col gap-1">
               <div className="text-lg">Check your email</div>
               <div className="font-light">
-                Login link was send to{' '}
-                <span className="text-white font-semibold">
+                Login link was send to{" "}
+                <span className="font-semibold text-white">
                   {model.submission.sentToEmailAddress}
                 </span>
               </div>

@@ -1,5 +1,5 @@
 import {
-  AppMsg,
+  ClientAppMsg,
   SpaceCtx,
   SpaceViewCtx,
   MainMenuScreen,
@@ -158,7 +158,7 @@ export const updateFromServer = ({
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
-  msgs?: AppMsg[];
+  msgs?: ClientAppMsg[];
 } => {
   switch (msg.t) {
     case "input-mode": {

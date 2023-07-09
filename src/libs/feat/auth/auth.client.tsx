@@ -1,6 +1,6 @@
 import { PhoneNumber, UserId, client } from "@gamezilla/shared/app";
 import {
-  AppMsg,
+  ClientAppMsg,
   Route,
   RouteAuth,
   UnauthenticatedViewCtx,
@@ -81,7 +81,7 @@ export const update = ({
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
-  msgs?: AppMsg[];
+  msgs?: ClientAppMsg[];
 } => {
   if (msg.t === "login-with-google") {
     return {
@@ -139,6 +139,7 @@ export const update = ({
       sendCode,
     });
     return {
+      ...updated,
       model: { ...model, phone: updated.model },
       cmd: Cmd.tag_("phone", updated.cmd),
     };
@@ -179,6 +180,7 @@ export const update = ({
     return {
       model: { ...model, emailLink: updated.model },
       cmd: Cmd.tag_("email-link", updated.cmd),
+      msgs: updated.msgs,
     };
   }
 
@@ -194,7 +196,10 @@ export const update = ({
     return {
       model: { ...model, currentUser: { t: "logged-out" } },
       cmd: sendToServer(msg),
-      msgs: [{ t: "got-current-user", userId: null }],
+      msgs: [
+        { t: "got-current-user", userId: null },
+        { t: "push-route", route: { t: "auth", c: { t: "login" } } },
+      ],
     };
   }
 
@@ -210,30 +215,14 @@ export const updateFromServer = ({
   return { model };
 };
 
-export const updateFromApp = ({
-  msg,
-  model,
-  route,
-}: {
-  msg: AppMsg;
+export const updateFromApp = (input: {
+  msg: ClientAppMsg;
   model: Model;
-  route: Route;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  // redirect to login if not logged in
-  if (msg.t === "got-current-user" && !msg.userId && route.t !== "auth") {
-    return {
-      model,
-      cmd: Route.push({
-        t: "auth",
-        c: { t: "login" },
-      }),
-    };
-  }
-
-  return { model };
+  return input;
 };
 //
 //
@@ -273,6 +262,7 @@ export const ViewLoggedOut = ({
   if (route.t === "login-phone") {
     return (
       <AuthPhone.View
+        ctx={ctx}
         model={model.phone}
         $send={(m) => $send({ t: "phone", c: m })}
       />

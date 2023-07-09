@@ -1,3 +1,2 @@
-export * as Spring from './spring';
-export * from './ease';
-export * as Animation from './animation';
+export * as Spring from "./spring";
+export * from "./ease";

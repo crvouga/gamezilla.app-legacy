@@ -1,4 +1,4 @@
-import { Route } from "@gamezilla/shared/client";
+import { ClientAppMsg } from "@gamezilla/shared/client";
 import { Browser, Cmd, matchSort, p } from "@gamezilla/shared/core";
 import { IconMagnifyingGlass, IconXMark, VDom } from "@gamezilla/shared/ui";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./search.shared";
@@ -46,6 +46,7 @@ export const update = ({
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
+  msgs?: ClientAppMsg[];
 } => {
   if (msg.t === "focus-done") {
     return { model };
@@ -64,10 +65,15 @@ export const update = ({
   if (msg.t === "clicked-result") {
     return {
       model,
-      cmd: Route.push({
-        t: "profile",
-        c: { t: "profile", userId: msg.userId },
-      }),
+      msgs: [
+        {
+          t: "push-route",
+          route: {
+            t: "profile",
+            c: { t: "profile", userId: msg.userId },
+          },
+        },
+      ],
     };
   }
 
@@ -115,14 +121,14 @@ export const View = ({
 
   return (
     <>
-      <div className="w-full h-full flex flex-col">
+      <div className="flex h-full w-full flex-col">
         {/* input */}
         <div className="w-full p-4">
-          <div className="w-full flex items-center bg-neutral-700 rounded-full px-4 py-2 gap-2">
+          <div className="flex w-full items-center gap-2 rounded-full bg-neutral-700 px-4 py-2">
             <IconMagnifyingGlass />
             <input
               id={searchInputId}
-              className="bg-transparent text-lg outline-none flex-1"
+              className="flex-1 bg-transparent text-lg outline-none"
               placeholder="Search"
               value={model.searchText}
               onChange={(event) =>
@@ -141,7 +147,7 @@ export const View = ({
           {results.map((result) => (
             <li key={result.userId}>
               <button
-                className="w-full flex items-center gap-4 p-4 hover:bg-neutral-700"
+                className="flex w-full items-center gap-4 p-4 hover:bg-neutral-700"
                 onClick={() =>
                   $send({ t: "clicked-result", userId: result.userId })
                 }>

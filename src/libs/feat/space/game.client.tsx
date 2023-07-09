@@ -6,7 +6,12 @@ import { MazeClient } from "@gamezilla/game/maze";
 import { SnakeClient } from "@gamezilla/game/snake";
 import { TetrisClient } from "@gamezilla/game/tetris";
 import { TicTacToeClient } from "@gamezilla/game/tic-tac-toe";
-import { AppMsg, Ctx, SpaceCtx, SpaceViewCtx } from "@gamezilla/shared/client";
+import {
+  ClientAppMsg,
+  Ctx,
+  SpaceCtx,
+  SpaceViewCtx,
+} from "@gamezilla/shared/client";
 import { Cmd, Sub, exhaustive } from "@gamezilla/shared/core";
 import {
   ClientModel,
@@ -100,7 +105,7 @@ export const update = ({
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
-  msgs?: AppMsg[];
+  msgs?: ClientAppMsg[];
 } => {
   if (model.t === "connect-four" && msg.t === "connect-four") {
     const updated = ConnectFourClient.update({
@@ -127,7 +132,7 @@ export const update = ({
     return {
       model: { t: "tic-tac-toe", c: updated.model },
       cmd: Cmd.tag_("tic-tac-toe", updated.cmd),
-      msgs: AppMsg.tag("tic-tac-toe", updated.msgs),
+      msgs: ClientAppMsg.tag("tic-tac-toe", updated.msgs),
     };
   }
 
@@ -225,7 +230,7 @@ export const updateFromServer = ({
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
-  msgs?: AppMsg[];
+  msgs?: ClientAppMsg[];
 } => {
   if (msg.t === "connect-four" && model.t === "connect-four") {
     const [child, cmd] = ConnectFourClient.updateFromServer({

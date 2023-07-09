@@ -15,6 +15,7 @@ import {
   handle,
   initShared,
 } from "./vs-bot.shared";
+import { IconArrowLeftOnRect, MyButton } from "@gamezilla/shared/ui";
 
 //
 //
@@ -216,7 +217,17 @@ export const View = ({
 
   // const status = toStatus(model.columns);
 
-  return <div></div>;
+  return (
+    <div className="flex h-full w-full flex-col">
+      <div className="flex-1"></div>
+      <div className="p-4">
+        <MyButton className="w-full" onClick={onQuit}>
+          <IconArrowLeftOnRect />
+          Quit
+        </MyButton>
+      </div>
+    </div>
+  );
   // return (
   //   <ViewVsBotGameScreen<PlayerType>
   //     gameOver={

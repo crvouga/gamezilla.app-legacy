@@ -1,5 +1,5 @@
 import {
-  AppMsg,
+  ClientAppMsg,
   BottomBarButtonAction,
   SpaceCtx,
   SpaceViewCtx,
@@ -100,7 +100,7 @@ export const updateFromServer = ({
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
-  msgs?: AppMsg[];
+  msgs?: ClientAppMsg[];
 } => {
   if (msg.t === "clock-tick") {
     return { model: { ...model, serverNow: msg.now } };

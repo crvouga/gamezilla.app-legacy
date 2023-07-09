@@ -1,13 +1,13 @@
 import { PhoneNumber } from "@gamezilla/shared/app";
-import { Route } from "@gamezilla/shared/client";
+import { ClientAppMsg } from "@gamezilla/shared/client";
 import {
   Browser,
   Cmd,
-  p,
   Result,
   Task,
   Time,
   Unit,
+  p,
 } from "@gamezilla/shared/core";
 import {
   AlertError,
@@ -92,10 +92,11 @@ export const update = ({
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
+  msgs?: ClientAppMsg[];
   shouldLoadCurrentUser?: boolean;
 } => {
   if (msg.t === "clicked-back") {
-    return { model, cmd: Route.back };
+    return { model, msgs: [{ t: "route-back" }] };
   }
 
   if (msg.t === "clicked-verify-code") {
@@ -161,16 +162,16 @@ export const View = ({
   $send: (msg: Msg) => void;
 }) => {
   return (
-    <div className="w-full h-full flex flex-col">
+    <div className="flex h-full w-full flex-col">
       <TopBar
         left={<TopBarBackButton onClick={() => $send({ t: "clicked-back" })} />}
         title="Verify Code"
       />
-      <div className="p-4 flex flex-col w-full gap-4">
+      <div className="flex w-full flex-col gap-4 p-4">
         <AlertSuccess>
-          <p className="font-light flex items-center flex-wrap gap-1">
+          <p className="flex flex-wrap items-center gap-1 font-light">
             The code was sent to
-            <span className="font-semibold inline-block">
+            <span className="inline-block font-semibold">
               {PhoneNumber.format(phoneNumber)}.
             </span>
           </p>
@@ -194,7 +195,7 @@ export const View = ({
           color="primary"
           onClick={() => $send({ t: "clicked-verify-code" })}>
           {model.submission.type === "loading" && (
-            <IconSpinner className="w-6 h-6 animate-spin" />
+            <IconSpinner className="h-6 w-6 animate-spin" />
           )}
           Verify Code
         </MyButton>

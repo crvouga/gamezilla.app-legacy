@@ -1,7 +1,7 @@
-import { Keyboard, Option, Result } from '@gamezilla/shared/core';
-import { UserId } from '@gamezilla/shared/app';
-import * as Direction from './direction';
-import * as Snake from './snake';
+import { Keyboard, Option, Result } from "@gamezilla/shared/core";
+import { UserId } from "@gamezilla/shared/app";
+import * as Direction from "./direction";
+import * as Snake from "./snake";
 
 //
 //
@@ -20,18 +20,18 @@ export type ClientModel = SharedModel & {
 export type SharedModel = Snake.Model & {
   gameStatus:
     | {
-        type: 'GameSetup';
+        type: "GameSetup";
         player: Option<Player>;
       }
     | {
-        type: 'GameStarted';
+        type: "GameStarted";
         player: Player;
       };
 };
 
-export type Player = ['User', UserId];
+export type Player = ["User", UserId];
 
-export type MouseStatus = 'Active' | 'Inactive';
+export type MouseStatus = "Active" | "Inactive";
 
 //
 //
@@ -42,7 +42,7 @@ export type MouseStatus = 'Active' | 'Inactive';
 export const initSharedModel: SharedModel = {
   ...Snake.init,
   gameStatus: {
-    type: 'GameSetup',
+    type: "GameSetup",
     player: Option.None,
   },
 };
@@ -56,17 +56,16 @@ export const initSharedModel: SharedModel = {
 //
 
 export type ClientMsg =
-  | ['clicked-back']
-  | ['PressedKeyDown', Keyboard.Key]
-  | ['OpenedMenu', string]
-  | ['ClosedMenu']
+  | ["PressedKeyDown", Keyboard.Key]
+  | ["OpenedMenu", string]
+  | ["ClosedMenu"]
   | Request;
 
-export type ServerMsg = ['tick'];
+export type ServerMsg = ["tick"];
 
 export type ToServer = Request;
 
-export type ToClient = ['tick', SharedModel] | Response;
+export type ToClient = ["tick", SharedModel] | Response;
 
 export type Request = ToggleStatus | InputPlayer | InputDirection | StartGame;
 
@@ -81,29 +80,29 @@ export type Response =
 //
 
 export type InputDirection = [
-  'input-direction',
+  "input-direction",
   { direction: Direction.Direction; userId: UserId }
 ];
 
 export type InputDirection_Done = [
-  'InputDirection_Done',
+  "InputDirection_Done",
   Result<InputDirectionProblem, SharedModel>
 ];
 
 export type InputDirectionProblem =
-  | 'user_must_be_the_current_player'
-  | 'must_be_in_game_started';
+  | "user_must_be_the_current_player"
+  | "must_be_in_game_started";
 
 //
 //
 //
 
-export type ToggleStatus = ['ToggleStatus', { userId: UserId }];
+export type ToggleStatus = ["ToggleStatus", { userId: UserId }];
 
-export type ToggleStatus_Done = ['ToggleStatus_Done', ToggleStatusResult];
+export type ToggleStatus_Done = ["ToggleStatus_Done", ToggleStatusResult];
 
 export type ToggleStatusResult = Result<
-  'user_must_be_the_current_player' | 'must_be_in_game_started',
+  "user_must_be_the_current_player" | "must_be_in_game_started",
   SharedModel
 >;
 
@@ -112,33 +111,33 @@ export type ToggleStatusResult = Result<
 //
 //
 
-export type InputPlayer = ['InputPlayer', Option<Player>];
+export type InputPlayer = ["InputPlayer", Option<Player>];
 
 export type InputPlayer_Done = [
-  'InputPlayer_Done',
-  Result<'must_be_in_game_setup', SharedModel>
+  "InputPlayer_Done",
+  Result<"must_be_in_game_setup", SharedModel>
 ];
 
-export type StartGame = ['start-game'];
+export type StartGame = ["start-game"];
 export type StartGame_Done = [
-  'StartGame_Done',
-  Result<'must_be_in_game_setup' | 'missing_player', SharedModel>
+  "StartGame_Done",
+  Result<"must_be_in_game_setup" | "missing_player", SharedModel>
 ];
 
 export const canStartGame = (model: SharedModel): boolean => {
   return (
-    model.gameStatus.type === 'GameSetup' &&
-    model.gameStatus.player.type === 'Some'
+    model.gameStatus.type === "GameSetup" &&
+    model.gameStatus.player.type === "Some"
   );
 };
 
 export const startGame = (model: SharedModel): StartGame_Done[1] => {
-  if (model.gameStatus.type !== 'GameSetup') {
-    return Result.Err('must_be_in_game_setup');
+  if (model.gameStatus.type !== "GameSetup") {
+    return Result.Err("must_be_in_game_setup");
   }
 
-  if (model.gameStatus.player.type === 'none') {
-    return Result.Err('missing_player');
+  if (model.gameStatus.player.type === "none") {
+    return Result.Err("missing_player");
   }
 
   const playerUserId = model.gameStatus.player.value[1];
@@ -146,8 +145,8 @@ export const startGame = (model: SharedModel): StartGame_Done[1] => {
   const modelNew: SharedModel = {
     ...model,
     gameStatus: {
-      type: 'GameStarted',
-      player: ['User', playerUserId],
+      type: "GameStarted",
+      player: ["User", playerUserId],
     },
   };
 

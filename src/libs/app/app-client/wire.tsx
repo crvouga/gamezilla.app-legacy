@@ -1,4 +1,4 @@
-import { AppMsg } from "@gamezilla/shared/client";
+import { ClientAppMsg } from "@gamezilla/shared/client";
 import { Cmd } from "@gamezilla/shared/core";
 import { IconSpinner } from "@gamezilla/shared/ui";
 
@@ -38,7 +38,7 @@ export const update = ({
   model: Model;
 }): {
   model: Model;
-  msgs?: AppMsg[];
+  msgs?: ClientAppMsg[];
 } => {
   if (msg.t === "connect-error") {
     return {
@@ -62,7 +62,7 @@ export const update = ({
 };
 
 export const updateFromApp = <ToServer,>(input: {
-  msg: AppMsg;
+  msg: ClientAppMsg;
   model: Model;
   sendToServer: (m: ToServer) => Cmd;
 }): {
@@ -83,8 +83,8 @@ export const updateFromApp = <ToServer,>(input: {
 export const View = ({ model }: { model: Model }) => {
   if (model.t === "connect-error" && model.errorCount > 2) {
     return (
-      <div className="w-full flex items-center justify-center text-white bg-blue-500 gap-2 h-6">
-        <IconSpinner className="w-5 h-5 text-white animate-spin" />
+      <div className="flex h-6 w-full items-center justify-center gap-2 bg-blue-500 text-white">
+        <IconSpinner className="h-5 w-5 animate-spin text-white" />
         Server disconnected. Reconnecting...
       </div>
     );
