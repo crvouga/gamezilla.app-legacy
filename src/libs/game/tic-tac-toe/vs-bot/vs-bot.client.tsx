@@ -1,5 +1,13 @@
-import { ClientAppMsg, Ctx, SpaceCtx, ViewCtx } from "@gamezilla/shared/client";
+import {
+  ClientAppMsg,
+  Ctx,
+  SpaceCtx,
+  SpaceViewCtx,
+  VsBotProps,
+  VsBotSetupScreen,
+} from "@gamezilla/shared/client";
 import { Cmd, Posix } from "@gamezilla/shared/core";
+import { PlayerTypeIcon, ViewCoverArt } from "../tic-tic-toe/tic-tac-toe-ui";
 import {
   ClientModel,
   ClientMsg,
@@ -113,12 +121,48 @@ export const syncWithServer = ({
 
 export const View = ({
   goBack,
+  model,
+  ctx,
+  $send,
 }: {
-  ctx: ViewCtx;
+  ctx: SpaceViewCtx;
   goBack: () => void;
   model: Model;
   $send: (msg: Msg) => void;
 }) => {
+  const vsBotProps: VsBotProps = {
+    bot: {
+      label: model.botLevel,
+    },
+    canStartGame: Boolean(model.player),
+    ctx,
+    human: {
+      player: model.userPlayerType === "X" ? "player-one" : "player-two",
+      userId: model.player ?? null,
+    },
+    onQuit: goBack,
+    onStartGame: () => $send({ t: "start-game" }),
+    playerOne: {
+      label: "Cross",
+      onStartPlaying: () => $send({ t: "start-playing", playerType: "X" }),
+      onStopPlaying: () => $send({ t: "stop-playing" }),
+      renderIcon: (props) => <PlayerTypeIcon {...props} playerType="X" />,
+    },
+
+    playerTwo: {
+      label: "Naught",
+      onStartPlaying: () => $send({ t: "start-playing", playerType: "O" }),
+      onStopPlaying: () => $send({ t: "stop-playing" }),
+      renderIcon: (props) => <PlayerTypeIcon {...props} playerType="O" />,
+    },
+    renderCoverArt: (props) => <ViewCoverArt {...props} />,
+    title: "Tic Tac Toe",
+  };
+
+  if (model.type === "setup") {
+    return <VsBotSetupScreen {...vsBotProps} />;
+  }
+
   return <div onClick={goBack}></div>;
 };
 

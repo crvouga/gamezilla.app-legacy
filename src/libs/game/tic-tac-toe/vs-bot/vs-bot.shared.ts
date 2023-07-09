@@ -87,8 +87,7 @@ export type ToClient =
 
 export type Req =
   | { t: "input-bot-level"; botLevel: BotLevel }
-  | { t: "input-player-type"; playerType: PlayerType }
-  | { t: "start-playing" }
+  | { t: "start-playing"; playerType: PlayerType }
   | { t: "stop-playing" }
   | { t: "start-game" }
   | { t: "stop-game" }
@@ -132,32 +131,18 @@ export const handle = ({
       });
     }
 
-    case "input-player-type": {
-      if (model.type !== "setup") {
-        return Err("must-be-in-setup-mode");
-      }
-
-      if (model.player !== ctx.currentUserId) {
-        return Err("must-be-player");
-      }
-
-      return Ok({
-        ...model,
-        userPlayerType: msg.playerType,
-      });
-    }
-
     case "start-playing": {
       if (model.type !== "setup") {
         return Err("must-be-in-setup-mode");
       }
 
-      if (model.player) {
-        return Err("must-be-empty-player");
+      if (model.player && model.player !== ctx.currentUserId) {
+        return Err("not-allowed");
       }
 
       return Ok({
         ...model,
+        userPlayerType: msg.playerType,
         player: ctx.currentUserId,
       });
     }
