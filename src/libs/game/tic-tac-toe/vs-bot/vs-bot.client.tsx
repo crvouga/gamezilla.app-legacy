@@ -3,11 +3,24 @@ import {
   Ctx,
   SpaceCtx,
   SpaceViewCtx,
+  ViewBottomButtonBar,
+  VsBotPlayerSection,
   VsBotProps,
   VsBotSetupScreen,
 } from "@gamezilla/shared/client";
 import { Cmd, Posix } from "@gamezilla/shared/core";
-import { PlayerTypeIcon, ViewCoverArt } from "../tic-tic-toe/tic-tac-toe-ui";
+import {
+  IconArrowLeftOnRect,
+  IconArrowRotateLeft,
+  IconRightLeft,
+  LoadingBar,
+} from "@gamezilla/shared/ui";
+import { toStatus, toTurn } from "../tic-tic-toe/tic-tac-toe";
+import {
+  PlayerTypeIcon,
+  ViewBoard,
+  ViewCoverArt,
+} from "../tic-tic-toe/tic-tac-toe-ui";
 import {
   ClientModel,
   ClientMsg,
@@ -163,7 +176,52 @@ export const View = ({
     return <VsBotSetupScreen {...vsBotProps} />;
   }
 
-  return <div onClick={goBack}></div>;
+  const vsBotGameProps = {
+    ...vsBotProps,
+    human: {
+      ...vsBotProps.human,
+      userId: model.player,
+    },
+  };
+
+  const turn = toTurn(model.board);
+  const status = toStatus(model.board);
+
+  return (
+    <div className="flex h-full w-full flex-col ">
+      <div className="flex flex-1 flex-col items-center justify-center">
+        <VsBotPlayerSection {...vsBotGameProps} />
+
+        <LoadingBar
+          className="w-full"
+          disabled={model.userPlayerType === turn || status.type !== "Turn"}
+        />
+        <ViewBoard
+          board={model.board}
+          onClick={(position) => $send({ t: "input-move", position })}
+        />
+      </div>
+      <ViewBottomButtonBar
+        actions={[
+          {
+            icon: <IconArrowLeftOnRect />,
+            label: "Exit",
+            onClick: goBack,
+          },
+          {
+            icon: <IconRightLeft />,
+            label: "Swap sides",
+            onClick: () => $send({ t: "swap-sides" }),
+          },
+          {
+            icon: <IconArrowRotateLeft />,
+            label: "Restart",
+            onClick: () => $send({ t: "restart" }),
+          },
+        ]}
+      />
+    </div>
+  );
 };
 
 export const ViewMsg = ({ msg }: { msg: Msg | ToClient }) => {
