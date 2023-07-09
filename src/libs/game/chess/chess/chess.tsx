@@ -1,5 +1,5 @@
 import { exhaustive, Result, Task } from "@gamezilla/shared/core";
-import * as ChessTs from "chess.ts";
+import * as ChessJS from "chess.js";
 import {
   useCallback,
   useEffect,
@@ -478,7 +478,7 @@ export const toPieceType = (piece: Piece): PieceType => {
 };
 
 export const init = (): Model => {
-  const chessInstance = new ChessTs.Chess();
+  const chessInstance = new ChessJS.Chess();
 
   return {
     fen: chessInstance.fen(),
@@ -487,7 +487,7 @@ export const init = (): Model => {
 };
 
 export const initFromFen = ({ fen }: { fen: string }): Model => {
-  const chessInstance = new ChessTs.Chess();
+  const chessInstance = new ChessJS.Chess();
 
   chessInstance.load(fen);
 
@@ -506,7 +506,7 @@ export const initFromFen = ({ fen }: { fen: string }): Model => {
 //
 
 const createInstance = (model: Model) => {
-  const instance = new ChessTs.Chess();
+  const instance = new ChessJS.Chess();
   instance.load(model.fen);
   return instance;
 };
@@ -542,23 +542,23 @@ export const inCheck = (model: Model): boolean => {
 };
 
 export const inDraw = (model: Model): boolean => {
-  return createInstance(model).inDraw();
+  return createInstance(model).isDraw();
 };
 
 export const inCheckmate = (model: Model): boolean => {
-  return createInstance(model).inCheckmate();
+  return createInstance(model).isCheckmate();
 };
 
 export const inStalemate = (model: Model): boolean => {
-  return createInstance(model).inStalemate();
+  return createInstance(model).isStalemate();
 };
 
 export const insufficientMaterial = (model: Model): boolean => {
-  return createInstance(model).insufficientMaterial();
+  return createInstance(model).isInsufficientMaterial();
 };
 
 export const inThreefoldRepetition = (model: Model): boolean => {
-  return createInstance(model).inThreefoldRepetition();
+  return createInstance(model).isThreefoldRepetition();
 };
 
 export const toMissingPieces = (model: Model) => {
@@ -664,7 +664,7 @@ export const toLegalMoveInputs = (model: Model): MoveInput[] => {
   return moves.flatMap(chessTsMoveToMove);
 };
 
-export const chessTsMoveToMove = (move: ChessTs.Move): MoveInput[] => {
+export const chessTsMoveToMove = (move: ChessJS.Move): MoveInput[] => {
   if (isLowercaseSquare(move.from) && isLowercaseSquare(move.to)) {
     const promotion: PromotionPieceSymbol = isPromotionPieceSymbol(
       move.promotion
@@ -777,7 +777,7 @@ export const View = ({
     (styles, move) => ({
       ...styles,
       [toLowercaseSquare(move.to)]:
-        game.get(move.to) &&
+        game.get(toLowercaseSquare(move.to)) &&
         selectedSquare &&
         game.get(toLowercaseSquare(move.to))?.color !==
           game.get(toLowercaseSquare(selectedSquare))?.color
