@@ -272,22 +272,23 @@ export const View = ({
             }
           />
 
-          {status.type !== "Playing" && (
-            <VsBotGameOverOverlay
-              {...vsBotGameProps}
-              gameOver={
-                status.type === "Tie"
-                  ? { t: "draw" }
-                  : {
-                      t: "winner",
-                      winner:
-                        status.winner === "PlayerOne"
-                          ? "player-one"
-                          : "player-two",
-                    }
-              }
-            />
-          )}
+          <VsBotGameOverOverlay
+            {...vsBotGameProps}
+            fadeInDelay={600}
+            gameOver={
+              status.type === "Tie"
+                ? { t: "draw" }
+                : status.type === "Winner"
+                ? {
+                    t: "winner",
+                    winner:
+                      status.winner === "PlayerOne"
+                        ? "player-one"
+                        : "player-two",
+                  }
+                : null
+            }
+          />
         </div>
       </div>
 

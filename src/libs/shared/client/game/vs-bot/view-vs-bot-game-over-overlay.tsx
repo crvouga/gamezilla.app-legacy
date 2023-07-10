@@ -2,6 +2,7 @@ import { UserId } from "@gamezilla/shared/app";
 import { IconRobot, MyAvatar, VDom } from "@gamezilla/shared/ui";
 import { SpaceViewCtx } from "../game-shared";
 import { PlayerType } from "./view-vs-bot";
+import { Transition, TransitionGroup } from "react-transition-group";
 
 type GameOver =
   | {
@@ -14,7 +15,8 @@ type GameOver =
 
 type Props = {
   ctx: SpaceViewCtx;
-  gameOver: GameOver;
+
+  gameOver: GameOver | null;
   human: {
     userId: UserId;
     player: PlayerType;
@@ -57,17 +59,48 @@ export const runMountAnimation = async (root: HTMLDivElement | null) => {
   root.style.opacity = "1";
 };
 
-export const VsBotGameOverOverlay = (props: Props) => {
+export const VsBotGameOverOverlay = (
+  props: Props & { fadeInDelay?: number }
+) => {
   const { gameOver } = props;
 
   return (
-    <div ref={runMountAnimation} className="absolute inset-0 bg-black/60">
-      {gameOver.t === "winner" && (
-        <Winner {...props} winner={gameOver.winner} />
+    <TransitionGroup className="pointer-events-none" appear>
+      {gameOver && (
+        <Transition
+          mountOnEnter={false}
+          addEndListener={() => {}}
+          onEnter={fadeIn({ delay: props.fadeInDelay ?? 0 })}
+          onExit={fadeOut}>
+          <div ref={runMountAnimation} className="absolute inset-0 bg-black/60">
+            {gameOver.t === "winner" && (
+              <Winner {...props} winner={gameOver.winner} />
+            )}
+            {gameOver.t === "draw" && <Draw {...props} />}
+          </div>
+        </Transition>
       )}
-      {gameOver.t === "draw" && <Draw {...props} />}
-    </div>
+    </TransitionGroup>
   );
+};
+
+const fadeIn =
+  ({ delay }: { delay: number }) =>
+  (node: HTMLElement) => {
+    node.animate([{ opacity: 0 }, { opacity: 1 }], {
+      duration: 200,
+      easing: "ease-in-out",
+      fill: "both",
+      delay,
+    });
+  };
+
+const fadeOut = (node: HTMLElement) => {
+  node.animate([{ opacity: 1 }, { opacity: 0 }], {
+    duration: 200,
+    easing: "ease-in-out",
+    fill: "both",
+  });
 };
 
 const Winner = ({
@@ -93,8 +126,8 @@ const Winner = ({
   );
 
   const playerOneSlot = (
-    <div className="flex flex-col items-center justify-center gap-2">
-      <div className="flex items-center justify-center gap-2">
+    <div className="flex flex-col items-center justify-center gap-3">
+      <div className="flex items-center justify-center gap-3">
         {playerOne.renderIcon({ className: "h-16 w-16" })}
         {human.player === "player-one" ? humanSlot : botSlot}
       </div>
@@ -105,8 +138,8 @@ const Winner = ({
   );
 
   const playerTwoSlot = (
-    <div className="flex flex-col items-center justify-center gap-2">
-      <div className="flex items-center justify-center gap-2">
+    <div className="flex flex-col items-center justify-center gap-3">
+      <div className="flex items-center justify-center gap-3">
         {playerTwo.renderIcon({ className: "h-16 w-16" })}
 
         {human.player === "player-two" ? humanSlot : botSlot}
