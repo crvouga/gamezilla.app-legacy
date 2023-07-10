@@ -458,14 +458,14 @@ export const subscriptions = (ctx: Ctx, model: Model): Sub<Msg> => {
 
 export const View = ({
   ctx: ctxPrev,
-  $send,
+  dispatch,
   model,
   route,
   viewBottomBar,
 }: {
   model: Model;
   ctx: ViewCtx;
-  $send: (m: Msg) => void;
+  dispatch: (m: Msg) => void;
   route: RouteSpace;
   viewBottomBar: VDom;
 }) => {
@@ -482,7 +482,7 @@ export const View = ({
       <ViewSpaceScreen
         spaceId={route.spaceId}
         ctx={ctx}
-        $send={$send}
+        dispatch={dispatch}
         model={model}
       />
     );
@@ -490,7 +490,7 @@ export const View = ({
 
   return (
     <>
-      <ViewSpaceListScreen $send={$send} ctx={ctx} model={model} />
+      <ViewSpaceListScreen dispatch={dispatch} ctx={ctx} model={model} />
       {viewBottomBar}
     </>
   );
@@ -498,13 +498,13 @@ export const View = ({
 
 const ViewSpaceScreen = ({
   ctx,
-  $send,
+  dispatch,
   model,
   spaceId,
 }: {
   model: Model;
   ctx: ViewCtx;
-  $send: (m: Msg) => void;
+  dispatch: (m: Msg) => void;
   spaceId: SpaceId;
 }) => {
   if (
@@ -526,28 +526,28 @@ const ViewSpaceScreen = ({
     hostId: space.hostId,
     space,
     onViewProfile: (input) =>
-      $send({ t: "clicked-user", userId: input.userId }),
-    onQuit: () => $send({ t: "input-game", gameName: undefined }),
+      dispatch({ t: "clicked-user", userId: input.userId }),
+    onQuit: () => dispatch({ t: "input-game", gameName: undefined }),
   };
 
   return (
     <>
-      <ViewPage ctx={spaceCtx} $send={$send} model={model} />
+      <ViewPage ctx={spaceCtx} dispatch={dispatch} model={model} />
 
       <MyDrawer
         open={model.modal === "users"}
-        onClose={() => $send({ t: "modal-closed" })}>
+        onClose={() => dispatch({ t: "modal-closed" })}>
         {spaceCtx && <ViewUsersInSpaceList ctx={spaceCtx} />}
       </MyDrawer>
 
       <MyDrawer
         open={model.modal === "user-preview"}
-        onClose={() => $send({ t: "modal-closed" })}>
+        onClose={() => dispatch({ t: "modal-closed" })}>
         <button
           className="flex w-full flex-col items-center justify-center gap-2 p-4"
           onClick={() => {
             if (model.previewUserId) {
-              $send({
+              dispatch({
                 t: "clicked-user-link",
                 userId: model.previewUserId,
               });
@@ -576,7 +576,7 @@ const ViewSpaceScreen = ({
           <MyButton
             onClick={() => {
               if (model.previewUserId) {
-                $send({
+                dispatch({
                   t: "clicked-user-link",
                   userId: model.previewUserId,
                 });
@@ -593,36 +593,36 @@ const ViewSpaceScreen = ({
 
 const ViewPage = ({
   ctx,
-  $send,
+  dispatch,
   model,
 }: {
   model: Model;
   ctx: SpaceViewCtx;
-  $send: (m: Msg) => void;
+  dispatch: (m: Msg) => void;
 }) => {
   const currentUser = model.users[ctx.currentUserId];
 
   if (!currentUser) {
-    return <ViewSpaceJoinScreen model={model} $send={$send} ctx={ctx} />;
+    return <ViewSpaceJoinScreen model={model} dispatch={dispatch} ctx={ctx} />;
   }
 
   if (currentUser.spaceId !== ctx.space.spaceId) {
-    return <ViewSpaceJoinScreen $send={$send} ctx={ctx} model={model} />;
+    return <ViewSpaceJoinScreen dispatch={dispatch} ctx={ctx} model={model} />;
   }
 
   const game = model.games[ctx.space.spaceId];
   return (
     <div className="flex h-full w-full flex-1 flex-col">
-      <ViewTopBar $send={$send} ctx={ctx} />
+      <ViewTopBar dispatch={dispatch} ctx={ctx} />
       <div className="w-full flex-1 overflow-y-auto">
         {game ? (
           <Game.View
             ctx={ctx}
-            $send={(msg) => $send({ t: "game", c: msg })}
+            dispatch={(msg) => dispatch({ t: "game", c: msg })}
             model={game}
           />
         ) : (
-          <ViewNotInGameScreen ctx={ctx} $send={$send} />
+          <ViewNotInGameScreen ctx={ctx} dispatch={dispatch} />
         )}
       </div>
     </div>
@@ -631,10 +631,10 @@ const ViewPage = ({
 
 const ViewTopBar = ({
   ctx,
-  $send,
+  dispatch,
 }: {
   ctx: SpaceViewCtx;
-  $send: (m: Msg) => void;
+  dispatch: (m: Msg) => void;
 }) => {
   const peopleCount = Object.values(ctx.space.users).length;
   return (
@@ -643,7 +643,7 @@ const ViewTopBar = ({
         <ActionButton
           label="Home"
           icon={<IconHome />}
-          onClick={() => ctx.$push({ t: "space", c: { t: "space-list" } })}
+          onClick={() => ctx.onPush({ t: "space", c: { t: "space-list" } })}
         />
       </div>
 
@@ -651,7 +651,7 @@ const ViewTopBar = ({
         <ActionButton
           label={peopleCount > 1 ? `People (${peopleCount})` : `People`}
           icon={<IconUserGroup />}
-          onClick={() => $send({ t: "modal-open", c: "users" })}
+          onClick={() => dispatch({ t: "modal-open", c: "users" })}
         />
       </div>
 
@@ -663,10 +663,10 @@ const ViewTopBar = ({
         size="sm"
         onClick={() => {
           if (ctx.space.hostId === ctx.currentUserId) {
-            $send({ t: "destroy", userId: ctx.currentUserId });
+            dispatch({ t: "destroy", userId: ctx.currentUserId });
             return;
           }
-          $send({ t: "leave", userId: ctx.currentUserId });
+          dispatch({ t: "leave", userId: ctx.currentUserId });
         }}>
         {ctx.space.hostId === ctx.currentUserId ? "End" : "Leave"}
       </MyButton>
@@ -679,7 +679,7 @@ export const ViewSpaceNotFound = ({ ctx }: { ctx: ViewCtx }) => {
     <div className="flex flex-1 flex-col items-center justify-center gap-4">
       <p className="text-center text-2xl">Space not found</p>
       <MyButton
-        onClick={() => ctx.$push({ t: "space", c: { t: "space-list" } })}
+        onClick={() => ctx.onPush({ t: "space", c: { t: "space-list" } })}
         size="lg"
         variant="contained"
         color="primary">
@@ -693,11 +693,11 @@ export const ViewSpaceNotFound = ({ ctx }: { ctx: ViewCtx }) => {
 export const ViewCurrentSpaceBar = ({
   ctx: ctxPrev,
   model,
-  $send,
+  dispatch,
 }: {
   ctx: ViewCtx;
   model: ClientModel;
-  $send: (msg: ClientMsg) => void;
+  dispatch: (msg: ClientMsg) => void;
 }) => {
   const ctx: ViewCtx = {
     ...ctxPrev,
@@ -729,7 +729,7 @@ export const ViewCurrentSpaceBar = ({
       <button
         className="flex flex-1 items-center overflow-hidden"
         onClick={() => {
-          ctx.$push({ t: "space", c: { t: "space", spaceId: space.spaceId } });
+          ctx.onPush({ t: "space", c: { t: "space", spaceId: space.spaceId } });
         }}>
         <div className="mr-2 p-2">
           {!game && (
@@ -759,10 +759,10 @@ export const ViewCurrentSpaceBar = ({
       <button
         onClick={() => {
           if (ctx.currentUserId === space.hostId) {
-            $send({ t: "destroy", userId: ctx.currentUserId });
+            dispatch({ t: "destroy", userId: ctx.currentUserId });
             return;
           }
-          $send({ t: "leave", userId: ctx.currentUserId });
+          dispatch({ t: "leave", userId: ctx.currentUserId });
         }}
         className="mr-4">
         <IconXMark className="h-8 w-8" />

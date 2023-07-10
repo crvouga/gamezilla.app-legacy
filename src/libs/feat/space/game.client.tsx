@@ -405,11 +405,11 @@ export const subscriptions = (
 export const View = ({
   ctx,
   model,
-  $send,
+  dispatch,
 }: {
   ctx: SpaceViewCtx;
   model: Model;
-  $send: (msg: Msg) => void;
+  dispatch: (msg: Msg) => void;
 }) => {
   switch (model.t) {
     case "connect-four": {
@@ -417,7 +417,7 @@ export const View = ({
         <ConnectFourClient.View
           ctx={ctx}
           model={model.c}
-          $send={(c) => $send({ t: "connect-four", c })}
+          dispatch={(c) => dispatch({ t: "connect-four", c })}
         />
       );
     }
@@ -427,7 +427,7 @@ export const View = ({
         <TicTacToeClient.View
           ctx={ctx}
           model={model.c}
-          $send={(c) => $send({ t: "tic-tac-toe", c })}
+          dispatch={(c) => dispatch({ t: "tic-tac-toe", c })}
         />
       );
     }
@@ -438,14 +438,14 @@ export const View = ({
           ctx={ctx}
           model={model.c}
           gameSpaceCtx={ctx}
-          $send={(c) => $send({ t: "chess", c })}
+          dispatch={(c) => dispatch({ t: "chess", c })}
         />
       );
     }
 
     case "gomoku": {
       return GomokuClient.view({
-        $send: (c) => $send({ t: "gomoku", c }),
+        dispatch: (c) => dispatch({ t: "gomoku", c }),
         model: model.c,
         ctx,
         gameSpaceCtx: ctx,
@@ -455,7 +455,7 @@ export const View = ({
     case "tetris": {
       return (
         <TetrisClient.View
-          $send={(c) => $send({ t: "tetris", c })}
+          dispatch={(c) => dispatch({ t: "tetris", c })}
           model={model.c}
         />
       );
@@ -464,7 +464,7 @@ export const View = ({
     case "snake": {
       return (
         <SnakeClient.View
-          $send={(c) => $send({ t: "snake", c })}
+          dispatch={(c) => dispatch({ t: "snake", c })}
           model={model.c}
           ctx={ctx}
         />
@@ -474,7 +474,7 @@ export const View = ({
     case "maze": {
       return (
         <MazeClient.View
-          $send={(c) => $send({ t: "maze", c })}
+          dispatch={(c) => dispatch({ t: "maze", c })}
           model={model.c}
           ctx={ctx}
         />
@@ -486,7 +486,7 @@ export const View = ({
         <FlowClient.View
           model={model.c}
           ctx={ctx}
-          $send={(c) => $send({ t: "flow", c })}
+          dispatch={(c) => dispatch({ t: "flow", c })}
         />
       );
     }

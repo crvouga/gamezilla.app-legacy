@@ -54,12 +54,12 @@ export const init = ({
       ...initShared,
       requests: {},
     },
-    cmd: async ($send) => {
+    cmd: async (dispatch) => {
       const result = await initialLoad({
         dbConn: ctx.mySql,
         userId: ctx.hostId,
       });
-      $send({ t: "db-got-initial-load", result });
+      dispatch({ t: "db-got-initial-load", result });
     },
   };
 };
@@ -291,11 +291,11 @@ const watchPutInteraction = ({
     };
     return {
       model,
-      cmd: async ($send) => {
+      cmd: async (dispatch) => {
         const result = await PuzzleDb.interactions.insert(ctx.mySql, [
           interaction,
         ]);
-        $send({ t: "db-put-interaction", result });
+        dispatch({ t: "db-put-interaction", result });
       },
     };
   }
@@ -327,12 +327,12 @@ const watchGetPuzzles = ({
           getPuzzles: { t: "loading" },
         },
       },
-      cmd: async ($send) => {
+      cmd: async (dispatch) => {
         const result = await PuzzleDb.puzzles.findForProfile(ctx.mySql, {
           profile: model.profile,
           omit: [model.puzzle.puzzleId, ...model.queue.map((x) => x.puzzleId)],
         });
-        $send({ t: "db-got-puzzles", result });
+        dispatch({ t: "db-got-puzzles", result });
       },
     };
   }
@@ -356,9 +356,9 @@ const watchPutProfile = ({
     const profile = model.profile;
     return {
       model,
-      cmd: async ($send) => {
+      cmd: async (dispatch) => {
         const result = await PuzzleDb.profiles.update(ctx.mySql, profile);
-        $send({ t: "db-put-profile", result });
+        dispatch({ t: "db-put-profile", result });
       },
     };
   }

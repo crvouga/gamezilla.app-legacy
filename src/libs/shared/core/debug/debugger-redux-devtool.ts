@@ -5,19 +5,19 @@
  *
  * @since 0.5.0
  */
-import * as Json from '../json';
-import { Option } from '../option';
-import { p } from '../pipe';
-import { $send } from '../program';
-import { Result } from '../result';
-import { Task } from '../task';
+import * as Json from "../json";
+import { Option } from "../option";
+import { p } from "../pipe";
+import { dispatch } from "../program";
+import { Result } from "../result";
+import { Task } from "../task";
 import {
   Debug,
   Debugger,
   DebuggerDeps,
   Global,
   MsgWithDebug,
-} from './debugger-commons';
+} from "./debugger-commons";
 
 type Unsubscription = () => void;
 
@@ -36,7 +36,7 @@ export interface Extension {
  * @since 0.5.0
  */
 export interface Connection<Model, Msg> {
-  subscribe: (listener?: $send<DevToolMsg>) => Unsubscription;
+  subscribe: (listener?: dispatch<DevToolMsg>) => Unsubscription;
   send(action: null, state: LiftedState<Model>): void;
   send(action: Msg, state: Model): void;
   init: (state: Model) => void;
@@ -47,25 +47,25 @@ export interface Connection<Model, Msg> {
 type DevToolMsg = Start | Action | Monitor;
 
 interface Start {
-  type: 'START';
+  type: "START";
 }
 
 interface Action {
-  type: 'ACTION';
+  type: "ACTION";
   payload: unknown;
 }
 
 interface Monitor {
-  type: 'DISPATCH';
+  type: "DISPATCH";
   payload: {
     type:
-      | 'JUMP_TO_STATE'
-      | 'JUMP_TO_ACTION'
-      | 'RESET'
-      | 'ROLLBACK'
-      | 'COMMIT'
-      | 'IMPORT_STATE'
-      | 'TOGGLE_ACTION';
+      | "JUMP_TO_STATE"
+      | "JUMP_TO_ACTION"
+      | "RESET"
+      | "ROLLBACK"
+      | "COMMIT"
+      | "IMPORT_STATE"
+      | "TOGGLE_ACTION";
     [k: string]: unknown;
   };
   [k: string]: unknown;
@@ -108,7 +108,7 @@ export const getConnection =
 const hasExtension = (
   global: Global
 ): global is Global & { __REDUX_DEVTOOLS_EXTENSION__: Extension } => {
-  return '__REDUX_DEVTOOLS_EXTENSION__' in global;
+  return "__REDUX_DEVTOOLS_EXTENSION__" in global;
 };
 
 /**
@@ -143,8 +143,8 @@ const handleSubscription = <Model, Msg extends {}>(
 
   return (msg) => {
     const result = handler(msg);
-    if (result.t === 'err') {
-      console.warn('[REDUX DEV TOOL]', result.error);
+    if (result.t === "err") {
+      console.warn("[REDUX DEV TOOL]", result.error);
       return;
     }
     result.value();
@@ -156,26 +156,26 @@ const handleSubscription = <Model, Msg extends {}>(
  *
  * This is largely inspired by https://github.com/zalmoxisus/mobx-remotedev/blob/master/src/monitorActions.js
  *
- * **Note:** the monitor can $send messages of any shape that will be re-$sended into the application; these messages **are not validated** and can lead to unexpected behaviours.
+ * **Note:** the monitor can dispatch messages of any shape that will be re-dispatched into the application; these messages **are not validated** and can lead to unexpected behaviours.
  * @since 0.5.0
  */
 const handleIncomingMsg = <Model, Msg extends {}>({
   connection,
   init,
   debug$,
-  $send,
+  dispatch,
 }: DevToolHandlerR<Model, Msg>): ((
   msg: DevToolMsg
 ) => Result<string, Task<void>>) => {
-  const $sendToApp =
+  const dispatchToApp =
     (m: unknown): Task<void> =>
     async () =>
-      $send(m as Msg);
+      dispatch(m as Msg);
 
   const reInit: Task<void> = async () => connection.init(init);
 
   const update = (payload: Model): Task<void> =>
-    $sendToApp({ type: '__DebugUpdateModel__', payload });
+    dispatchToApp({ type: "__DebugUpdateModel__", payload });
 
   const restart =
     (model: Model): Task<void> =>
@@ -187,33 +187,33 @@ const handleIncomingMsg = <Model, Msg extends {}>({
     async () =>
       connection.send(null, state);
 
-  const toggle = toggleAction($send);
+  const toggle = toggleAction(dispatch);
 
   return (msg) => {
     switch (msg.type) {
-      case 'START':
+      case "START":
         return Result.Ok(reInit);
 
-      case 'ACTION': {
+      case "ACTION": {
         const result = Json.parse(String(msg.payload));
         switch (result.t) {
-          case 'err':
+          case "err":
             return Result.Err(result.error.message);
 
-          case 'ok':
-            return Result.Ok($sendToApp(result.value));
+          case "ok":
+            return Result.Ok(dispatchToApp(result.value));
         }
       }
 
-      case 'DISPATCH':
+      case "DISPATCH":
         switch (msg.payload.type) {
-          case 'JUMP_TO_STATE':
+          case "JUMP_TO_STATE":
             return p(parseJump<Model>(msg), Result.map(update));
 
-          case 'JUMP_TO_ACTION':
+          case "JUMP_TO_ACTION":
             return p(parseJump<Model>(msg), Result.map(update));
 
-          case 'RESET':
+          case "RESET":
             return Result.Ok(
               p(
                 update(init),
@@ -221,7 +221,7 @@ const handleIncomingMsg = <Model, Msg extends {}>({
               )
             );
 
-          case 'ROLLBACK':
+          case "ROLLBACK":
             return p(
               parseRollback<Model>(msg),
               Result.map((m) =>
@@ -232,10 +232,10 @@ const handleIncomingMsg = <Model, Msg extends {}>({
               )
             );
 
-          case 'COMMIT':
+          case "COMMIT":
             return Result.Ok(restart(debug$.getValue()[1]));
 
-          case 'IMPORT_STATE':
+          case "IMPORT_STATE":
             return p(
               parseImportState<Model>(msg),
               Result.map((liftedState) =>
@@ -251,7 +251,7 @@ const handleIncomingMsg = <Model, Msg extends {}>({
               )
             );
 
-          case 'TOGGLE_ACTION':
+          case "TOGGLE_ACTION":
             return p(
               parseToggleAction<Model>(msg),
               Result.map(([id, liftedState]) =>
@@ -264,7 +264,7 @@ const handleIncomingMsg = <Model, Msg extends {}>({
         }
 
       default:
-        return Result.Err('unhandled case');
+        return Result.Err("unhandled case");
     }
   };
 };
@@ -279,7 +279,7 @@ const handleActions = <Model, Msg extends {}>({
   connection,
 }: DevToolHandlerR<Model, Msg>): Debug<Model, Msg> => {
   return ([action, model]) =>
-    action.type === 'MESSAGE'
+    action.type === "MESSAGE"
       ? connection.send(action.payload, model)
       : undefined;
 };
@@ -291,7 +291,7 @@ const handleActions = <Model, Msg extends {}>({
  */
 const parseJump = <Model>(msg: Monitor): Result<string, Model> => {
   return p(
-    Json.parse(String(msg['state'])),
+    Json.parse(String(msg["state"])),
     Result.mapErr((problem) => problem.message),
     Result.map(
       (value) =>
@@ -308,7 +308,7 @@ const parseJump = <Model>(msg: Monitor): Result<string, Model> => {
  */
 const parseRollback = <Model>(msg: Monitor): Result<string, Model> => {
   return p(
-    Json.parse(String(msg['state'])),
+    Json.parse(String(msg["state"])),
     Result.mapErr((problem) => problem.message),
     Result.map(
       (u) =>
@@ -326,10 +326,10 @@ const parseRollback = <Model>(msg: Monitor): Result<string, Model> => {
 const parseImportState = <Model>(
   msg: Monitor
 ): Result<string, LiftedState<Model>> => {
-  return typeof msg.payload['nextLiftedState'] === 'object' &&
-    msg.payload['nextLiftedState'] !== null
-    ? Result.Ok(msg.payload['nextLiftedState'] as LiftedState<Model>)
-    : Result.Err('IMPORT_STATE message has some bad payload...');
+  return typeof msg.payload["nextLiftedState"] === "object" &&
+    msg.payload["nextLiftedState"] !== null
+    ? Result.Ok(msg.payload["nextLiftedState"] as LiftedState<Model>)
+    : Result.Err("IMPORT_STATE message has some bad payload...");
 };
 
 /**
@@ -341,17 +341,17 @@ const parseToggleAction = <Model>(
   msg: Monitor
 ): Result<string, [number, LiftedState<Model>]> => {
   const getId = p(
-    msg.payload['id'],
-    Result.fromNullable('TOGGLE_ACTION message has some bad payload...'),
+    msg.payload["id"],
+    Result.fromNullable("TOGGLE_ACTION message has some bad payload..."),
     Result.map((x) => x as number)
   );
 
-  if (getId.t === 'err') {
+  if (getId.t === "err") {
     return getId;
   }
 
   const parseState = p(
-    Json.parse(String(msg['state'])),
+    Json.parse(String(msg["state"])),
     Result.map(
       // @ts-ignore
       (u) => u as LiftedState<Model>
@@ -359,7 +359,7 @@ const parseToggleAction = <Model>(
     Result.mapErr((problem) => problem.message)
   );
 
-  if (parseState.t === 'err') {
+  if (parseState.t === "err") {
     return parseState;
   }
 
@@ -377,7 +377,7 @@ const parseToggleAction = <Model>(
  */
 
 const toggleAction =
-  <Model, Msg extends {}>($send: $send<MsgWithDebug<Model, Msg>>) =>
+  <Model, Msg extends {}>(dispatch: dispatch<MsgWithDebug<Model, Msg>>) =>
   (id: number, liftedState: LiftedState<Model>): Task<LiftedState<Model>> =>
   async () => {
     const state = unsafeCopy(liftedState);
@@ -393,8 +393,8 @@ const toggleAction =
       return state;
     }
 
-    $send({
-      type: '__DebugUpdateModel__',
+    dispatch({
+      type: "__DebugUpdateModel__",
       // @ts-ignore
       payload: computedStates[actionIndex - 1].state,
     });
@@ -414,8 +414,8 @@ const toggleAction =
       }
 
       if (currentActionId) {
-        $send({
-          type: '__DebugApplyMsg__',
+        dispatch({
+          type: "__DebugApplyMsg__",
           // @ts-ignore
           payload: actionsById[currentActionId].action,
         });

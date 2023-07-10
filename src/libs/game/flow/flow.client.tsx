@@ -165,19 +165,19 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 
 export const View = ({
   ctx,
-  $send,
+  dispatch,
   model,
 }: {
   model: Model;
-  $send: (m: Msg) => void;
+  dispatch: (m: Msg) => void;
   ctx: SpaceViewCtx;
 }) => {
   if (model.t === "puzzle-builder") {
     return (
       <PuzzleBuilderClient.View
-        $send={(c) => $send({ t: "puzzle-builder", c })}
+        dispatch={(c) => dispatch({ t: "puzzle-builder", c })}
         ctx={ctx}
-        onExit={() => $send({ t: "input-mode", mode: "none" })}
+        onExit={() => dispatch({ t: "input-mode", mode: "none" })}
         model={model.c}
       />
     );
@@ -186,9 +186,9 @@ export const View = ({
   if (model.t === "play") {
     return (
       <PlayClient.View
-        $send={(c) => $send({ t: "play", c })}
+        dispatch={(c) => dispatch({ t: "play", c })}
         ctx={ctx}
-        onExit={() => $send({ t: "input-mode", mode: "none" })}
+        onExit={() => dispatch({ t: "input-mode", mode: "none" })}
         model={model.c}
       />
     );
@@ -205,7 +205,7 @@ export const View = ({
           title: "Play",
           description: "Start playing puzzles",
           onClick: () => {
-            $send({ t: "input-mode", mode: "play" });
+            dispatch({ t: "input-mode", mode: "play" });
           },
         },
         {
@@ -213,7 +213,7 @@ export const View = ({
           title: "Puzzle builder",
           description: "Build new puzzles to play",
           onClick: () => {
-            $send({ t: "input-mode", mode: "puzzle-builder" });
+            dispatch({ t: "input-mode", mode: "puzzle-builder" });
           },
         },
       ]}

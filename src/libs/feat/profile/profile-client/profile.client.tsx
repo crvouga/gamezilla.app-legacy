@@ -248,14 +248,14 @@ const updateUsernameDraft = ({
 export const View = ({
   model,
   route,
-  $send,
+  dispatch,
   ctx,
   viewBottomBar,
 }: {
   ctx: ViewCtx;
   model: Model;
   route: RouteProfile;
-  $send: (msg: Msg) => void;
+  dispatch: (msg: Msg) => void;
   viewBottomBar: VDom;
 }) => {
   if (route.t === "profile") {
@@ -264,7 +264,7 @@ export const View = ({
         <ViewProfileScreen
           model={model}
           ctx={ctx}
-          $send={$send}
+          dispatch={dispatch}
           userId={route.userId}
         />
 
@@ -274,15 +274,19 @@ export const View = ({
   }
 
   if (route.t === "profile-update") {
-    return <ViewUpdateScreen $send={$send} ctx={ctx} model={model} />;
+    return <ViewUpdateScreen dispatch={dispatch} ctx={ctx} model={model} />;
   }
 
   if (route.t === "profile-update-username") {
-    return <ViewUpdateUsernameScreen $send={$send} ctx={ctx} model={model} />;
+    return (
+      <ViewUpdateUsernameScreen dispatch={dispatch} ctx={ctx} model={model} />
+    );
   }
 
   if (route.t === "profile-update-avatar") {
-    return <ViewUpdateAvatarScreen $send={$send} ctx={ctx} model={model} />;
+    return (
+      <ViewUpdateAvatarScreen dispatch={dispatch} ctx={ctx} model={model} />
+    );
   }
 
   return <LoadingScreen />;
@@ -293,7 +297,7 @@ const ViewUpdateScreen = ({
 }: {
   ctx: ViewCtx;
   model: Model;
-  $send: (msg: Msg) => void;
+  dispatch: (msg: Msg) => void;
 }) => {
   const profile = ctx.profiles[ctx.currentUserId];
   return (
@@ -302,7 +306,7 @@ const ViewUpdateScreen = ({
         left={
           <TopBarBackButton
             onClick={() =>
-              ctx.$push({
+              ctx.onPush({
                 t: "profile",
                 c: { t: "profile", userId: ctx.currentUserId },
               })
@@ -318,7 +322,7 @@ const ViewUpdateScreen = ({
           className="h-28 w-28"
           alt="profile avatar"
           onClick={() =>
-            ctx.$push({ t: "profile", c: { t: "profile-update-avatar" } })
+            ctx.onPush({ t: "profile", c: { t: "profile-update-avatar" } })
           }
         />
 
@@ -328,7 +332,7 @@ const ViewUpdateScreen = ({
           variant="text"
           className="block"
           onClick={() =>
-            ctx.$push({ t: "profile", c: { t: "profile-update-avatar" } })
+            ctx.onPush({ t: "profile", c: { t: "profile-update-avatar" } })
           }>
           Change Avatar
         </MyButton>
@@ -336,7 +340,7 @@ const ViewUpdateScreen = ({
 
       <ViewField
         onClick={() =>
-          ctx.$push({ t: "profile", c: { t: "profile-update-username" } })
+          ctx.onPush({ t: "profile", c: { t: "profile-update-username" } })
         }
         label="Username"
         value={profile?.username}
@@ -375,10 +379,10 @@ export const ViewField = ({
 const ViewUpdateUsernameScreen = ({
   ctx,
   model,
-  $send,
+  dispatch,
 }: {
   model: Model;
-  $send: (msg: Msg) => void;
+  dispatch: (msg: Msg) => void;
   ctx: ViewCtx;
 }) => {
   const inputVal =
@@ -391,7 +395,7 @@ const ViewUpdateUsernameScreen = ({
             variant="text"
             color="primary"
             onClick={() =>
-              ctx.$push({ t: "profile", c: { t: "profile-update" } })
+              ctx.onPush({ t: "profile", c: { t: "profile-update" } })
             }>
             Cancel
           </MyButton>
@@ -404,7 +408,7 @@ const ViewUpdateUsernameScreen = ({
             onClick={() => {
               const username = model.draft?.username;
               if (username) {
-                $send({ t: "change-username", username });
+                dispatch({ t: "change-username", username });
               }
             }}>
             Done
@@ -417,7 +421,9 @@ const ViewUpdateUsernameScreen = ({
           label="Username"
           value={inputVal}
           id={"username"}
-          onChange={(username) => $send({ t: "inputted-username", username })}
+          onChange={(username) =>
+            dispatch({ t: "inputted-username", username })
+          }
         />
       </div>
     </div>

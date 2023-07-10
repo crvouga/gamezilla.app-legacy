@@ -453,13 +453,13 @@ const spaceSub = (now: Posix, model: Model): Sub<Msg> => {
 
 export const View = ({
   model,
-  $send,
+  dispatch,
   now,
 }: {
   isTimeTravelDebugging: boolean;
   now: Posix;
   model: Model;
-  $send: (msg: Msg) => void;
+  dispatch: (msg: Msg) => void;
 }) => {
   return (
     <div className="fixed left-1/2 top-1/2 mx-auto flex h-full max-h-full w-full max-w-md -translate-x-1/2 -translate-y-1/2 touch-none select-none flex-col overflow-hidden border border-neutral-800 bg-black text-white">
@@ -477,14 +477,14 @@ export const View = ({
 
       {model.auth.currentUser.t === "logged-out" && (
         <ViewLoggedOut
-          $send={$send}
+          dispatch={dispatch}
           model={model}
           ctx={{
             now,
             profiles: model.profile.profiles,
-            $back: () => $send({ t: "routing", c: { t: "clicked-back" } }),
-            $push: (route) =>
-              $send({ t: "routing", c: { t: "clicked-link", c: route } }),
+            onBack: () => dispatch({ t: "routing", c: { t: "clicked-back" } }),
+            onPush: (route) =>
+              dispatch({ t: "routing", c: { t: "clicked-link", c: route } }),
           }}
         />
       )}
@@ -492,21 +492,24 @@ export const View = ({
       {model.auth.currentUser.t === "logged-in" && (
         <ViewLoggedIn
           model={model}
-          $send={$send}
+          dispatch={dispatch}
           ctx={{
             now,
             currentUserId: model.auth.currentUser.userId,
             profiles: model.profile.profiles,
-            $push: (route) =>
-              $send({ t: "routing", c: { t: "clicked-link", c: route } }),
-            $back: () => $send({ t: "routing", c: { t: "clicked-back" } }),
+            onPush: (route) =>
+              dispatch({ t: "routing", c: { t: "clicked-link", c: route } }),
+            onBack: () => dispatch({ t: "routing", c: { t: "clicked-back" } }),
           }}
         />
       )}
 
       <Wire.View model={model.wire} />
 
-      <Toast.View model={model.toast} $send={(c) => $send({ t: "toast", c })} />
+      <Toast.View
+        model={model.toast}
+        dispatch={(c) => dispatch({ t: "toast", c })}
+      />
     </div>
   );
 };
@@ -514,16 +517,16 @@ export const View = ({
 const ViewLoggedOut = ({
   model,
   ctx,
-  $send,
+  dispatch,
 }: {
   model: Model;
-  $send: (m: Msg) => void;
+  dispatch: (m: Msg) => void;
   ctx: UnauthenticatedViewCtx;
 }) => {
   if (model.routing.route.t === "auth") {
     return (
       <AuthClient.ViewLoggedOut
-        $send={(m) => $send({ t: "auth", c: m })}
+        dispatch={(m) => dispatch({ t: "auth", c: m })}
         model={model.auth}
         ctx={ctx}
         route={model.routing.route.c}
@@ -533,7 +536,7 @@ const ViewLoggedOut = ({
 
   return (
     <AuthClient.ViewLoggedOut
-      $send={(m) => $send({ t: "auth", c: m })}
+      dispatch={(m) => dispatch({ t: "auth", c: m })}
       model={model.auth}
       ctx={ctx}
       route={{ t: "login" }}
@@ -544,24 +547,26 @@ const ViewLoggedOut = ({
 const ViewLoggedIn = ({
   model,
   ctx,
-  $send,
+  dispatch,
 }: {
   ctx: ViewCtx;
   model: Model;
-  $send: (m: Msg) => void;
+  dispatch: (m: Msg) => void;
 }) => {
   if (model.routing.route.t === "chat") {
     return (
       <ChatClient.View
-        $send={(m) => $send({ t: "chat", c: m })}
+        dispatch={(m) => dispatch({ t: "chat", c: m })}
         model={model.chat}
         ctx={ctx}
         route={model.routing.route.c}
-        viewBottomBar={<ViewBottomBar model={model} $send={$send} ctx={ctx} />}
+        viewBottomBar={
+          <ViewBottomBar model={model} dispatch={dispatch} ctx={ctx} />
+        }
         userSearch={{
           loading: model.profile.requests.search?.t === "loading",
           onInput: (query) => {
-            $send({
+            dispatch({
               t: "profile",
               c: { t: "search", query },
             });
@@ -574,11 +579,13 @@ const ViewLoggedIn = ({
   if (model.routing.route.t === "space") {
     return (
       <SpaceClient.View
-        $send={(m) => $send({ t: "space", c: m })}
+        dispatch={(m) => dispatch({ t: "space", c: m })}
         model={model.space}
         ctx={ctx}
         route={model.routing.route.c}
-        viewBottomBar={<ViewBottomBar model={model} $send={$send} ctx={ctx} />}
+        viewBottomBar={
+          <ViewBottomBar model={model} dispatch={dispatch} ctx={ctx} />
+        }
       />
     );
   }
@@ -586,11 +593,13 @@ const ViewLoggedIn = ({
   if (model.routing.route.t === "profile") {
     return (
       <ProfileClient.View
-        $send={(m) => $send({ t: "profile", c: m })}
+        dispatch={(m) => dispatch({ t: "profile", c: m })}
         model={model.profile}
         ctx={ctx}
         route={model.routing.route.c}
-        viewBottomBar={<ViewBottomBar model={model} $send={$send} ctx={ctx} />}
+        viewBottomBar={
+          <ViewBottomBar model={model} dispatch={dispatch} ctx={ctx} />
+        }
       />
     );
   }
@@ -598,7 +607,7 @@ const ViewLoggedIn = ({
   if (model.routing.route.t === "auth") {
     return (
       <AuthClient.ViewLoggedIn
-        $send={(m) => $send({ t: "auth", c: m })}
+        dispatch={(m) => dispatch({ t: "auth", c: m })}
         ctx={ctx}
         model={model.auth}
       />
@@ -608,9 +617,11 @@ const ViewLoggedIn = ({
   if (model.routing.route.t === "search") {
     return (
       <SearchClient.View
-        $send={(m) => $send({ t: "search", c: m })}
+        dispatch={(m) => dispatch({ t: "search", c: m })}
         model={model.search}
-        viewBottomBar={<ViewBottomBar model={model} $send={$send} ctx={ctx} />}
+        viewBottomBar={
+          <ViewBottomBar model={model} dispatch={dispatch} ctx={ctx} />
+        }
       />
     );
   }
@@ -618,7 +629,7 @@ const ViewLoggedIn = ({
   if (model.routing.route.t === "logout") {
     return (
       <AuthClient.ViewLogoutScreen
-        $send={(m) => $send({ t: "auth", c: m })}
+        dispatch={(m) => dispatch({ t: "auth", c: m })}
         ctx={ctx}
         model={model.auth}
       />
@@ -630,12 +641,12 @@ const ViewLoggedIn = ({
 
 const ViewBottomBar = ({
   model,
-  $send,
+  dispatch,
   ctx,
 }: {
   ctx: ViewCtx;
   model: Model;
-  $send: (m: Msg) => void;
+  dispatch: (m: Msg) => void;
 }) => {
   const items: {
     route: Route;
@@ -667,7 +678,7 @@ const ViewBottomBar = ({
       <SpaceClient.ViewCurrentSpaceBar
         ctx={ctx}
         model={model.space}
-        $send={(c) => $send({ t: "space", c })}
+        dispatch={(c) => dispatch({ t: "space", c })}
       />
       <div className="flex w-full items-center justify-center border-t border-neutral-700">
         {items.map((item) => {
@@ -675,7 +686,7 @@ const ViewBottomBar = ({
           return (
             <button
               key={Route.encode(item.route)}
-              onClick={() => ctx.$push(item.route)}
+              onClick={() => ctx.onPush(item.route)}
               className={cn(
                 "flex flex-1 flex-col items-center justify-center gap-0.5 pb-2 pt-1",
                 isSelected ? "text-blue-500" : "opacity-80"

@@ -122,7 +122,7 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 //
 
 export const View = (_props: {
-  $send: (m: Msg) => void;
+  dispatch: (m: Msg) => void;
   ctx: ViewCtx;
   model: Model;
   onCancel: () => void;

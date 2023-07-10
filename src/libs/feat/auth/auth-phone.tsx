@@ -190,11 +190,11 @@ const allOptions = Iso3166Alpha2Code.all.map((country) => ({
 
 export const View = ({
   model,
-  $send,
+  dispatch,
   ctx,
 }: {
   model: Model;
-  $send: (msg: Msg) => void;
+  dispatch: (msg: Msg) => void;
   ctx: UnauthenticatedViewCtx;
 }) => {
   const filteredOptions = matchSort(
@@ -205,7 +205,7 @@ export const View = ({
   return (
     <div className="w-full flex-1">
       <TopBar
-        left={<TopBarBackButton onClick={ctx.$back} />}
+        left={<TopBarBackButton onClick={ctx.onBack} />}
         title="Login With Phone"
       />
 
@@ -213,7 +213,7 @@ export const View = ({
         className="flex flex-col gap-4 p-4"
         onSubmit={(e) => {
           e.preventDefault();
-          $send({ t: "clicked-send-code" });
+          dispatch({ t: "clicked-send-code" });
         }}>
         <Autocomplete
           label="Country"
@@ -223,11 +223,11 @@ export const View = ({
             </span>
           }
           value={model.country}
-          onChange={(country) => $send({ t: "inputted-country", country })}
-          onClear={() => $send({ t: "inputted-country-query", value: "" })}
+          onChange={(country) => dispatch({ t: "inputted-country", country })}
+          onClear={() => dispatch({ t: "inputted-country-query", value: "" })}
           options={filteredOptions}
           onChangeQuery={(value) =>
-            $send({ t: "inputted-country-query", value })
+            dispatch({ t: "inputted-country-query", value })
           }
           toKey={(x) => x}
           toLabel={(x) => Iso3166Alpha2Code.toNameWithEmoji(x)}
@@ -242,12 +242,14 @@ export const View = ({
           }
           label="Phone Number"
           onChange={(phoneNumber) =>
-            $send({
+            dispatch({
               t: "inputted-phone-number",
               phoneNumber: phoneNumber.replace(/\D/g, ""),
             })
           }
-          onClear={() => $send({ t: "inputted-phone-number", phoneNumber: "" })}
+          onClear={() =>
+            dispatch({ t: "inputted-phone-number", phoneNumber: "" })
+          }
           type="tel"
           value={model.phoneNumber.replace(/\D/g, "")}
           error={

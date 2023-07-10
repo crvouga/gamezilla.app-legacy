@@ -178,17 +178,17 @@ const updatePressedDown = ({
 
 export const View = ({
   model,
-  $send,
+  dispatch,
 }: {
   model: Model;
-  $send: (m: Msg) => void;
+  dispatch: (m: Msg) => void;
 }) => {
   return (
     <FlowGridUI.View
       model={model.grid}
-      onDraggedOver={(nodeId) => $send({ t: "dragged-over", nodeId })}
-      onPressDown={(nodeId) => $send({ t: "pressed-down-node", nodeId })}
-      onPressUp={(nodeId) => $send({ t: "pressed-up", nodeId })}
+      onDraggedOver={(nodeId) => dispatch({ t: "dragged-over", nodeId })}
+      onPressDown={(nodeId) => dispatch({ t: "pressed-down-node", nodeId })}
+      onPressUp={(nodeId) => dispatch({ t: "pressed-up", nodeId })}
       autocompleteEdge={
         model.state.t === "dragging" && model.state.autocompleteEdge
           ? {

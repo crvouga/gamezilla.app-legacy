@@ -1,18 +1,18 @@
-import * as Rx from 'rxjs';
-import { Cmd } from './cmd';
-import { Sub } from './sub';
-import { Task } from './task';
+import * as Rx from "rxjs";
+import { Cmd } from "./cmd";
+import { Sub } from "./sub";
+import { Task } from "./task";
 
-export type Posix = number & { _tag: 'Posix' };
+export type Posix = number & { _tag: "Posix" };
 
 export const Posix = {
   is: (posixTime: unknown): posixTime is Posix => {
-    if (typeof posixTime !== 'number') {
+    if (typeof posixTime !== "number") {
       return false;
     }
 
-    const minPosixTime = new Date('1970-01-01T00:00:00.000Z').getTime();
-    const maxPosixTime = new Date('2038-01-19T03:14:07.999Z').getTime();
+    const minPosixTime = new Date("1970-01-01T00:00:00.000Z").getTime();
+    const maxPosixTime = new Date("2038-01-19T03:14:07.999Z").getTime();
     if (posixTime < minPosixTime || posixTime > maxPosixTime) {
       return false;
     }
@@ -43,12 +43,12 @@ export const startTimeout = <Msg>(
   duration: number,
   msg: Msg
 ): Cmd<Msg> => {
-  return ($send) => {
+  return (dispatch) => {
     timeouts.set(timeoutId, timeoutId);
 
     setTimeout(() => {
       if (timeouts.has(timeoutId)) {
-        $send(msg);
+        dispatch(msg);
         timeouts.delete(timeoutId);
         return;
       }

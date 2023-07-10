@@ -150,14 +150,14 @@ export const updateFromServer = ({
 
 export const View = ({
   model,
-  $send,
+  dispatch,
   ctx,
 }: {
   model: Model;
-  $send: (msg: Msg) => void;
+  dispatch: (msg: Msg) => void;
   ctx: SpaceViewCtx;
 }) => {
-  const onQuit = () => $send({ t: "input-mode", mode: "none" });
+  const onQuit = () => dispatch({ t: "input-mode", mode: "none" });
 
   switch (model.t) {
     case "none": {
@@ -168,10 +168,10 @@ export const View = ({
           renderCoverArt={(props) => <ViewCoverArt {...props} />}
           buttons={[
             mainMenuButtons.playFriend({
-              onClick: () => $send({ mode: "vs-user", t: "input-mode" }),
+              onClick: () => dispatch({ mode: "vs-user", t: "input-mode" }),
             }),
             mainMenuButtons.playComputer({
-              onClick: () => $send({ mode: "vs-bot", t: "input-mode" }),
+              onClick: () => dispatch({ mode: "vs-bot", t: "input-mode" }),
             }),
           ]}
         />
@@ -182,7 +182,7 @@ export const View = ({
       return (
         <VsUser.View
           ctx={ctx}
-          $send={(c) => $send({ t: "vs-user", c })}
+          dispatch={(c) => dispatch({ t: "vs-user", c })}
           model={model.c}
           onQuit={onQuit}
         />
@@ -193,7 +193,7 @@ export const View = ({
       return (
         <VsBot.View
           ctx={ctx}
-          $send={(c) => $send({ t: "vs-bot", c })}
+          dispatch={(c) => dispatch({ t: "vs-bot", c })}
           model={model.c}
           onQuit={onQuit}
         />

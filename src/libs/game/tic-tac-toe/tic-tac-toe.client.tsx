@@ -207,13 +207,13 @@ export const subscriptions = (_model: { model: Model }): Sub<Msg> => {
 export const View = ({
   ctx,
   model,
-  $send,
+  dispatch,
 }: {
   ctx: SpaceViewCtx;
   model: Model;
-  $send: (msg: Msg) => void;
+  dispatch: (msg: Msg) => void;
 }) => {
-  const onQuit = () => $send({ t: "input-mode", mode: "none" });
+  const onQuit = () => dispatch({ t: "input-mode", mode: "none" });
 
   if (model.t === "none") {
     return (
@@ -223,10 +223,10 @@ export const View = ({
         renderCoverArt={(props) => <ViewCoverArt {...props} />}
         buttons={[
           mainMenuButtons.playFriend({
-            onClick: () => $send({ t: "input-mode", mode: "vs-user" }),
+            onClick: () => dispatch({ t: "input-mode", mode: "vs-user" }),
           }),
           mainMenuButtons.playComputer({
-            onClick: () => $send({ t: "input-mode", mode: "vs-bot" }),
+            onClick: () => dispatch({ t: "input-mode", mode: "vs-bot" }),
           }),
         ]}
       />
@@ -239,7 +239,7 @@ export const View = ({
         onCloseGame={onQuit}
         ctx={ctx}
         model={model.c}
-        $send={(c) => $send({ t: "vs-user", c })}
+        dispatch={(c) => dispatch({ t: "vs-user", c })}
       />
     );
   }
@@ -250,7 +250,7 @@ export const View = ({
         goBack={onQuit}
         ctx={ctx}
         model={model.c}
-        $send={(c) => $send({ t: "vs-bot", c })}
+        dispatch={(c) => dispatch({ t: "vs-bot", c })}
       />
     );
   }

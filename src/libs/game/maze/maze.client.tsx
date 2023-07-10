@@ -194,11 +194,11 @@ const colorMap: { [color in Color]: string } = {
 export const View = ({
   model,
   ctx,
-  $send,
+  dispatch,
 }: {
   ctx: SpaceViewCtx;
   model: Model;
-  $send: (msg: Msg) => void;
+  dispatch: (msg: Msg) => void;
 }) => {
   if (model.type === "setup") {
     return <div></div>;
@@ -260,13 +260,13 @@ export const View = ({
               d === "none" ? undefined : d
             )}
             onChange={(direction) =>
-              $send([
+              dispatch([
                 "input-direction",
                 { direction, userId: ctx.currentUserId },
               ])
             }
             onDone={() =>
-              $send([
+              dispatch([
                 "input-direction",
                 { direction: "none", userId: ctx.currentUserId },
               ])
@@ -280,7 +280,7 @@ export const View = ({
               icon={<IconArrowLeftOnRect />}
               label="Exit"
               onClick={() =>
-                $send(["stop-game", { userId: ctx.currentUserId }])
+                dispatch(["stop-game", { userId: ctx.currentUserId }])
               }
             />
           </div>

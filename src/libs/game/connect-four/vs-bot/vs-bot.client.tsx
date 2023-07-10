@@ -187,10 +187,10 @@ export const View = ({
   model,
   onQuit,
   ctx,
-  $send,
+  dispatch,
 }: {
   model: Model;
-  $send: (msg: Msg) => void;
+  dispatch: (msg: Msg) => void;
   onQuit: () => void;
   ctx: SpaceViewCtx;
 }) => {
@@ -200,7 +200,7 @@ export const View = ({
     title: "Connect Four",
     renderCoverArt: (props) => <ViewCoverArt {...props} />,
     canStartGame: model.player !== null,
-    onStartGame: () => $send({ t: "start-game" }),
+    onStartGame: () => dispatch({ t: "start-game" }),
     human: {
       player:
         model.userPlayerType === "PlayerOne" ? "player-one" : "player-two",
@@ -213,15 +213,15 @@ export const View = ({
       label: "Red",
       renderIcon: (props) => <PlayerOneIcon {...props} />,
       onStartPlaying: () =>
-        $send({ t: "start-playing", playerType: "PlayerOne" }),
-      onStopPlaying: () => $send({ t: "stop-playing" }),
+        dispatch({ t: "start-playing", playerType: "PlayerOne" }),
+      onStopPlaying: () => dispatch({ t: "stop-playing" }),
     },
     playerTwo: {
       label: "Yellow",
       renderIcon: (props) => <PlayerTwoIcon {...props} />,
       onStartPlaying: () =>
-        $send({ t: "start-playing", playerType: "PlayerTwo" }),
-      onStopPlaying: () => $send({ t: "stop-playing" }),
+        dispatch({ t: "start-playing", playerType: "PlayerTwo" }),
+      onStopPlaying: () => dispatch({ t: "stop-playing" }),
     },
   };
 
@@ -263,8 +263,8 @@ export const View = ({
               : undefined
           }
           columns={model.columns}
-          onHover={(columnIndex) => $send({ t: "hovered", columnIndex })}
-          onClick={(columnIndex) => $send({ t: "input-move", columnIndex })}
+          onHover={(columnIndex) => dispatch({ t: "hovered", columnIndex })}
+          onClick={(columnIndex) => dispatch({ t: "input-move", columnIndex })}
         />
       </div>
 
@@ -273,17 +273,17 @@ export const View = ({
           {
             label: "Exit",
             icon: <IconArrowLeftOnRect />,
-            onClick: () => $send({ t: "stop-game" }),
+            onClick: () => dispatch({ t: "stop-game" }),
           },
           {
             label: "Swap sides",
             icon: <IconRightLeft />,
-            onClick: () => $send({ t: "swap-sides" }),
+            onClick: () => dispatch({ t: "swap-sides" }),
           },
           {
             label: "Restart",
             icon: <IconArrowRotateLeft />,
-            onClick: () => $send({ t: "restart" }),
+            onClick: () => dispatch({ t: "restart" }),
           },
         ]}
       />

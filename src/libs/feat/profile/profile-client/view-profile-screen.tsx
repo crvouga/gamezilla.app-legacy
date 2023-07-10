@@ -19,7 +19,7 @@ export const ViewProfileScreen = ({
   ctx: ViewCtx;
   userId: UserId;
   model: ClientModel;
-  $send: (msg: ClientMsg) => void;
+  dispatch: (msg: ClientMsg) => void;
 }) => {
   const profile = model.profiles[userId];
 
@@ -47,14 +47,14 @@ export const ViewProfileScreen = ({
           </p>
           <MyButton
             onClick={() =>
-              ctx.$push({ t: "profile", c: { t: "profile-update" } })
+              ctx.onPush({ t: "profile", c: { t: "profile-update" } })
             }
             className="w-full">
             <IconUserPen />
             Edit Profile
           </MyButton>
           <MyButton
-            onClick={() => ctx.$push({ t: "logout" })}
+            onClick={() => ctx.onPush({ t: "logout" })}
             className="w-full">
             <IconArrowLeftOnRect />
             Logout
@@ -67,7 +67,7 @@ export const ViewProfileScreen = ({
   return (
     <div className="flex h-full w-full flex-col">
       <TopBar
-        left={<TopBarBackButton onClick={ctx.$back} />}
+        left={<TopBarBackButton onClick={ctx.onBack} />}
         title={profile.username}
       />
       <div className="flex flex-col items-center justify-center gap-4 overflow-x-hidden p-4">

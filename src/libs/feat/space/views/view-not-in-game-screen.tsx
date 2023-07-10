@@ -8,10 +8,10 @@ import { ClientMsg } from "../space.shared";
 
 export const ViewNotInGameScreen = ({
   ctx,
-  $send,
+  dispatch,
 }: {
   ctx: SpaceViewCtx;
-  $send: (m: ClientMsg) => void;
+  dispatch: (m: ClientMsg) => void;
 }) => {
   if (ctx.space.hostId !== ctx.currentUserId) {
     return (
@@ -31,7 +31,7 @@ export const ViewNotInGameScreen = ({
           {gameNameList.map((gameName) => (
             <div key={gameName}>
               <button
-                onClick={() => $send({ t: "input-game", gameName })}
+                onClick={() => dispatch({ t: "input-game", gameName })}
                 className="flex overflow-hidden rounded-lg">
                 <ViewCoverArt gameName={gameName} />
               </button>

@@ -169,12 +169,12 @@ export const syncWithServer = (
 export const View = ({
   ctx,
   model,
-  $send,
+  dispatch,
   onCloseGame,
 }: {
   ctx: SpaceViewCtx;
   model: Model;
-  $send: (msg: Msg) => void;
+  dispatch: (msg: Msg) => void;
   onCloseGame: () => void;
 }) => {
   if (model.type === "setup") {
@@ -182,7 +182,9 @@ export const View = ({
       <VsUserSetupScreen
         ctx={ctx}
         onQuit={onCloseGame}
-        onStartGame={() => $send(["start-game", { userId: ctx.currentUserId }])}
+        onStartGame={() =>
+          dispatch(["start-game", { userId: ctx.currentUserId }])
+        }
         renderCoverArt={(props) => {
           return (
             <div {...props}>
@@ -199,13 +201,13 @@ export const View = ({
             return <PlayerTypeIcon playerType="X" {...props} />;
           },
           onStartPlaying: () => {
-            $send([
+            dispatch([
               "InputPlayer",
               { playerType: "X", userId: ctx.currentUserId },
             ]);
           },
           onStopPlaying: () => {
-            $send([
+            dispatch([
               "InputPlayer",
               { playerType: "X", userId: ctx.currentUserId },
             ]);
@@ -218,13 +220,13 @@ export const View = ({
             return <PlayerTypeIcon playerType="O" {...props} />;
           },
           onStartPlaying: () => {
-            $send([
+            dispatch([
               "InputPlayer",
               { playerType: "O", userId: ctx.currentUserId },
             ]);
           },
           onStopPlaying: () => {
-            $send([
+            dispatch([
               "InputPlayer",
               { playerType: "O", userId: ctx.currentUserId },
             ]);

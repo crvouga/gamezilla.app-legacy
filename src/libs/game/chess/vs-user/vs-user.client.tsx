@@ -367,11 +367,11 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 export const View = ({
   ctx,
   model,
-  $send,
+  dispatch,
 }: {
   ctx: ViewCtx;
   model: Model;
-  $send: (msg: Msg) => void;
+  dispatch: (msg: Msg) => void;
   onClose: () => void;
 }) => {
   if (model.sharedModel.type === "setup") {
@@ -416,7 +416,7 @@ export const View = ({
             },
           ];
 
-          $send(msg);
+          dispatch(msg);
 
           const inputted = inputMove(msg[1], model.sharedModel);
 
@@ -426,7 +426,7 @@ export const View = ({
 
       <div className="flex-1"></div>
 
-      <ViewGameOverDialog model={model} $send={$send} />
+      <ViewGameOverDialog model={model} dispatch={dispatch} />
     </div>
   );
 };
@@ -435,7 +435,7 @@ const ViewGameOverDialog = ({
   model,
 }: {
   model: Model;
-  $send: (msg: Msg) => void;
+  dispatch: (msg: Msg) => void;
 }) => {
   if (model.sharedModel.type === "setup") {
     return <span>{toGameText(model.sharedModel)}</span>;

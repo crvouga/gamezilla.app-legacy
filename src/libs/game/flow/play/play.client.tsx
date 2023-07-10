@@ -63,18 +63,18 @@ export const syncWithServer = ({
 
 export const View = ({
   model,
-  $send,
+  dispatch,
   onExit,
 }: {
   model: Model;
-  $send: (m: Msg) => void;
+  dispatch: (m: Msg) => void;
   onExit: () => void;
   ctx: SpaceViewCtx;
 }) => {
   return (
     <div className="flex h-full w-full flex-1 flex-col">
       <div className="flex flex-1 items-center justify-center">
-        <FlowGridPlayUI.View $send={$send} model={model} />
+        <FlowGridPlayUI.View dispatch={dispatch} model={model} />
       </div>
       <div className="w-full p-4">
         <MyButton className="w-full" onClick={onExit}>

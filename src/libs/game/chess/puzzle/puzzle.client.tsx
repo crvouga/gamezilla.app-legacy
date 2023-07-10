@@ -163,11 +163,11 @@ export const View = ({
   model,
   onClose,
   ctx,
-  $send,
+  dispatch,
 }: {
   ctx: SpaceViewCtx;
   model: Model;
-  $send: (m: Msg) => void;
+  dispatch: (m: Msg) => void;
   onClose: () => void;
 }) => {
   const durationMs = useMemo(() => {
@@ -243,7 +243,7 @@ export const View = ({
               }}
               boardOrientation={toPlayerColor(model.puzzle)}
               onPieceDrop={(moveInput) => {
-                $send({ t: "input-move", moveInput });
+                dispatch({ t: "input-move", moveInput });
                 return false;
               }}
             />
@@ -270,7 +270,7 @@ export const View = ({
 
       {!isSpectating && (
         <ViewBottomButtonBar
-          actions={toBottomBarActions({ model, onClose, $send })}
+          actions={toBottomBarActions({ model, onClose, dispatch })}
         />
       )}
     </ViewGameBox>
@@ -318,11 +318,11 @@ const formatDuration = (duration: number): string => {
 export const toBottomBarActions = ({
   model,
   onClose,
-  $send,
+  dispatch,
 }: {
   model: Model;
   onClose: () => void;
-  $send: (m: Msg) => void;
+  dispatch: (m: Msg) => void;
 }): BottomBarButtonAction[] => {
   const exit: BottomBarButtonAction = {
     icon: <IconArrowLeftOnRect />,
@@ -334,27 +334,27 @@ export const toBottomBarActions = ({
     icon: <IconLightbulb />,
     label: "Hint",
     disabled: isNoMoreHints(model),
-    onClick: () => $send({ t: "show-hint" }),
+    onClick: () => dispatch({ t: "show-hint" }),
   };
 
   const retry: BottomBarButtonAction = {
     icon: <IconArrowRotateLeft />,
     label: "Retry",
-    onClick: () => $send({ t: "retry" }),
+    onClick: () => dispatch({ t: "retry" }),
     color: "danger",
   };
 
   const skip: BottomBarButtonAction = {
     icon: <IconArrowRight />,
     label: "Skip",
-    onClick: () => $send({ t: "skip" }),
+    onClick: () => dispatch({ t: "skip" }),
   };
 
   const next: BottomBarButtonAction = {
     icon: <IconArrowCircle />,
     label: "Next",
     color: "success",
-    onClick: () => $send({ t: "next" }),
+    onClick: () => dispatch({ t: "next" }),
   };
 
   if (model.t === "loading") {

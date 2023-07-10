@@ -230,12 +230,12 @@ export const view = ({
   model,
   ctx,
   gameSpaceCtx,
-  $send,
+  dispatch,
 }: {
   model: Model;
   ctx: ViewCtx;
   gameSpaceCtx: SpaceViewCtx;
-  $send: (m: Msg) => void;
+  dispatch: (m: Msg) => void;
 }) => {
   switch (model.t) {
     case "none": {
@@ -247,7 +247,7 @@ export const view = ({
           buttons={[
             mainMenuButtons.playComputer({
               onClick: () =>
-                $send({
+                dispatch({
                   t: "input-mode",
                   userId: ctx.currentUserId,
                   mode: "vs-bot",
@@ -256,7 +256,7 @@ export const view = ({
 
             mainMenuButtons.playFriend({
               onClick: () =>
-                $send({
+                dispatch({
                   t: "input-mode",
                   userId: ctx.currentUserId,
                   mode: "vs-user",
@@ -273,9 +273,13 @@ export const view = ({
           model={model.c}
           ctx={ctx}
           onBack={() =>
-            $send({ t: "input-mode", mode: "none", userId: ctx.currentUserId })
+            dispatch({
+              t: "input-mode",
+              mode: "none",
+              userId: ctx.currentUserId,
+            })
           }
-          $send={(c) => $send({ t: "vs-bot", c })}
+          dispatch={(c) => dispatch({ t: "vs-bot", c })}
         />
       );
     }
@@ -286,9 +290,13 @@ export const view = ({
           model={model.c}
           ctx={ctx}
           onCancel={() =>
-            $send({ t: "input-mode", mode: "none", userId: ctx.currentUserId })
+            dispatch({
+              t: "input-mode",
+              mode: "none",
+              userId: ctx.currentUserId,
+            })
           }
-          $send={(c) => $send({ t: "vs-user", c })}
+          dispatch={(c) => dispatch({ t: "vs-user", c })}
         />
       );
     }

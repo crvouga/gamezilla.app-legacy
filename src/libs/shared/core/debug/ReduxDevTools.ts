@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import * as Rx from 'rxjs';
-import { Cmd } from '../cmd';
-import * as Json from '../json';
-import { Option } from '../option';
-import { p } from '../pipe';
-import * as Platform from '../program';
-import { $send } from '../program';
-import { Result } from '../result';
-import { Task } from '../task';
-import { Debug, Debugger, Global, MsgWithDebug } from './debugger-commons';
+import * as Rx from "rxjs";
+import { Cmd } from "../cmd";
+import * as Json from "../json";
+import { Option } from "../option";
+import { p } from "../pipe";
+import * as Platform from "../program";
+import { dispatch } from "../program";
+import { Result } from "../result";
+import { Task } from "../task";
+import { Debug, Debugger, Global, MsgWithDebug } from "./debugger-commons";
 
 type Unsubscribe = () => void;
 
@@ -30,7 +30,7 @@ export interface Extension {
  * @since 0.5.0
  */
 export interface Connection<Model, Msg> {
-  subscribe: (listener?: $send<DevToolMsg>) => Unsubscribe;
+  subscribe: (listener?: dispatch<DevToolMsg>) => Unsubscribe;
   send(action: null, state: LiftedState<Model>): void;
   send(action: Msg, state: Model): void;
   init: (state: Model) => void;
@@ -41,25 +41,25 @@ export interface Connection<Model, Msg> {
 type DevToolMsg = Start | Action | Monitor;
 
 interface Start {
-  type: 'START';
+  type: "START";
 }
 
 interface Action {
-  type: 'ACTION';
+  type: "ACTION";
   payload: unknown;
 }
 
 interface Monitor {
-  type: 'DISPATCH';
+  type: "DISPATCH";
   payload: {
     type:
-      | 'JUMP_TO_STATE'
-      | 'JUMP_TO_ACTION'
-      | 'RESET'
-      | 'ROLLBACK'
-      | 'COMMIT'
-      | 'IMPORT_STATE'
-      | 'TOGGLE_ACTION';
+      | "JUMP_TO_STATE"
+      | "JUMP_TO_ACTION"
+      | "RESET"
+      | "ROLLBACK"
+      | "COMMIT"
+      | "IMPORT_STATE"
+      | "TOGGLE_ACTION";
     [k: string]: unknown;
   };
   [k: string]: unknown;
@@ -78,7 +78,7 @@ interface LiftedState<Model> {
 interface DevToolHandlerR<Model, Msg extends object> {
   init: Model;
   //   debug$: Rx.BehaviorSubject<DebugData<Model, Msg>>
-  $send: Platform.$send<MsgWithDebug<Model, Msg>>;
+  dispatch: Platform.dispatch<MsgWithDebug<Model, Msg>>;
   connection: Connection<Model, Msg>;
 }
 
@@ -103,7 +103,7 @@ export const getConnection = <Model, Msg>(
 const hasExtension = (
   global: Global
 ): global is Global & { __REDUX_DEVTOOLS_EXTENSION__: Extension } => {
-  return '__REDUX_DEVTOOLS_EXTENSION__' in global;
+  return "__REDUX_DEVTOOLS_EXTENSION__" in global;
 };
 
 /**
@@ -139,8 +139,8 @@ const handleSubscription = <Model, Msg extends object>(
   return (msg) => {
     const result = handler(msg);
 
-    if (result.t === 'err') {
-      console.warn('[REDUX DEV TOOL]', result.error);
+    if (result.t === "err") {
+      console.warn("[REDUX DEV TOOL]", result.error);
       return;
     }
 
@@ -153,31 +153,31 @@ const handleSubscription = <Model, Msg extends object>(
  *
  * This is largely inspired by https://github.com/zalmoxisus/mobx-remotedev/blob/master/src/monitorActions.js
  *
- * **Note:** the monitor can $send messages of any shape that will be re-$sended into the application; these messages **are not validated** and can lead to unexpected behaviors.
+ * **Note:** the monitor can dispatch messages of any shape that will be re-dispatched into the application; these messages **are not validated** and can lead to unexpected behaviors.
  * @since 0.5.0
  */
 const handleIncomingMsg = <Model, Msg extends object>({
   connection,
   init,
   //   debug$,
-  $send,
+  dispatch,
 }: DevToolHandlerR<Model, Msg>): ((
   msg: DevToolMsg
 ) => Result<string, Task<void>>) => {
-  const $sendToApp =
+  const dispatchToApp =
     (m: unknown): Task<void> =>
     async () =>
-      $send(m as Msg);
+      dispatch(m as Msg);
 
   const initAgain: Task<void> = p(
     async () => {
       connection.init(init);
     },
-    Task.chain(() => $sendToApp({ type: '__DebugStarted__' }))
+    Task.chain(() => dispatchToApp({ type: "__DebugStarted__" }))
   );
 
   const update = (payload: Model): Task<void> =>
-    $sendToApp({ type: '__DebugUpdateModel__', payload });
+    dispatchToApp({ type: "__DebugUpdateModel__", payload });
 
   const restart =
     (model: Model): Task<void> =>
@@ -189,37 +189,37 @@ const handleIncomingMsg = <Model, Msg extends object>({
     async () =>
       connection.send(null, state);
 
-  const toggle = toggleAction($send);
+  const toggle = toggleAction(dispatch);
 
   return (msg) => {
     switch (msg.type) {
-      case 'START':
+      case "START":
         return Result.Ok(initAgain);
 
-      case 'ACTION': {
+      case "ACTION": {
         const result = Json.parse(String(msg.payload));
         switch (result.t) {
-          case 'err':
+          case "err":
             return Result.Err(result.error.message);
 
-          case 'ok':
-            return Result.Ok($sendToApp(result.value));
+          case "ok":
+            return Result.Ok(dispatchToApp(result.value));
 
           default: {
-            return Result.Err('Unknown result type');
+            return Result.Err("Unknown result type");
           }
         }
       }
 
-      case 'DISPATCH':
+      case "DISPATCH":
         switch (msg.payload.type) {
-          case 'JUMP_TO_STATE':
+          case "JUMP_TO_STATE":
             return p(parseJump<Model>(msg), Result.map(update));
 
-          case 'JUMP_TO_ACTION':
+          case "JUMP_TO_ACTION":
             return p(parseJump<Model>(msg), Result.map(update));
 
-          case 'RESET':
+          case "RESET":
             return Result.Ok(
               p(
                 update(init),
@@ -227,7 +227,7 @@ const handleIncomingMsg = <Model, Msg extends object>({
               )
             );
 
-          case 'ROLLBACK':
+          case "ROLLBACK":
             return p(
               parseRollback<Model>(msg),
               Result.map((m) =>
@@ -238,13 +238,13 @@ const handleIncomingMsg = <Model, Msg extends object>({
               )
             );
 
-          case 'COMMIT':
+          case "COMMIT":
             return Result.Ok(async () => {
               //
             });
           // return Result.Ok(restart(debug$.getValue()[1]))
 
-          case 'IMPORT_STATE':
+          case "IMPORT_STATE":
             return p(
               parseImportState<Model>(msg),
               Result.map((liftedState) =>
@@ -261,7 +261,7 @@ const handleIncomingMsg = <Model, Msg extends object>({
               )
             );
 
-          case 'TOGGLE_ACTION':
+          case "TOGGLE_ACTION":
             return p(
               parseToggleAction<Model>(msg),
               Result.map(([id, liftedState]) =>
@@ -286,7 +286,7 @@ const handleActions = <Model, Msg extends object>({
   connection,
 }: DevToolHandlerR<Model, Msg>): Debug<Model, Msg> => {
   return ([action, model]) =>
-    action.type === 'MESSAGE'
+    action.type === "MESSAGE"
       ? connection.send(action.payload, model)
       : undefined;
 };
@@ -298,7 +298,7 @@ const handleActions = <Model, Msg extends object>({
  */
 const parseJump = <Model>(msg: Monitor): Result<string, Model> => {
   return p(
-    Json.parse(String(msg['state'])),
+    Json.parse(String(msg["state"])),
     Result.mapErr((problem) => problem.message),
     Result.map(
       (value) =>
@@ -315,7 +315,7 @@ const parseJump = <Model>(msg: Monitor): Result<string, Model> => {
  */
 const parseRollback = <Model>(msg: Monitor): Result<string, Model> => {
   return p(
-    Json.parse(String(msg['state'])),
+    Json.parse(String(msg["state"])),
     Result.mapErr((problem) => problem.message),
     Result.map(
       (u) =>
@@ -333,10 +333,10 @@ const parseRollback = <Model>(msg: Monitor): Result<string, Model> => {
 const parseImportState = <Model>(
   msg: Monitor
 ): Result<string, LiftedState<Model>> => {
-  return typeof msg.payload['nextLiftedState'] === 'object' &&
-    msg.payload['nextLiftedState'] !== null
-    ? Result.Ok(msg.payload['nextLiftedState'] as LiftedState<Model>)
-    : Result.Err('IMPORT_STATE message has some bad payload...');
+  return typeof msg.payload["nextLiftedState"] === "object" &&
+    msg.payload["nextLiftedState"] !== null
+    ? Result.Ok(msg.payload["nextLiftedState"] as LiftedState<Model>)
+    : Result.Err("IMPORT_STATE message has some bad payload...");
 };
 
 /**
@@ -348,17 +348,17 @@ const parseToggleAction = <Model>(
   msg: Monitor
 ): Result<string, [number, LiftedState<Model>]> => {
   const getId = p(
-    msg.payload['id'],
-    Result.fromNullable('TOGGLE_ACTION message has some bad payload...'),
+    msg.payload["id"],
+    Result.fromNullable("TOGGLE_ACTION message has some bad payload..."),
     Result.map((x) => x as number)
   );
 
-  if (getId.t === 'err') {
+  if (getId.t === "err") {
     return getId;
   }
 
   const parseState = p(
-    Json.parse(String(msg['state'])),
+    Json.parse(String(msg["state"])),
     Result.map(
       // @ts-ignore
       (u) => u as LiftedState<Model>
@@ -366,7 +366,7 @@ const parseToggleAction = <Model>(
     Result.mapErr((problem) => problem.message)
   );
 
-  if (parseState.t === 'err') {
+  if (parseState.t === "err") {
     return parseState;
   }
 
@@ -384,7 +384,7 @@ const parseToggleAction = <Model>(
  */
 
 const toggleAction =
-  <Model, Msg extends object>($send: $send<MsgWithDebug<Model, Msg>>) =>
+  <Model, Msg extends object>(dispatch: dispatch<MsgWithDebug<Model, Msg>>) =>
   (id: number, liftedState: LiftedState<Model>): Task<LiftedState<Model>> =>
   async () => {
     const state = unsafeCopy(liftedState);
@@ -400,8 +400,8 @@ const toggleAction =
       return state;
     }
 
-    $send({
-      type: '__DebugUpdateModel__',
+    dispatch({
+      type: "__DebugUpdateModel__",
       // @ts-ignore
       payload: computedStates[actionIndex - 1].state,
     });
@@ -421,8 +421,8 @@ const toggleAction =
       }
 
       if (currentActionId) {
-        $send({
-          type: '__DebugApplyMsg__',
+        dispatch({
+          type: "__DebugApplyMsg__",
           // @ts-ignore
           payload: actionsById[currentActionId].action,
         });
@@ -457,7 +457,7 @@ export const withDebugger = <Model, Msg extends object>(
 ): { program: Platform.Program<Model, Msg>; stopDebugger: () => void } => {
   const maybeConnection = getConnection<Model, Msg>(window);
 
-  if (maybeConnection.type === 'none') {
+  if (maybeConnection.type === "none") {
     return {
       program,
       stopDebugger: () => {
@@ -468,29 +468,29 @@ export const withDebugger = <Model, Msg extends object>(
 
   const connection = maybeConnection.value;
 
-  const debuggerStarted$ = new Rx.Subject<'STARTED'>();
+  const debuggerStarted$ = new Rx.Subject<"STARTED">();
 
   const unsubscribe = connection.subscribe(
     handleSubscription({
       connection,
       init: program.state$.getValue().model,
-      $send: (msg) => {
-        if (!('type' in msg)) {
+      dispatch: (msg) => {
+        if (!("type" in msg)) {
           return;
         }
 
         switch (msg.type) {
-          case '__DebugApplyMsg__': {
-            program.$send(msg.payload);
+          case "__DebugApplyMsg__": {
+            program.dispatch(msg.payload);
             return;
           }
 
-          case '__DebugStarted__': {
-            debuggerStarted$.next('STARTED');
+          case "__DebugStarted__": {
+            debuggerStarted$.next("STARTED");
             return;
           }
 
-          case '__DebugUpdateModel__': {
+          case "__DebugUpdateModel__": {
             const current = program.state$.getValue();
             program.state$.next({
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -554,7 +554,7 @@ type AnyMsg = {
 } & Record<string, unknown>;
 
 const isAnyMsg = (msg: unknown): msg is AnyMsg => {
-  return typeof msg === 'object' && msg !== null && 't' in msg;
+  return typeof msg === "object" && msg !== null && "t" in msg;
 };
 
 const toMsgType = (msg: AnyMsg): string => {
@@ -591,22 +591,22 @@ const toAction = (action: unknown): { type: string; payload?: unknown } => {
 
   if (!Array.isArray(action)) {
     return {
-      type: 'UnknownAction',
+      type: "UnknownAction",
     };
   }
 
   const flatten = flattenDeep(action);
 
   const actionType = flatten
-    .flatMap((item) => (typeof item === 'string' ? [item] : []))
+    .flatMap((item) => (typeof item === "string" ? [item] : []))
     // .map((item) => (Uuid.is(item) ? "[id]" : item))
-    .join('.');
+    .join(".");
 
   const payload = flatten[flatten.length - 1];
 
   return {
     type: actionType,
-    payload: typeof payload === 'string' ? undefined : payload,
+    payload: typeof payload === "string" ? undefined : payload,
   };
 };
 

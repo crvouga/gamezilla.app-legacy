@@ -1,6 +1,6 @@
-import * as Rx from 'rxjs';
-import { Cmd } from '../cmd';
-import { Sub } from '../sub';
+import * as Rx from "rxjs";
+import { Cmd } from "../cmd";
+import { Sub } from "../sub";
 
 //
 //
@@ -17,26 +17,26 @@ export type DebugData<Model, Msg> = [DebugAction<Msg>, Model];
 export type DebugAction<Msg> = DebugInit | DebugMsg<Msg>;
 
 export interface DebugInit {
-  type: 'INIT';
+  type: "INIT";
 }
 
-export const debugInit = (): DebugInit => ({ type: 'INIT' });
+export const debugInit = (): DebugInit => ({ type: "INIT" });
 
 export interface DebugMsg<Msg> {
-  type: 'MESSAGE';
+  type: "MESSAGE";
   payload: Msg;
 }
 
 export const debugMsg = <Msg>(payload: Msg): DebugMsg<Msg> => ({
-  type: 'MESSAGE',
+  type: "MESSAGE",
   payload,
 });
 
 export type MsgWithDebug<Model, Msg extends {}> =
   | Msg
-  | { type: '__DebugUpdateModel__'; payload: Model }
-  | { type: '__DebugApplyMsg__'; payload: Msg }
-  | { type: '__DebugStarted__' };
+  | { type: "__DebugUpdateModel__"; payload: Model }
+  | { type: "__DebugApplyMsg__"; payload: Msg }
+  | { type: "__DebugStarted__" };
 
 export interface Debug<Model, Msg extends {}> {
   (data: DebugData<Model, Msg>): void;
@@ -52,13 +52,13 @@ export interface Debugger<Model, Msg extends {}> {
 export interface DebuggerDeps<Model, Msg extends {}> {
   init: Model;
   debug$: Rx.BehaviorSubject<DebugData<Model, Msg>>;
-  $send: (m: MsgWithDebug<Model, Msg>) => void;
+  dispatch: (m: MsgWithDebug<Model, Msg>) => void;
 }
 
 /**
  * Adds debugging capability to the provided `update` function.
  *
- * It tracks through the `debug$` stream every `Message` $sended and resulting `Model` update.
+ * It tracks through the `debug$` stream every `Message` dispatched and resulting `Model` update.
  *
  * It also lets directly updating the application's state with a special `Message` of type:
  *
@@ -80,7 +80,7 @@ export interface DebuggerDeps<Model, Msg extends {}> {
  * @since 0.5.3
  */
 
-export const DEBUG_ID_KEY = 'debugId';
+export const DEBUG_ID_KEY = "debugId";
 
 const makeDebugIdGen = function* () {
   let id = 0;
@@ -103,15 +103,15 @@ export const updateWithDebug =
     update: (msg: Msg, model: Model) => [Model, Cmd<Msg>];
   }) =>
   (msg: MsgWithDebug<Model, Msg>, model: Model): [Model, Cmd<Msg>] => {
-    if ('type' in msg) {
+    if ("type" in msg) {
       switch (msg.type) {
-        case '__DebugUpdateModel__':
+        case "__DebugUpdateModel__":
           return [msg.payload, Cmd.None];
 
-        case '__DebugApplyMsg__':
+        case "__DebugApplyMsg__":
           return [update(msg.payload, model)[0], Cmd.None];
 
-        case '__DebugStarted__':
+        case "__DebugStarted__":
           return [model, Cmd.None];
       }
     }

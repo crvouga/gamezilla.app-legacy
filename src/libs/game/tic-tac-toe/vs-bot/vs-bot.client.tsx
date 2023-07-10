@@ -136,12 +136,12 @@ export const View = ({
   goBack,
   model,
   ctx,
-  $send,
+  dispatch,
 }: {
   ctx: SpaceViewCtx;
   goBack: () => void;
   model: Model;
-  $send: (msg: Msg) => void;
+  dispatch: (msg: Msg) => void;
 }) => {
   const vsBotProps: VsBotProps = {
     bot: {
@@ -154,18 +154,18 @@ export const View = ({
       userId: model.player ?? null,
     },
     onQuit: goBack,
-    onStartGame: () => $send({ t: "start-game" }),
+    onStartGame: () => dispatch({ t: "start-game" }),
     playerOne: {
       label: "Cross",
-      onStartPlaying: () => $send({ t: "start-playing", playerType: "X" }),
-      onStopPlaying: () => $send({ t: "stop-playing" }),
+      onStartPlaying: () => dispatch({ t: "start-playing", playerType: "X" }),
+      onStopPlaying: () => dispatch({ t: "stop-playing" }),
       renderIcon: (props) => <PlayerTypeIcon {...props} playerType="X" />,
     },
 
     playerTwo: {
       label: "Naught",
-      onStartPlaying: () => $send({ t: "start-playing", playerType: "O" }),
-      onStopPlaying: () => $send({ t: "stop-playing" }),
+      onStartPlaying: () => dispatch({ t: "start-playing", playerType: "O" }),
+      onStopPlaying: () => dispatch({ t: "stop-playing" }),
       renderIcon: (props) => <PlayerTypeIcon {...props} playerType="O" />,
     },
     renderCoverArt: (props) => <ViewCoverArt {...props} />,
@@ -198,7 +198,7 @@ export const View = ({
         />
         <ViewBoard
           board={model.board}
-          onClick={(position) => $send({ t: "input-move", position })}
+          onClick={(position) => dispatch({ t: "input-move", position })}
         />
       </div>
       <ViewBottomButtonBar
@@ -211,12 +211,12 @@ export const View = ({
           {
             icon: <IconRightLeft />,
             label: "Swap sides",
-            onClick: () => $send({ t: "swap-sides" }),
+            onClick: () => dispatch({ t: "swap-sides" }),
           },
           {
             icon: <IconArrowRotateLeft />,
             label: "Restart",
-            onClick: () => $send({ t: "restart" }),
+            onClick: () => dispatch({ t: "restart" }),
           },
         ]}
       />

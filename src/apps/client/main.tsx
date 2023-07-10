@@ -94,7 +94,7 @@ const main = () => {
         isTimeTravelDebugging={state.model._debugId < state.runningDebugId}
         now={state.model._now}
         model={state.model}
-        $send={program.$send}
+        dispatch={program.dispatch}
       />
     );
   });

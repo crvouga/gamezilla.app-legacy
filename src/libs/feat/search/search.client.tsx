@@ -105,11 +105,11 @@ export const updateFromServer = ({
 
 export const View = ({
   model,
-  $send,
+  dispatch,
   viewBottomBar,
 }: {
   model: Model;
-  $send: (msg: Msg) => void;
+  dispatch: (msg: Msg) => void;
   viewBottomBar: VDom;
 }) => {
   //   const request = model.requests[model.searchText] ?? { type: 'not-asked' };
@@ -132,12 +132,12 @@ export const View = ({
               placeholder="Search"
               value={model.searchText}
               onChange={(event) =>
-                $send({
+                dispatch({
                   t: "inputted-search-text",
                   searchText: event.target.value,
                 })
               }></input>
-            <button onClick={() => $send({ t: "clicked-clear" })}>
+            <button onClick={() => dispatch({ t: "clicked-clear" })}>
               <IconXMark />
             </button>
           </div>
@@ -149,7 +149,7 @@ export const View = ({
               <button
                 className="flex w-full items-center gap-4 p-4 hover:bg-neutral-700"
                 onClick={() =>
-                  $send({ t: "clicked-result", userId: result.userId })
+                  dispatch({ t: "clicked-result", userId: result.userId })
                 }>
                 {result.username}
               </button>

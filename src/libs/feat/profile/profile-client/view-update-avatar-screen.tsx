@@ -6,17 +6,17 @@ import { ClientModel, ClientMsg } from "../profile.shared";
 export const ViewUpdateAvatarScreen = ({
   ctx,
   model,
-  $send,
+  dispatch,
 }: {
   ctx: ViewCtx;
   model: ClientModel;
-  $send: (msg: ClientMsg) => void;
+  dispatch: (msg: ClientMsg) => void;
 }) => {
   return (
     <div className="flex h-full w-full flex-col items-center">
       <TopBar
         left={
-          <MyButton color="primary" variant="text" onClick={() => ctx.$back()}>
+          <MyButton color="primary" variant="text" onClick={() => ctx.onBack()}>
             Cancel
           </MyButton>
         }
@@ -45,12 +45,14 @@ export const ViewUpdateAvatarScreen = ({
           <MyTextField
             label="Seed"
             value={model.draft?.avatarSeed ?? ""}
-            onChange={(val) => $send({ t: "inputted-avatar-seed", seed: val })}
+            onChange={(val) =>
+              dispatch({ t: "inputted-avatar-seed", seed: val })
+            }
             id="seed"
           />
 
           <MyButton
-            onClick={() => $send({ t: "clicked-generate-random-seed" })}>
+            onClick={() => dispatch({ t: "clicked-generate-random-seed" })}>
             Random seed
           </MyButton>
         </div>

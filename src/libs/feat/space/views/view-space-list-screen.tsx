@@ -13,12 +13,12 @@ import { ClientModel, ClientMsg } from "../space.shared";
 
 export const ViewSpaceListScreen = ({
   ctx,
-  $send,
+  dispatch,
   model,
 }: {
   model: ClientModel;
   ctx: ViewCtx;
-  $send: (m: ClientMsg) => void;
+  dispatch: (m: ClientMsg) => void;
 }) => {
   const user = model.users[ctx.currentUserId];
   const currentSpace = user ? model.spaces[user.spaceId] : undefined;
@@ -80,7 +80,7 @@ export const ViewSpaceListScreen = ({
                   users={users}
                   gameName={gameName}
                   onClick={() => {
-                    ctx.$push({
+                    ctx.onPush({
                       t: "space",
                       c: { t: "space", spaceId: space.spaceId },
                     });
@@ -98,7 +98,9 @@ export const ViewSpaceListScreen = ({
             size="lg"
             className="w-full"
             color="primary"
-            onClick={() => $send({ t: "create", spaceId: SpaceId.generate() })}>
+            onClick={() =>
+              dispatch({ t: "create", spaceId: SpaceId.generate() })
+            }>
             Create space
           </MyButton>
         </div>

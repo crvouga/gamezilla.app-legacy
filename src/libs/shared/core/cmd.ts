@@ -1,20 +1,20 @@
-import { p } from './pipe';
-import { Task } from './task';
+import { p } from "./pipe";
+import { Task } from "./task";
 
-export type Cmd<Msg = never> = ($send: (msg: Msg) => void) => void;
+export type Cmd<Msg = never> = (dispatch: (msg: Msg) => void) => void;
 
 const of = <Msg>(msg: Msg): Cmd<Msg> => {
-  return ($send) => {
-    $send(msg);
+  return (dispatch) => {
+    dispatch(msg);
   };
 };
 
 const map =
   <A, B>(mapper: (a: A) => B) =>
   (cmd: Cmd<A>): Cmd<B> => {
-    return ($send) => {
+    return (dispatch) => {
       cmd((a) => {
-        $send(mapper(a));
+        dispatch(mapper(a));
       });
     };
   };
@@ -22,10 +22,10 @@ const map =
 const chain =
   <A, B>(mapper: (a: A) => Cmd<B>) =>
   (cmd: Cmd<A>): Cmd<B> => {
-    return ($send) => {
+    return (dispatch) => {
       cmd((a) => {
         mapper(a)((b) => {
-          $send(b);
+          dispatch(b);
         });
       });
     };
@@ -58,11 +58,11 @@ const tag_ = <Tag extends string, Msg>(
 };
 
 const batch = <Msg>(cmdList: (Cmd<Msg> | undefined | null)[]): Cmd<Msg> => {
-  return ($send) => {
+  return (dispatch) => {
     for (let i = 0; i < cmdList.length; i++) {
       const cmd = cmdList[i];
       if (cmd) {
-        cmd($send);
+        cmd(dispatch);
       }
     }
   };
@@ -75,9 +75,9 @@ const None: Cmd = () => {
 const perform =
   <A, Msg>(f: (a: A) => Msg) =>
   (task: Task<A>): Cmd<Msg> => {
-    return async ($send) => {
+    return async (dispatch) => {
       const value = await task();
-      $send(f(value));
+      dispatch(f(value));
     };
   };
 

@@ -11,11 +11,11 @@ import { ClientModel, ClientMsg } from "../space.shared";
 export const ViewSpaceJoinScreen = ({
   model,
   ctx,
-  $send,
+  dispatch,
 }: {
   ctx: SpaceViewCtx;
   model: ClientModel;
-  $send: (msg: ClientMsg) => void;
+  dispatch: (msg: ClientMsg) => void;
 }) => {
   const host = ctx.profiles[ctx.space.hostId];
   const game = model.games[ctx.space.spaceId];
@@ -25,7 +25,7 @@ export const ViewSpaceJoinScreen = ({
       <TopBar
         left={
           <TopBarBackButton
-            onClick={() => ctx.$push({ t: "space", c: { t: "space-list" } })}
+            onClick={() => ctx.onPush({ t: "space", c: { t: "space-list" } })}
           />
         }
         title={host?.username ? `${host.username}'s space` : "..."}
@@ -54,7 +54,7 @@ export const ViewSpaceJoinScreen = ({
           variant="contained"
           color="primary"
           onClick={() => {
-            $send({
+            dispatch({
               t: "join",
               userId: ctx.currentUserId,
               spaceId: ctx.space.spaceId,

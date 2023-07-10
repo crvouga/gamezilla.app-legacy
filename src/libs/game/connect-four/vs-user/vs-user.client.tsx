@@ -189,12 +189,12 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 export const View = ({
   ctx,
   model,
-  $send,
+  dispatch,
   onQuit,
 }: {
   model: Model;
   ctx: SpaceViewCtx;
-  $send: (msg: Msg) => void;
+  dispatch: (msg: Msg) => void;
   onQuit: () => void;
 }) => {
   if (model.type === "setup") {
@@ -210,16 +210,16 @@ export const View = ({
           );
         }}
         onStartGame={() => {
-          $send({ t: "start-game" });
+          dispatch({ t: "start-game" });
         }}
         onQuit={onQuit}
         playerOne={{
           label: "Red",
           onStartPlaying: () => {
-            $send({ t: "start-playing", playerType: "PlayerOne" });
+            dispatch({ t: "start-playing", playerType: "PlayerOne" });
           },
           onStopPlaying: () => {
-            $send({ t: "stop-playing" });
+            dispatch({ t: "stop-playing" });
           },
           renderIcon: (props) => {
             return <PlayerIcon playerType="PlayerOne" {...props} />;
@@ -229,10 +229,10 @@ export const View = ({
         playerTwo={{
           label: "Yellow",
           onStartPlaying: () => {
-            $send({ t: "start-playing", playerType: "PlayerTwo" });
+            dispatch({ t: "start-playing", playerType: "PlayerTwo" });
           },
           onStopPlaying: () => {
-            $send({ t: "stop-playing" });
+            dispatch({ t: "stop-playing" });
           },
           renderIcon: (props) => {
             return <PlayerIcon playerType="PlayerTwo" {...props} />;
@@ -259,10 +259,14 @@ export const View = ({
           <ViewColumns
             columns={model.columns}
             onClick={(columnIndex) =>
-              $send({ t: "input-move", userId: ctx.currentUserId, columnIndex })
+              dispatch({
+                t: "input-move",
+                userId: ctx.currentUserId,
+                columnIndex,
+              })
             }
             onHover={(columnIndex) =>
-              $send({ t: "hovered-over-columns", columnIndex })
+              dispatch({ t: "hovered-over-columns", columnIndex })
             }
             disabled={
               toTurn(model.columns) !== currentUserPlayerType ||
@@ -279,7 +283,11 @@ export const View = ({
           />
           {model.type === "game-over" && (
             <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center bg-black/50">
-              <ViewGameOverMessage $send={$send} ctx={ctx} model={model} />
+              <ViewGameOverMessage
+                dispatch={dispatch}
+                ctx={ctx}
+                model={model}
+              />
             </div>
           )}
         </div>
@@ -293,7 +301,10 @@ export const View = ({
                   icon: <IconFlag />,
                   label: "Resign",
                   onClick: () => {
-                    $send({ t: "clicked-resign", userId: ctx.currentUserId });
+                    dispatch({
+                      t: "clicked-resign",
+                      userId: ctx.currentUserId,
+                    });
                   },
                 },
               ]
@@ -304,14 +315,14 @@ export const View = ({
                   icon: <IconArrowLeftOnRect />,
                   label: "Exit",
                   onClick: () => {
-                    $send({ t: "new-game" });
+                    dispatch({ t: "new-game" });
                   },
                 },
                 {
                   icon: <IconArrowRotateLeft />,
                   label: "Rematch",
                   onClick: () => {
-                    $send({ t: "rematch-request" });
+                    dispatch({ t: "rematch-request" });
                   },
                 },
               ]
@@ -322,10 +333,10 @@ export const View = ({
       <ConformationDialog
         headerIcon={<IconFlag className="h-10 w-10" />}
         title="Resign from game?"
-        onCancel={() => $send({ t: "close-modal" })}
-        onClose={() => $send({ t: "close-modal" })}
+        onCancel={() => dispatch({ t: "close-modal" })}
+        onClose={() => dispatch({ t: "close-modal" })}
         confirmTitle="Resign"
-        onConfirm={() => $send({ t: "resign" })}
+        onConfirm={() => dispatch({ t: "resign" })}
         open={model.openedModal === "ConfirmResign"}
       />
     </ViewGameBox>
@@ -335,11 +346,11 @@ export const View = ({
 const ViewGameOverMessage = ({
   ctx,
   model,
-  $send,
+  dispatch,
 }: {
   model: GameOverModel;
   ctx: ViewCtx;
-  $send: (msg: Msg) => void;
+  dispatch: (msg: Msg) => void;
 }) => {
   const currentPlayerType = toPlayerType(ctx.currentUserId, model);
 
@@ -353,7 +364,7 @@ const ViewGameOverMessage = ({
         <IconSpinner className="mb-4 h-8 w-8 animate-spin" />
         <MyButton
           variant="contained"
-          onClick={() => $send({ t: "rematch-cancel" })}>
+          onClick={() => dispatch({ t: "rematch-cancel" })}>
           Cancel
         </MyButton>
       </>
@@ -374,7 +385,7 @@ const ViewGameOverMessage = ({
           <MyButton
             variant="contained"
             onClick={() =>
-              $send({
+              dispatch({
                 t: "rematch-respond",
                 response: "Decline",
               })
@@ -385,7 +396,9 @@ const ViewGameOverMessage = ({
 
           <MyButton
             variant="contained"
-            onClick={() => $send({ t: "rematch-respond", response: "Accept" })}>
+            onClick={() =>
+              dispatch({ t: "rematch-respond", response: "Accept" })
+            }>
             <IconCheckmarkCircle />
             Accept
           </MyButton>

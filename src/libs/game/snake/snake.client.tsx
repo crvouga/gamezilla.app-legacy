@@ -190,11 +190,11 @@ export const subscriptions = (_intervalId: string, _model: Model): Sub<Msg> => {
 
 export const View = ({
   model,
-  $send,
+  dispatch,
 }: {
   ctx: ViewCtx;
   model: Model;
-  $send: (msg: Msg) => void;
+  dispatch: (msg: Msg) => void;
 }) => {
   if (model.gameStatus.type === "GameSetup") {
     return <div></div>;
@@ -202,7 +202,7 @@ export const View = ({
 
   return (
     <div>
-      <ViewBoard model={model} $send={$send} />
+      <ViewBoard model={model} dispatch={dispatch} />
     </div>
   );
 };
@@ -211,7 +211,7 @@ export const ViewBoard = ({
   model,
 }: {
   model: Model;
-  $send: (msg: Msg) => void;
+  dispatch: (msg: Msg) => void;
 }) => {
   const ref = useRef<HTMLCanvasElement | null>(null);
 

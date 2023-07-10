@@ -286,12 +286,12 @@ export const subscriptions = ({
 export const View = ({
   ctx,
   model,
-  $send,
+  dispatch,
   gameSpaceCtx,
 }: {
   ctx: SpaceViewCtx;
   model: Model;
-  $send: (msg: Msg) => void;
+  dispatch: (msg: Msg) => void;
   gameSpaceCtx: SpaceViewCtx;
 }) => {
   switch (model.mode.t) {
@@ -304,7 +304,7 @@ export const View = ({
           buttons={[
             mainMenuButtons.playComputer({
               onClick: () =>
-                $send({
+                dispatch({
                   t: "input-mode",
                   mode: "vs-bot",
                   userId: ctx.currentUserId,
@@ -312,7 +312,7 @@ export const View = ({
             }),
             mainMenuButtons.playFriend({
               onClick: () =>
-                $send({
+                dispatch({
                   t: "input-mode",
                   mode: "vs-user",
                   userId: ctx.currentUserId,
@@ -323,7 +323,7 @@ export const View = ({
               description: "Train with more than 3 million puzzles",
               renderIcon: (props) => <IconPuzzlePiece {...props} />,
               onClick: () =>
-                $send({
+                dispatch({
                   t: "input-mode",
                   mode: "puzzle",
                   userId: ctx.currentUserId,
@@ -338,10 +338,14 @@ export const View = ({
       return (
         <ChessVsBotClient.View
           ctx={ctx}
-          $send={(c) => $send({ t: "vs-bot", c })}
+          dispatch={(c) => dispatch({ t: "vs-bot", c })}
           model={model.mode.c}
           onClose={() => {
-            $send({ t: "input-mode", mode: "none", userId: ctx.currentUserId });
+            dispatch({
+              t: "input-mode",
+              mode: "none",
+              userId: ctx.currentUserId,
+            });
           }}
         />
       );
@@ -352,9 +356,13 @@ export const View = ({
         <VsUser.View
           ctx={ctx}
           model={model.mode.c}
-          $send={(c) => $send({ t: "vs-user", c })}
+          dispatch={(c) => dispatch({ t: "vs-user", c })}
           onClose={() => {
-            $send({ t: "input-mode", mode: "none", userId: ctx.currentUserId });
+            dispatch({
+              t: "input-mode",
+              mode: "none",
+              userId: ctx.currentUserId,
+            });
           }}
         />
       );
@@ -365,9 +373,13 @@ export const View = ({
         <Puzzle.View
           ctx={ctx}
           model={model.mode.c}
-          $send={(c) => $send({ t: "puzzle", c })}
+          dispatch={(c) => dispatch({ t: "puzzle", c })}
           onClose={() => {
-            $send({ t: "input-mode", mode: "none", userId: ctx.currentUserId });
+            dispatch({
+              t: "input-mode",
+              mode: "none",
+              userId: ctx.currentUserId,
+            });
           }}
         />
       );

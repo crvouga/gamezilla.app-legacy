@@ -118,10 +118,10 @@ export const updateFromApp = ({
 
 export const View = ({
   model,
-  $send,
+  dispatch,
 }: {
   model: Model;
-  $send: (msg: Msg) => void;
+  dispatch: (msg: Msg) => void;
 }) => {
   return (
     <div className="pointer-events-none fixed left-0 top-0 flex h-screen w-screen flex-col items-center gap-4 p-4">
@@ -132,7 +132,7 @@ export const View = ({
           {toast.message}
           <button
             onClick={() =>
-              $send({ t: "clicked-dismiss-button", toastId: toast.toastId })
+              dispatch({ t: "clicked-dismiss-button", toastId: toast.toastId })
             }>
             <IconXMark />
           </button>

@@ -80,11 +80,11 @@ export const syncWithServer = ({
 
 export const View = ({
   model,
-  $send,
+  dispatch,
   onExit,
 }: {
   model: Model;
-  $send: (m: Msg) => void;
+  dispatch: (m: Msg) => void;
   onExit: () => void;
   ctx: SpaceViewCtx;
 }) => {
@@ -98,7 +98,7 @@ export const View = ({
         <div className="flex w-full flex-1 flex-col items-center justify-center gap-3">
           <FlowGridPlayUI.View
             model={model}
-            $send={() => {
+            dispatch={() => {
               //
             }}
           />
@@ -114,7 +114,7 @@ export const View = ({
               label: "Edit Mode",
               icon: <IconPenToSquare />,
               onClick: () => {
-                $send({ t: "input-mode", mode: "edit" });
+                dispatch({ t: "input-mode", mode: "edit" });
               },
             },
           ]}
@@ -136,7 +136,7 @@ export const View = ({
             terminals: model.draftTerminals,
           }}
           onPressDown={(nodeId) => {
-            $send({
+            dispatch({
               t: "pressed-down-node",
               nodeId,
             });
@@ -164,7 +164,7 @@ export const View = ({
                     ? 'text-lg'
                     : 'opacity-50 text-sm'
                 )}
-                onClick={() => $send({ t: 'input-active-group', groupId })}
+                onClick={() => dispatch({ t: 'input-active-group', groupId })}
               >
                 <svg viewBox="-1 -1 2 2" className={cn('w-16 h-16')}>
                   <circle
@@ -191,7 +191,7 @@ export const View = ({
             label: "Play Mode",
             icon: <IconPlay />,
             onClick: () => {
-              $send({ t: "input-mode", mode: "play" });
+              dispatch({ t: "input-mode", mode: "play" });
             },
           },
         ]}

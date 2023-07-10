@@ -155,16 +155,18 @@ export const update = ({
 export const View = ({
   phoneNumber,
   model,
-  $send,
+  dispatch,
 }: {
   phoneNumber: PhoneNumber;
   model: Model;
-  $send: (msg: Msg) => void;
+  dispatch: (msg: Msg) => void;
 }) => {
   return (
     <div className="flex h-full w-full flex-col">
       <TopBar
-        left={<TopBarBackButton onClick={() => $send({ t: "clicked-back" })} />}
+        left={
+          <TopBarBackButton onClick={() => dispatch({ t: "clicked-back" })} />
+        }
         title="Verify Code"
       />
       <div className="flex w-full flex-col gap-4 p-4">
@@ -184,8 +186,8 @@ export const View = ({
           type="tel"
           label="Code"
           value={model.code}
-          onChange={(code) => $send({ t: "inputted-code", code })}
-          onClear={() => $send({ t: "inputted-code", code: "" })}
+          onChange={(code) => dispatch({ t: "inputted-code", code })}
+          onClear={() => dispatch({ t: "inputted-code", code: "" })}
         />
 
         <MyButton
@@ -193,7 +195,7 @@ export const View = ({
           size="lg"
           className="w-full"
           color="primary"
-          onClick={() => $send({ t: "clicked-verify-code" })}>
+          onClick={() => dispatch({ t: "clicked-verify-code" })}>
           {model.submission.type === "loading" && (
             <IconSpinner className="h-6 w-6 animate-spin" />
           )}

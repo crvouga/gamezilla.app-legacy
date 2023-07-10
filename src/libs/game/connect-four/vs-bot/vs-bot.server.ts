@@ -94,12 +94,12 @@ const watchBotMove = ({
     const botPlayer = toBotPlayer(model);
     return {
       model,
-      cmd: async ($send) => {
+      cmd: async (dispatch) => {
         const result = await getBestMove({
           columns,
           maximizingPlayer: botPlayer,
         });
-        $send({ t: "bot-moved", result });
+        dispatch({ t: "bot-moved", result });
       },
     };
   }

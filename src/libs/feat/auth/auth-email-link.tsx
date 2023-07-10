@@ -140,15 +140,17 @@ export const update = ({
 
 export const View = ({
   model,
-  $send,
+  dispatch,
 }: {
   model: Model;
-  $send: (msg: Msg) => void;
+  dispatch: (msg: Msg) => void;
 }) => {
   return (
     <div className="flex h-full w-full flex-col">
       <TopBar
-        left={<TopBarBackButton onClick={() => $send({ t: "clicked-back" })} />}
+        left={
+          <TopBarBackButton onClick={() => dispatch({ t: "clicked-back" })} />
+        }
         title="Login With Email"
       />
 
@@ -156,7 +158,7 @@ export const View = ({
         className="flex flex-col gap-6 p-4"
         onSubmit={(event) => {
           event.preventDefault();
-          $send({ t: "clicked-send-login-link" });
+          dispatch({ t: "clicked-send-login-link" });
         }}>
         <MyTextField
           autoFocus
@@ -165,10 +167,10 @@ export const View = ({
           label="Email Address"
           value={model.emailAddress}
           onChange={(emailAddress) => {
-            $send({ t: "inputted-email-address", emailAddress });
+            dispatch({ t: "inputted-email-address", emailAddress });
           }}
           onClear={() =>
-            $send({ t: "inputted-email-address", emailAddress: "" })
+            dispatch({ t: "inputted-email-address", emailAddress: "" })
           }
           error={model.validation === "invalid-email"}
           helperText={

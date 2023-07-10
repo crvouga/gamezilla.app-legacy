@@ -179,22 +179,22 @@ export const runAction = (
 export const ViewPage = ({
   ctx,
   model,
-  $send,
+  dispatch,
 }: {
   ctx: Ctx;
   model: Model;
-  $send: (msg: Msg) => void;
+  dispatch: (msg: Msg) => void;
 }) => {
   const user = model.users[ctx.currentUserId];
 
   if (!user) {
-    return <ViewNotInParty ctx={ctx} model={model} $send={$send} />;
+    return <ViewNotInParty ctx={ctx} model={model} dispatch={dispatch} />;
   }
 
   const party = model.parties[user.partyId];
 
   if (!party) {
-    return <ViewNotInParty ctx={ctx} model={model} $send={$send} />;
+    return <ViewNotInParty ctx={ctx} model={model} dispatch={dispatch} />;
   }
 
   return <div></div>;
@@ -203,7 +203,7 @@ export const ViewPage = ({
 const ViewNotInParty = (_props: {
   ctx: Ctx;
   model: Model;
-  $send: (msg: Msg) => void;
+  dispatch: (msg: Msg) => void;
 }) => {
   return <div></div>;
 };
@@ -215,7 +215,7 @@ export const ViewBanner = ({
   ctx: ViewCtx;
   route: Route;
   model: Model;
-  $send: (msg: Msg) => void;
+  dispatch: (msg: Msg) => void;
 }) => {
   const user = model.users[ctx.currentUserId];
 

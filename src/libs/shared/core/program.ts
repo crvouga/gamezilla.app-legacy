@@ -19,12 +19,12 @@ export type State<Model, Msg> = {
 };
 
 export type Program<Model, Msg> = {
-  $send: $send<Msg>;
+  dispatch: dispatch<Msg>;
   sub$: Sub<Msg>;
   state$: Rx.BehaviorSubject<State<Model, Msg>>;
 };
 
-export type $send<Msg> = (msg: Msg) => void;
+export type dispatch<Msg> = (msg: Msg) => void;
 
 //
 //
@@ -56,7 +56,7 @@ const create = <Model, Msg>({
     cmd: init.cmd ?? Cmd.None,
   });
 
-  const $send = (msg: Msg) => {
+  const dispatch = (msg: Msg) => {
     const state = state$.getValue();
     if (state.model._debugId < state.runningDebugId) {
       console.log("[program] skip msg");
@@ -92,7 +92,7 @@ const create = <Model, Msg>({
   );
 
   return {
-    $send,
+    dispatch,
     sub$,
     state$,
   };
@@ -100,11 +100,11 @@ const create = <Model, Msg>({
 
 const run = <Model, Msg>(program: Program<Model, Msg>): (() => void) => {
   const subSub = program.sub$.subscribe((msg) => {
-    program.$send(msg);
+    program.dispatch(msg);
   });
 
   const cmdSub = program.state$.subscribe(({ cmd }) => {
-    cmd(program.$send);
+    cmd(program.dispatch);
   });
 
   return () => {

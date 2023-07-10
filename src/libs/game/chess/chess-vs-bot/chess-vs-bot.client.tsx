@@ -261,12 +261,12 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 export const View = ({
   ctx,
   model,
-  $send,
+  dispatch,
   onClose,
 }: {
   ctx: SpaceViewCtx;
   model: Model;
-  $send: (msg: Msg) => void;
+  dispatch: (msg: Msg) => void;
   onClose: () => void;
 }) => {
   if (model.sharedModel.type === "setup") {
@@ -287,19 +287,19 @@ export const View = ({
           userId: model.sharedModel.userId,
         }}
         onQuit={onClose}
-        onStartGame={() => $send({ t: "start-game" })}
+        onStartGame={() => dispatch({ t: "start-game" })}
         playerOne={{
           label: "White",
-          onStartPlaying: () => $send({ t: "start-playing", color: "w" }),
-          onStopPlaying: () => $send({ t: "stop-playing" }),
+          onStartPlaying: () => dispatch({ t: "start-playing", color: "w" }),
+          onStopPlaying: () => dispatch({ t: "stop-playing" }),
           renderIcon: (props) => {
             return <PlayerIcon {...props} color="w" />;
           },
         }}
         playerTwo={{
           label: "Black",
-          onStartPlaying: () => $send({ t: "start-playing", color: "b" }),
-          onStopPlaying: () => $send({ t: "stop-playing" }),
+          onStartPlaying: () => dispatch({ t: "start-playing", color: "b" }),
+          onStopPlaying: () => dispatch({ t: "stop-playing" }),
           renderIcon: (props) => {
             return <PlayerIcon {...props} color="b" />;
           },
@@ -371,7 +371,7 @@ export const View = ({
             },
           };
 
-          $send(msg);
+          dispatch(msg);
 
           // return result.t === "ok";
           return true;

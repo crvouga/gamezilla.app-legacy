@@ -235,28 +235,28 @@ export const updateFromApp = (input: {
 export const ViewLoggedIn = ({
   model,
   ctx,
-  $send,
+  dispatch,
 }: {
   model: Model;
-  $send: (m: Msg) => void;
+  dispatch: (m: Msg) => void;
   ctx: UnauthenticatedViewCtx;
 }) => {
-  return <ViewLogoutScreen ctx={ctx} model={model} $send={$send} />;
+  return <ViewLogoutScreen ctx={ctx} model={model} dispatch={dispatch} />;
 };
 
 export const ViewLoggedOut = ({
   route,
   model,
   ctx,
-  $send,
+  dispatch,
 }: {
   route: RouteAuth;
   model: Model;
-  $send: (m: Msg) => void;
+  dispatch: (m: Msg) => void;
   ctx: UnauthenticatedViewCtx;
 }) => {
   if (route.t === "login") {
-    return <ViewLoginScreen ctx={ctx} model={model} $send={$send} />;
+    return <ViewLoginScreen ctx={ctx} model={model} dispatch={dispatch} />;
   }
 
   if (route.t === "login-phone") {
@@ -264,7 +264,7 @@ export const ViewLoggedOut = ({
       <AuthPhone.View
         ctx={ctx}
         model={model.phone}
-        $send={(m) => $send({ t: "phone", c: m })}
+        dispatch={(m) => dispatch({ t: "phone", c: m })}
       />
     );
   }
@@ -273,7 +273,7 @@ export const ViewLoggedOut = ({
     return (
       <AuthEmailLink.View
         model={model.emailLink}
-        $send={(m) => $send({ t: "email-link", c: m })}
+        dispatch={(m) => dispatch({ t: "email-link", c: m })}
       />
     );
   }
@@ -283,22 +283,22 @@ export const ViewLoggedOut = ({
       <AuthPhoneVerify.View
         phoneNumber={route.phoneNumber}
         model={model.phoneVerify}
-        $send={(m) => $send({ t: "phone-verify", c: m })}
+        dispatch={(m) => dispatch({ t: "phone-verify", c: m })}
       />
     );
   }
 
-  return <ViewLoginScreen ctx={ctx} model={model} $send={$send} />;
+  return <ViewLoginScreen ctx={ctx} model={model} dispatch={dispatch} />;
 };
 
 const ViewLoginScreen = ({
-  $send,
+  dispatch,
   ctx,
   model,
 }: {
   ctx: UnauthenticatedViewCtx;
   model: Model;
-  $send: (msg: Msg) => void;
+  dispatch: (msg: Msg) => void;
 }) => {
   const isLoading = model.requests["login-with-google"]?.t === "loading";
   return (
@@ -323,7 +323,7 @@ const ViewLoginScreen = ({
 
         <div className="flex w-full flex-col gap-6">
           <MyButton
-            onClick={() => $send({ t: "login-with-google" })}
+            onClick={() => dispatch({ t: "login-with-google" })}
             size="lg"
             className="w-full">
             <IconGoogle />
@@ -332,7 +332,7 @@ const ViewLoginScreen = ({
 
           <MyButton
             onClick={() =>
-              ctx.$push({
+              ctx.onPush({
                 t: "auth",
                 c: { t: "login-phone", isSelectingCountry: false },
               })
@@ -345,7 +345,7 @@ const ViewLoginScreen = ({
 
           <MyButton
             onClick={() =>
-              ctx.$push({ t: "auth", c: { t: "login-email-link" } })
+              ctx.onPush({ t: "auth", c: { t: "login-email-link" } })
             }
             size="lg"
             className="w-full">
@@ -360,12 +360,12 @@ const ViewLoginScreen = ({
 
 export const ViewLogoutScreen = ({
   model,
-  $send,
+  dispatch,
   ctx,
 }: {
   ctx: UnauthenticatedViewCtx;
   model: Model;
-  $send: (msg: Msg) => void;
+  dispatch: (msg: Msg) => void;
 }) => {
   if (model.requests.logout?.t === "loading") {
     return <LoadingScreen />;
@@ -377,13 +377,13 @@ export const ViewLogoutScreen = ({
       title="Logout of Gamezilla?"
       confirmTitle="Logout"
       onConfirm={() => {
-        $send({ t: "logout" });
+        dispatch({ t: "logout" });
       }}
       onClose={() => {
-        ctx.$back();
+        ctx.onBack();
       }}
       onCancel={() => {
-        ctx.$back();
+        ctx.onBack();
       }}
     />
   );
@@ -416,11 +416,11 @@ const fromSupabaseSession = (auth: SupabaseSession | null): Msg => {
 
 export const subscriptions: Sub<Msg> = subject;
 
-const loadCurrentUser: Cmd<Msg> = ($send) => {
+const loadCurrentUser: Cmd<Msg> = (dispatch) => {
   setTimeout(() => {
     const supabaseSession = client.auth.session();
     const msg = fromSupabaseSession(supabaseSession);
-    $send(msg);
+    dispatch(msg);
   }, 1_000);
 };
 
