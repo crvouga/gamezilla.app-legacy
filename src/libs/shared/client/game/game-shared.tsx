@@ -27,10 +27,12 @@ export type SpaceMsg =
 
 export const bannerArtAspectRatio = Math.pow(3 / 4, 4);
 
-export const ViewGameBox = ({
+export const GameLayout = ({
   children,
   isSpectating,
+  className,
 }: {
+  className?: string;
   isSpectating?: boolean;
   children?: VDom;
 }) => {
@@ -38,7 +40,8 @@ export const ViewGameBox = ({
     <div
       className={cn(
         "flex h-full w-full flex-col items-center justify-center overflow-y-auto",
-        isSpectating && "border-8 border-t-0 border-blue-500"
+        isSpectating && "border-8 border-t-0 border-blue-500",
+        className
       )}>
       {isSpectating && (
         <div className="flex w-full items-center justify-center bg-blue-500 py-1 text-sm font-semibold text-white">

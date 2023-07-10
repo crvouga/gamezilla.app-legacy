@@ -1,5 +1,6 @@
 import {
   Ctx,
+  GameLayout,
   SpaceCtx,
   SpaceViewCtx,
   ViewBottomButtonBar,
@@ -242,8 +243,8 @@ export const View = ({
   const status = toStatus(model.columns);
 
   return (
-    <div className="flex h-full w-full flex-col">
-      <div className="flex flex-1 flex-col items-center justify-center">
+    <GameLayout isSpectating={ctx.currentUserId !== model.player}>
+      <div className="flex w-full flex-1 flex-col items-center justify-center">
         <VsBotPlayerSection {...vsBotGameProps} />
 
         <LoadingBar
@@ -309,6 +310,6 @@ export const View = ({
           },
         ]}
       />
-    </div>
+    </GameLayout>
   );
 };

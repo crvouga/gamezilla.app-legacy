@@ -4,7 +4,7 @@ import {
   SpaceCtx,
   SpaceViewCtx,
   ViewBottomButtonBar,
-  ViewGameBox,
+  GameLayout,
 } from "@gamezilla/shared/client";
 import { Cmd } from "@gamezilla/shared/core";
 import {
@@ -183,7 +183,7 @@ export const View = ({
   const isSpectating = ctx.currentUserId !== ctx.hostId;
   const nextEloRating = toNextEloRating(model);
   return (
-    <ViewGameBox isSpectating={isSpectating}>
+    <GameLayout isSpectating={isSpectating}>
       <ViewStatusBar model={model} />
 
       {/* top heads up */}
@@ -273,7 +273,7 @@ export const View = ({
           actions={toBottomBarActions({ model, onClose, dispatch })}
         />
       )}
-    </ViewGameBox>
+    </GameLayout>
   );
 };
 

@@ -4,7 +4,7 @@ import {
   SpaceViewCtx,
   ViewBottomButtonBar,
   ViewCtx,
-  ViewGameBox,
+  GameLayout,
   VsUserSetupScreen,
 } from "@gamezilla/shared/client";
 import { Cmd, Sub } from "@gamezilla/shared/core";
@@ -246,7 +246,7 @@ export const View = ({
   const currentUserPlayerType = toPlayerType(ctx.currentUserId, model);
 
   return (
-    <ViewGameBox isSpectating={currentUserPlayerType === null}>
+    <GameLayout isSpectating={currentUserPlayerType === null}>
       <div className="flex w-full flex-1 flex-col items-center justify-center gap-2">
         <div className="flex w-full items-center gap-2 px-2">
           <PlayerSlot playerType="PlayerOne" model={model} ctx={ctx} />
@@ -339,7 +339,7 @@ export const View = ({
         onConfirm={() => dispatch({ t: "resign" })}
         open={model.openedModal === "ConfirmResign"}
       />
-    </ViewGameBox>
+    </GameLayout>
   );
 };
 
