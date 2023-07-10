@@ -1,7 +1,7 @@
-import { VDom } from "@gamezilla/shared/ui";
-import { PlayerType } from "./view-vs-bot";
-import { SpaceViewCtx } from "../game-shared";
 import { UserId } from "@gamezilla/shared/app";
+import { IconRobot, MyAvatar, VDom } from "@gamezilla/shared/ui";
+import { SpaceViewCtx } from "../game-shared";
+import { PlayerType } from "./view-vs-bot";
 
 type GameOver =
   | {
@@ -12,13 +12,15 @@ type GameOver =
       t: "draw";
     };
 
-export const VsBotGameOverOverlay = ({
-  gameOver,
-}: {
+type Props = {
   ctx: SpaceViewCtx;
   gameOver: GameOver;
   human: {
     userId: UserId;
+    player: PlayerType;
+  };
+  bot: {
+    label: string;
   };
   playerOne: {
     renderIcon: (props: { className: string }) => VDom;
@@ -26,18 +28,138 @@ export const VsBotGameOverOverlay = ({
   playerTwo: {
     renderIcon: (props: { className: string }) => VDom;
   };
-}) => {
-  if (gameOver.t === "winner") {
-    return <div></div>;
-  }
+};
 
-  if (gameOver.t === "draw") {
-    return <div></div>;
+// const timeline = new AnimationTimeline()
+
+// const namespace = "vs-bot-game-over-overlay";
+
+// const ids = {
+//   root: `${namespace}-root`,
+// };
+
+export const runMountAnimation = async (root: HTMLDivElement | null) => {
+  if (!root) {
+    return;
   }
+  root.style.opacity = "0";
+
+  const keyframes = [{ opacity: "0" }, { opacity: "1" }];
+
+  const animation = root.animate(keyframes, {
+    duration: 200,
+    delay: 800,
+    easing: "ease-in-out",
+  });
+
+  await animation.finished;
+
+  root.style.opacity = "1";
+};
+
+export const VsBotGameOverOverlay = (props: Props) => {
+  const { gameOver } = props;
 
   return (
-    <div>
-      <div className="w-full"></div>
+    <div ref={runMountAnimation} className="absolute inset-0 bg-black/60">
+      {gameOver.t === "winner" && (
+        <Winner {...props} winner={gameOver.winner} />
+      )}
+      {gameOver.t === "draw" && <Draw {...props} />}
+    </div>
+  );
+};
+
+const Winner = ({
+  ctx,
+  playerOne,
+  playerTwo,
+  human,
+  winner,
+}: Props & { winner: PlayerType }) => {
+  const humanSlot = (
+    <>
+      <MyAvatar
+        className="h-16 w-16"
+        src={ctx.profiles[ctx.currentUserId]?.avatarUrl}
+      />
+    </>
+  );
+
+  const botSlot = (
+    <>
+      <IconRobot className="h-16 w-16" />
+    </>
+  );
+
+  const playerOneSlot = (
+    <div className="flex flex-col items-center justify-center gap-2">
+      <div className="flex items-center justify-center gap-2">
+        {playerOne.renderIcon({ className: "h-16 w-16" })}
+        {human.player === "player-one" ? humanSlot : botSlot}
+      </div>
+      <p className="text-center text-4xl font-black">
+        {winner === "player-one" ? "Winner" : "Loser"}
+      </p>
+    </div>
+  );
+
+  const playerTwoSlot = (
+    <div className="flex flex-col items-center justify-center gap-2">
+      <div className="flex items-center justify-center gap-2">
+        {playerTwo.renderIcon({ className: "h-16 w-16" })}
+
+        {human.player === "player-two" ? humanSlot : botSlot}
+      </div>
+
+      <p className="text-center text-4xl font-black">
+        {winner === "player-two" ? "Winner" : "Loser"}
+      </p>
+    </div>
+  );
+
+  return (
+    <div className="grid h-full w-full grid-cols-2 items-center">
+      {playerOneSlot}
+      {playerTwoSlot}
+    </div>
+  );
+};
+
+const Draw = ({ ctx, playerOne, playerTwo, human }: Props) => {
+  const humanSlot = (
+    <>
+      <MyAvatar src={ctx.profiles[ctx.currentUserId]?.avatarUrl} />
+    </>
+  );
+
+  const botSlot = (
+    <>
+      <IconRobot />
+    </>
+  );
+
+  const playerOneSlot = (
+    <>
+      {playerOne.renderIcon({ className: "h-5 w-5" })}
+      {human.player === "player-one" ? humanSlot : botSlot}
+    </>
+  );
+
+  const playerTwoSlot = (
+    <>
+      {playerTwo.renderIcon({ className: "h-5 w-5" })}
+      {human.player === "player-two" ? humanSlot : botSlot}
+    </>
+  );
+
+  return (
+    <div className="flex h-full w-full items-center justify-center">
+      <div>
+        {playerOneSlot}
+        {playerTwoSlot}
+      </div>
+      <p>Tie</p>
     </div>
   );
 };

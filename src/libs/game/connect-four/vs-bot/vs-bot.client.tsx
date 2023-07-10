@@ -3,6 +3,7 @@ import {
   SpaceCtx,
   SpaceViewCtx,
   ViewBottomButtonBar,
+  VsBotGameOverOverlay,
   VsBotPlayerSection,
   VsBotProps,
   VsBotSetupScreen,
@@ -250,22 +251,43 @@ export const View = ({
           className="w-full"
         />
 
-        <ViewColumns
-          implementation="svg"
-          ghost={
-            ctx.currentUserId === model.player &&
-            turn === model.userPlayerType &&
-            model.ghostIndex !== null
-              ? {
-                  columnIndex: model.ghostIndex,
-                  playerType: model.userPlayerType,
-                }
-              : undefined
-          }
-          columns={model.columns}
-          onHover={(columnIndex) => dispatch({ t: "hovered", columnIndex })}
-          onClick={(columnIndex) => dispatch({ t: "input-move", columnIndex })}
-        />
+        <div className="relative flex w-full flex-col items-center justify-center overflow-hidden">
+          <ViewColumns
+            implementation="svg"
+            ghost={
+              ctx.currentUserId === model.player &&
+              turn === model.userPlayerType &&
+              model.ghostIndex !== null
+                ? {
+                    columnIndex: model.ghostIndex,
+                    playerType: model.userPlayerType,
+                  }
+                : undefined
+            }
+            columns={model.columns}
+            onHover={(columnIndex) => dispatch({ t: "hovered", columnIndex })}
+            onClick={(columnIndex) =>
+              dispatch({ t: "input-move", columnIndex })
+            }
+          />
+
+          {status.type !== "Playing" && (
+            <VsBotGameOverOverlay
+              {...vsBotGameProps}
+              gameOver={
+                status.type === "Tie"
+                  ? { t: "draw" }
+                  : {
+                      t: "winner",
+                      winner:
+                        status.winner === "PlayerOne"
+                          ? "player-one"
+                          : "player-two",
+                    }
+              }
+            />
+          )}
+        </div>
       </div>
 
       <ViewBottomButtonBar
