@@ -221,16 +221,9 @@ const undraw = (node: HTMLElement) => {
 
 const onEnter =
   ({ y }: { y: number }) =>
-  (node: HTMLElement) => {
-    // easeAttrs(node, {
-    //   cy: {
-    //     from: MAX_COLUMN_HEIGHT + 1,
-    //     to: y,
-    //     duration: 200 + 300 * (1 - y / MAX_COLUMN_HEIGHT),
-    //     easing: { type: "ease-out-quint" },
-    //   },
-    // });
+  async (node: HTMLElement) => {
     node.setAttribute("cy", `${MAX_COLUMN_HEIGHT + 1}`);
+
     const animation = node.animate(
       [{ cy: `${MAX_COLUMN_HEIGHT + 1}` }, { cy: `${y}` }],
       {
@@ -238,9 +231,10 @@ const onEnter =
         easing: "cubic-bezier(0.23, 1, 0.32, 1)",
       }
     );
-    animation.finished.then(() => {
-      node.setAttribute("cy", `${y}`);
-    });
+
+    await animation.finished;
+
+    node.setAttribute("cy", `${y}`);
   };
 
 const onExit =
@@ -254,7 +248,7 @@ const onExit =
       [{ cy: `${y}` }, { cy: `${y - MAX_COLUMN_HEIGHT}` }],
       {
         duration: 750,
-        // easing: "cubic-bezier(0.23, 1, 0.32, 1)",
+        easing: "cubic-bezier(0.68, -0.55, 0.27, 1.55)",
         delay: (x / COLUMN_COUNT) * 500,
       }
     );
@@ -262,16 +256,6 @@ const onExit =
     await animation.finished;
 
     node.setAttribute("cy", `${y - MAX_COLUMN_HEIGHT}`);
-
-    // easeAttrs(node, {
-    //   cy: {
-    //     from: y,
-    //     to: y - MAX_COLUMN_HEIGHT,
-    //     duration: 750,
-    //     easing: { type: "ease-in-back" },
-    //     delay: (x / COLUMN_COUNT) * 500,
-    //   },
-    // });
   };
 
 const SvgDefs = ({ ids }: { ids: SvgIds }) => {
