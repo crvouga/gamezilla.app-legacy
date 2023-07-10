@@ -1,4 +1,4 @@
-import { easeAttrs, memoize } from "@gamezilla/shared/core";
+import { Cmd, easeAttrs, memoize } from "@gamezilla/shared/core";
 import { Transition, TransitionGroup } from "react-transition-group";
 import {
   COLUMN_COUNT,
@@ -25,6 +25,34 @@ const ids = {
   holePattern: `holePattern${randomId}`,
   columnGradient: `columnGradient${randomId}`,
   holeMask: `holeMask${randomId}`,
+};
+
+export type Msg = {
+  t: "dropped-disc";
+  x: number;
+  y: number;
+  player: "PlayerOne" | "PlayerTwo";
+};
+
+export const _update = ({ msg }: { msg: Msg }): { cmd?: Cmd } => {
+  if (msg.t === "dropped-disc") {
+    const { y } = msg;
+    return {
+      cmd: async () => {
+        const node = document.getElementById(`disc-${msg.x}-${msg.player}`);
+        if (!node) {
+          return;
+        }
+        node.animate([{ cy: `${MAX_COLUMN_HEIGHT + 1}` }, { cy: `${y}` }], {
+          duration: 200 + 300 * (1 - y / MAX_COLUMN_HEIGHT),
+          easing: "cubic-bezier(0.23, 1, 0.32, 1)",
+          fill: "both",
+        });
+      },
+    };
+  }
+
+  return {};
 };
 
 export const ViewColumnsSvg = ({
