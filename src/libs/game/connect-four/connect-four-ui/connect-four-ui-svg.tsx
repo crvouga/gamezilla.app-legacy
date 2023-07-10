@@ -185,37 +185,29 @@ const draw = (node: HTMLElement) => {
   }
 
   const length = node.getTotalLength();
-  node.animate(
-    [
-      { "stroke-dasharray": length, "stroke-dashoffset": length },
-      { "stroke-dasharray": length, "stroke-dashoffset": 0 },
-    ],
-    {
-      duration: 500,
-      easing: "ease-in-out",
-      fill: "both",
-    }
-  );
+  node.style.strokeDasharray = length.toString();
+  node.style.strokeDashoffset = length.toString();
+
+  node.animate([{ strokeDashoffset: length }, { strokeDashoffset: 0 }], {
+    duration: 500,
+    easing: "ease-in-out",
+    fill: "both",
+  });
 };
 
 const undraw = (node: HTMLElement) => {
   if (!(node instanceof SVGRectElement)) {
     return;
   }
-
   const length = node.getTotalLength();
+  node.style.strokeDasharray = length.toString();
+  node.style.strokeDashoffset = "0";
 
-  node.animate(
-    [
-      { "stroke-dasharray": length, "stroke-dashoffset": 0 },
-      { "stroke-dasharray": length, "stroke-dashoffset": length },
-    ],
-    {
-      duration: 500,
-      easing: "ease-in-out",
-      fill: "both",
-    }
-  );
+  node.animate([{ strokeDashoffset: 0 }, { strokeDashoffset: length }], {
+    duration: 500,
+    easing: "ease-in-out",
+    fill: "both",
+  });
 };
 
 const onEnter =
