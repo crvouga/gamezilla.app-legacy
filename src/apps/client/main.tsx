@@ -22,16 +22,15 @@ import "./main.css";
 const env = {
   isDev: process.env.NODE_ENV === "development",
   isProd: process.env.NODE_ENV === "production",
-  useNgrok: Boolean(import.meta.env.USE_NGROK),
+  useNgrok: true,
 };
 
 const main = () => {
   const serverUrl = env.isProd
     ? "https://server.gamezilla.app/"
-    : "https://gamezilla-server.ngrok.io/";
-  // : env.useNgrok
-  // ? "https://gamezilla-server.ngrok.io/"
-  // : `http://localhost:${serverPort}/`;
+    : env.useNgrok
+    ? "https://gamezilla-server.ngrok.io/"
+    : `http://localhost:${serverPort}/`;
 
   const socketClient: Socket<ServerToClientEvents, ClientToServerEvents> = io(
     serverUrl,
