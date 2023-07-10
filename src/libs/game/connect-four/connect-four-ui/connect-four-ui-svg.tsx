@@ -222,28 +222,56 @@ const undraw = (node: HTMLElement) => {
 const onEnter =
   ({ y }: { y: number }) =>
   (node: HTMLElement) => {
-    easeAttrs(node, {
-      cy: {
-        from: MAX_COLUMN_HEIGHT + 1,
-        to: y,
+    // easeAttrs(node, {
+    //   cy: {
+    //     from: MAX_COLUMN_HEIGHT + 1,
+    //     to: y,
+    //     duration: 200 + 300 * (1 - y / MAX_COLUMN_HEIGHT),
+    //     easing: { type: "ease-out-quint" },
+    //   },
+    // });
+    node.setAttribute("cy", `${MAX_COLUMN_HEIGHT + 1}`);
+    const animation = node.animate(
+      [{ cy: `${MAX_COLUMN_HEIGHT + 1}` }, { cy: `${y}` }],
+      {
         duration: 200 + 300 * (1 - y / MAX_COLUMN_HEIGHT),
-        easing: { type: "ease-out-quint" },
-      },
+        easing: "cubic-bezier(0.23, 1, 0.32, 1)",
+      }
+    );
+    animation.finished.then(() => {
+      node.setAttribute("cy", `${y}`);
     });
   };
 
 const onExit =
   ({ x, y }: { x: number; y: number }) =>
-  (node: HTMLElement) => {
-    easeAttrs(node, {
-      cy: {
-        from: y,
-        to: y - MAX_COLUMN_HEIGHT,
+  async (node: HTMLElement) => {
+    console.log("onExit");
+
+    node.setAttribute("cy", `${y}`);
+
+    const animation = node.animate(
+      [{ cy: `${y}` }, { cy: `${y - MAX_COLUMN_HEIGHT}` }],
+      {
         duration: 750,
-        easing: { type: "ease-in-back" },
+        // easing: "cubic-bezier(0.23, 1, 0.32, 1)",
         delay: (x / COLUMN_COUNT) * 500,
-      },
-    });
+      }
+    );
+
+    await animation.finished;
+
+    node.setAttribute("cy", `${y - MAX_COLUMN_HEIGHT}`);
+
+    // easeAttrs(node, {
+    //   cy: {
+    //     from: y,
+    //     to: y - MAX_COLUMN_HEIGHT,
+    //     duration: 750,
+    //     easing: { type: "ease-in-back" },
+    //     delay: (x / COLUMN_COUNT) * 500,
+    //   },
+    // });
   };
 
 const SvgDefs = ({ ids }: { ids: SvgIds }) => {
