@@ -1,4 +1,4 @@
-import { Cmd, easeAttrs, memoize } from "@gamezilla/shared/core";
+import { memoize } from "@gamezilla/shared/core";
 import { Transition, TransitionGroup } from "react-transition-group";
 import {
   COLUMN_COUNT,
@@ -25,34 +25,6 @@ const ids = {
   holePattern: `holePattern${randomId}`,
   columnGradient: `columnGradient${randomId}`,
   holeMask: `holeMask${randomId}`,
-};
-
-export type Msg = {
-  t: "dropped-disc";
-  x: number;
-  y: number;
-  player: "PlayerOne" | "PlayerTwo";
-};
-
-export const _update = ({ msg }: { msg: Msg }): { cmd?: Cmd } => {
-  if (msg.t === "dropped-disc") {
-    const { y } = msg;
-    return {
-      cmd: async () => {
-        const node = document.getElementById(`disc-${msg.x}-${msg.player}`);
-        if (!node) {
-          return;
-        }
-        node.animate([{ cy: `${MAX_COLUMN_HEIGHT + 1}` }, { cy: `${y}` }], {
-          duration: 200 + 300 * (1 - y / MAX_COLUMN_HEIGHT),
-          easing: "cubic-bezier(0.23, 1, 0.32, 1)",
-          fill: "both",
-        });
-      },
-    };
-  }
-
-  return {};
 };
 
 export const ViewColumnsSvg = ({
@@ -213,18 +185,17 @@ const draw = (node: HTMLElement) => {
   }
 
   const length = node.getTotalLength();
-  easeAttrs(node, {
-    "stroke-dasharray": {
-      from: length,
-      to: length,
+  node.animate(
+    [
+      { "stroke-dasharray": length, "stroke-dashoffset": length },
+      { "stroke-dasharray": length, "stroke-dashoffset": 0 },
+    ],
+    {
       duration: 500,
-    },
-    "stroke-dashoffset": {
-      from: length,
-      to: 0,
-      duration: 500,
-    },
-  });
+      easing: "ease-in-out",
+      fill: "both",
+    }
+  );
 };
 
 const undraw = (node: HTMLElement) => {
@@ -233,18 +204,18 @@ const undraw = (node: HTMLElement) => {
   }
 
   const length = node.getTotalLength();
-  easeAttrs(node, {
-    "stroke-dasharray": {
-      from: length,
-      to: length,
+
+  node.animate(
+    [
+      { "stroke-dasharray": length, "stroke-dashoffset": 0 },
+      { "stroke-dasharray": length, "stroke-dashoffset": length },
+    ],
+    {
       duration: 500,
-    },
-    "stroke-dashoffset": {
-      from: 0,
-      to: length,
-      duration: 500,
-    },
-  });
+      easing: "ease-in-out",
+      fill: "both",
+    }
+  );
 };
 
 const onEnter =
