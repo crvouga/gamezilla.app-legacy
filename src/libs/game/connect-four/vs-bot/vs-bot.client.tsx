@@ -22,6 +22,7 @@ import {
   PlayerTwoIcon,
   ViewColumns,
   ViewCoverArt,
+  gameTheme,
 } from "../connect-four-ui";
 import {
   ClientModel,
@@ -247,12 +248,15 @@ export const View = ({
       <div className="flex w-full flex-1 flex-col items-center justify-center">
         <VsBotPlayerSection {...vsBotGameProps} />
 
-        <LoadingBar
-          disabled={turn === model.userPlayerType || status.type !== "Playing"}
-          className="w-full"
-        />
-
         <div className="relative flex w-full flex-col items-center justify-center overflow-hidden">
+          <LoadingBar
+            disabled={
+              turn === model.userPlayerType || status.type !== "Playing"
+            }
+            className="w-full"
+            color={gameTheme.primary.dark}
+            backgroundColor={gameTheme.primary.darker}
+          />
           <ViewColumns
             implementation="svg"
             ghost={

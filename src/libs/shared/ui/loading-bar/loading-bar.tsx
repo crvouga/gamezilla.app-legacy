@@ -3,11 +3,15 @@ import { useRef, useEffect } from "react";
 interface LoadingBarProps {
   disabled?: boolean;
   className?: string;
+  color?: string;
+  backgroundColor?: string;
 }
 
 export const LoadingBar: React.FC<LoadingBarProps> = ({
   disabled = false,
   className = "",
+  color = "#3B82F6",
+  backgroundColor = "#262626",
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const animationRef = useRef<HTMLDivElement | null>(null);
@@ -49,10 +53,14 @@ export const LoadingBar: React.FC<LoadingBarProps> = ({
   return (
     <div
       ref={containerRef}
-      className={`relative h-2 overflow-hidden rounded-full bg-neutral-800 ${className}`}>
+      className={`relative h-2 overflow-hidden ${className}`}
+      style={{
+        backgroundColor: backgroundColor,
+      }}>
       <div
         ref={animationRef}
-        className="absolute left-0 top-0 h-full w-2/3 rounded-full bg-blue-500"
+        className="absolute left-0 top-0 h-full w-2/3 rounded-full"
+        style={{ backgroundColor: color }}
       />
     </div>
   );
