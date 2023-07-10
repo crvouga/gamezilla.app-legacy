@@ -12,6 +12,7 @@
     "server:watch": "tsx watch src/apps/server/main.ts",
     "client:build": "tsc && vite build",
     "client": "vite",
+    "ngrok": "ngrok start --all",
     "db:dev": "pscale connect gamezilla dev",
     "tc": "tsc --noEmit && tsc --noEmit --watch"
   },

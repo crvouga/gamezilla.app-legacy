@@ -222,40 +222,22 @@ const undraw = (node: HTMLElement) => {
 const onEnter =
   ({ y }: { y: number }) =>
   async (node: HTMLElement) => {
-    node.setAttribute("cy", `${MAX_COLUMN_HEIGHT + 1}`);
-
-    const animation = node.animate(
-      [{ cy: `${MAX_COLUMN_HEIGHT + 1}` }, { cy: `${y}` }],
-      {
-        duration: 200 + 300 * (1 - y / MAX_COLUMN_HEIGHT),
-        easing: "cubic-bezier(0.23, 1, 0.32, 1)",
-      }
-    );
-
-    await animation.finished;
-
-    node.setAttribute("cy", `${y}`);
+    node.animate([{ cy: `${MAX_COLUMN_HEIGHT + 1}` }, { cy: `${y}` }], {
+      duration: 200 + 300 * (1 - y / MAX_COLUMN_HEIGHT),
+      easing: "cubic-bezier(0.23, 1, 0.32, 1)",
+      fill: "both",
+    });
   };
 
 const onExit =
   ({ x, y }: { x: number; y: number }) =>
   async (node: HTMLElement) => {
-    console.log("onExit");
-
-    node.setAttribute("cy", `${y}`);
-
-    const animation = node.animate(
-      [{ cy: `${y}` }, { cy: `${y - MAX_COLUMN_HEIGHT}` }],
-      {
-        duration: 750,
-        easing: "cubic-bezier(0.68, -0.55, 0.27, 1.55)",
-        delay: (x / COLUMN_COUNT) * 500,
-      }
-    );
-
-    await animation.finished;
-
-    node.setAttribute("cy", `${y - MAX_COLUMN_HEIGHT}`);
+    node.animate([{ cy: `${y}` }, { cy: `${y - MAX_COLUMN_HEIGHT}` }], {
+      duration: 750,
+      easing: "cubic-bezier(0.68, -0.55, 0.27, 1.55)",
+      delay: (x / COLUMN_COUNT) * 500,
+      fill: "both",
+    });
   };
 
 const SvgDefs = ({ ids }: { ids: SvgIds }) => {
