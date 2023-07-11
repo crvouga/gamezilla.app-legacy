@@ -9,6 +9,7 @@ import {
   Slot,
   allPositions,
   toSlot,
+  toWins,
 } from "./tic-tac-toe";
 
 export const gameTheme = {
@@ -96,10 +97,12 @@ export const ViewBoard = ({
               );
             }
 
-            return <g></g>;
+            return <g key={key}></g>;
           })
         )}
       </TransitionGroup>
+
+      <ViewWins board={board} />
 
       {allPositions.map((position) => (
         <rect
@@ -121,18 +124,59 @@ export const ViewBoard = ({
   );
 };
 
+const strokeWidth = 0.1 * scale;
+const ViewWins = ({ board }: { board: Model }) => {
+  const wins = toWins(board);
+
+  return (
+    <TransitionGroup component="g">
+      {[...wins.X, ...wins.O].map((winningGroup) => {
+        const key = winningGroup
+          .map((position) => `${position.column}-${position.row}`)
+          .join(",");
+
+        const leftMost = winningGroup[0];
+        const rightMost = winningGroup[winningGroup.length - 1] ?? leftMost;
+
+        return (
+          <Transition
+            key={key}
+            component="g"
+            addEndListener={() => {
+              //
+            }}
+            onEnter={drawLine}
+            onExit={undrawLine}>
+            <line
+              key={key}
+              x1={(leftMost.column + 1 / 2) * scale}
+              y1={(leftMost.row + 1 / 2) * scale}
+              x2={(rightMost.column + 1 / 2) * scale}
+              y2={(rightMost.row + 1 / 2) * scale}
+              strokeWidth={strokeWidth}
+              stroke={gameTheme.cross}></line>
+          </Transition>
+        );
+      })}
+    </TransitionGroup>
+  );
+};
+
+const DRAW_DURATION = 100;
+const UNDRAW_DURATION = DRAW_DURATION;
+
 const drawNaught = (node: HTMLElement) => {
   if (!(node instanceof SVGCircleElement)) {
     return;
   }
-  draw(node);
+  draw(node, { duration: DRAW_DURATION });
 };
 
 const undrawNaught = (node: HTMLElement) => {
   if (!(node instanceof SVGCircleElement)) {
     return;
   }
-  undraw(node);
+  undraw(node, { duration: UNDRAW_DURATION });
 };
 
 const drawCross = (node: HTMLElement) => {
@@ -145,7 +189,7 @@ const drawCross = (node: HTMLElement) => {
     if (!line) {
       continue;
     }
-    draw(line);
+    draw(line, { duration: DRAW_DURATION });
   }
 };
 
@@ -159,34 +203,60 @@ const undrawCross = (node: HTMLElement) => {
     if (!line) {
       continue;
     }
-    undraw(line);
+    undraw(line, { duration: UNDRAW_DURATION });
   }
 };
 
-const DRAW_DURATION = 100;
-const UNDRAW_DURATION = DRAW_DURATION;
+type AnimationOptions = { delay?: number; duration?: number };
 
-const draw = (node: SVGCircleElement | SVGLineElement | SVGRectElement) => {
+const drawLine = (node: HTMLElement) => {
+  if (!(node instanceof SVGLineElement)) {
+    return;
+  }
+  draw(node, {
+    duration: 200,
+    delay: 300,
+  });
+};
+
+const undrawLine = (node: HTMLElement) => {
+  if (!(node instanceof SVGLineElement)) {
+    return;
+  }
+  undraw(node, {
+    duration: UNDRAW_DURATION,
+  });
+};
+
+const draw = (
+  node: SVGCircleElement | SVGLineElement | SVGRectElement,
+  option?: AnimationOptions
+) => {
   const length = node.getTotalLength();
   node.style.strokeDasharray = length.toString();
   node.style.strokeDashoffset = length.toString();
 
   node.animate([{ strokeDashoffset: length }, { strokeDashoffset: 0 }], {
-    duration: DRAW_DURATION,
     easing: "ease-in-out",
     fill: "both",
+    duration: option?.duration ?? 1000,
+    delay: option?.delay ?? 0,
   });
 };
 
-const undraw = (node: SVGCircleElement | SVGLineElement | SVGRectElement) => {
+const undraw = (
+  node: SVGCircleElement | SVGLineElement | SVGRectElement,
+  option?: AnimationOptions
+) => {
   const length = node.getTotalLength();
   node.style.strokeDasharray = length.toString();
   node.style.strokeDashoffset = "0";
 
   node.animate([{ strokeDashoffset: 0 }, { strokeDashoffset: length }], {
-    duration: UNDRAW_DURATION,
     easing: "ease-in-out",
     fill: "both",
+    duration: option?.duration ?? 1000,
+    delay: option?.delay ?? 0,
   });
 };
 

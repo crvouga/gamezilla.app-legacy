@@ -215,41 +215,42 @@ export const allWinningGroups: WinningGroup[] = [
 
 type Wins = { X: WinningGroup[]; O: WinningGroup[]; None: WinningGroup[] };
 
-const toWins = memoize(
-  (x) => JSON.stringify(x),
-  (board: Model): Wins => {
-    const wins: Wins = {
-      X: [],
-      O: [],
-      None: [],
-    };
+const modelToKey = (model: Model): string => {
+  return model.map((col) => col.join(",")).join(",");
+};
 
-    for (let i = 0; i < allWinningGroups.length; i++) {
-      const group = allWinningGroups[i];
-      if (!group || !group[0] || !group[1] || !group[2]) {
-        continue;
-      }
-      const a = toSlot(board, group[0]);
-      const b = toSlot(board, group[1]);
-      const c = toSlot(board, group[2]);
+export const toWins = memoize(modelToKey, (board: Model): Wins => {
+  const wins: Wins = {
+    X: [],
+    O: [],
+    None: [],
+  };
 
-      const key: keyof typeof wins =
-        a === "X" && b === "X" && c === "X"
-          ? "X"
-          : a === "O" && b === "O" && c === "O"
-          ? "O"
-          : "None";
+  for (let i = 0; i < allWinningGroups.length; i++) {
+    const group = allWinningGroups[i];
+    if (!group || !group[0] || !group[1] || !group[2]) {
+      continue;
+    }
+    const a = toSlot(board, group[0]);
+    const b = toSlot(board, group[1]);
+    const c = toSlot(board, group[2]);
 
-      if (!group) {
-        continue;
-      }
+    const key: keyof typeof wins =
+      a === "X" && b === "X" && c === "X"
+        ? "X"
+        : a === "O" && b === "O" && c === "O"
+        ? "O"
+        : "None";
 
-      wins[key].push(group);
+    if (!group) {
+      continue;
     }
 
-    return wins;
+    wins[key].push(group);
   }
-);
+
+  return wins;
+});
 
 export type Status = { type: "Turn"; turn: PlayerType } | GameOver;
 

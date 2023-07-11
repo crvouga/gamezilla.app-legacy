@@ -304,10 +304,8 @@ const ViewLoginScreen = ({
   return (
     <div className="relative flex h-full w-full flex-1 flex-col">
       <LoadingBar
-        className={cn(
-          "absolute left-0 top-0 w-full",
-          isLoading ? "block" : "hidden"
-        )}
+        disabled={!isLoading}
+        className="absolute left-0 top-0 w-full"
       />
       <div
         className={cn(

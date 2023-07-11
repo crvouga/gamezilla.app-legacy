@@ -196,7 +196,6 @@ export const View = ({
         <LoadingBar
           className="w-full"
           disabled={model.userPlayerType === turn || status.type !== "Turn"}
-          backgroundColor={"transparent"}
           color={gameTheme.background}
         />
         <ViewBoard

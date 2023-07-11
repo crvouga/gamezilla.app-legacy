@@ -255,7 +255,6 @@ export const View = ({
             }
             className="w-full"
             color={gameTheme.primary.dark}
-            backgroundColor={gameTheme.primary.darker}
           />
           <ViewColumns
             implementation="svg"
