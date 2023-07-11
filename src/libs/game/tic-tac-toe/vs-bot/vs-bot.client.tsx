@@ -20,6 +20,7 @@ import {
   PlayerTypeIcon,
   ViewBoard,
   ViewCoverArt,
+  gameTheme,
 } from "../tic-tic-toe/tic-tac-toe-ui";
 import {
   ClientModel,
@@ -195,6 +196,8 @@ export const View = ({
         <LoadingBar
           className="w-full"
           disabled={model.userPlayerType === turn || status.type !== "Turn"}
+          backgroundColor={"transparent"}
+          color={gameTheme.background}
         />
         <ViewBoard
           board={model.board}

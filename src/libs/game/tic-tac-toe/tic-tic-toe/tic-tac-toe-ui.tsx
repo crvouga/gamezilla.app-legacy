@@ -1,3 +1,4 @@
+import { Transition, TransitionGroup } from "react-transition-group";
 import {
   Model,
   Empty,
@@ -48,20 +49,57 @@ export const ViewBoard = ({
         ))}
       </g>
 
-      {board.map((slots, x) =>
-        slots.flatMap((slot, y) => {
-          return (
-            <ViewSlot
-              cx={x * scale + scale / 2}
-              cy={y * scale + scale / 2}
-              r={0.28 * scale}
-              slot={slot}
-              key={[x, y, slot].join(" ")}
-              strokeWidth={0.1 * scale}
-            />
-          );
-        })
-      )}
+      <TransitionGroup component="g">
+        {board.flatMap((slots, x) =>
+          slots.flatMap((slot, y) => {
+            const key = [x, y, slot].join(" ");
+            const cx = x * scale + scale / 2;
+            const cy = y * scale + scale / 2;
+            const r = 0.28 * scale;
+            const strokeWidth = 0.1 * scale;
+
+            if (slot === "O") {
+              return (
+                <Transition
+                  component="g"
+                  key={key}
+                  addEndListener={removeWhenDone}
+                  onEnter={drawNaught}
+                  onExit={undrawNaught}>
+                  <circle
+                    r={r}
+                    cx={cx}
+                    cy={cy}
+                    stroke={gameTheme.naught}
+                    strokeWidth={strokeWidth}
+                    fill="transparent"
+                  />
+                </Transition>
+              );
+            }
+
+            if (slot === "X") {
+              return (
+                <Transition
+                  component="g"
+                  key={key}
+                  addEndListener={removeWhenDone}
+                  onEnter={drawCross}
+                  onExit={undrawCross}>
+                  <g strokeWidth={strokeWidth} stroke={gameTheme.cross}>
+                    {/* direction: \ */}
+                    <line x1={cx - r} y1={cy - r} x2={cx + r} y2={cy + r} />
+                    {/* direction: / */}
+                    <line x1={cx + r} y1={cy - r} x2={cx - r} y2={cy + r} />
+                  </g>
+                </Transition>
+              );
+            }
+
+            return <g></g>;
+          })
+        )}
+      </TransitionGroup>
 
       {allPositions.map((position) => (
         <rect
@@ -81,6 +119,81 @@ export const ViewBoard = ({
       ))}
     </svg>
   );
+};
+
+const drawNaught = (node: HTMLElement) => {
+  if (!(node instanceof SVGCircleElement)) {
+    return;
+  }
+  draw(node);
+};
+
+const undrawNaught = (node: HTMLElement) => {
+  if (!(node instanceof SVGCircleElement)) {
+    return;
+  }
+  undraw(node);
+};
+
+const drawCross = (node: HTMLElement) => {
+  if (!(node instanceof SVGElement)) {
+    return;
+  }
+  const lines = node.querySelectorAll("line");
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (!line) {
+      continue;
+    }
+    draw(line);
+  }
+};
+
+const undrawCross = (node: HTMLElement) => {
+  if (!(node instanceof SVGElement)) {
+    return;
+  }
+  const lines = node.querySelectorAll("line");
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (!line) {
+      continue;
+    }
+    undraw(line);
+  }
+};
+
+const DRAW_DURATION = 100;
+const UNDRAW_DURATION = DRAW_DURATION;
+
+const draw = (node: SVGCircleElement | SVGLineElement | SVGRectElement) => {
+  const length = node.getTotalLength();
+  node.style.strokeDasharray = length.toString();
+  node.style.strokeDashoffset = length.toString();
+
+  node.animate([{ strokeDashoffset: length }, { strokeDashoffset: 0 }], {
+    duration: DRAW_DURATION,
+    easing: "ease-in-out",
+    fill: "both",
+  });
+};
+
+const undraw = (node: SVGCircleElement | SVGLineElement | SVGRectElement) => {
+  const length = node.getTotalLength();
+  node.style.strokeDasharray = length.toString();
+  node.style.strokeDashoffset = "0";
+
+  node.animate([{ strokeDashoffset: 0 }, { strokeDashoffset: length }], {
+    duration: UNDRAW_DURATION,
+    easing: "ease-in-out",
+    fill: "both",
+  });
+};
+
+const removeWhenDone = (node: HTMLElement) => {
+  node.addEventListener("transitionend", () => {
+    node.remove();
+  });
 };
 
 const lines = [
