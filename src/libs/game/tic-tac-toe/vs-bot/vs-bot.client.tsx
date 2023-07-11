@@ -169,7 +169,7 @@ export const View = ({
       renderIcon: (props) => <PlayerTypeIcon {...props} playerType="O" />,
     },
     renderCoverArt: (props) => <ViewCoverArt {...props} />,
-    title: "Tic Tac Toe",
+    title: "Tic-Tac-Toe",
   };
 
   if (model.type === "setup") {
