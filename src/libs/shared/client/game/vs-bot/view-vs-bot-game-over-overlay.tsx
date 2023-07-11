@@ -32,47 +32,19 @@ type Props = {
   };
 };
 
-// const timeline = new AnimationTimeline()
-
-// const namespace = "vs-bot-game-over-overlay";
-
-// const ids = {
-//   root: `${namespace}-root`,
-// };
-
-export const runMountAnimation = async (root: HTMLDivElement | null) => {
-  if (!root) {
-    return;
-  }
-  root.style.opacity = "0";
-
-  const keyframes = [{ opacity: "0" }, { opacity: "1" }];
-
-  const animation = root.animate(keyframes, {
-    duration: 200,
-    delay: 800,
-    easing: "ease-in-out",
-  });
-
-  await animation.finished;
-
-  root.style.opacity = "1";
-};
-
 export const VsBotGameOverOverlay = (
   props: Props & { fadeInDelay?: number }
 ) => {
   const { gameOver } = props;
 
   return (
-    <TransitionGroup className="pointer-events-none" appear>
+    <TransitionGroup className="pointer-events-none">
       {gameOver && (
         <Transition
-          mountOnEnter={false}
           addEndListener={() => {}}
           onEnter={fadeIn({ delay: props.fadeInDelay ?? 0 })}
           onExit={fadeOut}>
-          <div ref={runMountAnimation} className="absolute inset-0 bg-black/60">
+          <div className="absolute inset-0 bg-black/60">
             {gameOver.t === "winner" && (
               <Winner {...props} winner={gameOver.winner} />
             )}
