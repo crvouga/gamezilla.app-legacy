@@ -145,8 +145,8 @@ const ViewWins = ({ board }: { board: Model }) => {
             addEndListener={() => {
               //
             }}
-            onEnter={drawLine}
-            onExit={undrawLine}>
+            onEnter={onEnterWin}
+            onExit={onExitWin}>
             <line
               key={key}
               x1={(leftMost.column + 1 / 2) * scale}
@@ -209,7 +209,7 @@ const undrawCross = (node: HTMLElement) => {
 
 type AnimationOptions = { delay?: number; duration?: number };
 
-const drawLine = (node: HTMLElement) => {
+const onEnterWin = (node: HTMLElement) => {
   if (!(node instanceof SVGLineElement)) {
     return;
   }
@@ -219,7 +219,7 @@ const drawLine = (node: HTMLElement) => {
   });
 };
 
-const undrawLine = (node: HTMLElement) => {
+const onExitWin = (node: HTMLElement) => {
   if (!(node instanceof SVGLineElement)) {
     return;
   }
@@ -259,6 +259,17 @@ const undraw = (
     delay: option?.delay ?? 0,
   });
 };
+
+// const fadeOut = (
+//   node: SVGCircleElement | SVGLineElement | SVGRectElement,
+//   option?: AnimationOptions
+// ) => {
+//   node.animate([{ opacity: 1 }, { opacity: 0 }], {
+//     duration: option?.duration ?? 1000,
+//     delay: option?.delay ?? 0,
+//     fill: "both",
+//   });
+// };
 
 const removeWhenDone = (node: HTMLElement) => {
   node.addEventListener("transitionend", () => {
