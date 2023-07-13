@@ -1,4 +1,4 @@
-import { memoize } from "@gamezilla/shared/core";
+import { easeAttrs, memoize } from "@gamezilla/shared/core";
 import { Transition, TransitionGroup } from "react-transition-group";
 import {
   COLUMN_COUNT,
@@ -213,22 +213,39 @@ const undraw = (node: HTMLElement) => {
 const onEnter =
   ({ y }: { y: number }) =>
   async (node: HTMLElement) => {
-    node.animate([{ cy: `${MAX_COLUMN_HEIGHT + 1}` }, { cy: `${y}` }], {
-      duration: 200 + 300 * (1 - y / MAX_COLUMN_HEIGHT),
-      easing: "ease-in-out",
-      fill: "both",
+    easeAttrs(node, {
+      cy: {
+        from: y - MAX_COLUMN_HEIGHT,
+        to: y,
+        duration: 200 + 300 * (1 - y / MAX_COLUMN_HEIGHT),
+        easing: { type: "ease-out-quint" },
+      },
     });
+    // node.animate([{ cy: `${MAX_COLUMN_HEIGHT + 1}` }, { cy: `${y}` }], {
+    //   duration: 200 + 300 * (1 - y / MAX_COLUMN_HEIGHT),
+    //   easing: "ease-in-out",
+    //   fill: "both",
+    // });
   };
 
 const onExit =
   ({ x, y }: { x: number; y: number }) =>
   async (node: HTMLElement) => {
-    node.animate([{ cy: `${y}` }, { cy: `${y - MAX_COLUMN_HEIGHT}` }], {
-      duration: 750,
-      easing: "ease-in-out",
-      delay: (x / COLUMN_COUNT) * 500,
-      fill: "both",
+    easeAttrs(node, {
+      cy: {
+        from: y,
+        to: y - MAX_COLUMN_HEIGHT,
+        duration: 750,
+        easing: { type: "ease-in-back" },
+        delay: (x / COLUMN_COUNT) * 500,
+      },
     });
+    // node.animate([{ cy: `${y}` }, { cy: `${y - MAX_COLUMN_HEIGHT}` }], {
+    //   duration: 750,
+    //   easing: "ease-in-out",
+    //   delay: (x / COLUMN_COUNT) * 500,
+    //   fill: "both",
+    // });
   };
 
 const SvgDefs = ({ ids }: { ids: SvgIds }) => {
