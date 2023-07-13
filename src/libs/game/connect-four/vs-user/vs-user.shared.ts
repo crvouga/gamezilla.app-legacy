@@ -52,7 +52,7 @@ export type GameOverModel = {
   };
 };
 
-type Rematch =
+export type Rematch =
   | {
       type: "NotAsking";
     }
@@ -61,7 +61,7 @@ type Rematch =
       asker: PlayerType;
     };
 
-type GameOver =
+export type GameOver =
   | {
       type: "Draw";
     }

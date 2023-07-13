@@ -50,11 +50,9 @@ export const toBotPlayer = (model: SharedModel): PlayerType => {
 
 export type ServerModel = SharedModel;
 
-export type ClientGameModel = GameModel & {
+export type ClientModel = SharedModel & {
   ghostIndex: ColumnIndex | null;
 };
-
-export type ClientModel = SetupModel | ClientGameModel;
 
 export const initShared = ({
   player,

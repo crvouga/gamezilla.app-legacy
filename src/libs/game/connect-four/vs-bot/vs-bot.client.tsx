@@ -47,10 +47,6 @@ export type Model = ClientModel;
 export const init = (...params: Parameters<typeof initShared>): ClientModel => {
   const shared = initShared(...params);
 
-  if (shared.type === "setup") {
-    return shared;
-  }
-
   return {
     ...shared,
     ghostIndex: null,
@@ -146,7 +142,7 @@ export const syncWithServer = ({
   serverModel: ServerModel;
 }): ClientModel => {
   if (serverModel.type === "setup") {
-    return serverModel;
+    return { ...serverModel, ghostIndex: null };
   }
 
   if (clientModel.type === "setup") {
