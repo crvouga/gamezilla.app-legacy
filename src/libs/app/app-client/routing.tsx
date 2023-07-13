@@ -13,7 +13,7 @@ export type Model = {
   route: Route;
 };
 
-const fallback: Route = { t: "space", c: { t: "space-list" } };
+const fallback: Route = { t: "game-space", c: { t: "game-space-list" } };
 
 export const init = (
   location: Browser.Location

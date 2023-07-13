@@ -6,7 +6,7 @@ import {
 } from "@gamezilla/shared/client";
 import { MyButton, TopBar, TopBarBackButton } from "@gamezilla/shared/ui";
 import { gameNameToString, ViewCoverArt } from "../game.shared";
-import { ClientModel, ClientMsg } from "../space.shared";
+import { ClientModel, ClientMsg } from "../game-space.shared";
 
 export const ViewSpaceJoinScreen = ({
   model,
@@ -25,7 +25,9 @@ export const ViewSpaceJoinScreen = ({
       <TopBar
         left={
           <TopBarBackButton
-            onClick={() => ctx.onPush({ t: "space", c: { t: "space-list" } })}
+            onClick={() =>
+              ctx.onPush({ t: "game-space", c: { t: "game-space-list" } })
+            }
           />
         }
         title={host?.username ? `${host.username}'s space` : "..."}

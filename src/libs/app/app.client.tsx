@@ -2,7 +2,7 @@ import { AuthClient } from "@gamezilla/feat/auth";
 import { ChatClient } from "@gamezilla/feat/chat";
 import { ProfileClient } from "@gamezilla/feat/profile";
 import { SearchClient } from "@gamezilla/feat/search";
-import { SpaceClient } from "@gamezilla/feat/space";
+import { GameSpaceClient } from "src/libs/feat/game-space";
 import {
   ClientAppMsg,
   Ctx,
@@ -49,7 +49,7 @@ export const init = ({
   const wire = Wire.init;
   //
   const auth = AuthClient.init();
-  const space = SpaceClient.init;
+  const space = GameSpaceClient.init;
   const profile = ProfileClient.init;
   const chat = ChatClient.init;
   const search = SearchClient.init;
@@ -61,7 +61,7 @@ export const init = ({
       wire,
       //
       chat,
-      space: space.model,
+      gameSpace: space.model,
       auth: auth.model,
       search: search.model,
       profile,
@@ -177,18 +177,18 @@ const update_ = ({
     return { model: { ...model, wire: updated.model }, msgs: updated.msgs };
   }
 
-  if (msg.t === "space") {
-    const updated = SpaceClient.update({
+  if (msg.t === "game-space") {
+    const updated = GameSpaceClient.update({
       ctx: ctx,
-      sendToServer: (m) => sendToServer({ t: "space", c: m }),
+      sendToServer: (m) => sendToServer({ t: "game-space", c: m }),
       msg: msg.c,
-      model: model.space,
+      model: model.gameSpace,
     });
 
     return {
-      model: { ...model, space: updated.model },
-      cmd: Cmd.tag_("space", updated.cmd ?? Cmd.None),
-      msgs: ClientAppMsg.tag("space", updated.msgs),
+      model: { ...model, gameSpace: updated.model },
+      cmd: Cmd.tag_("game-space", updated.cmd ?? Cmd.None),
+      msgs: ClientAppMsg.tag("game-space", updated.msgs),
     };
   }
 
@@ -288,17 +288,17 @@ const updateFromServer = ({
     };
   }
 
-  if (msg.t === "space") {
-    const updated = SpaceClient.updateFromServer({
+  if (msg.t === "game-space") {
+    const updated = GameSpaceClient.updateFromServer({
       ctx,
-      sendToServer: (msg) => sendToServer({ t: "space", c: msg }),
+      sendToServer: (msg) => sendToServer({ t: "game-space", c: msg }),
       msg: msg.c,
-      model: model.space,
+      model: model.gameSpace,
     });
 
     return {
-      model: { ...model, space: updated.model },
-      cmd: Cmd.tag_("space", updated.cmd ?? Cmd.None),
+      model: { ...model, gameSpace: updated.model },
+      cmd: Cmd.tag_("game-space", updated.cmd ?? Cmd.None),
       msgs: updated.msgs,
     };
   }
@@ -339,10 +339,10 @@ export const updateFromApp = ({
     sendToServer: (c) => sendToServer({ t: "chat", c }),
   });
 
-  const space = SpaceClient.updateFromApp({
-    model: model.space,
+  const space = GameSpaceClient.updateFromApp({
+    model: model.gameSpace,
     msg,
-    sendToServer: (c) => sendToServer({ t: "space", c }),
+    sendToServer: (c) => sendToServer({ t: "game-space", c }),
   });
 
   const profile = ProfileClient.updateFromApp({
@@ -380,7 +380,7 @@ export const updateFromApp = ({
       toast: toast.model,
       chat: chat.model,
       profile: profile.model,
-      space: space.model,
+      gameSpace: space.model,
       wire: wire.model,
       auth: auth.model,
     },
@@ -388,7 +388,7 @@ export const updateFromApp = ({
       Cmd.tag_("routing", routing.cmd),
       Cmd.tag_("chat", chat.cmd),
       Cmd.tag_("profile", profile.cmd),
-      Cmd.tag_("space", space.cmd),
+      Cmd.tag_("game-space", space.cmd),
       Cmd.tag_("wire", wire.cmd),
       Cmd.tag_("toast", toast.cmd),
       Cmd.tag_("auth", auth.cmd),
@@ -428,14 +428,14 @@ export const subscriptions = ({
 const spaceSub = (now: Posix, model: Model): Sub<Msg> => {
   if (model.auth.currentUser.t === "logged-in") {
     return Sub.tag_(
-      "space",
-      SpaceClient.subscriptions(
+      "game-space",
+      GameSpaceClient.subscriptions(
         {
           now,
           currentUserId: model.auth.currentUser.userId,
           profiles: model.profile.profiles,
         },
-        model.space
+        model.gameSpace
       )
     );
   }
@@ -576,11 +576,11 @@ const ViewLoggedIn = ({
     );
   }
 
-  if (model.routing.route.t === "space") {
+  if (model.routing.route.t === "game-space") {
     return (
-      <SpaceClient.View
-        dispatch={(m) => dispatch({ t: "space", c: m })}
-        model={model.space}
+      <GameSpaceClient.View
+        dispatch={(m) => dispatch({ t: "game-space", c: m })}
+        model={model.gameSpace}
         ctx={ctx}
         route={model.routing.route.c}
         viewBottomBar={
@@ -655,8 +655,8 @@ const ViewBottomBar = ({
   }[] = [
     {
       route: {
-        t: "space",
-        c: { t: "space-list" },
+        t: "game-space",
+        c: { t: "game-space-list" },
       },
       label: "Spaces",
       icon: <IconGamepad />,
@@ -675,10 +675,10 @@ const ViewBottomBar = ({
 
   return (
     <div className="flex w-full flex-col items-center justify-center">
-      <SpaceClient.ViewCurrentSpaceBar
+      <GameSpaceClient.ViewCurrentSpaceBar
         ctx={ctx}
-        model={model.space}
-        dispatch={(c) => dispatch({ t: "space", c })}
+        model={model.gameSpace}
+        dispatch={(c) => dispatch({ t: "game-space", c })}
       />
       <div className="flex w-full items-center justify-center border-t border-neutral-700">
         {items.map((item) => {

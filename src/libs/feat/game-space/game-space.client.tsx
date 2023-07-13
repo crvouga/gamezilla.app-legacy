@@ -1,8 +1,8 @@
-import { SpaceId } from "@gamezilla/shared/app";
+import { GameSpaceId } from "@gamezilla/shared/app";
 import {
   ClientAppMsg,
   Ctx,
-  RouteSpace,
+  RouteGameSpace,
   SpaceCtx,
   SpaceViewCtx,
   ViewCtx,
@@ -31,7 +31,7 @@ import {
   ToClient,
   ToServer,
   toSpace,
-} from "./space.shared";
+} from "./game-space.shared";
 import {
   ViewNotInGameScreen,
   ViewSpaceJoinScreen,
@@ -94,7 +94,10 @@ const watchCreate: typeof update = ({ msg, model }) => {
       msgs: [
         {
           t: "push-route",
-          route: { t: "space", c: { t: "space", spaceId: msg.spaceId } },
+          route: {
+            t: "game-space",
+            c: { t: "game-space", spaceId: msg.spaceId },
+          },
         },
       ],
     };
@@ -336,7 +339,7 @@ const syncWithServer = ({
     [ClientModel["games"], Cmd<ClientMsg>]
   >(
     (gamesNew, [spaceId, backendGame]) => {
-      if (!SpaceId.is(spaceId)) {
+      if (!GameSpaceId.is(spaceId)) {
         return gamesNew;
       }
 
@@ -466,7 +469,7 @@ export const View = ({
   model: Model;
   ctx: ViewCtx;
   dispatch: (m: Msg) => void;
-  route: RouteSpace;
+  route: RouteGameSpace;
   viewBottomBar: VDom;
 }) => {
   const ctx: ViewCtx = {
@@ -477,7 +480,7 @@ export const View = ({
     },
   };
 
-  if (route.t === "space") {
+  if (route.t === "game-space") {
     return (
       <ViewSpaceScreen
         spaceId={route.spaceId}
@@ -505,7 +508,7 @@ const ViewSpaceScreen = ({
   model: Model;
   ctx: ViewCtx;
   dispatch: (m: Msg) => void;
-  spaceId: SpaceId;
+  spaceId: GameSpaceId;
 }) => {
   if (
     model.requests.list?.t === "loading" ||
@@ -643,7 +646,9 @@ const ViewTopBar = ({
         <ActionButton
           label="Home"
           icon={<IconHome />}
-          onClick={() => ctx.onPush({ t: "space", c: { t: "space-list" } })}
+          onClick={() =>
+            ctx.onPush({ t: "game-space", c: { t: "game-space-list" } })
+          }
         />
       </div>
 
@@ -679,7 +684,9 @@ export const ViewSpaceNotFound = ({ ctx }: { ctx: ViewCtx }) => {
     <div className="flex flex-1 flex-col items-center justify-center gap-4">
       <p className="text-center text-2xl">Space not found</p>
       <MyButton
-        onClick={() => ctx.onPush({ t: "space", c: { t: "space-list" } })}
+        onClick={() =>
+          ctx.onPush({ t: "game-space", c: { t: "game-space-list" } })
+        }
         size="lg"
         variant="contained"
         color="primary">
@@ -729,7 +736,10 @@ export const ViewCurrentSpaceBar = ({
       <button
         className="flex flex-1 items-center overflow-hidden"
         onClick={() => {
-          ctx.onPush({ t: "space", c: { t: "space", spaceId: space.spaceId } });
+          ctx.onPush({
+            t: "game-space",
+            c: { t: "game-space", spaceId: space.spaceId },
+          });
         }}>
         <div className="mr-2 p-2">
           {!game && (

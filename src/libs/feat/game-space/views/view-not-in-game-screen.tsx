@@ -4,7 +4,7 @@ import {
   ViewUsersInSpaceList,
 } from "@gamezilla/shared/client";
 import { gameNameList, gameNameToString, ViewCoverArt } from "../game.shared";
-import { ClientMsg } from "../space.shared";
+import { ClientMsg } from "../game-space.shared";
 
 export const ViewNotInGameScreen = ({
   ctx,

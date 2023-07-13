@@ -2,7 +2,7 @@ import { AuthServer } from "@gamezilla/feat/auth";
 import { ChatServer } from "@gamezilla/feat/chat";
 import { ProfileServer } from "@gamezilla/feat/profile";
 import { SearchServer } from "@gamezilla/feat/search";
-import { SpaceServer } from "@gamezilla/feat/space";
+import { GameSpaceServer } from "src/libs/feat/game-space";
 import { ClientId, SessionId, UserId } from "@gamezilla/shared/app";
 import { Cmd, Sub, andThen, p } from "@gamezilla/shared/core";
 import {
@@ -33,7 +33,7 @@ type Model = ServerModel;
 export const init: { model: Model; cmd?: Cmd<Msg> } = {
   model: {
     sessions: {},
-    space: SpaceServer.init,
+    space: GameSpaceServer.init,
     profile: ProfileServer.init,
     search: SearchServer.init.model,
     chat: ChatServer.init.model,
@@ -149,10 +149,10 @@ const update_ = ({
     });
   }
 
-  if (msg.t === "space") {
-    const updated = SpaceServer.update({
+  if (msg.t === "game-space") {
+    const updated = GameSpaceServer.update({
       sendToUser: (userIds, m) =>
-        sendToUser(sendToClient, model, userIds, { t: "space", c: m }),
+        sendToUser(sendToClient, model, userIds, { t: "game-space", c: m }),
       msg: msg.c,
       model: model.space,
       ctx,
@@ -160,7 +160,7 @@ const update_ = ({
 
     return {
       model: { ...model, space: updated.model },
-      cmd: Cmd.tag_("space", updated.cmd ?? Cmd.None),
+      cmd: Cmd.tag_("game-space", updated.cmd ?? Cmd.None),
     };
   }
 
@@ -225,11 +225,11 @@ const updateFromApp = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  const spaceUpdated = SpaceServer.updateFromApp({
+  const spaceUpdated = GameSpaceServer.updateFromApp({
     msg,
     model: model.space,
     sendToClient: (clientIds, m) =>
-      sendToClient(clientIds, { t: "space", c: m }),
+      sendToClient(clientIds, { t: "game-space", c: m }),
   });
 
   const profileUpdated = ProfileServer.updateFromApp({
@@ -246,7 +246,7 @@ const updateFromApp = ({
       profile: profileUpdated.model,
     },
     cmd: Cmd.batch<Msg>([
-      Cmd.tag_("space", spaceUpdated.cmd),
+      Cmd.tag_("game-space", spaceUpdated.cmd),
       Cmd.tag_("profile", profileUpdated.cmd),
     ]),
   };
@@ -326,15 +326,15 @@ const updateFromClient = ({
     };
   }
 
-  if (msg.t === "space") {
-    const updated = SpaceServer.updateFromClient({
+  if (msg.t === "game-space") {
+    const updated = GameSpaceServer.updateFromClient({
       ctx: authReqCtx,
       msg: msg.c,
       model: model.space,
-      broadcast: (c) => broadcast({ t: "space", c }),
-      sendToClient: (c) => sendToClient([ctx.clientId], { t: "space", c }),
+      broadcast: (c) => broadcast({ t: "game-space", c }),
+      sendToClient: (c) => sendToClient([ctx.clientId], { t: "game-space", c }),
       sendToUser: (userIds, c) =>
-        sendToUser(sendToClient, model, userIds, { t: "space", c }),
+        sendToUser(sendToClient, model, userIds, { t: "game-space", c }),
     });
 
     return {
@@ -342,7 +342,7 @@ const updateFromClient = ({
         ...model,
         space: updated.model,
       },
-      cmd: Cmd.tag_("space", updated.cmd ?? Cmd.None),
+      cmd: Cmd.tag_("game-space", updated.cmd ?? Cmd.None),
     };
   }
 
@@ -386,7 +386,7 @@ const sendToUser = (
 
 export const subscriptions = ({ model }: { model: Model }): Sub<Msg> => {
   return Sub.batch([
-    Sub.tag_("space", SpaceServer.subscriptions(model.space)),
+    Sub.tag_("game-space", GameSpaceServer.subscriptions(model.space)),
     p(
       onConnect,
       Sub.map(

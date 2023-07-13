@@ -1,9 +1,9 @@
-import { SpaceId, UserId } from "./data";
+import { GameSpaceId, UserId } from "./data";
 
-export type Space = {
+export type GameSpace = {
   status?: "started" | "ended";
+  gameSpaceId: GameSpaceId;
   hostId: UserId;
-  spaceId: SpaceId;
   users: {
     [userId: UserId]: UserId;
   };

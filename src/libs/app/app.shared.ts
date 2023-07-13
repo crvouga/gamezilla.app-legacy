@@ -1,8 +1,8 @@
 import * as Auth from "@gamezilla/feat/auth";
 import * as Chat from "@gamezilla/feat/chat";
+import * as GameSpace from "@gamezilla/feat/game-space";
 import * as Profile from "@gamezilla/feat/profile";
 import * as Search from "@gamezilla/feat/search";
-import * as Space from "@gamezilla/feat/space";
 import { ClientId, SessionId } from "@gamezilla/shared/app";
 import { Routing, Toast, Wire } from "./app-client";
 
@@ -15,7 +15,7 @@ import { Routing, Toast, Wire } from "./app-client";
 //
 
 export type ServerModel = {
-  space: Space.ServerModel;
+  space: GameSpace.ServerModel;
   sessions: {
     [sessionId: SessionId]: Session;
   };
@@ -31,15 +31,15 @@ export type Session = {
 };
 
 export type ClientModel = {
-  routing: Routing.Model;
-  toast: Toast.Model;
-  wire: Wire.Model;
-  //
   auth: Auth.ClientModel;
-  space: Space.ClientModel;
+  gameSpace: GameSpace.ClientModel;
   profile: Profile.ClientModel;
   chat: Chat.ClientModel;
   search: Search.ClientModel;
+  //
+  routing: Routing.Model;
+  toast: Toast.Model;
+  wire: Wire.Model;
 };
 
 //
@@ -51,7 +51,7 @@ export type ClientModel = {
 //
 
 export type ToServer =
-  | { t: "space"; c: Space.ToServer }
+  | { t: "game-space"; c: GameSpace.ToServer }
   | { t: "auth"; c: Auth.ToServer }
   | { t: "profile"; c: Profile.ToServer }
   | { t: "search"; c: Search.ToServer }
@@ -59,7 +59,7 @@ export type ToServer =
   | { t: "auth"; c: Auth.ToServer };
 
 export type ToClient =
-  | { t: "space"; c: Space.ToClient }
+  | { t: "game-space"; c: GameSpace.ToClient }
   | { t: "profile"; c: Profile.ToClient }
   | { t: "search"; c: Search.ToClient }
   | { t: "chat"; c: Chat.ToClient }
@@ -73,7 +73,7 @@ export type ClientMsg =
   | { t: "routing"; c: Routing.Msg }
   | { t: "toast"; c: Toast.Msg }
   //
-  | { t: "space"; c: Space.ClientMsg }
+  | { t: "game-space"; c: GameSpace.ClientMsg }
   | { t: "chat"; c: Chat.ClientMsg }
   | { t: "auth"; c: Auth.ClientMsg }
   | { t: "profile"; c: Profile.ClientMsg }
@@ -83,7 +83,7 @@ export type ServerMsg =
   | { t: "→"; sessionId: SessionId; clientId: ClientId; c: ToServer }
   | { t: "client-connected"; sessionId: SessionId; clientId: ClientId }
   | { t: "client-disconnected"; sessionId: SessionId; clientId: ClientId }
-  | { t: "space"; c: Space.ServerMsg }
+  | { t: "game-space"; c: GameSpace.ServerMsg }
   | { t: "profile"; c: Profile.ServerMsg }
   | { t: "search"; c: Search.ServerMsg }
   | { t: "chat"; c: Chat.ServerMsg }

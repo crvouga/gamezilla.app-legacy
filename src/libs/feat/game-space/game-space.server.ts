@@ -1,4 +1,9 @@
-import { ClientId, Space, SpaceId, UserId } from "@gamezilla/shared/app";
+import {
+  ClientId,
+  GameSpace,
+  GameSpaceId,
+  UserId,
+} from "@gamezilla/shared/app";
 import {
   Cmd,
   Err,
@@ -18,7 +23,7 @@ import {
   SpaceReqServerCtx,
 } from "@gamezilla/shared/server";
 import * as Game from "./game.server";
-import { SpaceDb } from "./space-db";
+import { GameSpaceDb } from "./game-space-db";
 import {
   Req,
   Res,
@@ -27,7 +32,7 @@ import {
   ToClient,
   ToServer,
   handle,
-} from "./space.shared";
+} from "./game-space.shared";
 //
 //
 //
@@ -371,7 +376,7 @@ const sendToSpace = ({
 }: {
   model: Model;
   sendToUser: (userIds: UserId[], msg: ToClient) => Cmd;
-  spaceId: SpaceId;
+  spaceId: GameSpaceId;
   msg: ToClient;
 }): Cmd => {
   const userIds: UserId[] = [];
@@ -407,7 +412,7 @@ export const subscriptions = (model: Model): Sub<Msg> => {
   const subs: Sub<Msg>[] = [];
 
   for (const spaceId in model.spaces) {
-    if (!SpaceId.is(spaceId)) {
+    if (!GameSpaceId.is(spaceId)) {
       continue;
     }
 
@@ -450,7 +455,7 @@ export const handler = async ({
 }: {
   req: Req;
   ctx: SpaceReqServerCtx;
-  spaceDb: SpaceDb;
+  spaceDb: GameSpaceDb;
 }): Promise<Res_ & { msgs?: SpaceMsg[] }> => {
   //
   //
@@ -475,10 +480,10 @@ export const handler = async ({
       return { ...req, result: Err({ t: "already-in-a-space" }) };
     }
 
-    const spaceNew: Space = {
+    const spaceNew: GameSpace = {
       status: "started",
       hostId: ctx.currentUserId,
-      spaceId: req.spaceId,
+      gameSpaceId: req.spaceId,
       users: {},
     };
 
@@ -500,7 +505,7 @@ export const handler = async ({
       return { ...req, result: Err({ t: "must-be-host" }) };
     }
 
-    const spaceNew: Space = {
+    const spaceNew: GameSpace = {
       ...space,
       status: "ended",
     };

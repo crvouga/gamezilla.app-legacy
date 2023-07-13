@@ -1,4 +1,4 @@
-import { toProfilesBySpaceId } from "@gamezilla/feat/space";
+import { toProfilesBySpaceId } from "src/libs/feat/game-space";
 import { SpaceViewCtx } from "@gamezilla/shared/client";
 import { IconCrown, MyAvatar } from "@gamezilla/shared/ui";
 

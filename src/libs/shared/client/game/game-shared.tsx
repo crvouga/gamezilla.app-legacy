@@ -1,4 +1,4 @@
-import { SpaceId, UserId } from "@gamezilla/shared/app";
+import { GameSpaceId, UserId } from "@gamezilla/shared/app";
 import { VDom, cn } from "@gamezilla/shared/ui";
 import { Ctx, ViewCtx } from "../ctx";
 
@@ -8,7 +8,7 @@ export type SpaceCtx = Ctx & {
 
 export type Space = {
   hostId: UserId;
-  spaceId: SpaceId;
+  spaceId: GameSpaceId;
   users: {
     [userId: UserId]: UserId;
   };

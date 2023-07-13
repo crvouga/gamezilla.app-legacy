@@ -1,5 +1,5 @@
 import { Err, Ok, RemoteResult, Result } from "@gamezilla/shared/core";
-import { SpaceId, UserId, Username } from "@gamezilla/shared/app";
+import { GameSpaceId, UserId, Username } from "@gamezilla/shared/app";
 import { Profile, Space, SpaceViewCtx } from "@gamezilla/shared/client";
 import * as GameServer from "./game.server";
 import * as Game from "./game.shared";
@@ -14,12 +14,12 @@ import * as Game from "./game.shared";
 
 export type SharedModel = {
   spaces: {
-    [spaceId: SpaceId]: Space;
+    [spaceId: GameSpaceId]: Space;
   };
   users: {
     [userId: UserId]: {
       userId: UserId;
-      spaceId: SpaceId;
+      spaceId: GameSpaceId;
     };
   };
   profiles: {
@@ -33,13 +33,13 @@ export type SharedModel = {
 
 export type ServerModel = SharedModel & {
   games: {
-    [spaceId: SpaceId]: Game.ServerModel;
+    [spaceId: GameSpaceId]: Game.ServerModel;
   };
 };
 
 export type ClientModel = SharedModel & {
   games: {
-    [spaceId: SpaceId]: Game.ClientModel;
+    [spaceId: GameSpaceId]: Game.ClientModel;
   };
   requests: {
     [key in Req["t"]]?: RemoteResult<Problem, null>;
@@ -51,14 +51,14 @@ export type ClientModel = SharedModel & {
 type ModalModel = null | "user-preview" | "users";
 
 export type ClientSpace = {
-  spaceId: SpaceId;
+  spaceId: GameSpaceId;
   hostId: UserId;
   game?: Game.ClientModel;
 };
 
 export type SpaceUser = {
   userId: UserId;
-  spaceId: SpaceId;
+  spaceId: GameSpaceId;
 };
 
 //
@@ -100,7 +100,7 @@ export const toUsersBySpaceId = function* ({
   spaceId,
   model,
 }: {
-  spaceId: SpaceId;
+  spaceId: GameSpaceId;
   model: SharedModel;
 }): Generator<SpaceUser> {
   for (const user of toUsers({ model })) {
@@ -132,7 +132,7 @@ export const toSpace = ({
   spaceId,
   model,
 }: {
-  spaceId: SpaceId;
+  spaceId: GameSpaceId;
   model: SharedModel;
 }): Space | null => {
   const space = model.spaces[spaceId];
@@ -160,7 +160,7 @@ export type ToClient = (Res | { t: "game"; c: Game.ToClient }) & Extra;
 
 export type ToServer = (Req | { t: "game"; c: Game.ToServer }) & Extra;
 
-export type ServerMsg = { t: "game"; spaceId: SpaceId; c: Game.ServerMsg };
+export type ServerMsg = { t: "game"; spaceId: GameSpaceId; c: Game.ServerMsg };
 
 export type ClientMsg =
   | Req
@@ -189,9 +189,9 @@ type Model = ServerModel;
 
 export type Req =
   | { t: "list" }
-  | { t: "create"; spaceId: SpaceId; gameName?: Game.GameName }
+  | { t: "create"; spaceId: GameSpaceId; gameName?: Game.GameName }
   | { t: "destroy"; userId: UserId }
-  | { t: "join"; userId: UserId; spaceId: SpaceId }
+  | { t: "join"; userId: UserId; spaceId: GameSpaceId }
   | { t: "leave"; userId: UserId }
   | { t: "input-game"; gameName?: Game.GameName };
 

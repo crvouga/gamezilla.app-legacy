@@ -1,4 +1,4 @@
-import { SpaceId } from "@gamezilla/shared/app";
+import { GameSpaceId } from "@gamezilla/shared/app";
 import { ViewCtx, ViewSpaceHostChip } from "@gamezilla/shared/client";
 import {
   IconGamepad,
@@ -9,7 +9,7 @@ import {
   cn,
 } from "@gamezilla/shared/ui";
 import { GameName, gameNameToString, ViewCoverArt } from "../game.shared";
-import { ClientModel, ClientMsg } from "../space.shared";
+import { ClientModel, ClientMsg } from "../game-space.shared";
 
 export const ViewSpaceListScreen = ({
   ctx,
@@ -81,8 +81,8 @@ export const ViewSpaceListScreen = ({
                   gameName={gameName}
                   onClick={() => {
                     ctx.onPush({
-                      t: "space",
-                      c: { t: "space", spaceId: space.spaceId },
+                      t: "game-space",
+                      c: { t: "game-space", spaceId: space.spaceId },
                     });
                   }}
                 />
@@ -99,7 +99,7 @@ export const ViewSpaceListScreen = ({
             className="w-full"
             color="primary"
             onClick={() =>
-              dispatch({ t: "create", spaceId: SpaceId.generate() })
+              dispatch({ t: "create", spaceId: GameSpaceId.generate() })
             }>
             Create space
           </MyButton>

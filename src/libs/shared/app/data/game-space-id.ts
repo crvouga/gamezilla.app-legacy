@@ -1,18 +1,18 @@
 import { Result } from "@gamezilla/shared/core";
 
-export type SpaceId = string & { _opaque: "SpaceId" };
+export type GameSpaceId = string & { _opaque: "SpaceId" };
 
 const namespace = "";
 const separator = "";
 
-const is = (id: unknown): id is SpaceId => {
+const is = (id: unknown): id is GameSpaceId => {
   // todo: better validation
   return typeof id === "string";
 };
 
 type Problem = "invalid_id";
 
-const decode = (id: string): Result<Problem, SpaceId> => {
+const decode = (id: string): Result<Problem, GameSpaceId> => {
   if (is(id)) {
     return Result.Ok(id);
   }
@@ -20,7 +20,7 @@ const decode = (id: string): Result<Problem, SpaceId> => {
   return Result.Err("invalid_id");
 };
 
-const generate = (): SpaceId => {
+const generate = (): GameSpaceId => {
   // warning collisions could happen
   // use short id so the logs are more readable
   const spaceId = `${namespace}${separator}${Math.random()
@@ -34,7 +34,7 @@ const generate = (): SpaceId => {
   throw new Error("generated invalid id");
 };
 
-export const SpaceId = {
+export const GameSpaceId = {
   is,
   decode,
   generate,
