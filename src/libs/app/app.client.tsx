@@ -130,7 +130,7 @@ const update_ = ({
 } => {
   const ctx = toCtx({ model, now });
 
-  if (msg.t === "→") {
+  if (msg.t === "▶") {
     return updateFromServer({ now, sendToServer, msg: msg.c, model });
   }
 
@@ -417,7 +417,7 @@ export const subscriptions = ({
   model: Model;
 }): Sub<Msg> => {
   return Sub.batch<Msg>([
-    Sub.tag_("→", fromServerMsgs),
+    Sub.tag_("▶", fromServerMsgs),
     Sub.tag_("wire", wireMsgs),
     Sub.tag_("routing", Routing.subscriptions),
     Sub.tag_("auth", AuthClient.subscriptions),

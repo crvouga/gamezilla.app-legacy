@@ -135,7 +135,7 @@ const update_ = ({
     };
   }
 
-  if (msg.t === "→") {
+  if (msg.t === "▶") {
     return updateFromClient({
       ctx: {
         ...ctx,
@@ -411,7 +411,7 @@ export const subscriptions = ({ model }: { model: Model }): Sub<Msg> => {
       fromClientMsgs,
       Sub.map(
         ({ sessionId, clientId, msg }): Msg => ({
-          t: "→",
+          t: "▶",
           sessionId,
           clientId,
           c: msg,
