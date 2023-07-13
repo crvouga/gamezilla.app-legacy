@@ -27,6 +27,8 @@ const ids = {
   holeMask: `holeMask${randomId}`,
 };
 
+const rootId = "connect-four-columns-svg";
+
 export const ViewColumnsSvg = ({
   columns,
   onClick,
@@ -37,7 +39,10 @@ export const ViewColumnsSvg = ({
   const playerTwoFill = `url(#${ids.playerTwoGradient})`;
 
   return (
-    <svg width="100%" viewBox={`0 0 ${COLUMN_COUNT} ${MAX_COLUMN_HEIGHT}`}>
+    <svg
+      id={rootId}
+      width="100%"
+      viewBox={`0 0 ${COLUMN_COUNT} ${MAX_COLUMN_HEIGHT}`}>
       <SvgDefs ids={ids} />
 
       <g transform={`translate(0, ${MAX_COLUMN_HEIGHT}) scale(1,-1)`}>
@@ -221,6 +226,30 @@ const onEnter =
         easing: { type: "ease-out-quint" },
       },
     });
+
+    // const root = document.getElementById(rootId);
+    // if (!root) {
+    //   return;
+    // }
+    // const actualHeight = root.getBoundingClientRect().height;
+    // const slotHeight = actualHeight / MAX_COLUMN_HEIGHT;
+    // const from = actualHeight + slotHeight;
+    // const to = y * slotHeight;
+
+    // node.setAttribute("cy", `${from}`);
+    // node.animate(
+    //   [
+    //     { transform: `translateY(${from}px)` },
+    //     { transform: `translateY(${to}px)` },
+    //   ],
+    //   {
+    //     duration: 200 + 300 * (1 - y / MAX_COLUMN_HEIGHT),
+    //     easing: "ease-in-out",
+    //     fill: "both",
+    //   }
+    // );
+
+    // svg attributes are not supported by all browsers
     // node.animate([{ cy: `${MAX_COLUMN_HEIGHT + 1}` }, { cy: `${y}` }], {
     //   duration: 200 + 300 * (1 - y / MAX_COLUMN_HEIGHT),
     //   easing: "ease-in-out",
@@ -240,6 +269,30 @@ const onExit =
         delay: (x / COLUMN_COUNT) * 500,
       },
     });
+
+    // const root = document.getElementById(rootId);
+    // if (!root) {
+    //   return;
+    // }
+    // const actualHeight = root.getBoundingClientRect().height;
+    // const slotHeight = actualHeight / MAX_COLUMN_HEIGHT;
+    // const from = y * slotHeight;
+    // const to = from + actualHeight;
+
+    // node.animate(
+    //   [
+    //     { transform: `translateY(${from}px)` },
+    //     { transform: `translateY(${to}px)` },
+    //   ],
+    //   {
+    //     duration: 750,
+    //     easing: "ease-in-out",
+    //     fill: "both",
+    //     delay: (x / COLUMN_COUNT) * 500,
+    //   }
+    // );
+
+    //
     // node.animate([{ cy: `${y}` }, { cy: `${y - MAX_COLUMN_HEIGHT}` }], {
     //   duration: 750,
     //   easing: "ease-in-out",
