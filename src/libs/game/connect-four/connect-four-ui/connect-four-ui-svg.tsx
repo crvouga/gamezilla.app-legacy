@@ -215,7 +215,7 @@ const onEnter =
   async (node: HTMLElement) => {
     node.animate([{ cy: `${MAX_COLUMN_HEIGHT + 1}` }, { cy: `${y}` }], {
       duration: 200 + 300 * (1 - y / MAX_COLUMN_HEIGHT),
-      easing: "cubic-bezier(0.23, 1, 0.32, 1)",
+      easing: "ease-in-out",
       fill: "both",
     });
   };
@@ -225,7 +225,7 @@ const onExit =
   async (node: HTMLElement) => {
     node.animate([{ cy: `${y}` }, { cy: `${y - MAX_COLUMN_HEIGHT}` }], {
       duration: 750,
-      easing: "cubic-bezier(0.68, -0.55, 0.27, 1.55)",
+      easing: "ease-in-out",
       delay: (x / COLUMN_COUNT) * 500,
       fill: "both",
     });
