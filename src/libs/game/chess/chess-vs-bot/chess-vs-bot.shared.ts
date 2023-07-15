@@ -1,4 +1,5 @@
 import { UserId } from "@gamezilla/shared/app";
+import { VsBotSetup } from "@gamezilla/shared/client";
 import { Audio, Err, Ok, Result } from "@gamezilla/shared/core";
 import * as Chess from "../chess/chess";
 
@@ -15,6 +16,7 @@ export type ClientModel = {
   openedMenuId: string | null;
   openedModal: null | "game-over";
   isFlipped: boolean;
+  vsBotSetup: VsBotSetup.Model;
 };
 
 export type ServerModel = SharedModel;
@@ -85,7 +87,8 @@ export type ClientMsg =
   | { t: "opened-menu"; menuId: string }
   | { t: "closed-menu" }
   | { t: "clicked-flip" }
-  | { t: "closed-modal" };
+  | { t: "closed-modal" }
+  | { t: "vs-bot-setup"; c: VsBotSetup.Msg };
 
 export type ServerMsg = {
   t: "bot-moved";

@@ -11,6 +11,7 @@ import {
   toOpposite,
   toStatus,
 } from "../tic-tic-toe/tic-tac-toe";
+import { VsBotSetup } from "@gamezilla/shared/client";
 
 //
 //
@@ -37,7 +38,9 @@ export type GameModel = {
   board: Model;
 };
 
-export type ClientModel = SharedModel;
+export type ClientModel = SharedModel & {
+  vsBotSetup: VsBotSetup.Model;
+};
 
 export type ServerModel = SharedModel;
 
@@ -74,7 +77,7 @@ export const isBotTurn = (model: SharedModel): model is GameModel => {
 //
 //
 
-export type ClientMsg = Req;
+export type ClientMsg = Req | { t: "vs-bot-setup"; c: VsBotSetup.Msg };
 
 export type ServerMsg = { t: "bot-moved"; result: GetBestMoveResult };
 

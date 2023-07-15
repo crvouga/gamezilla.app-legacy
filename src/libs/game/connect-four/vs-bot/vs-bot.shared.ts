@@ -10,6 +10,7 @@ import {
   opposite,
   toStatus,
 } from "../connect-four/connect-four";
+import { VsBotSetup } from "@gamezilla/shared/client";
 
 //
 //
@@ -52,6 +53,7 @@ export type ServerModel = SharedModel;
 
 export type ClientModel = SharedModel & {
   ghostIndex: ColumnIndex | null;
+  vsBotSetup: VsBotSetup.Model;
 };
 
 export const initShared = ({
@@ -116,7 +118,10 @@ export const botLevel: { [botLevel in BotLevel]: BotLevel } = {
 //
 //
 
-export type ClientMsg = Req | { t: "hovered"; columnIndex: ColumnIndex };
+export type ClientMsg =
+  | Req
+  | { t: "hovered"; columnIndex: ColumnIndex }
+  | { t: "vs-bot-setup"; c: VsBotSetup.Msg };
 
 export type ServerMsg = { t: "bot-moved"; result: BestMoveResult };
 

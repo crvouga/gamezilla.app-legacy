@@ -5,11 +5,37 @@ import {
   IconRobot,
   MyAvatar,
   MyButton,
+  MyDrawer,
   VDom,
 } from "@gamezilla/shared/ui";
 import { SpaceViewCtx } from "../game-shared";
 import { ViewGameHeader } from "../view-game-header";
 import { VsBotProps } from "./view-vs-bot";
+import { z } from "zod";
+
+export type Model = {
+  opened: "change-bot" | null;
+};
+
+export const ModelZod = z.object({
+  opened: z.union([z.literal("change-bot"), z.null()]),
+});
+
+export const init: Model = {
+  opened: null,
+};
+
+export type Msg = { t: "clicked-change-bot" } | { t: "closed-modal" };
+
+export const update = (input: { msg: Msg; model: Model }): { model: Model } => {
+  if (input.msg.t === "clicked-change-bot") {
+    return { model: { opened: "change-bot" } };
+  }
+  if (input.msg.t === "closed-modal") {
+    return { model: { opened: null } };
+  }
+  return input;
+};
 
 type PlayerProp =
   | {
@@ -29,7 +55,11 @@ type PlayerProp =
       onStopPlaying: () => void;
     };
 
-export const VsBotSetupScreen = ({
+type Props = VsBotProps & { model: Model; dispatch: (m: Msg) => void };
+
+export const View = ({
+  dispatch,
+  model,
   title,
   renderCoverArt,
   onQuit,
@@ -40,7 +70,7 @@ export const VsBotSetupScreen = ({
   playerTwo,
   canStartGame,
   onStartGame,
-}: VsBotProps) => {
+}: Props) => {
   const playerOneProp: PlayerProp =
     human.player === "player-one"
       ? {
@@ -93,9 +123,19 @@ export const VsBotSetupScreen = ({
         </div>
 
         <div className="mt-2 grid w-full grid-cols-7">
-          <PlayerButtons human={human} player={playerOneProp} ctx={ctx} />
+          <PlayerButtons
+            dispatch={dispatch}
+            human={human}
+            player={playerOneProp}
+            ctx={ctx}
+          />
           <div className="col-span-1"></div>
-          <PlayerButtons human={human} player={playerTwoProp} ctx={ctx} />
+          <PlayerButtons
+            dispatch={dispatch}
+            human={human}
+            player={playerTwoProp}
+            ctx={ctx}
+          />
         </div>
       </div>
 
@@ -117,6 +157,14 @@ export const VsBotSetupScreen = ({
           </MyButton>
         </div>
       )}
+
+      <MyDrawer
+        open={model.opened === "change-bot"}
+        onClose={() => dispatch({ t: "closed-modal" })}>
+        <div className="flex flex-col p-4">
+          <p className="text-xl font-bold">Change bot</p>
+        </div>
+      </MyDrawer>
     </div>
   );
 };
@@ -174,19 +222,30 @@ const PlayerButtons = ({
   human,
   player,
   ctx,
+  dispatch,
 }: {
   human: { userId: UserId | null };
   ctx: SpaceViewCtx;
   player: PlayerProp;
+  dispatch: (m: Msg) => void;
 }) => {
   return (
-    <div className="col-span-3">
+    <div className="col-span-3 flex flex-col gap-2">
       {!human.userId && (
         <MyButton
           onClick={player.onStartPlaying}
           className="w-full"
           color="primary">
           Start playing
+        </MyButton>
+      )}
+      {player.t === "user" && ctx.currentUserId === player.userId && (
+        <MyButton
+          onClick={player.onStopPlaying}
+          className="w-full"
+          variant="text"
+          color="primary">
+          Stop playing
         </MyButton>
       )}
       {player.t === "bot" && human.userId === ctx.currentUserId && (
@@ -198,13 +257,13 @@ const PlayerButtons = ({
           Swap sides
         </MyButton>
       )}
-      {player.t === "user" && ctx.currentUserId === player.userId && (
+      {player.t === "bot" && human.userId === ctx.currentUserId && (
         <MyButton
-          onClick={player.onStopPlaying}
+          onClick={() => dispatch({ t: "clicked-change-bot" })}
           className="w-full"
           variant="text"
           color="primary">
-          Stop playing
+          Change bot
         </MyButton>
       )}
     </div>

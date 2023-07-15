@@ -11,6 +11,7 @@ import type {
   ServerModel,
   SharedModel,
 } from "./vs-bot.shared";
+import { VsBotSetup } from "@gamezilla/shared/client";
 
 export const BotLevelZod: z.ZodType<BotLevel> = z.enum([
   "Easy",
@@ -42,5 +43,6 @@ export const ServerModelZod: z.ZodType<ServerModel> = SharedModelZod;
 export const ClientModelZod: z.ZodType<ClientModel> = SharedModelZod.and(
   z.object({
     ghostIndex: ColumnIndexZod.nullable(),
+    vsBotSetup: VsBotSetup.ModelZod,
   })
 );

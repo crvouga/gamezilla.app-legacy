@@ -1,8 +1,4 @@
-import {
-  SpaceCtx,
-  SpaceViewCtx,
-  VsBotSetupScreen,
-} from "@gamezilla/shared/client";
+import { SpaceCtx, SpaceViewCtx, VsBotSetup } from "@gamezilla/shared/client";
 import {
   Audio,
   Cmd,
@@ -38,6 +34,7 @@ import {
 export type Model = ClientModel;
 
 export const init: ClientModel = {
+  vsBotSetup: VsBotSetup.init,
   sharedModel: initShared,
   openedMenuId: null,
   openedModal: null,
@@ -88,6 +85,11 @@ export const update = ({
 
   if (msg.t === "closed-menu") {
     return { model: { ...model, openedMenuId: null } };
+  }
+
+  if (msg.t === "vs-bot-setup") {
+    const updated = VsBotSetup.update({ msg: msg.c, model: model.vsBotSetup });
+    return { model: { ...model, vsBotSetup: updated.model } };
   }
 
   const handled = handle({
@@ -235,6 +237,7 @@ export const syncWithServer = ({
     openedMenuId: clientModel.openedMenuId,
     openedModal: clientModel.openedModal,
     sharedModel: serverModel,
+    vsBotSetup: clientModel.vsBotSetup,
   };
 };
 
@@ -271,7 +274,9 @@ export const View = ({
 }) => {
   if (model.sharedModel.type === "setup") {
     return (
-      <VsBotSetupScreen
+      <VsBotSetup.View
+        model={model.vsBotSetup}
+        dispatch={(c) => dispatch({ t: "vs-bot-setup", c })}
         title="Chess"
         renderCoverArt={(props) => {
           return <ViewCoverArt {...props} />;

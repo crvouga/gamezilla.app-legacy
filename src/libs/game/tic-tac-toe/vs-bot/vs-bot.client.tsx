@@ -6,7 +6,7 @@ import {
   ViewBottomButtonBar,
   VsBotPlayerSection,
   VsBotProps,
-  VsBotSetupScreen,
+  VsBotSetup,
 } from "@gamezilla/shared/client";
 import { Cmd, Posix } from "@gamezilla/shared/core";
 import {
@@ -42,7 +42,12 @@ import {
 
 export type Model = ClientModel;
 
-export const init = initSharedModel;
+export const init = (...input: Parameters<typeof initSharedModel>): Model => {
+  return {
+    ...initSharedModel(...input),
+    vsBotSetup: VsBotSetup.init,
+  };
+};
 
 //
 //
@@ -69,6 +74,11 @@ export const update = ({
   msgs?: ClientAppMsg[];
   cmd?: Cmd<Msg>;
 } => {
+  if (msg.t === "vs-bot-setup") {
+    const updated = VsBotSetup.update({ msg: msg.c, model: model.vsBotSetup });
+    return { model: { ...model, vsBotSetup: updated.model } };
+  }
+
   const handled = handle({ ctx, msg, model });
   if (handled.t === "err") {
     return { model, cmd: sendToServer(msg) };
@@ -113,10 +123,10 @@ export const updateFromServer = ({
 
 export const syncWithServer = ({
   server,
-  client,
+  client = init({ userId: null }),
 }: {
   now: Posix;
-  client: ClientModel;
+  client?: ClientModel;
   server: ServerModel;
 }): ClientModel => {
   return {
@@ -174,7 +184,13 @@ export const View = ({
   };
 
   if (model.type === "setup") {
-    return <VsBotSetupScreen {...vsBotProps} />;
+    return (
+      <VsBotSetup.View
+        model={model.vsBotSetup}
+        dispatch={(c) => dispatch({ t: "vs-bot-setup", c })}
+        {...vsBotProps}
+      />
+    );
   }
 
   const vsBotGameProps = {

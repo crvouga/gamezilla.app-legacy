@@ -7,7 +7,7 @@ import {
   VsBotGameOverOverlay,
   VsBotPlayerSection,
   VsBotProps,
-  VsBotSetupScreen,
+  VsBotSetup,
 } from "@gamezilla/shared/client";
 import { Cmd, Posix, Sub } from "@gamezilla/shared/core";
 import {
@@ -50,6 +50,7 @@ export const init = (...params: Parameters<typeof initShared>): ClientModel => {
   return {
     ...shared,
     ghostIndex: null,
+    vsBotSetup: VsBotSetup.init,
   };
 };
 
@@ -82,6 +83,17 @@ export const update = ({
       return { model };
     }
     return { model: { ...model, ghostIndex: msg.columnIndex } };
+  }
+
+  if (msg.t === "vs-bot-setup") {
+    if (model.type !== "setup") {
+      return { model };
+    }
+    const updated = VsBotSetup.update({
+      msg: msg.c,
+      model: model.vsBotSetup,
+    });
+    return { model: { ...model, vsBotSetup: updated.model } };
   }
 
   const result = handle({ ctx, msg, model });
@@ -135,26 +147,27 @@ export const updateFromServer = ({
 
 export const syncWithServer = ({
   serverModel,
-  clientModel,
+  clientModel = init({ player: null }),
 }: {
   ctx: Ctx;
-  clientModel: ClientModel;
+  clientModel?: ClientModel;
   serverModel: ServerModel;
 }): ClientModel => {
   if (serverModel.type === "setup") {
-    return { ...serverModel, ghostIndex: null };
+    return { ...clientModel, ...serverModel, ghostIndex: null };
   }
 
   if (clientModel.type === "setup") {
     return {
+      ...clientModel,
       ...serverModel,
       ghostIndex: null,
     };
   }
 
   return {
+    ...clientModel,
     ...serverModel,
-    ghostIndex: clientModel.ghostIndex,
   };
 };
 
@@ -225,7 +238,13 @@ export const View = ({
   };
 
   if (model.type === "setup") {
-    return <VsBotSetupScreen {...vsBotProps} />;
+    return (
+      <VsBotSetup.View
+        model={model.vsBotSetup}
+        dispatch={(c) => dispatch({ t: "vs-bot-setup", c })}
+        {...vsBotProps}
+      />
+    );
   }
 
   const vsBotGameProps = {

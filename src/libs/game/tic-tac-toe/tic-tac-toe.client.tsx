@@ -168,14 +168,11 @@ export const syncWithServer = ({
   }
 
   if (serverModel.t === "vs-bot") {
-    const clientModelChild =
-      clientModel.t === "vs-bot" ? clientModel.c : VsBot.init({ userId: null });
-
     return {
       t: "vs-bot",
       c: VsBot.syncWithServer({
         now: ctx.now,
-        client: clientModelChild,
+        client: clientModel.t === "vs-bot" ? clientModel.c : undefined,
         server: serverModel.c,
       }),
     };
