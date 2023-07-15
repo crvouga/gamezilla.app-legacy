@@ -110,8 +110,8 @@ describe("Connect Four", () => {
   });
 });
 
-export const p1: PlayerType = "PlayerOne";
-export const p2: PlayerType = "PlayerTwo";
+export const p1: PlayerType = "player-one";
+export const p2: PlayerType = "player-two";
 
 export const winner: PlayerType = p1;
 

@@ -216,28 +216,28 @@ export const View = ({
         playerOne={{
           label: "Red",
           onStartPlaying: () => {
-            dispatch({ t: "start-playing", playerType: "PlayerOne" });
+            dispatch({ t: "start-playing", playerType: "player-one" });
           },
           onStopPlaying: () => {
             dispatch({ t: "stop-playing" });
           },
           renderIcon: (props) => {
-            return <PlayerIcon playerType="PlayerOne" {...props} />;
+            return <PlayerIcon playerType="player-one" {...props} />;
           },
-          userId: model.players.PlayerOne,
+          userId: model.players["player-one"],
         }}
         playerTwo={{
           label: "Yellow",
           onStartPlaying: () => {
-            dispatch({ t: "start-playing", playerType: "PlayerTwo" });
+            dispatch({ t: "start-playing", playerType: "player-two" });
           },
           onStopPlaying: () => {
             dispatch({ t: "stop-playing" });
           },
           renderIcon: (props) => {
-            return <PlayerIcon playerType="PlayerTwo" {...props} />;
+            return <PlayerIcon playerType="player-two" {...props} />;
           },
-          userId: model.players.PlayerTwo,
+          userId: model.players["player-two"],
         }}
       />
     );
@@ -249,8 +249,8 @@ export const View = ({
     <GameLayout isSpectating={currentUserPlayerType === null}>
       <div className="flex w-full flex-1 flex-col items-center justify-center gap-2">
         <div className="flex w-full items-center gap-2 px-2">
-          <PlayerSlot playerType="PlayerOne" model={model} ctx={ctx} />
-          <PlayerSlot playerType="PlayerTwo" model={model} ctx={ctx} />
+          <PlayerSlot playerType="player-one" model={model} ctx={ctx} />
+          <PlayerSlot playerType="player-two" model={model} ctx={ctx} />
         </div>
 
         <Feedback ctx={ctx} model={model} />
@@ -415,7 +415,7 @@ const ViewGameOverMessage = ({
     const { resigner } = model.gameOver;
 
     const winner: PlayerType =
-      resigner === "PlayerOne" ? "PlayerTwo" : "PlayerOne";
+      resigner === "player-one" ? "player-two" : "player-one";
 
     if (currentPlayerType === null) {
       return (

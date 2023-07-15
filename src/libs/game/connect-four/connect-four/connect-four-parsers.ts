@@ -10,8 +10,8 @@ export const UserIdZod: z.ZodType<UserId> = z.custom((value) => {
 });
 
 export const PlayerTypeZod: z.ZodType<PlayerType> = z.enum([
-  "PlayerOne",
-  "PlayerTwo",
+  "player-one",
+  "player-two",
 ]);
 
 const Col = z.array(PlayerTypeZod);

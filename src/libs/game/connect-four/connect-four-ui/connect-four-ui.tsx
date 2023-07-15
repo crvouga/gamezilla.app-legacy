@@ -94,15 +94,15 @@ export const ViewCoverArt = (props: { className?: string }) => {
         <linearGradient
           id={ids.playerOneGradient}
           gradientTransform="rotate(90)">
-          <stop offset="0%" stopColor={gameTheme.PlayerOne.light} />
-          <stop offset="100%" stopColor={gameTheme.PlayerOne.dark} />
+          <stop offset="0%" stopColor={gameTheme["player-one"].light} />
+          <stop offset="100%" stopColor={gameTheme["player-one"].dark} />
         </linearGradient>
 
         <linearGradient
           id={ids.playerTwoGradient}
           gradientTransform="rotate(90)">
-          <stop offset="0%" stopColor={gameTheme.PlayerTwo.light} />
-          <stop offset="100%" stopColor={gameTheme.PlayerTwo.dark} />
+          <stop offset="0%" stopColor={gameTheme["player-two"].light} />
+          <stop offset="100%" stopColor={gameTheme["player-two"].dark} />
         </linearGradient>
       </defs>
 
@@ -148,11 +148,11 @@ export const PlayerIcon = ({
   className?: string;
 }) => {
   switch (playerType) {
-    case "PlayerOne": {
+    case "player-one": {
       return <PlayerOneIcon {...props} />;
     }
 
-    case "PlayerTwo": {
+    case "player-two": {
       return <PlayerTwoIcon {...props} />;
     }
   }
@@ -176,8 +176,8 @@ export const ViewPlayerOneGradientDef = ({
       cx={cx}
       cy={cy}
       r={r}>
-      <stop offset="50%" stopColor={gameTheme.PlayerOne.light} />
-      <stop offset="100%" stopColor={gameTheme.PlayerOne.dark} />
+      <stop offset="50%" stopColor={gameTheme["player-one"].light} />
+      <stop offset="100%" stopColor={gameTheme["player-one"].dark} />
     </radialGradient>
   );
 };
@@ -189,8 +189,8 @@ export const ViewPlayerTwoGradientDef = ({
 }) => {
   return (
     <radialGradient id={gradientId} gradientTransform="rotate(90)">
-      <stop offset="50%" stopColor={gameTheme.PlayerTwo.light} />
-      <stop offset="100%" stopColor={gameTheme.PlayerTwo.dark} />
+      <stop offset="50%" stopColor={gameTheme["player-two"].light} />
+      <stop offset="100%" stopColor={gameTheme["player-two"].dark} />
     </radialGradient>
   );
 };

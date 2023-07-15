@@ -202,7 +202,7 @@ export const View = ({
     onStartGame: () => dispatch({ t: "start-game" }),
     human: {
       player:
-        model.userPlayerType === "PlayerOne" ? "player-one" : "player-two",
+        model.userPlayerType === "player-one" ? "player-one" : "player-two",
       userId: model.player,
     },
     bot: {
@@ -212,14 +212,14 @@ export const View = ({
       label: "Red",
       renderIcon: (props) => <PlayerOneIcon {...props} />,
       onStartPlaying: () =>
-        dispatch({ t: "start-playing", playerType: "PlayerOne" }),
+        dispatch({ t: "start-playing", playerType: "player-one" }),
       onStopPlaying: () => dispatch({ t: "stop-playing" }),
     },
     playerTwo: {
       label: "Yellow",
       renderIcon: (props) => <PlayerTwoIcon {...props} />,
       onStartPlaying: () =>
-        dispatch({ t: "start-playing", playerType: "PlayerTwo" }),
+        dispatch({ t: "start-playing", playerType: "player-two" }),
       onStopPlaying: () => dispatch({ t: "stop-playing" }),
     },
   };
@@ -281,7 +281,7 @@ export const View = ({
                 ? {
                     t: "winner",
                     winner:
-                      status.winner === "PlayerOne"
+                      status.winner === "player-one"
                         ? "player-one"
                         : "player-two",
                   }

@@ -69,7 +69,7 @@ export const ViewColumnsSvg = ({
                   cx={x}
                   cy={y}
                   r={0.5}
-                  fill={disc === "PlayerOne" ? playerOneFill : playerTwoFill}
+                  fill={disc === "player-one" ? playerOneFill : playerTwoFill}
                 />
               </Transition>
             ))
@@ -333,13 +333,13 @@ const SvgDefs = ({ ids }: { ids: SvgIds }) => {
       </linearGradient>
 
       <linearGradient id={ids.playerOneGradient} gradientTransform="rotate(90)">
-        <stop offset="0%" stopColor={gameTheme.PlayerOne.light} />
-        <stop offset="100%" stopColor={gameTheme.PlayerOne.dark} />
+        <stop offset="0%" stopColor={gameTheme["player-one"].light} />
+        <stop offset="100%" stopColor={gameTheme["player-one"].dark} />
       </linearGradient>
 
       <linearGradient id={ids.playerTwoGradient} gradientTransform="rotate(90)">
-        <stop offset="0%" stopColor={gameTheme.PlayerTwo.light} />
-        <stop offset="100%" stopColor={gameTheme.PlayerTwo.dark} />
+        <stop offset="0%" stopColor={gameTheme["player-two"].light} />
+        <stop offset="100%" stopColor={gameTheme["player-two"].dark} />
       </linearGradient>
     </defs>
   );

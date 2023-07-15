@@ -16,23 +16,23 @@ import {
 //
 //
 
-export type PlayerType = "PlayerOne" | "PlayerTwo";
+export type PlayerType = "player-one" | "player-two";
 
 export const playerTypes: { [playerType in PlayerType]: PlayerType } = {
-  PlayerOne: "PlayerOne",
-  PlayerTwo: "PlayerTwo",
+  "player-one": "player-one",
+  "player-two": "player-two",
 };
 
 export const opposite: { [playerType in PlayerType]: PlayerType } = {
-  PlayerOne: "PlayerTwo",
-  PlayerTwo: "PlayerOne",
+  "player-one": "player-two",
+  "player-two": "player-one",
 };
 
 type Color = "Red" | "Yellow";
 
 export const playerTypeToColor: { [key in PlayerType]: Color } = {
-  PlayerOne: "Red",
-  PlayerTwo: "Yellow",
+  "player-one": "Red",
+  "player-two": "Yellow",
 };
 
 export type Column = readonly PlayerType[];
@@ -183,7 +183,7 @@ export const toSlot = (
 };
 
 export const toTurn = (columns: Columns): PlayerType => {
-  return columns.flat().length % 2 === 0 ? "PlayerOne" : "PlayerTwo";
+  return columns.flat().length % 2 === 0 ? "player-one" : "player-two";
 };
 
 const isFull = (columns: Columns) => {

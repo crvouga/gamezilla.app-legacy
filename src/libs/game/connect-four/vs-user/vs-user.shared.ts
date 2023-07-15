@@ -266,8 +266,8 @@ export const handle = ({
         return Err("not-in-setup");
       }
 
-      const playerOne = model.players.PlayerOne;
-      const playerTwo = model.players.PlayerTwo;
+      const playerOne = model.players["player-one"];
+      const playerTwo = model.players["player-two"];
 
       if (!playerOne || !playerTwo) {
         return Err("missing-player");
@@ -279,8 +279,8 @@ export const handle = ({
         moveTimeLimit: model.moveTimeLimit,
         moveCountDown: model.moveTimeLimit,
         players: {
-          PlayerOne: playerOne,
-          PlayerTwo: playerTwo,
+          "player-one": playerOne,
+          "player-two": playerTwo,
         },
       };
 
@@ -421,12 +421,12 @@ export const toPlayerType = (
   userId: UserId,
   model: SharedModel
 ): PlayerType | null => {
-  if (model.players.PlayerOne === userId) {
-    return "PlayerOne";
+  if (model.players["player-one"] === userId) {
+    return "player-one";
   }
 
-  if (model.players.PlayerTwo === userId) {
-    return "PlayerTwo";
+  if (model.players["player-two"] === userId) {
+    return "player-two";
   }
 
   return null;

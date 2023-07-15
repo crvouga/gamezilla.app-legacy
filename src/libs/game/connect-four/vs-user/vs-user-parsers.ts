@@ -21,8 +21,8 @@ export const MoveTimeLimitZod: z.ZodType<MoveTimeLimit> = z.union([
 ]);
 
 const PlayersZod = z.object({
-  PlayerOne: UserIdZod,
-  PlayerTwo: UserIdZod,
+  "player-one": UserIdZod,
+  "player-two": UserIdZod,
 });
 
 const RematchZod: z.ZodType<Rematch> = z.discriminatedUnion("type", [
@@ -56,8 +56,8 @@ export const SharedModelZod: z.ZodType<SharedModel> = z.discriminatedUnion(
       type: z.literal("setup"),
       moveTimeLimit: MoveTimeLimitZod,
       players: z.object({
-        PlayerOne: UserIdZod.nullable(),
-        PlayerTwo: UserIdZod.nullable(),
+        "player-one": UserIdZod.nullable(),
+        "player-two": UserIdZod.nullable(),
       }),
     }),
     z.object({

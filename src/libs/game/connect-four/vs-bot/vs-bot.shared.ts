@@ -63,7 +63,7 @@ export const initShared = ({
     type: "setup",
     botLevel: "Medium",
     player: player,
-    userPlayerType: "PlayerOne",
+    userPlayerType: "player-one",
   };
 };
 

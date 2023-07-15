@@ -267,10 +267,10 @@ const makeDisc = ({
   disc.setAttribute("data-position", `${x},${y}`);
   disc.setAttribute("data-player", player);
   disc.setAttribute("r", "0.5");
-  if (player === "PlayerOne") {
+  if (player === "player-one") {
     disc.setAttribute("fill", `url(#${svgDefIds.playerOneGradient})`);
   }
-  if (player === "PlayerTwo") {
+  if (player === "player-two") {
     disc.setAttribute("fill", `url(#${svgDefIds.playerTwoGradient})`);
   }
   disc.setAttribute("cx", `${x}`);
@@ -405,11 +405,11 @@ const createSvgDefs = (ids: SvgDefIds) => {
   playerOneGradient.setAttribute("gradientTransform", "rotate(90)");
   const playerOneStop1 = document.createElementNS(svgNS, "stop");
   playerOneStop1.setAttribute("offset", "0%");
-  playerOneStop1.setAttribute("stop-color", gameTheme.PlayerOne.light);
+  playerOneStop1.setAttribute("stop-color", gameTheme["player-one"].light);
   playerOneGradient.appendChild(playerOneStop1);
   const playerOneStop2 = document.createElementNS(svgNS, "stop");
   playerOneStop2.setAttribute("offset", "100%");
-  playerOneStop2.setAttribute("stop-color", gameTheme.PlayerOne.dark);
+  playerOneStop2.setAttribute("stop-color", gameTheme["player-one"].dark);
   playerOneGradient.appendChild(playerOneStop2);
   svgDefs.appendChild(playerOneGradient);
 
@@ -419,11 +419,11 @@ const createSvgDefs = (ids: SvgDefIds) => {
   playerTwoGradient.setAttribute("gradientTransform", "rotate(90)");
   const playerTwoStop1 = document.createElementNS(svgNS, "stop");
   playerTwoStop1.setAttribute("offset", "0%");
-  playerTwoStop1.setAttribute("stop-color", gameTheme.PlayerTwo.light);
+  playerTwoStop1.setAttribute("stop-color", gameTheme["player-two"].light);
   playerTwoGradient.appendChild(playerTwoStop1);
   const playerTwoStop2 = document.createElementNS(svgNS, "stop");
   playerTwoStop2.setAttribute("offset", "100%");
-  playerTwoStop2.setAttribute("stop-color", gameTheme.PlayerTwo.dark);
+  playerTwoStop2.setAttribute("stop-color", gameTheme["player-two"].dark);
   playerTwoGradient.appendChild(playerTwoStop2);
   svgDefs.appendChild(playerTwoGradient);
 

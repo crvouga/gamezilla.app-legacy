@@ -200,7 +200,9 @@ const initMode = (mode: Mode, userId: UserId): Model => {
     case "vs-user": {
       return {
         t: "vs-user",
-        c: VsUser.init({ players: { PlayerOne: userId, PlayerTwo: null } }),
+        c: VsUser.init({
+          players: { "player-one": userId, "player-two": null },
+        }),
       };
     }
   }
