@@ -1,7 +1,9 @@
 import {
   ClientAppMsg,
   Ctx,
-  IconBot,
+  IconBotCute,
+  IconBotLevel1,
+  IconBotScary,
   SpaceCtx,
   SpaceViewCtx,
   ViewBottomButtonBar,
@@ -238,7 +240,7 @@ export const View = ({
           {
             icon: <IconArrowLeftOnRect />,
             label: "Exit",
-            onClick: goBack,
+            onClick: () => dispatch({ t: "stop-game" }),
           },
           {
             icon: <IconRightLeft />,
@@ -272,13 +274,13 @@ export const renderBotLevel = ({
 }) => {
   switch (level) {
     case "Easy": {
-      return <IconBot.Level0 {...props} />;
+      return <IconBotCute {...props} />;
     }
     case "Medium": {
-      return <IconBot.Level1 {...props} />;
+      return <IconBotLevel1 {...props} />;
     }
     case "Impossible": {
-      return <IconBot.Level2 {...props} />;
+      return <IconBotScary {...props} />;
     }
   }
 };

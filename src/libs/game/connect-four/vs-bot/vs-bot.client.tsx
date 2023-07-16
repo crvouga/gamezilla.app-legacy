@@ -1,7 +1,9 @@
 import {
   Ctx,
   GameLayout,
-  IconBot,
+  IconBotCute,
+  IconBotLevel1,
+  IconBotScary,
   SpaceCtx,
   SpaceViewCtx,
   ViewBottomButtonBar,
@@ -354,13 +356,13 @@ export const renderBotLevel = ({
 }) => {
   switch (level) {
     case "Easy": {
-      return <IconBot.Level0 {...props} />;
+      return <IconBotCute {...props} />;
     }
     case "Medium": {
-      return <IconBot.Level1 {...props} />;
+      return <IconBotLevel1 {...props} />;
     }
     case "Hard": {
-      return <IconBot.Level2 {...props} />;
+      return <IconBotScary {...props} />;
     }
   }
 };
