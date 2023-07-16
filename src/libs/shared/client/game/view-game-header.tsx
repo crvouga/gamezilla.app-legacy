@@ -1,4 +1,4 @@
-import { IconGamepad, VDom } from "@gamezilla/shared/ui";
+import { IconGamepad, VDom } from "@gamezilla/ui";
 
 export const ViewGameHeader = ({
   title,

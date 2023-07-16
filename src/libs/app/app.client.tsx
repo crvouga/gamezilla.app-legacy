@@ -19,7 +19,7 @@ import {
   LoadingScreen,
   VDom,
   cn,
-} from "@gamezilla/shared/ui";
+} from "@gamezilla/ui";
 import { Subject } from "rxjs";
 import { Routing, Toast, Wire } from "./app-client";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./app.shared";

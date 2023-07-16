@@ -8,7 +8,7 @@ import {
   MyButton,
   TopBar,
   TopBarBackButton,
-} from "@gamezilla/shared/ui";
+} from "@gamezilla/ui";
 import { ClientModel, ClientMsg } from "../profile.shared";
 
 export const ViewProfileScreen = ({

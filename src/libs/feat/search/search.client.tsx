@@ -1,6 +1,6 @@
 import { ClientAppMsg } from "@gamezilla/shared/client";
 import { Browser, Cmd, matchSort, p } from "@gamezilla/core";
-import { IconMagnifyingGlass, IconXMark, VDom } from "@gamezilla/shared/ui";
+import { IconMagnifyingGlass, IconXMark, VDom } from "@gamezilla/ui";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./search.shared";
 
 //

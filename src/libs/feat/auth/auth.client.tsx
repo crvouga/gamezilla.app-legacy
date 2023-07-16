@@ -24,7 +24,7 @@ import {
   LoadingScreen,
   MyButton,
   cn,
-} from "@gamezilla/shared/ui";
+} from "@gamezilla/ui";
 import { Session as SupabaseSession } from "@supabase/supabase-js";
 import { Subject } from "rxjs";
 import * as AuthEmailLink from "./auth-email-link";

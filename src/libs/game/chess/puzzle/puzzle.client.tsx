@@ -17,7 +17,7 @@ import {
   IconXMark,
   MyAvatar,
   cn,
-} from "@gamezilla/shared/ui";
+} from "@gamezilla/ui";
 import { useMemo } from "react";
 import * as Chess from "../chess/chess";
 import {

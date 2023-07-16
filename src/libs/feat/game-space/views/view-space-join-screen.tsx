@@ -4,7 +4,7 @@ import {
   ViewGameHeaderEmpty,
   ViewUsersInSpaceList,
 } from "@gamezilla/shared/client";
-import { MyButton, TopBar, TopBarBackButton } from "@gamezilla/shared/ui";
+import { MyButton, TopBar, TopBarBackButton } from "@gamezilla/ui";
 import { gameNameToString, ViewCoverArt } from "../game.shared";
 import { ClientModel, ClientMsg } from "../game-space.shared";
 

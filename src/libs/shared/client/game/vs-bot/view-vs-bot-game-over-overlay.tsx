@@ -1,5 +1,5 @@
 import { UserId } from "@gamezilla/shared/app";
-import { IconRobot, MyAvatar, VDom } from "@gamezilla/shared/ui";
+import { IconRobot, MyAvatar, VDom } from "@gamezilla/ui";
 import { Transition, TransitionGroup } from "react-transition-group";
 import { SpaceViewCtx } from "../game-shared";
 import { PlayerType } from "./view-vs-bot";

@@ -6,7 +6,7 @@ import {
   mainMenuButtons,
 } from "@gamezilla/shared/client";
 import { Audio, Cmd, Posix, RemoteResult, Sub, Unit, p } from "@gamezilla/core";
-import { IconPuzzlePiece } from "@gamezilla/shared/ui";
+import { IconPuzzlePiece } from "@gamezilla/ui";
 import {
   ClientModel,
   ClientMsg,

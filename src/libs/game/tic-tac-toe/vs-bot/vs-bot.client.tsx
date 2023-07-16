@@ -17,7 +17,7 @@ import {
   IconArrowRotateLeft,
   IconRightLeft,
   LoadingBar,
-} from "@gamezilla/shared/ui";
+} from "@gamezilla/ui";
 import {
   BotLevel,
   allBotLevels,

@@ -5,7 +5,7 @@ import {
   MyButton,
   Text,
   VDom,
-} from "@gamezilla/shared/ui";
+} from "@gamezilla/ui";
 import { SpaceViewCtx } from "./game-shared";
 import { ViewGameHeader } from "./view-game-header";
 import { ViewUsersInSpaceList } from ".";

@@ -1,5 +1,5 @@
 import { UserId } from "@gamezilla/shared/app";
-import { VDom } from "@gamezilla/shared/ui";
+import { VDom } from "@gamezilla/ui";
 import { SpaceViewCtx } from "../game-shared";
 
 export type PlayerType = "player-one" | "player-two";

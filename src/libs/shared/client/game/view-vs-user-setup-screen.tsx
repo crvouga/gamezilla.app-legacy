@@ -6,7 +6,7 @@ import {
   MyAvatar,
   MyButton,
   VDom,
-} from "@gamezilla/shared/ui";
+} from "@gamezilla/ui";
 import { ViewGameHeader } from "./view-game-header";
 
 type IconProps = { className: string };

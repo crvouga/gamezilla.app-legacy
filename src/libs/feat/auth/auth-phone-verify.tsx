@@ -9,7 +9,7 @@ import {
   MyTextField,
   TopBar,
   TopBarBackButton,
-} from "@gamezilla/shared/ui";
+} from "@gamezilla/ui";
 
 //
 //

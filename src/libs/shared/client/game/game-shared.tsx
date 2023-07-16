@@ -1,5 +1,5 @@
 import { GameSpaceId, UserId } from "@gamezilla/shared/app";
-import { VDom, cn } from "@gamezilla/shared/ui";
+import { VDom, cn } from "@gamezilla/ui";
 import { Ctx, ViewCtx } from "../ctx";
 
 export type SpaceCtx = Ctx & {

@@ -1,6 +1,6 @@
 import { ClientAppMsg } from "@gamezilla/shared/client";
 import { Cmd, Time } from "@gamezilla/core";
-import { IconXMark } from "@gamezilla/shared/ui";
+import { IconXMark } from "@gamezilla/ui";
 
 //
 //

@@ -19,7 +19,7 @@ import {
   MyAvatar,
   MyButton,
   Text,
-} from "@gamezilla/shared/ui";
+} from "@gamezilla/ui";
 import { PlayerType, toTurn } from "../connect-four";
 import { PlayerIcon, ViewColumns, ViewCoverArt } from "../connect-four-ui";
 import {

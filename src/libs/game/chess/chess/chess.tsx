@@ -6,7 +6,7 @@ import {
   IconBotSimple,
 } from "@gamezilla/shared/client";
 import { Result, Task, exhaustive } from "@gamezilla/core";
-import { VDom } from "@gamezilla/shared/ui";
+import { VDom } from "@gamezilla/ui";
 import * as ChessJS from "chess.js";
 
 export type BotLevel = 0 | 1 | 2 | 3 | 4;

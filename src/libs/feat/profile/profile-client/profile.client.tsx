@@ -15,7 +15,7 @@ import {
   TopBar,
   TopBarBackButton,
   VDom,
-} from "@gamezilla/shared/ui";
+} from "@gamezilla/ui";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "../profile.shared";
 import { ViewProfileScreen } from "./view-profile-screen";
 import { ViewUpdateAvatarScreen } from "./view-update-avatar-screen";

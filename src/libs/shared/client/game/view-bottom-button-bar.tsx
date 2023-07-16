@@ -1,4 +1,4 @@
-import { VDom, cn } from "@gamezilla/shared/ui";
+import { VDom, cn } from "@gamezilla/ui";
 
 export type BottomBarButtonAction = {
   label: string;

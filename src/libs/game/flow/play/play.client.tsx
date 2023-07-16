@@ -9,7 +9,7 @@ import {
   initShared,
 } from "./play.shared";
 import { FlowGridPlayUI } from "../flow-grid";
-import { IconArrowLeftOnRect, MyButton } from "@gamezilla/shared/ui";
+import { IconArrowLeftOnRect, MyButton } from "@gamezilla/ui";
 
 type Model = ClientModel;
 

@@ -18,7 +18,7 @@ import {
   IconArrowRotateLeft,
   IconRightLeft,
   LoadingBar,
-} from "@gamezilla/shared/ui";
+} from "@gamezilla/ui";
 import { toStatus, toTurn } from "../connect-four";
 import {
   PlayerOneIcon,

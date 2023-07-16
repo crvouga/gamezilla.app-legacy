@@ -1,6 +1,6 @@
 import { SpaceCtx, SpaceViewCtx, VsBotSetup } from "@gamezilla/shared/client";
 import { Audio, Cmd, Sub, andThen, exhaustive, p } from "@gamezilla/core";
-import { IconRobot, IconSpinner, MyAvatar } from "@gamezilla/shared/ui";
+import { IconRobot, IconSpinner, MyAvatar } from "@gamezilla/ui";
 import { Chessboard, PlayerIcon, ViewCoverArt } from "../chess-ui";
 import * as Chess from "../chess/chess";
 import Sounds from "../chess/chess-sounds";

@@ -6,7 +6,7 @@ import {
   MyButton,
   MyDrawer,
   VDom,
-} from "@gamezilla/shared/ui";
+} from "@gamezilla/ui";
 import { z } from "zod";
 import { SpaceViewCtx } from "../game-shared";
 import { ViewGameHeader } from "../view-game-header";

@@ -21,7 +21,7 @@ import {
   MyButton,
   MyDrawer,
   VDom,
-} from "@gamezilla/shared/ui";
+} from "@gamezilla/ui";
 import * as Game from "./game.client";
 import { ViewCoverArt } from "./game.shared";
 import {

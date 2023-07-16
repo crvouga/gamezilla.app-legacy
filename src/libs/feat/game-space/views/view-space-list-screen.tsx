@@ -7,7 +7,7 @@ import {
   MyButton,
   TopBar,
   cn,
-} from "@gamezilla/shared/ui";
+} from "@gamezilla/ui";
 import { GameName, gameNameToString, ViewCoverArt } from "../game.shared";
 import { ClientModel, ClientMsg } from "../game-space.shared";
 

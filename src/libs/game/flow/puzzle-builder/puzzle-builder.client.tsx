@@ -9,7 +9,7 @@ import {
   IconPenToSquare,
   IconPlay,
   cn,
-} from "@gamezilla/shared/ui";
+} from "@gamezilla/ui";
 import { Color, groupIdToColor } from "../flow";
 import { FlowGridPlayUI, FlowGridUI } from "../flow-grid";
 import {

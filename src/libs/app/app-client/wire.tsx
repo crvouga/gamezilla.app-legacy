@@ -1,6 +1,6 @@
 import { ClientAppMsg } from "@gamezilla/shared/client";
 import { Cmd } from "@gamezilla/core";
-import { IconSpinner } from "@gamezilla/shared/ui";
+import { IconSpinner } from "@gamezilla/ui";
 
 //
 //
