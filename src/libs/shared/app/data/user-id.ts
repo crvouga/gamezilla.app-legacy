@@ -16,7 +16,7 @@ const decode = (id: unknown): Result<Problem, UserId> => {
 };
 
 const generate = () => {
-  const id = Uuid.generateSync();
+  const id = Uuid.generate();
 
   if (is(id)) {
     return id;

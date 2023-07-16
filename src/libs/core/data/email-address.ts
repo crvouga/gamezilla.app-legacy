@@ -1,6 +1,4 @@
-import { Result } from "@gamezilla/core";
-
-const { Err, Ok } = Result;
+import { Err, Ok, Result } from "../result";
 
 type Problem = "Invalid";
 

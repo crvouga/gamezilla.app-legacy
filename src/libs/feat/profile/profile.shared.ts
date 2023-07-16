@@ -1,6 +1,7 @@
 import {
   MsgMetaData,
-  ProfileAvatar,
+  ProfileAvatarSeed,
+  ProfileAvatarStyle,
   UserId,
   Username,
 } from "@gamezilla/shared/app";
@@ -30,8 +31,8 @@ export type ClientModel = {
   };
   draft?: {
     username?: string;
-    avatarSeed?: ProfileAvatar.Seed;
-    avatarStyle?: ProfileAvatar.Style;
+    avatarSeed?: ProfileAvatarSeed;
+    avatarStyle?: ProfileAvatarStyle;
   };
 };
 
@@ -49,7 +50,7 @@ export type ClientMsg =
   | Req
   | { t: "inputted-username"; username: string }
   | { t: "inputted-avatar-seed"; seed: string }
-  | { t: "inputted-avatar-style"; style: ProfileAvatar.Style }
+  | { t: "inputted-avatar-style"; style: ProfileAvatarStyle }
   | { t: "clicked-generate-random-seed" };
 
 export type ServerMsg = { t: "none" };

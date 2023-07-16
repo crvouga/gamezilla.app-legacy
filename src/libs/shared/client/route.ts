@@ -1,9 +1,5 @@
-import {
-  GameSpaceId,
-  Iso3166Alpha2Code,
-  PhoneNumber,
-  UserId,
-} from "@gamezilla/shared/app";
+import { Iso3166Alpha2Code, PhoneNumber } from "@gamezilla/core";
+import { GameSpaceId, UserId } from "@gamezilla/shared/app";
 
 //
 //

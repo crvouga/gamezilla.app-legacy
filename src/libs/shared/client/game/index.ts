@@ -1,5 +1,4 @@
 export * from "./game-shared";
-export * from "./game-shared-minimax";
 export * from "./view-bottom-button-bar";
 export * from "./view-game-header";
 export * from "./view-main-menu-screen";

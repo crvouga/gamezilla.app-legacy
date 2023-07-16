@@ -48,7 +48,7 @@ export const ViewColumns = ({
 //
 
 export const ViewCoverArt = (props: { className?: string }) => {
-  const ref = useRef(Uuid.generateSync());
+  const ref = useRef(Uuid.generate());
   const ids = {
     playerOneGradient: `playerOneGradient${ref.current}`,
     playerTwoGradient: `playerTwoGradient${ref.current}`,
@@ -196,7 +196,7 @@ export const ViewPlayerTwoGradientDef = ({
 };
 
 export const PlayerOneIcon = (props: { key?: string; className?: string }) => {
-  const ref = useRef(Uuid.generateSync());
+  const ref = useRef(Uuid.generate());
   return (
     <svg viewBox="-1 -1 2 2" {...props}>
       <ViewPlayerOneGradientDef cx={0} cy={0} r={1} gradientId={ref.current} />
@@ -206,7 +206,7 @@ export const PlayerOneIcon = (props: { key?: string; className?: string }) => {
 };
 
 export const PlayerTwoIcon = (props: { key?: string; className?: string }) => {
-  const ref = useRef(Uuid.generateSync());
+  const ref = useRef(Uuid.generate());
   return (
     <svg viewBox="-1 -1 2 2" className="h-6 w-6" {...props}>
       <ViewPlayerTwoGradientDef gradientId={ref.current} />

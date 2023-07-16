@@ -291,7 +291,7 @@ export const profilesInsert = async (
   dbConn: DbConnMySql,
   profile: PuzzleProfile
 ): Promise<Result<string, null>> => {
-  const puzzleProfileId = Uuid.generateSync();
+  const puzzleProfileId = Uuid.generate();
 
   const mutated = await dbConn.query(
     PuzzleProfileRow,

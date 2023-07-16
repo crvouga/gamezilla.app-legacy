@@ -1,7 +1,10 @@
-export type PosNum = number & { _opaque: 'PosNum' };
+/**
+ * Represents a number that will always be positive
+ */
+export type PosNum = number & { _opaque: "PosNum" };
 
 const is = (number: unknown): number is PosNum => {
-  return typeof number === 'number' && number >= 0;
+  return typeof number === "number" && number >= 0;
 };
 
 const fromNum = (number: number): PosNum => {
@@ -11,7 +14,7 @@ const fromNum = (number: number): PosNum => {
     return posNum;
   }
 
-  throw new Error('impossible case');
+  throw new Error("impossible case");
 };
 
 const add = (a: PosNum, b: PosNum): PosNum => {
