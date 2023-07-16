@@ -52,7 +52,7 @@
       "@gamezilla/shared/app": ["src/libs/shared/app/index.ts"],
       "@gamezilla/shared/client": ["src/libs/shared/client/index.ts"],
       "@gamezilla/shared/server": ["src/libs/shared/server/index.ts"],
-      "@gamezilla/shared/ui": ["src/libs/shared/ui/index.ts"]
+      "@gamezilla/shared/ui": ["src/libs/ui/index.ts"]
     }
   },
 
