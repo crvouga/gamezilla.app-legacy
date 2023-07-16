@@ -1,48 +1,48 @@
-import { Keyboard, Option } from '@gamezilla/shared/core';
-import { Position } from './position';
+import { Keyboard, Option } from "@gamezilla/shared/core";
+import { Position } from "./position";
 
-export type Direction = 'left' | 'up' | 'right' | 'down';
+export type Direction = "left" | "up" | "right" | "down";
 
 const toVector = (direction: Direction): Position => {
   switch (direction) {
-    case 'down':
+    case "down":
       return { x: 0, y: 1 };
 
-    case 'left':
+    case "left":
       return { x: -1, y: 0 };
 
-    case 'right':
+    case "right":
       return { x: 1, y: 0 };
 
-    case 'up':
+    case "up":
       return { x: 0, y: -1 };
   }
 };
 
 const directions: { [direction in Direction]: Direction } = {
-  left: 'left',
-  right: 'right',
-  up: 'up',
-  down: 'down',
+  left: "left",
+  right: "right",
+  up: "up",
+  down: "down",
 };
 
 const fromKey = (key: Keyboard.Key): Option<Direction> => {
   switch (key) {
-    case 'w':
-    case 'W':
-      return Option.Some('up');
+    case "w":
+    case "W":
+      return Option.Some("up");
 
-    case 's':
-    case 'S':
-      return Option.Some('down');
+    case "s":
+    case "S":
+      return Option.Some("down");
 
-    case 'a':
-    case 'A':
-      return Option.Some('left');
+    case "a":
+    case "A":
+      return Option.Some("left");
 
-    case 'd':
-    case 'D':
-      return Option.Some('right');
+    case "d":
+    case "D":
+      return Option.Some("right");
 
     default:
       return Option.None;
@@ -51,17 +51,17 @@ const fromKey = (key: Keyboard.Key): Option<Direction> => {
 
 const toOpposite = (direction: Direction): Direction => {
   switch (direction) {
-    case 'down':
-      return 'up';
+    case "down":
+      return "up";
 
-    case 'left':
-      return 'right';
+    case "left":
+      return "right";
 
-    case 'right':
-      return 'left';
+    case "right":
+      return "left";
 
-    case 'up':
-      return 'down';
+    case "up":
+      return "down";
   }
 };
 

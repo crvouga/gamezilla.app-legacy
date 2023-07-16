@@ -1,7 +1,7 @@
-import { Result } from '@gamezilla/shared/core';
-import { UserId } from '@gamezilla/shared/app';
-import { ShotRule } from './battleship/shot-rule';
-import { Position } from './battleship/position';
+import { Result } from "@gamezilla/shared/core";
+import { UserId } from "@gamezilla/shared/app";
+import { ShotRule } from "./battleship/shot-rule";
+import { Position } from "./battleship/position";
 
 const { Err } = Result;
 
@@ -11,7 +11,7 @@ const { Err } = Result;
 //
 //
 
-type PlayerType = 'player-one' | 'player-two' | 'player-three' | 'player-four';
+type PlayerType = "player-one" | "player-two" | "player-three" | "player-four";
 
 export type SharedModel = {
   players: Player[];
@@ -28,16 +28,16 @@ type Shot = {
 
 export type Ship = {
   topLeft: Position;
-  orientation: 'horizontal' | 'vertical';
+  orientation: "horizontal" | "vertical";
   type: ShipType;
 };
 
 type ShipType =
-  | 'Carrier'
-  | 'Battleship'
-  | 'Destroyer'
-  | 'Submarine'
-  | 'PatrolBoat';
+  | "Carrier"
+  | "Battleship"
+  | "Destroyer"
+  | "Submarine"
+  | "PatrolBoat";
 
 export const shipTypeToLength: { [key in ShipType]: number } = {
   Carrier: 5,
@@ -49,15 +49,15 @@ export const shipTypeToLength: { [key in ShipType]: number } = {
 
 type Player =
   | {
-      type: 'User';
+      type: "User";
       userId: UserId;
     }
   | {
-      type: 'Bot';
+      type: "Bot";
       level: BotLevel;
     };
 
-type BotLevel = 'Easy' | 'Medium' | 'Hard';
+type BotLevel = "Easy" | "Medium" | "Hard";
 
 //
 //
@@ -66,13 +66,13 @@ type BotLevel = 'Easy' | 'Medium' | 'Hard';
 //
 
 export type Req =
-  | { t: 'start-playing'; team: PlayerType }
-  | { t: 'stop-playing'; team: PlayerType }
-  | { t: 'fire'; team: PlayerType; position: Position };
+  | { t: "start-playing"; team: PlayerType }
+  | { t: "stop-playing"; team: PlayerType }
+  | { t: "fire"; team: PlayerType; position: Position };
 
 export type Res = Req & { result: Result<Problem, SharedModel> };
 
-type Problem = 'not-implemented' | 'must-be-turn';
+type Problem = "not-implemented" | "must-be-turn";
 
 export const handle = ({
   msg,
@@ -82,39 +82,39 @@ export const handle = ({
   msg: Req;
 }): Result<Problem, SharedModel> => {
   switch (msg.t) {
-    case 'start-playing': {
-      return Err('not-implemented');
+    case "start-playing": {
+      return Err("not-implemented");
     }
 
-    case 'stop-playing': {
-      return Err('not-implemented');
+    case "stop-playing": {
+      return Err("not-implemented");
     }
 
-    case 'fire': {
+    case "fire": {
       const turn = toTurn(model);
 
       if (turn !== msg.team) {
-        return Err('must-be-turn');
+        return Err("must-be-turn");
       }
 
-      return Err('not-implemented');
+      return Err("not-implemented");
     }
   }
 };
 
 export const toNextPlayer = (player: PlayerType): PlayerType => {
   switch (player) {
-    case 'player-one': {
-      return 'player-two';
+    case "player-one": {
+      return "player-two";
     }
-    case 'player-two': {
-      return 'player-three';
+    case "player-two": {
+      return "player-three";
     }
-    case 'player-three': {
-      return 'player-four';
+    case "player-three": {
+      return "player-four";
     }
-    case 'player-four': {
-      return 'player-one';
+    case "player-four": {
+      return "player-one";
     }
   }
 };
@@ -123,20 +123,20 @@ export const isNonEmpty = <T>(arr: T[]): arr is [T, ...T[]] => arr.length > 0;
 
 export const toTurn = (model: SharedModel): PlayerType => {
   switch (model.shotRule.t) {
-    case 'chain-fire': {
-      return 'player-one';
+    case "chain-fire": {
+      return "player-one";
     }
 
-    case 'count': {
+    case "count": {
       return toTurnRuleCount(model);
     }
 
-    case 'hitting-streak': {
-      return 'player-one';
+    case "hitting-streak": {
+      return "player-one";
     }
   }
 };
 
 const toTurnRuleCount = (_model: SharedModel): PlayerType => {
-  return 'player-one';
+  return "player-one";
 };

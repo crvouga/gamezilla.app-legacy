@@ -1,24 +1,24 @@
-import { Result } from '@gamezilla/shared/core';
+import { Result } from "@gamezilla/shared/core";
 const { Ok, Err } = Result;
-import { nouns } from './noun';
-import { adjectives } from './adjective';
-export type Username = string & { _opaque: 'Username' };
+import { nouns } from "./noun";
+import { adjectives } from "./adjective";
+export type Username = string & { _opaque: "Username" };
 
 const is = (username: unknown): username is Username => {
   return (
-    typeof username === 'string' &&
+    typeof username === "string" &&
     username.length > 0 &&
     username.length <= 100
   );
 };
 
-type Problem = 'invalid_username';
+type Problem = "invalid_username";
 
 const decode = (username: unknown): Result<Problem, Username> => {
   if (is(username)) {
     return Ok(username);
   }
-  return Err('invalid_username');
+  return Err("invalid_username");
 };
 
 const fromString = (username: string): Username => {
@@ -27,7 +27,7 @@ const fromString = (username: string): Username => {
     return cleaned;
   }
 
-  throw new Error('impossible state. did not create username from string');
+  throw new Error("impossible state. did not create username from string");
 };
 
 function generate(
@@ -35,9 +35,9 @@ function generate(
   digitCount?: number,
   length?: number
 ): Username {
-  const noun = nouns[Math.floor(Math.random() * nouns.length)] ?? '';
+  const noun = nouns[Math.floor(Math.random() * nouns.length)] ?? "";
   const adjective =
-    adjectives[Math.floor(Math.random() * adjectives.length)] ?? '';
+    adjectives[Math.floor(Math.random() * adjectives.length)] ?? "";
 
   let username;
   // Create unique username
@@ -56,7 +56,7 @@ function generate(
 
 function getRandomDigits(digitCount?: number) {
   if (!digitCount) {
-    return '';
+    return "";
   }
   const min = Math.pow(10, digitCount - 1);
   const max = Math.pow(10, digitCount) - 1;

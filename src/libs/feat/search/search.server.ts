@@ -1,5 +1,5 @@
-import { Cmd } from '@gamezilla/shared/core';
-import { ServerModel, ServerMsg, ToServer } from './search.shared';
+import { Cmd } from "@gamezilla/shared/core";
+import { ServerModel, ServerMsg, ToServer } from "./search.shared";
 
 type Model = ServerModel;
 
@@ -31,7 +31,7 @@ export const updateFromClient = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (msg.t === 'search') {
+  if (msg.t === "search") {
     return { model };
   }
   return { model };

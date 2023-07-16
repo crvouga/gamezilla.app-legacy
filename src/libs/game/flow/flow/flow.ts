@@ -521,8 +521,6 @@ export const toGroup = (
   model: Pick<Model, "edgesIn" | "edgesOut" | "edges" | "nodes">,
   nodeId: NodeId
 ): GroupId | null => {
-
-
   for (const edge of yieldInEdges(model, nodeId)) {
     if (edge.groupId) {
       return edge.groupId;

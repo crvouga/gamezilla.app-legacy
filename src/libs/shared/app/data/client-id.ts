@@ -1,19 +1,19 @@
-import { Result } from '@gamezilla/shared/core';
+import { Result } from "@gamezilla/shared/core";
 
-export type ClientId = string & { _opaque: 'ClientId' };
+export type ClientId = string & { _opaque: "ClientId" };
 
 const is = (id: unknown): id is ClientId => {
-  return typeof id === 'string';
+  return typeof id === "string";
 };
 
-type Problem = 'invalid_client_id';
+type Problem = "invalid_client_id";
 
 const decode = (id: string): Result<Problem, ClientId> => {
   if (is(id)) {
     return Result.Ok(id);
   }
 
-  return Result.Err('invalid_client_id');
+  return Result.Err("invalid_client_id");
 };
 
 export const ClientId = {

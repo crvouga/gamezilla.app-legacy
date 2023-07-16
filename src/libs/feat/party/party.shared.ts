@@ -3,9 +3,9 @@ import {
   RemoteResult,
   removeKey,
   Result,
-} from '@gamezilla/shared/core';
-import { PartyId, UserId } from '@gamezilla/shared/app';
-import { MicLoadResult, MicUnloadResult } from './mic';
+} from "@gamezilla/shared/core";
+import { PartyId, UserId } from "@gamezilla/shared/app";
+import { MicLoadResult, MicUnloadResult } from "./mic";
 const { Err, Ok } = Result;
 
 //
@@ -48,14 +48,14 @@ export type ClientModel = SharedModel & {
 //
 //
 
-export type ServerMsg = ['none'];
+export type ServerMsg = ["none"];
 
 export type ClientMsg =
   | Req
-  | ['clicked-banner']
-  | ['MicSound', { volume: number }]
-  | ['MicLoad', MicLoadResult]
-  | ['MicUnload', MicUnloadResult];
+  | ["clicked-banner"]
+  | ["MicSound", { volume: number }]
+  | ["MicLoad", MicLoadResult]
+  | ["MicUnload", MicUnloadResult];
 
 export type ToServer = Req;
 
@@ -70,52 +70,52 @@ export type ToClient = Res;
 //
 
 export type Req =
-  | ['party-get', null]
-  | ['PartyCreate', { userId: UserId; partyId: PartyId }]
-  | ['PartyDestroy', { userId: UserId }]
-  | ['PartyLeave', { userId: UserId }]
-  | ['PartyJoin', { userId: UserId; partyId: PartyId }];
+  | ["party-get", null]
+  | ["PartyCreate", { userId: UserId; partyId: PartyId }]
+  | ["PartyDestroy", { userId: UserId }]
+  | ["PartyLeave", { userId: UserId }]
+  | ["PartyJoin", { userId: UserId; partyId: PartyId }];
 
 export type Res =
-  | ['party-get', null, Result<Problem, SharedModel>]
+  | ["party-get", null, Result<Problem, SharedModel>]
   | [
-      'PartyCreate',
+      "PartyCreate",
       { userId: UserId; partyId: PartyId },
       Result<Problem, SharedModel>
     ]
-  | ['PartyDestroy', { userId: UserId }, Result<Problem, SharedModel>]
-  | ['PartyLeave', { userId: UserId }, Result<Problem, SharedModel>]
+  | ["PartyDestroy", { userId: UserId }, Result<Problem, SharedModel>]
+  | ["PartyLeave", { userId: UserId }, Result<Problem, SharedModel>]
   | [
-      'PartyJoin',
+      "PartyJoin",
       { userId: UserId; partyId: PartyId },
       Result<Problem, SharedModel>
     ];
 
 type Problem =
-  | 'must_not_be_in_party'
-  | 'must_be_in_party'
-  | 'must_be_host'
-  | 'party_must_exist'
-  | 'must_not_be_host'
-  | 'user_not_found'
-  | 'party_not_found';
+  | "must_not_be_in_party"
+  | "must_be_in_party"
+  | "must_be_host"
+  | "party_must_exist"
+  | "must_not_be_host"
+  | "user_not_found"
+  | "party_not_found";
 
 export const handle = (
   msg: Req,
   model: SharedModel
 ): Result<Problem, SharedModel> => {
   switch (msg[0]) {
-    case 'party-get': {
+    case "party-get": {
       return Ok(model);
     }
 
-    case 'PartyCreate': {
+    case "PartyCreate": {
       const { partyId, userId } = msg[1];
 
       const user = model.users[userId];
 
       if (user) {
-        return Err('must_not_be_in_party');
+        return Err("must_not_be_in_party");
       }
 
       const modelNew: SharedModel = {
@@ -139,23 +139,23 @@ export const handle = (
       return Ok(modelNew);
     }
 
-    case 'PartyDestroy': {
+    case "PartyDestroy": {
       const { userId } = msg[1];
 
       const user = model.users[userId];
 
       if (!user) {
-        return Err('user_not_found');
+        return Err("user_not_found");
       }
 
       const party = model.parties[user.partyId];
 
       if (!party) {
-        return Err('party_not_found');
+        return Err("party_not_found");
       }
 
       if (party.hostId !== userId) {
-        return Err('must_be_host');
+        return Err("must_be_host");
       }
 
       const modelNew: SharedModel = {
@@ -169,19 +169,19 @@ export const handle = (
       return Ok(modelNew);
     }
 
-    case 'PartyJoin': {
+    case "PartyJoin": {
       const { userId, partyId } = msg[1];
 
       const user = model.users[userId];
 
       if (user) {
-        return Err('must_not_be_in_party');
+        return Err("must_not_be_in_party");
       }
 
       const party = model.parties[partyId];
 
       if (!party) {
-        return Err('party_must_exist');
+        return Err("party_must_exist");
       }
 
       const modelNew: SharedModel = {
@@ -198,23 +198,23 @@ export const handle = (
       return Ok(modelNew);
     }
 
-    case 'PartyLeave': {
+    case "PartyLeave": {
       const { userId } = msg[1];
 
       const user = model.users[userId];
 
       if (!user) {
-        return Err('must_be_in_party');
+        return Err("must_be_in_party");
       }
 
       const party = model.parties[user.partyId];
 
       if (!party) {
-        return Err('must_be_in_party');
+        return Err("must_be_in_party");
       }
 
       if (party.hostId === userId) {
-        return Err('must_not_be_host');
+        return Err("must_not_be_host");
       }
 
       const modelNew: SharedModel = {

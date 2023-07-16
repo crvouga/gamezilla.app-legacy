@@ -1,4 +1,4 @@
-import { Cmd, Sub, Time } from '@gamezilla/shared/core';
+import { Cmd, Sub, Time } from "@gamezilla/shared/core";
 import {
   ServerModel,
   ServerMsg,
@@ -10,7 +10,7 @@ import {
   tick,
   ToServer,
   ToClient,
-} from './tetris.shared';
+} from "./tetris.shared";
 
 //
 //
@@ -40,10 +40,10 @@ export const update = (
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'tick': {
+    case "tick": {
       const modelNext = tick(model);
 
-      return [modelNext, broadcast(['Tick_Done', modelNext])];
+      return [modelNext, broadcast(["Tick_Done", modelNext])];
     }
   }
 };
@@ -60,10 +60,10 @@ export const updateFromClient = (
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'MouseMove': {
+    case "MouseMove": {
       const toClient = mouseMove(msg, model);
 
-      if (toClient[1].t === 'err') {
+      if (toClient[1].t === "err") {
         return [model, sendToClient(toClient)];
       }
 
@@ -72,40 +72,40 @@ export const updateFromClient = (
       return [modelNew, broadcast(toClient)];
     }
 
-    case 'InputDrop': {
+    case "InputDrop": {
       const result = inputDrop(model);
 
-      if (result.t === 'err') {
-        return [model, sendToClient(['InputDrop_Done', result])];
+      if (result.t === "err") {
+        return [model, sendToClient(["InputDrop_Done", result])];
       }
 
       const modelNew = result.value;
 
-      return [modelNew, broadcast(['InputDrop_Done', result])];
+      return [modelNew, broadcast(["InputDrop_Done", result])];
     }
 
-    case 'InputTranslate': {
+    case "InputTranslate": {
       const result = inputTranslate(msg[1], model);
 
-      if (result.t === 'err') {
-        return [model, sendToClient(['InputTranslate_Done', result])];
+      if (result.t === "err") {
+        return [model, sendToClient(["InputTranslate_Done", result])];
       }
 
       const modelNew = result.value;
 
-      return [modelNew, broadcast(['InputTranslate_Done', result])];
+      return [modelNew, broadcast(["InputTranslate_Done", result])];
     }
 
-    case 'InputRotate': {
+    case "InputRotate": {
       const result = inputRotate(model);
 
-      if (result.t === 'err') {
-        return [model, sendToClient(['InputRotate_Done', result])];
+      if (result.t === "err") {
+        return [model, sendToClient(["InputRotate_Done", result])];
       }
 
       const modelNew = result.value;
 
-      return [modelNew, broadcast(['InputRotate_Done', result])];
+      return [modelNew, broadcast(["InputRotate_Done", result])];
     }
   }
 };
@@ -119,5 +119,5 @@ export const updateFromClient = (
 //
 
 export const subscriptions = (intervalId: string, _model: Model): Sub<Msg> => {
-  return Time.every(intervalId, 500, (): Msg => ['tick']);
+  return Time.every(intervalId, 500, (): Msg => ["tick"]);
 };

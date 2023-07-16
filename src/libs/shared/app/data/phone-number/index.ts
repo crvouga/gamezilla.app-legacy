@@ -1,14 +1,14 @@
-import { Result } from '@gamezilla/shared/core';
-import { phone } from './phone';
-import { Iso3166Alpha2Code } from '../Iso-3166-alpha-2-code';
+import { Result } from "@gamezilla/shared/core";
+import { phone } from "./phone";
+import { Iso3166Alpha2Code } from "../Iso-3166-alpha-2-code";
 
 export type PhoneNumber = {
-  _opaque: 'PhoneNumber';
+  _opaque: "PhoneNumber";
   _validPhoneNumber: string;
   _country: Iso3166Alpha2Code;
 };
 
-type Problem = 'invalid_phone_number';
+type Problem = "invalid_phone_number";
 
 const decode = (
   country: Iso3166Alpha2Code,
@@ -18,13 +18,13 @@ const decode = (
 
   if (result.isValid) {
     return Result.Ok({
-      _opaque: 'PhoneNumber',
+      _opaque: "PhoneNumber",
       _validPhoneNumber: result.phoneNumber,
       _country: country,
     });
   }
 
-  return Result.Err('invalid_phone_number');
+  return Result.Err("invalid_phone_number");
 };
 
 const toString = (phoneNumber: PhoneNumber): string => {
@@ -42,7 +42,7 @@ const eq = (a: PhoneNumber, b: PhoneNumber): boolean => {
 const format = (phoneNumber: PhoneNumber): string => {
   const { _validPhoneNumber: rawPhoneNumber } = phoneNumber;
   // Remove all non-numeric characters from the phone number
-  const numericPhoneNumber = rawPhoneNumber.replace(/\D/g, '');
+  const numericPhoneNumber = rawPhoneNumber.replace(/\D/g, "");
 
   // If the numeric phone number is not 11 digits (including country code), return it as-is
   if (numericPhoneNumber.length !== 11) {

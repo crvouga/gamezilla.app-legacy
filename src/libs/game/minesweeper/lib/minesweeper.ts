@@ -1,6 +1,6 @@
-import { p, shuffle } from '@gamezilla/shared/core';
-import { Position } from './position';
-import { PositionSet } from './position-set';
+import { p, shuffle } from "@gamezilla/shared/core";
+import { Position } from "./position";
+import { PositionSet } from "./position-set";
 
 export type Model = {
   mines: PositionSet;

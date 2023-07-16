@@ -1,34 +1,34 @@
-import { Result } from '@gamezilla/shared/core';
+import { Result } from "@gamezilla/shared/core";
 
-export type SessionId = string & { _opaque: 'SessionId' };
+export type SessionId = string & { _opaque: "SessionId" };
 
 export const is = (id: unknown): id is SessionId => {
   return (
-    typeof id === 'string' &&
-    id.startsWith('session-') &&
-    id.split('').every((c) => characters.includes(c) || c === '-')
+    typeof id === "string" &&
+    id.startsWith("session-") &&
+    id.split("").every((c) => characters.includes(c) || c === "-")
   );
 };
 
-type Problem = 'invalid_session_id';
+type Problem = "invalid_session_id";
 
 export const decode = (id: string): Result<Problem, SessionId> => {
   if (is(id)) {
     return Result.Ok(id);
   }
 
-  return Result.Err('invalid_session_id');
+  return Result.Err("invalid_session_id");
 };
 
 const characters =
-  'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+  "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
 const randomCharacter = (word: string): string => {
-  return word[Math.floor(Math.random() * word.length)] ?? 'a';
+  return word[Math.floor(Math.random() * word.length)] ?? "a";
 };
 
 const generateId = (length: number): string => {
-  let runningId = '';
+  let runningId = "";
 
   for (let i = 0; i < length; i++) {
     runningId = `${runningId}${randomCharacter(characters)}`;
@@ -44,7 +44,7 @@ export const generate = (): SessionId => {
     return sessionId;
   }
 
-  throw new Error('generated invalid session id');
+  throw new Error("generated invalid session id");
 };
 
 export const SessionId = {

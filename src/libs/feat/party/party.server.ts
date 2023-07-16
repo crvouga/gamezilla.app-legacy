@@ -1,5 +1,5 @@
-import { Cmd, exhaustive } from '@gamezilla/shared/core';
-import { PartyId, UserId } from '@gamezilla/shared/app';
+import { Cmd, exhaustive } from "@gamezilla/shared/core";
+import { PartyId, UserId } from "@gamezilla/shared/app";
 import {
   ServerModel,
   ServerMsg,
@@ -7,7 +7,7 @@ import {
   Res,
   ToServer,
   ToClient,
-} from './party.shared';
+} from "./party.shared";
 
 //
 //
@@ -43,7 +43,7 @@ export const update = (
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'none': {
+    case "none": {
       return [model, Cmd.None];
     }
 
@@ -66,13 +66,13 @@ export const updateFromClient = (
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'PartyCreate':
-    case 'PartyDestroy':
-    case 'PartyJoin':
-    case 'party-get':
-    case 'PartyLeave': {
+    case "PartyCreate":
+    case "PartyDestroy":
+    case "PartyJoin":
+    case "party-get":
+    case "PartyLeave": {
       const res: Res = [...msg, handle(msg, model)];
-      if (res[2].t === 'err') {
+      if (res[2].t === "err") {
         return [model, sendToClient(res)];
       }
       return [res[2].value, broadcast(res)];

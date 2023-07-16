@@ -1,5 +1,5 @@
-import { Result, Task, Unit } from '@gamezilla/shared/core';
-import * as Rx from 'rxjs';
+import { Result, Task, Unit } from "@gamezilla/shared/core";
+import * as Rx from "rxjs";
 const { Err, Ok } = Result;
 
 const mediaStreams = new Rx.BehaviorSubject<MediaStream | null>(null);
@@ -15,7 +15,7 @@ const load: Task<MicLoadResult> = async () => {
     mediaStreams.next(mediaStream);
     return Ok(Unit);
   } catch (error) {
-    return Err('failed_to_load');
+    return Err("failed_to_load");
   }
 };
 
@@ -29,7 +29,7 @@ const unload: Task<MicUnloadResult> = async () => {
   }
 
   for (const track of mediaStream.getTracks()) {
-    if (track.readyState === 'live') {
+    if (track.readyState === "live") {
       track.stop();
     }
   }

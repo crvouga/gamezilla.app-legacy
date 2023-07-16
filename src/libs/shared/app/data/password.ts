@@ -1,11 +1,11 @@
-import { Result } from '@gamezilla/shared/core';
+import { Result } from "@gamezilla/shared/core";
 
-export type Password = string & { _opaque: 'Password' };
+export type Password = string & { _opaque: "Password" };
 
 const passwordMinLength = 6;
 
 const is = (password: unknown): password is Password => {
-  return typeof password === 'string' && password.length >= passwordMinLength;
+  return typeof password === "string" && password.length >= passwordMinLength;
 };
 
 type Problem = { message: string };
@@ -21,7 +21,7 @@ const decode = (password: string): Result<Problem, Password> => {
     return Result.Ok(password);
   }
 
-  return Result.Err({ message: 'Password is invalid for an unknown reason.' });
+  return Result.Err({ message: "Password is invalid for an unknown reason." });
 };
 
 export const Password = {

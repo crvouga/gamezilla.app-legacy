@@ -1,6 +1,6 @@
-import { Result } from '@gamezilla/shared/core';
-import * as VsBot from './vs-bot/vs-bot.shared';
-import * as VsUser from './vs-user/vs-user.shared';
+import { Result } from "@gamezilla/shared/core";
+import * as VsBot from "./vs-bot/vs-bot.shared";
+import * as VsUser from "./vs-user/vs-user.shared";
 
 //
 //
@@ -11,16 +11,16 @@ import * as VsUser from './vs-user/vs-user.shared';
 //
 
 export type ClientModel =
-  | { t: 'none' }
-  | { t: 'vs-user'; c: VsUser.ClientModel }
-  | { t: 'vs-bot'; c: VsBot.ClientModel };
+  | { t: "none" }
+  | { t: "vs-user"; c: VsUser.ClientModel }
+  | { t: "vs-bot"; c: VsBot.ClientModel };
 
 export type ServerModel =
-  | { t: 'none' }
-  | { t: 'vs-user'; c: VsUser.ServerModel }
-  | { t: 'vs-bot'; c: VsBot.ServerModel };
+  | { t: "none" }
+  | { t: "vs-user"; c: VsUser.ServerModel }
+  | { t: "vs-bot"; c: VsBot.ServerModel };
 
-export type Mode = ServerModel['t'];
+export type Mode = ServerModel["t"];
 
 //
 //
@@ -31,22 +31,22 @@ export type Mode = ServerModel['t'];
 //
 
 export type ClientMsg =
-  | { t: 'vs-user'; c: VsUser.ClientMsg }
-  | { t: 'vs-bot'; c: VsBot.ClientMsg }
+  | { t: "vs-user"; c: VsUser.ClientMsg }
+  | { t: "vs-bot"; c: VsBot.ClientMsg }
   | Req;
 
 export type ServerMsg =
-  | { t: 'vs-user'; c: VsUser.ServerMsg }
-  | { t: 'vs-bot'; c: VsBot.ServerMsg };
+  | { t: "vs-user"; c: VsUser.ServerMsg }
+  | { t: "vs-bot"; c: VsBot.ServerMsg };
 
 export type ToClient =
-  | { t: 'vs-user'; c: VsUser.ToClient }
-  | { t: 'vs-bot'; c: VsBot.ToClient }
+  | { t: "vs-user"; c: VsUser.ToClient }
+  | { t: "vs-bot"; c: VsBot.ToClient }
   | Res;
 
 export type ToServer =
-  | { t: 'vs-user'; c: VsUser.ToServer }
-  | { t: 'vs-bot'; c: VsBot.ToServer }
+  | { t: "vs-user"; c: VsUser.ToServer }
+  | { t: "vs-bot"; c: VsBot.ToServer }
   | Req;
 
 //
@@ -55,5 +55,5 @@ export type ToServer =
 //
 //
 
-export type Req = { t: 'input-mode'; mode: Mode };
+export type Req = { t: "input-mode"; mode: Mode };
 export type Res = Req & { result: Result<string, ServerModel> };

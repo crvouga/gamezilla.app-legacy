@@ -1,5 +1,5 @@
-import { Browser, Cmd, RemoteResult, Result } from '@gamezilla/shared/core';
-import { UserId } from '@gamezilla/shared/app';
+import { Browser, Cmd, RemoteResult, Result } from "@gamezilla/shared/core";
+import { UserId } from "@gamezilla/shared/app";
 
 //
 //
@@ -60,23 +60,23 @@ export type ServerModel = null;
 //
 
 export type ClientMsg =
-  | ['inputted-user-search', { userSearch: string }]
-  | ['clicked-user-search-result', { userId: UserId }]
-  | ['clicked-user-selected-delete-button', { userId: UserId }]
-  | ['clicked-user-search-clear-button']
-  | ['focused', Browser.FocusResult]
+  | ["inputted-user-search", { userSearch: string }]
+  | ["clicked-user-search-result", { userId: UserId }]
+  | ["clicked-user-selected-delete-button", { userId: UserId }]
+  | ["clicked-user-search-clear-button"]
+  | ["focused", Browser.FocusResult]
   | Req;
 
 export type Req =
-  | ['chat-join', { chatId: string }]
-  | ['chat-leave', { chatId: string }]
-  | ['chat-list', { userId: UserId }]
-  | ['chat-start', { userId: UserId[] }]
-  | ['message-send', { chatId: string; text: string }]
-  | ['message-unsend', { chatId: string; text: string }]
-  | ['message-list', { chatId: string }];
+  | ["chat-join", { chatId: string }]
+  | ["chat-leave", { chatId: string }]
+  | ["chat-list", { userId: UserId }]
+  | ["chat-start", { userId: UserId[] }]
+  | ["message-send", { chatId: string; text: string }]
+  | ["message-unsend", { chatId: string; text: string }]
+  | ["message-list", { chatId: string }];
 
-type Problem = ['database-error', string];
+type Problem = ["database-error", string];
 
 export type Res = [...Req, Result<Problem, Partial<ClientModel>>];
 

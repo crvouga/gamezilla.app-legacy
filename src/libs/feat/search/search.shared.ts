@@ -1,8 +1,8 @@
-import { Browser, RemoteResult, Result } from '@gamezilla/shared/core';
-import { UserId, Username } from '@gamezilla/shared/app';
+import { Browser, RemoteResult, Result } from "@gamezilla/shared/core";
+import { UserId, Username } from "@gamezilla/shared/app";
 
 type SearchResult = {
-  t: 'profile';
+  t: "profile";
   id: string;
   userId: UserId;
   username: Username;
@@ -25,15 +25,15 @@ export type ToServer = Req;
 
 export type ToClient = Res;
 
-export type ServerMsg = { t: 'none' };
+export type ServerMsg = { t: "none" };
 
 export type ClientMsg =
   | Req
-  | { t: 'clicked-clear' }
-  | { t: 'focus-done'; result: Browser.FocusResult }
-  | { t: 'inputted-search-text'; searchText: string }
-  | { t: 'clicked-result'; userId: UserId };
+  | { t: "clicked-clear" }
+  | { t: "focus-done"; result: Browser.FocusResult }
+  | { t: "inputted-search-text"; searchText: string }
+  | { t: "clicked-result"; userId: UserId };
 
-export type Req = { t: 'search'; searchText: string };
+export type Req = { t: "search"; searchText: string };
 
 export type Res = Req & { result: Result<string, SearchResult[]> };

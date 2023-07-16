@@ -1,4 +1,4 @@
-import { rescale } from '@gamezilla/shared/core';
+import { rescale } from "@gamezilla/shared/core";
 
 export type Position = {
   x: number;
@@ -6,33 +6,33 @@ export type Position = {
 };
 
 export type Direction =
-  | 'vertical'
-  | 'horizontal'
-  | 'left_diagonal'
-  | 'right_diagonal';
+  | "vertical"
+  | "horizontal"
+  | "left_diagonal"
+  | "right_diagonal";
 
 const directions: { [direction in Direction]: Direction } = {
-  vertical: 'vertical',
-  horizontal: 'horizontal',
-  left_diagonal: 'left_diagonal',
-  right_diagonal: 'right_diagonal',
+  vertical: "vertical",
+  horizontal: "horizontal",
+  left_diagonal: "left_diagonal",
+  right_diagonal: "right_diagonal",
 };
 
 const toVector = (direction: Direction): Position => {
   switch (direction) {
-    case 'horizontal': {
+    case "horizontal": {
       return { x: 1, y: 0 };
     }
 
-    case 'vertical': {
+    case "vertical": {
       return { x: 0, y: 1 };
     }
 
-    case 'left_diagonal': {
+    case "left_diagonal": {
       return { x: 1, y: 1 };
     }
 
-    case 'right_diagonal': {
+    case "right_diagonal": {
       return { x: 1, y: -1 };
     }
   }

@@ -1,4 +1,4 @@
-import { Cmd, Sub, Time } from '@gamezilla/shared/core';
+import { Cmd, Sub, Time } from "@gamezilla/shared/core";
 import {
   ServerModel,
   ServerMsg,
@@ -8,7 +8,7 @@ import {
   tick,
   ToServer,
   ToClient,
-} from './maze.shared';
+} from "./maze.shared";
 
 //
 //
@@ -38,9 +38,9 @@ export const update = (
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'tick': {
+    case "tick": {
       const modelNew = tick(model);
-      return [modelNew, broadcast(['tick', modelNew])];
+      return [modelNew, broadcast(["tick", modelNew])];
     }
   }
 };
@@ -51,14 +51,14 @@ export const updateFromClient = (
   model: Model
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
-    case 'stop-game':
-    case 'input-direction':
-    case 'input-seed':
-    case 'start-game':
-    case 'stop-playing':
-    case 'start-playing': {
+    case "stop-game":
+    case "input-direction":
+    case "input-seed":
+    case "start-game":
+    case "stop-playing":
+    case "start-playing": {
       const res: Res = [...msg, handle(msg, model)];
-      const modelNew = res[2].t === 'ok' ? res[2].value : model;
+      const modelNew = res[2].t === "ok" ? res[2].value : model;
       return [modelNew, broadcast(res)];
     }
   }
@@ -76,8 +76,8 @@ export const subscriptions = (
   intervalId: string,
   model: ServerModel
 ): Sub<Msg> => {
-  if (model.type === 'game') {
-    return Time.every(intervalId, 500, () => ['tick']);
+  if (model.type === "game") {
+    return Time.every(intervalId, 500, () => ["tick"]);
     // return Sub.None
   }
   return Sub.None;
