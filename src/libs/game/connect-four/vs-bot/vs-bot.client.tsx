@@ -1,9 +1,10 @@
+import { Cmd, Posix, Sub } from "@gamezilla/core";
 import {
   Ctx,
   GameLayout,
-  IconBotCute,
+  IconBotHappy,
   IconBotLevel1,
-  IconBotScary,
+  IconBotLevel3,
   SpaceCtx,
   SpaceViewCtx,
   ViewBottomButtonBar,
@@ -12,7 +13,6 @@ import {
   VsBotProps,
   VsBotSetup,
 } from "@gamezilla/shared/client";
-import { Cmd, Posix, Sub } from "@gamezilla/core";
 import {
   IconArrowLeftOnRect,
   IconArrowRotateLeft,
@@ -356,13 +356,13 @@ export const renderBotLevel = ({
 }) => {
   switch (level) {
     case "Easy": {
-      return <IconBotCute {...props} />;
+      return <IconBotHappy {...props} />;
     }
     case "Medium": {
       return <IconBotLevel1 {...props} />;
     }
     case "Hard": {
-      return <IconBotScary {...props} />;
+      return <IconBotLevel3 {...props} />;
     }
   }
 };

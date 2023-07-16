@@ -25,12 +25,23 @@ function alphabeta(node, depth, α, β, maximizingPlayer) is
 
 */
 
-const create = <TState>({
-  toScore,
-  toChildren,
+export type MinimaxCtx = {
+  depth: number;
+};
+
+export type MinimaxConfig<TState> = {
+  toScore: (ctx: MinimaxCtx, node: TState) => number;
+  yieldChildren: (state: TState) => Generator<TState>;
+};
+
+const findBestChildState = <TState>({
+  config,
+  state,
+  depth,
 }: {
-  toScore: (node: TState) => number;
-  toChildren: (state: TState) => TState[];
+  config: MinimaxConfig<TState>;
+  state: TState;
+  depth: number;
 }) => {
   const recur = (
     state: TState,
@@ -40,19 +51,19 @@ const create = <TState>({
     isMaximizing: boolean
   ): number => {
     if (depth === 0) {
-      return toScore(state);
+      return config.toScore({ depth }, state);
     }
 
-    const children = toChildren(state);
+    const children = config.yieldChildren(state);
 
-    if (children.length === 0) {
-      return toScore(state);
+    if (children.next().done) {
+      return config.toScore({ depth }, state);
     }
 
     if (isMaximizing) {
       let value = -Infinity;
 
-      for (const child of children) {
+      for (const child of config.yieldChildren(state)) {
         value = Math.max(value, recur(child, depth - 1, alpha, beta, false));
 
         if (value >= beta) {
@@ -67,7 +78,7 @@ const create = <TState>({
 
     let value = Infinity;
 
-    for (const child of children) {
+    for (const child of config.yieldChildren(state)) {
       value = Math.min(value, recur(child, depth - 1, alpha, beta, true));
 
       if (value <= alpha) {
@@ -80,19 +91,25 @@ const create = <TState>({
     return value;
   };
 
-  const initialCall = ({
-    state,
-    depth,
-  }: {
-    state: TState;
-    depth: number;
-  }): number => {
-    return recur(state, depth, -Infinity, +Infinity, true);
-  };
+  let bestState: TState | null = null;
+  let bestScore = -Infinity;
+  for (const child of config.yieldChildren(state)) {
+    if (!bestState) {
+      bestState = child;
+      continue;
+    }
 
-  return initialCall;
+    const childScore = recur(child, depth - 1, -Infinity, +Infinity, false);
+
+    if (childScore > bestScore) {
+      bestState = child;
+      bestScore = childScore;
+    }
+  }
+
+  return bestState;
 };
 
 export const Minimax = {
-  create,
+  findBestChildState,
 };

@@ -37,22 +37,7 @@ export const playerTypeToColor: { [key in PlayerType]: Color } = {
 
 export type Column = readonly PlayerType[];
 
-export type Columns = [Column, Column, Column, Column, Column, Column, Column];
-
-export const mapColumns = (
-  columns: Columns,
-  f: (column: Column, columnIndex: ColumnIndex) => Column
-): Columns => {
-  return [
-    f(columns[0], 0),
-    f(columns[1], 1),
-    f(columns[2], 2),
-    f(columns[3], 3),
-    f(columns[4], 4),
-    f(columns[5], 5),
-    f(columns[6], 6),
-  ];
-};
+export type Columns = Column[];
 
 export const MAX_COLUMN_HEIGHT = 6;
 
@@ -125,7 +110,7 @@ export const move = (
     return Err("column_is_full");
   }
 
-  const columnsNew = mapColumns(columns, (column, index) => {
+  const columnsNew = columns.map((column, index) => {
     if (index === columnIndex) {
       return column.concat([player]).slice(0, MAX_COLUMN_HEIGHT);
     }

@@ -3689,7 +3689,7 @@ thenify-all@^1.0.0:
 
 threads@^1.7.0:
   version "1.7.0"
-  resolved "https://registry.npmjs.org/threads/-/threads-1.7.0.tgz"
+  resolved "https://registry.yarnpkg.com/threads/-/threads-1.7.0.tgz#d9e9627bfc1ef22ada3b733c2e7558bbe78e589c"
   integrity sha512-Mx5NBSHX3sQYR6iI9VYbgHKBLisyB+xROCBGjjWm1O9wb9vfLxdaGtmT/KCjUqMsSNW6nERzCW3T6H43LqjDZQ==
   dependencies:
     callsites "^3.1.0"
