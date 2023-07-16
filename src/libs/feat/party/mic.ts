@@ -1,4 +1,4 @@
-import { Result, Task, Unit } from "@gamezilla/shared/core";
+import { Result, Task, Unit } from "@gamezilla/core";
 import * as Rx from "rxjs";
 const { Err, Ok } = Result;
 

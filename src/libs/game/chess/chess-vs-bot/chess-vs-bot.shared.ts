@@ -1,6 +1,6 @@
 import { UserId } from "@gamezilla/shared/app";
 import { VsBotSetup } from "@gamezilla/shared/client";
-import { Audio, Err, Ok, Result } from "@gamezilla/shared/core";
+import { Audio, Err, Ok, Result } from "@gamezilla/core";
 import * as Chess from "../chess/chess";
 
 //

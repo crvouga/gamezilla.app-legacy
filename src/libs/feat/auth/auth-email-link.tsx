@@ -1,5 +1,5 @@
 import { ClientAppMsg } from "@gamezilla/shared/client";
-import { Cmd, Result, Task, exhaustive, p } from "@gamezilla/shared/core";
+import { Cmd, Result, Task, exhaustive, p } from "@gamezilla/core";
 import {
   AlertError,
   AlertSuccess,

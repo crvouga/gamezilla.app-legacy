@@ -7,7 +7,7 @@ import {
   sessionIdKey,
 } from "@gamezilla/app";
 import { ClientId, SessionId } from "@gamezilla/shared/app";
-import { Cmd, Program, toMsgType } from "@gamezilla/shared/core";
+import { Cmd, Program, toMsgType } from "@gamezilla/core";
 import { DbConnMySql } from "@gamezilla/shared/server";
 import { RequestListener, createServer } from "http";
 import { Server } from "socket.io";

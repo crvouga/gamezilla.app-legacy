@@ -10,7 +10,7 @@ import {
   andThen,
   eq,
   p,
-} from "@gamezilla/shared/core";
+} from "@gamezilla/core";
 import {
   DbConnMySql,
   SpaceServerCtx,

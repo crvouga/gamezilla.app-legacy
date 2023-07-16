@@ -1,4 +1,4 @@
-import { Uuid } from "@gamezilla/shared/core";
+import { Uuid } from "@gamezilla/core";
 import { useRef } from "react";
 import { COLUMN_COUNT, MAX_COLUMN_HEIGHT, PlayerType } from "../connect-four";
 import { ViewColumnsCanvas } from "./connect-four-ui-canvas";

@@ -14,7 +14,7 @@ import {
   Sub,
   Task,
   p,
-} from "@gamezilla/shared/core";
+} from "@gamezilla/core";
 import {
   ConformationDialog,
   IconEnvelope,

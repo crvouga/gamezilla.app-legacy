@@ -1,13 +1,6 @@
 import { Iso3166Alpha2Code, PhoneNumber } from "@gamezilla/shared/app";
 import { ClientAppMsg, UnauthenticatedViewCtx } from "@gamezilla/shared/client";
-import {
-  Browser,
-  Cmd,
-  Result,
-  Task,
-  matchSort,
-  p,
-} from "@gamezilla/shared/core";
+import { Browser, Cmd, Result, Task, matchSort, p } from "@gamezilla/core";
 import {
   Autocomplete,
   IconPhone,

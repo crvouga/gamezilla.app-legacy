@@ -1,4 +1,4 @@
-import { rescale } from "@gamezilla/shared/core";
+import { rescale } from "@gamezilla/core";
 import { useLayoutEffect } from "react";
 import {
   COLUMN_COUNT,

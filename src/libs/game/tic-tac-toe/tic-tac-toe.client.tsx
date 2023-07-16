@@ -6,7 +6,7 @@ import {
   SpaceViewCtx,
   mainMenuButtons,
 } from "@gamezilla/shared/client";
-import { Cmd, Sub } from "@gamezilla/shared/core";
+import { Cmd, Sub } from "@gamezilla/core";
 import {
   ClientModel,
   ClientMsg,

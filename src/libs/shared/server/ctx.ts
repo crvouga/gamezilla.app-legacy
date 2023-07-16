@@ -1,5 +1,5 @@
 import { ClientId, SessionId, UserId } from "@gamezilla/shared/app";
-import { Posix } from "@gamezilla/shared/core";
+import { Posix } from "@gamezilla/core";
 import { DbConnMySql } from "./database-connection-mysql";
 
 //

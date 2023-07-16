@@ -1,4 +1,4 @@
-import { Hex, easeAttrs } from "@gamezilla/shared/core";
+import { Hex, easeAttrs } from "@gamezilla/core";
 
 import { Transition, TransitionGroup } from "react-transition-group";
 import {

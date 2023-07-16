@@ -1,4 +1,4 @@
-import { Result } from "@gamezilla/shared/core";
+import { Result } from "@gamezilla/core";
 const { Ok, Err } = Result;
 import { nouns } from "./noun";
 import { adjectives } from "./adjective";

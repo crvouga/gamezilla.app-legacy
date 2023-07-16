@@ -1,4 +1,4 @@
-import { Cmd, Result, Sub } from "@gamezilla/shared/core";
+import { Cmd, Result, Sub } from "@gamezilla/core";
 import {
   SpaceMsg,
   SpaceServerCtx,

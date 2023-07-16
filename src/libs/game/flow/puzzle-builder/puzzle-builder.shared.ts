@@ -1,5 +1,5 @@
 import { UserId } from "@gamezilla/shared/app";
-import { Err, Ok, Result } from "@gamezilla/shared/core";
+import { Err, Ok, Result } from "@gamezilla/core";
 import { Flow } from "../flow";
 import { FlowGrid, FlowGridPlayUI } from "../flow-grid";
 import { bounds8x8 } from "../flow-grid/flow-grid-position";

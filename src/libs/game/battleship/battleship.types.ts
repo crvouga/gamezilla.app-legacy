@@ -1,4 +1,4 @@
-import { Result } from "@gamezilla/shared/core";
+import { Result } from "@gamezilla/core";
 import { UserId } from "@gamezilla/shared/app";
 import { ShotRule } from "./battleship/shot-rule";
 import { Position } from "./battleship/position";

@@ -1,4 +1,4 @@
-import { IntRange } from "@gamezilla/shared/core";
+import { IntRange } from "@gamezilla/core";
 
 //
 //

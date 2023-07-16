@@ -12,7 +12,7 @@ import {
   VsBotProps,
   VsBotSetup,
 } from "@gamezilla/shared/client";
-import { Cmd, Posix, Sub } from "@gamezilla/shared/core";
+import { Cmd, Posix, Sub } from "@gamezilla/core";
 import {
   IconArrowLeftOnRect,
   IconArrowRotateLeft,

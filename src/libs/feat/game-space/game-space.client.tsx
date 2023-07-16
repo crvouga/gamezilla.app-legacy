@@ -10,7 +10,7 @@ import {
   ViewUsersInSpaceList,
   ViewYouChip,
 } from "@gamezilla/shared/client";
-import { Cmd, RemoteResult, Sub, andThen, p } from "@gamezilla/shared/core";
+import { Cmd, RemoteResult, Sub, andThen, p } from "@gamezilla/core";
 import {
   ActionButton,
   IconHome,

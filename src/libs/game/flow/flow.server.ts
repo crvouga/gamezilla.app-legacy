@@ -1,4 +1,4 @@
-import { Cmd, Err, Ok, Result, Sub } from "@gamezilla/shared/core";
+import { Cmd, Err, Ok, Result, Sub } from "@gamezilla/core";
 import { SpaceReqServerCtx } from "@gamezilla/shared/server";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./flow.shared";
 import { PuzzleBuilderServer } from "./puzzle-builder";

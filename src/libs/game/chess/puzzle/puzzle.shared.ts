@@ -6,7 +6,7 @@ import {
   Posix,
   RemoteResult,
   Result,
-} from "@gamezilla/shared/core";
+} from "@gamezilla/core";
 import * as Chess from "../chess/chess";
 import { EloRating } from "./elo-rating";
 import { zip } from "./utils";

@@ -6,7 +6,7 @@ import {
   ViewBottomButtonBar,
   GameLayout,
 } from "@gamezilla/shared/client";
-import { Cmd } from "@gamezilla/shared/core";
+import { Cmd } from "@gamezilla/core";
 import {
   IconArrowCircle,
   IconArrowLeftOnRect,

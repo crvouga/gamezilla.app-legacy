@@ -1,4 +1,4 @@
-import { RemoteResult, Result, Unit } from "@gamezilla/shared/core";
+import { RemoteResult, Result, Unit } from "@gamezilla/core";
 import { UserId } from "@gamezilla/shared/app";
 import * as Puzzle from "./puzzle/puzzle.shared";
 import * as VsBot from "./chess-vs-bot/chess-vs-bot.shared";

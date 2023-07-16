@@ -5,7 +5,7 @@ import {
   IconBotScary,
   IconBotSimple,
 } from "@gamezilla/shared/client";
-import { Result, Task, exhaustive } from "@gamezilla/shared/core";
+import { Result, Task, exhaustive } from "@gamezilla/core";
 import { VDom } from "@gamezilla/shared/ui";
 import * as ChessJS from "chess.js";
 

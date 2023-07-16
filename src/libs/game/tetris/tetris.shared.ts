@@ -2,7 +2,7 @@ import * as Board from "./board";
 import * as Direction from "./direction";
 import * as Piece from "./piece";
 import * as Position from "./position";
-import { Keyboard, Option, Result } from "@gamezilla/shared/core";
+import { Keyboard, Option, Result } from "@gamezilla/core";
 
 const { Err, Ok } = Result;
 

@@ -31,6 +31,7 @@
 
     "baseUrl": ".",
     "paths": {
+      "@gamezilla/core": ["src/libs/core/index.ts"],
       "@gamezilla/app": ["src/libs/app/index.ts"],
       "@gamezilla/feat/auth": ["src/libs/feat/auth/index.ts"],
       "@gamezilla/feat/chat": ["src/libs/feat/chat/index.ts"],
@@ -50,7 +51,6 @@
       "@gamezilla/game/tic-tac-toe": ["src/libs/game/tic-tac-toe/index.ts"],
       "@gamezilla/shared/app": ["src/libs/shared/app/index.ts"],
       "@gamezilla/shared/client": ["src/libs/shared/client/index.ts"],
-      "@gamezilla/shared/core": ["src/libs/core/index.ts"],
       "@gamezilla/shared/server": ["src/libs/shared/server/index.ts"],
       "@gamezilla/shared/ui": ["src/libs/shared/ui/index.ts"]
     }

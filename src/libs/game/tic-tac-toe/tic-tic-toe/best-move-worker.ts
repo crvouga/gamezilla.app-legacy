@@ -1,4 +1,4 @@
-import { Err, Ok } from "@gamezilla/shared/core";
+import { Err, Ok } from "@gamezilla/core";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { expose } from "threads/worker";

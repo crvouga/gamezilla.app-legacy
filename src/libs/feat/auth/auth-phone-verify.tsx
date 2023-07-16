@@ -1,14 +1,6 @@
 import { PhoneNumber } from "@gamezilla/shared/app";
 import { ClientAppMsg } from "@gamezilla/shared/client";
-import {
-  Browser,
-  Cmd,
-  Result,
-  Task,
-  Time,
-  Unit,
-  p,
-} from "@gamezilla/shared/core";
+import { Browser, Cmd, Result, Task, Time, Unit, p } from "@gamezilla/core";
 import {
   AlertError,
   AlertSuccess,

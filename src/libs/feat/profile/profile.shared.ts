@@ -4,7 +4,7 @@ import {
   UserId,
   Username,
 } from "@gamezilla/shared/app";
-import { RemoteResult, Result } from "@gamezilla/shared/core";
+import { RemoteResult, Result } from "@gamezilla/core";
 
 //
 //

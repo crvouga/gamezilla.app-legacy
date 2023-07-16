@@ -1,4 +1,4 @@
-import { Browser, RemoteResult, Result } from "@gamezilla/shared/core";
+import { Browser, RemoteResult, Result } from "@gamezilla/core";
 import { UserId, Username } from "@gamezilla/shared/app";
 
 type SearchResult = {

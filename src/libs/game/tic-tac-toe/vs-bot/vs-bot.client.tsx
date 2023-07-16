@@ -1,3 +1,4 @@
+import { Cmd, Posix } from "@gamezilla/core";
 import {
   ClientAppMsg,
   Ctx,
@@ -11,7 +12,6 @@ import {
   VsBotProps,
   VsBotSetup,
 } from "@gamezilla/shared/client";
-import { Cmd, Posix } from "@gamezilla/shared/core";
 import {
   IconArrowLeftOnRect,
   IconArrowRotateLeft,

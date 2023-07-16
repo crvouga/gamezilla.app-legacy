@@ -12,7 +12,7 @@ import {
   SpaceCtx,
   SpaceViewCtx,
 } from "@gamezilla/shared/client";
-import { Cmd, Sub, exhaustive } from "@gamezilla/shared/core";
+import { Cmd, Sub, exhaustive } from "@gamezilla/core";
 import {
   ClientModel,
   ClientMsg,

@@ -1,5 +1,5 @@
 import { GameSpace, UserId, GameSpaceId } from "@gamezilla/shared/app";
-import { Result } from "@gamezilla/shared/core";
+import { Result } from "@gamezilla/core";
 
 export type GameSpaceDb = {
   get: (spaceId: GameSpaceId) => Promise<Result<string, GameSpace | null>>;

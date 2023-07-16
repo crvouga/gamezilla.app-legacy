@@ -1,5 +1,5 @@
 import { UserId } from "@gamezilla/shared/app";
-import { Err, Ok, Result } from "@gamezilla/shared/core";
+import { Err, Ok, Result } from "@gamezilla/core";
 import { GetBestMoveResult } from "../tic-tic-toe/best-move";
 import {
   Model,

@@ -1,5 +1,5 @@
 import { SpaceCtx, SpaceViewCtx } from "@gamezilla/shared/client";
-import { Cmd, Keyboard, Sub, p } from "@gamezilla/shared/core";
+import { Cmd, Keyboard, Sub, p } from "@gamezilla/core";
 import { ActionButton, IconArrowLeftOnRect } from "@gamezilla/shared/ui";
 import { Maze } from "./maze";
 import {

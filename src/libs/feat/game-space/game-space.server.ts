@@ -13,7 +13,7 @@ import {
   andThen,
   exhaustive,
   p,
-} from "@gamezilla/shared/core";
+} from "@gamezilla/core";
 import {
   ServerAppMsg,
   AuthReqServerCtx,

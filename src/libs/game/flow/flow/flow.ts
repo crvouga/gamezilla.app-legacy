@@ -1,4 +1,4 @@
-import { removeKey } from "@gamezilla/shared/core";
+import { removeKey } from "@gamezilla/core";
 
 export type NodeId = string & { readonly __brand: unique symbol };
 

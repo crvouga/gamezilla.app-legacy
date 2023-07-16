@@ -1,4 +1,4 @@
-import { Cmd } from "@gamezilla/shared/core";
+import { Cmd } from "@gamezilla/core";
 import { ServerModel, ServerMsg, ToServer, ToClient } from "./chat.shared";
 
 type Model = ServerModel;

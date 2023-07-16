@@ -6,7 +6,7 @@ import {
   isSubset,
   shuffle,
   unique,
-} from "@gamezilla/shared/core";
+} from "@gamezilla/core";
 
 //
 //

@@ -6,7 +6,7 @@ import {
   serverPort,
   sessionIdKey,
 } from "@gamezilla/app";
-import { Browser, Cmd, Debug, Program } from "@gamezilla/shared/core";
+import { Browser, Cmd, Debug, Program } from "@gamezilla/core";
 import * as ReactDOM from "react-dom/client";
 import { Socket, io } from "socket.io-client";
 import "./main.css";

@@ -1,4 +1,4 @@
-import { Cmd, Keyboard, Option, Sub, exhaustive } from "@gamezilla/shared/core";
+import { Cmd, Keyboard, Option, Sub, exhaustive } from "@gamezilla/core";
 import { useLayoutEffect, useRef } from "react";
 import * as Board from "./board";
 import * as Direction from "./direction";

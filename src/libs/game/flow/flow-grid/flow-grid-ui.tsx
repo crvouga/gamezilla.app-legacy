@@ -1,4 +1,4 @@
-import { easeAttrs } from "@gamezilla/shared/core";
+import { easeAttrs } from "@gamezilla/core";
 import { cn } from "@gamezilla/shared/ui";
 import { useEffect, useRef } from "react";
 import { Color, Flow } from "../flow";

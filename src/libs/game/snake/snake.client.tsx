@@ -6,7 +6,7 @@ import {
   Result,
   Sub,
   exhaustive,
-} from "@gamezilla/shared/core";
+} from "@gamezilla/core";
 import { useLayoutEffect, useRef } from "react";
 import { Direction } from "./direction";
 import * as Snake from "./snake";

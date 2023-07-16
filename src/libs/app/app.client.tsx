@@ -10,7 +10,7 @@ import {
   UnauthenticatedViewCtx,
   ViewCtx,
 } from "@gamezilla/shared/client";
-import { Browser, Cmd, Posix, Sub, andThen, p } from "@gamezilla/shared/core";
+import { Browser, Cmd, Posix, Sub, andThen, p } from "@gamezilla/core";
 import {
   IconGamepad,
   IconMagnifyingGlass,

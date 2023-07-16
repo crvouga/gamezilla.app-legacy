@@ -1,5 +1,5 @@
 import { GameSpace } from "@gamezilla/shared/app";
-import { Ok } from "@gamezilla/shared/core";
+import { Ok } from "@gamezilla/core";
 import { GameSpaceDb } from "./game-space-db";
 
 export const makeGameSpaceDb = (): GameSpaceDb => {

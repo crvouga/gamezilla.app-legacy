@@ -1,4 +1,4 @@
-import { Err, Ok, RemoteResult, Result } from "@gamezilla/shared/core";
+import { Err, Ok, RemoteResult, Result } from "@gamezilla/core";
 import { GameSpaceId, UserId, Username } from "@gamezilla/shared/app";
 import { Profile, Space, SpaceViewCtx } from "@gamezilla/shared/client";
 import * as GameServer from "./game.server";

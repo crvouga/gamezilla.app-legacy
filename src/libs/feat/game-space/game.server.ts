@@ -7,7 +7,7 @@ import { SnakeServer } from "@gamezilla/game/snake";
 import { TetrisServer } from "@gamezilla/game/tetris";
 import { TicTacToeServer } from "@gamezilla/game/tic-tac-toe";
 import { UserId } from "@gamezilla/shared/app";
-import { Cmd, Sub, exhaustive } from "@gamezilla/shared/core";
+import { Cmd, Sub, exhaustive } from "@gamezilla/core";
 import {
   SpaceServerCtx,
   SpaceMsg,

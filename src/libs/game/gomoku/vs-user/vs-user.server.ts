@@ -1,5 +1,5 @@
 import { SpaceReqServerCtx } from "@gamezilla/shared/server";
-import { Cmd, Sub } from "@gamezilla/shared/core";
+import { Cmd, Sub } from "@gamezilla/core";
 import { SpaceMsg } from "@gamezilla/shared/client";
 import {
   ServerModel,

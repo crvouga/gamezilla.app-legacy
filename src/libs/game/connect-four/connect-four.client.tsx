@@ -5,7 +5,7 @@ import {
   SpaceViewCtx,
   mainMenuButtons,
 } from "@gamezilla/shared/client";
-import { Cmd, Posix, Sub } from "@gamezilla/shared/core";
+import { Cmd, Posix, Sub } from "@gamezilla/core";
 import { ViewCoverArt } from "./connect-four-ui";
 import {
   ClientModel,

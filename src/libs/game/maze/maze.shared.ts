@@ -1,4 +1,4 @@
-import { Keyboard, NonEmpty, removeKey, Result } from "@gamezilla/shared/core";
+import { Keyboard, NonEmpty, removeKey, Result } from "@gamezilla/core";
 import { UserId } from "@gamezilla/shared/app";
 import { Maze } from "./maze";
 import { Direction, Position } from "./position";

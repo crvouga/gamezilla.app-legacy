@@ -1,4 +1,4 @@
-import { Keyboard, Option } from "@gamezilla/shared/core";
+import { Keyboard, Option } from "@gamezilla/core";
 import { Position } from "./position";
 
 export type Direction = "left" | "up" | "right" | "down";

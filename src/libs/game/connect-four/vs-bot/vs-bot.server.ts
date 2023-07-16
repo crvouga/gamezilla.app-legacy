@@ -1,5 +1,5 @@
 import { SpaceMsg } from "@gamezilla/shared/client";
-import { andThen, Cmd, p, Sub } from "@gamezilla/shared/core";
+import { andThen, Cmd, p, Sub } from "@gamezilla/core";
 import { SpaceReqServerCtx } from "@gamezilla/shared/server";
 import {
   botMove,

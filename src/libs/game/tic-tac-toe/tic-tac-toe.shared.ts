@@ -1,4 +1,4 @@
-import { Err, Result } from "@gamezilla/shared/core";
+import { Err, Result } from "@gamezilla/core";
 import * as VsBot from "./vs-bot/vs-bot.shared";
 import * as VsUser from "./vs-user/vs-user.shared";
 

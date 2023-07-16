@@ -4,7 +4,7 @@ import { ProfileServer } from "@gamezilla/feat/profile";
 import { SearchServer } from "@gamezilla/feat/search";
 import { GameSpaceServer } from "src/libs/feat/game-space";
 import { ClientId, SessionId, UserId } from "@gamezilla/shared/app";
-import { Cmd, Sub, andThen, p } from "@gamezilla/shared/core";
+import { Cmd, Sub, andThen, p } from "@gamezilla/core";
 import {
   AuthReqServerCtx,
   ReqServerCtx,

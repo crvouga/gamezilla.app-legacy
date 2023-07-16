@@ -1,4 +1,4 @@
-import { easeAttrs, memoize } from "@gamezilla/shared/core";
+import { easeAttrs, memoize } from "@gamezilla/core";
 import { Transition, TransitionGroup } from "react-transition-group";
 import {
   COLUMN_COUNT,

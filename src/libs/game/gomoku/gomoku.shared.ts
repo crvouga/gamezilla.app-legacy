@@ -1,4 +1,4 @@
-import { Result } from "@gamezilla/shared/core";
+import { Result } from "@gamezilla/core";
 import { UserId } from "@gamezilla/shared/app";
 import * as VsBot from "./vs-bot/vs-bot.shared";
 import * as VsUser from "./vs-user/vs-user.shared";

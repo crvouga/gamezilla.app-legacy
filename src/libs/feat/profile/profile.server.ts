@@ -7,15 +7,7 @@ import {
   definitions,
 } from "@gamezilla/shared/app";
 import { ServerAppMsg, AuthReqServerCtx } from "@gamezilla/shared/server";
-import {
-  Cmd,
-  Err,
-  NonEmpty,
-  Ok,
-  Result,
-  Task,
-  p,
-} from "@gamezilla/shared/core";
+import { Cmd, Err, NonEmpty, Ok, Result, Task, p } from "@gamezilla/core";
 import {
   ServerModel,
   ServerMsg,

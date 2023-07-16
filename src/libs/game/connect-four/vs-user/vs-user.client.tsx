@@ -7,7 +7,7 @@ import {
   GameLayout,
   VsUserSetupScreen,
 } from "@gamezilla/shared/client";
-import { Cmd, Sub } from "@gamezilla/shared/core";
+import { Cmd, Sub } from "@gamezilla/core";
 import {
   ConformationDialog,
   IconArrowLeftOnRect,

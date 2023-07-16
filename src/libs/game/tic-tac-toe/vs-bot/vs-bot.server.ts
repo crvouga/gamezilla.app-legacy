@@ -1,5 +1,5 @@
 import { SpaceMsg } from "@gamezilla/shared/client";
-import { Cmd, Err, Ok, Sub, andThen, p } from "@gamezilla/shared/core";
+import { Cmd, Err, Ok, Sub, andThen, p } from "@gamezilla/core";
 import { SpaceReqServerCtx } from "@gamezilla/shared/server";
 import { TicTacToe } from "../tic-tic-toe";
 import { getBestMove } from "../tic-tic-toe/best-move";

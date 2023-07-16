@@ -1,14 +1,6 @@
 import { UserId } from "@gamezilla/shared/app";
 import { SpaceCtx, ViewCtx } from "@gamezilla/shared/client";
-import {
-  Audio,
-  Cmd,
-  Option,
-  Sub,
-  exhaustive,
-  p,
-  t,
-} from "@gamezilla/shared/core";
+import { Audio, Cmd, Option, Sub, exhaustive, p, t } from "@gamezilla/core";
 
 import * as Chess from "../chess/chess";
 import Sounds from "../chess/chess-sounds";

@@ -1,4 +1,4 @@
-import { Result } from "@gamezilla/shared/core";
+import { Result } from "@gamezilla/core";
 import { PuzzleBuilder } from "./puzzle-builder";
 import { Play } from "./play";
 
