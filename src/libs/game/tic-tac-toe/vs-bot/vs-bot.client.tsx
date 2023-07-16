@@ -1,6 +1,7 @@
 import {
   ClientAppMsg,
   Ctx,
+  IconBot,
   SpaceCtx,
   SpaceViewCtx,
   ViewBottomButtonBar,
@@ -15,7 +16,12 @@ import {
   IconRightLeft,
   LoadingBar,
 } from "@gamezilla/shared/ui";
-import { toStatus, toTurn } from "../tic-tic-toe/tic-tac-toe";
+import {
+  BotLevel,
+  allBotLevels,
+  toStatus,
+  toTurn,
+} from "../tic-tic-toe/tic-tac-toe";
 import {
   PlayerTypeIcon,
   ViewBoard,
@@ -166,13 +172,19 @@ export const View = ({
     },
     onQuit: goBack,
     onStartGame: () => dispatch({ t: "start-game" }),
+    botVariants: allBotLevels.map((botLevel) => {
+      return {
+        label: botLevel,
+        renderIcon: (props) => renderBotLevel({ level: botLevel, ...props }),
+        onSelect: () => dispatch({ t: "input-bot-level", botLevel }),
+      };
+    }),
     playerOne: {
       label: "Cross",
       onStartPlaying: () => dispatch({ t: "start-playing", playerType: "X" }),
       onStopPlaying: () => dispatch({ t: "stop-playing" }),
       renderIcon: (props) => <PlayerTypeIcon {...props} playerType="X" />,
     },
-
     playerTwo: {
       label: "Naught",
       onStartPlaying: () => dispatch({ t: "start-playing", playerType: "O" }),
@@ -247,4 +259,24 @@ export const ViewMsg = ({ msg }: { msg: Msg | ToClient }) => {
     return msg.result.error;
   }
   return null;
+};
+
+export const renderBotLevel = ({
+  level,
+  ...props
+}: {
+  level: BotLevel;
+  className?: string;
+}) => {
+  switch (level) {
+    case "Easy": {
+      return <IconBot.Level0 {...props} />;
+    }
+    case "Medium": {
+      return <IconBot.Level1 {...props} />;
+    }
+    case "Impossible": {
+      return <IconBot.Level2 {...props} />;
+    }
+  }
 };

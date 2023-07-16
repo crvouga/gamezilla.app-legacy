@@ -112,6 +112,8 @@ export const botLevel: { [botLevel in BotLevel]: BotLevel } = {
   Hard: "Hard",
 };
 
+export const allBotLevels: BotLevel[] = ["Easy", "Medium", "Hard"];
+
 //
 //
 // Msg

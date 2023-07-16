@@ -1,6 +1,7 @@
 import {
   Ctx,
   GameLayout,
+  IconBot,
   SpaceCtx,
   SpaceViewCtx,
   ViewBottomButtonBar,
@@ -25,11 +26,13 @@ import {
   gameTheme,
 } from "../connect-four-ui";
 import {
+  BotLevel,
   ClientModel,
   ClientMsg,
   ServerModel,
   ToClient,
   ToServer,
+  allBotLevels,
   handle,
   initShared,
 } from "./vs-bot.shared";
@@ -213,6 +216,13 @@ export const View = ({
     renderCoverArt: (props) => <ViewCoverArt {...props} />,
     canStartGame: model.player !== null,
     onStartGame: () => dispatch({ t: "start-game" }),
+    botVariants: allBotLevels.map((botLevel) => {
+      return {
+        label: botLevel,
+        renderIcon: (props) => renderBotLevel({ level: botLevel, ...props }),
+        onSelect: () => dispatch({ t: "input-bot-level", botLevel }),
+      };
+    }),
     human: {
       player:
         model.userPlayerType === "player-one" ? "player-one" : "player-two",
@@ -331,4 +341,24 @@ export const View = ({
       />
     </GameLayout>
   );
+};
+
+export const renderBotLevel = ({
+  level,
+  ...props
+}: {
+  level: BotLevel;
+  className?: string;
+}) => {
+  switch (level) {
+    case "Easy": {
+      return <IconBot.Level0 {...props} />;
+    }
+    case "Medium": {
+      return <IconBot.Level1 {...props} />;
+    }
+    case "Hard": {
+      return <IconBot.Level2 {...props} />;
+    }
+  }
 };

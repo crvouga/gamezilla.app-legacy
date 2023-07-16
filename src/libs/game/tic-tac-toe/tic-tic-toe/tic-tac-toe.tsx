@@ -74,6 +74,8 @@ export const toChildren = (board: Model): Model[] => {
 
 export type BotLevel = "Easy" | "Medium" | "Impossible";
 
+export const allBotLevels: BotLevel[] = ["Easy", "Medium", "Impossible"];
+
 export const botLevels: { [botLevel in BotLevel]: BotLevel } = {
   Easy: "Easy",
   Medium: "Medium",

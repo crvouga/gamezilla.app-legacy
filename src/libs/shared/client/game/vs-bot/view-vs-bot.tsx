@@ -30,4 +30,9 @@ export type VsBotProps = {
     onStartPlaying: () => void;
     onStopPlaying: () => void;
   };
+  botVariants: {
+    label: string;
+    renderIcon: (props: { className: string }) => VDom;
+    onSelect: () => void;
+  }[];
 };

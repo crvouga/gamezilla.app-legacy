@@ -106,6 +106,7 @@ export type ToClient =
   | { t: "player-left"; model: SharedModel };
 
 export type Req =
+  | { t: "input-bot-level"; botLevel: Chess.BotLevel }
   | { t: "start-playing"; color: Chess.Color }
   | { t: "stop-playing" }
   | { t: "start-game" }
@@ -144,6 +145,16 @@ export const handle = ({
         userColor: model.userColor,
         userId: model.userId,
         board: Chess.init(),
+      });
+    }
+
+    if (msg.t === "input-bot-level") {
+      if (model.userId !== ctx.currentUserId || model.userId !== ctx.hostId) {
+        return Err("not-allowed");
+      }
+      return Ok({
+        ...model,
+        botLevel: msg.botLevel,
       });
     }
 

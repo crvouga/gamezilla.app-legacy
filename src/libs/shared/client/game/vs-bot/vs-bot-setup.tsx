@@ -17,8 +17,8 @@ export type Model = {
   opened: "change-bot" | null;
 };
 
-export const ModelZod = z.object({
-  opened: z.union([z.literal("change-bot"), z.null()]),
+export const ModelZod: z.ZodType<Model> = z.object({
+  opened: z.enum(["change-bot"]).nullable(),
 });
 
 export const init: Model = {
@@ -60,6 +60,7 @@ type Props = VsBotProps & { model: Model; dispatch: (m: Msg) => void };
 export const View = ({
   dispatch,
   model,
+  botVariants,
   title,
   renderCoverArt,
   onQuit,
@@ -161,8 +162,25 @@ export const View = ({
       <MyDrawer
         open={model.opened === "change-bot"}
         onClose={() => dispatch({ t: "closed-modal" })}>
-        <div className="flex flex-col p-4">
-          <p className="text-xl font-bold">Change bot</p>
+        <div className="flex flex-col pb-6">
+          <p className="p-4 text-2xl font-bold">Change bot</p>
+          <div>
+            {botVariants.map((botLevel) => {
+              const onClick = () => {
+                botLevel.onSelect();
+                dispatch({ t: "closed-modal" });
+              };
+              return (
+                <button
+                  key={botLevel.label}
+                  className="flex w-full items-center gap-3 p-4 text-left text-xl font-bold"
+                  onClick={onClick}>
+                  {botLevel.renderIcon({ className: "w-10 h-10" })}
+                  {botLevel.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </MyDrawer>
     </div>

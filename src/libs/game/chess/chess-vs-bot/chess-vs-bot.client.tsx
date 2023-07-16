@@ -284,6 +284,14 @@ export const View = ({
         bot={{
           label: Chess.botLevelToString(model.sharedModel.botLevel),
         }}
+        botVariants={Chess.allBotLevels.map((botLevel) => {
+          return {
+            label: Chess.botLevelToString(botLevel),
+            renderIcon: (props) =>
+              Chess.renderBotLevel({ level: botLevel, ...props }),
+            onSelect: () => dispatch({ t: "input-bot-level", botLevel }),
+          };
+        })}
         canStartGame={model.sharedModel.userId !== null}
         ctx={ctx}
         human={{

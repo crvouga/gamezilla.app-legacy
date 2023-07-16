@@ -1,4 +1,6 @@
+import { IconBot } from "@gamezilla/shared/client";
 import { exhaustive, Result, Task } from "@gamezilla/shared/core";
+import { VDom } from "@gamezilla/shared/ui";
 import * as ChessJS from "chess.js";
 
 export type BotLevel = 0 | 1 | 2 | 3 | 4;
@@ -26,6 +28,32 @@ export const botLevelToString = (level: BotLevel): string => {
     case 4: {
       return "Experienced";
       // return "Level 4";
+    }
+  }
+};
+
+export const renderBotLevel = ({
+  level,
+  ...props
+}: {
+  level: BotLevel;
+  className?: string;
+}): VDom => {
+  switch (level) {
+    case 0: {
+      return <IconBot.Level0 {...props} />;
+    }
+    case 1: {
+      return <IconBot.Level1 {...props} />;
+    }
+    case 2: {
+      return <IconBot.Level2 {...props} />;
+    }
+    case 3: {
+      return <IconBot.Level3 {...props} />;
+    }
+    case 4: {
+      return <IconBot.Level4 {...props} />;
     }
   }
 };
