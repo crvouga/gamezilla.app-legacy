@@ -1,12 +1,12 @@
-import { Posix } from '../unix-time';
+import { Posix } from "../unix-time";
 
 export type Easing =
-  | { type: 'ease-out-bounce'; n1?: number; d1?: number }
-  | { type: 'ease-out-quint' }
-  | { type: 'linear' }
-  | { type: 'ease-in-back' }
-  | { type: 'ease-in-expo' }
-  | { type: 'ease-out-back' };
+  | { type: "ease-out-bounce"; n1?: number; d1?: number }
+  | { type: "ease-out-quint" }
+  | { type: "linear" }
+  | { type: "ease-in-back" }
+  | { type: "ease-in-expo" }
+  | { type: "ease-out-back" };
 
 export type Model = {
   startMs: Posix;
@@ -25,7 +25,7 @@ const initConstant = (value: number): Model => {
     value,
     from: value,
     to: value,
-    easing: { type: 'linear' },
+    easing: { type: "linear" },
     delayMs: 0,
   };
 };
@@ -54,22 +54,22 @@ function easeOutBack(x: number): number {
 
 const ease = (easing: Easing, x: number): number => {
   switch (easing.type) {
-    case 'ease-out-back':
+    case "ease-out-back":
       return easeOutBack(x);
 
-    case 'ease-out-bounce':
+    case "ease-out-bounce":
       return 1 - bounceIn(1 - x);
 
-    case 'ease-out-quint':
+    case "ease-out-quint":
       return easeOutQuint(x);
 
-    case 'ease-in-back':
+    case "ease-in-back":
       return easeInBack(x);
 
-    case 'ease-in-expo':
+    case "ease-in-expo":
       return easeInExpo(x);
 
-    case 'linear':
+    case "linear":
       return x;
   }
 };
@@ -112,7 +112,7 @@ const init = ({
   durationMs,
   startMs,
   delayMs = 0,
-  easing = { type: 'linear' },
+  easing = { type: "linear" },
 }: {
   easing?: Easing;
   delayMs?: number;
@@ -148,11 +148,20 @@ type AttributeEaseConfig = {
   easing?: Easing;
   delay?: number;
 };
+
+/**
+ *
+ */
+type Node = { setAttribute: (attribute: string, value: string) => void };
+
+type Attributes = {
+  [attribute: string]: AttributeEaseConfig;
+};
 /**
  * Applies easing function-based animations to specified attributes of an HTML/SVG node.
  *
- * @param {Object} node - An object representing an HTML/SVG node with a `setAttribute` function.
- * @param {Object} attributes - An object mapping attribute names to their animation configurations.
+ * @param {Node} node - An object representing an HTML/SVG node with a `setAttribute` function.
+ * @param {Attributes} attributes - An object mapping attribute names to their animation configurations.
  *
  * @example
  *   const node = document.querySelector('#myElement');
@@ -163,10 +172,8 @@ type AttributeEaseConfig = {
  *   easeAttrs(node, attributes);
  */
 export const easeAttrs = async (
-  node: { setAttribute: (attribute: string, value: string) => void },
-  attributes: {
-    [attribute: string]: AttributeEaseConfig;
-  }
+  node: Node,
+  attributes: Attributes
 ): Promise<void> => {
   const startTime = performance.now();
   const keys = Object.keys(attributes);
@@ -183,22 +190,17 @@ export const easeAttrs = async (
     function step(currentTime: number) {
       loop = false;
       for (i = 0; i < keyLength; i++) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        c = attributes[keys[i]];
+        c = attributes[keys[i]!]!;
         elapsed = currentTime - startTime - (c.delay || 0);
         progress = Math.max(0, Math.min(elapsed / c.duration, 1));
         eased =
           c.from +
-          (c.to - c.from) * ease(c.easing || { type: 'linear' }, progress);
+          (c.to - c.from) * ease(c.easing || { type: "linear" }, progress);
         clamped = Math.min(
           c.max || Infinity,
           Math.max(c.min || -Infinity, eased)
         );
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        node.setAttribute(keys[i], String(clamped));
-
+        node.setAttribute(keys[i]!, String(clamped));
         loop = loop || progress < 1;
       }
 
