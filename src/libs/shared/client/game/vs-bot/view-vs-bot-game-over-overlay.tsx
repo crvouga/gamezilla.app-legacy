@@ -1,8 +1,8 @@
 import { UserId } from "@gamezilla/shared/app";
 import { IconRobot, MyAvatar, VDom } from "@gamezilla/shared/ui";
+import { Transition, TransitionGroup } from "react-transition-group";
 import { SpaceViewCtx } from "../game-shared";
 import { PlayerType } from "./view-vs-bot";
-import { Transition, TransitionGroup } from "react-transition-group";
 
 type GameOver =
   | {
@@ -23,6 +23,7 @@ type Props = {
   };
   bot: {
     label: string;
+    renderIcon: (props: { className: string }) => VDom;
   };
   playerOne: {
     renderIcon: (props: { className: string }) => VDom;
@@ -80,6 +81,7 @@ const Winner = ({
   playerOne,
   playerTwo,
   human,
+  bot,
   winner,
 }: Props & { winner: PlayerType }) => {
   const humanSlot = (
@@ -91,11 +93,7 @@ const Winner = ({
     </>
   );
 
-  const botSlot = (
-    <>
-      <IconRobot className="h-16 w-16" />
-    </>
-  );
+  const botSlot = <>{bot.renderIcon({ className: "h-16 w-16" })}</>;
 
   const playerOneSlot = (
     <div className="flex flex-col items-center justify-center gap-3">

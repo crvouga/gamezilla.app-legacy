@@ -17,6 +17,7 @@ export type VsBotProps = {
   };
   bot: {
     label: string;
+    renderIcon: (props: { className: string }) => VDom;
   };
   playerOne: {
     label: string;

@@ -163,6 +163,8 @@ export const View = ({
   const vsBotProps: VsBotProps = {
     bot: {
       label: model.botLevel,
+      renderIcon: (props) =>
+        renderBotLevel({ level: model.botLevel, ...props }),
     },
     canStartGame: Boolean(model.player),
     ctx,

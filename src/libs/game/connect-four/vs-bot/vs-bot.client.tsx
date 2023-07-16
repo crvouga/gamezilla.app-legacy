@@ -230,6 +230,8 @@ export const View = ({
     },
     bot: {
       label: model.botLevel,
+      renderIcon: (props) =>
+        renderBotLevel({ level: model.botLevel, ...props }),
     },
     playerOne: {
       label: "Red",

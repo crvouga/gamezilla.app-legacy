@@ -2,16 +2,21 @@ import { UserId } from "@gamezilla/shared/app";
 import {
   IconArrowLeftOnRect,
   IconQuestionMark,
-  IconRobot,
   MyAvatar,
   MyButton,
   MyDrawer,
   VDom,
 } from "@gamezilla/shared/ui";
+import { z } from "zod";
 import { SpaceViewCtx } from "../game-shared";
 import { ViewGameHeader } from "../view-game-header";
 import { VsBotProps } from "./view-vs-bot";
-import { z } from "zod";
+
+//
+//
+//
+//
+//
 
 export type Model = {
   opened: "change-bot" | null;
@@ -25,6 +30,12 @@ export const init: Model = {
   opened: null,
 };
 
+//
+//
+//
+//
+//
+
 export type Msg = { t: "clicked-change-bot" } | { t: "closed-modal" };
 
 export const update = (input: { msg: Msg; model: Model }): { model: Model } => {
@@ -37,6 +48,13 @@ export const update = (input: { msg: Msg; model: Model }): { model: Model } => {
   return input;
 };
 
+//
+//
+//
+//
+//
+//
+
 type PlayerProp =
   | {
       t: "user";
@@ -48,7 +66,9 @@ type PlayerProp =
     }
   | {
       t: "bot";
+
       botLabel: string;
+      renderBotIcon: (props: { className: string }) => VDom;
       playerLabel: string;
       renderIcon: (props: { className: string }) => VDom;
       onStartPlaying: () => void;
@@ -85,6 +105,7 @@ export const View = ({
           t: "bot",
           botLabel: bot.label,
           playerLabel: playerOne.label,
+          renderBotIcon: bot.renderIcon,
         };
 
   const playerTwoProp: PlayerProp =
@@ -100,6 +121,7 @@ export const View = ({
           t: "bot",
           botLabel: bot.label,
           playerLabel: playerTwo.label,
+          renderBotIcon: bot.renderIcon,
         };
 
   return (
@@ -197,7 +219,7 @@ const PlayerIcons = ({
   return (
     <div className="col-span-3 grid grid-cols-2 place-items-center">
       {player.t === "bot" ? (
-        <IconRobot className="h-14 w-14" />
+        player.renderBotIcon({ className: "h-14 w-14" })
       ) : player.userId ? (
         <MyAvatar
           className="h-14 w-14"

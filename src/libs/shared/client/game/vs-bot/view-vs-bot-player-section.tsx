@@ -1,6 +1,6 @@
-import { IconRobot, MyAvatar, VDom } from "@gamezilla/shared/ui";
-import { PlayerType, VsBotProps } from "./view-vs-bot";
 import { UserId } from "@gamezilla/shared/app";
+import { MyAvatar, VDom } from "@gamezilla/shared/ui";
+import { PlayerType, VsBotProps } from "./view-vs-bot";
 
 export const VsBotPlayerSection = ({
   ctx,
@@ -26,7 +26,7 @@ export const VsBotPlayerSection = ({
 
   const botSlot = (
     <>
-      <IconRobot className="h-6 w-6" />
+      {bot.renderIcon({ className: "h-6 w-6" })}
       <p className="text-sm">{bot.label}</p>
     </>
   );

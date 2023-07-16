@@ -283,6 +283,11 @@ export const View = ({
         }}
         bot={{
           label: Chess.botLevelToString(model.sharedModel.botLevel),
+          renderIcon: (props) =>
+            Chess.renderBotLevel({
+              level: model.sharedModel.botLevel,
+              ...props,
+            }),
         }}
         botVariants={Chess.allBotLevels.map((botLevel) => {
           return {
