@@ -25,12 +25,14 @@ function alphabeta(node, depth, α, β, maximizingPlayer) is
 
 */
 
-export type MinimaxCtx = {
-  currentDepth: number;
-};
+/**
+ * The higher the score, the better the state is for the maximizing player.
+ */
+export type ScoreFn<TState> = (state: TState, currentDepth: number) => number;
 
-export type ScoreFn<TState> = (ctx: MinimaxCtx, state: TState) => number;
-
+/**
+ * Returns all possible states that can be reached from the given state.
+ */
 export type ChildrenFn<TState> = (state: TState) => Iterable<TState>;
 
 const findBestChildState = <TState>({
@@ -51,12 +53,12 @@ const findBestChildState = <TState>({
     beta: number,
     isMaximizing: boolean
   ): number => {
-    if (currentDepth === maxDepth) {
-      return scoreFn({ currentDepth }, state);
+    if (currentDepth >= maxDepth) {
+      return scoreFn(state, currentDepth);
     }
 
-    if (!first(childrenFn(state))) {
-      return scoreFn({ currentDepth }, state);
+    if (Array.from(childrenFn(state)).length === 0) {
+      return scoreFn(state, currentDepth);
     }
 
     if (isMaximizing) {
@@ -96,36 +98,25 @@ const findBestChildState = <TState>({
     return value;
   };
 
-  let bestState: TState | null = null;
+  const [head, ...tail] = Array.from(childrenFn(parentState));
+
+  let bestState: TState | null = head ?? null;
   let bestScore = -Infinity;
-  for (const child of childrenFn(parentState)) {
+  for (const child of tail) {
     if (!bestState) {
       bestState = child;
       continue;
     }
 
-    const childScore = calculateScore(
-      child,
-      maxDepth,
-      -Infinity,
-      +Infinity,
-      false
-    );
+    const childScore = calculateScore(child, 0, -Infinity, +Infinity, false);
 
-    if (childScore > bestScore) {
+    if (childScore >= bestScore) {
       bestState = child;
       bestScore = childScore;
     }
   }
 
   return bestState;
-};
-
-const first = <T>(xs: Iterable<T>): T | null => {
-  for (const x of xs) {
-    return x;
-  }
-  return null;
 };
 
 export const Minimax = {

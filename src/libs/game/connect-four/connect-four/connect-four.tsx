@@ -249,15 +249,15 @@ export const toWins = (columns: Columns): Win[] => {
           continue;
         }
 
-        const targetSlot = toSlot(columns, { x, y });
+        const targetSlot = column[y];
 
-        if (targetSlot === "Empty") {
+        if (!targetSlot) {
           continue;
         }
 
         const win: Position[] = [];
 
-        let position: Position = { x: x, y: y };
+        let position = { x, y };
 
         while (toSlot(columns, position) === targetSlot) {
           visited.add(toKey({ x: position.x, y: position.y, dx, dy }));
