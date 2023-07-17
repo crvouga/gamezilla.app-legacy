@@ -1,13 +1,5 @@
-import { UserId } from "@gamezilla/shared/app";
 import { z } from "zod";
 import { ColumnIndex, PlayerType } from "./connect-four";
-
-export const UserIdZod: z.ZodType<UserId> = z.custom((value) => {
-  if (typeof value === "string" && value.length > 0) {
-    return value as UserId;
-  }
-  throw new z.ZodError([]);
-});
 
 export const PlayerTypeZod: z.ZodType<PlayerType> = z.enum([
   "player-one",

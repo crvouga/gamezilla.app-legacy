@@ -1,12 +1,4 @@
-import {
-  Err,
-  Ok,
-  Result,
-  eq,
-  isSubset,
-  shuffle,
-  unique,
-} from "@gamezilla/core";
+import { Err, Ok, Result, eq, isSubset, unique } from "@gamezilla/core";
 
 //
 //
@@ -81,7 +73,7 @@ export type MoveResult = Result<MoveProblem, Columns>;
 
 export const move = (
   columns: Columns,
-  columnIndex: ColumnIndex,
+  columnIndex: number,
   player: PlayerType
 ): MoveResult => {
   const status = toStatus(columns);
@@ -118,40 +110,6 @@ export const move = (
   });
 
   return Ok(columnsNew);
-};
-
-export type BestMoveProblem = "no_move_available";
-
-export type BestMoveResult = Result<BestMoveProblem, ColumnIndex>;
-
-export const toBestMove = ({
-  columns,
-  maximizingPlayer,
-}: {
-  columns: Columns;
-  maximizingPlayer: PlayerType;
-}): BestMoveResult => {
-  for (const columnIndex of shuffle(String(Math.random()), allColumnIndexes)) {
-    const result = move(columns, columnIndex, maximizingPlayer);
-    if (result.t === "ok") {
-      return Ok(columnIndex);
-    }
-  }
-  return Err("no_move_available");
-};
-
-export const getBestMove = async ({
-  columns,
-  maximizingPlayer,
-}: {
-  columns: Columns;
-  maximizingPlayer: PlayerType;
-}): Promise<BestMoveResult> => {
-  const result = toBestMove({ columns, maximizingPlayer });
-
-  await new Promise((resolve) => setTimeout(resolve, 1_000));
-
-  return result;
 };
 
 export const toSlot = (

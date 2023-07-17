@@ -26,45 +26,47 @@ function alphabeta(node, depth, α, β, maximizingPlayer) is
 */
 
 export type MinimaxCtx = {
-  depth: number;
+  currentDepth: number;
 };
 
-export type MinimaxConfig<TState> = {
-  toScore: (ctx: MinimaxCtx, node: TState) => number;
-  yieldChildren: (state: TState) => Generator<TState>;
-};
+export type ScoreFn<TState> = (ctx: MinimaxCtx, state: TState) => number;
+
+export type ChildrenFn<TState> = (state: TState) => Iterable<TState>;
 
 const findBestChildState = <TState>({
-  config,
-  state,
-  depth,
+  scoreFn,
+  childrenFn,
+  parentState,
+  maxDepth,
 }: {
-  config: MinimaxConfig<TState>;
-  state: TState;
-  depth: number;
+  scoreFn: ScoreFn<TState>;
+  childrenFn: ChildrenFn<TState>;
+  parentState: TState;
+  maxDepth: number;
 }) => {
-  const recur = (
+  const calculateScore = (
     state: TState,
-    depth: number,
+    currentDepth: number,
     alpha: number,
     beta: number,
     isMaximizing: boolean
   ): number => {
-    if (depth === 0) {
-      return config.toScore({ depth }, state);
+    if (currentDepth === maxDepth) {
+      return scoreFn({ currentDepth }, state);
     }
 
-    const children = config.yieldChildren(state);
-
-    if (children.next().done) {
-      return config.toScore({ depth }, state);
+    if (!first(childrenFn(state))) {
+      return scoreFn({ currentDepth }, state);
     }
 
     if (isMaximizing) {
       let value = -Infinity;
 
-      for (const child of config.yieldChildren(state)) {
-        value = Math.max(value, recur(child, depth - 1, alpha, beta, false));
+      for (const child of childrenFn(state)) {
+        value = Math.max(
+          value,
+          calculateScore(child, currentDepth + 1, alpha, beta, false)
+        );
 
         if (value >= beta) {
           break;
@@ -78,8 +80,11 @@ const findBestChildState = <TState>({
 
     let value = Infinity;
 
-    for (const child of config.yieldChildren(state)) {
-      value = Math.min(value, recur(child, depth - 1, alpha, beta, true));
+    for (const child of childrenFn(state)) {
+      value = Math.min(
+        value,
+        calculateScore(child, currentDepth + 1, alpha, beta, true)
+      );
 
       if (value <= alpha) {
         break;
@@ -93,13 +98,19 @@ const findBestChildState = <TState>({
 
   let bestState: TState | null = null;
   let bestScore = -Infinity;
-  for (const child of config.yieldChildren(state)) {
+  for (const child of childrenFn(parentState)) {
     if (!bestState) {
       bestState = child;
       continue;
     }
 
-    const childScore = recur(child, depth - 1, -Infinity, +Infinity, false);
+    const childScore = calculateScore(
+      child,
+      maxDepth,
+      -Infinity,
+      +Infinity,
+      false
+    );
 
     if (childScore > bestScore) {
       bestState = child;
@@ -108,6 +119,13 @@ const findBestChildState = <TState>({
   }
 
   return bestState;
+};
+
+const first = <T>(xs: Iterable<T>): T | null => {
+  for (const x of xs) {
+    return x;
+  }
+  return null;
 };
 
 export const Minimax = {

@@ -1,10 +1,6 @@
 import { z } from "zod";
-import {
-  ColumnIndexZod,
-  ColumnsZod,
-  PlayerTypeZod,
-  UserIdZod,
-} from "../connect-four";
+import { UserIdZod } from "@gamezilla/shared/app";
+import { ColumnIndexZod, ColumnsZod, PlayerTypeZod } from "../connect-four";
 import {
   GameOver,
   MoveTimeLimit,

@@ -3,8 +3,8 @@ import {
   ColumnIndexZod,
   ColumnsZod,
   PlayerTypeZod,
-  UserIdZod,
 } from "../connect-four/connect-four-parsers";
+import { UserIdZod } from "@gamezilla/shared/app";
 import type {
   BotLevel,
   ClientModel,

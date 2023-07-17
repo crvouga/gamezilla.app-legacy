@@ -1,5 +1,6 @@
-import { UserId } from "@gamezilla/shared/app";
 import { Err, Ok, Result } from "@gamezilla/core";
+import { UserId } from "@gamezilla/shared/app";
+import { VsBotSetup } from "@gamezilla/shared/client";
 import {
   BestMoveResult,
   ColumnIndex,
@@ -9,8 +10,7 @@ import {
   move,
   opposite,
   toStatus,
-} from "../connect-four/connect-four";
-import { VsBotSetup } from "@gamezilla/shared/client";
+} from "../connect-four";
 
 //
 //
@@ -144,7 +144,7 @@ export type Req =
   | { t: "swap-sides" }
   | { t: "restart" };
 
-export type Res = Req & { result: Result<String, SharedModel> };
+export type Res = Req & { result: Result<string, SharedModel> };
 
 //
 //
@@ -309,9 +309,15 @@ export const botMove = (
     return bestMoveResult;
   }
 
+  const columnIndex = bestMoveResult.value;
+
+  if (!columnIndex) {
+    return Err("no-move-available");
+  }
+
   const moveResult = move(
     model.columns,
-    bestMoveResult.value,
+    columnIndex,
     opposite[model.userPlayerType]
   );
 

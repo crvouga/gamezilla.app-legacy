@@ -1,5 +1,5 @@
 import { SpaceMsg } from "@gamezilla/shared/client";
-import { andThen, Cmd, p, Sub } from "@gamezilla/core";
+import { andThen, Cmd, Ok, p, Sub } from "@gamezilla/core";
 import { SpaceReqServerCtx } from "@gamezilla/shared/server";
 import {
   botMove,
@@ -13,7 +13,7 @@ import {
   ToClient,
   ToServer,
 } from "./vs-bot.shared";
-import { getBestMove } from "../connect-four/connect-four";
+import { findBestMove } from "../connect-four";
 
 //
 //
@@ -95,11 +95,13 @@ const watchBotMove = ({
     return {
       model,
       cmd: async (dispatch) => {
-        const result = await getBestMove({
+        const result = findBestMove({
           columns,
           maximizingPlayer: botPlayer,
+          maxDepth: 5,
         });
-        dispatch({ t: "bot-moved", result });
+        await new Promise((resolve) => setTimeout(resolve, 10));
+        dispatch({ t: "bot-moved", result: Ok(result.columnIndex) });
       },
     };
   }

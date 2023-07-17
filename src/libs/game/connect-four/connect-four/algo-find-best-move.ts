@@ -1,4 +1,5 @@
-import { Minimax, MinimaxConfig } from "@gamezilla/shared/app";
+import { Result } from "@gamezilla/core";
+import { ChildrenFn, Minimax, ScoreFn } from "@gamezilla/shared/app";
 import {
   COLUMN_COUNT,
   Columns,
@@ -8,13 +9,19 @@ import {
   toStatus,
 } from "./connect-four";
 
+export type BestMoveProblem = "no_move_available";
+
+export type BestMoveResult = Result<BestMoveProblem, number | null>;
+
 type State = {
   columns: Columns;
   lastMoveColumnIndex: number | null;
   turn: PlayerType;
 };
 
-const yieldChildren: MinimaxConfig<State>["yieldChildren"] = function* (state) {
+const childrenFn: ChildrenFn<State> = (state) => {
+  const children: State[] = [];
+
   for (let columnIndex = 0; columnIndex < COLUMN_COUNT; columnIndex++) {
     const column = state.columns[columnIndex];
 
@@ -32,53 +39,57 @@ const yieldChildren: MinimaxConfig<State>["yieldChildren"] = function* (state) {
       ...state.columns.slice(columnIndex + 1),
     ];
 
-    yield {
+    children.push({
       columns: copied,
       turn: opposite[state.turn],
       lastMoveColumnIndex: columnIndex,
-    };
+    });
   }
+
+  return children;
 };
 
-const findBestMove = ({
+export const findBestMove = ({
   maximizingPlayer,
+  columns,
+  maxDepth,
 }: {
+  maxDepth: number;
   maximizingPlayer: PlayerType;
+  columns: Columns;
 }): {
   columnIndex: number | null;
 } => {
-  const config: MinimaxConfig<State> = {
-    yieldChildren,
-    toScore: (ctx, state) => {
-      // TODO: this is too slow
-      const status = toStatus(state.columns);
+  const scoreFn: ScoreFn<State> = (ctx, state) => {
+    const status = toStatus(state.columns);
+    console.log(ctx.currentDepth, state);
 
-      if (status.type === "Winner") {
-        if (status.winner === maximizingPlayer) {
-          return 22 - ctx.depth;
-        }
-        return -22 + ctx.depth;
+    if (status.type === "Winner") {
+      if (status.winner === maximizingPlayer) {
+        return -22 + ctx.currentDepth;
       }
+      return 22 - ctx.currentDepth;
+    }
 
-      if (status.type === "Tie") {
-        return 0;
-      }
-
+    if (status.type === "Tie") {
       return 0;
-    },
+    }
+
+    return 0;
   };
 
-  const bestState = Minimax.findBestChildState({
-    config,
-    depth: 5,
-    state: {
-      columns: Array.from({ length: COLUMN_COUNT }, () => []),
+  const bestChildState = Minimax.findBestChildState({
+    scoreFn,
+    childrenFn,
+    maxDepth,
+    parentState: {
+      columns,
       turn: maximizingPlayer,
       lastMoveColumnIndex: null,
     },
   });
 
-  const bestMove = bestState?.lastMoveColumnIndex ?? null;
+  const bestMove = bestChildState?.lastMoveColumnIndex ?? null;
 
   return {
     columnIndex: bestMove,
