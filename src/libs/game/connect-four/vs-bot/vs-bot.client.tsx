@@ -4,7 +4,7 @@ import {
   GameLayout,
   IconBotHappy,
   IconBotLevel1,
-  IconBotLevel3,
+  IconBotLevel4,
   SpaceCtx,
   SpaceViewCtx,
   ViewBottomButtonBar,
@@ -362,7 +362,7 @@ export const renderBotLevel = ({
       return <IconBotLevel1 {...props} />;
     }
     case "Hard": {
-      return <IconBotLevel3 {...props} />;
+      return <IconBotLevel4 {...props} />;
     }
   }
 };
