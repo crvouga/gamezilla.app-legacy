@@ -297,7 +297,7 @@ export const handle = ({
   return Err("unhandled-request");
 };
 
-export const botMove = (
+export const handleBotMove = (
   bestMoveResult: BestMoveResult,
   model: SharedModel
 ): Result<string, SharedModel> => {
@@ -311,7 +311,7 @@ export const botMove = (
 
   const columnIndex = bestMoveResult.value;
 
-  if (!columnIndex) {
+  if (typeof columnIndex !== "number") {
     return Err("no-move-available");
   }
 

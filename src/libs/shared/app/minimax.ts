@@ -98,25 +98,18 @@ const findBestChildState = <TState>({
     return value;
   };
 
-  const [head, ...tail] = Array.from(childrenFn(parentState));
+  let bestChildState: TState | null = null;
+  let bestChildScore = -Infinity;
+  for (const child of childrenFn(parentState)) {
+    const childScore = calculateScore(child, 0, -Infinity, +Infinity, true);
 
-  let bestState: TState | null = head ?? null;
-  let bestScore = -Infinity;
-  for (const child of tail) {
-    if (!bestState) {
-      bestState = child;
-      continue;
-    }
-
-    const childScore = calculateScore(child, 0, -Infinity, +Infinity, false);
-
-    if (childScore >= bestScore) {
-      bestState = child;
-      bestScore = childScore;
+    if (childScore > bestChildScore) {
+      bestChildState = child;
+      bestChildScore = childScore;
     }
   }
 
-  return bestState;
+  return bestChildState;
 };
 
 export const Minimax = {

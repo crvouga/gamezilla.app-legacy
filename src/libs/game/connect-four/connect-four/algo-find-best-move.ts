@@ -45,14 +45,14 @@ export const findBestMove = ({
         continue;
       }
 
-      const copied: Columns = [
-        ...state.columns.slice(0, columnIndex),
-        [...column, state.turn],
-        ...state.columns.slice(columnIndex + 1),
-      ];
+      const columnsNew: Columns = state.columns.map((column) =>
+        column.map((slot) => slot)
+      );
+
+      columnsNew[columnIndex] = [...column, state.turn];
 
       children.push({
-        columns: copied,
+        columns: columnsNew,
         turn: opposite[state.turn],
         lastMoveColumnIndex: columnIndex,
       });
@@ -69,11 +69,8 @@ export const findBestMove = ({
     }
 
     if (status.winner !== maximizingPlayer) {
-      console.log("scoreFn", -Infinity, maximizingPlayer);
       return -Infinity;
     }
-
-    console.log("scoreFn", Infinity);
 
     return Infinity;
   };
@@ -90,6 +87,8 @@ export const findBestMove = ({
   });
 
   const bestMove = bestChildState?.lastMoveColumnIndex ?? null;
+
+  console.log("bestChildState", bestChildState);
 
   return {
     columnIndex: bestMove,

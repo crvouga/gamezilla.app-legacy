@@ -2,7 +2,7 @@ import { SpaceMsg } from "@gamezilla/shared/client";
 import { andThen, Cmd, Ok, p, Sub } from "@gamezilla/core";
 import { SpaceReqServerCtx } from "@gamezilla/shared/server";
 import {
-  botMove,
+  handleBotMove,
   handle,
   initShared,
   isBotTurn,
@@ -50,7 +50,7 @@ export const update = ({
   cmd?: Cmd<Msg>;
 } => {
   if (msg.t === "bot-moved") {
-    const result = botMove(msg.result, model);
+    const result = handleBotMove(msg.result, model);
 
     if (result.t === "err") {
       return { model, cmd: broadcast({ t: "bot-move", result }) };
@@ -98,7 +98,7 @@ const watchBotMove = ({
         const result = findBestMove({
           columns,
           maximizingPlayer: botPlayer,
-          maxDepth: 5,
+          maxDepth: 4,
         });
         await new Promise((resolve) => setTimeout(resolve, 10));
         dispatch({ t: "bot-moved", result: Ok(result.columnIndex) });
