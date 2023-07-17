@@ -34,8 +34,6 @@ export const findBestMove = ({
   const childrenFn: ChildrenFn<State> = (state) => {
     const children: State[] = [];
 
-    const turnNew = opposite[state.turn];
-
     for (const columnIndex of COLUMN_INDEX_ORDER) {
       const column = state.columns[columnIndex];
 
@@ -49,13 +47,13 @@ export const findBestMove = ({
 
       const copied: Columns = [
         ...state.columns.slice(0, columnIndex),
-        [...column, turnNew],
+        [...column, state.turn],
         ...state.columns.slice(columnIndex + 1),
       ];
 
       children.push({
         columns: copied,
-        turn: turnNew,
+        turn: opposite[state.turn],
         lastMoveColumnIndex: columnIndex,
       });
     }
