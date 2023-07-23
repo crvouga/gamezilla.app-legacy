@@ -1,6 +1,6 @@
-import { Cmd } from '../cmd';
+import { Cmd } from "../cmd";
 
-export const exhaustive = (discriminatedUnionType: 'Missing Case!'): never => {
+export const exhaustive = (discriminatedUnionType: "Missing Case!"): never => {
   throw new Error(`Missing case for: ${discriminatedUnionType}`);
 };
 
@@ -26,9 +26,9 @@ export const t =
   <Value>(value: Value): [Tag, Value] =>
     [tag, value];
 
-export type Unit = { type: 'Unit' };
+export type Unit = { type: "Unit" };
 
-export const Unit: Unit = { type: 'Unit' };
+export const Unit: Unit = { type: "Unit" };
 
 type Range = [number, number];
 /**
@@ -136,7 +136,7 @@ export type AnyMsg = Record<string, unknown> & {
 };
 
 export const isAnyMsg = (msg: unknown): msg is AnyMsg => {
-  return typeof msg === 'object' && msg !== null && 't' in msg;
+  return typeof msg === "object" && msg !== null && "t" in msg;
 };
 
 export const toMsgType = (msg: AnyMsg): string => {

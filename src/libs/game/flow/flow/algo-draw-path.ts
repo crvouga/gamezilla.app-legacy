@@ -1,7 +1,6 @@
 import { findShortestEmptyPath } from "./algo-find-shortest-path";
 import {
   Edge,
-  EdgeFull,
   Model,
   NodeId,
   PathId,
@@ -58,24 +57,21 @@ export const startPath = <T extends Model>(model: T, nodeId: NodeId): T => {
 };
 
 /**
- * Remove path when the user stops drawing a path.
+ * Dissociates inputted path from all edges.
  */
 const destroyPath = <T extends Model>(model: T, pathId: PathId): T => {
   let modelNew: T = { ...model };
   for (const edge of yieldEdges(model)) {
-    if (edge.pathId === pathId) {
-      modelNew = setEdgePath(modelNew, toEdgeId(edge), null);
+    if (edge.pathId !== pathId) {
+      continue;
     }
+    modelNew = setEdgePath(modelNew, toEdgeId(edge), null);
   }
   return modelNew;
 };
 
 /**
- *
- *
  * Extends the path from the start node to the target node.
- *
- *
  */
 export const extendPath = <T extends Model>(
   model: T,
@@ -84,9 +80,7 @@ export const extendPath = <T extends Model>(
 ): T => {
   const newNode = toNode(model, newNodeId);
 
-  /**
-   * Can't extend path to a node that doesn't exist.
-   */
+  // Can't extend path to a node that doesn't exist.
   if (!newNode) {
     return model;
   }
@@ -139,7 +133,7 @@ const extendPathWalk = <T extends Model>({
     return model;
   }
 
-  const edge = findOutEdgeBypathId({
+  const edge = findOutEdgeByPathId({
     model: modelWithPath,
     nodeId: currentNodeId,
     pathId: pathId,
@@ -193,7 +187,7 @@ export const isNodeInPath = (model: Model, nodeId: NodeId): boolean => {
   return false;
 };
 
-const findOutEdgeBypathId = <T extends Model>({
+const findOutEdgeByPathId = <T extends Model>({
   model,
   nodeId,
   pathId,
@@ -201,7 +195,7 @@ const findOutEdgeBypathId = <T extends Model>({
   model: T;
   nodeId: NodeId;
   pathId: PathId;
-}): EdgeFull | null => {
+}): Edge | null => {
   for (const outEdge of yieldOutEdges(model, nodeId)) {
     if (outEdge.pathId === pathId) {
       return outEdge;
@@ -230,14 +224,9 @@ export const findPathEndNode = (
   return nodeId;
 };
 
-//
-//
-//
-// Autocomplete path
-//
-//
-//
-
+/**
+ *
+ */
 export const toAutocompleteEdge = (
   model: Model,
   pathId: PathId

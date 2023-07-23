@@ -1,4 +1,5 @@
-import { Flow, FlowAlgoPath } from "../flow";
+import { Cmd } from "@gamezilla/core";
+import { Flow, AlgoDrawPath } from "../flow";
 import * as FlowGrid from "./flow-grid";
 import * as FlowGridUI from "./flow-grid-ui";
 
@@ -50,6 +51,7 @@ export const update = ({
   model: Model;
 }): {
   model: Model;
+  cmd?: Cmd;
 } => {
   return {
     model: updateModel({ msg, model }),
@@ -72,7 +74,7 @@ export const updateModel = ({
       if (terminal) {
         return {
           ...model,
-          grid: FlowAlgoPath.startPath(model.grid, pressedNodeId),
+          grid: AlgoDrawPath.startPath(model.grid, pressedNodeId),
           state: {
             t: "dragging",
             activePathId: terminal.pathId,
@@ -88,7 +90,7 @@ export const updateModel = ({
 
       return {
         ...model,
-        grid: FlowAlgoPath.extendPath(model.grid, pressedPathId, pressedNodeId),
+        grid: AlgoDrawPath.extendPath(model.grid, pressedPathId, pressedNodeId),
         state: {
           t: "dragging",
           autocompleteEdge: null,
@@ -102,13 +104,13 @@ export const updateModel = ({
 
   if (model.state.t === "dragging") {
     if (msg.t === "dragged-over") {
-      const gridNew = FlowAlgoPath.extendPath(
+      const gridNew = AlgoDrawPath.extendPath(
         model.grid,
         model.state.activePathId,
         msg.nodeId
       );
 
-      const autocompleteEdge = FlowAlgoPath.toAutocompleteEdge(
+      const autocompleteEdge = AlgoDrawPath.toAutocompleteEdge(
         gridNew,
         model.state.activePathId
       );
@@ -143,7 +145,7 @@ export const updateModel = ({
 
 const addAutocompleteEdge = (model: Model): Model => {
   if (model.state.t === "dragging" && model.state.autocompleteEdge) {
-    const gridNew = FlowAlgoPath.extendPath(
+    const gridNew = AlgoDrawPath.extendPath(
       model.grid,
       model.state.activePathId,
       model.state.autocompleteEdge.to

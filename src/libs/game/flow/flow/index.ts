@@ -1,3 +1,3 @@
 export * as Flow from "./flow";
+export * as AlgoDrawPath from "./algo-draw-path";
 export * from "./flow-color";
-export * as FlowAlgoPath from "./algo-draw-path";

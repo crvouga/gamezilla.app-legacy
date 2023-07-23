@@ -91,6 +91,10 @@ const main = () => {
   );
 
   Program.subscribe(program, (state) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    window["model"] = state.model;
+
     root.render(
       <AppClient.View
         isTimeTravelDebugging={state.model._debugId < state.runningDebugId}

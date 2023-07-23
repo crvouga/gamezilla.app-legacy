@@ -206,34 +206,17 @@ export const toNode = (
   return model.nodes[nodeId] ?? null;
 };
 
-export type EdgeFull = Edge & {
-  nodeFrom: Node;
-  nodeTo: Node;
-};
-
 export const toEdge = (
   model: Pick<Model, "edges" | "nodes">,
   edgeId: EdgeId
-): EdgeFull | null => {
+): Edge | null => {
   const edge = model.edges[edgeId];
 
   if (!edge) {
     return null;
   }
 
-  const nodeFrom = model.nodes[edge.from];
-
-  if (!nodeFrom) {
-    return null;
-  }
-
-  const nodeTo = model.nodes[edge.to];
-
-  if (!nodeTo) {
-    return null;
-  }
-
-  return { ...edge, nodeFrom, nodeTo };
+  return edge;
 };
 
 export const addNode = <T extends Model>(model: T, nodeId: NodeId): T => {
@@ -442,7 +425,7 @@ export const yieldNodes = function* (
 
 export const yieldEdges = function* (
   model: Pick<Model, "nodes" | "edges">
-): Generator<EdgeFull> {
+): Generator<Edge> {
   for (const edgeId in model.edges) {
     if (!isEdgeId(model, edgeId)) {
       continue;
@@ -473,7 +456,7 @@ export const nodeToTerminal = (
 export const yieldOutEdges = function* (
   model: Pick<Model, "edgesOut" | "edges" | "nodes">,
   nodeId: NodeId
-): Generator<EdgeFull> {
+): Generator<Edge> {
   for (const outNodeId in model.edgesOut[nodeId]) {
     if (!isNodeId(model, outNodeId)) {
       continue;
@@ -498,7 +481,7 @@ export const yieldOutEdges = function* (
 export const yieldInEdges = function* (
   model: Pick<Model, "edgesIn" | "edges" | "nodes">,
   nodeId: NodeId
-): Generator<EdgeFull> {
+): Generator<Edge> {
   for (const inNodeId in model.edgesIn[nodeId]) {
     if (!isNodeId(model, inNodeId)) {
       continue;
@@ -530,7 +513,7 @@ export const doesPathExist = (
     return false;
   }
 
-  const targetpathId = targetTerminal.pathId;
+  const targetPathId = targetTerminal.pathId;
 
   if (visited.has(nodeId)) {
     return false;
@@ -543,7 +526,7 @@ export const doesPathExist = (
   }
 
   for (const outEdge of yieldOutEdges(model, nodeId)) {
-    if (outEdge.pathId !== targetpathId) {
+    if (outEdge.pathId !== targetPathId) {
       continue;
     }
 

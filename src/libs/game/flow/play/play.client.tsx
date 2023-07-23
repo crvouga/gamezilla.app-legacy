@@ -1,5 +1,5 @@
 import { SpaceCtx, SpaceViewCtx } from "@gamezilla/shared/client";
-import { Cmd } from "@gamezilla/core";
+import { Cmd, andThen, p } from "@gamezilla/core";
 import {
   ClientModel,
   ClientMsg,
@@ -15,7 +15,7 @@ type Model = ClientModel;
 
 type Msg = ClientMsg;
 
-export const init: Model = initShared;
+export const init = initShared;
 
 export const update = (input: {
   msg: Msg;
@@ -26,12 +26,12 @@ export const update = (input: {
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  const updated = FlowGridPlayUI.update({
-    msg: input.msg,
-    model: input.model,
-  });
-
-  return updated;
+  return p(
+    input,
+    andThen((step) => {
+      return FlowGridPlayUI.update({ ...input, ...step });
+    })
+  );
 };
 
 export const updateFromServer = (input: {
