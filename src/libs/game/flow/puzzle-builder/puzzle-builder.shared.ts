@@ -3,7 +3,7 @@ import { Err, Ok, Result } from "@gamezilla/core";
 import { Flow } from "../flow";
 import { FlowGrid, FlowGridPlayUI } from "../flow-grid";
 import { bounds8x8 } from "../flow-grid/flow-grid-position";
-import { GroupId } from "../flow/flow";
+import { PathId } from "../flow/flow";
 
 //
 //
@@ -15,10 +15,10 @@ export type SharedModel = EditModel | PlayModel;
 
 type EditModel = {
   mode: "edit";
-  focusedGroupId: Flow.GroupId;
+  focusedPathId: Flow.PathId;
   grid: FlowGrid.Model;
   draftTerminals: {
-    [groupId in Flow.GroupId]?: DraftTerminal;
+    [pathId in Flow.PathId]?: DraftTerminal;
   };
 };
 
@@ -42,7 +42,7 @@ export const initShared: SharedModel = {
 //
 
 export type DraftTerminal = {
-  groupId: Flow.GroupId;
+  pathId: Flow.PathId;
   pair: [Flow.NodeId] | [Flow.NodeId, Flow.NodeId];
 };
 
@@ -59,11 +59,11 @@ export const nodeIdToDraftTerminal = (
   if (model.mode !== "edit") {
     return null;
   }
-  for (const groupId in model.draftTerminals) {
-    if (!Flow.isGroupId(groupId)) {
+  for (const pathId in model.draftTerminals) {
+    if (!Flow.isPathId(pathId)) {
       continue;
     }
-    const draftTerminal = model.draftTerminals[groupId];
+    const draftTerminal = model.draftTerminals[pathId];
     if (!draftTerminal) {
       continue;
     }
@@ -89,7 +89,7 @@ export type ToServer = Req;
 export type ToClient = Res;
 
 export type Req =
-  | { t: "input-active-group"; groupId: GroupId }
+  | { t: "input-active-group"; pathId: PathId }
   | { t: "input-mode"; mode: ServerModel["mode"] }
   | { t: "pressed-down-node"; nodeId: Flow.NodeId };
 
@@ -120,7 +120,7 @@ export const handle = ({
     if (msg.t === "input-active-group") {
       const modelNew: SharedModel = {
         ...model,
-        focusedGroupId: msg.groupId,
+        focusedPathId: msg.pathId,
       };
       return Ok(modelNew);
     }
@@ -131,11 +131,11 @@ export const handle = ({
         nodeId: msg.nodeId,
       });
 
-      const focusedTerminal = model.draftTerminals[model.focusedGroupId];
+      const focusedTerminal = model.draftTerminals[model.focusedPathId];
       if (focusedTerminal && isDraftTerminalValid(focusedTerminal)) {
         return Ok({
           ...modelNew,
-          focusedGroupId: toNextGroupId(model.focusedGroupId),
+          focusedPathId: toNextPathId(model.focusedPathId),
         });
       }
 
@@ -160,16 +160,16 @@ export const handle = ({
 //
 //
 
-const toNextGroupId = (groupId: Flow.GroupId): Flow.GroupId => {
-  const index = Flow.groupIdOrder.indexOf(groupId);
-  const nextIndex = (index + 1) % Flow.groupIdOrder.length;
-  const groupIdNew = Flow.groupIdOrder[nextIndex];
+const toNextPathId = (pathId: Flow.PathId): Flow.PathId => {
+  const index = Flow.PATH_ID_ORDER.indexOf(pathId);
+  const nextIndex = (index + 1) % Flow.PATH_ID_ORDER.length;
+  const pathIdNew = Flow.PATH_ID_ORDER[nextIndex];
 
-  if (!groupIdNew) {
+  if (!pathIdNew) {
     throw new Error("impossible condition");
   }
 
-  return groupIdNew;
+  return pathIdNew;
 };
 
 const updateEditModePressedDownNode = ({
@@ -182,11 +182,11 @@ const updateEditModePressedDownNode = ({
   const terminal = nodeIdToDraftTerminal(model, nodeId);
 
   if (!terminal) {
-    const existing = model.draftTerminals[model.focusedGroupId];
+    const existing = model.draftTerminals[model.focusedPathId];
     const draftTerminals: EditModel["draftTerminals"] = {
       ...model.draftTerminals,
-      [model.focusedGroupId]: {
-        groupId: model.focusedGroupId,
+      [model.focusedPathId]: {
+        pathId: model.focusedPathId,
         pair: existing ? [nodeId, ...existing.pair].slice(0, 2) : [nodeId],
       },
     };
@@ -194,15 +194,15 @@ const updateEditModePressedDownNode = ({
     return { ...model, draftTerminals };
   }
 
-  if (terminal.groupId !== model.focusedGroupId) {
+  if (terminal.pathId !== model.focusedPathId) {
     const draftTerminals: EditModel["draftTerminals"] = {
       ...model.draftTerminals,
-      [terminal.groupId]: {
+      [terminal.pathId]: {
         ...terminal,
         pair: terminal.pair.filter((x) => x !== nodeId),
       },
-      // [model.focusedGroupId]: {
-      //   groupId: model.focusedGroupId,
+      // [model.focusedPathId]: {
+      //   pathId: model.focusedPathId,
       //   pair: [...terminal.pair, nodeId].slice(0, 2),
       // },
     };
@@ -221,7 +221,7 @@ const initMode = (
     return {
       grid: model.grid,
       mode: "edit",
-      focusedGroupId: Flow.groupIdOrder[0],
+      focusedPathId: Flow.PATH_ID_ORDER[0],
       draftTerminals: {},
     };
   }

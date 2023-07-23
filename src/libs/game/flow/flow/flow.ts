@@ -4,7 +4,7 @@ export type NodeId = string & { readonly __brand: unique symbol };
 
 export type EdgeId = string & { readonly __brand: unique symbol };
 
-export type GroupId =
+export type PathId =
   | "A"
   | "B"
   | "C"
@@ -23,7 +23,7 @@ export type GroupId =
   | "P"
   | "Q";
 
-export const groupIdOrder = [
+export const PATH_ID_ORDER = [
   "A",
   "B",
   "C",
@@ -43,8 +43,8 @@ export const groupIdOrder = [
   "Q",
 ] as const;
 
-export const isGroupId = (groupId: string): groupId is GroupId => {
-  return groupIdOrder.includes(groupId as GroupId);
+export const isPathId = (pathId: string): pathId is PathId => {
+  return PATH_ID_ORDER.includes(pathId as PathId);
 };
 
 export const toEdgeId = (edge: Edge): EdgeId => {
@@ -78,39 +78,63 @@ export type Model = {
     [nodeId: NodeId]: Node;
   };
 
+  /**
+   * Represents the start and end node of a path.
+   */
   terminals: {
-    [groupId in GroupId]?: Terminal;
+    [pathId in PathId]?: Terminal;
   };
 
+  /**
+   *
+   */
   edges: {
     [edgeId: EdgeId]: Edge;
   };
 
+  /**
+   * Edge index to get all edges that go into a node.
+   *
+   * -> • <-
+   *
+   **/
   edgesIn: {
-    [from: NodeId]: {
-      [to: NodeId]: EdgeId;
-    };
-  };
-
-  edgesOut: {
     [to: NodeId]: {
       [from: NodeId]: EdgeId;
     };
   };
+
+  /**
+   * Edge index to get all edges that go out of a node.
+   *
+   * <- • ->
+   *
+   **/
+  edgesOut: {
+    [from: NodeId]: {
+      [to: NodeId]: EdgeId;
+    };
+  };
 };
 
+/**
+ * Represents a connection between two nodes.
+ */
 export type Edge = {
   from: NodeId;
   to: NodeId;
-  groupId?: GroupId | null;
+  pathId?: PathId | null;
 };
 
+/**
+ * Represents each cell in the puzzle
+ */
 export type Node = {
   nodeId: NodeId;
 };
 
 export type Terminal = {
-  groupId: GroupId;
+  pathId: PathId;
   pair: [NodeId, NodeId];
 };
 
@@ -123,7 +147,7 @@ export const isTerminalNode = (model: Model, nodeId: NodeId): boolean => {
   return false;
 };
 
-export const isTerminalStartNode = <T extends Model>(
+export const isStartNode = <T extends Model>(
   model: T,
   nodeId: NodeId
 ): boolean => {
@@ -138,11 +162,11 @@ export const isTerminalStartNode = <T extends Model>(
 export const yieldTerminals = function* <T extends Model>(
   model: Pick<T, "terminals">
 ): Generator<Terminal> {
-  for (const groupId in model.terminals) {
-    if (!isGroupId(groupId)) {
+  for (const pathId in model.terminals) {
+    if (!isPathId(pathId)) {
       continue;
     }
-    const terminal = model.terminals[groupId];
+    const terminal = model.terminals[pathId];
     if (!terminal) {
       continue;
     }
@@ -255,16 +279,16 @@ export const removeNode = <T extends Model>(model: T, nodeId: NodeId): T => {
 export const setTerminalStartNode = <T extends Model>(
   model: T,
   nodeId: NodeId,
-  groupId: GroupId
+  pathId: PathId
 ): T => {
   const added = addNode(model, nodeId);
   return {
     ...added,
     terminals: {
       ...added.terminals,
-      [groupId]: {
-        groupId,
-        pair: [nodeId, added.terminals[groupId]?.pair[1]],
+      [pathId]: {
+        pathId,
+        pair: [nodeId, added.terminals[pathId]?.pair[1]],
       },
     },
   };
@@ -273,9 +297,9 @@ export const setTerminalStartNode = <T extends Model>(
 export const setTerminalEndNode = <T extends Model>(
   model: T,
   nodeId: NodeId,
-  groupId: GroupId
+  pathId: PathId
 ): T => {
-  const terminal = model.terminals[groupId];
+  const terminal = model.terminals[pathId];
 
   if (!terminal) {
     return model;
@@ -285,8 +309,8 @@ export const setTerminalEndNode = <T extends Model>(
     ...model,
     terminals: {
       ...model.terminals,
-      [groupId]: {
-        groupId: terminal.groupId,
+      [pathId]: {
+        pathId: terminal.pathId,
         pair: [terminal.pair[0], nodeId],
       },
     },
@@ -300,13 +324,13 @@ export const removeTerminalNode = <T extends Model>(
   return {
     ...model,
     terminals: Object.entries(model.terminals).reduce(
-      (acc, [groupId, terminal]) => {
+      (acc, [pathId, terminal]) => {
         if (terminal.pair[0] === nodeId) {
           return acc;
         }
         return {
           ...acc,
-          [groupId]: terminal,
+          [pathId]: terminal,
         };
       },
       {}
@@ -314,40 +338,40 @@ export const removeTerminalNode = <T extends Model>(
   };
 };
 
-export const isNodeInGroup = (
+export const isNodeInPath = (
   model: Model,
   nodeId: NodeId,
-  groupId: GroupId
+  pathId: PathId
 ): boolean => {
-  return Boolean(model.terminals[groupId]?.pair.includes(nodeId));
+  return Boolean(model.terminals[pathId]?.pair.includes(nodeId));
 };
 
-export const groupIdToTerminal = (
+export const pathIdToTerminal = (
   model: Model,
-  groupId: GroupId
+  pathId: PathId
 ): Terminal | null => {
-  return model.terminals[groupId] ?? null;
+  return model.terminals[pathId] ?? null;
 };
 
-export const toggleNodeGroup = <T extends Model>(
+export const toggleNodePath = <T extends Model>(
   model: T,
   nodeId: NodeId,
-  groupId: GroupId
+  pathId: PathId
 ): T => {
-  if (isNodeInGroup(model, nodeId, groupId)) {
+  if (isNodeInPath(model, nodeId, pathId)) {
     return removeTerminalNode(model, nodeId);
   }
-  return setTerminalStartNode(model, nodeId, groupId);
+  return setTerminalStartNode(model, nodeId, pathId);
 };
 
 export const includesNode = (model: Model, nodeId: NodeId): boolean => {
   return nodeId in model.nodes;
 };
 
-export const setEdgeGroup = <T extends Model>(
+export const setEdgePath = <T extends Model>(
   model: T,
   edgeId: EdgeId,
-  groupId: GroupId | null
+  pathId: PathId | null
 ): T => {
   const edge = model.edges[edgeId];
 
@@ -361,7 +385,7 @@ export const setEdgeGroup = <T extends Model>(
       ...model.edges,
       [edgeId]: {
         ...edge,
-        groupId: groupId,
+        pathId: pathId,
       },
     },
   };
@@ -420,7 +444,7 @@ export const yieldEdges = function* (
   }
 };
 
-export const nodeIdToTerminal = (
+export const nodeToTerminal = (
   model: Pick<Model, "terminals">,
   nodeId: NodeId
 ): Terminal | null => {
@@ -487,12 +511,12 @@ export const doesPathExist = (
   targetId: NodeId,
   visited = new Set<NodeId>()
 ): boolean => {
-  const targetTerminal = nodeIdToTerminal(model, targetId);
+  const targetTerminal = nodeToTerminal(model, targetId);
   if (!targetTerminal) {
     return false;
   }
 
-  const targetGroupId = targetTerminal.groupId;
+  const targetpathId = targetTerminal.pathId;
 
   if (visited.has(nodeId)) {
     return false;
@@ -505,7 +529,7 @@ export const doesPathExist = (
   }
 
   for (const outEdge of yieldOutEdges(model, nodeId)) {
-    if (outEdge.groupId !== targetGroupId) {
+    if (outEdge.pathId !== targetpathId) {
       continue;
     }
 
@@ -517,30 +541,27 @@ export const doesPathExist = (
   return false;
 };
 
-export const toGroup = (
+export const nodeToPath = (
   model: Pick<Model, "edgesIn" | "edgesOut" | "edges" | "nodes">,
   nodeId: NodeId
-): GroupId | null => {
+): PathId | null => {
   for (const edge of yieldInEdges(model, nodeId)) {
-    if (edge.groupId) {
-      return edge.groupId;
+    if (edge.pathId) {
+      return edge.pathId;
     }
   }
 
   for (const edge of yieldOutEdges(model, nodeId)) {
-    if (edge.groupId) {
-      return edge.groupId;
+    if (edge.pathId) {
+      return edge.pathId;
     }
   }
 
   return null;
 };
 
-export const toStartNodeId = (
-  model: Model,
-  groupId: GroupId
-): NodeId | null => {
-  const terminal = model.terminals[groupId];
+export const toStartNodeId = (model: Model, pathId: PathId): NodeId | null => {
+  const terminal = model.terminals[pathId];
 
   if (!terminal) {
     return null;

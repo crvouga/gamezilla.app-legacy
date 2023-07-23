@@ -10,7 +10,7 @@ import {
   IconPlay,
   cn,
 } from "@gamezilla/ui";
-import { Color, groupIdToColor } from "../flow";
+import { Color, pathIdToColor } from "../flow";
 import { FlowGridPlayUI, FlowGridUI } from "../flow-grid";
 import {
   ClientModel,
@@ -149,35 +149,10 @@ export const View = ({
               cx={0}
               cy={0}
               r={1}
-              fill={Color.toHex(groupIdToColor[model.focusedGroupId])}
+              fill={Color.toHex(pathIdToColor[model.focusedPathId])}
             />
           </svg>
-          <p>{capitalize(groupIdToColor[model.focusedGroupId])}</p>
-          {/* {Flow.groupIdOrder.map((groupId) => {
-            return (
-              <button
-                key={groupId}
-                id={toActiveGroupInputHtmlId(groupId)}
-                className={cn(
-                  'snap-mandatory flex items-center justify-center gap-1 flex-col',
-                  model.focusedGroupId === groupId
-                    ? 'text-lg'
-                    : 'opacity-50 text-sm'
-                )}
-                onClick={() => dispatch({ t: 'input-active-group', groupId })}
-              >
-                <svg viewBox="-1 -1 2 2" className={cn('w-16 h-16')}>
-                  <circle
-                    cx={0}
-                    cy={0}
-                    r={model.focusedGroupId === groupId ? 0.9 : 0.6}
-                    fill={Color.toHex(groupIdToColor[groupId])}
-                  />
-                </svg>
-                <p>{capitalize(Color.groupIdToColor[groupId])}</p>
-              </button>
-            );
-          })} */}
+          <p>{capitalize(pathIdToColor[model.focusedPathId])}</p>
         </div>
       </div>
       <ViewBottomButtonBar

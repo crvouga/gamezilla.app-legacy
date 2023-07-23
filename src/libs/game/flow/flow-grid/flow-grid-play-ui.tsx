@@ -19,7 +19,7 @@ type State =
   | { t: "idle" }
   | {
       t: "dragging";
-      activeGroupId: Flow.GroupId;
+      activePathId: Flow.PathId;
       autocompleteEdge?: FlowGrid.Edge | null;
     };
 
@@ -65,7 +65,7 @@ export const updateModel = ({
 }): Model => {
   if (model.state.t === "idle") {
     if (msg.t === "pressed-down-node") {
-      return updatePressedDown({ model, nodeId: msg.nodeId });
+      return updatePressedDown({ model, pressedNodeId: msg.nodeId });
     }
 
     return model;
@@ -75,13 +75,13 @@ export const updateModel = ({
     if (msg.t === "dragged-over") {
       const gridNew = FlowAlgoPath.extendPath(
         model.grid,
-        model.state.activeGroupId,
+        model.state.activePathId,
         msg.nodeId
       );
 
       const autocompleteEdge = FlowAlgoPath.toAutocompleteEdge(
         gridNew,
-        model.state.activeGroupId
+        model.state.activePathId
       );
 
       const autocompleteGridEdge = autocompleteEdge
@@ -99,7 +99,7 @@ export const updateModel = ({
     }
 
     if (msg.t === "pressed-down-node") {
-      return updatePressedDown({ model, nodeId: msg.nodeId });
+      return updatePressedDown({ model, pressedNodeId: msg.nodeId });
     }
 
     if (msg.t === "pressed-up") {
@@ -120,7 +120,7 @@ const addAutocompleteEdge = (model: Model): Model => {
   if (model.state.t === "dragging" && model.state.autocompleteEdge) {
     const gridNew = FlowAlgoPath.extendPath(
       model.grid,
-      model.state.activeGroupId,
+      model.state.activePathId,
       model.state.autocompleteEdge.to
     );
     return {
@@ -133,39 +133,39 @@ const addAutocompleteEdge = (model: Model): Model => {
 
 const updatePressedDown = ({
   model,
-  nodeId,
+  pressedNodeId,
 }: {
-  nodeId: Flow.NodeId;
+  pressedNodeId: Flow.NodeId;
   model: Model;
 }): Model => {
-  const terminal = Flow.nodeIdToTerminal(model.grid, nodeId);
+  const terminal = Flow.nodeToTerminal(model.grid, pressedNodeId);
+
   if (terminal) {
     return {
       ...model,
-      grid: FlowAlgoPath.startPath(model.grid, nodeId),
+      grid: FlowAlgoPath.startPath(model.grid, pressedNodeId),
       state: {
         t: "dragging",
-        activeGroupId: terminal.groupId,
+        activePathId: terminal.pathId,
         autocompleteEdge: null,
       },
     };
   }
 
-  const groupId = Flow.toGroup(model.grid, nodeId);
-
-  if (groupId) {
-    return {
-      ...model,
-      grid: FlowAlgoPath.extendPath(model.grid, groupId, nodeId),
-      state: {
-        t: "dragging",
-        autocompleteEdge: null,
-        activeGroupId: groupId,
-      },
-    };
+  const pressedPathId = Flow.nodeToPath(model.grid, pressedNodeId);
+  if (!pressedPathId) {
+    return model;
   }
 
-  return model;
+  return {
+    ...model,
+    grid: FlowAlgoPath.extendPath(model.grid, pressedPathId, pressedNodeId),
+    state: {
+      t: "dragging",
+      autocompleteEdge: null,
+      activePathId: pressedPathId,
+    },
+  };
 };
 
 //
@@ -193,15 +193,15 @@ export const View = ({
         model.state.t === "dragging" && model.state.autocompleteEdge
           ? {
               ...model.state.autocompleteEdge,
-              groupId: model.state.activeGroupId,
+              pathId: model.state.activePathId,
             }
           : null
       }
       className={
         model.state.t === "dragging" ? "cursor-grabbing" : "cursor-grab"
       }
-      isActive={({ groupId }) =>
-        model.state.t === "dragging" && model.state.activeGroupId === groupId
+      isActive={({ pathId }) =>
+        model.state.t === "dragging" && model.state.activePathId === pathId
       }
     />
   );

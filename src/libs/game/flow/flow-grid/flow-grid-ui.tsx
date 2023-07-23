@@ -2,8 +2,8 @@ import { easeAttrs } from "@gamezilla/core";
 import { cn } from "@gamezilla/ui";
 import { useEffect, useRef } from "react";
 import { Color, Flow } from "../flow";
-import { GroupId } from "../flow/flow";
-import { groupIdToColor } from "../flow/flow-color";
+import { PathId } from "../flow/flow";
+import { pathIdToColor } from "../flow/flow-color";
 import * as FlowGrid from "./flow-grid";
 import { Model } from "./flow-grid";
 import * as FlowGridPosition from "./flow-grid-position";
@@ -22,22 +22,22 @@ const TERMINAL_NODE_RADIUS_ACTIVE = 0.4;
 const EDGE_STROKE_WIDTH = 0.3;
 
 type ViewTerminal = {
-  groupId: GroupId;
+  pathId: PathId;
   pair: [Flow.NodeId] | [Flow.NodeId, Flow.NodeId];
 };
 
 export type ViewModel = Omit<Model, "terminals"> & {
   terminals: {
-    [groupId in GroupId]?: ViewTerminal;
+    [pathId in PathId]?: ViewTerminal;
   };
 };
 
 const yieldTerminals = function* (model: ViewModel): Generator<ViewTerminal> {
-  for (const groupId in model.terminals) {
-    if (!Flow.isGroupId(groupId)) {
+  for (const pathId in model.terminals) {
+    if (!Flow.isPathId(pathId)) {
       continue;
     }
-    const terminal = model.terminals[groupId];
+    const terminal = model.terminals[pathId];
     if (!terminal) {
       continue;
     }
@@ -45,6 +45,9 @@ const yieldTerminals = function* (model: ViewModel): Generator<ViewTerminal> {
   }
 };
 
+/**
+ * Renders the Flow Grid UI
+ */
 export const View = ({
   model,
   onDraggedOver,
@@ -61,12 +64,12 @@ export const View = ({
   onPressDown?: (nodeId: Flow.NodeId) => void;
   onPressUp?: (nodeId: Flow.NodeId) => void;
   onDraggedOver?: (nodeId: Flow.NodeId) => void;
-  autocompleteEdge?: (FlowGrid.Edge & { groupId: Flow.GroupId }) | null;
+  autocompleteEdge?: (FlowGrid.Edge & { pathId: Flow.PathId }) | null;
   isActive?: ({
     nodeId,
-    groupId,
+    pathId,
   }: {
-    groupId: Flow.GroupId;
+    pathId: Flow.PathId;
     nodeId: Flow.NodeId;
   }) => boolean;
 }) => {
@@ -92,12 +95,12 @@ export const View = ({
       */}
       <g>
         {map(FlowGrid.yieldNodes(model), (node) => {
-          const groupId = Flow.toGroup(model, node.nodeId);
-          const fill = !groupId
+          const pathId = Flow.nodeToPath(model, node.nodeId);
+          const fill = !pathId
             ? "transparent"
-            : isActive?.({ nodeId: node.nodeId, groupId })
+            : isActive?.({ nodeId: node.nodeId, pathId })
             ? "transparent"
-            : Color.toHex(groupIdToColor[groupId]);
+            : Color.toHex(pathIdToColor[pathId]);
           return (
             <rect
               key={node.nodeId}
@@ -169,16 +172,16 @@ export const View = ({
             : null;
           return (
             <g
-              key={`${terminal.groupId} ${terminal.pair[0]} ${terminal.pair[1]}`}>
+              key={`${terminal.pathId} ${terminal.pair[0]} ${terminal.pair[1]}`}>
               {startNode && (
                 <ViewTerminalNode
-                  groupId={terminal.groupId}
+                  pathId={terminal.pathId}
                   x={startNode.x}
                   y={startNode.y}
                   isActive={Boolean(
                     isActive?.({
                       nodeId: startNode.nodeId,
-                      groupId: terminal.groupId,
+                      pathId: terminal.pathId,
                     })
                   )}
                   key={startNode.nodeId}
@@ -186,13 +189,13 @@ export const View = ({
               )}
               {endNode && (
                 <ViewTerminalNode
-                  groupId={terminal.groupId}
+                  pathId={terminal.pathId}
                   x={endNode.x}
                   y={endNode.y}
                   isActive={Boolean(
                     isActive?.({
                       nodeId: endNode.nodeId,
-                      groupId: terminal.groupId,
+                      pathId: terminal.pathId,
                     })
                   )}
                   key={endNode.nodeId}
@@ -217,7 +220,7 @@ export const View = ({
             y1={autocompleteEdge.nodeFrom.y}
             x2={autocompleteEdge.nodeTo.x}
             y2={autocompleteEdge.nodeTo.y}
-            stroke={Color.groupIdToHex(autocompleteEdge.groupId)}
+            stroke={Color.pathIdToHex(autocompleteEdge.pathId)}
             strokeWidth={EDGE_STROKE_WIDTH}
             strokeOpacity={0.5}
           />
@@ -233,7 +236,7 @@ export const View = ({
       */}
       <g transform="translate(0.5, 0.5)">
         {map(FlowGrid.yieldEdges(model), (edge) => {
-          if (!edge.groupId) {
+          if (!edge.pathId) {
             return null;
           }
           return (
@@ -243,14 +246,14 @@ export const View = ({
                 y1={edge.nodeFrom.y}
                 x2={edge.nodeTo.x}
                 y2={edge.nodeTo.y}
-                stroke={Color.groupIdToHex(edge.groupId)}
+                stroke={Color.pathIdToHex(edge.pathId)}
                 strokeWidth={EDGE_STROKE_WIDTH}
               />
               <circle
                 cx={edge.nodeTo.x}
                 cy={edge.nodeTo.y}
                 r={EDGE_STROKE_WIDTH / 2}
-                fill={Color.groupIdToHex(edge.groupId)}
+                fill={Color.pathIdToHex(edge.pathId)}
               />
             </g>
           );
@@ -306,12 +309,12 @@ export const View = ({
 };
 
 const ViewTerminalNode = ({
-  groupId,
+  pathId,
   x,
   y,
   isActive,
 }: {
-  groupId: GroupId;
+  pathId: PathId;
   x: number;
   y: number;
   isActive: boolean;
@@ -368,7 +371,7 @@ const ViewTerminalNode = ({
       cx={x}
       cy={y}
       r={TERMINAL_NODE_RADIUS}
-      fill={Color.groupIdToHex(groupId)}
+      fill={Color.pathIdToHex(pathId)}
     />
   );
 };

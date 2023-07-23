@@ -1,9 +1,9 @@
 import { NonEmpty } from "@gamezilla/core";
-import { GroupId } from "../flow/flow";
-import * as FlowGrid from "./flow-grid";
 import { Flow } from "../flow";
+import { PathId } from "../flow/flow";
+import * as FlowGrid from "./flow-grid";
 
-export type Model = NonEmpty<NonEmpty<GroupId | null>>;
+export type Model = NonEmpty<NonEmpty<PathId | null>>;
 
 export const fromShorthand = (model: Model): FlowGrid.Model => {
   let grid = FlowGrid.initEmpty({
@@ -27,7 +27,7 @@ export const fromShorthand = (model: Model): FlowGrid.Model => {
     }
 
     for (let x = 0; x < row.length; x++) {
-      const groupId = row[x];
+      const pathId = row[x];
 
       const nodeId = FlowGrid.positionToId({
         x,
@@ -39,17 +39,17 @@ export const fromShorthand = (model: Model): FlowGrid.Model => {
         y,
       });
 
-      if (!groupId) {
+      if (!pathId) {
         continue;
       }
-      const terminal = Flow.groupIdToTerminal(grid, groupId);
+      const terminal = grid.terminals[pathId];
 
       if (!terminal) {
-        grid = Flow.setTerminalStartNode(grid, nodeId, groupId);
+        grid = Flow.setTerminalStartNode(grid, nodeId, pathId);
         continue;
       }
 
-      grid = Flow.setTerminalEndNode(grid, nodeId, groupId);
+      grid = Flow.setTerminalEndNode(grid, nodeId, pathId);
     }
   }
 
