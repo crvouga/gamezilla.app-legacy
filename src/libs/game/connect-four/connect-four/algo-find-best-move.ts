@@ -12,6 +12,14 @@ export type BestMoveProblem = "no_move_available";
 
 export type BestMoveResult = Result<BestMoveProblem, number | null>;
 
+type State = {
+  columns: Columns;
+  lastMoveColumnIndex: number | null;
+  turn: PlayerType;
+};
+
+const COLUMN_INDEX_ORDER = [3, 4, 2, 5, 1, 6, 0];
+
 export const findBestMove = ({
   maximizingPlayer,
   columns,
@@ -23,14 +31,6 @@ export const findBestMove = ({
 }): {
   columnIndex: number | null;
 } => {
-  type State = {
-    columns: Columns;
-    lastMoveColumnIndex: number | null;
-    turn: PlayerType;
-  };
-
-  const COLUMN_INDEX_ORDER = [3, 4, 2, 5, 1, 6, 0];
-
   const childrenFn: ChildrenFn<State> = (state) => {
     const children: State[] = [];
 
@@ -69,10 +69,10 @@ export const findBestMove = ({
     }
 
     if (status.winner !== maximizingPlayer) {
-      return -Infinity;
+      return Infinity;
     }
 
-    return Infinity;
+    return -Infinity;
   };
 
   const bestChildState = Minimax.findBestChildState({
