@@ -1,6 +1,6 @@
 import { NonEmpty } from "@gamezilla/core";
 import { Flow } from "../flow";
-import { PathId } from "../flow/flow";
+import { DraftTerminal, PathId, Terminal } from "../flow/flow";
 import * as FlowGrid from "./flow-grid";
 
 export type Model = NonEmpty<NonEmpty<PathId | null>>;
@@ -19,6 +19,8 @@ export const fromShorthand = (model: Model): FlowGrid.Model => {
     },
   });
 
+  const draftTerminals: { [pathId in PathId]?: DraftTerminal } = {};
+
   for (let y = 0; y < model.length; y++) {
     const row = model[y];
 
@@ -27,29 +29,40 @@ export const fromShorthand = (model: Model): FlowGrid.Model => {
     }
 
     for (let x = 0; x < row.length; x++) {
+      const position = {
+        x,
+        y,
+      };
+
+      const nodeId = FlowGrid.positionToId(position);
+
+      grid = FlowGrid.addNode(grid, position);
+
       const pathId = row[x];
-
-      const nodeId = FlowGrid.positionToId({
-        x,
-        y,
-      });
-
-      grid = FlowGrid.addNodeFromPosition(grid, {
-        x,
-        y,
-      });
 
       if (!pathId) {
         continue;
       }
-      const terminal = grid.terminals[pathId];
 
-      if (!terminal) {
-        grid = Flow.setTerminalStartNode(grid, nodeId, pathId);
+      const draftTerminal = draftTerminals[pathId];
+
+      if (!draftTerminal) {
+        const draftTerminalNew: DraftTerminal = {
+          pathId,
+          startId: nodeId,
+          endId: null,
+        };
+        draftTerminals[pathId] = draftTerminalNew;
         continue;
       }
 
-      grid = Flow.setTerminalEndNode(grid, nodeId, pathId);
+      const terminal: Terminal = {
+        pathId,
+        startId: draftTerminal.startId,
+        endId: nodeId,
+      };
+
+      grid = Flow.addTerminal(grid, terminal);
     }
   }
 

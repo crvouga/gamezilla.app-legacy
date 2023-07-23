@@ -135,13 +135,13 @@ export type Node = {
 
 export type Terminal = {
   pathId: PathId;
-  start: NodeId;
-  end: NodeId;
+  startId: NodeId;
+  endId: NodeId;
 };
 
 export const isTerminalNode = (model: Model, nodeId: NodeId): boolean => {
   for (const terminal of yieldTerminals(model)) {
-    if (terminal.start === nodeId || terminal.end === nodeId) {
+    if (terminal.startId === nodeId || terminal.endId === nodeId) {
       return true;
     }
   }
@@ -153,7 +153,7 @@ export const isStartNode = <T extends Model>(
   nodeId: NodeId
 ): boolean => {
   for (const terminal of yieldTerminals(model)) {
-    if (terminal.start === nodeId) {
+    if (terminal.startId === nodeId) {
       return true;
     }
   }
@@ -189,6 +189,29 @@ export const initEmpty: Model = {
   edges: {},
   edgesIn: {},
   edgesOut: {},
+};
+
+//
+//
+//
+//
+
+export type DraftTerminal = {
+  pathId: PathId;
+  startId: NodeId;
+  endId: NodeId | null;
+};
+
+export const isDraftTerminalValid = <T extends Model>(
+  model: T,
+  draftTerminal: DraftTerminal
+): draftTerminal is Terminal => {
+  return (
+    isPathId(draftTerminal.pathId) &&
+    isNodeId(model, draftTerminal.startId) &&
+    draftTerminal.endId !== null &&
+    isNodeId(model, draftTerminal.endId)
+  );
 };
 
 //
@@ -260,25 +283,34 @@ export const removeNode = <T extends Model>(model: T, nodeId: NodeId): T => {
   };
 };
 
-export const setTerminalStartNode = <T extends Model>(
+export const addTerminal = <T extends Model>(
   model: T,
-  nodeId: NodeId,
-  pathId: PathId
+  terminal: Terminal
 ): T => {
-  const added = addNode(model, nodeId);
   return {
-    ...added,
+    ...addNode(addNode(model, terminal.startId), terminal.endId),
     terminals: {
-      ...added.terminals,
-      [pathId]: {
-        pathId,
-        start: nodeId,
-      },
+      ...model.terminals,
+      [terminal.pathId]: terminal,
     },
   };
 };
 
-export const setTerminalEndNode = <T extends Model>(
+export const setStartNode = <T extends Model>(
+  model: T,
+  terminal: Terminal,
+  nodeId: NodeId
+): T => {
+  const terminalNew: Terminal = {
+    ...terminal,
+    startId: nodeId,
+    endId: terminal.endId === nodeId ? terminal.startId : terminal.endId,
+  };
+
+  return addTerminal(model, terminalNew);
+};
+
+export const setEndNode = <T extends Model>(
   model: T,
   nodeId: NodeId,
   pathId: PathId
@@ -290,16 +322,16 @@ export const setTerminalEndNode = <T extends Model>(
   }
 
   const terminalNew: Terminal =
-    terminal.start === nodeId
+    terminal.startId === nodeId
       ? {
           ...terminal,
-          end: nodeId,
-          start: terminal.end,
+          endId: nodeId,
+          startId: terminal.endId,
         }
       : {
           ...terminal,
-          start: nodeId,
-          end: terminal.start,
+          startId: nodeId,
+          endId: terminal.startId,
         };
 
   return {
@@ -319,7 +351,7 @@ export const removeTerminalNode = <T extends Model>(
     ...model,
     terminals: Object.entries(model.terminals).reduce(
       (acc, [pathId, terminal]) => {
-        if (terminal.start === nodeId) {
+        if (terminal.startId === nodeId) {
           return acc;
         }
         return {
@@ -338,31 +370,9 @@ export const isNodeInPath = (
   pathId: PathId
 ): boolean => {
   return (
-    model.terminals[pathId]?.start === nodeId ||
-    model.terminals[pathId]?.end === nodeId
+    model.terminals[pathId]?.startId === nodeId ||
+    model.terminals[pathId]?.endId === nodeId
   );
-};
-
-export const pathIdToTerminal = (
-  model: Model,
-  pathId: PathId
-): Terminal | null => {
-  return model.terminals[pathId] ?? null;
-};
-
-export const toggleNodePath = <T extends Model>(
-  model: T,
-  nodeId: NodeId,
-  pathId: PathId
-): T => {
-  if (isNodeInPath(model, nodeId, pathId)) {
-    return removeTerminalNode(model, nodeId);
-  }
-  return setTerminalStartNode(model, nodeId, pathId);
-};
-
-export const includesNode = (model: Model, nodeId: NodeId): boolean => {
-  return nodeId in model.nodes;
 };
 
 export const setEdgePath = <T extends Model>(
@@ -423,6 +433,20 @@ export const yieldNodes = function* (
   }
 };
 
+/**
+ * Dissociates inputted path from all edges.
+ */
+export const destroyPath = <T extends Model>(model: T, pathId: PathId): T => {
+  let modelNew: T = { ...model };
+  for (const edge of yieldEdges(model)) {
+    if (edge.pathId !== pathId) {
+      continue;
+    }
+    modelNew = setEdgePath(modelNew, toEdgeId(edge), null);
+  }
+  return modelNew;
+};
+
 export const yieldEdges = function* (
   model: Pick<Model, "nodes" | "edges">
 ): Generator<Edge> {
@@ -441,12 +465,15 @@ export const yieldEdges = function* (
   }
 };
 
-export const nodeToTerminal = (
+/**
+ * Finds the terminal that contains the inputted node.
+ */
+export const findTerminal = (
   model: Pick<Model, "terminals">,
   nodeId: NodeId
 ): Terminal | null => {
   for (const terminal of yieldTerminals(model)) {
-    if (terminal.start === nodeId || terminal.end === nodeId) {
+    if (terminal.startId === nodeId || terminal.endId === nodeId) {
       return terminal;
     }
   }
@@ -508,7 +535,7 @@ export const doesPathExist = (
   targetId: NodeId,
   visited = new Set<NodeId>()
 ): boolean => {
-  const targetTerminal = nodeToTerminal(model, targetId);
+  const targetTerminal = findTerminal(model, targetId);
   if (!targetTerminal) {
     return false;
   }
@@ -538,8 +565,11 @@ export const doesPathExist = (
   return false;
 };
 
-export const nodeToPath = (
-  model: Pick<Model, "edgesIn" | "edgesOut" | "edges" | "nodes">,
+/**
+ * Finds the path id that contains the inputted node.
+ */
+export const findPath = (
+  model: Pick<Model, "edgesIn" | "edgesOut" | "edges" | "nodes" | "terminals">,
   nodeId: NodeId
 ): PathId | null => {
   for (const edge of yieldInEdges(model, nodeId)) {
@@ -554,15 +584,11 @@ export const nodeToPath = (
     }
   }
 
-  return null;
-};
-
-export const toStartNodeId = (model: Model, pathId: PathId): NodeId | null => {
-  const terminal = model.terminals[pathId];
-
-  if (!terminal) {
-    return null;
+  for (const terminal of yieldTerminals(model)) {
+    if (terminal.startId === nodeId || terminal.endId === nodeId) {
+      return terminal.pathId;
+    }
   }
 
-  return terminal.start;
+  return null;
 };

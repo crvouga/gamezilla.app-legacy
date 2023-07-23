@@ -133,7 +133,7 @@ export const View = ({
         <FlowGridUI.View
           model={{
             ...model.grid,
-            terminals: model.draftTerminals,
+            draftTerminals: model.draftTerminals,
           }}
           onPressDown={(nodeId) => {
             dispatch({

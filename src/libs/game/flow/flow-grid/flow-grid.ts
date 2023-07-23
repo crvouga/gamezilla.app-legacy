@@ -1,5 +1,5 @@
-import { Flow } from '../flow';
-import { Bounds, Position, deltas, yieldRange } from './flow-grid-position';
+import { Flow } from "../flow";
+import { Bounds, Position, deltas, yieldRange } from "./flow-grid-position";
 
 //
 //
@@ -36,7 +36,7 @@ export const initEmpty = ({ bounds }: { bounds: Bounds }): Model => {
   };
 
   for (const position of yieldRange({ bounds })) {
-    model = addNodeFromPosition(model, position);
+    model = addNode(model, position);
   }
 
   for (const nodePosition of yieldPositions(model)) {
@@ -78,7 +78,7 @@ export type Edge = Flow.Edge & {
 };
 
 export const toNode = (
-  model: Pick<Model, 'nodes' | 'positions'>,
+  model: Pick<Model, "nodes" | "positions">,
   nodeId: Flow.NodeId
 ): Node | null => {
   const node = Flow.toNode(model, nodeId);
@@ -132,21 +132,13 @@ export const toEdge = (model: Model, edgeId: Flow.EdgeId): Edge | null => {
 //
 //
 
-export const addNodeFromPosition = (
-  model: Model,
-  position: Position
-): Model => {
+export const addNode = (model: Model, position: Position): Model => {
   const nodeId = positionToId(position);
+  const added = Flow.addNode(model, nodeId);
   return {
-    ...model,
-    nodes: {
-      ...model.nodes,
-      [nodeId]: {
-        nodeId,
-      },
-    },
+    ...added,
     positions: {
-      ...model.positions,
+      ...added.positions,
       [nodeId]: position,
     },
   };
@@ -171,7 +163,7 @@ export const yieldPositions = function* (model: Model): Generator<Position> {
 };
 
 export const yieldEdges = function* (
-  model: Pick<Model, 'edges' | 'nodes' | 'positions'>
+  model: Pick<Model, "edges" | "nodes" | "positions">
 ): Generator<Edge> {
   for (const edge of Flow.yieldEdges(model)) {
     const from = toNode(model, edge.from);
@@ -195,7 +187,7 @@ export const yieldEdges = function* (
 };
 
 export const yieldNodes = function* (
-  model: Pick<Model, 'nodes' | 'positions'>
+  model: Pick<Model, "nodes" | "positions">
 ): Generator<Node> {
   for (const node of Flow.yieldNodes(model)) {
     const position = model.positions[node.nodeId];

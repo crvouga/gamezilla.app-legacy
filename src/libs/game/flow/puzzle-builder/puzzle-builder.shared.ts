@@ -3,7 +3,7 @@ import { Err, Ok, Result } from "@gamezilla/core";
 import { Flow } from "../flow";
 import { FlowGrid, FlowGridPlayUI } from "../flow-grid";
 import { bounds8x8 } from "../flow-grid/flow-grid-position";
-import { PathId } from "../flow/flow";
+import { DraftTerminal, PathId, isDraftTerminalValid } from "../flow/flow";
 
 //
 //
@@ -41,18 +41,6 @@ export const initShared: SharedModel = {
 //
 //
 
-export type DraftTerminal = {
-  pathId: Flow.PathId;
-  start: Flow.NodeId;
-  end?: Flow.NodeId | null;
-};
-
-export const isDraftTerminalValid = (
-  draftTerminal: DraftTerminal
-): draftTerminal is Flow.Terminal => {
-  return Boolean(draftTerminal.start && draftTerminal.end);
-};
-
 export const nodeIdToDraftTerminal = (
   model: SharedModel,
   nodeId: Flow.NodeId
@@ -68,7 +56,7 @@ export const nodeIdToDraftTerminal = (
     if (!draftTerminal) {
       continue;
     }
-    if (draftTerminal.start === nodeId || draftTerminal.end === nodeId) {
+    if (draftTerminal.startId === nodeId || draftTerminal.endId === nodeId) {
       return draftTerminal;
     }
   }
@@ -133,7 +121,10 @@ export const handle = ({
       });
 
       const focusedTerminal = model.draftTerminals[model.focusedPathId];
-      if (focusedTerminal && isDraftTerminalValid(focusedTerminal)) {
+      if (
+        focusedTerminal &&
+        isDraftTerminalValid(model.grid, focusedTerminal)
+      ) {
         return Ok({
           ...modelNew,
           focusedPathId: toNextPathId(model.focusedPathId),

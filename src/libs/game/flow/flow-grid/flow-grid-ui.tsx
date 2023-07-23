@@ -2,7 +2,7 @@ import { easeAttrs } from "@gamezilla/core";
 import { cn } from "@gamezilla/ui";
 import { useEffect, useRef } from "react";
 import { Color, Flow } from "../flow";
-import { PathId } from "../flow/flow";
+import { DraftTerminal, PathId } from "../flow/flow";
 import { pathIdToColor } from "../flow/flow-color";
 import * as FlowGrid from "./flow-grid";
 import { Model } from "./flow-grid";
@@ -21,24 +21,18 @@ const TERMINAL_NODE_RADIUS_ACTIVE = 0.4;
 
 const EDGE_STROKE_WIDTH = 0.3;
 
-type ViewTerminal = {
-  pathId: PathId;
-  start: Flow.NodeId;
-  end?: Flow.NodeId | null;
-};
-
-export type ViewModel = Omit<Model, "terminals"> & {
-  terminals: {
-    [pathId in PathId]?: ViewTerminal;
+export type ViewModel = Model & {
+  draftTerminals: {
+    [pathId in PathId]?: DraftTerminal;
   };
 };
 
-const yieldTerminals = function* (model: ViewModel): Generator<ViewTerminal> {
-  for (const pathId in model.terminals) {
+const yieldTerminals = function* (model: ViewModel): Generator<DraftTerminal> {
+  for (const pathId in model.draftTerminals) {
     if (!Flow.isPathId(pathId)) {
       continue;
     }
-    const terminal = model.terminals[pathId];
+    const terminal = model.draftTerminals[pathId];
     if (!terminal) {
       continue;
     }
@@ -96,7 +90,7 @@ export const View = ({
       */}
       <g>
         {map(FlowGrid.yieldNodes(model), (node) => {
-          const pathId = Flow.nodeToPath(model, node.nodeId);
+          const pathId = Flow.findPath(model, node.nodeId);
           const fill = !pathId
             ? "transparent"
             : isActive?.({ nodeId: node.nodeId, pathId })
@@ -165,15 +159,15 @@ export const View = ({
       */}
       <g transform="translate(0.5, 0.5)">
         {map(yieldTerminals(model), (terminal) => {
-          const startId = terminal.start;
+          const startId = terminal.startId;
 
           const startNode = FlowGrid.toNode(model, startId);
-          const endNode = terminal.end
-            ? FlowGrid.toNode(model, terminal.end)
+          const endNode = terminal.endId
+            ? FlowGrid.toNode(model, terminal.endId)
             : null;
 
           return (
-            <g key={`${terminal.pathId} ${terminal.start} ${terminal.end}`}>
+            <g key={`${terminal.pathId} ${terminal.startId} ${terminal.endId}`}>
               {startNode && (
                 <ViewTerminalNode
                   pathId={terminal.pathId}

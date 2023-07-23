@@ -69,32 +69,22 @@ export const updateModel = ({
     if (msg.t === "pressed-down-node") {
       const pressedNodeId = msg.nodeId;
 
-      const terminal = Flow.nodeToTerminal(model.grid, pressedNodeId);
+      const activePathId = Flow.findPath(model.grid, pressedNodeId);
 
-      if (terminal) {
+      if (!activePathId) {
         return {
           ...model,
-          grid: AlgoDrawPath.startPath(model.grid, pressedNodeId),
-          state: {
-            t: "dragging",
-            activePathId: terminal.pathId,
-            autocompleteEdge: null,
-          },
+          state: { t: "idle" },
         };
-      }
-
-      const pressedPathId = Flow.nodeToPath(model.grid, pressedNodeId);
-      if (!pressedPathId) {
-        return model;
       }
 
       return {
         ...model,
-        grid: AlgoDrawPath.extendPath(model.grid, pressedPathId, pressedNodeId),
+        grid: AlgoDrawPath.startPath(model.grid, pressedNodeId),
         state: {
           t: "dragging",
+          activePathId,
           autocompleteEdge: null,
-          activePathId: pressedPathId,
         },
       };
     }
@@ -175,7 +165,7 @@ export const View = ({
 }) => {
   return (
     <FlowGridUI.View
-      model={model.grid}
+      model={{ ...model.grid, draftTerminals: model.grid.terminals }}
       onDraggedOver={(nodeId) => dispatch({ t: "dragged-over", nodeId })}
       onPressDown={(nodeId) => dispatch({ t: "pressed-down-node", nodeId })}
       onPressUp={(nodeId) => dispatch({ t: "pressed-up", nodeId })}
