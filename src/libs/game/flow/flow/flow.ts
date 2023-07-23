@@ -444,7 +444,7 @@ export const yieldEdges = function* (
   }
 };
 
-export const nodeToTerminal = (
+export const findTerminal = (
   model: Pick<Model, "terminals">,
   nodeId: NodeId
 ): Terminal | null => {
@@ -511,7 +511,7 @@ export const doesPathExist = (
   targetId: NodeId,
   visited = new Set<NodeId>()
 ): boolean => {
-  const targetTerminal = nodeToTerminal(model, targetId);
+  const targetTerminal = findTerminal(model, targetId);
   if (!targetTerminal) {
     return false;
   }

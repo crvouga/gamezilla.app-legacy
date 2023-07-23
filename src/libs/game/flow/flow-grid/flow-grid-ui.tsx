@@ -170,6 +170,7 @@ export const View = ({
           const endNode = terminal.pair[1]
             ? FlowGrid.toNode(model, terminal.pair[1])
             : null;
+
           return (
             <g
               key={`${terminal.pathId} ${terminal.pair[0]} ${terminal.pair[1]}`}>

@@ -98,10 +98,6 @@ export const updateModel = ({
       };
     }
 
-    if (msg.t === "pressed-down-node") {
-      return updatePressedDown({ model, pressedNodeId: msg.nodeId });
-    }
-
     if (msg.t === "pressed-up") {
       return { ...addAutocompleteEdge(model), state: { t: "idle" } };
     }
@@ -138,7 +134,7 @@ const updatePressedDown = ({
   pressedNodeId: Flow.NodeId;
   model: Model;
 }): Model => {
-  const terminal = Flow.nodeToTerminal(model.grid, pressedNodeId);
+  const terminal = Flow.findTerminal(model.grid, pressedNodeId);
 
   if (terminal) {
     return {

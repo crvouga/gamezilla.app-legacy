@@ -21,7 +21,7 @@ const colorToHexMap = {
   rose: "#e11d48",
 } as const;
 
-export const pathIdToColor: { [groupId in PathId]: Color } = {
+export const pathIdToColor: { [pathId in PathId]: Color } = {
   A: "red",
   B: "blue",
   C: "yellow",
@@ -143,7 +143,7 @@ export const Color = {
   all: allColors,
   toHex: colorToHex,
   pathIdToColor,
-  pathIdToHex: (groupId: PathId): string => {
-    return colorToHex(pathIdToColor[groupId]);
+  pathIdToHex: (pathId: PathId): string => {
+    return colorToHex(pathIdToColor[pathId]);
   },
 };

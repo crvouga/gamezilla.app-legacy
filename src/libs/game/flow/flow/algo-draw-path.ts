@@ -1,15 +1,15 @@
+import { findShortestEmptyPath } from "./algo-find-shortest-path";
 import {
   Edge,
   EdgeFull,
-  EdgeId,
-  PathId,
   Model,
   NodeId,
+  PathId,
   Terminal,
-  nodeToTerminal,
+  nodeToPath,
+  findTerminal,
   setEdgePath,
   toEdgeId,
-  nodeToPath,
   toNode,
   toStartNodeId,
   yieldEdges,
@@ -17,14 +17,23 @@ import {
   yieldOutEdges,
 } from "./flow";
 
+/**
+ * The first function called when a user starts drawing a path.
+ */
 export const startPath = <T extends Model>(model: T, nodeId: NodeId): T => {
-  const terminal = nodeToTerminal(model, nodeId);
+  const terminal = findTerminal(model, nodeId);
 
   if (!terminal) {
-    return model;
+    const pathId = nodeToPath(model, nodeId);
+
+    if (!pathId) {
+      return model;
+    }
+
+    return extendPath(model, pathId, nodeId);
   }
 
-  const cleared = clearPathFromEdges(model, terminal.pathId);
+  const cleared = destroyPath(model, terminal.pathId);
 
   const terminalNew: Terminal = {
     ...terminal,
@@ -43,7 +52,10 @@ export const startPath = <T extends Model>(model: T, nodeId: NodeId): T => {
   };
 };
 
-const clearPathFromEdges = <T extends Model>(model: T, pathId: PathId): T => {
+/**
+ * Remove path when the user stops drawing a path.
+ */
+const destroyPath = <T extends Model>(model: T, pathId: PathId): T => {
   let modelNew: T = { ...model };
   for (const edge of yieldEdges(model)) {
     if (edge.pathId === pathId) {
@@ -63,17 +75,20 @@ const clearPathFromEdges = <T extends Model>(model: T, pathId: PathId): T => {
 export const extendPath = <T extends Model>(
   model: T,
   pathId: PathId,
-  targetNodeId: NodeId
+  newNodeId: NodeId
 ): T => {
-  const targetNode = toNode(model, targetNodeId);
+  const newNode = toNode(model, newNodeId);
 
-  if (!targetNode) {
+  /**
+   * Can't extend path to a node that doesn't exist.
+   */
+  if (!newNode) {
     return model;
   }
 
-  const targetNodepathId = nodeToPath(model, targetNodeId);
+  const newNodePathId = nodeToPath(model, newNodeId);
 
-  if (targetNodepathId && targetNodepathId !== pathId) {
+  if (newNodePathId && newNodePathId !== pathId) {
     return model;
   }
 
@@ -83,13 +98,11 @@ export const extendPath = <T extends Model>(
     return model;
   }
 
-  const modelWithoutPath = clearPathFromEdges(model, pathId);
-
   const walked = extendPathWalk({
-    targetNodeId,
+    targetNodeId: newNodeId,
     pathId,
+    model: destroyPath(model, pathId),
     modelWithPath: model,
-    model: modelWithoutPath,
     currentNodeId: startNode,
   });
 
@@ -113,13 +126,17 @@ const extendPathWalk = <T extends Model>({
     return model;
   }
 
-  const terminal = nodeToTerminal(modelWithPath, currentNodeId);
+  const terminal = findTerminal(modelWithPath, currentNodeId);
 
-  if (terminal?.pair[1] === currentNodeId) {
+  if (terminal) {
+    if (terminal.pair[1] === currentNodeId) {
+      return model;
+    }
+
     return model;
   }
 
-  const edge = findOutEdgeBypathId({
+  const edge = findOutEdgeInPath({
     model: modelWithPath,
     nodeId: currentNodeId,
     pathId: pathId,
@@ -140,125 +157,22 @@ const extendPathWalk = <T extends Model>({
     return updated;
   }
 
-  if (isInGroup(model, edge.to)) {
+  if (isNodeInAnyPath(model, edge.to)) {
     return model;
   }
 
   const edgeId = toEdgeId({ from: currentNodeId, to: edge.to });
-
-  const updated = setEdgePath(model, edgeId, pathId);
 
   return extendPathWalk({
     modelWithPath,
     pathId: pathId,
     targetNodeId,
     currentNodeId: edge.to,
-    model: updated,
+    model: setEdgePath(model, edgeId, pathId),
   });
 };
 
-const findShortestEmptyPath = ({
-  model,
-  start,
-  target,
-}: {
-  model: Model;
-  start: NodeId;
-  target: NodeId;
-}): EdgeId[] => {
-  //
-  //
-  // Construct the breadth first tree
-  //
-  //
-  const queue: NodeId[] = [];
-  const visited = new Set<NodeId>();
-  const tree: { [id: NodeId]: { parent?: NodeId } } = {};
-
-  visited.add(start);
-  queue.push(start);
-
-  while (queue.length > 0) {
-    const current = queue.shift();
-
-    if (!current) {
-      break;
-    }
-
-    visited.add(current);
-
-    if (current === target) {
-      break;
-    }
-
-    for (const outEdge of yieldOutEdges(model, current)) {
-      const adjacentId = outEdge.to;
-
-      if (visited.has(adjacentId)) {
-        continue;
-      }
-
-      if (isInGroup(model, adjacentId)) {
-        continue;
-      }
-
-      const terminal = nodeToTerminal(model, adjacentId);
-
-      if (terminal && terminal.pathId === nodeToPath(model, start)) {
-        continue;
-      }
-
-      queue.push(adjacentId);
-      tree[adjacentId] = { parent: current };
-    }
-  }
-
-  //
-  // Construct the path from the breadth first tree
-  //
-
-  let current = target;
-  const nodePath: NodeId[] = [current];
-
-  while (current !== start) {
-    const parent = tree[current]?.parent;
-
-    if (!parent) {
-      break;
-    }
-
-    nodePath.push(parent);
-    current = parent;
-  }
-
-  nodePath.reverse();
-
-  //
-  // Convert node path to edge path
-  //
-
-  const path: EdgeId[] = [];
-
-  for (let i = 0; i < nodePath.length; i++) {
-    const from = nodePath[i];
-    if (!from) {
-      continue;
-    }
-    const to = nodePath[i + 1];
-    if (!to) {
-      continue;
-    }
-    path.push(toEdgeId({ from, to }));
-  }
-
-  //
-  // Done
-  //
-
-  return path;
-};
-
-export const isInGroup = (model: Model, nodeId: NodeId): boolean => {
+export const isNodeInAnyPath = (model: Model, nodeId: NodeId): boolean => {
   for (const edge of yieldOutEdges(model, nodeId)) {
     if (edge.pathId) {
       return true;
@@ -274,7 +188,7 @@ export const isInGroup = (model: Model, nodeId: NodeId): boolean => {
   return false;
 };
 
-const findOutEdgeBypathId = <T extends Model>({
+const findOutEdgeInPath = <T extends Model>({
   model,
   nodeId,
   pathId,
@@ -336,7 +250,7 @@ export const toAutocompleteEdge = (
   }
 
   for (const edge of yieldOutEdges(model, endId)) {
-    const terminal = nodeToTerminal(model, edge.to);
+    const terminal = findTerminal(model, edge.to);
     if (terminal && terminal.pathId === pathId) {
       return edge;
     }
