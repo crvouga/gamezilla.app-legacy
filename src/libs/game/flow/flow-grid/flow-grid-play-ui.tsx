@@ -65,7 +65,36 @@ export const updateModel = ({
 }): Model => {
   if (model.state.t === "idle") {
     if (msg.t === "pressed-down-node") {
-      return updatePressedDown({ model, pressedNodeId: msg.nodeId });
+      const pressedNodeId = msg.nodeId;
+
+      const terminal = Flow.nodeToTerminal(model.grid, pressedNodeId);
+
+      if (terminal) {
+        return {
+          ...model,
+          grid: FlowAlgoPath.startPath(model.grid, pressedNodeId),
+          state: {
+            t: "dragging",
+            activePathId: terminal.pathId,
+            autocompleteEdge: null,
+          },
+        };
+      }
+
+      const pressedPathId = Flow.nodeToPath(model.grid, pressedNodeId);
+      if (!pressedPathId) {
+        return model;
+      }
+
+      return {
+        ...model,
+        grid: FlowAlgoPath.extendPath(model.grid, pressedPathId, pressedNodeId),
+        state: {
+          t: "dragging",
+          autocompleteEdge: null,
+          activePathId: pressedPathId,
+        },
+      };
     }
 
     return model;
@@ -125,43 +154,6 @@ const addAutocompleteEdge = (model: Model): Model => {
     };
   }
   return model;
-};
-
-const updatePressedDown = ({
-  model,
-  pressedNodeId,
-}: {
-  pressedNodeId: Flow.NodeId;
-  model: Model;
-}): Model => {
-  const terminal = Flow.findTerminal(model.grid, pressedNodeId);
-
-  if (terminal) {
-    return {
-      ...model,
-      grid: FlowAlgoPath.startPath(model.grid, pressedNodeId),
-      state: {
-        t: "dragging",
-        activePathId: terminal.pathId,
-        autocompleteEdge: null,
-      },
-    };
-  }
-
-  const pressedPathId = Flow.nodeToPath(model.grid, pressedNodeId);
-  if (!pressedPathId) {
-    return model;
-  }
-
-  return {
-    ...model,
-    grid: FlowAlgoPath.extendPath(model.grid, pressedPathId, pressedNodeId),
-    state: {
-      t: "dragging",
-      autocompleteEdge: null,
-      activePathId: pressedPathId,
-    },
-  };
 };
 
 //

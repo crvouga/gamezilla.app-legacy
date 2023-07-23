@@ -1,10 +1,10 @@
-import { isNodeInAnyPath } from "./algo-draw-path";
+import { isNodeInPath } from "./algo-draw-path";
 import {
   EdgeId,
   Model,
   NodeId,
   nodeToPath,
-  findTerminal,
+  nodeToTerminal,
   toEdgeId,
   yieldOutEdges,
 } from "./flow";
@@ -50,11 +50,11 @@ export const findShortestEmptyPath = ({
         continue;
       }
 
-      if (isNodeInAnyPath(model, adjacentId)) {
+      if (isNodeInPath(model, adjacentId)) {
         continue;
       }
 
-      const terminal = findTerminal(model, adjacentId);
+      const terminal = nodeToTerminal(model, adjacentId);
 
       if (terminal && terminal.pathId === nodeToPath(model, start)) {
         continue;

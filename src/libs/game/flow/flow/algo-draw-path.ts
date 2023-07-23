@@ -7,7 +7,7 @@ import {
   PathId,
   Terminal,
   nodeToPath,
-  findTerminal,
+  nodeToTerminal,
   setEdgePath,
   toEdgeId,
   toNode,
@@ -21,7 +21,7 @@ import {
  * The first function called when a user starts drawing a path.
  */
 export const startPath = <T extends Model>(model: T, nodeId: NodeId): T => {
-  const terminal = findTerminal(model, nodeId);
+  const terminal = nodeToTerminal(model, nodeId);
 
   if (!terminal) {
     const pathId = nodeToPath(model, nodeId);
@@ -98,11 +98,13 @@ export const extendPath = <T extends Model>(
     return model;
   }
 
+  const modelWithoutPath = destroyPath(model, pathId);
+
   const walked = extendPathWalk({
     targetNodeId: newNodeId,
     pathId,
-    model: destroyPath(model, pathId),
     modelWithPath: model,
+    model: modelWithoutPath,
     currentNodeId: startNode,
   });
 
@@ -126,17 +128,13 @@ const extendPathWalk = <T extends Model>({
     return model;
   }
 
-  const terminal = findTerminal(modelWithPath, currentNodeId);
+  const terminal = nodeToTerminal(modelWithPath, currentNodeId);
 
-  if (terminal) {
-    if (terminal.pair[1] === currentNodeId) {
-      return model;
-    }
-
+  if (terminal?.pair[1] === currentNodeId) {
     return model;
   }
 
-  const edge = findOutEdgeInPath({
+  const edge = findOutEdgeBypathId({
     model: modelWithPath,
     nodeId: currentNodeId,
     pathId: pathId,
@@ -157,22 +155,24 @@ const extendPathWalk = <T extends Model>({
     return updated;
   }
 
-  if (isNodeInAnyPath(model, edge.to)) {
+  if (isNodeInPath(model, edge.to)) {
     return model;
   }
 
   const edgeId = toEdgeId({ from: currentNodeId, to: edge.to });
+
+  const updated = setEdgePath(model, edgeId, pathId);
 
   return extendPathWalk({
     modelWithPath,
     pathId: pathId,
     targetNodeId,
     currentNodeId: edge.to,
-    model: setEdgePath(model, edgeId, pathId),
+    model: updated,
   });
 };
 
-export const isNodeInAnyPath = (model: Model, nodeId: NodeId): boolean => {
+export const isNodeInPath = (model: Model, nodeId: NodeId): boolean => {
   for (const edge of yieldOutEdges(model, nodeId)) {
     if (edge.pathId) {
       return true;
@@ -188,7 +188,7 @@ export const isNodeInAnyPath = (model: Model, nodeId: NodeId): boolean => {
   return false;
 };
 
-const findOutEdgeInPath = <T extends Model>({
+const findOutEdgeBypathId = <T extends Model>({
   model,
   nodeId,
   pathId,
@@ -250,7 +250,7 @@ export const toAutocompleteEdge = (
   }
 
   for (const edge of yieldOutEdges(model, endId)) {
-    const terminal = findTerminal(model, edge.to);
+    const terminal = nodeToTerminal(model, edge.to);
     if (terminal && terminal.pathId === pathId) {
       return edge;
     }
