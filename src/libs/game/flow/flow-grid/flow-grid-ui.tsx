@@ -23,7 +23,8 @@ const EDGE_STROKE_WIDTH = 0.3;
 
 type ViewTerminal = {
   pathId: PathId;
-  pair: [Flow.NodeId] | [Flow.NodeId, Flow.NodeId];
+  start: Flow.NodeId;
+  end?: Flow.NodeId | null;
 };
 
 export type ViewModel = Omit<Model, "terminals"> & {
@@ -164,16 +165,15 @@ export const View = ({
       */}
       <g transform="translate(0.5, 0.5)">
         {map(yieldTerminals(model), (terminal) => {
-          const startId = terminal.pair[0];
+          const startId = terminal.start;
 
           const startNode = FlowGrid.toNode(model, startId);
-          const endNode = terminal.pair[1]
-            ? FlowGrid.toNode(model, terminal.pair[1])
+          const endNode = terminal.end
+            ? FlowGrid.toNode(model, terminal.end)
             : null;
 
           return (
-            <g
-              key={`${terminal.pathId} ${terminal.pair[0]} ${terminal.pair[1]}`}>
+            <g key={`${terminal.pathId} ${terminal.start} ${terminal.end}`}>
               {startNode && (
                 <ViewTerminalNode
                   pathId={terminal.pathId}

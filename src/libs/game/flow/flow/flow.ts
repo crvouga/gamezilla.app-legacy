@@ -135,12 +135,13 @@ export type Node = {
 
 export type Terminal = {
   pathId: PathId;
-  pair: [NodeId, NodeId];
+  start: NodeId;
+  end: NodeId;
 };
 
 export const isTerminalNode = (model: Model, nodeId: NodeId): boolean => {
   for (const terminal of yieldTerminals(model)) {
-    if (terminal.pair.includes(nodeId)) {
+    if (terminal.start === nodeId || terminal.end === nodeId) {
       return true;
     }
   }
@@ -152,7 +153,7 @@ export const isStartNode = <T extends Model>(
   nodeId: NodeId
 ): boolean => {
   for (const terminal of yieldTerminals(model)) {
-    if (terminal.pair[0] === nodeId) {
+    if (terminal.start === nodeId) {
       return true;
     }
   }
@@ -288,7 +289,7 @@ export const setTerminalStartNode = <T extends Model>(
       ...added.terminals,
       [pathId]: {
         pathId,
-        pair: [nodeId, added.terminals[pathId]?.pair[1]],
+        start: nodeId,
       },
     },
   };
@@ -305,14 +306,24 @@ export const setTerminalEndNode = <T extends Model>(
     return model;
   }
 
+  const terminalNew: Terminal =
+    terminal.start === nodeId
+      ? {
+          ...terminal,
+          end: nodeId,
+          start: terminal.end,
+        }
+      : {
+          ...terminal,
+          start: nodeId,
+          end: terminal.start,
+        };
+
   return {
     ...model,
     terminals: {
       ...model.terminals,
-      [pathId]: {
-        pathId: terminal.pathId,
-        pair: [terminal.pair[0], nodeId],
-      },
+      [pathId]: terminalNew,
     },
   };
 };
@@ -325,7 +336,7 @@ export const removeTerminalNode = <T extends Model>(
     ...model,
     terminals: Object.entries(model.terminals).reduce(
       (acc, [pathId, terminal]) => {
-        if (terminal.pair[0] === nodeId) {
+        if (terminal.start === nodeId) {
           return acc;
         }
         return {
@@ -343,7 +354,10 @@ export const isNodeInPath = (
   nodeId: NodeId,
   pathId: PathId
 ): boolean => {
-  return Boolean(model.terminals[pathId]?.pair.includes(nodeId));
+  return (
+    model.terminals[pathId]?.start === nodeId ||
+    model.terminals[pathId]?.end === nodeId
+  );
 };
 
 export const pathIdToTerminal = (
@@ -449,7 +463,7 @@ export const nodeToTerminal = (
   nodeId: NodeId
 ): Terminal | null => {
   for (const terminal of yieldTerminals(model)) {
-    if (terminal.pair.includes(nodeId)) {
+    if (terminal.start === nodeId || terminal.end === nodeId) {
       return terminal;
     }
   }
@@ -567,5 +581,5 @@ export const toStartNodeId = (model: Model, pathId: PathId): NodeId | null => {
     return null;
   }
 
-  return terminal.pair[0];
+  return terminal.start;
 };

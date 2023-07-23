@@ -35,13 +35,18 @@ export const startPath = <T extends Model>(model: T, nodeId: NodeId): T => {
 
   const cleared = destroyPath(model, terminal.pathId);
 
-  const terminalNew: Terminal = {
-    ...terminal,
-    pair:
-      terminal.pair[0] === nodeId
-        ? [terminal.pair[1], nodeId]
-        : [nodeId, terminal.pair[0]],
-  };
+  const terminalNew: Terminal =
+    terminal.start === nodeId
+      ? {
+          ...terminal,
+          start: terminal.end,
+          end: nodeId,
+        }
+      : {
+          ...terminal,
+          start: nodeId,
+          end: terminal.end,
+        };
 
   return {
     ...cleared,
@@ -130,7 +135,7 @@ const extendPathWalk = <T extends Model>({
 
   const terminal = nodeToTerminal(modelWithPath, currentNodeId);
 
-  if (terminal?.pair[1] === currentNodeId) {
+  if (terminal?.end === currentNodeId) {
     return model;
   }
 

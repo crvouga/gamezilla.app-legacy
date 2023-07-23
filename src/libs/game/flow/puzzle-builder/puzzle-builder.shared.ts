@@ -43,13 +43,14 @@ export const initShared: SharedModel = {
 
 export type DraftTerminal = {
   pathId: Flow.PathId;
-  pair: [Flow.NodeId] | [Flow.NodeId, Flow.NodeId];
+  start: Flow.NodeId;
+  end?: Flow.NodeId | null;
 };
 
 export const isDraftTerminalValid = (
   draftTerminal: DraftTerminal
 ): draftTerminal is Flow.Terminal => {
-  return draftTerminal.pair.length === 2;
+  return Boolean(draftTerminal.start && draftTerminal.end);
 };
 
 export const nodeIdToDraftTerminal = (
@@ -67,7 +68,7 @@ export const nodeIdToDraftTerminal = (
     if (!draftTerminal) {
       continue;
     }
-    if (draftTerminal.pair.includes(nodeId)) {
+    if (draftTerminal.start === nodeId || draftTerminal.end === nodeId) {
       return draftTerminal;
     }
   }
@@ -182,16 +183,7 @@ const updateEditModePressedDownNode = ({
   const terminal = nodeIdToDraftTerminal(model, nodeId);
 
   if (!terminal) {
-    const existing = model.draftTerminals[model.focusedPathId];
-    const draftTerminals: EditModel["draftTerminals"] = {
-      ...model.draftTerminals,
-      [model.focusedPathId]: {
-        pathId: model.focusedPathId,
-        pair: existing ? [nodeId, ...existing.pair].slice(0, 2) : [nodeId],
-      },
-    };
-
-    return { ...model, draftTerminals };
+    return model;
   }
 
   if (terminal.pathId !== model.focusedPathId) {
@@ -199,7 +191,7 @@ const updateEditModePressedDownNode = ({
       ...model.draftTerminals,
       [terminal.pathId]: {
         ...terminal,
-        pair: terminal.pair.filter((x) => x !== nodeId),
+        // pair: terminal.pair.filter((x) => x !== nodeId),
       },
       // [model.focusedPathId]: {
       //   pathId: model.focusedPathId,
