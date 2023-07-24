@@ -1,6 +1,6 @@
-import { toProfilesBySpaceId } from "src/libs/feat/game-space";
-import { ClientGameSpaceViewCtx } from "@gamezilla/shared/client";
+import { ClientGameSpaceViewCtx } from "@gamezilla/shared/game-space";
 import { IconCrown, MyAvatar } from "@gamezilla/ui";
+import { toProfilesBySpaceId } from "src/libs/feat/game-space";
 
 export const ViewUsersInSpaceList = ({
   ctx,

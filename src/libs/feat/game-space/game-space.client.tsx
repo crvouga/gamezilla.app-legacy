@@ -1,16 +1,18 @@
+import { Cmd, RemoteResult, Sub, andThen, p } from "@gamezilla/core";
 import { GameSpaceId } from "@gamezilla/shared/app";
 import {
   ClientAppMsg,
   ClientCtx,
   RouteGameSpace,
+  ViewCtx,
+} from "@gamezilla/shared/client";
+import {
   ClientGameSpaceCtx,
   ClientGameSpaceViewCtx,
-  ViewCtx,
   ViewSpaceHostChip,
   ViewUsersInSpaceList,
   ViewYouChip,
-} from "@gamezilla/shared/client";
-import { Cmd, RemoteResult, Sub, andThen, p } from "@gamezilla/core";
+} from "@gamezilla/shared/game-space";
 import {
   ActionButton,
   IconHome,
@@ -22,8 +24,6 @@ import {
   MyDrawer,
   VDom,
 } from "@gamezilla/ui";
-import * as Game from "./game.client";
-import { ViewCoverArt } from "./game.core";
 import {
   ClientModel,
   ClientMsg,
@@ -32,6 +32,8 @@ import {
   ToServer,
   toSpace,
 } from "./game-space.core";
+import * as Game from "./game.client";
+import { ViewCoverArt } from "./game.core";
 import {
   ViewNotInGameScreen,
   ViewSpaceJoinScreen,

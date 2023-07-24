@@ -1,7 +1,8 @@
-import { UserId } from "@gamezilla/shared/app";
-import { ClientGameSpaceCtx, ViewCtx } from "@gamezilla/shared/client";
 import { Audio, Cmd, Option, Sub, exhaustive, p, t } from "@gamezilla/core";
-
+import { UserId } from "@gamezilla/shared/app";
+import { ViewCtx } from "@gamezilla/shared/client";
+import { ClientGameSpaceCtx } from "@gamezilla/shared/game-space";
+import { Chessboard } from "../chess-ui";
 import * as Chess from "../chess/chess";
 import Sounds from "../chess/chess-sounds";
 import {
@@ -15,7 +16,6 @@ import {
   initShared,
   inputMove,
 } from "./vs-user.core";
-import { Chessboard } from "../chess-ui";
 
 //
 //

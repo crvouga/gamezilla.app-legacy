@@ -2,7 +2,7 @@ import { Cmd, andThen, p } from "@gamezilla/core";
 import {
   ClientGameSpaceCtx,
   ClientGameSpaceViewCtx,
-} from "@gamezilla/shared/client";
+} from "@gamezilla/shared/game-space";
 import { IconArrowLeftOnRect, MyButton } from "@gamezilla/ui";
 import { FlowGridPlayUI } from "../flow-grid";
 import {

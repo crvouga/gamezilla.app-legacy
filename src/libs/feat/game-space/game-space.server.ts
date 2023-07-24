@@ -8,13 +8,9 @@ import {
   exhaustive,
   p,
 } from "@gamezilla/core";
+import { ClientId, GameSpaceId, UserId } from "@gamezilla/shared/app";
 import {
-  ClientId,
   GameSpace,
-  GameSpaceId,
-  UserId,
-} from "@gamezilla/shared/app";
-import {
   ServerGameSpaceMsg,
   SpaceReqServerCtx,
   SpaceServerCtx,

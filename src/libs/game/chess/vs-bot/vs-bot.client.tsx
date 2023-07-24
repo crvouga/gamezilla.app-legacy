@@ -1,9 +1,9 @@
+import { Audio, Cmd, Sub, andThen, exhaustive, p } from "@gamezilla/core";
 import {
   ClientGameSpaceCtx,
   ClientGameSpaceViewCtx,
   VsBotSetup,
-} from "@gamezilla/shared/client";
-import { Audio, Cmd, Sub, andThen, exhaustive, p } from "@gamezilla/core";
+} from "@gamezilla/shared/game-space";
 import { IconRobot, IconSpinner, MyAvatar } from "@gamezilla/ui";
 import { Chessboard, PlayerIcon, ViewCoverArt } from "../chess-ui";
 import * as Chess from "../chess/chess";

@@ -1,9 +1,10 @@
-import { UserId } from "@gamezilla/shared/app";
 import { Err, Ok, Result } from "@gamezilla/core";
+import { UserId } from "@gamezilla/shared/app";
+import { VsBotSetup } from "@gamezilla/shared/game-space";
 import { GetBestMoveResult } from "../tic-tic-toe/best-move";
 import {
-  Model,
   BotLevel,
+  Model,
   PlayerType,
   Position,
   emptyBoard,
@@ -11,7 +12,6 @@ import {
   toOpposite,
   toStatus,
 } from "../tic-tic-toe/tic-tac-toe";
-import { VsBotSetup } from "@gamezilla/shared/client";
 
 //
 //

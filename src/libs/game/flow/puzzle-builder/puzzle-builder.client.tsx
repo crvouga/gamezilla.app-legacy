@@ -3,7 +3,7 @@ import {
   ClientGameSpaceCtx,
   ClientGameSpaceViewCtx,
   ViewBottomButtonBar,
-} from "@gamezilla/shared/client";
+} from "@gamezilla/shared/game-space";
 import {
   IconArrowLeftOnRect,
   IconPenToSquare,

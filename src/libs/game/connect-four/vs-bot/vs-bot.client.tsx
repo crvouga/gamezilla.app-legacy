@@ -1,18 +1,18 @@
 import { Cmd, Posix, Sub } from "@gamezilla/core";
+import { ClientCtx } from "@gamezilla/shared/client";
 import {
-  ClientCtx,
+  ClientGameSpaceCtx,
+  ClientGameSpaceViewCtx,
   GameLayout,
   IconBotHappy,
   IconBotLevel1,
   IconBotLevel4,
-  ClientGameSpaceCtx,
-  ClientGameSpaceViewCtx,
   ViewBottomButtonBar,
   VsBotGameOverOverlay,
   VsBotPlayerSection,
   VsBotProps,
   VsBotSetup,
-} from "@gamezilla/shared/client";
+} from "@gamezilla/shared/game-space";
 import {
   IconArrowLeftOnRect,
   IconArrowRotateLeft,

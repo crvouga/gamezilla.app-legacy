@@ -1,4 +1,3 @@
-import { ClientGameSpaceCtx, ViewCtx } from "@gamezilla/shared/client";
 import {
   Cmd,
   Keyboard,
@@ -7,6 +6,8 @@ import {
   Sub,
   exhaustive,
 } from "@gamezilla/core";
+import { ViewCtx } from "@gamezilla/shared/client";
+import { ClientGameSpaceCtx } from "@gamezilla/shared/game-space";
 import { useLayoutEffect, useRef } from "react";
 import { Direction } from "./direction";
 import * as Snake from "./snake";

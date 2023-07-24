@@ -1,10 +1,10 @@
+import { Cmd, Sub } from "@gamezilla/core";
 import { UserId } from "@gamezilla/shared/app";
 import {
   ClientGameSpaceCtx,
   ClientGameSpaceViewCtx,
   MainMenuScreen,
-} from "@gamezilla/shared/client";
-import { Cmd, Sub } from "@gamezilla/core";
+} from "@gamezilla/shared/game-space";
 import { IconGamepad, IconScrewdriverWrench } from "@gamezilla/ui";
 import { ViewCoverArt } from "./flow-ui/flow-cover-art";
 import {
@@ -14,8 +14,8 @@ import {
   ToClient,
   ToServer,
 } from "./flow.core";
-import { PuzzleBuilderClient } from "./puzzle-builder";
 import { PlayClient } from "./play";
+import { PuzzleBuilderClient } from "./puzzle-builder";
 
 type Model = ClientModel;
 

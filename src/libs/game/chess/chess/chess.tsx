@@ -1,11 +1,11 @@
+import { Result, Task, exhaustive } from "@gamezilla/core";
 import {
   IconBotCute,
   IconBotLevel1,
   IconBotLevel4,
   IconBotScary,
   IconBotSimple,
-} from "@gamezilla/shared/client";
-import { Result, Task, exhaustive } from "@gamezilla/core";
+} from "@gamezilla/shared/game-space";
 import { VDom } from "@gamezilla/ui";
 import * as ChessJS from "chess.js";
 

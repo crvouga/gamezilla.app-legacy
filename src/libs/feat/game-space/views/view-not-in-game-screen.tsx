@@ -2,9 +2,9 @@ import {
   ClientGameSpaceViewCtx,
   ViewGameHeaderEmpty,
   ViewUsersInSpaceList,
-} from "@gamezilla/shared/client";
-import { gameNameList, gameNameToString, ViewCoverArt } from "../game.core";
+} from "@gamezilla/shared/game-space";
 import { ClientMsg } from "../game-space.core";
+import { ViewCoverArt, gameNameList, gameNameToString } from "../game.core";
 
 export const ViewNotInGameScreen = ({
   ctx,

@@ -1,3 +1,4 @@
+import { Cmd, Sub, exhaustive } from "@gamezilla/core";
 import { ChessClient } from "@gamezilla/game/chess";
 import { ConnectFourClient } from "@gamezilla/game/connect-four";
 import { FlowClient } from "@gamezilla/game/flow";
@@ -6,13 +7,11 @@ import { MazeClient } from "@gamezilla/game/maze";
 import { SnakeClient } from "@gamezilla/game/snake";
 import { TetrisClient } from "@gamezilla/game/tetris";
 import { TicTacToeClient } from "@gamezilla/game/tic-tac-toe";
+import { ClientAppMsg, ClientCtx } from "@gamezilla/shared/client";
 import {
-  ClientAppMsg,
-  ClientCtx,
   ClientGameSpaceCtx,
   ClientGameSpaceViewCtx,
-} from "@gamezilla/shared/client";
-import { Cmd, Sub, exhaustive } from "@gamezilla/core";
+} from "@gamezilla/shared/game-space";
 import {
   ClientModel,
   ClientMsg,

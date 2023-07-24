@@ -1,12 +1,12 @@
+import { Cmd } from "@gamezilla/core";
+import { ClientAppMsg } from "@gamezilla/shared/client";
 import {
-  ClientAppMsg,
   BottomBarButtonAction,
   ClientGameSpaceCtx,
   ClientGameSpaceViewCtx,
-  ViewBottomButtonBar,
   GameLayout,
-} from "@gamezilla/shared/client";
-import { Cmd } from "@gamezilla/core";
+  ViewBottomButtonBar,
+} from "@gamezilla/shared/game-space";
 import {
   IconArrowCircle,
   IconArrowLeftOnRect,
@@ -19,6 +19,7 @@ import {
   cn,
 } from "@gamezilla/ui";
 import { useMemo } from "react";
+import { BoardProps, Chessboard } from "../chess-ui";
 import * as Chess from "../chess/chess";
 import {
   ClientModel,
@@ -34,7 +35,6 @@ import {
   toNextEloRating,
   toPlayerColor,
 } from "./puzzle.core";
-import { BoardProps, Chessboard } from "../chess-ui";
 
 //
 //

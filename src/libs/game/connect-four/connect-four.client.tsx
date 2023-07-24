@@ -1,11 +1,11 @@
+import { Cmd, Posix, Sub } from "@gamezilla/core";
+import { ClientCtx } from "@gamezilla/shared/client";
 import {
-  ClientCtx,
-  MainMenuScreen,
   ClientGameSpaceCtx,
   ClientGameSpaceViewCtx,
+  MainMenuScreen,
   mainMenuButtons,
-} from "@gamezilla/shared/client";
-import { Cmd, Posix, Sub } from "@gamezilla/core";
+} from "@gamezilla/shared/game-space";
 import { ViewCoverArt } from "./connect-four-ui";
 import {
   ClientModel,

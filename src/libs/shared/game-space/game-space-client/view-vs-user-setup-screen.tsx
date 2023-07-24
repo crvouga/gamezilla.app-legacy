@@ -1,5 +1,4 @@
 import { UserId } from "@gamezilla/shared/app";
-import { ClientGameSpaceViewCtx, ViewCtx } from "@gamezilla/shared/client";
 import {
   IconArrowLeftOnRect,
   IconQuestionMark,
@@ -7,6 +6,7 @@ import {
   MyButton,
   VDom,
 } from "@gamezilla/ui";
+import { ClientGameSpaceViewCtx } from "./game-space-client";
 import { ViewGameHeader } from "./view-game-header";
 
 type IconProps = { className: string };
@@ -26,7 +26,7 @@ const VersusSection = ({
 }: {
   playerOne: PlayerProp;
   playerTwo: PlayerProp;
-  ctx: ViewCtx;
+  ctx: ClientGameSpaceViewCtx;
 }) => {
   return (
     <div className="flex w-full flex-col gap-2 p-4">
@@ -69,7 +69,7 @@ const PlayerButtons = ({
   player,
   ctx,
 }: {
-  ctx: ViewCtx;
+  ctx: ClientGameSpaceViewCtx;
   player: PlayerProp;
 }) => {
   return (
@@ -99,7 +99,13 @@ const PlayerButtons = ({
   );
 };
 
-const PlayerIcons = ({ player, ctx }: { ctx: ViewCtx; player: PlayerProp }) => {
+const PlayerIcons = ({
+  player,
+  ctx,
+}: {
+  ctx: ClientGameSpaceViewCtx;
+  player: PlayerProp;
+}) => {
   return (
     <div
       className="col-span-3 grid w-full cursor-pointer grid-cols-2 place-items-center text-center"
@@ -131,7 +137,7 @@ const PlayerLabels = ({
   player,
   ctx,
 }: {
-  ctx: ViewCtx;
+  ctx: ClientGameSpaceViewCtx;
   player: PlayerProp;
 }) => {
   return (

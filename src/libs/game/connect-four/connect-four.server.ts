@@ -1,7 +1,9 @@
-import { UserId } from "@gamezilla/shared/app";
-import { ClientGameSpaceMsg } from "@gamezilla/shared/client";
 import { Cmd, Err, Result, Sub } from "@gamezilla/core";
-import { SpaceReqServerCtx } from "@gamezilla/shared/server";
+import { UserId } from "@gamezilla/shared/app";
+import {
+  ClientGameSpaceMsg,
+  SpaceReqServerCtx,
+} from "@gamezilla/shared/game-space";
 import {
   Mode,
   ServerModel,

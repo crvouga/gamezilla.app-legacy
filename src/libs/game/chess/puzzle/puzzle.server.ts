@@ -1,5 +1,3 @@
-import { UserId } from "@gamezilla/shared/app";
-import { ClientGameSpaceMsg } from "@gamezilla/shared/client";
 import {
   Cmd,
   Err,
@@ -11,12 +9,15 @@ import {
   eq,
   p,
 } from "@gamezilla/core";
+import { UserId } from "@gamezilla/shared/app";
 import {
-  DbConnMySql,
-  SpaceServerCtx,
+  ClientGameSpaceMsg,
   SpaceReqServerCtx,
-} from "@gamezilla/shared/server";
+  SpaceServerCtx,
+} from "@gamezilla/shared/game-space";
+import { DbConnMySql } from "@gamezilla/shared/server";
 import { ChessGameMsg } from "../chess-shared";
+import { EloRating } from "./elo-rating";
 import { PuzzleDb } from "./puzzle-db";
 import {
   PuzzleInteraction,
@@ -28,7 +29,6 @@ import {
   initShared,
   transitionLoadingToStarted,
 } from "./puzzle.core";
-import { EloRating } from "./elo-rating";
 
 //
 //

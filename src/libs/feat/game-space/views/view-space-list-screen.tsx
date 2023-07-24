@@ -1,5 +1,6 @@
 import { GameSpaceId } from "@gamezilla/shared/app";
-import { ViewCtx, ViewSpaceHostChip } from "@gamezilla/shared/client";
+import { ViewCtx } from "@gamezilla/shared/client";
+import { ViewSpaceHostChip } from "@gamezilla/shared/game-space";
 import {
   IconGamepad,
   IconSpinner,
@@ -8,8 +9,8 @@ import {
   TopBar,
   cn,
 } from "@gamezilla/ui";
-import { GameName, gameNameToString, ViewCoverArt } from "../game.core";
 import { ClientModel, ClientMsg } from "../game-space.core";
+import { GameName, ViewCoverArt, gameNameToString } from "../game.core";
 
 export const ViewSpaceListScreen = ({
   ctx,

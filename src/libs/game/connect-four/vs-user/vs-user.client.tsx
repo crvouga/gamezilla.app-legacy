@@ -1,13 +1,13 @@
+import { Cmd, Sub } from "@gamezilla/core";
+import { ViewCtx } from "@gamezilla/shared/client";
 import {
   ClientGameSpaceCtx,
   ClientGameSpaceMsg,
   ClientGameSpaceViewCtx,
-  ViewBottomButtonBar,
-  ViewCtx,
   GameLayout,
+  ViewBottomButtonBar,
   VsUserSetupScreen,
-} from "@gamezilla/shared/client";
-import { Cmd, Sub } from "@gamezilla/core";
+} from "@gamezilla/shared/game-space";
 import {
   ConformationDialog,
   IconArrowLeftOnRect,

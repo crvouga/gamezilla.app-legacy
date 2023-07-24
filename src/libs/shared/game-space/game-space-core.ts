@@ -1,13 +1,13 @@
 import { Cmd } from "@gamezilla/core";
 import { GameSpaceId, UserId } from "@gamezilla/shared/app";
+import { ClientAppMsg } from "@gamezilla/shared/client";
 import { ServerAppMsg } from "@gamezilla/shared/server";
 import { VDom } from "@gamezilla/ui";
 import {
-  ClientAppMsg,
   ClientGameSpaceCtx,
   ClientGameSpaceMsg,
   ClientGameSpaceViewCtx,
-} from "../client";
+} from "./game-space-client";
 import { ServerGameSpaceMsg, SpaceServerCtx } from "./game-space-server";
 
 //

@@ -1,11 +1,11 @@
+import { Audio, Cmd, Posix, RemoteResult, Sub, p } from "@gamezilla/core";
+import { ClientAppMsg } from "@gamezilla/shared/client";
 import {
-  ClientAppMsg,
   ClientGameSpaceCtx,
   ClientGameSpaceViewCtx,
   MainMenuScreen,
   mainMenuButtons,
-} from "@gamezilla/shared/client";
-import { Audio, Cmd, Posix, RemoteResult, Sub, p } from "@gamezilla/core";
+} from "@gamezilla/shared/game-space";
 import { IconPuzzlePiece } from "@gamezilla/ui";
 import {
   ClientModel,
@@ -15,11 +15,11 @@ import {
   ToServer,
 } from "./chess.core";
 
+import { ViewCoverArt } from "./chess-ui";
 import Sounds from "./chess/chess-sounds";
 import * as Puzzle from "./puzzle/puzzle.client";
 import { VsBotClient } from "./vs-bot";
 import * as VsUser from "./vs-user/vs-user.client";
-import { ViewCoverArt } from "./chess-ui";
 
 //
 //

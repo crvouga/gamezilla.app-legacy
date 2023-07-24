@@ -1,9 +1,7 @@
 import { Cmd, exhaustive, Sub, Time } from "@gamezilla/core";
-import { ClientGameSpaceMsg } from "@gamezilla/shared/client";
+import { ClientGameSpaceMsg } from "@gamezilla/shared/game-space";
 import * as Board from "../chess/chess";
 import {
-  ServerModel,
-  ServerMsg,
   cancelDraw,
   clockTicked,
   initShared,
@@ -15,9 +13,11 @@ import {
   Res,
   resign,
   respondToDraw,
+  ServerModel,
+  ServerMsg,
   startGame,
-  ToServer,
   ToClient,
+  ToServer,
 } from "./vs-user.core";
 
 //

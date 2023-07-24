@@ -1,8 +1,8 @@
 import { Cmd, Err, Ok, Result, Sub } from "@gamezilla/core";
-import { SpaceReqServerCtx } from "@gamezilla/shared/server";
+import { SpaceReqServerCtx } from "@gamezilla/shared/game-space";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./flow.core";
-import { PuzzleBuilderServer } from "./puzzle-builder";
 import { PlayServer } from "./play";
+import { PuzzleBuilderServer } from "./puzzle-builder";
 
 type Model = ServerModel;
 

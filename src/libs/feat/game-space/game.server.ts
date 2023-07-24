@@ -8,8 +8,11 @@ import { SnakeServer } from "@gamezilla/game/snake";
 import { TetrisServer } from "@gamezilla/game/tetris";
 import { TicTacToeServer } from "@gamezilla/game/tic-tac-toe";
 import { UserId } from "@gamezilla/shared/app";
-import { ServerGameSpaceMsg } from "@gamezilla/shared/game-space";
-import { SpaceReqServerCtx, SpaceServerCtx } from "@gamezilla/shared/server";
+import {
+  ServerGameSpaceMsg,
+  SpaceReqServerCtx,
+  SpaceServerCtx,
+} from "@gamezilla/shared/game-space";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./game.core";
 
 //

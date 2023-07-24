@@ -1,13 +1,15 @@
-import { UserId } from "@gamezilla/shared/app";
-import { SpaceReqServerCtx } from "@gamezilla/shared/server";
 import { Cmd, Result, Sub } from "@gamezilla/core";
-import { ClientGameSpaceMsg } from "@gamezilla/shared/client";
+import { UserId } from "@gamezilla/shared/app";
 import {
+  ClientGameSpaceMsg,
+  SpaceReqServerCtx,
+} from "@gamezilla/shared/game-space";
+import {
+  Mode,
   ServerModel,
   ServerMsg,
-  Mode,
-  ToServer,
   ToClient,
+  ToServer,
 } from "./gomoku.core";
 import * as VsBot from "./vs-bot/vs-bot.server";
 import * as VsUser from "./vs-user/vs-user.server";

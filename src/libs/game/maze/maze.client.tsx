@@ -1,8 +1,8 @@
+import { Cmd, Keyboard, Sub, p } from "@gamezilla/core";
 import {
   ClientGameSpaceCtx,
   ClientGameSpaceViewCtx,
-} from "@gamezilla/shared/client";
-import { Cmd, Keyboard, Sub, p } from "@gamezilla/core";
+} from "@gamezilla/shared/game-space";
 import { ActionButton, IconArrowLeftOnRect } from "@gamezilla/ui";
 import { Maze } from "./maze";
 import {

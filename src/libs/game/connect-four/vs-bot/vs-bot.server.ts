@@ -1,9 +1,12 @@
-import { ClientGameSpaceMsg } from "@gamezilla/shared/client";
 import { andThen, Cmd, Ok, p, Sub } from "@gamezilla/core";
-import { SpaceReqServerCtx } from "@gamezilla/shared/server";
 import {
-  handleBotMove,
+  ClientGameSpaceMsg,
+  SpaceReqServerCtx,
+} from "@gamezilla/shared/game-space";
+import { findBestMove } from "../connect-four";
+import {
   handle,
+  handleBotMove,
   initShared,
   isBotTurn,
   Res,
@@ -13,7 +16,6 @@ import {
   ToClient,
   ToServer,
 } from "./vs-bot.core";
-import { findBestMove } from "../connect-four";
 
 //
 //

@@ -3,10 +3,10 @@ import {
   ViewGameHeader,
   ViewGameHeaderEmpty,
   ViewUsersInSpaceList,
-} from "@gamezilla/shared/client";
+} from "@gamezilla/shared/game-space";
 import { MyButton, TopBar, TopBarBackButton } from "@gamezilla/ui";
-import { gameNameToString, ViewCoverArt } from "../game.core";
 import { ClientModel, ClientMsg } from "../game-space.core";
+import { ViewCoverArt, gameNameToString } from "../game.core";
 
 export const ViewSpaceJoinScreen = ({
   model,

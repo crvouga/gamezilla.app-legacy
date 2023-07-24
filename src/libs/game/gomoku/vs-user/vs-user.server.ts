@@ -1,12 +1,14 @@
-import { SpaceReqServerCtx } from "@gamezilla/shared/server";
 import { Cmd, Sub } from "@gamezilla/core";
-import { ClientGameSpaceMsg } from "@gamezilla/shared/client";
 import {
+  ClientGameSpaceMsg,
+  SpaceReqServerCtx,
+} from "@gamezilla/shared/game-space";
+import {
+  Res,
   ServerModel,
   ServerMsg,
-  Res,
-  ToServer,
   ToClient,
+  ToServer,
   handle,
   initShared,
 } from "./vs-user.core";

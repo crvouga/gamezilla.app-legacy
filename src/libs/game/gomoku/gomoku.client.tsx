@@ -1,12 +1,11 @@
+import { Cmd, Sub } from "@gamezilla/core";
+import { ClientCtx, ViewCtx } from "@gamezilla/shared/client";
 import {
-  ClientCtx,
   ClientGameSpaceCtx,
   ClientGameSpaceViewCtx,
-  ViewCtx,
   MainMenuScreen,
   mainMenuButtons,
-} from "@gamezilla/shared/client";
-import { Cmd, Sub } from "@gamezilla/core";
+} from "@gamezilla/shared/game-space";
 import {
   ClientModel,
   ClientMsg,

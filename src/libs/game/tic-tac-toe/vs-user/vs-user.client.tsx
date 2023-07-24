@@ -1,9 +1,9 @@
+import { Cmd } from "@gamezilla/core";
 import {
   ClientGameSpaceCtx,
   ClientGameSpaceViewCtx,
   VsUserSetupScreen,
-} from "@gamezilla/shared/client";
-import { Cmd } from "@gamezilla/core";
+} from "@gamezilla/shared/game-space";
 import { Position, Slot, toTurn } from "../tic-tic-toe/tic-tac-toe";
 import {
   PlayerTypeIcon,
