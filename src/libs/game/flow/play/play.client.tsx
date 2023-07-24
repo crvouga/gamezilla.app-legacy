@@ -1,5 +1,7 @@
-import { SpaceCtx, SpaceViewCtx } from "@gamezilla/shared/client";
 import { Cmd, andThen, p } from "@gamezilla/core";
+import { SpaceCtx, SpaceViewCtx } from "@gamezilla/shared/client";
+import { IconArrowLeftOnRect, MyButton } from "@gamezilla/ui";
+import { FlowGridPlayUI } from "../flow-grid";
 import {
   ClientModel,
   ClientMsg,
@@ -8,8 +10,6 @@ import {
   ToServer,
   initShared,
 } from "./play.shared";
-import { FlowGridPlayUI } from "../flow-grid";
-import { IconArrowLeftOnRect, MyButton } from "@gamezilla/ui";
 
 type Model = ClientModel;
 

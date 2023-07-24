@@ -28,7 +28,10 @@ export type ClientMsg = FlowGridPlayUI.Msg;
 
 export type ServerMsg = { t: null };
 
-export type ToServer = { t: null };
+export type ToServer = {
+  t: "new-sync";
+  model: SharedModel;
+};
 
 export type ToClient = { t: null };
 
