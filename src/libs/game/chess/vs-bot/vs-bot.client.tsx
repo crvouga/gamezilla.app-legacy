@@ -1,7 +1,7 @@
 import { Audio, Cmd, Sub, andThen, exhaustive, p } from "@gamezilla/core";
 import {
-  ClientGameSpaceCtx,
-  ClientGameSpaceViewCtx,
+  GameSpaceClientCtx,
+  GameSpaceViewCtx,
   VsBotSetup,
 } from "@gamezilla/shared/game-space";
 import { IconRobot, IconSpinner, MyAvatar } from "@gamezilla/ui";
@@ -54,7 +54,7 @@ export const update = ({
   model: model_,
   ctx,
 }: {
-  ctx: ClientGameSpaceCtx;
+  ctx: GameSpaceClientCtx;
   sendToServer: (msg: ToServer) => Cmd;
   msg: Msg;
   model: Model;
@@ -264,7 +264,7 @@ export const View = ({
   dispatch,
   onClose,
 }: {
-  ctx: ClientGameSpaceViewCtx;
+  ctx: GameSpaceViewCtx;
   model: Model;
   dispatch: (msg: Msg) => void;
   onClose: () => void;

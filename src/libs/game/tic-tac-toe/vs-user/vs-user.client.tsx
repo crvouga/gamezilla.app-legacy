@@ -1,7 +1,7 @@
 import { Cmd } from "@gamezilla/core";
 import {
-  ClientGameSpaceCtx,
-  ClientGameSpaceViewCtx,
+  GameSpaceClientCtx,
+  GameSpaceViewCtx,
   VsUserSetupScreen,
 } from "@gamezilla/shared/game-space";
 import { Position, Slot, toTurn } from "../tic-tic-toe/tic-tac-toe";
@@ -99,7 +99,7 @@ export const update = (
 };
 
 export const updateFromServer = (
-  _: { ctx: ClientGameSpaceCtx },
+  _: { ctx: GameSpaceClientCtx },
   msg: ToClient,
   model: Model
 ): [Model] => {
@@ -172,7 +172,7 @@ export const View = ({
   dispatch,
   onCloseGame,
 }: {
-  ctx: ClientGameSpaceViewCtx;
+  ctx: GameSpaceViewCtx;
   model: Model;
   dispatch: (msg: Msg) => void;
   onCloseGame: () => void;

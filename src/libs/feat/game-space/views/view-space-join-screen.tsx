@@ -1,5 +1,5 @@
 import {
-  ClientGameSpaceViewCtx,
+  GameSpaceViewCtx,
   ViewGameHeader,
   ViewGameHeaderEmpty,
   ViewUsersInSpaceList,
@@ -13,12 +13,12 @@ export const ViewSpaceJoinScreen = ({
   ctx,
   dispatch,
 }: {
-  ctx: ClientGameSpaceViewCtx;
+  ctx: GameSpaceViewCtx;
   model: ClientModel;
   dispatch: (msg: ClientMsg) => void;
 }) => {
   const host = ctx.profiles[ctx.space.hostId];
-  const game = model.games[ctx.space.spaceId];
+  const game = model.games[ctx.space.gameSpaceId];
 
   return (
     <div className="flex h-full w-full flex-col">
@@ -59,7 +59,7 @@ export const ViewSpaceJoinScreen = ({
             dispatch({
               t: "join",
               userId: ctx.currentUserId,
-              spaceId: ctx.space.spaceId,
+              spaceId: ctx.space.gameSpaceId,
             });
           }}>
           Join space

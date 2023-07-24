@@ -1,9 +1,6 @@
 import { Cmd, Err, Result, Sub } from "@gamezilla/core";
 import { UserId } from "@gamezilla/shared/app";
-import {
-  ClientGameSpaceMsg,
-  SpaceReqServerCtx,
-} from "@gamezilla/shared/game-space";
+import { GameSpaceMsg, GameSpaceReqCtx } from "@gamezilla/shared/game-space";
 import {
   Mode,
   ServerModel,
@@ -84,7 +81,7 @@ export const updateFromClient = ({
 }: {
   sendToClient: (msg: ToClient) => Cmd;
   broadcast: (msg: ToClient) => Cmd;
-  ctx: SpaceReqServerCtx;
+  ctx: GameSpaceReqCtx;
   msg: ToServer;
   model: Model;
 }): {
@@ -147,7 +144,7 @@ export const updateFromSpace = ({
   msg,
   model,
 }: {
-  msg: ClientGameSpaceMsg;
+  msg: GameSpaceMsg;
   model: Model;
   broadcast: (m: ToClient) => Cmd;
 }): {

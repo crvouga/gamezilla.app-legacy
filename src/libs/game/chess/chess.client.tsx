@@ -1,8 +1,8 @@
 import { Audio, Cmd, Posix, RemoteResult, Sub, p } from "@gamezilla/core";
 import { ClientAppMsg } from "@gamezilla/shared/client";
 import {
-  ClientGameSpaceCtx,
-  ClientGameSpaceViewCtx,
+  GameSpaceClientCtx,
+  GameSpaceViewCtx,
   MainMenuScreen,
   mainMenuButtons,
 } from "@gamezilla/shared/game-space";
@@ -60,7 +60,7 @@ export const update = ({
   sendToServer,
   ctx,
 }: {
-  ctx: ClientGameSpaceCtx;
+  ctx: GameSpaceClientCtx;
   sendToServer: (msg: ToServer) => Cmd;
   msg: Msg;
   model: Model;
@@ -145,7 +145,7 @@ export const updateFromServer = ({
   sendToServer,
 }: {
   sendToServer: (msg: ToServer) => Cmd;
-  ctx: ClientGameSpaceCtx;
+  ctx: GameSpaceClientCtx;
   msg: ToClient;
   model: Model;
 }): {
@@ -281,10 +281,10 @@ export const View = ({
   dispatch,
   gameSpaceCtx,
 }: {
-  ctx: ClientGameSpaceViewCtx;
+  ctx: GameSpaceViewCtx;
   model: Model;
   dispatch: (msg: Msg) => void;
-  gameSpaceCtx: ClientGameSpaceViewCtx;
+  gameSpaceCtx: GameSpaceViewCtx;
 }) => {
   switch (model.mode.t) {
     case "none": {

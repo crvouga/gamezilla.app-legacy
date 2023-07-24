@@ -11,12 +11,12 @@ import {
 import { ClientId, GameSpaceId, UserId } from "@gamezilla/shared/app";
 import {
   GameSpace,
-  ServerGameSpaceMsg,
-  SpaceReqServerCtx,
-  SpaceServerCtx,
+  GameSpaceMsg,
+  GameSpaceReqCtx,
+  GameSpaceServerCtx,
 } from "@gamezilla/shared/game-space";
 import {
-  AuthReqServerCtx,
+  ServerReqCtx,
   ServerAppMsg,
   ServerCtx,
 } from "@gamezilla/shared/server";
@@ -90,7 +90,7 @@ export const update = ({
         return { model };
       }
 
-      const spaceCtx: SpaceServerCtx = {
+      const spaceCtx: GameSpaceServerCtx = {
         ...ctx,
         hostId: space.hostId,
       };
@@ -123,7 +123,7 @@ export const update = ({
 };
 
 type UpdateFromClient = (input: {
-  ctx: AuthReqServerCtx | null;
+  ctx: ServerReqCtx | null;
   sendToClient: (msg: ToClient) => Cmd;
   sendToUser: (userId: UserId[], msg: ToClient) => Cmd;
   broadcast: (msg: ToClient) => Cmd;
@@ -209,7 +209,7 @@ export const updateFromClient_: UpdateFromClient = (input) => {
 
       const gameMsg = msg.c;
 
-      const spaceCtx: SpaceReqServerCtx = {
+      const spaceCtx: GameSpaceReqCtx = {
         ...ctx,
         hostId: space.hostId,
       };
@@ -222,7 +222,7 @@ export const updateFromClient_: UpdateFromClient = (input) => {
           sendToSpace({
             sendToUser: input.sendToUser,
             model,
-            spaceId: space.spaceId,
+            spaceId: space.gameSpaceId,
             msg: { t: "game", c: m },
           }),
         msg: gameMsg,
@@ -233,7 +233,7 @@ export const updateFromClient_: UpdateFromClient = (input) => {
         ...model,
         games: {
           ...model.games,
-          [space.spaceId]: gameNew,
+          [space.gameSpaceId]: gameNew,
         },
       };
 
@@ -241,7 +241,9 @@ export const updateFromClient_: UpdateFromClient = (input) => {
         model: modelNew,
         cmd: p(
           gameCmd,
-          Cmd.map((msg): Msg => ({ t: "game", spaceId: space.spaceId, c: msg }))
+          Cmd.map(
+            (msg): Msg => ({ t: "game", spaceId: space.gameSpaceId, c: msg })
+          )
         ),
       };
     }
@@ -288,7 +290,7 @@ const updateLeave: UpdateFromClient = ({
     return { model: modelAfter, cmd: broadcast(res) };
   }
 
-  const game = model.games[space.spaceId];
+  const game = model.games[space.gameSpaceId];
 
   if (!game) {
     return { model: modelAfter, cmd: broadcast(res) };
@@ -299,7 +301,7 @@ const updateLeave: UpdateFromClient = ({
       return sendToSpace({
         sendToUser: sendToUser,
         model: modelAfter,
-        spaceId: space.spaceId,
+        spaceId: space.gameSpaceId,
         msg: { t: "game", c: msg },
       });
     },
@@ -321,7 +323,9 @@ const updateLeave: UpdateFromClient = ({
       broadcast(res),
       p(
         updated.cmd ?? Cmd.None,
-        Cmd.map((msg): Msg => ({ t: "game", spaceId: space.spaceId, c: msg }))
+        Cmd.map(
+          (msg): Msg => ({ t: "game", spaceId: space.gameSpaceId, c: msg })
+        )
       ),
     ]),
   };
@@ -452,9 +456,9 @@ export const handler = async ({
   spaceDb,
 }: {
   req: Req;
-  ctx: SpaceReqServerCtx;
+  ctx: GameSpaceReqCtx;
   spaceDb: GameSpaceDb;
-}): Promise<Res_ & { msgs?: ServerGameSpaceMsg[] }> => {
+}): Promise<Res_ & { msgs?: GameSpaceMsg[] }> => {
   //
   //
   //

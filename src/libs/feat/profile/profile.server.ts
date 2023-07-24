@@ -6,7 +6,7 @@ import {
   client,
   definitions,
 } from "@gamezilla/shared/app";
-import { ServerAppMsg, AuthReqServerCtx } from "@gamezilla/shared/server";
+import { ServerAppMsg, ServerReqCtx } from "@gamezilla/shared/server";
 import { Cmd, Err, NonEmpty, Ok, Result, Task, p } from "@gamezilla/core";
 import {
   ServerModel,
@@ -65,7 +65,7 @@ export const updateFromClient = ({
   msg: ToServer;
   model: Model;
   sendToClient: (m: ToClient) => Cmd<Msg>;
-  ctx: AuthReqServerCtx | null;
+  ctx: ServerReqCtx | null;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;

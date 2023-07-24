@@ -6,8 +6,8 @@ import { GameSpaceServer } from "src/libs/feat/game-space";
 import { ClientId, SessionId, UserId } from "@gamezilla/shared/app";
 import { Cmd, Sub, andThen, p } from "@gamezilla/core";
 import {
-  AuthReqServerCtx,
-  ReqServerCtx,
+  ServerReqCtx,
+  ServerUnauthenticatedReqCtx,
   ServerAppMsg,
   ServerCtx,
 } from "@gamezilla/shared/server";
@@ -259,7 +259,7 @@ const updateFromClient = ({
   broadcast,
   sendToClient,
 }: {
-  ctx: ReqServerCtx;
+  ctx: ServerUnauthenticatedReqCtx;
   msg: ToServer;
   model: Model;
   broadcast: (m: ToClient) => Cmd;
@@ -270,7 +270,7 @@ const updateFromClient = ({
   msgs?: ServerAppMsg[];
 } => {
   const currentUserId = model.auth.sessions[ctx.sessionId]?.userId;
-  const authReqCtx: AuthReqServerCtx | null = currentUserId
+  const authReqCtx: ServerReqCtx | null = currentUserId
     ? {
         ...ctx,
         currentUserId,

@@ -7,8 +7,8 @@ import {
   ViewCtx,
 } from "@gamezilla/shared/client";
 import {
-  ClientGameSpaceCtx,
-  ClientGameSpaceViewCtx,
+  GameSpaceClientCtx,
+  GameSpaceViewCtx,
   ViewSpaceHostChip,
   ViewUsersInSpaceList,
   ViewYouChip,
@@ -166,7 +166,7 @@ const update_: typeof update = ({ ctx, sendToServer, msg, model }) => {
 
     const gameMsg = msg.c;
 
-    const spaceCtx: ClientGameSpaceCtx = {
+    const spaceCtx: GameSpaceClientCtx = {
       ...ctx,
       hostId: space.hostId,
     };
@@ -526,7 +526,7 @@ const ViewSpaceScreen = ({
     return <ViewSpaceNotFound ctx={ctx} />;
   }
 
-  const spaceCtx: ClientGameSpaceViewCtx = {
+  const spaceCtx: GameSpaceViewCtx = {
     ...ctx,
     hostId: space.hostId,
     space,
@@ -602,7 +602,7 @@ const ViewPage = ({
   model,
 }: {
   model: Model;
-  ctx: ClientGameSpaceViewCtx;
+  ctx: GameSpaceViewCtx;
   dispatch: (m: Msg) => void;
 }) => {
   const currentUser = model.users[ctx.currentUserId];
@@ -611,11 +611,11 @@ const ViewPage = ({
     return <ViewSpaceJoinScreen model={model} dispatch={dispatch} ctx={ctx} />;
   }
 
-  if (currentUser.spaceId !== ctx.space.spaceId) {
+  if (currentUser.spaceId !== ctx.space.gameSpaceId) {
     return <ViewSpaceJoinScreen dispatch={dispatch} ctx={ctx} model={model} />;
   }
 
-  const game = model.games[ctx.space.spaceId];
+  const game = model.games[ctx.space.gameSpaceId];
   return (
     <div className="flex h-full w-full flex-1 flex-col">
       <ViewTopBar dispatch={dispatch} ctx={ctx} />
@@ -638,7 +638,7 @@ const ViewTopBar = ({
   ctx,
   dispatch,
 }: {
-  ctx: ClientGameSpaceViewCtx;
+  ctx: GameSpaceViewCtx;
   dispatch: (m: Msg) => void;
 }) => {
   const peopleCount = Object.values(ctx.space.users).length;
@@ -727,10 +727,10 @@ export const ViewCurrentSpaceBar = ({
     return null;
   }
 
-  const game = model.games[space.spaceId];
+  const game = model.games[space.gameSpaceId];
   const hostProfile = ctx.profiles[space.hostId];
   const userCount = Object.values(model.users).filter(
-    (user) => user.spaceId === space.spaceId
+    (user) => user.spaceId === space.gameSpaceId
   ).length;
 
   return (
@@ -740,7 +740,7 @@ export const ViewCurrentSpaceBar = ({
         onClick={() => {
           ctx.onPush({
             t: "game-space",
-            c: { t: "game-space", spaceId: space.spaceId },
+            c: { t: "game-space", spaceId: space.gameSpaceId },
           });
         }}>
         <div className="mr-2 p-2">

@@ -1,8 +1,8 @@
 import { Cmd, Posix, Sub } from "@gamezilla/core";
 import { ClientCtx } from "@gamezilla/shared/client";
 import {
-  ClientGameSpaceCtx,
-  ClientGameSpaceViewCtx,
+  GameSpaceClientCtx,
+  GameSpaceViewCtx,
   MainMenuScreen,
   mainMenuButtons,
 } from "@gamezilla/shared/game-space";
@@ -46,7 +46,7 @@ export const update = ({
   model,
 }: {
   sendToServer: (msg: ToServer) => Cmd;
-  ctx: ClientGameSpaceCtx;
+  ctx: GameSpaceClientCtx;
   msg: Msg;
   model: Model;
 }): {
@@ -91,7 +91,7 @@ export const updateFromServer = ({
   model,
   msg,
 }: {
-  ctx: ClientGameSpaceCtx;
+  ctx: GameSpaceClientCtx;
   msg: ToClient;
   model: Model;
 }): [Model, Cmd<Msg>] => {
@@ -155,7 +155,7 @@ export const View = ({
 }: {
   model: Model;
   dispatch: (msg: Msg) => void;
-  ctx: ClientGameSpaceViewCtx;
+  ctx: GameSpaceViewCtx;
 }) => {
   const onQuit = () => dispatch({ t: "input-mode", mode: "none" });
 

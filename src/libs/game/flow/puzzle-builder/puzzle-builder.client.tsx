@@ -1,7 +1,7 @@
 import { Cmd } from "@gamezilla/core";
 import {
-  ClientGameSpaceCtx,
-  ClientGameSpaceViewCtx,
+  GameSpaceClientCtx,
+  GameSpaceViewCtx,
   ViewBottomButtonBar,
 } from "@gamezilla/shared/game-space";
 import {
@@ -36,7 +36,7 @@ export const update = ({
 }: {
   msg: Msg;
   model: Model;
-  ctx: ClientGameSpaceCtx;
+  ctx: GameSpaceClientCtx;
   sendToServer: (m: ToServer) => Cmd;
 }): {
   model: Model;
@@ -86,7 +86,7 @@ export const View = ({
   model: Model;
   dispatch: (m: Msg) => void;
   onExit: () => void;
-  ctx: ClientGameSpaceViewCtx;
+  ctx: GameSpaceViewCtx;
 }) => {
   if (model.mode === "play") {
     return (

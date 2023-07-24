@@ -7,7 +7,7 @@ import {
   exhaustive,
 } from "@gamezilla/core";
 import { ViewCtx } from "@gamezilla/shared/client";
-import { ClientGameSpaceCtx } from "@gamezilla/shared/game-space";
+import { GameSpaceClientCtx } from "@gamezilla/shared/game-space";
 import { useLayoutEffect, useRef } from "react";
 import { Direction } from "./direction";
 import * as Snake from "./snake";
@@ -52,7 +52,7 @@ export const update = (
     ctx,
   }: {
     sendToServer: (msg: ToServer) => Cmd;
-    ctx: ClientGameSpaceCtx;
+    ctx: GameSpaceClientCtx;
   },
   msg: Msg,
   _model: Model

@@ -1,7 +1,7 @@
 import { Cmd, Keyboard, Sub, p } from "@gamezilla/core";
 import {
-  ClientGameSpaceCtx,
-  ClientGameSpaceViewCtx,
+  GameSpaceClientCtx,
+  GameSpaceViewCtx,
 } from "@gamezilla/shared/game-space";
 import { ActionButton, IconArrowLeftOnRect } from "@gamezilla/ui";
 import { Maze } from "./maze";
@@ -42,7 +42,7 @@ export const update = (
   {
     ctx,
     sendToServer,
-  }: { ctx: ClientGameSpaceCtx; sendToServer: (m: ToServer) => Cmd },
+  }: { ctx: GameSpaceClientCtx; sendToServer: (m: ToServer) => Cmd },
   msg: Msg,
   model: Model
 ): [Model, Cmd<Msg>] => {
@@ -202,7 +202,7 @@ export const View = ({
   ctx,
   dispatch,
 }: {
-  ctx: ClientGameSpaceViewCtx;
+  ctx: GameSpaceViewCtx;
   model: Model;
   dispatch: (msg: Msg) => void;
 }) => {

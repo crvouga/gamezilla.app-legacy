@@ -50,7 +50,7 @@ export const ViewSpaceListScreen = ({
             {spaces.map((space) => {
               const host = ctx.profiles[space.hostId];
               const users = Object.values(model.users).flatMap((user) => {
-                if (user.spaceId !== space.spaceId) {
+                if (user.spaceId !== space.gameSpaceId) {
                   return [];
                 }
 
@@ -68,7 +68,7 @@ export const ViewSpaceListScreen = ({
                 ];
               });
 
-              const gameName = model.games[space.spaceId]?.t;
+              const gameName = model.games[space.gameSpaceId]?.t;
               const currentSpaceId = model.users[ctx.currentUserId]?.spaceId;
               return (
                 <ViewSpaceCard
@@ -76,14 +76,14 @@ export const ViewSpaceListScreen = ({
                     username: host?.username ?? "...",
                     avatarUrl: host?.avatarUrl ?? "",
                   }}
-                  key={space.spaceId}
-                  isCurrentSpace={currentSpaceId === space.spaceId}
+                  key={space.gameSpaceId}
+                  isCurrentSpace={currentSpaceId === space.gameSpaceId}
                   users={users}
                   gameName={gameName}
                   onClick={() => {
                     ctx.onPush({
                       t: "game-space",
-                      c: { t: "game-space", spaceId: space.spaceId },
+                      c: { t: "game-space", spaceId: space.gameSpaceId },
                     });
                   }}
                 />

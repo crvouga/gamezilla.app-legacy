@@ -3,12 +3,8 @@ import { GameSpaceId, UserId } from "@gamezilla/shared/app";
 import { ClientAppMsg } from "@gamezilla/shared/client";
 import { ServerAppMsg } from "@gamezilla/shared/server";
 import { VDom } from "@gamezilla/ui";
-import {
-  ClientGameSpaceCtx,
-  ClientGameSpaceMsg,
-  ClientGameSpaceViewCtx,
-} from "./game-space-client";
-import { ServerGameSpaceMsg, SpaceServerCtx } from "./game-space-server";
+import { GameSpaceClientCtx, GameSpaceViewCtx } from "./game-space-client";
+import { GameSpaceServerCtx } from "./game-space-server";
 
 //
 //
@@ -35,6 +31,18 @@ export type GameSpace = {
 //
 //
 
+export type GameSpaceMsg =
+  | { t: "user-left"; userId: UserId }
+  | { t: "user-joined"; userId: UserId };
+
+//
+//
+//
+//
+//
+//
+//
+
 type GameClientUpdate<Model, Msg> = {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -45,12 +53,12 @@ export type GameClient<Name extends string, Model, Msg, ToClient, ToServer> = {
   name: Name;
 
   init: (input: {
-    ctx: ClientGameSpaceCtx;
+    ctx: GameSpaceClientCtx;
     sendToServer: (m: ToServer) => Cmd;
   }) => GameClientUpdate<Model, Msg>;
 
   update: (input: {
-    ctx: ClientGameSpaceCtx;
+    ctx: GameSpaceClientCtx;
     sendToServer: (m: ToServer) => Cmd;
     msg: Msg;
     model: Model;
@@ -63,16 +71,16 @@ export type GameClient<Name extends string, Model, Msg, ToClient, ToServer> = {
   }) => GameClientUpdate<Model, Msg>;
 
   updateFromGameSpace: (input: {
-    ctx: ClientGameSpaceCtx;
+    ctx: GameSpaceClientCtx;
     sendToServer: (m: ToServer) => Cmd;
-    msg: ClientGameSpaceMsg;
+    msg: GameSpaceMsg;
     model: Model;
   }) => GameClientUpdate<Model, Msg>;
 
-  subscriptions: (input: { ctx: ClientGameSpaceCtx; model: Model }) => Cmd<Msg>;
+  subscriptions: (input: { ctx: GameSpaceClientCtx; model: Model }) => Cmd<Msg>;
 
   View: (input: {
-    ctx: ClientGameSpaceViewCtx;
+    ctx: GameSpaceViewCtx;
     dispatch: (msg: Msg) => void;
     model: Model;
   }) => VDom;
@@ -96,13 +104,13 @@ export type GameServer<Name extends string, Model, Msg, ToClient, ToServer> = {
   name: Name;
 
   init: (input: {
-    ctx: SpaceServerCtx;
+    ctx: GameSpaceServerCtx;
     sendToClient: (m: ToClient) => Cmd;
     sendToSpace: (m: ToClient) => Cmd;
   }) => GameServerUpdate<Model, Msg>;
 
   update: (input: {
-    ctx: SpaceServerCtx;
+    ctx: GameSpaceServerCtx;
     sendToClient: (m: ToClient) => Cmd;
     sendToSpace: (m: ToClient) => Cmd;
     msg: Msg;
@@ -117,12 +125,12 @@ export type GameServer<Name extends string, Model, Msg, ToClient, ToServer> = {
   }) => GameServerUpdate<Model, Msg>;
 
   updateFromGameSpace: (input: {
-    ctx: SpaceServerCtx;
+    ctx: GameSpaceServerCtx;
     sendToClient: (m: ToClient) => Cmd;
     sendToSpace: (m: ToClient) => Cmd;
-    msg: ServerGameSpaceMsg;
+    msg: GameSpaceMsg;
     model: Model;
   }) => GameServerUpdate<Model, Msg>;
 
-  subscriptions: (input: { ctx: SpaceServerCtx; model: Model }) => Cmd<Msg>;
+  subscriptions: (input: { ctx: GameSpaceServerCtx; model: Model }) => Cmd<Msg>;
 };

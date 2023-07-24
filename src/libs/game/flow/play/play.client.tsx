@@ -1,7 +1,7 @@
 import { Cmd, andThen, p } from "@gamezilla/core";
 import {
-  ClientGameSpaceCtx,
-  ClientGameSpaceViewCtx,
+  GameSpaceClientCtx,
+  GameSpaceViewCtx,
 } from "@gamezilla/shared/game-space";
 import { IconArrowLeftOnRect, MyButton } from "@gamezilla/ui";
 import { FlowGridPlayUI } from "../flow-grid";
@@ -23,7 +23,7 @@ export const init = initShared;
 export const update = (input: {
   msg: Msg;
   model: Model;
-  ctx: ClientGameSpaceCtx;
+  ctx: GameSpaceClientCtx;
   sendToServer: (m: ToServer) => Cmd;
 }): {
   model: Model;
@@ -72,7 +72,7 @@ export const View = ({
   model: Model;
   dispatch: (m: Msg) => void;
   onExit: () => void;
-  ctx: ClientGameSpaceViewCtx;
+  ctx: GameSpaceViewCtx;
 }) => {
   return (
     <div className="flex h-full w-full flex-1 flex-col">

@@ -1,9 +1,9 @@
 import { Cmd, Sub } from "@gamezilla/core";
 import { ViewCtx } from "@gamezilla/shared/client";
 import {
-  ClientGameSpaceCtx,
-  ClientGameSpaceMsg,
-  ClientGameSpaceViewCtx,
+  GameSpaceClientCtx,
+  GameSpaceMsg,
+  GameSpaceViewCtx,
   GameLayout,
   ViewBottomButtonBar,
   VsUserSetupScreen,
@@ -72,7 +72,7 @@ export const update = ({
   model,
   ctx,
 }: {
-  ctx: ClientGameSpaceCtx;
+  ctx: GameSpaceClientCtx;
   sendToServer: (msg: ToServer) => Cmd;
   msg: Msg;
   model: Model;
@@ -159,7 +159,7 @@ export const syncWithServer = ({
 
 export const updateFromSpace = (input: {
   model: Model;
-  msg: ClientGameSpaceMsg;
+  msg: GameSpaceMsg;
 }): {
   model: Model;
 } => {
@@ -193,7 +193,7 @@ export const View = ({
   onQuit,
 }: {
   model: Model;
-  ctx: ClientGameSpaceViewCtx;
+  ctx: GameSpaceViewCtx;
   dispatch: (msg: Msg) => void;
   onQuit: () => void;
 }) => {
@@ -474,7 +474,7 @@ const Feedback = ({
   ctx,
   model,
 }: {
-  ctx: ClientGameSpaceViewCtx;
+  ctx: GameSpaceViewCtx;
   model: GameModel | GameOverModel;
 }) => {
   if (model.type === "game-over") {
@@ -521,7 +521,7 @@ const PlayerSlot = ({
 }: {
   model: GameModel | GameOverModel;
   playerType: PlayerType;
-  ctx: ClientGameSpaceViewCtx;
+  ctx: GameSpaceViewCtx;
 }) => {
   return (
     <div className="flex flex-1 items-center gap-2 overflow-hidden rounded border border-neutral-700 p-2">
@@ -538,7 +538,7 @@ const PlayerSlot = ({
   );
 };
 
-export const resToStr = ({ res }: { ctx: ClientGameSpaceCtx; res: Res }) => {
+export const resToStr = ({ res }: { ctx: GameSpaceClientCtx; res: Res }) => {
   if (res.t === "start-playing" && res.result.t === "ok") {
     // const username = ctx.profiles[res.user]?.username ?? "...";
     return `Started playing`;

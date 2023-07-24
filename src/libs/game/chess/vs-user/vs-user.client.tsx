@@ -1,7 +1,7 @@
 import { Audio, Cmd, Option, Sub, exhaustive, p, t } from "@gamezilla/core";
 import { UserId } from "@gamezilla/shared/app";
 import { ViewCtx } from "@gamezilla/shared/client";
-import { ClientGameSpaceCtx } from "@gamezilla/shared/game-space";
+import { GameSpaceClientCtx } from "@gamezilla/shared/game-space";
 import { Chessboard } from "../chess-ui";
 import * as Chess from "../chess/chess";
 import Sounds from "../chess/chess-sounds";
@@ -146,7 +146,7 @@ export const update = (
 };
 
 export const updateFromServer = (
-  { ctx }: { ctx: ClientGameSpaceCtx },
+  { ctx }: { ctx: GameSpaceClientCtx },
   msg: ToClient,
   _model: Model
 ): [Model, Cmd<Msg>] => {

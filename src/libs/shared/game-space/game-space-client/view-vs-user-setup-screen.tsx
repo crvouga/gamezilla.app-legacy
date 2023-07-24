@@ -6,7 +6,7 @@ import {
   MyButton,
   VDom,
 } from "@gamezilla/ui";
-import { ClientGameSpaceViewCtx } from "./game-space-client";
+import { GameSpaceViewCtx } from "./game-space-client";
 import { ViewGameHeader } from "./view-game-header";
 
 type IconProps = { className: string };
@@ -26,7 +26,7 @@ const VersusSection = ({
 }: {
   playerOne: PlayerProp;
   playerTwo: PlayerProp;
-  ctx: ClientGameSpaceViewCtx;
+  ctx: GameSpaceViewCtx;
 }) => {
   return (
     <div className="flex w-full flex-col gap-2 p-4">
@@ -69,7 +69,7 @@ const PlayerButtons = ({
   player,
   ctx,
 }: {
-  ctx: ClientGameSpaceViewCtx;
+  ctx: GameSpaceViewCtx;
   player: PlayerProp;
 }) => {
   return (
@@ -103,7 +103,7 @@ const PlayerIcons = ({
   player,
   ctx,
 }: {
-  ctx: ClientGameSpaceViewCtx;
+  ctx: GameSpaceViewCtx;
   player: PlayerProp;
 }) => {
   return (
@@ -137,7 +137,7 @@ const PlayerLabels = ({
   player,
   ctx,
 }: {
-  ctx: ClientGameSpaceViewCtx;
+  ctx: GameSpaceViewCtx;
   player: PlayerProp;
 }) => {
   return (
@@ -163,7 +163,7 @@ export const VsUserSetupScreen = ({
   onQuit,
   canStartGame = Boolean(playerOne.userId && playerTwo.userId),
 }: {
-  ctx: ClientGameSpaceViewCtx;
+  ctx: GameSpaceViewCtx;
   title: string;
   renderCoverArt: (props: { className: string }) => VDom;
   playerOne: PlayerProp;

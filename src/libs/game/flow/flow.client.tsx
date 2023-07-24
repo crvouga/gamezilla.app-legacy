@@ -1,8 +1,8 @@
 import { Cmd, Sub } from "@gamezilla/core";
 import { UserId } from "@gamezilla/shared/app";
 import {
-  ClientGameSpaceCtx,
-  ClientGameSpaceViewCtx,
+  GameSpaceClientCtx,
+  GameSpaceViewCtx,
   MainMenuScreen,
 } from "@gamezilla/shared/game-space";
 import { IconGamepad, IconScrewdriverWrench } from "@gamezilla/ui";
@@ -33,7 +33,7 @@ export const update = ({
   sendToServer,
   ctx,
 }: {
-  ctx: ClientGameSpaceCtx;
+  ctx: GameSpaceClientCtx;
   msg: Msg;
   model: Model;
   sendToServer: (m: ToServer) => Cmd;
@@ -170,7 +170,7 @@ export const View = ({
 }: {
   model: Model;
   dispatch: (m: Msg) => void;
-  ctx: ClientGameSpaceViewCtx;
+  ctx: GameSpaceViewCtx;
 }) => {
   if (model.t === "puzzle-builder") {
     return (

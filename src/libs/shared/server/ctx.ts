@@ -7,11 +7,11 @@ export type ServerCtx = {
   now: Posix;
 };
 
-export type ReqServerCtx = ServerCtx & {
+export type ServerUnauthenticatedReqCtx = ServerCtx & {
   sessionId: SessionId;
   clientId: ClientId;
 };
 
-export type AuthReqServerCtx = ReqServerCtx & {
+export type ServerReqCtx = ServerUnauthenticatedReqCtx & {
   currentUserId: UserId;
 };

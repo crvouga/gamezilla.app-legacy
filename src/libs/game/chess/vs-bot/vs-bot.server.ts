@@ -1,8 +1,5 @@
 import { Cmd, p, Sub } from "@gamezilla/core";
-import {
-  ServerGameSpaceMsg,
-  SpaceReqServerCtx,
-} from "@gamezilla/shared/game-space";
+import { GameSpaceMsg, GameSpaceReqCtx } from "@gamezilla/shared/game-space";
 import * as Chess from "../chess/chess";
 import {
   botMoved,
@@ -68,7 +65,7 @@ export const updateFromClient = (input: {
   broadcast: (msg: ToClient) => Cmd;
   msg: ToServer;
   model: Model;
-  ctx: SpaceReqServerCtx;
+  ctx: GameSpaceReqCtx;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -120,7 +117,7 @@ export const updateFromSpace = ({
   model,
   broadcast,
 }: {
-  msg: ServerGameSpaceMsg;
+  msg: GameSpaceMsg;
   broadcast: (m: ToClient) => Cmd;
   model: Model;
 }): {

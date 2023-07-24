@@ -1,7 +1,7 @@
 import { Err, Ok, RemoteResult, Result } from "@gamezilla/core";
 import { GameSpaceId, UserId, Username } from "@gamezilla/shared/app";
 import { Profile } from "@gamezilla/shared/client";
-import { ClientGameSpaceViewCtx, Space } from "@gamezilla/shared/game-space";
+import { GameSpaceViewCtx, GameSpace } from "@gamezilla/shared/game-space";
 import * as Game from "./game.core";
 import * as GameServer from "./game.server";
 
@@ -15,7 +15,7 @@ import * as GameServer from "./game.server";
 
 export type SharedModel = {
   spaces: {
-    [spaceId: GameSpaceId]: Space;
+    [spaceId: GameSpaceId]: GameSpace;
   };
   users: {
     [userId: UserId]: {
@@ -114,7 +114,7 @@ export const toUsersBySpaceId = function* ({
 export const toProfilesBySpaceId = function* ({
   ctx,
 }: {
-  ctx: ClientGameSpaceViewCtx;
+  ctx: GameSpaceViewCtx;
 }): Generator<Profile> {
   for (const userId in ctx.space.users) {
     if (!UserId.is(userId)) {
@@ -135,7 +135,7 @@ export const toSpace = ({
 }: {
   spaceId: GameSpaceId;
   model: SharedModel;
-}): Space | null => {
+}): GameSpace | null => {
   const space = model.spaces[spaceId];
 
   if (!space) {
@@ -244,8 +244,8 @@ export const handle = ({
           })
         : undefined;
 
-      const spaceNew: Space = {
-        spaceId: msg.spaceId,
+      const spaceNew: GameSpace = {
+        gameSpaceId: msg.spaceId,
         hostId: ctx.currentUserId,
         users: {
           [ctx.currentUserId]: ctx.currentUserId,
@@ -261,11 +261,11 @@ export const handle = ({
         ...model,
         games: {
           ...model.games,
-          [spaceNew.spaceId]: gameNew,
+          [spaceNew.gameSpaceId]: gameNew,
         },
         spaces: {
           ...model.spaces,
-          [spaceNew.spaceId]: spaceNew,
+          [spaceNew.gameSpaceId]: spaceNew,
         },
         users: {
           ...model.users,
@@ -293,9 +293,9 @@ export const handle = ({
         return Err("must_be_host");
       }
 
-      const spacesNew = removeKey(space.spaceId, model.spaces);
+      const spacesNew = removeKey(space.gameSpaceId, model.spaces);
 
-      const gamesNew = removeKey(space.spaceId, model.games);
+      const gamesNew = removeKey(space.gameSpaceId, model.games);
 
       const usersNew = filterObject(
         model.users,
@@ -384,7 +384,7 @@ export const handle = ({
       if (!gameName) {
         const modelNew: ServerModel = {
           ...model,
-          games: removeKey(space.spaceId, model.games),
+          games: removeKey(space.gameSpaceId, model.games),
         };
 
         return Ok(modelNew);
@@ -399,7 +399,7 @@ export const handle = ({
         ...model,
         games: {
           ...model.games,
-          [space.spaceId]: gameNew,
+          [space.gameSpaceId]: gameNew,
         },
       };
 

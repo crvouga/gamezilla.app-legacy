@@ -1,25 +1,14 @@
-import { GameSpaceId, UserId } from "@gamezilla/shared/app";
+import { UserId } from "@gamezilla/shared/app";
 import { ClientCtx, ViewCtx } from "@gamezilla/shared/client";
+import { GameSpace } from "../game-space-core";
 
-export type ClientGameSpaceCtx = ClientCtx & {
+export type GameSpaceClientCtx = ClientCtx & {
   hostId: UserId;
 };
 
-export type Space = {
-  hostId: UserId;
-  spaceId: GameSpaceId;
-  users: {
-    [userId: UserId]: UserId;
-  };
-};
-
-export type ClientGameSpaceViewCtx = ViewCtx & {
+export type GameSpaceViewCtx = ViewCtx & {
   onQuit: () => void;
   onViewProfile: (input: { userId: UserId }) => void;
   hostId: UserId;
-  space: Space;
+  space: GameSpace;
 };
-
-export type ClientGameSpaceMsg =
-  | { t: "user-left"; userId: UserId }
-  | { t: "user-joined"; userId: UserId };

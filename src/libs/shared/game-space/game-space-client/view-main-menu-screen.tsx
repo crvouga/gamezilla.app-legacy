@@ -6,7 +6,7 @@ import {
   Text,
   VDom,
 } from "@gamezilla/ui";
-import { ClientGameSpaceViewCtx } from "./game-space-client";
+import { GameSpaceViewCtx } from "./game-space-client";
 import { ViewGameHeader } from "./view-game-header";
 import { ViewUsersInSpaceList } from ".";
 
@@ -23,7 +23,7 @@ export const MainMenuScreen = ({
   buttons,
   ctx,
 }: {
-  ctx: ClientGameSpaceViewCtx;
+  ctx: GameSpaceViewCtx;
   title: string;
   renderCoverArt: (props: { className: string }) => VDom;
   buttons: MainMenuButton[];

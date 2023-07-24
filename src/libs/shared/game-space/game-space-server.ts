@@ -1,12 +1,10 @@
 import { UserId } from "@gamezilla/shared/app";
-import { AuthReqServerCtx, ServerCtx } from "@gamezilla/shared/server";
+import { ServerReqCtx, ServerCtx } from "@gamezilla/shared/server";
 
-export type SpaceServerCtx = ServerCtx & {
+export type GameSpaceServerCtx = ServerCtx & {
   hostId: UserId;
 };
 
-export type SpaceReqServerCtx = AuthReqServerCtx & {
+export type GameSpaceReqCtx = ServerReqCtx & {
   hostId: UserId;
 };
-
-export type ServerGameSpaceMsg = { t: "user-left"; userId: UserId };

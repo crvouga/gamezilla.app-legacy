@@ -1,9 +1,6 @@
 import { Cmd, Result, Sub } from "@gamezilla/core";
 import { UserId } from "@gamezilla/shared/app";
-import {
-  ClientGameSpaceMsg,
-  SpaceReqServerCtx,
-} from "@gamezilla/shared/game-space";
+import { GameSpaceMsg, GameSpaceReqCtx } from "@gamezilla/shared/game-space";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./tic-tac-toe.core";
 import * as VsBot from "./vs-bot/vs-bot.server";
 import * as VsUser from "./vs-user/vs-user.server";
@@ -81,7 +78,7 @@ export const updateFromClient = ({
 }: {
   sendToClient: (msg: ToClient) => Cmd;
   broadcast: (msg: ToClient) => Cmd;
-  ctx: SpaceReqServerCtx;
+  ctx: GameSpaceReqCtx;
   msg: ToServer;
   model: Model;
 }): { model: Model; cmd?: Cmd<Msg> } => {
@@ -145,7 +142,7 @@ export const updateFromSpace = ({
 }: {
   broadcast: (m: ToClient) => Cmd;
   model: Model;
-  msg: ClientGameSpaceMsg;
+  msg: GameSpaceMsg;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;

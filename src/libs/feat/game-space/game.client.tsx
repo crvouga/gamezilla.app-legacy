@@ -9,8 +9,8 @@ import { TetrisClient } from "@gamezilla/game/tetris";
 import { TicTacToeClient } from "@gamezilla/game/tic-tac-toe";
 import { ClientAppMsg, ClientCtx } from "@gamezilla/shared/client";
 import {
-  ClientGameSpaceCtx,
-  ClientGameSpaceViewCtx,
+  GameSpaceClientCtx,
+  GameSpaceViewCtx,
 } from "@gamezilla/shared/game-space";
 import {
   ClientModel,
@@ -97,7 +97,7 @@ export const update = ({
   msg,
   model,
 }: {
-  ctx: ClientGameSpaceCtx;
+  ctx: GameSpaceClientCtx;
   sendToServer: (msg: ToServer) => Cmd;
   msg: Msg;
   model: Model;
@@ -222,7 +222,7 @@ export const updateFromServer = ({
   msg,
   model,
 }: {
-  ctx: ClientGameSpaceCtx;
+  ctx: GameSpaceClientCtx;
   sendToServer: (msg: ToServer) => Cmd;
   msg: ToClient;
   model: Model;
@@ -406,7 +406,7 @@ export const View = ({
   model,
   dispatch,
 }: {
-  ctx: ClientGameSpaceViewCtx;
+  ctx: GameSpaceViewCtx;
   model: Model;
   dispatch: (msg: Msg) => void;
 }) => {
