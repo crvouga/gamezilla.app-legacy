@@ -1,4 +1,4 @@
-import { Ctx, ViewCtx } from "@gamezilla/shared/client";
+import { ClientCtx, ViewCtx } from "@gamezilla/shared/client";
 import { Cmd, Sub } from "@gamezilla/core";
 import {
   ClientModel,
@@ -38,7 +38,7 @@ export const update = ({
   msg,
   model,
 }: {
-  ctx: Ctx;
+  ctx: ClientCtx;
   sendToServer: (m: ToServer) => Cmd;
   msg: Msg;
   model: Model;
@@ -76,7 +76,7 @@ export const updateFromServer = ({
   model,
   ctx,
 }: {
-  ctx: Ctx;
+  ctx: ClientCtx;
   msg: ToClient;
   model: Model;
 }): {
@@ -100,7 +100,7 @@ export const syncWithServer = ({
   serverModel,
   clientModel,
 }: {
-  ctx: Ctx;
+  ctx: ClientCtx;
   clientModel: ClientModel;
   serverModel: ServerModel;
 }): ClientModel => {
@@ -115,7 +115,7 @@ export const syncWithServer = ({
 //
 //
 
-export const subscriptions = (_ctx: Ctx, model: Model): Sub<Msg> => {
+export const subscriptions = (_ctx: ClientCtx, model: Model): Sub<Msg> => {
   switch (model.type) {
     case "game": {
       return Sub.None;

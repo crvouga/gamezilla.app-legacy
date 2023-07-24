@@ -8,9 +8,9 @@ import { TetrisClient } from "@gamezilla/game/tetris";
 import { TicTacToeClient } from "@gamezilla/game/tic-tac-toe";
 import {
   ClientAppMsg,
-  Ctx,
-  SpaceCtx,
-  SpaceViewCtx,
+  ClientCtx,
+  ClientGameSpaceCtx,
+  ClientGameSpaceViewCtx,
 } from "@gamezilla/shared/client";
 import { Cmd, Sub, exhaustive } from "@gamezilla/core";
 import {
@@ -36,7 +36,7 @@ export const init = ({
   ctx,
 }: {
   gameName: Model["t"];
-  ctx: Ctx;
+  ctx: ClientCtx;
 }): [Model, Cmd<Msg>] => {
   switch (gameName) {
     case "tic-tac-toe": {
@@ -98,7 +98,7 @@ export const update = ({
   msg,
   model,
 }: {
-  ctx: SpaceCtx;
+  ctx: ClientGameSpaceCtx;
   sendToServer: (msg: ToServer) => Cmd;
   msg: Msg;
   model: Model;
@@ -223,7 +223,7 @@ export const updateFromServer = ({
   msg,
   model,
 }: {
-  ctx: SpaceCtx;
+  ctx: ClientGameSpaceCtx;
   sendToServer: (msg: ToServer) => Cmd;
   msg: ToClient;
   model: Model;
@@ -342,7 +342,7 @@ export const updateFromServer = ({
 
 export const subscriptions = (
   intervalId: string,
-  ctx: Ctx,
+  ctx: ClientCtx,
   model: Model
 ): Sub<Msg> => {
   if (model.t === "connect-four") {
@@ -407,7 +407,7 @@ export const View = ({
   model,
   dispatch,
 }: {
-  ctx: SpaceViewCtx;
+  ctx: ClientGameSpaceViewCtx;
   model: Model;
   dispatch: (msg: Msg) => void;
 }) => {
@@ -503,7 +503,7 @@ export const syncWithServer = ({
   clientModel,
   serverModel,
 }: {
-  ctx: Ctx;
+  ctx: ClientCtx;
   sendToServer: (msg: ToServer) => Cmd;
   clientModel: ClientModel;
   serverModel: ServerModel;

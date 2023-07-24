@@ -1,6 +1,9 @@
 import { Err, Ok, Result } from "@gamezilla/core";
 import * as mysql from "mysql2/promise";
-import { ParserMyZodEsque } from "./shared";
+
+export type ParserMyZodEsque<TInput> = {
+  parse: (input: unknown) => TInput;
+};
 
 export type DbConnMySql = {
   query: <TRow>(

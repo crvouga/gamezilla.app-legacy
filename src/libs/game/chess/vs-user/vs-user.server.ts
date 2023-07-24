@@ -1,5 +1,5 @@
 import { Cmd, exhaustive, Sub, Time } from "@gamezilla/core";
-import { SpaceMsg } from "@gamezilla/shared/client";
+import { ClientGameSpaceMsg } from "@gamezilla/shared/client";
 import * as Board from "../chess/chess";
 import {
   ServerModel,
@@ -181,7 +181,7 @@ export const updateFromSpace = ({
   model,
 }: {
   broadcast: (m: ToClient) => Cmd;
-  msg: SpaceMsg;
+  msg: ClientGameSpaceMsg;
   model: Model;
 }): { model: Model; cmd?: Cmd<Msg> } => {
   if (msg.t === "user-left") {

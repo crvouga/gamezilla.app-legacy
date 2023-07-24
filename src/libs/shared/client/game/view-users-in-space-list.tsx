@@ -1,8 +1,12 @@
 import { toProfilesBySpaceId } from "src/libs/feat/game-space";
-import { SpaceViewCtx } from "@gamezilla/shared/client";
+import { ClientGameSpaceViewCtx } from "@gamezilla/shared/client";
 import { IconCrown, MyAvatar } from "@gamezilla/ui";
 
-export const ViewUsersInSpaceList = ({ ctx }: { ctx: SpaceViewCtx }) => {
+export const ViewUsersInSpaceList = ({
+  ctx,
+}: {
+  ctx: ClientGameSpaceViewCtx;
+}) => {
   const profiles = toProfilesBySpaceId({ ctx });
   return (
     <section className="flex w-full flex-col gap-2 py-4">

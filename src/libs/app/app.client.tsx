@@ -5,7 +5,7 @@ import { SearchClient } from "@gamezilla/feat/search";
 import { GameSpaceClient } from "src/libs/feat/game-space";
 import {
   ClientAppMsg,
-  Ctx,
+  ClientCtx,
   Route,
   UnauthenticatedViewCtx,
   ViewCtx,
@@ -227,7 +227,7 @@ const update_ = ({
   return { model };
 };
 
-const toCtx = (input: { model: Model; now: Posix }): Ctx | null => {
+const toCtx = (input: { model: Model; now: Posix }): ClientCtx | null => {
   if (input.model.auth.currentUser.t === "logged-in") {
     return {
       currentUserId: input.model.auth.currentUser.userId,

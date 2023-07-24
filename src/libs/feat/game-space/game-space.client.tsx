@@ -1,10 +1,10 @@
 import { GameSpaceId } from "@gamezilla/shared/app";
 import {
   ClientAppMsg,
-  Ctx,
+  ClientCtx,
   RouteGameSpace,
-  SpaceCtx,
-  SpaceViewCtx,
+  ClientGameSpaceCtx,
+  ClientGameSpaceViewCtx,
   ViewCtx,
   ViewSpaceHostChip,
   ViewUsersInSpaceList,
@@ -71,7 +71,7 @@ export const init: { model: Model } = {
 export type Msg = ClientMsg;
 
 export const update = (input: {
-  ctx: Ctx | null;
+  ctx: ClientCtx | null;
   sendToServer: (msg: ToServer) => Cmd;
   msg: Msg;
   model: Model;
@@ -164,7 +164,7 @@ const update_: typeof update = ({ ctx, sendToServer, msg, model }) => {
 
     const gameMsg = msg.c;
 
-    const spaceCtx: SpaceCtx = {
+    const spaceCtx: ClientGameSpaceCtx = {
       ...ctx,
       hostId: space.hostId,
     };
@@ -217,7 +217,7 @@ export const updateFromServer = ({
   msg,
   model,
 }: {
-  ctx: Ctx | null;
+  ctx: ClientCtx | null;
   sendToServer: (msg: ToServer) => Cmd;
   msg: ToClient;
   model: Model;
@@ -327,7 +327,7 @@ const syncWithServer = ({
   serverModel,
   sendToServer,
 }: {
-  ctx: Ctx | null;
+  ctx: ClientCtx | null;
   sendToServer: (msg: ToServer) => Cmd;
   clientModel: ClientModel;
   serverModel: ServerModel;
@@ -430,7 +430,7 @@ const syncWithServer = ({
 //
 //
 
-export const subscriptions = (ctx: Ctx, model: Model): Sub<Msg> => {
+export const subscriptions = (ctx: ClientCtx, model: Model): Sub<Msg> => {
   const user = model.users[ctx.currentUserId];
 
   if (!user) {
@@ -524,7 +524,7 @@ const ViewSpaceScreen = ({
     return <ViewSpaceNotFound ctx={ctx} />;
   }
 
-  const spaceCtx: SpaceViewCtx = {
+  const spaceCtx: ClientGameSpaceViewCtx = {
     ...ctx,
     hostId: space.hostId,
     space,
@@ -600,7 +600,7 @@ const ViewPage = ({
   model,
 }: {
   model: Model;
-  ctx: SpaceViewCtx;
+  ctx: ClientGameSpaceViewCtx;
   dispatch: (m: Msg) => void;
 }) => {
   const currentUser = model.users[ctx.currentUserId];
@@ -636,7 +636,7 @@ const ViewTopBar = ({
   ctx,
   dispatch,
 }: {
-  ctx: SpaceViewCtx;
+  ctx: ClientGameSpaceViewCtx;
   dispatch: (m: Msg) => void;
 }) => {
   const peopleCount = Object.values(ctx.space.users).length;

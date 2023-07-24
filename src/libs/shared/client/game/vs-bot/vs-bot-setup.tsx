@@ -8,7 +8,7 @@ import {
   VDom,
 } from "@gamezilla/ui";
 import { z } from "zod";
-import { SpaceViewCtx } from "../game-shared";
+import { ClientGameSpaceViewCtx } from "../game-shared";
 import { ViewGameHeader } from "../view-game-header";
 import { VsBotProps } from "./view-vs-bot";
 
@@ -213,7 +213,7 @@ const PlayerIcons = ({
   player,
   ctx,
 }: {
-  ctx: SpaceViewCtx;
+  ctx: ClientGameSpaceViewCtx;
   player: PlayerProp;
 }) => {
   return (
@@ -241,7 +241,7 @@ const PlayerLabels = ({
   player,
   ctx,
 }: {
-  ctx: SpaceViewCtx;
+  ctx: ClientGameSpaceViewCtx;
   player: PlayerProp;
 }) => {
   return (
@@ -265,7 +265,7 @@ const PlayerButtons = ({
   dispatch,
 }: {
   human: { userId: UserId | null };
-  ctx: SpaceViewCtx;
+  ctx: ClientGameSpaceViewCtx;
   player: PlayerProp;
   dispatch: (m: Msg) => void;
 }) => {

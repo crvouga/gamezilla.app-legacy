@@ -50,6 +50,7 @@
       "@gamezilla/game/tetris": ["src/libs/game/tetris/index.ts"],
       "@gamezilla/game/tic-tac-toe": ["src/libs/game/tic-tac-toe/index.ts"],
       "@gamezilla/shared/app": ["src/libs/shared/app/index.ts"],
+      "@gamezilla/shared/game-space": ["src/libs/shared/game-space/index.ts"],
       "@gamezilla/shared/client": ["src/libs/shared/client/index.ts"],
       "@gamezilla/shared/server": ["src/libs/shared/server/index.ts"],
       "@gamezilla/ui": ["src/libs/ui/index.ts"]

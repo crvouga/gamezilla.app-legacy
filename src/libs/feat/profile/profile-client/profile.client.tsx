@@ -1,7 +1,7 @@
 import { ProfileAvatar } from "@gamezilla/shared/app";
 import {
   ClientAppMsg,
-  Ctx,
+  ClientCtx,
   RouteProfile,
   ViewCtx,
 } from "@gamezilla/shared/client";
@@ -155,7 +155,7 @@ export const updateFromApp = ({
   msg: ClientAppMsg;
   model: Model;
   sendToServer: (m: ToServer) => Cmd<Msg>;
-  ctx: Ctx | null;
+  ctx: ClientCtx | null;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -207,7 +207,7 @@ const updateUsernameDraft = ({
 }: {
   model: Model;
   msg: ClientAppMsg;
-  ctx: Ctx | null;
+  ctx: ClientCtx | null;
 }): { model: Model } => {
   if (msg.t !== "route-changed") {
     return { model };

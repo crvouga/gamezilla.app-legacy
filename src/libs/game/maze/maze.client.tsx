@@ -1,4 +1,7 @@
-import { SpaceCtx, SpaceViewCtx } from "@gamezilla/shared/client";
+import {
+  ClientGameSpaceCtx,
+  ClientGameSpaceViewCtx,
+} from "@gamezilla/shared/client";
 import { Cmd, Keyboard, Sub, p } from "@gamezilla/core";
 import { ActionButton, IconArrowLeftOnRect } from "@gamezilla/ui";
 import { Maze } from "./maze";
@@ -36,7 +39,10 @@ export const init = initShared;
 export type Msg = ClientMsg;
 
 export const update = (
-  { ctx, sendToServer }: { ctx: SpaceCtx; sendToServer: (m: ToServer) => Cmd },
+  {
+    ctx,
+    sendToServer,
+  }: { ctx: ClientGameSpaceCtx; sendToServer: (m: ToServer) => Cmd },
   msg: Msg,
   model: Model
 ): [Model, Cmd<Msg>] => {
@@ -196,7 +202,7 @@ export const View = ({
   ctx,
   dispatch,
 }: {
-  ctx: SpaceViewCtx;
+  ctx: ClientGameSpaceViewCtx;
   model: Model;
   dispatch: (msg: Msg) => void;
 }) => {

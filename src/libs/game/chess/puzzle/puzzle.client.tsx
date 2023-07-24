@@ -1,8 +1,8 @@
 import {
   ClientAppMsg,
   BottomBarButtonAction,
-  SpaceCtx,
-  SpaceViewCtx,
+  ClientGameSpaceCtx,
+  ClientGameSpaceViewCtx,
   ViewBottomButtonBar,
   GameLayout,
 } from "@gamezilla/shared/client";
@@ -73,7 +73,7 @@ export const update = ({
   msg: Msg;
   model: Model;
   sendToServer: (m: ToServer) => Cmd;
-  ctx: SpaceCtx;
+  ctx: ClientGameSpaceCtx;
 }): {
   model: Model;
   cmd?: Cmd;
@@ -95,7 +95,7 @@ export const updateFromServer = ({
   msg,
   model,
 }: {
-  ctx: SpaceCtx;
+  ctx: ClientGameSpaceCtx;
   msg: ToClient;
   model: Model;
 }): {
@@ -165,7 +165,7 @@ export const View = ({
   ctx,
   dispatch,
 }: {
-  ctx: SpaceViewCtx;
+  ctx: ClientGameSpaceViewCtx;
   model: Model;
   dispatch: (m: Msg) => void;
   onClose: () => void;

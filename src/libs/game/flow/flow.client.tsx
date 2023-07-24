@@ -1,7 +1,7 @@
 import { UserId } from "@gamezilla/shared/app";
 import {
-  SpaceCtx,
-  SpaceViewCtx,
+  ClientGameSpaceCtx,
+  ClientGameSpaceViewCtx,
   MainMenuScreen,
 } from "@gamezilla/shared/client";
 import { Cmd, Sub } from "@gamezilla/core";
@@ -33,7 +33,7 @@ export const update = ({
   sendToServer,
   ctx,
 }: {
-  ctx: SpaceCtx;
+  ctx: ClientGameSpaceCtx;
   msg: Msg;
   model: Model;
   sendToServer: (m: ToServer) => Cmd;
@@ -170,7 +170,7 @@ export const View = ({
 }: {
   model: Model;
   dispatch: (m: Msg) => void;
-  ctx: SpaceViewCtx;
+  ctx: ClientGameSpaceViewCtx;
 }) => {
   if (model.t === "puzzle-builder") {
     return (

@@ -1,3 +1,4 @@
+import { Cmd, Sub, exhaustive } from "@gamezilla/core";
 import { ChessServer } from "@gamezilla/game/chess";
 import { ConnectFourServer } from "@gamezilla/game/connect-four";
 import { FlowServer } from "@gamezilla/game/flow";
@@ -7,12 +8,8 @@ import { SnakeServer } from "@gamezilla/game/snake";
 import { TetrisServer } from "@gamezilla/game/tetris";
 import { TicTacToeServer } from "@gamezilla/game/tic-tac-toe";
 import { UserId } from "@gamezilla/shared/app";
-import { Cmd, Sub, exhaustive } from "@gamezilla/core";
-import {
-  SpaceServerCtx,
-  SpaceMsg,
-  SpaceReqServerCtx,
-} from "@gamezilla/shared/server";
+import { ServerGameSpaceMsg } from "@gamezilla/shared/game-space";
+import { SpaceReqServerCtx, SpaceServerCtx } from "@gamezilla/shared/server";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./game.core";
 
 //
@@ -373,7 +370,7 @@ export const updateFromSpace = ({
   model,
 }: {
   broadcast: (m: ToClient) => Cmd;
-  msg: SpaceMsg;
+  msg: ServerGameSpaceMsg;
   model: Model;
 }): {
   model: Model;

@@ -1,7 +1,7 @@
 import {
-  Ctx,
-  SpaceCtx,
-  SpaceViewCtx,
+  ClientCtx,
+  ClientGameSpaceCtx,
+  ClientGameSpaceViewCtx,
   ViewCtx,
   MainMenuScreen,
   mainMenuButtons,
@@ -48,7 +48,7 @@ export const update = ({
   msg,
   model,
 }: {
-  ctx: SpaceCtx;
+  ctx: ClientGameSpaceCtx;
   sendToServer: (m: ToServer) => Cmd;
   msg: Msg;
   model: Model;
@@ -93,7 +93,7 @@ export const updateFromServer = ({
   model,
   msg,
 }: {
-  ctx: SpaceCtx;
+  ctx: ClientGameSpaceCtx;
   msg: ToClient;
   model: Model;
 }): {
@@ -143,7 +143,7 @@ export const syncWithServer = ({
   clientModel,
   serverModel,
 }: {
-  ctx: Ctx;
+  ctx: ClientCtx;
   clientModel: ClientModel;
   serverModel: ServerModel;
 }): ClientModel => {
@@ -202,7 +202,7 @@ export const syncWithServer = ({
 //
 //
 
-export const subscriptions = (ctx: Ctx, model: Model): Sub<Msg> => {
+export const subscriptions = (ctx: ClientCtx, model: Model): Sub<Msg> => {
   switch (model.t) {
     case "vs-bot": {
       return Sub.tag_("vs-bot", VsBot.subscriptions(ctx, model.c));
@@ -234,7 +234,7 @@ export const view = ({
 }: {
   model: Model;
   ctx: ViewCtx;
-  gameSpaceCtx: SpaceViewCtx;
+  gameSpaceCtx: ClientGameSpaceViewCtx;
   dispatch: (m: Msg) => void;
 }) => {
   switch (model.t) {

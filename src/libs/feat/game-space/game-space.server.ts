@@ -1,10 +1,4 @@
 import {
-  ClientId,
-  GameSpace,
-  GameSpaceId,
-  UserId,
-} from "@gamezilla/shared/app";
-import {
   Cmd,
   Err,
   Ok,
@@ -15,14 +9,21 @@ import {
   p,
 } from "@gamezilla/core";
 import {
-  ServerAppMsg,
-  AuthReqServerCtx,
-  ServerCtx,
-  SpaceServerCtx,
-  SpaceMsg,
+  ClientId,
+  GameSpace,
+  GameSpaceId,
+  UserId,
+} from "@gamezilla/shared/app";
+import {
+  ServerGameSpaceMsg,
   SpaceReqServerCtx,
+  SpaceServerCtx,
+} from "@gamezilla/shared/game-space";
+import {
+  AuthReqServerCtx,
+  ServerAppMsg,
+  ServerCtx,
 } from "@gamezilla/shared/server";
-import * as Game from "./game.server";
 import { GameSpaceDb } from "./game-space-db";
 import {
   Req,
@@ -33,6 +34,7 @@ import {
   ToServer,
   handle,
 } from "./game-space.core";
+import * as Game from "./game.server";
 //
 //
 //
@@ -456,7 +458,7 @@ export const handler = async ({
   req: Req;
   ctx: SpaceReqServerCtx;
   spaceDb: GameSpaceDb;
-}): Promise<Res_ & { msgs?: SpaceMsg[] }> => {
+}): Promise<Res_ & { msgs?: ServerGameSpaceMsg[] }> => {
   //
   //
   //

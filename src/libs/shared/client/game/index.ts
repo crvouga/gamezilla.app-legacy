@@ -1,6 +1,7 @@
 export * from "./game-shared";
 export * from "./view-bottom-button-bar";
 export * from "./view-game-header";
+export * from "./view-game-layout";
 export * from "./view-main-menu-screen";
 export * from "./view-users-in-space-list";
 export * from "./view-vs-user-game-screen";

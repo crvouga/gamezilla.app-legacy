@@ -1,12 +1,12 @@
 import { Cmd, Posix } from "@gamezilla/core";
 import {
   ClientAppMsg,
-  Ctx,
+  ClientCtx,
   IconBotCute,
   IconBotLevel1,
   IconBotScary,
-  SpaceCtx,
-  SpaceViewCtx,
+  ClientGameSpaceCtx,
+  ClientGameSpaceViewCtx,
   ViewBottomButtonBar,
   VsBotPlayerSection,
   VsBotProps,
@@ -74,7 +74,7 @@ export const update = ({
   sendToServer,
 }: {
   sendToServer: (msg: ToServer) => Cmd;
-  ctx: SpaceCtx;
+  ctx: ClientGameSpaceCtx;
   msg: Msg;
   model: Model;
 }): {
@@ -104,7 +104,7 @@ export const updateFromServer = ({
   model,
   ctx,
 }: {
-  ctx: Ctx;
+  ctx: ClientCtx;
   msg: ToClient;
   model: Model;
 }): {
@@ -157,7 +157,7 @@ export const View = ({
   ctx,
   dispatch,
 }: {
-  ctx: SpaceViewCtx;
+  ctx: ClientGameSpaceViewCtx;
   goBack: () => void;
   model: Model;
   dispatch: (msg: Msg) => void;

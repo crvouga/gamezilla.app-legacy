@@ -1,4 +1,8 @@
-import { SpaceCtx, SpaceViewCtx, VsBotSetup } from "@gamezilla/shared/client";
+import {
+  ClientGameSpaceCtx,
+  ClientGameSpaceViewCtx,
+  VsBotSetup,
+} from "@gamezilla/shared/client";
 import { Audio, Cmd, Sub, andThen, exhaustive, p } from "@gamezilla/core";
 import { IconRobot, IconSpinner, MyAvatar } from "@gamezilla/ui";
 import { Chessboard, PlayerIcon, ViewCoverArt } from "../chess-ui";
@@ -50,7 +54,7 @@ export const update = ({
   model: model_,
   ctx,
 }: {
-  ctx: SpaceCtx;
+  ctx: ClientGameSpaceCtx;
   sendToServer: (msg: ToServer) => Cmd;
   msg: Msg;
   model: Model;
@@ -260,7 +264,7 @@ export const View = ({
   dispatch,
   onClose,
 }: {
-  ctx: SpaceViewCtx;
+  ctx: ClientGameSpaceViewCtx;
   model: Model;
   dispatch: (msg: Msg) => void;
   onClose: () => void;

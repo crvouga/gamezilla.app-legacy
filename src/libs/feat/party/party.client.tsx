@@ -1,5 +1,5 @@
 import { UserId } from "@gamezilla/shared/app";
-import { Ctx, Route, ViewCtx } from "@gamezilla/shared/client";
+import { ClientCtx, Route, ViewCtx } from "@gamezilla/shared/client";
 import { Cmd, RemoteResult, Sub, exhaustive, p } from "@gamezilla/core";
 import { Mic } from "./mic";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./party.core";
@@ -181,7 +181,7 @@ export const ViewPage = ({
   model,
   dispatch,
 }: {
-  ctx: Ctx;
+  ctx: ClientCtx;
   model: Model;
   dispatch: (msg: Msg) => void;
 }) => {
@@ -201,7 +201,7 @@ export const ViewPage = ({
 };
 
 const ViewNotInParty = (_props: {
-  ctx: Ctx;
+  ctx: ClientCtx;
   model: Model;
   dispatch: (msg: Msg) => void;
 }) => {

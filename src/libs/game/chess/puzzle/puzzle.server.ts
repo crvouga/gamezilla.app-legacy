@@ -1,5 +1,5 @@
 import { UserId } from "@gamezilla/shared/app";
-import { SpaceMsg } from "@gamezilla/shared/client";
+import { ClientGameSpaceMsg } from "@gamezilla/shared/client";
 import {
   Cmd,
   Err,
@@ -394,7 +394,7 @@ export const updateFromGame = ({
 export const updateFromSpace = ({
   model,
 }: {
-  msg: SpaceMsg;
+  msg: ClientGameSpaceMsg;
   model: Model;
 }): {
   model: Model;

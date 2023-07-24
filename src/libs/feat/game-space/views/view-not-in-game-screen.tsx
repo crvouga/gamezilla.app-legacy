@@ -1,5 +1,5 @@
 import {
-  SpaceViewCtx,
+  ClientGameSpaceViewCtx,
   ViewGameHeaderEmpty,
   ViewUsersInSpaceList,
 } from "@gamezilla/shared/client";
@@ -10,7 +10,7 @@ export const ViewNotInGameScreen = ({
   ctx,
   dispatch,
 }: {
-  ctx: SpaceViewCtx;
+  ctx: ClientGameSpaceViewCtx;
   dispatch: (m: ClientMsg) => void;
 }) => {
   if (ctx.space.hostId !== ctx.currentUserId) {

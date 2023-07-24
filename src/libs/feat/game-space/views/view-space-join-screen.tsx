@@ -1,5 +1,5 @@
 import {
-  SpaceViewCtx,
+  ClientGameSpaceViewCtx,
   ViewGameHeader,
   ViewGameHeaderEmpty,
   ViewUsersInSpaceList,
@@ -13,7 +13,7 @@ export const ViewSpaceJoinScreen = ({
   ctx,
   dispatch,
 }: {
-  ctx: SpaceViewCtx;
+  ctx: ClientGameSpaceViewCtx;
   model: ClientModel;
   dispatch: (msg: ClientMsg) => void;
 }) => {

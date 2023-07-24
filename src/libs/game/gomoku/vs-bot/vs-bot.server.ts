@@ -1,6 +1,6 @@
 import { SpaceReqServerCtx } from "@gamezilla/shared/server";
 import { Cmd, Sub, andThen, p } from "@gamezilla/core";
-import { SpaceMsg } from "@gamezilla/shared/client";
+import { ClientGameSpaceMsg } from "@gamezilla/shared/client";
 import {
   ServerModel,
   ServerMsg,
@@ -114,7 +114,7 @@ export const updateFromSpace = ({
   msg,
   model,
 }: {
-  msg: SpaceMsg;
+  msg: ClientGameSpaceMsg;
   model: Model;
 }): {
   model: Model;

@@ -20,7 +20,7 @@ export type ViewCtx = UnauthenticatedViewCtx & {
   currentUserId: UserId;
 };
 
-export type Ctx = {
+export type ClientCtx = {
   now: Posix;
   profiles: { [userId: UserId]: Profile };
   currentUserId: UserId;

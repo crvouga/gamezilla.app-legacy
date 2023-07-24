@@ -1,4 +1,2 @@
 export * from "./ctx";
-export * from './database-connection-mysql';
-export * from './shared';
-
+export * from "./database-connection-mysql";

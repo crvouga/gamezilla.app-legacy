@@ -1,7 +1,7 @@
 import {
-  SpaceCtx,
-  SpaceMsg,
-  SpaceViewCtx,
+  ClientGameSpaceCtx,
+  ClientGameSpaceMsg,
+  ClientGameSpaceViewCtx,
   ViewBottomButtonBar,
   ViewCtx,
   GameLayout,
@@ -72,7 +72,7 @@ export const update = ({
   model,
   ctx,
 }: {
-  ctx: SpaceCtx;
+  ctx: ClientGameSpaceCtx;
   sendToServer: (msg: ToServer) => Cmd;
   msg: Msg;
   model: Model;
@@ -159,7 +159,7 @@ export const syncWithServer = ({
 
 export const updateFromSpace = (input: {
   model: Model;
-  msg: SpaceMsg;
+  msg: ClientGameSpaceMsg;
 }): {
   model: Model;
 } => {
@@ -193,7 +193,7 @@ export const View = ({
   onQuit,
 }: {
   model: Model;
-  ctx: SpaceViewCtx;
+  ctx: ClientGameSpaceViewCtx;
   dispatch: (msg: Msg) => void;
   onQuit: () => void;
 }) => {
@@ -474,7 +474,7 @@ const Feedback = ({
   ctx,
   model,
 }: {
-  ctx: SpaceViewCtx;
+  ctx: ClientGameSpaceViewCtx;
   model: GameModel | GameOverModel;
 }) => {
   if (model.type === "game-over") {
@@ -521,7 +521,7 @@ const PlayerSlot = ({
 }: {
   model: GameModel | GameOverModel;
   playerType: PlayerType;
-  ctx: SpaceViewCtx;
+  ctx: ClientGameSpaceViewCtx;
 }) => {
   return (
     <div className="flex flex-1 items-center gap-2 overflow-hidden rounded border border-neutral-700 p-2">
@@ -538,7 +538,7 @@ const PlayerSlot = ({
   );
 };
 
-export const resToStr = ({ res }: { ctx: SpaceCtx; res: Res }) => {
+export const resToStr = ({ res }: { ctx: ClientGameSpaceCtx; res: Res }) => {
   if (res.t === "start-playing" && res.result.t === "ok") {
     // const username = ctx.profiles[res.user]?.username ?? "...";
     return `Started playing`;

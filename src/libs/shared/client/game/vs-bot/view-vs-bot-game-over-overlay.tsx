@@ -1,7 +1,7 @@
 import { UserId } from "@gamezilla/shared/app";
 import { IconRobot, MyAvatar, VDom } from "@gamezilla/ui";
 import { Transition, TransitionGroup } from "react-transition-group";
-import { SpaceViewCtx } from "../game-shared";
+import { ClientGameSpaceViewCtx } from "../game-shared";
 import { PlayerType } from "./view-vs-bot";
 
 type GameOver =
@@ -14,7 +14,7 @@ type GameOver =
     };
 
 type Props = {
-  ctx: SpaceViewCtx;
+  ctx: ClientGameSpaceViewCtx;
 
   gameOver: GameOver | null;
   human: {

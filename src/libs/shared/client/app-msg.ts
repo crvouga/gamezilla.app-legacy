@@ -33,6 +33,7 @@ export type Profile = {
 
 const map = <TA, TB>(
   appMsg: ClientAppMsg<TA>,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _f: (a: TA) => TB
 ): ClientAppMsg<TB> => {
   return appMsg;

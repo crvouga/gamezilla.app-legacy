@@ -1,15 +1,18 @@
 import { Cmd, p, Sub } from "@gamezilla/core";
-import { SpaceReqServerCtx, SpaceMsg } from "@gamezilla/shared/server";
+import {
+  ServerGameSpaceMsg,
+  SpaceReqServerCtx,
+} from "@gamezilla/shared/game-space";
 import * as Chess from "../chess/chess";
 import {
+  botMoved,
+  handle,
+  initServer,
+  isBotTurn,
   ServerModel,
   ServerMsg,
-  botMoved,
-  initServer,
-  handle,
-  isBotTurn,
-  ToServer,
   ToClient,
+  ToServer,
 } from "./vs-bot.core";
 
 //
@@ -117,7 +120,7 @@ export const updateFromSpace = ({
   model,
   broadcast,
 }: {
-  msg: SpaceMsg;
+  msg: ServerGameSpaceMsg;
   broadcast: (m: ToClient) => Cmd;
   model: Model;
 }): {

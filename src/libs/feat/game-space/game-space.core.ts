@@ -1,6 +1,10 @@
 import { Err, Ok, RemoteResult, Result } from "@gamezilla/core";
 import { GameSpaceId, UserId, Username } from "@gamezilla/shared/app";
-import { Profile, Space, SpaceViewCtx } from "@gamezilla/shared/client";
+import {
+  Profile,
+  Space,
+  ClientGameSpaceViewCtx,
+} from "@gamezilla/shared/client";
 import * as GameServer from "./game.server";
 import * as Game from "./game.core";
 
@@ -113,7 +117,7 @@ export const toUsersBySpaceId = function* ({
 export const toProfilesBySpaceId = function* ({
   ctx,
 }: {
-  ctx: SpaceViewCtx;
+  ctx: ClientGameSpaceViewCtx;
 }): Generator<Profile> {
   for (const userId in ctx.space.users) {
     if (!UserId.is(userId)) {

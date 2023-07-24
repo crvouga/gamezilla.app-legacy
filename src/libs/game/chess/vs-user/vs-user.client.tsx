@@ -1,5 +1,5 @@
 import { UserId } from "@gamezilla/shared/app";
-import { SpaceCtx, ViewCtx } from "@gamezilla/shared/client";
+import { ClientGameSpaceCtx, ViewCtx } from "@gamezilla/shared/client";
 import { Audio, Cmd, Option, Sub, exhaustive, p, t } from "@gamezilla/core";
 
 import * as Chess from "../chess/chess";
@@ -146,7 +146,7 @@ export const update = (
 };
 
 export const updateFromServer = (
-  { ctx }: { ctx: SpaceCtx },
+  { ctx }: { ctx: ClientGameSpaceCtx },
   msg: ToClient,
   _model: Model
 ): [Model, Cmd<Msg>] => {
