@@ -2,7 +2,7 @@ import { easeAttrs } from "@gamezilla/core";
 import { cn } from "@gamezilla/ui";
 import { useEffect, useRef } from "react";
 import { Color, Flow } from "../flow";
-import { DraftTerminal, PathId } from "../flow/flow";
+import { NodeId, PathId } from "../flow/flow";
 import { pathIdToColor } from "../flow/flow-color";
 import * as FlowGrid from "./flow-grid";
 import { Model } from "./flow-grid";
@@ -20,6 +20,17 @@ const TERMINAL_NODE_RADIUS = 0.33;
 const TERMINAL_NODE_RADIUS_ACTIVE = 0.4;
 
 const EDGE_STROKE_WIDTH = 0.3;
+
+//
+//
+//
+//
+
+type DraftTerminal = {
+  pathId: PathId;
+  startId: NodeId;
+  endId: NodeId | null;
+};
 
 export type ViewModel = Model & {
   draftTerminals: {
@@ -90,7 +101,7 @@ export const View = ({
       */}
       <g>
         {map(FlowGrid.yieldNodes(model), (node) => {
-          const pathId = Flow.findPath(model, node.nodeId);
+          const pathId = Flow.findPathFromNode(model, node.nodeId);
           const fill = !pathId
             ? "transparent"
             : isActive?.({ nodeId: node.nodeId, pathId })

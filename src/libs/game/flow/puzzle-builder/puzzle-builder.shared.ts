@@ -3,7 +3,25 @@ import { Err, Ok, Result } from "@gamezilla/core";
 import { Flow } from "../flow";
 import { FlowGrid, FlowGridPlayUI } from "../flow-grid";
 import { bounds8x8 } from "../flow-grid/flow-grid-position";
-import { DraftTerminal, PathId, isDraftTerminalValid } from "../flow/flow";
+import { PathId } from "../flow/flow";
+
+type DraftTerminal = {
+  pathId: PathId;
+  startId: Flow.NodeId;
+  endId: Flow.NodeId | null;
+};
+
+const isDraftTerminalValid = <T extends Flow.Model>(
+  model: T,
+  draftTerminal: DraftTerminal
+): draftTerminal is Flow.Terminal => {
+  return (
+    Flow.isPathId(draftTerminal.pathId) &&
+    Flow.isNodeId(model, draftTerminal.startId) &&
+    draftTerminal.endId !== null &&
+    Flow.isNodeId(model, draftTerminal.endId)
+  );
+};
 
 //
 //

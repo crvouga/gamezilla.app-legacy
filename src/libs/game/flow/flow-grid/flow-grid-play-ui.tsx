@@ -1,5 +1,5 @@
 import { Cmd } from "@gamezilla/core";
-import { Flow, AlgoDrawPath } from "../flow";
+import { Flow, AlgoDrawPath, AlgoAutocompletePath } from "../flow";
 import * as FlowGrid from "./flow-grid";
 import * as FlowGridUI from "./flow-grid-ui";
 
@@ -69,7 +69,13 @@ export const updateModel = ({
     if (msg.t === "pressed-down-node") {
       const pressedNodeId = msg.nodeId;
 
-      const activePathId = Flow.findPath(model.grid, pressedNodeId);
+      const pressedPathId = Flow.findPathFromNode(model.grid, pressedNodeId);
+      const pressedTerminal = Flow.findTerminalFromNode(
+        model.grid,
+        pressedNodeId
+      );
+
+      const activePathId = pressedPathId ?? pressedTerminal?.pathId ?? null;
 
       if (!activePathId) {
         return {
@@ -100,7 +106,7 @@ export const updateModel = ({
         msg.nodeId
       );
 
-      const autocompleteEdge = AlgoDrawPath.toAutocompleteEdge(
+      const autocompleteEdge = AlgoAutocompletePath.toAutocompleteEdge(
         gridNew,
         model.state.activePathId
       );

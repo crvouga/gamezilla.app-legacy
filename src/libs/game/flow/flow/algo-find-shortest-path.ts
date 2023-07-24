@@ -1,23 +1,28 @@
-import { isNodeInAnyPath } from "./algo-draw-path";
 import {
   EdgeId,
   Model,
   NodeId,
-  findPath,
-  findTerminal,
+  findPathFromNode,
+  findTerminalFromNode,
   toEdgeId,
   yieldOutEdges,
 } from "./flow";
 
 export const findShortestEmptyPath = ({
   model,
-  start,
+  source,
   target,
 }: {
   model: Model;
-  start: NodeId;
+  source: NodeId;
   target: NodeId;
 }): EdgeId[] => {
+  const pathId = findPathFromNode(model, source);
+  const terminal = findTerminalFromNode(model, source);
+  const sourcePathId = pathId ?? terminal?.pathId;
+  if (!sourcePathId) {
+    return [];
+  }
   //
   //
   // Construct the breadth first tree
@@ -27,8 +32,8 @@ export const findShortestEmptyPath = ({
   const visited = new Set<NodeId>();
   const tree: { [id: NodeId]: { parent?: NodeId } } = {};
 
-  visited.add(start);
-  queue.push(start);
+  visited.add(source);
+  queue.push(source);
 
   while (queue.length > 0) {
     const current = queue.shift();
@@ -50,13 +55,15 @@ export const findShortestEmptyPath = ({
         continue;
       }
 
-      if (isNodeInAnyPath(model, adjacentId)) {
+      const adjacentPathId = findPathFromNode(model, adjacentId);
+
+      if (adjacentPathId && adjacentPathId !== sourcePathId) {
         continue;
       }
 
-      const terminal = findTerminal(model, adjacentId);
+      const terminal = findTerminalFromNode(model, adjacentId);
 
-      if (terminal && terminal.pathId !== findPath(model, start)) {
+      if (terminal && terminal.pathId !== sourcePathId) {
         continue;
       }
 
@@ -66,13 +73,15 @@ export const findShortestEmptyPath = ({
   }
 
   //
+  //
   // Construct the path from the breadth first tree
+  //
   //
 
   let current = target;
   const nodePath: NodeId[] = [current];
 
-  while (current !== start) {
+  while (current !== source) {
     const parent = tree[current]?.parent;
 
     if (!parent) {
@@ -86,7 +95,9 @@ export const findShortestEmptyPath = ({
   nodePath.reverse();
 
   //
+  //
   // Convert node path to edge path
+  //
   //
 
   const path: EdgeId[] = [];
@@ -104,7 +115,9 @@ export const findShortestEmptyPath = ({
   }
 
   //
+  //
   // Done
+  //
   //
 
   return path;
