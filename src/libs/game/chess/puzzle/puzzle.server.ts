@@ -16,7 +16,7 @@ import {
   SpaceServerCtx,
   SpaceReqServerCtx,
 } from "@gamezilla/shared/server";
-import { GameMsg } from "../chess-shared";
+import { ChessGameMsg } from "../chess-shared";
 import { PuzzleDb } from "./puzzle-db";
 import {
   PuzzleInteraction,
@@ -27,7 +27,7 @@ import {
   handle,
   initShared,
   transitionLoadingToStarted,
-} from "./puzzle.shared";
+} from "./puzzle.core";
 import { EloRating } from "./elo-rating";
 
 //
@@ -382,7 +382,7 @@ const updateFromClient_: typeof updateFromClient = ({
 export const updateFromGame = ({
   model,
 }: {
-  msg: GameMsg;
+  msg: ChessGameMsg;
   model: Model;
 }): {
   model: Model;

@@ -9,7 +9,7 @@ import {
   TopBar,
   TopBarBackButton,
 } from "@gamezilla/ui";
-import { ClientModel, ClientMsg } from "../profile.shared";
+import { ClientModel, ClientMsg } from "../profile.core";
 
 export const ViewProfileScreen = ({
   model,

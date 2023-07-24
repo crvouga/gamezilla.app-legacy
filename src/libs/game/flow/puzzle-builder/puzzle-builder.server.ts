@@ -1,4 +1,4 @@
-import { ServerModel, initShared } from './puzzle-builder.shared';
+import { ServerModel, initShared } from "./puzzle-builder.core";
 
 type Model = ServerModel;
 

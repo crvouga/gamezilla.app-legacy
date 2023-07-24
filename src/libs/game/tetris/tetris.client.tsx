@@ -15,7 +15,7 @@ import {
   rowCount,
   toGhostPiece,
   toPiece,
-} from "./tetris.shared";
+} from "./tetris.core";
 
 //
 //

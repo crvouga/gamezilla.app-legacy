@@ -14,7 +14,7 @@ import {
   handle,
   initShared,
   isBotTurn,
-} from "./chess-vs-bot.shared";
+} from "./vs-bot.core";
 
 //
 //

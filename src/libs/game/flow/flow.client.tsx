@@ -13,7 +13,7 @@ import {
   ServerModel,
   ToClient,
   ToServer,
-} from "./flow.shared";
+} from "./flow.core";
 import { PuzzleBuilderClient } from "./puzzle-builder";
 import { PlayClient } from "./play";
 

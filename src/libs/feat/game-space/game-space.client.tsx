@@ -23,7 +23,7 @@ import {
   VDom,
 } from "@gamezilla/ui";
 import * as Game from "./game.client";
-import { ViewCoverArt } from "./game.shared";
+import { ViewCoverArt } from "./game.core";
 import {
   ClientModel,
   ClientMsg,
@@ -31,7 +31,7 @@ import {
   ToClient,
   ToServer,
   toSpace,
-} from "./game-space.shared";
+} from "./game-space.core";
 import {
   ViewNotInGameScreen,
   ViewSpaceJoinScreen,

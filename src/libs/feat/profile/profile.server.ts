@@ -15,7 +15,7 @@ import {
   Req,
   ToServer,
   ToClient,
-} from "./profile.shared";
+} from "./profile.core";
 
 //
 //

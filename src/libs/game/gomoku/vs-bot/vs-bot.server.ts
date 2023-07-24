@@ -10,7 +10,7 @@ import {
   handle,
   handleBotMove,
   initShared,
-} from "./vs-bot.shared";
+} from "./vs-bot.core";
 
 //
 //

@@ -13,7 +13,7 @@ import {
   SpaceMsg,
   SpaceReqServerCtx,
 } from "@gamezilla/shared/server";
-import { ServerModel, ServerMsg, ToClient, ToServer } from "./game.shared";
+import { ServerModel, ServerMsg, ToClient, ToServer } from "./game.core";
 
 //
 //

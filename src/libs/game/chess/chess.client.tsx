@@ -13,11 +13,11 @@ import {
   ServerModel,
   ToClient,
   ToServer,
-} from "./chess.shared";
+} from "./chess.core";
 
 import Sounds from "./chess/chess-sounds";
 import * as Puzzle from "./puzzle/puzzle.client";
-import { ChessVsBotClient } from "./chess-vs-bot";
+import { VsBotClient } from "./vs-bot";
 import * as VsUser from "./vs-user/vs-user.client";
 import { ViewCoverArt } from "./chess-ui";
 
@@ -99,7 +99,7 @@ export const update = ({
 
     case "vs-bot": {
       if (model.mode.t === "vs-bot") {
-        const updated = ChessVsBotClient.update({
+        const updated = VsBotClient.update({
           sendToServer: (c) => sendToServer({ t: "vs-bot", c }),
           msg: msg.c,
           model: model.mode.c,
@@ -200,7 +200,7 @@ export const updateFromServer = ({
 
     case "vs-bot": {
       if (model.mode.t === "vs-bot") {
-        const updated = ChessVsBotClient.updateFromServer({
+        const updated = VsBotClient.updateFromServer({
           msg: msg.c,
           model: model.mode.c,
         });
@@ -328,7 +328,7 @@ export const View = ({
 
     case "vs-bot": {
       return (
-        <ChessVsBotClient.View
+        <VsBotClient.View
           ctx={ctx}
           dispatch={(c) => dispatch({ t: "vs-bot", c })}
           model={model.mode.c}
@@ -475,7 +475,7 @@ export const syncWithServer = ({
           ...clientModel,
           mode: {
             t: "vs-bot",
-            c: ChessVsBotClient.syncWithServer({
+            c: VsBotClient.syncWithServer({
               serverModel: serverModel.c,
               clientModel:
                 clientModel.mode.t === "vs-bot"

@@ -34,7 +34,7 @@ import {
   handle,
   initShared,
   toPlayerType,
-} from "./vs-user.shared";
+} from "./vs-user.core";
 
 //
 //

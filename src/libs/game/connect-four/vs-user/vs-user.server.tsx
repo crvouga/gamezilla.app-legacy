@@ -11,7 +11,7 @@ import {
   ToClient,
   toPlayerType,
   ToServer,
-} from "./vs-user.shared";
+} from "./vs-user.core";
 
 //
 //
@@ -115,9 +115,6 @@ export const updateFromSpace = ({
       model: modelNew,
       cmd: broadcast({ t: "player-left", model: modelNew }),
     };
-  }
-
-  if (msg.t === "user-joined") {
   }
 
   return { model };

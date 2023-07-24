@@ -10,7 +10,7 @@ import type {
   ClientModel,
   ServerModel,
   SharedModel,
-} from "./vs-bot.shared";
+} from "./vs-bot.core";
 import { VsBotSetup } from "@gamezilla/shared/client";
 
 export const BotLevelZod: z.ZodType<BotLevel> = z.enum([

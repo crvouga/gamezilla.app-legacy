@@ -12,7 +12,7 @@ import {
   toBotPlayer,
   ToClient,
   ToServer,
-} from "./vs-bot.shared";
+} from "./vs-bot.core";
 import { findBestMove } from "../connect-four";
 
 //

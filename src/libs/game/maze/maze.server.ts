@@ -8,7 +8,7 @@ import {
   tick,
   ToServer,
   ToClient,
-} from "./maze.shared";
+} from "./maze.core";
 
 //
 //

@@ -8,7 +8,7 @@ import {
   ToServer,
   handle,
   initShared,
-} from "./vs-bot.shared";
+} from "./vs-bot.core";
 
 //
 //

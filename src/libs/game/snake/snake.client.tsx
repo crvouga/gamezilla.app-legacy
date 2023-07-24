@@ -18,7 +18,7 @@ import {
   ToClient,
   ToServer,
   initSharedModel,
-} from "./snake.shared";
+} from "./snake.core";
 
 //
 //

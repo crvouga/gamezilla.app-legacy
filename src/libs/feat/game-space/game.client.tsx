@@ -19,7 +19,7 @@ import {
   ServerModel,
   ToClient,
   ToServer,
-} from "./game.shared";
+} from "./game.core";
 
 //
 //

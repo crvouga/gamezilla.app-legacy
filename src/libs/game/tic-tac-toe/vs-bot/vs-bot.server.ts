@@ -12,7 +12,7 @@ import {
   handle,
   initSharedModel,
   isBotTurn,
-} from "./vs-bot.shared";
+} from "./vs-bot.core";
 
 //
 //

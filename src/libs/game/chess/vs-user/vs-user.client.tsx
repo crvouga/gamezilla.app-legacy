@@ -14,7 +14,7 @@ import {
   ToServer,
   initShared,
   inputMove,
-} from "./vs-user.shared";
+} from "./vs-user.core";
 import { Chessboard } from "../chess-ui";
 
 //

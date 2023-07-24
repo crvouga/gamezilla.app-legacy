@@ -8,7 +8,7 @@ import {
   ServerMsg,
   ToClient,
   ToServer,
-} from "./connect-four.shared";
+} from "./connect-four.core";
 import * as VsBot from "./vs-bot/vs-bot.server";
 import * as VsUser from "./vs-user/vs-user.server";
 

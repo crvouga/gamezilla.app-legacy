@@ -31,7 +31,7 @@ import { Subject } from "rxjs";
 import * as AuthEmailLink from "./auth-email-link";
 import * as AuthPhone from "./auth-phone";
 import * as AuthPhoneVerify from "./auth-phone-verify";
-import { ClientModel, ClientMsg, ToClient, ToServer } from "./auth.shared";
+import { ClientModel, ClientMsg, ToClient, ToServer } from "./auth.core";
 
 //
 //

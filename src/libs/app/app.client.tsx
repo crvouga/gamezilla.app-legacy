@@ -22,7 +22,7 @@ import {
 } from "@gamezilla/ui";
 import { Subject } from "rxjs";
 import { Routing, Toast, Wire } from "./app-client";
-import { ClientModel, ClientMsg, ToClient, ToServer } from "./app.shared";
+import { ClientModel, ClientMsg, ToClient, ToServer } from "./app.core";
 
 //
 //

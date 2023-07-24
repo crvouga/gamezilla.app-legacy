@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ClientModel, ServerModel } from "./connect-four.shared";
+import { ClientModel, ServerModel } from "./connect-four.core";
 import * as VsBot from "./vs-bot/vs-bot-parsers";
 import * as VsUser from "./vs-user/vs-user-parsers";
 

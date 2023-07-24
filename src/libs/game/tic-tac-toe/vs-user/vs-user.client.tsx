@@ -20,7 +20,7 @@ import {
   ToClient,
   ToServer,
   initSharedModel,
-} from "./vs-user.shared";
+} from "./vs-user.core";
 
 //
 //

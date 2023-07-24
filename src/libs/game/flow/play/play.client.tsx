@@ -9,7 +9,7 @@ import {
   ToClient,
   ToServer,
   initShared,
-} from "./play.shared";
+} from "./play.core";
 
 type Model = ClientModel;
 

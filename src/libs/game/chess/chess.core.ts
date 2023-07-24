@@ -1,8 +1,8 @@
 import { RemoteResult, Result, Unit } from "@gamezilla/core";
 import { UserId } from "@gamezilla/shared/app";
-import * as Puzzle from "./puzzle/puzzle.shared";
-import * as VsBot from "./chess-vs-bot/chess-vs-bot.shared";
-import * as VsUser from "./vs-user/vs-user.shared";
+import * as Puzzle from "./puzzle/puzzle.core";
+import * as VsBot from "./vs-bot/vs-bot.core";
+import * as VsUser from "./vs-user/vs-user.core";
 
 export type ClientModel = {
   mode:

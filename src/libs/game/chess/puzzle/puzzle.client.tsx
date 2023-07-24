@@ -33,7 +33,7 @@ import {
   toCurrentBoard,
   toNextEloRating,
   toPlayerColor,
-} from "./puzzle.shared";
+} from "./puzzle.core";
 import { BoardProps, Chessboard } from "../chess-ui";
 
 //

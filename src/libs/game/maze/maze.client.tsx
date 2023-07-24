@@ -10,7 +10,7 @@ import {
   ToClient,
   ToServer,
   initShared,
-} from "./maze.shared";
+} from "./maze.core";
 import { Direction, Position } from "./position";
 
 //

@@ -7,7 +7,7 @@ import {
   Res,
   ToServer,
   ToClient,
-} from "./party.shared";
+} from "./party.core";
 
 //
 //

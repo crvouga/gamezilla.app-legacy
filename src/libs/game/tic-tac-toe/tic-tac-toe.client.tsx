@@ -13,7 +13,7 @@ import {
   ServerModel,
   ToClient,
   ToServer,
-} from "./tic-tac-toe.shared";
+} from "./tic-tac-toe.core";
 import { ViewCoverArt } from "./tic-tic-toe/tic-tac-toe-ui";
 import * as VsBot from "./vs-bot/vs-bot.client";
 import * as VsUser from "./vs-user/vs-user.client";

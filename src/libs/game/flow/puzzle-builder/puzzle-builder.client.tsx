@@ -20,7 +20,7 @@ import {
   ToServer,
   handle,
   initShared,
-} from "./puzzle-builder.shared";
+} from "./puzzle-builder.core";
 
 type Model = ClientModel;
 

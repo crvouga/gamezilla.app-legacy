@@ -18,7 +18,7 @@ import {
   Session,
   ToClient,
   ToServer,
-} from "./app.shared";
+} from "./app.core";
 
 //
 //

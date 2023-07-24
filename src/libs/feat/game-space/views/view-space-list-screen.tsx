@@ -8,8 +8,8 @@ import {
   TopBar,
   cn,
 } from "@gamezilla/ui";
-import { GameName, gameNameToString, ViewCoverArt } from "../game.shared";
-import { ClientModel, ClientMsg } from "../game-space.shared";
+import { GameName, gameNameToString, ViewCoverArt } from "../game.core";
+import { ClientModel, ClientMsg } from "../game-space.core";
 
 export const ViewSpaceListScreen = ({
   ctx,

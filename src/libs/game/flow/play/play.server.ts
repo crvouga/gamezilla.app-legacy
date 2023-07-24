@@ -1,3 +1,3 @@
-import { initShared } from "./play.shared";
+import { initShared } from "./play.core";
 
 export const init = initShared;

@@ -38,7 +38,7 @@ import {
   ToServer,
   handle,
   initSharedModel,
-} from "./vs-bot.shared";
+} from "./vs-bot.core";
 
 //
 //

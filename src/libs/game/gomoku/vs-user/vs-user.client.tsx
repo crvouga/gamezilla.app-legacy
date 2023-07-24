@@ -7,7 +7,7 @@ import {
   ToClient,
   ToServer,
   initShared,
-} from "./vs-user.shared";
+} from "./vs-user.core";
 
 //
 //

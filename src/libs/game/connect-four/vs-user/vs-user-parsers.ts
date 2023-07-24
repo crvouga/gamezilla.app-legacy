@@ -8,7 +8,7 @@ import {
   ServerModel,
   ClientModel,
   SharedModel,
-} from "./vs-user.shared";
+} from "./vs-user.core";
 
 export const MoveTimeLimitZod: z.ZodType<MoveTimeLimit> = z.union([
   z.literal(5),

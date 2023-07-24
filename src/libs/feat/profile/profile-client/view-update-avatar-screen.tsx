@@ -1,7 +1,7 @@
 import { ProfileAvatar } from "@gamezilla/shared/app";
 import { ViewCtx } from "@gamezilla/shared/client";
 import { MyAvatar, MyButton, MyTextField, TopBar } from "@gamezilla/ui";
-import { ClientModel, ClientMsg } from "../profile.shared";
+import { ClientModel, ClientMsg } from "../profile.core";
 
 export const ViewUpdateAvatarScreen = ({
   ctx,

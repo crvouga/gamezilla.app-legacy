@@ -10,7 +10,7 @@ import {
   isBotTurn,
   ToServer,
   ToClient,
-} from "./chess-vs-bot.shared";
+} from "./vs-bot.core";
 
 //
 //

@@ -13,7 +13,7 @@ import {
   ServerModel,
   ToClient,
   ToServer,
-} from "./gomoku.shared";
+} from "./gomoku.core";
 import { ViewCoverArt } from "./gomoku/gomoku-ui";
 import * as VsBot from "./vs-bot/vs-bot.client";
 import * as VsUser from "./vs-user/vs-user.client";

@@ -1,6 +1,6 @@
 import { Result } from "@gamezilla/core";
-import * as VsBot from "./vs-bot/vs-bot.shared";
-import * as VsUser from "./vs-user/vs-user.shared";
+import * as VsBot from "./vs-bot/vs-bot.core";
+import * as VsUser from "./vs-user/vs-user.core";
 
 //
 //

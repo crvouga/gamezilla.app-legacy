@@ -22,7 +22,7 @@ import {
   roundCountDown,
   startGame,
   stopPlaying,
-} from "./vs-user.shared";
+} from "./vs-user.core";
 
 //
 //

@@ -15,7 +15,7 @@ import {
   fromLowercase,
   toLowercaseSquare,
 } from "../../chess";
-import { BoardProps, theme } from "./chessboard.shared";
+import { BoardProps, theme } from "./chessboard-shared";
 
 export const ChessboardReact = ({
   boardOrientation,

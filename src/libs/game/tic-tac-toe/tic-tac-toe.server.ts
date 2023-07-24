@@ -2,12 +2,7 @@ import { UserId } from "@gamezilla/shared/app";
 import { SpaceMsg } from "@gamezilla/shared/client";
 import { Cmd, Result, Sub } from "@gamezilla/core";
 import { SpaceReqServerCtx } from "@gamezilla/shared/server";
-import {
-  ServerModel,
-  ServerMsg,
-  ToClient,
-  ToServer,
-} from "./tic-tac-toe.shared";
+import { ServerModel, ServerMsg, ToClient, ToServer } from "./tic-tac-toe.core";
 import * as VsBot from "./vs-bot/vs-bot.server";
 import * as VsUser from "./vs-user/vs-user.server";
 

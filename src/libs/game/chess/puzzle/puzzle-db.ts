@@ -11,7 +11,7 @@ import {
   initQuery,
   maxRating,
   minRating,
-} from "./puzzle.shared";
+} from "./puzzle.core";
 import { splitEvery } from "./utils";
 
 //

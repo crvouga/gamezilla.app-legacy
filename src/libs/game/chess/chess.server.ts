@@ -5,16 +5,10 @@ import {
   SpaceReqServerCtx,
 } from "@gamezilla/shared/server";
 import { UserId } from "@gamezilla/shared/app";
-import { GameMsg } from "./chess-shared";
-import {
-  ServerModel,
-  ServerMsg,
-  Res,
-  ToServer,
-  ToClient,
-} from "./chess.shared";
+import { ChessGameMsg } from "./chess-shared";
+import { ServerModel, ServerMsg, Res, ToServer, ToClient } from "./chess.core";
 import * as Puzzle from "./puzzle/puzzle.server";
-import { ChessVsBotServer } from "./chess-vs-bot";
+import { VsBotServer } from "./vs-bot";
 import * as VsUser from "./vs-user/vs-user.server";
 
 const { Err, Ok } = Result;
@@ -73,7 +67,7 @@ export const update = ({
 
     case "vs-bot": {
       if (msg.t === "vs-bot") {
-        const updated = ChessVsBotServer.update({
+        const updated = VsBotServer.update({
           broadcast: (msg) => broadcast({ t: "vs-bot", c: msg }),
           msg: msg.c,
           model: model.c,
@@ -147,7 +141,7 @@ export const updateFromClient = ({
 
     case "vs-bot": {
       if (model.t === "vs-bot") {
-        const updated = ChessVsBotServer.updateFromClient({
+        const updated = VsBotServer.updateFromClient({
           ctx,
           sendToClient: (msg) => sendToClient({ t: "vs-bot", c: msg }),
           broadcast: (msg) => broadcast({ t: "vs-bot", c: msg }),
@@ -220,7 +214,7 @@ export const updateFromSpace = ({
     }
 
     case "vs-bot": {
-      const updated = ChessVsBotServer.updateFromSpace({
+      const updated = VsBotServer.updateFromSpace({
         broadcast: (m) => broadcast({ t: "vs-bot", c: m }),
         msg,
         model: model.c,
@@ -261,7 +255,7 @@ export const updateFromGame = ({
   msg,
   model,
 }: {
-  msg: GameMsg;
+  msg: ChessGameMsg;
   model: Model;
 }): {
   model: Model;
@@ -319,7 +313,7 @@ const initMode = ({
     case "vs-bot": {
       const modelNew: ServerModel = {
         t: "vs-bot",
-        c: ChessVsBotServer.init({ userId: userId }),
+        c: VsBotServer.init({ userId: userId }),
       };
 
       return { result: Ok(modelNew) };
@@ -366,10 +360,7 @@ export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
     }
 
     case "vs-bot": {
-      return Sub.tag_(
-        "vs-bot",
-        ChessVsBotServer.subscriptions(intervalId, model.c)
-      );
+      return Sub.tag_("vs-bot", VsBotServer.subscriptions(intervalId, model.c));
     }
 
     case "puzzle": {

@@ -32,7 +32,7 @@ import {
   ToClient,
   ToServer,
   handle,
-} from "./game-space.shared";
+} from "./game-space.core";
 //
 //
 //
