@@ -5,7 +5,7 @@ import {
   MainMenuScreen,
   mainMenuButtons,
 } from "@gamezilla/shared/client";
-import { Audio, Cmd, Posix, RemoteResult, Sub, Unit, p } from "@gamezilla/core";
+import { Audio, Cmd, Posix, RemoteResult, Sub, p } from "@gamezilla/core";
 import { IconPuzzlePiece } from "@gamezilla/ui";
 import {
   ClientModel,
@@ -163,7 +163,7 @@ export const updateFromServer = ({
           ...model.requests,
           [msg.t]: p(
             result,
-            RemoteResult.map(() => Unit)
+            RemoteResult.map(() => null)
           ),
         },
       };

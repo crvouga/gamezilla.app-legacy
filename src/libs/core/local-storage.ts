@@ -1,10 +1,9 @@
-import { Cmd } from './cmd';
-import { p } from './pipe';
-import { Result } from './result';
-import { Task } from './task';
-import { Unit } from './utils';
+import { Cmd } from "./cmd";
+import { p } from "./pipe";
+import { Result } from "./result";
+import { Task } from "./task";
 
-export type PutResult = Result<'failed_put_item_in_local_storage', Unit>;
+export type PutResult = Result<"failed_put_item_in_local_storage", null>;
 
 export const put = <value, msg>(
   key: string,
@@ -14,9 +13,9 @@ export const put = <value, msg>(
   const task: Task<PutResult> = async () => {
     try {
       localStorage.setItem(key, JSON.stringify(value));
-      return Result.Ok(Unit);
+      return Result.Ok(null);
     } catch (error) {
-      return Result.Err('failed_put_item_in_local_storage');
+      return Result.Err("failed_put_item_in_local_storage");
     }
   };
   return p(task, Cmd.perform(mapper));

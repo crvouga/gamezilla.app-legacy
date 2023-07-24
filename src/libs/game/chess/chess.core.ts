@@ -1,4 +1,4 @@
-import { RemoteResult, Result, Unit } from "@gamezilla/core";
+import { RemoteResult, Result } from "@gamezilla/core";
 import { UserId } from "@gamezilla/shared/app";
 import * as Puzzle from "./puzzle/puzzle.core";
 import * as VsBot from "./vs-bot/vs-bot.core";
@@ -12,7 +12,7 @@ export type ClientModel = {
     | { t: "puzzle"; c: Puzzle.ClientModel };
 
   requests: {
-    [req in Req["t"]]?: RemoteResult<Problem, Unit>;
+    [req in Req["t"]]?: RemoteResult<Problem, null>;
   };
 };
 

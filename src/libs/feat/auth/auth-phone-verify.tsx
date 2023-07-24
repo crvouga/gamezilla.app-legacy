@@ -5,7 +5,6 @@ import {
   Result,
   Task,
   Time,
-  Unit,
   p,
 } from "@gamezilla/core";
 import { ClientAppMsg } from "@gamezilla/shared/client";
@@ -54,7 +53,7 @@ export const init = (): { model: Model; cmd: Cmd<Msg> } => {
       submission: { type: "idle" },
     },
     cmd: p(
-      Time.delay(100, () => Unit),
+      Time.delay(100, () => null),
       Task.chain(() => Browser.focus(codeInputId)),
       Cmd.perform((result) => ({ t: "focus-done", result }))
     ),

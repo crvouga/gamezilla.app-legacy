@@ -1,10 +1,10 @@
-import { Result, Task, Unit } from "@gamezilla/core";
+import { Result, Task } from "@gamezilla/core";
 import * as Rx from "rxjs";
 const { Err, Ok } = Result;
 
 const mediaStreams = new Rx.BehaviorSubject<MediaStream | null>(null);
 
-export type MicLoadResult = Result<string, Unit>;
+export type MicLoadResult = Result<string, null>;
 
 const load: Task<MicLoadResult> = async () => {
   try {
@@ -13,19 +13,19 @@ const load: Task<MicLoadResult> = async () => {
     });
 
     mediaStreams.next(mediaStream);
-    return Ok(Unit);
+    return Ok(null);
   } catch (error) {
     return Err("failed_to_load");
   }
 };
 
-export type MicUnloadResult = Result<string, Unit>;
+export type MicUnloadResult = Result<string, null>;
 
 const unload: Task<MicUnloadResult> = async () => {
   const mediaStream = mediaStreams.getValue();
 
   if (!mediaStream) {
-    return Ok(Unit);
+    return Ok(null);
   }
 
   for (const track of mediaStream.getTracks()) {
@@ -36,7 +36,7 @@ const unload: Task<MicUnloadResult> = async () => {
 
   mediaStreams.next(null);
 
-  return Ok(Unit);
+  return Ok(null);
 };
 
 export const volumes = new Rx.Subject<number>();

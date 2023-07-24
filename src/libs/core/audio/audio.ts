@@ -1,13 +1,12 @@
-import { Cmd } from '../cmd';
-import { p } from '../pipe';
-import { Result } from '../result';
-import { Unit } from '../utils';
+import { Cmd } from "../cmd";
+import { p } from "../pipe";
+import { Result } from "../result";
 
-export type Problem = 'Unknown';
+export type Problem = "Unknown";
 
-export type PlayResult = Result<Problem, Unit>;
+export type PlayResult = Result<Problem, null>;
 
-export type PreloadResult = Result<Problem, Unit>;
+export type PreloadResult = Result<Problem, null>;
 
 export const preload = <msg>(
   _srcList: string[],
@@ -17,17 +16,17 @@ export const preload = <msg>(
     // for (const src of srcList) {
     // getSoundInstance(src)
     // }
-    return Result.Ok(Unit);
+    return Result.Ok(null);
   }, Cmd.perform(mapper));
 
 export const play = <msg>(src: string, mapper: (result: PlayResult) => msg) =>
   p(async () => {
-    console.log('play sound', src);
+    console.log("play sound", src);
     // const sound = getSoundInstance(src);
 
     if (document.hasFocus()) {
       // sound.play();
     }
 
-    return Result.Ok(Unit);
+    return Result.Ok(null);
   }, Cmd.perform(mapper));

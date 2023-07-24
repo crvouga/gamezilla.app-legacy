@@ -26,10 +26,6 @@ export const t =
   <Value>(value: Value): [Tag, Value] =>
     [tag, value];
 
-export type Unit = { type: "Unit" };
-
-export const Unit: Unit = { type: "Unit" };
-
 type Range = [number, number];
 /**
  * @example
@@ -83,7 +79,19 @@ export const isSubset = <X>(
   eq: (x1: X, x2: X) => boolean,
   a: X[],
   b: X[]
-): boolean => a.every((a_i) => b.some((b_i) => eq(a_i, b_i)));
+): boolean => {
+  for (let ai = 0; ai < a.length; ai++) {
+    const aItem = a[ai];
+    if (!aItem) {
+      continue;
+    }
+    if (!b.some((bItem) => eq(aItem, bItem))) {
+      return false;
+    }
+  }
+
+  return false;
+};
 
 /**
  * @description
