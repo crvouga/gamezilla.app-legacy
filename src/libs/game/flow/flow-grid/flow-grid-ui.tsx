@@ -101,7 +101,7 @@ export const View = ({
       */}
       <g>
         {map(FlowGrid.yieldNodes(model), (node) => {
-          const pathId = Flow.findPathFromNode(model, node.nodeId);
+          const pathId = Flow.findPath(model, node.nodeId);
           const fill = !pathId
             ? "transparent"
             : isActive?.({ nodeId: node.nodeId, pathId })

@@ -4,8 +4,8 @@ import {
   Model,
   NodeId,
   PathId,
-  findPathFromNode,
-  findTerminalFromNode,
+  findPath,
+  findTerminal,
   setEdgePath,
   setStartNode,
   toEdgeId,
@@ -18,13 +18,13 @@ import {
  * The first function called when a user starts drawing a path.
  */
 export const startPath = <T extends Model>(model: T, nodeId: NodeId): T => {
-  const terminal = findTerminalFromNode(model, nodeId);
+  const terminal = findTerminal(model, nodeId);
 
   if (terminal) {
     return setStartNode(destroyPath(model, terminal.pathId), terminal, nodeId);
   }
 
-  const pathId = findPathFromNode(model, nodeId);
+  const pathId = findPath(model, nodeId);
 
   if (!pathId) {
     return model;
@@ -41,7 +41,7 @@ export const extendPath = <T extends Model>(
   pathId: PathId,
   newNodeId: NodeId
 ): T => {
-  const newNodePathId = findPathFromNode(model, newNodeId);
+  const newNodePathId = findPath(model, newNodeId);
   const isNewNodeInDifferentPath = newNodePathId && newNodePathId !== pathId;
   if (isNewNodeInDifferentPath) {
     return model;
@@ -83,7 +83,7 @@ const extendPathWalk = <T extends Model>({
     return model;
   }
 
-  const terminal = findTerminalFromNode(modelWithPath, currentNodeId);
+  const terminal = findTerminal(modelWithPath, currentNodeId);
 
   // Done walking the path. We made it to the end.
   if (terminal && terminal.endId === currentNodeId) {

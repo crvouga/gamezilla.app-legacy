@@ -397,7 +397,7 @@ export const yieldInEdges = function* (
 /**
  * Finds the terminal that contains the inputted node.
  */
-export const findTerminalFromNode = (
+export const findTerminal = (
   model: Pick<Model, "terminals">,
   nodeId: NodeId
 ): Terminal | null => {
@@ -412,7 +412,7 @@ export const findTerminalFromNode = (
 /**
  * Finds the path id that the inputted node is associated with.
  */
-export const findPathFromNode = (
+export const findPath = (
   model: Pick<Model, "indexEdgesIn" | "indexEdgesOut" | "edges" | "nodes">,
   nodeId: NodeId
 ): PathId | null => {
