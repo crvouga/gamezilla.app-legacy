@@ -64,7 +64,7 @@ const subscriptions: Server["subscriptions"] = () => {
 //
 //
 
-export const client: Server = {
+export const server: Server = {
   init,
   update,
   updateFromClient,
