@@ -70,7 +70,7 @@ export const updateModel = ({
       const pressedNodeId = msg.nodeId;
 
       const pressedPathId = Flow.findPath(model.grid, pressedNodeId);
-      const pressedTerminal = Flow.findTerminal(model.grid, pressedNodeId);
+      const pressedTerminal = Flow.findPathTerminal(model.grid, pressedNodeId);
 
       const activePathId = pressedPathId ?? pressedTerminal?.pathId ?? null;
 
@@ -141,7 +141,7 @@ const addAutocompleteEdge = (model: Model): Model => {
     const gridNew = AlgoDrawPath.extendPath(
       model.grid,
       model.state.activePathId,
-      model.state.autocompleteEdge.to
+      model.state.autocompleteEdge.target
     );
     return {
       ...model,
@@ -168,7 +168,7 @@ export const View = ({
 }) => {
   return (
     <FlowGridUI.View
-      model={{ ...model.grid, draftTerminals: model.grid.terminals }}
+      model={{ ...model.grid, draftTerminals: model.grid.pathTerminals }}
       onDraggedOver={(nodeId) => dispatch({ t: "dragged-over", nodeId })}
       onPressDown={(nodeId) => dispatch({ t: "pressed-down-node", nodeId })}
       onPressUp={(nodeId) => dispatch({ t: "pressed-up", nodeId })}

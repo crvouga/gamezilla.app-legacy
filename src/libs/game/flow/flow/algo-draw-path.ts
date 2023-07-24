@@ -5,7 +5,7 @@ import {
   NodeId,
   PathId,
   findPath,
-  findTerminal,
+  findPathTerminal,
   setEdgePath,
   setStartNode,
   toEdgeId,
@@ -18,7 +18,7 @@ import {
  * The first function called when a user starts drawing a path.
  */
 export const startPath = <T extends Model>(model: T, nodeId: NodeId): T => {
-  const terminal = findTerminal(model, nodeId);
+  const terminal = findPathTerminal(model, nodeId);
 
   if (terminal) {
     return setStartNode(destroyPath(model, terminal.pathId), terminal, nodeId);
@@ -47,7 +47,7 @@ export const extendPath = <T extends Model>(
     return model;
   }
 
-  const terminal = model.terminals[pathId];
+  const terminal = model.pathTerminals[pathId];
 
   // Can not extend a path that does not have a start node.
   if (!terminal) {
@@ -57,7 +57,7 @@ export const extendPath = <T extends Model>(
   const walked = extendPathWalk({
     newNodeId,
     pathId,
-    model: destroyPath(model, pathId),
+    modelNew: destroyPath(model, pathId),
     modelWithPath: model,
     currentNodeId: terminal.startId,
   });
@@ -70,25 +70,25 @@ const extendPathWalk = <T extends Model>({
   currentNodeId,
   pathId,
   modelWithPath,
-  model,
+  modelNew,
 }: {
   newNodeId: NodeId;
   pathId: PathId;
   modelWithPath: T;
-  model: T;
+  modelNew: T;
   currentNodeId: NodeId;
 }): T => {
   // Can not extend a path with a node that is already in the path.
   if (currentNodeId === newNodeId) {
-    return model;
+    return modelNew;
   }
 
-  const terminal = findTerminal(modelWithPath, currentNodeId);
+  const terminal = findPathTerminal(modelWithPath, currentNodeId);
 
   // Done walking the path. We made it to the end.
   if (terminal && terminal.endId === currentNodeId) {
-    const edgeId = toEdgeId({ from: currentNodeId, to: terminal.endId });
-    return setEdgePath(model, edgeId, pathId);
+    const edgeId = toEdgeId({ source: currentNodeId, target: terminal.endId });
+    return setEdgePath(modelNew, edgeId, pathId);
   }
 
   const edge = findOutEdgeWithPathId({
@@ -106,25 +106,25 @@ const extendPathWalk = <T extends Model>({
 
     const added = shortestPath.reduce(
       (acc, edgeId) => setEdgePath(acc, edgeId, pathId),
-      model
+      modelNew
     );
     return added;
   }
 
-  if (isNodeAssociatedWithPath(model, edge.to)) {
-    return model;
+  if (isNodeAssociatedWithPath(modelNew, edge.target)) {
+    return modelNew;
   }
 
-  const edgeId = toEdgeId({ from: currentNodeId, to: edge.to });
+  const edgeId = toEdgeId({ source: currentNodeId, target: edge.target });
 
-  const updated = setEdgePath(model, edgeId, pathId);
+  const updated = setEdgePath(modelNew, edgeId, pathId);
 
   return extendPathWalk({
     modelWithPath,
     pathId: pathId,
     newNodeId,
-    currentNodeId: edge.to,
-    model: updated,
+    currentNodeId: edge.target,
+    modelNew: updated,
   });
 };
 

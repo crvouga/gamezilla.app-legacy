@@ -51,8 +51,8 @@ export const initEmpty = ({ bounds }: { bounds: Bounds }): Model => {
       }
 
       const edge: Flow.Edge = {
-        from: positionToId(nodePosition),
-        to: positionToId(to),
+        source: positionToId(nodePosition),
+        target: positionToId(to),
       };
 
       model = Flow.addEdge(model, edge);
@@ -106,13 +106,13 @@ export const toEdge = (model: Model, edgeId: Flow.EdgeId): Edge | null => {
     return null;
   }
 
-  const from = toNode(model, edge.from);
+  const from = toNode(model, edge.source);
 
   if (!from) {
     return null;
   }
 
-  const to = toNode(model, edge.to);
+  const to = toNode(model, edge.target);
 
   if (!to) {
     return null;
@@ -166,13 +166,13 @@ export const yieldEdges = function* (
   model: Pick<Model, "edges" | "nodes" | "positions">
 ): Generator<Edge> {
   for (const edge of Flow.yieldEdges(model)) {
-    const from = toNode(model, edge.from);
+    const from = toNode(model, edge.source);
 
     if (!from) {
       continue;
     }
 
-    const to = toNode(model, edge.to);
+    const to = toNode(model, edge.target);
 
     if (!to) {
       continue;

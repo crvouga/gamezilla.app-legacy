@@ -14,7 +14,7 @@ type DraftTerminal = {
 const isDraftTerminalValid = <T extends Flow.Model>(
   model: T,
   draftTerminal: DraftTerminal
-): draftTerminal is Flow.Terminal => {
+): draftTerminal is Flow.PathTerminal => {
   return (
     Flow.isPathId(draftTerminal.pathId) &&
     Flow.isNodeId(model, draftTerminal.startId) &&

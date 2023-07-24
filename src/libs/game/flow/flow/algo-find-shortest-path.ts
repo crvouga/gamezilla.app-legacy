@@ -3,7 +3,7 @@ import {
   Model,
   NodeId,
   findPath,
-  findTerminal,
+  findPathTerminal,
   toEdgeId,
   yieldOutEdges,
 } from "./flow";
@@ -18,7 +18,7 @@ export const findShortestEmptyPath = ({
   target: NodeId;
 }): EdgeId[] => {
   const pathId = findPath(model, source);
-  const terminal = findTerminal(model, source);
+  const terminal = findPathTerminal(model, source);
   const sourcePathId = pathId ?? terminal?.pathId;
   if (!sourcePathId) {
     return [];
@@ -49,7 +49,7 @@ export const findShortestEmptyPath = ({
     }
 
     for (const outEdge of yieldOutEdges(model, current)) {
-      const adjacentId = outEdge.to;
+      const adjacentId = outEdge.target;
 
       if (visited.has(adjacentId)) {
         continue;
@@ -61,9 +61,12 @@ export const findShortestEmptyPath = ({
         continue;
       }
 
-      const terminal = findTerminal(model, adjacentId);
+      const adjacentPathTerminal = findPathTerminal(model, adjacentId);
 
-      if (terminal && terminal.pathId !== sourcePathId) {
+      if (
+        adjacentPathTerminal &&
+        adjacentPathTerminal.pathId !== sourcePathId
+      ) {
         continue;
       }
 
@@ -111,7 +114,7 @@ export const findShortestEmptyPath = ({
     if (!to) {
       continue;
     }
-    path.push(toEdgeId({ from, to }));
+    path.push(toEdgeId({ source: from, target: to }));
   }
 
   //
