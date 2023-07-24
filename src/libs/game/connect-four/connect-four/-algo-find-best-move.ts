@@ -1,5 +1,5 @@
 import { Result } from "@gamezilla/core";
-import { ChildrenFn, Minimax, ScoreFn } from "@gamezilla/shared/app";
+import { ChildrenFn, Minimax, ScoreFn } from "@gamezilla/shared/game-space";
 import {
   Columns,
   MAX_COLUMN_HEIGHT,
