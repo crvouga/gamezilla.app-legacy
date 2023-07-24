@@ -10,8 +10,8 @@ import {
   IconPlay,
   cn,
 } from "@gamezilla/ui";
-import { Color, pathIdToColor } from "../flow";
 import { FlowGridPlayUI, FlowGridUI } from "../flow-grid";
+import { Color, pathIdToColor } from "../flow-ui";
 import {
   ClientModel,
   ClientMsg,

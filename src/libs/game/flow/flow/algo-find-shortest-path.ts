@@ -8,6 +8,9 @@ import {
   yieldOutEdges,
 } from "./flow";
 
+/**
+ * Returns a list of edges without a pathId that form the shortest path between the source and target nodes.
+ */
 export const findShortestEmptyPath = ({
   model,
   source,

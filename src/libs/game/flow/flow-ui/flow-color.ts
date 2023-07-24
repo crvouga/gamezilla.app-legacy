@@ -1,4 +1,4 @@
-import { PathId } from "./flow";
+import { PathId } from "../flow/flow";
 
 // source: https://tailwindcss.com/docs/customizing-colors
 const colorToHexMap = {

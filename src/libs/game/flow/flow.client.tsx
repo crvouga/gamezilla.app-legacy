@@ -6,7 +6,7 @@ import {
 } from "@gamezilla/shared/client";
 import { Cmd, Sub } from "@gamezilla/core";
 import { IconGamepad, IconScrewdriverWrench } from "@gamezilla/ui";
-import { ViewCoverArt } from "./flow-cover-art";
+import { ViewCoverArt } from "./flow-ui/flow-cover-art";
 import {
   ClientModel,
   ClientMsg,

@@ -1,9 +1,8 @@
 import { easeAttrs } from "@gamezilla/core";
 import { cn } from "@gamezilla/ui";
 import { useEffect, useRef } from "react";
-import { Color, Flow } from "../flow";
-import { NodeId, PathId } from "../flow/flow";
-import { pathIdToColor } from "../flow/flow-color";
+import { Flow, NodeId, PathId } from "../flow";
+import { Color, pathIdToColor } from "../flow-ui";
 import * as FlowGrid from "./flow-grid";
 import { Model } from "./flow-grid";
 import * as FlowGridPosition from "./flow-grid-position";
