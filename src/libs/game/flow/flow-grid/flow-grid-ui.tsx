@@ -81,9 +81,17 @@ export const View = ({
 }) => {
   return (
     <svg
-      className={cn("w-full touch-none select-none", className)}
+      className={cn("w-full", className)}
+      style={{
+        WebkitUserSelect: "none",
+        MozUserSelect: "none",
+        msUserSelect: "none",
+        userSelect: "none",
+        touchAction: "none",
+      }}
       viewBox={toViewBox(model)}
       onContextMenu={(event) => {
+        event.stopPropagation();
         event.preventDefault();
       }}
       onTouchMove={(event) => {

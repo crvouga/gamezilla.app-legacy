@@ -14,7 +14,7 @@ export type ClientModel = SharedModel;
 export type ServerModel = SharedModel;
 
 export const initShared: SharedModel = FlowGridPlayUI.init(
-  flowGridSamples["5x5"][2]
+  flowGridSamples["8x8"][1]
 );
 
 //
