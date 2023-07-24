@@ -1,4 +1,4 @@
-import { Cmd } from "@gamezilla/core";
+import { Cmd, Sub } from "@gamezilla/core";
 import { GameSpaceId, UserId } from "@gamezilla/shared/app";
 import { ClientAppMsg } from "@gamezilla/shared/client";
 import { ServerAppMsg } from "@gamezilla/shared/server";
@@ -49,9 +49,7 @@ type GameClientUpdate<Model, Msg> = {
   msgs?: ClientAppMsg[];
 };
 
-export type GameClient<Name extends string, Model, Msg, ToClient, ToServer> = {
-  name: Name;
-
+export type GameClient<Model, ServerModel, Msg, ToClient, ToServer> = {
   init: (input: {
     ctx: GameSpaceClientCtx;
     sendToServer: (m: ToServer) => Cmd;
@@ -77,7 +75,14 @@ export type GameClient<Name extends string, Model, Msg, ToClient, ToServer> = {
     model: Model;
   }) => GameClientUpdate<Model, Msg>;
 
-  subscriptions: (input: { ctx: GameSpaceClientCtx; model: Model }) => Cmd<Msg>;
+  syncWithServer: (input: {
+    ctx: GameSpaceClientCtx;
+    sendToServer: (m: ToServer) => Cmd;
+    server: ServerModel;
+    client?: Model;
+  }) => GameClientUpdate<Model, Msg>;
+
+  subscriptions: (input: { ctx: GameSpaceClientCtx; model: Model }) => Sub<Msg>;
 
   View: (input: {
     ctx: GameSpaceViewCtx;
@@ -100,9 +105,7 @@ type GameServerUpdate<Model, Msg> = {
   msgs?: ServerAppMsg[];
 };
 
-export type GameServer<Name extends string, Model, Msg, ToClient, ToServer> = {
-  name: Name;
-
+export type GameServer<Model, Msg, ToClient, ToServer> = {
   init: (input: {
     ctx: GameSpaceServerCtx;
     sendToClient: (m: ToClient) => Cmd;
@@ -132,5 +135,5 @@ export type GameServer<Name extends string, Model, Msg, ToClient, ToServer> = {
     model: Model;
   }) => GameServerUpdate<Model, Msg>;
 
-  subscriptions: (input: { ctx: GameSpaceServerCtx; model: Model }) => Cmd<Msg>;
+  subscriptions: (input: { ctx: GameSpaceServerCtx; model: Model }) => Sub<Msg>;
 };
