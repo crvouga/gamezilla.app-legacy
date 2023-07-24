@@ -69,10 +69,10 @@ export const updateModel = ({
     if (msg.t === "pressed-down-node") {
       const pressedNodeId = msg.nodeId;
 
-      const pressedPathId = Flow.findPath(model.grid, pressedNodeId);
-      const pressedTerminal = Flow.findPathTerminal(model.grid, pressedNodeId);
+      const pathId = Flow.findPath(model.grid, pressedNodeId);
+      const pathTerminal = Flow.findPathTerminal(model.grid, pressedNodeId);
 
-      const activePathId = pressedPathId ?? pressedTerminal?.pathId ?? null;
+      const activePathId = pathId ?? pathTerminal?.pathId ?? null;
 
       if (!activePathId) {
         return {
