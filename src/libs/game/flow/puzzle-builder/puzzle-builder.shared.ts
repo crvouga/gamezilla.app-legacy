@@ -1,5 +1,5 @@
-import { UserId } from "@gamezilla/shared/app";
 import { Err, Ok, Result } from "@gamezilla/core";
+import { UserId } from "@gamezilla/shared/app";
 import { Flow } from "../flow";
 import { FlowGrid, FlowGridPlayUI } from "../flow-grid";
 import { bounds8x8 } from "../flow-grid/flow-grid-position";
@@ -9,18 +9,6 @@ type DraftTerminal = {
   pathId: PathId;
   startId: Flow.NodeId;
   endId: Flow.NodeId | null;
-};
-
-const isDraftTerminalValid = <T extends Flow.Model>(
-  model: T,
-  draftTerminal: DraftTerminal
-): draftTerminal is Flow.PathTerminal => {
-  return (
-    Flow.isPathId(draftTerminal.pathId) &&
-    Flow.isNodeId(model, draftTerminal.startId) &&
-    draftTerminal.endId !== null &&
-    Flow.isNodeId(model, draftTerminal.endId)
-  );
 };
 
 //
@@ -33,7 +21,7 @@ export type SharedModel = EditModel | PlayModel;
 
 type EditModel = {
   mode: "edit";
-  focusedPathId: Flow.PathId;
+  activePathId: Flow.PathId;
   grid: FlowGrid.Model;
   draftTerminals: {
     [pathId in Flow.PathId]?: DraftTerminal;
@@ -117,45 +105,70 @@ export const handle = ({
     return Err("must-be-host");
   }
 
-  if (msg.t === "input-mode") {
-    const modelNew = initMode(msg.mode, model);
-
-    return Ok(modelNew);
-  }
-
   if (model.mode === "edit") {
-    if (msg.t === "input-active-group") {
-      const modelNew: SharedModel = {
+    if (msg.t === "pressed-down-node") {
+      const pressedTerminal = findDraftPathTerminal(model, msg.nodeId);
+
+      if (pressedTerminal) {
+        return Ok(model);
+      }
+
+      const activeTerminal = model.draftTerminals[model.activePathId];
+
+      if (!activeTerminal) {
+        const terminalNew: DraftTerminal = {
+          pathId: model.activePathId,
+          startId: msg.nodeId,
+          endId: null,
+        };
+        const modelNew: EditModel = {
+          ...model,
+          draftTerminals: {
+            ...model.draftTerminals,
+            [model.activePathId]: terminalNew,
+          },
+        };
+        return Ok(modelNew);
+      }
+
+      const terminalNew: DraftTerminal = {
+        ...activeTerminal,
+        endId: msg.nodeId,
+      };
+      const modelNew: EditModel = {
         ...model,
-        focusedPathId: msg.pathId,
+        draftTerminals: {
+          ...model.draftTerminals,
+          [model.activePathId]: terminalNew,
+        },
+        activePathId: toNextPathId(model.activePathId),
       };
       return Ok(modelNew);
     }
 
-    if (msg.t === "pressed-down-node") {
-      const modelNew = updateEditModePressedDownNode({
-        model,
-        nodeId: msg.nodeId,
-      });
-
-      const focusedTerminal = model.draftTerminals[model.focusedPathId];
-      if (
-        focusedTerminal &&
-        isDraftTerminalValid(model.grid, focusedTerminal)
-      ) {
+    if (msg.t === "input-mode") {
+      if (msg.mode === "play") {
         return Ok({
-          ...modelNew,
-          focusedPathId: toNextPathId(model.focusedPathId),
+          ...model,
+          model: "play",
         });
       }
-
-      return Ok(modelNew);
     }
 
     return Err("must-be-in-edit-mode");
   }
 
   if (model.mode === "play") {
+    if (msg.t === "input-mode")
+      if (msg.mode === "edit") {
+        return Ok({
+          grid: model.grid,
+          mode: "edit",
+          activePathId: Flow.PATH_ID_ORDER[0],
+          draftTerminals: {},
+        });
+      }
+
     return Err("must-be-in-play-mode");
   }
 
@@ -180,59 +193,4 @@ const toNextPathId = (pathId: Flow.PathId): Flow.PathId => {
   }
 
   return pathIdNew;
-};
-
-const updateEditModePressedDownNode = ({
-  model,
-  nodeId,
-}: {
-  model: EditModel;
-  nodeId: Flow.NodeId;
-}): EditModel => {
-  const terminal = findDraftPathTerminal(model, nodeId);
-
-  if (!terminal) {
-    return model;
-  }
-
-  if (terminal.pathId !== model.focusedPathId) {
-    const draftTerminals: EditModel["draftTerminals"] = {
-      ...model.draftTerminals,
-      [terminal.pathId]: {
-        ...terminal,
-        // pair: terminal.pair.filter((x) => x !== nodeId),
-      },
-      // [model.focusedPathId]: {
-      //   pathId: model.focusedPathId,
-      //   pair: [...terminal.pair, nodeId].slice(0, 2),
-      // },
-    };
-
-    return { ...model, draftTerminals };
-  }
-
-  return { ...model };
-};
-
-const initMode = (
-  mode: ServerModel["mode"],
-  model: SharedModel
-): SharedModel => {
-  if (mode === "edit") {
-    return {
-      grid: model.grid,
-      mode: "edit",
-      focusedPathId: Flow.PATH_ID_ORDER[0],
-      draftTerminals: {},
-    };
-  }
-
-  if (mode === "play") {
-    return {
-      mode: "play",
-      ...FlowGridPlayUI.init(model.grid),
-    };
-  }
-
-  return model;
 };

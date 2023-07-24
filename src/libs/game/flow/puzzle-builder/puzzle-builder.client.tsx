@@ -149,10 +149,10 @@ export const View = ({
               cx={0}
               cy={0}
               r={1}
-              fill={Color.toHex(pathIdToColor[model.focusedPathId])}
+              fill={Color.toHex(pathIdToColor[model.activePathId])}
             />
           </svg>
-          <p>{capitalize(pathIdToColor[model.focusedPathId])}</p>
+          <p>{capitalize(pathIdToColor[model.activePathId])}</p>
         </div>
       </div>
       <ViewBottomButtonBar
