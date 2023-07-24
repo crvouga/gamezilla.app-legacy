@@ -59,7 +59,7 @@ export const initShared: SharedModel = {
 //
 //
 
-export const nodeIdToDraftTerminal = (
+export const findDraftPathTerminal = (
   model: SharedModel,
   nodeId: Flow.NodeId
 ): DraftTerminal | null => {
@@ -189,7 +189,7 @@ const updateEditModePressedDownNode = ({
   model: EditModel;
   nodeId: Flow.NodeId;
 }): EditModel => {
-  const terminal = nodeIdToDraftTerminal(model, nodeId);
+  const terminal = findDraftPathTerminal(model, nodeId);
 
   if (!terminal) {
     return model;
