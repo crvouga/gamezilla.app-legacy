@@ -20,6 +20,19 @@ export type SharedModel = {
   shotRule: ShotRule;
 };
 
+export const initShared = {
+  players: [],
+  ships: [],
+  shots: [],
+  shotRule: {
+    t: "chain-fire",
+  },
+};
+
+export type ClientModel = SharedModel;
+
+export type ServerModel = SharedModel;
+
 type Shot = {
   from: PlayerType;
   to: PlayerType;
@@ -64,6 +77,10 @@ type BotLevel = "Easy" | "Medium" | "Hard";
 // Msg
 //
 //
+
+export type ClientMsg = Req;
+
+export type ServerMsg = { t: null };
 
 export type Req =
   | { t: "start-playing"; team: PlayerType }
@@ -137,6 +154,7 @@ export const toTurn = (model: SharedModel): PlayerType => {
   }
 };
 
-const toTurnRuleCount = (_model: SharedModel): PlayerType => {
+const toTurnRuleCount = (model: SharedModel): PlayerType => {
+  console.log(model);
   return "player-one";
 };
