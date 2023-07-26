@@ -7,6 +7,7 @@ import {
   andThen,
   exhaustive,
   p,
+  removeKey,
 } from "@gamezilla/core";
 import { ClientId, GameSpaceId, UserId } from "@gamezilla/shared/app";
 import {
@@ -160,7 +161,6 @@ export const updateFromClient_: UpdateFromClient = (input) => {
   const { msg, model, ctx } = input;
   switch (msg.t) {
     case "list":
-    case "input-game":
     case "join":
     case "destroy":
     case "create": {
@@ -178,6 +178,10 @@ export const updateFromClient_: UpdateFromClient = (input) => {
         model: res.result.value,
         cmd: input.broadcast(res),
       };
+    }
+
+    case "input-game": {
+      return handleInputGame(input);
     }
 
     case "leave": {
@@ -251,6 +255,93 @@ export const updateFromClient_: UpdateFromClient = (input) => {
     default:
       return exhaustive(msg[0]);
   }
+};
+
+const handleInputGame: UpdateFromClient = ({
+  msg,
+  model,
+  ctx,
+  sendToClient,
+  sendToUser,
+  broadcast,
+}) => {
+  if (msg.t !== "input-game") {
+    return { model };
+  }
+
+  if (!ctx) {
+    return { model };
+  }
+
+  const user = model.users[ctx.currentUserId];
+
+  if (!user) {
+    return { model };
+  }
+
+  const space = model.spaces[user.spaceId];
+
+  if (!space) {
+    return { model };
+  }
+
+  if (space.hostId !== ctx.currentUserId) {
+    return {
+      model,
+      cmd: broadcast({ t: "input-game", result: Err("You must be the host") }),
+    };
+  }
+
+  if (!msg.gameName) {
+    const modelNew: Model = {
+      ...model,
+      games: removeKey(user.spaceId, model.games),
+    };
+
+    return {
+      model: modelNew,
+      cmd: broadcast({ t: "input-game", result: Ok(modelNew) }),
+    };
+  }
+  const initial = Game.init({ gameName: msg.gameName })({
+    ctx: {
+      ...ctx,
+      hostId: space.hostId,
+    },
+    sendToClient: (m) => sendToClient({ t: "game", c: m }),
+    sendToSpace: (m) =>
+      sendToSpace({
+        sendToUser,
+        model,
+        spaceId: user.spaceId,
+        msg: { t: "game", c: m },
+      }),
+  });
+
+  const modelNew: Model = {
+    ...model,
+    games: {
+      ...model.games,
+      [user.spaceId]: initial.model,
+    },
+  };
+
+  return {
+    model: modelNew,
+    cmd: Cmd.batch([
+      p(
+        initial.cmd ?? Cmd.None,
+        Cmd.map(
+          (m): Msg => ({
+            t: "game",
+            c: m,
+            spaceId: user.spaceId,
+          })
+        )
+      ),
+      broadcast({ t: "input-game", result: Ok(modelNew) }),
+    ]),
+  };
 };
 
 const updateLeave: UpdateFromClient = ({

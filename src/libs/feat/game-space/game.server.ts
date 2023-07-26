@@ -7,13 +7,15 @@ import { MazeServer } from "@gamezilla/game/maze";
 import { SnakeServer } from "@gamezilla/game/snake";
 import { TetrisServer } from "@gamezilla/game/tetris";
 import { TicTacToeServer } from "@gamezilla/game/tic-tac-toe";
-import { UserId } from "@gamezilla/shared/app";
 import {
+  GameServer,
   GameSpaceMsg,
   GameSpaceReqCtx,
   GameSpaceServerCtx,
 } from "@gamezilla/shared/game-space";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./game.core";
+
+type Server = GameServer<Model, Msg, ToClient, ToServer>;
 
 //
 //
@@ -25,56 +27,52 @@ import { ServerModel, ServerMsg, ToClient, ToServer } from "./game.core";
 
 export type Model = ServerModel;
 
-export const init = ({
-  gameName,
-  ctx,
-}: {
-  ctx: { currentUserId: UserId };
-  gameName: Model["t"];
-}): Model => {
-  switch (gameName) {
-    case "connect-four": {
-      return { t: "connect-four", c: ConnectFourServer.init };
-    }
+export const init =
+  ({ gameName }: { gameName: Model["t"] }): Server["init"] =>
+  (input) => {
+    switch (gameName) {
+      case "connect-four": {
+        return GameServer.tagInit(
+          "connect-four",
+          ConnectFourServer.init
+        )(input);
+      }
 
-    case "tic-tac-toe": {
-      return { t: "tic-tac-toe", c: TicTacToeServer.init };
-    }
+      case "tic-tac-toe": {
+        return { model: { t: "tic-tac-toe", c: TicTacToeServer.init } };
+      }
 
-    case "chess": {
-      return { t: "chess", c: ChessServer.init };
-    }
+      case "chess": {
+        return { model: { t: "chess", c: ChessServer.init } };
+      }
 
-    case "gomoku": {
-      return { t: "gomoku", c: GomokuServer.init };
-    }
+      case "gomoku": {
+        return { model: { t: "gomoku", c: GomokuServer.init } };
+      }
 
-    case "tetris": {
-      return { t: "tetris", c: TetrisServer.init };
-    }
+      case "tetris": {
+        return { model: { t: "tetris", c: TetrisServer.init } };
+      }
 
-    case "snake": {
-      return { t: "snake", c: SnakeServer.init };
-    }
+      case "snake": {
+        return { model: { t: "snake", c: SnakeServer.init } };
+      }
 
-    case "maze": {
-      return {
-        t: "maze",
-        c: MazeServer.init({
-          userId: ctx.currentUserId,
-        }),
-      };
-    }
+      case "maze": {
+        return {
+          model: { t: "maze", c: MazeServer.init({}) },
+        };
+      }
 
-    case "flow": {
-      return { t: "flow", c: FlowServer.init };
-    }
+      case "flow": {
+        return { model: { t: "flow", c: FlowServer.init } };
+      }
 
-    default: {
-      return exhaustive(gameName);
+      default: {
+        return exhaustive(gameName);
+      }
     }
-  }
-};
+  };
 
 //
 //

@@ -1,6 +1,10 @@
 import { Cmd, Err, Result, Sub } from "@gamezilla/core";
 import { UserId } from "@gamezilla/shared/app";
-import { GameSpaceMsg, GameSpaceReqCtx } from "@gamezilla/shared/game-space";
+import {
+  GameServer,
+  GameSpaceMsg,
+  GameSpaceReqCtx,
+} from "@gamezilla/shared/game-space";
 import {
   Mode,
   ServerModel,
@@ -10,6 +14,8 @@ import {
 } from "./connect-four.core";
 import * as VsBot from "./vs-bot/vs-bot.server";
 import * as VsUser from "./vs-user/vs-user.server";
+
+type Server = GameServer<Model, Msg, ToClient, ToServer>;
 
 //
 //
@@ -21,7 +27,11 @@ import * as VsUser from "./vs-user/vs-user.server";
 
 export type Model = ServerModel;
 
-export const init: Model = { t: "none" };
+export const init: Server["init"] = () => {
+  return {
+    model: { t: "none" },
+  };
+};
 
 //
 //

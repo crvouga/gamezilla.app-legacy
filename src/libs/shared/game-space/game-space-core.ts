@@ -106,12 +106,18 @@ type GameServerUpdate<Model, Msg> = {
 };
 
 export type GameServer<Model, Msg, ToClient, ToServer> = {
+  /**
+   * This returns the initial state
+   */
   init: (input: {
     ctx: GameSpaceServerCtx;
     sendToClient: (m: ToClient) => Cmd;
     sendToSpace: (m: ToClient) => Cmd;
   }) => GameServerUpdate<Model, Msg>;
 
+  /**
+   * This handles updates from the server
+   */
   update: (input: {
     ctx: GameSpaceServerCtx;
     sendToClient: (m: ToClient) => Cmd;
@@ -120,6 +126,9 @@ export type GameServer<Model, Msg, ToClient, ToServer> = {
     model: Model;
   }) => GameServerUpdate<Model, Msg>;
 
+  /**
+   * This handles updates from the client.
+   */
   updateFromClient: (input: {
     sendToClient: (m: ToClient) => Cmd;
     sendToSpace: (m: ToClient) => Cmd;
@@ -127,6 +136,9 @@ export type GameServer<Model, Msg, ToClient, ToServer> = {
     model: Model;
   }) => GameServerUpdate<Model, Msg>;
 
+  /**
+   * This handles updates from the game space itself.
+   */
   updateFromGameSpace: (input: {
     ctx: GameSpaceServerCtx;
     sendToClient: (m: ToClient) => Cmd;
@@ -136,4 +148,31 @@ export type GameServer<Model, Msg, ToClient, ToServer> = {
   }) => GameServerUpdate<Model, Msg>;
 
   subscriptions: (input: { ctx: GameSpaceServerCtx; model: Model }) => Sub<Msg>;
+};
+
+const tagInit =
+  <T extends string, Model, Msg, ToClient, ToServer>(
+    tag: T,
+    init: GameServer<Model, Msg, ToClient, ToServer>["init"]
+  ): GameServer<
+    { t: T; c: Model },
+    { t: T; c: Msg },
+    { t: T; c: ToClient },
+    { t: T; c: ToServer }
+  >["init"] =>
+  (input) => {
+    const initial = init({
+      ...input,
+      sendToClient: (m) => input.sendToClient({ t: tag, c: m }),
+      sendToSpace: (m) => input.sendToSpace({ t: tag, c: m }),
+    });
+    return {
+      model: { t: tag, c: initial.model },
+      cmd: Cmd.tag_(tag, initial.cmd),
+      msgs: initial.msgs,
+    };
+  };
+
+export const GameServer = {
+  tagInit,
 };

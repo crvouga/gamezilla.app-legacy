@@ -1,9 +1,8 @@
 import { Err, Ok, RemoteResult, Result } from "@gamezilla/core";
 import { GameSpaceId, UserId, Username } from "@gamezilla/shared/app";
 import { Profile } from "@gamezilla/shared/client";
-import { GameSpaceViewCtx, GameSpace } from "@gamezilla/shared/game-space";
+import { GameSpace, GameSpaceViewCtx } from "@gamezilla/shared/game-space";
 import * as Game from "./game.core";
-import * as GameServer from "./game.server";
 
 //
 //
@@ -233,17 +232,6 @@ export const handle = ({
         return Err("impossible_state_space_id_taken");
       }
 
-      const { gameName } = msg;
-
-      const gameNew = gameName
-        ? GameServer.init({
-            gameName,
-            ctx: {
-              currentUserId: ctx.currentUserId,
-            },
-          })
-        : undefined;
-
       const spaceNew: GameSpace = {
         gameSpaceId: msg.spaceId,
         hostId: ctx.currentUserId,
@@ -259,10 +247,7 @@ export const handle = ({
 
       const modelNew: Model = {
         ...model,
-        games: {
-          ...model.games,
-          [spaceNew.gameSpaceId]: gameNew,
-        },
+        games: model.games,
         spaces: {
           ...model.spaces,
           [spaceNew.gameSpaceId]: spaceNew,
@@ -363,47 +348,8 @@ export const handle = ({
     }
 
     case "input-game": {
-      const { gameName } = msg;
-
-      const user = model.users[ctx.currentUserId];
-
-      if (!user) {
-        return Err("not_in_space");
-      }
-
-      const space = model.spaces[user.spaceId];
-
-      if (!space) {
-        return Err("not_in_space");
-      }
-
-      if (space.hostId !== user.userId) {
-        return Err("must_be_host");
-      }
-
-      if (!gameName) {
-        const modelNew: ServerModel = {
-          ...model,
-          games: removeKey(space.gameSpaceId, model.games),
-        };
-
-        return Ok(modelNew);
-      }
-
-      const gameNew = GameServer.init({
-        gameName,
-        ctx,
-      });
-
-      const modelNew: ServerModel = {
-        ...model,
-        games: {
-          ...model.games,
-          [space.gameSpaceId]: gameNew,
-        },
-      };
-
-      return Ok(modelNew);
+      //
+      return Ok(model);
     }
   }
 };

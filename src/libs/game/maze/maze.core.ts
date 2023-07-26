@@ -312,15 +312,17 @@ const mapValues = <A, B>(f: (a: A) => B, record: Record<string, A>) => {
 //
 //
 
-export const initShared = ({ userId }: { userId: UserId }): SharedModel => {
+export const initShared = ({ userId }: { userId?: UserId }): SharedModel => {
   return {
     type: "setup",
-    players: {
-      [userId]: {
-        color: colorSeq[0],
-        userId,
-      },
-    },
+    players: userId
+      ? {
+          [userId]: {
+            color: colorSeq[0],
+            userId,
+          },
+        }
+      : {},
     seed: "some arbitrary seed",
     lower: { x: -10, y: -10 },
     upper: { x: 10, y: 10 },
