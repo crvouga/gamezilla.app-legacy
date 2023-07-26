@@ -340,7 +340,7 @@ const syncWithServer = ({
   const gamesNew = Object.entries(serverModel.games).reduce<
     [ClientModel["games"], Cmd<ClientMsg>]
   >(
-    (gamesNew, [spaceId, backendGame]) => {
+    (gamesNew, [spaceId, serverGame]) => {
       if (!GameSpaceId.is(spaceId)) {
         return gamesNew;
       }
@@ -349,56 +349,69 @@ const syncWithServer = ({
         return gamesNew;
       }
 
-      const frontendGame = clientModel.games[spaceId];
+      const space = serverModel.spaces[spaceId];
 
-      if (frontendGame) {
+      if (!space) {
+        return gamesNew;
+      }
+
+      const gameSpaceCtx: GameSpaceClientCtx = {
+        ...ctx,
+        hostId: space.hostId,
+      };
+
+      const clientGame = clientModel.games[spaceId];
+
+      if (clientGame) {
         const merged = Game.syncWithServer({
-          ctx,
-          serverModel: backendGame,
-          clientModel: frontendGame,
+          ctx: gameSpaceCtx,
+          server: serverGame,
+          client: clientGame,
           sendToServer: (msg) => sendToServer({ t: "game", c: msg }),
         });
 
         return [
           {
             ...gamesNew[0],
-            [spaceId]: merged[0],
+            [spaceId]: merged.model,
           },
           Cmd.batch([
             gamesNew[1],
             p(
-              merged[1],
+              merged.cmd ?? Cmd.None,
               Cmd.map((m): Msg => ({ t: "game", c: m }))
             ),
           ]),
         ];
       }
 
-      const initial = Game.init({
-        gameName: backendGame.t,
-        ctx,
+      const gameName = serverGame.t;
+
+      const initial = Game.init({ gameName })({
+        ctx: gameSpaceCtx,
+        sendToServer: (msg) => sendToServer({ t: "game", c: msg }),
       });
 
       const merged = Game.syncWithServer({
-        ctx,
-        serverModel: backendGame,
-        clientModel: initial[0],
+        ctx: gameSpaceCtx,
+        server: serverGame,
+        client: initial.model,
         sendToServer: (msg) => sendToServer({ t: "game", c: msg }),
       });
 
       return [
         {
           ...gamesNew[0],
-          [spaceId]: merged[0],
+          [spaceId]: merged.model,
         },
         Cmd.batch([
           gamesNew[1],
           p(
-            initial[1],
+            initial.cmd ?? Cmd.None,
             Cmd.map((msg) => ({ t: "game", c: msg }))
           ),
           p(
-            merged[1],
+            merged.cmd ?? Cmd.None,
             Cmd.map((msg) => ({ t: "game", c: msg }))
           ),
         ]),
@@ -445,9 +458,24 @@ export const subscriptions = (ctx: ClientCtx, model: Model): Sub<Msg> => {
     return Sub.None;
   }
 
-  return p(
-    Game.subscriptions(`space/${user.spaceId}`, ctx, game),
-    Sub.map((msg) => ({ t: "game", c: msg }))
+  const space = model.spaces[user.spaceId];
+
+  if (!space) {
+    return Sub.None;
+  }
+
+  const gameSpaceCtx: GameSpaceClientCtx = {
+    ...ctx,
+    hostId: space.hostId,
+  };
+
+  return Sub.tag_(
+    "game",
+    Game.subscriptions({
+      ctx: gameSpaceCtx,
+      model: game,
+      intervalId: `space/${user.spaceId}`,
+    })
   );
 };
 

@@ -14,7 +14,7 @@
     "client": "vite",
     "ngrok": "ngrok start --all",
     "db:dev": "pscale connect gamezilla dev",
-    "tc": "tsc --noEmit && tsc --noEmit --watch"
+    "tc": "tsc --noEmit --watch"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.14",

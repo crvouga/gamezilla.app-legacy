@@ -1,7 +1,7 @@
 import { Cmd, Sub } from "@gamezilla/core";
 import { ServerAppMsg } from "@gamezilla/shared/server";
 import { GameSpaceMsg } from "../game-space-core";
-import { GameSpaceServerCtx } from "../game-space-server";
+import { GameSpaceReqCtx, GameSpaceServerCtx } from "../game-space-server";
 //
 //
 //
@@ -10,12 +10,9 @@ import { GameSpaceServerCtx } from "../game-space-server";
 //
 //
 
-type GameServerUpdate<Model, Msg> = {
-  model: Model;
-  cmd?: Cmd<Msg>;
-  msgs?: ServerAppMsg[];
-};
-
+/**
+ * This is the interface for a game server.
+ */
 export type GameServer<Model, Msg, ToClient, ToServer> = {
   /**
    * This returns the initial state
@@ -24,28 +21,40 @@ export type GameServer<Model, Msg, ToClient, ToServer> = {
     ctx: GameSpaceServerCtx;
     sendToClient: (m: ToClient) => Cmd;
     sendToSpace: (m: ToClient) => Cmd;
-  }) => GameServerUpdate<Model, Msg>;
+  }) => {
+    model: Model;
+    cmd?: Cmd<Msg>;
+    msgs?: ServerAppMsg[];
+  };
 
   /**
    * This handles updates from the server
    */
   update: (input: {
     ctx: GameSpaceServerCtx;
-    sendToClient: (m: ToClient) => Cmd;
     sendToSpace: (m: ToClient) => Cmd;
     msg: Msg;
     model: Model;
-  }) => GameServerUpdate<Model, Msg>;
+  }) => {
+    model: Model;
+    cmd?: Cmd<Msg>;
+    msgs?: ServerAppMsg[];
+  };
 
   /**
    * This handles updates from the client.
    */
   updateFromClient: (input: {
+    ctx: GameSpaceReqCtx;
     sendToClient: (m: ToClient) => Cmd;
     sendToSpace: (m: ToClient) => Cmd;
     msg: ToServer;
     model: Model;
-  }) => GameServerUpdate<Model, Msg>;
+  }) => {
+    model: Model;
+    cmd?: Cmd<Msg>;
+    msgs?: ServerAppMsg[];
+  };
 
   /**
    * This handles updates from the game space itself.
@@ -56,12 +65,23 @@ export type GameServer<Model, Msg, ToClient, ToServer> = {
     sendToSpace: (m: ToClient) => Cmd;
     msg: GameSpaceMsg;
     model: Model;
-  }) => GameServerUpdate<Model, Msg>;
+  }) => {
+    model: Model;
+    cmd?: Cmd<Msg>;
+    msgs?: ServerAppMsg[];
+  };
 
-  subscriptions: (input: { ctx: GameSpaceServerCtx; model: Model }) => Sub<Msg>;
+  subscriptions: (input: {
+    ctx: GameSpaceServerCtx;
+    intervalId: string;
+    model: Model;
+  }) => Sub<Msg>;
 };
 
-export const tagServer = <T extends string, Model, Msg, ToClient, ToServer>(
+/**
+ * Tags to all the messages and models that are inputted and outputted from this module
+ */
+const tag = <T extends string, Model, Msg, ToClient, ToServer>(
   tag: T,
   server: GameServer<Model, Msg, ToClient, ToServer>
 ): GameServer<
@@ -88,7 +108,6 @@ export const tagServer = <T extends string, Model, Msg, ToClient, ToServer>(
         ...input,
         msg: input.msg.c,
         model: input.model.c,
-        sendToClient: (m) => input.sendToClient({ t: tag, c: m }),
         sendToSpace: (m) => input.sendToSpace({ t: tag, c: m }),
       });
       return {
@@ -137,29 +156,6 @@ export const tagServer = <T extends string, Model, Msg, ToClient, ToServer>(
   };
 };
 
-const tagInit =
-  <T extends string, Model, Msg, ToClient, ToServer>(
-    tag: T,
-    init: GameServer<Model, Msg, ToClient, ToServer>["init"]
-  ): GameServer<
-    { t: T; c: Model },
-    { t: T; c: Msg },
-    { t: T; c: ToClient },
-    { t: T; c: ToServer }
-  >["init"] =>
-  (input) => {
-    const initial = init({
-      ...input,
-      sendToClient: (m) => input.sendToClient({ t: tag, c: m }),
-      sendToSpace: (m) => input.sendToSpace({ t: tag, c: m }),
-    });
-    return {
-      model: { t: tag, c: initial.model },
-      cmd: Cmd.tag_(tag, initial.cmd),
-      msgs: initial.msgs,
-    };
-  };
-
 export const GameServer = {
-  tagInit,
+  tag,
 };

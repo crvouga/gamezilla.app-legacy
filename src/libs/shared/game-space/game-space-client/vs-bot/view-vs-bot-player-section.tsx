@@ -56,7 +56,7 @@ export const VsBotPlayerSection = ({
   );
 };
 
-const Slot = ({ children }: { children: VDom }) => {
+const Slot = ({ children }: { children: VDom | VDom[] }) => {
   return (
     <div className="col-span-3 flex items-center gap-2 rounded-md border border-neutral-600 p-2">
       {children}

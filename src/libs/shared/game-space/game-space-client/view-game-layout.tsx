@@ -7,7 +7,7 @@ export const GameLayout = ({
 }: {
   className?: string;
   isSpectating?: boolean;
-  children?: VDom;
+  children?: VDom | VDom[];
 }) => {
   return (
     <div

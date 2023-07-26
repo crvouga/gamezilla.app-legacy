@@ -7,11 +7,8 @@ import { MazeClient } from "@gamezilla/game/maze";
 import { SnakeClient } from "@gamezilla/game/snake";
 import { TetrisClient } from "@gamezilla/game/tetris";
 import { TicTacToeClient } from "@gamezilla/game/tic-tac-toe";
-import { ClientAppMsg, ClientCtx } from "@gamezilla/shared/client";
-import {
-  GameSpaceClientCtx,
-  GameSpaceViewCtx,
-} from "@gamezilla/shared/game-space";
+import { ClientAppMsg } from "@gamezilla/shared/client";
+import { GameClient } from "@gamezilla/shared/game-space";
 import {
   ClientModel,
   ClientMsg,
@@ -19,6 +16,16 @@ import {
   ToClient,
   ToServer,
 } from "./game.core";
+
+type Client = GameClient<
+  ClientModel,
+  ServerModel,
+  ClientMsg,
+  ToClient,
+  ToServer
+>;
+
+const ConnectFour = GameClient.tag("connect-four", ConnectFourClient);
 
 //
 //
@@ -30,56 +37,52 @@ import {
 
 export type Model = ClientModel;
 
-export const init = ({
-  gameName,
-  ctx,
-}: {
-  gameName: Model["t"];
-  ctx: ClientCtx;
-}): [Model, Cmd<Msg>] => {
-  switch (gameName) {
-    case "tic-tac-toe": {
-      return [{ t: "tic-tac-toe", c: TicTacToeClient.init }, Cmd.None];
-    }
+export const init =
+  ({ gameName }: { gameName: Model["t"] }): Client["init"] =>
+  (input) => {
+    switch (gameName) {
+      case "tic-tac-toe": {
+        return { model: { t: "tic-tac-toe", c: TicTacToeClient.init } };
+      }
 
-    case "connect-four": {
-      return [{ t: "connect-four", c: ConnectFourClient.init }, Cmd.None];
-    }
+      case "connect-four": {
+        return ConnectFour.init(input);
+      }
 
-    case "chess": {
-      const initial = ChessClient.init();
-      return [{ t: "chess", c: initial.model }, Cmd.tag_("chess", initial.cmd)];
-    }
+      case "chess": {
+        const initial = ChessClient.init();
+        return {
+          model: { t: "chess", c: initial.model },
+          cmd: Cmd.tag_("chess", initial.cmd),
+        };
+      }
 
-    case "gomoku": {
-      return [{ t: "gomoku", c: GomokuClient.init }, Cmd.None];
-    }
+      case "gomoku": {
+        return { model: { t: "gomoku", c: GomokuClient.init } };
+      }
 
-    case "tetris": {
-      return [{ t: "tetris", c: TetrisClient.init }, Cmd.None];
-    }
+      case "tetris": {
+        return { model: { t: "tetris", c: TetrisClient.init } };
+      }
 
-    case "snake": {
-      return [{ t: "snake", c: SnakeClient.init }, Cmd.None];
-    }
+      case "snake": {
+        return { model: { t: "snake", c: SnakeClient.init } };
+      }
 
-    case "maze": {
-      return [
-        {
-          t: "maze",
-          c: MazeClient.init({
-            userId: ctx.currentUserId,
-          }),
-        },
-        Cmd.None,
-      ];
-    }
+      case "maze": {
+        return {
+          model: {
+            t: "maze",
+            c: MazeClient.init({}),
+          },
+        };
+      }
 
-    case "flow": {
-      return [{ t: "flow", c: FlowClient.init({}) }, Cmd.None];
+      case "flow": {
+        return { model: { t: "flow", c: FlowClient.init({}) } };
+      }
     }
-  }
-};
+  };
 
 //
 //
@@ -91,33 +94,11 @@ export const init = ({
 
 export type Msg = ClientMsg;
 
-export const update = ({
-  ctx,
-  sendToServer,
-  msg,
-  model,
-}: {
-  ctx: GameSpaceClientCtx;
-  sendToServer: (msg: ToServer) => Cmd;
-  msg: Msg;
-  model: Model;
-}): {
-  model: Model;
-  cmd?: Cmd<Msg>;
-  msgs?: ClientAppMsg[];
-} => {
-  if (model.t === "connect-four" && msg.t === "connect-four") {
-    const updated = ConnectFourClient.update({
-      ctx,
-      sendToServer: (msg) => sendToServer({ t: "connect-four", c: msg }),
-      msg: msg.c,
-      model: model.c,
-    });
+export const update: Client["update"] = (input) => {
+  const { ctx, sendToServer, msg, model } = input;
 
-    return {
-      model: { t: "connect-four", c: updated.model },
-      cmd: Cmd.tag_("connect-four", updated.cmd),
-    };
+  if (model.t === "connect-four" && msg.t === "connect-four") {
+    return ConnectFour.update({ ...input, msg: msg, model: model });
   }
 
   if (model.t === "tic-tac-toe" && msg.t === "tic-tac-toe") {
@@ -216,32 +197,10 @@ export const update = ({
   return { model };
 };
 
-export const updateFromServer = ({
-  ctx,
-  sendToServer,
-  msg,
-  model,
-}: {
-  ctx: GameSpaceClientCtx;
-  sendToServer: (msg: ToServer) => Cmd;
-  msg: ToClient;
-  model: Model;
-}): {
-  model: Model;
-  cmd?: Cmd<Msg>;
-  msgs?: ClientAppMsg[];
-} => {
+export const updateFromServer: Client["updateFromServer"] = (input) => {
+  const { ctx, sendToServer, msg, model } = input;
   if (msg.t === "connect-four" && model.t === "connect-four") {
-    const [child, cmd] = ConnectFourClient.updateFromServer({
-      msg: msg.c,
-      ctx,
-      model: model.c,
-    });
-
-    return {
-      model: { t: "connect-four", c: child },
-      cmd: Cmd.tag_("connect-four", cmd),
-    };
+    return ConnectFour.updateFromServer({ ...input, msg, model });
   }
 
   if (msg.t === "gomoku" && model.t === "gomoku") {
@@ -339,16 +298,10 @@ export const updateFromServer = ({
 //
 //
 
-export const subscriptions = (
-  intervalId: string,
-  ctx: ClientCtx,
-  model: Model
-): Sub<Msg> => {
+export const subscriptions: Client["subscriptions"] = (input): Sub<Msg> => {
+  const { model, ctx, intervalId } = input;
   if (model.t === "connect-four") {
-    return Sub.tag_(
-      "connect-four",
-      ConnectFourClient.subscriptions(intervalId, ctx.now, model.c)
-    );
+    return ConnectFour.subscriptions({ ...input, model });
   }
 
   if (model.t === "tic-tac-toe") {
@@ -401,24 +354,11 @@ export const subscriptions = (
 //
 //
 
-export const View = ({
-  ctx,
-  model,
-  dispatch,
-}: {
-  ctx: GameSpaceViewCtx;
-  model: Model;
-  dispatch: (msg: Msg) => void;
-}) => {
+export const View: Client["View"] = (input) => {
+  const { ctx, model, dispatch } = input;
   switch (model.t) {
     case "connect-four": {
-      return (
-        <ConnectFourClient.View
-          ctx={ctx}
-          model={model.c}
-          dispatch={(c) => dispatch({ t: "connect-four", c })}
-        />
-      );
+      return <ConnectFour.View {...input} model={model} />;
     }
 
     case "tic-tac-toe": {
@@ -496,27 +436,21 @@ export const View = ({
   }
 };
 
-export const syncWithServer = ({
-  ctx,
-  sendToServer,
-  clientModel,
-  serverModel,
-}: {
-  ctx: ClientCtx;
-  sendToServer: (msg: ToServer) => Cmd;
-  clientModel: ClientModel;
-  serverModel: ServerModel;
-}): [ClientModel, Cmd<Msg>] => {
-  switch (serverModel.t) {
+export const syncWithServer: Client["syncWithServer"] = (input) => {
+  const { ctx, sendToServer, client, server } = input;
+  switch (server.t) {
     case "chess": {
-      if (clientModel.t === "chess") {
+      if (client?.t === "chess") {
         const merged = ChessClient.syncWithServer({
           sendToServer: (msg) => sendToServer({ t: "chess", c: msg }),
-          clientModel: clientModel.c,
-          serverModel: serverModel.c,
+          clientModel: client.c,
+          serverModel: server.c,
         });
 
-        return [{ t: "chess", c: merged.model }, Cmd.tag_("chess", merged.cmd)];
+        return {
+          model: { t: "chess", c: merged.model },
+          cmd: Cmd.tag_("chess", merged.cmd),
+        };
       }
 
       const initial = ChessClient.init();
@@ -524,214 +458,179 @@ export const syncWithServer = ({
       const merged = ChessClient.syncWithServer({
         sendToServer: (msg) => sendToServer({ t: "chess", c: msg }),
         clientModel: initial.model,
-        serverModel: serverModel.c,
+        serverModel: server.c,
       });
 
-      return [
-        {
+      return {
+        model: {
           t: "chess",
           c: merged.model,
         },
-        Cmd.batch([
+        cmd: Cmd.batch([
           Cmd.tag_("chess", initial.cmd),
           Cmd.tag_("chess", merged.cmd),
         ]),
-      ];
+      };
     }
 
     case "connect-four": {
-      if (clientModel.t === "connect-four") {
-        return [
-          {
-            t: "connect-four",
-            c: ConnectFourClient.syncWithServer({
-              ctx,
-              clientModel: clientModel.c,
-              serverModel: serverModel.c,
-            }),
-          },
-          Cmd.None,
-        ];
-      }
-
-      const initial = ConnectFourClient.init;
-
-      return [
-        {
-          t: "connect-four",
-          c: ConnectFourClient.syncWithServer({
-            ctx,
-            clientModel: initial,
-            serverModel: serverModel.c,
-          }),
-        },
-        Cmd.None,
-      ];
+      return ConnectFour.syncWithServer({
+        ...input,
+        server,
+        client: client?.t === "connect-four" ? client : undefined,
+      });
     }
 
     case "tic-tac-toe": {
-      if (clientModel.t === "tic-tac-toe") {
-        return [
-          {
+      if (client?.t === "tic-tac-toe") {
+        return {
+          model: {
             t: "tic-tac-toe",
             c: TicTacToeClient.syncWithServer({
               ctx,
-              clientModel: clientModel.c,
-              serverModel: serverModel.c,
+              clientModel: client.c,
+              serverModel: server.c,
             }),
           },
-          Cmd.None,
-        ];
+        };
       }
 
       const initial = TicTacToeClient.init;
 
-      return [
-        {
+      return {
+        model: {
           t: "tic-tac-toe",
           c: TicTacToeClient.syncWithServer({
             ctx,
             clientModel: initial,
-            serverModel: serverModel.c,
+            serverModel: server.c,
           }),
         },
-        Cmd.None,
-      ];
+      };
     }
 
     case "gomoku": {
-      if (clientModel.t === "gomoku") {
-        return [
-          {
+      if (client?.t === "gomoku") {
+        return {
+          model: {
             t: "gomoku",
             c: GomokuClient.syncWithServer({
               ctx,
-              clientModel: clientModel.c,
-              serverModel: serverModel.c,
+              clientModel: client.c,
+              serverModel: server.c,
             }),
           },
-          Cmd.None,
-        ];
+        };
       }
 
-      return [
-        {
+      return {
+        model: {
           t: "gomoku",
           c: GomokuClient.syncWithServer({
             ctx,
             clientModel: GomokuClient.init,
-            serverModel: serverModel.c,
+            serverModel: server.c,
           }),
         },
-        Cmd.None,
-      ];
+      };
     }
 
     case "tetris": {
-      if (clientModel.t === "tetris") {
-        return [
-          {
+      if (client?.t === "tetris") {
+        return {
+          model: {
             t: "tetris",
             c: TetrisClient.syncWithServer({
-              clientModel: clientModel.c,
-              serverModel: serverModel.c,
+              clientModel: client.c,
+              serverModel: server.c,
             }),
           },
-          Cmd.None,
-        ];
+        };
       }
 
-      return [
-        {
+      return {
+        model: {
           t: "tetris",
           c: TetrisClient.syncWithServer({
             clientModel: TetrisClient.init,
-            serverModel: serverModel.c,
+            serverModel: server.c,
           }),
         },
-        Cmd.None,
-      ];
+      };
     }
 
     case "snake": {
-      if (clientModel.t === "snake") {
-        return [
-          {
+      if (client?.t === "snake") {
+        return {
+          model: {
             t: "snake",
             c: SnakeClient.syncWithServer({
-              clientModel: clientModel.c,
-              serverModel: serverModel.c,
+              clientModel: client.c,
+              serverModel: server.c,
             }),
           },
-
-          Cmd.None,
-        ];
+        };
       }
 
-      return [
-        {
+      return {
+        model: {
           t: "snake",
           c: SnakeClient.syncWithServer({
             clientModel: SnakeClient.init,
-            serverModel: serverModel.c,
+            serverModel: server.c,
           }),
         },
-        Cmd.None,
-      ];
+      };
     }
 
     case "maze": {
-      if (clientModel.t === "maze") {
-        return [
-          {
+      if (client?.t === "maze") {
+        return {
+          model: {
             t: "maze",
             c: MazeClient.syncWithServer({
-              clientModel: clientModel.c,
-              serverModel: serverModel.c,
+              clientModel: client.c,
+              serverModel: server.c,
             }),
           },
-          Cmd.None,
-        ];
+        };
       }
 
-      return [
-        {
+      return {
+        model: {
           t: "maze",
           c: MazeClient.syncWithServer({
             clientModel: MazeClient.init({
               userId: ctx.currentUserId,
             }),
-            serverModel: serverModel.c,
+            serverModel: server.c,
           }),
         },
-        Cmd.None,
-      ];
+      };
     }
 
     case "flow": {
-      if (clientModel.t === "flow") {
-        return [
-          {
+      if (client?.t === "flow") {
+        return {
+          model: {
             t: "flow",
             c: FlowClient.syncWithServer({
-              client: clientModel.c,
-              server: serverModel.c,
+              client: client.c,
+              server: server.c,
             }),
           },
-          Cmd.None,
-        ];
+        };
       }
 
-      return [
-        {
+      return {
+        model: {
           t: "flow",
           c: FlowClient.syncWithServer({
             client: FlowClient.init({}),
-            server: serverModel.c,
+            server: server.c,
           }),
         },
-        Cmd.None,
-      ];
+      };
     }
   }
 };

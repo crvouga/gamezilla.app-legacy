@@ -268,10 +268,12 @@ export const View = ({
         </div>
       </div>
 
-      {!isSpectating && (
+      {!isSpectating ? (
         <ViewBottomButtonBar
           actions={toBottomBarActions({ model, onClose, dispatch })}
         />
+      ) : (
+        <></>
       )}
     </GameLayout>
   );

@@ -384,9 +384,18 @@ const sendToUser = (
 //
 //
 
-export const subscriptions = ({ model }: { model: Model }): Sub<Msg> => {
+export const subscriptions = ({
+  model,
+  ctx,
+}: {
+  model: Model;
+  ctx: ServerCtx;
+}): Sub<Msg> => {
   return Sub.batch([
-    Sub.tag_("game-space", GameSpaceServer.subscriptions(model.space)),
+    Sub.tag_(
+      "game-space",
+      GameSpaceServer.subscriptions({ model: model.space, ctx })
+    ),
     p(
       onConnect,
       Sub.map(

@@ -97,7 +97,15 @@ const main = async () => {
 
   const program = Program.create({
     init: AppServer.init,
-    subscriptions: AppServer.subscriptions,
+    subscriptions: (input) => {
+      return AppServer.subscriptions({
+        ...input,
+        ctx: {
+          mySql,
+          now: input.now,
+        },
+      });
+    },
     update: (input) => {
       try {
         return AppServer.update({

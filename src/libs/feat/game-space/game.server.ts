@@ -7,15 +7,12 @@ import { MazeServer } from "@gamezilla/game/maze";
 import { SnakeServer } from "@gamezilla/game/snake";
 import { TetrisServer } from "@gamezilla/game/tetris";
 import { TicTacToeServer } from "@gamezilla/game/tic-tac-toe";
-import {
-  GameServer,
-  GameSpaceMsg,
-  GameSpaceReqCtx,
-  GameSpaceServerCtx,
-} from "@gamezilla/shared/game-space";
+import { GameServer } from "@gamezilla/shared/game-space";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./game.core";
 
 type Server = GameServer<Model, Msg, ToClient, ToServer>;
+
+const ConnectFour = GameServer.tag("connect-four", ConnectFourServer);
 
 //
 //
@@ -32,10 +29,7 @@ export const init =
   (input) => {
     switch (gameName) {
       case "connect-four": {
-        return GameServer.tagInit(
-          "connect-four",
-          ConnectFourServer.init
-        )(input);
+        return ConnectFour.init(input);
       }
 
       case "tic-tac-toe": {
@@ -84,303 +78,199 @@ export const init =
 
 export type Msg = ServerMsg;
 
-export const update = ({
-  broadcast,
-  msg,
-  model,
-  ctx,
-}: {
-  ctx: GameSpaceServerCtx;
-  broadcast: (m: ToClient) => Cmd;
-  msg: Msg;
-  model: Model;
-}): [Model, Cmd<Msg>] => {
-  switch (msg.t) {
-    case "connect-four": {
-      if (model.t === "connect-four") {
-        const updated = ConnectFourServer.update({
-          broadcast: (m) => broadcast({ t: "connect-four", c: m }),
-          msg: msg.c,
-          model: model.c,
-        });
-        return [
-          { t: "connect-four", c: updated.model },
-          Cmd.tag_("connect-four", updated.cmd),
-        ];
-      }
-      return [model, Cmd.None];
-    }
+export const update: Server["update"] = (input) => {
+  const { sendToSpace, msg, model, ctx } = input;
 
-    case "tic-tac-toe": {
-      if (model.t === "tic-tac-toe") {
-        const updated = TicTacToeServer.update({
-          broadcast: (m) => broadcast({ t: "tic-tac-toe", c: m }),
-          msg: msg.c,
-          model: model.c,
-        });
-        return [
-          { t: "tic-tac-toe", c: updated.model },
-          Cmd.tag_("tic-tac-toe", updated.cmd ?? Cmd.None),
-        ];
-      }
-      return [model, Cmd.None];
-    }
-
-    case "chess": {
-      if (model.t === "chess") {
-        const [child, cmd] = ChessServer.update({
-          broadcast: (m) => broadcast({ t: "chess", c: m }),
-          ctx,
-          msg: msg.c,
-          model: model.c,
-        });
-        return [{ t: "chess", c: child }, Cmd.tag_("chess", cmd)];
-      }
-      return [model, Cmd.None];
-    }
-
-    case "gomoku": {
-      if (model.t === "gomoku") {
-        const updated = GomokuServer.update({
-          msg: msg.c,
-          model: model.c,
-        });
-        return [
-          { t: "gomoku", c: updated.model },
-          Cmd.tag_("gomoku", updated.cmd),
-        ];
-      }
-      return [model, Cmd.None];
-    }
-
-    case "tetris": {
-      if (model.t === "tetris") {
-        const [child, cmd] = TetrisServer.update(
-          {
-            broadcast: (m) => broadcast({ t: "tetris", c: m }),
-          },
-          msg.c,
-          model.c
-        );
-        return [{ t: "tetris", c: child }, Cmd.tag_("tetris", cmd)];
-      }
-      return [model, Cmd.None];
-    }
-
-    case "snake": {
-      if (model.t === "snake") {
-        const [child, cmd] = SnakeServer.update(
-          {
-            broadcast: (m) => broadcast({ t: "snake", c: m }),
-          },
-          msg.c,
-          model.c
-        );
-        return [{ t: "snake", c: child }, Cmd.tag_("snake", cmd)];
-      }
-      return [model, Cmd.None];
-    }
-
-    case "maze": {
-      if (model.t === "maze") {
-        const [child, cmd] = MazeServer.update(
-          {
-            broadcast: (m) => broadcast({ t: "maze", c: m }),
-          },
-          msg.c,
-          model.c
-        );
-        return [{ t: "maze", c: child }, Cmd.tag_("maze", cmd)];
-      }
-      return [model, Cmd.None];
-    }
-
-    case "flow": {
-      if (model.t !== "flow") {
-        return [model, Cmd.None];
-      }
-      const updated = FlowServer.update({
-        model: model.c,
-        msg: msg.c,
-      });
-      return [
-        { t: "flow", c: updated.model },
-        Cmd.tag_("flow", updated?.cmd ?? Cmd.None),
-      ];
-    }
-
-    default: {
-      return exhaustive(msg);
-    }
+  if (model.t === "connect-four" && msg.t === "connect-four") {
+    return ConnectFour.update({ ...input, msg, model });
   }
+
+  if (model.t === "tic-tac-toe" && msg.t === "tic-tac-toe") {
+    const updated = TicTacToeServer.update({
+      broadcast: (m) => sendToSpace({ t: "tic-tac-toe", c: m }),
+      msg: msg.c,
+      model: model.c,
+    });
+    return {
+      model: { t: "tic-tac-toe", c: updated.model },
+      cmd: Cmd.tag_("tic-tac-toe", updated.cmd ?? Cmd.None),
+    };
+  }
+
+  if (model.t === "chess" && msg.t === "chess") {
+    const [child, cmd] = ChessServer.update({
+      broadcast: (m) => sendToSpace({ t: "chess", c: m }),
+      ctx,
+      msg: msg.c,
+      model: model.c,
+    });
+    return { model: { t: "chess", c: child }, cmd: Cmd.tag_("chess", cmd) };
+  }
+
+  if (model.t === "gomoku" && msg.t === "gomoku") {
+    const updated = GomokuServer.update({
+      msg: msg.c,
+      model: model.c,
+    });
+    return {
+      model: { t: "gomoku", c: updated.model },
+      cmd: Cmd.tag_("gomoku", updated.cmd),
+    };
+  }
+
+  if (model.t === "tetris" && msg.t === "tetris") {
+    const [child, cmd] = TetrisServer.update(
+      {
+        broadcast: (m) => sendToSpace({ t: "tetris", c: m }),
+      },
+      msg.c,
+      model.c
+    );
+    return { model: { t: "tetris", c: child }, cmd: Cmd.tag_("tetris", cmd) };
+  }
+
+  if (model.t === "snake" && msg.t === "snake") {
+    const [child, cmd] = SnakeServer.update(
+      {
+        broadcast: (m) => sendToSpace({ t: "snake", c: m }),
+      },
+      msg.c,
+      model.c
+    );
+    return { model: { t: "snake", c: child }, cmd: Cmd.tag_("snake", cmd) };
+  }
+  if (model.t === "maze" && msg.t === "maze") {
+    const [child, cmd] = MazeServer.update(
+      {
+        broadcast: (m) => sendToSpace({ t: "maze", c: m }),
+      },
+      msg.c,
+      model.c
+    );
+    return { model: { t: "maze", c: child }, cmd: Cmd.tag_("maze", cmd) };
+  }
+
+  if (model.t === "flow" && msg.t === "flow") {
+    const updated = FlowServer.update({
+      model: model.c,
+      msg: msg.c,
+    });
+    return {
+      model: { t: "flow", c: updated.model },
+      cmd: Cmd.tag_("flow", updated?.cmd ?? Cmd.None),
+    };
+  }
+
+  return { model };
 };
 
-export const updateFromClient = ({
-  sendToClient,
-  broadcast,
-  ctx,
-  msg,
-  model,
-}: {
-  ctx: GameSpaceReqCtx;
-  sendToClient: (msg: ToClient) => Cmd;
-  broadcast: (msg: ToClient) => Cmd;
-  msg: ToServer;
-  model: Model;
-}): [Model, Cmd<Msg>] => {
-  switch (msg.t) {
-    case "connect-four": {
-      if (model.t === "connect-four") {
-        const updated = ConnectFourServer.updateFromClient({
-          ctx,
-          sendToClient: (msg) => sendToClient({ t: "connect-four", c: msg }),
-          broadcast: (msg) => broadcast({ t: "connect-four", c: msg }),
-          msg: msg.c,
-          model: model.c,
-        });
-        return [
-          { t: "connect-four", c: updated.model },
-          Cmd.tag_("connect-four", updated.cmd),
-        ];
-      }
-      return [model, Cmd.None];
-    }
+export const updateFromClient: Server["updateFromClient"] = (input) => {
+  const { sendToClient, sendToSpace, ctx, msg, model } = input;
 
-    case "tic-tac-toe": {
-      if (model.t === "tic-tac-toe") {
-        const updated = TicTacToeServer.updateFromClient({
-          sendToClient: (msg) => sendToClient({ t: "tic-tac-toe", c: msg }),
-          broadcast: (msg) => broadcast({ t: "tic-tac-toe", c: msg }),
-          msg: msg.c,
-          model: model.c,
-          ctx,
-        });
-        return [
-          { t: "tic-tac-toe", c: updated.model },
-          Cmd.tag_("tic-tac-toe", updated.cmd ?? Cmd.None),
-        ];
-      }
-      return [model, Cmd.None];
-    }
-
-    case "chess": {
-      if (model.t === "chess") {
-        const [child, cmd] = ChessServer.updateFromClient({
-          sendToClient: (msg) => sendToClient({ t: "chess", c: msg }),
-          broadcast: (msg) => broadcast({ t: "chess", c: msg }),
-          msg: msg.c,
-          model: model.c,
-          ctx,
-        });
-        return [{ t: "chess", c: child }, Cmd.tag_("chess", cmd)];
-      }
-      return [model, Cmd.None];
-    }
-
-    case "gomoku": {
-      if (model.t === "gomoku") {
-        const updated = GomokuServer.updateFromClient({
-          ctx,
-          broadcast: (m) => broadcast({ t: "gomoku", c: m }),
-          sendToClient: (m) => sendToClient({ t: "gomoku", c: m }),
-          msg: msg.c,
-          model: model.c,
-        });
-
-        return [
-          { t: "gomoku", c: updated.model },
-          Cmd.tag_("gomoku", updated.cmd),
-        ];
-      }
-      return [model, Cmd.None];
-    }
-
-    case "tetris": {
-      if (model.t === "tetris") {
-        const [child, cmd] = TetrisServer.updateFromClient(
-          {
-            // ctx,
-            broadcast: (m) => broadcast({ t: "tetris", c: m }),
-            sendToClient: (m) => sendToClient({ t: "tetris", c: m }),
-          },
-          msg.c,
-          model.c
-        );
-        return [{ t: "tetris", c: child }, Cmd.tag_("tetris", cmd)];
-      }
-      return [model, Cmd.None];
-    }
-
-    case "snake": {
-      if (model.t === "snake") {
-        const [child, cmd] = SnakeServer.updateFromClient(
-          {
-            // ctx,
-            broadcast: (m) => broadcast({ t: "snake", c: m }),
-            sendToClient: (m) => sendToClient({ t: "snake", c: m }),
-          },
-          msg.c,
-          model.c
-        );
-        return [{ t: "snake", c: child }, Cmd.tag_("snake", cmd)];
-      }
-      return [model, Cmd.None];
-    }
-
-    case "maze": {
-      if (model.t === "maze") {
-        const [child, cmd] = MazeServer.updateFromClient(
-          {
-            // ctx,
-            broadcast: (m) => broadcast({ t: "maze", c: m }),
-            // sendToClient: (m) => sendToClient(['maze', m]),
-          },
-          msg.c,
-          model.c
-        );
-        return [{ t: "maze", c: child }, Cmd.tag_("maze", cmd)];
-      }
-      return [model, Cmd.None];
-    }
-
-    case "flow": {
-      if (model.t !== "flow") {
-        return [model, Cmd.None];
-      }
-      const updated = FlowServer.updateFromClient({
-        model: model.c,
-        msg: msg.c,
-        ctx,
-        broadcast: (m) => broadcast({ t: "flow", c: m }),
-      });
-      return [
-        { t: "flow", c: updated.model },
-        Cmd.tag_("flow", updated?.cmd ?? Cmd.None),
-      ];
-    }
-
-    default: {
-      return exhaustive(msg);
-    }
+  if (model.t === "connect-four" && msg.t === "connect-four") {
+    return ConnectFour.updateFromClient({ ...input, msg, model });
   }
+
+  if (model.t === "tic-tac-toe" && msg.t === "tic-tac-toe") {
+    const updated = TicTacToeServer.updateFromClient({
+      sendToClient: (msg) => sendToClient({ t: "tic-tac-toe", c: msg }),
+      broadcast: (msg) => sendToSpace({ t: "tic-tac-toe", c: msg }),
+      msg: msg.c,
+      model: model.c,
+      ctx,
+    });
+    return {
+      model: { t: "tic-tac-toe", c: updated.model },
+      cmd: Cmd.tag_("tic-tac-toe", updated.cmd ?? Cmd.None),
+    };
+  }
+
+  if (model.t === "chess" && msg.t === "chess") {
+    const [child, cmd] = ChessServer.updateFromClient({
+      sendToClient: (msg) => sendToClient({ t: "chess", c: msg }),
+      broadcast: (msg) => sendToSpace({ t: "chess", c: msg }),
+      msg: msg.c,
+      model: model.c,
+      ctx,
+    });
+    return { model: { t: "chess", c: child }, cmd: Cmd.tag_("chess", cmd) };
+  }
+
+  if (model.t === "gomoku" && msg.t === "gomoku") {
+    const updated = GomokuServer.updateFromClient({
+      ctx,
+      broadcast: (m) => sendToSpace({ t: "gomoku", c: m }),
+      sendToClient: (m) => sendToClient({ t: "gomoku", c: m }),
+      msg: msg.c,
+      model: model.c,
+    });
+
+    return {
+      model: { t: "gomoku", c: updated.model },
+      cmd: Cmd.tag_("gomoku", updated.cmd),
+    };
+  }
+
+  if (model.t === "tetris" && msg.t === "tetris") {
+    const [child, cmd] = TetrisServer.updateFromClient(
+      {
+        // ctx,
+        broadcast: (m) => sendToSpace({ t: "tetris", c: m }),
+        sendToClient: (m) => sendToClient({ t: "tetris", c: m }),
+      },
+      msg.c,
+      model.c
+    );
+    return { model: { t: "tetris", c: child }, cmd: Cmd.tag_("tetris", cmd) };
+  }
+
+  if (model.t === "snake" && msg.t === "snake") {
+    const [child, cmd] = SnakeServer.updateFromClient(
+      {
+        // ctx,
+        broadcast: (m) => sendToSpace({ t: "snake", c: m }),
+        sendToClient: (m) => sendToClient({ t: "snake", c: m }),
+      },
+      msg.c,
+      model.c
+    );
+    return { model: { t: "snake", c: child }, cmd: Cmd.tag_("snake", cmd) };
+  }
+
+  if (model.t === "maze" && msg.t === "maze") {
+    const [child, cmd] = MazeServer.updateFromClient(
+      {
+        broadcast: (m) => sendToSpace({ t: "maze", c: m }),
+      },
+      msg.c,
+      model.c
+    );
+    return { model: { t: "maze", c: child }, cmd: Cmd.tag_("maze", cmd) };
+  }
+
+  if (model.t === "flow" && msg.t === "flow") {
+    const updated = FlowServer.updateFromClient({
+      model: model.c,
+      msg: msg.c,
+      ctx,
+      broadcast: (m) => sendToSpace({ t: "flow", c: m }),
+    });
+    return {
+      model: { t: "flow", c: updated.model },
+      cmd: Cmd.tag_("flow", updated?.cmd ?? Cmd.None),
+    };
+  }
+
+  return { model };
 };
 
-export const updateFromSpace = ({
-  broadcast,
-  msg,
-  model,
-}: {
-  broadcast: (m: ToClient) => Cmd;
-  msg: GameSpaceMsg;
-  model: Model;
-}): {
-  model: Model;
-  cmd?: Cmd<Msg>;
-} => {
+export const updateFromSpace: Server["updateFromGameSpace"] = (input) => {
+  const { sendToSpace, msg, model } = input;
+
   switch (model.t) {
     case "chess": {
       const updated = ChessServer.updateFromSpace({
-        broadcast: (m) => broadcast({ t: "chess", c: m }),
+        broadcast: (m) => sendToSpace({ t: "chess", c: m }),
         msg,
         model: model.c,
       });
@@ -392,20 +282,12 @@ export const updateFromSpace = ({
     }
 
     case "connect-four": {
-      const updated = ConnectFourServer.updateFromSpace({
-        msg,
-        model: model.c,
-        broadcast: (m) => broadcast({ t: "connect-four", c: m }),
-      });
-      return {
-        model: { t: "connect-four", c: updated.model },
-        cmd: Cmd.tag_("connect-four", updated.cmd ?? Cmd.None),
-      };
+      return ConnectFour.updateFromGameSpace({ ...input, msg, model });
     }
 
     case "tic-tac-toe": {
       const updated = TicTacToeServer.updateFromSpace({
-        broadcast: (msg) => broadcast({ t: "tic-tac-toe", c: msg }),
+        broadcast: (msg) => sendToSpace({ t: "tic-tac-toe", c: msg }),
         msg,
         model: model.c,
       });
@@ -452,13 +334,11 @@ export const updateFromSpace = ({
 //
 //
 
-export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
+export const subscriptions: Server["subscriptions"] = (input): Sub<Msg> => {
+  const { model, intervalId } = input;
   switch (model.t) {
     case "connect-four": {
-      return Sub.tag_(
-        "connect-four",
-        ConnectFourServer.subscriptions(intervalId, model.c)
-      );
+      return ConnectFour.subscriptions({ ...input, model });
     }
 
     case "tic-tac-toe": {

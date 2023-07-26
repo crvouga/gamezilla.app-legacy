@@ -7,10 +7,10 @@ export const MyDrawer = ({
 }: {
   onClose?: () => void;
   open?: boolean;
-  children?: VDom;
+  children?: VDom | VDom[];
 }) => {
   if (!open) {
-    return null;
+    return <></>;
   }
 
   return (

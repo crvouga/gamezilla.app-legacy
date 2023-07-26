@@ -1,10 +1,6 @@
 import { Cmd, Err, Result, Sub } from "@gamezilla/core";
 import { UserId } from "@gamezilla/shared/app";
-import {
-  GameServer,
-  GameSpaceMsg,
-  GameSpaceReqCtx,
-} from "@gamezilla/shared/game-space";
+import { GameServer } from "@gamezilla/shared/game-space";
 import {
   Mode,
   ServerModel,
@@ -43,21 +39,10 @@ export const init: Server["init"] = () => {
 
 export type Msg = ServerMsg;
 
-export const update = ({
-  broadcast,
-  msg,
-  model,
-}: {
-  broadcast: (msg: ToClient) => Cmd;
-  msg: Msg;
-  model: Model;
-}): {
-  model: Model;
-  cmd?: Cmd<Msg>;
-} => {
+export const update: Server["update"] = ({ sendToSpace, msg, model }) => {
   if (msg.t === "vs-bot" && model.t === "vs-bot") {
     const updated = VsBot.update({
-      broadcast: (c) => broadcast({ t: "vs-bot", c }),
+      broadcast: (c) => sendToSpace({ t: "vs-bot", c }),
       msg: msg.c,
       model: model.c,
     });
@@ -69,7 +54,7 @@ export const update = ({
 
   if (msg.t === "vs-user" && model.t === "vs-user") {
     const updated = VsUser.update({
-      broadcast: (c) => broadcast({ t: "vs-user", c }),
+      broadcast: (c) => sendToSpace({ t: "vs-user", c }),
       msg: msg.c,
       model: model.c,
     });
@@ -82,22 +67,13 @@ export const update = ({
   return { model };
 };
 
-export const updateFromClient = ({
+export const updateFromClient: Server["updateFromClient"] = ({
   sendToClient,
-  broadcast,
+  sendToSpace,
   msg,
   model,
   ctx,
-}: {
-  sendToClient: (msg: ToClient) => Cmd;
-  broadcast: (msg: ToClient) => Cmd;
-  ctx: GameSpaceReqCtx;
-  msg: ToServer;
-  model: Model;
-}): {
-  model: Model;
-  cmd?: Cmd<Msg>;
-} => {
+}) => {
   if (msg.t === "input-mode") {
     const { mode } = msg;
 
@@ -112,7 +88,7 @@ export const updateFromClient = ({
 
     return {
       model: modelNew,
-      cmd: broadcast({ ...msg, result: Result.Ok(modelNew) }),
+      cmd: sendToSpace({ ...msg, result: Result.Ok(modelNew) }),
     };
   }
 
@@ -120,7 +96,7 @@ export const updateFromClient = ({
     const updated = VsBot.updateFromClient({
       ctx,
       sendToClient: (c) => sendToClient({ t: "vs-bot", c }),
-      broadcast: (c) => broadcast({ t: "vs-bot", c }),
+      broadcast: (c) => sendToSpace({ t: "vs-bot", c }),
       msg: msg.c,
       model: model.c,
     });
@@ -134,7 +110,7 @@ export const updateFromClient = ({
   if (msg.t === "vs-user" && model.t === "vs-user") {
     const updated = VsUser.updateFromClient({
       sendToClient: (c) => sendToClient({ t: "vs-user", c }),
-      broadcast: (c) => broadcast({ t: "vs-user", c }),
+      broadcast: (c) => sendToSpace({ t: "vs-user", c }),
       msg: msg.c,
       model: model.c,
       ctx,
@@ -149,18 +125,11 @@ export const updateFromClient = ({
   return { model };
 };
 
-export const updateFromSpace = ({
-  broadcast,
+export const updateFromGameSpace: Server["updateFromGameSpace"] = ({
   msg,
   model,
-}: {
-  msg: GameSpaceMsg;
-  model: Model;
-  broadcast: (m: ToClient) => Cmd;
-}): {
-  model: Model;
-  cmd?: Cmd<Msg>;
-} => {
+  sendToSpace,
+}) => {
   switch (model.t) {
     case "none": {
       return { model };
@@ -170,7 +139,7 @@ export const updateFromSpace = ({
       const updated = VsBot.updateFromSpace({
         msg,
         model: model.c,
-        broadcast: (c) => broadcast({ t: "vs-bot", c }),
+        broadcast: (c) => sendToSpace({ t: "vs-bot", c }),
       });
       return {
         model: { t: "vs-bot", c: updated.model },
@@ -182,7 +151,7 @@ export const updateFromSpace = ({
       const updated = VsUser.updateFromSpace({
         msg,
         model: model.c,
-        broadcast: (c) => broadcast({ t: "vs-user", c }),
+        broadcast: (c) => sendToSpace({ t: "vs-user", c }),
       });
 
       return {
@@ -225,7 +194,10 @@ const initMode = (mode: Mode, userId: UserId): Model => {
 //
 //
 
-export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
+export const subscriptions: Server["subscriptions"] = ({
+  intervalId,
+  model,
+}) => {
   switch (model.t) {
     case "none": {
       return Sub.None;

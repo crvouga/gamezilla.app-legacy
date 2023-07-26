@@ -1,8 +1,6 @@
-import { Cmd, Posix, Sub } from "@gamezilla/core";
-import { ClientCtx } from "@gamezilla/shared/client";
+import { Cmd, Sub } from "@gamezilla/core";
 import {
-  GameSpaceClientCtx,
-  GameSpaceViewCtx,
+  GameClient,
   MainMenuScreen,
   mainMenuButtons,
 } from "@gamezilla/shared/game-space";
@@ -17,6 +15,14 @@ import {
 import * as VsBot from "./vs-bot/vs-bot.client";
 import * as VsUser from "./vs-user/vs-user.client";
 
+type Client = GameClient<
+  ClientModel,
+  ServerModel,
+  ClientMsg,
+  ToClient,
+  ToServer
+>;
+
 //
 //
 //
@@ -27,7 +33,11 @@ import * as VsUser from "./vs-user/vs-user.client";
 
 export type Model = ClientModel;
 
-export const init: Model = { t: "none" };
+export const init: Client["init"] = () => {
+  return {
+    model: { t: "none" },
+  };
+};
 
 //
 //
@@ -39,20 +49,7 @@ export const init: Model = { t: "none" };
 
 export type Msg = ClientMsg;
 
-export const update = ({
-  sendToServer,
-  ctx,
-  msg,
-  model,
-}: {
-  sendToServer: (msg: ToServer) => Cmd;
-  ctx: GameSpaceClientCtx;
-  msg: Msg;
-  model: Model;
-}): {
-  model: Model;
-  cmd?: Cmd<Msg>;
-} => {
+export const update: Client["update"] = ({ sendToServer, ctx, msg, model }) => {
   if (msg.t === "input-mode") {
     return { model, cmd: sendToServer(msg) };
   }
@@ -86,27 +83,22 @@ export const update = ({
   return { model };
 };
 
-export const updateFromServer = ({
-  ctx,
-  model,
-  msg,
-}: {
-  ctx: GameSpaceClientCtx;
-  msg: ToClient;
-  model: Model;
-}): [Model, Cmd<Msg>] => {
+export const updateFromServer: Client["updateFromServer"] = (input) => {
+  const { ctx, model, msg } = input;
   switch (msg.t) {
     case "input-mode": {
       if (msg.result.t === "err") {
-        return [model, Cmd.None];
+        return { model };
       }
 
       const merged = syncWithServer({
-        clientModel: model,
-        serverModel: msg.result.value,
+        ...input,
+        client: model,
+        server: msg.result.value,
         ctx,
       });
-      return [merged, Cmd.None];
+
+      return merged;
     }
 
     case "vs-user": {
@@ -115,12 +107,12 @@ export const updateFromServer = ({
           msg: msg.c,
           model: model.c,
         });
-        return [
-          { t: "vs-user", c: updated.model },
-          Cmd.tag_("vs-user", updated.cmd),
-        ];
+        return {
+          model: { t: "vs-user", c: updated.model },
+          cmd: Cmd.tag_("vs-user", updated.cmd),
+        };
       }
-      return [model, Cmd.None];
+      return { model };
     }
 
     case "vs-bot": {
@@ -130,14 +122,19 @@ export const updateFromServer = ({
           msg: msg.c,
           model: model.c,
         });
-        return [
-          { t: "vs-bot", c: updated.model },
-          Cmd.tag_("vs-bot", updated.cmd ?? Cmd.None),
-        ];
+        return {
+          model: { t: "vs-bot", c: updated.model },
+          cmd: Cmd.tag_("vs-bot", updated.cmd ?? Cmd.None),
+        };
       }
-      return [model, Cmd.None];
+
+      return { model };
     }
   }
+};
+
+export const updateFromGameSpace: Client["updateFromGameSpace"] = (input) => {
+  return input;
 };
 
 //
@@ -148,15 +145,7 @@ export const updateFromServer = ({
 //
 //
 
-export const View = ({
-  model,
-  dispatch,
-  ctx,
-}: {
-  model: Model;
-  dispatch: (msg: Msg) => void;
-  ctx: GameSpaceViewCtx;
-}) => {
+export const View: Client["View"] = ({ model, dispatch, ctx }) => {
   const onQuit = () => dispatch({ t: "input-mode", mode: "none" });
 
   switch (model.t) {
@@ -202,59 +191,63 @@ export const View = ({
   }
 };
 
-export const syncWithServer = ({
+export const syncWithServer: Client["syncWithServer"] = ({
   ctx,
-  clientModel,
-  serverModel,
-}: {
-  ctx: ClientCtx;
-  clientModel: ClientModel;
-  serverModel: ServerModel;
-}): ClientModel => {
-  switch (serverModel.t) {
+  client = { t: "none" },
+  server,
+}) => {
+  switch (server.t) {
     case "none": {
-      return serverModel;
+      return { model: server };
     }
 
     case "vs-bot": {
-      if (clientModel.t === "vs-bot") {
+      if (client.t === "vs-bot") {
         return {
-          t: "vs-bot",
-          c: VsBot.syncWithServer({
-            ctx,
-            clientModel: clientModel.c,
-            serverModel: serverModel.c,
-          }),
+          model: {
+            t: "vs-bot",
+            c: VsBot.syncWithServer({
+              ctx,
+              clientModel: client.c,
+              serverModel: server.c,
+            }),
+          },
         };
       }
 
       return {
-        t: "vs-bot",
-        c: VsBot.syncWithServer({
-          ctx,
-          clientModel: VsBot.init(serverModel.c),
-          serverModel: serverModel.c,
-        }),
+        model: {
+          t: "vs-bot",
+          c: VsBot.syncWithServer({
+            ctx,
+            clientModel: VsBot.init(server.c),
+            serverModel: server.c,
+          }),
+        },
       };
     }
 
     case "vs-user": {
-      if (clientModel.t === "vs-user") {
+      if (client.t === "vs-user") {
         return {
-          t: "vs-user",
-          c: VsUser.syncWithServer({
-            clientModel: clientModel.c,
-            serverModel: serverModel.c,
-          }),
+          model: {
+            t: "vs-user",
+            c: VsUser.syncWithServer({
+              clientModel: client.c,
+              serverModel: server.c,
+            }),
+          },
         };
       }
 
       return {
-        t: "vs-user",
-        c: VsUser.syncWithServer({
-          clientModel: VsUser.init(serverModel.c),
-          serverModel: serverModel.c,
-        }),
+        model: {
+          t: "vs-user",
+          c: VsUser.syncWithServer({
+            clientModel: VsUser.init(server.c),
+            serverModel: server.c,
+          }),
+        },
       };
     }
   }
@@ -268,22 +261,21 @@ export const syncWithServer = ({
 //
 //
 
-export const subscriptions = (
-  intervalId: string,
-  now: Posix,
-  model: Model
-): Sub<Msg> => {
-  switch (model.t) {
+export const subscriptions: Client["subscriptions"] = (input) => {
+  switch (input.model.t) {
     case "none": {
       return Sub.None;
     }
 
     case "vs-bot": {
-      return Sub.tag_("vs-bot", VsBot.subscriptions(intervalId, now, model.c));
+      return Sub.tag_(
+        "vs-bot",
+        VsBot.subscriptions(input.intervalId, input.ctx.now, input.model.c)
+      );
     }
 
     case "vs-user": {
-      return Sub.tag_("vs-user", VsUser.subscriptions(model.c));
+      return Sub.tag_("vs-user", VsUser.subscriptions(input.model.c));
     }
   }
 };

@@ -97,7 +97,7 @@ export const update = ({
       };
 
       const updated = Game.update({
-        broadcast: (m) =>
+        sendToSpace: (m) =>
           sendToSpace({ sendToUser, model, spaceId, msg: { t: "game", c: m } }),
         msg: gameMsg,
         model: game,
@@ -108,14 +108,14 @@ export const update = ({
         ...model,
         games: {
           ...model.games,
-          [spaceId]: updated[0],
+          [spaceId]: updated.model,
         },
       };
 
       return {
         model: modelNew,
         cmd: p(
-          updated[1],
+          updated.cmd ?? Cmd.None,
           Cmd.map((m): Msg => ({ t: "game", spaceId, c: m }))
         ),
       };
@@ -218,11 +218,11 @@ export const updateFromClient_: UpdateFromClient = (input) => {
         hostId: space.hostId,
       };
 
-      const [gameNew, gameCmd] = Game.updateFromClient({
+      const gameUpdated = Game.updateFromClient({
         ...ctx,
         ctx: spaceCtx,
         sendToClient: (m) => input.sendToClient({ t: "game", c: m }),
-        broadcast: (m) =>
+        sendToSpace: (m) =>
           sendToSpace({
             sendToUser: input.sendToUser,
             model,
@@ -237,14 +237,14 @@ export const updateFromClient_: UpdateFromClient = (input) => {
         ...model,
         games: {
           ...model.games,
-          [space.gameSpaceId]: gameNew,
+          [space.gameSpaceId]: gameUpdated.model,
         },
       };
 
       return {
         model: modelNew,
         cmd: p(
-          gameCmd,
+          gameUpdated.cmd ?? Cmd.None,
           Cmd.map(
             (msg): Msg => ({ t: "game", spaceId: space.gameSpaceId, c: msg })
           )
@@ -387,8 +387,17 @@ const updateLeave: UpdateFromClient = ({
     return { model: modelAfter, cmd: broadcast(res) };
   }
 
+  const gameSpaceCtx: GameSpaceServerCtx = {
+    ...ctx,
+    hostId: space.hostId,
+  };
+
   const updated = Game.updateFromSpace({
-    broadcast: (msg) => {
+    ctx: gameSpaceCtx,
+    sendToClient: (m) => {
+      return sendToClient({ t: "game", c: m });
+    },
+    sendToSpace: (msg) => {
       return sendToSpace({
         sendToUser: sendToUser,
         model: modelAfter,
@@ -501,7 +510,13 @@ const sendToSpace = ({
 //
 //
 
-export const subscriptions = (model: Model): Sub<Msg> => {
+export const subscriptions = ({
+  model,
+  ctx,
+}: {
+  ctx: ServerCtx;
+  model: Model;
+}): Sub<Msg> => {
   const subs: Sub<Msg>[] = [];
 
   for (const spaceId in model.spaces) {
@@ -515,8 +530,23 @@ export const subscriptions = (model: Model): Sub<Msg> => {
       continue;
     }
 
+    const space = model.spaces[spaceId];
+
+    if (!space) {
+      continue;
+    }
+
+    const gameSpaceCtx: GameSpaceServerCtx = {
+      ...ctx,
+      hostId: space.hostId,
+    };
+
     const sub = p(
-      Game.subscriptions(`space/${spaceId}`, game),
+      Game.subscriptions({
+        intervalId: `space/${spaceId}`,
+        model: game,
+        ctx: gameSpaceCtx,
+      }),
       Sub.map((msg): Msg => ({ t: "game", spaceId, c: msg }))
     );
 
