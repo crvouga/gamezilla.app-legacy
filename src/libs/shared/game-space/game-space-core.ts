@@ -150,6 +150,82 @@ export type GameServer<Model, Msg, ToClient, ToServer> = {
   subscriptions: (input: { ctx: GameSpaceServerCtx; model: Model }) => Sub<Msg>;
 };
 
+export const tagServer = <T extends string, Model, Msg, ToClient, ToServer>(
+  tag: T,
+  server: GameServer<Model, Msg, ToClient, ToServer>
+): GameServer<
+  { t: T; c: Model },
+  { t: T; c: Msg },
+  { t: T; c: ToClient },
+  { t: T; c: ToServer }
+> => {
+  return {
+    init: (input) => {
+      const initial = server.init({
+        ...input,
+        sendToClient: (m) => input.sendToClient({ t: tag, c: m }),
+        sendToSpace: (m) => input.sendToSpace({ t: tag, c: m }),
+      });
+      return {
+        model: { t: tag, c: initial.model },
+        cmd: Cmd.tag_(tag, initial.cmd),
+        msgs: initial.msgs,
+      };
+    },
+    update: (input) => {
+      const updated = server.update({
+        ...input,
+        msg: input.msg.c,
+        model: input.model.c,
+        sendToClient: (m) => input.sendToClient({ t: tag, c: m }),
+        sendToSpace: (m) => input.sendToSpace({ t: tag, c: m }),
+      });
+      return {
+        model: { t: tag, c: updated.model },
+        cmd: Cmd.tag_(tag, updated.cmd),
+        msgs: updated.msgs,
+      };
+    },
+    updateFromClient: (input) => {
+      const updated = server.updateFromClient({
+        ...input,
+        msg: input.msg.c,
+        model: input.model.c,
+        sendToClient: (m) => input.sendToClient({ t: tag, c: m }),
+        sendToSpace: (m) => input.sendToSpace({ t: tag, c: m }),
+      });
+      return {
+        model: { t: tag, c: updated.model },
+        cmd: Cmd.tag_(tag, updated.cmd),
+        msgs: updated.msgs,
+      };
+    },
+    updateFromGameSpace: (input) => {
+      const updated = server.updateFromGameSpace({
+        ...input,
+        msg: input.msg,
+        model: input.model.c,
+        sendToClient: (m) => input.sendToClient({ t: tag, c: m }),
+        sendToSpace: (m) => input.sendToSpace({ t: tag, c: m }),
+      });
+      return {
+        model: { t: tag, c: updated.model },
+        cmd: Cmd.tag_(tag, updated.cmd),
+        msgs: updated.msgs,
+      };
+    },
+    subscriptions: (input) => {
+      return Sub.tag_(
+        tag,
+        server.subscriptions({
+          ...input,
+          model: input.model.c,
+        })
+      );
+    },
+  };
+};
+
 const tagInit =
   <T extends string, Model, Msg, ToClient, ToServer>(
     tag: T,
