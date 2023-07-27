@@ -1,6 +1,7 @@
-import { Cmd, Sub } from "@gamezilla/core";
+import { Sub } from "@gamezilla/core";
 import { GameClient, MainMenuScreen } from "@gamezilla/shared/game-space";
 import { IconGamepad, IconScrewdriverWrench } from "@gamezilla/ui";
+import { FlowViewCtx } from "./flow-shared";
 import { ViewCoverArt } from "./flow-ui/flow-cover-art";
 import {
   ClientModel,
@@ -20,6 +21,10 @@ type Client = GameClient<
   ToServer
 >;
 
+const PuzzleBuilder = GameClient.tag("puzzle-builder", PuzzleBuilderClient);
+
+const Play = GameClient.tag("play", PlayClient);
+
 export const init: Client["init"] = () => {
   return {
     model: {
@@ -28,35 +33,19 @@ export const init: Client["init"] = () => {
   };
 };
 
-export const update: Client["update"] = ({ model, msg, sendToServer, ctx }) => {
+export const update: Client["update"] = (input) => {
+  const { model, msg } = input;
+
+  if (msg.t === "input-mode") {
+    return { model, cmd: input.sendToServer(msg) };
+  }
+
   if (model.t === "puzzle-builder" && msg.t === "puzzle-builder") {
-    const updated = PuzzleBuilderClient.update({
-      ctx,
-      msg: msg.c,
-      model: model.c,
-      sendToServer: (c) => sendToServer({ t: "puzzle-builder", c }),
-    });
-    return {
-      model: { t: "puzzle-builder", c: updated.model },
-      cmd: Cmd.tag_("puzzle-builder", updated.cmd),
-    };
+    return PuzzleBuilder.update({ ...input, msg, model });
   }
 
   if (model.t === "play" && msg.t === "play") {
-    const updated = PlayClient.update({
-      ctx,
-      msg: msg.c,
-      model: model.c,
-      sendToServer: (c) => sendToServer({ t: "play", c }),
-    });
-    return {
-      model: { t: "play", c: updated.model },
-      cmd: Cmd.tag_("play", updated.cmd),
-    };
-  }
-
-  if (msg.t === "input-mode") {
-    return { model, cmd: sendToServer(msg) };
+    return Play.update({ ...input, msg, model });
   }
 
   return { model };
@@ -73,73 +62,65 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
   }
 
   if (msg.t === "puzzle-builder" && model.t === "puzzle-builder") {
-    const updated = PuzzleBuilderClient.updateFromServer({
-      model: model.c,
-      msg: msg.c,
-    });
-    return {
-      model: { t: "puzzle-builder", c: updated.model },
-      cmd: Cmd.tag_("puzzle-builder", updated.cmd),
-    };
+    return PuzzleBuilder.updateFromServer({ ...input, msg, model });
   }
 
   if (msg.t === "play" && model.t === "play") {
-    const updated = PlayClient.updateFromServer({
-      model: model.c,
-      msg: msg.c,
-    });
-    return {
-      model: { t: "play", c: updated.model },
-      cmd: Cmd.tag_("play", updated.cmd),
-    };
+    return Play.updateFromServer({ ...input, msg, model });
   }
 
   return { model };
 };
 
 export const updateFromGameSpace: Client["updateFromGameSpace"] = (input) => {
+  const { model } = input;
+  if (model.t === "puzzle-builder") {
+    return PuzzleBuilder.updateFromGameSpace({ ...input, model });
+  }
+  if (model.t === "play") {
+    return Play.updateFromGameSpace({ ...input, model });
+  }
   return input;
 };
 
-export const syncWithServer: Client["syncWithServer"] = ({
-  client = { t: "none" },
-  server,
-}) => {
+export const syncWithServer: Client["syncWithServer"] = (input) => {
+  const { client = { t: "none" }, server } = input;
+
   if (server.t === "none") {
     return { model: server };
   }
 
   if (server.t === "puzzle-builder") {
-    const client_ = client.t === "puzzle-builder" ? client.c : undefined;
-    return {
-      model: {
-        t: "puzzle-builder",
-        c: PuzzleBuilderClient.syncWithServer({
-          client: client_,
-          server: server.c,
-        }),
-      },
-    };
+    return PuzzleBuilder.syncWithServer({
+      ...input,
+      server,
+      client: client.t === "puzzle-builder" ? client : undefined,
+    });
   }
 
   if (server.t === "play") {
-    const client_ = client.t === "play" ? client.c : undefined;
-    return {
-      model: {
-        t: "play",
-        c: PlayClient.syncWithServer({
-          client: client_,
-          server: server.c,
-        }),
-      },
-    };
+    return Play.syncWithServer({
+      ...input,
+      server,
+      client: client.t === "play" ? client : undefined,
+    });
   }
 
   return { model: client };
 };
 
-export const subscriptions: Client["subscriptions"] = () => {
-  return Sub.None;
+export const subscriptions: Client["subscriptions"] = (input) => {
+  const { model } = input;
+  switch (model.t) {
+    case "none":
+      return Sub.None;
+
+    case "play":
+      return Play.subscriptions({ ...input, model });
+
+    case "puzzle-builder":
+      return PuzzleBuilder.subscriptions({ ...input, model });
+  }
 };
 
 //
@@ -148,27 +129,19 @@ export const subscriptions: Client["subscriptions"] = () => {
 //
 //
 
-export const View: Client["View"] = ({ ctx, dispatch, model }) => {
+export const View: Client["View"] = (input) => {
+  const { dispatch, model } = input;
+  const ctx: FlowViewCtx = {
+    ...input.ctx,
+    onExit: () => dispatch({ t: "input-mode", mode: "none" }),
+  };
+
   if (model.t === "puzzle-builder") {
-    return (
-      <PuzzleBuilderClient.View
-        dispatch={(c) => dispatch({ t: "puzzle-builder", c })}
-        ctx={ctx}
-        onExit={() => dispatch({ t: "input-mode", mode: "none" })}
-        model={model.c}
-      />
-    );
+    return <PuzzleBuilder.View {...input} ctx={ctx} model={model} />;
   }
 
   if (model.t === "play") {
-    return (
-      <PlayClient.View
-        dispatch={(c) => dispatch({ t: "play", c })}
-        ctx={ctx}
-        onExit={() => dispatch({ t: "input-mode", mode: "none" })}
-        model={model.c}
-      />
-    );
+    return <Play.View {...input} ctx={ctx} model={model} />;
   }
 
   return (

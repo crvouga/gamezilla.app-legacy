@@ -136,7 +136,7 @@ export const updateFromGameSpace: Server["updateFromGameSpace"] = ({
     }
 
     case "vs-bot": {
-      const updated = VsBot.updateFromSpace({
+      const updated = VsBot.updateFromGameSpace({
         msg,
         model: model.c,
         broadcast: (c) => sendToSpace({ t: "vs-bot", c }),
@@ -148,7 +148,7 @@ export const updateFromGameSpace: Server["updateFromGameSpace"] = ({
     }
 
     case "vs-user": {
-      const updated = VsUser.updateFromSpace({
+      const updated = VsUser.updateFromGameSpace({
         msg,
         model: model.c,
         broadcast: (c) => sendToSpace({ t: "vs-user", c }),

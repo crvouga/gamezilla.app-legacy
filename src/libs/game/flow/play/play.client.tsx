@@ -1,10 +1,8 @@
-import { Cmd, andThen, p } from "@gamezilla/core";
-import {
-  GameSpaceClientCtx,
-  GameSpaceViewCtx,
-} from "@gamezilla/shared/game-space";
+import { Sub, andThen, p } from "@gamezilla/core";
+import { GameClient } from "@gamezilla/shared/game-space";
 import { IconArrowLeftOnRect, MyButton } from "@gamezilla/ui";
 import { FlowGridPlayUI } from "../flow-grid";
+import { FlowViewCtx } from "../flow-shared";
 import {
   ClientModel,
   ClientMsg,
@@ -14,21 +12,20 @@ import {
   initShared,
 } from "./play.core";
 
-type Model = ClientModel;
+type Client = GameClient<
+  ClientModel,
+  SharedModel,
+  ClientMsg,
+  ToClient,
+  ToServer,
+  FlowViewCtx
+>;
 
-type Msg = ClientMsg;
+const init: Client["init"] = () => {
+  return { model: initShared };
+};
 
-export const init = initShared;
-
-export const update = (input: {
-  msg: Msg;
-  model: Model;
-  ctx: GameSpaceClientCtx;
-  sendToServer: (m: ToServer) => Cmd;
-}): {
-  model: Model;
-  cmd?: Cmd<Msg>;
-} => {
+const update: Client["update"] = (input) => {
   return p(
     input,
     andThen((step) => {
@@ -37,54 +34,45 @@ export const update = (input: {
   );
 };
 
-export const updateFromServer = (input: {
-  msg: ToClient;
-  model: Model;
-}): {
-  model: Model;
-  cmd?: Cmd<Msg>;
-} => {
+const updateFromServer: Client["updateFromServer"] = (input) => {
   return input;
 };
 
-export const syncWithServer = ({
-  client,
-  server,
-}: {
-  client?: ClientModel;
-  server: SharedModel;
-}) => {
-  const client_ = client ?? init;
-  return { ...client_, ...server };
+const updateFromGameSpace: Client["updateFromGameSpace"] = (input) => {
+  return input;
 };
 
-//
-//
-// View
-//
-//
+const syncWithServer: Client["syncWithServer"] = ({ client, server }) => {
+  const client_ = client ?? init;
+  return { model: { ...client_, ...server } };
+};
 
-export const View = ({
-  model,
-  dispatch,
-  onExit,
-}: {
-  model: Model;
-  dispatch: (m: Msg) => void;
-  onExit: () => void;
-  ctx: GameSpaceViewCtx;
-}) => {
+const subscriptions: Client["subscriptions"] = () => {
+  return Sub.None;
+};
+
+const View: Client["View"] = ({ model, dispatch, ctx }) => {
   return (
     <div className="flex h-full w-full flex-1 flex-col">
       <div className="flex flex-1 items-center justify-center">
         <FlowGridPlayUI.View dispatch={dispatch} model={model} />
       </div>
       <div className="w-full p-4">
-        <MyButton className="w-full" onClick={onExit}>
+        <MyButton className="w-full" onClick={ctx.onExit}>
           <IconArrowLeftOnRect />
           Exit
         </MyButton>
       </div>
     </div>
   );
+};
+
+export const PlayClient: Client = {
+  init,
+  update,
+  updateFromServer,
+  updateFromGameSpace,
+  syncWithServer,
+  subscriptions,
+  View,
 };

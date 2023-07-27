@@ -4,18 +4,26 @@ import { VDom } from "@gamezilla/ui";
 import { GameSpaceClientCtx, GameSpaceViewCtx } from "../game-space-client";
 import { GameSpaceMsg } from "../game-space-core";
 
-export type GameClient<Model, ServerModel, Msg, ToClient, ToServer> = {
-  init: (input: {
-    ctx: GameSpaceClientCtx;
-    sendToServer: (m: ToServer) => Cmd;
-  }) => {
+/**
+ * Represents all the functions needed to run a game client side
+ */
+export type GameClient<
+  Model,
+  ServerModel,
+  Msg,
+  ToClient,
+  ToServer,
+  ViewCtx = GameSpaceViewCtx,
+  Ctx = GameSpaceClientCtx
+> = {
+  init: (input: { ctx: Ctx; sendToServer: (m: ToServer) => Cmd }) => {
     model: Model;
     cmd?: Cmd<Msg>;
     msgs?: ClientAppMsg[];
   };
 
   update: (input: {
-    ctx: GameSpaceClientCtx;
+    ctx: Ctx;
     sendToServer: (m: ToServer) => Cmd;
     msg: Msg;
     model: Model;
@@ -26,7 +34,7 @@ export type GameClient<Model, ServerModel, Msg, ToClient, ToServer> = {
   };
 
   updateFromServer: (input: {
-    ctx: GameSpaceClientCtx;
+    ctx: Ctx;
     sendToServer: (m: ToServer) => Cmd;
     msg: ToClient;
     model: Model;
@@ -37,7 +45,7 @@ export type GameClient<Model, ServerModel, Msg, ToClient, ToServer> = {
   };
 
   updateFromGameSpace: (input: {
-    ctx: GameSpaceClientCtx;
+    ctx: GameSpaceViewCtx;
     sendToServer: (m: ToServer) => Cmd;
     msg: GameSpaceMsg;
     model: Model;
@@ -48,7 +56,7 @@ export type GameClient<Model, ServerModel, Msg, ToClient, ToServer> = {
   };
 
   syncWithServer: (input: {
-    ctx: GameSpaceClientCtx;
+    ctx: Ctx;
     sendToServer: (m: ToServer) => Cmd;
     server: ServerModel;
     client?: Model;
@@ -60,12 +68,12 @@ export type GameClient<Model, ServerModel, Msg, ToClient, ToServer> = {
 
   subscriptions: (input: {
     intervalId: string;
-    ctx: GameSpaceClientCtx;
+    ctx: Ctx;
     model: Model;
   }) => Sub<Msg>;
 
   View: (input: {
-    ctx: GameSpaceViewCtx;
+    ctx: ViewCtx;
     dispatch: (msg: Msg) => void;
     model: Model;
   }) => VDom;
@@ -74,15 +82,24 @@ export type GameClient<Model, ServerModel, Msg, ToClient, ToServer> = {
 /**
  * Tags to all the messages and models that are inputted and outputted from this module
  */
-const tag = <T extends string, Model, ServerModel, Msg, ToClient, ToServer>(
+const tag = <
+  T extends string,
+  Model,
+  ServerModel,
+  Msg,
+  ToClient,
+  ToServer,
+  ViewCtx
+>(
   tag: T,
-  client: GameClient<Model, ServerModel, Msg, ToClient, ToServer>
+  client: GameClient<Model, ServerModel, Msg, ToClient, ToServer, ViewCtx>
 ): GameClient<
   { t: T; c: Model },
   { t: T; c: ServerModel },
   { t: T; c: Msg },
   { t: T; c: ToClient },
-  { t: T; c: ToServer }
+  { t: T; c: ToServer },
+  ViewCtx
 > => {
   return {
     init: (input) => {
@@ -170,6 +187,56 @@ const tag = <T extends string, Model, ServerModel, Msg, ToClient, ToServer>(
   };
 };
 
+const tagUpdate =
+  <T extends string, Model, ServerModel, Msg, ToClient, ToServer>(
+    tag: T,
+    update: GameClient<Model, ServerModel, Msg, ToClient, ToServer>["update"]
+  ): GameClient<
+    { t: T; c: Model },
+    { t: T; c: ServerModel },
+    { t: T; c: Msg },
+    { t: T; c: ToClient },
+    { t: T; c: ToServer }
+  >["update"] =>
+  (input) => {
+    const updated = update({
+      ...input,
+      msg: input.msg.c,
+      model: input.model.c,
+      sendToServer: (m) => input.sendToServer({ t: tag, c: m }),
+    });
+    return {
+      model: { t: tag, c: updated.model },
+      cmd: Cmd.tag_(tag, updated.cmd),
+      msgs: updated.msgs,
+    };
+  };
+
+const tagInit =
+  <T extends string, Model, ServerModel, Msg, ToClient, ToServer>(
+    tag: T,
+    init: GameClient<Model, ServerModel, Msg, ToClient, ToServer>["init"]
+  ): GameClient<
+    { t: T; c: Model },
+    { t: T; c: ServerModel },
+    { t: T; c: Msg },
+    { t: T; c: ToClient },
+    { t: T; c: ToServer }
+  >["init"] =>
+  (input) => {
+    const initial = init({
+      ...input,
+      sendToServer: (m) => input.sendToServer({ t: tag, c: m }),
+    });
+    return {
+      model: { t: tag, c: initial.model },
+      cmd: Cmd.tag_(tag, initial.cmd),
+      msgs: initial.msgs,
+    };
+  };
+
 export const GameClient = {
   tag,
+  tagUpdate,
+  tagInit,
 };

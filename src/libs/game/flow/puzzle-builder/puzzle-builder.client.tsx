@@ -1,9 +1,5 @@
-import { Cmd } from "@gamezilla/core";
-import {
-  GameSpaceClientCtx,
-  GameSpaceViewCtx,
-  ViewBottomButtonBar,
-} from "@gamezilla/shared/game-space";
+import { Cmd, Sub } from "@gamezilla/core";
+import { GameClient, ViewBottomButtonBar } from "@gamezilla/shared/game-space";
 import {
   IconArrowLeftOnRect,
   IconPenToSquare,
@@ -11,83 +7,67 @@ import {
   cn,
 } from "@gamezilla/ui";
 import { FlowGridPlayUI, FlowGridUI } from "../flow-grid";
+import { FlowViewCtx } from "../flow-shared";
 import { Color, pathIdToColor } from "../flow-ui";
 import {
   ClientModel,
   ClientMsg,
-  SharedModel,
+  ServerModel,
   ToClient,
   ToServer,
   handle,
   initShared,
 } from "./puzzle-builder.core";
 
+type Client = GameClient<
+  ClientModel,
+  ServerModel,
+  ClientMsg,
+  ToClient,
+  ToServer,
+  FlowViewCtx
+>;
+
 type Model = ClientModel;
 
 type Msg = ClientMsg;
 
-export const init: Model = initShared;
+const init: Client["init"] = () => {
+  return { model: initShared };
+};
 
-export const update = ({
-  msg,
-  model,
-  ctx,
-  sendToServer,
-}: {
-  msg: Msg;
-  model: Model;
-  ctx: GameSpaceClientCtx;
-  sendToServer: (m: ToServer) => Cmd;
-}): {
+const update: Client["update"] = (input) => {
+  const handled = handle(input);
+
+  const modelNew =
+    handled.t === "ok" ? { ...input.model, ...handled.value } : input.model;
+
+  return { model: modelNew, cmd: input.sendToServer(input.msg) };
+};
+
+const updateFromServer: Client["updateFromServer"] = (
+  input
+): {
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  const handled = handle({ ctx, msg, model });
-
-  const modelNew = handled.t === "ok" ? { ...model, ...handled.value } : model;
-
-  return { model: modelNew, cmd: sendToServer(msg) };
+  return input;
 };
 
-export const updateFromServer = ({
-  model,
-}: {
-  msg: ToClient;
-  model: Model;
-}): {
-  model: Model;
-  cmd?: Cmd<Msg>;
-} => {
-  return { model };
+const updateFromGameSpace: Client["updateFromGameSpace"] = (input) => {
+  return input;
 };
 
-export const syncWithServer = ({
-  client,
-  server,
-}: {
-  client?: ClientModel;
-  server: SharedModel;
-}) => {
-  const client_ = client ?? init;
-  return { ...client_, ...server };
+const syncWithServer: Client["syncWithServer"] = ({ client, server }) => {
+  const client_ = client ?? initShared;
+  return { model: { ...client_, ...server } };
 };
 
-//
-//
-// View
-//
-//
+const subscriptions: Client["subscriptions"] = () => {
+  return Sub.None;
+};
 
-export const View = ({
-  model,
-  dispatch,
-  onExit,
-}: {
-  model: Model;
-  dispatch: (m: Msg) => void;
-  onExit: () => void;
-  ctx: GameSpaceViewCtx;
-}) => {
+const View: Client["View"] = ({ model, dispatch, ctx }) => {
   if (model.mode === "play") {
     return (
       <div className="flex h-full w-full flex-col items-center justify-center">
@@ -108,7 +88,7 @@ export const View = ({
             {
               label: "Exit Builder",
               icon: <IconArrowLeftOnRect />,
-              onClick: onExit,
+              onClick: ctx.onExit,
             },
             {
               label: "Edit Mode",
@@ -160,7 +140,7 @@ export const View = ({
           {
             label: "Exit Builder",
             icon: <IconArrowLeftOnRect />,
-            onClick: onExit,
+            onClick: ctx.onExit,
           },
           {
             label: "Play Mode",
@@ -177,4 +157,14 @@ export const View = ({
 
 const capitalize = (s: string) => {
   return `${s.charAt(0).toUpperCase()}${s.slice(1).toLowerCase()}`;
+};
+
+export const PuzzleBuilderClient: Client = {
+  init,
+  update,
+  updateFromServer,
+  updateFromGameSpace,
+  syncWithServer,
+  subscriptions,
+  View,
 };

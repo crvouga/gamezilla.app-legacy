@@ -109,7 +109,7 @@ const updateFromClient_: updateFromClient = ({
   }
 };
 
-export const updateFromSpace = ({
+export const updateFromGameSpace = ({
   msg,
   model,
 }: {

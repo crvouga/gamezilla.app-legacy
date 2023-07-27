@@ -135,7 +135,7 @@ export const updateFromClient = ({
   return { model };
 };
 
-export const updateFromSpace = ({
+export const updateFromGameSpace = ({
   broadcast,
   msg,
   model,
@@ -152,7 +152,7 @@ export const updateFromSpace = ({
   }
 
   if (model.t === "vs-bot") {
-    const updated = VsBot.updateFromSpace({
+    const updated = VsBot.updateFromGameSpace({
       broadcast: (c) => broadcast({ t: "vs-bot", c }),
       msg,
       model: model.c,
@@ -164,7 +164,7 @@ export const updateFromSpace = ({
   }
 
   if (model.t === "vs-user") {
-    const updated = VsUser.updateFromSpace({
+    const updated = VsUser.updateFromGameSpace({
       broadcast: (c) => broadcast({ t: "vs-user", c }),
       msg,
       model: model.c,

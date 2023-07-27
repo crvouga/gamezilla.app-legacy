@@ -255,7 +255,7 @@ export const updateFromGameSpace: Server["updateFromGameSpace"] = (input) => {
 
   switch (model.t) {
     case "chess": {
-      const updated = ChessServer.updateFromSpace({
+      const updated = ChessServer.updateFromGameSpace({
         broadcast: (m) => sendToSpace({ t: "chess", c: m }),
         msg,
         model: model.c,
@@ -272,7 +272,7 @@ export const updateFromGameSpace: Server["updateFromGameSpace"] = (input) => {
     }
 
     case "tic-tac-toe": {
-      const updated = TicTacToeServer.updateFromSpace({
+      const updated = TicTacToeServer.updateFromGameSpace({
         broadcast: (msg) => sendToSpace({ t: "tic-tac-toe", c: msg }),
         msg,
         model: model.c,
@@ -284,7 +284,7 @@ export const updateFromGameSpace: Server["updateFromGameSpace"] = (input) => {
     }
 
     case "gomoku": {
-      const updated = GomokuServer.updateFromSpace({
+      const updated = GomokuServer.updateFromGameSpace({
         msg,
         model: model.c,
       });

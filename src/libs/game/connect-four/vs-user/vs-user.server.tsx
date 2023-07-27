@@ -81,7 +81,7 @@ export const updateFromClient = ({
   return { model: res.result.value, cmd: broadcast(res) };
 };
 
-export const updateFromSpace = ({
+export const updateFromGameSpace = ({
   broadcast,
   msg,
   model,

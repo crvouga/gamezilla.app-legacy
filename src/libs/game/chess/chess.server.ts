@@ -194,7 +194,7 @@ export const updateFromClient = ({
   }
 };
 
-export const updateFromSpace = ({
+export const updateFromGameSpace = ({
   broadcast,
   msg,
   model,
@@ -212,7 +212,7 @@ export const updateFromSpace = ({
     }
 
     case "vs-bot": {
-      const updated = VsBotServer.updateFromSpace({
+      const updated = VsBotServer.updateFromGameSpace({
         broadcast: (m) => broadcast({ t: "vs-bot", c: m }),
         msg,
         model: model.c,
@@ -224,7 +224,7 @@ export const updateFromSpace = ({
     }
 
     case "vs-user": {
-      const updated = VsUser.updateFromSpace({
+      const updated = VsUser.updateFromGameSpace({
         broadcast: (m) => broadcast({ t: "vs-user", c: m }),
         msg,
         model: model.c,
@@ -236,7 +236,7 @@ export const updateFromSpace = ({
     }
 
     case "puzzle": {
-      const updated = Puzzle.updateFromSpace({
+      const updated = Puzzle.updateFromGameSpace({
         model: model.c,
         msg,
       });

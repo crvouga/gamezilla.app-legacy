@@ -220,7 +220,7 @@ export const updateFromClient = (
   }
 };
 
-export const updateFromSpace = ({
+export const updateFromGameSpace = ({
   msg,
   model,
   broadcast,

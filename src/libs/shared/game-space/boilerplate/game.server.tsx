@@ -18,7 +18,7 @@ export type Server = GameServer<ServerModel, ServerMsg, ToClient, ToServer>;
 //
 //
 
-const init: Server["init"] = () => {
+export const init: Server["init"] = () => {
   return {
     model: initShared,
   };
@@ -32,15 +32,15 @@ const init: Server["init"] = () => {
 //
 //
 
-const update: Server["update"] = (input) => {
+export const update: Server["update"] = (input) => {
   return input;
 };
 
-const updateFromClient: Server["updateFromClient"] = (input) => {
+export const updateFromClient: Server["updateFromClient"] = (input) => {
   return input;
 };
 
-const updateFromGameSpace: Server["updateFromGameSpace"] = (input) => {
+export const updateFromGameSpace: Server["updateFromGameSpace"] = (input) => {
   return input;
 };
 
@@ -52,22 +52,6 @@ const updateFromGameSpace: Server["updateFromGameSpace"] = (input) => {
 //
 //
 
-const subscriptions: Server["subscriptions"] = () => {
+export const subscriptions: Server["subscriptions"] = () => {
   return Sub.None;
-};
-
-//
-//
-//
-// Module
-//
-//
-//
-
-export const server: Server = {
-  init,
-  update,
-  updateFromClient,
-  updateFromGameSpace,
-  subscriptions,
 };
