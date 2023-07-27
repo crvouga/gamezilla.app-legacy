@@ -194,7 +194,7 @@ const update_: typeof update = ({ ctx, sendToServer, msg, model }) => {
     return {
       model: modelNew,
       cmd: Cmd.tag_("game", updated.cmd),
-      msgs: ClientAppMsg.tag("game", updated.msgs),
+      msgs: updated.msgs,
     };
   }
 

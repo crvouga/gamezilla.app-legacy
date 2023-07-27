@@ -7,7 +7,6 @@ import { MazeClient } from "@gamezilla/game/maze";
 import { SnakeClient } from "@gamezilla/game/snake";
 import { TetrisClient } from "@gamezilla/game/tetris";
 import { TicTacToeClient } from "@gamezilla/game/tic-tac-toe";
-import { ClientAppMsg } from "@gamezilla/shared/client";
 import { GameClient } from "@gamezilla/shared/game-space";
 import {
   ClientModel,
@@ -113,7 +112,7 @@ export const update: Client["update"] = (input) => {
     return {
       model: { t: "tic-tac-toe", c: updated.model },
       cmd: Cmd.tag_("tic-tac-toe", updated.cmd),
-      msgs: ClientAppMsg.tag("tic-tac-toe", updated.msgs),
+      msgs: updated.msgs,
     };
   }
 

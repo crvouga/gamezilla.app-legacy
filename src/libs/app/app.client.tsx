@@ -144,7 +144,7 @@ const update_ = ({
     return {
       model: { ...model, auth: updated.model },
       cmd: Cmd.tag_("auth", updated.cmd),
-      msgs: ClientAppMsg.tag("auth", updated.msgs),
+      msgs: updated.msgs,
     };
   }
 
@@ -165,7 +165,7 @@ const update_ = ({
     return {
       model: { ...model, routing: updated.model },
       cmd: Cmd.tag_("routing", updated.cmd),
-      msgs: ClientAppMsg.tag("routing", updated.msgs),
+      msgs: updated.msgs,
     };
   }
 
@@ -188,7 +188,7 @@ const update_ = ({
     return {
       model: { ...model, gameSpace: updated.model },
       cmd: Cmd.tag_("game-space", updated.cmd ?? Cmd.None),
-      msgs: ClientAppMsg.tag("game-space", updated.msgs),
+      msgs: updated.msgs,
     };
   }
 

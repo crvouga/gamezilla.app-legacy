@@ -84,7 +84,7 @@ export const update = ({
     return {
       model: { t: "vs-bot", c: updated.model },
       cmd: Cmd.tag_("vs-bot", updated.cmd),
-      msgs: ClientAppMsg.tag("vs-bot", updated.msgs),
+      msgs: updated.msgs,
     };
   }
 
