@@ -1,10 +1,5 @@
 import { Cmd, Sub } from "@gamezilla/core";
-import { UserId } from "@gamezilla/shared/app";
-import {
-  GameSpaceClientCtx,
-  GameSpaceViewCtx,
-  MainMenuScreen,
-} from "@gamezilla/shared/game-space";
+import { GameClient, MainMenuScreen } from "@gamezilla/shared/game-space";
 import { IconGamepad, IconScrewdriverWrench } from "@gamezilla/ui";
 import { ViewCoverArt } from "./flow-ui/flow-cover-art";
 import {
@@ -17,30 +12,23 @@ import {
 import { PlayClient } from "./play";
 import { PuzzleBuilderClient } from "./puzzle-builder";
 
-type Model = ClientModel;
+type Client = GameClient<
+  ClientModel,
+  ServerModel,
+  ClientMsg,
+  ToClient,
+  ToServer
+>;
 
-export const init = (_args: { playerId?: UserId }): Model => {
+export const init: Client["init"] = () => {
   return {
-    t: "none",
+    model: {
+      t: "none",
+    },
   };
 };
 
-type Msg = ClientMsg;
-
-export const update = ({
-  model,
-  msg,
-  sendToServer,
-  ctx,
-}: {
-  ctx: GameSpaceClientCtx;
-  msg: Msg;
-  model: Model;
-  sendToServer: (m: ToServer) => Cmd;
-}): {
-  model: Model;
-  cmd?: Cmd<Msg>;
-} => {
+export const update: Client["update"] = ({ model, msg, sendToServer, ctx }) => {
   if (model.t === "puzzle-builder" && msg.t === "puzzle-builder") {
     const updated = PuzzleBuilderClient.update({
       ctx,
@@ -74,22 +62,14 @@ export const update = ({
   return { model };
 };
 
-export const updateFromServer = ({
-  model,
-  msg,
-}: {
-  msg: ToClient;
-  model: Model;
-}): {
-  model: Model;
-  cmd?: Cmd<Msg>;
-} => {
+export const updateFromServer: Client["updateFromServer"] = (input) => {
+  const { model, msg } = input;
   if (msg.t === "input-mode") {
     if (msg.result.t === "err") {
       return { model };
     }
-    const merged = syncWithServer({ client: model, server: msg.result.value });
-    return { model: merged };
+    const synced = syncWithServer({ ...input, server: msg.result.value });
+    return synced;
   }
 
   if (msg.t === "puzzle-builder" && model.t === "puzzle-builder") {
@@ -117,43 +97,48 @@ export const updateFromServer = ({
   return { model };
 };
 
-export const syncWithServer = ({
-  client,
+export const updateFromGameSpace: Client["updateFromGameSpace"] = (input) => {
+  return input;
+};
+
+export const syncWithServer: Client["syncWithServer"] = ({
+  client = { t: "none" },
   server,
-}: {
-  client: ClientModel;
-  server: ServerModel;
-}): ClientModel => {
+}) => {
   if (server.t === "none") {
-    return server;
+    return { model: server };
   }
 
   if (server.t === "puzzle-builder") {
     const client_ = client.t === "puzzle-builder" ? client.c : undefined;
     return {
-      t: "puzzle-builder",
-      c: PuzzleBuilderClient.syncWithServer({
-        client: client_,
-        server: server.c,
-      }),
+      model: {
+        t: "puzzle-builder",
+        c: PuzzleBuilderClient.syncWithServer({
+          client: client_,
+          server: server.c,
+        }),
+      },
     };
   }
 
   if (server.t === "play") {
     const client_ = client.t === "play" ? client.c : undefined;
     return {
-      t: "play",
-      c: PlayClient.syncWithServer({
-        client: client_,
-        server: server.c,
-      }),
+      model: {
+        t: "play",
+        c: PlayClient.syncWithServer({
+          client: client_,
+          server: server.c,
+        }),
+      },
     };
   }
 
-  return client;
+  return { model: client };
 };
 
-export const subscriptions = (_model: Model): Sub<Msg> => {
+export const subscriptions: Client["subscriptions"] = () => {
   return Sub.None;
 };
 
@@ -163,15 +148,7 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 //
 //
 
-export const View = ({
-  ctx,
-  dispatch,
-  model,
-}: {
-  model: Model;
-  dispatch: (m: Msg) => void;
-  ctx: GameSpaceViewCtx;
-}) => {
+export const View: Client["View"] = ({ ctx, dispatch, model }) => {
   if (model.t === "puzzle-builder") {
     return (
       <PuzzleBuilderClient.View

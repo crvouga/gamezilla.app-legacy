@@ -26,6 +26,7 @@ type Client = GameClient<
 >;
 
 const ConnectFour = GameClient.tag("connect-four", ConnectFourClient);
+const Flow = GameClient.tag("flow", FlowClient);
 
 //
 //
@@ -79,7 +80,7 @@ export const init =
       }
 
       case "flow": {
-        return { model: { t: "flow", c: FlowClient.init({}) } };
+        return Flow.init(input);
       }
     }
   };
@@ -277,14 +278,7 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
   }
 
   if (msg.t === "flow" && model.t === "flow") {
-    const updated = FlowClient.updateFromServer({
-      msg: msg.c,
-      model: model.c,
-    });
-    return {
-      model: { t: "flow", c: updated.model },
-      cmd: Cmd.tag_("flow", updated.cmd),
-    };
+    return Flow.updateFromServer({ ...input, msg, model });
   }
 
   return { model };
@@ -339,11 +333,11 @@ export const subscriptions: Client["subscriptions"] = (input): Sub<Msg> => {
   }
 
   if (model.t === "flow") {
-    return Sub.tag_("flow", FlowClient.subscriptions(model.c));
+    return Flow.subscriptions({ ...input, model });
   }
 
-  const exhaustiveCheck: never = model;
-  return exhaustiveCheck;
+  const check: never = model;
+  return check;
 };
 
 //
@@ -421,13 +415,7 @@ export const View: Client["View"] = (input) => {
     }
 
     case "flow": {
-      return (
-        <FlowClient.View
-          model={model.c}
-          ctx={ctx}
-          dispatch={(c) => dispatch({ t: "flow", c })}
-        />
-      );
+      return <Flow.View {...input} model={model} />;
     }
 
     default: {
@@ -610,27 +598,11 @@ export const syncWithServer: Client["syncWithServer"] = (input) => {
     }
 
     case "flow": {
-      if (client?.t === "flow") {
-        return {
-          model: {
-            t: "flow",
-            c: FlowClient.syncWithServer({
-              client: client.c,
-              server: server.c,
-            }),
-          },
-        };
-      }
-
-      return {
-        model: {
-          t: "flow",
-          c: FlowClient.syncWithServer({
-            client: FlowClient.init({}),
-            server: server.c,
-          }),
-        },
-      };
+      return Flow.syncWithServer({
+        ...input,
+        server,
+        client: client?.t === "flow" ? client : undefined,
+      });
     }
   }
 };
