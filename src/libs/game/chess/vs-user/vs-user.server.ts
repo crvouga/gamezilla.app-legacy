@@ -175,7 +175,7 @@ const sendResponse = (
   ];
 };
 
-export const updateFromGameSpace = ({
+export const updateFromParent = ({
   broadcast,
   msg,
   model,

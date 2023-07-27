@@ -157,7 +157,7 @@ export const syncWithServer = ({
   };
 };
 
-export const updateFromGameSpace = (input: {
+export const updateFromParent = (input: {
   model: Model;
   msg: GameSpaceMsg;
 }): {

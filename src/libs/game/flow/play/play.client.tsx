@@ -38,7 +38,7 @@ const updateFromServer: Client["updateFromServer"] = (input) => {
   return input;
 };
 
-const updateFromGameSpace: Client["updateFromGameSpace"] = (input) => {
+const updateFromParent: Client["updateFromParent"] = (input) => {
   return input;
 };
 
@@ -71,7 +71,7 @@ export const PlayClient: Client = {
   init,
   update,
   updateFromServer,
-  updateFromGameSpace,
+  updateFromParent,
   syncWithServer,
   subscriptions,
   View,

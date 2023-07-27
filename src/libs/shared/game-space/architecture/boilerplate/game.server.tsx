@@ -40,7 +40,7 @@ export const updateFromClient: Server["updateFromClient"] = (input) => {
   return input;
 };
 
-export const updateFromGameSpace: Server["updateFromGameSpace"] = (input) => {
+export const updateFromParent: Server["updateFromParent"] = (input) => {
   return input;
 };
 

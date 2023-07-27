@@ -391,7 +391,7 @@ export const updateFromGame = ({
   return { model };
 };
 
-export const updateFromGameSpace = ({
+export const updateFromParent = ({
   model,
 }: {
   msg: GameSpaceMsg;

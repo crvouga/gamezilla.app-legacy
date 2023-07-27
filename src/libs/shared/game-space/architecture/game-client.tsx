@@ -44,7 +44,10 @@ export type GameClient<
     msgs?: ClientAppMsg[];
   };
 
-  updateFromGameSpace: (input: {
+  /**
+   * Handles messages from the game space like users leaving and joining
+   */
+  updateFromParent: (input: {
     ctx: GameSpaceViewCtx;
     sendToServer: (m: ToServer) => Cmd;
     msg: GameSpaceMsg;
@@ -139,8 +142,8 @@ const tag = <
         msgs: updated.msgs,
       };
     },
-    updateFromGameSpace: (input) => {
-      const updated = client.updateFromGameSpace({
+    updateFromParent: (input) => {
+      const updated = client.updateFromParent({
         ...input,
         msg: input.msg,
         model: input.model.c,

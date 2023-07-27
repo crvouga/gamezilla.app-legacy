@@ -250,12 +250,12 @@ export const updateFromClient: Server["updateFromClient"] = (input) => {
   return { model };
 };
 
-export const updateFromGameSpace: Server["updateFromGameSpace"] = (input) => {
+export const updateFromParent: Server["updateFromParent"] = (input) => {
   const { sendToSpace, msg, model } = input;
 
   switch (model.t) {
     case "chess": {
-      const updated = ChessServer.updateFromGameSpace({
+      const updated = ChessServer.updateFromParent({
         broadcast: (m) => sendToSpace({ t: "chess", c: m }),
         msg,
         model: model.c,
@@ -268,11 +268,11 @@ export const updateFromGameSpace: Server["updateFromGameSpace"] = (input) => {
     }
 
     case "connect-four": {
-      return ConnectFour.updateFromGameSpace({ ...input, model });
+      return ConnectFour.updateFromParent({ ...input, model });
     }
 
     case "tic-tac-toe": {
-      const updated = TicTacToeServer.updateFromGameSpace({
+      const updated = TicTacToeServer.updateFromParent({
         broadcast: (msg) => sendToSpace({ t: "tic-tac-toe", c: msg }),
         msg,
         model: model.c,
@@ -284,7 +284,7 @@ export const updateFromGameSpace: Server["updateFromGameSpace"] = (input) => {
     }
 
     case "gomoku": {
-      const updated = GomokuServer.updateFromGameSpace({
+      const updated = GomokuServer.updateFromParent({
         msg,
         model: model.c,
       });
@@ -307,7 +307,7 @@ export const updateFromGameSpace: Server["updateFromGameSpace"] = (input) => {
     }
 
     case "flow": {
-      return Flow.updateFromGameSpace({ ...input, model });
+      return Flow.updateFromParent({ ...input, model });
     }
   }
 };

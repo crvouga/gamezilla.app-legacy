@@ -125,7 +125,7 @@ export const updateFromClient: Server["updateFromClient"] = ({
   return { model };
 };
 
-export const updateFromGameSpace: Server["updateFromGameSpace"] = ({
+export const updateFromParent: Server["updateFromParent"] = ({
   msg,
   model,
   sendToSpace,
@@ -136,7 +136,7 @@ export const updateFromGameSpace: Server["updateFromGameSpace"] = ({
     }
 
     case "vs-bot": {
-      const updated = VsBot.updateFromGameSpace({
+      const updated = VsBot.updateFromParent({
         msg,
         model: model.c,
         broadcast: (c) => sendToSpace({ t: "vs-bot", c }),
@@ -148,7 +148,7 @@ export const updateFromGameSpace: Server["updateFromGameSpace"] = ({
     }
 
     case "vs-user": {
-      const updated = VsUser.updateFromGameSpace({
+      const updated = VsUser.updateFromParent({
         msg,
         model: model.c,
         broadcast: (c) => sendToSpace({ t: "vs-user", c }),

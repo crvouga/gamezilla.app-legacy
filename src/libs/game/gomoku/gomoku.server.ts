@@ -141,7 +141,7 @@ export const updateFromClient = ({
   return { model };
 };
 
-export const updateFromGameSpace = ({
+export const updateFromParent = ({
   msg,
   model,
 }: {
@@ -152,7 +152,7 @@ export const updateFromGameSpace = ({
   cmd?: Cmd<Msg>;
 } => {
   if (model.t === "vs-bot") {
-    const updated = VsBot.updateFromGameSpace({ msg, model: model.c });
+    const updated = VsBot.updateFromParent({ msg, model: model.c });
     return {
       model: { t: "vs-bot", c: updated.model },
       cmd: Cmd.tag_("vs-bot", updated.cmd),
@@ -160,7 +160,7 @@ export const updateFromGameSpace = ({
   }
 
   if (model.t === "vs-user") {
-    const updated = VsUser.updateFromGameSpace({ msg, model: model.c });
+    const updated = VsUser.updateFromParent({ msg, model: model.c });
     return {
       model: { t: "vs-user", c: updated.model },
       cmd: Cmd.tag_("vs-user", updated.cmd),

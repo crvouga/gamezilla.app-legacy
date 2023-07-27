@@ -52,7 +52,7 @@ const initMode =
     return { model: { t: "none" } };
   };
 
-export const updateFromGameSpace: Server["updateFromGameSpace"] = (input) => {
+export const updateFromParent: Server["updateFromParent"] = (input) => {
   return input;
 };
 

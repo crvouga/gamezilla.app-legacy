@@ -112,7 +112,7 @@ const updateFromClient_: typeof updateFromClient = ({
   return { model: modelNew, cmd: broadcast({ ...msg, result: handled }) };
 };
 
-export const updateFromGameSpace = ({
+export const updateFromParent = ({
   msg,
   model,
   broadcast,

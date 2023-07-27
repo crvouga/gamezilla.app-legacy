@@ -72,13 +72,13 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
   return { model };
 };
 
-export const updateFromGameSpace: Client["updateFromGameSpace"] = (input) => {
+export const updateFromParent: Client["updateFromParent"] = (input) => {
   const { model } = input;
   if (model.t === "puzzle-builder") {
-    return PuzzleBuilder.updateFromGameSpace({ ...input, model });
+    return PuzzleBuilder.updateFromParent({ ...input, model });
   }
   if (model.t === "play") {
-    return Play.updateFromGameSpace({ ...input, model });
+    return Play.updateFromParent({ ...input, model });
   }
   return input;
 };

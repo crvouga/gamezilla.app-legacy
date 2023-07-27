@@ -129,7 +129,7 @@ const updateFromClient_: typeof updateFromClient = ({
   return { model: res.result.value, cmd: broadcast(res) };
 };
 
-export const updateFromGameSpace = ({
+export const updateFromParent = ({
   msg,
   model,
   broadcast,

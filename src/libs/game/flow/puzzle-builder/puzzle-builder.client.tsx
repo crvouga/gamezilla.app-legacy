@@ -54,7 +54,10 @@ const updateFromServer: Client["updateFromServer"] = (
   return input;
 };
 
-const updateFromGameSpace: Client["updateFromGameSpace"] = (input) => {
+/**
+ * @inheritdoc
+ */
+const updateFromParent: Client["updateFromParent"] = (input) => {
   return input;
 };
 
@@ -163,7 +166,7 @@ export const PuzzleBuilderClient: Client = {
   init,
   update,
   updateFromServer,
-  updateFromGameSpace,
+  updateFromParent,
   syncWithServer,
   subscriptions,
   View,

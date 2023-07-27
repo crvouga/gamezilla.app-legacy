@@ -158,7 +158,7 @@ const updateFromClient_ = ({
   };
 };
 
-export const updateFromGameSpace = ({
+export const updateFromParent = ({
   broadcast,
   msg,
   model,
