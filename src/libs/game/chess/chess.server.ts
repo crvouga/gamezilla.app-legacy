@@ -1,4 +1,4 @@
-import { Cmd, Result, Sub } from "@gamezilla/core";
+import { Cmd, Err, Ok, Sub } from "@gamezilla/core";
 import { UserId } from "@gamezilla/shared/app";
 import {
   GameSpaceMsg,
@@ -10,8 +10,6 @@ import { Res, ServerModel, ServerMsg, ToClient, ToServer } from "./chess.core";
 import * as Puzzle from "./puzzle/puzzle.server";
 import { VsBotServer } from "./vs-bot";
 import * as VsUser from "./vs-user/vs-user.server";
-
-const { Err, Ok } = Result;
 
 //
 //

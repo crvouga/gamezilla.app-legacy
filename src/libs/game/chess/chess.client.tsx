@@ -14,7 +14,6 @@ import {
   ToClient,
   ToServer,
 } from "./chess.core";
-
 import { ViewCoverArt } from "./chess-ui";
 import Sounds from "./chess/chess-sounds";
 import * as Puzzle from "./puzzle/puzzle.client";
