@@ -1,4 +1,4 @@
-import { Cmd, Sub, exhaustive } from "@gamezilla/core";
+import { Cmd, Sub } from "@gamezilla/core";
 import { ChessServer } from "@gamezilla/game/chess";
 import { ConnectFourServer } from "@gamezilla/game/connect-four";
 import { FlowServer } from "@gamezilla/game/flow";
@@ -13,6 +13,7 @@ import { ServerModel, ServerMsg, ToClient, ToServer } from "./game.core";
 type Server = GameServer<Model, Msg, ToClient, ToServer>;
 
 const ConnectFour = GameServer.tag("connect-four", ConnectFourServer);
+const Flow = GameServer.tag("flow", FlowServer);
 
 //
 //
@@ -59,11 +60,12 @@ export const init =
       }
 
       case "flow": {
-        return { model: { t: "flow", c: FlowServer.init } };
+        return Flow.init(input);
       }
 
       default: {
-        return exhaustive(gameName);
+        const check: never = gameName;
+        return check;
       }
     }
   };
@@ -151,14 +153,7 @@ export const update: Server["update"] = (input) => {
   }
 
   if (model.t === "flow" && msg.t === "flow") {
-    const updated = FlowServer.update({
-      model: model.c,
-      msg: msg.c,
-    });
-    return {
-      model: { t: "flow", c: updated.model },
-      cmd: Cmd.tag_("flow", updated?.cmd ?? Cmd.None),
-    };
+    return Flow.update({ ...input, msg, model });
   }
 
   return { model };
@@ -249,22 +244,13 @@ export const updateFromClient: Server["updateFromClient"] = (input) => {
   }
 
   if (model.t === "flow" && msg.t === "flow") {
-    const updated = FlowServer.updateFromClient({
-      model: model.c,
-      msg: msg.c,
-      ctx,
-      broadcast: (m) => sendToSpace({ t: "flow", c: m }),
-    });
-    return {
-      model: { t: "flow", c: updated.model },
-      cmd: Cmd.tag_("flow", updated?.cmd ?? Cmd.None),
-    };
+    return Flow.updateFromClient({ ...input, model, msg });
   }
 
   return { model };
 };
 
-export const updateFromSpace: Server["updateFromGameSpace"] = (input) => {
+export const updateFromGameSpace: Server["updateFromGameSpace"] = (input) => {
   const { sendToSpace, msg, model } = input;
 
   switch (model.t) {
@@ -282,7 +268,7 @@ export const updateFromSpace: Server["updateFromGameSpace"] = (input) => {
     }
 
     case "connect-four": {
-      return ConnectFour.updateFromGameSpace({ ...input, msg, model });
+      return ConnectFour.updateFromGameSpace({ ...input, model });
     }
 
     case "tic-tac-toe": {
@@ -321,7 +307,7 @@ export const updateFromSpace: Server["updateFromGameSpace"] = (input) => {
     }
 
     case "flow": {
-      return { model };
+      return Flow.updateFromGameSpace({ ...input, model });
     }
   }
 };
@@ -372,7 +358,7 @@ export const subscriptions: Server["subscriptions"] = (input): Sub<Msg> => {
     }
 
     case "flow": {
-      return Sub.tag_("flow", FlowServer.subscriptions(model.c));
+      return Flow.subscriptions({ ...input, model });
     }
   }
 };

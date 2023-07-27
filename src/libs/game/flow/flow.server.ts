@@ -1,48 +1,32 @@
-import { Cmd, Err, Ok, Result, Sub } from "@gamezilla/core";
-import { GameSpaceReqCtx } from "@gamezilla/shared/game-space";
+import { Err, Ok, Result, Sub } from "@gamezilla/core";
+import { GameServer, GameSpaceReqCtx } from "@gamezilla/shared/game-space";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./flow.core";
 import { PlayServer } from "./play";
 import { PuzzleBuilderServer } from "./puzzle-builder";
 
-type Model = ServerModel;
+type Server = GameServer<ServerModel, ServerMsg, ToClient, ToServer>;
 
-export const init: Model = {
-  t: "none",
+export const init: Server["init"] = () => {
+  return {
+    model: { t: "none" },
+  };
 };
 
-type Msg = ServerMsg;
-
-export const update = ({
-  model,
-}: {
-  msg: Msg;
-  model: Model;
-}): {
-  model: Model;
-  cmd?: Cmd<Msg>;
-} => {
-  return { model };
+export const update: Server["update"] = (input) => {
+  return input;
 };
 
-export const updateFromClient = ({
+export const updateFromClient: Server["updateFromClient"] = ({
   msg,
   model,
   ctx,
-  broadcast,
-}: {
-  ctx: GameSpaceReqCtx;
-  msg: ToServer;
-  model: Model;
-  broadcast: (m: ToClient) => Cmd;
-}): {
-  model: Model;
-  cmd?: Cmd<Msg>;
-} => {
+  sendToSpace,
+}) => {
   if (msg.t === "input-mode") {
     const handled = handleInputMode({ mode: msg.mode, ctx });
     return {
       model: handled.t === "err" ? model : handled.value,
-      cmd: broadcast({ ...msg, result: handled }),
+      cmd: sendToSpace({ ...msg, result: handled }),
     };
   }
 
@@ -54,8 +38,8 @@ const handleInputMode = ({
   ctx,
 }: {
   ctx: GameSpaceReqCtx;
-  mode: Model["t"];
-}): Result<string, Model> => {
+  mode: ServerModel["t"];
+}): Result<string, ServerModel> => {
   if (ctx.hostId !== ctx.currentUserId) {
     return Err("must-be-host");
   }
@@ -75,6 +59,10 @@ const handleInputMode = ({
   return Err("invalid-mode");
 };
 
-export const subscriptions = (_model: Model): Sub<Msg> => {
+export const updateFromGameSpace: Server["updateFromGameSpace"] = (input) => {
+  return input;
+};
+
+export const subscriptions: Server["subscriptions"] = () => {
   return Sub.None;
 };

@@ -392,7 +392,7 @@ const updateLeave: UpdateFromClient = ({
     hostId: space.hostId,
   };
 
-  const updated = Game.updateFromSpace({
+  const updated = Game.updateFromGameSpace({
     ctx: gameSpaceCtx,
     sendToClient: (m) => {
       return sendToClient({ t: "game", c: m });
