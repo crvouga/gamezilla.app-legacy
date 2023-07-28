@@ -1,8 +1,9 @@
 import { takeWhile } from "@gamezilla/core";
+// import { findShortestEmptyPath } from "./algo-find-shortest-path";
 import {
+  Node,
   GroupId,
   Model,
-  Node,
   NodeId,
   StartNode,
   setNode,
@@ -10,29 +11,30 @@ import {
 } from "./flow";
 
 /**
- * The first function called when a user starts drawing a path.
- */
-export const startPath = <T extends Model>(model: T): T => {
-  return model;
-};
-
-/**
  * Extends the path from the start node to the target node.
  */
 export const extendPath = <T extends Model>(
   model: T,
   groupId: GroupId,
-  newNodeId: NodeId
+  newId: NodeId
 ): T => {
   const path = findPath(model, groupId);
 
-  if (path.length === 0) {
-    return model;
-  }
+  const subPath = takeWhile((node) => node.nodeId !== newId, path);
 
-  const subPath = takeWhile((nodeId) => nodeId !== newNodeId, path);
+  const added = setPath(
+    model,
+    groupId,
+    subPath.map((x) => x.nodeId)
+  );
 
-  const added = setPath(model, groupId, subPath);
+  // const end = subPath[subPath.length - 1];
+
+  // const shortestPath = end ? findShortestEmptyPath(added, end.nodeId, newId) : [];
+
+  // const pathNew = [...subPath, ...shortestPath];
+
+  // const addedNew = setPath(model, groupId, pathNew);
 
   return added;
 };
@@ -44,7 +46,7 @@ const findPath = (
   model: Model,
   groupId: GroupId,
   currentId?: NodeId
-): NodeId[] => {
+): Node[] => {
   if (!currentId) {
     const startNode = findStartNode(model, groupId);
     if (!startNode) {
@@ -68,50 +70,47 @@ const findPath = (
   }
 
   if (current.t === "end") {
-    return [currentId];
+    return [current];
   }
 
   if (!current.nextId) {
-    return [currentId];
+    return [current];
   }
 
-  return findPath(model, groupId, current.nextId);
+  return [current, ...findPath(model, groupId, current.nextId)];
 };
 
-export const removePath = (model: Model, groupId: GroupId): Model => {
-  let modelNew: Model = { ...model };
+/**
+ *
+ */
+export const setPath = <T extends Model>(
+  model: T,
+  groupId: GroupId,
+  path: NodeId[]
+): T => {
+  return addPath(removePath(model, groupId), groupId, path);
+};
+
+/**
+ *
+ */
+export const removePath = <T extends Model>(model: T, groupId: GroupId): T => {
+  let modelNew: T = { ...model };
   for (const node of yieldNodes(model)) {
-    if (node.t === "empty") {
-      continue;
+    if (node.t === "path" && node.groupId === groupId) {
+      modelNew = setNode(modelNew, {
+        nodeId: node.nodeId,
+        t: "empty",
+      });
     }
-    if (node.groupId !== groupId) {
-      continue;
-    }
-
-    const nodeNew: Node =
-      node.t === "start"
-        ? {
-            nodeId: node.nodeId,
-            groupId: node.groupId,
-            t: "start",
-          }
-        : node.t === "end"
-        ? {
-            nodeId: node.nodeId,
-            t: "end",
-            groupId: node.groupId,
-          }
-        : {
-            nodeId: node.nodeId,
-            t: "empty",
-          };
-
-    modelNew = setNode(modelNew, nodeNew);
   }
   return modelNew;
 };
 
-const setPath = <T extends Model>(
+/**
+ *
+ */
+const addPath = <T extends Model>(
   model: T,
   groupId: GroupId,
   path: NodeId[]
@@ -130,7 +129,7 @@ const setPath = <T extends Model>(
 
   const modelNew = setNode(model, head);
 
-  return setPath(modelNew, groupId, tail);
+  return addPath(modelNew, groupId, tail);
 };
 
 const findStartNode = (model: Model, groupId: GroupId): StartNode | null => {

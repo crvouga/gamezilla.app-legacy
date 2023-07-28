@@ -1,13 +1,13 @@
-import { EdgeId, Model, NodeId } from "./flow";
+import { Model, NodeId } from "./flow";
 
 /**
  * Returns a list of edges without a groupId that form the shortest path between the source and target nodes.
  */
-export const findShortestEmptyPath = (_: {
-  model: Model;
-  source: NodeId;
-  target: NodeId;
-}): EdgeId[] => {
+export const findShortestEmptyPath = (
+  _model: Model,
+  _sourceId: NodeId,
+  _targetId: NodeId
+): NodeId[] => {
   return [];
   // const groupId = findPath(model, source);
   // const terminal = findTerminal(model, source);
@@ -92,7 +92,7 @@ export const findShortestEmptyPath = (_: {
   //
   //
 
-  const path: EdgeId[] = [];
+  // const path: EdgeId[] = [];
 
   // for (let i = 0; i < nodePath.length; i++) {
   //   const from = nodePath[i];
@@ -112,5 +112,5 @@ export const findShortestEmptyPath = (_: {
   //
   //
 
-  return path;
+  // return path;
 };
