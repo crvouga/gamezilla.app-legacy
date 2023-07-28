@@ -6,6 +6,7 @@ import {
   NodeId,
   StartNode,
   mapNodes,
+  setNode,
   toEdgeId,
   yieldEdges,
   yieldInEdges,
@@ -28,33 +29,19 @@ export const extendPath = <T extends Model>(
   groupId: GroupId,
   newNodeId: NodeId
 ): T => {
-  const newNode = model.nodes[newNodeId];
-
-  if (!newNode) {
-    return model;
-  }
-
-  if (newNode.t !== "empty") {
-    return model;
-  }
-
-  const path = takeUntil(
-    findPath(model, groupId),
-    (node) => node.nodeId === newNodeId
+  const path = takeWhile(
+    (node) => node.nodeId !== newNodeId,
+    findPath(model, groupId)
   );
 
   if (path.length === 0) {
     return model;
   }
 
-  const removed = removePath({
-    model,
-    groupId,
-    currentId: last.nodeId,
-  });
+  const added = setPath(removePath(model, groupId), groupId, path);
 
   const shortestEmptyPath = findShortestEmptyPath({
-    model: removed,
+    model: added,
     sourceId: last.nodeId,
     targetId: newNodeId,
   });
@@ -66,10 +53,10 @@ export const extendPath = <T extends Model>(
   return removed;
 };
 
-const takeUntil = <T>(arr: T[], predicate: (item: T) => boolean): T[] => {
+const takeWhile = <T>(predicate: (item: T) => boolean, arr: T[]): T[] => {
   const result: T[] = [];
   for (const item of arr) {
-    if (predicate(item)) {
+    if (!predicate(item)) {
       return result;
     }
     result.push(item);
@@ -78,7 +65,7 @@ const takeUntil = <T>(arr: T[], predicate: (item: T) => boolean): T[] => {
 };
 
 /**
- * Returns last node of the walk
+ * Returns ordered list of node from a group
  */
 const findPath = (
   model: Model,
@@ -118,72 +105,36 @@ const findPath = (
   return findPath(model, groupId, current.nextId);
 };
 
-const removePath = ({
-  model,
-  groupId,
-  currentId,
-}: {
-  model: Model;
-  groupId: GroupId;
-  currentId: NodeId;
-}): Model => {
-  const current = model.nodes[currentId];
-
-  if (!current) {
-    return model;
-  }
-
-  if (current.t === "empty") {
-    return model;
-  }
-
-  if (current.groupId !== groupId) {
-    return model;
-  }
-
-  if (current.t === "end") {
-    return model;
-  }
-
-  if (!current.nextId) {
-    return model;
-  }
-
-  const removed = dissocNodeFromGroup(model, current.nodeId);
-
-  return removePath({
-    model: removed,
-    groupId,
-    currentId: current.nextId,
-  });
-};
-
-const assocNodeWithGroup = (model: Model, nodeId: NodeId, groupId: GroupId) => {
-  return mapNodes(model, (node) => {
-    if (node.nodeId !== nodeId) {
-      return node;
+const removePath = (model: Model, groupId: GroupId): Model => {
+  let modelNew: Model = { ...model };
+  for (const node of yieldNodes(model)) {
+    if (node.t === "empty") {
+      continue;
     }
-
-    return {
-      nodeId: node.nodeId,
-      t: "path",
-      groupId,
-      prevId: node.nodeId,
-    };
-  });
-};
-
-const dissocNodeFromGroup = (model: Model, nodeId: NodeId): Model => {
-  return mapNodes(model, (node) => {
-    if (node.nodeId !== nodeId) {
-      return node;
+    if (node.groupId !== groupId) {
+      continue;
     }
-
-    return {
+    modelNew = setNode(modelNew, {
       nodeId: node.nodeId,
       t: "empty",
-    };
+    });
+  }
+  return modelNew;
+};
+
+const setPath = (model: Model, groupId: GroupId, path: NodeId[]): Model => {
+  const [head, ...tail] = path;
+  if(!head) {
+    return model;
+  }
+  const modelNew = setNode(model, {
+    nodeId: head,
+    t: "start",
+    groupId,
   });
+
+  if (tail.length === 0) {
+
 };
 
 const findStartNode = (model: Model, groupId: GroupId): StartNode | null => {
