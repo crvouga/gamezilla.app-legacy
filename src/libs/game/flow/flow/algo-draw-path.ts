@@ -3,7 +3,7 @@ import {
   Edge,
   Model,
   NodeId,
-  PathId,
+  GroupId,
   findPath,
   findPathTerminal,
   setEdgePath,
@@ -21,16 +21,16 @@ export const startPath = <T extends Model>(model: T, nodeId: NodeId): T => {
   const terminal = findPathTerminal(model, nodeId);
 
   if (terminal) {
-    return setStartNode(destroyPath(model, terminal.pathId), terminal, nodeId);
+    return setStartNode(destroyPath(model, terminal.groupId), terminal, nodeId);
   }
 
-  const pathId = findPath(model, nodeId);
+  const groupId = findPath(model, nodeId);
 
-  if (!pathId) {
+  if (!groupId) {
     return model;
   }
 
-  return extendPath(model, pathId, nodeId);
+  return extendPath(model, groupId, nodeId);
 };
 
 /**
@@ -38,16 +38,16 @@ export const startPath = <T extends Model>(model: T, nodeId: NodeId): T => {
  */
 export const extendPath = <T extends Model>(
   model: T,
-  pathId: PathId,
+  groupId: GroupId,
   newNodeId: NodeId
 ): T => {
-  const newNodePathId = findPath(model, newNodeId);
-  const isNewNodeInDifferentPath = newNodePathId && newNodePathId !== pathId;
+  const newNodeGroupId = findPath(model, newNodeId);
+  const isNewNodeInDifferentPath = newNodeGroupId && newNodeGroupId !== groupId;
   if (isNewNodeInDifferentPath) {
     return model;
   }
 
-  const terminal = model.pathTerminals[pathId];
+  const terminal = model.pathTerminals[groupId];
 
   // Can not extend a path that does not have a start node.
   if (!terminal) {
@@ -56,8 +56,8 @@ export const extendPath = <T extends Model>(
 
   const walked = extendPathWalk({
     newNodeId,
-    pathId,
-    modelNew: destroyPath(model, pathId),
+    groupId,
+    modelNew: destroyPath(model, groupId),
     modelWithPath: model,
     currentNodeId: terminal.startId,
   });
@@ -68,12 +68,12 @@ export const extendPath = <T extends Model>(
 const extendPathWalk = <T extends Model>({
   newNodeId,
   currentNodeId,
-  pathId,
+  groupId,
   modelWithPath,
   modelNew,
 }: {
   newNodeId: NodeId;
-  pathId: PathId;
+  groupId: GroupId;
   modelWithPath: T;
   modelNew: T;
   currentNodeId: NodeId;
@@ -88,13 +88,13 @@ const extendPathWalk = <T extends Model>({
   // Done walking the path. We made it to the end.
   if (terminal && terminal.endId === currentNodeId) {
     const edgeId = toEdgeId({ source: currentNodeId, target: terminal.endId });
-    return setEdgePath(modelNew, edgeId, pathId);
+    return setEdgePath(modelNew, edgeId, groupId);
   }
 
-  const edge = findOutEdgeWithPathId({
+  const edge = findOutEdgeWithGroupId({
     model: modelWithPath,
     sourceNodeId: currentNodeId,
-    pathId: pathId,
+    groupId: groupId,
   });
 
   if (!edge) {
@@ -105,7 +105,7 @@ const extendPathWalk = <T extends Model>({
     });
 
     const added = shortestPath.reduce(
-      (acc, edgeId) => setEdgePath(acc, edgeId, pathId),
+      (acc, edgeId) => setEdgePath(acc, edgeId, groupId),
       modelNew
     );
     return added;
@@ -117,11 +117,11 @@ const extendPathWalk = <T extends Model>({
 
   const edgeId = toEdgeId({ source: currentNodeId, target: edge.target });
 
-  const updated = setEdgePath(modelNew, edgeId, pathId);
+  const updated = setEdgePath(modelNew, edgeId, groupId);
 
   return extendPathWalk({
     modelWithPath,
-    pathId: pathId,
+    groupId: groupId,
     newNodeId,
     currentNodeId: edge.target,
     modelNew: updated,
@@ -136,13 +136,13 @@ export const isNodeAssociatedWithPath = (
   nodeId: NodeId
 ): boolean => {
   for (const edge of yieldOutEdges(model, nodeId)) {
-    if (edge.pathId) {
+    if (edge.groupId) {
       return true;
     }
   }
 
   for (const edge of yieldInEdges(model, nodeId)) {
-    if (edge.pathId) {
+    if (edge.groupId) {
       return true;
     }
   }
@@ -153,10 +153,10 @@ export const isNodeAssociatedWithPath = (
 /**
  * Dissociates inputted path from all edges.
  */
-const destroyPath = <T extends Model>(model: T, pathId: PathId): T => {
+const destroyPath = <T extends Model>(model: T, groupId: GroupId): T => {
   let modelNew: T = { ...model };
   for (const edge of yieldEdges(model)) {
-    if (edge.pathId !== pathId) {
+    if (edge.groupId !== groupId) {
       continue;
     }
     modelNew = setEdgePath(modelNew, toEdgeId(edge), null);
@@ -167,17 +167,17 @@ const destroyPath = <T extends Model>(model: T, pathId: PathId): T => {
 /**
  * Find an edge where the inputted node is the source and the path id matches.
  */
-const findOutEdgeWithPathId = <T extends Model>({
+const findOutEdgeWithGroupId = <T extends Model>({
   model,
   sourceNodeId,
-  pathId,
+  groupId,
 }: {
   model: T;
   sourceNodeId: NodeId;
-  pathId: PathId;
+  groupId: GroupId;
 }): Edge | null => {
   for (const outEdge of yieldOutEdges(model, sourceNodeId)) {
-    if (outEdge.pathId === pathId) {
+    if (outEdge.groupId === groupId) {
       return outEdge;
     }
   }

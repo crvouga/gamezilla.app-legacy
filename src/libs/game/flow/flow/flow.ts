@@ -2,7 +2,7 @@ export type NodeId = string & { readonly __brand: unique symbol };
 
 export type EdgeId = string & { readonly __brand: unique symbol };
 
-export type PathId =
+export type GroupId =
   | "A"
   | "B"
   | "C"
@@ -41,8 +41,8 @@ export const PATH_ID_ORDER = [
   "Q",
 ] as const;
 
-export const isPathId = (pathId: string): pathId is PathId => {
-  return PATH_ID_ORDER.includes(pathId as PathId);
+export const isGroupId = (groupId: string): groupId is GroupId => {
+  return PATH_ID_ORDER.includes(groupId as GroupId);
 };
 
 export const toEdgeId = (edge: Edge): EdgeId => {
@@ -90,7 +90,7 @@ export type Model = {
    * Represents the start and end node of a path.
    */
   pathTerminals: {
-    [pathId in PathId]?: PathTerminal;
+    [groupId in GroupId]?: PathTerminal;
   };
 
   /**
@@ -129,7 +129,7 @@ export type Model = {
 export type Edge = {
   source: NodeId;
   target: NodeId;
-  pathId?: PathId | null;
+  groupId?: GroupId | null;
 };
 
 /**
@@ -143,7 +143,7 @@ export type Node = {
  * Represents the start and end node of a path.
  */
 export type PathTerminal = {
-  pathId: PathId;
+  groupId: GroupId;
   startId: NodeId;
   endId: NodeId;
 };
@@ -237,7 +237,7 @@ export const addTerminal = <T extends Model>(
     ...addNode(addNode(model, terminal.startId), terminal.endId),
     pathTerminals: {
       ...model.pathTerminals,
-      [terminal.pathId]: terminal,
+      [terminal.groupId]: terminal,
     },
   };
 };
@@ -264,7 +264,7 @@ export const setStartNode = <T extends Model>(
 export const setEdgePath = <T extends Model>(
   model: T,
   edgeId: EdgeId,
-  pathId: PathId | null
+  groupId: GroupId | null
 ): T => {
   const edge = model.edges[edgeId];
 
@@ -274,7 +274,7 @@ export const setEdgePath = <T extends Model>(
 
   const edgeNew: Edge = {
     ...edge,
-    pathId: pathId,
+    groupId: groupId,
   };
 
   return addEdge(model, edgeNew);
@@ -286,12 +286,12 @@ export const setEdgePath = <T extends Model>(
 export const yieldPathTerminals = function* <T extends Model>(
   model: Pick<T, "pathTerminals">
 ): Generator<PathTerminal> {
-  for (const pathId in model.pathTerminals) {
-    if (!isPathId(pathId)) {
+  for (const groupId in model.pathTerminals) {
+    if (!isGroupId(groupId)) {
       continue;
     }
 
-    const terminal = model.pathTerminals[pathId];
+    const terminal = model.pathTerminals[groupId];
 
     if (!terminal) {
       continue;
@@ -418,16 +418,16 @@ export const findPathTerminal = (
 export const findPath = (
   model: Pick<Model, "indexEdgesIn" | "indexEdgesOut" | "edges" | "nodes">,
   nodeId: NodeId
-): PathId | null => {
+): GroupId | null => {
   for (const edge of yieldInEdges(model, nodeId)) {
-    if (edge.pathId) {
-      return edge.pathId;
+    if (edge.groupId) {
+      return edge.groupId;
     }
   }
 
   for (const edge of yieldOutEdges(model, nodeId)) {
-    if (edge.pathId) {
-      return edge.pathId;
+    if (edge.groupId) {
+      return edge.groupId;
     }
   }
 

@@ -3,10 +3,10 @@ import { UserId } from "@gamezilla/shared/app";
 import { Flow } from "../flow";
 import { FlowGrid, FlowGridPlayUI } from "../flow-grid";
 import { bounds8x8 } from "../flow-grid/flow-grid-position";
-import { PathId } from "../flow/flow";
+import { GroupId } from "../flow/flow";
 
 type DraftTerminal = {
-  pathId: PathId;
+  groupId: GroupId;
   startId: Flow.NodeId;
   endId: Flow.NodeId | null;
 };
@@ -21,10 +21,10 @@ export type SharedModel = EditModel | PlayModel;
 
 type EditModel = {
   mode: "edit";
-  activePathId: Flow.PathId;
+  activeGroupId: Flow.GroupId;
   grid: FlowGrid.Model;
   draftTerminals: {
-    [pathId in Flow.PathId]?: DraftTerminal;
+    [groupId in Flow.GroupId]?: DraftTerminal;
   };
 };
 
@@ -44,33 +44,6 @@ export const initShared: SharedModel = {
 
 //
 //
-//
-//
-
-export const findDraftPathTerminal = (
-  model: SharedModel,
-  nodeId: Flow.NodeId
-): DraftTerminal | null => {
-  if (model.mode !== "edit") {
-    return null;
-  }
-  for (const pathId in model.draftTerminals) {
-    if (!Flow.isPathId(pathId)) {
-      continue;
-    }
-    const draftTerminal = model.draftTerminals[pathId];
-    if (!draftTerminal) {
-      continue;
-    }
-    if (draftTerminal.startId === nodeId || draftTerminal.endId === nodeId) {
-      return draftTerminal;
-    }
-  }
-  return null;
-};
-
-//
-//
 // Msg
 //
 //
@@ -84,7 +57,7 @@ export type ToServer = Req;
 export type ToClient = Res;
 
 export type Req =
-  | { t: "input-active-group"; pathId: PathId }
+  | { t: "input-active-group"; groupId: GroupId }
   | { t: "input-mode"; mode: ServerModel["mode"] }
   | { t: "pressed-down-node"; nodeId: Flow.NodeId };
 
@@ -105,30 +78,47 @@ export const handle = ({
     return Err("must-be-host");
   }
 
+  const updated = updateModel({ msg, model });
+
+  return Ok(updated);
+};
+
+export const updateModel = ({
+  msg,
+  model,
+}: {
+  msg: Req;
+  model: SharedModel;
+}): SharedModel => {
   if (model.mode === "edit") {
     if (msg.t === "pressed-down-node") {
-      const pressedTerminal = findDraftPathTerminal(model, msg.nodeId);
+      const pressedTerminal = findDraftTerminal(model, msg.nodeId);
 
       if (pressedTerminal) {
-        return Ok(model);
+        return { ...model, activeGroupId: pressedTerminal.groupId };
       }
 
-      const activeTerminal = model.draftTerminals[model.activePathId];
+      const activeTerminal = model.draftTerminals[model.activeGroupId];
 
       if (!activeTerminal) {
         const terminalNew: DraftTerminal = {
-          pathId: model.activePathId,
+          groupId: model.activeGroupId,
           startId: msg.nodeId,
           endId: null,
         };
+
         const modelNew: EditModel = {
           ...model,
           draftTerminals: {
             ...model.draftTerminals,
-            [model.activePathId]: terminalNew,
+            [model.activeGroupId]: terminalNew,
           },
         };
-        return Ok(modelNew);
+        return modelNew;
+      }
+
+      if (activeTerminal.groupId === model.activeGroupId) {
+        return model;
       }
 
       const terminalNew: DraftTerminal = {
@@ -139,40 +129,62 @@ export const handle = ({
         ...model,
         draftTerminals: {
           ...model.draftTerminals,
-          [model.activePathId]: terminalNew,
+          [model.activeGroupId]: terminalNew,
         },
-        activePathId: toNextPathId(model.activePathId),
+        activeGroupId: toNextGroupId(model.activeGroupId),
       };
-      return Ok(modelNew);
+      return modelNew;
     }
 
     if (msg.t === "input-mode") {
       if (msg.mode === "play") {
-        return Ok({
-          ...model,
-          model: "play",
-        });
+        return model;
       }
+      return model;
     }
 
-    return Err("must-be-in-edit-mode");
+    return model;
   }
 
   if (model.mode === "play") {
     if (msg.t === "input-mode")
       if (msg.mode === "edit") {
-        return Ok({
+        return {
           grid: model.grid,
           mode: "edit",
-          activePathId: Flow.PATH_ID_ORDER[0],
+          activeGroupId: Flow.PATH_ID_ORDER[0],
           draftTerminals: {},
-        });
+        };
       }
 
-    return Err("must-be-in-play-mode");
+    return model;
   }
+  return model;
+};
 
-  return Err("unimplemented");
+/**
+ *
+ */
+export const findDraftTerminal = (
+  model: SharedModel,
+  nodeId: Flow.NodeId
+): DraftTerminal | null => {
+  if (model.mode !== "edit") {
+    return null;
+  }
+  for (const groupId in model.draftTerminals) {
+    if (!Flow.isGroupId(groupId)) {
+      continue;
+    }
+    const draftTerminal = model.draftTerminals[groupId];
+    if (!draftTerminal) {
+      continue;
+    }
+    if (draftTerminal.startId === nodeId || draftTerminal.endId === nodeId) {
+      return draftTerminal;
+    }
+  }
+  return null;
 };
 
 //
@@ -183,14 +195,14 @@ export const handle = ({
 //
 //
 
-const toNextPathId = (pathId: Flow.PathId): Flow.PathId => {
-  const index = Flow.PATH_ID_ORDER.indexOf(pathId);
+const toNextGroupId = (groupId: Flow.GroupId): Flow.GroupId => {
+  const index = Flow.PATH_ID_ORDER.indexOf(groupId);
   const nextIndex = (index + 1) % Flow.PATH_ID_ORDER.length;
-  const pathIdNew = Flow.PATH_ID_ORDER[nextIndex];
+  const groupIdNew = Flow.PATH_ID_ORDER[nextIndex];
 
-  if (!pathIdNew) {
+  if (!groupIdNew) {
     throw new Error("impossible condition");
   }
 
-  return pathIdNew;
+  return groupIdNew;
 };

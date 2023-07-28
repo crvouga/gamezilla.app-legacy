@@ -2,7 +2,7 @@ import {
   Edge,
   Model,
   NodeId,
-  PathId,
+  GroupId,
   findPathTerminal,
   yieldOutEdges,
 } from "./flow";
@@ -12,15 +12,15 @@ import {
  */
 export const toAutocompleteEdge = (
   model: Model,
-  pathId: PathId
+  groupId: GroupId
 ): Edge | null => {
-  const terminal = model.pathTerminals[pathId];
+  const terminal = model.pathTerminals[groupId];
 
   if (!terminal) {
     return null;
   }
 
-  const endId = findPathEndNode(model, pathId, terminal.startId);
+  const endId = findPathEndNode(model, groupId, terminal.startId);
 
   if (!endId) {
     return null;
@@ -29,7 +29,7 @@ export const toAutocompleteEdge = (
   for (const edge of yieldOutEdges(model, endId)) {
     const terminal = findPathTerminal(model, edge.target);
 
-    if (terminal && terminal.pathId === pathId) {
+    if (terminal && terminal.groupId === groupId) {
       return edge;
     }
   }
@@ -39,11 +39,11 @@ export const toAutocompleteEdge = (
 
 const findPathEndNode = (
   model: Model,
-  pathId: PathId,
+  groupId: GroupId,
   nodeId: NodeId
 ): NodeId => {
   for (const outEdge of yieldOutEdges(model, nodeId)) {
-    if (outEdge.pathId !== pathId) {
+    if (outEdge.groupId !== groupId) {
       continue;
     }
 
@@ -51,7 +51,7 @@ const findPathEndNode = (
       return nodeId;
     }
 
-    return findPathEndNode(model, pathId, outEdge.target);
+    return findPathEndNode(model, groupId, outEdge.target);
   }
 
   return nodeId;

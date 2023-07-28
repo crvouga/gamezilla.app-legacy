@@ -20,7 +20,7 @@ type State =
   | { t: "idle" }
   | {
       t: "dragging";
-      activePathId: Flow.PathId;
+      activeGroupId: Flow.GroupId;
       autocompleteEdge?: FlowGrid.Edge | null;
     };
 
@@ -69,12 +69,12 @@ export const updateModel = ({
     if (msg.t === "pressed-down-node") {
       const pressedNodeId = msg.nodeId;
 
-      const pathId = Flow.findPath(model.grid, pressedNodeId);
+      const groupId = Flow.findPath(model.grid, pressedNodeId);
       const pathTerminal = Flow.findPathTerminal(model.grid, pressedNodeId);
 
-      const activePathId = pathId ?? pathTerminal?.pathId ?? null;
+      const activeGroupId = groupId ?? pathTerminal?.groupId ?? null;
 
-      if (!activePathId) {
+      if (!activeGroupId) {
         return {
           ...model,
           state: { t: "idle" },
@@ -86,7 +86,7 @@ export const updateModel = ({
         grid: AlgoDrawPath.startPath(model.grid, pressedNodeId),
         state: {
           t: "dragging",
-          activePathId,
+          activeGroupId,
           autocompleteEdge: null,
         },
       };
@@ -99,13 +99,13 @@ export const updateModel = ({
     if (msg.t === "dragged-over") {
       const gridNew = AlgoDrawPath.extendPath(
         model.grid,
-        model.state.activePathId,
+        model.state.activeGroupId,
         msg.nodeId
       );
 
       const autocompleteEdge = AlgoAutocompletePath.toAutocompleteEdge(
         gridNew,
-        model.state.activePathId
+        model.state.activeGroupId
       );
 
       const autocompleteGridEdge = autocompleteEdge
@@ -140,7 +140,7 @@ const addAutocompleteEdge = (model: Model): Model => {
   if (model.state.t === "dragging" && model.state.autocompleteEdge) {
     const gridNew = AlgoDrawPath.extendPath(
       model.grid,
-      model.state.activePathId,
+      model.state.activeGroupId,
       model.state.autocompleteEdge.target
     );
     return {
@@ -176,15 +176,15 @@ export const View = ({
         model.state.t === "dragging" && model.state.autocompleteEdge
           ? {
               ...model.state.autocompleteEdge,
-              pathId: model.state.activePathId,
+              groupId: model.state.activeGroupId,
             }
           : null
       }
       className={
         model.state.t === "dragging" ? "cursor-grabbing" : "cursor-grab"
       }
-      isActive={({ pathId }) =>
-        model.state.t === "dragging" && model.state.activePathId === pathId
+      isActive={({ groupId }) =>
+        model.state.t === "dragging" && model.state.activeGroupId === groupId
       }
     />
   );

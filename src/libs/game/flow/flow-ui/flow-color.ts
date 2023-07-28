@@ -1,4 +1,4 @@
-import { PathId } from "../flow/flow";
+import { GroupId } from "../flow/flow";
 
 // source: https://tailwindcss.com/docs/customizing-colors
 const colorToHexMap = {
@@ -21,7 +21,7 @@ const colorToHexMap = {
   rose: "#e11d48",
 } as const;
 
-export const pathIdToColor: { [pathId in PathId]: Color } = {
+export const groupIdToColor: { [groupId in GroupId]: Color } = {
   A: "red",
   B: "blue",
   C: "yellow",
@@ -142,8 +142,8 @@ export const Color = {
   fromEmoji: emojiToColor,
   all: allColors,
   toHex: colorToHex,
-  pathIdToColor,
-  pathIdToHex: (pathId: PathId): string => {
-    return colorToHex(pathIdToColor[pathId]);
+  groupIdToColor,
+  groupIdToHex: (groupId: GroupId): string => {
+    return colorToHex(groupIdToColor[groupId]);
   },
 };

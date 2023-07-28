@@ -8,7 +8,7 @@ import {
 } from "@gamezilla/ui";
 import { FlowGridPlayUI, FlowGridUI } from "../flow-grid";
 import { FlowViewCtx } from "../flow-shared";
-import { Color, pathIdToColor } from "../flow-ui";
+import { Color, groupIdToColor } from "../flow-ui";
 import {
   ClientModel,
   ClientMsg,
@@ -132,10 +132,10 @@ const View: Client["View"] = ({ model, dispatch, ctx }) => {
               cx={0}
               cy={0}
               r={1}
-              fill={Color.toHex(pathIdToColor[model.activePathId])}
+              fill={Color.toHex(groupIdToColor[model.activeGroupId])}
             />
           </svg>
-          <p>{capitalize(pathIdToColor[model.activePathId])}</p>
+          <p>{capitalize(groupIdToColor[model.activeGroupId])}</p>
         </div>
       </div>
       <ViewBottomButtonBar
