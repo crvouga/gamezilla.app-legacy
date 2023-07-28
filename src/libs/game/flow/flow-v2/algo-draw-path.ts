@@ -1,17 +1,12 @@
+import { takeWhile } from "@gamezilla/core";
 import {
-  Edge,
   GroupId,
   Model,
   Node,
   NodeId,
   StartNode,
-  mapNodes,
   setNode,
-  toEdgeId,
-  yieldEdges,
-  yieldInEdges,
   yieldNodes,
-  yieldOutEdges,
 } from "./flow";
 
 /**
@@ -29,39 +24,17 @@ export const extendPath = <T extends Model>(
   groupId: GroupId,
   newNodeId: NodeId
 ): T => {
-  const path = takeWhile(
-    (node) => node.nodeId !== newNodeId,
-    findPath(model, groupId)
-  );
+  const path = findPath(model, groupId);
 
   if (path.length === 0) {
     return model;
   }
 
-  const added = setPath(removePath(model, groupId), groupId, path);
+  const subPath = takeWhile((nodeId) => nodeId !== newNodeId, path);
 
-  const shortestEmptyPath = findShortestEmptyPath({
-    model: added,
-    sourceId: last.nodeId,
-    targetId: newNodeId,
-  });
+  const added = setPath(model, groupId, subPath);
 
-  if (!shortestEmptyPath) {
-    return removed;
-  }
-
-  return removed;
-};
-
-const takeWhile = <T>(predicate: (item: T) => boolean, arr: T[]): T[] => {
-  const result: T[] = [];
-  for (const item of arr) {
-    if (!predicate(item)) {
-      return result;
-    }
-    result.push(item);
-  }
-  return result;
+  return added;
 };
 
 /**
@@ -71,7 +44,7 @@ const findPath = (
   model: Model,
   groupId: GroupId,
   currentId?: NodeId
-): Node[] => {
+): NodeId[] => {
   if (!currentId) {
     const startNode = findStartNode(model, groupId);
     if (!startNode) {
@@ -95,17 +68,17 @@ const findPath = (
   }
 
   if (current.t === "end") {
-    return [current];
+    return [currentId];
   }
 
   if (!current.nextId) {
-    return [current];
+    return [currentId];
   }
 
   return findPath(model, groupId, current.nextId);
 };
 
-const removePath = (model: Model, groupId: GroupId): Model => {
+export const removePath = (model: Model, groupId: GroupId): Model => {
   let modelNew: Model = { ...model };
   for (const node of yieldNodes(model)) {
     if (node.t === "empty") {
@@ -114,109 +87,56 @@ const removePath = (model: Model, groupId: GroupId): Model => {
     if (node.groupId !== groupId) {
       continue;
     }
-    modelNew = setNode(modelNew, {
-      nodeId: node.nodeId,
-      t: "empty",
-    });
+
+    const nodeNew: Node =
+      node.t === "start"
+        ? {
+            nodeId: node.nodeId,
+            groupId: node.groupId,
+            t: "start",
+          }
+        : node.t === "end"
+        ? {
+            nodeId: node.nodeId,
+            t: "end",
+            groupId: node.groupId,
+          }
+        : {
+            nodeId: node.nodeId,
+            t: "empty",
+          };
+
+    modelNew = setNode(modelNew, nodeNew);
   }
   return modelNew;
 };
 
-const setPath = (model: Model, groupId: GroupId, path: NodeId[]): Model => {
-  const [head, ...tail] = path;
-  if(!head) {
+const setPath = <T extends Model>(
+  model: T,
+  groupId: GroupId,
+  path: NodeId[]
+): T => {
+  const [headId, ...tail] = path;
+
+  if (!headId) {
     return model;
   }
-  const modelNew = setNode(model, {
-    nodeId: head,
-    t: "start",
-    groupId,
-  });
 
-  if (tail.length === 0) {
+  const head = model.nodes[headId];
 
+  if (!head) {
+    return model;
+  }
+
+  const modelNew = setNode(model, head);
+
+  return setPath(modelNew, groupId, tail);
 };
 
 const findStartNode = (model: Model, groupId: GroupId): StartNode | null => {
   for (const node of yieldNodes(model)) {
     if (node.t === "start" && node.groupId === groupId) {
       return node;
-    }
-  }
-  return null;
-};
-
-const findLastNode = (model: Model, groupId: GroupId): NodeId | null => {
-  return null;
-};
-
-const extendPathWalk = <T extends Model>({
-  newNodeId,
-  currentId,
-  groupId,
-  modelWithPath,
-  modelNew,
-}: {
-  newNodeId: NodeId;
-  groupId: GroupId;
-  modelWithPath: T;
-  modelNew: T;
-  currentId: NodeId;
-}): T => {
-  retr;
-};
-
-/**
- * Returns true if the inputted node is associated with a path.
- */
-export const isNodeAssociatedWithPath = (
-  model: Model,
-  nodeId: NodeId
-): boolean => {
-  for (const edge of yieldOutEdges(model, nodeId)) {
-    if (edge.groupId) {
-      return true;
-    }
-  }
-
-  for (const edge of yieldInEdges(model, nodeId)) {
-    if (edge.groupId) {
-      return true;
-    }
-  }
-
-  return false;
-};
-
-/**
- * Dissociates inputted path from all edges.
- */
-const destroyPath = <T extends Model>(model: T, groupId: GroupId): T => {
-  let modelNew: T = { ...model };
-  for (const edge of yieldEdges(model)) {
-    if (edge.groupId !== groupId) {
-      continue;
-    }
-    modelNew = setEdgePath(modelNew, toEdgeId(edge), null);
-  }
-  return modelNew;
-};
-
-/**
- * Find an edge where the inputted node is the source and the path id matches.
- */
-const findOutEdgeWithGroupId = <T extends Model>({
-  model,
-  sourceNodeId,
-  groupId,
-}: {
-  model: T;
-  sourceNodeId: NodeId;
-  groupId: GroupId;
-}): Edge | null => {
-  for (const outEdge of yieldOutEdges(model, sourceNodeId)) {
-    if (outEdge.groupId === groupId) {
-      return outEdge;
     }
   }
   return null;

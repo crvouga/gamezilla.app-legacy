@@ -333,7 +333,7 @@ export const yieldOutEdges = function* (
       continue;
     }
 
-    const edge = toEdge(model, edgeId);
+    const edge = toEdgeJoined(model, edgeId);
 
     if (!edge) {
       continue;

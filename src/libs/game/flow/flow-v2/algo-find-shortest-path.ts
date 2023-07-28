@@ -1,79 +1,68 @@
-import {
-  EdgeId,
-  Model,
-  NodeId,
-  findPath,
-  findTerminal,
-  toEdgeId,
-  yieldOutEdges,
-} from "./flow";
+import { EdgeId, Model, NodeId } from "./flow";
 
 /**
  * Returns a list of edges without a groupId that form the shortest path between the source and target nodes.
  */
-export const findShortestEmptyPath = ({
-  model,
-  source,
-  target,
-}: {
+export const findShortestEmptyPath = (_: {
   model: Model;
   source: NodeId;
   target: NodeId;
 }): EdgeId[] => {
-  const groupId = findPath(model, source);
-  const terminal = findTerminal(model, source);
-  const sourceGroupId = groupId ?? terminal?.groupId;
-  if (!sourceGroupId) {
-    return [];
-  }
+  return [];
+  // const groupId = findPath(model, source);
+  // const terminal = findTerminal(model, source);
+  // const sourceGroupId = groupId ?? terminal?.groupId;
+  // if (!sourceGroupId) {
+  //   return [];
+  // }
   //
   //
   // Construct the breadth first tree
   //
   //
-  const queue: NodeId[] = [];
-  const visited = new Set<NodeId>();
-  const tree: { [id: NodeId]: { parent?: NodeId } } = {};
+  // const queue: NodeId[] = [];
+  // const visited = new Set<NodeId>();
+  // const tree: { [id: NodeId]: { parent?: NodeId } } = {};
 
-  visited.add(source);
-  queue.push(source);
+  // visited.add(source);
+  // queue.push(source);
 
-  while (queue.length > 0) {
-    const current = queue.shift();
+  // while (queue.length > 0) {
+  //   const current = queue.shift();
 
-    if (!current) {
-      break;
-    }
+  //   if (!current) {
+  //     break;
+  //   }
 
-    visited.add(current);
+  //   visited.add(current);
 
-    if (current === target) {
-      break;
-    }
+  //   if (current === target) {
+  //     break;
+  //   }
 
-    for (const outEdge of yieldOutEdges(model, current)) {
-      const adjacentId = outEdge.targetId;
+  //   for (const outEdge of yieldOutEdges(model, current)) {
+  //     const adjacentId = outEdge.targetId;
 
-      if (visited.has(adjacentId)) {
-        continue;
-      }
+  //     if (visited.has(adjacentId)) {
+  //       continue;
+  //     }
 
-      const adjacentGroupId = findPath(model, adjacentId);
+  //     const adjacentGroupId = findPath(model, adjacentId);
 
-      if (adjacentGroupId && adjacentGroupId !== sourceGroupId) {
-        continue;
-      }
+  //     if (adjacentGroupId && adjacentGroupId !== sourceGroupId) {
+  //       continue;
+  //     }
 
-      const adjacentTerminal = findTerminal(model, adjacentId);
+  //     const adjacentTerminal = findTerminal(model, adjacentId);
 
-      if (adjacentTerminal && adjacentTerminal.groupId !== sourceGroupId) {
-        continue;
-      }
+  //     if (adjacentTerminal && adjacentTerminal.groupId !== sourceGroupId) {
+  //       continue;
+  //     }
 
-      queue.push(adjacentId);
-      tree[adjacentId] = { parent: current };
-    }
-  }
+  //     queue.push(adjacentId);
+  //     tree[adjacentId] = { parent: current };
+  //   }
+  // }
 
   //
   //
@@ -81,21 +70,21 @@ export const findShortestEmptyPath = ({
   //
   //
 
-  let current = target;
-  const nodePath: NodeId[] = [current];
+  // let current = target;
+  // const nodePath: NodeId[] = [current];
 
-  while (current !== source) {
-    const parent = tree[current]?.parent;
+  // while (current !== source) {
+  //   const parent = tree[current]?.parent;
 
-    if (!parent) {
-      break;
-    }
+  //   if (!parent) {
+  //     break;
+  //   }
 
-    nodePath.push(parent);
-    current = parent;
-  }
+  //   nodePath.push(parent);
+  //   current = parent;
+  // }
 
-  nodePath.reverse();
+  // nodePath.reverse();
 
   //
   //
@@ -105,17 +94,17 @@ export const findShortestEmptyPath = ({
 
   const path: EdgeId[] = [];
 
-  for (let i = 0; i < nodePath.length; i++) {
-    const from = nodePath[i];
-    if (!from) {
-      continue;
-    }
-    const to = nodePath[i + 1];
-    if (!to) {
-      continue;
-    }
-    path.push(toEdgeId({ sourceId: from, targetId: to }));
-  }
+  // for (let i = 0; i < nodePath.length; i++) {
+  //   const from = nodePath[i];
+  //   if (!from) {
+  //     continue;
+  //   }
+  //   const to = nodePath[i + 1];
+  //   if (!to) {
+  //     continue;
+  //   }
+  //   path.push(toEdgeId({ sourceId: from, targetId: to }));
+  // }
 
   //
   //

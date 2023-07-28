@@ -46,6 +46,29 @@ export const rescale = ({
 };
 
 /**
+ * Takes elements from the start of the array while the predicate returns true.
+ * @example
+ * const isNeg = (x) => x < 0;
+ * takeWhile(isNeg, [-2, -1, 0, 1, 2]); //=> [-2, -1]
+ * takeWhile(isNeg, [-2, -1]); //=> [-2, -1]
+ * takeWhile(isNeg, [1, 2, 3]); //=> []
+ * takeWhile(isNeg, []); //=> []
+ */
+export const takeWhile = <T>(
+  predicate: (item: T) => boolean,
+  arr: Iterable<T>
+): T[] => {
+  const results: T[] = [];
+  for (const item of arr) {
+    if (!predicate(item)) {
+      break;
+    }
+    results.push(item);
+  }
+  return results;
+};
+
+/**
  * @example
  * const strEq = (s1, s2) => String(s1) === String(s2)
  * unique(strEq, [1, '1', 2, 1]) //=> [1, 2]
@@ -80,17 +103,7 @@ export const isSubset = <X>(
   a: X[],
   b: X[]
 ): boolean => {
-  for (let ai = 0; ai < a.length; ai++) {
-    const aItem = a[ai];
-    if (!aItem) {
-      continue;
-    }
-    if (!b.some((bItem) => eq(aItem, bItem))) {
-      return false;
-    }
-  }
-
-  return false;
+  return a.every((x1) => b.some((x2) => eq(x1, x2)));
 };
 
 /**
