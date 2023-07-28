@@ -3,7 +3,7 @@ import {
   Model,
   NodeId,
   GroupId,
-  findPathTerminal,
+  findTerminal,
   yieldOutEdges,
 } from "./flow";
 
@@ -14,7 +14,7 @@ export const toAutocompleteEdge = (
   model: Model,
   groupId: GroupId
 ): Edge | null => {
-  const terminal = model.pathTerminals[groupId];
+  const terminal = model.terminals[groupId];
 
   if (!terminal) {
     return null;
@@ -27,7 +27,7 @@ export const toAutocompleteEdge = (
   }
 
   for (const edge of yieldOutEdges(model, endId)) {
-    const terminal = findPathTerminal(model, edge.target);
+    const terminal = findTerminal(model, edge.target);
 
     if (terminal && terminal.groupId === groupId) {
       return edge;

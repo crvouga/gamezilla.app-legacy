@@ -291,6 +291,7 @@ export const View = ({
               x={node.x}
               y={node.y}
               width={1}
+              className="cursor-pointer"
               height={1}
               fill={"transparent"}
               onMouseDown={() => {

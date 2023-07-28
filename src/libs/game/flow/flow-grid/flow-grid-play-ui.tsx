@@ -70,9 +70,10 @@ export const updateModel = ({
       const pressedNodeId = msg.nodeId;
 
       const groupId = Flow.findPath(model.grid, pressedNodeId);
-      const pathTerminal = Flow.findPathTerminal(model.grid, pressedNodeId);
 
-      const activeGroupId = groupId ?? pathTerminal?.groupId ?? null;
+      const terminal = Flow.findTerminal(model.grid, pressedNodeId);
+
+      const activeGroupId = groupId ?? terminal?.groupId ?? null;
 
       if (!activeGroupId) {
         return {
@@ -168,7 +169,7 @@ export const View = ({
 }) => {
   return (
     <FlowGridUI.View
-      model={{ ...model.grid, draftTerminals: model.grid.pathTerminals }}
+      model={{ ...model.grid, draftTerminals: model.grid.terminals }}
       onDraggedOver={(nodeId) => dispatch({ t: "dragged-over", nodeId })}
       onPressDown={(nodeId) => dispatch({ t: "pressed-down-node", nodeId })}
       onPressUp={(nodeId) => dispatch({ t: "pressed-up", nodeId })}

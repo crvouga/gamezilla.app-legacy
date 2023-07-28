@@ -89,8 +89,8 @@ export type Model = {
   /**
    * Represents the start and end node of a path.
    */
-  pathTerminals: {
-    [groupId in GroupId]?: PathTerminal;
+  terminals: {
+    [groupId in GroupId]?: Terminal;
   };
 
   /**
@@ -142,7 +142,7 @@ export type Node = {
 /**
  * Represents the start and end node of a path.
  */
-export type PathTerminal = {
+export type Terminal = {
   groupId: GroupId;
   startId: NodeId;
   endId: NodeId;
@@ -154,7 +154,7 @@ export type PathTerminal = {
  */
 export const initEmpty: Model = {
   nodes: {},
-  pathTerminals: {},
+  terminals: {},
   edges: {},
   indexEdgesIn: {},
   indexEdgesOut: {},
@@ -231,15 +231,22 @@ export const addEdge = <T extends Model>(model: T, edge: Edge): T => {
  */
 export const addTerminal = <T extends Model>(
   model: T,
-  terminal: PathTerminal
+  terminal: Terminal
 ): T => {
   return {
     ...addNode(addNode(model, terminal.startId), terminal.endId),
-    pathTerminals: {
-      ...model.pathTerminals,
+    terminals: {
+      ...model.terminals,
       [terminal.groupId]: terminal,
     },
   };
+};
+
+export const addTerminals = <T extends Model>(
+  model: T,
+  terminals: Model["terminals"]
+): T => {
+  return Object.values(terminals).reduce(addTerminal, model);
 };
 
 /**
@@ -247,10 +254,10 @@ export const addTerminal = <T extends Model>(
  */
 export const setStartNode = <T extends Model>(
   model: T,
-  terminal: PathTerminal,
+  terminal: Terminal,
   nodeId: NodeId
 ): T => {
-  const terminalNew: PathTerminal = {
+  const terminalNew: Terminal = {
     ...terminal,
     startId: nodeId,
     endId: terminal.endId === nodeId ? terminal.startId : terminal.endId,
@@ -283,15 +290,15 @@ export const setEdgePath = <T extends Model>(
 /**
  * Yields all terminals in the model.
  */
-export const yieldPathTerminals = function* <T extends Model>(
-  model: Pick<T, "pathTerminals">
-): Generator<PathTerminal> {
-  for (const groupId in model.pathTerminals) {
+export const yieldTerminals = function* <T extends Model>(
+  model: Pick<T, "terminals">
+): Generator<Terminal> {
+  for (const groupId in model.terminals) {
     if (!isGroupId(groupId)) {
       continue;
     }
 
-    const terminal = model.pathTerminals[groupId];
+    const terminal = model.terminals[groupId];
 
     if (!terminal) {
       continue;
@@ -400,11 +407,11 @@ export const yieldInEdges = function* (
 /**
  * Finds the terminal that contains the inputted node.
  */
-export const findPathTerminal = (
-  model: Pick<Model, "pathTerminals">,
+export const findTerminal = (
+  model: Pick<Model, "terminals">,
   nodeId: NodeId
-): PathTerminal | null => {
-  for (const pathTerminal of yieldPathTerminals(model)) {
+): Terminal | null => {
+  for (const pathTerminal of yieldTerminals(model)) {
     if (pathTerminal.startId === nodeId || pathTerminal.endId === nodeId) {
       return pathTerminal;
     }

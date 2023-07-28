@@ -3,7 +3,7 @@ import {
   Model,
   NodeId,
   findPath,
-  findPathTerminal,
+  findTerminal,
   toEdgeId,
   yieldOutEdges,
 } from "./flow";
@@ -21,7 +21,7 @@ export const findShortestEmptyPath = ({
   target: NodeId;
 }): EdgeId[] => {
   const groupId = findPath(model, source);
-  const terminal = findPathTerminal(model, source);
+  const terminal = findTerminal(model, source);
   const sourceGroupId = groupId ?? terminal?.groupId;
   if (!sourceGroupId) {
     return [];
@@ -64,12 +64,9 @@ export const findShortestEmptyPath = ({
         continue;
       }
 
-      const adjacentPathTerminal = findPathTerminal(model, adjacentId);
+      const adjacentTerminal = findTerminal(model, adjacentId);
 
-      if (
-        adjacentPathTerminal &&
-        adjacentPathTerminal.groupId !== sourceGroupId
-      ) {
+      if (adjacentTerminal && adjacentTerminal.groupId !== sourceGroupId) {
         continue;
       }
 

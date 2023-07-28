@@ -1,6 +1,6 @@
 import { NonEmpty } from "@gamezilla/core";
 import { Flow } from "../flow";
-import { NodeId, GroupId, PathTerminal } from "../flow/flow";
+import { NodeId, GroupId, Terminal } from "../flow/flow";
 import * as FlowGrid from "./flow-grid";
 
 export type Model = NonEmpty<NonEmpty<GroupId | null>>;
@@ -62,7 +62,7 @@ export const fromShorthand = (model: Model): FlowGrid.Model => {
         continue;
       }
 
-      const terminal: PathTerminal = {
+      const terminal: Terminal = {
         groupId,
         startId: draftTerminal.startId,
         endId: nodeId,

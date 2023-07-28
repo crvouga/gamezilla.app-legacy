@@ -5,14 +5,14 @@ import {
   ServerMsg,
   ToClient,
   ToServer,
-  initShared,
+  initCore,
 } from "./puzzle-builder.core";
 
 type Server = GameServer<ServerModel, ServerMsg, ToClient, ToServer>;
 
 const init: Server["init"] = () => {
   return {
-    model: initShared,
+    model: initCore,
   };
 };
 

@@ -16,7 +16,7 @@ import {
   ToClient,
   ToServer,
   handle,
-  initShared,
+  initCore,
 } from "./puzzle-builder.core";
 
 type Client = GameClient<
@@ -33,16 +33,25 @@ type Model = ClientModel;
 type Msg = ClientMsg;
 
 const init: Client["init"] = () => {
-  return { model: initShared };
+  return { model: initCore };
 };
 
 const update: Client["update"] = (input) => {
-  const handled = handle(input);
+  const { msg, model } = input;
+  if (msg.t === "play-ui") {
+    const updated = FlowGridPlayUI.update({ model: model.playUI, msg: msg.c });
+    return {
+      model: { ...model, playUI: updated.model },
+      cmd: Cmd.tag_("play-ui", updated.cmd),
+    };
+  }
+
+  const handled = handle({ ...input, msg });
 
   const modelNew =
-    handled.t === "ok" ? { ...input.model, ...handled.value } : input.model;
+    handled.t === "ok" ? { ...model, ...handled.value } : input.model;
 
-  return { model: modelNew, cmd: input.sendToServer(input.msg) };
+  return { model: modelNew, cmd: input.sendToServer(msg) };
 };
 
 const updateFromServer: Client["updateFromServer"] = (
@@ -62,7 +71,7 @@ const updateFromParent: Client["updateFromParent"] = (input) => {
 };
 
 const syncWithServer: Client["syncWithServer"] = ({ client, server }) => {
-  const client_ = client ?? initShared;
+  const client_ = client ?? initCore;
   return { model: { ...client_, ...server } };
 };
 
@@ -80,10 +89,8 @@ const View: Client["View"] = ({ model, dispatch, ctx }) => {
         </div>
         <div className="flex w-full flex-1 flex-col items-center justify-center gap-3">
           <FlowGridPlayUI.View
-            model={model}
-            dispatch={() => {
-              //
-            }}
+            model={model.playUI}
+            dispatch={(m) => dispatch({ t: "play-ui", c: m })}
           />
         </div>
         <ViewBottomButtonBar
@@ -115,7 +122,7 @@ const View: Client["View"] = ({ model, dispatch, ctx }) => {
       <div className="flex w-full flex-1 flex-col items-center justify-center overflow-y-auto">
         <FlowGridUI.View
           model={{
-            ...model.grid,
+            ...model.editUI,
             draftTerminals: model.draftTerminals,
           }}
           onPressDown={(nodeId) => {
