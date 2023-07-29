@@ -3,13 +3,13 @@ import * as Snake from "./snake";
 import {
   ServerModel,
   ServerMsg,
-  initSharedModel,
+  initCoreModel,
   InputDirection,
   InputDirection_Done,
   InputPlayer,
   InputPlayer_Done,
   Response,
-  SharedModel,
+  CoreModel,
   startGame,
   ToServer,
   ToClient,
@@ -27,7 +27,7 @@ import {
 
 export type Model = ServerModel;
 
-export const init = initSharedModel;
+export const init = initCoreModel;
 
 //
 //
@@ -155,13 +155,13 @@ export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
 
 export const inputPlayer = (
   player: InputPlayer[1],
-  model: SharedModel
+  model: CoreModel
 ): InputPlayer_Done[1] => {
   if (model.gameStatus.type !== "GameSetup") {
     return Result.Err("must_be_in_game_setup");
   }
 
-  const modelNew: SharedModel = {
+  const modelNew: CoreModel = {
     ...model,
     gameStatus: {
       type: "GameSetup",
@@ -174,7 +174,7 @@ export const inputPlayer = (
 
 export const inputDirection = (
   { direction, userId }: InputDirection[1],
-  model: SharedModel
+  model: CoreModel
 ): InputDirection_Done[1] => {
   if (model.gameStatus.type !== "GameStarted") {
     return Result.Err("must_be_in_game_started");
@@ -186,7 +186,7 @@ export const inputDirection = (
     return Result.Err("user_must_be_the_current_player");
   }
 
-  const modelNew: SharedModel = {
+  const modelNew: CoreModel = {
     ...model,
     ...Snake.enqueueDirection(direction, model),
     status: "Playing",
@@ -197,7 +197,7 @@ export const inputDirection = (
 
 export const toggleStatus = (
   { userId }: ToggleStatus[1],
-  model: SharedModel
+  model: CoreModel
 ): ToggleStatusResult => {
   if (model.gameStatus.type !== "GameStarted") {
     return Result.Err("must_be_in_game_started");
@@ -207,7 +207,7 @@ export const toggleStatus = (
     return Result.Err("user_must_be_the_current_player");
   }
 
-  const modelNew: SharedModel = {
+  const modelNew: CoreModel = {
     ...model,
     status: model.status === "Paused" ? "Playing" : "Paused",
   };

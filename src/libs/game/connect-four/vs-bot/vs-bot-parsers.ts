@@ -10,7 +10,7 @@ import type {
   BotLevel,
   ClientModel,
   ServerModel,
-  SharedModel,
+  CoreModel,
 } from "./vs-bot.core";
 
 export const BotLevelZod: z.ZodType<BotLevel> = z.enum([
@@ -19,28 +19,25 @@ export const BotLevelZod: z.ZodType<BotLevel> = z.enum([
   "Hard",
 ]);
 
-export const SharedModelZod: z.ZodType<SharedModel> = z.discriminatedUnion(
-  "type",
-  [
-    z.object({
-      type: z.literal("setup"),
-      userPlayerType: PlayerTypeZod,
-      botLevel: BotLevelZod,
-      player: UserIdZod.nullable(),
-    }),
-    z.object({
-      type: z.literal("game"),
-      userPlayerType: PlayerTypeZod,
-      botLevel: BotLevelZod,
-      player: UserIdZod,
-      columns: ColumnsZod,
-    }),
-  ]
-);
+export const CoreModelZod: z.ZodType<CoreModel> = z.discriminatedUnion("type", [
+  z.object({
+    type: z.literal("setup"),
+    userPlayerType: PlayerTypeZod,
+    botLevel: BotLevelZod,
+    player: UserIdZod.nullable(),
+  }),
+  z.object({
+    type: z.literal("game"),
+    userPlayerType: PlayerTypeZod,
+    botLevel: BotLevelZod,
+    player: UserIdZod,
+    columns: ColumnsZod,
+  }),
+]);
 
-export const ServerModelZod: z.ZodType<ServerModel> = SharedModelZod;
+export const ServerModelZod: z.ZodType<ServerModel> = CoreModelZod;
 
-export const ClientModelZod: z.ZodType<ClientModel> = SharedModelZod.and(
+export const ClientModelZod: z.ZodType<ClientModel> = CoreModelZod.and(
   z.object({
     ghostIndex: ColumnIndexZod.nullable(),
     vsBotSetup: VsBotSetup.ModelZod,

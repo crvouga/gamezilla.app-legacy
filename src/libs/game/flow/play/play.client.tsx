@@ -6,7 +6,7 @@ import { FlowViewCtx } from "../flow-shared";
 import {
   ClientModel,
   ClientMsg,
-  SharedModel,
+  CoreModel,
   ToClient,
   ToServer,
   initShared,
@@ -14,7 +14,7 @@ import {
 
 type Client = GameClient<
   ClientModel,
-  SharedModel,
+  CoreModel,
   ClientMsg,
   ToClient,
   ToServer,

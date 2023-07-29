@@ -11,7 +11,7 @@ const { Err, Ok } = Result;
 //
 //
 
-export type SharedModel = {
+export type CoreModel = {
   parties: {
     [partyId: PartyId]: {
       partyId: PartyId;
@@ -26,9 +26,9 @@ export type SharedModel = {
   };
 };
 
-export type ServerModel = SharedModel;
+export type ServerModel = CoreModel;
 
-export type ClientModel = SharedModel & {
+export type ClientModel = CoreModel & {
   volume: number;
   requests: {
     [key in Req[0]]?: RemoteResult<Problem, null>;
@@ -72,18 +72,18 @@ export type Req =
   | ["PartyJoin", { userId: UserId; partyId: PartyId }];
 
 export type Res =
-  | ["party-get", null, Result<Problem, SharedModel>]
+  | ["party-get", null, Result<Problem, CoreModel>]
   | [
       "PartyCreate",
       { userId: UserId; partyId: PartyId },
-      Result<Problem, SharedModel>
+      Result<Problem, CoreModel>
     ]
-  | ["PartyDestroy", { userId: UserId }, Result<Problem, SharedModel>]
-  | ["PartyLeave", { userId: UserId }, Result<Problem, SharedModel>]
+  | ["PartyDestroy", { userId: UserId }, Result<Problem, CoreModel>]
+  | ["PartyLeave", { userId: UserId }, Result<Problem, CoreModel>]
   | [
       "PartyJoin",
       { userId: UserId; partyId: PartyId },
-      Result<Problem, SharedModel>
+      Result<Problem, CoreModel>
     ];
 
 type Problem =
@@ -97,8 +97,8 @@ type Problem =
 
 export const handle = (
   msg: Req,
-  model: SharedModel
-): Result<Problem, SharedModel> => {
+  model: CoreModel
+): Result<Problem, CoreModel> => {
   switch (msg[0]) {
     case "party-get": {
       return Ok(model);
@@ -113,7 +113,7 @@ export const handle = (
         return Err("must_not_be_in_party");
       }
 
-      const modelNew: SharedModel = {
+      const modelNew: CoreModel = {
         ...model,
         users: {
           ...model.users,
@@ -153,7 +153,7 @@ export const handle = (
         return Err("must_be_host");
       }
 
-      const modelNew: SharedModel = {
+      const modelNew: CoreModel = {
         parties: removeKey(user.partyId, model.parties),
         users: filterObject(
           model.users,
@@ -179,7 +179,7 @@ export const handle = (
         return Err("party_must_exist");
       }
 
-      const modelNew: SharedModel = {
+      const modelNew: CoreModel = {
         ...model,
         users: {
           ...model.users,
@@ -212,7 +212,7 @@ export const handle = (
         return Err("must_not_be_host");
       }
 
-      const modelNew: SharedModel = {
+      const modelNew: CoreModel = {
         parties: model.parties,
         users: removeKey(userId, model.users),
       };

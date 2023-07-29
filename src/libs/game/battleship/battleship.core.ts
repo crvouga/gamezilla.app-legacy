@@ -13,7 +13,7 @@ const { Err } = Result;
 
 type PlayerType = "player-one" | "player-two" | "player-three" | "player-four";
 
-export type SharedModel = {
+export type CoreModel = {
   players: Player[];
   ships: Ship[];
   shots: Shot[]; // newest first
@@ -29,9 +29,9 @@ export const initShared = {
   },
 };
 
-export type ClientModel = SharedModel;
+export type ClientModel = CoreModel;
 
-export type ServerModel = SharedModel;
+export type ServerModel = CoreModel;
 
 type Shot = {
   from: PlayerType;
@@ -87,7 +87,7 @@ export type Req =
   | { t: "stop-playing"; team: PlayerType }
   | { t: "fire"; team: PlayerType; position: Position };
 
-export type Res = Req & { result: Result<Problem, SharedModel> };
+export type Res = Req & { result: Result<Problem, CoreModel> };
 
 type Problem = "not-implemented" | "must-be-turn";
 
@@ -95,9 +95,9 @@ export const handle = ({
   msg,
   model,
 }: {
-  model: SharedModel;
+  model: CoreModel;
   msg: Req;
-}): Result<Problem, SharedModel> => {
+}): Result<Problem, CoreModel> => {
   switch (msg.t) {
     case "start-playing": {
       return Err("not-implemented");
@@ -138,7 +138,7 @@ export const toNextPlayer = (player: PlayerType): PlayerType => {
 
 export const isNonEmpty = <T>(arr: T[]): arr is [T, ...T[]] => arr.length > 0;
 
-export const toTurn = (model: SharedModel): PlayerType => {
+export const toTurn = (model: CoreModel): PlayerType => {
   switch (model.shotRule.t) {
     case "chain-fire": {
       return "player-one";
@@ -154,7 +154,7 @@ export const toTurn = (model: SharedModel): PlayerType => {
   }
 };
 
-const toTurnRuleCount = (model: SharedModel): PlayerType => {
+const toTurnRuleCount = (model: CoreModel): PlayerType => {
   console.log(model);
   return "player-one";
 };

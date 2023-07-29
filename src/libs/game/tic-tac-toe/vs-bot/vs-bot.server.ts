@@ -9,7 +9,7 @@ import {
   ToClient,
   ToServer,
   handle,
-  initSharedModel,
+  initCoreModel,
   isBotTurn,
 } from "./vs-bot.core";
 
@@ -23,7 +23,7 @@ import {
 
 export type Model = ServerModel;
 
-export const init = initSharedModel;
+export const init = initCoreModel;
 
 //
 //

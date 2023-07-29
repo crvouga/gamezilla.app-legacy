@@ -3,7 +3,7 @@ import { GameClient } from "@gamezilla/shared/game-space";
 import {
   ClientModel,
   ClientMsg,
-  SharedModel,
+  CoreModel,
   ToClient,
   ToServer,
   initShared,
@@ -11,7 +11,7 @@ import {
 
 export type Client = GameClient<
   ClientModel,
-  SharedModel,
+  CoreModel,
   ClientMsg,
   ToClient,
   ToServer

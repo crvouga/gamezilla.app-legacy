@@ -21,7 +21,7 @@ import {
 //
 //
 
-export type SharedModel = SetupModel | GameModel | GameOverModel;
+export type CoreModel = SetupModel | GameModel | GameOverModel;
 
 export type SetupModel = {
   type: "setup";
@@ -74,7 +74,7 @@ export type GameOver =
       resigner: PlayerType;
     };
 
-export const toGameOver = (model: SharedModel): GameOver | { type: "none" } => {
+export const toGameOver = (model: CoreModel): GameOver | { type: "none" } => {
   if (model.type === "setup") {
     return { type: "none" };
   }
@@ -105,8 +105,8 @@ export const allMoveTimeLimit: {
 export const initShared = ({
   players,
 }: {
-  players: SharedModel["players"];
-}): SharedModel => {
+  players: CoreModel["players"];
+}): CoreModel => {
   return {
     type: "setup",
     moveTimeLimit: 7,
@@ -114,12 +114,12 @@ export const initShared = ({
   };
 };
 
-export type ClientModel = SharedModel & {
+export type ClientModel = CoreModel & {
   openedModal: "ConfirmResign" | "none";
   ghostIndex: ColumnIndex | "none";
 };
 
-export type ServerModel = SharedModel;
+export type ServerModel = CoreModel;
 
 //
 //
@@ -139,10 +139,7 @@ export type ClientMsg =
 
 export type ToServer = Req;
 
-export type ToClient =
-  | Res
-  | TickDone
-  | { t: "player-left"; model: SharedModel };
+export type ToClient = Res | TickDone | { t: "player-left"; model: CoreModel };
 
 export type Req =
   //
@@ -159,7 +156,7 @@ export type Req =
   | { t: "new-game" }
   | { t: "resign" };
 
-export type Res = Req & { result: Result<string, SharedModel> };
+export type Res = Req & { result: Result<string, CoreModel> };
 
 export const handle = ({
   ctx,
@@ -168,8 +165,8 @@ export const handle = ({
 }: {
   ctx: { currentUserId: UserId };
   req: Req;
-  model: SharedModel;
-}): Result<string, SharedModel> => {
+  model: CoreModel;
+}): Result<string, CoreModel> => {
   switch (req.t) {
     case "input-move": {
       if (model.type !== "game") {
@@ -211,9 +208,9 @@ export const handle = ({
             ? null
             : model.players[opposite[playerType]],
         [playerType]: ctx.currentUserId,
-      } as SharedModel["players"];
+      } as CoreModel["players"];
 
-      const modelNew: SharedModel = { ...model, players: playersNew };
+      const modelNew: CoreModel = { ...model, players: playersNew };
 
       return Ok(modelNew);
     }
@@ -231,7 +228,7 @@ export const handle = ({
         return Err("not-playing");
       }
 
-      const modelNew: SharedModel = {
+      const modelNew: CoreModel = {
         ...model,
         moveTimeLimit,
       };
@@ -250,7 +247,7 @@ export const handle = ({
         return Err("not-playing");
       }
 
-      const modelNew: SharedModel = {
+      const modelNew: CoreModel = {
         ...model,
         players: {
           ...model.players,
@@ -273,7 +270,7 @@ export const handle = ({
         return Err("missing-player");
       }
 
-      const modelNew: SharedModel = {
+      const modelNew: CoreModel = {
         type: "game",
         columns: emptyColumns,
         moveTimeLimit: model.moveTimeLimit,
@@ -302,7 +299,7 @@ export const handle = ({
         return Err("not-playing");
       }
 
-      const modelNew: SharedModel = {
+      const modelNew: CoreModel = {
         ...model,
         rematch: { type: "Asking", asker: playerType },
       };
@@ -322,7 +319,7 @@ export const handle = ({
       const { response } = req;
 
       if (response === "Decline") {
-        const modelNew: SharedModel = {
+        const modelNew: CoreModel = {
           ...model,
           rematch: { type: "NotAsking" },
         };
@@ -330,7 +327,7 @@ export const handle = ({
         return Ok(modelNew);
       }
 
-      const modelNew: SharedModel = {
+      const modelNew: CoreModel = {
         type: "game",
         columns: emptyColumns,
         moveCountDown: model.moveTimeLimit,
@@ -352,7 +349,7 @@ export const handle = ({
         return Err("not-playing");
       }
 
-      const modelNew: SharedModel = {
+      const modelNew: CoreModel = {
         type: "setup",
         moveTimeLimit: model.moveTimeLimit,
         players: model.players,
@@ -380,7 +377,7 @@ export const handle = ({
         return Err("not-asking");
       }
 
-      const modelNew: SharedModel = {
+      const modelNew: CoreModel = {
         ...model,
         rematch: { type: "NotAsking" },
       };
@@ -399,7 +396,7 @@ export const handle = ({
         return Err("not-playing");
       }
 
-      const modelNew: SharedModel = {
+      const modelNew: CoreModel = {
         type: "game-over",
         columns: model.columns,
         players: model.players,
@@ -419,7 +416,7 @@ export const handle = ({
 
 export const toPlayerType = (
   userId: UserId,
-  model: SharedModel
+  model: CoreModel
 ): PlayerType | null => {
   if (model.players["player-one"] === userId) {
     return "player-one";
@@ -439,9 +436,9 @@ export const toPlayerType = (
 //
 
 type Tick = { t: "tick" };
-type TickDone = { t: "tick-done"; model: SharedModel };
+type TickDone = { t: "tick-done"; model: CoreModel };
 
-export const tick = (model: SharedModel): SharedModel => {
+export const tick = (model: CoreModel): CoreModel => {
   if (model.type !== "game") {
     return model;
   }
@@ -449,7 +446,7 @@ export const tick = (model: SharedModel): SharedModel => {
   const moveCountDownNew = Math.floor(Math.max(0, model.moveCountDown - 1));
 
   if (moveCountDownNew > 0) {
-    const modelNew: SharedModel = {
+    const modelNew: CoreModel = {
       ...model,
       moveCountDown: moveCountDownNew,
     };
@@ -487,7 +484,7 @@ const handleMoveResult = (
   const status = toStatus(columnsNew);
 
   if (status.type === "Playing") {
-    const modelNew: SharedModel = {
+    const modelNew: CoreModel = {
       ...model,
       columns: columnsNew,
       moveCountDown: model.moveTimeLimit,
@@ -501,7 +498,7 @@ const handleMoveResult = (
       ? { type: "Winner", winner: status.winner }
       : { type: "Draw" };
 
-  const modelNew: SharedModel = {
+  const modelNew: CoreModel = {
     type: "game-over",
     moveTimeLimit: model.moveTimeLimit,
     players: model.players,

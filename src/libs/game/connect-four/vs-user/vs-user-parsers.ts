@@ -7,7 +7,7 @@ import {
   Rematch,
   ServerModel,
   ClientModel,
-  SharedModel,
+  CoreModel,
 } from "./vs-user.core";
 
 export const MoveTimeLimitZod: z.ZodType<MoveTimeLimit> = z.union([
@@ -45,38 +45,35 @@ const GameOverZod: z.ZodType<GameOver> = z.discriminatedUnion("type", [
   }),
 ]);
 
-export const SharedModelZod: z.ZodType<SharedModel> = z.discriminatedUnion(
-  "type",
-  [
-    z.object({
-      type: z.literal("setup"),
-      moveTimeLimit: MoveTimeLimitZod,
-      players: z.object({
-        "player-one": UserIdZod.nullable(),
-        "player-two": UserIdZod.nullable(),
-      }),
+export const CoreModelZod: z.ZodType<CoreModel> = z.discriminatedUnion("type", [
+  z.object({
+    type: z.literal("setup"),
+    moveTimeLimit: MoveTimeLimitZod,
+    players: z.object({
+      "player-one": UserIdZod.nullable(),
+      "player-two": UserIdZod.nullable(),
     }),
-    z.object({
-      type: z.literal("game"),
-      moveTimeLimit: MoveTimeLimitZod,
-      moveCountDown: z.number(),
-      columns: ColumnsZod,
-      players: PlayersZod,
-    }),
-    z.object({
-      type: z.literal("game-over"),
-      moveTimeLimit: MoveTimeLimitZod,
-      columns: ColumnsZod,
-      gameOver: GameOverZod,
-      rematch: RematchZod,
-      players: PlayersZod,
-    }),
-  ]
-);
+  }),
+  z.object({
+    type: z.literal("game"),
+    moveTimeLimit: MoveTimeLimitZod,
+    moveCountDown: z.number(),
+    columns: ColumnsZod,
+    players: PlayersZod,
+  }),
+  z.object({
+    type: z.literal("game-over"),
+    moveTimeLimit: MoveTimeLimitZod,
+    columns: ColumnsZod,
+    gameOver: GameOverZod,
+    rematch: RematchZod,
+    players: PlayersZod,
+  }),
+]);
 
-export const ServerModelZod: z.ZodType<ServerModel> = SharedModelZod;
+export const ServerModelZod: z.ZodType<ServerModel> = CoreModelZod;
 
-export const ClientModelZod: z.ZodType<ClientModel> = SharedModelZod.and(
+export const ClientModelZod: z.ZodType<ClientModel> = CoreModelZod.and(
   z.object({
     ghostIndex: ColumnIndexZod.or(z.literal("none")),
     openedModal: z.enum(["ConfirmResign", "none"]),

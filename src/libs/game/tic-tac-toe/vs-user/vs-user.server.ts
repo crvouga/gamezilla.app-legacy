@@ -9,7 +9,7 @@ import {
   ServerMsg,
   ToClient,
   ToServer,
-  initSharedModel,
+  initCoreModel,
   inputBestOutOf,
   inputMove,
   inputPlayer,
@@ -34,7 +34,7 @@ import {
 
 export type Model = ServerModel;
 
-export const init = initSharedModel;
+export const init = initCoreModel;
 
 //
 //

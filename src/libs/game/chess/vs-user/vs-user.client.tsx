@@ -10,7 +10,7 @@ import {
   ClientMsg,
   InputMove,
   ServerModel,
-  SharedModel,
+  CoreModel,
   ToClient,
   ToServer,
   initShared,
@@ -440,7 +440,7 @@ const ViewGameOverDialog = ({
   return <span></span>;
 };
 
-const toGameText = (model: SharedModel): string => {
+const toGameText = (model: CoreModel): string => {
   switch (model.type) {
     case "game-over": {
       switch (model.gameOver.type) {

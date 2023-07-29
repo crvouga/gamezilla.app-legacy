@@ -19,7 +19,7 @@ import {
   ServerModel,
   ToClient,
   ToServer,
-  initSharedModel,
+  initCoreModel,
 } from "./vs-user.core";
 
 //
@@ -33,7 +33,7 @@ import {
 export type Model = ClientModel;
 
 export const init: Model = {
-  ...initSharedModel({ X: "none", O: "none" }),
+  ...initCoreModel({ X: "none", O: "none" }),
   openedModal: "none",
 };
 

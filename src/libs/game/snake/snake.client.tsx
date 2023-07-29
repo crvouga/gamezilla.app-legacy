@@ -15,10 +15,10 @@ import {
   ClientModel,
   ClientMsg,
   ServerModel,
-  SharedModel,
+  CoreModel,
   ToClient,
   ToServer,
-  initSharedModel,
+  initCoreModel,
 } from "./snake.core";
 
 //
@@ -32,7 +32,7 @@ import {
 export type Model = ClientModel;
 
 export const init: Model = {
-  ...initSharedModel,
+  ...initCoreModel,
   openedMenuId: Option.None,
 };
 
@@ -157,7 +157,7 @@ export const updateFromServer = (
 
 const updateResponse = <
   TProblem extends string,
-  TResult extends Result<TProblem, SharedModel>
+  TResult extends Result<TProblem, CoreModel>
 >(
   result: TResult,
   model: Model

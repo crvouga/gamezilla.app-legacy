@@ -36,7 +36,7 @@ import {
   ToClient,
   ToServer,
   handle,
-  initSharedModel,
+  initCoreModel,
 } from "./vs-bot.core";
 
 //
@@ -49,9 +49,9 @@ import {
 
 export type Model = ClientModel;
 
-export const init = (...input: Parameters<typeof initSharedModel>): Model => {
+export const init = (...input: Parameters<typeof initCoreModel>): Model => {
   return {
-    ...initSharedModel(...input),
+    ...initCoreModel(...input),
     vsBotSetup: VsBotSetup.init,
   };
 };

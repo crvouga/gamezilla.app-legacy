@@ -13,7 +13,7 @@ const { Err, Ok } = Result;
 //
 //
 
-export type SharedModel = SetupModel;
+export type CoreModel = SetupModel;
 
 export type SetupModel =
   | {
@@ -42,9 +42,9 @@ export type Color = "Red" | "Blue" | "Green" | "Purple" | "Cyan" | "Pink";
 
 const colorSeq: NonEmpty<Color> = ["Red", "Blue", "Green", "Purple"];
 
-export type ClientModel = SharedModel;
+export type ClientModel = CoreModel;
 
-export type ServerModel = SharedModel;
+export type ServerModel = CoreModel;
 
 //
 //
@@ -63,7 +63,7 @@ export type ServerMsg = ["tick"];
 
 export type ToServer = Req;
 
-export type ToClient = Res | ["tick", SharedModel];
+export type ToClient = Res | ["tick", CoreModel];
 
 //
 //
@@ -78,7 +78,7 @@ export type Req =
   | ["input-direction", { userId: UserId; direction: Direction | "none" }]
   | ["input-seed", { userId: UserId; seed: string }];
 
-export type Res = [...Req, Result<Problem, SharedModel>];
+export type Res = [...Req, Result<Problem, CoreModel>];
 
 type Problem =
   | "must_be_setup"
@@ -90,7 +90,7 @@ type Problem =
   | "hit_wall"
   | "no_next_color";
 
-const toNextColor = (model: SharedModel): Color | null => {
+const toNextColor = (model: CoreModel): Color | null => {
   for (const color of colorSeq) {
     if (Object.values(model.players).every((p) => p.color !== color)) {
       return color;
@@ -101,8 +101,8 @@ const toNextColor = (model: SharedModel): Color | null => {
 
 export const handle = (
   msg: Req,
-  model: SharedModel
-): Result<Problem, SharedModel> => {
+  model: CoreModel
+): Result<Problem, CoreModel> => {
   switch (msg[0]) {
     case "input-seed": {
       if (model.type !== "setup") {
@@ -115,7 +115,7 @@ export const handle = (
         return Err("must_be_playing");
       }
 
-      const modelNew: SharedModel = {
+      const modelNew: CoreModel = {
         ...model,
         seed: msg[1].seed,
       };
@@ -134,7 +134,7 @@ export const handle = (
         return Err("must_be_playing");
       }
 
-      const modelNew: SharedModel = {
+      const modelNew: CoreModel = {
         type: "setup",
         lower: model.lower,
         players: mapValues(
@@ -165,7 +165,7 @@ export const handle = (
         return Err("no_next_color");
       }
 
-      const modelNew: SharedModel = {
+      const modelNew: CoreModel = {
         ...model,
         players: {
           ...model.players,
@@ -183,7 +183,7 @@ export const handle = (
         return Err("must_be_setup");
       }
 
-      const modelNew: SharedModel = {
+      const modelNew: CoreModel = {
         ...model,
         players: removeKey(msg[1].userId, model.players),
       };
@@ -212,7 +212,7 @@ export const handle = (
         return { ...byId, [player.userId]: playerNew };
       }, {});
 
-      const modelNew: SharedModel = {
+      const modelNew: CoreModel = {
         type: "game",
         seed: model.seed,
         lower: model.lower,
@@ -234,7 +234,7 @@ export const handle = (
         return Err("must_be_playing");
       }
 
-      const modelNew: SharedModel = {
+      const modelNew: CoreModel = {
         type: "game",
         seed: model.seed,
         upper: model.upper,
@@ -253,14 +253,14 @@ export const handle = (
   }
 };
 
-export const tick = (model: SharedModel): SharedModel => {
+export const tick = (model: CoreModel): CoreModel => {
   if (model.type !== "game") {
     return model;
   }
 
   const maze = Maze.makeMemoized(model);
 
-  const modelNew: SharedModel = {
+  const modelNew: CoreModel = {
     ...model,
     players: mapValues((player) => mapPlayer(maze, player), model.players),
   };
@@ -312,7 +312,7 @@ const mapValues = <A, B>(f: (a: A) => B, record: Record<string, A>) => {
 //
 //
 
-export const initShared = ({ userId }: { userId?: UserId }): SharedModel => {
+export const initShared = ({ userId }: { userId?: UserId }): CoreModel => {
   return {
     type: "setup",
     players: userId

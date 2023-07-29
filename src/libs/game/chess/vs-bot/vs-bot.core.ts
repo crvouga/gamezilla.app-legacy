@@ -12,16 +12,16 @@ import * as Chess from "../chess/chess";
 //
 
 export type ClientModel = {
-  sharedModel: SharedModel;
+  sharedModel: CoreModel;
   openedMenuId: string | null;
   openedModal: null | "game-over";
   isFlipped: boolean;
   vsBotSetup: VsBotSetup.Model;
 };
 
-export type ServerModel = SharedModel;
+export type ServerModel = CoreModel;
 
-export type SharedModel = SetupModel | GameModel | GameOverModel;
+export type CoreModel = SetupModel | GameModel | GameOverModel;
 
 export type SetupModel = {
   type: "setup";
@@ -49,7 +49,7 @@ export type GameOverModel = {
 
 export type GameOver = Chess.GameOver;
 
-export const initShared: SharedModel = {
+export const initShared: CoreModel = {
   type: "setup",
   userColor: "w",
   userId: null,
@@ -69,7 +69,7 @@ export const initServer = ({
   };
 };
 
-export const isBotTurn = (model: SharedModel) => {
+export const isBotTurn = (model: CoreModel) => {
   return model.type === "game" && Chess.toTurn(model.board) !== model.userColor;
 };
 
@@ -101,9 +101,9 @@ export type ToClient =
   | Res
   | {
       t: "bot-moved";
-      result: Result<string, SharedModel & { didCapture: boolean }>;
+      result: Result<string, CoreModel & { didCapture: boolean }>;
     }
-  | { t: "player-left"; model: SharedModel };
+  | { t: "player-left"; model: CoreModel };
 
 export type Req =
   | { t: "input-bot-level"; botLevel: Chess.BotLevel }
@@ -114,7 +114,7 @@ export type Req =
   | { t: "input-move"; move: Chess.MoveInput };
 
 export type Res = Req & {
-  result: Result<string, SharedModel & { didCapture?: boolean }>;
+  result: Result<string, CoreModel & { didCapture?: boolean }>;
 };
 
 //
@@ -129,8 +129,8 @@ export const handle = ({
 }: {
   ctx: { currentUserId: UserId; hostId: UserId };
   msg: Req;
-  model: SharedModel;
-}): Result<string, SharedModel & { didCapture?: boolean }> => {
+  model: CoreModel;
+}): Result<string, CoreModel & { didCapture?: boolean }> => {
   if (model.type === "setup") {
     if (msg.t === "start-game") {
       if (!model.userId) {
@@ -212,7 +212,7 @@ export const handle = ({
         });
       }
 
-      const modelNew: SharedModel = {
+      const modelNew: CoreModel = {
         ...model,
         board: boardNew,
       };
@@ -280,7 +280,7 @@ export type InputMove = ["input-move", Chess.MoveInput & { userId: UserId }];
 
 export type InputMove_Done = [
   "input-move-done",
-  Result<InputMoveProblem, SharedModel & { didCapture: boolean }>
+  Result<InputMoveProblem, CoreModel & { didCapture: boolean }>
 ];
 
 export type InputMoveProblem =
@@ -291,7 +291,7 @@ export type InputMoveProblem =
 
 export const inputMove = (
   { userId, ...moveInput }: InputMove[1],
-  model: SharedModel
+  model: CoreModel
 ): InputMove_Done[1] => {
   if (model.type !== "game") {
     return Result.Err("must_be_started");
@@ -316,7 +316,7 @@ export const inputMove = (
   const gameOver = Chess.toGameOver(boardNew);
 
   if (gameOver.type !== "none") {
-    const modelNew: SharedModel = {
+    const modelNew: CoreModel = {
       ...model,
       type: "game-over",
       board: boardNew,
@@ -329,7 +329,7 @@ export const inputMove = (
     });
   }
 
-  const modelNew: SharedModel = {
+  const modelNew: CoreModel = {
     ...model,
     board: boardNew,
   };
@@ -350,8 +350,8 @@ export const inputMove = (
 
 export const botMoved = (
   botMoveResult: Chess.BestMoveInputResult,
-  model: SharedModel
-): Result<string, SharedModel & { didCapture: boolean }> => {
+  model: CoreModel
+): Result<string, CoreModel & { didCapture: boolean }> => {
   if (model.type !== "game") {
     return Err("must_be_started");
   }
@@ -379,7 +379,7 @@ export const botMoved = (
   const gameOver = Chess.toGameOver(boardNew);
 
   if (gameOver.type !== "none") {
-    const modelNew: SharedModel = {
+    const modelNew: CoreModel = {
       ...model,
       type: "game-over",
       gameOver: gameOver,

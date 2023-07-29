@@ -7,13 +7,13 @@ import { FlowGridPlayUI, flowGridSamples } from "../flow-grid";
 //
 //
 
-export type SharedModel = FlowGridPlayUI.Model;
+export type CoreModel = FlowGridPlayUI.Model;
 
-export type ClientModel = SharedModel;
+export type ClientModel = CoreModel;
 
-export type ServerModel = SharedModel;
+export type ServerModel = CoreModel;
 
-export const initShared: SharedModel = FlowGridPlayUI.init(
+export const initShared: CoreModel = FlowGridPlayUI.init(
   flowGridSamples["8x8"][1]
 );
 
@@ -30,7 +30,7 @@ export type ServerMsg = { t: null };
 
 export type ToServer = {
   t: "new-sync";
-  model: SharedModel;
+  model: CoreModel;
 };
 
 export type ToClient = { t: null };

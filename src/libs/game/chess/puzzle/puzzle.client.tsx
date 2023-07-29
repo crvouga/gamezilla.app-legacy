@@ -24,7 +24,7 @@ import * as Chess from "../chess/chess";
 import {
   ClientModel,
   ClientMsg,
-  SharedModel,
+  CoreModel,
   ToClient,
   ToServer,
   handle,
@@ -145,7 +145,7 @@ export const syncWithServer = ({
   server,
 }: {
   client: Model;
-  server: SharedModel;
+  server: CoreModel;
 }): Model => {
   return {
     ...client,

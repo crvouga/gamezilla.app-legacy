@@ -55,7 +55,7 @@ type MainModel =
       endedAt: Posix;
     };
 
-export type SharedModel =
+export type CoreModel =
   | {
       t: "loading";
       profile?: PuzzleProfile | null;
@@ -64,11 +64,11 @@ export type SharedModel =
     }
   | (BaseModel & MainModel);
 
-export type ServerModel = SharedModel & {
+export type ServerModel = CoreModel & {
   requests: { getPuzzles?: RemoteResult<string, null> };
 };
 
-export type ClientModel = SharedModel & {
+export type ClientModel = CoreModel & {
   initializedAt?: number;
   serverNow?: Posix;
 };
@@ -80,7 +80,7 @@ const hintToNextHint: { [key in Hint]: Hint } = {
   "from-and-to": "from-and-to",
 };
 
-export const isNoMoreHints = (model: SharedModel): boolean => {
+export const isNoMoreHints = (model: CoreModel): boolean => {
   return model.t === "started" && model.hint === "from-and-to";
 };
 
@@ -88,7 +88,7 @@ export const initQuery: PuzzleQuery = {
   ratingRange: [1000, 1500],
 };
 
-export const initShared: SharedModel = {
+export const initShared: CoreModel = {
   t: "loading",
 };
 
@@ -142,7 +142,7 @@ export type Req =
   | { t: "skip" }
   | { t: "show-hint" };
 
-export type Res = Req & { result: Result<string, SharedModel> };
+export type Res = Req & { result: Result<string, CoreModel> };
 
 export type ServerMsg = { t: "clock-tick" } | DbMsg;
 
@@ -163,7 +163,7 @@ export type ToServer = Req;
 export type ToClient =
   | Res
   | { t: "clock-tick"; now: Posix }
-  | (Omit<DbMsg, "result"> & { result: Result<string, SharedModel> });
+  | (Omit<DbMsg, "result"> & { result: Result<string, CoreModel> });
 
 export const toOpponentColor = (puzzle: Puzzle): Chess.Color => {
   return Chess.toTurn(Chess.initFromFen({ fen: puzzle.fen }));
@@ -173,7 +173,7 @@ export const toPlayerColor = (puzzle: Puzzle): Chess.Color => {
   return Chess.toOppositeColor(toOpponentColor(puzzle));
 };
 
-export const toCorrectMove = (model: SharedModel): Chess.MoveInput | null => {
+export const toCorrectMove = (model: CoreModel): Chess.MoveInput | null => {
   if (model.t === "started") {
     return model.puzzle.moves[model.moves.length]?.correctMove ?? null;
   }
@@ -190,7 +190,7 @@ export const toCorrectMove = (model: SharedModel): Chess.MoveInput | null => {
 //
 //
 
-export const toCurrentBoard = (model: SharedModel): Chess.Model => {
+export const toCurrentBoard = (model: CoreModel): Chess.Model => {
   if (model.t === "loading") {
     return Chess.init();
   }
@@ -268,8 +268,8 @@ export const handle = ({
 }: {
   ctx: Ctx;
   msg: Req;
-  model: SharedModel;
-}): Result<string, SharedModel> => {
+  model: CoreModel;
+}): Result<string, CoreModel> => {
   //
   //
   //
@@ -294,7 +294,7 @@ export const handle = ({
         return moved;
       }
 
-      const modelNew: SharedModel = {
+      const modelNew: CoreModel = {
         ...model,
         moves: [...model.moves, msg.moveInput],
         hint: null,
@@ -378,8 +378,8 @@ const transitionNextPuzzle = ({
   ctx,
 }: {
   ctx: Ctx;
-  model: SharedModel;
-}): SharedModel => {
+  model: CoreModel;
+}): CoreModel => {
   if (model.t === "loading") {
     return model;
   }
@@ -412,7 +412,7 @@ const transitionNextPuzzle = ({
   };
 };
 
-export const toNextEloRating = (model: SharedModel): EloRating | null => {
+export const toNextEloRating = (model: CoreModel): EloRating | null => {
   if (model.t === "loading") {
     return null;
   }
@@ -453,8 +453,8 @@ export const transitionLoadingToStarted = ({
   ctx,
 }: {
   ctx: { now: Posix };
-  model: SharedModel;
-}): SharedModel => {
+  model: CoreModel;
+}): CoreModel => {
   if (model.t === "loading") {
     const profile = model.profile;
 

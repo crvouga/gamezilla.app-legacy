@@ -21,7 +21,7 @@ import {
 //
 //
 
-export type SharedModel = SetupModel | GameModel;
+export type CoreModel = SetupModel | GameModel;
 
 export type SetupModel = {
   type: "setup";
@@ -38,17 +38,17 @@ export type GameModel = {
   board: Model;
 };
 
-export type ClientModel = SharedModel & {
+export type ClientModel = CoreModel & {
   vsBotSetup: VsBotSetup.Model;
 };
 
-export type ServerModel = SharedModel;
+export type ServerModel = CoreModel;
 
-export const initSharedModel = ({
+export const initCoreModel = ({
   userId,
 }: {
   userId: SetupModel["player"];
-}): SharedModel => {
+}): CoreModel => {
   return {
     type: "setup",
     botLevel: "Medium",
@@ -57,7 +57,7 @@ export const initSharedModel = ({
   };
 };
 
-export const isBotTurn = (model: SharedModel): model is GameModel => {
+export const isBotTurn = (model: CoreModel): model is GameModel => {
   if (model.type !== "game") {
     return false;
   }
@@ -85,8 +85,8 @@ export type ToServer = Req;
 
 export type ToClient =
   | Res
-  | { t: "bot-moved"; result: Result<string, SharedModel> }
-  | { t: "player-left"; result: Result<string, SharedModel> };
+  | { t: "bot-moved"; result: Result<string, CoreModel> }
+  | { t: "player-left"; result: Result<string, CoreModel> };
 
 export type Req =
   | { t: "input-bot-level"; botLevel: BotLevel }
@@ -99,7 +99,7 @@ export type Req =
   | { t: "restart" };
 
 export type Res = Req & {
-  result: Result<string, SharedModel>;
+  result: Result<string, CoreModel>;
 };
 
 //
@@ -116,8 +116,8 @@ export const handle = ({
 }: {
   ctx: { currentUserId: UserId; hostId: UserId };
   msg: Req;
-  model: SharedModel;
-}): Result<string, SharedModel> => {
+  model: CoreModel;
+}): Result<string, CoreModel> => {
   switch (msg.t) {
     case "input-bot-level": {
       if (model.type !== "setup") {
@@ -223,7 +223,7 @@ export const handle = ({
         return result;
       }
 
-      const modelNext: SharedModel = {
+      const modelNext: CoreModel = {
         ...model,
         board: result.value,
       };
@@ -240,7 +240,7 @@ export const handle = ({
         return Err("must-be-player");
       }
 
-      const modelNext: SharedModel = {
+      const modelNext: CoreModel = {
         ...model,
         board: emptyBoard,
         userPlayerType: toOpposite(model.userPlayerType),

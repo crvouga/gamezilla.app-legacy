@@ -11,13 +11,13 @@ import * as Snake from "./snake";
 //
 //
 
-export type ServerModel = SharedModel;
+export type ServerModel = CoreModel;
 
-export type ClientModel = SharedModel & {
+export type ClientModel = CoreModel & {
   openedMenuId: Option<string>;
 };
 
-export type SharedModel = Snake.Model & {
+export type CoreModel = Snake.Model & {
   gameStatus:
     | {
         type: "GameSetup";
@@ -39,7 +39,7 @@ export type MouseStatus = "Active" | "Inactive";
 //
 //
 
-export const initSharedModel: SharedModel = {
+export const initCoreModel: CoreModel = {
   ...Snake.init,
   gameStatus: {
     type: "GameSetup",
@@ -65,7 +65,7 @@ export type ServerMsg = ["tick"];
 
 export type ToServer = Request;
 
-export type ToClient = ["tick", SharedModel] | Response;
+export type ToClient = ["tick", CoreModel] | Response;
 
 export type Request = ToggleStatus | InputPlayer | InputDirection | StartGame;
 
@@ -86,7 +86,7 @@ export type InputDirection = [
 
 export type InputDirection_Done = [
   "InputDirection_Done",
-  Result<InputDirectionProblem, SharedModel>
+  Result<InputDirectionProblem, CoreModel>
 ];
 
 export type InputDirectionProblem =
@@ -103,7 +103,7 @@ export type ToggleStatus_Done = ["ToggleStatus_Done", ToggleStatusResult];
 
 export type ToggleStatusResult = Result<
   "user_must_be_the_current_player" | "must_be_in_game_started",
-  SharedModel
+  CoreModel
 >;
 
 //
@@ -115,23 +115,23 @@ export type InputPlayer = ["InputPlayer", Option<Player>];
 
 export type InputPlayer_Done = [
   "InputPlayer_Done",
-  Result<"must_be_in_game_setup", SharedModel>
+  Result<"must_be_in_game_setup", CoreModel>
 ];
 
 export type StartGame = ["start-game"];
 export type StartGame_Done = [
   "StartGame_Done",
-  Result<"must_be_in_game_setup" | "missing_player", SharedModel>
+  Result<"must_be_in_game_setup" | "missing_player", CoreModel>
 ];
 
-export const canStartGame = (model: SharedModel): boolean => {
+export const canStartGame = (model: CoreModel): boolean => {
   return (
     model.gameStatus.type === "GameSetup" &&
     model.gameStatus.player.type === "Some"
   );
 };
 
-export const startGame = (model: SharedModel): StartGame_Done[1] => {
+export const startGame = (model: CoreModel): StartGame_Done[1] => {
   if (model.gameStatus.type !== "GameSetup") {
     return Result.Err("must_be_in_game_setup");
   }
@@ -142,7 +142,7 @@ export const startGame = (model: SharedModel): StartGame_Done[1] => {
 
   const playerUserId = model.gameStatus.player.value[1];
 
-  const modelNew: SharedModel = {
+  const modelNew: CoreModel = {
     ...model,
     gameStatus: {
       type: "GameStarted",

@@ -9,17 +9,17 @@ import { UserId } from "@gamezilla/shared/app";
 //
 //
 
-export type SharedModel = {
+export type CoreModel = {
   t: null;
 };
 
-export const initShared: SharedModel = {
+export const initShared: CoreModel = {
   t: null,
 };
 
-export type ClientModel = SharedModel;
+export type ClientModel = CoreModel;
 
-export type ServerModel = SharedModel;
+export type ServerModel = CoreModel;
 
 //
 //
@@ -46,12 +46,12 @@ export type ToServer = Req;
 
 export type Req = { t: null };
 
-export type Res = Req & { result: Result<string, SharedModel> };
+export type Res = Req & { result: Result<string, CoreModel> };
 
 export const handle = (input: {
   msg: Req;
   model: ServerModel;
   ctx: { currentUserId: UserId };
-}): Result<string, SharedModel> => {
+}): Result<string, CoreModel> => {
   return Ok(input.model);
 };

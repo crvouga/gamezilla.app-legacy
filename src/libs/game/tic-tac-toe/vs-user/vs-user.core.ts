@@ -13,7 +13,7 @@ const { Err, Ok } = Result;
 //
 //
 
-export type SharedModel = SetupModel | GameModel | GameOverModel;
+export type CoreModel = SetupModel | GameModel | GameOverModel;
 
 export type SetupModel = {
   type: "setup";
@@ -105,13 +105,13 @@ export const moveTimeLimitToString = (moveTimeLimit: MoveTimeLimit): string => {
   }
 };
 
-export const initSharedModel = ({
+export const initCoreModel = ({
   X,
   O,
 }: {
   X: SetupModel["X"];
   O: SetupModel["O"];
-}): SharedModel => {
+}): CoreModel => {
   return {
     type: "setup",
     O,
@@ -121,13 +121,13 @@ export const initSharedModel = ({
   };
 };
 
-export type ClientModel = SharedModel & {
+export type ClientModel = CoreModel & {
   openedModal: "none" | ModalName;
 };
 
-export type ServerModel = SharedModel;
+export type ServerModel = CoreModel;
 
-export const parseModel = (): Result<string, SharedModel> => {
+export const parseModel = (): Result<string, CoreModel> => {
   return Err("unimplemented");
 };
 
@@ -151,7 +151,7 @@ export type ToClient =
   | Res
   | RoundCountDown_Done
   | MoveCountDown_Done
-  | ["player-left", SharedModel];
+  | ["player-left", CoreModel];
 
 export type GameMsg = ["ClickedBoard", TicTacToe.Position];
 
@@ -195,13 +195,13 @@ type InputPlayer = [
 ];
 type InputPlayer_Done = [
   "InputPlayer_Done",
-  Result<InputPlayerProblem, SharedModel>
+  Result<InputPlayerProblem, CoreModel>
 ];
 type InputPlayerProblem = "player_is_taken" | "must_be_in_setup_mode";
 
 export const inputPlayer = (
   { userId, playerType }: InputPlayer[1],
-  model: SharedModel
+  model: CoreModel
 ): InputPlayer_Done[1] => {
   if (model.type !== "setup") {
     return Err("must_be_in_setup_mode");
@@ -218,7 +218,7 @@ export const inputPlayer = (
   const otherPlayerNew =
     otherPlayer !== "none" && otherPlayer === userId ? "none" : otherPlayer;
 
-  const modelNew: SharedModel = {
+  const modelNew: CoreModel = {
     ...model,
     [playerType]: userId,
     [TicTacToe.toOpposite(playerType)]: otherPlayerNew,
@@ -230,13 +230,13 @@ export const inputPlayer = (
 type StopPlaying = ["stop-playing", { userId: UserId }];
 type StopPlaying_Done = [
   "StopPlaying_Done",
-  Result<StopPlayingProblem, SharedModel>
+  Result<StopPlayingProblem, CoreModel>
 ];
 type StopPlayingProblem = "must_be_in_setup_mode" | "not_playing";
 
 export const stopPlaying = (
   { userId }: StopPlaying[1],
-  model: SharedModel
+  model: CoreModel
 ): StopPlaying_Done[1] => {
   if (model.type !== "setup") {
     return Err("must_be_in_setup_mode");
@@ -249,7 +249,7 @@ export const stopPlaying = (
     return Err("not_playing");
   }
 
-  const modelNew: SharedModel = {
+  const modelNew: CoreModel = {
     ...model,
     X: isPlayingX ? "none" : model.X,
     O: isPlayingO ? "none" : model.O,
@@ -265,7 +265,7 @@ export const stopPlaying = (
 //
 
 type StartGame = ["start-game", { userId: UserId }];
-type StartGame_Done = ["StartGame_Done", Result<StartGameProblem, SharedModel>];
+type StartGame_Done = ["StartGame_Done", Result<StartGameProblem, CoreModel>];
 type StartGameProblem =
   | "not_in_setup_mode"
   | "missing_x"
@@ -275,7 +275,7 @@ type StartGameProblem =
 
 export const startGame = (
   { userId }: StartGame[1],
-  model: SharedModel
+  model: CoreModel
 ): StartGame_Done[1] => {
   if (model.type !== "setup") {
     return Err("not_in_setup_mode");
@@ -297,7 +297,7 @@ export const startGame = (
     return Err("missing_o");
   }
 
-  const modelNew: SharedModel = {
+  const modelNew: CoreModel = {
     type: "game",
     X: model.X,
     O: model.O,
@@ -319,12 +319,12 @@ export const startGame = (
 //
 
 type Resign = ["resign", { userId: UserId }];
-type Resign_Done = ["resign_Done", Result<ResignProblem, SharedModel>];
+type Resign_Done = ["resign_Done", Result<ResignProblem, CoreModel>];
 type ResignProblem = "not_in_game_mode" | "not_playing";
 
 export const resign = (
   { userId }: Resign[1],
-  model: SharedModel
+  model: CoreModel
 ): Resign_Done[1] => {
   if (model.type !== "game") {
     return Err("not_in_game_mode");
@@ -337,7 +337,7 @@ export const resign = (
     return Err("not_playing");
   }
 
-  const modelNew: SharedModel = {
+  const modelNew: CoreModel = {
     ...model,
     type: "game-over",
     gameOver: {
@@ -362,10 +362,7 @@ type InputMove = [
   "input-move",
   { userId: UserId; position: TicTacToe.Position }
 ];
-type InputMove_Done = [
-  "input-move-done",
-  Result<InputMoveProblem, SharedModel>
-];
+type InputMove_Done = ["input-move-done", Result<InputMoveProblem, CoreModel>];
 type InputMoveProblem =
   | TicTacToe.MoveProblem
   | "not_playing"
@@ -374,7 +371,7 @@ type InputMoveProblem =
 
 export const inputMove = (
   { userId, position }: InputMove[1],
-  model: SharedModel
+  model: CoreModel
 ): InputMove_Done[1] => {
   if (model.type !== "game") {
     return Err("not_game_mode");
@@ -406,7 +403,7 @@ export const inputMove = (
   const roundOver = TicTacToe.toGameOver(boardNew);
 
   if (roundOver.type === "none") {
-    const modelNew: SharedModel = {
+    const modelNew: CoreModel = {
       ...model,
       round: Round.mapCurrent(model.round, () => ({
         type: "RoundStarted",
@@ -418,7 +415,7 @@ export const inputMove = (
     return Ok(modelNew);
   }
 
-  const modelNew: SharedModel = {
+  const modelNew: CoreModel = {
     ...model,
     round: Round.mapCurrent(model.round, () => ({
       type: "RoundOver",
@@ -454,7 +451,7 @@ export const inputMove = (
 type MoveCountDown = ["MoveCountDown"];
 type MoveCountDown_Done = [
   "MoveCountDown_Done",
-  Result<MoveCountDownProblem, SharedModel>
+  Result<MoveCountDownProblem, CoreModel>
 ];
 type MoveCountDownProblem =
   | "not_in_game_mode"
@@ -462,7 +459,7 @@ type MoveCountDownProblem =
   | "no_empty_positions"
   | InputMoveProblem;
 
-export const moveCountDown = (model: SharedModel): MoveCountDown_Done[1] => {
+export const moveCountDown = (model: CoreModel): MoveCountDown_Done[1] => {
   if (model.type !== "game") {
     return Err("not_in_game_mode");
   }
@@ -478,7 +475,7 @@ export const moveCountDown = (model: SharedModel): MoveCountDown_Done[1] => {
   const moveCountDownNew = Math.max(moveCountDown - 1, 0);
 
   if (moveCountDownNew > 0) {
-    const modelNew: SharedModel = {
+    const modelNew: CoreModel = {
       ...model,
       round: Round.mapCurrent(model.round, () => ({
         type: "RoundStarted",
@@ -521,12 +518,12 @@ export const moveCountDown = (model: SharedModel): MoveCountDown_Done[1] => {
 //
 
 type NewGame = ["NewGame", { userId: UserId }];
-type NewGame_Done = ["NewGame_Done", Result<NewGameProblem, SharedModel>];
+type NewGame_Done = ["NewGame_Done", Result<NewGameProblem, CoreModel>];
 type NewGameProblem = "not_playing" | "not_game_over";
 
 export const NewGame = (
   { userId }: NewGame[1],
-  model: SharedModel
+  model: CoreModel
 ): NewGame_Done[1] => {
   if (model.type !== "game-over") {
     return Err("not_game_over");
@@ -536,7 +533,7 @@ export const NewGame = (
     return Err("not_playing");
   }
 
-  const modelNew: SharedModel = {
+  const modelNew: CoreModel = {
     type: "setup",
     moveTimeLimit: model.moveTimeLimit,
     O: model.O,
@@ -576,13 +573,13 @@ type InputBestOutOf = [
 ];
 type InputBestOutOf_Done = [
   "InputBestOutOf_Done",
-  Result<InputBestOutOfProblem, SharedModel>
+  Result<InputBestOutOfProblem, CoreModel>
 ];
 type InputBestOutOfProblem = "not_in_setup_mode" | "not_playing";
 
 export const inputBestOutOf = (
   { userId, bestOutOf }: InputBestOutOf[1],
-  model: SharedModel
+  model: CoreModel
 ): InputBestOutOf_Done[1] => {
   if (model.type !== "setup") {
     return Err("not_in_setup_mode");
@@ -592,7 +589,7 @@ export const inputBestOutOf = (
     return Err("not_playing");
   }
 
-  const modelNew: SharedModel = {
+  const modelNew: CoreModel = {
     ...model,
     maxRoundCount: bestOutOf,
   };
@@ -636,11 +633,11 @@ export const inputBestOutOfToString = (
 type RoundCountDown = ["RoundCountDown"];
 type RoundCountDown_Done = [
   "RoundCountDown_Done",
-  Result<RoundCountDownProblem, SharedModel>
+  Result<RoundCountDownProblem, CoreModel>
 ];
 type RoundCountDownProblem = "not_in_game_mode" | "round_not_starting";
 
-export const roundCountDown = (model: SharedModel): RoundCountDown_Done[1] => {
+export const roundCountDown = (model: CoreModel): RoundCountDown_Done[1] => {
   if (model.type !== "game") {
     return Err("not_in_game_mode");
   }
@@ -654,7 +651,7 @@ export const roundCountDown = (model: SharedModel): RoundCountDown_Done[1] => {
   const countDownNew = Math.max(round.countDown - 1, 0);
 
   if (countDownNew === 0) {
-    const modelNew: SharedModel = {
+    const modelNew: CoreModel = {
       ...model,
       round: Round.mapCurrent(model.round, () => ({
         type: "RoundStarted",
@@ -666,7 +663,7 @@ export const roundCountDown = (model: SharedModel): RoundCountDown_Done[1] => {
     return Ok(modelNew);
   }
 
-  const modelNew: SharedModel = {
+  const modelNew: CoreModel = {
     ...model,
     round: Round.mapCurrent(model.round, () => ({
       type: "RoundStarting",
@@ -688,13 +685,13 @@ export const roundCountDown = (model: SharedModel): RoundCountDown_Done[1] => {
 type RematchAsk = ["RematchAsk", { userId: UserId }];
 type RematchAsk_Done = [
   "RematchAsk_Done",
-  Result<RematchAskProblem, SharedModel>
+  Result<RematchAskProblem, CoreModel>
 ];
 type RematchAskProblem = "not_game_over" | "already_asking" | "not_player";
 
 export const rematchAsk = (
   { userId }: RematchAsk[1],
-  model: SharedModel
+  model: CoreModel
 ): RematchAsk_Done[1] => {
   if (model.type !== "game-over") {
     return Err("not_game_over");
@@ -738,7 +735,7 @@ export const rematchAskToString = (result: RematchAsk_Done[1]): string => {
 type Rematch_Cancel = ["Rematch_Cancel", { userId: UserId }];
 type Rematch_Cancel_Done = [
   "Rematch_Cancel_Done",
-  Result<Rematch_CancelProblem, SharedModel>
+  Result<Rematch_CancelProblem, CoreModel>
 ];
 type Rematch_CancelProblem =
   | "not_game_over"
@@ -748,7 +745,7 @@ type Rematch_CancelProblem =
 
 export const rematchCancel = (
   { userId }: Rematch_Cancel[1],
-  model: SharedModel
+  model: CoreModel
 ): Rematch_Cancel_Done[1] => {
   if (model.type !== "game-over") {
     return Err("not_game_over");
@@ -775,7 +772,7 @@ export const rematchCancel = (
 type RematchDecline = ["RematchDecline", { userId: UserId }];
 type RematchDecline_Done = [
   "RematchDecline_Done",
-  Result<RematchDeclineProblem, SharedModel>
+  Result<RematchDeclineProblem, CoreModel>
 ];
 type RematchDeclineProblem =
   | "not_game_over"
@@ -785,7 +782,7 @@ type RematchDeclineProblem =
 
 export const rematchDecline = (
   { userId }: RematchDecline[1],
-  model: SharedModel
+  model: CoreModel
 ): RematchDecline_Done[1] => {
   if (model.type !== "game-over") {
     return Err("not_game_over");
@@ -809,7 +806,7 @@ export const rematchDecline = (
 type RematchAccept = ["RematchAccept", { userId: UserId }];
 type RematchAccept_Done = [
   "RematchAccept_Done",
-  Result<RematchAcceptProblem, SharedModel>
+  Result<RematchAcceptProblem, CoreModel>
 ];
 type RematchAcceptProblem =
   | "not_game_over"
@@ -819,7 +816,7 @@ type RematchAcceptProblem =
 
 export const rematchAccept = (
   { userId }: RematchAccept[1],
-  model: SharedModel
+  model: CoreModel
 ): RematchAccept_Done[1] => {
   if (model.type !== "game-over") {
     return Err("not_game_over");

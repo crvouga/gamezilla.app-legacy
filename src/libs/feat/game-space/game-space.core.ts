@@ -12,7 +12,7 @@ import * as Game from "./game.core";
 //
 //
 
-export type SharedModel = {
+export type CoreModel = {
   spaces: {
     [spaceId: GameSpaceId]: GameSpace;
   };
@@ -31,13 +31,13 @@ export type SharedModel = {
   };
 };
 
-export type ServerModel = SharedModel & {
+export type ServerModel = CoreModel & {
   games: {
     [spaceId: GameSpaceId]: Game.ServerModel;
   };
 };
 
-export type ClientModel = SharedModel & {
+export type ClientModel = CoreModel & {
   games: {
     [spaceId: GameSpaceId]: Game.ClientModel;
   };
@@ -50,13 +50,7 @@ export type ClientModel = SharedModel & {
 
 type ModalModel = null | "user-preview" | "users";
 
-export type ClientSpace = {
-  spaceId: GameSpaceId;
-  hostId: UserId;
-  game?: Game.ClientModel;
-};
-
-export type SpaceUser = {
+export type GameSpaceUser = {
   userId: UserId;
   spaceId: GameSpaceId;
 };
@@ -70,7 +64,7 @@ export type SpaceUser = {
 export const toUserIds = function* ({
   model,
 }: {
-  model: SharedModel;
+  model: CoreModel;
 }): Generator<UserId> {
   for (const userId in model.users) {
     if (!UserId.is(userId)) {
@@ -83,8 +77,8 @@ export const toUserIds = function* ({
 export const toUsers = function* ({
   model,
 }: {
-  model: SharedModel;
-}): Generator<SpaceUser> {
+  model: CoreModel;
+}): Generator<GameSpaceUser> {
   for (const userId of toUserIds({ model })) {
     const user = model.users[userId];
 
@@ -101,8 +95,8 @@ export const toUsersBySpaceId = function* ({
   model,
 }: {
   spaceId: GameSpaceId;
-  model: SharedModel;
-}): Generator<SpaceUser> {
+  model: CoreModel;
+}): Generator<GameSpaceUser> {
   for (const user of toUsers({ model })) {
     if (user.spaceId === spaceId) {
       yield user;
@@ -133,7 +127,7 @@ export const toSpace = ({
   model,
 }: {
   spaceId: GameSpaceId;
-  model: SharedModel;
+  model: CoreModel;
 }): GameSpace | null => {
   const space = model.spaces[spaceId];
 
@@ -240,7 +234,7 @@ export const handle = ({
         },
       };
 
-      const userNew: SpaceUser = {
+      const userNew: GameSpaceUser = {
         spaceId: msg.spaceId,
         userId: ctx.currentUserId,
       };
@@ -304,7 +298,7 @@ export const handle = ({
         return Err("already_in_space");
       }
 
-      const userNew: SpaceUser = {
+      const userNew: GameSpaceUser = {
         spaceId: msg.spaceId,
         userId: ctx.currentUserId,
       };

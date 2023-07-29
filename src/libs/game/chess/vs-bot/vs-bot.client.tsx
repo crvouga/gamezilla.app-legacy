@@ -12,7 +12,7 @@ import {
   ClientModel,
   ClientMsg,
   ServerModel,
-  SharedModel,
+  CoreModel,
   ToClient,
   ToServer,
   handle,
@@ -400,7 +400,7 @@ export const View = ({
   );
 };
 
-export const toGameText = (model: SharedModel): string => {
+export const toGameText = (model: CoreModel): string => {
   switch (model.type) {
     case "game-over": {
       switch (model.gameOver.type) {

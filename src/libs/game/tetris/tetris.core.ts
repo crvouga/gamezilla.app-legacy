@@ -16,12 +16,12 @@ const { Err, Ok } = Result;
 
 export type ClientModel = {
   touched: Option<Position.Position>;
-  sharedModel: SharedModel;
+  sharedModel: CoreModel;
 };
 
-export type ServerModel = SharedModel;
+export type ServerModel = CoreModel;
 
-export type SharedModel = {
+export type CoreModel = {
   board: Board.Board;
   origin: Position.Position;
   tetrominoName: Piece.Name;
@@ -37,14 +37,14 @@ const initialOrigin: Position.Position = {
   y: 0,
 };
 
-export const initShared: SharedModel = {
+export const initShared: CoreModel = {
   board: Board.init({ rowCount, columnCount }),
   origin: initialOrigin,
   tetrominoName: "Z",
   rotations: 0,
 };
 
-export const toPiece = (model: SharedModel): Piece.Piece => {
+export const toPiece = (model: CoreModel): Piece.Piece => {
   return Piece.toUnit(model.tetrominoName)
     .map((position) => times(model.rotations, Position.rotate, position))
     .map((position) => Position.add(position, model.origin));
@@ -57,7 +57,7 @@ const times = <X>(count: number, f: (x: X) => X, x: X): X => {
   return times(count - 1, f, f(x));
 };
 
-export const inCollision = (model: SharedModel): boolean => {
+export const inCollision = (model: CoreModel): boolean => {
   return (
     toPiece(model).some(
       (position) => Board.toCell(position, model.board) !== "Empty"
@@ -65,15 +65,15 @@ export const inCollision = (model: SharedModel): boolean => {
   );
 };
 
-export const isOutOfBounds = (model: SharedModel): boolean => {
+export const isOutOfBounds = (model: CoreModel): boolean => {
   return toPiece(model).some(
     (position) =>
       position.x >= columnCount || position.x < 0 || position.y >= rowCount
   );
 };
 
-export const toDrop = (model: SharedModel): SharedModel => {
-  const modelNext: SharedModel = {
+export const toDrop = (model: CoreModel): CoreModel => {
+  const modelNext: CoreModel = {
     ...model,
     origin: Position.add(Direction.toPosition("Down"), model.origin),
   };
@@ -85,7 +85,7 @@ export const toDrop = (model: SharedModel): SharedModel => {
   return toDrop(modelNext);
 };
 
-export const toGhostPiece = (model: SharedModel): Piece.Piece => {
+export const toGhostPiece = (model: CoreModel): Piece.Piece => {
   return toPiece(toDrop(model));
 };
 
@@ -125,16 +125,10 @@ export type ToClient =
 //
 
 export type MouseMove = ["MouseMove", Position.Position];
-export type MouseMove_Done = [
-  "MouseMove_Done",
-  Result<"collision", SharedModel>
-];
+export type MouseMove_Done = ["MouseMove_Done", Result<"collision", CoreModel>];
 
-export const mouseMove = (
-  msg: MouseMove,
-  model: SharedModel
-): MouseMove_Done => {
-  const modelNew: SharedModel = {
+export const mouseMove = (msg: MouseMove, model: CoreModel): MouseMove_Done => {
+  const modelNew: CoreModel = {
     ...model,
     origin: {
       x: msg[1].x,
@@ -155,20 +149,20 @@ export type InputTranslate = [
 ];
 export type InputTranslate_Done = [
   "InputTranslate_Done",
-  Result<InputTranslateProblem, SharedModel>
+  Result<InputTranslateProblem, CoreModel>
 ];
 export type InputTranslateProblem = "collision";
 
 export const inputTranslate = (
   { direction }: InputTranslate[1],
-  model: SharedModel
+  model: CoreModel
 ): InputTranslate_Done[1] => {
   const originNext = Position.add(
     Direction.toPosition(direction),
     model.origin
   );
 
-  const modelNext: SharedModel = {
+  const modelNext: CoreModel = {
     ...model,
     origin: originNext,
   };
@@ -191,12 +185,12 @@ export const inputTranslate = (
 export type InputRotate = ["InputRotate"];
 export type InputRotate_Done = [
   "InputRotate_Done",
-  Result<InputRotateProblem, SharedModel>
+  Result<InputRotateProblem, CoreModel>
 ];
 export type InputRotateProblem = "collision";
 
-export const inputRotate = (model: SharedModel): InputRotate_Done[1] => {
-  const modelNew: SharedModel = {
+export const inputRotate = (model: CoreModel): InputRotate_Done[1] => {
+  const modelNew: CoreModel = {
     ...model,
     rotations: toNextRotation(model.rotations),
   };
@@ -232,11 +226,11 @@ const toNextRotation = (rotation: 0 | 1 | 2 | 3): 0 | 1 | 2 | 3 => {
 export type InputDrop = ["InputDrop"];
 export type InputDrop_Done = [
   "InputDrop_Done",
-  Result<InputDropProblem, SharedModel>
+  Result<InputDropProblem, CoreModel>
 ];
 export type InputDropProblem = "";
 
-export const inputDrop = (model: SharedModel): InputDrop_Done[1] => {
+export const inputDrop = (model: CoreModel): InputDrop_Done[1] => {
   const modelNext = tick(toDrop(model));
 
   return Result.Ok(modelNext);
@@ -251,12 +245,12 @@ export const inputDrop = (model: SharedModel): InputDrop_Done[1] => {
 //
 
 export type Tick = ["tick"];
-export type Tick_Done = ["Tick_Done", SharedModel];
+export type Tick_Done = ["Tick_Done", CoreModel];
 
-export const tick = (model: SharedModel): SharedModel => {
+export const tick = (model: CoreModel): CoreModel => {
   const originNext = Position.add(Direction.toPosition("Down"), model.origin);
 
-  const modelNext: SharedModel = {
+  const modelNext: CoreModel = {
     ...model,
     origin: originNext,
   };

@@ -15,7 +15,7 @@ export const ServerModelZod: z.ZodType<ServerModel> = z.discriminatedUnion(
     }),
     z.object({
       t: z.literal("vs-bot"),
-      c: VsBot.SharedModelZod,
+      c: VsBot.CoreModelZod,
     }),
   ]
 );

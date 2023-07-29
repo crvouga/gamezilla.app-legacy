@@ -18,7 +18,7 @@ import {
 //
 //
 
-export type SharedModel = SetupModel | GameModel;
+export type CoreModel = SetupModel | GameModel;
 
 export type SetupModel = {
   type: "setup";
@@ -35,7 +35,7 @@ export type GameModel = {
   columns: Columns;
 };
 
-export const isBotTurn = (model: SharedModel): boolean => {
+export const isBotTurn = (model: CoreModel): boolean => {
   if (model.type !== "game") {
     return false;
   }
@@ -45,13 +45,13 @@ export const isBotTurn = (model: SharedModel): boolean => {
   );
 };
 
-export const toBotPlayer = (model: SharedModel): PlayerType => {
+export const toBotPlayer = (model: CoreModel): PlayerType => {
   return opposite[model.userPlayerType];
 };
 
-export type ServerModel = SharedModel;
+export type ServerModel = CoreModel;
 
-export type ClientModel = SharedModel & {
+export type ClientModel = CoreModel & {
   ghostIndex: ColumnIndex | null;
   vsBotSetup: VsBotSetup.Model;
 };
@@ -60,7 +60,7 @@ export const initShared = ({
   player,
 }: {
   player: UserId | null;
-}): SharedModel => {
+}): CoreModel => {
   return {
     type: "setup",
     botLevel: "Medium",
@@ -76,7 +76,7 @@ export const initShared = ({
 
 export type GameOver = { type: "Tie" } | { type: "Winner"; winner: PlayerType };
 
-export const toGameOver = (model: SharedModel): GameOver | { type: null } => {
+export const toGameOver = (model: CoreModel): GameOver | { type: null } => {
   switch (model.type) {
     case "game": {
       const status = toStatus(model.columns);
@@ -129,8 +129,8 @@ export type ServerMsg = { t: "bot-moved"; result: BestMoveResult };
 
 export type ToClient =
   | Res
-  | { t: "player-left"; model: SharedModel }
-  | { t: "bot-move"; result: Result<string, SharedModel> };
+  | { t: "player-left"; model: CoreModel }
+  | { t: "bot-move"; result: Result<string, CoreModel> };
 
 export type ToServer = Req;
 
@@ -144,7 +144,7 @@ export type Req =
   | { t: "swap-sides" }
   | { t: "restart" };
 
-export type Res = Req & { result: Result<string, SharedModel> };
+export type Res = Req & { result: Result<string, CoreModel> };
 
 //
 //
@@ -158,8 +158,8 @@ export const handle = ({
 }: {
   ctx: { currentUserId: UserId; hostId: UserId };
   msg: Req;
-  model: SharedModel;
-}): Result<string, SharedModel> => {
+  model: CoreModel;
+}): Result<string, CoreModel> => {
   if (model.type === "setup") {
     if (msg.t === "start-playing") {
       // if (model.player !== null) {
@@ -192,7 +192,7 @@ export const handle = ({
         return Err("not-allowed");
       }
 
-      const modelNew: SharedModel = {
+      const modelNew: CoreModel = {
         ...model,
         botLevel: msg.botLevel,
       };
@@ -212,7 +212,7 @@ export const handle = ({
         return Err("missing-player");
       }
 
-      const modelNew: SharedModel = {
+      const modelNew: CoreModel = {
         type: "game",
         botLevel: model.botLevel,
         player: model.player,
@@ -235,7 +235,7 @@ export const handle = ({
         return Err("not-playing");
       }
 
-      const modelNew: SharedModel = {
+      const modelNew: CoreModel = {
         type: "setup",
         botLevel: model.botLevel,
         player: model.player,
@@ -250,7 +250,7 @@ export const handle = ({
         return Err("not-playing");
       }
 
-      const modelNew: SharedModel = {
+      const modelNew: CoreModel = {
         ...model,
         columns: emptyColumns,
         userPlayerType: opposite[model.userPlayerType],
@@ -270,7 +270,7 @@ export const handle = ({
         return result;
       }
 
-      const modelNew: SharedModel = {
+      const modelNew: CoreModel = {
         ...model,
         columns: result.value,
       };
@@ -299,8 +299,8 @@ export const handle = ({
 
 export const handleBotMove = (
   bestMoveResult: BestMoveResult,
-  model: SharedModel
-): Result<string, SharedModel> => {
+  model: CoreModel
+): Result<string, CoreModel> => {
   if (model.type !== "game") {
     return Err("not-game");
   }
@@ -325,7 +325,7 @@ export const handleBotMove = (
     return moveResult;
   }
 
-  const modelNew: SharedModel = {
+  const modelNew: CoreModel = {
     ...model,
     columns: moveResult.value,
   };
