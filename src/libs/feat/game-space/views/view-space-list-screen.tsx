@@ -8,6 +8,7 @@ import {
   Button,
   TopBar,
   cn,
+  LoadingScreen,
 } from "@gamezilla/ui";
 import { ClientModel, ClientMsg } from "../game-space.core";
 import { GameName, ViewCoverArt, gameNameToString } from "../game.core";
@@ -31,17 +32,15 @@ export const ViewSpaceListScreen = ({
     <div className="flex h-full max-h-full w-full flex-1 flex-col gap-4 overflow-hidden">
       <TopBar title="Spaces" />
       {!isLoading && spaces.length === 0 ? (
-        <div className="flex h-full w-full flex-1 flex-col items-center justify-center opacity-60">
-          <IconGamepad className="h-12 w-12" />
-          <p className="text-lg">No active spaces</p>
+        <div className="flex h-full w-full flex-1 flex-col items-center justify-center gap-2 opacity-60">
+          <div className="grid place-items-center rounded-full bg-white/20 p-6">
+            <IconGamepad className="h-14 w-14" />
+          </div>
+          <p className="text-lg text-secondary">No active spaces</p>
         </div>
       ) : (
         <div className="relative flex h-full w-full flex-1 flex-col">
-          {isLoading && (
-            <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center">
-              <IconSpinner className="h-12 w-12 animate-spin" />
-            </div>
-          )}
+          {isLoading && <LoadingScreen absolute />}
           <div
             className={cn(
               isLoading && "pointer-events-none opacity-50",

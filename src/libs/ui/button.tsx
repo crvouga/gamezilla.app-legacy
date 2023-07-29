@@ -56,7 +56,8 @@ export const Button = ({
         size === "md" && "px-4 py-2 text-lg",
         size === "sm" && "text-md  px-4 py-1",
         disabled && "cursor-not-allowed bg-neutral-600 opacity-60",
-        !disabled && !loading && " active:opacity-70"
+        !disabled && !loading && " active:opacity-70",
+        loading && "cursor-wait opacity-70"
       )}
       onClick={(event) => {
         onClick?.({ stopPropagation: () => event.stopPropagation() });
