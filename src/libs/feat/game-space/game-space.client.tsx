@@ -707,7 +707,7 @@ const ViewTopBar = ({
   const peopleCount = Object.values(ctx.space.users).length;
   return (
     <nav className="flex h-14 w-full items-center border-b border-neutral-700 px-2 py-1">
-      <div className="flex w-16 items-center">
+      <div className="grid w-20 place-items-center">
         <ActionButton
           label="Home"
           icon={<IconHome />}
@@ -717,7 +717,7 @@ const ViewTopBar = ({
         />
       </div>
 
-      <div className="flex w-16 items-center">
+      <div className="grid w-20 place-items-center">
         <ActionButton
           label={peopleCount > 1 ? `People (${peopleCount})` : `People`}
           icon={<IconUserGroup />}
