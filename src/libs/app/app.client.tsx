@@ -463,18 +463,8 @@ export const View = ({
 }) => {
   return (
     <div className="fixed left-1/2 top-1/2 mx-auto flex h-full max-h-full w-full max-w-md -translate-x-1/2 -translate-y-1/2 touch-none select-none flex-col overflow-hidden border border-neutral-800 bg-black text-white">
-      {model.auth.currentUser.t === "not-asked" && (
-        <div className="flex h-full w-full items-center justify-center">
-          <IconSpinner className="h-12 w-12 animate-spin" />
-        </div>
-      )}
-
-      {model.auth.currentUser.t === "loading" && (
-        <div className="flex h-full w-full items-center justify-center">
-          <IconSpinner className="h-12 w-12 animate-spin" />
-        </div>
-      )}
-
+      {model.auth.currentUser.t === "not-asked" && <LoadingScreen />}
+      {model.auth.currentUser.t === "loading" && <LoadingScreen />}
       {model.auth.currentUser.t === "logged-out" && (
         <ViewLoggedOut
           dispatch={dispatch}
@@ -488,7 +478,6 @@ export const View = ({
           }}
         />
       )}
-
       {model.auth.currentUser.t === "logged-in" && (
         <ViewLoggedIn
           model={model}

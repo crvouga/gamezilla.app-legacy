@@ -64,7 +64,7 @@ export const init: { model: Model } = {
     spaces: {},
     users: {},
     profiles: {},
-    requests: {},
+    req: {},
     modal: null,
     previewUserId: null,
   },
@@ -209,8 +209,8 @@ const update_: typeof update = ({ ctx, sendToServer, msg, model }) => {
   return {
     model: {
       ...model,
-      requests: {
-        ...model.requests,
+      req: {
+        ...model.req,
         [msg.t]: RemoteResult.Loading,
       },
     },
@@ -292,8 +292,8 @@ export const updateFromServer = ({
     return {
       model: {
         ...model,
-        requests: {
-          ...model.requests,
+        req: {
+          ...model.req,
           [msg.t]: msg.result,
         },
       },
@@ -310,8 +310,8 @@ export const updateFromServer = ({
   return {
     model: {
       ...merged.model,
-      requests: {
-        ...merged.model.requests,
+      req: {
+        ...merged.model.req,
         [msg.t]: Ok(null),
       },
     },
@@ -348,8 +348,8 @@ const loadGameSpaces = (input: {
   return {
     model: {
       ...model,
-      requests: {
-        ...model.requests,
+      req: {
+        ...model.req,
         list: Loading,
       },
     },
@@ -575,9 +575,9 @@ const ViewSpaceScreen = ({
   spaceId: GameSpaceId;
 }) => {
   if (
-    model.requests.list?.t === "loading" ||
-    model.requests.create?.t === "loading" ||
-    model.requests.join?.t === "loading"
+    model.req.list?.t === "loading" ||
+    model.req.create?.t === "loading" ||
+    model.req.join?.t === "loading"
   ) {
     return <LoadingScreen />;
   }
@@ -678,6 +678,7 @@ const ViewPage = ({
   }
 
   const game = model.games[ctx.space.gameSpaceId];
+
   return (
     <div className="flex h-full w-full flex-1 flex-col">
       <ViewTopBar dispatch={dispatch} ctx={ctx} />
@@ -706,7 +707,7 @@ const ViewTopBar = ({
   const peopleCount = Object.values(ctx.space.users).length;
   return (
     <nav className="flex h-14 w-full items-center border-b border-neutral-700 px-2 py-1">
-      <div className="flex w-20 items-center">
+      <div className="flex w-16 items-center">
         <ActionButton
           label="Home"
           icon={<IconHome />}
@@ -716,7 +717,7 @@ const ViewTopBar = ({
         />
       </div>
 
-      <div className="flex w-20 items-center">
+      <div className="flex w-16 items-center">
         <ActionButton
           label={peopleCount > 1 ? `People (${peopleCount})` : `People`}
           icon={<IconUserGroup />}
@@ -730,6 +731,7 @@ const ViewTopBar = ({
         color="danger"
         variant="contained"
         size="sm"
+        text={ctx.space.hostId === ctx.currentUserId ? "End" : "Leave"}
         onClick={() => {
           if (ctx.space.hostId === ctx.currentUserId) {
             dispatch({ t: "destroy", userId: ctx.currentUserId });
@@ -737,7 +739,6 @@ const ViewTopBar = ({
           }
           dispatch({ t: "leave", userId: ctx.currentUserId });
         }}
-        text={ctx.space.hostId === ctx.currentUserId ? "End" : "Leave"}
       />
     </nav>
   );

@@ -25,7 +25,7 @@ export const ViewSpaceListScreen = ({
   const currentSpace = user ? model.spaces[user.spaceId] : undefined;
   const spaces = Object.values(model.spaces);
 
-  const isLoading = model.requests.list?.t === "loading";
+  const isLoading = model.req.list?.t === "loading";
 
   return (
     <div className="flex h-full max-h-full w-full flex-1 flex-col gap-4 overflow-hidden">
@@ -100,8 +100,8 @@ export const ViewSpaceListScreen = ({
             className="w-full"
             color="primary"
             loading={
-              model.requests.create?.t === "loading" ||
-              model.requests.list?.t === "loading"
+              model.req.create?.t === "loading" ||
+              model.req.list?.t === "loading"
             }
             onClick={() =>
               dispatch({ t: "create", spaceId: GameSpaceId.generate() })

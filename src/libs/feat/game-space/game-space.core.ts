@@ -41,7 +41,7 @@ export type ClientModel = CoreModel & {
   games: {
     [spaceId: GameSpaceId]: Game.ClientModel;
   };
-  requests: {
+  req: {
     [key in Req["t"]]?: RemoteResult<Problem, null>;
   };
   previewUserId: UserId | null;
