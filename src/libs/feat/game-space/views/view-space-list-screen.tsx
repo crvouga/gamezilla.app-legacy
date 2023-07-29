@@ -2,13 +2,12 @@ import { GameSpaceId } from "@gamezilla/shared/app";
 import { ViewCtx } from "@gamezilla/shared/client";
 import { ViewSpaceHostChip } from "@gamezilla/shared/game-space";
 import {
-  IconGamepad,
-  IconSpinner,
-  MyAvatar,
   Button,
+  IconGamepad,
+  LoadingScreen,
+  MyAvatar,
   TopBar,
   cn,
-  LoadingScreen,
 } from "@gamezilla/ui";
 import { ClientModel, ClientMsg } from "../game-space.core";
 import { GameName, ViewCoverArt, gameNameToString } from "../game.core";
