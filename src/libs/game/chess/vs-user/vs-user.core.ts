@@ -14,7 +14,7 @@ const { Ok, Err } = Result;
 //
 
 export type ClientModel = {
-  sharedModel: CoreModel;
+  coreModel: CoreModel;
   openedMenuId: Option<string>;
   openedModal: Modal | "none";
   isFlipped: boolean;

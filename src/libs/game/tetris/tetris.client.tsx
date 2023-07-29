@@ -28,7 +28,7 @@ import {
 export type Model = ClientModel;
 
 export const init: Model = {
-  sharedModel: initShared,
+  coreModel: initShared,
   touched: Option.None,
 };
 
@@ -171,7 +171,7 @@ export const updateFromServer = (
 
       const modelNew = result.value;
 
-      return [{ ...model, sharedModel: modelNew }, Cmd.None];
+      return [{ ...model, coreModel: modelNew }, Cmd.None];
     }
 
     case "InputDrop_Done": {
@@ -183,12 +183,12 @@ export const updateFromServer = (
 
       const modelNew = result.value;
 
-      return [{ ...model, sharedModel: modelNew }, Cmd.None];
+      return [{ ...model, coreModel: modelNew }, Cmd.None];
     }
 
     case "Tick_Done": {
       const modelNew = msg[1];
-      return [{ ...model, sharedModel: modelNew }, Cmd.None];
+      return [{ ...model, coreModel: modelNew }, Cmd.None];
     }
 
     case "InputRotate_Done": {
@@ -200,7 +200,7 @@ export const updateFromServer = (
 
       const modelNew = result.value;
 
-      return [{ ...model, sharedModel: modelNew }, Cmd.None];
+      return [{ ...model, coreModel: modelNew }, Cmd.None];
     }
 
     case "InputTranslate_Done": {
@@ -212,7 +212,7 @@ export const updateFromServer = (
 
       const modelNew = result.value;
 
-      return [{ ...model, sharedModel: modelNew }, Cmd.None];
+      return [{ ...model, coreModel: modelNew }, Cmd.None];
     }
   }
 };
@@ -226,7 +226,7 @@ export const syncWithServer = ({
 }): ClientModel => {
   return {
     ...clientModel,
-    sharedModel: serverModel,
+    coreModel: serverModel,
   };
 };
 
@@ -282,8 +282,8 @@ export const View = ({
       return;
     }
 
-    const columnCount = Board.toColumnCount(model.sharedModel.board);
-    const rowCount = Board.toRowCount(model.sharedModel.board);
+    const columnCount = Board.toColumnCount(model.coreModel.board);
+    const rowCount = Board.toRowCount(model.coreModel.board);
 
     const canvasHeight = container.offsetHeight;
 
@@ -355,27 +355,27 @@ export const View = ({
       </div>
 
       {/* <svg width="100%" viewBox={[0, 0, columnCount, rowCount,].join(", ")}>
-            {range(1, Board.toColumnCount(model.sharedModel.board)).map(x => (
+            {range(1, Board.toColumnCount(model.coreModel.board)).map(x => (
                 <line key={x} x1={x} y1={0} x2={x} y2={rowCount} stroke={gridStroke} strokeWidth={gridStrokeWidth} />
             ))}
 
-            {range(1, Board.toRowCount(model.sharedModel.board)).map(y => (
+            {range(1, Board.toRowCount(model.coreModel.board)).map(y => (
                 <line key={y} x1={0} y1={y} x2={columnCount} y2={y} stroke={gridStroke} strokeWidth={gridStrokeWidth} />
             ))}
 
-            {Board.flatMap(model.sharedModel.board, ({ cell, x, y }) => (
+            {Board.flatMap(model.coreModel.board, ({ cell, x, y }) => (
                 <rect key={`${x}-${y}-${cell}`} width={1} height={1} x={x} y={y} fill={cell === 'Empty' ? 'transparent' : Piece.colors[cell]} />
             ))}
 
-            {toGhostPiece(model.sharedModel).map(position => (
+            {toGhostPiece(model.coreModel).map(position => (
                 <rect key={`${position.x}-${position.y}`} width={1} height={1} x={position.x} y={position.y} fill={"rgba(0, 0, 0, 0.4)"} />
             ))}
 
-            {toPiece(model.sharedModel).map(position => (
-                <rect key={`${position.x}-${position.y}`} width={1} height={1} x={position.x} y={position.y} fill={Piece.colors[model.sharedModel.tetrominoName]} />
+            {toPiece(model.coreModel).map(position => (
+                <rect key={`${position.x}-${position.y}`} width={1} height={1} x={position.x} y={position.y} fill={Piece.colors[model.coreModel.tetrominoName]} />
             ))}
 
-            {Board.flatMap(model.sharedModel.board, ({ x, y }) => (
+            {Board.flatMap(model.coreModel.board, ({ x, y }) => (
                 <rect
                     key={`${x}-${y}`}
                     width={1}
@@ -417,8 +417,8 @@ const mouseEventToPosition = (
 };
 
 const paint = (context: CanvasRenderingContext2D, model: Model) => {
-  const columnCount = Board.toColumnCount(model.sharedModel.board);
-  const rowCount = Board.toRowCount(model.sharedModel.board);
+  const columnCount = Board.toColumnCount(model.coreModel.board);
+  const rowCount = Board.toRowCount(model.coreModel.board);
   const canvasWidth = context.canvas.width;
   const canvasHeight = context.canvas.height;
   const cellWidth = canvasWidth / columnCount;
@@ -442,19 +442,19 @@ const paint = (context: CanvasRenderingContext2D, model: Model) => {
     context.stroke();
   }
 
-  for (const { x, y } of toGhostPiece(model.sharedModel)) {
+  for (const { x, y } of toGhostPiece(model.coreModel)) {
     context.fillStyle = "#555";
     context.fillRect(x * cellLength, y * cellLength, cellLength, cellLength);
   }
 
-  for (const { x, y } of toPiece(model.sharedModel)) {
-    context.fillStyle = Piece.colors[model.sharedModel.tetrominoName];
+  for (const { x, y } of toPiece(model.coreModel)) {
+    context.fillStyle = Piece.colors[model.coreModel.tetrominoName];
     context.fillRect(x * cellLength, y * cellLength, cellLength, cellLength);
   }
 
   for (let x = 0; x < columnCount; x++) {
     for (let y = 0; y < rowCount; y++) {
-      const cell = Board.toCell({ x, y }, model.sharedModel.board);
+      const cell = Board.toCell({ x, y }, model.coreModel.board);
 
       if (cell === "Empty") {
         continue;

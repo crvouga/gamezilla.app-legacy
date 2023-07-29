@@ -35,7 +35,7 @@ export const init = ({
 }): [ClientModel, Cmd<Msg>] => {
   return [
     {
-      sharedModel: initShared({ userId }),
+      coreModel: initShared({ userId }),
       openedMenuId: Option.None,
       openedModal: "none",
       isFlipped: false,
@@ -127,13 +127,13 @@ export const update = (
     }
 
     case "input-move": {
-      const result = inputMove(msg[1], model.sharedModel);
+      const result = inputMove(msg[1], model.coreModel);
 
       if (result.t === "err") {
         return [model, Cmd.None];
       }
 
-      return [{ ...model, sharedModel: result.value }, sendToServer(msg)];
+      return [{ ...model, coreModel: result.value }, sendToServer(msg)];
     }
 
     case "CancelDraw": {
@@ -157,7 +157,7 @@ export const updateFromServer = (
       if (msg[1].t === "err") {
         return [model, Cmd.None];
       }
-      return [{ ...model, sharedModel: msg[1].value }, Cmd.None];
+      return [{ ...model, coreModel: msg[1].value }, Cmd.None];
     }
 
     case "input-move-done": {
@@ -165,19 +165,19 @@ export const updateFromServer = (
         return [model, Cmd.None];
       }
 
-      const sharedModelNew = msg[1].value;
+      const coreModelNew = msg[1].value;
 
-      if (sharedModelNew.type !== "game") {
+      if (coreModelNew.type !== "game") {
         return [model, Cmd.None];
       }
 
-      const soundCmd = Chess.inCheck(sharedModelNew.board)
+      const soundCmd = Chess.inCheck(coreModelNew.board)
         ? playAudio(Sounds.check)
-        : sharedModelNew.didCapture
+        : coreModelNew.didCapture
         ? playAudio(Sounds.capture)
         : playAudio(Sounds.move);
 
-      return [{ ...model, sharedModel: sharedModelNew }, soundCmd];
+      return [{ ...model, coreModel: coreModelNew }, soundCmd];
     }
 
     case "InputPlayer_Done": {
@@ -185,9 +185,9 @@ export const updateFromServer = (
         return [model, Cmd.None];
       }
 
-      const sharedModel = msg[1].value;
+      const coreModel = msg[1].value;
 
-      return [{ ...model, sharedModel }, Cmd.None];
+      return [{ ...model, coreModel }, Cmd.None];
     }
 
     case "StartGame_Done": {
@@ -195,9 +195,9 @@ export const updateFromServer = (
         return [model, Cmd.None];
       }
 
-      const sharedModel = msg[1].value;
+      const coreModel = msg[1].value;
 
-      return [{ ...model, sharedModel }, Cmd.None];
+      return [{ ...model, coreModel }, Cmd.None];
     }
 
     //
@@ -230,22 +230,22 @@ export const updateFromServer = (
         return [model, Cmd.None];
       }
 
-      const sharedModel = msg[1].value;
+      const coreModel = msg[1].value;
 
-      if (sharedModel.type === "game-over") {
-        return [{ ...model, sharedModel }, Cmd.None];
+      if (coreModel.type === "game-over") {
+        return [{ ...model, coreModel }, Cmd.None];
       }
 
       const isNotPlaying =
-        sharedModel.type === "game" &&
-        sharedModel.w !== ctx.currentUserId &&
-        sharedModel.b !== ctx.currentUserId;
+        coreModel.type === "game" &&
+        coreModel.w !== ctx.currentUserId &&
+        coreModel.b !== ctx.currentUserId;
 
       if (isNotPlaying) {
-        return [{ ...model, sharedModel }, Cmd.None];
+        return [{ ...model, coreModel }, Cmd.None];
       }
 
-      return [{ ...model, sharedModel }, Cmd.None];
+      return [{ ...model, coreModel }, Cmd.None];
     }
 
     case "CancelDraw_Done": {
@@ -255,18 +255,18 @@ export const updateFromServer = (
         return [model, Cmd.None];
       }
 
-      const sharedModel = result.value;
+      const coreModel = result.value;
 
       const isNotPlaying =
-        sharedModel.type === "game" &&
-        sharedModel.w !== ctx.currentUserId &&
-        sharedModel.b !== ctx.currentUserId;
+        coreModel.type === "game" &&
+        coreModel.w !== ctx.currentUserId &&
+        coreModel.b !== ctx.currentUserId;
 
       if (isNotPlaying) {
-        return [{ ...model, sharedModel }, Cmd.None];
+        return [{ ...model, coreModel }, Cmd.None];
       }
 
-      return [{ ...model, sharedModel }, Cmd.None];
+      return [{ ...model, coreModel }, Cmd.None];
     }
 
     //
@@ -280,13 +280,13 @@ export const updateFromServer = (
         return [model, Cmd.None];
       }
 
-      const sharedModelNew = msg[1].value;
+      const coreModelNew = msg[1].value;
 
-      if (sharedModelNew.type === "setup") {
+      if (coreModelNew.type === "setup") {
         return [model, Cmd.None];
       }
 
-      return [{ ...model, sharedModel: sharedModelNew }, Cmd.None];
+      return [{ ...model, coreModel: coreModelNew }, Cmd.None];
     }
 
     case "NewGame_Done": {
@@ -294,10 +294,10 @@ export const updateFromServer = (
         return [model, Cmd.None];
       }
 
-      const sharedModelNew = msg[1].value;
+      const coreModelNew = msg[1].value;
 
       return [
-        { ...model, sharedModel: sharedModelNew },
+        { ...model, coreModel: coreModelNew },
         playAudio(Sounds.navigationCancel),
       ];
     }
@@ -317,13 +317,13 @@ export const updateFromServer = (
     }
 
     case "ClockTicked": {
-      const sharedModel = msg[1];
+      const coreModel = msg[1];
 
-      return [{ ...model, sharedModel }, Cmd.None];
+      return [{ ...model, coreModel }, Cmd.None];
     }
 
     case "player-left": {
-      return [{ ...model, sharedModel: msg[1] }, Cmd.None];
+      return [{ ...model, coreModel: msg[1] }, Cmd.None];
     }
 
     default: {
@@ -366,11 +366,11 @@ export const View = ({
   dispatch: (msg: Msg) => void;
   onClose: () => void;
 }) => {
-  if (model.sharedModel.type === "setup") {
+  if (model.coreModel.type === "setup") {
     return <div>hello</div>;
   }
 
-  const { w, b, board } = model.sharedModel;
+  const { w, b, board } = model.coreModel;
 
   const currentUserColor: Chess.Color | "none" | "Both" =
     ctx.currentUserId === w && ctx.currentUserId === b
@@ -410,7 +410,7 @@ export const View = ({
 
           dispatch(msg);
 
-          const inputted = inputMove(msg[1], model.sharedModel);
+          const inputted = inputMove(msg[1], model.coreModel);
 
           return inputted.t === "ok";
         }}
@@ -429,11 +429,11 @@ const ViewGameOverDialog = ({
   model: Model;
   dispatch: (msg: Msg) => void;
 }) => {
-  if (model.sharedModel.type === "setup") {
-    return <span>{toGameText(model.sharedModel)}</span>;
+  if (model.coreModel.type === "setup") {
+    return <span>{toGameText(model.coreModel)}</span>;
   }
 
-  if (model.sharedModel.type === "game") {
+  if (model.coreModel.type === "game") {
     return <span></span>;
   }
 
@@ -503,6 +503,6 @@ export const syncWithServer = (
     isFlipped: clientModel.isFlipped,
     openedMenuId: clientModel.openedMenuId,
     openedModal: clientModel.openedModal,
-    sharedModel: serverModel,
+    coreModel: serverModel,
   };
 };

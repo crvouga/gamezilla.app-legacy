@@ -16,7 +16,7 @@ const { Err, Ok } = Result;
 
 export type ClientModel = {
   touched: Option<Position.Position>;
-  sharedModel: CoreModel;
+  coreModel: CoreModel;
 };
 
 export type ServerModel = CoreModel;

@@ -32,7 +32,7 @@ export type Model = ClientModel;
 
 export const init: ClientModel = {
   vsBotSetup: VsBotSetup.init,
-  sharedModel: initShared,
+  coreModel: initShared,
   openedMenuId: null,
   openedModal: null,
   isFlipped: false,
@@ -92,18 +92,18 @@ export const update = ({
   const handled = handle({
     ctx,
     msg,
-    model: model.sharedModel,
+    model: model.coreModel,
   });
 
   if (handled.t === "err") {
     return { model, cmd: sendToServer(msg) };
   }
 
-  const sharedModel = handled.value;
+  const coreModel = handled.value;
 
   const modelNew = syncWithServer({
     clientModel: model,
-    serverModel: sharedModel,
+    serverModel: coreModel,
   });
 
   return { model: modelNew, cmd: sendToServer(msg) };
@@ -120,8 +120,8 @@ export const updateFromServer = (input: {
     updateFromServer_(input),
     andThen(({ model }) => {
       if (
-        input.model.sharedModel.type !== "game-over" &&
-        model.sharedModel.type === "game-over"
+        input.model.coreModel.type !== "game-over" &&
+        model.coreModel.type === "game-over"
       ) {
         return {
           model: { ...model, openedModal: "game-over" },
@@ -130,8 +130,8 @@ export const updateFromServer = (input: {
       }
 
       if (
-        input.model.sharedModel.type !== "game" &&
-        model.sharedModel.type === "game"
+        input.model.coreModel.type !== "game" &&
+        model.coreModel.type === "game"
       ) {
         return {
           model,
@@ -152,16 +152,16 @@ const updateFromServer_: typeof updateFromServer = ({ msg, model }) => {
       return { model };
     }
 
-    const { didCapture, ...sharedModel } = result.value;
+    const { didCapture, ...coreModel } = result.value;
 
     const soundCmd =
-      sharedModel.type === "game" && Chess.inCheck(sharedModel.board)
+      coreModel.type === "game" && Chess.inCheck(coreModel.board)
         ? playAudio(Sounds.check)
         : didCapture
         ? playAudio(Sounds.capture)
         : playAudio(Sounds.move);
 
-    return { model: { ...model, sharedModel }, cmd: soundCmd };
+    return { model: { ...model, coreModel }, cmd: soundCmd };
   }
 
   if (msg.t === "player-left") {
@@ -179,17 +179,17 @@ const updateFromServer_: typeof updateFromServer = ({ msg, model }) => {
       return { model };
     }
 
-    const sharedModelNew = result.value;
+    const coreModelNew = result.value;
 
     const modelNew = syncWithServer({
       clientModel: model,
-      serverModel: sharedModelNew,
+      serverModel: coreModelNew,
     });
 
     const soundCmd =
-      sharedModelNew.type === "game" && Chess.inCheck(sharedModelNew.board)
+      coreModelNew.type === "game" && Chess.inCheck(coreModelNew.board)
         ? playAudio(Sounds.check)
-        : sharedModelNew.didCapture
+        : coreModelNew.didCapture
         ? playAudio(Sounds.capture)
         : playAudio(Sounds.move);
 
@@ -233,7 +233,7 @@ export const syncWithServer = ({
     isFlipped: clientModel.isFlipped,
     openedMenuId: clientModel.openedMenuId,
     openedModal: clientModel.openedModal,
-    sharedModel: serverModel,
+    coreModel: serverModel,
     vsBotSetup: clientModel.vsBotSetup,
   };
 };
@@ -269,7 +269,7 @@ export const View = ({
   dispatch: (msg: Msg) => void;
   onClose: () => void;
 }) => {
-  if (model.sharedModel.type === "setup") {
+  if (model.coreModel.type === "setup") {
     return (
       <VsBotSetup.View
         model={model.vsBotSetup}
@@ -279,10 +279,10 @@ export const View = ({
           return <ViewCoverArt {...props} />;
         }}
         bot={{
-          label: Chess.botLevelToString(model.sharedModel.botLevel),
+          label: Chess.botLevelToString(model.coreModel.botLevel),
           renderIcon: (props) =>
             Chess.renderBotLevel({
-              level: model.sharedModel.botLevel,
+              level: model.coreModel.botLevel,
               ...props,
             }),
         }}
@@ -294,12 +294,12 @@ export const View = ({
             onSelect: () => dispatch({ t: "input-bot-level", botLevel }),
           };
         })}
-        canStartGame={model.sharedModel.userId !== null}
+        canStartGame={model.coreModel.userId !== null}
         ctx={ctx}
         human={{
           player:
-            model.sharedModel.userColor === "b" ? "player-two" : "player-one",
-          userId: model.sharedModel.userId,
+            model.coreModel.userColor === "b" ? "player-two" : "player-one",
+          userId: model.coreModel.userId,
         }}
         onQuit={onClose}
         onStartGame={() => dispatch({ t: "start-game" })}
@@ -330,10 +330,10 @@ export const View = ({
       </div>
 
       <div>
-        <p>{Chess.botLevelToString(model.sharedModel.botLevel)}</p>
+        <p>{Chess.botLevelToString(model.coreModel.botLevel)}</p>
       </div>
 
-      {isBotTurn(model.sharedModel) && (
+      {isBotTurn(model.coreModel) && (
         <IconSpinner className="h-5 w-5 animate-spin" />
       )}
     </div>
@@ -341,25 +341,25 @@ export const View = ({
 
   const userSlot = (
     <div>
-      <MyAvatar src={ctx.profiles[model.sharedModel.userId]?.avatarUrl} />
+      <MyAvatar src={ctx.profiles[model.coreModel.userId]?.avatarUrl} />
 
-      <p>{ctx.profiles[model.sharedModel.userId]?.username}</p>
+      <p>{ctx.profiles[model.coreModel.userId]?.username}</p>
     </div>
   );
 
   const boardOrientation = model.isFlipped
-    ? Chess.toOppositeColor(model.sharedModel.userColor)
-    : model.sharedModel.userColor;
+    ? Chess.toOppositeColor(model.coreModel.userColor)
+    : model.coreModel.userColor;
 
   const topSlot = (
     <div>
-      {boardOrientation === model.sharedModel.userColor ? botSlot : userSlot}
+      {boardOrientation === model.coreModel.userColor ? botSlot : userSlot}
     </div>
   );
 
   const bottomSlot = (
     <div>
-      {boardOrientation === model.sharedModel.userColor ? userSlot : botSlot}
+      {boardOrientation === model.coreModel.userColor ? userSlot : botSlot}
     </div>
   );
 
@@ -371,11 +371,11 @@ export const View = ({
         boardOrientation={boardOrientation}
         isDraggablePiece={({ piece }) => {
           return (
-            Chess.toColor(piece) === model.sharedModel.userColor &&
-            model.sharedModel.userId === ctx.currentUserId
+            Chess.toColor(piece) === model.coreModel.userColor &&
+            model.coreModel.userId === ctx.currentUserId
           );
         }}
-        model={model.sharedModel.board}
+        model={model.coreModel.board}
         onPieceDrop={(move) => {
           const msg: Msg = {
             t: "input-move",

@@ -12,7 +12,7 @@ import * as Chess from "../chess/chess";
 //
 
 export type ClientModel = {
-  sharedModel: CoreModel;
+  coreModel: CoreModel;
   openedMenuId: string | null;
   openedModal: null | "game-over";
   isFlipped: boolean;

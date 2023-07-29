@@ -123,10 +123,10 @@ export const updateFromServer = (
 ): [Model, Cmd<Msg>] => {
   switch (msg[0]) {
     case "tick": {
-      const sharedModel = msg[1];
+      const coreModel = msg[1];
       return [
         {
-          ...sharedModel,
+          ...coreModel,
           openedMenuId: model.openedMenuId,
         },
         Cmd.None,
@@ -165,8 +165,8 @@ const updateResponse = <
   if (result.t === "err") {
     return [model, Cmd.None];
   }
-  const sharedModel = result.value;
-  return [{ ...model, ...sharedModel }, Cmd.None];
+  const coreModel = result.value;
+  return [{ ...model, ...coreModel }, Cmd.None];
 };
 
 //
