@@ -1,8 +1,8 @@
+import { Browser, Cmd, Posix, Sub, andThen, p } from "@gamezilla/core";
 import { AuthClient } from "@gamezilla/feat/auth";
 import { ChatClient } from "@gamezilla/feat/chat";
 import { ProfileClient } from "@gamezilla/feat/profile";
 import { SearchClient } from "@gamezilla/feat/search";
-import { GameSpaceClient } from "src/libs/feat/game-space";
 import {
   ClientAppMsg,
   ClientCtx,
@@ -10,17 +10,15 @@ import {
   UnauthenticatedViewCtx,
   ViewCtx,
 } from "@gamezilla/shared/client";
-import { Browser, Cmd, Posix, Sub, andThen, p } from "@gamezilla/core";
 import {
   IconGamepad,
-  IconMagnifyingGlass,
-  IconSpinner,
   IconUserCircle,
   LoadingScreen,
   VDom,
-  cn,
+  cn
 } from "@gamezilla/ui";
 import { Subject } from "rxjs";
+import { GameSpaceClient } from "src/libs/feat/game-space";
 import { Routing, Toast, Wire } from "./app-client";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./app.core";
 
@@ -649,11 +647,6 @@ const ViewBottomBar = ({
       },
       label: "Spaces",
       icon: <IconGamepad />,
-    },
-    {
-      route: { t: "search" },
-      label: "Search",
-      icon: <IconMagnifyingGlass />,
     },
     {
       route: { t: "profile", c: { t: "profile", userId: ctx.currentUserId } },
