@@ -6,9 +6,10 @@ export type ClientAppMsg =
   | { t: "push-route"; route: Route }
   | { t: "route-back" }
   | { t: "wire-connected" }
-  | { t: "got-current-user"; userId: UserId | null }
   | { t: "toast-enqueued"; text: string; duration?: number }
-  | { t: "got-profiles"; profiles: { [userId: string]: Profile } };
+  | { t: "got-profiles"; profiles: { [userId: string]: Profile } }
+  | { t: "current-user-authenticated"; userId: UserId }
+  | { t: "current-user-unauthenticated" };
 
 export type Profile = {
   userId: UserId;

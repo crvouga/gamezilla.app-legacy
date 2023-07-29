@@ -4,7 +4,7 @@ import {
   ViewGameHeaderEmpty,
   ViewUsersInSpaceList,
 } from "@gamezilla/shared/game-space";
-import { MyButton, TopBar, TopBarBackButton } from "@gamezilla/ui";
+import { Button, TopBar, TopBarBackButton } from "@gamezilla/ui";
 import { ClientModel, ClientMsg } from "../game-space.core";
 import { ViewCoverArt, gameNameToString } from "../game.core";
 
@@ -51,7 +51,7 @@ export const ViewSpaceJoinScreen = ({
       </div>
 
       <div className="flex border-t border-neutral-700 p-4">
-        <MyButton
+        <Button
           className="w-full"
           variant="contained"
           color="primary"
@@ -61,9 +61,9 @@ export const ViewSpaceJoinScreen = ({
               userId: ctx.currentUserId,
               spaceId: ctx.space.gameSpaceId,
             });
-          }}>
-          Join space
-        </MyButton>
+          }}
+          text="Join space"
+        />
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import { Sub, andThen, p } from "@gamezilla/core";
 import { GameClient } from "@gamezilla/shared/game-space";
-import { IconArrowLeftOnRect, MyButton } from "@gamezilla/ui";
+import { IconArrowLeftOnRect, Button } from "@gamezilla/ui";
 import { FlowGridPlayUI } from "../flow-grid";
 import { FlowViewCtx } from "../flow-shared";
 import {
@@ -58,10 +58,12 @@ const View: Client["View"] = ({ model, dispatch, ctx }) => {
         <FlowGridPlayUI.View dispatch={dispatch} model={model} />
       </div>
       <div className="w-full p-4">
-        <MyButton className="w-full" onClick={ctx.onExit}>
-          <IconArrowLeftOnRect />
-          Exit
-        </MyButton>
+        <Button
+          className="w-full"
+          onClick={ctx.onExit}
+          start={<IconArrowLeftOnRect />}
+          text="Exit"
+        />
       </div>
     </div>
   );

@@ -11,8 +11,7 @@ import { ClientAppMsg } from "@gamezilla/shared/client";
 import {
   AlertError,
   AlertSuccess,
-  IconSpinner,
-  MyButton,
+  Button,
   MyTextField,
   TopBar,
   TopBarBackButton,
@@ -189,17 +188,15 @@ export const View = ({
           onClear={() => dispatch({ t: "inputted-code", code: "" })}
         />
 
-        <MyButton
+        <Button
           variant="contained"
           size="lg"
           className="w-full"
           color="primary"
-          onClick={() => dispatch({ t: "clicked-verify-code" })}>
-          {model.submission.type === "loading" && (
-            <IconSpinner className="h-6 w-6 animate-spin" />
-          )}
-          Verify Code
-        </MyButton>
+          onClick={() => dispatch({ t: "clicked-verify-code" })}
+          loading={model.submission.type === "loading"}
+          text="Verify Code"
+        />
 
         {model.submission.type === "problem" && (
           <AlertError className="mt-4">{model.submission.message}</AlertError>

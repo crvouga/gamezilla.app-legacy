@@ -52,7 +52,7 @@ export const updateFromClient = ({
   cmd?: Cmd<Msg>;
   msgs?: ServerAppMsg[];
 } => {
-  if (msg.t === "user-authenticated") {
+  if (msg.t === "current-user-authenticated") {
     return {
       model: {
         ...model,
@@ -74,7 +74,7 @@ export const updateFromClient = ({
     };
   }
 
-  if (msg.t === "user-unauthenticated") {
+  if (msg.t === "current-user-unauthenticated") {
     const sessionsNew = { ...model.sessions };
     delete sessionsNew[ctx.sessionId];
     return {

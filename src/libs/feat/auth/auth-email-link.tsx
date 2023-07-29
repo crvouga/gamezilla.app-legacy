@@ -1,10 +1,9 @@
-import { ClientAppMsg } from "@gamezilla/shared/client";
 import { Cmd, Result, Task, exhaustive, p } from "@gamezilla/core";
+import { ClientAppMsg } from "@gamezilla/shared/client";
 import {
   AlertError,
   AlertSuccess,
-  IconSpinner,
-  MyButton,
+  Button,
   MyTextField,
   TopBar,
   TopBarBackButton,
@@ -180,17 +179,15 @@ export const View = ({
           }
         />
 
-        <MyButton
+        <Button
           variant="contained"
           size="lg"
           className="w-full"
           color="primary"
-          type="submit">
-          {model.submission.type === "loading" && (
-            <IconSpinner className="h-6 w-6 animate-spin" />
-          )}
-          Send Login Link
-        </MyButton>
+          type="submit"
+          loading={model.submission.type === "loading"}
+          text="Send Login Link"
+        />
 
         {model.submission.type === "problem" && (
           <AlertError>{model.submission.message}</AlertError>

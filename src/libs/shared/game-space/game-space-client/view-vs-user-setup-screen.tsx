@@ -3,7 +3,7 @@ import {
   IconArrowLeftOnRect,
   IconQuestionMark,
   MyAvatar,
-  MyButton,
+  Button,
   VDom,
 } from "@gamezilla/ui";
 import { GameSpaceViewCtx } from "./game-space-client";
@@ -75,25 +75,25 @@ const PlayerButtons = ({
   return (
     <div className="col-span-3 w-full">
       {player.userId && player.userId === ctx.currentUserId && (
-        <MyButton
+        <Button
           key="toggle-play-button"
           className="w-full"
           variant="text"
           color="primary"
-          onClick={player.onStopPlaying}>
-          Stop Playing
-        </MyButton>
+          onClick={player.onStopPlaying}
+          text="Stop Playing"
+        />
       )}
 
       {!player.userId && (
-        <MyButton
+        <Button
           key="toggle-play-button"
           className="w-full"
           variant="contained"
           color="primary"
-          onClick={player.onStartPlaying}>
-          Start Playing
-        </MyButton>
+          onClick={player.onStartPlaying}
+          text="Start Playing"
+        />
       )}
     </div>
   );
@@ -182,23 +182,23 @@ export const VsUserSetupScreen = ({
 
       {ctx.currentUserId === ctx.hostId && (
         <div className="flex w-full items-center gap-4 border-t border-neutral-700 p-4">
-          <MyButton
+          <Button
             variant="contained"
             color="default"
             className="flex-1"
-            onClick={onQuit}>
-            <IconArrowLeftOnRect />
-            Quit
-          </MyButton>
+            onClick={onQuit}
+            start={<IconArrowLeftOnRect />}
+            text="Quit"
+          />
 
-          <MyButton
+          <Button
             disabled={!canStartGame}
             variant="contained"
             color="primary"
             className="flex-1"
-            onClick={onStartGame}>
-            Start Game
-          </MyButton>
+            onClick={onStartGame}
+            text="Start Game"
+          />
         </div>
       )}
     </div>

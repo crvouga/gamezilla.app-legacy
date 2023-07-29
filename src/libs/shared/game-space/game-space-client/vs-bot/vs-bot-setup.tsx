@@ -3,7 +3,7 @@ import {
   IconArrowLeftOnRect,
   IconQuestionMark,
   MyAvatar,
-  MyButton,
+  Button,
   MyDrawer,
   VDom,
 } from "@gamezilla/ui";
@@ -166,18 +166,20 @@ export const View = ({
 
       {ctx.currentUserId === ctx.hostId && (
         <div className="flex items-center gap-4 border-t border-neutral-700 p-4">
-          <MyButton className="flex-1" onClick={onQuit}>
-            <IconArrowLeftOnRect />
-            Quit
-          </MyButton>
-          <MyButton
+          <Button
+            className="flex-1"
+            onClick={onQuit}
+            start={<IconArrowLeftOnRect />}
+            text="Quit"
+          />
+          <Button
             disabled={!canStartGame}
             variant="contained"
             color="primary"
             className="flex-1"
-            onClick={onStartGame}>
-            Start Game
-          </MyButton>
+            onClick={onStartGame}
+            text="Start Game"
+          />
         </div>
       )}
 
@@ -272,39 +274,39 @@ const PlayerButtons = ({
   return (
     <div className="col-span-3 flex flex-col gap-2">
       {!human.userId && (
-        <MyButton
+        <Button
           onClick={player.onStartPlaying}
           className="w-full"
-          color="primary">
-          Start playing
-        </MyButton>
+          color="primary"
+          text="Start playing"
+        />
       )}
       {player.t === "user" && ctx.currentUserId === player.userId && (
-        <MyButton
+        <Button
           onClick={player.onStopPlaying}
           className="w-full"
           variant="text"
-          color="primary">
-          Stop playing
-        </MyButton>
+          color="primary"
+          text="Stop playing"
+        />
       )}
       {player.t === "bot" && human.userId === ctx.currentUserId && (
-        <MyButton
+        <Button
           onClick={player.onStartPlaying}
           className="w-full"
           variant="text"
-          color="primary">
-          Swap sides
-        </MyButton>
+          color="primary"
+          text="Swap sides"
+        />
       )}
       {player.t === "bot" && human.userId === ctx.currentUserId && (
-        <MyButton
+        <Button
           onClick={() => dispatch({ t: "clicked-change-bot" })}
           className="w-full"
           variant="text"
-          color="primary">
-          Change bot
-        </MyButton>
+          color="primary"
+          text="Change bot"
+        />
       )}
     </div>
   );

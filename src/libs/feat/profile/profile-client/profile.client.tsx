@@ -10,7 +10,7 @@ import {
   IconChevronRight,
   LoadingScreen,
   MyAvatar,
-  MyButton,
+  Button,
   MyTextField,
   TopBar,
   TopBarBackButton,
@@ -326,16 +326,16 @@ const ViewUpdateScreen = ({
           }
         />
 
-        <MyButton
+        <Button
           size="sm"
           color="primary"
           variant="text"
           className="block"
           onClick={() =>
             ctx.onPush({ t: "profile", c: { t: "profile-update-avatar" } })
-          }>
-          Change Avatar
-        </MyButton>
+          }
+          text=" Change Avatar"
+        />
       </div>
 
       <ViewField
@@ -391,18 +391,18 @@ const ViewUpdateUsernameScreen = ({
     <div className="flex h-full w-full flex-col">
       <TopBar
         left={
-          <MyButton
+          <Button
             variant="text"
             color="primary"
             onClick={() =>
               ctx.onPush({ t: "profile", c: { t: "profile-update" } })
-            }>
-            Cancel
-          </MyButton>
+            }
+            text="Cancel"
+          />
         }
         title="Username"
         right={
-          <MyButton
+          <Button
             variant="text"
             color="primary"
             onClick={() => {
@@ -410,9 +410,9 @@ const ViewUpdateUsernameScreen = ({
               if (username) {
                 dispatch({ t: "change-username", username });
               }
-            }}>
-            Done
-          </MyButton>
+            }}
+            text="Done"
+          />
         }
       />
 

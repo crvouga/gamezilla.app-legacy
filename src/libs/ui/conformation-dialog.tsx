@@ -1,5 +1,5 @@
 import { VDom, cn } from ".";
-import { MyButton } from "./button";
+import { Button } from "./button";
 
 export const ConformationDialog = ({
   open,
@@ -31,22 +31,23 @@ export const ConformationDialog = ({
         <p className="text-center text-xl font-semibold">{title}</p>
 
         <div className="flex w-full items-center gap-4">
-          <MyButton
+          <Button
             variant="outlined"
             onClick={(event) => {
               event.stopPropagation();
               onCancel();
             }}
-            className="flex-1">
-            {cancelTitle}
-          </MyButton>
-          <MyButton
+            className="flex-1"
+            text={cancelTitle}
+          />
+
+          <Button
             variant="contained"
             color="danger"
             onClick={onConfirm}
-            className="flex-1">
-            {confirmTitle}
-          </MyButton>
+            className="flex-1"
+            text={confirmTitle}
+          />
         </div>
       </div>
     </div>

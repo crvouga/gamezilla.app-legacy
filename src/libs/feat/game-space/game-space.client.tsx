@@ -1,4 +1,12 @@
-import { Cmd, RemoteResult, Sub, andThen, p } from "@gamezilla/core";
+import {
+  Cmd,
+  Loading,
+  Ok,
+  RemoteResult,
+  Sub,
+  andThen,
+  p,
+} from "@gamezilla/core";
 import { GameSpaceId } from "@gamezilla/shared/app";
 import {
   ClientAppMsg,
@@ -20,7 +28,7 @@ import {
   IconXMark,
   LoadingScreen,
   MyAvatar,
-  MyButton,
+  Button,
   MyDrawer,
   VDom,
 } from "@gamezilla/ui";
@@ -32,7 +40,7 @@ import {
   ToServer,
   toSpace,
 } from "./game-space.core";
-import * as Game from "./game.client";
+import * as GameClient from "./game.client";
 import { ViewCoverArt } from "./game.core";
 import {
   ViewNotInGameScreen,
@@ -171,7 +179,7 @@ const update_: typeof update = ({ ctx, sendToServer, msg, model }) => {
       hostId: space.hostId,
     };
 
-    const updated = Game.update({
+    const updated = GameClient.update({
       ctx: spaceCtx,
       sendToServer: (msg) =>
         sendToServer({
@@ -250,7 +258,7 @@ export const updateFromServer = ({
       return { model };
     }
 
-    const updated = Game.updateFromServer({
+    const updated = GameClient.updateFromServer({
       ctx: {
         ...ctx,
         hostId: space.hostId,
@@ -304,7 +312,7 @@ export const updateFromServer = ({
       ...merged.model,
       requests: {
         ...merged.model.requests,
-        [msg.t]: RemoteResult.Ok(null),
+        [msg.t]: Ok(null),
       },
     },
     cmd: merged.cmd,
@@ -320,7 +328,33 @@ export const updateFromApp = (input: {
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
+  const { msg } = input;
+
+  if (msg.t === "current-user-authenticated") {
+    return loadGameSpaces(input);
+  }
+
   return input;
+};
+
+const loadGameSpaces = (input: {
+  model: Model;
+  sendToServer: (m: ToServer) => Cmd;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  const { model, sendToServer } = input;
+  return {
+    model: {
+      ...model,
+      requests: {
+        ...model.requests,
+        list: Loading,
+      },
+    },
+    cmd: sendToServer({ t: "list" }),
+  };
 };
 
 const syncWithServer = ({
@@ -363,7 +397,7 @@ const syncWithServer = ({
       const clientGame = clientModel.games[spaceId];
 
       if (clientGame) {
-        const merged = Game.syncWithServer({
+        const merged = GameClient.syncWithServer({
           ctx: gameSpaceCtx,
           server: serverGame,
           client: clientGame,
@@ -387,12 +421,12 @@ const syncWithServer = ({
 
       const gameName = serverGame.t;
 
-      const initial = Game.init({ gameName })({
+      const initial = GameClient.init({ gameName })({
         ctx: gameSpaceCtx,
         sendToServer: (msg) => sendToServer({ t: "game", c: msg }),
       });
 
-      const merged = Game.syncWithServer({
+      const merged = GameClient.syncWithServer({
         ctx: gameSpaceCtx,
         server: serverGame,
         client: initial.model,
@@ -471,7 +505,7 @@ export const subscriptions = (ctx: ClientCtx, model: Model): Sub<Msg> => {
 
   return Sub.tag_(
     "game",
-    Game.subscriptions({
+    GameClient.subscriptions({
       ctx: gameSpaceCtx,
       model: game,
       intervalId: `space/${user.spaceId}`,
@@ -606,7 +640,7 @@ const ViewSpaceScreen = ({
         </button>
 
         <div className="w-full px-4 pb-8">
-          <MyButton
+          <Button
             onClick={() => {
               if (model.previewUserId) {
                 dispatch({
@@ -615,9 +649,9 @@ const ViewSpaceScreen = ({
                 });
               }
             }}
-            className="w-full">
-            See profile
-          </MyButton>
+            className="w-full"
+            text="See profile"
+          />
         </div>
       </MyDrawer>
     </>
@@ -649,7 +683,7 @@ const ViewPage = ({
       <ViewTopBar dispatch={dispatch} ctx={ctx} />
       <div className="w-full flex-1 overflow-y-auto">
         {game ? (
-          <Game.View
+          <GameClient.View
             ctx={ctx}
             dispatch={(msg) => dispatch({ t: "game", c: msg })}
             model={game}
@@ -692,7 +726,7 @@ const ViewTopBar = ({
 
       <div className="flex-1"></div>
 
-      <MyButton
+      <Button
         color="danger"
         variant="contained"
         size="sm"
@@ -702,9 +736,9 @@ const ViewTopBar = ({
             return;
           }
           dispatch({ t: "leave", userId: ctx.currentUserId });
-        }}>
-        {ctx.space.hostId === ctx.currentUserId ? "End" : "Leave"}
-      </MyButton>
+        }}
+        text={ctx.space.hostId === ctx.currentUserId ? "End" : "Leave"}
+      />
     </nav>
   );
 };
@@ -713,16 +747,16 @@ export const ViewSpaceNotFound = ({ ctx }: { ctx: ViewCtx }) => {
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-4">
       <p className="text-center text-2xl">Space not found</p>
-      <MyButton
+      <Button
         onClick={() =>
           ctx.onPush({ t: "game-space", c: { t: "game-space-list" } })
         }
         size="lg"
         variant="contained"
-        color="primary">
-        <IconHome />
-        Go Home
-      </MyButton>
+        color="primary"
+        start={<IconHome />}
+        text="Go Home"
+      />
     </div>
   );
 };

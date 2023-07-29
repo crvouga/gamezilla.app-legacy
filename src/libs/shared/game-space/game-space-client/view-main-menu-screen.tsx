@@ -2,7 +2,7 @@ import {
   IconArrowLeftOnRect,
   IconRobot,
   IconUsers,
-  MyButton,
+  Button,
   Text,
   VDom,
 } from "@gamezilla/ui";
@@ -70,10 +70,12 @@ export const MainMenuScreen = ({
       </div>
 
       <div className="flex justify-center border-t border-neutral-700 p-4">
-        <MyButton onClick={ctx.onQuit} className="w-full">
-          <IconArrowLeftOnRect />
-          Quit
-        </MyButton>
+        <Button
+          onClick={ctx.onQuit}
+          className="w-full"
+          start={<IconArrowLeftOnRect />}
+          text="Quit"
+        />
       </div>
     </div>
   );

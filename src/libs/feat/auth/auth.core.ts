@@ -43,11 +43,11 @@ export type ServerModel = {
 
 type Event =
   | {
-      t: "user-authenticated";
+      t: "current-user-authenticated";
       userId: UserId;
     }
   | {
-      t: "user-unauthenticated";
+      t: "current-user-unauthenticated";
     };
 
 export type ClientMsg =

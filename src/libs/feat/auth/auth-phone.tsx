@@ -12,8 +12,7 @@ import { ClientAppMsg, UnauthenticatedViewCtx } from "@gamezilla/shared/client";
 import {
   Autocomplete,
   IconPhone,
-  IconSpinner,
-  MyButton,
+  Button,
   MyTextField,
   TopBar,
   TopBarBackButton,
@@ -266,17 +265,15 @@ export const View = ({
           }
         />
 
-        <MyButton
+        <Button
           type="submit"
           variant="contained"
           color="primary"
           size="lg"
-          className="mt-2 w-full">
-          {model.submission.type === "loading" && (
-            <IconSpinner className="h-6 w-6 animate-spin" />
-          )}
-          Send Code
-        </MyButton>
+          className="mt-2 w-full"
+          loading={model.submission.type === "loading"}
+          text="Send Code"
+        />
 
         {model.submission.type === "Problem" && (
           <div className="mt-2 rounded-md bg-red-500 p-4 text-white">

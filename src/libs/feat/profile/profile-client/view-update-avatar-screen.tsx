@@ -1,6 +1,6 @@
 import { ProfileAvatar } from "@gamezilla/shared/app";
 import { ViewCtx } from "@gamezilla/shared/client";
-import { MyAvatar, MyButton, MyTextField, TopBar } from "@gamezilla/ui";
+import { MyAvatar, Button, MyTextField, TopBar } from "@gamezilla/ui";
 import { ClientModel, ClientMsg } from "../profile.core";
 
 export const ViewUpdateAvatarScreen = ({
@@ -16,16 +16,15 @@ export const ViewUpdateAvatarScreen = ({
     <div className="flex h-full w-full flex-col items-center">
       <TopBar
         left={
-          <MyButton color="primary" variant="text" onClick={() => ctx.onBack()}>
-            Cancel
-          </MyButton>
+          <Button
+            color="primary"
+            variant="text"
+            onClick={() => ctx.onBack()}
+            text="Cancel"
+          />
         }
         title="Avatar"
-        right={
-          <MyButton color="primary" variant="text">
-            Done
-          </MyButton>
-        }
+        right={<Button color="primary" variant="text" text="Done" />}
       />
 
       <div className="flex w-full flex-1 flex-col gap-8 p-4">
@@ -51,10 +50,10 @@ export const ViewUpdateAvatarScreen = ({
             id="seed"
           />
 
-          <MyButton
-            onClick={() => dispatch({ t: "clicked-generate-random-seed" })}>
-            Random seed
-          </MyButton>
+          <Button
+            onClick={() => dispatch({ t: "clicked-generate-random-seed" })}
+            text=" Random seed"
+          />
         </div>
       </div>
     </div>

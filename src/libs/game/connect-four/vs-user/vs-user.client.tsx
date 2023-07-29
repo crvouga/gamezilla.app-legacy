@@ -17,7 +17,7 @@ import {
   IconSpinner,
   IconXMark,
   MyAvatar,
-  MyButton,
+  Button,
   Text,
 } from "@gamezilla/ui";
 import { PlayerType, toTurn } from "../connect-four";
@@ -362,11 +362,11 @@ const ViewGameOverMessage = ({
       <>
         <p className="mb-4 text-center text-xl">Waiting for response</p>
         <IconSpinner className="mb-4 h-8 w-8 animate-spin" />
-        <MyButton
+        <Button
           variant="contained"
-          onClick={() => dispatch({ t: "rematch-cancel" })}>
-          Cancel
-        </MyButton>
+          onClick={() => dispatch({ t: "rematch-cancel" })}
+          text="Cancel"
+        />
       </>
     );
   }
@@ -382,26 +382,26 @@ const ViewGameOverMessage = ({
           Rematch?
         </Text>
         <div className="flex w-full items-center justify-center gap-4">
-          <MyButton
+          <Button
             variant="contained"
             onClick={() =>
               dispatch({
                 t: "rematch-respond",
                 response: "Decline",
               })
-            }>
-            <IconXMark />
-            Decline
-          </MyButton>
+            }
+            start={<IconXMark />}
+            text="Decline"
+          />
 
-          <MyButton
+          <Button
             variant="contained"
             onClick={() =>
               dispatch({ t: "rematch-respond", response: "Accept" })
-            }>
-            <IconCheckmarkCircle />
-            Accept
-          </MyButton>
+            }
+            start={<IconCheckmarkCircle />}
+            text="Accept"
+          />
         </div>
       </>
     );

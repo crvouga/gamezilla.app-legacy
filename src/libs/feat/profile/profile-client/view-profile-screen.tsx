@@ -5,7 +5,7 @@ import {
   IconSpinner,
   IconUserPen,
   MyAvatar,
-  MyButton,
+  Button,
   TopBar,
   TopBarBackButton,
 } from "@gamezilla/ui";
@@ -45,20 +45,19 @@ export const ViewProfileScreen = ({
           <p className="w-full overflow-hidden text-ellipsis text-center text-3xl">
             @{profile.username}
           </p>
-          <MyButton
+          <Button
             onClick={() =>
               ctx.onPush({ t: "profile", c: { t: "profile-update" } })
             }
-            className="w-full">
-            <IconUserPen />
-            Edit Profile
-          </MyButton>
-          <MyButton
+            className="w-full"
+            start={<IconUserPen />}
+            text="Edit Profile"></Button>
+          <Button
             onClick={() => ctx.onPush({ t: "logout" })}
-            className="w-full">
-            <IconArrowLeftOnRect />
-            Logout
-          </MyButton>
+            className="w-full"
+            start={<IconArrowLeftOnRect />}
+            text="Logout"
+          />
         </div>
       </div>
     );

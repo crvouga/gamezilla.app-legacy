@@ -431,11 +431,7 @@ const updateLeave: UpdateFromClient = ({
   };
 };
 
-export const updateFromApp = ({
-  msg,
-  model,
-  sendToClient,
-}: {
+export const updateFromApp = (input: {
   msg: ServerAppMsg;
   model: Model;
   sendToClient: (clientId: ClientId[], msg: ToClient) => Cmd;
@@ -443,31 +439,7 @@ export const updateFromApp = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  // if (msg.t === "client-connected") {
-  //   return {
-  //     model,
-  //     cmd: sendToClient([msg.clientId], {
-  //       t: "list",
-  //       result: Ok(model),
-  //       initiatorMsg: msg,
-  //     }),
-  //   };
-  // }
-
-  if (msg.t === "client-authenticated") {
-    return {
-      model,
-      cmd: sendToClient([msg.clientId], {
-        t: "list",
-        result: Ok(model),
-        initiatorMsg: msg,
-      }),
-    };
-  }
-
-  return {
-    model,
-  };
+  return input;
 };
 
 const sendToSpace = ({

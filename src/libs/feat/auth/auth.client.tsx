@@ -23,7 +23,7 @@ import {
   IconMobilePhone,
   LoadingBar,
   LoadingScreen,
-  MyButton,
+  Button,
   cn,
 } from "@gamezilla/ui";
 import { Session as SupabaseSession } from "@supabase/supabase-js";
@@ -185,22 +185,19 @@ export const update = ({
     };
   }
 
-  if (msg.t === "user-authenticated") {
+  if (msg.t === "current-user-authenticated") {
     return {
       model: { ...model, currentUser: { t: "logged-in", userId: msg.userId } },
       cmd: sendToServer(msg),
-      msgs: [{ t: "got-current-user", userId: msg.userId }],
+      msgs: [msg],
     };
   }
 
-  if (msg.t === "user-unauthenticated") {
+  if (msg.t === "current-user-unauthenticated") {
     return {
       model: { ...model, currentUser: { t: "logged-out" } },
       cmd: sendToServer(msg),
-      msgs: [
-        { t: "got-current-user", userId: null },
-        { t: "push-route", route: { t: "auth", c: { t: "login" } } },
-      ],
+      msgs: [msg, { t: "push-route", route: { t: "auth", c: { t: "login" } } }],
     };
   }
 
@@ -321,15 +318,15 @@ const ViewLoginScreen = ({
         </div>
 
         <div className="flex w-full flex-col gap-6">
-          <MyButton
+          <Button
             onClick={() => dispatch({ t: "login-with-google" })}
             size="lg"
-            className="w-full">
-            <IconGoogle />
-            Continue With Google
-          </MyButton>
+            className="w-full"
+            start={<IconGoogle />}
+            text="Continue With Google"
+          />
 
-          <MyButton
+          <Button
             onClick={() =>
               ctx.onPush({
                 t: "auth",
@@ -337,20 +334,20 @@ const ViewLoginScreen = ({
               })
             }
             size="lg"
-            className="w-full">
-            <IconMobilePhone />
-            Continue With Text
-          </MyButton>
+            className="w-full"
+            start={<IconMobilePhone />}
+            text="Continue With Text"
+          />
 
-          <MyButton
+          <Button
             onClick={() =>
               ctx.onPush({ t: "auth", c: { t: "login-email-link" } })
             }
             size="lg"
-            className="w-full">
-            <IconEnvelope />
-            Continue With Email
-          </MyButton>
+            className="w-full"
+            start={<IconEnvelope />}
+            text="Continue With Email"
+          />
         </div>
       </div>
     </div>
@@ -403,13 +400,13 @@ const fromSupabaseSession = (auth: SupabaseSession | null): Msg => {
 
   if (userId.t === "ok") {
     return {
-      t: "user-authenticated",
+      t: "current-user-authenticated",
       userId: userId.value,
     };
   }
 
   return {
-    t: "user-unauthenticated",
+    t: "current-user-unauthenticated",
   };
 };
 

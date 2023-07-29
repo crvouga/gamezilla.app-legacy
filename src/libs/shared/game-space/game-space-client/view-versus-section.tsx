@@ -1,6 +1,6 @@
 import { UserId } from "@gamezilla/shared/app";
 import { ViewCtx } from "@gamezilla/shared/client";
-import { IconQuestionMark, MyAvatar, MyButton, VDom } from "@gamezilla/ui";
+import { IconQuestionMark, MyAvatar, Button, VDom } from "@gamezilla/ui";
 
 type IconProps = { className: string };
 
@@ -69,25 +69,25 @@ const PlayerButtons = ({
       {player.playerType.t === "human" &&
         player.playerType.userId &&
         player.playerType.userId === ctx.currentUserId && (
-          <MyButton
+          <Button
             key="toggle-play-button"
             className="w-full"
             variant="text"
             color="primary"
-            onClick={player.onStopPlaying}>
-            Stop Playing
-          </MyButton>
+            onClick={player.onStopPlaying}
+            text="Stop Playing"
+          />
         )}
 
       {player.playerType.t === "human" && player.playerType.userId && (
-        <MyButton
+        <Button
           key="toggle-play-button"
           className="w-full"
           variant="contained"
           color="primary"
-          onClick={player.onStartPlaying}>
-          Start Playing
-        </MyButton>
+          onClick={player.onStartPlaying}
+          text="Start Playing"
+        />
       )}
     </div>
   );

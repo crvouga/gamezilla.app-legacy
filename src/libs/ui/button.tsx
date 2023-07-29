@@ -1,4 +1,5 @@
-import { cn } from "./utils";
+import { Spinner } from ".";
+import { VDom, cn } from "./utils";
 
 export type ButtonVariant = "contained" | "outlined" | "text";
 
@@ -12,24 +13,28 @@ export type ButtonEvent = {
   stopPropagation: () => void;
 };
 
-export const MyButton = ({
+export const Button = ({
   type,
-  children,
+  start,
   className,
   onClick,
   variant = "contained",
   color = "default",
   size = "md",
   disabled,
+  loading,
+  text,
 }: {
+  text?: string;
   disabled?: boolean;
   type?: "button" | "submit" | "reset";
   className?: string;
   onClick?: (event: ButtonEvent) => void;
-  children?: React.ReactNode;
+  start?: VDom | VDom[];
   variant?: ButtonVariant;
   color?: ButtonColor;
   size?: ButtonSize;
+  loading?: boolean;
 }) => {
   const combo: VariantColor = `${variant}-${color}`;
 
@@ -51,12 +56,19 @@ export const MyButton = ({
         size === "md" && "px-4 py-2 text-lg",
         size === "sm" && "text-md  px-4 py-1",
         disabled && "cursor-not-allowed bg-neutral-600 opacity-60",
-        !disabled && " active:opacity-70"
+        !disabled && !loading && " active:opacity-70"
       )}
       onClick={(event) => {
         onClick?.({ stopPropagation: () => event.stopPropagation() });
       }}>
-      {children}
+      {loading ? (
+        <Spinner className="h-6 w-6" />
+      ) : (
+        <>
+          {start}
+          {text}
+        </>
+      )}
     </button>
   );
 };

@@ -5,7 +5,7 @@ import {
   IconGamepad,
   IconSpinner,
   MyAvatar,
-  MyButton,
+  Button,
   TopBar,
   cn,
 } from "@gamezilla/ui";
@@ -95,15 +95,19 @@ export const ViewSpaceListScreen = ({
 
       {!currentSpace && (
         <div className="w-full p-4">
-          <MyButton
+          <Button
             size="lg"
             className="w-full"
             color="primary"
+            loading={
+              model.requests.create?.t === "loading" ||
+              model.requests.list?.t === "loading"
+            }
             onClick={() =>
               dispatch({ t: "create", spaceId: GameSpaceId.generate() })
-            }>
-            Create space
-          </MyButton>
+            }
+            text="Create space"
+          />
         </div>
       )}
     </div>
