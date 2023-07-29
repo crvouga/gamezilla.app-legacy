@@ -16,14 +16,14 @@ export type ButtonEvent = {
 export const Button = ({
   type,
   start,
-  className,
+  className = "",
   onClick,
   variant = "contained",
   color = "default",
   size = "md",
-  disabled,
-  loading,
-  text,
+  disabled = false,
+  loading = false,
+  text = "",
 }: {
   text?: string;
   disabled?: boolean;
