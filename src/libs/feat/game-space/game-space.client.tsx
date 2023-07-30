@@ -23,18 +23,19 @@ import {
 } from "@gamezilla/shared/game-space";
 import {
   ActionButton,
+  Button,
   IconHome,
   IconUserGroup,
   IconXMark,
   LoadingScreen,
   MyAvatar,
-  Button,
   MyDrawer,
   VDom,
 } from "@gamezilla/ui";
 import {
   ClientModel,
   ClientMsg,
+  Res,
   ServerModel,
   ToClient,
   ToServer,
@@ -236,88 +237,130 @@ export const updateFromServer = ({
   cmd?: Cmd<Msg>;
   msgs?: ClientAppMsg[];
 } => {
-  if (msg.t === "game") {
-    if (!ctx) {
-      return { model };
-    }
-    const user = model.users[ctx.currentUserId];
+  switch (msg.t) {
+    case "game": {
+      if (!ctx) {
+        return { model };
+      }
+      const user = model.users[ctx.currentUserId];
 
-    if (!user) {
-      return { model };
-    }
+      if (!user) {
+        return { model };
+      }
 
-    const space = model.spaces[user.spaceId];
+      const space = model.spaces[user.spaceId];
 
-    if (!space) {
-      return { model };
-    }
+      if (!space) {
+        return { model };
+      }
 
-    const game = model.games[user.spaceId];
+      const game = model.games[user.spaceId];
 
-    if (!game) {
-      return { model };
-    }
+      if (!game) {
+        return { model };
+      }
 
-    const updated = GameClient.updateFromServer({
-      ctx: {
-        ...ctx,
-        hostId: space.hostId,
-      },
-      sendToServer: (msg) =>
-        sendToServer({
-          t: "game",
-          c: msg,
-          profile: ctx.profiles[ctx.currentUserId],
-        }),
-      model: game,
-      msg: msg.c,
-    });
-
-    const modelNew: Model = {
-      ...model,
-      games: {
-        ...model.games,
-        [user.spaceId]: updated.model,
-      },
-    };
-
-    return {
-      model: modelNew,
-      cmd: Cmd.tag_("game", updated.cmd),
-      msgs: updated.msgs,
-    };
-  }
-
-  if (msg.result.t === "err") {
-    return {
-      model: {
-        ...model,
-        req: {
-          ...model.req,
-          [msg.t]: msg.result,
+      const updated = GameClient.updateFromServer({
+        ctx: {
+          ...ctx,
+          hostId: space.hostId,
         },
-      },
-    };
+        sendToServer: (msg) =>
+          sendToServer({
+            t: "game",
+            c: msg,
+            profile: ctx.profiles[ctx.currentUserId],
+          }),
+        model: game,
+        msg: msg.c,
+      });
+
+      const modelNew: Model = {
+        ...model,
+        games: {
+          ...model.games,
+          [user.spaceId]: updated.model,
+        },
+      };
+
+      return {
+        model: modelNew,
+        cmd: Cmd.tag_("game", updated.cmd),
+        msgs: updated.msgs,
+      };
+    }
+    default: {
+      if (msg.result.t === "err") {
+        return {
+          model: {
+            ...model,
+            req: {
+              ...model.req,
+              [msg.t]: msg.result,
+            },
+          },
+        };
+      }
+
+      const merged = syncWithServer({
+        ctx,
+        clientModel: model,
+        serverModel: msg.result.value,
+        sendToServer,
+      });
+
+      return {
+        model: {
+          ...merged.model,
+          req: {
+            ...merged.model.req,
+            [msg.t]: Ok(null),
+          },
+        },
+        cmd: merged.cmd,
+        msgs: [
+          ...(ctx ? resToToast({ model: merged.model, ctx, res: msg }) : []),
+          { t: "got-profiles", profiles: merged.model.profiles },
+        ],
+      };
+    }
+  }
+};
+
+const resToToast = ({
+  ctx,
+  res,
+  model,
+}: {
+  model: Model;
+  ctx: ClientCtx;
+  res: Res;
+}): ClientAppMsg[] => {
+  const user = model.users[ctx.currentUserId];
+
+  if (!user) {
+    return [];
   }
 
-  const merged = syncWithServer({
-    ctx,
-    clientModel: model,
-    serverModel: msg.result.value,
-    sendToServer,
-  });
+  if (
+    res.t === "join" &&
+    res.result.t === "ok" &&
+    res.userId !== ctx.currentUserId
+  ) {
+    const username = ctx.profiles[res.userId]?.username ?? "...";
+    return [{ t: "toast-enqueued", text: `${username} joined space` }];
+  }
 
-  return {
-    model: {
-      ...merged.model,
-      req: {
-        ...merged.model.req,
-        [msg.t]: Ok(null),
-      },
-    },
-    cmd: merged.cmd,
-    msgs: [{ t: "got-profiles", profiles: merged.model.profiles }],
-  };
+  if (
+    res.t === "leave" &&
+    res.result.t === "ok" &&
+    res.userId !== ctx.currentUserId
+  ) {
+    const username = ctx.profiles[res.userId]?.username ?? "...";
+    return [{ t: "toast-enqueued", text: `${username} left space` }];
+  }
+
+  return [];
 };
 
 export const updateFromApp = (input: {

@@ -1,6 +1,36 @@
+import { Transition, Cmd, Time, p, andThen } from "@gamezilla/core";
 import { ClientAppMsg } from "@gamezilla/shared/client";
-import { Cmd, Time } from "@gamezilla/core";
 import { IconXMark } from "@gamezilla/ui";
+
+const config: Transition.Config<Toast> = {
+  toId: (toast) => String(toast.toastId),
+  enter: async (node) => {
+    const animation = node.animate(
+      [{ transform: "translateY(-100%)" }, { transform: "translateY(0%)" }],
+      {
+        duration: 200,
+        easing: "ease-in-out",
+        fill: "both",
+      }
+    );
+    await new Promise((resolve) => {
+      animation.onfinish = resolve;
+    });
+  },
+  exit: async (node) => {
+    const animation = node.animate(
+      [{ transform: "translateY(0%)" }, { transform: "translateY(-100%)" }],
+      {
+        duration: 200,
+        easing: "ease-in-out",
+        fill: "both",
+      }
+    );
+    await new Promise((resolve) => {
+      animation.onfinish = resolve;
+    });
+  },
+};
 
 //
 //
@@ -13,7 +43,7 @@ import { IconXMark } from "@gamezilla/ui";
 export type Model = {
   runningId: number;
   toasts: Toast[];
-  visualToast: Toast[];
+  transition: Transition.Model<Toast>;
 };
 
 export type Toast = {
@@ -25,7 +55,7 @@ export type Toast = {
 export const init: Model = {
   runningId: 0,
   toasts: [],
-  visualToast: [],
+  transition: Transition.init<Toast>([]),
 };
 
 //
@@ -37,17 +67,10 @@ export const init: Model = {
 //
 
 export type Msg =
-  | {
-      t: "time";
-    }
-  | {
-      t: "clicked-dismiss-button";
-      toastId: number;
-    }
-  | {
-      t: "toast-duration-elapsed";
-      toastId: number;
-    };
+  | { t: "time" }
+  | { t: "clicked-dismiss-button"; toastId: number }
+  | { t: "toast-duration-elapsed"; toastId: number }
+  | { t: "transition"; c: Transition.Msg<Toast> };
 
 export const update = ({
   model,
@@ -59,6 +82,13 @@ export const update = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
+  return p(
+    { model },
+    andThen(({ model }) => updateToasts({ model, msg })),
+    andThen(({ model }) => updateTransitions({ model, msg }))
+  );
+};
+const updateToasts: typeof update = ({ model, msg }) => {
   if (msg.t === "clicked-dismiss-button") {
     return {
       model: {
@@ -80,6 +110,36 @@ export const update = ({
   return { model };
 };
 
+const updateTransitions = ({
+  model,
+  msg,
+}: {
+  msg?: Msg;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  const updated = Transition.update({
+    config,
+    model: model.transition,
+    msg: msg?.t === "transition" ? msg.c : undefined,
+    items: model.toasts,
+  });
+  return {
+    model: {
+      ...model,
+      transition: updated.model,
+    },
+    cmd: Cmd.tag_("transition", updated.cmd),
+  };
+};
+
+//
+//
+//
+//
+
 export const updateFromApp = ({
   msg,
   model,
@@ -92,8 +152,8 @@ export const updateFromApp = ({
 } => {
   if (msg.t === "toast-enqueued") {
     const toastId = model.runningId;
-    const duration = msg.duration ?? 3000;
-    return {
+    const duration = msg.duration ?? 2000;
+    const updated: ReturnType<typeof updateFromApp> = {
       model: {
         ...model,
         runningId: model.runningId + 1,
@@ -104,7 +164,9 @@ export const updateFromApp = ({
         toastId: model.runningId,
       }),
     };
+    return p(updated, andThen(updateTransitions));
   }
+
   return { model };
 };
 
@@ -124,18 +186,26 @@ export const View = ({
   dispatch: (msg: Msg) => void;
 }) => {
   return (
-    <div className="pointer-events-none fixed left-0 top-0 flex h-screen w-screen flex-col items-center gap-4 p-4">
-      {model.toasts.map((toast) => (
+    <div className="pointer-events-none fixed left-0 top-0 flex h-screen w-screen flex-col items-center">
+      {model.transition.items.map(({ item: toast }) => (
         <div
-          className="pointer-events-auto z-40 flex w-full max-w-md items-center justify-between overflow-hidden whitespace-nowrap break-words rounded-lg border border-neutral-700 bg-neutral-800 p-3 text-lg text-white shadow-2xl"
-          key={toast.toastId}>
-          {toast.message}
-          <button
-            onClick={() =>
-              dispatch({ t: "clicked-dismiss-button", toastId: toast.toastId })
-            }>
-            <IconXMark />
-          </button>
+          key={config.toId(toast)}
+          id={config.toId(toast)}
+          className="w-full p-4 pb-0">
+          <div
+            className="pointer-events-auto z-40 flex w-full max-w-md items-center justify-between overflow-hidden whitespace-nowrap break-words rounded-lg border border-neutral-700 bg-neutral-700 p-3 text-lg text-white shadow-2xl"
+            key={toast.toastId}>
+            {toast.message}
+            <button
+              onClick={() =>
+                dispatch({
+                  t: "clicked-dismiss-button",
+                  toastId: toast.toastId,
+                })
+              }>
+              <IconXMark />
+            </button>
+          </div>
         </div>
       ))}
     </div>
