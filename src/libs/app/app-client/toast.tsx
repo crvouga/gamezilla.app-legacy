@@ -5,7 +5,7 @@ import { IconXMark } from "@gamezilla/ui";
 const config: TransitionList.Config<Toast> = {
   toId: (toast) => `toast-${String(toast.toastId)}`,
   enter: async (toast) => {
-    const node = document.getElementById(config.toId(toast));
+    const node = await TransitionList.waitForElementById(config.toId(toast));
 
     await node?.animate(
       [{ transform: "translateY(-100%)" }, { transform: "translateY(0%)" }],
@@ -17,7 +17,7 @@ const config: TransitionList.Config<Toast> = {
     ).finished;
   },
   exit: async (toast) => {
-    const node = document.getElementById(config.toId(toast));
+    const node = await TransitionList.waitForElementById(config.toId(toast));
 
     await node?.animate(
       [{ transform: "translateY(0%)" }, { transform: "translateY(-100%)" }],

@@ -172,3 +172,29 @@ const difference = <T>(
 
   return a.filter((x) => !bKeys.has(toId(x)));
 };
+
+export function waitForElementById(htmlId: string, maxWait = 5000) {
+  const element = document.getElementById(htmlId);
+
+  if (element) {
+    // If the element is already available, resolve the promise immediately
+    return Promise.resolve(element);
+  }
+
+  return new Promise<HTMLElement | null>((resolve) => {
+    const timeout = setTimeout(() => {
+      observer.disconnect();
+      resolve(null);
+    }, maxWait);
+    const observer = new MutationObserver(() => {
+      const targetElement = document.getElementById(htmlId);
+      if (targetElement) {
+        observer.disconnect();
+        clearTimeout(timeout);
+        resolve(targetElement);
+      }
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+  });
+}
