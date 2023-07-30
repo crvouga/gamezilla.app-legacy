@@ -11,24 +11,22 @@ export const config = <T>(config: Config<T>): Config<T> => {
   return config;
 };
 
-type TransitionItem<T> = {
-  t: "entering" | "entered" | "exiting" | "exited";
+export type TransitionItem<T> = {
+  state: TransitionState;
   item: T;
 };
 
-export type Model<T> = {
-  items: TransitionItem<T>[];
-};
+export type TransitionState = "entering" | "entered" | "exiting" | "exited";
+
+export type Model<T> = TransitionItem<T>[];
 
 export const init = <T>(items: T[]): Model<T> => {
-  return {
-    items: items.map((item) => {
-      return {
-        t: "entered",
-        item,
-      };
-    }),
-  };
+  return items.map((item): TransitionItem<T> => {
+    return {
+      state: "entered",
+      item,
+    };
+  });
 };
 
 export type Msg<T> = { t: "entered"; items: T[] } | { t: "exited"; items: T[] };
@@ -48,12 +46,11 @@ export const watch = <T>({
   const additions = difference(
     config.toId,
     list,
-    model.items.map((x) => x.item)
+    model.map((x) => x.item)
   );
-
   const subtractions = difference(
     config.toId,
-    model.items.map((x) => x.item),
+    model.map((x) => x.item),
     list
   );
 
@@ -61,7 +58,7 @@ export const watch = <T>({
     const adds: Promise<void>[] = [];
 
     for (const item of additions) {
-      const found = model.items.find(
+      const found = model.find(
         (x) => config.toId(x.item) === config.toId(item)
       );
       if (!found) {
@@ -71,11 +68,11 @@ export const watch = <T>({
 
     const subs: Promise<void>[] = [];
     for (const item of subtractions) {
-      const found = model.items.find(
+      const found = model.find(
         (x) => config.toId(x.item) === config.toId(item)
       );
 
-      if (found && (found.t === "entering" || found.t === "entered")) {
+      if (found && (found.state === "entering" || found.state === "entered")) {
         subs.push(config.exit(item));
       }
     }
@@ -93,11 +90,11 @@ export const watch = <T>({
 
   const subtractionSet = new Set(subtractions.map(config.toId));
 
-  const itemsNew: Model<T>["items"] = [
-    ...model.items.map((item): TransitionItem<T> => {
+  const itemsNew: Model<T> = [
+    ...model.map((item): TransitionItem<T> => {
       if (subtractionSet.has(config.toId(item.item))) {
         return {
-          t: "exiting",
+          state: "exiting",
           item: item.item,
         };
       }
@@ -106,17 +103,14 @@ export const watch = <T>({
 
     ...additions.map((item): TransitionItem<T> => {
       return {
-        t: "entering",
+        state: "entering",
         item,
       };
     }),
   ];
 
   return {
-    model: {
-      ...model,
-      items: itemsNew,
-    },
+    model: itemsNew,
     cmd: cmd,
   };
 };
@@ -144,31 +138,23 @@ export const update = <T>({
 
       if (msg.t === "entered") {
         return {
-          model: {
-            ...model,
-            items: model.items.map((x) => {
-              if (
-                msg.items.some((y) => config.toId(x.item) === config.toId(y))
-              ) {
-                return {
-                  ...x,
-                  t: "entered",
-                };
-              }
-              return x;
-            }),
-          },
+          model: model.map((x) => {
+            if (msg.items.some((y) => config.toId(x.item) === config.toId(y))) {
+              return {
+                ...x,
+                state: "entered",
+              };
+            }
+            return x;
+          }),
         };
       }
 
       if (msg.t === "exited") {
         return {
-          model: {
-            ...model,
-            items: model.items.filter((x) =>
-              msg.items.every((y) => config.toId(x.item) !== config.toId(y))
-            ),
-          },
+          model: model.filter((x) =>
+            msg.items.every((y) => config.toId(x.item) !== config.toId(y))
+          ),
         };
       }
 

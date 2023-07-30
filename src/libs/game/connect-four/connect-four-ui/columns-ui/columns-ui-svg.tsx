@@ -56,7 +56,7 @@ export const ViewColumnsSvg = ({
         />
 
         <g transform="translate(0.5, 0.5)">
-          {model?.discs.items?.map(({ item: disc }) => {
+          {model?.discs?.map(({ item: disc }) => {
             return (
               <circle
                 id={disc.id}
@@ -133,7 +133,7 @@ const ViewWins = ({ model }: { model?: Model; columns: Columns }) => {
       width={COLUMN_COUNT}
       height={MAX_COLUMN_HEIGHT}
       viewBox={`0 0 ${COLUMN_COUNT * n} ${MAX_COLUMN_HEIGHT * n}`}>
-      {model?.wins.items.flatMap(({ item: win }, i) => {
+      {model?.wins.flatMap(({ item: win }, i) => {
         const westMost = win[0];
         const eastMost = win[win.length - 1];
         if (!eastMost) {

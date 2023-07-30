@@ -54,7 +54,6 @@ export const init = (...params: Parameters<typeof initShared>): ClientModel => {
 
   return {
     ...shared,
-    ui: ColumnsUI.init([]),
     vsBotSetup: VsBotSetup.init,
   };
 };
@@ -142,6 +141,7 @@ const updateUI = ({
     msg: msg?.t === "ui" ? msg.c : undefined,
     model: model.ui,
   });
+
   return {
     model: { ...model, ui: updated.model },
     cmd: Cmd.tag_("ui", updated.cmd),

@@ -185,7 +185,7 @@ export const View = ({
 }) => {
   return (
     <div className="pointer-events-none fixed left-0 top-0 flex h-screen w-screen flex-col items-center">
-      {model.uiToasts.items.map(({ item: toast }) => (
+      {model.uiToasts.map(({ item: toast }) => (
         <div
           key={config.toId(toast)}
           id={config.toId(toast)}
