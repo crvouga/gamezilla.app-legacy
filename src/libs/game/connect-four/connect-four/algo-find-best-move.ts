@@ -88,8 +88,6 @@ export const findBestMove = ({
 
   const bestMove = bestChildState?.lastMoveColumnIndex ?? null;
 
-  console.log("bestChildState", bestChildState);
-
   return {
     columnIndex: bestMove,
   };

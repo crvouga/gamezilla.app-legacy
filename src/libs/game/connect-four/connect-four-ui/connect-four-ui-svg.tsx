@@ -30,6 +30,7 @@ const ids = {
 const rootId = "connect-four-columns-svg";
 
 export const ViewColumnsSvg = ({
+  gameId,
   columns,
   onClick,
   onHover,
@@ -59,7 +60,7 @@ export const ViewColumnsSvg = ({
             column.map((disc, y) => (
               <Transition
                 component="g"
-                key={`${x} ${y} ${disc}`}
+                key={`${gameId} ${x} ${y} ${disc}`}
                 addEndListener={() => {
                   //
                 }}

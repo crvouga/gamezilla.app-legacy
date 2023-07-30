@@ -29,6 +29,7 @@ export const CoreModelZod: z.ZodType<CoreModel> = z.discriminatedUnion("type", [
   z.object({
     type: z.literal("game"),
     userPlayerType: PlayerTypeZod,
+    gameId: z.number(),
     botLevel: BotLevelZod,
     player: UserIdZod,
     columns: ColumnsZod,

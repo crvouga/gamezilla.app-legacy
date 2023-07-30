@@ -22,4 +22,5 @@ export type ViewColumnsProps = {
   onClick?: (columnIndex: ColumnIndex) => void;
   onHover?: (columnINdex: ColumnIndex) => void;
   disabled?: boolean;
+  gameId: string | number | null | undefined;
 };

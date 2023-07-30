@@ -36,6 +36,7 @@ export type GameModel = {
   moveTimeLimit: MoveTimeLimit;
   moveCountDown: number;
   columns: Columns;
+  gameId: number;
   players: {
     [playerType in PlayerType]: UserId;
   };
@@ -45,6 +46,7 @@ export type GameOverModel = {
   type: "game-over";
   moveTimeLimit: MoveTimeLimit;
   columns: Columns;
+  gameId: number;
   gameOver: GameOver;
   rematch: Rematch;
   players: {
@@ -275,6 +277,7 @@ export const handle = ({
         columns: emptyColumns,
         moveTimeLimit: model.moveTimeLimit,
         moveCountDown: model.moveTimeLimit,
+        gameId: 0,
         players: {
           "player-one": playerOne,
           "player-two": playerTwo,
@@ -331,6 +334,7 @@ export const handle = ({
         type: "game",
         columns: emptyColumns,
         moveCountDown: model.moveTimeLimit,
+        gameId: model.gameId + 1,
         moveTimeLimit: model.moveTimeLimit,
         players: model.players,
       };
@@ -400,6 +404,7 @@ export const handle = ({
         type: "game-over",
         columns: model.columns,
         players: model.players,
+        gameId: model.gameId,
         rematch: { type: "NotAsking" },
         moveTimeLimit: model.moveTimeLimit,
         gameOver: { type: "resignation", resigner: playerType },
@@ -503,6 +508,7 @@ const handleMoveResult = (
     moveTimeLimit: model.moveTimeLimit,
     players: model.players,
     columns: columnsNew,
+    gameId: model.gameId,
     gameOver: gameOver,
     rematch: { type: "NotAsking" },
   };

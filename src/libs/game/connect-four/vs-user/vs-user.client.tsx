@@ -44,8 +44,6 @@ import {
 //
 //
 
-export type Model = ClientModel;
-
 export const init = ({
   players,
 }: Pick<ClientModel, "players">): ClientModel => {
@@ -64,8 +62,6 @@ export const init = ({
 //
 //
 
-export type Msg = ClientMsg;
-
 export const update = ({
   sendToServer,
   msg,
@@ -74,11 +70,11 @@ export const update = ({
 }: {
   ctx: GameSpaceClientCtx;
   sendToServer: (msg: ToServer) => Cmd;
-  msg: Msg;
-  model: Model;
+  msg: ClientMsg;
+  model: ClientModel;
 }): {
-  model: Model;
-  cmd?: Cmd<Msg>;
+  model: ClientModel;
+  cmd?: Cmd<ClientMsg>;
 } => {
   if (msg.t === "clicked-resign") {
     return { model: { ...model, openedModal: "ConfirmResign" } };
@@ -114,10 +110,10 @@ export const updateFromServer = ({
   model,
 }: {
   msg: ToClient;
-  model: Model;
+  model: ClientModel;
 }): {
-  model: Model;
-  cmd?: Cmd<Msg>;
+  model: ClientModel;
+  cmd?: Cmd<ClientMsg>;
 } => {
   if (msg.t === "tick-done") {
     const merged = syncWithServer({
@@ -158,10 +154,10 @@ export const syncWithServer = ({
 };
 
 export const updateFromParent = (input: {
-  model: Model;
+  model: ClientModel;
   msg: GameSpaceMsg;
 }): {
-  model: Model;
+  model: ClientModel;
 } => {
   return input;
 };
@@ -174,7 +170,7 @@ export const updateFromParent = (input: {
 //
 //
 
-export const subscriptions = (_model: Model): Sub<Msg> => {
+export const subscriptions = (_model: ClientModel): Sub<ClientMsg> => {
   return Sub.None;
 };
 
@@ -192,9 +188,9 @@ export const View = ({
   dispatch,
   onQuit,
 }: {
-  model: Model;
+  model: ClientModel;
   ctx: GameSpaceViewCtx;
-  dispatch: (msg: Msg) => void;
+  dispatch: (msg: ClientMsg) => void;
   onQuit: () => void;
 }) => {
   if (model.type === "setup") {
@@ -258,6 +254,7 @@ export const View = ({
         <div className="relative w-full">
           <ViewColumns
             columns={model.columns}
+            gameId={model.gameId}
             onClick={(columnIndex) =>
               dispatch({
                 t: "input-move",
@@ -350,7 +347,7 @@ const ViewGameOverMessage = ({
 }: {
   model: GameOverModel;
   ctx: ViewCtx;
-  dispatch: (msg: Msg) => void;
+  dispatch: (msg: ClientMsg) => void;
 }) => {
   const currentPlayerType = toPlayerType(ctx.currentUserId, model);
 

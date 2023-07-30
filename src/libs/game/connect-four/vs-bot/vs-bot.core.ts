@@ -29,6 +29,7 @@ export type SetupModel = {
 
 export type GameModel = {
   type: "game";
+  gameId: number;
   userPlayerType: PlayerType;
   botLevel: BotLevel;
   player: UserId;
@@ -214,6 +215,7 @@ export const handle = ({
 
       const modelNew: CoreModel = {
         type: "game",
+        gameId: 0,
         botLevel: model.botLevel,
         player: model.player,
         userPlayerType: model.userPlayerType,
@@ -253,6 +255,7 @@ export const handle = ({
       const modelNew: CoreModel = {
         ...model,
         columns: emptyColumns,
+        gameId: model.gameId + 1,
         userPlayerType: opposite[model.userPlayerType],
       };
 
@@ -286,6 +289,7 @@ export const handle = ({
       const modelNew: GameModel = {
         ...model,
         columns: emptyColumns,
+        gameId: model.gameId + 1,
       };
 
       return Ok(modelNew);

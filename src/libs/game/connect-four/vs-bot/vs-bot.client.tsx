@@ -286,6 +286,7 @@ export const View = ({
             color={gameTheme.primary.dark}
           />
           <ViewColumns
+            gameId={model.gameId}
             implementation="svg"
             ghost={
               ctx.currentUserId === model.player &&

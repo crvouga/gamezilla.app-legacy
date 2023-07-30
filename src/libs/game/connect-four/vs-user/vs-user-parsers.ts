@@ -57,6 +57,7 @@ export const CoreModelZod: z.ZodType<CoreModel> = z.discriminatedUnion("type", [
   z.object({
     type: z.literal("game"),
     moveTimeLimit: MoveTimeLimitZod,
+    gameId: z.number(),
     moveCountDown: z.number(),
     columns: ColumnsZod,
     players: PlayersZod,
@@ -65,6 +66,7 @@ export const CoreModelZod: z.ZodType<CoreModel> = z.discriminatedUnion("type", [
     type: z.literal("game-over"),
     moveTimeLimit: MoveTimeLimitZod,
     columns: ColumnsZod,
+    gameId: z.number(),
     gameOver: GameOverZod,
     rematch: RematchZod,
     players: PlayersZod,
