@@ -107,9 +107,9 @@ const run = <Model, Msg>(program: Program<Model, Msg>): (() => void) => {
     // TODO: use a scheduler
     // Make sure that the view render is done before the cmd is executed
     // because cmd might do animations
-    requestAnimationFrame(() => {
+    setTimeout(() => {
       cmd(program.dispatch);
-    });
+    }, 1);
   });
 
   return () => {
