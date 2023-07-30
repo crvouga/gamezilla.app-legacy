@@ -6,7 +6,7 @@ import {
   serverPort,
   sessionIdKey,
 } from "@gamezilla/app";
-import { Browser, Cmd, Debug, Program } from "@gamezilla/core";
+import { Browser, Cmd, Debug, Program, toMsgType } from "@gamezilla/core";
 import * as ReactDOM from "react-dom/client";
 import { Socket, io } from "socket.io-client";
 import "./main.css";
@@ -94,6 +94,11 @@ const main = () => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     window["model"] = state.model;
+    // if (state.msg) {
+    //   const msgStr = toMsgType(state.msg);
+    //   console.log(msgStr);
+    // }
+    // console.log(state.model);
 
     root.render(
       <AppClient.View

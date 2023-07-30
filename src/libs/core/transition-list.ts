@@ -7,6 +7,10 @@ export type Config<T> = {
   exit: (item: T) => Promise<void>;
 };
 
+export const config = <T>(config: Config<T>): Config<T> => {
+  return config;
+};
+
 type TransitionItem<T> = {
   t: "entering" | "entered" | "exiting" | "exited";
   item: T;
@@ -27,7 +31,7 @@ export const init = <T>(items: T[]): Model<T> => {
   };
 };
 
-export type Msg<T> = { t: "entered"; item: T } | { t: "exited"; item: T };
+export type Msg<T> = { t: "entered"; items: T[] } | { t: "exited"; items: T[] };
 
 export const watch = <T>({
   config,
@@ -54,24 +58,24 @@ export const watch = <T>({
   );
 
   const cmd: Cmd<Msg<T>> = async (dispatch) => {
-    const enter = async (item: T) => {
-      await config.enter(item);
-      dispatch({ t: "entered", item });
-    };
-
-    const exit = async (item: T) => {
-      await config.exit(item);
-      dispatch({ t: "exited", item });
-    };
-
     const promises: Promise<void>[] = [];
 
     for (const item of additions) {
-      promises.push(enter(item));
+      promises.push(config.enter(item));
     }
 
     for (const item of subtractions) {
-      promises.push(exit(item));
+      promises.push(config.exit(item));
+    }
+
+    await Promise.all(promises);
+
+    if (subtractions.length > 0) {
+      dispatch({ t: "exited", items: subtractions });
+    }
+
+    if (additions.length > 0) {
+      dispatch({ t: "entered", items: additions });
     }
   };
 
@@ -131,7 +135,9 @@ export const update = <T>({
           model: {
             ...model,
             items: model.items.map((x) => {
-              if (config.toId(x.item) === config.toId(msg.item)) {
+              if (
+                msg.items.some((y) => config.toId(x.item) === config.toId(y))
+              ) {
                 return {
                   ...x,
                   t: "entered",
@@ -147,8 +153,8 @@ export const update = <T>({
         return {
           model: {
             ...model,
-            items: model.items.filter(
-              (x) => config.toId(x.item) !== config.toId(msg.item)
+            items: model.items.filter((x) =>
+              msg.items.every((y) => config.toId(x.item) !== config.toId(y))
             ),
           },
         };

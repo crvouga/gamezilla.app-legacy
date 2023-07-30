@@ -11,6 +11,7 @@ import {
   opposite,
   toStatus,
 } from "../connect-four";
+import { ColumnsUI } from "../connect-four-ui";
 
 //
 //
@@ -53,8 +54,8 @@ export const toBotPlayer = (model: CoreModel): PlayerType => {
 export type ServerModel = CoreModel;
 
 export type ClientModel = CoreModel & {
-  ghostIndex: ColumnIndex | null;
   vsBotSetup: VsBotSetup.Model;
+  ui?: ColumnsUI.Model;
 };
 
 export const initShared = ({
@@ -123,7 +124,7 @@ export const allBotLevels: BotLevel[] = ["Easy", "Medium", "Hard"];
 
 export type ClientMsg =
   | Req
-  | { t: "hovered"; columnIndex: ColumnIndex }
+  | { t: "ui"; c: ColumnsUI.Msg }
   | { t: "vs-bot-setup"; c: VsBotSetup.Msg };
 
 export type ServerMsg = { t: "bot-moved"; result: BestMoveResult };

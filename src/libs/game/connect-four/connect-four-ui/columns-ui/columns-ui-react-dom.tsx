@@ -1,10 +1,10 @@
 import { useEffect, useRef } from "react";
-import * as ConnectFourUI from "./columns-dom";
+import * as ColumnsUI from "./columns-ui-dom";
 import { ViewColumnsProps } from "./shared";
 
 export const ViewColumnsDOM = (props: ViewColumnsProps) => {
-  const instanceRef = useRef<ConnectFourUI.ConnectFourUI>(
-    ConnectFourUI.create({
+  const instanceRef = useRef<ColumnsUI.ConnectFourUI>(
+    ColumnsUI.create({
       initialColumns: props.columns,
       onClick: props.onClick,
     })

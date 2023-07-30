@@ -9,8 +9,8 @@ import {
 import type {
   BotLevel,
   ClientModel,
-  ServerModel,
   CoreModel,
+  ServerModel,
 } from "./vs-bot.core";
 
 export const BotLevelZod: z.ZodType<BotLevel> = z.enum([

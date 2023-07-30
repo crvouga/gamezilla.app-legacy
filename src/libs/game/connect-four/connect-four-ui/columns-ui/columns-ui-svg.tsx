@@ -31,11 +31,11 @@ const ids = {
 const rootId = "connect-four-columns-svg";
 
 export const ViewColumnsSvg = ({
-  gameId,
   columns,
   onClick,
   onHover,
   disabled,
+  model,
 }: ViewColumnsProps) => {
   const playerOneFill = `url(#${ids.playerOneGradient})`;
   const playerTwoFill = `url(#${ids.playerTwoGradient})`;
@@ -56,21 +56,24 @@ export const ViewColumnsSvg = ({
           fill={gameTheme.primary.darker}
         />
 
-        {/* {visualDiscs.map((disc) => {
-          return (
-            <circle
-              key={config.toId(disc)}
-              cx={disc.x}
-              cy={disc.y}
-              r={0.5}
-              fill={
-                disc.player === "player-one" ? playerOneFill : playerTwoFill
-              }
-            />
-          );
-        })} */}
+        <g transform="translate(0.5, 0.5)">
+          {model?.discs.items?.map(({ item: disc }) => {
+            return (
+              <circle
+                id={disc.id}
+                key={disc.id}
+                cx={disc.x}
+                cy={disc.y}
+                r={0.5}
+                fill={
+                  disc.player === "player-one" ? playerOneFill : playerTwoFill
+                }
+              />
+            );
+          })}
+        </g>
 
-        <TransitionGroup component={"g"} transform="translate(0.5, 0.5)">
+        {/* <TransitionGroup component={"g"} transform="translate(0.5, 0.5)">
           {columns.flatMap((column, x) =>
             column.map((disc, y) => (
               <Transition
@@ -90,7 +93,7 @@ export const ViewColumnsSvg = ({
               </Transition>
             ))
           )}
-        </TransitionGroup>
+        </TransitionGroup> */}
 
         <rect
           x={0}
@@ -231,7 +234,7 @@ const undraw = (node: HTMLElement) => {
   });
 };
 
-const onEnter =
+export const onEnter =
   ({ y }: { y: number }) =>
   async (node: HTMLElement) => {
     easeAttrs(node, {
@@ -273,7 +276,7 @@ const onEnter =
     // });
   };
 
-const onExit =
+export const onExit =
   ({ x, y }: { x: number; y: number }) =>
   async (node: HTMLElement) => {
     easeAttrs(node, {

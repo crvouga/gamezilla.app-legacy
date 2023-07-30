@@ -22,7 +22,7 @@ import {
 } from "@gamezilla/ui";
 import { PlayerType, toTurn } from "../connect-four";
 import { ViewCoverArt } from "../connect-four-cover-art";
-import { PlayerIcon, ViewColumns } from "../connect-four-ui";
+import { ColumnsUI, PlayerIcon } from "../connect-four-ui";
 import {
   ClientModel,
   ClientMsg,
@@ -253,7 +253,7 @@ export const View = ({
         <Feedback ctx={ctx} model={model} />
 
         <div className="relative w-full">
-          <ViewColumns
+          <ColumnsUI.View
             columns={model.columns}
             gameId={model.gameId}
             onClick={(columnIndex) =>

@@ -1,4 +1,4 @@
-import { Cmd, Posix, Sub } from "@gamezilla/core";
+import { Cmd, Posix, Sub, andThen, p } from "@gamezilla/core";
 import { ClientCtx } from "@gamezilla/shared/client";
 import {
   GameLayout,
@@ -19,12 +19,12 @@ import {
   IconRightLeft,
   LoadingBar,
 } from "@gamezilla/ui";
-import { toStatus, toTurn } from "../connect-four";
+import { emptyColumns, toStatus, toTurn } from "../connect-four";
 import { ViewCoverArt } from "../connect-four-cover-art";
 import {
+  ColumnsUI,
   PlayerOneIcon,
   PlayerTwoIcon,
-  ViewColumns,
   gameTheme,
 } from "../connect-four-ui";
 import {
@@ -54,7 +54,7 @@ export const init = (...params: Parameters<typeof initShared>): ClientModel => {
 
   return {
     ...shared,
-    ghostIndex: null,
+    ui: ColumnsUI.init([]),
     vsBotSetup: VsBotSetup.init,
   };
 };
@@ -83,44 +83,72 @@ export const update = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  if (msg.t === "hovered") {
-    if (model.type !== "game") {
-      return { model };
-    }
-    return { model: { ...model, ghostIndex: msg.columnIndex } };
-  }
+  return p(
+    { model },
+    andThen(({ model }) => {
+      if (msg.t === "ui") {
+        const updated = ColumnsUI.update({
+          msg: msg.c,
+          model: model.ui,
+          columns: model.type === "game" ? model.columns : emptyColumns,
+        });
+        return {
+          model: { ...model, ui: updated.model },
+          cmd: Cmd.tag_("ui", updated.cmd),
+        };
+      }
 
-  if (msg.t === "vs-bot-setup") {
-    if (model.type !== "setup") {
-      return { model };
-    }
-    const updated = VsBotSetup.update({
-      msg: msg.c,
-      model: model.vsBotSetup,
-    });
-    return { model: { ...model, vsBotSetup: updated.model } };
-  }
+      if (msg.t === "vs-bot-setup") {
+        if (model.type !== "setup") {
+          return { model };
+        }
+        const updated = VsBotSetup.update({
+          msg: msg.c,
+          model: model.vsBotSetup,
+        });
+        return { model: { ...model, vsBotSetup: updated.model } };
+      }
 
-  const result = handle({ ctx, msg, model });
+      const result = handle({ ctx, msg, model });
 
-  if (result.t === "err") {
-    return { model };
-  }
+      if (result.t === "err") {
+        return { model };
+      }
 
-  const modelNext = syncWithServer({
-    ctx,
-    serverModel: result.value,
-    clientModel: model,
-  });
+      const modelNext = syncWithServer({
+        ctx,
+        serverModel: result.value,
+        clientModel: model,
+      });
 
-  return { model: modelNext, cmd: sendToServer(msg) };
+      return { model: modelNext, cmd: sendToServer(msg) };
+    }),
+    andThen(({ model }) => updateUI({ model }))
+  );
 };
 
-export const updateFromServer = ({
-  ctx,
-  msg,
+const updateUI = ({
   model,
+  msg,
 }: {
+  msg?: Msg;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  const updated = ColumnsUI.update({
+    columns: model.type === "game" ? model.columns : undefined,
+    msg: msg?.t === "ui" ? msg.c : undefined,
+    model: model.ui,
+  });
+  return {
+    model: { ...model, ui: updated.model },
+    cmd: Cmd.tag_("ui", updated.cmd),
+  };
+};
+
+export const updateFromServer = (input: {
   ctx: GameSpaceClientCtx;
   msg: ToClient;
   model: Model;
@@ -128,6 +156,14 @@ export const updateFromServer = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
+  return p(
+    input,
+    andThen(({ model }) => updateFromServer_({ ...input, model })),
+    andThen(updateUI)
+  );
+};
+
+const updateFromServer_: typeof updateFromServer = ({ ctx, msg, model }) => {
   if (msg.t === "player-left") {
     const modelNew = syncWithServer({
       ctx,
@@ -159,20 +195,20 @@ export const syncWithServer = ({
   serverModel: ServerModel;
 }): ClientModel => {
   if (serverModel.type === "setup") {
-    return { ...clientModel, ...serverModel, ghostIndex: null };
+    return { ...clientModel, ...serverModel };
   }
 
   if (clientModel.type === "setup") {
     return {
       ...clientModel,
       ...serverModel,
-      ghostIndex: null,
     };
   }
 
   return {
     ...clientModel,
     ...serverModel,
+    ui: clientModel.ui ? clientModel.ui : ColumnsUI.init(serverModel.columns),
   };
 };
 
@@ -285,21 +321,11 @@ export const View = ({
             className="w-full"
             color={gameTheme.primary.dark}
           />
-          <ViewColumns
+          <ColumnsUI.View
             gameId={model.gameId}
+            model={model.ui}
             implementation="svg"
-            ghost={
-              ctx.currentUserId === model.player &&
-              turn === model.userPlayerType &&
-              model.ghostIndex !== null
-                ? {
-                    columnIndex: model.ghostIndex,
-                    playerType: model.userPlayerType,
-                  }
-                : undefined
-            }
             columns={model.columns}
-            onHover={(columnIndex) => dispatch({ t: "hovered", columnIndex })}
             onClick={(columnIndex) =>
               dispatch({ t: "input-move", columnIndex })
             }
