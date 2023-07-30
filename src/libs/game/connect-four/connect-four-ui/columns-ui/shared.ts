@@ -1,3 +1,4 @@
+import { VDom } from "@gamezilla/ui";
 import { ColumnIndex, Columns, PlayerType } from "../../connect-four";
 import { Model } from "./columns-ui";
 
@@ -9,4 +10,5 @@ export type ViewColumnsProps = {
   onHover?: (columnINdex: ColumnIndex) => void;
   disabled?: boolean;
   gameId?: string | number | null;
+  gameOverOverlay?: () => VDom | VDom[] | null;
 };

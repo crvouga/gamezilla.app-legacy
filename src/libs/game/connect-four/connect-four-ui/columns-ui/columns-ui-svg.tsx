@@ -1,14 +1,13 @@
-import { easeAttrs, memoize } from "@gamezilla/core";
-import { Transition, TransitionGroup } from "react-transition-group";
 import {
   COLUMN_COUNT,
   Columns,
   MAX_COLUMN_HEIGHT,
   Position,
   isColumnIndex,
-  toWins,
+  winToId,
 } from "../../connect-four";
 import { gameTheme } from "../shared";
+import { Model } from "./columns-ui";
 import { ViewColumnsProps } from "./shared";
 
 type SvgIds = {
@@ -73,28 +72,6 @@ export const ViewColumnsSvg = ({
           })}
         </g>
 
-        {/* <TransitionGroup component={"g"} transform="translate(0.5, 0.5)">
-          {columns.flatMap((column, x) =>
-            column.map((disc, y) => (
-              <Transition
-                component="g"
-                key={`${gameId} ${x} ${y} ${disc}`}
-                addEndListener={() => {
-                  //
-                }}
-                onEnter={onEnter({ y })}
-                onExit={onExit({ x, y })}>
-                <circle
-                  cx={x}
-                  cy={y}
-                  r={0.5}
-                  fill={disc === "player-one" ? playerOneFill : playerTwoFill}
-                />
-              </Transition>
-            ))
-          )}
-        </TransitionGroup> */}
-
         <rect
           x={0}
           y={0}
@@ -104,7 +81,7 @@ export const ViewColumnsSvg = ({
           mask={`url(#${ids.holeMask})`}
         />
 
-        <ViewWins columns={columns} />
+        <ViewWins model={model} columns={columns} />
 
         {[...new Array(COLUMN_COUNT)].map((_, columnIndex) => (
           <rect
@@ -148,14 +125,7 @@ const distance = (a: Position, b: Position): number =>
 const angleBetween = (a: Position, b: Position): number =>
   (Math.atan2(b.y - a.y, b.x - a.x) * 180) / Math.PI;
 
-const memoizedWins = memoize(
-  (columns) => columns.map((x) => x.join(",")).join(","),
-  toWins
-);
-
-const ViewWins = ({ columns }: { columns: Columns }) => {
-  const wins = memoizedWins(columns);
-
+const ViewWins = ({ model }: { model?: Model; columns: Columns }) => {
   return (
     <svg
       x={0}
@@ -163,162 +133,37 @@ const ViewWins = ({ columns }: { columns: Columns }) => {
       width={COLUMN_COUNT}
       height={MAX_COLUMN_HEIGHT}
       viewBox={`0 0 ${COLUMN_COUNT * n} ${MAX_COLUMN_HEIGHT * n}`}>
-      <TransitionGroup component="g">
-        {wins.flatMap((win, i) => {
-          const westMost = win[0];
-          const eastMost = win[win.length - 1];
-          if (!eastMost) {
-            return [];
-          }
+      {model?.wins.items.flatMap(({ item: win }, i) => {
+        const westMost = win[0];
+        const eastMost = win[win.length - 1];
+        if (!eastMost) {
+          return [];
+        }
 
-          const theta = angleBetween(westMost, eastMost);
-          const originX = (westMost.x + 0.5) * n;
-          const originY = (westMost.y + 0.5) * n;
-          const width = (distance(westMost, eastMost) + 1) * n;
-          return [
-            <Transition
-              key={i}
-              addEndListener={() => {
-                //
-              }}
-              onEnter={draw}
-              onExit={undraw}>
-              <rect
-                transform={`rotate(${theta} ${originX} ${originY})`}
-                x={westMost.x * n}
-                y={westMost.y * n}
-                width={width}
-                height={n}
-                rx={n / 2}
-                stroke="white"
-                fill="transparent"
-                strokeWidth={n / 8}
-                className="pointer-events-none"
-              />
-            </Transition>,
-          ];
-        })}
-      </TransitionGroup>
+        const theta = angleBetween(westMost, eastMost);
+        const originX = (westMost.x + 0.5) * n;
+        const originY = (westMost.y + 0.5) * n;
+        const width = (distance(westMost, eastMost) + 1) * n;
+        return [
+          <rect
+            key={i}
+            id={winToId(win)}
+            transform={`rotate(${theta} ${originX} ${originY})`}
+            x={westMost.x * n}
+            y={westMost.y * n}
+            width={width}
+            height={n}
+            rx={n / 2}
+            stroke="white"
+            fill="transparent"
+            strokeWidth={n / 8}
+            className="pointer-events-none"
+          />,
+        ];
+      })}
     </svg>
   );
 };
-
-const draw = (node: HTMLElement) => {
-  if (!(node instanceof SVGRectElement)) {
-    return;
-  }
-
-  const length = node.getTotalLength();
-  node.style.strokeDasharray = length.toString();
-  node.style.strokeDashoffset = length.toString();
-
-  node.animate([{ strokeDashoffset: length }, { strokeDashoffset: 0 }], {
-    duration: 500,
-    easing: "ease-in-out",
-    fill: "both",
-  });
-};
-
-const undraw = (node: HTMLElement) => {
-  if (!(node instanceof SVGRectElement)) {
-    return;
-  }
-  const length = node.getTotalLength();
-  node.style.strokeDasharray = length.toString();
-  node.style.strokeDashoffset = "0";
-
-  node.animate([{ strokeDashoffset: 0 }, { strokeDashoffset: length }], {
-    duration: 500,
-    easing: "ease-in-out",
-    fill: "both",
-  });
-};
-
-export const onEnter =
-  ({ y }: { y: number }) =>
-  async (node: HTMLElement) => {
-    easeAttrs(node, {
-      cy: {
-        from: MAX_COLUMN_HEIGHT + 1,
-        to: y,
-        duration: 200 + 300 * (1 - y / MAX_COLUMN_HEIGHT),
-        easing: { type: "ease-out-quint" },
-      },
-    });
-
-    // const root = document.getElementById(rootId);
-    // if (!root) {
-    //   return;
-    // }
-    // const actualHeight = root.getBoundingClientRect().height;
-    // const slotHeight = actualHeight / MAX_COLUMN_HEIGHT;
-    // const from = actualHeight + slotHeight;
-    // const to = y * slotHeight;
-
-    // node.setAttribute("cy", `${from}`);
-    // node.animate(
-    //   [
-    //     { transform: `translateY(${from}px)` },
-    //     { transform: `translateY(${to}px)` },
-    //   ],
-    //   {
-    //     duration: 200 + 300 * (1 - y / MAX_COLUMN_HEIGHT),
-    //     easing: "ease-in-out",
-    //     fill: "both",
-    //   }
-    // );
-
-    // svg attributes are not supported by all browsers
-    // node.animate([{ cy: `${MAX_COLUMN_HEIGHT + 1}` }, { cy: `${y}` }], {
-    //   duration: 200 + 300 * (1 - y / MAX_COLUMN_HEIGHT),
-    //   easing: "ease-in-out",
-    //   fill: "both",
-    // });
-  };
-
-export const onExit =
-  ({ x, y }: { x: number; y: number }) =>
-  async (node: HTMLElement) => {
-    easeAttrs(node, {
-      cy: {
-        from: y,
-        to: y - MAX_COLUMN_HEIGHT,
-        duration: 750,
-        easing: { type: "ease-in-back" },
-        delay: (x / COLUMN_COUNT) * 500,
-      },
-    });
-
-    // const root = document.getElementById(rootId);
-    // if (!root) {
-    //   return;
-    // }
-    // const actualHeight = root.getBoundingClientRect().height;
-    // const slotHeight = actualHeight / MAX_COLUMN_HEIGHT;
-    // const from = y * slotHeight;
-    // const to = from + actualHeight;
-
-    // node.animate(
-    //   [
-    //     { transform: `translateY(${from}px)` },
-    //     { transform: `translateY(${to}px)` },
-    //   ],
-    //   {
-    //     duration: 750,
-    //     easing: "ease-in-out",
-    //     fill: "both",
-    //     delay: (x / COLUMN_COUNT) * 500,
-    //   }
-    // );
-
-    //
-    // node.animate([{ cy: `${y}` }, { cy: `${y - MAX_COLUMN_HEIGHT}` }], {
-    //   duration: 750,
-    //   easing: "ease-in-out",
-    //   delay: (x / COLUMN_COUNT) * 500,
-    //   fill: "both",
-    // });
-  };
 
 const SvgDefs = ({ ids }: { ids: SvgIds }) => {
   return (

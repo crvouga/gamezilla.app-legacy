@@ -4,6 +4,9 @@ import {
   Columns,
   MAX_COLUMN_HEIGHT,
   PlayerType,
+  Win,
+  toWins,
+  winToId,
 } from "../../connect-four";
 import { ViewColumnsCanvas } from "./columns-ui-canvas";
 import { ViewColumnsDOM } from "./columns-ui-react-dom";
@@ -22,6 +25,12 @@ const discsConfig = TransitionList.config<Disc>({
   exit,
 });
 
+const winsConfig = TransitionList.config<Win>({
+  toId: winToId,
+  enter: draw,
+  exit: undraw,
+});
+
 //
 //
 //
@@ -31,13 +40,15 @@ const discsConfig = TransitionList.config<Disc>({
 
 export type Model = {
   discs: TransitionList.Model<Disc>;
+  wins: TransitionList.Model<Win>;
 };
 
-export const init = (columns?: Columns): Model => {
+export function init(columns?: Columns): Model {
   return {
     discs: TransitionList.init(columns ? toDiscs(columns) : []),
+    wins: TransitionList.init(columns ? toWins(columns) : []),
   };
-};
+}
 
 //
 //
@@ -47,9 +58,11 @@ export const init = (columns?: Columns): Model => {
 //
 //
 
-export type Msg = { t: "discs"; c: TransitionList.Msg<Disc> };
+export type Msg =
+  | { t: "discs"; c: TransitionList.Msg<Disc> }
+  | { t: "wins"; c: TransitionList.Msg<Win> };
 
-export const update = ({
+export function update({
   msg,
   model,
   columns,
@@ -60,7 +73,7 @@ export const update = ({
 }): {
   model?: Model;
   cmd?: Cmd<Msg>;
-} => {
+} {
   if (!model || !columns) {
     return { model };
   }
@@ -70,13 +83,23 @@ export const update = ({
     config: discsConfig,
     list: toDiscs(columns),
   });
+  const wins = TransitionList.update<Win>({
+    msg: msg?.t === "wins" ? msg.c : undefined,
+    model: model.wins,
+    config: winsConfig,
+    list: toWins(columns),
+  });
   return {
     model: {
       discs: discs.model,
+      wins: wins.model,
     },
-    cmd: Cmd.tag_("discs", discs.cmd),
+    cmd: Cmd.batch<Msg>([
+      Cmd.tag_("discs", discs.cmd),
+      Cmd.tag_("wins", wins.cmd),
+    ]),
   };
-};
+}
 
 export type Disc = {
   x: number;
@@ -85,7 +108,7 @@ export type Disc = {
   id: string;
 };
 
-export const toDiscs = (columns: Columns): Disc[] => {
+export function toDiscs(columns: Columns): Disc[] {
   const discs: Disc[] = [];
   for (let x = 0; x < columns.length; x++) {
     for (let y = 0; y < (columns[x]?.length ?? 0); y++) {
@@ -103,7 +126,7 @@ export const toDiscs = (columns: Columns): Disc[] => {
     }
   }
   return discs;
-};
+}
 
 //
 //
@@ -113,12 +136,12 @@ export const toDiscs = (columns: Columns): Disc[] => {
 //
 //
 
-export const View = ({
+export function View({
   implementation = "svg",
   ...props
 }: ViewColumnsProps & {
   implementation?: "svg" | "canvas" | "dom";
-}) => {
+}) {
   switch (implementation) {
     case "canvas": {
       return <ViewColumnsCanvas {...props} />;
@@ -132,7 +155,7 @@ export const View = ({
       return <ViewColumnsDOM {...props} />;
     }
   }
-};
+}
 
 //
 //
@@ -147,9 +170,10 @@ async function enter(disc: Disc) {
   const { y } = disc;
   const node = document.getElementById(disc.id);
   if (!node) {
+    console.log("no node");
     return;
   }
-  await easeAttrs(node, {
+  easeAttrs(node, {
     cy: {
       from: MAX_COLUMN_HEIGHT + 1,
       to: y,
@@ -157,6 +181,9 @@ async function enter(disc: Disc) {
       easing: { type: "ease-out-quint" },
     },
   });
+  await new Promise((r) =>
+    setTimeout(r, 200 + 300 * (1 - y / MAX_COLUMN_HEIGHT))
+  );
 }
 
 async function exit(disc: Disc) {
@@ -164,10 +191,11 @@ async function exit(disc: Disc) {
   const node = document.getElementById(disc.id);
 
   if (!node) {
+    console.log("no node");
     return;
   }
 
-  await easeAttrs(node, {
+  easeAttrs(node, {
     cy: {
       from: y,
       to: y - MAX_COLUMN_HEIGHT,
@@ -176,4 +204,47 @@ async function exit(disc: Disc) {
       delay: (x / COLUMN_COUNT) * 500,
     },
   });
+  await new Promise((r) => setTimeout(r, 750));
+}
+
+async function draw(win: Win) {
+  const id = winToId(win);
+
+  const node = document.getElementById(id);
+
+  if (!(node instanceof SVGRectElement)) {
+    console.log("no node");
+    return;
+  }
+
+  const length = node.getTotalLength();
+  node.style.strokeDasharray = length.toString();
+  node.style.strokeDashoffset = length.toString();
+
+  await node.animate([{ strokeDashoffset: length }, { strokeDashoffset: 0 }], {
+    duration: 500,
+    easing: "ease-in-out",
+    fill: "both",
+  }).finished;
+}
+
+async function undraw(win: Win) {
+  const id = winToId(win);
+
+  const node = document.getElementById(id);
+
+  if (!(node instanceof SVGRectElement)) {
+    console.log("no node");
+    return;
+  }
+
+  const length = node.getTotalLength();
+  node.style.strokeDasharray = length.toString();
+  node.style.strokeDashoffset = "0";
+
+  await node.animate([{ strokeDashoffset: 0 }, { strokeDashoffset: length }], {
+    duration: 500,
+    easing: "ease-in-out",
+    fill: "both",
+  }).finished;
 }

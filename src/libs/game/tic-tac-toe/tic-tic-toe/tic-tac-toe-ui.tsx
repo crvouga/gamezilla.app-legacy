@@ -1,9 +1,8 @@
-import { Transition, TransitionGroup } from "react-transition-group";
 import {
-  Model,
   Empty,
   MAX_X,
   MAX_Y,
+  Model,
   PlayerType,
   Position,
   Slot,
@@ -50,57 +49,41 @@ export const ViewBoard = ({
         ))}
       </g>
 
-      <TransitionGroup component="g">
-        {board.flatMap((slots, x) =>
-          slots.flatMap((slot, y) => {
-            const key = [x, y, slot].join(" ");
-            const cx = x * scale + scale / 2;
-            const cy = y * scale + scale / 2;
-            const r = 0.28 * scale;
-            const strokeWidth = 0.1 * scale;
+      {board.flatMap((slots, x) =>
+        slots.flatMap((slot, y) => {
+          const key = [x, y, slot].join(" ");
+          const cx = x * scale + scale / 2;
+          const cy = y * scale + scale / 2;
+          const r = 0.28 * scale;
+          const strokeWidth = 0.1 * scale;
 
-            if (slot === "O") {
-              return (
-                <Transition
-                  component="g"
-                  key={key}
-                  addEndListener={removeWhenDone}
-                  onEnter={drawNaught}
-                  onExit={undrawNaught}>
-                  <circle
-                    r={r}
-                    cx={cx}
-                    cy={cy}
-                    stroke={gameTheme.naught}
-                    strokeWidth={strokeWidth}
-                    fill="transparent"
-                  />
-                </Transition>
-              );
-            }
+          if (slot === "O") {
+            return (
+              <circle
+                r={r}
+                cx={cx}
+                cy={cy}
+                stroke={gameTheme.naught}
+                strokeWidth={strokeWidth}
+                fill="transparent"
+              />
+            );
+          }
 
-            if (slot === "X") {
-              return (
-                <Transition
-                  component="g"
-                  key={key}
-                  addEndListener={removeWhenDone}
-                  onEnter={drawCross}
-                  onExit={undrawCross}>
-                  <g strokeWidth={strokeWidth} stroke={gameTheme.cross}>
-                    {/* direction: \ */}
-                    <line x1={cx - r} y1={cy - r} x2={cx + r} y2={cy + r} />
-                    {/* direction: / */}
-                    <line x1={cx + r} y1={cy - r} x2={cx - r} y2={cy + r} />
-                  </g>
-                </Transition>
-              );
-            }
+          if (slot === "X") {
+            return (
+              <g strokeWidth={strokeWidth} stroke={gameTheme.cross}>
+                {/* direction: \ */}
+                <line x1={cx - r} y1={cy - r} x2={cx + r} y2={cy + r} />
+                {/* direction: / */}
+                <line x1={cx + r} y1={cy - r} x2={cx - r} y2={cy + r} />
+              </g>
+            );
+          }
 
-            return <g key={key}></g>;
-          })
-        )}
-      </TransitionGroup>
+          return <g key={key}></g>;
+        })
+      )}
 
       <ViewWins board={board} />
 
@@ -129,7 +112,7 @@ const ViewWins = ({ board }: { board: Model }) => {
   const wins = toWins(board);
 
   return (
-    <TransitionGroup component="g">
+    <g>
       {[...wins.X, ...wins.O].map((winningGroup) => {
         const key = winningGroup
           .map((position) => `${position.column}-${position.row}`)
@@ -139,47 +122,38 @@ const ViewWins = ({ board }: { board: Model }) => {
         const rightMost = winningGroup[winningGroup.length - 1] ?? leftMost;
 
         return (
-          <Transition
+          <line
             key={key}
-            component="g"
-            addEndListener={() => {
-              //
-            }}
-            onEnter={onEnterWin}
-            onExit={onExitWin}>
-            <line
-              key={key}
-              x1={(leftMost.column + 1 / 2) * scale}
-              y1={(leftMost.row + 1 / 2) * scale}
-              x2={(rightMost.column + 1 / 2) * scale}
-              y2={(rightMost.row + 1 / 2) * scale}
-              strokeWidth={strokeWidth}
-              stroke={gameTheme.cross}></line>
-          </Transition>
+            x1={(leftMost.column + 1 / 2) * scale}
+            y1={(leftMost.row + 1 / 2) * scale}
+            x2={(rightMost.column + 1 / 2) * scale}
+            y2={(rightMost.row + 1 / 2) * scale}
+            strokeWidth={strokeWidth}
+            stroke={gameTheme.cross}></line>
         );
       })}
-    </TransitionGroup>
+    </g>
   );
 };
 
 const DRAW_DURATION = 100;
 const UNDRAW_DURATION = DRAW_DURATION;
 
-const drawNaught = (node: HTMLElement) => {
+export function drawNaught(node: HTMLElement) {
   if (!(node instanceof SVGCircleElement)) {
     return;
   }
   draw(node, { duration: DRAW_DURATION });
-};
+}
 
-const undrawNaught = (node: HTMLElement) => {
+export function undrawNaught(node: HTMLElement) {
   if (!(node instanceof SVGCircleElement)) {
     return;
   }
   undraw(node, { duration: UNDRAW_DURATION });
-};
+}
 
-const drawCross = (node: HTMLElement) => {
+export function drawCross(node: HTMLElement) {
   if (!(node instanceof SVGElement)) {
     return;
   }
@@ -191,9 +165,9 @@ const drawCross = (node: HTMLElement) => {
     }
     draw(line, { duration: DRAW_DURATION });
   }
-};
+}
 
-const undrawCross = (node: HTMLElement) => {
+export function undrawCross(node: HTMLElement) {
   if (!(node instanceof SVGElement)) {
     return;
   }
@@ -205,11 +179,11 @@ const undrawCross = (node: HTMLElement) => {
     }
     undraw(line, { duration: UNDRAW_DURATION });
   }
-};
+}
 
 type AnimationOptions = { delay?: number; duration?: number };
 
-const onEnterWin = (node: HTMLElement) => {
+export function onEnterWin(node: HTMLElement) {
   if (!(node instanceof SVGLineElement)) {
     return;
   }
@@ -217,21 +191,21 @@ const onEnterWin = (node: HTMLElement) => {
     duration: 200,
     delay: 300,
   });
-};
+}
 
-const onExitWin = (node: HTMLElement) => {
+export function onExitWin(node: HTMLElement) {
   if (!(node instanceof SVGLineElement)) {
     return;
   }
   undraw(node, {
     duration: UNDRAW_DURATION,
   });
-};
+}
 
-const draw = (
+function draw(
   node: SVGCircleElement | SVGLineElement | SVGRectElement,
   option?: AnimationOptions
-) => {
+) {
   const length = node.getTotalLength();
   node.style.strokeDasharray = length.toString();
   node.style.strokeDashoffset = length.toString();
@@ -242,12 +216,12 @@ const draw = (
     duration: option?.duration ?? 1000,
     delay: option?.delay ?? 0,
   });
-};
+}
 
-const undraw = (
+function undraw(
   node: SVGCircleElement | SVGLineElement | SVGRectElement,
   option?: AnimationOptions
-) => {
+) {
   const length = node.getTotalLength();
   node.style.strokeDasharray = length.toString();
   node.style.strokeDashoffset = "0";
@@ -258,24 +232,13 @@ const undraw = (
     duration: option?.duration ?? 1000,
     delay: option?.delay ?? 0,
   });
-};
+}
 
-// const fadeOut = (
-//   node: SVGCircleElement | SVGLineElement | SVGRectElement,
-//   option?: AnimationOptions
-// ) => {
-//   node.animate([{ opacity: 1 }, { opacity: 0 }], {
-//     duration: option?.duration ?? 1000,
-//     delay: option?.delay ?? 0,
-//     fill: "both",
-//   });
-// };
-
-const removeWhenDone = (node: HTMLElement) => {
+export function removeWhenDone(node: HTMLElement) {
   node.addEventListener("transitionend", () => {
     node.remove();
   });
-};
+}
 
 const lines = [
   { x1: 1, y1: 0, x2: 1, y2: 3 },

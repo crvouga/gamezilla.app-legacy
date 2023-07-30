@@ -231,6 +231,8 @@ const directions: [number, number][] = [
 
 export type Win = [Position, Position, Position, Position, ...Position[]];
 
+export const winToId = (win: Win) => win.map((x) => `${x.x},${x.y}`).join(" ");
+
 export const toWins = (columns: Columns): Win[] => {
   const wins: Win[] = [];
 

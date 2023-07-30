@@ -195,10 +195,6 @@ export const syncWithServer = ({
   serverModel: ServerModel;
 }): ClientModel => {
   if (serverModel.type === "setup") {
-    return { ...clientModel, ...serverModel };
-  }
-
-  if (clientModel.type === "setup") {
     return {
       ...clientModel,
       ...serverModel,
@@ -329,24 +325,28 @@ export const View = ({
             onClick={(columnIndex) =>
               dispatch({ t: "input-move", columnIndex })
             }
-          />
-
-          <VsBotGameOverOverlay
-            {...vsBotGameProps}
-            fadeInDelay={600}
-            gameOver={
-              status.type === "Tie"
-                ? { t: "draw" }
-                : status.type === "Winner"
-                ? {
-                    t: "winner",
-                    winner:
-                      status.winner === "player-one"
-                        ? "player-one"
-                        : "player-two",
+            gameOverOverlay={() => {
+              return (
+                <VsBotGameOverOverlay
+                  {...vsBotGameProps}
+                  id={"vs-bot-game-over-overlay"}
+                  fadeInDelay={600}
+                  gameOver={
+                    status.type === "Tie"
+                      ? { t: "draw" }
+                      : status.type === "Winner"
+                      ? {
+                          t: "winner",
+                          winner:
+                            status.winner === "player-one"
+                              ? "player-one"
+                              : "player-two",
+                        }
+                      : null
                   }
-                : null
-            }
+                />
+              );
+            }}
           />
         </div>
       </div>

@@ -99,7 +99,7 @@ const watchBotMove = ({
           maximizingPlayer: botPlayer,
           maxDepth: 4,
         });
-        await new Promise((resolve) => setTimeout(resolve, 10));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         dispatch({ t: "bot-moved", result: Ok(result.columnIndex) });
       },
     };

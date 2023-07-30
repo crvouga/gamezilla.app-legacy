@@ -1,6 +1,5 @@
 import { UserId } from "@gamezilla/shared/app";
 import { IconRobot, MyAvatar, VDom } from "@gamezilla/ui";
-import { Transition, TransitionGroup } from "react-transition-group";
 import { GameSpaceViewCtx } from "../game-space-client";
 import { PlayerType } from "./view-vs-bot";
 
@@ -34,32 +33,23 @@ type Props = {
 };
 
 export const VsBotGameOverOverlay = (
-  props: Props & { fadeInDelay?: number }
+  props: Props & { id: string; fadeInDelay?: number }
 ) => {
   const { gameOver } = props;
 
   return (
-    <TransitionGroup className="pointer-events-none">
-      {gameOver && (
-        <Transition
-          addEndListener={() => {
-            //
-          }}
-          onEnter={fadeIn({ delay: props.fadeInDelay ?? 0 })}
-          onExit={fadeOut}>
-          <div className="absolute inset-0 bg-black/60">
-            {gameOver.t === "winner" && (
-              <Winner {...props} winner={gameOver.winner} />
-            )}
-            {gameOver.t === "draw" && <Draw {...props} />}
-          </div>
-        </Transition>
-      )}
-    </TransitionGroup>
+    gameOver && (
+      <div id={props.id} className="absolute inset-0 bg-black/60">
+        {gameOver.t === "winner" && (
+          <Winner {...props} winner={gameOver.winner} />
+        )}
+        {gameOver.t === "draw" && <Draw {...props} />}
+      </div>
+    )
   );
 };
 
-const fadeIn =
+export const fadeIn =
   ({ delay }: { delay: number }) =>
   (node: HTMLElement) => {
     node.animate([{ opacity: 0 }, { opacity: 1 }], {
@@ -70,13 +60,13 @@ const fadeIn =
     });
   };
 
-const fadeOut = (node: HTMLElement) => {
+export function fadeOut(node: HTMLElement) {
   node.animate([{ opacity: 1 }, { opacity: 0 }], {
     duration: 200,
     easing: "ease-in-out",
     fill: "both",
   });
-};
+}
 
 const Winner = ({
   ctx,

@@ -1,6 +1,4 @@
-import { Hex, easeAttrs } from "@gamezilla/core";
-
-import { Transition, TransitionGroup } from "react-transition-group";
+import { Hex } from "@gamezilla/core";
 import {
   Board,
   Bounds,
@@ -154,50 +152,22 @@ export const ViewBoard = ({
           })}
         </g>
 
-        <TransitionGroup component={"g"}>
-          {allPositions.flatMap(({ x, y }) => {
-            const stone = board[x]?.[y] ?? null;
-            if (!stone) {
-              return [];
-            }
+        {allPositions.flatMap(({ x, y }) => {
+          const stone = board[x]?.[y] ?? null;
+          if (!stone) {
+            return [];
+          }
 
-            return [
-              <Transition
-                component="g"
-                key={[x, y, stone].join(", ")}
-                timeout={1000}
-                onEnter={(node: HTMLElement) =>
-                  easeAttrs(node, {
-                    r: {
-                      min: 0,
-                      from: 0,
-                      to: 0.45,
-                      duration: 200,
-                      easing: { type: "ease-out-back" },
-                    },
-                  })
-                }
-                onExit={(node: HTMLElement) =>
-                  easeAttrs(node, {
-                    r: {
-                      from: 0.45,
-                      to: 0,
-                      duration: 200,
-                      easing: { type: "ease-in-expo" },
-                    },
-                  })
-                }>
-                <circle
-                  key={[x, y, stone].join("-")}
-                  cx={x}
-                  cy={y}
-                  r={0.45}
-                  fill={stoneToColor(stone)}
-                />
-              </Transition>,
-            ];
-          })}
-        </TransitionGroup>
+          return [
+            <circle
+              key={[x, y, stone].join("-")}
+              cx={x}
+              cy={y}
+              r={0.45}
+              fill={stoneToColor(stone)}
+            />,
+          ];
+        })}
 
         <g>
           {allPositions.map(({ x, y }) => (

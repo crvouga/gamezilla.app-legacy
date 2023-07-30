@@ -58,23 +58,35 @@ export const watch = <T>({
   );
 
   const cmd: Cmd<Msg<T>> = async (dispatch) => {
-    const promises: Promise<void>[] = [];
+    const adds: Promise<void>[] = [];
 
     for (const item of additions) {
-      promises.push(config.enter(item));
+      const found = model.items.find(
+        (x) => config.toId(x.item) === config.toId(item)
+      );
+      if (!found) {
+        adds.push(config.enter(item));
+      }
     }
 
+    const subs: Promise<void>[] = [];
     for (const item of subtractions) {
-      promises.push(config.exit(item));
+      const found = model.items.find(
+        (x) => config.toId(x.item) === config.toId(item)
+      );
+
+      if (found && (found.t === "entering" || found.t === "entered")) {
+        subs.push(config.exit(item));
+      }
     }
 
-    await Promise.all(promises);
+    await Promise.all([...subs, ...adds]);
 
-    if (subtractions.length > 0) {
+    if (subs.length > 0) {
       dispatch({ t: "exited", items: subtractions });
     }
 
-    if (additions.length > 0) {
+    if (adds.length > 0) {
       dispatch({ t: "entered", items: additions });
     }
   };
