@@ -55,6 +55,7 @@ export type ServerModel = CoreModel;
 
 export type ClientModel = CoreModel & {
   vsBotSetup: VsBotSetup.Model;
+
   ui?: ColumnsUI.Model;
 };
 
