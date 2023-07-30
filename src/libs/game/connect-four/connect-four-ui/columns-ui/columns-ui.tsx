@@ -167,8 +167,10 @@ export function View({
 //
 
 async function discEnter(disc: Disc) {
-  const { y } = disc;
-  const node = document.getElementById(disc.id);
+  const { y, id } = disc;
+
+  const node = await waitForElementById(id);
+
   if (!node) {
     console.log("no node");
     return;
@@ -184,8 +186,9 @@ async function discEnter(disc: Disc) {
 }
 
 async function discExit(disc: Disc) {
-  const { x, y } = disc;
-  const node = document.getElementById(disc.id);
+  const { x, y, id } = disc;
+
+  const node = await waitForElementById(id);
 
   if (!node) {
     console.log("no node");
@@ -206,7 +209,7 @@ async function discExit(disc: Disc) {
 async function draw(win: Win) {
   const id = winToId(win);
 
-  const node = document.getElementById(id);
+  const node = await waitForElementById(id);
 
   if (!(node instanceof SVGRectElement)) {
     console.log("no node");
@@ -233,7 +236,7 @@ async function draw(win: Win) {
 async function undraw(win: Win) {
   const id = winToId(win);
 
-  const node = document.getElementById(id);
+  const node = await waitForElementById(id);
 
   if (!(node instanceof SVGRectElement)) {
     console.log("no node");
@@ -254,4 +257,30 @@ async function undraw(win: Win) {
   );
 
   await animation.finished;
+}
+
+function waitForElementById(htmlId: string, maxWait = 5000) {
+  const element = document.getElementById(htmlId);
+
+  if (element) {
+    // If the element is already available, resolve the promise immediately
+    return Promise.resolve(element);
+  }
+
+  return new Promise<HTMLElement | null>((resolve) => {
+    const timeout = setTimeout(() => {
+      observer.disconnect();
+      resolve(null);
+    }, maxWait);
+    const observer = new MutationObserver(() => {
+      const targetElement = document.getElementById(htmlId);
+      if (targetElement) {
+        observer.disconnect();
+        clearTimeout(timeout);
+        resolve(targetElement);
+      }
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+  });
 }

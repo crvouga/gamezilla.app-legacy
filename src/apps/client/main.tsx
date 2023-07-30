@@ -109,25 +109,18 @@ const main = () => {
       <AppClient.View now={now} model={stateNew.model} dispatch={dispatch} />
     );
 
-    function executeAfterRender() {
-      if (stateNew.cmd) {
-        stateNew.cmd(dispatch);
-      }
-
-      console.log(stateNew.model);
-    }
-
     if (subscribed) {
       subscribed.unsubscribe();
     }
+
     subscribed = AppClient.subscriptions({
       now,
       model: stateNew.model,
-    }).subscribe((msg) => {
-      dispatch(msg);
-    });
+    }).subscribe(dispatch);
 
-    setTimeout(executeAfterRender, 10);
+    if (stateNew.cmd) {
+      stateNew.cmd(dispatch);
+    }
 
     state = stateNew;
   }
