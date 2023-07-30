@@ -42,12 +42,7 @@ import {
 //
 //
 //
-// Model
 //
-//
-//
-
-export type Model = ClientModel;
 
 export const init = (...params: Parameters<typeof initShared>): ClientModel => {
   const shared = initShared(...params);
@@ -61,12 +56,8 @@ export const init = (...params: Parameters<typeof initShared>): ClientModel => {
 //
 //
 //
-// Update
 //
 //
-//
-
-export type Msg = ClientMsg;
 
 export const update = ({
   sendToServer,
@@ -76,11 +67,11 @@ export const update = ({
 }: {
   ctx: GameSpaceClientCtx;
   sendToServer: (msg: ToServer) => Cmd;
-  msg: Msg;
-  model: Model;
+  msg: ClientMsg;
+  model: ClientModel;
 }): {
-  model: Model;
-  cmd?: Cmd<Msg>;
+  model: ClientModel;
+  cmd?: Cmd<ClientMsg>;
 } => {
   return p(
     { model },
@@ -114,13 +105,16 @@ export const update = ({
         return { model };
       }
 
-      const modelNext = syncWithServer({
+      const sync = syncWithServer({
         ctx,
         serverModel: result.value,
         clientModel: model,
       });
 
-      return { model: modelNext, cmd: sendToServer(msg) };
+      return {
+        model: sync.model,
+        cmd: Cmd.batch<ClientMsg>([sync.cmd, sendToServer(msg)]),
+      };
     }),
     andThen(({ model }) => updateUI({ model, msg }))
   );
@@ -130,11 +124,11 @@ const updateUI = ({
   model,
   msg,
 }: {
-  msg?: Msg;
-  model: Model;
+  msg?: ClientMsg;
+  model: ClientModel;
 }): {
-  model: Model;
-  cmd?: Cmd<Msg>;
+  model: ClientModel;
+  cmd?: Cmd<ClientMsg>;
 } => {
   const updated = ColumnsUI.update({
     columns: model.type === "game" ? model.columns : undefined,
@@ -151,39 +145,35 @@ const updateUI = ({
 export const updateFromServer = (input: {
   ctx: GameSpaceClientCtx;
   msg: ToClient;
-  model: Model;
+  model: ClientModel;
 }): {
-  model: Model;
-  cmd?: Cmd<Msg>;
+  model: ClientModel;
+  cmd?: Cmd<ClientMsg>;
 } => {
-  return p(
-    input,
-    andThen(({ model }) => updateFromServer_({ ...input, model })),
-    andThen(updateUI)
-  );
+  return p(updateFromServer_(input), andThen(updateUI));
 };
 
 const updateFromServer_: typeof updateFromServer = ({ ctx, msg, model }) => {
   if (msg.t === "player-left") {
-    const modelNew = syncWithServer({
+    const sync = syncWithServer({
       ctx,
       clientModel: model,
       serverModel: msg.model,
     });
-    return { model: modelNew };
+    return sync;
   }
 
   if (msg.result.t === "err") {
     return { model };
   }
 
-  const modelNew = syncWithServer({
+  const sync = syncWithServer({
     ctx,
     clientModel: model,
     serverModel: msg.result.value,
   });
 
-  return { model: modelNew };
+  return sync;
 };
 
 export const syncWithServer = ({
@@ -193,19 +183,18 @@ export const syncWithServer = ({
   ctx: ClientCtx;
   clientModel?: ClientModel;
   serverModel: ServerModel;
-}): ClientModel => {
-  if (serverModel.type === "setup") {
-    return {
-      ...clientModel,
-      ...serverModel,
-    };
-  }
-
-  return {
+}): { model: ClientModel; cmd?: Cmd<ClientMsg> } => {
+  const modelNew: ClientModel = {
     ...clientModel,
     ...serverModel,
-    ui: clientModel.ui ? clientModel.ui : ColumnsUI.init(serverModel.columns),
+    ui: clientModel.ui
+      ? clientModel.ui
+      : serverModel.type === "game"
+      ? ColumnsUI.init(serverModel.columns)
+      : ColumnsUI.init(),
   };
+
+  return updateUI({ model: modelNew });
 };
 
 //
@@ -219,8 +208,8 @@ export const syncWithServer = ({
 export const subscriptions = (
   _intervalId: string,
   _now: Posix,
-  _model: Model
-): Sub<Msg> => {
+  _model: ClientModel
+): Sub<ClientMsg> => {
   return Sub.None;
 };
 
@@ -238,8 +227,8 @@ export const View = ({
   ctx,
   dispatch,
 }: {
-  model: Model;
-  dispatch: (msg: Msg) => void;
+  model: ClientModel;
+  dispatch: (msg: ClientMsg) => void;
   onQuit: () => void;
   ctx: GameSpaceViewCtx;
 }) => {

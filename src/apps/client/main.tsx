@@ -22,7 +22,7 @@ import "./main.css";
 const env = {
   isDev: process.env.NODE_ENV === "development",
   isProd: process.env.NODE_ENV === "production",
-  useNgrok: false,
+  useNgrok: true,
 };
 
 const main = () => {

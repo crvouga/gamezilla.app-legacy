@@ -202,28 +202,14 @@ export const syncWithServer: Client["syncWithServer"] = ({
     }
 
     case "vs-bot": {
-      if (client.t === "vs-bot") {
-        return {
-          model: {
-            t: "vs-bot",
-            c: VsBot.syncWithServer({
-              ctx,
-              clientModel: client.c,
-              serverModel: server.c,
-            }),
-          },
-        };
-      }
-
+      const sync = VsBot.syncWithServer({
+        ctx,
+        clientModel: client.t === "vs-bot" ? client.c : VsBot.init(server.c),
+        serverModel: server.c,
+      });
       return {
-        model: {
-          t: "vs-bot",
-          c: VsBot.syncWithServer({
-            ctx,
-            clientModel: VsBot.init(server.c),
-            serverModel: server.c,
-          }),
-        },
+        model: { t: "vs-bot", c: sync.model },
+        cmd: Cmd.tag_("vs-bot", sync.cmd),
       };
     }
 
