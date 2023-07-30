@@ -112,6 +112,10 @@ export const move = (
   return Ok(columnsNew);
 };
 
+export function isGameOver(columns: Columns): boolean {
+  return toStatus(columns).type !== "Playing";
+}
+
 export const toSlot = (
   columns: Columns,
   { x, y }: { x: number; y: number }

@@ -187,8 +187,8 @@ export const View = ({
     <div className="pointer-events-none absolute left-0 top-0 flex w-full flex-col items-center gap-4 px-4 pt-4">
       {model.uiToasts.map(({ item: toast }) => (
         <div
-          key={config.toId(toast)}
-          id={config.toId(toast)}
+          key={String(config.toId(toast))}
+          id={String(config.toId(toast))}
           className="w-full overflow-visible">
           <div
             className="pointer-events-auto z-40 flex w-full max-w-md items-center justify-between overflow-hidden whitespace-nowrap break-words rounded-lg border border-neutral-700 bg-neutral-700 p-3 text-lg text-white shadow-2xl"

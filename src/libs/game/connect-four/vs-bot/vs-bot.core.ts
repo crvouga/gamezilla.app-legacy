@@ -1,6 +1,6 @@
 import { Err, Ok, Result } from "@gamezilla/core";
 import { UserId } from "@gamezilla/shared/app";
-import { VsBotSetup } from "@gamezilla/shared/game-space";
+import { VsBotGame, VsBotSetup } from "@gamezilla/shared/game-space";
 import {
   BestMoveResult,
   ColumnIndex,
@@ -55,8 +55,8 @@ export type ServerModel = CoreModel;
 
 export type ClientModel = CoreModel & {
   vsBotSetup: VsBotSetup.Model;
-
-  ui?: ColumnsUI.Model;
+  vsBotGame?: VsBotGame.Model;
+  columnsUI?: ColumnsUI.Model;
 };
 
 export const initShared = ({
@@ -125,8 +125,9 @@ export const allBotLevels: BotLevel[] = ["Easy", "Medium", "Hard"];
 
 export type ClientMsg =
   | Req
-  | { t: "ui"; c: ColumnsUI.Msg }
-  | { t: "vs-bot-setup"; c: VsBotSetup.Msg };
+  | { t: "columns-ui"; c: ColumnsUI.Msg }
+  | { t: "vs-bot-setup"; c: VsBotSetup.Msg }
+  | { t: "vs-bot-game"; c: VsBotGame.Msg };
 
 export type ServerMsg = { t: "bot-moved"; result: BestMoveResult };
 

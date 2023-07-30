@@ -8,11 +8,12 @@ import {
   serverPort,
   sessionIdKey,
 } from "@gamezilla/app";
-import { Browser, Cmd, Posix } from "@gamezilla/core";
+import { Browser, Cmd, Posix, toMsgPayload, toMsgType } from "@gamezilla/core";
+import { StrictMode } from "react";
 import * as ReactDOM from "react-dom/client";
+import { Subscription } from "rxjs";
 import { Socket, io } from "socket.io-client";
 import "./main.css";
-import { Subscription } from "rxjs";
 
 //
 //
@@ -99,14 +100,17 @@ const main = () => {
       sendToServer,
     });
 
-    console.log(msg);
+    console.log(toMsgType(msg));
+    console.log(toMsgPayload(msg, {}));
 
     setState(now, updated);
   }
 
   function setState(now: Posix, stateNew: State) {
     root.render(
-      <AppClient.View now={now} model={stateNew.model} dispatch={dispatch} />
+      <StrictMode>
+        <AppClient.View now={now} model={stateNew.model} dispatch={dispatch} />
+      </StrictMode>
     );
 
     if (subscribed) {

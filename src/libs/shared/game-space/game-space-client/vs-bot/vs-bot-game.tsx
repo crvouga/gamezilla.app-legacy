@@ -1,67 +1,218 @@
+import { UserId } from "@gamezilla/shared/app";
+import { IconRobot, MyAvatar, VDom } from "@gamezilla/ui";
+import { GameSpaceViewCtx } from "../game-space-client";
+import { PlayerType } from "./view-vs-bot";
 import { Cmd, TransitionList } from "@gamezilla/core";
 
-const gameOverOverlayId = (value: boolean) =>
-  value ? "overlay" : "overlay-hidden";
+const toOverlayId = (_gameOver: GameOver): string => "game-over";
 
-const overlayConfig = TransitionList.config<boolean>({
-  toId: gameOverOverlayId,
-  enter: (val) => fadeIn(gameOverOverlayId(val)),
-  exit: (val) => fadeOut(gameOverOverlayId(val)),
+const overlayConfig = TransitionList.config<GameOver>({
+  toId: toOverlayId,
+  enter: (val) => fadeIn(toOverlayId(val)),
+  exit: (val) => fadeOut(toOverlayId(val)),
 });
 
 export type Model = {
-  gameOverOverlayOpen: TransitionList.Model<boolean>;
+  overlay: TransitionList.Model<GameOver>;
 };
 
-export const init: Model = {
-  gameOverOverlayOpen: TransitionList.init([false]),
+export const init = (gameOver?: GameOver | null): Model => ({
+  overlay: TransitionList.init(gameOver ? [gameOver] : []),
+});
+
+export type Msg = {
+  t: "overlay";
+  c: TransitionList.Msg<GameOver>;
 };
 
-export type Msg = { t: "overlay"; c: TransitionList.Msg<boolean> };
-
-export function update({
+export const update = ({
   msg,
   model,
-  overlay,
+  gameOver,
 }: {
-  overlay: boolean;
-  msg: Msg;
+  msg?: Msg;
+  model?: Model;
+  gameOver?: GameOver | null;
+}): {
   model: Model;
-}) {
-  const overlayUpdated = TransitionList.update({
-    msg: msg.c,
-    model: model.gameOverOverlayOpen,
+  cmd?: Cmd<Msg>;
+} => {
+  const overlay = TransitionList.update<GameOver>({
+    msg: msg?.c,
+    model: model?.overlay,
     config: overlayConfig,
-    list: [overlay],
+    list: gameOver ? [gameOver] : [],
   });
 
   return {
     model: {
-      ...model,
-      overlay: overlayUpdated.model,
+      overlay: overlay.model,
     },
-    cmd: Cmd.batch<Msg>([Cmd.tag_("overlay", overlayUpdated.cmd)]),
+    cmd: Cmd.tag_("overlay", overlay.cmd),
   };
-}
+};
+
+export type GameOver =
+  | {
+      t: "winner";
+      winner: PlayerType;
+    }
+  | {
+      t: "draw";
+    };
+
+type Props = {
+  ctx: GameSpaceViewCtx;
+  model?: Model;
+  gameOver: GameOver | null;
+  human: {
+    userId: UserId;
+    player: PlayerType;
+  };
+  bot: {
+    label: string;
+    renderIcon: (props: { className: string }) => VDom;
+  };
+  playerOne: {
+    renderIcon: (props: { className: string }) => VDom;
+  };
+  playerTwo: {
+    renderIcon: (props: { className: string }) => VDom;
+  };
+};
+
+export const ViewGameOverOverlay = (props: Props) => {
+  const { model } = props;
+
+  return (
+    <>
+      {model?.overlay.map(({ item: gameOver }) => {
+        return (
+          <div
+            id={String(overlayConfig.toId(gameOver))}
+            key={String(overlayConfig.toId(gameOver))}>
+            {gameOver?.t === "winner" && (
+              <div className="absolute inset-0 bg-black/60">
+                <Winner {...props} winner={gameOver.winner} />
+              </div>
+            )}
+            {gameOver?.t === "draw" && (
+              <div className="absolute inset-0 bg-black/60">
+                <Draw {...props} />
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </>
+  );
+};
+
+const Winner = ({
+  ctx,
+  playerOne,
+  playerTwo,
+  human,
+  bot,
+  winner,
+}: Props & { winner: PlayerType }) => {
+  const humanSlot = (
+    <>
+      <MyAvatar
+        className="h-16 w-16"
+        src={ctx.profiles[ctx.currentUserId]?.avatarUrl}
+      />
+    </>
+  );
+
+  const botSlot = <>{bot.renderIcon({ className: "h-16 w-16" })}</>;
+
+  const playerOneSlot = (
+    <div className="flex flex-col items-center justify-center gap-3">
+      <div className="flex items-center justify-center gap-3">
+        {playerOne.renderIcon({ className: "h-16 w-16" })}
+        {human.player === "player-one" ? humanSlot : botSlot}
+      </div>
+      <p className="text-center text-4xl font-black">
+        {winner === "player-one" ? "Winner" : "Loser"}
+      </p>
+    </div>
+  );
+
+  const playerTwoSlot = (
+    <div className="flex flex-col items-center justify-center gap-3">
+      <div className="flex items-center justify-center gap-3">
+        {playerTwo.renderIcon({ className: "h-16 w-16" })}
+
+        {human.player === "player-two" ? humanSlot : botSlot}
+      </div>
+
+      <p className="text-center text-4xl font-black">
+        {winner === "player-two" ? "Winner" : "Loser"}
+      </p>
+    </div>
+  );
+
+  return (
+    <div className="grid h-full w-full grid-cols-2 items-center">
+      {playerOneSlot}
+      {playerTwoSlot}
+    </div>
+  );
+};
+
+const Draw = ({ ctx, playerOne, playerTwo, human }: Props) => {
+  const humanSlot = (
+    <>
+      <MyAvatar src={ctx.profiles[ctx.currentUserId]?.avatarUrl} />
+    </>
+  );
+
+  const botSlot = (
+    <>
+      <IconRobot />
+    </>
+  );
+
+  const playerOneSlot = (
+    <>
+      {playerOne.renderIcon({ className: "h-5 w-5" })}
+      {human.player === "player-one" ? humanSlot : botSlot}
+    </>
+  );
+
+  const playerTwoSlot = (
+    <>
+      {playerTwo.renderIcon({ className: "h-5 w-5" })}
+      {human.player === "player-two" ? humanSlot : botSlot}
+    </>
+  );
+
+  return (
+    <div className="flex h-full w-full items-center justify-center">
+      <div>
+        {playerOneSlot}
+        {playerTwoSlot}
+      </div>
+      <p>Tie</p>
+    </div>
+  );
+};
 
 async function fadeIn(id: string) {
-  const node = document.getElementById(id);
-  if (!node) {
-    return;
-  }
-  await node.animate([{ opacity: 0 }, { opacity: 1 }], {
+  const node = await TransitionList.waitForElementById(id);
+
+  await node?.animate([{ opacity: 0 }, { opacity: 1 }], {
     duration: 200,
+    delay: 600,
     easing: "ease-in-out",
     fill: "both",
   }).finished;
 }
 
 async function fadeOut(id: string) {
-  const node = document.getElementById(id);
-  if (!node) {
-    return;
-  }
-  await node.animate([{ opacity: 0 }, { opacity: 1 }], {
+  const node = await TransitionList.waitForElementById(id);
+  await node?.animate([{ opacity: 1 }, { opacity: 0 }], {
     duration: 200,
     easing: "ease-in-out",
     fill: "both",

@@ -2,7 +2,6 @@ import { UserIdZod } from "@gamezilla/shared/app";
 import { VsBotSetup } from "@gamezilla/shared/game-space";
 import { z } from "zod";
 import {
-  ColumnIndexZod,
   ColumnsZod,
   PlayerTypeZod,
 } from "../connect-four/connect-four-parsers";
@@ -40,7 +39,6 @@ export const ServerModelZod: z.ZodType<ServerModel> = CoreModelZod;
 
 export const ClientModelZod: z.ZodType<ClientModel> = CoreModelZod.and(
   z.object({
-    ghostIndex: ColumnIndexZod.nullable(),
     vsBotSetup: VsBotSetup.ModelZod,
   })
 );

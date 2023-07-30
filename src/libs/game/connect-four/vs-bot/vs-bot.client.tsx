@@ -8,7 +8,8 @@ import {
   IconBotLevel1,
   IconBotLevel4,
   ViewBottomButtonBar,
-  VsBotGameOverOverlay,
+  ViewGameOverOverlay,
+  VsBotGame,
   VsBotPlayerSection,
   VsBotProps,
   VsBotSetup,
@@ -19,7 +20,7 @@ import {
   IconRightLeft,
   LoadingBar,
 } from "@gamezilla/ui";
-import { emptyColumns, toStatus, toTurn } from "../connect-four";
+import { Status, toStatus, toTurn } from "../connect-four";
 import { ViewCoverArt } from "../connect-four-cover-art";
 import {
   ColumnsUI,
@@ -59,7 +60,7 @@ export const init = (...params: Parameters<typeof initShared>): ClientModel => {
 //
 //
 
-export const update = ({
+export function update({
   sendToServer,
   ctx,
   msg,
@@ -72,20 +73,24 @@ export const update = ({
 }): {
   model: ClientModel;
   cmd?: Cmd<ClientMsg>;
-} => {
+} {
   return p(
     { model },
     andThen(({ model }) => {
-      if (msg.t === "ui") {
-        const updated = ColumnsUI.update({
+      if (msg.t === "columns-ui") {
+        return { model };
+      }
+
+      if (msg.t === "vs-bot-game") {
+        if (model.type !== "game") {
+          return { model };
+        }
+        const updated = VsBotGame.update({
           msg: msg.c,
-          model: model.ui,
-          columns: model.type === "game" ? model.columns : emptyColumns,
+          model: model.vsBotGame,
+          gameOver: statusToGameOver(toStatus(model.columns)),
         });
-        return {
-          model: { ...model, ui: updated.model },
-          cmd: Cmd.tag_("ui", updated.cmd),
-        };
+        return { model: { ...model, vsBotGame: updated.model } };
       }
 
       if (msg.t === "vs-bot-setup") {
@@ -118,7 +123,7 @@ export const update = ({
     }),
     andThen(({ model }) => updateUI({ model, msg }))
   );
-};
+}
 
 const updateUI = ({
   model,
@@ -130,15 +135,29 @@ const updateUI = ({
   model: ClientModel;
   cmd?: Cmd<ClientMsg>;
 } => {
-  const updated = ColumnsUI.update({
+  const columnsUI = ColumnsUI.update({
     columns: model.type === "game" ? model.columns : undefined,
-    msg: msg?.t === "ui" ? msg.c : undefined,
-    model: model.ui,
+    msg: msg?.t === "columns-ui" ? msg.c : undefined,
+    model: model.columnsUI,
+  });
+
+  const vsBotGame = VsBotGame.update({
+    gameOver:
+      model.type === "game" ? statusToGameOver(toStatus(model.columns)) : null,
+    model: model.vsBotGame,
+    msg: msg?.t === "vs-bot-game" ? msg.c : undefined,
   });
 
   return {
-    model: { ...model, ui: updated.model },
-    cmd: Cmd.tag_("ui", updated.cmd),
+    model: {
+      ...model,
+      columnsUI: columnsUI.model,
+      vsBotGame: vsBotGame.model,
+    },
+    cmd: Cmd.batch<ClientMsg>([
+      Cmd.tag_("columns-ui", columnsUI.cmd),
+      Cmd.tag_("vs-bot-game", vsBotGame.cmd),
+    ]),
   };
 };
 
@@ -187,11 +206,16 @@ export const syncWithServer = ({
   const modelNew: ClientModel = {
     ...clientModel,
     ...serverModel,
-    ui: clientModel.ui
-      ? clientModel.ui
+    columnsUI: clientModel.columnsUI
+      ? clientModel.columnsUI
       : serverModel.type === "game"
       ? ColumnsUI.init(serverModel.columns)
       : ColumnsUI.init(),
+    vsBotGame: clientModel.vsBotGame
+      ? clientModel.vsBotGame
+      : serverModel.type === "game"
+      ? VsBotGame.init(statusToGameOver(toStatus(serverModel.columns)))
+      : VsBotGame.init(null),
   };
 
   return updateUI({ model: modelNew });
@@ -220,6 +244,17 @@ export const subscriptions = (
 //
 //
 //
+
+const statusToGameOver = (status: Status): VsBotGame.GameOver | null => {
+  return status.type === "Tie"
+    ? { t: "draw" }
+    : status.type === "Winner"
+    ? {
+        t: "winner",
+        winner: status.winner === "player-one" ? "player-one" : "player-two",
+      }
+    : null;
+};
 
 export const View = ({
   model,
@@ -308,34 +343,29 @@ export const View = ({
           />
           <ColumnsUI.View
             gameId={model.gameId}
-            model={model.ui}
+            model={model?.columnsUI}
             implementation="svg"
             columns={model.columns}
             onClick={(columnIndex) =>
               dispatch({ t: "input-move", columnIndex })
             }
-            gameOverOverlay={() => {
-              return (
-                <VsBotGameOverOverlay
-                  {...vsBotGameProps}
-                  id={"vs-bot-game-over-overlay"}
-                  fadeInDelay={600}
-                  gameOver={
-                    status.type === "Tie"
-                      ? { t: "draw" }
-                      : status.type === "Winner"
-                      ? {
-                          t: "winner",
-                          winner:
-                            status.winner === "player-one"
-                              ? "player-one"
-                              : "player-two",
-                        }
-                      : null
+          />
+          <ViewGameOverOverlay
+            {...vsBotGameProps}
+            model={model.vsBotGame}
+            gameOver={
+              status.type === "Tie"
+                ? { t: "draw" }
+                : status.type === "Winner"
+                ? {
+                    t: "winner",
+                    winner:
+                      status.winner === "player-one"
+                        ? "player-one"
+                        : "player-two",
                   }
-                />
-              );
-            }}
+                : null
+            }
           />
         </div>
       </div>

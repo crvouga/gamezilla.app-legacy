@@ -1,8 +1,10 @@
 import { andThen, p } from ".";
 import { Cmd } from "./cmd";
 
+type Id = string | number | null | undefined | boolean;
+
 export type Config<T> = {
-  toId: (item: T) => string;
+  toId: (item: T) => Id;
   enter: (item: T) => Promise<void>;
   exit: (item: T) => Promise<void>;
 };
@@ -117,12 +119,12 @@ export const watch = <T>({
 
 export const update = <T>({
   config,
-  model,
+  model = init([]),
   list,
   msg,
 }: {
   config: Config<T>;
-  model: Model<T>;
+  model?: Model<T>;
   list: T[];
   msg?: Msg<T>;
 }): {
@@ -163,18 +165,14 @@ export const update = <T>({
   );
 };
 
-const difference = <T>(
-  toId: (x: T) => string | number,
-  a: T[],
-  b: T[]
-): T[] => {
+const difference = <T>(toId: (x: T) => Id, a: T[], b: T[]): T[] => {
   const bKeys = new Set(b.map(toId));
 
   return a.filter((x) => !bKeys.has(toId(x)));
 };
 
-export function waitForElementById(htmlId: string, maxWait = 5000) {
-  const element = document.getElementById(htmlId);
+export function waitForElementById(htmlId: Id, maxWait = 5000) {
+  const element = document.getElementById(String(htmlId));
 
   if (element) {
     // If the element is already available, resolve the promise immediately
@@ -187,7 +185,7 @@ export function waitForElementById(htmlId: string, maxWait = 5000) {
       resolve(null);
     }, maxWait);
     const observer = new MutationObserver(() => {
-      const targetElement = document.getElementById(htmlId);
+      const targetElement = document.getElementById(String(htmlId));
       if (targetElement) {
         observer.disconnect();
         clearTimeout(timeout);
