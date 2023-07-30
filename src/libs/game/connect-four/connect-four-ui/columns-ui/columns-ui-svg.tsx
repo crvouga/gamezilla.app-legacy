@@ -56,13 +56,13 @@ export const ViewColumnsSvg = ({
         />
 
         <g transform="translate(0.5, 0.5)">
-          {model?.discs?.map(({ item: disc }) => {
+          {model?.discs?.map(({ item: disc, state }) => {
             return (
               <circle
                 id={disc.id}
                 key={disc.id}
                 cx={disc.x}
-                cy={-1}
+                cy={state === "entered" ? disc.y : -1}
                 r={0.5}
                 fill={
                   disc.player === "player-one" ? playerOneFill : playerTwoFill
