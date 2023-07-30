@@ -62,7 +62,7 @@ export const ViewColumnsSvg = ({
                 id={disc.id}
                 key={disc.id}
                 cx={disc.x}
-                cy={disc.y}
+                cy={-1}
                 r={0.5}
                 fill={
                   disc.player === "player-one" ? playerOneFill : playerTwoFill
@@ -154,7 +154,7 @@ const ViewWins = ({ model }: { model?: Model; columns: Columns }) => {
             width={width}
             height={n}
             rx={n / 2}
-            stroke="white"
+            stroke="transparent"
             fill="transparent"
             strokeWidth={n / 8}
             className="pointer-events-none"

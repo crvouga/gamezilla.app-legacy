@@ -122,7 +122,7 @@ export const update = ({
 
       return { model: modelNext, cmd: sendToServer(msg) };
     }),
-    andThen(({ model }) => updateUI({ model }))
+    andThen(({ model }) => updateUI({ model, msg }))
   );
 };
 

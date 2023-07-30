@@ -56,6 +56,7 @@ export const watch = <T>({
 
   const cmd: Cmd<Msg<T>> = async (dispatch) => {
     const adds: Promise<void>[] = [];
+    const subs: Promise<void>[] = [];
 
     for (const item of additions) {
       const found = model.find(
@@ -66,7 +67,6 @@ export const watch = <T>({
       }
     }
 
-    const subs: Promise<void>[] = [];
     for (const item of subtractions) {
       const found = model.find(
         (x) => config.toId(x.item) === config.toId(item)
@@ -168,7 +168,7 @@ const difference = <T>(
   a: T[],
   b: T[]
 ): T[] => {
-  const bKeys = b.map(toId);
+  const bKeys = new Set(b.map(toId));
 
-  return a.filter((x) => !bKeys.includes(toId(x)));
+  return a.filter((x) => !bKeys.has(toId(x)));
 };

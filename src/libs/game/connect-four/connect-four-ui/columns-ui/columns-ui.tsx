@@ -21,8 +21,8 @@ import { ViewColumnsProps } from "./shared";
 
 const discsConfig = TransitionList.config<Disc>({
   toId: (disc) => disc.id,
-  enter,
-  exit,
+  enter: discEnter,
+  exit: discExit,
 });
 
 const winsConfig = TransitionList.config<Win>({
@@ -166,14 +166,14 @@ export function View({
 //
 //
 
-async function enter(disc: Disc) {
+async function discEnter(disc: Disc) {
   const { y } = disc;
   const node = document.getElementById(disc.id);
   if (!node) {
     console.log("no node");
     return;
   }
-  easeAttrs(node, {
+  await easeAttrs(node, {
     cy: {
       from: MAX_COLUMN_HEIGHT + 1,
       to: y,
@@ -181,12 +181,9 @@ async function enter(disc: Disc) {
       easing: { type: "ease-out-quint" },
     },
   });
-  await new Promise((r) =>
-    setTimeout(r, 200 + 300 * (1 - y / MAX_COLUMN_HEIGHT))
-  );
 }
 
-async function exit(disc: Disc) {
+async function discExit(disc: Disc) {
   const { x, y } = disc;
   const node = document.getElementById(disc.id);
 
@@ -195,7 +192,7 @@ async function exit(disc: Disc) {
     return;
   }
 
-  easeAttrs(node, {
+  await easeAttrs(node, {
     cy: {
       from: y,
       to: y - MAX_COLUMN_HEIGHT,
@@ -204,7 +201,6 @@ async function exit(disc: Disc) {
       delay: (x / COLUMN_COUNT) * 500,
     },
   });
-  await new Promise((r) => setTimeout(r, 750));
 }
 
 async function draw(win: Win) {
@@ -220,12 +216,18 @@ async function draw(win: Win) {
   const length = node.getTotalLength();
   node.style.strokeDasharray = length.toString();
   node.style.strokeDashoffset = length.toString();
+  node.style.stroke = "white";
 
-  await node.animate([{ strokeDashoffset: length }, { strokeDashoffset: 0 }], {
-    duration: 500,
-    easing: "ease-in-out",
-    fill: "both",
-  }).finished;
+  const animation = node.animate(
+    [{ strokeDashoffset: length }, { strokeDashoffset: 0 }],
+    {
+      duration: 500,
+      easing: "ease-in-out",
+      fill: "both",
+    }
+  );
+
+  await animation.finished;
 }
 
 async function undraw(win: Win) {
@@ -242,9 +244,14 @@ async function undraw(win: Win) {
   node.style.strokeDasharray = length.toString();
   node.style.strokeDashoffset = "0";
 
-  await node.animate([{ strokeDashoffset: 0 }, { strokeDashoffset: length }], {
-    duration: 500,
-    easing: "ease-in-out",
-    fill: "both",
-  }).finished;
+  const animation = node.animate(
+    [{ strokeDashoffset: 0 }, { strokeDashoffset: length }],
+    {
+      duration: 500,
+      easing: "ease-in-out",
+      fill: "both",
+    }
+  );
+
+  await animation.finished;
 }
