@@ -5,8 +5,9 @@ import {
   Columns,
   isColumnIndex,
   MAX_COLUMN_HEIGHT,
-} from "../connect-four";
-import { gameTheme, ViewColumnsProps } from "./connect-four-ui-shared";
+} from "../../connect-four";
+import { gameTheme } from "../shared";
+import { ViewColumnsProps } from "./shared";
 
 export const ViewColumnsCanvas = ({ columns, onClick }: ViewColumnsProps) => {
   useLayoutEffect(() => {

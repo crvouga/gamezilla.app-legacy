@@ -1,2 +1,3 @@
 export * from "./connect-four-ui";
-export * from "./connect-four-ui-shared";
+export * from "./shared";
+export * from "./connect-four-ui-columns";

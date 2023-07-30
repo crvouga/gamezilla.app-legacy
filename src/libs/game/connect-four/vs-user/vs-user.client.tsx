@@ -1,14 +1,15 @@
 import { Cmd, Sub } from "@gamezilla/core";
 import { ViewCtx } from "@gamezilla/shared/client";
 import {
+  GameLayout,
   GameSpaceClientCtx,
   GameSpaceMsg,
   GameSpaceViewCtx,
-  GameLayout,
   ViewBottomButtonBar,
   VsUserSetupScreen,
 } from "@gamezilla/shared/game-space";
 import {
+  Button,
   ConformationDialog,
   IconArrowLeftOnRect,
   IconArrowRotateLeft,
@@ -17,11 +18,11 @@ import {
   IconSpinner,
   IconXMark,
   MyAvatar,
-  Button,
   Text,
 } from "@gamezilla/ui";
 import { PlayerType, toTurn } from "../connect-four";
-import { PlayerIcon, ViewColumns, ViewCoverArt } from "../connect-four-ui";
+import { ViewCoverArt } from "../connect-four-cover-art";
+import { PlayerIcon, ViewColumns } from "../connect-four-ui";
 import {
   ClientModel,
   ClientMsg,

@@ -7,8 +7,9 @@ import {
   Position,
   isColumnIndex,
   toWins,
-} from "../connect-four";
-import { ViewColumnsProps, gameTheme } from "./connect-four-ui-shared";
+} from "../../connect-four";
+import { gameTheme } from "../shared";
+import { ViewColumnsProps } from "./shared";
 
 type SvgIds = {
   playerOneGradient: string;

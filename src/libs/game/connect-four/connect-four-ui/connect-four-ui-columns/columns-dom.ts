@@ -8,8 +8,8 @@ import {
   Win,
   isColumnIndex,
   toWins,
-} from "../connect-four";
-import { gameTheme } from "./connect-four-ui-shared";
+} from "../../connect-four";
+import { gameTheme } from "../shared";
 
 export type ConnectFourUI = ReturnType<typeof create>;
 

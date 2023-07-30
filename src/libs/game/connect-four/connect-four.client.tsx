@@ -4,7 +4,7 @@ import {
   MainMenuScreen,
   mainMenuButtons,
 } from "@gamezilla/shared/game-space";
-import { ViewCoverArt } from "./connect-four-ui";
+import { ViewCoverArt } from "./connect-four-cover-art";
 import {
   ClientModel,
   ClientMsg,

@@ -1,9 +1,9 @@
 import { Cmd, Posix, Sub } from "@gamezilla/core";
 import { ClientCtx } from "@gamezilla/shared/client";
 import {
+  GameLayout,
   GameSpaceClientCtx,
   GameSpaceViewCtx,
-  GameLayout,
   IconBotHappy,
   IconBotLevel1,
   IconBotLevel4,
@@ -20,11 +20,11 @@ import {
   LoadingBar,
 } from "@gamezilla/ui";
 import { toStatus, toTurn } from "../connect-four";
+import { ViewCoverArt } from "../connect-four-cover-art";
 import {
   PlayerOneIcon,
   PlayerTwoIcon,
   ViewColumns,
-  ViewCoverArt,
   gameTheme,
 } from "../connect-four-ui";
 import {

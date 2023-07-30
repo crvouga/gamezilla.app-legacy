@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
-import { ViewColumnsProps } from "./connect-four-ui-shared";
-import * as ConnectFourUI from "./connect-four-ui-dom";
+import * as ConnectFourUI from "./columns-dom";
+import { ViewColumnsProps } from "./shared";
 
 export const ViewColumnsDOM = (props: ViewColumnsProps) => {
   const instanceRef = useRef<ConnectFourUI.ConnectFourUI>(
