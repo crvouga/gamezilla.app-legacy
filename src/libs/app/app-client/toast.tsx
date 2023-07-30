@@ -83,7 +83,7 @@ export const update = ({
   return p(
     { model },
     andThen(({ model }) => updateToasts({ model, msg })),
-    andThen(({ model }) => updateTransitions({ model, msg }))
+    andThen(({ model }) => updateUI({ model, msg }))
   );
 };
 const updateToasts: typeof update = ({ model, msg }) => {
@@ -106,31 +106,6 @@ const updateToasts: typeof update = ({ model, msg }) => {
   }
 
   return { model };
-};
-
-const updateTransitions = ({
-  model,
-  msg,
-}: {
-  msg?: Msg;
-  model: Model;
-}): {
-  model: Model;
-  cmd?: Cmd<Msg>;
-} => {
-  const updated = TransitionList.update({
-    config,
-    model: model.uiToasts,
-    msg: msg?.t === "uiToast" ? msg.c : undefined,
-    list: model.toasts,
-  });
-  return {
-    model: {
-      ...model,
-      uiToasts: updated.model,
-    },
-    cmd: Cmd.tag_("uiToast", updated.cmd),
-  };
 };
 
 //
@@ -162,11 +137,36 @@ export const updateFromApp = ({
         toastId: model.runningId,
       }),
     };
-    return p(updated, andThen(updateTransitions));
+    return p(updated, andThen(updateUI));
   }
 
   return { model };
 };
+
+//
+//
+//
+//
+//
+
+function updateUI({ model, msg }: { msg?: Msg; model: Model }): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} {
+  const updated = TransitionList.update({
+    config,
+    model: model.uiToasts,
+    msg: msg?.t === "uiToast" ? msg.c : undefined,
+    list: model.toasts,
+  });
+  return {
+    model: {
+      ...model,
+      uiToasts: updated.model,
+    },
+    cmd: Cmd.tag_("uiToast", updated.cmd),
+  };
+}
 
 //
 //
@@ -184,12 +184,12 @@ export const View = ({
   dispatch: (msg: Msg) => void;
 }) => {
   return (
-    <div className="pointer-events-none fixed left-0 top-0 flex h-screen w-screen flex-col items-center">
+    <div className="pointer-events-none absolute left-0 top-0 flex w-full flex-col items-center gap-4 px-4 pt-4">
       {model.uiToasts.map(({ item: toast }) => (
         <div
           key={config.toId(toast)}
           id={config.toId(toast)}
-          className="w-full p-4 pb-0">
+          className="w-full">
           <div
             className="pointer-events-auto z-40 flex w-full max-w-md items-center justify-between overflow-hidden whitespace-nowrap break-words rounded-lg border border-neutral-700 bg-neutral-700 p-3 text-lg text-white shadow-2xl"
             key={toast.toastId}>
