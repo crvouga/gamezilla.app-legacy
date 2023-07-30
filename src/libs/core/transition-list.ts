@@ -29,22 +29,98 @@ export const init = <T>(items: T[]): Model<T> => {
 
 export type Msg<T> = { t: "entered"; item: T } | { t: "exited"; item: T };
 
+export const watch = <T>({
+  config,
+  model,
+  list,
+}: {
+  config: Config<T>;
+  model: Model<T>;
+  list: T[];
+}): {
+  model: Model<T>;
+  cmd?: Cmd<Msg<T>>;
+} => {
+  const additions = difference(
+    config.toId,
+    list,
+    model.items.map((x) => x.item)
+  );
+
+  const subtractions = difference(
+    config.toId,
+    model.items.map((x) => x.item),
+    list
+  );
+
+  const cmd: Cmd<Msg<T>> = async (dispatch) => {
+    const enter = async (item: T) => {
+      await config.enter(item);
+      dispatch({ t: "entered", item });
+    };
+
+    const exit = async (item: T) => {
+      await config.exit(item);
+      dispatch({ t: "exited", item });
+    };
+
+    const promises: Promise<void>[] = [];
+
+    for (const item of additions) {
+      promises.push(enter(item));
+    }
+
+    for (const item of subtractions) {
+      promises.push(exit(item));
+    }
+  };
+
+  const subtractionSet = new Set(subtractions.map(config.toId));
+
+  const itemsNew: Model<T>["items"] = [
+    ...model.items.map((item): TransitionItem<T> => {
+      if (subtractionSet.has(config.toId(item.item))) {
+        return {
+          t: "exiting",
+          item: item.item,
+        };
+      }
+      return item;
+    }),
+
+    ...additions.map((item): TransitionItem<T> => {
+      return {
+        t: "entering",
+        item,
+      };
+    }),
+  ];
+
+  return {
+    model: {
+      ...model,
+      items: itemsNew,
+    },
+    cmd: cmd,
+  };
+};
+
 export const update = <T>({
   config,
   model,
-  items,
+  list,
   msg,
 }: {
   config: Config<T>;
   model: Model<T>;
-  items: T[];
+  list: T[];
   msg?: Msg<T>;
 }): {
   model: Model<T>;
   cmd?: Cmd<Msg<T>>;
 } => {
   return p(
-    updateLifecycle({ config, model, items, msg }),
+    watch({ config, model, list }),
     andThen(({ model }) => {
       if (!msg) {
         return { model };
@@ -81,77 +157,6 @@ export const update = <T>({
       return { model };
     })
   );
-};
-
-const updateLifecycle = <T>({
-  config,
-  model,
-  items,
-  msg,
-}: {
-  config: Config<T>;
-  model: Model<T>;
-  msg?: Msg<T>;
-  items: T[];
-}): {
-  model: Model<T>;
-  cmd?: Cmd<Msg<T>>;
-} => {
-  if (msg) {
-    return { model };
-  }
-  const additions = difference(
-    config.toId,
-    items,
-    model.items.map((x) => x.item)
-  );
-  const subtractions = difference(
-    config.toId,
-    model.items.map((x) => x.item),
-    items
-  );
-
-  const enterCmd: Cmd<Msg<T>> = async (dispatch) => {
-    for (const item of additions) {
-      await config.enter(item);
-      dispatch({ t: "entered", item });
-    }
-  };
-
-  const exitCmd: Cmd<Msg<T>> = async (dispatch) => {
-    for (const item of subtractions) {
-      await config.exit(item);
-      dispatch({ t: "exited", item });
-    }
-  };
-
-  const subtractionSet = new Set(subtractions.map(config.toId));
-  const itemsNew: Model<T>["items"] = [
-    ...model.items.map((item): TransitionItem<T> => {
-      if (subtractionSet.has(config.toId(item.item))) {
-        return {
-          t: "exiting",
-          item: item.item,
-        };
-      }
-      return item;
-    }),
-
-    ...additions.map((item): TransitionItem<T> => {
-      return {
-        t: "entering",
-        item,
-      };
-    }),
-  ];
-
-  return {
-    model: {
-      ...model,
-      items: itemsNew,
-    },
-    cmd: Cmd.batch([enterCmd, exitCmd]),
-  };
 };
 
 const difference = <T>(
