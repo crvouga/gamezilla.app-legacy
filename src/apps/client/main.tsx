@@ -1,15 +1,18 @@
 import {
   AppClient,
+  ClientModel,
+  ClientMsg,
   ClientToServerEvents,
   ServerToClientEvents,
   ToServer,
   serverPort,
   sessionIdKey,
 } from "@gamezilla/app";
-import { Browser, Cmd, Debug, Program } from "@gamezilla/core";
+import { Browser, Cmd, Posix } from "@gamezilla/core";
 import * as ReactDOM from "react-dom/client";
 import { Socket, io } from "socket.io-client";
 import "./main.css";
+import { Subscription } from "rxjs";
 
 //
 //
@@ -76,39 +79,60 @@ const main = () => {
       socketClient.emit("to-server", msg);
     };
 
-  const program = Program.create({
-    init: AppClient.init({ location: Browser.getLocation() }),
-    update: (input) => AppClient.update({ ...input, sendToServer }),
-    subscriptions: AppClient.subscriptions,
-  });
-
-  const attached = Debug.ReduxDevTools.withDebugger(program);
-
-  Program.run(attached.program);
-
   const root = ReactDOM.createRoot(
     document.getElementById("root") as HTMLElement
   );
 
-  Program.subscribe(program, (state) => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    window["model"] = state.model;
-    // if (state.msg) {
-    //   const msgStr = toMsgType(state.msg);
-    //   console.log(msgStr);
-    // }
-    // console.log(state.model);
+  type State = { model: ClientModel; cmd?: Cmd<ClientMsg> };
 
+  let state: State = AppClient.init({ location: Browser.getLocation() });
+
+  let subscribed: Subscription | null = null;
+
+  function dispatch(msg: ClientMsg) {
+    const now = Posix.fromNumber(Date.now());
+
+    const updated = AppClient.update({
+      now,
+      model: state.model,
+      msg,
+      sendToServer,
+    });
+
+    console.log(msg);
+
+    setState(now, updated);
+  }
+
+  function setState(now: Posix, stateNew: State) {
     root.render(
-      <AppClient.View
-        isTimeTravelDebugging={state.model._debugId < state.runningDebugId}
-        now={state.model._now}
-        model={state.model}
-        dispatch={program.dispatch}
-      />
+      <AppClient.View now={now} model={stateNew.model} dispatch={dispatch} />
     );
-  });
+
+    function executeAfterRender() {
+      if (stateNew.cmd) {
+        stateNew.cmd(dispatch);
+      }
+
+      console.log(stateNew.model);
+    }
+
+    if (subscribed) {
+      subscribed.unsubscribe();
+    }
+    subscribed = AppClient.subscriptions({
+      now,
+      model: stateNew.model,
+    }).subscribe((msg) => {
+      dispatch(msg);
+    });
+
+    setTimeout(executeAfterRender, 10);
+
+    state = stateNew;
+  }
+
+  setState(Posix.fromNumber(Date.now()), state);
 };
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment

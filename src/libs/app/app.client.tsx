@@ -15,7 +15,7 @@ import {
   IconUserCircle,
   LoadingScreen,
   VDom,
-  cn
+  cn,
 } from "@gamezilla/ui";
 import { Subject } from "rxjs";
 import { GameSpaceClient } from "src/libs/feat/game-space";
@@ -454,7 +454,6 @@ export const View = ({
   dispatch,
   now,
 }: {
-  isTimeTravelDebugging: boolean;
   now: Posix;
   model: Model;
   dispatch: (msg: Msg) => void;
