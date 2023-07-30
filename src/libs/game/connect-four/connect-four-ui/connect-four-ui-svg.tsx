@@ -55,6 +55,20 @@ export const ViewColumnsSvg = ({
           fill={gameTheme.primary.darker}
         />
 
+        {/* {visualDiscs.map((disc) => {
+          return (
+            <circle
+              key={config.toId(disc)}
+              cx={disc.x}
+              cy={disc.y}
+              r={0.5}
+              fill={
+                disc.player === "player-one" ? playerOneFill : playerTwoFill
+              }
+            />
+          );
+        })} */}
+
         <TransitionGroup component={"g"} transform="translate(0.5, 0.5)">
           {columns.flatMap((column, x) =>
             column.map((disc, y) => (

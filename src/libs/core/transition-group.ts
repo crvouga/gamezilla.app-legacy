@@ -1,20 +1,10 @@
 import { andThen, p } from ".";
 import { Cmd } from "./cmd";
 
-export type Config<TItem, TNode = HTMLElement> = {
-  toId: (item: TItem) => string;
-  enter: (item: TNode) => Promise<void>;
-  exit: (item: TNode) => Promise<void>;
-  getNode?: (id: string) => TNode | null;
-};
-
-const getNode = <TItem, TNode>(config: Config<TItem, TNode>, item: TItem) => {
-  const id = config.toId(item);
-  if (!config.getNode) {
-    const got = document.getElementById(id);
-    return got;
-  }
-  return config.getNode(id);
+export type Config<T> = {
+  toId: (item: T) => string;
+  enter: (item: T) => Promise<void>;
+  exit: (item: T) => Promise<void>;
 };
 
 type TransitionItem<T> = {
@@ -37,11 +27,7 @@ export const init = <T>(items: T[]): Model<T> => {
   };
 };
 
-export type Msg<T> =
-  | { t: "entering"; item: T }
-  | { t: "entered"; item: T }
-  | { t: "exiting"; item: T }
-  | { t: "exited"; item: T };
+export type Msg<T> = { t: "entered"; item: T } | { t: "exited"; item: T };
 
 export const update = <T>({
   config,
@@ -58,19 +44,10 @@ export const update = <T>({
   cmd?: Cmd<Msg<T>>;
 } => {
   return p(
-    updateLifecycle({ config, model, items }),
+    updateLifecycle({ config, model, items, msg }),
     andThen(({ model }) => {
       if (!msg) {
-        console.log("no msg");
         return { model };
-      }
-
-      if (msg.t === "entering") {
-        return {
-          model: {
-            ...model,
-          },
-        };
       }
 
       if (msg.t === "entered") {
@@ -82,23 +59,6 @@ export const update = <T>({
                 return {
                   ...x,
                   t: "entered",
-                };
-              }
-              return x;
-            }),
-          },
-        };
-      }
-
-      if (msg.t === "exiting") {
-        return {
-          model: {
-            ...model,
-            items: model.items.map((x) => {
-              if (config.toId(x.item) === config.toId(msg.item)) {
-                return {
-                  ...x,
-                  t: "exiting",
                 };
               }
               return x;
@@ -127,14 +87,19 @@ const updateLifecycle = <T>({
   config,
   model,
   items,
+  msg,
 }: {
   config: Config<T>;
   model: Model<T>;
+  msg?: Msg<T>;
   items: T[];
 }): {
   model: Model<T>;
-  cmd: Cmd<Msg<T>>;
+  cmd?: Cmd<Msg<T>>;
 } => {
+  if (msg) {
+    return { model };
+  }
   const additions = difference(
     config.toId,
     items,
@@ -145,44 +110,45 @@ const updateLifecycle = <T>({
     model.items.map((x) => x.item),
     items
   );
-  console.log({
-    additions,
-    subtractions,
-  });
 
   const enterCmd: Cmd<Msg<T>> = async (dispatch) => {
     for (const item of additions) {
-      await new Promise((resolve) => setTimeout(resolve, 1));
-
-      const node = getNode(config, item);
-
-      if (node) {
-        await config.enter(node);
-      }
+      await config.enter(item);
       dispatch({ t: "entered", item });
     }
   };
 
   const exitCmd: Cmd<Msg<T>> = async (dispatch) => {
     for (const item of subtractions) {
-      const node = getNode(config, item);
-
-      if (node) {
-        await config.exit(node);
-      }
+      await config.exit(item);
       dispatch({ t: "exited", item });
     }
   };
 
+  const subtractionSet = new Set(subtractions.map(config.toId));
+  const itemsNew: Model<T>["items"] = [
+    ...model.items.map((item): TransitionItem<T> => {
+      if (subtractionSet.has(config.toId(item.item))) {
+        return {
+          t: "exiting",
+          item: item.item,
+        };
+      }
+      return item;
+    }),
+
+    ...additions.map((item): TransitionItem<T> => {
+      return {
+        t: "entering",
+        item,
+      };
+    }),
+  ];
+
   return {
     model: {
       ...model,
-      items: [
-        ...model.items,
-        ...additions.map(
-          (item): TransitionItem<T> => ({ t: "entering", item })
-        ),
-      ],
+      items: itemsNew,
     },
     cmd: Cmd.batch([enterCmd, exitCmd]),
   };

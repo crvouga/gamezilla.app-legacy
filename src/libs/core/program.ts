@@ -104,7 +104,12 @@ const run = <Model, Msg>(program: Program<Model, Msg>): (() => void) => {
   });
 
   const cmdSub = program.state$.subscribe(({ cmd }) => {
-    cmd(program.dispatch);
+    // TODO: use a scheduler
+    // Make sure that the view render is done before the cmd is executed
+    // because cmd might do animations
+    requestAnimationFrame(() => {
+      cmd(program.dispatch);
+    });
   });
 
   return () => {

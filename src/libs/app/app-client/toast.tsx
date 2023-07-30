@@ -1,10 +1,16 @@
-import { Transition, Cmd, Time, p, andThen } from "@gamezilla/core";
+import { TransitionGroup, Cmd, Time, p, andThen } from "@gamezilla/core";
 import { ClientAppMsg } from "@gamezilla/shared/client";
 import { IconXMark } from "@gamezilla/ui";
 
-const config: Transition.Config<Toast> = {
-  toId: (toast) => String(toast.toastId),
-  enter: async (node) => {
+const config: TransitionGroup.Config<Toast> = {
+  toId: (toast) => `toast-${String(toast.toastId)}`,
+  enter: async (toast) => {
+    const node = document.getElementById(config.toId(toast));
+
+    if (!node) {
+      return;
+    }
+
     const animation = node.animate(
       [{ transform: "translateY(-100%)" }, { transform: "translateY(0%)" }],
       {
@@ -13,11 +19,20 @@ const config: Transition.Config<Toast> = {
         fill: "both",
       }
     );
+
     await new Promise((resolve) => {
-      animation.onfinish = resolve;
+      animation.onfinish = () => {
+        resolve(null);
+      };
     });
   },
-  exit: async (node) => {
+  exit: async (toast) => {
+    const node = document.getElementById(config.toId(toast));
+
+    if (!node) {
+      return;
+    }
+
     const animation = node.animate(
       [{ transform: "translateY(0%)" }, { transform: "translateY(-100%)" }],
       {
@@ -26,8 +41,11 @@ const config: Transition.Config<Toast> = {
         fill: "both",
       }
     );
+
     await new Promise((resolve) => {
-      animation.onfinish = resolve;
+      animation.onfinish = () => {
+        resolve(null);
+      };
     });
   },
 };
@@ -43,7 +61,7 @@ const config: Transition.Config<Toast> = {
 export type Model = {
   runningId: number;
   toasts: Toast[];
-  transition: Transition.Model<Toast>;
+  transition: TransitionGroup.Model<Toast>;
 };
 
 export type Toast = {
@@ -55,7 +73,7 @@ export type Toast = {
 export const init: Model = {
   runningId: 0,
   toasts: [],
-  transition: Transition.init<Toast>([]),
+  transition: TransitionGroup.init<Toast>([]),
 };
 
 //
@@ -70,7 +88,7 @@ export type Msg =
   | { t: "time" }
   | { t: "clicked-dismiss-button"; toastId: number }
   | { t: "toast-duration-elapsed"; toastId: number }
-  | { t: "transition"; c: Transition.Msg<Toast> };
+  | { t: "transition"; c: TransitionGroup.Msg<Toast> };
 
 export const update = ({
   model,
@@ -120,7 +138,7 @@ const updateTransitions = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  const updated = Transition.update({
+  const updated = TransitionGroup.update({
     config,
     model: model.transition,
     msg: msg?.t === "transition" ? msg.c : undefined,

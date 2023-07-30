@@ -24,4 +24,4 @@ export * as Time from "./time";
 export { Posix } from "./unix-time";
 export * from "./utils";
 export { Uuid } from "./data/uuid";
-export * as Transition from "./transition";
+export * as TransitionGroup from "./transition-group";
