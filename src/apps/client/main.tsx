@@ -8,7 +8,15 @@ import {
   serverPort,
   sessionIdKey,
 } from "@gamezilla/app";
-import { Browser, Cmd, Posix, toMsgPayload, toMsgType } from "@gamezilla/core";
+import {
+  Browser,
+  Cmd,
+  Debug,
+  Posix,
+  Program,
+  toMsgPayload,
+  toMsgType,
+} from "@gamezilla/core";
 import { StrictMode } from "react";
 import * as ReactDOM from "react-dom/client";
 import { Subscription } from "rxjs";
@@ -70,19 +78,41 @@ const main = () => {
   const sendToServer =
     (msg: ToServer): Cmd =>
     () => {
-      if (env.isDev) {
-        setTimeout(() => {
-          socketClient.emit("to-server", msg);
-        }, 50 + 100 * Math.random());
-        return;
-      }
-
       socketClient.emit("to-server", msg);
     };
 
   const root = ReactDOM.createRoot(
     document.getElementById("root") as HTMLElement
   );
+
+  if (false) {
+    const program = Program.create({
+      init: AppClient.init({ location: Browser.getLocation() }),
+      update: (input) =>
+        AppClient.update({
+          ...input,
+          sendToServer,
+        }),
+      subscriptions: AppClient.subscriptions,
+    });
+
+    const attached = Debug.ReduxDevTools.withDebugger(program);
+
+    Program.run(attached.program);
+
+    attached.program.state$.subscribe((state) => {
+      root.render(
+        <StrictMode>
+          <AppClient.View
+            now={state.model._now}
+            model={state.model}
+            dispatch={attached.program.dispatch}
+          />
+        </StrictMode>
+      );
+    });
+    return;
+  }
 
   type State = { model: ClientModel; cmd?: Cmd<ClientMsg> };
 
