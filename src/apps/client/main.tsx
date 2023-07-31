@@ -1,25 +1,13 @@
 import {
   AppClient,
-  ClientModel,
-  ClientMsg,
   ClientToServerEvents,
   ServerToClientEvents,
   ToServer,
   serverPort,
   sessionIdKey,
 } from "@gamezilla/app";
-import {
-  Browser,
-  Cmd,
-  Debug,
-  Posix,
-  Program,
-  toMsgPayload,
-  toMsgType,
-} from "@gamezilla/core";
-import { StrictMode } from "react";
+import { Browser, Cmd, ProgramV2 } from "@gamezilla/core";
 import * as ReactDOM from "react-dom/client";
-import { Subscription } from "rxjs";
 import { Socket, io } from "socket.io-client";
 import "./main.css";
 
@@ -85,82 +73,46 @@ const main = () => {
     document.getElementById("root") as HTMLElement
   );
 
-  if (false) {
-    const program = Program.create({
-      init: AppClient.init({ location: Browser.getLocation() }),
-      update: (input) =>
-        AppClient.update({
-          ...input,
-          sendToServer,
-        }),
-      subscriptions: AppClient.subscriptions,
-    });
+  const program = ProgramV2.create({
+    init: () => {
+      return AppClient.init({ location: Browser.getLocation() });
+    },
+    update: (input) => {
+      return AppClient.update({
+        now: input.ctx.now,
+        model: input.model,
+        msg: input.msg,
+        sendToServer,
+      });
+    },
+    subscriptions: (input) => {
+      return AppClient.subscriptions({
+        now: input.ctx.now,
+        model: input.model,
+      });
+    },
+  });
 
-    const attached = Debug.ReduxDevTools.withDebugger(program);
-
-    Program.run(attached.program);
-
-    attached.program.state$.subscribe((state) => {
-      root.render(
-        <StrictMode>
-          <AppClient.View
-            now={state.model._now}
-            model={state.model}
-            dispatch={attached.program.dispatch}
-          />
-        </StrictMode>
-      );
-    });
-    return;
-  }
-
-  type State = { model: ClientModel; cmd?: Cmd<ClientMsg> };
-
-  let state: State = AppClient.init({ location: Browser.getLocation() });
-
-  let subscribed: Subscription | null = null;
-
-  function dispatch(msg: ClientMsg) {
-    const now = Posix.fromNumber(Date.now());
-
-    const updated = AppClient.update({
-      now,
-      model: state.model,
-      msg,
-      sendToServer,
-    });
-
-    console.log(toMsgType(msg));
-    console.log(toMsgPayload(msg, {}));
-
-    setState(now, updated);
-  }
-
-  function setState(now: Posix, stateNew: State) {
+  program.subscribe(async (ctx, model) => {
     root.render(
-      <StrictMode>
-        <AppClient.View now={now} model={stateNew.model} dispatch={dispatch} />
-      </StrictMode>
+      <AppClient.View now={ctx.now} model={model} dispatch={program.dispatch} />
     );
+  });
 
-    if (subscribed) {
-      subscribed.unsubscribe();
-    }
-
-    subscribed = AppClient.subscriptions({
-      now,
-      model: stateNew.model,
-    }).subscribe(dispatch);
-
-    if (stateNew.cmd) {
-      stateNew.cmd(dispatch);
-    }
-
-    state = stateNew;
-  }
-
-  setState(Posix.fromNumber(Date.now()), state);
+  program.start();
 };
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore

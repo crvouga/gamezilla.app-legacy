@@ -18,6 +18,27 @@ export function create<Model, Msg>(input: {
   };
   subscriptions: (input: { ctx: Ctx; model: Model }) => Sub<Msg>;
 }) {
+  let id = 0;
+  const subscribers = new Map<
+    number,
+    (ctx: Ctx, model: Model) => Promise<void>
+  >();
+  const subscribe = (
+    cb: (ctx: Ctx, model: Model) => Promise<void>
+  ): (() => void) => {
+    subscribers.set(id, cb);
+    id++;
+    return () => {
+      subscribers.delete(id);
+    };
+  };
+
+  async function callSubscribers(ctx: Ctx, model: Model) {
+    for (const cb of subscribers.values()) {
+      await cb(ctx, model);
+    }
+  }
+
   let state = input.init({
     ctx: {
       now: Posix.fromNumber(Date.now()),
@@ -40,7 +61,14 @@ export function create<Model, Msg>(input: {
     setState(ctx, updated);
   }
 
-  function setState(ctx: Ctx, stateNew: { model: Model; cmd?: Cmd<Msg> }) {
+  async function setState(
+    ctx: Ctx,
+    stateNew: { model: Model; cmd?: Cmd<Msg> }
+  ) {
+    state = stateNew;
+
+    await callSubscribers(ctx, stateNew.model);
+
     if (subscribed) {
       subscribed.unsubscribe();
     }
@@ -48,23 +76,32 @@ export function create<Model, Msg>(input: {
     subscribed = input
       .subscriptions({
         ctx,
-        model: stateNew.model,
+        model: state.model,
       })
       .subscribe(dispatch);
 
-    if (stateNew.cmd) {
-      stateNew.cmd(dispatch);
+    if (state.cmd) {
+      state.cmd(dispatch);
     }
-
-    state = stateNew;
   }
 
-  const ctx: Ctx = {
-    now: Posix.fromNumber(Date.now()),
-  };
-  setState(ctx, state);
+  function start() {
+    const ctx: Ctx = {
+      now: Posix.fromNumber(Date.now()),
+    };
+    setState(ctx, state);
+
+    return function stop() {
+      if (subscribed) {
+        subscribed.unsubscribe();
+      }
+      subscribers.clear();
+    };
+  }
 
   return {
+    start,
     dispatch,
+    subscribe,
   };
 }
