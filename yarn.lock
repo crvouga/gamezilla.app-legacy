@@ -902,6 +902,11 @@
   dependencies:
     "@babel/types" "^7.3.0"
 
+"@types/chessboardjs@^0.3.2":
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/@types/chessboardjs/-/chessboardjs-0.3.2.tgz#70150392548948251e147aee8593527aab111a0b"
+  integrity sha512-2Xrx3iemNvGAC4BWUBr4igbB/sRZu6W+rWogNS0wfWZaw1YhxGygcAU3Oyzruas/oUbZ35jrE96AGvLR1NZxbg==
+
 "@types/cookie@^0.4.1":
   version "0.4.1"
   resolved "https://registry.npmjs.org/@types/cookie/-/cookie-0.4.1.tgz"
