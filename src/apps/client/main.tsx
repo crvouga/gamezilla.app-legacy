@@ -6,7 +6,13 @@ import {
   serverPort,
   sessionIdKey,
 } from "@gamezilla/app";
-import { Browser, Cmd, ProgramV2 } from "@gamezilla/core";
+import {
+  Browser,
+  Cmd,
+  ProgramV2,
+  toMsgPayload,
+  toMsgType,
+} from "@gamezilla/core";
 import * as ReactDOM from "react-dom/client";
 import { Socket, io } from "socket.io-client";
 import "./main.css";
@@ -93,7 +99,12 @@ const main = () => {
     },
   });
 
-  program.subscribe(async (ctx, model) => {
+  program.subscribe(async function (model, ctx, msg) {
+    if (msg) {
+      console.log(toMsgType(msg), toMsgPayload(msg, {}), model);
+    } else {
+      console.log(model);
+    }
     root.render(
       <AppClient.View now={ctx.now} model={model} dispatch={program.dispatch} />
     );
