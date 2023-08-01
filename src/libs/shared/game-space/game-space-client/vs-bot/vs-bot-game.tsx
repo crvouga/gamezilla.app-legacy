@@ -2,52 +2,48 @@ import { UserId } from "@gamezilla/shared/app";
 import { IconRobot, MyAvatar, VDom } from "@gamezilla/ui";
 import { GameSpaceViewCtx } from "../game-space-client";
 import { PlayerType } from "./view-vs-bot";
-import { Cmd, TransitionList } from "@gamezilla/core";
+import { Cmd, Transition } from "@gamezilla/core";
 
 const toOverlayId = (_gameOver: GameOver): string => "game-over";
 
-const overlayConfig = TransitionList.config<GameOver>({
+const overlayConfig = Transition.config<GameOver>({
   toId: toOverlayId,
   enter: (val) => fadeIn(toOverlayId(val)),
   exit: (val) => fadeOut(toOverlayId(val)),
 });
 
 export type Model = {
-  overlay: TransitionList.Model<GameOver>;
+  overlay: Transition.Model<GameOver>;
 };
 
-export const init = (gameOver?: GameOver | null): Model => ({
-  overlay: TransitionList.init(gameOver ? [gameOver] : []),
-});
+export const init = (gameOver?: GameOver | null): Model => {
+  return {
+    overlay: Transition.init(overlayConfig, gameOver ? [gameOver] : []),
+  };
+};
 
 export type Msg = {
   t: "overlay";
-  c: TransitionList.Msg<GameOver>;
+  c: Transition.Msg;
 };
 
-export const update = ({
-  msg,
-  model,
-  gameOver,
-}: {
-  msg?: Msg;
-  model?: Model;
-  gameOver?: GameOver | null;
-}): {
-  model: Model;
-  cmd?: Cmd<Msg>;
-} => {
-  const overlay = TransitionList.update<GameOver>({
-    msg: msg?.c,
-    model: model?.overlay,
-    config: overlayConfig,
-    list: gameOver ? [gameOver] : [],
-  });
+export const update = (model: Model, msg: Msg): Model => {
+  const overlay = Transition.update(model?.overlay, msg.c);
 
+  return { overlay };
+};
+
+export const watch = (
+  model: Model,
+  gameOver?: GameOver
+): { model: Model; cmd: Cmd<Msg> } => {
+  const overlay = Transition.watch(
+    overlayConfig,
+    model.overlay,
+    gameOver ? [gameOver] : []
+  );
   return {
-    model: {
-      overlay: overlay.model,
-    },
+    model: { overlay: overlay.model },
     cmd: Cmd.tag_("overlay", overlay.cmd),
   };
 };
@@ -200,7 +196,7 @@ const Draw = ({ ctx, playerOne, playerTwo, human }: Props) => {
 };
 
 async function fadeIn(id: string) {
-  const node = await TransitionList.waitForElementById(id);
+  const node = await Transition.waitForElementById(id);
 
   await node?.animate([{ opacity: 0 }, { opacity: 1 }], {
     duration: 200,
@@ -211,7 +207,7 @@ async function fadeIn(id: string) {
 }
 
 async function fadeOut(id: string) {
-  const node = await TransitionList.waitForElementById(id);
+  const node = await Transition.waitForElementById(id);
   await node?.animate([{ opacity: 1 }, { opacity: 0 }], {
     duration: 200,
     easing: "ease-in-out",

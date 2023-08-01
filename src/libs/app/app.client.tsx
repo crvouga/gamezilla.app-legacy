@@ -147,7 +147,7 @@ const update_ = ({
   }
 
   if (msg.t === "toast") {
-    const updated = Toast.update({ msg: msg.c, model: model.toast });
+    const updated = Toast.update(model.toast, msg.c);
     return {
       model: { ...model, toast: updated.model },
       cmd: Cmd.tag_("toast", updated.cmd),

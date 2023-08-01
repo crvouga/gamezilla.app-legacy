@@ -55,8 +55,8 @@ export type ServerModel = CoreModel;
 
 export type ClientModel = CoreModel & {
   vsBotSetup: VsBotSetup.Model;
-  vsBotGame?: VsBotGame.Model;
-  columnsUI?: ColumnsUI.Model;
+  vsBotGame: VsBotGame.Model;
+  columnsUI: ColumnsUI.Model;
 };
 
 export const initShared = ({

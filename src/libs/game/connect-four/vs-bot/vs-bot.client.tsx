@@ -51,6 +51,8 @@ export const init = (...params: Parameters<typeof initShared>): ClientModel => {
   return {
     ...shared,
     vsBotSetup: VsBotSetup.init,
+    vsBotGame: VsBotGame.init(null),
+    columnsUI: ColumnsUI.init(),
   };
 };
 
@@ -78,19 +80,13 @@ export function update({
     { model },
     andThen(({ model }) => {
       if (msg.t === "columns-ui") {
-        return { model };
+        const updated = ColumnsUI.update(model.columnsUI, msg.c);
+        return { model: { ...model, columnsUI: updated } };
       }
 
       if (msg.t === "vs-bot-game") {
-        if (model.type !== "game") {
-          return { model };
-        }
-        const updated = VsBotGame.update({
-          msg: msg.c,
-          model: model.vsBotGame,
-          gameOver: statusToGameOver(toStatus(model.columns)),
-        });
-        return { model: { ...model, vsBotGame: updated.model } };
+        const updated = VsBotGame.update(model.vsBotGame, msg.c);
+        return { model: { ...model, vsBotGame: updated } };
       }
 
       if (msg.t === "vs-bot-setup") {
@@ -121,32 +117,22 @@ export function update({
         cmd: Cmd.batch<ClientMsg>([sync.cmd, sendToServer(msg)]),
       };
     }),
-    andThen(({ model }) => updateUI({ model, msg }))
+    andThen(({ model }) => watch(model))
   );
 }
 
-const updateUI = ({
-  model,
-  msg,
-}: {
-  msg?: ClientMsg;
-  model: ClientModel;
-}): {
-  model: ClientModel;
-  cmd?: Cmd<ClientMsg>;
-} => {
-  const columnsUI = ColumnsUI.update({
-    columns: model.type === "game" ? model.columns : undefined,
-    msg: msg?.t === "columns-ui" ? msg.c : undefined,
-    model: model.columnsUI,
-  });
+function watch(model: ClientModel) {
+  const columnsUI = ColumnsUI.watch(
+    model.columnsUI,
+    "columns" in model ? model.columns : undefined
+  );
 
-  const vsBotGame = VsBotGame.update({
-    gameOver:
-      model.type === "game" ? statusToGameOver(toStatus(model.columns)) : null,
-    model: model.vsBotGame,
-    msg: msg?.t === "vs-bot-game" ? msg.c : undefined,
-  });
+  const vsBotGame = VsBotGame.watch(
+    model.vsBotGame,
+    model.type === "game"
+      ? statusToGameOver(toStatus(model.columns)) ?? undefined
+      : undefined
+  );
 
   return {
     model: {
@@ -155,11 +141,11 @@ const updateUI = ({
       vsBotGame: vsBotGame.model,
     },
     cmd: Cmd.batch<ClientMsg>([
-      Cmd.tag_("columns-ui", columnsUI.cmd),
       Cmd.tag_("vs-bot-game", vsBotGame.cmd),
+      Cmd.tag_("columns-ui", columnsUI.cmd),
     ]),
   };
-};
+}
 
 export const updateFromServer = (input: {
   ctx: GameSpaceClientCtx;
@@ -169,7 +155,10 @@ export const updateFromServer = (input: {
   model: ClientModel;
   cmd?: Cmd<ClientMsg>;
 } => {
-  return p(updateFromServer_(input), andThen(updateUI));
+  return p(
+    updateFromServer_(input),
+    andThen(({ model }) => watch(model))
+  );
 };
 
 const updateFromServer_: typeof updateFromServer = ({ ctx, msg, model }) => {
@@ -218,7 +207,7 @@ export const syncWithServer = ({
       : VsBotGame.init(null),
   };
 
-  return updateUI({ model: modelNew });
+  return watch(modelNew);
 };
 
 //

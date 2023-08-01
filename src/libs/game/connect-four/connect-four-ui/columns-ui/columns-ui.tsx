@@ -1,4 +1,4 @@
-import { Cmd, TransitionList, easeAttrs } from "@gamezilla/core";
+import { Cmd, Transition, easeAttrs } from "@gamezilla/core";
 import {
   COLUMN_COUNT,
   Columns,
@@ -19,13 +19,13 @@ import { ViewColumnsProps } from "./shared";
 //
 //
 
-const discsConfig = TransitionList.config<Disc>({
+const discsConfig = Transition.config<Disc>({
   toId: (disc) => disc.id,
   enter: discEnter,
   exit: discExit,
 });
 
-const winsConfig = TransitionList.config<Win>({
+const winsConfig = Transition.config<Win>({
   toId: winToId,
   enter: draw,
   exit: undraw,
@@ -39,14 +39,14 @@ const winsConfig = TransitionList.config<Win>({
 //
 
 export type Model = {
-  discs: TransitionList.Model<Disc>;
-  wins: TransitionList.Model<Win>;
+  discs: Transition.Model<Disc>;
+  wins: Transition.Model<Win>;
 };
 
 export function init(columns?: Columns): Model {
   return {
-    discs: TransitionList.init(columns ? toDiscs(columns) : []),
-    wins: TransitionList.init(columns ? toWins(columns) : []),
+    discs: Transition.init(discsConfig, columns ? toDiscs(columns) : []),
+    wins: Transition.init(winsConfig, columns ? toWins(columns) : []),
   };
 }
 
@@ -59,36 +59,20 @@ export function init(columns?: Columns): Model {
 //
 
 export type Msg =
-  | { t: "discs"; c: TransitionList.Msg<Disc> }
-  | { t: "wins"; c: TransitionList.Msg<Win> };
+  | { t: "discs"; c: Transition.Msg }
+  | { t: "wins"; c: Transition.Msg };
 
-export function update({
-  msg,
-  model,
-  columns,
-}: {
-  columns?: Columns;
-  msg?: Msg;
-  model?: Model;
-}): {
-  model?: Model;
-  cmd?: Cmd<Msg>;
-} {
-  if (!model || !columns) {
-    return { model };
-  }
-  const discs = TransitionList.update<Disc>({
-    msg: msg?.t === "discs" ? msg.c : undefined,
-    model: model.discs,
-    config: discsConfig,
-    list: toDiscs(columns),
-  });
-  const wins = TransitionList.update<Win>({
-    msg: msg?.t === "wins" ? msg.c : undefined,
-    model: model.wins,
-    config: winsConfig,
-    list: toWins(columns),
-  });
+export function watch(model: Model, columns?: Columns) {
+  const discs = Transition.watch<Disc>(
+    discsConfig,
+    model.discs,
+    columns ? toDiscs(columns) : undefined
+  );
+  const wins = Transition.watch<Win>(
+    winsConfig,
+    model.wins,
+    columns ? toWins(columns) : undefined
+  );
   return {
     model: {
       discs: discs.model,
@@ -98,6 +82,21 @@ export function update({
       Cmd.tag_("discs", discs.cmd),
       Cmd.tag_("wins", wins.cmd),
     ]),
+  };
+}
+
+export function update(model: Model, msg: Msg) {
+  const discs = Transition.update<Disc>(
+    model.discs,
+    msg.t === "discs" ? msg.c : undefined
+  );
+  const wins = Transition.update<Win>(
+    model.wins,
+    msg.t === "wins" ? msg.c : undefined
+  );
+  return {
+    discs: discs,
+    wins: wins,
   };
 }
 
@@ -169,7 +168,7 @@ export function View({
 async function discEnter(disc: Disc) {
   const { y, id } = disc;
 
-  const node = await TransitionList.waitForElementById(id);
+  const node = await Transition.waitForElementById(id);
 
   if (!node) {
     console.log("no node");
@@ -188,7 +187,7 @@ async function discEnter(disc: Disc) {
 async function discExit(disc: Disc) {
   const { x, y, id } = disc;
 
-  const node = await TransitionList.waitForElementById(id);
+  const node = await Transition.waitForElementById(id);
 
   if (!node) {
     console.log("no node");
@@ -209,7 +208,7 @@ async function discExit(disc: Disc) {
 async function draw(win: Win) {
   const id = winToId(win);
 
-  const node = await TransitionList.waitForElementById(id);
+  const node = await Transition.waitForElementById(id);
 
   if (!(node instanceof SVGRectElement)) {
     console.log("no node");
@@ -236,7 +235,7 @@ async function draw(win: Win) {
 async function undraw(win: Win) {
   const id = winToId(win);
 
-  const node = await TransitionList.waitForElementById(id);
+  const node = await Transition.waitForElementById(id);
 
   if (!(node instanceof SVGRectElement)) {
     console.log("no node");

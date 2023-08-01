@@ -37,6 +37,7 @@ export const CoreModelZod: z.ZodType<CoreModel> = z.discriminatedUnion("type", [
 
 export const ServerModelZod: z.ZodType<ServerModel> = CoreModelZod;
 
+// @ts-ignore
 export const ClientModelZod: z.ZodType<ClientModel> = CoreModelZod.and(
   z.object({
     vsBotSetup: VsBotSetup.ModelZod,

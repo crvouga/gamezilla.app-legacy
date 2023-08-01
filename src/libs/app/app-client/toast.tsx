@@ -1,11 +1,11 @@
-import { TransitionList, Cmd, Time, p, andThen } from "@gamezilla/core";
+import { Transition, Cmd, Time, p, andThen } from "@gamezilla/core";
 import { ClientAppMsg } from "@gamezilla/shared/client";
 import { IconXMark } from "@gamezilla/ui";
 
-const config: TransitionList.Config<Toast> = {
+const config: Transition.Config<Toast> = {
   toId: (toast) => `toast-${String(toast.toastId)}`,
   enter: async (toast) => {
-    const node = await TransitionList.waitForElementById(config.toId(toast));
+    const node = await Transition.waitForElementById(config.toId(toast));
 
     await node?.animate(
       [{ transform: "translateY(-100%)" }, { transform: "translateY(0%)" }],
@@ -17,7 +17,7 @@ const config: TransitionList.Config<Toast> = {
     ).finished;
   },
   exit: async (toast) => {
-    const node = await TransitionList.waitForElementById(config.toId(toast));
+    const node = await Transition.waitForElementById(config.toId(toast));
 
     await node?.animate(
       [{ transform: "translateY(0%)" }, { transform: "translateY(-100%)" }],
@@ -41,7 +41,7 @@ const config: TransitionList.Config<Toast> = {
 export type Model = {
   runningId: number;
   toasts: Toast[];
-  uiToasts: TransitionList.Model<Toast>;
+  uiToasts: Transition.Model<Toast>;
 };
 
 export type Toast = {
@@ -53,7 +53,7 @@ export type Toast = {
 export const init: Model = {
   runningId: 0,
   toasts: [],
-  uiToasts: TransitionList.init<Toast>([]),
+  uiToasts: Transition.init<Toast>(),
 };
 
 //
@@ -68,25 +68,28 @@ export type Msg =
   | { t: "time" }
   | { t: "clicked-dismiss-button"; toastId: number }
   | { t: "toast-duration-elapsed"; toastId: number }
-  | { t: "uiToast"; c: TransitionList.Msg<Toast> };
+  | { t: "ui-toast"; c: Transition.Msg };
 
-export const update = ({
-  model,
-  msg,
-}: {
-  msg: Msg;
-  model: Model;
-}): {
+export function update(
+  model: Model,
+  msg: Msg
+): {
   model: Model;
   cmd?: Cmd<Msg>;
-} => {
+} {
   return p(
     { model },
-    andThen(({ model }) => updateToasts({ model, msg })),
-    andThen(({ model }) => updateUI({ model, msg }))
+    andThen(({ model }) => update_(model, msg)),
+    andThen(({ model }) => watch(model))
   );
-};
-const updateToasts: typeof update = ({ model, msg }) => {
+}
+
+const update_: typeof update = (model, msg) => {
+  if (msg.t === "ui-toast") {
+    const uiToasts = Transition.update(model.uiToasts, msg.c);
+    return { model: { ...model, uiToasts } };
+  }
+
   if (msg.t === "clicked-dismiss-button") {
     return {
       model: {
@@ -104,16 +107,23 @@ const updateToasts: typeof update = ({ model, msg }) => {
       },
     };
   }
-
   return { model };
 };
 
+function watch(model: Model): { model: Model; cmd: Cmd<Msg> } {
+  const uiToasts = Transition.watch(config, model.uiToasts, model.toasts);
+  return {
+    model: { ...model, uiToasts: uiToasts.model },
+    cmd: Cmd.tag_("ui-toast", uiToasts.cmd),
+  };
+}
+
 //
 //
 //
 //
 
-export const updateFromApp = ({
+export function updateFromApp({
   msg,
   model,
 }: {
@@ -122,7 +132,7 @@ export const updateFromApp = ({
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
-} => {
+} {
   if (msg.t === "toast-enqueued") {
     const toastId = model.runningId;
     const duration = msg.duration ?? 2000;
@@ -137,35 +147,13 @@ export const updateFromApp = ({
         toastId: model.runningId,
       }),
     };
-    return p(updated, andThen(updateUI));
+    return p(
+      updated,
+      andThen(({ model }) => watch(model))
+    );
   }
 
   return { model };
-};
-
-//
-//
-//
-//
-//
-
-function updateUI({ model, msg }: { msg?: Msg; model: Model }): {
-  model: Model;
-  cmd?: Cmd<Msg>;
-} {
-  const updated = TransitionList.update({
-    config,
-    model: model.uiToasts,
-    msg: msg?.t === "uiToast" ? msg.c : undefined,
-    list: model.toasts,
-  });
-  return {
-    model: {
-      ...model,
-      uiToasts: updated.model,
-    },
-    cmd: Cmd.tag_("uiToast", updated.cmd),
-  };
 }
 
 //
@@ -176,13 +164,13 @@ function updateUI({ model, msg }: { msg?: Msg; model: Model }): {
 //
 //
 
-export const View = ({
+export function View({
   model,
   dispatch,
 }: {
   model: Model;
   dispatch: (msg: Msg) => void;
-}) => {
+}) {
   return (
     <div className="pointer-events-none absolute left-0 top-0 flex w-full flex-col items-center gap-4 px-4 pt-4">
       {model.uiToasts.map(({ item: toast }) => (
@@ -208,4 +196,4 @@ export const View = ({
       ))}
     </div>
   );
-};
+}
