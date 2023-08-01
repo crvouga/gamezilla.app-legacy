@@ -101,7 +101,10 @@ const main = () => {
 
   program.subscribe(async function (model, ctx, msg) {
     if (msg) {
-      console.log(toMsgType(msg), toMsgPayload(msg, {}), model);
+      console.group("update");
+      console.log(toMsgType(msg), toMsgPayload(msg, {}));
+      console.log(model);
+      console.groupEnd();
     } else {
       console.log(model);
     }
