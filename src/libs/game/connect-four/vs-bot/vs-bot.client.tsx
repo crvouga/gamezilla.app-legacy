@@ -1,6 +1,7 @@
 import { Cmd, Posix, Sub, andThen, p } from "@gamezilla/core";
 import { ClientCtx } from "@gamezilla/shared/client";
 import {
+  GameClient,
   GameLayout,
   GameSpaceClientCtx,
   GameSpaceViewCtx,
@@ -32,21 +33,30 @@ import {
   BotLevel,
   ClientModel,
   ClientMsg,
+  CoreModel,
   ServerModel,
   ToClient,
   ToServer,
   allBotLevels,
-  handle,
-  initShared,
+  updateCore,
+  initCore,
 } from "./vs-bot.core";
 
+export type Client = GameClient<
+  ClientModel,
+  CoreModel,
+  ClientMsg,
+  ToClient,
+  ToServer
+>;
+
 //
 //
 //
 //
 
-export const init = (...params: Parameters<typeof initShared>): ClientModel => {
-  const shared = initShared(...params);
+export const init = (...params: Parameters<typeof initCore>): ClientModel => {
+  const shared = initCore(...params);
 
   return {
     ...shared,
@@ -94,7 +104,7 @@ export const update = ({
         return { model: { ...model, vsBotSetup: updated } };
       }
 
-      const result = handle({ ctx, msg, model });
+      const result = updateCore({ ctx, msg, model });
 
       if (result.t === "err") {
         return { model };

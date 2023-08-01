@@ -59,11 +59,7 @@ export type ClientModel = CoreModel & {
   columnsUI: ColumnsUI.Model;
 };
 
-export const initShared = ({
-  player,
-}: {
-  player: UserId | null;
-}): CoreModel => {
+export const initCore = ({ player }: { player: UserId | null }): CoreModel => {
   return {
     type: "setup",
     botLevel: "Medium",
@@ -155,7 +151,7 @@ export type Res = Req & { result: Result<string, CoreModel> };
 //
 //
 
-export const handle = ({
+export const updateCore = ({
   ctx,
   msg,
   model,

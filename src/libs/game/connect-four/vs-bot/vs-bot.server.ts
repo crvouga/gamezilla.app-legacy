@@ -2,9 +2,9 @@ import { andThen, Cmd, Ok, p, Sub } from "@gamezilla/core";
 import { GameSpaceMsg, GameSpaceReqCtx } from "@gamezilla/shared/game-space";
 import { findBestMove } from "../connect-four";
 import {
-  handle,
+  updateCore,
   handleBotMove,
-  initShared,
+  initCore,
   isBotTurn,
   Res,
   ServerModel,
@@ -24,7 +24,7 @@ import {
 
 export type Model = ServerModel;
 
-export const init = initShared;
+export const init = initCore;
 
 //
 //
@@ -119,7 +119,7 @@ const updateFromClient_: typeof updateFromClient = ({
 }) => {
   const res: Res = {
     ...msg,
-    result: handle({ ctx, msg, model }),
+    result: updateCore({ ctx, msg, model }),
   };
 
   if (res.result.t === "err") {
