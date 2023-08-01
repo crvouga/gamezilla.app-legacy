@@ -1,13 +1,13 @@
+import { Transition, p } from "@gamezilla/core";
 import { UserId } from "@gamezilla/shared/app";
 import {
+  Button,
   IconArrowLeftOnRect,
   IconQuestionMark,
   MyAvatar,
-  Button,
   MyDrawer,
   VDom,
 } from "@gamezilla/ui";
-import { z } from "zod";
 import { GameSpaceViewCtx } from "../game-space-client";
 import { ViewGameHeader } from "../view-game-header";
 import { VsBotProps } from "./view-vs-bot";
@@ -18,34 +18,75 @@ import { VsBotProps } from "./view-vs-bot";
 //
 //
 
-export type Model = {
-  opened: "change-bot" | null;
-};
+type Opened = "change-bot";
 
-export const ModelZod: z.ZodType<Model> = z.object({
-  opened: z.enum(["change-bot"]).nullable(),
-});
+export type Model = {
+  opened: Opened | null;
+  openedUI: Transition.Model<Opened>;
+};
 
 export const init: Model = {
   opened: null,
+  openedUI: Transition.init<Opened>(),
 };
 
+export const openedConfig = Transition.config<Opened>({
+  toId: (val) => String(val),
+  enter: (val) => fadeIn(String(val)),
+  exit: (val) => fadeOut(String(val)),
+});
+
+async function fadeOut(htmlId: string) {
+  const node = await Transition.waitForElementById(htmlId);
+  await node?.animate([{ opacity: 1 }, { opacity: 0 }], {
+    duration: 200,
+    fill: "both",
+  }).finished;
+}
+
+async function fadeIn(htmlId: string) {
+  const node = await Transition.waitForElementById(htmlId);
+  await node?.animate([{ opacity: 0 }, { opacity: 1 }], {
+    duration: 200,
+    fill: "both",
+  }).finished;
+}
+
 //
 //
 //
 //
 //
 
-export type Msg = { t: "clicked-change-bot" } | { t: "closed-modal" };
+export type Msg =
+  | { t: "clicked-change-bot" }
+  | { t: "closed-modal" }
+  | { t: "ui-opened"; c: Transition.Msg };
 
-export const update = (input: { msg: Msg; model: Model }): { model: Model } => {
-  if (input.msg.t === "clicked-change-bot") {
-    return { model: { opened: "change-bot" } };
-  }
-  if (input.msg.t === "closed-modal") {
-    return { model: { opened: null } };
-  }
-  return input;
+export const update = (model: Model, msg: Msg): Model => {
+  return p(
+    model,
+    (model): Model => {
+      if (msg.t === "clicked-change-bot") {
+        return { ...model, opened: "change-bot" };
+      }
+      if (msg.t === "closed-modal") {
+        return { ...model, opened: null };
+      }
+      if (msg.t === "ui-opened") {
+        return { ...model, openedUI: Transition.update(model.openedUI, msg.c) };
+      }
+      return model;
+    },
+    (model): Model => {
+      const openedUI = Transition.watch(
+        openedConfig,
+        model.openedUI,
+        model.opened ? [model.opened] : []
+      );
+      return { ...model, openedUI: openedUI.model };
+    }
+  );
 };
 
 //

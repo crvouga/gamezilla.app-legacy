@@ -82,8 +82,8 @@ export const update = ({
   cmd?: Cmd<Msg>;
 } => {
   if (msg.t === "vs-bot-setup") {
-    const updated = VsBotSetup.update({ msg: msg.c, model: model.vsBotSetup });
-    return { model: { ...model, vsBotSetup: updated.model } };
+    const updated = VsBotSetup.update(model.vsBotSetup, msg.c);
+    return { model: { ...model, vsBotSetup: updated } };
   }
 
   const handled = handle({ ctx, msg, model });

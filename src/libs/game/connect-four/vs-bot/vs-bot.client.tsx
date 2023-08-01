@@ -20,7 +20,7 @@ import {
   IconRightLeft,
   LoadingBar,
 } from "@gamezilla/ui";
-import { Status, toStatus, toTurn } from "../connect-four";
+import { Columns, toStatus, toTurn } from "../connect-four";
 import { ViewCoverArt } from "../connect-four-cover-art";
 import {
   ColumnsUI,
@@ -62,7 +62,7 @@ export const init = (...params: Parameters<typeof initShared>): ClientModel => {
 //
 //
 
-export function update({
+export const update = ({
   sendToServer,
   ctx,
   msg,
@@ -75,8 +75,8 @@ export function update({
 }): {
   model: ClientModel;
   cmd?: Cmd<ClientMsg>;
-} {
-  return p(
+} =>
+  p(
     { model },
     andThen(({ model }) => {
       if (msg.t === "columns-ui") {
@@ -90,14 +90,8 @@ export function update({
       }
 
       if (msg.t === "vs-bot-setup") {
-        if (model.type !== "setup") {
-          return { model };
-        }
-        const updated = VsBotSetup.update({
-          msg: msg.c,
-          model: model.vsBotSetup,
-        });
-        return { model: { ...model, vsBotSetup: updated.model } };
+        const updated = VsBotSetup.update(model.vsBotSetup, msg.c);
+        return { model: { ...model, vsBotSetup: updated } };
       }
 
       const result = handle({ ctx, msg, model });
@@ -119,7 +113,6 @@ export function update({
     }),
     andThen(({ model }) => watch(model))
   );
-}
 
 function watch(model: ClientModel) {
   const columnsUI = ColumnsUI.watch(
@@ -129,9 +122,7 @@ function watch(model: ClientModel) {
 
   const vsBotGame = VsBotGame.watch(
     model.vsBotGame,
-    model.type === "game"
-      ? statusToGameOver(toStatus(model.columns)) ?? undefined
-      : undefined
+    "columns" in model ? toGameOver(model.columns) : undefined
   );
 
   return {
@@ -202,9 +193,9 @@ export const syncWithServer = ({
       : ColumnsUI.init(),
     vsBotGame: clientModel.vsBotGame
       ? clientModel.vsBotGame
-      : serverModel.type === "game"
-      ? VsBotGame.init(statusToGameOver(toStatus(serverModel.columns)))
-      : VsBotGame.init(null),
+      : VsBotGame.init(
+          "columns" in serverModel ? toGameOver(serverModel.columns) : null
+        ),
   };
 
   return watch(modelNew);
@@ -234,16 +225,23 @@ export const subscriptions = (
 //
 //
 
-const statusToGameOver = (status: Status): VsBotGame.GameOver | null => {
-  return status.type === "Tie"
-    ? { t: "draw" }
-    : status.type === "Winner"
-    ? {
+function toGameOver(columns: Columns): VsBotGame.GameOver {
+  const status = toStatus(columns);
+  switch (status.type) {
+    case "Playing": {
+      return { t: null };
+    }
+    case "Tie": {
+      return { t: "draw" };
+    }
+    case "Winner": {
+      return {
         t: "winner",
         winner: status.winner === "player-one" ? "player-one" : "player-two",
-      }
-    : null;
-};
+      };
+    }
+  }
+}
 
 export const View = ({
   model,

@@ -1,5 +1,4 @@
 import { UserIdZod } from "@gamezilla/shared/app";
-import { VsBotSetup } from "@gamezilla/shared/game-space";
 import { z } from "zod";
 import {
   ColumnsZod,
@@ -38,8 +37,4 @@ export const CoreModelZod: z.ZodType<CoreModel> = z.discriminatedUnion("type", [
 export const ServerModelZod: z.ZodType<ServerModel> = CoreModelZod;
 
 // @ts-ignore
-export const ClientModelZod: z.ZodType<ClientModel> = CoreModelZod.and(
-  z.object({
-    vsBotSetup: VsBotSetup.ModelZod,
-  })
-);
+export const ClientModelZod: z.ZodType<ClientModel> = CoreModelZod;

@@ -50,6 +50,9 @@ export const watch = (
 
 export type GameOver =
   | {
+      t: null;
+    }
+  | {
       t: "winner";
       winner: PlayerType;
     }
