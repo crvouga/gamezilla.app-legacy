@@ -49,7 +49,7 @@ export const update = ({
     );
     return {
       model: { t: "vs-user", c: updated[0] },
-      cmd: Cmd.tag_("vs-user", updated[1]),
+      cmd: Cmd.tag("vs-user", updated[1]),
     };
   }
 
@@ -62,7 +62,7 @@ export const update = ({
 
     return {
       model: { t: "vs-bot", c: updated.model },
-      cmd: Cmd.tag_("vs-bot", updated.cmd),
+      cmd: Cmd.tag("vs-bot", updated.cmd),
     };
   }
 
@@ -113,7 +113,7 @@ export const updateFromClient = ({
 
     return {
       model: { ...model, c: updated[0] },
-      cmd: Cmd.tag_("vs-user", updated[1]),
+      cmd: Cmd.tag("vs-user", updated[1]),
     };
   }
 
@@ -128,7 +128,7 @@ export const updateFromClient = ({
 
     return {
       model: { ...model, c: updated.model },
-      cmd: Cmd.tag_("vs-bot", updated.cmd),
+      cmd: Cmd.tag("vs-bot", updated.cmd),
     };
   }
 
@@ -159,7 +159,7 @@ export const updateFromParent = ({
     });
     return {
       model: { t: "vs-bot", c: updated.model },
-      cmd: updated.cmd ? Cmd.tag_("vs-bot", updated.cmd) : undefined,
+      cmd: updated.cmd ? Cmd.tag("vs-bot", updated.cmd) : undefined,
     };
   }
 
@@ -171,7 +171,7 @@ export const updateFromParent = ({
     });
     return {
       model: { t: "vs-user", c: updated.model },
-      cmd: updated.cmd ? Cmd.tag_("vs-user", updated.cmd) : undefined,
+      cmd: updated.cmd ? Cmd.tag("vs-user", updated.cmd) : undefined,
     };
   }
 
@@ -216,11 +216,11 @@ const initMode = ({
 
 export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
   if (model.t === "vs-user") {
-    return Sub.tag_("vs-user", VsUser.subscriptions(intervalId, model.c));
+    return Sub.tag("vs-user", VsUser.subscriptions(intervalId, model.c));
   }
 
   if (model.t === "vs-bot") {
-    return Sub.tag_("vs-bot", VsBot.subscriptions(model.c));
+    return Sub.tag("vs-bot", VsBot.subscriptions(model.c));
   }
 
   return Sub.None;

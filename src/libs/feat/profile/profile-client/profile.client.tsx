@@ -163,7 +163,7 @@ export const updateFromApp = ({
   return p(
     { model },
 
-    andThen(({ model }) => {
+    andThen((model) => {
       if (msg.t !== "route-changed") {
         return { model };
       }
@@ -182,9 +182,9 @@ export const updateFromApp = ({
         cmd: sendToServer({ t: "find-many", userIds: [route.c.userId] }),
       };
     }),
-    andThen(({ model }) => updateUsernameDraft({ model, msg, ctx })),
+    andThen((model) => updateUsernameDraft({ model, msg, ctx })),
 
-    andThen(({ model }) => {
+    andThen((model) => {
       if (msg.t === "route-changed") {
         return { model: { ...model, opened: null } };
       }

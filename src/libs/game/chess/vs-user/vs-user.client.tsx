@@ -1,4 +1,4 @@
-import { Audio, Cmd, Option, Sub, exhaustive, p, t } from "@gamezilla/core";
+import { Cmd, Option, Sub, exhaustive, p } from "@gamezilla/core";
 import { UserId } from "@gamezilla/shared/app";
 import { ViewCtx } from "@gamezilla/shared/client";
 import { GameSpaceClientCtx } from "@gamezilla/shared/game-space";
@@ -8,9 +8,9 @@ import Sounds from "../chess/chess-sounds";
 import {
   ClientModel,
   ClientMsg,
+  CoreModel,
   InputMove,
   ServerModel,
-  CoreModel,
   ToClient,
   ToServer,
   initShared,
@@ -332,8 +332,9 @@ export const updateFromServer = (
   }
 };
 
-const playAudio = (src: string): Cmd<Msg> => {
-  return Audio.play(src, t("audio-done"));
+const playAudio = (_src: string): Cmd<Msg> => {
+  // return Audio.play(src, t("audio-done"));
+  return Cmd.None;
 };
 
 //

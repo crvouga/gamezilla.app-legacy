@@ -89,7 +89,7 @@ export const update = ({
 
         return [
           { ...model, mode: { t: "vs-user", c: child } },
-          Cmd.tag_("vs-user", cmd),
+          Cmd.tag("vs-user", cmd),
         ];
       }
 
@@ -107,7 +107,7 @@ export const update = ({
 
         return [
           { ...model, mode: { t: "vs-bot", c: updated.model } },
-          Cmd.tag_("vs-bot", updated.cmd),
+          Cmd.tag("vs-bot", updated.cmd),
         ];
       }
 
@@ -131,7 +131,7 @@ export const update = ({
           ...model,
           mode: { t: "puzzle", c: updated.model },
         },
-        Cmd.tag_("puzzle", updated?.cmd ?? Cmd.None),
+        Cmd.tag("puzzle", updated?.cmd ?? Cmd.None),
       ];
     }
   }
@@ -190,7 +190,7 @@ export const updateFromServer = ({
 
         return {
           model: { ...model, mode: { t: "vs-user", c: child } },
-          cmd: Cmd.tag_("vs-user", cmd),
+          cmd: Cmd.tag("vs-user", cmd),
         };
       }
 
@@ -206,7 +206,7 @@ export const updateFromServer = ({
 
         return {
           model: { ...model, mode: { t: "vs-bot", c: updated.model } },
-          cmd: Cmd.tag_("vs-bot", updated.cmd),
+          cmd: Cmd.tag("vs-bot", updated.cmd),
         };
       }
 
@@ -226,7 +226,7 @@ export const updateFromServer = ({
 
       return {
         model: { ...model, mode: { t: "puzzle", c: updated.model } },
-        cmd: Cmd.tag_("puzzle", updated?.cmd ?? Cmd.None),
+        cmd: Cmd.tag("puzzle", updated?.cmd ?? Cmd.None),
         msgs: updated.msgs,
       };
     }
@@ -433,7 +433,7 @@ export const syncWithServer = ({
             }),
           },
         },
-        cmd: Cmd.tag_("puzzle", initial.cmd),
+        cmd: Cmd.tag("puzzle", initial.cmd),
       };
     }
 
@@ -464,7 +464,7 @@ export const syncWithServer = ({
             c: VsUser.syncWithServer(child, serverModel.c),
           },
         },
-        cmd: Cmd.tag_("vs-user", childCmd),
+        cmd: Cmd.tag("vs-user", childCmd),
       };
     }
 

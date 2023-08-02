@@ -57,7 +57,7 @@ export const update = ({
           model.c
         );
 
-        return [{ t: "vs-user", c: child }, Cmd.tag_("vs-user", cmd)];
+        return [{ t: "vs-user", c: child }, Cmd.tag("vs-user", cmd)];
       }
 
       return [model, Cmd.None];
@@ -73,7 +73,7 @@ export const update = ({
 
         return [
           { t: "vs-bot", c: updated.model },
-          Cmd.tag_("vs-bot", updated.cmd),
+          Cmd.tag("vs-bot", updated.cmd),
         ];
       }
 
@@ -94,7 +94,7 @@ export const update = ({
 
       return [
         { t: "puzzle", c: updated.model },
-        Cmd.tag_("puzzle", updated.cmd ?? Cmd.None),
+        Cmd.tag("puzzle", updated.cmd ?? Cmd.None),
       ];
     }
   }
@@ -149,7 +149,7 @@ export const updateFromClient = ({
 
         return [
           { t: "vs-bot", c: updated.model },
-          Cmd.tag_("vs-bot", updated.cmd),
+          Cmd.tag("vs-bot", updated.cmd),
         ];
       }
 
@@ -167,7 +167,7 @@ export const updateFromClient = ({
           model.c
         );
 
-        return [{ t: "vs-user", c: child }, Cmd.tag_("vs-user", cmd)];
+        return [{ t: "vs-user", c: child }, Cmd.tag("vs-user", cmd)];
       }
 
       return [model, Cmd.None];
@@ -188,7 +188,7 @@ export const updateFromClient = ({
 
       return [
         { t: "puzzle", c: updated.model },
-        Cmd.tag_("puzzle", updated.cmd ?? Cmd.None),
+        Cmd.tag("puzzle", updated.cmd ?? Cmd.None),
       ];
     }
   }
@@ -219,7 +219,7 @@ export const updateFromParent = ({
       });
       return {
         model: { t: "vs-bot", c: updated.model },
-        cmd: Cmd.tag_("vs-bot", updated.cmd ?? Cmd.None),
+        cmd: Cmd.tag("vs-bot", updated.cmd ?? Cmd.None),
       };
     }
 
@@ -231,7 +231,7 @@ export const updateFromParent = ({
       });
       return {
         model: { t: "vs-user", c: updated.model },
-        cmd: Cmd.tag_("vs-user", updated.cmd ?? Cmd.None),
+        cmd: Cmd.tag("vs-user", updated.cmd ?? Cmd.None),
       };
     }
 
@@ -243,7 +243,7 @@ export const updateFromParent = ({
 
       return {
         model: { t: "puzzle", c: updated.model },
-        cmd: Cmd.tag_("puzzle", updated.cmd ?? Cmd.None),
+        cmd: Cmd.tag("puzzle", updated.cmd ?? Cmd.None),
       };
     }
   }
@@ -272,7 +272,7 @@ export const updateFromGame = ({
 
       return {
         model: { t: "puzzle", c: updated.model },
-        cmd: Cmd.tag_("puzzle", updated.cmd ?? Cmd.None),
+        cmd: Cmd.tag("puzzle", updated.cmd ?? Cmd.None),
       };
     }
 
@@ -334,7 +334,7 @@ const initMode = ({
 
       const modelNew: ServerModel = { t: "puzzle", c: initial.model };
 
-      return { result: Ok(modelNew), cmd: Cmd.tag_("puzzle", initial.cmd) };
+      return { result: Ok(modelNew), cmd: Cmd.tag("puzzle", initial.cmd) };
     }
   }
 };
@@ -354,15 +354,15 @@ export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
     }
 
     case "vs-user": {
-      return Sub.tag_("vs-user", VsUser.subscriptions(intervalId, model.c));
+      return Sub.tag("vs-user", VsUser.subscriptions(intervalId, model.c));
     }
 
     case "vs-bot": {
-      return Sub.tag_("vs-bot", VsBotServer.subscriptions(intervalId, model.c));
+      return Sub.tag("vs-bot", VsBotServer.subscriptions(intervalId, model.c));
     }
 
     case "puzzle": {
-      return Sub.tag_("puzzle", Puzzle.subscriptions(intervalId, model.c));
+      return Sub.tag("puzzle", Puzzle.subscriptions(intervalId, model.c));
     }
   }
 };

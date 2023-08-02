@@ -137,8 +137,8 @@ type UpdateFromClient = (input: {
 export const updateFromClient: UpdateFromClient = (input) => {
   return p(
     input,
-    andThen(({ model }) => updateProfiles({ ...input, model })),
-    andThen(({ model }) => updateFromClient_({ ...input, model }))
+    andThen((model) => updateProfiles({ ...input, model })),
+    andThen((model) => updateFromClient_({ ...input, model }))
   );
 };
 

@@ -42,7 +42,7 @@ const update: Client["update"] = (input) => {
     const updated = FlowGridPlayUI.update({ model: model.playUI, msg: msg.c });
     return {
       model: { ...model, playUI: updated.model },
-      cmd: Cmd.tag_("play-ui", updated.cmd),
+      cmd: Cmd.tag("play-ui", updated.cmd),
     };
   }
 

@@ -1,6 +1,5 @@
 import * as Rx from "rxjs";
 import { p } from "./pipe";
-import { t } from "./utils";
 
 export type Sub<Msg> = Rx.Observable<Msg>;
 
@@ -38,14 +37,7 @@ export const create = <Msg>(
   });
 };
 
-export const tag = <Tag extends string, Msg>(
-  tagName: Tag,
-  sub: Sub<Msg>
-): Sub<[Tag, Msg]> => {
-  return p(sub, Sub.map(t(tagName)));
-};
-
-const tag_ = <Tag extends string, Msg>(
+const tag = <Tag extends string, Msg>(
   t: Tag,
   sub: Sub<Msg>
 ): Sub<{ t: Tag; c: Msg }> => {
@@ -65,7 +57,6 @@ export const Sub = {
   create,
   of,
   None,
-  tag,
   chain,
-  tag_,
+  tag,
 };

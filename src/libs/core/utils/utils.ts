@@ -4,27 +4,26 @@ export const exhaustive = (discriminatedUnionType: "Missing Case!"): never => {
   throw new Error(`Missing case for: ${discriminatedUnionType}`);
 };
 
+/**
+ * @description
+ * A helper function for composing update functions
+ */
 export const andThen =
   <Msg, Model, OutMsg>(
-    update: (input: { model: Model }) => {
+    updateStep: (input: Model) => {
       model: Model;
       cmd?: Cmd<Msg>;
       msgs?: OutMsg[];
     }
   ) =>
   (output: { cmd?: Cmd<Msg>; model: Model; msgs?: OutMsg[] }) => {
-    const updated = update({ model: output.model });
+    const updated = updateStep(output.model);
     return {
       model: updated.model,
       cmd: Cmd.batch([updated.cmd, output.cmd]),
       msgs: [...(output.msgs ?? []), ...(updated.msgs ?? [])],
     };
   };
-
-export const t =
-  <Tag extends string>(tag: Tag) =>
-  <Value>(value: Value): [Tag, Value] =>
-    [tag, value];
 
 type Range = [number, number];
 /**

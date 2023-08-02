@@ -142,7 +142,7 @@ export const update = ({
     return {
       ...updated,
       model: { ...model, phone: updated.model },
-      cmd: Cmd.tag_("phone", updated.cmd),
+      cmd: Cmd.tag("phone", updated.cmd),
     };
   }
 
@@ -166,7 +166,7 @@ export const update = ({
           : model.currentUser,
       },
       cmd: Cmd.batch([
-        Cmd.tag_("phone-verify", updated.cmd),
+        Cmd.tag("phone-verify", updated.cmd),
         updated.shouldLoadCurrentUser ? loadCurrentUser : Cmd.None,
       ]),
     };
@@ -180,7 +180,7 @@ export const update = ({
     });
     return {
       model: { ...model, emailLink: updated.model },
-      cmd: Cmd.tag_("email-link", updated.cmd),
+      cmd: Cmd.tag("email-link", updated.cmd),
       msgs: updated.msgs,
     };
   }

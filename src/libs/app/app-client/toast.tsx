@@ -79,8 +79,8 @@ export function update(
 } {
   return p(
     { model },
-    andThen(({ model }) => update_(model, msg)),
-    andThen(({ model }) => watch(model))
+    andThen((model) => update_(model, msg)),
+    andThen(watch)
   );
 }
 
@@ -114,7 +114,7 @@ function watch(model: Model): { model: Model; cmd: Cmd<Msg> } {
   const uiToasts = Transition.watch(config, model.uiToasts, model.toasts);
   return {
     model: { ...model, uiToasts: uiToasts.model },
-    cmd: Cmd.tag_("ui-toast", uiToasts.cmd),
+    cmd: Cmd.tag("ui-toast", uiToasts.cmd),
   };
 }
 
@@ -147,10 +147,7 @@ export function updateFromApp({
         toastId: model.runningId,
       }),
     };
-    return p(
-      updated,
-      andThen(({ model }) => watch(model))
-    );
+    return p(updated, andThen(watch));
   }
 
   return { model };

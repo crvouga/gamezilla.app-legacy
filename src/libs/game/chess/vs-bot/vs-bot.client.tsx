@@ -118,7 +118,7 @@ export const updateFromServer = (input: {
 } => {
   return p(
     updateFromServer_(input),
-    andThen(({ model }) => {
+    andThen((model) => {
       if (
         input.model.coreModel.type !== "game-over" &&
         model.coreModel.type === "game-over"

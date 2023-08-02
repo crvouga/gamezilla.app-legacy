@@ -68,7 +68,7 @@ export const update = ({
     });
     return {
       model: { t: "vs-bot", c: updated.model },
-      cmd: Cmd.tag_("vs-bot", updated.cmd),
+      cmd: Cmd.tag("vs-bot", updated.cmd),
     };
   }
 
@@ -80,7 +80,7 @@ export const update = ({
     });
     return {
       model: { t: "vs-user", c: updated.model },
-      cmd: Cmd.tag_("vs-user", updated.cmd),
+      cmd: Cmd.tag("vs-user", updated.cmd),
     };
   }
 
@@ -119,7 +119,7 @@ export const updateFromServer = ({
     });
     return {
       model: { t: "vs-bot", c: updated.model },
-      cmd: Cmd.tag_("vs-bot", updated.cmd),
+      cmd: Cmd.tag("vs-bot", updated.cmd),
     };
   }
 
@@ -130,7 +130,7 @@ export const updateFromServer = ({
     });
     return {
       model: { t: "vs-user", c: updated.model },
-      cmd: Cmd.tag_("vs-user", updated.cmd),
+      cmd: Cmd.tag("vs-user", updated.cmd),
     };
   }
 
@@ -204,7 +204,7 @@ export const syncWithServer = ({
 export const subscriptions = (ctx: ClientCtx, model: Model): Sub<Msg> => {
   switch (model.t) {
     case "vs-bot": {
-      return Sub.tag_("vs-bot", VsBot.subscriptions(ctx, model.c));
+      return Sub.tag("vs-bot", VsBot.subscriptions(ctx, model.c));
     }
 
     case "vs-user": {

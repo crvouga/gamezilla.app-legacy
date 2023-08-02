@@ -88,7 +88,7 @@ export const update = ({
 } =>
   p(
     { model },
-    andThen(({ model }) => {
+    andThen((model) => {
       if (msg.t === "columns-ui") {
         const updated = ColumnsUI.update(model.columnsUI, msg.c);
         return { model: { ...model, columnsUI: updated } };
@@ -121,7 +121,7 @@ export const update = ({
         cmd: Cmd.batch<ClientMsg>([sync.cmd, sendToServer(msg)]),
       };
     }),
-    andThen(({ model }) => watch(model))
+    andThen(watch)
   );
 
 function watch(model: ClientModel) {
@@ -142,8 +142,8 @@ function watch(model: ClientModel) {
       vsBotGame: vsBotGame.model,
     },
     cmd: Cmd.batch<ClientMsg>([
-      Cmd.tag_("vs-bot-game", vsBotGame.cmd),
-      Cmd.tag_("columns-ui", columnsUI.cmd),
+      Cmd.tag("vs-bot-game", vsBotGame.cmd),
+      Cmd.tag("columns-ui", columnsUI.cmd),
     ]),
   };
 }
@@ -156,10 +156,7 @@ export const updateFromServer = (input: {
   model: ClientModel;
   cmd?: Cmd<ClientMsg>;
 } => {
-  return p(
-    updateFromServer_(input),
-    andThen(({ model }) => watch(model))
-  );
+  return p(updateFromServer_(input), andThen(watch));
 };
 
 const updateFromServer_: typeof updateFromServer = ({ ctx, msg, model }) => {

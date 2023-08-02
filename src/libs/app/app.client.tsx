@@ -64,7 +64,7 @@ export const init = ({
       search: search.model,
       profile,
     },
-    cmd: Cmd.batch<Msg>([routing.cmd, Cmd.tag_("auth", auth.cmd)]),
+    cmd: Cmd.batch<Msg>([routing.cmd, Cmd.tag("auth", auth.cmd)]),
   };
 };
 
@@ -103,7 +103,7 @@ export const update = (input: {
     (acc, msg) =>
       p(
         acc,
-        andThen(({ model }) => updateFromApp({ ...input, model, msg }))
+        andThen((model) => updateFromApp({ ...input, model, msg }))
       ),
     updated
   );
@@ -141,7 +141,7 @@ const update_ = ({
     });
     return {
       model: { ...model, auth: updated.model },
-      cmd: Cmd.tag_("auth", updated.cmd),
+      cmd: Cmd.tag("auth", updated.cmd),
       msgs: updated.msgs,
     };
   }
@@ -150,7 +150,7 @@ const update_ = ({
     const updated = Toast.update(model.toast, msg.c);
     return {
       model: { ...model, toast: updated.model },
-      cmd: Cmd.tag_("toast", updated.cmd),
+      cmd: Cmd.tag("toast", updated.cmd),
     };
   }
 
@@ -162,7 +162,7 @@ const update_ = ({
 
     return {
       model: { ...model, routing: updated.model },
-      cmd: Cmd.tag_("routing", updated.cmd),
+      cmd: Cmd.tag("routing", updated.cmd),
       msgs: updated.msgs,
     };
   }
@@ -185,7 +185,7 @@ const update_ = ({
 
     return {
       model: { ...model, gameSpace: updated.model },
-      cmd: Cmd.tag_("game-space", updated.cmd ?? Cmd.None),
+      cmd: Cmd.tag("game-space", updated.cmd ?? Cmd.None),
       msgs: updated.msgs,
     };
   }
@@ -198,7 +198,7 @@ const update_ = ({
     });
     return {
       model: { ...model, profile: updated.model },
-      cmd: Cmd.tag_("profile", updated.cmd),
+      cmd: Cmd.tag("profile", updated.cmd),
     };
   }
 
@@ -206,7 +206,7 @@ const update_ = ({
     const updated = ChatClient.update({ msg: msg.c, model: model.chat });
     return {
       model: { ...model, chat: updated.model },
-      cmd: Cmd.tag_("chat", updated?.cmd ?? Cmd.None),
+      cmd: Cmd.tag("chat", updated?.cmd ?? Cmd.None),
     };
   }
 
@@ -218,7 +218,7 @@ const update_ = ({
     });
     return {
       model: { ...model, search: updated.model },
-      cmd: Cmd.tag_("search", updated.cmd),
+      cmd: Cmd.tag("search", updated.cmd),
     };
   }
 
@@ -260,7 +260,7 @@ const updateFromServer = ({
     });
     return {
       model: { ...model, auth: updated.model },
-      cmd: Cmd.tag_("auth", updated.cmd),
+      cmd: Cmd.tag("auth", updated.cmd),
     };
   }
 
@@ -271,7 +271,7 @@ const updateFromServer = ({
     });
     return {
       model: { ...model, search: updated.model },
-      cmd: Cmd.tag_("search", updated.cmd),
+      cmd: Cmd.tag("search", updated.cmd),
     };
   }
 
@@ -282,7 +282,7 @@ const updateFromServer = ({
     });
     return {
       model: { ...model, chat: updated.model },
-      cmd: Cmd.tag_("chat", updated.cmd),
+      cmd: Cmd.tag("chat", updated.cmd),
     };
   }
 
@@ -296,7 +296,7 @@ const updateFromServer = ({
 
     return {
       model: { ...model, gameSpace: updated.model },
-      cmd: Cmd.tag_("game-space", updated.cmd ?? Cmd.None),
+      cmd: Cmd.tag("game-space", updated.cmd ?? Cmd.None),
       msgs: updated.msgs,
     };
   }
@@ -308,7 +308,7 @@ const updateFromServer = ({
     });
     return {
       model: { ...model, profile: updated.model },
-      cmd: Cmd.tag_("profile", updated.cmd),
+      cmd: Cmd.tag("profile", updated.cmd),
     };
   }
 
@@ -383,13 +383,13 @@ export const updateFromApp = ({
       auth: auth.model,
     },
     cmd: Cmd.batch<Msg>([
-      Cmd.tag_("routing", routing.cmd),
-      Cmd.tag_("chat", chat.cmd),
-      Cmd.tag_("profile", profile.cmd),
-      Cmd.tag_("game-space", space.cmd),
-      Cmd.tag_("wire", wire.cmd),
-      Cmd.tag_("toast", toast.cmd),
-      Cmd.tag_("auth", auth.cmd),
+      Cmd.tag("routing", routing.cmd),
+      Cmd.tag("chat", chat.cmd),
+      Cmd.tag("profile", profile.cmd),
+      Cmd.tag("game-space", space.cmd),
+      Cmd.tag("wire", wire.cmd),
+      Cmd.tag("toast", toast.cmd),
+      Cmd.tag("auth", auth.cmd),
     ]),
   };
 };
@@ -415,17 +415,17 @@ export const subscriptions = ({
   model: Model;
 }): Sub<Msg> => {
   return Sub.batch<Msg>([
-    Sub.tag_("▶", fromServerMsgs),
-    Sub.tag_("wire", wireMsgs),
-    Sub.tag_("routing", Routing.subscriptions),
-    Sub.tag_("auth", AuthClient.subscriptions),
+    Sub.tag("▶", fromServerMsgs),
+    Sub.tag("wire", wireMsgs),
+    Sub.tag("routing", Routing.subscriptions),
+    Sub.tag("auth", AuthClient.subscriptions),
     spaceSub(now, model),
   ]);
 };
 
 const spaceSub = (now: Posix, model: Model): Sub<Msg> => {
   if (model.auth.currentUser.t === "logged-in") {
-    return Sub.tag_(
+    return Sub.tag(
       "game-space",
       GameSpaceClient.subscriptions(
         {

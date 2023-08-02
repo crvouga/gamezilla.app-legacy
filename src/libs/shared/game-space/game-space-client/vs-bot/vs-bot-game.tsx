@@ -44,7 +44,7 @@ export const watch = (
   );
   return {
     model: { overlay: overlay.model },
-    cmd: Cmd.tag_("overlay", overlay.cmd),
+    cmd: Cmd.tag("overlay", overlay.cmd),
   };
 };
 

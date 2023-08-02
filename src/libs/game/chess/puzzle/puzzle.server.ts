@@ -120,9 +120,8 @@ export const update = (input: {
   cmd?: Cmd<Msg>;
 } => {
   return p(
-    input,
-    andThen(({ model }) => update_({ ...input, model })),
-    andThen(({ model }) =>
+    update_(input),
+    andThen((model) =>
       watchPutInteraction({ ctx: input.ctx, modelPrev: input.model, model })
     )
   );
@@ -249,14 +248,14 @@ export const updateFromClient = (input: {
 } => {
   return p(
     input,
-    andThen(({ model }) => updateFromClient_({ ...input, model })),
-    andThen(({ model }) =>
+    andThen((model) => updateFromClient_({ ...input, model })),
+    andThen((model) =>
       watchPutInteraction({ ...input, modelPrev: input.model, model })
     ),
-    andThen(({ model }) =>
+    andThen((model) =>
       watchPutProfile({ ...input, modelPrev: input.model, model })
     ),
-    andThen(({ model }) =>
+    andThen((model) =>
       watchGetPuzzles({ ...input, modelPrev: input.model, model })
     )
   );

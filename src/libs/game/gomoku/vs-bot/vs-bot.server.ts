@@ -64,8 +64,8 @@ type updateFromClient = (input: {
 export const updateFromClient: updateFromClient = (input) => {
   return p(
     input,
-    andThen(({ model }) => updateFromClient_({ ...input, model })),
-    andThen(({ model }) => updateBotMove({ ...input, model }))
+    andThen((model) => updateFromClient_({ ...input, model })),
+    andThen((model) => updateBotMove({ ...input, model }))
   );
 };
 

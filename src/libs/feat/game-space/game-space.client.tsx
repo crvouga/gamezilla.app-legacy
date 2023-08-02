@@ -93,8 +93,8 @@ export const update = (input: {
 } => {
   return p(
     input,
-    andThen(({ model }) => update_({ ...input, model })),
-    andThen(({ model }) => watchCreate({ ...input, model }))
+    andThen((model) => update_({ ...input, model })),
+    andThen((model) => watchCreate({ ...input, model }))
   );
 };
 
@@ -202,7 +202,7 @@ const update_: typeof update = ({ ctx, sendToServer, msg, model }) => {
 
     return {
       model: modelNew,
-      cmd: Cmd.tag_("game", updated.cmd),
+      cmd: Cmd.tag("game", updated.cmd),
       msgs: updated.msgs,
     };
   }
@@ -285,7 +285,7 @@ export const updateFromServer = ({
 
       return {
         model: modelNew,
-        cmd: Cmd.tag_("game", updated.cmd),
+        cmd: Cmd.tag("game", updated.cmd),
         msgs: updated.msgs,
       };
     }
@@ -546,7 +546,7 @@ export const subscriptions = (ctx: ClientCtx, model: Model): Sub<Msg> => {
     hostId: space.hostId,
   };
 
-  return Sub.tag_(
+  return Sub.tag(
     "game",
     GameClient.subscriptions({
       ctx: gameSpaceCtx,

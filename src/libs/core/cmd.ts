@@ -34,19 +34,6 @@ const chain =
 const tag = <Tag extends string, Msg>(
   tagName: Tag,
   cmd: Cmd<Msg> | undefined | null
-): Cmd<[Tag, Msg]> => {
-  if (!cmd) {
-    return None;
-  }
-  return p(
-    cmd,
-    map((msg) => [tagName, msg])
-  );
-};
-
-const tag_ = <Tag extends string, Msg>(
-  tagName: Tag,
-  cmd: Cmd<Msg> | undefined | null
 ): Cmd<{ t: Tag; c: Msg }> => {
   if (!cmd) {
     return None;
@@ -57,12 +44,15 @@ const tag_ = <Tag extends string, Msg>(
   );
 };
 
-const batch = <Msg>(cmdList: (Cmd<Msg> | undefined | null)[]): Cmd<Msg> => {
+const batch = <Msg>(
+  ...cmdLists: (Cmd<Msg> | undefined | null)[][]
+): Cmd<Msg> => {
   return (dispatch) => {
-    for (let i = 0; i < cmdList.length; i++) {
-      const cmd = cmdList[i];
-      if (cmd) {
-        cmd(dispatch);
+    for (const cmdList of cmdLists) {
+      for (const cmd of cmdList) {
+        if (cmd) {
+          cmd(dispatch);
+        }
       }
     }
   };
@@ -86,7 +76,6 @@ export const Cmd = {
   perform,
   batch,
   tag,
-  tag_,
   chain,
   map,
   of,

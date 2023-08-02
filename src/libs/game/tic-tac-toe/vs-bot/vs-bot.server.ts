@@ -103,8 +103,8 @@ export const updateFromClient = (input: {
 } => {
   return p(
     input,
-    andThen(({ model }) => updateFromClient_({ ...input, model })),
-    andThen(({ model }) => watchBotMove({ model, modelPrev: input.model }))
+    andThen((model) => updateFromClient_({ ...input, model })),
+    andThen((model) => watchBotMove({ model, modelPrev: input.model }))
   );
 };
 

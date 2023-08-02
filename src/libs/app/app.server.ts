@@ -69,7 +69,7 @@ export const update = (input: {
     (acc, msg) =>
       p(
         acc,
-        andThen(({ model }) => updateFromApp({ ...input, model, msg }))
+        andThen((model) => updateFromApp({ ...input, model, msg }))
       ),
     updated
   );
@@ -160,7 +160,7 @@ const update_ = ({
 
     return {
       model: { ...model, space: updated.model },
-      cmd: Cmd.tag_("game-space", updated.cmd ?? Cmd.None),
+      cmd: Cmd.tag("game-space", updated.cmd ?? Cmd.None),
     };
   }
 
@@ -171,7 +171,7 @@ const update_ = ({
     });
     return {
       model: { ...model, profile: updated.model },
-      cmd: Cmd.tag_("profile", updated.cmd),
+      cmd: Cmd.tag("profile", updated.cmd),
     };
   }
 
@@ -182,7 +182,7 @@ const update_ = ({
     });
     return {
       model: { ...model, search: updated.model },
-      cmd: Cmd.tag_("search", updated.cmd),
+      cmd: Cmd.tag("search", updated.cmd),
     };
   }
 
@@ -193,7 +193,7 @@ const update_ = ({
     });
     return {
       model: { ...model, auth: updated.model },
-      cmd: Cmd.tag_("auth", updated.cmd),
+      cmd: Cmd.tag("auth", updated.cmd),
     };
   }
 
@@ -205,7 +205,7 @@ const update_ = ({
 
     return {
       model: { ...model, chat: updated.model },
-      cmd: Cmd.tag_("chat", updated.cmd),
+      cmd: Cmd.tag("chat", updated.cmd),
     };
   }
 
@@ -246,8 +246,8 @@ const updateFromApp = ({
       profile: profileUpdated.model,
     },
     cmd: Cmd.batch<Msg>([
-      Cmd.tag_("game-space", spaceUpdated.cmd),
-      Cmd.tag_("profile", profileUpdated.cmd),
+      Cmd.tag("game-space", spaceUpdated.cmd),
+      Cmd.tag("profile", profileUpdated.cmd),
     ]),
   };
 };
@@ -285,7 +285,7 @@ const updateFromClient = ({
     });
     return {
       model: { ...model, auth: updated.model },
-      cmd: Cmd.tag_("auth", updated.cmd),
+      cmd: Cmd.tag("auth", updated.cmd),
       msgs: updated.msgs,
     };
   }
@@ -299,7 +299,7 @@ const updateFromClient = ({
     });
     return {
       model: { ...model, profile: updated.model },
-      cmd: Cmd.tag_("profile", updated.cmd),
+      cmd: Cmd.tag("profile", updated.cmd),
     };
   }
 
@@ -310,7 +310,7 @@ const updateFromClient = ({
     });
     return {
       model: { ...model, search: updated.model },
-      cmd: Cmd.tag_("search", updated.cmd),
+      cmd: Cmd.tag("search", updated.cmd),
     };
   }
 
@@ -322,7 +322,7 @@ const updateFromClient = ({
     });
     return {
       model: { ...model, chat: updated.model },
-      cmd: Cmd.tag_("chat", updated.cmd),
+      cmd: Cmd.tag("chat", updated.cmd),
     };
   }
 
@@ -342,7 +342,7 @@ const updateFromClient = ({
         ...model,
         space: updated.model,
       },
-      cmd: Cmd.tag_("game-space", updated.cmd ?? Cmd.None),
+      cmd: Cmd.tag("game-space", updated.cmd ?? Cmd.None),
     };
   }
 
@@ -392,7 +392,7 @@ export const subscriptions = ({
   ctx: ServerCtx;
 }): Sub<Msg> => {
   return Sub.batch([
-    Sub.tag_(
+    Sub.tag(
       "game-space",
       GameSpaceServer.subscriptions({ model: model.space, ctx })
     ),

@@ -53,7 +53,7 @@ export const init =
         const initial = ChessClient.init();
         return {
           model: { t: "chess", c: initial.model },
-          cmd: Cmd.tag_("chess", initial.cmd),
+          cmd: Cmd.tag("chess", initial.cmd),
         };
       }
 
@@ -111,7 +111,7 @@ export const update: Client["update"] = (input) => {
 
     return {
       model: { t: "tic-tac-toe", c: updated.model },
-      cmd: Cmd.tag_("tic-tac-toe", updated.cmd),
+      cmd: Cmd.tag("tic-tac-toe", updated.cmd),
       msgs: updated.msgs,
     };
   }
@@ -125,7 +125,7 @@ export const update: Client["update"] = (input) => {
     });
     return {
       model: { t: "chess", c: child },
-      cmd: Cmd.tag_("chess", cmd),
+      cmd: Cmd.tag("chess", cmd),
     };
   }
 
@@ -138,7 +138,7 @@ export const update: Client["update"] = (input) => {
     });
     return {
       model: { t: "gomoku", c: updated.model },
-      cmd: Cmd.tag_("gomoku", updated.cmd),
+      cmd: Cmd.tag("gomoku", updated.cmd),
     };
   }
 
@@ -150,7 +150,7 @@ export const update: Client["update"] = (input) => {
     );
     return {
       model: { t: "tetris", c: child },
-      cmd: Cmd.tag_("tetris", cmd),
+      cmd: Cmd.tag("tetris", cmd),
     };
   }
 
@@ -165,7 +165,7 @@ export const update: Client["update"] = (input) => {
     );
     return {
       model: { t: "snake", c: child },
-      cmd: Cmd.tag_("snake", cmd),
+      cmd: Cmd.tag("snake", cmd),
     };
   }
 
@@ -177,7 +177,7 @@ export const update: Client["update"] = (input) => {
     );
     return {
       model: { t: "maze", c: child },
-      cmd: Cmd.tag_("maze", cmd),
+      cmd: Cmd.tag("maze", cmd),
     };
   }
 
@@ -190,7 +190,7 @@ export const update: Client["update"] = (input) => {
     });
     return {
       model: { t: "flow", c: updated.model },
-      cmd: Cmd.tag_("flow", updated?.cmd ?? Cmd.None),
+      cmd: Cmd.tag("flow", updated?.cmd ?? Cmd.None),
     };
   }
 
@@ -212,7 +212,7 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
 
     return {
       model: { t: "gomoku", c: updated.model },
-      cmd: Cmd.tag_("gomoku", updated.cmd),
+      cmd: Cmd.tag("gomoku", updated.cmd),
     };
   }
 
@@ -224,7 +224,7 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
     });
     return {
       model: { t: "tic-tac-toe", c: updated.model },
-      cmd: Cmd.tag_("tic-tac-toe", updated.cmd),
+      cmd: Cmd.tag("tic-tac-toe", updated.cmd),
       msgs: updated.msgs,
     };
   }
@@ -239,7 +239,7 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
 
     return {
       model: { t: "chess", c: updated.model },
-      cmd: Cmd.tag_("chess", updated.cmd),
+      cmd: Cmd.tag("chess", updated.cmd),
       msgs: updated.msgs,
     };
   }
@@ -248,7 +248,7 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
     const [child, cmd] = TetrisClient.updateFromServer(msg.c, model.c);
     return {
       model: { t: "tetris", c: child },
-      cmd: Cmd.tag_("tetris", cmd),
+      cmd: Cmd.tag("tetris", cmd),
     };
   }
 
@@ -260,7 +260,7 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
     );
     return {
       model: { t: "snake", c: child },
-      cmd: Cmd.tag_("snake", cmd),
+      cmd: Cmd.tag("snake", cmd),
     };
   }
 
@@ -272,7 +272,7 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
     );
     return {
       model: { t: "maze", c: child },
-      cmd: Cmd.tag_("maze", cmd),
+      cmd: Cmd.tag("maze", cmd),
     };
   }
 
@@ -298,14 +298,14 @@ export const subscriptions: Client["subscriptions"] = (input): Sub<Msg> => {
   }
 
   if (model.t === "tic-tac-toe") {
-    return Sub.tag_(
+    return Sub.tag(
       "tic-tac-toe",
       TicTacToeClient.subscriptions({ model: model.c })
     );
   }
 
   if (model.t === "chess") {
-    return Sub.tag_(
+    return Sub.tag(
       "chess",
       ChessClient.subscriptions({
         now: ctx.now,
@@ -316,19 +316,19 @@ export const subscriptions: Client["subscriptions"] = (input): Sub<Msg> => {
   }
 
   if (model.t === "gomoku") {
-    return Sub.tag_("gomoku", GomokuClient.subscriptions(ctx, model.c));
+    return Sub.tag("gomoku", GomokuClient.subscriptions(ctx, model.c));
   }
 
   if (model.t === "tetris") {
-    return Sub.tag_("tetris", TetrisClient.subscriptions(model.c));
+    return Sub.tag("tetris", TetrisClient.subscriptions(model.c));
   }
 
   if (model.t === "snake") {
-    return Sub.tag_("snake", SnakeClient.subscriptions(intervalId, model.c));
+    return Sub.tag("snake", SnakeClient.subscriptions(intervalId, model.c));
   }
 
   if (model.t === "maze") {
-    return Sub.tag_("maze", MazeClient.subscriptions(model.c));
+    return Sub.tag("maze", MazeClient.subscriptions(model.c));
   }
 
   if (model.t === "flow") {
@@ -436,7 +436,7 @@ export const syncWithServer: Client["syncWithServer"] = (input) => {
 
         return {
           model: { t: "chess", c: merged.model },
-          cmd: Cmd.tag_("chess", merged.cmd),
+          cmd: Cmd.tag("chess", merged.cmd),
         };
       }
 
@@ -454,8 +454,8 @@ export const syncWithServer: Client["syncWithServer"] = (input) => {
           c: merged.model,
         },
         cmd: Cmd.batch([
-          Cmd.tag_("chess", initial.cmd),
-          Cmd.tag_("chess", merged.cmd),
+          Cmd.tag("chess", initial.cmd),
+          Cmd.tag("chess", merged.cmd),
         ]),
       };
     }

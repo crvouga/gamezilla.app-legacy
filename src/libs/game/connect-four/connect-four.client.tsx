@@ -63,7 +63,7 @@ export const update: Client["update"] = ({ sendToServer, ctx, msg, model }) => {
     });
     return {
       model: { t: "vs-user", c: updated.model },
-      cmd: Cmd.tag_("vs-user", updated.cmd),
+      cmd: Cmd.tag("vs-user", updated.cmd),
     };
   }
 
@@ -76,7 +76,7 @@ export const update: Client["update"] = ({ sendToServer, ctx, msg, model }) => {
     });
     return {
       model: { t: "vs-bot", c: updated.model },
-      cmd: Cmd.tag_("vs-bot", updated.cmd),
+      cmd: Cmd.tag("vs-bot", updated.cmd),
     };
   }
 
@@ -109,7 +109,7 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
         });
         return {
           model: { t: "vs-user", c: updated.model },
-          cmd: Cmd.tag_("vs-user", updated.cmd),
+          cmd: Cmd.tag("vs-user", updated.cmd),
         };
       }
       return { model };
@@ -124,7 +124,7 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
         });
         return {
           model: { t: "vs-bot", c: updated.model },
-          cmd: Cmd.tag_("vs-bot", updated.cmd ?? Cmd.None),
+          cmd: Cmd.tag("vs-bot", updated.cmd ?? Cmd.None),
         };
       }
 
@@ -209,7 +209,7 @@ export const syncWithServer: Client["syncWithServer"] = ({
       });
       return {
         model: { t: "vs-bot", c: sync.model },
-        cmd: Cmd.tag_("vs-bot", sync.cmd),
+        cmd: Cmd.tag("vs-bot", sync.cmd),
       };
     }
 
@@ -254,14 +254,14 @@ export const subscriptions: Client["subscriptions"] = (input) => {
     }
 
     case "vs-bot": {
-      return Sub.tag_(
+      return Sub.tag(
         "vs-bot",
         VsBot.subscriptions(input.intervalId, input.ctx.now, input.model.c)
       );
     }
 
     case "vs-user": {
-      return Sub.tag_("vs-user", VsUser.subscriptions(input.model.c));
+      return Sub.tag("vs-user", VsUser.subscriptions(input.model.c));
     }
   }
 };
