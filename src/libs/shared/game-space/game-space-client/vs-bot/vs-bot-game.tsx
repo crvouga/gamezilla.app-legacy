@@ -4,7 +4,8 @@ import { GameSpaceViewCtx } from "../game-space-client";
 import { PlayerType } from "./view-vs-bot";
 import { Cmd, Transition } from "@gamezilla/core";
 
-const toOverlayId = (_gameOver: GameOver): string => "game-over";
+const toOverlayId = (gameOver: GameOver): string =>
+  gameOver.t === null ? "not-game-over" : "game-over";
 
 const overlayConfig = Transition.config<GameOver>({
   toId: toOverlayId,
