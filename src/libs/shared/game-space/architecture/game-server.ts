@@ -99,7 +99,7 @@ const tag = <T extends string, Model, Msg, ToClient, ToServer>(
       });
       return {
         model: { t: tag, c: initial.model },
-        cmd: Cmd.tag(tag, initial.cmd),
+        cmd: Cmd.t(tag, initial.cmd),
         msgs: initial.msgs,
       };
     },
@@ -112,7 +112,7 @@ const tag = <T extends string, Model, Msg, ToClient, ToServer>(
       });
       return {
         model: { t: tag, c: updated.model },
-        cmd: Cmd.tag(tag, updated.cmd),
+        cmd: Cmd.t(tag, updated.cmd),
         msgs: updated.msgs,
       };
     },
@@ -126,7 +126,7 @@ const tag = <T extends string, Model, Msg, ToClient, ToServer>(
       });
       return {
         model: { t: tag, c: updated.model },
-        cmd: Cmd.tag(tag, updated.cmd),
+        cmd: Cmd.t(tag, updated.cmd),
         msgs: updated.msgs,
       };
     },
@@ -140,7 +140,7 @@ const tag = <T extends string, Model, Msg, ToClient, ToServer>(
       });
       return {
         model: { t: tag, c: updated.model },
-        cmd: Cmd.tag(tag, updated.cmd),
+        cmd: Cmd.t(tag, updated.cmd),
         msgs: updated.msgs,
       };
     },

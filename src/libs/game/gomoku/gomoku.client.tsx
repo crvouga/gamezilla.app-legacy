@@ -68,7 +68,7 @@ export const update = ({
     });
     return {
       model: { t: "vs-bot", c: updated.model },
-      cmd: Cmd.tag("vs-bot", updated.cmd),
+      cmd: Cmd.t("vs-bot", updated.cmd),
     };
   }
 
@@ -80,7 +80,7 @@ export const update = ({
     });
     return {
       model: { t: "vs-user", c: updated.model },
-      cmd: Cmd.tag("vs-user", updated.cmd),
+      cmd: Cmd.t("vs-user", updated.cmd),
     };
   }
 
@@ -119,7 +119,7 @@ export const updateFromServer = ({
     });
     return {
       model: { t: "vs-bot", c: updated.model },
-      cmd: Cmd.tag("vs-bot", updated.cmd),
+      cmd: Cmd.t("vs-bot", updated.cmd),
     };
   }
 
@@ -130,7 +130,7 @@ export const updateFromServer = ({
     });
     return {
       model: { t: "vs-user", c: updated.model },
-      cmd: Cmd.tag("vs-user", updated.cmd),
+      cmd: Cmd.t("vs-user", updated.cmd),
     };
   }
 

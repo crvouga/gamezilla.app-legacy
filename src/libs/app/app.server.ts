@@ -160,7 +160,7 @@ const update_ = ({
 
     return {
       model: { ...model, space: updated.model },
-      cmd: Cmd.tag("game-space", updated.cmd ?? Cmd.None),
+      cmd: Cmd.t("game-space", updated.cmd ?? Cmd.None),
     };
   }
 
@@ -171,7 +171,7 @@ const update_ = ({
     });
     return {
       model: { ...model, profile: updated.model },
-      cmd: Cmd.tag("profile", updated.cmd),
+      cmd: Cmd.t("profile", updated.cmd),
     };
   }
 
@@ -182,7 +182,7 @@ const update_ = ({
     });
     return {
       model: { ...model, search: updated.model },
-      cmd: Cmd.tag("search", updated.cmd),
+      cmd: Cmd.t("search", updated.cmd),
     };
   }
 
@@ -193,7 +193,7 @@ const update_ = ({
     });
     return {
       model: { ...model, auth: updated.model },
-      cmd: Cmd.tag("auth", updated.cmd),
+      cmd: Cmd.t("auth", updated.cmd),
     };
   }
 
@@ -205,7 +205,7 @@ const update_ = ({
 
     return {
       model: { ...model, chat: updated.model },
-      cmd: Cmd.tag("chat", updated.cmd),
+      cmd: Cmd.t("chat", updated.cmd),
     };
   }
 
@@ -246,8 +246,8 @@ const updateFromApp = ({
       profile: profileUpdated.model,
     },
     cmd: Cmd.batch<Msg>([
-      Cmd.tag("game-space", spaceUpdated.cmd),
-      Cmd.tag("profile", profileUpdated.cmd),
+      Cmd.t("game-space", spaceUpdated.cmd),
+      Cmd.t("profile", profileUpdated.cmd),
     ]),
   };
 };
@@ -285,7 +285,7 @@ const updateFromClient = ({
     });
     return {
       model: { ...model, auth: updated.model },
-      cmd: Cmd.tag("auth", updated.cmd),
+      cmd: Cmd.t("auth", updated.cmd),
       msgs: updated.msgs,
     };
   }
@@ -299,7 +299,7 @@ const updateFromClient = ({
     });
     return {
       model: { ...model, profile: updated.model },
-      cmd: Cmd.tag("profile", updated.cmd),
+      cmd: Cmd.t("profile", updated.cmd),
     };
   }
 
@@ -310,7 +310,7 @@ const updateFromClient = ({
     });
     return {
       model: { ...model, search: updated.model },
-      cmd: Cmd.tag("search", updated.cmd),
+      cmd: Cmd.t("search", updated.cmd),
     };
   }
 
@@ -322,7 +322,7 @@ const updateFromClient = ({
     });
     return {
       model: { ...model, chat: updated.model },
-      cmd: Cmd.tag("chat", updated.cmd),
+      cmd: Cmd.t("chat", updated.cmd),
     };
   }
 
@@ -342,7 +342,7 @@ const updateFromClient = ({
         ...model,
         space: updated.model,
       },
-      cmd: Cmd.tag("game-space", updated.cmd ?? Cmd.None),
+      cmd: Cmd.t("game-space", updated.cmd ?? Cmd.None),
     };
   }
 

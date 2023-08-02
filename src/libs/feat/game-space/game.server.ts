@@ -95,7 +95,7 @@ export const update: Server["update"] = (input) => {
     });
     return {
       model: { t: "tic-tac-toe", c: updated.model },
-      cmd: Cmd.tag("tic-tac-toe", updated.cmd ?? Cmd.None),
+      cmd: Cmd.t("tic-tac-toe", updated.cmd ?? Cmd.None),
     };
   }
 
@@ -106,7 +106,7 @@ export const update: Server["update"] = (input) => {
       msg: msg.c,
       model: model.c,
     });
-    return { model: { t: "chess", c: child }, cmd: Cmd.tag("chess", cmd) };
+    return { model: { t: "chess", c: child }, cmd: Cmd.t("chess", cmd) };
   }
 
   if (model.t === "gomoku" && msg.t === "gomoku") {
@@ -116,7 +116,7 @@ export const update: Server["update"] = (input) => {
     });
     return {
       model: { t: "gomoku", c: updated.model },
-      cmd: Cmd.tag("gomoku", updated.cmd),
+      cmd: Cmd.t("gomoku", updated.cmd),
     };
   }
 
@@ -128,7 +128,7 @@ export const update: Server["update"] = (input) => {
       msg.c,
       model.c
     );
-    return { model: { t: "tetris", c: child }, cmd: Cmd.tag("tetris", cmd) };
+    return { model: { t: "tetris", c: child }, cmd: Cmd.t("tetris", cmd) };
   }
 
   if (model.t === "snake" && msg.t === "snake") {
@@ -139,7 +139,7 @@ export const update: Server["update"] = (input) => {
       msg.c,
       model.c
     );
-    return { model: { t: "snake", c: child }, cmd: Cmd.tag("snake", cmd) };
+    return { model: { t: "snake", c: child }, cmd: Cmd.t("snake", cmd) };
   }
   if (model.t === "maze" && msg.t === "maze") {
     const [child, cmd] = MazeServer.update(
@@ -149,7 +149,7 @@ export const update: Server["update"] = (input) => {
       msg.c,
       model.c
     );
-    return { model: { t: "maze", c: child }, cmd: Cmd.tag("maze", cmd) };
+    return { model: { t: "maze", c: child }, cmd: Cmd.t("maze", cmd) };
   }
 
   if (model.t === "flow" && msg.t === "flow") {
@@ -176,7 +176,7 @@ export const updateFromClient: Server["updateFromClient"] = (input) => {
     });
     return {
       model: { t: "tic-tac-toe", c: updated.model },
-      cmd: Cmd.tag("tic-tac-toe", updated.cmd ?? Cmd.None),
+      cmd: Cmd.t("tic-tac-toe", updated.cmd ?? Cmd.None),
     };
   }
 
@@ -188,7 +188,7 @@ export const updateFromClient: Server["updateFromClient"] = (input) => {
       model: model.c,
       ctx,
     });
-    return { model: { t: "chess", c: child }, cmd: Cmd.tag("chess", cmd) };
+    return { model: { t: "chess", c: child }, cmd: Cmd.t("chess", cmd) };
   }
 
   if (model.t === "gomoku" && msg.t === "gomoku") {
@@ -202,7 +202,7 @@ export const updateFromClient: Server["updateFromClient"] = (input) => {
 
     return {
       model: { t: "gomoku", c: updated.model },
-      cmd: Cmd.tag("gomoku", updated.cmd),
+      cmd: Cmd.t("gomoku", updated.cmd),
     };
   }
 
@@ -216,7 +216,7 @@ export const updateFromClient: Server["updateFromClient"] = (input) => {
       msg.c,
       model.c
     );
-    return { model: { t: "tetris", c: child }, cmd: Cmd.tag("tetris", cmd) };
+    return { model: { t: "tetris", c: child }, cmd: Cmd.t("tetris", cmd) };
   }
 
   if (model.t === "snake" && msg.t === "snake") {
@@ -229,7 +229,7 @@ export const updateFromClient: Server["updateFromClient"] = (input) => {
       msg.c,
       model.c
     );
-    return { model: { t: "snake", c: child }, cmd: Cmd.tag("snake", cmd) };
+    return { model: { t: "snake", c: child }, cmd: Cmd.t("snake", cmd) };
   }
 
   if (model.t === "maze" && msg.t === "maze") {
@@ -240,7 +240,7 @@ export const updateFromClient: Server["updateFromClient"] = (input) => {
       msg.c,
       model.c
     );
-    return { model: { t: "maze", c: child }, cmd: Cmd.tag("maze", cmd) };
+    return { model: { t: "maze", c: child }, cmd: Cmd.t("maze", cmd) };
   }
 
   if (model.t === "flow" && msg.t === "flow") {
@@ -263,7 +263,7 @@ export const updateFromParent: Server["updateFromParent"] = (input) => {
 
       return {
         model: { t: "chess", c: updated.model },
-        cmd: Cmd.tag("chess", updated.cmd ?? Cmd.None),
+        cmd: Cmd.t("chess", updated.cmd ?? Cmd.None),
       };
     }
 
@@ -279,7 +279,7 @@ export const updateFromParent: Server["updateFromParent"] = (input) => {
       });
       return {
         model: { t: "tic-tac-toe", c: updated.model },
-        cmd: Cmd.tag("tic-tac-toe", updated.cmd ?? Cmd.None),
+        cmd: Cmd.t("tic-tac-toe", updated.cmd ?? Cmd.None),
       };
     }
 
@@ -290,7 +290,7 @@ export const updateFromParent: Server["updateFromParent"] = (input) => {
       });
       return {
         model: { t: "gomoku", c: updated.model },
-        cmd: Cmd.tag("gomoku", updated.cmd ?? Cmd.None),
+        cmd: Cmd.t("gomoku", updated.cmd ?? Cmd.None),
       };
     }
 

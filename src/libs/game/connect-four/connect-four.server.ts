@@ -48,7 +48,7 @@ export const update: Server["update"] = ({ sendToSpace, msg, model }) => {
     });
     return {
       model: { t: "vs-bot", c: updated.model },
-      cmd: Cmd.tag("vs-bot", updated.cmd),
+      cmd: Cmd.t("vs-bot", updated.cmd),
     };
   }
 
@@ -60,7 +60,7 @@ export const update: Server["update"] = ({ sendToSpace, msg, model }) => {
     });
     return {
       model: { t: "vs-user", c: updated.model },
-      cmd: Cmd.tag("vs-user", updated.cmd),
+      cmd: Cmd.t("vs-user", updated.cmd),
     };
   }
 
@@ -103,7 +103,7 @@ export const updateFromClient: Server["updateFromClient"] = ({
 
     return {
       model: { t: "vs-bot", c: updated.model },
-      cmd: Cmd.tag("vs-bot", updated.cmd),
+      cmd: Cmd.t("vs-bot", updated.cmd),
     };
   }
 
@@ -118,7 +118,7 @@ export const updateFromClient: Server["updateFromClient"] = ({
 
     return {
       model: { t: "vs-user", c: updated.model },
-      cmd: Cmd.tag("vs-user", updated.cmd),
+      cmd: Cmd.t("vs-user", updated.cmd),
     };
   }
 
@@ -143,7 +143,7 @@ export const updateFromParent: Server["updateFromParent"] = ({
       });
       return {
         model: { t: "vs-bot", c: updated.model },
-        cmd: Cmd.tag("vs-bot", updated.cmd),
+        cmd: Cmd.t("vs-bot", updated.cmd),
       };
     }
 
@@ -156,7 +156,7 @@ export const updateFromParent: Server["updateFromParent"] = ({
 
       return {
         model: { t: "vs-user", c: updated.model },
-        cmd: Cmd.tag("vs-user", updated.cmd),
+        cmd: Cmd.t("vs-user", updated.cmd),
       };
     }
   }

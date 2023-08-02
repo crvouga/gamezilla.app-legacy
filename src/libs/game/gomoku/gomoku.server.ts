@@ -70,7 +70,7 @@ export const update = ({
     const updated = VsBot.update({ msg: msg.c, model: model.c });
     return {
       model: { t: "vs-bot", c: updated.model },
-      cmd: Cmd.tag("vs-bot", updated.cmd),
+      cmd: Cmd.t("vs-bot", updated.cmd),
     };
   }
 
@@ -78,7 +78,7 @@ export const update = ({
     const updated = VsUser.update({ msg: msg.c, model: model.c });
     return {
       model: { t: "vs-user", c: updated.model },
-      cmd: Cmd.tag("vs-user", updated.cmd),
+      cmd: Cmd.t("vs-user", updated.cmd),
     };
   }
 
@@ -119,7 +119,7 @@ export const updateFromClient = ({
     });
     return {
       model: { t: "vs-bot", c: updated.model },
-      cmd: Cmd.tag("vs-bot", updated.cmd),
+      cmd: Cmd.t("vs-bot", updated.cmd),
     };
   }
 
@@ -134,7 +134,7 @@ export const updateFromClient = ({
 
     return {
       model: { t: "vs-user", c: updated.model },
-      cmd: Cmd.tag("vs-user", updated.cmd),
+      cmd: Cmd.t("vs-user", updated.cmd),
     };
   }
 
@@ -155,7 +155,7 @@ export const updateFromParent = ({
     const updated = VsBot.updateFromParent({ msg, model: model.c });
     return {
       model: { t: "vs-bot", c: updated.model },
-      cmd: Cmd.tag("vs-bot", updated.cmd),
+      cmd: Cmd.t("vs-bot", updated.cmd),
     };
   }
 
@@ -163,7 +163,7 @@ export const updateFromParent = ({
     const updated = VsUser.updateFromParent({ msg, model: model.c });
     return {
       model: { t: "vs-user", c: updated.model },
-      cmd: Cmd.tag("vs-user", updated.cmd),
+      cmd: Cmd.t("vs-user", updated.cmd),
     };
   }
 

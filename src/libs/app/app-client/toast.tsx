@@ -114,7 +114,7 @@ function watch(model: Model): { model: Model; cmd: Cmd<Msg> } {
   const uiToasts = Transition.watch(config, model.uiToasts, model.toasts);
   return {
     model: { ...model, uiToasts: uiToasts.model },
-    cmd: Cmd.tag("ui-toast", uiToasts.cmd),
+    cmd: Cmd.t("ui-toast", uiToasts.cmd),
   };
 }
 

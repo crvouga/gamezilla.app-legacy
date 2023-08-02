@@ -64,7 +64,7 @@ export const init = ({
       search: search.model,
       profile,
     },
-    cmd: Cmd.batch<Msg>([routing.cmd, Cmd.tag("auth", auth.cmd)]),
+    cmd: Cmd.batch<Msg>([routing.cmd, Cmd.t("auth", auth.cmd)]),
   };
 };
 
@@ -141,7 +141,7 @@ const update_ = ({
     });
     return {
       model: { ...model, auth: updated.model },
-      cmd: Cmd.tag("auth", updated.cmd),
+      cmd: Cmd.t("auth", updated.cmd),
       msgs: updated.msgs,
     };
   }
@@ -150,7 +150,7 @@ const update_ = ({
     const updated = Toast.update(model.toast, msg.c);
     return {
       model: { ...model, toast: updated.model },
-      cmd: Cmd.tag("toast", updated.cmd),
+      cmd: Cmd.t("toast", updated.cmd),
     };
   }
 
@@ -162,7 +162,7 @@ const update_ = ({
 
     return {
       model: { ...model, routing: updated.model },
-      cmd: Cmd.tag("routing", updated.cmd),
+      cmd: Cmd.t("routing", updated.cmd),
       msgs: updated.msgs,
     };
   }
@@ -185,7 +185,7 @@ const update_ = ({
 
     return {
       model: { ...model, gameSpace: updated.model },
-      cmd: Cmd.tag("game-space", updated.cmd ?? Cmd.None),
+      cmd: Cmd.t("game-space", updated.cmd ?? Cmd.None),
       msgs: updated.msgs,
     };
   }
@@ -198,7 +198,7 @@ const update_ = ({
     });
     return {
       model: { ...model, profile: updated.model },
-      cmd: Cmd.tag("profile", updated.cmd),
+      cmd: Cmd.t("profile", updated.cmd),
     };
   }
 
@@ -206,7 +206,7 @@ const update_ = ({
     const updated = ChatClient.update({ msg: msg.c, model: model.chat });
     return {
       model: { ...model, chat: updated.model },
-      cmd: Cmd.tag("chat", updated?.cmd ?? Cmd.None),
+      cmd: Cmd.t("chat", updated?.cmd ?? Cmd.None),
     };
   }
 
@@ -218,7 +218,7 @@ const update_ = ({
     });
     return {
       model: { ...model, search: updated.model },
-      cmd: Cmd.tag("search", updated.cmd),
+      cmd: Cmd.t("search", updated.cmd),
     };
   }
 
@@ -260,7 +260,7 @@ const updateFromServer = ({
     });
     return {
       model: { ...model, auth: updated.model },
-      cmd: Cmd.tag("auth", updated.cmd),
+      cmd: Cmd.t("auth", updated.cmd),
     };
   }
 
@@ -271,7 +271,7 @@ const updateFromServer = ({
     });
     return {
       model: { ...model, search: updated.model },
-      cmd: Cmd.tag("search", updated.cmd),
+      cmd: Cmd.t("search", updated.cmd),
     };
   }
 
@@ -282,7 +282,7 @@ const updateFromServer = ({
     });
     return {
       model: { ...model, chat: updated.model },
-      cmd: Cmd.tag("chat", updated.cmd),
+      cmd: Cmd.t("chat", updated.cmd),
     };
   }
 
@@ -296,7 +296,7 @@ const updateFromServer = ({
 
     return {
       model: { ...model, gameSpace: updated.model },
-      cmd: Cmd.tag("game-space", updated.cmd ?? Cmd.None),
+      cmd: Cmd.t("game-space", updated.cmd ?? Cmd.None),
       msgs: updated.msgs,
     };
   }
@@ -308,7 +308,7 @@ const updateFromServer = ({
     });
     return {
       model: { ...model, profile: updated.model },
-      cmd: Cmd.tag("profile", updated.cmd),
+      cmd: Cmd.t("profile", updated.cmd),
     };
   }
 
@@ -383,13 +383,13 @@ export const updateFromApp = ({
       auth: auth.model,
     },
     cmd: Cmd.batch<Msg>([
-      Cmd.tag("routing", routing.cmd),
-      Cmd.tag("chat", chat.cmd),
-      Cmd.tag("profile", profile.cmd),
-      Cmd.tag("game-space", space.cmd),
-      Cmd.tag("wire", wire.cmd),
-      Cmd.tag("toast", toast.cmd),
-      Cmd.tag("auth", auth.cmd),
+      Cmd.t("routing", routing.cmd),
+      Cmd.t("chat", chat.cmd),
+      Cmd.t("profile", profile.cmd),
+      Cmd.t("game-space", space.cmd),
+      Cmd.t("wire", wire.cmd),
+      Cmd.t("toast", toast.cmd),
+      Cmd.t("auth", auth.cmd),
     ]),
   };
 };

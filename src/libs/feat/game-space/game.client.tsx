@@ -53,7 +53,7 @@ export const init =
         const initial = ChessClient.init();
         return {
           model: { t: "chess", c: initial.model },
-          cmd: Cmd.tag("chess", initial.cmd),
+          cmd: Cmd.t("chess", initial.cmd),
         };
       }
 
@@ -111,7 +111,7 @@ export const update: Client["update"] = (input) => {
 
     return {
       model: { t: "tic-tac-toe", c: updated.model },
-      cmd: Cmd.tag("tic-tac-toe", updated.cmd),
+      cmd: Cmd.t("tic-tac-toe", updated.cmd),
       msgs: updated.msgs,
     };
   }
@@ -125,7 +125,7 @@ export const update: Client["update"] = (input) => {
     });
     return {
       model: { t: "chess", c: child },
-      cmd: Cmd.tag("chess", cmd),
+      cmd: Cmd.t("chess", cmd),
     };
   }
 
@@ -138,7 +138,7 @@ export const update: Client["update"] = (input) => {
     });
     return {
       model: { t: "gomoku", c: updated.model },
-      cmd: Cmd.tag("gomoku", updated.cmd),
+      cmd: Cmd.t("gomoku", updated.cmd),
     };
   }
 
@@ -150,7 +150,7 @@ export const update: Client["update"] = (input) => {
     );
     return {
       model: { t: "tetris", c: child },
-      cmd: Cmd.tag("tetris", cmd),
+      cmd: Cmd.t("tetris", cmd),
     };
   }
 
@@ -165,7 +165,7 @@ export const update: Client["update"] = (input) => {
     );
     return {
       model: { t: "snake", c: child },
-      cmd: Cmd.tag("snake", cmd),
+      cmd: Cmd.t("snake", cmd),
     };
   }
 
@@ -177,7 +177,7 @@ export const update: Client["update"] = (input) => {
     );
     return {
       model: { t: "maze", c: child },
-      cmd: Cmd.tag("maze", cmd),
+      cmd: Cmd.t("maze", cmd),
     };
   }
 
@@ -190,7 +190,7 @@ export const update: Client["update"] = (input) => {
     });
     return {
       model: { t: "flow", c: updated.model },
-      cmd: Cmd.tag("flow", updated?.cmd ?? Cmd.None),
+      cmd: Cmd.t("flow", updated?.cmd ?? Cmd.None),
     };
   }
 
@@ -212,7 +212,7 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
 
     return {
       model: { t: "gomoku", c: updated.model },
-      cmd: Cmd.tag("gomoku", updated.cmd),
+      cmd: Cmd.t("gomoku", updated.cmd),
     };
   }
 
@@ -224,7 +224,7 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
     });
     return {
       model: { t: "tic-tac-toe", c: updated.model },
-      cmd: Cmd.tag("tic-tac-toe", updated.cmd),
+      cmd: Cmd.t("tic-tac-toe", updated.cmd),
       msgs: updated.msgs,
     };
   }
@@ -239,7 +239,7 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
 
     return {
       model: { t: "chess", c: updated.model },
-      cmd: Cmd.tag("chess", updated.cmd),
+      cmd: Cmd.t("chess", updated.cmd),
       msgs: updated.msgs,
     };
   }
@@ -248,7 +248,7 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
     const [child, cmd] = TetrisClient.updateFromServer(msg.c, model.c);
     return {
       model: { t: "tetris", c: child },
-      cmd: Cmd.tag("tetris", cmd),
+      cmd: Cmd.t("tetris", cmd),
     };
   }
 
@@ -260,7 +260,7 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
     );
     return {
       model: { t: "snake", c: child },
-      cmd: Cmd.tag("snake", cmd),
+      cmd: Cmd.t("snake", cmd),
     };
   }
 
@@ -272,7 +272,7 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
     );
     return {
       model: { t: "maze", c: child },
-      cmd: Cmd.tag("maze", cmd),
+      cmd: Cmd.t("maze", cmd),
     };
   }
 
@@ -436,7 +436,7 @@ export const syncWithServer: Client["syncWithServer"] = (input) => {
 
         return {
           model: { t: "chess", c: merged.model },
-          cmd: Cmd.tag("chess", merged.cmd),
+          cmd: Cmd.t("chess", merged.cmd),
         };
       }
 
@@ -454,8 +454,8 @@ export const syncWithServer: Client["syncWithServer"] = (input) => {
           c: merged.model,
         },
         cmd: Cmd.batch([
-          Cmd.tag("chess", initial.cmd),
-          Cmd.tag("chess", merged.cmd),
+          Cmd.t("chess", initial.cmd),
+          Cmd.t("chess", merged.cmd),
         ]),
       };
     }

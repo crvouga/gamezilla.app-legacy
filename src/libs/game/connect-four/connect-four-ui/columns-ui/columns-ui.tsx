@@ -78,10 +78,7 @@ export function watch(model: Model, columns?: Columns) {
       discs: discs.model,
       wins: wins.model,
     },
-    cmd: Cmd.batch<Msg>([
-      Cmd.tag("discs", discs.cmd),
-      Cmd.tag("wins", wins.cmd),
-    ]),
+    cmd: Cmd.batch<Msg>([Cmd.t("discs", discs.cmd), Cmd.t("wins", wins.cmd)]),
   };
 }
 

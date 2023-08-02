@@ -142,8 +142,8 @@ function watch(model: ClientModel) {
       vsBotGame: vsBotGame.model,
     },
     cmd: Cmd.batch<ClientMsg>([
-      Cmd.tag("vs-bot-game", vsBotGame.cmd),
-      Cmd.tag("columns-ui", columnsUI.cmd),
+      Cmd.t("vs-bot-game", vsBotGame.cmd),
+      Cmd.t("columns-ui", columnsUI.cmd),
     ]),
   };
 }

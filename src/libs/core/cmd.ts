@@ -31,7 +31,7 @@ const chain =
     };
   };
 
-const tag = <Tag extends string, Msg>(
+const t = <Tag extends string, Msg>(
   tagName: Tag,
   cmd: Cmd<Msg> | undefined | null
 ): Cmd<{ t: Tag; c: Msg }> => {
@@ -75,7 +75,7 @@ export const Cmd = {
   None,
   perform,
   batch,
-  tag,
+  t,
   chain,
   map,
   of,

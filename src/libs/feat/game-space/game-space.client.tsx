@@ -202,7 +202,7 @@ const update_: typeof update = ({ ctx, sendToServer, msg, model }) => {
 
     return {
       model: modelNew,
-      cmd: Cmd.tag("game", updated.cmd),
+      cmd: Cmd.t("game", updated.cmd),
       msgs: updated.msgs,
     };
   }
@@ -285,7 +285,7 @@ export const updateFromServer = ({
 
       return {
         model: modelNew,
-        cmd: Cmd.tag("game", updated.cmd),
+        cmd: Cmd.t("game", updated.cmd),
         msgs: updated.msgs,
       };
     }

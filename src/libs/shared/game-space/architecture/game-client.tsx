@@ -112,7 +112,7 @@ const tag = <
       });
       return {
         model: { t: tag, c: initial.model },
-        cmd: Cmd.tag(tag, initial.cmd),
+        cmd: Cmd.t(tag, initial.cmd),
         msgs: initial.msgs,
       };
     },
@@ -125,7 +125,7 @@ const tag = <
       });
       return {
         model: { t: tag, c: updated.model },
-        cmd: Cmd.tag(tag, updated.cmd),
+        cmd: Cmd.t(tag, updated.cmd),
         msgs: updated.msgs,
       };
     },
@@ -138,7 +138,7 @@ const tag = <
       });
       return {
         model: { t: tag, c: updated.model },
-        cmd: Cmd.tag(tag, updated.cmd),
+        cmd: Cmd.t(tag, updated.cmd),
         msgs: updated.msgs,
       };
     },
@@ -151,7 +151,7 @@ const tag = <
       });
       return {
         model: { t: tag, c: updated.model },
-        cmd: Cmd.tag(tag, updated.cmd),
+        cmd: Cmd.t(tag, updated.cmd),
         msgs: updated.msgs,
       };
     },
@@ -164,7 +164,7 @@ const tag = <
       });
       return {
         model: { t: tag, c: updated.model },
-        cmd: Cmd.tag(tag, updated.cmd),
+        cmd: Cmd.t(tag, updated.cmd),
         msgs: updated.msgs,
       };
     },
@@ -210,7 +210,7 @@ const tagUpdate =
     });
     return {
       model: { t: tag, c: updated.model },
-      cmd: Cmd.tag(tag, updated.cmd),
+      cmd: Cmd.t(tag, updated.cmd),
       msgs: updated.msgs,
     };
   };
@@ -233,7 +233,7 @@ const tagInit =
     });
     return {
       model: { t: tag, c: initial.model },
-      cmd: Cmd.tag(tag, initial.cmd),
+      cmd: Cmd.t(tag, initial.cmd),
       msgs: initial.msgs,
     };
   };
