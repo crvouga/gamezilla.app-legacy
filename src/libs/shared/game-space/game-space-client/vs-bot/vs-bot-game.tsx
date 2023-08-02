@@ -12,6 +12,26 @@ const overlayConfig = Transition.config<GameOver>({
   exit: (val) => fadeOut(toOverlayId(val)),
 });
 
+async function fadeIn(id: string) {
+  const node = await Transition.waitForElementById(id);
+
+  await node?.animate([{ opacity: 0 }, { opacity: 1 }], {
+    duration: 200,
+    delay: 600,
+    easing: "ease-in-out",
+    fill: "both",
+  }).finished;
+}
+
+async function fadeOut(id: string) {
+  const node = await Transition.waitForElementById(id);
+  await node?.animate([{ opacity: 1 }, { opacity: 0 }], {
+    duration: 200,
+    easing: "ease-in-out",
+    fill: "both",
+  }).finished;
+}
+
 export type Model = {
   overlay: Transition.Model<GameOver>;
 };
@@ -40,7 +60,7 @@ export const watch = (
   const overlay = Transition.watch(
     overlayConfig,
     model.overlay,
-    gameOver ? [gameOver] : []
+    gameOver ? [gameOver] : undefined
   );
   return {
     model: { overlay: overlay.model },
@@ -197,23 +217,3 @@ const Draw = ({ ctx, playerOne, playerTwo, human }: Props) => {
     </div>
   );
 };
-
-async function fadeIn(id: string) {
-  const node = await Transition.waitForElementById(id);
-
-  await node?.animate([{ opacity: 0 }, { opacity: 1 }], {
-    duration: 200,
-    delay: 600,
-    easing: "ease-in-out",
-    fill: "both",
-  }).finished;
-}
-
-async function fadeOut(id: string) {
-  const node = await Transition.waitForElementById(id);
-  await node?.animate([{ opacity: 1 }, { opacity: 0 }], {
-    duration: 200,
-    easing: "ease-in-out",
-    fill: "both",
-  }).finished;
-}
