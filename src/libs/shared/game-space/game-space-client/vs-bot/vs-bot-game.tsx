@@ -1,8 +1,15 @@
+import { Cmd, Transition } from "@gamezilla/core";
 import { UserId } from "@gamezilla/shared/app";
 import { IconRobot, MyAvatar, VDom } from "@gamezilla/ui";
 import { GameSpaceViewCtx } from "../game-space-client";
 import { PlayerType } from "./view-vs-bot";
-import { Cmd, Transition } from "@gamezilla/core";
+
+//
+//
+//
+//
+//
+//
 
 const toOverlayId = (gameOver: GameOver): string =>
   gameOver.t === null ? "not-game-over" : "game-over";
@@ -33,15 +40,22 @@ async function fadeOut(id: string) {
   }).finished;
 }
 
+//
+//
+//
+//
+//
+//
+
 export type Model = {
-  overlay: Transition.Model<GameOver>;
+  gameOverOverlay: Transition.Model<GameOver>;
 };
 
-export const init = (gameOver?: GameOver | null): Model => {
+export function init(gameOver?: GameOver | null): Model {
   return {
-    overlay: Transition.init(overlayConfig, gameOver ? [gameOver] : []),
+    gameOverOverlay: Transition.init(overlayConfig, gameOver ? [gameOver] : []),
   };
-};
+}
 
 export type Msg = {
   t: "overlay";
@@ -49,9 +63,9 @@ export type Msg = {
 };
 
 export const update = (model: Model, msg: Msg): Model => {
-  const overlay = Transition.update(model?.overlay, msg.c);
+  const overlay = Transition.update(model?.gameOverOverlay, msg.c);
 
-  return { overlay };
+  return { gameOverOverlay: overlay };
 };
 
 export const watch = (
@@ -60,11 +74,11 @@ export const watch = (
 ): { model: Model; cmd: Cmd<Msg> } => {
   const overlay = Transition.watch(
     overlayConfig,
-    model.overlay,
+    model.gameOverOverlay,
     gameOver ? [gameOver] : undefined
   );
   return {
-    model: { overlay: overlay.model },
+    model: { gameOverOverlay: overlay.model },
     cmd: Cmd.t("overlay", overlay.cmd),
   };
 };
@@ -106,7 +120,7 @@ export const ViewGameOverOverlay = (props: Props) => {
 
   return (
     <>
-      {model?.overlay.map(({ item: gameOver }) => {
+      {model?.gameOverOverlay.map(({ item: gameOver }) => {
         return (
           <div
             id={String(overlayConfig.toId(gameOver))}
