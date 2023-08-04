@@ -16,12 +16,12 @@
     "incremental": true,
 
     /* Bundler mode */
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "preserve",
+    "moduleResolution": "node",
+    // "allowImportingTsExtensions": true,
+    // "resolveJsonModule": true,
+    // "isolatedModules": true,
+    // "noEmit": true,
+    "jsx": "react-jsx",
 
     /* Linting */
     "strict": true,
@@ -57,6 +57,6 @@
     }
   },
 
-  "include": ["src", "deployment-manager"],
+  "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
