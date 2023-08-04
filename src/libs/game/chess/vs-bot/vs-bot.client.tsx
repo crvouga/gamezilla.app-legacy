@@ -5,7 +5,7 @@ import {
   VsBotSetup,
 } from "@gamezilla/shared/game-space";
 import { IconRobot, IconSpinner, MyAvatar } from "@gamezilla/ui";
-import { Chessboard, PlayerIcon, ViewCoverArt } from "../chess-ui";
+import { PlayerIcon, ViewCoverArt } from "../chess-ui";
 import * as Chess from "../chess/chess";
 import Sounds from "../chess/chess-sounds";
 import {
@@ -367,7 +367,7 @@ export const View = ({
     <div>
       {topSlot}
 
-      <Chessboard
+      {/* <Chessboard
         boardOrientation={boardOrientation}
         isDraggablePiece={({ piece }) => {
           return (
@@ -391,7 +391,7 @@ export const View = ({
           // return result.t === "ok";
           return true;
         }}
-      />
+      /> */}
 
       {bottomSlot}
 

@@ -1,15 +1,14 @@
-import { Cmd, Option, Sub, exhaustive, p } from "@gamezilla/core";
+import { Cmd, Option, Sub, exhaustive } from "@gamezilla/core";
 import { UserId } from "@gamezilla/shared/app";
 import { ViewCtx } from "@gamezilla/shared/client";
 import { GameSpaceClientCtx } from "@gamezilla/shared/game-space";
-import { Chessboard } from "../chess-ui";
+// import { Chessboard } from "../chess-ui";
 import * as Chess from "../chess/chess";
 import Sounds from "../chess/chess-sounds";
 import {
   ClientModel,
   ClientMsg,
   CoreModel,
-  InputMove,
   ServerModel,
   ToClient,
   ToServer,
@@ -358,7 +357,6 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 //
 
 export const View = ({
-  ctx,
   model,
   dispatch,
 }: {
@@ -371,27 +369,27 @@ export const View = ({
     return <div>hello</div>;
   }
 
-  const { w, b, board } = model.coreModel;
+  // const { w, b } = model.coreModel;
 
-  const currentUserColor: Chess.Color | "none" | "Both" =
-    ctx.currentUserId === w && ctx.currentUserId === b
-      ? "Both"
-      : ctx.currentUserId === w
-      ? "w"
-      : ctx.currentUserId === b
-      ? "b"
-      : "none";
+  // const currentUserColor: Chess.Color | "none" | "Both" =
+  //   ctx.currentUserId === w && ctx.currentUserId === b
+  //     ? "Both"
+  //     : ctx.currentUserId === w
+  //     ? "w"
+  //     : ctx.currentUserId === b
+  //     ? "b"
+  //     : "none";
 
-  const boardOrientation: Chess.Color = p(
-    currentUserColor === "none" || currentUserColor === "Both"
-      ? "w"
-      : currentUserColor,
-    (color) => (model.isFlipped ? Chess.toOppositeColor(color) : color)
-  );
+  // const boardOrientation: Chess.Color = p(
+  //   currentUserColor === "none" || currentUserColor === "Both"
+  //     ? "w"
+  //     : currentUserColor,
+  //   (color) => (model.isFlipped ? Chess.toOppositeColor(color) : color)
+  // );
 
   return (
     <div>
-      <Chessboard
+      {/* <Chessboard
         model={board}
         boardOrientation={boardOrientation}
         isDraggablePiece={({ piece }) => {
@@ -415,7 +413,7 @@ export const View = ({
 
           return inputted.t === "ok";
         }}
-      />
+      /> */}
 
       <div className="flex-1"></div>
 

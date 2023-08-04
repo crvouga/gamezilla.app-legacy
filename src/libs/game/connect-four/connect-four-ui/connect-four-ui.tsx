@@ -39,8 +39,8 @@ export const ViewPlayerOneGradientDef = ({
       cx={cx}
       cy={cy}
       r={r}>
-      <stop offset="50%" stopColor={gameTheme["player-one"].light} />
-      <stop offset="100%" stopColor={gameTheme["player-one"].dark} />
+      <stop offset="50%" stop-color={gameTheme["player-one"].light} />
+      <stop offset="100%" stop-color={gameTheme["player-one"].dark} />
     </radialGradient>
   );
 };
@@ -52,8 +52,8 @@ export const ViewPlayerTwoGradientDef = ({
 }) => {
   return (
     <radialGradient id={gradientId} gradientTransform="rotate(90)">
-      <stop offset="50%" stopColor={gameTheme["player-two"].light} />
-      <stop offset="100%" stopColor={gameTheme["player-two"].dark} />
+      <stop offset="50%" stop-color={gameTheme["player-two"].light} />
+      <stop offset="100%" stop-color={gameTheme["player-two"].dark} />
     </radialGradient>
   );
 };

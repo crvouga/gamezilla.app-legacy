@@ -134,7 +134,7 @@ export const View = ({
               onChange={(event) =>
                 dispatch({
                   t: "inputted-search-text",
-                  searchText: event.target.value,
+                  searchText: event.currentTarget.value,
                 })
               }></input>
             <button onClick={() => dispatch({ t: "clicked-clear" })}>

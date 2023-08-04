@@ -1,11 +1,12 @@
+import { VDomChildren } from ".";
 import { IconChevronLeft, IconSpinner } from "./icon";
 import { IconButton } from "./icon-button";
 
 export const TopBar = (input: {
-  left?: React.ReactNode;
-  title: React.ReactNode;
+  left?: VDomChildren;
+  title: VDomChildren;
   loading?: boolean;
-  right?: React.ReactNode;
+  right?: VDomChildren;
 }) => {
   return (
     <div className="min-h-fit w-full">

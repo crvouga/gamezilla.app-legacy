@@ -120,7 +120,7 @@ export const View = ({
               width={1}
               height={1}
               fill={fill}
-              fillOpacity={0.2}
+              fill-opacity={0.2}
             />
           );
         })}
@@ -133,13 +133,13 @@ export const View = ({
 
 
       */}
-      <g stroke="green" strokeWidth={0.01}>
+      <g stroke="green" stroke-width={0.01}>
         <rect
           x={model.bounds.min.x}
           y={model.bounds.min.y}
           width={model.bounds.max.x - model.bounds.min.x}
           height={model.bounds.max.y - model.bounds.min.y}
-          strokeWidth={0.02}
+          stroke-width={0.02}
           fill="transparent"
         />
         {map(yieldRange(model.bounds.min.x + 1, model.bounds.max.x), (x) => {
@@ -233,7 +233,7 @@ export const View = ({
             x2={autocompleteEdge.nodeTo.x}
             y2={autocompleteEdge.nodeTo.y}
             stroke={Color.groupIdToHex(autocompleteEdge.groupId)}
-            strokeWidth={EDGE_STROKE_WIDTH}
+            stroke-width={EDGE_STROKE_WIDTH}
             strokeOpacity={0.5}
           />
         )}
@@ -259,7 +259,7 @@ export const View = ({
                 x2={edge.nodeTo.x}
                 y2={edge.nodeTo.y}
                 stroke={Color.groupIdToHex(edge.groupId)}
-                strokeWidth={EDGE_STROKE_WIDTH}
+                stroke-width={EDGE_STROKE_WIDTH}
               />
               <circle
                 cx={edge.nodeTo.x}
@@ -341,14 +341,15 @@ const ViewTerminalNode = ({
   );
 };
 
-const touchEventToNodeId = (
-  event: React.TouchEvent<SVGSVGElement>
-): Flow.NodeId | null => {
+const touchEventToNodeId = (event: TouchEvent): Flow.NodeId | null => {
   const touch = event.touches[0];
   if (!touch) {
     return null;
   }
   const svg = event.currentTarget;
+  if (!(svg instanceof SVGSVGElement)) {
+    return null;
+  }
   const point = svg.createSVGPoint();
   point.x = touch.clientX;
   point.y = touch.clientY;

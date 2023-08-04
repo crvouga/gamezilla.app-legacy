@@ -42,7 +42,7 @@ export const ViewCoverArt = (props: { className?: string }) => {
             <g
               key={`${x}-${y}-${fill}`}
               transform="translate(0.5, 0.5)"
-              strokeWidth={0.3}>
+              stroke-width={0.3}>
               <circle cx={x} cy={y} r={isEndpoint ? 0.3 : 0.15} fill={fill} />
               {isNorth && (
                 <line x1={x} y1={y} x2={x} y2={y - 0.6} stroke={fill} />

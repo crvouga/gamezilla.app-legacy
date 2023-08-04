@@ -22,6 +22,7 @@
     // "isolatedModules": true,
     // "noEmit": true,
     "jsx": "react-jsx",
+    "jsxImportSource": "preact",
     "outDir": "dist",
     /* Linting */
     "strict": true,

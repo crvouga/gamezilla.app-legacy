@@ -201,7 +201,7 @@ export const ViewCoverArt = () => {
       {coverArtMaze.edges.map(([a, b]) => (
         <g
           key={[a.x, a.y, b.x, b.y].join("-")}
-          strokeWidth="0.1"
+          stroke-width="0.1"
           stroke={"#fff"}>
           <line
             x1={a.x + 1 / 2}

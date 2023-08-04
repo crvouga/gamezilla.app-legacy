@@ -36,7 +36,7 @@ export const viewStoneIcon = ({ stone }: { stone: Stone }) => {
         cy={0}
         r={0.9}
         fill={stoneToColor(stone)}
-        strokeWidth={0.1}
+        stroke-width={0.1}
         stroke="#454545"
       />
     </svg>
@@ -100,7 +100,7 @@ export const ViewBoard = ({
       width="100%"
       viewBox={viewBox}
       className={className}>
-      <g strokeWidth={0.05}>
+      <g stroke-width={0.05}>
         <rect
           x={boundsView.lower.x}
           y={boundsView.lower.y}

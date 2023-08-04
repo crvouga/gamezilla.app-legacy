@@ -319,11 +319,11 @@ export const View = ({
 
       {/* <svg width="100%" viewBox={[0, 0, columnCount, rowCount,].join(", ")}>
             {range(1, Board.toColumnCount(model.coreModel.board)).map(x => (
-                <line key={x} x1={x} y1={0} x2={x} y2={rowCount} stroke={gridStroke} strokeWidth={gridStrokeWidth} />
+                <line key={x} x1={x} y1={0} x2={x} y2={rowCount} stroke={gridStroke} stroke-width={gridStrokeWidth} />
             ))}
 
             {range(1, Board.toRowCount(model.coreModel.board)).map(y => (
-                <line key={y} x1={0} y1={y} x2={columnCount} y2={y} stroke={gridStroke} strokeWidth={gridStrokeWidth} />
+                <line key={y} x1={0} y1={y} x2={columnCount} y2={y} stroke={gridStroke} stroke-width={gridStrokeWidth} />
             ))}
 
             {Board.flatMap(model.coreModel.board, ({ cell, x, y }) => (
@@ -357,9 +357,13 @@ export const View = ({
   );
 };
 
-const mouseEventToPosition = (
-  event: React.MouseEvent<HTMLCanvasElement, MouseEvent>
-): Position.Position => {
+const mouseEventToPosition = (event: MouseEvent): Position.Position => {
+  if (!(event.currentTarget instanceof HTMLCanvasElement)) {
+    return {
+      x: 0,
+      y: 0,
+    };
+  }
   const x = Math.floor(
     rescale({
       value: event.pageX - event.currentTarget.offsetLeft,

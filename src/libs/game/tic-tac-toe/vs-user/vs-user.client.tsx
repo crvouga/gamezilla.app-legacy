@@ -333,7 +333,12 @@ export const CoverArt = () => {
       <rect x={0} y={0} width={2} height={2} fill={gameTheme.background} />
 
       {LINES.map((line, index) => (
-        <line key={index} {...line} stroke={gameTheme.line} strokeWidth={0.1} />
+        <line
+          key={index}
+          {...line}
+          stroke={gameTheme.line}
+          stroke-width={0.1}
+        />
       ))}
 
       {positions.map(([{ column, row }, slot], index) => (

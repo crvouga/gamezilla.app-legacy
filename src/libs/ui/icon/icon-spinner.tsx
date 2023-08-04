@@ -1,4 +1,4 @@
-import { IconProps } from '../icon-shared';
+import { IconProps } from "../icon-shared";
 
 export const IconSpinner = (props: IconProps) => {
   return (
@@ -7,15 +7,13 @@ export const IconSpinner = (props: IconProps) => {
       fill="currentColor"
       stroke="currentColor"
       viewBox="0 0 24 24"
-      className={`w-6 h-6 animate-spin`}
-      {...props}
-    >
+      className={`h-6 w-6 animate-spin`}
+      {...props}>
       <path
-        fillRule="evenodd"
+        fill-rule="evenodd"
         d="M12 19a7 7 0 100-14 7 7 0 000 14zm0 3c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"
-        clipRule="evenodd"
-        opacity="0.2"
-      ></path>
+        clip-rule="evenodd"
+        opacity="0.2"></path>
       <path d="M2 12C2 6.477 6.477 2 12 2v3a7 7 0 00-7 7H2z"></path>
     </svg>
   );

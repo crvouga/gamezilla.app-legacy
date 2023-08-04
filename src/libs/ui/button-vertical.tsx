@@ -1,3 +1,5 @@
+import { VDomChildren } from ".";
+
 export const ButtonVertical = ({
   children,
   className,
@@ -5,16 +7,15 @@ export const ButtonVertical = ({
 }: {
   className?: string;
   onClick?: () => void;
-  children?: React.ReactNode;
+  children?: VDomChildren;
 }) => {
   return (
     <button
       className={[
-        'flex flex-col items-center justify-center w-14 h-14',
-        className ? className : '',
-      ].join(' ')}
-      onClick={onClick}
-    >
+        "flex h-14 w-14 flex-col items-center justify-center",
+        className ? className : "",
+      ].join(" ")}
+      onClick={onClick}>
       {children}
     </button>
   );

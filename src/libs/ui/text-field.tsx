@@ -50,12 +50,12 @@ export const MyTextField = ({
           value={value}
           min={min}
           max={max}
-          autoComplete="off"
-          autoCapitalize="off"
-          autoCorrect="off"
-          autoSave="off"
+          auto-complete="off"
+          auto-capitalize="off"
+          auto-correct="off"
+          auto-save="off"
           step={step}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e) => onChange(e.currentTarget.value)}
           className="flex-1 bg-transparent outline-none"
           style={{ width: "auto" }}
         />

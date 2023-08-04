@@ -44,7 +44,7 @@ export const ViewBoard = ({
             x2={line.x2 * scale}
             y2={line.y2 * scale}
             stroke={gameTheme.line}
-            strokeWidth={0.1 * scale}
+            stroke-width={0.1 * scale}
           />
         ))}
       </g>
@@ -64,7 +64,7 @@ export const ViewBoard = ({
                 cx={cx}
                 cy={cy}
                 stroke={gameTheme.naught}
-                strokeWidth={strokeWidth}
+                stroke-width={strokeWidth}
                 fill="transparent"
               />
             );
@@ -72,7 +72,7 @@ export const ViewBoard = ({
 
           if (slot === "X") {
             return (
-              <g strokeWidth={strokeWidth} stroke={gameTheme.cross}>
+              <g stroke-width={strokeWidth} stroke={gameTheme.cross}>
                 {/* direction: \ */}
                 <line x1={cx - r} y1={cy - r} x2={cx + r} y2={cy + r} />
                 {/* direction: / */}
@@ -128,7 +128,7 @@ const ViewWins = ({ board }: { board: Model }) => {
             y1={(leftMost.row + 1 / 2) * scale}
             x2={(rightMost.column + 1 / 2) * scale}
             y2={(rightMost.row + 1 / 2) * scale}
-            strokeWidth={strokeWidth}
+            stroke-width={strokeWidth}
             stroke={gameTheme.cross}></line>
         );
       })}
@@ -292,7 +292,7 @@ const Cross = ({
   strokeWidth?: number;
 }) => {
   return (
-    <g strokeWidth={strokeWidth} stroke={color}>
+    <g stroke-width={strokeWidth} stroke={color}>
       {/* direction: \ */}
       <line x1={cx - r} y1={cy - r} x2={cx + r} y2={cy + r} />
       {/* direction: / */}
@@ -320,7 +320,7 @@ const Naught = ({
       cx={cx}
       cy={cy}
       stroke={color}
-      strokeWidth={strokeWidth}
+      stroke-width={strokeWidth}
       fill="transparent"
     />
   );
@@ -366,7 +366,12 @@ export const ViewCoverArt = (props: { className?: string }) => {
       <rect x={0} y={0} width={2} height={2} fill={gameTheme.background} />
 
       {LINES.map((line, index) => (
-        <line key={index} {...line} stroke={gameTheme.line} strokeWidth={0.1} />
+        <line
+          key={index}
+          {...line}
+          stroke={gameTheme.line}
+          stroke-width={0.1}
+        />
       ))}
 
       {positions.map(([{ column, row }, slot], index) => (

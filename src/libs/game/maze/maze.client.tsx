@@ -238,7 +238,7 @@ export const View = ({
         {maze.edges.map(([a, b]) => (
           <g
             key={[a.x, a.y, b.x, b.y].join("-")}
-            strokeWidth="0.1"
+            stroke-width="0.1"
             stroke={"#fff"}>
             <line
               x1={a.x + 1 / 2}
@@ -323,7 +323,7 @@ const ViewJoystick = ({
           </clipPath>
         </defs>
 
-        <g strokeWidth={0.025}>
+        <g stroke-width={0.025}>
           <g clipPath="url(#cut-off-bottom)" stroke={stroke}>
             {Direction.all.map((direction) => {
               const { x, y } = directionToVector(direction);

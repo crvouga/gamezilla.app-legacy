@@ -19,7 +19,7 @@ import {
   cn,
 } from "@gamezilla/ui";
 import { Chess } from "../chess";
-import { BoardProps } from "../chess-ui";
+import "../chess-ui/chessboard-element";
 import {
   ClientModel,
   ClientMsg,
@@ -28,12 +28,10 @@ import {
   ToServer,
   initShared,
   isNoMoreHints,
-  toCorrectMove,
   toNextEloRating,
   toPlayerColor,
   updateCore,
 } from "./puzzle.core";
-import "../chess-ui/chessboard-element";
 
 //
 //
@@ -252,9 +250,9 @@ export const View = ({
 
         <div className="flex aspect-square w-full items-center justify-end overflow-hidden bg-neutral-700">
           {model.t !== "loading" && (
+            // @ts-ignore
             <my-chess-board fen={model.puzzle.fen}></my-chess-board>
 
-            // <ChessboardV2.View />
             // <Chessboard
             //   {...toChessboardPropsForHint(model)}
             //   key={model.puzzle.puzzleId}
@@ -307,35 +305,35 @@ export const View = ({
   );
 };
 
-export const toChessboardPropsForHint = (model: Model): Partial<BoardProps> => {
-  const correctMove = toCorrectMove(model);
+// export const toChessboardPropsForHint = (model: Model): Partial<BoardProps> => {
+//   const correctMove = toCorrectMove(model);
 
-  if (!correctMove) {
-    return {};
-  }
+//   if (!correctMove) {
+//     return {};
+//   }
 
-  if (model.t !== "started") {
-    return {};
-  }
+//   if (model.t !== "started") {
+//     return {};
+//   }
 
-  if (model.hint === "from") {
-    return {
-      customSquareStyles: {
-        [Chess.toLowercaseSquare(correctMove.from)]: {
-          backgroundColor: "#91CEBD",
-        },
-      },
-    };
-  }
+//   if (model.hint === "from") {
+//     return {
+//       customSquareStyles: {
+//         [Chess.toLowercaseSquare(correctMove.from)]: {
+//           backgroundColor: "#91CEBD",
+//         },
+//       },
+//     };
+//   }
 
-  if (model.hint === "from-and-to") {
-    return {
-      arrows: [correctMove],
-    };
-  }
+//   if (model.hint === "from-and-to") {
+//     return {
+//       arrows: [correctMove],
+//     };
+//   }
 
-  return {};
-};
+//   return {};
+// };
 
 const formatDuration = (duration: number): string => {
   const minutes = Math.floor(duration / 60_000);
@@ -478,7 +476,7 @@ const TickingClock = (input: { sec: number }) => {
       className="h-5 w-5"
       viewBox="-1 -1 2 2"
       stroke="currentColor"
-      strokeWidth="0.2">
+      stroke-width="0.2">
       <circle cx="0" cy="0" r="0.9"></circle>
 
       {/* up */}

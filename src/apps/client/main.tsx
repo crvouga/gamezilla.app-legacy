@@ -6,14 +6,9 @@ import {
   serverPort,
   sessionIdKey,
 } from "@gamezilla/app";
-import {
-  Browser,
-  Cmd,
-  ProgramV2,
-  toMsgPayload,
-  toMsgType,
-} from "@gamezilla/core";
-import { createRoot } from "react-dom/client";
+import { Browser, Cmd, ProgramV2 } from "@gamezilla/core";
+
+import { render } from "preact";
 import { Socket, io } from "socket.io-client";
 import "./main.css";
 
@@ -75,8 +70,6 @@ const main = () => {
       socketClient.emit("to-server", msg);
     };
 
-  const root = createRoot(document.getElementById("root") as HTMLElement);
-
   const program = ProgramV2.create({
     init: () => {
       return AppClient.init({ location: Browser.getLocation() });
@@ -97,17 +90,24 @@ const main = () => {
     },
   });
 
-  program.subscribe(async function (model, ctx, msg) {
-    if (msg) {
-      console.group("update");
-      console.log(toMsgType(msg), toMsgPayload(msg, {}));
-      console.log(model);
-      console.groupEnd();
-    } else {
-      console.log(model);
-    }
-    root.render(
-      <AppClient.View now={ctx.now} model={model} dispatch={program.dispatch} />
+  const root = document.getElementById("root") as HTMLElement;
+
+  program.subscribe(async function (model, ctx) {
+    // if (msg) {
+    //   console.group("update");
+    //   console.log(toMsgType(msg), toMsgPayload(msg, {}));
+    //   console.log(model);
+    //   console.groupEnd();
+    // } else {
+    //   console.log(model);
+    // }
+    render(
+      <AppClient.View
+        now={ctx.now}
+        model={model}
+        dispatch={program.dispatch}
+      />,
+      root
     );
   });
 
