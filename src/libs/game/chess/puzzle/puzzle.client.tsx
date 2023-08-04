@@ -7,6 +7,7 @@ import {
   GameSpaceViewCtx,
   ViewBottomButtonBar,
 } from "@gamezilla/shared/game-space";
+import "chessboard-element";
 import {
   IconArrowCircle,
   IconArrowLeftOnRect,
@@ -19,11 +20,7 @@ import {
   cn,
 } from "@gamezilla/ui";
 import { Chess } from "../chess";
-import {
-  BoardProps,
-  // Chessboard,
-  ChessboardV2,
-} from "../chess-ui";
+import { BoardProps } from "../chess-ui";
 import {
   ClientModel,
   ClientMsg,
@@ -50,14 +47,14 @@ export const init = (_input: {
   sendToServer: (m: ToServer) => Cmd;
 }): {
   model: Model;
-  cmd: Cmd<Msg>;
+  cmd?: Cmd<Msg>;
 } => {
-  const chessboard = ChessboardV2.init({
-    onDrop: () => false,
-  });
+  // const chessboard = ChessboardV2.init({
+  //   onDrop: () => false,
+  // });
   return {
     model: initShared,
-    cmd: chessboard.cmd,
+    // cmd: chessboard.cmd,
   };
 };
 
@@ -253,9 +250,16 @@ export const View = ({
           </div>
         </div>
 
-        <div className="re flex aspect-square w-full items-center justify-end bg-neutral-700">
+        <div className="flex aspect-square w-full items-center justify-end overflow-hidden bg-neutral-700">
           {model.t !== "loading" && (
-            <ChessboardV2.View />
+            // @ts-ignore
+            <chess-board
+              style={{ width: "100%", maxHeight: "100%", height: "100%" }}
+              position="start"
+              // @ts-ignore
+              draggable-pieces></chess-board>
+
+            // <ChessboardV2.View />
             // <Chessboard
             //   {...toChessboardPropsForHint(model)}
             //   key={model.puzzle.puzzleId}

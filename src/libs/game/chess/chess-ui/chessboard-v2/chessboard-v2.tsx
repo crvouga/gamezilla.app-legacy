@@ -36,17 +36,17 @@ const id = "chessboard";
 export const init = (config: Config): { cmd: Cmd } => {
   return {
     cmd: async () => {
-      await Transition.waitForElementById(id);
+      const node = await Transition.waitForElementById(id);
       console.log({
         id,
         // @ts-ignore
         ChessBoard: window.ChessBoard,
       });
       // @ts-ignore
-      instance = window.ChessBoard(id, {
+      instance = window.ChessBoard(node, {
         draggable: true,
         // sparePieces: true,
-        pieceTheme: "img/chess-pieces/alpha/{piece}.png",
+        // pieceTheme: "img/chess-pieces/alpha/{piece}.png",
         position: "start",
         onDrop() {
           return config.onDrop();
