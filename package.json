@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "server:build": "echo 'no build step'",
     "server": "tsx --tsconfig ./tsconfig.server.json src/apps/server/main.ts",
     "client:build": "vite build",
     "client:preview": "vite preview",
