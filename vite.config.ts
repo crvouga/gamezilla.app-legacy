@@ -8,10 +8,10 @@ export default defineConfig({
   plugins: [
     inferno(),
     tsconfigPaths({
-      projects: ["./tsconfig.client.json"],
+      projects: ["./tsconfig.json"],
     }),
   ],
   esbuild: {
-    tsconfigRaw: require("./tsconfig.client.json"),
+    tsconfigRaw: require("./tsconfig.json"),
   },
 });
