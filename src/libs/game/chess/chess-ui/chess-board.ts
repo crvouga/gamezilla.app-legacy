@@ -1,4 +1,4 @@
-import "chessboard-element";
+import "chessboard-element"; // https://justinfagnani.github.io/chessboard-element/docs/
 
 declare global {
   namespace JSX {
