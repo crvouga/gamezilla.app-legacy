@@ -97,7 +97,7 @@ export const ViewSpaceListScreen = ({
             size="lg"
             className="w-full"
             color="primary"
-            loading={
+            disabled={
               model.req.create?.t === "loading" ||
               model.req.list?.t === "loading"
             }
