@@ -29,7 +29,7 @@ const attrToLibAttr = (attr: Attributes): LibraryAttributes => {
   };
 };
 
-export class ChessBoard extends HTMLElement {
+class ChessBoard extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
@@ -88,8 +88,6 @@ export class ChessBoard extends HTMLElement {
   }
 }
 
-customElements.define("my-chess-board", ChessBoard);
-
 function objectToHtmlAttributes<T extends Record<string, unknown>>(
   obj: T
 ): string {
@@ -107,3 +105,5 @@ function objectToHtmlAttributes<T extends Record<string, unknown>>(
   }
   return attrStr;
 }
+
+customElements.define("my-chess-board", ChessBoard);

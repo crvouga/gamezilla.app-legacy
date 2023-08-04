@@ -33,7 +33,7 @@ import {
   toPlayerColor,
   updateCore,
 } from "./puzzle.core";
-import "../chess-ui/chess-board";
+import "../chess-ui/chessboard-element";
 
 //
 //
