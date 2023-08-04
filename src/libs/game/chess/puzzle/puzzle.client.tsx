@@ -7,7 +7,6 @@ import {
   GameSpaceViewCtx,
   ViewBottomButtonBar,
 } from "@gamezilla/shared/game-space";
-import "chessboard-element";
 import {
   IconArrowCircle,
   IconArrowLeftOnRect,
@@ -34,6 +33,7 @@ import {
   toPlayerColor,
   updateCore,
 } from "./puzzle.core";
+import "../chess-ui/chess-board";
 
 //
 //
@@ -252,12 +252,7 @@ export const View = ({
 
         <div className="flex aspect-square w-full items-center justify-end overflow-hidden bg-neutral-700">
           {model.t !== "loading" && (
-            // @ts-ignore
-            <chess-board
-              style={{ width: "100%", maxHeight: "100%", height: "100%" }}
-              position="start"
-              // @ts-ignore
-              draggable-pieces></chess-board>
+            <my-chess-board fen={model.puzzle.fen}></my-chess-board>
 
             // <ChessboardV2.View />
             // <Chessboard
