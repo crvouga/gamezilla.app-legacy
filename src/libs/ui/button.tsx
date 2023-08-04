@@ -46,7 +46,7 @@ export const Button = ({
         className,
         "flex select-none flex-nowrap items-center justify-center gap-2 font-semibold",
         combo === "contained-primary" && "rounded-md bg-blue-600 text-white",
-        combo === "contained-danger" && "rounded-md bg-red-500 text-white",
+        combo === "contained-danger" && "rounded-md bg-red-600 text-white",
         combo === "contained-default" &&
           "rounded-md border border-neutral-800 bg-neutral-800 text-blue-500",
         combo === "outlined-default" &&

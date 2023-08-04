@@ -31,6 +31,7 @@ export const ViewNotInGameScreen = ({
           {gameNameList.map((gameName) => (
             <div key={gameName}>
               <button
+                aria-label={gameName}
                 onClick={() => dispatch({ t: "input-game", gameName })}
                 className="flex overflow-hidden rounded-lg">
                 <ViewCoverArt gameName={gameName} />
