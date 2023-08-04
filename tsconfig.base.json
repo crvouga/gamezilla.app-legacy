@@ -14,11 +14,6 @@
     "strictFunctionTypes": true,
     "strictPropertyInitialization": true,
     "incremental": true,
-
-    /* Bundler mode */
-    "moduleResolution": "Bundler",
-    "types": ["inferno"],
-    "jsx": "preserve",
     "outDir": "dist",
     /* Linting */
     "strict": true,
@@ -53,7 +48,6 @@
       "@gamezilla/ui": ["src/libs/ui/index.ts"]
     }
   },
-
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

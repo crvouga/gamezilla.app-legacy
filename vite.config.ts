@@ -5,5 +5,13 @@ import inferno from "vite-plugin-inferno";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [inferno(), tsconfigPaths()],
+  plugins: [
+    inferno(),
+    tsconfigPaths({
+      projects: ["./tsconfig.client.json"],
+    }),
+  ],
+  esbuild: {
+    tsconfigRaw: require("./tsconfig.client.json"),
+  },
 });

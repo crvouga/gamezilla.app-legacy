@@ -4,17 +4,13 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "build": "vite build",
-    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview",
-    "server:build": "echo 'server build'",
-    "server": "tsx --tsconfig ./tsconfig.json src/apps/server/main.ts",
-    "server:watch": "tsx watch src/apps/server/main.ts",
+    "server": "tsx --tsconfig ./tsconfig.server.json src/apps/server/main.ts",
     "client:build": "vite build",
+    "client:preview": "vite preview",
     "client": "vite",
     "ngrok": "ngrok start --all",
     "db:dev": "pscale connect gamezilla dev",
-    "tc": "tsc --noEmit --watch"
+    "tc": "tsc --noEmit --watch "
   },
   "dependencies": {
     "@supabase/supabase-js": "^1.30.0",
@@ -34,6 +30,7 @@
     "@typescript-eslint/eslint-plugin": "^5.57.1",
     "@typescript-eslint/parser": "^5.57.1",
     "autoprefixer": "^10.4.14",
+    "babel-plugin-inferno": "^6.6.1",
     "babel-plugin-transform-hook-names": "^1.0.2",
     "csv-parser": "^3.0.0",
     "eslint": "^8.38.0",
