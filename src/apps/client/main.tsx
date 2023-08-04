@@ -13,7 +13,7 @@ import {
   toMsgPayload,
   toMsgType,
 } from "@gamezilla/core";
-import * as ReactDOM from "react-dom/client";
+import { createRoot } from "react-dom/client";
 import { Socket, io } from "socket.io-client";
 import "./main.css";
 
@@ -75,9 +75,7 @@ const main = () => {
       socketClient.emit("to-server", msg);
     };
 
-  const root = ReactDOM.createRoot(
-    document.getElementById("root") as HTMLElement
-  );
+  const root = createRoot(document.getElementById("root") as HTMLElement);
 
   const program = ProgramV2.create({
     init: () => {

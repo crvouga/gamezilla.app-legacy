@@ -24,7 +24,7 @@ export const init = (config: Config): { cmd: Cmd } => {
   };
 };
 
-export const update = ({ fen }: { fen: string }): { cmd: Cmd } => {
+export const watch = ({ fen }: { fen: string }): { cmd: Cmd } => {
   return {
     cmd: () => {
       if (!instance) {
