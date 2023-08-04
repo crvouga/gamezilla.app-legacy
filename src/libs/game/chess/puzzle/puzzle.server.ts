@@ -25,7 +25,7 @@ import {
   ServerMsg,
   ToClient,
   ToServer,
-  handle,
+  updateCore,
   initShared,
   transitionLoadingToStarted,
 } from "./puzzle.core";
@@ -370,7 +370,7 @@ const updateFromClient_: typeof updateFromClient = ({
   broadcast,
   ctx,
 }) => {
-  const handled = handle({ ctx, msg, model });
+  const handled = updateCore({ ctx, msg, model });
 
   return {
     model: handled.t === "ok" ? { ...model, ...handled.value } : model,

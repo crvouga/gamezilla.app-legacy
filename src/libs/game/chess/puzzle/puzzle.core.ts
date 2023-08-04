@@ -261,7 +261,7 @@ const didFailPuzzle = (
 
 type Ctx = { now: Posix; currentUserId: UserId; hostId: UserId };
 
-export const handle = ({
+export const updateCore = ({
   ctx,
   msg,
   model,

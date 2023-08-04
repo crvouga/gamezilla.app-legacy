@@ -1,10 +1,10 @@
-import { Cmd } from "@gamezilla/core";
+import { Cmd, andThen, p } from "@gamezilla/core";
 import { ClientAppMsg } from "@gamezilla/shared/client";
 import {
   BottomBarButtonAction,
+  GameLayout,
   GameSpaceClientCtx,
   GameSpaceViewCtx,
-  GameLayout,
   ViewBottomButtonBar,
 } from "@gamezilla/shared/game-space";
 import {
@@ -18,22 +18,24 @@ import {
   MyAvatar,
   cn,
 } from "@gamezilla/ui";
-
-import { BoardProps, Chessboard } from "../chess-ui";
-import * as Chess from "../chess/chess";
+import { Chess } from "../chess";
+import {
+  BoardProps,
+  // Chessboard,
+  ChessboardV2,
+} from "../chess-ui";
 import {
   ClientModel,
   ClientMsg,
   CoreModel,
   ToClient,
   ToServer,
-  handle,
   initShared,
   isNoMoreHints,
   toCorrectMove,
-  toCurrentBoard,
   toNextEloRating,
   toPlayerColor,
+  updateCore,
 } from "./puzzle.core";
 
 //
@@ -50,9 +52,12 @@ export const init = (_input: {
   model: Model;
   cmd: Cmd<Msg>;
 } => {
+  const chessboard = ChessboardV2.init({
+    onDrop: () => false,
+  });
   return {
     model: initShared,
-    cmd: Cmd.None,
+    cmd: chessboard.cmd,
   };
 };
 
@@ -76,22 +81,40 @@ export const update = ({
   ctx: GameSpaceClientCtx;
 }): {
   model: Model;
-  cmd?: Cmd;
+  cmd?: Cmd<Msg>;
 } => {
-  const handled = handle({ msg, model, ctx });
+  return p(
+    { model },
+    andThen((model) => {
+      const updated = updateCore({ msg, model, ctx });
 
-  const modelNew = syncWithServer({
-    client: model,
-    server: handled.t === "err" ? model : handled.value,
-  });
+      const modelNew = syncWithServer({
+        client: model,
+        server: updated.t === "err" ? model : updated.value,
+      });
 
-  return {
-    model: modelNew,
-    cmd: sendToServer(msg),
-  };
+      return {
+        model: modelNew,
+        cmd: sendToServer(msg),
+      };
+    }),
+    andThen(watch)
+  );
 };
 
-export const updateFromServer = ({
+export const updateFromServer = (input: {
+  ctx: GameSpaceClientCtx;
+  msg: ToClient;
+  model: Model;
+}): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+  msgs?: ClientAppMsg[];
+} => {
+  return p(updateFromServer_(input), andThen(watch));
+};
+
+export const updateFromServer_: typeof updateFromServer = ({
   msg,
   model,
 }: {
@@ -152,6 +175,10 @@ export const syncWithServer = ({
     ...server,
   };
 };
+
+function watch(model: Model): { model: Model; cmd?: Cmd<Msg> } {
+  return { model };
+}
 
 //
 //
@@ -228,26 +255,27 @@ export const View = ({
 
         <div className="re flex aspect-square w-full items-center justify-end bg-neutral-700">
           {model.t !== "loading" && (
-            <Chessboard
-              {...toChessboardPropsForHint(model)}
-              key={model.puzzle.puzzleId}
-              model={toCurrentBoard(model)}
-              isDraggablePiece={({ piece }) => {
-                if (model.t !== "started") {
-                  return false;
-                }
-                const color = Chess.toColor(piece);
-                return (
-                  color === toPlayerColor(model.puzzle) &&
-                  ctx.hostId === ctx.currentUserId
-                );
-              }}
-              boardOrientation={toPlayerColor(model.puzzle)}
-              onPieceDrop={(moveInput) => {
-                dispatch({ t: "input-move", moveInput });
-                return false;
-              }}
-            />
+            <ChessboardV2.View />
+            // <Chessboard
+            //   {...toChessboardPropsForHint(model)}
+            //   key={model.puzzle.puzzleId}
+            //   model={toCurrentBoard(model)}
+            //   isDraggablePiece={({ piece }) => {
+            //     if (model.t !== "started") {
+            //       return false;
+            //     }
+            //     const color = Chess.toColor(piece);
+            //     return (
+            //       color === toPlayerColor(model.puzzle) &&
+            //       ctx.hostId === ctx.currentUserId
+            //     );
+            //   }}
+            //   boardOrientation={toPlayerColor(model.puzzle)}
+            //   onPieceDrop={(moveInput) => {
+            //     dispatch({ t: "input-move", moveInput });
+            //     return false;
+            //   }}
+            // />
           )}
         </div>
         <div className="grid w-full grid-cols-2 px-2 py-1">
@@ -280,7 +308,7 @@ export const View = ({
   );
 };
 
-const toChessboardPropsForHint = (model: Model): Partial<BoardProps> => {
+export const toChessboardPropsForHint = (model: Model): Partial<BoardProps> => {
   const correctMove = toCorrectMove(model);
 
   if (!correctMove) {

@@ -1,6 +1,6 @@
-import { Cmd } from "@gamezilla/core";
-import { ChessBoardInstance, ChessBoard } from "chessboardjs";
-import { Color, Model, MoveInput, Piece, Square } from "../chess";
+import { Cmd, Transition } from "@gamezilla/core";
+// import * as Chessboardjs from "@chrisoakman/chessboardjs";
+import { Color, Model, MoveInput, Piece, Square } from "../../chess";
 
 export type SquareStyle = {
   backgroundColor?: string;
@@ -25,18 +25,29 @@ export type BoardProps = {
 };
 
 export type Config = {
-  id: string;
   onDrop: () => boolean;
 };
 
+// @ts-ignore
 let instance: ChessBoardInstance | null;
+
+const id = "chessboard";
 
 export const init = (config: Config): { cmd: Cmd } => {
   return {
-    cmd: () => {
-      instance = ChessBoard(config.id, {
+    cmd: async () => {
+      await Transition.waitForElementById(id);
+      console.log({
+        id,
+        // @ts-ignore
+        ChessBoard: window.ChessBoard,
+      });
+      // @ts-ignore
+      instance = window.ChessBoard(id, {
         draggable: true,
-        sparePieces: true,
+        // sparePieces: true,
+        pieceTheme: "img/chess-pieces/alpha/{piece}.png",
+        position: "start",
         onDrop() {
           return config.onDrop();
         },
@@ -50,20 +61,26 @@ export const init = (config: Config): { cmd: Cmd } => {
 export const watch = (props: BoardProps): { cmd: Cmd } => {
   return {
     cmd: () => {
+      // @ts-ignore
       if (!instance) {
         return;
       }
-      if (
-        instance.orientation() === "white" &&
-        props?.boardOrientation === "b"
-      ) {
-        instance.flip();
-      }
+      // if (
+      //   instance.orientation() === "white" &&
+      //   props?.boardOrientation === "b"
+      // ) {
+      //   instance.flip();
+      // }
+      // @ts-ignore
       instance.position(props.model.fen);
     },
   };
 };
 
-export const View = ({ id }: { id: string }) => {
-  return <div className="w-full" id={id}></div>;
+export const View = () => {
+  return (
+    <div className="aspect-square w-full overflow-hidden">
+      <div id={id}></div>;
+    </div>
+  );
 };
