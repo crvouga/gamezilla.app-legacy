@@ -132,13 +132,11 @@ const ViewSpaceCard = ({
   return (
     <button
       onClick={onClick}
-      className="flex flex-col gap-3 rounded-md bg-blue-500 p-4 active:opacity-70">
+      className="flex flex-col gap-3 rounded-md bg-blue-600 p-4 active:opacity-70">
       <div className="flex w-full items-center justify-start">
-        <p className="block flex-1 animate-pulse text-left font-bold uppercase">
-          LIVE
-        </p>
+        <p className="block flex-1 text-left font-bold uppercase">LIVE</p>
         {isCurrentSpace && (
-          <p className="block text-xs italic opacity-70">Current space</p>
+          <p className="block text-xs italic">Current space</p>
         )}
       </div>
 

@@ -840,7 +840,7 @@ export const ViewCurrentSpaceBar = ({
   ).length;
 
   return (
-    <div className="flex w-full items-center overflow-hidden border-t-2 border-blue-500 text-inherit">
+    <div className="flex w-full items-center overflow-hidden border-t-2 border-blue-600 text-inherit">
       <button
         className="flex flex-1 items-center overflow-hidden"
         onClick={() => {
@@ -875,6 +875,7 @@ export const ViewCurrentSpaceBar = ({
       </button>
 
       <button
+        aria-label="destroy or leave space"
         onClick={() => {
           if (ctx.currentUserId === space.hostId) {
             dispatch({ t: "destroy", userId: ctx.currentUserId });

@@ -29,7 +29,7 @@ export const ViewUsersInSpaceList = ({ ctx }: { ctx: GameSpaceViewCtx }) => {
 
 export const ViewSpaceHostChip = () => {
   return (
-    <div className="flex items-center gap-1 rounded-xl bg-white/20 px-2 py-1 text-xs">
+    <div className="flex items-center gap-1 rounded-xl border px-2 py-1 text-xs font-semibold">
       <IconCrown className="h-4 w-4 text-yellow-300" />
       Host
     </div>

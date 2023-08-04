@@ -40,7 +40,7 @@ export const MyTextField = ({
         className={cn(
           "flex items-center rounded-md bg-white/10 p-3 text-lg outline-none",
           error && "border border-red-500 text-red-500",
-          !error && " ring-blue-500 focus:ring-2"
+          !error && " ring-blue-600 focus:ring-2"
         )}>
         {startIcon}
         <input
@@ -60,7 +60,7 @@ export const MyTextField = ({
         />
         {onClear && (
           <button
-            className="rounded-md outline-none ring-blue-500 focus:ring-2"
+            className="rounded-md outline-none ring-blue-600 focus:ring-2"
             onClick={(event) => {
               event.preventDefault();
               document.getElementById(id)?.focus();

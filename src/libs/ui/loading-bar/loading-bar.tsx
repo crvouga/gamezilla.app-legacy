@@ -8,7 +8,7 @@ type LoadingBarProps = {
 export const LoadingBar = (_props: LoadingBarProps) => {
   return (
     <div className="relative h-2 overflow-hidden bg-transparent">
-      <div className="animate-slide absolute h-full w-1/2 rounded-full bg-blue-500"></div>
+      <div className="absolute h-full w-1/2 animate-slide rounded-full bg-blue-500"></div>
     </div>
   );
 };

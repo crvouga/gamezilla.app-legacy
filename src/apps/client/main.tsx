@@ -89,8 +89,6 @@ const main = () => {
     },
   });
 
-  const root = document.getElementById("root") as HTMLElement;
-
   program.subscribe(async function (model, ctx) {
     // if (msg) {
     //   console.group("update");
@@ -106,7 +104,7 @@ const main = () => {
         model={model}
         dispatch={program.dispatch}
       />,
-      root
+      document.body
     );
   });
 
