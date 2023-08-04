@@ -210,7 +210,7 @@ export const View = ({
           <Button
             className="flex-1"
             onClick={onQuit}
-            start={<IconArrowLeftOnRect />}
+            start={<IconArrowLeftOnRect className="h-6 w-6" />}
             text="Quit"
           />
           <Button

@@ -204,7 +204,7 @@ const Draw = ({ ctx, playerOne, playerTwo, human }: Props) => {
 
   const botSlot = (
     <>
-      <IconRobot />
+      <IconRobot className="h-6 w-6" />
     </>
   );
 

@@ -70,7 +70,7 @@ export const MainMenuScreen = ({
         <Button
           onClick={ctx.onQuit}
           className="w-full"
-          start={<IconArrowLeftOnRect />}
+          start={<IconArrowLeftOnRect className="h-6 w-6" />}
           text="Quit"
         />
       </div>

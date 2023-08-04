@@ -1,5 +1,5 @@
 import { cn } from "./utils";
-import { IconSpinner } from "./icon";
+import { Spinner } from "./spinner";
 
 export const LoadingScreen = ({
   absolute,
@@ -16,10 +16,7 @@ export const LoadingScreen = ({
         absolute && "absolute inset-0",
         !absolute && "h-screen"
       )}>
-      <IconSpinner
-        key="loading-screen-spinner"
-        className="h-12 w-12 animate-spin"
-      />
+      <Spinner key="loading-screen-spinner" />
     </div>
   );
 };

@@ -187,7 +187,7 @@ export const VsUserSetupScreen = ({
             color="default"
             className="flex-1"
             onClick={onQuit}
-            start={<IconArrowLeftOnRect />}
+            start={<IconArrowLeftOnRect className="h-6 w-6" />}
             text="Quit"
           />
 

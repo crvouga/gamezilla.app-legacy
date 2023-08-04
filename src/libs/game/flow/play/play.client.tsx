@@ -61,7 +61,7 @@ const View: Client["View"] = ({ model, dispatch, ctx }) => {
         <Button
           className="w-full"
           onClick={ctx.onExit}
-          start={<IconArrowLeftOnRect />}
+          start={<IconArrowLeftOnRect className="h-6 w-6" />}
           text="Exit"
         />
       </div>

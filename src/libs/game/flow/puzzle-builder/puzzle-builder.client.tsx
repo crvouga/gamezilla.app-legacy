@@ -84,7 +84,7 @@ const View: Client["View"] = ({ model, dispatch, ctx }) => {
     return (
       <div className="flex h-full w-full flex-col items-center justify-center">
         <div className="flex w-full items-center justify-center gap-2 bg-blue-500 p-2 text-xl text-white">
-          <IconPlay />
+          <IconPlay className="h-6 w-6" />
           Play Mode
         </div>
         <div className="flex w-full flex-1 flex-col items-center justify-center gap-3">
@@ -97,12 +97,12 @@ const View: Client["View"] = ({ model, dispatch, ctx }) => {
           actions={[
             {
               label: "Exit Builder",
-              icon: <IconArrowLeftOnRect />,
+              icon: <IconArrowLeftOnRect className="h-6 w-6" />,
               onClick: ctx.onExit,
             },
             {
               label: "Edit Mode",
-              icon: <IconPenToSquare />,
+              icon: <IconPenToSquare className="h-6 w-6" />,
               onClick: () => {
                 dispatch({ t: "input-mode", mode: "edit" });
               },
@@ -116,7 +116,7 @@ const View: Client["View"] = ({ model, dispatch, ctx }) => {
   return (
     <div className="flex h-full w-full flex-col items-center justify-center">
       <div className="flex w-full items-center justify-center gap-2 bg-yellow-500 p-2 text-xl text-white">
-        <IconPenToSquare />
+        <IconPenToSquare className="h-6 w-6" />
         Edit Mode
       </div>
       <div className="flex w-full flex-1 flex-col items-center justify-center overflow-y-auto">
@@ -149,12 +149,12 @@ const View: Client["View"] = ({ model, dispatch, ctx }) => {
         actions={[
           {
             label: "Exit Builder",
-            icon: <IconArrowLeftOnRect />,
+            icon: <IconArrowLeftOnRect className="h-6 w-6" />,
             onClick: ctx.onExit,
           },
           {
             label: "Play Mode",
-            icon: <IconPlay />,
+            icon: <IconPlay className="h-6 w-6" />,
             onClick: () => {
               dispatch({ t: "input-mode", mode: "play" });
             },

@@ -283,7 +283,7 @@ export const View = ({
           />
           <div>
             <ActionButton
-              icon={<IconArrowLeftOnRect />}
+              icon={<IconArrowLeftOnRect className="h-6 w-6" />}
               label="Exit"
               onClick={() =>
                 dispatch(["stop-game", { userId: ctx.currentUserId }])

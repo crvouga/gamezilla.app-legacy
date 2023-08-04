@@ -125,7 +125,7 @@ export const View = ({
         {/* input */}
         <div className="w-full p-4">
           <div className="flex w-full items-center gap-2 rounded-full bg-neutral-700 px-4 py-2">
-            <IconMagnifyingGlass />
+            <IconMagnifyingGlass className="h-6 w-6" />
             <input
               id={searchInputId}
               className="flex-1 bg-transparent text-lg outline-none"
@@ -138,7 +138,7 @@ export const View = ({
                 })
               }></input>
             <button onClick={() => dispatch({ t: "clicked-clear" })}>
-              <IconXMark />
+              <IconXMark className="h-6 w-6" />
             </button>
           </div>
         </div>

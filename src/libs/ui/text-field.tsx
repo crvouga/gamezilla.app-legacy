@@ -67,7 +67,7 @@ export const MyTextField = ({
               document.getElementById(id)?.focus();
               onClear();
             }}>
-            <IconXMark />
+            <IconXMark className="h-6 w-6" />
           </button>
         )}
       </div>

@@ -16,7 +16,7 @@ export const AlertError = ({
         className
       )}>
       <div>
-        <IconExclamationCircle />
+        <IconExclamationCircle className="h-6 w-6" />
       </div>
 
       {children}
@@ -38,7 +38,7 @@ export const AlertInfo = ({
         "flex w-full items-center gap-2 rounded-md bg-blue-500 p-4 text-white"
       )}>
       <div>
-        <IconInfoCircle />
+        <IconInfoCircle className="h-6 w-6" />
       </div>
       {children}
     </div>
@@ -59,7 +59,7 @@ export const AlertSuccess = ({
         "flex w-full items-center gap-2 rounded-md bg-green-500 p-4 text-white"
       )}>
       <div>
-        <IconCheckmarkCircle />
+        <IconCheckmarkCircle className="h-6 w-6" />
       </div>
       {children}
     </div>

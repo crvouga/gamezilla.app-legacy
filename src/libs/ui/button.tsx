@@ -63,7 +63,7 @@ export const Button = ({
         onClick?.({ stopPropagation: () => event.stopPropagation() });
       }}>
       {loading ? (
-        <Spinner className="h-6 w-6" />
+        <Spinner />
       ) : (
         <>
           {start}

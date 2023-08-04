@@ -368,17 +368,17 @@ export const View = ({
         actions={[
           {
             label: "Exit",
-            icon: <IconArrowLeftOnRect />,
+            icon: <IconArrowLeftOnRect className="h-6 w-6" />,
             onClick: () => dispatch({ t: "stop-game" }),
           },
           {
             label: "Swap sides",
-            icon: <IconRightLeft />,
+            icon: <IconRightLeft className="h-6 w-6" />,
             onClick: () => dispatch({ t: "swap-sides" }),
           },
           {
             label: "Restart",
-            icon: <IconArrowRotateLeft />,
+            icon: <IconArrowRotateLeft className="h-6 w-6" />,
             onClick: () => dispatch({ t: "restart" }),
           },
         ]}

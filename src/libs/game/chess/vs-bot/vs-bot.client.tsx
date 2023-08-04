@@ -326,7 +326,7 @@ export const View = ({
   const botSlot = (
     <div>
       <div>
-        <IconRobot />
+        <IconRobot className="h-6 w-6" />
       </div>
 
       <div>

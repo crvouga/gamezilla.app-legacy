@@ -753,7 +753,7 @@ const ViewTopBar = ({
       <div className="grid w-20 place-items-center">
         <ActionButton
           label="Home"
-          icon={<IconHome />}
+          icon={<IconHome className="h-6 w-6" />}
           onClick={() =>
             ctx.onPush({ t: "game-space", c: { t: "game-space-list" } })
           }
@@ -763,7 +763,7 @@ const ViewTopBar = ({
       <div className="grid w-20 place-items-center">
         <ActionButton
           label={peopleCount > 1 ? `People (${peopleCount})` : `People`}
-          icon={<IconUserGroup />}
+          icon={<IconUserGroup className="h-6 w-6" />}
           onClick={() => dispatch({ t: "modal-open", c: "users" })}
         />
       </div>
@@ -798,7 +798,7 @@ export const ViewSpaceNotFound = ({ ctx }: { ctx: ViewCtx }) => {
         size="lg"
         variant="contained"
         color="primary"
-        start={<IconHome />}
+        start={<IconHome className="h-6 w-6" />}
         text="Go Home"
       />
     </div>

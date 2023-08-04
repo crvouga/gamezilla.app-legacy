@@ -7,8 +7,8 @@ import {
   sessionIdKey,
 } from "@gamezilla/app";
 import { Browser, Cmd, ProgramV2 } from "@gamezilla/core";
-
-import { render } from "preact";
+// import { render } from "preact";
+import { render } from "inferno";
 import { Socket, io } from "socket.io-client";
 import "./main.css";
 

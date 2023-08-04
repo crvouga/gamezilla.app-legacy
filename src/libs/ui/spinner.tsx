@@ -6,7 +6,7 @@ export const Spinner = (props: { className?: string }) => {
     <IconSpinner
       className={cn(
         "animate-spin",
-        props.className ? props.className : "h-8 w-8"
+        props.className ? props.className : "h-12 w-12"
       )}
     />
   );

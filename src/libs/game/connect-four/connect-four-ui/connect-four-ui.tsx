@@ -58,9 +58,8 @@ export const ViewPlayerTwoGradientDef = ({
   );
 };
 
-const playerOneId = Uuid.generate();
-const playerTwoId = Uuid.generate();
 export const PlayerOneIcon = (props: { key?: string; className?: string }) => {
+  const playerOneId = Uuid.generate();
   return (
     <svg viewBox="-1 -1 2 2" {...props}>
       <ViewPlayerOneGradientDef cx={0} cy={0} r={1} gradientId={playerOneId} />
@@ -70,8 +69,9 @@ export const PlayerOneIcon = (props: { key?: string; className?: string }) => {
 };
 
 export const PlayerTwoIcon = (props: { key?: string; className?: string }) => {
+  const playerTwoId = Uuid.generate();
   return (
-    <svg viewBox="-1 -1 2 2" className="h-6 w-6" {...props}>
+    <svg viewBox="-1 -1 2 2" {...props}>
       <ViewPlayerTwoGradientDef gradientId={playerTwoId} />
       <circle cx={0} cy={0} r={1} fill={`url(#${playerTwoId})`} />
     </svg>

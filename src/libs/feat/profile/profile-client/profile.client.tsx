@@ -372,7 +372,7 @@ export const ViewField = ({
       )}
     </div>
 
-    <IconChevronRight />
+    <IconChevronRight className="h-6 w-6" />
   </button>
 );
 

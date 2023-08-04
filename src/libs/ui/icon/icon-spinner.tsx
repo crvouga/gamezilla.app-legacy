@@ -7,7 +7,6 @@ export const IconSpinner = (props: IconProps) => {
       fill="currentColor"
       stroke="currentColor"
       viewBox="0 0 24 24"
-      className={`h-6 w-6 animate-spin`}
       {...props}>
       <path
         fill-rule="evenodd"

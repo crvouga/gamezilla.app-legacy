@@ -295,7 +295,7 @@ export const View = ({
           ...(model.type === "game"
             ? [
                 {
-                  icon: <IconFlag />,
+                  icon: <IconFlag className="h-6 w-6" />,
                   label: "Resign",
                   onClick: () => {
                     dispatch({
@@ -309,14 +309,14 @@ export const View = ({
           ...(model.type === "game-over" && ctx.currentUserId === ctx.hostId
             ? [
                 {
-                  icon: <IconArrowLeftOnRect />,
+                  icon: <IconArrowLeftOnRect className="h-6 w-6" />,
                   label: "Exit",
                   onClick: () => {
                     dispatch({ t: "new-game" });
                   },
                 },
                 {
-                  icon: <IconArrowRotateLeft />,
+                  icon: <IconArrowRotateLeft className="h-6 w-6" />,
                   label: "Rematch",
                   onClick: () => {
                     dispatch({ t: "rematch-request" });
@@ -385,7 +385,7 @@ const ViewGameOverMessage = ({
                 response: "Decline",
               })
             }
-            start={<IconXMark />}
+            start={<IconXMark className="h-6 w-6" />}
             text="Decline"
           />
 
@@ -394,7 +394,7 @@ const ViewGameOverMessage = ({
             onClick={() =>
               dispatch({ t: "rematch-respond", response: "Accept" })
             }
-            start={<IconCheckmarkCircle />}
+            start={<IconCheckmarkCircle className="h-6 w-6" />}
             text="Accept"
           />
         </div>

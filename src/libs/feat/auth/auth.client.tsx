@@ -322,7 +322,7 @@ const ViewLoginScreen = ({
             onClick={() => dispatch({ t: "login-with-google" })}
             size="lg"
             className="w-full"
-            start={<IconGoogle />}
+            start={<IconGoogle className="h-6 w-6" />}
             text="Continue With Google"
           />
 
@@ -335,7 +335,7 @@ const ViewLoginScreen = ({
             }
             size="lg"
             className="w-full"
-            start={<IconMobilePhone />}
+            start={<IconMobilePhone className="h-6 w-6" />}
             text="Continue With Text"
           />
 
@@ -345,7 +345,7 @@ const ViewLoginScreen = ({
             }
             size="lg"
             className="w-full"
-            start={<IconEnvelope />}
+            start={<IconEnvelope className="h-6 w-6" />}
             text="Continue With Email"
           />
         </div>

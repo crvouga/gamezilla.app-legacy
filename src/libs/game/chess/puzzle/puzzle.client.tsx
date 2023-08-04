@@ -353,33 +353,33 @@ export const toBottomBarActions = ({
   dispatch: (m: Msg) => void;
 }): BottomBarButtonAction[] => {
   const exit: BottomBarButtonAction = {
-    icon: <IconArrowLeftOnRect />,
+    icon: <IconArrowLeftOnRect className="h-6 w-6" />,
     label: "Exit",
     onClick: onClose,
   };
 
   const hint: BottomBarButtonAction = {
-    icon: <IconLightbulb />,
+    icon: <IconLightbulb className="h-6 w-6" />,
     label: "Hint",
     disabled: isNoMoreHints(model),
     onClick: () => dispatch({ t: "show-hint" }),
   };
 
   const retry: BottomBarButtonAction = {
-    icon: <IconArrowRotateLeft />,
+    icon: <IconArrowRotateLeft className="h-6 w-6" />,
     label: "Retry",
     onClick: () => dispatch({ t: "retry" }),
     color: "danger",
   };
 
   const skip: BottomBarButtonAction = {
-    icon: <IconArrowRight />,
+    icon: <IconArrowRight className="h-6 w-6" />,
     label: "Skip",
     onClick: () => dispatch({ t: "skip" }),
   };
 
   const next: BottomBarButtonAction = {
-    icon: <IconArrowCircle />,
+    icon: <IconArrowCircle className="h-6 w-6" />,
     label: "Next",
     color: "success",
     onClick: () => dispatch({ t: "next" }),
@@ -420,7 +420,7 @@ const ViewStatusBar = ({ model }: { model: Model }) => {
   if (model.t === "incorrect") {
     return (
       <div className="flex w-full items-center justify-center gap-2 bg-red-500 p-2 text-white">
-        <IconXMark />
+        <IconXMark className="h-6 w-6" />
         <p className="text-xl">Incorrect</p>
       </div>
     );
@@ -429,7 +429,7 @@ const ViewStatusBar = ({ model }: { model: Model }) => {
   if (model.t === "solved") {
     return (
       <div className="flex w-full items-center justify-center gap-2 bg-green-500 p-2 text-white">
-        <IconCheckmarkCircle />
+        <IconCheckmarkCircle className="h-6 w-6" />
         <p className="text-xl">Correct</p>
       </div>
     );
@@ -461,7 +461,7 @@ const ViewStatusBar = ({ model }: { model: Model }) => {
   if (model.t === "solved-with-hint") {
     return (
       <div className="flex w-full items-center justify-center gap-2 bg-neutral-600 p-2 text-white">
-        <IconCheckmarkCircle />
+        <IconCheckmarkCircle className="h-6 w-6" />
         <p className="text-xl">Solved with hint</p>
       </div>
     );

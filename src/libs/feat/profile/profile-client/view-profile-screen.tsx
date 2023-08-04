@@ -50,12 +50,12 @@ export const ViewProfileScreen = ({
               ctx.onPush({ t: "profile", c: { t: "profile-update" } })
             }
             className="w-full"
-            start={<IconUserPen />}
+            start={<IconUserPen className="h-6 w-6" />}
             text="Edit Profile"></Button>
           <Button
             onClick={() => ctx.onPush({ t: "logout" })}
             className="w-full"
-            start={<IconArrowLeftOnRect />}
+            start={<IconArrowLeftOnRect className="h-6 w-6" />}
             text="Logout"
           />
         </div>

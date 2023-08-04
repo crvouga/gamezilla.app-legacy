@@ -645,12 +645,12 @@ const ViewBottomBar = ({
         c: { t: "game-space-list" },
       },
       label: "Spaces",
-      icon: <IconGamepad />,
+      icon: <IconGamepad className="h-6 w-6" />,
     },
     {
       route: { t: "profile", c: { t: "profile", userId: ctx.currentUserId } },
       label: "Profile",
-      icon: <IconUserCircle />,
+      icon: <IconUserCircle className="h-6 w-6" />,
     },
   ];
 

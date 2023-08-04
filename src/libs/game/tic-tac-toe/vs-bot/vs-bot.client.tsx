@@ -237,17 +237,17 @@ export const View = ({
       <ViewBottomButtonBar
         actions={[
           {
-            icon: <IconArrowLeftOnRect />,
+            icon: <IconArrowLeftOnRect className="h-6 w-6" />,
             label: "Exit",
             onClick: () => dispatch({ t: "stop-game" }),
           },
           {
-            icon: <IconRightLeft />,
+            icon: <IconRightLeft className="h-6 w-6" />,
             label: "Swap sides",
             onClick: () => dispatch({ t: "swap-sides" }),
           },
           {
-            icon: <IconArrowRotateLeft />,
+            icon: <IconArrowRotateLeft className="h-6 w-6" />,
             label: "Restart",
             onClick: () => dispatch({ t: "restart" }),
           },
