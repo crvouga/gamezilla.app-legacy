@@ -18,7 +18,7 @@ import {
   MyAvatar,
   cn,
 } from "@gamezilla/ui";
-import { useMemo } from "react";
+
 import { BoardProps, Chessboard } from "../chess-ui";
 import * as Chess from "../chess/chess";
 import {
@@ -159,6 +159,16 @@ export const syncWithServer = ({
 //
 //
 
+const toDurationMs = (ctx: GameSpaceViewCtx, model: Model) => {
+  if (model.t === "loading") {
+    return null;
+  }
+  if (model.t === "started") {
+    return Math.max(0, (model.serverNow ?? ctx.now) - model.startedAt);
+  }
+  return model.endedAt - model.startedAt;
+};
+
 export const View = ({
   model,
   onClose,
@@ -170,16 +180,7 @@ export const View = ({
   dispatch: (m: Msg) => void;
   onClose: () => void;
 }) => {
-  const durationMs = useMemo(() => {
-    if (model.t === "loading") {
-      return null;
-    }
-    if (model.t === "started") {
-      return Math.max(0, (model.serverNow ?? ctx.now) - model.startedAt);
-    }
-    return model.endedAt - model.startedAt;
-  }, [ctx.now, model]);
-
+  const durationMs = toDurationMs(ctx, model);
   const isSpectating = ctx.currentUserId !== ctx.hostId;
   const nextEloRating = toNextEloRating(model);
   return (

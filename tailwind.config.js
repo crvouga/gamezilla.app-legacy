@@ -6,6 +6,9 @@ export default {
       textColor: {
         secondary: "#ffffffcc",
       },
+      animation: {
+        slide: "slide 2s linear infinite",
+      },
     },
   },
   plugins: [],

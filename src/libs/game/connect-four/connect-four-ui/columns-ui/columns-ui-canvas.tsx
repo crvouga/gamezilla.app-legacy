@@ -1,5 +1,4 @@
 import { rescale } from "@gamezilla/core";
-import { useLayoutEffect } from "react";
 import {
   COLUMN_COUNT,
   Columns,
@@ -9,30 +8,30 @@ import {
 import { gameTheme } from "../shared";
 import { ViewColumnsProps } from "./shared";
 
-export const ViewColumnsCanvas = ({ columns, onClick }: ViewColumnsProps) => {
-  useLayoutEffect(() => {
-    const canvas = document.getElementById("view-columns-canvas");
+export const doPaint = (columns: Columns) => {
+  const canvas = document.getElementById("view-columns-canvas");
 
-    if (!canvas) {
-      return;
-    }
+  if (!canvas) {
+    return;
+  }
 
-    if (!isCanvas(canvas)) {
-      return;
-    }
+  if (!isCanvas(canvas)) {
+    return;
+  }
 
-    const context = canvas.getContext("2d");
+  const context = canvas.getContext("2d");
 
-    if (!context) {
-      return;
-    }
+  if (!context) {
+    return;
+  }
 
-    context.canvas.height =
-      (MAX_COLUMN_HEIGHT / COLUMN_COUNT) * context.canvas.width;
+  context.canvas.height =
+    (MAX_COLUMN_HEIGHT / COLUMN_COUNT) * context.canvas.width;
 
-    paint({ context, columns });
-  });
+  paint({ context, columns });
+};
 
+export const ViewColumnsCanvas = ({ onClick }: ViewColumnsProps) => {
   return (
     <canvas
       id="view-columns-canvas"

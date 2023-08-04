@@ -1,5 +1,4 @@
 import { Uuid } from "@gamezilla/core";
-import { useRef } from "react";
 import { PlayerType } from "../connect-four";
 import { gameTheme } from "./shared";
 
@@ -59,22 +58,22 @@ export const ViewPlayerTwoGradientDef = ({
   );
 };
 
+const playerOneId = Uuid.generate();
+const playerTwoId = Uuid.generate();
 export const PlayerOneIcon = (props: { key?: string; className?: string }) => {
-  const ref = useRef(Uuid.generate());
   return (
     <svg viewBox="-1 -1 2 2" {...props}>
-      <ViewPlayerOneGradientDef cx={0} cy={0} r={1} gradientId={ref.current} />
-      <circle cx={0} cy={0} r={1} fill={`url(#${ref.current})`} />
+      <ViewPlayerOneGradientDef cx={0} cy={0} r={1} gradientId={playerOneId} />
+      <circle cx={0} cy={0} r={1} fill={`url(#${playerOneId})`} />
     </svg>
   );
 };
 
 export const PlayerTwoIcon = (props: { key?: string; className?: string }) => {
-  const ref = useRef(Uuid.generate());
   return (
     <svg viewBox="-1 -1 2 2" className="h-6 w-6" {...props}>
-      <ViewPlayerTwoGradientDef gradientId={ref.current} />
-      <circle cx={0} cy={0} r={1} fill={`url(#${ref.current})`} />
+      <ViewPlayerTwoGradientDef gradientId={playerTwoId} />
+      <circle cx={0} cy={0} r={1} fill={`url(#${playerTwoId})`} />
     </svg>
   );
 };

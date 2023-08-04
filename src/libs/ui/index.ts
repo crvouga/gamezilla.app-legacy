@@ -1,6 +1,5 @@
 export * from "./action-button";
 export * from "./alert";
-export * from "./autocomplete";
 export * from "./avatar";
 export * from "./button";
 export * from "./button-vertical";
@@ -11,8 +10,7 @@ export * from "./icon";
 export * from "./icon-button";
 export * from "./loading-bar";
 export * from "./loading-screen";
-export * from './spinner';
-export * from "./text";
+export * from "./spinner";
 export * from "./text-field";
 export * from "./top-bar";
 export * from "./utils";

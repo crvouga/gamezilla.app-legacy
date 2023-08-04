@@ -1,7 +1,5 @@
-import { easeAttrs } from "@gamezilla/core";
 import { cn } from "@gamezilla/ui";
-import { useEffect, useRef } from "react";
-import { Flow, NodeId, GroupId } from "../flow";
+import { Flow, GroupId, NodeId } from "../flow";
 import { Color, groupIdToColor } from "../flow-ui";
 import * as FlowGrid from "./flow-grid";
 import { Model } from "./flow-grid";
@@ -16,7 +14,7 @@ import * as FlowGridPosition from "./flow-grid-position";
 //
 
 const TERMINAL_NODE_RADIUS = 0.33;
-const TERMINAL_NODE_RADIUS_ACTIVE = 0.4;
+export const TERMINAL_NODE_RADIUS_ACTIVE = 0.4;
 
 const EDGE_STROKE_WIDTH = 0.3;
 
@@ -327,62 +325,14 @@ const ViewTerminalNode = ({
   groupId,
   x,
   y,
-  isActive,
 }: {
   groupId: GroupId;
   x: number;
   y: number;
   isActive: boolean;
 }) => {
-  const ref = useRef<SVGCircleElement | null>(null);
-  const previousIsActive = useRef(isActive);
-  const isAnimating = useRef(false);
-  useEffect(() => {
-    if (previousIsActive.current === isActive) {
-      return;
-    }
-    previousIsActive.current = isActive;
-
-    const node = ref.current;
-    if (!node) {
-      return;
-    }
-
-    const animate = async () => {
-      if (!isActive) {
-        return;
-      }
-
-      if (isAnimating.current) {
-        return;
-      }
-      isAnimating.current = true;
-
-      await easeAttrs(node, {
-        r: {
-          from: TERMINAL_NODE_RADIUS,
-          to: TERMINAL_NODE_RADIUS_ACTIVE,
-          duration: 200,
-          easing: { type: "ease-out-back" },
-        },
-      });
-      await easeAttrs(node, {
-        r: {
-          from: TERMINAL_NODE_RADIUS_ACTIVE,
-          to: TERMINAL_NODE_RADIUS,
-          duration: 400,
-          easing: { type: "ease-out-back" },
-        },
-      });
-      isAnimating.current = false;
-    };
-
-    animate();
-  }, [isActive]);
-
   return (
     <circle
-      ref={ref}
       cx={x}
       cy={y}
       r={TERMINAL_NODE_RADIUS}

@@ -1,22 +1,20 @@
-import { ReactNode } from 'react';
-import { IconExclamationCircle, IconInfoCircle } from './icon';
-import { IconCheckmarkCircle } from './icon/icon-checkmark-circle';
-import { cn } from './utils';
+import { IconExclamationCircle, IconInfoCircle } from "./icon";
+import { IconCheckmarkCircle } from "./icon/icon-checkmark-circle";
+import { VDomChildren, cn } from "./utils";
 
 export const AlertError = ({
   className,
   children,
 }: {
-  children: ReactNode;
+  children?: VDomChildren;
   className?: string;
 }) => {
   return (
     <div
       className={cn(
-        'bg-red-500 text-white rounded-md p-4 flex items-center w-full gap-2',
+        "flex w-full items-center gap-2 rounded-md bg-red-500 p-4 text-white",
         className
-      )}
-    >
+      )}>
       <div>
         <IconExclamationCircle />
       </div>
@@ -30,16 +28,15 @@ export const AlertInfo = ({
   children,
   className,
 }: {
-  children: ReactNode;
+  children?: VDomChildren;
   className?: string;
 }) => {
   return (
     <div
       className={cn(
         className,
-        'bg-blue-500 text-white p-4 rounded-md flex items-center w-full gap-2'
-      )}
-    >
+        "flex w-full items-center gap-2 rounded-md bg-blue-500 p-4 text-white"
+      )}>
       <div>
         <IconInfoCircle />
       </div>
@@ -52,16 +49,15 @@ export const AlertSuccess = ({
   children,
   className,
 }: {
-  children: ReactNode;
+  children?: VDomChildren;
   className?: string;
 }) => {
   return (
     <div
       className={cn(
         className,
-        'bg-green-500 text-white p-4 rounded-md flex items-center w-full gap-2'
-      )}
-    >
+        "flex w-full items-center gap-2 rounded-md bg-green-500 p-4 text-white"
+      )}>
       <div>
         <IconCheckmarkCircle />
       </div>

@@ -1,14 +1,13 @@
 import {
+  Button,
   IconArrowLeftOnRect,
   IconRobot,
   IconUsers,
-  Button,
-  Text,
   VDom,
 } from "@gamezilla/ui";
+import { ViewUsersInSpaceList } from ".";
 import { GameSpaceViewCtx } from "./game-space-client";
 import { ViewGameHeader } from "./view-game-header";
-import { ViewUsersInSpaceList } from ".";
 
 type MainMenuButton = {
   renderIcon: (input: { className: string }) => VDom;
@@ -52,12 +51,10 @@ export const MainMenuScreen = ({
                 className: "aspect-square w-12 h-12",
               })}
               <div className="flex-1 text-left">
-                <Text variant="h5">{title}</Text>
+                <p className="text-2xl font-bold">{title}</p>
 
                 {description && (
-                  <Text color="secondary" variant="body-sm">
-                    {description}
-                  </Text>
+                  <p className="text-sm text-secondary">{description}</p>
                 )}
               </div>
             </button>

@@ -8,14 +8,12 @@ import {
 } from "@gamezilla/core";
 import { ViewCtx } from "@gamezilla/shared/client";
 import { GameSpaceClientCtx } from "@gamezilla/shared/game-space";
-import { useLayoutEffect, useRef } from "react";
 import { Direction } from "./direction";
-import * as Snake from "./snake";
 import {
   ClientModel,
   ClientMsg,
-  ServerModel,
   CoreModel,
+  ServerModel,
   ToClient,
   ToServer,
   initCoreModel,
@@ -208,29 +206,10 @@ export const View = ({
   );
 };
 
-export const ViewBoard = ({
-  model,
-}: {
+export const ViewBoard = (_props: {
   model: Model;
   dispatch: (msg: Msg) => void;
 }) => {
-  const ref = useRef<HTMLCanvasElement | null>(null);
-
-  useLayoutEffect(() => {
-    const canvas = ref.current;
-    const ctx = canvas?.getContext("2d");
-
-    if (canvas && ctx) {
-      const dpi = 1000;
-      ctx.scale(dpi, dpi);
-
-      const width = canvas.width;
-      const height = canvas.height;
-
-      Snake.draw({ width, height }, model, ctx);
-    }
-  }, [model]);
-
   return (
     <canvas
       style={{
@@ -240,7 +219,6 @@ export const ViewBoard = ({
         maxHeight: "100%",
         minHeight: "100%",
       }}
-      ref={ref}
     />
   );
 };

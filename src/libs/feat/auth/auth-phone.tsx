@@ -5,14 +5,12 @@ import {
   PhoneNumber,
   Result,
   Task,
-  matchSort,
   p,
 } from "@gamezilla/core";
 import { ClientAppMsg, UnauthenticatedViewCtx } from "@gamezilla/shared/client";
 import {
-  Autocomplete,
-  IconPhone,
   Button,
+  IconPhone,
   MyTextField,
   TopBar,
   TopBarBackButton,
@@ -183,11 +181,6 @@ export const update = ({
 //
 //
 
-const allOptions = Iso3166Alpha2Code.all.map((country) => ({
-  value: country,
-  name: Iso3166Alpha2Code.toName(country),
-}));
-
 export const View = ({
   model,
   dispatch,
@@ -197,11 +190,6 @@ export const View = ({
   dispatch: (msg: Msg) => void;
   ctx: UnauthenticatedViewCtx;
 }) => {
-  const filteredOptions = matchSort(
-    allOptions,
-    (x) => x.name,
-    model.countryQuery
-  ).map((option) => option.value);
   return (
     <div className="w-full flex-1">
       <TopBar
@@ -215,26 +203,6 @@ export const View = ({
           e.preventDefault();
           dispatch({ t: "clicked-send-code" });
         }}>
-        <Autocomplete
-          label="Country"
-          startIcon={
-            <span className="ml-2" role="img" aria-describedby="flag">
-              {Iso3166Alpha2Code.toEmoji(model.country)}
-            </span>
-          }
-          value={model.country}
-          onChange={(country) => dispatch({ t: "inputted-country", country })}
-          onClear={() => dispatch({ t: "inputted-country-query", value: "" })}
-          options={filteredOptions}
-          onChangeQuery={(value) =>
-            dispatch({ t: "inputted-country-query", value })
-          }
-          toKey={(x) => x}
-          toLabel={(x) => Iso3166Alpha2Code.toNameWithEmoji(x)}
-          valueQuery={model.countryQuery}
-          className="w-full"
-        />
-
         <MyTextField
           id="phone-number"
           startIcon={

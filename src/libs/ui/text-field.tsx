@@ -1,6 +1,5 @@
-import { ReactNode, useRef } from "react";
 import { IconXMark } from "./icon";
-import { cn } from "./utils";
+import { VDom, cn } from "./utils";
 
 export const MyTextField = ({
   label,
@@ -17,7 +16,7 @@ export const MyTextField = ({
   max,
   step,
 }: {
-  startIcon?: ReactNode;
+  startIcon?: VDom;
   type?: "text" | "password" | "email" | "number" | "search" | "tel" | "url";
   autoFocus?: boolean;
   id: string;
@@ -31,7 +30,6 @@ export const MyTextField = ({
   onClear?: () => void;
   onChange: (value: string) => void;
 }) => {
-  const inputRef = useRef<HTMLInputElement | null>(null);
   return (
     <div className="flex w-full flex-col gap-1">
       <label htmlFor={id} className={cn("text-base", error && "text-red-500")}>
@@ -47,7 +45,6 @@ export const MyTextField = ({
         {startIcon}
         <input
           id={id}
-          ref={inputRef}
           autoFocus={autoFocus}
           type={type}
           value={value}
@@ -67,7 +64,7 @@ export const MyTextField = ({
             className="rounded-md outline-none ring-blue-500 focus:ring-2"
             onClick={(event) => {
               event.preventDefault();
-              inputRef.current?.focus();
+              document.getElementById(id)?.focus();
               onClear();
             }}>
             <IconXMark />

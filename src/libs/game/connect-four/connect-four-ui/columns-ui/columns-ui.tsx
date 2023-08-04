@@ -9,7 +9,6 @@ import {
   winToId,
 } from "../../connect-four";
 import { ViewColumnsCanvas } from "./columns-ui-canvas";
-import { ViewColumnsDOM } from "./columns-ui-react-dom";
 import { ViewColumnsSvg } from "./columns-ui-svg";
 import { ViewColumnsProps } from "./shared";
 
@@ -136,7 +135,7 @@ export function View({
   implementation = "svg",
   ...props
 }: ViewColumnsProps & {
-  implementation?: "svg" | "canvas" | "dom";
+  implementation?: "svg" | "canvas";
 }) {
   switch (implementation) {
     case "canvas": {
@@ -145,10 +144,6 @@ export function View({
 
     case "svg": {
       return <ViewColumnsSvg {...props} />;
-    }
-
-    case "dom": {
-      return <ViewColumnsDOM {...props} />;
     }
   }
 }

@@ -18,7 +18,6 @@ import {
   IconSpinner,
   IconXMark,
   MyAvatar,
-  Text,
 } from "@gamezilla/ui";
 import { PlayerType, toTurn } from "../connect-four";
 import { ViewCoverArt } from "../connect-four-cover-art";
@@ -376,9 +375,7 @@ const ViewGameOverMessage = ({
   ) {
     return (
       <>
-        <Text variant="h3" className="text-center">
-          Rematch?
-        </Text>
+        <p>Rematch?</p>
         <div className="flex w-full items-center justify-center gap-4">
           <Button
             variant="contained"
@@ -432,9 +429,7 @@ const ViewGameOverMessage = ({
 
     return (
       <>
-        <Text variant="h2">
-          {currentPlayerType === winner ? "You Won" : "You Lost"}
-        </Text>
+        <p>{currentPlayerType === winner ? "You Won" : "You Lost"}</p>
         <p>by resignation</p>
       </>
     );
@@ -453,16 +448,12 @@ const ViewGameOverMessage = ({
               src={ctx.profiles[model.players[winner]]?.avatarUrl}
             />
           </div>
-          <Text variant="h2">Winner</Text>
+          <p>Winner</p>
         </div>
       );
     }
 
-    return (
-      <Text variant="h2">
-        {currentPlayerType === winner ? "You Won" : "You Lost"}
-      </Text>
-    );
+    return <p>{currentPlayerType === winner ? "You Won" : "You Lost"}</p>;
   }
 
   return null;

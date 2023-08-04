@@ -1,5 +1,4 @@
 import { Cmd, Keyboard, Option, Sub, exhaustive } from "@gamezilla/core";
-import { useLayoutEffect, useRef } from "react";
 import * as Board from "./board";
 import * as Direction from "./direction";
 import * as Piece from "./piece";
@@ -254,49 +253,14 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 // const gridStrokeWidth = 0.025
 
 export const View = ({
-  model,
   dispatch,
 }: {
   model: Model;
   dispatch: (msg: Msg) => void;
 }) => {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const containerRef = useRef<HTMLDivElement | null>(null);
-
-  useLayoutEffect(() => {
-    const canvas = canvasRef.current;
-
-    if (!canvas) {
-      return;
-    }
-
-    const context = canvas.getContext("2d");
-
-    if (!context) {
-      return;
-    }
-
-    const container = containerRef.current;
-
-    if (!container) {
-      return;
-    }
-
-    const columnCount = Board.toColumnCount(model.coreModel.board);
-    const rowCount = Board.toRowCount(model.coreModel.board);
-
-    const canvasHeight = container.offsetHeight;
-
-    context.canvas.width = (columnCount / rowCount) * canvasHeight;
-    context.canvas.height = canvasHeight;
-
-    paint(context, model);
-  }, [model]);
-
   return (
     <div>
       <div
-        ref={containerRef}
         style={{
           display: "flex",
           justifyContent: "center",
@@ -304,7 +268,6 @@ export const View = ({
           flex: 1,
         }}>
         <canvas
-          ref={canvasRef}
           onTouchMove={(event) => {
             const touch = event.touches[0];
 
@@ -416,7 +379,7 @@ const mouseEventToPosition = (
   return { x, y };
 };
 
-const paint = (context: CanvasRenderingContext2D, model: Model) => {
+export const paint = (context: CanvasRenderingContext2D, model: Model) => {
   const columnCount = Board.toColumnCount(model.coreModel.board);
   const rowCount = Board.toRowCount(model.coreModel.board);
   const canvasWidth = context.canvas.width;

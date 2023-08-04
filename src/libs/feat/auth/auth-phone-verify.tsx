@@ -179,7 +179,6 @@ export const View = ({
 
         <MyTextField
           id={codeInputId}
-          startIcon
           autoFocus
           type="tel"
           label="Code"
