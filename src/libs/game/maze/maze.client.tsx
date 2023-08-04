@@ -224,10 +224,7 @@ export const View = ({
   return (
     <div>
       {!currentUserPlayer && <p>Spectating</p>}
-      <svg
-        // style={{ maxWidth: "400px", margin: 0 }}
-        width="100%"
-        viewBox={viewBox}>
+      <svg width="100%" viewBox={viewBox}>
         <rect
           x={model.lower.x}
           y={model.lower.y}
@@ -316,7 +313,7 @@ const ViewJoystick = ({
       <svg
         width="100%"
         viewBox="-1 -1 2 2"
-        style={{ overflow: "hidden", userSelect: "none", touchAction: "none" }}>
+        className="touch-none select-none overflow-hidden">
         <defs>
           <clipPath id="cut-off-bottom">
             <circle x="0" y="0" r={1} />
@@ -355,22 +352,14 @@ const ViewJoystick = ({
             y="0"
             r={0.5}
             fill={fill}
-            style={{
-              touchAction: "none",
-              userSelect: "none",
-              pointerEvents: "none",
-            }}
+            className="pointer-events-none touch-none select-none"
             stroke={stroke}
           />
           <circle
             x="0"
             y="0"
             r={0.98}
-            style={{
-              touchAction: "none",
-              userSelect: "none",
-              pointerEvents: "none",
-            }}
+            className="pointer-events-none touch-none select-none"
             fill="transparent"
             stroke={stroke}
           />

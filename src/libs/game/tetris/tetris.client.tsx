@@ -260,13 +260,7 @@ export const View = ({
 }) => {
   return (
     <div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          overflow: "hidden",
-          flex: 1,
-        }}>
+      <div>
         <canvas
           onTouchMove={(event) => {
             const touch = event.touches[0];

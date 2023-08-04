@@ -211,15 +211,7 @@ export const ViewBoard = (_props: {
   dispatch: (msg: Msg) => void;
 }) => {
   return (
-    <canvas
-      style={{
-        userSelect: "none",
-        width: "100%",
-        height: "100%",
-        maxHeight: "100%",
-        minHeight: "100%",
-      }}
-    />
+    <canvas className="pointer-events-none h-full max-h-full min-h-full w-full touch-none select-none" />
   );
 };
 

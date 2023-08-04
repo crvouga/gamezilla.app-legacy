@@ -56,8 +56,7 @@ export const MyTextField = ({
           auto-save="off"
           step={step}
           onChange={(e) => onChange(e.currentTarget.value)}
-          className="flex-1 bg-transparent outline-none"
-          style={{ width: "auto" }}
+          className="w-auto flex-1 bg-transparent outline-none"
         />
         {onClear && (
           <button

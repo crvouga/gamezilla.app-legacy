@@ -1,3 +1,4 @@
+import { toInlineStyles } from "@gamezilla/ui";
 import {
   Empty,
   MAX_X,
@@ -32,9 +33,9 @@ export const ViewBoard = ({
     <svg
       width={"100%"}
       viewBox={[0, 0, MAX_X * scale, MAX_Y * scale].join(" ")}
-      style={{
+      style={toInlineStyles({
         backgroundColor: gameTheme.background,
-      }}>
+      })}>
       <g>
         {lines.map((line, index) => (
           <line
@@ -92,9 +93,7 @@ export const ViewBoard = ({
           key={[position.column, position.row, toSlot(board, position)].join(
             " "
           )}
-          style={{
-            cursor: "pointer",
-          }}
+          className="cursor-pointer"
           x={Number(position.column) * scale}
           y={Number(position.row) * scale}
           width={1 * scale}

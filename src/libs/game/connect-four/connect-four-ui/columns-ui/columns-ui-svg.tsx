@@ -1,3 +1,4 @@
+import { toInlineStyles } from "@gamezilla/ui";
 import {
   COLUMN_COUNT,
   Columns,
@@ -85,14 +86,14 @@ export const ViewColumnsSvg = ({
 
         {[...new Array(COLUMN_COUNT)].map((_, columnIndex) => (
           <rect
-            style={{
+            style={toInlineStyles({
               cursor:
                 disabled || !onClick
                   ? undefined
                   : (columns[columnIndex]?.length ?? 0) >= MAX_COLUMN_HEIGHT
                   ? "not-allowed"
                   : "pointer",
-            }}
+            })}
             onMouseOver={() => {
               if (!disabled && isColumnIndex(columnIndex) && onHover) {
                 onHover(columnIndex);

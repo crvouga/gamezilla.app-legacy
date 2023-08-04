@@ -1,4 +1,4 @@
-import { cn } from "@gamezilla/ui";
+import { cn, toInlineStyles } from "@gamezilla/ui";
 import { Flow, GroupId, NodeId } from "../flow";
 import { Color, groupIdToColor } from "../flow-ui";
 import * as FlowGrid from "./flow-grid";
@@ -79,17 +79,18 @@ export const View = ({
   return (
     <svg
       className={cn("w-full", className)}
-      style={{
+      style={toInlineStyles({
         WebkitUserSelect: "none",
         MozUserSelect: "none",
         msUserSelect: "none",
         userSelect: "none",
         touchAction: "none",
-      }}
+      })}
       viewBox={toViewBox(model)}
       onContextMenu={(event) => {
         event.stopPropagation();
         event.preventDefault();
+        event.stopImmediatePropagation();
       }}
       onTouchMove={(event) => {
         const nodeId = touchEventToNodeId(event);
@@ -291,7 +292,7 @@ export const View = ({
               width={1}
               className="cursor-pointer"
               height={1}
-              fill={"transparent"}
+              fill="transparent"
               onMouseDown={() => {
                 onPressDown?.(nodeId);
               }}

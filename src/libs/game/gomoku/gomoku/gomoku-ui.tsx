@@ -8,6 +8,7 @@ import {
   presetToStars,
 } from "./gomoku";
 import { Position } from "./gomoku-position";
+import { toInlineStyles } from "@gamezilla/ui";
 
 const backgroundColor = "#C88655";
 const lineColor = Hex.darken(backgroundColor, 0.3);
@@ -96,7 +97,7 @@ export const ViewBoard = ({
 
   return (
     <svg
-      style={{ overflow: "hidden" }}
+      style={toInlineStyles({ overflow: "hidden" })}
       width="100%"
       viewBox={viewBox}
       className={className}>
@@ -178,7 +179,7 @@ export const ViewBoard = ({
               r={0.5}
               fill="transparent"
               onClick={() => onPress?.({ x, y })}
-              style={{ cursor: "pointer" }}
+              className="cursor-pointer"
             />
           ))}
         </g>
