@@ -17,7 +17,6 @@ import {
   VDom,
   cn,
 } from "@gamezilla/ui";
-import { Subject } from "rxjs";
 import { GameSpaceClient } from "src/libs/feat/game-space";
 import { Routing, Toast, Wire } from "./app-client";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./app.core";
@@ -404,8 +403,8 @@ export const updateFromApp = ({
 //
 //
 
-export const wireMsgs = new Subject<Wire.Msg>();
-export const fromServerMsgs = new Subject<ToClient>();
+export const wireMsgs = Sub.create<Wire.Msg>();
+export const fromServerMsgs = Sub.create<ToClient>();
 
 export const subscriptions = ({
   now,

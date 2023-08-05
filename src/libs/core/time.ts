@@ -1,6 +1,6 @@
-import * as Rx from "rxjs";
+import { p } from ".";
 import { Cmd } from "./cmd";
-import { Sub } from "./sub";
+import { PubSub, Sub } from "./sub";
 import { Task } from "./task";
 
 export type Posix = number & { _tag: "Posix" };
@@ -64,23 +64,14 @@ export const cancelTimeout = (timeoutId: string): Cmd => {
   };
 };
 
-//
-//
-//
-// why not just use rxjs for intervals?
-// https://github.com/gcanti/elm-ts/issues/20
-//
-//
-//
-
 // NOTE: needs to be cleaned up when using HMR
-const intervals = new Map<string, Rx.Subject<number>>();
+const intervals = new Map<string, PubSub<number>>();
 
 const onTimeout = (intervalId: string, time: number) => {
-  const subj = intervals.get(intervalId);
+  const sub = intervals.get(intervalId);
 
-  if (subj && subj.observed) {
-    subj.next(new Date().getTime());
+  if (sub && sub.isSubscribed()) {
+    sub.publish(new Date().getTime());
 
     setTimeout(() => onTimeout(intervalId, time), time);
 
@@ -95,19 +86,25 @@ export const every = <Msg>(
   time: number,
   f: (time: number) => Msg
 ): Sub<Msg> => {
-  const subj = intervals.get(intervalId);
+  const sub = intervals.get(intervalId);
 
-  if (subj) {
-    return subj.pipe(Rx.map(() => f(new Date().getTime())));
+  if (sub) {
+    return p(
+      sub,
+      Sub.map(() => f(new Date().getTime()))
+    );
   }
 
-  const newSubj = new Rx.Subject<number>();
+  const subNew = Sub.create<number>();
 
-  intervals.set(intervalId, newSubj);
+  intervals.set(intervalId, subNew);
 
   setTimeout(() => {
     onTimeout(intervalId, time);
   }, time);
 
-  return newSubj.pipe(Rx.map(() => f(new Date().getTime())));
+  return p(
+    subNew,
+    Sub.map(() => f(new Date().getTime()))
+  );
 };

@@ -1,17 +1,16 @@
+import { Cmd, Sub, andThen, p } from "@gamezilla/core";
 import { AuthServer } from "@gamezilla/feat/auth";
 import { ChatServer } from "@gamezilla/feat/chat";
 import { ProfileServer } from "@gamezilla/feat/profile";
 import { SearchServer } from "@gamezilla/feat/search";
-import { GameSpaceServer } from "src/libs/feat/game-space";
 import { ClientId, SessionId, UserId } from "@gamezilla/shared/app";
-import { Cmd, Sub, andThen, p } from "@gamezilla/core";
 import {
-  ServerReqCtx,
-  ServerUnauthenticatedReqCtx,
   ServerAppMsg,
   ServerCtx,
+  ServerReqCtx,
+  ServerUnauthenticatedReqCtx,
 } from "@gamezilla/shared/server";
-import { Subject } from "rxjs";
+import { GameSpaceServer } from "src/libs/feat/game-space";
 import {
   ServerModel,
   ServerMsg,
@@ -430,18 +429,18 @@ export const subscriptions = ({
   ]);
 };
 
-export const fromClientMsgs = new Subject<{
+export const fromClientMsgs = Sub.create<{
   sessionId: SessionId;
   clientId: ClientId;
   msg: ToServer;
 }>();
 
-export const onConnect = new Subject<{
+export const onConnect = Sub.create<{
   sessionId: SessionId;
   clientId: ClientId;
 }>();
 
-export const onDisconnect = new Subject<{
+export const onDisconnect = Sub.create<{
   sessionId: SessionId;
   clientId: ClientId;
 }>();

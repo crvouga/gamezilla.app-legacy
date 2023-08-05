@@ -1,40 +1,64 @@
-import * as Rx from "rxjs";
 import { p } from "./pipe";
 
-export type Sub<Msg> = Rx.Observable<Msg>;
+export type Sub<Msg> = {
+  subscribe: (subscriber: (msg: Msg) => void) => () => void;
+};
+
+type Pub<Msg> = {
+  publish: (msg: Msg) => void;
+  isSubscribed: () => boolean;
+};
+
+export type PubSub<Msg> = Pub<Msg> & Sub<Msg>;
+
+export const create = <Msg>(): PubSub<Msg> => {
+  let runningId = 0;
+  const subscribers = new Map<number, (msg: Msg) => void>();
+
+  return {
+    isSubscribed: () => subscribers.size > 0,
+    subscribe: (subscriber) => {
+      const id = runningId + 1;
+      subscribers.set(id, subscriber);
+      return () => {
+        subscribers.delete(id);
+      };
+    },
+    publish: (msg: Msg) => {
+      for (const subscriber of subscribers.values()) {
+        subscriber(msg);
+      }
+    },
+  };
+};
 
 export const map =
   <A, Msg>(f: (a: A) => Msg) =>
   (sub: Sub<A>): Sub<Msg> => {
-    return sub.pipe(Rx.map(f));
-  };
-
-const chain =
-  <Msg, A>(f: (a: A) => Sub<Msg>) =>
-  (sub: Sub<A>): Sub<Msg> => {
-    return sub.pipe(Rx.mergeMap(f));
+    return {
+      subscribe: (subscriber) => {
+        return sub.subscribe((a) => {
+          subscriber(f(a));
+        });
+      },
+    };
   };
 
 export const batch = <Msg>(arr: Sub<Msg>[]): Sub<Msg> => {
-  return Rx.merge(...arr);
+  return {
+    subscribe: (subscriber) => {
+      const unsubscribeList = arr.map((sub) => sub.subscribe(subscriber));
+      return () => {
+        for (const unsubscribe of unsubscribeList) {
+          unsubscribe();
+        }
+      };
+    },
+  };
 };
 
-export const None: Sub<never> = Rx.EMPTY;
-
-type Unsubscribe = () => void;
-
-export const create = <Msg>(
-  subscribe: (emit: (msg: Msg) => void) => Unsubscribe
-): Sub<Msg> => {
-  return new Rx.Observable<Msg>((subscriber) => {
-    const unsubscribe = subscribe((msg) => {
-      subscriber.next(msg);
-    });
-
-    return () => {
-      unsubscribe();
-    };
-  });
+export const None: Sub<never> = {
+  subscribe: () => () => {},
 };
 
 const tag = <Tag extends string, Msg>(
@@ -47,16 +71,10 @@ const tag = <Tag extends string, Msg>(
   );
 };
 
-const of = <T>(msg: T): Sub<T> => {
-  return Rx.of(msg);
-};
-
 export const Sub = {
   map,
   batch,
   create,
-  of,
   None,
-  chain,
   tag,
 };

@@ -17,17 +17,16 @@ import {
   UnauthenticatedViewCtx,
 } from "@gamezilla/shared/client";
 import {
+  Button,
   ConformationDialog,
   IconEnvelope,
   IconGoogle,
   IconMobilePhone,
   LoadingBar,
   LoadingScreen,
-  Button,
   cn,
 } from "@gamezilla/ui";
 import { Session as SupabaseSession } from "@supabase/supabase-js";
-import { Subject } from "rxjs";
 import * as AuthEmailLink from "./auth-email-link";
 import * as AuthPhone from "./auth-phone";
 import * as AuthPhoneVerify from "./auth-phone-verify";
@@ -393,8 +392,6 @@ export const ViewLogoutScreen = ({
 //
 //
 
-const subject = new Subject<Msg>();
-
 const fromSupabaseSession = (auth: SupabaseSession | null): Msg => {
   const userId = UserId.decode(auth?.user?.id);
 
@@ -410,7 +407,7 @@ const fromSupabaseSession = (auth: SupabaseSession | null): Msg => {
   };
 };
 
-export const subscriptions: Sub<Msg> = subject;
+export const subscriptions: Sub<Msg> = Sub.None;
 
 const loadCurrentUser: Cmd<Msg> = (dispatch) => {
   setTimeout(() => {

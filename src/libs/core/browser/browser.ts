@@ -1,9 +1,8 @@
-import * as Rx from 'rxjs';
-import { Cmd } from '../cmd';
-import { p } from '../pipe';
-import { Result } from '../result';
-import { Sub } from '../sub';
-import { Task } from '../task';
+import { Cmd } from "../cmd";
+import { p } from "../pipe";
+import { Result } from "../result";
+import { Sub } from "../sub";
+import { Task } from "../task";
 
 //
 //
@@ -18,20 +17,17 @@ export type Location = {
   query: { [key: string]: string };
 };
 
-const location$ = new Rx.Observable<Location>((subscriber) => {
-  const handler = () => {
-    subscriber.next(getLocation());
-  };
-  window.addEventListener('popstate', handler);
-  return () => {
-    window.removeEventListener('popstate', handler);
-  };
-});
+const locationSub = Sub.create<Location>();
+
+const handler = () => {
+  locationSub.publish(getLocation());
+};
+window.addEventListener("popstate", handler);
 
 export const onLocation = <Msg>(
   mapper: (location: Location) => Msg
 ): Sub<Msg> => {
-  return p(location$, Sub.map(mapper));
+  return p(locationSub, Sub.map(mapper));
 };
 
 export const getLocation = (): Location => {
@@ -56,8 +52,8 @@ export const getLocation = (): Location => {
 export const push = (url: string): Cmd => {
   return () => {
     setTimeout(() => {
-      window.history.pushState(null, '', url);
-      window.dispatchEvent(new Event('popstate'));
+      window.history.pushState(null, "", url);
+      window.dispatchEvent(new Event("popstate"));
     }, 0);
   };
 };
@@ -65,8 +61,8 @@ export const push = (url: string): Cmd => {
 export const replace = (url: string): Cmd => {
   return () => {
     setTimeout(() => {
-      window.history.replaceState(null, '', url);
-      window.dispatchEvent(new Event('popstate'));
+      window.history.replaceState(null, "", url);
+      window.dispatchEvent(new Event("popstate"));
     }, 0);
   };
 };
@@ -74,7 +70,7 @@ export const replace = (url: string): Cmd => {
 export const back: Cmd = () => {
   setTimeout(() => {
     window.history.back();
-    window.dispatchEvent(new Event('popstate'));
+    window.dispatchEvent(new Event("popstate"));
   }, 0);
 };
 
@@ -86,7 +82,7 @@ export const back: Cmd = () => {
 //
 //
 
-export type Problem = { type: 'ElementNotFound' };
+export type Problem = { type: "ElementNotFound" };
 
 export type FocusResult = Result<Problem, null>;
 
@@ -102,7 +98,7 @@ export const focus =
       return Result.Ok(null);
     }
 
-    return Result.Err({ type: 'ElementNotFound' });
+    return Result.Err({ type: "ElementNotFound" });
   };
 
 export type ScrollResult = Result<Problem, null>;
@@ -116,15 +112,15 @@ export const scrollIntoView =
 
     if (element) {
       element.scrollIntoView({
-        behavior: 'auto',
+        behavior: "auto",
         // block: 'center',
-        inline: 'center',
+        inline: "center",
       });
 
       return Result.Ok(null);
     }
 
-    return Result.Err({ type: 'ElementNotFound' });
+    return Result.Err({ type: "ElementNotFound" });
   };
 
 export type GetElementByIdResult = Result<Problem, DomElement>;
@@ -146,29 +142,5 @@ export const getElementById =
       });
     }
 
-    return Result.Err({ type: 'ElementNotFound' });
+    return Result.Err({ type: "ElementNotFound" });
   };
-
-export type Resize = {
-  width: number;
-  height: number;
-};
-
-export const onResize = <Msg>(mapper: (resize: Resize) => Msg): Sub<Msg> => {
-  return new Rx.Observable((subscriber) => {
-    const handle = () => {
-      subscriber.next(
-        mapper({
-          height: window.innerHeight,
-          width: window.innerWidth,
-        })
-      );
-    };
-
-    window.addEventListener('resize', handle);
-
-    return () => {
-      window.removeEventListener('resize', handle);
-    };
-  });
-};

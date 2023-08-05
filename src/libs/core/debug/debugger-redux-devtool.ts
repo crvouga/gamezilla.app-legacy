@@ -8,7 +8,6 @@
 import * as Json from "../json";
 import { Option } from "../option";
 import { p } from "../pipe";
-import { dispatch } from "../program";
 import { Result } from "../result";
 import { Task } from "../task";
 import {
@@ -19,7 +18,7 @@ import {
   MsgWithDebug,
 } from "./debugger-commons";
 
-type Unsubscription = () => void;
+type Unsubscribe = () => void;
 
 /**
  * Defines a _Redux DevTool Extension_ object.
@@ -36,7 +35,7 @@ export interface Extension {
  * @since 0.5.0
  */
 export interface Connection<Model, Msg> {
-  subscribe: (listener?: dispatch<DevToolMsg>) => Unsubscription;
+  subscribe: (listener?: (m: DevToolMsg) => void) => Unsubscribe;
   send(action: null, state: LiftedState<Model>): void;
   send(action: Msg, state: Model): void;
   init: (state: Model) => void;
@@ -162,7 +161,6 @@ const handleSubscription = <Model, Msg extends {}>(
 const handleIncomingMsg = <Model, Msg extends {}>({
   connection,
   init,
-  debug$,
   dispatch,
 }: DevToolHandlerR<Model, Msg>): ((
   msg: DevToolMsg
@@ -233,7 +231,8 @@ const handleIncomingMsg = <Model, Msg extends {}>({
             );
 
           case "COMMIT":
-            return Result.Ok(restart(debug$.getValue()[1]));
+            // return Result.Ok(restart(debug$.getValue()[1]));
+            return Result.Err("idk");
 
           case "IMPORT_STATE":
             return p(
@@ -377,7 +376,7 @@ const parseToggleAction = <Model>(
  */
 
 const toggleAction =
-  <Model, Msg extends {}>(dispatch: dispatch<MsgWithDebug<Model, Msg>>) =>
+  <Model, Msg extends {}>(dispatch: (m: MsgWithDebug<Model, Msg>) => void) =>
   (id: number, liftedState: LiftedState<Model>): Task<LiftedState<Model>> =>
   async () => {
     const state = unsafeCopy(liftedState);

@@ -241,8 +241,5 @@ export const ViewBanner = ({
 //
 
 export const subscriptions = (_model: Model): Sub<Msg> => {
-  return p(
-    Mic.volumes,
-    Sub.map((volume) => ["MicSound", { volume }])
-  );
+  return Sub.None;
 };

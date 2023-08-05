@@ -1,11 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import * as Rx from "rxjs";
-import { Cmd } from "../cmd";
 import * as Json from "../json";
 import { Option } from "../option";
 import { p } from "../pipe";
-import * as Platform from "../program";
-import { dispatch } from "../program";
 import { Result } from "../result";
 import { Task } from "../task";
 import { Debug, Debugger, Global, MsgWithDebug } from "./debugger-commons";
@@ -30,7 +26,7 @@ export interface Extension {
  * @since 0.5.0
  */
 export interface Connection<Model, Msg> {
-  subscribe: (listener?: dispatch<DevToolMsg>) => Unsubscribe;
+  subscribe: (listener?: (m: DevToolMsg) => void) => Unsubscribe;
   send(action: null, state: LiftedState<Model>): void;
   send(action: Msg, state: Model): void;
   init: (state: Model) => void;
@@ -78,7 +74,7 @@ interface LiftedState<Model> {
 interface DevToolHandlerR<Model, Msg extends object> {
   init: Model;
   //   debug$: Rx.BehaviorSubject<DebugData<Model, Msg>>
-  dispatch: Platform.dispatch<MsgWithDebug<Model, Msg>>;
+  dispatch: (m: MsgWithDebug<Model, Msg>) => void;
   connection: Connection<Model, Msg>;
 }
 
@@ -384,7 +380,9 @@ const parseToggleAction = <Model>(
  */
 
 const toggleAction =
-  <Model, Msg extends object>(dispatch: dispatch<MsgWithDebug<Model, Msg>>) =>
+  <Model, Msg extends object>(
+    dispatch: (m: MsgWithDebug<Model, Msg>) => void
+  ) =>
   (id: number, liftedState: LiftedState<Model>): Task<LiftedState<Model>> =>
   async () => {
     const state = unsafeCopy(liftedState);
@@ -452,86 +450,6 @@ const unsafeCopy = <A>(a: A): A => {
  *
  */
 
-export const withDebugger = <Model, Msg extends object>(
-  program: Platform.Program<Model, Msg>
-): { program: Platform.Program<Model, Msg>; stopDebugger: () => void } => {
-  const maybeConnection = getConnection<Model, Msg>(window);
-
-  if (maybeConnection.type === "none") {
-    return {
-      program,
-      stopDebugger: () => {
-        //
-      },
-    };
-  }
-
-  const connection = maybeConnection.value;
-
-  const debuggerStarted$ = new Rx.Subject<"STARTED">();
-
-  const unsubscribe = connection.subscribe(
-    handleSubscription({
-      connection,
-      init: program.state$.getValue().model,
-      dispatch: (msg) => {
-        if (!("type" in msg)) {
-          return;
-        }
-
-        switch (msg.type) {
-          case "__DebugApplyMsg__": {
-            program.dispatch(msg.payload);
-            return;
-          }
-
-          case "__DebugStarted__": {
-            debuggerStarted$.next("STARTED");
-            return;
-          }
-
-          case "__DebugUpdateModel__": {
-            const current = program.state$.getValue();
-            program.state$.next({
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              model: msg.payload,
-              cmd: Cmd.None,
-              runningDebugId: current.runningDebugId,
-            });
-            return;
-          }
-        }
-      },
-    })
-  );
-
-  const subscription = program.state$
-    .pipe(waitFor(debuggerStarted$))
-    .subscribe((state) => {
-      if (!state.msg) {
-        return;
-      }
-      const action = toAction(state.msg);
-      // @ts-ignore
-      connection.send(action, state.model);
-    });
-
-  const stopDebugger = () => {
-    unsubscribe();
-    subscription.unsubscribe();
-  };
-
-  const programNew: Platform.Program<Model, Msg> = {
-    ...program,
-  };
-
-  return {
-    program: programNew,
-    stopDebugger,
-  };
-};
-
 //
 //
 //
@@ -540,22 +458,10 @@ export const withDebugger = <Model, Msg extends object>(
 //
 //
 
-const waitFor = <T>(signal: Rx.Observable<unknown>) => {
-  return (source: Rx.Observable<T>) =>
-    signal.pipe(
-      Rx.first(),
-      Rx.switchMap((_) => source)
-    );
-};
-
 type AnyMsg = {
   t: string;
   c?: AnyMsg;
 } & Record<string, unknown>;
-
-const isAnyMsg = (msg: unknown): msg is AnyMsg => {
-  return typeof msg === "object" && msg !== null && "t" in msg;
-};
 
 const toMsgType = (msg: AnyMsg): string => {
   if (msg.c) {
@@ -577,41 +483,4 @@ const toMsgPayload = (
     return toMsgPayload(msg.c, { ...acc, ...payload });
   }
   return { ...acc, ...payload };
-};
-
-const toAction = (action: unknown): { type: string; payload?: unknown } => {
-  if (isAnyMsg(action)) {
-    const msgType = toMsgType(action);
-    const msgPayload = toMsgPayload(action, {});
-    return {
-      type: msgType,
-      payload: Object.keys(msgPayload).length > 0 ? msgPayload : undefined,
-    };
-  }
-
-  if (!Array.isArray(action)) {
-    return {
-      type: "UnknownAction",
-    };
-  }
-
-  const flatten = flattenDeep(action);
-
-  const actionType = flatten
-    .flatMap((item) => (typeof item === "string" ? [item] : []))
-    // .map((item) => (Uuid.is(item) ? "[id]" : item))
-    .join(".");
-
-  const payload = flatten[flatten.length - 1];
-
-  return {
-    type: actionType,
-    payload: typeof payload === "string" ? undefined : payload,
-  };
-};
-
-const flattenDeep = <T>(arr: T | T[]): T[] => {
-  return Array.isArray(arr)
-    ? arr.reduce<T[]>((a, b) => a.concat(flattenDeep(b)), [])
-    : [arr];
 };

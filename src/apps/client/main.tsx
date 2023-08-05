@@ -6,7 +6,7 @@ import {
   serverPort,
   sessionIdKey,
 } from "@gamezilla/app";
-import { Browser, Cmd, ProgramV2 } from "@gamezilla/core";
+import { Browser, Cmd, Program } from "@gamezilla/core";
 import { render } from "inferno";
 import { Socket, io } from "socket.io-client";
 import "./main.css";
@@ -48,19 +48,19 @@ const main = () => {
   });
 
   socketClient.on("connect", () => {
-    AppClient.wireMsgs.next({ t: "connected" });
+    AppClient.wireMsgs.publish({ t: "connected" });
   });
 
   socketClient.on("disconnect", () => {
-    AppClient.wireMsgs.next({ t: "disconnected" });
+    AppClient.wireMsgs.publish({ t: "disconnected" });
   });
 
   socketClient.on("connect_error", () => {
-    AppClient.wireMsgs.next({ t: "connect-error" });
+    AppClient.wireMsgs.publish({ t: "connect-error" });
   });
 
   socketClient.on("to-client", (msg) => {
-    AppClient.fromServerMsgs.next(msg);
+    AppClient.fromServerMsgs.publish(msg);
   });
 
   const sendToServer =
@@ -69,7 +69,7 @@ const main = () => {
       socketClient.emit("to-server", msg);
     };
 
-  const program = ProgramV2.create({
+  const program = Program.create({
     init: () => {
       return AppClient.init({ location: Browser.getLocation() });
     },

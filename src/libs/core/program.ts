@@ -1,137 +1,105 @@
-import * as Rx from "rxjs";
 import { Cmd } from "./cmd";
 import { Sub } from "./sub";
 import { Posix } from "./unix-time";
 
-//
-//
-//
-//  Model
-//
-//
-//
-
-export type State<Model, Msg> = {
-  model: Model & { _debugId: number; _now: Posix };
-  cmd: Cmd<Msg>;
-  msg?: Msg;
-  runningDebugId: number;
-};
+export type Ctx = { now: Posix };
 
 export type Program<Model, Msg> = {
-  dispatch: dispatch<Msg>;
-  sub$: Sub<Msg>;
-  state$: Rx.BehaviorSubject<State<Model, Msg>>;
+  dispatch: (msg: Msg) => void;
+  subscribe: (cb: (model: Model) => void) => () => void;
 };
 
-export type dispatch<Msg> = (msg: Msg) => void;
-
-//
-//
-//
-// Program
-//
-//
-//
-
-const create = <Model, Msg>({
-  init,
-  update,
-  subscriptions,
-}: {
-  init: { model: Model; cmd?: Cmd<Msg> };
-  update: (input: { now: Posix; msg: Msg; model: Model }) => {
+export function create<Model, Msg>(input: {
+  init: (input: { ctx: Ctx }) => { model: Model; cmd?: Cmd<Msg> };
+  update: (input: { ctx: Ctx; msg: Msg; model: Model }) => {
     model: Model;
     cmd?: Cmd<Msg>;
   };
-  subscriptions: (input: { now: Posix; model: Model }) => Sub<Msg>;
-}): Program<Model, Msg> => {
-  const state$ = new Rx.BehaviorSubject<State<Model, Msg>>({
-    runningDebugId: 0,
-    model: {
-      ...init.model,
-      _debugId: 0,
-      _now: Posix.fromNumber(Date.now()),
-    },
-    cmd: init.cmd ?? Cmd.None,
-  });
+  subscriptions: (input: { ctx: Ctx; model: Model }) => Sub<Msg>;
+}) {
+  let id = 0;
 
-  const dispatch = (msg: Msg) => {
-    const state = state$.getValue();
-    if (state.model._debugId < state.runningDebugId) {
-      console.log("[program] skip msg");
-      return;
-    }
-    const updated = update({
-      now: state.model._now,
-      msg,
-      model: state.model,
-    });
+  type Subscriber = (model: Model, ctx: Ctx, msg: Msg | null) => Promise<void>;
 
-    const debugIdNext = state.model._debugId + 1;
-
-    state$.next({
-      runningDebugId: debugIdNext,
-      model: {
-        ...updated.model,
-        _debugId: debugIdNext,
-        _now: Posix.fromNumber(Date.now()),
-      },
-      cmd: updated.cmd ?? Cmd.None,
-      msg,
-    });
+  const subscribers = new Map<number, Subscriber>();
+  const subscribe = (subscriber: Subscriber): (() => void) => {
+    subscribers.set(id, subscriber);
+    id++;
+    return () => {
+      subscribers.delete(id);
+    };
   };
 
-  const sub$ = state$.pipe(
-    Rx.switchMap((state) => {
-      return subscriptions({
-        now: state.model._now,
+  async function callSubscribers(model: Model, ctx: Ctx, msg: Msg | null) {
+    for (const subscriber of subscribers.values()) {
+      await subscriber(model, ctx, msg);
+    }
+  }
+
+  let state = input.init({
+    ctx: {
+      now: Posix.fromNumber(Date.now()),
+    },
+  });
+
+  let unsubscribe: () => void = () => {};
+
+  function dispatch(msg: Msg) {
+    const ctx: Ctx = {
+      now: Posix.fromNumber(Date.now()),
+    };
+
+    const updated = input.update({
+      model: state.model,
+      msg,
+      ctx,
+    });
+
+    setState(updated, ctx, msg);
+  }
+
+  async function setState(
+    stateNew: { model: Model; cmd?: Cmd<Msg> },
+    ctx: Ctx,
+    msg: Msg | null
+  ) {
+    state = stateNew;
+
+    await callSubscribers(stateNew.model, ctx, msg);
+
+    if (unsubscribe) {
+      unsubscribe;
+    }
+
+    unsubscribe = input
+      .subscriptions({
+        ctx,
         model: state.model,
-      });
-    })
-  );
+      })
+      .subscribe(dispatch);
+
+    if (state.cmd) {
+      state.cmd(dispatch);
+    }
+  }
+
+  function start() {
+    const ctx: Ctx = {
+      now: Posix.fromNumber(Date.now()),
+    };
+    setState(state, ctx, null);
+
+    return function stop() {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+      subscribers.clear();
+    };
+  }
 
   return {
+    start,
     dispatch,
-    sub$,
-    state$,
+    subscribe,
   };
-};
-
-const run = <Model, Msg>(program: Program<Model, Msg>): (() => void) => {
-  const subSub = program.sub$.subscribe((msg) => {
-    program.dispatch(msg);
-  });
-
-  const cmdSub = program.state$.subscribe(({ cmd }) => {
-    // TODO: use a scheduler
-    // Make sure that the view render is done before the cmd is executed
-    // because cmd might do animations
-    setTimeout(() => {
-      cmd(program.dispatch);
-    }, 1);
-  });
-
-  return () => {
-    subSub.unsubscribe();
-    cmdSub.unsubscribe();
-  };
-};
-
-const subscribe = <Model, Msg>(
-  program: Program<Model, Msg>,
-  subscriber: (state: State<Model, Msg>) => void
-): (() => void) => {
-  const sub = program.state$.subscribe((state) => {
-    subscriber(state);
-  });
-  return () => {
-    sub.unsubscribe();
-  };
-};
-
-export const Program = {
-  create,
-  run,
-  subscribe,
-};
+}

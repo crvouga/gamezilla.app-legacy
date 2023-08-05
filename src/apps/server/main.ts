@@ -4,6 +4,8 @@ import {
   ServerToClientEvents,
   ToClient,
   serverPort,
+  ServerModel,
+  ServerMsg,
   sessionIdKey,
 } from "@gamezilla/app";
 import { ClientId, SessionId } from "@gamezilla/shared/app";
@@ -31,10 +33,10 @@ const main = async () => {
   });
 
   console.log("[server] planet scale connected.");
-
+  let model: ServerModel | null = null;
+  let msg: ServerMsg | null = null;
   const requestListener: RequestListener = (_request, response) => {
-    const state = program.state$.getValue();
-    response.end(JSON.stringify({ msgType: state.msg, model: state.model }));
+    response.end(JSON.stringify({ msgType: msg, model: model }));
   };
 
   const httpServer = createServer(requestListener);
@@ -61,18 +63,22 @@ const main = async () => {
     socket.emit("session-id", sessionId);
 
     if (ClientId.is(socket.id)) {
-      AppServer.onConnect.next({ sessionId, clientId: socket.id });
+      AppServer.onConnect.publish({ sessionId, clientId: socket.id });
     }
 
     socket.on("to-server", (msg) => {
       if (ClientId.is(socket.id)) {
-        AppServer.fromClientMsgs.next({ sessionId, clientId: socket.id, msg });
+        AppServer.fromClientMsgs.publish({
+          sessionId,
+          clientId: socket.id,
+          msg,
+        });
       }
     });
 
     socket.on("disconnect", () => {
       if (ClientId.is(socket.id)) {
-        AppServer.onDisconnect.next({ sessionId, clientId: socket.id });
+        AppServer.onDisconnect.publish({ sessionId, clientId: socket.id });
       }
     });
   });
@@ -96,13 +102,13 @@ const main = async () => {
     };
 
   const program = Program.create({
-    init: AppServer.init,
+    init: () => AppServer.init,
     subscriptions: (input) => {
       return AppServer.subscriptions({
         ...input,
         ctx: {
           mySql,
-          now: input.now,
+          now: input.ctx.now,
         },
       });
     },
@@ -115,7 +121,7 @@ const main = async () => {
           sendToClient,
           ctx: {
             mySql,
-            now: input.now,
+            now: input.ctx.now,
           },
         });
       } catch (error) {
@@ -128,14 +134,16 @@ const main = async () => {
     },
   });
 
-  program.state$.subscribe((state) => {
-    if (state.msg) {
-      const type = toMsgType(state.msg);
+  program.subscribe(async (model_, _ctx, msg_) => {
+    if (msg_) {
+      const type = toMsgType(msg_);
       console.log(type);
     }
+    model = model_;
+    msg = msg_;
   });
 
-  Program.run(program);
+  program.start();
 };
 
 main();
