@@ -7,7 +7,7 @@ export default {
         secondary: "#ffffffcc",
       },
       animation: {
-        slide: "slide 2s linear infinite",
+        slide: "slide 0.5s linear infinite",
       },
     },
   },
