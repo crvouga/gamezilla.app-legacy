@@ -412,7 +412,6 @@ export const updateFromParent = ({
 export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
   if (model.t === "started") {
     return Time.every(intervalId, 500, () => ({ t: "clock-tick" }));
-    // return Sub.None;
   }
   return Sub.None;
 };

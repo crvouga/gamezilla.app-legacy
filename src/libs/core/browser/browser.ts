@@ -17,17 +17,20 @@ export type Location = {
   query: { [key: string]: string };
 };
 
-const locationSub = Sub.create<Location>();
-
-const handler = () => {
-  locationSub.publish(getLocation());
-};
-window.addEventListener("popstate", handler);
-
 export const onLocation = <Msg>(
   mapper: (location: Location) => Msg
 ): Sub<Msg> => {
-  return p(locationSub, Sub.map(mapper));
+  return {
+    subscribe: (subscriber) => {
+      const handler = () => {
+        subscriber(mapper(getLocation()));
+      };
+      window.addEventListener("popstate", handler);
+      return () => {
+        window.removeEventListener("popstate", handler);
+      };
+    },
+  };
 };
 
 export const getLocation = (): Location => {
