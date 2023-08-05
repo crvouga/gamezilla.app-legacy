@@ -1,6 +1,6 @@
 import { VDom } from "./utils";
 
-export const MyDrawer = ({
+export const Drawer = ({
   open,
   children,
   onClose,

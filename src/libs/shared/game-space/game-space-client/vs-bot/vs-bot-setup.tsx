@@ -5,7 +5,7 @@ import {
   IconArrowLeftOnRect,
   IconQuestionMark,
   MyAvatar,
-  MyDrawer,
+  Drawer,
   VDom,
 } from "@gamezilla/ui";
 import { GameSpaceViewCtx } from "../game-space-client";
@@ -224,7 +224,7 @@ export const View = ({
         </div>
       )}
 
-      <MyDrawer
+      <Drawer
         open={model.opened === "change-bot"}
         onClose={() => dispatch({ t: "closed-modal" })}>
         <div className="flex flex-col pb-6">
@@ -247,7 +247,7 @@ export const View = ({
             })}
           </div>
         </div>
-      </MyDrawer>
+      </Drawer>
     </div>
   );
 };

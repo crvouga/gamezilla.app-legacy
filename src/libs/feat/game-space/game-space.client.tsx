@@ -29,7 +29,7 @@ import {
   IconXMark,
   LoadingScreen,
   MyAvatar,
-  MyDrawer,
+  Drawer,
   VDom,
 } from "@gamezilla/ui";
 import {
@@ -644,13 +644,13 @@ const ViewSpaceScreen = ({
     <>
       <ViewPage ctx={spaceCtx} dispatch={dispatch} model={model} />
 
-      <MyDrawer
+      <Drawer
         open={model.modal === "users"}
         onClose={() => dispatch({ t: "modal-closed" })}>
         {spaceCtx && <ViewUsersInSpaceList ctx={spaceCtx} />}
-      </MyDrawer>
+      </Drawer>
 
-      <MyDrawer
+      <Drawer
         open={model.modal === "user-preview"}
         onClose={() => dispatch({ t: "modal-closed" })}>
         <button
@@ -696,7 +696,7 @@ const ViewSpaceScreen = ({
             text="See profile"
           />
         </div>
-      </MyDrawer>
+      </Drawer>
     </>
   );
 };
