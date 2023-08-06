@@ -439,6 +439,25 @@ export const updateFromApp = (input: {
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
+  const { msg } = input;
+  if (msg.t === "client-connected") {
+    return {
+      ...input,
+      cmd: input.sendToClient([msg.clientId], {
+        t: "list",
+        result: Ok(input.model),
+      }),
+    };
+  }
+  if (msg.t === "client-authenticated") {
+    return {
+      ...input,
+      cmd: input.sendToClient([msg.clientId], {
+        t: "list",
+        result: Ok(input.model),
+      }),
+    };
+  }
   return input;
 };
 

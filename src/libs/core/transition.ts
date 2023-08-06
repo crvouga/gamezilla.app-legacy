@@ -41,8 +41,8 @@ export type TransitionState = "entering" | "entered" | "exiting" | "exited";
 
 export type Model<T> = TransitionItem<T>[];
 
-export const init = <T>(config?: Config<T>, items?: T[]): Model<T> => {
-  if (!config) {
+export const init = <T>(toId?: Config<T>["toId"], items?: T[]): Model<T> => {
+  if (!toId) {
     return [];
   }
 
@@ -52,7 +52,7 @@ export const init = <T>(config?: Config<T>, items?: T[]): Model<T> => {
 
   return items.map((item): TransitionItem<T> => {
     return {
-      id: config.toId(item),
+      id: toId(item),
       state: "entered",
       item,
     };
@@ -80,7 +80,7 @@ export function watch<T>(
   list?: T[]
 ): { model: Model<T>; cmd?: Cmd<Msg> } {
   if (!list) {
-    return { model: init(config, []) };
+    return { model: init(config.toId, []) };
   }
 
   const prevKeys = new Map<Id, TransitionItem<T>>();

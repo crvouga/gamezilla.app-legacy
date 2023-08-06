@@ -19,6 +19,7 @@
     "chessboard-element": "^1.2.0",
     "inferno": "^8.2.2",
     "mysql2": "^3.2.0",
+    "preact": "^10.16.0",
     "socket.io": "^4.5.1",
     "socket.io-client": "^4.5.1",
     "threads": "^1.7.0",
@@ -26,6 +27,7 @@
   },
   "devDependencies": {
     "@babel/plugin-transform-react-jsx-development": "^7.22.5",
+    "@preact/preset-vite": "^2.5.0",
     "@types/chessboardjs": "^0.3.2",
     "@typescript-eslint/eslint-plugin": "^5.57.1",
     "@typescript-eslint/parser": "^5.57.1",

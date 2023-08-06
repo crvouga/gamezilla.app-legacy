@@ -44,8 +44,8 @@ export type Model = {
 
 export function init(columns?: Columns): Model {
   return {
-    discs: Transition.init(discsConfig, columns ? toDiscs(columns) : []),
-    wins: Transition.init(winsConfig, columns ? toWins(columns) : []),
+    discs: Transition.init(discsConfig.toId, columns ? toDiscs(columns) : []),
+    wins: Transition.init(winsConfig.toId, columns ? toWins(columns) : []),
   };
 }
 

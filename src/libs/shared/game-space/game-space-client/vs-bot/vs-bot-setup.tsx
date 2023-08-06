@@ -22,12 +22,10 @@ type Opened = "change-bot";
 
 export type Model = {
   opened: Opened | null;
-  openedUI: Transition.Model<Opened>;
 };
 
 export const init: Model = {
   opened: null,
-  openedUI: Transition.init<Opened>(),
 };
 
 export const openedConfig = Transition.config<Opened>({
@@ -58,35 +56,19 @@ async function fadeIn(htmlId: string) {
 //
 //
 
-export type Msg =
-  | { t: "clicked-change-bot" }
-  | { t: "closed-modal" }
-  | { t: "ui-opened"; c: Transition.Msg };
+export type Msg = { t: "clicked-change-bot" } | { t: "closed-modal" };
 
 export const update = (model: Model, msg: Msg): Model => {
-  return p(
-    model,
-    (model): Model => {
-      if (msg.t === "clicked-change-bot") {
-        return { ...model, opened: "change-bot" };
-      }
-      if (msg.t === "closed-modal") {
-        return { ...model, opened: null };
-      }
-      if (msg.t === "ui-opened") {
-        return { ...model, openedUI: Transition.update(model.openedUI, msg.c) };
-      }
-      return model;
-    },
-    (model): Model => {
-      const openedUI = Transition.watch(
-        openedConfig,
-        model.openedUI,
-        model.opened ? [model.opened] : []
-      );
-      return { ...model, openedUI: openedUI.model };
+  return p(model, (model): Model => {
+    if (msg.t === "clicked-change-bot") {
+      return { ...model, opened: "change-bot" };
     }
-  );
+    if (msg.t === "closed-modal") {
+      return { ...model, opened: null };
+    }
+
+    return model;
+  });
 };
 
 //

@@ -53,7 +53,10 @@ export type Model = {
 
 export function init(gameOver?: GameOver | null): Model {
   return {
-    gameOverOverlay: Transition.init(overlayConfig, gameOver ? [gameOver] : []),
+    gameOverOverlay: Transition.init(
+      overlayConfig.toId,
+      gameOver ? [gameOver] : []
+    ),
   };
 }
 

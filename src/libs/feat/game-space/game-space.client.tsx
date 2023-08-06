@@ -389,6 +389,7 @@ const loadGameSpaces = (input: {
 } => {
   const { model, sendToServer } = input;
   return {
+    // model,
     model: {
       ...model,
       req: {
@@ -423,6 +424,7 @@ const syncWithServer = ({
       }
 
       if (!ctx) {
+        console.log("skip no ctx");
         return gamesNew;
       }
 

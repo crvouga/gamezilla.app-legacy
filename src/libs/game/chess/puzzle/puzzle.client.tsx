@@ -250,7 +250,6 @@ export const View = ({
 
         <div className="flex aspect-square w-full items-center justify-end overflow-hidden bg-neutral-700">
           {model.t !== "loading" && (
-            // @ts-ignore
             <my-chess-board fen={model.puzzle.fen}></my-chess-board>
 
             // <Chessboard
