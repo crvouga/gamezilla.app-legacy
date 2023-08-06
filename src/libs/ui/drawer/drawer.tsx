@@ -12,9 +12,10 @@ export const Drawer = ({
   onClose: () => void;
   children?: VDom | VDom[];
 }) => {
-  window.customElementsCallbacks.set(`${id}/onClose`, onClose);
+  const drawerId = `drawer/${id}`;
+  window.customElementsCallbacks.set(`${drawerId}/onClose`, onClose);
   return (
-    <bottom-drawer id={id} open={open}>
+    <bottom-drawer id={drawerId} open={open}>
       <div class="w-full border border-neutral-700 bg-black">{children}</div>
     </bottom-drawer>
   );
