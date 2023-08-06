@@ -30,6 +30,8 @@ const winsConfig = Transition.config<Win>({
   exit: undraw,
 });
 
+const rootId = "connect-four-columns-svg";
+
 //
 //
 //
@@ -143,7 +145,7 @@ export function View({
     }
 
     case "svg": {
-      return <ViewColumnsSvg {...props} />;
+      return <ViewColumnsSvg id={rootId} {...props} />;
     }
   }
 }
@@ -160,7 +162,7 @@ export function View({
 async function discEnter(disc: Disc) {
   const { y, id } = disc;
 
-  const node = await Transition.waitForElementById(id);
+  const node = await Transition.waitForElementById(id, rootId);
 
   if (!node) {
     console.log("no node");
@@ -179,7 +181,7 @@ async function discEnter(disc: Disc) {
 async function discExit(disc: Disc) {
   const { x, y, id } = disc;
 
-  const node = await Transition.waitForElementById(id);
+  const node = await Transition.waitForElementById(id, rootId);
 
   if (!node) {
     console.log("no node");
@@ -200,7 +202,7 @@ async function discExit(disc: Disc) {
 async function draw(win: Win) {
   const id = winToId(win);
 
-  const node = await Transition.waitForElementById(id);
+  const node = await Transition.waitForElementById(id, rootId);
 
   if (!(node instanceof SVGRectElement)) {
     console.log("no node");
@@ -227,7 +229,7 @@ async function draw(win: Win) {
 async function undraw(win: Win) {
   const id = winToId(win);
 
-  const node = await Transition.waitForElementById(id);
+  const node = await Transition.waitForElementById(id, rootId);
 
   if (!(node instanceof SVGRectElement)) {
     console.log("no node");

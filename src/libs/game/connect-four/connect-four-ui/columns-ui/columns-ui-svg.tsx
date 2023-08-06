@@ -28,21 +28,20 @@ const ids = {
   holeMask: `holeMask${randomId}`,
 };
 
-const rootId = "connect-four-columns-svg";
-
 export const ViewColumnsSvg = ({
+  id,
   columns,
   onClick,
   onHover,
   disabled,
   model,
-}: ViewColumnsProps) => {
+}: ViewColumnsProps & { id: string }) => {
   const playerOneFill = `url(#${ids.playerOneGradient})`;
   const playerTwoFill = `url(#${ids.playerTwoGradient})`;
 
   return (
     <svg
-      id={rootId}
+      id={id}
       width="100%"
       viewBox={`0 0 ${COLUMN_COUNT} ${MAX_COLUMN_HEIGHT}`}>
       <SvgDefs ids={ids} />
