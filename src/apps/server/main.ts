@@ -33,8 +33,10 @@ const main = async () => {
   });
 
   console.log("[server] planet scale connected.");
+
   let model: ServerModel | null = null;
   let msg: ServerMsg | null = null;
+
   const requestListener: RequestListener = (_request, response) => {
     response.end(JSON.stringify({ msgType: msg, model: model }));
   };
