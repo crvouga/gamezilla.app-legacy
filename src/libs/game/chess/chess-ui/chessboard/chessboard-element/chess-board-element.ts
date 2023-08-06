@@ -16,14 +16,22 @@ class ChessBoard extends HTMLElement {
   private props: ChessboardProps | null = null;
   private unsubscribe: () => void = () => {};
   private chessboard = new ChessBoardElement();
+  private root: ShadowRoot;
 
   constructor() {
     super();
-    const shadowRoot = this.attachShadow({ mode: "open" });
+    this.root = this.attachShadow({ mode: "open" });
+  }
+
+  disconnectedCallback() {
+    this.unsubscribe();
+  }
+
+  connectedCallback() {
     this.unsubscribe = chessboardSub.subscribe((event) => {
       if (event.id === this.getAttribute("id")) {
         this.props = event;
-        this.syncUI();
+        this.sync();
       }
     });
 
@@ -36,26 +44,18 @@ class ChessBoard extends HTMLElement {
         overflow: hidden;
       }
     `;
-    shadowRoot.appendChild(rootStyle);
-    shadowRoot.appendChild(this.chessboard);
-    this.syncUI();
+    this.root.appendChild(rootStyle);
+    this.root.appendChild(this.chessboard);
+    this.sync();
   }
 
-  disconnectedCallback() {
-    this.unsubscribe();
-  }
-
-  connectedCallback() {
-    //
-  }
-
-  syncUI() {
-    const chessboard = this.shadowRoot?.querySelector("chess-board");
-    if (!chessboard) {
-      return;
+  sync() {
+    const fen = this.props?.fen;
+    if (typeof fen === "string") {
+      this.chessboard.setPosition(fen);
     }
-    chessboard.setAttribute("position", this.props?.fen ?? "");
-    chessboard.setAttribute(
+
+    this.chessboard.setAttribute(
       "draggable-pieces",
       this.props?.["draggable-pieces"] ? "true" : "false"
     );
