@@ -8,11 +8,6 @@ export default defineConfig({
   plugins: [
     // inferno(),
     preact(),
-    tsconfigPaths({
-      projects: ["./tsconfig.json"],
-    }),
+    tsconfigPaths(),
   ],
-  esbuild: {
-    tsconfigRaw: require("./tsconfig.json"),
-  },
 });
