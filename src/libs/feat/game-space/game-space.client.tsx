@@ -647,12 +647,14 @@ const ViewSpaceScreen = ({
       <ViewPage ctx={spaceCtx} dispatch={dispatch} model={model} />
 
       <Drawer
+        id="users"
         open={model.modal === "users"}
         onClose={() => dispatch({ t: "modal-closed" })}>
         {spaceCtx && <ViewUsersInSpaceList ctx={spaceCtx} />}
       </Drawer>
 
       <Drawer
+        id="user-preview"
         open={model.modal === "user-preview"}
         onClose={() => dispatch({ t: "modal-closed" })}>
         <button

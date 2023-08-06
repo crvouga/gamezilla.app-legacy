@@ -207,6 +207,7 @@ export const View = ({
       )}
 
       <Drawer
+        id="change-bot"
         open={model.opened === "change-bot"}
         onClose={() => dispatch({ t: "closed-modal" })}>
         <div className="flex flex-col pb-6">

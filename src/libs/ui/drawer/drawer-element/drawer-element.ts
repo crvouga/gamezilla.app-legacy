@@ -21,9 +21,15 @@ export class BottomDrawer extends HTMLElement {
 
   constructor() {
     super();
-
     this.attachShadow({ mode: "open" });
+  }
+  disconnectedCallback() {}
 
+  connectedCallback() {
+    this.setup();
+  }
+
+  setup() {
     if (!this.shadowRoot) {
       return;
     }
@@ -90,10 +96,6 @@ export class BottomDrawer extends HTMLElement {
       }
     });
   }
-
-  disconnectedCallback() {}
-
-  connectedCallback() {}
 
   attributeChangedCallback(name: string, _oldValue: string, newValue: string) {
     if (name === "open" && this.content && this.root && this.backdrop) {
