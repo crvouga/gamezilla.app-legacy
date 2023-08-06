@@ -5,7 +5,7 @@ export type ChessboardProps = {
   id: string;
   fen: string;
   "draggable-pieces"?: boolean;
-  onDroppedPiece?: (input: { from: Square; to: Square }) => boolean;
+  onDroppedPiece?: (input: { source: Square; target: Square }) => boolean;
   orientation?: Color;
 };
 

@@ -1,7 +1,7 @@
 import { Chess } from "chess.js";
 import "chessboard-element"; // https://justinfagnani.github.io/chessboard-element/docs/
 import { ChessBoardElement } from "chessboard-element";
-import { isLowercaseSquare } from "../../../chess";
+import { Square, isLowercaseSquare } from "../../../chess";
 import { ChessboardProps, chessboardSub } from "../chessboard-shared";
 
 declare global {
@@ -17,13 +17,13 @@ declare global {
 type BoardMsg =
   | {
       t: "drop";
-      source: string;
-      target: string;
+      source: Square;
+      target: Square;
       setAction: (action: "snapback" | "idl") => void;
     }
   | {
       t: "mouseover-square";
-      square: string;
+      square: Square;
       piece: string;
     }
   | {
@@ -70,6 +70,16 @@ class ChessBoard extends HTMLElement {
       case "drop": {
         this.removeSquareHighlight();
         const { source, target, setAction } = msg;
+
+        const isValidDrop = this.props?.onDroppedPiece?.({
+          source: source,
+          target: target,
+        });
+
+        if (!isValidDrop) {
+          setAction("snapback");
+          return;
+        }
 
         if (source === target) {
           setAction("snapback");
@@ -202,12 +212,18 @@ class ChessBoard extends HTMLElement {
     this.sync();
   }
 
+  /**
+   * Syncs the board and internal state with the props.
+   */
   sync() {
     const fen = this.props?.fen;
     if (typeof fen === "string") {
       this.board.setPosition(fen);
       this.game.load(fen);
     }
+
+    const orientation = this.props?.orientation === "w" ? "white" : "black";
+    this.board.orientation = orientation;
 
     this.board.setAttribute(
       "draggable-pieces",
