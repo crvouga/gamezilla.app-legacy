@@ -13,11 +13,9 @@ export const Drawer = ({
   children?: VDom | VDom[];
 }) => {
   window.customElementsCallbacks.set(`${id}/onClose`, onClose);
-
-  console.log(`Drawer: ${id} ${open}`);
   return (
-    <my-bottom-drawer id={id} open={open}>
+    <bottom-drawer id={id} open={open}>
       <div class="w-full border border-neutral-700 bg-black">{children}</div>
-    </my-bottom-drawer>
+    </bottom-drawer>
   );
 };

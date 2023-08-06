@@ -1,7 +1,7 @@
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      "my-bottom-drawer": {
+      "bottom-drawer": {
         id: string;
         open: boolean;
         children: any;
@@ -115,4 +115,4 @@ export class BottomDrawer extends HTMLElement {
   }
 }
 
-customElements.define("my-bottom-drawer", BottomDrawer);
+customElements.define("bottom-drawer", BottomDrawer);
