@@ -14,6 +14,7 @@ export type PubSub<Msg> = Pub<Msg> & Sub<Msg>;
 export const create = <Msg>(): PubSub<Msg> => {
   let runningId = 0;
   const subscribers = new Map<number, (msg: Msg) => void>();
+  let queue: Msg[] = [];
 
   return {
     isSubscribed: () => subscribers.size > 0,
@@ -26,9 +27,17 @@ export const create = <Msg>(): PubSub<Msg> => {
       };
     },
     publish: (msg: Msg) => {
-      for (const subscriber of subscribers.values()) {
-        subscriber(msg);
+      if (subscribers.size === 0) {
+        queue.push(msg);
+        return;
       }
+      queue.push(msg);
+      for (const subscriber of subscribers.values()) {
+        for (const msg of queue) {
+          subscriber(msg);
+        }
+      }
+      queue = [];
     },
   };
 };

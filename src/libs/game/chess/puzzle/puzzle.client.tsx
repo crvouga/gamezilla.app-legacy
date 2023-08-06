@@ -251,7 +251,11 @@ export const View = ({
 
         <div className="flex aspect-square w-full items-center justify-end overflow-hidden bg-neutral-700">
           {model.t !== "loading" && (
-            <Chessboard fen={model.puzzle.fen} id={"puzzle-chess-board"} />
+            <Chessboard
+              orientation={toPlayerColor(model.puzzle)}
+              fen={model.puzzle.fen}
+              id={"puzzle-chess-board"}
+            />
           )}
         </div>
         <div className="grid w-full grid-cols-2 px-2 py-1">

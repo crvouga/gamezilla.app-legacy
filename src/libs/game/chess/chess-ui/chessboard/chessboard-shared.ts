@@ -1,9 +1,12 @@
 import { Sub } from "@gamezilla/core";
+import { Color, Square } from "../../chess";
 
 export type ChessboardProps = {
   id: string;
   fen: string;
   "draggable-pieces"?: boolean;
+  onDroppedPiece?: (input: { from: Square; to: Square }) => boolean;
+  orientation?: Color;
 };
 
 type ChessboardEvent = ChessboardProps & {

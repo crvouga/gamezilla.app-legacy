@@ -1,5 +1,6 @@
 import "chessboard-element"; // https://justinfagnani.github.io/chessboard-element/docs/
 import { ChessboardProps, chessboardSub } from "../chessboard-shared";
+import { ChessBoardElement } from "chessboard-element";
 
 declare global {
   namespace JSX {
@@ -14,17 +15,11 @@ declare global {
 class ChessBoard extends HTMLElement {
   private props: ChessboardProps | null = null;
   private unsubscribe: () => void = () => {};
+  private chessboard = new ChessBoardElement();
 
   constructor() {
     super();
-    this.attachShadow({ mode: "open" });
-  }
-
-  disconnectedCallback() {
-    this.unsubscribe();
-  }
-
-  connectedCallback() {
+    const shadowRoot = this.attachShadow({ mode: "open" });
     this.unsubscribe = chessboardSub.subscribe((event) => {
       if (event.id === this.getAttribute("id")) {
         this.props = event;
@@ -32,23 +27,26 @@ class ChessBoard extends HTMLElement {
       }
     });
 
-    if (!this.shadowRoot) {
-      return;
-    }
-
-    this.shadowRoot.innerHTML = `
-      <style>
-        :host {
-          display: block;
-          width: 100%;
-          height: 100%;
-        }
-      </style>
-      <div style="width: 100%; height: 100%;">
-        <chess-board></chess-board>
-      </div>`;
-
+    const rootStyle = document.createElement("style");
+    rootStyle.innerHTML = `
+      :host {
+        display: block;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+    `;
+    shadowRoot.appendChild(rootStyle);
+    shadowRoot.appendChild(this.chessboard);
     this.syncUI();
+  }
+
+  disconnectedCallback() {
+    this.unsubscribe();
+  }
+
+  connectedCallback() {
+    //
   }
 
   syncUI() {
