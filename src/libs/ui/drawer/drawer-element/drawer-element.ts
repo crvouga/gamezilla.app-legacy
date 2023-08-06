@@ -2,8 +2,8 @@ declare global {
   namespace JSX {
     interface IntrinsicElements {
       "my-bottom-drawer": {
+        id: string;
         open: boolean;
-        onClose: () => void;
         children: any;
       };
     }
@@ -16,22 +16,13 @@ export class BottomDrawer extends HTMLElement {
   private root: HTMLElement | null = null;
 
   static get observedAttributes() {
-    return ["open", "onClose"];
+    return ["open", "close"];
   }
 
   constructor() {
     super();
 
     this.attachShadow({ mode: "open" });
-  }
-
-  disconnectedCallback() {
-    console.log("disconnectedCallback");
-  }
-
-  connectedCallback() {
-    console.log("connectedCallback");
-    console.log(this.attributes);
 
     if (!this.shadowRoot) {
       return;
@@ -50,6 +41,8 @@ export class BottomDrawer extends HTMLElement {
           flex-direction: column;
           justify-content: flex-end;
           z-index: 100;
+          background-color: rgba(0, 0, 0, 0);
+          transition: background-color 0.2s ease-in-out;
         }
         .content {
           transition: transform 0.2s ease-in-out;
@@ -58,9 +51,10 @@ export class BottomDrawer extends HTMLElement {
         .backdrop {
           flex: 1;
           width: 100%;
-          background-color: rgba(0, 0, 0, 0.5);
-          transition: opacity 0.3s ease-in-out;
           opacity: 0;
+        }
+        .darken-background {
+          background-color: rgba(0, 0, 0, 0.5);
         }
         .visible {
           opacity: 1;
@@ -87,23 +81,33 @@ export class BottomDrawer extends HTMLElement {
     this.root?.classList.add("pointer-events-none");
 
     this.backdrop?.addEventListener("click", () => {
-      console.log("backdrop click", "onClose");
+      const id = this.getAttribute("id");
+
+      const maybeFn = window.customElementsCallbacks.get(`${id}/onClose`);
+
+      if (typeof maybeFn === "function") {
+        maybeFn();
+      }
     });
   }
 
+  disconnectedCallback() {}
+
+  connectedCallback() {}
+
   attributeChangedCallback(name: string, _oldValue: string, newValue: string) {
-    console.log("attributeChangedCallback", name, newValue);
     if (name === "open" && this.content && this.root && this.backdrop) {
-      console.log(this.content);
       const isOpen = newValue === "true";
       if (isOpen) {
         this.content.classList.add("open");
         this.root.classList.remove("pointer-events-none");
+        this.root.classList.add("darken-background");
         this.backdrop.classList.add("visible");
         return;
       }
       this.backdrop.classList.remove("visible");
       this.content.classList.remove("open");
+      this.root.classList.remove("darken-background");
       this.root.classList.add("pointer-events-none");
     }
   }

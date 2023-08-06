@@ -21,7 +21,9 @@ const locationSub = Sub.create<Location>();
 const handler = () => {
   locationSub.publish(getLocation());
 };
-window.addEventListener("popstate", handler);
+if (typeof window !== "undefined") {
+  window.addEventListener("popstate", handler);
+}
 
 export const onLocation = <Msg>(
   mapper: (location: Location) => Msg
