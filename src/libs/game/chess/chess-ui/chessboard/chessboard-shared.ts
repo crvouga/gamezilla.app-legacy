@@ -3,7 +3,7 @@ import { Color, Square } from "../../chess";
 
 export type ChessboardProps = {
   id: string;
-  fen: string;
+  fen?: string;
   "draggable-pieces"?: boolean;
   onDroppedPiece?: (input: { source: Square; target: Square }) => boolean;
   orientation?: Color;

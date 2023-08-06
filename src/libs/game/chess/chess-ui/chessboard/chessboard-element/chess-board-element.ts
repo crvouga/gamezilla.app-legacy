@@ -31,7 +31,12 @@ type BoardMsg =
     }
   | {
       t: "snap-end";
-    };
+  }
+  | {
+    t: 'drag-start',
+    square: Square,
+    piece: string, position: string, orientation: "white" | "black"
+  };
 
 type Msg = BoardMsg;
 
@@ -49,7 +54,10 @@ class ChessBoard extends HTMLElement {
   }
 
   log(...args: any[]) {
-    console.log(`[ChessBoard]`, ...args);
+    const debug = true;
+    if (debug) {
+      console.log(`[ChessBoard]`, ...args);
+    }
   }
 
   disconnectedCallback() {
@@ -103,6 +111,11 @@ class ChessBoard extends HTMLElement {
         return;
       }
 
+      case 'drag-start': {
+        this.addSquareHighlight(msg.square)
+        return
+      }
+
       case "mouseover-square": {
         const { square } = msg;
 
@@ -119,10 +132,10 @@ class ChessBoard extends HTMLElement {
           return;
         }
 
-        this.addSquareHighlightSquare(square);
+        this.addSquareHighlight(square);
 
         for (const move of moves) {
-          this.addSquareHighlightSquare(move.to);
+          this.addSquareHighlight(move.to);
         }
         return;
       }
@@ -137,7 +150,8 @@ class ChessBoard extends HTMLElement {
     this.highlightStyles.textContent = "";
   }
 
-  addSquareHighlightSquare(square: string) {
+  addSquareHighlight(square: string) {
+    this.log(`addSquareHighlight`, square)
     const whiteSquareGrey = "#a9a9a9";
     const blackSquareGrey = "#696969";
     const highlightColor =
@@ -156,6 +170,7 @@ class ChessBoard extends HTMLElement {
     this.unsubscribe = chessboardSub.subscribe((event) => {
       if (event.id === this.getAttribute("id")) {
         this.props = event;
+        this.log(`props`, event)
         this.sync();
       }
     });
@@ -168,7 +183,12 @@ class ChessBoard extends HTMLElement {
         height: 100%;
         overflow: hidden;
       }
-    `;
+      chessboard::part(dragged-piece) {
+        opacity: 0.8;
+        scale: 1.2;
+      }
+      `;
+      // transform: scale(2);
     this.root.appendChild(rootStyle);
     this.root.appendChild(this.board);
     this.root.appendChild(this.highlightStyles);
@@ -209,6 +229,17 @@ class ChessBoard extends HTMLElement {
       { passive: true }
     );
 
+    this.board.addEventListener(
+      "drag-start",
+      (e) => {
+        // @ts-ignore
+        const { square, piece, position, orientation } = e.detail;
+
+        this.dispatch({t: 'drag-start',square, piece, position ,orientation })
+      },
+      { passive: true }
+    )
+
     this.sync();
   }
 
@@ -218,17 +249,15 @@ class ChessBoard extends HTMLElement {
   sync() {
     const fen = this.props?.fen;
     if (typeof fen === "string") {
-      this.board.setPosition(fen);
+      this.board.setPosition(fen, true);
       this.game.load(fen);
     }
 
-    const orientation = this.props?.orientation === "w" ? "white" : "black";
-    this.board.orientation = orientation;
+    this.board.orientation = this.props?.orientation === "w" ? "white" : "black";
+    this.board.draggablePieces = true
+    // this.board.setAttribute("draggable-pieces", "false"")
 
-    this.board.setAttribute(
-      "draggable-pieces",
-      this.props?.["draggable-pieces"] ? "true" : "false"
-    );
+
   }
 }
 

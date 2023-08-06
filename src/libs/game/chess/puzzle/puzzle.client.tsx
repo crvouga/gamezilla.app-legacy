@@ -16,6 +16,7 @@ import {
   IconLightbulb,
   IconXMark,
   MyAvatar,
+  Spinner,
   cn,
 } from "@gamezilla/ui";
 import { Chess } from "../chess";
@@ -249,13 +250,18 @@ export const View = ({
           </div>
         </div>
 
-        <div className="flex aspect-square w-full items-center justify-end overflow-hidden bg-neutral-700">
-          {model.t !== "loading" && (
-            <Chessboard
-              orientation={toPlayerColor(model.puzzle)}
-              fen={model.puzzle.fen}
-              id={"puzzle-chess-board"}
-            />
+        <div className="relative flex aspect-square w-full items-center justify-end overflow-hidden bg-neutral-700">
+          <Chessboard
+            id="puzzle-chess-board"
+            orientation={
+              model.t === "loading" ? undefined : toPlayerColor(model.puzzle)
+            }
+            fen={model.t === "loading" ? undefined : model.puzzle.fen}
+          />
+          {model.t === "loading" && (
+            <div className="absolute left-0 top-0 z-20 grid h-full w-full place-items-center bg-black/50">
+              <Spinner />
+            </div>
           )}
         </div>
         <div className="grid w-full grid-cols-2 px-2 py-1">
