@@ -1,10 +1,11 @@
+import { drawerSub, DrawerProps } from "../drawer-shared";
+
 declare global {
   namespace JSX {
     interface IntrinsicElements {
       "bottom-drawer": {
         id: string;
-        open: boolean;
-        children: any;
+        children: unknown;
       };
     }
   }
@@ -15,21 +16,26 @@ export class BottomDrawer extends HTMLElement {
   private content: HTMLElement | null = null;
   private root: HTMLElement | null = null;
 
-  static get observedAttributes() {
-    return ["open", "close"];
-  }
+  private unsubscribe: () => void = () => {};
+  private props: DrawerProps | null = null;
 
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
   }
-  disconnectedCallback() {}
 
-  connectedCallback() {
-    this.setup();
+  disconnectedCallback() {
+    this.unsubscribe();
   }
 
-  setup() {
+  connectedCallback() {
+    this.unsubscribe = drawerSub.subscribe((event) => {
+      if (event.id === this.getAttribute("id")) {
+        this.props = event;
+        this.syncUI();
+      }
+    });
+
     if (!this.shadowRoot) {
       return;
     }
@@ -87,31 +93,27 @@ export class BottomDrawer extends HTMLElement {
     this.root?.classList.add("pointer-events-none");
 
     this.backdrop?.addEventListener("click", () => {
-      const id = this.getAttribute("id");
-
-      const maybeFn = window.customElementsCallbacks.get(`${id}/onClose`);
-
-      if (typeof maybeFn === "function") {
-        maybeFn();
-      }
+      this.props?.onClose();
     });
   }
 
-  attributeChangedCallback(name: string, _oldValue: string, newValue: string) {
-    if (name === "open" && this.content && this.root && this.backdrop) {
-      const isOpen = newValue === "true";
-      if (isOpen) {
-        this.content.classList.add("open");
-        this.root.classList.remove("pointer-events-none");
-        this.root.classList.add("darken-background");
-        this.backdrop.classList.add("visible");
-        return;
-      }
-      this.backdrop.classList.remove("visible");
-      this.content.classList.remove("open");
-      this.root.classList.remove("darken-background");
-      this.root.classList.add("pointer-events-none");
+  syncUI() {
+    if (!this.props || !this.content || !this.root || !this.backdrop) {
+      return;
     }
+
+    if (this.props.open) {
+      this.content.classList.add("open");
+      this.root.classList.remove("pointer-events-none");
+      this.root.classList.add("darken-background");
+      this.backdrop.classList.add("visible");
+      return;
+    }
+
+    this.backdrop.classList.remove("visible");
+    this.content.classList.remove("open");
+    this.root.classList.remove("darken-background");
+    this.root.classList.add("pointer-events-none");
   }
 }
 

@@ -6,15 +6,8 @@ import {
   serverPort,
   sessionIdKey,
 } from "@gamezilla/app";
-import {
-  Browser,
-  Cmd,
-  Program,
-  toMsgPayload,
-  toMsgType,
-} from "@gamezilla/core";
-// import { render } from "inferno";
-import { render } from "preact";
+import { Browser, Cmd, Program } from "@gamezilla/core";
+import { render } from "inferno";
 import { Socket, io } from "socket.io-client";
 import "./main.css";
 
@@ -87,11 +80,11 @@ const program = Program.create({
   },
 });
 
-program.subscribe(async function (model, ctx, msg) {
-  if (msg) {
-    console.log(toMsgType(msg), toMsgPayload(msg, {}));
-  }
-  console.log(model);
+program.subscribe(async function (model, ctx) {
+  // if (msg) {
+  //   console.log(toMsgType(msg), toMsgPayload(msg, {}));
+  // }
+  // console.log(model);
   render(
     <AppClient.View now={ctx.now} model={model} dispatch={program.dispatch} />,
     document.body

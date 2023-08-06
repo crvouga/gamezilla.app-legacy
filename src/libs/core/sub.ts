@@ -18,7 +18,8 @@ export const create = <Msg>(): PubSub<Msg> => {
   return {
     isSubscribed: () => subscribers.size > 0,
     subscribe: (subscriber) => {
-      const id = runningId + 1;
+      runningId++;
+      const id = runningId;
       subscribers.set(id, subscriber);
       return () => {
         subscribers.delete(id);
