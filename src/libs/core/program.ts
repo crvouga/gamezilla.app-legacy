@@ -30,7 +30,7 @@ export function create<Model, Msg>(input: {
     };
   };
 
-  async function callSubscribers(model: Model, ctx: Ctx, msg: Msg | null) {
+  async function publish(model: Model, ctx: Ctx, msg: Msg | null) {
     for (const subscriber of subscribers.values()) {
       await subscriber(model, ctx, msg);
     }
@@ -65,18 +65,17 @@ export function create<Model, Msg>(input: {
   ) {
     state = stateNew;
 
-    await callSubscribers(stateNew.model, ctx, msg);
+    await publish(stateNew.model, ctx, msg);
+
+    const sub = input.subscriptions({
+      ctx,
+      model: state.model,
+    });
 
     if (unsubscribe) {
-      unsubscribe;
+      unsubscribe();
     }
-
-    unsubscribe = input
-      .subscriptions({
-        ctx,
-        model: state.model,
-      })
-      .subscribe(dispatch);
+    unsubscribe = sub.subscribe(dispatch);
 
     if (state.cmd) {
       state.cmd(dispatch);

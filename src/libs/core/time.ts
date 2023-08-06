@@ -103,8 +103,15 @@ export const every = <Msg>(
     onTimeout(intervalId, time);
   }, time);
 
-  return p(
-    subNew,
-    Sub.map(() => f(new Date().getTime()))
-  );
+  return {
+    subscribe: (subscriber) => {
+      const unsub = subNew.subscribe((msg) => {
+        subscriber(f(msg));
+      });
+      return () => {
+        console.log("every unsub", intervalId);
+        unsub();
+      };
+    },
+  };
 };

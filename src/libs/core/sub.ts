@@ -37,9 +37,13 @@ export const map =
   (sub: Sub<A>): Sub<Msg> => {
     return {
       subscribe: (subscriber) => {
-        return sub.subscribe((a) => {
+        const unsubscribe = sub.subscribe((a) => {
           subscriber(f(a));
         });
+
+        return () => {
+          unsubscribe();
+        };
       },
     };
   };
