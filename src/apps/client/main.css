@@ -1,6 +1,5 @@
 @tailwind base;
 @tailwind components;
-
 @keyframes slide {
   0% {
     transform: translateX(-100%);
@@ -9,8 +8,8 @@
     transform: translateX(200%);
   }
 }
-
 @tailwind utilities;
+
 /*
 
 Remove arrows from number input
