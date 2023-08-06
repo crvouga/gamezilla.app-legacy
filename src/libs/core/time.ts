@@ -105,13 +105,9 @@ export const every = <Msg>(
 
   return {
     subscribe: (subscriber) => {
-      const unsub = subNew.subscribe((msg) => {
+      return subNew.subscribe((msg) => {
         subscriber(f(msg));
       });
-      return () => {
-        console.log("every unsub", intervalId);
-        unsub();
-      };
     },
   };
 };
