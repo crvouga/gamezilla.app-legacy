@@ -318,7 +318,7 @@ const ViewUpdateScreen = ({
 
       <div className="flex w-full flex-col items-center gap-2 py-2">
         <MyAvatar
-          src={profile?.avatarUrl ?? "..."}
+          src={profile?.avatarUrl}
           className="h-28 w-28"
           alt="profile avatar"
           onClick={() =>

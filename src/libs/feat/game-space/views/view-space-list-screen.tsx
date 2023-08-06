@@ -72,7 +72,7 @@ export const ViewSpaceListScreen = ({
                 <ViewSpaceCard
                   host={{
                     username: host?.username ?? "...",
-                    avatarUrl: host?.avatarUrl ?? "",
+                    avatarUrl: host?.avatarUrl,
                   }}
                   key={space.gameSpaceId}
                   isCurrentSpace={currentSpaceId === space.gameSpaceId}
@@ -126,7 +126,7 @@ const ViewSpaceCard = ({
   isCurrentSpace?: boolean;
   host: {
     username: string;
-    avatarUrl: string;
+    avatarUrl?: string;
   };
 }) => {
   return (

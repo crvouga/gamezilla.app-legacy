@@ -93,11 +93,16 @@ const parseUrl = (
   style: ProfileAvatarStyle;
 } => {
   try {
+    if (!avatarUrl) {
+      return {
+        style: toStyle("adventurer"),
+        seed: toSeed(""),
+      };
+    }
+
     const [style, seed] =
-      new URL(avatarUrl ?? "")?.pathname
-        ?.split(".")?.[0]
-        ?.split("/")
-        ?.slice(-2) ?? [];
+      new URL(avatarUrl)?.pathname?.split(".")?.[0]?.split("/")?.slice(-2) ??
+      [];
 
     if (style && seed) {
       return {

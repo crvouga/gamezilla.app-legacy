@@ -856,7 +856,7 @@ export const ViewCurrentSpaceBar = ({
         <div className="mr-2 p-2">
           {!game && (
             <MyAvatar
-              src={hostProfile?.avatarUrl ?? ""}
+              src={hostProfile?.avatarUrl}
               alt="Host Avatar"
               className="h-12 w-12"
             />
