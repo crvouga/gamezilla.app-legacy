@@ -1,3 +1,4 @@
+import { p } from "..";
 import { Cmd } from "../cmd";
 import { Result } from "../result";
 import { Sub } from "../sub";
@@ -16,20 +17,16 @@ export type Location = {
   query: { [key: string]: string };
 };
 
+const locationSub = Sub.create<Location>();
+const handler = () => {
+  locationSub.publish(getLocation());
+};
+window.addEventListener("popstate", handler);
+
 export const onLocation = <Msg>(
   mapper: (location: Location) => Msg
 ): Sub<Msg> => {
-  return {
-    subscribe: (subscriber) => {
-      const handler = () => {
-        subscriber(mapper(getLocation()));
-      };
-      window.addEventListener("popstate", handler);
-      return () => {
-        window.removeEventListener("popstate", handler);
-      };
-    },
-  };
+  return p(locationSub, Sub.map(mapper));
 };
 
 export const getLocation = (): Location => {

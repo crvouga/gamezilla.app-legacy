@@ -52,7 +52,7 @@ export class BottomDrawer extends HTMLElement {
           z-index: 100;
         }
         .content {
-          transition: transform 0.3s ease-in-out;
+          transition: transform 0.2s ease-in-out;
           transform: translateY(100%);
         }
         .backdrop {
