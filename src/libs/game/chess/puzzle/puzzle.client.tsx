@@ -19,7 +19,7 @@ import {
   cn,
 } from "@gamezilla/ui";
 import { Chess } from "../chess";
-import "../chess-ui/chessboard-element";
+import "../chess-ui/chessboard/chessboard-element";
 import {
   ClientModel,
   ClientMsg,
@@ -32,6 +32,7 @@ import {
   toPlayerColor,
   updateCore,
 } from "./puzzle.core";
+import { Chessboard } from "../chess-ui";
 
 //
 //
@@ -250,28 +251,7 @@ export const View = ({
 
         <div className="flex aspect-square w-full items-center justify-end overflow-hidden bg-neutral-700">
           {model.t !== "loading" && (
-            <my-chess-board fen={model.puzzle.fen}></my-chess-board>
-
-            // <Chessboard
-            //   {...toChessboardPropsForHint(model)}
-            //   key={model.puzzle.puzzleId}
-            //   model={toCurrentBoard(model)}
-            //   isDraggablePiece={({ piece }) => {
-            //     if (model.t !== "started") {
-            //       return false;
-            //     }
-            //     const color = Chess.toColor(piece);
-            //     return (
-            //       color === toPlayerColor(model.puzzle) &&
-            //       ctx.hostId === ctx.currentUserId
-            //     );
-            //   }}
-            //   boardOrientation={toPlayerColor(model.puzzle)}
-            //   onPieceDrop={(moveInput) => {
-            //     dispatch({ t: "input-move", moveInput });
-            //     return false;
-            //   }}
-            // />
+            <Chessboard fen={model.puzzle.fen} id={"puzzle-chess-board"} />
           )}
         </div>
         <div className="grid w-full grid-cols-2 px-2 py-1">
