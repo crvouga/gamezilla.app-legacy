@@ -91,12 +91,6 @@ const updateMain: typeof update = ({ ctx, sendToServer, msg, model }) => {
     return { model: { ...model, vsBotSetup: updated } };
   }
 
-  // const result = updateCore({ ctx, msg, model });
-
-  // if (result.t === "err") {
-  //   return { model, cmd: sendToServer(msg) };
-  // }
-
   return { model, cmd: sendToServer(msg) };
 };
 
