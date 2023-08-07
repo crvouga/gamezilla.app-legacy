@@ -7,7 +7,7 @@ export type ParserMyZodEsque<TInput> = {
 
 export type DbConnMySql = {
   query: <TRow>(
-    rowParser: ParserMyZodEsque<TRow>,
+    isRow: (row: unknown) => row is TRow,
     text: string,
     params?: unknown[]
   ) => Promise<Result<string, TRow[]>>;
@@ -41,14 +41,19 @@ const create = async ({
   };
 
   return {
-    query: async (rowParser, text, values) => {
+    query: async (isRow, text, values) => {
       try {
         const conn = await getConnection();
         const [rows, fields] = await conn.query(text, values);
         conn.release();
 
         const parsed = Array.isArray(rows)
-          ? rows.map(rowParser.parse, values)
+          ? rows.flatMap((row) => {
+              if (isRow(row)) {
+                return [row];
+              }
+              return [];
+            }, values)
           : [];
         log("executed query", {
           text,

@@ -45,7 +45,7 @@ export const uploadLichessDbPuzzleCsv = async ({
 
   const stream = fs.createReadStream(lichessDbPuzzleCsvPath).pipe(csv());
 
-  let batch: z.infer<typeof PuzzleRow>[] = [];
+  let batch: PuzzleRow[] = [];
 
   console.log("starting upload");
   for await (const lichessRow of stream) {
@@ -92,9 +92,7 @@ export const uploadLichessDbPuzzleCsv = async ({
   console.log("upload done");
 };
 
-const lichessRowToRow = (
-  lichessRow: z.infer<typeof LichessRow>
-): z.infer<typeof PuzzleRow> => {
+const lichessRowToRow = (lichessRow: z.infer<typeof LichessRow>): PuzzleRow => {
   const {
     PuzzleId,
     FEN,

@@ -15,7 +15,6 @@ import {
 } from "@gamezilla/core";
 import { UserId } from "@gamezilla/shared/app";
 import { DbConnMySql } from "@gamezilla/shared/server";
-import { z } from "zod";
 import { MoveInput, uciMoveToMoveInput } from "../chess/chess";
 import { EloRating } from "./elo-rating";
 import {
@@ -23,8 +22,6 @@ import {
   PuzzleInteraction,
   PuzzleProfile,
   initQuery,
-  maxRating,
-  minRating,
 } from "./puzzle.core";
 import { splitEvery } from "./utils";
 
@@ -36,29 +33,12 @@ import { splitEvery } from "./utils";
 //
 //
 
-const Int = z
-  .union([z.string(), z.number()])
-  .transform((s) => (typeof s === "string" ? parseInt(s) : s));
-
-export const PuzzleRow = z.object({
-  puzzle_id: z.string(),
-  rating: Int,
-  rating_deviation: Int,
-  opening_tags: z.string(),
-  fen: z.string(),
-  moves: z.string(),
-  popularity: Int,
-  number_of_plays: Int,
-  themes: z.string(),
-  game_url: z.string(),
-});
-
 export type Int = string | number;
 
 export type PuzzleRow = {
   puzzle_id: string;
   rating: Int;
-  rating_deviation: string;
+  rating_deviation: Int;
   opening_tags: string;
   fen: string;
   moves: string;
@@ -67,6 +47,30 @@ export type PuzzleRow = {
   themes: string;
   game_url: string;
 };
+
+export type PuzzleInteractionRow = {
+  id: string;
+  puzzle_id: string;
+  user_id: string;
+  type: "started" | "solved" | "incorrect" | "solved-with-hint";
+};
+
+export type PuzzleProfileRow = {
+  id: string;
+  user_id: string;
+  elo_rating: Int;
+  puzzle_query: PuzzleQueryJSON;
+};
+
+//
+//
+//
+// Parsing
+//
+//
+//
+
+const types = ["started", "solved", "incorrect", "solved-with-hint"] as const;
 
 const toInt = (x: unknown): Int | null => {
   if (isStr(x) || isNum(x)) {
@@ -82,7 +86,7 @@ export const toPuzzleRow = (x: unknown): PuzzleRow | null => {
     isObj(x) &&
     has(x, "puzzle_id", isStr) &&
     has(x, "rating", isInt) &&
-    has(x, "rating_deviation", isStr) &&
+    has(x, "rating_deviation", isInt) &&
     has(x, "opening_tags", isStr) &&
     has(x, "fen", isStr) &&
     has(x, "moves", isStr) &&
@@ -107,37 +111,9 @@ export const toPuzzleRow = (x: unknown): PuzzleRow | null => {
   return null;
 };
 
-const PuzzleInteractionRow = z.object({
-  id: z.string(),
-  puzzle_id: z.string(),
-  user_id: z.string(),
-  type: z.enum(["started", "solved", "incorrect", "solved-with-hint"]),
-});
-
-const PuzzleQueryJSON = z.object({
-  ratingRange: z.tuple([
-    z.number().min(minRating).max(maxRating),
-    z.number().min(minRating).max(maxRating),
-  ]),
-});
-
-const PuzzleProfileRow = z.object({
-  id: z.string(),
-  user_id: z.string(),
-  elo_rating: Int,
-  puzzle_query: PuzzleQueryJSON,
-});
-
-export type PuzzleInteractionRow = {
-  id: string;
-  puzzle_id: string;
-  user_id: string;
-  type: "started" | "solved" | "incorrect" | "solved-with-hint";
-};
-
-const types = ["started", "solved", "incorrect", "solved-with-hint"] as const;
-
-const toPuzzleInteractionRow = (x: unknown): PuzzleInteractionRow | null => {
+export const toPuzzleInteractionRow = (
+  x: unknown
+): PuzzleInteractionRow | null => {
   if (
     isObj(x) &&
     has(x, "id", isStr) &&
@@ -165,14 +141,7 @@ const toPuzzleQueryJSON = (x: unknown): PuzzleQueryJSON | null => {
   return null;
 };
 
-export type PuzzleProfileRow = {
-  id: string;
-  user_id: string;
-  elo_rating: Int;
-  puzzle_query: PuzzleQueryJSON;
-};
-
-const toPuzzleProfileRow = (x: unknown): PuzzleProfileRow | null => {
+export const toPuzzleProfileRow = (x: unknown): PuzzleProfileRow | null => {
   if (
     isObj(x) &&
     has(x, "id", isStr) &&
@@ -192,9 +161,7 @@ const toPuzzleProfileRow = (x: unknown): PuzzleProfileRow | null => {
 //
 //
 
-const rowToPuzzle = (
-  row: z.infer<typeof PuzzleRow>
-): Result<string, Puzzle> => {
+const rowToPuzzle = (row: PuzzleRow): Result<string, Puzzle> => {
   const parsedMoves = uciMovesToPuzzleMoves(row.moves.split(" "));
 
   if (parsedMoves.t === "err") {
@@ -226,18 +193,29 @@ const rowToPuzzle = (
     return Err("Failed to parse elo rating from puzzle database record");
   }
 
-  return Ok({
+  const puzzle: Puzzle = {
     puzzleId: row.puzzle_id,
     fen: row.fen,
     moves,
     rating: row.rating,
-    ratingDeviation: row.rating_deviation,
-    popularity: row.popularity,
-    numberOfPlays: row.number_of_plays,
+    ratingDeviation:
+      typeof row.rating_deviation === "string"
+        ? parseFloat(row.rating_deviation)
+        : row.rating_deviation,
+    popularity:
+      typeof row.popularity === "string"
+        ? parseInt(row.popularity)
+        : row.popularity,
+    numberOfPlays:
+      typeof row.number_of_plays === "string"
+        ? parseInt(row.number_of_plays)
+        : row.number_of_plays,
     themes: row.themes.split(" "),
     gameUrl: row.game_url,
     openingTags: row.opening_tags.split(" "),
-  });
+  };
+
+  return Ok(puzzle);
 };
 
 export const uciMovesToPuzzleMoves = (
@@ -296,7 +274,7 @@ const puzzlesFindForProfile = async (
     LIMIT 1
   `;
 
-  const found = await dbConn.query(PuzzleRow, sql);
+  const found = await dbConn.query(is(toPuzzleRow), sql);
 
   if (found.t === "err") {
     return found;
@@ -314,7 +292,7 @@ const puzzlesReplace = async ({
   rows,
 }: {
   dbConn: DbConnMySql;
-  rows: z.infer<typeof PuzzleRow>[];
+  rows: PuzzleRow[];
 }) => {
   const queryString = `
     REPLACE INTO game_chess_puzzle (
@@ -336,7 +314,7 @@ const puzzlesReplace = async ({
       )}
   `;
 
-  const inserted = await dbConn.query(PuzzleRow, queryString);
+  const inserted = await dbConn.query(is(toPuzzleRow), queryString);
 
   return inserted;
 };
@@ -346,7 +324,7 @@ const interactionsInsert = async (
   interactions: PuzzleInteraction[]
 ): Promise<Result<string, null>> => {
   const result = await dbConn.query(
-    PuzzleInteractionRow,
+    is(toPuzzleInteractionRow),
     `
         INSERT INTO game_chess_puzzle_interaction (
           puzzle_id,
@@ -365,7 +343,7 @@ const profilesFind = async (
   userId: UserId
 ): Promise<Result<string, PuzzleProfile | null>> => {
   const found = await dbConn.query(
-    PuzzleProfileRow,
+    is(toPuzzleProfileRow),
     `
       SELECT
         *
@@ -396,9 +374,7 @@ const profilesFind = async (
     return Err("Invalid elo rating");
   }
 
-  const parsed = PuzzleQueryJSON.safeParse(row.puzzle_query);
-
-  const puzzleQuery = parsed.success ? parsed.data : initQuery;
+  const puzzleQuery = toPuzzleQueryJSON(row.puzzle_query) ?? initQuery;
 
   const profile: PuzzleProfile = {
     userId: row.user_id,
@@ -416,7 +392,7 @@ export const profilesInsert = async (
   const puzzleProfileId = Uuid.generate();
 
   const mutated = await dbConn.query(
-    PuzzleProfileRow,
+    is(toPuzzleProfileRow),
     `
         INSERT INTO game_chess_puzzle_profile (
           id,
@@ -472,7 +448,7 @@ const profilesUpdate = async (
   profile: PuzzleProfile
 ): Promise<Result<string, null>> => {
   const mutated = await dbConn.query(
-    PuzzleProfileRow,
+    is(toPuzzleProfileRow),
     `
       UPDATE game_chess_puzzle_profile
       SET
