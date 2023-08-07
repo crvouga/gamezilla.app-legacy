@@ -147,6 +147,8 @@ export type Req =
 
 export type Res = Req & { result: Result<string, null> };
 
+export type CoreMsg = (Req | Event) & { order: number };
+
 //
 //
 //
