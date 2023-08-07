@@ -2,6 +2,20 @@ export type Master<CoreModel, CoreMsg> = {
   lastOrder: number;
   acc: CoreModel;
   msgs: Msg<CoreMsg>[];
+  sent?: Msg<CoreMsg>[];
+  received?: Msg<CoreMsg>[];
+};
+
+export type Relay<CoreModel, CoreMsg> = {
+  acc: CoreModel;
+  msgs: Msg<CoreMsg>[];
+};
+
+export type Slave<CoreModel, CoreMsg> = {
+  acc: CoreModel;
+  msgs: Msg<CoreMsg>[];
+  sent?: Msg<CoreMsg>[];
+  received?: Msg<CoreMsg>[];
 };
 
 export const initMaster = <CoreModel, CoreMsg>(
@@ -18,11 +32,6 @@ export const initSlave = <CoreModel, CoreMsg>(
   acc,
   msgs: [],
 });
-
-export type Slave<CoreModel, CoreMsg> = {
-  acc: CoreModel;
-  msgs: Msg<CoreMsg>[];
-};
 
 export type Msg<CoreMsg> = CoreMsg & { order: number };
 

@@ -51,9 +51,27 @@
 // describe("sync", () => {
 //   it("should work", () => {
 //     const system = initSystem();
+//   const initialState = { amount: 0 };
+//   const msg0 = { t: "add", c: 1 }
+//   const msg1 = { t: "sub", c: 1 }
+//   const msg2 = { t: "add", c: 2 }
+//   const expectedState = { amount: 2 };
 
-//     system.clientA.sendToServer({ t: "add", c: 1 });
+//     system.clientA.sendToServer(msg0); // clientA: { amount:  1 } clientB: { amount: 0 } server: { amount: 1 }
+//     system.clientB.sendToServer(msg1); // clientA: { amount: -1 } clientB: { amount: 0 } server: { amount: 0 }
+//     system.server.broadcast(msg0);     // clientA: { amount:  1 } clientB: { amount: 0 } server: { amount: 0 }
+//     system.clientA.sendToServer(msg2)
+//     system.server.broadcast(msg1);
+//     system.server.broadcast(msg2);
+
+//  expect(system.server.acc).toEqual(expectedState);
+//  expect(system.clientA.acc).toEqual(expectedState);
+//  expect(system.clientB.acc).toEqual(expectedState);
+
+//
 
 //     system.clientB.sendToServer({ t: "sub", c: 1 });
+
+// system.server.broca;
 //   });
 // });
