@@ -16,7 +16,35 @@ const decode = (id: string): Result<Problem, ClientId> => {
   return Result.Err("invalid_client_id");
 };
 
+const characters =
+  "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+
+const randomCharacter = (word: string): string => {
+  return word[Math.floor(Math.random() * word.length)] ?? "a";
+};
+
+const generateId = (length: number): string => {
+  let runningId = "";
+
+  for (let i = 0; i < length; i++) {
+    runningId = `${runningId}${randomCharacter(characters)}`;
+  }
+
+  return runningId;
+};
+
+const generate = (): ClientId => {
+  const id = `client-${generateId(5)}`;
+
+  if (is(id)) {
+    return id;
+  }
+
+  throw new Error("generated invalid client id");
+};
+
 export const ClientId = {
   is,
   decode,
+  generate,
 };

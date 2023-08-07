@@ -203,7 +203,10 @@ const updateWire = ({
     return {
       model: {
         ...model,
-        sessions: sessionNew,
+        sessions: {
+          ...model.sessions,
+          [sessionNew.sessionId]: sessionNew,
+        },
       },
       msgs: [
         {
@@ -391,9 +394,19 @@ const sendToUser = (
 
     const authSession = model.auth.sessions[sessionId];
 
-    if (session && authSession && userIdSet.has(authSession.userId)) {
-      clientIds.push(...session.clientIds);
+    if (!session) {
+      continue;
     }
+
+    if (!authSession) {
+      continue;
+    }
+
+    if (!userIdSet.has(authSession.userId)) {
+      continue;
+    }
+
+    clientIds.push(...session.clientIds);
   }
 
   return sendToClient(clientIds, msg);

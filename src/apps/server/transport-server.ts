@@ -1,10 +1,4 @@
-import {
-  ClientToServerEvents,
-  SESSION_ID_KEY,
-  ServerToClientEvents,
-  ToClient,
-  ToServer,
-} from "@gamezilla/app";
+import { ToClient, ToServer } from "@gamezilla/app";
 import {
   ClientId,
   PubSub,
@@ -12,15 +6,16 @@ import {
   SessionId,
   TransportServer,
 } from "@gamezilla/core";
-import { Server as HttpServer } from "http";
-import { Server as SocketIoServer } from "socket.io";
+import http from "http";
+import url from "url";
+import WebSocket, { WebSocketServer } from "ws";
 
 export const createTransportServer = ({
   httpServer,
   onClientMsg,
   onWireMsg,
 }: {
-  httpServer: HttpServer;
+  httpServer: http.Server;
   onClientMsg: PubSub<{
     msg: ToServer;
     clientId: ClientId;
@@ -28,62 +23,88 @@ export const createTransportServer = ({
   }>;
   onWireMsg: PubSub<ServerWireMsg>;
 }): TransportServer<ToClient, ToServer> => {
-  const io = new SocketIoServer<ClientToServerEvents, ServerToClientEvents>(
-    httpServer,
-    {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      cors: {
-        origin: "*",
-        credentials: true,
-      },
-    }
-  );
+  const wsServer = new WebSocketServer({ noServer: true });
+  const clients = new Map<ClientId, WebSocket>();
+  const sessions = new Map<ClientId, SessionId>();
 
-  io.on("connection", (socket) => {
-    const maybeSessionId: unknown = socket.handshake.auth[SESSION_ID_KEY];
+  httpServer.on("upgrade", (request, socket, head) => {
+    const reqUrl = request?.url;
+
+    if (!reqUrl) {
+      return;
+    }
+
+    const parsedUrl = url.parse(reqUrl, true);
+
+    if (parsedUrl.pathname === "/ws") {
+      wsServer.handleUpgrade(request, socket, head, (ws) => {
+        wsServer.emit("connection", ws, request);
+      });
+    }
+  });
+
+  wsServer.on("connection", (ws, req) => {
+    const reqUrl = req?.url;
+
+    if (!reqUrl) {
+      return;
+    }
+
+    const parsedUrl = url.parse(reqUrl, true);
+
+    const maybeSessionId = parsedUrl.query["session-id"];
 
     const sessionId = SessionId.is(maybeSessionId)
       ? maybeSessionId
       : SessionId.generate();
 
-    socket.emit("session-id", sessionId);
+    const clientId = ClientId.generate();
 
-    const clientId = socket.id;
+    console.log(`[server] client connected: ${clientId} ${sessionId}`);
 
-    if (!ClientId.is(clientId)) {
-      return;
-    }
+    sessions.set(clientId, sessionId);
+    clients.set(clientId, ws);
+
+    ws.send(JSON.stringify({ type: "session-id", sessionId }));
 
     onWireMsg.publish({ t: "client-connected", clientId, sessionId });
 
-    socket.on("to-server", (msg) => {
-      const clientId = socket.id;
+    ws.on("message", (data) => {
+      const msg = JSON.parse(data.toString());
 
-      if (!ClientId.is(clientId)) {
-        return;
+      if (msg.type === "to-server") {
+        onClientMsg.publish({ clientId, sessionId, msg: msg.payload });
       }
-
-      onClientMsg.publish({ clientId, sessionId, msg });
     });
 
-    socket.on("disconnect", () => {
-      const clientId = socket.id;
-
-      if (!ClientId.is(clientId)) {
-        return;
-      }
-
+    ws.on("close", () => {
+      clients.delete(clientId);
       onWireMsg.publish({ t: "client-disconnected", clientId, sessionId });
     });
   });
 
   return {
     broadcast: (msg) => () => {
-      io.emit("to-client", msg);
+      for (const client of clients.values()) {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(JSON.stringify({ type: "to-client", payload: msg }));
+        }
+      }
     },
     sendToClient: (clientIds: ClientId[], msg: ToClient) => () => {
-      io.to(clientIds).emit("to-client", msg);
+      for (const clientId of clientIds) {
+        const client = clients.get(clientId);
+
+        if (!client) {
+          continue;
+        }
+
+        if (client.readyState !== WebSocket.OPEN) {
+          continue;
+        }
+
+        client.send(JSON.stringify({ type: "to-client", payload: msg }));
+      }
     },
     onClientMsg,
     onWireMsg,

@@ -1,56 +1,66 @@
-import {
-  ClientToServerEvents,
-  ServerToClientEvents,
-  SESSION_ID_KEY,
-  ToClient,
-  ToServer,
-} from "@gamezilla/app";
+import { SESSION_ID_KEY, ToClient, ToServer } from "@gamezilla/app";
 import { ClientWireMsg, PubSub, TransportClient } from "@gamezilla/core";
-import { io, Socket } from "socket.io-client";
 
 export const createTransportClient = ({
-  serverUrl,
+  baseServerUrl,
   onWireMsg,
   onServerMsg,
 }: {
-  serverUrl: string;
+  baseServerUrl: string;
   onWireMsg: PubSub<ClientWireMsg>;
   onServerMsg: PubSub<ToClient>;
 }): TransportClient<ToClient, ToServer> => {
-  const socketClient: Socket<ServerToClientEvents, ClientToServerEvents> = io(
-    serverUrl,
-    {
-      auth: {
-        [SESSION_ID_KEY]: localStorage.getItem(SESSION_ID_KEY) ?? undefined,
-      },
-      forceNew: true,
-    }
-  );
+  const baseServerUrlObj = new URL(baseServerUrl);
+  const sessionId = localStorage.getItem(SESSION_ID_KEY);
 
-  socketClient.on("session-id", (sessionId) => {
-    console.log(`session-id: ${sessionId}`);
-    localStorage.setItem(SESSION_ID_KEY, sessionId);
-  });
+  if (sessionId) {
+    baseServerUrlObj.searchParams.append("session-id", sessionId);
+  }
 
-  socketClient.on("connect", () => {
+  if (baseServerUrlObj.protocol === "https:") {
+    baseServerUrlObj.protocol = "wss";
+  }
+
+  if (baseServerUrlObj.protocol === "http:") {
+    baseServerUrlObj.protocol = "ws";
+  }
+
+  baseServerUrlObj.pathname = "/ws";
+  const serverUrl = baseServerUrlObj.href;
+
+  const socketClient = new WebSocket(serverUrl);
+
+  socketClient.onopen = () => {
+    const authMessage = JSON.stringify({
+      type: "auth",
+      [SESSION_ID_KEY]: localStorage.getItem(SESSION_ID_KEY) ?? undefined,
+    });
+    socketClient.send(authMessage);
     onWireMsg.publish({ t: "server-connected" });
-  });
+  };
 
-  socketClient.on("disconnect", () => {
-    onWireMsg.publish({ t: "server-disconnected" });
-  });
-
-  socketClient.on("connect_error", () => {
+  socketClient.onerror = () => {
     onWireMsg.publish({ t: "server-connect-error" });
-  });
+  };
 
-  socketClient.on("to-client", (msg) => {
-    onServerMsg.publish(msg);
-  });
+  socketClient.onclose = () => {
+    onWireMsg.publish({ t: "server-disconnected" });
+  };
+
+  socketClient.onmessage = (event) => {
+    const msg = JSON.parse(event.data);
+
+    if (msg.type === "session-id") {
+      console.log(`session-id: ${msg.sessionId}`);
+      localStorage.setItem(SESSION_ID_KEY, msg.sessionId);
+    } else if (msg.type === "to-client") {
+      onServerMsg.publish(msg.payload);
+    }
+  };
 
   return {
     sendToServer: (msg) => () => {
-      socketClient.emit("to-server", msg);
+      socketClient.send(JSON.stringify({ type: "to-server", payload: msg }));
     },
     onServerMsg,
     onWireMsg,

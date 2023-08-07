@@ -17,7 +17,7 @@ const serverUrl = env.isProd
   : `http://localhost:${5000}/`;
 
 const transport = createTransportClient({
-  serverUrl,
+  baseServerUrl: serverUrl,
   onServerMsg: AppClient.onServerMsg,
   onWireMsg: AppClient.onWireMsg,
 });

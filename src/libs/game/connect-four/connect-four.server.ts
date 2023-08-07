@@ -80,7 +80,11 @@ export const updateFromClient: Server["updateFromClient"] = ({
     if (ctx.currentUserId !== ctx.hostId) {
       return {
         model,
-        cmd: sendToClient({ ...msg, result: Err("must_be_host") }),
+        cmd: sendToClient({
+          t: "input-mode",
+          mode: msg.mode,
+          result: Err("must_be_host"),
+        }),
       };
     }
 
