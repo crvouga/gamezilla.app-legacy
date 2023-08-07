@@ -377,6 +377,10 @@ export const updateFromApp = (input: {
     return loadGameSpaces(input);
   }
 
+  if (msg.t === "wire-connected") {
+    return loadGameSpaces(input);
+  }
+
   return input;
 };
 

@@ -31,12 +31,14 @@ type BoardMsg =
     }
   | {
       t: "snap-end";
-  }
+    }
   | {
-    t: 'drag-start',
-    square: Square,
-    piece: string, position: string, orientation: "white" | "black"
-  };
+      t: "drag-start";
+      square: Square;
+      piece: string;
+      position: string;
+      orientation: "white" | "black";
+    };
 
 type Msg = BoardMsg;
 
@@ -54,7 +56,7 @@ class ChessBoard extends HTMLElement {
   }
 
   log(...args: any[]) {
-    const debug = true;
+    const debug = false;
     if (debug) {
       console.log(`[ChessBoard]`, ...args);
     }
@@ -111,9 +113,9 @@ class ChessBoard extends HTMLElement {
         return;
       }
 
-      case 'drag-start': {
-        this.addSquareHighlight(msg.square)
-        return
+      case "drag-start": {
+        this.addSquareHighlight(msg.square);
+        return;
       }
 
       case "mouseover-square": {
@@ -151,7 +153,7 @@ class ChessBoard extends HTMLElement {
   }
 
   addSquareHighlight(square: string) {
-    this.log(`addSquareHighlight`, square)
+    this.log(`addSquareHighlight`, square);
     const whiteSquareGrey = "#a9a9a9";
     const blackSquareGrey = "#696969";
     const highlightColor =
@@ -170,7 +172,7 @@ class ChessBoard extends HTMLElement {
     this.unsubscribe = chessboardSub.subscribe((event) => {
       if (event.id === this.getAttribute("id")) {
         this.props = event;
-        this.log(`props`, event)
+        this.log(`props`, event);
         this.sync();
       }
     });
@@ -188,7 +190,7 @@ class ChessBoard extends HTMLElement {
         scale: 1.2;
       }
       `;
-      // transform: scale(2);
+    // transform: scale(2);
     this.root.appendChild(rootStyle);
     this.root.appendChild(this.board);
     this.root.appendChild(this.highlightStyles);
@@ -235,10 +237,16 @@ class ChessBoard extends HTMLElement {
         // @ts-ignore
         const { square, piece, position, orientation } = e.detail;
 
-        this.dispatch({t: 'drag-start',square, piece, position ,orientation })
+        this.dispatch({
+          t: "drag-start",
+          square,
+          piece,
+          position,
+          orientation,
+        });
       },
       { passive: true }
-    )
+    );
 
     this.sync();
   }
@@ -253,11 +261,10 @@ class ChessBoard extends HTMLElement {
       this.game.load(fen);
     }
 
-    this.board.orientation = this.props?.orientation === "w" ? "white" : "black";
-    this.board.draggablePieces = true
+    this.board.orientation =
+      this.props?.orientation === "w" ? "white" : "black";
+    this.board.draggablePieces = true;
     // this.board.setAttribute("draggable-pieces", "false"")
-
-
   }
 }
 

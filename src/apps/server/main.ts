@@ -1,5 +1,5 @@
-import { AppServer, ServerModel, ServerMsg, ToClient } from "@gamezilla/app";
-import { ClientId, Program, toMsgType } from "@gamezilla/core";
+import { AppServer, ServerModel, ServerMsg } from "@gamezilla/app";
+import { Program, toMsgType } from "@gamezilla/core";
 import { DbConnMySql } from "@gamezilla/shared/server";
 import { createServer } from "http";
 import { createTransportServer } from "./transport-server";
@@ -43,29 +43,9 @@ const httpServer = createServer((_request, response) => {
 
 const transport = createTransportServer(httpServer);
 
-transport.onClientMsg((clientId, sessionId, msg) => {
-  AppServer.fromClientSub.publish({
-    sessionId,
-    clientId,
-    msg,
-  });
-});
-
-transport.onConnect((clientId, sessionId) => {
-  AppServer.onConnectSub.publish({ sessionId, clientId });
-});
-
-transport.onDisconnect((clientId, sessionId) => {
-  AppServer.onDisconnectSub.publish({ sessionId, clientId });
-});
-
-const sendToClient = (clientIds: ClientId[], msg: ToClient) => () => {
-  transport.sendToClient(clientIds, msg);
-};
-
-const broadcast = (msg: ToClient) => () => {
-  transport.broadcast(msg);
-};
+transport.onClientMsg.subscribe((m) => AppServer.fromClientSub.publish(m));
+transport.onConnect.subscribe((m) => AppServer.onConnectSub.publish(m));
+transport.onDisconnect.subscribe((m) => AppServer.onDisconnectSub.publish(m));
 
 //
 //
@@ -80,8 +60,8 @@ const program = Program.create({
     return AppServer.update({
       model: input.model,
       msg: input.msg,
-      broadcast,
-      sendToClient,
+      broadcast: transport.broadcast,
+      sendToClient: transport.sendToClient,
       ctx: {
         mySql,
         now: input.ctx.now,

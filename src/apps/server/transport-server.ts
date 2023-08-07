@@ -5,7 +5,7 @@ import {
   ToClient,
   ToServer,
 } from "@gamezilla/app";
-import { ClientId, SessionId, TransportServer } from "@gamezilla/core";
+import { ClientId, SessionId, Sub, TransportServer } from "@gamezilla/core";
 import { Server as HttpServer } from "http";
 import { Server as SocketIoServer } from "socket.io";
 
@@ -24,16 +24,21 @@ export const createTransportServer = (
     }
   );
 
-  let onClientMsg: (
-    clientId: ClientId,
-    sessionId: SessionId,
-    msg: ToServer
-  ) => void = () => {};
-  let onDisconnect: (
-    clientId: ClientId,
-    sessionId: SessionId
-  ) => void = () => {};
-  let onConnect: (clientId: ClientId, sessionId: SessionId) => void = () => {};
+  const onClientMsg = Sub.create<{
+    clientId: ClientId;
+    sessionId: SessionId;
+    msg: ToServer;
+  }>();
+
+  const onDisconnect = Sub.create<{
+    clientId: ClientId;
+    sessionId: SessionId;
+  }>();
+
+  const onConnect = Sub.create<{
+    clientId: ClientId;
+    sessionId: SessionId;
+  }>();
 
   io.on("connection", (socket) => {
     const maybeSessionId: unknown = socket.handshake.auth[SESSION_ID_KEY];
@@ -49,31 +54,38 @@ export const createTransportServer = (
     if (!ClientId.is(clientId)) {
       return;
     }
-    onConnect(clientId, sessionId);
+
+    onConnect.publish({ clientId, sessionId });
 
     socket.on("to-server", (msg) => {
-      onClientMsg(clientId, sessionId, msg);
+      const clientId = socket.id;
+
+      if (!ClientId.is(clientId)) {
+        return;
+      }
+
+      onClientMsg.publish({ clientId, sessionId, msg });
     });
 
     socket.on("disconnect", () => {
-      onDisconnect(clientId, sessionId);
+      const clientId = socket.id;
+
+      if (!ClientId.is(clientId)) {
+        return;
+      }
+
+      onDisconnect.publish({ clientId, sessionId });
     });
   });
 
   return {
-    onClientMsg: (cb) => {
-      onClientMsg = cb;
-    },
-    onDisconnect: (cb) => {
-      onDisconnect = cb;
-    },
-    onConnect: (cb) => {
-      onConnect = cb;
-    },
-    broadcast: (msg) => {
+    onClientMsg,
+    onDisconnect,
+    onConnect,
+    broadcast: (msg) => () => {
       io.emit("to-client", msg);
     },
-    sendToClient: (clientIds: ClientId[], msg: ToClient) => {
+    sendToClient: (clientIds: ClientId[], msg: ToClient) => () => {
       io.to(clientIds).emit("to-client", msg);
     },
   };

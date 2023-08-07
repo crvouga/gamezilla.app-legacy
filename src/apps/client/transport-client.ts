@@ -5,7 +5,7 @@ import {
   ToClient,
   ToServer,
 } from "@gamezilla/app";
-import { TransportClient } from "@gamezilla/core";
+import { Sub, TransportClient } from "@gamezilla/core";
 import { io, Socket } from "socket.io-client";
 
 export const createTransportClient = (
@@ -21,11 +21,10 @@ export const createTransportClient = (
     }
   );
 
-  let onServerMsg: (msg: ToClient) => void = () => {};
-
-  let onConnect: () => void = () => {};
-  let onDisconnect: () => void = () => {};
-  let onConnectError: () => void = () => {};
+  const onServerMsg = Sub.create<ToClient>();
+  const onConnect = Sub.create<void>();
+  const onDisconnect = Sub.create<void>();
+  const onConnectError = Sub.create<void>();
 
   socketClient.on("session-id", (sessionId) => {
     console.log(`session-id: ${sessionId}`);
@@ -33,36 +32,29 @@ export const createTransportClient = (
   });
 
   socketClient.on("connect", () => {
-    onConnect();
+    onConnect.publish();
   });
 
   socketClient.on("disconnect", () => {
-    onDisconnect();
+    onDisconnect.publish();
   });
 
   socketClient.on("connect_error", () => {
-    onConnectError();
+    onConnectError.publish();
   });
 
   socketClient.on("to-client", (msg) => {
-    onServerMsg(msg);
+    onServerMsg.publish(msg);
   });
 
   return {
-    sendToServer: (msg) => {
+    sendToServer: (msg) => () => {
+      console.log("sending to server", msg);
       socketClient.emit("to-server", msg);
     },
-    onServerMsg: (cb) => {
-      onServerMsg = cb;
-    },
-    onConnect: (cb) => {
-      onConnect = cb;
-    },
-    onDisconnect: (cb) => {
-      onDisconnect = cb;
-    },
-    onConnectError: (cb) => {
-      onConnectError = cb;
-    },
+    onServerMsg,
+    onConnect,
+    onDisconnect,
+    onConnectError,
   };
 };

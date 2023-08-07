@@ -18,25 +18,19 @@ const serverUrl = env.isProd
 
 const transport = createTransportClient(serverUrl);
 
-transport.onConnect(() => {
+transport.onConnect.subscribe(() => {
   AppClient.wireSub.publish({ t: "connected" });
 });
 
-transport.onConnectError(() => {
+transport.onConnectError.subscribe(() => {
   AppClient.wireSub.publish({ t: "connect-error" });
 });
 
-transport.onDisconnect(() => {
+transport.onDisconnect.subscribe(() => {
   AppClient.wireSub.publish({ t: "disconnected" });
 });
 
-transport.onServerMsg((msg) => {
-  AppClient.fromServerSub.publish(msg);
-});
-
-const sendToServer = (msg: ToServer) => () => {
-  transport.sendToServer(msg);
-};
+transport.onServerMsg.subscribe((m) => AppClient.fromServerSub.publish(m));
 
 const program = Program.create({
   init: () => {
@@ -47,7 +41,7 @@ const program = Program.create({
       now: input.ctx.now,
       model: input.model,
       msg: input.msg,
-      sendToServer,
+      sendToServer: transport.sendToServer,
     });
   },
   subscriptions: (input) => {
@@ -58,7 +52,8 @@ const program = Program.create({
   },
 });
 
-program.subscribe(async function (model, ctx) {
+program.subscribe(async function (model, ctx, msg) {
+  console.log(msg);
   render(
     <AppClient.View now={ctx.now} model={model} dispatch={program.dispatch} />,
     document.body

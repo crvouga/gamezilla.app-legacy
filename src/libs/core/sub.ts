@@ -11,6 +11,10 @@ type Pub<Msg> = {
 
 export type PubSub<Msg> = Pub<Msg> & Sub<Msg>;
 
+export const dump = <Msg>(source: Sub<Msg>, target: PubSub<Msg>) => {
+  return source.subscribe(target.publish);
+};
+
 export const create = <Msg>(): PubSub<Msg> => {
   let runningId = 0;
   const subscribers = new Map<number, (msg: Msg) => void>();
