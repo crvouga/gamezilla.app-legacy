@@ -16,6 +16,7 @@ export const createTransportClient = ({
   let reconnectAttempts = 0;
   const serverUrl = createServerUrl(baseServerUrl);
   let socketClient: WebSocket;
+  const queue: ToServer[] = [];
 
   const connect = () => {
     socketClient = new WebSocket(serverUrl);
@@ -28,6 +29,9 @@ export const createTransportClient = ({
       });
       socketClient.send(authMessage);
       onWireMsg.publish({ t: "server-connected" });
+      for (const msg of queue) {
+        socketClient.send(JSON.stringify({ type: "to-server", payload: msg }));
+      }
     };
 
     socketClient.onerror = () => {
@@ -65,7 +69,11 @@ export const createTransportClient = ({
 
   return {
     sendToServer: (msg) => () => {
-      socketClient.send(JSON.stringify({ type: "to-server", payload: msg }));
+      if (socketClient.readyState === WebSocket.OPEN) {
+        socketClient.send(JSON.stringify({ type: "to-server", payload: msg }));
+        return;
+      }
+      queue.push(msg);
     },
     onServerMsg,
     onWireMsg,
@@ -87,6 +95,8 @@ const createServerUrl = (baseServerUrl: string) => {
   if (baseServerUrlObj.protocol === "http:") {
     baseServerUrlObj.protocol = "ws";
   }
+
+  baseServerUrlObj.pathname = "/ws";
 
   return baseServerUrlObj.href;
 };
