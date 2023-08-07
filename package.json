@@ -11,7 +11,8 @@
     "client": "vite",
     "ngrok": "ngrok start --all",
     "db:dev": "pscale connect gamezilla dev",
-    "tc": "tsc --noEmit --watch "
+    "tc": "tsc --noEmit --watch",
+    "viz-bundle": "npx vite-bundle-visualizer"
   },
   "dependencies": {
     "@supabase/supabase-js": "^1.30.0",
