@@ -1,5 +1,14 @@
 import {
   ClientId,
+  Cmd,
+  Err,
+  NonEmpty,
+  Ok,
+  Result,
+  Task,
+  p,
+} from "@gamezilla/core";
+import {
   ProfileAvatar,
   UserId,
   Username,
@@ -7,14 +16,13 @@ import {
   definitions,
 } from "@gamezilla/shared/app";
 import { ServerAppMsg, ServerReqCtx } from "@gamezilla/shared/server";
-import { Cmd, Err, NonEmpty, Ok, Result, Task, p } from "@gamezilla/core";
 import {
-  ServerModel,
-  ServerMsg,
   Profile,
   Req,
-  ToServer,
+  ServerModel,
+  ServerMsg,
   ToClient,
+  ToServer,
 } from "./profile.core";
 
 //

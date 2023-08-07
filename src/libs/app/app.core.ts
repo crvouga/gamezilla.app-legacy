@@ -1,9 +1,9 @@
+import { ClientId, SessionId } from "@gamezilla/core";
 import * as Auth from "@gamezilla/feat/auth";
 import * as Chat from "@gamezilla/feat/chat";
 import * as GameSpace from "@gamezilla/feat/game-space";
 import * as Profile from "@gamezilla/feat/profile";
 import * as Search from "@gamezilla/feat/search";
-import { ClientId, SessionId } from "@gamezilla/shared/app";
 import { Routing, Toast, Wire } from "./app-client";
 
 //
@@ -88,24 +88,3 @@ export type ServerMsg =
   | { t: "search"; c: Search.ServerMsg }
   | { t: "chat"; c: Chat.ServerMsg }
   | { t: "auth"; c: Auth.ServerMsg };
-
-//
-//
-//
-// Transport
-//
-//
-//
-
-export type ServerToClientEvents = {
-  ["to-client"]: (msg: ToClient) => void;
-  ["session-id"]: (sessionId: SessionId) => void;
-};
-
-export type ClientToServerEvents = {
-  ["to-server"]: (msg: ToServer) => void;
-};
-
-export const serverPort = 5000;
-
-export const sessionIdKey = "gamezilla_session_id";

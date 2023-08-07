@@ -1,11 +1,5 @@
-import { ClientId, SessionId, UserId } from "@gamezilla/shared/app";
-
-//
-//
-//
-//
-//
-//
+import { ClientId, SessionId } from "@gamezilla/core";
+import { UserId } from "@gamezilla/shared/app";
 
 export type ServerAppMsg =
   | {

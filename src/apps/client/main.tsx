@@ -1,15 +1,8 @@
-import {
-  AppClient,
-  ClientToServerEvents,
-  ServerToClientEvents,
-  ToServer,
-  serverPort,
-  sessionIdKey,
-} from "@gamezilla/app";
-import { Browser, Cmd, Program } from "@gamezilla/core";
+import { AppClient, ToServer } from "@gamezilla/app";
+import { Browser, Program } from "@gamezilla/core";
 import { render } from "inferno";
-import { Socket, io } from "socket.io-client";
 import "./main.css";
+import { createTransportClient } from "./transport-client";
 
 const env = {
   isDev: process.env.NODE_ENV === "development",
@@ -21,44 +14,29 @@ const serverUrl = env.isProd
   ? "https://server.gamezilla.app/"
   : env.useNgrok
   ? "https://gamezilla-server.ngrok.io/"
-  : `http://localhost:${serverPort}/`;
+  : `http://localhost:${5000}/`;
 
-const socketClient: Socket<ServerToClientEvents, ClientToServerEvents> = io(
-  serverUrl,
-  {
-    auth: {
-      [sessionIdKey]: localStorage.getItem(sessionIdKey) ?? undefined,
-    },
-    forceNew: true,
-  }
-);
+const transport = createTransportClient(serverUrl);
 
-socketClient.on("session-id", (sessionId) => {
-  console.log(`session-id: ${sessionId}`);
-  localStorage.setItem(sessionIdKey, sessionId);
+transport.onConnect(() => {
+  AppClient.wireSub.publish({ t: "connected" });
 });
 
-socketClient.on("connect", () => {
-  AppClient.wireMsgs.publish({ t: "connected" });
+transport.onConnectError(() => {
+  AppClient.wireSub.publish({ t: "connect-error" });
 });
 
-socketClient.on("disconnect", () => {
-  AppClient.wireMsgs.publish({ t: "disconnected" });
+transport.onDisconnect(() => {
+  AppClient.wireSub.publish({ t: "disconnected" });
 });
 
-socketClient.on("connect_error", () => {
-  AppClient.wireMsgs.publish({ t: "connect-error" });
+transport.onServerMsg((msg) => {
+  AppClient.fromServerSub.publish(msg);
 });
 
-socketClient.on("to-client", (msg) => {
-  AppClient.fromServerMsgs.publish(msg);
-});
-
-const sendToServer =
-  (msg: ToServer): Cmd =>
-  () => {
-    socketClient.emit("to-server", msg);
-  };
+const sendToServer = (msg: ToServer) => () => {
+  transport.sendToServer(msg);
+};
 
 const program = Program.create({
   init: () => {
@@ -81,10 +59,6 @@ const program = Program.create({
 });
 
 program.subscribe(async function (model, ctx) {
-  // if (msg) {
-  //   console.log(toMsgType(msg), toMsgPayload(msg, {}));
-  // }
-  // console.log(model);
   render(
     <AppClient.View now={ctx.now} model={model} dispatch={program.dispatch} />,
     document.body

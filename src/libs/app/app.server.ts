@@ -1,9 +1,9 @@
-import { Cmd, Sub, andThen, p } from "@gamezilla/core";
+import { ClientId, Cmd, SessionId, Sub, andThen, p } from "@gamezilla/core";
 import { AuthServer } from "@gamezilla/feat/auth";
 import { ChatServer } from "@gamezilla/feat/chat";
 import { ProfileServer } from "@gamezilla/feat/profile";
 import { SearchServer } from "@gamezilla/feat/search";
-import { ClientId, SessionId, UserId } from "@gamezilla/shared/app";
+import { UserId } from "@gamezilla/shared/app";
 import {
   ServerAppMsg,
   ServerCtx,
@@ -396,7 +396,7 @@ export const subscriptions = ({
       GameSpaceServer.subscriptions({ model: model.space, ctx })
     ),
     p(
-      onConnect,
+      onConnectSub,
       Sub.map(
         ({ sessionId, clientId }): Msg => ({
           t: "client-connected",
@@ -406,7 +406,7 @@ export const subscriptions = ({
       )
     ),
     p(
-      onDisconnect,
+      onDisconnectSub,
       Sub.map(
         ({ sessionId, clientId }): Msg => ({
           t: "client-disconnected",
@@ -416,7 +416,7 @@ export const subscriptions = ({
       )
     ),
     p(
-      fromClientMsgs,
+      fromClientSub,
       Sub.map(
         ({ sessionId, clientId, msg }): Msg => ({
           t: "▶",
@@ -429,18 +429,18 @@ export const subscriptions = ({
   ]);
 };
 
-export const fromClientMsgs = Sub.create<{
+export const fromClientSub = Sub.create<{
   sessionId: SessionId;
   clientId: ClientId;
   msg: ToServer;
 }>();
 
-export const onConnect = Sub.create<{
+export const onConnectSub = Sub.create<{
   sessionId: SessionId;
   clientId: ClientId;
 }>();
 
-export const onDisconnect = Sub.create<{
+export const onDisconnectSub = Sub.create<{
   sessionId: SessionId;
   clientId: ClientId;
 }>();
