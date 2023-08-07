@@ -61,7 +61,12 @@ export const map =
 export const batch = <Msg>(arr: Sub<Msg>[]): Sub<Msg> => {
   return {
     subscribe: (subscriber) => {
-      const unsubscribeList = arr.map((sub) => sub.subscribe(subscriber));
+      const unsubscribeList: (() => void)[] = [];
+
+      for (const sub of arr) {
+        unsubscribeList.push(sub.subscribe(subscriber));
+      }
+
       return () => {
         for (const unsubscribe of unsubscribeList) {
           unsubscribe();
