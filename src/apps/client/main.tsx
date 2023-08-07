@@ -1,5 +1,5 @@
 import { AppClient } from "@gamezilla/app";
-import { Browser, Program } from "@gamezilla/core";
+import { Browser, Program, toMsgPayload, toMsgType } from "@gamezilla/core";
 import { render } from "inferno";
 import "./main.css";
 import { createTransportClient } from "./transport-client";
@@ -43,7 +43,9 @@ const program = Program.create({
 });
 
 program.subscribe(async function (model, ctx, msg) {
-  console.log(msg);
+  if (msg) {
+    console.log(toMsgType(msg), toMsgPayload(msg, {}));
+  }
   render(
     <AppClient.View now={ctx.now} model={model} dispatch={program.dispatch} />,
     document.body
