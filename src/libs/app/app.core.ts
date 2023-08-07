@@ -1,4 +1,4 @@
-import { ClientId, SessionId } from "@gamezilla/core";
+import { ClientId, ServerWireMsg, SessionId } from "@gamezilla/core";
 import * as Auth from "@gamezilla/feat/auth";
 import * as Chat from "@gamezilla/feat/chat";
 import * as GameSpace from "@gamezilla/feat/game-space";
@@ -81,8 +81,7 @@ export type ClientMsg =
 
 export type ServerMsg =
   | { t: "▶"; sessionId: SessionId; clientId: ClientId; c: ToServer }
-  | { t: "client-connected"; sessionId: SessionId; clientId: ClientId }
-  | { t: "client-disconnected"; sessionId: SessionId; clientId: ClientId }
+  | { t: "wire"; c: ServerWireMsg }
   | { t: "game-space"; c: GameSpace.ServerMsg }
   | { t: "profile"; c: Profile.ServerMsg }
   | { t: "search"; c: Search.ServerMsg }

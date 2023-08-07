@@ -5,13 +5,29 @@ import {
   ToClient,
   ToServer,
 } from "@gamezilla/app";
-import { ClientId, SessionId, Sub, TransportServer } from "@gamezilla/core";
+import {
+  ClientId,
+  PubSub,
+  ServerWireMsg,
+  SessionId,
+  TransportServer,
+} from "@gamezilla/core";
 import { Server as HttpServer } from "http";
 import { Server as SocketIoServer } from "socket.io";
 
-export const createTransportServer = (
-  httpServer: HttpServer
-): TransportServer<ToClient, ToServer> => {
+export const createTransportServer = ({
+  httpServer,
+  onClientMsg,
+  onWireMsg,
+}: {
+  httpServer: HttpServer;
+  onClientMsg: PubSub<{
+    msg: ToServer;
+    clientId: ClientId;
+    sessionId: SessionId;
+  }>;
+  onWireMsg: PubSub<ServerWireMsg>;
+}): TransportServer<ToClient, ToServer> => {
   const io = new SocketIoServer<ClientToServerEvents, ServerToClientEvents>(
     httpServer,
     {
@@ -23,22 +39,6 @@ export const createTransportServer = (
       },
     }
   );
-
-  const onClientMsg = Sub.create<{
-    clientId: ClientId;
-    sessionId: SessionId;
-    msg: ToServer;
-  }>();
-
-  const onDisconnect = Sub.create<{
-    clientId: ClientId;
-    sessionId: SessionId;
-  }>();
-
-  const onConnect = Sub.create<{
-    clientId: ClientId;
-    sessionId: SessionId;
-  }>();
 
   io.on("connection", (socket) => {
     const maybeSessionId: unknown = socket.handshake.auth[SESSION_ID_KEY];
@@ -55,7 +55,7 @@ export const createTransportServer = (
       return;
     }
 
-    onConnect.publish({ clientId, sessionId });
+    onWireMsg.publish({ t: "client-connected", clientId, sessionId });
 
     socket.on("to-server", (msg) => {
       const clientId = socket.id;
@@ -74,19 +74,18 @@ export const createTransportServer = (
         return;
       }
 
-      onDisconnect.publish({ clientId, sessionId });
+      onWireMsg.publish({ t: "client-disconnected", clientId, sessionId });
     });
   });
 
   return {
-    onClientMsg,
-    onDisconnect,
-    onConnect,
     broadcast: (msg) => () => {
       io.emit("to-client", msg);
     },
     sendToClient: (clientIds: ClientId[], msg: ToClient) => () => {
       io.to(clientIds).emit("to-client", msg);
     },
+    onClientMsg,
+    onWireMsg,
   };
 };

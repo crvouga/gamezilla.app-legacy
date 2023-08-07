@@ -11,7 +11,7 @@ type Pub<Msg> = {
 
 export type PubSub<Msg> = Pub<Msg> & Sub<Msg>;
 
-export const create = <Msg>(): PubSub<Msg> => {
+const create = <Msg>(): PubSub<Msg> => {
   let runningId = 0;
   const subscribers = new Map<number, (msg: Msg) => void>();
   let queue: Msg[] = [];
@@ -42,7 +42,7 @@ export const create = <Msg>(): PubSub<Msg> => {
   };
 };
 
-export const map =
+const map =
   <A, Msg>(f: (a: A) => Msg) =>
   (sub: Sub<A>): Sub<Msg> => {
     return {
@@ -58,7 +58,7 @@ export const map =
     };
   };
 
-export const batch = <Msg>(arr: Sub<Msg>[]): Sub<Msg> => {
+const batch = <Msg>(arr: Sub<Msg>[]): Sub<Msg> => {
   return {
     subscribe: (subscriber) => {
       const unsubscribeList: (() => void)[] = [];
@@ -76,7 +76,7 @@ export const batch = <Msg>(arr: Sub<Msg>[]): Sub<Msg> => {
   };
 };
 
-export const None: Sub<never> = {
+const None: Sub<never> = {
   subscribe: () => () => {},
 };
 
@@ -97,3 +97,5 @@ export const Sub = {
   None,
   tag,
 };
+
+export const PubSub = Sub;

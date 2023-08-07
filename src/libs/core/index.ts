@@ -19,7 +19,7 @@ export * from "./range";
 export * from "./remote-result";
 export * from "./result";
 export { Set } from "./set";
-export { Sub } from "./sub";
+export * from "./sub";
 export { Task } from "./task";
 export * as Time from "./time";
 export * as Transition from "./transition";

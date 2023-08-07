@@ -1,5 +1,5 @@
+import { ClientWireMsg, Cmd } from "@gamezilla/core";
 import { ClientAppMsg } from "@gamezilla/shared/client";
-import { Cmd } from "@gamezilla/core";
 import { IconSpinner } from "@gamezilla/ui";
 
 //
@@ -11,13 +11,13 @@ import { IconSpinner } from "@gamezilla/ui";
 //
 
 export type Model =
-  | { t: "connecting" }
-  | { t: "connect-error"; errorCount: number }
-  | { t: "disconnected" }
-  | { t: "connected" };
+  | { t: "server-connecting" }
+  | { t: "server-connect-error"; errorCount: number }
+  | { t: "server-disconnected" }
+  | { t: "server-connected" };
 
 export const init: Model = {
-  t: "connecting",
+  t: "server-connecting",
 };
 
 //
@@ -28,7 +28,7 @@ export const init: Model = {
 //
 //
 
-export type Msg = { t: Model["t"] };
+export type Msg = ClientWireMsg;
 
 export const update = ({
   msg,
@@ -40,19 +40,20 @@ export const update = ({
   model: Model;
   msgs?: ClientAppMsg[];
 } => {
-  if (msg.t === "connect-error") {
+  if (msg.t === "server-connect-error") {
     return {
       model: {
-        t: "connect-error",
-        errorCount: model.t === "connect-error" ? model.errorCount + 1 : 1,
+        t: "server-connect-error",
+        errorCount:
+          model.t === "server-connect-error" ? model.errorCount + 1 : 1,
       },
     };
   }
 
-  if (msg.t === "connected") {
+  if (msg.t === "server-connected") {
     return {
       model: {
-        t: "connected",
+        t: "server-connected",
       },
       msgs: [{ t: "wire-connected" }],
     };
@@ -81,7 +82,7 @@ export const updateFromApp = <ToServer,>(input: {
 //
 
 export const View = ({ model }: { model: Model }) => {
-  if (model.t === "connect-error" && model.errorCount > 2) {
+  if (model.t === "server-connect-error" && model.errorCount > 2) {
     return (
       <div className="flex h-6 w-full items-center justify-center gap-2 bg-blue-500 text-white">
         <IconSpinner className="h-5 w-5 animate-spin text-white" />

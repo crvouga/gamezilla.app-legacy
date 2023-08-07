@@ -403,8 +403,8 @@ export const updateFromApp = ({
 //
 //
 
-export const wireSub = Sub.create<Wire.Msg>();
-export const fromServerSub = Sub.create<ToClient>();
+export const onWireMsg = Sub.create<Wire.Msg>();
+export const onServerMsg = Sub.create<ToClient>();
 
 export const subscriptions = ({
   now,
@@ -414,8 +414,8 @@ export const subscriptions = ({
   model: Model;
 }): Sub<Msg> => {
   return Sub.batch<Msg>([
-    Sub.tag("▶", fromServerSub),
-    Sub.tag("wire", wireSub),
+    Sub.tag("▶", onServerMsg),
+    Sub.tag("wire", onWireMsg),
     Sub.tag("routing", Routing.subscriptions),
     Sub.tag("auth", AuthClient.subscriptions),
     spaceSub(now, model),

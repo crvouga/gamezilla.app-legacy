@@ -4,12 +4,6 @@ import { DbConnMySql } from "@gamezilla/shared/server";
 import { createServer } from "http";
 import { createTransportServer } from "./transport-server";
 
-//
-//
-//
-//
-//
-
 console.log("[server] planet scale connecting...");
 
 const DATABASE_URL =
@@ -22,12 +16,6 @@ const mySql = await DbConnMySql.create({
 
 console.log("[server] planet scale connected.");
 
-//
-//
-//
-//
-//
-
 let model: ServerModel | null = null;
 let msg: ServerMsg | null = null;
 
@@ -35,23 +23,11 @@ const httpServer = createServer((_request, response) => {
   response.end(JSON.stringify({ msgType: msg, model: model }));
 });
 
-//
-//
-//
-//
-//
-
-const transport = createTransportServer(httpServer);
-
-transport.onClientMsg.subscribe((m) => AppServer.fromClientSub.publish(m));
-transport.onConnect.subscribe((m) => AppServer.onConnectSub.publish(m));
-transport.onDisconnect.subscribe((m) => AppServer.onDisconnectSub.publish(m));
-
-//
-//
-//
-//
-//
+const transport = createTransportServer({
+  httpServer,
+  onClientMsg: AppServer.onClientMsg,
+  onWireMsg: AppServer.onWireMsg,
+});
 
 const program = Program.create({
   init: () => AppServer.init,
@@ -90,12 +66,6 @@ program.subscribe(async (model_, _ctx, msg_) => {
 });
 
 program.start();
-
-//
-//
-//
-//
-//
 
 const port = Number(process.env["PORT"]) || 5000;
 

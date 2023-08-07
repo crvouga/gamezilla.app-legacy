@@ -1,4 +1,4 @@
-import { AppClient, ToServer } from "@gamezilla/app";
+import { AppClient } from "@gamezilla/app";
 import { Browser, Program } from "@gamezilla/core";
 import { render } from "inferno";
 import "./main.css";
@@ -16,21 +16,11 @@ const serverUrl = env.isProd
   ? "https://gamezilla-server.ngrok.io/"
   : `http://localhost:${5000}/`;
 
-const transport = createTransportClient(serverUrl);
-
-transport.onConnect.subscribe(() => {
-  AppClient.wireSub.publish({ t: "connected" });
+const transport = createTransportClient({
+  serverUrl,
+  onServerMsg: AppClient.onServerMsg,
+  onWireMsg: AppClient.onWireMsg,
 });
-
-transport.onConnectError.subscribe(() => {
-  AppClient.wireSub.publish({ t: "connect-error" });
-});
-
-transport.onDisconnect.subscribe(() => {
-  AppClient.wireSub.publish({ t: "disconnected" });
-});
-
-transport.onServerMsg.subscribe((m) => AppClient.fromServerSub.publish(m));
 
 const program = Program.create({
   init: () => {

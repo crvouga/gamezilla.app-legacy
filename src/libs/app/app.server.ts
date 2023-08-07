@@ -1,4 +1,12 @@
-import { ClientId, Cmd, SessionId, Sub, andThen, p } from "@gamezilla/core";
+import {
+  ClientId,
+  Cmd,
+  ServerWireMsg,
+  SessionId,
+  Sub,
+  andThen,
+  p,
+} from "@gamezilla/core";
 import { AuthServer } from "@gamezilla/feat/auth";
 import { ChatServer } from "@gamezilla/feat/chat";
 import { ProfileServer } from "@gamezilla/feat/profile";
@@ -93,45 +101,8 @@ const update_ = ({
   cmd?: Cmd<Msg>;
   msgs?: ServerAppMsg[];
 } => {
-  if (msg.t === "client-connected") {
-    const sessionId = msg.sessionId;
-    const clientIds = model.sessions[sessionId]?.clientIds ?? [];
-    const sessionNew: Session = {
-      clientIds: [...clientIds, msg.clientId].slice(0, 5),
-      sessionId,
-    };
-
-    return {
-      model: {
-        ...model,
-        sessions: sessionNew,
-      },
-      msgs: [
-        {
-          ...msg,
-          userId: model.auth.sessions[msg.sessionId]?.userId,
-          t: "client-connected",
-        },
-      ],
-    };
-  }
-
-  if (msg.t === "client-disconnected") {
-    const sessionId = msg.sessionId;
-    const clientIds = model.sessions[sessionId]?.clientIds ?? [];
-    const sessionNew: Session = {
-      clientIds: clientIds.filter((clientId) => clientId !== msg.clientId),
-      sessionId,
-    };
-    return {
-      model: {
-        ...model,
-        sessions: {
-          ...model.sessions,
-          [sessionId]: sessionNew,
-        },
-      },
-    };
+  if (msg.t === "wire") {
+    return updateWire({ msg: msg.c, model });
   }
 
   if (msg.t === "▶") {
@@ -208,6 +179,59 @@ const update_ = ({
     };
   }
 
+  return { model };
+};
+
+const updateWire = ({
+  msg,
+  model,
+}: {
+  msg: ServerWireMsg;
+  model: Model;
+}): {
+  model: Model;
+  msgs?: ServerAppMsg[];
+} => {
+  if (msg.t === "client-connected") {
+    const sessionId = msg.sessionId;
+    const clientIds = model.sessions[sessionId]?.clientIds ?? [];
+    const sessionNew: Session = {
+      clientIds: [...clientIds, msg.clientId].slice(0, 5),
+      sessionId,
+    };
+
+    return {
+      model: {
+        ...model,
+        sessions: sessionNew,
+      },
+      msgs: [
+        {
+          ...msg,
+          userId: model.auth.sessions[msg.sessionId]?.userId,
+          t: "client-connected",
+        },
+      ],
+    };
+  }
+
+  if (msg.t === "client-disconnected") {
+    const sessionId = msg.sessionId;
+    const clientIds = model.sessions[sessionId]?.clientIds ?? [];
+    const sessionNew: Session = {
+      clientIds: clientIds.filter((clientId) => clientId !== msg.clientId),
+      sessionId,
+    };
+    return {
+      model: {
+        ...model,
+        sessions: {
+          ...model.sessions,
+          [sessionId]: sessionNew,
+        },
+      },
+    };
+  }
   return { model };
 };
 
@@ -395,28 +419,9 @@ export const subscriptions = ({
       "game-space",
       GameSpaceServer.subscriptions({ model: model.space, ctx })
     ),
+    Sub.tag("wire", onWireMsg),
     p(
-      onConnectSub,
-      Sub.map(
-        ({ sessionId, clientId }): Msg => ({
-          t: "client-connected",
-          sessionId,
-          clientId,
-        })
-      )
-    ),
-    p(
-      onDisconnectSub,
-      Sub.map(
-        ({ sessionId, clientId }): Msg => ({
-          t: "client-disconnected",
-          sessionId,
-          clientId,
-        })
-      )
-    ),
-    p(
-      fromClientSub,
+      onClientMsg,
       Sub.map(
         ({ sessionId, clientId, msg }): Msg => ({
           t: "▶",
@@ -429,18 +434,10 @@ export const subscriptions = ({
   ]);
 };
 
-export const fromClientSub = Sub.create<{
+export const onClientMsg = Sub.create<{
   sessionId: SessionId;
   clientId: ClientId;
   msg: ToServer;
 }>();
 
-export const onConnectSub = Sub.create<{
-  sessionId: SessionId;
-  clientId: ClientId;
-}>();
-
-export const onDisconnectSub = Sub.create<{
-  sessionId: SessionId;
-  clientId: ClientId;
-}>();
+export const onWireMsg = Sub.create<ServerWireMsg>();

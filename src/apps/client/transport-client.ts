@@ -5,12 +5,18 @@ import {
   ToClient,
   ToServer,
 } from "@gamezilla/app";
-import { Sub, TransportClient } from "@gamezilla/core";
+import { ClientWireMsg, PubSub, TransportClient } from "@gamezilla/core";
 import { io, Socket } from "socket.io-client";
 
-export const createTransportClient = (
-  serverUrl: string
-): TransportClient<ToClient, ToServer> => {
+export const createTransportClient = ({
+  serverUrl,
+  onWireMsg,
+  onServerMsg,
+}: {
+  serverUrl: string;
+  onWireMsg: PubSub<ClientWireMsg>;
+  onServerMsg: PubSub<ToClient>;
+}): TransportClient<ToClient, ToServer> => {
   const socketClient: Socket<ServerToClientEvents, ClientToServerEvents> = io(
     serverUrl,
     {
@@ -21,26 +27,21 @@ export const createTransportClient = (
     }
   );
 
-  const onServerMsg = Sub.create<ToClient>();
-  const onConnect = Sub.create<void>();
-  const onDisconnect = Sub.create<void>();
-  const onConnectError = Sub.create<void>();
-
   socketClient.on("session-id", (sessionId) => {
     console.log(`session-id: ${sessionId}`);
     localStorage.setItem(SESSION_ID_KEY, sessionId);
   });
 
   socketClient.on("connect", () => {
-    onConnect.publish();
+    onWireMsg.publish({ t: "server-connected" });
   });
 
   socketClient.on("disconnect", () => {
-    onDisconnect.publish();
+    onWireMsg.publish({ t: "server-disconnected" });
   });
 
   socketClient.on("connect_error", () => {
-    onConnectError.publish();
+    onWireMsg.publish({ t: "server-connect-error" });
   });
 
   socketClient.on("to-client", (msg) => {
@@ -52,8 +53,6 @@ export const createTransportClient = (
       socketClient.emit("to-server", msg);
     },
     onServerMsg,
-    onConnect,
-    onDisconnect,
-    onConnectError,
+    onWireMsg,
   };
 };
