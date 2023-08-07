@@ -26,3 +26,4 @@ export * as Transition from "./transition";
 export * from "./transport";
 export { Posix } from "./unix-time";
 export * from "./utils";
+export * from "./parsing";

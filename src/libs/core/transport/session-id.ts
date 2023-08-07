@@ -2,7 +2,7 @@ import { Result } from "@gamezilla/core";
 
 export type SessionId = string & { _opaque: "SessionId" };
 
-export const is = (id: unknown): id is SessionId => {
+const is = (id: unknown): id is SessionId => {
   return (
     typeof id === "string" &&
     id.startsWith("session-") &&

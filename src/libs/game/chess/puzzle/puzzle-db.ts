@@ -1,4 +1,18 @@
-import { Err, NonEmpty, Ok, Result, Uuid } from "@gamezilla/core";
+import {
+  Err,
+  NonEmpty,
+  Ok,
+  Result,
+  Uuid,
+  has,
+  is,
+  isEnum,
+  isNum,
+  isObj,
+  isStr,
+  isTuple,
+  to,
+} from "@gamezilla/core";
 import { UserId } from "@gamezilla/shared/app";
 import { DbConnMySql } from "@gamezilla/shared/server";
 import { z } from "zod";
@@ -39,6 +53,60 @@ export const PuzzleRow = z.object({
   game_url: z.string(),
 });
 
+export type Int = string | number;
+
+export type PuzzleRow = {
+  puzzle_id: string;
+  rating: Int;
+  rating_deviation: string;
+  opening_tags: string;
+  fen: string;
+  moves: string;
+  popularity: Int;
+  number_of_plays: Int;
+  themes: string;
+  game_url: string;
+};
+
+const toInt = (x: unknown): Int | null => {
+  if (isStr(x) || isNum(x)) {
+    return x;
+  }
+  return null;
+};
+
+const isInt = is(toInt);
+
+export const toPuzzleRow = (x: unknown): PuzzleRow | null => {
+  if (
+    isObj(x) &&
+    has(x, "puzzle_id", isStr) &&
+    has(x, "rating", isInt) &&
+    has(x, "rating_deviation", isStr) &&
+    has(x, "opening_tags", isStr) &&
+    has(x, "fen", isStr) &&
+    has(x, "moves", isStr) &&
+    has(x, "popularity", isInt) &&
+    has(x, "number_of_plays", isInt) &&
+    has(x, "themes", isStr) &&
+    has(x, "game_url", isStr)
+  ) {
+    return {
+      fen: x.fen,
+      game_url: x.game_url,
+      moves: x.moves,
+      number_of_plays: x.number_of_plays,
+      opening_tags: x.opening_tags,
+      popularity: x.popularity,
+      puzzle_id: x.puzzle_id,
+      rating: x.rating,
+      rating_deviation: x.rating_deviation,
+      themes: x.themes,
+    };
+  }
+  return null;
+};
+
 const PuzzleInteractionRow = z.object({
   id: z.string(),
   puzzle_id: z.string(),
@@ -59,6 +127,63 @@ const PuzzleProfileRow = z.object({
   elo_rating: Int,
   puzzle_query: PuzzleQueryJSON,
 });
+
+export type PuzzleInteractionRow = {
+  id: string;
+  puzzle_id: string;
+  user_id: string;
+  type: "started" | "solved" | "incorrect" | "solved-with-hint";
+};
+
+const types = ["started", "solved", "incorrect", "solved-with-hint"] as const;
+
+const toPuzzleInteractionRow = (x: unknown): PuzzleInteractionRow | null => {
+  if (
+    isObj(x) &&
+    has(x, "id", isStr) &&
+    has(x, "puzzle_id", isStr) &&
+    has(x, "user_id", isStr) &&
+    has(x, "type", isEnum(types))
+  ) {
+    return x;
+  }
+  return null;
+};
+
+export type RatingRange = [number, number];
+
+const toRatingRange = to<RatingRange>(isTuple(isNum, isNum));
+
+export type PuzzleQueryJSON = {
+  ratingRange: RatingRange;
+};
+
+const toPuzzleQueryJSON = (x: unknown): PuzzleQueryJSON | null => {
+  if (isObj(x) && has(x, "ratingRange", is(toRatingRange))) {
+    return x;
+  }
+  return null;
+};
+
+export type PuzzleProfileRow = {
+  id: string;
+  user_id: string;
+  elo_rating: Int;
+  puzzle_query: PuzzleQueryJSON;
+};
+
+const toPuzzleProfileRow = (x: unknown): PuzzleProfileRow | null => {
+  if (
+    isObj(x) &&
+    has(x, "id", isStr) &&
+    has(x, "user_id", isStr) &&
+    has(x, "elo_rating", isInt) &&
+    has(x, "puzzle_query", is(toPuzzleQueryJSON))
+  ) {
+    return x;
+  }
+  return null;
+};
 
 //
 //
