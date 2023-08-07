@@ -17,11 +17,10 @@ export type Follower<State, Msg> = {
   received: ToFollower<Msg>[];
 };
 
-export type ToFollower<Msg> =
-  | Msg & {
-      orderId: number;
-      msgId: string;
-    };
+export type ToFollower<Msg> = Msg & {
+  msgId: string;
+  orderId: number;
+};
 
 export type ToLeader<Msg> = Msg & {
   msgId: string;
