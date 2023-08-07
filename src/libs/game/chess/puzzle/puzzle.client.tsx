@@ -133,7 +133,7 @@ export const updateFromServer_: typeof updateFromServer = ({
     if (msg.t === "db-got-puzzles") {
       return {
         model,
-        msgs: [{ t: "toast-enqueued", text: `Failed to load puzzles.` }],
+        msgs: [{ t: "enqueue-toast", text: `Failed to load puzzles.` }],
       };
     }
 
@@ -142,7 +142,7 @@ export const updateFromServer_: typeof updateFromServer = ({
         model,
         msgs: [
           {
-            t: "toast-enqueued",
+            t: "enqueue-toast",
             text: `Failed to load puzzles and profile.`,
           },
         ],

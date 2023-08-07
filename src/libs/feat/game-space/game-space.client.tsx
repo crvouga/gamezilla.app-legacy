@@ -52,14 +52,12 @@ import {
 //
 //
 //
-// Model
+// ClientModel
 //
 //
 //
 
-export type Model = ClientModel;
-
-export const init: { model: Model } = {
+export const init: { model: ClientModel } = {
   model: {
     games: {},
     spaces: {},
@@ -79,16 +77,14 @@ export const init: { model: Model } = {
 //
 //
 
-export type Msg = ClientMsg;
-
 export const update = (input: {
   ctx: ClientCtx | null;
   sendToServer: (msg: ToServer) => Cmd;
-  msg: Msg;
-  model: Model;
+  msg: ClientMsg;
+  model: ClientModel;
 }): {
-  model: Model;
-  cmd?: Cmd<Msg>;
+  model: ClientModel;
+  cmd?: Cmd<ClientMsg>;
   msgs?: ClientAppMsg[];
 } => {
   return p(
@@ -192,7 +188,7 @@ const update_: typeof update = ({ ctx, sendToServer, msg, model }) => {
       model: game,
     });
 
-    const modelNew: Model = {
+    const modelNew: ClientModel = {
       ...model,
       games: {
         ...model.games,
@@ -231,10 +227,10 @@ export const updateFromServer = ({
   ctx: ClientCtx | null;
   sendToServer: (msg: ToServer) => Cmd;
   msg: ToClient;
-  model: Model;
+  model: ClientModel;
 }): {
-  model: Model;
-  cmd?: Cmd<Msg>;
+  model: ClientModel;
+  cmd?: Cmd<ClientMsg>;
   msgs?: ClientAppMsg[];
 } => {
   switch (msg.t) {
@@ -275,7 +271,7 @@ export const updateFromServer = ({
         msg: msg.c,
       });
 
-      const modelNew: Model = {
+      const modelNew: ClientModel = {
         ...model,
         games: {
           ...model.games,
@@ -292,13 +288,8 @@ export const updateFromServer = ({
     default: {
       if (msg.result.t === "err") {
         return {
-          model: {
-            ...model,
-            req: {
-              ...model.req,
-              [msg.t]: msg.result,
-            },
-          },
+          model: { ...model, req: { ...model.req, [msg.t]: msg.result } },
+          msgs: [{ t: "enqueue-toast", text: msg.result.error }],
         };
       }
 
@@ -332,7 +323,7 @@ const resToToast = ({
   res,
   model,
 }: {
-  model: Model;
+  model: ClientModel;
   ctx: ClientCtx;
   res: Res;
 }): ClientAppMsg[] => {
@@ -348,7 +339,7 @@ const resToToast = ({
     res.userId !== ctx.currentUserId
   ) {
     const username = ctx.profiles[res.userId]?.username ?? "...";
-    return [{ t: "toast-enqueued", text: `${username} joined space` }];
+    return [{ t: "enqueue-toast", text: `${username} joined space` }];
   }
 
   if (
@@ -357,7 +348,7 @@ const resToToast = ({
     res.userId !== ctx.currentUserId
   ) {
     const username = ctx.profiles[res.userId]?.username ?? "...";
-    return [{ t: "toast-enqueued", text: `${username} left space` }];
+    return [{ t: "enqueue-toast", text: `${username} left space` }];
   }
 
   return [];
@@ -365,11 +356,11 @@ const resToToast = ({
 
 export const updateFromApp = (input: {
   msg: ClientAppMsg;
-  model: Model;
+  model: ClientModel;
   sendToServer: (m: ToServer) => Cmd;
 }): {
-  model: Model;
-  cmd?: Cmd<Msg>;
+  model: ClientModel;
+  cmd?: Cmd<ClientMsg>;
 } => {
   const { msg } = input;
 
@@ -385,11 +376,11 @@ export const updateFromApp = (input: {
 };
 
 const loadGameSpaces = (input: {
-  model: Model;
+  model: ClientModel;
   sendToServer: (m: ToServer) => Cmd;
 }): {
-  model: Model;
-  cmd?: Cmd<Msg>;
+  model: ClientModel;
+  cmd?: Cmd<ClientMsg>;
 } => {
   const { model, sendToServer } = input;
   return {
@@ -462,7 +453,7 @@ const syncWithServer = ({
             gamesNew[1],
             p(
               merged.cmd ?? Cmd.None,
-              Cmd.map((m): Msg => ({ t: "game", c: m }))
+              Cmd.map((m): ClientMsg => ({ t: "game", c: m }))
             ),
           ]),
         ];
@@ -528,7 +519,10 @@ const syncWithServer = ({
 //
 //
 
-export const subscriptions = (ctx: ClientCtx, model: Model): Sub<Msg> => {
+export const subscriptions = (
+  ctx: ClientCtx,
+  model: ClientModel
+): Sub<ClientMsg> => {
   const user = model.users[ctx.currentUserId];
 
   if (!user) {
@@ -579,9 +573,9 @@ export const View = ({
   route,
   viewBottomBar,
 }: {
-  model: Model;
+  model: ClientModel;
   ctx: ViewCtx;
-  dispatch: (m: Msg) => void;
+  dispatch: (m: ClientMsg) => void;
   route: RouteGameSpace;
   viewBottomBar: VDom;
 }) => {
@@ -618,9 +612,9 @@ const ViewSpaceScreen = ({
   model,
   spaceId,
 }: {
-  model: Model;
+  model: ClientModel;
   ctx: ViewCtx;
-  dispatch: (m: Msg) => void;
+  dispatch: (m: ClientMsg) => void;
   spaceId: GameSpaceId;
 }) => {
   if (
@@ -714,9 +708,9 @@ const ViewPage = ({
   dispatch,
   model,
 }: {
-  model: Model;
+  model: ClientModel;
   ctx: GameSpaceViewCtx;
-  dispatch: (m: Msg) => void;
+  dispatch: (m: ClientMsg) => void;
 }) => {
   const currentUser = model.users[ctx.currentUserId];
 
@@ -753,7 +747,7 @@ const ViewTopBar = ({
   dispatch,
 }: {
   ctx: GameSpaceViewCtx;
-  dispatch: (m: Msg) => void;
+  dispatch: (m: ClientMsg) => void;
 }) => {
   const peopleCount = Object.values(ctx.space.users).length;
   return (

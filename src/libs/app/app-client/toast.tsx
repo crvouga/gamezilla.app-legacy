@@ -133,7 +133,7 @@ export function updateFromApp({
   model: Model;
   cmd?: Cmd<Msg>;
 } {
-  if (msg.t === "toast-enqueued") {
+  if (msg.t === "enqueue-toast") {
     const toastId = model.runningId;
     const duration = msg.duration ?? 2000;
     const updated: ReturnType<typeof updateFromApp> = {
