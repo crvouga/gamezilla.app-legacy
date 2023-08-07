@@ -147,7 +147,20 @@ export type Req =
 
 export type Res = Req & { result: Result<string, null> };
 
-export type CoreMsg = (Req | Event) & { order: number };
+export type CoreMsg = Req | Event;
+
+type CoreCtx = { currentUserId: UserId; hostId: UserId };
+
+export const reducer =
+  (ctx: CoreCtx) =>
+  (model: CoreModel, msg: CoreMsg): CoreModel => {
+    if (msg.t === "bot-moved" || msg.t === "player-left") {
+      const result = updateCoreEvent({ msg, model });
+      return result.t === "err" ? model : result.value;
+    }
+    const result = updateCore({ ctx, msg, model });
+    return result.t === "err" ? model : result.value;
+  };
 
 //
 //
@@ -159,7 +172,7 @@ export const updateCore = ({
   msg,
   model,
 }: {
-  ctx: { currentUserId: UserId; hostId: UserId };
+  ctx: CoreCtx;
   msg: Req;
   model: CoreModel;
 }): Result<string, CoreModel> => {
