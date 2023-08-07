@@ -18,6 +18,8 @@ export const createTransportClient = ({
   let socketClient: WebSocket;
   const queue: ToServer[] = [];
 
+  let tryReconnect = true;
+
   const connect = () => {
     socketClient = new WebSocket(serverUrl);
 
@@ -39,6 +41,12 @@ export const createTransportClient = ({
     };
 
     socketClient.onclose = () => {
+      if (!tryReconnect) {
+        onWireMsg.publish({ t: "server-disconnected" });
+        console.log("Server disconnected. Reconnects disabled.");
+        return;
+      }
+
       if (reconnectAttempts > MAX_RECONNECT_ATTEMPTS) {
         onWireMsg.publish({ t: "server-disconnected" });
         console.log("Max reconnect attempts reached.");
@@ -65,6 +73,16 @@ export const createTransportClient = ({
   };
 
   connect();
+
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) {
+      tryReconnect = false;
+      socketClient.close();
+    } else {
+      tryReconnect = true;
+      connect();
+    }
+  });
 
   return {
     sendToServer: (msg) => () => {
