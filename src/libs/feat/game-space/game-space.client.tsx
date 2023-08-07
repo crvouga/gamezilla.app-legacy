@@ -182,7 +182,7 @@ const update_: typeof update = ({ ctx, sendToServer, msg, model }) => {
         sendToServer({
           t: "game",
           c: msg,
-          profile: ctx.profiles[ctx.currentUserId],
+          // profile: ctx.profiles[ctx.currentUserId],
         }),
       msg: gameMsg,
       model: game,
@@ -265,7 +265,7 @@ export const updateFromServer = ({
           sendToServer({
             t: "game",
             c: msg,
-            profile: ctx.profiles[ctx.currentUserId],
+            // profile: ctx.profiles[ctx.currentUserId],
           }),
         model: game,
         msg: msg.c,

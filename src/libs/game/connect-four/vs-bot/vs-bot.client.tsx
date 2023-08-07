@@ -1,7 +1,6 @@
 import { Cmd, Posix, Sub, andThen, p } from "@gamezilla/core";
 import { ClientCtx } from "@gamezilla/shared/client";
 import {
-  GameClient,
   GameLayout,
   GameSpaceClientCtx,
   GameSpaceViewCtx,
@@ -33,22 +32,14 @@ import {
   BotLevel,
   ClientModel,
   ClientMsg,
-  CoreModel,
   ServerModel,
   ToClient,
   ToServer,
   allBotLevels,
-  updateCore,
   initCore,
+  updateCore,
+  updateCoreEvent,
 } from "./vs-bot.core";
-
-export type Client = GameClient<
-  ClientModel,
-  CoreModel,
-  ClientMsg,
-  ToClient,
-  ToServer
->;
 
 //
 //
@@ -72,12 +63,7 @@ export const init = (...params: Parameters<typeof initCore>): ClientModel => {
 //
 //
 
-export const update = ({
-  sendToServer,
-  ctx,
-  msg,
-  model,
-}: {
+export const update = (input: {
   ctx: GameSpaceClientCtx;
   sendToServer: (msg: ToServer) => Cmd;
   msg: ClientMsg;
@@ -85,46 +71,36 @@ export const update = ({
 }): {
   model: ClientModel;
   cmd?: Cmd<ClientMsg>;
-} =>
-  p(
-    { model },
-    andThen((model) => {
-      if (msg.t === "columns-ui") {
-        const updated = ColumnsUI.update(model.columnsUI, msg.c);
-        return { model: { ...model, columnsUI: updated } };
-      }
+} => {
+  return p(updateMain(input), andThen(watch));
+};
 
-      if (msg.t === "vs-bot-game") {
-        const updated = VsBotGame.update(model.vsBotGame, msg.c);
-        return { model: { ...model, vsBotGame: updated } };
-      }
+const updateMain: typeof update = ({ ctx, sendToServer, msg, model }) => {
+  if (msg.t === "columns-ui") {
+    const updated = ColumnsUI.update(model.columnsUI, msg.c);
+    return { model: { ...model, columnsUI: updated } };
+  }
 
-      if (msg.t === "vs-bot-setup") {
-        const updated = VsBotSetup.update(model.vsBotSetup, msg.c);
-        return { model: { ...model, vsBotSetup: updated } };
-      }
+  if (msg.t === "vs-bot-game") {
+    const updated = VsBotGame.update(model.vsBotGame, msg.c);
+    return { model: { ...model, vsBotGame: updated } };
+  }
 
-      const result = updateCore({ ctx, msg, model });
+  if (msg.t === "vs-bot-setup") {
+    const updated = VsBotSetup.update(model.vsBotSetup, msg.c);
+    return { model: { ...model, vsBotSetup: updated } };
+  }
 
-      if (result.t === "err") {
-        return { model };
-      }
+  const result = updateCore({ ctx, msg, model });
 
-      const sync = syncWithServer({
-        ctx,
-        serverModel: result.value,
-        clientModel: model,
-      });
+  if (result.t === "err") {
+    return { model, cmd: sendToServer(msg) };
+  }
 
-      return {
-        model: sync.model,
-        cmd: Cmd.batch<ClientMsg>([sync.cmd, sendToServer(msg)]),
-      };
-    }),
-    andThen(watch)
-  );
+  return { model: { ...model, ...result.value }, cmd: sendToServer(msg) };
+};
 
-function watch(model: ClientModel) {
+const watch = (model: ClientModel) => {
   const columnsUI = ColumnsUI.watch(
     model.columnsUI,
     "columns" in model ? model.columns : undefined
@@ -146,7 +122,7 @@ function watch(model: ClientModel) {
       Cmd.t("columns-ui", columnsUI.cmd),
     ]),
   };
-}
+};
 
 export const updateFromServer = (input: {
   ctx: GameSpaceClientCtx;
@@ -156,30 +132,30 @@ export const updateFromServer = (input: {
   model: ClientModel;
   cmd?: Cmd<ClientMsg>;
 } => {
-  return p(updateFromServer_(input), andThen(watch));
+  return p(updateFromServerMain(input), andThen(watch));
 };
 
-const updateFromServer_: typeof updateFromServer = ({ ctx, msg, model }) => {
-  if (msg.t === "player-left") {
-    const sync = syncWithServer({
-      ctx,
-      clientModel: model,
-      serverModel: msg.model,
+const updateFromServerMain: typeof updateFromServer = ({ ctx, msg, model }) => {
+  if (msg.t === "player-left" || msg.t === "bot-moved") {
+    const result = updateCoreEvent({
+      msg,
+      model,
     });
-    return sync;
+    if (result.t === "err") {
+      return { model };
+    }
+    return {
+      model: { ...model, ...result.value },
+    };
   }
 
-  if (msg.result.t === "err") {
+  const result = updateCore({ ctx, msg, model });
+
+  if (result.t === "err") {
     return { model };
   }
 
-  const sync = syncWithServer({
-    ctx,
-    clientModel: model,
-    serverModel: msg.result.value,
-  });
-
-  return sync;
+  return { model: { ...model, ...result.value } };
 };
 
 export const syncWithServer = ({

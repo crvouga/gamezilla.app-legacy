@@ -1,4 +1,4 @@
-import { Audio, Cmd, Posix, RemoteResult, Sub, p } from "@gamezilla/core";
+import { Audio, Cmd, Posix, RemoteResult, Sub } from "@gamezilla/core";
 import { ClientAppMsg } from "@gamezilla/shared/client";
 import {
   GameSpaceClientCtx,
@@ -7,6 +7,7 @@ import {
   mainMenuButtons,
 } from "@gamezilla/shared/game-space";
 import { IconPuzzlePiece } from "@gamezilla/ui";
+import { ViewCoverArt } from "./chess-ui";
 import {
   ClientModel,
   ClientMsg,
@@ -14,7 +15,6 @@ import {
   ToClient,
   ToServer,
 } from "./chess.core";
-import { ViewCoverArt } from "./chess-ui";
 import Sounds from "./chess/chess-sounds";
 import * as Puzzle from "./puzzle/puzzle.client";
 import { VsBotClient } from "./vs-bot";
@@ -160,10 +160,7 @@ export const updateFromServer = ({
         ...model,
         requests: {
           ...model.requests,
-          [msg.t]: p(
-            result,
-            RemoteResult.map(() => null)
-          ),
+          [msg.t]: RemoteResult.map(result, () => null),
         },
       };
 

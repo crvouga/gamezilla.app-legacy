@@ -12,18 +12,6 @@ export const Err = <T>(error: T): Err<T> => {
   return { t: "err", error };
 };
 
-const map =
-  <TError, A, B>(mapper: (a: A) => B) =>
-  (result: Result<TError, A>): Result<TError, B> => {
-    switch (result.t) {
-      case "err":
-        return result;
-
-      case "ok":
-        return Ok(mapper(result.value));
-    }
-  };
-
 const mapErr =
   <A, B, TValue>(mapper: (a: A) => B) =>
   (result: Result<A, TValue>): Result<B, TValue> => {
@@ -88,7 +76,6 @@ const map_ = <TError, A, B>(
 export const Result = {
   Ok,
   Err,
-  map,
   map_,
   mapErr,
   fromNullable,

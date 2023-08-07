@@ -182,10 +182,7 @@ const findElseCreate = async ({ userId }: { userId: UserId }) => {
   if (NonEmpty.is(found.data)) {
     const row = found.data[0];
     const decoded = decodeRow(row);
-    return p(
-      decoded,
-      Result.map((p) => [p])
-    );
+    return Result.map_(decoded, (p) => [p]);
   }
 
   const seed = await ProfileAvatar.generateRandomSeed();
@@ -210,10 +207,7 @@ const findElseCreate = async ({ userId }: { userId: UserId }) => {
   }
 
   const decoded = decodeRow(created.data);
-  return p(
-    decoded,
-    Result.map((p) => [p])
-  );
+  return Result.map_(decoded, (p) => [p]);
 };
 
 export const decodeRow = (

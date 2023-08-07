@@ -1,4 +1,4 @@
-import { Result } from "@gamezilla/core";
+import { Ok, Result } from "@gamezilla/core";
 import { ChildrenFn, Minimax, ScoreFn } from "@gamezilla/shared/game-space";
 import {
   Columns,
@@ -10,7 +10,10 @@ import {
 
 export type BestMoveProblem = "no_move_available";
 
-export type BestMoveResult = Result<BestMoveProblem, number | null>;
+export type BestMoveResult = Result<
+  BestMoveProblem,
+  { columnIndex: number | null }
+>;
 
 type State = {
   columns: Columns;
@@ -28,9 +31,7 @@ export const findBestMove = ({
   maxDepth: number;
   maximizingPlayer: PlayerType;
   columns: Columns;
-}): {
-  columnIndex: number | null;
-} => {
+}): BestMoveResult => {
   const childrenFn: ChildrenFn<State> = (state) => {
     const children: State[] = [];
 
@@ -88,9 +89,9 @@ export const findBestMove = ({
 
   const bestMove = bestChildState?.lastMoveColumnIndex ?? null;
 
-  return {
+  return Ok({
     columnIndex: bestMove,
-  };
+  });
 };
 
 export const ConnectFourBotWorker = {

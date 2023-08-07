@@ -206,10 +206,10 @@ const handleIncomingMsg = <Model, Msg extends {}>({
       case "DISPATCH":
         switch (msg.payload.type) {
           case "JUMP_TO_STATE":
-            return p(parseJump<Model>(msg), Result.map(update));
+            return p(parseJump<Model>(msg), (x) => Result.map_(x, update));
 
           case "JUMP_TO_ACTION":
-            return p(parseJump<Model>(msg), Result.map(update));
+            return p(parseJump<Model>(msg), (x) => Result.map_(x, update));
 
           case "RESET":
             return Result.Ok(
@@ -220,9 +220,8 @@ const handleIncomingMsg = <Model, Msg extends {}>({
             );
 
           case "ROLLBACK":
-            return p(
-              parseRollback<Model>(msg),
-              Result.map((m) =>
+            return p(parseRollback<Model>(msg), (x) =>
+              Result.map_(x, (m) =>
                 p(
                   update(m),
                   Task.chain(() => restart(m))
@@ -235,9 +234,8 @@ const handleIncomingMsg = <Model, Msg extends {}>({
             return Result.Err("idk");
 
           case "IMPORT_STATE":
-            return p(
-              parseImportState<Model>(msg),
-              Result.map((liftedState) =>
+            return p(parseImportState<Model>(msg), (x) =>
+              Result.map_(x, (liftedState) =>
                 p(
                   update(
                     // @ts-ignore
@@ -251,9 +249,8 @@ const handleIncomingMsg = <Model, Msg extends {}>({
             );
 
           case "TOGGLE_ACTION":
-            return p(
-              parseToggleAction<Model>(msg),
-              Result.map(([id, liftedState]) =>
+            return p(parseToggleAction<Model>(msg), (x) =>
+              Result.map_(x, ([id, liftedState]) =>
                 p(toggle(id, liftedState), Task.chain(liftState))
               )
             );
@@ -292,11 +289,13 @@ const parseJump = <Model>(msg: Monitor): Result<string, Model> => {
   return p(
     Json.parse(String(msg["state"])),
     Result.mapErr((problem) => problem.message),
-    Result.map(
-      (value) =>
-        // @ts-ignore
-        value as Model
-    )
+    (x) =>
+      Result.map_(
+        x,
+        (value) =>
+          // @ts-ignore
+          value as Model
+      )
   );
 };
 
@@ -309,11 +308,13 @@ const parseRollback = <Model>(msg: Monitor): Result<string, Model> => {
   return p(
     Json.parse(String(msg["state"])),
     Result.mapErr((problem) => problem.message),
-    Result.map(
-      (u) =>
-        // @ts-ignore
-        u as Model
-    )
+    (x) =>
+      Result.map_(
+        x,
+        (u) =>
+          // @ts-ignore
+          u as Model
+      )
   );
 };
 
@@ -342,7 +343,7 @@ const parseToggleAction = <Model>(
   const getId = p(
     msg.payload["id"],
     Result.fromNullable("TOGGLE_ACTION message has some bad payload..."),
-    Result.map((x) => x as number)
+    (_) => Result.map_(_, (x) => x as number)
   );
 
   if (getId.t === "err") {
@@ -351,10 +352,12 @@ const parseToggleAction = <Model>(
 
   const parseState = p(
     Json.parse(String(msg["state"])),
-    Result.map(
-      // @ts-ignore
-      (u) => u as LiftedState<Model>
-    ),
+    (_) =>
+      Result.map_(
+        _,
+        // @ts-ignore
+        (u) => u as LiftedState<Model>
+      ),
     Result.mapErr((problem) => problem.message)
   );
 

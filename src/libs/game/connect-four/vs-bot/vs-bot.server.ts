@@ -1,9 +1,8 @@
-import { andThen, Cmd, Ok, p, Sub } from "@gamezilla/core";
+import { andThen, Cmd, p, Result, Sub } from "@gamezilla/core";
 import { GameSpaceMsg, GameSpaceReqCtx } from "@gamezilla/shared/game-space";
 import { findBestMove } from "../connect-four";
 import {
-  updateCore,
-  handleBotMove,
+  Event,
   initCore,
   isBotTurn,
   Res,
@@ -12,6 +11,8 @@ import {
   toBotPlayer,
   ToClient,
   ToServer,
+  updateCore,
+  updateCoreEvent,
 } from "./vs-bot.core";
 
 //
@@ -49,13 +50,16 @@ export const update = ({
   cmd?: Cmd<Msg>;
 } => {
   if (msg.t === "bot-moved") {
-    const result = handleBotMove(msg.result, model);
+    const updated = updateCoreEvent({
+      msg: msg,
+      model,
+    });
 
-    if (result.t === "err") {
-      return { model, cmd: broadcast({ t: "bot-move", result }) };
+    if (updated.t === "err") {
+      return { model, cmd: broadcast(msg) };
     }
 
-    return { model: result.value, cmd: broadcast({ t: "bot-move", result }) };
+    return { model: updated.value, cmd: broadcast(msg) };
   }
 
   return { model };
@@ -73,7 +77,7 @@ export const updateFromClient = (input: {
 } => {
   return p(
     input,
-    andThen((model) => updateFromClient_({ ...input, model })),
+    andThen((model) => updateFromClientMain({ ...input, model })),
     andThen((model) => watchBotMove({ model, modelPrev: input.model }))
   );
 };
@@ -94,13 +98,13 @@ const watchBotMove = ({
     return {
       model,
       cmd: async (dispatch) => {
-        const result = findBestMove({
+        const moved = findBestMove({
           columns,
           maximizingPlayer: botPlayer,
           maxDepth: 4,
         });
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        dispatch({ t: "bot-moved", result: Ok(result.columnIndex) });
+        dispatch({ t: "bot-moved", moved });
       },
     };
   }
@@ -110,23 +114,25 @@ const watchBotMove = ({
   };
 };
 
-const updateFromClient_: typeof updateFromClient = ({
+const updateFromClientMain: typeof updateFromClient = ({
   broadcast,
   sendToClient,
   ctx,
   msg,
   model,
 }) => {
+  const result = updateCore({ ctx, msg, model });
+
   const res: Res = {
     ...msg,
-    result: updateCore({ ctx, msg, model }),
+    result: Result.map_(result, () => null),
   };
 
-  if (res.result.t === "err") {
+  if (result.t === "err") {
     return { model, cmd: sendToClient(res) };
   }
 
-  return { model: res.result.value, cmd: broadcast(res) };
+  return { model: result.value, cmd: broadcast(res) };
 };
 
 export const updateFromParent = ({
@@ -142,21 +148,20 @@ export const updateFromParent = ({
   cmd?: Cmd<Msg>;
 } => {
   if (msg.t === "user-left") {
-    if (model.player !== msg.userId) {
+    const event: Event = {
+      t: "player-left",
+      userId: msg.userId,
+    };
+    const updated = updateCoreEvent({
+      msg: event,
+      model,
+    });
+
+    if (updated.t === "err") {
       return { model };
     }
 
-    const modelNew: Model = {
-      type: "setup",
-      botLevel: model.botLevel,
-      userPlayerType: model.userPlayerType,
-      player: null,
-    };
-
-    return {
-      model: modelNew,
-      cmd: broadcast({ t: "player-left", model: modelNew }),
-    };
+    return { model: updated.value, cmd: broadcast(event) };
   }
 
   return { model };

@@ -125,12 +125,13 @@ export type ClientMsg =
   | { t: "vs-bot-setup"; c: VsBotSetup.Msg }
   | { t: "vs-bot-game"; c: VsBotGame.Msg };
 
-export type ServerMsg = { t: "bot-moved"; result: BestMoveResult };
+export type ServerMsg = BotMovedEvent;
 
-export type ToClient =
-  | Res
-  | { t: "player-left"; model: CoreModel }
-  | { t: "bot-move"; result: Result<string, CoreModel> };
+export type ToClient = Res | Event;
+
+type BotMovedEvent = { t: "bot-moved"; moved: BestMoveResult };
+
+export type Event = { t: "player-left"; userId: string } | BotMovedEvent;
 
 export type ToServer = Req;
 
@@ -144,7 +145,7 @@ export type Req =
   | { t: "swap-sides" }
   | { t: "restart" };
 
-export type Res = Req & { result: Result<string, CoreModel> };
+export type Res = Req & { result: Result<string, null> };
 
 //
 //
@@ -162,10 +163,6 @@ export const updateCore = ({
 }): Result<string, CoreModel> => {
   if (model.type === "setup") {
     if (msg.t === "start-playing") {
-      // if (model.player !== null) {
-      //   return Err("already-playing");
-      // }
-
       return Ok({
         ...model,
         userPlayerType: msg.playerType,
@@ -300,38 +297,62 @@ export const updateCore = ({
   return Err("unhandled-request");
 };
 
-export const handleBotMove = (
-  bestMoveResult: BestMoveResult,
-  model: CoreModel
-): Result<string, CoreModel> => {
-  if (model.type !== "game") {
-    return Err("not-game");
+export const updateCoreEvent = ({
+  msg,
+  model,
+}: {
+  msg: Event;
+  model: CoreModel;
+}): Result<string, CoreModel> => {
+  if (msg.t === "bot-moved") {
+    if (model.type !== "game") {
+      return Err("not-game");
+    }
+
+    const bestMoveResult = msg.moved;
+
+    if (bestMoveResult.t === "err") {
+      return bestMoveResult;
+    }
+
+    const columnIndex = bestMoveResult.value.columnIndex;
+
+    if (typeof columnIndex !== "number") {
+      return Err("no-move-available");
+    }
+
+    const moveResult = move(
+      model.columns,
+      columnIndex,
+      opposite[model.userPlayerType]
+    );
+
+    if (moveResult.t === "err") {
+      return moveResult;
+    }
+
+    const modelNew: CoreModel = {
+      ...model,
+      columns: moveResult.value,
+    };
+
+    return Ok(modelNew);
   }
 
-  if (bestMoveResult.t === "err") {
-    return bestMoveResult;
+  if (msg.t === "player-left") {
+    if (model.player !== msg.userId) {
+      return Ok(model);
+    }
+
+    const modelNew: CoreModel = {
+      type: "setup",
+      botLevel: model.botLevel,
+      userPlayerType: model.userPlayerType,
+      player: null,
+    };
+
+    return Ok(modelNew);
   }
 
-  const columnIndex = bestMoveResult.value;
-
-  if (typeof columnIndex !== "number") {
-    return Err("no-move-available");
-  }
-
-  const moveResult = move(
-    model.columns,
-    columnIndex,
-    opposite[model.userPlayerType]
-  );
-
-  if (moveResult.t === "err") {
-    return moveResult;
-  }
-
-  const modelNew: CoreModel = {
-    ...model,
-    columns: moveResult.value,
-  };
-
-  return Ok(modelNew);
+  return Err("unhandled-event");
 };

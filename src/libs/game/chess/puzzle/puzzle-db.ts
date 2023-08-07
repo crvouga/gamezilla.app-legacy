@@ -1,5 +1,5 @@
+import { Err, NonEmpty, Ok, Result, Uuid } from "@gamezilla/core";
 import { UserId } from "@gamezilla/shared/app";
-import { Err, NonEmpty, Ok, Result, Uuid, p } from "@gamezilla/core";
 import { DbConnMySql } from "@gamezilla/shared/server";
 import { z } from "zod";
 import { MoveInput, uciMoveToMoveInput } from "../chess/chess";
@@ -232,10 +232,7 @@ const interactionsInsert = async (
           .join(", ")}
       `
   );
-  return p(
-    result,
-    Result.map(() => null)
-  );
+  return Result.map_(result, () => null);
 };
 
 const profilesFind = async (

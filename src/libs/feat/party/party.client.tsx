@@ -93,10 +93,7 @@ export const updateFromServer = (
     case "PartyLeave": {
       const requestsNew: Model["requests"] = {
         ...model.requests,
-        [msg[0]]: p(
-          msg[2],
-          RemoteResult.map(() => null)
-        ),
+        [msg[0]]: RemoteResult.map(msg[2], () => null),
       };
 
       if (msg[2].t === "err") {
