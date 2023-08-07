@@ -137,16 +137,13 @@ export const updateFromServer = (input: {
 
 const updateFromServerMain: typeof updateFromServer = ({ ctx, msg, model }) => {
   if (msg.t === "player-left" || msg.t === "bot-moved") {
-    const result = updateCoreEvent({
-      msg,
-      model,
-    });
+    const result = updateCoreEvent({ msg, model });
+
     if (result.t === "err") {
       return { model };
     }
-    return {
-      model: { ...model, ...result.value },
-    };
+
+    return { model: { ...model, ...result.value } };
   }
 
   const result = updateCore({ ctx, msg, model });
