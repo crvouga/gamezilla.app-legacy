@@ -6,11 +6,11 @@ import {
   Uuid,
   has,
   is,
-  isEnum,
-  isNum,
-  isObj,
-  isStr,
-  isTuple,
+  union,
+  num,
+  obj,
+  str,
+  tuple,
   to,
 } from "@gamezilla/core";
 import { UserId } from "@gamezilla/shared/app";
@@ -73,7 +73,7 @@ export type PuzzleProfileRow = {
 const types = ["started", "solved", "incorrect", "solved-with-hint"] as const;
 
 const toInt = (x: unknown): Int | null => {
-  if (isStr(x) || isNum(x)) {
+  if (str(x) || num(x)) {
     return x;
   }
   return null;
@@ -83,17 +83,17 @@ const isInt = is(toInt);
 
 export const toPuzzleRow = (x: unknown): PuzzleRow | null => {
   if (
-    isObj(x) &&
-    has(x, "puzzle_id", isStr) &&
+    obj(x) &&
+    has(x, "puzzle_id", str) &&
     has(x, "rating", isInt) &&
     has(x, "rating_deviation", isInt) &&
-    has(x, "opening_tags", isStr) &&
-    has(x, "fen", isStr) &&
-    has(x, "moves", isStr) &&
+    has(x, "opening_tags", str) &&
+    has(x, "fen", str) &&
+    has(x, "moves", str) &&
     has(x, "popularity", isInt) &&
     has(x, "number_of_plays", isInt) &&
-    has(x, "themes", isStr) &&
-    has(x, "game_url", isStr)
+    has(x, "themes", str) &&
+    has(x, "game_url", str)
   ) {
     return {
       fen: x.fen,
@@ -115,11 +115,11 @@ export const toPuzzleInteractionRow = (
   x: unknown
 ): PuzzleInteractionRow | null => {
   if (
-    isObj(x) &&
-    has(x, "id", isStr) &&
-    has(x, "puzzle_id", isStr) &&
-    has(x, "user_id", isStr) &&
-    has(x, "type", isEnum(types))
+    obj(x) &&
+    has(x, "id", str) &&
+    has(x, "puzzle_id", str) &&
+    has(x, "user_id", str) &&
+    has(x, "type", union(types))
   ) {
     return x;
   }
@@ -128,14 +128,14 @@ export const toPuzzleInteractionRow = (
 
 export type RatingRange = [number, number];
 
-const toRatingRange = to<RatingRange>(isTuple(isNum, isNum));
+const toRatingRange = to<RatingRange>(tuple(num, num));
 
 export type PuzzleQueryJSON = {
   ratingRange: RatingRange;
 };
 
 const toPuzzleQueryJSON = (x: unknown): PuzzleQueryJSON | null => {
-  if (isObj(x) && has(x, "ratingRange", is(toRatingRange))) {
+  if (obj(x) && has(x, "ratingRange", is(toRatingRange))) {
     return x;
   }
   return null;
@@ -143,9 +143,9 @@ const toPuzzleQueryJSON = (x: unknown): PuzzleQueryJSON | null => {
 
 export const toPuzzleProfileRow = (x: unknown): PuzzleProfileRow | null => {
   if (
-    isObj(x) &&
-    has(x, "id", isStr) &&
-    has(x, "user_id", isStr) &&
+    obj(x) &&
+    has(x, "id", str) &&
+    has(x, "user_id", str) &&
     has(x, "elo_rating", isInt) &&
     has(x, "puzzle_query", is(toPuzzleQueryJSON))
   ) {

@@ -1,5 +1,5 @@
 import { DbConnMySql } from "@gamezilla/shared/server";
-import { z } from "zod";
+import { has, obj, str } from "@gamezilla/core";
 import { PuzzleDb, PuzzleRow } from "../puzzle-db";
 
 //
@@ -10,18 +10,38 @@ import { PuzzleDb, PuzzleRow } from "../puzzle-db";
 //
 //
 
-const LichessRow = z.object({
-  PuzzleId: z.string(),
-  FEN: z.string(),
-  Moves: z.string(),
-  Rating: z.string().transform((x) => parseInt(x)),
-  RatingDeviation: z.string().transform((x) => parseInt(x)),
-  Popularity: z.string().transform((x) => parseInt(x)),
-  NbPlays: z.string().transform((x) => parseInt(x)),
-  Themes: z.string(),
-  GameUrl: z.string().url(),
-  OpeningTags: z.string(),
-});
+export type LichessRow = {
+  PuzzleId: string;
+  FEN: string;
+  Moves: string;
+  Rating: string;
+  RatingDeviation: string;
+  Popularity: string;
+  NbPlays: string;
+  Themes: string;
+  GameUrl: string;
+  OpeningTags: string;
+};
+
+export const toLichessRow = (x: unknown): LichessRow | null => {
+  if (
+    obj(x) &&
+    has(x, "PuzzleId", str) &&
+    has(x, "FEN", str) &&
+    has(x, "Moves", str) &&
+    has(x, "Rating", str) &&
+    has(x, "RatingDeviation", str) &&
+    has(x, "Popularity", str) &&
+    has(x, "NbPlays", str) &&
+    has(x, "Themes", str) &&
+    has(x, "GameUrl", str) &&
+    has(x, "OpeningTags", str)
+  ) {
+    return x;
+  }
+
+  return null;
+};
 
 export const uploadLichessDbPuzzleCsv = async ({
   dbConn,
@@ -49,8 +69,10 @@ export const uploadLichessDbPuzzleCsv = async ({
 
   console.log("starting upload");
   for await (const lichessRow of stream) {
-    const parsed = LichessRow.parse(lichessRow);
-
+    const parsed = toLichessRow(lichessRow);
+    if (!parsed) {
+      continue;
+    }
     const row = lichessRowToRow(parsed);
 
     batch.push(row);
@@ -92,7 +114,7 @@ export const uploadLichessDbPuzzleCsv = async ({
   console.log("upload done");
 };
 
-const lichessRowToRow = (lichessRow: z.infer<typeof LichessRow>): PuzzleRow => {
+const lichessRowToRow = (lichessRow: LichessRow): PuzzleRow => {
   const {
     PuzzleId,
     FEN,

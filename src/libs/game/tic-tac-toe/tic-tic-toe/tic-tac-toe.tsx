@@ -1,5 +1,4 @@
 import { Err, Ok, Result, memoize } from "@gamezilla/core";
-import { z } from "zod";
 
 //
 //
@@ -47,14 +46,6 @@ export type Model = [
   [Slot, Slot, Slot],
   [Slot, Slot, Slot]
 ];
-
-export const Slot = z.union([z.literal("X"), z.literal("O"), z.literal("_")]);
-
-export const Model = z.array(z.array(Slot).length(MAX_X)).length(MAX_Y);
-
-export const isModel = (model: unknown): model is Model => {
-  return Model.safeParse(model).success;
-};
 
 export const toChildren = (board: Model): Model[] => {
   const turn = toTurn(board);

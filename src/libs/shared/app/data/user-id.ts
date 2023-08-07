@@ -1,5 +1,4 @@
 import { Result, Uuid } from "@gamezilla/core";
-import { z } from "zod";
 
 export type UserId = string & { _opaque: "UserId" };
 
@@ -31,10 +30,3 @@ export const UserId = {
   decode,
   is,
 };
-
-export const UserIdZod: z.ZodType<UserId> = z.custom((value) => {
-  if (typeof value === "string" && value.length > 0) {
-    return value as UserId;
-  }
-  throw new z.ZodError([]);
-});
