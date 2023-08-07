@@ -49,7 +49,6 @@ export const createTransportClient = (
 
   return {
     sendToServer: (msg) => () => {
-      console.log("sending to server", msg);
       socketClient.emit("to-server", msg);
     },
     onServerMsg,
