@@ -17,16 +17,15 @@ export function create<Model, Msg>(input: {
   };
   subscriptions: (input: { ctx: Ctx; model: Model }) => Sub<Msg>;
 }) {
-  let id = 0;
+  let subscriberId = 0;
 
   type Subscriber = (model: Model, ctx: Ctx, msg: Msg | null) => Promise<void>;
 
   const subscribers = new Map<number, Subscriber>();
   const subscribe = (subscriber: Subscriber): (() => void) => {
-    subscribers.set(id, subscriber);
-    id++;
+    subscribers.set(subscriberId++, subscriber);
     return () => {
-      subscribers.delete(id);
+      subscribers.delete(subscriberId);
     };
   };
 
@@ -96,9 +95,14 @@ export function create<Model, Msg>(input: {
     };
   }
 
+  function _debugSetState(model: Model) {
+    console.log({ model });
+  }
+
   return {
     start,
     dispatch,
     subscribe,
+    _debugSetState,
   };
 }
