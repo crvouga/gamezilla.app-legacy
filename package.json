@@ -21,8 +21,7 @@
     "inferno": "^8.2.2",
     "mysql2": "^3.2.0",
     "threads": "^1.7.0",
-    "ws": "^8.13.0",
-    "zod": "^3.20.2"
+    "ws": "^8.13.0"
   },
   "devDependencies": {
     "@babel/plugin-transform-react-jsx-development": "^7.22.5",
