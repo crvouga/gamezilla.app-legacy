@@ -125,7 +125,7 @@ const updateFromClientMain: typeof updateFromClient = ({
 
   const res: Res = {
     ...msg,
-    result: Result.map_(result, () => null),
+    result: Result.mapOk(result, () => null),
   };
 
   if (result.t === "err") {

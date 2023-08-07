@@ -22,7 +22,7 @@ export const map = <E, A, B>(
 
     case "err":
     case "ok":
-      return Result.map_(result, mapper);
+      return Result.mapOk(result, mapper);
   }
 };
 

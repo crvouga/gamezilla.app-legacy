@@ -232,7 +232,7 @@ const interactionsInsert = async (
           .join(", ")}
       `
   );
-  return Result.map_(result, () => null);
+  return Result.mapOk(result, () => null);
 };
 
 const profilesFind = async (

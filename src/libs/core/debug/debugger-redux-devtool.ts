@@ -206,10 +206,10 @@ const handleIncomingMsg = <Model, Msg extends {}>({
       case "DISPATCH":
         switch (msg.payload.type) {
           case "JUMP_TO_STATE":
-            return p(parseJump<Model>(msg), (x) => Result.map_(x, update));
+            return p(parseJump<Model>(msg), (x) => Result.mapOk(x, update));
 
           case "JUMP_TO_ACTION":
-            return p(parseJump<Model>(msg), (x) => Result.map_(x, update));
+            return p(parseJump<Model>(msg), (x) => Result.mapOk(x, update));
 
           case "RESET":
             return Result.Ok(
@@ -221,7 +221,7 @@ const handleIncomingMsg = <Model, Msg extends {}>({
 
           case "ROLLBACK":
             return p(parseRollback<Model>(msg), (x) =>
-              Result.map_(x, (m) =>
+              Result.mapOk(x, (m) =>
                 p(
                   update(m),
                   Task.chain(() => restart(m))
@@ -235,7 +235,7 @@ const handleIncomingMsg = <Model, Msg extends {}>({
 
           case "IMPORT_STATE":
             return p(parseImportState<Model>(msg), (x) =>
-              Result.map_(x, (liftedState) =>
+              Result.mapOk(x, (liftedState) =>
                 p(
                   update(
                     // @ts-ignore
@@ -250,7 +250,7 @@ const handleIncomingMsg = <Model, Msg extends {}>({
 
           case "TOGGLE_ACTION":
             return p(parseToggleAction<Model>(msg), (x) =>
-              Result.map_(x, ([id, liftedState]) =>
+              Result.mapOk(x, ([id, liftedState]) =>
                 p(toggle(id, liftedState), Task.chain(liftState))
               )
             );
@@ -290,7 +290,7 @@ const parseJump = <Model>(msg: Monitor): Result<string, Model> => {
     Json.parse(String(msg["state"])),
     Result.mapErr((problem) => problem.message),
     (x) =>
-      Result.map_(
+      Result.mapOk(
         x,
         (value) =>
           // @ts-ignore
@@ -309,7 +309,7 @@ const parseRollback = <Model>(msg: Monitor): Result<string, Model> => {
     Json.parse(String(msg["state"])),
     Result.mapErr((problem) => problem.message),
     (x) =>
-      Result.map_(
+      Result.mapOk(
         x,
         (u) =>
           // @ts-ignore
@@ -343,7 +343,7 @@ const parseToggleAction = <Model>(
   const getId = p(
     msg.payload["id"],
     Result.fromNullable("TOGGLE_ACTION message has some bad payload..."),
-    (_) => Result.map_(_, (x) => x as number)
+    (_) => Result.mapOk(_, (x) => x as number)
   );
 
   if (getId.t === "err") {
@@ -353,7 +353,7 @@ const parseToggleAction = <Model>(
   const parseState = p(
     Json.parse(String(msg["state"])),
     (_) =>
-      Result.map_(
+      Result.mapOk(
         _,
         // @ts-ignore
         (u) => u as LiftedState<Model>

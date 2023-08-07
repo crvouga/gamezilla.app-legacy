@@ -63,7 +63,7 @@ const combine = <E, A>(results: Result<E, A>[]): Result<E, A[]> => {
   }, Ok([]));
 };
 
-const map_ = <TError, A, B>(
+const mapOk = <TError, A, B>(
   result: Result<TError, A>,
   mapper: (a: A) => B
 ): Result<TError, B> => {
@@ -76,7 +76,7 @@ const map_ = <TError, A, B>(
 export const Result = {
   Ok,
   Err,
-  map_,
+  mapOk,
   mapErr,
   fromNullable,
   withDefault,

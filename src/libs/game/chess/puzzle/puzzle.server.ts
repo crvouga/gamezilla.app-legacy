@@ -218,7 +218,7 @@ const update_ = ({
       model,
       cmd: broadcast({
         t: "db-put-interaction",
-        result: Result.map_(msg.result, () => model),
+        result: Result.mapOk(msg.result, () => model),
       }),
     };
   }
@@ -228,7 +228,7 @@ const update_ = ({
       model,
       cmd: broadcast({
         t: "db-put-profile",
-        result: Result.map_(msg.result, () => model),
+        result: Result.mapOk(msg.result, () => model),
       }),
     };
   }
