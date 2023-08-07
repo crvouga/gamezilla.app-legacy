@@ -1,7 +1,7 @@
 import { SESSION_ID_KEY, ToClient, ToServer } from "@gamezilla/app";
 import { ClientWireMsg, PubSub, TransportClient } from "@gamezilla/core";
 
-const RECONNECT_INTERVAL = 1000; // 1 second
+const RECONNECT_INTERVAL = 2000; // 1 second
 const MAX_RECONNECT_ATTEMPTS = 5; // Adjust as needed
 
 export const createTransportClient = ({
@@ -39,12 +39,11 @@ export const createTransportClient = ({
     };
 
     socketClient.onclose = () => {
-      onWireMsg.publish({ t: "server-disconnected" });
       if (reconnectAttempts > MAX_RECONNECT_ATTEMPTS) {
+        onWireMsg.publish({ t: "server-disconnected" });
         console.log("Max reconnect attempts reached.");
         return;
       }
-
       reconnectAttempts++;
       setTimeout(connect, RECONNECT_INTERVAL);
       return;

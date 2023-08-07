@@ -459,35 +459,7 @@ export const View = ({
 }) => {
   return (
     <div className="fixed left-1/2 top-1/2 mx-auto flex h-full max-h-full w-full max-w-md -translate-x-1/2 -translate-y-1/2 touch-none select-none flex-col overflow-hidden border border-neutral-800 bg-black text-white">
-      {model.auth.currentUser.t === "not-asked" && <LoadingScreen />}
-      {model.auth.currentUser.t === "loading" && <LoadingScreen />}
-      {model.auth.currentUser.t === "logged-out" && (
-        <ViewLoggedOut
-          dispatch={dispatch}
-          model={model}
-          ctx={{
-            now,
-            profiles: model.profile.profiles,
-            onBack: () => dispatch({ t: "routing", c: { t: "clicked-back" } }),
-            onPush: (route) =>
-              dispatch({ t: "routing", c: { t: "clicked-link", c: route } }),
-          }}
-        />
-      )}
-      {model.auth.currentUser.t === "logged-in" && (
-        <ViewLoggedIn
-          model={model}
-          dispatch={dispatch}
-          ctx={{
-            now,
-            currentUserId: model.auth.currentUser.userId,
-            profiles: model.profile.profiles,
-            onPush: (route) =>
-              dispatch({ t: "routing", c: { t: "clicked-link", c: route } }),
-            onBack: () => dispatch({ t: "routing", c: { t: "clicked-back" } }),
-          }}
-        />
-      )}
+      <ViewMain model={model} now={now} dispatch={dispatch} />
 
       <Wire.View model={model.wire} />
 
@@ -496,6 +468,68 @@ export const View = ({
         dispatch={(c) => dispatch({ t: "toast", c })}
       />
     </div>
+  );
+};
+
+const ViewMain = ({
+  model,
+  dispatch,
+  now,
+}: {
+  now: Posix;
+  model: Model;
+  dispatch: (msg: Msg) => void;
+}) => {
+  if (model.wire.t === "server-disconnected") {
+    return (
+      <div className="flex h-full w-full items-center justify-center">
+        <p>Server disconnected. Try refreshing the page.</p>
+      </div>
+    );
+  }
+
+  if (model.auth.currentUser.t === "not-asked") {
+    return <LoadingScreen />;
+  }
+
+  if (model.auth.currentUser.t === "loading") {
+    return <LoadingScreen />;
+  }
+  if (model.auth.currentUser.t === "logged-out") {
+    return (
+      <ViewLoggedOut
+        dispatch={dispatch}
+        model={model}
+        ctx={{
+          now,
+          profiles: model.profile.profiles,
+          onBack: () => dispatch({ t: "routing", c: { t: "clicked-back" } }),
+          onPush: (route) =>
+            dispatch({
+              t: "routing",
+              c: { t: "clicked-link", c: route },
+            }),
+        }}
+      />
+    );
+  }
+
+  return (
+    <ViewLoggedIn
+      model={model}
+      dispatch={dispatch}
+      ctx={{
+        now,
+        currentUserId: model.auth.currentUser.userId,
+        profiles: model.profile.profiles,
+        onPush: (route) =>
+          dispatch({
+            t: "routing",
+            c: { t: "clicked-link", c: route },
+          }),
+        onBack: () => dispatch({ t: "routing", c: { t: "clicked-back" } }),
+      }}
+    />
   );
 };
 
