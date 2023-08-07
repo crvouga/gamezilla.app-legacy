@@ -16,7 +16,7 @@ export const MyAvatar = ({
       <img
         onClick={onClick}
         src={src}
-        alt={alt}
+        alt={alt ?? "user avatar"}
         className={cn(
           `inline-block h-12 w-12 overflow-hidden rounded-full bg-white/40`,
           className
