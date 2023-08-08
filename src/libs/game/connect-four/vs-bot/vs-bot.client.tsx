@@ -172,7 +172,7 @@ export const syncWithServer = ({
         ),
   };
 
-  return { model: modelNew };
+  return watch(modelNew);
 };
 
 //

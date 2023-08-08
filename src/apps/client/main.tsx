@@ -42,8 +42,9 @@ const program = Program.create({
   },
 });
 
+const debug = false;
 program.subscribe(async function (model, ctx, msg) {
-  if (msg) {
+  if (debug && msg) {
     console.log(toMsgType(msg), toMsgPayload(msg, {}));
   }
   render(

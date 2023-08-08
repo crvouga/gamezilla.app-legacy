@@ -45,7 +45,7 @@ type Msg = BoardMsg;
 class ChessBoard extends HTMLElement {
   private props: ChessboardProps | null = null;
   private unsubscribe: () => void = () => {};
-  private board = new ChessBoardElement();
+
   private game = new Chess();
   private root: ShadowRoot;
   private highlightStyles = document.createElement("style");
@@ -56,56 +56,59 @@ class ChessBoard extends HTMLElement {
   }
 
   log(...args: any[]) {
-    const debug = false;
+    const debug = true;
     if (debug) {
-      console.log(`[ChessBoard]`, ...args);
+      console.log(`[chess-board]`, ...args);
     }
   }
 
   disconnectedCallback() {
-    this.cleanUp();
+    this.teardown();
   }
 
   connectedCallback() {
     this.setup();
   }
 
-  cleanUp() {
+  teardown() {
     this.unsubscribe();
   }
 
   dispatch(msg: Msg) {
-    this.log(msg);
+    // this.log(msg);
     switch (msg.t) {
       case "drop": {
         this.removeSquareHighlight();
         const { source, target, setAction } = msg;
 
-        const isValidDrop = this.props?.onDroppedPiece?.({
+        const isValidDrop = this.props?.onPieceDrop?.({
           source: source,
           target: target,
         });
+
+        this.log("isValidDrop", isValidDrop);
 
         if (!isValidDrop) {
           setAction("snapback");
           return;
         }
+        return;
 
-        if (source === target) {
-          setAction("snapback");
-          return;
-        }
+        // if (source === target) {
+        //   setAction("snapback");
+        //   return;
+        // }
 
-        try {
-          this.game.move({
-            from: source.toLowerCase(),
-            to: target.toLowerCase(),
-          });
-          return;
-        } catch (error) {
-          setAction("snapback");
-          return;
-        }
+        // try {
+        //   this.game.move({
+        //     from: source.toLowerCase(),
+        //     to: target.toLowerCase(),
+        //   });
+        //   return;
+        // } catch (error) {
+        //   setAction("snapback");
+        //   return;
+        // }
       }
 
       case "mouseout-square": {
@@ -142,7 +145,10 @@ class ChessBoard extends HTMLElement {
         return;
       }
       case "snap-end": {
-        this.board.setPosition(this.game.fen());
+        const board = this.root.querySelector(
+          "chess-board"
+        ) as ChessBoardElement;
+        board.setPosition(this.game.fen());
         return;
       }
     }
@@ -172,30 +178,30 @@ class ChessBoard extends HTMLElement {
     this.unsubscribe = chessboardSub.subscribe((event) => {
       if (event.id === this.getAttribute("id")) {
         this.props = event;
-        this.log(`props`, event);
+        // this.log(`props`, event);
         this.sync();
       }
     });
 
-    const rootStyle = document.createElement("style");
-    rootStyle.innerHTML = `
-      :host {
-        display: block;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-      }
-      chessboard::part(dragged-piece) {
-        opacity: 0.8;
-        scale: 1.2;
-      }
-      `;
-    // transform: scale(2);
-    this.root.appendChild(rootStyle);
-    this.root.appendChild(this.board);
-    this.root.appendChild(this.highlightStyles);
+    this.root.innerHTML = `
+      <style>
+        :host {
+          display: block;
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+        }
+        chessboard::part(dragged-piece) {
+          opacity: 0.8;
+          scale: 1.2;
+        }
+      </style>
+      <chess-board id="board"></chess-board>
+    `;
 
-    this.board.addEventListener(
+    const board = this.root.querySelector("chess-board") as ChessBoardElement;
+
+    board.addEventListener(
       "drop",
       (e) => {
         // @ts-ignore
@@ -205,7 +211,7 @@ class ChessBoard extends HTMLElement {
       { passive: true }
     );
 
-    this.board.addEventListener(
+    board.addEventListener(
       "mouseover-square",
       (e) => {
         // @ts-ignore
@@ -215,7 +221,7 @@ class ChessBoard extends HTMLElement {
       { passive: true }
     );
 
-    this.board.addEventListener(
+    board.addEventListener(
       "mouseout-square",
       () => {
         this.dispatch({ t: "mouseout-square" });
@@ -223,7 +229,7 @@ class ChessBoard extends HTMLElement {
       { passive: true }
     );
 
-    this.board.addEventListener(
+    board.addEventListener(
       "snap-end",
       () => {
         this.dispatch({ t: "snap-end" });
@@ -231,11 +237,21 @@ class ChessBoard extends HTMLElement {
       { passive: true }
     );
 
-    this.board.addEventListener(
+    board.addEventListener(
       "drag-start",
       (e) => {
         // @ts-ignore
         const { square, piece, position, orientation } = e.detail;
+
+        if (
+          this.props?.isPieceDraggable &&
+          !this.props.isPieceDraggable({ piece, square })
+        ) {
+          e.preventDefault();
+
+          this.log(`drag-start prevented`);
+          return;
+        }
 
         this.dispatch({
           t: "drag-start",
@@ -255,16 +271,16 @@ class ChessBoard extends HTMLElement {
    * Syncs the board and internal state with the props.
    */
   sync() {
+    const board = this.root.querySelector("chess-board") as ChessBoardElement;
+
     const fen = this.props?.fen;
     if (typeof fen === "string") {
-      this.board.setPosition(fen, true);
+      board.setPosition(fen, true);
       this.game.load(fen);
     }
 
-    this.board.orientation =
-      this.props?.orientation === "w" ? "white" : "black";
-    this.board.draggablePieces = true;
-    // this.board.setAttribute("draggable-pieces", "false"")
+    board.orientation = this.props?.orientation === "w" ? "white" : "black";
+    board.draggablePieces = true;
   }
 }
 

@@ -650,20 +650,24 @@ export const move = (
     promotion: moveInput.promotion,
   };
 
-  const moved = instance.move(moveInput_);
+  try {
+    const moved = instance.move(moveInput_);
 
-  if (!moved) {
+    if (!moved) {
+      return Result.Err("invalid_move");
+    }
+
+    // const capturesNew = capturedPieceSymbol ? [...model.captures] : model.captures
+
+    return Result.Ok({
+      pgn: instance.pgn(),
+      fen: instance.fen(),
+      previousMove: moveInput,
+      didCapture: Boolean(moved.captured),
+    });
+  } catch (error) {
     return Result.Err("invalid_move");
   }
-
-  // const capturesNew = capturedPieceSymbol ? [...model.captures] : model.captures
-
-  return Result.Ok({
-    pgn: instance.pgn(),
-    fen: instance.fen(),
-    previousMove: moveInput,
-    didCapture: Boolean(moved.captured),
-  });
 };
 
 export const moveMany = (moveInputs: MoveInput[], model: Model) => {

@@ -669,7 +669,7 @@ const ViewSpaceScreen = ({
             src={
               model.previewUserId
                 ? ctx.profiles[model.previewUserId]?.avatarUrl
-                : "..."
+                : undefined
             }
             className="h-24 w-24"
           />

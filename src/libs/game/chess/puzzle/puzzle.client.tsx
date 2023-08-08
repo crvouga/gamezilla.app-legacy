@@ -29,6 +29,7 @@ import {
   ToServer,
   initShared,
   isNoMoreHints,
+  toCurrentBoard,
   toNextEloRating,
   toPlayerColor,
   updateCore,
@@ -256,7 +257,28 @@ export const View = ({
             orientation={
               model.t === "loading" ? undefined : toPlayerColor(model.puzzle)
             }
-            fen={model.t === "loading" ? undefined : model.puzzle.fen}
+            fen={model.t === "loading" ? undefined : toCurrentBoard(model).fen}
+            isPieceDraggable={(input) => {
+              if (model.t !== "started") {
+                return false;
+              }
+              const color = Chess.toColor(input.piece);
+              return (
+                color === toPlayerColor(model.puzzle) &&
+                ctx.hostId === ctx.currentUserId
+              );
+            }}
+            onPieceDrop={(input) => {
+              dispatch({
+                t: "input-move",
+                moveInput: {
+                  from: input.source,
+                  to: input.target,
+                  promotion: "q",
+                },
+              });
+              return true;
+            }}
           />
           {model.t === "loading" && (
             <div className="absolute left-0 top-0 z-20 grid h-full w-full place-items-center bg-black/50">
