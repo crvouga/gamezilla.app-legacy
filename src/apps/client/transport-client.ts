@@ -1,5 +1,10 @@
 import { SESSION_ID_KEY, ToClient, ToServer } from "@gamezilla/app";
-import { ClientWireMsg, PubSub, TransportClient } from "@gamezilla/core";
+import {
+  ClientWireMsg,
+  PubSub,
+  SessionMsg,
+  TransportClient,
+} from "@gamezilla/core";
 
 const RECONNECT_INTERVAL = 2000; // 1 second
 const MAX_RECONNECT_ATTEMPTS = 5; // Adjust as needed
@@ -13,43 +18,34 @@ export const createTransportClient = ({
   onWireMsg: PubSub<ClientWireMsg>;
   onServerMsg: PubSub<ToClient>;
 }): TransportClient<ToClient, ToServer> => {
-  let reconnectAttempts = 0;
   const serverUrl = createServerUrl(baseServerUrl);
-  let socketClient: WebSocket;
-  const queue: ToServer[] = [];
 
-  let tryReconnect = true;
+  let reconnectAttempts = 0;
+  let ws: WebSocket;
+  let isDocumentHidden = false;
 
   const connect = () => {
-    socketClient = new WebSocket(serverUrl);
+    ws = new WebSocket(serverUrl);
 
-    socketClient.onopen = () => {
+    ws.onopen = () => {
       reconnectAttempts = 0;
-      const authMessage = JSON.stringify({
-        type: "auth",
-        [SESSION_ID_KEY]: localStorage.getItem(SESSION_ID_KEY) ?? undefined,
-      });
-      socketClient.send(authMessage);
       onWireMsg.publish({ t: "server-connected" });
-      for (const msg of queue) {
-        socketClient.send(JSON.stringify({ type: "to-server", payload: msg }));
-      }
     };
 
-    socketClient.onerror = () => {
+    ws.onerror = () => {
       onWireMsg.publish({ t: "server-connect-error" });
     };
 
-    socketClient.onclose = () => {
-      if (!tryReconnect) {
-        onWireMsg.publish({ t: "server-disconnected" });
-        console.log("Server disconnected. Reconnects disabled.");
+    ws.onclose = () => {
+      if (isDocumentHidden) {
+        // onWireMsg.publish({ t: "server-disconnected" });
+        console.log("closed socket because document is hidden");
         return;
       }
 
       if (reconnectAttempts > MAX_RECONNECT_ATTEMPTS) {
         onWireMsg.publish({ t: "server-disconnected" });
-        console.log("Max reconnect attempts reached.");
+        console.log("server disconnected. max reconnect attempts reached");
         return;
       }
       reconnectAttempts++;
@@ -57,40 +53,36 @@ export const createTransportClient = ({
       return;
     };
 
-    socketClient.onmessage = (event) => {
-      const msg = JSON.parse(event.data);
+    ws.onmessage = (event) => {
+      const msg = JSON.parse(event.data) as ToClient | SessionMsg;
 
-      if (msg.type === "session-id") {
-        console.log(`session-id: ${msg.sessionId}`);
+      if (msg.t === "session-id") {
         localStorage.setItem(SESSION_ID_KEY, msg.sessionId);
         return;
       }
 
-      if (msg.type === "to-client") {
-        onServerMsg.publish(msg.payload);
-      }
+      onServerMsg.publish(msg);
     };
   };
 
   connect();
 
-  document.addEventListener("visibilitychange", function () {
+  document.addEventListener("visibilitychange", () => {
     if (document.hidden) {
-      tryReconnect = false;
-      socketClient.close();
-    } else {
-      tryReconnect = true;
-      connect();
+      isDocumentHidden = true;
+      ws.close();
+      return;
     }
+    isDocumentHidden = false;
+    connect();
   });
 
   return {
     sendToServer: (msg) => () => {
-      if (socketClient.readyState === WebSocket.OPEN) {
-        socketClient.send(JSON.stringify({ type: "to-server", payload: msg }));
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify(msg));
         return;
       }
-      queue.push(msg);
     },
     onServerMsg,
     onWireMsg,

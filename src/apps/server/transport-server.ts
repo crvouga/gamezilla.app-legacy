@@ -7,7 +7,6 @@ import {
   TransportServer,
 } from "@gamezilla/core";
 import http from "http";
-import url from "url";
 import WebSocket, { WebSocketServer } from "ws";
 
 export const createTransportServer = ({
@@ -25,20 +24,19 @@ export const createTransportServer = ({
 }): TransportServer<ToClient, ToServer> => {
   const wsServer = new WebSocketServer({ noServer: true });
   const clients = new Map<ClientId, WebSocket>();
-  const sessions = new Map<ClientId, SessionId>();
 
-  httpServer.on("upgrade", (request, socket, head) => {
-    const reqUrl = request?.url;
+  httpServer.on("upgrade", (req, socket, head) => {
+    const reqUrl = req?.url;
 
     if (!reqUrl) {
       return;
     }
 
-    const parsedUrl = url.parse(reqUrl, true);
+    const parsedUrl = new URL(reqUrl, `http://${req.headers.host}`);
 
     if (parsedUrl.pathname === "/ws") {
-      wsServer.handleUpgrade(request, socket, head, (ws) => {
-        wsServer.emit("connection", ws, request);
+      wsServer.handleUpgrade(req, socket, head, (ws) => {
+        wsServer.emit("connection", ws, req);
       });
     }
   });
@@ -50,9 +48,9 @@ export const createTransportServer = ({
       return;
     }
 
-    const parsedUrl = url.parse(reqUrl, true);
+    const parsedUrl = new URL(reqUrl, `http://${req.headers.host}`);
 
-    const maybeSessionId = parsedUrl.query["session-id"];
+    const maybeSessionId = parsedUrl.searchParams.get("session-id");
 
     const sessionId = SessionId.is(maybeSessionId)
       ? maybeSessionId
@@ -62,19 +60,15 @@ export const createTransportServer = ({
 
     console.log(`[server] client connected: ${clientId} ${sessionId}`);
 
-    sessions.set(clientId, sessionId);
     clients.set(clientId, ws);
 
-    ws.send(JSON.stringify({ type: "session-id", sessionId }));
+    ws.send(JSON.stringify({ t: "session-id", sessionId }));
 
     onWireMsg.publish({ t: "client-connected", clientId, sessionId });
 
     ws.on("message", (data) => {
-      const msg = JSON.parse(data.toString());
-
-      if (msg.type === "to-server") {
-        onClientMsg.publish({ clientId, sessionId, msg: msg.payload });
-      }
+      const msg = JSON.parse(data.toString()) as ToServer; // leap of faith
+      onClientMsg.publish({ clientId, sessionId, msg });
     });
 
     ws.on("close", () => {
@@ -87,7 +81,7 @@ export const createTransportServer = ({
     broadcast: (msg) => () => {
       for (const client of clients.values()) {
         if (client.readyState === WebSocket.OPEN) {
-          client.send(JSON.stringify({ type: "to-client", payload: msg }));
+          client.send(JSON.stringify(msg));
         }
       }
     },
@@ -103,7 +97,7 @@ export const createTransportServer = ({
           continue;
         }
 
-        client.send(JSON.stringify({ type: "to-client", payload: msg }));
+        client.send(JSON.stringify(msg));
       }
     },
     onClientMsg,

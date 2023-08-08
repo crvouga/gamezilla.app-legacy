@@ -3,6 +3,8 @@ import { Cmd } from "../cmd";
 import { ClientId } from "./client-id";
 import { SessionId } from "./session-id";
 
+export type SessionMsg = { t: "session-id"; sessionId: SessionId };
+
 /**
  * TransportClient represents the a client side object that sends and receives messages to and from the server.
  */
