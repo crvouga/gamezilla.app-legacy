@@ -1,11 +1,19 @@
 import { Audio, Cmd, Sub, andThen, exhaustive, p } from "@gamezilla/core";
 import {
+  GameLayout,
   GameSpaceClientCtx,
   GameSpaceViewCtx,
+  ViewBottomButtonBar,
   VsBotSetup,
 } from "@gamezilla/shared/game-space";
-import { IconRobot, IconSpinner, MyAvatar } from "@gamezilla/ui";
-import { PlayerIcon, ViewCoverArt } from "../chess-ui";
+import {
+  IconArrowLeftOnRect,
+  IconRobot,
+  IconSpinner,
+  MyAvatar,
+  Spinner,
+} from "@gamezilla/ui";
+import { Chessboard, PlayerIcon, ViewCoverArt } from "../chess-ui";
 import * as Chess from "../chess/chess";
 import Sounds from "../chess/chess-sounds";
 import {
@@ -15,7 +23,7 @@ import {
   CoreModel,
   ToClient,
   ToServer,
-  handle,
+  updateCore,
   initShared,
   isBotTurn,
 } from "./vs-bot.core";
@@ -89,7 +97,7 @@ export const update = ({
     return { model: { ...model, vsBotSetup: updated } };
   }
 
-  const handled = handle({
+  const handled = updateCore({
     ctx,
     msg,
     model: model.coreModel,
@@ -324,26 +332,27 @@ export const View = ({
   }
 
   const botSlot = (
-    <div>
-      <div>
-        <IconRobot className="h-6 w-6" />
-      </div>
+    <div className="flex w-full items-center gap-3 p-3">
+      <IconRobot className="h-10 w-10" />
 
-      <div>
-        <p>{Chess.botLevelToString(model.coreModel.botLevel)}</p>
-      </div>
+      <p className="flex-1 text-lg">
+        {Chess.botLevelToString(model.coreModel.botLevel)}
+      </p>
 
-      {isBotTurn(model.coreModel) && (
-        <IconSpinner className="h-5 w-5 animate-spin" />
-      )}
+      {isBotTurn(model.coreModel) && <Spinner className="h-10 w-10" />}
     </div>
   );
 
   const userSlot = (
-    <div>
-      <MyAvatar src={ctx.profiles[model.coreModel.userId]?.avatarUrl} />
+    <div className="flex w-full items-center gap-3 p-3">
+      <MyAvatar
+        className="h-10 w-10"
+        src={ctx.profiles[model.coreModel.userId]?.avatarUrl}
+      />
 
-      <p>{ctx.profiles[model.coreModel.userId]?.username}</p>
+      <p className="flex-1 text-lg">
+        {ctx.profiles[model.coreModel.userId]?.username}
+      </p>
     </div>
   );
 
@@ -351,52 +360,49 @@ export const View = ({
     ? Chess.toOppositeColor(model.coreModel.userColor)
     : model.coreModel.userColor;
 
-  const topSlot = (
-    <div>
-      {boardOrientation === model.coreModel.userColor ? botSlot : userSlot}
-    </div>
-  );
+  const topSlot =
+    boardOrientation === model.coreModel.userColor ? botSlot : userSlot;
 
-  const bottomSlot = (
-    <div>
-      {boardOrientation === model.coreModel.userColor ? userSlot : botSlot}
-    </div>
-  );
+  const bottomSlot =
+    boardOrientation === model.coreModel.userColor ? userSlot : botSlot;
 
   return (
-    <div>
-      {topSlot}
+    <GameLayout>
+      <div className="flex w-full flex-1 flex-col items-center justify-center">
+        {topSlot}
 
-      {/* <Chessboard
-        boardOrientation={boardOrientation}
-        isDraggablePiece={({ piece }) => {
-          return (
-            Chess.toColor(piece) === model.coreModel.userColor &&
-            model.coreModel.userId === ctx.currentUserId
-          );
-        }}
-        model={model.coreModel.board}
-        onPieceDrop={(move) => {
-          const msg: Msg = {
-            t: "input-move",
-            move: {
-              from: move.from,
-              to: move.to,
-              promotion: move.promotion,
-            },
-          };
+        <Chessboard
+          id="chessboard"
+          fen={model.coreModel.board.fen}
+          orientation={boardOrientation}
+          onPieceDrop={(move) => {
+            const msg: Msg = {
+              t: "input-move",
+              move: {
+                from: move.source,
+                to: move.target,
+                promotion: "q",
+              },
+            };
 
-          dispatch(msg);
+            dispatch(msg);
 
-          // return result.t === "ok";
-          return true;
-        }}
-      /> */}
-
-      {bottomSlot}
-
-      <div className="flex-1"></div>
-    </div>
+            // return result.t === "ok";
+            return true;
+          }}
+        />
+        {bottomSlot}
+      </div>
+      <ViewBottomButtonBar
+        actions={[
+          {
+            label: "Exit",
+            icon: <IconArrowLeftOnRect className="h-6 w-6" />,
+            onClick: () => dispatch({ t: "stop-game" }),
+          },
+        ]}
+      />
+    </GameLayout>
   );
 };
 

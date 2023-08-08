@@ -3,7 +3,7 @@ import { GameSpaceMsg, GameSpaceReqCtx } from "@gamezilla/shared/game-space";
 import * as Chess from "../chess/chess";
 import {
   botMoved,
-  handle,
+  updateCore,
   initServer,
   isBotTurn,
   ServerModel,
@@ -105,7 +105,7 @@ const updateFromClient_: typeof updateFromClient = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  const handled = handle({ msg, model, ctx });
+  const handled = updateCore({ msg, model, ctx });
 
   const modelNew: Model = handled.t === "err" ? model : handled.value;
 

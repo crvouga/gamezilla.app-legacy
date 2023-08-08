@@ -19,7 +19,11 @@ export function create<Model, Msg>(input: {
 }) {
   let subscriberId = 0;
 
-  type Subscriber = (model: Model, ctx: Ctx, msg: Msg | null) => Promise<void>;
+  type Subscriber = (
+    model: Model,
+    ctx: Ctx,
+    msg: Msg | null
+  ) => Promise<void> | void;
 
   const subscribers = new Map<number, Subscriber>();
   const subscribe = (subscriber: Subscriber): (() => void) => {

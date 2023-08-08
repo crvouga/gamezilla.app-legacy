@@ -3,5 +3,9 @@ import { ChessboardProps, chessboardSub } from "./chessboard-shared";
 
 export const Chessboard = (props: ChessboardProps) => {
   chessboardSub.publish({ type: "props", ...props });
-  return <my-chess-board id={props.id}></my-chess-board>;
+  return (
+    <div className="aspect-square w-full overflow-hidden">
+      <my-chess-board id={props.id}></my-chess-board>
+    </div>
+  );
 };

@@ -34,7 +34,7 @@ type BoardMsg =
     }
   | {
       t: "drag-start";
-      square: Square;
+      source: Square;
       piece: string;
       position: string;
       orientation: "white" | "black";
@@ -75,7 +75,7 @@ class ChessBoard extends HTMLElement {
   }
 
   dispatch(msg: Msg) {
-    // this.log(msg);
+    this.log(msg);
     switch (msg.t) {
       case "drop": {
         this.removeSquareHighlight();
@@ -93,22 +93,6 @@ class ChessBoard extends HTMLElement {
           return;
         }
         return;
-
-        // if (source === target) {
-        //   setAction("snapback");
-        //   return;
-        // }
-
-        // try {
-        //   this.game.move({
-        //     from: source.toLowerCase(),
-        //     to: target.toLowerCase(),
-        //   });
-        //   return;
-        // } catch (error) {
-        //   setAction("snapback");
-        //   return;
-        // }
       }
 
       case "mouseout-square": {
@@ -117,7 +101,7 @@ class ChessBoard extends HTMLElement {
       }
 
       case "drag-start": {
-        this.addSquareHighlight(msg.square);
+        this.addSquareHighlight(msg.source);
         return;
       }
 
@@ -158,17 +142,21 @@ class ChessBoard extends HTMLElement {
     this.highlightStyles.textContent = "";
   }
 
-  addSquareHighlight(square: string) {
+  addSquareHighlight(square: string | undefined) {
+    if (!square) {
+      return;
+    }
     this.log(`addSquareHighlight`, square);
+    const sqr = square.toUpperCase();
     const whiteSquareGrey = "#a9a9a9";
     const blackSquareGrey = "#696969";
     const highlightColor =
-      square.charCodeAt(0) % 2 ^ square.charCodeAt(1) % 2
+      sqr.charCodeAt(0) % 2 ^ sqr.charCodeAt(1) % 2
         ? whiteSquareGrey
         : blackSquareGrey;
 
     this.highlightStyles.textContent += `
-        chess-board::part(${square}) {
+        chess-board::part(${sqr}) {
           background-color: ${highlightColor};
         }
       `;
@@ -191,13 +179,11 @@ class ChessBoard extends HTMLElement {
           height: 100%;
           overflow: hidden;
         }
-        chessboard::part(dragged-piece) {
-          opacity: 0.8;
-          scale: 1.2;
-        }
       </style>
       <chess-board id="board"></chess-board>
     `;
+
+    this.root.appendChild(this.highlightStyles);
 
     const board = this.root.querySelector("chess-board") as ChessBoardElement;
 
@@ -241,11 +227,11 @@ class ChessBoard extends HTMLElement {
       "drag-start",
       (e) => {
         // @ts-ignore
-        const { square, piece, position, orientation } = e.detail;
+        const { source, piece, position, orientation } = e.detail;
 
         if (
           this.props?.isPieceDraggable &&
-          !this.props.isPieceDraggable({ piece, square })
+          !this.props.isPieceDraggable({ piece, square: source })
         ) {
           e.preventDefault();
 
@@ -255,7 +241,7 @@ class ChessBoard extends HTMLElement {
 
         this.dispatch({
           t: "drag-start",
-          square,
+          source,
           piece,
           position,
           orientation,

@@ -122,7 +122,7 @@ export type Res = Req & {
 //
 //
 
-export const handle = ({
+export const updateCore = ({
   msg,
   model,
   ctx,
@@ -261,83 +261,6 @@ export const handle = ({
   }
 
   return Err("unhandled");
-};
-
-//
-//
-//
-//
-
-//
-//
-//
-//
-//
-//
-//
-
-export type InputMove = ["input-move", Chess.MoveInput & { userId: UserId }];
-
-export type InputMove_Done = [
-  "input-move-done",
-  Result<InputMoveProblem, CoreModel & { didCapture: boolean }>
-];
-
-export type InputMoveProblem =
-  | Chess.MoveProblem
-  | "must_be_started"
-  | "must_be_playing"
-  | "must_be_turn";
-
-export const inputMove = (
-  { userId, ...moveInput }: InputMove[1],
-  model: CoreModel
-): InputMove_Done[1] => {
-  if (model.type !== "game") {
-    return Result.Err("must_be_started");
-  }
-
-  if (model.userId !== userId) {
-    return Result.Err("must_be_playing");
-  }
-
-  if (Chess.toTurn(model.board) !== model.userColor) {
-    return Result.Err("must_be_turn");
-  }
-
-  const result = Chess.move(moveInput, model.board);
-
-  if (result.t === "err") {
-    return result;
-  }
-
-  const boardNew = result.value;
-
-  const gameOver = Chess.toGameOver(boardNew);
-
-  if (gameOver.type !== "none") {
-    const modelNew: CoreModel = {
-      ...model,
-      type: "game-over",
-      board: boardNew,
-      gameOver: gameOver,
-    };
-
-    return Ok({
-      ...modelNew,
-      didCapture: boardNew.didCapture,
-    });
-  }
-
-  const modelNew: CoreModel = {
-    ...model,
-    board: boardNew,
-  };
-
-  return Ok({
-    ...modelNew,
-    didCapture: boardNew.didCapture,
-  });
 };
 
 //

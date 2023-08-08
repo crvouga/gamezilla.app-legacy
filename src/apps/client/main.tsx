@@ -42,15 +42,22 @@ const program = Program.create({
   },
 });
 
-const debug = false;
-program.subscribe(async function (model, ctx, msg) {
-  if (debug && msg) {
-    console.log(toMsgType(msg), toMsgPayload(msg, {}));
-  }
+program.subscribe((model, ctx) => {
   render(
     <AppClient.View now={ctx.now} model={model} dispatch={program.dispatch} />,
     document.body
   );
+});
+
+// @ts-ignore
+window.debug = false;
+program.subscribe(async function (model, ctx, msg) {
+  // @ts-ignore
+  if (window.debug && msg) {
+    console.log(toMsgType(msg), toMsgPayload(msg, {}));
+  }
+  // @ts-ignore
+  window.model = model;
 });
 
 program.start();
