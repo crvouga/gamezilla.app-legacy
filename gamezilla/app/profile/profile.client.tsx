@@ -1,3 +1,4 @@
+import { Cmd, andThen, p } from "gamezilla/@/core";
 import { ProfileAvatar } from "gamezilla/app/@/app";
 import {
   ClientAppMsg,
@@ -5,20 +6,19 @@ import {
   RouteProfile,
   ViewCtx,
 } from "gamezilla/app/@/client";
-import { Cmd, andThen, p } from "gamezilla/@/core";
 import {
+  Button,
   IconChevronRight,
   LoadingScreen,
   MyAvatar,
-  Button,
   MyTextField,
   TopBar,
   TopBarBackButton,
   VDom,
 } from "gamezilla/app/@/ui";
-import { ClientModel, ClientMsg, ToClient, ToServer } from "../profile.core";
-import { ViewProfileScreen } from "./view-profile-screen";
-import { ViewUpdateAvatarScreen } from "./view-update-avatar-screen";
+import { ViewProfileScreen } from "./profile-client-view-profile-screen";
+import { ViewUpdateAvatarScreen } from "./profile-client-view-update-avatar-screen";
+import { ClientModel, ClientMsg, ToClient, ToServer } from "./profile.core";
 
 //
 //
