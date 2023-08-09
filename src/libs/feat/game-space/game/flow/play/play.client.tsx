@@ -1,5 +1,5 @@
 import { Sub, andThen, p } from "@gamezilla/core";
-import { GameClient } from "@gamezilla/shared/game-space";
+import { GameClient } from "src/libs/feat/game-space/shared";
 import { IconArrowLeftOnRect, Button } from "@gamezilla/ui";
 import { FlowGridPlayUI } from "../flow-grid";
 import { FlowViewCtx } from "../flow-shared";

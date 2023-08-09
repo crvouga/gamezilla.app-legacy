@@ -3,7 +3,7 @@ import {
   GameClient,
   MainMenuScreen,
   mainMenuButtons,
-} from "@gamezilla/shared/game-space";
+} from "src/libs/feat/game-space/shared";
 import { ViewCoverArt } from "./connect-four-cover-art";
 import {
   ClientModel,

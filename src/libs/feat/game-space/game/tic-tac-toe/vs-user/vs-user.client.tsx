@@ -3,7 +3,7 @@ import {
   GameSpaceClientCtx,
   GameSpaceViewCtx,
   VsUserSetupScreen,
-} from "@gamezilla/shared/game-space";
+} from "src/libs/feat/game-space/shared";
 import { Position, Slot, toTurn } from "../tic-tic-toe/tic-tac-toe";
 import {
   PlayerTypeIcon,

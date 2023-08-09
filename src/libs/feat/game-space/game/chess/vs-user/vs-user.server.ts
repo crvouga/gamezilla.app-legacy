@@ -1,5 +1,5 @@
 import { Cmd, exhaustive, Sub, Time } from "@gamezilla/core";
-import { GameSpaceMsg } from "@gamezilla/shared/game-space";
+import { GameSpaceMsg } from "src/libs/feat/game-space/shared";
 import * as Board from "../chess/chess";
 import {
   cancelDraw,

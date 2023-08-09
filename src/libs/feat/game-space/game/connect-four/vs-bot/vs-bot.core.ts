@@ -1,6 +1,6 @@
 import { Err, Ok, Posix, Result } from "@gamezilla/core";
 import { UserId } from "@gamezilla/shared/app";
-import { VsBotGame, VsBotSetup } from "@gamezilla/shared/game-space";
+import { VsBotGame, VsBotSetup } from "src/libs/feat/game-space/shared";
 import {
   BestMoveResult,
   ColumnIndex,

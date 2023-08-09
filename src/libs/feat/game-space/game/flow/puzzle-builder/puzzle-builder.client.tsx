@@ -1,5 +1,8 @@
 import { Cmd, Sub } from "@gamezilla/core";
-import { GameClient, ViewBottomButtonBar } from "@gamezilla/shared/game-space";
+import {
+  GameClient,
+  ViewBottomButtonBar,
+} from "src/libs/feat/game-space/shared";
 import {
   IconArrowLeftOnRect,
   IconPenToSquare,

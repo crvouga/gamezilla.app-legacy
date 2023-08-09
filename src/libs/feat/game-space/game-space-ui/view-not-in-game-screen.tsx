@@ -3,7 +3,7 @@ import {
   GameSpaceViewCtx,
   ViewGameHeaderEmpty,
   ViewUsersInSpaceList,
-} from "@gamezilla/shared/game-space";
+} from "src/libs/feat/game-space/shared";
 import { ClientMsg } from "../game-space.core";
 import {
   ViewCoverArt,

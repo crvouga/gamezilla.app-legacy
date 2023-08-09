@@ -7,7 +7,10 @@ import { MazeClient } from "src/libs/feat/game-space/game/maze";
 import { SnakeClient } from "src/libs/feat/game-space/game/snake";
 import { TetrisClient } from "src/libs/feat/game-space/game/tetris";
 import { TicTacToeClient } from "src/libs/feat/game-space/game/tic-tac-toe";
-import { GameClient, GameSpaceClientCtx } from "@gamezilla/shared/game-space";
+import {
+  GameClient,
+  GameSpaceClientCtx,
+} from "src/libs/feat/game-space/shared";
 import {
   ClientModel,
   ClientMsg,

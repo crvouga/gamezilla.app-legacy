@@ -1,6 +1,6 @@
 import { Err, Ok, Result } from "@gamezilla/core";
 import { UserId } from "@gamezilla/shared/app";
-import { VsBotSetup } from "@gamezilla/shared/game-space";
+import { VsBotSetup } from "src/libs/feat/game-space/shared";
 import { GetBestMoveResult } from "../tic-tic-toe/best-move";
 import {
   BotLevel,

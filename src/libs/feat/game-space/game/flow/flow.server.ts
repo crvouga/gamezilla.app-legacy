@@ -1,5 +1,5 @@
 import { Err, Ok, Sub } from "@gamezilla/core";
-import { GameServer } from "@gamezilla/shared/game-space";
+import { GameServer } from "src/libs/feat/game-space/shared";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./flow.core";
 import { PlayServer } from "./play";
 import { PuzzleBuilderServer } from "./puzzle-builder";

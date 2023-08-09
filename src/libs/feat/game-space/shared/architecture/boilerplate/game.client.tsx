@@ -1,5 +1,5 @@
 import { Sub } from "@gamezilla/core";
-import { GameClient } from "@gamezilla/shared/game-space";
+import { GameClient } from "src/libs/feat/game-space/shared";
 import {
   ClientModel,
   ClientMsg,

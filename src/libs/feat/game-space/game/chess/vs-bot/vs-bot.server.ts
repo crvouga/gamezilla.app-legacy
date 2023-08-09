@@ -1,5 +1,5 @@
 import { Cmd, p, Sub } from "@gamezilla/core";
-import { GameSpaceMsg, GameSpaceReqCtx } from "@gamezilla/shared/game-space";
+import { GameSpaceMsg, GameSpaceReqCtx } from "src/libs/feat/game-space/shared";
 import * as Chess from "../chess/chess";
 import {
   botMoved,

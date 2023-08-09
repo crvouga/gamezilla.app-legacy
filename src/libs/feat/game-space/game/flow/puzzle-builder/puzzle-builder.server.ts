@@ -1,5 +1,5 @@
 import { Sub } from "@gamezilla/core";
-import { GameServer } from "@gamezilla/shared/game-space";
+import { GameServer } from "src/libs/feat/game-space/shared";
 import {
   ServerModel,
   ServerMsg,

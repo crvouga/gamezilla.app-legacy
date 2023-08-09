@@ -2,7 +2,7 @@ import { Cmd, Keyboard, Sub, p } from "@gamezilla/core";
 import {
   GameSpaceClientCtx,
   GameSpaceViewCtx,
-} from "@gamezilla/shared/game-space";
+} from "src/libs/feat/game-space/shared";
 import { ActionButton, IconArrowLeftOnRect } from "@gamezilla/ui";
 import { Maze } from "./maze";
 import {

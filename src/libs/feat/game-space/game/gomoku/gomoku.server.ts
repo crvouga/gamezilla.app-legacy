@@ -1,6 +1,6 @@
 import { Cmd, Result, Sub } from "@gamezilla/core";
 import { UserId } from "@gamezilla/shared/app";
-import { GameSpaceMsg, GameSpaceReqCtx } from "@gamezilla/shared/game-space";
+import { GameSpaceMsg, GameSpaceReqCtx } from "src/libs/feat/game-space/shared";
 import {
   Mode,
   ServerModel,

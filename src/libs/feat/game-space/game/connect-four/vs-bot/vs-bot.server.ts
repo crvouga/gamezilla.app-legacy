@@ -1,5 +1,5 @@
 import { andThen, Cmd, p, Result, Sub } from "@gamezilla/core";
-import { GameSpaceMsg, GameSpaceReqCtx } from "@gamezilla/shared/game-space";
+import { GameSpaceMsg, GameSpaceReqCtx } from "src/libs/feat/game-space/shared";
 import { findBestMove } from "../connect-four";
 import {
   Event,

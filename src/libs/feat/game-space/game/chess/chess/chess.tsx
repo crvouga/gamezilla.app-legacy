@@ -5,7 +5,7 @@ import {
   IconBotLevel4,
   IconBotScary,
   IconBotSimple,
-} from "@gamezilla/shared/game-space";
+} from "src/libs/feat/game-space/shared";
 import { VDom } from "@gamezilla/ui";
 import * as ChessJS from "chess.js";
 

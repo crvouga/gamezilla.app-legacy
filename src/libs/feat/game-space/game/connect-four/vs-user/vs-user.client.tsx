@@ -7,7 +7,7 @@ import {
   GameSpaceViewCtx,
   ViewBottomButtonBar,
   VsUserSetupScreen,
-} from "@gamezilla/shared/game-space";
+} from "src/libs/feat/game-space/shared";
 import {
   Button,
   ConformationDialog,

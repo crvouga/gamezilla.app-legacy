@@ -13,7 +13,7 @@ import {
   VsBotPlayerSection,
   VsBotProps,
   VsBotSetup,
-} from "@gamezilla/shared/game-space";
+} from "src/libs/feat/game-space/shared";
 import {
   IconArrowLeftOnRect,
   IconArrowRotateLeft,

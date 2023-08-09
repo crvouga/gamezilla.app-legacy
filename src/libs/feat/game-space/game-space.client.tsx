@@ -21,7 +21,7 @@ import {
   ViewSpaceHostChip,
   ViewUsersInSpaceList,
   ViewYouChip,
-} from "@gamezilla/shared/game-space";
+} from "src/libs/feat/game-space/shared";
 import {
   ActionButton,
   Button,

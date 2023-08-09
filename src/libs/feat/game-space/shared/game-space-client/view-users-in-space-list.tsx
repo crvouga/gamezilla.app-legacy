@@ -1,4 +1,4 @@
-import { GameSpace, GameSpaceViewCtx } from "@gamezilla/shared/game-space";
+import { GameSpace, GameSpaceViewCtx } from "src/libs/feat/game-space/shared";
 import { IconCrown, MyAvatar } from "@gamezilla/ui";
 
 export const ViewUsersInSpaceList = <T,>({

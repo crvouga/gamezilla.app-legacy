@@ -7,7 +7,7 @@ import {
   exhaustive,
 } from "@gamezilla/core";
 import { ViewCtx } from "@gamezilla/shared/client";
-import { GameSpaceClientCtx } from "@gamezilla/shared/game-space";
+import { GameSpaceClientCtx } from "src/libs/feat/game-space/shared";
 import { Direction } from "./direction";
 import {
   ClientModel,

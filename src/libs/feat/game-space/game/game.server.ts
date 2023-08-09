@@ -3,7 +3,7 @@ import { ChessServer } from "src/libs/feat/game-space/game/chess";
 import { ConnectFourServer } from "src/libs/feat/game-space/game/connect-four";
 import { FlowServer } from "src/libs/feat/game-space/game/flow";
 import { TicTacToeServer } from "src/libs/feat/game-space/game/tic-tac-toe";
-import { GameServer } from "@gamezilla/shared/game-space";
+import { GameServer } from "src/libs/feat/game-space/shared";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./game.core";
 
 type Server = GameServer<Model, Msg, ToClient, ToServer>;

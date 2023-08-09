@@ -4,7 +4,7 @@ import {
   GameSpaceMsg,
   GameSpaceReqCtx,
   GameSpaceServerCtx,
-} from "@gamezilla/shared/game-space";
+} from "src/libs/feat/game-space/shared";
 import { ChessGameMsg } from "./chess-shared";
 import { Res, ServerModel, ServerMsg, ToClient, ToServer } from "./chess.core";
 import * as Puzzle from "./puzzle/puzzle.server";

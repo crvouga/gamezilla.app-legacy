@@ -1,6 +1,6 @@
 import { ClientId, Cmd, Err, Ok, Sub, removeKey } from "@gamezilla/core";
 import { UserId } from "@gamezilla/shared/app";
-import { GameSpace, GameSpaceServerCtx } from "@gamezilla/shared/game-space";
+import { GameSpace, GameSpaceServerCtx } from "src/libs/feat/game-space/shared";
 import {
   ServerAppMsg,
   ServerCtx,

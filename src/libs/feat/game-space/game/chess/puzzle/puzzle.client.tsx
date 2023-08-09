@@ -1,13 +1,6 @@
 import { Cmd, andThen, p } from "@gamezilla/core";
 import { ClientAppMsg } from "@gamezilla/shared/client";
 import {
-  BottomBarButtonAction,
-  GameLayout,
-  GameSpaceClientCtx,
-  GameSpaceViewCtx,
-  ViewBottomButtonBar,
-} from "@gamezilla/shared/game-space";
-import {
   IconArrowCircle,
   IconArrowLeftOnRect,
   IconArrowRight,
@@ -19,8 +12,15 @@ import {
   Spinner,
   cn,
 } from "@gamezilla/ui";
+import {
+  BottomBarButtonAction,
+  GameLayout,
+  GameSpaceClientCtx,
+  GameSpaceViewCtx,
+  ViewBottomButtonBar,
+} from "src/libs/feat/game-space/shared";
 import { Chess } from "../chess";
-import "../chess-ui/chessboard/chessboard-element";
+import { Chessboard } from "../chess-ui";
 import {
   ClientModel,
   ClientMsg,
@@ -34,7 +34,6 @@ import {
   toPlayerColor,
   updateCore,
 } from "./puzzle.core";
-import { Chessboard } from "../chess-ui";
 
 //
 //

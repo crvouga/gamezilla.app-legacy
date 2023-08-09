@@ -1,7 +1,7 @@
 import { Cmd, Option, Sub, exhaustive } from "@gamezilla/core";
 import { UserId } from "@gamezilla/shared/app";
 import { ViewCtx } from "@gamezilla/shared/client";
-import { GameSpaceClientCtx } from "@gamezilla/shared/game-space";
+import { GameSpaceClientCtx } from "src/libs/feat/game-space/shared";
 // import { Chessboard } from "../chess-ui";
 import * as Chess from "../chess/chess";
 import Sounds from "../chess/chess-sounds";

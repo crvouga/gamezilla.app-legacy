@@ -5,7 +5,7 @@ import {
   GameSpaceViewCtx,
   ViewBottomButtonBar,
   VsBotSetup,
-} from "@gamezilla/shared/game-space";
+} from "src/libs/feat/game-space/shared";
 import {
   IconArrowLeftOnRect,
   IconRobot,

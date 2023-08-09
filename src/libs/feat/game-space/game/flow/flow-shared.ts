@@ -1,3 +1,3 @@
-import { GameSpaceViewCtx } from "@gamezilla/shared/game-space";
+import { GameSpaceViewCtx } from "src/libs/feat/game-space/shared";
 
 export type FlowViewCtx = GameSpaceViewCtx & { onExit: () => void };

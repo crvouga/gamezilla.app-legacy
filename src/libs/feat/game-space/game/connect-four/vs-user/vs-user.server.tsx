@@ -1,5 +1,5 @@
 import { Cmd, Sub, Time } from "@gamezilla/core";
-import { GameSpaceMsg, GameSpaceReqCtx } from "@gamezilla/shared/game-space";
+import { GameSpaceMsg, GameSpaceReqCtx } from "src/libs/feat/game-space/shared";
 import {
   Res,
   ServerModel,

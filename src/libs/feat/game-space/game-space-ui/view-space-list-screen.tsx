@@ -1,6 +1,6 @@
 import { GameSpaceId } from "@gamezilla/shared/app";
 import { ViewCtx } from "@gamezilla/shared/client";
-import { ViewSpaceHostChip } from "@gamezilla/shared/game-space";
+import { ViewSpaceHostChip } from "src/libs/feat/game-space/shared";
 import {
   Button,
   IconGamepad,

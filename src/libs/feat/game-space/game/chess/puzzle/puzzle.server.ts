@@ -14,7 +14,7 @@ import {
   GameSpaceMsg,
   GameSpaceReqCtx,
   GameSpaceServerCtx,
-} from "@gamezilla/shared/game-space";
+} from "src/libs/feat/game-space/shared";
 import { DbConnMySql } from "@gamezilla/shared/server";
 import { ChessGameMsg } from "../chess-shared";
 import { EloRating } from "./elo-rating";
