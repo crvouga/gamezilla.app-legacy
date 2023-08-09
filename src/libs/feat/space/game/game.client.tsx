@@ -235,7 +235,7 @@ export const View: Client["View"] = (input) => {
         <ChessClient.View
           ctx={ctx}
           model={model.c}
-          gameSpaceCtx={ctx}
+          spaceCtx={ctx}
           dispatch={(c) => dispatch({ t: "chess", c })}
         />
       );

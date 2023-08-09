@@ -275,19 +275,19 @@ export const View = ({
   ctx,
   model,
   dispatch,
-  gameSpaceCtx,
+  spaceCtx,
 }: {
   ctx: SpaceViewCtx;
   model: Model;
   dispatch: (msg: Msg) => void;
-  gameSpaceCtx: SpaceViewCtx;
+  spaceCtx: SpaceViewCtx;
 }) => {
   switch (model.mode.t) {
     case "none": {
       return (
         <MainMenuScreen
           title="Chess"
-          ctx={gameSpaceCtx}
+          ctx={spaceCtx}
           renderCoverArt={(props) => <ViewCoverArt {...props} />}
           buttons={[
             mainMenuButtons.playComputer({

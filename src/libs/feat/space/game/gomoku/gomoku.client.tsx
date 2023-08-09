@@ -228,12 +228,12 @@ export const subscriptions = (ctx: ClientCtx, model: Model): Sub<Msg> => {
 export const view = ({
   model,
   ctx,
-  gameSpaceCtx,
+  spaceCtx,
   dispatch,
 }: {
   model: Model;
   ctx: ViewCtx;
-  gameSpaceCtx: SpaceViewCtx;
+  spaceCtx: SpaceViewCtx;
   dispatch: (m: Msg) => void;
 }) => {
   switch (model.t) {
@@ -242,7 +242,7 @@ export const view = ({
         <MainMenuScreen
           title="Gomoku"
           renderCoverArt={(props) => <ViewCoverArt {...props} />}
-          ctx={gameSpaceCtx}
+          ctx={spaceCtx}
           buttons={[
             mainMenuButtons.playComputer({
               onClick: () =>
