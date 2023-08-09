@@ -1,5 +1,6 @@
 import { Iso3166Alpha2Code, PhoneNumber } from "@gamezilla/core";
-import { GameSpaceId, UserId } from "@gamezilla/shared/app";
+import { UserId } from "@gamezilla/shared/app";
+import { SpaceId } from "src/libs/feat/space/space-id";
 
 //
 //
@@ -192,7 +193,7 @@ export const decodeProfile = (pathname: string): RouteProfile | null => {
 //
 
 export type RouteGameSpace =
-  | { t: "game-space"; spaceId: GameSpaceId }
+  | { t: "game-space"; spaceId: SpaceId }
   | { t: "game-space-list" };
 
 export const encodeSpace = (route: RouteGameSpace): string => {
@@ -206,7 +207,7 @@ export const encodeSpace = (route: RouteGameSpace): string => {
 export const decodeSpace = (pathname: string): RouteGameSpace | null => {
   if (pathname.startsWith("/game-space/")) {
     const spaceId = pathname.slice("/game-space/".length);
-    if (GameSpaceId.is(spaceId)) {
+    if (SpaceId.is(spaceId)) {
       return { t: "game-space", spaceId };
     }
     return null;

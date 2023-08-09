@@ -18,7 +18,7 @@ import {
   ServerReqCtx,
   ServerUnauthenticatedReqCtx,
 } from "@gamezilla/shared/server";
-import { GameSpaceServer } from "src/libs/feat/game-space";
+import { SpaceServer } from "src/libs/feat/space";
 import {
   ServerModel,
   ServerMsg,
@@ -40,7 +40,7 @@ type Model = ServerModel;
 export const init: { model: Model; cmd?: Cmd<Msg> } = {
   model: {
     sessions: {},
-    space: GameSpaceServer.init,
+    space: SpaceServer.init,
     profile: ProfileServer.init,
     search: SearchServer.init.model,
     chat: ChatServer.init.model,
@@ -120,7 +120,7 @@ const updateMain = async ({
   }
 
   if (msg.t === "game-space") {
-    const updated = await GameSpaceServer.update({
+    const updated = await SpaceServer.update({
       sendToUser: (userIds, m) =>
         sendToUser(sendToClient, model, userIds, { t: "game-space", c: m }),
       msg: msg.c,
@@ -251,7 +251,7 @@ const updateFromApp = ({
   model: Model;
   cmd?: Cmd<Msg>;
 } => {
-  const spaceUpdated = GameSpaceServer.updateFromApp({
+  const spaceUpdated = SpaceServer.updateFromApp({
     msg,
     model: model.space,
     sendToClient: (clientIds, m) =>
@@ -357,7 +357,7 @@ const updateFromClient = async ({
       return { model };
     }
 
-    const updated = await GameSpaceServer.updateFromClient({
+    const updated = await SpaceServer.updateFromClient({
       ctx: authReqCtx,
       msg: msg.c,
       model: model.space,
@@ -434,7 +434,7 @@ export const subscriptions = ({
   return Sub.batch([
     Sub.tag(
       "game-space",
-      GameSpaceServer.subscriptions({ model: model.space, ctx })
+      SpaceServer.subscriptions({ model: model.space, ctx })
     ),
     Sub.tag("wire", onWireMsg),
     p(
