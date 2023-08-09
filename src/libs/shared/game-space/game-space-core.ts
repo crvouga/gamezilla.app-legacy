@@ -2,7 +2,7 @@ import { GameSpaceId, UserId } from "@gamezilla/shared/app";
 
 export type GameSpace = {
   visibility?: "public" | "private";
-  status?: "started" | "ended";
+  state?: "started" | "ended";
   gameSpaceId: GameSpaceId;
   hostId: UserId;
   users: {

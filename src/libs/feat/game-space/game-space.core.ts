@@ -199,7 +199,7 @@ export type Problem =
   | "space_not_found"
   | "impossible_state_space_id_taken";
 
-export const handle = ({
+export const updateCore = ({
   ctx,
   msg,
   model,

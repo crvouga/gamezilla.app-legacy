@@ -655,37 +655,9 @@ const ViewSpaceScreen = ({
         id="user-preview"
         open={model.modal === "user-preview"}
         onClose={() => dispatch({ t: "modal-closed" })}>
-        <button
-          className="flex w-full flex-col items-center justify-center gap-2 p-4"
-          onClick={() => {
-            if (model.previewUserId) {
-              dispatch({
-                t: "clicked-user-link",
-                userId: model.previewUserId,
-              });
-            }
-          }}>
-          <MyAvatar
-            src={
-              model.previewUserId
-                ? ctx.profiles[model.previewUserId]?.avatarUrl
-                : undefined
-            }
-            className="h-24 w-24"
-          />
-          <p className="text-xl font-semibold">
-            {model.previewUserId
-              ? ctx.profiles[model.previewUserId]?.username ?? "..."
-              : "..."}
-          </p>
-          <div className="flex items-center gap-2">
-            {spaceCtx.hostId === model.previewUserId && <ViewSpaceHostChip />}
-            {spaceCtx.currentUserId === model.previewUserId && <ViewYouChip />}
-          </div>
-        </button>
-
-        <div className="w-full px-4 pb-8">
-          <Button
+        <div>
+          <button
+            className="flex w-full flex-col items-center justify-center gap-2 p-4"
             onClick={() => {
               if (model.previewUserId) {
                 dispatch({
@@ -693,10 +665,42 @@ const ViewSpaceScreen = ({
                   userId: model.previewUserId,
                 });
               }
-            }}
-            className="w-full"
-            text="See profile"
-          />
+            }}>
+            <MyAvatar
+              src={
+                model.previewUserId
+                  ? ctx.profiles[model.previewUserId]?.avatarUrl
+                  : undefined
+              }
+              className="h-24 w-24"
+            />
+            <p className="text-xl font-semibold">
+              {model.previewUserId
+                ? ctx.profiles[model.previewUserId]?.username ?? "..."
+                : "..."}
+            </p>
+            <div className="flex items-center gap-2">
+              {spaceCtx.hostId === model.previewUserId && <ViewSpaceHostChip />}
+              {spaceCtx.currentUserId === model.previewUserId && (
+                <ViewYouChip />
+              )}
+            </div>
+          </button>
+
+          <div className="w-full px-4 pb-8">
+            <Button
+              onClick={() => {
+                if (model.previewUserId) {
+                  dispatch({
+                    t: "clicked-user-link",
+                    userId: model.previewUserId,
+                  });
+                }
+              }}
+              className="w-full"
+              text="See profile"
+            />
+          </div>
         </div>
       </Drawer>
     </>

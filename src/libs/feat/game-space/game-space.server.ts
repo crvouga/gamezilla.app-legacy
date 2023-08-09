@@ -30,7 +30,7 @@ import {
   ServerMsg,
   ToClient,
   ToServer,
-  handle,
+  updateCore,
 } from "./game-space.core";
 import * as Game from "./game.server";
 //
@@ -124,26 +124,25 @@ export const update = ({
   }
 };
 
-type UpdateFromClient = (input: {
+export const updateFromClient = (input: {
   ctx: ServerReqCtx | null;
   sendToClient: (msg: ToClient) => Cmd;
   sendToUser: (userId: UserId[], msg: ToClient) => Cmd;
   broadcast: (msg: ToClient) => Cmd;
   msg: ToServer;
   model: Model;
-}) => {
+}): {
   model: Model;
   cmd?: Cmd<ServerMsg>;
-};
-export const updateFromClient: UpdateFromClient = (input) => {
+} => {
   return p(
     input,
     andThen((model) => updateProfiles({ ...input, model })),
-    andThen((model) => updateFromClient_({ ...input, model }))
+    andThen((model) => updateFromClientMain({ ...input, model }))
   );
 };
 
-const updateProfiles: UpdateFromClient = ({ msg, model }) => {
+const updateProfiles: typeof updateFromClient = ({ msg, model }) => {
   if (msg.profile) {
     return {
       model: {
@@ -158,7 +157,7 @@ const updateProfiles: UpdateFromClient = ({ msg, model }) => {
   return { model };
 };
 
-export const updateFromClient_: UpdateFromClient = (input) => {
+export const updateFromClientMain: typeof updateFromClient = (input) => {
   const { msg, model, ctx } = input;
   switch (msg.t) {
     case "list":
@@ -169,7 +168,7 @@ export const updateFromClient_: UpdateFromClient = (input) => {
         return { model };
       }
 
-      const res: Res = { ...msg, result: handle({ ctx, model, msg }) };
+      const res: Res = { ...msg, result: updateCore({ ctx, model, msg }) };
 
       if (res.result.t === "err") {
         return { model, cmd: input.sendToClient(res) };
@@ -186,7 +185,7 @@ export const updateFromClient_: UpdateFromClient = (input) => {
     }
 
     case "leave": {
-      return updateLeave(input);
+      return handleLeave(input);
     }
 
     case "game": {
@@ -258,7 +257,7 @@ export const updateFromClient_: UpdateFromClient = (input) => {
   }
 };
 
-const handleInputGame: UpdateFromClient = ({
+const handleInputGame: typeof updateFromClient = ({
   msg,
   model,
   ctx,
@@ -345,7 +344,7 @@ const handleInputGame: UpdateFromClient = ({
   };
 };
 
-const updateLeave: UpdateFromClient = ({
+const handleLeave: typeof updateFromClient = ({
   broadcast,
   sendToClient,
   sendToUser,
@@ -361,7 +360,7 @@ const updateLeave: UpdateFromClient = ({
     return { model };
   }
 
-  const result = handle({ ctx, model, msg });
+  const result = updateCore({ ctx, model, msg });
   const res: Res = { ...msg, result };
 
   if (result.t === "err") {
@@ -566,18 +565,18 @@ type Res_ = Req & { result: Result<Problem, null> };
 export const handler = async ({
   req,
   ctx,
-  spaceDb,
+  db,
 }: {
   req: Req;
   ctx: GameSpaceReqCtx;
-  spaceDb: GameSpaceDb;
+  db: GameSpaceDb;
 }): Promise<Res_ & { msgs?: GameSpaceMsg[] }> => {
   //
   //
   //
   //
 
-  const got = await spaceDb.getByUserId(ctx.currentUserId);
+  const got = await db.getByUserId(ctx.currentUserId);
 
   if (got.t === "err") {
     return { ...req, result: Err({ t: "db-problem", problem: got.error }) };
@@ -596,7 +595,7 @@ export const handler = async ({
     }
 
     const spaceNew: GameSpace = {
-      status: "started",
+      state: "started",
       hostId: ctx.currentUserId,
       gameSpaceId: req.spaceId,
       users: {},
@@ -622,10 +621,10 @@ export const handler = async ({
 
     const spaceNew: GameSpace = {
       ...space,
-      status: "ended",
+      state: "ended",
     };
 
-    const set = await spaceDb.set(spaceNew);
+    const set = await db.set(spaceNew);
 
     if (set.t === "err") {
       return { ...req, result: Err({ t: "db-problem", problem: set.error }) };
