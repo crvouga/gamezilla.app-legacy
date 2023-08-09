@@ -2,9 +2,9 @@ import { Cmd, Option, Sub, exhaustive } from "gamezilla/@/core";
 import { UserId } from "gamezilla/app/@/app";
 import { ViewCtx } from "gamezilla/app/@/client";
 import { SpaceClientCtx } from "gamezilla/app/space/@";
-// import { Chessboard } from "../chess-ui";
-import * as Chess from "../chess/chess";
-import Sounds from "../chess/chess-sounds";
+
+import { Chess } from "../@/chess";
+import Sounds from "../@/chess/chess-sounds";
 import {
   ClientModel,
   ClientMsg,

@@ -1,4 +1,3 @@
-import { UserId } from "gamezilla/app/@/app";
 import {
   Err,
   NonEmpty,
@@ -7,7 +6,8 @@ import {
   RemoteResult,
   Result,
 } from "gamezilla/@/core";
-import * as Chess from "../chess/chess";
+import { UserId } from "gamezilla/app/@/app";
+import { Chess } from "../@/chess";
 import { EloRating } from "./elo-rating";
 import { zip } from "./utils";
 

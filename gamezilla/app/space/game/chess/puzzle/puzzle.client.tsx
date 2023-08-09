@@ -19,8 +19,8 @@ import {
   SpaceViewCtx,
   ViewBottomButtonBar,
 } from "gamezilla/app/space/@";
-import { Chess } from "../chess";
-import { Chessboard } from "../chess-ui";
+import { Chess } from "../@/chess";
+import { Chessboard } from "../@/chess-ui";
 import {
   ClientModel,
   ClientMsg,

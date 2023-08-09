@@ -1,25 +1,19 @@
 import { Browser, Cmd, Posix, Sub, andThen, p } from "gamezilla/@/core";
-import { AuthClient } from "gamezilla/app/auth";
-import { ChatClient } from "gamezilla/app/chat";
-import { ProfileClient } from "gamezilla/app/profile";
-import { SearchClient } from "gamezilla/app/search";
 import {
   ClientAppMsg,
   ClientCtx,
   Route,
   UnauthenticatedViewCtx,
   ViewCtx,
-} from "gamezilla/app/@/client";
-import {
-  IconGamepad,
-  IconUserCircle,
-  LoadingScreen,
-  VDom,
-  cn,
-} from "gamezilla/app/@/ui";
-import { SpaceClient } from "gamezilla/app/space";
+} from "./@/client";
+import { IconGamepad, IconUserCircle, LoadingScreen, VDom, cn } from "./@/ui";
 import { Routing, Toast, Wire } from "./app-client";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./app.core";
+import { AuthClient } from "./auth";
+import { ChatClient } from "./chat";
+import { ProfileClient } from "./profile";
+import { SearchClient } from "./search";
+import { SpaceClient } from "./space";
 
 //
 //

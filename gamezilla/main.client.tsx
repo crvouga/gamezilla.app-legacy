@@ -1,4 +1,3 @@
-import { render } from "inferno";
 import {
   Browser,
   Program,
@@ -6,6 +5,7 @@ import {
   toMsgPayload,
   toMsgType,
 } from "gamezilla/@/core";
+import { render } from "inferno";
 import { AppClient } from "./app";
 import "./main.client.css";
 

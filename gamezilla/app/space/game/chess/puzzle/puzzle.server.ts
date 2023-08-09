@@ -16,7 +16,7 @@ import {
   GameSpaceServerCtx,
 } from "gamezilla/app/space/@";
 import { DbConnMySql } from "gamezilla/app/@/server";
-import { ChessGameMsg } from "../chess-shared";
+import { ChessGameMsg } from "../@/chess/chess-shared";
 import { EloRating } from "./elo-rating";
 import { PuzzleDb } from "./puzzle-db";
 import {

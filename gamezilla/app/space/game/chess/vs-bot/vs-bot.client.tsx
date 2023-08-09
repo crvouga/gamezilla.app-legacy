@@ -1,31 +1,30 @@
 import { Audio, Cmd, Sub, andThen, exhaustive, p } from "gamezilla/@/core";
 import {
+  IconArrowLeftOnRect,
+  IconRobot,
+  MyAvatar,
+  Spinner,
+} from "gamezilla/app/@/ui";
+import {
   GameLayout,
   SpaceClientCtx,
   SpaceViewCtx,
   ViewBottomButtonBar,
   VsBotSetup,
 } from "gamezilla/app/space/@";
-import {
-  IconArrowLeftOnRect,
-  IconRobot,
-  IconSpinner,
-  MyAvatar,
-  Spinner,
-} from "gamezilla/app/@/ui";
-import { Chessboard, PlayerIcon, ViewCoverArt } from "../chess-ui";
-import * as Chess from "../chess/chess";
-import Sounds from "../chess/chess-sounds";
+import { Chess } from "../@/chess";
+import { Chessboard, PlayerIcon, ViewCoverArt } from "../@/chess-ui";
+import Sounds from "../@/chess/chess-sounds";
 import {
   ClientModel,
   ClientMsg,
-  ServerModel,
   CoreModel,
+  ServerModel,
   ToClient,
   ToServer,
-  updateCore,
   initShared,
   isBotTurn,
+  updateCore,
 } from "./vs-bot.core";
 
 //

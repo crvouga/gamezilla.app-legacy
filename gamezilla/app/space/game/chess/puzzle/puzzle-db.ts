@@ -15,7 +15,7 @@ import {
 } from "gamezilla/@/core";
 import { UserId } from "gamezilla/app/@/app";
 import { DbConnMySql } from "gamezilla/app/@/server";
-import { MoveInput, uciMoveToMoveInput } from "../chess/chess";
+import { MoveInput, uciMoveToMoveInput } from "../@/chess/chess";
 import { EloRating } from "./elo-rating";
 import {
   Puzzle,
