@@ -1,0 +1,41 @@
+import { GameServer } from "src/app/space/shared";
+import {
+  ServerModel,
+  ServerMsg,
+  ToClient,
+  ToServer,
+  initShared,
+} from "./play.core";
+import { Sub } from "src/core";
+
+type Server = GameServer<ServerModel, ServerMsg, ToClient, ToServer>;
+
+const init: Server["init"] = () => {
+  return {
+    model: initShared,
+  };
+};
+
+const update: Server["update"] = (input) => {
+  return input;
+};
+
+const updateFromClient: Server["updateFromClient"] = (input) => {
+  return input;
+};
+
+const updateFromParent: Server["updateFromParent"] = (input) => {
+  return input;
+};
+
+const subscriptions: Server["subscriptions"] = () => {
+  return Sub.None;
+};
+
+export const PlayServer: Server = {
+  init,
+  update,
+  updateFromClient,
+  updateFromParent,
+  subscriptions,
+};

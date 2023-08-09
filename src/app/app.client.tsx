@@ -1,8 +1,8 @@
 import { Browser, Cmd, Posix, Sub, andThen, p } from "src/core";
-import { AuthClient } from "src/feat/auth";
-import { ChatClient } from "src/feat/chat";
-import { ProfileClient } from "src/feat/profile";
-import { SearchClient } from "src/feat/search";
+import { AuthClient } from "src/app/auth";
+import { ChatClient } from "src/app/chat";
+import { ProfileClient } from "src/app/profile";
+import { SearchClient } from "src/app/search";
 import {
   ClientAppMsg,
   ClientCtx,
@@ -11,7 +11,7 @@ import {
   ViewCtx,
 } from "src/shared/client";
 import { IconGamepad, IconUserCircle, LoadingScreen, VDom, cn } from "src/ui";
-import { SpaceClient } from "src/feat/space";
+import { SpaceClient } from "src/app/space";
 import { Routing, Toast, Wire } from "./app-client";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./app.core";
 

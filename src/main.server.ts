@@ -1,7 +1,7 @@
-import { AppServer, ServerModel, ServerMsg } from "src/app";
+import { createServer } from "http";
 import { Program, toMsgType } from "src/core";
 import { DbConnMySql } from "src/shared/server";
-import { createServer } from "http";
+import { AppServer, ServerModel, ServerMsg } from "./app";
 import { createTransportServer } from "./transport.server";
 
 console.log("[server] planet scale connecting...");

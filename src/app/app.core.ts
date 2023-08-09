@@ -1,10 +1,10 @@
 import { ClientId, ServerWireMsg, SessionId } from "src/core";
-import * as Auth from "src/feat/auth";
-import * as Chat from "src/feat/chat";
-import * as Space from "src/feat/space";
-import * as Profile from "src/feat/profile";
-import * as Search from "src/feat/search";
 import { Routing, Toast, Wire } from "./app-client";
+import * as Auth from "./auth";
+import * as Chat from "./chat";
+import * as Profile from "./profile";
+import * as Search from "./search";
+import * as Space from "./space";
 
 //
 //

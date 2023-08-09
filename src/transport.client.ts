@@ -1,5 +1,5 @@
-import { ToClient, ToServer } from "src/app";
 import { ClientWireMsg, PubSub, SessionMsg, TransportClient } from "src/core";
+import { ToClient, ToServer } from "./app";
 
 const SESSION_ID_KEY = "gamezilla-session-id";
 

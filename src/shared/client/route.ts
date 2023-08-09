@@ -1,6 +1,6 @@
 import { Iso3166Alpha2Code, PhoneNumber } from "src/core";
 import { UserId } from "src/shared/app";
-import { SpaceId } from "src/feat/space/space-id";
+import { SpaceId } from "src/app/space/space-id";
 
 //
 //

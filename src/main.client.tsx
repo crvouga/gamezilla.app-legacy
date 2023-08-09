@@ -1,6 +1,6 @@
-import { AppClient } from "src/app";
-import { Browser, Program, toMsgPayload, toMsgType } from "src/core";
 import { render } from "inferno";
+import { Browser, Program, toMsgPayload, toMsgType } from "src/core";
+import { AppClient } from "./app";
 import "./main.client.css";
 import { createTransportClient } from "./transport.client";
 

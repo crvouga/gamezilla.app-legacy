@@ -1,4 +1,4 @@
-import { ToClient, ToServer } from "src/app";
+import http from "http";
 import {
   ClientId,
   PubSub,
@@ -6,8 +6,8 @@ import {
   SessionId,
   TransportServer,
 } from "src/core";
-import http from "http";
 import WebSocket, { WebSocketServer } from "ws";
+import { ToClient, ToServer } from "./app";
 
 export const createTransportServer = ({
   httpServer,

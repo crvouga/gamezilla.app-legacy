@@ -7,10 +7,10 @@ import {
   andThen,
   p,
 } from "src/core";
-import { AuthServer } from "src/feat/auth";
-import { ChatServer } from "src/feat/chat";
-import { ProfileServer } from "src/feat/profile";
-import { SearchServer } from "src/feat/search";
+import { AuthServer } from "src/app/auth";
+import { ChatServer } from "src/app/chat";
+import { ProfileServer } from "src/app/profile";
+import { SearchServer } from "src/app/search";
 import { UserId } from "src/shared/app";
 import {
   ServerAppMsg,
@@ -18,7 +18,7 @@ import {
   ServerReqCtx,
   ServerUnauthenticatedReqCtx,
 } from "src/shared/server";
-import { SpaceServer } from "src/feat/space";
+import { SpaceServer } from "src/app/space";
 import {
   ServerModel,
   ServerMsg,
