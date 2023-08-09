@@ -3,7 +3,7 @@ import {
   GameClient,
   MainMenuScreen,
   mainMenuButtons,
-} from "src/app/space/shared";
+} from "src/app/space/@shared";
 import { ViewCoverArt } from "./connect-four-cover-art";
 import {
   ClientModel,

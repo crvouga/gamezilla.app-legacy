@@ -1,5 +1,5 @@
 import { Cmd, p, Sub } from "src/core";
-import { SpaceMsg, GameSpaceReqCtx } from "src/app/space/shared";
+import { SpaceMsg, GameSpaceReqCtx } from "src/app/space/@shared";
 import * as Chess from "../chess/chess";
 import {
   botMoved,

@@ -1,5 +1,5 @@
-import { UserId } from "src/shared/app";
-import { ServerReqCtx, ServerCtx } from "src/shared/server";
+import { UserId } from "src/app/@shared/app";
+import { ServerReqCtx, ServerCtx } from "src/app/@shared/server";
 
 export type GameSpaceServerCtx = ServerCtx & {
   hostId: UserId;

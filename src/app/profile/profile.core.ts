@@ -4,7 +4,7 @@ import {
   ProfileAvatarStyle,
   UserId,
   Username,
-} from "src/shared/app";
+} from "src/app/@shared/app";
 import { RemoteResult, Result } from "src/core";
 
 //

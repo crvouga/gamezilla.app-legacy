@@ -1,5 +1,5 @@
 import { Cmd, Sub } from "src/core";
-import { GameClient, ViewBottomButtonBar } from "src/app/space/shared";
+import { GameClient, ViewBottomButtonBar } from "src/app/space/@shared";
 import { IconArrowLeftOnRect, IconPenToSquare, IconPlay, cn } from "src/ui";
 import { FlowGridPlayUI, FlowGridUI } from "../flow-grid";
 import { FlowViewCtx } from "../flow-shared";

@@ -14,7 +14,7 @@ import {
   ClientCtx,
   RouteGameSpace,
   ViewCtx,
-} from "src/shared/client";
+} from "src/app/@shared/client";
 import {
   ActionButton,
   Button,
@@ -32,7 +32,7 @@ import {
   ViewSpaceHostChip,
   ViewUsersInSpaceList,
   ViewYouChip,
-} from "src/app/space/shared";
+} from "src/app/space/@shared";
 import * as GameClient from "./game/game.client";
 import * as Game from "./game/game.core";
 import { ViewCoverArt } from "./game/game.core";

@@ -1,4 +1,4 @@
-import { UserId } from "src/shared/app";
+import { UserId } from "src/app/@shared/app";
 import { VDom } from "src/ui";
 import { SpaceViewCtx } from "../game-space-client";
 

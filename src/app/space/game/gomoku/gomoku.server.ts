@@ -1,6 +1,6 @@
 import { Cmd, Result, Sub } from "src/core";
-import { UserId } from "src/shared/app";
-import { SpaceMsg, GameSpaceReqCtx } from "src/app/space/shared";
+import { UserId } from "src/app/@shared/app";
+import { SpaceMsg, GameSpaceReqCtx } from "src/app/space/@shared";
 import {
   Mode,
   ServerModel,

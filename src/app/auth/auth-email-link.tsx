@@ -1,5 +1,5 @@
 import { Cmd, Result, Task, exhaustive, p } from "src/core";
-import { ClientAppMsg } from "src/shared/client";
+import { ClientAppMsg } from "src/app/@shared/client";
 import {
   AlertError,
   AlertSuccess,

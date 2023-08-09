@@ -1,11 +1,11 @@
 import { Audio, Cmd, Posix, RemoteResult, Sub } from "src/core";
-import { ClientAppMsg } from "src/shared/client";
+import { ClientAppMsg } from "src/app/@shared/client";
 import {
   SpaceClientCtx,
   SpaceViewCtx,
   MainMenuScreen,
   mainMenuButtons,
-} from "src/app/space/shared";
+} from "src/app/space/@shared";
 import { IconPuzzlePiece } from "src/ui";
 import { ViewCoverArt } from "./chess-ui";
 import {

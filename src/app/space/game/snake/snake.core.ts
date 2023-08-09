@@ -1,5 +1,5 @@
 import { Keyboard, Option, Result } from "src/core";
-import { UserId } from "src/shared/app";
+import { UserId } from "src/app/@shared/app";
 import * as Direction from "./direction";
 import * as Snake from "./snake";
 

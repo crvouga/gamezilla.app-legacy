@@ -1,5 +1,5 @@
 import { Transition, p } from "src/core";
-import { UserId } from "src/shared/app";
+import { UserId } from "src/app/@shared/app";
 import {
   Button,
   IconArrowLeftOnRect,

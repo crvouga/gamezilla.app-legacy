@@ -1,4 +1,4 @@
-import { UserId } from "src/shared/app";
+import { UserId } from "src/app/@shared/app";
 import { Result } from "src/core";
 import * as TicTacToe from "../tic-tic-toe/tic-tac-toe";
 import * as Round from "./vs-user-round";

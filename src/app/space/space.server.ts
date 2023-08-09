@@ -1,7 +1,7 @@
 import { ClientId, Cmd, Err, Ok, Sub, removeKey } from "src/core";
-import { UserId } from "src/shared/app";
-import { ServerAppMsg, ServerCtx, ServerReqCtx } from "src/shared/server";
-import { Space, GameSpaceServerCtx } from "src/app/space/shared";
+import { UserId } from "src/app/@shared/app";
+import { ServerAppMsg, ServerCtx, ServerReqCtx } from "src/app/@shared/server";
+import { Space, GameSpaceServerCtx } from "src/app/space/@shared";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./space.core";
 import * as GameServer from "./game/game.server";
 import { makeSpaceDb } from "./space-db";

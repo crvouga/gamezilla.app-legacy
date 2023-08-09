@@ -1,10 +1,10 @@
 import { Cmd, Err, Ok, Sub } from "src/core";
-import { UserId } from "src/shared/app";
+import { UserId } from "src/app/@shared/app";
 import {
   SpaceMsg,
   GameSpaceReqCtx,
   GameSpaceServerCtx,
-} from "src/app/space/shared";
+} from "src/app/space/@shared";
 import { ChessGameMsg } from "./chess-shared";
 import { Res, ServerModel, ServerMsg, ToClient, ToServer } from "./chess.core";
 import * as Puzzle from "./puzzle/puzzle.server";

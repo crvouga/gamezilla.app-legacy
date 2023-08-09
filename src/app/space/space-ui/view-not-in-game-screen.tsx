@@ -3,7 +3,7 @@ import {
   SpaceViewCtx,
   ViewGameHeaderEmpty,
   ViewUsersInSpaceList,
-} from "src/app/space/shared";
+} from "src/app/space/@shared";
 import { ClientMsg } from "../space.core";
 import {
   ViewCoverArt,

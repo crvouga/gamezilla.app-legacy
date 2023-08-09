@@ -1,5 +1,5 @@
 import { Cmd, Sub } from "src/core";
-import { ViewCtx } from "src/shared/client";
+import { ViewCtx } from "src/app/@shared/client";
 import {
   GameLayout,
   SpaceClientCtx,
@@ -7,7 +7,7 @@ import {
   SpaceViewCtx,
   ViewBottomButtonBar,
   VsUserSetupScreen,
-} from "src/app/space/shared";
+} from "src/app/space/@shared";
 import {
   Button,
   ConformationDialog,

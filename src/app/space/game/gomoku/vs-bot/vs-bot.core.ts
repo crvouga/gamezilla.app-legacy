@@ -1,5 +1,5 @@
 import { Err, Ok, Result } from "src/core";
-import { UserId } from "src/shared/app";
+import { UserId } from "src/app/@shared/app";
 import {
   Board,
   BotLevel,

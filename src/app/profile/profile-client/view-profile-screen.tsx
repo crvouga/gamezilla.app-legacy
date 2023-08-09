@@ -1,5 +1,5 @@
-import { UserId } from "src/shared/app";
-import { ViewCtx } from "src/shared/client";
+import { UserId } from "src/app/@shared/app";
+import { ViewCtx } from "src/app/@shared/client";
 import {
   IconArrowLeftOnRect,
   IconSpinner,

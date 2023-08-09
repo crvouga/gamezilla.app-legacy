@@ -1,4 +1,4 @@
-import { ClientAppMsg, Route } from "src/shared/client";
+import { ClientAppMsg, Route } from "src/app/@shared/client";
 import { Browser, Cmd, p } from "src/core";
 
 //

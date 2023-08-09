@@ -1,11 +1,11 @@
 import { Cmd, Err, Ok, Result, Sub, Time, andThen, eq, p } from "src/core";
-import { UserId } from "src/shared/app";
+import { UserId } from "src/app/@shared/app";
 import {
   SpaceMsg,
   GameSpaceReqCtx,
   GameSpaceServerCtx,
-} from "src/app/space/shared";
-import { DbConnMySql } from "src/shared/server";
+} from "src/app/space/@shared";
+import { DbConnMySql } from "src/app/@shared/server";
 import { ChessGameMsg } from "../chess-shared";
 import { EloRating } from "./elo-rating";
 import { PuzzleDb } from "./puzzle-db";

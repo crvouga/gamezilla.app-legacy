@@ -1,6 +1,6 @@
 import { Result } from "src/core";
-import { UserId } from "src/shared/app";
-import { Space } from "src/app/space/shared";
+import { UserId } from "src/app/@shared/app";
+import { Space } from "src/app/space/@shared";
 import { ServerModel } from "../game/game.core";
 import { SpaceId } from "../space-id";
 

@@ -1,5 +1,5 @@
 import { andThen, Cmd, p, Result, Sub } from "src/core";
-import { SpaceMsg, GameSpaceReqCtx } from "src/app/space/shared";
+import { SpaceMsg, GameSpaceReqCtx } from "src/app/space/@shared";
 import { findBestMove } from "../connect-four";
 import {
   Event,

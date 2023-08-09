@@ -1,5 +1,5 @@
 import { Sub } from "src/core";
-import { GameClient, MainMenuScreen } from "src/app/space/shared";
+import { GameClient, MainMenuScreen } from "src/app/space/@shared";
 import { IconGamepad, IconScrewdriverWrench } from "src/ui";
 import { FlowViewCtx } from "./flow-shared";
 import { ViewCoverArt } from "./flow-ui/flow-cover-art";

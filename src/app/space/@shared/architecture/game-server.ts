@@ -1,5 +1,5 @@
 import { Cmd, Sub } from "src/core";
-import { ServerAppMsg } from "src/shared/server";
+import { ServerAppMsg } from "src/app/@shared/server";
 import { SpaceMsg } from "../game-space-core";
 import { GameSpaceReqCtx, GameSpaceServerCtx } from "../game-space-server";
 //

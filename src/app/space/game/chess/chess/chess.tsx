@@ -5,7 +5,7 @@ import {
   IconBotLevel4,
   IconBotScary,
   IconBotSimple,
-} from "src/app/space/shared";
+} from "src/app/space/@shared";
 import { VDom } from "src/ui";
 import * as ChessJS from "chess.js";
 

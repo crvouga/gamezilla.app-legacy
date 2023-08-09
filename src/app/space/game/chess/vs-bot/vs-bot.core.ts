@@ -1,6 +1,6 @@
 import { Audio, Err, Ok, Result } from "src/core";
-import { UserId } from "src/shared/app";
-import { VsBotSetup } from "src/app/space/shared";
+import { UserId } from "src/app/@shared/app";
+import { VsBotSetup } from "src/app/space/@shared";
 import * as Chess from "../chess/chess";
 
 //

@@ -1,4 +1,4 @@
-import { UserId, Username } from "src/shared/app";
+import { UserId, Username } from "src/app/@shared/app";
 import { Posix } from "src/core";
 import * as Route from "./route";
 

@@ -1,5 +1,5 @@
-import { ProfileAvatar } from "src/shared/app";
-import { ViewCtx } from "src/shared/client";
+import { ProfileAvatar } from "src/app/@shared/app";
+import { ViewCtx } from "src/app/@shared/client";
 import { MyAvatar, Button, MyTextField, TopBar } from "src/ui";
 import { ClientModel, ClientMsg } from "../profile.core";
 

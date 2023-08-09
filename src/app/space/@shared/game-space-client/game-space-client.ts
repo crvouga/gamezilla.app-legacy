@@ -1,6 +1,6 @@
-import { UserId } from "src/shared/app";
+import { UserId } from "src/app/@shared/app";
 import { SpaceId } from "../../space-id";
-import { ClientCtx, ViewCtx } from "src/shared/client";
+import { ClientCtx, ViewCtx } from "src/app/@shared/client";
 
 export type SpaceClientCtx = ClientCtx & {
   hostId: UserId;

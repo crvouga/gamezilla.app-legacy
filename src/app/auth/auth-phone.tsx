@@ -7,7 +7,7 @@ import {
   Task,
   p,
 } from "src/core";
-import { ClientAppMsg, UnauthenticatedViewCtx } from "src/shared/client";
+import { ClientAppMsg, UnauthenticatedViewCtx } from "src/app/@shared/client";
 import {
   Button,
   IconPhone,

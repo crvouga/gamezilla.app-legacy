@@ -9,7 +9,7 @@ import {
   Route,
   UnauthenticatedViewCtx,
   ViewCtx,
-} from "src/shared/client";
+} from "src/app/@shared/client";
 import { IconGamepad, IconUserCircle, LoadingScreen, VDom, cn } from "src/ui";
 import { SpaceClient } from "src/app/space";
 import { Routing, Toast, Wire } from "./app-client";

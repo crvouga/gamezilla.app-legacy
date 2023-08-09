@@ -1,5 +1,5 @@
 import { Sub, andThen, p } from "src/core";
-import { GameClient } from "src/app/space/shared";
+import { GameClient } from "src/app/space/@shared";
 import { IconArrowLeftOnRect, Button } from "src/ui";
 import { FlowGridPlayUI } from "../flow-grid";
 import { FlowViewCtx } from "../flow-shared";

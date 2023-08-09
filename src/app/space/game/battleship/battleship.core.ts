@@ -1,5 +1,5 @@
 import { Result } from "src/core";
-import { UserId } from "src/shared/app";
+import { UserId } from "src/app/@shared/app";
 import { ShotRule } from "./battleship/shot-rule";
 import { Position } from "./battleship/position";
 

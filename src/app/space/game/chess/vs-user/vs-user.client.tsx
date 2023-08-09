@@ -1,7 +1,7 @@
 import { Cmd, Option, Sub, exhaustive } from "src/core";
-import { UserId } from "src/shared/app";
-import { ViewCtx } from "src/shared/client";
-import { SpaceClientCtx } from "src/app/space/shared";
+import { UserId } from "src/app/@shared/app";
+import { ViewCtx } from "src/app/@shared/client";
+import { SpaceClientCtx } from "src/app/space/@shared";
 // import { Chessboard } from "../chess-ui";
 import * as Chess from "../chess/chess";
 import Sounds from "../chess/chess-sounds";

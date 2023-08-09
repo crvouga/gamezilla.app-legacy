@@ -1,5 +1,5 @@
 import { Sub } from "src/core";
-import { GameClient } from "src/app/space/shared";
+import { GameClient } from "src/app/space/@shared";
 import {
   ClientModel,
   ClientMsg,

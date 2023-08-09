@@ -5,7 +5,7 @@ import {
   SpaceViewCtx,
   ViewBottomButtonBar,
   VsBotSetup,
-} from "src/app/space/shared";
+} from "src/app/space/@shared";
 import {
   IconArrowLeftOnRect,
   IconRobot,

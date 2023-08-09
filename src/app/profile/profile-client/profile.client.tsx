@@ -1,10 +1,10 @@
-import { ProfileAvatar } from "src/shared/app";
+import { ProfileAvatar } from "src/app/@shared/app";
 import {
   ClientAppMsg,
   ClientCtx,
   RouteProfile,
   ViewCtx,
-} from "src/shared/client";
+} from "src/app/@shared/client";
 import { Cmd, andThen, p } from "src/core";
 import {
   IconChevronRight,

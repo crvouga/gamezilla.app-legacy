@@ -1,5 +1,5 @@
 import { Cmd, Posix } from "src/core";
-import { ClientAppMsg, ClientCtx } from "src/shared/client";
+import { ClientAppMsg, ClientCtx } from "src/app/@shared/client";
 import {
   SpaceClientCtx,
   SpaceViewCtx,
@@ -10,7 +10,7 @@ import {
   VsBotPlayerSection,
   VsBotProps,
   VsBotSetup,
-} from "src/app/space/shared";
+} from "src/app/space/@shared";
 import {
   IconArrowLeftOnRect,
   IconArrowRotateLeft,

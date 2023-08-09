@@ -1,5 +1,5 @@
 import { ClientId, SessionId } from "src/core";
-import { UserId } from "src/shared/app";
+import { UserId } from "src/app/@shared/app";
 
 export type ServerAppMsg =
   | {

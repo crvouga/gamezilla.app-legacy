@@ -1,4 +1,4 @@
-import { UserId } from "src/shared/app";
+import { UserId } from "src/app/@shared/app";
 
 export const VsUserGameScreen = ({
   playerOne,

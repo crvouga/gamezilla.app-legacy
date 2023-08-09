@@ -5,8 +5,8 @@ import {
   Username,
   client,
   definitions,
-} from "src/shared/app";
-import { ServerAppMsg, ServerReqCtx } from "src/shared/server";
+} from "src/app/@shared/app";
+import { ServerAppMsg, ServerReqCtx } from "src/app/@shared/server";
 import {
   Profile,
   Req,

@@ -1,5 +1,5 @@
 import { ClientId, Posix, SessionId } from "src/core";
-import { UserId } from "src/shared/app";
+import { UserId } from "src/app/@shared/app";
 import { DbConnMySql } from "./database-connection-mysql";
 
 export type ServerCtx = {

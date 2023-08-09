@@ -1,6 +1,6 @@
 import { Cmd, Err, Result, Sub } from "src/core";
-import { UserId } from "src/shared/app";
-import { GameServer } from "src/app/space/shared";
+import { UserId } from "src/app/@shared/app";
+import { GameServer } from "src/app/space/@shared";
 import {
   Mode,
   ServerModel,

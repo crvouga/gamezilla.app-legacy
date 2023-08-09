@@ -1,4 +1,4 @@
-import { GameServer } from "src/app/space/shared";
+import { GameServer } from "src/app/space/@shared";
 import {
   ServerModel,
   ServerMsg,

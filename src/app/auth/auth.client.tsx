@@ -9,13 +9,13 @@ import {
   Task,
   p,
 } from "src/core";
-import { UserId, client } from "src/shared/app";
+import { UserId, client } from "src/app/@shared/app";
 import {
   ClientAppMsg,
   Route,
   RouteAuth,
   UnauthenticatedViewCtx,
-} from "src/shared/client";
+} from "src/app/@shared/client";
 import {
   Button,
   ConformationDialog,

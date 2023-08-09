@@ -1,11 +1,11 @@
 import { Cmd, Sub } from "src/core";
-import { ClientCtx, ViewCtx } from "src/shared/client";
+import { ClientCtx, ViewCtx } from "src/app/@shared/client";
 import {
   SpaceClientCtx,
   SpaceViewCtx,
   MainMenuScreen,
   mainMenuButtons,
-} from "src/app/space/shared";
+} from "src/app/space/@shared";
 import {
   ClientModel,
   ClientMsg,

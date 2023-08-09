@@ -7,7 +7,7 @@ import { MazeClient } from "src/app/space/game/maze";
 import { SnakeClient } from "src/app/space/game/snake";
 import { TetrisClient } from "src/app/space/game/tetris";
 import { TicTacToeClient } from "src/app/space/game/tic-tac-toe";
-import { GameClient, SpaceClientCtx } from "src/app/space/shared";
+import { GameClient, SpaceClientCtx } from "src/app/space/@shared";
 import {
   ClientModel,
   ClientMsg,
@@ -15,7 +15,7 @@ import {
   ToClient,
   ToServer,
 } from "./game.core";
-import { ClientAppMsg } from "src/shared/client";
+import { ClientAppMsg } from "src/app/@shared/client";
 
 type Client = GameClient<
   ClientModel,

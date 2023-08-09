@@ -1,4 +1,4 @@
-import { ClientAppMsg } from "src/shared/client";
+import { ClientAppMsg } from "src/app/@shared/client";
 import { Browser, Cmd, matchSort, p } from "src/core";
 import { IconMagnifyingGlass, IconXMark, VDom } from "src/ui";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./search.core";

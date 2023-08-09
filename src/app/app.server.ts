@@ -11,13 +11,13 @@ import { AuthServer } from "src/app/auth";
 import { ChatServer } from "src/app/chat";
 import { ProfileServer } from "src/app/profile";
 import { SearchServer } from "src/app/search";
-import { UserId } from "src/shared/app";
+import { UserId } from "src/app/@shared/app";
 import {
   ServerAppMsg,
   ServerCtx,
   ServerReqCtx,
   ServerUnauthenticatedReqCtx,
-} from "src/shared/server";
+} from "src/app/@shared/server";
 import { SpaceServer } from "src/app/space";
 import {
   ServerModel,
