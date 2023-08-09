@@ -84,7 +84,9 @@ export const updateFromParent: Client["updateFromParent"] = (input) => {
 };
 
 export const syncWithServer: Client["syncWithServer"] = (input) => {
-  const { client = { t: "none" }, server } = input;
+  const { client: client_, server } = input;
+
+  const client: ClientModel = client_ ?? { t: "none" };
 
   if (server.t === "none") {
     return { model: server };

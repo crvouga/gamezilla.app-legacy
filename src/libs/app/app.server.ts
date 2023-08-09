@@ -58,17 +58,17 @@ export const init: { model: Model; cmd?: Cmd<Msg> } = {
 
 type Msg = ServerMsg;
 
-export const update = (input: {
+export const update = async (input: {
   msg: Msg;
   model: Model;
   ctx: ServerCtx;
   broadcast: (m: ToClient) => Cmd;
   sendToClient: (clientIds: ClientId[], m: ToClient) => Cmd;
-}): {
+}): Promise<{
   model: Model;
   cmd?: Cmd<Msg>;
-} => {
-  const updated = update_(input);
+}> => {
+  const updated = await updateMain(input);
 
   const appMsgs = updated.msgs ?? [];
 
@@ -84,7 +84,7 @@ export const update = (input: {
   return appUpdated;
 };
 
-const update_ = ({
+const updateMain = async ({
   msg,
   model,
   ctx,
@@ -96,11 +96,11 @@ const update_ = ({
   ctx: ServerCtx;
   broadcast: (m: ToClient) => Cmd;
   sendToClient: (clientIds: ClientId[], m: ToClient) => Cmd;
-}): {
+}): Promise<{
   model: Model;
   cmd?: Cmd<Msg>;
   msgs?: ServerAppMsg[];
-} => {
+}> => {
   if (msg.t === "wire") {
     return updateWire({ msg: msg.c, model });
   }
@@ -120,7 +120,7 @@ const update_ = ({
   }
 
   if (msg.t === "game-space") {
-    const updated = GameSpaceServer.update({
+    const updated = await GameSpaceServer.update({
       sendToUser: (userIds, m) =>
         sendToUser(sendToClient, model, userIds, { t: "game-space", c: m }),
       msg: msg.c,
@@ -278,7 +278,7 @@ const updateFromApp = ({
   };
 };
 
-const updateFromClient = ({
+const updateFromClient = async ({
   msg,
   model,
   ctx,
@@ -290,11 +290,11 @@ const updateFromClient = ({
   model: Model;
   broadcast: (m: ToClient) => Cmd;
   sendToClient: (clientIds: ClientId[], m: ToClient) => Cmd;
-}): {
+}): Promise<{
   model: Model;
   cmd?: Cmd<Msg>;
   msgs?: ServerAppMsg[];
-} => {
+}> => {
   const currentUserId = model.auth.sessions[ctx.sessionId]?.userId;
   const authReqCtx: ServerReqCtx | null = currentUserId
     ? {
@@ -353,7 +353,11 @@ const updateFromClient = ({
   }
 
   if (msg.t === "game-space") {
-    const updated = GameSpaceServer.updateFromClient({
+    if (!authReqCtx) {
+      return { model };
+    }
+
+    const updated = await GameSpaceServer.updateFromClient({
       ctx: authReqCtx,
       msg: msg.c,
       model: model.space,

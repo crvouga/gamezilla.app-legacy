@@ -1,23 +1,27 @@
 import {
+  GameSpace,
   GameSpaceViewCtx,
   ViewGameHeaderEmpty,
   ViewUsersInSpaceList,
 } from "@gamezilla/shared/game-space";
 import { ClientMsg } from "../game-space.core";
 import { ViewCoverArt, gameNameList, gameNameToString } from "../game.core";
+import * as Game from "../game.core";
 
 export const ViewNotInGameScreen = ({
   ctx,
+  space,
   dispatch,
 }: {
+  space: GameSpace<Game.ClientModel>;
   ctx: GameSpaceViewCtx;
   dispatch: (m: ClientMsg) => void;
 }) => {
-  if (ctx.space.hostId !== ctx.currentUserId) {
+  if (space.hostId !== ctx.currentUserId) {
     return (
       <>
         <ViewGameHeaderEmpty />
-        <ViewUsersInSpaceList ctx={ctx} />
+        <ViewUsersInSpaceList space={space} ctx={ctx} />
       </>
     );
   }
@@ -44,8 +48,8 @@ export const ViewNotInGameScreen = ({
           ))}
         </div>
       </section>
-      {Object.values(ctx.space.users).length > 1 && (
-        <ViewUsersInSpaceList ctx={ctx} />
+      {Object.values(space.users).length > 1 && (
+        <ViewUsersInSpaceList space={space} ctx={ctx} />
       )}
       <div>
         <div className="h-24 w-full"></div>

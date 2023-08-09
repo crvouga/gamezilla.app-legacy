@@ -193,9 +193,10 @@ export const View: Client["View"] = ({ model, dispatch, ctx }) => {
 
 export const syncWithServer: Client["syncWithServer"] = ({
   ctx,
-  client = { t: "none" },
+  client: client_,
   server,
 }) => {
+  const client: ClientModel = client_ ?? { t: "none" };
   switch (server.t) {
     case "none": {
       return { model: server };

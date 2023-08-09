@@ -1,4 +1,5 @@
 import {
+  GameSpace,
   GameSpaceViewCtx,
   ViewGameHeader,
   ViewGameHeaderEmpty,
@@ -17,8 +18,14 @@ export const ViewSpaceJoinScreen = ({
   model: ClientModel;
   dispatch: (msg: ClientMsg) => void;
 }) => {
-  const host = ctx.profiles[ctx.space.hostId];
-  const game = model.games[ctx.space.gameSpaceId];
+  const space = model.spaces[ctx.gameSpaceId];
+
+  if (!space) {
+    return null;
+  }
+
+  const host = ctx.profiles[space?.hostId];
+  const game = space?.game;
 
   return (
     <div className="flex h-full w-full flex-col">
@@ -47,7 +54,7 @@ export const ViewSpaceJoinScreen = ({
           <ViewGameHeaderEmpty />
         )}
 
-        <ViewUsersInSpaceList ctx={ctx} />
+        <ViewUsersInSpaceList space={space} ctx={ctx} />
       </div>
 
       <div className="flex border-t border-neutral-700 p-4">
@@ -59,7 +66,7 @@ export const ViewSpaceJoinScreen = ({
             dispatch({
               t: "join",
               userId: ctx.currentUserId,
-              spaceId: ctx.space.gameSpaceId,
+              spaceId: space.gameSpaceId,
             });
           }}
           text="Join space"

@@ -5,7 +5,6 @@ import {
   IconUsers,
   VDom,
 } from "@gamezilla/ui";
-import { ViewUsersInSpaceList } from ".";
 import { GameSpaceViewCtx } from "./game-space-client";
 import { ViewGameHeader } from "./view-game-header";
 
@@ -31,7 +30,7 @@ export const MainMenuScreen = ({
     return (
       <div className="flex h-full w-full flex-col">
         <ViewGameHeader title={title} renderCoverArt={renderCoverArt} />
-        <ViewUsersInSpaceList ctx={ctx} />
+        {/* <ViewUsersInSpaceList space={space} ctx={ctx} /> */}
       </div>
     );
   }

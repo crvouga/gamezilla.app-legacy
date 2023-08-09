@@ -144,12 +144,12 @@ export const updateFromServer = ({
 };
 
 export const syncWithServer = ({
-  clientModel,
+  clientModel = init,
   serverModel,
   ctx,
 }: {
   ctx: ClientCtx;
-  clientModel: ClientModel;
+  clientModel?: ClientModel;
   serverModel: ServerModel;
 }): ClientModel => {
   if (serverModel.t === "none") {

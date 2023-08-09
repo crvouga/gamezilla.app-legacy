@@ -1,9 +1,29 @@
-import { GameSpaceViewCtx } from "@gamezilla/shared/game-space";
+import { GameSpace, GameSpaceViewCtx } from "@gamezilla/shared/game-space";
 import { IconCrown, MyAvatar } from "@gamezilla/ui";
-import { toProfilesBySpaceId } from "src/libs/feat/game-space";
 
-export const ViewUsersInSpaceList = ({ ctx }: { ctx: GameSpaceViewCtx }) => {
-  const profiles = toProfilesBySpaceId({ ctx });
+export const ViewUsersInSpaceList = <T,>({
+  space,
+  ctx,
+}: {
+  space: GameSpace<T>;
+  ctx: GameSpaceViewCtx;
+}) => {
+  const profiles = Object.values(space.users).flatMap((userId) => {
+    const profile = ctx.profiles[userId];
+
+    if (!profile) {
+      return [];
+    }
+
+    return [
+      {
+        userId: profile.userId,
+        username: profile.username,
+        avatarUrl: profile.avatarUrl,
+      },
+    ];
+  });
+
   return (
     <section className="flex w-full flex-col gap-2 py-4">
       <p className="text-center text-3xl font-bold">People</p>

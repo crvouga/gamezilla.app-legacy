@@ -383,12 +383,12 @@ export const View = ({
 //
 
 export const syncWithServer = ({
-  clientModel,
+  clientModel = init().model,
   serverModel,
   sendToServer,
 }: {
   sendToServer: (msg: ToServer) => Cmd;
-  clientModel: ClientModel;
+  clientModel?: ClientModel;
   serverModel: ServerModel;
 }): {
   model: ClientModel;

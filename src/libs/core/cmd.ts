@@ -19,6 +19,20 @@ const map =
     };
   };
 
+const map_ = <A, B>(
+  mapper: (a: A) => B,
+  cmd?: Cmd<A> | null | undefined
+): Cmd<B> => {
+  if (!cmd) {
+    return None;
+  }
+  return (dispatch) => {
+    cmd((a) => {
+      dispatch(mapper(a));
+    });
+  };
+};
+
 const chain =
   <A, B>(mapper: (a: A) => Cmd<B>) =>
   (cmd: Cmd<A>): Cmd<B> => {
@@ -78,5 +92,6 @@ export const Cmd = {
   t,
   chain,
   map,
+  map_,
   of,
 };

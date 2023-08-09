@@ -9,7 +9,7 @@ import {
   TopBar,
   cn,
 } from "@gamezilla/ui";
-import { ClientModel, ClientMsg } from "../game-space.core";
+import { ClientModel, ClientMsg, findSpaceByUserId } from "../game-space.core";
 import { GameName, ViewCoverArt, gameNameToString } from "../game.core";
 
 export const ViewSpaceListScreen = ({
@@ -21,8 +21,8 @@ export const ViewSpaceListScreen = ({
   ctx: ViewCtx;
   dispatch: (m: ClientMsg) => void;
 }) => {
-  const user = model.users[ctx.currentUserId];
-  const currentSpace = user ? model.spaces[user.spaceId] : undefined;
+  const currentSpace = findSpaceByUserId(model, ctx.currentUserId);
+
   const spaces = Object.values(model.spaces);
 
   const isLoading = model.req.list?.t === "loading";
@@ -47,12 +47,8 @@ export const ViewSpaceListScreen = ({
             )}>
             {spaces.map((space) => {
               const host = ctx.profiles[space.hostId];
-              const users = Object.values(model.users).flatMap((user) => {
-                if (user.spaceId !== space.gameSpaceId) {
-                  return [];
-                }
-
-                const profile = ctx.profiles[user.userId];
+              const users = Object.values(space.users).flatMap((userId) => {
+                const profile = ctx.profiles[userId];
 
                 if (!profile) {
                   return [];
@@ -66,8 +62,8 @@ export const ViewSpaceListScreen = ({
                 ];
               });
 
-              const gameName = model.games[space.gameSpaceId]?.t;
-              const currentSpaceId = model.users[ctx.currentUserId]?.spaceId;
+              const gameName = space.game?.t ?? null;
+              const currentSpaceId = currentSpace?.gameSpaceId ?? null;
               return (
                 <ViewSpaceCard
                   host={{
@@ -120,7 +116,7 @@ const ViewSpaceCard = ({
   users,
   host,
 }: {
-  gameName?: GameName;
+  gameName?: GameName | null;
   users: { avatarUrl: string; username: string }[];
   onClick: () => void;
   isCurrentSpace?: boolean;

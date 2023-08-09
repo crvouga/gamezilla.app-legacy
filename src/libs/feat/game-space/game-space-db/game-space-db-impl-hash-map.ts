@@ -1,9 +1,11 @@
 import { Ok } from "@gamezilla/core";
 import { GameSpace } from "@gamezilla/shared/game-space";
+import { ServerModel } from "../game.core";
 import { GameSpaceDb } from "./game-space-db";
+import { GameSpaceId } from "@gamezilla/shared/app";
 
 export const makeGameSpaceDb = (): GameSpaceDb => {
-  const db = new Map<string, GameSpace>();
+  const db = new Map<GameSpaceId, GameSpace<ServerModel>>();
 
   const zap: GameSpaceDb["zap"] = async (spaceId) => {
     await new Promise((resolve) => setTimeout(resolve, 10));
@@ -25,12 +27,22 @@ export const makeGameSpaceDb = (): GameSpaceDb => {
 
   const getByUserId: GameSpaceDb["getByUserId"] = async (userId) => {
     await new Promise((resolve) => setTimeout(resolve, 10));
-    const space = db.get(userId);
-    return Ok(space ?? null);
+    for (const space of db.values()) {
+      if (space.users[userId]) {
+        return Ok(space);
+      }
+    }
+    return Ok(null);
+  };
+
+  const getAll: GameSpaceDb["getAll"] = async () => {
+    await new Promise((resolve) => setTimeout(resolve, 10));
+    return Ok(Array.from(db.values()));
   };
 
   return {
     get,
+    getAll,
     getByUserId,
     set,
     zap,

@@ -1,38 +1,15 @@
-import {
-  ClientId,
-  Cmd,
-  Err,
-  Ok,
-  Result,
-  Sub,
-  andThen,
-  exhaustive,
-  p,
-  removeKey,
-} from "@gamezilla/core";
+import { ClientId, Cmd, Err, Ok, Sub, p, removeKey } from "@gamezilla/core";
 import { GameSpaceId, UserId } from "@gamezilla/shared/app";
-import {
-  GameSpace,
-  GameSpaceMsg,
-  GameSpaceReqCtx,
-  GameSpaceServerCtx,
-} from "@gamezilla/shared/game-space";
+import { GameSpace, GameSpaceServerCtx } from "@gamezilla/shared/game-space";
 import {
   ServerAppMsg,
   ServerCtx,
   ServerReqCtx,
 } from "@gamezilla/shared/server";
-import { GameSpaceDb } from "./game-space-db";
-import {
-  Req,
-  Res,
-  ServerModel,
-  ServerMsg,
-  ToClient,
-  ToServer,
-  updateCore,
-} from "./game-space.core";
+import { makeGameSpaceDb } from "./game-space-db";
+import { ServerModel, ServerMsg, ToClient, ToServer } from "./game-space.core";
 import * as Game from "./game.server";
+
 //
 //
 //
@@ -41,14 +18,9 @@ import * as Game from "./game.server";
 //
 //
 
-export type Model = ServerModel;
+const gameSpaceDb = makeGameSpaceDb();
 
-export const init: Model = {
-  spaces: {},
-  users: {},
-  games: {},
-  profiles: {},
-};
+export const init: ServerModel = null;
 
 //
 //
@@ -58,9 +30,7 @@ export const init: Model = {
 //
 //
 
-export type Msg = ServerMsg;
-
-export const update = ({
+export const update = async ({
   model,
   msg,
   sendToUser,
@@ -68,27 +38,26 @@ export const update = ({
 }: {
   ctx: ServerCtx;
   sendToUser: (userIds: UserId[], msg: ToClient) => Cmd;
-  msg: Msg;
-  model: Model;
-}): {
-  model: Model;
-  cmd?: Cmd<Msg>;
-} => {
+  msg: ServerMsg;
+  model: ServerModel;
+}): Promise<{ model: ServerModel; cmd?: Cmd<ServerMsg> }> => {
   switch (msg.t) {
     case "game": {
       const { spaceId } = msg;
 
-      const game = model.games[spaceId];
+      const got = await gameSpaceDb.get(spaceId);
 
-      if (!game) {
+      if (got.t === "err") {
         return { model };
       }
 
-      const gameMsg = msg.c;
-
-      const space = model.spaces[spaceId];
+      const space = got.value;
 
       if (!space) {
+        return { model };
+      }
+
+      if (!space.game) {
         return { model };
       }
 
@@ -98,399 +67,399 @@ export const update = ({
       };
 
       const updated = Game.update({
-        sendToSpace: (m) =>
-          sendToSpace({ sendToUser, model, spaceId, msg: { t: "game", c: m } }),
-        msg: gameMsg,
-        model: game,
+        sendToSpace: (m) => {
+          return sendToSpace(sendToUser, space, { t: "game", c: m });
+        },
+        msg: msg.c,
+        model: space.game,
         ctx: spaceCtx,
       });
 
-      const modelNew: Model = {
-        ...model,
-        games: {
-          ...model.games,
-          [spaceId]: updated.model,
-        },
+      const spaceNew: GameSpace<Game.Model> = {
+        ...space,
+        game: updated.model,
       };
 
+      const mutated = await gameSpaceDb.set(spaceNew);
+
+      if (mutated.t === "err") {
+        return { model };
+      }
+
       return {
-        model: modelNew,
-        cmd: p(
-          updated.cmd ?? Cmd.None,
-          Cmd.map((m): Msg => ({ t: "game", spaceId, c: m }))
+        model,
+        cmd: Cmd.map_(
+          (m): ServerMsg => ({ t: "game", spaceId, c: m }),
+          updated.cmd
         ),
       };
     }
   }
 };
 
-export const updateFromClient = (input: {
-  ctx: ServerReqCtx | null;
+export const updateFromClient = async (input: {
+  ctx: ServerReqCtx;
   sendToClient: (msg: ToClient) => Cmd;
   sendToUser: (userId: UserId[], msg: ToClient) => Cmd;
   broadcast: (msg: ToClient) => Cmd;
   msg: ToServer;
-  model: Model;
-}): {
-  model: Model;
+  model: ServerModel;
+}): Promise<{
+  model: ServerModel;
   cmd?: Cmd<ServerMsg>;
-} => {
-  return p(
-    input,
-    andThen((model) => updateProfiles({ ...input, model })),
-    andThen((model) => updateFromClientMain({ ...input, model }))
-  );
-};
+}> => {
+  const { msg, model, ctx, broadcast, sendToUser, sendToClient } = input;
 
-const updateProfiles: typeof updateFromClient = ({ msg, model }) => {
-  if (msg.profile) {
-    return {
-      model: {
-        ...model,
-        profiles: {
-          ...model.profiles,
-          [msg.profile.userId]: msg.profile,
-        },
-      },
-    };
-  }
-  return { model };
-};
-
-export const updateFromClientMain: typeof updateFromClient = (input) => {
-  const { msg, model, ctx } = input;
   switch (msg.t) {
-    case "list":
-    case "join":
-    case "destroy":
-    case "create": {
-      if (!ctx) {
-        return { model };
+    case "list": {
+      const got = await gameSpaceDb.getAll();
+
+      return { model, cmd: sendToClient({ t: "list", result: got }) };
+    }
+
+    case "join": {
+      const currentSpace = await gameSpaceDb.getByUserId(msg.userId);
+
+      if (currentSpace.t === "err") {
+        return {
+          model,
+          cmd: sendToClient({
+            ...msg,
+            result: Err(
+              "You're already in a space. You must leave your current space before joining another"
+            ),
+          }),
+        };
       }
 
-      const res: Res = { ...msg, result: updateCore({ ctx, model, msg }) };
+      const foundSpace = await gameSpaceDb.get(msg.spaceId);
 
-      if (res.result.t === "err") {
-        return { model, cmd: input.sendToClient(res) };
+      if (foundSpace.t === "err") {
+        return { model, cmd: sendToClient({ ...msg, result: foundSpace }) };
       }
 
-      return {
-        model: res.result.value,
-        cmd: input.broadcast(res),
+      const space = foundSpace.value;
+
+      if (!space) {
+        return {
+          model,
+          cmd: sendToClient({
+            ...msg,
+            result: Err("Game space was not found"),
+          }),
+        };
+      }
+
+      const spaceNew: GameSpace<Game.Model> = {
+        ...space,
+        users: {
+          ...space.users,
+          [ctx.currentUserId]: ctx.currentUserId,
+        },
       };
+
+      const mutated = await gameSpaceDb.set(spaceNew);
+
+      if (mutated.t === "err") {
+        return { model, cmd: sendToClient({ ...msg, result: mutated }) };
+      }
+
+      return { model, cmd: broadcast({ ...msg, result: Ok(spaceNew) }) };
+    }
+
+    case "destroy": {
+      const currentSpace = await gameSpaceDb.getByUserId(ctx.currentUserId);
+
+      if (currentSpace.t === "err") {
+        return { model, cmd: sendToClient({ ...msg, result: currentSpace }) };
+      }
+
+      const space = currentSpace.value;
+
+      if (!space) {
+        return {
+          model,
+          cmd: sendToClient({ ...msg, result: Err("Failed to find space") }),
+        };
+      }
+
+      if (space.hostId !== ctx.currentUserId) {
+        return {
+          model,
+          cmd: sendToClient({
+            ...msg,
+            result: Err("You must be the host to destroy a space"),
+          }),
+        };
+      }
+
+      // const spaceNew: GameSpace<Game.Model> = {
+      //   ...space,
+      //   state: "ended",
+      // };
+
+      const mutated = await gameSpaceDb.zap(space.gameSpaceId);
+
+      if (mutated.t === "err") {
+        return { model, cmd: sendToClient({ ...msg, result: mutated }) };
+      }
+
+      return { model, cmd: broadcast({ ...msg, result: Ok(space) }) };
+    }
+
+    case "create": {
+      const currentSpace = await gameSpaceDb.getByUserId(ctx.currentUserId);
+
+      if (currentSpace.t === "err") {
+        return { model, cmd: sendToClient({ ...msg, result: currentSpace }) };
+      }
+
+      const space = currentSpace.value;
+
+      if (space) {
+        return {
+          model,
+          cmd: sendToClient({
+            ...msg,
+            result: Err(
+              "You're already in a space. You must leave your current space before creating another"
+            ),
+          }),
+        };
+      }
+
+      const spaceNew: GameSpace<Game.Model> = {
+        gameSpaceId: msg.spaceId,
+        hostId: ctx.currentUserId,
+        state: "started",
+        visibility: "public",
+        users: {
+          [ctx.currentUserId]: ctx.currentUserId,
+        },
+      };
+
+      const mutated = await gameSpaceDb.set(spaceNew);
+
+      if (mutated.t === "err") {
+        return { model, cmd: sendToClient({ ...msg, result: mutated }) };
+      }
+
+      return { model, cmd: broadcast({ ...msg, result: Ok(spaceNew) }) };
     }
 
     case "input-game": {
-      return handleInputGame(input);
+      const currentSpace = await gameSpaceDb.getByUserId(ctx.currentUserId);
+
+      if (currentSpace.t === "err") {
+        return {
+          model,
+          cmd: sendToClient({ ...msg, result: currentSpace }),
+        };
+      }
+
+      const space = currentSpace.value;
+
+      if (!space) {
+        return {
+          model,
+          cmd: sendToClient({
+            ...msg,
+            result: Err("Failed to find space"),
+          }),
+        };
+      }
+
+      if (space.hostId !== ctx.currentUserId) {
+        return {
+          model,
+          cmd: sendToClient({
+            ...msg,
+            result: Err("You must be the host to change the game"),
+          }),
+        };
+      }
+
+      if (!msg.gameName) {
+        const spaceNew: GameSpace<Game.Model> = {
+          ...space,
+          game: null,
+        };
+
+        const mutated = await gameSpaceDb.set(spaceNew);
+
+        if (mutated.t === "err") {
+          return { model, cmd: sendToClient({ ...msg, result: mutated }) };
+        }
+
+        return { model, cmd: broadcast({ ...msg, result: Ok(spaceNew) }) };
+      }
+
+      const initial = Game.init({ gameName: msg.gameName })({
+        ctx: {
+          ...ctx,
+          hostId: space.hostId,
+        },
+        sendToClient: (m) => sendToClient({ t: "game", c: m }),
+        sendToSpace: (m) => sendToSpace(sendToUser, space, { t: "game", c: m }),
+      });
+
+      const spaceNew: GameSpace<Game.Model> = {
+        ...space,
+        game: initial.model,
+      };
+
+      const mutated = await gameSpaceDb.set(spaceNew);
+
+      if (mutated.t === "err") {
+        return { model, cmd: sendToClient({ ...msg, result: mutated }) };
+      }
+
+      return {
+        model,
+        cmd: Cmd.batch([
+          broadcast({ ...msg, result: Ok(spaceNew) }),
+          Cmd.map_(
+            (m): ServerMsg => ({
+              t: "game",
+              c: m,
+              spaceId: space.gameSpaceId,
+            }),
+            initial.cmd
+          ),
+        ]),
+      };
     }
 
     case "leave": {
-      return handleLeave(input);
+      const got = await gameSpaceDb.getByUserId(ctx.currentUserId);
+
+      if (got.t === "err") {
+        return { model, cmd: sendToClient({ ...msg, result: got }) };
+      }
+
+      const space = got.value;
+
+      if (!space) {
+        return {
+          model,
+          cmd: sendToClient({ ...msg, result: Err("Failed to find space") }),
+        };
+      }
+
+      if (space.hostId === ctx.currentUserId) {
+        return {
+          model,
+          cmd: sendToClient({
+            ...msg,
+            result: Err("You must destroy the space to leave as host"),
+          }),
+        };
+      }
+
+      const spaceNew: GameSpace<Game.Model> = {
+        ...space,
+        users: removeKey(ctx.currentUserId, space.users),
+      };
+
+      const updated = !spaceNew.game
+        ? { model: spaceNew.game, cmd: Cmd.None }
+        : Game.updateFromParent({
+            ctx: { ...ctx, hostId: space.hostId },
+            sendToClient: (m) => sendToClient({ t: "game", c: m }),
+            sendToSpace: (m) =>
+              sendToSpace(sendToUser, space, { t: "game", c: m }),
+            model: spaceNew.game,
+            msg: { t: "user-left", userId: ctx.currentUserId },
+          });
+
+      const mutated = await gameSpaceDb.set(spaceNew);
+
+      if (mutated.t === "err") {
+        return { model, cmd: sendToClient({ ...msg, result: mutated }) };
+      }
+
+      return {
+        model,
+        cmd: Cmd.batch([
+          broadcast({ ...msg, result: Ok(spaceNew) }),
+          Cmd.map_(
+            (c): ServerMsg => ({ t: "game", spaceId: space.gameSpaceId, c }),
+            updated.cmd
+          ),
+        ]),
+      };
     }
 
     case "game": {
-      if (!ctx) {
+      const got = await gameSpaceDb.getByUserId(ctx.currentUserId);
+
+      if (got.t === "err") {
         return { model };
       }
 
-      const user = model.users[ctx.currentUserId];
-
-      if (!user) {
-        return { model };
-      }
-
-      const space = model.spaces[user.spaceId];
+      const space = got.value;
 
       if (!space) {
         return { model };
       }
 
-      const game = model.games[user.spaceId];
-
-      if (!game) {
+      if (!space.game) {
         return { model };
       }
 
-      const gameMsg = msg.c;
-
-      const spaceCtx: GameSpaceReqCtx = {
+      const updated = Game.updateFromClient({
         ...ctx,
-        hostId: space.hostId,
-      };
-
-      const gameUpdated = Game.updateFromClient({
-        ...ctx,
-        ctx: spaceCtx,
-        sendToClient: (m) => input.sendToClient({ t: "game", c: m }),
-        sendToSpace: (m) =>
-          sendToSpace({
-            sendToUser: input.sendToUser,
-            model,
-            spaceId: space.gameSpaceId,
-            msg: { t: "game", c: m },
-          }),
-        msg: gameMsg,
-        model: game,
+        ctx: {
+          ...ctx,
+          hostId: space.hostId,
+        },
+        sendToClient: (m) => sendToClient({ t: "game", c: m }),
+        sendToSpace: (m) => sendToSpace(sendToUser, space, { t: "game", c: m }),
+        msg: msg.c,
+        model: space.game,
       });
 
-      const modelNew: Model = {
-        ...model,
-        games: {
-          ...model.games,
-          [space.gameSpaceId]: gameUpdated.model,
-        },
+      const spaceNew: GameSpace<Game.Model> = {
+        ...space,
+        game: updated.model,
       };
 
+      const mutated = await gameSpaceDb.set(spaceNew);
+
+      if (mutated.t === "err") {
+        return { model };
+      }
+
       return {
-        model: modelNew,
-        cmd: p(
-          gameUpdated.cmd ?? Cmd.None,
-          Cmd.map(
-            (msg): Msg => ({ t: "game", spaceId: space.gameSpaceId, c: msg })
-          )
+        model,
+        cmd: Cmd.map_(
+          (c): ServerMsg => ({ t: "game", spaceId: space.gameSpaceId, c }),
+          updated.cmd
         ),
       };
     }
-
-    default:
-      return exhaustive(msg[0]);
   }
-};
-
-const handleInputGame: typeof updateFromClient = ({
-  msg,
-  model,
-  ctx,
-  sendToClient,
-  sendToUser,
-  broadcast,
-}) => {
-  if (msg.t !== "input-game") {
-    return { model };
-  }
-
-  if (!ctx) {
-    return { model };
-  }
-
-  const user = model.users[ctx.currentUserId];
-
-  if (!user) {
-    return { model };
-  }
-
-  const space = model.spaces[user.spaceId];
-
-  if (!space) {
-    return { model };
-  }
-
-  if (space.hostId !== ctx.currentUserId) {
-    return {
-      model,
-      cmd: broadcast({ t: "input-game", result: Err("You must be the host") }),
-    };
-  }
-
-  if (!msg.gameName) {
-    const modelNew: Model = {
-      ...model,
-      games: removeKey(user.spaceId, model.games),
-    };
-
-    return {
-      model: modelNew,
-      cmd: broadcast({ t: "input-game", result: Ok(modelNew) }),
-    };
-  }
-  const initial = Game.init({ gameName: msg.gameName })({
-    ctx: {
-      ...ctx,
-      hostId: space.hostId,
-    },
-    sendToClient: (m) => sendToClient({ t: "game", c: m }),
-    sendToSpace: (m) =>
-      sendToSpace({
-        sendToUser,
-        model,
-        spaceId: user.spaceId,
-        msg: { t: "game", c: m },
-      }),
-  });
-
-  const modelNew: Model = {
-    ...model,
-    games: {
-      ...model.games,
-      [user.spaceId]: initial.model,
-    },
-  };
-
-  return {
-    model: modelNew,
-    cmd: Cmd.batch([
-      p(
-        initial.cmd ?? Cmd.None,
-        Cmd.map(
-          (m): Msg => ({
-            t: "game",
-            c: m,
-            spaceId: user.spaceId,
-          })
-        )
-      ),
-      broadcast({ t: "input-game", result: Ok(modelNew) }),
-    ]),
-  };
-};
-
-const handleLeave: typeof updateFromClient = ({
-  broadcast,
-  sendToClient,
-  sendToUser,
-  model,
-  msg,
-  ctx,
-}) => {
-  if (msg.t !== "leave") {
-    return { model };
-  }
-
-  if (!ctx) {
-    return { model };
-  }
-
-  const result = updateCore({ ctx, model, msg });
-  const res: Res = { ...msg, result };
-
-  if (result.t === "err") {
-    return { model, cmd: sendToClient(res) };
-  }
-
-  const modelAfter = result.value;
-
-  const user = model.users[ctx.currentUserId];
-
-  if (!user) {
-    return { model: modelAfter, cmd: broadcast(res) };
-  }
-
-  const space = model.spaces[user.spaceId];
-
-  if (!space) {
-    return { model: modelAfter, cmd: broadcast(res) };
-  }
-
-  const game = model.games[space.gameSpaceId];
-
-  if (!game) {
-    return { model: modelAfter, cmd: broadcast(res) };
-  }
-
-  const gameSpaceCtx: GameSpaceServerCtx = {
-    ...ctx,
-    hostId: space.hostId,
-  };
-
-  const updated = Game.updateFromParent({
-    ctx: gameSpaceCtx,
-    sendToClient: (m) => {
-      return sendToClient({ t: "game", c: m });
-    },
-    sendToSpace: (msg) => {
-      return sendToSpace({
-        sendToUser: sendToUser,
-        model: modelAfter,
-        spaceId: space.gameSpaceId,
-        msg: { t: "game", c: msg },
-      });
-    },
-    model: game,
-    msg: { t: "user-left", userId: ctx.currentUserId },
-  });
-
-  const modelNew: Model = {
-    ...modelAfter,
-    games: {
-      ...modelAfter.games,
-      [user.spaceId]: updated.model,
-    },
-  };
-
-  return {
-    model: modelNew,
-    cmd: Cmd.batch([
-      broadcast(res),
-      p(
-        updated.cmd ?? Cmd.None,
-        Cmd.map(
-          (msg): Msg => ({ t: "game", spaceId: space.gameSpaceId, c: msg })
-        )
-      ),
-    ]),
-  };
 };
 
 export const updateFromApp = (input: {
   msg: ServerAppMsg;
-  model: Model;
+  model: ServerModel;
   sendToClient: (clientId: ClientId[], msg: ToClient) => Cmd;
 }): {
-  model: Model;
-  cmd?: Cmd<Msg>;
+  model: ServerModel;
+  cmd?: Cmd<ServerMsg>;
 } => {
   const { msg } = input;
-  if (msg.t === "client-connected") {
-    return {
-      ...input,
-      cmd: input.sendToClient([msg.clientId], {
-        t: "list",
-        result: Ok(input.model),
-      }),
-    };
-  }
-  if (msg.t === "client-authenticated") {
-    return {
-      ...input,
-      cmd: input.sendToClient([msg.clientId], {
-        t: "list",
-        result: Ok(input.model),
-      }),
-    };
-  }
+
   return input;
 };
 
-const sendToSpace = ({
-  model,
-  sendToUser,
-  spaceId,
-  msg,
-}: {
-  model: Model;
-  sendToUser: (userIds: UserId[], msg: ToClient) => Cmd;
-  spaceId: GameSpaceId;
-  msg: ToClient;
-}): Cmd => {
-  const userIds: UserId[] = [];
-
-  for (const userId in model.users) {
-    if (!UserId.is(userId)) {
-      continue;
-    }
-
-    const user = model.users[userId];
-
-    if (!user) {
-      continue;
-    }
-
-    if (user.spaceId === spaceId) {
-      userIds.push(userId);
-    }
-  }
-
-  return sendToUser(userIds, msg);
+const sendToSpace = (
+  sendToUser: (userIds: UserId[], msg: ToClient) => Cmd,
+  space: GameSpace<Game.Model>,
+  msg: ToClient
+): Cmd => {
+  return sendToUser(Object.values(space.users), msg);
 };
 
 //
@@ -501,178 +470,9 @@ const sendToSpace = ({
 //
 //
 
-export const subscriptions = ({
-  model,
-  ctx,
-}: {
+export const subscriptions = (_input: {
   ctx: ServerCtx;
-  model: Model;
-}): Sub<Msg> => {
-  const subs: Sub<Msg>[] = [];
-
-  for (const spaceId in model.spaces) {
-    if (!GameSpaceId.is(spaceId)) {
-      continue;
-    }
-
-    const game = model.games[spaceId];
-
-    if (!game) {
-      continue;
-    }
-
-    const space = model.spaces[spaceId];
-
-    if (!space) {
-      continue;
-    }
-
-    const gameSpaceCtx: GameSpaceServerCtx = {
-      ...ctx,
-      hostId: space.hostId,
-    };
-
-    const sub = p(
-      Game.subscriptions({
-        intervalId: `space/${spaceId}`,
-        model: game,
-        ctx: gameSpaceCtx,
-      }),
-      Sub.map((msg): Msg => ({ t: "game", spaceId, c: msg }))
-    );
-
-    subs.push(sub);
-  }
-
-  return Sub.batch(subs);
-};
-
-//
-//
-//
-//
-//
-//
-
-export type Problem =
-  | { t: "must-be-host" }
-  | { t: "not-in-a-space" }
-  | { t: "already-in-a-space" }
-  | { t: "db-problem"; problem: string };
-
-type Res_ = Req & { result: Result<Problem, null> };
-
-export const handler = async ({
-  req,
-  ctx,
-  db,
-}: {
-  req: Req;
-  ctx: GameSpaceReqCtx;
-  db: GameSpaceDb;
-}): Promise<Res_ & { msgs?: GameSpaceMsg[] }> => {
-  //
-  //
-  //
-  //
-
-  const got = await db.getByUserId(ctx.currentUserId);
-
-  if (got.t === "err") {
-    return { ...req, result: Err({ t: "db-problem", problem: got.error }) };
-  }
-
-  const space = got.value;
-
-  //
-  //
-  //
-  //
-
-  if (req.t === "create") {
-    if (space) {
-      return { ...req, result: Err({ t: "already-in-a-space" }) };
-    }
-
-    const spaceNew: GameSpace = {
-      state: "started",
-      hostId: ctx.currentUserId,
-      gameSpaceId: req.spaceId,
-      users: {},
-    };
-
-    console.log({ spaceNew });
-
-    return { ...req, result: Ok(null) };
-  }
-
-  //
-  //
-  //
-
-  if (req.t === "destroy") {
-    if (!space) {
-      return { ...req, result: Err({ t: "not-in-a-space" }) };
-    }
-
-    if (space.hostId !== ctx.currentUserId) {
-      return { ...req, result: Err({ t: "must-be-host" }) };
-    }
-
-    const spaceNew: GameSpace = {
-      ...space,
-      state: "ended",
-    };
-
-    const set = await db.set(spaceNew);
-
-    if (set.t === "err") {
-      return { ...req, result: Err({ t: "db-problem", problem: set.error }) };
-    }
-
-    return { ...req, result: Ok(null) };
-  }
-
-  //
-  //
-  //
-
-  if (req.t === "join") {
-    if (!space) {
-      return { ...req, result: Err({ t: "not-in-a-space" }) };
-    }
-
-    return {
-      ...req,
-      msgs: [{ t: "user-left", userId: ctx.currentUserId }],
-      result: Ok(null),
-    };
-  }
-
-  //
-  //
-  //
-
-  if (req.t === "leave") {
-    if (!space) {
-      return { ...req, result: Err({ t: "not-in-a-space" }) };
-    }
-
-    return {
-      ...req,
-      msgs: [{ t: "user-left", userId: ctx.currentUserId }],
-      result: Ok(null),
-    };
-  }
-
-  //
-  //
-  //
-
-  //
-  //
-  //
-  //
-
-  return { ...req, result: Ok(null) };
+  model: ServerModel;
+}): Sub<ServerMsg> => {
+  return Sub.None;
 };

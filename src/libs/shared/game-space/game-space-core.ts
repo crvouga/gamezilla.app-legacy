@@ -1,6 +1,6 @@
 import { GameSpaceId, UserId } from "@gamezilla/shared/app";
 
-export type GameSpace = {
+export type GameSpace<GameModel> = {
   visibility?: "public" | "private";
   state?: "started" | "ended";
   gameSpaceId: GameSpaceId;
@@ -8,6 +8,7 @@ export type GameSpace = {
   users: {
     [userId: UserId]: UserId;
   };
+  game?: GameModel | null;
 };
 
 export type GameSpaceMsg =

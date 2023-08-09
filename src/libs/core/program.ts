@@ -11,10 +11,15 @@ export type Program<Model, Msg> = {
 
 export function create<Model, Msg>(input: {
   init: (input: { ctx: Ctx }) => { model: Model; cmd?: Cmd<Msg> };
-  update: (input: { ctx: Ctx; msg: Msg; model: Model }) => {
-    model: Model;
-    cmd?: Cmd<Msg>;
-  };
+  update: (input: { ctx: Ctx; msg: Msg; model: Model }) =>
+    | {
+        model: Model;
+        cmd?: Cmd<Msg>;
+      }
+    | Promise<{
+        model: Model;
+        cmd?: Cmd<Msg>;
+      }>;
   subscriptions: (input: { ctx: Ctx; model: Model }) => Sub<Msg>;
 }) {
   let subscriberId = 0;
@@ -47,7 +52,7 @@ export function create<Model, Msg>(input: {
 
   let unsubscribe: () => void = () => {};
 
-  function dispatch(msg: Msg) {
+  async function dispatch(msg: Msg) {
     const ctx: Ctx = {
       now: Posix.fromNumber(Date.now()),
     };
@@ -58,7 +63,9 @@ export function create<Model, Msg>(input: {
       ctx,
     });
 
-    setState(updated, ctx, msg);
+    const awaited = await updated;
+
+    setState(awaited, ctx, msg);
   }
 
   async function setState(

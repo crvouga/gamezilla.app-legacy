@@ -175,6 +175,9 @@ const update_ = ({
   }
 
   if (msg.t === "game-space") {
+    if (!ctx) {
+      return { model };
+    }
     const updated = GameSpaceClient.update({
       ctx: ctx,
       sendToServer: (m) => sendToServer({ t: "game-space", c: m }),
@@ -286,6 +289,9 @@ const updateFromServer = ({
   }
 
   if (msg.t === "game-space") {
+    if (!ctx) {
+      return { model };
+    }
     const updated = GameSpaceClient.updateFromServer({
       ctx,
       sendToServer: (msg) => sendToServer({ t: "game-space", c: msg }),

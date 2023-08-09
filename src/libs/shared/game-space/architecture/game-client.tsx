@@ -62,7 +62,7 @@ export type GameClient<
     ctx: Ctx;
     sendToServer: (m: ToServer) => Cmd;
     server: ServerModel;
-    client?: Model;
+    client?: Model | null;
   }) => {
     model: Model;
     cmd?: Cmd<Msg>;

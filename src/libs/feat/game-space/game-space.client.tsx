@@ -3,11 +3,13 @@ import {
   Loading,
   Ok,
   RemoteResult,
+  Result,
   Sub,
   andThen,
   p,
+  removeKey,
 } from "@gamezilla/core";
-import { GameSpaceId } from "@gamezilla/shared/app";
+import { GameSpaceId, UserId } from "@gamezilla/shared/app";
 import {
   ClientAppMsg,
   ClientCtx,
@@ -15,6 +17,7 @@ import {
   ViewCtx,
 } from "@gamezilla/shared/client";
 import {
+  GameSpace,
   GameSpaceClientCtx,
   GameSpaceViewCtx,
   ViewSpaceHostChip,
@@ -39,9 +42,10 @@ import {
   ServerModel,
   ToClient,
   ToServer,
-  toSpace,
+  findSpaceByUserId,
 } from "./game-space.core";
 import * as GameClient from "./game.client";
+import * as Game from "./game.core";
 import { ViewCoverArt } from "./game.core";
 import {
   ViewNotInGameScreen,
@@ -59,10 +63,7 @@ import {
 
 export const init: { model: ClientModel } = {
   model: {
-    games: {},
     spaces: {},
-    users: {},
-    profiles: {},
     req: {},
     modal: null,
     previewUserId: null,
@@ -78,7 +79,7 @@ export const init: { model: ClientModel } = {
 //
 
 export const update = (input: {
-  ctx: ClientCtx | null;
+  ctx: ClientCtx;
   sendToServer: (msg: ToServer) => Cmd;
   msg: ClientMsg;
   model: ClientModel;
@@ -89,7 +90,7 @@ export const update = (input: {
 } => {
   return p(
     input,
-    andThen((model) => update_({ ...input, model })),
+    andThen((model) => updateMain({ ...input, model })),
     andThen((model) => watchCreate({ ...input, model }))
   );
 };
@@ -112,7 +113,7 @@ const watchCreate: typeof update = ({ msg, model }) => {
   return { model };
 };
 
-const update_: typeof update = ({ ctx, sendToServer, msg, model }) => {
+const updateMain: typeof update = ({ ctx, sendToServer, msg, model }) => {
   if (msg.t === "modal-closed") {
     return { model: { ...model, modal: null } };
   }
@@ -147,52 +148,33 @@ const update_: typeof update = ({ ctx, sendToServer, msg, model }) => {
   }
 
   if (msg.t === "game") {
-    if (!ctx) {
-      return { model };
-    }
-
-    const user = model.users[ctx.currentUserId];
-
-    if (!user) {
-      return { model };
-    }
-
-    const space = model.spaces[user.spaceId];
+    const space = findSpaceByUserId(model, ctx.currentUserId);
 
     if (!space) {
       return { model };
     }
 
-    const game = model.games[user.spaceId];
-
-    if (!game) {
+    if (!space.game) {
       return { model };
     }
 
-    const gameMsg = msg.c;
-
-    const spaceCtx: GameSpaceClientCtx = {
-      ...ctx,
-      hostId: space.hostId,
-    };
-
     const updated = GameClient.update({
-      ctx: spaceCtx,
-      sendToServer: (msg) =>
-        sendToServer({
-          t: "game",
-          c: msg,
-          // profile: ctx.profiles[ctx.currentUserId],
-        }),
-      msg: gameMsg,
-      model: game,
+      ctx: { ...ctx, hostId: space.hostId },
+      sendToServer: (msg) => sendToServer({ t: "game", c: msg }),
+      msg: msg.c,
+      model: space.game,
     });
 
-    const modelNew: ClientModel = {
+    const spaceNew: GameSpace<GameClient.Model> = {
+      ...space,
+      game: updated.model,
+    };
+
+    const modelNew = {
       ...model,
-      games: {
-        ...model.games,
-        [user.spaceId]: updated.model,
+      spaces: {
+        ...model.spaces,
+        [space.gameSpaceId]: spaceNew,
       },
     };
 
@@ -204,17 +186,8 @@ const update_: typeof update = ({ ctx, sendToServer, msg, model }) => {
   }
 
   return {
-    model: {
-      ...model,
-      req: {
-        ...model.req,
-        [msg.t]: RemoteResult.Loading,
-      },
-    },
-    cmd: sendToServer({
-      ...msg,
-      profile: ctx ? ctx.profiles[ctx.currentUserId] : undefined,
-    }),
+    model: { ...model, req: { ...model.req, [msg.t]: RemoteResult.Loading } },
+    cmd: sendToServer(msg),
   };
 };
 
@@ -224,7 +197,7 @@ export const updateFromServer = ({
   msg,
   model,
 }: {
-  ctx: ClientCtx | null;
+  ctx: ClientCtx;
   sendToServer: (msg: ToServer) => Cmd;
   msg: ToClient;
   model: ClientModel;
@@ -235,47 +208,33 @@ export const updateFromServer = ({
 } => {
   switch (msg.t) {
     case "game": {
-      if (!ctx) {
-        return { model };
-      }
-      const user = model.users[ctx.currentUserId];
-
-      if (!user) {
-        return { model };
-      }
-
-      const space = model.spaces[user.spaceId];
+      const space = findSpaceByUserId(model, ctx.currentUserId);
 
       if (!space) {
         return { model };
       }
 
-      const game = model.games[user.spaceId];
-
-      if (!game) {
+      if (!space.game) {
         return { model };
       }
 
       const updated = GameClient.updateFromServer({
-        ctx: {
-          ...ctx,
-          hostId: space.hostId,
-        },
-        sendToServer: (msg) =>
-          sendToServer({
-            t: "game",
-            c: msg,
-            // profile: ctx.profiles[ctx.currentUserId],
-          }),
-        model: game,
+        ctx: { ...ctx, hostId: space.hostId },
+        sendToServer: (msg) => sendToServer({ t: "game", c: msg }),
+        model: space.game,
         msg: msg.c,
       });
 
+      const spaceNew: GameSpace<GameClient.Model> = {
+        ...space,
+        game: updated.model,
+      };
+
       const modelNew: ClientModel = {
         ...model,
-        games: {
-          ...model.games,
-          [user.spaceId]: updated.model,
+        spaces: {
+          ...model.spaces,
+          [space.gameSpaceId]: spaceNew,
         },
       };
 
@@ -285,6 +244,45 @@ export const updateFromServer = ({
         msgs: updated.msgs,
       };
     }
+
+    case "list": {
+      if (msg.result.t === "err") {
+        return {
+          model: { ...model, req: { ...model.req, list: msg.result } },
+          msgs: [{ t: "enqueue-toast", text: msg.result.error }],
+        };
+      }
+
+      const merged = syncWithServer({
+        ctx,
+        client: model,
+        server: msg.result.value,
+        sendToServer,
+      });
+
+      return {
+        model: { ...merged.model, req: { ...model.req, list: Ok(null) } },
+        cmd: merged.cmd,
+      };
+    }
+
+    case "destroy": {
+      if (msg.result.t === "err") {
+        return {
+          model: { ...model, req: { ...model.req, [msg.t]: msg.result } },
+          msgs: [{ t: "enqueue-toast", text: msg.result.error }],
+        };
+      }
+
+      return {
+        model: {
+          ...model,
+          spaces: removeKey(msg.result.value.gameSpaceId, model.spaces),
+          req: { ...model.req, [msg.t]: Ok(null) },
+        },
+      };
+    }
+
     default: {
       if (msg.result.t === "err") {
         return {
@@ -295,63 +293,17 @@ export const updateFromServer = ({
 
       const merged = syncWithServer({
         ctx,
-        clientModel: model,
-        serverModel: msg.result.value,
+        client: model,
+        server: [msg.result.value],
         sendToServer,
       });
 
       return {
-        model: {
-          ...merged.model,
-          req: {
-            ...merged.model.req,
-            [msg.t]: Ok(null),
-          },
-        },
+        model: { ...merged.model, req: { ...model.req, [msg.t]: Ok(null) } },
         cmd: merged.cmd,
-        msgs: [
-          ...(ctx ? resToToast({ model: merged.model, ctx, res: msg }) : []),
-          { t: "got-profiles", profiles: merged.model.profiles },
-        ],
       };
     }
   }
-};
-
-const resToToast = ({
-  ctx,
-  res,
-  model,
-}: {
-  model: ClientModel;
-  ctx: ClientCtx;
-  res: Res;
-}): ClientAppMsg[] => {
-  const user = model.users[ctx.currentUserId];
-
-  if (!user) {
-    return [];
-  }
-
-  if (
-    res.t === "join" &&
-    res.result.t === "ok" &&
-    res.userId !== ctx.currentUserId
-  ) {
-    const username = ctx.profiles[res.userId]?.username ?? "...";
-    return [{ t: "enqueue-toast", text: `${username} joined space` }];
-  }
-
-  if (
-    res.t === "leave" &&
-    res.result.t === "ok" &&
-    res.userId !== ctx.currentUserId
-  ) {
-    const username = ctx.profiles[res.userId]?.username ?? "...";
-    return [{ t: "enqueue-toast", text: `${username} left space` }];
-  }
-
-  return [];
 };
 
 export const updateFromApp = (input: {
@@ -369,6 +321,10 @@ export const updateFromApp = (input: {
   }
 
   if (msg.t === "wire-connected") {
+    return loadGameSpaces(input);
+  }
+
+  if (msg.t === "route-changed" && msg.route.t === "game-space") {
     return loadGameSpaces(input);
   }
 
@@ -398,114 +354,55 @@ const loadGameSpaces = (input: {
 
 const syncWithServer = ({
   ctx,
-  clientModel,
-  serverModel,
+  client,
+  server,
   sendToServer,
 }: {
-  ctx: ClientCtx | null;
+  ctx: ClientCtx;
   sendToServer: (msg: ToServer) => Cmd;
-  clientModel: ClientModel;
-  serverModel: ServerModel;
+  client: ClientModel;
+  server: GameSpace<Game.ServerModel>[];
 }): {
   model: ClientModel;
   cmd: Cmd<ClientMsg>;
 } => {
-  const gamesNew = Object.entries(serverModel.games).reduce<
-    [ClientModel["games"], Cmd<ClientMsg>]
-  >(
-    (gamesNew, [spaceId, serverGame]) => {
-      if (!GameSpaceId.is(spaceId)) {
-        return gamesNew;
-      }
+  const clientSpaces: { [id: GameSpaceId]: GameSpace<Game.ClientModel> } = {};
+  const cmds: Cmd<ClientMsg>[] = [];
 
-      if (!ctx) {
-        console.log("skip no ctx");
-        return gamesNew;
-      }
-
-      const space = serverModel.spaces[spaceId];
-
-      if (!space) {
-        return gamesNew;
-      }
-
-      const gameSpaceCtx: GameSpaceClientCtx = {
-        ...ctx,
-        hostId: space.hostId,
+  for (const serverSpace of server) {
+    if (!serverSpace.game) {
+      const clientSpaceNew: GameSpace<Game.ClientModel> = {
+        ...serverSpace,
+        game: null,
       };
+      clientSpaces[clientSpaceNew.gameSpaceId] = clientSpaceNew;
+      continue;
+    }
 
-      const clientGame = clientModel.games[spaceId];
+    const clientSpace = client.spaces[serverSpace.gameSpaceId];
 
-      if (clientGame) {
-        const merged = GameClient.syncWithServer({
-          ctx: gameSpaceCtx,
-          server: serverGame,
-          client: clientGame,
-          sendToServer: (msg) => sendToServer({ t: "game", c: msg }),
-        });
+    const merged = GameClient.syncWithServer({
+      ctx: { ...ctx, hostId: serverSpace.hostId },
+      sendToServer: (msg) => sendToServer({ t: "game", c: msg }),
+      server: serverSpace.game,
+      client: clientSpace?.game,
+    });
 
-        return [
-          {
-            ...gamesNew[0],
-            [spaceId]: merged.model,
-          },
-          Cmd.batch([
-            gamesNew[1],
-            p(
-              merged.cmd ?? Cmd.None,
-              Cmd.map((m): ClientMsg => ({ t: "game", c: m }))
-            ),
-          ]),
-        ];
-      }
-
-      const gameName = serverGame.t;
-
-      const initial = GameClient.init({ gameName })({
-        ctx: gameSpaceCtx,
-        sendToServer: (msg) => sendToServer({ t: "game", c: msg }),
-      });
-
-      const merged = GameClient.syncWithServer({
-        ctx: gameSpaceCtx,
-        server: serverGame,
-        client: initial.model,
-        sendToServer: (msg) => sendToServer({ t: "game", c: msg }),
-      });
-
-      return [
-        {
-          ...gamesNew[0],
-          [spaceId]: merged.model,
-        },
-        Cmd.batch([
-          gamesNew[1],
-          p(
-            initial.cmd ?? Cmd.None,
-            Cmd.map((msg) => ({ t: "game", c: msg }))
-          ),
-          p(
-            merged.cmd ?? Cmd.None,
-            Cmd.map((msg) => ({ t: "game", c: msg }))
-          ),
-        ]),
-      ];
-    },
-    [{}, Cmd.None]
-  );
+    const clientSpaceNew: GameSpace<Game.ClientModel> = {
+      ...serverSpace,
+      game: merged.model,
+    };
+    clientSpaces[clientSpaceNew.gameSpaceId] = clientSpaceNew;
+    cmds.push(Cmd.t("game", merged.cmd));
+    continue;
+  }
 
   return {
     model: {
-      ...clientModel,
-      games: gamesNew[0],
-      spaces: serverModel.spaces,
-      users: serverModel.users,
-      profiles: {
-        ...clientModel.profiles,
-        ...serverModel.profiles,
-      },
+      ...client,
+      spaces: clientSpaces,
     },
-    cmd: gamesNew[1],
+    cmd: Cmd.batch(cmds),
   };
 };
 
@@ -523,35 +420,22 @@ export const subscriptions = (
   ctx: ClientCtx,
   model: ClientModel
 ): Sub<ClientMsg> => {
-  const user = model.users[ctx.currentUserId];
-
-  if (!user) {
-    return Sub.None;
-  }
-
-  const game = model.games[user.spaceId];
-
-  if (!game) {
-    return Sub.None;
-  }
-
-  const space = model.spaces[user.spaceId];
+  const space = findSpaceByUserId(model, ctx.currentUserId);
 
   if (!space) {
     return Sub.None;
   }
 
-  const gameSpaceCtx: GameSpaceClientCtx = {
-    ...ctx,
-    hostId: space.hostId,
-  };
+  if (!space.game) {
+    return Sub.None;
+  }
 
   return Sub.tag(
     "game",
     GameClient.subscriptions({
-      ctx: gameSpaceCtx,
-      model: game,
-      intervalId: `space/${user.spaceId}`,
+      ctx: { ...ctx, hostId: space.hostId },
+      model: space.game,
+      intervalId: space.gameSpaceId,
     })
   );
 };
@@ -567,7 +451,7 @@ export const subscriptions = (
 //
 
 export const View = ({
-  ctx: ctxPrev,
+  ctx,
   dispatch,
   model,
   route,
@@ -579,14 +463,6 @@ export const View = ({
   route: RouteGameSpace;
   viewBottomBar: VDom;
 }) => {
-  const ctx: ViewCtx = {
-    ...ctxPrev,
-    profiles: {
-      ...ctxPrev.profiles,
-      ...model.profiles,
-    },
-  };
-
   if (route.t === "game-space") {
     return (
       <ViewSpaceScreen
@@ -625,7 +501,7 @@ const ViewSpaceScreen = ({
     return <LoadingScreen />;
   }
 
-  const space = toSpace({ spaceId, model });
+  const space = model.spaces[spaceId];
 
   if (!space) {
     return <ViewSpaceNotFound ctx={ctx} />;
@@ -634,7 +510,7 @@ const ViewSpaceScreen = ({
   const spaceCtx: GameSpaceViewCtx = {
     ...ctx,
     hostId: space.hostId,
-    space,
+    gameSpaceId: space.gameSpaceId,
     onViewProfile: (input) =>
       dispatch({ t: "clicked-user", userId: input.userId }),
     onQuit: () => dispatch({ t: "input-game", gameName: undefined }),
@@ -648,7 +524,7 @@ const ViewSpaceScreen = ({
         id="users"
         open={model.modal === "users"}
         onClose={() => dispatch({ t: "modal-closed" })}>
-        {spaceCtx && <ViewUsersInSpaceList ctx={spaceCtx} />}
+        {spaceCtx && <ViewUsersInSpaceList space={space} ctx={spaceCtx} />}
       </Drawer>
 
       <Drawer
@@ -716,30 +592,24 @@ const ViewPage = ({
   ctx: GameSpaceViewCtx;
   dispatch: (m: ClientMsg) => void;
 }) => {
-  const currentUser = model.users[ctx.currentUserId];
+  const space = findSpaceByUserId(model, ctx.currentUserId);
 
-  if (!currentUser) {
+  if (!space) {
     return <ViewSpaceJoinScreen model={model} dispatch={dispatch} ctx={ctx} />;
   }
 
-  if (currentUser.spaceId !== ctx.space.gameSpaceId) {
-    return <ViewSpaceJoinScreen dispatch={dispatch} ctx={ctx} model={model} />;
-  }
-
-  const game = model.games[ctx.space.gameSpaceId];
-
   return (
     <div className="flex h-full w-full flex-1 flex-col">
-      <ViewTopBar dispatch={dispatch} ctx={ctx} />
+      <ViewTopBar space={space} dispatch={dispatch} ctx={ctx} />
       <div className="w-full flex-1 overflow-y-auto">
-        {game ? (
+        {space.game ? (
           <GameClient.View
             ctx={ctx}
             dispatch={(msg) => dispatch({ t: "game", c: msg })}
-            model={game}
+            model={space.game}
           />
         ) : (
-          <ViewNotInGameScreen ctx={ctx} dispatch={dispatch} />
+          <ViewNotInGameScreen space={space} ctx={ctx} dispatch={dispatch} />
         )}
       </div>
     </div>
@@ -748,12 +618,13 @@ const ViewPage = ({
 
 const ViewTopBar = ({
   ctx,
+  space,
   dispatch,
 }: {
+  space: GameSpace<Game.ClientModel>;
   ctx: GameSpaceViewCtx;
   dispatch: (m: ClientMsg) => void;
 }) => {
-  const peopleCount = Object.values(ctx.space.users).length;
   return (
     <nav className="flex h-14 w-full items-center border-b border-neutral-700 px-2 py-1">
       <div className="grid w-20 place-items-center">
@@ -767,8 +638,9 @@ const ViewTopBar = ({
       </div>
 
       <div className="grid w-20 place-items-center">
+        {/* label={peopleCount > 1 ? `People (${peopleCount})` : `People`} */}
         <ActionButton
-          label={peopleCount > 1 ? `People (${peopleCount})` : `People`}
+          label="People"
           icon={<IconUserGroup className="h-6 w-6" />}
           onClick={() => dispatch({ t: "modal-open", c: "users" })}
         />
@@ -780,9 +652,9 @@ const ViewTopBar = ({
         color="danger"
         variant="contained"
         size="sm"
-        text={ctx.space.hostId === ctx.currentUserId ? "End" : "Leave"}
+        text={space.hostId === ctx.currentUserId ? "End" : "Leave"}
         onClick={() => {
-          if (ctx.space.hostId === ctx.currentUserId) {
+          if (space.hostId === ctx.currentUserId) {
             dispatch({ t: "destroy", userId: ctx.currentUserId });
             return;
           }
@@ -812,7 +684,7 @@ export const ViewSpaceNotFound = ({ ctx }: { ctx: ViewCtx }) => {
 };
 
 export const ViewCurrentSpaceBar = ({
-  ctx: ctxPrev,
+  ctx,
   model,
   dispatch,
 }: {
@@ -820,30 +692,15 @@ export const ViewCurrentSpaceBar = ({
   model: ClientModel;
   dispatch: (msg: ClientMsg) => void;
 }) => {
-  const ctx: ViewCtx = {
-    ...ctxPrev,
-    profiles: {
-      ...ctxPrev.profiles,
-      ...model.profiles,
-    },
-  };
-  const user = model.users[ctx.currentUserId];
-
-  if (!user) {
-    return null;
-  }
-
-  const space = model.spaces[user.spaceId];
+  const space = findSpaceByUserId(model, ctx.currentUserId);
 
   if (!space) {
     return null;
   }
 
-  const game = model.games[space.gameSpaceId];
   const hostProfile = ctx.profiles[space.hostId];
-  const userCount = Object.values(model.users).filter(
-    (user) => user.spaceId === space.gameSpaceId
-  ).length;
+
+  const userCount = Object.values(space.users).length;
 
   return (
     <div className="flex w-full items-center overflow-hidden border-t-2 border-blue-600 text-inherit">
@@ -856,16 +713,16 @@ export const ViewCurrentSpaceBar = ({
           });
         }}>
         <div className="mr-2 p-2">
-          {!game && (
+          {!space.game && (
             <MyAvatar
               src={hostProfile?.avatarUrl}
               alt="Host Avatar"
               className="h-12 w-12"
             />
           )}
-          {game && (
+          {space.game && (
             <div className="h-12 w-12 overflow-hidden rounded border border-neutral-600">
-              <ViewCoverArt gameName={game.t} />
+              <ViewCoverArt gameName={space.game.t} />
             </div>
           )}
         </div>
