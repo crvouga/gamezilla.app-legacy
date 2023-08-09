@@ -1,8 +1,8 @@
 import { AppClient } from "@gamezilla/app";
 import { Browser, Program, toMsgPayload, toMsgType } from "@gamezilla/core";
 import { render } from "inferno";
-import "./main.css";
-import { createTransportClient } from "./transport-client";
+import "./main.client.css";
+import { createTransportClient } from "./transport.client";
 
 const env = {
   isDev: process.env.NODE_ENV === "development",
