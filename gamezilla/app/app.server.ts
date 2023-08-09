@@ -1,24 +1,26 @@
 import {
   ClientId,
   Cmd,
+  Posix,
   ServerWireMsg,
   SessionId,
   Sub,
   andThen,
   p,
 } from "gamezilla/@/core";
+import { UserId } from "gamezilla/app/@/app";
 import { AuthServer } from "gamezilla/app/auth";
 import { ChatServer } from "gamezilla/app/chat";
 import { ProfileServer } from "gamezilla/app/profile";
 import { SearchServer } from "gamezilla/app/search";
-import { UserId } from "gamezilla/app/@/app";
+import { SpaceServer } from "gamezilla/app/space";
 import {
+  DbConnMySql,
   ServerAppMsg,
   ServerCtx,
   ServerReqCtx,
   ServerUnauthenticatedReqCtx,
-} from "gamezilla/app/@/server";
-import { SpaceServer } from "gamezilla/app/space";
+} from "./@/server";
 import {
   ServerModel,
   ServerMsg,
@@ -458,3 +460,27 @@ export const onClientMsg = Sub.create<{
 }>();
 
 export const onWireMsg = Sub.create<ServerWireMsg>();
+
+//
+//
+//
+//
+//
+//
+
+export const initCtx = async (): Promise<ServerCtx> => {
+  console.log("[server] planet scale connecting...");
+
+  const DATABASE_URL =
+    'mysql://scuu9usphxh6zuxltqbe:pscale_pw_lkZooGgR8H09Uc59IVrcZEt8avVQ54VObBfoFwbCIa3@aws.connect.psdb.cloud/gamezilla?ssl={"rejectUnauthorized":true}';
+
+  const mySql = await DbConnMySql.create({
+    connectionString: DATABASE_URL,
+  });
+
+  console.log("[server] planet scale connected.");
+  return {
+    mySql,
+    now: Posix.now(),
+  };
+};

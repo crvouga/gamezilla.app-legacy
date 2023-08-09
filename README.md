@@ -2,4 +2,4 @@
 
 Folder Structure Rules
 
-- Modules are only allowed to import children files or parent files in a shared (@) folder
+- Files are ONLY allowed to import sibling files, or index file if its in a sibling folder, or parent files in its in a shared folder
