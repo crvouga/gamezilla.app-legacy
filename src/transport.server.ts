@@ -1,11 +1,11 @@
-import { ToClient, ToServer } from "@gamezilla/app";
+import { ToClient, ToServer } from "src/app";
 import {
   ClientId,
   PubSub,
   ServerWireMsg,
   SessionId,
   TransportServer,
-} from "@gamezilla/core";
+} from "src/core";
 import http from "http";
 import WebSocket, { WebSocketServer } from "ws";
 

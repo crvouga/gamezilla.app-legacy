@@ -1,10 +1,7 @@
-import { SESSION_ID_KEY, ToClient, ToServer } from "@gamezilla/app";
-import {
-  ClientWireMsg,
-  PubSub,
-  SessionMsg,
-  TransportClient,
-} from "@gamezilla/core";
+import { ToClient, ToServer } from "src/app";
+import { ClientWireMsg, PubSub, SessionMsg, TransportClient } from "src/core";
+
+const SESSION_ID_KEY = "gamezilla-session-id";
 
 const RECONNECT_INTERVAL = 2000; // 1 second
 const MAX_RECONNECT_ATTEMPTS = 5; // Adjust as needed

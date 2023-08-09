@@ -1,5 +1,5 @@
-import { AppClient } from "@gamezilla/app";
-import { Browser, Program, toMsgPayload, toMsgType } from "@gamezilla/core";
+import { AppClient } from "src/app";
+import { Browser, Program, toMsgPayload, toMsgType } from "src/core";
 import { render } from "inferno";
 import "./main.client.css";
 import { createTransportClient } from "./transport.client";
