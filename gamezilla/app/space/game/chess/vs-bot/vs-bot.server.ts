@@ -1,4 +1,4 @@
-import { Cmd, p, Sub } from "gamezilla/core";
+import { Cmd, p, Sub } from "gamezilla/@/core";
 import { SpaceMsg, GameSpaceReqCtx } from "gamezilla/app/space/@";
 import * as Chess from "../chess/chess";
 import {

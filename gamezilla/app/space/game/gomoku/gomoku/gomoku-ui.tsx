@@ -1,4 +1,4 @@
-import { Hex } from "gamezilla/core";
+import { Hex } from "gamezilla/@/core";
 import {
   Board,
   Bounds,

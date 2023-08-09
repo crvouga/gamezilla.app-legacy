@@ -7,7 +7,7 @@ import {
   andThen,
   p,
   removeKey,
-} from "gamezilla/core";
+} from "gamezilla/@/core";
 
 import {
   ClientAppMsg,

@@ -6,7 +6,7 @@ import {
   Result,
   Task,
   p,
-} from "gamezilla/core";
+} from "gamezilla/@/core";
 import { ClientAppMsg, UnauthenticatedViewCtx } from "gamezilla/app/@/client";
 import {
   Button,

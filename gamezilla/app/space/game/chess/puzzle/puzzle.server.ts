@@ -8,7 +8,7 @@ import {
   andThen,
   eq,
   p,
-} from "gamezilla/core";
+} from "gamezilla/@/core";
 import { UserId } from "gamezilla/app/@/app";
 import {
   SpaceMsg,

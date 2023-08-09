@@ -8,7 +8,7 @@ import {
   Sub,
   Task,
   p,
-} from "gamezilla/core";
+} from "gamezilla/@/core";
 import { UserId, client } from "gamezilla/app/@/app";
 import {
   ClientAppMsg,

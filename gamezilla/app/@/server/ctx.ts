@@ -1,4 +1,4 @@
-import { ClientId, Posix, SessionId } from "gamezilla/core";
+import { ClientId, Posix, SessionId } from "gamezilla/@/core";
 import { UserId } from "gamezilla/app/@/app";
 import { DbConnMySql } from "./database-connection-mysql";
 

@@ -1,4 +1,4 @@
-import { Transition, p } from "gamezilla/core";
+import { Transition, p } from "gamezilla/@/core";
 import { UserId } from "gamezilla/app/@/app";
 import {
   Button,

@@ -5,7 +5,7 @@ import {
   RouteProfile,
   ViewCtx,
 } from "gamezilla/app/@/client";
-import { Cmd, andThen, p } from "gamezilla/core";
+import { Cmd, andThen, p } from "gamezilla/@/core";
 import {
   IconChevronRight,
   LoadingScreen,

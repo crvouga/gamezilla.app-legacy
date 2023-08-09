@@ -1,5 +1,5 @@
 import { UserId, Username } from "gamezilla/app/@/app";
-import { Posix } from "gamezilla/core";
+import { Posix } from "gamezilla/@/core";
 import * as Route from "./route";
 
 type Profile = {

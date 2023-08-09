@@ -1,4 +1,4 @@
-import { Cmd, Err, Ok, Sub, andThen, p } from "gamezilla/core";
+import { Cmd, Err, Ok, Sub, andThen, p } from "gamezilla/@/core";
 import { SpaceMsg, GameSpaceReqCtx } from "gamezilla/app/space/@";
 import { TicTacToe } from "../tic-tic-toe";
 import { getBestMove } from "../tic-tic-toe/best-move";

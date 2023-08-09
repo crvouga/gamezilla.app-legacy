@@ -1,4 +1,4 @@
-import { Cmd, andThen, p } from "gamezilla/core";
+import { Cmd, andThen, p } from "gamezilla/@/core";
 import { ClientAppMsg } from "gamezilla/app/@/client";
 import {
   IconArrowCircle,

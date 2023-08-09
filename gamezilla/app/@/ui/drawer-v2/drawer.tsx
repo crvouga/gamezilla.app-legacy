@@ -1,4 +1,4 @@
-import { Transition } from "gamezilla/core";
+import { Transition } from "gamezilla/@/core";
 import { VDomChildren } from "..";
 
 const config = Transition.config<boolean>({

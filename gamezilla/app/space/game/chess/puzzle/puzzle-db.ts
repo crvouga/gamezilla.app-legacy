@@ -12,7 +12,7 @@ import {
   str,
   tuple,
   to,
-} from "gamezilla/core";
+} from "gamezilla/@/core";
 import { UserId } from "gamezilla/app/@/app";
 import { DbConnMySql } from "gamezilla/app/@/server";
 import { MoveInput, uciMoveToMoveInput } from "../chess/chess";

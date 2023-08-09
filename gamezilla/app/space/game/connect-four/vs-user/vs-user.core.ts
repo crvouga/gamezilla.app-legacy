@@ -1,5 +1,5 @@
 import { UserId } from "gamezilla/app/@/app";
-import { Err, Ok, Result, exhaustive } from "gamezilla/core";
+import { Err, Ok, Result, exhaustive } from "gamezilla/@/core";
 import {
   ColumnIndex,
   Columns,

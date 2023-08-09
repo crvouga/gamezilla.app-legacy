@@ -1,4 +1,4 @@
-import { Sub, andThen, p } from "gamezilla/core";
+import { Sub, andThen, p } from "gamezilla/@/core";
 import { GameClient } from "gamezilla/app/space/@";
 import { IconArrowLeftOnRect, Button } from "gamezilla/app/@/ui";
 import { FlowGridPlayUI } from "../flow-grid";

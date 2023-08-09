@@ -1,4 +1,4 @@
-import { Ok, Result } from "gamezilla/core";
+import { Ok, Result } from "gamezilla/@/core";
 import { ChildrenFn, Minimax, ScoreFn } from "gamezilla/app/space/@";
 import {
   Columns,

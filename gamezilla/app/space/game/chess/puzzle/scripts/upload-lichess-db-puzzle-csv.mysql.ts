@@ -1,5 +1,5 @@
 import { DbConnMySql } from "gamezilla/app/@/server";
-import { has, obj, str } from "gamezilla/core";
+import { has, obj, str } from "gamezilla/@/core";
 import { PuzzleDb, PuzzleRow } from "../puzzle-db";
 
 //

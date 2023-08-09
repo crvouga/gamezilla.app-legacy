@@ -6,7 +6,7 @@ import {
   ToServer,
   initShared,
 } from "./play.core";
-import { Sub } from "gamezilla/core";
+import { Sub } from "gamezilla/@/core";
 
 type Server = GameServer<ServerModel, ServerMsg, ToClient, ToServer>;
 

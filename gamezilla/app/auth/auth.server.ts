@@ -1,4 +1,4 @@
-import { Cmd } from "gamezilla/core";
+import { Cmd } from "gamezilla/@/core";
 import { ServerModel, ServerMsg, ToServer } from "./auth.core";
 import {
   ServerAppMsg,

@@ -1,4 +1,4 @@
-import { Audio, Cmd, Sub, andThen, exhaustive, p } from "gamezilla/core";
+import { Audio, Cmd, Sub, andThen, exhaustive, p } from "gamezilla/@/core";
 import {
   GameLayout,
   SpaceClientCtx,

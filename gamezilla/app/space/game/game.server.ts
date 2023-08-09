@@ -1,4 +1,4 @@
-import { Cmd, Sub } from "gamezilla/core";
+import { Cmd, Sub } from "gamezilla/@/core";
 import { ChessServer } from "gamezilla/app/space/game/chess";
 import { ConnectFourServer } from "gamezilla/app/space/game/connect-four";
 import { FlowServer } from "gamezilla/app/space/game/flow";

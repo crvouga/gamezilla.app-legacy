@@ -1,4 +1,4 @@
-import { Cmd, Keyboard, Sub, p } from "gamezilla/core";
+import { Cmd, Keyboard, Sub, p } from "gamezilla/@/core";
 import { SpaceClientCtx, SpaceViewCtx } from "gamezilla/app/space/@";
 import { ActionButton, IconArrowLeftOnRect } from "gamezilla/app/@/ui";
 import { Maze } from "./maze";

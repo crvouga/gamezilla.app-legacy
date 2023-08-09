@@ -1,4 +1,4 @@
-import { Err, Result, Task } from "gamezilla/core";
+import { Err, Result, Task } from "gamezilla/@/core";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import * as threads from "threads";

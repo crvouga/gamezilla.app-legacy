@@ -1,4 +1,4 @@
-import { NonEmpty } from "gamezilla/core";
+import { NonEmpty } from "gamezilla/@/core";
 import { Flow } from "../flow";
 import { NodeId, GroupId, Terminal } from "../flow/flow";
 import * as FlowGrid from "./flow-grid";

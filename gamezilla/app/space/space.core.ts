@@ -1,4 +1,4 @@
-import { RemoteResult, Result } from "gamezilla/core";
+import { RemoteResult, Result } from "gamezilla/@/core";
 import { UserId } from "gamezilla/app/@/app";
 import { Space } from "gamezilla/app/space/@";
 import * as Game from "./game/game.core";

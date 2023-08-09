@@ -1,4 +1,4 @@
-import { ClientId, Cmd, Err, Ok, Sub, removeKey } from "gamezilla/core";
+import { ClientId, Cmd, Err, Ok, Sub, removeKey } from "gamezilla/@/core";
 import { UserId } from "gamezilla/app/@/app";
 import { ServerAppMsg, ServerCtx, ServerReqCtx } from "gamezilla/app/@/server";
 import { Space, GameSpaceServerCtx } from "gamezilla/app/space/@";

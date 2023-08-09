@@ -1,4 +1,4 @@
-import { Result } from "gamezilla/core";
+import { Result } from "gamezilla/@/core";
 import { phone } from "./phone";
 import { Iso3166Alpha2Code } from "../Iso-3166-alpha-2-code";
 

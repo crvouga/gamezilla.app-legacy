@@ -1,4 +1,4 @@
-import { Audio, Cmd, Posix, RemoteResult, Sub } from "gamezilla/core";
+import { Audio, Cmd, Posix, RemoteResult, Sub } from "gamezilla/@/core";
 import { ClientAppMsg } from "gamezilla/app/@/client";
 import {
   SpaceClientCtx,

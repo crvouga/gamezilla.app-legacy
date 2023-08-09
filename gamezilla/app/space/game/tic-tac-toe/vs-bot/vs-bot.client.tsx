@@ -1,4 +1,4 @@
-import { Cmd, Posix } from "gamezilla/core";
+import { Cmd, Posix } from "gamezilla/@/core";
 import { ClientAppMsg, ClientCtx } from "gamezilla/app/@/client";
 import {
   SpaceClientCtx,

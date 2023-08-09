@@ -6,7 +6,7 @@ import {
   Task,
   Time,
   p,
-} from "gamezilla/core";
+} from "gamezilla/@/core";
 import { ClientAppMsg } from "gamezilla/app/@/client";
 import {
   AlertError,

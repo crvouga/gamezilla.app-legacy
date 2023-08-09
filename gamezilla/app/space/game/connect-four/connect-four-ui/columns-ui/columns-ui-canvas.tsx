@@ -1,4 +1,4 @@
-import { rescale } from "gamezilla/core";
+import { rescale } from "gamezilla/@/core";
 import {
   COLUMN_COUNT,
   Columns,

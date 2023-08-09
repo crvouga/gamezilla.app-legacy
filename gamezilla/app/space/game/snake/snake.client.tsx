@@ -1,4 +1,11 @@
-import { Cmd, Keyboard, Option, Result, Sub, exhaustive } from "gamezilla/core";
+import {
+  Cmd,
+  Keyboard,
+  Option,
+  Result,
+  Sub,
+  exhaustive,
+} from "gamezilla/@/core";
 import { ViewCtx } from "gamezilla/app/@/client";
 import { SpaceClientCtx } from "gamezilla/app/space/@";
 import { Direction } from "./direction";

@@ -1,4 +1,4 @@
-import { Cmd, Posix, Sub, andThen, p } from "gamezilla/core";
+import { Cmd, Posix, Sub, andThen, p } from "gamezilla/@/core";
 import { ClientCtx } from "gamezilla/app/@/client";
 import {
   GameLayout,

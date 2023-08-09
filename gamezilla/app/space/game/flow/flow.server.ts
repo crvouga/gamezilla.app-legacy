@@ -1,4 +1,4 @@
-import { Err, Ok, Sub } from "gamezilla/core";
+import { Err, Ok, Sub } from "gamezilla/@/core";
 import { GameServer } from "gamezilla/app/space/@";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./flow.core";
 import { PlayServer } from "./play";

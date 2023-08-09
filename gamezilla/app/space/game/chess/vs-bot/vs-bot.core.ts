@@ -1,4 +1,4 @@
-import { Audio, Err, Ok, Result } from "gamezilla/core";
+import { Audio, Err, Ok, Result } from "gamezilla/@/core";
 import { UserId } from "gamezilla/app/@/app";
 import { VsBotSetup } from "gamezilla/app/space/@";
 import * as Chess from "../chess/chess";

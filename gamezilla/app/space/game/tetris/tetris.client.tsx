@@ -1,4 +1,4 @@
-import { Cmd, Keyboard, Option, Sub, exhaustive } from "gamezilla/core";
+import { Cmd, Keyboard, Option, Sub, exhaustive } from "gamezilla/@/core";
 import * as Board from "./board";
 import * as Direction from "./direction";
 import * as Piece from "./piece";

@@ -1,5 +1,5 @@
 import { UserId } from "gamezilla/app/@/app";
-import { Err, NonEmpty, Ok, Result } from "gamezilla/core";
+import { Err, NonEmpty, Ok, Result } from "gamezilla/@/core";
 import {
   Board,
   MoveProblem,

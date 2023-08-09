@@ -1,4 +1,4 @@
-import { Cmd, Sub } from "gamezilla/core";
+import { Cmd, Sub } from "gamezilla/@/core";
 import { VDom } from "gamezilla/app/@/ui";
 
 /**

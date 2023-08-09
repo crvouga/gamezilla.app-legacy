@@ -1,4 +1,4 @@
-import { Cmd, Sub, andThen, p } from "gamezilla/core";
+import { Cmd, Sub, andThen, p } from "gamezilla/@/core";
 import { SpaceMsg, GameSpaceReqCtx } from "gamezilla/app/space/@";
 import {
   Res,

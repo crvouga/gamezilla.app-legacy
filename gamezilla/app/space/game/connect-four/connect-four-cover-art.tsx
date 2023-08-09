@@ -1,4 +1,4 @@
-import { Uuid } from "gamezilla/core";
+import { Uuid } from "gamezilla/@/core";
 import { COLUMN_COUNT, MAX_COLUMN_HEIGHT } from "./connect-four";
 import { gameTheme } from "./connect-four-ui/shared";
 

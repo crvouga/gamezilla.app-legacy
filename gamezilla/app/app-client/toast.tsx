@@ -1,4 +1,4 @@
-import { Transition, Cmd, Time, p, andThen } from "gamezilla/core";
+import { Transition, Cmd, Time, p, andThen } from "gamezilla/@/core";
 import { ClientAppMsg } from "gamezilla/app/@/client";
 import { IconXMark } from "gamezilla/app/@/ui";
 

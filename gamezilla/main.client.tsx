@@ -5,7 +5,7 @@ import {
   createTransportClient,
   toMsgPayload,
   toMsgType,
-} from "gamezilla/core";
+} from "gamezilla/@/core";
 import { AppClient } from "./app";
 import "./main.client.css";
 

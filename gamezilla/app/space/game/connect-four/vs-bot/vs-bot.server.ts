@@ -1,4 +1,4 @@
-import { andThen, Cmd, p, Result, Sub } from "gamezilla/core";
+import { andThen, Cmd, p, Result, Sub } from "gamezilla/@/core";
 import { SpaceMsg, GameSpaceReqCtx } from "gamezilla/app/space/@";
 import { findBestMove } from "../connect-four";
 import {

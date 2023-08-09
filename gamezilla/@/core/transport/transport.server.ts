@@ -6,7 +6,7 @@ import {
   ServerWireMsg,
   SessionId,
   TransportServer,
-} from "gamezilla/core";
+} from "gamezilla/@/core";
 import WebSocket, { WebSocketServer } from "ws";
 
 export const createTransportServer = <ToServer, ToClient>({

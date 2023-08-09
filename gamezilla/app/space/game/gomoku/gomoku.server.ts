@@ -1,4 +1,4 @@
-import { Cmd, Result, Sub } from "gamezilla/core";
+import { Cmd, Result, Sub } from "gamezilla/@/core";
 import { UserId } from "gamezilla/app/@/app";
 import { SpaceMsg, GameSpaceReqCtx } from "gamezilla/app/space/@";
 import {

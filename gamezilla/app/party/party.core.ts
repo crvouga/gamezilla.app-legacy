@@ -1,4 +1,9 @@
-import { filterObject, RemoteResult, removeKey, Result } from "gamezilla/core";
+import {
+  filterObject,
+  RemoteResult,
+  removeKey,
+  Result,
+} from "gamezilla/@/core";
 import { PartyId, UserId } from "gamezilla/app/@/app";
 import { MicLoadResult, MicUnloadResult } from "./mic";
 const { Err, Ok } = Result;

@@ -1,4 +1,4 @@
-import { Cmd, Transition } from "gamezilla/core";
+import { Cmd, Transition } from "gamezilla/@/core";
 import { UserId } from "gamezilla/app/@/app";
 import { IconRobot, MyAvatar, VDom } from "gamezilla/app/@/ui";
 import { SpaceViewCtx } from "../game-space-client";

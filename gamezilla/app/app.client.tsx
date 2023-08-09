@@ -1,4 +1,4 @@
-import { Browser, Cmd, Posix, Sub, andThen, p } from "gamezilla/core";
+import { Browser, Cmd, Posix, Sub, andThen, p } from "gamezilla/@/core";
 import { AuthClient } from "gamezilla/app/auth";
 import { ChatClient } from "gamezilla/app/chat";
 import { ProfileClient } from "gamezilla/app/profile";

@@ -1,4 +1,4 @@
-import { Sub } from "gamezilla/core";
+import { Sub } from "gamezilla/@/core";
 import { GameClient } from "gamezilla/app/space/@";
 import {
   ClientModel,

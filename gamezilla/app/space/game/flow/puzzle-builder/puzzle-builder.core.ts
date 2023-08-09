@@ -1,4 +1,4 @@
-import { Err, Ok, Result } from "gamezilla/core";
+import { Err, Ok, Result } from "gamezilla/@/core";
 import { UserId } from "gamezilla/app/@/app";
 import { Flow } from "../flow";
 import { FlowGrid, FlowGridPlayUI } from "../flow-grid";

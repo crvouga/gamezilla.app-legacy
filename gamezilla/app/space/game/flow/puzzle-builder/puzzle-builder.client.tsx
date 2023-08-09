@@ -1,4 +1,4 @@
-import { Cmd, Sub } from "gamezilla/core";
+import { Cmd, Sub } from "gamezilla/@/core";
 import { GameClient, ViewBottomButtonBar } from "gamezilla/app/space/@";
 import {
   IconArrowLeftOnRect,

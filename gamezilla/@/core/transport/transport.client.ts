@@ -3,7 +3,7 @@ import {
   PubSub,
   ServerToClientMsg,
   TransportClient,
-} from "gamezilla/core";
+} from "gamezilla/@/core";
 
 const SESSION_ID_KEY = "gamezilla-session-id";
 

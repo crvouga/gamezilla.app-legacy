@@ -1,4 +1,4 @@
-import { Cmd, Sub } from "gamezilla/core";
+import { Cmd, Sub } from "gamezilla/@/core";
 import { ServerAppMsg } from "gamezilla/app/@/server";
 import { SpaceMsg } from "../game-space-core";
 import { GameSpaceReqCtx, GameSpaceServerCtx } from "../game-space-server";

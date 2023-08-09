@@ -1,6 +1,6 @@
 import { createServer } from "http";
 import { DbConnMySql } from "gamezilla/app/@/server";
-import { createTransportServer, Program, toMsgType } from "gamezilla/core";
+import { createTransportServer, Program, toMsgType } from "gamezilla/@/core";
 import { AppServer, ServerModel, ServerMsg } from "./app";
 
 console.log("[server] planet scale connecting...");

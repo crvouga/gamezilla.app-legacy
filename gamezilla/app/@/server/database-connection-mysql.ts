@@ -1,4 +1,4 @@
-import { Err, Ok, Result } from "gamezilla/core";
+import { Err, Ok, Result } from "gamezilla/@/core";
 import * as mysql from "mysql2/promise";
 
 export type ParserMyZodEsque<TInput> = {

@@ -1,4 +1,4 @@
-import { Err, Ok, Posix, Result } from "gamezilla/core";
+import { Err, Ok, Posix, Result } from "gamezilla/@/core";
 import { UserId } from "gamezilla/app/@/app";
 import { VsBotGame, VsBotSetup } from "gamezilla/app/space/@";
 import {

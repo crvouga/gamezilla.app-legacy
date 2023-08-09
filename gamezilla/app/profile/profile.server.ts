@@ -7,7 +7,7 @@ import {
   Result,
   Task,
   p,
-} from "gamezilla/core";
+} from "gamezilla/@/core";
 import {
   ProfileAvatar,
   UserId,

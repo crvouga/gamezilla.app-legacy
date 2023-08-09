@@ -1,4 +1,4 @@
-import { Cmd, exhaustive, Sub, Time } from "gamezilla/core";
+import { Cmd, exhaustive, Sub, Time } from "gamezilla/@/core";
 import { SpaceMsg } from "gamezilla/app/space/@";
 import * as Board from "../chess/chess";
 import {

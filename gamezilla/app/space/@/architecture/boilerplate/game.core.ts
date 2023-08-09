@@ -1,4 +1,4 @@
-import { Ok, Result } from "gamezilla/core";
+import { Ok, Result } from "gamezilla/@/core";
 import { UserId } from "gamezilla/app/@/app";
 
 //

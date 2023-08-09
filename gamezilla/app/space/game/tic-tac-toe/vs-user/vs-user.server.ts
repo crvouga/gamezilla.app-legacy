@@ -1,5 +1,5 @@
 import { SpaceMsg } from "gamezilla/app/space/@";
-import { Cmd, Sub, Time } from "gamezilla/core";
+import { Cmd, Sub, Time } from "gamezilla/@/core";
 import { PlayerType, toOpposite, toTurn } from "../tic-tic-toe/tic-tac-toe";
 import * as Round from "./vs-user-round";
 import {

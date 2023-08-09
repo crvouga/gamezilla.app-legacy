@@ -1,5 +1,5 @@
 import { ClientAppMsg, RouteChat, ViewCtx } from "gamezilla/app/@/client";
-import { Browser, Cmd, exhaustive, p } from "gamezilla/core";
+import { Browser, Cmd, exhaustive, p } from "gamezilla/@/core";
 import { VDom } from "gamezilla/app/@/ui";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./chat.core";
 

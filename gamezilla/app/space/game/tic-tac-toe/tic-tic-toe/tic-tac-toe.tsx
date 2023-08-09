@@ -1,4 +1,4 @@
-import { Err, Ok, Result, memoize } from "gamezilla/core";
+import { Err, Ok, Result, memoize } from "gamezilla/@/core";
 
 //
 //

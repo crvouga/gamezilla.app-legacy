@@ -1,4 +1,4 @@
-import { ClientId, ServerWireMsg, SessionId } from "gamezilla/core";
+import { ClientId, ServerWireMsg, SessionId } from "gamezilla/@/core";
 import { Routing, Toast, Wire } from "./app-client";
 import * as Auth from "./auth";
 import * as Chat from "./chat";

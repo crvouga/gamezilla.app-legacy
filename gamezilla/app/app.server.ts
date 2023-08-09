@@ -6,7 +6,7 @@ import {
   Sub,
   andThen,
   p,
-} from "gamezilla/core";
+} from "gamezilla/@/core";
 import { AuthServer } from "gamezilla/app/auth";
 import { ChatServer } from "gamezilla/app/chat";
 import { ProfileServer } from "gamezilla/app/profile";

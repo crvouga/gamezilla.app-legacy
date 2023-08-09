@@ -1,4 +1,4 @@
-import { Sub } from "gamezilla/core";
+import { Sub } from "gamezilla/@/core";
 import { GameClient, MainMenuScreen } from "gamezilla/app/space/@";
 import { IconGamepad, IconScrewdriverWrench } from "gamezilla/app/@/ui";
 import { FlowViewCtx } from "./flow-shared";

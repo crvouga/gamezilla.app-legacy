@@ -1,4 +1,4 @@
-import { Result, Task, exhaustive } from "gamezilla/core";
+import { Result, Task, exhaustive } from "gamezilla/@/core";
 import {
   IconBotCute,
   IconBotLevel1,

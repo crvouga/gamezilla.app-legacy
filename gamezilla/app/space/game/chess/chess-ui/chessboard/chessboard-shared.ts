@@ -1,4 +1,4 @@
-import { Sub } from "gamezilla/core";
+import { Sub } from "gamezilla/@/core";
 import { Color, Piece, Square } from "../../chess";
 
 export type ChessboardProps = {
