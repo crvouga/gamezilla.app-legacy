@@ -47,7 +47,7 @@ import {
   ViewNotInGameScreen,
   ViewSpaceJoinScreen,
   ViewSpaceListScreen,
-} from "./views";
+} from "./game-space-ui";
 
 //
 //
