@@ -1,8 +1,8 @@
 import { Cmd, Sub } from "@gamezilla/core";
-import { ChessServer } from "@gamezilla/game/chess";
-import { ConnectFourServer } from "@gamezilla/game/connect-four";
-import { FlowServer } from "@gamezilla/game/flow";
-import { TicTacToeServer } from "@gamezilla/game/tic-tac-toe";
+import { ChessServer } from "src/libs/feat/game-space/game/chess";
+import { ConnectFourServer } from "src/libs/feat/game-space/game/connect-four";
+import { FlowServer } from "src/libs/feat/game-space/game/flow";
+import { TicTacToeServer } from "src/libs/feat/game-space/game/tic-tac-toe";
 import { GameServer } from "@gamezilla/shared/game-space";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./game.core";
 

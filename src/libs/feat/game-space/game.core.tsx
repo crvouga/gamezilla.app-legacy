@@ -1,7 +1,7 @@
-import * as Chess from "@gamezilla/game/chess";
-import * as ConnectFour from "@gamezilla/game/connect-four";
-import * as Flow from "@gamezilla/game/flow";
-import * as TicTacToe from "@gamezilla/game/tic-tac-toe";
+import * as Chess from "./game/chess";
+import * as ConnectFour from "./game/connect-four";
+import * as Flow from "./game/flow";
+import * as TicTacToe from "./game/tic-tac-toe";
 
 //
 //

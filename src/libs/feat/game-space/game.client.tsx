@@ -1,12 +1,12 @@
 import { Cmd, Sub, exhaustive } from "@gamezilla/core";
-import { ChessClient } from "@gamezilla/game/chess";
-import { ConnectFourClient } from "@gamezilla/game/connect-four";
-import { FlowClient } from "@gamezilla/game/flow";
-import { GomokuClient } from "@gamezilla/game/gomoku";
-import { MazeClient } from "@gamezilla/game/maze";
-import { SnakeClient } from "@gamezilla/game/snake";
-import { TetrisClient } from "@gamezilla/game/tetris";
-import { TicTacToeClient } from "@gamezilla/game/tic-tac-toe";
+import { ChessClient } from "src/libs/feat/game-space/game/chess";
+import { ConnectFourClient } from "src/libs/feat/game-space/game/connect-four";
+import { FlowClient } from "src/libs/feat/game-space/game/flow";
+import { GomokuClient } from "src/libs/feat/game-space/game/gomoku";
+import { MazeClient } from "src/libs/feat/game-space/game/maze";
+import { SnakeClient } from "src/libs/feat/game-space/game/snake";
+import { TetrisClient } from "src/libs/feat/game-space/game/tetris";
+import { TicTacToeClient } from "src/libs/feat/game-space/game/tic-tac-toe";
 import { GameClient, GameSpaceClientCtx } from "@gamezilla/shared/game-space";
 import {
   ClientModel,
