@@ -1,4 +1,4 @@
-import { VDom, cn } from "src/ui";
+import { VDom, cn } from "src/app/@shared/ui";
 
 export const GameLayout = ({
   children,

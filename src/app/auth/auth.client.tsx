@@ -25,7 +25,7 @@ import {
   LoadingBar,
   LoadingScreen,
   cn,
-} from "src/ui";
+} from "src/app/@shared/ui";
 import { Session as SupabaseSession } from "@supabase/supabase-js";
 import * as AuthEmailLink from "./auth-email-link";
 import * as AuthPhone from "./auth-phone";

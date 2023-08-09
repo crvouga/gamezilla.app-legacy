@@ -1,4 +1,4 @@
-import { IconGamepad, VDom } from "src/ui";
+import { IconGamepad, VDom } from "src/app/@shared/ui";
 
 export const ViewGameHeader = ({
   title,

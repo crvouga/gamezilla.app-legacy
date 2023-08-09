@@ -1,5 +1,5 @@
 import { UserId } from "src/app/@shared/app";
-import { MyAvatar, VDom } from "src/ui";
+import { MyAvatar, VDom } from "src/app/@shared/ui";
 import { PlayerType, VsBotProps } from "./view-vs-bot";
 
 export const VsBotPlayerSection = ({

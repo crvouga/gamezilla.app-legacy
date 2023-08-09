@@ -1,6 +1,6 @@
 import { Transition, Cmd, Time, p, andThen } from "src/core";
 import { ClientAppMsg } from "src/app/@shared/client";
-import { IconXMark } from "src/ui";
+import { IconXMark } from "src/app/@shared/ui";
 
 const config: Transition.Config<Toast> = {
   toId: (toast) => `toast-${String(toast.toastId)}`,

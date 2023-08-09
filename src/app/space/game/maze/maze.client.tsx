@@ -1,6 +1,6 @@
 import { Cmd, Keyboard, Sub, p } from "src/core";
 import { SpaceClientCtx, SpaceViewCtx } from "src/app/space/@shared";
-import { ActionButton, IconArrowLeftOnRect } from "src/ui";
+import { ActionButton, IconArrowLeftOnRect } from "src/app/@shared/ui";
 import { Maze } from "./maze";
 import {
   ClientModel,

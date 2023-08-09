@@ -1,5 +1,5 @@
 import { Cmd, Sub } from "src/core";
-import { VDom } from "src/ui";
+import { VDom } from "src/app/@shared/ui";
 
 /**
  * Represents all the functions needed to run a game client side

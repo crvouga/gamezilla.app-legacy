@@ -14,7 +14,7 @@ import {
   MyTextField,
   TopBar,
   TopBarBackButton,
-} from "src/ui";
+} from "src/app/@shared/ui";
 
 //
 //

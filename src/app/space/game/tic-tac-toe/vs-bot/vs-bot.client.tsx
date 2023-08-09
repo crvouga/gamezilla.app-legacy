@@ -16,7 +16,7 @@ import {
   IconArrowRotateLeft,
   IconRightLeft,
   LoadingBar,
-} from "src/ui";
+} from "src/app/@shared/ui";
 import {
   BotLevel,
   allBotLevels,

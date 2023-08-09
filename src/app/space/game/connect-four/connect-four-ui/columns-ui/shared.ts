@@ -1,4 +1,4 @@
-import { VDom } from "src/ui";
+import { VDom } from "src/app/@shared/ui";
 import { ColumnIndex, Columns, PlayerType } from "../../connect-four";
 import { Model } from "./columns-ui";
 

@@ -6,7 +6,7 @@ import {
   IconBotScary,
   IconBotSimple,
 } from "src/app/space/@shared";
-import { VDom } from "src/ui";
+import { VDom } from "src/app/@shared/ui";
 import * as ChessJS from "chess.js";
 
 export type BotLevel = 0 | 1 | 2 | 3 | 4;

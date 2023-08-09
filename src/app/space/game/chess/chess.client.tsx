@@ -6,7 +6,7 @@ import {
   MainMenuScreen,
   mainMenuButtons,
 } from "src/app/space/@shared";
-import { IconPuzzlePiece } from "src/ui";
+import { IconPuzzlePiece } from "src/app/@shared/ui";
 import { ViewCoverArt } from "./chess-ui";
 import {
   ClientModel,

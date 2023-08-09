@@ -7,7 +7,7 @@ import {
   MyAvatar,
   Drawer,
   VDom,
-} from "src/ui";
+} from "src/app/@shared/ui";
 import { SpaceViewCtx } from "../game-space-client";
 import { ViewGameHeader } from "../view-game-header";
 import { VsBotProps } from "./view-vs-bot";

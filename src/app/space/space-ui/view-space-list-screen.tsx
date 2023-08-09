@@ -6,7 +6,7 @@ import {
   MyAvatar,
   TopBar,
   cn,
-} from "src/ui";
+} from "src/app/@shared/ui";
 import { ViewSpaceHostChip } from "src/app/space/@shared";
 import { GameName, ViewCoverArt, gameNameToString } from "../game/game.core";
 import { SpaceId } from "../space-id";

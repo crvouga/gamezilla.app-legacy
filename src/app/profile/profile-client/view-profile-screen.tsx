@@ -8,7 +8,7 @@ import {
   Button,
   TopBar,
   TopBarBackButton,
-} from "src/ui";
+} from "src/app/@shared/ui";
 import { ClientModel, ClientMsg } from "../profile.core";
 
 export const ViewProfileScreen = ({

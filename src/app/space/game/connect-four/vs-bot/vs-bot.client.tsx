@@ -19,7 +19,7 @@ import {
   IconArrowRotateLeft,
   IconRightLeft,
   LoadingBar,
-} from "src/ui";
+} from "src/app/@shared/ui";
 import { Columns, toStatus, toTurn } from "../connect-four";
 import { ViewCoverArt } from "../connect-four-cover-art";
 import {

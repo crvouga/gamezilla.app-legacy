@@ -25,7 +25,7 @@ import {
   LoadingScreen,
   MyAvatar,
   VDom,
-} from "src/ui";
+} from "src/app/@shared/ui";
 import {
   SpaceViewCtx,
   Space,

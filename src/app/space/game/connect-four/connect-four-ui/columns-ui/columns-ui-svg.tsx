@@ -1,4 +1,4 @@
-import { toInlineStyles } from "src/ui";
+import { toInlineStyles } from "src/app/@shared/ui";
 import {
   COLUMN_COUNT,
   Columns,

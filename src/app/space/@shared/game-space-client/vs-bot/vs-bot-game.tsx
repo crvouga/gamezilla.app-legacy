@@ -1,6 +1,6 @@
 import { Cmd, Transition } from "src/core";
 import { UserId } from "src/app/@shared/app";
-import { IconRobot, MyAvatar, VDom } from "src/ui";
+import { IconRobot, MyAvatar, VDom } from "src/app/@shared/ui";
 import { SpaceViewCtx } from "../game-space-client";
 import { PlayerType } from "./view-vs-bot";
 

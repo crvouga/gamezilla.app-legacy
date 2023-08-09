@@ -12,7 +12,7 @@ import {
   IconSpinner,
   MyAvatar,
   Spinner,
-} from "src/ui";
+} from "src/app/@shared/ui";
 import { Chessboard, PlayerIcon, ViewCoverArt } from "../chess-ui";
 import * as Chess from "../chess/chess";
 import Sounds from "../chess/chess-sounds";

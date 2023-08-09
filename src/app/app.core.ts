@@ -6,19 +6,11 @@ import * as Profile from "./profile";
 import * as Search from "./search";
 import * as Space from "./space";
 
-//
-//
-//
-// Model
-//
-//
-//
-
 export type ServerModel = {
-  space: Space.ServerModel;
   sessions: {
     [sessionId: SessionId]: Session;
   };
+  space: Space.ServerModel;
   profile: Profile.ServerModel;
   search: Search.ServerModel;
   chat: Chat.ServerModel;
@@ -41,14 +33,6 @@ export type ClientModel = {
   toast: Toast.Model;
   wire: Wire.Model;
 };
-
-//
-//
-//
-// Msg
-//
-//
-//
 
 export type ToServer =
   | { t: "game-space"; c: Space.ToServer }

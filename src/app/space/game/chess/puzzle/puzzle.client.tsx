@@ -11,7 +11,7 @@ import {
   MyAvatar,
   Spinner,
   cn,
-} from "src/ui";
+} from "src/app/@shared/ui";
 import {
   BottomBarButtonAction,
   GameLayout,

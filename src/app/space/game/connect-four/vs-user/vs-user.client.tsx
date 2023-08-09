@@ -18,7 +18,7 @@ import {
   IconSpinner,
   IconXMark,
   MyAvatar,
-} from "src/ui";
+} from "src/app/@shared/ui";
 import { PlayerType, toTurn } from "../connect-four";
 import { ViewCoverArt } from "../connect-four-cover-art";
 import { ColumnsUI, PlayerIcon } from "../connect-four-ui";

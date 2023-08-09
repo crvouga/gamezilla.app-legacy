@@ -1,6 +1,6 @@
 import { ProfileAvatar } from "src/app/@shared/app";
 import { ViewCtx } from "src/app/@shared/client";
-import { MyAvatar, Button, MyTextField, TopBar } from "src/ui";
+import { MyAvatar, Button, MyTextField, TopBar } from "src/app/@shared/ui";
 import { ClientModel, ClientMsg } from "../profile.core";
 
 export const ViewUpdateAvatarScreen = ({

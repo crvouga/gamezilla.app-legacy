@@ -1,5 +1,5 @@
 import { UserId } from "src/app/@shared/app";
-import { VDom } from "src/ui";
+import { VDom } from "src/app/@shared/ui";
 import { SpaceViewCtx } from "../game-space-client";
 
 export type PlayerType = "player-one" | "player-two";

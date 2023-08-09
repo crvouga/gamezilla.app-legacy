@@ -1,5 +1,5 @@
 import { Space, SpaceViewCtx } from "src/app/space/@shared";
-import { IconCrown, MyAvatar } from "src/ui";
+import { IconCrown, MyAvatar } from "src/app/@shared/ui";
 
 export const ViewUsersInSpaceList = <T,>({
   space,

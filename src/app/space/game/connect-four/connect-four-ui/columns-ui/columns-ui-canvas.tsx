@@ -7,7 +7,7 @@ import {
 } from "../../connect-four";
 import { gameTheme } from "../shared";
 import { ViewColumnsProps } from "./shared";
-import { toInlineStyles } from "src/ui";
+import { toInlineStyles } from "src/app/@shared/ui";
 
 export const doPaint = (columns: Columns) => {
   const canvas = document.getElementById("view-columns-canvas");
