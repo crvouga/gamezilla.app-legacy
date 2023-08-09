@@ -1,12 +1,16 @@
-import { ClientWireMsg, PubSub, SessionMsg, TransportClient } from "src/core";
-import { ToClient, ToServer } from "./app";
+import {
+  ClientWireMsg,
+  PubSub,
+  ServerToClientMsg,
+  TransportClient,
+} from "src/core";
 
 const SESSION_ID_KEY = "gamezilla-session-id";
 
 const RECONNECT_INTERVAL = 2000; // 1 second
 const MAX_RECONNECT_ATTEMPTS = 5; // Adjust as needed
 
-export const createTransportClient = ({
+export const createTransportClient = <ToServer, ToClient>({
   baseServerUrl,
   onWireMsg,
   onServerMsg,
@@ -51,14 +55,17 @@ export const createTransportClient = ({
     };
 
     ws.onmessage = (event) => {
-      const msg = JSON.parse(event.data) as ToClient | SessionMsg;
+      const msg = JSON.parse(event.data) as ServerToClientMsg<ToClient>;
+
+      if (msg.t === "to-client") {
+        onServerMsg.publish(msg.c);
+        return;
+      }
 
       if (msg.t === "session-id") {
         localStorage.setItem(SESSION_ID_KEY, msg.sessionId);
         return;
       }
-
-      onServerMsg.publish(msg);
     };
   };
 

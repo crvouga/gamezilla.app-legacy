@@ -1,15 +1,15 @@
 import http from "http";
 import {
   ClientId,
+  ClientToServerMsg,
   PubSub,
   ServerWireMsg,
   SessionId,
   TransportServer,
 } from "src/core";
 import WebSocket, { WebSocketServer } from "ws";
-import { ToClient, ToServer } from "./app";
 
-export const createTransportServer = ({
+export const createTransportServer = <ToServer, ToClient>({
   httpServer,
   onClientMsg,
   onWireMsg,
@@ -67,8 +67,11 @@ export const createTransportServer = ({
     onWireMsg.publish({ t: "client-connected", clientId, sessionId });
 
     ws.on("message", (data) => {
-      const msg = JSON.parse(data.toString()) as ToServer; // leap of faith
-      onClientMsg.publish({ clientId, sessionId, msg });
+      const msg = JSON.parse(data.toString()) as ClientToServerMsg<ToServer>; // leap of faith
+      if (msg.t === "to-server") {
+        onClientMsg.publish({ clientId, sessionId, msg: msg.c });
+        return;
+      }
     });
 
     ws.on("close", () => {

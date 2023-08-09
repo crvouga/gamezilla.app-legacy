@@ -3,7 +3,11 @@ import { Cmd } from "../cmd";
 import { ClientId } from "./client-id";
 import { SessionId } from "./session-id";
 
-export type SessionMsg = { t: "session-id"; sessionId: SessionId };
+export type ServerToClientMsg<ToClient> =
+  | { t: "to-client"; c: ToClient }
+  | { t: "session-id"; sessionId: SessionId };
+
+export type ClientToServerMsg<ToServer> = { t: "to-server"; c: ToServer };
 
 /**
  * TransportClient represents the a client side object that sends and receives messages to and from the server.
