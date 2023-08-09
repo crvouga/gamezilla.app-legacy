@@ -1,6 +1,6 @@
-import { ClientAppMsg, RouteChat, ViewCtx } from "src/app/@shared/client";
+import { ClientAppMsg, RouteChat, ViewCtx } from "src/app/@/client";
 import { Browser, Cmd, exhaustive, p } from "src/core";
-import { VDom } from "src/app/@shared/ui";
+import { VDom } from "src/app/@/ui";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./chat.core";
 
 //

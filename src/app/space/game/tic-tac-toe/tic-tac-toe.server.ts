@@ -1,6 +1,6 @@
 import { Cmd, Result, Sub } from "src/core";
-import { UserId } from "src/app/@shared/app";
-import { SpaceMsg, GameSpaceReqCtx } from "src/app/space/@shared";
+import { UserId } from "src/app/@/app";
+import { SpaceMsg, GameSpaceReqCtx } from "src/app/space/@";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./tic-tac-toe.core";
 import * as VsBot from "./vs-bot/vs-bot.server";
 import * as VsUser from "./vs-user/vs-user.server";

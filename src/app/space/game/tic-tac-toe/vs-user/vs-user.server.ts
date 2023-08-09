@@ -1,4 +1,4 @@
-import { SpaceMsg } from "src/app/space/@shared";
+import { SpaceMsg } from "src/app/space/@";
 import { Cmd, Sub, Time } from "src/core";
 import { PlayerType, toOpposite, toTurn } from "../tic-tic-toe/tic-tac-toe";
 import * as Round from "./vs-user-round";

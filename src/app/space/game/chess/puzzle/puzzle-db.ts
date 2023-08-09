@@ -13,8 +13,8 @@ import {
   tuple,
   to,
 } from "src/core";
-import { UserId } from "src/app/@shared/app";
-import { DbConnMySql } from "src/app/@shared/server";
+import { UserId } from "src/app/@/app";
+import { DbConnMySql } from "src/app/@/server";
 import { MoveInput, uciMoveToMoveInput } from "../chess/chess";
 import { EloRating } from "./elo-rating";
 import {

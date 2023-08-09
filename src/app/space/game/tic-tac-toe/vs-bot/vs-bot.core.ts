@@ -1,6 +1,6 @@
 import { Err, Ok, Result } from "src/core";
-import { UserId } from "src/app/@shared/app";
-import { VsBotSetup } from "src/app/space/@shared";
+import { UserId } from "src/app/@/app";
+import { VsBotSetup } from "src/app/space/@";
 import { GetBestMoveResult } from "../tic-tic-toe/best-move";
 import {
   BotLevel,

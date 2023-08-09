@@ -1,4 +1,4 @@
-import { ViewCtx } from "src/app/@shared/client";
+import { ViewCtx } from "src/app/@/client";
 import {
   Button,
   IconGamepad,
@@ -6,8 +6,8 @@ import {
   MyAvatar,
   TopBar,
   cn,
-} from "src/app/@shared/ui";
-import { ViewSpaceHostChip } from "src/app/space/@shared";
+} from "src/app/@/ui";
+import { ViewSpaceHostChip } from "src/app/space/@";
 import { GameName, ViewCoverArt, gameNameToString } from "../game/game.core";
 import { SpaceId } from "../space-id";
 import { ClientModel, ClientMsg, findSpaceByUserId } from "../space.core";

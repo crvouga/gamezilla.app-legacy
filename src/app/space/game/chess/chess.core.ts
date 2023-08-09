@@ -1,5 +1,5 @@
 import { RemoteResult, Result } from "src/core";
-import { UserId } from "src/app/@shared/app";
+import { UserId } from "src/app/@/app";
 import * as Puzzle from "./puzzle/puzzle.core";
 import * as VsBot from "./vs-bot/vs-bot.core";
 import * as VsUser from "./vs-user/vs-user.core";

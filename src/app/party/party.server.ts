@@ -1,5 +1,5 @@
 import { Cmd, exhaustive } from "src/core";
-import { PartyId, UserId } from "src/app/@shared/app";
+import { PartyId, UserId } from "src/app/@/app";
 import {
   ServerModel,
   ServerMsg,

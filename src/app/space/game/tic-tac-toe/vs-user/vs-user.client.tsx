@@ -3,7 +3,7 @@ import {
   SpaceClientCtx,
   SpaceViewCtx,
   VsUserSetupScreen,
-} from "src/app/space/@shared";
+} from "src/app/space/@";
 import { Position, Slot, toTurn } from "../tic-tic-toe/tic-tac-toe";
 import {
   PlayerTypeIcon,

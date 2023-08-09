@@ -9,14 +9,14 @@ import {
   Route,
   UnauthenticatedViewCtx,
   ViewCtx,
-} from "src/app/@shared/client";
+} from "src/app/@/client";
 import {
   IconGamepad,
   IconUserCircle,
   LoadingScreen,
   VDom,
   cn,
-} from "src/app/@shared/ui";
+} from "src/app/@/ui";
 import { SpaceClient } from "src/app/space";
 import { Routing, Toast, Wire } from "./app-client";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./app.core";

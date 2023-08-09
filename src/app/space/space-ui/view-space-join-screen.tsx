@@ -4,8 +4,8 @@ import {
   ViewGameHeader,
   ViewGameHeaderEmpty,
   ViewUsersInSpaceList,
-} from "src/app/space/@shared";
-import { Button, TopBar, TopBarBackButton } from "src/app/@shared/ui";
+} from "src/app/space/@";
+import { Button, TopBar, TopBarBackButton } from "src/app/@/ui";
 import { ClientModel, ClientMsg } from "../space.core";
 import { ViewCoverArt, gameNameToString } from "../game/game.core";
 

@@ -1,9 +1,5 @@
 import { Cmd, Sub } from "src/core";
-import {
-  GameClient,
-  MainMenuScreen,
-  mainMenuButtons,
-} from "src/app/space/@shared";
+import { GameClient, MainMenuScreen, mainMenuButtons } from "src/app/space/@";
 import { ViewCoverArt } from "./connect-four-cover-art";
 import {
   ClientModel,

@@ -1,5 +1,5 @@
 import { Cmd, andThen, p } from "src/core";
-import { ClientAppMsg } from "src/app/@shared/client";
+import { ClientAppMsg } from "src/app/@/client";
 import {
   IconArrowCircle,
   IconArrowLeftOnRect,
@@ -11,14 +11,14 @@ import {
   MyAvatar,
   Spinner,
   cn,
-} from "src/app/@shared/ui";
+} from "src/app/@/ui";
 import {
   BottomBarButtonAction,
   GameLayout,
   SpaceClientCtx,
   SpaceViewCtx,
   ViewBottomButtonBar,
-} from "src/app/space/@shared";
+} from "src/app/space/@";
 import { Chess } from "../chess";
 import { Chessboard } from "../chess-ui";
 import {

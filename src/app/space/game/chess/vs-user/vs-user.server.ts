@@ -1,5 +1,5 @@
 import { Cmd, exhaustive, Sub, Time } from "src/core";
-import { SpaceMsg } from "src/app/space/@shared";
+import { SpaceMsg } from "src/app/space/@";
 import * as Board from "../chess/chess";
 import {
   cancelDraw,

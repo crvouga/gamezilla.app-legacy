@@ -1,5 +1,5 @@
 import { Ok, Result } from "src/core";
-import { ChildrenFn, Minimax, ScoreFn } from "src/app/space/@shared";
+import { ChildrenFn, Minimax, ScoreFn } from "src/app/space/@";
 import {
   Columns,
   MAX_COLUMN_HEIGHT,

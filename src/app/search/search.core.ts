@@ -1,5 +1,5 @@
 import { Browser, RemoteResult, Result } from "src/core";
-import { UserId, Username } from "src/app/@shared/app";
+import { UserId, Username } from "src/app/@/app";
 
 type SearchResult = {
   t: "profile";

@@ -1,11 +1,11 @@
 import { Cmd, Sub } from "src/core";
-import { GameClient, ViewBottomButtonBar } from "src/app/space/@shared";
+import { GameClient, ViewBottomButtonBar } from "src/app/space/@";
 import {
   IconArrowLeftOnRect,
   IconPenToSquare,
   IconPlay,
   cn,
-} from "src/app/@shared/ui";
+} from "src/app/@/ui";
 import { FlowGridPlayUI, FlowGridUI } from "../flow-grid";
 import { FlowViewCtx } from "../flow-shared";
 import { Color, groupIdToColor } from "../flow-ui";

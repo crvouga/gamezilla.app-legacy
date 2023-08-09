@@ -1,6 +1,6 @@
 import { RemoteResult, Result } from "src/core";
-import { UserId } from "src/app/@shared/app";
-import { Space } from "src/app/space/@shared";
+import { UserId } from "src/app/@/app";
+import { Space } from "src/app/space/@";
 import * as Game from "./game/game.core";
 import { SpaceId } from "./space-id";
 

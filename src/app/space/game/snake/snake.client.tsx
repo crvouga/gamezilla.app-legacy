@@ -1,6 +1,6 @@
 import { Cmd, Keyboard, Option, Result, Sub, exhaustive } from "src/core";
-import { ViewCtx } from "src/app/@shared/client";
-import { SpaceClientCtx } from "src/app/space/@shared";
+import { ViewCtx } from "src/app/@/client";
+import { SpaceClientCtx } from "src/app/space/@";
 import { Direction } from "./direction";
 import {
   ClientModel,

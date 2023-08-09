@@ -1,6 +1,6 @@
 import { Err, Ok, Posix, Result } from "src/core";
-import { UserId } from "src/app/@shared/app";
-import { VsBotGame, VsBotSetup } from "src/app/space/@shared";
+import { UserId } from "src/app/@/app";
+import { VsBotGame, VsBotSetup } from "src/app/space/@";
 import {
   BestMoveResult,
   ColumnIndex,

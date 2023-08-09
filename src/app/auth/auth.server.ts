@@ -1,9 +1,6 @@
 import { Cmd } from "src/core";
 import { ServerModel, ServerMsg, ToServer } from "./auth.core";
-import {
-  ServerAppMsg,
-  ServerUnauthenticatedReqCtx,
-} from "src/app/@shared/server";
+import { ServerAppMsg, ServerUnauthenticatedReqCtx } from "src/app/@/server";
 
 //
 //

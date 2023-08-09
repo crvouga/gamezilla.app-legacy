@@ -1,5 +1,5 @@
 import { Ok } from "src/core";
-import { Space } from "src/app/space/@shared";
+import { Space } from "src/app/space/@";
 import { ServerModel } from "../game/game.core";
 import { SpaceId } from "../space-id";
 import { SpaceDb } from "./space-db";

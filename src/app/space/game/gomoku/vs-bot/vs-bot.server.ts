@@ -1,5 +1,5 @@
 import { Cmd, Sub, andThen, p } from "src/core";
-import { SpaceMsg, GameSpaceReqCtx } from "src/app/space/@shared";
+import { SpaceMsg, GameSpaceReqCtx } from "src/app/space/@";
 import {
   Res,
   ServerModel,

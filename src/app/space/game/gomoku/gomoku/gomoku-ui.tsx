@@ -8,7 +8,7 @@ import {
   presetToStars,
 } from "./gomoku";
 import { Position } from "./gomoku-position";
-import { toInlineStyles } from "src/app/@shared/ui";
+import { toInlineStyles } from "src/app/@/ui";
 
 const backgroundColor = "#C88655";
 const lineColor = Hex.darken(backgroundColor, 0.3);

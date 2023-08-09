@@ -1,5 +1,5 @@
 import { PhoneNumber, RemoteResult, Result, SessionId } from "src/core";
-import { UserId } from "src/app/@shared/app";
+import { UserId } from "src/app/@/app";
 import * as AuthEmailLink from "./auth-email-link";
 import * as AuthPhone from "./auth-phone";
 import * as AuthPhoneVerify from "./auth-phone-verify";

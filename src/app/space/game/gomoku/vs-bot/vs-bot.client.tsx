@@ -1,4 +1,4 @@
-import { ClientCtx, ViewCtx } from "src/app/@shared/client";
+import { ClientCtx, ViewCtx } from "src/app/@/client";
 import { Cmd, Sub } from "src/core";
 import {
   ClientModel,

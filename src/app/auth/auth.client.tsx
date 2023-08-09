@@ -9,13 +9,13 @@ import {
   Task,
   p,
 } from "src/core";
-import { UserId, client } from "src/app/@shared/app";
+import { UserId, client } from "src/app/@/app";
 import {
   ClientAppMsg,
   Route,
   RouteAuth,
   UnauthenticatedViewCtx,
-} from "src/app/@shared/client";
+} from "src/app/@/client";
 import {
   Button,
   ConformationDialog,
@@ -25,7 +25,7 @@ import {
   LoadingBar,
   LoadingScreen,
   cn,
-} from "src/app/@shared/ui";
+} from "src/app/@/ui";
 import { Session as SupabaseSession } from "@supabase/supabase-js";
 import * as AuthEmailLink from "./auth-email-link";
 import * as AuthPhone from "./auth-phone";

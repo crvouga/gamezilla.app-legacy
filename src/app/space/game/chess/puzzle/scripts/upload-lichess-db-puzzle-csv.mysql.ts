@@ -1,4 +1,4 @@
-import { DbConnMySql } from "src/app/@shared/server";
+import { DbConnMySql } from "src/app/@/server";
 import { has, obj, str } from "src/core";
 import { PuzzleDb, PuzzleRow } from "../puzzle-db";
 

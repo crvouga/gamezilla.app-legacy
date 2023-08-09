@@ -1,6 +1,6 @@
 import { ClientWireMsg, Cmd } from "src/core";
-import { ClientAppMsg } from "src/app/@shared/client";
-import { IconSpinner } from "src/app/@shared/ui";
+import { ClientAppMsg } from "src/app/@/client";
+import { IconSpinner } from "src/app/@/ui";
 
 //
 //

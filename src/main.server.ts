@@ -1,5 +1,5 @@
 import { createServer } from "http";
-import { DbConnMySql } from "src/app/@shared/server";
+import { DbConnMySql } from "src/app/@/server";
 import { createTransportServer, Program, toMsgType } from "src/core";
 import { AppServer, ServerModel, ServerMsg } from "./app";
 

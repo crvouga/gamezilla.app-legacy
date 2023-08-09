@@ -3,7 +3,7 @@ import { ChessServer } from "src/app/space/game/chess";
 import { ConnectFourServer } from "src/app/space/game/connect-four";
 import { FlowServer } from "src/app/space/game/flow";
 import { TicTacToeServer } from "src/app/space/game/tic-tac-toe";
-import { GameServer } from "src/app/space/@shared";
+import { GameServer } from "src/app/space/@";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./game.core";
 
 type Server = GameServer<Model, Msg, ToClient, ToServer>;

@@ -1,5 +1,5 @@
-import { UserId } from "src/app/@shared/app";
-import { ViewCtx } from "src/app/@shared/client";
+import { UserId } from "src/app/@/app";
+import { ViewCtx } from "src/app/@/client";
 import {
   IconArrowLeftOnRect,
   IconSpinner,
@@ -8,7 +8,7 @@ import {
   Button,
   TopBar,
   TopBarBackButton,
-} from "src/app/@shared/ui";
+} from "src/app/@/ui";
 import { ClientModel, ClientMsg } from "../profile.core";
 
 export const ViewProfileScreen = ({

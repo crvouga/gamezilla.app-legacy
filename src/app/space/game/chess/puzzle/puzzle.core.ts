@@ -1,4 +1,4 @@
-import { UserId } from "src/app/@shared/app";
+import { UserId } from "src/app/@/app";
 import { Err, NonEmpty, Ok, Posix, RemoteResult, Result } from "src/core";
 import * as Chess from "../chess/chess";
 import { EloRating } from "./elo-rating";

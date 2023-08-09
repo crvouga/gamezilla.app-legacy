@@ -1,5 +1,5 @@
 import { Err, Ok, Result } from "src/core";
-import { UserId } from "src/app/@shared/app";
+import { UserId } from "src/app/@/app";
 import { Flow } from "../flow";
 import { FlowGrid, FlowGridPlayUI } from "../flow-grid";
 import { bounds8x8 } from "../flow-grid/flow-grid-position";

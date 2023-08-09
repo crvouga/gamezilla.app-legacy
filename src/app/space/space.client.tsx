@@ -14,7 +14,7 @@ import {
   ClientCtx,
   RouteGameSpace,
   ViewCtx,
-} from "src/app/@shared/client";
+} from "src/app/@/client";
 import {
   ActionButton,
   Button,
@@ -25,14 +25,14 @@ import {
   LoadingScreen,
   MyAvatar,
   VDom,
-} from "src/app/@shared/ui";
+} from "src/app/@/ui";
 import {
   SpaceViewCtx,
   Space,
   ViewSpaceHostChip,
   ViewUsersInSpaceList,
   ViewYouChip,
-} from "src/app/space/@shared";
+} from "src/app/space/@";
 import * as GameClient from "./game/game.client";
 import * as Game from "./game/game.core";
 import { ViewCoverArt } from "./game/game.core";

@@ -1,5 +1,5 @@
 import { Browser, Cmd, RemoteResult, Result } from "src/core";
-import { UserId } from "src/app/@shared/app";
+import { UserId } from "src/app/@/app";
 
 //
 //

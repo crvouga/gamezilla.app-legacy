@@ -1,5 +1,5 @@
 import { Audio, eq, Option, Result } from "src/core";
-import { UserId } from "src/app/@shared/app";
+import { UserId } from "src/app/@/app";
 import * as Chess from "../chess/chess";
 import * as Clock from "../chess/chess-clock";
 

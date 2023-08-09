@@ -1,5 +1,5 @@
 import { Keyboard, NonEmpty, removeKey, Result } from "src/core";
-import { UserId } from "src/app/@shared/app";
+import { UserId } from "src/app/@/app";
 import { Maze } from "./maze";
 import { Direction, Position } from "./position";
 

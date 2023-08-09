@@ -5,14 +5,14 @@ import {
   SpaceViewCtx,
   ViewBottomButtonBar,
   VsBotSetup,
-} from "src/app/space/@shared";
+} from "src/app/space/@";
 import {
   IconArrowLeftOnRect,
   IconRobot,
   IconSpinner,
   MyAvatar,
   Spinner,
-} from "src/app/@shared/ui";
+} from "src/app/@/ui";
 import { Chessboard, PlayerIcon, ViewCoverArt } from "../chess-ui";
 import * as Chess from "../chess/chess";
 import Sounds from "../chess/chess-sounds";

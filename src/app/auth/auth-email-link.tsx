@@ -1,5 +1,5 @@
 import { Cmd, Result, Task, exhaustive, p } from "src/core";
-import { ClientAppMsg } from "src/app/@shared/client";
+import { ClientAppMsg } from "src/app/@/client";
 import {
   AlertError,
   AlertSuccess,
@@ -7,7 +7,7 @@ import {
   MyTextField,
   TopBar,
   TopBarBackButton,
-} from "src/app/@shared/ui";
+} from "src/app/@/ui";
 
 //
 //

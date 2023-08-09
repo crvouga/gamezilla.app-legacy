@@ -1,10 +1,10 @@
-import { ProfileAvatar } from "src/app/@shared/app";
+import { ProfileAvatar } from "src/app/@/app";
 import {
   ClientAppMsg,
   ClientCtx,
   RouteProfile,
   ViewCtx,
-} from "src/app/@shared/client";
+} from "src/app/@/client";
 import { Cmd, andThen, p } from "src/core";
 import {
   IconChevronRight,
@@ -15,7 +15,7 @@ import {
   TopBar,
   TopBarBackButton,
   VDom,
-} from "src/app/@shared/ui";
+} from "src/app/@/ui";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "../profile.core";
 import { ViewProfileScreen } from "./view-profile-screen";
 import { ViewUpdateAvatarScreen } from "./view-update-avatar-screen";

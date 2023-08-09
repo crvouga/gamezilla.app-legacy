@@ -7,14 +7,14 @@ import {
   Task,
   p,
 } from "src/core";
-import { ClientAppMsg, UnauthenticatedViewCtx } from "src/app/@shared/client";
+import { ClientAppMsg, UnauthenticatedViewCtx } from "src/app/@/client";
 import {
   Button,
   IconPhone,
   MyTextField,
   TopBar,
   TopBarBackButton,
-} from "src/app/@shared/ui";
+} from "src/app/@/ui";
 
 //
 //

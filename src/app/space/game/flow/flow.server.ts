@@ -1,5 +1,5 @@
 import { Err, Ok, Sub } from "src/core";
-import { GameServer } from "src/app/space/@shared";
+import { GameServer } from "src/app/space/@";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./flow.core";
 import { PlayServer } from "./play";
 import { PuzzleBuilderServer } from "./puzzle-builder";

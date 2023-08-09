@@ -1,5 +1,5 @@
 import { Cmd, Posix, Sub, andThen, p } from "src/core";
-import { ClientCtx } from "src/app/@shared/client";
+import { ClientCtx } from "src/app/@/client";
 import {
   GameLayout,
   SpaceClientCtx,
@@ -13,13 +13,13 @@ import {
   VsBotPlayerSection,
   VsBotProps,
   VsBotSetup,
-} from "src/app/space/@shared";
+} from "src/app/space/@";
 import {
   IconArrowLeftOnRect,
   IconArrowRotateLeft,
   IconRightLeft,
   LoadingBar,
-} from "src/app/@shared/ui";
+} from "src/app/@/ui";
 import { Columns, toStatus, toTurn } from "../connect-four";
 import { ViewCoverArt } from "../connect-four-cover-art";
 import {

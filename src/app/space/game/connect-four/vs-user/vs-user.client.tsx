@@ -1,5 +1,5 @@
 import { Cmd, Sub } from "src/core";
-import { ViewCtx } from "src/app/@shared/client";
+import { ViewCtx } from "src/app/@/client";
 import {
   GameLayout,
   SpaceClientCtx,
@@ -7,7 +7,7 @@ import {
   SpaceViewCtx,
   ViewBottomButtonBar,
   VsUserSetupScreen,
-} from "src/app/space/@shared";
+} from "src/app/space/@";
 import {
   Button,
   ConformationDialog,
@@ -18,7 +18,7 @@ import {
   IconSpinner,
   IconXMark,
   MyAvatar,
-} from "src/app/@shared/ui";
+} from "src/app/@/ui";
 import { PlayerType, toTurn } from "../connect-four";
 import { ViewCoverArt } from "../connect-four-cover-art";
 import { ColumnsUI, PlayerIcon } from "../connect-four-ui";

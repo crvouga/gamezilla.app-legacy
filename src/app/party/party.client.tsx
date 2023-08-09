@@ -1,5 +1,5 @@
-import { UserId } from "src/app/@shared/app";
-import { ClientCtx, Route, ViewCtx } from "src/app/@shared/client";
+import { UserId } from "src/app/@/app";
+import { ClientCtx, Route, ViewCtx } from "src/app/@/client";
 import { Cmd, RemoteResult, Sub, exhaustive, p } from "src/core";
 import { Mic } from "./mic";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./party.core";

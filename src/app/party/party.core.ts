@@ -1,5 +1,5 @@
 import { filterObject, RemoteResult, removeKey, Result } from "src/core";
-import { PartyId, UserId } from "src/app/@shared/app";
+import { PartyId, UserId } from "src/app/@/app";
 import { MicLoadResult, MicUnloadResult } from "./mic";
 const { Err, Ok } = Result;
 

@@ -1,4 +1,4 @@
-import { toInlineStyles } from "src/app/@shared/ui";
+import { toInlineStyles } from "src/app/@/ui";
 
 export const toChecker = ({
   x,

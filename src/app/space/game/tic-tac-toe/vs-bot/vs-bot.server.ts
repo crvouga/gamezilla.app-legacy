@@ -1,5 +1,5 @@
 import { Cmd, Err, Ok, Sub, andThen, p } from "src/core";
-import { SpaceMsg, GameSpaceReqCtx } from "src/app/space/@shared";
+import { SpaceMsg, GameSpaceReqCtx } from "src/app/space/@";
 import { TicTacToe } from "../tic-tic-toe";
 import { getBestMove } from "../tic-tic-toe/best-move";
 import {
