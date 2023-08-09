@@ -10,7 +10,7 @@ import {
   cn,
 } from "@gamezilla/ui";
 import { ClientModel, ClientMsg, findSpaceByUserId } from "../game-space.core";
-import { GameName, ViewCoverArt, gameNameToString } from "../game.core";
+import { GameName, ViewCoverArt, gameNameToString } from "../game/game.core";
 
 export const ViewSpaceListScreen = ({
   ctx,

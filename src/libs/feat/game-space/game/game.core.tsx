@@ -1,7 +1,7 @@
-import * as Chess from "./game/chess";
-import * as ConnectFour from "./game/connect-four";
-import * as Flow from "./game/flow";
-import * as TicTacToe from "./game/tic-tac-toe";
+import * as Chess from "./chess";
+import * as ConnectFour from "./connect-four";
+import * as Flow from "./flow";
+import * as TicTacToe from "./tic-tac-toe";
 
 //
 //

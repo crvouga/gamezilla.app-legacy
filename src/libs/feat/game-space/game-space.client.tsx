@@ -3,13 +3,12 @@ import {
   Loading,
   Ok,
   RemoteResult,
-  Result,
   Sub,
   andThen,
   p,
   removeKey,
 } from "@gamezilla/core";
-import { GameSpaceId, UserId } from "@gamezilla/shared/app";
+import { GameSpaceId } from "@gamezilla/shared/app";
 import {
   ClientAppMsg,
   ClientCtx,
@@ -18,7 +17,6 @@ import {
 } from "@gamezilla/shared/client";
 import {
   GameSpace,
-  GameSpaceClientCtx,
   GameSpaceViewCtx,
   ViewSpaceHostChip,
   ViewUsersInSpaceList,
@@ -27,26 +25,24 @@ import {
 import {
   ActionButton,
   Button,
+  Drawer,
   IconHome,
   IconUserGroup,
   IconXMark,
   LoadingScreen,
   MyAvatar,
-  Drawer,
   VDom,
 } from "@gamezilla/ui";
 import {
   ClientModel,
   ClientMsg,
-  Res,
-  ServerModel,
   ToClient,
   ToServer,
   findSpaceByUserId,
 } from "./game-space.core";
-import * as GameClient from "./game.client";
-import * as Game from "./game.core";
-import { ViewCoverArt } from "./game.core";
+import * as GameClient from "./game/game.client";
+import * as Game from "./game/game.core";
+import { ViewCoverArt } from "./game/game.core";
 import {
   ViewNotInGameScreen,
   ViewSpaceJoinScreen,

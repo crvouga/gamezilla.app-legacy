@@ -1,6 +1,6 @@
 import { Ok } from "@gamezilla/core";
 import { GameSpace } from "@gamezilla/shared/game-space";
-import { ServerModel } from "../game.core";
+import { ServerModel } from "../game/game.core";
 import { GameSpaceDb } from "./game-space-db";
 import { GameSpaceId } from "@gamezilla/shared/app";
 

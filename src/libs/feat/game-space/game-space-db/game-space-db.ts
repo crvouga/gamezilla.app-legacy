@@ -1,7 +1,7 @@
 import { Result } from "@gamezilla/core";
 import { GameSpaceId, UserId } from "@gamezilla/shared/app";
 import { GameSpace } from "@gamezilla/shared/game-space";
-import { ServerModel } from "../game.core";
+import { ServerModel } from "../game/game.core";
 
 export type GameSpaceDb = {
   //

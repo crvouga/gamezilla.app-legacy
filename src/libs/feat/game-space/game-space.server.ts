@@ -1,5 +1,5 @@
-import { ClientId, Cmd, Err, Ok, Sub, p, removeKey } from "@gamezilla/core";
-import { GameSpaceId, UserId } from "@gamezilla/shared/app";
+import { ClientId, Cmd, Err, Ok, Sub, removeKey } from "@gamezilla/core";
+import { UserId } from "@gamezilla/shared/app";
 import { GameSpace, GameSpaceServerCtx } from "@gamezilla/shared/game-space";
 import {
   ServerAppMsg,
@@ -8,7 +8,7 @@ import {
 } from "@gamezilla/shared/server";
 import { makeGameSpaceDb } from "./game-space-db";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./game-space.core";
-import * as Game from "./game.server";
+import * as GameServer from "./game/game.server";
 
 //
 //
@@ -66,7 +66,7 @@ export const update = async ({
         hostId: space.hostId,
       };
 
-      const updated = Game.update({
+      const updated = GameServer.update({
         sendToSpace: (m) => {
           return sendToSpace(sendToUser, space, { t: "game", c: m });
         },
@@ -75,7 +75,7 @@ export const update = async ({
         ctx: spaceCtx,
       });
 
-      const spaceNew: GameSpace<Game.Model> = {
+      const spaceNew: GameSpace<GameServer.Model> = {
         ...space,
         game: updated.model,
       };
@@ -150,7 +150,7 @@ export const updateFromClient = async (input: {
         };
       }
 
-      const spaceNew: GameSpace<Game.Model> = {
+      const spaceNew: GameSpace<GameServer.Model> = {
         ...space,
         users: {
           ...space.users,
@@ -228,7 +228,7 @@ export const updateFromClient = async (input: {
         };
       }
 
-      const spaceNew: GameSpace<Game.Model> = {
+      const spaceNew: GameSpace<GameServer.Model> = {
         gameSpaceId: msg.spaceId,
         hostId: ctx.currentUserId,
         state: "started",
@@ -280,7 +280,7 @@ export const updateFromClient = async (input: {
       }
 
       if (!msg.gameName) {
-        const spaceNew: GameSpace<Game.Model> = {
+        const spaceNew: GameSpace<GameServer.Model> = {
           ...space,
           game: null,
         };
@@ -294,7 +294,7 @@ export const updateFromClient = async (input: {
         return { model, cmd: broadcast({ ...msg, result: Ok(spaceNew) }) };
       }
 
-      const initial = Game.init({ gameName: msg.gameName })({
+      const initial = GameServer.init({ gameName: msg.gameName })({
         ctx: {
           ...ctx,
           hostId: space.hostId,
@@ -303,7 +303,7 @@ export const updateFromClient = async (input: {
         sendToSpace: (m) => sendToSpace(sendToUser, space, { t: "game", c: m }),
       });
 
-      const spaceNew: GameSpace<Game.Model> = {
+      const spaceNew: GameSpace<GameServer.Model> = {
         ...space,
         game: initial.model,
       };
@@ -356,14 +356,14 @@ export const updateFromClient = async (input: {
         };
       }
 
-      const spaceNew: GameSpace<Game.Model> = {
+      const spaceNew: GameSpace<GameServer.Model> = {
         ...space,
         users: removeKey(ctx.currentUserId, space.users),
       };
 
       const updated = !spaceNew.game
         ? { model: spaceNew.game, cmd: Cmd.None }
-        : Game.updateFromParent({
+        : GameServer.updateFromParent({
             ctx: { ...ctx, hostId: space.hostId },
             sendToClient: (m) => sendToClient({ t: "game", c: m }),
             sendToSpace: (m) =>
@@ -407,7 +407,7 @@ export const updateFromClient = async (input: {
         return { model };
       }
 
-      const updated = Game.updateFromClient({
+      const updated = GameServer.updateFromClient({
         ...ctx,
         ctx: {
           ...ctx,
@@ -419,7 +419,7 @@ export const updateFromClient = async (input: {
         model: space.game,
       });
 
-      const spaceNew: GameSpace<Game.Model> = {
+      const spaceNew: GameSpace<GameServer.Model> = {
         ...space,
         game: updated.model,
       };
@@ -456,7 +456,7 @@ export const updateFromApp = (input: {
 
 const sendToSpace = (
   sendToUser: (userIds: UserId[], msg: ToClient) => Cmd,
-  space: GameSpace<Game.Model>,
+  space: GameSpace<GameServer.Model>,
   msg: ToClient
 ): Cmd => {
   return sendToUser(Object.values(space.users), msg);

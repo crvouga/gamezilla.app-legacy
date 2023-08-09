@@ -1,7 +1,7 @@
 import { RemoteResult, Result } from "@gamezilla/core";
 import { GameSpaceId, UserId } from "@gamezilla/shared/app";
 import { GameSpace } from "@gamezilla/shared/game-space";
-import * as Game from "./game.core";
+import * as Game from "./game/game.core";
 
 //
 //

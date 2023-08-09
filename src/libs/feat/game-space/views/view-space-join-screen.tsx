@@ -7,7 +7,7 @@ import {
 } from "@gamezilla/shared/game-space";
 import { Button, TopBar, TopBarBackButton } from "@gamezilla/ui";
 import { ClientModel, ClientMsg } from "../game-space.core";
-import { ViewCoverArt, gameNameToString } from "../game.core";
+import { ViewCoverArt, gameNameToString } from "../game/game.core";
 
 export const ViewSpaceJoinScreen = ({
   model,

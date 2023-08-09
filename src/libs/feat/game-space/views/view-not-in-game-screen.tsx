@@ -5,8 +5,12 @@ import {
   ViewUsersInSpaceList,
 } from "@gamezilla/shared/game-space";
 import { ClientMsg } from "../game-space.core";
-import { ViewCoverArt, gameNameList, gameNameToString } from "../game.core";
-import * as Game from "../game.core";
+import {
+  ViewCoverArt,
+  gameNameList,
+  gameNameToString,
+} from "../game/game.core";
+import * as Game from "../game/game.core";
 
 export const ViewNotInGameScreen = ({
   ctx,
