@@ -160,7 +160,12 @@ const updateMain: typeof update = ({ ctx, sendToServer, msg, model }) => {
 
       const updated = GameClient.update({
         ctx: { ...ctx, hostId: space.hostId },
-        sendToServer: (msg) => sendToServer({ t: "game", c: msg }),
+        sendToServer: (c) =>
+          sendToServer({
+            t: "game",
+            c,
+            profile: ctx.profiles[ctx.currentUserId],
+          }),
         msg: msg.c,
         model: space.game,
       });
@@ -191,7 +196,8 @@ const updateMain: typeof update = ({ ctx, sendToServer, msg, model }) => {
           ...model,
           req: { ...model.req, [msg.t]: RemoteResult.Loading },
         },
-        cmd: sendToServer(msg),
+
+        cmd: sendToServer({ ...msg, profile: ctx.profiles[ctx.currentUserId] }),
       };
     }
   }
@@ -305,7 +311,10 @@ export const updateFromServer = ({
       });
 
       return {
-        model: { ...merged.model, req: { ...model.req, [msg.t]: Ok(null) } },
+        model: {
+          ...merged.model,
+          req: { ...model.req, [msg.t]: Ok(null) },
+        },
         cmd: merged.cmd,
       };
     }

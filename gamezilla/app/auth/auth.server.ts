@@ -1,5 +1,5 @@
 import { Cmd } from "gamezilla/@/core";
-import { ServerAppMsg, ServerUnauthenticatedReqCtx } from "gamezilla/app/@";
+import { AnonymousReqCtx, ServerAppMsg } from "gamezilla/app/@";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./auth.core";
 
 //
@@ -43,7 +43,7 @@ export const updateFromClient = ({
   sendBack,
 }: {
   sendBack: (m: ToClient) => Cmd;
-  ctx: ServerUnauthenticatedReqCtx;
+  ctx: AnonymousReqCtx;
   msg: ToServer;
   model: Model;
 }): {

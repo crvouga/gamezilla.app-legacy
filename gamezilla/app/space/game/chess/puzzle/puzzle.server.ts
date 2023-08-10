@@ -10,11 +10,7 @@ import {
   p,
 } from "gamezilla/@/core";
 import { UserId } from "gamezilla/app/@";
-import {
-  SpaceMsg,
-  GameSpaceReqCtx,
-  GameSpaceServerCtx,
-} from "gamezilla/app/space/@";
+import { SpaceMsg, SpaceReqCtx, SpaceServerCtx } from "gamezilla/app/space/@";
 import { DbConnSql } from "gamezilla/app/@";
 import { ChessGameMsg } from "../@/chess/chess-shared";
 import { EloRating } from "./elo-rating";
@@ -44,7 +40,7 @@ export const init = ({
   ctx,
 }: {
   broadcast: (m: ToClient) => Cmd;
-  ctx: GameSpaceServerCtx;
+  ctx: SpaceServerCtx;
 }): {
   model: Model;
   cmd: Cmd<Msg>;
@@ -114,7 +110,7 @@ export const update = (input: {
   msg: Msg;
   model: Model;
   broadcast: (m: ToClient) => Cmd;
-  ctx: GameSpaceServerCtx;
+  ctx: SpaceServerCtx;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -135,7 +131,7 @@ const update_ = ({
   msg: Msg;
   model: Model;
   broadcast: (m: ToClient) => Cmd;
-  ctx: GameSpaceServerCtx;
+  ctx: SpaceServerCtx;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -237,7 +233,7 @@ const update_ = ({
 };
 
 export const updateFromClient = (input: {
-  ctx: GameSpaceReqCtx;
+  ctx: SpaceReqCtx;
   msg: ToServer;
   model: Model;
   sendToClient: (m: ToClient) => Cmd;
@@ -268,7 +264,7 @@ const watchPutInteraction = ({
 }: {
   modelPrev: Model;
   model: Model;
-  ctx: GameSpaceServerCtx;
+  ctx: SpaceServerCtx;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -308,7 +304,7 @@ const watchGetPuzzles = ({
 }: {
   model: Model;
   modelPrev: Model;
-  ctx: GameSpaceServerCtx;
+  ctx: SpaceServerCtx;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -346,7 +342,7 @@ const watchPutProfile = ({
 }: {
   model: Model;
   modelPrev: Model;
-  ctx: GameSpaceServerCtx;
+  ctx: SpaceServerCtx;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;

@@ -11,8 +11,8 @@ import {
 import {
   ServerAppMsg,
   ServerCtx,
-  ServerReqCtx,
-  ServerUnauthenticatedReqCtx,
+  ReqCtx,
+  AnonymousReqCtx,
   UserId,
 } from "gamezilla/app/@";
 import { AuthServer } from "gamezilla/app/auth";
@@ -287,7 +287,7 @@ const updateFromClient = async ({
   broadcast,
   sendToClient,
 }: {
-  ctx: ServerUnauthenticatedReqCtx;
+  ctx: AnonymousReqCtx;
   msg: ToServer;
   model: Model;
   broadcast: (m: ToClient) => Cmd;
@@ -298,7 +298,7 @@ const updateFromClient = async ({
   msgs?: ServerAppMsg[];
 }> => {
   const currentUserId = model.auth.sessions[ctx.sessionId]?.userId;
-  const authReqCtx: ServerReqCtx | null = currentUserId
+  const authReqCtx: ReqCtx | null = currentUserId
     ? {
         ...ctx,
         currentUserId,

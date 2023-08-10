@@ -6,7 +6,6 @@ type Profile = {
   userId: UserId;
   username: Username;
   avatarUrl: string;
-  themeMode?: string;
 };
 
 export type UnauthenticatedViewCtx = {

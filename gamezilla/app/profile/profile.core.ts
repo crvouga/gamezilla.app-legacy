@@ -19,7 +19,7 @@ export type Profile = {
   userId: UserId;
   username: Username;
   avatarUrl: string;
-  themeMode: "Light" | "Dark" | "System";
+  themeMode?: "Light" | "Dark" | "System" | null;
 };
 
 export type ClientModel = {

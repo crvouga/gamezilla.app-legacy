@@ -1,5 +1,5 @@
 import { andThen, Cmd, p, Result, Sub } from "gamezilla/@/core";
-import { SpaceMsg, GameSpaceReqCtx } from "gamezilla/app/space/@";
+import { SpaceMsg, SpaceReqCtx } from "gamezilla/app/space/@";
 import { findBestMove } from "../connect-four";
 import {
   Event,
@@ -68,7 +68,7 @@ export const update = ({
 export const updateFromClient = (input: {
   broadcast: (msg: ToClient) => Cmd;
   sendToClient: (msg: ToClient) => Cmd;
-  ctx: GameSpaceReqCtx;
+  ctx: SpaceReqCtx;
   msg: ToServer;
   model: Model;
 }): {

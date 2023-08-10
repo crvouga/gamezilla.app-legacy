@@ -1,7 +1,7 @@
 import { Cmd, Sub } from "gamezilla/@/core";
 import { ServerAppMsg } from "gamezilla/app/@";
-import { SpaceMsg } from "../game-space-core";
-import { GameSpaceReqCtx, GameSpaceServerCtx } from "../game-space-server";
+import { SpaceMsg } from "../space";
+import { SpaceReqCtx, SpaceServerCtx } from "../space";
 //
 //
 //
@@ -18,7 +18,7 @@ export type GameServer<Model, Msg, ToClient, ToServer> = {
    * This returns the initial state
    */
   init: (input: {
-    ctx: GameSpaceServerCtx;
+    ctx: SpaceServerCtx;
     sendToClient: (m: ToClient) => Cmd;
     sendToSpace: (m: ToClient) => Cmd;
   }) => {
@@ -31,7 +31,7 @@ export type GameServer<Model, Msg, ToClient, ToServer> = {
    * This handles updates from the server
    */
   update: (input: {
-    ctx: GameSpaceServerCtx;
+    ctx: SpaceServerCtx;
     sendToSpace: (m: ToClient) => Cmd;
     msg: Msg;
     model: Model;
@@ -45,7 +45,7 @@ export type GameServer<Model, Msg, ToClient, ToServer> = {
    * This handles updates from the client.
    */
   updateFromClient: (input: {
-    ctx: GameSpaceReqCtx;
+    ctx: SpaceReqCtx;
     sendToClient: (m: ToClient) => Cmd;
     sendToSpace: (m: ToClient) => Cmd;
     msg: ToServer;
@@ -60,7 +60,7 @@ export type GameServer<Model, Msg, ToClient, ToServer> = {
    * This handles updates from the game space itself.
    */
   updateFromParent: (input: {
-    ctx: GameSpaceServerCtx;
+    ctx: SpaceServerCtx;
     sendToClient: (m: ToClient) => Cmd;
     sendToSpace: (m: ToClient) => Cmd;
     msg: SpaceMsg;
@@ -72,7 +72,7 @@ export type GameServer<Model, Msg, ToClient, ToServer> = {
   };
 
   subscriptions: (input: {
-    ctx: GameSpaceServerCtx;
+    ctx: SpaceServerCtx;
     intervalId: string;
     model: Model;
   }) => Sub<Msg>;

@@ -1,5 +1,5 @@
 import { RemoteResult, Result } from "gamezilla/@/core";
-import { UserId } from "gamezilla/app/@";
+import { Profile, UserId } from "gamezilla/app/@";
 import { Space } from "gamezilla/app/space/@";
 import * as Game from "./game/game.core";
 import { SpaceId } from "./space-id";
@@ -27,11 +27,6 @@ export type ClientModel = {
 
 type ModalModel = null | "user-preview" | "users";
 
-export type GameSpaceUser = {
-  userId: UserId;
-  spaceId: SpaceId;
-};
-
 //
 //
 //
@@ -40,9 +35,17 @@ export type GameSpaceUser = {
 //
 //
 
-export type ToClient = Res | { t: "game"; c: Game.ToClient };
+export type ToClient = ToClientExtra & (Res | { t: "game"; c: Game.ToClient });
 
-export type ToServer = Req | { t: "game"; c: Game.ToServer };
+export type ToServer = ToServerExtra & (Req | { t: "game"; c: Game.ToServer });
+
+type ToClientExtra = {
+  profiles?: { [userId: UserId]: Profile };
+};
+
+type ToServerExtra = {
+  profile?: Profile | null;
+};
 
 export type ServerMsg = { t: "game"; spaceId: SpaceId; c: Game.ServerMsg };
 

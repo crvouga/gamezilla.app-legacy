@@ -15,7 +15,7 @@ import {
   client,
   definitions,
 } from "gamezilla/app/@";
-import { ServerAppMsg, ServerReqCtx } from "gamezilla/app/@";
+import { ServerAppMsg, ReqCtx } from "gamezilla/app/@";
 import {
   Profile,
   Req,
@@ -73,7 +73,7 @@ export const updateFromClient = ({
   msg: ToServer;
   model: Model;
   sendBack: (m: ToClient) => Cmd<Msg>;
-  ctx: ServerReqCtx | null;
+  ctx: ReqCtx | null;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
@@ -294,7 +294,7 @@ export const rowThemeModeToThemeMode = (
 };
 
 export const fromThemeMode = (
-  themeMode: Profile["themeMode"]
+  themeMode: Profile["themeMode"] | null | undefined
 ): definitions["user_profile"]["theme_mode"] => {
   switch (themeMode) {
     case "Dark":
@@ -304,6 +304,10 @@ export const fromThemeMode = (
       return "LIGHT";
 
     case "System":
+      return "SYSTEM";
+
+    case null:
+    case undefined:
       return "SYSTEM";
   }
 };

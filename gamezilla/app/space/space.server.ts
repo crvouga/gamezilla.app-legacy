@@ -1,6 +1,6 @@
 import { ClientId, Cmd, Err, Ok, Sub, removeKey } from "gamezilla/@/core";
-import { ServerAppMsg, ServerCtx, ServerReqCtx, UserId } from "gamezilla/app/@";
-import { GameSpaceServerCtx, Space } from "gamezilla/app/space/@";
+import { ServerAppMsg, ServerCtx, ReqCtx, UserId } from "gamezilla/app/@";
+import { SpaceServerCtx, Space } from "gamezilla/app/space/@";
 import * as GameServer from "./game/game.server";
 import { makeSpaceDb } from "./space-db";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./space.core";
@@ -56,13 +56,17 @@ export const update = async ({
         return { model };
       }
 
-      const spaceCtx: GameSpaceServerCtx = {
+      const spaceCtx: SpaceServerCtx = {
         ...ctx,
         hostId: space.hostId,
       };
 
       const updated = GameServer.update({
-        sendToSpace: (m) => sendToSpace(sendToUser, space, { t: "game", c: m }),
+        sendToSpace: (m) =>
+          sendToSpace(sendToUser, space, {
+            t: "game",
+            c: m,
+          }),
         msg: msg.c,
         model: space.game,
         ctx: spaceCtx,
@@ -91,7 +95,7 @@ export const update = async ({
 };
 
 export const updateFromClient = async (input: {
-  ctx: ServerReqCtx;
+  ctx: ReqCtx;
   sendToClient: (msg: ToClient) => Cmd;
   sendToUser: (userId: UserId[], msg: ToClient) => Cmd;
   broadcast: (msg: ToClient) => Cmd;
