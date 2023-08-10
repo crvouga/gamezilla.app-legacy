@@ -1,5 +1,5 @@
 import { Err, Ok, Result } from "gamezilla/@/core";
-import { UserId } from "gamezilla/app/@/app";
+import { UserId } from "gamezilla/app/@";
 import { VsBotGame, VsBotSetup } from "gamezilla/app/space/game/@";
 import {
   BestMoveResult,

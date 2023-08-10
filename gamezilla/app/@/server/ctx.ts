@@ -1,6 +1,6 @@
 import { ClientId, Posix, SessionId } from "gamezilla/@/core";
-import { UserId } from "gamezilla/app/@/app";
-import { DbConnMySql } from "./database-connection-mysql";
+import { UserId } from "gamezilla/app/@";
+import { DbConnMySql } from "./db-conn-mysql";
 
 export type ServerCtx = {
   mySql: DbConnMySql;

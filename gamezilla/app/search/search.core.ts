@@ -1,5 +1,5 @@
 import { Browser, RemoteResult, Result } from "gamezilla/@/core";
-import { UserId, Username } from "gamezilla/app/@/app";
+import { UserId, Username } from "gamezilla/app/@";
 
 type SearchResult = {
   t: "profile";

@@ -1,5 +1,5 @@
 import { Cmd, Err, Ok, Sub } from "gamezilla/@/core";
-import { UserId } from "gamezilla/app/@/app";
+import { UserId } from "gamezilla/app/@";
 import {
   SpaceMsg,
   GameSpaceReqCtx,

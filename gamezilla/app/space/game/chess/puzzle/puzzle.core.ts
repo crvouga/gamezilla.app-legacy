@@ -6,7 +6,7 @@ import {
   RemoteResult,
   Result,
 } from "gamezilla/@/core";
-import { UserId } from "gamezilla/app/@/app";
+import { UserId } from "gamezilla/app/@";
 import { Chess } from "../@/chess";
 import { EloRating } from "./elo-rating";
 import { zip } from "./utils";

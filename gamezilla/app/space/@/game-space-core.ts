@@ -1,4 +1,4 @@
-import { UserId } from "gamezilla/app/@/app";
+import { UserId } from "gamezilla/app/@";
 import { SpaceId } from "../space-id";
 
 export type Space<GameModel> = {

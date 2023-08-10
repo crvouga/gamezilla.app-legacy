@@ -10,7 +10,7 @@ import {
   Task,
   p,
 } from "gamezilla/@/core";
-import { UserId, client } from "gamezilla/app/@/app";
+import { UserId, client } from "gamezilla/app/@";
 import {
   ClientAppMsg,
   Route,

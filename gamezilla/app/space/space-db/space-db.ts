@@ -1,5 +1,5 @@
 import { Result } from "gamezilla/@/core";
-import { UserId } from "gamezilla/app/@/app";
+import { UserId } from "gamezilla/app/@";
 import { Space } from "gamezilla/app/space/@";
 import { ServerModel } from "../game/game.core";
 import { SpaceId } from "../space-id";

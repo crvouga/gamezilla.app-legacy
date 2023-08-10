@@ -1,5 +1,5 @@
 import { Cmd, andThen, p } from "gamezilla/@/core";
-import { ProfileAvatar } from "gamezilla/app/@/app";
+import { ProfileAvatar } from "gamezilla/app/@";
 import {
   ClientAppMsg,
   ClientCtx,

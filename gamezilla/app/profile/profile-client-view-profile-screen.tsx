@@ -1,4 +1,4 @@
-import { UserId } from "gamezilla/app/@/app";
+import { UserId } from "gamezilla/app/@";
 import { ViewCtx } from "gamezilla/app/@/client";
 import {
   IconArrowLeftOnRect,

@@ -8,7 +8,7 @@ import {
   andThen,
   p,
 } from "gamezilla/@/core";
-import { UserId } from "gamezilla/app/@/app";
+import { UserId } from "gamezilla/app/@";
 import { AuthServer } from "gamezilla/app/auth";
 import { ChatServer } from "gamezilla/app/chat";
 import { ProfileServer } from "gamezilla/app/profile";

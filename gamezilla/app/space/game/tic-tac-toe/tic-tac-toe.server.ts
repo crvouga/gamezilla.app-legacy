@@ -1,5 +1,5 @@
 import { Cmd, Result, Sub } from "gamezilla/@/core";
-import { UserId } from "gamezilla/app/@/app";
+import { UserId } from "gamezilla/app/@";
 import { SpaceMsg, GameSpaceReqCtx } from "gamezilla/app/space/@";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./tic-tac-toe.core";
 import * as VsBot from "./vs-bot/vs-bot.server";

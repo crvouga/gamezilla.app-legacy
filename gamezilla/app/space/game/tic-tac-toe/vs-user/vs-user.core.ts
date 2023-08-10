@@ -1,4 +1,4 @@
-import { UserId } from "gamezilla/app/@/app";
+import { UserId } from "gamezilla/app/@";
 import { Result } from "gamezilla/@/core";
 import * as TicTacToe from "../tic-tic-toe/tic-tac-toe";
 import * as Round from "./vs-user-round";

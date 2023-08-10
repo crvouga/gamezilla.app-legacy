@@ -1,5 +1,5 @@
 import { Cmd, exhaustive } from "gamezilla/@/core";
-import { PartyId, UserId } from "gamezilla/app/@/app";
+import { PartyId, UserId } from "gamezilla/app/@";
 import {
   ServerModel,
   ServerMsg,

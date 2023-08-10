@@ -1,5 +1,5 @@
 import { Audio, eq, Option, Result } from "gamezilla/@/core";
-import { UserId } from "gamezilla/app/@/app";
+import { UserId } from "gamezilla/app/@";
 import { Chess } from "../@/chess";
 import * as Clock from "../@/chess/chess-clock";
 

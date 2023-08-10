@@ -1,4 +1,4 @@
-import { UserId, Username } from "gamezilla/app/@/app";
+import { UserId, Username } from "gamezilla/app/@";
 import { Posix } from "gamezilla/@/core";
 import * as Route from "./route";
 

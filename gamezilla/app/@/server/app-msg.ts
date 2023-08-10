@@ -1,5 +1,5 @@
 import { ClientId, SessionId } from "gamezilla/@/core";
-import { UserId } from "gamezilla/app/@/app";
+import { UserId } from "gamezilla/app/@";
 
 export type ServerAppMsg =
   | {

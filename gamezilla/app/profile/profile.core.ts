@@ -4,7 +4,7 @@ import {
   ProfileAvatarStyle,
   UserId,
   Username,
-} from "gamezilla/app/@/app";
+} from "gamezilla/app/@";
 import { RemoteResult, Result } from "gamezilla/@/core";
 
 //

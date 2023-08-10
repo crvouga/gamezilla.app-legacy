@@ -1,5 +1,5 @@
 import { Cmd, Option, Sub, exhaustive } from "gamezilla/@/core";
-import { UserId } from "gamezilla/app/@/app";
+import { UserId } from "gamezilla/app/@";
 import { ViewCtx } from "gamezilla/app/@/client";
 import { SpaceClientCtx } from "gamezilla/app/space/@";
 
