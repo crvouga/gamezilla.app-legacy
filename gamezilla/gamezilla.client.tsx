@@ -7,7 +7,6 @@ import {
 } from "gamezilla/@/core";
 import { render } from "inferno";
 import { AppClient } from "./app";
-import "./main.client.css";
 
 const env = {
   isDev: process.env.NODE_ENV === "development",
