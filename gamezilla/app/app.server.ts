@@ -15,12 +15,12 @@ import { ProfileServer } from "gamezilla/app/profile";
 import { SearchServer } from "gamezilla/app/search";
 import { SpaceServer } from "gamezilla/app/space";
 import {
-  DbConnMySql,
   ServerAppMsg,
   ServerCtx,
   ServerReqCtx,
   ServerUnauthenticatedReqCtx,
-} from "./@/server";
+} from "./@";
+import { createDbConnMySql } from "./app-server";
 import {
   ServerModel,
   ServerMsg,
@@ -474,7 +474,7 @@ export const initCtx = async (): Promise<ServerCtx> => {
   const DATABASE_URL =
     'mysql://scuu9usphxh6zuxltqbe:pscale_pw_lkZooGgR8H09Uc59IVrcZEt8avVQ54VObBfoFwbCIa3@aws.connect.psdb.cloud/gamezilla?ssl={"rejectUnauthorized":true}';
 
-  const mySql = await DbConnMySql.create({
+  const mySql = await createDbConnMySql({
     connectionString: DATABASE_URL,
   });
 

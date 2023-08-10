@@ -15,7 +15,7 @@ import {
   GameSpaceReqCtx,
   GameSpaceServerCtx,
 } from "gamezilla/app/space/@";
-import { DbConnMySql } from "gamezilla/app/@/server";
+import { DbConnSql } from "gamezilla/app/@";
 import { ChessGameMsg } from "../@/chess/chess-shared";
 import { EloRating } from "./elo-rating";
 import { PuzzleDb } from "./puzzle-db";
@@ -68,7 +68,7 @@ const initialLoad = async ({
   dbConn,
   userId,
 }: {
-  dbConn: DbConnMySql;
+  dbConn: DbConnSql;
   userId: UserId;
 }) => {
   const found = await PuzzleDb.profiles.findElseInsert(dbConn, {

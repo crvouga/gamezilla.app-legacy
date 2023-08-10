@@ -14,7 +14,7 @@ import {
   to,
 } from "gamezilla/@/core";
 import { UserId } from "gamezilla/app/@";
-import { DbConnMySql } from "gamezilla/app/@/server";
+import { DbConnSql } from "gamezilla/app/@";
 import { MoveInput, uciMoveToMoveInput } from "../@/chess/chess";
 import { EloRating } from "./elo-rating";
 import {
@@ -246,7 +246,7 @@ export const uciMovesToPuzzleMoves = (
 };
 
 const puzzlesFindForProfile = async (
-  dbConn: DbConnMySql,
+  dbConn: DbConnSql,
   input: { profile: PuzzleProfile; omit?: string[] }
 ): Promise<Result<string, Puzzle[]>> => {
   const delta = 100;
@@ -291,7 +291,7 @@ const puzzlesReplace = async ({
   dbConn,
   rows,
 }: {
-  dbConn: DbConnMySql;
+  dbConn: DbConnSql;
   rows: PuzzleRow[];
 }) => {
   const queryString = `
@@ -320,7 +320,7 @@ const puzzlesReplace = async ({
 };
 
 const interactionsInsert = async (
-  dbConn: DbConnMySql,
+  dbConn: DbConnSql,
   interactions: PuzzleInteraction[]
 ): Promise<Result<string, null>> => {
   const result = await dbConn.query(
@@ -339,7 +339,7 @@ const interactionsInsert = async (
 };
 
 const profilesFind = async (
-  dbConn: DbConnMySql,
+  dbConn: DbConnSql,
   userId: UserId
 ): Promise<Result<string, PuzzleProfile | null>> => {
   const found = await dbConn.query(
@@ -386,7 +386,7 @@ const profilesFind = async (
 };
 
 export const profilesInsert = async (
-  dbConn: DbConnMySql,
+  dbConn: DbConnSql,
   profile: PuzzleProfile
 ): Promise<Result<string, null>> => {
   const puzzleProfileId = Uuid.generate();
@@ -421,7 +421,7 @@ export const profilesInsert = async (
 };
 
 export const profilesFindElseInsert = async (
-  dbConn: DbConnMySql,
+  dbConn: DbConnSql,
   profile: PuzzleProfile
 ): Promise<Result<string, PuzzleProfile>> => {
   const found = await profilesFind(dbConn, profile.userId);
@@ -444,7 +444,7 @@ export const profilesFindElseInsert = async (
 };
 
 const profilesUpdate = async (
-  dbConn: DbConnMySql,
+  dbConn: DbConnSql,
   profile: PuzzleProfile
 ): Promise<Result<string, null>> => {
   const mutated = await dbConn.query(

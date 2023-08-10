@@ -1,4 +1,4 @@
-import { DbConnMySql } from "gamezilla/app/@/server";
+import { DbConnSql } from "gamezilla/app/@";
 import { has, obj, str } from "gamezilla/@/core";
 import { PuzzleDb, PuzzleRow } from "../puzzle-db";
 
@@ -48,7 +48,7 @@ export const uploadLichessDbPuzzleCsv = async ({
   lichessDbPuzzleCsvPath,
   batchSize = 10_000,
 }: {
-  dbConn: DbConnMySql;
+  dbConn: DbConnSql;
   lichessDbPuzzleCsvPath: string;
   batchSize?: number;
 }) => {

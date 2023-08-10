@@ -15,7 +15,7 @@ import {
   client,
   definitions,
 } from "gamezilla/app/@";
-import { ServerAppMsg, ServerReqCtx } from "gamezilla/app/@/server";
+import { ServerAppMsg, ServerReqCtx } from "gamezilla/app/@";
 import {
   Profile,
   Req,

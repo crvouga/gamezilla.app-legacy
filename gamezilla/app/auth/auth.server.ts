@@ -1,9 +1,6 @@
 import { Cmd } from "gamezilla/@/core";
 import { ServerModel, ServerMsg, ToServer } from "./auth.core";
-import {
-  ServerAppMsg,
-  ServerUnauthenticatedReqCtx,
-} from "gamezilla/app/@/server";
+import { ServerAppMsg, ServerUnauthenticatedReqCtx } from "gamezilla/app/@";
 
 //
 //

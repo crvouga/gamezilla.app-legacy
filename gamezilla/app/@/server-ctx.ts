@@ -1,9 +1,9 @@
 import { ClientId, Posix, SessionId } from "gamezilla/@/core";
 import { UserId } from "gamezilla/app/@";
-import { DbConnMySql } from "./db-conn-mysql";
+import { DbConnSql } from "./server-db-conn-sql";
 
 export type ServerCtx = {
-  mySql: DbConnMySql;
+  mySql: DbConnSql;
   now: Posix;
 };
 

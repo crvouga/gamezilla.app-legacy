@@ -1,34 +1,15 @@
-import { Err, Ok, Result } from "gamezilla/@/core";
-import * as mysql from "mysql2/promise";
+import { Err, Ok } from "gamezilla/@/core";
+import { DbConnSql } from "gamezilla/app/@";
+import { PoolConnection, createPool } from "mysql2/promise";
 
-export type ParserMyZodEsque<TInput> = {
-  parse: (input: unknown) => TInput;
-};
-
-export type DbConnMySql = {
-  query: <TRow>(
-    isRow: (row: unknown) => row is TRow,
-    text: string,
-    params?: unknown[]
-  ) => Promise<Result<string, TRow[]>>;
-};
-
-const debugging = false;
-
-const log = (...args: unknown[]) => {
-  if (debugging) {
-    console.log(...args);
-  }
-};
-
-const create = async ({
+export const createDbConnMySql = async ({
   connectionString,
 }: {
   connectionString: string;
-}): Promise<DbConnMySql> => {
-  const pool = mysql.createPool(connectionString);
+}): Promise<DbConnSql> => {
+  const pool = createPool(connectionString);
 
-  const getConnection = async (): Promise<mysql.PoolConnection> => {
+  const getConnection = async (): Promise<PoolConnection> => {
     const conn = await pool.getConnection();
 
     const [rows] = await conn.query("SELECT 1");
@@ -70,6 +51,10 @@ const create = async ({
   };
 };
 
-export const DbConnMySql = {
-  create,
+const debugging = false;
+
+const log = (...args: unknown[]) => {
+  if (debugging) {
+    console.log(...args);
+  }
 };
