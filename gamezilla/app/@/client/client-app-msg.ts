@@ -15,7 +15,7 @@ export type ToChild =
   | { t: "client-authenticated"; userId: UserId }
   | { t: "client-unauthenticated" };
 
-export type ToParent<ToServer> =
+export type ToParent<ToServer = unknown> =
   | { t: "send-to-server"; msg: ToServer }
   | { t: "enqueue-toast"; text: string; duration?: number };
 

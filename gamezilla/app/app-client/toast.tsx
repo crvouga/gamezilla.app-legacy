@@ -1,6 +1,7 @@
 import { Transition, Cmd, Time, p, andThen } from "gamezilla/@/core";
 import { ClientAppMsg } from "gamezilla/app/@";
 import { IconXMark } from "gamezilla/app/@/ui";
+import { ToParent } from "../@/client";
 
 const config: Transition.Config<Toast> = {
   toId: (toast) => `toast-${String(toast.toastId)}`,
@@ -122,6 +123,32 @@ function watch(model: Model): { model: Model; cmd: Cmd<Msg> } {
 //
 //
 //
+
+export const updateFromChild = (model: Model, msg: ToParent) => {
+  switch (msg.t) {
+    case "enqueue-toast": {
+      const toastId = model.runningId;
+
+      const duration = msg.duration ?? 2000;
+
+      const modelNew: Model = {
+        ...model,
+        runningId: model.runningId + 1,
+        toasts: [...model.toasts, { toastId, message: msg.text, duration }],
+      };
+
+      const cmd: Cmd<Msg> = Time.startTimeout(toastId, duration, {
+        t: "toast-duration-elapsed",
+        toastId: model.runningId,
+      });
+
+      return p({ model: modelNew, cmd }, andThen(watch));
+    }
+    default: {
+      return { model };
+    }
+  }
+};
 
 export function updateFromParent({
   msg,

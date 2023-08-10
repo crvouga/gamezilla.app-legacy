@@ -340,7 +340,7 @@ const updateFromServer = ({
   }
 };
 
-export const updateFromParent = ({
+const updateFromParent = ({
   model,
   msg,
   sendToServer,
