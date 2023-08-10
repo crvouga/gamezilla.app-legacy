@@ -1,5 +1,5 @@
-import { Cmd, andThen, p } from "gamezilla/@/core";
-import { ProfileAvatar } from "gamezilla/app/@";
+import { Cmd, Loading, andThen, p } from "gamezilla/@/core";
+import { ProfileAvatar, UserId } from "gamezilla/app/@";
 import {
   ClientAppMsg,
   ClientCtx,
@@ -154,7 +154,7 @@ export const updateFromApp = ({
 }: {
   msg: ClientAppMsg;
   model: Model;
-  sendToServer: (m: ToServer) => Cmd<Msg>;
+  sendToServer: (m: ToServer) => Cmd;
   ctx: ClientCtx | null;
 }): {
   model: Model;
@@ -162,42 +162,75 @@ export const updateFromApp = ({
 } => {
   return p(
     { model },
-
-    andThen((model) => {
-      if (msg.t !== "route-changed") {
-        return { model };
-      }
-      const route = msg.route;
-
-      if (route.t !== "profile") {
-        return { model };
-      }
-
-      if (route.c.t !== "profile") {
-        return { model };
-      }
-
-      return {
-        model,
-        cmd: sendToServer({ t: "find-many", userIds: [route.c.userId] }),
-      };
-    }),
+    andThen((model) => loadProfileRoute(sendToServer, msg, model)),
     andThen((model) => updateUsernameDraft({ model, msg, ctx })),
-
-    andThen((model) => {
-      if (msg.t === "route-changed") {
-        return { model: { ...model, opened: null } };
-      }
-
-      if (msg.t === "got-profiles") {
-        return {
-          model: { ...model, profiles: { ...model.profiles, ...msg.profiles } },
-        };
-      }
-
-      return { model };
-    })
+    andThen((model) => gotProfiles(msg, model)),
+    andThen((model) => loadCurrentUserProfile(sendToServer, msg, model))
   );
+};
+
+const loadCurrentUserProfile = (
+  sendToServer: (m: ToServer) => Cmd,
+  msg: ClientAppMsg,
+  model: Model
+): {
+  model: Model;
+} => {
+  switch (msg.t) {
+    case "client-authenticated": {
+      return loadProfiles(sendToServer, [msg.userId], model);
+    }
+    default: {
+      return { model };
+    }
+  }
+};
+
+const loadProfileRoute = (
+  sendToServer: (m: ToServer) => Cmd,
+  msg: ClientAppMsg,
+  model: Model
+) => {
+  if (
+    msg.t !== "route-changed" ||
+    msg.route.t !== "profile" ||
+    msg.route.c.t !== "profile"
+  ) {
+    return { model };
+  }
+
+  return loadProfiles(sendToServer, [msg.route.c.userId], model);
+};
+
+const loadProfiles = (
+  sendToServer: (m: ToServer) => Cmd,
+  userIds: UserId[],
+  model: Model
+): {
+  model: Model;
+  cmd?: Cmd<Msg>;
+} => {
+  return {
+    model: {
+      ...model,
+      requests: { ...model.requests, "find-many": Loading },
+    },
+    cmd: sendToServer({
+      t: "find-many",
+      userIds,
+    }),
+  };
+};
+
+const gotProfiles = (msg: ClientAppMsg, model: Model): { model: Model } => {
+  switch (msg.t) {
+    case "got-profiles": {
+      return { model };
+    }
+    default: {
+      return { model };
+    }
+  }
 };
 
 const updateUsernameDraft = ({
