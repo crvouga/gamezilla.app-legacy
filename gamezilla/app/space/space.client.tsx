@@ -321,7 +321,7 @@ export const updateFromServer = ({
   }
 };
 
-export const updateFromApp = (input: {
+export const updateFromParent = (input: {
   msg: ClientAppMsg;
   model: ClientModel;
   sendToServer: (m: ToServer) => Cmd;

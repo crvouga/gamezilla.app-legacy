@@ -123,7 +123,7 @@ function watch(model: Model): { model: Model; cmd: Cmd<Msg> } {
 //
 //
 
-export function updateFromApp({
+export function updateFromParent({
   msg,
   model,
 }: {
@@ -136,7 +136,7 @@ export function updateFromApp({
   if (msg.t === "enqueue-toast") {
     const toastId = model.runningId;
     const duration = msg.duration ?? 2000;
-    const updated: ReturnType<typeof updateFromApp> = {
+    const updated: ReturnType<typeof updateFromParent> = {
       model: {
         ...model,
         runningId: model.runningId + 1,

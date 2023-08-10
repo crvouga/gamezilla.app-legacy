@@ -62,7 +62,7 @@ export const update = ({
   return { model: { t: msg.t } };
 };
 
-export const updateFromApp = <ToServer,>(input: {
+export const updateFromParent = <ToServer,>(input: {
   msg: ClientAppMsg;
   model: Model;
   sendToServer: (m: ToServer) => Cmd;

@@ -438,7 +438,7 @@ export const updateFromClient = async (input: {
   }
 };
 
-export const updateFromApp = (input: {
+export const updateFromParent = (input: {
   msg: ServerAppMsg;
   model: ServerModel;
   sendToClient: (clientId: ClientId[], msg: ToClient) => Cmd;

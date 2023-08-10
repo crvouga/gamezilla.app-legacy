@@ -72,7 +72,7 @@ export const update = ({
   return { model };
 };
 
-export const updateFromApp = (input: {
+export const updateFromParent = (input: {
   msg: ClientAppMsg;
   model: Model;
 }): {

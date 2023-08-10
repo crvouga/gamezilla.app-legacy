@@ -117,7 +117,7 @@ export const update = (input: {
     (acc, msg) =>
       p(
         acc,
-        andThen((model) => updateFromApp({ ...input, model, msg }))
+        andThen((model) => updateFromParent({ ...input, model, msg }))
       ),
     updated
   );
@@ -340,7 +340,7 @@ const updateFromServer = ({
   }
 };
 
-export const updateFromApp = ({
+export const updateFromParent = ({
   model,
   msg,
   sendToServer,
@@ -356,41 +356,41 @@ export const updateFromApp = ({
 } => {
   const ctx = toCtx({ model, now });
 
-  const chat = ChatClient.updateFromApp({
+  const chat = ChatClient.updateFromParent({
     model: model.chat,
     msg,
     sendToServer: (c) => sendToServer({ t: "chat", c }),
   });
 
-  const space = SpaceClient.updateFromApp({
+  const space = SpaceClient.updateFromParent({
     model: model.space,
     msg,
     sendToServer: (c) => sendToServer({ t: "space", c }),
   });
 
-  const profile = ProfileClient.updateFromApp({
+  const profile = ProfileClient.updateFromParent({
     model: model.profile,
     msg,
     ctx,
     sendToServer: (c) => sendToServer({ t: "profile", c }),
   });
 
-  const auth = AuthClient.updateFromApp({
+  const auth = AuthClient.updateFromParent({
     model: model.auth,
     msg,
   });
 
-  const routing = Routing.updateFromApp({
+  const routing = Routing.updateFromParent({
     model: model.routing,
     msg,
   });
 
-  const toast = Toast.updateFromApp({
+  const toast = Toast.updateFromParent({
     model: model.toast,
     msg,
   });
 
-  const wire = Wire.updateFromApp({
+  const wire = Wire.updateFromParent({
     model: model.wire,
     msg,
     sendToServer,

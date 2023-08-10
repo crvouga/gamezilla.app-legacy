@@ -146,7 +146,7 @@ export const updateFromServer = ({
   };
 };
 
-export const updateFromApp = ({
+export const updateFromParent = ({
   msg,
   model,
   sendToServer,

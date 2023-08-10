@@ -229,7 +229,7 @@ export const updateFromServer = ({
   }
 };
 
-export const updateFromApp = ({
+export const updateFromParent = ({
   model,
 }: {
   msg: ClientAppMsg;

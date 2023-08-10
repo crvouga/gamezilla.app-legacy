@@ -11,6 +11,14 @@ export type ClientAppMsg =
   | { t: "client-authenticated"; userId: UserId }
   | { t: "client-unauthenticated" };
 
+export type ToChild =
+  | { t: "client-authenticated"; userId: UserId }
+  | { t: "client-unauthenticated" };
+
+export type ToParent<ToServer> =
+  | { t: "send-to-server"; msg: ToServer }
+  | { t: "enqueue-toast"; text: string; duration?: number };
+
 export type Profile = {
   userId: UserId;
   username: Username;

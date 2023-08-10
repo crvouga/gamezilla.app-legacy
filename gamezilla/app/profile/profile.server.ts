@@ -95,7 +95,7 @@ export const updateFromClient = ({
   };
 };
 
-export const updateFromApp = ({
+export const updateFromParent = ({
   sendToClient,
   msg,
   model,
