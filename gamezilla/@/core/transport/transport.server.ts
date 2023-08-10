@@ -5,6 +5,7 @@ import { ClientId } from "./client-id";
 import { SessionId } from "./session-id";
 import {
   ClientToServerMsg,
+  ServerToClientMsg,
   ServerWireMsg,
   TransportServer,
 } from "./transport-core";
@@ -68,6 +69,7 @@ export const createTransportServer = <ToServer, ToClient>({
 
     ws.on("message", (data) => {
       const msg = JSON.parse(data.toString()) as ClientToServerMsg<ToServer>; // leap of faith
+
       if (msg.t === "to-server") {
         onClientMsg.publish({ clientId, sessionId, msg: msg.c });
         return;
@@ -80,12 +82,16 @@ export const createTransportServer = <ToServer, ToClient>({
     });
   });
 
+  const send = (client: WebSocket, msg: ServerToClientMsg<ToClient>) => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(JSON.stringify(msg));
+    }
+  };
+
   return {
     broadcast: (msg) => () => {
       for (const client of clients.values()) {
-        if (client.readyState === WebSocket.OPEN) {
-          client.send(JSON.stringify(msg));
-        }
+        send(client, { t: "to-client", c: msg });
       }
     },
     sendToClient: (clientIds: ClientId[], msg: ToClient) => () => {
@@ -96,11 +102,7 @@ export const createTransportServer = <ToServer, ToClient>({
           continue;
         }
 
-        if (client.readyState !== WebSocket.OPEN) {
-          continue;
-        }
-
-        client.send(JSON.stringify(msg));
+        send(client, { t: "to-client", c: msg });
       }
     },
     onClientMsg,

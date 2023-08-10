@@ -53,13 +53,11 @@ program.subscribe((model, ctx) => {
   );
 });
 
-// @ts-ignore
-window.debug = false;
 program.subscribe(async function (model, ctx, msg) {
-  // @ts-ignore
-  if (window.debug && msg) {
+  if (msg) {
     console.log(toMsgType(msg), toMsgPayload(msg, {}));
   }
+
   // @ts-ignore
   window.model = model;
 });

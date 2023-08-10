@@ -1,5 +1,5 @@
+import { createTransportServer, Program, toMsgType } from "gamezilla/@/core";
 import { createServer } from "http";
-import { createTransportServer, Program } from "./@/core";
 import * as AppServer from "./app/app.server";
 
 const httpServer = createServer((_request, response) => {
@@ -40,6 +40,12 @@ const run = async () => {
         },
       });
     },
+  });
+
+  program.subscribe((_model, _ctx, msg) => {
+    if (msg) {
+      console.log(toMsgType(msg));
+    }
   });
 
   program.start();

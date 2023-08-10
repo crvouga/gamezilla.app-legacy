@@ -1,5 +1,6 @@
 import { PubSub } from "../sub";
 import {
+  ClientToServerMsg,
   ClientWireMsg,
   ServerToClientMsg,
   TransportClient,
@@ -55,7 +56,7 @@ export const createTransportClient = <ToServer, ToClient>({
     };
 
     ws.onmessage = (event) => {
-      const msg = JSON.parse(event.data) as ServerToClientMsg<ToClient>;
+      const msg = JSON.parse(event.data) as ServerToClientMsg<ToClient>; // leap of faith
 
       if (msg.t === "to-client") {
         onServerMsg.publish(msg.c);
@@ -81,12 +82,16 @@ export const createTransportClient = <ToServer, ToClient>({
     connect();
   });
 
+  const send = (msg: ClientToServerMsg<ToServer>) => {
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify(msg));
+      return;
+    }
+  };
+
   return {
     sendToServer: (msg) => () => {
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify(msg));
-        return;
-      }
+      send({ t: "to-server", c: msg });
     },
     onServerMsg,
     onWireMsg,

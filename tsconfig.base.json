@@ -24,6 +24,6 @@
 
     "baseUrl": "."
   },
-  "include": ["src", "gamezilla"],
+  "include": ["gamezilla"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
