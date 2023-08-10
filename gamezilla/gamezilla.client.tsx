@@ -6,7 +6,7 @@ import {
   toMsgType,
 } from "gamezilla/@/core";
 import { render } from "inferno";
-import { AppClient } from "./app";
+import * as AppClient from "./app/app.client";
 
 const env = {
   isDev: process.env.NODE_ENV === "development",

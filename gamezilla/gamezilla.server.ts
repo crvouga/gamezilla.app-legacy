@@ -1,6 +1,6 @@
 import { createServer } from "http";
 import { createTransportServer, Program } from "./@/core";
-import { AppServer } from "./app";
+import * as AppServer from "./app/app.server";
 
 const httpServer = createServer((_request, response) => {
   response.end(JSON.stringify({ message: "hello from gamezilla.app server" }));
