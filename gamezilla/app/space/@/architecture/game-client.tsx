@@ -1,5 +1,5 @@
 import { Cmd, Sub } from "gamezilla/@/core";
-import { ClientAppMsg } from "gamezilla/app/@/client";
+import { ClientAppMsg } from "gamezilla/app/@";
 import { VDom } from "gamezilla/app/@/ui";
 import { SpaceClientCtx, SpaceViewCtx } from "../game-space-client";
 import { SpaceMsg } from "../game-space-core";

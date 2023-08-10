@@ -1,5 +1,5 @@
 import { UserId } from "gamezilla/app/@";
-import { ViewCtx } from "gamezilla/app/@/client";
+import { ViewCtx } from "gamezilla/app/@";
 import { IconQuestionMark, MyAvatar, Button, VDom } from "gamezilla/app/@/ui";
 
 type IconProps = { className: string };

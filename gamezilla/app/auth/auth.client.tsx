@@ -16,7 +16,7 @@ import {
   Route,
   RouteAuth,
   UnauthenticatedViewCtx,
-} from "gamezilla/app/@/client";
+} from "gamezilla/app/@";
 import {
   Button,
   ConformationDialog,

@@ -1,4 +1,4 @@
-import { ViewCtx } from "gamezilla/app/@/client";
+import { ViewCtx } from "gamezilla/app/@";
 import {
   Button,
   IconGamepad,

@@ -5,8 +5,14 @@ import {
   Route,
   UnauthenticatedViewCtx,
   ViewCtx,
-} from "./@/client";
-import { IconGamepad, IconUserCircle, LoadingScreen, VDom, cn } from "./@/ui";
+} from "gamezilla/app/@";
+import {
+  IconGamepad,
+  IconUserCircle,
+  LoadingScreen,
+  VDom,
+  cn,
+} from "gamezilla/app/@/ui";
 import { Routing, Toast, Wire } from "./app-client";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./app.core";
 import { AuthClient } from "./auth";

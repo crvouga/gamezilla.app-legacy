@@ -15,7 +15,7 @@ import {
   ToClient,
   ToServer,
 } from "./game.core";
-import { ClientAppMsg } from "gamezilla/app/@/client";
+import { ClientAppMsg } from "gamezilla/app/@";
 
 type Client = GameClient<
   ClientModel,

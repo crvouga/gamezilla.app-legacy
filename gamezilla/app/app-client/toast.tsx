@@ -1,5 +1,5 @@
 import { Transition, Cmd, Time, p, andThen } from "gamezilla/@/core";
-import { ClientAppMsg } from "gamezilla/app/@/client";
+import { ClientAppMsg } from "gamezilla/app/@";
 import { IconXMark } from "gamezilla/app/@/ui";
 
 const config: Transition.Config<Toast> = {

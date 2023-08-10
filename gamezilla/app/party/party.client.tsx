@@ -1,5 +1,5 @@
 import { UserId } from "gamezilla/app/@";
-import { ClientCtx, Route, ViewCtx } from "gamezilla/app/@/client";
+import { ClientCtx, Route, ViewCtx } from "gamezilla/app/@";
 import { Cmd, RemoteResult, Sub, exhaustive, p } from "gamezilla/@/core";
 import { Mic } from "./mic";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./party.core";

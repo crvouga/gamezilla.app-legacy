@@ -1,5 +1,5 @@
 import { UserId, Username } from "gamezilla/app/@";
-import { Route } from "./route";
+import { Route } from "./client-route";
 
 export type ClientAppMsg =
   | { t: "route-changed"; route: Route }

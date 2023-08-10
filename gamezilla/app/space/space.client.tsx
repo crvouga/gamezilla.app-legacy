@@ -8,13 +8,12 @@ import {
   p,
   removeKey,
 } from "gamezilla/@/core";
-
 import {
   ClientAppMsg,
   ClientCtx,
   RouteGameSpace,
   ViewCtx,
-} from "gamezilla/app/@/client";
+} from "gamezilla/app/@";
 import {
   ActionButton,
   Button,

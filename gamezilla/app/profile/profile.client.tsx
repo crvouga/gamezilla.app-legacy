@@ -5,7 +5,7 @@ import {
   ClientCtx,
   RouteProfile,
   ViewCtx,
-} from "gamezilla/app/@/client";
+} from "gamezilla/app/@";
 import {
   Button,
   IconChevronRight,
