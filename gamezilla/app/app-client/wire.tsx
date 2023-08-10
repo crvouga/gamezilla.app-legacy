@@ -55,7 +55,7 @@ export const update = ({
       model: {
         t: "server-connected",
       },
-      msgs: [{ t: "wire-connected" }],
+      msgs: [{ t: "server-connected" }],
     };
   }
 

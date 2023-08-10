@@ -91,99 +91,110 @@ export const update = (input: {
 };
 
 const watchCreate: typeof update = ({ msg, model }) => {
-  if (msg.t === "create") {
-    return {
-      model,
-      msgs: [
-        {
-          t: "push-route",
-          route: {
-            t: "game-space",
-            c: { t: "game-space", spaceId: msg.spaceId },
+  switch (msg.t) {
+    case "create": {
+      return {
+        model,
+        msgs: [
+          {
+            t: "push-route",
+            route: {
+              t: "space",
+              c: { t: "space", spaceId: msg.spaceId },
+            },
           },
-        },
-      ],
-    };
+        ],
+      };
+    }
+    default: {
+      return { model };
+    }
   }
-  return { model };
 };
 
 const updateMain: typeof update = ({ ctx, sendToServer, msg, model }) => {
-  if (msg.t === "modal-closed") {
-    return { model: { ...model, modal: null } };
-  }
+  switch (msg.t) {
+    case "modal-closed": {
+      return { model: { ...model, modal: null } };
+    }
 
-  if (msg.t === "modal-open") {
-    return { model: { ...model, modal: msg.c } };
-  }
+    case "modal-open": {
+      return { model: { ...model, modal: msg.c } };
+    }
 
-  if (msg.t === "clicked-user-link") {
-    return {
-      model: { ...model, modal: null },
-      msgs: [
-        {
-          t: "push-route",
-          route: {
-            t: "profile",
-            c: { t: "profile", userId: msg.userId },
+    case "clicked-user-link": {
+      return {
+        model: { ...model, modal: null },
+        msgs: [
+          {
+            t: "push-route",
+            route: {
+              t: "profile",
+              c: { t: "profile", userId: msg.userId },
+            },
           },
+        ],
+      };
+    }
+
+    case "clicked-user": {
+      return {
+        model: {
+          ...model,
+          previewUserId: msg.userId,
+          modal: "user-preview",
         },
-      ],
-    };
-  }
+      };
+    }
 
-  if (msg.t === "clicked-user") {
-    return {
-      model: {
+    case "game": {
+      const space = findSpaceByUserId(model, ctx.currentUserId);
+
+      if (!space) {
+        return { model };
+      }
+
+      if (!space.game) {
+        return { model };
+      }
+
+      const updated = GameClient.update({
+        ctx: { ...ctx, hostId: space.hostId },
+        sendToServer: (msg) => sendToServer({ t: "game", c: msg }),
+        msg: msg.c,
+        model: space.game,
+      });
+
+      const spaceNew: Space<GameClient.Model> = {
+        ...space,
+        game: updated.model,
+      };
+
+      const modelNew = {
         ...model,
-        previewUserId: msg.userId,
-        modal: "user-preview",
-      },
-    };
-  }
+        spaces: {
+          ...model.spaces,
+          [space.spaceId]: spaceNew,
+        },
+      };
 
-  if (msg.t === "game") {
-    const space = findSpaceByUserId(model, ctx.currentUserId);
-
-    if (!space) {
-      return { model };
+      return {
+        model: modelNew,
+        cmd: Cmd.t("game", updated.cmd),
+        msgs: updated.msgs,
+      };
     }
 
-    if (!space.game) {
-      return { model };
+    default: {
+      return {
+        model: {
+          ...model,
+          req: { ...model.req, [msg.t]: RemoteResult.Loading },
+        },
+        cmd: sendToServer(msg),
+      };
     }
-
-    const updated = GameClient.update({
-      ctx: { ...ctx, hostId: space.hostId },
-      sendToServer: (msg) => sendToServer({ t: "game", c: msg }),
-      msg: msg.c,
-      model: space.game,
-    });
-
-    const spaceNew: Space<GameClient.Model> = {
-      ...space,
-      game: updated.model,
-    };
-
-    const modelNew = {
-      ...model,
-      spaces: {
-        ...model.spaces,
-        [space.spaceId]: spaceNew,
-      },
-    };
-
-    return {
-      model: modelNew,
-      cmd: Cmd.t("game", updated.cmd),
-      msgs: updated.msgs,
-    };
   }
-
-  return {
-    model: { ...model, req: { ...model.req, [msg.t]: RemoteResult.Loading } },
-    cmd: sendToServer(msg),
-  };
 };
 
 export const updateFromServer = ({
@@ -311,22 +322,26 @@ export const updateFromApp = (input: {
 } => {
   const { msg } = input;
 
-  if (msg.t === "current-user-authenticated") {
-    return loadGameSpaces(input);
-  }
+  switch (msg.t) {
+    case "client-authenticated": {
+      return listSpaces(input);
+    }
 
-  if (msg.t === "wire-connected") {
-    return loadGameSpaces(input);
-  }
+    case "route-changed": {
+      if (msg.route.t === "space") {
+        return listSpaces(input);
+      }
 
-  if (msg.t === "route-changed" && msg.route.t === "game-space") {
-    return loadGameSpaces(input);
-  }
+      return input;
+    }
 
-  return input;
+    default: {
+      return input;
+    }
+  }
 };
 
-const loadGameSpaces = (input: {
+const listSpaces = (input: {
   model: ClientModel;
   sendToServer: (m: ToServer) => Cmd;
 }): {
@@ -334,15 +349,9 @@ const loadGameSpaces = (input: {
   cmd?: Cmd<ClientMsg>;
 } => {
   const { model, sendToServer } = input;
+
   return {
-    // model,
-    model: {
-      ...model,
-      req: {
-        ...model.req,
-        list: Loading,
-      },
-    },
+    model: { ...model, req: { ...model.req, list: Loading } },
     cmd: sendToServer({ t: "list" }),
   };
 };
@@ -458,7 +467,7 @@ export const View = ({
   route: RouteGameSpace;
   viewBottomBar: VDom;
 }) => {
-  if (route.t === "game-space") {
+  if (route.t === "space") {
     return (
       <ViewSpaceScreen
         spaceId={route.spaceId}
@@ -627,7 +636,7 @@ const ViewTopBar = ({
           label="Home"
           icon={<IconHome className="h-6 w-6" />}
           onClick={() =>
-            ctx.onPush({ t: "game-space", c: { t: "game-space-list" } })
+            ctx.onPush({ t: "space", c: { t: "game-space-list" } })
           }
         />
       </div>
@@ -665,9 +674,7 @@ export const ViewSpaceNotFound = ({ ctx }: { ctx: ViewCtx }) => {
     <div className="flex flex-1 flex-col items-center justify-center gap-4">
       <p className="text-center text-2xl">Space not found</p>
       <Button
-        onClick={() =>
-          ctx.onPush({ t: "game-space", c: { t: "game-space-list" } })
-        }
+        onClick={() => ctx.onPush({ t: "space", c: { t: "game-space-list" } })}
         size="lg"
         variant="contained"
         color="primary"
@@ -703,8 +710,8 @@ export const ViewCurrentSpaceBar = ({
         className="flex flex-1 items-center overflow-hidden"
         onClick={() => {
           ctx.onPush({
-            t: "game-space",
-            c: { t: "game-space", spaceId: space.spaceId },
+            t: "space",
+            c: { t: "space", spaceId: space.spaceId },
           });
         }}>
         <div className="mr-2 p-2">

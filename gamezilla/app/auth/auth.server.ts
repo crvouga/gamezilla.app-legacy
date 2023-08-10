@@ -1,6 +1,6 @@
 import { Cmd } from "gamezilla/@/core";
-import { ServerModel, ServerMsg, ToServer } from "./auth.core";
 import { ServerAppMsg, ServerUnauthenticatedReqCtx } from "gamezilla/app/@";
+import { ServerModel, ServerMsg, ToClient, ToServer } from "./auth.core";
 
 //
 //
@@ -40,7 +40,9 @@ export const updateFromClient = ({
   ctx,
   model,
   msg,
+  sendBack,
 }: {
+  sendBack: (m: ToClient) => Cmd;
   ctx: ServerUnauthenticatedReqCtx;
   msg: ToServer;
   model: Model;
@@ -49,7 +51,7 @@ export const updateFromClient = ({
   cmd?: Cmd<Msg>;
   msgs?: ServerAppMsg[];
 } => {
-  if (msg.t === "current-user-authenticated") {
+  if (msg.t === "client-authenticated") {
     return {
       model: {
         ...model,
@@ -61,6 +63,9 @@ export const updateFromClient = ({
           },
         },
       },
+
+      cmd: sendBack({ t: "acknowledged", c: msg }),
+
       msgs: [
         {
           t: "client-authenticated",
@@ -71,7 +76,7 @@ export const updateFromClient = ({
     };
   }
 
-  if (msg.t === "current-user-unauthenticated") {
+  if (msg.t === "client-unauthenticated") {
     const sessionsNew = { ...model.sessions };
     delete sessionsNew[ctx.sessionId];
     return {
@@ -79,8 +84,13 @@ export const updateFromClient = ({
         ...model,
         sessions: sessionsNew,
       },
+
+      cmd: sendBack({ t: "acknowledged", c: msg }),
     };
   }
 
-  return { model };
+  return {
+    model,
+    cmd: sendBack({ t: "acknowledged", c: msg }),
+  };
 };

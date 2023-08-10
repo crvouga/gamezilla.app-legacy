@@ -45,18 +45,16 @@ export type Model = {
 
 const codeInputId = "codeInputId";
 
-export const init = (): { model: Model; cmd: Cmd<Msg> } => {
-  return {
-    model: {
-      code: "",
-      submission: { type: "idle" },
-    },
-    cmd: p(
-      Time.delay(100, () => null),
-      Task.chain(() => Browser.focus(codeInputId)),
-      Cmd.perform((result) => ({ t: "focus-done", result }))
-    ),
-  };
+export const init: { model: Model; cmd: Cmd<Msg> } = {
+  model: {
+    code: "",
+    submission: { type: "idle" },
+  },
+  cmd: p(
+    Time.delay(100, () => null),
+    Task.chain(() => Browser.focus(codeInputId)),
+    Cmd.perform((result) => ({ t: "focus-done", result }))
+  ),
 };
 
 //

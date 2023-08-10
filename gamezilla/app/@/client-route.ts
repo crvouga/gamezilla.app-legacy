@@ -14,7 +14,7 @@ export type Route =
   | { t: "auth"; c: RouteAuth }
   | { t: "logout" }
   | { t: "profile"; c: RouteProfile }
-  | { t: "game-space"; c: RouteGameSpace }
+  | { t: "space"; c: RouteGameSpace }
   | { t: "chat"; c: RouteChat }
   | { t: "search" };
 
@@ -26,7 +26,7 @@ const encode = (route: Route): string => {
       return "/logout";
     case "profile":
       return encodeProfile(route.c);
-    case "game-space":
+    case "space":
       return encodeSpace(route.c);
     case "chat":
       return encodeChat(route.c);
@@ -55,7 +55,7 @@ const decode = (pathname: string): Route | null => {
     if (space === null) {
       return null;
     }
-    return { t: "game-space", c: space };
+    return { t: "space", c: space };
   }
   if (pathname.startsWith("/chat")) {
     const chat = decodeChat(pathname);
@@ -193,12 +193,12 @@ export const decodeProfile = (pathname: string): RouteProfile | null => {
 //
 
 export type RouteGameSpace =
-  | { t: "game-space"; spaceId: SpaceId }
+  | { t: "space"; spaceId: SpaceId }
   | { t: "game-space-list" };
 
 export const encodeSpace = (route: RouteGameSpace): string => {
   switch (route.t) {
-    case "game-space":
+    case "space":
       return `/game-space/${route.spaceId}`;
     case "game-space-list":
       return "/game-space";
@@ -208,7 +208,7 @@ export const decodeSpace = (pathname: string): RouteGameSpace | null => {
   if (pathname.startsWith("/game-space/")) {
     const spaceId = pathname.slice("/game-space/".length);
     if (SpaceId.is(spaceId)) {
-      return { t: "game-space", spaceId };
+      return { t: "space", spaceId };
     }
     return null;
   }

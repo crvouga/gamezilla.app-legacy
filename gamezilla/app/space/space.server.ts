@@ -444,7 +444,11 @@ export const updateFromApp = (input: {
 } => {
   const { msg } = input;
 
-  return input;
+  switch (msg.t) {
+    default: {
+      return input;
+    }
+  }
 };
 
 const sendToSpace = (

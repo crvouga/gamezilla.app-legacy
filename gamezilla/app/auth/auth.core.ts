@@ -40,13 +40,8 @@ export type ServerModel = {
 //
 
 type Event =
-  | {
-      t: "current-user-authenticated";
-      userId: UserId;
-    }
-  | {
-      t: "current-user-unauthenticated";
-    };
+  | { t: "client-authenticated"; userId: UserId }
+  | { t: "client-unauthenticated" };
 
 export type ClientMsg =
   | Req
@@ -61,7 +56,7 @@ export type ServerMsg = { t: "none" };
 
 export type ToServer = Req | Event;
 
-export type ToClient = Res;
+export type ToClient = Res | { t: "acknowledged"; c: ToServer };
 
 export type Req =
   | { t: "logout" }

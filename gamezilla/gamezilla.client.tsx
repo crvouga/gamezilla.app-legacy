@@ -53,9 +53,11 @@ program.subscribe((model, ctx) => {
   );
 });
 
+let i = 0;
 program.subscribe(async function (model, ctx, msg) {
   if (msg) {
-    console.log(toMsgType(msg), toMsgPayload(msg, {}));
+    console.log(i, [toMsgType(msg), toMsgPayload(msg, {})]);
+    i++;
   }
 
   // @ts-ignore

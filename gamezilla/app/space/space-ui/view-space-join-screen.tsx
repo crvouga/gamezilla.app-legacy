@@ -32,7 +32,7 @@ export const ViewSpaceJoinScreen = ({
         left={
           <TopBarBackButton
             onClick={() =>
-              ctx.onPush({ t: "game-space", c: { t: "game-space-list" } })
+              ctx.onPush({ t: "space", c: { t: "game-space-list" } })
             }
           />
         }

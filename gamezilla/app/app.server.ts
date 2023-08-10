@@ -121,10 +121,10 @@ const updateMain = async ({
     });
   }
 
-  if (msg.t === "game-space") {
+  if (msg.t === "space") {
     const updated = await SpaceServer.update({
       sendToUser: (userIds, m) =>
-        sendToUser(sendToClient, model, userIds, { t: "game-space", c: m }),
+        sendToUser(sendToClient, model, userIds, { t: "space", c: m }),
       msg: msg.c,
       model: model.space,
       ctx,
@@ -132,7 +132,7 @@ const updateMain = async ({
 
     return {
       model: { ...model, space: updated.model },
-      cmd: Cmd.t("game-space", updated.cmd ?? Cmd.None),
+      cmd: Cmd.t("space", updated.cmd ?? Cmd.None),
     };
   }
 
@@ -257,7 +257,7 @@ const updateFromApp = ({
     msg,
     model: model.space,
     sendToClient: (clientIds, m) =>
-      sendToClient(clientIds, { t: "game-space", c: m }),
+      sendToClient(clientIds, { t: "space", c: m }),
   });
 
   const profileUpdated = ProfileServer.updateFromApp({
@@ -274,7 +274,7 @@ const updateFromApp = ({
       profile: profileUpdated.model,
     },
     cmd: Cmd.batch<Msg>([
-      Cmd.t("game-space", spaceUpdated.cmd),
+      Cmd.t("space", spaceUpdated.cmd),
       Cmd.t("profile", profileUpdated.cmd),
     ]),
   };
@@ -310,11 +310,11 @@ const updateFromClient = async ({
       ctx,
       model: model.auth,
       msg: msg.c,
+      sendBack: (c) => sendToClient([ctx.clientId], { t: "auth", c }),
     });
     return {
       model: { ...model, auth: updated.model },
       cmd: Cmd.t("auth", updated.cmd),
-      msgs: updated.msgs,
     };
   }
 
@@ -322,7 +322,7 @@ const updateFromClient = async ({
     const updated = ProfileServer.updateFromClient({
       model: model.profile,
       msg: msg.c,
-      sendToClient: (c) => sendToClient([ctx.clientId], { t: "profile", c }),
+      sendBack: (c) => sendToClient([ctx.clientId], { t: "profile", c }),
       ctx: authReqCtx,
     });
     return {
@@ -354,7 +354,7 @@ const updateFromClient = async ({
     };
   }
 
-  if (msg.t === "game-space") {
+  if (msg.t === "space") {
     if (!authReqCtx) {
       return { model };
     }
@@ -363,10 +363,10 @@ const updateFromClient = async ({
       ctx: authReqCtx,
       msg: msg.c,
       model: model.space,
-      broadcast: (c) => broadcast({ t: "game-space", c }),
-      sendToClient: (c) => sendToClient([ctx.clientId], { t: "game-space", c }),
+      broadcast: (c) => broadcast({ t: "space", c }),
+      sendToClient: (c) => sendToClient([ctx.clientId], { t: "space", c }),
       sendToUser: (userIds, c) =>
-        sendToUser(sendToClient, model, userIds, { t: "game-space", c }),
+        sendToUser(sendToClient, model, userIds, { t: "space", c }),
     });
 
     return {
@@ -374,7 +374,7 @@ const updateFromClient = async ({
         ...model,
         space: updated.model,
       },
-      cmd: Cmd.t("game-space", updated.cmd ?? Cmd.None),
+      cmd: Cmd.t("space", updated.cmd ?? Cmd.None),
     };
   }
 
@@ -434,10 +434,7 @@ export const subscriptions = ({
   ctx: ServerCtx;
 }): Sub<Msg> => {
   return Sub.batch([
-    Sub.tag(
-      "game-space",
-      SpaceServer.subscriptions({ model: model.space, ctx })
-    ),
+    Sub.tag("space", SpaceServer.subscriptions({ model: model.space, ctx })),
     Sub.tag("wire", onWireMsg),
     p(
       onClientMsg,

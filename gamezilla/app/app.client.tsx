@@ -1,4 +1,13 @@
-import { Browser, Cmd, Posix, Sub, andThen, p } from "gamezilla/@/core";
+import {
+  Browser,
+  Cmd,
+  Posix,
+  Sub,
+  andThen,
+  p,
+  toMsgPayload,
+  toMsgType,
+} from "gamezilla/@/core";
 import {
   ClientAppMsg,
   ClientCtx,
@@ -44,8 +53,7 @@ export const init = ({
   const routing = Routing.init(location);
   const toast = Toast.init;
   const wire = Wire.init;
-  //
-  const auth = AuthClient.init();
+  const auth = AuthClient.init;
   const space = SpaceClient.init;
   const profile = ProfileClient.init;
   const chat = ChatClient.init;
@@ -98,6 +106,13 @@ export const update = (input: {
 
   const appMsgs = updated.msgs ?? [];
 
+  if (appMsgs.length > 0) {
+    console.log(
+      "appMsgs",
+      ...appMsgs.map((m) => [toMsgType(m), toMsgPayload(m, {})])
+    );
+  }
+
   const output = appMsgs.reduce(
     (acc, msg) =>
       p(
@@ -127,104 +142,101 @@ const update_ = ({
 } => {
   const ctx = toCtx({ model, now });
 
-  if (msg.t === "▶") {
-    return updateFromServer({ now, sendToServer, msg: msg.c, model });
-  }
-
-  if (msg.t === "auth") {
-    const updated = AuthClient.update({
-      route: model.routing.route,
-      sendToServer: (c) => sendToServer({ t: "auth", c }),
-      msg: msg.c,
-      model: model.auth,
-    });
-    return {
-      model: { ...model, auth: updated.model },
-      cmd: Cmd.t("auth", updated.cmd),
-      msgs: updated.msgs,
-    };
-  }
-
-  if (msg.t === "toast") {
-    const updated = Toast.update(model.toast, msg.c);
-    return {
-      model: { ...model, toast: updated.model },
-      cmd: Cmd.t("toast", updated.cmd),
-    };
-  }
-
-  if (msg.t === "routing") {
-    const updated = Routing.update({
-      msg: msg.c,
-      model: model.routing,
-    });
-
-    return {
-      model: { ...model, routing: updated.model },
-      cmd: Cmd.t("routing", updated.cmd),
-      msgs: updated.msgs,
-    };
-  }
-
-  if (msg.t === "wire") {
-    const updated = Wire.update({
-      msg: msg.c,
-      model: model.wire,
-    });
-    return { model: { ...model, wire: updated.model }, msgs: updated.msgs };
-  }
-
-  if (msg.t === "game-space") {
-    if (!ctx) {
-      return { model };
+  switch (msg.t) {
+    case "▶": {
+      return updateFromServer({ now, sendToServer, msg: msg.c, model });
     }
-    const updated = SpaceClient.update({
-      ctx: ctx,
-      sendToServer: (m) => sendToServer({ t: "game-space", c: m }),
-      msg: msg.c,
-      model: model.space,
-    });
 
-    return {
-      model: { ...model, space: updated.model },
-      cmd: Cmd.t("game-space", updated.cmd ?? Cmd.None),
-      msgs: updated.msgs,
-    };
+    case "auth": {
+      const updated = AuthClient.update({
+        route: model.routing.route,
+        sendToServer: (c) => sendToServer({ t: "auth", c }),
+        msg: msg.c,
+        model: model.auth,
+      });
+      return {
+        model: { ...model, auth: updated.model },
+        cmd: Cmd.t("auth", updated.cmd),
+        msgs: updated.msgs,
+      };
+    }
+
+    case "toast": {
+      const updated = Toast.update(model.toast, msg.c);
+      return {
+        model: { ...model, toast: updated.model },
+        cmd: Cmd.t("toast", updated.cmd),
+      };
+    }
+
+    case "routing": {
+      const updated = Routing.update({ msg: msg.c, model: model.routing });
+
+      return {
+        model: { ...model, routing: updated.model },
+        cmd: Cmd.t("routing", updated.cmd),
+        msgs: updated.msgs,
+      };
+    }
+
+    case "wire": {
+      const updated = Wire.update({
+        msg: msg.c,
+        model: model.wire,
+      });
+      return { model: { ...model, wire: updated.model }, msgs: updated.msgs };
+    }
+
+    case "space": {
+      if (!ctx) {
+        return { model };
+      }
+      const updated = SpaceClient.update({
+        ctx: ctx,
+        sendToServer: (m) => sendToServer({ t: "space", c: m }),
+        msg: msg.c,
+        model: model.space,
+      });
+
+      return {
+        model: { ...model, space: updated.model },
+        cmd: Cmd.t("space", updated.cmd ?? Cmd.None),
+        msgs: updated.msgs,
+      };
+    }
+
+    case "profile": {
+      const updated = ProfileClient.update({
+        msg: msg.c,
+        model: model.profile,
+        sendToServer: (m) => sendToServer({ t: "profile", c: m }),
+      });
+      return {
+        model: { ...model, profile: updated.model },
+        cmd: Cmd.t("profile", updated.cmd),
+      };
+    }
+
+    case "chat": {
+      const updated = ChatClient.update({ msg: msg.c, model: model.chat });
+      return {
+        model: { ...model, chat: updated.model },
+        cmd: Cmd.t("chat", updated?.cmd ?? Cmd.None),
+      };
+    }
+
+    case "search": {
+      const updated = SearchClient.update({
+        msg: msg.c,
+        model: model.search,
+        sendToServer: (m) => sendToServer({ t: "search", c: m }),
+      });
+      return {
+        model: { ...model, search: updated.model },
+        cmd: Cmd.t("search", updated.cmd),
+      };
+    }
   }
-
-  if (msg.t === "profile") {
-    const updated = ProfileClient.update({
-      msg: msg.c,
-      model: model.profile,
-      sendToServer: (m) => sendToServer({ t: "profile", c: m }),
-    });
-    return {
-      model: { ...model, profile: updated.model },
-      cmd: Cmd.t("profile", updated.cmd),
-    };
-  }
-
-  if (msg.t === "chat") {
-    const updated = ChatClient.update({ msg: msg.c, model: model.chat });
-    return {
-      model: { ...model, chat: updated.model },
-      cmd: Cmd.t("chat", updated?.cmd ?? Cmd.None),
-    };
-  }
-
-  if (msg.t === "search") {
-    const updated = SearchClient.update({
-      msg: msg.c,
-      model: model.search,
-      sendToServer: (m) => sendToServer({ t: "search", c: m }),
-    });
-    return {
-      model: { ...model, search: updated.model },
-      cmd: Cmd.t("search", updated.cmd),
-    };
-  }
-
-  return { model };
 };
 
 const toCtx = (input: { model: Model; now: Posix }): ClientCtx | null => {
@@ -255,69 +267,77 @@ const updateFromServer = ({
 } => {
   const ctx = toCtx({ model, now });
 
-  if (msg.t === "auth") {
-    const updated = AuthClient.updateFromServer({
-      msg: msg.c,
-      model: model.auth,
-    });
-    return {
-      model: { ...model, auth: updated.model },
-      cmd: Cmd.t("auth", updated.cmd),
-    };
-  }
+  switch (msg.t) {
+    case "auth": {
+      const updated = AuthClient.updateFromServer({
+        msg: msg.c,
+        model: model.auth,
+      });
+      return {
+        ...updated,
+        model: { ...model, auth: updated.model },
+        cmd: Cmd.t("auth", updated.cmd),
+      };
+    }
 
-  if (msg.t === "search") {
-    const updated = SearchClient.updateFromServer({
-      msg: msg.c,
-      model: model.search,
-    });
-    return {
-      model: { ...model, search: updated.model },
-      cmd: Cmd.t("search", updated.cmd),
-    };
-  }
+    case "search": {
+      const updated = SearchClient.updateFromServer({
+        msg: msg.c,
+        model: model.search,
+      });
+      return {
+        ...updated,
+        model: { ...model, search: updated.model },
+        cmd: Cmd.t("search", updated.cmd),
+      };
+    }
 
-  if (msg.t === "chat") {
-    const updated = ChatClient.updateFromServer({
-      msg: msg.c,
-      model: model.chat,
-    });
-    return {
-      model: { ...model, chat: updated.model },
-      cmd: Cmd.t("chat", updated.cmd),
-    };
-  }
+    case "chat": {
+      const updated = ChatClient.updateFromServer({
+        msg: msg.c,
+        model: model.chat,
+      });
+      return {
+        ...updated,
+        model: { ...model, chat: updated.model },
+        cmd: Cmd.t("chat", updated.cmd),
+      };
+    }
 
-  if (msg.t === "game-space") {
-    if (!ctx) {
+    case "space": {
+      if (!ctx) {
+        return { model };
+      }
+      const updated = SpaceClient.updateFromServer({
+        ctx,
+        sendToServer: (msg) => sendToServer({ t: "space", c: msg }),
+        msg: msg.c,
+        model: model.space,
+      });
+
+      return {
+        ...updated,
+        model: { ...model, space: updated.model },
+        cmd: Cmd.t("space", updated.cmd),
+      };
+    }
+
+    case "profile": {
+      const updated = ProfileClient.updateFromServer({
+        msg: msg.c,
+        model: model.profile,
+      });
+      return {
+        ...updated,
+        model: { ...model, profile: updated.model },
+        cmd: Cmd.t("profile", updated.cmd),
+      };
+    }
+
+    case "access-denied": {
       return { model };
     }
-    const updated = SpaceClient.updateFromServer({
-      ctx,
-      sendToServer: (msg) => sendToServer({ t: "game-space", c: msg }),
-      msg: msg.c,
-      model: model.space,
-    });
-
-    return {
-      model: { ...model, space: updated.model },
-      cmd: Cmd.t("game-space", updated.cmd ?? Cmd.None),
-      msgs: updated.msgs,
-    };
   }
-
-  if (msg.t === "profile") {
-    const updated = ProfileClient.updateFromServer({
-      msg: msg.c,
-      model: model.profile,
-    });
-    return {
-      model: { ...model, profile: updated.model },
-      cmd: Cmd.t("profile", updated.cmd),
-    };
-  }
-
-  return { model };
 };
 
 export const updateFromApp = ({
@@ -345,7 +365,7 @@ export const updateFromApp = ({
   const space = SpaceClient.updateFromApp({
     model: model.space,
     msg,
-    sendToServer: (c) => sendToServer({ t: "game-space", c }),
+    sendToServer: (c) => sendToServer({ t: "space", c }),
   });
 
   const profile = ProfileClient.updateFromApp({
@@ -391,7 +411,7 @@ export const updateFromApp = ({
       Cmd.t("routing", routing.cmd),
       Cmd.t("chat", chat.cmd),
       Cmd.t("profile", profile.cmd),
-      Cmd.t("game-space", space.cmd),
+      Cmd.t("space", space.cmd),
       Cmd.t("wire", wire.cmd),
       Cmd.t("toast", toast.cmd),
       Cmd.t("auth", auth.cmd),
@@ -431,7 +451,7 @@ export const subscriptions = ({
 const spaceSub = (now: Posix, model: Model): Sub<Msg> => {
   if (model.auth.currentUser.t === "logged-in") {
     return Sub.tag(
-      "game-space",
+      "space",
       SpaceClient.subscriptions(
         {
           now,
@@ -513,7 +533,7 @@ const ViewMain = ({
           onPush: (route) =>
             dispatch({
               t: "routing",
-              c: { t: "clicked-link", c: route },
+              c: { t: "clicked-link", route },
             }),
         }}
       />
@@ -529,10 +549,7 @@ const ViewMain = ({
         currentUserId: model.auth.currentUser.userId,
         profiles: model.profile.profiles,
         onPush: (route) =>
-          dispatch({
-            t: "routing",
-            c: { t: "clicked-link", c: route },
-          }),
+          dispatch({ t: "routing", c: { t: "clicked-link", route } }),
         onBack: () => dispatch({ t: "routing", c: { t: "clicked-back" } }),
       }}
     />
@@ -601,10 +618,10 @@ const ViewLoggedIn = ({
     );
   }
 
-  if (model.routing.route.t === "game-space") {
+  if (model.routing.route.t === "space") {
     return (
       <SpaceClient.View
-        dispatch={(m) => dispatch({ t: "game-space", c: m })}
+        dispatch={(m) => dispatch({ t: "space", c: m })}
         model={model.space}
         ctx={ctx}
         route={model.routing.route.c}
@@ -680,7 +697,7 @@ const ViewBottomBar = ({
   }[] = [
     {
       route: {
-        t: "game-space",
+        t: "space",
         c: { t: "game-space-list" },
       },
       label: "Spaces",
@@ -698,7 +715,7 @@ const ViewBottomBar = ({
       <SpaceClient.ViewCurrentSpaceBar
         ctx={ctx}
         model={model.space}
-        dispatch={(c) => dispatch({ t: "game-space", c })}
+        dispatch={(c) => dispatch({ t: "space", c })}
       />
       <div className="flex w-full items-center justify-center border-t border-neutral-700">
         {items.map((item) => {

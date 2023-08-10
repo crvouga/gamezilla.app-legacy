@@ -5,11 +5,11 @@ export type ClientAppMsg =
   | { t: "route-changed"; route: Route }
   | { t: "push-route"; route: Route }
   | { t: "route-back" }
-  | { t: "wire-connected" }
+  | { t: "server-connected" }
   | { t: "enqueue-toast"; text: string; duration?: number }
   | { t: "got-profiles"; profiles: { [userId: string]: Profile } }
-  | { t: "current-user-authenticated"; userId: UserId }
-  | { t: "current-user-unauthenticated" };
+  | { t: "client-authenticated"; userId: UserId }
+  | { t: "client-unauthenticated" };
 
 export type Profile = {
   userId: UserId;

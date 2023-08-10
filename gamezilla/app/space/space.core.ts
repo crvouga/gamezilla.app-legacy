@@ -25,22 +25,6 @@ export type ClientModel = {
   modal: ModalModel;
 };
 
-export const findSpaceByUserId = (model: ClientModel, userId: UserId) => {
-  for (const spaceId in model.spaces) {
-    if (!SpaceId.is(spaceId)) {
-      continue;
-    }
-    const space = model.spaces[spaceId];
-    if (!space) {
-      continue;
-    }
-    if (space.users[userId]) {
-      return space;
-    }
-  }
-  return null;
-};
-
 type ModalModel = null | "user-preview" | "users";
 
 export type GameSpaceUser = {
@@ -118,3 +102,19 @@ export type Res =
       t: "list";
       result: Result<string, Space<Game.ServerModel>[]>;
     };
+
+export const findSpaceByUserId = (model: ClientModel, userId: UserId) => {
+  for (const spaceId in model.spaces) {
+    if (!SpaceId.is(spaceId)) {
+      continue;
+    }
+    const space = model.spaces[spaceId];
+    if (!space) {
+      continue;
+    }
+    if (space.users[userId]) {
+      return space;
+    }
+  }
+  return null;
+};

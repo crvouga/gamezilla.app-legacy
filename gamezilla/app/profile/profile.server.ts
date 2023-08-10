@@ -68,11 +68,11 @@ export const updateFromClient = ({
   msg,
   model,
   ctx,
-  sendToClient,
+  sendBack,
 }: {
   msg: ToServer;
   model: Model;
-  sendToClient: (m: ToClient) => Cmd<Msg>;
+  sendBack: (m: ToClient) => Cmd<Msg>;
   ctx: ServerReqCtx | null;
 }): {
   model: Model;
@@ -90,7 +90,7 @@ export const updateFromClient = ({
         ...msg,
         result,
       })),
-      Cmd.chain((res) => sendToClient(res))
+      Cmd.chain((res) => sendBack(res))
     ),
   };
 };

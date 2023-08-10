@@ -10,12 +10,13 @@ import {
   Task,
   p,
 } from "gamezilla/@/core";
-import { UserId, client } from "gamezilla/app/@";
 import {
   ClientAppMsg,
   Route,
   RouteAuth,
   UnauthenticatedViewCtx,
+  UserId,
+  client,
 } from "gamezilla/app/@";
 import {
   Button,
@@ -38,22 +39,18 @@ import { ClientModel, ClientMsg, ToClient, ToServer } from "./auth.core";
 //
 //
 
-export type Model = ClientModel;
-
-export const init = (): { model: Model; cmd?: Cmd<Msg> } => {
-  const phone = AuthPhone.init();
-  const phoneVerify = AuthPhoneVerify.init();
-  const emailLink = AuthEmailLink.init;
-  return {
-    model: {
-      requests: {},
-      phone: phone.model,
-      phoneVerify: phoneVerify.model,
-      emailLink,
-      currentUser: { t: "loading" },
-    },
-    cmd: loadCurrentUser,
-  };
+const phone = AuthPhone.init;
+const phoneVerify = AuthPhoneVerify.init;
+const emailLink = AuthEmailLink.init;
+export const init: { model: ClientModel; cmd?: Cmd<ClientMsg> } = {
+  model: {
+    requests: {},
+    phone: phone.model,
+    phoneVerify: phoneVerify.model,
+    emailLink,
+    currentUser: { t: "loading" },
+  },
+  cmd: loadCurrentUser,
 };
 
 //
@@ -64,8 +61,6 @@ export const init = (): { model: Model; cmd?: Cmd<Msg> } => {
 //
 //
 
-export type Msg = ClientMsg;
-
 export const update = ({
   sendToServer,
   msg,
@@ -74,150 +69,176 @@ export const update = ({
 }: {
   route: Route;
   sendToServer: (m: ToServer) => Cmd;
-  msg: Msg;
-  model: Model;
+  msg: ClientMsg;
+  model: ClientModel;
 }): {
-  model: Model;
-  cmd?: Cmd<Msg>;
+  model: ClientModel;
+  cmd?: Cmd<ClientMsg>;
   msgs?: ClientAppMsg[];
 } => {
-  if (msg.t === "login-with-google") {
-    return {
-      model: {
-        ...model,
-        requests: {
-          ...model.requests,
-          "login-with-google": RemoteResult.Loading,
+  switch (msg.t) {
+    case "login-with-google": {
+      return {
+        model: {
+          ...model,
+          requests: {
+            ...model.requests,
+            "login-with-google": RemoteResult.Loading,
+          },
         },
-      },
-      cmd: p(
-        loginWithProvider({ provider: "Google" }),
-        Cmd.perform((result) => ({ t: "login-done", result }))
-      ),
-    };
-  }
-
-  if (msg.t === "login-done") {
-    return {
-      model,
-      cmd: loadCurrentUser,
-    };
-  }
-
-  if (msg.t === "logout") {
-    return {
-      model: {
-        ...model,
-        currentUser: {
-          t: "loading",
-        },
-      },
-      cmd: p(
-        logout,
-        Cmd.perform((result) => ({ t: "logout-done", result }))
-      ),
-    };
-  }
-
-  if (msg.t === "logout-done") {
-    return {
-      model: {
-        ...model,
-        currentUser: {
-          t: "logged-out",
-        },
-      },
-    };
-  }
-
-  if (msg.t === "phone") {
-    const updated = AuthPhone.update({
-      msg: msg.c,
-      model: model.phone,
-      sendCode,
-    });
-    return {
-      ...updated,
-      model: { ...model, phone: updated.model },
-      cmd: Cmd.t("phone", updated.cmd),
-    };
-  }
-
-  if (msg.t === "phone-verify") {
-    if (!(route.t === "auth" && route.c.t === "login-phone-verify")) {
-      return { model };
+        cmd: p(
+          loginWithProvider({ provider: "Google" }),
+          Cmd.perform((result) => ({ t: "login-done", result }))
+        ),
+      };
     }
 
-    const updated = AuthPhoneVerify.update({
-      msg: msg.c,
-      model: model.phoneVerify,
-      phoneNumber: route.c.phoneNumber,
-      verifyCode,
-    });
-    return {
-      model: {
-        ...model,
-        phoneVerify: updated.model,
-        currentUser: updated.shouldLoadCurrentUser
-          ? { t: "loading" }
-          : model.currentUser,
-      },
-      cmd: Cmd.batch([
-        Cmd.t("phone-verify", updated.cmd),
-        updated.shouldLoadCurrentUser ? loadCurrentUser : Cmd.None,
-      ]),
-    };
-  }
+    case "login-done": {
+      return {
+        model,
+        cmd: loadCurrentUser,
+      };
+    }
 
-  if (msg.t === "email-link") {
-    const updated = AuthEmailLink.update({
-      msg: msg.c,
-      model: model.emailLink,
-      sendEmailLink,
-    });
-    return {
-      model: { ...model, emailLink: updated.model },
-      cmd: Cmd.t("email-link", updated.cmd),
-      msgs: updated.msgs,
-    };
-  }
+    case "logout": {
+      return {
+        model: {
+          ...model,
+          currentUser: {
+            t: "loading",
+          },
+        },
+        cmd: p(
+          logout,
+          Cmd.perform((result) => ({ t: "logout-done", result }))
+        ),
+      };
+    }
 
-  if (msg.t === "current-user-authenticated") {
-    return {
-      model: { ...model, currentUser: { t: "logged-in", userId: msg.userId } },
-      cmd: sendToServer(msg),
-      msgs: [msg],
-    };
-  }
+    case "logout-done": {
+      return {
+        model: {
+          ...model,
+          currentUser: {
+            t: "logged-out",
+          },
+        },
+      };
+    }
 
-  if (msg.t === "current-user-unauthenticated") {
-    return {
-      model: { ...model, currentUser: { t: "logged-out" } },
-      cmd: sendToServer(msg),
-      msgs: [msg, { t: "push-route", route: { t: "auth", c: { t: "login" } } }],
-    };
-  }
+    case "phone": {
+      const updated = AuthPhone.update({
+        msg: msg.c,
+        model: model.phone,
+        sendCode,
+      });
+      return {
+        ...updated,
+        model: { ...model, phone: updated.model },
+        cmd: Cmd.t("phone", updated.cmd),
+      };
+    }
 
-  return { model, cmd: sendToServer(msg) };
+    case "phone-verify": {
+      if (!(route.t === "auth" && route.c.t === "login-phone-verify")) {
+        return { model };
+      }
+
+      const updated = AuthPhoneVerify.update({
+        msg: msg.c,
+        model: model.phoneVerify,
+        phoneNumber: route.c.phoneNumber,
+        verifyCode,
+      });
+      return {
+        model: {
+          ...model,
+          phoneVerify: updated.model,
+          currentUser: updated.shouldLoadCurrentUser
+            ? { t: "loading" }
+            : model.currentUser,
+        },
+        cmd: Cmd.batch([
+          Cmd.t("phone-verify", updated.cmd),
+          updated.shouldLoadCurrentUser ? loadCurrentUser : Cmd.None,
+        ]),
+      };
+    }
+
+    case "email-link": {
+      const updated = AuthEmailLink.update({
+        msg: msg.c,
+        model: model.emailLink,
+        sendEmailLink,
+      });
+      return {
+        model: { ...model, emailLink: updated.model },
+        cmd: Cmd.t("email-link", updated.cmd),
+        msgs: updated.msgs,
+      };
+    }
+
+    case "client-authenticated": {
+      return {
+        model: {
+          ...model,
+          currentUser: { t: "logged-in", userId: msg.userId },
+        },
+        cmd: sendToServer(msg),
+      };
+    }
+
+    case "client-unauthenticated": {
+      return {
+        model: { ...model, currentUser: { t: "logged-out" } },
+        cmd: sendToServer(msg),
+        msgs: [
+          msg,
+          { t: "push-route", route: { t: "auth", c: { t: "login" } } },
+        ],
+      };
+    }
+
+    default: {
+      return { model, cmd: sendToServer(msg) };
+    }
+  }
 };
 
 export const updateFromServer = ({
   model,
+  msg,
 }: {
   msg: ToClient;
-  model: Model;
-}): { model: Model; cmd?: Cmd<Msg> } => {
-  return { model };
+  model: ClientModel;
+}): {
+  model: ClientModel;
+  cmd?: Cmd<ClientMsg>;
+  msgs?: ClientAppMsg[];
+} => {
+  switch (msg.t) {
+    case "acknowledged": {
+      if (msg.c.t === "client-authenticated") {
+        return { model, msgs: [msg.c] };
+      }
+      return { model };
+    }
+    default: {
+      return { model };
+    }
+  }
 };
 
-export const updateFromApp = (input: {
+export const updateFromApp = ({
+  model,
+}: {
   msg: ClientAppMsg;
-  model: Model;
+  model: ClientModel;
 }): {
-  model: Model;
-  cmd?: Cmd<Msg>;
+  model: ClientModel;
+  cmd?: Cmd<ClientMsg>;
 } => {
-  return input;
+  return { model };
 };
 //
 //
@@ -232,8 +253,8 @@ export const ViewLoggedIn = ({
   ctx,
   dispatch,
 }: {
-  model: Model;
-  dispatch: (m: Msg) => void;
+  model: ClientModel;
+  dispatch: (m: ClientMsg) => void;
   ctx: UnauthenticatedViewCtx;
 }) => {
   return <ViewLogoutScreen ctx={ctx} model={model} dispatch={dispatch} />;
@@ -246,8 +267,8 @@ export const ViewLoggedOut = ({
   dispatch,
 }: {
   route: RouteAuth;
-  model: Model;
-  dispatch: (m: Msg) => void;
+  model: ClientModel;
+  dispatch: (m: ClientMsg) => void;
   ctx: UnauthenticatedViewCtx;
 }) => {
   if (route.t === "login") {
@@ -292,8 +313,8 @@ const ViewLoginScreen = ({
   model,
 }: {
   ctx: UnauthenticatedViewCtx;
-  model: Model;
-  dispatch: (msg: Msg) => void;
+  model: ClientModel;
+  dispatch: (msg: ClientMsg) => void;
 }) => {
   const isLoading = model.requests["login-with-google"]?.t === "loading";
   return (
@@ -357,8 +378,8 @@ export const ViewLogoutScreen = ({
   ctx,
 }: {
   ctx: UnauthenticatedViewCtx;
-  model: Model;
-  dispatch: (msg: Msg) => void;
+  model: ClientModel;
+  dispatch: (msg: ClientMsg) => void;
 }) => {
   if (model.requests.logout?.t === "loading") {
     return <LoadingScreen />;
@@ -390,30 +411,30 @@ export const ViewLogoutScreen = ({
 //
 //
 
-const fromSupabaseSession = (auth: SupabaseSession | null): Msg => {
+const fromSupabaseSession = (auth: SupabaseSession | null): ClientMsg => {
   const userId = UserId.decode(auth?.user?.id);
 
   if (userId.t === "ok") {
     return {
-      t: "current-user-authenticated",
+      t: "client-authenticated",
       userId: userId.value,
     };
   }
 
   return {
-    t: "current-user-unauthenticated",
+    t: "client-unauthenticated",
   };
 };
 
-export const subscriptions: Sub<Msg> = Sub.None;
+export const subscriptions: Sub<ClientMsg> = Sub.None;
 
-const loadCurrentUser: Cmd<Msg> = (dispatch) => {
+function loadCurrentUser(dispatch: (m: ClientMsg) => void) {
   setTimeout(() => {
     const supabaseSession = client.auth.session();
     const msg = fromSupabaseSession(supabaseSession);
     dispatch(msg);
   }, 1_000);
-};
+}
 
 //
 //

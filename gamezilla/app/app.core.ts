@@ -35,7 +35,7 @@ export type ClientModel = {
 };
 
 export type ToServer =
-  | { t: "game-space"; c: Space.ToServer }
+  | { t: "space"; c: Space.ToServer }
   | { t: "auth"; c: Auth.ToServer }
   | { t: "profile"; c: Profile.ToServer }
   | { t: "search"; c: Search.ToServer }
@@ -43,7 +43,7 @@ export type ToServer =
   | { t: "auth"; c: Auth.ToServer };
 
 export type ToClient =
-  | { t: "game-space"; c: Space.ToClient }
+  | { t: "space"; c: Space.ToClient }
   | { t: "profile"; c: Profile.ToClient }
   | { t: "search"; c: Search.ToClient }
   | { t: "chat"; c: Chat.ToClient }
@@ -57,7 +57,7 @@ export type ClientMsg =
   | { t: "routing"; c: Routing.Msg }
   | { t: "toast"; c: Toast.Msg }
   //
-  | { t: "game-space"; c: Space.ClientMsg }
+  | { t: "space"; c: Space.ClientMsg }
   | { t: "chat"; c: Chat.ClientMsg }
   | { t: "auth"; c: Auth.ClientMsg }
   | { t: "profile"; c: Profile.ClientMsg }
@@ -66,7 +66,7 @@ export type ClientMsg =
 export type ServerMsg =
   | { t: "▶"; sessionId: SessionId; clientId: ClientId; c: ToServer }
   | { t: "wire"; c: ServerWireMsg }
-  | { t: "game-space"; c: Space.ServerMsg }
+  | { t: "space"; c: Space.ServerMsg }
   | { t: "profile"; c: Profile.ServerMsg }
   | { t: "search"; c: Search.ServerMsg }
   | { t: "chat"; c: Chat.ServerMsg }

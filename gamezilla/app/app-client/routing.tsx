@@ -13,7 +13,7 @@ export type Model = {
   route: Route;
 };
 
-const fallback: Route = { t: "game-space", c: { t: "game-space-list" } };
+const fallback: Route = { t: "space", c: { t: "game-space-list" } };
 
 export const init = (
   location: Browser.Location
@@ -39,8 +39,8 @@ export const init = (
 //
 
 export type Msg =
-  | { t: "route-changed"; c: Route }
-  | { t: "clicked-link"; c: Route }
+  | { t: "route-changed"; route: Route }
+  | { t: "clicked-link"; route: Route }
   | { t: "clicked-back" };
 
 export const update = ({
@@ -59,13 +59,13 @@ export const update = ({
   }
 
   if (msg.t === "clicked-link") {
-    return { model, cmd: Browser.push(Route.encode(msg.c)) };
+    return { model, cmd: Browser.push(Route.encode(msg.route)) };
   }
 
   if (msg.t === "route-changed") {
     return {
-      model: { route: msg.c },
-      msgs: [{ t: "route-changed", route: msg.c }],
+      model: { route: msg.route },
+      msgs: [{ t: "route-changed", route: msg.route }],
     };
   }
 
@@ -109,7 +109,7 @@ const onLocationChange = (location: Browser.Location): Msg => {
     location.pathname,
     Route.decode,
     (route): Route => (route ? route : fallback),
-    (route): Msg => ({ t: "route-changed", c: route })
+    (route): Msg => ({ t: "route-changed", route })
   );
 };
 

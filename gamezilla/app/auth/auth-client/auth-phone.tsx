@@ -40,25 +40,23 @@ export type Model = {
     | { type: "ok" };
 };
 
-export const init = (): {
+export const init: {
   model: Model;
   cmd: Cmd<Msg>;
-} => {
-  return {
-    model: {
-      country: "US",
-      phoneNumber: "",
-      countryQuery: Iso3166Alpha2Code.toName("US"),
-      validation: "not-validated",
-      submission: {
-        type: "idle",
-      },
+} = {
+  model: {
+    country: "US",
+    phoneNumber: "",
+    countryQuery: Iso3166Alpha2Code.toName("US"),
+    validation: "not-validated",
+    submission: {
+      type: "idle",
     },
-    cmd: p(
-      Browser.focus("phone-number"),
-      Cmd.perform((result) => ({ t: "focus-done", result }))
-    ),
-  };
+  },
+  cmd: p(
+    Browser.focus("phone-number"),
+    Cmd.perform((result) => ({ t: "focus-done", result }))
+  ),
 };
 
 //
