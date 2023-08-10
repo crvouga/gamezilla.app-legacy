@@ -12,6 +12,8 @@ import {
 import * as VsBot from "./vs-bot/vs-bot.client";
 import * as VsUser from "./vs-user/vs-user.client";
 
+export const ConnectFour = () => {};
+
 type Client = GameClient<
   ClientModel,
   ServerModel,
@@ -28,8 +30,6 @@ type Client = GameClient<
 //
 //
 
-export type Model = ClientModel;
-
 export const init: Client["init"] = () => {
   return {
     model: { t: "none" },
@@ -43,8 +43,6 @@ export const init: Client["init"] = () => {
 //
 //
 //
-
-export type Msg = ClientMsg;
 
 export const update: Client["update"] = ({ sendToServer, ctx, msg, model }) => {
   if (msg.t === "input-mode") {
