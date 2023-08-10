@@ -1,9 +1,9 @@
+import { PubSub } from "../sub";
 import {
   ClientWireMsg,
-  PubSub,
   ServerToClientMsg,
   TransportClient,
-} from "gamezilla/@/core";
+} from "./transport-core";
 
 const SESSION_ID_KEY = "gamezilla-session-id";
 

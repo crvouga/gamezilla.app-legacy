@@ -1,4 +1,4 @@
-import { Spinner } from ".";
+import { Spinner } from "./spinner";
 import { VDom, cn } from "./utils";
 
 export type ButtonVariant = "contained" | "outlined" | "text";

@@ -8,8 +8,7 @@ import {
   winToId,
 } from "../../connect-four";
 import { gameTheme } from "../shared";
-import { Model } from "./columns-ui";
-import { ViewColumnsProps } from "./shared";
+import { Model, ViewColumnsProps } from "./shared";
 
 type SvgIds = {
   playerOneGradient: string;

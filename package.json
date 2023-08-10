@@ -12,7 +12,8 @@
     "ngrok": "ngrok start --all",
     "db:dev": "pscale connect gamezilla dev",
     "tc": "tsc --noEmit --watch",
-    "viz-bundle": "npx vite-bundle-visualizer"
+    "viz-bundle": "npx vite-bundle-visualizer",
+    "cir-deps": "dpdm --progress --no-warning --no-tree ./gamezilla/gamezilla.client.tsx"
   },
   "dependencies": {
     "@supabase/supabase-js": "^1.30.0",
@@ -33,6 +34,7 @@
     "babel-plugin-inferno": "^6.6.1",
     "babel-plugin-transform-hook-names": "^1.0.2",
     "csv-parser": "^3.0.0",
+    "dpdm": "^3.13.1",
     "eslint": "^8.38.0",
     "jest": "^29.5.0",
     "postcss": "^8.4.23",

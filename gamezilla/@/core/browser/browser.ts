@@ -1,5 +1,5 @@
-import { p } from "..";
 import { Cmd } from "../cmd";
+import { p } from "../pipe";
 import { Result } from "../result";
 import { Sub } from "../sub";
 import { Task } from "../task";

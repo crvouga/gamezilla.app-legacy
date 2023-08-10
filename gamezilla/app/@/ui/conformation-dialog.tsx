@@ -1,5 +1,5 @@
-import { VDom, cn } from ".";
 import { Button } from "./button";
+import { VDom, cn } from "./utils";
 
 export const ConformationDialog = ({
   open,

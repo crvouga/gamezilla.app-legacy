@@ -1,6 +1,6 @@
+import { Transition } from "gamezilla/@/core";
 import { VDom } from "gamezilla/app/@/ui";
-import { ColumnIndex, Columns, PlayerType } from "../../connect-four";
-import { Model } from "./columns-ui";
+import { ColumnIndex, Columns, PlayerType, Win } from "../../connect-four";
 
 export type ViewColumnsProps = {
   columns: Columns;
@@ -12,3 +12,35 @@ export type ViewColumnsProps = {
   gameId?: string | number | null;
   gameOverOverlay?: () => VDom | VDom[] | null;
 };
+
+export type Model = {
+  discs: Transition.Model<Disc>;
+  wins: Transition.Model<Win>;
+};
+
+export type Disc = {
+  x: number;
+  y: number;
+  player: PlayerType;
+  id: string;
+};
+
+export function toDiscs(columns: Columns): Disc[] {
+  const discs: Disc[] = [];
+  for (let x = 0; x < columns.length; x++) {
+    for (let y = 0; y < (columns[x]?.length ?? 0); y++) {
+      const player = columns[x]?.[y];
+
+      if (player) {
+        const disc: Disc = {
+          id: `${player}-${x}-${y}`,
+          x,
+          y,
+          player,
+        };
+        discs.push(disc);
+      }
+    }
+  }
+  return discs;
+}

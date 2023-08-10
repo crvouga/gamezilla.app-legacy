@@ -1,5 +1,5 @@
-import { Sub } from "..";
 import { Cmd } from "../cmd";
+import { Sub } from "../sub";
 import { ClientId } from "./client-id";
 import { SessionId } from "./session-id";
 

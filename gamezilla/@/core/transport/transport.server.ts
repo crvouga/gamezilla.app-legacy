@@ -1,13 +1,13 @@
 import http from "http";
-import {
-  ClientId,
-  ClientToServerMsg,
-  PubSub,
-  ServerWireMsg,
-  SessionId,
-  TransportServer,
-} from "gamezilla/@/core";
 import WebSocket, { WebSocketServer } from "ws";
+import { PubSub } from "../sub";
+import { ClientId } from "./client-id";
+import { SessionId } from "./session-id";
+import {
+  ClientToServerMsg,
+  ServerWireMsg,
+  TransportServer,
+} from "./transport-core";
 
 export const createTransportServer = <ToServer, ToClient>({
   httpServer,

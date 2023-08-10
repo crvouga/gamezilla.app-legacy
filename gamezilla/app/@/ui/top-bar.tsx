@@ -1,6 +1,6 @@
-import { VDomChildren } from ".";
 import { IconChevronLeft, IconSpinner } from "./icon";
 import { IconButton } from "./icon-button";
+import { VDomChildren } from "./utils";
 
 export const TopBar = (input: {
   left?: VDomChildren;

@@ -3,14 +3,13 @@ import {
   COLUMN_COUNT,
   Columns,
   MAX_COLUMN_HEIGHT,
-  PlayerType,
   Win,
   toWins,
   winToId,
 } from "../../connect-four";
 import { ViewColumnsCanvas } from "./columns-ui-canvas";
 import { ViewColumnsSvg } from "./columns-ui-svg";
-import { ViewColumnsProps } from "./shared";
+import { Disc, Model, ViewColumnsProps, toDiscs } from "./shared";
 
 //
 //
@@ -38,11 +37,6 @@ const rootId = "connect-four-columns-svg";
 //
 //
 //
-
-export type Model = {
-  discs: Transition.Model<Disc>;
-  wins: Transition.Model<Win>;
-};
 
 export function init(columns?: Columns): Model {
   return {
@@ -96,33 +90,6 @@ export function update(model: Model, msg: Msg) {
     discs: discs,
     wins: wins,
   };
-}
-
-export type Disc = {
-  x: number;
-  y: number;
-  player: PlayerType;
-  id: string;
-};
-
-export function toDiscs(columns: Columns): Disc[] {
-  const discs: Disc[] = [];
-  for (let x = 0; x < columns.length; x++) {
-    for (let y = 0; y < (columns[x]?.length ?? 0); y++) {
-      const player = columns[x]?.[y];
-
-      if (player) {
-        const disc: Disc = {
-          id: `${player}-${x}-${y}`,
-          x,
-          y,
-          player,
-        };
-        discs.push(disc);
-      }
-    }
-  }
-  return discs;
 }
 
 //

@@ -1,4 +1,4 @@
-import { VDomChildren } from ".";
+import { VDomChildren } from "./utils";
 
 export const ButtonVertical = ({
   children,
