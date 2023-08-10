@@ -176,7 +176,8 @@ export function View({
           id={String(config.toId(toast))}
           className="w-full overflow-visible">
           <div
-            className="pointer-events-auto z-40 flex w-full max-w-md items-center justify-between overflow-hidden whitespace-nowrap break-words rounded-lg border border-neutral-700 bg-neutral-700 p-3 text-lg text-white shadow-2xl"
+            // whitespace-nowrap break-words
+            className="pointer-events-auto z-40 flex w-full max-w-md items-center justify-between overflow-hidden  rounded-lg border border-neutral-700 bg-neutral-700 p-3 text-lg text-white shadow-2xl"
             key={toast.toastId}>
             {toast.message}
             <button

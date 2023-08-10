@@ -467,23 +467,27 @@ export const View = ({
   route: RouteGameSpace;
   viewBottomBar: VDom;
 }) => {
-  if (route.t === "space") {
-    return (
-      <ViewSpaceScreen
-        spaceId={route.spaceId}
-        ctx={ctx}
-        dispatch={dispatch}
-        model={model}
-      />
-    );
-  }
+  switch (route.t) {
+    case "space-list": {
+      return (
+        <>
+          <ViewSpaceListScreen dispatch={dispatch} ctx={ctx} model={model} />
+          {viewBottomBar}
+        </>
+      );
+    }
 
-  return (
-    <>
-      <ViewSpaceListScreen dispatch={dispatch} ctx={ctx} model={model} />
-      {viewBottomBar}
-    </>
-  );
+    case "space": {
+      return (
+        <ViewSpaceScreen
+          spaceId={route.spaceId}
+          ctx={ctx}
+          dispatch={dispatch}
+          model={model}
+        />
+      );
+    }
+  }
 };
 
 const ViewSpaceScreen = ({
@@ -635,9 +639,7 @@ const ViewTopBar = ({
         <ActionButton
           label="Home"
           icon={<IconHome className="h-6 w-6" />}
-          onClick={() =>
-            ctx.onPush({ t: "space", c: { t: "game-space-list" } })
-          }
+          onClick={() => ctx.onPush({ t: "space", c: { t: "space-list" } })}
         />
       </div>
 
@@ -674,7 +676,7 @@ export const ViewSpaceNotFound = ({ ctx }: { ctx: ViewCtx }) => {
     <div className="flex flex-1 flex-col items-center justify-center gap-4">
       <p className="text-center text-2xl">Space not found</p>
       <Button
-        onClick={() => ctx.onPush({ t: "space", c: { t: "game-space-list" } })}
+        onClick={() => ctx.onPush({ t: "space", c: { t: "space-list" } })}
         size="lg"
         variant="contained"
         color="primary"

@@ -30,16 +30,19 @@ export const ViewSpaceListScreen = ({
   return (
     <div className="flex h-full max-h-full w-full flex-1 flex-col gap-4 overflow-hidden">
       <TopBar title="Spaces" />
-      {!isLoading && spaces.length === 0 ? (
+
+      {!isLoading && spaces.length === 0 && (
         <div className="flex h-full w-full flex-1 flex-col items-center justify-center gap-2 opacity-60">
-          <div className="grid place-items-center rounded-full bg-white/20 p-6">
-            <IconGamepad className="h-14 w-14" />
-          </div>
+          <IconGamepad className="h-14 w-14" />
+
           <p className="text-lg text-secondary">No active spaces</p>
         </div>
-      ) : (
+      )}
+
+      {spaces.length > 0 && (
         <div className="relative flex h-full w-full flex-1 flex-col">
           {isLoading && <LoadingScreen absolute />}
+
           <div
             className={cn(
               isLoading && "pointer-events-none opacity-50",
@@ -87,7 +90,7 @@ export const ViewSpaceListScreen = ({
         </div>
       )}
 
-      {!currentSpace && (
+      {!currentSpace && !isLoading && (
         <div className="w-full p-4">
           <Button
             size="lg"

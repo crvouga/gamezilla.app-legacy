@@ -194,13 +194,13 @@ export const decodeProfile = (pathname: string): RouteProfile | null => {
 
 export type RouteGameSpace =
   | { t: "space"; spaceId: SpaceId }
-  | { t: "game-space-list" };
+  | { t: "space-list" };
 
 export const encodeSpace = (route: RouteGameSpace): string => {
   switch (route.t) {
     case "space":
       return `/game-space/${route.spaceId}`;
-    case "game-space-list":
+    case "space-list":
       return "/game-space";
   }
 };
@@ -213,7 +213,7 @@ export const decodeSpace = (pathname: string): RouteGameSpace | null => {
     return null;
   }
   if (pathname === "/game-space") {
-    return { t: "game-space-list" };
+    return { t: "space-list" };
   }
   return null;
 };

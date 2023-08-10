@@ -108,7 +108,7 @@ export const update = (input: {
 
   if (appMsgs.length > 0) {
     console.log(
-      "appMsgs",
+      " ",
       ...appMsgs.map((m) => [toMsgType(m), toMsgPayload(m, {})])
     );
   }
@@ -698,7 +698,7 @@ const ViewBottomBar = ({
     {
       route: {
         t: "space",
-        c: { t: "game-space-list" },
+        c: { t: "space-list" },
       },
       label: "Spaces",
       icon: <IconGamepad className="h-6 w-6" />,
