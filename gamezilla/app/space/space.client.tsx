@@ -27,8 +27,8 @@ import {
   VDom,
 } from "gamezilla/app/@/ui";
 import {
-  SpaceViewCtx,
   Space,
+  SpaceViewCtx,
   ViewSpaceHostChip,
   ViewUsersInSpaceList,
   ViewYouChip,
