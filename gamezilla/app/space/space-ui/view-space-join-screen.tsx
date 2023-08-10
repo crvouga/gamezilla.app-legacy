@@ -1,13 +1,12 @@
+import { Button, TopBar, TopBarBackButton } from "gamezilla/app/@/ui";
+import { SpaceViewCtx } from "gamezilla/app/space/@";
 import {
-  Space,
-  SpaceViewCtx,
   ViewGameHeader,
   ViewGameHeaderEmpty,
   ViewUsersInSpaceList,
-} from "gamezilla/app/space/@";
-import { Button, TopBar, TopBarBackButton } from "gamezilla/app/@/ui";
-import { ClientModel, ClientMsg } from "../space.core";
+} from "gamezilla/app/space/game/@";
 import { ViewCoverArt, gameNameToString } from "../game/game.core";
+import { ClientModel, ClientMsg } from "../space.core";
 
 export const ViewSpaceJoinScreen = ({
   model,

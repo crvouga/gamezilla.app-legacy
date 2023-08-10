@@ -1,13 +1,13 @@
+import * as ChessJS from "chess.js";
 import { Result, Task, exhaustive } from "gamezilla/@/core";
+import { VDom } from "gamezilla/app/@/ui";
 import {
   IconBotCute,
   IconBotLevel1,
   IconBotLevel4,
   IconBotScary,
   IconBotSimple,
-} from "gamezilla/app/space/@";
-import { VDom } from "gamezilla/app/@/ui";
-import * as ChessJS from "chess.js";
+} from "gamezilla/app/space/game/@";
 
 export type BotLevel = 0 | 1 | 2 | 3 | 4;
 

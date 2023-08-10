@@ -1,6 +1,5 @@
 import { IconCrown, MyAvatar } from "gamezilla/app/@/ui";
-import { Space } from "../game-space-core";
-import { SpaceViewCtx } from "./game-space-client";
+import { Space, SpaceViewCtx } from "gamezilla/app/space/@";
 
 export const ViewUsersInSpaceList = <T,>({
   space,

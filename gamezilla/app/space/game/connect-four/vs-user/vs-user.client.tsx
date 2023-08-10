@@ -1,14 +1,6 @@
 import { Cmd, Sub } from "gamezilla/@/core";
 import { ViewCtx } from "gamezilla/app/@/client";
 import {
-  GameLayout,
-  SpaceClientCtx,
-  SpaceMsg,
-  SpaceViewCtx,
-  ViewBottomButtonBar,
-  VsUserSetupScreen,
-} from "gamezilla/app/space/@";
-import {
   Button,
   ConformationDialog,
   IconArrowLeftOnRect,
@@ -19,6 +11,12 @@ import {
   IconXMark,
   MyAvatar,
 } from "gamezilla/app/@/ui";
+import { SpaceClientCtx, SpaceMsg, SpaceViewCtx } from "gamezilla/app/space/@";
+import {
+  GameLayout,
+  ViewBottomButtonBar,
+  VsUserSetupScreen,
+} from "gamezilla/app/space/game/@";
 import { PlayerType, toTurn } from "../connect-four";
 import { ViewCoverArt } from "../connect-four-cover-art";
 import { ColumnsUI, PlayerIcon } from "../connect-four-ui";

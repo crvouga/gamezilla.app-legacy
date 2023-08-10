@@ -6,7 +6,7 @@ import {
   Button,
   VDom,
 } from "gamezilla/app/@/ui";
-import { SpaceViewCtx } from "./game-space-client";
+import { SpaceViewCtx } from "gamezilla/app/space/@";
 import { ViewGameHeader } from "./view-game-header";
 
 type IconProps = { className: string };

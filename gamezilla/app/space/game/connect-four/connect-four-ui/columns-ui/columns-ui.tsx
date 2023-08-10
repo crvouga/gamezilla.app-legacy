@@ -9,7 +9,14 @@ import {
 } from "../../connect-four";
 import { ViewColumnsCanvas } from "./columns-ui-canvas";
 import { ViewColumnsSvg } from "./columns-ui-svg";
-import { Disc, Model, ViewColumnsProps, toDiscs } from "./shared";
+import {
+  Disc,
+  Model as SharedModel,
+  ViewColumnsProps,
+  toDiscs,
+} from "./shared";
+
+export type Model = SharedModel;
 
 //
 //

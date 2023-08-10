@@ -1,5 +1,5 @@
 import { UserId } from "gamezilla/app/@/app";
-import { SpaceId } from "../../space-id";
+import { SpaceId } from "../space-id";
 import { ClientCtx, ViewCtx } from "gamezilla/app/@/client";
 
 export type SpaceClientCtx = ClientCtx & {

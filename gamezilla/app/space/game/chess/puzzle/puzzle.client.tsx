@@ -12,13 +12,12 @@ import {
   Spinner,
   cn,
 } from "gamezilla/app/@/ui";
+import { SpaceClientCtx, SpaceViewCtx } from "gamezilla/app/space/@";
 import {
   BottomBarButtonAction,
   GameLayout,
-  SpaceClientCtx,
-  SpaceViewCtx,
   ViewBottomButtonBar,
-} from "gamezilla/app/space/@";
+} from "gamezilla/app/space/game/@";
 import { Chess } from "../@/chess";
 import { Chessboard } from "../@/chess-ui";
 import {

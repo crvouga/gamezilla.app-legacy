@@ -26,13 +26,12 @@ import {
   MyAvatar,
   VDom,
 } from "gamezilla/app/@/ui";
+import { Space, SpaceViewCtx } from "gamezilla/app/space/@";
 import {
-  Space,
-  SpaceViewCtx,
   ViewSpaceHostChip,
   ViewUsersInSpaceList,
   ViewYouChip,
-} from "gamezilla/app/space/@";
+} from "gamezilla/app/space/game/@";
 import * as GameClient from "./game/game.client";
 import * as Game from "./game/game.core";
 import { ViewCoverArt } from "./game/game.core";

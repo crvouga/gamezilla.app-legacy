@@ -1,9 +1,6 @@
 import { Cmd } from "gamezilla/@/core";
-import {
-  SpaceClientCtx,
-  SpaceViewCtx,
-  VsUserSetupScreen,
-} from "gamezilla/app/space/@";
+import { SpaceClientCtx, SpaceViewCtx } from "gamezilla/app/space/@";
+import { VsUserSetupScreen } from "gamezilla/app/space/game/@";
 import { Position, Slot, toTurn } from "../tic-tic-toe/tic-tac-toe";
 import {
   PlayerTypeIcon,

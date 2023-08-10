@@ -1,6 +1,7 @@
 import { Sub } from "gamezilla/@/core";
-import { GameClient, MainMenuScreen } from "gamezilla/app/space/@";
 import { IconGamepad, IconScrewdriverWrench } from "gamezilla/app/@/ui";
+import { GameClient } from "gamezilla/app/space/@";
+import { MainMenuScreen } from "gamezilla/app/space/game/@";
 import { FlowViewCtx } from "./flow-shared";
 import { ViewCoverArt } from "./flow-ui/flow-cover-art";
 import {

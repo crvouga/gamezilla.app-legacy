@@ -7,7 +7,7 @@ import {
   TopBar,
   cn,
 } from "gamezilla/app/@/ui";
-import { ViewSpaceHostChip } from "gamezilla/app/space/@";
+import { ViewSpaceHostChip } from "gamezilla/app/space/game/@";
 import { GameName, ViewCoverArt, gameNameToString } from "../game/game.core";
 import { SpaceId } from "../space-id";
 import { ClientModel, ClientMsg, findSpaceByUserId } from "../space.core";

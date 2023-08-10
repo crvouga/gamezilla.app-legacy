@@ -1,16 +1,15 @@
+import { Space, SpaceViewCtx } from "gamezilla/app/space/@";
 import {
-  Space,
-  SpaceViewCtx,
   ViewGameHeaderEmpty,
   ViewUsersInSpaceList,
-} from "gamezilla/app/space/@";
-import { ClientMsg } from "../space.core";
+} from "gamezilla/app/space/game/@";
+import * as Game from "../game/game.core";
 import {
   ViewCoverArt,
   gameNameList,
   gameNameToString,
 } from "../game/game.core";
-import * as Game from "../game/game.core";
+import { ClientMsg } from "../space.core";
 
 export const ViewNotInGameScreen = ({
   ctx,

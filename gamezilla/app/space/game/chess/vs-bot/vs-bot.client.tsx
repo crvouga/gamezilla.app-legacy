@@ -5,13 +5,12 @@ import {
   MyAvatar,
   Spinner,
 } from "gamezilla/app/@/ui";
+import { SpaceClientCtx, SpaceViewCtx } from "gamezilla/app/space/@";
 import {
   GameLayout,
-  SpaceClientCtx,
-  SpaceViewCtx,
   ViewBottomButtonBar,
   VsBotSetup,
-} from "gamezilla/app/space/@";
+} from "gamezilla/app/space/game/@";
 import { Chess } from "../@/chess";
 import { Chessboard, PlayerIcon, ViewCoverArt } from "../@/chess-ui";
 import Sounds from "../@/chess/chess-sounds";

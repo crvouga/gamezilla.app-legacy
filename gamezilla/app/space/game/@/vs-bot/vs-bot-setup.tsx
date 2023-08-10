@@ -2,13 +2,13 @@ import { Transition, p } from "gamezilla/@/core";
 import { UserId } from "gamezilla/app/@/app";
 import {
   Button,
+  Drawer,
   IconArrowLeftOnRect,
   IconQuestionMark,
   MyAvatar,
-  Drawer,
   VDom,
 } from "gamezilla/app/@/ui";
-import { SpaceViewCtx } from "../game-space-client";
+import { SpaceViewCtx } from "gamezilla/app/space/@";
 import { ViewGameHeader } from "../view-game-header";
 import { VsBotProps } from "./view-vs-bot";
 

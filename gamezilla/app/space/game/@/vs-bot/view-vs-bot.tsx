@@ -1,6 +1,6 @@
 import { UserId } from "gamezilla/app/@/app";
 import { VDom } from "gamezilla/app/@/ui";
-import { SpaceViewCtx } from "../game-space-client";
+import { SpaceViewCtx } from "gamezilla/app/space/@";
 
 export type PlayerType = "player-one" | "player-two";
 

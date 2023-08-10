@@ -1,4 +1,4 @@
-export * from "./game-space-client";
+export * from "./minimax";
 export * from "./view-bottom-button-bar";
 export * from "./view-game-header";
 export * from "./view-game-layout";

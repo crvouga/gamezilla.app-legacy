@@ -1,12 +1,8 @@
 import { Audio, Cmd, Posix, RemoteResult, Sub } from "gamezilla/@/core";
 import { ClientAppMsg } from "gamezilla/app/@/client";
 import { IconPuzzlePiece } from "gamezilla/app/@/ui";
-import {
-  MainMenuScreen,
-  SpaceClientCtx,
-  SpaceViewCtx,
-  mainMenuButtons,
-} from "gamezilla/app/space/@";
+import { SpaceClientCtx, SpaceViewCtx } from "gamezilla/app/space/@";
+import { MainMenuScreen, mainMenuButtons } from "gamezilla/app/space/game/@";
 import { ViewCoverArt } from "./@/chess-ui";
 import Sounds from "./@/chess/chess-sounds";
 import {

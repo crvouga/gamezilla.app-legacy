@@ -1,6 +1,6 @@
 import { Audio, Err, Ok, Result } from "gamezilla/@/core";
 import { UserId } from "gamezilla/app/@/app";
-import { VsBotSetup } from "gamezilla/app/space/@";
+import { VsBotSetup } from "gamezilla/app/space/game/@";
 import { Chess } from "../@/chess";
 
 //
