@@ -56,7 +56,7 @@ export type ServerMsg = { t: "none" };
 
 export type ToServer = Req | Event;
 
-export type ToClient = Res | { t: "acknowledged"; c: ToServer };
+export type ToClient = Res | { t: "acknowledged"; msg: ToServer };
 
 export type Req =
   | { t: "logout" }

@@ -218,10 +218,14 @@ export const updateFromServer = ({
 } => {
   switch (msg.t) {
     case "acknowledged": {
-      if (msg.c.t === "client-authenticated") {
-        return { model, msgs: [msg.c] };
+      switch (msg.msg.t) {
+        case "client-authenticated": {
+          return { model, msgs: [msg.msg] };
+        }
+        default: {
+          return { model };
+        }
       }
-      return { model };
     }
     default: {
       return { model };

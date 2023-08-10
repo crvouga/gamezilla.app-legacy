@@ -64,7 +64,7 @@ export const updateFromClient = ({
         },
       },
 
-      cmd: sendBack({ t: "acknowledged", c: msg }),
+      cmd: sendBack({ t: "acknowledged", msg: msg }),
 
       msgs: [
         {
@@ -85,12 +85,12 @@ export const updateFromClient = ({
         sessions: sessionsNew,
       },
 
-      cmd: sendBack({ t: "acknowledged", c: msg }),
+      cmd: sendBack({ t: "acknowledged", msg: msg }),
     };
   }
 
   return {
     model,
-    cmd: sendBack({ t: "acknowledged", c: msg }),
+    cmd: sendBack({ t: "acknowledged", msg: msg }),
   };
 };
