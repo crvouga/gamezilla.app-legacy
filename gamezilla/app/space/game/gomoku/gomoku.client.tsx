@@ -1,5 +1,5 @@
 import { Cmd, Sub } from "gamezilla/@/core";
-import { ClientCtx, ViewCtx } from "gamezilla/app/@";
+import { ClientCtx, ViewCtx } from "gamezilla/app/@/client";
 import { SpaceClientCtx, SpaceViewCtx } from "gamezilla/app/space/@";
 import { MainMenuScreen, mainMenuButtons } from "gamezilla/app/space/game/@";
 import {

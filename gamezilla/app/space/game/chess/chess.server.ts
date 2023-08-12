@@ -1,5 +1,5 @@
 import { Cmd, Err, Ok, Sub } from "gamezilla/@/core";
-import { UserId } from "gamezilla/app/@";
+import { UserId } from "gamezilla/app/@/data";
 import { SpaceMsg, SpaceReqCtx, SpaceServerCtx } from "gamezilla/app/space/@";
 import { ChessGameMsg } from "./@/chess/chess-shared";
 import { Res, ServerModel, ServerMsg, ToClient, ToServer } from "./chess.core";

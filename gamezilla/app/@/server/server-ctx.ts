@@ -1,5 +1,5 @@
 import { ClientId, Posix, SessionId } from "gamezilla/@/core";
-import { UserId } from "gamezilla/app/@";
+import { UserId } from "gamezilla/app/@/data";
 import { DbConnSql } from "./server-db-conn-sql";
 
 export type ServerCtx = {

@@ -6,7 +6,7 @@ import {
   Sub,
   exhaustive,
 } from "gamezilla/@/core";
-import { ViewCtx } from "gamezilla/app/@";
+import { ViewCtx } from "gamezilla/app/@/client";
 import { SpaceClientCtx } from "gamezilla/app/space/@";
 import { Direction } from "./direction";
 import {

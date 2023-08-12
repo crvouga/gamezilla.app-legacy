@@ -1,5 +1,5 @@
 import { Cmd, Sub } from "gamezilla/@/core";
-import { ViewCtx } from "gamezilla/app/@";
+import { ViewCtx } from "gamezilla/app/@/client";
 import {
   Button,
   ConformationDialog,

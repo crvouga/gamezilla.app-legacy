@@ -14,7 +14,7 @@ import {
   Route,
   UnauthenticatedViewCtx,
   ViewCtx,
-} from "gamezilla/app/@";
+} from "gamezilla/app/@/client";
 import {
   IconGamepad,
   IconUserCircle,

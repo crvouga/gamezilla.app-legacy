@@ -1,5 +1,5 @@
 import { ClientWireMsg, Cmd } from "gamezilla/@/core";
-import { ClientAppMsg } from "gamezilla/app/@";
+import { ClientAppMsg } from "gamezilla/app/@/client";
 import { IconSpinner } from "gamezilla/app/@/ui";
 
 //

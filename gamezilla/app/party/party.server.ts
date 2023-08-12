@@ -1,12 +1,12 @@
 import { Cmd, exhaustive } from "gamezilla/@/core";
-import { PartyId, UserId } from "gamezilla/app/@";
+import { PartyId, UserId } from "gamezilla/app/@/data";
 import {
+  Res,
   ServerModel,
   ServerMsg,
-  handle,
-  Res,
-  ToServer,
   ToClient,
+  ToServer,
+  handle,
 } from "./party.core";
 
 //

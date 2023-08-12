@@ -1,13 +1,10 @@
 import { Cmd, Sub, exhaustive } from "gamezilla/@/core";
+import { ClientAppMsg } from "gamezilla/app/@/client";
+import { GameClient, SpaceClientCtx } from "gamezilla/app/space/@";
 import { ChessClient } from "gamezilla/app/space/game/chess";
 import { ConnectFourClient } from "gamezilla/app/space/game/connect-four";
 import { FlowClient } from "gamezilla/app/space/game/flow";
-import { GomokuClient } from "gamezilla/app/space/game/gomoku";
-import { MazeClient } from "gamezilla/app/space/game/maze";
-import { SnakeClient } from "gamezilla/app/space/game/snake";
-import { TetrisClient } from "gamezilla/app/space/game/tetris";
 import { TicTacToeClient } from "gamezilla/app/space/game/tic-tac-toe";
-import { GameClient, SpaceClientCtx } from "gamezilla/app/space/@";
 import {
   ClientModel,
   ClientMsg,
@@ -15,7 +12,6 @@ import {
   ToClient,
   ToServer,
 } from "./game.core";
-import { ClientAppMsg } from "gamezilla/app/@";
 
 type Client = GameClient<
   ClientModel,

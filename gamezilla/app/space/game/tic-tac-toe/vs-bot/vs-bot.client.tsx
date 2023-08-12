@@ -1,5 +1,5 @@
 import { Cmd, Posix } from "gamezilla/@/core";
-import { ClientAppMsg, ClientCtx } from "gamezilla/app/@";
+import { ClientAppMsg, ClientCtx } from "gamezilla/app/@/client";
 import {
   IconArrowLeftOnRect,
   IconArrowRotateLeft,

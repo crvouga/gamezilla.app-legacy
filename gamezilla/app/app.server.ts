@@ -9,12 +9,12 @@ import {
   p,
 } from "gamezilla/@/core";
 import {
+  AnonymousReqCtx,
+  ReqCtx,
   ServerAppMsg,
   ServerCtx,
-  ReqCtx,
-  AnonymousReqCtx,
-  UserId,
-} from "gamezilla/app/@";
+} from "gamezilla/app/@/server";
+import { UserId } from "gamezilla/app/@/data";
 import { AuthServer } from "gamezilla/app/auth";
 import { ChatServer } from "gamezilla/app/chat";
 import { ProfileServer } from "gamezilla/app/profile";

@@ -1,5 +1,5 @@
 import { Cmd, Posix, Sub, andThen, p } from "gamezilla/@/core";
-import { ClientCtx } from "gamezilla/app/@";
+import { ClientCtx } from "gamezilla/app/@/client";
 import { SpaceClientCtx, SpaceViewCtx } from "gamezilla/app/space/@";
 import {
   IconArrowLeftOnRect,

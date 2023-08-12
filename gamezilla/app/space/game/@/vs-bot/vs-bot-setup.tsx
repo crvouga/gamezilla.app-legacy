@@ -1,5 +1,5 @@
 import { Transition, p } from "gamezilla/@/core";
-import { UserId } from "gamezilla/app/@";
+import { UserId } from "gamezilla/app/@/data";
 import {
   Button,
   Drawer,

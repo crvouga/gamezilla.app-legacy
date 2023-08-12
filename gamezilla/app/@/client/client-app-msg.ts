@@ -1,4 +1,4 @@
-import { UserId, Username } from "gamezilla/app/@";
+import { UserId, Username } from "gamezilla/app/@/data";
 import { Route } from "./client-route";
 
 export type ClientAppMsg =

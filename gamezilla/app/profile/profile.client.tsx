@@ -1,11 +1,11 @@
 import { Cmd, Loading, andThen, p } from "gamezilla/@/core";
-import { ProfileAvatar, UserId } from "gamezilla/app/@";
 import {
   ClientAppMsg,
   ClientCtx,
   RouteProfile,
   ViewCtx,
-} from "gamezilla/app/@";
+} from "gamezilla/app/@/client";
+import { ProfileAvatar, UserId } from "gamezilla/app/@/data";
 import {
   Button,
   IconChevronRight,

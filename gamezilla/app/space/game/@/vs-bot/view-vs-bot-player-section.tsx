@@ -1,4 +1,4 @@
-import { UserId } from "gamezilla/app/@";
+import { UserId } from "gamezilla/app/@/data";
 import { MyAvatar, VDom } from "gamezilla/app/@/ui";
 import { PlayerType, VsBotProps } from "./view-vs-bot";
 

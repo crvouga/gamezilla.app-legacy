@@ -1,5 +1,5 @@
 import { Ok, Result } from "gamezilla/@/core";
-import { UserId } from "gamezilla/app/@";
+import { UserId } from "gamezilla/app/@/data";
 
 //
 //

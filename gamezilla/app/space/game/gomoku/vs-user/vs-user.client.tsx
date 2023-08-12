@@ -1,4 +1,4 @@
-import { ViewCtx } from "gamezilla/app/@";
+import { ViewCtx } from "gamezilla/app/@/client";
 import { Cmd, Sub } from "gamezilla/@/core";
 import {
   ClientModel,

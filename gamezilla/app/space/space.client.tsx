@@ -13,7 +13,8 @@ import {
   ClientCtx,
   RouteGameSpace,
   ViewCtx,
-} from "gamezilla/app/@";
+} from "gamezilla/app/@/client";
+import { SpaceId } from "gamezilla/app/@/data";
 import {
   ActionButton,
   Button,
@@ -34,7 +35,6 @@ import {
 import * as GameClient from "./game/game.client";
 import * as Game from "./game/game.core";
 import { ViewCoverArt } from "./game/game.core";
-import { SpaceId } from "./space-id";
 import {
   ViewNotInGameScreen,
   ViewSpaceJoinScreen,

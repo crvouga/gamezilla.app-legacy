@@ -1,8 +1,7 @@
 import { Cmd, Sub } from "gamezilla/@/core";
-import { ClientAppMsg } from "gamezilla/app/@";
+import { ClientAppMsg } from "gamezilla/app/@/client";
 import { VDom } from "gamezilla/app/@/ui";
-import { SpaceClientCtx, SpaceViewCtx } from "../space";
-import { SpaceMsg } from "../space";
+import { SpaceClientCtx, SpaceMsg, SpaceViewCtx } from "../space";
 
 /**
  * Represents all the functions needed to run a game client side

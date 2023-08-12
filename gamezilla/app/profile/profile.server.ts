@@ -8,14 +8,12 @@ import {
   Task,
   p,
 } from "gamezilla/@/core";
+import { ProfileAvatar, UserId, Username } from "gamezilla/app/@/data";
 import {
-  ProfileAvatar,
-  UserId,
-  Username,
-  client,
+  supabaseClient,
   definitions,
-} from "gamezilla/app/@";
-import { ServerAppMsg, ReqCtx } from "gamezilla/app/@";
+} from "gamezilla/app/@/third-party-services";
+import { ServerAppMsg, ReqCtx } from "gamezilla/app/@/server";
 import {
   Profile,
   Req,
@@ -116,7 +114,6 @@ export const updateFromParent = ({
           (result): ToClient => ({
             t: "current-user-profile",
             result,
-            initiatorMsg: msg,
           })
         ),
         Cmd.chain((res) => sendToClient([msg.clientId], res))
@@ -151,7 +148,7 @@ const handler =
         return parsed;
       }
 
-      const updated = await client
+      const updated = await supabaseClient
         .from<definitions["user_profile"]>("user_profile")
         .update({
           username: parsed.value,
@@ -170,7 +167,7 @@ const handler =
   };
 
 const findElseCreate = async ({ userId }: { userId: UserId }) => {
-  const found = await client
+  const found = await supabaseClient
     .from<definitions["user_profile"]>("user_profile")
     .select("*")
     .eq("id", userId);
@@ -186,7 +183,7 @@ const findElseCreate = async ({ userId }: { userId: UserId }) => {
   }
 
   const seed = await ProfileAvatar.generateRandomSeed();
-  const created = await client
+  const created = await supabaseClient
     .from<definitions["user_profile"]>("user_profile")
     .insert([
       {
@@ -233,7 +230,7 @@ export const decodeRow = (
 export const findMany =
   ({ userIds }: { userIds: string[] }): Task<Result<string, Profile[]>> =>
   async () => {
-    const response = await client
+    const response = await supabaseClient
       .from<definitions["user_profile"]>("user_profile")
       .select("*")
       .in("id", userIds);
@@ -260,7 +257,7 @@ export const create =
     avatarUrl: string;
   }): Task<Result<string, Profile>> =>
   async () => {
-    const response = await client
+    const response = await supabaseClient
       .from<definitions["user_profile"]>("user_profile")
       .insert({
         id: userId,

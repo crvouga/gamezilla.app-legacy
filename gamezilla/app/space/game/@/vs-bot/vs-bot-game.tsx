@@ -1,5 +1,5 @@
 import { Cmd, Transition } from "gamezilla/@/core";
-import { UserId } from "gamezilla/app/@";
+import { UserId } from "gamezilla/app/@/data";
 import { IconRobot, MyAvatar, VDom } from "gamezilla/app/@/ui";
 import { SpaceViewCtx } from "gamezilla/app/space/@";
 import { PlayerType } from "./view-vs-bot";

@@ -15,9 +15,9 @@ import {
   Route,
   RouteAuth,
   UnauthenticatedViewCtx,
-  UserId,
-  client,
-} from "gamezilla/app/@";
+} from "gamezilla/app/@/client";
+import { UserId } from "gamezilla/app/@/data";
+import { supabaseClient } from "gamezilla/app/@/third-party-services";
 import {
   Button,
   ConformationDialog,
@@ -434,7 +434,7 @@ export const subscriptions: Sub<ClientMsg> = Sub.None;
 
 function loadCurrentUser(dispatch: (m: ClientMsg) => void) {
   setTimeout(() => {
-    const supabaseSession = client.auth.session();
+    const supabaseSession = supabaseClient.auth.session();
     const msg = fromSupabaseSession(supabaseSession);
     dispatch(msg);
   }, 1_000);
@@ -454,7 +454,7 @@ export const loginWithProvider =
   async () => {
     switch (provider) {
       case "Google": {
-        const response = await client.auth.signIn({
+        const response = await supabaseClient.auth.signIn({
           provider: "google",
         });
 
@@ -470,7 +470,7 @@ export const loginWithProvider =
 const sendCode =
   ({ phoneNumber }: { phoneNumber: PhoneNumber }): Task<Result<string, null>> =>
   async () => {
-    const response = await client.auth.signIn({
+    const response = await supabaseClient.auth.signIn({
       phone: PhoneNumber.toString(phoneNumber),
     });
 
@@ -490,7 +490,7 @@ const verifyCode =
     phoneNumber: PhoneNumber;
   }): Task<Result<string, null>> =>
   async () => {
-    const response = await client.auth.verifyOTP({
+    const response = await supabaseClient.auth.verifyOTP({
       phone: PhoneNumber.toString(phoneNumber),
       token: code,
     });
@@ -505,7 +505,7 @@ const verifyCode =
 const sendEmailLink =
   ({ emailAddress }: { emailAddress: string }): Task<Result<string, null>> =>
   async () => {
-    const response = await client.auth.signIn({
+    const response = await supabaseClient.auth.signIn({
       email: emailAddress,
     });
 
@@ -517,7 +517,7 @@ const sendEmailLink =
   };
 
 const logout: Task<Result<string, null>> = async () => {
-  const { error } = await client.auth.signOut();
+  const { error } = await supabaseClient.auth.signOut();
 
   if (error) {
     return Err(error.message);

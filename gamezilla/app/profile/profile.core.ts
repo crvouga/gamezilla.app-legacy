@@ -1,11 +1,10 @@
+import { RemoteResult, Result } from "gamezilla/@/core";
 import {
-  MsgMetaData,
   ProfileAvatarSeed,
   ProfileAvatarStyle,
   UserId,
   Username,
-} from "gamezilla/app/@";
-import { RemoteResult, Result } from "gamezilla/@/core";
+} from "gamezilla/app/@/data";
 
 //
 //
@@ -56,10 +55,10 @@ export type ClientMsg =
 export type ServerMsg = { t: "none" };
 
 export type ToClient =
-  | ({
+  | {
       t: "current-user-profile";
       result: Result<string, Profile[]>;
-    } & MsgMetaData)
+    }
   | Res;
 
 export type ToServer = Req;
@@ -70,4 +69,4 @@ export type Req =
   | { t: "search"; query: string }
   | { t: "delete-forever"; query: string };
 
-export type Res = Req & { result: Result<string, Profile[]> } & MsgMetaData;
+export type Res = Req & { result: Result<string, Profile[]> };

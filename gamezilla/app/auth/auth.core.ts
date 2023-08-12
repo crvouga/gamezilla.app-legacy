@@ -1,5 +1,5 @@
 import { PhoneNumber, RemoteResult, Result, SessionId } from "gamezilla/@/core";
-import { UserId } from "gamezilla/app/@";
+import { UserId } from "gamezilla/app/@/data";
 import { AuthEmailLink, AuthPhone, AuthPhoneVerify } from "./auth-client";
 
 export type ClientModel = {

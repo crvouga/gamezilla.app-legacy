@@ -1,5 +1,5 @@
 import { Cmd, Result, Task, exhaustive, p } from "gamezilla/@/core";
-import { ClientAppMsg } from "gamezilla/app/@";
+import { ClientAppMsg } from "gamezilla/app/@/client";
 import {
   AlertError,
   AlertSuccess,

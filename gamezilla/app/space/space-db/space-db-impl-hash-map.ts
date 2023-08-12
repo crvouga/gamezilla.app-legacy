@@ -1,7 +1,7 @@
 import { Ok } from "gamezilla/@/core";
 import { Space } from "gamezilla/app/space/@";
 import { ServerModel } from "../game/game.core";
-import { SpaceId } from "../space-id";
+import { SpaceId } from "gamezilla/app/@/data";
 import { SpaceDb } from "./space-db";
 
 const TIMEOUT = 1;

@@ -9,9 +9,9 @@ import {
   eq,
   p,
 } from "gamezilla/@/core";
-import { UserId } from "gamezilla/app/@";
+import { UserId } from "gamezilla/app/@/data";
+import { DbConnSql } from "gamezilla/app/@/server";
 import { SpaceMsg, SpaceReqCtx, SpaceServerCtx } from "gamezilla/app/space/@";
-import { DbConnSql } from "gamezilla/app/@";
 import { ChessGameMsg } from "../@/chess/chess-shared";
 import { EloRating } from "./elo-rating";
 import { PuzzleDb } from "./puzzle-db";
@@ -21,9 +21,9 @@ import {
   ServerMsg,
   ToClient,
   ToServer,
-  updateCore,
   initShared,
   transitionLoadingToStarted,
+  updateCore,
 } from "./puzzle.core";
 
 //

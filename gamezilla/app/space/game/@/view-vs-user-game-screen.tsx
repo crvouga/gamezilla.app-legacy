@@ -1,4 +1,4 @@
-import { UserId } from "gamezilla/app/@";
+import { UserId } from "gamezilla/app/@/data";
 
 export const VsUserGameScreen = ({
   playerOne,

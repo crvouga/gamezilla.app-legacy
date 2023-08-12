@@ -1,5 +1,5 @@
-import { UserId } from "gamezilla/app/@";
-import { ViewCtx } from "gamezilla/app/@";
+import { UserId } from "gamezilla/app/@/data";
+import { ViewCtx } from "gamezilla/app/@/client";
 import {
   IconArrowLeftOnRect,
   IconSpinner,

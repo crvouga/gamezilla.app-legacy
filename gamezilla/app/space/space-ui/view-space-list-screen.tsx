@@ -1,4 +1,4 @@
-import { ViewCtx } from "gamezilla/app/@";
+import { ViewCtx } from "gamezilla/app/@/client";
 import {
   Button,
   IconGamepad,
@@ -8,8 +8,8 @@ import {
   cn,
 } from "gamezilla/app/@/ui";
 import { ViewSpaceHostChip } from "gamezilla/app/space/game/@";
+import { SpaceId } from "gamezilla/app/@/data";
 import { GameName, ViewCoverArt, gameNameToString } from "../game/game.core";
-import { SpaceId } from "../space-id";
 import { ClientModel, ClientMsg, findSpaceByUserId } from "../space.core";
 
 export const ViewSpaceListScreen = ({

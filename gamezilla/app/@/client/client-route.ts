@@ -1,6 +1,6 @@
 import { Iso3166Alpha2Code, PhoneNumber } from "gamezilla/@/core";
-import { UserId } from "gamezilla/app/@";
-import { SpaceId } from "gamezilla/app/space/space-id";
+import { UserId } from "gamezilla/app/@/data";
+import { SpaceId } from "gamezilla/app/@/data/space-id";
 
 //
 //

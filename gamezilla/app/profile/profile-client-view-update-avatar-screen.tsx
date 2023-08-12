@@ -1,5 +1,5 @@
-import { ProfileAvatar } from "gamezilla/app/@";
-import { ViewCtx } from "gamezilla/app/@";
+import { ViewCtx } from "gamezilla/app/@/client";
+import { ProfileAvatar } from "gamezilla/app/@/data";
 import { Button, MyAvatar, MyTextField, TopBar } from "gamezilla/app/@/ui";
 import { ClientModel, ClientMsg } from "./profile.core";
 

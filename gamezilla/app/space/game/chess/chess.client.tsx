@@ -1,5 +1,5 @@
 import { Audio, Cmd, Posix, RemoteResult, Sub } from "gamezilla/@/core";
-import { ClientAppMsg } from "gamezilla/app/@";
+import { ClientAppMsg } from "gamezilla/app/@/client";
 import { IconPuzzlePiece } from "gamezilla/app/@/ui";
 import { SpaceClientCtx, SpaceViewCtx } from "gamezilla/app/space/@";
 import { MainMenuScreen, mainMenuButtons } from "gamezilla/app/space/game/@";

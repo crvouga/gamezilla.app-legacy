@@ -7,7 +7,7 @@ import {
   Task,
   p,
 } from "gamezilla/@/core";
-import { ClientAppMsg, UnauthenticatedViewCtx } from "gamezilla/app/@";
+import { ClientAppMsg, UnauthenticatedViewCtx } from "gamezilla/app/@/client";
 import {
   Button,
   IconPhone,

@@ -1,5 +1,6 @@
 import { ClientId, Cmd, Err, Ok, Sub, removeKey } from "gamezilla/@/core";
-import { ServerAppMsg, ServerCtx, ReqCtx, UserId } from "gamezilla/app/@";
+import { UserId } from "gamezilla/app/@/data";
+import { ServerAppMsg, ServerCtx, ReqCtx } from "gamezilla/app/@/server";
 import { SpaceServerCtx, Space } from "gamezilla/app/space/@";
 import * as GameServer from "./game/game.server";
 import { makeSpaceDb } from "./space-db";

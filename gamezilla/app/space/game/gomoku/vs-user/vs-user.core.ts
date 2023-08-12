@@ -1,4 +1,4 @@
-import { UserId } from "gamezilla/app/@";
+import { UserId } from "gamezilla/app/@/data";
 import { Err, NonEmpty, Ok, Result } from "gamezilla/@/core";
 import {
   Board,

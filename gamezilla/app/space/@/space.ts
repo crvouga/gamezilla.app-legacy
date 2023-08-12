@@ -1,11 +1,6 @@
-import {
-  ClientCtx,
-  ServerCtx,
-  ReqCtx as ReqCtx,
-  UserId,
-  ViewCtx,
-} from "gamezilla/app/@";
-import { SpaceId } from "../space-id";
+import { ClientCtx, ViewCtx } from "gamezilla/app/@/client";
+import { SpaceId, UserId } from "gamezilla/app/@/data";
+import { ReqCtx, ServerCtx } from "gamezilla/app/@/server";
 
 /**
  *
