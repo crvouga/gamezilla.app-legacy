@@ -8,11 +8,15 @@ import {
   andThen,
   eq,
   p,
-} from "gamezilla/@/core";
-import { UserId } from "gamezilla/app/@/data";
-import { DbConnSql } from "gamezilla/app/@/server";
-import { SpaceMsg, SpaceReqCtx, SpaceServerCtx } from "gamezilla/app/space/@";
-import { ChessGameMsg } from "../@/chess/chess-shared";
+} from "gamezilla/@SHARED/core";
+import { UserId } from "gamezilla/app/@SHARED/data";
+import { DbConnSql } from "gamezilla/app/@SHARED/server";
+import {
+  SpaceMsg,
+  SpaceReqCtx,
+  SpaceServerCtx,
+} from "gamezilla/app/space/@SHARED";
+import { ChessGameMsg } from "../@SHARED/chess/chess-shared";
 import { EloRating } from "./elo-rating";
 import { PuzzleDb } from "./puzzle-db";
 import {

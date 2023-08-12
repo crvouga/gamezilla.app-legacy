@@ -1,4 +1,4 @@
-import { ViewCtx } from "gamezilla/app/@/client";
+import { ViewCtx } from "gamezilla/app/@SHARED/client";
 import {
   Button,
   IconGamepad,
@@ -6,9 +6,9 @@ import {
   MyAvatar,
   TopBar,
   cn,
-} from "gamezilla/app/@/ui";
-import { ViewSpaceHostChip } from "gamezilla/app/space/game/@";
-import { SpaceId } from "gamezilla/app/@/data";
+} from "gamezilla/app/@SHARED/ui";
+import { ViewSpaceHostChip } from "gamezilla/app/space/game/@SHARED";
+import { SpaceId } from "gamezilla/app/@SHARED/data";
 import { GameName, ViewCoverArt, gameNameToString } from "../game/game.core";
 import { ClientModel, ClientMsg, findSpaceByUserId } from "../space.core";
 

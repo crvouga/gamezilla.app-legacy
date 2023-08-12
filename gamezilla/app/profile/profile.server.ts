@@ -7,13 +7,13 @@ import {
   Result,
   Task,
   p,
-} from "gamezilla/@/core";
-import { ProfileAvatar, UserId, Username } from "gamezilla/app/@/data";
+} from "gamezilla/@SHARED/core";
+import { ProfileAvatar, UserId, Username } from "gamezilla/app/@SHARED/data";
 import {
   supabaseClient,
   definitions,
-} from "gamezilla/app/@/third-party-services";
-import { ServerAppMsg, ReqCtx } from "gamezilla/app/@/server";
+} from "gamezilla/app/@SHARED/third-party-services";
+import { ServerAppMsg, ReqCtx } from "gamezilla/app/@SHARED/server";
 import {
   Profile,
   Req,

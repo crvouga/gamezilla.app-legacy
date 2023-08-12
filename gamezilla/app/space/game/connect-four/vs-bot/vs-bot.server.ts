@@ -1,5 +1,5 @@
-import { andThen, Cmd, p, Result, Sub } from "gamezilla/@/core";
-import { SpaceMsg, SpaceReqCtx } from "gamezilla/app/space/@";
+import { andThen, Cmd, p, Result, Sub } from "gamezilla/@SHARED/core";
+import { SpaceMsg, SpaceReqCtx } from "gamezilla/app/space/@SHARED";
 import { findBestMove } from "../connect-four";
 import {
   Event,

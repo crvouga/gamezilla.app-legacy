@@ -1,4 +1,4 @@
-import { Hex } from "gamezilla/@/core";
+import { Hex } from "gamezilla/@SHARED/core";
 import {
   Board,
   Bounds,
@@ -8,7 +8,7 @@ import {
   presetToStars,
 } from "./gomoku";
 import { Position } from "./gomoku-position";
-import { toInlineStyles } from "gamezilla/app/@/ui";
+import { toInlineStyles } from "gamezilla/app/@SHARED/ui";
 
 const backgroundColor = "#C88655";
 const lineColor = Hex.darken(backgroundColor, 0.3);

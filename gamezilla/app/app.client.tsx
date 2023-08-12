@@ -7,21 +7,21 @@ import {
   p,
   toMsgPayload,
   toMsgType,
-} from "gamezilla/@/core";
+} from "gamezilla/@SHARED/core";
 import {
   ClientAppMsg,
   ClientCtx,
   Route,
   UnauthenticatedViewCtx,
   ViewCtx,
-} from "gamezilla/app/@/client";
+} from "gamezilla/app/@SHARED/client";
 import {
   IconGamepad,
   IconUserCircle,
   LoadingScreen,
   VDom,
   cn,
-} from "gamezilla/app/@/ui";
+} from "gamezilla/app/@SHARED/ui";
 import { Routing, Toast, Wire } from "./app-client";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./app.core";
 import { AuthClient } from "./auth";

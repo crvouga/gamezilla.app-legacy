@@ -5,9 +5,9 @@ import {
   Result,
   Sub,
   exhaustive,
-} from "gamezilla/@/core";
-import { ViewCtx } from "gamezilla/app/@/client";
-import { SpaceClientCtx } from "gamezilla/app/space/@";
+} from "gamezilla/@SHARED/core";
+import { ViewCtx } from "gamezilla/app/@SHARED/client";
+import { SpaceClientCtx } from "gamezilla/app/space/@SHARED";
 import { Direction } from "./direction";
 import {
   ClientModel,

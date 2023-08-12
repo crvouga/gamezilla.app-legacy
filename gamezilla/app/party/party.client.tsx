@@ -1,6 +1,6 @@
-import { Cmd, RemoteResult, Sub, exhaustive, p } from "gamezilla/@/core";
-import { ClientCtx, Route, ViewCtx } from "gamezilla/app/@/client";
-import { UserId } from "gamezilla/app/@/data";
+import { Cmd, RemoteResult, Sub, exhaustive, p } from "gamezilla/@SHARED/core";
+import { ClientCtx, Route, ViewCtx } from "gamezilla/app/@SHARED/client";
+import { UserId } from "gamezilla/app/@SHARED/data";
 import { Mic } from "./mic";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./party.core";
 

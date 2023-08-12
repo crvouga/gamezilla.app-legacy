@@ -1,19 +1,26 @@
-import { Audio, Cmd, Sub, andThen, exhaustive, p } from "gamezilla/@/core";
+import {
+  Audio,
+  Cmd,
+  Sub,
+  andThen,
+  exhaustive,
+  p,
+} from "gamezilla/@SHARED/core";
 import {
   IconArrowLeftOnRect,
   IconRobot,
   MyAvatar,
   Spinner,
-} from "gamezilla/app/@/ui";
-import { SpaceClientCtx, SpaceViewCtx } from "gamezilla/app/space/@";
+} from "gamezilla/app/@SHARED/ui";
+import { SpaceClientCtx, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
 import {
   GameLayout,
   ViewBottomButtonBar,
   VsBotSetup,
-} from "gamezilla/app/space/game/@";
-import { Chess } from "../@/chess";
-import { Chessboard, PlayerIcon, ViewCoverArt } from "../@/chess-ui";
-import Sounds from "../@/chess/chess-sounds";
+} from "gamezilla/app/space/game/@SHARED";
+import { Chess } from "../@SHARED/chess";
+import { Chessboard, PlayerIcon, ViewCoverArt } from "../@SHARED/chess-ui";
+import Sounds from "../@SHARED/chess/chess-sounds";
 import {
   ClientModel,
   ClientMsg,

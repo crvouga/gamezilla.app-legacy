@@ -1,7 +1,7 @@
-import { Audio, eq, Option, Result } from "gamezilla/@/core";
-import { UserId } from "gamezilla/app/@/data";
-import { Chess } from "../@/chess";
-import * as Clock from "../@/chess/chess-clock";
+import { Audio, eq, Option, Result } from "gamezilla/@SHARED/core";
+import { UserId } from "gamezilla/app/@SHARED/data";
+import { Chess } from "../@SHARED/chess";
+import * as Clock from "../@SHARED/chess/chess-clock";
 
 const { Ok, Err } = Result;
 

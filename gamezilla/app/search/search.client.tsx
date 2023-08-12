@@ -1,6 +1,6 @@
-import { Browser, Cmd, matchSort, p } from "gamezilla/@/core";
-import { ClientAppMsg } from "gamezilla/app/@/client";
-import { IconMagnifyingGlass, IconXMark, VDom } from "gamezilla/app/@/ui";
+import { Browser, Cmd, matchSort, p } from "gamezilla/@SHARED/core";
+import { ClientAppMsg } from "gamezilla/app/@SHARED/client";
+import { IconMagnifyingGlass, IconXMark, VDom } from "gamezilla/app/@SHARED/ui";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./search.core";
 
 //

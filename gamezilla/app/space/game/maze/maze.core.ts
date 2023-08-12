@@ -1,5 +1,5 @@
-import { Keyboard, NonEmpty, removeKey, Result } from "gamezilla/@/core";
-import { UserId } from "gamezilla/app/@/data";
+import { Keyboard, NonEmpty, removeKey, Result } from "gamezilla/@SHARED/core";
+import { UserId } from "gamezilla/app/@SHARED/data";
 import { Maze } from "./maze";
 import { Direction, Position } from "./position";
 

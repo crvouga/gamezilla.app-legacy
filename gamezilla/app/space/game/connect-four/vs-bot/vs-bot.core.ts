@@ -1,6 +1,6 @@
-import { Err, Ok, Result } from "gamezilla/@/core";
-import { UserId } from "gamezilla/app/@/data";
-import { VsBotGame, VsBotSetup } from "gamezilla/app/space/game/@";
+import { Err, Ok, Result } from "gamezilla/@SHARED/core";
+import { UserId } from "gamezilla/app/@SHARED/data";
+import { VsBotGame, VsBotSetup } from "gamezilla/app/space/game/@SHARED";
 import {
   BestMoveResult,
   ColumnIndex,

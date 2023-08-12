@@ -7,14 +7,14 @@ import {
   andThen,
   p,
   removeKey,
-} from "gamezilla/@/core";
+} from "gamezilla/@SHARED/core";
 import {
   ClientAppMsg,
   ClientCtx,
   RouteGameSpace,
   ViewCtx,
-} from "gamezilla/app/@/client";
-import { SpaceId } from "gamezilla/app/@/data";
+} from "gamezilla/app/@SHARED/client";
+import { SpaceId } from "gamezilla/app/@SHARED/data";
 import {
   ActionButton,
   Button,
@@ -25,13 +25,13 @@ import {
   LoadingScreen,
   MyAvatar,
   VDom,
-} from "gamezilla/app/@/ui";
-import { Space, SpaceViewCtx } from "gamezilla/app/space/@";
+} from "gamezilla/app/@SHARED/ui";
+import { Space, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
 import {
   ViewSpaceHostChip,
   ViewUsersInSpaceList,
   ViewYouChip,
-} from "gamezilla/app/space/game/@";
+} from "gamezilla/app/space/game/@SHARED";
 import * as GameClient from "./game/game.client";
 import * as Game from "./game/game.core";
 import { ViewCoverArt } from "./game/game.core";

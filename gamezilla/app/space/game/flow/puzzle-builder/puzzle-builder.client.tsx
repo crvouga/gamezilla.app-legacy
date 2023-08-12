@@ -1,12 +1,12 @@
-import { Cmd, Sub } from "gamezilla/@/core";
+import { Cmd, Sub } from "gamezilla/@SHARED/core";
 import {
   IconArrowLeftOnRect,
   IconPenToSquare,
   IconPlay,
   cn,
-} from "gamezilla/app/@/ui";
-import { GameClient } from "gamezilla/app/space/@";
-import { ViewBottomButtonBar } from "gamezilla/app/space/game/@";
+} from "gamezilla/app/@SHARED/ui";
+import { GameClient } from "gamezilla/app/space/@SHARED";
+import { ViewBottomButtonBar } from "gamezilla/app/space/game/@SHARED";
 import { FlowGridPlayUI, FlowGridUI } from "../flow-grid";
 import { FlowViewCtx } from "../flow-shared";
 import { Color, groupIdToColor } from "../flow-ui";

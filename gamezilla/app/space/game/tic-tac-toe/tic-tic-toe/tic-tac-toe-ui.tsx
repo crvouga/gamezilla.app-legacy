@@ -1,4 +1,4 @@
-import { toInlineStyles } from "gamezilla/app/@/ui";
+import { toInlineStyles } from "gamezilla/app/@SHARED/ui";
 import {
   Empty,
   MAX_X,

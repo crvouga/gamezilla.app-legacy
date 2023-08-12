@@ -5,9 +5,9 @@ import {
   Posix,
   RemoteResult,
   Result,
-} from "gamezilla/@/core";
-import { UserId } from "gamezilla/app/@/data";
-import { Chess } from "../@/chess";
+} from "gamezilla/@SHARED/core";
+import { UserId } from "gamezilla/app/@SHARED/data";
+import { Chess } from "../@SHARED/chess";
 import { EloRating } from "./elo-rating";
 import { zip } from "./utils";
 

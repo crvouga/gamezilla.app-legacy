@@ -1,7 +1,7 @@
-import { ClientId, Cmd, Err, Ok, Sub, removeKey } from "gamezilla/@/core";
-import { UserId } from "gamezilla/app/@/data";
-import { ServerAppMsg, ServerCtx, ReqCtx } from "gamezilla/app/@/server";
-import { SpaceServerCtx, Space } from "gamezilla/app/space/@";
+import { ClientId, Cmd, Err, Ok, Sub, removeKey } from "gamezilla/@SHARED/core";
+import { UserId } from "gamezilla/app/@SHARED/data";
+import { ServerAppMsg, ServerCtx, ReqCtx } from "gamezilla/app/@SHARED/server";
+import { SpaceServerCtx, Space } from "gamezilla/app/space/@SHARED";
 import * as GameServer from "./game/game.server";
 import { makeSpaceDb } from "./space-db";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./space.core";

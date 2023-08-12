@@ -1,5 +1,5 @@
-import { Cmd, andThen, p } from "gamezilla/@/core";
-import { ClientAppMsg } from "gamezilla/app/@/client";
+import { Cmd, andThen, p } from "gamezilla/@SHARED/core";
+import { ClientAppMsg } from "gamezilla/app/@SHARED/client";
 import {
   IconArrowCircle,
   IconArrowLeftOnRect,
@@ -11,15 +11,15 @@ import {
   MyAvatar,
   Spinner,
   cn,
-} from "gamezilla/app/@/ui";
-import { SpaceClientCtx, SpaceViewCtx } from "gamezilla/app/space/@";
+} from "gamezilla/app/@SHARED/ui";
+import { SpaceClientCtx, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
 import {
   BottomBarButtonAction,
   GameLayout,
   ViewBottomButtonBar,
-} from "gamezilla/app/space/game/@";
-import { Chess } from "../@/chess";
-import { Chessboard } from "../@/chess-ui";
+} from "gamezilla/app/space/game/@SHARED";
+import { Chess } from "../@SHARED/chess";
+import { Chessboard } from "../@SHARED/chess-ui";
 import {
   ClientModel,
   ClientMsg,

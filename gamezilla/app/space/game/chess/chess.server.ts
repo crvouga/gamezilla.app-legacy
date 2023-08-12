@@ -1,7 +1,11 @@
-import { Cmd, Err, Ok, Sub } from "gamezilla/@/core";
-import { UserId } from "gamezilla/app/@/data";
-import { SpaceMsg, SpaceReqCtx, SpaceServerCtx } from "gamezilla/app/space/@";
-import { ChessGameMsg } from "./@/chess/chess-shared";
+import { Cmd, Err, Ok, Sub } from "gamezilla/@SHARED/core";
+import { UserId } from "gamezilla/app/@SHARED/data";
+import {
+  SpaceMsg,
+  SpaceReqCtx,
+  SpaceServerCtx,
+} from "gamezilla/app/space/@SHARED";
+import { ChessGameMsg } from "./@SHARED/chess/chess-shared";
 import { Res, ServerModel, ServerMsg, ToClient, ToServer } from "./chess.core";
 import * as Puzzle from "./puzzle/puzzle.server";
 import { VsBotServer } from "./vs-bot";

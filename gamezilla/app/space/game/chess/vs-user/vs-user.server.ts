@@ -1,6 +1,6 @@
-import { Cmd, exhaustive, Sub, Time } from "gamezilla/@/core";
-import { SpaceMsg } from "gamezilla/app/space/@";
-import * as Board from "../@/chess/chess";
+import { Cmd, exhaustive, Sub, Time } from "gamezilla/@SHARED/core";
+import { SpaceMsg } from "gamezilla/app/space/@SHARED";
+import * as Board from "../@SHARED/chess/chess";
 import {
   cancelDraw,
   clockTicked,

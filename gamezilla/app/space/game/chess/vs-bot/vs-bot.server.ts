@@ -1,6 +1,6 @@
-import { Cmd, p, Sub } from "gamezilla/@/core";
-import { SpaceMsg, SpaceReqCtx } from "gamezilla/app/space/@";
-import { Chess } from "../@/chess";
+import { Cmd, p, Sub } from "gamezilla/@SHARED/core";
+import { SpaceMsg, SpaceReqCtx } from "gamezilla/app/space/@SHARED";
+import { Chess } from "../@SHARED/chess";
 import {
   botMoved,
   updateCore,

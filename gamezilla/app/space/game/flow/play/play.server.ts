@@ -1,4 +1,4 @@
-import { GameServer } from "gamezilla/app/space/@";
+import { GameServer } from "gamezilla/app/space/@SHARED";
 import {
   ServerModel,
   ServerMsg,
@@ -6,7 +6,7 @@ import {
   ToServer,
   initShared,
 } from "./play.core";
-import { Sub } from "gamezilla/@/core";
+import { Sub } from "gamezilla/@SHARED/core";
 
 type Server = GameServer<ServerModel, ServerMsg, ToClient, ToServer>;
 

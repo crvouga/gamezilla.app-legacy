@@ -1,4 +1,4 @@
-import { Cmd } from "gamezilla/@/core";
+import { Cmd } from "gamezilla/@SHARED/core";
 import { ServerModel, ServerMsg, ToServer } from "./search.core";
 
 type Model = ServerModel;

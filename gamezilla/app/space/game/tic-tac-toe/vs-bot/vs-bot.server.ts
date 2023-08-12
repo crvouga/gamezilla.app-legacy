@@ -1,5 +1,5 @@
-import { Cmd, Err, Ok, Sub, andThen, p } from "gamezilla/@/core";
-import { SpaceMsg, SpaceReqCtx } from "gamezilla/app/space/@";
+import { Cmd, Err, Ok, Sub, andThen, p } from "gamezilla/@SHARED/core";
+import { SpaceMsg, SpaceReqCtx } from "gamezilla/app/space/@SHARED";
 import { TicTacToe } from "../tic-tic-toe";
 import { getBestMove } from "../tic-tic-toe/best-move";
 import {

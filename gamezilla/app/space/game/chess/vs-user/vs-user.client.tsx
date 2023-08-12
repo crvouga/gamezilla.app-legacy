@@ -1,10 +1,10 @@
-import { Cmd, Option, Sub, exhaustive } from "gamezilla/@/core";
-import { ViewCtx } from "gamezilla/app/@/client";
-import { UserId } from "gamezilla/app/@/data";
-import { SpaceClientCtx } from "gamezilla/app/space/@";
+import { Cmd, Option, Sub, exhaustive } from "gamezilla/@SHARED/core";
+import { ViewCtx } from "gamezilla/app/@SHARED/client";
+import { UserId } from "gamezilla/app/@SHARED/data";
+import { SpaceClientCtx } from "gamezilla/app/space/@SHARED";
 
-import { Chess } from "../@/chess";
-import Sounds from "../@/chess/chess-sounds";
+import { Chess } from "../@SHARED/chess";
+import Sounds from "../@SHARED/chess/chess-sounds";
 import {
   ClientModel,
   ClientMsg,

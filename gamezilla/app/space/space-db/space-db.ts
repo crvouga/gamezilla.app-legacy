@@ -1,8 +1,8 @@
-import { Result } from "gamezilla/@/core";
-import { UserId } from "gamezilla/app/@/data";
-import { Space } from "gamezilla/app/space/@";
+import { Result } from "gamezilla/@SHARED/core";
+import { UserId } from "gamezilla/app/@SHARED/data";
+import { Space } from "gamezilla/app/space/@SHARED";
 import * as Game from "../game/game.core";
-import { SpaceId } from "gamezilla/app/@/data";
+import { SpaceId } from "gamezilla/app/@SHARED/data";
 
 export type SpaceDb = {
   get: (

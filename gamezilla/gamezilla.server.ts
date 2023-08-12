@@ -1,4 +1,8 @@
-import { createTransportServer, Program, toMsgType } from "gamezilla/@/core";
+import {
+  createTransportServer,
+  Program,
+  toMsgType,
+} from "gamezilla/@SHARED/core";
 import { createServer } from "http";
 import * as AppServer from "./app/app.server";
 

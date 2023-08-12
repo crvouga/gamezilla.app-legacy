@@ -1,12 +1,12 @@
-import { Cmd, Posix, Sub, andThen, p } from "gamezilla/@/core";
-import { ClientCtx } from "gamezilla/app/@/client";
-import { SpaceClientCtx, SpaceViewCtx } from "gamezilla/app/space/@";
+import { Cmd, Posix, Sub, andThen, p } from "gamezilla/@SHARED/core";
+import { ClientCtx } from "gamezilla/app/@SHARED/client";
+import { SpaceClientCtx, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
 import {
   IconArrowLeftOnRect,
   IconArrowRotateLeft,
   IconRightLeft,
   LoadingBar,
-} from "gamezilla/app/@/ui";
+} from "gamezilla/app/@SHARED/ui";
 import {
   GameLayout,
   IconBotHappy,
@@ -18,7 +18,7 @@ import {
   VsBotPlayerSection,
   VsBotProps,
   VsBotSetup,
-} from "gamezilla/app/space/game/@";
+} from "gamezilla/app/space/game/@SHARED";
 import { Columns, toStatus, toTurn } from "../connect-four";
 import { ViewCoverArt } from "../connect-four-cover-art";
 import {

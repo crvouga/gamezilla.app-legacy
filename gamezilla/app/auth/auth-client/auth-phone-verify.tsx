@@ -6,8 +6,8 @@ import {
   Task,
   Time,
   p,
-} from "gamezilla/@/core";
-import { ClientAppMsg } from "gamezilla/app/@/client";
+} from "gamezilla/@SHARED/core";
+import { ClientAppMsg } from "gamezilla/app/@SHARED/client";
 import {
   AlertError,
   AlertSuccess,
@@ -15,7 +15,7 @@ import {
   MyTextField,
   TopBar,
   TopBarBackButton,
-} from "gamezilla/app/@/ui";
+} from "gamezilla/app/@SHARED/ui";
 
 //
 //

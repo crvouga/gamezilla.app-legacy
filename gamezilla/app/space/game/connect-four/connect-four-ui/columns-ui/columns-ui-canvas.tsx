@@ -1,4 +1,4 @@
-import { rescale } from "gamezilla/@/core";
+import { rescale } from "gamezilla/@SHARED/core";
 import {
   COLUMN_COUNT,
   Columns,
@@ -7,7 +7,7 @@ import {
 } from "../../connect-four";
 import { gameTheme } from "../shared";
 import { ViewColumnsProps } from "./shared";
-import { toInlineStyles } from "gamezilla/app/@/ui";
+import { toInlineStyles } from "gamezilla/app/@SHARED/ui";
 
 export const doPaint = (columns: Columns) => {
   const canvas = document.getElementById("view-columns-canvas");

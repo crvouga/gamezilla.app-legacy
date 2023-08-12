@@ -1,4 +1,4 @@
-import { rescale } from "gamezilla/@/core";
+import { rescale } from "gamezilla/@SHARED/core";
 
 export type Position = {
   x: number;

@@ -1,6 +1,6 @@
-import { Cmd, Sub, exhaustive } from "gamezilla/@/core";
-import { ClientAppMsg } from "gamezilla/app/@/client";
-import { GameClient, SpaceClientCtx } from "gamezilla/app/space/@";
+import { Cmd, Sub, exhaustive } from "gamezilla/@SHARED/core";
+import { ClientAppMsg } from "gamezilla/app/@SHARED/client";
+import { GameClient, SpaceClientCtx } from "gamezilla/app/space/@SHARED";
 import { ChessClient } from "gamezilla/app/space/game/chess";
 import { ConnectFourClient } from "gamezilla/app/space/game/connect-four";
 import { FlowClient } from "gamezilla/app/space/game/flow";

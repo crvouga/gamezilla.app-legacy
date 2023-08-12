@@ -1,4 +1,4 @@
-import { cn, toInlineStyles } from "gamezilla/app/@/ui";
+import { cn, toInlineStyles } from "gamezilla/app/@SHARED/ui";
 import { Flow, GroupId, NodeId } from "../flow";
 import { Color, groupIdToColor } from "../flow-ui";
 import * as FlowGrid from "./flow-grid";

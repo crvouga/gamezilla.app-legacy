@@ -1,5 +1,5 @@
-import { Cmd, Sub, andThen, p } from "gamezilla/@/core";
-import { SpaceMsg, SpaceReqCtx } from "gamezilla/app/space/@";
+import { Cmd, Sub, andThen, p } from "gamezilla/@SHARED/core";
+import { SpaceMsg, SpaceReqCtx } from "gamezilla/app/space/@SHARED";
 import {
   Res,
   ServerModel,

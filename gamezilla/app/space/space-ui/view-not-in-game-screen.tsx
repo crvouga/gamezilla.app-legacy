@@ -1,8 +1,8 @@
-import { Space, SpaceViewCtx } from "gamezilla/app/space/@";
+import { Space, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
 import {
   ViewGameHeaderEmpty,
   ViewUsersInSpaceList,
-} from "gamezilla/app/space/game/@";
+} from "gamezilla/app/space/game/@SHARED";
 import * as Game from "../game/game.core";
 import {
   ViewCoverArt,

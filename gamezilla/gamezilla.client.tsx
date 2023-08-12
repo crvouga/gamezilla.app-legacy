@@ -4,7 +4,7 @@ import {
   createTransportClient,
   toMsgPayload,
   toMsgType,
-} from "gamezilla/@/core";
+} from "gamezilla/@SHARED/core";
 import { render } from "inferno";
 import * as AppClient from "./app/app.client";
 

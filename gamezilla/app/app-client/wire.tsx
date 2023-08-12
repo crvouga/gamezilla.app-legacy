@@ -1,6 +1,6 @@
-import { ClientWireMsg, Cmd } from "gamezilla/@/core";
-import { ClientAppMsg } from "gamezilla/app/@/client";
-import { IconSpinner } from "gamezilla/app/@/ui";
+import { ClientWireMsg, Cmd } from "gamezilla/@SHARED/core";
+import { ClientAppMsg } from "gamezilla/app/@SHARED/client";
+import { IconSpinner } from "gamezilla/app/@SHARED/ui";
 
 //
 //

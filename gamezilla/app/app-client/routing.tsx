@@ -1,5 +1,5 @@
-import { Browser, Cmd, p } from "gamezilla/@/core";
-import { ClientAppMsg, Route } from "gamezilla/app/@/client";
+import { Browser, Cmd, p } from "gamezilla/@SHARED/core";
+import { ClientAppMsg, Route } from "gamezilla/app/@SHARED/client";
 
 //
 //

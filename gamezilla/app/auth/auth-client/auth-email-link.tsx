@@ -1,5 +1,5 @@
-import { Cmd, Result, Task, exhaustive, p } from "gamezilla/@/core";
-import { ClientAppMsg } from "gamezilla/app/@/client";
+import { Cmd, Result, Task, exhaustive, p } from "gamezilla/@SHARED/core";
+import { ClientAppMsg } from "gamezilla/app/@SHARED/client";
 import {
   AlertError,
   AlertSuccess,
@@ -7,7 +7,7 @@ import {
   MyTextField,
   TopBar,
   TopBarBackButton,
-} from "gamezilla/app/@/ui";
+} from "gamezilla/app/@SHARED/ui";
 
 //
 //

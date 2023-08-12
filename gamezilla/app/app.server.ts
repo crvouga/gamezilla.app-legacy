@@ -7,14 +7,14 @@ import {
   Sub,
   andThen,
   p,
-} from "gamezilla/@/core";
+} from "gamezilla/@SHARED/core";
 import {
   AnonymousReqCtx,
   ReqCtx,
   ServerAppMsg,
   ServerCtx,
-} from "gamezilla/app/@/server";
-import { UserId } from "gamezilla/app/@/data";
+} from "gamezilla/app/@SHARED/server";
+import { UserId } from "gamezilla/app/@SHARED/data";
 import { AuthServer } from "gamezilla/app/auth";
 import { ChatServer } from "gamezilla/app/chat";
 import { ProfileServer } from "gamezilla/app/profile";

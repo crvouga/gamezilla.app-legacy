@@ -1,5 +1,5 @@
-import { ViewCtx } from "gamezilla/app/@/client";
-import { Cmd, Sub } from "gamezilla/@/core";
+import { ViewCtx } from "gamezilla/app/@SHARED/client";
+import { Cmd, Sub } from "gamezilla/@SHARED/core";
 import {
   ClientModel,
   ClientMsg,

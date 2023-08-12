@@ -1,4 +1,4 @@
-import { Cmd } from "gamezilla/@/core";
+import { Cmd } from "gamezilla/@SHARED/core";
 import { Flow, AlgoDrawPath, AlgoAutocompletePath } from "../flow";
 import * as FlowGrid from "./flow-grid";
 import * as FlowGridUI from "./flow-grid-ui";

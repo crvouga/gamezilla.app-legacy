@@ -1,12 +1,12 @@
-import { Cmd, Posix } from "gamezilla/@/core";
-import { ClientAppMsg, ClientCtx } from "gamezilla/app/@/client";
+import { Cmd, Posix } from "gamezilla/@SHARED/core";
+import { ClientAppMsg, ClientCtx } from "gamezilla/app/@SHARED/client";
 import {
   IconArrowLeftOnRect,
   IconArrowRotateLeft,
   IconRightLeft,
   LoadingBar,
-} from "gamezilla/app/@/ui";
-import { SpaceClientCtx, SpaceViewCtx } from "gamezilla/app/space/@";
+} from "gamezilla/app/@SHARED/ui";
+import { SpaceClientCtx, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
 import {
   IconBotCute,
   IconBotLevel1,
@@ -15,7 +15,7 @@ import {
   VsBotPlayerSection,
   VsBotProps,
   VsBotSetup,
-} from "gamezilla/app/space/game/@";
+} from "gamezilla/app/space/game/@SHARED";
 import {
   BotLevel,
   allBotLevels,

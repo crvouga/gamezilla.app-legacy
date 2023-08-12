@@ -1,7 +1,10 @@
-import { Cmd, Sub } from "gamezilla/@/core";
-import { ClientAppMsg, ClientCtx } from "gamezilla/app/@/client";
-import { SpaceClientCtx, SpaceViewCtx } from "gamezilla/app/space/@";
-import { MainMenuScreen, mainMenuButtons } from "gamezilla/app/space/game/@";
+import { Cmd, Sub } from "gamezilla/@SHARED/core";
+import { ClientAppMsg, ClientCtx } from "gamezilla/app/@SHARED/client";
+import { SpaceClientCtx, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
+import {
+  MainMenuScreen,
+  mainMenuButtons,
+} from "gamezilla/app/space/game/@SHARED";
 import {
   ClientModel,
   ClientMsg,

@@ -1,7 +1,7 @@
-import { Audio, Err, Ok, Result } from "gamezilla/@/core";
-import { UserId } from "gamezilla/app/@/data";
-import { VsBotSetup } from "gamezilla/app/space/game/@";
-import { Chess } from "../@/chess";
+import { Audio, Err, Ok, Result } from "gamezilla/@SHARED/core";
+import { UserId } from "gamezilla/app/@SHARED/data";
+import { VsBotSetup } from "gamezilla/app/space/game/@SHARED";
+import { Chess } from "../@SHARED/chess";
 
 //
 //

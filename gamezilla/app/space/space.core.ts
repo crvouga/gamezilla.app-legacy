@@ -1,8 +1,8 @@
-import { RemoteResult, Result } from "gamezilla/@/core";
-import { UserId, Profile } from "gamezilla/app/@/data";
-import { Space } from "gamezilla/app/space/@";
+import { RemoteResult, Result } from "gamezilla/@SHARED/core";
+import { UserId, Profile } from "gamezilla/app/@SHARED/data";
+import { Space } from "gamezilla/app/space/@SHARED";
 import * as Game from "./game/game.core";
-import { SpaceId } from "../@/data/space-id";
+import { SpaceId } from "../@SHARED/data/space-id";
 
 //
 //

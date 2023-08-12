@@ -1,4 +1,4 @@
-import { takeWhile } from "gamezilla/@/core";
+import { takeWhile } from "gamezilla/@SHARED/core";
 // import { findShortestEmptyPath } from "./algo-find-shortest-path";
 import {
   Node,

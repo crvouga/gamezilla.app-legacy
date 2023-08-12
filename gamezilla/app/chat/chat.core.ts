@@ -1,5 +1,5 @@
-import { Browser, Cmd, RemoteResult, Result } from "gamezilla/@/core";
-import { UserId } from "gamezilla/app/@/data";
+import { Browser, Cmd, RemoteResult, Result } from "gamezilla/@SHARED/core";
+import { UserId } from "gamezilla/app/@SHARED/data";
 
 //
 //

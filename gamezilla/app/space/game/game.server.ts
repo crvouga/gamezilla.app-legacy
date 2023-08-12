@@ -1,9 +1,9 @@
-import { Cmd, Sub } from "gamezilla/@/core";
+import { Cmd, Sub } from "gamezilla/@SHARED/core";
 import { ChessServer } from "gamezilla/app/space/game/chess";
 import { ConnectFourServer } from "gamezilla/app/space/game/connect-four";
 import { FlowServer } from "gamezilla/app/space/game/flow";
 import { TicTacToeServer } from "gamezilla/app/space/game/tic-tac-toe";
-import { GameServer } from "gamezilla/app/space/@";
+import { GameServer } from "gamezilla/app/space/@SHARED";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./game.core";
 
 type Server = GameServer<Model, Msg, ToClient, ToServer>;

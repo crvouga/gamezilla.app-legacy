@@ -6,15 +6,18 @@ import {
   Result,
   Task,
   p,
-} from "gamezilla/@/core";
-import { ClientAppMsg, UnauthenticatedViewCtx } from "gamezilla/app/@/client";
+} from "gamezilla/@SHARED/core";
+import {
+  ClientAppMsg,
+  UnauthenticatedViewCtx,
+} from "gamezilla/app/@SHARED/client";
 import {
   Button,
   IconPhone,
   MyTextField,
   TopBar,
   TopBarBackButton,
-} from "gamezilla/app/@/ui";
+} from "gamezilla/app/@SHARED/ui";
 
 //
 //

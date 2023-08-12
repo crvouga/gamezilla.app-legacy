@@ -1,6 +1,6 @@
-import { Cmd, Err, Result, Sub } from "gamezilla/@/core";
-import { UserId } from "gamezilla/app/@/data";
-import { GameServer } from "gamezilla/app/space/@";
+import { Cmd, Err, Result, Sub } from "gamezilla/@SHARED/core";
+import { UserId } from "gamezilla/app/@SHARED/data";
+import { GameServer } from "gamezilla/app/space/@SHARED";
 import {
   Mode,
   ServerModel,

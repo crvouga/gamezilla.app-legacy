@@ -1,6 +1,9 @@
-import { Cmd, Sub } from "gamezilla/@/core";
-import { GameClient } from "gamezilla/app/space/@";
-import { MainMenuScreen, mainMenuButtons } from "gamezilla/app/space/game/@";
+import { Cmd, Sub } from "gamezilla/@SHARED/core";
+import { GameClient } from "gamezilla/app/space/@SHARED";
+import {
+  MainMenuScreen,
+  mainMenuButtons,
+} from "gamezilla/app/space/game/@SHARED";
 import { ViewCoverArt } from "./connect-four-cover-art";
 import {
   ClientModel,

@@ -9,15 +9,15 @@ import {
   Sub,
   Task,
   p,
-} from "gamezilla/@/core";
+} from "gamezilla/@SHARED/core";
 import {
   ClientAppMsg,
   Route,
   RouteAuth,
   UnauthenticatedViewCtx,
-} from "gamezilla/app/@/client";
-import { UserId } from "gamezilla/app/@/data";
-import { supabaseClient } from "gamezilla/app/@/third-party-services";
+} from "gamezilla/app/@SHARED/client";
+import { UserId } from "gamezilla/app/@SHARED/data";
+import { supabaseClient } from "gamezilla/app/@SHARED/third-party-services";
 import {
   Button,
   ConformationDialog,
@@ -27,7 +27,7 @@ import {
   LoadingBar,
   LoadingScreen,
   cn,
-} from "gamezilla/app/@/ui";
+} from "gamezilla/app/@SHARED/ui";
 import { AuthEmailLink, AuthPhone, AuthPhoneVerify } from "./auth-client";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./auth.core";
 

@@ -1,5 +1,5 @@
-import { UserId } from "gamezilla/app/@/data";
-import { ViewCtx } from "gamezilla/app/@/client";
+import { UserId } from "gamezilla/app/@SHARED/data";
+import { ViewCtx } from "gamezilla/app/@SHARED/client";
 import {
   IconArrowLeftOnRect,
   IconSpinner,
@@ -8,7 +8,7 @@ import {
   Button,
   TopBar,
   TopBarBackButton,
-} from "gamezilla/app/@/ui";
+} from "gamezilla/app/@SHARED/ui";
 import { ClientModel, ClientMsg } from "./profile.core";
 
 export const ViewProfileScreen = ({

@@ -12,10 +12,10 @@ import {
   to,
   tuple,
   union,
-} from "gamezilla/@/core";
-import { UserId } from "gamezilla/app/@/data";
-import { DbConnSql } from "gamezilla/app/@/server";
-import { MoveInput, uciMoveToMoveInput } from "../@/chess/chess";
+} from "gamezilla/@SHARED/core";
+import { UserId } from "gamezilla/app/@SHARED/data";
+import { DbConnSql } from "gamezilla/app/@SHARED/server";
+import { MoveInput, uciMoveToMoveInput } from "../@SHARED/chess/chess";
 import { EloRating } from "./elo-rating";
 import {
   Puzzle,

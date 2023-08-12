@@ -1,5 +1,5 @@
-import { Cmd } from "gamezilla/@/core";
-import { AnonymousReqCtx, ServerAppMsg } from "gamezilla/app/@/server";
+import { Cmd } from "gamezilla/@SHARED/core";
+import { AnonymousReqCtx, ServerAppMsg } from "gamezilla/app/@SHARED/server";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./auth.core";
 
 //

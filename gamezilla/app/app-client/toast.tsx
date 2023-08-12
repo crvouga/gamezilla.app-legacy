@@ -1,7 +1,7 @@
-import { Cmd, Time, Transition, andThen, p } from "gamezilla/@/core";
-import { ClientAppMsg } from "gamezilla/app/@/client";
-import { IconXMark } from "gamezilla/app/@/ui";
-import { ToParent } from "../@/client";
+import { Cmd, Time, Transition, andThen, p } from "gamezilla/@SHARED/core";
+import { ClientAppMsg } from "gamezilla/app/@SHARED/client";
+import { IconXMark } from "gamezilla/app/@SHARED/ui";
+import { ToParent } from "../@SHARED/client";
 
 const config: Transition.Config<Toast> = {
   toId: (toast) => `toast-${String(toast.toastId)}`,

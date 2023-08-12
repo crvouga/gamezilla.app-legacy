@@ -1,10 +1,10 @@
-import { Button, TopBar, TopBarBackButton } from "gamezilla/app/@/ui";
-import { SpaceViewCtx } from "gamezilla/app/space/@";
+import { Button, TopBar, TopBarBackButton } from "gamezilla/app/@SHARED/ui";
+import { SpaceViewCtx } from "gamezilla/app/space/@SHARED";
 import {
   ViewGameHeader,
   ViewGameHeaderEmpty,
   ViewUsersInSpaceList,
-} from "gamezilla/app/space/game/@";
+} from "gamezilla/app/space/game/@SHARED";
 import { ViewCoverArt, gameNameToString } from "../game/game.core";
 import { ClientModel, ClientMsg } from "../space.core";
 

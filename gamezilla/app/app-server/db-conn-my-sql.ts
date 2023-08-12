@@ -1,5 +1,5 @@
-import { Err, Ok } from "gamezilla/@/core";
-import { DbConnSql } from "gamezilla/app/@/server";
+import { Err, Ok } from "gamezilla/@SHARED/core";
+import { DbConnSql } from "gamezilla/app/@SHARED/server";
 import { PoolConnection, createPool } from "mysql2/promise";
 
 export const createDbConnMySql = async ({

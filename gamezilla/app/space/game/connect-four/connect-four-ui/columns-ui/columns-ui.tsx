@@ -1,4 +1,4 @@
-import { Cmd, Transition, easeAttrs } from "gamezilla/@/core";
+import { Cmd, Transition, easeAttrs } from "gamezilla/@SHARED/core";
 import {
   COLUMN_COUNT,
   Columns,

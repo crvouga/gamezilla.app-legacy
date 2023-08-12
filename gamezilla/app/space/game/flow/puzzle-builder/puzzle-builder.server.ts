@@ -1,5 +1,5 @@
-import { Sub } from "gamezilla/@/core";
-import { GameServer } from "gamezilla/app/space/@";
+import { Sub } from "gamezilla/@SHARED/core";
+import { GameServer } from "gamezilla/app/space/@SHARED";
 import {
   ServerModel,
   ServerMsg,
