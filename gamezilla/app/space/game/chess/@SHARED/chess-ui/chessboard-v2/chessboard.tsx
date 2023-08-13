@@ -1,5 +1,5 @@
 import { VDom, VDomChildren, toInlineStyles } from "gamezilla/app/@SHARED/ui";
-import { Piece, fenToGrid, pieces } from "../../chess";
+import { Piece, fenToGrid, pieces, positionToSquare } from "../../chess";
 import { ChessboardProps } from "./chessboard-shared";
 import { chessPieces } from "./chesspieces";
 
@@ -73,7 +73,7 @@ const onDragStart = (event: MouseEvent | TouchEvent) => {
   }
 };
 
-const onDragEnd = () => {
+const onDragEnd = (props: ChessboardProps) => () => {
   if (touched) {
     const currentX = parseFloat(touched.node.getAttribute("x") || "0");
     const currentY = parseFloat(touched.node.getAttribute("y") || "0");
@@ -92,13 +92,44 @@ const onDragEnd = () => {
 
     touched.node.width.baseVal.value = SCALE * 1;
     touched.node.height.baseVal.value = SCALE * 1;
+    const source = positionToSquare({
+      x: touched.x,
+      y: touched.y,
+    });
+    const target = positionToSquare({
+      x: Math.floor(roundedX / stepX),
+      y: Math.floor(roundedY / stepY),
+    });
+
+    if (props.onPieceDrop && source && target) {
+      const isValidDrop = props.onPieceDrop({ source, target });
+
+      if (!isValidDrop) {
+        touched.node.setAttribute("x", `${touched.x}`);
+        touched.node.setAttribute("y", `${touched.y}`);
+      }
+    }
+
     touched = null;
   }
 };
 
 const onPieceDragStart =
-  (input: { x: number; y: number; piece: Piece }) =>
+  (input: { props: ChessboardProps; x: number; y: number; piece: Piece }) =>
   (e: MouseEvent | TouchEvent) => {
+    const square = positionToSquare({ x: input.x, y: input.y });
+
+    if (!square) {
+      return;
+    }
+
+    if (
+      input.props.isPieceDraggable &&
+      !input.props.isPieceDraggable({ square, piece: input.piece })
+    ) {
+      return;
+    }
+
     const target = e.currentTarget;
     if (!(target instanceof SVGSVGElement)) {
       return;
@@ -120,6 +151,7 @@ export const Chessboard = (props: ChessboardProps) => {
   console.log("RENDER", board);
   return (
     <svg
+      key={props.fen}
       width="100%"
       viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
       onContextMenu={(e) => {
@@ -140,8 +172,8 @@ export const Chessboard = (props: ChessboardProps) => {
       onMouseDown={onDragStart}
       onTouchMove={onDragStart}
       onMouseMove={onDragStart}
-      onTouchEnd={onDragEnd}
-      onMouseUp={onDragEnd}>
+      onTouchEnd={onDragEnd(props)}
+      onMouseUp={onDragEnd(props)}>
       <g>
         {checkers.map((checker) => {
           return (
@@ -166,13 +198,12 @@ export const Chessboard = (props: ChessboardProps) => {
         {board?.map(({ piece, x, y }) => {
           return (
             <svg
-              key={`${x},${y},${piece}`}
               x={SCALE * x}
               y={SCALE * y}
               width={SCALE * 1}
               height={SCALE * 1}
-              onMouseDown={onPieceDragStart({ piece, x, y })}
-              onTouchStart={onPieceDragStart({ piece, x, y })}
+              onMouseDown={onPieceDragStart({ props, piece, x, y })}
+              onTouchStart={onPieceDragStart({ props, piece, x, y })}
               viewBox="0 0 45 45">
               <rect
                 fill="transparent"

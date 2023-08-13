@@ -261,21 +261,37 @@ export const View = ({
                 return false;
               }
               const color = Chess.toColor(input.piece);
+
               return (
                 color === toPlayerColor(model.puzzle) &&
                 ctx.hostId === ctx.currentUserId
               );
             }}
             onPieceDrop={(input) => {
-              dispatch({
-                t: "input-move",
-                moveInput: {
+              const moved = Chess.move(
+                {
                   from: input.source,
                   to: input.target,
                   promotion: "q",
                 },
+                toCurrentBoard(model)
+              );
+              console.log(moved, {
+                from: input.source,
+                to: input.target,
+                promotion: "q",
               });
-              return true;
+              if (moved.t === "ok") {
+                dispatch({
+                  t: "input-move",
+                  moveInput: {
+                    from: input.source,
+                    to: input.target,
+                    promotion: "q",
+                  },
+                });
+              }
+              return moved.t === "ok";
             }}
           />
           {model.t === "loading" && (

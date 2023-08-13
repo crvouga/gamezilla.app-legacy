@@ -161,6 +161,8 @@ const files: { [file in File]: File } = {
   H: "H",
 };
 
+export const FILE_ORDER: File[] = ["A", "B", "C", "D", "E", "F", "G", "H"];
+
 export const isFile = (file: unknown): file is File => {
   return typeof file === "string" && file in files;
 };
@@ -185,6 +187,8 @@ const ranks: { [rank in Rank]: Rank } = {
   "7": "7",
   "8": "8",
 };
+
+export const RANK_ORDER: Rank[] = ["8", "7", "6", "5", "4", "3", "2", "1"];
 
 export const isRank = (rank: unknown): rank is Rank => {
   return typeof rank === "string" && rank in ranks;
@@ -216,6 +220,21 @@ export const isLowercaseSquare = (
     isLowercaseFile(square[0]) &&
     isRank(square[1])
   );
+};
+
+export type Position = { x: number; y: number };
+
+export const positionToSquare = (position: Position): Square | null => {
+  const { x, y } = position;
+
+  const rank = RANK_ORDER[y];
+  const file = FILE_ORDER[x];
+
+  if (isFile(file) && isRank(rank)) {
+    return toSquare(file, rank);
+  }
+
+  return null;
 };
 
 export const squareToChecker = (square: Square): "Light" | "Dark" => {
