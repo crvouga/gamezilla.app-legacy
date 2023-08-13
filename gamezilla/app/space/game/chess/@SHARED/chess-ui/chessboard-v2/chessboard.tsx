@@ -151,7 +151,6 @@ export const Chessboard = (props: ChessboardProps) => {
   console.log("RENDER", board);
   return (
     <svg
-      key={props.fen}
       width="100%"
       viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
       onContextMenu={(e) => {
@@ -304,7 +303,7 @@ const renderPiece: { [piece in Piece]: () => VDom } = {
     </g>
   ),
 
-  wR: () => (
+  wN: () => (
     <g style="opacity:1; fill:none; fill-opacity:1; fill-rule:evenodd; stroke:#000000; stroke-width:1.5; stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4; stroke-dasharray:none; stroke-opacity:1;">
       <path
         d="M 22,10 C 32.5,11 38.5,18 38,39 L 15,39 C 15,30 25,32.5 23,18"
@@ -326,7 +325,7 @@ const renderPiece: { [piece in Piece]: () => VDom } = {
     </g>
   ),
 
-  wN: () => (
+  wR: () => (
     <g style="opacity:1; fill:#ffffff; fill-opacity:1; fill-rule:evenodd; stroke:#000000; stroke-width:1.5; stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4; stroke-dasharray:none; stroke-opacity:1;">
       <path
         d="M 9,39 L 36,39 L 36,36 L 9,36 L 9,39 z "
@@ -442,7 +441,7 @@ const renderPiece: { [piece in Piece]: () => VDom } = {
     </g>
   ),
 
-  bR: () => (
+  bN: () => (
     <g style="opacity:1; fill:none; fill-opacity:1; fill-rule:evenodd; stroke:#000000; stroke-width:1.5; stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4; stroke-dasharray:none; stroke-opacity:1;">
       <path
         d="M 22,10 C 32.5,11 38.5,18 38,39 L 15,39 C 15,30 25,32.5 23,18"
@@ -468,7 +467,7 @@ const renderPiece: { [piece in Piece]: () => VDom } = {
     </g>
   ),
 
-  bN: () => (
+  bR: () => (
     <g style="opacity:1; fill:000000; fill-opacity:1; fill-rule:evenodd; stroke:#000000; stroke-width:1.5; stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4; stroke-dasharray:none; stroke-opacity:1;">
       <path
         d="M 9,39 L 36,39 L 36,36 L 9,36 L 9,39 z "

@@ -268,19 +268,21 @@ export const View = ({
               );
             }}
             onPieceDrop={(input) => {
+              const chessModel = toCurrentBoard(model);
+              console.log(chessModel, {
+                from: input.source,
+                to: input.target,
+                promotion: "q",
+              });
               const moved = Chess.move(
                 {
                   from: input.source,
                   to: input.target,
                   promotion: "q",
                 },
-                toCurrentBoard(model)
+                chessModel
               );
-              console.log(moved, {
-                from: input.source,
-                to: input.target,
-                promotion: "q",
-              });
+
               if (moved.t === "ok") {
                 dispatch({
                   t: "input-move",
