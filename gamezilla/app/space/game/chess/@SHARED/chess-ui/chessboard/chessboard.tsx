@@ -138,10 +138,10 @@ const onDragStartOrMove =
       touched.node.setAttribute("y", `${newY}`);
     }
 
-    updateDropZone(props.orientation ?? "w");
+    updateDropZoneUI(props.orientation ?? "w");
   };
 
-const updateDropZone = (orientation: Color) => {
+const updateDropZoneUI = (orientation: Color) => {
   if (!touched) {
     return;
   }
@@ -176,51 +176,53 @@ const updateDropZone = (orientation: Color) => {
 };
 
 const onDragEnd = (props: ChessboardProps) => () => {
-  if (touched) {
-    const currentX = parseFloat(touched.node.getAttribute("x") || "0");
-    const currentY = parseFloat(touched.node.getAttribute("y") || "0");
-
-    const newX = currentX + TOUCHED_SCALED_OFFSET / 2;
-    const newY = currentY + TOUCHED_SCALED_OFFSET / 2 + TOUCHED_Y_OFFSET;
-
-    const stepX = WIDTH / GRID_DIVISIONS;
-    const stepY = HEIGHT / GRID_DIVISIONS;
-
-    const roundedX = Math.round(newX / stepX) * stepX;
-    const roundedY = Math.round(newY / stepY) * stepY;
-
-    touched.node.setAttribute("x", `${roundedX}`);
-    touched.node.setAttribute("y", `${roundedY}`);
-
-    touched.node.width.baseVal.value = SCALE * 1;
-    touched.node.height.baseVal.value = SCALE * 1;
-    const source = positionToSquare(
-      {
-        x: touched.x,
-        y: touched.y,
-      },
-      props.orientation ?? "w"
-    );
-    const target = positionToSquare(
-      {
-        x: Math.floor(roundedX / stepX),
-        y: Math.floor(roundedY / stepY),
-      },
-      props.orientation ?? "w"
-    );
-
-    if (props.onPieceDrop && source && target) {
-      const isValidDrop = props.onPieceDrop({ source, target });
-
-      if (!isValidDrop) {
-        touched.node.setAttribute("x", `${touched.x}`);
-        touched.node.setAttribute("y", `${touched.y}`);
-      }
-    }
-
-    setVisibleDropZoneNode(null);
-    touched = null;
+  if (!touched) {
+    return;
   }
+
+  const currentX = parseFloat(touched.node.getAttribute("x") || "0");
+  const currentY = parseFloat(touched.node.getAttribute("y") || "0");
+
+  const newX = currentX + TOUCHED_SCALED_OFFSET / 2;
+  const newY = currentY + TOUCHED_SCALED_OFFSET / 2 + TOUCHED_Y_OFFSET;
+
+  const stepX = WIDTH / GRID_DIVISIONS;
+  const stepY = HEIGHT / GRID_DIVISIONS;
+
+  const roundedX = Math.round(newX / stepX) * stepX;
+  const roundedY = Math.round(newY / stepY) * stepY;
+
+  touched.node.setAttribute("x", `${roundedX}`);
+  touched.node.setAttribute("y", `${roundedY}`);
+
+  touched.node.width.baseVal.value = SCALE * 1;
+  touched.node.height.baseVal.value = SCALE * 1;
+  const source = positionToSquare(
+    {
+      x: touched.x,
+      y: touched.y,
+    },
+    props.orientation ?? "w"
+  );
+  const target = positionToSquare(
+    {
+      x: Math.floor(roundedX / stepX),
+      y: Math.floor(roundedY / stepY),
+    },
+    props.orientation ?? "w"
+  );
+
+  if (props.onPieceDrop && source && target) {
+    const isValidDrop = props.onPieceDrop({ source, target });
+
+    if (!isValidDrop) {
+      touched.node.setAttribute("x", `${touched.x}`);
+      touched.node.setAttribute("y", `${touched.y}`);
+    }
+  }
+
+  setVisibleDropZoneNode(null);
+  touched = null;
 };
 
 const onPieceDragStart =
@@ -255,7 +257,7 @@ const onPieceDragStart =
     if (touched && touched.node && touched.node.parentNode) {
       touched.node.parentNode.appendChild(touched.node);
     }
-    updateDropZone(input.props.orientation ?? "w");
+    updateDropZoneUI(input.props.orientation ?? "w");
   };
 
 const toDropZoneId = (square: Square) => {
