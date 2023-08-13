@@ -27,12 +27,14 @@ const theme = {
 let touched: {
   node: EventTarget & SVGSVGElement;
   piece: Piece;
+  x: number;
+  y: number;
 } | null = null;
 
 const SCALE = 1;
-const WIDTH = 8 * SCALE;
-const HEIGHT = 8 * SCALE;
-
+const GRID_DIVISIONS = 8;
+const WIDTH = GRID_DIVISIONS * SCALE;
+const HEIGHT = GRID_DIVISIONS * SCALE;
 const TOUCHED_SCALED = SCALE * 2;
 const TOUCHED_SCALED_OFFSET = TOUCHED_SCALED * 0.5;
 const TOUCHED_Y_OFFSET = SCALE + SCALE * 0.25;
@@ -76,29 +78,42 @@ const onDragEnd = () => {
     const currentX = parseFloat(touched.node.getAttribute("x") || "0");
     const currentY = parseFloat(touched.node.getAttribute("y") || "0");
 
-    touched.node.setAttribute("x", `${currentX + TOUCHED_SCALED_OFFSET / 2}`);
-    touched.node.setAttribute(
-      "y",
-      `${currentY + TOUCHED_SCALED_OFFSET / 2 + TOUCHED_Y_OFFSET}`
-    );
+    const newX = currentX + TOUCHED_SCALED_OFFSET / 2;
+    const newY = currentY + TOUCHED_SCALED_OFFSET / 2 + TOUCHED_Y_OFFSET;
 
-    touched.node.style.zIndex = "0";
+    const stepX = WIDTH / GRID_DIVISIONS;
+    const stepY = HEIGHT / GRID_DIVISIONS;
+
+    const roundedX = Math.round(newX / stepX) * stepX;
+    const roundedY = Math.round(newY / stepY) * stepY;
+
+    touched.node.setAttribute("x", `${roundedX}`);
+    touched.node.setAttribute("y", `${roundedY}`);
+
     touched.node.width.baseVal.value = SCALE * 1;
     touched.node.height.baseVal.value = SCALE * 1;
     touched = null;
   }
 };
 
-const onPieceDragStart = (piece: Piece) => (e: MouseEvent | TouchEvent) => {
-  const target = e.currentTarget;
-  if (!(target instanceof SVGSVGElement)) {
-    return;
-  }
-  target.style.zIndex = "1000";
-  target.width.baseVal.value = TOUCHED_SCALED;
-  target.height.baseVal.value = TOUCHED_SCALED;
-  touched = { node: target, piece };
-};
+const onPieceDragStart =
+  (input: { x: number; y: number; piece: Piece }) =>
+  (e: MouseEvent | TouchEvent) => {
+    const target = e.currentTarget;
+    if (!(target instanceof SVGSVGElement)) {
+      return;
+    }
+
+    target.width.baseVal.value = TOUCHED_SCALED;
+    target.height.baseVal.value = TOUCHED_SCALED;
+    touched = { node: target, ...input };
+
+    // make sure piece is rendered on top of other pieces
+    if (touched && touched.node && touched.node.parentNode) {
+      console.log("APPEND", touched.node);
+      touched.node.parentNode.appendChild(touched.node);
+    }
+  };
 
 export const Chessboard = (props: ChessboardProps) => {
   const board = props.fen ? fenToGrid(props.fen) : [];
@@ -156,8 +171,8 @@ export const Chessboard = (props: ChessboardProps) => {
               y={SCALE * y}
               width={SCALE * 1}
               height={SCALE * 1}
-              onMouseDown={onPieceDragStart(piece)}
-              onTouchStart={onPieceDragStart(piece)}
+              onMouseDown={onPieceDragStart({ piece, x, y })}
+              onTouchStart={onPieceDragStart({ piece, x, y })}
               viewBox="0 0 45 45">
               <rect
                 fill="transparent"
