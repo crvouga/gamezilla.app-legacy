@@ -96,82 +96,86 @@ export const update = ({
   cmd?: Cmd<Msg>;
   msgs?: ClientAppMsg[];
 } => {
-  if (msg.t === "clicked-send-code") {
-    if (model.phoneNumber.length === 0) {
-      return { model: { ...model, validation: "empty-phone-number" } };
+  switch (msg.t) {
+    case "clicked-send-code": {
+      if (model.phoneNumber.length === 0) {
+        return { model: { ...model, validation: "empty-phone-number" } };
+      }
+
+      const decoded = PhoneNumber.decode(model.country, model.phoneNumber);
+
+      if (decoded.t === "err") {
+        return { model: { ...model, validation: "invalid-phone-number" } };
+      }
+
+      const phoneNumber = decoded.value;
+
+      return {
+        model: { ...model, submission: { type: "loading" } },
+        cmd: p(
+          sendCode({ phoneNumber: phoneNumber }),
+          Cmd.perform(
+            (result): Msg => ({ t: "send-code-done", phoneNumber, result })
+          )
+        ),
+      };
     }
 
-    const decoded = PhoneNumber.decode(model.country, model.phoneNumber);
-
-    if (decoded.t === "err") {
-      return { model: { ...model, validation: "invalid-phone-number" } };
-    }
-
-    const phoneNumber = decoded.value;
-
-    return {
-      model: { ...model, submission: { type: "loading" } },
-      cmd: p(
-        sendCode({ phoneNumber: phoneNumber }),
-        Cmd.perform(
-          (result): Msg => ({ t: "send-code-done", phoneNumber, result })
-        )
-      ),
-    };
-  }
-
-  if (msg.t === "inputted-country") {
-    return {
-      model: {
-        ...model,
-        country: msg.country,
-        countryQuery: Iso3166Alpha2Code.toName(msg.country),
-        validation: "not-validated",
-      },
-    };
-  }
-
-  if (msg.t === "inputted-phone-number") {
-    return {
-      model: {
-        ...model,
-        phoneNumber: msg.phoneNumber,
-        validation: "not-validated",
-      },
-    };
-  }
-
-  if (msg.t === "send-code-done") {
-    const { phoneNumber, result } = msg;
-
-    if (result.t === "err") {
+    case "inputted-country": {
       return {
         model: {
           ...model,
-          submission: { type: "Problem", message: result.error },
+          country: msg.country,
+          countryQuery: Iso3166Alpha2Code.toName(msg.country),
+          validation: "not-validated",
         },
       };
     }
 
-    return {
-      model: { ...model, submission: { type: "ok" } },
-      msgs: [
-        {
-          t: "push-route",
-          route: {
-            t: "auth",
-            c: { t: "login-phone-verify", phoneNumber: phoneNumber },
-          },
+    case "inputted-phone-number": {
+      return {
+        model: {
+          ...model,
+          phoneNumber: msg.phoneNumber,
+          validation: "not-validated",
         },
-      ],
-    };
-  }
+      };
+    }
 
-  if (msg.t === "inputted-country-query") {
-    return { model: { ...model, countryQuery: msg.value } };
-  }
+    case "send-code-done": {
+      const { phoneNumber, result } = msg;
 
-  return { model };
+      if (result.t === "err") {
+        return {
+          model: {
+            ...model,
+            submission: { type: "Problem", message: result.error },
+          },
+        };
+      }
+
+      return {
+        model: { ...model, submission: { type: "ok" } },
+        msgs: [
+          {
+            t: "push-route",
+            route: {
+              t: "auth",
+              c: { t: "login-phone-verify", phoneNumber: phoneNumber },
+            },
+          },
+        ],
+      };
+    }
+
+    case "inputted-country-query": {
+      return { model: { ...model, countryQuery: msg.value } };
+    }
+
+    default: {
+      return { model };
+    }
+  }
 };
 
 //
@@ -210,12 +214,9 @@ export const View = ({
             <IconPhone className="mr-2 h-6 w-6 text-inherit opacity-80" />
           }
           label="Phone Number"
-          onChange={(phoneNumber) =>
-            dispatch({
-              t: "inputted-phone-number",
-              phoneNumber: phoneNumber.replace(/\D/g, ""),
-            })
-          }
+          onChange={(phoneNumber) => {
+            dispatch({ t: "inputted-phone-number", phoneNumber });
+          }}
           onClear={() =>
             dispatch({ t: "inputted-phone-number", phoneNumber: "" })
           }

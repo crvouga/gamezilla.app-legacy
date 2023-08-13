@@ -55,7 +55,9 @@ export const MyTextField = ({
           auto-correct="off"
           auto-save="off"
           step={step}
-          onChange={(e) => onChange(e.currentTarget.value)}
+          onInput={(e) => {
+            onChange(e.currentTarget.value);
+          }}
           className="w-auto flex-1 bg-transparent outline-none"
         />
         {onClear && (

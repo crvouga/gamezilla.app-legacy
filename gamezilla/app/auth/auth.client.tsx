@@ -151,6 +151,7 @@ export const update = ({
         verifyCode,
       });
       return {
+        ...updated,
         model: {
           ...model,
           phoneVerify: updated.model,
@@ -192,10 +193,7 @@ export const update = ({
       return {
         model: { ...model, currentUser: { t: "logged-out" } },
         cmd: sendToServer(msg),
-        msgs: [
-          msg,
-          { t: "push-route", route: { t: "auth", c: { t: "login" } } },
-        ],
+        msgs: [msg],
       };
     }
 
@@ -361,15 +359,17 @@ const ViewLoginScreen = ({
             text="Continue With Text"
           />
 
-          <Button
-            onClick={() =>
-              ctx.onPush({ t: "auth", c: { t: "login-email-link" } })
-            }
-            size="lg"
-            className="w-full"
-            start={<IconEnvelope className="h-6 w-6" />}
-            text="Continue With Email"
-          />
+          {false && (
+            <Button
+              onClick={() =>
+                ctx.onPush({ t: "auth", c: { t: "login-email-link" } })
+              }
+              size="lg"
+              className="w-full"
+              start={<IconEnvelope className="h-6 w-6" />}
+              text="Continue With Email"
+            />
+          )}
         </div>
       </div>
     </div>
