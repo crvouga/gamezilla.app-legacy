@@ -1,12 +1,13 @@
-import { VDom, VDomChildren, toInlineStyles } from "gamezilla/app/@SHARED/ui";
-import {
-  Piece,
-  Square,
-  fenToPieces,
-  pieces,
-  positionToSquare,
-} from "../../chess";
+import { VDom, toInlineStyles } from "gamezilla/app/@SHARED/ui";
+import { Piece, Square, fenToPieces, positionToSquare } from "../../chess";
 import { ChessboardProps } from "./chessboard-shared";
+
+//
+//
+//
+//
+//
+//
 
 type Checker = {
   id: string;
@@ -24,10 +25,23 @@ for (let x = 0; x < 8; x++) {
   }
 }
 
+//
+//
+//
+//
+//
+//
+
 const theme = {
   lightChecker: "#f0d9b5",
   darkChecker: "#b58863",
 };
+
+//
+//
+//
+//
+//
 
 let touched: {
   node: EventTarget & SVGSVGElement;
@@ -36,6 +50,7 @@ let touched: {
   y: number;
 } | null = null;
 let visibleDropZoneNode: SVGCircleElement | null = null;
+
 const setVisibleDropZoneNode = (node: SVGCircleElement | null) => {
   if (!node) {
     if (visibleDropZoneNode) {
@@ -51,6 +66,14 @@ const setVisibleDropZoneNode = (node: SVGCircleElement | null) => {
   }
   visibleDropZoneNode = node;
 };
+
+//
+//
+//
+//
+//
+//
+//
 
 const SCALE = 1;
 const GRID_DIVISIONS = 8;
