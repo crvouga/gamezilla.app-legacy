@@ -29,7 +29,7 @@ let touched: {
   piece: Piece;
 } | null = null;
 
-const SCALE = 100;
+const SCALE = 1;
 const WIDTH = 8 * SCALE;
 const HEIGHT = 8 * SCALE;
 
@@ -162,7 +162,7 @@ export const Chessboard = (props: ChessboardProps) => {
                 y="0"
                 width="100%"
                 height="100%"></rect>
-              {renderPiece[piece]}
+              {renderPiece[piece]()}
             </svg>
           );
         })}
@@ -171,8 +171,8 @@ export const Chessboard = (props: ChessboardProps) => {
   );
 };
 
-const renderPiece: { [piece in Piece]: VDom } = {
-  wK: (
+const renderPiece: { [piece in Piece]: () => VDom } = {
+  wK: () => (
     <g style="fill:none; fill-opacity:1; fill-rule:evenodd; stroke:#000000; stroke-width:1.5; stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4; stroke-dasharray:none; stroke-opacity:1;">
       <path
         d="M 22.5,11.63 L 22.5,6"
@@ -205,7 +205,7 @@ const renderPiece: { [piece in Piece]: VDom } = {
     </g>
   ),
 
-  wQ: (
+  wQ: () => (
     <g style="opacity:1; fill:#ffffff; fill-opacity:1; fill-rule:evenodd; stroke:#000000; stroke-width:1.5; stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4; stroke-dasharray:none; stroke-opacity:1;">
       <path
         d="M 9 13 A 2 2 0 1 1  5,13 A 2 2 0 1 1  9 13 z"
@@ -240,7 +240,7 @@ const renderPiece: { [piece in Piece]: VDom } = {
     </g>
   ),
 
-  wB: (
+  wB: () => (
     <g style="opacity:1; fill:none; fill-rule:evenodd; fill-opacity:1; stroke:#000000; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; stroke-miterlimit:4; stroke-dasharray:none; stroke-opacity:1;">
       <g style="fill:#ffffff; stroke:#000000; stroke-linecap:butt;">
         <path d="M 9,36 C 12.39,35.03 19.11,36.43 22.5,34 C 25.89,36.43 32.61,35.03 36,36 C 36,36 37.65,36.54 39,38 C 38.32,38.97 37.35,38.99 36,38.5 C 32.61,37.53 25.89,38.96 22.5,37.5 C 19.11,38.96 12.39,37.53 9,38.5 C 7.646,38.99 6.677,38.97 6,38 C 7.354,36.06 9,36 9,36 z" />
@@ -254,7 +254,7 @@ const renderPiece: { [piece in Piece]: VDom } = {
     </g>
   ),
 
-  wR: (
+  wR: () => (
     <g style="opacity:1; fill:none; fill-opacity:1; fill-rule:evenodd; stroke:#000000; stroke-width:1.5; stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4; stroke-dasharray:none; stroke-opacity:1;">
       <path
         d="M 22,10 C 32.5,11 38.5,18 38,39 L 15,39 C 15,30 25,32.5 23,18"
@@ -276,7 +276,7 @@ const renderPiece: { [piece in Piece]: VDom } = {
     </g>
   ),
 
-  wN: (
+  wN: () => (
     <g style="opacity:1; fill:#ffffff; fill-opacity:1; fill-rule:evenodd; stroke:#000000; stroke-width:1.5; stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4; stroke-dasharray:none; stroke-opacity:1;">
       <path
         d="M 9,39 L 36,39 L 36,36 L 9,36 L 9,39 z "
@@ -303,7 +303,7 @@ const renderPiece: { [piece in Piece]: VDom } = {
     </g>
   ),
 
-  wP: (
+  wP: () => (
     <g>
       <path
         d="M 22,9 C 19.79,9 18,10.79 18,13 C 18,13.89 18.29,14.71 18.78,15.38 C 16.83,16.5 15.5,18.59 15.5,21 C 15.5,23.03 16.44,24.84 17.91,26.03 C 14.91,27.09 10.5,31.58 10.5,39.5 L 33.5,39.5 C 33.5,31.58 29.09,27.09 26.09,26.03 C 27.56,24.84 28.5,23.03 28.5,21 C 28.5,18.59 27.17,16.5 25.22,15.38 C 25.71,14.71 26,13.89 26,13 C 26,10.79 24.21,9 22,9 z "
@@ -312,7 +312,7 @@ const renderPiece: { [piece in Piece]: VDom } = {
     </g>
   ),
 
-  bK: (
+  bK: () => (
     <g style="fill:none; fill-opacity:1; fill-rule:evenodd; stroke:#000000; stroke-width:1.5; stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4; stroke-dasharray:none; stroke-opacity:1;">
       <path
         d="M 22.5,11.63 L 22.5,6"
@@ -341,7 +341,7 @@ const renderPiece: { [piece in Piece]: VDom } = {
     </g>
   ),
 
-  bQ: (
+  bQ: () => (
     <g style="opacity:1; fill:000000; fill-opacity:1; fill-rule:evenodd; stroke:#000000; stroke-width:1.5; stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4; stroke-dasharray:none; stroke-opacity:1;">
       <g style="fill:#000000; stroke:none;">
         <circle cx="6" cy="12" r="2.75" />
@@ -378,7 +378,7 @@ const renderPiece: { [piece in Piece]: VDom } = {
     </g>
   ),
 
-  bB: (
+  bB: () => (
     <g style="opacity:1; fill:none; fill-rule:evenodd; fill-opacity:1; stroke:#000000; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; stroke-miterlimit:4; stroke-dasharray:none; stroke-opacity:1;">
       <g style="fill:#000000; stroke:#000000; stroke-linecap:butt;">
         <path d="M 9,36 C 12.39,35.03 19.11,36.43 22.5,34 C 25.89,36.43 32.61,35.03 36,36 C 36,36 37.65,36.54 39,38 C 38.32,38.97 37.35,38.99 36,38.5 C 32.61,37.53 25.89,38.96 22.5,37.5 C 19.11,38.96 12.39,37.53 9,38.5 C 7.646,38.99 6.677,38.97 6,38 C 7.354,36.06 9,36 9,36 z" />
@@ -392,7 +392,7 @@ const renderPiece: { [piece in Piece]: VDom } = {
     </g>
   ),
 
-  bR: (
+  bR: () => (
     <g style="opacity:1; fill:none; fill-opacity:1; fill-rule:evenodd; stroke:#000000; stroke-width:1.5; stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4; stroke-dasharray:none; stroke-opacity:1;">
       <path
         d="M 22,10 C 32.5,11 38.5,18 38,39 L 15,39 C 15,30 25,32.5 23,18"
@@ -418,7 +418,7 @@ const renderPiece: { [piece in Piece]: VDom } = {
     </g>
   ),
 
-  bN: (
+  bN: () => (
     <g style="opacity:1; fill:000000; fill-opacity:1; fill-rule:evenodd; stroke:#000000; stroke-width:1.5; stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4; stroke-dasharray:none; stroke-opacity:1;">
       <path
         d="M 9,39 L 36,39 L 36,36 L 9,36 L 9,39 z "
@@ -467,7 +467,7 @@ const renderPiece: { [piece in Piece]: VDom } = {
     </g>
   ),
 
-  bP: (
+  bP: () => (
     <g>
       <path
         d="M 22,9 C 19.79,9 18,10.79 18,13 C 18,13.89 18.29,14.71 18.78,15.38 C 16.83,16.5 15.5,18.59 15.5,21 C 15.5,23.03 16.44,24.84 17.91,26.03 C 14.91,27.09 10.5,31.58 10.5,39.5 L 33.5,39.5 C 33.5,31.58 29.09,27.09 26.09,26.03 C 27.56,24.84 28.5,23.03 28.5,21 C 28.5,18.59 27.17,16.5 25.22,15.38 C 25.71,14.71 26,13.89 26,13 C 26,10.79 24.21,9 22,9 z "
