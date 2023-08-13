@@ -1,5 +1,5 @@
 import { VDom, VDomChildren, toInlineStyles } from "gamezilla/app/@SHARED/ui";
-import { Piece, fenToGrid, pieces, positionToSquare } from "../../chess";
+import { Piece, fenToPieces, pieces, positionToSquare } from "../../chess";
 import { ChessboardProps } from "./chessboard-shared";
 import { chessPieces } from "./chesspieces";
 
@@ -92,14 +92,20 @@ const onDragEnd = (props: ChessboardProps) => () => {
 
     touched.node.width.baseVal.value = SCALE * 1;
     touched.node.height.baseVal.value = SCALE * 1;
-    const source = positionToSquare({
-      x: touched.x,
-      y: touched.y,
-    });
-    const target = positionToSquare({
-      x: Math.floor(roundedX / stepX),
-      y: Math.floor(roundedY / stepY),
-    });
+    const source = positionToSquare(
+      {
+        x: touched.x,
+        y: touched.y,
+      },
+      props.orientation ?? "w"
+    );
+    const target = positionToSquare(
+      {
+        x: Math.floor(roundedX / stepX),
+        y: Math.floor(roundedY / stepY),
+      },
+      props.orientation ?? "w"
+    );
 
     if (props.onPieceDrop && source && target) {
       const isValidDrop = props.onPieceDrop({ source, target });
@@ -117,7 +123,10 @@ const onDragEnd = (props: ChessboardProps) => () => {
 const onPieceDragStart =
   (input: { props: ChessboardProps; x: number; y: number; piece: Piece }) =>
   (e: MouseEvent | TouchEvent) => {
-    const square = positionToSquare({ x: input.x, y: input.y });
+    const square = positionToSquare(
+      { x: input.x, y: input.y },
+      input.props.orientation ?? "w"
+    );
 
     if (!square) {
       return;
@@ -141,13 +150,15 @@ const onPieceDragStart =
 
     // make sure piece is rendered on top of other pieces
     if (touched && touched.node && touched.node.parentNode) {
-      console.log("APPEND", touched.node);
       touched.node.parentNode.appendChild(touched.node);
     }
   };
 
 export const Chessboard = (props: ChessboardProps) => {
-  const board = props.fen ? fenToGrid(props.fen) : [];
+  const board = props.fen
+    ? fenToPieces(props.fen, props.orientation ?? "w")
+    : [];
+
   console.log("RENDER", board);
   return (
     <svg
@@ -197,6 +208,7 @@ export const Chessboard = (props: ChessboardProps) => {
         {board?.map(({ piece, x, y }) => {
           return (
             <svg
+              key={[piece, x, y, props.fen].join(",")}
               x={SCALE * x}
               y={SCALE * y}
               width={SCALE * 1}
@@ -211,6 +223,7 @@ export const Chessboard = (props: ChessboardProps) => {
                 y="0"
                 width="100%"
                 height="100%"></rect>
+
               {renderPiece[piece]()}
             </svg>
           );

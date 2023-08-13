@@ -224,11 +224,17 @@ export const isLowercaseSquare = (
 
 export type Position = { x: number; y: number };
 
-export const positionToSquare = (position: Position): Square | null => {
+export const positionToSquare = (
+  position: Position,
+  orientation: Color
+): Square | null => {
   const { x, y } = position;
 
-  const rank = RANK_ORDER[y];
-  const file = FILE_ORDER[x];
+  const rank =
+    orientation === "w" ? RANK_ORDER[y] : RANK_ORDER[RANK_ORDER.length - 1 - y];
+
+  const file =
+    orientation === "w" ? FILE_ORDER[x] : FILE_ORDER[FILE_ORDER.length - 1 - x];
 
   if (isFile(file) && isRank(rank)) {
     return toSquare(file, rank);
@@ -468,9 +474,9 @@ export type PieceSymbol = "p" | "b" | "n" | "r" | "q" | "k";
 function isPieceType(char: string): char is PieceType {
   return ["P", "B", "N", "R", "Q", "K"].includes(char);
 }
-
-export function fenToGrid(
-  fen: string
+export function fenToPieces(
+  fen: string,
+  orientation: "w" | "b"
 ): { x: number; y: number; piece: Piece }[] {
   const parts = fen.split(" ");
   const rowsString = parts[0];
@@ -478,6 +484,8 @@ export function fenToGrid(
 
   const rows = rowsString.split("/");
   const grid: { x: number; y: number; piece: Piece }[] = [];
+
+  const size = 7; // Assuming an 8x8 board
 
   for (let y = 0; y < rows.length; y++) {
     const row = rows[y];
@@ -492,8 +500,11 @@ export function fenToGrid(
         const color = char === char.toLowerCase() ? "b" : "w";
         const pieceType = char.toUpperCase();
 
+        const x = orientation === "w" ? length : size - length;
+        const yCoord = orientation === "w" ? y : size - y;
+
         if (isPieceType(pieceType)) {
-          grid.push({ x: length, y: y, piece: `${color}${pieceType}` });
+          grid.push({ x: x, y: yCoord, piece: `${color}${pieceType}` });
         }
       } else {
         const spaces = Number(char);
@@ -505,7 +516,6 @@ export function fenToGrid(
 
   return grid;
 }
-
 const allPieceSymbols: { [pieceSymbol in PieceSymbol]: PieceSymbol } = {
   b: "b",
   k: "k",
