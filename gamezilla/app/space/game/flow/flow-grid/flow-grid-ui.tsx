@@ -86,12 +86,12 @@ export const View = ({
         userSelect: "none",
         touchAction: "none",
       })}
-      viewBox={toViewBox(model)}
       onContextMenu={(event) => {
         event.stopPropagation();
         event.preventDefault();
         event.stopImmediatePropagation();
       }}
+      viewBox={toViewBox(model)}
       onTouchMove={(event) => {
         const nodeId = touchEventToNodeId(event);
         if (nodeId) {

@@ -1,4 +1,4 @@
-import { VDom, VDomChildren } from "gamezilla/app/@SHARED/ui";
+import { VDom, VDomChildren, toInlineStyles } from "gamezilla/app/@SHARED/ui";
 import { Piece, fenToGrid, pieces } from "../../chess";
 import { ChessboardProps } from "./chessboard-shared";
 import { chessPieces } from "./chesspieces";
@@ -33,6 +33,73 @@ const SCALE = 1;
 const WIDTH = 8 * SCALE;
 const HEIGHT = 8 * SCALE;
 
+const TOUCHED_SCALED = SCALE * 2;
+const TOUCHED_SCALED_OFFSET = TOUCHED_SCALED * 0.5;
+const TOUCHED_Y_OFFSET = SCALE + SCALE * 0.25;
+
+const onDragStart = (event: MouseEvent | TouchEvent) => {
+  let clientX: number;
+  let clientY: number;
+
+  if (event instanceof MouseEvent) {
+    clientX = event.clientX;
+    clientY = event.clientY;
+  } else if (event instanceof TouchEvent && event.touches[0]) {
+    clientX = event.touches[0].clientX;
+    clientY = event.touches[0].clientY;
+  } else {
+    return;
+  }
+
+  const target = event.currentTarget;
+
+  if (!(target instanceof SVGSVGElement)) {
+    return;
+  }
+
+  const rect = target.getBoundingClientRect();
+  const scaleX = WIDTH / rect.width;
+  const scaleY = HEIGHT / rect.height;
+
+  const x = (clientX - rect.left) * scaleX - TOUCHED_SCALED_OFFSET;
+  const y =
+    (clientY - rect.top) * scaleY - TOUCHED_SCALED_OFFSET - TOUCHED_Y_OFFSET;
+
+  if (touched) {
+    touched.node.setAttribute("x", `${x}`);
+    touched.node.setAttribute("y", `${y}`);
+  }
+};
+
+const onDragEnd = () => {
+  if (touched) {
+    const currentX = parseFloat(touched.node.getAttribute("x") || "0");
+    const currentY = parseFloat(touched.node.getAttribute("y") || "0");
+
+    touched.node.setAttribute("x", `${currentX + TOUCHED_SCALED_OFFSET / 2}`);
+    touched.node.setAttribute(
+      "y",
+      `${currentY + TOUCHED_SCALED_OFFSET / 2 + TOUCHED_Y_OFFSET}`
+    );
+
+    touched.node.style.zIndex = "0";
+    touched.node.width.baseVal.value = SCALE * 1;
+    touched.node.height.baseVal.value = SCALE * 1;
+    touched = null;
+  }
+};
+
+const onPieceDragStart = (piece: Piece) => (e: MouseEvent | TouchEvent) => {
+  const target = e.currentTarget;
+  if (!(target instanceof SVGSVGElement)) {
+    return;
+  }
+  target.style.zIndex = "1000";
+  target.width.baseVal.value = TOUCHED_SCALED;
+  target.height.baseVal.value = TOUCHED_SCALED;
+  touched = { node: target, piece };
+};
+
 export const Chessboard = (props: ChessboardProps) => {
   const board = props.fen ? fenToGrid(props.fen) : [];
   console.log("RENDER", board);
@@ -45,76 +112,21 @@ export const Chessboard = (props: ChessboardProps) => {
         e.stopPropagation();
         e.stopImmediatePropagation();
       }}
-      onTouchStart={(e) => {
-        const touch = e.touches[0];
-        if (!touch) {
-          return;
-        }
-        const rect = e.currentTarget.getBoundingClientRect();
-        const scaleX = WIDTH / rect.width;
-        const scaleY = HEIGHT / rect.height;
-
-        const touchX = (touch.clientX - rect.left) * scaleX;
-        const touchY = (touch.clientY - rect.top) * scaleY;
-        if (touched) {
-          touched.node.setAttribute("x", `${touchX - SCALE * 0.5}`);
-          touched.node.setAttribute("y", `${touchY - SCALE * 0.5}`);
-        }
-      }}
-      onMouseDown={(e) => {
-        const rect = e.currentTarget.getBoundingClientRect();
-        const scaleX = WIDTH / rect.width;
-        const scaleY = HEIGHT / rect.height;
-
-        const mouseX = (e.clientX - rect.left) * scaleX - SCALE * 0.5;
-        const mouseY = (e.clientY - rect.top) * scaleY - SCALE * 0.5;
-        if (touched) {
-          touched.node.setAttribute("x", `${mouseX}`);
-          touched.node.setAttribute("y", `${mouseY}`);
-        }
-      }}
-      onTouchMove={(e) => {
-        const touch = e.touches[0];
-        if (!touch) {
-          return;
-        }
-        const rect = e.currentTarget.getBoundingClientRect();
-        const scaleX = WIDTH / rect.width;
-        const scaleY = HEIGHT / rect.height;
-
-        const touchX = (touch.clientX - rect.left) * scaleX;
-        const touchY = (touch.clientY - rect.top) * scaleY;
-        if (touched) {
-          touched.node.setAttribute("x", `${touchX - SCALE * 0.5}`);
-          touched.node.setAttribute("y", `${touchY - SCALE * 0.5}`);
-        }
-      }}
-      onMouseMove={(e) => {
-        const rect = e.currentTarget.getBoundingClientRect();
-        const scaleX = WIDTH / rect.width;
-        const scaleY = HEIGHT / rect.height;
-
-        const mouseX = (e.clientX - rect.left) * scaleX - SCALE * 0.5;
-        const mouseY = (e.clientY - rect.top) * scaleY - SCALE * 0.5;
-        if (touched) {
-          touched.node.setAttribute("x", `${mouseX}`);
-          touched.node.setAttribute("y", `${mouseY}`);
-        }
-      }}
-      onTouchEnd={(e) => {
-        console.log("onTouchEnd", touched);
-        if (touched) {
-          touched.node.style.zIndex = "0";
-          touched = null;
-        }
-      }}
-      onMouseUp={(e) => {
-        console.log("onMouseUp", touched);
-        if (touched) {
-          touched.node.style.zIndex = "0";
-          touched = null;
-        }
-      }}>
+      preserveAspectRatio="xMinYMin meet"
+      style={toInlineStyles({
+        overflow: "visible",
+        WebkitUserSelect: "none",
+        MozUserSelect: "none",
+        msUserSelect: "none",
+        userSelect: "none",
+        touchAction: "none",
+      })}
+      onTouchStart={onDragStart}
+      onMouseDown={onDragStart}
+      onTouchMove={onDragStart}
+      onMouseMove={onDragStart}
+      onTouchEnd={onDragEnd}
+      onMouseUp={onDragEnd}>
       <g>
         {checkers.map((checker) => {
           return (
@@ -144,16 +156,8 @@ export const Chessboard = (props: ChessboardProps) => {
               y={SCALE * y}
               width={SCALE * 1}
               height={SCALE * 1}
-              onTouchStart={(e) => {
-                const target = e.currentTarget;
-                target.style.zIndex = "100";
-                touched = { node: target, piece };
-              }}
-              onMouseDown={(e) => {
-                const target = e.currentTarget;
-                target.style.zIndex = "100";
-                touched = { node: target, piece };
-              }}
+              onMouseDown={onPieceDragStart(piece)}
+              onTouchStart={onPieceDragStart(piece)}
               viewBox="0 0 45 45">
               <rect
                 fill="transparent"
