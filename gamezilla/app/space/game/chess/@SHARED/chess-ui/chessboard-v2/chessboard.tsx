@@ -36,6 +36,21 @@ let touched: {
   y: number;
 } | null = null;
 let visibleDropZoneNode: SVGCircleElement | null = null;
+const setVisibleDropZoneNode = (node: SVGCircleElement | null) => {
+  if (!node) {
+    if (visibleDropZoneNode) {
+      visibleDropZoneNode.setAttribute("fill", `transparent`);
+    }
+    visibleDropZoneNode = null;
+    return;
+  }
+
+  if (visibleDropZoneNode && visibleDropZoneNode !== node) {
+    visibleDropZoneNode.setAttribute("fill", `transparent`);
+    node.setAttribute("fill", `black`);
+  }
+  visibleDropZoneNode = node;
+};
 
 const SCALE = 1;
 const GRID_DIVISIONS = 8;
@@ -114,11 +129,7 @@ const onDragStartOrMove =
         : null;
 
       if (dropZoneNode instanceof SVGCircleElement) {
-        dropZoneNode.setAttribute("fill", `black`);
-        if (visibleDropZoneNode && visibleDropZoneNode !== dropZoneNode) {
-          visibleDropZoneNode?.setAttribute("fill", `transparent`);
-        }
-        visibleDropZoneNode = dropZoneNode;
+        setVisibleDropZoneNode(dropZoneNode);
       }
     }
   };
@@ -166,10 +177,7 @@ const onDragEnd = (props: ChessboardProps) => () => {
       }
     }
 
-    if (visibleDropZoneNode) {
-      visibleDropZoneNode.setAttribute("fill", `transparent`);
-      visibleDropZoneNode = null;
-    }
+    setVisibleDropZoneNode(null);
     touched = null;
   }
 };
@@ -262,6 +270,7 @@ export const Chessboard = (props: ChessboardProps) => {
         })}
       </g>
 
+      {/* Drop zone */}
       <g>
         {CHECKERS.map((checker) => {
           const square = positionToSquare(checker, props.orientation ?? "w");
