@@ -403,7 +403,63 @@ export const isSquare = (square: unknown): square is Square => {
 
 export type PieceType = "P" | "B" | "N" | "R" | "Q" | "K";
 
+export type Color = "w" | "b";
+
+export type Piece = `${Color}${PieceType}`;
+
 export type PieceSymbol = "p" | "b" | "n" | "r" | "q" | "k";
+
+function isPieceType(char: string): char is PieceType {
+  return ["P", "B", "N", "R", "Q", "K"].includes(char);
+}
+
+export function fenToGrid(fen: string): (Piece | null)[][] {
+  const parts = fen.split(" ");
+  const rows = parts?.[0]?.split("/") || [];
+
+  const grid: (Piece | null)[][] = [];
+
+  for (const row of rows) {
+    const pieces: (Piece | null)[] = [];
+    let length = 0;
+    for (let i = 0; i < row.length; i++) {
+      const char = row.charAt(i); // Using charAt() instead of indexing to avoid possible undefined
+
+      if (isNaN(Number(char))) {
+        const color = char === char.toLowerCase() ? "b" : "w";
+        const pieceType = char.toUpperCase();
+
+        if (isPieceType(pieceType)) {
+          pieces.push(`${color}${pieceType}`);
+        } else {
+          pieces.push(null);
+        }
+      } else {
+        const spaces = Number(char);
+        for (let j = 0; j < spaces; j++) {
+          pieces.push(null);
+        }
+        length += spaces - 1;
+      }
+      length++;
+    }
+
+    // Fill the remaining spaces with null if the row length is less than 8
+    while (length < 8) {
+      pieces.push(null);
+      length++;
+    }
+
+    grid.push(pieces);
+  }
+
+  // Fill the remaining rows with null if the grid length is less than 8
+  while (grid.length < 8) {
+    grid.push(Array(8).fill(null));
+  }
+
+  return grid;
+}
 
 const allPieceSymbols: { [pieceSymbol in PieceSymbol]: PieceSymbol } = {
   b: "b",
@@ -443,14 +499,10 @@ export const isPromotionPieceSymbol = (
   );
 };
 
-export type Color = "w" | "b";
-
 export const colors: { [color in Color]: Color } = {
   b: "b",
   w: "w",
 };
-
-export type Piece = `${Color}${PieceType}`;
 
 export const toColor = (piece: Piece): Color => {
   switch (piece) {

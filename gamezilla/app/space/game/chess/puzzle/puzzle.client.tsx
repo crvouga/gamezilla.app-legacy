@@ -19,7 +19,7 @@ import {
   ViewBottomButtonBar,
 } from "gamezilla/app/space/game/@SHARED";
 import { Chess } from "../@SHARED/chess";
-import { Chessboard } from "../@SHARED/chess-ui";
+import { Chessboard } from "../@SHARED/chess-ui/chessboard-v2";
 import {
   ClientModel,
   ClientMsg,

@@ -53,6 +53,16 @@ class ChessBoard extends HTMLElement {
   constructor() {
     super();
     this.root = this.attachShadow({ mode: "open" });
+
+    this.unsubscribe = chessboardSub.subscribe((event) => {
+      if (event.id === this.getAttribute("id")) {
+        this.props = event;
+        // this.log(`props`, event);
+        this.sync();
+      }
+    });
+
+    this.setup();
   }
 
   log(...args: any[]) {
@@ -66,76 +76,10 @@ class ChessBoard extends HTMLElement {
     this.teardown();
   }
 
-  connectedCallback() {
-    this.setup();
-  }
+  connectedCallback() {}
 
   teardown() {
     this.unsubscribe();
-  }
-
-  dispatch(msg: Msg) {
-    this.log(msg);
-    switch (msg.t) {
-      case "drop": {
-        this.removeSquareHighlight();
-        const { source, target, setAction } = msg;
-
-        const isValidDrop = this.props?.onPieceDrop?.({
-          source: source,
-          target: target,
-        });
-
-        this.log("isValidDrop", isValidDrop);
-
-        if (!isValidDrop) {
-          setAction("snapback");
-          return;
-        }
-        return;
-      }
-
-      case "mouseout-square": {
-        this.removeSquareHighlight();
-        return;
-      }
-
-      case "drag-start": {
-        this.addSquareHighlight(msg.source);
-        return;
-      }
-
-      case "mouseover-square": {
-        const { square } = msg;
-
-        if (!isLowercaseSquare(square)) {
-          return;
-        }
-
-        const moves = this.game.moves({
-          square: square,
-          verbose: true,
-        });
-
-        if (moves.length === 0) {
-          return;
-        }
-
-        this.addSquareHighlight(square);
-
-        for (const move of moves) {
-          this.addSquareHighlight(move.to);
-        }
-        return;
-      }
-      case "snap-end": {
-        const board = this.root.querySelector(
-          "chess-board"
-        ) as ChessBoardElement;
-        board.setPosition(this.game.fen());
-        return;
-      }
-    }
   }
 
   removeSquareHighlight() {
@@ -163,14 +107,6 @@ class ChessBoard extends HTMLElement {
   }
 
   setup() {
-    this.unsubscribe = chessboardSub.subscribe((event) => {
-      if (event.id === this.getAttribute("id")) {
-        this.props = event;
-        // this.log(`props`, event);
-        this.sync();
-      }
-    });
-
     this.root.innerHTML = `
       <style>
         :host {
@@ -180,7 +116,9 @@ class ChessBoard extends HTMLElement {
           overflow: hidden;
         }
       </style>
-      <chess-board id="board"></chess-board>
+      <chess-board id="board" position="${
+        this.props?.fen ?? "start"
+      }"></chess-board>
     `;
 
     this.root.appendChild(this.highlightStyles);
@@ -261,12 +199,77 @@ class ChessBoard extends HTMLElement {
 
     const fen = this.props?.fen;
     if (typeof fen === "string") {
-      board.setPosition(fen, true);
+      // board.setPosition(fen, true);
+      board.setAttribute("position", fen);
       this.game.load(fen);
     }
 
     board.orientation = this.props?.orientation === "w" ? "white" : "black";
     board.draggablePieces = true;
+  }
+
+  dispatch(msg: Msg) {
+    this.log(msg);
+    switch (msg.t) {
+      case "drop": {
+        this.removeSquareHighlight();
+        const { source, target, setAction } = msg;
+
+        const isValidDrop = this.props?.onPieceDrop?.({
+          source: source,
+          target: target,
+        });
+
+        this.log("isValidDrop", isValidDrop);
+
+        if (!isValidDrop) {
+          setAction("snapback");
+          return;
+        }
+        return;
+      }
+
+      case "mouseout-square": {
+        this.removeSquareHighlight();
+        return;
+      }
+
+      case "drag-start": {
+        this.addSquareHighlight(msg.source);
+        return;
+      }
+
+      case "mouseover-square": {
+        const { square } = msg;
+
+        if (!isLowercaseSquare(square)) {
+          return;
+        }
+
+        const moves = this.game.moves({
+          square: square,
+          verbose: true,
+        });
+
+        if (moves.length === 0) {
+          return;
+        }
+
+        this.addSquareHighlight(square);
+
+        for (const move of moves) {
+          this.addSquareHighlight(move.to);
+        }
+        return;
+      }
+      case "snap-end": {
+        const board = this.root.querySelector(
+          "chess-board"
+        ) as ChessBoardElement;
+        board.setPosition(this.game.fen());
+        return;
+      }
+    }
   }
 }
 
