@@ -1,7 +1,12 @@
 import { VDom, VDomChildren, toInlineStyles } from "gamezilla/app/@SHARED/ui";
-import { Piece, fenToPieces, pieces, positionToSquare } from "../../chess";
+import {
+  Piece,
+  Square,
+  fenToPieces,
+  pieces,
+  positionToSquare,
+} from "../../chess";
 import { ChessboardProps } from "./chessboard-shared";
-import { chessPieces } from "./chesspieces";
 
 type Checker = {
   id: string;
@@ -10,12 +15,12 @@ type Checker = {
   color: "white" | "black";
 };
 
-const checkers: Checker[] = [];
+const CHECKERS: Checker[] = [];
 
 for (let x = 0; x < 8; x++) {
   for (let y = 0; y < 8; y++) {
     const color = (x + y) % 2 === 0 ? "white" : "black";
-    checkers.push({ id: `${x},${y}`, x, y, color });
+    CHECKERS.push({ id: `${x},${y}`, x, y, color });
   }
 }
 
@@ -30,6 +35,7 @@ let touched: {
   x: number;
   y: number;
 } | null = null;
+let visibleDropZoneNode: SVGCircleElement | null = null;
 
 const SCALE = 1;
 const GRID_DIVISIONS = 8;
@@ -39,39 +45,83 @@ const TOUCHED_SCALED = SCALE * 2;
 const TOUCHED_SCALED_OFFSET = TOUCHED_SCALED * 0.5;
 const TOUCHED_Y_OFFSET = SCALE + SCALE * 0.25;
 
-const onDragStart = (event: MouseEvent | TouchEvent) => {
-  let clientX: number;
-  let clientY: number;
+const onDragStartOrMove =
+  (props: ChessboardProps) => (event: MouseEvent | TouchEvent) => {
+    let clientX: number;
+    let clientY: number;
 
-  if (event instanceof MouseEvent) {
-    clientX = event.clientX;
-    clientY = event.clientY;
-  } else if (event instanceof TouchEvent && event.touches[0]) {
-    clientX = event.touches[0].clientX;
-    clientY = event.touches[0].clientY;
-  } else {
-    return;
-  }
+    if (event instanceof MouseEvent) {
+      clientX = event.clientX;
+      clientY = event.clientY;
+    } else if (event instanceof TouchEvent && event.touches[0]) {
+      clientX = event.touches[0].clientX;
+      clientY = event.touches[0].clientY;
+    } else {
+      return;
+    }
 
-  const target = event.currentTarget;
+    const target = event.currentTarget;
 
-  if (!(target instanceof SVGSVGElement)) {
-    return;
-  }
+    if (!(target instanceof SVGSVGElement)) {
+      return;
+    }
 
-  const rect = target.getBoundingClientRect();
-  const scaleX = WIDTH / rect.width;
-  const scaleY = HEIGHT / rect.height;
+    const rect = target.getBoundingClientRect();
+    const scaleX = WIDTH / rect.width;
+    const scaleY = HEIGHT / rect.height;
 
-  const x = (clientX - rect.left) * scaleX - TOUCHED_SCALED_OFFSET;
-  const y =
-    (clientY - rect.top) * scaleY - TOUCHED_SCALED_OFFSET - TOUCHED_Y_OFFSET;
+    const newX = (clientX - rect.left) * scaleX - TOUCHED_SCALED_OFFSET;
+    const newY =
+      (clientY - rect.top) * scaleY - TOUCHED_SCALED_OFFSET - TOUCHED_Y_OFFSET;
 
-  if (touched) {
-    touched.node.setAttribute("x", `${x}`);
-    touched.node.setAttribute("y", `${y}`);
-  }
-};
+    if (touched) {
+      touched.node.setAttribute("x", `${newX}`);
+      touched.node.setAttribute("y", `${newY}`);
+    }
+
+    //
+    //
+    //
+    //
+    //
+    //
+
+    if (touched) {
+      const currentX = parseFloat(touched.node.getAttribute("x") || "0");
+      const currentY = parseFloat(touched.node.getAttribute("y") || "0");
+
+      const newX = currentX + TOUCHED_SCALED_OFFSET / 2;
+      const newY = currentY + TOUCHED_SCALED_OFFSET / 2 + TOUCHED_Y_OFFSET;
+
+      const stepX = WIDTH / GRID_DIVISIONS;
+      const stepY = HEIGHT / GRID_DIVISIONS;
+
+      const roundedX = Math.round(newX / stepX) * stepX;
+      const roundedY = Math.round(newY / stepY) * stepY;
+
+      const square = positionToSquare(
+        {
+          x: roundedX,
+          y: roundedY,
+        },
+        props.orientation ?? "w"
+      );
+
+      const dropzoneId = square ? toDropZoneId(square) : null;
+
+      const dropZoneNode = dropzoneId
+        ? document.getElementById(dropzoneId)
+        : null;
+
+      if (dropZoneNode instanceof SVGCircleElement) {
+        dropZoneNode.setAttribute("fill", `black`);
+        if (visibleDropZoneNode && visibleDropZoneNode !== dropZoneNode) {
+          visibleDropZoneNode?.setAttribute("fill", `transparent`);
+        }
+        visibleDropZoneNode = dropZoneNode;
+      }
+    }
+  };
 
 const onDragEnd = (props: ChessboardProps) => () => {
   if (touched) {
@@ -116,6 +166,10 @@ const onDragEnd = (props: ChessboardProps) => () => {
       }
     }
 
+    if (visibleDropZoneNode) {
+      visibleDropZoneNode.setAttribute("fill", `transparent`);
+      visibleDropZoneNode = null;
+    }
     touched = null;
   }
 };
@@ -154,6 +208,10 @@ const onPieceDragStart =
     }
   };
 
+const toDropZoneId = (square: Square) => {
+  return `dropzone-${square}`;
+};
+
 export const Chessboard = (props: ChessboardProps) => {
   const board = props.fen
     ? fenToPieces(props.fen, props.orientation ?? "w")
@@ -178,14 +236,14 @@ export const Chessboard = (props: ChessboardProps) => {
         userSelect: "none",
         touchAction: "none",
       })}
-      onTouchStart={onDragStart}
-      onMouseDown={onDragStart}
-      onTouchMove={onDragStart}
-      onMouseMove={onDragStart}
+      onTouchStart={onDragStartOrMove(props)}
+      onMouseDown={onDragStartOrMove(props)}
+      onTouchMove={onDragStartOrMove(props)}
+      onMouseMove={onDragStartOrMove(props)}
       onTouchEnd={onDragEnd(props)}
       onMouseUp={onDragEnd(props)}>
       <g>
-        {checkers.map((checker) => {
+        {CHECKERS.map((checker) => {
           return (
             <rect
               key={checker.id}
@@ -199,6 +257,26 @@ export const Chessboard = (props: ChessboardProps) => {
                   ? theme.lightChecker
                   : theme.darkChecker
               }
+            />
+          );
+        })}
+      </g>
+
+      <g>
+        {CHECKERS.map((checker) => {
+          const square = positionToSquare(checker, props.orientation ?? "w");
+          return (
+            <circle
+              key={checker.id}
+              id={square ? toDropZoneId(square) : undefined}
+              cx={checker.x * SCALE + SCALE / 2}
+              cy={checker.y * SCALE + SCALE / 2}
+              style={{
+                "pointer-events": "none",
+              }}
+              r={SCALE * 1.25}
+              fill-opacity="0.25"
+              fill="none"
             />
           );
         })}
