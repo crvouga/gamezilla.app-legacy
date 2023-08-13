@@ -138,45 +138,42 @@ const onDragStartOrMove =
       touched.node.setAttribute("y", `${newY}`);
     }
 
-    //
-    //
-    //
-    //
-    //
-    //
-
-    if (touched) {
-      const currentX = parseFloat(touched.node.getAttribute("x") || "0");
-      const currentY = parseFloat(touched.node.getAttribute("y") || "0");
-
-      const newX = currentX + TOUCHED_SCALED_OFFSET / 2;
-      const newY = currentY + TOUCHED_SCALED_OFFSET / 2 + TOUCHED_Y_OFFSET;
-
-      const stepX = WIDTH / GRID_DIVISIONS;
-      const stepY = HEIGHT / GRID_DIVISIONS;
-
-      const roundedX = Math.round(newX / stepX) * stepX;
-      const roundedY = Math.round(newY / stepY) * stepY;
-
-      const square = positionToSquare(
-        {
-          x: roundedX,
-          y: roundedY,
-        },
-        props.orientation ?? "w"
-      );
-
-      const dropzoneId = square ? toDropZoneId(square) : null;
-
-      const dropZoneNode = dropzoneId
-        ? document.getElementById(dropzoneId)
-        : null;
-
-      if (dropZoneNode instanceof SVGCircleElement) {
-        setVisibleDropZoneNode(dropZoneNode);
-      }
-    }
+    updateDropZone(props.orientation ?? "w");
   };
+
+const updateDropZone = (orientation: Color) => {
+  if (!touched) {
+    return;
+  }
+
+  const currentX = parseFloat(touched.node.getAttribute("x") || "0");
+  const currentY = parseFloat(touched.node.getAttribute("y") || "0");
+
+  const newX = currentX + TOUCHED_SCALED_OFFSET / 2;
+  const newY = currentY + TOUCHED_SCALED_OFFSET / 2 + TOUCHED_Y_OFFSET;
+
+  const stepX = WIDTH / GRID_DIVISIONS;
+  const stepY = HEIGHT / GRID_DIVISIONS;
+
+  const roundedX = Math.round(newX / stepX) * stepX;
+  const roundedY = Math.round(newY / stepY) * stepY;
+
+  const square = positionToSquare(
+    {
+      x: roundedX,
+      y: roundedY,
+    },
+    orientation
+  );
+
+  const dropzoneId = square ? toDropZoneId(square) : null;
+
+  const dropZoneNode = dropzoneId ? document.getElementById(dropzoneId) : null;
+
+  if (dropZoneNode instanceof SVGCircleElement) {
+    setVisibleDropZoneNode(dropZoneNode);
+  }
+};
 
 const onDragEnd = (props: ChessboardProps) => () => {
   if (touched) {
@@ -258,10 +255,15 @@ const onPieceDragStart =
     if (touched && touched.node && touched.node.parentNode) {
       touched.node.parentNode.appendChild(touched.node);
     }
+    updateDropZone(input.props.orientation ?? "w");
   };
 
 const toDropZoneId = (square: Square) => {
   return `dropzone-${square}`;
+};
+
+const toCheckerId = (square: Square) => {
+  return `checker-${square}`;
 };
 
 export const Chessboard = (props: ChessboardProps) => {
@@ -279,6 +281,7 @@ export const Chessboard = (props: ChessboardProps) => {
         e.stopPropagation();
         e.stopImmediatePropagation();
       }}
+      class="overflow-visible"
       preserveAspectRatio="xMinYMin meet"
       style={toInlineStyles({
         overflow: "visible",
@@ -296,9 +299,11 @@ export const Chessboard = (props: ChessboardProps) => {
       onMouseUp={onDragEnd(props)}>
       <g>
         {CHECKERS.map((checker) => {
+          const square = positionToSquare(checker, props.orientation ?? "w");
           return (
             <rect
               key={checker.id}
+              id={square ? toCheckerId(square) : undefined}
               x={checker.x * SCALE}
               y={checker.y * SCALE}
               width={SCALE * 1}
