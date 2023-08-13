@@ -1,6 +1,7 @@
 import { VDom, VDomChildren } from "gamezilla/app/@SHARED/ui";
-import { Piece, fenToGrid } from "../../chess";
+import { Piece, fenToGrid, pieces } from "../../chess";
 import { ChessboardProps } from "./chessboard-shared";
+import { chessPieces } from "./chesspieces";
 
 type Checker = {
   id: string;
@@ -23,19 +24,106 @@ const theme = {
   darkChecker: "#b58863",
 };
 
+let touched: {
+  node: EventTarget & SVGSVGElement;
+  piece: Piece;
+} | null = null;
+
+const SCALE = 100;
+const WIDTH = 8 * SCALE;
+const HEIGHT = 8 * SCALE;
+
 export const Chessboard = (props: ChessboardProps) => {
   const board = props.fen ? fenToGrid(props.fen) : [];
+  console.log("RENDER", board);
   return (
-    <svg width="100%" viewBox="0 0 8 8">
+    <svg
+      width="100%"
+      viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
+      onContextMenu={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+      }}
+      onTouchStart={(e) => {
+        const touch = e.touches[0];
+        if (!touch) {
+          return;
+        }
+        const rect = e.currentTarget.getBoundingClientRect();
+        const scaleX = WIDTH / rect.width;
+        const scaleY = HEIGHT / rect.height;
+
+        const touchX = (touch.clientX - rect.left) * scaleX;
+        const touchY = (touch.clientY - rect.top) * scaleY;
+        if (touched) {
+          touched.node.setAttribute("x", `${touchX - SCALE * 0.5}`);
+          touched.node.setAttribute("y", `${touchY - SCALE * 0.5}`);
+        }
+      }}
+      onMouseDown={(e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        const scaleX = WIDTH / rect.width;
+        const scaleY = HEIGHT / rect.height;
+
+        const mouseX = (e.clientX - rect.left) * scaleX - SCALE * 0.5;
+        const mouseY = (e.clientY - rect.top) * scaleY - SCALE * 0.5;
+        if (touched) {
+          touched.node.setAttribute("x", `${mouseX}`);
+          touched.node.setAttribute("y", `${mouseY}`);
+        }
+      }}
+      onTouchMove={(e) => {
+        const touch = e.touches[0];
+        if (!touch) {
+          return;
+        }
+        const rect = e.currentTarget.getBoundingClientRect();
+        const scaleX = WIDTH / rect.width;
+        const scaleY = HEIGHT / rect.height;
+
+        const touchX = (touch.clientX - rect.left) * scaleX;
+        const touchY = (touch.clientY - rect.top) * scaleY;
+        if (touched) {
+          touched.node.setAttribute("x", `${touchX - SCALE * 0.5}`);
+          touched.node.setAttribute("y", `${touchY - SCALE * 0.5}`);
+        }
+      }}
+      onMouseMove={(e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        const scaleX = WIDTH / rect.width;
+        const scaleY = HEIGHT / rect.height;
+
+        const mouseX = (e.clientX - rect.left) * scaleX - SCALE * 0.5;
+        const mouseY = (e.clientY - rect.top) * scaleY - SCALE * 0.5;
+        if (touched) {
+          touched.node.setAttribute("x", `${mouseX}`);
+          touched.node.setAttribute("y", `${mouseY}`);
+        }
+      }}
+      onTouchEnd={(e) => {
+        console.log("onTouchEnd", touched);
+        if (touched) {
+          touched.node.style.zIndex = "0";
+          touched = null;
+        }
+      }}
+      onMouseUp={(e) => {
+        console.log("onMouseUp", touched);
+        if (touched) {
+          touched.node.style.zIndex = "0";
+          touched = null;
+        }
+      }}>
       <g>
         {checkers.map((checker) => {
           return (
             <rect
               key={checker.id}
-              x={checker.x}
-              y={checker.y}
-              width="1"
-              height="1"
+              x={checker.x * SCALE}
+              y={checker.y * SCALE}
+              width={SCALE * 1}
+              height={SCALE * 1}
               stroke="none"
               fill={
                 checker.color === "white"
@@ -47,24 +135,38 @@ export const Chessboard = (props: ChessboardProps) => {
         })}
       </g>
 
-      {board?.map((row, y) => {
-        return row.map((square, x) => {
-          if (!square) {
-            return null;
-          }
+      <g>
+        {board?.map(({ piece, x, y }) => {
           return (
             <svg
-              key={`${x},${y},${square}`}
-              x={x}
-              y={y}
-              width="1"
-              height="1"
+              key={`${x},${y},${piece}`}
+              x={SCALE * x}
+              y={SCALE * y}
+              width={SCALE * 1}
+              height={SCALE * 1}
+              onTouchStart={(e) => {
+                const target = e.currentTarget;
+                target.style.zIndex = "100";
+                touched = { node: target, piece };
+              }}
+              onMouseDown={(e) => {
+                const target = e.currentTarget;
+                target.style.zIndex = "100";
+                touched = { node: target, piece };
+              }}
               viewBox="0 0 45 45">
-              {renderPiece[square]}
+              <rect
+                fill="transparent"
+                stroke="transparent"
+                x="0"
+                y="0"
+                width="100%"
+                height="100%"></rect>
+              {renderPiece[piece]}
             </svg>
           );
-        });
-      })}
+        })}
+      </g>
     </svg>
   );
 };

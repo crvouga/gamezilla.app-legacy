@@ -2,7 +2,7 @@
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
     "moduleResolution": "Bundler",
-    "types": ["inferno"],
+    "types": ["inferno", "vite/client"],
     "jsx": "preserve"
   }
 }
