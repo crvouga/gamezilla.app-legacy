@@ -67,8 +67,10 @@ const theme = {
 let touched: {
   node: EventTarget & SVGSVGElement;
   piece: Piece;
-  x: number;
-  y: number;
+  source: {
+    x: number;
+    y: number;
+  };
 } | null = null;
 let visibleDropZoneNode: SVGCircleElement | null = null;
 
@@ -197,13 +199,7 @@ const onDragEnd = (props: ChessboardProps) => () => {
 
   touched.node.width.baseVal.value = SCALE * 1;
   touched.node.height.baseVal.value = SCALE * 1;
-  const source = positionToSquare(
-    {
-      x: touched.x,
-      y: touched.y,
-    },
-    props.orientation ?? "w"
-  );
+  const source = positionToSquare(touched.source, props.orientation ?? "w");
   const target = positionToSquare(
     {
       x: Math.floor(roundedX / stepX),
@@ -216,8 +212,8 @@ const onDragEnd = (props: ChessboardProps) => () => {
     const isValidDrop = props.onPieceDrop({ source, target });
 
     if (!isValidDrop) {
-      touched.node.setAttribute("x", `${touched.x}`);
-      touched.node.setAttribute("y", `${touched.y}`);
+      touched.node.setAttribute("x", `${touched.source.x}`);
+      touched.node.setAttribute("y", `${touched.source.y}`);
     }
   }
 
@@ -226,10 +222,14 @@ const onDragEnd = (props: ChessboardProps) => () => {
 };
 
 const onPieceDragStart =
-  (input: { props: ChessboardProps; x: number; y: number; piece: Piece }) =>
+  (input: {
+    props: ChessboardProps;
+    source: { x: number; y: number };
+    piece: Piece;
+  }) =>
   (e: MouseEvent | TouchEvent) => {
     const square = positionToSquare(
-      { x: input.x, y: input.y },
+      input.source,
       input.props.orientation ?? "w"
     );
 
@@ -251,7 +251,7 @@ const onPieceDragStart =
 
     target.width.baseVal.value = TOUCHED_SCALED;
     target.height.baseVal.value = TOUCHED_SCALED;
-    touched = { node: target, ...input };
+    touched = { node: target, piece: input.piece, source: input.source };
 
     // make sure piece is rendered on top of other pieces
     if (touched && touched.node && touched.node.parentNode) {
@@ -335,7 +335,7 @@ export const Chessboard = (props: ChessboardProps) => {
                 "pointer-events": "none",
               }}
               r={SCALE * 1.25}
-              fill-opacity="0.25"
+              fill-opacity="0.2"
               fill="none"
             />
           );
@@ -351,8 +351,12 @@ export const Chessboard = (props: ChessboardProps) => {
               y={SCALE * y}
               width={SCALE * 1}
               height={SCALE * 1}
-              onMouseDown={onPieceDragStart({ props, piece, x, y })}
-              onTouchStart={onPieceDragStart({ props, piece, x, y })}
+              onMouseDown={onPieceDragStart({ props, piece, source: { x, y } })}
+              onTouchStart={onPieceDragStart({
+                props,
+                piece,
+                source: { x, y },
+              })}
               viewBox="0 0 45 45">
               <rect
                 fill="transparent"
