@@ -198,6 +198,22 @@ export const toSquare = (file: File, rank: Rank): Square => {
   return `${file}${rank}`;
 };
 
+export const sanToSquare = (san: string): Square => {
+  const squareRegex = /[A-Ha-h][1-8]/;
+  const match = san.match(squareRegex);
+  if (match) {
+    const square = match[0].toUpperCase();
+    const file = square[0] as File;
+    const rank = square[1] as Rank;
+
+    if (isFile(file) && isRank(rank)) {
+      return toSquare(file, rank);
+    }
+  }
+
+  throw new Error("Invalid SAN notation");
+};
+
 const fromSquare = (square: Square): [File, Rank] => {
   const file = square[0];
   const rank = square[1];
@@ -420,6 +436,14 @@ export const toLowercaseSquare = (square: Square): LowercaseSquare => {
     throw new Error("impossible condition!");
   }
   return lowered;
+};
+
+export const toUppercaseSquare = (square: LowercaseSquare): Square => {
+  const upper = square.toUpperCase();
+  if (!isSquare(upper)) {
+    throw new Error("impossible condition!");
+  }
+  return upper;
 };
 
 export const isSquare = (square: unknown): square is Square => {

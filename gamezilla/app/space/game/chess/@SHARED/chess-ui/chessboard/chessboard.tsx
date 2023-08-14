@@ -4,8 +4,15 @@ import {
   Piece,
   Square,
   fenToPieces,
+  isLowercaseSquare,
   positionToSquare,
+  sanToSquare,
+  squareToChecker,
+  toColor,
+  toLowercaseSquare,
+  toUppercaseSquare,
 } from "../../chess";
+import { Chess } from "chess.js";
 
 //
 //
@@ -53,9 +60,10 @@ for (let x = 0; x < 8; x++) {
 //
 //
 
-const theme = {
+const THEME = {
   lightChecker: "#f0d9b5",
   darkChecker: "#b58863",
+  legalMoveDot: "green",
 };
 
 //
@@ -73,6 +81,15 @@ let touched: {
   };
 } | null = null;
 let visibleDropZoneNode: SVGCircleElement | null = null;
+
+const instance = new Chess();
+
+//
+//
+//
+//
+//
+//
 
 const setVisibleDropZoneNode = (node: SVGCircleElement | null) => {
   if (!node) {
@@ -141,6 +158,8 @@ const onDragStartOrMove =
     }
 
     updateDropZoneUI(props.orientation ?? "w");
+    showSourceCheckerUI(props.orientation ?? "w");
+    setLegalMoveDotsFill(props, THEME.legalMoveDot);
   };
 
 const updateDropZoneUI = (orientation: Color) => {
@@ -174,6 +193,68 @@ const updateDropZoneUI = (orientation: Color) => {
 
   if (dropZoneNode instanceof SVGCircleElement) {
     setVisibleDropZoneNode(dropZoneNode);
+  }
+};
+
+const setLegalMoveDotsFill = (props: ChessboardProps, fill: string) => {
+  if (!touched) {
+    return;
+  }
+  const sourceSquare = positionToSquare(
+    touched.source,
+    props.orientation ?? "w"
+  );
+  if (!sourceSquare) {
+    return;
+  }
+  const legalMoves = instance.moves({
+    square: toLowercaseSquare(sourceSquare),
+  });
+  for (const legalMove of legalMoves) {
+    const square = sanToSquare(legalMove);
+    const id = toLegalMoveDotId(square);
+    const node = document.getElementById(id);
+    if (!(node instanceof SVGCircleElement)) {
+      continue;
+    }
+    node.setAttribute("fill", fill);
+  }
+};
+
+const showSourceCheckerUI = (orientation: Color) => {
+  if (!touched) {
+    return;
+  }
+  const sourceSquare = positionToSquare(touched.source, orientation);
+  const checkerId = sourceSquare ? toCheckerId(sourceSquare) : null;
+  const sourceCheckerNode = checkerId
+    ? document.getElementById(checkerId)
+    : null;
+
+  if (sourceCheckerNode instanceof SVGRectElement) {
+    sourceCheckerNode.setAttribute("fill", "yellow");
+    return;
+  }
+};
+const hideSourceCheckerUI = (orientation: Color) => {
+  if (!touched) {
+    return;
+  }
+  const sourceSquare = positionToSquare(touched.source, orientation);
+
+  const checkerId = sourceSquare ? toCheckerId(sourceSquare) : null;
+  const sourceCheckerNode = checkerId
+    ? document.getElementById(checkerId)
+    : null;
+  const sourceCheckerColor = sourceSquare
+    ? squareToChecker(sourceSquare)
+    : null;
+  if (sourceCheckerColor && sourceCheckerNode instanceof SVGRectElement) {
+    sourceCheckerNode.setAttribute(
+      "fill",
+      sourceCheckerColor === "Light" ? THEME.lightChecker : THEME.darkChecker
+    );
+    return;
   }
 };
 
@@ -217,7 +298,10 @@ const onDragEnd = (props: ChessboardProps) => () => {
     }
   }
 
+  hideSourceCheckerUI(props.orientation ?? "w");
   setVisibleDropZoneNode(null);
+  setLegalMoveDotsFill(props, "none");
+
   touched = null;
 };
 
@@ -268,11 +352,18 @@ const toCheckerId = (square: Square) => {
   return `checker-${square}`;
 };
 
+const toLegalMoveDotId = (square: Square) => {
+  return `legal-move-dot-${square}`;
+};
+
 export const Chessboard = (props: ChessboardProps) => {
   const board = props.fen
     ? fenToPieces(props.fen, props.orientation ?? "w")
     : [];
 
+  if (props.fen) {
+    instance.load(props.fen);
+  }
   console.log("RENDER", board);
   return (
     <svg
@@ -313,9 +404,30 @@ export const Chessboard = (props: ChessboardProps) => {
               stroke="none"
               fill={
                 checker.color === "white"
-                  ? theme.lightChecker
-                  : theme.darkChecker
+                  ? THEME.lightChecker
+                  : THEME.darkChecker
               }
+            />
+          );
+        })}
+      </g>
+
+      {/* legal moves */}
+      <g>
+        {CHECKERS.map((checker) => {
+          const square = positionToSquare(checker, props.orientation ?? "w");
+          return (
+            <circle
+              key={checker.id}
+              id={square ? toLegalMoveDotId(square) : undefined}
+              cx={checker.x * SCALE + SCALE / 2}
+              cy={checker.y * SCALE + SCALE / 2}
+              style={{
+                "pointer-events": "none",
+              }}
+              r={(SCALE * 1) / 4}
+              fill-opacity="0.5"
+              fill="none"
             />
           );
         })}
