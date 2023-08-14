@@ -255,7 +255,7 @@ export const View = ({
             orientation={
               model.t === "loading" ? undefined : toPlayerColor(model.puzzle)
             }
-            fen={model.t === "loading" ? undefined : toCurrentBoard(model).fen}
+            model={model.t === "loading" ? undefined : toCurrentBoard(model)}
             isPieceDraggable={(input) => {
               if (model.t !== "started") {
                 return false;

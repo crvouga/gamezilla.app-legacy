@@ -1,6 +1,7 @@
 import { VDom, toInlineStyles } from "gamezilla/app/@SHARED/ui";
 import {
   Color,
+  Model,
   Piece,
   Square,
   fenToPieces,
@@ -23,7 +24,7 @@ import { Chess } from "chess.js";
 
 export type ChessboardProps = {
   id: string;
-  fen?: string;
+  model?: Model;
   "draggable-pieces"?: boolean;
   onPieceDrop?: (input: { source: Square; target: Square }) => boolean;
   isPieceDraggable?: (input: { piece: Piece; square: Square }) => boolean;
@@ -357,14 +358,15 @@ const toLegalMoveDotId = (square: Square) => {
 };
 
 export const Chessboard = (props: ChessboardProps) => {
-  const board = props.fen
-    ? fenToPieces(props.fen, props.orientation ?? "w")
+  const board = props.model?.fen
+    ? fenToPieces(props.model.fen, props.orientation ?? "w")
     : [];
 
-  if (props.fen) {
-    instance.load(props.fen);
+  if (props.model?.fen) {
+    instance.load(props.model?.fen);
   }
-  console.log("RENDER", board);
+  console.log("RENDER");
+
   return (
     <svg
       width="100%"
@@ -458,7 +460,7 @@ export const Chessboard = (props: ChessboardProps) => {
         {board?.map(({ piece, x, y }) => {
           return (
             <svg
-              key={[piece, x, y, props.fen].join(",")}
+              key={[piece, x, y, props.model?.fen].join(",")}
               x={SCALE * x}
               y={SCALE * y}
               width={SCALE * 1}

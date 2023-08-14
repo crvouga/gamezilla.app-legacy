@@ -378,7 +378,7 @@ export const View = ({
 
         <Chessboard
           id="chessboard"
-          fen={model.coreModel.board.fen}
+          model={model.coreModel.board}
           orientation={boardOrientation}
           onPieceDrop={(move) => {
             const msg: Msg = {
