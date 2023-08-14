@@ -18,7 +18,8 @@ import {
   GameLayout,
   ViewBottomButtonBar,
 } from "gamezilla/app/space/game/@SHARED";
-import { Chess, ChessSounds } from "../@SHARED/chess";
+import { Chess } from "../@SHARED/chess";
+import { ChessSounds } from "../@SHARED/chess/chess-sounds";
 import { Chessboard } from "../@SHARED/chess-ui/chessboard";
 import {
   ClientModel,
@@ -280,6 +281,7 @@ export const View = ({
               );
 
               if (moved.t === "ok") {
+                ChessSounds.move.play();
                 dispatch({
                   t: "input-move",
                   moveInput: {
