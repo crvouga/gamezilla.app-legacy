@@ -1,4 +1,12 @@
-import { ClientId, Cmd, Err, Ok, Sub, removeKey } from "gamezilla/@SHARED/core";
+import {
+  ClientId,
+  Cmd,
+  Err,
+  Ok,
+  Sub,
+  p,
+  removeKey,
+} from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
 import { ServerAppMsg, ServerCtx, ReqCtx } from "gamezilla/app/@SHARED/server";
 import { SpaceServerCtx, Space } from "gamezilla/app/space/@SHARED";
@@ -193,11 +201,6 @@ export const updateFromClient = async (input: {
           }),
         };
       }
-
-      // const spaceNew: GameSpace<Game.Model> = {
-      //   ...space,
-      //   state: "ended",
-      // };
 
       const mutated = await spaceDb.zap(space.spaceId);
 
@@ -475,11 +478,34 @@ const sendToSpace = (
 //
 //
 
-const sub = Sub.create<ServerMsg>();
+export const subscriptions = Sub.create<ServerMsg>();
 
-export const subscriptions = (_input: {
-  ctx: ServerCtx;
-  model: ServerModel;
-}): Sub<ServerMsg> => {
+const spaceSub = (space: Space<GameServer.Model>): Sub<ServerMsg> => {
+  if (space.game) {
+    return Sub.map(
+      GameServer.subscriptions(space.spaceId, space.game),
+      (msg) => ({ t: "game", c: msg, spaceId: space.spaceId })
+    );
+  }
+
   return Sub.None;
 };
+
+const unsubscribes = new Map<string, () => void>();
+
+spaceDb.sub.subscribe((msg) => {
+  switch (msg.t) {
+    case "set": {
+      unsubscribes.get(msg.space.spaceId)?.();
+      unsubscribes.set(
+        msg.space.spaceId,
+        spaceSub(msg.space).subscribe(subscriptions.publish)
+      );
+      return;
+    }
+    case "zap": {
+      unsubscribes.get(msg.spaceId)?.();
+      return;
+    }
+  }
+});

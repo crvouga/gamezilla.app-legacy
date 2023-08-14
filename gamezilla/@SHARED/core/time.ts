@@ -89,10 +89,7 @@ export const every = <Msg>(
   const sub = intervals.get(intervalId);
 
   if (sub) {
-    return p(
-      sub,
-      Sub.map(() => f(new Date().getTime()))
-    );
+    return Sub.map(sub, () => f(Date.now()));
   }
 
   const subNew = Sub.create<number>();

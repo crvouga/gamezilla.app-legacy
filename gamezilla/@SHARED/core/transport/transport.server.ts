@@ -59,8 +59,6 @@ export const createTransportServer = <ToServer, ToClient>({
 
     const clientId = ClientId.generate();
 
-    console.log(`[server] client connected: ${clientId} ${sessionId}`);
-
     clients.set(clientId, ws);
 
     ws.send(JSON.stringify({ t: "session-id", sessionId }));

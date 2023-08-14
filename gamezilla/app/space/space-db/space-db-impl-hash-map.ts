@@ -1,8 +1,8 @@
-import { Ok } from "gamezilla/@SHARED/core";
+import { Ok, Sub } from "gamezilla/@SHARED/core";
 import { Space } from "gamezilla/app/space/@SHARED";
 import { ServerModel } from "../game/game.core";
 import { SpaceId } from "gamezilla/app/@SHARED/data";
-import { SpaceDb } from "./space-db";
+import { SpaceDb, SpaceDbMsg } from "./space-db";
 
 const TIMEOUT = 1;
 
@@ -12,12 +12,14 @@ export const makeSpaceDb = (): SpaceDb => {
   const zap: SpaceDb["zap"] = async (spaceId) => {
     await new Promise((resolve) => setTimeout(resolve, TIMEOUT));
     db.delete(spaceId);
+    sub.publish({ t: "zap", spaceId });
     return Ok(null);
   };
 
   const set: SpaceDb["set"] = async (space) => {
     await new Promise((resolve) => setTimeout(resolve, TIMEOUT));
     db.set(space.spaceId, space);
+    sub.publish({ t: "set", space });
     return Ok(null);
   };
 
@@ -42,11 +44,14 @@ export const makeSpaceDb = (): SpaceDb => {
     return Ok(Array.from(db.values()));
   };
 
+  const sub = Sub.create<SpaceDbMsg>();
+
   return {
     get,
     getAll,
     getByUserId,
     set,
     zap,
+    sub,
   };
 };

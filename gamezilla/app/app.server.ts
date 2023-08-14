@@ -434,18 +434,16 @@ export const subscriptions = ({
   ctx: ServerCtx;
 }): Sub<Msg> => {
   return Sub.batch([
-    Sub.tag("space", SpaceServer.subscriptions({ model: model.space, ctx })),
+    Sub.tag("space", SpaceServer.subscriptions),
     Sub.tag("wire", onWireMsg),
-    p(
+    Sub.map(
       onClientMsg,
-      Sub.map(
-        ({ sessionId, clientId, msg }): Msg => ({
-          t: "▶",
-          sessionId,
-          clientId,
-          c: msg,
-        })
-      )
+      ({ sessionId, clientId, msg }): Msg => ({
+        t: "▶",
+        sessionId,
+        clientId,
+        c: msg,
+      })
     ),
   ]);
 };

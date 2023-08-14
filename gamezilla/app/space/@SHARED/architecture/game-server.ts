@@ -70,11 +70,7 @@ export type GameServer<Model, Msg, ToClient, ToServer> = {
     msgs?: ServerAppMsg[];
   };
 
-  subscriptions: (input: {
-    ctx: SpaceServerCtx;
-    intervalId: string;
-    model: Model;
-  }) => Sub<Msg>;
+  subscriptions: (intervalId: string, model: Model) => Sub<Msg>;
 };
 
 /**
@@ -143,14 +139,8 @@ const tag = <T extends string, Model, Msg, ToClient, ToServer>(
         msgs: updated.msgs,
       };
     },
-    subscriptions: (input) => {
-      return Sub.tag(
-        tag,
-        server.subscriptions({
-          ...input,
-          model: input.model.c,
-        })
-      );
+    subscriptions: (intervalId, model) => {
+      return Sub.tag(tag, server.subscriptions(intervalId, model.c));
     },
   };
 };

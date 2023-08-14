@@ -1,5 +1,3 @@
-import { p } from "./pipe";
-
 export type Sub<Msg> = {
   subscribe: (subscriber: (msg: Msg) => void) => () => void;
 };
@@ -42,21 +40,35 @@ const create = <Msg>(): PubSub<Msg> => {
   };
 };
 
-const map =
-  <A, Msg>(f: (a: A) => Msg) =>
-  (sub: Sub<A>): Sub<Msg> => {
-    return {
-      subscribe: (subscriber) => {
-        const unsubscribe = sub.subscribe((a) => {
-          subscriber(f(a));
-        });
-
-        return () => {
-          unsubscribe();
-        };
-      },
-    };
+const map = <A, B>(sub: Sub<A>, f: (a: A) => B): Sub<B> => {
+  return {
+    subscribe: (subscriber) => {
+      return sub.subscribe((a) => {
+        subscriber(f(a));
+      });
+    },
   };
+};
+
+function flatMap<A, B>(sub: Sub<A>, fn: (value: A) => Sub<B>): Sub<B> {
+  return {
+    subscribe: (subscriber: (msg: B) => void) => {
+      const unsubscribeFunctions: Array<() => void> = [];
+
+      const unsubscribeA = sub.subscribe((msgA) => {
+        const subB = fn(msgA);
+        const unsubscribeB = subB.subscribe(subscriber);
+        unsubscribeFunctions.push(unsubscribeB);
+      });
+
+      unsubscribeFunctions.push(unsubscribeA);
+
+      return () => {
+        unsubscribeFunctions.forEach((unsubscribe) => unsubscribe());
+      };
+    },
+  };
+}
 
 const batch = <Msg>(arr: Sub<Msg>[]): Sub<Msg> => {
   return {
@@ -84,10 +96,7 @@ const tag = <Tag extends string, Msg>(
   t: Tag,
   sub: Sub<Msg>
 ): Sub<{ t: Tag; c: Msg }> => {
-  return p(
-    sub,
-    Sub.map((c) => ({ t, c }))
-  );
+  return Sub.map(sub, (c) => ({ t, c }));
 };
 
 export const Sub = {
@@ -96,6 +105,7 @@ export const Sub = {
   create,
   None,
   tag,
+  flatMap,
 };
 
 export const PubSub = Sub;

@@ -28,7 +28,7 @@ if (typeof window !== "undefined") {
 export const onLocation = <Msg>(
   mapper: (location: Location) => Msg
 ): Sub<Msg> => {
-  return p(locationSub, Sub.map(mapper));
+  return Sub.map(locationSub, mapper);
 };
 
 export const getLocation = (): Location => {

@@ -180,11 +180,13 @@ export const updateFromParent: Server["updateFromParent"] = (input) => {
 //
 //
 
-export const subscriptions: Server["subscriptions"] = (input): Sub<Msg> => {
-  const { model, intervalId } = input;
+export const subscriptions: Server["subscriptions"] = (
+  intervalId,
+  model
+): Sub<Msg> => {
   switch (model.t) {
     case "connect-four": {
-      return ConnectFour.subscriptions({ ...input, model });
+      return ConnectFour.subscriptions(intervalId, model);
     }
 
     case "tic-tac-toe": {
@@ -199,7 +201,7 @@ export const subscriptions: Server["subscriptions"] = (input): Sub<Msg> => {
     }
 
     case "flow": {
-      return Flow.subscriptions({ ...input, model });
+      return Flow.subscriptions(intervalId, model);
     }
   }
 };

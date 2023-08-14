@@ -198,10 +198,7 @@ const initMode = (mode: Mode, userId: UserId): Model => {
 //
 //
 
-export const subscriptions: Server["subscriptions"] = ({
-  intervalId,
-  model,
-}) => {
+export const subscriptions: Server["subscriptions"] = (intervalId, model) => {
   switch (model.t) {
     case "none": {
       return Sub.None;
