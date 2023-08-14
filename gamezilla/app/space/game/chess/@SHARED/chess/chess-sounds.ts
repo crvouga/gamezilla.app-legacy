@@ -1,21 +1,32 @@
-import captureSound from "./assets/capture-1.wav";
-import castlingSound from "./assets/castling-1.wav";
-import checkSound from "./assets/check-1.wav";
-import gameOverSound from "./assets/game-over.wav";
-import gameStartSound from "./assets/game-start.wav";
-import moveSound from "./assets/move-1.wav";
-import navigationCancelSound from "./assets/navigation-cancel.wav";
-import navigationForwardSelectionSound from "./assets/navigation_forward-selection-minimal.wav";
-import uiUnlockSound from "./assets/ui_unlock.wav";
+const src = {
+  captureSound: "./space-game-chess/capture-1.wav",
+  castlingSound: "./space-game-chess/castling-1.wav",
+  checkSound: "./space-game-chess/check-1.wav",
+  gameOverSound: "./space-game-chess/game-over.wav",
+  gameStartSound: "./space-game-chess/game-start.wav",
+  moveSound: "./space-game-chess/move-1.wav",
+  navigationCancelSound: "./space-game-chess/navigation-cancel.wav",
+  navigationForwardSelectionSound:
+    "./space-game-chess/navigation_forward-selection-minimal.wav",
+  uiUnlockSound: "./space-game-chess/ui_unlock.wav",
+} as const;
+
+if (typeof window === "undefined") {
+  // @ts-ignore
+  global.Audio = class Audio {
+    constructor() {}
+    play() {}
+  };
+}
 
 export const ChessSounds = {
-  capture: new Audio(captureSound),
-  castling: new Audio(castlingSound),
-  check: new Audio(checkSound),
-  gameOver: new Audio(gameOverSound),
-  gameStart: new Audio(gameStartSound),
-  move: new Audio(moveSound),
-  navigationCancel: new Audio(navigationCancelSound),
-  navigationForwardSelection: new Audio(navigationForwardSelectionSound),
-  uiUnlock: new Audio(uiUnlockSound),
+  capture: new Audio(src.captureSound),
+  castling: new Audio(src.castlingSound),
+  check: new Audio(src.checkSound),
+  gameOver: new Audio(src.gameOverSound),
+  gameStart: new Audio(src.gameStartSound),
+  move: new Audio(src.moveSound),
+  navigationCancel: new Audio(src.navigationCancelSound),
+  navigationForwardSelection: new Audio(src.navigationForwardSelectionSound),
+  uiUnlock: new Audio(src.uiUnlockSound),
 };
