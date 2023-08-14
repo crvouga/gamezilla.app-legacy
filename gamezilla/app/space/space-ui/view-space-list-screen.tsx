@@ -39,56 +39,54 @@ export const ViewSpaceListScreen = ({
         </div>
       )}
 
-      {spaces.length > 0 && (
-        <div className="relative flex h-full w-full flex-1 flex-col">
-          {isLoading && <LoadingScreen absolute />}
+      <div className="relative flex h-full w-full flex-1 flex-col">
+        {isLoading && <LoadingScreen absolute />}
 
-          <div
-            className={cn(
-              isLoading && "pointer-events-none opacity-50",
-              "flex w-full flex-1 flex-col gap-4 overflow-y-auto px-5"
-            )}>
-            {spaces.map((space) => {
-              const host = ctx.profiles[space.hostId];
-              const users = Object.values(space.users).flatMap((userId) => {
-                const profile = ctx.profiles[userId];
+        <div
+          className={cn(
+            isLoading && "pointer-events-none opacity-50",
+            "flex w-full flex-1 flex-col gap-4 overflow-y-auto px-5"
+          )}>
+          {spaces.map((space) => {
+            const host = ctx.profiles[space.hostId];
+            const users = Object.values(space.users).flatMap((userId) => {
+              const profile = ctx.profiles[userId];
 
-                if (!profile) {
-                  return [];
-                }
+              if (!profile) {
+                return [];
+              }
 
-                return [
-                  {
-                    username: profile.username,
-                    avatarUrl: profile.avatarUrl,
-                  },
-                ];
-              });
+              return [
+                {
+                  username: profile.username,
+                  avatarUrl: profile.avatarUrl,
+                },
+              ];
+            });
 
-              const gameName = space.game?.t ?? null;
-              const currentSpaceId = currentSpace?.spaceId ?? null;
-              return (
-                <ViewSpaceCard
-                  host={{
-                    username: host?.username ?? "...",
-                    avatarUrl: host?.avatarUrl,
-                  }}
-                  key={space.spaceId}
-                  isCurrentSpace={currentSpaceId === space.spaceId}
-                  users={users}
-                  gameName={gameName}
-                  onClick={() => {
-                    ctx.onPush({
-                      t: "space",
-                      c: { t: "space", spaceId: space.spaceId },
-                    });
-                  }}
-                />
-              );
-            })}
-          </div>
+            const gameName = space.game?.t ?? null;
+            const currentSpaceId = currentSpace?.spaceId ?? null;
+            return (
+              <ViewSpaceCard
+                host={{
+                  username: host?.username ?? "...",
+                  avatarUrl: host?.avatarUrl,
+                }}
+                key={space.spaceId}
+                isCurrentSpace={currentSpaceId === space.spaceId}
+                users={users}
+                gameName={gameName}
+                onClick={() => {
+                  ctx.onPush({
+                    t: "space",
+                    c: { t: "space", spaceId: space.spaceId },
+                  });
+                }}
+              />
+            );
+          })}
         </div>
-      )}
+      </div>
 
       {!currentSpace && !isLoading && (
         <div className="w-full p-4">
