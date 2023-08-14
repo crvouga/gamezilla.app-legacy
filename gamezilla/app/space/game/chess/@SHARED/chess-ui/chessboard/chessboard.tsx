@@ -386,7 +386,7 @@ const onDragCancel = (props: ChessboardProps) => () => {
 };
 
 export const Chessboard = (props: ChessboardProps) => {
-  const board = props.model?.fen
+  const pieces = props.model?.fen
     ? fenToPieces(props.model.fen, props.orientation ?? "w")
     : [];
 
@@ -493,7 +493,8 @@ export const Chessboard = (props: ChessboardProps) => {
 
       {/* pieces */}
       <g>
-        {board?.map(({ piece, x, y }) => {
+        {pieces?.map(({ piece, x, y }) => {
+          const square = positionToSquare({ x, y }, props.orientation ?? "w");
           return (
             <svg
               key={[piece, x, y, props.model?.fen].join(",")}

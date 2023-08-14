@@ -20,7 +20,6 @@ import {
 } from "gamezilla/app/space/game/@SHARED";
 import { Chess } from "../@SHARED/chess";
 import { Chessboard, PlayerIcon, ViewCoverArt } from "../@SHARED/chess-ui";
-import Sounds from "../@SHARED/chess/chess-sounds";
 import {
   ClientModel,
   ClientMsg,
@@ -138,7 +137,6 @@ export const updateFromServer = (input: {
       ) {
         return {
           model: { ...model, openedModal: "game-over" },
-          cmd: playAudio(Sounds.gameOver),
         };
       }
 
@@ -148,7 +146,6 @@ export const updateFromServer = (input: {
       ) {
         return {
           model,
-          cmd: playAudio(Sounds.gameStart),
         };
       }
 
@@ -167,12 +164,7 @@ const updateFromServer_: typeof updateFromServer = ({ msg, model }) => {
 
     const { didCapture, ...coreModel } = result.value;
 
-    const soundCmd =
-      coreModel.type === "game" && Chess.inCheck(coreModel.board)
-        ? playAudio(Sounds.check)
-        : didCapture
-        ? playAudio(Sounds.capture)
-        : playAudio(Sounds.move);
+    const soundCmd = Cmd.None;
 
     return { model: { ...model, coreModel }, cmd: soundCmd };
   }
@@ -199,12 +191,7 @@ const updateFromServer_: typeof updateFromServer = ({ msg, model }) => {
       serverModel: coreModelNew,
     });
 
-    const soundCmd =
-      coreModelNew.type === "game" && Chess.inCheck(coreModelNew.board)
-        ? playAudio(Sounds.check)
-        : coreModelNew.didCapture
-        ? playAudio(Sounds.capture)
-        : playAudio(Sounds.move);
+    const soundCmd = Cmd.None;
 
     return { model: modelNew, cmd: soundCmd };
   }

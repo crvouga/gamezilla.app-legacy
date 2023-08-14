@@ -2,9 +2,7 @@ import { Cmd, Option, Sub, exhaustive } from "gamezilla/@SHARED/core";
 import { ViewCtx } from "gamezilla/app/@SHARED/client";
 import { UserId } from "gamezilla/app/@SHARED/data";
 import { SpaceClientCtx } from "gamezilla/app/space/@SHARED";
-
 import { Chess } from "../@SHARED/chess";
-import Sounds from "../@SHARED/chess/chess-sounds";
 import {
   ClientModel,
   ClientMsg,
@@ -170,13 +168,7 @@ export const updateFromServer = (
         return [model, Cmd.None];
       }
 
-      const soundCmd = Chess.inCheck(coreModelNew.board)
-        ? playAudio(Sounds.check)
-        : coreModelNew.didCapture
-        ? playAudio(Sounds.capture)
-        : playAudio(Sounds.move);
-
-      return [{ ...model, coreModel: coreModelNew }, soundCmd];
+      return [{ ...model, coreModel: coreModelNew }, Cmd.None];
     }
 
     case "InputPlayer_Done": {
@@ -212,10 +204,7 @@ export const updateFromServer = (
         }
 
         case "ok": {
-          return [
-            { ...model, openedModal: "AskedToDraw" },
-            playAudio(Sounds.uiUnlock),
-          ];
+          return [{ ...model, openedModal: "AskedToDraw" }, Cmd.None];
         }
 
         default: {
@@ -295,10 +284,7 @@ export const updateFromServer = (
 
       const coreModelNew = msg[1].value;
 
-      return [
-        { ...model, coreModel: coreModelNew },
-        playAudio(Sounds.navigationCancel),
-      ];
+      return [{ ...model, coreModel: coreModelNew }, Cmd.None];
     }
 
     case "game-over": {
@@ -307,12 +293,12 @@ export const updateFromServer = (
           ...model,
           openedModal: "game-over",
         },
-        playAudio(Sounds.gameOver),
+        Cmd.None,
       ];
     }
 
     case "GameStarted": {
-      return [model, playAudio(Sounds.gameStart)];
+      return [model, Cmd.None];
     }
 
     case "ClockTicked": {

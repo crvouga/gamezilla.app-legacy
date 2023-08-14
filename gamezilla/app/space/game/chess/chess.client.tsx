@@ -7,7 +7,6 @@ import {
   mainMenuButtons,
 } from "gamezilla/app/space/game/@SHARED";
 import { ViewCoverArt } from "./@SHARED/chess-ui";
-import Sounds from "./@SHARED/chess/chess-sounds";
 import {
   ClientModel,
   ClientMsg,
@@ -35,10 +34,7 @@ export const init = (): { model: ClientModel; cmd?: Cmd<Msg> } => {
       mode: { t: "none" },
       requests: {},
     },
-    cmd: Audio.preload(
-      Array.from(Object.values(Sounds)),
-      (): Msg => ({ t: "preload-audio-done" })
-    ),
+    cmd: Cmd.None,
   };
 };
 

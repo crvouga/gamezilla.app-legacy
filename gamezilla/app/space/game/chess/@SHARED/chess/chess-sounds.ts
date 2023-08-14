@@ -1,39 +1,21 @@
-// // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// // @ts-ignore
-// import capture from "./assets/capture-1.wav"
-// // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// // @ts-ignore
-// import castling from "./assets/castling-1.wav"
-// // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// // @ts-ignore
-// import check from "./assets/check-1.wav"
-// // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// // @ts-ignore
-// import gameOver from "./assets/game-over.wav"
-// // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// // @ts-ignore
-// import gameStart from "./assets/game-start.wav"
-// // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// // @ts-ignore
-// import move from "./assets/move-1.wav"
-// // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// // @ts-ignore
-// import navigationCancel from "./assets/navigation-cancel.wav"
-// // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// // @ts-ignore
-// import navigationForwardSelection from "./assets/navigation_forward-selection-minimal.wav"
-// // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// // @ts-ignore
-// import uiUnlock from "./assets/ui_unlock.wav"
+import captureSound from "./assets/capture-1.wav";
+import castlingSound from "./assets/castling-1.wav";
+import checkSound from "./assets/check-1.wav";
+import gameOverSound from "./assets/game-over.wav";
+import gameStartSound from "./assets/game-start.wav";
+import moveSound from "./assets/move-1.wav";
+import navigationCancelSound from "./assets/navigation-cancel.wav";
+import navigationForwardSelectionSound from "./assets/navigation_forward-selection-minimal.wav";
+import uiUnlockSound from "./assets/ui_unlock.wav";
 
-export default {
-  capture: 'sound',
-  castling: 'sound',
-  check: 'sound',
-  gameOver: 'sound',
-  gameStart: 'sound',
-  move: 'sound',
-  navigationCancel: 'sound',
-  navigationForwardSelection: 'sound',
-  uiUnlock: 'sound',
+export const ChessSounds = {
+  capture: new Audio(captureSound),
+  castling: new Audio(castlingSound),
+  check: new Audio(checkSound),
+  gameOver: new Audio(gameOverSound),
+  gameStart: new Audio(gameStartSound),
+  move: new Audio(moveSound),
+  navigationCancel: new Audio(navigationCancelSound),
+  navigationForwardSelection: new Audio(navigationForwardSelectionSound),
+  uiUnlock: new Audio(uiUnlockSound),
 };

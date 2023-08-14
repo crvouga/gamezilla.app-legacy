@@ -501,7 +501,11 @@ function isPieceType(char: string): char is PieceType {
 export function fenToPieces(
   fen: string,
   orientation: "w" | "b"
-): { x: number; y: number; piece: Piece }[] {
+): {
+  x: number;
+  y: number;
+  piece: Piece;
+}[] {
   const parts = fen.split(" ");
   const rowsString = parts[0];
   if (!rowsString) return [];
