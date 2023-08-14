@@ -75,7 +75,7 @@ export const ViewSpaceListScreen = ({
                 users={users}
                 gameName={gameName}
                 onClick={() => {
-                  ctx.onPush({
+                  ctx.push({
                     t: "space",
                     c: { t: "space", spaceId: space.spaceId },
                   });

@@ -339,7 +339,7 @@ const ViewUpdateScreen = ({
         left={
           <TopBarBackButton
             onClick={() =>
-              ctx.onPush({
+              ctx.push({
                 t: "profile",
                 c: { t: "profile", userId: ctx.currentUserId },
               })
@@ -355,7 +355,7 @@ const ViewUpdateScreen = ({
           className="h-28 w-28"
           alt="profile avatar"
           onClick={() =>
-            ctx.onPush({ t: "profile", c: { t: "profile-update-avatar" } })
+            ctx.push({ t: "profile", c: { t: "profile-update-avatar" } })
           }
         />
 
@@ -365,7 +365,7 @@ const ViewUpdateScreen = ({
           variant="text"
           className="block"
           onClick={() =>
-            ctx.onPush({ t: "profile", c: { t: "profile-update-avatar" } })
+            ctx.push({ t: "profile", c: { t: "profile-update-avatar" } })
           }
           text=" Change Avatar"
         />
@@ -373,7 +373,7 @@ const ViewUpdateScreen = ({
 
       <ViewField
         onClick={() =>
-          ctx.onPush({ t: "profile", c: { t: "profile-update-username" } })
+          ctx.push({ t: "profile", c: { t: "profile-update-username" } })
         }
         label="Username"
         value={profile?.username}
@@ -428,7 +428,7 @@ const ViewUpdateUsernameScreen = ({
             variant="text"
             color="primary"
             onClick={() =>
-              ctx.onPush({ t: "profile", c: { t: "profile-update" } })
+              ctx.push({ t: "profile", c: { t: "profile-update" } })
             }
             text="Cancel"
           />

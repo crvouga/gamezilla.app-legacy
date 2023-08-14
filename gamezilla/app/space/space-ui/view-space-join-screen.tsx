@@ -31,7 +31,7 @@ export const ViewSpaceJoinScreen = ({
       <TopBar
         left={
           <TopBarBackButton
-            onClick={() => ctx.onPush({ t: "space", c: { t: "space-list" } })}
+            onClick={() => ctx.push({ t: "space", c: { t: "space-list" } })}
           />
         }
         title={host?.username ? `${host.username}'s space` : "..."}

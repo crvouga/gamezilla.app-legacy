@@ -112,7 +112,10 @@ export const updateFromClient = async (input: {
     case "list": {
       const got = await spaceDb.getAll();
 
-      return { model, cmd: sendToClient({ t: "list", result: got }) };
+      return {
+        model,
+        cmd: sendToClient({ t: "list", result: got }),
+      };
     }
 
     case "join": {
@@ -471,6 +474,8 @@ const sendToSpace = (
 //
 //
 //
+
+const sub = Sub.create<ServerMsg>();
 
 export const subscriptions = (_input: {
   ctx: ServerCtx;

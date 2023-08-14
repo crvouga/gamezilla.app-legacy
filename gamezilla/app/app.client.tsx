@@ -12,7 +12,7 @@ import {
   ClientAppMsg,
   ClientCtx,
   Route,
-  UnauthenticatedViewCtx,
+  AnonymousViewCtx,
   ViewCtx,
 } from "gamezilla/app/@SHARED/client";
 import {
@@ -529,8 +529,8 @@ const ViewMain = ({
         ctx={{
           now,
           profiles: model.profile.profiles,
-          onBack: () => dispatch({ t: "routing", c: { t: "clicked-back" } }),
-          onPush: (route) =>
+          back: () => dispatch({ t: "routing", c: { t: "clicked-back" } }),
+          push: (route) =>
             dispatch({
               t: "routing",
               c: { t: "clicked-link", route },
@@ -548,9 +548,9 @@ const ViewMain = ({
         now,
         currentUserId: model.auth.currentUser.userId,
         profiles: model.profile.profiles,
-        onPush: (route) =>
+        push: (route) =>
           dispatch({ t: "routing", c: { t: "clicked-link", route } }),
-        onBack: () => dispatch({ t: "routing", c: { t: "clicked-back" } }),
+        back: () => dispatch({ t: "routing", c: { t: "clicked-back" } }),
       }}
     />
   );
@@ -563,7 +563,7 @@ const ViewLoggedOut = ({
 }: {
   model: Model;
   dispatch: (m: Msg) => void;
-  ctx: UnauthenticatedViewCtx;
+  ctx: AnonymousViewCtx;
 }) => {
   if (model.routing.route.t === "auth") {
     return (
@@ -723,7 +723,7 @@ const ViewBottomBar = ({
           return (
             <button
               key={Route.encode(item.route)}
-              onClick={() => ctx.onPush(item.route)}
+              onClick={() => ctx.push(item.route)}
               className={cn(
                 "flex flex-1 flex-col items-center justify-center gap-0.5 pb-2 pt-1",
                 isSelected ? "text-blue-500" : "opacity-80"

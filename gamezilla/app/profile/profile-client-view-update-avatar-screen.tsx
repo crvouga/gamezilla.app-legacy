@@ -24,7 +24,7 @@ export const ViewUpdateAvatarScreen = ({
           <Button
             color="primary"
             variant="text"
-            onClick={() => ctx.onBack()}
+            onClick={() => ctx.back()}
             text="Cancel"
           />
         }

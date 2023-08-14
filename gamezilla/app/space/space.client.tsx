@@ -648,7 +648,7 @@ const ViewTopBar = ({
         <ActionButton
           label="Home"
           icon={<IconHome className="h-6 w-6" />}
-          onClick={() => ctx.onPush({ t: "space", c: { t: "space-list" } })}
+          onClick={() => ctx.push({ t: "space", c: { t: "space-list" } })}
         />
       </div>
 
@@ -685,7 +685,7 @@ export const ViewSpaceNotFound = ({ ctx }: { ctx: ViewCtx }) => {
     <div className="flex flex-1 flex-col items-center justify-center gap-4">
       <p className="text-center text-2xl">Space not found</p>
       <Button
-        onClick={() => ctx.onPush({ t: "space", c: { t: "space-list" } })}
+        onClick={() => ctx.push({ t: "space", c: { t: "space-list" } })}
         size="lg"
         variant="contained"
         color="primary"
@@ -720,7 +720,7 @@ export const ViewCurrentSpaceBar = ({
       <button
         className="flex flex-1 items-center overflow-hidden"
         onClick={() => {
-          ctx.onPush({
+          ctx.push({
             t: "space",
             c: { t: "space", spaceId: space.spaceId },
           });

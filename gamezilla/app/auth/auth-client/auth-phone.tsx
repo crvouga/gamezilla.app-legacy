@@ -7,10 +7,7 @@ import {
   Task,
   p,
 } from "gamezilla/@SHARED/core";
-import {
-  ClientAppMsg,
-  UnauthenticatedViewCtx,
-} from "gamezilla/app/@SHARED/client";
+import { ClientAppMsg, AnonymousViewCtx } from "gamezilla/app/@SHARED/client";
 import {
   Button,
   IconPhone,
@@ -193,12 +190,12 @@ export const View = ({
 }: {
   model: Model;
   dispatch: (msg: Msg) => void;
-  ctx: UnauthenticatedViewCtx;
+  ctx: AnonymousViewCtx;
 }) => {
   return (
     <div className="w-full flex-1">
       <TopBar
-        left={<TopBarBackButton onClick={ctx.onBack} />}
+        left={<TopBarBackButton onClick={ctx.back} />}
         title="Login With Phone"
       />
 

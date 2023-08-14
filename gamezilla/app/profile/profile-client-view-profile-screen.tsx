@@ -47,13 +47,13 @@ export const ViewProfileScreen = ({
           </p>
           <Button
             onClick={() =>
-              ctx.onPush({ t: "profile", c: { t: "profile-update" } })
+              ctx.push({ t: "profile", c: { t: "profile-update" } })
             }
             className="w-full"
             start={<IconUserPen className="h-6 w-6" />}
             text="Edit Profile"></Button>
           <Button
-            onClick={() => ctx.onPush({ t: "logout" })}
+            onClick={() => ctx.push({ t: "logout" })}
             className="w-full"
             start={<IconArrowLeftOnRect className="h-6 w-6" />}
             text="Logout"
@@ -66,7 +66,7 @@ export const ViewProfileScreen = ({
   return (
     <div className="flex h-full w-full flex-col">
       <TopBar
-        left={<TopBarBackButton onClick={ctx.onBack} />}
+        left={<TopBarBackButton onClick={ctx.back} />}
         title={profile.username}
       />
       <div className="flex flex-col items-center justify-center gap-4 overflow-x-hidden p-4">

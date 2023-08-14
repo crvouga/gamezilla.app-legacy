@@ -8,14 +8,14 @@ type Profile = {
   avatarUrl: string;
 };
 
-export type UnauthenticatedViewCtx = {
-  onPush: (route: Route.Route) => void;
-  onBack: () => void;
+export type AnonymousViewCtx = {
+  push: (route: Route.Route) => void;
+  back: () => void;
   now: Posix;
   profiles: { [userId: UserId]: Profile };
 };
 
-export type ViewCtx = UnauthenticatedViewCtx & {
+export type ViewCtx = AnonymousViewCtx & {
   currentUserId: UserId;
 };
 

@@ -14,7 +14,7 @@ import {
   ClientAppMsg,
   Route,
   RouteAuth,
-  UnauthenticatedViewCtx,
+  AnonymousViewCtx,
 } from "gamezilla/app/@SHARED/client";
 import { UserId } from "gamezilla/app/@SHARED/data";
 import { supabaseClient } from "gamezilla/app/@SHARED/third-party-services";
@@ -257,7 +257,7 @@ export const ViewLoggedIn = ({
 }: {
   model: ClientModel;
   dispatch: (m: ClientMsg) => void;
-  ctx: UnauthenticatedViewCtx;
+  ctx: AnonymousViewCtx;
 }) => {
   return <ViewLogoutScreen ctx={ctx} model={model} dispatch={dispatch} />;
 };
@@ -271,7 +271,7 @@ export const ViewLoggedOut = ({
   route: RouteAuth;
   model: ClientModel;
   dispatch: (m: ClientMsg) => void;
-  ctx: UnauthenticatedViewCtx;
+  ctx: AnonymousViewCtx;
 }) => {
   if (route.t === "login") {
     return <ViewLoginScreen ctx={ctx} model={model} dispatch={dispatch} />;
@@ -314,7 +314,7 @@ const ViewLoginScreen = ({
   ctx,
   model,
 }: {
-  ctx: UnauthenticatedViewCtx;
+  ctx: AnonymousViewCtx;
   model: ClientModel;
   dispatch: (msg: ClientMsg) => void;
 }) => {
@@ -348,7 +348,7 @@ const ViewLoginScreen = ({
 
           <Button
             onClick={() =>
-              ctx.onPush({
+              ctx.push({
                 t: "auth",
                 c: { t: "login-phone", isSelectingCountry: false },
               })
@@ -362,7 +362,7 @@ const ViewLoginScreen = ({
           {false && (
             <Button
               onClick={() =>
-                ctx.onPush({ t: "auth", c: { t: "login-email-link" } })
+                ctx.push({ t: "auth", c: { t: "login-email-link" } })
               }
               size="lg"
               className="w-full"
@@ -381,7 +381,7 @@ export const ViewLogoutScreen = ({
   dispatch,
   ctx,
 }: {
-  ctx: UnauthenticatedViewCtx;
+  ctx: AnonymousViewCtx;
   model: ClientModel;
   dispatch: (msg: ClientMsg) => void;
 }) => {
@@ -398,10 +398,10 @@ export const ViewLogoutScreen = ({
         dispatch({ t: "logout" });
       }}
       onClose={() => {
-        ctx.onBack();
+        ctx.back();
       }}
       onCancel={() => {
-        ctx.onBack();
+        ctx.back();
       }}
     />
   );
