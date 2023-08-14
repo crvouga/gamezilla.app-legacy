@@ -405,7 +405,11 @@ export const Chessboard = (props: ChessboardProps) => {
               height={SCALE * 1}
               stroke="none"
               fill={
-                checker.color === "white"
+                props.model?.previousMove?.from === square
+                  ? "orange"
+                  : props.model?.previousMove?.to === square
+                  ? "yellow"
+                  : checker.color === "white"
                   ? THEME.lightChecker
                   : THEME.darkChecker
               }
