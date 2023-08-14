@@ -1,3 +1,4 @@
+import { Chess } from "chess.js";
 import { VDom, toInlineStyles } from "gamezilla/app/@SHARED/ui";
 import {
   Color,
@@ -5,15 +6,11 @@ import {
   Piece,
   Square,
   fenToPieces,
-  isLowercaseSquare,
   positionToSquare,
   sanToSquare,
   squareToChecker,
-  toColor,
   toLowercaseSquare,
-  toUppercaseSquare,
 } from "../../chess";
-import { Chess } from "chess.js";
 
 //
 //
@@ -125,21 +122,23 @@ const TOUCHED_SCALED_OFFSET = TOUCHED_SCALED * 0.5;
 const TOUCHED_Y_OFFSET = SCALE + SCALE * 0.25;
 
 const onDragStartOrMove =
-  (props: ChessboardProps) => (event: MouseEvent | TouchEvent) => {
+  (props: ChessboardProps) => (e: MouseEvent | TouchEvent) => {
+    e.preventDefault(); // prevent swipe gestures on iOS
+
     let clientX: number;
     let clientY: number;
 
-    if (event instanceof MouseEvent) {
-      clientX = event.clientX;
-      clientY = event.clientY;
-    } else if (event instanceof TouchEvent && event.touches[0]) {
-      clientX = event.touches[0].clientX;
-      clientY = event.touches[0].clientY;
+    if (e instanceof MouseEvent) {
+      clientX = e.clientX;
+      clientY = e.clientY;
+    } else if (e instanceof TouchEvent && e.touches[0]) {
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
     } else {
       return;
     }
 
-    const target = event.currentTarget;
+    const target = e.currentTarget;
 
     if (!(target instanceof SVGSVGElement)) {
       return;
