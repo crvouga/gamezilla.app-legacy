@@ -122,7 +122,17 @@ export const updateFromClient = async (input: {
 
       return {
         model,
-        cmd: sendToClient({ t: "list", result: got }),
+        cmd: sendToClient({
+          t: "list",
+          profiles:
+            got.t === "ok"
+              ? got.value.reduce(
+                  (acc, space) => ({ ...acc, ...space.profileCache }),
+                  {}
+                )
+              : {},
+          result: got,
+        }),
       };
     }
 
@@ -165,6 +175,12 @@ export const updateFromClient = async (input: {
           ...space.users,
           [ctx.currentUserId]: ctx.currentUserId,
         },
+        profileCache: msg.profile
+          ? {
+              ...space.profileCache,
+              [ctx.currentUserId]: msg.profile,
+            }
+          : space.profileCache,
       };
 
       const mutated = await spaceDb.set(spaceNew);
@@ -173,7 +189,14 @@ export const updateFromClient = async (input: {
         return { model, cmd: sendToClient({ ...msg, result: mutated }) };
       }
 
-      return { model, cmd: broadcast({ ...msg, result: Ok(spaceNew) }) };
+      return {
+        model,
+        cmd: broadcast({
+          ...msg,
+          profiles: spaceNew.profileCache,
+          result: Ok(spaceNew),
+        }),
+      };
     }
 
     case "destroy": {
@@ -208,7 +231,14 @@ export const updateFromClient = async (input: {
         return { model, cmd: sendToClient({ ...msg, result: mutated }) };
       }
 
-      return { model, cmd: broadcast({ ...msg, result: Ok(space) }) };
+      return {
+        model,
+        cmd: broadcast({
+          ...msg,
+          profiles: space.profileCache,
+          result: Ok(space),
+        }),
+      };
     }
 
     case "create": {
@@ -240,6 +270,11 @@ export const updateFromClient = async (input: {
         users: {
           [ctx.currentUserId]: ctx.currentUserId,
         },
+        profileCache: msg.profile
+          ? {
+              [ctx.currentUserId]: msg.profile,
+            }
+          : {},
       };
 
       const mutated = await spaceDb.set(spaceNew);
@@ -248,7 +283,14 @@ export const updateFromClient = async (input: {
         return { model, cmd: sendToClient({ ...msg, result: mutated }) };
       }
 
-      return { model, cmd: broadcast({ ...msg, result: Ok(spaceNew) }) };
+      return {
+        model,
+        cmd: broadcast({
+          ...msg,
+          profiles: spaceNew.profileCache,
+          result: Ok(spaceNew),
+        }),
+      };
     }
 
     case "input-game": {
@@ -287,6 +329,12 @@ export const updateFromClient = async (input: {
         const spaceNew: Space<GameServer.Model> = {
           ...space,
           game: null,
+          profileCache: msg.profile
+            ? {
+                ...space.profileCache,
+                [msg.profile.userId]: msg.profile,
+              }
+            : space.profileCache,
         };
 
         const mutated = await spaceDb.set(spaceNew);
@@ -295,7 +343,14 @@ export const updateFromClient = async (input: {
           return { model, cmd: sendToClient({ ...msg, result: mutated }) };
         }
 
-        return { model, cmd: broadcast({ ...msg, result: Ok(spaceNew) }) };
+        return {
+          model,
+          cmd: broadcast({
+            ...msg,
+            profiles: spaceNew.profileCache,
+            result: Ok(spaceNew),
+          }),
+        };
       }
 
       const initial = GameServer.init({ gameName: msg.gameName })({
@@ -310,6 +365,12 @@ export const updateFromClient = async (input: {
       const spaceNew: Space<GameServer.Model> = {
         ...space,
         game: initial.model,
+        profileCache: msg.profile
+          ? {
+              ...space.profileCache,
+              [msg.profile.userId]: msg.profile,
+            }
+          : space.profileCache,
       };
 
       const mutated = await spaceDb.set(spaceNew);
@@ -321,7 +382,11 @@ export const updateFromClient = async (input: {
       return {
         model,
         cmd: Cmd.batch([
-          broadcast({ ...msg, result: Ok(spaceNew) }),
+          broadcast({
+            ...msg,
+            profiles: spaceNew.profileCache,
+            result: Ok(spaceNew),
+          }),
           Cmd.map_(
             (m): ServerMsg => ({
               t: "game",
@@ -363,6 +428,12 @@ export const updateFromClient = async (input: {
       const spaceNew: Space<GameServer.Model> = {
         ...space,
         users: removeKey(ctx.currentUserId, space.users),
+        profileCache: msg.profile
+          ? {
+              ...space.profileCache,
+              [msg.profile.userId]: msg.profile,
+            }
+          : space.profileCache,
       };
 
       const updated = !spaceNew.game
@@ -385,7 +456,11 @@ export const updateFromClient = async (input: {
       return {
         model,
         cmd: Cmd.batch([
-          broadcast({ ...msg, result: Ok(spaceNew) }),
+          broadcast({
+            ...msg,
+            profiles: spaceNew.profileCache,
+            result: Ok(spaceNew),
+          }),
           Cmd.map_(
             (c): ServerMsg => ({ t: "game", spaceId: space.spaceId, c }),
             updated.cmd

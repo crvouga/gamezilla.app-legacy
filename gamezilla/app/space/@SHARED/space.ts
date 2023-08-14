@@ -1,5 +1,5 @@
 import { ClientCtx, ViewCtx } from "gamezilla/app/@SHARED/client";
-import { SpaceId, UserId } from "gamezilla/app/@SHARED/data";
+import { Profile, SpaceId, UserId } from "gamezilla/app/@SHARED/data";
 import { ReqCtx, ServerCtx } from "gamezilla/app/@SHARED/server";
 
 /**
@@ -15,7 +15,11 @@ export type Space<GameModel> = {
   users: {
     [userId: UserId]: UserId;
   };
+  //
   game?: GameModel | null;
+  profileCache?: {
+    [userId: UserId]: Profile;
+  };
 };
 
 export type SpaceMsg =

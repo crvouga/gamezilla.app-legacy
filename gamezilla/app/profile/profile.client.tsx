@@ -225,7 +225,15 @@ const loadProfiles = (
 const gotProfiles = (msg: ClientAppMsg, model: Model): { model: Model } => {
   switch (msg.t) {
     case "got-profiles": {
-      return { model };
+      return {
+        model: {
+          ...model,
+          profiles: {
+            ...model.profiles,
+            ...msg.profiles,
+          },
+        },
+      };
     }
     default: {
       return { model };

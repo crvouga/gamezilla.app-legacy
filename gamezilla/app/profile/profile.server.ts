@@ -8,14 +8,18 @@ import {
   Task,
   p,
 } from "gamezilla/@SHARED/core";
-import { ProfileAvatar, UserId, Username } from "gamezilla/app/@SHARED/data";
+import {
+  ProfileAvatar,
+  UserId,
+  Username,
+  Profile,
+} from "gamezilla/app/@SHARED/data";
 import {
   supabaseClient,
   definitions,
 } from "gamezilla/app/@SHARED/third-party-services";
 import { ServerAppMsg, ReqCtx } from "gamezilla/app/@SHARED/server";
 import {
-  Profile,
   Req,
   ServerModel,
   ServerMsg,
@@ -275,9 +279,10 @@ export const create =
     return Result.Err(response.error.message);
   };
 
+type ThemeMode = "Dark" | "Light" | "System";
 export const rowThemeModeToThemeMode = (
   themeMode: definitions["user_profile"]["theme_mode"]
-): Profile["themeMode"] => {
+): ThemeMode => {
   switch (themeMode) {
     case "DARK":
       return "Dark";
@@ -291,7 +296,7 @@ export const rowThemeModeToThemeMode = (
 };
 
 export const fromThemeMode = (
-  themeMode: Profile["themeMode"] | null | undefined
+  themeMode: ThemeMode | null | undefined
 ): definitions["user_profile"]["theme_mode"] => {
   switch (themeMode) {
     case "Dark":

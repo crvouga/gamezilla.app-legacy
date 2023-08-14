@@ -1,9 +1,9 @@
 import { RemoteResult, Result } from "gamezilla/@SHARED/core";
 import {
+  Profile,
   ProfileAvatarSeed,
   ProfileAvatarStyle,
   UserId,
-  Username,
 } from "gamezilla/app/@SHARED/data";
 
 //
@@ -13,13 +13,6 @@ import {
 //
 //
 //
-
-export type Profile = {
-  userId: UserId;
-  username: Username;
-  avatarUrl: string;
-  themeMode?: "Light" | "Dark" | "System" | null;
-};
 
 export type ClientModel = {
   profiles: {

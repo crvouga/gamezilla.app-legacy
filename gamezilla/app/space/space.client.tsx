@@ -275,6 +275,9 @@ export const updateFromServer = ({
       return {
         model: { ...merged.model, req: { ...model.req, list: Ok(null) } },
         cmd: merged.cmd,
+        msgs: msg.profiles
+          ? [{ t: "got-profiles", profiles: msg.profiles }]
+          : [],
       };
     }
 
@@ -292,6 +295,9 @@ export const updateFromServer = ({
           spaces: removeKey(msg.result.value.spaceId, model.spaces),
           req: { ...model.req, [msg.t]: Ok(null) },
         },
+        msgs: msg.profiles
+          ? [{ t: "got-profiles", profiles: msg.profiles }]
+          : [],
       };
     }
 
@@ -316,6 +322,9 @@ export const updateFromServer = ({
           req: { ...model.req, [msg.t]: Ok(null) },
         },
         cmd: merged.cmd,
+        msgs: msg.profiles
+          ? [{ t: "got-profiles", profiles: msg.profiles }]
+          : [],
       };
     }
   }

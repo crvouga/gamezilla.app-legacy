@@ -1,4 +1,4 @@
-import { UserId, Username } from "gamezilla/app/@SHARED/data";
+import { Profile, UserId } from "gamezilla/app/@SHARED/data";
 import { Route } from "./client-route";
 
 export type ClientAppMsg =
@@ -18,9 +18,3 @@ export type ToChild =
 export type ToParent<ToServer = unknown> =
   | { t: "send-to-server"; msg: ToServer }
   | { t: "enqueue-toast"; text: string; duration?: number };
-
-export type Profile = {
-  userId: UserId;
-  username: Username;
-  avatarUrl: string;
-};
