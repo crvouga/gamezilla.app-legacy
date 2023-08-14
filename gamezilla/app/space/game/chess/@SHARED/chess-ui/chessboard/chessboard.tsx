@@ -69,6 +69,7 @@ const THEME = {
 //
 //
 //
+//
 
 let touched: {
   node: EventTarget & SVGSVGElement;
@@ -119,7 +120,14 @@ const WIDTH = GRID_DIVISIONS * SCALE;
 const HEIGHT = GRID_DIVISIONS * SCALE;
 const TOUCHED_SCALED = SCALE * 2;
 const TOUCHED_SCALED_OFFSET = TOUCHED_SCALED * 0.5;
-const TOUCHED_Y_OFFSET = SCALE + SCALE * 0.25;
+const TOUCHED_Y_OFFSET = SCALE;
+
+//
+//
+//
+//
+//
+//
 
 const onDragStartOrMove =
   (props: ChessboardProps) => (e: MouseEvent | TouchEvent) => {
@@ -236,6 +244,7 @@ const showSourceCheckerUI = (orientation: Color) => {
     return;
   }
 };
+
 const hideSourceCheckerUI = (orientation: Color) => {
   if (!touched) {
     return;
@@ -298,6 +307,11 @@ const onDragEnd = (props: ChessboardProps) => () => {
     }
   }
 
+  if (!target) {
+    touched.node.setAttribute("x", `${touched.source.x}`);
+    touched.node.setAttribute("y", `${touched.source.y}`);
+  }
+
   hideSourceCheckerUI(props.orientation ?? "w");
   setVisibleDropZoneNode(null);
   setLegalMoveDotsFill(props, "none");
@@ -356,6 +370,21 @@ const toLegalMoveDotId = (square: Square) => {
   return `legal-move-dot-${square}`;
 };
 
+const onDragCancel = (props: ChessboardProps) => () => {
+  hideSourceCheckerUI(props.orientation ?? "w");
+  setVisibleDropZoneNode(null);
+  setLegalMoveDotsFill(props, "none");
+
+  if (touched) {
+    touched.node.setAttribute("x", `${touched.source.x}`);
+    touched.node.setAttribute("y", `${touched.source.y}`);
+    touched.node.width.baseVal.value = SCALE * 1;
+    touched.node.height.baseVal.value = SCALE * 1;
+  }
+
+  touched = null;
+};
+
 export const Chessboard = (props: ChessboardProps) => {
   const board = props.model?.fen
     ? fenToPieces(props.model.fen, props.orientation ?? "w")
@@ -364,7 +393,6 @@ export const Chessboard = (props: ChessboardProps) => {
   if (props.model?.fen) {
     instance.load(props.model?.fen);
   }
-  console.log("RENDER");
 
   return (
     <svg
@@ -385,10 +413,14 @@ export const Chessboard = (props: ChessboardProps) => {
         userSelect: "none",
         touchAction: "none",
       })}
+      onMouseLeave={onDragCancel(props)}
+      onTouchCancel={onDragCancel(props)}
+      //
       onTouchStart={onDragStartOrMove(props)}
       onMouseDown={onDragStartOrMove(props)}
       onTouchMove={onDragStartOrMove(props)}
       onMouseMove={onDragStartOrMove(props)}
+      //
       onTouchEnd={onDragEnd(props)}
       onMouseUp={onDragEnd(props)}>
       <g>
@@ -438,7 +470,7 @@ export const Chessboard = (props: ChessboardProps) => {
         })}
       </g>
 
-      {/* Drop zone */}
+      {/* drop zone */}
       <g>
         {CHECKERS.map((checker) => {
           const square = positionToSquare(checker, props.orientation ?? "w");
@@ -459,6 +491,7 @@ export const Chessboard = (props: ChessboardProps) => {
         })}
       </g>
 
+      {/* pieces */}
       <g>
         {board?.map(({ piece, x, y }) => {
           return (
