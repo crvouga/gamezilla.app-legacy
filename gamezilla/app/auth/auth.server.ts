@@ -1,5 +1,9 @@
 import { Cmd } from "gamezilla/@SHARED/core";
-import { AnonymousReqCtx, ServerAppMsg } from "gamezilla/app/@SHARED/server";
+import {
+  AnonymousReqCtx,
+  ServerEffect,
+  ServerEvent,
+} from "gamezilla/app/@SHARED/server";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./auth.core";
 
 //
@@ -49,7 +53,7 @@ export const updateFromClient = ({
 }): {
   model: Model;
   cmd?: Cmd<Msg>;
-  msgs?: ServerAppMsg[];
+  events?: ServerEvent[];
 } => {
   if (msg.t === "client-authenticated") {
     return {
@@ -66,7 +70,7 @@ export const updateFromClient = ({
 
       cmd: sendBack({ t: "acknowledged", msg: msg }),
 
-      msgs: [
+      events: [
         {
           t: "client-authenticated",
           clientId: ctx.clientId,

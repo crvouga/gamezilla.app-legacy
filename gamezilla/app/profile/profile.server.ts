@@ -18,7 +18,11 @@ import {
   supabaseClient,
   definitions,
 } from "gamezilla/app/@SHARED/third-party-services";
-import { ServerAppMsg, ReqCtx } from "gamezilla/app/@SHARED/server";
+import {
+  ServerEffect,
+  ReqCtx,
+  ServerEvent,
+} from "gamezilla/app/@SHARED/server";
 import {
   Req,
   ServerModel,
@@ -103,7 +107,7 @@ export const updateFromParent = ({
   model,
 }: {
   sendToClient: (clientId: ClientId[], m: ToClient) => Cmd<Msg>;
-  msg: ServerAppMsg;
+  msg: ServerEvent;
   model: Model;
 }): {
   model: Model;

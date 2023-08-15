@@ -11,8 +11,9 @@ import {
 import {
   AnonymousReqCtx,
   ReqCtx,
-  ServerAppMsg,
+  ServerEffect,
   ServerCtx,
+  ServerEvent,
 } from "gamezilla/app/@SHARED/server";
 import { UserId } from "gamezilla/app/@SHARED/data";
 import { AuthServer } from "gamezilla/app/auth";
@@ -37,9 +38,7 @@ import {
 //
 //
 
-type Model = ServerModel;
-
-export const init: { model: Model; cmd?: Cmd<Msg> } = {
+export const init: { model: ServerModel; cmd?: Cmd<ServerMsg> } = {
   model: {
     sessions: {},
     space: SpaceServer.init,
@@ -58,21 +57,25 @@ export const init: { model: Model; cmd?: Cmd<Msg> } = {
 //
 //
 
-type Msg = ServerMsg;
-
 export const update = async (input: {
-  msg: Msg;
-  model: Model;
+  msg: ServerMsg;
+  model: ServerModel;
   ctx: ServerCtx;
   broadcast: (m: ToClient) => Cmd;
   sendToClient: (clientIds: ClientId[], m: ToClient) => Cmd;
 }): Promise<{
-  model: Model;
-  cmd?: Cmd<Msg>;
+  model: ServerModel;
+  cmd?: Cmd<ServerMsg>;
 }> => {
   const updated = await updateMain(input);
 
-  const appMsgs = updated.msgs ?? [];
+  //
+  //
+  //
+  //
+  //
+
+  const appMsgs = updated.events ?? [];
 
   const appUpdated = appMsgs.reduce(
     (acc, msg) =>
@@ -83,6 +86,28 @@ export const update = async (input: {
     updated
   );
 
+  //
+  //
+  //
+  //
+  //
+
+  const cmdList: Cmd<ServerMsg>[] = [];
+
+  for (const eff of appUpdated.eff ?? []) {
+    if (eff.t === "send-to-client") {
+      cmdList.push(input.sendToClient(eff.clientIds, eff.msg));
+    }
+    if (eff.t === "broadcast") {
+      cmdList.push(input.broadcast(eff.msg));
+    }
+    if (eff.t === "send-to-user") {
+      cmdList.push(
+        sendToUser(input.sendToClient, appUpdated.model, eff.userIds, eff.msg)
+      );
+    }
+  }
+
   return appUpdated;
 };
 
@@ -90,18 +115,17 @@ const updateMain = async ({
   msg,
   model,
   ctx,
-  broadcast,
   sendToClient,
 }: {
-  msg: Msg;
-  model: Model;
+  msg: ServerMsg;
+  model: ServerModel;
   ctx: ServerCtx;
-  broadcast: (m: ToClient) => Cmd;
   sendToClient: (clientIds: ClientId[], m: ToClient) => Cmd;
 }): Promise<{
-  model: Model;
-  cmd?: Cmd<Msg>;
-  msgs?: ServerAppMsg[];
+  model: ServerModel;
+  cmd?: Cmd<ServerMsg>;
+  events?: ServerEvent[];
+  eff?: ServerEffect<ToClient>[];
 }> => {
   if (msg.t === "wire") {
     return updateWire({ msg: msg.c, model });
@@ -116,7 +140,7 @@ const updateMain = async ({
       },
       msg: msg.c,
       model,
-      broadcast,
+
       sendToClient,
     });
   }
@@ -189,10 +213,10 @@ const updateWire = ({
   model,
 }: {
   msg: ServerWireMsg;
-  model: Model;
+  model: ServerModel;
 }): {
-  model: Model;
-  msgs?: ServerAppMsg[];
+  model: ServerModel;
+  events?: ServerEvent[];
 } => {
   if (msg.t === "client-connected") {
     const sessionId = msg.sessionId;
@@ -210,7 +234,7 @@ const updateWire = ({
           [sessionNew.sessionId]: sessionNew,
         },
       },
-      msgs: [
+      events: [
         {
           ...msg,
           userId: model.auth.sessions[msg.sessionId]?.userId,
@@ -245,13 +269,13 @@ const updateFromParent = ({
   model,
   sendToClient,
 }: {
-  msg: ServerAppMsg;
-  model: Model;
+  msg: ServerEvent;
+  model: ServerModel;
   broadcast: (m: ToClient) => Cmd;
   sendToClient: (clientIds: ClientId[], m: ToClient) => Cmd;
 }): {
-  model: Model;
-  cmd?: Cmd<Msg>;
+  model: ServerModel;
+  cmd?: Cmd<ServerMsg>;
 } => {
   const spaceUpdated = SpaceServer.updateFromParent({
     msg,
@@ -273,7 +297,7 @@ const updateFromParent = ({
       space: spaceUpdated.model,
       profile: profileUpdated.model,
     },
-    cmd: Cmd.batch<Msg>([
+    cmd: Cmd.batch<ServerMsg>([
       Cmd.t("space", spaceUpdated.cmd),
       Cmd.t("profile", profileUpdated.cmd),
     ]),
@@ -284,18 +308,16 @@ const updateFromClient = async ({
   msg,
   model,
   ctx,
-  broadcast,
   sendToClient,
 }: {
   ctx: AnonymousReqCtx;
   msg: ToServer;
-  model: Model;
-  broadcast: (m: ToClient) => Cmd;
+  model: ServerModel;
   sendToClient: (clientIds: ClientId[], m: ToClient) => Cmd;
 }): Promise<{
-  model: Model;
-  cmd?: Cmd<Msg>;
-  msgs?: ServerAppMsg[];
+  model: ServerModel;
+  cmd?: Cmd<ServerMsg>;
+  eff?: ServerEffect<ToClient>[];
 }> => {
   const currentUserId = model.auth.sessions[ctx.sessionId]?.userId;
   const authReqCtx: ReqCtx | null = currentUserId
@@ -363,18 +385,19 @@ const updateFromClient = async ({
       ctx: authReqCtx,
       msg: msg.c,
       model: model.space,
-      broadcast: (c) => broadcast({ t: "space", c }),
       sendToClient: (c) => sendToClient([ctx.clientId], { t: "space", c }),
       sendToUser: (userIds, c) =>
         sendToUser(sendToClient, model, userIds, { t: "space", c }),
     });
 
     return {
+      ...updated,
       model: {
         ...model,
         space: updated.model,
       },
-      cmd: Cmd.t("space", updated.cmd ?? Cmd.None),
+      cmd: Cmd.t("space", updated.cmd),
+      eff: ServerEffect.tag("space", updated.eff),
     };
   }
 
@@ -383,7 +406,7 @@ const updateFromClient = async ({
 
 const sendToUser = (
   sendToClient: (clientIds: ClientId[], msg: ToClient) => Cmd,
-  model: Model,
+  model: ServerModel,
   userIds: UserId[],
   msg: ToClient
 ): Cmd => {
@@ -430,15 +453,15 @@ export const subscriptions = ({
   model,
   ctx,
 }: {
-  model: Model;
+  model: ServerModel;
   ctx: ServerCtx;
-}): Sub<Msg> => {
+}): Sub<ServerMsg> => {
   return Sub.batch([
     Sub.tag("space", SpaceServer.subscriptions),
     Sub.tag("wire", onWireMsg),
     Sub.map(
       onClientMsg,
-      ({ sessionId, clientId, msg }): Msg => ({
+      ({ sessionId, clientId, msg }): ServerMsg => ({
         t: "▶",
         sessionId,
         clientId,

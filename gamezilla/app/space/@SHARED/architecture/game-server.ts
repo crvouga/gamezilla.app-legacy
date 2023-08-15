@@ -1,5 +1,5 @@
 import { Cmd, Sub } from "gamezilla/@SHARED/core";
-import { ServerAppMsg } from "gamezilla/app/@SHARED/server";
+import { ServerEffect, ServerEvent } from "gamezilla/app/@SHARED/server";
 import { SpaceMsg, SpaceReqCtx, SpaceServerCtx } from "../space";
 //
 //
@@ -23,7 +23,7 @@ export type GameServer<Model, Msg, ToClient, ToServer> = {
   }) => {
     model: Model;
     cmd?: Cmd<Msg>;
-    msgs?: ServerAppMsg[];
+    msgs?: ServerEvent[];
   };
 
   /**
@@ -37,7 +37,7 @@ export type GameServer<Model, Msg, ToClient, ToServer> = {
   }) => {
     model: Model;
     cmd?: Cmd<Msg>;
-    msgs?: ServerAppMsg[];
+    msgs?: ServerEvent[];
   };
 
   /**
@@ -52,7 +52,7 @@ export type GameServer<Model, Msg, ToClient, ToServer> = {
   }) => {
     model: Model;
     cmd?: Cmd<Msg>;
-    msgs?: ServerAppMsg[];
+    msgs?: ServerEvent[];
   };
 
   /**
@@ -67,7 +67,7 @@ export type GameServer<Model, Msg, ToClient, ToServer> = {
   }) => {
     model: Model;
     cmd?: Cmd<Msg>;
-    msgs?: ServerAppMsg[];
+    msgs?: ServerEvent[];
   };
 
   subscriptions: (intervalId: string, model: Model) => Sub<Msg>;
