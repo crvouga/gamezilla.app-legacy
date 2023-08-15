@@ -121,3 +121,29 @@ export const findSpaceByUserId = (model: ClientModel, userId: UserId) => {
   }
   return null;
 };
+
+//
+//
+//
+// Events
+//
+//
+//
+
+export type SpaceEventStore = {
+  getSpaceIdByUserId: (userId: UserId) => Promise<SpaceId | null>;
+  get: (spaceId: SpaceId) => Promise<Event[]>;
+  append: (spaceId: SpaceId, event: Event) => Promise<null>;
+};
+
+export type Event =
+  | { t: "user-left-space"; spaceId: SpaceId; userId: UserId }
+  | { t: "user-joined-space"; spaceId: SpaceId; userId: UserId }
+  | { t: "user-created-space"; spaceId: SpaceId; userId: UserId }
+  | { t: "user-destroyed-space"; spaceId: SpaceId; userId: UserId }
+  | {
+      t: "user-inputted-game";
+      userId: UserId;
+      spaceId: SpaceId;
+      gameName?: Game.GameName | null;
+    };
