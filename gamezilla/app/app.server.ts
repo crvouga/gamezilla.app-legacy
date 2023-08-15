@@ -108,7 +108,12 @@ export const update = async (input: {
     }
   }
 
-  return appUpdated;
+  //
+  //
+  //
+  //
+
+  return { ...appUpdated, cmd: Cmd.batch([...cmdList, appUpdated.cmd]) };
 };
 
 const updateMain = async ({
