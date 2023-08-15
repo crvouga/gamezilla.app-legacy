@@ -494,7 +494,6 @@ export const Chessboard = (props: ChessboardProps) => {
       {/* pieces */}
       <g>
         {pieces?.map(({ piece, x, y }) => {
-          const square = positionToSquare({ x, y }, props.orientation ?? "w");
           return (
             <svg
               key={[piece, x, y, props.model?.fen].join(",")}
