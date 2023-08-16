@@ -48,6 +48,14 @@ const yieldTerminals = function* (model: ViewModel): Generator<DraftTerminal> {
   }
 };
 
+const STATIC_STYLES = toInlineStyles({
+  WebkitUserSelect: "none",
+  MozUserSelect: "none",
+  msUserSelect: "none",
+  userSelect: "none",
+  touchAction: "none",
+});
+
 /**
  * Renders the Flow Grid UI
  */
@@ -79,13 +87,7 @@ export const View = ({
   return (
     <svg
       className={cn("w-full", className)}
-      style={toInlineStyles({
-        WebkitUserSelect: "none",
-        MozUserSelect: "none",
-        msUserSelect: "none",
-        userSelect: "none",
-        touchAction: "none",
-      })}
+      style={STATIC_STYLES}
       onContextMenu={(event) => {
         event.stopPropagation();
         event.preventDefault();
@@ -134,38 +136,26 @@ export const View = ({
 
 
       */}
-      <g stroke="green" stroke-width={0.01}>
-        <rect
-          x={model.bounds.min.x}
-          y={model.bounds.min.y}
-          width={model.bounds.max.x - model.bounds.min.x}
-          height={model.bounds.max.y - model.bounds.min.y}
-          stroke-width={0.02}
-          fill="transparent"
-        />
-        {map(yieldRange(model.bounds.min.x + 1, model.bounds.max.x), (x) => {
-          return (
-            <line
-              key={x}
-              x1={x}
-              y1={model.bounds.min.y}
-              x2={x}
-              y2={model.bounds.max.y}
-            />
-          );
-        })}
-        {map(yieldRange(model.bounds.min.y + 1, model.bounds.max.y), (y) => {
-          return (
-            <line
-              key={y}
-              x1={model.bounds.min.x}
-              y1={y}
-              x2={model.bounds.max.x}
-              y2={y}
-            />
-          );
-        })}
-      </g>
+      <defs>
+        <pattern id="grid" width="1" height="1" patternUnits="userSpaceOnUse">
+          <path
+            d="M 1 0 L 0 0 0 1"
+            fill="none"
+            stroke="green"
+            stroke-width="0.02"
+          />
+        </pattern>
+      </defs>
+
+      <rect
+        x={model.bounds.min.x}
+        y={model.bounds.min.y}
+        width={model.bounds.max.x - model.bounds.min.x}
+        height={model.bounds.max.y - model.bounds.min.y}
+        fill="url(#grid)"
+        stroke="green"
+        stroke-width="0.02"
+      />
 
       {/*
 
