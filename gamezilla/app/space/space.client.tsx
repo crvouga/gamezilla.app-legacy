@@ -627,7 +627,7 @@ const ViewPage = ({
   return (
     <div className="flex h-full w-full flex-1 flex-col">
       <ViewTopBar space={space} dispatch={dispatch} ctx={ctx} />
-      <div className="w-full flex-1 overflow-y-auto">
+      <div className="w-full flex-1 overflow-hidden">
         {space.game ? (
           <GameClient.View
             ctx={ctx}

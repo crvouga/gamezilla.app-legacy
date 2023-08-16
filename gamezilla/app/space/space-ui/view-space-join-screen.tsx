@@ -37,7 +37,7 @@ export const ViewSpaceJoinScreen = ({
         title={host?.username ? `${host.username}'s space` : "..."}
       />
 
-      <div className="flex w-full flex-1 flex-col overflow-y-auto">
+      <div className="flex w-full flex-1 flex-col overflow-y-scroll">
         {game ? (
           <ViewGameHeader
             title={gameNameToString(game.t)}

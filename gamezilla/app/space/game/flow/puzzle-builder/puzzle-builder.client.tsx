@@ -120,7 +120,7 @@ const View: Client["View"] = ({ model, dispatch, ctx }) => {
         <IconPenToSquare className="h-6 w-6" />
         Edit Mode
       </div>
-      <div className="flex w-full flex-1 flex-col items-center justify-center overflow-y-auto">
+      <div className="flex w-full flex-1 flex-col items-center justify-center overflow-y-scroll">
         <FlowGridUI.View
           model={{
             ...model.editUI,

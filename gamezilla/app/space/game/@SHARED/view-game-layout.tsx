@@ -12,7 +12,7 @@ export const GameLayout = ({
   return (
     <div
       className={cn(
-        "flex h-full w-full flex-col items-center justify-center overflow-y-auto",
+        "flex h-full w-full flex-col items-center justify-center overflow-y-scroll",
         isSpectating && "border-8 border-t-0 border-blue-600",
         className
       )}>

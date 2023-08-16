@@ -43,7 +43,7 @@ export const ViewSpaceListScreen = ({
         <div
           className={cn(
             isLoading && "pointer-events-none opacity-50",
-            "flex w-full flex-1 flex-col gap-4 overflow-y-auto px-5"
+            "flex w-full flex-1 flex-col gap-4 overflow-y-scroll px-5"
           )}>
           {spaces.map((space) => {
             const host = ctx.profiles[space.hostId];

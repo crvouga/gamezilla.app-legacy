@@ -24,52 +24,14 @@
         user-select: none;
         pointer-events: none;
       }
-
-      @tailwind base;
-      @tailwind components;
-      @tailwind utilities;
-      @keyframes slide {
-        0% {
-          transform: translateX(-100%);
-        }
-        100% {
-          transform: translateX(200%);
-        }
-      }
-
-      /*
-
-      Remove arrows from number input
-      https://stackoverflow.com/questions/26024771/styling-an-input-type-number
-
-      */
-      input[type="number"] {
-        -moz-appearance: textfield;
-        appearance: textfield;
-        margin: 0;
-      }
-      input[type="number"]::-webkit-inner-spin-button,
-      input[type="number"]::-webkit-outer-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-      }
-
-      /*
-      Remove autofill background color
-      */
-
-      input:-webkit-autofill,
-      input:-webkit-autofill:hover,
-      input:-webkit-autofill:focus,
-      input:-webkit-autofill:active {
-        -webkit-box-shadow: 0 0 0 30px white inset !important;
-      }
     </style>
   </head>
 
   <body>
     <div class="logo">🦕</div>
     <script type="module" src="./gamezilla/gamezilla.client.tsx"></script>
+
+    <!-- show runtime errors on screen -->
     <script>
       window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
         showError(errorMsg, url, lineNumber, column);

@@ -2,12 +2,10 @@ import {
   Browser,
   Program,
   createTransportClient,
-  toMsgPayload,
-  toMsgType,
 } from "gamezilla/@SHARED/core";
-// import { render } from "inferno";
 import { render } from "preact";
 import * as AppClient from "./app/app.client";
+import "./main.css";
 
 const env = {
   isDev: process.env.NODE_ENV === "development",
@@ -53,15 +51,5 @@ program.subscribe((model, ctx) => {
     document.body
   );
 });
-
-// let i = 0;
-// program.subscribe(async function (model, ctx, msg) {
-//   if (msg) {
-//     console.log(i, [toMsgType(msg), toMsgPayload(msg, {})]);
-//     i++;
-//   }
-//   // @ts-ignore
-//   window.model = model;
-// });
 
 program.start();

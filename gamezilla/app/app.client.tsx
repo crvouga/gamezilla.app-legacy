@@ -515,11 +515,11 @@ const ViewMain = ({
   }
 
   if (model.auth.currentUser.t === "not-asked") {
-    return <LoadingScreen />;
+    return <LogoScreen />;
   }
 
   if (model.auth.currentUser.t === "loading") {
-    return <LoadingScreen />;
+    return <LogoScreen />;
   }
   if (model.auth.currentUser.t === "logged-out") {
     return (
@@ -553,6 +553,16 @@ const ViewMain = ({
         back: () => dispatch({ t: "routing", c: { t: "clicked-back" } }),
       }}
     />
+  );
+};
+
+const LogoScreen = () => {
+  return (
+    <div
+      style={{ "font-size": "6rem" }}
+      className="flex h-full w-full items-center justify-center">
+      🦕
+    </div>
   );
 };
 

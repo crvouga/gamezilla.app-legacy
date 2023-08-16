@@ -174,7 +174,7 @@ export const VsUserSetupScreen = ({
 }) => {
   return (
     <div className="flex h-full w-full flex-1 flex-col overflow-hidden">
-      <div className="flex w-full flex-1 flex-col overflow-y-auto">
+      <div className="flex w-full flex-1 flex-col overflow-y-scroll">
         <ViewGameHeader title={title} renderCoverArt={renderCoverArt} />
 
         <VersusSection playerOne={playerOne} playerTwo={playerTwo} ctx={ctx} />

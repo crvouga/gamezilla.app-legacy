@@ -37,17 +37,17 @@ export const MainMenuScreen = ({
 
   return (
     <div className="flex h-full w-full flex-col overflow-y-hidden">
-      <div className="flex w-full flex-1 flex-col items-center overflow-y-auto">
+      <div className="flex w-full flex-1 flex-col items-center overflow-y-scroll">
         <ViewGameHeader title={title} renderCoverArt={renderCoverArt} />
 
-        <div className="flex w-full flex-col gap-6 p-4">
+        <div className="flex w-full flex-col p-4">
           {buttons.map(({ renderIcon, title, description, onClick }, index) => (
             <button
-              className="flex w-full items-center  gap-6 rounded-lg bg-neutral-800 p-6 active:opacity-70"
+              className="mb-6 flex w-full items-center rounded-lg bg-neutral-800 p-6 active:opacity-70"
               onClick={onClick}
               key={`${index} ${title}`}>
               {renderIcon({
-                className: "aspect-square w-12 h-12",
+                className: "aspect-square w-12 h-12 mr-4",
               })}
               <div className="flex-1 text-left">
                 <p className="text-2xl font-bold">{title}</p>
@@ -58,10 +58,6 @@ export const MainMenuScreen = ({
               </div>
             </button>
           ))}
-        </div>
-
-        <div>
-          <div className="h-24 w-full"></div>
         </div>
       </div>
 
