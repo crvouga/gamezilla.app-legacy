@@ -385,7 +385,7 @@ const updateFromEvent = ({
     msg,
   });
 
-  const toast = Toast.updateFromEvent({
+  const toast = Toast.updateFromCmd({
     model: model.toast,
     msg,
   });

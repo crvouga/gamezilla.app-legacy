@@ -120,7 +120,6 @@ export const updateFromServer_: typeof updateFromServer = ({
   model: Model;
 }): {
   model: Model;
-  eff?: Eff<Msg>;
   msgs?: ClientAppMsg[];
 } => {
   if (msg.t === "clock-tick") {

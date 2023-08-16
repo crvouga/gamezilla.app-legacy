@@ -585,6 +585,7 @@ export const updateFromEvent = (input: {
   sendToClient: (clientId: ClientId[], msg: ToClient) => Eff;
 }): {
   model: ServerModel;
+
   eff?: Eff<ServerMsg>;
 } => {
   const { msg } = input;

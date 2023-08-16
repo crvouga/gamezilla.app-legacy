@@ -15,10 +15,9 @@ export type ClientEvent =
   | { t: "client-authenticated"; userId: UserId }
   | { t: "client-unauthenticated" }
   | { t: "got-profiles"; profiles: { [userId: UserId]: Profile } }
-  | { t: "enqueue-toast"; text: string; duration?: number }
   | { t: "route-changed"; route: Route };
 
-export type ClientEffect<ToServer> =
+export type ClientCommand<ToServer> =
   | { t: "send-to-server"; msg: ToServer }
   | { t: "enqueue-toast"; text: string; duration?: number }
   | { t: "push-route"; route: Route }

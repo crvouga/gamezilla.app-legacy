@@ -123,7 +123,7 @@ function watch(model: Model): { model: Model; eff: Eff<Msg> } {
 //
 //
 
-export function updateFromEvent({
+export function updateFromCmd({
   msg,
   model,
 }: {
@@ -137,12 +137,13 @@ export function updateFromEvent({
     case "enqueue-toast": {
       const toastId = model.runningId;
       const duration = msg.duration ?? 2000;
-      const updated: ReturnType<typeof updateFromEvent> = {
+      const updated: ReturnType<typeof updateFromCmd> = {
         model: {
           ...model,
           runningId: model.runningId + 1,
           toasts: [...model.toasts, { toastId, message: msg.text, duration }],
         },
+
         eff: Time.startTimeout(toastId, duration, {
           t: "toast-duration-elapsed",
           toastId: model.runningId,

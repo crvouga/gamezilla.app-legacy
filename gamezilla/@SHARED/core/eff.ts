@@ -85,6 +85,9 @@ const perform =
     };
   };
 
+/**
+ * An `Eff` represents a side effect that can be performed by the runtime.
+ */
 export const Eff = {
   None,
   perform,
