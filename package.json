@@ -20,11 +20,13 @@
     "chess.js": "^1.0.0-beta.6",
     "inferno": "^8.2.2",
     "mysql2": "^3.2.0",
+    "preact": "^10.17.0",
     "threads": "^1.7.0",
     "ws": "^8.13.0"
   },
   "devDependencies": {
     "@babel/plugin-transform-react-jsx-development": "^7.22.5",
+    "@preact/preset-vite": "^2.5.0",
     "@types/ws": "^8.5.5",
     "@typescript-eslint/eslint-plugin": "^5.57.1",
     "@typescript-eslint/parser": "^5.57.1",
