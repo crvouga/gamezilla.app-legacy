@@ -40,14 +40,6 @@ export const getLocation = (): Location => {
   };
 };
 
-//
-//
-//
-// Navigation
-//
-//
-//
-
 // setTimeout because actions where happening in a weird order if not setTimeout
 
 export const push = (url: string): Eff => {
