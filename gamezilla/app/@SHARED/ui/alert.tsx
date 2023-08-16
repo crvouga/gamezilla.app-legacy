@@ -12,10 +12,10 @@ export const AlertError = ({
   return (
     <div
       className={cn(
-        "flex w-full items-center gap-2 rounded-md bg-red-500 p-4 text-white",
+        "flex w-full items-center rounded-md bg-red-500 p-4 text-white",
         className
       )}>
-      <div>
+      <div className="mr-2">
         <IconExclamationCircle className="h-6 w-6" />
       </div>
 
@@ -35,9 +35,9 @@ export const AlertInfo = ({
     <div
       className={cn(
         className,
-        "flex w-full items-center gap-2 rounded-md bg-blue-500 p-4 text-white"
+        "flex w-full items-center rounded-md bg-blue-500 p-4 text-white"
       )}>
-      <div>
+      <div className="mr-2">
         <IconInfoCircle className="h-6 w-6" />
       </div>
       {children}
@@ -56,9 +56,9 @@ export const AlertSuccess = ({
     <div
       className={cn(
         className,
-        "flex w-full items-center gap-2 rounded-md bg-green-500 p-4 text-white"
+        "flex w-full items-center rounded-md bg-green-500 p-4 text-white"
       )}>
-      <div>
+      <div className="mr-2">
         <IconCheckmarkCircle className="h-6 w-6" />
       </div>
       {children}

@@ -44,7 +44,7 @@ export const Button = ({
       type={type}
       className={cn(
         className,
-        "flex select-none flex-nowrap items-center justify-center gap-2 font-semibold",
+        "flex select-none flex-nowrap items-center justify-center font-semibold",
         combo === "contained-primary" && "rounded-md bg-blue-600 text-white",
         combo === "contained-danger" && "rounded-md bg-red-600 text-white",
         combo === "contained-default" &&
@@ -66,7 +66,7 @@ export const Button = ({
         <Spinner className="h-6 w-6" />
       ) : (
         <>
-          {start}
+          {start && <div className="mr-2">{start}</div>}
           {text}
         </>
       )}

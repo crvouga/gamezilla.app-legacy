@@ -19,13 +19,13 @@ export const ActionButton = ({
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        "flex flex-1 flex-col items-center gap-0.5 p-1 text-sm active:opacity-50",
+        "flex flex-1 flex-col items-center p-1 text-sm active:opacity-50",
         disabled && "opacity-50",
         color === "error" && "text-red-500",
         color === "success" && "text-green-500"
       )}>
       {icon}
-      <p className="text-xs">{label}</p>
+      <p className="mt-0.5 text-xs">{label}</p>
     </button>
   );
 };

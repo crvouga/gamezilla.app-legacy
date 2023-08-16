@@ -735,11 +735,11 @@ const ViewBottomBar = ({
               key={Route.encode(item.route)}
               onClick={() => ctx.push(item.route)}
               className={cn(
-                "flex flex-1 flex-col items-center justify-center gap-0.5 pb-2 pt-1",
+                "flex flex-1 flex-col items-center justify-center pb-2 pt-1",
                 isSelected ? "text-blue-500" : "opacity-80"
               )}>
               {item.icon}
-              <div className="text-xs">{item.label}</div>
+              <div className="mt-0.5 text-xs">{item.label}</div>
             </button>
           );
         })}
