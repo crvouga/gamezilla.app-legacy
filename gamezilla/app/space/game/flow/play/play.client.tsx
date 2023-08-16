@@ -38,7 +38,7 @@ const updateFromServer: Client["updateFromServer"] = (input) => {
   return input;
 };
 
-const updateFromParent: Client["updateFromParent"] = (input) => {
+const updateFromEvent: Client["updateFromEvent"] = (input) => {
   return input;
 };
 
@@ -73,7 +73,7 @@ export const PlayClient: Client = {
   init,
   update,
   updateFromServer,
-  updateFromParent,
+  updateFromEvent,
   syncWithServer,
   subscriptions,
   View,

@@ -81,7 +81,7 @@ export const update = async (input: {
     (acc, msg) =>
       p(
         acc,
-        andThen((model) => updateFromParent({ ...input, model, msg }))
+        andThen((model) => updateFromEvent({ ...input, model, msg }))
       ),
     updated
   );
@@ -269,7 +269,7 @@ const updateWire = ({
   return { model };
 };
 
-const updateFromParent = ({
+const updateFromEvent = ({
   msg,
   model,
   sendToClient,
@@ -282,14 +282,14 @@ const updateFromParent = ({
   model: ServerModel;
   cmd?: Cmd<ServerMsg>;
 } => {
-  const spaceUpdated = SpaceServer.updateFromParent({
+  const spaceUpdated = SpaceServer.updateFromEvent({
     msg,
     model: model.space,
     sendToClient: (clientIds, m) =>
       sendToClient(clientIds, { t: "space", c: m }),
   });
 
-  const profileUpdated = ProfileServer.updateFromParent({
+  const profileUpdated = ProfileServer.updateFromEvent({
     msg,
     model: model.profile,
     sendToClient: (clientIds, c) =>

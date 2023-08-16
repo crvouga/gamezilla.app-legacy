@@ -129,7 +129,7 @@ export const updateFromClient: Server["updateFromClient"] = ({
   return { model };
 };
 
-export const updateFromParent: Server["updateFromParent"] = ({
+export const updateFromEvent: Server["updateFromEvent"] = ({
   msg,
   model,
   sendToSpace,
@@ -140,7 +140,7 @@ export const updateFromParent: Server["updateFromParent"] = ({
     }
 
     case "vs-bot": {
-      const updated = VsBot.updateFromParent({
+      const updated = VsBot.updateFromEvent({
         msg,
         model: model.c,
         broadcast: (c) => sendToSpace({ t: "vs-bot", c }),
@@ -152,7 +152,7 @@ export const updateFromParent: Server["updateFromParent"] = ({
     }
 
     case "vs-user": {
-      const updated = VsUser.updateFromParent({
+      const updated = VsUser.updateFromEvent({
         msg,
         model: model.c,
         broadcast: (c) => sendToSpace({ t: "vs-user", c }),

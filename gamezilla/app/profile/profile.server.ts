@@ -101,7 +101,7 @@ export const updateFromClient = ({
   };
 };
 
-export const updateFromParent = ({
+export const updateFromEvent = ({
   sendToClient,
   msg,
   model,

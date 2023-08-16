@@ -330,7 +330,7 @@ export const updateFromServer = ({
   }
 };
 
-export const updateFromParent = (input: {
+export const updateFromEvent = (input: {
   msg: ClientAppMsg;
   model: ClientModel;
   sendToServer: (m: ToServer) => Cmd;

@@ -133,12 +133,12 @@ export const updateFromClient: Server["updateFromClient"] = (input) => {
   return { model };
 };
 
-export const updateFromParent: Server["updateFromParent"] = (input) => {
+export const updateFromEvent: Server["updateFromEvent"] = (input) => {
   const { sendToSpace, msg, model } = input;
 
   switch (model.t) {
     case "chess": {
-      const updated = ChessServer.updateFromParent({
+      const updated = ChessServer.updateFromEvent({
         broadcast: (m) => sendToSpace({ t: "chess", c: m }),
         msg,
         model: model.c,
@@ -151,11 +151,11 @@ export const updateFromParent: Server["updateFromParent"] = (input) => {
     }
 
     case "connect-four": {
-      return ConnectFour.updateFromParent({ ...input, model });
+      return ConnectFour.updateFromEvent({ ...input, model });
     }
 
     case "tic-tac-toe": {
-      const updated = TicTacToeServer.updateFromParent({
+      const updated = TicTacToeServer.updateFromEvent({
         broadcast: (msg) => sendToSpace({ t: "tic-tac-toe", c: msg }),
         msg,
         model: model.c,
@@ -167,7 +167,7 @@ export const updateFromParent: Server["updateFromParent"] = (input) => {
     }
 
     case "flow": {
-      return Flow.updateFromParent({ ...input, model });
+      return Flow.updateFromEvent({ ...input, model });
     }
   }
 };

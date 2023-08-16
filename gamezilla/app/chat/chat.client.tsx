@@ -132,7 +132,7 @@ export const updateFromServer = ({
   return { model };
 };
 
-export const updateFromParent = ({
+export const updateFromEvent = ({
   msg,
   model,
   sendToServer,

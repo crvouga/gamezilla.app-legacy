@@ -231,7 +231,7 @@ export const updateFromServer = ({
   }
 };
 
-export const updateFromParent = ({
+export const updateFromEvent = ({
   model,
 }: {
   msg: ClientAppMsg;

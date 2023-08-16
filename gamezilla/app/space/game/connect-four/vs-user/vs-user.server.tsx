@@ -81,7 +81,7 @@ export const updateFromClient = ({
   return { model: res.result.value, cmd: broadcast(res) };
 };
 
-export const updateFromParent = ({
+export const updateFromEvent = ({
   broadcast,
   msg,
   model,

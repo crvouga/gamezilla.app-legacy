@@ -175,7 +175,7 @@ const sendResponse = (
   ];
 };
 
-export const updateFromParent = ({
+export const updateFromEvent = ({
   broadcast,
   msg,
   model,

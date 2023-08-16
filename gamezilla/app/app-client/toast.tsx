@@ -1,7 +1,6 @@
 import { Cmd, Time, Transition, andThen, p } from "gamezilla/@SHARED/core";
 import { ClientAppMsg } from "gamezilla/app/@SHARED/client";
 import { IconXMark } from "gamezilla/app/@SHARED/ui";
-import { ToParent } from "../@SHARED/client";
 
 const config: Transition.Config<Toast> = {
   toId: (toast) => `toast-${String(toast.toastId)}`,
@@ -124,33 +123,7 @@ function watch(model: Model): { model: Model; cmd: Cmd<Msg> } {
 //
 //
 
-export const updateFromChild = (model: Model, msg: ToParent) => {
-  switch (msg.t) {
-    case "enqueue-toast": {
-      const toastId = model.runningId;
-
-      const duration = msg.duration ?? 2000;
-
-      const modelNew: Model = {
-        ...model,
-        runningId: model.runningId + 1,
-        toasts: [...model.toasts, { toastId, message: msg.text, duration }],
-      };
-
-      const cmd: Cmd<Msg> = Time.startTimeout(toastId, duration, {
-        t: "toast-duration-elapsed",
-        toastId: model.runningId,
-      });
-
-      return p({ model: modelNew, cmd }, andThen(watch));
-    }
-    default: {
-      return { model };
-    }
-  }
-};
-
-export function updateFromParent({
+export function updateFromEvent({
   msg,
   model,
 }: {
@@ -160,24 +133,27 @@ export function updateFromParent({
   model: Model;
   cmd?: Cmd<Msg>;
 } {
-  if (msg.t === "enqueue-toast") {
-    const toastId = model.runningId;
-    const duration = msg.duration ?? 2000;
-    const updated: ReturnType<typeof updateFromParent> = {
-      model: {
-        ...model,
-        runningId: model.runningId + 1,
-        toasts: [...model.toasts, { toastId, message: msg.text, duration }],
-      },
-      cmd: Time.startTimeout(toastId, duration, {
-        t: "toast-duration-elapsed",
-        toastId: model.runningId,
-      }),
-    };
-    return p(updated, andThen(watch));
+  switch (msg.t) {
+    case "enqueue-toast": {
+      const toastId = model.runningId;
+      const duration = msg.duration ?? 2000;
+      const updated: ReturnType<typeof updateFromEvent> = {
+        model: {
+          ...model,
+          runningId: model.runningId + 1,
+          toasts: [...model.toasts, { toastId, message: msg.text, duration }],
+        },
+        cmd: Time.startTimeout(toastId, duration, {
+          t: "toast-duration-elapsed",
+          toastId: model.runningId,
+        }),
+      };
+      return p(updated, andThen(watch));
+    }
+    default: {
+      return { model };
+    }
   }
-
-  return { model };
 }
 
 //

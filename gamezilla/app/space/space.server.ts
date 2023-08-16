@@ -488,7 +488,7 @@ export const updateFromClient = async (input: {
 
       const updated = !spaceNew.game
         ? { model: spaceNew.game, cmd: Cmd.None }
-        : GameServer.updateFromParent({
+        : GameServer.updateFromEvent({
             ctx: { ...ctx, hostId: space.hostId },
             sendToClient: (m) => sendToClient({ t: "game", c: m }),
             sendToSpace: (m) =>
@@ -575,7 +575,7 @@ export const updateFromClient = async (input: {
   }
 };
 
-export const updateFromParent = (input: {
+export const updateFromEvent = (input: {
   msg: ServerEvent;
   model: ServerModel;
   sendToClient: (clientId: ClientId[], msg: ToClient) => Cmd;

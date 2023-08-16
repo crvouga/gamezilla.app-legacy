@@ -58,7 +58,7 @@ export type GameServer<Model, Msg, ToClient, ToServer> = {
   /**
    * This handles updates from the game space itself.
    */
-  updateFromParent: (input: {
+  updateFromEvent: (input: {
     ctx: SpaceServerCtx;
     sendToClient: (m: ToClient) => Cmd;
     sendToSpace: (m: ToClient) => Cmd;
@@ -125,8 +125,8 @@ const tag = <T extends string, Model, Msg, ToClient, ToServer>(
         msgs: updated.msgs,
       };
     },
-    updateFromParent: (input) => {
-      const updated = server.updateFromParent({
+    updateFromEvent: (input) => {
+      const updated = server.updateFromEvent({
         ...input,
         msg: input.msg,
         model: input.model.c,

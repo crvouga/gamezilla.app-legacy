@@ -52,7 +52,7 @@ const initMode =
     return { model: { t: "none" } };
   };
 
-export const updateFromParent: Server["updateFromParent"] = (input) => {
+export const updateFromEvent: Server["updateFromEvent"] = (input) => {
   return input;
 };
 

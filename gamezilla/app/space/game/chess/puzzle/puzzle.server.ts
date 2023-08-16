@@ -390,7 +390,7 @@ export const updateFromGame = ({
   return { model };
 };
 
-export const updateFromParent = ({
+export const updateFromEvent = ({
   model,
 }: {
   msg: SpaceMsg;

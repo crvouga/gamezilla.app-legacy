@@ -220,7 +220,7 @@ export const updateFromClient = (
   }
 };
 
-export const updateFromParent = ({
+export const updateFromEvent = ({
   msg,
   model,
   broadcast,

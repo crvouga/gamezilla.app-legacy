@@ -155,7 +155,7 @@ export const syncWithServer = ({
   };
 };
 
-export const updateFromParent = (input: {
+export const updateFromEvent = (input: {
   model: ClientModel;
   msg: SpaceMsg;
 }): {

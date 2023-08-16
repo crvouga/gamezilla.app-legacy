@@ -194,7 +194,7 @@ export const updateFromClient = ({
   }
 };
 
-export const updateFromParent = ({
+export const updateFromEvent = ({
   broadcast,
   msg,
   model,
@@ -212,7 +212,7 @@ export const updateFromParent = ({
     }
 
     case "vs-bot": {
-      const updated = VsBotServer.updateFromParent({
+      const updated = VsBotServer.updateFromEvent({
         broadcast: (m) => broadcast({ t: "vs-bot", c: m }),
         msg,
         model: model.c,
@@ -224,7 +224,7 @@ export const updateFromParent = ({
     }
 
     case "vs-user": {
-      const updated = VsUser.updateFromParent({
+      const updated = VsUser.updateFromEvent({
         broadcast: (m) => broadcast({ t: "vs-user", c: m }),
         msg,
         model: model.c,
@@ -236,7 +236,7 @@ export const updateFromParent = ({
     }
 
     case "puzzle": {
-      const updated = Puzzle.updateFromParent({
+      const updated = Puzzle.updateFromEvent({
         model: model.c,
         msg,
       });
