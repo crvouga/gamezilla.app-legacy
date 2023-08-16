@@ -2,9 +2,8 @@
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
     "moduleResolution": "Bundler",
-    "target": "ES5",
-    "downlevelIteration": true,
-    "types": ["inferno", "vite/client"],
-    "jsx": "preserve"
+    "types": ["vite/client"],
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact"
   }
 }
