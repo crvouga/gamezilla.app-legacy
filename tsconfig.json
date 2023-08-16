@@ -4,6 +4,8 @@
     "moduleResolution": "Bundler",
     "types": ["vite/client"],
     "jsx": "react-jsx",
-    "jsxImportSource": "preact"
+    "jsxImportSource": "preact",
+    "target": "ES5",
+    "downlevelIteration": true
   }
 }
