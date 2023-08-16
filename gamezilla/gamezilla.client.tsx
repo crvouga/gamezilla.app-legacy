@@ -53,15 +53,14 @@ program.subscribe((model, ctx) => {
   );
 });
 
-let i = 0;
-program.subscribe(async function (model, ctx, msg) {
-  if (msg) {
-    console.log(i, [toMsgType(msg), toMsgPayload(msg, {})]);
-    i++;
-  }
-
-  // @ts-ignore
-  window.model = model;
-});
+// let i = 0;
+// program.subscribe(async function (model, ctx, msg) {
+//   if (msg) {
+//     console.log(i, [toMsgType(msg), toMsgPayload(msg, {})]);
+//     i++;
+//   }
+//   // @ts-ignore
+//   window.model = model;
+// });
 
 program.start();
