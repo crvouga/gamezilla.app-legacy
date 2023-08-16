@@ -44,6 +44,6 @@ declare global {
   }
 }
 
-if (typeof window !== "undefined") {
+if (typeof window !== "undefined" && "customElements" in window) {
   window.customElementsCallbacks = new Map();
 }
