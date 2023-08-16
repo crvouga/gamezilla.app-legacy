@@ -2,6 +2,8 @@
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
     "moduleResolution": "Bundler",
+    "target": "ES5",
+    "downlevelIteration": true,
     "types": ["inferno", "vite/client"],
     "jsx": "preserve"
   }
