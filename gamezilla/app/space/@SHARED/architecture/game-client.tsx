@@ -1,7 +1,7 @@
 import { Cmd, Sub } from "gamezilla/@SHARED/core";
 import { ClientAppMsg } from "gamezilla/app/@SHARED/client";
 import { VDom } from "gamezilla/app/@SHARED/ui";
-import { SpaceClientCtx, SpaceMsg, SpaceViewCtx } from "../space";
+import { SpaceClientCtx, SpaceEvent, SpaceViewCtx } from "../space";
 
 /**
  * Represents all the functions needed to run a game client side
@@ -49,7 +49,7 @@ export type GameClient<
   updateFromEvent: (input: {
     ctx: SpaceViewCtx;
     sendToServer: (m: ToServer) => Cmd;
-    msg: SpaceMsg;
+    msg: SpaceEvent;
     model: Model;
   }) => {
     model: Model;

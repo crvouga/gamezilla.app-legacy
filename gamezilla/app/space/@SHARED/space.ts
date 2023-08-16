@@ -22,7 +22,7 @@ export type Space<GameModel> = {
   };
 };
 
-export type SpaceMsg =
+export type SpaceEvent =
   | { t: "user-left"; userId: UserId }
   | { t: "user-joined"; userId: UserId };
 

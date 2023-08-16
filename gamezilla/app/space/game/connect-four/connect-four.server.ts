@@ -46,6 +46,7 @@ export const update: Server["update"] = ({ sendToSpace, msg, model }) => {
       msg: msg.c,
       model: model.c,
     });
+
     return {
       model: { t: "vs-bot", c: updated.model },
       cmd: Cmd.t("vs-bot", updated.cmd),

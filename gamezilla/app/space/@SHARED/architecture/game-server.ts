@@ -1,6 +1,7 @@
 import { Cmd, Sub } from "gamezilla/@SHARED/core";
 import { ServerEffect, ServerEvent } from "gamezilla/app/@SHARED/server";
-import { SpaceMsg, SpaceReqCtx, SpaceServerCtx } from "../space";
+import { SpaceEvent, SpaceReqCtx, SpaceServerCtx } from "../space";
+
 //
 //
 //
@@ -38,6 +39,7 @@ export type GameServer<Model, Msg, ToClient, ToServer> = {
     model: Model;
     cmd?: Cmd<Msg>;
     msgs?: ServerEvent[];
+    eff?: ServerEffect<ToClient>[];
   };
 
   /**
@@ -53,6 +55,7 @@ export type GameServer<Model, Msg, ToClient, ToServer> = {
     model: Model;
     cmd?: Cmd<Msg>;
     msgs?: ServerEvent[];
+    eff?: ServerEffect<ToClient>[];
   };
 
   /**
@@ -62,7 +65,7 @@ export type GameServer<Model, Msg, ToClient, ToServer> = {
     ctx: SpaceServerCtx;
     sendToClient: (m: ToClient) => Cmd;
     sendToSpace: (m: ToClient) => Cmd;
-    msg: SpaceMsg;
+    msg: SpaceEvent;
     model: Model;
   }) => {
     model: Model;
@@ -70,6 +73,12 @@ export type GameServer<Model, Msg, ToClient, ToServer> = {
     msgs?: ServerEvent[];
   };
 
+  /**
+   *
+   * @param intervalId
+   * @param model
+   * @returns
+   */
   subscriptions: (intervalId: string, model: Model) => Sub<Msg>;
 };
 
@@ -109,6 +118,7 @@ const tag = <T extends string, Model, Msg, ToClient, ToServer>(
         model: { t: tag, c: updated.model },
         cmd: Cmd.t(tag, updated.cmd),
         msgs: updated.msgs,
+        eff: ServerEffect.tag(tag, updated.eff),
       };
     },
     updateFromClient: (input) => {
@@ -123,6 +133,7 @@ const tag = <T extends string, Model, Msg, ToClient, ToServer>(
         model: { t: tag, c: updated.model },
         cmd: Cmd.t(tag, updated.cmd),
         msgs: updated.msgs,
+        eff: ServerEffect.tag(tag, updated.eff),
       };
     },
     updateFromEvent: (input) => {

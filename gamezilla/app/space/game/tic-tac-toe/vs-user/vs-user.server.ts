@@ -1,4 +1,4 @@
-import { SpaceMsg } from "gamezilla/app/space/@SHARED";
+import { SpaceEvent } from "gamezilla/app/space/@SHARED";
 import { Cmd, Sub, Time } from "gamezilla/@SHARED/core";
 import { PlayerType, toOpposite, toTurn } from "../tic-tic-toe/tic-tac-toe";
 import * as Round from "./vs-user-round";
@@ -226,7 +226,7 @@ export const updateFromEvent = ({
   broadcast,
 }: {
   broadcast: (m: ToClient) => Cmd;
-  msg: SpaceMsg;
+  msg: SpaceEvent;
   model: Model;
 }): {
   model: Model;

@@ -1,5 +1,5 @@
 import { Cmd, p, Sub } from "gamezilla/@SHARED/core";
-import { SpaceMsg, SpaceReqCtx } from "gamezilla/app/space/@SHARED";
+import { SpaceEvent, SpaceReqCtx } from "gamezilla/app/space/@SHARED";
 import { Chess } from "../@SHARED/chess";
 import {
   botMoved,
@@ -117,7 +117,7 @@ export const updateFromEvent = ({
   model,
   broadcast,
 }: {
-  msg: SpaceMsg;
+  msg: SpaceEvent;
   broadcast: (m: ToClient) => Cmd;
   model: Model;
 }): {

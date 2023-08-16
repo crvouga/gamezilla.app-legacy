@@ -1,6 +1,14 @@
 import { ClientId } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
 
+//
+//
+//
+//
+//
+//
+//
+
 export type ServerEffect<ToClient> =
   | {
       t: "send-to-client";
@@ -16,6 +24,15 @@ export type ServerEffect<ToClient> =
       userIds: UserId[];
       msg: ToClient;
     };
+
+//
+//
+//
+//
+//
+//
+//
+//
 
 const tagServerEff = <T extends string, A>(
   tag: T,

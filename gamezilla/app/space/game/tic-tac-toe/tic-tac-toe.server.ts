@@ -1,6 +1,6 @@
 import { Cmd, Result, Sub } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
-import { SpaceMsg, SpaceReqCtx } from "gamezilla/app/space/@SHARED";
+import { SpaceEvent, SpaceReqCtx } from "gamezilla/app/space/@SHARED";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./tic-tac-toe.core";
 import * as VsBot from "./vs-bot/vs-bot.server";
 import * as VsUser from "./vs-user/vs-user.server";
@@ -142,7 +142,7 @@ export const updateFromEvent = ({
 }: {
   broadcast: (m: ToClient) => Cmd;
   model: Model;
-  msg: SpaceMsg;
+  msg: SpaceEvent;
 }): {
   model: Model;
   cmd?: Cmd<Msg>;

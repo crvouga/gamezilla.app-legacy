@@ -1,5 +1,5 @@
 import { Cmd, Sub, Time } from "gamezilla/@SHARED/core";
-import { SpaceMsg, SpaceReqCtx } from "gamezilla/app/space/@SHARED";
+import { SpaceEvent, SpaceReqCtx } from "gamezilla/app/space/@SHARED";
 import {
   Res,
   ServerModel,
@@ -75,10 +75,16 @@ export const updateFromClient = ({
   const res: Res = { ...msg, result: handle({ req: msg, ctx, model }) };
 
   if (res.result.t === "err") {
-    return { model, cmd: sendToClient(res) };
+    return {
+      model,
+      cmd: sendToClient(res),
+    };
   }
 
-  return { model: res.result.value, cmd: broadcast(res) };
+  return {
+    model: res.result.value,
+    cmd: broadcast(res),
+  };
 };
 
 export const updateFromEvent = ({
@@ -87,7 +93,7 @@ export const updateFromEvent = ({
   model,
 }: {
   broadcast: (m: ToClient) => Cmd;
-  msg: SpaceMsg;
+  msg: SpaceEvent;
   model: Model;
 }): {
   model: Model;
