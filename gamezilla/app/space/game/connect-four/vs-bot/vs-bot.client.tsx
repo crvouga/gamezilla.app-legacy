@@ -1,4 +1,4 @@
-import { Cmd, Posix, Sub, andThen, p } from "gamezilla/@SHARED/core";
+import { Eff, Posix, Sub, andThen, p } from "gamezilla/@SHARED/core";
 import { ClientCtx } from "gamezilla/app/@SHARED/client";
 import { SpaceClientCtx, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
 import {
@@ -64,12 +64,12 @@ export const init = (...params: Parameters<typeof initCore>): ClientModel => {
 
 export const update = (input: {
   ctx: SpaceClientCtx;
-  sendToServer: (msg: ToServer) => Cmd;
+  sendToServer: (msg: ToServer) => Eff;
   msg: ClientMsg;
   model: ClientModel;
 }): {
   model: ClientModel;
-  cmd?: Cmd<ClientMsg>;
+  eff?: Eff<ClientMsg>;
 } => {
   return p(updateMain(input), andThen(watch));
 };
@@ -90,7 +90,7 @@ const updateMain: typeof update = ({ ctx, sendToServer, msg, model }) => {
     return { model: { ...model, vsBotSetup: updated } };
   }
 
-  return { model, cmd: sendToServer(msg) };
+  return { model, eff: sendToServer(msg) };
 };
 
 const watch = (model: ClientModel) => {
@@ -110,9 +110,9 @@ const watch = (model: ClientModel) => {
       columnsUI: columnsUI.model,
       vsBotGame: vsBotGame.model,
     },
-    cmd: Cmd.batch<ClientMsg>([
-      Cmd.t("vs-bot-game", vsBotGame.cmd),
-      Cmd.t("columns-ui", columnsUI.cmd),
+    eff: Eff.batch<ClientMsg>([
+      Eff.t("vs-bot-game", vsBotGame.eff),
+      Eff.t("columns-ui", columnsUI.eff),
     ]),
   };
 };
@@ -123,7 +123,7 @@ export const updateFromServer = (input: {
   model: ClientModel;
 }): {
   model: ClientModel;
-  cmd?: Cmd<ClientMsg>;
+  eff?: Eff<ClientMsg>;
 } => {
   return p(updateFromServerMain(input), andThen(watch));
 };
@@ -155,7 +155,7 @@ export const syncWithServer = ({
   ctx: ClientCtx;
   clientModel?: ClientModel;
   serverModel: ServerModel;
-}): { model: ClientModel; cmd?: Cmd<ClientMsg> } => {
+}): { model: ClientModel; eff?: Eff<ClientMsg> } => {
   const modelNew: ClientModel = {
     ...clientModel,
     ...serverModel,

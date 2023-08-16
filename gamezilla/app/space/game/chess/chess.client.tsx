@@ -1,4 +1,4 @@
-import { Audio, Cmd, Posix, RemoteResult, Sub } from "gamezilla/@SHARED/core";
+import { Audio, Eff, Posix, RemoteResult, Sub } from "gamezilla/@SHARED/core";
 import { ClientAppMsg } from "gamezilla/app/@SHARED/client";
 import { IconPuzzlePiece } from "gamezilla/app/@SHARED/ui";
 import { SpaceClientCtx, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
@@ -28,13 +28,13 @@ import * as VsUser from "./vs-user/vs-user.client";
 
 export type Model = ClientModel;
 
-export const init = (): { model: ClientModel; cmd?: Cmd<Msg> } => {
+export const init = (): { model: ClientModel; eff?: Eff<Msg> } => {
   return {
     model: {
       mode: { t: "none" },
       requests: {},
     },
-    cmd: Cmd.None,
+    eff: Eff.None,
   };
 };
 
@@ -55,13 +55,13 @@ export const update = ({
   ctx,
 }: {
   ctx: SpaceClientCtx;
-  sendToServer: (msg: ToServer) => Cmd;
+  sendToServer: (msg: ToServer) => Eff;
   msg: Msg;
   model: Model;
-}): [Model, Cmd<Msg>] => {
+}): [Model, Eff<Msg>] => {
   switch (msg.t) {
     case "preload-audio-done": {
-      return [model, Cmd.None];
+      return [model, Eff.None];
     }
 
     case "input-mode": {
@@ -76,7 +76,7 @@ export const update = ({
 
     case "vs-user": {
       if (model.mode.t === "vs-user") {
-        const [child, cmd] = VsUser.update(
+        const [child, eff] = VsUser.update(
           { sendToServer: (c) => sendToServer({ t: "vs-user", c }) },
           msg.c,
           model.mode.c
@@ -84,11 +84,11 @@ export const update = ({
 
         return [
           { ...model, mode: { t: "vs-user", c: child } },
-          Cmd.t("vs-user", cmd),
+          Eff.t("vs-user", eff),
         ];
       }
 
-      return [model, Cmd.None];
+      return [model, Eff.None];
     }
 
     case "vs-bot": {
@@ -102,16 +102,16 @@ export const update = ({
 
         return [
           { ...model, mode: { t: "vs-bot", c: updated.model } },
-          Cmd.t("vs-bot", updated.cmd),
+          Eff.t("vs-bot", updated.eff),
         ];
       }
 
-      return [model, Cmd.None];
+      return [model, Eff.None];
     }
 
     case "puzzle": {
       if (model.mode.t !== "puzzle") {
-        return [model, Cmd.None];
+        return [model, Eff.None];
       }
 
       const updated = Puzzle.update({
@@ -126,7 +126,7 @@ export const update = ({
           ...model,
           mode: { t: "puzzle", c: updated.model },
         },
-        Cmd.t("puzzle", updated?.cmd ?? Cmd.None),
+        Eff.t("puzzle", updated?.eff ?? Eff.None),
       ];
     }
   }
@@ -138,13 +138,13 @@ export const updateFromServer = ({
   model,
   sendToServer,
 }: {
-  sendToServer: (msg: ToServer) => Cmd;
+  sendToServer: (msg: ToServer) => Eff;
   ctx: SpaceClientCtx;
   msg: ToClient;
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
   msgs?: ClientAppMsg[];
 } => {
   switch (msg.t) {
@@ -174,7 +174,7 @@ export const updateFromServer = ({
 
     case "vs-user": {
       if (model.mode.t === "vs-user") {
-        const [child, cmd] = VsUser.updateFromServer(
+        const [child, eff] = VsUser.updateFromServer(
           { ctx },
           msg.c,
           model.mode.c
@@ -182,7 +182,7 @@ export const updateFromServer = ({
 
         return {
           model: { ...model, mode: { t: "vs-user", c: child } },
-          cmd: Cmd.t("vs-user", cmd),
+          eff: Eff.t("vs-user", eff),
         };
       }
 
@@ -198,7 +198,7 @@ export const updateFromServer = ({
 
         return {
           model: { ...model, mode: { t: "vs-bot", c: updated.model } },
-          cmd: Cmd.t("vs-bot", updated.cmd),
+          eff: Eff.t("vs-bot", updated.eff),
         };
       }
 
@@ -218,7 +218,7 @@ export const updateFromServer = ({
 
       return {
         model: { ...model, mode: { t: "puzzle", c: updated.model } },
-        cmd: Cmd.t("puzzle", updated?.cmd ?? Cmd.None),
+        eff: Eff.t("puzzle", updated?.eff ?? Eff.None),
         msgs: updated.msgs,
       };
     }
@@ -382,12 +382,12 @@ export const syncWithServer = ({
   serverModel,
   sendToServer,
 }: {
-  sendToServer: (msg: ToServer) => Cmd;
+  sendToServer: (msg: ToServer) => Eff;
   clientModel?: ClientModel;
   serverModel: ServerModel;
 }): {
   model: ClientModel;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   switch (serverModel.t) {
     case "none": {
@@ -425,7 +425,7 @@ export const syncWithServer = ({
             }),
           },
         },
-        cmd: Cmd.t("puzzle", initial.cmd),
+        eff: Eff.t("puzzle", initial.eff),
       };
     }
 
@@ -439,11 +439,11 @@ export const syncWithServer = ({
               c: VsUser.syncWithServer(clientModel.mode.c, serverModel.c),
             },
           },
-          cmd: Cmd.None,
+          eff: Eff.None,
         };
       }
 
-      const [child, childCmd] = VsUser.init({
+      const [child, childEff] = VsUser.init({
         userId: "none",
         sendToServer: (c) => sendToServer({ t: "vs-user", c }),
       });
@@ -456,7 +456,7 @@ export const syncWithServer = ({
             c: VsUser.syncWithServer(child, serverModel.c),
           },
         },
-        cmd: Cmd.t("vs-user", childCmd),
+        eff: Eff.t("vs-user", childEff),
       };
     }
 

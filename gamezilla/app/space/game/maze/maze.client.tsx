@@ -1,4 +1,4 @@
-import { Cmd, Keyboard, Sub, p } from "gamezilla/@SHARED/core";
+import { Eff, Keyboard, Sub, p } from "gamezilla/@SHARED/core";
 import { SpaceClientCtx, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
 import { ActionButton, IconArrowLeftOnRect } from "gamezilla/app/@SHARED/ui";
 import { Maze } from "./maze";
@@ -39,10 +39,10 @@ export const update = (
   {
     ctx,
     sendToServer,
-  }: { ctx: SpaceClientCtx; sendToServer: (m: ToServer) => Cmd },
+  }: { ctx: SpaceClientCtx; sendToServer: (m: ToServer) => Eff },
   msg: Msg,
   model: Model
-): [Model, Cmd<Msg>] => {
+): [Model, Eff<Msg>] => {
   switch (msg[0]) {
     //
     //
@@ -52,7 +52,7 @@ export const update = (
       const direction = keyToDirection(msg[1]);
 
       if (!direction) {
-        return [model, Cmd.None];
+        return [model, Eff.None];
       }
 
       return [
@@ -68,7 +68,7 @@ export const update = (
       const direction = keyToDirection(msg[1]);
 
       if (!direction) {
-        return [model, Cmd.None];
+        return [model, Eff.None];
       }
 
       return [
@@ -98,7 +98,7 @@ export const update = (
 export const updateFromServer = (
   msg: ToClient,
   model: Model
-): [Model, Cmd<Msg>] => {
+): [Model, Eff<Msg>] => {
   switch (msg[0]) {
     case "stop-game":
     case "input-seed":
@@ -107,13 +107,13 @@ export const updateFromServer = (
     case "stop-playing":
     case "start-playing": {
       if (msg[2].t === "err") {
-        return [model, Cmd.None];
+        return [model, Eff.None];
       }
       const merged = syncWithServer({
         clientModel: model,
         serverModel: msg[2].value,
       });
-      return [merged, Cmd.None];
+      return [merged, Eff.None];
     }
 
     case "tick": {
@@ -121,7 +121,7 @@ export const updateFromServer = (
         clientModel: model,
         serverModel: msg[1],
       });
-      return [merged, Cmd.None];
+      return [merged, Eff.None];
     }
   }
 };

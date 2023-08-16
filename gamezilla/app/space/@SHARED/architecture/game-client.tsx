@@ -1,4 +1,4 @@
-import { Cmd, Sub } from "gamezilla/@SHARED/core";
+import { Eff, Sub } from "gamezilla/@SHARED/core";
 import { ClientAppMsg } from "gamezilla/app/@SHARED/client";
 import { VDom } from "gamezilla/app/@SHARED/ui";
 import { SpaceClientCtx, SpaceEvent, SpaceViewCtx } from "../space";
@@ -15,31 +15,31 @@ export type GameClient<
   ViewCtx = SpaceViewCtx,
   Ctx = SpaceClientCtx
 > = {
-  init: (input: { ctx: Ctx; sendToServer: (m: ToServer) => Cmd }) => {
+  init: (input: { ctx: Ctx; sendToServer: (m: ToServer) => Eff }) => {
     model: Model;
-    cmd?: Cmd<Msg>;
+    eff?: Eff<Msg>;
     msgs?: ClientAppMsg[];
   };
 
   update: (input: {
     ctx: Ctx;
-    sendToServer: (m: ToServer) => Cmd;
+    sendToServer: (m: ToServer) => Eff;
     msg: Msg;
     model: Model;
   }) => {
     model: Model;
-    cmd?: Cmd<Msg>;
+    eff?: Eff<Msg>;
     msgs?: ClientAppMsg[];
   };
 
   updateFromServer: (input: {
     ctx: Ctx;
-    sendToServer: (m: ToServer) => Cmd;
+    sendToServer: (m: ToServer) => Eff;
     msg: ToClient;
     model: Model;
   }) => {
     model: Model;
-    cmd?: Cmd<Msg>;
+    eff?: Eff<Msg>;
     msgs?: ClientAppMsg[];
   };
 
@@ -48,23 +48,23 @@ export type GameClient<
    */
   updateFromEvent: (input: {
     ctx: SpaceViewCtx;
-    sendToServer: (m: ToServer) => Cmd;
+    sendToServer: (m: ToServer) => Eff;
     msg: SpaceEvent;
     model: Model;
   }) => {
     model: Model;
-    cmd?: Cmd<Msg>;
+    eff?: Eff<Msg>;
     msgs?: ClientAppMsg[];
   };
 
   syncWithServer: (input: {
     ctx: Ctx;
-    sendToServer: (m: ToServer) => Cmd;
+    sendToServer: (m: ToServer) => Eff;
     server: ServerModel;
     client?: Model | null;
   }) => {
     model: Model;
-    cmd?: Cmd<Msg>;
+    eff?: Eff<Msg>;
     msgs?: ClientAppMsg[];
   };
 
@@ -111,7 +111,7 @@ const tag = <
       });
       return {
         model: { t: tag, c: initial.model },
-        cmd: Cmd.t(tag, initial.cmd),
+        eff: Eff.t(tag, initial.eff),
         msgs: initial.msgs,
       };
     },
@@ -124,7 +124,7 @@ const tag = <
       });
       return {
         model: { t: tag, c: updated.model },
-        cmd: Cmd.t(tag, updated.cmd),
+        eff: Eff.t(tag, updated.eff),
         msgs: updated.msgs,
       };
     },
@@ -137,7 +137,7 @@ const tag = <
       });
       return {
         model: { t: tag, c: updated.model },
-        cmd: Cmd.t(tag, updated.cmd),
+        eff: Eff.t(tag, updated.eff),
         msgs: updated.msgs,
       };
     },
@@ -150,7 +150,7 @@ const tag = <
       });
       return {
         model: { t: tag, c: updated.model },
-        cmd: Cmd.t(tag, updated.cmd),
+        eff: Eff.t(tag, updated.eff),
         msgs: updated.msgs,
       };
     },
@@ -163,7 +163,7 @@ const tag = <
       });
       return {
         model: { t: tag, c: updated.model },
-        cmd: Cmd.t(tag, updated.cmd),
+        eff: Eff.t(tag, updated.eff),
         msgs: updated.msgs,
       };
     },
@@ -209,7 +209,7 @@ const tagUpdate =
     });
     return {
       model: { t: tag, c: updated.model },
-      cmd: Cmd.t(tag, updated.cmd),
+      eff: Eff.t(tag, updated.eff),
       msgs: updated.msgs,
     };
   };
@@ -232,7 +232,7 @@ const tagInit =
     });
     return {
       model: { t: tag, c: initial.model },
-      cmd: Cmd.t(tag, initial.cmd),
+      eff: Eff.t(tag, initial.eff),
       msgs: initial.msgs,
     };
   };

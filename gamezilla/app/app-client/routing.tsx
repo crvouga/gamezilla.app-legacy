@@ -1,4 +1,4 @@
-import { Browser, Cmd, p } from "gamezilla/@SHARED/core";
+import { Browser, Eff, p } from "gamezilla/@SHARED/core";
 import { ClientAppMsg, Route } from "gamezilla/app/@SHARED/client";
 
 //
@@ -17,7 +17,7 @@ const fallback: Route = { t: "space", c: { t: "space-list" } };
 
 export const init = (
   location: Browser.Location
-): { model: Model; cmd: Cmd } => {
+): { model: Model; eff: Eff } => {
   const route = p(
     location.pathname,
     Route.decode,
@@ -26,7 +26,7 @@ export const init = (
 
   return {
     model: { route },
-    cmd: Browser.replace(Route.encode(route)),
+    eff: Browser.replace(Route.encode(route)),
   };
 };
 
@@ -51,15 +51,15 @@ export const update = ({
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
   msgs?: ClientAppMsg[];
 } => {
   if (msg.t === "clicked-back") {
-    return { model, cmd: Browser.back };
+    return { model, eff: Browser.back };
   }
 
   if (msg.t === "clicked-link") {
-    return { model, cmd: Browser.push(Route.encode(msg.route)) };
+    return { model, eff: Browser.push(Route.encode(msg.route)) };
   }
 
   if (msg.t === "route-changed") {
@@ -77,19 +77,19 @@ export const updateFromEvent = (input: {
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   if (input.msg.t === "push-route") {
     return {
       ...input,
-      cmd: Browser.push(Route.encode(input.msg.route)),
+      eff: Browser.push(Route.encode(input.msg.route)),
     };
   }
 
   if (input.msg.t === "route-back") {
     return {
       ...input,
-      cmd: Browser.back,
+      eff: Browser.back,
     };
   }
 

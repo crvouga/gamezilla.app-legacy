@@ -1,4 +1,4 @@
-import { Cmd, Err, Result, Sub } from "gamezilla/@SHARED/core";
+import { Eff, Err, Result, Sub } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
 import { GameServer } from "gamezilla/app/space/@SHARED";
 import {
@@ -49,7 +49,7 @@ export const update: Server["update"] = ({ sendToSpace, msg, model }) => {
 
     return {
       model: { t: "vs-bot", c: updated.model },
-      cmd: Cmd.t("vs-bot", updated.cmd),
+      eff: Eff.t("vs-bot", updated.eff),
     };
   }
 
@@ -61,7 +61,7 @@ export const update: Server["update"] = ({ sendToSpace, msg, model }) => {
     });
     return {
       model: { t: "vs-user", c: updated.model },
-      cmd: Cmd.t("vs-user", updated.cmd),
+      eff: Eff.t("vs-user", updated.eff),
     };
   }
 
@@ -81,7 +81,7 @@ export const updateFromClient: Server["updateFromClient"] = ({
     if (ctx.currentUserId !== ctx.hostId) {
       return {
         model,
-        cmd: sendToClient({
+        eff: sendToClient({
           t: "input-mode",
           mode: msg.mode,
           result: Err("must_be_host"),
@@ -93,7 +93,7 @@ export const updateFromClient: Server["updateFromClient"] = ({
 
     return {
       model: modelNew,
-      cmd: sendToSpace({ ...msg, result: Result.Ok(modelNew) }),
+      eff: sendToSpace({ ...msg, result: Result.Ok(modelNew) }),
     };
   }
 
@@ -108,7 +108,7 @@ export const updateFromClient: Server["updateFromClient"] = ({
 
     return {
       model: { t: "vs-bot", c: updated.model },
-      cmd: Cmd.t("vs-bot", updated.cmd),
+      eff: Eff.t("vs-bot", updated.eff),
     };
   }
 
@@ -123,7 +123,7 @@ export const updateFromClient: Server["updateFromClient"] = ({
 
     return {
       model: { t: "vs-user", c: updated.model },
-      cmd: Cmd.t("vs-user", updated.cmd),
+      eff: Eff.t("vs-user", updated.eff),
     };
   }
 
@@ -148,7 +148,7 @@ export const updateFromEvent: Server["updateFromEvent"] = ({
       });
       return {
         model: { t: "vs-bot", c: updated.model },
-        cmd: Cmd.t("vs-bot", updated.cmd),
+        eff: Eff.t("vs-bot", updated.eff),
       };
     }
 
@@ -161,7 +161,7 @@ export const updateFromEvent: Server["updateFromEvent"] = ({
 
       return {
         model: { t: "vs-user", c: updated.model },
-        cmd: Cmd.t("vs-user", updated.cmd),
+        eff: Eff.t("vs-user", updated.eff),
       };
     }
   }

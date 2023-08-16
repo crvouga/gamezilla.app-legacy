@@ -1,4 +1,4 @@
-import { Cmd, Sub, Time } from "gamezilla/@SHARED/core";
+import { Eff, Sub, Time } from "gamezilla/@SHARED/core";
 import {
   ServerModel,
   ServerMsg,
@@ -33,10 +33,10 @@ export const init = initShared;
 export type Msg = ServerMsg;
 
 export const update = (
-  { broadcast }: { broadcast: (msg: ToClient) => Cmd },
+  { broadcast }: { broadcast: (msg: ToClient) => Eff },
   msg: Msg,
   model: Model
-): [Model, Cmd<Msg>] => {
+): [Model, Eff<Msg>] => {
   switch (msg[0]) {
     case "tick": {
       const modelNew = tick(model);
@@ -46,10 +46,10 @@ export const update = (
 };
 
 export const updateFromClient = (
-  { broadcast }: { broadcast: (m: ToClient) => Cmd },
+  { broadcast }: { broadcast: (m: ToClient) => Eff },
   msg: ToServer,
   model: Model
-): [Model, Cmd<Msg>] => {
+): [Model, Eff<Msg>] => {
   switch (msg[0]) {
     case "stop-game":
     case "input-direction":

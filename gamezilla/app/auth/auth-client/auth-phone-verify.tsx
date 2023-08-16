@@ -1,6 +1,6 @@
 import {
   Browser,
-  Cmd,
+  Eff,
   PhoneNumber,
   Result,
   Task,
@@ -45,15 +45,15 @@ export type Model = {
 
 const codeInputId = "codeInputId";
 
-export const init: { model: Model; cmd: Cmd<Msg> } = {
+export const init: { model: Model; eff: Eff<Msg> } = {
   model: {
     code: "",
     submission: { type: "idle" },
   },
-  cmd: p(
+  eff: p(
     Time.delay(100, () => null),
     Task.chain(() => Browser.focus(codeInputId)),
-    Cmd.perform((result) => ({ t: "focus-done", result }))
+    Eff.perform((result) => ({ t: "focus-done", result }))
   ),
 };
 
@@ -87,7 +87,7 @@ export const update = ({
   }) => Task<Result<string, null>>;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
   msgs?: ClientAppMsg[];
   shouldLoadCurrentUser?: boolean;
 } => {
@@ -101,9 +101,9 @@ export const update = ({
         code: model.code,
         submission: { type: "loading" },
       },
-      cmd: p(
+      eff: p(
         verifyCode({ code: model.code, phoneNumber }),
-        Cmd.perform((result): Msg => ({ t: "verify-code-done", result }))
+        Eff.perform((result): Msg => ({ t: "verify-code-done", result }))
       ),
     };
   }

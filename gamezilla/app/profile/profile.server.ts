@@ -1,6 +1,6 @@
 import {
   ClientId,
-  Cmd,
+  Eff,
   Err,
   NonEmpty,
   Ok,
@@ -18,11 +18,7 @@ import {
   supabaseClient,
   definitions,
 } from "gamezilla/app/@SHARED/third-party-services";
-import {
-  ServerEffect,
-  ReqCtx,
-  ServerEvent,
-} from "gamezilla/app/@SHARED/server";
+import { ServerCmd, ReqCtx, ServerEvent } from "gamezilla/app/@SHARED/server";
 import {
   Req,
   ServerModel,
@@ -61,7 +57,7 @@ export const update = ({
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   switch (msg.t) {
     case "none": {
@@ -78,11 +74,11 @@ export const updateFromClient = ({
 }: {
   msg: ToServer;
   model: Model;
-  sendBack: (m: ToClient) => Cmd<Msg>;
+  sendBack: (m: ToClient) => Eff<Msg>;
   ctx: ReqCtx | null;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   if (!ctx) {
     return { model };
@@ -90,13 +86,13 @@ export const updateFromClient = ({
 
   return {
     model,
-    cmd: p(
+    eff: p(
       handler({ msg, ctx }),
-      Cmd.perform((result) => ({
+      Eff.perform((result) => ({
         ...msg,
         result,
       })),
-      Cmd.chain((res) => sendBack(res))
+      Eff.chain((res) => sendBack(res))
     ),
   };
 };
@@ -106,25 +102,25 @@ export const updateFromEvent = ({
   msg,
   model,
 }: {
-  sendToClient: (clientId: ClientId[], m: ToClient) => Cmd<Msg>;
+  sendToClient: (clientId: ClientId[], m: ToClient) => Eff<Msg>;
   msg: ServerEvent;
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   if (msg.t === "client-authenticated") {
     return {
       model,
-      cmd: p(
+      eff: p(
         () => findElseCreate({ userId: msg.userId }),
-        Cmd.perform(
+        Eff.perform(
           (result): ToClient => ({
             t: "current-user-profile",
             result,
           })
         ),
-        Cmd.chain((res) => sendToClient([msg.clientId], res))
+        Eff.chain((res) => sendToClient([msg.clientId], res))
       ),
     };
   }

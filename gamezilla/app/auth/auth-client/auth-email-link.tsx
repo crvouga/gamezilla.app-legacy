@@ -1,4 +1,4 @@
-import { Cmd, Result, Task, exhaustive, p } from "gamezilla/@SHARED/core";
+import { Eff, Result, Task, exhaustive, p } from "gamezilla/@SHARED/core";
 import { ClientAppMsg } from "gamezilla/app/@SHARED/client";
 import {
   AlertError,
@@ -58,7 +58,7 @@ export const update = ({
   }) => Task<Result<string, null>>;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
   msgs?: ClientAppMsg[];
 } => {
   if (msg.t === "inputted-email-address") {
@@ -112,9 +112,9 @@ export const update = ({
           sentToEmailAddress: model.emailAddress,
         },
       },
-      cmd: p(
+      eff: p(
         sendEmailLink({ emailAddress: model.emailAddress }),
-        Cmd.perform((result) => ({ t: "login-done", result }))
+        Eff.perform((result) => ({ t: "login-done", result }))
       ),
     };
   }

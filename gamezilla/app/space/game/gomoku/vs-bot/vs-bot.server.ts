@@ -1,4 +1,4 @@
-import { Cmd, Sub, andThen, p } from "gamezilla/@SHARED/core";
+import { Eff, Sub, andThen, p } from "gamezilla/@SHARED/core";
 import { SpaceEvent, SpaceReqCtx } from "gamezilla/app/space/@SHARED";
 import {
   Res,
@@ -41,7 +41,7 @@ export const update = ({
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   switch (msg.t) {
     case "none": {
@@ -52,13 +52,13 @@ export const update = ({
 
 type updateFromClient = (input: {
   ctx: SpaceReqCtx;
-  sendToClient: (m: ToClient) => Cmd;
-  broadcast: (m: ToClient) => Cmd;
+  sendToClient: (m: ToClient) => Eff;
+  broadcast: (m: ToClient) => Eff;
   msg: ToServer;
   model: Model;
 }) => {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 };
 
 export const updateFromClient: updateFromClient = (input) => {
@@ -75,7 +75,7 @@ const updateBotMove: updateFromClient = ({ broadcast, model }) => {
   if (handled.t === "err") {
     return {
       model,
-      cmd: broadcast({ t: "bot-moved", result: handled }),
+      eff: broadcast({ t: "bot-moved", result: handled }),
     };
   }
 
@@ -83,10 +83,10 @@ const updateBotMove: updateFromClient = ({ broadcast, model }) => {
 
   return {
     model: modelNew,
-    // cmd: p(
+    // eff: p(
     //   Time.delay(2000),
-    //   Cmd.perform(() => null),
-    //   Cmd.chain(() => broadcast({ t: 'bot-moved', result: Ok(modelNew) }))
+    //   Eff.perform(() => null),
+    //   Eff.chain(() => broadcast({ t: 'bot-moved', result: Ok(modelNew) }))
     // ),
   };
 };
@@ -102,9 +102,9 @@ const updateFromClient_: updateFromClient = ({
     default: {
       const res: Res = { ...msg, result: handle({ ctx, msg, model }) };
       if (res.result.t === "err") {
-        return { model, cmd: sendToClient(res) };
+        return { model, eff: sendToClient(res) };
       }
-      return { model: res.result.value, cmd: broadcast(res) };
+      return { model: res.result.value, eff: broadcast(res) };
     }
   }
 };
@@ -117,7 +117,7 @@ export const updateFromEvent = ({
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   if (msg.t === "user-joined") {
     return {

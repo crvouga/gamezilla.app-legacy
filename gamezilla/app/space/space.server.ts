@@ -1,6 +1,6 @@
 import {
   ClientId,
-  Cmd,
+  Eff,
   Err,
   Ok,
   Sub,
@@ -9,7 +9,7 @@ import {
 } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
 import {
-  ServerEffect,
+  ServerCmd,
   ServerCtx,
   ReqCtx,
   ServerEvent,
@@ -46,10 +46,10 @@ export const update = async ({
   ctx,
 }: {
   ctx: ServerCtx;
-  sendToUser: (userIds: UserId[], msg: ToClient) => Cmd;
+  sendToUser: (userIds: UserId[], msg: ToClient) => Eff;
   msg: ServerMsg;
   model: ServerModel;
-}): Promise<{ model: ServerModel; cmd?: Cmd<ServerMsg> }> => {
+}): Promise<{ model: ServerModel; eff?: Eff<ServerMsg> }> => {
   switch (msg.t) {
     case "game": {
       const { spaceId } = msg;
@@ -99,16 +99,16 @@ export const update = async ({
 
       return {
         model,
-        cmd: Cmd.map_(
+        eff: Eff.map_(
           (m): ServerMsg => ({ t: "game", spaceId, c: m }),
-          updated.cmd
+          updated.eff
         ),
       };
     }
   }
 };
 
-const sendBack = (ctx: ReqCtx, msg: ToClient): ServerEffect<ToClient> => {
+const sendBack = (ctx: ReqCtx, msg: ToClient): ServerCmd<ToClient> => {
   return {
     t: "send-to-client",
     clientIds: [ctx.clientId],
@@ -120,12 +120,12 @@ export const updateFromClient = async (input: {
   ctx: ReqCtx;
   msg: ToServer;
   model: ServerModel;
-  sendToClient: (msg: ToClient) => Cmd;
-  sendToUser: (userIds: UserId[], msg: ToClient) => Cmd;
+  sendToClient: (msg: ToClient) => Eff;
+  sendToUser: (userIds: UserId[], msg: ToClient) => Eff;
 }): Promise<{
   model: ServerModel;
-  eff?: ServerEffect<ToClient>[];
-  cmd?: Cmd<ServerMsg>;
+  cmd?: ServerCmd<ToClient>[];
+  eff?: Eff<ServerMsg>;
 }> => {
   const { msg, model, ctx, sendToClient, sendToUser } = input;
 
@@ -143,7 +143,7 @@ export const updateFromClient = async (input: {
 
       return {
         model,
-        eff: [sendBack(ctx, { t: "list", profiles, result })],
+        cmd: [sendBack(ctx, { t: "list", profiles, result })],
       };
     }
 
@@ -153,7 +153,7 @@ export const updateFromClient = async (input: {
       if (currentSpace.t === "err") {
         return {
           model,
-          eff: [
+          cmd: [
             sendBack(ctx, {
               ...msg,
               result: Err(
@@ -169,7 +169,7 @@ export const updateFromClient = async (input: {
       if (foundSpace.t === "err") {
         return {
           model,
-          eff: [sendBack(ctx, { ...msg, result: foundSpace })],
+          cmd: [sendBack(ctx, { ...msg, result: foundSpace })],
         };
       }
 
@@ -178,7 +178,7 @@ export const updateFromClient = async (input: {
       if (!space) {
         return {
           model,
-          eff: [
+          cmd: [
             sendBack(ctx, {
               ...msg,
               result: Err("Game space was not found"),
@@ -206,13 +206,13 @@ export const updateFromClient = async (input: {
       if (mutated.t === "err") {
         return {
           model,
-          eff: [sendBack(ctx, { ...msg, result: mutated })],
+          cmd: [sendBack(ctx, { ...msg, result: mutated })],
         };
       }
 
       return {
         model,
-        eff: [{ t: "broadcast", msg: { ...msg, result: Ok(spaceNew) } }],
+        cmd: [{ t: "broadcast", msg: { ...msg, result: Ok(spaceNew) } }],
       };
     }
 
@@ -222,7 +222,7 @@ export const updateFromClient = async (input: {
       if (currentSpace.t === "err") {
         return {
           model,
-          eff: [sendBack(ctx, { ...msg, result: currentSpace })],
+          cmd: [sendBack(ctx, { ...msg, result: currentSpace })],
         };
       }
 
@@ -231,14 +231,14 @@ export const updateFromClient = async (input: {
       if (!space) {
         return {
           model,
-          eff: [sendBack(ctx, { ...msg, result: Err("Failed to find space") })],
+          cmd: [sendBack(ctx, { ...msg, result: Err("Failed to find space") })],
         };
       }
 
       if (space.hostId !== ctx.currentUserId) {
         return {
           model,
-          eff: [
+          cmd: [
             sendBack(ctx, {
               ...msg,
               result: Err("You must be the host to destroy a space"),
@@ -252,13 +252,13 @@ export const updateFromClient = async (input: {
       if (mutated.t === "err") {
         return {
           model,
-          eff: [sendBack(ctx, { ...msg, result: mutated })],
+          cmd: [sendBack(ctx, { ...msg, result: mutated })],
         };
       }
 
       return {
         model,
-        eff: [
+        cmd: [
           {
             t: "broadcast",
             msg: { ...msg, profiles: space.profileCache, result: Ok(space) },
@@ -273,7 +273,7 @@ export const updateFromClient = async (input: {
       if (currentSpace.t === "err") {
         return {
           model,
-          eff: [sendBack(ctx, { ...msg, result: currentSpace })],
+          cmd: [sendBack(ctx, { ...msg, result: currentSpace })],
         };
       }
 
@@ -282,7 +282,7 @@ export const updateFromClient = async (input: {
       if (space) {
         return {
           model,
-          eff: [
+          cmd: [
             sendBack(ctx, {
               ...msg,
               result: Err(
@@ -313,13 +313,13 @@ export const updateFromClient = async (input: {
       if (mutated.t === "err") {
         return {
           model,
-          eff: [sendBack(ctx, { ...msg, result: mutated })],
+          cmd: [sendBack(ctx, { ...msg, result: mutated })],
         };
       }
 
       return {
         model,
-        eff: [
+        cmd: [
           {
             t: "broadcast",
             msg: {
@@ -338,7 +338,7 @@ export const updateFromClient = async (input: {
       if (currentSpace.t === "err") {
         return {
           model,
-          eff: [sendBack(ctx, { ...msg, result: currentSpace })],
+          cmd: [sendBack(ctx, { ...msg, result: currentSpace })],
         };
       }
 
@@ -347,7 +347,7 @@ export const updateFromClient = async (input: {
       if (!space) {
         return {
           model,
-          eff: [
+          cmd: [
             sendBack(ctx, {
               ...msg,
               result: Err("Failed to find space"),
@@ -359,7 +359,7 @@ export const updateFromClient = async (input: {
       if (space.hostId !== ctx.currentUserId) {
         return {
           model,
-          eff: [
+          cmd: [
             sendBack(ctx, {
               ...msg,
               result: Err("You must be the host to change the game"),
@@ -385,13 +385,13 @@ export const updateFromClient = async (input: {
         if (mutated.t === "err") {
           return {
             model,
-            eff: [sendBack(ctx, { ...msg, result: mutated })],
+            cmd: [sendBack(ctx, { ...msg, result: mutated })],
           };
         }
 
         return {
           model,
-          eff: [
+          cmd: [
             {
               t: "broadcast",
               msg: {
@@ -427,12 +427,16 @@ export const updateFromClient = async (input: {
       const mutated = await spaceDb.set(spaceNew);
 
       if (mutated.t === "err") {
-        return { model, cmd: sendToClient({ ...msg, result: mutated }) };
+        return {
+          model,
+          cmd: [sendBack(ctx, { ...msg, result: mutated })],
+          eff: sendToClient({ ...msg, result: mutated }),
+        };
       }
 
       return {
         model,
-        eff: [
+        cmd: [
           {
             t: "broadcast",
             msg: {
@@ -442,9 +446,9 @@ export const updateFromClient = async (input: {
             },
           },
         ],
-        cmd: Cmd.map_(
+        eff: Eff.map_(
           (m): ServerMsg => ({ t: "game", c: m, spaceId: space.spaceId }),
-          initial.cmd
+          initial.eff
         ),
       };
     }
@@ -453,7 +457,7 @@ export const updateFromClient = async (input: {
       const got = await spaceDb.getByUserId(ctx.currentUserId);
 
       if (got.t === "err") {
-        return { model, cmd: sendToClient({ ...msg, result: got }) };
+        return { model, eff: sendToClient({ ...msg, result: got }) };
       }
 
       const space = got.value;
@@ -461,14 +465,14 @@ export const updateFromClient = async (input: {
       if (!space) {
         return {
           model,
-          cmd: sendToClient({ ...msg, result: Err("Failed to find space") }),
+          eff: sendToClient({ ...msg, result: Err("Failed to find space") }),
         };
       }
 
       if (space.hostId === ctx.currentUserId) {
         return {
           model,
-          cmd: sendToClient({
+          eff: sendToClient({
             ...msg,
             result: Err("You must destroy the space to leave as host"),
           }),
@@ -487,7 +491,7 @@ export const updateFromClient = async (input: {
       };
 
       const updated = !spaceNew.game
-        ? { model: spaceNew.game, cmd: Cmd.None }
+        ? { model: spaceNew.game, eff: Eff.None }
         : GameServer.updateFromEvent({
             ctx: { ...ctx, hostId: space.hostId },
             sendToClient: (m) => sendToClient({ t: "game", c: m }),
@@ -500,12 +504,12 @@ export const updateFromClient = async (input: {
       const mutated = await spaceDb.set(spaceNew);
 
       if (mutated.t === "err") {
-        return { model, cmd: sendToClient({ ...msg, result: mutated }) };
+        return { model, eff: sendToClient({ ...msg, result: mutated }) };
       }
 
       return {
         model,
-        eff: [
+        cmd: [
           {
             t: "broadcast",
             msg: {
@@ -515,10 +519,10 @@ export const updateFromClient = async (input: {
             },
           },
         ],
-        cmd: Cmd.batch([
-          Cmd.map_(
+        eff: Eff.batch([
+          Eff.map_(
             (c): ServerMsg => ({ t: "game", spaceId: space.spaceId, c }),
-            updated.cmd
+            updated.eff
           ),
         ]),
       };
@@ -566,9 +570,9 @@ export const updateFromClient = async (input: {
 
       return {
         model,
-        cmd: Cmd.map_(
+        eff: Eff.map_(
           (c): ServerMsg => ({ t: "game", spaceId: space.spaceId, c }),
-          updated.cmd
+          updated.eff
         ),
       };
     }
@@ -578,10 +582,10 @@ export const updateFromClient = async (input: {
 export const updateFromEvent = (input: {
   msg: ServerEvent;
   model: ServerModel;
-  sendToClient: (clientId: ClientId[], msg: ToClient) => Cmd;
+  sendToClient: (clientId: ClientId[], msg: ToClient) => Eff;
 }): {
   model: ServerModel;
-  cmd?: Cmd<ServerMsg>;
+  eff?: Eff<ServerMsg>;
 } => {
   const { msg } = input;
 
@@ -593,10 +597,10 @@ export const updateFromEvent = (input: {
 };
 
 const sendToSpace = (
-  sendToUser: (userIds: UserId[], msg: ToClient) => Cmd,
+  sendToUser: (userIds: UserId[], msg: ToClient) => Eff,
   space: Space<GameServer.Model>,
   msg: ToClient
-): Cmd => {
+): Eff => {
   return sendToUser(Object.values(space.users), msg);
 };
 

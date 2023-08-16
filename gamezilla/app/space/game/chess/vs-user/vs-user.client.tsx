@@ -1,4 +1,4 @@
-import { Cmd, Option, Sub, exhaustive } from "gamezilla/@SHARED/core";
+import { Eff, Option, Sub, exhaustive } from "gamezilla/@SHARED/core";
 import { ViewCtx } from "gamezilla/app/@SHARED/client";
 import { UserId } from "gamezilla/app/@SHARED/data";
 import { SpaceClientCtx } from "gamezilla/app/space/@SHARED";
@@ -27,9 +27,9 @@ export type Model = ClientModel;
 export const init = ({
   userId,
 }: {
-  sendToServer: (msg: ToServer) => Cmd;
+  sendToServer: (msg: ToServer) => Eff;
   userId: UserId | "none";
-}): [ClientModel, Cmd<Msg>] => {
+}): [ClientModel, Eff<Msg>] => {
   return [
     {
       coreModel: initShared({ userId }),
@@ -37,7 +37,7 @@ export const init = ({
       openedModal: "none",
       isFlipped: false,
     },
-    Cmd.None,
+    Eff.None,
   ];
 };
 
@@ -52,10 +52,10 @@ export const init = ({
 export type Msg = ClientMsg;
 
 export const update = (
-  { sendToServer }: { sendToServer: (msg: ToServer) => Cmd },
+  { sendToServer }: { sendToServer: (msg: ToServer) => Eff },
   msg: Msg,
   model: Model
-): [Model, Cmd<Msg>] => {
+): [Model, Eff<Msg>] => {
   switch (msg[0]) {
     //
     //
@@ -64,27 +64,27 @@ export const update = (
     //
 
     case "audio-done": {
-      return [model, Cmd.None];
+      return [model, Eff.None];
     }
 
     case "OpenedMenu": {
-      return [{ ...model, openedMenuId: Option.Some(msg[1]) }, Cmd.None];
+      return [{ ...model, openedMenuId: Option.Some(msg[1]) }, Eff.None];
     }
 
     case "ClosedMenu": {
-      return [{ ...model, openedMenuId: Option.None }, Cmd.None];
+      return [{ ...model, openedMenuId: Option.None }, Eff.None];
     }
 
     case "ClickedFlip": {
-      return [{ ...model, isFlipped: !model.isFlipped }, Cmd.None];
+      return [{ ...model, isFlipped: !model.isFlipped }, Eff.None];
     }
 
     case "OpenedModal": {
-      return [{ ...model, openedModal: msg[1] }, Cmd.None];
+      return [{ ...model, openedModal: msg[1] }, Eff.None];
     }
 
     case "ClosedModal": {
-      return [{ ...model, openedModal: "none" }, Cmd.None];
+      return [{ ...model, openedModal: "none" }, Eff.None];
     }
 
     //
@@ -127,7 +127,7 @@ export const update = (
       const result = inputMove(msg[1], model.coreModel);
 
       if (result.t === "err") {
-        return [model, Cmd.None];
+        return [model, Eff.None];
       }
 
       return [{ ...model, coreModel: result.value }, sendToServer(msg)];
@@ -146,49 +146,49 @@ export const updateFromServer = (
   { ctx }: { ctx: SpaceClientCtx },
   msg: ToClient,
   _model: Model
-): [Model, Cmd<Msg>] => {
+): [Model, Eff<Msg>] => {
   const model: Model = { ..._model, openedMenuId: Option.None };
 
   switch (msg[0]) {
     case "InputClock_Done": {
       if (msg[1].t === "err") {
-        return [model, Cmd.None];
+        return [model, Eff.None];
       }
-      return [{ ...model, coreModel: msg[1].value }, Cmd.None];
+      return [{ ...model, coreModel: msg[1].value }, Eff.None];
     }
 
     case "input-move-done": {
       if (msg[1].t === "err") {
-        return [model, Cmd.None];
+        return [model, Eff.None];
       }
 
       const coreModelNew = msg[1].value;
 
       if (coreModelNew.type !== "game") {
-        return [model, Cmd.None];
+        return [model, Eff.None];
       }
 
-      return [{ ...model, coreModel: coreModelNew }, Cmd.None];
+      return [{ ...model, coreModel: coreModelNew }, Eff.None];
     }
 
     case "InputPlayer_Done": {
       if (msg[1].t === "err") {
-        return [model, Cmd.None];
+        return [model, Eff.None];
       }
 
       const coreModel = msg[1].value;
 
-      return [{ ...model, coreModel }, Cmd.None];
+      return [{ ...model, coreModel }, Eff.None];
     }
 
     case "StartGame_Done": {
       if (msg[1].t === "err") {
-        return [model, Cmd.None];
+        return [model, Eff.None];
       }
 
       const coreModel = msg[1].value;
 
-      return [{ ...model, coreModel }, Cmd.None];
+      return [{ ...model, coreModel }, Eff.None];
     }
 
     //
@@ -200,28 +200,28 @@ export const updateFromServer = (
     case "RequestToDraw_Done": {
       switch (msg[1].t) {
         case "err": {
-          return [model, Cmd.None];
+          return [model, Eff.None];
         }
 
         case "ok": {
-          return [{ ...model, openedModal: "AskedToDraw" }, Cmd.None];
+          return [{ ...model, openedModal: "AskedToDraw" }, Eff.None];
         }
 
         default: {
-          return [model, Cmd.None];
+          return [model, Eff.None];
         }
       }
     }
 
     case "RespondToDraw_Done": {
       if (msg[1].t === "err") {
-        return [model, Cmd.None];
+        return [model, Eff.None];
       }
 
       const coreModel = msg[1].value;
 
       if (coreModel.type === "game-over") {
-        return [{ ...model, coreModel }, Cmd.None];
+        return [{ ...model, coreModel }, Eff.None];
       }
 
       const isNotPlaying =
@@ -230,17 +230,17 @@ export const updateFromServer = (
         coreModel.b !== ctx.currentUserId;
 
       if (isNotPlaying) {
-        return [{ ...model, coreModel }, Cmd.None];
+        return [{ ...model, coreModel }, Eff.None];
       }
 
-      return [{ ...model, coreModel }, Cmd.None];
+      return [{ ...model, coreModel }, Eff.None];
     }
 
     case "CancelDraw_Done": {
       const result = msg[1];
 
       if (result.t === "err") {
-        return [model, Cmd.None];
+        return [model, Eff.None];
       }
 
       const coreModel = result.value;
@@ -251,10 +251,10 @@ export const updateFromServer = (
         coreModel.b !== ctx.currentUserId;
 
       if (isNotPlaying) {
-        return [{ ...model, coreModel }, Cmd.None];
+        return [{ ...model, coreModel }, Eff.None];
       }
 
-      return [{ ...model, coreModel }, Cmd.None];
+      return [{ ...model, coreModel }, Eff.None];
     }
 
     //
@@ -265,26 +265,26 @@ export const updateFromServer = (
 
     case "resign_Done": {
       if (msg[1].t === "err") {
-        return [model, Cmd.None];
+        return [model, Eff.None];
       }
 
       const coreModelNew = msg[1].value;
 
       if (coreModelNew.type === "setup") {
-        return [model, Cmd.None];
+        return [model, Eff.None];
       }
 
-      return [{ ...model, coreModel: coreModelNew }, Cmd.None];
+      return [{ ...model, coreModel: coreModelNew }, Eff.None];
     }
 
     case "NewGame_Done": {
       if (msg[1].t === "err") {
-        return [model, Cmd.None];
+        return [model, Eff.None];
       }
 
       const coreModelNew = msg[1].value;
 
-      return [{ ...model, coreModel: coreModelNew }, Cmd.None];
+      return [{ ...model, coreModel: coreModelNew }, Eff.None];
     }
 
     case "game-over": {
@@ -293,22 +293,22 @@ export const updateFromServer = (
           ...model,
           openedModal: "game-over",
         },
-        Cmd.None,
+        Eff.None,
       ];
     }
 
     case "GameStarted": {
-      return [model, Cmd.None];
+      return [model, Eff.None];
     }
 
     case "ClockTicked": {
       const coreModel = msg[1];
 
-      return [{ ...model, coreModel }, Cmd.None];
+      return [{ ...model, coreModel }, Eff.None];
     }
 
     case "player-left": {
-      return [{ ...model, coreModel: msg[1] }, Cmd.None];
+      return [{ ...model, coreModel: msg[1] }, Eff.None];
     }
 
     default: {
@@ -317,9 +317,9 @@ export const updateFromServer = (
   }
 };
 
-const playAudio = (_src: string): Cmd<Msg> => {
+const playAudio = (_src: string): Eff<Msg> => {
   // return Audio.play(src, t("audio-done"));
-  return Cmd.None;
+  return Eff.None;
 };
 
 //

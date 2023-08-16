@@ -1,4 +1,4 @@
-import { Cmd, Posix } from "gamezilla/@SHARED/core";
+import { Eff, Posix } from "gamezilla/@SHARED/core";
 import { ClientAppMsg, ClientCtx } from "gamezilla/app/@SHARED/client";
 import {
   IconArrowLeftOnRect,
@@ -71,14 +71,14 @@ export const update = ({
   ctx,
   sendToServer,
 }: {
-  sendToServer: (msg: ToServer) => Cmd;
+  sendToServer: (msg: ToServer) => Eff;
   ctx: SpaceClientCtx;
   msg: Msg;
   model: Model;
 }): {
   model: Model;
   msgs?: ClientAppMsg[];
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   if (msg.t === "vs-bot-setup") {
     const updated = VsBotSetup.update(model.vsBotSetup, msg.c);
@@ -87,14 +87,14 @@ export const update = ({
 
   const handled = handle({ ctx, msg, model });
   if (handled.t === "err") {
-    return { model, cmd: sendToServer(msg) };
+    return { model, eff: sendToServer(msg) };
   }
   const merged = syncWithServer({
     ...ctx,
     client: model,
     server: handled.value,
   });
-  return { model: merged, cmd: sendToServer(msg) };
+  return { model: merged, eff: sendToServer(msg) };
 };
 
 export const updateFromServer = ({
@@ -107,7 +107,7 @@ export const updateFromServer = ({
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
   msgs?: ClientAppMsg[];
 } => {
   if (msg.result.t === "err") {

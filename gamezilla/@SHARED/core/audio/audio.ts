@@ -1,4 +1,4 @@
-import { Cmd } from "../cmd";
+import { Eff } from "../eff";
 import { p } from "../pipe";
 import { Result } from "../result";
 
@@ -17,7 +17,7 @@ export const preload = <msg>(
     // getSoundInstance(src)
     // }
     return Result.Ok(null);
-  }, Cmd.perform(mapper));
+  }, Eff.perform(mapper));
 
 export const play = <msg>(src: string, mapper: (result: PlayResult) => msg) =>
   p(async () => {
@@ -29,4 +29,4 @@ export const play = <msg>(src: string, mapper: (result: PlayResult) => msg) =>
     }
 
     return Result.Ok(null);
-  }, Cmd.perform(mapper));
+  }, Eff.perform(mapper));

@@ -1,4 +1,4 @@
-import { Cmd } from "./cmd";
+import { Eff } from "./eff";
 import { Sub } from "./sub";
 import { Posix } from "./unix-time";
 
@@ -10,15 +10,15 @@ export type Program<Model, Msg> = {
 };
 
 export function create<Model, Msg>(input: {
-  init: (input: { ctx: Ctx }) => { model: Model; cmd?: Cmd<Msg> };
+  init: (input: { ctx: Ctx }) => { model: Model; eff?: Eff<Msg> };
   update: (input: { ctx: Ctx; msg: Msg; model: Model }) =>
     | {
         model: Model;
-        cmd?: Cmd<Msg>;
+        eff?: Eff<Msg>;
       }
     | Promise<{
         model: Model;
-        cmd?: Cmd<Msg>;
+        eff?: Eff<Msg>;
       }>;
   subscriptions: (input: { ctx: Ctx; model: Model }) => Sub<Msg>;
 }) {
@@ -69,7 +69,7 @@ export function create<Model, Msg>(input: {
   }
 
   async function setState(
-    stateNew: { model: Model; cmd?: Cmd<Msg> },
+    stateNew: { model: Model; eff?: Eff<Msg> },
     ctx: Ctx,
     msg: Msg | null
   ) {
@@ -87,8 +87,8 @@ export function create<Model, Msg>(input: {
     }
     unsubscribe = sub.subscribe(dispatch);
 
-    if (state.cmd) {
-      state.cmd(dispatch);
+    if (state.eff) {
+      state.eff(dispatch);
     }
   }
 

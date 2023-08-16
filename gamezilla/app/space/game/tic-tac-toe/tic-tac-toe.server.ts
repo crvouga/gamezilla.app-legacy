@@ -1,4 +1,4 @@
-import { Cmd, Result, Sub } from "gamezilla/@SHARED/core";
+import { Eff, Result, Sub } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
 import { SpaceEvent, SpaceReqCtx } from "gamezilla/app/space/@SHARED";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./tic-tac-toe.core";
@@ -34,12 +34,12 @@ export const update = ({
   msg,
   model,
 }: {
-  broadcast: (msg: ToClient) => Cmd;
+  broadcast: (msg: ToClient) => Eff;
   msg: Msg;
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   if (msg.t === "vs-user" && model.t === "vs-user") {
     const updated = VsUser.update(
@@ -49,7 +49,7 @@ export const update = ({
     );
     return {
       model: { t: "vs-user", c: updated[0] },
-      cmd: Cmd.t("vs-user", updated[1]),
+      eff: Eff.t("vs-user", updated[1]),
     };
   }
 
@@ -62,7 +62,7 @@ export const update = ({
 
     return {
       model: { t: "vs-bot", c: updated.model },
-      cmd: Cmd.t("vs-bot", updated.cmd),
+      eff: Eff.t("vs-bot", updated.eff),
     };
   }
 
@@ -76,17 +76,17 @@ export const updateFromClient = ({
   model,
   ctx,
 }: {
-  sendToClient: (msg: ToClient) => Cmd;
-  broadcast: (msg: ToClient) => Cmd;
+  sendToClient: (msg: ToClient) => Eff;
+  broadcast: (msg: ToClient) => Eff;
   ctx: SpaceReqCtx;
   msg: ToServer;
   model: Model;
-}): { model: Model; cmd?: Cmd<Msg> } => {
+}): { model: Model; eff?: Eff<Msg> } => {
   if (msg.t === "input-mode") {
     if (ctx.currentUserId !== ctx.hostId) {
       return {
         model,
-        cmd: sendToClient({ ...msg, result: Err("must-be-host") }),
+        eff: sendToClient({ ...msg, result: Err("must-be-host") }),
       };
     }
 
@@ -97,7 +97,7 @@ export const updateFromClient = ({
 
     return {
       model: modelNew,
-      cmd: broadcast({ ...msg, result: Ok(modelNew) }),
+      eff: broadcast({ ...msg, result: Ok(modelNew) }),
     };
   }
 
@@ -113,7 +113,7 @@ export const updateFromClient = ({
 
     return {
       model: { ...model, c: updated[0] },
-      cmd: Cmd.t("vs-user", updated[1]),
+      eff: Eff.t("vs-user", updated[1]),
     };
   }
 
@@ -128,7 +128,7 @@ export const updateFromClient = ({
 
     return {
       model: { ...model, c: updated.model },
-      cmd: Cmd.t("vs-bot", updated.cmd),
+      eff: Eff.t("vs-bot", updated.eff),
     };
   }
 
@@ -140,12 +140,12 @@ export const updateFromEvent = ({
   msg,
   model,
 }: {
-  broadcast: (m: ToClient) => Cmd;
+  broadcast: (m: ToClient) => Eff;
   model: Model;
   msg: SpaceEvent;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   if (model.t === "none") {
     return { model };
@@ -159,7 +159,7 @@ export const updateFromEvent = ({
     });
     return {
       model: { t: "vs-bot", c: updated.model },
-      cmd: updated.cmd ? Cmd.t("vs-bot", updated.cmd) : undefined,
+      eff: updated.eff ? Eff.t("vs-bot", updated.eff) : undefined,
     };
   }
 
@@ -171,7 +171,7 @@ export const updateFromEvent = ({
     });
     return {
       model: { t: "vs-user", c: updated.model },
-      cmd: updated.cmd ? Cmd.t("vs-user", updated.cmd) : undefined,
+      eff: updated.eff ? Eff.t("vs-user", updated.eff) : undefined,
     };
   }
 

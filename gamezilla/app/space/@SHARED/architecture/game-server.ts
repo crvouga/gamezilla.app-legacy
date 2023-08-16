@@ -1,5 +1,5 @@
-import { Cmd, Sub } from "gamezilla/@SHARED/core";
-import { ServerEffect, ServerEvent } from "gamezilla/app/@SHARED/server";
+import { Eff, Sub } from "gamezilla/@SHARED/core";
+import { ServerCmd, ServerEvent } from "gamezilla/app/@SHARED/server";
 import { SpaceEvent, SpaceReqCtx, SpaceServerCtx } from "../space";
 
 //
@@ -19,11 +19,11 @@ export type GameServer<Model, Msg, ToClient, ToServer> = {
    */
   init: (input: {
     ctx: SpaceServerCtx;
-    sendToClient: (m: ToClient) => Cmd;
-    sendToSpace: (m: ToClient) => Cmd;
+    sendToClient: (m: ToClient) => Eff;
+    sendToSpace: (m: ToClient) => Eff;
   }) => {
     model: Model;
-    cmd?: Cmd<Msg>;
+    eff?: Eff<Msg>;
     msgs?: ServerEvent[];
   };
 
@@ -32,14 +32,14 @@ export type GameServer<Model, Msg, ToClient, ToServer> = {
    */
   update: (input: {
     ctx: SpaceServerCtx;
-    sendToSpace: (m: ToClient) => Cmd;
+    sendToSpace: (m: ToClient) => Eff;
     msg: Msg;
     model: Model;
   }) => {
     model: Model;
-    cmd?: Cmd<Msg>;
+    eff?: Eff<Msg>;
     msgs?: ServerEvent[];
-    eff?: ServerEffect<ToClient>[];
+    cmd?: ServerCmd<ToClient>[];
   };
 
   /**
@@ -47,15 +47,15 @@ export type GameServer<Model, Msg, ToClient, ToServer> = {
    */
   updateFromClient: (input: {
     ctx: SpaceReqCtx;
-    sendToClient: (m: ToClient) => Cmd;
-    sendToSpace: (m: ToClient) => Cmd;
+    sendToClient: (m: ToClient) => Eff;
+    sendToSpace: (m: ToClient) => Eff;
     msg: ToServer;
     model: Model;
   }) => {
     model: Model;
-    cmd?: Cmd<Msg>;
+    eff?: Eff<Msg>;
     msgs?: ServerEvent[];
-    eff?: ServerEffect<ToClient>[];
+    cmd?: ServerCmd<ToClient>[];
   };
 
   /**
@@ -63,13 +63,13 @@ export type GameServer<Model, Msg, ToClient, ToServer> = {
    */
   updateFromEvent: (input: {
     ctx: SpaceServerCtx;
-    sendToClient: (m: ToClient) => Cmd;
-    sendToSpace: (m: ToClient) => Cmd;
+    sendToClient: (m: ToClient) => Eff;
+    sendToSpace: (m: ToClient) => Eff;
     msg: SpaceEvent;
     model: Model;
   }) => {
     model: Model;
-    cmd?: Cmd<Msg>;
+    eff?: Eff<Msg>;
     msgs?: ServerEvent[];
   };
 
@@ -103,7 +103,7 @@ const tag = <T extends string, Model, Msg, ToClient, ToServer>(
       });
       return {
         model: { t: tag, c: initial.model },
-        cmd: Cmd.t(tag, initial.cmd),
+        eff: Eff.t(tag, initial.eff),
         msgs: initial.msgs,
       };
     },
@@ -116,9 +116,9 @@ const tag = <T extends string, Model, Msg, ToClient, ToServer>(
       });
       return {
         model: { t: tag, c: updated.model },
-        cmd: Cmd.t(tag, updated.cmd),
+        eff: Eff.t(tag, updated.eff),
         msgs: updated.msgs,
-        eff: ServerEffect.tag(tag, updated.eff),
+        cmd: ServerCmd.tag(tag, updated.cmd),
       };
     },
     updateFromClient: (input) => {
@@ -131,9 +131,9 @@ const tag = <T extends string, Model, Msg, ToClient, ToServer>(
       });
       return {
         model: { t: tag, c: updated.model },
-        cmd: Cmd.t(tag, updated.cmd),
+        eff: Eff.t(tag, updated.eff),
         msgs: updated.msgs,
-        eff: ServerEffect.tag(tag, updated.eff),
+        cmd: ServerCmd.tag(tag, updated.cmd),
       };
     },
     updateFromEvent: (input) => {
@@ -146,7 +146,7 @@ const tag = <T extends string, Model, Msg, ToClient, ToServer>(
       });
       return {
         model: { t: tag, c: updated.model },
-        cmd: Cmd.t(tag, updated.cmd),
+        eff: Eff.t(tag, updated.eff),
         msgs: updated.msgs,
       };
     },

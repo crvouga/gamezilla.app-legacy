@@ -1,4 +1,4 @@
-import { Cmd, Keyboard, Option, Sub, exhaustive } from "gamezilla/@SHARED/core";
+import { Eff, Keyboard, Option, Sub, exhaustive } from "gamezilla/@SHARED/core";
 import * as Board from "./board";
 import * as Direction from "./direction";
 import * as Piece from "./piece";
@@ -42,22 +42,22 @@ export const init: Model = {
 export type Msg = ClientMsg;
 
 export const update = (
-  { sendToServer }: { sendToServer: (msg: ToServer) => Cmd },
+  { sendToServer }: { sendToServer: (msg: ToServer) => Eff },
   msg: Msg,
   model: Model
-): [Model, Cmd<Msg>] => {
+): [Model, Eff<Msg>] => {
   switch (msg[0]) {
     case "MouseMove": {
       return [model, sendToServer(msg)];
     }
 
     case "TouchStart": {
-      return [{ ...model, touched: Option.Some(msg[1]) }, Cmd.None];
+      return [{ ...model, touched: Option.Some(msg[1]) }, Eff.None];
     }
 
     case "TouchMove": {
       if (model.touched.type === "none") {
-        return [model, Cmd.None];
+        return [model, Eff.None];
       }
 
       const from = model.touched.value;
@@ -67,14 +67,14 @@ export const update = (
       const direction = positionsToDirection({ from, to });
 
       if (direction === "none") {
-        return [model, Cmd.None];
+        return [model, Eff.None];
       }
 
       return [model, sendToServer(["InputTranslate", { direction }])];
     }
 
     case "TouchEnd": {
-      return [{ ...model, touched: Option.None }, Cmd.None];
+      return [{ ...model, touched: Option.None }, Eff.None];
     }
 
     case "PressedKey": {
@@ -94,7 +94,7 @@ export const update = (
         return [model, sendToServer(["InputTranslate", { direction }])];
       }
 
-      return [model, Cmd.None];
+      return [model, Eff.None];
     }
 
     case "ClickedBoard": {
@@ -159,59 +159,59 @@ const keyToDirection = (key: Keyboard.Key): Direction.Direction | "none" => {
 export const updateFromServer = (
   msg: ToClient,
   model: Model
-): [Model, Cmd<Msg>] => {
+): [Model, Eff<Msg>] => {
   switch (msg[0]) {
     case "MouseMove_Done": {
       const result = msg[1];
 
       if (result.t === "err") {
-        return [model, Cmd.None];
+        return [model, Eff.None];
       }
 
       const modelNew = result.value;
 
-      return [{ ...model, coreModel: modelNew }, Cmd.None];
+      return [{ ...model, coreModel: modelNew }, Eff.None];
     }
 
     case "InputDrop_Done": {
       const result = msg[1];
 
       if (result.t === "err") {
-        return [model, Cmd.None];
+        return [model, Eff.None];
       }
 
       const modelNew = result.value;
 
-      return [{ ...model, coreModel: modelNew }, Cmd.None];
+      return [{ ...model, coreModel: modelNew }, Eff.None];
     }
 
     case "Tick_Done": {
       const modelNew = msg[1];
-      return [{ ...model, coreModel: modelNew }, Cmd.None];
+      return [{ ...model, coreModel: modelNew }, Eff.None];
     }
 
     case "InputRotate_Done": {
       const result = msg[1];
 
       if (result.t === "err") {
-        return [model, Cmd.None];
+        return [model, Eff.None];
       }
 
       const modelNew = result.value;
 
-      return [{ ...model, coreModel: modelNew }, Cmd.None];
+      return [{ ...model, coreModel: modelNew }, Eff.None];
     }
 
     case "InputTranslate_Done": {
       const result = msg[1];
 
       if (result.t === "err") {
-        return [model, Cmd.None];
+        return [model, Eff.None];
       }
 
       const modelNew = result.value;
 
-      return [{ ...model, coreModel: modelNew }, Cmd.None];
+      return [{ ...model, coreModel: modelNew }, Eff.None];
     }
   }
 };

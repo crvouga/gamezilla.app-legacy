@@ -1,4 +1,4 @@
-import { Cmd } from "./cmd";
+import { Eff } from "./eff";
 import { p } from "./pipe";
 import { Result } from "./result";
 import { Task } from "./task";
@@ -9,7 +9,7 @@ export const put = <value, msg>(
   key: string,
   value: value,
   mapper: (result: PutResult) => msg
-): Cmd<msg> => {
+): Eff<msg> => {
   const task: Task<PutResult> = async () => {
     try {
       localStorage.setItem(key, JSON.stringify(value));
@@ -18,5 +18,5 @@ export const put = <value, msg>(
       return Result.Err("failed_put_item_in_local_storage");
     }
   };
-  return p(task, Cmd.perform(mapper));
+  return p(task, Eff.perform(mapper));
 };

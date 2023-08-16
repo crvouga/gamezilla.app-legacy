@@ -1,4 +1,4 @@
-import { Cmd, RemoteResult, Sub, exhaustive, p } from "gamezilla/@SHARED/core";
+import { Eff, RemoteResult, Sub, exhaustive, p } from "gamezilla/@SHARED/core";
 import { ClientCtx, Route, ViewCtx } from "gamezilla/app/@SHARED/client";
 import { UserId } from "gamezilla/app/@SHARED/data";
 import { Mic } from "./mic";
@@ -17,8 +17,8 @@ export type Model = ClientModel;
 export const init = ({
   sendToServer,
 }: {
-  sendToServer: (msg: ToServer) => Cmd;
-}): [Model, Cmd<Msg>] => {
+  sendToServer: (msg: ToServer) => Eff;
+}): [Model, Eff<Msg>] => {
   return [
     {
       parties: {},
@@ -42,22 +42,22 @@ export const init = ({
 export type Msg = ClientMsg;
 
 export const update = (
-  { sendToServer }: { sendToServer: (msg: ToServer) => Cmd },
+  { sendToServer }: { sendToServer: (msg: ToServer) => Eff },
   msg: Msg,
   model: Model
-): [Model, Cmd<Msg>] => {
+): [Model, Eff<Msg>] => {
   switch (msg[0]) {
     case "clicked-banner": {
-      return [model, Cmd.None];
+      return [model, Eff.None];
     }
 
     case "MicSound": {
-      return [{ ...model, volume: msg[1].volume }, Cmd.None];
+      return [{ ...model, volume: msg[1].volume }, Eff.None];
     }
 
     case "MicUnload":
     case "MicLoad": {
-      return [model, Cmd.None];
+      return [model, Eff.None];
     }
 
     case "party-get":
@@ -84,7 +84,7 @@ export const updateFromServer = (
   { currentUserId }: { currentUserId: UserId },
   msg: ToClient,
   model: Model
-): [Model, Cmd<Msg>] => {
+): [Model, Eff<Msg>] => {
   switch (msg[0]) {
     case "party-get":
     case "PartyDestroy":
@@ -97,7 +97,7 @@ export const updateFromServer = (
       };
 
       if (msg[2].t === "err") {
-        return [{ ...model, requests: requestsNew }, Cmd.None];
+        return [{ ...model, requests: requestsNew }, Eff.None];
       }
 
       const modelNext: Model = {
@@ -106,13 +106,13 @@ export const updateFromServer = (
         ...msg[2].value,
       };
 
-      const cmd = toLifecycleCmd({
+      const eff = toLifecycleEff({
         currentUserId,
         modelNext: modelNext,
         modelPrev: model,
       });
 
-      return [modelNext, cmd];
+      return [modelNext, eff];
     }
     default: {
       return exhaustive(msg[0]);
@@ -120,7 +120,7 @@ export const updateFromServer = (
   }
 };
 
-const toLifecycleCmd = ({
+const toLifecycleEff = ({
   currentUserId,
   modelNext,
   modelPrev,
@@ -128,7 +128,7 @@ const toLifecycleCmd = ({
   currentUserId: UserId;
   modelPrev: Model;
   modelNext: Model;
-}): Cmd<Msg> => {
+}): Eff<Msg> => {
   const userPrev = modelPrev.users[currentUserId];
   const userNext = modelNext.users[currentUserId];
 
@@ -136,7 +136,7 @@ const toLifecycleCmd = ({
   if (userPrev && !userNext) {
     return p(
       Mic.unload,
-      Cmd.perform((result) => ["MicUnload", result])
+      Eff.perform((result) => ["MicUnload", result])
     );
   }
 
@@ -144,20 +144,20 @@ const toLifecycleCmd = ({
   if (!userPrev && userNext) {
     return p(
       Mic.load,
-      Cmd.perform((result) => ["MicLoad", result])
+      Eff.perform((result) => ["MicLoad", result])
     );
   }
 
-  return Cmd.None;
+  return Eff.None;
 };
 
 export type Action = ["party", ["Msg", Msg]];
 
 export const runAction = (
-  wire: { sendToServer: (msg: ToServer) => Cmd },
+  wire: { sendToServer: (msg: ToServer) => Eff },
   action: Action,
   model: Model
-): [Model, Cmd<Msg>] => {
+): [Model, Eff<Msg>] => {
   switch (action[1][0]) {
     case "Msg": {
       return update(wire, action[1][1], model);

@@ -1,4 +1,4 @@
-import { Cmd } from "../cmd";
+import { Eff } from "../eff";
 
 export const exhaustive = (discriminatedUnionType: "Missing Case!"): never => {
   throw new Error(`Missing case for: ${discriminatedUnionType}`);
@@ -12,15 +12,15 @@ export const andThen =
   <Msg, Model, OutMsg>(
     updateStep: (input: Model) => {
       model: Model;
-      cmd?: Cmd<Msg>;
+      eff?: Eff<Msg>;
       msgs?: OutMsg[];
     }
   ) =>
-  (output: { cmd?: Cmd<Msg>; model: Model; msgs?: OutMsg[] }) => {
+  (output: { eff?: Eff<Msg>; model: Model; msgs?: OutMsg[] }) => {
     const updated = updateStep(output.model);
     return {
       model: updated.model,
-      cmd: Cmd.batch([updated.cmd, output.cmd]),
+      eff: Eff.batch([updated.eff, output.eff]),
       msgs: [...(output.msgs ?? []), ...(updated.msgs ?? [])],
     };
   };

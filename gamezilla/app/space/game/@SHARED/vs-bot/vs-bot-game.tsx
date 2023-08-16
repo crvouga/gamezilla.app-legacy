@@ -1,4 +1,4 @@
-import { Cmd, Transition } from "gamezilla/@SHARED/core";
+import { Eff, Transition } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
 import { IconRobot, MyAvatar, VDom } from "gamezilla/app/@SHARED/ui";
 import { SpaceViewCtx } from "gamezilla/app/space/@SHARED";
@@ -74,7 +74,7 @@ export const update = (model: Model, msg: Msg): Model => {
 export const watch = (
   model: Model,
   gameOver?: GameOver
-): { model: Model; cmd: Cmd<Msg> } => {
+): { model: Model; eff: Eff<Msg> } => {
   const overlay = Transition.watch(
     overlayConfig,
     model.gameOverOverlay,
@@ -82,7 +82,7 @@ export const watch = (
   );
   return {
     model: { gameOverOverlay: overlay.model },
-    cmd: Cmd.t("overlay", overlay.cmd),
+    eff: Eff.t("overlay", overlay.eff),
   };
 };
 

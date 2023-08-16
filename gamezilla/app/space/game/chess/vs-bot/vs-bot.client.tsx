@@ -1,6 +1,6 @@
 import {
   Audio,
-  Cmd,
+  Eff,
   Sub,
   andThen,
   exhaustive,
@@ -67,12 +67,12 @@ export const update = ({
   ctx,
 }: {
   ctx: SpaceClientCtx;
-  sendToServer: (msg: ToServer) => Cmd;
+  sendToServer: (msg: ToServer) => Eff;
   msg: Msg;
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   const model: Model = { ...model_, openedMenuId: null };
 
@@ -108,7 +108,7 @@ export const update = ({
   });
 
   if (handled.t === "err") {
-    return { model, cmd: sendToServer(msg) };
+    return { model, eff: sendToServer(msg) };
   }
 
   const coreModel = handled.value;
@@ -118,7 +118,7 @@ export const update = ({
     serverModel: coreModel,
   });
 
-  return { model: modelNew, cmd: sendToServer(msg) };
+  return { model: modelNew, eff: sendToServer(msg) };
 };
 
 export const updateFromServer = (input: {
@@ -126,7 +126,7 @@ export const updateFromServer = (input: {
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   return p(
     updateFromServer_(input),
@@ -164,9 +164,9 @@ const updateFromServer_: typeof updateFromServer = ({ msg, model }) => {
 
     const { didCapture, ...coreModel } = result.value;
 
-    const soundCmd = Cmd.None;
+    const soundEff = Eff.None;
 
-    return { model: { ...model, coreModel }, cmd: soundCmd };
+    return { model: { ...model, coreModel }, eff: soundEff };
   }
 
   if (msg.t === "player-left") {
@@ -191,9 +191,9 @@ const updateFromServer_: typeof updateFromServer = ({ msg, model }) => {
       serverModel: coreModelNew,
     });
 
-    const soundCmd = Cmd.None;
+    const soundEff = Eff.None;
 
-    return { model: modelNew, cmd: soundCmd };
+    return { model: modelNew, eff: soundEff };
   }
 
   const { result } = msg;
@@ -210,7 +210,7 @@ const updateFromServer_: typeof updateFromServer = ({ msg, model }) => {
   return { model: modelNew };
 };
 
-const playAudio = (src: string): Cmd<Msg> => {
+const playAudio = (src: string): Eff<Msg> => {
   return Audio.play(src, (result) => ({ t: "audio-done", result }));
 };
 

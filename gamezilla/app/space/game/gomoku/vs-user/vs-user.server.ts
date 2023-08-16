@@ -1,4 +1,4 @@
-import { Cmd, Sub } from "gamezilla/@SHARED/core";
+import { Eff, Sub } from "gamezilla/@SHARED/core";
 import { SpaceEvent, SpaceReqCtx } from "gamezilla/app/space/@SHARED";
 import {
   Res,
@@ -39,7 +39,7 @@ export const update = ({
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   return { model };
 };
@@ -54,18 +54,18 @@ export const updateFromClient = ({
   ctx: SpaceReqCtx;
   msg: ToServer;
   model: Model;
-  broadcast: (m: ToClient) => Cmd;
-  sendToClient: (m: ToClient) => Cmd;
+  broadcast: (m: ToClient) => Eff;
+  sendToClient: (m: ToClient) => Eff;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   const res: Res = { ...msg, result: handle({ msg, model, ctx }) };
 
   if (res.result.t === "err") {
-    return { model, cmd: sendToClient(res) };
+    return { model, eff: sendToClient(res) };
   }
-  return { model: res.result.value, cmd: broadcast(res) };
+  return { model: res.result.value, eff: broadcast(res) };
 };
 
 export const updateFromEvent = ({
@@ -76,7 +76,7 @@ export const updateFromEvent = ({
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   if (msg.t === "user-left") {
     return { model: init(model) };

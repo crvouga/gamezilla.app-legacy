@@ -1,4 +1,4 @@
-import { Cmd, Sub } from "gamezilla/@SHARED/core";
+import { Eff, Sub } from "gamezilla/@SHARED/core";
 import { ChessServer } from "gamezilla/app/space/game/chess";
 import { ConnectFourServer } from "gamezilla/app/space/game/connect-four";
 import { FlowServer } from "gamezilla/app/space/game/flow";
@@ -73,18 +73,18 @@ export const update: Server["update"] = (input) => {
     });
     return {
       model: { t: "tic-tac-toe", c: updated.model },
-      cmd: Cmd.t("tic-tac-toe", updated.cmd ?? Cmd.None),
+      eff: Eff.t("tic-tac-toe", updated.eff ?? Eff.None),
     };
   }
 
   if (model.t === "chess" && msg.t === "chess") {
-    const [child, cmd] = ChessServer.update({
+    const [child, eff] = ChessServer.update({
       broadcast: (m) => sendToSpace({ t: "chess", c: m }),
       ctx,
       msg: msg.c,
       model: model.c,
     });
-    return { model: { t: "chess", c: child }, cmd: Cmd.t("chess", cmd) };
+    return { model: { t: "chess", c: child }, eff: Eff.t("chess", eff) };
   }
 
   if (model.t === "flow" && msg.t === "flow") {
@@ -111,19 +111,19 @@ export const updateFromClient: Server["updateFromClient"] = (input) => {
     });
     return {
       model: { t: "tic-tac-toe", c: updated.model },
-      cmd: Cmd.t("tic-tac-toe", updated.cmd ?? Cmd.None),
+      eff: Eff.t("tic-tac-toe", updated.eff ?? Eff.None),
     };
   }
 
   if (model.t === "chess" && msg.t === "chess") {
-    const [child, cmd] = ChessServer.updateFromClient({
+    const [child, eff] = ChessServer.updateFromClient({
       sendToClient: (msg) => sendToClient({ t: "chess", c: msg }),
       broadcast: (msg) => sendToSpace({ t: "chess", c: msg }),
       msg: msg.c,
       model: model.c,
       ctx,
     });
-    return { model: { t: "chess", c: child }, cmd: Cmd.t("chess", cmd) };
+    return { model: { t: "chess", c: child }, eff: Eff.t("chess", eff) };
   }
 
   if (model.t === "flow" && msg.t === "flow") {
@@ -146,7 +146,7 @@ export const updateFromEvent: Server["updateFromEvent"] = (input) => {
 
       return {
         model: { t: "chess", c: updated.model },
-        cmd: Cmd.t("chess", updated.cmd ?? Cmd.None),
+        eff: Eff.t("chess", updated.eff ?? Eff.None),
       };
     }
 
@@ -162,7 +162,7 @@ export const updateFromEvent: Server["updateFromEvent"] = (input) => {
       });
       return {
         model: { t: "tic-tac-toe", c: updated.model },
-        cmd: Cmd.t("tic-tac-toe", updated.cmd ?? Cmd.None),
+        eff: Eff.t("tic-tac-toe", updated.eff ?? Eff.None),
       };
     }
 

@@ -1,6 +1,6 @@
 import {
   Browser,
-  Cmd,
+  Eff,
   Iso3166Alpha2Code,
   PhoneNumber,
   Result,
@@ -42,7 +42,7 @@ export type Model = {
 
 export const init: {
   model: Model;
-  cmd: Cmd<Msg>;
+  eff: Eff<Msg>;
 } = {
   model: {
     country: "US",
@@ -53,9 +53,9 @@ export const init: {
       type: "idle",
     },
   },
-  cmd: p(
+  eff: p(
     Browser.focus("phone-number"),
-    Cmd.perform((result) => ({ t: "focus-done", result }))
+    Eff.perform((result) => ({ t: "focus-done", result }))
   ),
 };
 
@@ -90,7 +90,7 @@ export const update = ({
   sendCode: (input: { phoneNumber: PhoneNumber }) => Task<Result<string, null>>;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
   msgs?: ClientAppMsg[];
 } => {
   switch (msg.t) {
@@ -109,9 +109,9 @@ export const update = ({
 
       return {
         model: { ...model, submission: { type: "loading" } },
-        cmd: p(
+        eff: p(
           sendCode({ phoneNumber: phoneNumber }),
-          Cmd.perform(
+          Eff.perform(
             (result): Msg => ({ t: "send-code-done", phoneNumber, result })
           )
         ),

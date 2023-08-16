@@ -1,5 +1,5 @@
 import { ViewCtx } from "gamezilla/app/@SHARED/client";
-import { Cmd, Sub } from "gamezilla/@SHARED/core";
+import { Eff, Sub } from "gamezilla/@SHARED/core";
 import {
   ClientModel,
   ClientMsg,
@@ -36,12 +36,12 @@ export const update = ({
   model,
   sendToServer,
 }: {
-  sendToServer: (m: ToServer) => Cmd;
+  sendToServer: (m: ToServer) => Eff;
   msg: Msg;
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   if (msg.t === "clicked-cancel") {
     return { model: { ...model, confirming: undefined } };
@@ -49,13 +49,13 @@ export const update = ({
 
   if (msg.t === "resign") {
     if (model.confirming === "resign") {
-      return { model, cmd: sendToServer(msg) };
+      return { model, eff: sendToServer(msg) };
     }
 
     return { model: { ...model, confirming: "resign" } };
   }
 
-  return { model, cmd: sendToServer(msg) };
+  return { model, eff: sendToServer(msg) };
 };
 
 export const updateFromServer = ({
@@ -66,7 +66,7 @@ export const updateFromServer = ({
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   if (msg.t === "input-move") {
     if (msg.result.t === "err") {

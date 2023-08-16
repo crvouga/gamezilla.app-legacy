@@ -1,5 +1,5 @@
 import {
-  Cmd,
+  Eff,
   Err,
   Ok,
   Result,
@@ -43,18 +43,18 @@ export type Model = ServerModel;
 export const init = ({
   ctx,
 }: {
-  broadcast: (m: ToClient) => Cmd;
+  broadcast: (m: ToClient) => Eff;
   ctx: SpaceServerCtx;
 }): {
   model: Model;
-  cmd: Cmd<Msg>;
+  eff: Eff<Msg>;
 } => {
   return {
     model: {
       ...initShared,
       requests: {},
     },
-    cmd: async (dispatch) => {
+    eff: async (dispatch) => {
       const result = await initialLoad({
         dbConn: ctx.mySql,
         userId: ctx.hostId,
@@ -113,11 +113,11 @@ export type Msg = ServerMsg;
 export const update = (input: {
   msg: Msg;
   model: Model;
-  broadcast: (m: ToClient) => Cmd;
+  broadcast: (m: ToClient) => Eff;
   ctx: SpaceServerCtx;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   return p(
     update_(input),
@@ -134,16 +134,16 @@ const update_ = ({
 }: {
   msg: Msg;
   model: Model;
-  broadcast: (m: ToClient) => Cmd;
+  broadcast: (m: ToClient) => Eff;
   ctx: SpaceServerCtx;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   if (msg.t === "clock-tick") {
     return {
       model,
-      cmd: broadcast({ t: "clock-tick", now: ctx.now }),
+      eff: broadcast({ t: "clock-tick", now: ctx.now }),
     };
   }
 
@@ -154,7 +154,7 @@ const update_ = ({
           ...model,
           requests: { ...model.requests, getPuzzles: msg.result },
         },
-        cmd: broadcast({ t: "db-got-puzzles", result: msg.result }),
+        eff: broadcast({ t: "db-got-puzzles", result: msg.result }),
       };
     }
 
@@ -171,7 +171,7 @@ const update_ = ({
         ...modelNew,
         requests: { ...model.requests, getPuzzles: Ok(null) },
       },
-      cmd: broadcast({ t: "db-got-puzzles", result: Ok(modelNew) }),
+      eff: broadcast({ t: "db-got-puzzles", result: Ok(modelNew) }),
     };
   }
 
@@ -179,7 +179,7 @@ const update_ = ({
     if (msg.result.t === "err") {
       return {
         model,
-        cmd: broadcast({ t: "db-got-initial-load", result: msg.result }),
+        eff: broadcast({ t: "db-got-initial-load", result: msg.result }),
       };
     }
 
@@ -190,7 +190,7 @@ const update_ = ({
     if (!puzzle) {
       return {
         model,
-        cmd: broadcast({
+        eff: broadcast({
           t: "db-got-initial-load",
           result: Err("No puzzles found."),
         }),
@@ -209,14 +209,14 @@ const update_ = ({
 
     return {
       model: modelNew,
-      cmd: broadcast({ t: "db-got-initial-load", result: Ok(modelNew) }),
+      eff: broadcast({ t: "db-got-initial-load", result: Ok(modelNew) }),
     };
   }
 
   if (msg.t === "db-put-interaction") {
     return {
       model,
-      cmd: broadcast({
+      eff: broadcast({
         t: "db-put-interaction",
         result: Result.mapOk(msg.result, () => model),
       }),
@@ -226,7 +226,7 @@ const update_ = ({
   if (msg.t === "db-put-profile") {
     return {
       model,
-      cmd: broadcast({
+      eff: broadcast({
         t: "db-put-profile",
         result: Result.mapOk(msg.result, () => model),
       }),
@@ -240,11 +240,11 @@ export const updateFromClient = (input: {
   ctx: SpaceReqCtx;
   msg: ToServer;
   model: Model;
-  sendToClient: (m: ToClient) => Cmd;
-  broadcast: (m: ToClient) => Cmd;
+  sendToClient: (m: ToClient) => Eff;
+  broadcast: (m: ToClient) => Eff;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   return p(
     input,
@@ -271,7 +271,7 @@ const watchPutInteraction = ({
   ctx: SpaceServerCtx;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   if (model.t === modelPrev.t) {
     return { model };
@@ -290,7 +290,7 @@ const watchPutInteraction = ({
     };
     return {
       model,
-      cmd: async (dispatch) => {
+      eff: async (dispatch) => {
         const result = await PuzzleDb.interactions.insert(ctx.mySql, [
           interaction,
         ]);
@@ -311,7 +311,7 @@ const watchGetPuzzles = ({
   ctx: SpaceServerCtx;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   if (
     model.t !== "loading" &&
@@ -326,7 +326,7 @@ const watchGetPuzzles = ({
           getPuzzles: { t: "loading" },
         },
       },
-      cmd: async (dispatch) => {
+      eff: async (dispatch) => {
         const result = await PuzzleDb.puzzles.findForProfile(ctx.mySql, {
           profile: model.profile,
           omit: [model.puzzle.puzzleId, ...model.queue.map((x) => x.puzzleId)],
@@ -349,13 +349,13 @@ const watchPutProfile = ({
   ctx: SpaceServerCtx;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   if (model.profile && !eq(model.profile, modelPrev.profile)) {
     const profile = model.profile;
     return {
       model,
-      cmd: async (dispatch) => {
+      eff: async (dispatch) => {
         const result = await PuzzleDb.profiles.update(ctx.mySql, profile);
         dispatch({ t: "db-put-profile", result });
       },
@@ -374,7 +374,7 @@ const updateFromClient_: typeof updateFromClient = ({
 
   return {
     model: handled.t === "ok" ? { ...model, ...handled.value } : model,
-    cmd: broadcast({ ...msg, result: handled }),
+    eff: broadcast({ ...msg, result: handled }),
   };
 };
 
@@ -385,7 +385,7 @@ export const updateFromGame = ({
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd;
+  eff?: Eff;
 } => {
   return { model };
 };
@@ -397,7 +397,7 @@ export const updateFromEvent = ({
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd;
+  eff?: Eff;
 } => {
   return { model };
 };

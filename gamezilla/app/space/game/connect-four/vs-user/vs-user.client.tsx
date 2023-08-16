@@ -1,4 +1,4 @@
-import { Cmd, Sub } from "gamezilla/@SHARED/core";
+import { Eff, Sub } from "gamezilla/@SHARED/core";
 import { ViewCtx } from "gamezilla/app/@SHARED/client";
 import {
   Button,
@@ -71,12 +71,12 @@ export const update = ({
   ctx,
 }: {
   ctx: SpaceClientCtx;
-  sendToServer: (msg: ToServer) => Cmd;
+  sendToServer: (msg: ToServer) => Eff;
   msg: ClientMsg;
   model: ClientModel;
 }): {
   model: ClientModel;
-  cmd?: Cmd<ClientMsg>;
+  eff?: Eff<ClientMsg>;
 } => {
   if (msg.t === "clicked-resign") {
     return { model: { ...model, openedModal: "ConfirmResign" } };
@@ -103,7 +103,7 @@ export const update = ({
 
   return {
     model: modelNew,
-    cmd: sendToServer(msg),
+    eff: sendToServer(msg),
   };
 };
 
@@ -115,7 +115,7 @@ export const updateFromServer = ({
   model: ClientModel;
 }): {
   model: ClientModel;
-  cmd?: Cmd<ClientMsg>;
+  eff?: Eff<ClientMsg>;
 } => {
   if (msg.t === "tick-done") {
     const merged = syncWithServer({

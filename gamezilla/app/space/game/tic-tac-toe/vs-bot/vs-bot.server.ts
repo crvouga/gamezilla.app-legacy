@@ -1,4 +1,4 @@
-import { Cmd, Err, Ok, Sub, andThen, p } from "gamezilla/@SHARED/core";
+import { Eff, Err, Ok, Sub, andThen, p } from "gamezilla/@SHARED/core";
 import { SpaceEvent, SpaceReqCtx } from "gamezilla/app/space/@SHARED";
 import { TicTacToe } from "../tic-tic-toe";
 import { getBestMove } from "../tic-tic-toe/best-move";
@@ -40,22 +40,22 @@ export const update = ({
   msg,
   model,
 }: {
-  broadcast: (msg: ToClient) => Cmd;
+  broadcast: (msg: ToClient) => Eff;
   msg: Msg;
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   if (msg.t === "bot-moved") {
     if (msg.result.t === "err") {
-      return { model, cmd: broadcast({ t: "bot-moved", result: msg.result }) };
+      return { model, eff: broadcast({ t: "bot-moved", result: msg.result }) };
     }
 
     if (model.type !== "game") {
       return {
         model,
-        cmd: broadcast({
+        eff: broadcast({
           t: "bot-moved",
           result: Err("The bot moved not during game mode"),
         }),
@@ -69,7 +69,7 @@ export const update = ({
     });
 
     if (moved.t === "err") {
-      return { model, cmd: broadcast({ t: "bot-moved", result: moved }) };
+      return { model, eff: broadcast({ t: "bot-moved", result: moved }) };
     }
 
     const modelNew: Model = {
@@ -79,7 +79,7 @@ export const update = ({
 
     return {
       model: modelNew,
-      cmd: broadcast({ t: "bot-moved", result: Ok(modelNew) }),
+      eff: broadcast({ t: "bot-moved", result: Ok(modelNew) }),
     };
   }
   return { model };
@@ -92,14 +92,14 @@ export const update = ({
 //
 
 export const updateFromClient = (input: {
-  sendToClient: (m: ToClient) => Cmd;
-  broadcast: (m: ToClient) => Cmd;
+  sendToClient: (m: ToClient) => Eff;
+  broadcast: (m: ToClient) => Eff;
   msg: ToServer;
   model: Model;
   ctx: SpaceReqCtx;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   return p(
     input,
@@ -116,18 +116,18 @@ const watchBotMove = ({
   modelPrev: Model;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   if (!isBotTurn(modelPrev) && isBotTurn(model)) {
     return {
       model,
-      cmd: p(
+      eff: p(
         getBestMove({
           depth: TicTacToe.toDepth(model.botLevel),
           maximizingPlayer: TicTacToe.toOpposite(model.userPlayerType),
           board: model.board,
         }),
-        Cmd.perform((result) => ({ t: "bot-moved", result }))
+        Eff.perform((result) => ({ t: "bot-moved", result }))
       ),
     };
   }
@@ -141,12 +141,12 @@ const updateFromClient_ = ({
   ctx,
 }: {
   ctx: SpaceReqCtx;
-  sendToClient: (m: ToClient) => Cmd;
-  broadcast: (m: ToClient) => Cmd;
+  sendToClient: (m: ToClient) => Eff;
+  broadcast: (m: ToClient) => Eff;
   msg: ToServer;
   model: Model;
 }): {
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
   model: Model;
 } => {
   const handled = handle({ ctx, model, msg });
@@ -154,7 +154,7 @@ const updateFromClient_ = ({
   const modelNew: Model = handled.t === "ok" ? handled.value : model;
   return {
     model: modelNew,
-    cmd: broadcast(res),
+    eff: broadcast(res),
   };
 };
 
@@ -165,10 +165,10 @@ export const updateFromEvent = ({
 }: {
   msg: SpaceEvent;
   model: Model;
-  broadcast: (m: ToClient) => Cmd;
+  broadcast: (m: ToClient) => Eff;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   if (msg.t === "user-left") {
     if (model.player !== msg.userId) {
@@ -184,7 +184,7 @@ export const updateFromEvent = ({
 
     return {
       model: modelNew,
-      cmd: broadcast({ t: "player-left", result: Ok(modelNew) }),
+      eff: broadcast({ t: "player-left", result: Ok(modelNew) }),
     };
   }
 

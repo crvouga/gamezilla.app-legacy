@@ -1,5 +1,5 @@
 import { SpaceEvent } from "gamezilla/app/space/@SHARED";
-import { Cmd, Sub, Time } from "gamezilla/@SHARED/core";
+import { Eff, Sub, Time } from "gamezilla/@SHARED/core";
 import { PlayerType, toOpposite, toTurn } from "../tic-tic-toe/tic-tac-toe";
 import * as Round from "./vs-user-round";
 import {
@@ -50,11 +50,11 @@ export const update = (
   {
     broadcast,
   }: {
-    broadcast: (msg: ToClient) => Cmd;
+    broadcast: (msg: ToClient) => Eff;
   },
   msg: Msg,
   model: Model
-): [Model, Cmd<Msg>] => {
+): [Model, Eff<Msg>] => {
   switch (msg[0]) {
     case "RoundCountDown": {
       const result = roundCountDown(model);
@@ -79,12 +79,12 @@ export const updateFromClient = (
     sendToClient,
     broadcast,
   }: {
-    sendToClient: (msg: ToClient) => Cmd;
-    broadcast: (msg: ToClient) => Cmd;
+    sendToClient: (msg: ToClient) => Eff;
+    broadcast: (msg: ToClient) => Eff;
   },
   msg: ToServer,
   model: Model
-): [Model, Cmd<Msg>] => {
+): [Model, Eff<Msg>] => {
   switch (msg[0]) {
     case "InputPlayer": {
       const result = inputPlayer(msg[1], model);
@@ -215,7 +215,7 @@ export const updateFromClient = (
     }
 
     default: {
-      return [model, Cmd.None];
+      return [model, Eff.None];
     }
   }
 };
@@ -225,12 +225,12 @@ export const updateFromEvent = ({
   model,
   broadcast,
 }: {
-  broadcast: (m: ToClient) => Cmd;
+  broadcast: (m: ToClient) => Eff;
   msg: SpaceEvent;
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   if (msg.t === "user-left") {
     const { userId } = msg;
@@ -254,7 +254,7 @@ export const updateFromEvent = ({
       [other]: model[other],
     };
 
-    return { model: modelNew, cmd: broadcast(["player-left", modelNew]) };
+    return { model: modelNew, eff: broadcast(["player-left", modelNew]) };
   }
 
   return {

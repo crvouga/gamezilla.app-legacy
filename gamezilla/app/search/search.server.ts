@@ -1,4 +1,4 @@
-import { Cmd } from "gamezilla/@SHARED/core";
+import { Eff } from "gamezilla/@SHARED/core";
 import { ServerModel, ServerMsg, ToServer } from "./search.core";
 
 type Model = ServerModel;
@@ -16,7 +16,7 @@ export const update = ({
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   return { model };
 };
@@ -29,7 +29,7 @@ export const updateFromClient = ({
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   if (msg.t === "search") {
     return { model };

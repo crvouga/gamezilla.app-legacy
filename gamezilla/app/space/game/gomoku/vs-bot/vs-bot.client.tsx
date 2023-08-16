@@ -1,4 +1,4 @@
-import { Cmd, Sub } from "gamezilla/@SHARED/core";
+import { Eff, Sub } from "gamezilla/@SHARED/core";
 import { ClientCtx, ViewCtx } from "gamezilla/app/@SHARED/client";
 import {
   ClientModel,
@@ -39,12 +39,12 @@ export const update = ({
   model,
 }: {
   ctx: ClientCtx;
-  sendToServer: (m: ToServer) => Cmd;
+  sendToServer: (m: ToServer) => Eff;
   msg: Msg;
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   switch (msg.t) {
     default: {
@@ -53,7 +53,7 @@ export const update = ({
       if (result.t === "err") {
         return {
           model,
-          cmd: sendToServer(msg),
+          eff: sendToServer(msg),
         };
       }
 
@@ -65,7 +65,7 @@ export const update = ({
 
       return {
         model: merged,
-        cmd: sendToServer(msg),
+        eff: sendToServer(msg),
       };
     }
   }
@@ -81,7 +81,7 @@ export const updateFromServer = ({
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   if (msg.result.t === "err") {
     return { model };

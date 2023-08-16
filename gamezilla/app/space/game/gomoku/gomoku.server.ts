@@ -1,4 +1,4 @@
-import { Cmd, Result, Sub } from "gamezilla/@SHARED/core";
+import { Eff, Result, Sub } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
 import { SpaceEvent, SpaceReqCtx } from "gamezilla/app/space/@SHARED";
 import {
@@ -65,12 +65,12 @@ export const update = ({
 }: {
   msg: Msg;
   model: Model;
-}): { model: Model; cmd?: Cmd<Msg> } => {
+}): { model: Model; eff?: Eff<Msg> } => {
   if (msg.t === "vs-bot" && model.t === "vs-bot") {
     const updated = VsBot.update({ msg: msg.c, model: model.c });
     return {
       model: { t: "vs-bot", c: updated.model },
-      cmd: Cmd.t("vs-bot", updated.cmd),
+      eff: Eff.t("vs-bot", updated.eff),
     };
   }
 
@@ -78,7 +78,7 @@ export const update = ({
     const updated = VsUser.update({ msg: msg.c, model: model.c });
     return {
       model: { t: "vs-user", c: updated.model },
-      cmd: Cmd.t("vs-user", updated.cmd),
+      eff: Eff.t("vs-user", updated.eff),
     };
   }
 
@@ -93,19 +93,19 @@ export const updateFromClient = ({
   model,
 }: {
   ctx: SpaceReqCtx;
-  sendToClient: (m: ToClient) => Cmd;
-  broadcast: (m: ToClient) => Cmd;
+  sendToClient: (m: ToClient) => Eff;
+  broadcast: (m: ToClient) => Eff;
   msg: ToServer;
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   if (msg.t === "input-mode") {
     const modelNew = initMode(msg);
     return {
       model: modelNew,
-      cmd: broadcast({ ...msg, result: Ok(modelNew) }),
+      eff: broadcast({ ...msg, result: Ok(modelNew) }),
     };
   }
 
@@ -119,7 +119,7 @@ export const updateFromClient = ({
     });
     return {
       model: { t: "vs-bot", c: updated.model },
-      cmd: Cmd.t("vs-bot", updated.cmd),
+      eff: Eff.t("vs-bot", updated.eff),
     };
   }
 
@@ -134,7 +134,7 @@ export const updateFromClient = ({
 
     return {
       model: { t: "vs-user", c: updated.model },
-      cmd: Cmd.t("vs-user", updated.cmd),
+      eff: Eff.t("vs-user", updated.eff),
     };
   }
 
@@ -149,13 +149,13 @@ export const updateFromEvent = ({
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   if (model.t === "vs-bot") {
     const updated = VsBot.updateFromEvent({ msg, model: model.c });
     return {
       model: { t: "vs-bot", c: updated.model },
-      cmd: Cmd.t("vs-bot", updated.cmd),
+      eff: Eff.t("vs-bot", updated.eff),
     };
   }
 
@@ -163,7 +163,7 @@ export const updateFromEvent = ({
     const updated = VsUser.updateFromEvent({ msg, model: model.c });
     return {
       model: { t: "vs-user", c: updated.model },
-      cmd: Cmd.t("vs-user", updated.cmd),
+      eff: Eff.t("vs-user", updated.eff),
     };
   }
 

@@ -1,7 +1,7 @@
-import { Cmd } from "gamezilla/@SHARED/core";
+import { Eff } from "gamezilla/@SHARED/core";
 import {
   AnonymousReqCtx,
-  ServerEffect,
+  ServerCmd,
   ServerEvent,
 } from "gamezilla/app/@SHARED/server";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./auth.core";
@@ -35,7 +35,7 @@ export const update = ({
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   return { model };
 };
@@ -46,13 +46,13 @@ export const updateFromClient = ({
   msg,
   sendBack,
 }: {
-  sendBack: (m: ToClient) => Cmd;
+  sendBack: (m: ToClient) => Eff;
   ctx: AnonymousReqCtx;
   msg: ToServer;
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
   events?: ServerEvent[];
 } => {
   if (msg.t === "client-authenticated") {
@@ -68,7 +68,7 @@ export const updateFromClient = ({
         },
       },
 
-      cmd: sendBack({ t: "acknowledged", msg: msg }),
+      eff: sendBack({ t: "acknowledged", msg: msg }),
 
       events: [
         {
@@ -89,12 +89,12 @@ export const updateFromClient = ({
         sessions: sessionsNew,
       },
 
-      cmd: sendBack({ t: "acknowledged", msg: msg }),
+      eff: sendBack({ t: "acknowledged", msg: msg }),
     };
   }
 
   return {
     model,
-    cmd: sendBack({ t: "acknowledged", msg: msg }),
+    eff: sendBack({ t: "acknowledged", msg: msg }),
   };
 };

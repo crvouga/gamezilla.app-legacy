@@ -1,4 +1,4 @@
-import { Cmd, Transition, easeAttrs } from "gamezilla/@SHARED/core";
+import { Eff, Transition, easeAttrs } from "gamezilla/@SHARED/core";
 import {
   COLUMN_COUNT,
   Columns,
@@ -80,7 +80,7 @@ export function watch(model: Model, columns?: Columns) {
       discs: discs.model,
       wins: wins.model,
     },
-    cmd: Cmd.batch<Msg>([Cmd.t("discs", discs.cmd), Cmd.t("wins", wins.cmd)]),
+    eff: Eff.batch<Msg>([Eff.t("discs", discs.eff), Eff.t("wins", wins.eff)]),
   };
 }
 

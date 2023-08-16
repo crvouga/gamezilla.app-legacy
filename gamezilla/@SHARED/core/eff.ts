@@ -1,9 +1,9 @@
 import { p } from "./pipe";
 import { Task } from "./task";
 
-export type Cmd<Msg = never> = (dispatch: (msg: Msg) => void) => void;
+export type Eff<Msg = never> = (dispatch: (msg: Msg) => void) => void;
 
-const of = <Msg>(msg: Msg): Cmd<Msg> => {
+const of = <Msg>(msg: Msg): Eff<Msg> => {
   return (dispatch) => {
     dispatch(msg);
   };
@@ -11,9 +11,9 @@ const of = <Msg>(msg: Msg): Cmd<Msg> => {
 
 const map =
   <A, B>(mapper: (a: A) => B) =>
-  (cmd: Cmd<A>): Cmd<B> => {
+  (eff: Eff<A>): Eff<B> => {
     return (dispatch) => {
-      cmd((a) => {
+      eff((a) => {
         dispatch(mapper(a));
       });
     };
@@ -21,23 +21,23 @@ const map =
 
 const map_ = <A, B>(
   mapper: (a: A) => B,
-  cmd?: Cmd<A> | null | undefined
-): Cmd<B> => {
-  if (!cmd) {
+  eff?: Eff<A> | null | undefined
+): Eff<B> => {
+  if (!eff) {
     return None;
   }
   return (dispatch) => {
-    cmd((a) => {
+    eff((a) => {
       dispatch(mapper(a));
     });
   };
 };
 
 const chain =
-  <A, B>(mapper: (a: A) => Cmd<B>) =>
-  (cmd: Cmd<A>): Cmd<B> => {
+  <A, B>(mapper: (a: A) => Eff<B>) =>
+  (eff: Eff<A>): Eff<B> => {
     return (dispatch) => {
-      cmd((a) => {
+      eff((a) => {
         mapper(a)((b) => {
           dispatch(b);
         });
@@ -47,45 +47,45 @@ const chain =
 
 const t = <Tag extends string, Msg>(
   tagName: Tag,
-  cmd: Cmd<Msg> | undefined | null
-): Cmd<{ t: Tag; c: Msg }> => {
-  if (!cmd) {
+  eff: Eff<Msg> | undefined | null
+): Eff<{ t: Tag; c: Msg }> => {
+  if (!eff) {
     return None;
   }
   return p(
-    cmd,
+    eff,
     map((msg) => ({ t: tagName, c: msg }))
   );
 };
 
 const batch = <Msg>(
-  ...cmdLists: (Cmd<Msg> | undefined | null)[][]
-): Cmd<Msg> => {
+  ...effLists: (Eff<Msg> | undefined | null)[][]
+): Eff<Msg> => {
   return (dispatch) => {
-    for (const cmdList of cmdLists) {
-      for (const cmd of cmdList) {
-        if (cmd) {
-          cmd(dispatch);
+    for (const effList of effLists) {
+      for (const eff of effList) {
+        if (eff) {
+          eff(dispatch);
         }
       }
     }
   };
 };
 
-const None: Cmd = () => {
+const None: Eff = () => {
   // do nothing
 };
 
 const perform =
   <A, Msg>(f: (a: A) => Msg) =>
-  (task: Task<A>): Cmd<Msg> => {
+  (task: Task<A>): Eff<Msg> => {
     return async (dispatch) => {
       const value = await task();
       dispatch(f(value));
     };
   };
 
-export const Cmd = {
+export const Eff = {
   None,
   perform,
   batch,

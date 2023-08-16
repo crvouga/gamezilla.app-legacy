@@ -1,4 +1,4 @@
-import { Browser, Cmd, matchSort, p } from "gamezilla/@SHARED/core";
+import { Browser, Eff, matchSort, p } from "gamezilla/@SHARED/core";
 import { ClientAppMsg } from "gamezilla/app/@SHARED/client";
 import { IconMagnifyingGlass, IconXMark, VDom } from "gamezilla/app/@SHARED/ui";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./search.core";
@@ -42,10 +42,10 @@ export const update = ({
 }: {
   msg: Msg;
   model: Model;
-  sendToServer: (m: ToServer) => Cmd;
+  sendToServer: (m: ToServer) => Eff;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
   msgs?: ClientAppMsg[];
 } => {
   if (msg.t === "focus-done") {
@@ -55,9 +55,9 @@ export const update = ({
   if (msg.t === "clicked-clear") {
     return {
       model: { ...model, searchText: "" },
-      cmd: p(
+      eff: p(
         Browser.focus(searchInputId),
-        Cmd.perform((result) => ({ t: "focus-done", result }))
+        Eff.perform((result) => ({ t: "focus-done", result }))
       ),
     };
   }
@@ -83,7 +83,7 @@ export const update = ({
     };
   }
 
-  return { model, cmd: sendToServer(msg) };
+  return { model, eff: sendToServer(msg) };
 };
 
 export const updateFromServer = ({
@@ -91,7 +91,7 @@ export const updateFromServer = ({
 }: {
   msg: ToClient;
   model: Model;
-}): { model: Model; cmd?: Cmd<Msg> } => {
+}): { model: Model; eff?: Eff<Msg> } => {
   return { model };
 };
 

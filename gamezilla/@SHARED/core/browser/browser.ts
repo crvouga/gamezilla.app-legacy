@@ -1,4 +1,4 @@
-import { Cmd } from "../cmd";
+import { Eff } from "../eff";
 import { p } from "../pipe";
 import { Result } from "../result";
 import { Sub } from "../sub";
@@ -50,7 +50,7 @@ export const getLocation = (): Location => {
 
 // setTimeout because actions where happening in a weird order if not setTimeout
 
-export const push = (url: string): Cmd => {
+export const push = (url: string): Eff => {
   return () => {
     setTimeout(() => {
       window.history.pushState(null, "", url);
@@ -59,7 +59,7 @@ export const push = (url: string): Cmd => {
   };
 };
 
-export const replace = (url: string): Cmd => {
+export const replace = (url: string): Eff => {
   return () => {
     setTimeout(() => {
       window.history.replaceState(null, "", url);
@@ -68,7 +68,7 @@ export const replace = (url: string): Cmd => {
   };
 };
 
-export const back: Cmd = () => {
+export const back: Eff = () => {
   setTimeout(() => {
     window.history.back();
     window.dispatchEvent(new Event("popstate"));

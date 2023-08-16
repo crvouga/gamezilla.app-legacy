@@ -26,7 +26,7 @@ export const updateFromClient: Server["updateFromClient"] = (input) => {
     if (ctx.hostId !== ctx.currentUserId) {
       return {
         model,
-        cmd: sendToSpace({ ...msg, result: Err("Must be the host") }),
+        eff: sendToSpace({ ...msg, result: Err("Must be the host") }),
       };
     }
 
@@ -34,7 +34,7 @@ export const updateFromClient: Server["updateFromClient"] = (input) => {
 
     return {
       ...initial,
-      cmd: sendToSpace({ ...msg, result: Ok(initial.model) }),
+      eff: sendToSpace({ ...msg, result: Ok(initial.model) }),
     };
   }
   return { model };

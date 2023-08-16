@@ -1,6 +1,6 @@
 import { Session as SupabaseSession } from "@supabase/supabase-js";
 import {
-  Cmd,
+  Eff,
   Err,
   Ok,
   PhoneNumber,
@@ -42,7 +42,7 @@ import { ClientModel, ClientMsg, ToClient, ToServer } from "./auth.core";
 const phone = AuthPhone.init;
 const phoneVerify = AuthPhoneVerify.init;
 const emailLink = AuthEmailLink.init;
-export const init: { model: ClientModel; cmd?: Cmd<ClientMsg> } = {
+export const init: { model: ClientModel; eff?: Eff<ClientMsg> } = {
   model: {
     requests: {},
     phone: phone.model,
@@ -50,7 +50,7 @@ export const init: { model: ClientModel; cmd?: Cmd<ClientMsg> } = {
     emailLink,
     currentUser: { t: "loading" },
   },
-  cmd: loadCurrentUser,
+  eff: loadCurrentUser,
 };
 
 //
@@ -68,12 +68,12 @@ export const update = ({
   route,
 }: {
   route: Route;
-  sendToServer: (m: ToServer) => Cmd;
+  sendToServer: (m: ToServer) => Eff;
   msg: ClientMsg;
   model: ClientModel;
 }): {
   model: ClientModel;
-  cmd?: Cmd<ClientMsg>;
+  eff?: Eff<ClientMsg>;
   msgs?: ClientAppMsg[];
 } => {
   switch (msg.t) {
@@ -86,9 +86,9 @@ export const update = ({
             "login-with-google": RemoteResult.Loading,
           },
         },
-        cmd: p(
+        eff: p(
           loginWithProvider({ provider: "Google" }),
-          Cmd.perform((result) => ({ t: "login-done", result }))
+          Eff.perform((result) => ({ t: "login-done", result }))
         ),
       };
     }
@@ -96,7 +96,7 @@ export const update = ({
     case "login-done": {
       return {
         model,
-        cmd: loadCurrentUser,
+        eff: loadCurrentUser,
       };
     }
 
@@ -108,9 +108,9 @@ export const update = ({
             t: "loading",
           },
         },
-        cmd: p(
+        eff: p(
           logout,
-          Cmd.perform((result) => ({ t: "logout-done", result }))
+          Eff.perform((result) => ({ t: "logout-done", result }))
         ),
       };
     }
@@ -135,7 +135,7 @@ export const update = ({
       return {
         ...updated,
         model: { ...model, phone: updated.model },
-        cmd: Cmd.t("phone", updated.cmd),
+        eff: Eff.t("phone", updated.eff),
       };
     }
 
@@ -159,9 +159,9 @@ export const update = ({
             ? { t: "loading" }
             : model.currentUser,
         },
-        cmd: Cmd.batch([
-          Cmd.t("phone-verify", updated.cmd),
-          updated.shouldLoadCurrentUser ? loadCurrentUser : Cmd.None,
+        eff: Eff.batch([
+          Eff.t("phone-verify", updated.eff),
+          updated.shouldLoadCurrentUser ? loadCurrentUser : Eff.None,
         ]),
       };
     }
@@ -174,7 +174,7 @@ export const update = ({
       });
       return {
         model: { ...model, emailLink: updated.model },
-        cmd: Cmd.t("email-link", updated.cmd),
+        eff: Eff.t("email-link", updated.eff),
         msgs: updated.msgs,
       };
     }
@@ -185,20 +185,20 @@ export const update = ({
           ...model,
           currentUser: { t: "logged-in", userId: msg.userId },
         },
-        cmd: sendToServer(msg),
+        eff: sendToServer(msg),
       };
     }
 
     case "client-unauthenticated": {
       return {
         model: { ...model, currentUser: { t: "logged-out" } },
-        cmd: sendToServer(msg),
+        eff: sendToServer(msg),
         msgs: [msg],
       };
     }
 
     default: {
-      return { model, cmd: sendToServer(msg) };
+      return { model, eff: sendToServer(msg) };
     }
   }
 };
@@ -211,7 +211,7 @@ export const updateFromServer = ({
   model: ClientModel;
 }): {
   model: ClientModel;
-  cmd?: Cmd<ClientMsg>;
+  eff?: Eff<ClientMsg>;
   msgs?: ClientAppMsg[];
 } => {
   switch (msg.t) {
@@ -238,7 +238,7 @@ export const updateFromEvent = ({
   model: ClientModel;
 }): {
   model: ClientModel;
-  cmd?: Cmd<ClientMsg>;
+  eff?: Eff<ClientMsg>;
 } => {
   return { model };
 };

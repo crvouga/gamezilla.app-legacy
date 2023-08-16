@@ -1,4 +1,4 @@
-import { Cmd } from "./cmd";
+import { Eff } from "./eff";
 
 /**
  *
@@ -78,7 +78,7 @@ export function watch<T>(
   config: Config<T>,
   model: Model<T>,
   list?: T[]
-): { model: Model<T>; cmd?: Cmd<Msg> } {
+): { model: Model<T>; eff?: Eff<Msg> } {
   if (!list) {
     return { model: init(config.toId, []) };
   }
@@ -117,7 +117,7 @@ export function watch<T>(
   //
   //
 
-  const cmd: Cmd<Msg> = async (dispatch) => {
+  const eff: Eff<Msg> = async (dispatch) => {
     const promises: Promise<void>[] = [];
 
     for (const item of entering.values()) {
@@ -170,7 +170,7 @@ export function watch<T>(
 
   return {
     model: modelNew,
-    cmd,
+    eff,
   };
 }
 

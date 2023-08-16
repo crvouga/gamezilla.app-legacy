@@ -1,4 +1,4 @@
-import { Cmd } from "gamezilla/@SHARED/core";
+import { Eff } from "gamezilla/@SHARED/core";
 import { Flow, AlgoDrawPath, AlgoAutocompletePath } from "../flow";
 import * as FlowGrid from "./flow-grid";
 import * as FlowGridUI from "./flow-grid-ui";
@@ -51,7 +51,7 @@ export const update = ({
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd;
+  eff?: Eff;
 } => {
   return {
     model: updateModel({ msg, model }),

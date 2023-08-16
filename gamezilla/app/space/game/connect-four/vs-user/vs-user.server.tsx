@@ -1,4 +1,4 @@
-import { Cmd, Sub, Time } from "gamezilla/@SHARED/core";
+import { Eff, Sub, Time } from "gamezilla/@SHARED/core";
 import { SpaceEvent, SpaceReqCtx } from "gamezilla/app/space/@SHARED";
 import {
   Res,
@@ -39,18 +39,18 @@ export const update = ({
   msg,
   model,
 }: {
-  broadcast: (msg: ToClient) => Cmd;
+  broadcast: (msg: ToClient) => Eff;
   msg: Msg;
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   if (msg.t === "tick") {
     const modelNew = tick(model);
     return {
       model: modelNew,
-      cmd: broadcast({ t: "tick-done", model: modelNew }),
+      eff: broadcast({ t: "tick-done", model: modelNew }),
     };
   }
   return { model };
@@ -63,27 +63,27 @@ export const updateFromClient = ({
   model,
   ctx,
 }: {
-  sendToClient: (msg: ToClient) => Cmd;
-  broadcast: (msg: ToClient) => Cmd;
+  sendToClient: (msg: ToClient) => Eff;
+  broadcast: (msg: ToClient) => Eff;
   msg: ToServer;
   model: Model;
   ctx: SpaceReqCtx;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   const res: Res = { ...msg, result: handle({ req: msg, ctx, model }) };
 
   if (res.result.t === "err") {
     return {
       model,
-      cmd: sendToClient(res),
+      eff: sendToClient(res),
     };
   }
 
   return {
     model: res.result.value,
-    cmd: broadcast(res),
+    eff: broadcast(res),
   };
 };
 
@@ -92,12 +92,12 @@ export const updateFromEvent = ({
   msg,
   model,
 }: {
-  broadcast: (m: ToClient) => Cmd;
+  broadcast: (m: ToClient) => Eff;
   msg: SpaceEvent;
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   if (msg.t === "user-left") {
     const userId = msg.userId;
@@ -118,7 +118,7 @@ export const updateFromEvent = ({
 
     return {
       model: modelNew,
-      cmd: broadcast({ t: "player-left", model: modelNew }),
+      eff: broadcast({ t: "player-left", model: modelNew }),
     };
   }
 

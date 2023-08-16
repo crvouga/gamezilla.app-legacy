@@ -1,4 +1,4 @@
-import { Cmd, Sub } from "gamezilla/@SHARED/core";
+import { Eff, Sub } from "gamezilla/@SHARED/core";
 import { ClientAppMsg, ClientCtx } from "gamezilla/app/@SHARED/client";
 import { SpaceClientCtx, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
 import {
@@ -45,17 +45,17 @@ export const update = ({
   model,
   ctx,
 }: {
-  sendToServer: (msg: ToServer) => Cmd;
+  sendToServer: (msg: ToServer) => Eff;
   ctx: SpaceClientCtx;
   msg: Msg;
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
   msgs?: ClientAppMsg[];
 } => {
   if (msg.t === "input-mode") {
-    return { model, cmd: sendToServer(msg) };
+    return { model, eff: sendToServer(msg) };
   }
 
   if (msg.t === "vs-user" && model.t === "vs-user") {
@@ -68,7 +68,7 @@ export const update = ({
     );
     return {
       model: { t: "vs-user", c: updated[0] },
-      cmd: Cmd.t("vs-user", updated[1]),
+      eff: Eff.t("vs-user", updated[1]),
     };
   }
 
@@ -82,7 +82,7 @@ export const update = ({
 
     return {
       model: { t: "vs-bot", c: updated.model },
-      cmd: Cmd.t("vs-bot", updated.cmd),
+      eff: Eff.t("vs-bot", updated.eff),
       msgs: updated.msgs,
     };
   }
@@ -100,7 +100,7 @@ export const updateFromServer = ({
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
   msgs?: ClientAppMsg[];
 } => {
   if (msg.t === "input-mode") {
@@ -134,7 +134,7 @@ export const updateFromServer = ({
     });
     return {
       model: { t: "vs-bot", c: updated.model },
-      cmd: Cmd.t("vs-bot", updated.cmd),
+      eff: Eff.t("vs-bot", updated.eff),
       msgs: updated.msgs,
     };
   }

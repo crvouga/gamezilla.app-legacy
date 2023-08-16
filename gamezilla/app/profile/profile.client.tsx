@@ -1,4 +1,4 @@
-import { Cmd, Loading, andThen, p } from "gamezilla/@SHARED/core";
+import { Eff, Loading, andThen, p } from "gamezilla/@SHARED/core";
 import {
   ClientAppMsg,
   ClientCtx,
@@ -52,10 +52,10 @@ export const update = ({
 }: {
   msg: Msg;
   model: Model;
-  sendToServer: (m: ToServer) => Cmd;
+  sendToServer: (m: ToServer) => Eff;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   if (msg.t === "inputted-username") {
     return {
@@ -100,7 +100,7 @@ export const update = ({
         [msg.t]: { t: "loading" },
       },
     },
-    cmd: sendToServer(msg),
+    eff: sendToServer(msg),
   };
 };
 
@@ -112,7 +112,7 @@ export const updateFromServer = ({
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   if (msg.result.t === "err") {
     return {
@@ -154,11 +154,11 @@ export const updateFromEvent = ({
 }: {
   msg: ClientAppMsg;
   model: Model;
-  sendToServer: (m: ToServer) => Cmd;
+  sendToServer: (m: ToServer) => Eff;
   ctx: ClientCtx | null;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   return p(
     { model },
@@ -170,7 +170,7 @@ export const updateFromEvent = ({
 };
 
 const loadCurrentUserProfile = (
-  sendToServer: (m: ToServer) => Cmd,
+  sendToServer: (m: ToServer) => Eff,
   msg: ClientAppMsg,
   model: Model
 ): {
@@ -187,7 +187,7 @@ const loadCurrentUserProfile = (
 };
 
 const loadProfileRoute = (
-  sendToServer: (m: ToServer) => Cmd,
+  sendToServer: (m: ToServer) => Eff,
   msg: ClientAppMsg,
   model: Model
 ) => {
@@ -203,19 +203,19 @@ const loadProfileRoute = (
 };
 
 const loadProfiles = (
-  sendToServer: (m: ToServer) => Cmd,
+  sendToServer: (m: ToServer) => Eff,
   userIds: UserId[],
   model: Model
 ): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   return {
     model: {
       ...model,
       requests: { ...model.requests, "find-many": Loading },
     },
-    cmd: sendToServer({
+    eff: sendToServer({
       t: "find-many",
       userIds,
     }),

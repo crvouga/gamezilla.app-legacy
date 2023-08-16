@@ -1,4 +1,4 @@
-import { Cmd } from "./cmd";
+import { Eff } from "./eff";
 import { p } from "./pipe";
 import { PubSub, Sub } from "./sub";
 import { Task } from "./task";
@@ -42,7 +42,7 @@ export const startTimeout = <Msg>(
   timeoutId: string | number,
   duration: number,
   msg: Msg
-): Cmd<Msg> => {
+): Eff<Msg> => {
   return (dispatch) => {
     timeouts.set(timeoutId, timeoutId);
 
@@ -58,7 +58,7 @@ export const startTimeout = <Msg>(
   };
 };
 
-export const cancelTimeout = (timeoutId: string): Cmd => {
+export const cancelTimeout = (timeoutId: string): Eff => {
   return () => {
     timeouts.delete(timeoutId);
   };

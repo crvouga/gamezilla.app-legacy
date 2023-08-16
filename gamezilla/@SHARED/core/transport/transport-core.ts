@@ -1,4 +1,4 @@
-import { Cmd } from "../cmd";
+import { Eff } from "../eff";
 import { Sub } from "../sub";
 import { ClientId } from "./client-id";
 import { SessionId } from "./session-id";
@@ -13,7 +13,7 @@ export type ClientToServerMsg<ToServer> = { t: "to-server"; c: ToServer };
  * TransportClient represents the a client side object that sends and receives messages to and from the server.
  */
 export type TransportClient<ToClient, ToServer> = {
-  sendToServer: (msg: ToServer) => Cmd;
+  sendToServer: (msg: ToServer) => Eff;
   onServerMsg: Sub<ToClient>;
   onWireMsg: Sub<ClientWireMsg>;
 };
@@ -27,8 +27,8 @@ export type ClientWireMsg =
  * TransportServer represents the a server side object that sends and receives messages to and from the client.
  */
 export type TransportServer<ToClient, ToServer> = {
-  sendToClient: (clientId: ClientId[], msg: ToClient) => Cmd;
-  broadcast: (msg: ToClient) => Cmd;
+  sendToClient: (clientId: ClientId[], msg: ToClient) => Eff;
+  broadcast: (msg: ToClient) => Eff;
   onClientMsg: Sub<{ msg: ToServer; clientId: ClientId; sessionId: SessionId }>;
   onWireMsg: Sub<ServerWireMsg>;
 };

@@ -1,4 +1,4 @@
-import { Cmd, andThen, p } from "gamezilla/@SHARED/core";
+import { Eff, andThen, p } from "gamezilla/@SHARED/core";
 import { ClientAppMsg } from "gamezilla/app/@SHARED/client";
 import {
   IconArrowCircle,
@@ -44,17 +44,17 @@ import {
 export type Model = ClientModel;
 
 export const init = (_input: {
-  sendToServer: (m: ToServer) => Cmd;
+  sendToServer: (m: ToServer) => Eff;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   // const chessboard = ChessboardV2.init({
   //   onDrop: () => false,
   // });
   return {
     model: initShared,
-    // cmd: chessboard.cmd,
+    // eff: chessboard.eff,
   };
 };
 
@@ -74,11 +74,11 @@ export const update = ({
 }: {
   msg: Msg;
   model: Model;
-  sendToServer: (m: ToServer) => Cmd;
+  sendToServer: (m: ToServer) => Eff;
   ctx: SpaceClientCtx;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   return p(
     { model },
@@ -92,7 +92,7 @@ export const update = ({
 
       return {
         model: modelNew,
-        cmd: sendToServer(msg),
+        eff: sendToServer(msg),
       };
     }),
     andThen(watch)
@@ -105,7 +105,7 @@ export const updateFromServer = (input: {
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
   msgs?: ClientAppMsg[];
 } => {
   return p(updateFromServer_(input), andThen(watch));
@@ -120,7 +120,7 @@ export const updateFromServer_: typeof updateFromServer = ({
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
   msgs?: ClientAppMsg[];
 } => {
   if (msg.t === "clock-tick") {
@@ -173,7 +173,7 @@ export const syncWithServer = ({
   };
 };
 
-function watch(model: Model): { model: Model; cmd?: Cmd<Msg> } {
+function watch(model: Model): { model: Model; eff?: Eff<Msg> } {
   return { model };
 }
 

@@ -1,4 +1,4 @@
-import { Browser, Cmd, RemoteResult, Result } from "gamezilla/@SHARED/core";
+import { Browser, Eff, RemoteResult, Result } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
 
 //
@@ -100,12 +100,12 @@ export const updateFromClient = ({
   msg: ToServer;
   model: ServerModel;
 }): {
-  cmd: Cmd<ServerMsg>;
+  eff: Eff<ServerMsg>;
 } => {
   switch (msg[0]) {
     default: {
       return {
-        cmd: () => {
+        eff: () => {
           //
         },
       };

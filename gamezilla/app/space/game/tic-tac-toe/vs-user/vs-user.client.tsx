@@ -1,4 +1,4 @@
-import { Cmd } from "gamezilla/@SHARED/core";
+import { Eff } from "gamezilla/@SHARED/core";
 import { SpaceClientCtx, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
 import { VsUserSetupScreen } from "gamezilla/app/space/game/@SHARED";
 import { Position, Slot, toTurn } from "../tic-tic-toe/tic-tac-toe";
@@ -47,11 +47,11 @@ export const update = (
   {
     sendToServer,
   }: {
-    sendToServer: (msg: ToServer) => Cmd;
+    sendToServer: (msg: ToServer) => Eff;
   },
   msg: Msg,
   model: Model
-): [Model, Cmd<Msg>] => {
+): [Model, Eff<Msg>] => {
   switch (msg[0]) {
     //
     //
@@ -60,11 +60,11 @@ export const update = (
     //
 
     case "close-modal": {
-      return [{ ...model, openedModal: "none" }, Cmd.None];
+      return [{ ...model, openedModal: "none" }, Eff.None];
     }
 
     case "OpenModal": {
-      return [{ ...model, openedModal: msg[1] }, Cmd.None];
+      return [{ ...model, openedModal: msg[1] }, Eff.None];
     }
 
     //
@@ -90,7 +90,7 @@ export const update = (
     }
 
     default: {
-      return [model, Cmd.None];
+      return [model, Eff.None];
     }
   }
 };

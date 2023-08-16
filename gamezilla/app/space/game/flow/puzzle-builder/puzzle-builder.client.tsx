@@ -1,4 +1,4 @@
-import { Cmd, Sub } from "gamezilla/@SHARED/core";
+import { Eff, Sub } from "gamezilla/@SHARED/core";
 import {
   IconArrowLeftOnRect,
   IconPenToSquare,
@@ -43,7 +43,7 @@ const update: Client["update"] = (input) => {
     const updated = FlowGridPlayUI.update({ model: model.playUI, msg: msg.c });
     return {
       model: { ...model, playUI: updated.model },
-      cmd: Cmd.t("play-ui", updated.cmd),
+      eff: Eff.t("play-ui", updated.eff),
     };
   }
 
@@ -52,14 +52,14 @@ const update: Client["update"] = (input) => {
   const modelNew =
     handled.t === "ok" ? { ...model, ...handled.value } : input.model;
 
-  return { model: modelNew, cmd: input.sendToServer(msg) };
+  return { model: modelNew, eff: input.sendToServer(msg) };
 };
 
 const updateFromServer: Client["updateFromServer"] = (
   input
 ): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   return input;
 };

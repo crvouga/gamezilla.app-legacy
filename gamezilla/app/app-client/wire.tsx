@@ -1,4 +1,4 @@
-import { ClientWireMsg, Cmd } from "gamezilla/@SHARED/core";
+import { ClientWireMsg, Eff } from "gamezilla/@SHARED/core";
 import { ClientAppMsg } from "gamezilla/app/@SHARED/client";
 import { IconSpinner } from "gamezilla/app/@SHARED/ui";
 
@@ -65,10 +65,10 @@ export const update = ({
 export const updateFromEvent = <ToServer,>(input: {
   msg: ClientAppMsg;
   model: Model;
-  sendToServer: (m: ToServer) => Cmd;
+  sendToServer: (m: ToServer) => Eff;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   return { model: input.model };
 };

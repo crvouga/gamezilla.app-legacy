@@ -1,4 +1,4 @@
-import { Cmd, Time, Transition, andThen, p } from "gamezilla/@SHARED/core";
+import { Eff, Time, Transition, andThen, p } from "gamezilla/@SHARED/core";
 import { ClientAppMsg } from "gamezilla/app/@SHARED/client";
 import { IconXMark } from "gamezilla/app/@SHARED/ui";
 
@@ -75,7 +75,7 @@ export function update(
   msg: Msg
 ): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } {
   return p(
     { model },
@@ -110,11 +110,11 @@ const update_: typeof update = (model, msg) => {
   return { model };
 };
 
-function watch(model: Model): { model: Model; cmd: Cmd<Msg> } {
+function watch(model: Model): { model: Model; eff: Eff<Msg> } {
   const uiToasts = Transition.watch(config, model.uiToasts, model.toasts);
   return {
     model: { ...model, uiToasts: uiToasts.model },
-    cmd: Cmd.t("ui-toast", uiToasts.cmd),
+    eff: Eff.t("ui-toast", uiToasts.eff),
   };
 }
 
@@ -131,7 +131,7 @@ export function updateFromEvent({
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } {
   switch (msg.t) {
     case "enqueue-toast": {
@@ -143,7 +143,7 @@ export function updateFromEvent({
           runningId: model.runningId + 1,
           toasts: [...model.toasts, { toastId, message: msg.text, duration }],
         },
-        cmd: Time.startTimeout(toastId, duration, {
+        eff: Time.startTimeout(toastId, duration, {
           t: "toast-duration-elapsed",
           toastId: model.runningId,
         }),

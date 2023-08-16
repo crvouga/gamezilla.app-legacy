@@ -1,5 +1,5 @@
 import {
-  Cmd,
+  Eff,
   Keyboard,
   Option,
   Result,
@@ -49,40 +49,40 @@ export const update = (
     sendToServer,
     ctx,
   }: {
-    sendToServer: (msg: ToServer) => Cmd;
+    sendToServer: (msg: ToServer) => Eff;
     ctx: SpaceClientCtx;
   },
   msg: Msg,
   _model: Model
-): [Model, Cmd<Msg>] => {
+): [Model, Eff<Msg>] => {
   const model: Model = { ..._model, openedMenuId: Option.None };
 
   switch (msg[0]) {
     case "PressedKeyDown": {
       if (model.gameStatus.type !== "GameStarted") {
-        return [model, Cmd.None];
+        return [model, Eff.None];
       }
 
       if (model.gameStatus.player[1] !== ctx.currentUserId) {
-        return [model, Cmd.None];
+        return [model, Eff.None];
       }
 
       const direction = Direction.fromKey(msg[1]);
 
-      const changeDirectionCmd =
+      const changeDirectionEff =
         direction.type === "Some"
           ? sendToServer([
               "input-direction",
               { userId: ctx.currentUserId, direction: direction.value },
             ])
-          : Cmd.None;
+          : Eff.None;
 
-      const toggleStatusCmd =
+      const toggleStatusEff =
         msg[1] === "Space"
           ? sendToServer(["ToggleStatus", { userId: ctx.currentUserId }])
-          : Cmd.None;
+          : Eff.None;
 
-      return [model, Cmd.batch([changeDirectionCmd, toggleStatusCmd])];
+      return [model, Eff.batch([changeDirectionEff, toggleStatusEff])];
     }
 
     case "ToggleStatus": {
@@ -102,11 +102,11 @@ export const update = (
     }
 
     case "OpenedMenu": {
-      return [{ ...model, openedMenuId: Option.Some(msg[1]) }, Cmd.None];
+      return [{ ...model, openedMenuId: Option.Some(msg[1]) }, Eff.None];
     }
 
     case "ClosedMenu": {
-      return [{ ...model, openedMenuId: Option.None }, Cmd.None];
+      return [{ ...model, openedMenuId: Option.None }, Eff.None];
     }
 
     default: {
@@ -118,7 +118,7 @@ export const update = (
 export const updateFromServer = (
   msg: ToClient,
   model: Model
-): [Model, Cmd<Msg>] => {
+): [Model, Eff<Msg>] => {
   switch (msg[0]) {
     case "tick": {
       const coreModel = msg[1];
@@ -127,7 +127,7 @@ export const updateFromServer = (
           ...coreModel,
           openedMenuId: model.openedMenuId,
         },
-        Cmd.None,
+        Eff.None,
       ];
     }
 
@@ -159,12 +159,12 @@ const updateResponse = <
 >(
   result: TResult,
   model: Model
-): [Model, Cmd<Msg>] => {
+): [Model, Eff<Msg>] => {
   if (result.t === "err") {
-    return [model, Cmd.None];
+    return [model, Eff.None];
   }
   const coreModel = result.value;
-  return [{ ...model, ...coreModel }, Cmd.None];
+  return [{ ...model, ...coreModel }, Eff.None];
 };
 
 //

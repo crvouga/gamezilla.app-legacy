@@ -1,7 +1,7 @@
 export * from "./animation";
 export * as Audio from "./audio";
 export * as Browser from "./browser";
-export { Cmd } from "./cmd";
+export { Eff } from "./eff";
 export * from "./data";
 export * from "./data/phone-number";
 export { Uuid } from "./data/uuid";

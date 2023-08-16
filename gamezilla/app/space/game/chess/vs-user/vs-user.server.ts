@@ -1,4 +1,4 @@
-import { Cmd, exhaustive, Sub, Time } from "gamezilla/@SHARED/core";
+import { Eff, exhaustive, Sub, Time } from "gamezilla/@SHARED/core";
 import { SpaceEvent } from "gamezilla/app/space/@SHARED";
 import * as Board from "../@SHARED/chess/chess";
 import {
@@ -42,10 +42,10 @@ export const init = initShared;
 export type Msg = ServerMsg;
 
 export const update = (
-  { broadcast }: { broadcast: (msg: ToClient) => Cmd },
+  { broadcast }: { broadcast: (msg: ToClient) => Eff },
   msg: Msg,
   model: Model
-): [Model, Cmd<Msg>] => {
+): [Model, Eff<Msg>] => {
   switch (msg[0]) {
     case "ClockTicked": {
       const modelNew: Model = {
@@ -58,9 +58,9 @@ export const update = (
 
       return [
         modelNew,
-        Cmd.batch([
+        Eff.batch([
           broadcast(["ClockTicked", modelNew]),
-          didChangeToGameOver ? broadcast(["game-over"]) : Cmd.None,
+          didChangeToGameOver ? broadcast(["game-over"]) : Eff.None,
         ]),
       ];
     }
@@ -69,12 +69,12 @@ export const update = (
 
 export const updateFromClient = (
   wire: {
-    sendToClient: (msg: ToClient) => Cmd;
-    broadcast: (msg: ToClient) => Cmd;
+    sendToClient: (msg: ToClient) => Eff;
+    broadcast: (msg: ToClient) => Eff;
   },
   msg: ToServer,
   model: Model
-): [Model, Cmd<Msg>] => {
+): [Model, Eff<Msg>] => {
   switch (msg[0]) {
     case "RequestToDraw": {
       return sendResponse(
@@ -151,14 +151,14 @@ const sendResponse = (
     sendToClient,
     broadcast,
   }: {
-    sendToClient: (msg: ToClient) => Cmd;
-    broadcast: (msg: ToClient) => Cmd;
+    sendToClient: (msg: ToClient) => Eff;
+    broadcast: (msg: ToClient) => Eff;
   },
   response: Res,
   model: Model
-): [Model, Cmd<Msg>] => {
+): [Model, Eff<Msg>] => {
   if (response[1].t === "err") {
-    return [model, Cmd.batch([sendToClient(response)])];
+    return [model, Eff.batch([sendToClient(response)])];
   }
 
   const modelNew: Model = response[1].value;
@@ -168,8 +168,8 @@ const sendResponse = (
 
   return [
     modelNew,
-    Cmd.batch([
-      didChangeToGameOver ? broadcast(["game-over"]) : Cmd.None,
+    Eff.batch([
+      didChangeToGameOver ? broadcast(["game-over"]) : Eff.None,
       broadcast(response),
     ]),
   ];
@@ -180,10 +180,10 @@ export const updateFromEvent = ({
   msg,
   model,
 }: {
-  broadcast: (m: ToClient) => Cmd;
+  broadcast: (m: ToClient) => Eff;
   msg: SpaceEvent;
   model: Model;
-}): { model: Model; cmd?: Cmd<Msg> } => {
+}): { model: Model; eff?: Eff<Msg> } => {
   if (msg.t === "user-left") {
     switch (model.type) {
       case "setup": {
@@ -197,7 +197,7 @@ export const updateFromEvent = ({
 
         const modelNew: Model = { ...model, [color]: "none" };
 
-        return { model: modelNew, cmd: broadcast(["player-left", modelNew]) };
+        return { model: modelNew, eff: broadcast(["player-left", modelNew]) };
       }
 
       case "game":
@@ -221,7 +221,7 @@ export const updateFromEvent = ({
           [color]: "none",
         };
 
-        return { model: modelNew, cmd: broadcast(["player-left", modelNew]) };
+        return { model: modelNew, eff: broadcast(["player-left", modelNew]) };
       }
     }
   }

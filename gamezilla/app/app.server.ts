@@ -1,6 +1,6 @@
 import {
   ClientId,
-  Cmd,
+  Eff,
   Posix,
   ServerWireMsg,
   SessionId,
@@ -11,7 +11,7 @@ import {
 import {
   AnonymousReqCtx,
   ReqCtx,
-  ServerEffect,
+  ServerCmd,
   ServerCtx,
   ServerEvent,
 } from "gamezilla/app/@SHARED/server";
@@ -38,7 +38,7 @@ import {
 //
 //
 
-export const init: { model: ServerModel; cmd?: Cmd<ServerMsg> } = {
+export const init: { model: ServerModel; eff?: Eff<ServerMsg> } = {
   model: {
     sessions: {},
     space: SpaceServer.init,
@@ -61,11 +61,11 @@ export const update = async (input: {
   msg: ServerMsg;
   model: ServerModel;
   ctx: ServerCtx;
-  broadcast: (m: ToClient) => Cmd;
-  sendToClient: (clientIds: ClientId[], m: ToClient) => Cmd;
+  broadcast: (m: ToClient) => Eff;
+  sendToClient: (clientIds: ClientId[], m: ToClient) => Eff;
 }): Promise<{
   model: ServerModel;
-  cmd?: Cmd<ServerMsg>;
+  eff?: Eff<ServerMsg>;
 }> => {
   const updated = await updateMain(input);
 
@@ -92,18 +92,18 @@ export const update = async (input: {
   //
   //
 
-  const cmdList: Cmd<ServerMsg>[] = [];
+  const effList: Eff<ServerMsg>[] = [];
 
-  for (const eff of appUpdated.eff ?? []) {
-    if (eff.t === "send-to-client") {
-      cmdList.push(input.sendToClient(eff.clientIds, eff.msg));
+  for (const cmd of appUpdated.cmd ?? []) {
+    if (cmd.t === "send-to-client") {
+      effList.push(input.sendToClient(cmd.clientIds, cmd.msg));
     }
-    if (eff.t === "broadcast") {
-      cmdList.push(input.broadcast(eff.msg));
+    if (cmd.t === "broadcast") {
+      effList.push(input.broadcast(cmd.msg));
     }
-    if (eff.t === "send-to-user") {
-      cmdList.push(
-        sendToUser(input.sendToClient, appUpdated.model, eff.userIds, eff.msg)
+    if (cmd.t === "send-to-user") {
+      effList.push(
+        sendToUser(input.sendToClient, appUpdated.model, cmd.userIds, cmd.msg)
       );
     }
   }
@@ -113,7 +113,7 @@ export const update = async (input: {
   //
   //
 
-  return { ...appUpdated, cmd: Cmd.batch([...cmdList, appUpdated.cmd]) };
+  return { ...appUpdated, eff: Eff.batch([...effList, appUpdated.eff]) };
 };
 
 const updateMain = async ({
@@ -125,12 +125,12 @@ const updateMain = async ({
   msg: ServerMsg;
   model: ServerModel;
   ctx: ServerCtx;
-  sendToClient: (clientIds: ClientId[], m: ToClient) => Cmd;
+  sendToClient: (clientIds: ClientId[], m: ToClient) => Eff;
 }): Promise<{
   model: ServerModel;
-  cmd?: Cmd<ServerMsg>;
+  eff?: Eff<ServerMsg>;
   events?: ServerEvent[];
-  eff?: ServerEffect<ToClient>[];
+  cmd?: ServerCmd<ToClient>[];
 }> => {
   if (msg.t === "wire") {
     return updateWire({ msg: msg.c, model });
@@ -161,7 +161,7 @@ const updateMain = async ({
 
     return {
       model: { ...model, space: updated.model },
-      cmd: Cmd.t("space", updated.cmd ?? Cmd.None),
+      eff: Eff.t("space", updated.eff ?? Eff.None),
     };
   }
 
@@ -172,7 +172,7 @@ const updateMain = async ({
     });
     return {
       model: { ...model, profile: updated.model },
-      cmd: Cmd.t("profile", updated.cmd),
+      eff: Eff.t("profile", updated.eff),
     };
   }
 
@@ -183,7 +183,7 @@ const updateMain = async ({
     });
     return {
       model: { ...model, search: updated.model },
-      cmd: Cmd.t("search", updated.cmd),
+      eff: Eff.t("search", updated.eff),
     };
   }
 
@@ -194,7 +194,7 @@ const updateMain = async ({
     });
     return {
       model: { ...model, auth: updated.model },
-      cmd: Cmd.t("auth", updated.cmd),
+      eff: Eff.t("auth", updated.eff),
     };
   }
 
@@ -206,7 +206,7 @@ const updateMain = async ({
 
     return {
       model: { ...model, chat: updated.model },
-      cmd: Cmd.t("chat", updated.cmd),
+      eff: Eff.t("chat", updated.eff),
     };
   }
 
@@ -276,11 +276,11 @@ const updateFromEvent = ({
 }: {
   msg: ServerEvent;
   model: ServerModel;
-  broadcast: (m: ToClient) => Cmd;
-  sendToClient: (clientIds: ClientId[], m: ToClient) => Cmd;
+  broadcast: (m: ToClient) => Eff;
+  sendToClient: (clientIds: ClientId[], m: ToClient) => Eff;
 }): {
   model: ServerModel;
-  cmd?: Cmd<ServerMsg>;
+  eff?: Eff<ServerMsg>;
 } => {
   const spaceUpdated = SpaceServer.updateFromEvent({
     msg,
@@ -302,9 +302,9 @@ const updateFromEvent = ({
       space: spaceUpdated.model,
       profile: profileUpdated.model,
     },
-    cmd: Cmd.batch<ServerMsg>([
-      Cmd.t("space", spaceUpdated.cmd),
-      Cmd.t("profile", profileUpdated.cmd),
+    eff: Eff.batch<ServerMsg>([
+      Eff.t("space", spaceUpdated.eff),
+      Eff.t("profile", profileUpdated.eff),
     ]),
   };
 };
@@ -318,11 +318,11 @@ const updateFromClient = async ({
   ctx: AnonymousReqCtx;
   msg: ToServer;
   model: ServerModel;
-  sendToClient: (clientIds: ClientId[], m: ToClient) => Cmd;
+  sendToClient: (clientIds: ClientId[], m: ToClient) => Eff;
 }): Promise<{
   model: ServerModel;
-  cmd?: Cmd<ServerMsg>;
-  eff?: ServerEffect<ToClient>[];
+  eff?: Eff<ServerMsg>;
+  cmd?: ServerCmd<ToClient>[];
 }> => {
   const currentUserId = model.auth.sessions[ctx.sessionId]?.userId;
   const authReqCtx: ReqCtx | null = currentUserId
@@ -341,7 +341,7 @@ const updateFromClient = async ({
     });
     return {
       model: { ...model, auth: updated.model },
-      cmd: Cmd.t("auth", updated.cmd),
+      eff: Eff.t("auth", updated.eff),
     };
   }
 
@@ -354,7 +354,7 @@ const updateFromClient = async ({
     });
     return {
       model: { ...model, profile: updated.model },
-      cmd: Cmd.t("profile", updated.cmd),
+      eff: Eff.t("profile", updated.eff),
     };
   }
 
@@ -365,7 +365,7 @@ const updateFromClient = async ({
     });
     return {
       model: { ...model, search: updated.model },
-      cmd: Cmd.t("search", updated.cmd),
+      eff: Eff.t("search", updated.eff),
     };
   }
 
@@ -377,7 +377,7 @@ const updateFromClient = async ({
     });
     return {
       model: { ...model, chat: updated.model },
-      cmd: Cmd.t("chat", updated.cmd),
+      eff: Eff.t("chat", updated.eff),
     };
   }
 
@@ -401,8 +401,8 @@ const updateFromClient = async ({
         ...model,
         space: updated.model,
       },
-      cmd: Cmd.t("space", updated.cmd),
-      eff: ServerEffect.tag("space", updated.eff),
+      eff: Eff.t("space", updated.eff),
+      cmd: ServerCmd.tag("space", updated.cmd),
     };
   }
 
@@ -410,11 +410,11 @@ const updateFromClient = async ({
 };
 
 const sendToUser = (
-  sendToClient: (clientIds: ClientId[], msg: ToClient) => Cmd,
+  sendToClient: (clientIds: ClientId[], msg: ToClient) => Eff,
   model: ServerModel,
   userIds: UserId[],
   msg: ToClient
-): Cmd => {
+): Eff => {
   const clientIds: ClientId[] = [];
 
   const userIdSet = new Set<UserId>(userIds);

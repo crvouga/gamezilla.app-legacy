@@ -1,4 +1,4 @@
-import { Cmd, exhaustive } from "gamezilla/@SHARED/core";
+import { Eff, exhaustive } from "gamezilla/@SHARED/core";
 import { PartyId, UserId } from "gamezilla/app/@SHARED/data";
 import {
   Res,
@@ -36,15 +36,15 @@ export type Msg = ServerMsg;
 
 export const update = (
   _wire: {
-    sendToUser: (userIds: UserId[], msg: ToClient) => Cmd;
-    broadcast: (msg: ToClient) => Cmd;
+    sendToUser: (userIds: UserId[], msg: ToClient) => Eff;
+    broadcast: (msg: ToClient) => Eff;
   },
   msg: Msg,
   model: Model
-): [Model, Cmd<Msg>] => {
+): [Model, Eff<Msg>] => {
   switch (msg[0]) {
     case "none": {
-      return [model, Cmd.None];
+      return [model, Eff.None];
     }
 
     default: {
@@ -58,13 +58,13 @@ export const updateFromClient = (
     sendToClient,
     broadcast,
   }: {
-    broadcast: (msg: ToClient) => Cmd;
-    sendToUser: (userId: UserId[], msg: ToClient) => Cmd;
-    sendToClient: (msg: ToClient) => Cmd;
+    broadcast: (msg: ToClient) => Eff;
+    sendToUser: (userId: UserId[], msg: ToClient) => Eff;
+    sendToClient: (msg: ToClient) => Eff;
   },
   msg: ToServer,
   model: Model
-): [Model, Cmd<Msg>] => {
+): [Model, Eff<Msg>] => {
   switch (msg[0]) {
     case "PartyCreate":
     case "PartyDestroy":
@@ -93,8 +93,8 @@ export const sendToParty = ({
   model: Model;
   partyId: PartyId;
   msg: ToClient;
-  sendToUser: (userIds: UserId[], msg: ToClient) => Cmd;
-}): Cmd => {
+  sendToUser: (userIds: UserId[], msg: ToClient) => Eff;
+}): Eff => {
   const userIds: UserId[] = [];
 
   for (const userId in model.users) {

@@ -1,5 +1,5 @@
 import {
-  Cmd,
+  Eff,
   Loading,
   Ok,
   RemoteResult,
@@ -75,12 +75,12 @@ export const init: { model: ClientModel } = {
 
 export const update = (input: {
   ctx: ClientCtx;
-  sendToServer: (msg: ToServer) => Cmd;
+  sendToServer: (msg: ToServer) => Eff;
   msg: ClientMsg;
   model: ClientModel;
 }): {
   model: ClientModel;
-  cmd?: Cmd<ClientMsg>;
+  eff?: Eff<ClientMsg>;
   msgs?: ClientAppMsg[];
 } => {
   return p(
@@ -185,7 +185,7 @@ const updateMain: typeof update = ({ ctx, sendToServer, msg, model }) => {
 
       return {
         model: modelNew,
-        cmd: Cmd.t("game", updated.cmd),
+        eff: Eff.t("game", updated.eff),
         msgs: updated.msgs,
       };
     }
@@ -197,7 +197,7 @@ const updateMain: typeof update = ({ ctx, sendToServer, msg, model }) => {
           req: { ...model.req, [msg.t]: RemoteResult.Loading },
         },
 
-        cmd: sendToServer({ ...msg, profile: ctx.profiles[ctx.currentUserId] }),
+        eff: sendToServer({ ...msg, profile: ctx.profiles[ctx.currentUserId] }),
       };
     }
   }
@@ -210,12 +210,12 @@ export const updateFromServer = ({
   model,
 }: {
   ctx: ClientCtx;
-  sendToServer: (msg: ToServer) => Cmd;
+  sendToServer: (msg: ToServer) => Eff;
   msg: ToClient;
   model: ClientModel;
 }): {
   model: ClientModel;
-  cmd?: Cmd<ClientMsg>;
+  eff?: Eff<ClientMsg>;
   msgs?: ClientAppMsg[];
 } => {
   switch (msg.t) {
@@ -252,7 +252,7 @@ export const updateFromServer = ({
 
       return {
         model: modelNew,
-        cmd: Cmd.t("game", updated.cmd),
+        eff: Eff.t("game", updated.eff),
         msgs: updated.msgs,
       };
     }
@@ -274,7 +274,7 @@ export const updateFromServer = ({
 
       return {
         model: { ...merged.model, req: { ...model.req, list: Ok(null) } },
-        cmd: merged.cmd,
+        eff: merged.eff,
         msgs: msg.profiles
           ? [{ t: "got-profiles", profiles: msg.profiles }]
           : [],
@@ -321,7 +321,7 @@ export const updateFromServer = ({
           ...merged.model,
           req: { ...model.req, [msg.t]: Ok(null) },
         },
-        cmd: merged.cmd,
+        eff: merged.eff,
         msgs: msg.profiles
           ? [{ t: "got-profiles", profiles: msg.profiles }]
           : [],
@@ -333,10 +333,10 @@ export const updateFromServer = ({
 export const updateFromEvent = (input: {
   msg: ClientAppMsg;
   model: ClientModel;
-  sendToServer: (m: ToServer) => Cmd;
+  sendToServer: (m: ToServer) => Eff;
 }): {
   model: ClientModel;
-  cmd?: Cmd<ClientMsg>;
+  eff?: Eff<ClientMsg>;
 } => {
   const { msg } = input;
 
@@ -361,16 +361,16 @@ export const updateFromEvent = (input: {
 
 const listSpaces = (input: {
   model: ClientModel;
-  sendToServer: (m: ToServer) => Cmd;
+  sendToServer: (m: ToServer) => Eff;
 }): {
   model: ClientModel;
-  cmd?: Cmd<ClientMsg>;
+  eff?: Eff<ClientMsg>;
 } => {
   const { model, sendToServer } = input;
 
   return {
     model: { ...model, req: { ...model.req, list: Loading } },
-    cmd: sendToServer({ t: "list" }),
+    eff: sendToServer({ t: "list" }),
   };
 };
 
@@ -381,15 +381,15 @@ const syncWithServer = ({
   sendToServer,
 }: {
   ctx: ClientCtx;
-  sendToServer: (msg: ToServer) => Cmd;
+  sendToServer: (msg: ToServer) => Eff;
   client: ClientModel;
   server: Space<Game.ServerModel>[];
 }): {
   model: ClientModel;
-  cmd: Cmd<ClientMsg>;
+  eff: Eff<ClientMsg>;
 } => {
   const clientSpaces: { [id: SpaceId]: Space<Game.ClientModel> } = {};
-  const cmds: Cmd<ClientMsg>[] = [];
+  const effs: Eff<ClientMsg>[] = [];
 
   for (const serverSpace of server) {
     if (!serverSpace.game) {
@@ -415,7 +415,7 @@ const syncWithServer = ({
       game: merged.model,
     };
     clientSpaces[clientSpaceNew.spaceId] = clientSpaceNew;
-    cmds.push(Cmd.t("game", merged.cmd));
+    effs.push(Eff.t("game", merged.eff));
     continue;
   }
 
@@ -424,7 +424,7 @@ const syncWithServer = ({
       ...client,
       spaces: clientSpaces,
     },
-    cmd: Cmd.batch(cmds),
+    eff: Eff.batch(effs),
   };
 };
 

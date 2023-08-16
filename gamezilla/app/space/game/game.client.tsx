@@ -1,4 +1,4 @@
-import { Cmd, Sub, exhaustive } from "gamezilla/@SHARED/core";
+import { Eff, Sub, exhaustive } from "gamezilla/@SHARED/core";
 import { ClientAppMsg } from "gamezilla/app/@SHARED/client";
 import { GameClient, SpaceClientCtx } from "gamezilla/app/space/@SHARED";
 import { ChessClient } from "gamezilla/app/space/game/chess";
@@ -50,7 +50,7 @@ export const init =
         const initial = ChessClient.init();
         return {
           model: { t: "chess", c: initial.model },
-          cmd: Cmd.t("chess", initial.cmd),
+          eff: Eff.t("chess", initial.eff),
         };
       }
 
@@ -87,13 +87,13 @@ export const update: Client["update"] = (input) => {
 
     return {
       model: { t: "tic-tac-toe", c: updated.model },
-      cmd: Cmd.t("tic-tac-toe", updated.cmd),
+      eff: Eff.t("tic-tac-toe", updated.eff),
       msgs: updated.msgs,
     };
   }
 
   if (model.t === "chess" && msg.t === "chess") {
-    const [child, cmd] = ChessClient.update({
+    const [child, eff] = ChessClient.update({
       ctx,
       sendToServer: (msg) => sendToServer({ t: "chess", c: msg }),
       msg: msg.c,
@@ -101,7 +101,7 @@ export const update: Client["update"] = (input) => {
     });
     return {
       model: { t: "chess", c: child },
-      cmd: Cmd.t("chess", cmd),
+      eff: Eff.t("chess", eff),
     };
   }
 
@@ -114,7 +114,7 @@ export const update: Client["update"] = (input) => {
     });
     return {
       model: { t: "flow", c: updated.model },
-      cmd: Cmd.t("flow", updated?.cmd ?? Cmd.None),
+      eff: Eff.t("flow", updated?.eff ?? Eff.None),
     };
   }
 
@@ -135,7 +135,7 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
     });
     return {
       model: { t: "tic-tac-toe", c: updated.model },
-      cmd: Cmd.t("tic-tac-toe", updated.cmd),
+      eff: Eff.t("tic-tac-toe", updated.eff),
       msgs: updated.msgs,
     };
   }
@@ -150,7 +150,7 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
 
     return {
       model: { t: "chess", c: updated.model },
-      cmd: Cmd.t("chess", updated.cmd),
+      eff: Eff.t("chess", updated.eff),
       msgs: updated.msgs,
     };
   }
@@ -254,10 +254,10 @@ export const syncWithServer = ({
   server,
 }: {
   ctx: SpaceClientCtx;
-  sendToServer: (m: ToServer) => Cmd;
+  sendToServer: (m: ToServer) => Eff;
   client?: ClientModel | null;
   server: ServerModel;
-}): { model: ClientModel; cmd?: Cmd<ClientMsg>; msgs?: ClientAppMsg[] } => {
+}): { model: ClientModel; eff?: Eff<ClientMsg>; msgs?: ClientAppMsg[] } => {
   switch (server.t) {
     case "chess": {
       const merged = ChessClient.syncWithServer({
@@ -268,7 +268,7 @@ export const syncWithServer = ({
 
       return {
         model: { t: "chess", c: merged.model },
-        cmd: Cmd.t("chess", merged.cmd),
+        eff: Eff.t("chess", merged.eff),
       };
     }
 
@@ -281,7 +281,7 @@ export const syncWithServer = ({
       });
       return {
         model: { t: "connect-four", c: merged.model },
-        cmd: Cmd.t("connect-four", merged.cmd),
+        eff: Eff.t("connect-four", merged.eff),
         msgs: merged.msgs,
       };
     }
@@ -304,7 +304,7 @@ export const syncWithServer = ({
       });
       return {
         model: { t: "flow", c: merged.model },
-        cmd: Cmd.t("flow", merged.cmd),
+        eff: Eff.t("flow", merged.eff),
         msgs: merged.msgs,
       };
     }

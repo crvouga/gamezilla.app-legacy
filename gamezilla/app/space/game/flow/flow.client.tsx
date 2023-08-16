@@ -38,7 +38,7 @@ export const update: Client["update"] = (input) => {
   const { model, msg } = input;
 
   if (msg.t === "input-mode") {
-    return { model, cmd: input.sendToServer(msg) };
+    return { model, eff: input.sendToServer(msg) };
   }
 
   if (model.t === "puzzle-builder" && msg.t === "puzzle-builder") {

@@ -1,4 +1,4 @@
-import { Cmd, p, Sub } from "gamezilla/@SHARED/core";
+import { Eff, p, Sub } from "gamezilla/@SHARED/core";
 import { SpaceEvent, SpaceReqCtx } from "gamezilla/app/space/@SHARED";
 import { Chess } from "../@SHARED/chess";
 import {
@@ -39,12 +39,12 @@ export const update = ({
   msg,
   model,
 }: {
-  broadcast: (msg: ToClient) => Cmd;
+  broadcast: (msg: ToClient) => Eff;
   msg: Msg;
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   if (msg.t === "bot-moved") {
     const result = botMoved(msg.moved, model);
@@ -53,7 +53,7 @@ export const update = ({
 
     return {
       model: modelNew,
-      cmd: broadcast({ t: "bot-moved", result }),
+      eff: broadcast({ t: "bot-moved", result }),
     };
   }
 
@@ -61,39 +61,39 @@ export const update = ({
 };
 
 export const updateFromClient = (input: {
-  sendToClient: (msg: ToClient) => Cmd;
-  broadcast: (msg: ToClient) => Cmd;
+  sendToClient: (msg: ToClient) => Eff;
+  broadcast: (msg: ToClient) => Eff;
   msg: ToServer;
   model: Model;
   ctx: SpaceReqCtx;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   const updated = updateFromClient_(input);
 
   return {
     ...updated,
-    cmd: Cmd.batch([updated.cmd, toBotMoveCmd(input.model, updated.model)]),
+    eff: Eff.batch([updated.eff, toBotMoveEff(input.model, updated.model)]),
   };
 };
 
-const toBotMoveCmd = (modelPrev: Model, modelNext: Model): Cmd<Msg> => {
+const toBotMoveEff = (modelPrev: Model, modelNext: Model): Eff<Msg> => {
   const didChangeToBotTurn = !isBotTurn(modelPrev) && isBotTurn(modelNext);
 
   if (!didChangeToBotTurn) {
-    return Cmd.None;
+    return Eff.None;
   }
   if (modelNext.type !== "game") {
-    return Cmd.None;
+    return Eff.None;
   }
 
-  const cmd = p(
+  const eff = p(
     Chess.getBestMove(modelNext.botLevel, modelNext.board),
-    Cmd.perform((moved): Msg => ({ t: "bot-moved", moved }))
+    Eff.perform((moved): Msg => ({ t: "bot-moved", moved }))
   );
 
-  return cmd;
+  return eff;
 };
 
 const updateFromClient_: typeof updateFromClient = ({
@@ -103,13 +103,13 @@ const updateFromClient_: typeof updateFromClient = ({
   model,
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   const handled = updateCore({ msg, model, ctx });
 
   const modelNew: Model = handled.t === "err" ? model : handled.value;
 
-  return { model: modelNew, cmd: broadcast({ ...msg, result: handled }) };
+  return { model: modelNew, eff: broadcast({ ...msg, result: handled }) };
 };
 
 export const updateFromEvent = ({
@@ -118,11 +118,11 @@ export const updateFromEvent = ({
   broadcast,
 }: {
   msg: SpaceEvent;
-  broadcast: (m: ToClient) => Cmd;
+  broadcast: (m: ToClient) => Eff;
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd;
+  eff?: Eff;
 } => {
   if (msg.t === "user-left") {
     if (model.userId === msg.userId) {
@@ -134,7 +134,7 @@ export const updateFromEvent = ({
       };
       return {
         model: modelNew,
-        cmd: broadcast({ t: "player-left", model: modelNew }),
+        eff: broadcast({ t: "player-left", model: modelNew }),
       };
     }
     return { model };

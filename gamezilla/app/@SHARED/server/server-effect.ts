@@ -9,7 +9,7 @@ import { UserId } from "gamezilla/app/@SHARED/data";
 //
 //
 
-export type ServerEffect<ToClient> =
+export type ServerCmd<ToClient> =
   | {
       t: "send-to-client";
       clientIds: ClientId[];
@@ -34,10 +34,10 @@ export type ServerEffect<ToClient> =
 //
 //
 
-const tagServerEff = <T extends string, A>(
+const tagCmd = <T extends string, A>(
   tag: T,
-  eff: ServerEffect<A>
-): ServerEffect<{ t: T; c: A }> => {
+  eff: ServerCmd<A>
+): ServerCmd<{ t: T; c: A }> => {
   switch (eff.t) {
     case "send-to-client":
     case "send-to-user":
@@ -49,13 +49,13 @@ const tagServerEff = <T extends string, A>(
   }
 };
 
-const tagServerEffects = <T extends string, A>(
+const tagCmds = <T extends string, A>(
   tag: T,
-  effects?: ServerEffect<A>[]
-): ServerEffect<{ t: T; c: A }>[] | undefined => {
-  return effects?.map((m) => tagServerEff(tag, m));
+  effects?: ServerCmd<A>[]
+): ServerCmd<{ t: T; c: A }>[] | undefined => {
+  return effects?.map((m) => tagCmd(tag, m));
 };
 
-export const ServerEffect = {
-  tag: tagServerEffects,
+export const ServerCmd = {
+  tag: tagCmds,
 };

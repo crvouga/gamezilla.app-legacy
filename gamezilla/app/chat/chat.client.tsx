@@ -1,4 +1,4 @@
-import { Browser, Cmd, exhaustive, p } from "gamezilla/@SHARED/core";
+import { Browser, Eff, exhaustive, p } from "gamezilla/@SHARED/core";
 import { ClientAppMsg, RouteChat, ViewCtx } from "gamezilla/app/@SHARED/client";
 import { VDom } from "gamezilla/app/@SHARED/ui";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./chat.core";
@@ -50,7 +50,7 @@ export const update = ({
 }: {
   msg: Msg;
   model: Model;
-}): { model: Model; cmd?: Cmd<Msg> } => {
+}): { model: Model; eff?: Eff<Msg> } => {
   switch (msg[0]) {
     case "clicked-user-search-result": {
       return {
@@ -87,9 +87,9 @@ export const update = ({
           userSelected: {},
           userSearch: "",
         },
-        cmd: p(
+        eff: p(
           Browser.focus(userSearchInputId),
-          Cmd.perform((result) => ["focused", result])
+          Eff.perform((result) => ["focused", result])
         ),
       };
     }
@@ -97,7 +97,7 @@ export const update = ({
     default: {
       return {
         model,
-        cmd: Cmd.None,
+        eff: Eff.None,
       };
     }
   }
@@ -127,7 +127,7 @@ export const updateFromServer = ({
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   return { model };
 };
@@ -139,10 +139,10 @@ export const updateFromEvent = ({
 }: {
   msg: ClientAppMsg;
   model: Model;
-  sendToServer: (m: ToServer) => Cmd;
+  sendToServer: (m: ToServer) => Eff;
 }): {
   model: Model;
-  cmd?: Cmd<Msg>;
+  eff?: Eff<Msg>;
 } => {
   switch (msg.t) {
     case "route-changed": {
@@ -154,21 +154,21 @@ export const updateFromEvent = ({
         case "chat-conversation": {
           return {
             model,
-            cmd: sendToServer(["chat-join", { chatId: "todo" }]),
+            eff: sendToServer(["chat-join", { chatId: "todo" }]),
           };
         }
 
         case "chat-new": {
           return {
             model,
-            cmd: sendToServer(["chat-join", { chatId: "todo" }]),
+            eff: sendToServer(["chat-join", { chatId: "todo" }]),
           };
         }
 
         default: {
           return {
             model,
-            cmd: sendToServer(["chat-leave", { chatId: "todo" }]),
+            eff: sendToServer(["chat-leave", { chatId: "todo" }]),
           };
         }
       }

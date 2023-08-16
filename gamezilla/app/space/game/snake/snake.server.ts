@@ -1,4 +1,4 @@
-import { Cmd, Result, Sub, Time } from "gamezilla/@SHARED/core";
+import { Eff, Result, Sub, Time } from "gamezilla/@SHARED/core";
 import * as Snake from "./snake";
 import {
   ServerModel,
@@ -40,10 +40,10 @@ export const init = initCoreModel;
 export type Msg = ServerMsg;
 
 export const update = (
-  { broadcast }: { broadcast: (msg: ToClient) => Cmd },
+  { broadcast }: { broadcast: (msg: ToClient) => Eff },
   msg: Msg,
   model: Model
-): [Model, Cmd<Msg>] => {
+): [Model, Eff<Msg>] => {
   switch (msg[0]) {
     case "tick": {
       const modelNew: Model = {
@@ -61,12 +61,12 @@ export const updateFromClient = (
     sendToClient,
     broadcast,
   }: {
-    sendToClient: (msg: ToClient) => Cmd;
-    broadcast: (msg: ToClient) => Cmd;
+    sendToClient: (msg: ToClient) => Eff;
+    broadcast: (msg: ToClient) => Eff;
   },
   msg: ToServer,
   model: Model
-): [Model, Cmd<Msg>] => {
+): [Model, Eff<Msg>] => {
   switch (msg[0]) {
     case "start-game": {
       return updateRequest(
@@ -107,12 +107,12 @@ const updateRequest = (
     sendToClient,
     broadcast,
   }: {
-    sendToClient: (msg: ToClient) => Cmd;
-    broadcast: (msg: ToClient) => Cmd;
+    sendToClient: (msg: ToClient) => Eff;
+    broadcast: (msg: ToClient) => Eff;
   },
   response: Response,
   model: Model
-): [Model, Cmd<Msg>] => {
+): [Model, Eff<Msg>] => {
   if (response[1].t === "err") {
     return [model, sendToClient(response)];
   }
@@ -121,7 +121,7 @@ const updateRequest = (
 
   return [
     modelNew,
-    Cmd.batch([broadcast(response), broadcast(["tick", modelNew])]),
+    Eff.batch([broadcast(response), broadcast(["tick", modelNew])]),
   ];
 };
 
