@@ -18,21 +18,17 @@
   "dependencies": {
     "@supabase/supabase-js": "^1.30.0",
     "chess.js": "^1.0.0-beta.6",
-    "inferno": "^8.2.2",
     "mysql2": "^3.2.0",
     "preact": "^10.17.0",
     "threads": "^1.7.0",
     "ws": "^8.13.0"
   },
   "devDependencies": {
-    "@babel/plugin-transform-react-jsx-development": "^7.22.5",
     "@preact/preset-vite": "^2.5.0",
     "@types/ws": "^8.5.5",
     "@typescript-eslint/eslint-plugin": "^5.57.1",
     "@typescript-eslint/parser": "^5.57.1",
     "autoprefixer": "^10.4.14",
-    "babel-plugin-inferno": "^6.6.1",
-    "babel-plugin-transform-hook-names": "^1.0.2",
     "csv-parser": "^3.0.0",
     "dpdm": "^3.13.1",
     "eslint": "^8.38.0",
@@ -44,7 +40,6 @@
     "tsx": "^3.12.7",
     "typescript": "^5.0.2",
     "vite": "^4.3.2",
-    "vite-plugin-inferno": "^0.0.1",
     "vite-tsconfig-paths": "^4.2.0"
   },
   "engines": {
