@@ -5,7 +5,8 @@ import {
   toMsgPayload,
   toMsgType,
 } from "gamezilla/@SHARED/core";
-import { render } from "inferno";
+// import { render } from "inferno";
+import { render } from "preact";
 import * as AppClient from "./app/app.client";
 
 const env = {
