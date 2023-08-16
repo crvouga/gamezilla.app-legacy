@@ -12,17 +12,6 @@
 
 /*
 
-
-*/
-
-@media (max-width: 480px) {
-  html {
-    font-size: 75%;
-  }
-}
-
-/*
-
 Remove arrows from number input
 https://stackoverflow.com/questions/26024771/styling-an-input-type-number
 
