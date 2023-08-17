@@ -14,7 +14,7 @@ export type SpaceDbMsg =
       spaceId: SpaceId;
     };
 
-export type SpaceQuery = {
+export type SpaceReads = {
   findOne: (
     time: Posix,
     spaceId: SpaceId
@@ -25,7 +25,13 @@ export type SpaceQuery = {
   ) => Promise<Space<Game.ServerModel> | null>;
 };
 
-export const spaceQuery = (): SpaceQuery => {
+export type SpaceWrite = {
+  type: "update";
+  space: Space<Game.ServerModel>;
+};
+
+export const spaceQuery = (): SpaceReads => {
+  const spaces = new Map<SpaceId, Space<Game.ServerModel>>();
   return {
     async findOne(time, spaceId) {
       return null;
