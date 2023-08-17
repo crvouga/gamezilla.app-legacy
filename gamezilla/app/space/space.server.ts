@@ -18,6 +18,7 @@ import { SpaceServerCtx, Space } from "gamezilla/app/space/@SHARED";
 import * as GameServer from "./game/game.server";
 import { makeSpaceDb } from "./space-db";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./space.core";
+import { createStore } from "gamezilla/@SHARED/core/store/store.in-memory";
 
 //
 //
@@ -27,6 +28,7 @@ import { ServerModel, ServerMsg, ToClient, ToServer } from "./space.core";
 //
 //
 
+const Store = createStore<Space<GameServer.Model>>();
 const spaceDb = makeSpaceDb();
 
 export const init: ServerModel = null;
