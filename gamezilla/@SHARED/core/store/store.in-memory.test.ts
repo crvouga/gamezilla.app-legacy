@@ -5,29 +5,29 @@ const Store = createStore<{ username: string; userId: string }>();
 const now = 1;
 const userId = "1";
 
-const store1 = init();
+const store1 = init(now);
 
-const store2A = Store.add(store1, now, userId, {
+const store2A = Store.add(store1, userId, {
   username: "store2A",
   userId,
 });
 
-const store2B = Store.add(store1, now, userId, {
+const store2B = Store.add(store1, userId, {
   username: "store2B",
   userId,
 });
 
-const store3A = Store.add(store2A, now, userId, {
+const store3A = Store.add(store2A, userId, {
   username: "store3A",
   userId,
 });
 
-const store3B = Store.add(store2A, now, userId, {
+const store3B = Store.add(store2A, userId, {
   username: "store3B",
   userId,
 });
 
-const store4 = Store.add(store3A, now, userId, {
+const store4 = Store.add(store3A, userId, {
   username: "bobby smith",
   userId,
 });
