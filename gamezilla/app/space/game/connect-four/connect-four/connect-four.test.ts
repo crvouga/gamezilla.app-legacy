@@ -1,5 +1,5 @@
 import { Columns, PlayerType, toStatus, toWins } from "./connect-four";
-import { expect, describe, it } from "@jest/globals";
+import { expect, test } from "vitest";
 
 const expectWinner = (columns: Columns) => {
   const status = toStatus(columns);
@@ -11,103 +11,101 @@ const expectWinner = (columns: Columns) => {
   }
 };
 
-describe("Connect Four", () => {
-  it("detects horizontal win", () => {
-    expectWinner(horizontal);
-    expect(toWins(horizontal).length).toBe(1);
-  });
+test("detects horizontal win", () => {
+  expectWinner(horizontal);
+  expect(toWins(horizontal).length).toBe(1);
+});
 
-  it("detects vertical win", () => {
-    expectWinner(vertical);
-    expect(toWins(vertical).length).toBe(1);
-  });
+test("detects vertical win", () => {
+  expectWinner(vertical);
+  expect(toWins(vertical).length).toBe(1);
+});
 
-  it("detects right diagonal win", () => {
-    expectWinner(rightDiagonal);
-    expect(toWins(rightDiagonal).length).toBe(1);
-  });
+test("detects right diagonal win", () => {
+  expectWinner(rightDiagonal);
+  expect(toWins(rightDiagonal).length).toBe(1);
+});
 
-  it("detects left diagonal win", () => {
-    expectWinner(leftDiagonal);
-    expect(toWins(leftDiagonal).length).toBe(1);
-  });
+test("detects left diagonal win", () => {
+  expectWinner(leftDiagonal);
+  expect(toWins(leftDiagonal).length).toBe(1);
+});
 
-  it("detects left and right diagonal win", () => {
-    expectWinner(leftAndRightDiagonal);
+test("detects left and right diagonal win", () => {
+  expectWinner(leftAndRightDiagonal);
 
-    const wins = toWins(leftAndRightDiagonal);
+  const wins = toWins(leftAndRightDiagonal);
 
-    expect(wins.length).toBe(2);
-  });
+  expect(wins.length).toBe(2);
+});
 
-  it("detects wins longer than 4", () => {
-    expectWinner(horizontalLongest);
+test("detects wins longer than 4", () => {
+  expectWinner(horizontalLongest);
 
-    const wins = toWins(horizontalLongest);
+  const wins = toWins(horizontalLongest);
 
-    expect(wins.length).toBeGreaterThanOrEqual(1);
+  expect(wins.length).toBeGreaterThanOrEqual(1);
 
-    // expect(wins.length).toBe(1)
+  // expect(wins.length).toBe(1)
 
-    // const [win] = wins
+  // const [win] = wins
 
-    // if (win) {
-    //     expect(win.length).toBe(horizontalLongest.length)
-    // }
-  });
+  // if (win) {
+  //     expect(win.length).toBe(horizontalLongest.length)
+  // }
+});
 
-  it("detects draw", () => {
-    const status = toStatus(tie);
-    expect(status.type).toBe("Tie");
-  });
+test("detects draw", () => {
+  const status = toStatus(tie);
+  expect(status.type).toBe("Tie");
+});
 
-  it("detects left diagonal win", () => {
-    const columns: Columns = [
-      [],
-      [p2, p1, p2, p1],
-      [p2, p2, p1],
-      [p1, p1, p2],
-      [p1],
-      [],
-      [],
-    ];
+test("detects left diagonal win", () => {
+  const columns: Columns = [
+    [],
+    [p2, p1, p2, p1],
+    [p2, p2, p1],
+    [p1, p1, p2],
+    [p1],
+    [],
+    [],
+  ];
 
-    const wins = toWins(columns);
+  const wins = toWins(columns);
 
-    expect(wins.length).toBe(1);
-  });
+  expect(wins.length).toBe(1);
+});
 
-  it("detects diagonal", () => {
-    const columns: Columns = [
-      [],
-      [p1],
-      [p1, p1, p2],
-      [p2, p2, p1],
-      [p2, p1, p2, p1],
-      [],
-      [],
-    ];
+test("detects diagonal", () => {
+  const columns: Columns = [
+    [],
+    [p1],
+    [p1, p1, p2],
+    [p2, p2, p1],
+    [p2, p1, p2, p1],
+    [],
+    [],
+  ];
 
-    const wins = toWins(columns);
+  const wins = toWins(columns);
 
-    expect(wins.length).toBe(1);
-  });
+  expect(wins.length).toBe(1);
+});
 
-  it("detects right most vertical", () => {
-    const columns: Columns = [
-      [p2, p2, p2],
-      [p1],
-      [p2, p2, p1, p2],
-      [p1, p1, p2, p1],
-      [p2, p2, p1, p1, p2],
-      [p1, p2, p2],
-      [p1, p1, p1, p1],
-    ];
+test("detects right most vertical", () => {
+  const columns: Columns = [
+    [p2, p2, p2],
+    [p1],
+    [p2, p2, p1, p2],
+    [p1, p1, p2, p1],
+    [p2, p2, p1, p1, p2],
+    [p1, p2, p2],
+    [p1, p1, p1, p1],
+  ];
 
-    const wins = toWins(columns);
+  const wins = toWins(columns);
 
-    expect(wins.length).toBe(1);
-  });
+  expect(wins.length).toBe(1);
 });
 
 export const p1: PlayerType = "player-one";

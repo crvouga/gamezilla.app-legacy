@@ -27,4 +27,4 @@ export * from "./transport";
 export { Posix } from "./unix-time";
 export * from "./utils";
 export * from "./parsing";
-export * from "./store";
+export * from "./immutable-map";

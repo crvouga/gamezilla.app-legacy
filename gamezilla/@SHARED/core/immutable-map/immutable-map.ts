@@ -1,0 +1,123 @@
+export type ImmutableMapInstance = {
+  timestamp: number;
+  instanceStep: number;
+  appendStep: number;
+};
+
+export const init = (timestamp: number): ImmutableMapInstance => {
+  return {
+    timestamp,
+    instanceStep: 0,
+    appendStep: 0,
+  };
+};
+
+export type ImmutableMap<T> = {
+  set: (
+    store: ImmutableMapInstance,
+    key: string,
+    value: T
+  ) => Promise<ImmutableMapInstance>;
+  zap: (
+    store: ImmutableMapInstance,
+    key: string
+  ) => Promise<ImmutableMapInstance>;
+  get: (store: ImmutableMapInstance, key: string) => Promise<T | undefined>;
+};
+
+export type MapEntry<T> = ImmutableMapInstance & {
+  key: string;
+  value: T | undefined;
+};
+
+export type EntryStorage<T> = {
+  append: (entry: MapEntry<T>) => Promise<void>;
+  list: (key: string) => Promise<MapEntry<T>[] | undefined>;
+};
+
+export const createImmutableMap = <T>(
+  storage: EntryStorage<T>
+): ImmutableMap<T> => {
+  let runningAppendStep = 1;
+
+  const append = async (
+    instance: ImmutableMapInstance,
+    key: string,
+    value: T | undefined
+  ): Promise<ImmutableMapInstance> => {
+    const instanceNew: ImmutableMapInstance = {
+      timestamp: instance.timestamp,
+      instanceStep: instance.instanceStep + 1,
+      appendStep: runningAppendStep++,
+    };
+
+    const entry: MapEntry<T> = {
+      ...instanceNew,
+      key,
+      value,
+    };
+
+    await storage.append(entry);
+
+    return instanceNew;
+  };
+
+  return {
+    async set(instance, key, value) {
+      return append(instance, key, value);
+    },
+
+    async zap(instance, key) {
+      return append(instance, key, undefined);
+    },
+
+    async get(instance, key) {
+      let runningEntry: MapEntry<T> | undefined = undefined;
+
+      const entries = await storage.list(key);
+
+      for (const entry of entries ?? []) {
+        // SKIP entry is from the future
+        if (entry.timestamp > instance.timestamp) {
+          continue;
+        }
+
+        // SKIP entry is from the future
+        if (entry.instanceStep > instance.instanceStep) {
+          continue;
+        }
+
+        // SKIP entry is from the future
+        if (entry.appendStep > instance.appendStep) {
+          continue;
+        }
+
+        // KEEP entry exists
+        if (!runningEntry) {
+          runningEntry = entry;
+          continue;
+        }
+
+        // KEEP entry is newer
+        if (entry.timestamp > runningEntry.timestamp) {
+          runningEntry = entry;
+          continue;
+        }
+
+        // KEEP entry is newer
+        if (entry.instanceStep > runningEntry.instanceStep) {
+          runningEntry = entry;
+          continue;
+        }
+
+        // KEEP entry is newer
+        if (entry.appendStep > runningEntry.appendStep) {
+          runningEntry = entry;
+          continue;
+        }
+      }
+
+      return runningEntry?.value;
+    },
+  };
+};

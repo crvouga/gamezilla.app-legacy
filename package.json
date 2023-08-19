@@ -9,6 +9,7 @@
     "client:build": "vite build",
     "client:preview": "vite preview",
     "client": "vite",
+    "test": "vitest",
     "ngrok": "ngrok start --all",
     "db:dev": "pscale connect gamezilla dev",
     "tc": "tsc --noEmit --watch",
@@ -44,7 +45,8 @@
     "typescript": "^5.0.2",
     "vite": "^4.3.2",
     "vite-plugin-inferno": "^0.0.1",
-    "vite-tsconfig-paths": "^4.2.0"
+    "vite-tsconfig-paths": "^4.2.0",
+    "vitest": "^0.34.2"
   },
   "engines": {
     "node": ">=16.14"
