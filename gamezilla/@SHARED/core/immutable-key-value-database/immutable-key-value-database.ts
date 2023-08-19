@@ -1,51 +1,46 @@
-export type ImmutableMapInstance = {
+export type ImmutableKeyValueDatabase<T> = {
+  set: (instance: Instance, key: string, value: T) => Promise<Instance>;
+  zap: (instance: Instance, key: string) => Promise<Instance>;
+  get: (instance: Instance, key: string) => Promise<T | undefined>;
+};
+
+export type Instance = {
   timestamp: number;
   instanceStep: number;
   appendStep: number;
 };
 
-export const init = (timestamp: number): ImmutableMapInstance => {
+export const init = (timestamp: number): Instance => {
   return {
+    // used for out-of-process ordering
     timestamp,
+    // used for in-process ordering
     instanceStep: 0,
     appendStep: 0,
   };
 };
 
-export type ImmutableMap<T> = {
-  set: (
-    store: ImmutableMapInstance,
-    key: string,
-    value: T
-  ) => Promise<ImmutableMapInstance>;
-  zap: (
-    store: ImmutableMapInstance,
-    key: string
-  ) => Promise<ImmutableMapInstance>;
-  get: (store: ImmutableMapInstance, key: string) => Promise<T | undefined>;
-};
-
-export type MapEntry<T> = ImmutableMapInstance & {
+export type MapEntry<T> = Instance & {
   key: string;
   value: T | undefined;
 };
 
 export type EntryStorage<T> = {
-  append: (entry: MapEntry<T>) => Promise<void>;
-  list: (key: string) => Promise<MapEntry<T>[] | undefined>;
+  add: (entry: MapEntry<T>) => Promise<void>;
+  get: (key: string) => Promise<MapEntry<T>[] | undefined>;
 };
 
-export const createImmutableMap = <T>(
+export const createImmutableKeyValueDatabase = <T>(
   storage: EntryStorage<T>
-): ImmutableMap<T> => {
+): ImmutableKeyValueDatabase<T> => {
   let runningAppendStep = 1;
 
   const append = async (
-    instance: ImmutableMapInstance,
+    instance: Instance,
     key: string,
     value: T | undefined
-  ): Promise<ImmutableMapInstance> => {
-    const instanceNew: ImmutableMapInstance = {
+  ): Promise<Instance> => {
+    const instanceNew: Instance = {
       timestamp: instance.timestamp,
       instanceStep: instance.instanceStep + 1,
       appendStep: runningAppendStep++,
@@ -57,7 +52,7 @@ export const createImmutableMap = <T>(
       value,
     };
 
-    await storage.append(entry);
+    await storage.add(entry);
 
     return instanceNew;
   };
@@ -74,7 +69,7 @@ export const createImmutableMap = <T>(
     async get(instance, key) {
       let runningEntry: MapEntry<T> | undefined = undefined;
 
-      const entries = await storage.list(key);
+      const entries = await storage.get(key);
 
       for (const entry of entries ?? []) {
         // SKIP entry is from the future
