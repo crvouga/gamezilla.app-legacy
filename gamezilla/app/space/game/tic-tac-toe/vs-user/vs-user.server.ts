@@ -1,10 +1,9 @@
-import { Eff, Sub, Time } from "gamezilla/@SHARED/core";
+import { Sub, Time } from "gamezilla/@SHARED/core";
 import { sendBack } from "gamezilla/app/@SHARED/server";
 import {
   SpaceEvt,
   SpaceReqCtx,
   SpaceServerCmd,
-  sendToSpace,
 } from "gamezilla/app/space/@SHARED";
 import { PlayerType, toOpposite, toTurn } from "../tic-tic-toe/tic-tac-toe";
 import * as Round from "./vs-user-round";
@@ -107,7 +106,7 @@ export const updateFromClient = (
 
       return {
         model: modelNew,
-        cmd: [sendToSpace(["InputPlayer_Done", result])],
+        cmd: [{ t: "send-to-space", msg: ["InputPlayer_Done", result] }],
       };
     }
 
@@ -124,7 +123,7 @@ export const updateFromClient = (
       const modelNew = result.value;
       return {
         model: modelNew,
-        cmd: [sendToSpace(["StopPlaying_Done", result])],
+        cmd: [{ t: "send-to-space", msg: ["StopPlaying_Done", result] }],
       };
     }
 
@@ -141,7 +140,7 @@ export const updateFromClient = (
       const modelNew = result.value;
       return {
         model: modelNew,
-        cmd: [sendToSpace(["StartGame_Done", result])],
+        cmd: [{ t: "send-to-space", msg: ["StartGame_Done", result] }],
       };
     }
 
@@ -158,7 +157,7 @@ export const updateFromClient = (
       const modelNew = result.value;
       return {
         model: modelNew,
-        cmd: [sendToSpace(["resign_Done", result])],
+        cmd: [{ t: "send-to-space", msg: ["resign_Done", result] }],
       };
     }
 
@@ -175,7 +174,7 @@ export const updateFromClient = (
       const modelNew = result.value;
       return {
         model: modelNew,
-        cmd: [sendToSpace(["input-move-done", result])],
+        cmd: [{ t: "send-to-space", msg: ["input-move-done", result] }],
       };
     }
 
@@ -193,7 +192,7 @@ export const updateFromClient = (
 
       return {
         model: modelNew,
-        cmd: [sendToSpace(["NewGame_Done", result])],
+        cmd: [{ t: "send-to-space", msg: ["NewGame_Done", result] }],
       };
     }
 
@@ -210,7 +209,7 @@ export const updateFromClient = (
       const modelNew = result.value;
       return {
         model: modelNew,
-        cmd: [sendToSpace(["InputBestOutOf_Done", result])],
+        cmd: [{ t: "send-to-space", msg: ["InputBestOutOf_Done", result] }],
       };
     }
 
@@ -227,7 +226,7 @@ export const updateFromClient = (
 
       return {
         model: result.value,
-        cmd: [sendToSpace(res)],
+        cmd: [{ t: "send-to-space", msg: res }],
       };
     }
 
@@ -244,7 +243,7 @@ export const updateFromClient = (
 
       return {
         model: result.value,
-        cmd: [sendToSpace(res)],
+        cmd: [{ t: "send-to-space", msg: res }],
       };
     }
 
@@ -261,7 +260,7 @@ export const updateFromClient = (
 
       return {
         model: result.value,
-        cmd: [sendToSpace(res)],
+        cmd: [{ t: "send-to-space", msg: res }],
       };
     }
 
@@ -278,7 +277,7 @@ export const updateFromClient = (
 
       return {
         model: result.value,
-        cmd: [sendToSpace(res)],
+        cmd: [{ t: "send-to-space", msg: res }],
       };
     }
   }

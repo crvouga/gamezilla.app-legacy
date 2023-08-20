@@ -16,7 +16,6 @@ import {
   SpaceReqCtx,
   SpaceServerCmd,
   SpaceServerCtx,
-  sendToSpace,
 } from "gamezilla/app/space/@SHARED";
 import { ChessGameMsg } from "../@SHARED/chess/chess-shared";
 import { EloRating } from "./elo-rating";
@@ -128,7 +127,7 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
     case "clock-tick": {
       return {
         model,
-        cmd: [sendToSpace<ToClient>({ t: "clock-tick", now: ctx.now })],
+        cmd: [{ t: "send-to-space", msg: { t: "clock-tick", now: ctx.now } }],
       };
     }
 
@@ -140,10 +139,10 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
             requests: { ...model.requests, getPuzzles: msg.result },
           },
           cmd: [
-            sendToSpace<ToClient>({
-              t: "db-got-puzzles",
-              result: msg.result,
-            }),
+            {
+              t: "send-to-space",
+              msg: { t: "db-got-puzzles", result: msg.result },
+            },
           ],
         };
       }
@@ -162,10 +161,10 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
           requests: { ...model.requests, getPuzzles: Ok(null) },
         },
         cmd: [
-          sendToSpace<ToClient>({
-            t: "db-got-puzzles",
-            result: Ok(modelNew),
-          }),
+          {
+            t: "send-to-space",
+            msg: { t: "db-got-puzzles", result: Ok(modelNew) },
+          },
         ],
       };
     }
@@ -175,10 +174,10 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
         return {
           model,
           cmd: [
-            sendToSpace<ToClient>({
-              t: "db-got-initial-load",
-              result: msg.result,
-            }),
+            {
+              t: "send-to-space",
+              msg: { t: "db-got-initial-load", result: msg.result },
+            },
           ],
         };
       }
@@ -191,10 +190,13 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
         return {
           model,
           cmd: [
-            sendToSpace<ToClient>({
-              t: "db-got-initial-load",
-              result: Err("No puzzles found."),
-            }),
+            {
+              t: "send-to-space",
+              msg: {
+                t: "db-got-initial-load",
+                result: Err("No puzzles found."),
+              },
+            },
           ],
         };
       }
@@ -212,10 +214,10 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
       return {
         model: modelNew,
         cmd: [
-          sendToSpace<ToClient>({
-            t: "db-got-initial-load",
-            result: Ok(modelNew),
-          }),
+          {
+            t: "send-to-space",
+            msg: { t: "db-got-initial-load", result: Ok(modelNew) },
+          },
         ],
       };
     }
@@ -224,10 +226,13 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
       return {
         model,
         cmd: [
-          sendToSpace<ToClient>({
-            t: "db-put-interaction",
-            result: Result.mapOk(msg.result, () => model),
-          }),
+          {
+            t: "send-to-space",
+            msg: {
+              t: "db-put-interaction",
+              result: Result.mapOk(msg.result, () => model),
+            },
+          },
         ],
       };
     }
@@ -236,10 +241,13 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
       return {
         model,
         cmd: [
-          sendToSpace<ToClient>({
-            t: "db-put-profile",
-            result: Result.mapOk(msg.result, () => model),
-          }),
+          {
+            t: "send-to-space",
+            msg: {
+              t: "db-put-profile",
+              result: Result.mapOk(msg.result, () => model),
+            },
+          },
         ],
       };
     }

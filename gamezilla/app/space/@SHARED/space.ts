@@ -75,15 +75,6 @@ export type SpaceServerCmd<ToClient> =
   | ServerCmd<ToClient>
   | { t: "send-to-space"; msg: ToClient };
 
-/**
- * Message creator to reduce boilerplate
- */
-export const sendToSpace = <ToClient>(
-  msg: ToClient
-): SpaceServerCmd<ToClient> => {
-  return { t: "send-to-space", msg };
-};
-
 const tagOne = <T extends string, A>(
   tag: T,
   cmd: SpaceServerCmd<A>
