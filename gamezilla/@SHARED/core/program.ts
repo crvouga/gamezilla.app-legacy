@@ -20,7 +20,10 @@ export function create<Model, Msg>(input: {
         model: Model;
         eff?: Eff<Msg>;
       }>;
-  subscriptions: (input: { ctx: Ctx; model: Model }) => Sub<Msg>;
+  subscriptions: (input: {
+    ctx: Ctx;
+    model: Model;
+  }) => Sub<Msg> | Promise<Sub<Msg>>;
 }) {
   let subscriberId = 0;
 
@@ -77,7 +80,7 @@ export function create<Model, Msg>(input: {
 
     await publish(stateNew.model, ctx, msg);
 
-    const sub = input.subscriptions({
+    const sub = await input.subscriptions({
       ctx,
       model: state.model,
     });

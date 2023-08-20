@@ -1,7 +1,7 @@
 import {
   filterObject,
   RemoteResult,
-  removeKey,
+  dissoc,
   Result,
 } from "gamezilla/@SHARED/core";
 import { PartyId, UserId } from "gamezilla/app/@SHARED/data";
@@ -159,7 +159,7 @@ export const handle = (
       }
 
       const modelNew: CoreModel = {
-        parties: removeKey(user.partyId, model.parties),
+        parties: dissoc(model.parties, user.partyId),
         users: filterObject(
           model.users,
           (entry) => entry[1].partyId !== user.partyId
@@ -219,7 +219,7 @@ export const handle = (
 
       const modelNew: CoreModel = {
         parties: model.parties,
-        users: removeKey(userId, model.users),
+        users: dissoc(model.users, userId),
       };
 
       return Ok(modelNew);

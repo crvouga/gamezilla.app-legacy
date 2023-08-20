@@ -64,7 +64,14 @@ export const cancelTimeout = (timeoutId: string): Eff => {
   };
 };
 
-// NOTE: needs to be cleaned up when using HMR
+//
+//
+//
+// Interval
+//
+//
+//
+
 const intervals = new Map<string, PubSub<number>>();
 
 const onTimeout = (intervalId: string, time: number) => {

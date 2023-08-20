@@ -1,37 +1,45 @@
-export type ImmutableStoreInstance<TKey, TValue> = {
+export type StoreInstance<_TKey, _TValue> = {
   timestamp: number;
   instanceStep: number;
   appendStep: number;
 };
 
-export type ImmutableStore<TKey extends string | number, TValue> = {
-  init: (timestamp: number) => ImmutableStoreInstance<TKey, TValue>;
+export type Store<TKey extends string | number, TValue> = {
+  init: (timestamp: number) => StoreInstance<TKey, TValue>;
 
   assoc: (
-    instance: ImmutableStoreInstance<TKey, TValue>,
+    now: number,
+    instance: StoreInstance<TKey, TValue>,
     key: TKey,
     value: TValue
-  ) => Promise<ImmutableStoreInstance<TKey, TValue>>;
+  ) => Promise<StoreInstance<TKey, TValue>>;
 
   assocMany: (
-    instance: ImmutableStoreInstance<TKey, TValue>,
+    now: number,
+    instance: StoreInstance<TKey, TValue>,
     entries: [TKey, TValue][]
-  ) => Promise<ImmutableStoreInstance<TKey, TValue>>;
+  ) => Promise<StoreInstance<TKey, TValue>>;
 
   dissoc: (
-    instance: ImmutableStoreInstance<TKey, TValue>,
+    now: number,
+    instance: StoreInstance<TKey, TValue>,
     key: TKey
-  ) => Promise<ImmutableStoreInstance<TKey, TValue>>;
+  ) => Promise<StoreInstance<TKey, TValue>>;
 
   dissocMany: (
-    instance: ImmutableStoreInstance<TKey, TValue>,
+    now: number,
+    instance: StoreInstance<TKey, TValue>,
     keys: TKey[]
-  ) => Promise<ImmutableStoreInstance<TKey, TValue>>;
+  ) => Promise<StoreInstance<TKey, TValue>>;
 
   get: (
-    instance: ImmutableStoreInstance<TKey, TValue>,
+    now: number,
+    instance: StoreInstance<TKey, TValue>,
     key: TKey
   ) => Promise<TValue | undefined>;
 
-  values: (instance: ImmutableStoreInstance<TKey, TValue>) => Promise<TValue[]>;
+  values: (
+    now: number,
+    instance: StoreInstance<TKey, TValue>
+  ) => Promise<TValue[]>;
 };

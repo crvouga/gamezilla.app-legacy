@@ -9,9 +9,7 @@ import { ClientAppMsg, Route } from "gamezilla/app/@SHARED/client";
 //
 //
 
-export type Model = {
-  route: Route;
-};
+export type Model = Route;
 
 const fallback: Route = { t: "space", c: { t: "space-list" } };
 
@@ -25,7 +23,7 @@ export const init = (
   );
 
   return {
-    model: { route },
+    model: route,
     eff: Browser.replace(Route.encode(route)),
   };
 };
@@ -64,7 +62,7 @@ export const update = ({
 
   if (msg.t === "route-changed") {
     return {
-      model: { route: msg.route },
+      model: msg.route,
       msgs: [{ t: "route-changed", route: msg.route }],
     };
   }

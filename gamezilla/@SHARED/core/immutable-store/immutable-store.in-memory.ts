@@ -1,27 +1,28 @@
-import { ImmutableStore, ImmutableStoreInstance } from "./immutable-store";
+import { Store, StoreInstance } from "./immutable-store";
 
-export type MapEntry<
-  TKey extends string | number,
+export type MapEntry<TKey extends string | number, TValue> = StoreInstance<
+  TKey,
   TValue
-> = ImmutableStoreInstance<TKey, TValue> & {
+> & {
   key: TKey;
   value: TValue | undefined;
 };
 
-export const createImmutableStore = <
+export const createInMemoryStore = <
   TKey extends string | number,
   TValue
->(): ImmutableStore<TKey, TValue> => {
+>(): Store<TKey, TValue> => {
   const map = new Map<TKey, MapEntry<TKey, TValue>[]>();
 
   let runningAppendStep = 1;
 
   const append = async (
-    instance: ImmutableStoreInstance<TKey, TValue>,
+    now: number,
+    instance: StoreInstance<TKey, TValue>,
     entries: [TKey, TValue | undefined][]
-  ): Promise<ImmutableStoreInstance<TKey, TValue>> => {
-    const instanceNew: ImmutableStoreInstance<TKey, TValue> = {
-      timestamp: instance.timestamp,
+  ): Promise<StoreInstance<TKey, TValue>> => {
+    const instanceNew: StoreInstance<TKey, TValue> = {
+      timestamp: now,
       instanceStep: instance.instanceStep + 1,
       appendStep: runningAppendStep++,
     };
@@ -42,42 +43,50 @@ export const createImmutableStore = <
   };
 
   return {
-    init(timestamp) {
+    init(now) {
       return {
-        timestamp,
+        timestamp: now,
         instanceStep: 0,
         appendStep: 0,
       };
     },
-    async assoc(instance, key, value) {
-      return append(instance, [[key, value]]);
+    async assoc(now, instance, key, value) {
+      return append(now, instance, [[key, value]]);
     },
 
-    async assocMany(instance, entries) {
-      return append(instance, entries);
+    async assocMany(now, instance, entries) {
+      return append(now, instance, entries);
     },
 
-    async dissoc(instance, key) {
-      return append(instance, [[key, undefined]]);
+    async dissoc(now, instance, key) {
+      return append(now, instance, [[key, undefined]]);
     },
 
-    async dissocMany(instance, keys) {
+    async dissocMany(now, instance, keys) {
       return append(
+        now,
         instance,
         keys.map((key) => [key, undefined])
       );
     },
 
-    async values(instance) {
-      return [];
+    async values(now, instance) {
+      const values: TValue[] = [];
+      for (const key of map.keys()) {
+        const got = await this.get(now, instance, key);
+        if (got) {
+          values.push(got);
+        }
+      }
+      return values;
     },
 
-    async get(instance, key) {
+    async get(now, instance, key) {
       let runningEntry: MapEntry<TKey, TValue> | undefined = undefined;
 
       for (const entry of map.get(key) ?? []) {
         // SKIP entry is from the future
-        if (entry.timestamp > instance.timestamp) {
+        if (entry.timestamp > now) {
           continue;
         }
 

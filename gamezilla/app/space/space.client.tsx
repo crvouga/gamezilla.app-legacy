@@ -6,7 +6,7 @@ import {
   Sub,
   andThen,
   p,
-  removeKey,
+  dissoc,
 } from "gamezilla/@SHARED/core";
 import {
   ClientAppMsg,
@@ -292,7 +292,7 @@ export const updateFromServer = ({
       return {
         model: {
           ...model,
-          spaces: removeKey(msg.result.value.spaceId, model.spaces),
+          spaces: dissoc(model.spaces, msg.result.value.spaceId),
           req: { ...model.req, [msg.t]: Ok(null) },
         },
         msgs: msg.profiles

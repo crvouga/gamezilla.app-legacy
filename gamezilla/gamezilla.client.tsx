@@ -2,6 +2,8 @@ import {
   Browser,
   Program,
   createTransportClient,
+  toMsgPayload,
+  toMsgType,
 } from "gamezilla/@SHARED/core";
 import { render } from "preact";
 import * as AppClient from "./app/app.client";
@@ -50,6 +52,14 @@ program.subscribe((model, ctx) => {
     <AppClient.View now={ctx.now} model={model} dispatch={program.dispatch} />,
     document.body
   );
+});
+
+program.subscribe((model, _ctx, msg) => {
+  if (msg) {
+    console.log([toMsgType(msg), toMsgPayload(msg, {})]);
+  }
+  // @ts-ignore
+  window.model = model;
 });
 
 program.start();

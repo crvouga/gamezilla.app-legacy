@@ -120,13 +120,13 @@ export const update = (input: {
   eff?: Eff<Msg>;
 } => {
   return p(
-    update_(input),
+    updateMain(input),
     andThen((model) =>
       watchPutInteraction({ ctx: input.ctx, modelPrev: input.model, model })
     )
   );
 };
-const update_ = ({
+const updateMain = ({
   msg,
   model,
   broadcast,
@@ -140,100 +140,104 @@ const update_ = ({
   model: Model;
   eff?: Eff<Msg>;
 } => {
-  if (msg.t === "clock-tick") {
-    return {
-      model,
-      eff: broadcast({ t: "clock-tick", now: ctx.now }),
-    };
-  }
-
-  if (msg.t === "db-got-puzzles") {
-    if (msg.result.t === "err") {
-      return {
-        model: {
-          ...model,
-          requests: { ...model.requests, getPuzzles: msg.result },
-        },
-        eff: broadcast({ t: "db-got-puzzles", result: msg.result }),
-      };
-    }
-
-    const modelNew = transitionLoadingToStarted({
-      ctx,
-      model: {
-        ...model,
-        queue: msg.result.value,
-      },
-    });
-
-    return {
-      model: {
-        ...modelNew,
-        requests: { ...model.requests, getPuzzles: Ok(null) },
-      },
-      eff: broadcast({ t: "db-got-puzzles", result: Ok(modelNew) }),
-    };
-  }
-
-  if (msg.t === "db-got-initial-load") {
-    if (msg.result.t === "err") {
+  switch (msg.t) {
+    case "clock-tick": {
       return {
         model,
-        eff: broadcast({ t: "db-got-initial-load", result: msg.result }),
+        eff: broadcast({ t: "clock-tick", now: ctx.now }),
       };
     }
 
-    const { profile, puzzles } = msg.result.value;
+    case "db-got-puzzles": {
+      if (msg.result.t === "err") {
+        return {
+          model: {
+            ...model,
+            requests: { ...model.requests, getPuzzles: msg.result },
+          },
+          eff: broadcast({ t: "db-got-puzzles", result: msg.result }),
+        };
+      }
 
-    const puzzle = puzzles[0];
+      const modelNew = transitionLoadingToStarted({
+        ctx,
+        model: {
+          ...model,
+          queue: msg.result.value,
+        },
+      });
 
-    if (!puzzle) {
+      return {
+        model: {
+          ...modelNew,
+          requests: { ...model.requests, getPuzzles: Ok(null) },
+        },
+        eff: broadcast({ t: "db-got-puzzles", result: Ok(modelNew) }),
+      };
+    }
+
+    case "db-got-initial-load": {
+      if (msg.result.t === "err") {
+        return {
+          model,
+          eff: broadcast({ t: "db-got-initial-load", result: msg.result }),
+        };
+      }
+
+      const { profile, puzzles } = msg.result.value;
+
+      const puzzle = puzzles[0];
+
+      if (!puzzle) {
+        return {
+          model,
+          eff: broadcast({
+            t: "db-got-initial-load",
+            result: Err("No puzzles found."),
+          }),
+        };
+      }
+
+      const modelNew: Model = {
+        ...model,
+        t: "started",
+        moves: [],
+        profile,
+        puzzle,
+        queue: puzzles.slice(1),
+        startedAt: ctx.now,
+      };
+
+      return {
+        model: modelNew,
+        eff: broadcast({ t: "db-got-initial-load", result: Ok(modelNew) }),
+      };
+    }
+
+    case "db-put-interaction": {
       return {
         model,
         eff: broadcast({
-          t: "db-got-initial-load",
-          result: Err("No puzzles found."),
+          t: "db-put-interaction",
+          result: Result.mapOk(msg.result, () => model),
         }),
       };
     }
 
-    const modelNew: Model = {
-      ...model,
-      t: "started",
-      moves: [],
-      profile,
-      puzzle,
-      queue: puzzles.slice(1),
-      startedAt: ctx.now,
-    };
+    case "db-put-profile": {
+      return {
+        model,
+        eff: broadcast({
+          t: "db-put-profile",
+          result: Result.mapOk(msg.result, () => model),
+        }),
+      };
+    }
 
-    return {
-      model: modelNew,
-      eff: broadcast({ t: "db-got-initial-load", result: Ok(modelNew) }),
-    };
+    case "db-got-profile": {
+      return { model };
+    }
   }
-
-  if (msg.t === "db-put-interaction") {
-    return {
-      model,
-      eff: broadcast({
-        t: "db-put-interaction",
-        result: Result.mapOk(msg.result, () => model),
-      }),
-    };
-  }
-
-  if (msg.t === "db-put-profile") {
-    return {
-      model,
-      eff: broadcast({
-        t: "db-put-profile",
-        result: Result.mapOk(msg.result, () => model),
-      }),
-    };
-  }
-
-  return { model };
 };
 
 export const updateFromClient = (input: {
@@ -248,7 +252,7 @@ export const updateFromClient = (input: {
 } => {
   return p(
     input,
-    andThen((model) => updateFromClient_({ ...input, model })),
+    andThen((model) => updateFromClientMain({ ...input, model })),
     andThen((model) =>
       watchPutInteraction({ ...input, modelPrev: input.model, model })
     ),
@@ -364,7 +368,7 @@ const watchPutProfile = ({
   return { model };
 };
 
-const updateFromClient_: typeof updateFromClient = ({
+const updateFromClientMain: typeof updateFromClient = ({
   msg,
   model,
   broadcast,
@@ -409,9 +413,15 @@ export const updateFromEvent = ({
 //
 //
 
+const TICK_RATE = 500;
+
 export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
-  if (model.t === "started") {
-    return Time.every(intervalId, 500, () => ({ t: "clock-tick" }));
+  switch (model.t) {
+    case "started": {
+      return Time.every(intervalId, TICK_RATE, () => ({ t: "clock-tick" }));
+    }
+    default: {
+      return Sub.None;
+    }
   }
-  return Sub.None;
 };

@@ -3,20 +3,20 @@ import {
   Eff,
   Err,
   Ok,
+  Posix,
   Sub,
-  p,
-  removeKey,
+  dissoc,
 } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
 import {
+  ReqCtx,
   ServerCmd,
   ServerCtx,
-  ReqCtx,
   ServerEvent,
 } from "gamezilla/app/@SHARED/server";
-import { SpaceServerCtx, Space } from "gamezilla/app/space/@SHARED";
+import { Space, SpaceServerCtx } from "gamezilla/app/space/@SHARED";
 import * as GameServer from "./game/game.server";
-import { createSpaceStore, makeSpaceDb } from "./space-db";
+import { createSpaceStoreInMemory } from "./space-store";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./space.core";
 
 //
@@ -27,11 +27,9 @@ import { ServerModel, ServerMsg, ToClient, ToServer } from "./space.core";
 //
 //
 
-const spaceStore = createSpaceStore();
+const SpaceStore = createSpaceStoreInMemory();
 
-const spaceDb = makeSpaceDb();
-
-export const init: ServerModel = spaceStore.init(Date.now());
+export const init: ServerModel = SpaceStore.init(Posix.now());
 
 //
 //
@@ -51,18 +49,15 @@ export const update = async ({
   sendToUser: (userIds: UserId[], msg: ToClient) => Eff;
   msg: ServerMsg;
   model: ServerModel;
-}): Promise<{ model: ServerModel; eff?: Eff<ServerMsg> }> => {
+}): Promise<{
+  model: ServerModel;
+  eff?: Eff<ServerMsg>;
+}> => {
   switch (msg.t) {
     case "game": {
       const { spaceId } = msg;
 
-      const got = await spaceDb.get(spaceId);
-
-      if (got.t === "err") {
-        return { model };
-      }
-
-      const space = got.value;
+      const space = await SpaceStore.get(ctx.now, model, spaceId);
 
       if (!space) {
         return { model };
@@ -93,14 +88,10 @@ export const update = async ({
         game: updated.model,
       };
 
-      const mutated = await spaceDb.set(spaceNew);
-
-      if (mutated.t === "err") {
-        return { model };
-      }
+      const modelNew = await SpaceStore.assoc(ctx.now, model, spaceNew);
 
       return {
-        model,
+        model: modelNew,
         eff: Eff.map_(
           (m): ServerMsg => ({ t: "game", spaceId, c: m }),
           updated.eff
@@ -133,26 +124,27 @@ export const updateFromClient = async (input: {
 
   switch (msg.t) {
     case "list": {
-      const result = await spaceDb.getAll();
+      const listed = await SpaceStore.list(ctx.now, model);
 
-      const profiles =
-        result.t === "ok"
-          ? result.value.reduce(
-              (acc, space) => ({ ...acc, ...space.profileCache }),
-              {}
-            )
-          : {};
+      const profiles = listed.reduce(
+        (acc, space) => ({ ...acc, ...space.profileCache }),
+        {}
+      );
 
       return {
         model,
-        cmd: [sendBack(ctx, { t: "list", profiles, result })],
+        cmd: [sendBack(ctx, { t: "list", profiles, result: Ok(listed) })],
       };
     }
 
     case "join": {
-      const currentSpace = await spaceDb.getByUserId(msg.userId);
+      const currentSpace = await SpaceStore.getByUserId(
+        ctx.now,
+        model,
+        ctx.currentUserId
+      );
 
-      if (currentSpace.t === "err") {
+      if (currentSpace) {
         return {
           model,
           cmd: [
@@ -166,25 +158,13 @@ export const updateFromClient = async (input: {
         };
       }
 
-      const foundSpace = await spaceDb.get(msg.spaceId);
-
-      if (foundSpace.t === "err") {
-        return {
-          model,
-          cmd: [sendBack(ctx, { ...msg, result: foundSpace })],
-        };
-      }
-
-      const space = foundSpace.value;
+      const space = await SpaceStore.get(ctx.now, model, msg.spaceId);
 
       if (!space) {
         return {
           model,
           cmd: [
-            sendBack(ctx, {
-              ...msg,
-              result: Err("Game space was not found"),
-            }),
+            sendBack(ctx, { ...msg, result: Err("Game space was not found") }),
           ],
         };
       }
@@ -203,85 +183,69 @@ export const updateFromClient = async (input: {
           : space.profileCache,
       };
 
-      const mutated = await spaceDb.set(spaceNew);
-
-      if (mutated.t === "err") {
-        return {
-          model,
-          cmd: [sendBack(ctx, { ...msg, result: mutated })],
-        };
-      }
+      const modelNew = await SpaceStore.assoc(ctx.now, model, spaceNew);
 
       return {
-        model,
+        model: modelNew,
         cmd: [{ t: "broadcast", msg: { ...msg, result: Ok(spaceNew) } }],
       };
     }
 
     case "destroy": {
-      const currentSpace = await spaceDb.getByUserId(ctx.currentUserId);
+      const currentSpace = await SpaceStore.getByUserId(
+        ctx.now,
+        model,
+        ctx.currentUserId
+      );
 
-      if (currentSpace.t === "err") {
-        return {
-          model,
-          cmd: [sendBack(ctx, { ...msg, result: currentSpace })],
-        };
-      }
-
-      const space = currentSpace.value;
-
-      if (!space) {
+      if (!currentSpace) {
         return {
           model,
           cmd: [sendBack(ctx, { ...msg, result: Err("Failed to find space") })],
         };
       }
 
-      if (space.hostId !== ctx.currentUserId) {
+      if (currentSpace.hostId !== ctx.currentUserId) {
         return {
           model,
           cmd: [
             sendBack(ctx, {
               ...msg,
-              result: Err("You must be the host to destroy a space"),
+              result: Err("You must be the host to destroy the space"),
             }),
           ],
         };
       }
 
-      const mutated = await spaceDb.zap(space.spaceId);
-
-      if (mutated.t === "err") {
-        return {
-          model,
-          cmd: [sendBack(ctx, { ...msg, result: mutated })],
-        };
-      }
+      const modelNew = await SpaceStore.dissoc(
+        ctx.now,
+        model,
+        currentSpace.spaceId
+      );
 
       return {
-        model,
+        model: modelNew,
         cmd: [
           {
             t: "broadcast",
-            msg: { ...msg, profiles: space.profileCache, result: Ok(space) },
+            msg: {
+              ...msg,
+              profiles: currentSpace.profileCache,
+              result: Ok(currentSpace),
+            },
           },
         ],
       };
     }
 
     case "create": {
-      const currentSpace = await spaceDb.getByUserId(ctx.currentUserId);
+      const currentSpace = await SpaceStore.getByUserId(
+        ctx.now,
+        model,
+        ctx.currentUserId
+      );
 
-      if (currentSpace.t === "err") {
-        return {
-          model,
-          cmd: [sendBack(ctx, { ...msg, result: currentSpace })],
-        };
-      }
-
-      const space = currentSpace.value;
-
-      if (space) {
+      if (currentSpace) {
         return {
           model,
           cmd: [
@@ -310,17 +274,10 @@ export const updateFromClient = async (input: {
           : {},
       };
 
-      const mutated = await spaceDb.set(spaceNew);
-
-      if (mutated.t === "err") {
-        return {
-          model,
-          cmd: [sendBack(ctx, { ...msg, result: mutated })],
-        };
-      }
+      const modelNew = await SpaceStore.assoc(ctx.now, model, spaceNew);
 
       return {
-        model,
+        model: modelNew,
         cmd: [
           {
             t: "broadcast",
@@ -335,18 +292,13 @@ export const updateFromClient = async (input: {
     }
 
     case "input-game": {
-      const currentSpace = await spaceDb.getByUserId(ctx.currentUserId);
+      const currentSpace = await SpaceStore.getByUserId(
+        ctx.now,
+        model,
+        ctx.currentUserId
+      );
 
-      if (currentSpace.t === "err") {
-        return {
-          model,
-          cmd: [sendBack(ctx, { ...msg, result: currentSpace })],
-        };
-      }
-
-      const space = currentSpace.value;
-
-      if (!space) {
+      if (!currentSpace) {
         return {
           model,
           cmd: [
@@ -358,7 +310,7 @@ export const updateFromClient = async (input: {
         };
       }
 
-      if (space.hostId !== ctx.currentUserId) {
+      if (currentSpace.hostId !== ctx.currentUserId) {
         return {
           model,
           cmd: [
@@ -372,27 +324,20 @@ export const updateFromClient = async (input: {
 
       if (!msg.gameName) {
         const spaceNew: Space<GameServer.Model> = {
-          ...space,
+          ...currentSpace,
           game: null,
           profileCache: msg.profile
             ? {
-                ...space.profileCache,
+                ...currentSpace.profileCache,
                 [msg.profile.userId]: msg.profile,
               }
-            : space.profileCache,
+            : currentSpace.profileCache,
         };
 
-        const mutated = await spaceDb.set(spaceNew);
-
-        if (mutated.t === "err") {
-          return {
-            model,
-            cmd: [sendBack(ctx, { ...msg, result: mutated })],
-          };
-        }
+        const modelNew = await SpaceStore.assoc(ctx.now, model, spaceNew);
 
         return {
-          model,
+          model: modelNew,
           cmd: [
             {
               t: "broadcast",
@@ -409,35 +354,28 @@ export const updateFromClient = async (input: {
       const initial = GameServer.init({ gameName: msg.gameName })({
         ctx: {
           ...ctx,
-          hostId: space.hostId,
+          hostId: currentSpace.hostId,
         },
         sendToClient: (m) => sendToClient({ t: "game", c: m }),
-        sendToSpace: (m) => sendToSpace(sendToUser, space, { t: "game", c: m }),
+        sendToSpace: (m) =>
+          sendToSpace(sendToUser, currentSpace, { t: "game", c: m }),
       });
 
       const spaceNew: Space<GameServer.Model> = {
-        ...space,
+        ...currentSpace,
         game: initial.model,
         profileCache: msg.profile
           ? {
-              ...space.profileCache,
+              ...currentSpace.profileCache,
               [msg.profile.userId]: msg.profile,
             }
-          : space.profileCache,
+          : currentSpace.profileCache,
       };
 
-      const mutated = await spaceDb.set(spaceNew);
-
-      if (mutated.t === "err") {
-        return {
-          model,
-          cmd: [sendBack(ctx, { ...msg, result: mutated })],
-          eff: sendToClient({ ...msg, result: mutated }),
-        };
-      }
+      const modelNew = await SpaceStore.assoc(ctx.now, model, spaceNew);
 
       return {
-        model,
+        model: modelNew,
         cmd: [
           {
             t: "broadcast",
@@ -449,20 +387,18 @@ export const updateFromClient = async (input: {
           },
         ],
         eff: Eff.map_(
-          (m): ServerMsg => ({ t: "game", c: m, spaceId: space.spaceId }),
+          (c) => ({ t: "game", c, spaceId: currentSpace.spaceId }),
           initial.eff
         ),
       };
     }
 
     case "leave": {
-      const got = await spaceDb.getByUserId(ctx.currentUserId);
-
-      if (got.t === "err") {
-        return { model, eff: sendToClient({ ...msg, result: got }) };
-      }
-
-      const space = got.value;
+      const space = await SpaceStore.getByUserId(
+        ctx.now,
+        model,
+        ctx.currentUserId
+      );
 
       if (!space) {
         return {
@@ -483,7 +419,7 @@ export const updateFromClient = async (input: {
 
       const spaceNew: Space<GameServer.Model> = {
         ...space,
-        users: removeKey(ctx.currentUserId, space.users),
+        users: dissoc(space.users, ctx.currentUserId),
         profileCache: msg.profile
           ? {
               ...space.profileCache,
@@ -503,14 +439,10 @@ export const updateFromClient = async (input: {
             msg: { t: "user-left", userId: ctx.currentUserId },
           });
 
-      const mutated = await spaceDb.set(spaceNew);
-
-      if (mutated.t === "err") {
-        return { model, eff: sendToClient({ ...msg, result: mutated }) };
-      }
+      const modelNew = await SpaceStore.assoc(ctx.now, model, spaceNew);
 
       return {
-        model,
+        model: modelNew,
         cmd: [
           {
             t: "broadcast",
@@ -523,7 +455,7 @@ export const updateFromClient = async (input: {
         ],
         eff: Eff.batch([
           Eff.map_(
-            (c): ServerMsg => ({ t: "game", spaceId: space.spaceId, c }),
+            (c) => ({ t: "game", spaceId: space.spaceId, c }),
             updated.eff
           ),
         ]),
@@ -531,13 +463,11 @@ export const updateFromClient = async (input: {
     }
 
     case "game": {
-      const got = await spaceDb.getByUserId(ctx.currentUserId);
-
-      if (got.t === "err") {
-        return { model };
-      }
-
-      const space = got.value;
+      const space = await SpaceStore.getByUserId(
+        ctx.now,
+        model,
+        ctx.currentUserId
+      );
 
       if (!space) {
         return { model };
@@ -564,14 +494,10 @@ export const updateFromClient = async (input: {
         game: updated.model,
       };
 
-      const mutated = await spaceDb.set(spaceNew);
-
-      if (mutated.t === "err") {
-        return { model };
-      }
+      const modelNew = await SpaceStore.assoc(ctx.now, model, spaceNew);
 
       return {
-        model,
+        model: modelNew,
         eff: Eff.map_(
           (c): ServerMsg => ({ t: "game", spaceId: space.spaceId, c }),
           updated.eff
@@ -615,34 +541,28 @@ const sendToSpace = (
 //
 //
 
-export const subscriptions = Sub.create<ServerMsg>();
-
-const spaceSub = (space: Space<GameServer.Model>): Sub<ServerMsg> => {
-  if (space.game) {
-    return Sub.map(
-      GameServer.subscriptions(space.spaceId, space.game),
-      (msg) => ({ t: "game", c: msg, spaceId: space.spaceId })
+export const subscriptions = async ({
+  model,
+  ctx,
+}: {
+  model: ServerModel;
+  ctx: ServerCtx;
+}): Promise<Sub<ServerMsg>> => {
+  const batch: Sub<ServerMsg>[] = [];
+  for (const space of await SpaceStore.list(ctx.now, model)) {
+    if (!space.game) {
+      continue;
+    }
+    const sub = GameServer.subscriptions(space.spaceId, space.game);
+    const mapped = Sub.map(
+      sub,
+      (msg): ServerMsg => ({
+        t: "game",
+        c: msg,
+        spaceId: space.spaceId,
+      })
     );
+    batch.push(mapped);
   }
-
-  return Sub.None;
+  return Sub.batch(batch);
 };
-
-const unsubscribes = new Map<string, () => void>();
-
-spaceDb.sub.subscribe((msg) => {
-  switch (msg.t) {
-    case "set": {
-      unsubscribes.get(msg.space.spaceId)?.();
-      unsubscribes.set(
-        msg.space.spaceId,
-        spaceSub(msg.space).subscribe(subscriptions.publish)
-      );
-      return;
-    }
-    case "zap": {
-      unsubscribes.get(msg.spaceId)?.();
-      return;
-    }
-  }
-});

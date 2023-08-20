@@ -3,7 +3,7 @@ import { UserId, Profile } from "gamezilla/app/@SHARED/data";
 import { Space } from "gamezilla/app/space/@SHARED";
 import * as Game from "./game/game.core";
 import { SpaceId } from "../@SHARED/data/space-id";
-import { SpaceStoreInstance } from "./space-db";
+import { SpaceStoreInstance } from "./space-store";
 
 //
 //

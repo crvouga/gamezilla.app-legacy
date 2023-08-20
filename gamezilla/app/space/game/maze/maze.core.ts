@@ -1,4 +1,4 @@
-import { Keyboard, NonEmpty, removeKey, Result } from "gamezilla/@SHARED/core";
+import { Keyboard, NonEmpty, dissoc, Result } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
 import { Maze } from "./maze";
 import { Direction, Position } from "./position";
@@ -185,7 +185,7 @@ export const handle = (
 
       const modelNew: CoreModel = {
         ...model,
-        players: removeKey(msg[1].userId, model.players),
+        players: dissoc(model.players, msg[1].userId),
       };
 
       return Ok(modelNew);

@@ -149,7 +149,7 @@ const update_ = ({
 
     case "auth": {
       const updated = AuthClient.update({
-        route: model.routing.route,
+        route: model.routing,
         sendToServer: (c) => sendToServer({ t: "auth", c }),
         msg: msg.c,
         model: model.auth,
@@ -484,7 +484,7 @@ export const View = ({
   dispatch: (msg: Msg) => void;
 }) => {
   return (
-    <div className="fixed left-1/2 top-1/2 mx-auto flex h-full max-h-full w-full max-w-md -translate-x-1/2 -translate-y-1/2 touch-none select-none flex-col overflow-hidden border border-neutral-800 bg-black text-white">
+    <div className="fixed left-1/2 top-1/2 mx-auto  flex h-full max-h-full w-full max-w-md -translate-x-1/2 -translate-y-1/2 touch-none select-none flex-col overflow-hidden border border-neutral-800 bg-black text-white">
       <ViewMain model={model} now={now} dispatch={dispatch} />
 
       <Wire.View model={model.wire} />
@@ -521,6 +521,7 @@ const ViewMain = ({
   if (model.auth.currentUser.t === "loading") {
     return <LogoScreen />;
   }
+
   if (model.auth.currentUser.t === "logged-out") {
     return (
       <ViewLoggedOut
@@ -575,13 +576,13 @@ const ViewLoggedOut = ({
   dispatch: (m: Msg) => void;
   ctx: AnonymousViewCtx;
 }) => {
-  if (model.routing.route.t === "auth") {
+  if (model.routing.t === "auth") {
     return (
       <AuthClient.ViewLoggedOut
         dispatch={(m) => dispatch({ t: "auth", c: m })}
         model={model.auth}
         ctx={ctx}
-        route={model.routing.route.c}
+        route={model.routing.c}
       />
     );
   }
@@ -605,13 +606,13 @@ const ViewLoggedIn = ({
   model: Model;
   dispatch: (m: Msg) => void;
 }) => {
-  if (model.routing.route.t === "chat") {
+  if (model.routing.t === "chat") {
     return (
       <ChatClient.View
         dispatch={(m) => dispatch({ t: "chat", c: m })}
         model={model.chat}
         ctx={ctx}
-        route={model.routing.route.c}
+        route={model.routing.c}
         viewBottomBar={
           <ViewBottomBar model={model} dispatch={dispatch} ctx={ctx} />
         }
@@ -628,13 +629,13 @@ const ViewLoggedIn = ({
     );
   }
 
-  if (model.routing.route.t === "space") {
+  if (model.routing.t === "space") {
     return (
       <SpaceClient.View
         dispatch={(m) => dispatch({ t: "space", c: m })}
         model={model.space}
         ctx={ctx}
-        route={model.routing.route.c}
+        route={model.routing.c}
         viewBottomBar={
           <ViewBottomBar model={model} dispatch={dispatch} ctx={ctx} />
         }
@@ -642,13 +643,13 @@ const ViewLoggedIn = ({
     );
   }
 
-  if (model.routing.route.t === "profile") {
+  if (model.routing.t === "profile") {
     return (
       <ProfileClient.View
         dispatch={(m) => dispatch({ t: "profile", c: m })}
         model={model.profile}
         ctx={ctx}
-        route={model.routing.route.c}
+        route={model.routing.c}
         viewBottomBar={
           <ViewBottomBar model={model} dispatch={dispatch} ctx={ctx} />
         }
@@ -656,7 +657,7 @@ const ViewLoggedIn = ({
     );
   }
 
-  if (model.routing.route.t === "auth") {
+  if (model.routing.t === "auth") {
     return (
       <AuthClient.ViewLoggedIn
         dispatch={(m) => dispatch({ t: "auth", c: m })}
@@ -666,7 +667,7 @@ const ViewLoggedIn = ({
     );
   }
 
-  if (model.routing.route.t === "search") {
+  if (model.routing.t === "search") {
     return (
       <SearchClient.View
         dispatch={(m) => dispatch({ t: "search", c: m })}
@@ -678,7 +679,7 @@ const ViewLoggedIn = ({
     );
   }
 
-  if (model.routing.route.t === "logout") {
+  if (model.routing.t === "logout") {
     return (
       <AuthClient.ViewLogoutScreen
         dispatch={(m) => dispatch({ t: "auth", c: m })}
@@ -729,7 +730,7 @@ const ViewBottomBar = ({
       />
       <div className="flex w-full items-center justify-center border-t border-neutral-700">
         {items.map((item) => {
-          const isSelected = Route.eq(model.routing.route, item.route);
+          const isSelected = Route.eq(model.routing, item.route);
           return (
             <button
               key={Route.encode(item.route)}

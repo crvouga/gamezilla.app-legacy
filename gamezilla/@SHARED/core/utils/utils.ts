@@ -132,10 +132,19 @@ export const memoize = <X, Y>(toKey: (x: X) => string, f: (x: X) => Y) => {
   };
 };
 
-export const removeKey = <T>(key: keyof T, obj: T): Omit<T, keyof T> => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { [key]: _value, ...rest } = obj;
-  return rest;
+/**
+ * @description
+ * Removes a key from an object
+ * @param key key to remove
+ * @param obj some plain object
+ * @returns `obj` with out the key `key`
+ */
+export const dissoc = <T>(obj: T, ...keys: (keyof T)[]): Omit<T, keyof T> => {
+  const copied = { ...obj };
+  for (const key of keys) {
+    delete copied[key];
+  }
+  return copied;
 };
 
 type Entry<T> = {

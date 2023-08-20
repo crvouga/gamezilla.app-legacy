@@ -454,15 +454,18 @@ const sendToUser = (
 //
 //
 
-export const subscriptions = ({
+export const subscriptions = async ({
   model,
   ctx,
 }: {
   model: ServerModel;
   ctx: ServerCtx;
-}): Sub<ServerMsg> => {
+}): Promise<Sub<ServerMsg>> => {
   return Sub.batch([
-    Sub.tag("space", SpaceServer.subscriptions),
+    Sub.tag(
+      "space",
+      await SpaceServer.subscriptions({ model: model.space, ctx })
+    ),
     Sub.tag("wire", onWireMsg),
     Sub.map(
       onClientMsg,
