@@ -155,7 +155,7 @@ export const update = ({
         model: { ...model, submission: { type: "ok" } },
         msgs: [
           {
-            t: "push-route",
+            t: "route-push",
             route: {
               t: "auth",
               c: { t: "login-phone-verify", phoneNumber: phoneNumber },

@@ -40,29 +40,36 @@ export const update = ({
   model: Model;
   msgs?: ClientAppMsg[];
 } => {
-  if (msg.t === "server-connect-error") {
-    return {
-      model: {
-        t: "server-connect-error",
-        errorCount:
-          model.t === "server-connect-error" ? model.errorCount + 1 : 1,
-      },
-    };
-  }
+  switch (msg.t) {
+    case "server-connect-error": {
+      return {
+        model: {
+          t: "server-connect-error",
+          errorCount:
+            model.t === "server-connect-error" ? model.errorCount + 1 : 1,
+        },
+      };
+    }
 
-  if (msg.t === "server-connected") {
-    return {
-      model: {
-        t: "server-connected",
-      },
-      msgs: [{ t: "server-connected" }],
-    };
-  }
+    case "server-connected": {
+      return {
+        model: {
+          t: "server-connected",
+        },
+        msgs: [{ t: "server-connected" }],
+      };
+    }
 
-  return { model: { t: msg.t } };
+    case "server-disconnected": {
+      return { model: { t: msg.t } };
+    }
+  }
 };
 
-export const updateFromEvent = <ToServer,>(input: {
+export const updateFromEvent = <ToServer,>({
+  model,
+  msg,
+}: {
   msg: ClientAppMsg;
   model: Model;
   sendToServer: (m: ToServer) => Eff;
@@ -70,7 +77,11 @@ export const updateFromEvent = <ToServer,>(input: {
   model: Model;
   eff?: Eff<Msg>;
 } => {
-  return { model: input.model };
+  switch (msg.t) {
+    default: {
+      return { model };
+    }
+  }
 };
 
 //

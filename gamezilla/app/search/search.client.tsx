@@ -67,7 +67,7 @@ export const update = ({
       model,
       msgs: [
         {
-          t: "push-route",
+          t: "route-push",
           route: {
             t: "profile",
             c: { t: "profile", userId: msg.userId },

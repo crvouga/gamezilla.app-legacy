@@ -3,7 +3,7 @@ import { Route } from "./client-route";
 
 export type ClientAppMsg =
   | { t: "route-changed"; route: Route }
-  | { t: "push-route"; route: Route }
+  | { t: "route-push"; route: Route }
   | { t: "route-back" }
   | { t: "server-connected" }
   | { t: "enqueue-toast"; text: string; duration?: number }
@@ -11,14 +11,14 @@ export type ClientAppMsg =
   | { t: "client-authenticated"; userId: UserId }
   | { t: "client-unauthenticated" };
 
-export type ClientEvent =
+export type ClientEvt =
   | { t: "client-authenticated"; userId: UserId }
   | { t: "client-unauthenticated" }
   | { t: "got-profiles"; profiles: { [userId: UserId]: Profile } }
   | { t: "route-changed"; route: Route };
 
-export type ClientCommand<ToServer> =
+export type ClientCmd<ToServer> =
   | { t: "send-to-server"; msg: ToServer }
   | { t: "enqueue-toast"; text: string; duration?: number }
-  | { t: "push-route"; route: Route }
+  | { t: "route-push"; route: Route }
   | { t: "route-back" };

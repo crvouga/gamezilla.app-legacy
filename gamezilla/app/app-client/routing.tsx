@@ -1,4 +1,4 @@
-import { Browser, Eff, p } from "gamezilla/@SHARED/core";
+import { Browser, Eff } from "gamezilla/@SHARED/core";
 import { ClientAppMsg, Route } from "gamezilla/app/@SHARED/client";
 
 //
@@ -11,21 +11,21 @@ import { ClientAppMsg, Route } from "gamezilla/app/@SHARED/client";
 
 export type Model = Route;
 
-const fallback: Route = { t: "space", c: { t: "space-list" } };
+const FALLBACK: Route = { t: "space", c: { t: "space-list" } };
 
 export const init = (
   location: Browser.Location
-): { model: Model; eff: Eff } => {
-  const route = p(
-    location.pathname,
-    Route.decode,
-    (route): Route => (route ? route : fallback)
-  );
+): {
+  model: Model;
+  eff?: Eff;
+} => {
+  const decoded = Route.decode(location.pathname);
 
-  return {
-    model: route,
-    eff: Browser.replace(Route.encode(route)),
-  };
+  if (decoded) {
+    return { model: decoded };
+  }
+
+  return { model: FALLBACK, eff: Browser.replace(Route.encode(FALLBACK)) };
 };
 
 //
@@ -52,46 +52,47 @@ export const update = ({
   eff?: Eff<Msg>;
   msgs?: ClientAppMsg[];
 } => {
-  if (msg.t === "clicked-back") {
-    return { model, eff: Browser.back };
-  }
+  switch (msg.t) {
+    case "clicked-back": {
+      return { model, eff: Browser.back };
+    }
 
-  if (msg.t === "clicked-link") {
-    return { model, eff: Browser.push(Route.encode(msg.route)) };
-  }
+    case "clicked-link": {
+      return { model, eff: Browser.push(Route.encode(msg.route)) };
+    }
 
-  if (msg.t === "route-changed") {
-    return {
-      model: msg.route,
-      msgs: [{ t: "route-changed", route: msg.route }],
-    };
+    case "route-changed": {
+      return {
+        model: msg.route,
+        msgs: [{ t: "route-changed", route: msg.route }],
+      };
+    }
   }
-
-  return { model };
 };
 
-export const updateFromEvent = (input: {
+export const updateFromEvent = ({
+  msg,
+  model,
+}: {
   msg: ClientAppMsg;
   model: Model;
 }): {
   model: Model;
   eff?: Eff<Msg>;
 } => {
-  if (input.msg.t === "push-route") {
-    return {
-      ...input,
-      eff: Browser.push(Route.encode(input.msg.route)),
-    };
-  }
+  switch (msg.t) {
+    case "route-push": {
+      return { model, eff: Browser.push(Route.encode(msg.route)) };
+    }
 
-  if (input.msg.t === "route-back") {
-    return {
-      ...input,
-      eff: Browser.back,
-    };
-  }
+    case "route-back": {
+      return { model, eff: Browser.back };
+    }
 
-  return input;
+    default: {
+      return { model };
+    }
+  }
 };
 
 //
@@ -103,12 +104,13 @@ export const updateFromEvent = (input: {
 //
 
 const onLocationChange = (location: Browser.Location): Msg => {
-  return p(
-    location.pathname,
-    Route.decode,
-    (route): Route => (route ? route : fallback),
-    (route): Msg => ({ t: "route-changed", route })
-  );
+  const decoded = Route.decode(location.pathname);
+
+  if (decoded) {
+    return { t: "route-changed", route: decoded };
+  }
+
+  return { t: "route-changed", route: FALLBACK };
 };
 
 export const subscriptions = Browser.onLocation(onLocationChange);

@@ -97,7 +97,7 @@ const watchCreate: typeof update = ({ msg, model }) => {
         model,
         msgs: [
           {
-            t: "push-route",
+            t: "route-push",
             route: {
               t: "space",
               c: { t: "space", spaceId: msg.spaceId },
@@ -127,7 +127,7 @@ const updateMain: typeof update = ({ ctx, sendToServer, msg, model }) => {
         model: { ...model, modal: null },
         msgs: [
           {
-            t: "push-route",
+            t: "route-push",
             route: {
               t: "profile",
               c: { t: "profile", userId: msg.userId },

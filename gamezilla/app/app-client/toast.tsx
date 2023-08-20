@@ -2,10 +2,23 @@ import { Eff, Time, Transition, andThen, p } from "gamezilla/@SHARED/core";
 import { ClientAppMsg } from "gamezilla/app/@SHARED/client";
 import { IconXMark } from "gamezilla/app/@SHARED/ui";
 
+//
+//
+//
+// Animation
+//
+//
+//
+
+const ROOT_HTML_ID = "toast-root";
+
 const config: Transition.Config<Toast> = {
   toId: (toast) => `toast-${String(toast.toastId)}`,
   enter: async (toast) => {
-    const node = await Transition.waitForElementById(config.toId(toast));
+    const node = await Transition.waitForElementById(
+      config.toId(toast),
+      ROOT_HTML_ID
+    );
 
     await node?.animate(
       [{ transform: "translateY(-100%)" }, { transform: "translateY(0%)" }],
@@ -17,7 +30,10 @@ const config: Transition.Config<Toast> = {
     ).finished;
   },
   exit: async (toast) => {
-    const node = await Transition.waitForElementById(config.toId(toast));
+    const node = await Transition.waitForElementById(
+      config.toId(toast),
+      ROOT_HTML_ID
+    );
 
     await node?.animate(
       [{ transform: "translateY(0%)" }, { transform: "translateY(-100%)" }],
@@ -79,35 +95,40 @@ export function update(
 } {
   return p(
     { model },
-    andThen((model) => update_(model, msg)),
+    andThen((model) => updateMain(model, msg)),
     andThen(watch)
   );
 }
 
-const update_: typeof update = (model, msg) => {
-  if (msg.t === "ui-toast") {
-    const uiToasts = Transition.update(model.uiToasts, msg.c);
-    return { model: { ...model, uiToasts } };
-  }
+const updateMain: typeof update = (model, msg) => {
+  switch (msg.t) {
+    case "ui-toast": {
+      const uiToasts = Transition.update(model.uiToasts, msg.c);
+      return { model: { ...model, uiToasts } };
+    }
 
-  if (msg.t === "clicked-dismiss-button") {
-    return {
-      model: {
-        ...model,
-        toasts: model.toasts.filter((t) => t.toastId !== msg.toastId),
-      },
-    };
-  }
+    case "clicked-dismiss-button": {
+      return {
+        model: {
+          ...model,
+          toasts: model.toasts.filter((t) => t.toastId !== msg.toastId),
+        },
+      };
+    }
 
-  if (msg.t === "toast-duration-elapsed") {
-    return {
-      model: {
-        ...model,
-        toasts: model.toasts.filter((t) => t.toastId !== msg.toastId),
-      },
-    };
+    case "toast-duration-elapsed": {
+      return {
+        model: {
+          ...model,
+          toasts: model.toasts.filter((t) => t.toastId !== msg.toastId),
+        },
+      };
+    }
+
+    case "time": {
+      return { model };
+    }
   }
-  return { model };
 };
 
 function watch(model: Model): { model: Model; eff: Eff<Msg> } {
@@ -170,10 +191,12 @@ export function View({
   dispatch,
 }: {
   model: Model;
-  dispatch: (msg: Msg) => void;
+  dispatch: (m: Msg) => void;
 }) {
   return (
-    <div className="pointer-events-none absolute left-0 top-0 flex w-full flex-col items-center gap-4 px-4 pt-4">
+    <div
+      id={ROOT_HTML_ID}
+      className="pointer-events-none absolute left-0 top-0 flex w-full flex-col items-center gap-4 px-4 pt-4">
       {model.uiToasts.map(({ item: toast }) => (
         <div
           key={String(config.toId(toast))}
