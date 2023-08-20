@@ -1,5 +1,9 @@
 import { Eff, Sub, Time } from "gamezilla/@SHARED/core";
-import { SpaceEvent, SpaceReqCtx } from "gamezilla/app/space/@SHARED";
+import {
+  SpaceEvent,
+  SpaceReqCtx,
+  SpaceServerCmd,
+} from "gamezilla/app/space/@SHARED";
 import {
   Res,
   ServerModel,
@@ -35,69 +39,63 @@ export const init = initShared;
 export type Msg = ServerMsg;
 
 export const update = ({
-  broadcast,
   msg,
   model,
 }: {
-  broadcast: (msg: ToClient) => Eff;
   msg: Msg;
   model: Model;
 }): {
   model: Model;
-  eff?: Eff<Msg>;
+  cmd?: SpaceServerCmd<ToClient>[];
 } => {
   if (msg.t === "tick") {
     const modelNew = tick(model);
     return {
       model: modelNew,
-      eff: broadcast({ t: "tick-done", model: modelNew }),
+      cmd: [{ t: "send-to-space", msg: { t: "tick-done", model: modelNew } }],
     };
   }
   return { model };
 };
 
 export const updateFromClient = ({
-  sendToClient,
-  broadcast,
   msg,
   model,
   ctx,
 }: {
-  sendToClient: (msg: ToClient) => Eff;
-  broadcast: (msg: ToClient) => Eff;
   msg: ToServer;
   model: Model;
   ctx: SpaceReqCtx;
 }): {
   model: Model;
   eff?: Eff<Msg>;
+  cmd?: SpaceServerCmd<ToClient>[];
 } => {
   const res: Res = { ...msg, result: handle({ req: msg, ctx, model }) };
 
   if (res.result.t === "err") {
     return {
       model,
-      eff: sendToClient(res),
+      cmd: [{ t: "send-to-client", clientIds: [ctx.clientId], msg: res }],
     };
   }
 
   return {
     model: res.result.value,
-    eff: broadcast(res),
+    cmd: [{ t: "send-to-space", msg: res }],
   };
 };
 
 export const updateFromEvent = ({
-  broadcast,
   msg,
   model,
 }: {
-  broadcast: (m: ToClient) => Eff;
   msg: SpaceEvent;
   model: Model;
 }): {
   model: Model;
   eff?: Eff<Msg>;
+  cmd?: SpaceServerCmd<ToClient>[];
 } => {
   if (msg.t === "user-left") {
     const userId = msg.userId;
@@ -118,7 +116,7 @@ export const updateFromEvent = ({
 
     return {
       model: modelNew,
-      eff: broadcast({ t: "player-left", model: modelNew }),
+      cmd: [{ t: "send-to-space", msg: { t: "player-left", model: modelNew } }],
     };
   }
 

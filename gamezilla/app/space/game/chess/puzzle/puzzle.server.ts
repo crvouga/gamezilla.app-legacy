@@ -14,7 +14,9 @@ import { DbConnSql } from "gamezilla/app/@SHARED/server";
 import {
   SpaceEvent,
   SpaceReqCtx,
+  SpaceServerCmd,
   SpaceServerCtx,
+  sendToSpace,
 } from "gamezilla/app/space/@SHARED";
 import { ChessGameMsg } from "../@SHARED/chess/chess-shared";
 import { EloRating } from "./elo-rating";
@@ -38,16 +40,13 @@ import {
 //
 //
 
-export type Model = ServerModel;
-
 export const init = ({
   ctx,
 }: {
-  broadcast: (m: ToClient) => Eff;
   ctx: SpaceServerCtx;
 }): {
-  model: Model;
-  eff: Eff<Msg>;
+  model: ServerModel;
+  eff: Eff<ServerMsg>;
 } => {
   return {
     model: {
@@ -108,16 +107,14 @@ const initialLoad = async ({
 //
 //
 
-export type Msg = ServerMsg;
-
 export const update = (input: {
-  msg: Msg;
-  model: Model;
-  broadcast: (m: ToClient) => Eff;
+  msg: ServerMsg;
+  model: ServerModel;
   ctx: SpaceServerCtx;
 }): {
-  model: Model;
-  eff?: Eff<Msg>;
+  model: ServerModel;
+  eff?: Eff<ServerMsg>;
+  cmd?: SpaceServerCmd<ToClient>[];
 } => {
   return p(
     updateMain(input),
@@ -126,25 +123,12 @@ export const update = (input: {
     )
   );
 };
-const updateMain = ({
-  msg,
-  model,
-  broadcast,
-  ctx,
-}: {
-  msg: Msg;
-  model: Model;
-  broadcast: (m: ToClient) => Eff;
-  ctx: SpaceServerCtx;
-}): {
-  model: Model;
-  eff?: Eff<Msg>;
-} => {
+const updateMain: typeof update = ({ msg, model, ctx }) => {
   switch (msg.t) {
     case "clock-tick": {
       return {
         model,
-        eff: broadcast({ t: "clock-tick", now: ctx.now }),
+        cmd: [sendToSpace<ToClient>({ t: "clock-tick", now: ctx.now })],
       };
     }
 
@@ -155,7 +139,12 @@ const updateMain = ({
             ...model,
             requests: { ...model.requests, getPuzzles: msg.result },
           },
-          eff: broadcast({ t: "db-got-puzzles", result: msg.result }),
+          cmd: [
+            sendToSpace<ToClient>({
+              t: "db-got-puzzles",
+              result: msg.result,
+            }),
+          ],
         };
       }
 
@@ -172,7 +161,12 @@ const updateMain = ({
           ...modelNew,
           requests: { ...model.requests, getPuzzles: Ok(null) },
         },
-        eff: broadcast({ t: "db-got-puzzles", result: Ok(modelNew) }),
+        cmd: [
+          sendToSpace<ToClient>({
+            t: "db-got-puzzles",
+            result: Ok(modelNew),
+          }),
+        ],
       };
     }
 
@@ -180,7 +174,12 @@ const updateMain = ({
       if (msg.result.t === "err") {
         return {
           model,
-          eff: broadcast({ t: "db-got-initial-load", result: msg.result }),
+          cmd: [
+            sendToSpace<ToClient>({
+              t: "db-got-initial-load",
+              result: msg.result,
+            }),
+          ],
         };
       }
 
@@ -191,14 +190,16 @@ const updateMain = ({
       if (!puzzle) {
         return {
           model,
-          eff: broadcast({
-            t: "db-got-initial-load",
-            result: Err("No puzzles found."),
-          }),
+          cmd: [
+            sendToSpace<ToClient>({
+              t: "db-got-initial-load",
+              result: Err("No puzzles found."),
+            }),
+          ],
         };
       }
 
-      const modelNew: Model = {
+      const modelNew: ServerModel = {
         ...model,
         t: "started",
         moves: [],
@@ -210,27 +211,36 @@ const updateMain = ({
 
       return {
         model: modelNew,
-        eff: broadcast({ t: "db-got-initial-load", result: Ok(modelNew) }),
+        cmd: [
+          sendToSpace<ToClient>({
+            t: "db-got-initial-load",
+            result: Ok(modelNew),
+          }),
+        ],
       };
     }
 
     case "db-put-interaction": {
       return {
         model,
-        eff: broadcast({
-          t: "db-put-interaction",
-          result: Result.mapOk(msg.result, () => model),
-        }),
+        cmd: [
+          sendToSpace<ToClient>({
+            t: "db-put-interaction",
+            result: Result.mapOk(msg.result, () => model),
+          }),
+        ],
       };
     }
 
     case "db-put-profile": {
       return {
         model,
-        eff: broadcast({
-          t: "db-put-profile",
-          result: Result.mapOk(msg.result, () => model),
-        }),
+        cmd: [
+          sendToSpace<ToClient>({
+            t: "db-put-profile",
+            result: Result.mapOk(msg.result, () => model),
+          }),
+        ],
       };
     }
 
@@ -243,12 +253,11 @@ const updateMain = ({
 export const updateFromClient = (input: {
   ctx: SpaceReqCtx;
   msg: ToServer;
-  model: Model;
-  sendToClient: (m: ToClient) => Eff;
-  broadcast: (m: ToClient) => Eff;
+  model: ServerModel;
 }): {
-  model: Model;
-  eff?: Eff<Msg>;
+  model: ServerModel;
+  eff?: Eff<ServerMsg>;
+  cmd?: SpaceServerCmd<ToClient>[];
 } => {
   return p(
     input,
@@ -270,12 +279,12 @@ const watchPutInteraction = ({
   model,
   ctx,
 }: {
-  modelPrev: Model;
-  model: Model;
+  modelPrev: ServerModel;
+  model: ServerModel;
   ctx: SpaceServerCtx;
 }): {
-  model: Model;
-  eff?: Eff<Msg>;
+  model: ServerModel;
+  eff?: Eff<ServerMsg>;
 } => {
   if (model.t === modelPrev.t) {
     return { model };
@@ -310,12 +319,12 @@ const watchGetPuzzles = ({
   model,
   ctx,
 }: {
-  model: Model;
-  modelPrev: Model;
+  model: ServerModel;
+  modelPrev: ServerModel;
   ctx: SpaceServerCtx;
 }): {
-  model: Model;
-  eff?: Eff<Msg>;
+  model: ServerModel;
+  eff?: Eff<ServerMsg>;
 } => {
   if (
     model.t !== "loading" &&
@@ -348,12 +357,12 @@ const watchPutProfile = ({
   modelPrev,
   ctx,
 }: {
-  model: Model;
-  modelPrev: Model;
+  model: ServerModel;
+  modelPrev: ServerModel;
   ctx: SpaceServerCtx;
 }): {
-  model: Model;
-  eff?: Eff<Msg>;
+  model: ServerModel;
+  eff?: Eff<ServerMsg>;
 } => {
   if (model.profile && !eq(model.profile, modelPrev.profile)) {
     const profile = model.profile;
@@ -368,17 +377,12 @@ const watchPutProfile = ({
   return { model };
 };
 
-const updateFromClientMain: typeof updateFromClient = ({
-  msg,
-  model,
-  broadcast,
-  ctx,
-}) => {
+const updateFromClientMain: typeof updateFromClient = ({ msg, model, ctx }) => {
   const handled = updateCore({ ctx, msg, model });
 
   return {
     model: handled.t === "ok" ? { ...model, ...handled.value } : model,
-    eff: broadcast({ ...msg, result: handled }),
+    cmd: [{ t: "send-to-space", msg: { ...msg, result: handled } }],
   };
 };
 
@@ -386,9 +390,9 @@ export const updateFromGame = ({
   model,
 }: {
   msg: ChessGameMsg;
-  model: Model;
+  model: ServerModel;
 }): {
-  model: Model;
+  model: ServerModel;
   eff?: Eff;
 } => {
   return { model };
@@ -398,9 +402,9 @@ export const updateFromEvent = ({
   model,
 }: {
   msg: SpaceEvent;
-  model: Model;
+  model: ServerModel;
 }): {
-  model: Model;
+  model: ServerModel;
   eff?: Eff;
 } => {
   return { model };
@@ -415,7 +419,10 @@ export const updateFromEvent = ({
 
 const TICK_RATE = 500;
 
-export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
+export const subscriptions = (
+  intervalId: string,
+  model: ServerModel
+): Sub<ServerMsg> => {
   switch (model.t) {
     case "started": {
       return Time.every(intervalId, TICK_RATE, () => ({ t: "clock-tick" }));

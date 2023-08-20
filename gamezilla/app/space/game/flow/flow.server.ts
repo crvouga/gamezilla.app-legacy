@@ -20,13 +20,18 @@ export const update: Server["update"] = (input) => {
 };
 
 export const updateFromClient: Server["updateFromClient"] = (input) => {
-  const { msg, model, ctx, sendToSpace } = input;
+  const { msg, model, ctx } = input;
 
   if (msg.t === "input-mode") {
     if (ctx.hostId !== ctx.currentUserId) {
       return {
         model,
-        eff: sendToSpace({ ...msg, result: Err("Must be the host") }),
+        cmd: [
+          {
+            t: "send-to-space",
+            msg: { ...msg, result: Err("Must be the host") },
+          },
+        ],
       };
     }
 
@@ -34,7 +39,7 @@ export const updateFromClient: Server["updateFromClient"] = (input) => {
 
     return {
       ...initial,
-      eff: sendToSpace({ ...msg, result: Ok(initial.model) }),
+      cmd: [{ t: "send-to-space", msg: { ...msg, result: Ok(initial.model) } }],
     };
   }
   return { model };

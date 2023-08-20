@@ -1,4 +1,4 @@
-import { RemoteResult, Result } from "gamezilla/@SHARED/core";
+import { ClientId, RemoteResult, Result } from "gamezilla/@SHARED/core";
 import {
   Profile,
   ProfileAvatarSeed,
@@ -45,7 +45,7 @@ export type ClientMsg =
   | { t: "inputted-avatar-style"; style: ProfileAvatarStyle }
   | { t: "clicked-generate-random-seed" };
 
-export type ServerMsg = { t: "none" };
+export type ServerMsg = { t: "handled"; clientId: ClientId; msg: ToClient };
 
 export type ToClient =
   | {

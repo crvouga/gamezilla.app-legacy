@@ -1,8 +1,9 @@
-import { Eff } from "gamezilla/@SHARED/core";
+import { Eff, dissoc } from "gamezilla/@SHARED/core";
 import {
   AnonymousReqCtx,
   ServerCmd,
-  ServerEvent,
+  ServerEvt,
+  sendBack,
 } from "gamezilla/app/@SHARED/server";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./auth.core";
 
@@ -35,7 +36,6 @@ export const update = ({
   model: Model;
 }): {
   model: Model;
-  eff?: Eff<Msg>;
 } => {
   return { model };
 };
@@ -44,57 +44,50 @@ export const updateFromClient = ({
   ctx,
   model,
   msg,
-  sendBack,
 }: {
-  sendBack: (m: ToClient) => Eff;
   ctx: AnonymousReqCtx;
   msg: ToServer;
   model: Model;
 }): {
   model: Model;
-  eff?: Eff<Msg>;
-  events?: ServerEvent[];
+  evt?: ServerEvt[];
+  cmd?: ServerCmd<ToClient>[];
 } => {
-  if (msg.t === "client-authenticated") {
-    return {
-      model: {
-        ...model,
-        sessions: {
-          ...model.sessions,
-          [ctx.sessionId]: {
-            sessionId: ctx.sessionId,
-            userId: msg.userId,
+  switch (msg.t) {
+    case "client-authenticated": {
+      return {
+        model: {
+          ...model,
+          sessions: {
+            ...model.sessions,
+            [ctx.sessionId]: {
+              sessionId: ctx.sessionId,
+              userId: msg.userId,
+            },
           },
         },
-      },
+        cmd: [sendBack(ctx, { t: "acknowledged", msg })],
+        evt: [
+          {
+            t: "client-authenticated",
+            clientId: ctx.clientId,
+            userId: msg.userId,
+          },
+        ],
+      };
+    }
 
-      eff: sendBack({ t: "acknowledged", msg: msg }),
-
-      events: [
-        {
-          t: "client-authenticated",
-          clientId: ctx.clientId,
-          userId: msg.userId,
+    case "client-unauthenticated": {
+      const sessionsNew = dissoc(model.sessions, ctx.sessionId);
+      return {
+        model: {
+          ...model,
+          sessions: sessionsNew,
         },
-      ],
-    };
+      };
+    }
+    default: {
+      return { model, cmd: [sendBack(ctx, { t: "acknowledged", msg })] };
+    }
   }
-
-  if (msg.t === "client-unauthenticated") {
-    const sessionsNew = { ...model.sessions };
-    delete sessionsNew[ctx.sessionId];
-    return {
-      model: {
-        ...model,
-        sessions: sessionsNew,
-      },
-
-      eff: sendBack({ t: "acknowledged", msg: msg }),
-    };
-  }
-
-  return {
-    model,
-    eff: sendBack({ t: "acknowledged", msg: msg }),
-  };
 };

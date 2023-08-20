@@ -1,5 +1,11 @@
-import { SpaceEvent } from "gamezilla/app/space/@SHARED";
 import { Eff, Sub, Time } from "gamezilla/@SHARED/core";
+import { sendBack } from "gamezilla/app/@SHARED/server";
+import {
+  SpaceEvent,
+  SpaceReqCtx,
+  SpaceServerCmd,
+  sendToSpace,
+} from "gamezilla/app/space/@SHARED";
 import { PlayerType, toOpposite, toTurn } from "../tic-tic-toe/tic-tac-toe";
 import * as Round from "./vs-user-round";
 import {
@@ -47,21 +53,22 @@ export const init = initCoreModel;
 export type Msg = ServerMsg;
 
 export const update = (
-  {
-    broadcast,
-  }: {
-    broadcast: (msg: ToClient) => Eff;
-  },
   msg: Msg,
   model: Model
-): [Model, Eff<Msg>] => {
+): {
+  model: Model;
+  cmd: SpaceServerCmd<ToClient>[];
+} => {
   switch (msg[0]) {
     case "RoundCountDown": {
       const result = roundCountDown(model);
 
       const modelNew = result.t === "err" ? model : result.value;
 
-      return [modelNew, broadcast(["RoundCountDown_Done", result])];
+      return {
+        model: modelNew,
+        cmd: [{ t: "send-to-space", msg: ["RoundCountDown_Done", result] }],
+      };
     }
 
     case "MoveCountDown": {
@@ -69,105 +76,142 @@ export const update = (
 
       const modelNew = result.t === "err" ? model : result.value;
 
-      return [modelNew, broadcast(["MoveCountDown_Done", result])];
+      return {
+        model: modelNew,
+        cmd: [{ t: "send-to-space", msg: ["MoveCountDown_Done", result] }],
+      };
     }
   }
 };
 
 export const updateFromClient = (
-  {
-    sendToClient,
-    broadcast,
-  }: {
-    sendToClient: (msg: ToClient) => Eff;
-    broadcast: (msg: ToClient) => Eff;
-  },
+  ctx: SpaceReqCtx,
   msg: ToServer,
   model: Model
-): [Model, Eff<Msg>] => {
+): {
+  model: Model;
+  cmd: SpaceServerCmd<ToClient>[];
+} => {
   switch (msg[0]) {
     case "InputPlayer": {
       const result = inputPlayer(msg[1], model);
 
       if (result.t === "err") {
-        return [model, sendToClient(["InputPlayer_Done", result])];
+        return {
+          model,
+          cmd: [sendBack(ctx, ["InputPlayer_Done", result])],
+        };
       }
 
       const modelNew = result.value;
 
-      return [modelNew, broadcast(["InputPlayer_Done", result])];
+      return {
+        model: modelNew,
+        cmd: [sendToSpace(["InputPlayer_Done", result])],
+      };
     }
 
     case "stop-playing": {
       const result = stopPlaying(msg[1], model);
 
       if (result.t === "err") {
-        return [model, sendToClient(["StopPlaying_Done", result])];
+        return {
+          model,
+          cmd: [sendBack(ctx, ["StopPlaying_Done", result])],
+        };
       }
 
       const modelNew = result.value;
-
-      return [modelNew, broadcast(["StopPlaying_Done", result])];
+      return {
+        model: modelNew,
+        cmd: [sendToSpace(["StopPlaying_Done", result])],
+      };
     }
 
     case "start-game": {
       const result = startGame(msg[1], model);
 
       if (result.t === "err") {
-        return [model, sendToClient(["StartGame_Done", result])];
+        return {
+          model,
+          cmd: [sendBack(ctx, ["StartGame_Done", result])],
+        };
       }
 
       const modelNew = result.value;
-
-      return [modelNew, broadcast(["StartGame_Done", result])];
+      return {
+        model: modelNew,
+        cmd: [sendToSpace(["StartGame_Done", result])],
+      };
     }
 
     case "resign": {
       const result = resign(msg[1], model);
 
       if (result.t === "err") {
-        return [model, sendToClient(["resign_Done", result])];
+        return {
+          model,
+          cmd: [sendBack(ctx, ["resign_Done", result])],
+        };
       }
 
       const modelNew = result.value;
-
-      return [modelNew, broadcast(["resign_Done", result])];
+      return {
+        model: modelNew,
+        cmd: [sendToSpace(["resign_Done", result])],
+      };
     }
 
     case "input-move": {
       const result = inputMove(msg[1], model);
 
       if (result.t === "err") {
-        return [model, sendToClient(["input-move-done", result])];
+        return {
+          model,
+          cmd: [sendBack(ctx, ["input-move-done", result])],
+        };
       }
 
       const modelNew = result.value;
-
-      return [modelNew, broadcast(["input-move-done", result])];
+      return {
+        model: modelNew,
+        cmd: [sendToSpace(["input-move-done", result])],
+      };
     }
 
     case "NewGame": {
       const result = NewGame(msg[1], model);
 
       if (result.t === "err") {
-        return [model, sendToClient(["NewGame_Done", result])];
+        return {
+          model,
+          cmd: [sendBack(ctx, ["NewGame_Done", result])],
+        };
       }
 
       const modelNew = result.value;
 
-      return [modelNew, broadcast(["NewGame_Done", result])];
+      return {
+        model: modelNew,
+        cmd: [sendToSpace(["NewGame_Done", result])],
+      };
     }
 
     case "InputBestOutOf": {
       const result = inputBestOutOf(msg[1], model);
 
       if (result.t === "err") {
-        return [model, sendToClient(["InputBestOutOf_Done", result])];
+        return {
+          model,
+          cmd: [sendBack(ctx, ["InputBestOutOf_Done", result])],
+        };
       }
 
       const modelNew = result.value;
-
-      return [modelNew, broadcast(["InputBestOutOf_Done", result])];
+      return {
+        model: modelNew,
+        cmd: [sendToSpace(["InputBestOutOf_Done", result])],
+      };
     }
 
     case "RematchAccept": {
@@ -175,10 +219,16 @@ export const updateFromClient = (
       const res: Res = ["RematchAccept_Done", result];
 
       if (result.t === "err") {
-        return [model, sendToClient(res)];
+        return {
+          model,
+          cmd: [sendBack(ctx, res)],
+        };
       }
 
-      return [result.value, broadcast(res)];
+      return {
+        model: result.value,
+        cmd: [sendToSpace(res)],
+      };
     }
 
     case "RematchAsk": {
@@ -186,10 +236,16 @@ export const updateFromClient = (
       const res: Res = ["RematchAsk_Done", result];
 
       if (result.t === "err") {
-        return [model, sendToClient(res)];
+        return {
+          model,
+          cmd: [sendBack(ctx, res)],
+        };
       }
 
-      return [result.value, broadcast(res)];
+      return {
+        model: result.value,
+        cmd: [sendToSpace(res)],
+      };
     }
 
     case "RematchDecline": {
@@ -197,10 +253,16 @@ export const updateFromClient = (
       const res: Res = ["RematchDecline_Done", result];
 
       if (result.t === "err") {
-        return [model, sendToClient(res)];
+        return {
+          model,
+          cmd: [sendBack(ctx, res)],
+        };
       }
 
-      return [result.value, broadcast(res)];
+      return {
+        model: result.value,
+        cmd: [sendToSpace(res)],
+      };
     }
 
     case "Rematch_Cancel": {
@@ -208,14 +270,16 @@ export const updateFromClient = (
       const res: Res = ["Rematch_Cancel_Done", result];
 
       if (result.t === "err") {
-        return [model, sendToClient(res)];
+        return {
+          model,
+          cmd: [sendBack(ctx, res)],
+        };
       }
 
-      return [result.value, broadcast(res)];
-    }
-
-    default: {
-      return [model, Eff.None];
+      return {
+        model: result.value,
+        cmd: [sendToSpace(res)],
+      };
     }
   }
 };
@@ -223,14 +287,12 @@ export const updateFromClient = (
 export const updateFromEvent = ({
   msg,
   model,
-  broadcast,
 }: {
-  broadcast: (m: ToClient) => Eff;
   msg: SpaceEvent;
   model: Model;
 }): {
   model: Model;
-  eff?: Eff<Msg>;
+  cmd?: SpaceServerCmd<ToClient>[];
 } => {
   if (msg.t === "user-left") {
     const { userId } = msg;
@@ -254,7 +316,10 @@ export const updateFromEvent = ({
       [other]: model[other],
     };
 
-    return { model: modelNew, eff: broadcast(["player-left", modelNew]) };
+    return {
+      model: modelNew,
+      cmd: [{ t: "send-to-space", msg: ["player-left", modelNew] }],
+    };
   }
 
   return {

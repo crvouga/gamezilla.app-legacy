@@ -1,6 +1,6 @@
 import { ClientCtx, ViewCtx } from "gamezilla/app/@SHARED/client";
 import { Profile, SpaceId, UserId } from "gamezilla/app/@SHARED/data";
-import { ReqCtx, ServerCtx } from "gamezilla/app/@SHARED/server";
+import { ReqCtx, ServerCmd, ServerCtx } from "gamezilla/app/@SHARED/server";
 
 /**
  *
@@ -55,4 +55,51 @@ export type SpaceViewCtx = ViewCtx & {
   onViewProfile: (input: { userId: UserId }) => void;
   hostId: UserId;
   spaceId: SpaceId;
+};
+
+/**
+ *
+ *
+ *
+ *
+ *
+ */
+
+export type SpaceServerCmd<ToClient> =
+  | ServerCmd<ToClient>
+  | { t: "send-to-space"; msg: ToClient };
+
+/**
+ * Message creator to reduce boilerplate
+ */
+export const sendToSpace = <ToClient>(
+  msg: ToClient
+): SpaceServerCmd<ToClient> => {
+  return { t: "send-to-space", msg };
+};
+
+const tagOne = <T extends string, A>(
+  tag: T,
+  cmd: SpaceServerCmd<A>
+): SpaceServerCmd<{ t: T; c: A }> => {
+  switch (cmd.t) {
+    case "send-to-space": {
+      return { ...cmd, msg: { t: tag, c: cmd.msg } };
+    }
+    default: {
+      return ServerCmd.tagOne(tag, cmd);
+    }
+  }
+};
+
+const tag = <T extends string, A>(
+  tag: T,
+  commands?: SpaceServerCmd<A>[]
+): SpaceServerCmd<{ t: T; c: A }>[] | undefined => {
+  return commands?.map((m) => tagOne(tag, m));
+};
+
+export const SpaceServerCmd = {
+  tagOne,
+  tag,
 };

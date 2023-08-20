@@ -1,21 +1,10 @@
-import { Eff, exhaustive, Sub, Time } from "gamezilla/@SHARED/core";
-import { SpaceEvent } from "gamezilla/app/space/@SHARED";
+import { Eff, Sub, Time } from "gamezilla/@SHARED/core";
+import { SpaceEvent, SpaceServerCmd } from "gamezilla/app/space/@SHARED";
 import * as Board from "../@SHARED/chess/chess";
 import {
-  cancelDraw,
-  clockTicked,
-  initShared,
-  inputClock,
-  inputMove,
-  inputPlayer,
-  NewGame,
-  requestToDraw,
-  Res,
-  resign,
-  respondToDraw,
+  initCore,
   ServerModel,
   ServerMsg,
-  startGame,
   ToClient,
   ToServer,
 } from "./vs-user.core";
@@ -28,9 +17,8 @@ import {
 //
 //
 
-export type Model = ServerModel;
+export const init = initCore;
 
-export const init = initShared;
 //
 //
 //
@@ -39,151 +27,35 @@ export const init = initShared;
 //
 //
 
-export type Msg = ServerMsg;
-
 export const update = (
-  { broadcast }: { broadcast: (msg: ToClient) => Eff },
-  msg: Msg,
-  model: Model
-): [Model, Eff<Msg>] => {
-  switch (msg[0]) {
-    case "ClockTicked": {
-      const modelNew: Model = {
-        ...model,
-        ...clockTicked(model),
-      };
-
-      const didChangeToGameOver =
-        model.type !== "game-over" && modelNew.type === "game-over";
-
-      return [
-        modelNew,
-        Eff.batch([
-          broadcast(["ClockTicked", modelNew]),
-          didChangeToGameOver ? broadcast(["game-over"]) : Eff.None,
-        ]),
-      ];
-    }
-  }
+  _msg: ServerMsg,
+  model: ServerModel
+): { model: ServerModel } => {
+  return { model };
 };
 
 export const updateFromClient = (
-  wire: {
-    sendToClient: (msg: ToClient) => Eff;
-    broadcast: (msg: ToClient) => Eff;
-  },
-  msg: ToServer,
-  model: Model
-): [Model, Eff<Msg>] => {
-  switch (msg[0]) {
-    case "RequestToDraw": {
-      return sendResponse(
-        wire,
-        ["RequestToDraw_Done", requestToDraw(msg[1], model)],
-        model
-      );
-    }
-
-    case "resign": {
-      return sendResponse(wire, ["resign_Done", resign(msg[1], model)], model);
-    }
-
-    case "InputClock": {
-      return sendResponse(
-        wire,
-        ["InputClock_Done", inputClock(msg[1], model)],
-        model
-      );
-    }
-
-    case "InputPlayer": {
-      return sendResponse(
-        wire,
-        ["InputPlayer_Done", inputPlayer(msg[1], model)],
-        model
-      );
-    }
-
-    case "start-game": {
-      return sendResponse(
-        wire,
-        ["StartGame_Done", startGame(msg[1], model)],
-        model
-      );
-    }
-
-    case "input-move": {
-      return sendResponse(
-        wire,
-        ["input-move-done", inputMove(msg[1], model)],
-        model
-      );
-    }
-
-    case "RespondToDraw": {
-      return sendResponse(
-        wire,
-        ["RespondToDraw_Done", respondToDraw(msg[1], model)],
-        model
-      );
-    }
-
-    case "NewGame": {
-      return sendResponse(wire, ["NewGame_Done", NewGame(model)], model);
-    }
-
-    case "CancelDraw": {
-      return sendResponse(
-        wire,
-        ["CancelDraw_Done", cancelDraw(msg[1], model)],
-        model
-      );
-    }
-
-    default: {
-      return exhaustive(msg[0]);
-    }
-  }
-};
-
-const sendResponse = (
-  {
-    sendToClient,
-    broadcast,
-  }: {
-    sendToClient: (msg: ToClient) => Eff;
-    broadcast: (msg: ToClient) => Eff;
-  },
-  response: Res,
-  model: Model
-): [Model, Eff<Msg>] => {
-  if (response[1].t === "err") {
-    return [model, Eff.batch([sendToClient(response)])];
-  }
-
-  const modelNew: Model = response[1].value;
-
-  const didChangeToGameOver =
-    model.type !== "game-over" && modelNew.type === "game-over";
-
-  return [
-    modelNew,
-    Eff.batch([
-      didChangeToGameOver ? broadcast(["game-over"]) : Eff.None,
-      broadcast(response),
-    ]),
-  ];
+  _msg: ToServer,
+  model: ServerModel
+): {
+  model: ServerModel;
+  eff?: Eff<ServerMsg>;
+  cmd?: SpaceServerCmd<ToClient>[];
+} => {
+  return { model };
 };
 
 export const updateFromEvent = ({
-  broadcast,
   msg,
   model,
 }: {
-  broadcast: (m: ToClient) => Eff;
   msg: SpaceEvent;
-  model: Model;
-}): { model: Model; eff?: Eff<Msg> } => {
+  model: ServerModel;
+}): {
+  model: ServerModel;
+  eff?: Eff<ServerMsg>;
+  cmd?: SpaceServerCmd<ToClient>[];
+} => {
   if (msg.t === "user-left") {
     switch (model.type) {
       case "setup": {
@@ -195,9 +67,12 @@ export const updateFromEvent = ({
           return { model };
         }
 
-        const modelNew: Model = { ...model, [color]: "none" };
+        const modelNew: ServerModel = { ...model, [color]: "none" };
 
-        return { model: modelNew, eff: broadcast(["player-left", modelNew]) };
+        return {
+          model: modelNew,
+          cmd: [{ t: "send-to-space", msg: ["player-left", modelNew] }],
+        };
       }
 
       case "game":
@@ -213,7 +88,7 @@ export const updateFromEvent = ({
 
         const otherColor = Board.toOppositeColor(color);
 
-        const modelNew: Model = {
+        const modelNew: ServerModel = {
           ...model,
           type: "setup",
           clockPreset: model.clock.preset,
@@ -221,7 +96,10 @@ export const updateFromEvent = ({
           [color]: "none",
         };
 
-        return { model: modelNew, eff: broadcast(["player-left", modelNew]) };
+        return {
+          model: modelNew,
+          cmd: [{ t: "send-to-space", msg: ["player-left", modelNew] }],
+        };
       }
     }
   }
@@ -236,7 +114,10 @@ export const updateFromEvent = ({
 //
 //
 
-export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
+export const subscriptions = (
+  intervalId: string,
+  model: ServerModel
+): Sub<ServerMsg> => {
   switch (model.type) {
     case "setup": {
       return Sub.None;

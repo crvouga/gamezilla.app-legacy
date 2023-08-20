@@ -10,7 +10,7 @@ import {
   ServerModel,
   ToClient,
   ToServer,
-  initShared,
+  initCore,
   inputMove,
 } from "./vs-user.core";
 
@@ -32,7 +32,7 @@ export const init = ({
 }): [ClientModel, Eff<Msg>] => {
   return [
     {
-      coreModel: initShared({ userId }),
+      coreModel: initCore({ userId }),
       openedMenuId: Option.None,
       openedModal: "none",
       isFlipped: false,

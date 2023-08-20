@@ -1,6 +1,10 @@
 import { Eff, Result, Sub } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
-import { SpaceEvent, SpaceReqCtx } from "gamezilla/app/space/@SHARED";
+import {
+  SpaceEvent,
+  SpaceReqCtx,
+  SpaceServerCmd,
+} from "gamezilla/app/space/@SHARED";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./tic-tac-toe.core";
 import * as VsBot from "./vs-bot/vs-bot.server";
 import * as VsUser from "./vs-user/vs-user.server";
@@ -30,39 +34,33 @@ export const init: Model = { t: "none" };
 export type Msg = ServerMsg;
 
 export const update = ({
-  broadcast,
   msg,
   model,
 }: {
-  broadcast: (msg: ToClient) => Eff;
   msg: Msg;
   model: Model;
 }): {
   model: Model;
   eff?: Eff<Msg>;
+  cmd?: SpaceServerCmd<ToClient>[];
 } => {
   if (msg.t === "vs-user" && model.t === "vs-user") {
-    const updated = VsUser.update(
-      { broadcast: (c) => broadcast({ t: "vs-user", c }) },
-      msg.c,
-      model.c
-    );
+    const updated = VsUser.update(msg.c, model.c);
     return {
-      model: { t: "vs-user", c: updated[0] },
-      eff: Eff.t("vs-user", updated[1]),
+      model: { t: "vs-user", c: updated.model },
+      cmd: SpaceServerCmd.tag("vs-user", updated.cmd),
     };
   }
 
   if (msg.t === "vs-bot" && model.t === "vs-bot") {
     const updated = VsBot.update({
-      broadcast: (c) => broadcast({ t: "vs-bot", c }),
       model: model.c,
       msg: msg.c,
     });
 
     return {
       model: { t: "vs-bot", c: updated.model },
-      eff: Eff.t("vs-bot", updated.eff),
+      cmd: SpaceServerCmd.tag("vs-bot", updated.cmd),
     };
   }
 
@@ -70,23 +68,29 @@ export const update = ({
 };
 
 export const updateFromClient = ({
-  sendToClient,
-  broadcast,
   msg,
   model,
   ctx,
 }: {
-  sendToClient: (msg: ToClient) => Eff;
-  broadcast: (msg: ToClient) => Eff;
   ctx: SpaceReqCtx;
   msg: ToServer;
   model: Model;
-}): { model: Model; eff?: Eff<Msg> } => {
+}): {
+  model: Model;
+  eff?: Eff<Msg>;
+  cmd?: SpaceServerCmd<ToClient>[];
+} => {
   if (msg.t === "input-mode") {
     if (ctx.currentUserId !== ctx.hostId) {
       return {
         model,
-        eff: sendToClient({ ...msg, result: Err("must-be-host") }),
+        cmd: [
+          {
+            t: "send-to-client",
+            clientIds: [ctx.clientId],
+            msg: { ...msg, result: Err("must-be-host") },
+          },
+        ],
       };
     }
 
@@ -97,30 +101,26 @@ export const updateFromClient = ({
 
     return {
       model: modelNew,
-      eff: broadcast({ ...msg, result: Ok(modelNew) }),
+      cmd: [
+        {
+          t: "send-to-space",
+          msg: { t: "input-mode", mode: msg.mode, result: Ok(modelNew) },
+        },
+      ],
     };
   }
 
   if (msg.t === "vs-user" && model.t === "vs-user") {
-    const updated = VsUser.updateFromClient(
-      {
-        sendToClient: (c) => sendToClient({ t: "vs-user", c }),
-        broadcast: (c) => broadcast({ t: "vs-user", c }),
-      },
-      msg.c,
-      model.c
-    );
+    const updated = VsUser.updateFromClient(ctx, msg.c, model.c);
 
     return {
-      model: { ...model, c: updated[0] },
-      eff: Eff.t("vs-user", updated[1]),
+      model: { ...model, c: updated.model },
+      cmd: SpaceServerCmd.tag("vs-user", updated.cmd),
     };
   }
 
   if (msg.t === "vs-bot" && model.t === "vs-bot") {
     const updated = VsBot.updateFromClient({
-      sendToClient: (c) => sendToClient({ t: "vs-bot", c }),
-      broadcast: (c) => broadcast({ t: "vs-bot", c }),
       msg: msg.c,
       model: model.c,
       ctx,
@@ -136,16 +136,14 @@ export const updateFromClient = ({
 };
 
 export const updateFromEvent = ({
-  broadcast,
   msg,
   model,
 }: {
-  broadcast: (m: ToClient) => Eff;
   model: Model;
   msg: SpaceEvent;
 }): {
   model: Model;
-  eff?: Eff<Msg>;
+  cmd?: SpaceServerCmd<ToClient>[];
 } => {
   if (model.t === "none") {
     return { model };
@@ -153,25 +151,23 @@ export const updateFromEvent = ({
 
   if (model.t === "vs-bot") {
     const updated = VsBot.updateFromEvent({
-      broadcast: (c) => broadcast({ t: "vs-bot", c }),
       msg,
       model: model.c,
     });
     return {
       model: { t: "vs-bot", c: updated.model },
-      eff: updated.eff ? Eff.t("vs-bot", updated.eff) : undefined,
+      cmd: SpaceServerCmd.tag("vs-bot", updated.cmd),
     };
   }
 
   if (model.t === "vs-user") {
     const updated = VsUser.updateFromEvent({
-      broadcast: (c) => broadcast({ t: "vs-user", c }),
       msg,
       model: model.c,
     });
     return {
       model: { t: "vs-user", c: updated.model },
-      eff: updated.eff ? Eff.t("vs-user", updated.eff) : undefined,
+      cmd: SpaceServerCmd.tag("vs-user", updated.cmd),
     };
   }
 
@@ -185,25 +181,25 @@ const initMode = ({
   mode: ServerModel["t"];
   userId: UserId;
 }): ServerModel => {
-  if (mode === "none") {
-    return { t: "none" };
-  }
+  switch (mode) {
+    case "none": {
+      return { t: "none" };
+    }
 
-  if (mode === "vs-user") {
-    return {
-      t: "vs-user",
-      c: VsUser.init({ X: userId, O: "none" }),
-    };
-  }
+    case "vs-user": {
+      return {
+        t: "vs-user",
+        c: VsUser.init({ X: userId, O: "none" }),
+      };
+    }
 
-  if (mode === "vs-bot") {
-    return {
-      t: "vs-bot",
-      c: VsBot.init({ userId }),
-    };
+    case "vs-bot": {
+      return {
+        t: "vs-bot",
+        c: VsBot.init({ userId }),
+      };
+    }
   }
-
-  return { t: "none" };
 };
 
 //
@@ -215,13 +211,15 @@ const initMode = ({
 //
 
 export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
-  if (model.t === "vs-user") {
-    return Sub.tag("vs-user", VsUser.subscriptions(intervalId, model.c));
+  switch (model.t) {
+    case "vs-bot": {
+      return Sub.tag("vs-bot", VsBot.subscriptions(model.c));
+    }
+    case "vs-user": {
+      return Sub.tag("vs-user", VsUser.subscriptions(intervalId, model.c));
+    }
+    case "none": {
+      return Sub.None;
+    }
   }
-
-  if (model.t === "vs-bot") {
-    return Sub.tag("vs-bot", VsBot.subscriptions(model.c));
-  }
-
-  return Sub.None;
 };

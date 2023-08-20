@@ -9,19 +9,21 @@ export const exhaustive = (discriminatedUnionType: "Missing Case!"): never => {
  * A helper function for composing update functions
  */
 export const andThen =
-  <Msg, Model, OutMsg>(
+  <Msg, Model, OutMsg, Cmd>(
     updateStep: (input: Model) => {
       model: Model;
       eff?: Eff<Msg>;
       msgs?: OutMsg[];
+      cmd?: Cmd[];
     }
   ) =>
-  (output: { eff?: Eff<Msg>; model: Model; msgs?: OutMsg[] }) => {
+  (output: { eff?: Eff<Msg>; model: Model; msgs?: OutMsg[]; cmd?: Cmd[] }) => {
     const updated = updateStep(output.model);
     return {
       model: updated.model,
       eff: Eff.batch([updated.eff, output.eff]),
       msgs: [...(output.msgs ?? []), ...(updated.msgs ?? [])],
+      cmd: [...(output.cmd ?? []), ...(updated.cmd ?? [])],
     };
   };
 

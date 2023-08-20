@@ -8,14 +8,15 @@ import {
   andThen,
   p,
 } from "gamezilla/@SHARED/core";
+import { UserId } from "gamezilla/app/@SHARED/data";
 import {
   AnonymousReqCtx,
   ReqCtx,
   ServerCmd,
   ServerCtx,
-  ServerEvent,
+  ServerEvt,
+  sendBack,
 } from "gamezilla/app/@SHARED/server";
-import { UserId } from "gamezilla/app/@SHARED/data";
 import { AuthServer } from "gamezilla/app/auth";
 import { ChatServer } from "gamezilla/app/chat";
 import { ProfileServer } from "gamezilla/app/profile";
@@ -67,150 +68,162 @@ export const update = async (input: {
   model: ServerModel;
   eff?: Eff<ServerMsg>;
 }> => {
+  const { model, broadcast, sendToClient } = input;
+
   const updated = await updateMain(input);
 
-  //
-  //
-  //
-  //
-  //
+  const evt = updated.evt ?? [];
 
-  const appMsgs = updated.events ?? [];
-
-  const appUpdated = appMsgs.reduce(
-    (acc, msg) =>
+  const appUpdated = evt.reduce(
+    (acc, evt) =>
       p(
         acc,
-        andThen((model) => updateFromEvent({ ...input, model, msg }))
+        andThen((model) => updateFromEvent({ ...input, model, msg: evt }))
       ),
     updated
   );
 
-  //
-  //
-  //
-  //
-  //
+  const effList =
+    appUpdated.cmd?.map(cmdToEff(model, sendToClient, broadcast)) ?? [];
 
-  const effList: Eff<ServerMsg>[] = [];
-
-  for (const cmd of appUpdated.cmd ?? []) {
-    if (cmd.t === "send-to-client") {
-      effList.push(input.sendToClient(cmd.clientIds, cmd.msg));
-    }
-    if (cmd.t === "broadcast") {
-      effList.push(input.broadcast(cmd.msg));
-    }
-    if (cmd.t === "send-to-user") {
-      effList.push(
-        sendToUser(input.sendToClient, appUpdated.model, cmd.userIds, cmd.msg)
-      );
-    }
-  }
-
-  //
-  //
-  //
-  //
-
-  return { ...appUpdated, eff: Eff.batch([...effList, appUpdated.eff]) };
+  return {
+    model: appUpdated.model,
+    eff: Eff.batch([...effList, appUpdated.eff]),
+  };
 };
+
+const cmdToEff =
+  (
+    model: ServerModel,
+    sendToClient: (clientIds: ClientId[], m: ToClient) => Eff,
+    broadcast: (m: ToClient) => Eff
+  ) =>
+  (cmd: ServerCmd<ToClient>): Eff<ServerMsg> => {
+    switch (cmd.t) {
+      case "broadcast": {
+        return broadcast(cmd.msg);
+      }
+      case "send-to-client": {
+        return sendToClient(cmd.clientIds, cmd.msg);
+      }
+      case "send-to-user": {
+        const clientIds: ClientId[] = [];
+
+        const userIdSet = new Set<UserId>(cmd.userIds);
+
+        for (const sessionId in model.sessions) {
+          if (!SessionId.is(sessionId)) {
+            continue;
+          }
+
+          const session = model.sessions[sessionId];
+
+          const authSession = model.auth.sessions[sessionId];
+
+          if (!session) {
+            continue;
+          }
+
+          if (!authSession) {
+            continue;
+          }
+
+          if (!userIdSet.has(authSession.userId)) {
+            continue;
+          }
+
+          clientIds.push(...session.clientIds);
+        }
+
+        return sendToClient(clientIds, cmd.msg);
+      }
+    }
+  };
 
 const updateMain = async ({
   msg,
   model,
   ctx,
-  sendToClient,
 }: {
   msg: ServerMsg;
   model: ServerModel;
   ctx: ServerCtx;
-  sendToClient: (clientIds: ClientId[], m: ToClient) => Eff;
 }): Promise<{
   model: ServerModel;
   eff?: Eff<ServerMsg>;
-  events?: ServerEvent[];
+  evt?: ServerEvt[];
   cmd?: ServerCmd<ToClient>[];
 }> => {
-  if (msg.t === "wire") {
-    return updateWire({ msg: msg.c, model });
+  switch (msg.t) {
+    case "▶": {
+      return updateFromClient({
+        ctx: {
+          ...ctx,
+          sessionId: msg.sessionId,
+          clientId: msg.clientId,
+        },
+        msg: msg.c,
+        model,
+      });
+    }
+
+    case "wire": {
+      return updateWire({ msg: msg.c, model });
+    }
+
+    case "space": {
+      const updated = await SpaceServer.update({
+        msg: msg.c,
+        model: model.space,
+        ctx,
+      });
+
+      return {
+        model: { ...model, space: updated.model },
+        eff: Eff.t("space", updated.eff ?? Eff.None),
+        cmd: ServerCmd.tag("space", updated.cmd),
+      };
+    }
+
+    case "profile": {
+      const updated = ProfileServer.update({
+        model: model.profile,
+        msg: msg.c,
+      });
+      return {
+        model: { ...model, profile: updated.model },
+        cmd: ServerCmd.tag("profile", updated.cmd),
+      };
+    }
+
+    case "search": {
+      const updated = SearchServer.update({
+        model: model.search,
+        msg: msg.c,
+      });
+      return {
+        model: { ...model, search: updated.model },
+        eff: Eff.t("search", updated.eff),
+      };
+    }
+
+    case "auth": {
+      const updated = AuthServer.update({ model: model.auth, msg: msg.c });
+      return { model: { ...model, auth: updated.model } };
+    }
+
+    case "chat": {
+      const updated = ChatServer.update({
+        model: model.chat,
+        msg: msg.c,
+      });
+
+      return {
+        model: { ...model, chat: updated.model },
+        eff: Eff.t("chat", updated.eff),
+      };
+    }
   }
-
-  if (msg.t === "▶") {
-    return updateFromClient({
-      ctx: {
-        ...ctx,
-        sessionId: msg.sessionId,
-        clientId: msg.clientId,
-      },
-      msg: msg.c,
-      model,
-
-      sendToClient,
-    });
-  }
-
-  if (msg.t === "space") {
-    const updated = await SpaceServer.update({
-      sendToUser: (userIds, m) =>
-        sendToUser(sendToClient, model, userIds, { t: "space", c: m }),
-      msg: msg.c,
-      model: model.space,
-      ctx,
-    });
-
-    return {
-      model: { ...model, space: updated.model },
-      eff: Eff.t("space", updated.eff ?? Eff.None),
-    };
-  }
-
-  if (msg.t === "profile") {
-    const updated = ProfileServer.update({
-      model: model.profile,
-      msg: msg.c,
-    });
-    return {
-      model: { ...model, profile: updated.model },
-      eff: Eff.t("profile", updated.eff),
-    };
-  }
-
-  if (msg.t === "search") {
-    const updated = SearchServer.update({
-      model: model.search,
-      msg: msg.c,
-    });
-    return {
-      model: { ...model, search: updated.model },
-      eff: Eff.t("search", updated.eff),
-    };
-  }
-
-  if (msg.t === "auth") {
-    const updated = AuthServer.update({
-      model: model.auth,
-      msg: msg.c,
-    });
-    return {
-      model: { ...model, auth: updated.model },
-      eff: Eff.t("auth", updated.eff),
-    };
-  }
-
-  if (msg.t === "chat") {
-    const updated = ChatServer.update({
-      model: model.chat,
-      msg: msg.c,
-    });
-
-    return {
-      model: { ...model, chat: updated.model },
-      eff: Eff.t("chat", updated.eff),
-    };
-  }
-
-  return { model };
 };
 
 const updateWire = ({
@@ -221,7 +234,7 @@ const updateWire = ({
   model: ServerModel;
 }): {
   model: ServerModel;
-  events?: ServerEvent[];
+  events?: ServerEvt[];
 } => {
   if (msg.t === "client-connected") {
     const sessionId = msg.sessionId;
@@ -272,12 +285,9 @@ const updateWire = ({
 const updateFromEvent = ({
   msg,
   model,
-  sendToClient,
 }: {
-  msg: ServerEvent;
+  msg: ServerEvt;
   model: ServerModel;
-  broadcast: (m: ToClient) => Eff;
-  sendToClient: (clientIds: ClientId[], m: ToClient) => Eff;
 }): {
   model: ServerModel;
   eff?: Eff<ServerMsg>;
@@ -285,15 +295,11 @@ const updateFromEvent = ({
   const spaceUpdated = SpaceServer.updateFromEvent({
     msg,
     model: model.space,
-    sendToClient: (clientIds, m) =>
-      sendToClient(clientIds, { t: "space", c: m }),
   });
 
   const profileUpdated = ProfileServer.updateFromEvent({
     msg,
     model: model.profile,
-    sendToClient: (clientIds, c) =>
-      sendToClient(clientIds, { t: "profile", c }),
   });
 
   return {
@@ -313,16 +319,15 @@ const updateFromClient = async ({
   msg,
   model,
   ctx,
-  sendToClient,
 }: {
   ctx: AnonymousReqCtx;
   msg: ToServer;
   model: ServerModel;
-  sendToClient: (clientIds: ClientId[], m: ToClient) => Eff;
 }): Promise<{
   model: ServerModel;
   eff?: Eff<ServerMsg>;
   cmd?: ServerCmd<ToClient>[];
+  evt?: ServerEvt[];
 }> => {
   const currentUserId = model.auth.sessions[ctx.sessionId]?.userId;
   const authReqCtx: ReqCtx | null = currentUserId
@@ -331,119 +336,81 @@ const updateFromClient = async ({
         currentUserId,
       }
     : null;
-
-  if (msg.t === "auth") {
-    const updated = AuthServer.updateFromClient({
-      ctx,
-      model: model.auth,
-      msg: msg.c,
-      sendBack: (c) => sendToClient([ctx.clientId], { t: "auth", c }),
-    });
-    return {
-      model: { ...model, auth: updated.model },
-      eff: Eff.t("auth", updated.eff),
-    };
-  }
-
-  if (msg.t === "profile") {
-    const updated = ProfileServer.updateFromClient({
-      model: model.profile,
-      msg: msg.c,
-      sendBack: (c) => sendToClient([ctx.clientId], { t: "profile", c }),
-      ctx: authReqCtx,
-    });
-    return {
-      model: { ...model, profile: updated.model },
-      eff: Eff.t("profile", updated.eff),
-    };
-  }
-
-  if (msg.t === "search") {
-    const updated = SearchServer.updateFromClient({
-      model: model.search,
-      msg: msg.c,
-    });
-    return {
-      model: { ...model, search: updated.model },
-      eff: Eff.t("search", updated.eff),
-    };
-  }
-
-  if (msg.t === "chat") {
-    const updated = ChatServer.updateFromClient({
-      model: model.chat,
-      msg: msg.c,
-      sendToClient: (c) => sendToClient([ctx.clientId], { t: "chat", c }),
-    });
-    return {
-      model: { ...model, chat: updated.model },
-      eff: Eff.t("chat", updated.eff),
-    };
-  }
-
-  if (msg.t === "space") {
-    if (!authReqCtx) {
-      return { model };
+  switch (msg.t) {
+    case "auth": {
+      const updated = AuthServer.updateFromClient({
+        ctx,
+        model: model.auth,
+        msg: msg.c,
+      });
+      return {
+        model: { ...model, auth: updated.model },
+        cmd: ServerCmd.tag("auth", updated.cmd),
+        evt: updated.evt,
+      };
     }
 
-    const updated = await SpaceServer.updateFromClient({
-      ctx: authReqCtx,
-      msg: msg.c,
-      model: model.space,
-      sendToClient: (c) => sendToClient([ctx.clientId], { t: "space", c }),
-      sendToUser: (userIds, c) =>
-        sendToUser(sendToClient, model, userIds, { t: "space", c }),
-    });
+    case "profile": {
+      if (!authReqCtx) {
+        return { model, cmd: [sendBack(ctx, { t: "access-denied", msg })] };
+      }
 
-    return {
-      ...updated,
-      model: {
-        ...model,
-        space: updated.model,
-      },
-      eff: Eff.t("space", updated.eff),
-      cmd: ServerCmd.tag("space", updated.cmd),
-    };
+      const updated = ProfileServer.updateFromClient({
+        model: model.profile,
+        msg: msg.c,
+        ctx: authReqCtx,
+      });
+
+      return {
+        model: { ...model, profile: updated.model },
+        eff: Eff.t("profile", updated.eff),
+      };
+    }
+
+    case "search": {
+      const updated = SearchServer.updateFromClient({
+        model: model.search,
+        msg: msg.c,
+      });
+      return {
+        model: { ...model, search: updated.model },
+        eff: Eff.t("search", updated.eff),
+      };
+    }
+
+    case "chat": {
+      const updated = ChatServer.updateFromClient({
+        model: model.chat,
+        msg: msg.c,
+      });
+      return {
+        model: { ...model, chat: updated.model },
+        eff: Eff.t("chat", updated.eff),
+      };
+    }
+
+    case "space": {
+      if (!authReqCtx) {
+        return { model, cmd: [sendBack(ctx, { t: "access-denied", msg })] };
+      }
+
+      const updated = await SpaceServer.updateFromClient({
+        ctx: authReqCtx,
+        msg: msg.c,
+        model: model.space,
+      });
+
+      return {
+        ...updated,
+        model: {
+          ...model,
+          space: updated.model,
+        },
+        eff: Eff.t("space", updated.eff),
+        cmd: ServerCmd.tag("space", updated.cmd),
+      };
+    }
   }
-
-  return { model };
-};
-
-const sendToUser = (
-  sendToClient: (clientIds: ClientId[], msg: ToClient) => Eff,
-  model: ServerModel,
-  userIds: UserId[],
-  msg: ToClient
-): Eff => {
-  const clientIds: ClientId[] = [];
-
-  const userIdSet = new Set<UserId>(userIds);
-
-  for (const sessionId in model.sessions) {
-    if (!SessionId.is(sessionId)) {
-      continue;
-    }
-
-    const session = model.sessions[sessionId];
-
-    const authSession = model.auth.sessions[sessionId];
-
-    if (!session) {
-      continue;
-    }
-
-    if (!authSession) {
-      continue;
-    }
-
-    if (!userIdSet.has(authSession.userId)) {
-      continue;
-    }
-
-    clientIds.push(...session.clientIds);
-  }
-
-  return sendToClient(clientIds, msg);
 };
 
 //

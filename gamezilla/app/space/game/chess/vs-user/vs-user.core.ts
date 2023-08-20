@@ -71,7 +71,7 @@ export type GameOver =
       winner: Chess.Color;
     };
 
-export const initShared = ({
+export const initCore = ({
   userId,
 }: {
   userId: UserId | "none";

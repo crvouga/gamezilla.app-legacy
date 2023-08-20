@@ -1,6 +1,6 @@
-import { Eff, Err, Result, Sub } from "gamezilla/@SHARED/core";
+import { Eff, Err, Ok, Result, Sub } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
-import { GameServer } from "gamezilla/app/space/@SHARED";
+import { GameServer, SpaceServerCmd } from "gamezilla/app/space/@SHARED";
 import {
   Mode,
   ServerModel,
@@ -39,29 +39,27 @@ export const init: Server["init"] = () => {
 
 export type Msg = ServerMsg;
 
-export const update: Server["update"] = ({ sendToSpace, msg, model }) => {
+export const update: Server["update"] = ({ msg, model }) => {
   if (msg.t === "vs-bot" && model.t === "vs-bot") {
     const updated = VsBot.update({
-      broadcast: (c) => sendToSpace({ t: "vs-bot", c }),
       msg: msg.c,
       model: model.c,
     });
 
     return {
       model: { t: "vs-bot", c: updated.model },
-      eff: Eff.t("vs-bot", updated.eff),
+      cmd: SpaceServerCmd.tag("vs-bot", updated.cmd),
     };
   }
 
   if (msg.t === "vs-user" && model.t === "vs-user") {
     const updated = VsUser.update({
-      broadcast: (c) => sendToSpace({ t: "vs-user", c }),
       msg: msg.c,
       model: model.c,
     });
     return {
       model: { t: "vs-user", c: updated.model },
-      eff: Eff.t("vs-user", updated.eff),
+      cmd: SpaceServerCmd.tag("vs-user", updated.cmd),
     };
   }
 
@@ -69,8 +67,6 @@ export const update: Server["update"] = ({ sendToSpace, msg, model }) => {
 };
 
 export const updateFromClient: Server["updateFromClient"] = ({
-  sendToClient,
-  sendToSpace,
   msg,
   model,
   ctx,
@@ -81,11 +77,17 @@ export const updateFromClient: Server["updateFromClient"] = ({
     if (ctx.currentUserId !== ctx.hostId) {
       return {
         model,
-        eff: sendToClient({
-          t: "input-mode",
-          mode: msg.mode,
-          result: Err("must_be_host"),
-        }),
+        cmd: [
+          {
+            t: "send-to-client",
+            clientIds: [ctx.clientId],
+            msg: {
+              t: "input-mode",
+              mode: msg.mode,
+              result: Err("You must be the host to change the game mode"),
+            },
+          },
+        ],
       };
     }
 
@@ -93,15 +95,18 @@ export const updateFromClient: Server["updateFromClient"] = ({
 
     return {
       model: modelNew,
-      eff: sendToSpace({ ...msg, result: Result.Ok(modelNew) }),
+      cmd: [
+        {
+          t: "send-to-space",
+          msg: { ...msg, result: Ok(modelNew) },
+        },
+      ],
     };
   }
 
   if (msg.t === "vs-bot" && model.t === "vs-bot") {
     const updated = VsBot.updateFromClient({
       ctx,
-      sendToClient: (c) => sendToClient({ t: "vs-bot", c }),
-      broadcast: (c) => sendToSpace({ t: "vs-bot", c }),
       msg: msg.c,
       model: model.c,
     });
@@ -109,13 +114,12 @@ export const updateFromClient: Server["updateFromClient"] = ({
     return {
       model: { t: "vs-bot", c: updated.model },
       eff: Eff.t("vs-bot", updated.eff),
+      cmd: SpaceServerCmd.tag("vs-bot", updated.cmd),
     };
   }
 
   if (msg.t === "vs-user" && model.t === "vs-user") {
     const updated = VsUser.updateFromClient({
-      sendToClient: (c) => sendToClient({ t: "vs-user", c }),
-      broadcast: (c) => sendToSpace({ t: "vs-user", c }),
       msg: msg.c,
       model: model.c,
       ctx,
@@ -124,17 +128,14 @@ export const updateFromClient: Server["updateFromClient"] = ({
     return {
       model: { t: "vs-user", c: updated.model },
       eff: Eff.t("vs-user", updated.eff),
+      cmd: SpaceServerCmd.tag("vs-user", updated.cmd),
     };
   }
 
   return { model };
 };
 
-export const updateFromEvent: Server["updateFromEvent"] = ({
-  msg,
-  model,
-  sendToSpace,
-}) => {
+export const updateFromEvent: Server["updateFromEvent"] = ({ msg, model }) => {
   switch (model.t) {
     case "none": {
       return { model };
@@ -144,7 +145,6 @@ export const updateFromEvent: Server["updateFromEvent"] = ({
       const updated = VsBot.updateFromEvent({
         msg,
         model: model.c,
-        broadcast: (c) => sendToSpace({ t: "vs-bot", c }),
       });
       return {
         model: { t: "vs-bot", c: updated.model },
@@ -156,7 +156,6 @@ export const updateFromEvent: Server["updateFromEvent"] = ({
       const updated = VsUser.updateFromEvent({
         msg,
         model: model.c,
-        broadcast: (c) => sendToSpace({ t: "vs-user", c }),
       });
 
       return {

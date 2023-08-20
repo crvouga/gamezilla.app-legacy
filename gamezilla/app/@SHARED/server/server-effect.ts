@@ -25,6 +25,17 @@ export type ServerCmd<ToClient> =
       msg: ToClient;
     };
 
+export const sendBack = <ToClient>(
+  ctx: { clientId: ClientId },
+  msg: ToClient
+): ServerCmd<ToClient> => {
+  return {
+    t: "send-to-client",
+    clientIds: [ctx.clientId],
+    msg,
+  };
+};
+
 //
 //
 //
@@ -34,28 +45,29 @@ export type ServerCmd<ToClient> =
 //
 //
 
-const tagCmd = <T extends string, A>(
+const tagOne = <T extends string, A>(
   tag: T,
-  eff: ServerCmd<A>
+  cmd: ServerCmd<A>
 ): ServerCmd<{ t: T; c: A }> => {
-  switch (eff.t) {
+  switch (cmd.t) {
     case "send-to-client":
     case "send-to-user":
     case "broadcast": {
-      return { ...eff, msg: { t: tag, c: eff.msg } };
+      return { ...cmd, msg: { t: tag, c: cmd.msg } };
     }
     default:
-      return eff;
+      return cmd;
   }
 };
 
-const tagCmds = <T extends string, A>(
+const tag = <T extends string, A>(
   tag: T,
-  effects?: ServerCmd<A>[]
+  commands?: ServerCmd<A>[]
 ): ServerCmd<{ t: T; c: A }>[] | undefined => {
-  return effects?.map((m) => tagCmd(tag, m));
+  return commands?.map((m) => tagOne(tag, m));
 };
 
 export const ServerCmd = {
-  tag: tagCmds,
+  tagOne,
+  tag,
 };

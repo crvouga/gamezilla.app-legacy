@@ -1,14 +1,16 @@
 import { Eff, Err, Ok, Sub } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
+import { sendBack } from "gamezilla/app/@SHARED/server";
 import {
   SpaceEvent,
   SpaceReqCtx,
+  SpaceServerCmd,
   SpaceServerCtx,
 } from "gamezilla/app/space/@SHARED";
 import { ChessGameMsg } from "./@SHARED/chess/chess-shared";
 import { Res, ServerModel, ServerMsg, ToClient, ToServer } from "./chess.core";
 import * as Puzzle from "./puzzle/puzzle.server";
-import { VsBotServer } from "./vs-bot";
+import * as VsBot from "./vs-bot/vs-bot.server";
 import * as VsUser from "./vs-user/vs-user.server";
 
 //
@@ -34,96 +36,98 @@ export const init: Model = { t: "none" };
 export type Msg = ServerMsg;
 
 export const update = ({
-  broadcast,
   ctx,
   msg,
   model,
 }: {
-  broadcast: (msg: ToClient) => Eff;
   msg: Msg;
   model: Model;
   ctx: SpaceServerCtx;
-}): [Model, Eff<Msg>] => {
+}): {
+  model: Model;
+  eff?: Eff<Msg>;
+  cmd?: SpaceServerCmd<ToClient>[];
+} => {
   switch (model.t) {
     case "none": {
-      return [model, Eff.None];
+      return { model };
     }
 
     case "vs-user": {
       if (msg.t === "vs-user") {
-        const [child, eff] = VsUser.update(
-          { broadcast: (msg) => broadcast({ t: "vs-user", c: msg }) },
-          msg.c,
-          model.c
-        );
+        const updated = VsUser.update(msg.c, model.c);
 
-        return [{ t: "vs-user", c: child }, Eff.t("vs-user", eff)];
+        return {
+          model: { t: "vs-user", c: updated.model },
+        };
       }
 
-      return [model, Eff.None];
+      return { model };
     }
 
     case "vs-bot": {
       if (msg.t === "vs-bot") {
-        const updated = VsBotServer.update({
-          broadcast: (msg) => broadcast({ t: "vs-bot", c: msg }),
+        const updated = VsBot.update({
           msg: msg.c,
           model: model.c,
         });
 
-        return [
-          { t: "vs-bot", c: updated.model },
-          Eff.t("vs-bot", updated.eff),
-        ];
+        return {
+          model: { t: "vs-bot", c: updated.model },
+          eff: Eff.t("vs-bot", updated.eff),
+        };
       }
 
-      return [model, Eff.None];
+      return { model };
     }
 
     case "puzzle": {
       if (msg.t !== "puzzle") {
-        return [model, Eff.None];
+        return { model };
       }
 
       const updated = Puzzle.update({
         model: model.c,
         msg: msg.c,
-        broadcast: (m) => broadcast({ t: "puzzle", c: m }),
         ctx,
       });
 
-      return [
-        { t: "puzzle", c: updated.model },
-        Eff.t("puzzle", updated.eff ?? Eff.None),
-      ];
+      return {
+        model: { t: "puzzle", c: updated.model },
+        eff: Eff.t("puzzle", updated.eff),
+        cmd: SpaceServerCmd.tag("puzzle", updated.cmd),
+      };
     }
   }
 };
 
 export const updateFromClient = ({
-  sendToClient,
-  broadcast,
   msg,
   model,
   ctx,
 }: {
   ctx: SpaceReqCtx;
-  sendToClient: (msg: ToClient) => Eff;
-  broadcast: (msg: ToClient) => Eff;
   msg: ToServer;
   model: Model;
-}): [Model, Eff<Msg>] => {
+}): {
+  model: Model;
+  eff?: Eff<Msg>;
+  cmd?: SpaceServerCmd<ToClient>[];
+} => {
   switch (msg.t) {
     case "input-mode": {
       const { result, eff } = initMode({
         ctx,
-        broadcast,
         mode: msg.mode,
         userId: msg.userId,
       });
 
       if (result.t === "err") {
-        return [model, Eff.batch([eff, sendToClient({ ...msg, result })])];
+        return {
+          model,
+          eff,
+          cmd: [sendBack(ctx, { ...msg, result })],
+        };
       }
 
       const updated = updateFromGame({
@@ -131,80 +135,73 @@ export const updateFromClient = ({
         model: result.value,
       });
 
-      return [
-        updated.model,
-        Eff.batch([broadcast({ ...msg, result }), updated.eff, eff]),
-      ];
+      return {
+        model: updated.model,
+        eff: Eff.batch([updated.eff, eff]),
+        cmd: [{ t: "send-to-space", msg: { ...msg, result } }],
+      };
     }
 
     case "vs-bot": {
       if (model.t === "vs-bot") {
-        const updated = VsBotServer.updateFromClient({
+        const updated = VsBot.updateFromClient({
           ctx,
-          sendToClient: (msg) => sendToClient({ t: "vs-bot", c: msg }),
-          broadcast: (msg) => broadcast({ t: "vs-bot", c: msg }),
           msg: msg.c,
           model: model.c,
         });
 
-        return [
-          { t: "vs-bot", c: updated.model },
-          Eff.t("vs-bot", updated.eff),
-        ];
+        return {
+          model: { t: "vs-bot", c: updated.model },
+          eff: Eff.t("vs-bot", updated.eff),
+        };
       }
 
-      return [model, Eff.None];
+      return { model };
     }
 
     case "vs-user": {
       if (model.t === "vs-user") {
-        const [child, eff] = VsUser.updateFromClient(
-          {
-            sendToClient: (msg) => sendToClient({ t: "vs-user", c: msg }),
-            broadcast: (msg) => broadcast({ t: "vs-user", c: msg }),
-          },
-          msg.c,
-          model.c
-        );
+        const updated = VsUser.updateFromClient(msg.c, model.c);
 
-        return [{ t: "vs-user", c: child }, Eff.t("vs-user", eff)];
+        return {
+          model: { t: "vs-user", c: updated.model },
+          eff: Eff.t("vs-user", updated.eff),
+          cmd: SpaceServerCmd.tag("vs-user", updated.cmd),
+        };
       }
 
-      return [model, Eff.None];
+      return { model };
     }
 
     case "puzzle": {
       if (model.t !== "puzzle") {
-        return [model, Eff.None];
+        return { model };
       }
 
       const updated = Puzzle.updateFromClient({
         model: model.c,
         msg: msg.c,
-        sendToClient: (m) => sendToClient({ t: "puzzle", c: m }),
-        broadcast: (m) => broadcast({ t: "puzzle", c: m }),
         ctx,
       });
 
-      return [
-        { t: "puzzle", c: updated.model },
-        Eff.t("puzzle", updated.eff ?? Eff.None),
-      ];
+      return {
+        model: { t: "puzzle", c: updated.model },
+        eff: Eff.t("puzzle", updated.eff),
+      };
     }
   }
 };
 
 export const updateFromEvent = ({
-  broadcast,
   msg,
   model,
 }: {
-  broadcast: (msg: ToClient) => Eff;
   model: Model;
   msg: SpaceEvent;
 }): {
   model: Model;
   eff?: Eff<Msg>;
+  cmd?: SpaceServerCmd<ToClient>[];
 } => {
   switch (model.t) {
     case "none": {
@@ -212,26 +209,25 @@ export const updateFromEvent = ({
     }
 
     case "vs-bot": {
-      const updated = VsBotServer.updateFromEvent({
-        broadcast: (m) => broadcast({ t: "vs-bot", c: m }),
+      const updated = VsBot.updateFromEvent({
         msg,
         model: model.c,
       });
       return {
         model: { t: "vs-bot", c: updated.model },
-        eff: Eff.t("vs-bot", updated.eff ?? Eff.None),
+        eff: Eff.t("vs-bot", updated.eff),
       };
     }
 
     case "vs-user": {
       const updated = VsUser.updateFromEvent({
-        broadcast: (m) => broadcast({ t: "vs-user", c: m }),
         msg,
         model: model.c,
       });
       return {
         model: { t: "vs-user", c: updated.model },
-        eff: Eff.t("vs-user", updated.eff ?? Eff.None),
+        eff: Eff.t("vs-user", updated.eff),
+        cmd: SpaceServerCmd.tag("vs-user", updated.cmd),
       };
     }
 
@@ -243,7 +239,7 @@ export const updateFromEvent = ({
 
       return {
         model: { t: "puzzle", c: updated.model },
-        eff: Eff.t("puzzle", updated.eff ?? Eff.None),
+        eff: Eff.t("puzzle", updated.eff),
       };
     }
   }
@@ -272,7 +268,7 @@ export const updateFromGame = ({
 
       return {
         model: { t: "puzzle", c: updated.model },
-        eff: Eff.t("puzzle", updated.eff ?? Eff.None),
+        eff: Eff.t("puzzle", updated.eff),
       };
     }
 
@@ -289,14 +285,17 @@ export const updateFromGame = ({
 const initMode = ({
   mode,
   userId,
-  broadcast,
+
   ctx,
 }: {
   ctx: SpaceReqCtx;
-  broadcast: (m: ToClient) => Eff;
+
   mode: ServerModel["t"];
   userId: UserId;
-}): { result: Res["result"]; eff?: Eff<Msg> } => {
+}): {
+  result: Res["result"];
+  eff?: Eff<Msg>;
+} => {
   if (ctx.hostId !== userId) {
     return { result: Err("must_be_the_host") };
   }
@@ -311,7 +310,7 @@ const initMode = ({
     case "vs-bot": {
       const modelNew: ServerModel = {
         t: "vs-bot",
-        c: VsBotServer.init({ userId: userId }),
+        c: VsBot.init({ userId: userId }),
       };
 
       return { result: Ok(modelNew) };
@@ -327,10 +326,7 @@ const initMode = ({
     }
 
     case "puzzle": {
-      const initial = Puzzle.init({
-        ctx,
-        broadcast: (m) => broadcast({ t: "puzzle", c: m }),
-      });
+      const initial = Puzzle.init({ ctx });
 
       const modelNew: ServerModel = { t: "puzzle", c: initial.model };
 
@@ -358,7 +354,7 @@ export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
     }
 
     case "vs-bot": {
-      return Sub.tag("vs-bot", VsBotServer.subscriptions(intervalId, model.c));
+      return Sub.tag("vs-bot", VsBot.subscriptions(intervalId, model.c));
     }
 
     case "puzzle": {

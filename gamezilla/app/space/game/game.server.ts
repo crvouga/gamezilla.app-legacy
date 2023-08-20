@@ -3,7 +3,7 @@ import { ChessServer } from "gamezilla/app/space/game/chess";
 import { ConnectFourServer } from "gamezilla/app/space/game/connect-four";
 import { FlowServer } from "gamezilla/app/space/game/flow";
 import { TicTacToeServer } from "gamezilla/app/space/game/tic-tac-toe";
-import { GameServer } from "gamezilla/app/space/@SHARED";
+import { GameServer, SpaceServerCmd } from "gamezilla/app/space/@SHARED";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./game.core";
 
 type Server = GameServer<Model, Msg, ToClient, ToServer>;
@@ -59,7 +59,7 @@ export const init =
 export type Msg = ServerMsg;
 
 export const update: Server["update"] = (input) => {
-  const { sendToSpace, msg, model, ctx } = input;
+  const { msg, model, ctx } = input;
 
   if (model.t === "connect-four" && msg.t === "connect-four") {
     return ConnectFour.update({ ...input, msg, model });
@@ -67,7 +67,6 @@ export const update: Server["update"] = (input) => {
 
   if (model.t === "tic-tac-toe" && msg.t === "tic-tac-toe") {
     const updated = TicTacToeServer.update({
-      broadcast: (m) => sendToSpace({ t: "tic-tac-toe", c: m }),
       msg: msg.c,
       model: model.c,
     });
@@ -78,13 +77,16 @@ export const update: Server["update"] = (input) => {
   }
 
   if (model.t === "chess" && msg.t === "chess") {
-    const [child, eff] = ChessServer.update({
-      broadcast: (m) => sendToSpace({ t: "chess", c: m }),
+    const updated = ChessServer.update({
       ctx,
       msg: msg.c,
       model: model.c,
     });
-    return { model: { t: "chess", c: child }, eff: Eff.t("chess", eff) };
+    return {
+      model: { t: "chess", c: updated.model },
+      eff: Eff.t("chess", updated.eff),
+      cmd: SpaceServerCmd.tag("chess", updated.cmd),
+    };
   }
 
   if (model.t === "flow" && msg.t === "flow") {
@@ -95,7 +97,7 @@ export const update: Server["update"] = (input) => {
 };
 
 export const updateFromClient: Server["updateFromClient"] = (input) => {
-  const { sendToClient, sendToSpace, ctx, msg, model } = input;
+  const { ctx, msg, model } = input;
 
   if (model.t === "connect-four" && msg.t === "connect-four") {
     return ConnectFour.updateFromClient({ ...input, msg, model });
@@ -103,8 +105,6 @@ export const updateFromClient: Server["updateFromClient"] = (input) => {
 
   if (model.t === "tic-tac-toe" && msg.t === "tic-tac-toe") {
     const updated = TicTacToeServer.updateFromClient({
-      sendToClient: (msg) => sendToClient({ t: "tic-tac-toe", c: msg }),
-      broadcast: (msg) => sendToSpace({ t: "tic-tac-toe", c: msg }),
       msg: msg.c,
       model: model.c,
       ctx,
@@ -116,14 +116,16 @@ export const updateFromClient: Server["updateFromClient"] = (input) => {
   }
 
   if (model.t === "chess" && msg.t === "chess") {
-    const [child, eff] = ChessServer.updateFromClient({
-      sendToClient: (msg) => sendToClient({ t: "chess", c: msg }),
-      broadcast: (msg) => sendToSpace({ t: "chess", c: msg }),
+    const updated = ChessServer.updateFromClient({
       msg: msg.c,
       model: model.c,
       ctx,
     });
-    return { model: { t: "chess", c: child }, eff: Eff.t("chess", eff) };
+    return {
+      model: { t: "chess", c: updated.model },
+      eff: Eff.t("chess", updated.eff),
+      cmd: SpaceServerCmd.tag("chess", updated.cmd),
+    };
   }
 
   if (model.t === "flow" && msg.t === "flow") {
@@ -134,12 +136,11 @@ export const updateFromClient: Server["updateFromClient"] = (input) => {
 };
 
 export const updateFromEvent: Server["updateFromEvent"] = (input) => {
-  const { sendToSpace, msg, model } = input;
+  const { msg, model } = input;
 
   switch (model.t) {
     case "chess": {
       const updated = ChessServer.updateFromEvent({
-        broadcast: (m) => sendToSpace({ t: "chess", c: m }),
         msg,
         model: model.c,
       });
@@ -156,13 +157,12 @@ export const updateFromEvent: Server["updateFromEvent"] = (input) => {
 
     case "tic-tac-toe": {
       const updated = TicTacToeServer.updateFromEvent({
-        broadcast: (msg) => sendToSpace({ t: "tic-tac-toe", c: msg }),
         msg,
         model: model.c,
       });
       return {
         model: { t: "tic-tac-toe", c: updated.model },
-        eff: Eff.t("tic-tac-toe", updated.eff ?? Eff.None),
+        cmd: SpaceServerCmd.tag("tic-tac-toe", updated.cmd),
       };
     }
 

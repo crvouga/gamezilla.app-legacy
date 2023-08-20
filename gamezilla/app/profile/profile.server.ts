@@ -18,7 +18,7 @@ import {
   supabaseClient,
   definitions,
 } from "gamezilla/app/@SHARED/third-party-services";
-import { ServerCmd, ReqCtx, ServerEvent } from "gamezilla/app/@SHARED/server";
+import { ServerCmd, ReqCtx, ServerEvt } from "gamezilla/app/@SHARED/server";
 import {
   Req,
   ServerModel,
@@ -35,9 +35,7 @@ import {
 //
 //
 
-export type Model = ServerModel;
-
-export const init: Model = null;
+export const init: ServerModel = null;
 
 //
 //
@@ -47,21 +45,22 @@ export const init: Model = null;
 //
 //
 
-export type Msg = ServerMsg;
-
 export const update = ({
   msg,
   model,
 }: {
-  msg: Msg;
-  model: Model;
+  msg: ServerMsg;
+  model: ServerModel;
 }): {
-  model: Model;
-  eff?: Eff<Msg>;
+  model: ServerModel;
+  cmd: ServerCmd<ToClient>[];
 } => {
   switch (msg.t) {
-    case "none": {
-      return { model };
+    case "handled": {
+      return {
+        model,
+        cmd: [{ t: "send-to-client", clientIds: [msg.clientId], msg: msg.msg }],
+      };
     }
   }
 };
@@ -70,105 +69,94 @@ export const updateFromClient = ({
   msg,
   model,
   ctx,
-  sendBack,
 }: {
   msg: ToServer;
-  model: Model;
-  sendBack: (m: ToClient) => Eff<Msg>;
-  ctx: ReqCtx | null;
+  model: ServerModel;
+  ctx: ReqCtx;
 }): {
-  model: Model;
-  eff?: Eff<Msg>;
+  model: ServerModel;
+  eff?: Eff<ServerMsg>;
 } => {
-  if (!ctx) {
-    return { model };
-  }
-
   return {
     model,
-    eff: p(
-      handler({ msg, ctx }),
-      Eff.perform((result) => ({
-        ...msg,
-        result,
-      })),
-      Eff.chain((res) => sendBack(res))
-    ),
+    eff: async (dispatch) => {
+      const result = await handler({ msg, ctx });
+
+      dispatch({
+        t: "handled",
+        clientId: ctx.clientId,
+        msg: { ...msg, result },
+      });
+    },
   };
 };
 
 export const updateFromEvent = ({
-  sendToClient,
   msg,
   model,
 }: {
-  sendToClient: (clientId: ClientId[], m: ToClient) => Eff<Msg>;
-  msg: ServerEvent;
-  model: Model;
+  msg: ServerEvt;
+  model: ServerModel;
 }): {
-  model: Model;
-  eff?: Eff<Msg>;
+  model: ServerModel;
+  eff?: Eff<ServerMsg>;
 } => {
   if (msg.t === "client-authenticated") {
     return {
       model,
-      eff: p(
-        () => findElseCreate({ userId: msg.userId }),
-        Eff.perform(
-          (result): ToClient => ({
-            t: "current-user-profile",
-            result,
-          })
-        ),
-        Eff.chain((res) => sendToClient([msg.clientId], res))
-      ),
+      eff: async (dispatch) => {
+        const result = await findElseCreate({ userId: msg.userId });
+        dispatch({
+          t: "handled",
+          clientId: msg.clientId,
+          msg: { t: "current-user-profile", result },
+        });
+      },
     };
   }
 
   return { model };
 };
 
-const handler =
-  ({
-    msg,
-    ctx,
-  }: {
-    msg: Req;
-    ctx: { currentUserId: UserId };
-  }): Task<Result<string, Profile[]>> =>
-  async () => {
-    if (msg.t === "find-many") {
-      const found = await findMany({
-        userIds: msg.userIds,
-      })();
+const handler = async ({
+  msg,
+  ctx,
+}: {
+  msg: Req;
+  ctx: { currentUserId: UserId };
+}): Promise<Result<string, Profile[]>> => {
+  if (msg.t === "find-many") {
+    const found = await findMany({
+      userIds: msg.userIds,
+    })();
 
-      return found;
+    return found;
+  }
+
+  if (msg.t === "change-username") {
+    const parsed = Username.decode(msg.username);
+
+    if (parsed.t === "err") {
+      return parsed;
     }
 
-    if (msg.t === "change-username") {
-      const parsed = Username.decode(msg.username);
+    const updated = await supabaseClient
+      .from<definitions["user_profile"]>("user_profile")
+      .update({
+        username: parsed.value,
+      })
+      .eq("id", ctx.currentUserId)
+      .single();
 
-      if (parsed.t === "err") {
-        return parsed;
-      }
-
-      const updated = await supabaseClient
-        .from<definitions["user_profile"]>("user_profile")
-        .update({
-          username: parsed.value,
-        })
-        .eq("id", ctx.currentUserId)
-        .single();
-
-      if (updated.error) {
-        return Err(updated.error.message);
-      }
-
-      return Ok([]);
+    if (updated.error) {
+      return Err(updated.error.message);
     }
 
-    return Err("not-implemented");
-  };
+    return Ok([]);
+  }
+
+  return Err("not-implemented");
+};
 
 const findElseCreate = async ({ userId }: { userId: UserId }) => {
   const found = await supabaseClient

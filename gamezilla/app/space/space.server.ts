@@ -12,9 +12,14 @@ import {
   ReqCtx,
   ServerCmd,
   ServerCtx,
-  ServerEvent,
+  ServerEvt,
+  sendBack,
 } from "gamezilla/app/@SHARED/server";
-import { Space, SpaceServerCtx } from "gamezilla/app/space/@SHARED";
+import {
+  Space,
+  SpaceServerCmd,
+  SpaceServerCtx,
+} from "gamezilla/app/space/@SHARED";
 import * as GameServer from "./game/game.server";
 import { createSpaceStoreInMemory } from "./space-store";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./space.core";
@@ -42,16 +47,15 @@ export const init: ServerModel = SpaceStore.init(Posix.now());
 export const update = async ({
   model,
   msg,
-  sendToUser,
   ctx,
 }: {
   ctx: ServerCtx;
-  sendToUser: (userIds: UserId[], msg: ToClient) => Eff;
   msg: ServerMsg;
   model: ServerModel;
 }): Promise<{
   model: ServerModel;
   eff?: Eff<ServerMsg>;
+  cmd?: ServerCmd<ToClient>[];
 }> => {
   switch (msg.t) {
     case "game": {
@@ -73,14 +77,9 @@ export const update = async ({
       };
 
       const updated = GameServer.update({
-        sendToSpace: (m) =>
-          sendToSpace(sendToUser, space, {
-            t: "game",
-            c: m,
-          }),
-        msg: msg.c,
-        model: space.game,
         ctx: spaceCtx,
+        model: space.game,
+        msg: msg.c,
       });
 
       const spaceNew: Space<GameServer.Model> = {
@@ -96,31 +95,22 @@ export const update = async ({
           (m): ServerMsg => ({ t: "game", spaceId, c: m }),
           updated.eff
         ),
+        cmd: fromSpaceCmd(spaceNew, SpaceServerCmd.tag("game", updated.cmd)),
       };
     }
   }
-};
-
-const sendBack = (ctx: ReqCtx, msg: ToClient): ServerCmd<ToClient> => {
-  return {
-    t: "send-to-client",
-    clientIds: [ctx.clientId],
-    msg,
-  };
 };
 
 export const updateFromClient = async (input: {
   ctx: ReqCtx;
   msg: ToServer;
   model: ServerModel;
-  sendToClient: (msg: ToClient) => Eff;
-  sendToUser: (userIds: UserId[], msg: ToClient) => Eff;
 }): Promise<{
   model: ServerModel;
   cmd?: ServerCmd<ToClient>[];
   eff?: Eff<ServerMsg>;
 }> => {
-  const { msg, model, ctx, sendToClient, sendToUser } = input;
+  const { msg, model, ctx } = input;
 
   switch (msg.t) {
     case "list": {
@@ -356,9 +346,6 @@ export const updateFromClient = async (input: {
           ...ctx,
           hostId: currentSpace.hostId,
         },
-        sendToClient: (m) => sendToClient({ t: "game", c: m }),
-        sendToSpace: (m) =>
-          sendToSpace(sendToUser, currentSpace, { t: "game", c: m }),
       });
 
       const spaceNew: Space<GameServer.Model> = {
@@ -403,17 +390,19 @@ export const updateFromClient = async (input: {
       if (!space) {
         return {
           model,
-          eff: sendToClient({ ...msg, result: Err("Failed to find space") }),
+          cmd: [sendBack(ctx, { ...msg, result: Err("Failed to find space") })],
         };
       }
 
       if (space.hostId === ctx.currentUserId) {
         return {
           model,
-          eff: sendToClient({
-            ...msg,
-            result: Err("You must destroy the space to leave as host"),
-          }),
+          cmd: [
+            sendBack(ctx, {
+              ...msg,
+              result: Err("You must destroy the space to leave as host"),
+            }),
+          ],
         };
       }
 
@@ -432,9 +421,6 @@ export const updateFromClient = async (input: {
         ? { model: spaceNew.game, eff: Eff.None }
         : GameServer.updateFromEvent({
             ctx: { ...ctx, hostId: space.hostId },
-            sendToClient: (m) => sendToClient({ t: "game", c: m }),
-            sendToSpace: (m) =>
-              sendToSpace(sendToUser, space, { t: "game", c: m }),
             model: spaceNew.game,
             msg: { t: "user-left", userId: ctx.currentUserId },
           });
@@ -478,13 +464,7 @@ export const updateFromClient = async (input: {
       }
 
       const updated = GameServer.updateFromClient({
-        ...ctx,
-        ctx: {
-          ...ctx,
-          hostId: space.hostId,
-        },
-        sendToClient: (m) => sendToClient({ t: "game", c: m }),
-        sendToSpace: (m) => sendToSpace(sendToUser, space, { t: "game", c: m }),
+        ctx: { ...ctx, hostId: space.hostId },
         msg: msg.c,
         model: space.game,
       });
@@ -499,21 +479,38 @@ export const updateFromClient = async (input: {
       return {
         model: modelNew,
         eff: Eff.map_(
-          (c): ServerMsg => ({ t: "game", spaceId: space.spaceId, c }),
+          (c) => ({ t: "game", spaceId: space.spaceId, c }),
           updated.eff
         ),
+        cmd: fromSpaceCmd(spaceNew, SpaceServerCmd.tag("game", updated.cmd)),
       };
     }
   }
 };
 
+const fromSpaceCmd = (
+  space: Space<GameServer.Model>,
+  cmd?: SpaceServerCmd<ToClient>[]
+) => {
+  return cmd?.map((cmd): ServerCmd<ToClient> => {
+    switch (cmd.t) {
+      case "send-to-space": {
+        const userIds = Object.values(space.users);
+
+        return { t: "send-to-user", userIds, msg: cmd.msg };
+      }
+      default: {
+        return cmd;
+      }
+    }
+  });
+};
+
 export const updateFromEvent = (input: {
-  msg: ServerEvent;
+  msg: ServerEvt;
   model: ServerModel;
-  sendToClient: (clientId: ClientId[], msg: ToClient) => Eff;
 }): {
   model: ServerModel;
-
   eff?: Eff<ServerMsg>;
 } => {
   const { msg } = input;

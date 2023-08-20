@@ -1,5 +1,9 @@
 import { andThen, Eff, p, Result, Sub } from "gamezilla/@SHARED/core";
-import { SpaceEvent, SpaceReqCtx } from "gamezilla/app/space/@SHARED";
+import {
+  SpaceEvent,
+  SpaceReqCtx,
+  SpaceServerCmd,
+} from "gamezilla/app/space/@SHARED";
 import { findBestMove } from "../connect-four";
 import {
   Event,
@@ -38,16 +42,14 @@ export const init = initCore;
 export type Msg = ServerMsg;
 
 export const update = ({
-  broadcast,
   msg,
   model,
 }: {
-  broadcast: (m: ToClient) => Eff;
   msg: Msg;
   model: Model;
 }): {
   model: Model;
-  eff?: Eff<Msg>;
+  cmd?: SpaceServerCmd<ToClient>[];
 } => {
   if (msg.t === "bot-moved") {
     const updated = updateCoreEvent({
@@ -56,24 +58,23 @@ export const update = ({
     });
 
     if (updated.t === "err") {
-      return { model, eff: broadcast(msg) };
+      return { model, cmd: [{ t: "send-to-space", msg }] };
     }
 
-    return { model: updated.value, eff: broadcast(msg) };
+    return { model: updated.value, cmd: [{ t: "send-to-space", msg }] };
   }
 
   return { model };
 };
 
 export const updateFromClient = (input: {
-  broadcast: (msg: ToClient) => Eff;
-  sendToClient: (msg: ToClient) => Eff;
   ctx: SpaceReqCtx;
   msg: ToServer;
   model: Model;
 }): {
   model: Model;
   eff?: Eff<Msg>;
+  cmd?: SpaceServerCmd<ToClient>[];
 } => {
   return p(
     input,
@@ -114,13 +115,7 @@ const watchBotMove = ({
   };
 };
 
-const updateFromClientMain: typeof updateFromClient = ({
-  broadcast,
-  sendToClient,
-  ctx,
-  msg,
-  model,
-}) => {
+const updateFromClientMain: typeof updateFromClient = ({ ctx, msg, model }) => {
   const result = updateCore({ ctx, msg, model });
 
   const res: Res = {
@@ -129,22 +124,24 @@ const updateFromClientMain: typeof updateFromClient = ({
   };
 
   if (result.t === "err") {
-    return { model, eff: sendToClient(res) };
+    return {
+      model,
+      cmd: [{ t: "send-to-client", clientIds: [ctx.clientId], msg: res }],
+    };
   }
 
-  return { model: result.value, eff: broadcast(res) };
+  return { model: result.value, cmd: [{ t: "send-to-space", msg: res }] };
 };
 
 export const updateFromEvent = ({
   msg,
   model,
-  broadcast,
 }: {
-  broadcast: (m: ToClient) => Eff;
   msg: SpaceEvent;
   model: Model;
 }): {
   model: Model;
+  cmd?: SpaceServerCmd<ToClient>[];
   eff?: Eff<Msg>;
 } => {
   if (msg.t === "user-left") {
@@ -161,7 +158,10 @@ export const updateFromEvent = ({
       return { model };
     }
 
-    return { model: updated.value, eff: broadcast(event) };
+    return {
+      model: updated.value,
+      cmd: [{ t: "send-to-space", msg: event }],
+    };
   }
 
   return { model };
