@@ -13,7 +13,7 @@ import {
 } from "gamezilla/app/@SHARED/ui";
 import {
   SpaceClientCtx,
-  SpaceEvent,
+  SpaceEvt,
   SpaceViewCtx,
 } from "gamezilla/app/space/@SHARED";
 import {
@@ -157,7 +157,7 @@ export const syncWithServer = ({
 
 export const updateFromEvent = (input: {
   model: ClientModel;
-  msg: SpaceEvent;
+  msg: SpaceEvt;
 }): {
   model: ClientModel;
 } => {

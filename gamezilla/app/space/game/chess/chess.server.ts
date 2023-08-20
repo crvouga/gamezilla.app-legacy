@@ -2,7 +2,7 @@ import { Eff, Err, Ok, Sub } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
 import { sendBack } from "gamezilla/app/@SHARED/server";
 import {
-  SpaceEvent,
+  SpaceEvt,
   SpaceReqCtx,
   SpaceServerCmd,
   SpaceServerCtx,
@@ -197,7 +197,7 @@ export const updateFromEvent = ({
   model,
 }: {
   model: Model;
-  msg: SpaceEvent;
+  msg: SpaceEvt;
 }): {
   model: Model;
   eff?: Eff<Msg>;

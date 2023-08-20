@@ -1,7 +1,7 @@
 import { Eff, Sub } from "gamezilla/@SHARED/core";
 import { ServerCmd, ServerEvt } from "gamezilla/app/@SHARED/server";
 import {
-  SpaceEvent,
+  SpaceEvt,
   SpaceReqCtx,
   SpaceServerCmd,
   SpaceServerCtx,
@@ -57,7 +57,7 @@ export type GameServer<Model, Msg, ToClient, ToServer> = {
    */
   updateFromEvent: (input: {
     ctx: SpaceServerCtx;
-    msg: SpaceEvent;
+    msg: SpaceEvt;
     model: Model;
   }) => {
     model: Model;

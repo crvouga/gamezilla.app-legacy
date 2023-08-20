@@ -1,6 +1,6 @@
 import { Eff, Result, Sub } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
-import { SpaceEvent, SpaceReqCtx } from "gamezilla/app/space/@SHARED";
+import { SpaceEvt, SpaceReqCtx } from "gamezilla/app/space/@SHARED";
 import {
   Mode,
   ServerModel,
@@ -145,7 +145,7 @@ export const updateFromEvent = ({
   msg,
   model,
 }: {
-  msg: SpaceEvent;
+  msg: SpaceEvt;
   model: Model;
 }): {
   model: Model;

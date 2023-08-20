@@ -1,6 +1,6 @@
 import { andThen, Eff, p, Result, Sub } from "gamezilla/@SHARED/core";
 import {
-  SpaceEvent,
+  SpaceEvt,
   SpaceReqCtx,
   SpaceServerCmd,
 } from "gamezilla/app/space/@SHARED";
@@ -137,7 +137,7 @@ export const updateFromEvent = ({
   msg,
   model,
 }: {
-  msg: SpaceEvent;
+  msg: SpaceEvt;
   model: Model;
 }): {
   model: Model;

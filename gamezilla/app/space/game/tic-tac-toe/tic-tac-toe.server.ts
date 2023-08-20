@@ -1,7 +1,7 @@
 import { Eff, Result, Sub } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
 import {
-  SpaceEvent,
+  SpaceEvt,
   SpaceReqCtx,
   SpaceServerCmd,
 } from "gamezilla/app/space/@SHARED";
@@ -129,6 +129,7 @@ export const updateFromClient = ({
     return {
       model: { ...model, c: updated.model },
       eff: Eff.t("vs-bot", updated.eff),
+      cmd: SpaceServerCmd.tag("vs-bot", updated.cmd),
     };
   }
 
@@ -140,7 +141,7 @@ export const updateFromEvent = ({
   model,
 }: {
   model: Model;
-  msg: SpaceEvent;
+  msg: SpaceEvt;
 }): {
   model: Model;
   cmd?: SpaceServerCmd<ToClient>[];

@@ -1,7 +1,7 @@
 import { Eff, Sub, Time } from "gamezilla/@SHARED/core";
 import { sendBack } from "gamezilla/app/@SHARED/server";
 import {
-  SpaceEvent,
+  SpaceEvt,
   SpaceReqCtx,
   SpaceServerCmd,
   sendToSpace,
@@ -288,7 +288,7 @@ export const updateFromEvent = ({
   msg,
   model,
 }: {
-  msg: SpaceEvent;
+  msg: SpaceEvt;
   model: Model;
 }): {
   model: Model;

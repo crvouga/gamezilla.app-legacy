@@ -1,6 +1,11 @@
 import { ClientCtx, ViewCtx } from "gamezilla/app/@SHARED/client";
 import { Profile, SpaceId, UserId } from "gamezilla/app/@SHARED/data";
-import { ReqCtx, ServerCmd, ServerCtx } from "gamezilla/app/@SHARED/server";
+import {
+  ReqCtx,
+  ServerCmd,
+  ServerCtx,
+  ServerEvt,
+} from "gamezilla/app/@SHARED/server";
 
 /**
  *
@@ -22,7 +27,8 @@ export type Space<GameModel> = {
   };
 };
 
-export type SpaceEvent =
+export type SpaceEvt =
+  | ServerEvt
   | { t: "user-left"; userId: UserId }
   | { t: "user-joined"; userId: UserId };
 
