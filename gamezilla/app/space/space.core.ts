@@ -3,6 +3,7 @@ import { UserId, Profile } from "gamezilla/app/@SHARED/data";
 import { Space } from "gamezilla/app/space/@SHARED";
 import * as Game from "./game/game.core";
 import { SpaceId } from "../@SHARED/data/space-id";
+import { SpaceStoreInstance } from "./space-db";
 
 //
 //
@@ -12,7 +13,7 @@ import { SpaceId } from "../@SHARED/data/space-id";
 //
 //
 
-export type ServerModel = null;
+export type ServerModel = SpaceStoreInstance;
 
 export type ClientModel = {
   spaces: {

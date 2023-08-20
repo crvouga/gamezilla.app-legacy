@@ -42,6 +42,13 @@ export const createImmutableStore = <
   };
 
   return {
+    init(timestamp) {
+      return {
+        timestamp,
+        instanceStep: 0,
+        appendStep: 0,
+      };
+    },
     async assoc(instance, key, value) {
       return append(instance, [[key, value]]);
     },

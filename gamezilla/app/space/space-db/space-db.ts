@@ -38,36 +38,43 @@ export type SpaceDb = {
   sub: Sub<SpaceDbMsg>;
 };
 
-export type SpaceDbInstance = {
+export type SpaceStoreInstance = {
   spaces: ImmutableStoreInstance<SpaceId, Space<Game.ServerModel>>;
   indexUserId: ImmutableStoreInstance<UserId, SpaceId>;
 };
 
-export type ImmutableSpaceDb = {
+export type SpaceStore = {
+  init: (now: number) => SpaceStoreInstance;
   get: (
-    instance: SpaceDbInstance,
+    instance: SpaceStoreInstance,
     spaceId: SpaceId
   ) => Promise<Space<Game.ServerModel> | undefined>;
   getByUserId: (
-    instance: SpaceDbInstance,
+    instance: SpaceStoreInstance,
     userId: UserId
   ) => Promise<Space<Game.ServerModel> | undefined>;
-  list: (instance: SpaceDbInstance) => Promise<Space<Game.ServerModel>[]>;
+  list: (instance: SpaceStoreInstance) => Promise<Space<Game.ServerModel>[]>;
   set: (
-    instance: SpaceDbInstance,
+    instance: SpaceStoreInstance,
     space: Space<Game.ServerModel>
-  ) => Promise<SpaceDbInstance>;
+  ) => Promise<SpaceStoreInstance>;
   zap: (
-    instance: SpaceDbInstance,
+    instance: SpaceStoreInstance,
     spaceId: SpaceId
-  ) => Promise<SpaceDbInstance>;
+  ) => Promise<SpaceStoreInstance>;
 };
 
-export const createImmutableSpaceDb = (): ImmutableSpaceDb => {
+export const createSpaceStore = (): SpaceStore => {
   const Space = createImmutableStore<SpaceId, Space<Game.ServerModel>>();
   const SpaceIdByUserId = createImmutableStore<UserId, SpaceId>();
 
   return {
+    init(now) {
+      return {
+        spaces: Space.init(now),
+        indexUserId: SpaceIdByUserId.init(now),
+      };
+    },
     async get(instance, spaceId) {
       return Space.get(instance.spaces, spaceId);
     },

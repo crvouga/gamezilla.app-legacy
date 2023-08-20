@@ -1,4 +1,12 @@
+export type ImmutableStoreInstance<TKey, TValue> = {
+  timestamp: number;
+  instanceStep: number;
+  appendStep: number;
+};
+
 export type ImmutableStore<TKey extends string | number, TValue> = {
+  init: (timestamp: number) => ImmutableStoreInstance<TKey, TValue>;
+
   assoc: (
     instance: ImmutableStoreInstance<TKey, TValue>,
     key: TKey,
@@ -26,22 +34,4 @@ export type ImmutableStore<TKey extends string | number, TValue> = {
   ) => Promise<TValue | undefined>;
 
   values: (instance: ImmutableStoreInstance<TKey, TValue>) => Promise<TValue[]>;
-};
-
-export type ImmutableStoreInstance<TKey, TValue> = {
-  timestamp: number;
-  instanceStep: number;
-  appendStep: number;
-};
-
-export const init = <TKey extends string | number, TValue>(
-  timestamp: number
-): ImmutableStoreInstance<TKey, TValue> => {
-  return {
-    // used for out-of-process ordering
-    timestamp,
-    // used for in-process ordering
-    instanceStep: 0,
-    appendStep: 0,
-  };
 };

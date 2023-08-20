@@ -1,6 +1,5 @@
 import { expect, test } from "vitest";
 import { createImmutableStore } from "./immutable-store.in-memory";
-import { init } from "./immutable-store";
 
 const Db = createImmutableStore<string, string | null | undefined>();
 
@@ -8,7 +7,7 @@ test("working with one key", async () => {
   const now = Date.now();
   const key = "user-123";
 
-  const db1 = init(now);
+  const db1 = Db.init(now);
   const db2A = await Db.assoc(db1, key, "2A");
   const db2B = await Db.assoc(db1, key, "2B");
 
@@ -22,7 +21,7 @@ test("working with two keys", async () => {
   const key1 = "key-1";
   const key2 = "key-2";
 
-  const db0 = init(now);
+  const db0 = Db.init(now);
 
   const db1 = await Db.assoc(db0, key1, "value-1");
 
@@ -42,7 +41,7 @@ test("immutable behavior", async () => {
   const now = Date.now();
   const key = "user-123";
 
-  const db1 = init(now);
+  const db1 = Db.init(now);
   const db2 = await Db.assoc(db1, key, "value");
 
   // Ensure the original db is unchanged after 'set'
@@ -57,7 +56,7 @@ test("chaining updates", async () => {
   const key1 = "key-1";
   const key2 = "key-2";
 
-  const db0 = init(now);
+  const db0 = Db.init(now);
   const db1 = await Db.assoc(db0, key1, "value-1");
   const db2 = await Db.assoc(db1, key2, "value-2");
 
@@ -76,7 +75,7 @@ test("deleting keys", async () => {
   const now = Date.now();
   const key = "key-1";
 
-  const db1 = init(now);
+  const db1 = Db.init(now);
   const db2 = await Db.assoc(db1, key, "value");
   const db3 = await Db.dissoc(db2, key);
 
@@ -94,7 +93,7 @@ test("key not found", async () => {
   const now = Date.now();
   const key = "nonexistent-key";
 
-  const db = init(now);
+  const db = Db.init(now);
 
   // Ensure a key that doesn't exist returns null
   expect(await Db.get(db, key)).toEqual(undefined);
@@ -104,7 +103,7 @@ test("overwriting values", async () => {
   const now = Date.now();
   const key = "key-1";
 
-  const db1 = init(now);
+  const db1 = Db.init(now);
   const db2 = await Db.assoc(db1, key, "value1");
   const db3 = await Db.assoc(db2, key, "value2");
 
@@ -121,7 +120,7 @@ test("multiple keys independently updated", async () => {
   const key1 = "key-1";
   const key2 = "key-2";
 
-  const db1 = init(now);
+  const db1 = Db.init(now);
   const db2 = await Db.assoc(db1, key1, "value1");
   const db3 = await Db.assoc(db2, key2, "value2");
 
@@ -140,7 +139,7 @@ test("empty key handling", async () => {
   const now = Date.now();
   const key = "";
 
-  const db1 = init(now);
+  const db1 = Db.init(now);
   const db2 = await Db.assoc(db1, key, "value");
 
   expect(await Db.get(db2, key)).toEqual("value");
@@ -151,7 +150,7 @@ test("null and undefined values", async () => {
   const key1 = "null-key";
   const key2 = "undefined-key";
 
-  const db1 = init(now);
+  const db1 = Db.init(now);
   const db2 = await Db.assoc(db1, key1, null);
   const db3 = await Db.assoc(db2, key2, undefined);
 
@@ -162,7 +161,7 @@ test("null and undefined values", async () => {
 test("concurrent writes", async () => {
   const key = "concurrent-key";
   const now = Date.now();
-  const initialMap = init(now);
+  const initialMap = Db.init(now);
 
   // Simulate concurrent operations by creating multiple promises
   const concurrentWrites = Array.from({ length: 10 }, (_, index) => {
@@ -184,7 +183,7 @@ test("concurrent reads", async () => {
   const now = Date.now();
   const key = "concurrent-key";
 
-  const db1 = init(now);
+  const db1 = Db.init(now);
   const db2 = await Db.assoc(db1, key, "value");
 
   // Simulate concurrent reads by creating multiple promises
@@ -203,17 +202,17 @@ test("concurrent reads", async () => {
 
 test("concurrent", async () => {
   const KEY = "key";
-  const dbA1 = init(Date.now());
+  const dbA1 = Db.init(Date.now());
   const dbA2 = await Db.assoc(dbA1, KEY, "valueA");
 
   await new Promise((resolve) => setTimeout(resolve, 1));
 
-  const dbB1 = init(Date.now());
+  const dbB1 = Db.init(Date.now());
   const dbB2 = await Db.assoc(dbB1, KEY, "valueB");
 
   await new Promise((resolve) => setTimeout(resolve, 1));
 
-  const dbC1 = init(Date.now());
+  const dbC1 = Db.init(Date.now());
   const dbC2 = await Db.assoc(dbC1, KEY, "valueC");
 
   expect(await Db.get(dbA2, KEY)).toEqual("valueA");
