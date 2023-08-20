@@ -20,7 +20,6 @@ export type Space<GameModel> = {
   users: {
     [userId: UserId]: UserId;
   };
-  //
   game?: GameModel | null;
   profileCache?: {
     [userId: UserId]: Profile;
@@ -57,8 +56,8 @@ export type SpaceClientCtx = ClientCtx & {
 };
 
 export type SpaceViewCtx = ViewCtx & {
-  onQuit: () => void;
-  onViewProfile: (input: { userId: UserId }) => void;
+  quit: () => void;
+  viewProfile: (userId: UserId) => void;
   hostId: UserId;
   spaceId: SpaceId;
 };
@@ -91,9 +90,9 @@ const tagOne = <T extends string, A>(
 
 const tag = <T extends string, A>(
   tag: T,
-  commands?: SpaceServerCmd<A>[]
+  cmd?: SpaceServerCmd<A>[]
 ): SpaceServerCmd<{ t: T; c: A }>[] | undefined => {
-  return commands?.map((m) => tagOne(tag, m));
+  return cmd?.map((m) => tagOne(tag, m));
 };
 
 export const SpaceServerCmd = {

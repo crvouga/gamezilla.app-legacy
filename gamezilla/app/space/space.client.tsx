@@ -537,14 +537,30 @@ const ViewSpaceScreen = ({
     ...ctx,
     hostId: space.hostId,
     spaceId: space.spaceId,
-    onViewProfile: (input) =>
-      dispatch({ t: "clicked-user", userId: input.userId }),
-    onQuit: () => dispatch({ t: "input-game", gameName: undefined }),
+    viewProfile: (userId) => dispatch({ t: "clicked-user", userId: userId }),
+    quit: () => dispatch({ t: "input-game", gameName: undefined }),
   };
 
   return (
     <>
-      <ViewPage ctx={spaceCtx} dispatch={dispatch} model={model} />
+      <div className="flex h-full w-full flex-1 flex-col">
+        <ViewTopBar space={space} dispatch={dispatch} ctx={spaceCtx} />
+        <div className="w-full flex-1 overflow-hidden">
+          {space.game ? (
+            <GameClient.View
+              ctx={spaceCtx}
+              dispatch={(msg) => dispatch({ t: "game", c: msg })}
+              model={space.game}
+            />
+          ) : (
+            <ViewNotInGameScreen
+              space={space}
+              ctx={spaceCtx}
+              dispatch={dispatch}
+            />
+          )}
+        </div>
+      </div>
 
       <Drawer
         id="users"
@@ -609,39 +625,6 @@ const ViewSpaceScreen = ({
   );
 };
 
-const ViewPage = ({
-  ctx,
-  dispatch,
-  model,
-}: {
-  model: ClientModel;
-  ctx: SpaceViewCtx;
-  dispatch: (m: ClientMsg) => void;
-}) => {
-  const space = findSpaceByUserId(model, ctx.currentUserId);
-
-  if (!space) {
-    return <ViewSpaceJoinScreen model={model} dispatch={dispatch} ctx={ctx} />;
-  }
-
-  return (
-    <div className="flex h-full w-full flex-1 flex-col">
-      <ViewTopBar space={space} dispatch={dispatch} ctx={ctx} />
-      <div className="w-full flex-1 overflow-hidden">
-        {space.game ? (
-          <GameClient.View
-            ctx={ctx}
-            dispatch={(msg) => dispatch({ t: "game", c: msg })}
-            model={space.game}
-          />
-        ) : (
-          <ViewNotInGameScreen space={space} ctx={ctx} dispatch={dispatch} />
-        )}
-      </div>
-    </div>
-  );
-};
-
 const ViewTopBar = ({
   ctx,
   space,
@@ -651,6 +634,7 @@ const ViewTopBar = ({
   ctx: SpaceViewCtx;
   dispatch: (m: ClientMsg) => void;
 }) => {
+  const peopleCount = Object.keys(space.users).length;
   return (
     <nav className="flex h-14 w-full items-center border-b border-neutral-700 px-2 py-1">
       <div className="grid w-20 place-items-center">
@@ -662,9 +646,8 @@ const ViewTopBar = ({
       </div>
 
       <div className="grid w-20 place-items-center">
-        {/* label={peopleCount > 1 ? `People (${peopleCount})` : `People`} */}
         <ActionButton
-          label="People"
+          label={peopleCount > 1 ? `People (${peopleCount})` : `People`}
           icon={<IconUserGroup className="h-6 w-6" />}
           onClick={() => dispatch({ t: "modal-open", c: "users" })}
         />

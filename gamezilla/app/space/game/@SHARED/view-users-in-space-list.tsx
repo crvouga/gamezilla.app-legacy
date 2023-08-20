@@ -1,3 +1,4 @@
+import { Profile, UserId } from "gamezilla/app/@SHARED/data";
 import { IconCrown, MyAvatar } from "gamezilla/app/@SHARED/ui";
 import { Space, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
 
@@ -8,32 +9,17 @@ export const ViewUsersInSpaceList = <T,>({
   space: Space<T>;
   ctx: SpaceViewCtx;
 }) => {
-  const profiles = Object.values(space.users).flatMap((userId) => {
-    const profile = ctx.profiles[userId];
-
-    if (!profile) {
-      return [];
-    }
-
-    return [
-      {
-        userId: profile.userId,
-        username: profile.username,
-        avatarUrl: profile.avatarUrl,
-      },
-    ];
-  });
-
+  const profiles = toProfiles(ctx, space);
   return (
     <section className="flex w-full flex-col gap-2 py-4">
       <p className="text-center text-3xl font-bold">People</p>
 
       <div className="w-full">
-        {Array.from(profiles).map((profile) => {
+        {profiles.map((profile) => {
           return (
             <button
               key={profile.userId}
-              onClick={() => ctx.onViewProfile(profile)}
+              onClick={() => ctx.viewProfile(profile.userId)}
               className="flex w-full items-center gap-2 p-2 px-4 active:opacity-60">
               <MyAvatar src={profile.avatarUrl} />
               <p>{profile.username}</p>
@@ -45,6 +31,21 @@ export const ViewUsersInSpaceList = <T,>({
       </div>
     </section>
   );
+};
+
+const toProfiles = <T,>(ctx: SpaceViewCtx, space: Space<T>) => {
+  const profiles: Profile[] = [];
+  for (const userId in space.users) {
+    if (!UserId.is(userId)) {
+      continue;
+    }
+    const profile = ctx.profiles[userId];
+    if (!profile) {
+      continue;
+    }
+    profiles.push(profile);
+  }
+  return profiles;
 };
 
 export const ViewSpaceHostChip = () => {

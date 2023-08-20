@@ -11,12 +11,12 @@ import { UserId } from "gamezilla/app/@SHARED/data";
 
 export type ServerCmd<ToClient> =
   | {
-      t: "send-to-client";
-      clientIds: ClientId[];
+      t: "broadcast";
       msg: ToClient;
     }
   | {
-      t: "broadcast";
+      t: "send-to-client";
+      clientIds: ClientId[];
       msg: ToClient;
     }
   | {

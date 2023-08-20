@@ -63,7 +63,7 @@ export const MainMenuScreen = ({
 
       <div className="flex justify-center border-t border-neutral-700 p-4">
         <Button
-          onClick={ctx.onQuit}
+          onClick={ctx.quit}
           className="w-full"
           start={<IconArrowLeftOnRect className="h-6 w-6" />}
           text="Quit"
