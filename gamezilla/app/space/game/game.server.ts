@@ -73,6 +73,7 @@ export const update: Server["update"] = (input) => {
     return {
       model: { t: "tic-tac-toe", c: updated.model },
       eff: Eff.t("tic-tac-toe", updated.eff ?? Eff.None),
+      cmd: SpaceServerCmd.tag("tic-tac-toe", updated.cmd),
     };
   }
 
@@ -112,6 +113,7 @@ export const updateFromClient: Server["updateFromClient"] = (input) => {
     return {
       model: { t: "tic-tac-toe", c: updated.model },
       eff: Eff.t("tic-tac-toe", updated.eff ?? Eff.None),
+      cmd: SpaceServerCmd.tag("tic-tac-toe", updated.cmd),
     };
   }
 
