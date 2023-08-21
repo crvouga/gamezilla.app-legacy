@@ -1,7 +1,9 @@
 import { expect, test } from "vitest";
 import { createInMemoryStore } from "./immutable-store.in-memory";
 
-const Store = createInMemoryStore<string, string | null | undefined>();
+const Store = createInMemoryStore<string, string | null | undefined>({
+  maxEntryCount: 10,
+});
 
 test("working with one key", async () => {
   const now = Date.now();

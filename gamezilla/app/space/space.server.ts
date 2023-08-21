@@ -24,7 +24,9 @@ import { ServerModel, ServerMsg, ToClient, ToServer } from "./space.core";
 //
 //
 
-const SpaceStore = createSpaceStoreInMemory();
+export const SpaceStore = createSpaceStoreInMemory({
+  maxEntryCount: 5,
+});
 
 export const init: ServerModel = SpaceStore.init(Posix.now());
 

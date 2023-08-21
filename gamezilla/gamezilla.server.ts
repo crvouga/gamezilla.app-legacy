@@ -5,9 +5,10 @@ import {
 } from "gamezilla/@SHARED/core";
 import { createServer } from "http";
 import * as AppServer from "./app/app.server";
+import { SpaceStore } from "./app/space/space.server";
 
 const httpServer = createServer((_request, response) => {
-  response.end(JSON.stringify({ message: "hello from gamezilla.app server" }));
+  response.end(JSON.stringify({ SpaceStore: SpaceStore.toJSON() }));
 });
 
 const transport = createTransportServer({
@@ -23,7 +24,7 @@ const run = async () => {
     init: () => AppServer.init,
 
     update: (input) => {
-      return AppServer.update({
+      const updated = AppServer.update({
         model: input.model,
         msg: input.msg,
         broadcast: transport.broadcast,
@@ -33,6 +34,8 @@ const run = async () => {
           now: input.ctx.now,
         },
       });
+
+      return updated;
     },
 
     subscriptions: (input) => {

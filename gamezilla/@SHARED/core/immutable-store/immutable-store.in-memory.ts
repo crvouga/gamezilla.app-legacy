@@ -8,10 +8,13 @@ export type MapEntry<TKey extends string | number, TValue> = StoreInstance<
   value: TValue | undefined;
 };
 
-export const createInMemoryStore = <
-  TKey extends string | number,
-  TValue
->(): Store<TKey, TValue> => {
+export const createInMemoryStore = <TKey extends string | number, TValue>({
+  maxEntryCount,
+}: {
+  maxEntryCount: number;
+}): Store<TKey, TValue> & {
+  toJSON: () => { [key: string | number]: MapEntry<TKey, TValue>[] };
+} => {
   const map = new Map<TKey, MapEntry<TKey, TValue>[]>();
 
   let runningAppendStep = 1;
@@ -36,6 +39,9 @@ export const createInMemoryStore = <
 
       const keyEntries = map.get(entry.key) ?? [];
       keyEntries.push(entry);
+      if (keyEntries.length > maxEntryCount) {
+        keyEntries.shift();
+      }
       map.set(entry.key, keyEntries);
     }
 
@@ -43,6 +49,13 @@ export const createInMemoryStore = <
   };
 
   return {
+    toJSON() {
+      const json: { [key: string | number]: MapEntry<TKey, TValue>[] } = {};
+      for (const [key, entries] of map.entries()) {
+        json[key] = entries;
+      }
+      return json;
+    },
     init(now) {
       return {
         timestamp: now,

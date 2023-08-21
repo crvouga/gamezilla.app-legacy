@@ -9,6 +9,7 @@ export type SpaceStoreInstance = {
 };
 
 export type SpaceStore = {
+  toJSON: () => unknown;
   init: (now: Posix) => SpaceStoreInstance;
   get: (
     now: Posix,

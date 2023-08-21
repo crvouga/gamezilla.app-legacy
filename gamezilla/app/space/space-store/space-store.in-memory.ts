@@ -4,11 +4,25 @@ import { SpaceId, UserId } from "gamezilla/app/@SHARED/data";
 import { Space } from "../@SHARED";
 import * as Game from "../game/game.core";
 
-export const createSpaceStoreInMemory = (): SpaceStore => {
-  const Space = createInMemoryStore<SpaceId, Space<Game.ServerModel>>();
-  const IndexUserId = createInMemoryStore<UserId, SpaceId>();
+export const createSpaceStoreInMemory = ({
+  maxEntryCount,
+}: {
+  maxEntryCount: number;
+}): SpaceStore => {
+  const Space = createInMemoryStore<SpaceId, Space<Game.ServerModel>>({
+    maxEntryCount,
+  });
+  const IndexUserId = createInMemoryStore<UserId, SpaceId>({
+    maxEntryCount,
+  });
 
   return {
+    toJSON() {
+      return {
+        spaces: Space.toJSON(),
+        indexUserId: IndexUserId.toJSON(),
+      };
+    },
     init(now) {
       return {
         spaces: Space.init(now),
