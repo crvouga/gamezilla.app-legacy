@@ -16,8 +16,8 @@ export default defineConfig({
         })
       : null,
 
-    inferno(),
-    // preact(),
+    // inferno(),
+    preact(),
     tsconfigPaths(),
   ],
 });

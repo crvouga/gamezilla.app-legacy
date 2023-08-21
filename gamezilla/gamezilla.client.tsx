@@ -7,8 +7,8 @@ import {
 } from "gamezilla/@SHARED/core";
 import * as AppClient from "./app/app.client";
 import "./main.css";
-// import { render } from "preact";
-import { render } from "inferno";
+import { render } from "preact";
+// import { render } from "inferno";
 
 const env = {
   isDev: process.env.NODE_ENV === "development",
