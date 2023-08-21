@@ -13,7 +13,7 @@ export const createInMemoryStore = <TKey extends string | number, TValue>({
 }: {
   maxEntryCount: number;
 }): Store<TKey, TValue> & {
-  toJSON: () => { [key: string | number]: MapEntry<TKey, TValue>[] };
+  toJSON: () => unknown;
 } => {
   const map = new Map<TKey, MapEntry<TKey, TValue>[]>();
 
