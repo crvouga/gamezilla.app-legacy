@@ -15,6 +15,8 @@ import {
   Route,
   RouteAuth,
   AnonymousViewCtx,
+  ClientCmd,
+  ClientEvt,
 } from "gamezilla/app/@SHARED/client";
 import { UserId } from "gamezilla/app/@SHARED/data";
 import { supabaseClient } from "gamezilla/app/@SHARED/third-party-services";
@@ -75,6 +77,8 @@ export const update = ({
   model: ClientModel;
   eff?: Eff<ClientMsg>;
   msgs?: ClientAppMsg[];
+  cmd?: ClientCmd<ToServer>[];
+  evt?: ClientEvt[];
 } => {
   switch (msg.t) {
     case "login-with-google": {
@@ -185,6 +189,7 @@ export const update = ({
           ...model,
           currentUser: { t: "logged-in", userId: msg.userId },
         },
+        cmd: [{ t: "send-to-server", msg }],
         eff: sendToServer(msg),
       };
     }
@@ -192,13 +197,17 @@ export const update = ({
     case "client-unauthenticated": {
       return {
         model: { ...model, currentUser: { t: "logged-out" } },
+        cmd: [{ t: "send-to-server", msg }],
         eff: sendToServer(msg),
-        msgs: [msg],
       };
     }
 
     default: {
-      return { model, eff: sendToServer(msg) };
+      return {
+        model,
+        cmd: [{ t: "send-to-server", msg }],
+        eff: sendToServer(msg),
+      };
     }
   }
 };
@@ -217,9 +226,11 @@ export const updateFromServer = ({
   switch (msg.t) {
     case "acknowledged": {
       switch (msg.msg.t) {
+        case "client-unauthenticated":
         case "client-authenticated": {
           return { model, msgs: [msg.msg] };
         }
+
         default: {
           return { model };
         }
