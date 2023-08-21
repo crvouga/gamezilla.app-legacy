@@ -7,7 +7,6 @@ import {
 } from "../../connect-four";
 import { gameTheme } from "../shared";
 import { ViewColumnsProps } from "./shared";
-import { toInlineStyles } from "gamezilla/app/@SHARED/ui";
 
 export const doPaint = (columns: Columns) => {
   const canvas = document.getElementById("view-columns-canvas");
@@ -36,7 +35,7 @@ export const ViewColumnsCanvas = ({ onClick }: ViewColumnsProps) => {
   return (
     <canvas
       id="view-columns-canvas"
-      style={toInlineStyles({ width: "100%", cursor: "pointer" })}
+      className="w-full cursor-pointer"
       onClick={(event) => {
         const rect = event.currentTarget.getBoundingClientRect();
         const elementRelativeX = event.clientX - rect.left;

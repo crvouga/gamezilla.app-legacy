@@ -9,10 +9,10 @@ import {
   toMsgType,
 } from "gamezilla/@SHARED/core";
 import {
+  AnonymousViewCtx,
   ClientAppMsg,
   ClientCtx,
   Route,
-  AnonymousViewCtx,
   ViewCtx,
 } from "gamezilla/app/@SHARED/client";
 import {
@@ -559,9 +559,7 @@ const ViewMain = ({
 
 const LogoScreen = () => {
   return (
-    <div
-      style={{ "font-size": "6rem" }}
-      className="flex h-full w-full items-center justify-center">
+    <div className="flex h-full w-full items-center justify-center text-8xl">
       🦕
     </div>
   );

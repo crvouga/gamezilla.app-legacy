@@ -1,4 +1,5 @@
 import { Hex } from "gamezilla/@SHARED/core";
+import { cn } from "gamezilla/app/@SHARED/ui";
 import {
   Board,
   Bounds,
@@ -8,7 +9,6 @@ import {
   presetToStars,
 } from "./gomoku";
 import { Position } from "./gomoku-position";
-import { toInlineStyles } from "gamezilla/app/@SHARED/ui";
 
 const backgroundColor = "#C88655";
 const lineColor = Hex.darken(backgroundColor, 0.3);
@@ -97,10 +97,9 @@ export const ViewBoard = ({
 
   return (
     <svg
-      style={toInlineStyles({ overflow: "hidden" })}
       width="100%"
       viewBox={viewBox}
-      className={className}>
+      className={cn("overflow-hidden", className)}>
       <g stroke-width={0.05}>
         <rect
           x={boundsView.lower.x}

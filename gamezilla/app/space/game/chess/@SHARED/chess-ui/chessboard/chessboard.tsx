@@ -1,5 +1,5 @@
 import { Chess } from "chess.js";
-import { VDom, toInlineStyles } from "gamezilla/app/@SHARED/ui";
+import { VDom } from "gamezilla/app/@SHARED/ui";
 import {
   Color,
   Model,
@@ -403,16 +403,8 @@ export const Chessboard = (props: ChessboardProps) => {
         e.stopPropagation();
         e.stopImmediatePropagation();
       }}
-      class="overflow-visible"
+      className="touch-none select-none overflow-visible"
       preserveAspectRatio="xMinYMin meet"
-      style={toInlineStyles({
-        overflow: "visible",
-        WebkitUserSelect: "none",
-        MozUserSelect: "none",
-        msUserSelect: "none",
-        userSelect: "none",
-        touchAction: "none",
-      })}
       onMouseLeave={onDragCancel(props)}
       onTouchCancel={onDragCancel(props)}
       //
@@ -459,9 +451,7 @@ export const Chessboard = (props: ChessboardProps) => {
               id={square ? toLegalMoveDotId(square) : undefined}
               cx={checker.x * SCALE + SCALE / 2}
               cy={checker.y * SCALE + SCALE / 2}
-              style={{
-                "pointer-events": "none",
-              }}
+              className="pointer-events-none"
               r={(SCALE * 1) / 4}
               fill-opacity="0.5"
               fill="none"
@@ -480,9 +470,7 @@ export const Chessboard = (props: ChessboardProps) => {
               id={square ? toDropZoneId(square) : undefined}
               cx={checker.x * SCALE + SCALE / 2}
               cy={checker.y * SCALE + SCALE / 2}
-              style={{
-                "pointer-events": "none",
-              }}
+              className="pointer-events-none"
               r={SCALE * 1.25}
               fill-opacity="0.2"
               fill="none"

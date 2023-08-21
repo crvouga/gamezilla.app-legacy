@@ -14,7 +14,9 @@ export const Drawer = ({
   return (
     // @ts-ignore
     <bottom-drawer id={id}>
-      <div class="w-full border border-neutral-700 bg-black">{children}</div>
+      <div className="w-full border border-neutral-700 bg-black">
+        {children}
+      </div>
       {/* @ts-ignore */}
     </bottom-drawer>
   );

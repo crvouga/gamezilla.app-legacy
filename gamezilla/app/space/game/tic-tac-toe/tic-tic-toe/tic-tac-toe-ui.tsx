@@ -1,4 +1,3 @@
-import { toInlineStyles } from "gamezilla/app/@SHARED/ui";
 import {
   Empty,
   MAX_X,
@@ -32,10 +31,14 @@ export const ViewBoard = ({
   return (
     <svg
       width={"100%"}
-      viewBox={[0, 0, MAX_X * scale, MAX_Y * scale].join(" ")}
-      style={toInlineStyles({
-        backgroundColor: gameTheme.background,
-      })}>
+      viewBox={[0, 0, MAX_X * scale, MAX_Y * scale].join(" ")}>
+      <rect
+        x="0"
+        y="0"
+        width="100%"
+        height="100%"
+        fill={gameTheme.background}
+      />
       <g>
         {lines.map((line, index) => (
           <line

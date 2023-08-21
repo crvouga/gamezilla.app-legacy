@@ -10,6 +10,10 @@
   }
 }
 
+.transform-origin-center {
+  transform-origin: center;
+}
+
 /*
 
 Remove arrows from number input

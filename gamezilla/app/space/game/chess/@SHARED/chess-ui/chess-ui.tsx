@@ -1,5 +1,3 @@
-import { toInlineStyles } from "gamezilla/app/@SHARED/ui";
-
 export const toChecker = ({
   x,
   y,
@@ -17,9 +15,7 @@ const isOdd = (x: number) => !isEven(x);
 
 export const PawnIcon = ({ stroke }: { stroke?: string }) => {
   return (
-    <g
-      transform="translate(0 -2) scale(1)"
-      style={toInlineStyles({ transformOrigin: "center" })}>
+    <g transform="translate(0 -2) scale(1)" className="transform-origin-center">
       <path
         fill={"currentColor"}
         stroke={stroke ?? "#000"}
@@ -41,7 +37,7 @@ export const PlayerIcon = ({
     <svg viewBox="0 0 45 45" className={className}>
       <g
         transform="translate(0 -2) scale(1.25)"
-        style={toInlineStyles({ transformOrigin: "center" })}>
+        className="transform-origin-center">
         <path
           fill={color === "w" ? "#fff" : "#000"}
           stroke={color === "w" ? "#000" : "#fff"}

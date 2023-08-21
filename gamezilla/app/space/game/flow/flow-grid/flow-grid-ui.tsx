@@ -1,4 +1,4 @@
-import { cn, toInlineStyles } from "gamezilla/app/@SHARED/ui";
+import { cn } from "gamezilla/app/@SHARED/ui";
 import { Flow, GroupId, NodeId } from "../flow";
 import { Color, groupIdToColor } from "../flow-ui";
 import * as FlowGrid from "./flow-grid";
@@ -48,14 +48,6 @@ const yieldTerminals = function* (model: ViewModel): Generator<DraftTerminal> {
   }
 };
 
-const STATIC_STYLES = toInlineStyles({
-  WebkitUserSelect: "none",
-  MozUserSelect: "none",
-  msUserSelect: "none",
-  userSelect: "none",
-  touchAction: "none",
-});
-
 /**
  * Renders the Flow Grid UI
  */
@@ -86,12 +78,10 @@ export const View = ({
 }) => {
   return (
     <svg
-      className={cn("w-full", className)}
-      style={STATIC_STYLES}
+      className={cn("w-full touch-none select-none", className)}
       onContextMenu={(event) => {
         event.stopPropagation();
         event.preventDefault();
-        event.stopImmediatePropagation();
       }}
       viewBox={toViewBox(model)}
       onTouchMove={(event) => {
