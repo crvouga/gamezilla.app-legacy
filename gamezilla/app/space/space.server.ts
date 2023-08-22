@@ -500,28 +500,36 @@ const fromSpaceCmd = (
   });
 };
 
-export const updateFromEvent = (input: {
+export const updateFromEvent = async (input: {
+  ctx: ServerCtx;
   msg: ServerEvt;
   model: ServerModel;
-}): {
+}): Promise<{
   model: ServerModel;
   eff?: Eff<ServerMsg>;
-} => {
+  cmd?: ServerCmd<ToClient>[];
+}> => {
   const { msg } = input;
 
   switch (msg.t) {
+    // case "client-authenticated":
+    // case "client-connected": {
+    //   const listed = await SpaceStore.list(input.ctx.now, input.model);
+    //   return {
+    //     model: input.model,
+    //     cmd: [
+    //       {
+    //         t: "send-to-client",
+    //         clientIds: [msg.clientId],
+    //         msg: { t: "list", result: Ok(listed) },
+    //       },
+    //     ],
+    //   };
+    // }
     default: {
       return input;
     }
   }
-};
-
-const sendToSpace = (
-  sendToUser: (userIds: UserId[], msg: ToClient) => Eff,
-  space: Space<GameServer.Model>,
-  msg: ToClient
-): Eff => {
-  return sendToUser(Object.values(space.users), msg);
 };
 
 //

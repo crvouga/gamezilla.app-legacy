@@ -5,10 +5,12 @@ import {
 } from "gamezilla/@SHARED/core";
 import { createServer } from "http";
 import * as AppServer from "./app/app.server";
+import { ServerModel } from "./app/app.core";
 import { SpaceStore } from "./app/space/space.server";
 
+let model: ServerModel;
 const httpServer = createServer((_request, response) => {
-  response.end(JSON.stringify({ SpaceStore: SpaceStore.toJSON() }));
+  response.end(JSON.stringify({ model, SpaceStore: SpaceStore.toJSON() }));
 });
 
 const transport = createTransportServer({
@@ -49,7 +51,8 @@ const run = async () => {
     },
   });
 
-  program.subscribe((_model, _ctx, msg) => {
+  program.subscribe((modelNew, _ctx, msg) => {
+    model = modelNew;
     if (msg) {
       console.log(toMsgType(msg));
     }

@@ -68,27 +68,33 @@ export const update = async (input: {
   model: ServerModel;
   eff?: Eff<ServerMsg>;
 }> => {
-  const { model, broadcast, sendToClient } = input;
+  const { model, broadcast, sendToClient, ctx } = input;
 
   const updated = await updateMain(input);
 
   const evt = updated.evt ?? [];
 
-  const appUpdated = evt.reduce(
-    (acc, evt) =>
-      p(
-        acc,
-        andThen((model) => updateFromEvent({ ...input, model, msg: evt }))
-      ),
-    updated
-  );
+  let acc = updated;
 
-  const effList =
-    appUpdated.cmd?.map(cmdToEff(model, sendToClient, broadcast)) ?? [];
+  for (const e of evt) {
+    const updatedEvt = await updateFromEvent({
+      ...input,
+      ctx,
+      model: acc.model,
+      msg: e,
+    });
+    acc = {
+      model: updatedEvt.model,
+      eff: Eff.batch([acc.eff, updatedEvt.eff]),
+      cmd: [...(acc.cmd ?? []), ...(updatedEvt.cmd ?? [])],
+    };
+  }
+
+  const effList = acc.cmd?.map(cmdToEff(model, sendToClient, broadcast)) ?? [];
 
   return {
-    model: appUpdated.model,
-    eff: Eff.batch([...effList, appUpdated.eff]),
+    model: acc.model,
+    eff: Eff.batch([...effList, acc.eff]),
   };
 };
 
@@ -236,63 +242,68 @@ const updateWire = ({
   model: ServerModel;
   events?: ServerEvt[];
 } => {
-  if (msg.t === "client-connected") {
-    const sessionId = msg.sessionId;
-    const clientIds = model.sessions[sessionId]?.clientIds ?? [];
-    const sessionNew: Session = {
-      clientIds: [...clientIds, msg.clientId].slice(0, 5),
-      sessionId,
-    };
+  switch (msg.t) {
+    case "client-connected": {
+      const sessionId = msg.sessionId;
+      const clientIds = model.sessions[sessionId]?.clientIds ?? [];
+      const sessionNew: Session = {
+        clientIds: [...clientIds, msg.clientId].slice(0, 5),
+        sessionId,
+      };
 
-    return {
-      model: {
-        ...model,
-        sessions: {
-          ...model.sessions,
-          [sessionNew.sessionId]: sessionNew,
+      return {
+        model: {
+          ...model,
+          sessions: {
+            ...model.sessions,
+            [sessionNew.sessionId]: sessionNew,
+          },
         },
-      },
-      events: [
-        {
-          ...msg,
-          userId: model.auth.sessions[msg.sessionId]?.userId,
-          t: "client-connected",
-        },
-      ],
-    };
-  }
+        events: [
+          {
+            ...msg,
+            userId: model.auth.sessions[msg.sessionId]?.userId,
+            t: "client-connected",
+          },
+        ],
+      };
+    }
 
-  if (msg.t === "client-disconnected") {
-    const sessionId = msg.sessionId;
-    const clientIds = model.sessions[sessionId]?.clientIds ?? [];
-    const sessionNew: Session = {
-      clientIds: clientIds.filter((clientId) => clientId !== msg.clientId),
-      sessionId,
-    };
-    return {
-      model: {
-        ...model,
-        sessions: {
-          ...model.sessions,
-          [sessionId]: sessionNew,
+    case "client-disconnected": {
+      const sessionId = msg.sessionId;
+      const clientIds = model.sessions[sessionId]?.clientIds ?? [];
+      const sessionNew: Session = {
+        clientIds: clientIds.filter((clientId) => clientId !== msg.clientId),
+        sessionId,
+      };
+      return {
+        model: {
+          ...model,
+          sessions: {
+            ...model.sessions,
+            [sessionId]: sessionNew,
+          },
         },
-      },
-    };
+      };
+    }
   }
-  return { model };
 };
 
-const updateFromEvent = ({
+const updateFromEvent = async ({
+  ctx,
   msg,
   model,
 }: {
+  ctx: ServerCtx;
   msg: ServerEvt;
   model: ServerModel;
-}): {
+}): Promise<{
   model: ServerModel;
   eff?: Eff<ServerMsg>;
-} => {
-  const spaceUpdated = SpaceServer.updateFromEvent({
+  cmd?: ServerCmd<ToClient>[];
+}> => {
+  const spaceUpdated = await SpaceServer.updateFromEvent({
+    ctx,
     msg,
     model: model.space,
   });
@@ -312,6 +323,7 @@ const updateFromEvent = ({
       Eff.t("space", spaceUpdated.eff),
       Eff.t("profile", profileUpdated.eff),
     ]),
+    cmd: ServerCmd.tag("space", spaceUpdated.cmd),
   };
 };
 
