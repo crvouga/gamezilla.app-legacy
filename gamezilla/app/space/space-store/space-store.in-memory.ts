@@ -41,7 +41,9 @@ export const createSpaceStoreInMemory = ({
         return undefined;
       }
 
-      return Space.get(now, instance.spaces, spaceId);
+      const space = await Space.get(now, instance.spaces, spaceId);
+
+      return space;
     },
 
     async list(now, instance) {
