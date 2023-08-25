@@ -83,39 +83,18 @@ export const createInMemoryStore = <TKey extends string | number, TValue>({
       );
     },
 
-    async list(from, to, instance) {
-      const values: TValue[] = [];
-
+    async listLatest(from, to, instance) {
+      const latestValues: TValue[] = [];
       for (const key of map.keys()) {
-        for (const entry of map.get(key) ?? []) {
-          // SKIP entry is too old
-          if (entry.timestamp < from) {
-            continue;
-          }
+        const value = await this.latest(from, to, instance, key);
 
-          // SKIP entry is from the future
-          if (entry.timestamp > to) {
-            continue;
-          }
-
-          // SKIP entry is from the future
-          if (entry.instanceStep > instance.instanceStep) {
-            continue;
-          }
-
-          // SKIP entry is from the future
-          if (entry.appendStep > instance.appendStep) {
-            continue;
-          }
-
-          if (entry.value) {
-            values.push(entry.value);
-          }
+        if (!value) {
+          continue;
         }
-      }
 
-      // return runningEntry?.value;}
-      return values;
+        latestValues.push(value);
+      }
+      return latestValues;
     },
 
     async latest(from, to, instance, key) {

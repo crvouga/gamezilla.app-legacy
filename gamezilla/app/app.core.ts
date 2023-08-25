@@ -8,7 +8,7 @@ import * as Space from "./space";
 
 export type ServerModel = {
   sessions: {
-    [sessionId: SessionId]: Session;
+    [sessionId: SessionId]: WireSession;
   };
   space: Space.ServerModel;
   profile: Profile.ServerModel;
@@ -17,9 +17,9 @@ export type ServerModel = {
   auth: Auth.ServerModel;
 };
 
-export type Session = {
+export type WireSession = {
   sessionId: SessionId;
-  clientIds: ClientId[];
+  clientId?: ClientId;
 };
 
 export type ClientModel = {

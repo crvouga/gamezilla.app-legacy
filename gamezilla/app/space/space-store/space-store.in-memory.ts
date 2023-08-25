@@ -61,7 +61,7 @@ export const createSpaceStoreInMemory = ({
     },
 
     async list(now, instance) {
-      return Space.list(-Infinity, now, instance.spaces);
+      return Space.listLatest(-Infinity, now, instance.spaces);
     },
 
     async assoc(now, instance, space) {

@@ -26,7 +26,7 @@ import { createDbConnMySql } from "./app-server";
 import {
   ServerModel,
   ServerMsg,
-  Session,
+  WireSession,
   ToClient,
   ToServer,
 } from "./app.core";
@@ -138,7 +138,11 @@ const cmdToEff =
             continue;
           }
 
-          clientIds.push(...session.clientIds);
+          if (!session.clientId) {
+            continue;
+          }
+
+          clientIds.push(session.clientId);
         }
 
         return sendToClient(clientIds, cmd.msg);
@@ -245,9 +249,9 @@ const updateWire = ({
   switch (msg.t) {
     case "client-connected": {
       const sessionId = msg.sessionId;
-      const clientIds = model.sessions[sessionId]?.clientIds ?? [];
-      const sessionNew: Session = {
-        clientIds: [...clientIds, msg.clientId].slice(0, 5),
+      const clientId = model.sessions[sessionId]?.clientId ?? [];
+      const sessionNew: WireSession = {
+        clientId: msg.clientId,
         sessionId,
       };
 
@@ -270,18 +274,15 @@ const updateWire = ({
     }
 
     case "client-disconnected": {
-      const sessionId = msg.sessionId;
-      const clientIds = model.sessions[sessionId]?.clientIds ?? [];
-      const sessionNew: Session = {
-        clientIds: clientIds.filter((clientId) => clientId !== msg.clientId),
-        sessionId,
+      const sessionNew: WireSession = {
+        sessionId: msg.sessionId,
       };
       return {
         model: {
           ...model,
           sessions: {
             ...model.sessions,
-            [sessionId]: sessionNew,
+            [sessionNew.sessionId]: sessionNew,
           },
         },
       };

@@ -46,7 +46,7 @@ export type Store<TKey extends string | number, TValue> = {
    * Returns a list of all values in the store that exist between the given
    * timestamps.
    */
-  list: (
+  listLatest: (
     from: number,
     to: number,
     instance: StoreInstance<TKey, TValue>

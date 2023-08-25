@@ -241,28 +241,54 @@ test("add then remove then add", async () => {
   expect(await Store.latest(t0, t3, addedAgain, key)).toEqual("valueAgain");
 });
 
-test("listing spaces", async () => {
+test("listing spaces of different keys", async () => {
   const key = "key";
   const t0 = Date.now() + 10_0000;
   const initial = Store.init(t0);
   const t1 = t0 + 1000;
-  const added1 = await Store.assoc(t1, initial, key, "1");
+  const added1 = await Store.assoc(t1, initial, "k1", "1");
   const t2 = t1 + 1000;
-  const added2 = await Store.assoc(t2, added1, key, "2");
+  const added2 = await Store.assoc(t2, added1, "k2", "2");
   const t3 = t2 + 1000;
-  const added3 = await Store.assoc(t3, added2, key, "3");
+  const added3 = await Store.assoc(t3, added2, "k3", "3");
 
-  expect(await Store.list(t0, t1, initial)).toEqual([]);
+  expect(await Store.listLatest(t0, t1, initial)).toEqual([]);
   //
-  expect(await Store.list(t0, t1, added1)).toEqual(["1"]);
-  expect(await Store.list(t0, t2, added1)).toEqual(["1"]);
-  expect(await Store.list(t0, t3, added1)).toEqual(["1"]);
+  expect(await Store.listLatest(t0, t1, added1)).toEqual(["1"]);
+  expect(await Store.listLatest(t0, t2, added1)).toEqual(["1"]);
+  expect(await Store.listLatest(t0, t3, added1)).toEqual(["1"]);
   //
-  expect(await Store.list(t0, t1, added2)).toEqual(["1"]);
-  expect(await Store.list(t0, t2, added2)).toEqual(["1", "2"]);
-  expect(await Store.list(t0, t3, added2)).toEqual(["1", "2"]);
+  expect(await Store.listLatest(t0, t1, added2)).toEqual(["1"]);
+  expect(await Store.listLatest(t0, t2, added2)).toEqual(["1", "2"]);
+  expect(await Store.listLatest(t0, t3, added2)).toEqual(["1", "2"]);
   //
-  expect(await Store.list(t0, t1, added3)).toEqual(["1"]);
-  expect(await Store.list(t0, t2, added3)).toEqual(["1", "2"]);
-  expect(await Store.list(t0, t3, added3)).toEqual(["1", "2", "3"]);
+  expect(await Store.listLatest(t0, t1, added3)).toEqual(["1"]);
+  expect(await Store.listLatest(t0, t2, added3)).toEqual(["1", "2"]);
+  expect(await Store.listLatest(t0, t3, added3)).toEqual(["1", "2", "3"]);
+});
+
+test("listing spaces of same keys", async () => {
+  const key = "key";
+  const t0 = Date.now() + 10_001;
+  const initial = Store.init(t0);
+  const t1 = t0 + 1000;
+  const added1 = await Store.assoc(t1, initial, "k1", "1");
+  const t2 = t1 + 1000;
+  const added2 = await Store.assoc(t2, added1, "k1", "2");
+  const t3 = t2 + 1000;
+  const added3 = await Store.assoc(t3, added2, "k1", "3");
+
+  expect(await Store.listLatest(t0, t1, initial)).toEqual([]);
+  //
+  expect(await Store.listLatest(t0, t1, added1)).toEqual(["1"]);
+  expect(await Store.listLatest(t0, t2, added1)).toEqual(["1"]);
+  expect(await Store.listLatest(t0, t3, added1)).toEqual(["1"]);
+  //
+  expect(await Store.listLatest(t0, t1, added2)).toEqual(["1"]);
+  expect(await Store.listLatest(t0, t2, added2)).toEqual(["2"]);
+  expect(await Store.listLatest(t0, t3, added2)).toEqual(["2"]);
+  //
+  expect(await Store.listLatest(t0, t1, added3)).toEqual(["1"]);
+  expect(await Store.listLatest(t0, t2, added3)).toEqual(["2"]);
+  expect(await Store.listLatest(t0, t3, added3)).toEqual(["3"]);
 });
