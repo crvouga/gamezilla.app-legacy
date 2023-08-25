@@ -12,7 +12,7 @@ import {
  *
  *
  */
-export type Space<GameModel> = {
+export type Space<T> = Game<T> & {
   visibility?: "public" | "private";
   state?: "started" | "ended";
   spaceId: SpaceId;
@@ -20,11 +20,12 @@ export type Space<GameModel> = {
   users: {
     [userId: UserId]: UserId;
   };
-  game?: GameModel | null;
   profileCache?: {
     [userId: UserId]: Profile;
   };
 };
+
+export type Game<T> = { game?: T | null };
 
 export type SpaceEvt =
   | ServerEvt
