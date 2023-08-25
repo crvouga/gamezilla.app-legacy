@@ -12,20 +12,24 @@ import {
  *
  *
  */
-export type Space<T> = Game<T> & {
-  visibility?: "public" | "private";
-  state?: "started" | "ended";
-  spaceId: SpaceId;
-  hostId: UserId;
-  users: {
-    [userId: UserId]: UserId;
+export type Space<T> = ProfileCache &
+  Game<T> & {
+    visibility?: "public" | "private";
+    state?: "started" | "ended";
+    spaceId: SpaceId;
+    hostId: UserId;
+    users: {
+      [userId: UserId]: UserId;
+    };
   };
+
+export type Game<T> = { game?: T | null };
+
+export type ProfileCache = {
   profileCache?: {
     [userId: UserId]: Profile;
   };
 };
-
-export type Game<T> = { game?: T | null };
 
 export type SpaceEvt =
   | ServerEvt
