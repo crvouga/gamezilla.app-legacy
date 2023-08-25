@@ -346,7 +346,7 @@ export const updateFromEvent = (input: {
     }
 
     case "route-changed": {
-      if (msg.route.t === "space") {
+      if (msg.route.t === "space" && msg.route.c.t === "space-list") {
         return listSpaces(input);
       }
 
@@ -369,7 +369,7 @@ const listSpaces = (input: {
   const { model, sendToServer } = input;
 
   return {
-    model: { ...model, req: { ...model.req, list: Loading } },
+    model,
     eff: sendToServer({ t: "list" }),
   };
 };
