@@ -7,6 +7,10 @@ import * as Game from "../game/game.core";
 export const createSpaceStoreInMemory = ({
   maxEntryCount,
 }: {
+  /**
+   * The maximum number of entries to keep in the store.
+   * If this is infinite then the store will grow without bound but will be purely functional and immutable.
+   */
   maxEntryCount: number;
 }): SpaceStore => {
   const Space = createInMemoryStore<SpaceId, Space<Game.ServerModel>>({

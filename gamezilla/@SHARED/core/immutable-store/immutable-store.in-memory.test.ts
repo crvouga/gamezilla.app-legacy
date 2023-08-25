@@ -203,24 +203,62 @@ test("concurrent reads", async () => {
 });
 
 test("concurrent", async () => {
-  const KEY = "key";
+  const key = "key";
   const storeA1 = Store.init(Date.now());
   const t1 = Date.now();
-  const storeA2 = await Store.assoc(t1, storeA1, KEY, "valueA");
+  const storeA2 = await Store.assoc(t1, storeA1, key, "valueA");
 
   await new Promise((resolve) => setTimeout(resolve, 1));
 
   const storeB1 = Store.init(Date.now());
   const t2 = Date.now();
-  const storeB2 = await Store.assoc(t2, storeB1, KEY, "valueB");
+  const storeB2 = await Store.assoc(t2, storeB1, key, "valueB");
 
   await new Promise((resolve) => setTimeout(resolve, 1));
 
   const storeC1 = Store.init(Date.now());
   const t3 = Date.now();
-  const storeC2 = await Store.assoc(t3, storeC1, KEY, "valueC");
+  const storeC2 = await Store.assoc(t3, storeC1, key, "valueC");
 
-  expect(await Store.get(t1, storeA2, KEY)).toEqual("valueA");
-  expect(await Store.get(t2, storeB2, KEY)).toEqual("valueB");
-  expect(await Store.get(t3, storeC2, KEY)).toEqual("valueC");
+  expect(await Store.get(t1, storeA2, key)).toEqual("valueA");
+  expect(await Store.get(t2, storeB2, key)).toEqual("valueB");
+  expect(await Store.get(t3, storeC2, key)).toEqual("valueC");
+});
+
+test("add then remove", async () => {
+  const key = "key";
+  const initial = Store.init(Date.now());
+
+  const t1 = Date.now();
+  const added = await Store.assoc(t1, initial, key, "value");
+
+  await new Promise((resolve) => setTimeout(resolve, 1));
+
+  const t2 = Date.now();
+  const removed = await Store.dissoc(t2, added, key);
+
+  expect(await Store.get(t1, added, key)).toEqual("value");
+  expect(await Store.get(t2, removed, key)).toEqual(undefined);
+});
+
+test("add then remove then add", async () => {
+  const key = "key";
+  const initial = Store.init(Date.now());
+
+  const t1 = Date.now();
+  const added = await Store.assoc(t1, initial, key, "value");
+
+  await new Promise((resolve) => setTimeout(resolve, 1));
+
+  const t2 = Date.now();
+  const removed = await Store.dissoc(t2, added, key);
+
+  await new Promise((resolve) => setTimeout(resolve, 1));
+
+  const t3 = Date.now();
+  const addedAgain = await Store.assoc(t3, removed, key, "valueAgain");
+
+  expect(await Store.get(t1, added, key)).toEqual("value");
+  expect(await Store.get(t2, removed, key)).toEqual(undefined);
+  expect(await Store.get(t3, addedAgain, key)).toEqual("valueAgain");
 });
