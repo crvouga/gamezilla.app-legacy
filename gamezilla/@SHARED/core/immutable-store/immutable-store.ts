@@ -32,14 +32,23 @@ export type Store<TKey extends string | number, TValue> = {
     keys: TKey[]
   ) => Promise<StoreInstance<TKey, TValue>>;
 
-  get: (
-    now: number,
+  /**
+   * Returns the latest value for the given key, if it exists.
+   */
+  latest: (
+    from: number,
+    to: number,
     instance: StoreInstance<TKey, TValue>,
     key: TKey
   ) => Promise<TValue | undefined>;
 
-  values: (
-    now: number,
+  /**
+   * Returns a list of all values in the store that exist between the given
+   * timestamps.
+   */
+  list: (
+    from: number,
+    to: number,
     instance: StoreInstance<TKey, TValue>
   ) => Promise<TValue[]>;
 };

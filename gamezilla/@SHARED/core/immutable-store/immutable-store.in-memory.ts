@@ -83,23 +83,52 @@ export const createInMemoryStore = <TKey extends string | number, TValue>({
       );
     },
 
-    async values(now, instance) {
+    async list(from, to, instance) {
       const values: TValue[] = [];
+
       for (const key of map.keys()) {
-        const got = await this.get(now, instance, key);
-        if (got) {
-          values.push(got);
+        for (const entry of map.get(key) ?? []) {
+          // SKIP entry is too old
+          if (entry.timestamp < from) {
+            continue;
+          }
+
+          // SKIP entry is from the future
+          if (entry.timestamp > to) {
+            continue;
+          }
+
+          // SKIP entry is from the future
+          if (entry.instanceStep > instance.instanceStep) {
+            continue;
+          }
+
+          // SKIP entry is from the future
+          if (entry.appendStep > instance.appendStep) {
+            continue;
+          }
+
+          if (entry.value) {
+            values.push(entry.value);
+          }
         }
       }
+
+      // return runningEntry?.value;}
       return values;
     },
 
-    async get(now, instance, key) {
+    async latest(from, to, instance, key) {
       let runningEntry: MapEntry<TKey, TValue> | undefined = undefined;
 
       for (const entry of map.get(key) ?? []) {
+        // SKIP entry is too old
+        if (entry.timestamp < from) {
+          continue;
+        }
+
         // SKIP entry is from the future
-        if (entry.timestamp > now) {
+        if (entry.timestamp > to) {
           continue;
         }
 

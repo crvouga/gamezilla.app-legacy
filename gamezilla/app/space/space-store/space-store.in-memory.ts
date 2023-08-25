@@ -35,23 +35,33 @@ export const createSpaceStoreInMemory = ({
     },
 
     async get(now, instance, spaceId) {
-      return Space.get(now, instance.spaces, spaceId);
+      return Space.latest(-Infinity, now, instance.spaces, spaceId);
     },
 
     async getByUserId(now, instance, userId) {
-      const spaceId = await IndexUserId.get(now, instance.indexUserId, userId);
+      const spaceId = await IndexUserId.latest(
+        -Infinity,
+        now,
+        instance.indexUserId,
+        userId
+      );
 
       if (!spaceId) {
         return undefined;
       }
 
-      const space = await Space.get(now, instance.spaces, spaceId);
+      const space = await Space.latest(
+        -Infinity,
+        now,
+        instance.spaces,
+        spaceId
+      );
 
       return space;
     },
 
     async list(now, instance) {
-      return Space.values(now, instance.spaces);
+      return Space.list(-Infinity, now, instance.spaces);
     },
 
     async assoc(now, instance, space) {
@@ -75,7 +85,12 @@ export const createSpaceStoreInMemory = ({
     },
 
     async dissoc(now, instance, spaceId) {
-      const space = await Space.get(now, instance.spaces, spaceId);
+      const space = await Space.latest(
+        -Infinity,
+        now,
+        instance.spaces,
+        spaceId
+      );
       if (!space) {
         return instance;
       }
