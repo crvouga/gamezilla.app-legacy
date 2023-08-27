@@ -88,7 +88,7 @@ export const initQuery: PuzzleQuery = {
   ratingRange: [1000, 1500],
 };
 
-export const initShared: CoreModel = {
+export const initCore: CoreModel = {
   t: "loading",
 };
 

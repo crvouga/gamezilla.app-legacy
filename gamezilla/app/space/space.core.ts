@@ -19,6 +19,9 @@ export type ClientModel = {
   spaces: {
     [spaceId: SpaceId]: Space<Game.ClientModel>;
   };
+  indexUserId: {
+    [userId: UserId]: SpaceId;
+  };
   req: {
     [key in Req["t"]]?: RemoteResult<string, null>;
   };

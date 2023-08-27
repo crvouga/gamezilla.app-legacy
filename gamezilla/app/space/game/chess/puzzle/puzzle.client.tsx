@@ -1,5 +1,5 @@
 import { Eff, andThen, p } from "gamezilla/@SHARED/core";
-import { ClientAppMsg } from "gamezilla/app/@SHARED/client";
+import { ClientAppMsg, ClientCmd } from "gamezilla/app/@SHARED/client";
 import {
   IconArrowCircle,
   IconArrowLeftOnRect,
@@ -19,15 +19,15 @@ import {
   ViewBottomButtonBar,
 } from "gamezilla/app/space/game/@SHARED";
 import { Chess } from "../@SHARED/chess";
-import { ChessSounds } from "../@SHARED/chess/chess-sounds";
 import { Chessboard } from "../@SHARED/chess-ui/chessboard";
+import { ChessSounds } from "../@SHARED/chess/chess-sounds";
 import {
   ClientModel,
   ClientMsg,
   CoreModel,
   ToClient,
   ToServer,
-  initShared,
+  initCore,
   isNoMoreHints,
   toCurrentBoard,
   toNextEloRating,
@@ -41,20 +41,11 @@ import {
 //
 //
 
-export type Model = ClientModel;
-
-export const init = (_input: {
-  sendToServer: (m: ToServer) => Eff;
-}): {
-  model: Model;
-  eff?: Eff<Msg>;
+export const init = (): {
+  model: ClientModel;
 } => {
-  // const chessboard = ChessboardV2.init({
-  //   onDrop: () => false,
-  // });
   return {
-    model: initShared,
-    // eff: chessboard.eff,
+    model: initCore,
   };
 };
 
@@ -64,48 +55,56 @@ export const init = (_input: {
 //
 //
 
-type Msg = ClientMsg;
-
-export const update = ({
-  msg,
-  model,
-  sendToServer,
-  ctx,
-}: {
-  msg: Msg;
-  model: Model;
-  sendToServer: (m: ToServer) => Eff;
+export const update = (input: {
+  msg: ClientMsg;
+  model: ClientModel;
   ctx: SpaceClientCtx;
 }): {
-  model: Model;
-  eff?: Eff<Msg>;
+  model: ClientModel;
+  eff?: Eff<ClientMsg>;
+  cmd?: ClientCmd<ToServer>[];
 } => {
   return p(
-    { model },
-    andThen((model) => {
-      const updated = updateCore({ msg, model, ctx });
-
-      const modelNew = syncWithServer({
-        client: model,
-        server: updated.t === "err" ? model : updated.value,
-      });
-
-      return {
-        model: modelNew,
-        eff: sendToServer(msg),
-      };
-    }),
+    input,
+    andThen((model) => updateMain({ ...input, model })),
     andThen(watch)
   );
+};
+
+export const updateMain = ({
+  msg,
+  model,
+  ctx,
+}: {
+  msg: ClientMsg;
+  model: ClientModel;
+  ctx: SpaceClientCtx;
+}): {
+  model: ClientModel;
+  eff?: Eff<ClientMsg>;
+  cmd?: ClientCmd<ToServer>[];
+} => {
+  const updated = updateCore({ msg, model, ctx });
+
+  const modelNew = syncWithServer({
+    client: model,
+    server: updated.t === "err" ? model : updated.value,
+  });
+
+  return {
+    model: modelNew,
+    cmd: [{ t: "send-to-server", msg }],
+    eff: Eff.None,
+  };
 };
 
 export const updateFromServer = (input: {
   ctx: SpaceClientCtx;
   msg: ToClient;
-  model: Model;
+  model: ClientModel;
 }): {
-  model: Model;
-  eff?: Eff<Msg>;
+  model: ClientModel;
+  eff?: Eff<ClientMsg>;
   msgs?: ClientAppMsg[];
 } => {
   return p(updateFromServer_(input), andThen(watch));
@@ -117,9 +116,9 @@ export const updateFromServer_: typeof updateFromServer = ({
 }: {
   ctx: SpaceClientCtx;
   msg: ToClient;
-  model: Model;
+  model: ClientModel;
 }): {
-  model: Model;
+  model: ClientModel;
   msgs?: ClientAppMsg[];
 } => {
   if (msg.t === "clock-tick") {
@@ -163,16 +162,19 @@ export const syncWithServer = ({
   client,
   server,
 }: {
-  client: Model;
+  client: ClientModel;
   server: CoreModel;
-}): Model => {
+}): ClientModel => {
   return {
     ...client,
     ...server,
   };
 };
 
-function watch(model: Model): { model: Model; eff?: Eff<Msg> } {
+function watch(model: ClientModel): {
+  model: ClientModel;
+  eff?: Eff<ClientMsg>;
+} {
   return { model };
 }
 
@@ -182,7 +184,7 @@ function watch(model: Model): { model: Model; eff?: Eff<Msg> } {
 //
 //
 
-const toDurationMs = (ctx: SpaceViewCtx, model: Model) => {
+const toDurationMs = (ctx: SpaceViewCtx, model: ClientModel) => {
   if (model.t === "loading") {
     return null;
   }
@@ -199,8 +201,8 @@ export const View = ({
   dispatch,
 }: {
   ctx: SpaceViewCtx;
-  model: Model;
-  dispatch: (m: Msg) => void;
+  model: ClientModel;
+  dispatch: (m: ClientMsg) => void;
   onClose: () => void;
 }) => {
   const durationMs = toDurationMs(ctx, model);
@@ -372,9 +374,9 @@ export const toBottomBarActions = ({
   onClose,
   dispatch,
 }: {
-  model: Model;
+  model: ClientModel;
   onClose: () => void;
-  dispatch: (m: Msg) => void;
+  dispatch: (m: ClientMsg) => void;
 }): BottomBarButtonAction[] => {
   const exit: BottomBarButtonAction = {
     icon: <IconArrowLeftOnRect className="h-6 w-6" />,
@@ -432,7 +434,7 @@ export const toBottomBarActions = ({
   return [];
 };
 
-const ViewStatusBar = ({ model }: { model: Model }) => {
+const ViewStatusBar = ({ model }: { model: ClientModel }) => {
   if (model.t === "loading") {
     return (
       <div className="flex w-full items-center justify-center p-2">

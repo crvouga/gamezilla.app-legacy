@@ -18,6 +18,7 @@ import {
   ToServer,
   initCoreModel,
 } from "./vs-user.core";
+import { ClientCmd } from "gamezilla/app/@SHARED/client";
 
 //
 //
@@ -27,9 +28,7 @@ import {
 //
 //
 
-export type Model = ClientModel;
-
-export const init: Model = {
+export const init: ClientModel = {
   ...initCoreModel({ X: "none", O: "none" }),
   openedModal: "none",
 };
@@ -41,17 +40,13 @@ export const init: Model = {
 //
 //
 
-export type Msg = ClientMsg;
-
 export const update = (
-  {
-    sendToServer,
-  }: {
-    sendToServer: (msg: ToServer) => Eff;
-  },
-  msg: Msg,
-  model: Model
-): [Model, Eff<Msg>] => {
+  msg: ClientMsg,
+  model: ClientModel
+): {
+  model: ClientModel;
+  cmd?: ClientCmd<ToServer>[];
+} => {
   switch (msg[0]) {
     //
     //
@@ -60,11 +55,11 @@ export const update = (
     //
 
     case "close-modal": {
-      return [{ ...model, openedModal: "none" }, Eff.None];
+      return { model: { ...model, openedModal: "none" } };
     }
 
     case "OpenModal": {
-      return [{ ...model, openedModal: msg[1] }, Eff.None];
+      return { model: { ...model, openedModal: msg[1] } };
     }
 
     //
@@ -86,11 +81,11 @@ export const update = (
     case "stop-playing":
     case "start-game":
     case "NewGame": {
-      return [model, sendToServer(msg)];
+      return { model, cmd: [{ t: "send-to-server", msg }] };
     }
 
     default: {
-      return [model, Eff.None];
+      return { model };
     }
   }
 };
@@ -98,8 +93,8 @@ export const update = (
 export const updateFromServer = (
   _: { ctx: SpaceClientCtx },
   msg: ToClient,
-  model: Model
-): [Model] => {
+  model: ClientModel
+): [ClientModel] => {
   switch (msg[0]) {
     case "player-left": {
       const modelNew = syncWithServer(model, msg[1]);
@@ -170,8 +165,8 @@ export const View = ({
   onCloseGame,
 }: {
   ctx: SpaceViewCtx;
-  model: Model;
-  dispatch: (msg: Msg) => void;
+  model: ClientModel;
+  dispatch: (msg: ClientMsg) => void;
   onCloseGame: () => void;
 }) => {
   if (model.type === "setup") {
@@ -240,7 +235,7 @@ export const View = ({
   return <div></div>;
 };
 
-export const toGameText = ({ model }: { model: Model }): string => {
+export const toGameText = ({ model }: { model: ClientModel }): string => {
   switch (model.type) {
     case "setup": {
       return "Setting up";

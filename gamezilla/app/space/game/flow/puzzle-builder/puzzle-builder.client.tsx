@@ -5,7 +5,7 @@ import {
   IconPlay,
   cn,
 } from "gamezilla/app/@SHARED/ui";
-import { GameClient } from "gamezilla/app/space/@SHARED";
+import { SpaceGameClient } from "gamezilla/app/space/@SHARED";
 import { ViewBottomButtonBar } from "gamezilla/app/space/game/@SHARED";
 import { FlowGridPlayUI, FlowGridUI } from "../flow-grid";
 import { FlowViewCtx } from "../flow-shared";
@@ -20,7 +20,7 @@ import {
   initCore,
 } from "./puzzle-builder.core";
 
-type Client = GameClient<
+type Client = SpaceGameClient<
   ClientModel,
   ServerModel,
   ClientMsg,
@@ -52,7 +52,10 @@ const update: Client["update"] = (input) => {
   const modelNew =
     handled.t === "ok" ? { ...model, ...handled.value } : input.model;
 
-  return { model: modelNew, eff: input.sendToServer(msg) };
+  return {
+    model: modelNew,
+    cmd: [{ t: "send-to-server", msg }],
+  };
 };
 
 const updateFromServer: Client["updateFromServer"] = (

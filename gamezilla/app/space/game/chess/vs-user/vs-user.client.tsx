@@ -27,7 +27,6 @@ export type Model = ClientModel;
 export const init = ({
   userId,
 }: {
-  sendToServer: (msg: ToServer) => Eff;
   userId: UserId | "none";
 }): [ClientModel, Eff<Msg>] => {
   return [
@@ -52,10 +51,9 @@ export const init = ({
 export type Msg = ClientMsg;
 
 export const update = (
-  { sendToServer }: { sendToServer: (msg: ToServer) => Eff },
   msg: Msg,
   model: Model
-): [Model, Eff<Msg>] => {
+): { model: Model; eff?: Eff<Msg> } => {
   switch (msg[0]) {
     //
     //
@@ -64,27 +62,27 @@ export const update = (
     //
 
     case "audio-done": {
-      return [model, Eff.None];
+      return { model };
     }
 
     case "OpenedMenu": {
-      return [{ ...model, openedMenuId: Option.Some(msg[1]) }, Eff.None];
+      return { model: { ...model, openedMenuId: Option.Some(msg[1]) } };
     }
 
     case "ClosedMenu": {
-      return [{ ...model, openedMenuId: Option.None }, Eff.None];
+      return { model: { ...model, openedMenuId: Option.None } };
     }
 
     case "ClickedFlip": {
-      return [{ ...model, isFlipped: !model.isFlipped }, Eff.None];
+      return { model: { ...model, isFlipped: !model.isFlipped } };
     }
 
     case "OpenedModal": {
-      return [{ ...model, openedModal: msg[1] }, Eff.None];
+      return { model: { ...model, openedModal: msg[1] } };
     }
 
     case "ClosedModal": {
-      return [{ ...model, openedModal: "none" }, Eff.None];
+      return { model: { ...model, openedModal: "none" } };
     }
 
     //
@@ -95,50 +93,9 @@ export const update = (
     //
     //
 
-    case "InputPlayer": {
-      return [model, sendToServer(msg)];
+    default: {
+      return { model };
     }
-
-    case "start-game": {
-      return [model, sendToServer(msg)];
-    }
-
-    case "InputClock": {
-      return [model, sendToServer(msg)];
-    }
-
-    case "RequestToDraw": {
-      return [model, sendToServer(msg)];
-    }
-
-    case "resign": {
-      return [{ ...model, openedModal: "none" }, sendToServer(msg)];
-    }
-
-    case "RespondToDraw": {
-      return [model, sendToServer(msg)];
-    }
-
-    case "NewGame": {
-      return [model, sendToServer(msg)];
-    }
-
-    case "input-move": {
-      const result = inputMove(msg[1], model.coreModel);
-
-      if (result.t === "err") {
-        return [model, Eff.None];
-      }
-
-      return [{ ...model, coreModel: result.value }, sendToServer(msg)];
-    }
-
-    case "CancelDraw": {
-      return [model, sendToServer(msg)];
-    }
-
-    default:
-      return exhaustive(msg[0]);
   }
 };
 

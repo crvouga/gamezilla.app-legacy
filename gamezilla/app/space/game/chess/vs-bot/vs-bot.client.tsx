@@ -31,6 +31,7 @@ import {
   isBotTurn,
   updateCore,
 } from "./vs-bot.core";
+import { ClientAppMsg, ClientCmd } from "gamezilla/app/@SHARED/client";
 
 //
 //
@@ -39,8 +40,6 @@ import {
 //
 //
 //
-
-export type Model = ClientModel;
 
 export const init: ClientModel = {
   vsBotSetup: VsBotSetup.init,
@@ -58,23 +57,20 @@ export const init: ClientModel = {
 //
 //
 
-export type Msg = ClientMsg;
-
 export const update = ({
-  sendToServer,
   msg,
-  model: model_,
+  model: modelPrev,
   ctx,
 }: {
   ctx: SpaceClientCtx;
-  sendToServer: (msg: ToServer) => Eff;
-  msg: Msg;
-  model: Model;
+  msg: ClientMsg;
+  model: ClientModel;
 }): {
-  model: Model;
-  eff?: Eff<Msg>;
+  model: ClientModel;
+  eff?: Eff<ClientMsg>;
+  cmd?: ClientCmd<ToServer>[];
 } => {
-  const model: Model = { ...model_, openedMenuId: null };
+  const model: ClientModel = { ...modelPrev, openedMenuId: null };
 
   if (msg.t === "audio-done") {
     return { model };
@@ -108,25 +104,25 @@ export const update = ({
   });
 
   if (handled.t === "err") {
-    return { model, eff: sendToServer(msg) };
+    return { model, cmd: [{ t: "send-to-server", msg }] };
   }
 
   const coreModel = handled.value;
 
   const modelNew = syncWithServer({
-    clientModel: model,
-    serverModel: coreModel,
+    client: model,
+    server: coreModel,
   });
 
-  return { model: modelNew, eff: sendToServer(msg) };
+  return { model: modelNew, cmd: [{ t: "send-to-server", msg }] };
 };
 
 export const updateFromServer = (input: {
   msg: ToClient;
-  model: Model;
+  model: ClientModel;
 }): {
-  model: Model;
-  eff?: Eff<Msg>;
+  model: ClientModel;
+  eff?: Eff<ClientMsg>;
 } => {
   return p(
     updateFromServer_(input),
@@ -171,8 +167,8 @@ const updateFromServer_: typeof updateFromServer = ({ msg, model }) => {
 
   if (msg.t === "player-left") {
     const merged = syncWithServer({
-      clientModel: model,
-      serverModel: msg.model,
+      client: model,
+      server: msg.model,
     });
     return { model: merged };
   }
@@ -187,8 +183,8 @@ const updateFromServer_: typeof updateFromServer = ({ msg, model }) => {
     const coreModelNew = result.value;
 
     const modelNew = syncWithServer({
-      clientModel: model,
-      serverModel: coreModelNew,
+      client: model,
+      server: coreModelNew,
     });
 
     const soundEff = Eff.None;
@@ -203,14 +199,14 @@ const updateFromServer_: typeof updateFromServer = ({ msg, model }) => {
   }
 
   const modelNew = syncWithServer({
-    clientModel: model,
-    serverModel: result.value,
+    client: model,
+    server: result.value,
   });
 
   return { model: modelNew };
 };
 
-const playAudio = (src: string): Eff<Msg> => {
+const playAudio = (src: string): Eff<ClientMsg> => {
   return Audio.play(src, (result) => ({ t: "audio-done", result }));
 };
 
@@ -223,18 +219,18 @@ const playAudio = (src: string): Eff<Msg> => {
 //
 
 export const syncWithServer = ({
-  clientModel = init,
-  serverModel,
+  client = init,
+  server,
 }: {
-  clientModel?: ClientModel;
-  serverModel: ServerModel;
+  client?: ClientModel;
+  server: ServerModel;
 }): ClientModel => {
   return {
-    isFlipped: clientModel.isFlipped,
-    openedMenuId: clientModel.openedMenuId,
-    openedModal: clientModel.openedModal,
-    coreModel: serverModel,
-    vsBotSetup: clientModel.vsBotSetup,
+    isFlipped: client.isFlipped,
+    openedMenuId: client.openedMenuId,
+    openedModal: client.openedModal,
+    coreModel: server,
+    vsBotSetup: client.vsBotSetup,
   };
 };
 
@@ -246,7 +242,7 @@ export const syncWithServer = ({
 //
 //
 
-export const subscriptions = (_model: Model): Sub<Msg> => {
+export const subscriptions = (_model: ClientModel): Sub<ClientMsg> => {
   return Sub.None;
 };
 
@@ -265,8 +261,8 @@ export const View = ({
   onClose,
 }: {
   ctx: SpaceViewCtx;
-  model: Model;
-  dispatch: (msg: Msg) => void;
+  model: ClientModel;
+  dispatch: (msg: ClientMsg) => void;
   onClose: () => void;
 }) => {
   if (model.coreModel.type === "setup") {
@@ -368,7 +364,7 @@ export const View = ({
           model={model.coreModel.board}
           orientation={boardOrientation}
           onPieceDrop={(move) => {
-            const msg: Msg = {
+            const msg: ClientMsg = {
               t: "input-move",
               move: {
                 from: move.source,

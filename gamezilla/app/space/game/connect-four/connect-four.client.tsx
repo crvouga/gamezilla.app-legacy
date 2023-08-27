@@ -1,5 +1,5 @@
 import { Eff, Sub } from "gamezilla/@SHARED/core";
-import { GameClient } from "gamezilla/app/space/@SHARED";
+import { SpaceGameClient } from "gamezilla/app/space/@SHARED";
 import {
   MainMenuScreen,
   mainMenuButtons,
@@ -14,10 +14,11 @@ import {
 } from "./connect-four.core";
 import * as VsBot from "./vs-bot/vs-bot.client";
 import * as VsUser from "./vs-user/vs-user.client";
+import { ClientCmd } from "gamezilla/app/@SHARED/client";
 
 export const ConnectFour = () => {};
 
-type Client = GameClient<
+type Client = SpaceGameClient<
   ClientModel,
   ServerModel,
   ClientMsg,
@@ -47,14 +48,16 @@ export const init: Client["init"] = () => {
 //
 //
 
-export const update: Client["update"] = ({ sendToServer, ctx, msg, model }) => {
+export const update: Client["update"] = ({ ctx, msg, model }) => {
   if (msg.t === "input-mode") {
-    return { model, eff: sendToServer(msg) };
+    return {
+      model,
+      cmd: [{ t: "send-to-server", msg }],
+    };
   }
 
   if (msg.t === "vs-user" && model.t === "vs-user") {
     const updated = VsUser.update({
-      sendToServer: (c) => sendToServer({ t: "vs-user", c }),
       msg: msg.c,
       model: model.c,
       ctx,
@@ -62,19 +65,16 @@ export const update: Client["update"] = ({ sendToServer, ctx, msg, model }) => {
     return {
       model: { t: "vs-user", c: updated.model },
       eff: Eff.t("vs-user", updated.eff),
+      cmd: ClientCmd.tag("vs-user", updated.cmd),
     };
   }
 
   if (msg.t === "vs-bot" && model.t === "vs-bot") {
-    const updated = VsBot.update({
-      ctx,
-      sendToServer: (c) => sendToServer({ t: "vs-bot", c }),
-      msg: msg.c,
-      model: model.c,
-    });
+    const updated = VsBot.update({ ctx, msg: msg.c, model: model.c });
     return {
       model: { t: "vs-bot", c: updated.model },
       eff: Eff.t("vs-bot", updated.eff),
+      cmd: ClientCmd.tag("vs-bot", updated.cmd),
     };
   }
 
@@ -83,52 +83,46 @@ export const update: Client["update"] = ({ sendToServer, ctx, msg, model }) => {
 
 export const updateFromServer: Client["updateFromServer"] = (input) => {
   const { ctx, model, msg } = input;
-  switch (msg.t) {
-    case "input-mode": {
-      if (msg.result.t === "err") {
-        return { model };
-      }
 
-      const merged = syncWithServer({
-        ...input,
-        client: model,
-        server: msg.result.value,
-        ctx,
-      });
-
-      return merged;
-    }
-
-    case "vs-user": {
-      if (model.t === "vs-user") {
-        const updated = VsUser.updateFromServer({
-          msg: msg.c,
-          model: model.c,
-        });
-        return {
-          model: { t: "vs-user", c: updated.model },
-          eff: Eff.t("vs-user", updated.eff),
-        };
-      }
+  if (msg.t === "input-mode") {
+    if (msg.result.t === "err") {
       return { model };
     }
 
-    case "vs-bot": {
-      if (model.t === "vs-bot") {
-        const updated = VsBot.updateFromServer({
-          ctx,
-          msg: msg.c,
-          model: model.c,
-        });
-        return {
-          model: { t: "vs-bot", c: updated.model },
-          eff: Eff.t("vs-bot", updated.eff ?? Eff.None),
-        };
-      }
+    const merged = syncWithServer({
+      ...input,
+      client: model,
+      server: msg.result.value,
+      ctx,
+    });
 
-      return { model };
-    }
+    return merged;
   }
+
+  if (msg.t === "vs-user" && model.t === "vs-user") {
+    const updated = VsUser.updateFromServer({
+      msg: msg.c,
+      model: model.c,
+    });
+    return {
+      model: { t: "vs-user", c: updated.model },
+      eff: Eff.t("vs-user", updated.eff),
+    };
+  }
+
+  if (msg.t === "vs-bot" && model.t === "vs-bot") {
+    const updated = VsBot.updateFromServer({
+      ctx,
+      msg: msg.c,
+      model: model.c,
+    });
+    return {
+      model: { t: "vs-bot", c: updated.model },
+      eff: Eff.t("vs-bot", updated.eff ?? Eff.None),
+    };
+  }
+
+  return { model };
 };
 
 export const updateFromEvent: Client["updateFromEvent"] = (input) => {

@@ -34,12 +34,10 @@ export type Msg = ClientMsg;
 
 export const update = ({
   ctx,
-  sendToServer,
   msg,
   model,
 }: {
   ctx: ClientCtx;
-  sendToServer: (m: ToServer) => Eff;
   msg: Msg;
   model: Model;
 }): {
@@ -53,7 +51,7 @@ export const update = ({
       if (result.t === "err") {
         return {
           model,
-          eff: sendToServer(msg),
+          eff: Eff.None,
         };
       }
 
@@ -65,7 +63,7 @@ export const update = ({
 
       return {
         model: merged,
-        eff: sendToServer(msg),
+        eff: Eff.None,
       };
     }
   }

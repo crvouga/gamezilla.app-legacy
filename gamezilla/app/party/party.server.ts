@@ -1,13 +1,5 @@
 import { Eff, exhaustive } from "gamezilla/@SHARED/core";
-import { PartyId, UserId } from "gamezilla/app/@SHARED/data";
-import {
-  Res,
-  ServerModel,
-  ServerMsg,
-  ToClient,
-  ToServer,
-  handle,
-} from "./party.core";
+import { Res, ServerModel, ServerMsg, ToServer, handle } from "./party.core";
 
 //
 //
@@ -67,26 +59,4 @@ export const updateFromClient = (
       return exhaustive(msg[0]);
     }
   }
-};
-
-export const sendToParty = ({
-  model,
-  partyId,
-  msg,
-  sendToUser,
-}: {
-  model: Model;
-  partyId: PartyId;
-  msg: ToClient;
-  sendToUser: (userIds: UserId[], msg: ToClient) => Eff;
-}): Eff => {
-  const userIds: UserId[] = [];
-
-  for (const userId in model.users) {
-    if (UserId.is(userId) && model.users[userId]?.partyId === partyId) {
-      userIds.push(userId);
-    }
-  }
-
-  return sendToUser(userIds, msg);
 };

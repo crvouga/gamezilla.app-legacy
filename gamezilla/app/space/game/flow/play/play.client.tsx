@@ -1,5 +1,5 @@
 import { Sub, andThen, p } from "gamezilla/@SHARED/core";
-import { GameClient } from "gamezilla/app/space/@SHARED";
+import { SpaceGameClient } from "gamezilla/app/space/@SHARED";
 import { IconArrowLeftOnRect, Button } from "gamezilla/app/@SHARED/ui";
 import { FlowGridPlayUI } from "../flow-grid";
 import { FlowViewCtx } from "../flow-shared";
@@ -12,7 +12,7 @@ import {
   initShared,
 } from "./play.core";
 
-type Client = GameClient<
+type Client = SpaceGameClient<
   ClientModel,
   CoreModel,
   ClientMsg,

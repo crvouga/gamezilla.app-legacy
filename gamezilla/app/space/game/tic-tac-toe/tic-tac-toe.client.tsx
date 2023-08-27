@@ -1,6 +1,14 @@
 import { Eff, Sub } from "gamezilla/@SHARED/core";
-import { ClientAppMsg, ClientCtx } from "gamezilla/app/@SHARED/client";
-import { SpaceClientCtx, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
+import {
+  ClientAppMsg,
+  ClientCmd,
+  ClientCtx,
+} from "gamezilla/app/@SHARED/client";
+import {
+  SpaceGameClient,
+  SpaceClientCtx,
+  SpaceViewCtx,
+} from "gamezilla/app/space/@SHARED";
 import {
   MainMenuScreen,
   mainMenuButtons,
@@ -16,6 +24,14 @@ import { ViewCoverArt } from "./tic-tic-toe/tic-tac-toe-ui";
 import * as VsBot from "./vs-bot/vs-bot.client";
 import * as VsUser from "./vs-user/vs-user.client";
 
+type Client = SpaceGameClient<
+  ClientModel,
+  ServerModel,
+  ClientMsg,
+  ToClient,
+  ToServer
+>;
+
 //
 //
 //
@@ -24,10 +40,8 @@ import * as VsUser from "./vs-user/vs-user.client";
 //
 //
 
-export type Model = ClientModel;
-
-export const init: Model = {
-  t: "none",
+export const init: Client["init"] = () => {
+  return { model: { t: "none" } };
 };
 
 //
@@ -37,38 +51,16 @@ export const init: Model = {
 //
 //
 
-export type Msg = ClientMsg;
-
-export const update = ({
-  sendToServer,
-  msg,
-  model,
-  ctx,
-}: {
-  sendToServer: (msg: ToServer) => Eff;
-  ctx: SpaceClientCtx;
-  msg: Msg;
-  model: Model;
-}): {
-  model: Model;
-  eff?: Eff<Msg>;
-  msgs?: ClientAppMsg[];
-} => {
+export const update: Client["update"] = ({ msg, model, ctx }) => {
   if (msg.t === "input-mode") {
-    return { model, eff: sendToServer(msg) };
+    return { model, cmd: [{ t: "send-to-server", msg }] };
   }
 
   if (msg.t === "vs-user" && model.t === "vs-user") {
-    const updated = VsUser.update(
-      {
-        sendToServer: (c) => sendToServer({ t: "vs-user", c }),
-      },
-      msg.c,
-      model.c
-    );
+    const updated = VsUser.update(msg.c, model.c);
     return {
-      model: { t: "vs-user", c: updated[0] },
-      eff: Eff.t("vs-user", updated[1]),
+      model: { t: "vs-user", c: updated.model },
+      cmd: ClientCmd.tag("vs-user", updated.cmd),
     };
   }
 
@@ -77,32 +69,24 @@ export const update = ({
       ctx,
       msg: msg.c,
       model: model.c,
-      sendToServer: (c) => sendToServer({ t: "vs-bot", c }),
     });
 
     return {
       model: { t: "vs-bot", c: updated.model },
       eff: Eff.t("vs-bot", updated.eff),
       msgs: updated.msgs,
+      cmd: ClientCmd.tag("vs-bot", updated.cmd),
     };
   }
 
   return { model };
 };
 
-export const updateFromServer = ({
+export const updateFromServer: Client["updateFromServer"] = ({
   ctx,
   msg,
   model,
-}: {
-  ctx: SpaceClientCtx;
-  msg: ToClient;
-  model: Model;
-}): {
-  model: Model;
-  eff?: Eff<Msg>;
-  msgs?: ClientAppMsg[];
-} => {
+}) => {
   if (msg.t === "input-mode") {
     const { result } = msg;
 
@@ -110,13 +94,13 @@ export const updateFromServer = ({
       return { model };
     }
 
-    const modelNew = syncWithServer({
+    const synced = syncWithServer({
       ctx,
-      clientModel: model,
-      serverModel: result.value,
+      client: model,
+      server: result.value,
     });
 
-    return { model: modelNew };
+    return synced;
   }
 
   if (msg.t === "vs-user" && model.t === "vs-user") {
@@ -134,49 +118,50 @@ export const updateFromServer = ({
     });
     return {
       model: { t: "vs-bot", c: updated.model },
-      eff: Eff.t("vs-bot", updated.eff),
-      msgs: updated.msgs,
     };
   }
 
   return { model };
 };
 
-export const syncWithServer = ({
-  clientModel = init,
-  serverModel,
+export const syncWithServer: Client["syncWithServer"] = ({
+  client = { t: "none" },
+  server,
   ctx,
-}: {
-  ctx: ClientCtx;
-  clientModel?: ClientModel;
-  serverModel: ServerModel;
-}): ClientModel => {
-  if (serverModel.t === "none") {
-    return { t: "none" };
+}) => {
+  if (server.t === "none") {
+    return { model: { t: "none" } };
   }
 
-  if (serverModel.t === "vs-user") {
-    const clientModelChild =
-      clientModel.t === "vs-user" ? clientModel.c : VsUser.init;
+  if (server.t === "vs-user") {
+    const clientChild = client?.t === "vs-user" ? client.c : VsUser.init;
 
     return {
-      t: "vs-user",
-      c: VsUser.syncWithServer(clientModelChild, serverModel.c),
+      model: {
+        t: "vs-user",
+        c: VsUser.syncWithServer(clientChild, server.c),
+      },
     };
   }
 
-  if (serverModel.t === "vs-bot") {
+  if (server.t === "vs-bot") {
     return {
-      t: "vs-bot",
-      c: VsBot.syncWithServer({
-        now: ctx.now,
-        client: clientModel.t === "vs-bot" ? clientModel.c : undefined,
-        server: serverModel.c,
-      }),
+      model: {
+        t: "vs-bot",
+        c: VsBot.syncWithServer({
+          now: ctx.now,
+          client: client?.t === "vs-bot" ? client.c : undefined,
+          server: server.c,
+        }),
+      },
     };
   }
 
-  return clientModel;
+  return { model: { t: "none" } };
+};
+
+export const updateFromEvent: Client["updateFromEvent"] = (input) => {
+  return input;
 };
 
 //
@@ -187,7 +172,7 @@ export const syncWithServer = ({
 //
 //
 
-export const subscriptions = (_model: { model: Model }): Sub<Msg> => {
+export const subscriptions: Client["subscriptions"] = () => {
   return Sub.None;
 };
 
@@ -205,8 +190,8 @@ export const View = ({
   dispatch,
 }: {
   ctx: SpaceViewCtx;
-  model: Model;
-  dispatch: (msg: Msg) => void;
+  model: ClientModel;
+  dispatch: (msg: ClientMsg) => void;
 }) => {
   const onQuit = () => dispatch({ t: "input-mode", mode: "none" });
 

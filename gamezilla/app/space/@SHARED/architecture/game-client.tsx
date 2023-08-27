@@ -1,12 +1,12 @@
 import { Eff, Sub } from "gamezilla/@SHARED/core";
-import { ClientAppMsg } from "gamezilla/app/@SHARED/client";
+import { ClientAppMsg, ClientCmd } from "gamezilla/app/@SHARED/client";
 import { VDom } from "gamezilla/app/@SHARED/ui";
 import { SpaceClientCtx, SpaceEvt, SpaceViewCtx } from "../space";
 
 /**
  * Represents all the functions needed to run a game client side
  */
-export type GameClient<
+export type SpaceGameClient<
   Model,
   ServerModel,
   Msg,
@@ -15,32 +15,25 @@ export type GameClient<
   ViewCtx = SpaceViewCtx,
   Ctx = SpaceClientCtx
 > = {
-  init: (input: { ctx: Ctx; sendToServer: (m: ToServer) => Eff }) => {
+  init: (input: { ctx: Ctx }) => {
     model: Model;
     eff?: Eff<Msg>;
     msgs?: ClientAppMsg[];
+    cmd?: ClientCmd<ToServer>[];
   };
 
-  update: (input: {
-    ctx: Ctx;
-    sendToServer: (m: ToServer) => Eff;
-    msg: Msg;
-    model: Model;
-  }) => {
+  update: (input: { ctx: Ctx; msg: Msg; model: Model }) => {
     model: Model;
     eff?: Eff<Msg>;
     msgs?: ClientAppMsg[];
+    cmd?: ClientCmd<ToServer>[];
   };
 
-  updateFromServer: (input: {
-    ctx: Ctx;
-    sendToServer: (m: ToServer) => Eff;
-    msg: ToClient;
-    model: Model;
-  }) => {
+  updateFromServer: (input: { ctx: Ctx; msg: ToClient; model: Model }) => {
     model: Model;
     eff?: Eff<Msg>;
     msgs?: ClientAppMsg[];
+    cmd?: ClientCmd<ToServer>[];
   };
 
   /**
@@ -48,23 +41,23 @@ export type GameClient<
    */
   updateFromEvent: (input: {
     ctx: SpaceViewCtx;
-    sendToServer: (m: ToServer) => Eff;
     msg: SpaceEvt;
     model: Model;
   }) => {
     model: Model;
     eff?: Eff<Msg>;
+    cmd?: ClientCmd<ToServer>[];
     msgs?: ClientAppMsg[];
   };
 
   syncWithServer: (input: {
     ctx: Ctx;
-    sendToServer: (m: ToServer) => Eff;
     server: ServerModel;
     client?: Model | null;
   }) => {
     model: Model;
     eff?: Eff<Msg>;
+    cmd?: ClientCmd<ToServer>[];
     msgs?: ClientAppMsg[];
   };
 
@@ -94,8 +87,8 @@ const tag = <
   ViewCtx
 >(
   tag: T,
-  client: GameClient<Model, ServerModel, Msg, ToClient, ToServer, ViewCtx>
-): GameClient<
+  client: SpaceGameClient<Model, ServerModel, Msg, ToClient, ToServer, ViewCtx>
+): SpaceGameClient<
   { t: T; c: Model },
   { t: T; c: ServerModel },
   { t: T; c: Msg },
@@ -105,14 +98,12 @@ const tag = <
 > => {
   return {
     init: (input) => {
-      const initial = client.init({
-        ...input,
-        sendToServer: (m) => input.sendToServer({ t: tag, c: m }),
-      });
+      const initial = client.init(input);
       return {
         model: { t: tag, c: initial.model },
         eff: Eff.t(tag, initial.eff),
         msgs: initial.msgs,
+        cmd: ClientCmd.tag(tag, initial.cmd),
       };
     },
     update: (input) => {
@@ -120,12 +111,12 @@ const tag = <
         ...input,
         msg: input.msg.c,
         model: input.model.c,
-        sendToServer: (m) => input.sendToServer({ t: tag, c: m }),
       });
       return {
         model: { t: tag, c: updated.model },
         eff: Eff.t(tag, updated.eff),
         msgs: updated.msgs,
+        cmd: ClientCmd.tag(tag, updated.cmd),
       };
     },
     updateFromServer: (input) => {
@@ -133,12 +124,12 @@ const tag = <
         ...input,
         msg: input.msg.c,
         model: input.model.c,
-        sendToServer: (m) => input.sendToServer({ t: tag, c: m }),
       });
       return {
         model: { t: tag, c: updated.model },
         eff: Eff.t(tag, updated.eff),
         msgs: updated.msgs,
+        cmd: ClientCmd.tag(tag, updated.cmd),
       };
     },
     updateFromEvent: (input) => {
@@ -146,12 +137,12 @@ const tag = <
         ...input,
         msg: input.msg,
         model: input.model.c,
-        sendToServer: (m) => input.sendToServer({ t: tag, c: m }),
       });
       return {
         model: { t: tag, c: updated.model },
         eff: Eff.t(tag, updated.eff),
         msgs: updated.msgs,
+        cmd: ClientCmd.tag(tag, updated.cmd),
       };
     },
     syncWithServer: (input) => {
@@ -159,12 +150,12 @@ const tag = <
         ...input,
         server: input.server.c,
         client: input.client?.c,
-        sendToServer: (m) => input.sendToServer({ t: tag, c: m }),
       });
       return {
         model: { t: tag, c: updated.model },
         eff: Eff.t(tag, updated.eff),
         msgs: updated.msgs,
+        cmd: ClientCmd.tag(tag, updated.cmd),
       };
     },
     subscriptions: (input) => {
@@ -192,8 +183,14 @@ const tag = <
 const tagUpdate =
   <T extends string, Model, ServerModel, Msg, ToClient, ToServer>(
     tag: T,
-    update: GameClient<Model, ServerModel, Msg, ToClient, ToServer>["update"]
-  ): GameClient<
+    update: SpaceGameClient<
+      Model,
+      ServerModel,
+      Msg,
+      ToClient,
+      ToServer
+    >["update"]
+  ): SpaceGameClient<
     { t: T; c: Model },
     { t: T; c: ServerModel },
     { t: T; c: Msg },
@@ -205,20 +202,20 @@ const tagUpdate =
       ...input,
       msg: input.msg.c,
       model: input.model.c,
-      sendToServer: (m) => input.sendToServer({ t: tag, c: m }),
     });
     return {
       model: { t: tag, c: updated.model },
       eff: Eff.t(tag, updated.eff),
       msgs: updated.msgs,
+      cmd: ClientCmd.tag(tag, updated.cmd),
     };
   };
 
 const tagInit =
   <T extends string, Model, ServerModel, Msg, ToClient, ToServer>(
     tag: T,
-    init: GameClient<Model, ServerModel, Msg, ToClient, ToServer>["init"]
-  ): GameClient<
+    init: SpaceGameClient<Model, ServerModel, Msg, ToClient, ToServer>["init"]
+  ): SpaceGameClient<
     { t: T; c: Model },
     { t: T; c: ServerModel },
     { t: T; c: Msg },
@@ -226,18 +223,16 @@ const tagInit =
     { t: T; c: ToServer }
   >["init"] =>
   (input) => {
-    const initial = init({
-      ...input,
-      sendToServer: (m) => input.sendToServer({ t: tag, c: m }),
-    });
+    const initial = init(input);
     return {
       model: { t: tag, c: initial.model },
       eff: Eff.t(tag, initial.eff),
       msgs: initial.msgs,
+      cmd: ClientCmd.tag(tag, initial.cmd),
     };
   };
 
-export const GameClient = {
+export const SpaceGameClient = {
   tag,
   tagUpdate,
   tagInit,

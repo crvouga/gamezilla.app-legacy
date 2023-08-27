@@ -1,5 +1,5 @@
 import { Eff, Sub } from "gamezilla/@SHARED/core";
-import { ViewCtx } from "gamezilla/app/@SHARED/client";
+import { ClientCmd, ViewCtx } from "gamezilla/app/@SHARED/client";
 import {
   Button,
   ConformationDialog,
@@ -65,18 +65,17 @@ export const init = ({
 //
 
 export const update = ({
-  sendToServer,
   msg,
   model,
   ctx,
 }: {
   ctx: SpaceClientCtx;
-  sendToServer: (msg: ToServer) => Eff;
   msg: ClientMsg;
   model: ClientModel;
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
+  cmd?: ClientCmd<ToServer>[];
 } => {
   if (msg.t === "clicked-resign") {
     return { model: { ...model, openedModal: "ConfirmResign" } };
@@ -103,7 +102,7 @@ export const update = ({
 
   return {
     model: modelNew,
-    eff: sendToServer(msg),
+    cmd: [{ t: "send-to-server", msg }],
   };
 };
 

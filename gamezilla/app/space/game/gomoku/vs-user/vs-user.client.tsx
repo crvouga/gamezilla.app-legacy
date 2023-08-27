@@ -34,9 +34,7 @@ export type Msg = ClientMsg;
 export const update = ({
   msg,
   model,
-  sendToServer,
 }: {
-  sendToServer: (m: ToServer) => Eff;
   msg: Msg;
   model: Model;
 }): {
@@ -49,13 +47,13 @@ export const update = ({
 
   if (msg.t === "resign") {
     if (model.confirming === "resign") {
-      return { model, eff: sendToServer(msg) };
+      return { model, eff: Eff.None };
     }
 
     return { model: { ...model, confirming: "resign" } };
   }
 
-  return { model, eff: sendToServer(msg) };
+  return { model, eff: Eff.None };
 };
 
 export const updateFromServer = ({

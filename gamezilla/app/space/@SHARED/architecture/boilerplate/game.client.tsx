@@ -1,5 +1,5 @@
 import { Sub } from "gamezilla/@SHARED/core";
-import { GameClient } from "gamezilla/app/space/@SHARED";
+import { SpaceGameClient } from "gamezilla/app/space/@SHARED";
 import {
   ClientModel,
   ClientMsg,
@@ -9,7 +9,7 @@ import {
   initShared,
 } from "./game.core";
 
-export type Client = GameClient<
+export type Client = SpaceGameClient<
   ClientModel,
   CoreModel,
   ClientMsg,

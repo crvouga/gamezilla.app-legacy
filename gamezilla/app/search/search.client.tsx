@@ -1,5 +1,5 @@
 import { Browser, Eff, matchSort, p } from "gamezilla/@SHARED/core";
-import { ClientAppMsg } from "gamezilla/app/@SHARED/client";
+import { ClientAppMsg, ClientCmd } from "gamezilla/app/@SHARED/client";
 import { IconMagnifyingGlass, IconXMark, VDom } from "gamezilla/app/@SHARED/ui";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./search.core";
 
@@ -38,15 +38,14 @@ const searchInputId = "search-input";
 export const update = ({
   msg,
   model,
-  sendToServer,
 }: {
   msg: Msg;
   model: Model;
-  sendToServer: (m: ToServer) => Eff;
 }): {
   model: Model;
   eff?: Eff<Msg>;
   msgs?: ClientAppMsg[];
+  cmd?: ClientCmd<ToServer>[];
 } => {
   if (msg.t === "focus-done") {
     return { model };
@@ -83,7 +82,7 @@ export const update = ({
     };
   }
 
-  return { model, eff: sendToServer(msg) };
+  return { model, cmd: [{ t: "send-to-server", msg }] };
 };
 
 export const updateFromServer = ({

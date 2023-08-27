@@ -12,6 +12,7 @@ import {
 import {
   AnonymousViewCtx,
   ClientAppMsg,
+  ClientCmd,
   ClientCtx,
   Route,
   ViewCtx,
@@ -102,7 +103,7 @@ export const update = (input: {
   model: Model;
   eff?: Eff<Msg>;
 } => {
-  const updated = update_(input);
+  const updated = updateMain(input);
 
   const appMsgs = updated.msgs ?? [];
 
@@ -113,19 +114,49 @@ export const update = (input: {
     );
   }
 
-  const output = appMsgs.reduce(
-    (acc, msg) =>
-      p(
-        acc,
-        andThen((model) => updateFromEvent({ ...input, model, msg }))
-      ),
-    updated
-  );
+  let acc: {
+    model: Model;
+    eff?: Eff<Msg>;
+    cmd?: ClientCmd<ToServer>[];
+  } = updated;
 
-  return output;
+  for (const msg of appMsgs) {
+    const updatedEvent = updateFromEvent({ ...input, model: acc.model, msg });
+    acc = {
+      model: updatedEvent.model,
+      eff: Eff.batch([acc.eff ?? Eff.None, updatedEvent.eff ?? Eff.None]),
+      cmd: [...(acc.cmd ?? []), ...(updatedEvent.cmd ?? [])],
+    };
+  }
+
+  const effs = acc.cmd?.map(cmdToEff) ?? [];
+
+  return {
+    ...acc,
+    eff: Eff.batch([...effs, acc.eff ?? Eff.None]),
+  };
 };
 
-const update_ = ({
+const cmdToEff = (cmd: ClientCmd<ToServer>): Eff<Msg> => {
+  switch (cmd.t) {
+    case "enqueue-toast": {
+      return Eff.None;
+    }
+    case "route-back": {
+      return Eff.None;
+    }
+    case "route-push": {
+      return Eff.None;
+    }
+    case "send-to-server": {
+      return () => {
+        clientToServer.publish(cmd.msg);
+      };
+    }
+  }
+};
+
+const updateMain = ({
   msg,
   model,
   now,
@@ -137,6 +168,7 @@ const update_ = ({
   model: Model;
   eff?: Eff<Msg>;
   msgs?: ClientAppMsg[];
+  cmd?: ClientCmd<ToServer>[];
 } => {
   const ctx = toCtx({ model, now });
 
@@ -148,7 +180,6 @@ const update_ = ({
     case "auth": {
       const updated = AuthClient.update({
         route: model.routing,
-        sendToServer: (c) => sendToServer({ t: "auth", c }),
         msg: msg.c,
         model: model.auth,
       });
@@ -156,6 +187,7 @@ const update_ = ({
         model: { ...model, auth: updated.model },
         eff: Eff.t("auth", updated.eff),
         msgs: updated.msgs,
+        cmd: ClientCmd.tag("auth", updated.cmd),
       };
     }
 
@@ -191,7 +223,6 @@ const update_ = ({
       }
       const updated = SpaceClient.update({
         ctx: ctx,
-        sendToServer: (m) => sendToServer({ t: "space", c: m }),
         msg: msg.c,
         model: model.space,
       });
@@ -200,6 +231,7 @@ const update_ = ({
         model: { ...model, space: updated.model },
         eff: Eff.t("space", updated.eff ?? Eff.None),
         msgs: updated.msgs,
+        cmd: ClientCmd.tag("space", updated.cmd),
       };
     }
 
@@ -207,11 +239,10 @@ const update_ = ({
       const updated = ProfileClient.update({
         msg: msg.c,
         model: model.profile,
-        sendToServer: (m) => sendToServer({ t: "profile", c: m }),
       });
       return {
         model: { ...model, profile: updated.model },
-        eff: Eff.t("profile", updated.eff),
+        cmd: ClientCmd.tag("profile", updated.cmd),
       };
     }
 
@@ -227,11 +258,11 @@ const update_ = ({
       const updated = SearchClient.update({
         msg: msg.c,
         model: model.search,
-        sendToServer: (m) => sendToServer({ t: "search", c: m }),
       });
       return {
         model: { ...model, search: updated.model },
         eff: Eff.t("search", updated.eff),
+        cmd: ClientCmd.tag("search", updated.cmd),
       };
     }
   }
@@ -259,6 +290,7 @@ const updateFromServer = ({
 }): {
   model: Model;
   eff?: Eff<Msg>;
+  cmd?: ClientCmd<ToServer>[];
   msgs?: ClientAppMsg[];
 } => {
   const ctx = toCtx({ model, now });
@@ -270,7 +302,7 @@ const updateFromServer = ({
         model: model.auth,
       });
       return {
-        ...updated,
+        msgs: updated.msgs,
         model: { ...model, auth: updated.model },
         eff: Eff.t("auth", updated.eff),
       };
@@ -306,13 +338,13 @@ const updateFromServer = ({
       }
       const updated = SpaceClient.updateFromServer({
         ctx,
-        sendToServer: (msg) => sendToServer({ t: "space", c: msg }),
         msg: msg.c,
         model: model.space,
       });
 
       return {
-        ...updated,
+        msgs: updated.msgs,
+        cmd: ClientCmd.tag("space", updated.cmd),
         model: { ...model, space: updated.model },
         eff: Eff.t("space", updated.eff),
       };
@@ -347,26 +379,24 @@ const updateFromEvent = ({
 }): {
   model: Model;
   eff?: Eff<Msg>;
+  cmd?: ClientCmd<ToServer>[];
 } => {
   const ctx = toCtx({ model, now });
 
   const chat = ChatClient.updateFromEvent({
     model: model.chat,
     msg,
-    sendToServer: (c) => sendToServer({ t: "chat", c }),
   });
 
   const space = SpaceClient.updateFromEvent({
     model: model.space,
     msg,
-    sendToServer: (c) => sendToServer({ t: "space", c }),
   });
 
   const profile = ProfileClient.updateFromEvent({
     model: model.profile,
     msg,
     ctx,
-    sendToServer: (c) => sendToServer({ t: "profile", c }),
   });
 
   const auth = AuthClient.updateFromEvent({
@@ -387,7 +417,6 @@ const updateFromEvent = ({
   const wire = Wire.updateFromEvent({
     model: model.wire,
     msg,
-    sendToServer,
   });
 
   return {
@@ -405,11 +434,11 @@ const updateFromEvent = ({
       Eff.t("routing", routing.eff),
       Eff.t("chat", chat.eff),
       Eff.t("profile", profile.eff),
-      Eff.t("space", space.eff),
       Eff.t("wire", wire.eff),
       Eff.t("toast", toast.eff),
       Eff.t("auth", auth.eff),
     ]),
+    cmd: [...ClientCmd.tag("space", space.cmd)],
   };
 };
 
@@ -422,12 +451,6 @@ const updateFromEvent = ({
 //
 
 export const clientToServer = Sub.create<ToServer>();
-
-const sendToServer =
-  (m: ToServer): Eff =>
-  () => {
-    clientToServer.publish(m);
-  };
 
 export const wire = Sub.create<Wire.Msg>();
 export const serverToClient = Sub.create<ToClient>();

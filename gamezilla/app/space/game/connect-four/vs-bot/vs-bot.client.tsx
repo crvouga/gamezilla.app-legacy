@@ -1,5 +1,5 @@
 import { Eff, Posix, Sub, andThen, p } from "gamezilla/@SHARED/core";
-import { ClientCtx } from "gamezilla/app/@SHARED/client";
+import { ClientCmd, ClientCtx } from "gamezilla/app/@SHARED/client";
 import { SpaceClientCtx, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
 import {
   IconArrowLeftOnRect,
@@ -64,17 +64,17 @@ export const init = (...params: Parameters<typeof initCore>): ClientModel => {
 
 export const update = (input: {
   ctx: SpaceClientCtx;
-  sendToServer: (msg: ToServer) => Eff;
   msg: ClientMsg;
   model: ClientModel;
 }): {
   model: ClientModel;
+  cmd?: ClientCmd<ToServer>[];
   eff?: Eff<ClientMsg>;
 } => {
   return p(updateMain(input), andThen(watch));
 };
 
-const updateMain: typeof update = ({ ctx, sendToServer, msg, model }) => {
+const updateMain: typeof update = ({ msg, model }) => {
   if (msg.t === "columns-ui") {
     const updated = ColumnsUI.update(model.columnsUI, msg.c);
     return { model: { ...model, columnsUI: updated } };
@@ -90,7 +90,7 @@ const updateMain: typeof update = ({ ctx, sendToServer, msg, model }) => {
     return { model: { ...model, vsBotSetup: updated } };
   }
 
-  return { model, eff: sendToServer(msg) };
+  return { model, cmd: [{ t: "send-to-server", msg }] };
 };
 
 const watch = (model: ClientModel) => {

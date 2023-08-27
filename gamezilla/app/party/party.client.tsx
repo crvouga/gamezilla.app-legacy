@@ -14,11 +14,7 @@ import { ClientModel, ClientMsg, ToClient, ToServer } from "./party.core";
 
 export type Model = ClientModel;
 
-export const init = ({
-  sendToServer,
-}: {
-  sendToServer: (msg: ToServer) => Eff;
-}): [Model, Eff<Msg>] => {
+export const init = (): [Model, Eff<Msg>] => {
   return [
     {
       parties: {},
@@ -27,7 +23,7 @@ export const init = ({
       requests: {},
       volume: 0,
     },
-    sendToServer(["party-get", null]),
+    Eff.None,
   ];
 };
 
@@ -41,11 +37,7 @@ export const init = ({
 
 export type Msg = ClientMsg;
 
-export const update = (
-  { sendToServer }: { sendToServer: (msg: ToServer) => Eff },
-  msg: Msg,
-  model: Model
-): [Model, Eff<Msg>] => {
+export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
   switch (msg[0]) {
     case "clicked-banner": {
       return [model, Eff.None];
@@ -70,7 +62,7 @@ export const update = (
           ...model,
           requests: { ...model.requests, [msg[0]]: RemoteResult.Loading },
         },
-        sendToServer(msg),
+        Eff.None,
       ];
     }
 
@@ -149,20 +141,6 @@ const toLifecycleEff = ({
   }
 
   return Eff.None;
-};
-
-export type Action = ["party", ["Msg", Msg]];
-
-export const runAction = (
-  wire: { sendToServer: (msg: ToServer) => Eff },
-  action: Action,
-  model: Model
-): [Model, Eff<Msg>] => {
-  switch (action[1][0]) {
-    case "Msg": {
-      return update(wire, action[1][1], model);
-    }
-  }
 };
 
 //

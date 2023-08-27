@@ -72,7 +72,6 @@ export const updateFromEvent = <ToServer,>({
 }: {
   msg: ClientAppMsg;
   model: Model;
-  sendToServer: (m: ToServer) => Eff;
 }): {
   model: Model;
   eff?: Eff<Msg>;

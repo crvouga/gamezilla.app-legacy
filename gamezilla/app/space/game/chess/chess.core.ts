@@ -11,7 +11,7 @@ export type ClientModel = {
     | { t: "vs-bot"; c: VsBot.ClientModel }
     | { t: "puzzle"; c: Puzzle.ClientModel };
 
-  requests: {
+  requests?: {
     [req in Req["t"]]?: RemoteResult<Problem, null>;
   };
 };

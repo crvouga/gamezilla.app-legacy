@@ -41,14 +41,10 @@ export const init: Model = {
 
 export type Msg = ClientMsg;
 
-export const update = (
-  { sendToServer }: { sendToServer: (msg: ToServer) => Eff },
-  msg: Msg,
-  model: Model
-): [Model, Eff<Msg>] => {
+export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
   switch (msg[0]) {
     case "MouseMove": {
-      return [model, sendToServer(msg)];
+      return [model, Eff.None];
     }
 
     case "TouchStart": {
@@ -70,7 +66,7 @@ export const update = (
         return [model, Eff.None];
       }
 
-      return [model, sendToServer(["InputTranslate", { direction }])];
+      return [model, Eff.None];
     }
 
     case "TouchEnd": {
@@ -81,17 +77,17 @@ export const update = (
       const key = msg[1];
 
       if (key === "Space") {
-        return [model, sendToServer(["InputDrop"])];
+        return [model, Eff.None];
       }
 
       if (key === "ArrowUp" || key === "W" || key === "w") {
-        return [model, sendToServer(["InputRotate"])];
+        return [model, Eff.None];
       }
 
       const direction = keyToDirection(key);
 
       if (direction !== "none") {
-        return [model, sendToServer(["InputTranslate", { direction }])];
+        return [model, Eff.None];
       }
 
       return [model, Eff.None];
@@ -100,7 +96,7 @@ export const update = (
     case "ClickedBoard": {
       // const position = msg[1]
 
-      return [model, sendToServer(["InputDrop"])];
+      return [model, Eff.None];
     }
 
     default: {

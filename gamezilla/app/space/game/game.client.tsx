@@ -1,6 +1,5 @@
-import { Eff, Sub, exhaustive } from "gamezilla/@SHARED/core";
-import { ClientAppMsg } from "gamezilla/app/@SHARED/client";
-import { GameClient, SpaceClientCtx } from "gamezilla/app/space/@SHARED";
+import { Sub } from "gamezilla/@SHARED/core";
+import { SpaceClientCtx, SpaceGameClient } from "gamezilla/app/space/@SHARED";
 import { ChessClient } from "gamezilla/app/space/game/chess";
 import { ConnectFourClient } from "gamezilla/app/space/game/connect-four";
 import { FlowClient } from "gamezilla/app/space/game/flow";
@@ -13,7 +12,7 @@ import {
   ToServer,
 } from "./game.core";
 
-type Client = GameClient<
+type Client = SpaceGameClient<
   ClientModel,
   ServerModel,
   ClientMsg,
@@ -21,8 +20,10 @@ type Client = GameClient<
   ToServer
 >;
 
-const ConnectFour = GameClient.tag("connect-four", ConnectFourClient);
-const Flow = GameClient.tag("flow", FlowClient);
+const ConnectFour = SpaceGameClient.tag("connect-four", ConnectFourClient);
+const Flow = SpaceGameClient.tag("flow", FlowClient);
+const TicTacToe = SpaceGameClient.tag("tic-tac-toe", TicTacToeClient);
+const Chess = SpaceGameClient.tag("chess", ChessClient);
 
 //
 //
@@ -32,33 +33,28 @@ const Flow = GameClient.tag("flow", FlowClient);
 //
 //
 
-export type Model = ClientModel;
-
-export const init =
-  ({ gameName }: { gameName: Model["t"] }): Client["init"] =>
-  (input) => {
-    switch (gameName) {
-      case "tic-tac-toe": {
-        return { model: { t: "tic-tac-toe", c: TicTacToeClient.init } };
-      }
-
-      case "connect-four": {
-        return ConnectFour.init(input);
-      }
-
-      case "chess": {
-        const initial = ChessClient.init();
-        return {
-          model: { t: "chess", c: initial.model },
-          eff: Eff.t("chess", initial.eff),
-        };
-      }
-
-      case "flow": {
-        return Flow.init(input);
-      }
+export const init = (input: {
+  ctx: SpaceClientCtx;
+  gameName: ClientModel["t"];
+}): ReturnType<Client["init"]> => {
+  switch (input.gameName) {
+    case "tic-tac-toe": {
+      return TicTacToe.init(input);
     }
-  };
+
+    case "connect-four": {
+      return ConnectFour.init(input);
+    }
+
+    case "chess": {
+      return Chess.init(input);
+    }
+
+    case "flow": {
+      return Flow.init(input);
+    }
+  }
+};
 
 //
 //
@@ -71,88 +67,40 @@ export const init =
 export type Msg = ClientMsg;
 
 export const update: Client["update"] = (input) => {
-  const { ctx, sendToServer, msg, model } = input;
+  const { ctx, msg, model } = input;
 
   if (model.t === "connect-four" && msg.t === "connect-four") {
-    return ConnectFour.update({ ...input, msg: msg, model: model });
+    return ConnectFour.update({ ctx, msg, model });
   }
 
   if (model.t === "tic-tac-toe" && msg.t === "tic-tac-toe") {
-    const updated = TicTacToeClient.update({
-      sendToServer: (msg) => sendToServer({ t: "tic-tac-toe", c: msg }),
-      ctx,
-      msg: msg.c,
-      model: model.c,
-    });
-
-    return {
-      model: { t: "tic-tac-toe", c: updated.model },
-      eff: Eff.t("tic-tac-toe", updated.eff),
-      msgs: updated.msgs,
-    };
+    return TicTacToe.update({ ctx, msg, model });
   }
 
   if (model.t === "chess" && msg.t === "chess") {
-    const [child, eff] = ChessClient.update({
-      ctx,
-      sendToServer: (msg) => sendToServer({ t: "chess", c: msg }),
-      msg: msg.c,
-      model: model.c,
-    });
-    return {
-      model: { t: "chess", c: child },
-      eff: Eff.t("chess", eff),
-    };
+    return Chess.update({ ctx, msg, model });
   }
 
   if (model.t === "flow" && msg.t === "flow") {
-    const updated = FlowClient.update({
-      ctx,
-      sendToServer: (c) => sendToServer({ t: "flow", c }),
-      msg: msg.c,
-      model: model.c,
-    });
-    return {
-      model: { t: "flow", c: updated.model },
-      eff: Eff.t("flow", updated?.eff ?? Eff.None),
-    };
+    return Flow.update({ ctx, msg, model });
   }
 
   return { model };
 };
 
 export const updateFromServer: Client["updateFromServer"] = (input) => {
-  const { ctx, sendToServer, msg, model } = input;
+  const { ctx, msg, model } = input;
+
   if (msg.t === "connect-four" && model.t === "connect-four") {
     return ConnectFour.updateFromServer({ ...input, msg, model });
   }
 
   if (msg.t === "tic-tac-toe" && model.t === "tic-tac-toe") {
-    const updated = TicTacToeClient.updateFromServer({
-      ctx,
-      msg: msg.c,
-      model: model.c,
-    });
-    return {
-      model: { t: "tic-tac-toe", c: updated.model },
-      eff: Eff.t("tic-tac-toe", updated.eff),
-      msgs: updated.msgs,
-    };
+    return TicTacToe.updateFromServer({ ...input, msg, model });
   }
 
   if (msg.t === "chess" && model.t === "chess") {
-    const updated = ChessClient.updateFromServer({
-      ctx,
-      msg: msg.c,
-      model: model.c,
-      sendToServer: (msg) => sendToServer({ t: "chess", c: msg }),
-    });
-
-    return {
-      model: { t: "chess", c: updated.model },
-      eff: Eff.t("chess", updated.eff),
-      msgs: updated.msgs,
-    };
+    return Chess.updateFromServer({ ctx, msg, model });
   }
 
   if (msg.t === "flow" && model.t === "flow") {
@@ -160,6 +108,28 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
   }
 
   return { model };
+};
+
+export const updateFromEvent: Client["updateFromEvent"] = (input) => {
+  const { model } = input;
+
+  switch (model.t) {
+    case "chess": {
+      return Chess.updateFromEvent({ ...input, model });
+    }
+
+    case "connect-four": {
+      return ConnectFour.updateFromEvent({ ...input, model });
+    }
+
+    case "flow": {
+      return Flow.updateFromEvent({ ...input, model });
+    }
+
+    case "tic-tac-toe": {
+      return TicTacToe.updateFromEvent({ ...input, model });
+    }
+  }
 };
 
 //
@@ -171,18 +141,11 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
 //
 
 export const subscriptions: Client["subscriptions"] = (input): Sub<Msg> => {
-  const { model, ctx, intervalId } = input;
+  const { model } = input;
 
   switch (model.t) {
     case "chess": {
-      return Sub.tag(
-        "chess",
-        ChessClient.subscriptions({
-          now: ctx.now,
-          intervalId,
-          model: model.c,
-        })
-      );
+      return Chess.subscriptions({ ...input, model });
     }
 
     case "connect-four": {
@@ -190,13 +153,54 @@ export const subscriptions: Client["subscriptions"] = (input): Sub<Msg> => {
     }
 
     case "tic-tac-toe": {
-      return Sub.tag(
-        "tic-tac-toe",
-        TicTacToeClient.subscriptions({ model: model.c })
-      );
+      return TicTacToe.subscriptions({ ...input, model });
     }
     case "flow": {
       return Flow.subscriptions({ ...input, model });
+    }
+  }
+};
+
+//
+//
+//
+//
+//
+//
+
+export const syncWithServer: Client["syncWithServer"] = (input) => {
+  const { client, server } = input;
+  switch (server.t) {
+    case "chess": {
+      return Chess.syncWithServer({
+        ...input,
+        client: client?.t === "chess" ? client : undefined,
+        server: server,
+      });
+    }
+
+    case "connect-four": {
+      return ConnectFour.syncWithServer({
+        ...input,
+        server,
+        client: client?.t === "connect-four" ? client : undefined,
+      });
+    }
+
+    case "tic-tac-toe": {
+      return TicTacToe.syncWithServer({
+        ...input,
+        client: client?.t === "tic-tac-toe" ? client : undefined,
+        server: server,
+      });
+    }
+
+    case "flow": {
+      return Flow.syncWithServer({
+        ...input,
+        client: client?.t === "flow" ? client : null,
+        server: server,
+      });
     }
   }
 };
@@ -210,108 +214,23 @@ export const subscriptions: Client["subscriptions"] = (input): Sub<Msg> => {
 //
 
 export const View: Client["View"] = (input) => {
-  const { ctx, model, dispatch } = input;
+  const { model } = input;
+
   switch (model.t) {
     case "connect-four": {
       return <ConnectFour.View {...input} model={model} />;
     }
 
     case "tic-tac-toe": {
-      return (
-        <TicTacToeClient.View
-          ctx={ctx}
-          model={model.c}
-          dispatch={(c) => dispatch({ t: "tic-tac-toe", c })}
-        />
-      );
+      return <TicTacToe.View {...input} model={model} />;
     }
 
     case "chess": {
-      return (
-        <ChessClient.View
-          ctx={ctx}
-          model={model.c}
-          spaceCtx={ctx}
-          dispatch={(c) => dispatch({ t: "chess", c })}
-        />
-      );
+      return <Chess.View {...input} model={model} />;
     }
 
     case "flow": {
       return <Flow.View {...input} model={model} />;
-    }
-
-    default: {
-      return exhaustive(model);
-    }
-  }
-};
-
-export const syncWithServer = ({
-  ctx,
-  sendToServer,
-  client,
-  server,
-}: {
-  ctx: SpaceClientCtx;
-  sendToServer: (m: ToServer) => Eff;
-  client?: ClientModel | null;
-  server: ServerModel;
-}): { model: ClientModel; eff?: Eff<ClientMsg>; msgs?: ClientAppMsg[] } => {
-  switch (server.t) {
-    case "chess": {
-      const merged = ChessClient.syncWithServer({
-        sendToServer: (msg) => sendToServer({ t: "chess", c: msg }),
-        clientModel: client?.t === "chess" ? client.c : undefined,
-        serverModel: server.c,
-      });
-
-      return {
-        model: { t: "chess", c: merged.model },
-        eff: Eff.t("chess", merged.eff),
-      };
-    }
-
-    case "connect-four": {
-      const merged = ConnectFourClient.syncWithServer({
-        ctx,
-        server: server.c,
-        client: client?.t === "connect-four" ? client.c : undefined,
-        sendToServer: (m) => sendToServer({ t: "connect-four", c: m }),
-      });
-      return {
-        model: { t: "connect-four", c: merged.model },
-        eff: Eff.t("connect-four", merged.eff),
-        msgs: merged.msgs,
-      };
-    }
-
-    case "tic-tac-toe": {
-      const merged = TicTacToeClient.syncWithServer({
-        ctx,
-        clientModel: client?.t === "tic-tac-toe" ? client.c : undefined,
-        serverModel: server.c,
-      });
-      return { model: { t: "tic-tac-toe", c: merged } };
-    }
-
-    case "flow": {
-      const merged = FlowClient.syncWithServer({
-        ctx,
-        sendToServer: (m) => sendToServer({ t: "flow", c: m }),
-        client: client?.t === "flow" ? client.c : null,
-        server: server.c,
-      });
-      return {
-        model: { t: "flow", c: merged.model },
-        eff: Eff.t("flow", merged.eff),
-        msgs: merged.msgs,
-      };
-    }
-
-    default: {
-      const check: never = server;
-      return check;
     }
   }
 };

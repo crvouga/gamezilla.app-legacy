@@ -41,13 +41,11 @@ export const init: Model = {
 export type Msg = ClientMsg;
 
 export const update = ({
-  sendToServer,
   ctx,
   msg,
   model,
 }: {
   ctx: SpaceClientCtx;
-  sendToServer: (m: ToServer) => Eff;
   msg: Msg;
   model: Model;
 }): {
@@ -55,13 +53,12 @@ export const update = ({
   eff?: Eff<Msg>;
 } => {
   if (msg.t === "input-mode") {
-    return { model, eff: sendToServer(msg) };
+    return { model };
   }
 
   if (model.t === "vs-bot" && msg.t === "vs-bot") {
     const updated = VsBot.update({
       ctx,
-      sendToServer: (c) => sendToServer({ t: "vs-bot", c }),
       msg: msg.c,
       model: model.c,
     });
@@ -73,7 +70,6 @@ export const update = ({
 
   if (model.t === "vs-user" && msg.t === "vs-user") {
     const updated = VsUser.update({
-      sendToServer: (c) => sendToServer({ t: "vs-user", c }),
       msg: msg.c,
       model: model.c,
     });

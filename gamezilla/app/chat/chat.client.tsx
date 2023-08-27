@@ -135,11 +135,9 @@ export const updateFromServer = ({
 export const updateFromEvent = ({
   msg,
   model,
-  sendToServer,
 }: {
   msg: ClientAppMsg;
   model: Model;
-  sendToServer: (m: ToServer) => Eff;
 }): {
   model: Model;
   eff?: Eff<Msg>;
@@ -154,21 +152,18 @@ export const updateFromEvent = ({
         case "chat-conversation": {
           return {
             model,
-            eff: sendToServer(["chat-join", { chatId: "todo" }]),
           };
         }
 
         case "chat-new": {
           return {
             model,
-            eff: sendToServer(["chat-join", { chatId: "todo" }]),
           };
         }
 
         default: {
           return {
             model,
-            eff: sendToServer(["chat-leave", { chatId: "todo" }]),
           };
         }
       }

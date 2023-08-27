@@ -1,15 +1,15 @@
 import {
   Eff,
-  Loading,
   Ok,
   RemoteResult,
   Sub,
   andThen,
-  p,
   dissoc,
+  p,
 } from "gamezilla/@SHARED/core";
 import {
   ClientAppMsg,
+  ClientCmd,
   ClientCtx,
   RouteGameSpace,
   ViewCtx,
@@ -35,11 +35,7 @@ import {
 import * as GameClient from "./game/game.client";
 import * as Game from "./game/game.core";
 import { ViewCoverArt } from "./game/game.core";
-import {
-  ViewNotInGameScreen,
-  ViewSpaceJoinScreen,
-  ViewSpaceListScreen,
-} from "./space-ui";
+import { ViewNotInGameScreen, ViewSpaceListScreen } from "./space-ui";
 import {
   ClientModel,
   ClientMsg,
@@ -59,6 +55,7 @@ import {
 export const init: { model: ClientModel } = {
   model: {
     spaces: {},
+    indexUserId: {},
     req: {},
     modal: null,
     previewUserId: null,
@@ -75,13 +72,13 @@ export const init: { model: ClientModel } = {
 
 export const update = (input: {
   ctx: ClientCtx;
-  sendToServer: (msg: ToServer) => Eff;
   msg: ClientMsg;
   model: ClientModel;
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
   msgs?: ClientAppMsg[];
+  cmd?: ClientCmd<ToServer>[];
 } => {
   return p(
     input,
@@ -112,7 +109,7 @@ const watchCreate: typeof update = ({ msg, model }) => {
   }
 };
 
-const updateMain: typeof update = ({ ctx, sendToServer, msg, model }) => {
+const updateMain: typeof update = ({ ctx, msg, model }) => {
   switch (msg.t) {
     case "modal-closed": {
       return { model: { ...model, modal: null } };
@@ -160,22 +157,16 @@ const updateMain: typeof update = ({ ctx, sendToServer, msg, model }) => {
 
       const updated = GameClient.update({
         ctx: { ...ctx, hostId: space.hostId },
-        sendToServer: (c) =>
-          sendToServer({
-            t: "game",
-            c,
-            profile: ctx.profiles[ctx.currentUserId],
-          }),
         msg: msg.c,
         model: space.game,
       });
 
-      const spaceNew: Space<GameClient.Model> = {
+      const spaceNew: Space<Game.ClientModel> = {
         ...space,
         game: updated.model,
       };
 
-      const modelNew = {
+      const modelNew: ClientModel = {
         ...model,
         spaces: {
           ...model.spaces,
@@ -187,6 +178,7 @@ const updateMain: typeof update = ({ ctx, sendToServer, msg, model }) => {
         model: modelNew,
         eff: Eff.t("game", updated.eff),
         msgs: updated.msgs,
+        cmd: ClientCmd.tag("game", updated.cmd),
       };
     }
 
@@ -196,8 +188,12 @@ const updateMain: typeof update = ({ ctx, sendToServer, msg, model }) => {
           ...model,
           req: { ...model.req, [msg.t]: RemoteResult.Loading },
         },
-
-        eff: sendToServer({ ...msg, profile: ctx.profiles[ctx.currentUserId] }),
+        cmd: [
+          {
+            t: "send-to-server",
+            msg: { ...msg, profile: ctx.profiles[ctx.currentUserId] },
+          },
+        ],
       };
     }
   }
@@ -205,18 +201,17 @@ const updateMain: typeof update = ({ ctx, sendToServer, msg, model }) => {
 
 export const updateFromServer = ({
   ctx,
-  sendToServer,
   msg,
   model,
 }: {
   ctx: ClientCtx;
-  sendToServer: (msg: ToServer) => Eff;
   msg: ToClient;
   model: ClientModel;
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
   msgs?: ClientAppMsg[];
+  cmd?: ClientCmd<ToServer>[];
 } => {
   switch (msg.t) {
     case "game": {
@@ -232,12 +227,11 @@ export const updateFromServer = ({
 
       const updated = GameClient.updateFromServer({
         ctx: { ...ctx, hostId: space.hostId },
-        sendToServer: (msg) => sendToServer({ t: "game", c: msg }),
         model: space.game,
         msg: msg.c,
       });
 
-      const spaceNew: Space<GameClient.Model> = {
+      const spaceNew: Space<Game.ClientModel> = {
         ...space,
         game: updated.model,
       };
@@ -269,7 +263,6 @@ export const updateFromServer = ({
         ctx,
         client: model,
         server: msg.result.value,
-        sendToServer,
       });
 
       return {
@@ -313,7 +306,6 @@ export const updateFromServer = ({
         ctx,
         client: model,
         server: [msg.result.value],
-        sendToServer,
       });
 
       return {
@@ -333,10 +325,9 @@ export const updateFromServer = ({
 export const updateFromEvent = (input: {
   msg: ClientAppMsg;
   model: ClientModel;
-  sendToServer: (m: ToServer) => Eff;
 }): {
   model: ClientModel;
-  eff?: Eff<ClientMsg>;
+  cmd?: ClientCmd<ToServer>[];
 } => {
   const { msg } = input;
 
@@ -361,16 +352,15 @@ export const updateFromEvent = (input: {
 
 const listSpaces = (input: {
   model: ClientModel;
-  sendToServer: (m: ToServer) => Eff;
 }): {
   model: ClientModel;
-  eff?: Eff<ClientMsg>;
+  cmd?: ClientCmd<ToServer>[];
 } => {
-  const { model, sendToServer } = input;
+  const { model } = input;
 
   return {
     model,
-    eff: sendToServer({ t: "list" }),
+    cmd: [{ t: "send-to-server", msg: { t: "list" } }],
   };
 };
 
@@ -378,10 +368,8 @@ const syncWithServer = ({
   ctx,
   client,
   server,
-  sendToServer,
 }: {
   ctx: ClientCtx;
-  sendToServer: (msg: ToServer) => Eff;
   client: ClientModel;
   server: Space<Game.ServerModel>[];
 }): {
@@ -405,7 +393,6 @@ const syncWithServer = ({
 
     const merged = GameClient.syncWithServer({
       ctx: { ...ctx, hostId: serverSpace.hostId },
-      sendToServer: (msg) => sendToServer({ t: "game", c: msg }),
       server: serverSpace.game,
       client: clientSpace?.game,
     });

@@ -1,6 +1,6 @@
 import { Sub } from "gamezilla/@SHARED/core";
 import { IconGamepad, IconScrewdriverWrench } from "gamezilla/app/@SHARED/ui";
-import { GameClient } from "gamezilla/app/space/@SHARED";
+import { SpaceGameClient } from "gamezilla/app/space/@SHARED";
 import { MainMenuScreen } from "gamezilla/app/space/game/@SHARED";
 import { FlowViewCtx } from "./flow-shared";
 import { ViewCoverArt } from "./flow-ui/flow-cover-art";
@@ -14,7 +14,7 @@ import {
 import { PlayClient } from "./play";
 import { PuzzleBuilderClient } from "./puzzle-builder";
 
-type Client = GameClient<
+type Client = SpaceGameClient<
   ClientModel,
   ServerModel,
   ClientMsg,
@@ -22,9 +22,12 @@ type Client = GameClient<
   ToServer
 >;
 
-const PuzzleBuilder = GameClient.tag("puzzle-builder", PuzzleBuilderClient);
+const PuzzleBuilder = SpaceGameClient.tag(
+  "puzzle-builder",
+  PuzzleBuilderClient
+);
 
-const Play = GameClient.tag("play", PlayClient);
+const Play = SpaceGameClient.tag("play", PlayClient);
 
 export const init: Client["init"] = () => {
   return {
@@ -38,7 +41,10 @@ export const update: Client["update"] = (input) => {
   const { model, msg } = input;
 
   if (msg.t === "input-mode") {
-    return { model, eff: input.sendToServer(msg) };
+    return {
+      model,
+      cmd: [{ t: "send-to-server", msg }],
+    };
   }
 
   if (model.t === "puzzle-builder" && msg.t === "puzzle-builder") {

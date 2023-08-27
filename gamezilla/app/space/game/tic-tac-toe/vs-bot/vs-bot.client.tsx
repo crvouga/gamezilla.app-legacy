@@ -1,5 +1,9 @@
 import { Eff, Posix } from "gamezilla/@SHARED/core";
-import { ClientAppMsg, ClientCtx } from "gamezilla/app/@SHARED/client";
+import {
+  ClientAppMsg,
+  ClientCmd,
+  ClientCtx,
+} from "gamezilla/app/@SHARED/client";
 import {
   IconArrowLeftOnRect,
   IconArrowRotateLeft,
@@ -69,9 +73,7 @@ export const update = ({
   msg,
   model,
   ctx,
-  sendToServer,
 }: {
-  sendToServer: (msg: ToServer) => Eff;
   ctx: SpaceClientCtx;
   msg: Msg;
   model: Model;
@@ -79,6 +81,7 @@ export const update = ({
   model: Model;
   msgs?: ClientAppMsg[];
   eff?: Eff<Msg>;
+  cmd?: ClientCmd<ToServer>[];
 } => {
   if (msg.t === "vs-bot-setup") {
     const updated = VsBotSetup.update(model.vsBotSetup, msg.c);
@@ -87,14 +90,14 @@ export const update = ({
 
   const handled = handle({ ctx, msg, model });
   if (handled.t === "err") {
-    return { model, eff: sendToServer(msg) };
+    return { model, cmd: [{ t: "send-to-server", msg }] };
   }
   const merged = syncWithServer({
     ...ctx,
     client: model,
     server: handled.value,
   });
-  return { model: merged, eff: sendToServer(msg) };
+  return { model: merged, cmd: [{ t: "send-to-server", msg }] };
 };
 
 export const updateFromServer = ({
@@ -107,8 +110,6 @@ export const updateFromServer = ({
   model: Model;
 }): {
   model: Model;
-  eff?: Eff<Msg>;
-  msgs?: ClientAppMsg[];
 } => {
   if (msg.result.t === "err") {
     return {

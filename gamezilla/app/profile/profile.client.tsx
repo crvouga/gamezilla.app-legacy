@@ -1,6 +1,7 @@
 import { Eff, Loading, andThen, p } from "gamezilla/@SHARED/core";
 import {
   ClientAppMsg,
+  ClientCmd,
   ClientCtx,
   RouteProfile,
   ViewCtx,
@@ -28,9 +29,7 @@ import { ClientModel, ClientMsg, ToClient, ToServer } from "./profile.core";
 //
 //
 
-export type Model = ClientModel;
-
-export const init: Model = {
+export const init: ClientModel = {
   profiles: {},
   requests: {},
 };
@@ -43,65 +42,65 @@ export const init: Model = {
 //
 //
 
-export type Msg = ClientMsg;
-
 export const update = ({
   msg,
   model,
-  sendToServer,
 }: {
-  msg: Msg;
-  model: Model;
-  sendToServer: (m: ToServer) => Eff;
+  msg: ClientMsg;
+  model: ClientModel;
 }): {
-  model: Model;
-  eff?: Eff<Msg>;
+  model: ClientModel;
+  cmd?: ClientCmd<ToServer>[];
 } => {
-  if (msg.t === "inputted-username") {
-    return {
-      model: { ...model, draft: { ...model.draft, username: msg.username } },
-    };
-  }
+  switch (msg.t) {
+    case "inputted-username": {
+      return {
+        model: { ...model, draft: { ...model.draft, username: msg.username } },
+      };
+    }
 
-  if (msg.t === "inputted-avatar-seed") {
-    return {
-      model: {
-        ...model,
-        draft: { ...model.draft, avatarSeed: ProfileAvatar.toSeed(msg.seed) },
-      },
-    };
-  }
-
-  if (msg.t === "inputted-avatar-style") {
-    return {
-      model: {
-        ...model,
-        draft: { ...model.draft, avatarStyle: msg.style },
-      },
-    };
-  }
-
-  if (msg.t === "clicked-generate-random-seed") {
-    return {
-      model: {
-        ...model,
-        draft: {
-          ...model.draft,
+    case "inputted-avatar-seed": {
+      return {
+        model: {
+          ...model,
+          draft: { ...model.draft, avatarSeed: ProfileAvatar.toSeed(msg.seed) },
         },
-      },
-    };
-  }
+      };
+    }
 
-  return {
-    model: {
-      ...model,
-      requests: {
-        ...model.requests,
-        [msg.t]: { t: "loading" },
-      },
-    },
-    eff: sendToServer(msg),
-  };
+    case "inputted-avatar-style": {
+      return {
+        model: {
+          ...model,
+          draft: { ...model.draft, avatarStyle: msg.style },
+        },
+      };
+    }
+
+    case "clicked-generate-random-seed": {
+      return {
+        model: {
+          ...model,
+          draft: {
+            ...model.draft,
+          },
+        },
+      };
+    }
+
+    default: {
+      return {
+        model: {
+          ...model,
+          requests: {
+            ...model.requests,
+            [msg.t]: { t: "loading" },
+          },
+        },
+        cmd: [{ t: "send-to-server", msg }],
+      };
+    }
+  }
 };
 
 export const updateFromServer = ({
@@ -109,10 +108,10 @@ export const updateFromServer = ({
   model,
 }: {
   msg: ToClient;
-  model: Model;
+  model: ClientModel;
 }): {
-  model: Model;
-  eff?: Eff<Msg>;
+  model: ClientModel;
+  eff?: Eff<ClientMsg>;
 } => {
   if (msg.result.t === "err") {
     return {
@@ -126,7 +125,7 @@ export const updateFromServer = ({
     };
   }
 
-  const profilesNew = msg.result.value.reduce<Model["profiles"]>(
+  const profilesNew = msg.result.value.reduce<ClientModel["profiles"]>(
     (acc, profile) => {
       return {
         ...acc,
@@ -136,7 +135,7 @@ export const updateFromServer = ({
     model.profiles
   );
 
-  const modelNew: Model = {
+  const modelNew: ClientModel = {
     ...model,
     profiles: profilesNew,
   };
@@ -149,36 +148,35 @@ export const updateFromServer = ({
 export const updateFromEvent = ({
   msg,
   model,
-  sendToServer,
   ctx,
 }: {
   msg: ClientAppMsg;
-  model: Model;
-  sendToServer: (m: ToServer) => Eff;
+  model: ClientModel;
   ctx: ClientCtx | null;
 }): {
-  model: Model;
-  eff?: Eff<Msg>;
+  model: ClientModel;
+  eff?: Eff<ClientMsg>;
+  cmd?: ClientCmd<ToServer>[];
 } => {
   return p(
     { model },
-    andThen((model) => loadProfileRoute(sendToServer, msg, model)),
+    andThen((model) => loadProfileRoute({ msg, model })),
     andThen((model) => updateUsernameDraft({ model, msg, ctx })),
-    andThen((model) => gotProfiles(msg, model)),
-    andThen((model) => loadCurrentUserProfile(sendToServer, msg, model))
+    andThen((model) => gotProfiles({ msg, model })),
+    andThen((model) => loadCurrentUserProfile(msg, model))
   );
 };
 
 const loadCurrentUserProfile = (
-  sendToServer: (m: ToServer) => Eff,
   msg: ClientAppMsg,
-  model: Model
+  model: ClientModel
 ): {
-  model: Model;
+  model: ClientModel;
+  cmd?: ClientCmd<ToServer>[];
 } => {
   switch (msg.t) {
     case "client-authenticated": {
-      return loadProfiles(sendToServer, [msg.userId], model);
+      return loadProfiles([msg.userId], model);
     }
     default: {
       return { model };
@@ -186,11 +184,17 @@ const loadCurrentUserProfile = (
   }
 };
 
-const loadProfileRoute = (
-  sendToServer: (m: ToServer) => Eff,
-  msg: ClientAppMsg,
-  model: Model
-) => {
+const loadProfileRoute = ({
+  msg,
+  model,
+}: {
+  msg: ClientAppMsg;
+  model: ClientModel;
+}): {
+  model: ClientModel;
+  cmd?: ClientCmd<ToServer>[];
+  eff?: Eff<ClientMsg>;
+} => {
   if (
     msg.t !== "route-changed" ||
     msg.route.t !== "profile" ||
@@ -199,30 +203,43 @@ const loadProfileRoute = (
     return { model };
   }
 
-  return loadProfiles(sendToServer, [msg.route.c.userId], model);
+  return loadProfiles([msg.route.c.userId], model);
 };
 
 const loadProfiles = (
-  sendToServer: (m: ToServer) => Eff,
   userIds: UserId[],
-  model: Model
+  model: ClientModel
 ): {
-  model: Model;
-  eff?: Eff<Msg>;
+  model: ClientModel;
+  cmd?: ClientCmd<ToServer>[];
 } => {
   return {
     model: {
       ...model,
       requests: { ...model.requests, "find-many": Loading },
     },
-    eff: sendToServer({
-      t: "find-many",
-      userIds,
-    }),
+    cmd: [
+      {
+        t: "send-to-server",
+        msg: {
+          t: "find-many",
+          userIds,
+        },
+      },
+    ],
   };
 };
 
-const gotProfiles = (msg: ClientAppMsg, model: Model): { model: Model } => {
+const gotProfiles = ({
+  msg,
+  model,
+}: {
+  msg: ClientAppMsg;
+  model: ClientModel;
+}): {
+  model: ClientModel;
+  eff?: Eff<ClientMsg>;
+} => {
   switch (msg.t) {
     case "got-profiles": {
       return {
@@ -246,10 +263,13 @@ const updateUsernameDraft = ({
   msg,
   ctx,
 }: {
-  model: Model;
+  model: ClientModel;
   msg: ClientAppMsg;
   ctx: ClientCtx | null;
-}): { model: Model } => {
+}): {
+  model: ClientModel;
+  eff?: Eff<ClientMsg>;
+} => {
   if (msg.t !== "route-changed") {
     return { model };
   }
@@ -294,9 +314,9 @@ export const View = ({
   viewBottomBar,
 }: {
   ctx: ViewCtx;
-  model: Model;
+  model: ClientModel;
   route: RouteProfile;
-  dispatch: (msg: Msg) => void;
+  dispatch: (msg: ClientMsg) => void;
   viewBottomBar: VDom;
 }) => {
   if (route.t === "profile") {
@@ -337,8 +357,8 @@ const ViewUpdateScreen = ({
   ctx,
 }: {
   ctx: ViewCtx;
-  model: Model;
-  dispatch: (msg: Msg) => void;
+  model: ClientModel;
+  dispatch: (msg: ClientMsg) => void;
 }) => {
   const profile = ctx.profiles[ctx.currentUserId];
   return (
@@ -422,8 +442,8 @@ const ViewUpdateUsernameScreen = ({
   model,
   dispatch,
 }: {
-  model: Model;
-  dispatch: (msg: Msg) => void;
+  model: ClientModel;
+  dispatch: (msg: ClientMsg) => void;
   ctx: ViewCtx;
 }) => {
   const inputVal =

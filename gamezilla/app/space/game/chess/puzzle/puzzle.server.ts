@@ -26,7 +26,7 @@ import {
   ServerMsg,
   ToClient,
   ToServer,
-  initShared,
+  initCore,
   transitionLoadingToStarted,
   updateCore,
 } from "./puzzle.core";
@@ -49,7 +49,7 @@ export const init = ({
 } => {
   return {
     model: {
-      ...initShared,
+      ...initCore,
       requests: {},
     },
     eff: async (dispatch) => {

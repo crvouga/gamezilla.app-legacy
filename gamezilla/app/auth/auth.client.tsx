@@ -64,13 +64,11 @@ export const init: { model: ClientModel; eff?: Eff<ClientMsg> } = {
 //
 
 export const update = ({
-  sendToServer,
   msg,
   model,
   route,
 }: {
   route: Route;
-  sendToServer: (m: ToServer) => Eff;
   msg: ClientMsg;
   model: ClientModel;
 }): {
@@ -190,7 +188,6 @@ export const update = ({
           currentUser: { t: "logged-in", userId: msg.userId },
         },
         cmd: [{ t: "send-to-server", msg }],
-        eff: sendToServer(msg),
       };
     }
 
@@ -198,7 +195,6 @@ export const update = ({
       return {
         model: { ...model, currentUser: { t: "logged-out" } },
         cmd: [{ t: "send-to-server", msg }],
-        eff: sendToServer(msg),
       };
     }
 
@@ -206,7 +202,6 @@ export const update = ({
       return {
         model,
         cmd: [{ t: "send-to-server", msg }],
-        eff: sendToServer(msg),
       };
     }
   }

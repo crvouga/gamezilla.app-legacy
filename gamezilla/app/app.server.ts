@@ -416,7 +416,6 @@ const updateFromClient = async ({
       });
 
       return {
-        ...updated,
         model: {
           ...model,
           space: updated.model,

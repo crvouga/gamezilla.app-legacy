@@ -35,14 +35,7 @@ export const init = initShared;
 
 export type Msg = ClientMsg;
 
-export const update = (
-  {
-    ctx,
-    sendToServer,
-  }: { ctx: SpaceClientCtx; sendToServer: (m: ToServer) => Eff },
-  msg: Msg,
-  model: Model
-): [Model, Eff<Msg>] => {
+export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
   switch (msg[0]) {
     //
     //
@@ -55,13 +48,7 @@ export const update = (
         return [model, Eff.None];
       }
 
-      return [
-        model,
-        sendToServer([
-          "input-direction",
-          { userId: ctx.currentUserId, direction: "none" },
-        ]),
-      ];
+      return [model, Eff.None];
     }
 
     case "key-down": {
@@ -71,13 +58,7 @@ export const update = (
         return [model, Eff.None];
       }
 
-      return [
-        model,
-        sendToServer([
-          "input-direction",
-          { userId: ctx.currentUserId, direction },
-        ]),
-      ];
+      return [model, Eff.None];
     }
 
     //
@@ -90,7 +71,7 @@ export const update = (
     case "stop-game":
     case "stop-playing":
     case "start-playing": {
-      return [model, sendToServer(msg)];
+      return [model, Eff.None];
     }
   }
 };

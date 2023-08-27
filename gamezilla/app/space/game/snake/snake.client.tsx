@@ -46,10 +46,8 @@ export type Msg = ClientMsg;
 
 export const update = (
   {
-    sendToServer,
     ctx,
   }: {
-    sendToServer: (msg: ToServer) => Eff;
     ctx: SpaceClientCtx;
   },
   msg: Msg,
@@ -70,35 +68,27 @@ export const update = (
       const direction = Direction.fromKey(msg[1]);
 
       const changeDirectionEff =
-        direction.type === "Some"
-          ? sendToServer([
-              "input-direction",
-              { userId: ctx.currentUserId, direction: direction.value },
-            ])
-          : Eff.None;
+        direction.type === "Some" ? Eff.None : Eff.None;
 
-      const toggleStatusEff =
-        msg[1] === "Space"
-          ? sendToServer(["ToggleStatus", { userId: ctx.currentUserId }])
-          : Eff.None;
+      const toggleStatusEff = msg[1] === "Space" ? Eff.None : Eff.None;
 
       return [model, Eff.batch([changeDirectionEff, toggleStatusEff])];
     }
 
     case "ToggleStatus": {
-      return [model, sendToServer(msg)];
+      return [model, Eff.None];
     }
 
     case "InputPlayer": {
-      return [model, sendToServer(msg)];
+      return [model, Eff.None];
     }
 
     case "input-direction": {
-      return [model, sendToServer(msg)];
+      return [model, Eff.None];
     }
 
     case "start-game": {
-      return [model, sendToServer(msg)];
+      return [model, Eff.None];
     }
 
     case "OpenedMenu": {
