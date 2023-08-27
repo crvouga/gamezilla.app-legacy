@@ -62,13 +62,11 @@ export const update = async (input: {
   msg: ServerMsg;
   model: ServerModel;
   ctx: ServerCtx;
-  broadcast: (m: ToClient) => Eff;
-  sendToClient: (clientIds: ClientId[], m: ToClient) => Eff;
 }): Promise<{
   model: ServerModel;
   eff?: Eff<ServerMsg>;
 }> => {
-  const { model, broadcast, sendToClient, ctx } = input;
+  const { model, ctx } = input;
 
   const updated = await updateMain(input);
 
@@ -90,7 +88,7 @@ export const update = async (input: {
     };
   }
 
-  const effList = acc.cmd?.map(cmdToEff(model, sendToClient, broadcast)) ?? [];
+  const effList = acc.cmd?.map(cmdToEff(model)) ?? [];
 
   return {
     model: acc.model,
@@ -99,18 +97,21 @@ export const update = async (input: {
 };
 
 const cmdToEff =
-  (
-    model: ServerModel,
-    sendToClient: (clientIds: ClientId[], m: ToClient) => Eff,
-    broadcast: (m: ToClient) => Eff
-  ) =>
+  (model: ServerModel) =>
   (cmd: ServerCmd<ToClient>): Eff<ServerMsg> => {
     switch (cmd.t) {
       case "broadcast": {
-        return broadcast(cmd.msg);
+        return () => {
+          serverToClientBroadcast.publish(cmd.msg);
+        };
       }
       case "send-to-client": {
-        return sendToClient(cmd.clientIds, cmd.msg);
+        return () => {
+          serverToClient.publish({
+            clientIds: cmd.clientIds,
+            msg: cmd.msg,
+          });
+        };
       }
       case "send-to-user": {
         const clientIds: ClientId[] = [];
@@ -145,7 +146,9 @@ const cmdToEff =
           clientIds.push(session.clientId);
         }
 
-        return sendToClient(clientIds, cmd.msg);
+        return () => {
+          serverToClient.publish({ clientIds, msg: cmd.msg });
+        };
       }
     }
   };
@@ -249,7 +252,6 @@ const updateWire = ({
   switch (msg.t) {
     case "client-connected": {
       const sessionId = msg.sessionId;
-      const clientId = model.sessions[sessionId]?.clientId ?? [];
       const sessionNew: WireSession = {
         clientId: msg.clientId,
         sessionId,
@@ -446,9 +448,9 @@ export const subscriptions = async ({
       "space",
       await SpaceServer.subscriptions({ model: model.space, ctx })
     ),
-    Sub.tag("wire", onWireMsg),
+    Sub.tag("wire", wire),
     Sub.map(
-      onClientMsg,
+      clientToServer,
       ({ sessionId, clientId, msg }): ServerMsg => ({
         t: "▶",
         sessionId,
@@ -459,13 +461,20 @@ export const subscriptions = async ({
   ]);
 };
 
-export const onClientMsg = Sub.create<{
+export const serverToClient = Sub.create<{
+  clientIds: ClientId[];
+  msg: ToClient;
+}>();
+
+export const serverToClientBroadcast = Sub.create<ToClient>();
+
+export const clientToServer = Sub.create<{
   sessionId: SessionId;
   clientId: ClientId;
   msg: ToServer;
 }>();
 
-export const onWireMsg = Sub.create<ServerWireMsg>();
+export const wire = Sub.create<ServerWireMsg>();
 
 //
 //

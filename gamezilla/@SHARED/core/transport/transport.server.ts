@@ -7,22 +7,28 @@ import {
   ClientToServerMsg,
   ServerToClientMsg,
   ServerWireMsg,
-  TransportServer,
 } from "./transport-core";
 
-export const createTransportServer = <ToServer, ToClient>({
+export const attachServerTransport = <ToServer, ToClient>({
   httpServer,
-  onClientMsg,
-  onWireMsg,
+  clientToServer,
+  serverToClientBroadcast,
+  serverToClient,
+  wire,
 }: {
   httpServer: http.Server;
-  onClientMsg: PubSub<{
+  serverToClientBroadcast: PubSub<ToClient>;
+  serverToClient: PubSub<{
+    clientIds: ClientId[];
+    msg: ToClient;
+  }>;
+  clientToServer: PubSub<{
     msg: ToServer;
     clientId: ClientId;
     sessionId: SessionId;
   }>;
-  onWireMsg: PubSub<ServerWireMsg>;
-}): TransportServer<ToClient, ToServer> => {
+  wire: PubSub<ServerWireMsg>;
+}) => {
   const wsServer = new WebSocketServer({ noServer: true });
   const clients = new Map<ClientId, WebSocket>();
 
@@ -63,20 +69,20 @@ export const createTransportServer = <ToServer, ToClient>({
 
     ws.send(JSON.stringify({ t: "session-id", sessionId }));
 
-    onWireMsg.publish({ t: "client-connected", clientId, sessionId });
+    wire.publish({ t: "client-connected", clientId, sessionId });
 
     ws.on("message", (data) => {
       const msg = JSON.parse(data.toString()) as ClientToServerMsg<ToServer>; // leap of faith
 
       if (msg.t === "to-server") {
-        onClientMsg.publish({ clientId, sessionId, msg: msg.c });
+        clientToServer.publish({ clientId, sessionId, msg: msg.c });
         return;
       }
     });
 
     ws.on("close", () => {
       clients.delete(clientId);
-      onWireMsg.publish({ t: "client-disconnected", clientId, sessionId });
+      wire.publish({ t: "client-disconnected", clientId, sessionId });
     });
   });
 
@@ -86,24 +92,21 @@ export const createTransportServer = <ToServer, ToClient>({
     }
   };
 
-  return {
-    broadcast: (msg) => () => {
-      for (const client of clients.values()) {
-        send(client, { t: "to-client", c: msg });
-      }
-    },
-    sendToClient: (clientIds: ClientId[], msg: ToClient) => () => {
-      for (const clientId of clientIds) {
-        const client = clients.get(clientId);
+  serverToClientBroadcast.subscribe((msg) => {
+    for (const client of clients.values()) {
+      send(client, { t: "to-client", c: msg });
+    }
+  });
 
-        if (!client) {
-          continue;
-        }
+  serverToClient.subscribe(({ clientIds, msg }) => {
+    for (const clientId of clientIds) {
+      const client = clients.get(clientId);
 
-        send(client, { t: "to-client", c: msg });
+      if (!client) {
+        continue;
       }
-    },
-    onClientMsg,
-    onWireMsg,
-  };
+
+      send(client, { t: "to-client", c: msg });
+    }
+  });
 };

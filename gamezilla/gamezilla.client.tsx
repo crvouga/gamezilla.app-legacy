@@ -1,7 +1,7 @@
 import {
   Browser,
   Program,
-  createTransportClient,
+  attachClientTransport,
   toMsgPayload,
   toMsgType,
 } from "gamezilla/@SHARED/core";
@@ -21,10 +21,11 @@ const serverUrl = env.isProd
   ? "https://gamezilla-server.ngrok.io/"
   : `http://localhost:${5000}/`;
 
-const transport = createTransportClient({
+attachClientTransport({
   baseServerUrl: serverUrl,
-  onServerMsg: AppClient.onServerMsg,
-  onWireMsg: AppClient.onWireMsg,
+  wire: AppClient.wire,
+  serverToClient: AppClient.serverToClient,
+  clientToServer: AppClient.clientToServer,
 });
 
 const program = Program.create({
@@ -36,7 +37,6 @@ const program = Program.create({
       now: input.ctx.now,
       model: input.model,
       msg: input.msg,
-      sendToServer: transport.sendToServer,
     });
   },
   subscriptions: (input) => {

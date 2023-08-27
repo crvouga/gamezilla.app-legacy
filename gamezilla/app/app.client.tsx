@@ -1,5 +1,6 @@
 import {
   Browser,
+  ClientId,
   Eff,
   Posix,
   Sub,
@@ -95,7 +96,6 @@ type Msg = ClientMsg;
 
 export const update = (input: {
   now: Posix;
-  sendToServer: (m: ToServer) => Eff;
   msg: Msg;
   model: Model;
 }): {
@@ -126,13 +126,11 @@ export const update = (input: {
 };
 
 const update_ = ({
-  sendToServer,
   msg,
   model,
   now,
 }: {
   now: Posix;
-  sendToServer: (m: ToServer) => Eff;
   msg: Msg;
   model: Model;
 }): {
@@ -144,7 +142,7 @@ const update_ = ({
 
   switch (msg.t) {
     case "▶": {
-      return updateFromServer({ now, sendToServer, msg: msg.c, model });
+      return updateFromServer({ now, msg: msg.c, model });
     }
 
     case "auth": {
@@ -251,12 +249,10 @@ const toCtx = (input: { model: Model; now: Posix }): ClientCtx | null => {
 };
 
 const updateFromServer = ({
-  sendToServer,
   msg,
   now,
   model,
 }: {
-  sendToServer: (m: ToServer) => Eff;
   msg: ToClient;
   model: Model;
   now: Posix;
@@ -343,13 +339,11 @@ const updateFromServer = ({
 const updateFromEvent = ({
   model,
   msg,
-  sendToServer,
   now,
 }: {
   now: Posix;
   model: Model;
   msg: ClientAppMsg;
-  sendToServer: (m: ToServer) => Eff;
 }): {
   model: Model;
   eff?: Eff<Msg>;
@@ -423,14 +417,30 @@ const updateFromEvent = ({
 //
 //
 //
+//
+//
+//
+
+export const clientToServer = Sub.create<ToServer>();
+
+const sendToServer =
+  (m: ToServer): Eff =>
+  () => {
+    clientToServer.publish(m);
+  };
+
+export const wire = Sub.create<Wire.Msg>();
+export const serverToClient = Sub.create<ToClient>();
+
+//
+//
+//
+//
 // Subscriptions
 //
 //
 //
 //
-
-export const onWireMsg = Sub.create<Wire.Msg>();
-export const onServerMsg = Sub.create<ToClient>();
 
 export const subscriptions = ({
   now,
@@ -440,8 +450,8 @@ export const subscriptions = ({
   model: Model;
 }): Sub<Msg> => {
   return Sub.batch<Msg>([
-    Sub.tag("▶", onServerMsg),
-    Sub.tag("wire", onWireMsg),
+    Sub.tag("▶", serverToClient),
+    Sub.tag("wire", wire),
     Sub.tag("routing", Routing.subscriptions),
     Sub.tag("auth", AuthClient.subscriptions),
     spaceSub(now, model),

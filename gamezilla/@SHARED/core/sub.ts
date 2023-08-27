@@ -2,7 +2,7 @@ export type Sub<Msg> = {
   subscribe: (subscriber: (msg: Msg) => void) => () => void;
 };
 
-type Pub<Msg> = {
+export type Pub<Msg> = {
   publish: (msg: Msg) => void;
   isSubscribed: () => boolean;
 };

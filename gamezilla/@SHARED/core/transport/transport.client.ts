@@ -3,7 +3,6 @@ import {
   ClientToServerMsg,
   ClientWireMsg,
   ServerToClientMsg,
-  TransportClient,
 } from "./transport-core";
 
 const SESSION_ID_KEY = "gamezilla-session-id";
@@ -11,16 +10,18 @@ const SESSION_ID_KEY = "gamezilla-session-id";
 const RECONNECT_INTERVAL = 2000; // 1 second
 const MAX_RECONNECT_ATTEMPTS = 5; // Adjust as needed
 
-export const createTransportClient = <ToServer, ToClient>({
+export const attachClientTransport = <ToServer, ToClient>({
   baseServerUrl,
-  onWireMsg,
-  onServerMsg,
+  wire,
+  serverToClient,
+  clientToServer,
 }: {
   baseServerUrl: string;
-  onWireMsg: PubSub<ClientWireMsg>;
-  onServerMsg: PubSub<ToClient>;
-}): TransportClient<ToClient, ToServer> => {
-  const serverUrl = createServerUrl(baseServerUrl);
+  wire: PubSub<ClientWireMsg>;
+  clientToServer: PubSub<ToServer>;
+  serverToClient: PubSub<ToClient>;
+}) => {
+  const serverUrl = toWebsocketServerUrl(baseServerUrl);
 
   let reconnectAttempts = 0;
   let ws: WebSocket;
@@ -31,22 +32,21 @@ export const createTransportClient = <ToServer, ToClient>({
 
     ws.onopen = () => {
       reconnectAttempts = 0;
-      onWireMsg.publish({ t: "server-connected" });
+      wire.publish({ t: "server-connected" });
     };
 
     ws.onerror = () => {
-      onWireMsg.publish({ t: "server-connect-error" });
+      wire.publish({ t: "server-connect-error" });
     };
 
     ws.onclose = () => {
       if (isDocumentHidden) {
-        // onWireMsg.publish({ t: "server-disconnected" });
         console.log("closed socket because document is hidden");
         return;
       }
 
       if (reconnectAttempts > MAX_RECONNECT_ATTEMPTS) {
-        onWireMsg.publish({ t: "server-disconnected" });
+        wire.publish({ t: "server-disconnected" });
         console.log("server disconnected. max reconnect attempts reached");
         return;
       }
@@ -59,7 +59,7 @@ export const createTransportClient = <ToServer, ToClient>({
       const msg = JSON.parse(event.data) as ServerToClientMsg<ToClient>; // leap of faith
 
       if (msg.t === "to-client") {
-        onServerMsg.publish(msg.c);
+        serverToClient.publish(msg.c);
         return;
       }
 
@@ -89,16 +89,12 @@ export const createTransportClient = <ToServer, ToClient>({
     }
   };
 
-  return {
-    sendToServer: (msg) => () => {
-      send({ t: "to-server", c: msg });
-    },
-    onServerMsg,
-    onWireMsg,
-  };
+  clientToServer.subscribe((msg) => {
+    send({ t: "to-server", c: msg });
+  });
 };
 
-const createServerUrl = (baseServerUrl: string) => {
+const toWebsocketServerUrl = (baseServerUrl: string) => {
   const baseServerUrlObj = new URL(baseServerUrl);
   const sessionId = localStorage.getItem(SESSION_ID_KEY);
 

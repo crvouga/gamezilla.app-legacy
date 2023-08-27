@@ -1,5 +1,5 @@
 import {
-  createTransportServer,
+  attachServerTransport,
   Program,
   toMsgType,
 } from "gamezilla/@SHARED/core";
@@ -13,10 +13,12 @@ const httpServer = createServer((_request, response) => {
   response.end(JSON.stringify({ model, SpaceStore: SpaceStore.toJSON() }));
 });
 
-const transport = createTransportServer({
+attachServerTransport({
   httpServer,
-  onClientMsg: AppServer.onClientMsg,
-  onWireMsg: AppServer.onWireMsg,
+  wire: AppServer.wire,
+  clientToServer: AppServer.clientToServer,
+  serverToClient: AppServer.serverToClient,
+  serverToClientBroadcast: AppServer.serverToClientBroadcast,
 });
 
 const run = async () => {
@@ -29,8 +31,6 @@ const run = async () => {
       const updated = AppServer.update({
         model: input.model,
         msg: input.msg,
-        broadcast: transport.broadcast,
-        sendToClient: transport.sendToClient,
         ctx: {
           mySql: ctx.mySql,
           now: input.ctx.now,
