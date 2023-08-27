@@ -52,8 +52,7 @@ export const update = ({
 
 type updateFromClient = (input: {
   ctx: SpaceReqCtx;
-  sendToClient: (m: ToClient) => Eff;
-  broadcast: (m: ToClient) => Eff;
+
   msg: ToServer;
   model: Model;
 }) => {
@@ -69,13 +68,13 @@ export const updateFromClient: updateFromClient = (input) => {
   );
 };
 
-const updateBotMove: updateFromClient = ({ broadcast, model }) => {
+const updateBotMove: updateFromClient = ({ model }) => {
   const handled = handleBotMove(model);
 
   if (handled.t === "err") {
     return {
       model,
-      eff: broadcast({ t: "bot-moved", result: handled }),
+      eff: Eff.None,
     };
   }
 
@@ -83,28 +82,17 @@ const updateBotMove: updateFromClient = ({ broadcast, model }) => {
 
   return {
     model: modelNew,
-    // eff: p(
-    //   Time.delay(2000),
-    //   Eff.perform(() => null),
-    //   Eff.chain(() => broadcast({ t: 'bot-moved', result: Ok(modelNew) }))
-    // ),
   };
 };
 
-const updateFromClient_: updateFromClient = ({
-  ctx,
-  sendToClient,
-  broadcast,
-  msg,
-  model,
-}) => {
+const updateFromClient_: updateFromClient = ({ ctx, msg, model }) => {
   switch (msg.t) {
     default: {
       const res: Res = { ...msg, result: handle({ ctx, msg, model }) };
       if (res.result.t === "err") {
-        return { model, eff: sendToClient(res) };
+        return { model, eff: Eff.None };
       }
-      return { model: res.result.value, eff: broadcast(res) };
+      return { model: res.result.value, eff: Eff.None };
     }
   }
 };

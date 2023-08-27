@@ -39,11 +39,7 @@ export const init = initCoreModel;
 
 export type Msg = ServerMsg;
 
-export const update = (
-  { broadcast }: { broadcast: (msg: ToClient) => Eff },
-  msg: Msg,
-  model: Model
-): [Model, Eff<Msg>] => {
+export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
   switch (msg[0]) {
     case "tick": {
       const modelNew: Model = {
@@ -51,34 +47,22 @@ export const update = (
         gameStatus: model.gameStatus,
       };
 
-      return [modelNew, broadcast(["tick", modelNew])];
+      return [modelNew, Eff.None];
     }
   }
 };
 
 export const updateFromClient = (
-  {
-    sendToClient,
-    broadcast,
-  }: {
-    sendToClient: (msg: ToClient) => Eff;
-    broadcast: (msg: ToClient) => Eff;
-  },
   msg: ToServer,
   model: Model
 ): [Model, Eff<Msg>] => {
   switch (msg[0]) {
     case "start-game": {
-      return updateRequest(
-        { sendToClient, broadcast },
-        ["StartGame_Done", startGame(model)],
-        model
-      );
+      return updateRequest(["StartGame_Done", startGame(model)], model);
     }
 
     case "ToggleStatus": {
       return updateRequest(
-        { sendToClient, broadcast },
         ["ToggleStatus_Done", toggleStatus(msg[1], model)],
         model
       );
@@ -86,7 +70,6 @@ export const updateFromClient = (
 
     case "input-direction": {
       return updateRequest(
-        { sendToClient, broadcast },
         ["InputDirection_Done", inputDirection(msg[1], model)],
         model
       );
@@ -94,7 +77,6 @@ export const updateFromClient = (
 
     case "InputPlayer": {
       return updateRequest(
-        { sendToClient, broadcast },
         ["InputPlayer_Done", inputPlayer(msg[1], model)],
         model
       );
@@ -102,27 +84,14 @@ export const updateFromClient = (
   }
 };
 
-const updateRequest = (
-  {
-    sendToClient,
-    broadcast,
-  }: {
-    sendToClient: (msg: ToClient) => Eff;
-    broadcast: (msg: ToClient) => Eff;
-  },
-  response: Response,
-  model: Model
-): [Model, Eff<Msg>] => {
+const updateRequest = (response: Response, model: Model): [Model, Eff<Msg>] => {
   if (response[1].t === "err") {
-    return [model, sendToClient(response)];
+    return [model, Eff.None];
   }
 
   const modelNew = response[1].value;
 
-  return [
-    modelNew,
-    Eff.batch([broadcast(response), broadcast(["tick", modelNew])]),
-  ];
+  return [modelNew, Eff.None];
 };
 
 //

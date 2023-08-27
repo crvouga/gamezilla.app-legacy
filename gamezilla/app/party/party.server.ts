@@ -34,14 +34,7 @@ export const init: Model = {
 
 export type Msg = ServerMsg;
 
-export const update = (
-  _wire: {
-    sendToUser: (userIds: UserId[], msg: ToClient) => Eff;
-    broadcast: (msg: ToClient) => Eff;
-  },
-  msg: Msg,
-  model: Model
-): [Model, Eff<Msg>] => {
+export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
   switch (msg[0]) {
     case "none": {
       return [model, Eff.None];
@@ -54,14 +47,6 @@ export const update = (
 };
 
 export const updateFromClient = (
-  {
-    sendToClient,
-    broadcast,
-  }: {
-    broadcast: (msg: ToClient) => Eff;
-    sendToUser: (userId: UserId[], msg: ToClient) => Eff;
-    sendToClient: (msg: ToClient) => Eff;
-  },
   msg: ToServer,
   model: Model
 ): [Model, Eff<Msg>] => {
@@ -73,9 +58,9 @@ export const updateFromClient = (
     case "PartyLeave": {
       const res: Res = [...msg, handle(msg, model)];
       if (res[2].t === "err") {
-        return [model, sendToClient(res)];
+        return [model, Eff.None];
       }
-      return [res[2].value, broadcast(res)];
+      return [res[2].value, Eff.None];
     }
 
     default: {

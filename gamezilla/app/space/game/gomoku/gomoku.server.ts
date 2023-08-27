@@ -87,14 +87,10 @@ export const update = ({
 
 export const updateFromClient = ({
   ctx,
-  broadcast,
-  sendToClient,
   msg,
   model,
 }: {
   ctx: SpaceReqCtx;
-  sendToClient: (m: ToClient) => Eff;
-  broadcast: (m: ToClient) => Eff;
   msg: ToServer;
   model: Model;
 }): {
@@ -105,15 +101,13 @@ export const updateFromClient = ({
     const modelNew = initMode(msg);
     return {
       model: modelNew,
-      eff: broadcast({ ...msg, result: Ok(modelNew) }),
+      eff: Eff.None,
     };
   }
 
   if (model.t === "vs-bot" && msg.t === "vs-bot") {
     const updated = VsBot.updateFromClient({
       ctx,
-      broadcast: (c) => broadcast({ t: "vs-bot", c }),
-      sendToClient: (c) => sendToClient({ t: "vs-bot", c }),
       msg: msg.c,
       model: model.c,
     });
@@ -128,8 +122,6 @@ export const updateFromClient = ({
       msg: msg.c,
       model: model.c,
       ctx,
-      broadcast: (c) => broadcast({ t: "vs-user", c }),
-      sendToClient: (c) => sendToClient({ t: "vs-user", c }),
     });
 
     return {

@@ -4,7 +4,6 @@ import {
   Res,
   ServerModel,
   ServerMsg,
-  ToClient,
   ToServer,
   handle,
   initShared,
@@ -45,8 +44,6 @@ export const update = ({
 };
 
 export const updateFromClient = ({
-  sendToClient,
-  broadcast,
   msg,
   model,
   ctx,
@@ -54,8 +51,6 @@ export const updateFromClient = ({
   ctx: SpaceReqCtx;
   msg: ToServer;
   model: Model;
-  broadcast: (m: ToClient) => Eff;
-  sendToClient: (m: ToClient) => Eff;
 }): {
   model: Model;
   eff?: Eff<Msg>;
@@ -63,9 +58,9 @@ export const updateFromClient = ({
   const res: Res = { ...msg, result: handle({ msg, model, ctx }) };
 
   if (res.result.t === "err") {
-    return { model, eff: sendToClient(res) };
+    return { model, eff: Eff.None };
   }
-  return { model: res.result.value, eff: broadcast(res) };
+  return { model: res.result.value, eff: Eff.None };
 };
 
 export const updateFromEvent = ({

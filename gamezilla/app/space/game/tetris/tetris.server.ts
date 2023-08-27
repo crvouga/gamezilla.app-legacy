@@ -34,28 +34,17 @@ export const init: Model = initShared;
 
 export type Msg = ServerMsg;
 
-export const update = (
-  { broadcast }: { broadcast: (msg: ToClient) => Eff },
-  msg: Msg,
-  model: Model
-): [Model, Eff<Msg>] => {
+export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
   switch (msg[0]) {
     case "tick": {
       const modelNext = tick(model);
 
-      return [modelNext, broadcast(["Tick_Done", modelNext])];
+      return [modelNext, Eff.None];
     }
   }
 };
 
 export const updateFromClient = (
-  {
-    broadcast,
-    sendToClient,
-  }: {
-    broadcast: (msg: ToClient) => Eff;
-    sendToClient: (msg: ToClient) => Eff;
-  },
   msg: ToServer,
   model: Model
 ): [Model, Eff<Msg>] => {
@@ -64,48 +53,48 @@ export const updateFromClient = (
       const toClient = mouseMove(msg, model);
 
       if (toClient[1].t === "err") {
-        return [model, sendToClient(toClient)];
+        return [model, Eff.None];
       }
 
       const modelNew = toClient[1].value;
 
-      return [modelNew, broadcast(toClient)];
+      return [modelNew, Eff.None];
     }
 
     case "InputDrop": {
       const result = inputDrop(model);
 
       if (result.t === "err") {
-        return [model, sendToClient(["InputDrop_Done", result])];
+        return [model, Eff.None];
       }
 
       const modelNew = result.value;
 
-      return [modelNew, broadcast(["InputDrop_Done", result])];
+      return [modelNew, Eff.None];
     }
 
     case "InputTranslate": {
       const result = inputTranslate(msg[1], model);
 
       if (result.t === "err") {
-        return [model, sendToClient(["InputTranslate_Done", result])];
+        return [model, Eff.None];
       }
 
       const modelNew = result.value;
 
-      return [modelNew, broadcast(["InputTranslate_Done", result])];
+      return [modelNew, Eff.None];
     }
 
     case "InputRotate": {
       const result = inputRotate(model);
 
       if (result.t === "err") {
-        return [model, sendToClient(["InputRotate_Done", result])];
+        return [model, Eff.None];
       }
 
       const modelNew = result.value;
 
-      return [modelNew, broadcast(["InputRotate_Done", result])];
+      return [modelNew, Eff.None];
     }
   }
 };

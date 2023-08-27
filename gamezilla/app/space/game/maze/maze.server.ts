@@ -32,21 +32,16 @@ export const init = initShared;
 
 export type Msg = ServerMsg;
 
-export const update = (
-  { broadcast }: { broadcast: (msg: ToClient) => Eff },
-  msg: Msg,
-  model: Model
-): [Model, Eff<Msg>] => {
+export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
   switch (msg[0]) {
     case "tick": {
       const modelNew = tick(model);
-      return [modelNew, broadcast(["tick", modelNew])];
+      return [modelNew, Eff.None];
     }
   }
 };
 
 export const updateFromClient = (
-  { broadcast }: { broadcast: (m: ToClient) => Eff },
   msg: ToServer,
   model: Model
 ): [Model, Eff<Msg>] => {
@@ -59,7 +54,7 @@ export const updateFromClient = (
     case "start-playing": {
       const res: Res = [...msg, handle(msg, model)];
       const modelNew = res[2].t === "ok" ? res[2].value : model;
-      return [modelNew, broadcast(res)];
+      return [modelNew, Eff.None];
     }
   }
 };
