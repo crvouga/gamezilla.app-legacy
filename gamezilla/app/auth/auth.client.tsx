@@ -11,12 +11,11 @@ import {
   p,
 } from "gamezilla/@SHARED/core";
 import {
-  ClientAppMsg,
-  Route,
-  RouteAuth,
   AnonymousViewCtx,
   ClientCmd,
   ClientEvt,
+  Route,
+  RouteAuth,
 } from "gamezilla/app/@SHARED/client";
 import { UserId } from "gamezilla/app/@SHARED/data";
 import { supabaseClient } from "gamezilla/app/@SHARED/third-party-services";
@@ -74,7 +73,6 @@ export const update = ({
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
-  msgs?: ClientAppMsg[];
   cmd?: ClientCmd<ToServer>[];
   evt?: ClientEvt[];
 } => {
@@ -135,7 +133,7 @@ export const update = ({
         sendCode,
       });
       return {
-        ...updated,
+        cmd: updated.cmd,
         model: { ...model, phone: updated.model },
         eff: Eff.t("phone", updated.eff),
       };
@@ -161,6 +159,7 @@ export const update = ({
             ? { t: "loading" }
             : model.currentUser,
         },
+        cmd: updated.cmd,
         eff: Eff.batch([
           Eff.t("phone-verify", updated.eff),
           updated.shouldLoadCurrentUser ? loadCurrentUser : Eff.None,
@@ -177,7 +176,7 @@ export const update = ({
       return {
         model: { ...model, emailLink: updated.model },
         eff: Eff.t("email-link", updated.eff),
-        msgs: updated.msgs,
+        cmd: updated.cmd,
       };
     }
 
@@ -216,14 +215,14 @@ export const updateFromServer = ({
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
-  msgs?: ClientAppMsg[];
+  evt?: ClientEvt[];
 } => {
   switch (msg.t) {
     case "acknowledged": {
       switch (msg.msg.t) {
         case "client-unauthenticated":
         case "client-authenticated": {
-          return { model, msgs: [msg.msg] };
+          return { model, evt: [msg.msg] };
         }
 
         default: {
@@ -237,10 +236,10 @@ export const updateFromServer = ({
   }
 };
 
-export const updateFromEvent = ({
+export const updateFromEvt = ({
   model,
 }: {
-  msg: ClientAppMsg;
+  msg: ClientEvt;
   model: ClientModel;
 }): {
   model: ClientModel;
@@ -305,6 +304,7 @@ export const ViewLoggedOut = ({
   if (route.t === "login-phone-verify") {
     return (
       <AuthPhoneVerify.View
+        ctx={ctx}
         phoneNumber={route.phoneNumber}
         model={model.phoneVerify}
         dispatch={(m) => dispatch({ t: "phone-verify", c: m })}

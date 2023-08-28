@@ -7,7 +7,7 @@ import {
   Task,
   p,
 } from "gamezilla/@SHARED/core";
-import { ClientAppMsg, AnonymousViewCtx } from "gamezilla/app/@SHARED/client";
+import { AnonymousViewCtx, RouteCmd } from "gamezilla/app/@SHARED/client";
 import {
   Button,
   IconPhone,
@@ -91,7 +91,7 @@ export const update = ({
 }): {
   model: Model;
   eff?: Eff<Msg>;
-  msgs?: ClientAppMsg[];
+  cmd?: RouteCmd[];
 } => {
   switch (msg.t) {
     case "clicked-send-code": {
@@ -153,9 +153,9 @@ export const update = ({
 
       return {
         model: { ...model, submission: { type: "ok" } },
-        msgs: [
+        cmd: [
           {
-            t: "route-push",
+            t: "routing/push",
             route: {
               t: "auth",
               c: { t: "login-phone-verify", phoneNumber: phoneNumber },

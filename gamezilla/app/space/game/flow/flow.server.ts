@@ -57,7 +57,7 @@ const initMode =
     return { model: { t: "none" } };
   };
 
-export const updateFromEvent: Server["updateFromEvent"] = (input) => {
+export const updateFromEvt: Server["updateFromEvt"] = (input) => {
   return input;
 };
 

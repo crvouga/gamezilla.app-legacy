@@ -125,7 +125,7 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
   return { model };
 };
 
-export const updateFromEvent: Client["updateFromEvent"] = (input) => {
+export const updateFromEvt: Client["updateFromEvt"] = (input) => {
   return input;
 };
 

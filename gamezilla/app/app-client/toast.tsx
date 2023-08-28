@@ -1,5 +1,5 @@
 import { Eff, Time, Transition, andThen, p } from "gamezilla/@SHARED/core";
-import { ClientAppMsg } from "gamezilla/app/@SHARED/client";
+import { ClientCmd } from "gamezilla/app/@SHARED/client";
 import { IconXMark } from "gamezilla/app/@SHARED/ui";
 
 //
@@ -145,17 +145,17 @@ function watch(model: Model): { model: Model; eff: Eff<Msg> } {
 //
 
 export function updateFromCmd({
-  msg,
+  cmd: msg,
   model,
 }: {
-  msg: ClientAppMsg;
+  cmd: ClientCmd<unknown>;
   model: Model;
 }): {
   model: Model;
   eff?: Eff<Msg>;
 } {
   switch (msg.t) {
-    case "enqueue-toast": {
+    case "toast/enqueue": {
       const toastId = model.runningId;
       const duration = msg.duration ?? 2000;
       const updated: ReturnType<typeof updateFromCmd> = {

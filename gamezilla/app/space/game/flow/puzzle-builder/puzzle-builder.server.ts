@@ -24,7 +24,7 @@ const updateFromClient: Server["updateFromClient"] = (input) => {
   return input;
 };
 
-const updateFromEvent: Server["updateFromEvent"] = (input) => {
+const updateFromEvt: Server["updateFromEvt"] = (input) => {
   return input;
 };
 
@@ -36,6 +36,6 @@ export const PuzzleBuilderServer: Server = {
   init,
   update,
   updateFromClient,
-  updateFromEvent,
+  updateFromEvt,
   subscriptions,
 };

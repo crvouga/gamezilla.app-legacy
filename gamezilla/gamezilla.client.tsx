@@ -54,10 +54,7 @@ program.subscribe((model, ctx) => {
   );
 });
 
-program.subscribe((model, _ctx, msg) => {
-  if (msg) {
-    console.log([toMsgType(msg), toMsgPayload(msg, {})]);
-  }
+program.subscribe((model) => {
   // @ts-ignore
   window.model = model;
 });

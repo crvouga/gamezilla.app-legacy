@@ -25,7 +25,7 @@ export type GameServer<Model, Msg, ToClient, ToServer> = {
   init: (input: { ctx: SpaceServerCtx }) => {
     model: Model;
     eff?: Eff<Msg>;
-    msgs?: ServerEvt[];
+    evt?: ServerEvt[];
   };
 
   /**
@@ -34,7 +34,7 @@ export type GameServer<Model, Msg, ToClient, ToServer> = {
   update: (input: { ctx: SpaceServerCtx; msg: Msg; model: Model }) => {
     model: Model;
     eff?: Eff<Msg>;
-    msgs?: ServerEvt[];
+    evt?: ServerEvt[];
     cmd?: SpaceServerCmd<ToClient>[];
   };
 
@@ -48,21 +48,21 @@ export type GameServer<Model, Msg, ToClient, ToServer> = {
   }) => {
     model: Model;
     eff?: Eff<Msg>;
-    msgs?: ServerEvt[];
+    evt?: ServerEvt[];
     cmd?: SpaceServerCmd<ToClient>[];
   };
 
   /**
    * This handles updates from the game space itself.
    */
-  updateFromEvent: (input: {
+  updateFromEvt: (input: {
     ctx: SpaceServerCtx;
     msg: SpaceEvt;
     model: Model;
   }) => {
     model: Model;
     eff?: Eff<Msg>;
-    msgs?: ServerEvt[];
+    evt?: ServerEvt[];
     cmd?: SpaceServerCmd<ToClient>[];
   };
 
@@ -93,7 +93,7 @@ const tag = <T extends string, Model, Msg, ToClient, ToServer>(
       return {
         model: { t: tag, c: initial.model },
         eff: Eff.t(tag, initial.eff),
-        msgs: initial.msgs,
+        evt: initial.evt,
       };
     },
     update: (input) => {
@@ -105,7 +105,7 @@ const tag = <T extends string, Model, Msg, ToClient, ToServer>(
       return {
         model: { t: tag, c: updated.model },
         eff: Eff.t(tag, updated.eff),
-        msgs: updated.msgs,
+        evt: updated.evt,
         cmd: SpaceServerCmd.tag(tag, updated.cmd),
       };
     },
@@ -118,12 +118,12 @@ const tag = <T extends string, Model, Msg, ToClient, ToServer>(
       return {
         model: { t: tag, c: updated.model },
         eff: Eff.t(tag, updated.eff),
-        msgs: updated.msgs,
+        evt: updated.evt,
         cmd: SpaceServerCmd.tag(tag, updated.cmd),
       };
     },
-    updateFromEvent: (input) => {
-      const updated = server.updateFromEvent({
+    updateFromEvt: (input) => {
+      const updated = server.updateFromEvt({
         ...input,
         msg: input.msg,
         model: input.model.c,
@@ -131,7 +131,7 @@ const tag = <T extends string, Model, Msg, ToClient, ToServer>(
       return {
         model: { t: tag, c: updated.model },
         eff: Eff.t(tag, updated.eff),
-        msgs: updated.msgs,
+        evt: updated.evt,
       };
     },
     subscriptions: (intervalId, model) => {

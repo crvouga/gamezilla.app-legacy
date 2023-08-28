@@ -75,7 +75,7 @@ export const update = async (input: {
   let acc = updated;
 
   for (const e of evt) {
-    const updatedEvt = await updateFromEvent({
+    const updatedEvt = await updateFromEvt({
       ...input,
       ctx,
       model: acc.model,
@@ -292,7 +292,7 @@ const updateWire = ({
   }
 };
 
-const updateFromEvent = async ({
+const updateFromEvt = async ({
   ctx,
   msg,
   model,
@@ -305,13 +305,13 @@ const updateFromEvent = async ({
   eff?: Eff<ServerMsg>;
   cmd?: ServerCmd<ToClient>[];
 }> => {
-  const spaceUpdated = await SpaceServer.updateFromEvent({
+  const spaceUpdated = await SpaceServer.updateFromEvt({
     ctx,
     msg,
     model: model.space,
   });
 
-  const profileUpdated = ProfileServer.updateFromEvent({
+  const profileUpdated = ProfileServer.updateFromEvt({
     msg,
     model: model.profile,
   });

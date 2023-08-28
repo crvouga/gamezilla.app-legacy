@@ -45,7 +45,7 @@ export const updateFromClient = (
   return { model };
 };
 
-export const updateFromEvent = ({
+export const updateFromEvt = ({
   msg,
   model,
 }: {

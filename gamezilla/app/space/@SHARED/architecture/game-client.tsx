@@ -1,5 +1,5 @@
 import { Eff, Sub } from "gamezilla/@SHARED/core";
-import { ClientAppMsg, ClientCmd } from "gamezilla/app/@SHARED/client";
+import { ClientEvt, ClientCmd } from "gamezilla/app/@SHARED/client";
 import { VDom } from "gamezilla/app/@SHARED/ui";
 import { SpaceClientCtx, SpaceEvt, SpaceViewCtx } from "../space";
 
@@ -18,28 +18,28 @@ export type SpaceGameClient<
   init: (input: { ctx: Ctx }) => {
     model: Model;
     eff?: Eff<Msg>;
-    msgs?: ClientAppMsg[];
+    evt?: ClientEvt[];
     cmd?: ClientCmd<ToServer>[];
   };
 
   update: (input: { ctx: Ctx; msg: Msg; model: Model }) => {
     model: Model;
     eff?: Eff<Msg>;
-    msgs?: ClientAppMsg[];
+    evt?: ClientEvt[];
     cmd?: ClientCmd<ToServer>[];
   };
 
   updateFromServer: (input: { ctx: Ctx; msg: ToClient; model: Model }) => {
     model: Model;
     eff?: Eff<Msg>;
-    msgs?: ClientAppMsg[];
+    evt?: ClientEvt[];
     cmd?: ClientCmd<ToServer>[];
   };
 
   /**
    * Handles messages from the game space like users leaving and joining
    */
-  updateFromEvent: (input: {
+  updateFromEvt: (input: {
     ctx: SpaceViewCtx;
     msg: SpaceEvt;
     model: Model;
@@ -47,7 +47,7 @@ export type SpaceGameClient<
     model: Model;
     eff?: Eff<Msg>;
     cmd?: ClientCmd<ToServer>[];
-    msgs?: ClientAppMsg[];
+    evt?: ClientEvt[];
   };
 
   syncWithServer: (input: {
@@ -58,7 +58,7 @@ export type SpaceGameClient<
     model: Model;
     eff?: Eff<Msg>;
     cmd?: ClientCmd<ToServer>[];
-    msgs?: ClientAppMsg[];
+    evt?: ClientEvt[];
   };
 
   subscriptions: (input: {
@@ -102,7 +102,7 @@ const tag = <
       return {
         model: { t: tag, c: initial.model },
         eff: Eff.t(tag, initial.eff),
-        msgs: initial.msgs,
+        evt: initial.evt,
         cmd: ClientCmd.tag(tag, initial.cmd),
       };
     },
@@ -115,7 +115,7 @@ const tag = <
       return {
         model: { t: tag, c: updated.model },
         eff: Eff.t(tag, updated.eff),
-        msgs: updated.msgs,
+        evt: updated.evt,
         cmd: ClientCmd.tag(tag, updated.cmd),
       };
     },
@@ -128,12 +128,12 @@ const tag = <
       return {
         model: { t: tag, c: updated.model },
         eff: Eff.t(tag, updated.eff),
-        msgs: updated.msgs,
+        evt: updated.evt,
         cmd: ClientCmd.tag(tag, updated.cmd),
       };
     },
-    updateFromEvent: (input) => {
-      const updated = client.updateFromEvent({
+    updateFromEvt: (input) => {
+      const updated = client.updateFromEvt({
         ...input,
         msg: input.msg,
         model: input.model.c,
@@ -141,7 +141,7 @@ const tag = <
       return {
         model: { t: tag, c: updated.model },
         eff: Eff.t(tag, updated.eff),
-        msgs: updated.msgs,
+        evt: updated.evt,
         cmd: ClientCmd.tag(tag, updated.cmd),
       };
     },
@@ -154,7 +154,7 @@ const tag = <
       return {
         model: { t: tag, c: updated.model },
         eff: Eff.t(tag, updated.eff),
-        msgs: updated.msgs,
+        evt: updated.evt,
         cmd: ClientCmd.tag(tag, updated.cmd),
       };
     },
@@ -206,7 +206,7 @@ const tagUpdate =
     return {
       model: { t: tag, c: updated.model },
       eff: Eff.t(tag, updated.eff),
-      msgs: updated.msgs,
+      evt: updated.evt,
       cmd: ClientCmd.tag(tag, updated.cmd),
     };
   };
@@ -227,7 +227,7 @@ const tagInit =
     return {
       model: { t: tag, c: initial.model },
       eff: Eff.t(tag, initial.eff),
-      msgs: initial.msgs,
+      evt: initial.evt,
       cmd: ClientCmd.tag(tag, initial.cmd),
     };
   };

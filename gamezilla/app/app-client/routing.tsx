@@ -1,5 +1,5 @@
 import { Browser, Eff } from "gamezilla/@SHARED/core";
-import { ClientAppMsg, Route } from "gamezilla/app/@SHARED/client";
+import { ClientCmd, ClientEvt, Route } from "gamezilla/app/@SHARED/client";
 
 //
 //
@@ -50,7 +50,7 @@ export const update = ({
 }): {
   model: Model;
   eff?: Eff<Msg>;
-  msgs?: ClientAppMsg[];
+  evt?: ClientEvt[];
 } => {
   switch (msg.t) {
     case "clicked-back": {
@@ -64,29 +64,35 @@ export const update = ({
     case "route-changed": {
       return {
         model: msg.route,
-        msgs: [{ t: "route-changed", route: msg.route }],
+        evt: [{ t: "route-changed", route: msg.route }],
       };
     }
   }
 };
 
-export const updateFromEvent = ({
-  msg,
+export const updateFromCmd = ({
+  cmd: msg,
   model,
 }: {
-  msg: ClientAppMsg;
+  cmd: ClientCmd<unknown>;
   model: Model;
 }): {
   model: Model;
   eff?: Eff<Msg>;
 } => {
   switch (msg.t) {
-    case "route-push": {
-      return { model, eff: Browser.push(Route.encode(msg.route)) };
+    case "routing/push": {
+      return {
+        model,
+        eff: Browser.push(Route.encode(msg.route)),
+      };
     }
 
-    case "route-back": {
-      return { model, eff: Browser.back };
+    case "routing/back": {
+      return {
+        model,
+        eff: Browser.back,
+      };
     }
 
     default: {

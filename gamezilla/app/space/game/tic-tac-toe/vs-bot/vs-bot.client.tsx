@@ -1,9 +1,5 @@
 import { Eff, Posix } from "gamezilla/@SHARED/core";
-import {
-  ClientAppMsg,
-  ClientCmd,
-  ClientCtx,
-} from "gamezilla/app/@SHARED/client";
+import { ClientEvt, ClientCmd, ClientCtx } from "gamezilla/app/@SHARED/client";
 import {
   IconArrowLeftOnRect,
   IconArrowRotateLeft,
@@ -79,7 +75,7 @@ export const update = ({
   model: Model;
 }): {
   model: Model;
-  msgs?: ClientAppMsg[];
+  evt?: ClientEvt[];
   eff?: Eff<Msg>;
   cmd?: ClientCmd<ToServer>[];
 } => {

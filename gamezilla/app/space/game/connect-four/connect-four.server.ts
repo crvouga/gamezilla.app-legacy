@@ -135,14 +135,14 @@ export const updateFromClient: Server["updateFromClient"] = ({
   return { model };
 };
 
-export const updateFromEvent: Server["updateFromEvent"] = ({ msg, model }) => {
+export const updateFromEvt: Server["updateFromEvt"] = ({ msg, model }) => {
   switch (model.t) {
     case "none": {
       return { model };
     }
 
     case "vs-bot": {
-      const updated = VsBot.updateFromEvent({
+      const updated = VsBot.updateFromEvt({
         msg,
         model: model.c,
       });
@@ -153,7 +153,7 @@ export const updateFromEvent: Server["updateFromEvent"] = ({ msg, model }) => {
     }
 
     case "vs-user": {
-      const updated = VsUser.updateFromEvent({
+      const updated = VsUser.updateFromEvt({
         msg,
         model: model.c,
       });

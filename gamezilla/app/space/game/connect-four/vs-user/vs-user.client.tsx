@@ -154,7 +154,7 @@ export const syncWithServer = ({
   };
 };
 
-export const updateFromEvent = (input: {
+export const updateFromEvt = (input: {
   model: ClientModel;
   msg: SpaceEvt;
 }): {

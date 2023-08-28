@@ -1,5 +1,5 @@
 import { ClientWireMsg, Eff } from "gamezilla/@SHARED/core";
-import { ClientAppMsg } from "gamezilla/app/@SHARED/client";
+import { ClientEvt } from "gamezilla/app/@SHARED/client";
 import { IconSpinner } from "gamezilla/app/@SHARED/ui";
 
 //
@@ -38,7 +38,7 @@ export const update = ({
   model: Model;
 }): {
   model: Model;
-  msgs?: ClientAppMsg[];
+  evt?: ClientEvt[];
 } => {
   switch (msg.t) {
     case "server-connect-error": {
@@ -56,29 +56,12 @@ export const update = ({
         model: {
           t: "server-connected",
         },
-        msgs: [{ t: "server-connected" }],
+        evt: [{ t: "server-connected" }],
       };
     }
 
     case "server-disconnected": {
       return { model: { t: msg.t } };
-    }
-  }
-};
-
-export const updateFromEvent = <ToServer,>({
-  model,
-  msg,
-}: {
-  msg: ClientAppMsg;
-  model: Model;
-}): {
-  model: Model;
-  eff?: Eff<Msg>;
-} => {
-  switch (msg.t) {
-    default: {
-      return { model };
     }
   }
 };

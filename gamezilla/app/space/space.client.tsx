@@ -8,9 +8,9 @@ import {
   p,
 } from "gamezilla/@SHARED/core";
 import {
-  ClientAppMsg,
   ClientCmd,
   ClientCtx,
+  ClientEvt,
   RouteGameSpace,
   ViewCtx,
 } from "gamezilla/app/@SHARED/client";
@@ -77,7 +77,7 @@ export const update = (input: {
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
-  msgs?: ClientAppMsg[];
+  evt?: ClientEvt[];
   cmd?: ClientCmd<ToServer>[];
 } => {
   return p(
@@ -92,9 +92,9 @@ const watchCreate: typeof update = ({ msg, model }) => {
     case "create": {
       return {
         model,
-        msgs: [
+        cmd: [
           {
-            t: "route-push",
+            t: "routing/push",
             route: {
               t: "space",
               c: { t: "space", spaceId: msg.spaceId },
@@ -122,9 +122,9 @@ const updateMain: typeof update = ({ ctx, msg, model }) => {
     case "clicked-user-link": {
       return {
         model: { ...model, modal: null },
-        msgs: [
+        cmd: [
           {
-            t: "route-push",
+            t: "routing/push",
             route: {
               t: "profile",
               c: { t: "profile", userId: msg.userId },
@@ -177,7 +177,7 @@ const updateMain: typeof update = ({ ctx, msg, model }) => {
       return {
         model: modelNew,
         eff: Eff.t("game", updated.eff),
-        msgs: updated.msgs,
+        evt: updated.evt,
         cmd: ClientCmd.tag("game", updated.cmd),
       };
     }
@@ -210,7 +210,7 @@ export const updateFromServer = ({
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
-  msgs?: ClientAppMsg[];
+  evt?: ClientEvt[];
   cmd?: ClientCmd<ToServer>[];
 } => {
   switch (msg.t) {
@@ -247,7 +247,7 @@ export const updateFromServer = ({
       return {
         model: modelNew,
         eff: Eff.t("game", updated.eff),
-        msgs: updated.msgs,
+        evt: updated.evt,
       };
     }
 
@@ -255,7 +255,7 @@ export const updateFromServer = ({
       if (msg.result.t === "err") {
         return {
           model: { ...model, req: { ...model.req, list: msg.result } },
-          msgs: [{ t: "enqueue-toast", text: msg.result.error }],
+          cmd: [{ t: "toast/enqueue", text: msg.result.error }],
         };
       }
 
@@ -268,7 +268,7 @@ export const updateFromServer = ({
       return {
         model: { ...merged.model, req: { ...model.req, list: Ok(null) } },
         eff: merged.eff,
-        msgs: msg.profiles
+        evt: msg.profiles
           ? [{ t: "got-profiles", profiles: msg.profiles }]
           : [],
       };
@@ -278,7 +278,7 @@ export const updateFromServer = ({
       if (msg.result.t === "err") {
         return {
           model: { ...model, req: { ...model.req, [msg.t]: msg.result } },
-          msgs: [{ t: "enqueue-toast", text: msg.result.error }],
+          cmd: [{ t: "toast/enqueue", text: msg.result.error }],
         };
       }
 
@@ -288,7 +288,7 @@ export const updateFromServer = ({
           spaces: dissoc(model.spaces, msg.result.value.spaceId),
           req: { ...model.req, [msg.t]: Ok(null) },
         },
-        msgs: msg.profiles
+        evt: msg.profiles
           ? [{ t: "got-profiles", profiles: msg.profiles }]
           : [],
       };
@@ -298,7 +298,7 @@ export const updateFromServer = ({
       if (msg.result.t === "err") {
         return {
           model: { ...model, req: { ...model.req, [msg.t]: msg.result } },
-          msgs: [{ t: "enqueue-toast", text: msg.result.error }],
+          cmd: [{ t: "toast/enqueue", text: msg.result.error }],
         };
       }
 
@@ -314,7 +314,7 @@ export const updateFromServer = ({
           req: { ...model.req, [msg.t]: Ok(null) },
         },
         eff: merged.eff,
-        msgs: msg.profiles
+        evt: msg.profiles
           ? [{ t: "got-profiles", profiles: msg.profiles }]
           : [],
       };
@@ -322,8 +322,8 @@ export const updateFromServer = ({
   }
 };
 
-export const updateFromEvent = (input: {
-  msg: ClientAppMsg;
+export const updateFromEvt = (input: {
+  msg: ClientEvt;
   model: ClientModel;
 }): {
   model: ClientModel;

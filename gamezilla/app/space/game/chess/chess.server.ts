@@ -192,7 +192,7 @@ export const updateFromClient = ({
   }
 };
 
-export const updateFromEvent = ({
+export const updateFromEvt = ({
   msg,
   model,
 }: {
@@ -209,7 +209,7 @@ export const updateFromEvent = ({
     }
 
     case "vs-bot": {
-      const updated = VsBot.updateFromEvent({
+      const updated = VsBot.updateFromEvt({
         msg,
         model: model.c,
       });
@@ -220,7 +220,7 @@ export const updateFromEvent = ({
     }
 
     case "vs-user": {
-      const updated = VsUser.updateFromEvent({
+      const updated = VsUser.updateFromEvt({
         msg,
         model: model.c,
       });
@@ -232,7 +232,7 @@ export const updateFromEvent = ({
     }
 
     case "puzzle": {
-      const updated = Puzzle.updateFromEvent({
+      const updated = Puzzle.updateFromEvt({
         model: model.c,
         msg,
       });

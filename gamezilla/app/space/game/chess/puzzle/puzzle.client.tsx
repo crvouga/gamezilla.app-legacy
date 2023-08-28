@@ -1,5 +1,5 @@
 import { Eff, andThen, p } from "gamezilla/@SHARED/core";
-import { ClientAppMsg, ClientCmd } from "gamezilla/app/@SHARED/client";
+import { ClientCmd, ClientEvt, ToastCmd } from "gamezilla/app/@SHARED/client";
 import {
   IconArrowCircle,
   IconArrowLeftOnRect,
@@ -105,7 +105,7 @@ export const updateFromServer = (input: {
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
-  msgs?: ClientAppMsg[];
+  evt?: ClientEvt[];
 } => {
   return p(updateFromServer_(input), andThen(watch));
 };
@@ -119,7 +119,7 @@ export const updateFromServer_: typeof updateFromServer = ({
   model: ClientModel;
 }): {
   model: ClientModel;
-  msgs?: ClientAppMsg[];
+  cmd?: ToastCmd[];
 } => {
   if (msg.t === "clock-tick") {
     return { model: { ...model, serverNow: msg.now } };
@@ -131,16 +131,16 @@ export const updateFromServer_: typeof updateFromServer = ({
     if (msg.t === "db-got-puzzles") {
       return {
         model,
-        msgs: [{ t: "enqueue-toast", text: `Failed to load puzzles.` }],
+        cmd: [{ t: "toast/enqueue", text: `Failed to load puzzles.` }],
       };
     }
 
     if (msg.t === "db-got-initial-load") {
       return {
         model,
-        msgs: [
+        cmd: [
           {
-            t: "enqueue-toast",
+            t: "toast/enqueue",
             text: `Failed to load puzzles and profile.`,
           },
         ],

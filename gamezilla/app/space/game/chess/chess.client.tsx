@@ -195,13 +195,13 @@ export const updateFromServer: Client["updateFromServer"] = ({
       return {
         model: { ...model, mode: { t: "puzzle", c: updated.model } },
         eff: Eff.t("puzzle", updated?.eff ?? Eff.None),
-        msgs: updated.msgs,
+        evt: updated.evt,
       };
     }
   }
 };
 
-export const updateFromEvent: Client["updateFromEvent"] = (input) => {
+export const updateFromEvt: Client["updateFromEvt"] = (input) => {
   return input;
 };
 

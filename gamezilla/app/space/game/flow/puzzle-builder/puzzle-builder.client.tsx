@@ -70,7 +70,7 @@ const updateFromServer: Client["updateFromServer"] = (
 /**
  * @inheritdoc
  */
-const updateFromEvent: Client["updateFromEvent"] = (input) => {
+const updateFromEvt: Client["updateFromEvt"] = (input) => {
   return input;
 };
 
@@ -177,7 +177,7 @@ export const PuzzleBuilderClient: Client = {
   init,
   update,
   updateFromServer,
-  updateFromEvent,
+  updateFromEvt,
   syncWithServer,
   subscriptions,
   View,

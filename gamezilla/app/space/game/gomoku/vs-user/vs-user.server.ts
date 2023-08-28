@@ -63,7 +63,7 @@ export const updateFromClient = ({
   return { model: res.result.value, eff: Eff.None };
 };
 
-export const updateFromEvent = ({
+export const updateFromEvt = ({
   msg,
   model,
 }: {

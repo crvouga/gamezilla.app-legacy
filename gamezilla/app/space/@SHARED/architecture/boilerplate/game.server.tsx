@@ -40,7 +40,7 @@ export const updateFromClient: Server["updateFromClient"] = (input) => {
   return input;
 };
 
-export const updateFromEvent: Server["updateFromEvent"] = (input) => {
+export const updateFromEvt: Server["updateFromEvt"] = (input) => {
   return input;
 };
 

@@ -79,13 +79,13 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
   return { model };
 };
 
-export const updateFromEvent: Client["updateFromEvent"] = (input) => {
+export const updateFromEvt: Client["updateFromEvt"] = (input) => {
   const { model } = input;
   if (model.t === "puzzle-builder") {
-    return PuzzleBuilder.updateFromEvent({ ...input, model });
+    return PuzzleBuilder.updateFromEvt({ ...input, model });
   }
   if (model.t === "play") {
-    return Play.updateFromEvent({ ...input, model });
+    return Play.updateFromEvt({ ...input, model });
   }
   return input;
 };

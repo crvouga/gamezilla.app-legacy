@@ -1,8 +1,8 @@
 import { Eff, Loading, andThen, p } from "gamezilla/@SHARED/core";
 import {
-  ClientAppMsg,
   ClientCmd,
   ClientCtx,
+  ClientEvt,
   RouteProfile,
   ViewCtx,
 } from "gamezilla/app/@SHARED/client";
@@ -145,12 +145,12 @@ export const updateFromServer = ({
   };
 };
 
-export const updateFromEvent = ({
-  msg,
+export const updateFromEvt = ({
+  evt,
   model,
   ctx,
 }: {
-  msg: ClientAppMsg;
+  evt: ClientEvt;
   model: ClientModel;
   ctx: ClientCtx | null;
 }): {
@@ -160,23 +160,26 @@ export const updateFromEvent = ({
 } => {
   return p(
     { model },
-    andThen((model) => loadProfileRoute({ msg, model })),
-    andThen((model) => updateUsernameDraft({ model, msg, ctx })),
-    andThen((model) => gotProfiles({ msg, model })),
-    andThen((model) => loadCurrentUserProfile(msg, model))
+    andThen((model) => loadProfileRoute({ evt, model })),
+    andThen((model) => updateUsernameDraft({ model, evt, ctx })),
+    andThen((model) => gotProfiles({ evt, model })),
+    andThen((model) => loadCurrentUserProfile({ evt, model }))
   );
 };
 
-const loadCurrentUserProfile = (
-  msg: ClientAppMsg,
-  model: ClientModel
-): {
+const loadCurrentUserProfile = ({
+  evt,
+  model,
+}: {
+  evt: ClientEvt;
+  model: ClientModel;
+}): {
   model: ClientModel;
   cmd?: ClientCmd<ToServer>[];
 } => {
-  switch (msg.t) {
+  switch (evt.t) {
     case "client-authenticated": {
-      return loadProfiles([msg.userId], model);
+      return loadProfiles([evt.userId], model);
     }
     default: {
       return { model };
@@ -185,10 +188,10 @@ const loadCurrentUserProfile = (
 };
 
 const loadProfileRoute = ({
-  msg,
+  evt,
   model,
 }: {
-  msg: ClientAppMsg;
+  evt: ClientEvt;
   model: ClientModel;
 }): {
   model: ClientModel;
@@ -196,14 +199,14 @@ const loadProfileRoute = ({
   eff?: Eff<ClientMsg>;
 } => {
   if (
-    msg.t !== "route-changed" ||
-    msg.route.t !== "profile" ||
-    msg.route.c.t !== "profile"
+    evt.t !== "route-changed" ||
+    evt.route.t !== "profile" ||
+    evt.route.c.t !== "profile"
   ) {
     return { model };
   }
 
-  return loadProfiles([msg.route.c.userId], model);
+  return loadProfiles([evt.route.c.userId], model);
 };
 
 const loadProfiles = (
@@ -231,23 +234,23 @@ const loadProfiles = (
 };
 
 const gotProfiles = ({
-  msg,
+  evt,
   model,
 }: {
-  msg: ClientAppMsg;
+  evt: ClientEvt;
   model: ClientModel;
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
 } => {
-  switch (msg.t) {
+  switch (evt.t) {
     case "got-profiles": {
       return {
         model: {
           ...model,
           profiles: {
             ...model.profiles,
-            ...msg.profiles,
+            ...evt.profiles,
           },
         },
       };
@@ -260,20 +263,20 @@ const gotProfiles = ({
 
 const updateUsernameDraft = ({
   model,
-  msg,
+  evt,
   ctx,
 }: {
   model: ClientModel;
-  msg: ClientAppMsg;
+  evt: ClientEvt;
   ctx: ClientCtx | null;
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
 } => {
-  if (msg.t !== "route-changed") {
+  if (evt.t !== "route-changed") {
     return { model };
   }
-  const route = msg.route;
+  const route = evt.route;
 
   if (route.t !== "profile") {
     return { model };

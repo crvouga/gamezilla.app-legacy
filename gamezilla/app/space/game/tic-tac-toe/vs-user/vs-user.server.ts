@@ -283,7 +283,7 @@ export const updateFromClient = (
   }
 };
 
-export const updateFromEvent = ({
+export const updateFromEvt = ({
   msg,
   model,
 }: {

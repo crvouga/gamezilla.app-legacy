@@ -110,24 +110,24 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
   return { model };
 };
 
-export const updateFromEvent: Client["updateFromEvent"] = (input) => {
+export const updateFromEvt: Client["updateFromEvt"] = (input) => {
   const { model } = input;
 
   switch (model.t) {
     case "chess": {
-      return Chess.updateFromEvent({ ...input, model });
+      return Chess.updateFromEvt({ ...input, model });
     }
 
     case "connect-four": {
-      return ConnectFour.updateFromEvent({ ...input, model });
+      return ConnectFour.updateFromEvt({ ...input, model });
     }
 
     case "flow": {
-      return Flow.updateFromEvent({ ...input, model });
+      return Flow.updateFromEvt({ ...input, model });
     }
 
     case "tic-tac-toe": {
-      return TicTacToe.updateFromEvent({ ...input, model });
+      return TicTacToe.updateFromEvt({ ...input, model });
     }
   }
 };

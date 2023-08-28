@@ -133,7 +133,7 @@ const updateFromClientMain: typeof updateFromClient = ({ ctx, msg, model }) => {
   return { model: result.value, cmd: [{ t: "send-to-space", msg: res }] };
 };
 
-export const updateFromEvent = ({
+export const updateFromEvt = ({
   msg,
   model,
 }: {

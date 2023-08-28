@@ -1,5 +1,5 @@
 import { Browser, Eff, exhaustive, p } from "gamezilla/@SHARED/core";
-import { ClientAppMsg, RouteChat, ViewCtx } from "gamezilla/app/@SHARED/client";
+import { ClientEvt, RouteChat, ViewCtx } from "gamezilla/app/@SHARED/client";
 import { VDom } from "gamezilla/app/@SHARED/ui";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./chat.core";
 
@@ -132,11 +132,11 @@ export const updateFromServer = ({
   return { model };
 };
 
-export const updateFromEvent = ({
+export const updateFromEvt = ({
   msg,
   model,
 }: {
-  msg: ClientAppMsg;
+  msg: ClientEvt;
   model: Model;
 }): {
   model: Model;

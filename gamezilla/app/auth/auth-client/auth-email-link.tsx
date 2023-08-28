@@ -1,5 +1,10 @@
 import { Eff, Result, Task, exhaustive, p } from "gamezilla/@SHARED/core";
-import { ClientAppMsg } from "gamezilla/app/@SHARED/client";
+import {
+  ClientCmd,
+  ClientEvt,
+  RouteCmd,
+  ToastCmd,
+} from "gamezilla/app/@SHARED/client";
 import {
   AlertError,
   AlertSuccess,
@@ -59,7 +64,7 @@ export const update = ({
 }): {
   model: Model;
   eff?: Eff<Msg>;
-  msgs?: ClientAppMsg[];
+  cmd?: RouteCmd[];
 } => {
   if (msg.t === "inputted-email-address") {
     return {
@@ -122,7 +127,7 @@ export const update = ({
   if (msg.t === "clicked-back") {
     return {
       model: model,
-      msgs: [{ t: "route-back" }],
+      cmd: [{ t: "routing/back" }],
     };
   }
 

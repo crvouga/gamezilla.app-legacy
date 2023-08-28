@@ -7,7 +7,7 @@ import {
   Time,
   p,
 } from "gamezilla/@SHARED/core";
-import { ClientAppMsg } from "gamezilla/app/@SHARED/client";
+import { AnonymousViewCtx, RouteCmd } from "gamezilla/app/@SHARED/client";
 import {
   AlertError,
   AlertSuccess,
@@ -66,7 +66,6 @@ export const init: { model: Model; eff: Eff<Msg> } = {
 //
 
 export type Msg =
-  | { t: "clicked-back" }
   | { t: "clicked-verify-code" }
   | { t: "inputted-code"; code: string }
   | { t: "verify-code-done"; result: Result<string, null> }
@@ -88,13 +87,9 @@ export const update = ({
 }): {
   model: Model;
   eff?: Eff<Msg>;
-  msgs?: ClientAppMsg[];
+  cmd?: RouteCmd[];
   shouldLoadCurrentUser?: boolean;
 } => {
-  if (msg.t === "clicked-back") {
-    return { model, msgs: [{ t: "route-back" }] };
-  }
-
   if (msg.t === "clicked-verify-code") {
     return {
       model: {
@@ -149,20 +144,20 @@ export const update = ({
 //
 
 export const View = ({
+  ctx,
   phoneNumber,
   model,
   dispatch,
 }: {
   phoneNumber: PhoneNumber;
   model: Model;
+  ctx: AnonymousViewCtx;
   dispatch: (msg: Msg) => void;
 }) => {
   return (
     <div className="flex h-full w-full flex-col">
       <TopBar
-        left={
-          <TopBarBackButton onClick={() => dispatch({ t: "clicked-back" })} />
-        }
+        left={<TopBarBackButton onClick={ctx.back} />}
         title="Verify Code"
       />
       <div className="flex w-full flex-col gap-4 p-4">

@@ -1,14 +1,6 @@
 import { Eff, Sub } from "gamezilla/@SHARED/core";
-import {
-  ClientAppMsg,
-  ClientCmd,
-  ClientCtx,
-} from "gamezilla/app/@SHARED/client";
-import {
-  SpaceGameClient,
-  SpaceClientCtx,
-  SpaceViewCtx,
-} from "gamezilla/app/space/@SHARED";
+import { ClientCmd } from "gamezilla/app/@SHARED/client";
+import { SpaceGameClient, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
 import {
   MainMenuScreen,
   mainMenuButtons,
@@ -74,7 +66,7 @@ export const update: Client["update"] = ({ msg, model, ctx }) => {
     return {
       model: { t: "vs-bot", c: updated.model },
       eff: Eff.t("vs-bot", updated.eff),
-      msgs: updated.msgs,
+      evt: updated.evt,
       cmd: ClientCmd.tag("vs-bot", updated.cmd),
     };
   }
@@ -160,7 +152,7 @@ export const syncWithServer: Client["syncWithServer"] = ({
   return { model: { t: "none" } };
 };
 
-export const updateFromEvent: Client["updateFromEvent"] = (input) => {
+export const updateFromEvt: Client["updateFromEvt"] = (input) => {
   return input;
 };
 

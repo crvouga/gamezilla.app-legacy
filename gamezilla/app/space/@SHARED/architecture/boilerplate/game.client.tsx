@@ -47,7 +47,7 @@ const updateFromServer: Client["updateFromServer"] = (input) => {
   return input;
 };
 
-const updateFromEvent: Client["updateFromEvent"] = (input) => {
+const updateFromEvt: Client["updateFromEvt"] = (input) => {
   return input;
 };
 
@@ -91,7 +91,7 @@ export const client: Client = {
   init,
   update,
   updateFromServer,
-  updateFromEvent,
+  updateFromEvt,
   syncWithServer,
   subscriptions,
   View,

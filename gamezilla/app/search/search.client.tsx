@@ -1,5 +1,5 @@
 import { Browser, Eff, matchSort, p } from "gamezilla/@SHARED/core";
-import { ClientAppMsg, ClientCmd } from "gamezilla/app/@SHARED/client";
+import { ClientEvt, ClientCmd } from "gamezilla/app/@SHARED/client";
 import { IconMagnifyingGlass, IconXMark, VDom } from "gamezilla/app/@SHARED/ui";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./search.core";
 
@@ -44,7 +44,7 @@ export const update = ({
 }): {
   model: Model;
   eff?: Eff<Msg>;
-  msgs?: ClientAppMsg[];
+  evt?: ClientEvt[];
   cmd?: ClientCmd<ToServer>[];
 } => {
   if (msg.t === "focus-done") {
@@ -64,9 +64,9 @@ export const update = ({
   if (msg.t === "clicked-result") {
     return {
       model,
-      msgs: [
+      cmd: [
         {
-          t: "route-push",
+          t: "routing/push",
           route: {
             t: "profile",
             c: { t: "profile", userId: msg.userId },

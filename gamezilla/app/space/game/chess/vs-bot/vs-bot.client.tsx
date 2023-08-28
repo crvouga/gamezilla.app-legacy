@@ -31,7 +31,7 @@ import {
   isBotTurn,
   updateCore,
 } from "./vs-bot.core";
-import { ClientAppMsg, ClientCmd } from "gamezilla/app/@SHARED/client";
+import { ClientEvt, ClientCmd } from "gamezilla/app/@SHARED/client";
 
 //
 //
@@ -204,10 +204,6 @@ const updateFromServer_: typeof updateFromServer = ({ msg, model }) => {
   });
 
   return { model: modelNew };
-};
-
-const playAudio = (src: string): Eff<ClientMsg> => {
-  return Audio.play(src, (result) => ({ t: "audio-done", result }));
 };
 
 //
