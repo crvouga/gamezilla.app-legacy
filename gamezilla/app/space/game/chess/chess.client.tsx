@@ -16,6 +16,7 @@ import {
 import * as Puzzle from "./puzzle/puzzle.client";
 import * as VsBot from "./vs-bot/vs-bot.client";
 import * as VsUser from "./vs-user/vs-user.client";
+import { ClientCmd } from "gamezilla/app/@SHARED/client";
 
 type Client = SpaceGameClient<
   ClientModel,
@@ -97,23 +98,23 @@ export const update: Client["update"] = ({ msg, model, ctx }) => {
     }
 
     case "puzzle": {
-      if (model.mode?.t !== "puzzle") {
-        return { model };
+      if (model.mode?.t === "puzzle") {
+        const updated = Puzzle.update({
+          ctx,
+          model: model.mode.c,
+          msg: msg.c,
+        });
+
+        return {
+          model: {
+            ...model,
+            mode: { t: "puzzle", c: updated.model },
+          },
+          eff: Eff.t("puzzle", updated?.eff ?? Eff.None),
+          cmd: ClientCmd.tag("puzzle", updated.cmd),
+        };
       }
-
-      const updated = Puzzle.update({
-        ctx,
-        model: model.mode.c,
-        msg: msg.c,
-      });
-
-      return {
-        model: {
-          ...model,
-          mode: { t: "puzzle", c: updated.model },
-        },
-        eff: Eff.t("puzzle", updated?.eff ?? Eff.None),
-      };
+      return { model };
     }
   }
 };
