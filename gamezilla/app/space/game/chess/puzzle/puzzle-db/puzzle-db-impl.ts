@@ -15,15 +15,18 @@ import {
 } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
 import { DbConnSql } from "gamezilla/app/@SHARED/server";
-import { MoveInput, uciMoveToMoveInput } from "../@SHARED/chess/chess";
-import { EloRating } from "./elo-rating";
+import {
+  MoveInput,
+  uciMoveToMoveInput,
+} from "gamezilla/app/space/game/chess/@SHARED/chess";
+import { EloRating } from "../elo-rating";
 import {
   Puzzle,
   PuzzleInteraction,
   PuzzleProfile,
   initQuery,
-} from "./puzzle.core";
-import { splitEvery } from "./utils";
+} from "../puzzle.core";
+import { splitEvery } from "../utils";
 
 //
 //

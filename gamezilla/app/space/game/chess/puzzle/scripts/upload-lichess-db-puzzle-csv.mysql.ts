@@ -1,6 +1,6 @@
 import { has, obj, str } from "gamezilla/@SHARED/core";
 import { DbConnSql } from "gamezilla/app/@SHARED/server";
-import { PuzzleDb, PuzzleRow } from "../puzzle-db";
+import { PuzzleDb, PuzzleRow } from "../puzzle-db/puzzle-db-impl";
 
 //
 //
