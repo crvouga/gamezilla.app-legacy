@@ -342,6 +342,10 @@ export const updateFromEvt = (input: {
   const { msg } = input;
 
   switch (msg.t) {
+    case "server-connected": {
+      return listSpaces(input);
+    }
+
     case "client-authenticated": {
       return listSpaces(input);
     }

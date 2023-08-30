@@ -1,19 +1,9 @@
-import {
-  Browser,
-  ClientId,
-  Eff,
-  Posix,
-  Sub,
-  andThen,
-  p,
-  toMsgPayload,
-  toMsgType,
-} from "gamezilla/@SHARED/core";
+import { Browser, Eff, Posix, Sub } from "gamezilla/@SHARED/core";
 import {
   AnonymousViewCtx,
-  ClientEvt,
   ClientCmd,
   ClientCtx,
+  ClientEvt,
   Route,
   ViewCtx,
 } from "gamezilla/app/@SHARED/client";
@@ -42,15 +32,13 @@ import { SpaceClient } from "./space";
 //
 //
 
-type Model = ClientModel;
-
 export const init = ({
   location,
 }: {
   location: Browser.Location;
 }): {
-  model: Model;
-  eff: Eff<Msg>;
+  model: ClientModel;
+  eff: Eff<ClientMsg>;
 } => {
   const routing = Routing.init(location);
   const toast = Toast.init;
@@ -73,19 +61,9 @@ export const init = ({
       search: search.model,
       profile,
     },
-    eff: Eff.batch<Msg>([routing.eff, Eff.t("auth", auth.eff)]),
+    eff: Eff.batch<ClientMsg>([routing.eff, Eff.t("auth", auth.eff)]),
   };
 };
-
-//
-//
-//
-// Msg
-//
-//
-//
-
-type Msg = ClientMsg;
 
 //
 //
@@ -96,31 +74,14 @@ type Msg = ClientMsg;
 //
 
 export const update = (input: {
-  snapshot: (state: { model: Model }, ...consoleArgs: unknown[]) => void;
   now: Posix;
-  msg: Msg;
-  model: Model;
+  msg: ClientMsg;
+  model: ClientModel;
 }): {
-  model: Model;
-  eff?: Eff<Msg>;
+  model: ClientModel;
+  eff?: Eff<ClientMsg>;
 } => {
   let acc = updateMain(input);
-
-  if (input.msg.t === "from-server") {
-    input.snapshot(
-      acc,
-      "[ ▶ ]",
-      toMsgType(input.msg.msg),
-      toMsgPayload(input.msg.msg, {})
-    );
-  } else {
-    input.snapshot(
-      acc,
-      "[msg]",
-      toMsgType(input.msg),
-      toMsgPayload(input.msg, {})
-    );
-  }
 
   for (const evt of acc.evt ?? []) {
     const updatedEvt = updateFromEvt({
@@ -133,8 +94,6 @@ export const update = (input: {
       eff: Eff.batch([acc.eff, updatedEvt.eff]),
       cmd: [...(acc.cmd ?? []), ...(updatedEvt.cmd ?? [])],
     };
-    //
-    input.snapshot(acc, "[evt]", toMsgType(evt), toMsgPayload(evt, {}));
   }
 
   for (const cmd of acc.cmd ?? []) {
@@ -143,17 +102,6 @@ export const update = (input: {
       model: updatedCmd.model,
       eff: Eff.batch([acc.eff, updatedCmd.eff]),
     };
-    //
-    if (cmd.t === "send-to-server") {
-      input.snapshot(
-        acc,
-        "[ ◀ ]",
-        toMsgType(cmd.msg),
-        toMsgPayload(cmd.msg, {})
-      );
-    } else {
-      input.snapshot(acc, "[cmd]", toMsgType(cmd), toMsgPayload(cmd, {}));
-    }
   }
 
   return acc;
@@ -165,11 +113,11 @@ const updateMain = ({
   now,
 }: {
   now: Posix;
-  msg: Msg;
-  model: Model;
+  msg: ClientMsg;
+  model: ClientModel;
 }): {
-  model: Model;
-  eff?: Eff<Msg>;
+  model: ClientModel;
+  eff?: Eff<ClientMsg>;
   evt?: ClientEvt[];
   cmd?: ClientCmd<ToServer>[];
 } => {
@@ -271,7 +219,7 @@ const updateMain = ({
   }
 };
 
-const toCtx = (input: { model: Model; now: Posix }): ClientCtx | null => {
+const toCtx = (input: { model: ClientModel; now: Posix }): ClientCtx | null => {
   if (input.model.auth.currentUser.t === "logged-in") {
     return {
       currentUserId: input.model.auth.currentUser.userId,
@@ -288,11 +236,11 @@ const updateFromServer = ({
   model,
 }: {
   msg: ToClient;
-  model: Model;
+  model: ClientModel;
   now: Posix;
 }): {
-  model: Model;
-  eff?: Eff<Msg>;
+  model: ClientModel;
+  eff?: Eff<ClientMsg>;
   cmd?: ClientCmd<ToServer>[];
   evt?: ClientEvt[];
 } => {
@@ -376,11 +324,11 @@ const updateFromCmd = ({
   cmd,
 }: {
   now: Posix;
-  model: Model;
+  model: ClientModel;
   cmd: ClientCmd<ToServer>;
 }): {
-  model: Model;
-  eff?: Eff<Msg>;
+  model: ClientModel;
+  eff?: Eff<ClientMsg>;
 } => {
   switch (cmd.t) {
     case "routing/back":
@@ -431,11 +379,11 @@ const updateFromEvt = ({
   now,
 }: {
   now: Posix;
-  model: Model;
+  model: ClientModel;
   msg: ClientEvt;
 }): {
-  model: Model;
-  eff?: Eff<Msg>;
+  model: ClientModel;
+  eff?: Eff<ClientMsg>;
   cmd?: ClientCmd<ToServer>[];
 } => {
   const ctx = toCtx({ model, now });
@@ -469,7 +417,7 @@ const updateFromEvt = ({
       space: space.model,
       auth: auth.model,
     },
-    eff: Eff.batch<Msg>([
+    eff: Eff.batch<ClientMsg>([
       Eff.t("chat", chat.eff),
       Eff.t("profile", profile.eff),
       Eff.t("auth", auth.eff),
@@ -506,9 +454,9 @@ export const subscriptions = ({
   model,
 }: {
   now: Posix;
-  model: Model;
-}): Sub<Msg> => {
-  return Sub.batch<Msg>([
+  model: ClientModel;
+}): Sub<ClientMsg> => {
+  return Sub.batch<ClientMsg>([
     Sub.map(serverToClient, (msg) => ({ t: "from-server", msg })),
     Sub.tag("wire", wire),
     Sub.tag("routing", Routing.subscriptions),
@@ -517,7 +465,7 @@ export const subscriptions = ({
   ]);
 };
 
-const spaceSub = (now: Posix, model: Model): Sub<Msg> => {
+const spaceSub = (now: Posix, model: ClientModel): Sub<ClientMsg> => {
   if (model.auth.currentUser.t === "logged-in") {
     return Sub.tag(
       "space",
@@ -549,8 +497,8 @@ export const View = ({
   now,
 }: {
   now: Posix;
-  model: Model;
-  dispatch: (msg: Msg) => void;
+  model: ClientModel;
+  dispatch: (msg: ClientMsg) => void;
 }) => {
   return (
     <div className="fixed left-1/2 top-1/2 mx-auto  flex h-full max-h-full w-full max-w-md -translate-x-1/2 -translate-y-1/2 touch-none select-none flex-col overflow-hidden border border-neutral-800 bg-black text-white">
@@ -572,8 +520,8 @@ const ViewMain = ({
   now,
 }: {
   now: Posix;
-  model: Model;
-  dispatch: (msg: Msg) => void;
+  model: ClientModel;
+  dispatch: (msg: ClientMsg) => void;
 }) => {
   if (model.wire.t === "server-disconnected") {
     return (
@@ -639,8 +587,8 @@ const ViewLoggedOut = ({
   ctx,
   dispatch,
 }: {
-  model: Model;
-  dispatch: (m: Msg) => void;
+  model: ClientModel;
+  dispatch: (m: ClientMsg) => void;
   ctx: AnonymousViewCtx;
 }) => {
   if (model.routing.t === "auth") {
@@ -670,8 +618,8 @@ const ViewLoggedIn = ({
   dispatch,
 }: {
   ctx: ViewCtx;
-  model: Model;
-  dispatch: (m: Msg) => void;
+  model: ClientModel;
+  dispatch: (m: ClientMsg) => void;
 }) => {
   if (model.routing.t === "chat") {
     return (
@@ -765,8 +713,8 @@ const ViewBottomBar = ({
   ctx,
 }: {
   ctx: ViewCtx;
-  model: Model;
-  dispatch: (m: Msg) => void;
+  model: ClientModel;
+  dispatch: (m: ClientMsg) => void;
 }) => {
   const items: {
     route: Route;

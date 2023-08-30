@@ -2,13 +2,42 @@ import {
   Browser,
   Program,
   attachClientTransport,
-  toMsgPayload,
-  toMsgType,
 } from "gamezilla/@SHARED/core";
+import { render } from "preact";
+import { attachDebugger } from "./@SHARED/core/debug";
 import * as AppClient from "./app/app.client";
 import "./main.css";
-import { render } from "preact";
-import { ClientModel } from "./app/app.core";
+
+const program = Program.create({
+  init: () => {
+    return AppClient.init({ location: Browser.getLocation() });
+  },
+  update: (input) => {
+    return AppClient.update({
+      now: input.ctx.now,
+      model: input.model,
+      msg: input.msg,
+    });
+  },
+  subscriptions: (input) => {
+    return AppClient.subscriptions({
+      now: input.ctx.now,
+      model: input.model,
+    });
+  },
+});
+
+//
+//
+//
+//
+
+attachDebugger(program);
+
+//
+//
+//
+//
 
 const env = {
   isDev: process.env.NODE_ENV === "development",
@@ -29,37 +58,10 @@ attachClientTransport({
   clientToServer: AppClient.clientToServer,
 });
 
-const snapshots = new Map<
-  number,
-  { state: { model: ClientModel }; consoleArgs: unknown[] }
->();
-
-let id = 0;
-const snapshot = (state: { model: ClientModel }, ...consoleArgs: unknown[]) => {
-  id++;
-  snapshots.set(id, { state, consoleArgs });
-  console.log(...consoleArgs);
-};
-
-const program = Program.create({
-  init: () => {
-    return AppClient.init({ location: Browser.getLocation() });
-  },
-  update: (input) => {
-    return AppClient.update({
-      snapshot: snapshot,
-      now: input.ctx.now,
-      model: input.model,
-      msg: input.msg,
-    });
-  },
-  subscriptions: (input) => {
-    return AppClient.subscriptions({
-      now: input.ctx.now,
-      model: input.model,
-    });
-  },
-});
+//
+//
+//
+//
 
 program.subscribe((model, ctx) => {
   render(

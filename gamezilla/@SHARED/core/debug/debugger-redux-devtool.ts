@@ -5,9 +5,10 @@
  *
  * @since 0.5.0
  */
+import { toMsgPayload, toMsgType } from "..";
 import * as Json from "../json";
-import { Option } from "../option";
 import { p } from "../pipe";
+import { Program } from "../program";
 import { Result } from "../result";
 import { Task } from "../task";
 import {
@@ -26,7 +27,7 @@ type Unsubscribe = () => void;
  * @since 0.5.0
  */
 export interface Extension {
-  connect: <Model, Msg>() => Connection<Model, Msg>;
+  connect: <Model, Msg extends {}>() => Connection<Model, Msg>;
 }
 
 /**
@@ -34,7 +35,7 @@ export interface Extension {
  * @category model
  * @since 0.5.0
  */
-export interface Connection<Model, Msg> {
+export interface Connection<Model, Msg extends {}> {
   subscribe: (listener?: (m: DevToolMsg) => void) => Unsubscribe;
   send(action: null, state: LiftedState<Model>): void;
   send(action: Msg, state: Model): void;
@@ -90,13 +91,13 @@ interface DevToolHandlerR<Model, Msg extends {}>
  * @category utils
  * @since 0.5.0
  */
-export const getConnection =
-  <Model, Msg>(global: Global): Task<Option<Connection<Model, Msg>>> =>
-  async () => {
-    return hasExtension(global)
-      ? Option.Some(global.__REDUX_DEVTOOLS_EXTENSION__.connect())
-      : Option.None;
-  };
+export const getConnection = <Model, Msg extends {}>(
+  global: Global
+): Connection<Model, Msg> | null => {
+  return hasExtension(global)
+    ? global.__REDUX_DEVTOOLS_EXTENSION__.connect<Model, Msg>()
+    : null;
+};
 
 /**
  * **[UNSAFE]** Type guard to check if _Redux DevTool Extension_ is available.
@@ -436,4 +437,64 @@ const toggleAction =
 // poor man deep clone...
 const unsafeCopy = <A>(a: A): A => {
   return JSON.parse(JSON.stringify(a));
+};
+
+export const attachDebugger = async <Model, Msg extends {}>(
+  program: Program<Model, Msg>
+) => {
+  const connection = getConnection<Model, Msg>(window);
+
+  if (!connection) {
+    return;
+  }
+
+  connection.subscribe((msg) => {
+    switch (msg.type) {
+      case "ACTION": {
+        return;
+      }
+      case "DISPATCH": {
+        return;
+      }
+      case "START": {
+        return;
+      }
+    }
+  });
+
+  const created = makeDebugger<Model, Msg>(connection);
+
+  const started = created({
+    dispatch: (msg) => {
+      if ("type" in msg) {
+        console.log(msg.type);
+        switch (msg.type) {
+          case "__DebugApplyMsg__": {
+            return;
+          }
+          case "__DebugStarted__": {
+            return;
+          }
+          case "__DebugUpdateModel__": {
+            program.setState(msg.payload);
+            return;
+          }
+        }
+      }
+    },
+    init: program.getState(),
+  });
+
+  program.subscribe((model, ctx, msg) => {
+    if (msg) {
+      const action = {
+        type: toMsgType(msg),
+        payload: toMsgPayload(msg, {}),
+      };
+      // @ts-ignore
+      connection.send(action, model);
+    }
+  });
+
+  return started;
 };

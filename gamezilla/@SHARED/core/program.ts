@@ -4,9 +4,18 @@ import { Posix } from "./unix-time";
 
 export type Ctx = { now: Posix };
 
+type Subscriber<Model, Msg> = (
+  model: Model,
+  ctx: Ctx,
+  msg: Msg | null
+) => Promise<void> | void;
+
 export type Program<Model, Msg> = {
   dispatch: (msg: Msg) => void;
-  subscribe: (cb: (model: Model) => void) => () => void;
+  subscribe: (subscriber: Subscriber<Model, Msg>) => () => void;
+  getState: () => Model;
+  setState: (state: Model) => void;
+  start: () => () => void;
 };
 
 export function create<Model, Msg>(input: {
@@ -24,17 +33,11 @@ export function create<Model, Msg>(input: {
     ctx: Ctx;
     model: Model;
   }) => Sub<Msg> | Promise<Sub<Msg>>;
-}) {
+}): Program<Model, Msg> {
   let subscriberId = 0;
 
-  type Subscriber = (
-    model: Model,
-    ctx: Ctx,
-    msg: Msg | null
-  ) => Promise<void> | void;
-
-  const subscribers = new Map<number, Subscriber>();
-  const subscribe = (subscriber: Subscriber): (() => void) => {
+  const subscribers = new Map<number, Subscriber<Model, Msg>>();
+  const subscribe = (subscriber: Subscriber<Model, Msg>): (() => void) => {
     subscribers.set(subscriberId++, subscriber);
     return () => {
       subscribers.delete(subscriberId);
@@ -109,17 +112,18 @@ export function create<Model, Msg>(input: {
     };
   }
 
-  function debugSetState(model: Model) {
-    publish(model, { now: Posix.fromNumber(Date.now()) }, null);
-    if (unsubscribe) {
-      unsubscribe();
-    }
-  }
-
   return {
     start,
     dispatch,
     subscribe,
-    debugSetState,
+    getState: () => {
+      return state.model;
+    },
+    setState: (state) => {
+      publish(state, { now: Posix.fromNumber(Date.now()) }, null);
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    },
   };
 }
