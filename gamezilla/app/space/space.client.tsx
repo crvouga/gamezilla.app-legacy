@@ -1,5 +1,6 @@
 import {
   Eff,
+  Loading,
   Ok,
   RemoteResult,
   Sub,
@@ -266,7 +267,13 @@ export const updateFromServer = ({
       });
 
       return {
-        model: { ...merged.model, req: { ...model.req, list: Ok(null) } },
+        model: {
+          ...merged.model,
+          req: {
+            ...model.req,
+            list: Ok(null),
+          },
+        },
         eff: merged.eff,
         evt: msg.profiles
           ? [{ t: "got-profiles", profiles: msg.profiles }]
@@ -311,7 +318,10 @@ export const updateFromServer = ({
       return {
         model: {
           ...merged.model,
-          req: { ...model.req, [msg.t]: Ok(null) },
+          req: {
+            ...model.req,
+            [msg.t]: Ok(null),
+          },
         },
         eff: merged.eff,
         evt: msg.profiles
@@ -359,7 +369,13 @@ const listSpaces = (input: {
   const { model } = input;
 
   return {
-    model,
+    model: {
+      ...model,
+      req: {
+        ...model.req,
+        list: Loading,
+      },
+    },
     cmd: [{ t: "send-to-server", msg: { t: "list" } }],
   };
 };

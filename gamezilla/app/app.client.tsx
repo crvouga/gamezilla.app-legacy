@@ -96,6 +96,7 @@ type Msg = ClientMsg;
 //
 
 export const update = (input: {
+  snapshot: (state: { model: Model }, ...consoleArgs: unknown[]) => void;
   now: Posix;
   msg: Msg;
   model: Model;
@@ -105,27 +106,54 @@ export const update = (input: {
 } => {
   let acc = updateMain(input);
 
-  console.log("msg", toMsgType(input.msg), toMsgPayload(input.msg, {}));
+  if (input.msg.t === "from-server") {
+    input.snapshot(
+      acc,
+      "[ ▶ ]",
+      toMsgType(input.msg.msg),
+      toMsgPayload(input.msg.msg, {})
+    );
+  } else {
+    input.snapshot(
+      acc,
+      "[msg]",
+      toMsgType(input.msg),
+      toMsgPayload(input.msg, {})
+    );
+  }
 
   for (const evt of acc.evt ?? []) {
-    console.log("evt", toMsgType(evt), toMsgPayload(evt, {}));
-    const updatedEvt = updateFromEvt({ ...input, model: acc.model, msg: evt });
-
+    const updatedEvt = updateFromEvt({
+      ...input,
+      model: acc.model,
+      msg: evt,
+    });
     acc = {
       model: updatedEvt.model,
       eff: Eff.batch([acc.eff, updatedEvt.eff]),
       cmd: [...(acc.cmd ?? []), ...(updatedEvt.cmd ?? [])],
     };
+    //
+    input.snapshot(acc, "[evt]", toMsgType(evt), toMsgPayload(evt, {}));
   }
 
   for (const cmd of acc.cmd ?? []) {
-    console.log("cmd", toMsgType(cmd), toMsgPayload(cmd, {}));
     const updatedCmd = updateFromCmd({ ...input, model: acc.model, cmd });
-
     acc = {
       model: updatedCmd.model,
       eff: Eff.batch([acc.eff, updatedCmd.eff]),
     };
+    //
+    if (cmd.t === "send-to-server") {
+      input.snapshot(
+        acc,
+        "[ ◀ ]",
+        toMsgType(cmd.msg),
+        toMsgPayload(cmd.msg, {})
+      );
+    } else {
+      input.snapshot(acc, "[cmd]", toMsgType(cmd), toMsgPayload(cmd, {}));
+    }
   }
 
   return acc;
@@ -148,8 +176,8 @@ const updateMain = ({
   const ctx = toCtx({ model, now });
 
   switch (msg.t) {
-    case "▶": {
-      return updateFromServer({ now, msg: msg.c, model });
+    case "from-server": {
+      return updateFromServer({ now, msg: msg.msg, model });
     }
 
     case "auth": {
@@ -481,7 +509,7 @@ export const subscriptions = ({
   model: Model;
 }): Sub<Msg> => {
   return Sub.batch<Msg>([
-    Sub.tag("▶", serverToClient),
+    Sub.map(serverToClient, (msg) => ({ t: "from-server", msg })),
     Sub.tag("wire", wire),
     Sub.tag("routing", Routing.subscriptions),
     Sub.tag("auth", AuthClient.subscriptions),

@@ -8,6 +8,7 @@ import {
 import * as AppClient from "./app/app.client";
 import "./main.css";
 import { render } from "preact";
+import { ClientModel } from "./app/app.core";
 
 const env = {
   isDev: process.env.NODE_ENV === "development",
@@ -28,12 +29,25 @@ attachClientTransport({
   clientToServer: AppClient.clientToServer,
 });
 
+const snapshots = new Map<
+  number,
+  { state: { model: ClientModel }; consoleArgs: unknown[] }
+>();
+
+let id = 0;
+const snapshot = (state: { model: ClientModel }, ...consoleArgs: unknown[]) => {
+  id++;
+  snapshots.set(id, { state, consoleArgs });
+  console.log(...consoleArgs);
+};
+
 const program = Program.create({
   init: () => {
     return AppClient.init({ location: Browser.getLocation() });
   },
   update: (input) => {
     return AppClient.update({
+      snapshot: snapshot,
       now: input.ctx.now,
       model: input.model,
       msg: input.msg,
@@ -52,11 +66,6 @@ program.subscribe((model, ctx) => {
     <AppClient.View now={ctx.now} model={model} dispatch={program.dispatch} />,
     document.body
   );
-});
-
-program.subscribe((model) => {
-  // @ts-ignore
-  window.model = model;
 });
 
 program.start();

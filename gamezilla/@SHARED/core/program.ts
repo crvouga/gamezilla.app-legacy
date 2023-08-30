@@ -109,14 +109,17 @@ export function create<Model, Msg>(input: {
     };
   }
 
-  function _debugSetState(model: Model) {
-    console.log({ model });
+  function debugSetState(model: Model) {
+    publish(model, { now: Posix.fromNumber(Date.now()) }, null);
+    if (unsubscribe) {
+      unsubscribe();
+    }
   }
 
   return {
     start,
     dispatch,
     subscribe,
-    _debugSetState,
+    debugSetState,
   };
 }
