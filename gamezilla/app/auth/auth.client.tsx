@@ -352,18 +352,20 @@ const ViewLoginScreen = ({
             text="Continue With Google"
           />
 
-          <Button
-            onClick={() =>
-              ctx.push({
-                t: "auth",
-                c: { t: "login-phone", isSelectingCountry: false },
-              })
-            }
-            size="lg"
-            className="w-full"
-            start={<IconMobilePhone className="h-6 w-6" />}
-            text="Continue With Text"
-          />
+          {false && (
+            <Button
+              onClick={() =>
+                ctx.push({
+                  t: "auth",
+                  c: { t: "login-phone", isSelectingCountry: false },
+                })
+              }
+              size="lg"
+              className="w-full"
+              start={<IconMobilePhone className="h-6 w-6" />}
+              text="Continue With Text"
+            />
+          )}
 
           {false && (
             <Button
