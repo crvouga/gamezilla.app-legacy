@@ -12,8 +12,14 @@
       content="gamezilla.app is a multiplayer gaming app. Play games with your friends online" />
 
     <style>
-      body {
+      html {
         background-color: #000 !important;
+      }
+
+      @media (max-width: 360px) {
+        html {
+          font-size: 75%;
+        }
       }
 
       .logo {
@@ -25,12 +31,6 @@
         user-select: none;
         pointer-events: none;
         touch-action: none;
-      }
-
-      @media (max-width: 360px) {
-        html {
-          font-size: 75%;
-        }
       }
     </style>
   </head>

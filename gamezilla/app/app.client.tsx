@@ -501,7 +501,7 @@ export const View = ({
   dispatch: (msg: ClientMsg) => void;
 }) => {
   return (
-    <div className="fixed left-1/2 top-1/2 mx-auto  flex h-full max-h-full w-full max-w-md -translate-x-1/2 -translate-y-1/2 touch-none select-none flex-col overflow-hidden border border-neutral-800 bg-black text-white">
+    <div className="fixed left-1/2 top-1/2 mx-auto box-content flex h-full max-h-[850px] w-full max-w-md -translate-x-1/2 -translate-y-1/2 touch-none select-none flex-col overflow-hidden rounded border border-neutral-700 bg-black text-white">
       <ViewMain model={model} now={now} dispatch={dispatch} />
 
       <Wire.View model={model.wire} />
@@ -523,19 +523,10 @@ const ViewMain = ({
   model: ClientModel;
   dispatch: (msg: ClientMsg) => void;
 }) => {
-  if (model.wire.t === "server-disconnected") {
-    return (
-      <div className="flex h-full w-full items-center justify-center">
-        <p>Server disconnected. Try refreshing the page.</p>
-      </div>
-    );
-  }
-
-  if (model.auth.currentUser.t === "not-asked") {
-    return <LogoScreen />;
-  }
-
-  if (model.auth.currentUser.t === "loading") {
+  if (
+    model.auth.currentUser.t === "loading" ||
+    model.auth.currentUser.t === "not-asked"
+  ) {
     return <LogoScreen />;
   }
 
