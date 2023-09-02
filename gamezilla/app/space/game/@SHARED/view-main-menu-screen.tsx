@@ -7,6 +7,7 @@ import {
 } from "gamezilla/app/@SHARED/ui";
 import { SpaceViewCtx } from "gamezilla/app/space/@SHARED";
 import { ViewGameHeader } from "./view-game-header";
+import { ViewUsersInSpaceList } from ".";
 
 type MainMenuButton = {
   renderIcon: (input: { className: string }) => VDom;
@@ -30,7 +31,7 @@ export const MainMenuScreen = ({
     return (
       <div className="flex h-full w-full flex-col">
         <ViewGameHeader title={title} renderCoverArt={renderCoverArt} />
-        {/* <ViewUsersInSpaceList space={space} ctx={ctx} /> */}
+        <ViewUsersInSpaceList space={ctx.space} ctx={ctx} />
       </div>
     );
   }

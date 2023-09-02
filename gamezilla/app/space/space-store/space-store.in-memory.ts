@@ -13,7 +13,7 @@ export const createSpaceStoreInMemory = ({
    */
   maxEntryCount: number;
 }): SpaceStore => {
-  const Space = createInMemoryStore<SpaceId, Space<Game.ServerModel>>({
+  const Spaces = createInMemoryStore<SpaceId, Space<Game.ServerModel>>({
     maxEntryCount,
   });
   const IndexUserId = createInMemoryStore<UserId, SpaceId>({
@@ -23,19 +23,19 @@ export const createSpaceStoreInMemory = ({
   return {
     toJSON() {
       return {
-        spaces: Space.toJSON(),
+        spaces: Spaces.toJSON(),
         indexUserId: IndexUserId.toJSON(),
       };
     },
     init(now) {
       return {
-        spaces: Space.init(now),
+        spaces: Spaces.init(now),
         indexUserId: IndexUserId.init(now),
       };
     },
 
     async get(now, instance, spaceId) {
-      return Space.latest(-Infinity, now, instance.spaces, spaceId);
+      return Spaces.latest(-Infinity, now, instance.spaces, spaceId);
     },
 
     async getByUserId(now, instance, userId) {
@@ -50,7 +50,7 @@ export const createSpaceStoreInMemory = ({
         return undefined;
       }
 
-      const space = await Space.latest(
+      const space = await Spaces.latest(
         -Infinity,
         now,
         instance.spaces,
@@ -61,23 +61,37 @@ export const createSpaceStoreInMemory = ({
     },
 
     async list(now, instance) {
-      return Space.listLatest(-Infinity, now, instance.spaces);
+      return Spaces.listLatest(-Infinity, now, instance.spaces);
     },
 
     async assoc(now, instance, space) {
-      const spaces = await Space.assoc(
+      const prevSpace = await Spaces.latest(
+        -Infinity,
+        now,
+        instance.spaces,
+        space.spaceId
+      );
+
+      const spaces = await Spaces.assoc(
         now,
         instance.spaces,
         space.spaceId,
         space
       );
 
-      const indexUserId = await IndexUserId.assocMany(
+      const prevUserIds = prevSpace ? Object.values(prevSpace.users) : [];
+
+      const dissocPrevUserId = await IndexUserId.dissocMany(
         now,
         instance.indexUserId,
-        Object.values(space.users).map((userId) => [userId, space.spaceId])
+        prevUserIds
       );
 
+      const indexUserId = await IndexUserId.assocMany(
+        now,
+        dissocPrevUserId,
+        Object.values(space.users).map((userId) => [userId, space.spaceId])
+      );
       return {
         spaces,
         indexUserId,
@@ -85,7 +99,7 @@ export const createSpaceStoreInMemory = ({
     },
 
     async dissoc(now, instance, spaceId) {
-      const space = await Space.latest(
+      const space = await Spaces.latest(
         -Infinity,
         now,
         instance.spaces,
@@ -95,7 +109,7 @@ export const createSpaceStoreInMemory = ({
         return instance;
       }
       return {
-        spaces: await Space.dissoc(now, instance.spaces, spaceId),
+        spaces: await Spaces.dissoc(now, instance.spaces, spaceId),
         indexUserId: await IndexUserId.dissocMany(
           now,
           instance.indexUserId,

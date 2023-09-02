@@ -111,19 +111,15 @@ export type Res =
     };
 
 export const findSpaceByUserId = (model: ClientModel, userId: UserId) => {
-  for (const spaceId in model.spaces) {
-    if (!SpaceId.is(spaceId)) {
-      continue;
-    }
-    const space = model.spaces[spaceId];
-    if (!space) {
-      continue;
-    }
-    if (space.users[userId]) {
-      return space;
-    }
+  const spaceId = model.indexUserId[userId];
+  if (!spaceId) {
+    return null;
   }
-  return null;
+  const space = model.spaces[spaceId];
+  if (!space) {
+    return null;
+  }
+  return space;
 };
 
 //

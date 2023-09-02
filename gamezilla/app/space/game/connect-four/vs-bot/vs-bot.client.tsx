@@ -306,9 +306,10 @@ export const View = ({
             model={model?.columnsUI}
             implementation="svg"
             columns={model.columns}
-            onClick={(columnIndex) =>
-              dispatch({ t: "input-move", columnIndex })
-            }
+            disabled={ctx.currentUserId !== model.player}
+            onClick={(columnIndex) => {
+              dispatch({ t: "input-move", columnIndex });
+            }}
           />
           <ViewGameOverOverlay
             {...vsBotGameProps}
@@ -330,25 +331,27 @@ export const View = ({
         </div>
       </div>
 
-      <ViewBottomButtonBar
-        actions={[
-          {
-            label: "Exit",
-            icon: <IconArrowLeftOnRect className="h-6 w-6" />,
-            onClick: () => dispatch({ t: "stop-game" }),
-          },
-          {
-            label: "Swap sides",
-            icon: <IconRightLeft className="h-6 w-6" />,
-            onClick: () => dispatch({ t: "swap-sides" }),
-          },
-          {
-            label: "Restart",
-            icon: <IconArrowRotateLeft className="h-6 w-6" />,
-            onClick: () => dispatch({ t: "restart" }),
-          },
-        ]}
-      />
+      {ctx.currentUserId === model.player && (
+        <ViewBottomButtonBar
+          actions={[
+            {
+              label: "Exit",
+              icon: <IconArrowLeftOnRect className="h-6 w-6" />,
+              onClick: () => dispatch({ t: "stop-game" }),
+            },
+            {
+              label: "Swap sides",
+              icon: <IconRightLeft className="h-6 w-6" />,
+              onClick: () => dispatch({ t: "swap-sides" }),
+            },
+            {
+              label: "Restart",
+              icon: <IconArrowRotateLeft className="h-6 w-6" />,
+              onClick: () => dispatch({ t: "restart" }),
+            },
+          ]}
+        />
+      )}
     </GameLayout>
   );
 };

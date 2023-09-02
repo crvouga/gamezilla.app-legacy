@@ -20,14 +20,17 @@ export const VsBotPlayerSection = ({
         className="h-6 w-6"
         src={ctx.profiles[human.userId]?.avatarUrl}
       />
-      <p className="text-sm">{ctx.profiles[human.userId]?.username}</p>
+
+      <p className="text-ellipsis whitespace-nowrap text-sm">
+        {ctx.profiles[human.userId]?.username}
+      </p>
     </>
   );
 
   const botSlot = (
     <>
       {bot.renderIcon({ className: "h-6 w-6" })}
-      <p className="text-sm">{bot.label}</p>
+      <p className="text-ellipsis whitespace-nowrap text-sm">{bot.label}</p>
     </>
   );
 

@@ -65,6 +65,7 @@ export type SpaceViewCtx = ViewCtx & {
   viewProfile: (userId: UserId) => void;
   hostId: UserId;
   spaceId: SpaceId;
+  space: Space<unknown>;
 };
 
 /**

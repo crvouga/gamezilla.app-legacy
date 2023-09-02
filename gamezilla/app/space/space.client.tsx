@@ -15,7 +15,7 @@ import {
   RouteGameSpace,
   ViewCtx,
 } from "gamezilla/app/@SHARED/client";
-import { SpaceId } from "gamezilla/app/@SHARED/data";
+import { SpaceId, UserId } from "gamezilla/app/@SHARED/data";
 import {
   ActionButton,
   Button,
@@ -36,7 +36,11 @@ import {
 import * as GameClient from "./game/game.client";
 import * as Game from "./game/game.core";
 import { ViewCoverArt } from "./game/game.core";
-import { ViewNotInGameScreen, ViewSpaceListScreen } from "./space-ui";
+import {
+  ViewNotInGameScreen,
+  ViewSpaceJoinScreen,
+  ViewSpaceListScreen,
+} from "./space-ui";
 import {
   ClientModel,
   ClientMsg,
@@ -232,7 +236,7 @@ export const updateFromServer = ({
         msg: msg.c,
       });
 
-      const spaceNew: Space<Game.ClientModel> = {
+      const spaceNew = {
         ...space,
         game: updated.model,
       };
@@ -242,6 +246,10 @@ export const updateFromServer = ({
         spaces: {
           ...model.spaces,
           [space.spaceId]: spaceNew,
+        },
+        indexUserId: {
+          ...model.indexUserId,
+          ...toIndexUserId(spaceNew),
         },
       };
 
@@ -384,6 +392,9 @@ const listSpaces = (input: {
   };
 };
 
+/**
+ * Merges the client model with the server model.
+ */
 const syncWithServer = ({
   ctx,
   client,
@@ -396,7 +407,9 @@ const syncWithServer = ({
   model: ClientModel;
   eff: Eff<ClientMsg>;
 } => {
-  const clientSpaces: { [id: SpaceId]: Space<Game.ClientModel> } = {};
+  const clientSpaces: { [spaceId: SpaceId]: Space<Game.ClientModel> } = {};
+  let indexUserId: { [userId: UserId]: SpaceId } = {};
+
   const effs: Eff<ClientMsg>[] = [];
 
   for (const serverSpace of server) {
@@ -406,6 +419,10 @@ const syncWithServer = ({
         game: null,
       };
       clientSpaces[clientSpaceNew.spaceId] = clientSpaceNew;
+      indexUserId = {
+        ...indexUserId,
+        ...toIndexUserId(clientSpaceNew),
+      };
       continue;
     }
 
@@ -422,6 +439,10 @@ const syncWithServer = ({
       game: merged.model,
     };
     clientSpaces[clientSpaceNew.spaceId] = clientSpaceNew;
+    indexUserId = {
+      ...indexUserId,
+      ...toIndexUserId(clientSpaceNew),
+    };
     effs.push(Eff.t("game", merged.eff));
     continue;
   }
@@ -430,11 +451,18 @@ const syncWithServer = ({
     model: {
       ...client,
       spaces: clientSpaces,
+      indexUserId: indexUserId,
     },
     eff: Eff.batch(effs),
   };
 };
 
+const toIndexUserId = <T,>(space: Space<T>) => {
+  return Object.values(space.users).reduce<{ [userId: UserId]: SpaceId }>(
+    (acc, userId) => ({ ...acc, [userId]: space.spaceId }),
+    {}
+  );
+};
 //
 //
 //
@@ -526,11 +554,12 @@ const ViewSpaceScreen = ({
   dispatch: (m: ClientMsg) => void;
   spaceId: SpaceId;
 }) => {
-  if (
+  const isLoading =
     model.req.list?.t === "loading" ||
     model.req.create?.t === "loading" ||
-    model.req.join?.t === "loading"
-  ) {
+    model.req.join?.t === "loading";
+
+  if (isLoading) {
     return <LoadingScreen />;
   }
 
@@ -546,28 +575,17 @@ const ViewSpaceScreen = ({
     spaceId: space.spaceId,
     viewProfile: (userId) => dispatch({ t: "clicked-user", userId: userId }),
     quit: () => dispatch({ t: "input-game", gameName: undefined }),
+    space,
   };
 
   return (
     <>
-      <div className="flex h-full w-full flex-1 flex-col">
-        <ViewTopBar space={space} dispatch={dispatch} ctx={spaceCtx} />
-        <div className="w-full flex-1 overflow-hidden">
-          {space.game ? (
-            <GameClient.View
-              ctx={spaceCtx}
-              dispatch={(msg) => dispatch({ t: "game", c: msg })}
-              model={space.game}
-            />
-          ) : (
-            <ViewNotInGameScreen
-              space={space}
-              ctx={spaceCtx}
-              dispatch={dispatch}
-            />
-          )}
-        </div>
-      </div>
+      <ViewSpaceScreenMain
+        dispatch={dispatch}
+        model={model}
+        space={space}
+        ctx={spaceCtx}
+      />
 
       <Drawer
         id="users"
@@ -629,6 +647,42 @@ const ViewSpaceScreen = ({
         </div>
       </Drawer>
     </>
+  );
+};
+
+const ViewSpaceScreenMain = ({
+  ctx,
+  dispatch,
+  model,
+  space,
+}: {
+  model: ClientModel;
+  ctx: SpaceViewCtx;
+  dispatch: (m: ClientMsg) => void;
+  space: Space<Game.ClientModel>;
+}) => {
+  const currentUserSpace = findSpaceByUserId(model, ctx.currentUserId);
+
+  if (!currentUserSpace) {
+    return <ViewSpaceJoinScreen ctx={ctx} dispatch={dispatch} model={model} />;
+  }
+
+  return (
+    <div className="flex h-full w-full flex-1 flex-col">
+      <ViewTopBar space={space} dispatch={dispatch} ctx={ctx} />
+
+      <div className="w-full flex-1 overflow-hidden">
+        {space.game ? (
+          <GameClient.View
+            ctx={ctx}
+            dispatch={(msg) => dispatch({ t: "game", c: msg })}
+            model={space.game}
+          />
+        ) : (
+          <ViewNotInGameScreen space={space} ctx={ctx} dispatch={dispatch} />
+        )}
+      </div>
+    </div>
   );
 };
 

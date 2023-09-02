@@ -412,7 +412,10 @@ export const updateFromClient = async (input: {
       };
 
       const updated = !spaceNew.game
-        ? { model: spaceNew.game, eff: Eff.None }
+        ? {
+            model: spaceNew.game,
+            eff: Eff.None,
+          }
         : GameServer.updateFromEvt({
             ctx: { ...ctx, hostId: space.hostId },
             model: spaceNew.game,

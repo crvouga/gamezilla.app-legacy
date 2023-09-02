@@ -1,4 +1,11 @@
-import { Eff, Time, Transition, andThen, p } from "gamezilla/@SHARED/core";
+import {
+  Eff,
+  Time,
+  Transition,
+  andThen,
+  dissoc,
+  p,
+} from "gamezilla/@SHARED/core";
 import { ClientCmd } from "gamezilla/app/@SHARED/client";
 import { IconXMark } from "gamezilla/app/@SHARED/ui";
 
@@ -57,6 +64,9 @@ const config: Transition.Config<Toast> = {
 export type Model = {
   runningId: number;
   toasts: Toast[];
+  hold: {
+    [toastId: number]: Toast;
+  };
   uiToasts: Transition.Model<Toast>;
 };
 
@@ -69,6 +79,7 @@ export type Toast = {
 export const init: Model = {
   runningId: 0,
   toasts: [],
+  hold: {},
   uiToasts: Transition.init<Toast>(),
 };
 
@@ -82,6 +93,8 @@ export const init: Model = {
 
 export type Msg =
   | { t: "time" }
+  | { t: "pressed-down-on-toast"; toast: Toast }
+  | { t: "pressed-up-on-toast"; toast: Toast }
   | { t: "clicked-dismiss-button"; toastId: number }
   | { t: "toast-duration-elapsed"; toastId: number }
   | { t: "ui-toast"; c: Transition.Msg };
@@ -128,11 +141,39 @@ const updateMain: typeof update = (model, msg) => {
     case "time": {
       return { model };
     }
+
+    case "pressed-down-on-toast": {
+      return {
+        model: {
+          ...model,
+          hold: {
+            ...model.hold,
+            [msg.toast.toastId]: msg.toast,
+          },
+        },
+      };
+    }
+    case "pressed-up-on-toast": {
+      return {
+        model: {
+          ...model,
+          hold: dissoc(model.hold, msg.toast.toastId),
+        },
+      };
+    }
   }
 };
 
+const toVisibleToast = (model: Model): Toast[] => {
+  return [...model.toasts, ...Object.values(model.hold)];
+};
+
 function watch(model: Model): { model: Model; eff: Eff<Msg> } {
-  const uiToasts = Transition.watch(config, model.uiToasts, model.toasts);
+  const uiToasts = Transition.watch(
+    config,
+    model.uiToasts,
+    toVisibleToast(model)
+  );
   return {
     model: { ...model, uiToasts: uiToasts.model },
     eff: Eff.t("ui-toast", uiToasts.eff),
@@ -201,7 +242,17 @@ export function View({
         <div
           key={String(config.toId(toast))}
           id={String(config.toId(toast))}
-          className="w-full overflow-visible">
+          className="w-full overflow-visible"
+          //
+          onMouseDown={() => dispatch({ t: "pressed-down-on-toast", toast })}
+          onMouseUp={() => dispatch({ t: "pressed-up-on-toast", toast })}
+          //
+          onTouchStart={() => dispatch({ t: "pressed-down-on-toast", toast })}
+          onTouchEnd={() => dispatch({ t: "pressed-up-on-toast", toast })}
+          //
+          onContextMenu={(e) => {
+            e.preventDefault();
+          }}>
           <div
             // whitespace-nowrap break-words
             className="pointer-events-auto z-40 flex w-full max-w-md items-center justify-between overflow-hidden  rounded-lg border border-neutral-700 bg-neutral-700 p-3 text-lg text-white shadow-2xl"
