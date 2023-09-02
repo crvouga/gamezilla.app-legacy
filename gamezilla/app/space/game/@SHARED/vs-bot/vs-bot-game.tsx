@@ -157,7 +157,7 @@ const Winner = ({
     <>
       <MyAvatar
         className="h-16 w-16"
-        src={ctx.profiles[ctx.currentUserId]?.avatarUrl}
+        src={ctx.profiles[human.userId]?.avatarUrl}
       />
     </>
   );

@@ -21,9 +21,11 @@ export const VsBotPlayerSection = ({
         src={ctx.profiles[human.userId]?.avatarUrl}
       />
 
-      <p className="text-ellipsis whitespace-nowrap text-sm">
-        {ctx.profiles[human.userId]?.username}
-      </p>
+      <div className="text-ellipsis whitespace-nowrap">
+        <p className="text-ellipsis whitespace-nowrap text-sm">
+          {ctx.profiles[human.userId]?.username}
+        </p>
+      </div>
     </>
   );
 
@@ -49,7 +51,7 @@ export const VsBotPlayerSection = ({
   );
 
   return (
-    <section className="grid w-full grid-cols-7 gap-2 p-4">
+    <section className="flex w-full items-center gap-2 p-4">
       {playerOneSlot}
       <p className="flex items-center justify-center text-2xl font-black uppercase">
         vs
@@ -61,7 +63,7 @@ export const VsBotPlayerSection = ({
 
 const Slot = ({ children }: { children: VDom | VDom[] }) => {
   return (
-    <div className="col-span-3 flex items-center gap-2 rounded-md border border-neutral-600 p-2">
+    <div className="flex flex-1 items-center gap-2 rounded-md border border-neutral-600 p-2">
       {children}
     </div>
   );

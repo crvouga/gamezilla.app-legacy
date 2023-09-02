@@ -18,7 +18,7 @@ export const MyAvatar = ({
         src={src}
         alt={alt ?? "user avatar"}
         className={cn(
-          `inline-block h-12 w-12 overflow-hidden rounded-full bg-white/40`,
+          `inline-block aspect-square h-12 w-12 overflow-hidden rounded-full bg-white/40`,
           className
         )}></img>
     );
@@ -27,7 +27,7 @@ export const MyAvatar = ({
   return (
     <span
       onClick={onClick}
-      className={`inline-block h-12 w-12 overflow-hidden rounded-full bg-white/40 ${className}`}>
+      className={`inline-block aspect-square h-12 w-12 overflow-hidden rounded-full bg-white/40 ${className}`}>
       <svg
         className="h-full w-full text-gray-300"
         fill="currentColor"

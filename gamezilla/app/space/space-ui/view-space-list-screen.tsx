@@ -10,7 +10,7 @@ import {
 import { ViewSpaceHostChip } from "gamezilla/app/space/game/@SHARED";
 import { SpaceId } from "gamezilla/app/@SHARED/data";
 import { GameName, ViewCoverArt, gameNameToString } from "../game/game.core";
-import { ClientModel, ClientMsg, findSpaceByUserId } from "../space.core";
+import { ClientModel, ClientMsg, toSpaceByUserId } from "../space.core";
 
 export const ViewSpaceListScreen = ({
   ctx,
@@ -21,11 +21,11 @@ export const ViewSpaceListScreen = ({
   ctx: ViewCtx;
   dispatch: (m: ClientMsg) => void;
 }) => {
-  const currentSpace = findSpaceByUserId(model, ctx.currentUserId);
+  const currentSpace = toSpaceByUserId(model, ctx.currentUserId);
 
   const spaces = Object.values(model.spaces);
 
-  const isLoading = model.req.list?.t === "loading";
+  const isLoading = model.requests.list?.t === "loading";
 
   return (
     <div className="flex h-full max-h-full w-full flex-1 flex-col gap-4 overflow-hidden">
@@ -93,8 +93,8 @@ export const ViewSpaceListScreen = ({
             className="w-full"
             color="primary"
             disabled={
-              model.req.create?.t === "loading" ||
-              model.req.list?.t === "loading"
+              model.requests.create?.t === "loading" ||
+              model.requests.list?.t === "loading"
             }
             onClick={() =>
               dispatch({ t: "create", spaceId: SpaceId.generate() })

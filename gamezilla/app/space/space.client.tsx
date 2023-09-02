@@ -46,7 +46,7 @@ import {
   ClientMsg,
   ToClient,
   ToServer,
-  findSpaceByUserId,
+  toSpaceByUserId,
 } from "./space.core";
 
 //
@@ -61,7 +61,7 @@ export const init: { model: ClientModel } = {
   model: {
     spaces: {},
     indexUserId: {},
-    req: {},
+    requests: {},
     modal: null,
     previewUserId: null,
   },
@@ -150,7 +150,7 @@ const updateMain: typeof update = ({ ctx, msg, model }) => {
     }
 
     case "game": {
-      const space = findSpaceByUserId(model, ctx.currentUserId);
+      const space = toSpaceByUserId(model, ctx.currentUserId);
 
       if (!space) {
         return { model };
@@ -191,7 +191,7 @@ const updateMain: typeof update = ({ ctx, msg, model }) => {
       return {
         model: {
           ...model,
-          req: { ...model.req, [msg.t]: RemoteResult.Loading },
+          requests: { ...model.requests, [msg.t]: RemoteResult.Loading },
         },
         cmd: [
           {
@@ -220,7 +220,7 @@ export const updateFromServer = ({
 } => {
   switch (msg.t) {
     case "game": {
-      const space = findSpaceByUserId(model, ctx.currentUserId);
+      const space = toSpaceByUserId(model, ctx.currentUserId);
 
       if (!space) {
         return { model };
@@ -263,7 +263,10 @@ export const updateFromServer = ({
     case "list": {
       if (msg.result.t === "err") {
         return {
-          model: { ...model, req: { ...model.req, list: msg.result } },
+          model: {
+            ...model,
+            requests: { ...model.requests, list: msg.result },
+          },
           cmd: [{ t: "toast/enqueue", text: msg.result.error }],
         };
       }
@@ -277,8 +280,8 @@ export const updateFromServer = ({
       return {
         model: {
           ...merged.model,
-          req: {
-            ...model.req,
+          requests: {
+            ...model.requests,
             list: Ok(null),
           },
         },
@@ -292,7 +295,10 @@ export const updateFromServer = ({
     case "destroy": {
       if (msg.result.t === "err") {
         return {
-          model: { ...model, req: { ...model.req, [msg.t]: msg.result } },
+          model: {
+            ...model,
+            requests: { ...model.requests, [msg.t]: msg.result },
+          },
           cmd: [{ t: "toast/enqueue", text: msg.result.error }],
         };
       }
@@ -301,7 +307,7 @@ export const updateFromServer = ({
         model: {
           ...model,
           spaces: dissoc(model.spaces, msg.result.value.spaceId),
-          req: { ...model.req, [msg.t]: Ok(null) },
+          requests: { ...model.requests, [msg.t]: Ok(null) },
         },
         evt: msg.profiles
           ? [{ t: "got-profiles", profiles: msg.profiles }]
@@ -312,7 +318,10 @@ export const updateFromServer = ({
     default: {
       if (msg.result.t === "err") {
         return {
-          model: { ...model, req: { ...model.req, [msg.t]: msg.result } },
+          model: {
+            ...model,
+            requests: { ...model.requests, [msg.t]: msg.result },
+          },
           cmd: [{ t: "toast/enqueue", text: msg.result.error }],
         };
       }
@@ -326,8 +335,8 @@ export const updateFromServer = ({
       return {
         model: {
           ...merged.model,
-          req: {
-            ...model.req,
+          requests: {
+            ...model.requests,
             [msg.t]: Ok(null),
           },
         },
@@ -383,8 +392,8 @@ const listSpaces = (input: {
   return {
     model: {
       ...model,
-      req: {
-        ...model.req,
+      requests: {
+        ...model.requests,
         list: Loading,
       },
     },
@@ -477,7 +486,7 @@ export const subscriptions = (
   ctx: ClientCtx,
   model: ClientModel
 ): Sub<ClientMsg> => {
-  const space = findSpaceByUserId(model, ctx.currentUserId);
+  const space = toSpaceByUserId(model, ctx.currentUserId);
 
   if (!space) {
     return Sub.None;
@@ -555,9 +564,9 @@ const ViewSpaceScreen = ({
   spaceId: SpaceId;
 }) => {
   const isLoading =
-    model.req.list?.t === "loading" ||
-    model.req.create?.t === "loading" ||
-    model.req.join?.t === "loading";
+    model.requests.list?.t === "loading" ||
+    model.requests.create?.t === "loading" ||
+    model.requests.join?.t === "loading";
 
   if (isLoading) {
     return <LoadingScreen />;
@@ -661,7 +670,7 @@ const ViewSpaceScreenMain = ({
   dispatch: (m: ClientMsg) => void;
   space: Space<Game.ClientModel>;
 }) => {
-  const currentUserSpace = findSpaceByUserId(model, ctx.currentUserId);
+  const currentUserSpace = toSpaceByUserId(model, ctx.currentUserId);
 
   if (!currentUserSpace) {
     return <ViewSpaceJoinScreen ctx={ctx} dispatch={dispatch} model={model} />;
@@ -758,7 +767,7 @@ export const ViewCurrentSpaceBar = ({
   model: ClientModel;
   dispatch: (msg: ClientMsg) => void;
 }) => {
-  const space = findSpaceByUserId(model, ctx.currentUserId);
+  const space = toSpaceByUserId(model, ctx.currentUserId);
 
   if (!space) {
     return null;

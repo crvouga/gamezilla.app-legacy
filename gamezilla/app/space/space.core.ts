@@ -22,7 +22,7 @@ export type ClientModel = {
   indexUserId: {
     [userId: UserId]: SpaceId;
   };
-  req: {
+  requests: {
     [key in Req["t"]]?: RemoteResult<string, null>;
   };
   previewUserId: UserId | null;
@@ -110,7 +110,7 @@ export type Res =
       result: Result<string, Space<Game.ServerModel>[]>;
     };
 
-export const findSpaceByUserId = (model: ClientModel, userId: UserId) => {
+export const toSpaceByUserId = (model: ClientModel, userId: UserId) => {
   const spaceId = model.indexUserId[userId];
   if (!spaceId) {
     return null;
@@ -121,29 +121,3 @@ export const findSpaceByUserId = (model: ClientModel, userId: UserId) => {
   }
   return space;
 };
-
-//
-//
-//
-// Events
-//
-//
-//
-
-export type SpaceEventStore = {
-  getSpaceIdByUserId: (userId: UserId) => Promise<SpaceId | null>;
-  get: (spaceId: SpaceId) => Promise<Event[]>;
-  append: (spaceId: SpaceId, event: Event) => Promise<null>;
-};
-
-export type Event =
-  | { t: "user-left-space"; spaceId: SpaceId; userId: UserId }
-  | { t: "user-joined-space"; spaceId: SpaceId; userId: UserId }
-  | { t: "user-created-space"; spaceId: SpaceId; userId: UserId }
-  | { t: "user-destroyed-space"; spaceId: SpaceId; userId: UserId }
-  | {
-      t: "user-inputted-game";
-      userId: UserId;
-      spaceId: SpaceId;
-      gameName?: Game.GameName | null;
-    };
