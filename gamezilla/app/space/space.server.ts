@@ -147,9 +147,7 @@ export const updateFromClient = async (input: {
       if (!space) {
         return {
           model,
-          cmd: [
-            sendBack(ctx, { ...msg, result: Err("Game space was not found") }),
-          ],
+          cmd: [sendBack(ctx, { ...msg, result: Err("Space was not found") })],
         };
       }
 

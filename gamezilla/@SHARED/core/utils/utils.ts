@@ -6,7 +6,7 @@ export const exhaustive = (discriminatedUnionType: "Missing Case!"): never => {
 
 /**
  * @description
- * A helper function for composing update functions
+ * A helper function for chaining update functions
  */
 export const andThen =
   <Msg, Model, Evt, Cmd>(
@@ -19,9 +19,10 @@ export const andThen =
   ) =>
   (output: { eff?: Eff<Msg>; model: Model; evt?: Evt[]; cmd?: Cmd[] }) => {
     const updated = updateStep(output.model);
+
     return {
       model: updated.model,
-      eff: Eff.batch([updated.eff, output.eff]),
+      eff: Eff.batch([output.eff, updated.eff]),
       evt: [...(output.evt ?? []), ...(updated.evt ?? [])],
       cmd: [...(output.cmd ?? []), ...(updated.cmd ?? [])],
     };

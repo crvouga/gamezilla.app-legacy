@@ -43,7 +43,7 @@ export type ToClient = ToClientExtra & (Res | { t: "game"; c: Game.ToClient });
 
 export type ToServer = ToServerExtra & (Req | { t: "game"; c: Game.ToServer });
 
-type ToClientExtra = {
+export type ToClientExtra = {
   profiles?: { [userId: UserId]: Profile };
 };
 

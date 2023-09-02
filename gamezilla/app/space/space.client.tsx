@@ -14,6 +14,7 @@ import {
   ClientEvt,
   RouteGameSpace,
   ViewCtx,
+  enqueueToast,
 } from "gamezilla/app/@SHARED/client";
 import { SpaceId, UserId } from "gamezilla/app/@SHARED/data";
 import {
@@ -44,7 +45,9 @@ import {
 import {
   ClientModel,
   ClientMsg,
+  Res,
   ToClient,
+  ToClientExtra,
   ToServer,
   toSpaceByUserId,
 } from "./space.core";
@@ -315,40 +318,91 @@ export const updateFromServer = ({
       };
     }
 
+    case "join": {
+      return p(
+        { model },
+        andThen((model) => updateFromResponse({ ctx, msg, model })),
+        andThen((model) => {
+          const currentSpace = toSpaceByUserId(model, ctx.currentUserId);
+
+          if (msg.spaceId !== currentSpace?.spaceId) {
+            return { model };
+          }
+
+          if (msg.result.t === "err") {
+            return { model };
+          }
+
+          if (msg.userId === ctx.currentUserId) {
+            return {
+              model,
+              cmd: [enqueueToast("Joined space")],
+            };
+          }
+
+          const profile = ctx.profiles[msg.userId];
+
+          if (!profile) {
+            return { model };
+          }
+
+          return {
+            model,
+            cmd: [enqueueToast(`${profile.username} joined space`)],
+          };
+        })
+      );
+    }
+
     default: {
-      if (msg.result.t === "err") {
-        return {
-          model: {
-            ...model,
-            requests: { ...model.requests, [msg.t]: msg.result },
-          },
-          cmd: [
-            { t: "toast/enqueue", variant: "error", text: msg.result.error },
-          ],
-        };
-      }
-
-      const merged = syncWithServer({
-        ctx,
-        client: model,
-        server: [msg.result.value],
-      });
-
-      return {
-        model: {
-          ...merged.model,
-          requests: {
-            ...model.requests,
-            [msg.t]: Ok(null),
-          },
-        },
-        eff: merged.eff,
-        evt: msg.profiles
-          ? [{ t: "got-profiles", profiles: msg.profiles }]
-          : [],
-      };
+      return updateFromResponse({ model, ctx, msg });
     }
   }
+};
+
+const updateFromResponse = ({
+  ctx,
+  msg,
+  model,
+}: {
+  ctx: ClientCtx;
+  msg: Res & ToClientExtra;
+  model: ClientModel;
+}): {
+  model: ClientModel;
+  eff?: Eff<ClientMsg>;
+  evt?: ClientEvt[];
+  cmd?: ClientCmd<ToServer>[];
+} => {
+  if (msg.result.t === "err") {
+    return {
+      model: {
+        ...model,
+        requests: { ...model.requests, [msg.t]: msg.result },
+      },
+      cmd: [{ t: "toast/enqueue", variant: "error", text: msg.result.error }],
+    };
+  }
+
+  const merged = syncWithServer({
+    ctx,
+    client: model,
+    server: Array.isArray(msg.result.value)
+      ? msg.result.value
+      : [msg.result.value],
+  });
+
+  return {
+    model: {
+      ...merged.model,
+      requests: {
+        ...model.requests,
+        [msg.t]: Ok(null),
+      },
+    },
+    eff: merged.eff,
+    evt: msg.profiles ? [{ t: "got-profiles", profiles: msg.profiles }] : [],
+  };
 };
 
 export const updateFromEvt = (input: {
@@ -567,8 +621,7 @@ const ViewSpaceScreen = ({
 }) => {
   const isLoading =
     model.requests.list?.t === "loading" ||
-    model.requests.create?.t === "loading" ||
-    model.requests.join?.t === "loading";
+    model.requests.create?.t === "loading";
 
   if (isLoading) {
     return <LoadingScreen />;

@@ -59,6 +59,7 @@ export const ViewSpaceJoinScreen = ({
           className="w-full"
           variant="contained"
           color="primary"
+          loading={model.requests.join?.t === "loading"}
           onClick={() => {
             dispatch({
               t: "join",

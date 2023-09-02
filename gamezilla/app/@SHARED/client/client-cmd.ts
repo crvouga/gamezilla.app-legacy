@@ -12,6 +12,14 @@ export type ToastCmd = {
   duration?: number;
 };
 
+export const enqueueToast = <T>(
+  text: string,
+  variant?: "error" | "info",
+  duration?: number
+): ClientCmd<T> => {
+  return { t: "toast/enqueue", text, variant, duration };
+};
+
 export type RouteCmd =
   | { t: "routing/push"; route: Route }
   | { t: "routing/back" };
