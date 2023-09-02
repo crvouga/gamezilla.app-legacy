@@ -51,7 +51,7 @@ export type ToClient =
   | { t: "access-denied"; msg: ToServer };
 
 export type ClientMsg =
-  | { t: "from-server"; msg: ToClient }
+  | { t: "from-server"; c: ToClient }
   //
   | { t: "wire"; c: Wire.Msg }
   | { t: "routing"; c: Routing.Msg }

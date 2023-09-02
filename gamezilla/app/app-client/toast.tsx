@@ -7,7 +7,7 @@ import {
   p,
 } from "gamezilla/@SHARED/core";
 import { ClientCmd } from "gamezilla/app/@SHARED/client";
-import { IconXMark } from "gamezilla/app/@SHARED/ui";
+import { IconXMark, cn } from "gamezilla/app/@SHARED/ui";
 
 //
 //
@@ -72,8 +72,9 @@ export type Model = {
 
 export type Toast = {
   toastId: number;
-  message: string;
+  text: string;
   duration: number;
+  variant: "error" | "info";
 };
 
 export const init: Model = {
@@ -197,16 +198,21 @@ export function updateFromCmd({
 } {
   switch (msg.t) {
     case "toast/enqueue": {
-      const toastId = model.runningId;
-      const duration = msg.duration ?? 2000;
+      const toastNew: Toast = {
+        toastId: model.runningId,
+        text: msg.text,
+        duration: msg.duration ?? 2000,
+        variant: msg.variant ?? "info",
+      };
+
       const updated: ReturnType<typeof updateFromCmd> = {
         model: {
           ...model,
           runningId: model.runningId + 1,
-          toasts: [...model.toasts, { toastId, message: msg.text, duration }],
+          toasts: [...model.toasts, toastNew],
         },
 
-        eff: Time.startTimeout(toastId, duration, {
+        eff: Time.startTimeout(toastNew.toastId, toastNew.duration, {
           t: "toast-duration-elapsed",
           toastId: model.runningId,
         }),
@@ -254,10 +260,13 @@ export function View({
             e.preventDefault();
           }}>
           <div
-            // whitespace-nowrap break-words
-            className="pointer-events-auto z-40 flex w-full max-w-md items-center justify-between overflow-hidden  rounded-lg border border-neutral-700 bg-neutral-700 p-3 text-lg text-white shadow-2xl"
+            className={cn(
+              "pointer-events-auto z-40 flex w-full max-w-md items-center justify-between overflow-hidden  rounded-lg border p-3 text-lg text-white shadow-2xl",
+              toast.variant === "info" && "border-neutral-600 bg-neutral-700",
+              toast.variant === "error" && "border-red-400 bg-red-500"
+            )}
             key={toast.toastId}>
-            {toast.message}
+            {toast.text}
             <button
               onClick={() =>
                 dispatch({

@@ -5,7 +5,12 @@ export type ClientCmd<ToServer = unknown> =
   | ToastCmd
   | RouteCmd;
 
-export type ToastCmd = { t: "toast/enqueue"; text: string; duration?: number };
+export type ToastCmd = {
+  t: "toast/enqueue";
+  text: string;
+  variant?: "error" | "info";
+  duration?: number;
+};
 
 export type RouteCmd =
   | { t: "routing/push"; route: Route }

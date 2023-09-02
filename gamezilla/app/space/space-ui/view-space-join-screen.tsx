@@ -1,8 +1,7 @@
 import { Button, TopBar, TopBarBackButton } from "gamezilla/app/@SHARED/ui";
-import { SpaceViewCtx } from "gamezilla/app/space/@SHARED";
+import { SpaceViewCtx, spaceToHostTitle } from "gamezilla/app/space/@SHARED";
 import {
   ViewGameHeader,
-  ViewGameHeaderEmpty,
   ViewUsersInSpaceList,
 } from "gamezilla/app/space/game/@SHARED";
 import { ViewCoverArt, gameNameToString } from "../game/game.core";
@@ -23,8 +22,9 @@ export const ViewSpaceJoinScreen = ({
     return null;
   }
 
-  const host = ctx.profiles[space?.hostId];
   const game = space?.game;
+
+  const hostTitle = spaceToHostTitle(ctx, space);
 
   return (
     <div className="flex h-full w-full flex-col">
@@ -34,22 +34,22 @@ export const ViewSpaceJoinScreen = ({
             onClick={() => ctx.push({ t: "space", c: { t: "space-list" } })}
           />
         }
-        title={host?.username ? `${host.username}'s space` : "..."}
+        title="Join space"
       />
 
       <div className="flex w-full flex-1 flex-col overflow-y-scroll">
-        {game ? (
-          <ViewGameHeader
-            title={gameNameToString(game.t)}
-            renderCoverArt={(props) => (
-              <div {...props}>
-                <ViewCoverArt gameName={game.t} />
-              </div>
-            )}
-          />
-        ) : (
-          <ViewGameHeaderEmpty />
-        )}
+        <ViewGameHeader
+          title={game ? gameNameToString(game.t) : hostTitle ?? " "}
+          renderCoverArt={
+            game
+              ? (props) => (
+                  <div {...props}>
+                    <ViewCoverArt gameName={game.t} />
+                  </div>
+                )
+              : undefined
+          }
+        />
 
         <ViewUsersInSpaceList space={space} ctx={ctx} />
       </div>

@@ -1,6 +1,10 @@
-import { Space, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
 import {
-  ViewGameHeaderEmpty,
+  Space,
+  SpaceViewCtx,
+  spaceToHostTitle,
+} from "gamezilla/app/space/@SHARED";
+import {
+  ViewGameHeader,
   ViewUsersInSpaceList,
 } from "gamezilla/app/space/game/@SHARED";
 import * as Game from "../game/game.core";
@@ -21,9 +25,10 @@ export const ViewNotInGameScreen = ({
   dispatch: (m: ClientMsg) => void;
 }) => {
   if (space.hostId !== ctx.currentUserId) {
+    const hostTitle = spaceToHostTitle(ctx, space);
     return (
       <>
-        <ViewGameHeaderEmpty />
+        <ViewGameHeader title={hostTitle ?? " "} />
         <ViewUsersInSpaceList space={space} ctx={ctx} />
       </>
     );

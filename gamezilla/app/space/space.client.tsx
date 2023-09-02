@@ -322,7 +322,9 @@ export const updateFromServer = ({
             ...model,
             requests: { ...model.requests, [msg.t]: msg.result },
           },
-          cmd: [{ t: "toast/enqueue", text: msg.result.error }],
+          cmd: [
+            { t: "toast/enqueue", variant: "error", text: msg.result.error },
+          ],
         };
       }
 
@@ -528,7 +530,7 @@ export const View = ({
   dispatch: (m: ClientMsg) => void;
   route: RouteGameSpace;
   viewBottomBar: VDom;
-}) => {
+}): VDom => {
   switch (route.t) {
     case "space-list": {
       return (
@@ -672,13 +674,46 @@ const ViewSpaceScreenMain = ({
 }) => {
   const currentUserSpace = toSpaceByUserId(model, ctx.currentUserId);
 
-  if (!currentUserSpace) {
+  if (currentUserSpace?.spaceId !== space.spaceId) {
     return <ViewSpaceJoinScreen ctx={ctx} dispatch={dispatch} model={model} />;
   }
+  const peopleCount = Object.keys(space.users).length;
 
   return (
     <div className="flex h-full w-full flex-1 flex-col">
-      <ViewTopBar space={space} dispatch={dispatch} ctx={ctx} />
+      <nav className="flex h-14 w-full items-center border-b border-neutral-700 px-2 py-1">
+        <div className="grid w-20 place-items-center">
+          <ActionButton
+            label="Home"
+            icon={<IconHome className="h-6 w-6" />}
+            onClick={() => ctx.push({ t: "space", c: { t: "space-list" } })}
+          />
+        </div>
+
+        <div className="grid w-20 place-items-center">
+          <ActionButton
+            label={peopleCount > 1 ? `People (${peopleCount})` : `People`}
+            icon={<IconUserGroup className="h-6 w-6" />}
+            onClick={() => dispatch({ t: "modal-open", c: "users" })}
+          />
+        </div>
+
+        <div className="flex-1"></div>
+
+        <Button
+          color="danger"
+          variant="contained"
+          size="sm"
+          text={space.hostId === ctx.currentUserId ? "End" : "Leave"}
+          onClick={() => {
+            if (space.hostId === ctx.currentUserId) {
+              dispatch({ t: "destroy", userId: ctx.currentUserId });
+              return;
+            }
+            dispatch({ t: "leave", userId: ctx.currentUserId });
+          }}
+        />
+      </nav>
 
       <div className="w-full flex-1 overflow-hidden">
         {space.game ? (
@@ -695,54 +730,7 @@ const ViewSpaceScreenMain = ({
   );
 };
 
-const ViewTopBar = ({
-  ctx,
-  space,
-  dispatch,
-}: {
-  space: Space<Game.ClientModel>;
-  ctx: SpaceViewCtx;
-  dispatch: (m: ClientMsg) => void;
-}) => {
-  const peopleCount = Object.keys(space.users).length;
-  return (
-    <nav className="flex h-14 w-full items-center border-b border-neutral-700 px-2 py-1">
-      <div className="grid w-20 place-items-center">
-        <ActionButton
-          label="Home"
-          icon={<IconHome className="h-6 w-6" />}
-          onClick={() => ctx.push({ t: "space", c: { t: "space-list" } })}
-        />
-      </div>
-
-      <div className="grid w-20 place-items-center">
-        <ActionButton
-          label={peopleCount > 1 ? `People (${peopleCount})` : `People`}
-          icon={<IconUserGroup className="h-6 w-6" />}
-          onClick={() => dispatch({ t: "modal-open", c: "users" })}
-        />
-      </div>
-
-      <div className="flex-1"></div>
-
-      <Button
-        color="danger"
-        variant="contained"
-        size="sm"
-        text={space.hostId === ctx.currentUserId ? "End" : "Leave"}
-        onClick={() => {
-          if (space.hostId === ctx.currentUserId) {
-            dispatch({ t: "destroy", userId: ctx.currentUserId });
-            return;
-          }
-          dispatch({ t: "leave", userId: ctx.currentUserId });
-        }}
-      />
-    </nav>
-  );
-};
-
-export const ViewSpaceNotFound = ({ ctx }: { ctx: ViewCtx }) => {
+const ViewSpaceNotFound = ({ ctx }: { ctx: ViewCtx }) => {
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-4">
       <p className="text-center text-2xl">Space not found</p>

@@ -125,7 +125,7 @@ const updateMain = ({
 
   switch (msg.t) {
     case "from-server": {
-      return updateFromServer({ now, msg: msg.msg, model });
+      return updateFromServer({ now, msg: msg.c, model });
     }
 
     case "auth": {
@@ -457,7 +457,7 @@ export const subscriptions = ({
   model: ClientModel;
 }): Sub<ClientMsg> => {
   return Sub.batch<ClientMsg>([
-    Sub.map(serverToClient, (msg) => ({ t: "from-server", msg })),
+    Sub.map(serverToClient, (msg) => ({ t: "from-server", c: msg })),
     Sub.tag("wire", wire),
     Sub.tag("routing", Routing.subscriptions),
     Sub.tag("auth", AuthClient.subscriptions),

@@ -68,6 +68,29 @@ export type SpaceViewCtx = ViewCtx & {
   space: Space<unknown>;
 };
 
+export const spaceToProfiles = <T>(ctx: SpaceViewCtx, space: Space<T>) => {
+  const profiles: Profile[] = [];
+  for (const userId in space.users) {
+    if (!UserId.is(userId)) {
+      continue;
+    }
+    const profile = ctx.profiles[userId];
+    if (!profile) {
+      continue;
+    }
+    profiles.push(profile);
+  }
+  return profiles;
+};
+
+export const spaceToHostTitle = <T>(ctx: SpaceViewCtx, space: Space<T>) => {
+  const host = ctx.profiles[space.hostId];
+  if (!host) {
+    return null;
+  }
+  return `${host.username}'s space`;
+};
+
 /**
  *
  *
