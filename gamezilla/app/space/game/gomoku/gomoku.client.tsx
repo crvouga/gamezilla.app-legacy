@@ -98,7 +98,7 @@ export const updateFromServer = ({
     if (msg.result.t === "err") {
       return { model };
     }
-    const merged = syncWithServer({
+    const merged = mergeWithServer({
       ctx,
       clientModel: model,
       serverModel: msg.result.value,
@@ -132,7 +132,7 @@ export const updateFromServer = ({
   return { model };
 };
 
-export const syncWithServer = ({
+export const mergeWithServer = ({
   ctx,
   clientModel,
   serverModel,
@@ -150,7 +150,7 @@ export const syncWithServer = ({
       if (clientModel.t === "vs-bot") {
         return {
           t: "vs-bot",
-          c: VsBot.syncWithServer({
+          c: VsBot.mergeWithServer({
             ctx,
             clientModel: clientModel.c,
             serverModel: serverModel.c,
@@ -159,7 +159,7 @@ export const syncWithServer = ({
       }
       return {
         t: "vs-bot",
-        c: VsBot.syncWithServer({
+        c: VsBot.mergeWithServer({
           ctx,
           clientModel: VsBot.init({ userId: null }),
           serverModel: serverModel.c,
@@ -171,7 +171,7 @@ export const syncWithServer = ({
       if (clientModel.t === "vs-user") {
         return {
           t: "vs-user",
-          c: VsUser.syncWithServer({
+          c: VsUser.mergeWithServer({
             clientModel: clientModel.c,
             serverModel: serverModel.c,
           }),
@@ -179,7 +179,7 @@ export const syncWithServer = ({
       }
       return {
         t: "vs-user",
-        c: VsUser.syncWithServer({
+        c: VsUser.mergeWithServer({
           clientModel: VsUser.init({ white: null, black: null }),
           serverModel: serverModel.c,
         }),

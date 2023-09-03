@@ -64,7 +64,7 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
     if (msg.result.t === "err") {
       return { model };
     }
-    const synced = syncWithServer({ ...input, server: msg.result.value });
+    const synced = mergeWithServer({ ...input, server: msg.result.value });
     return synced;
   }
 
@@ -90,7 +90,7 @@ export const updateFromEvt: Client["updateFromEvt"] = (input) => {
   return input;
 };
 
-export const syncWithServer: Client["syncWithServer"] = (input) => {
+export const mergeWithServer: Client["mergeWithServer"] = (input) => {
   const { client: client_, server } = input;
 
   const client: ClientModel = client_ ?? { t: "none" };
@@ -100,7 +100,7 @@ export const syncWithServer: Client["syncWithServer"] = (input) => {
   }
 
   if (server.t === "puzzle-builder") {
-    return PuzzleBuilder.syncWithServer({
+    return PuzzleBuilder.mergeWithServer({
       ...input,
       server,
       client: client.t === "puzzle-builder" ? client : undefined,
@@ -108,7 +108,7 @@ export const syncWithServer: Client["syncWithServer"] = (input) => {
   }
 
   if (server.t === "play") {
-    return Play.syncWithServer({
+    return Play.mergeWithServer({
       ...input,
       server,
       client: client.t === "play" ? client : undefined,

@@ -90,7 +90,7 @@ export const updateFromServer = (
       if (msg[2].t === "err") {
         return [model, Eff.None];
       }
-      const merged = syncWithServer({
+      const merged = mergeWithServer({
         clientModel: model,
         serverModel: msg[2].value,
       });
@@ -98,7 +98,7 @@ export const updateFromServer = (
     }
 
     case "tick": {
-      const merged = syncWithServer({
+      const merged = mergeWithServer({
         clientModel: model,
         serverModel: msg[1],
       });
@@ -107,7 +107,7 @@ export const updateFromServer = (
   }
 };
 
-export const syncWithServer = ({
+export const mergeWithServer = ({
   serverModel,
 }: {
   clientModel: ClientModel;

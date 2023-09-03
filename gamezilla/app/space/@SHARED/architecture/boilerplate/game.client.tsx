@@ -51,7 +51,7 @@ const updateFromEvt: Client["updateFromEvt"] = (input) => {
   return input;
 };
 
-const syncWithServer: Client["syncWithServer"] = (input) => {
+const mergeWithServer: Client["mergeWithServer"] = (input) => {
   return { model: input.client ?? init(input).model };
 };
 
@@ -92,7 +92,7 @@ export const client: Client = {
   update,
   updateFromServer,
   updateFromEvt,
-  syncWithServer,
+  mergeWithServer,
   subscriptions,
   View,
 };

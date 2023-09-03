@@ -616,7 +616,7 @@ const mergeWithServer = ({
     return { client: clientNew };
   }
 
-  const mergedGame = GameClient.syncWithServer({
+  const mergedGame = GameClient.mergeWithServer({
     ctx: { ...ctx, hostId: server.hostId },
     server: server.game,
     client: client?.game,

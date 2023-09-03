@@ -86,7 +86,7 @@ export const updateMain = ({
 } => {
   const updated = updateCore({ msg, model, ctx });
 
-  const modelNew = syncWithServer({
+  const modelNew = mergeWithServer({
     client: model,
     server: updated.t === "err" ? model : updated.value,
   });
@@ -150,7 +150,7 @@ export const updateFromServer_: typeof updateFromServer = ({
     return { model };
   }
 
-  const merged = syncWithServer({
+  const merged = mergeWithServer({
     client: model,
     server: result.value,
   });
@@ -158,7 +158,7 @@ export const updateFromServer_: typeof updateFromServer = ({
   return { model: merged };
 };
 
-export const syncWithServer = ({
+export const mergeWithServer = ({
   client,
   server,
 }: {

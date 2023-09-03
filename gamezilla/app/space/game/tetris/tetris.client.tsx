@@ -212,7 +212,7 @@ export const updateFromServer = (
   }
 };
 
-export const syncWithServer = ({
+export const mergeWithServer = ({
   clientModel,
   serverModel,
 }: {

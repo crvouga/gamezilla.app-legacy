@@ -50,7 +50,7 @@ export type SpaceGameClient<
     evt?: ClientEvt[];
   };
 
-  syncWithServer: (input: {
+  mergeWithServer: (input: {
     ctx: Ctx;
     server: ServerModel;
     client?: Model | null;
@@ -145,8 +145,8 @@ const tag = <
         cmd: ClientCmd.tag(tag, updated.cmd),
       };
     },
-    syncWithServer: (input) => {
-      const updated = client.syncWithServer({
+    mergeWithServer: (input) => {
+      const updated = client.mergeWithServer({
         ...input,
         server: input.server.c,
         client: input.client?.c,

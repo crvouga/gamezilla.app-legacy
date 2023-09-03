@@ -100,7 +100,7 @@ export const update = ({
 
       const coreModel = handled.value;
 
-      const modelNew = syncWithServer({
+      const modelNew = mergeWithServer({
         client: model,
         server: coreModel,
       });
@@ -158,7 +158,7 @@ const updateFromServerMain: typeof updateFromServer = ({ msg, model }) => {
     }
 
     case "player-left": {
-      const merged = syncWithServer({
+      const merged = mergeWithServer({
         client: model,
         server: msg.model,
       });
@@ -174,7 +174,7 @@ const updateFromServerMain: typeof updateFromServer = ({ msg, model }) => {
 
       const coreModelNew = result.value;
 
-      const modelNew = syncWithServer({
+      const modelNew = mergeWithServer({
         client: model,
         server: coreModelNew,
       });
@@ -189,7 +189,7 @@ const updateFromServerMain: typeof updateFromServer = ({ msg, model }) => {
         return { model };
       }
 
-      const modelNew = syncWithServer({
+      const modelNew = mergeWithServer({
         client: model,
         server: result.value,
       });
@@ -207,7 +207,7 @@ const updateFromServerMain: typeof updateFromServer = ({ msg, model }) => {
 //
 //
 
-export const syncWithServer = ({
+export const mergeWithServer = ({
   client = init,
   server,
 }: {

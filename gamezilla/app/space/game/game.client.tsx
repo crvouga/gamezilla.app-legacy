@@ -168,11 +168,11 @@ export const subscriptions: Client["subscriptions"] = (input): Sub<Msg> => {
 //
 //
 
-export const syncWithServer: Client["syncWithServer"] = (input) => {
+export const mergeWithServer: Client["mergeWithServer"] = (input) => {
   const { client, server } = input;
   switch (server.t) {
     case "chess": {
-      return Chess.syncWithServer({
+      return Chess.mergeWithServer({
         ...input,
         client: client?.t === "chess" ? client : undefined,
         server: server,
@@ -180,7 +180,7 @@ export const syncWithServer: Client["syncWithServer"] = (input) => {
     }
 
     case "connect-four": {
-      return ConnectFour.syncWithServer({
+      return ConnectFour.mergeWithServer({
         ...input,
         server,
         client: client?.t === "connect-four" ? client : undefined,
@@ -188,7 +188,7 @@ export const syncWithServer: Client["syncWithServer"] = (input) => {
     }
 
     case "tic-tac-toe": {
-      return TicTacToe.syncWithServer({
+      return TicTacToe.mergeWithServer({
         ...input,
         client: client?.t === "tic-tac-toe" ? client : undefined,
         server: server,
@@ -196,7 +196,7 @@ export const syncWithServer: Client["syncWithServer"] = (input) => {
     }
 
     case "flow": {
-      return Flow.syncWithServer({
+      return Flow.mergeWithServer({
         ...input,
         client: client?.t === "flow" ? client : null,
         server: server,

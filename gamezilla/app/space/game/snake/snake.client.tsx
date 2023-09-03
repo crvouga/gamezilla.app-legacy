@@ -205,7 +205,7 @@ export const ViewBoard = (_props: {
   );
 };
 
-export const syncWithServer = ({
+export const mergeWithServer = ({
   clientModel,
   serverModel,
 }: {

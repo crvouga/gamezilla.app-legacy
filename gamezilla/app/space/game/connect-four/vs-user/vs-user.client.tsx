@@ -95,7 +95,7 @@ export const update = ({
     req: msg,
   });
 
-  const modelNew = syncWithServer({
+  const modelNew = mergeWithServer({
     clientModel: model,
     serverModel: handled.t === "ok" ? handled.value : model,
   });
@@ -117,7 +117,7 @@ export const updateFromServer = ({
   eff?: Eff<ClientMsg>;
 } => {
   if (msg.t === "tick-done") {
-    const merged = syncWithServer({
+    const merged = mergeWithServer({
       clientModel: model,
       serverModel: msg.model,
     });
@@ -125,7 +125,7 @@ export const updateFromServer = ({
   }
 
   if (msg.t === "player-left") {
-    const merged = syncWithServer({
+    const merged = mergeWithServer({
       clientModel: model,
       serverModel: msg.model,
     });
@@ -133,14 +133,14 @@ export const updateFromServer = ({
   }
 
   const modelNew = msg.result.t === "err" ? model : msg.result.value;
-  const merged = syncWithServer({
+  const merged = mergeWithServer({
     clientModel: model,
     serverModel: modelNew,
   });
   return { model: { ...merged, openedModal: "none" } };
 };
 
-export const syncWithServer = ({
+export const mergeWithServer = ({
   clientModel,
   serverModel,
 }: {

@@ -88,7 +88,7 @@ export const update = ({
   if (handled.t === "err") {
     return { model, cmd: [{ t: "send-to-server", msg }] };
   }
-  const merged = syncWithServer({
+  const merged = mergeWithServer({
     ...ctx,
     client: model,
     server: handled.value,
@@ -113,7 +113,7 @@ export const updateFromServer = ({
     };
   }
 
-  const modelNew = syncWithServer({
+  const modelNew = mergeWithServer({
     ...ctx,
     client: model,
     server: msg.result.value,
@@ -124,7 +124,7 @@ export const updateFromServer = ({
   };
 };
 
-export const syncWithServer = ({
+export const mergeWithServer = ({
   server,
   client = init({ userId: null }),
 }: {

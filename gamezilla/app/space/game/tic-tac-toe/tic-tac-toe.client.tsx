@@ -86,7 +86,7 @@ export const updateFromServer: Client["updateFromServer"] = ({
       return { model };
     }
 
-    const synced = syncWithServer({
+    const synced = mergeWithServer({
       ctx,
       client: model,
       server: result.value,
@@ -116,7 +116,7 @@ export const updateFromServer: Client["updateFromServer"] = ({
   return { model };
 };
 
-export const syncWithServer: Client["syncWithServer"] = ({
+export const mergeWithServer: Client["mergeWithServer"] = ({
   client = { t: "none" },
   server,
   ctx,
@@ -131,7 +131,7 @@ export const syncWithServer: Client["syncWithServer"] = ({
     return {
       model: {
         t: "vs-user",
-        c: VsUser.syncWithServer(clientChild, server.c),
+        c: VsUser.mergeWithServer(clientChild, server.c),
       },
     };
   }
@@ -140,7 +140,7 @@ export const syncWithServer: Client["syncWithServer"] = ({
     return {
       model: {
         t: "vs-bot",
-        c: VsBot.syncWithServer({
+        c: VsBot.mergeWithServer({
           now: ctx.now,
           client: client?.t === "vs-bot" ? client.c : undefined,
           server: server.c,

@@ -140,7 +140,7 @@ export const updateFromServer: Client["updateFromServer"] = ({
         return { model: modelNew };
       }
 
-      const merged = syncWithServer({
+      const merged = mergeWithServer({
         ctx,
         client: modelNew,
         server: result.value,
@@ -327,7 +327,7 @@ export const View: Client["View"] = ({ ctx, model, dispatch }) => {
 //
 //
 
-export const syncWithServer: Client["syncWithServer"] = ({
+export const mergeWithServer: Client["mergeWithServer"] = ({
   client = { mode: { t: "none" }, requests: {} },
   server,
 }) => {
@@ -343,7 +343,7 @@ export const syncWithServer: Client["syncWithServer"] = ({
             ...client,
             mode: {
               t: "puzzle",
-              c: Puzzle.syncWithServer({
+              c: Puzzle.mergeWithServer({
                 client: client.mode.c,
                 server: server.c,
               }),
@@ -359,7 +359,7 @@ export const syncWithServer: Client["syncWithServer"] = ({
           ...client,
           mode: {
             t: "puzzle",
-            c: Puzzle.syncWithServer({
+            c: Puzzle.mergeWithServer({
               client: initial.model,
               server: server.c,
             }),
@@ -375,7 +375,7 @@ export const syncWithServer: Client["syncWithServer"] = ({
             ...client,
             mode: {
               t: "vs-user",
-              c: VsUser.syncWithServer(client.mode.c, server.c),
+              c: VsUser.mergeWithServer(client.mode.c, server.c),
             },
           },
           eff: Eff.None,
@@ -391,7 +391,7 @@ export const syncWithServer: Client["syncWithServer"] = ({
           ...client,
           mode: {
             t: "vs-user",
-            c: VsUser.syncWithServer(child, server.c),
+            c: VsUser.mergeWithServer(child, server.c),
           },
         },
         eff: Eff.t("vs-user", childEff),
@@ -404,7 +404,7 @@ export const syncWithServer: Client["syncWithServer"] = ({
           ...client,
           mode: {
             t: "vs-bot",
-            c: VsBot.syncWithServer({
+            c: VsBot.mergeWithServer({
               server: server.c,
               client: client?.mode.t === "vs-bot" ? client.mode.c : undefined,
             }),

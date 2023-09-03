@@ -70,7 +70,7 @@ export const updateFromServer = ({
     if (msg.result.t === "err") {
       return { model };
     }
-    const merged = syncWithServer({
+    const merged = mergeWithServer({
       serverModel: msg.result.value,
       clientModel: model,
     });
@@ -82,7 +82,7 @@ export const updateFromServer = ({
     return { model };
   }
 
-  const merged = syncWithServer({
+  const merged = mergeWithServer({
     serverModel: msg.result.value,
     clientModel: model,
   });
@@ -90,7 +90,7 @@ export const updateFromServer = ({
   return { model: merged };
 };
 
-export const syncWithServer = ({
+export const mergeWithServer = ({
   serverModel,
 }: {
   clientModel: ClientModel;

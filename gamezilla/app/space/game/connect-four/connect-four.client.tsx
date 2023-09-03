@@ -89,7 +89,7 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
       return { model };
     }
 
-    const merged = syncWithServer({
+    const merged = mergeWithServer({
       ...input,
       client: model,
       server: msg.result.value,
@@ -183,7 +183,7 @@ export const View: Client["View"] = ({ model, dispatch, ctx }) => {
   }
 };
 
-export const syncWithServer: Client["syncWithServer"] = ({
+export const mergeWithServer: Client["mergeWithServer"] = ({
   ctx,
   client: client_,
   server,
@@ -195,7 +195,7 @@ export const syncWithServer: Client["syncWithServer"] = ({
     }
 
     case "vs-bot": {
-      const sync = VsBot.syncWithServer({
+      const sync = VsBot.mergeWithServer({
         ctx,
         clientModel: client.t === "vs-bot" ? client.c : VsBot.init(server.c),
         serverModel: server.c,
@@ -211,7 +211,7 @@ export const syncWithServer: Client["syncWithServer"] = ({
         return {
           model: {
             t: "vs-user",
-            c: VsUser.syncWithServer({
+            c: VsUser.mergeWithServer({
               clientModel: client.c,
               serverModel: server.c,
             }),
@@ -222,7 +222,7 @@ export const syncWithServer: Client["syncWithServer"] = ({
       return {
         model: {
           t: "vs-user",
-          c: VsUser.syncWithServer({
+          c: VsUser.mergeWithServer({
             clientModel: VsUser.init(server.c),
             serverModel: server.c,
           }),

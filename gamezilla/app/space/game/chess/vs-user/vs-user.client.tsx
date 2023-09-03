@@ -433,7 +433,7 @@ const toGameText = (model: CoreModel): string => {
 //
 //
 
-export const syncWithServer = (
+export const mergeWithServer = (
   clientModel: ClientModel,
   serverModel: ServerModel
 ): ClientModel => {

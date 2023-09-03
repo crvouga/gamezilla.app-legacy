@@ -42,7 +42,7 @@ const updateFromEvt: Client["updateFromEvt"] = (input) => {
   return input;
 };
 
-const syncWithServer: Client["syncWithServer"] = ({ client, server }) => {
+const mergeWithServer: Client["mergeWithServer"] = ({ client, server }) => {
   const client_ = client ?? init;
   return { model: { ...client_, ...server } };
 };
@@ -74,7 +74,7 @@ export const PlayClient: Client = {
   update,
   updateFromServer,
   updateFromEvt,
-  syncWithServer,
+  mergeWithServer,
   subscriptions,
   View,
 };

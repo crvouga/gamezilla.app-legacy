@@ -148,7 +148,7 @@ const updateFromServerMain: typeof updateFromServer = ({ ctx, msg, model }) => {
   return { model: { ...model, ...result.value } };
 };
 
-export const syncWithServer = ({
+export const mergeWithServer = ({
   serverModel,
   clientModel = init({ player: null }),
 }: {
