@@ -5,11 +5,9 @@ import {
   RemoteResult,
   Sub,
   andThen,
-  dissoc,
   p,
 } from "gamezilla/@SHARED/core";
 import {
-  APP_SOUND,
   ClientCmd,
   ClientCtx,
   ClientEvt,
@@ -19,6 +17,8 @@ import {
   playSound,
   preloadSound,
   pushRoute,
+  sendToServer,
+  showToast,
 } from "gamezilla/app/@SHARED/client";
 import { SpaceId, UserId } from "gamezilla/app/@SHARED/data";
 import {
@@ -51,6 +51,7 @@ import {
 import {
   ClientModel,
   ClientMsg,
+  Req,
   Res,
   ToClient,
   ToClientExtra,
@@ -179,21 +180,48 @@ export const update = ({
       };
     }
 
+    case "create": {
+      return p(
+        { model },
+        andThen((model) => updateRequest({ ctx, msg, model })),
+        andThen((model) => {
+          return {
+            model,
+            cmd: [
+              pushRoute({
+                t: "space",
+                c: { t: "space", spaceId: msg.spaceId },
+              }),
+            ],
+          };
+        })
+      );
+    }
+
     default: {
-      return {
-        model: {
-          ...model,
-          requests: { ...model.requests, [msg.t]: RemoteResult.Loading },
-        },
-        cmd: [
-          {
-            t: "send-to-server",
-            msg: { ...msg, profile: ctx.profiles[ctx.currentUserId] },
-          },
-        ],
-      };
+      return updateRequest({ ctx, msg, model });
     }
   }
+};
+
+const updateRequest = ({
+  ctx,
+  msg,
+  model,
+}: {
+  ctx: ClientCtx;
+  msg: Req & ToClientExtra;
+  model: ClientModel;
+}): {
+  model: ClientModel;
+  cmd?: ClientCmd<ToServer>[];
+  eff?: Eff<ClientMsg>;
+  evt?: ClientEvt[];
+} => {
+  return {
+    model: { ...model, requests: { ...model.requests, [msg.t]: Loading } },
+    cmd: [sendToServer({ ...msg, profile: ctx.profiles[ctx.currentUserId] })],
+  };
 };
 
 export const updateFromServer = ({
@@ -292,10 +320,12 @@ export const updateFromServer = ({
           if (msg.result.t === "err") {
             return { model };
           }
+          const spacesNew = { ...model.spaces };
+          delete spacesNew[msg.result.value.spaceId];
           return {
             model: {
               ...model,
-              spaces: dissoc(model.spaces, msg.result.value.spaceId),
+              spaces: spacesNew,
             },
           };
         }),
@@ -305,10 +335,7 @@ export const updateFromServer = ({
           }
 
           if (msg.userId === ctx.currentUserId) {
-            return {
-              model,
-              cmd: [playSound(SPACE_SOUND.left)],
-            };
+            return { model, cmd: [playSound(SPACE_SOUND.left)] };
           }
 
           const profile = ctx.profiles[msg.userId];
@@ -439,11 +466,8 @@ const updateFromResponse = ({
 } => {
   if (msg.result.t === "err") {
     return {
-      model: {
-        ...model,
-        requests: { ...model.requests, [msg.t]: msg.result },
-      },
-      cmd: [{ t: "toast/enqueue", variant: "error", text: msg.result.error }],
+      model: { ...model, requests: { ...model.requests, [msg.t]: msg.result } },
+      cmd: [showToast(msg.result.error, "error")],
     };
   }
 
@@ -535,7 +559,9 @@ const syncWithServer = ({
   model: ClientModel;
   eff: Eff<ClientMsg>;
 } => {
-  const clientSpaces: { [spaceId: SpaceId]: Space<Game.ClientModel> } = {};
+  const clientSpaces: { [spaceId: SpaceId]: Space<Game.ClientModel> } = {
+    ...client.spaces,
+  };
   let indexUserId: { [userId: UserId]: SpaceId } = {};
 
   const effs: Eff<ClientMsg>[] = [];

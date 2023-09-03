@@ -355,6 +355,7 @@ const updateFromCmd = ({
   eff?: Eff<ClientMsg>;
 } => {
   switch (cmd.t) {
+    case "routing/replace":
     case "routing/back":
     case "routing/push": {
       const routing = Routing.updateFromCmd({

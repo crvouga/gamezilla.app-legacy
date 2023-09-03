@@ -11,11 +11,26 @@ export type SendToServerCmd<T> = {
   msg: T;
 };
 
+export const sendToServer = <T>(msg: T): ClientCmd<T> => {
+  return {
+    t: "send-to-server",
+    msg,
+  };
+};
+
 export type ToastCmd = {
   t: "toast/enqueue";
   text: string;
   variant?: "error" | "info";
   duration?: number;
+};
+
+export const showToast = <T>(
+  text: string,
+  variant?: "error" | "info",
+  duration?: number
+): ClientCmd<T> => {
+  return { t: "toast/enqueue", text, variant, duration };
 };
 
 export type SoundCmd =
@@ -58,10 +73,15 @@ export const enqueueToast = <T>(
 
 export type RouteCmd =
   | { t: "routing/push"; route: Route }
+  | { t: "routing/replace"; route: Route }
   | { t: "routing/back" };
 
 export const pushRoute = <T>(route: Route): ClientCmd<T> => {
   return { t: "routing/push", route };
+};
+
+export const replaceRoute = <T>(route: Route): ClientCmd<T> => {
+  return { t: "routing/replace", route };
 };
 
 const tagOne = <T extends string, Msg>(

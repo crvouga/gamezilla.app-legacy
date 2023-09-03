@@ -1,5 +1,10 @@
 import { Browser, Eff } from "gamezilla/@SHARED/core";
-import { ClientCmd, ClientEvt, Route } from "gamezilla/app/@SHARED/client";
+import {
+  ClientCmd,
+  ClientEvt,
+  Route,
+  RouteCmd,
+} from "gamezilla/app/@SHARED/client";
 
 //
 //
@@ -74,7 +79,7 @@ export const updateFromCmd = ({
   cmd: msg,
   model,
 }: {
-  cmd: ClientCmd<unknown>;
+  cmd: RouteCmd;
   model: Model;
 }): {
   model: Model;
@@ -95,8 +100,11 @@ export const updateFromCmd = ({
       };
     }
 
-    default: {
-      return { model };
+    case "routing/replace": {
+      return {
+        model,
+        eff: Browser.replace(Route.encode(msg.route)),
+      };
     }
   }
 };
