@@ -24,6 +24,10 @@ export type SoundCmd = {
   volume?: number;
 };
 
+export const APP_SOUND = {
+  tap: "./tap.wav",
+};
+
 export const playSound = <T>(src: string, volume?: number): ClientCmd<T> => {
   return {
     t: "sound/play",

@@ -9,6 +9,7 @@ import {
   p,
 } from "gamezilla/@SHARED/core";
 import {
+  APP_SOUND,
   ClientCmd,
   ClientCtx,
   ClientEvt,
@@ -440,8 +441,11 @@ export const updateFromServer = ({
       );
     }
 
-    default: {
-      return updateFromResponse({ model, ctx, msg });
+    case "input-game": {
+      return p(
+        { model },
+        andThen((model) => updateFromResponse({ ctx, msg, model }))
+      );
     }
   }
 };
