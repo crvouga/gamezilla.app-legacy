@@ -12,6 +12,7 @@ export type AnonymousViewCtx = {
   push: (route: Route.Route) => void;
   back: () => void;
   now: Posix;
+  documentVisibilityState: DocumentVisibilityState;
   profiles: { [userId: UserId]: Profile };
   sound: { muted: boolean };
   toggleSound: () => void;
@@ -25,4 +26,12 @@ export type ClientCtx = {
   now: Posix;
   profiles: { [userId: UserId]: Profile };
   currentUserId: UserId;
+  documentVisibilityState: DocumentVisibilityState;
+};
+
+export type AnonymousClientCtx = {
+  currentUserId?: UserId | null;
+  now: Posix;
+  profiles: { [userId: UserId]: Profile };
+  documentVisibilityState: DocumentVisibilityState;
 };

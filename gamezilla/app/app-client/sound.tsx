@@ -1,17 +1,34 @@
-import { Eff } from "gamezilla/@SHARED/core";
-import { SoundCmd } from "gamezilla/app/@SHARED/client";
+import { Browser, Eff, Err, Ok, Result } from "gamezilla/@SHARED/core";
+import {
+  AnonymousClientCtx,
+  ClientCtx,
+  SoundCmd,
+} from "gamezilla/app/@SHARED/client";
 
 export type Model = {
   muted: boolean;
+  isDocumentVisible: boolean;
 };
 
 export const init: Model = {
   muted: false,
+  isDocumentVisible: false,
 };
 
-export type Msg = {
-  t: "toggle-mute";
-};
+export type Msg =
+  | {
+      t: "toggle-mute";
+    }
+  | {
+      t: "played-sound";
+      src: string;
+      result: Result<unknown, null>;
+    }
+  | {
+      t: "preloaded-sounds";
+      src: string[];
+      result: Result<unknown, null>;
+    };
 
 export const update = ({
   msg,
@@ -31,25 +48,42 @@ export const update = ({
         },
       };
     }
+    case "played-sound": {
+      return {
+        model,
+      };
+    }
+    case "preloaded-sounds": {
+      return {
+        model,
+      };
+    }
   }
 };
 
 export const updateFromCmd = ({
   model,
   cmd,
+  ctx,
 }: {
+  ctx: AnonymousClientCtx;
   model: Model;
   cmd: SoundCmd;
 }): {
   model: Model;
-  eff?: Eff;
+  eff?: Eff<Msg>;
 } => {
   switch (cmd.t) {
     case "sound/preload": {
       return {
         model,
-        eff: async () => {
-          await preloadSounds(cmd.src);
+        eff: async (dispatch) => {
+          const preloaded = await preloadSounds(cmd.src);
+          dispatch({
+            t: "preloaded-sounds",
+            src: cmd.src,
+            result: preloaded,
+          });
         },
       };
     }
@@ -57,10 +91,20 @@ export const updateFromCmd = ({
       if (model.muted) {
         return { model };
       }
+
+      if (ctx.documentVisibilityState === "hidden") {
+        return { model };
+      }
+
       return {
         model,
-        eff: async () => {
-          await playSound(cmd.src);
+        eff: async (dispatch) => {
+          const played = await playSound(cmd.src);
+          dispatch({
+            t: "played-sound",
+            src: cmd.src,
+            result: played,
+          });
         },
       };
     }
@@ -71,60 +115,70 @@ let audioContext: AudioContext | null = null;
 
 const bufferCache = new Map<string, AudioBuffer>();
 
-let userGestureRequired = true;
+let userGestureRequired = false;
 const playSound = async (url: string) => {
-  if (!audioContext) {
-    audioContext = new (window.AudioContext ||
-      (window as any).webkitAudioContext)();
+  try {
+    if (!audioContext) {
+      audioContext = new (window.AudioContext ||
+        (window as any).webkitAudioContext)();
 
-    // Try resuming context to handle user gesture requirement
-    if (audioContext.state === "suspended") {
-      await audioContext.resume();
-      userGestureRequired = false;
+      // Try resuming context to handle user gesture requirement
+      if (audioContext.state === "suspended") {
+        await audioContext.resume();
+        userGestureRequired = false;
+      }
     }
-  }
 
-  if (userGestureRequired) {
-    return;
-  }
+    if (userGestureRequired) {
+      return Err({ message: "User gesture required" });
+    }
 
-  const cached = bufferCache.get(url);
+    const cached = bufferCache.get(url);
 
-  if (cached) {
+    if (cached) {
+      const source = audioContext.createBufferSource();
+      source.buffer = cached;
+      source.connect(audioContext.destination);
+      source.start(0);
+      return Ok(null);
+    }
+
+    const response = await fetch(url);
+    const arrayBuffer = await response.arrayBuffer();
+    const buffer = await audioContext.decodeAudioData(arrayBuffer);
     const source = audioContext.createBufferSource();
-    source.buffer = cached;
+
+    bufferCache.set(url, buffer);
+
+    source.buffer = buffer;
     source.connect(audioContext.destination);
     source.start(0);
-    return;
+    return Ok(null);
+  } catch (error) {
+    return Err({ error, message: "Caught error" });
   }
-
-  const response = await fetch(url);
-  const arrayBuffer = await response.arrayBuffer();
-  const buffer = await audioContext.decodeAudioData(arrayBuffer);
-  const source = audioContext.createBufferSource();
-
-  bufferCache.set(url, buffer);
-
-  source.buffer = buffer;
-  source.connect(audioContext.destination);
-  source.start(0);
 };
 
 const preloadSounds = async (srcList: string[]) => {
-  if (!audioContext) {
-    audioContext = new (window.AudioContext ||
-      (window as any).webkitAudioContext)();
-  }
-
-  for (const src of srcList) {
-    const cached = bufferCache.get(src);
-    if (cached) {
-      continue;
+  try {
+    if (!audioContext) {
+      audioContext = new (window.AudioContext ||
+        (window as any).webkitAudioContext)();
     }
-    const response = await fetch(src);
-    const arrayBuffer = await response.arrayBuffer();
-    const buffer = await audioContext.decodeAudioData(arrayBuffer);
 
-    bufferCache.set(src, buffer);
+    for (const src of srcList) {
+      const cached = bufferCache.get(src);
+      if (cached) {
+        continue;
+      }
+      const response = await fetch(src);
+      const arrayBuffer = await response.arrayBuffer();
+      const buffer = await audioContext.decodeAudioData(arrayBuffer);
+
+      bufferCache.set(src, buffer);
+    }
+    return Ok(null);
+  } catch (error) {
+    return Err({ error, message: "Caught error" });
   }
 };

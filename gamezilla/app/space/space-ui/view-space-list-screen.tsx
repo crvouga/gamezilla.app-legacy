@@ -92,10 +92,8 @@ export const ViewSpaceListScreen = ({
             size="lg"
             className="w-full"
             color="primary"
-            disabled={
-              model.requests.create?.t === "loading" ||
-              model.requests.list?.t === "loading"
-            }
+            disabled={model.requests.list?.t === "loading"}
+            loading={model.requests.create?.t === "loading"}
             onClick={() =>
               dispatch({ t: "create", spaceId: SpaceId.generate() })
             }

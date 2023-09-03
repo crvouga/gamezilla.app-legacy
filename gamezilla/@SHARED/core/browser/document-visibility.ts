@@ -1,9 +1,17 @@
 import { Sub } from "../sub";
 
-export const onDocumentVisibilityState = Sub.create<"visible" | "hidden">();
+type VisibilityState = "visible" | "hidden";
+
+const documentVisibilityState = Sub.create<VisibilityState>();
+
+export const onDocumentVisibilityState = <T>(
+  fn: (state: VisibilityState) => T
+) => {
+  return Sub.map(documentVisibilityState, fn);
+};
 
 if (typeof document !== "undefined") {
   document.addEventListener("visibilitychange", () => {
-    onDocumentVisibilityState.publish(document.visibilityState);
+    documentVisibilityState.publish(document.visibilityState);
   });
 }

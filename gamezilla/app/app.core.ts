@@ -33,6 +33,8 @@ export type ClientModel = {
   toast: Toast.Model;
   wire: Wire.Model;
   sound: Sound.Model;
+  //
+  documentVisibilityState: DocumentVisibilityState;
 };
 
 export type ToServer =
@@ -58,6 +60,8 @@ export type ClientMsg =
   | { t: "routing"; c: Routing.Msg }
   | { t: "toast"; c: Toast.Msg }
   | { t: "sound"; c: Sound.Msg }
+  //
+  | { t: "document-visibility-changed"; state: DocumentVisibilityState }
   //
   | { t: "space"; c: Space.ClientMsg }
   | { t: "chat"; c: Chat.ClientMsg }

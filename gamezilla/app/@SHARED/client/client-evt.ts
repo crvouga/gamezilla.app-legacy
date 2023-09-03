@@ -6,4 +6,5 @@ export type ClientEvt =
   | { t: "client-unauthenticated" }
   | { t: "server-connected" }
   | { t: "got-profiles"; profiles: { [userId: UserId]: Profile } }
-  | { t: "route-changed"; route: Route };
+  | { t: "route-changed"; route: Route }
+  | { t: "document-visibility-changed"; state: DocumentVisibilityState };

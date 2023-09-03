@@ -68,8 +68,10 @@ import {
 //
 
 const SPACE_SOUND = {
-  joined: "./space/joined.wav",
-  left: "./space/left.wav",
+  // joined: "./space/joined.wav",
+  // left: "./space/left.wav",
+  joined: "./nav-forward.wav",
+  left: "./nav-backward.wav",
 };
 
 export const init: {

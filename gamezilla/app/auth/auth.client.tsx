@@ -199,9 +199,29 @@ export const update = ({
       };
     }
 
-    case "document-visibility": {
+    default: {
+      return {
+        model,
+        cmd: [{ t: "send-to-server", msg }],
+      };
+    }
+  }
+};
+
+export const updateFromEvt = ({
+  model,
+  msg,
+}: {
+  msg: ClientEvt;
+  model: ClientModel;
+}): {
+  model: ClientModel;
+  eff?: Eff<ClientMsg>;
+} => {
+  switch (msg.t) {
+    case "document-visibility-changed": {
       if (
-        !msg.isVisible &&
+        msg.state === "hidden" &&
         model.requests["login-with-google"]?.t === "loading"
       ) {
         return {
@@ -218,10 +238,7 @@ export const update = ({
     }
 
     default: {
-      return {
-        model,
-        cmd: [{ t: "send-to-server", msg }],
-      };
+      return { model };
     }
   }
 };
@@ -256,17 +273,6 @@ export const updateFromServer = ({
   }
 };
 
-export const updateFromEvt = ({
-  model,
-}: {
-  msg: ClientEvt;
-  model: ClientModel;
-}): {
-  model: ClientModel;
-  eff?: Eff<ClientMsg>;
-} => {
-  return { model };
-};
 //
 //
 //
@@ -471,13 +477,7 @@ function loadCurrentUser(dispatch: (m: ClientMsg) => void) {
 //
 //
 
-export const subscriptions = (model: ClientModel): Sub<ClientMsg> => {
-  if (model.requests["login-with-google"]) {
-    return Sub.map(Browser.onDocumentVisibilityState, (visibilityState) => ({
-      t: "document-visibility",
-      isVisible: visibilityState === "visible",
-    }));
-  }
+export const subscriptions = (_model: ClientModel): Sub<ClientMsg> => {
   return Sub.None;
 };
 

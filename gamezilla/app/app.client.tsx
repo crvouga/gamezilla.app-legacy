@@ -1,11 +1,14 @@
 import { Browser, Eff, Posix, Sub } from "gamezilla/@SHARED/core";
 import {
+  APP_SOUND,
+  AnonymousClientCtx,
   AnonymousViewCtx,
   ClientCmd,
   ClientCtx,
   ClientEvt,
   Route,
   ViewCtx,
+  preloadSound,
 } from "gamezilla/app/@SHARED/client";
 import {
   IconGamepad,
@@ -64,14 +67,28 @@ export const init = ({
       auth: auth.model,
       search: search.model,
       profile,
+      documentVisibilityState: "visible",
     },
     eff: Eff.batch<ClientMsg>([routing.eff, Eff.t("auth", auth.eff)]),
   };
 
-  const cmdList: ClientCmd<ToServer>[] = [...ClientCmd.tag("space", space.cmd)];
+  const cmdList: ClientCmd<ToServer>[] = [
+    ...ClientCmd.tag("space", space.cmd),
+    preloadSound(Object.values(APP_SOUND)),
+  ];
+
+  const ctx: AnonymousClientCtx = {
+    currentUserId:
+      auth.model.currentUser.t === "logged-in"
+        ? auth.model.currentUser.userId
+        : null,
+    documentVisibilityState: acc.model.documentVisibilityState,
+    profiles: profile.profiles,
+    now,
+  };
 
   for (const cmd of cmdList) {
-    const updatedCmd = updateFromCmd({ now, model: acc.model, cmd });
+    const updatedCmd = updateFromCmd({ ctx, model: acc.model, cmd });
     acc = {
       model: updatedCmd.model,
       eff: Eff.batch([acc.eff, updatedCmd.eff]),
@@ -112,8 +129,18 @@ export const update = (input: {
     };
   }
 
+  const ctx: AnonymousClientCtx = {
+    currentUserId:
+      acc.model.auth.currentUser.t === "logged-in"
+        ? acc.model.auth.currentUser.userId
+        : null,
+    documentVisibilityState: acc.model.documentVisibilityState,
+    profiles: acc.model.profile.profiles,
+    now: input.now,
+  };
+
   for (const cmd of acc.cmd ?? []) {
-    const updatedCmd = updateFromCmd({ ...input, model: acc.model, cmd });
+    const updatedCmd = updateFromCmd({ ...input, ctx, model: acc.model, cmd });
     acc = {
       model: updatedCmd.model,
       eff: Eff.batch([acc.eff, updatedCmd.eff]),
@@ -240,6 +267,13 @@ const updateMain = ({
         cmd: ClientCmd.tag("search", updated.cmd),
       };
     }
+
+    case "document-visibility-changed": {
+      return {
+        model: { ...model, documentVisibilityState: msg.state },
+        evt: [msg],
+      };
+    }
   }
 };
 
@@ -249,6 +283,7 @@ const toCtx = (input: { model: ClientModel; now: Posix }): ClientCtx | null => {
       currentUserId: input.model.auth.currentUser.userId,
       profiles: input.model.profile.profiles,
       now: input.now,
+      documentVisibilityState: input.model.documentVisibilityState,
     };
   }
   return null;
@@ -346,8 +381,9 @@ const updateFromServer = ({
 const updateFromCmd = ({
   model,
   cmd,
+  ctx,
 }: {
-  now: Posix;
+  ctx: AnonymousClientCtx;
   model: ClientModel;
   cmd: ClientCmd<ToServer>;
 }): {
@@ -392,13 +428,11 @@ const updateFromCmd = ({
       const sound = Sound.updateFromCmd({
         model: model.sound,
         cmd,
+        ctx,
       });
       return {
-        model: {
-          ...model,
-          sound: sound.model,
-        },
-        eff: sound.eff,
+        model: { ...model, sound: sound.model },
+        eff: Eff.t("sound", sound.eff),
       };
     }
 
@@ -501,6 +535,10 @@ export const subscriptions = ({
     Sub.tag("wire", wire),
     Sub.tag("routing", Routing.subscriptions),
     Sub.tag("auth", AuthClient.subscriptions(model.auth)),
+    Browser.onDocumentVisibilityState((state) => ({
+      t: "document-visibility-changed",
+      state,
+    })),
     spaceSub(now, model),
   ]);
 };
@@ -514,6 +552,7 @@ const spaceSub = (now: Posix, model: ClientModel): Sub<ClientMsg> => {
           now,
           currentUserId: model.auth.currentUser.userId,
           profiles: model.profile.profiles,
+          documentVisibilityState: model.documentVisibilityState,
         },
         model.space
       )
@@ -579,6 +618,7 @@ const ViewMain = ({
           now,
           profiles: model.profile.profiles,
           sound: model.sound,
+          documentVisibilityState: model.documentVisibilityState,
           toggleSound: () => dispatch({ t: "sound", c: { t: "toggle-mute" } }),
           back: () => dispatch({ t: "routing", c: { t: "clicked-back" } }),
           push: (route) =>
@@ -600,6 +640,7 @@ const ViewMain = ({
         currentUserId: model.auth.currentUser.userId,
         profiles: model.profile.profiles,
         sound: model.sound,
+        documentVisibilityState: model.documentVisibilityState,
         toggleSound: () => dispatch({ t: "sound", c: { t: "toggle-mute" } }),
         push: (route) =>
           dispatch({ t: "routing", c: { t: "clicked-link", route } }),
