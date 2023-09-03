@@ -170,6 +170,14 @@ const updateMain = ({
       return { model: { ...model, wire: updated.model }, evt: updated.evt };
     }
 
+    case "sound": {
+      const updated = Sound.update({
+        msg: msg.c,
+        model: model.sound,
+      });
+      return { model: { ...model, sound: updated.model } };
+    }
+
     case "space": {
       if (!ctx) {
         return { model };
@@ -554,6 +562,8 @@ const ViewMain = ({
         ctx={{
           now,
           profiles: model.profile.profiles,
+          sound: model.sound,
+          toggleSound: () => dispatch({ t: "sound", c: { t: "toggle-mute" } }),
           back: () => dispatch({ t: "routing", c: { t: "clicked-back" } }),
           push: (route) =>
             dispatch({
@@ -573,6 +583,8 @@ const ViewMain = ({
         now,
         currentUserId: model.auth.currentUser.userId,
         profiles: model.profile.profiles,
+        sound: model.sound,
+        toggleSound: () => dispatch({ t: "sound", c: { t: "toggle-mute" } }),
         push: (route) =>
           dispatch({ t: "routing", c: { t: "clicked-link", route } }),
         back: () => dispatch({ t: "routing", c: { t: "clicked-back" } }),

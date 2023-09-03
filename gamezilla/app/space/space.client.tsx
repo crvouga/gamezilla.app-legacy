@@ -25,6 +25,8 @@ import {
   Drawer,
   IconHome,
   IconUserGroup,
+  IconVolumeHigh,
+  IconVolumeXMark,
   IconXMark,
   LoadingScreen,
   MyAvatar,
@@ -842,6 +844,20 @@ const ViewSpaceScreenMain = ({
         </div>
 
         <div className="flex-1"></div>
+
+        <div className="w-20">
+          <ActionButton
+            label={ctx.sound.muted ? "Unmute" : "Mute"}
+            icon={
+              ctx.sound.muted ? (
+                <IconVolumeHigh className="h-6 w-6" />
+              ) : (
+                <IconVolumeXMark className="h-6 w-6" />
+              )
+            }
+            onClick={ctx.toggleSound}
+          />
+        </div>
 
         <Button
           color="danger"

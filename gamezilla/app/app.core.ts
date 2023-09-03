@@ -57,6 +57,7 @@ export type ClientMsg =
   | { t: "wire"; c: Wire.Msg }
   | { t: "routing"; c: Routing.Msg }
   | { t: "toast"; c: Toast.Msg }
+  | { t: "sound"; c: Sound.Msg }
   //
   | { t: "space"; c: Space.ClientMsg }
   | { t: "chat"; c: Chat.ClientMsg }

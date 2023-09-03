@@ -34,4 +34,7 @@ export * from "./icon-user-circle";
 export * from "./icon-user-group";
 export * from "./icon-user-pen";
 export * from "./icon-users";
+export * from "./icon-volume-high";
+export * from "./icon-volume-x-mark";
 export * from "./icon-x-mark";
+

@@ -9,6 +9,31 @@ export const init: Model = {
   muted: false,
 };
 
+export type Msg = {
+  t: "toggle-mute";
+};
+
+export const update = ({
+  msg,
+  model,
+}: {
+  msg: Msg;
+  model: Model;
+}): {
+  model: Model;
+} => {
+  switch (msg.t) {
+    case "toggle-mute": {
+      return {
+        model: {
+          ...model,
+          muted: !model.muted,
+        },
+      };
+    }
+  }
+};
+
 export const updateFromCmd = ({
   model,
   cmd,

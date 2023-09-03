@@ -13,6 +13,8 @@ export type AnonymousViewCtx = {
   back: () => void;
   now: Posix;
   profiles: { [userId: UserId]: Profile };
+  sound: { muted: boolean };
+  toggleSound: () => void;
 };
 
 export type ViewCtx = AnonymousViewCtx & {
