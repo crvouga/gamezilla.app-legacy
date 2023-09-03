@@ -21,12 +21,6 @@ export const createSpaceStoreInMemory = ({
   });
 
   return {
-    toJSON() {
-      return {
-        spaces: Spaces.toJSON(),
-        indexUserId: IndexUserId.toJSON(),
-      };
-    },
     init(now) {
       return {
         spaces: Spaces.init(now),

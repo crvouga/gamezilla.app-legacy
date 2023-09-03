@@ -2,6 +2,7 @@ import { Browser, Eff, Err, Ok, Result } from "gamezilla/@SHARED/core";
 import {
   AnonymousClientCtx,
   ClientCtx,
+  ClientEvt,
   SoundCmd,
 } from "gamezilla/app/@SHARED/client";
 
@@ -61,12 +62,32 @@ export const update = ({
   }
 };
 
+export const updateFromEvt = ({
+  model,
+  evt,
+}: {
+  model: Model;
+  evt: ClientEvt;
+}): {
+  model: Model;
+  eff?: Eff<Msg>;
+} => {
+  switch (evt.t) {
+    case "document-visibility-changed": {
+      return {
+        model: { ...model, muted: evt.state === "hidden" },
+      };
+    }
+    default: {
+      return { model };
+    }
+  }
+};
+
 export const updateFromCmd = ({
   model,
   cmd,
-  ctx,
 }: {
-  ctx: AnonymousClientCtx;
   model: Model;
   cmd: SoundCmd;
 }): {
@@ -89,10 +110,6 @@ export const updateFromCmd = ({
     }
     case "sound/play": {
       if (model.muted) {
-        return { model };
-      }
-
-      if (ctx.documentVisibilityState === "hidden") {
         return { model };
       }
 

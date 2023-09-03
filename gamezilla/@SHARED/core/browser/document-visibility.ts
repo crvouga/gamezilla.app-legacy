@@ -15,3 +15,10 @@ if (typeof document !== "undefined") {
     documentVisibilityState.publish(document.visibilityState);
   });
 }
+
+export const getDocumentVisibilityState = (): VisibilityState => {
+  if (typeof document === "undefined") {
+    return "visible";
+  }
+  return document.visibilityState;
+};

@@ -1,5 +1,6 @@
 import {
   attachServerTransport,
+  Posix,
   Program,
   toMsgType,
 } from "gamezilla/@SHARED/core";
@@ -9,8 +10,13 @@ import { ServerModel } from "./app/app.core";
 import { SpaceStore } from "./app/space/space.server";
 
 let model: ServerModel;
-const httpServer = createServer((_request, response) => {
-  response.end(JSON.stringify({ model, SpaceStore: SpaceStore.toJSON() }));
+const httpServer = createServer(async (_request, response) => {
+  response.end(
+    JSON.stringify({
+      SpaceStore: await SpaceStore.list(Posix.now(), model.space),
+      model,
+    })
+  );
 });
 
 attachServerTransport({

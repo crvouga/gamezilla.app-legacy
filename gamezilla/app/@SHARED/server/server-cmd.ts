@@ -36,6 +36,35 @@ export const sendBack = <ToClient>(
   };
 };
 
+export const broadcast = <ToClient>(msg: ToClient): ServerCmd<ToClient> => {
+  return {
+    t: "broadcast",
+    msg,
+  };
+};
+
+export const sendToClient = <ToClient>(
+  clientIds: ClientId[],
+  msg: ToClient
+): ServerCmd<ToClient> => {
+  return {
+    t: "send-to-client",
+    clientIds,
+    msg,
+  };
+};
+
+export const sendToUser = <ToClient>(
+  userIds: UserId[],
+  msg: ToClient
+): ServerCmd<ToClient> => {
+  return {
+    t: "send-to-user",
+    userIds,
+    msg,
+  };
+};
+
 //
 //
 //

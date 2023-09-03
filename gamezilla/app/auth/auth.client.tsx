@@ -18,6 +18,7 @@ import {
   ClientEvt,
   Route,
   RouteAuth,
+  sendToServer,
 } from "gamezilla/app/@SHARED/client";
 import { UserId } from "gamezilla/app/@SHARED/data";
 import { supabaseClient } from "gamezilla/app/@SHARED/third-party-services";
@@ -188,21 +189,21 @@ export const update = ({
           ...model,
           currentUser: { t: "logged-in", userId: msg.userId },
         },
-        cmd: [{ t: "send-to-server", msg }],
+        cmd: [sendToServer(msg)],
       };
     }
 
     case "client-unauthenticated": {
       return {
         model: { ...model, currentUser: { t: "logged-out" } },
-        cmd: [{ t: "send-to-server", msg }],
+        cmd: [sendToServer(msg)],
       };
     }
 
     default: {
       return {
         model,
-        cmd: [{ t: "send-to-server", msg }],
+        cmd: [sendToServer(msg)],
       };
     }
   }
@@ -217,8 +218,29 @@ export const updateFromEvt = ({
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
+  cmd?: ClientCmd<ToServer>[];
 } => {
   switch (msg.t) {
+    case "server-connected": {
+      if (model.currentUser.t === "logged-in") {
+        return {
+          model,
+          cmd: [
+            sendToServer({
+              t: "client-authenticated",
+              userId: model.currentUser.userId,
+            }),
+          ],
+        };
+      }
+      if (model.currentUser.t === "logged-out") {
+        return {
+          model,
+          cmd: [sendToServer({ t: "client-unauthenticated" })],
+        };
+      }
+      return { model };
+    }
     case "document-visibility-changed": {
       if (
         msg.state === "hidden" &&

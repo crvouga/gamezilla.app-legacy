@@ -37,10 +37,11 @@ import { SpaceClient } from "./space";
 
 export const init = ({
   location,
-  now,
+  documentVisibilityState,
 }: {
-  now: Posix;
+  ctx: { now: Posix };
   location: Browser.Location;
+  documentVisibilityState: DocumentVisibilityState;
 }): {
   model: ClientModel;
   eff: Eff<ClientMsg>;
@@ -67,7 +68,7 @@ export const init = ({
       auth: auth.model,
       search: search.model,
       profile,
-      documentVisibilityState: "visible",
+      documentVisibilityState,
     },
     eff: Eff.batch<ClientMsg>([routing.eff, Eff.t("auth", auth.eff)]),
   };
@@ -77,18 +78,8 @@ export const init = ({
     preloadSound(Object.values(APP_SOUND)),
   ];
 
-  const ctx: AnonymousClientCtx = {
-    currentUserId:
-      auth.model.currentUser.t === "logged-in"
-        ? auth.model.currentUser.userId
-        : null,
-    documentVisibilityState: acc.model.documentVisibilityState,
-    profiles: profile.profiles,
-    now,
-  };
-
   for (const cmd of cmdList) {
-    const updatedCmd = updateFromCmd({ ctx, model: acc.model, cmd });
+    const updatedCmd = updateFromCmd({ model: acc.model, cmd });
     acc = {
       model: updatedCmd.model,
       eff: Eff.batch([acc.eff, updatedCmd.eff]),
@@ -129,18 +120,8 @@ export const update = (input: {
     };
   }
 
-  const ctx: AnonymousClientCtx = {
-    currentUserId:
-      acc.model.auth.currentUser.t === "logged-in"
-        ? acc.model.auth.currentUser.userId
-        : null,
-    documentVisibilityState: acc.model.documentVisibilityState,
-    profiles: acc.model.profile.profiles,
-    now: input.now,
-  };
-
   for (const cmd of acc.cmd ?? []) {
-    const updatedCmd = updateFromCmd({ ...input, ctx, model: acc.model, cmd });
+    const updatedCmd = updateFromCmd({ ...input, model: acc.model, cmd });
     acc = {
       model: updatedCmd.model,
       eff: Eff.batch([acc.eff, updatedCmd.eff]),
@@ -167,7 +148,7 @@ const updateMain = ({
   const ctx = toCtx({ model, now });
 
   switch (msg.t) {
-    case "from-server": {
+    case "➡️": {
       return updateFromServer({ now, msg: msg.c, model });
     }
 
@@ -208,6 +189,7 @@ const updateMain = ({
         msg: msg.c,
         model: model.wire,
       });
+
       return { model: { ...model, wire: updated.model }, evt: updated.evt };
     }
 
@@ -381,9 +363,7 @@ const updateFromServer = ({
 const updateFromCmd = ({
   model,
   cmd,
-  ctx,
 }: {
-  ctx: AnonymousClientCtx;
   model: ClientModel;
   cmd: ClientCmd<ToServer>;
 }): {
@@ -428,7 +408,6 @@ const updateFromCmd = ({
       const sound = Sound.updateFromCmd({
         model: model.sound,
         cmd,
-        ctx,
       });
       return {
         model: { ...model, sound: sound.model },
@@ -460,6 +439,7 @@ const updateFromEvt = ({
   eff?: Eff<ClientMsg>;
   cmd?: ClientCmd<ToServer>[];
 } => {
+  console.log(msg);
   const ctx = toCtx({ model, now });
 
   const chat = ChatClient.updateFromEvt({
@@ -496,7 +476,10 @@ const updateFromEvt = ({
       Eff.t("profile", profile.eff),
       Eff.t("auth", auth.eff),
     ]),
-    cmd: [...ClientCmd.tag("space", space.cmd)],
+    cmd: [
+      ...ClientCmd.tag("space", space.cmd),
+      ...ClientCmd.tag("auth", auth.cmd),
+    ],
   };
 };
 
@@ -508,9 +491,8 @@ const updateFromEvt = ({
 //
 //
 
-export const clientToServer = Sub.create<ToServer>();
-
 export const wire = Sub.create<Wire.Msg>();
+export const clientToServer = Sub.create<ToServer>();
 export const serverToClient = Sub.create<ToClient>();
 
 //
@@ -531,7 +513,7 @@ export const subscriptions = ({
   model: ClientModel;
 }): Sub<ClientMsg> => {
   return Sub.batch<ClientMsg>([
-    Sub.map(serverToClient, (msg) => ({ t: "from-server", c: msg })),
+    Sub.tag("➡️", serverToClient),
     Sub.tag("wire", wire),
     Sub.tag("routing", Routing.subscriptions),
     Sub.tag("auth", AuthClient.subscriptions(model.auth)),

@@ -5,7 +5,9 @@ import {
   ServerCmd,
   ServerCtx,
   ServerEvt,
+  broadcast,
   sendBack,
+  sendToUser,
 } from "gamezilla/app/@SHARED/server";
 import {
   Space,
@@ -89,7 +91,7 @@ export const update = async ({
           (m): ServerMsg => ({ t: "game", spaceId, c: m }),
           updated.eff
         ),
-        cmd: fromSpaceCmd(spaceNew, SpaceServerCmd.tag("game", updated.cmd)),
+        cmd: spaceCmdToCmd(spaceNew, SpaceServerCmd.tag("game", updated.cmd)),
       };
     }
   }
@@ -208,14 +210,11 @@ export const updateFromClient = async (input: {
       return {
         model: modelNew,
         cmd: [
-          {
-            t: "broadcast",
-            msg: {
-              ...msg,
-              profiles: currentSpace.profileCache,
-              result: Ok(currentSpace),
-            },
-          },
+          broadcast({
+            ...msg,
+            profiles: currentSpace.profileCache,
+            result: Ok(currentSpace),
+          }),
         ],
       };
     }
@@ -261,14 +260,11 @@ export const updateFromClient = async (input: {
       return {
         model: modelNew,
         cmd: [
-          {
-            t: "broadcast",
-            msg: {
-              ...msg,
-              profiles: spaceNew.profileCache,
-              result: Ok(spaceNew),
-            },
-          },
+          broadcast({
+            ...msg,
+            profiles: spaceNew.profileCache,
+            result: Ok(spaceNew),
+          }),
         ],
       };
     }
@@ -425,14 +421,11 @@ export const updateFromClient = async (input: {
       return {
         model: modelNew,
         cmd: [
-          {
-            t: "broadcast",
-            msg: {
-              ...msg,
-              profiles: spaceNew.profileCache,
-              result: Ok(spaceNew),
-            },
-          },
+          broadcast({
+            ...msg,
+            profiles: spaceNew.profileCache,
+            result: Ok(spaceNew),
+          }),
         ],
         eff: Eff.batch([
           Eff.map_(
@@ -477,13 +470,13 @@ export const updateFromClient = async (input: {
           (c) => ({ t: "game", spaceId: space.spaceId, c }),
           updated.eff
         ),
-        cmd: fromSpaceCmd(spaceNew, SpaceServerCmd.tag("game", updated.cmd)),
+        cmd: spaceCmdToCmd(spaceNew, SpaceServerCmd.tag("game", updated.cmd)),
       };
     }
   }
 };
 
-const fromSpaceCmd = (
+const spaceCmdToCmd = (
   space: Space<GameServer.Model>,
   cmd?: SpaceServerCmd<ToClient>[]
 ) => {
@@ -491,8 +484,7 @@ const fromSpaceCmd = (
     switch (cmd.t) {
       case "send-to-space": {
         const userIds = Object.values(space.users);
-
-        return { t: "send-to-user", userIds, msg: cmd.msg };
+        return sendToUser(userIds, cmd.msg);
       }
       default: {
         return cmd;
@@ -513,20 +505,6 @@ export const updateFromEvt = async (input: {
   const { msg } = input;
 
   switch (msg.t) {
-    // case "client-authenticated":
-    // case "client-connected": {
-    //   const listed = await SpaceStore.list(input.ctx.now, input.model);
-    //   return {
-    //     model: input.model,
-    //     cmd: [
-    //       {
-    //         t: "send-to-client",
-    //         clientIds: [msg.clientId],
-    //         msg: { t: "list", result: Ok(listed) },
-    //       },
-    //     ],
-    //   };
-    // }
     default: {
       return input;
     }

@@ -11,8 +11,9 @@ import "./main.css";
 const program = Program.create({
   init: (input) => {
     return AppClient.init({
-      now: input.ctx.now,
+      ctx: input.ctx,
       location: Browser.getLocation(),
+      documentVisibilityState: Browser.getDocumentVisibilityState(),
     });
   },
   update: (input) => {

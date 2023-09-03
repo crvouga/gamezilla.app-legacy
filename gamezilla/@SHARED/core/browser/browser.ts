@@ -25,10 +25,8 @@ if (typeof window !== "undefined") {
   window.addEventListener("popstate", handler);
 }
 
-export const onLocation = <Msg>(
-  mapper: (location: Location) => Msg
-): Sub<Msg> => {
-  return Sub.map(locationSub, mapper);
+export const onLocation = <Msg>(fn: (location: Location) => Msg): Sub<Msg> => {
+  return Sub.map(locationSub, fn);
 };
 
 export const getLocation = (): Location => {

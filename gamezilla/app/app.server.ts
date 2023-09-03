@@ -168,14 +168,14 @@ const updateMain = async ({
   cmd?: ServerCmd<ToClient>[];
 }> => {
   switch (msg.t) {
-    case "from-client": {
+    case "➡️": {
       return updateFromClient({
         ctx: {
           ...ctx,
           sessionId: msg.sessionId,
           clientId: msg.clientId,
         },
-        msg: msg.msg,
+        msg: msg.c,
         model,
       });
     }
@@ -451,10 +451,10 @@ export const subscriptions = async ({
     Sub.map(
       clientToServer,
       ({ sessionId, clientId, msg }): ServerMsg => ({
-        t: "from-client",
+        t: "➡️",
         sessionId,
         clientId,
-        msg,
+        c: msg,
       })
     ),
   ]);

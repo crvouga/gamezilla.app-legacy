@@ -1,10 +1,23 @@
 import { Route } from "./client-route";
 
+//
+//
+//
+//
+//
+//
+
 export type ClientCmd<ToServer = unknown> =
   | SendToServerCmd<ToServer>
   | ToastCmd
   | RouteCmd
   | SoundCmd;
+
+//
+//
+//
+//
+//
 
 export type SendToServerCmd<T> = {
   t: "send-to-server";
@@ -21,6 +34,13 @@ export const sendToServer = <T>(msg: T): ClientCmd<T> => {
   };
 };
 
+//
+//
+//
+//
+//
+//
+
 export type ToastCmd = {
   t: "toast/enqueue";
   text: string;
@@ -35,6 +55,14 @@ export const showToast = <T>(
 ): ClientCmd<T> => {
   return { t: "toast/enqueue", text, variant, duration };
 };
+
+//
+//
+//
+//
+//
+//
+//
 
 export type SoundCmd =
   | {
@@ -66,13 +94,14 @@ export const preloadSound = <T>(src: string[]): ClientCmd<T> => {
   };
 };
 
-export const enqueueToast = <T>(
-  text: string,
-  variant?: "error" | "info",
-  duration?: number
-): ClientCmd<T> => {
-  return { t: "toast/enqueue", text, variant, duration };
-};
+//
+//
+//
+//
+//
+//
+//
+//
 
 export type RouteCmd =
   | { t: "routing/push"; route: Route }
@@ -86,6 +115,15 @@ export const pushRoute = <T>(route: Route): ClientCmd<T> => {
 export const replaceRoute = <T>(route: Route): ClientCmd<T> => {
   return { t: "routing/replace", route };
 };
+
+//
+//
+//
+//
+//
+//
+//
+//
 
 const tagOne = <T extends string, Msg>(
   t: T,

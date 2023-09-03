@@ -54,7 +54,7 @@ export type ToClient =
   | { t: "access-denied"; msg: ToServer };
 
 export type ClientMsg =
-  | { t: "from-server"; c: ToClient }
+  | { t: "➡️"; c: ToClient }
   //
   | { t: "wire"; c: Wire.Msg }
   | { t: "routing"; c: Routing.Msg }
@@ -71,10 +71,10 @@ export type ClientMsg =
 
 export type ServerMsg =
   | {
-      t: "from-client";
+      t: "➡️";
       sessionId: SessionId;
       clientId: ClientId;
-      msg: ToServer;
+      c: ToServer;
     }
   | { t: "wire"; c: ServerWireMsg }
   | { t: "space"; c: Space.ServerMsg }

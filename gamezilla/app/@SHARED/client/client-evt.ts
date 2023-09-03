@@ -8,3 +8,14 @@ export type ClientEvt =
   | { t: "got-profiles"; profiles: { [userId: UserId]: Profile } }
   | { t: "route-changed"; route: Route }
   | { t: "document-visibility-changed"; state: DocumentVisibilityState };
+
+export const gotProfiles = (
+  profiles?: {
+    [userId: UserId]: Profile;
+  } | null
+): ClientEvt => {
+  return {
+    t: "got-profiles",
+    profiles: profiles ?? {},
+  };
+};
