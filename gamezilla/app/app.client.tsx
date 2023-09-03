@@ -499,7 +499,7 @@ export const subscriptions = ({
     Sub.map(serverToClient, (msg) => ({ t: "from-server", c: msg })),
     Sub.tag("wire", wire),
     Sub.tag("routing", Routing.subscriptions),
-    Sub.tag("auth", AuthClient.subscriptions),
+    Sub.tag("auth", AuthClient.subscriptions(model.auth)),
     spaceSub(now, model),
   ]);
 };

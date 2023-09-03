@@ -1,7 +1,9 @@
 import { Session as SupabaseSession } from "@supabase/supabase-js";
 import {
+  Browser,
   Eff,
   Err,
+  NotAsked,
   Ok,
   PhoneNumber,
   RemoteResult,
@@ -195,6 +197,24 @@ export const update = ({
         model: { ...model, currentUser: { t: "logged-out" } },
         cmd: [{ t: "send-to-server", msg }],
       };
+    }
+
+    case "document-visibility": {
+      if (
+        !msg.isVisible &&
+        model.requests["login-with-google"]?.t === "loading"
+      ) {
+        return {
+          model: {
+            ...model,
+            requests: {
+              ...model.requests,
+              "login-with-google": NotAsked,
+            },
+          },
+        };
+      }
+      return { model };
     }
 
     default: {
@@ -438,8 +458,6 @@ const fromSupabaseSession = (auth: SupabaseSession | null): ClientMsg => {
   };
 };
 
-export const subscriptions: Sub<ClientMsg> = Sub.None;
-
 function loadCurrentUser(dispatch: (m: ClientMsg) => void) {
   setTimeout(() => {
     const supabaseSession = supabaseClient.auth.session();
@@ -447,6 +465,21 @@ function loadCurrentUser(dispatch: (m: ClientMsg) => void) {
     dispatch(msg);
   }, 1_000);
 }
+//
+//
+//
+//
+//
+
+export const subscriptions = (model: ClientModel): Sub<ClientMsg> => {
+  if (model.requests["login-with-google"]) {
+    return Sub.map(Browser.onDocumentVisibilityState, (visibilityState) => ({
+      t: "document-visibility",
+      isVisible: visibilityState === "visible",
+    }));
+  }
+  return Sub.None;
+};
 
 //
 //

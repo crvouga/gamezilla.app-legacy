@@ -41,6 +41,13 @@ export const playSound = <T>(src: string, volume?: number): ClientCmd<T> => {
   };
 };
 
+export const preloadSound = <T>(src: string[]): ClientCmd<T> => {
+  return {
+    t: "sound/preload",
+    src,
+  };
+};
+
 export const enqueueToast = <T>(
   text: string,
   variant?: "error" | "info",
@@ -52,6 +59,10 @@ export const enqueueToast = <T>(
 export type RouteCmd =
   | { t: "routing/push"; route: Route }
   | { t: "routing/back" };
+
+export const pushRoute = <T>(route: Route): ClientCmd<T> => {
+  return { t: "routing/push", route };
+};
 
 const tagOne = <T extends string, Msg>(
   t: T,

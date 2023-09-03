@@ -51,6 +51,7 @@ type Event =
 export type ClientMsg =
   | Req
   | Event
+  | { t: "document-visibility"; isVisible: boolean }
   | { t: "login-done"; result: Result<string, null> }
   | { t: "logout-done"; result: Result<string, null> }
   | { t: "phone"; c: AuthPhone.Msg }

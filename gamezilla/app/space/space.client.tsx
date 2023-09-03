@@ -17,6 +17,8 @@ import {
   ViewCtx,
   enqueueToast,
   playSound,
+  preloadSound,
+  pushRoute,
 } from "gamezilla/app/@SHARED/client";
 import { SpaceId, UserId } from "gamezilla/app/@SHARED/data";
 import {
@@ -80,7 +82,7 @@ export const init: {
     modal: null,
     previewUserId: null,
   },
-  cmd: [{ t: "sound/preload", src: Object.values(SPACE_SOUND) }],
+  cmd: [preloadSound(Object.values(SPACE_SOUND))],
 };
 
 //
@@ -91,7 +93,11 @@ export const init: {
 //
 //
 
-export const update = (input: {
+export const update = ({
+  msg,
+  model,
+  ctx,
+}: {
   ctx: ClientCtx;
   msg: ClientMsg;
   model: ClientModel;
@@ -101,36 +107,6 @@ export const update = (input: {
   evt?: ClientEvt[];
   cmd?: ClientCmd<ToServer>[];
 } => {
-  return p(
-    input,
-    andThen((model) => updateMain({ ...input, model })),
-    andThen((model) => watchCreate({ ...input, model }))
-  );
-};
-
-const watchCreate: typeof update = ({ msg, model }) => {
-  switch (msg.t) {
-    case "create": {
-      return {
-        model,
-        cmd: [
-          {
-            t: "routing/push",
-            route: {
-              t: "space",
-              c: { t: "space", spaceId: msg.spaceId },
-            },
-          },
-        ],
-      };
-    }
-    default: {
-      return { model };
-    }
-  }
-};
-
-const updateMain: typeof update = ({ ctx, msg, model }) => {
   switch (msg.t) {
     case "modal-closed": {
       return { model: { ...model, modal: null } };
@@ -331,14 +307,14 @@ export const updateFromServer = ({
           if (msg.userId === ctx.currentUserId) {
             return {
               model,
-              cmd: [enqueueToast("Ended space"), playSound(SPACE_SOUND.left)],
+              cmd: [playSound(SPACE_SOUND.left)],
             };
           }
 
           const profile = ctx.profiles[msg.userId];
 
           if (!profile) {
-            return { model };
+            return { model, cmd: [playSound(SPACE_SOUND.left)] };
           }
 
           return {
@@ -364,17 +340,14 @@ export const updateFromServer = ({
           if (msg.userId === ctx.currentUserId) {
             return {
               model,
-              cmd: [
-                enqueueToast("Joined space"),
-                playSound(SPACE_SOUND.joined),
-              ],
+              cmd: [playSound(SPACE_SOUND.joined)],
             };
           }
 
           const profile = ctx.profiles[msg.userId];
 
           if (!profile) {
-            return { model };
+            return { model, cmd: [playSound(SPACE_SOUND.joined)] };
           }
 
           return {
@@ -398,16 +371,13 @@ export const updateFromServer = ({
           }
 
           if (msg.userId === ctx.currentUserId) {
-            return {
-              model,
-              cmd: [enqueueToast("Left space"), playSound(SPACE_SOUND.left)],
-            };
+            return { model, cmd: [playSound(SPACE_SOUND.left)] };
           }
 
           const profile = ctx.profiles[msg.userId];
 
           if (!profile) {
-            return { model };
+            return { model, cmd: [playSound(SPACE_SOUND.left)] };
           }
 
           return {
@@ -432,7 +402,13 @@ export const updateFromServer = ({
 
           return {
             model,
-            cmd: [playSound(SPACE_SOUND.joined), enqueueToast("Created space")],
+            cmd: [
+              playSound(SPACE_SOUND.joined),
+              pushRoute({
+                t: "space",
+                c: { t: "space", spaceId: msg.spaceId },
+              }),
+            ],
           };
         })
       );
