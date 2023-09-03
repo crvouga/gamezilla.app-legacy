@@ -59,12 +59,20 @@ import {
 //
 //
 //
-// ClientModel
+// Model
 //
 //
 //
 
-export const init: { model: ClientModel } = {
+const SPACE_SOUND = {
+  joined: "./space/joined.wav",
+  left: "./space/left.wav",
+};
+
+export const init: {
+  model: ClientModel;
+  cmd: ClientCmd<ToServer>[];
+} = {
   model: {
     spaces: {},
     indexUserId: {},
@@ -72,6 +80,8 @@ export const init: { model: ClientModel } = {
     modal: null,
     previewUserId: null,
   },
+  // cmd: [],
+  cmd: [{ t: "sound/preload", src: Object.values(SPACE_SOUND) }],
 };
 
 //
@@ -211,11 +221,6 @@ const updateMain: typeof update = ({ ctx, msg, model }) => {
   }
 };
 
-const SPACE_SOUND_SRC = {
-  joined: "./space/joined.wav",
-  left: "./space/left.wav",
-};
-
 export const updateFromServer = ({
   ctx,
   msg,
@@ -327,10 +332,7 @@ export const updateFromServer = ({
           if (msg.userId === ctx.currentUserId) {
             return {
               model,
-              cmd: [
-                enqueueToast("Ended space"),
-                playSound(SPACE_SOUND_SRC.left),
-              ],
+              cmd: [enqueueToast("Ended space"), playSound(SPACE_SOUND.left)],
             };
           }
 
@@ -344,7 +346,7 @@ export const updateFromServer = ({
             model,
             cmd: [
               enqueueToast(`${profile.username} ended space`),
-              playSound(SPACE_SOUND_SRC.left),
+              playSound(SPACE_SOUND.left),
             ],
           };
         })
@@ -365,7 +367,7 @@ export const updateFromServer = ({
               model,
               cmd: [
                 enqueueToast("Joined space"),
-                playSound(SPACE_SOUND_SRC.joined),
+                playSound(SPACE_SOUND.joined),
               ],
             };
           }
@@ -380,7 +382,7 @@ export const updateFromServer = ({
             model,
             cmd: [
               enqueueToast(`${profile.username} joined space`),
-              playSound(SPACE_SOUND_SRC.joined),
+              playSound(SPACE_SOUND.joined),
             ],
           };
         })
@@ -399,10 +401,7 @@ export const updateFromServer = ({
           if (msg.userId === ctx.currentUserId) {
             return {
               model,
-              cmd: [
-                enqueueToast("Left space"),
-                playSound(SPACE_SOUND_SRC.left),
-              ],
+              cmd: [enqueueToast("Left space"), playSound(SPACE_SOUND.left)],
             };
           }
 
@@ -416,7 +415,7 @@ export const updateFromServer = ({
             model,
             cmd: [
               enqueueToast(`${profile.username} left space`),
-              playSound(SPACE_SOUND_SRC.left),
+              playSound(SPACE_SOUND.left),
             ],
           };
         })
@@ -434,10 +433,7 @@ export const updateFromServer = ({
 
           return {
             model,
-            cmd: [
-              playSound(SPACE_SOUND_SRC.joined),
-              enqueueToast("Created space"),
-            ],
+            cmd: [playSound(SPACE_SOUND.joined), enqueueToast("Created space")],
           };
         })
       );

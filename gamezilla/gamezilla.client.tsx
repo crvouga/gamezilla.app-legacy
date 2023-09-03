@@ -9,8 +9,11 @@ import * as AppClient from "./app/app.client";
 import "./main.css";
 
 const program = Program.create({
-  init: () => {
-    return AppClient.init({ location: Browser.getLocation() });
+  init: (input) => {
+    return AppClient.init({
+      now: input.ctx.now,
+      location: Browser.getLocation(),
+    });
   },
   update: (input) => {
     return AppClient.update({

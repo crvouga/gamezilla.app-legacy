@@ -34,7 +34,9 @@ import { SpaceClient } from "./space";
 
 export const init = ({
   location,
+  now,
 }: {
+  now: Posix;
   location: Browser.Location;
 }): {
   model: ClientModel;
@@ -50,7 +52,7 @@ export const init = ({
   const search = SearchClient.init;
   const sound = Sound.init;
 
-  return {
+  let acc: { model: ClientModel; eff: Eff<ClientMsg> } = {
     model: {
       routing: routing.model,
       toast,
@@ -65,6 +67,18 @@ export const init = ({
     },
     eff: Eff.batch<ClientMsg>([routing.eff, Eff.t("auth", auth.eff)]),
   };
+
+  const cmdList: ClientCmd<ToServer>[] = [...ClientCmd.tag("space", space.cmd)];
+
+  for (const cmd of cmdList) {
+    const updatedCmd = updateFromCmd({ now, model: acc.model, cmd });
+    acc = {
+      model: updatedCmd.model,
+      eff: Eff.batch([acc.eff, updatedCmd.eff]),
+    };
+  }
+
+  return acc;
 };
 
 //
@@ -372,6 +386,7 @@ const updateFromCmd = ({
       };
     }
 
+    case "sound/preload":
     case "sound/play": {
       const sound = Sound.updateFromCmd({
         model: model.sound,

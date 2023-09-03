@@ -45,6 +45,14 @@ export const updateFromCmd = ({
   eff?: Eff;
 } => {
   switch (cmd.t) {
+    case "sound/preload": {
+      return {
+        model,
+        eff: async () => {
+          await preloadSounds(cmd.src);
+        },
+      };
+    }
     case "sound/play": {
       if (model.muted) {
         return { model };
@@ -89,4 +97,23 @@ const playSound = async (url: string) => {
   source.buffer = buffer;
   source.connect(audioContext.destination);
   source.start(0);
+};
+
+const preloadSounds = async (srcList: string[]) => {
+  if (!audioContext) {
+    audioContext = new (window.AudioContext ||
+      (window as any).webkitAudioContext)();
+  }
+
+  for (const src of srcList) {
+    const cached = bufferCache.get(src);
+    if (cached) {
+      continue;
+    }
+    const response = await fetch(src);
+    const arrayBuffer = await response.arrayBuffer();
+    const buffer = await audioContext.decodeAudioData(arrayBuffer);
+
+    bufferCache.set(src, buffer);
+  }
 };

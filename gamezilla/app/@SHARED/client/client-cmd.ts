@@ -18,11 +18,16 @@ export type ToastCmd = {
   duration?: number;
 };
 
-export type SoundCmd = {
-  t: "sound/play";
-  src: string;
-  volume?: number;
-};
+export type SoundCmd =
+  | {
+      t: "sound/play";
+      src: string;
+      volume?: number;
+    }
+  | {
+      t: "sound/preload";
+      src: string[];
+    };
 
 export const APP_SOUND = {
   tap: "./tap.wav",
