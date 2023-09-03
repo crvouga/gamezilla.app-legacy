@@ -52,7 +52,7 @@ export const showToast = <T>(
   text: string,
   variant?: "error" | "info",
   duration?: number
-): ClientCmd<T> => {
+): ToastCmd => {
   return { t: "toast/enqueue", text, variant, duration };
 };
 
@@ -77,6 +77,7 @@ export type SoundCmd =
 
 export const APP_SOUND = {
   tap: "./tap.wav",
+  error: "./alert-error.wav",
 };
 
 export const playSound = <T>(src: string, volume?: number): ClientCmd<T> => {

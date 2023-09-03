@@ -44,7 +44,14 @@ export const ViewNotInGameScreen = ({
             <div key={gameName}>
               <button
                 aria-label={gameName}
-                onClick={() => dispatch({ t: "input-game", gameName })}
+                onClick={() =>
+                  dispatch({
+                    t: "input-game",
+                    spaceId: space.spaceId,
+                    userId: ctx.currentUserId,
+                    gameName,
+                  })
+                }
                 className="flex overflow-hidden rounded-lg">
                 <ViewCoverArt gameName={gameName} />
               </button>

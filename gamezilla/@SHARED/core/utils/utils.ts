@@ -9,7 +9,7 @@ export const exhaustive = (discriminatedUnionType: "Missing Case!"): never => {
  * A helper function for chaining update functions
  */
 export const andThen =
-  <Msg, Model, Evt, Cmd>(
+  <Model, Msg, Evt, Cmd>(
     updateStep: (input: Model) => {
       model: Model;
       eff?: Eff<Msg>;

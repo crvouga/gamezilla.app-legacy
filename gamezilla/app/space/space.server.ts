@@ -91,7 +91,13 @@ export const update = async ({
           (m): ServerMsg => ({ t: "game", spaceId, c: m }),
           updated.eff
         ),
-        cmd: spaceCmdToCmd(spaceNew, SpaceServerCmd.tag("game", updated.cmd)),
+        cmd: spaceCmdToCmd(
+          spaceNew,
+          SpaceServerCmd.map(
+            (c) => ({ t: "game", spaceId: msg.spaceId, c }),
+            updated.cmd
+          )
+        ),
       };
     }
   }
@@ -470,7 +476,13 @@ export const updateFromClient = async (input: {
           (c) => ({ t: "game", spaceId: space.spaceId, c }),
           updated.eff
         ),
-        cmd: spaceCmdToCmd(spaceNew, SpaceServerCmd.tag("game", updated.cmd)),
+        cmd: spaceCmdToCmd(
+          spaceNew,
+          SpaceServerCmd.map(
+            (m) => ({ t: "game", spaceId: space.spaceId, c: m }),
+            updated.cmd
+          )
+        ),
       };
     }
   }

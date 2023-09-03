@@ -1,5 +1,15 @@
-import { Eff, Loading, Ok, Sub, andThen, p } from "gamezilla/@SHARED/core";
 import {
+  Eff,
+  Loading,
+  Ok,
+  Result,
+  Sub,
+  andThen,
+  dissoc,
+  p,
+} from "gamezilla/@SHARED/core";
+import {
+  APP_SOUND,
   ClientCmd,
   ClientCtx,
   ClientEvt,
@@ -73,7 +83,6 @@ export const init: {
 } = {
   model: {
     spaces: {},
-    indexUserId: {},
     requests: {},
     modal: null,
     previewUserId: null,
@@ -233,9 +242,26 @@ export const updateFromServer = ({
   evt?: ClientEvt[];
   cmd?: ClientCmd<ToServer>[];
 } => {
+  return p(
+    { model },
+    andThen((model) => updateFromServerMain({ ctx, msg, model })),
+    andThen((model) => {
+      return {
+        model,
+        evt: msg.profiles ? [gotProfiles(msg.profiles)] : [],
+      };
+    })
+  );
+};
+
+export const updateFromServerMain: typeof updateFromServer = ({
+  ctx,
+  msg,
+  model,
+}) => {
   switch (msg.t) {
     case "game": {
-      const space = toSpaceByUserId(model, ctx.currentUserId);
+      const space = model.spaces[msg.spaceId];
 
       if (!space) {
         return { model };
@@ -262,93 +288,96 @@ export const updateFromServer = ({
           ...model.spaces,
           [space.spaceId]: spaceNew,
         },
-        indexUserId: {
-          ...model.indexUserId,
-          ...toIndexUserId(spaceNew),
-        },
       };
 
       return {
         model: modelNew,
         eff: Eff.t("game", updated.eff),
         evt: updated.evt,
+        cmd: ClientCmd.tag("game", updated.cmd),
       };
     }
 
     case "list": {
-      if (msg.result.t === "err") {
-        return {
-          model: {
-            ...model,
-            requests: { ...model.requests, list: msg.result },
-          },
-          cmd: [{ t: "toast/enqueue", text: msg.result.error }],
-        };
-      }
+      return p(
+        { model },
+        andThen((model) => updateLoading({ res: msg, model })),
+        andThen((model): ReturnType<typeof updateFromServer> => {
+          if (msg.result.t === "err") {
+            return { model, cmd: [showToast(msg.result.error, "error")] };
+          }
 
-      const merged = syncWithServer({
-        ctx,
-        client: model,
-        server: msg.result.value,
-      });
+          let merged: { model: ClientModel; eff?: Eff<ClientMsg> } = {
+            model: {
+              ...model,
+              spaces: {},
+            },
+          };
 
-      return {
-        model: {
-          ...merged.model,
-          requests: {
-            ...model.requests,
-            list: Ok(null),
-          },
-        },
-        eff: merged.eff,
-        evt: [gotProfiles(msg.profiles)],
-      };
+          for (const server of msg.result.value) {
+            const mergedSpace = mergeWithServer({
+              ctx,
+              client: merged.model.spaces[server.spaceId],
+              server: server,
+            });
+            merged = {
+              model: {
+                ...merged.model,
+                spaces: {
+                  ...merged.model.spaces,
+                  [server.spaceId]: mergedSpace.client,
+                },
+              },
+              eff: Eff.batch([merged.eff, mergedSpace.eff]),
+            };
+          }
+
+          return merged;
+        })
+      );
     }
 
     case "destroy": {
       return p(
         { model },
-        andThen((model) => updateFromResponse({ ctx, msg, model })),
-        andThen((model) => {
-          if (msg.result.t === "err") {
-            return { model };
-          }
-          const spacesNew = { ...model.spaces };
-          delete spacesNew[msg.result.value.spaceId];
-          return {
-            model: {
-              ...model,
-              spaces: spacesNew,
-            },
-          };
-        }),
-        andThen((model) => {
-          if (msg.result.t === "err") {
-            return { model };
-          }
-
+        andThen((model) => updateLoading({ res: msg, model })),
+        andThen((model): ReturnType<typeof update> => {
           const currentUserSpace = toSpaceByUserId(model, ctx.currentUserId);
 
           if (currentUserSpace?.spaceId !== msg.spaceId) {
             return { model };
           }
 
-          if (msg.userId === ctx.currentUserId) {
-            return { model, cmd: [playSound(SPACE_SOUND.left)] };
+          if (msg.result.t === "err") {
+            return { model, cmd: [showToast(msg.result.error, "error")] };
           }
 
           const profile = ctx.profiles[msg.userId];
 
-          if (!profile) {
-            return { model, cmd: [playSound(SPACE_SOUND.left)] };
-          }
+          const toastCmd =
+            msg.userId === ctx.currentUserId
+              ? []
+              : profile
+              ? [showToast(`${profile.username} ended space`)]
+              : [showToast("Space ended")];
 
           return {
             model,
             cmd: [
-              showToast(`${profile.username} ended space`),
               playSound(SPACE_SOUND.left),
+              replaceRoute({ t: "space", c: { t: "space-list" } }),
+              ...toastCmd,
             ],
+          };
+
+          return { model };
+        }),
+        andThen((model) => {
+          if (msg.result.t !== "ok") {
+            return { model };
+          }
+          return {
+            model: { ...model, spaces: dissoc(model.spaces, msg.spaceId) },
           };
         })
       );
@@ -357,9 +386,22 @@ export const updateFromServer = ({
     case "join": {
       return p(
         { model },
-        andThen((model) => updateFromResponse({ ctx, msg, model })),
+        andThen((model) => updateLoading({ res: msg, model })),
+        andThen((model) => mergeWithResult({ ctx, result: msg.result, model })),
         andThen((model) => {
           if (msg.result.t === "err") {
+            return {
+              model,
+              cmd: [
+                showToast(msg.result.error, "error", 4000),
+                playSound(APP_SOUND.error),
+              ],
+            };
+          }
+
+          const currentUserSpace = toSpaceByUserId(model, ctx.currentUserId);
+
+          if (currentUserSpace?.spaceId !== msg.spaceId) {
             return { model };
           }
 
@@ -390,7 +432,8 @@ export const updateFromServer = ({
     case "leave": {
       return p(
         { model },
-        andThen((model) => updateFromResponse({ ctx, msg, model })),
+        andThen((model) => updateLoading({ res: msg, model })),
+        andThen((model) => mergeWithResult({ ctx, result: msg.result, model })),
         andThen((model) => {
           if (msg.result.t === "err") {
             return { model };
@@ -420,7 +463,8 @@ export const updateFromServer = ({
     case "create": {
       return p(
         { model },
-        andThen((model) => updateFromResponse({ ctx, msg, model })),
+        andThen((model) => updateLoading({ res: msg, model })),
+        andThen((model) => mergeWithResult({ ctx, result: msg.result, model })),
         andThen((model) => {
           if (msg.result.t === "err") {
             return { model };
@@ -449,51 +493,57 @@ export const updateFromServer = ({
     case "input-game": {
       return p(
         { model },
-        andThen((model) => updateFromResponse({ ctx, msg, model }))
+        andThen((model) => updateLoading({ res: msg, model })),
+        andThen((model) => mergeWithResult({ ctx, result: msg.result, model }))
       );
     }
   }
 };
 
-const updateFromResponse = ({
-  ctx,
-  msg,
+const updateLoading = ({
+  res,
   model,
 }: {
-  ctx: ClientCtx;
-  msg: Res & ToClientExtra;
+  res: Res & ToClientExtra;
   model: ClientModel;
-}): {
-  model: ClientModel;
-  eff?: Eff<ClientMsg>;
-  evt?: ClientEvt[];
-  cmd?: ClientCmd<ToServer>[];
-} => {
-  if (msg.result.t === "err") {
-    return {
-      model: { ...model, requests: { ...model.requests, [msg.t]: msg.result } },
-      cmd: [showToast(msg.result.error, "error")],
-    };
-  }
-
-  const merged = syncWithServer({
-    ctx,
-    client: model,
-    server: Array.isArray(msg.result.value)
-      ? msg.result.value
-      : [msg.result.value],
-  });
-
+}): ReturnType<typeof updateFromServer> => {
   return {
     model: {
-      ...merged.model,
+      ...model,
       requests: {
         ...model.requests,
-        [msg.t]: Ok(null),
+        [res.t]: res.result,
+      },
+    },
+  };
+};
+
+const mergeWithResult = ({
+  ctx,
+  model,
+  result,
+}: {
+  ctx: ClientCtx;
+  result: Result<string, Space<Game.ServerModel>>;
+  model: ClientModel;
+}): ReturnType<typeof updateFromServer> => {
+  if (result.t === "err") {
+    return { model };
+  }
+  const merged = mergeWithServer({
+    ctx,
+    server: result.value,
+    client: model.spaces[result.value.spaceId],
+  });
+  return {
+    model: {
+      ...model,
+      spaces: {
+        ...model.spaces,
+        [merged.client.spaceId]: merged.client,
       },
     },
     eff: merged.eff,
-    evt: [gotProfiles(msg.profiles)],
   };
 };
 
@@ -545,79 +595,45 @@ const listSpaces = (input: {
   };
 };
 
-/**
- * Merges the client model with the server model.
- */
-const syncWithServer = ({
+const mergeWithServer = ({
   ctx,
   client,
   server,
 }: {
   ctx: ClientCtx;
-  client: ClientModel;
-  server: Space<Game.ServerModel>[];
+  client?: Space<Game.ClientModel> | null;
+  server: Space<Game.ServerModel>;
 }): {
-  model: ClientModel;
-  eff: Eff<ClientMsg>;
+  client: Space<Game.ClientModel>;
+  eff?: Eff<ClientMsg>;
 } => {
-  const clientSpaces: { [spaceId: SpaceId]: Space<Game.ClientModel> } = {
-    ...client.spaces,
-  };
-  let indexUserId: { [userId: UserId]: SpaceId } = {};
-
-  const effs: Eff<ClientMsg>[] = [];
-
-  for (const serverSpace of server) {
-    if (!serverSpace.game) {
-      const clientSpaceNew: Space<Game.ClientModel> = {
-        ...serverSpace,
-        game: null,
-      };
-      clientSpaces[clientSpaceNew.spaceId] = clientSpaceNew;
-      indexUserId = {
-        ...indexUserId,
-        ...toIndexUserId(clientSpaceNew),
-      };
-      continue;
-    }
-
-    const clientSpace = client.spaces[serverSpace.spaceId];
-
-    const merged = GameClient.syncWithServer({
-      ctx: { ...ctx, hostId: serverSpace.hostId },
-      server: serverSpace.game,
-      client: clientSpace?.game,
-    });
-
-    const clientSpaceNew: Space<Game.ClientModel> = {
-      ...serverSpace,
-      game: merged.model,
+  if (!server.game) {
+    const clientNew: Space<Game.ClientModel> = {
+      ...client,
+      ...server,
+      game: null,
     };
-    clientSpaces[clientSpaceNew.spaceId] = clientSpaceNew;
-    indexUserId = {
-      ...indexUserId,
-      ...toIndexUserId(clientSpaceNew),
-    };
-    effs.push(Eff.t("game", merged.eff));
-    continue;
+    return { client: clientNew };
   }
 
+  const mergedGame = GameClient.syncWithServer({
+    ctx: { ...ctx, hostId: server.hostId },
+    server: server.game,
+    client: client?.game,
+  });
+
+  const clientNew: Space<Game.ClientModel> = {
+    ...client,
+    ...server,
+    game: mergedGame.model,
+  };
+
   return {
-    model: {
-      ...client,
-      spaces: clientSpaces,
-      indexUserId: indexUserId,
-    },
-    eff: Eff.batch(effs),
+    client: clientNew,
+    eff: Eff.t("game", mergedGame.eff),
   };
 };
 
-const toIndexUserId = <T,>(space: Space<T>) => {
-  return Object.values(space.users).reduce<{ [userId: UserId]: SpaceId }>(
-    (acc, userId) => ({ ...acc, [userId]: space.spaceId }),
-    {}
-  );
-};
 //
 //
 //
@@ -728,7 +744,13 @@ const ViewSpaceScreen = ({
     hostId: space.hostId,
     spaceId: space.spaceId,
     viewProfile: (userId) => dispatch({ t: "clicked-user", userId: userId }),
-    quit: () => dispatch({ t: "input-game", gameName: undefined }),
+    quit: () =>
+      dispatch({
+        t: "input-game",
+        spaceId: space.spaceId,
+        userId: ctx.currentUserId,
+        gameName: undefined,
+      }),
     space,
   };
 

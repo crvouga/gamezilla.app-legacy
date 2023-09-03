@@ -19,9 +19,6 @@ export type ClientModel = {
   spaces: {
     [spaceId: SpaceId]: Space<Game.ClientModel>;
   };
-  indexUserId: {
-    [userId: UserId]: SpaceId;
-  };
   requests: {
     [key in Req["t"]]?: RemoteResult<string, null>;
   };
@@ -39,7 +36,8 @@ type ModalModel = null | "user-preview" | "users";
 //
 //
 
-export type ToClient = ToClientExtra & (Res | { t: "game"; c: Game.ToClient });
+export type ToClient = ToClientExtra &
+  (Res | { t: "game"; spaceId: SpaceId; c: Game.ToClient });
 
 export type ToServer = ToServerExtra & (Req | { t: "game"; c: Game.ToServer });
 
@@ -75,7 +73,12 @@ export type Req =
   | { t: "destroy"; userId: UserId; spaceId: SpaceId }
   | { t: "join"; userId: UserId; spaceId: SpaceId }
   | { t: "leave"; userId: UserId; spaceId: SpaceId }
-  | { t: "input-game"; gameName?: Game.GameName | null };
+  | {
+      t: "input-game";
+      userId: UserId;
+      spaceId: SpaceId;
+      gameName?: Game.GameName | null;
+    };
 
 export type Res =
   | {
@@ -104,6 +107,8 @@ export type Res =
     }
   | {
       t: "input-game";
+      userId: UserId;
+      spaceId: SpaceId;
       gameName?: Game.GameName | null;
       result: Result<string, Space<Game.ServerModel>>;
     }
@@ -113,13 +118,16 @@ export type Res =
     };
 
 export const toSpaceByUserId = (model: ClientModel, userId: UserId) => {
-  const spaceId = model.indexUserId[userId];
-  if (!spaceId) {
-    return null;
+  for (const spaceId in model.spaces) {
+    if (!SpaceId.is(spaceId)) {
+      continue;
+    }
+
+    const space = model.spaces[spaceId];
+
+    if (space?.users[userId]) {
+      return space;
+    }
   }
-  const space = model.spaces[spaceId];
-  if (!space) {
-    return null;
-  }
-  return space;
+  return null;
 };

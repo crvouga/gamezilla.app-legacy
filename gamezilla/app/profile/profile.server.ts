@@ -109,7 +109,7 @@ export const updateFromEvt = ({
         dispatch({
           t: "handled",
           clientId: msg.clientId,
-          msg: { t: "current-user-profile", result },
+          msg: { t: "current-user-profile", result, source: msg },
         });
       },
     };

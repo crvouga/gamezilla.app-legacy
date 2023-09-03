@@ -103,28 +103,36 @@ export type SpaceServerCmd<ToClient> =
   | ServerCmd<ToClient>
   | { t: "send-to-space"; msg: ToClient };
 
-const tagOne = <T extends string, A>(
-  tag: T,
+const mapOne = <A, B>(
+  fn: (a: A) => B,
   cmd: SpaceServerCmd<A>
-): SpaceServerCmd<{ t: T; c: A }> => {
+): SpaceServerCmd<B> => {
   switch (cmd.t) {
     case "send-to-space": {
-      return { ...cmd, msg: { t: tag, c: cmd.msg } };
+      return { ...cmd, msg: fn(cmd.msg) };
     }
     default: {
-      return ServerCmd.tagOne(tag, cmd);
+      return ServerCmd.mapOne(fn, cmd);
     }
   }
+};
+
+const map = <A, B>(
+  fn: (a: A) => B,
+  cmd?: SpaceServerCmd<A>[]
+): SpaceServerCmd<B>[] | undefined => {
+  return cmd?.map((m) => mapOne(fn, m));
 };
 
 const tag = <T extends string, A>(
   tag: T,
   cmd?: SpaceServerCmd<A>[]
 ): SpaceServerCmd<{ t: T; c: A }>[] | undefined => {
-  return cmd?.map((m) => tagOne(tag, m));
+  return map((c) => ({ t: tag, c }), cmd);
 };
 
 export const SpaceServerCmd = {
-  tagOne,
+  map,
+  mapOne,
   tag,
 };
