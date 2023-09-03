@@ -71,10 +71,21 @@ let audioContext: AudioContext | null = null;
 
 const bufferCache = new Map<string, AudioBuffer>();
 
+let userGestureRequired = true;
 const playSound = async (url: string) => {
   if (!audioContext) {
     audioContext = new (window.AudioContext ||
       (window as any).webkitAudioContext)();
+
+    // Try resuming context to handle user gesture requirement
+    if (audioContext.state === "suspended") {
+      await audioContext.resume();
+      userGestureRequired = false;
+    }
+  }
+
+  if (userGestureRequired) {
+    return;
   }
 
   const cached = bufferCache.get(url);

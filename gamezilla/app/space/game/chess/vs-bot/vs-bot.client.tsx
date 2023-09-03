@@ -1,5 +1,5 @@
 import { Eff, Sub, andThen, exhaustive, p } from "gamezilla/@SHARED/core";
-import { ClientCmd } from "gamezilla/app/@SHARED/client";
+import { ClientCmd, sendToServer } from "gamezilla/app/@SHARED/client";
 import {
   IconArrowLeftOnRect,
   IconRobot,
@@ -21,7 +21,7 @@ import {
   ServerModel,
   ToClient,
   ToServer,
-  initShared,
+  initCore,
   isBotTurn,
   updateCore,
 } from "./vs-bot.core";
@@ -36,7 +36,7 @@ import {
 
 export const init: ClientModel = {
   vsBotSetup: VsBotSetup.init,
-  coreModel: initShared,
+  coreModel: initCore,
   openedMenuId: null,
   openedModal: null,
   isFlipped: false,
@@ -65,45 +65,49 @@ export const update = ({
 } => {
   const model: ClientModel = { ...modelPrev, openedMenuId: null };
 
-  if (msg.t === "closed-modal") {
-    return { model: { ...model, openedModal: null } };
+  switch (msg.t) {
+    case "closed-modal": {
+      return { model: { ...model, openedModal: null } };
+    }
+
+    case "clicked-flip": {
+      return { model: { ...model, isFlipped: !model.isFlipped } };
+    }
+
+    case "opened-menu": {
+      return { model: { ...model, openedMenuId: msg.menuId } };
+    }
+
+    case "closed-menu": {
+      return { model: { ...model, openedMenuId: null } };
+    }
+
+    case "vs-bot-setup": {
+      const updated = VsBotSetup.update(model.vsBotSetup, msg.c);
+      return { model: { ...model, vsBotSetup: updated } };
+    }
+
+    default: {
+      const handled = updateCore({
+        ctx,
+        msg,
+        model: model.coreModel,
+      });
+
+      if (handled.t === "err") {
+        return { model, cmd: [sendToServer(msg)] };
+      }
+
+      const coreModel = handled.value;
+
+      const modelNew = syncWithServer({
+        client: model,
+        server: coreModel,
+      });
+
+      return { model: modelNew, cmd: [sendToServer(msg)] };
+    }
   }
-
-  if (msg.t === "clicked-flip") {
-    return { model: { ...model, isFlipped: !model.isFlipped } };
-  }
-
-  if (msg.t === "opened-menu") {
-    return { model: { ...model, openedMenuId: msg.menuId } };
-  }
-
-  if (msg.t === "closed-menu") {
-    return { model: { ...model, openedMenuId: null } };
-  }
-
-  if (msg.t === "vs-bot-setup") {
-    const updated = VsBotSetup.update(model.vsBotSetup, msg.c);
-    return { model: { ...model, vsBotSetup: updated } };
-  }
-
-  const handled = updateCore({
-    ctx,
-    msg,
-    model: model.coreModel,
-  });
-
-  if (handled.t === "err") {
-    return { model, cmd: [{ t: "send-to-server", msg }] };
-  }
-
-  const coreModel = handled.value;
-
-  const modelNew = syncWithServer({
-    client: model,
-    server: coreModel,
-  });
-
-  return { model: modelNew, cmd: [{ t: "send-to-server", msg }] };
 };
 
 export const updateFromServer = (input: {
@@ -114,7 +118,7 @@ export const updateFromServer = (input: {
   eff?: Eff<ClientMsg>;
 } => {
   return p(
-    updateFromServer_(input),
+    updateFromServerMain(input),
     andThen((model) => {
       if (
         input.model.coreModel.type !== "game-over" &&
@@ -139,60 +143,60 @@ export const updateFromServer = (input: {
   );
 };
 
-const updateFromServer_: typeof updateFromServer = ({ msg, model }) => {
-  if (msg.t === "bot-moved") {
-    const { result } = msg;
+const updateFromServerMain: typeof updateFromServer = ({ msg, model }) => {
+  switch (msg.t) {
+    case "bot-moved": {
+      const { result } = msg;
 
-    if (result.t === "err") {
-      return { model };
+      if (result.t === "err") {
+        return { model };
+      }
+
+      const { didCapture, ...coreModel } = result.value;
+
+      return { model: { ...model, coreModel } };
     }
 
-    const { didCapture, ...coreModel } = result.value;
-
-    const soundEff = Eff.None;
-
-    return { model: { ...model, coreModel }, eff: soundEff };
-  }
-
-  if (msg.t === "player-left") {
-    const merged = syncWithServer({
-      client: model,
-      server: msg.model,
-    });
-    return { model: merged };
-  }
-
-  if (msg.t === "input-move") {
-    const { result } = msg;
-
-    if (result.t === "err") {
-      return { model };
+    case "player-left": {
+      const merged = syncWithServer({
+        client: model,
+        server: msg.model,
+      });
+      return { model: merged };
     }
 
-    const coreModelNew = result.value;
+    case "input-move": {
+      const { result } = msg;
 
-    const modelNew = syncWithServer({
-      client: model,
-      server: coreModelNew,
-    });
+      if (result.t === "err") {
+        return { model };
+      }
 
-    const soundEff = Eff.None;
+      const coreModelNew = result.value;
 
-    return { model: modelNew, eff: soundEff };
+      const modelNew = syncWithServer({
+        client: model,
+        server: coreModelNew,
+      });
+
+      return { model: modelNew };
+    }
+
+    default: {
+      const { result } = msg;
+
+      if (result.t === "err") {
+        return { model };
+      }
+
+      const modelNew = syncWithServer({
+        client: model,
+        server: result.value,
+      });
+
+      return { model: modelNew };
+    }
   }
-
-  const { result } = msg;
-
-  if (result.t === "err") {
-    return { model };
-  }
-
-  const modelNew = syncWithServer({
-    client: model,
-    server: result.value,
-  });
-
-  return { model: modelNew };
 };
 
 //

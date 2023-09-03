@@ -14,18 +14,27 @@ import { PlayerType } from "./view-vs-bot";
 const toOverlayId = (gameOver: GameOver): string =>
   gameOver.t === null ? "not-game-over" : "game-over";
 
+const PLAY_AGAIN_ID = "play-again";
+
 const overlayConfig = Transition.config<GameOver>({
   toId: toOverlayId,
-  enter: (val) => fadeIn(toOverlayId(val)),
+  enter: async (val) => {
+    const playAgainNode = await Transition.waitForElementById(PLAY_AGAIN_ID);
+    if (playAgainNode) {
+      playAgainNode.style.opacity = "0";
+    }
+    await fadeIn(toOverlayId(val), 600);
+    await fadeIn(PLAY_AGAIN_ID, 600);
+  },
   exit: (val) => fadeOut(toOverlayId(val)),
 });
 
-async function fadeIn(id: string) {
+async function fadeIn(id: string, delay: number = 0) {
   const node = await Transition.waitForElementById(id);
 
   await node?.animate([{ opacity: 0 }, { opacity: 1 }], {
     duration: 200,
-    delay: 600,
+    delay,
     easing: "ease-in-out",
     fill: "both",
   }).finished;
@@ -116,6 +125,7 @@ type Props = {
   playerTwo: {
     renderIcon: (props: { className: string }) => VDom;
   };
+  onPlayAgain?: () => void;
 };
 
 export const ViewGameOverOverlay = (props: Props) => {
@@ -127,15 +137,36 @@ export const ViewGameOverOverlay = (props: Props) => {
         return (
           <div
             id={String(overlayConfig.toId(gameOver))}
-            key={String(overlayConfig.toId(gameOver))}>
+            key={String(overlayConfig.toId(gameOver))}
+            onClick={props.onPlayAgain}>
             {gameOver?.t === "winner" && (
-              <div className="absolute inset-0 bg-black/60">
+              <div className="absolute inset-0 flex cursor-pointer flex-col justify-center bg-black/60">
+                <div className="flex-1"></div>
                 <Winner {...props} winner={gameOver.winner} />
+                {props.onPlayAgain ? (
+                  <div
+                    className="flex flex-1 items-center justify-center pb-2 text-2xl font-bold "
+                    id={PLAY_AGAIN_ID}>
+                    Tap to play again
+                  </div>
+                ) : (
+                  <div className="flex-1"></div>
+                )}
               </div>
             )}
             {gameOver?.t === "draw" && (
-              <div className="absolute inset-0 bg-black/60">
+              <div className="absolute inset-0 cursor-pointer bg-black/60">
+                <div className="flex-1"></div>
                 <Draw {...props} />
+                {props.onPlayAgain ? (
+                  <div
+                    className="flex flex-1 items-center justify-center pb-2 text-2xl font-bold "
+                    id={PLAY_AGAIN_ID}>
+                    Tap to play again
+                  </div>
+                ) : (
+                  <div className="flex-1"></div>
+                )}
               </div>
             )}
           </div>
@@ -191,7 +222,7 @@ const Winner = ({
   );
 
   return (
-    <div className="grid h-full w-full grid-cols-2 items-center">
+    <div className="grid w-full flex-1 grid-cols-2 items-center">
       {playerOneSlot}
       {playerTwoSlot}
     </div>
@@ -226,7 +257,7 @@ const Draw = ({ ctx, playerOne, playerTwo, human }: Props) => {
   );
 
   return (
-    <div className="flex h-full w-full items-center justify-center">
+    <div className="flex h-full w-full flex-1 items-center justify-center">
       <div>
         {playerOneSlot}
         {playerTwoSlot}

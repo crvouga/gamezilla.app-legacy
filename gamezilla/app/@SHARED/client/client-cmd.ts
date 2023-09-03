@@ -11,6 +11,9 @@ export type SendToServerCmd<T> = {
   msg: T;
 };
 
+/**
+ * A cmd creator for sending a messages to the server.
+ */
 export const sendToServer = <T>(msg: T): ClientCmd<T> => {
   return {
     t: "send-to-server",

@@ -311,9 +311,11 @@ export const View = ({
               dispatch({ t: "input-move", columnIndex });
             }}
           />
+
           <ViewGameOverOverlay
             {...vsBotGameProps}
             model={model.vsBotGame}
+            onPlayAgain={() => dispatch({ t: "restart" })}
             gameOver={
               status.type === "Tie"
                 ? { t: "draw" }

@@ -49,7 +49,7 @@ export type GameOverModel = {
 
 export type GameOver = Chess.GameOver;
 
-export const initShared: CoreModel = {
+export const initCore: CoreModel = {
   type: "setup",
   userColor: "w",
   userId: null,
@@ -63,8 +63,8 @@ export const initServer = ({
 }): ServerModel => {
   return {
     type: "setup",
-    botLevel: initShared.botLevel,
-    userColor: initShared.userColor,
+    botLevel: initCore.botLevel,
+    userColor: initCore.userColor,
     userId,
   };
 };
