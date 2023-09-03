@@ -80,7 +80,6 @@ export const init: {
     modal: null,
     previewUserId: null,
   },
-  // cmd: [],
   cmd: [{ t: "sound/preload", src: Object.values(SPACE_SOUND) }],
 };
 
