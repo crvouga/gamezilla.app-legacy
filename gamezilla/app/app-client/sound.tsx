@@ -40,7 +40,8 @@ const bufferCache = new Map<string, AudioBuffer>();
 
 const playSound = async (url: string) => {
   if (!audioContext) {
-    audioContext = new AudioContext();
+    audioContext = new (window.AudioContext ||
+      (window as any).webkitAudioContext)();
   }
 
   const cached = bufferCache.get(url);
