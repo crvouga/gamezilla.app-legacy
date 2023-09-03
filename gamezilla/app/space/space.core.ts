@@ -72,9 +72,9 @@ export type ClientMsg =
 export type Req =
   | { t: "list" }
   | { t: "create"; spaceId: SpaceId }
-  | { t: "destroy"; userId: UserId }
+  | { t: "destroy"; userId: UserId; spaceId: SpaceId }
   | { t: "join"; userId: UserId; spaceId: SpaceId }
-  | { t: "leave"; userId: UserId }
+  | { t: "leave"; userId: UserId; spaceId: SpaceId }
   | { t: "input-game"; gameName?: Game.GameName | null };
 
 export type Res =
@@ -86,6 +86,7 @@ export type Res =
   | {
       t: "destroy";
       userId: UserId;
+      spaceId: SpaceId;
       result: Result<string, Space<Game.ServerModel>>;
     }
   | {
@@ -98,6 +99,7 @@ export type Res =
   | {
       t: "leave";
       userId: UserId;
+      spaceId: SpaceId;
       result: Result<string, Space<Game.ServerModel>>;
     }
   | {

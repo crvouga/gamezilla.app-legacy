@@ -1,4 +1,4 @@
-import { Audio, Err, Ok, Result } from "gamezilla/@SHARED/core";
+import { Err, Ok, Result } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
 import { VsBotSetup } from "gamezilla/app/space/game/@SHARED";
 import { Chess } from "../@SHARED/chess";
@@ -83,7 +83,6 @@ export const isBotTurn = (model: CoreModel) => {
 
 export type ClientMsg =
   | Req
-  | { t: "audio-done"; result: Audio.PlayResult }
   | { t: "opened-menu"; menuId: string }
   | { t: "closed-menu" }
   | { t: "clicked-flip" }

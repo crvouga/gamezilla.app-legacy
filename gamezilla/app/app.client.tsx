@@ -14,7 +14,7 @@ import {
   VDom,
   cn,
 } from "gamezilla/app/@SHARED/ui";
-import { Routing, Toast, Wire } from "./app-client";
+import { Routing, Toast, Wire, Sound } from "./app-client";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./app.core";
 import { AuthClient } from "./auth";
 import { ChatClient } from "./chat";
@@ -48,12 +48,14 @@ export const init = ({
   const profile = ProfileClient.init;
   const chat = ChatClient.init;
   const search = SearchClient.init;
+  const sound = Sound.init;
 
   return {
     model: {
       routing: routing.model,
       toast,
       wire,
+      sound,
       //
       chat,
       space: space.model,
@@ -359,6 +361,20 @@ const updateFromCmd = ({
           toast: toast.model,
         },
         eff: Eff.t("toast", toast.eff),
+      };
+    }
+
+    case "sound/play": {
+      const sound = Sound.updateFromCmd({
+        model: model.sound,
+        cmd,
+      });
+      return {
+        model: {
+          ...model,
+          sound: sound.model,
+        },
+        eff: sound.eff,
       };
     }
 

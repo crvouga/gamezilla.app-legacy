@@ -15,6 +15,7 @@ import {
   RouteGameSpace,
   ViewCtx,
   enqueueToast,
+  playSound,
 } from "gamezilla/app/@SHARED/client";
 import { SpaceId, UserId } from "gamezilla/app/@SHARED/data";
 import {
@@ -207,6 +208,11 @@ const updateMain: typeof update = ({ ctx, msg, model }) => {
   }
 };
 
+const SPACE_SOUND_SRC = {
+  joined: "./space/joined.wav",
+  left: "./space/left.wav",
+};
+
 export const updateFromServer = ({
   ctx,
   msg,
@@ -296,39 +302,21 @@ export const updateFromServer = ({
     }
 
     case "destroy": {
-      if (msg.result.t === "err") {
-        return {
-          model: {
-            ...model,
-            requests: { ...model.requests, [msg.t]: msg.result },
-          },
-          cmd: [{ t: "toast/enqueue", text: msg.result.error }],
-        };
-      }
-
-      return {
-        model: {
-          ...model,
-          spaces: dissoc(model.spaces, msg.result.value.spaceId),
-          requests: { ...model.requests, [msg.t]: Ok(null) },
-        },
-        evt: msg.profiles
-          ? [{ t: "got-profiles", profiles: msg.profiles }]
-          : [],
-      };
-    }
-
-    case "join": {
       return p(
         { model },
         andThen((model) => updateFromResponse({ ctx, msg, model })),
         andThen((model) => {
-          const currentSpace = toSpaceByUserId(model, ctx.currentUserId);
-
-          if (msg.spaceId !== currentSpace?.spaceId) {
+          if (msg.result.t === "err") {
             return { model };
           }
-
+          return {
+            model: {
+              ...model,
+              spaces: dissoc(model.spaces, msg.result.value.spaceId),
+            },
+          };
+        }),
+        andThen((model) => {
           if (msg.result.t === "err") {
             return { model };
           }
@@ -336,7 +324,10 @@ export const updateFromServer = ({
           if (msg.userId === ctx.currentUserId) {
             return {
               model,
-              cmd: [enqueueToast("Joined space")],
+              cmd: [
+                enqueueToast("Ended space"),
+                playSound(SPACE_SOUND_SRC.left),
+              ],
             };
           }
 
@@ -348,7 +339,102 @@ export const updateFromServer = ({
 
           return {
             model,
-            cmd: [enqueueToast(`${profile.username} joined space`)],
+            cmd: [
+              enqueueToast(`${profile.username} ended space`),
+              playSound(SPACE_SOUND_SRC.left),
+            ],
+          };
+        })
+      );
+    }
+
+    case "join": {
+      return p(
+        { model },
+        andThen((model) => updateFromResponse({ ctx, msg, model })),
+        andThen((model) => {
+          if (msg.result.t === "err") {
+            return { model };
+          }
+
+          if (msg.userId === ctx.currentUserId) {
+            return {
+              model,
+              cmd: [
+                enqueueToast("Joined space"),
+                playSound(SPACE_SOUND_SRC.joined),
+              ],
+            };
+          }
+
+          const profile = ctx.profiles[msg.userId];
+
+          if (!profile) {
+            return { model };
+          }
+
+          return {
+            model,
+            cmd: [
+              enqueueToast(`${profile.username} joined space`),
+              playSound(SPACE_SOUND_SRC.joined),
+            ],
+          };
+        })
+      );
+    }
+
+    case "leave": {
+      return p(
+        { model },
+        andThen((model) => updateFromResponse({ ctx, msg, model })),
+        andThen((model) => {
+          if (msg.result.t === "err") {
+            return { model };
+          }
+
+          if (msg.userId === ctx.currentUserId) {
+            return {
+              model,
+              cmd: [
+                enqueueToast("Left space"),
+                playSound(SPACE_SOUND_SRC.left),
+              ],
+            };
+          }
+
+          const profile = ctx.profiles[msg.userId];
+
+          if (!profile) {
+            return { model };
+          }
+
+          return {
+            model,
+            cmd: [
+              enqueueToast(`${profile.username} left space`),
+              playSound(SPACE_SOUND_SRC.left),
+            ],
+          };
+        })
+      );
+    }
+
+    case "create": {
+      return p(
+        { model },
+        andThen((model) => updateFromResponse({ ctx, msg, model })),
+        andThen((model) => {
+          if (msg.result.t === "err") {
+            return { model };
+          }
+
+          return {
+            model,
+            cmd: [
+              playSound(SPACE_SOUND_SRC.joined),
+              enqueueToast("Created space"),
+            ],
           };
         })
       );
@@ -760,10 +846,18 @@ const ViewSpaceScreenMain = ({
           text={space.hostId === ctx.currentUserId ? "End" : "Leave"}
           onClick={() => {
             if (space.hostId === ctx.currentUserId) {
-              dispatch({ t: "destroy", userId: ctx.currentUserId });
+              dispatch({
+                t: "destroy",
+                userId: ctx.currentUserId,
+                spaceId: space.spaceId,
+              });
               return;
             }
-            dispatch({ t: "leave", userId: ctx.currentUserId });
+            dispatch({
+              t: "leave",
+              spaceId: space.spaceId,
+              userId: ctx.currentUserId,
+            });
           }}
         />
       </nav>
@@ -857,10 +951,18 @@ export const ViewCurrentSpaceBar = ({
         aria-label="destroy or leave space"
         onClick={() => {
           if (ctx.currentUserId === space.hostId) {
-            dispatch({ t: "destroy", userId: ctx.currentUserId });
+            dispatch({
+              t: "destroy",
+              userId: ctx.currentUserId,
+              spaceId: space.spaceId,
+            });
             return;
           }
-          dispatch({ t: "leave", userId: ctx.currentUserId });
+          dispatch({
+            t: "leave",
+            spaceId: space.spaceId,
+            userId: ctx.currentUserId,
+          });
         }}
         className="mr-4">
         <IconXMark className="h-8 w-8" />

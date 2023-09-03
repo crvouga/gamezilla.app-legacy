@@ -1,4 +1,4 @@
-import { Audio, eq, Option, Result } from "gamezilla/@SHARED/core";
+import { eq, Option, Result } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
 import { Chess } from "../@SHARED/chess";
 import * as Clock from "../@SHARED/chess/chess-clock";
@@ -93,7 +93,6 @@ export const initCore = ({
 //
 
 export type ClientMsg =
-  | ["audio-done", Audio.PlayResult]
   | ["OpenedMenu", string]
   | ["ClosedMenu"]
   | ["OpenedModal", Modal]

@@ -1,15 +1,35 @@
 import { Route } from "./client-route";
 
 export type ClientCmd<ToServer = unknown> =
-  | { t: "send-to-server"; msg: ToServer }
+  | SendToServerCmd<ToServer>
   | ToastCmd
-  | RouteCmd;
+  | RouteCmd
+  | SoundCmd;
+
+export type SendToServerCmd<T> = {
+  t: "send-to-server";
+  msg: T;
+};
 
 export type ToastCmd = {
   t: "toast/enqueue";
   text: string;
   variant?: "error" | "info";
   duration?: number;
+};
+
+export type SoundCmd = {
+  t: "sound/play";
+  src: string;
+  volume?: number;
+};
+
+export const playSound = <T>(src: string, volume?: number): ClientCmd<T> => {
+  return {
+    t: "sound/play",
+    src,
+    volume,
+  };
 };
 
 export const enqueueToast = <T>(

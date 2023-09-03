@@ -1,5 +1,5 @@
 import { ClientId, ServerWireMsg, SessionId } from "gamezilla/@SHARED/core";
-import { Routing, Toast, Wire } from "./app-client";
+import { Routing, Toast, Wire, Sound } from "./app-client";
 import * as Auth from "./auth";
 import * as Chat from "./chat";
 import * as Profile from "./profile";
@@ -32,6 +32,7 @@ export type ClientModel = {
   routing: Routing.Model;
   toast: Toast.Model;
   wire: Wire.Model;
+  sound: Sound.Model;
 };
 
 export type ToServer =

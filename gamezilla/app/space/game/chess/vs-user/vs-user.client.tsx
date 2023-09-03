@@ -61,10 +61,6 @@ export const update = (
     //
     //
 
-    case "audio-done": {
-      return { model };
-    }
-
     case "OpenedMenu": {
       return { model: { ...model, openedMenuId: Option.Some(msg[1]) } };
     }

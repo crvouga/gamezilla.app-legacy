@@ -1,11 +1,5 @@
-import {
-  Audio,
-  Eff,
-  Sub,
-  andThen,
-  exhaustive,
-  p,
-} from "gamezilla/@SHARED/core";
+import { Eff, Sub, andThen, exhaustive, p } from "gamezilla/@SHARED/core";
+import { ClientCmd } from "gamezilla/app/@SHARED/client";
 import {
   IconArrowLeftOnRect,
   IconRobot,
@@ -31,7 +25,6 @@ import {
   isBotTurn,
   updateCore,
 } from "./vs-bot.core";
-import { ClientEvt, ClientCmd } from "gamezilla/app/@SHARED/client";
 
 //
 //
@@ -71,10 +64,6 @@ export const update = ({
   cmd?: ClientCmd<ToServer>[];
 } => {
   const model: ClientModel = { ...modelPrev, openedMenuId: null };
-
-  if (msg.t === "audio-done") {
-    return { model };
-  }
 
   if (msg.t === "closed-modal") {
     return { model: { ...model, openedModal: null } };

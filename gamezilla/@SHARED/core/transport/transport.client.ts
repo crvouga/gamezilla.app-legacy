@@ -25,9 +25,14 @@ export const attachClientTransport = <ToServer, ToClient>({
 
   let reconnectAttempts = 0;
   let ws: WebSocket;
+  let isConnected = false;
   let isDocumentHidden = false;
 
   const connect = () => {
+    if (isConnected) {
+      return;
+    }
+    isConnected = true;
     ws = new WebSocket(serverUrl);
 
     ws.onopen = () => {
@@ -40,6 +45,7 @@ export const attachClientTransport = <ToServer, ToClient>({
     };
 
     ws.onclose = () => {
+      isConnected = false;
       if (isDocumentHidden) {
         console.log("closed socket because document is hidden");
         return;
@@ -72,10 +78,17 @@ export const attachClientTransport = <ToServer, ToClient>({
 
   connect();
 
+  let closeTimeout: ReturnType<typeof setTimeout> | null = null;
   document.addEventListener("visibilitychange", () => {
+    if (closeTimeout) {
+      clearTimeout(closeTimeout);
+    }
+
     if (document.hidden) {
       isDocumentHidden = true;
-      ws.close();
+      closeTimeout = setTimeout(() => {
+        ws.close();
+      }, 5000);
       return;
     }
     isDocumentHidden = false;
