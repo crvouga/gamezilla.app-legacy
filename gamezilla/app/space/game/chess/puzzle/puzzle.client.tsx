@@ -1,5 +1,12 @@
 import { Eff, andThen, p } from "gamezilla/@SHARED/core";
-import { ClientCmd, ClientEvt, ToastCmd } from "gamezilla/app/@SHARED/client";
+import {
+  APP_SOUND,
+  ClientCmd,
+  ClientEvt,
+  ToastCmd,
+  playSound,
+  showToast,
+} from "gamezilla/app/@SHARED/client";
 import {
   IconArrowCircle,
   IconArrowLeftOnRect,
@@ -20,7 +27,7 @@ import {
 } from "gamezilla/app/space/game/@SHARED";
 import { Chess } from "../@SHARED/chess";
 import { Chessboard } from "../@SHARED/chess-ui/chessboard";
-import { ChessSounds } from "../@SHARED/chess/chess-sounds";
+import { CHESS_SOUND } from "../@SHARED/chess/chess-sounds";
 import {
   ClientModel,
   ClientMsg,
@@ -29,6 +36,8 @@ import {
   ToServer,
   initCore,
   isNoMoreHints,
+  isSolved,
+  isIncorrect,
   toCurrentBoard,
   toNextEloRating,
   toPlayerColor,
@@ -67,7 +76,25 @@ export const update = (input: {
   return p(
     input,
     andThen((model) => updateMain({ ...input, model })),
-    andThen(watch)
+    andThen(watch),
+    andThen((model) => {
+      if (input.msg.t === "input-move") {
+        if (input.msg.didCapture) {
+          return { model, cmd: [playSound(CHESS_SOUND.captureSound)] };
+        }
+        return { model, cmd: [playSound(CHESS_SOUND.moveSound)] };
+      }
+      return { model };
+    }),
+    andThen((model) => {
+      if (!isIncorrect(input.model) && isIncorrect(model)) {
+        return { model, cmd: [playSound(APP_SOUND.error)] };
+      }
+      if (!isSolved(input.model) && isSolved(model)) {
+        return { model, cmd: [playSound(APP_SOUND.celebration)] };
+      }
+      return { model };
+    })
   );
 };
 
@@ -106,11 +133,12 @@ export const updateFromServer = (input: {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
   evt?: ClientEvt[];
+  cmd?: ClientCmd<ToServer>[];
 } => {
-  return p(updateFromServer_(input), andThen(watch));
+  return p(updateFromServerMain(input), andThen(watch));
 };
 
-export const updateFromServer_: typeof updateFromServer = ({
+export const updateFromServerMain: typeof updateFromServer = ({
   msg,
   model,
 }: {
@@ -121,41 +149,40 @@ export const updateFromServer_: typeof updateFromServer = ({
   model: ClientModel;
   cmd?: ToastCmd[];
 } => {
-  if (msg.t === "clock-tick") {
-    return { model: { ...model, serverNow: msg.now } };
-  }
-
-  const result = msg.result;
-
-  if (result.t === "err") {
-    if (msg.t === "db-got-puzzles") {
-      return {
-        model,
-        cmd: [{ t: "toast/enqueue", text: `Failed to load puzzles.` }],
-      };
+  switch (msg.t) {
+    case "clock-tick": {
+      return { model: { ...model, serverNow: msg.now } };
     }
 
-    if (msg.t === "db-got-initial-load") {
-      return {
-        model,
-        cmd: [
-          {
-            t: "toast/enqueue",
-            text: `Failed to load puzzles and profile.`,
-          },
-        ],
-      };
+    default: {
+      const result = msg.result;
+
+      if (result.t === "err") {
+        if (msg.t === "db-got-puzzles") {
+          return {
+            model,
+            cmd: [showToast("Failed to load puzzles")],
+          };
+        }
+
+        if (msg.t === "db-got-initial-load") {
+          return {
+            model,
+            cmd: [showToast(`Failed to load puzzles and profile.`, "error")],
+          };
+        }
+
+        return { model };
+      }
+
+      const merged = mergeWithServer({
+        client: model,
+        server: result.value,
+      });
+
+      return { model: merged };
     }
-
-    return { model };
   }
-
-  const merged = mergeWithServer({
-    client: model,
-    server: result.value,
-  });
-
-  return { model: merged };
 };
 
 export const mergeWithServer = ({
@@ -282,9 +309,9 @@ export const View = ({
               );
 
               if (moved.t === "ok") {
-                ChessSounds.move.play();
                 dispatch({
                   t: "input-move",
+                  didCapture: moved.value.didCapture,
                   moveInput: {
                     from: input.source,
                     to: input.target,

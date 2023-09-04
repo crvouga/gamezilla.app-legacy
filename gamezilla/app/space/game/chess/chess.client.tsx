@@ -218,6 +218,7 @@ export const updateFromServer: Client["updateFromServer"] = ({
         model: { ...model, mode: { t: "puzzle", c: updated.model } },
         eff: Eff.t("puzzle", updated?.eff ?? Eff.None),
         evt: updated.evt,
+        cmd: ClientCmd.tag("puzzle", updated.cmd),
       };
     }
   }

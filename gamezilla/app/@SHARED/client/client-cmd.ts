@@ -78,6 +78,7 @@ export type SoundCmd =
 export const APP_SOUND = {
   tap: "./tap.wav",
   error: "./alert-error.wav",
+  celebration: "./celebration.wav",
   navForward: "./nav-forward.wav",
   navBackward: "./nav-backward.wav",
   navForwardMin: "./nav-forward-min.wav",

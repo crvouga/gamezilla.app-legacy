@@ -84,6 +84,14 @@ export const isNoMoreHints = (model: CoreModel): boolean => {
   return model.t === "started" && model.hint === "from-and-to";
 };
 
+export const isSolved = (model: CoreModel): boolean => {
+  return model.t === "solved" || model.t === "solved-with-hint";
+};
+
+export const isIncorrect = (model: CoreModel): boolean => {
+  return model.t === "incorrect";
+};
+
 export const initQuery: PuzzleQuery = {
   ratingRange: [1000, 1500],
 };
@@ -136,7 +144,7 @@ export type PuzzleInteraction = {
 
 export type Req =
   | { t: "input-query"; query: PuzzleQuery }
-  | { t: "input-move"; moveInput: Chess.MoveInput }
+  | { t: "input-move"; moveInput: Chess.MoveInput; didCapture?: boolean }
   | { t: "next" }
   | { t: "retry" }
   | { t: "skip" }
