@@ -7,6 +7,7 @@ import {
   ServerEvt,
   broadcast,
   sendBack,
+  sendToClient,
   sendToUser,
 } from "gamezilla/app/@SHARED/server";
 import {
@@ -522,7 +523,7 @@ export const updateFromEvt = async (input: {
       return {
         ...input,
         cmd: [
-          sendToUser([msg.userId], {
+          sendToClient([msg.clientId], {
             t: "list",
             result: Ok(listed),
             source: msg,

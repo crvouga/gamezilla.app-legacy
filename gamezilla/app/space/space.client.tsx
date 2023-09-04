@@ -588,22 +588,6 @@ export const updateFromEvt = (input: {
   const { msg } = input;
 
   switch (msg.t) {
-    // case "server-connected": {
-    //   return listSpaces(input);
-    // }
-
-    // case "client-authenticated": {
-    //   return listSpaces(input);
-    // }
-
-    // case "route-changed": {
-    //   if (msg.route.t === "space" && msg.route.c.t === "space-list") {
-    //     return listSpaces(input);
-    //   }
-
-    //   return input;
-    // }
-
     default: {
       return input;
     }

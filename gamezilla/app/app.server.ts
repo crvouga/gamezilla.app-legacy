@@ -266,7 +266,7 @@ const updateWire = ({
   model: ServerModel;
 }): {
   model: ServerModel;
-  events?: ServerEvt[];
+  evt?: ServerEvt[];
 } => {
   switch (msg.t) {
     case "client-connected": {
@@ -284,7 +284,7 @@ const updateWire = ({
             [sessionNew.sessionId]: sessionNew,
           },
         },
-        events: [
+        evt: [
           {
             ...msg,
             userId: model.auth.sessions[msg.sessionId]?.userId,
