@@ -92,6 +92,18 @@ const None: Sub<never> = {
   subscribe: () => () => {},
 };
 
+const flatten = <A, B>(sub: Sub<A>, fn: (a: A) => B[]): Sub<B> => {
+  return {
+    subscribe: (subscriber) => {
+      return sub.subscribe((a) => {
+        for (const b of fn(a)) {
+          subscriber(b);
+        }
+      });
+    },
+  };
+};
+
 const tag = <Tag extends string, Msg>(
   t: Tag,
   sub: Sub<Msg>
@@ -104,6 +116,7 @@ export const Sub = {
   batch,
   create,
   None,
+  flatten,
   tag,
   flatMap,
 };

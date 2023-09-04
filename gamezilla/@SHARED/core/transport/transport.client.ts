@@ -13,13 +13,13 @@ const MAX_RECONNECT_ATTEMPTS = 5; // Adjust as needed
 export const attachClientTransport = <ToServer, ToClient>({
   baseServerUrl,
   wire,
-  serverToClient,
-  clientToServer,
+  fromServer,
+  toServer,
 }: {
   baseServerUrl: string;
   wire: PubSub<ClientWireMsg>;
-  clientToServer: PubSub<ToServer>;
-  serverToClient: PubSub<ToClient>;
+  toServer: PubSub<ToServer[]>;
+  fromServer: PubSub<ToClient[]>;
 }) => {
   const serverUrl = toWebsocketServerUrl(baseServerUrl);
 
@@ -70,7 +70,7 @@ export const attachClientTransport = <ToServer, ToClient>({
       const msg = JSON.parse(event.data) as ServerToClientMsg<ToClient>; // leap of faith
 
       if (msg.t === "to-client") {
-        serverToClient.publish(msg.c);
+        fromServer.publish(msg.msgs);
         return;
       }
 
@@ -112,8 +112,8 @@ export const attachClientTransport = <ToServer, ToClient>({
     }
   };
 
-  clientToServer.subscribe((msg) => {
-    send({ t: "to-server", c: msg });
+  toServer.subscribe((msgs) => {
+    send({ t: "to-server", msgs });
   });
 };
 

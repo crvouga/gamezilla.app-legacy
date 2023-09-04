@@ -55,6 +55,30 @@ export function create<Model, Msg>(input: {
       now: Posix.fromNumber(Date.now()),
     },
   });
+  let isProcessing = false;
+  const messageQueue: Msg[] = [];
+
+  function enqueueMsg(msg: Msg) {
+    messageQueue.push(msg);
+    processQueue();
+  }
+
+  async function processQueue() {
+    if (isProcessing || messageQueue.length === 0) {
+      return;
+    }
+
+    isProcessing = true;
+
+    const msg = messageQueue.shift();
+    if (msg) {
+      await dispatch(msg);
+    }
+
+    isProcessing = false;
+
+    processQueue();
+  }
 
   let unsubscribe: () => void = () => {};
 
@@ -91,10 +115,10 @@ export function create<Model, Msg>(input: {
     if (unsubscribe) {
       unsubscribe();
     }
-    unsubscribe = sub.subscribe(dispatch);
+    unsubscribe = sub.subscribe(enqueueMsg);
 
     if (state.eff) {
-      state.eff(dispatch);
+      state.eff(enqueueMsg);
     }
   }
 
@@ -114,7 +138,7 @@ export function create<Model, Msg>(input: {
 
   return {
     start,
-    dispatch,
+    dispatch: enqueueMsg,
     subscribe,
     getState: () => {
       return state.model;

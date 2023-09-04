@@ -5,8 +5,6 @@ import {
   ServerWireMsg,
   SessionId,
   Sub,
-  andThen,
-  p,
 } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
 import {
@@ -26,9 +24,9 @@ import { createDbConnMySql } from "./app-server";
 import {
   ServerModel,
   ServerMsg,
-  WireSession,
   ToClient,
   ToServer,
+  WireSession,
 } from "./app.core";
 
 //
@@ -88,30 +86,40 @@ export const update = async (input: {
     };
   }
 
-  const effList = acc.cmd?.map(cmdToEff(model)) ?? [];
+  const eff = cmdToEff(model, acc.cmd ?? []);
 
   return {
     model: acc.model,
-    eff: Eff.batch([...effList, acc.eff]),
+    eff: Eff.batch([eff, acc.eff]),
   };
 };
 
-const cmdToEff =
-  (model: ServerModel) =>
-  (cmd: ServerCmd<ToClient>): Eff<ServerMsg> => {
+const cmdToEff = (
+  model: ServerModel,
+  cmdList: ServerCmd<ToClient>[]
+): Eff<ServerMsg> => {
+  const broadcastMsgs: ToClient[] = [];
+  const toClientMsgs: {
+    [clientId: ClientId]: {
+      clientId: ClientId;
+      msgs: ToClient[];
+    };
+  } = {};
+
+  for (const cmd of cmdList) {
     switch (cmd.t) {
       case "broadcast": {
-        return () => {
-          serverToClientBroadcast.publish(cmd.msg);
-        };
+        broadcastMsgs.push(cmd.msg);
+        break;
       }
       case "send-to-client": {
-        return () => {
-          serverToClient.publish({
-            clientIds: cmd.clientIds,
-            msg: cmd.msg,
-          });
-        };
+        for (const clientId of cmd.clientIds) {
+          toClientMsgs[clientId] = {
+            clientId,
+            msgs: [...(toClientMsgs[clientId]?.msgs ?? []), cmd.msg],
+          };
+        }
+        break;
       }
       case "send-to-user": {
         const clientIds: ClientId[] = [];
@@ -146,12 +154,23 @@ const cmdToEff =
           clientIds.push(session.clientId);
         }
 
-        return () => {
-          serverToClient.publish({ clientIds, msg: cmd.msg });
-        };
+        for (const clientId of clientIds) {
+          toClientMsgs[clientId] = {
+            clientId,
+            msgs: [...(toClientMsgs[clientId]?.msgs ?? []), cmd.msg],
+          };
+        }
+
+        break;
       }
     }
+  }
+
+  return () => {
+    toClientBroadcast.publish(broadcastMsgs);
+    toClient.publish(toClientMsgs);
   };
+};
 
 const updateMain = async ({
   msg,
@@ -448,29 +467,32 @@ export const subscriptions = async ({
       await SpaceServer.subscriptions({ model: model.space, ctx })
     ),
     Sub.tag("wire", wire),
-    Sub.map(
-      clientToServer,
-      ({ sessionId, clientId, msg }): ServerMsg => ({
-        t: "➡️",
-        sessionId,
-        clientId,
-        c: msg,
-      })
+    Sub.flatten(fromClient, ({ sessionId, clientId, msgs }) =>
+      msgs.map(
+        (msg): ServerMsg => ({
+          t: "➡️",
+          sessionId,
+          clientId,
+          c: msg,
+        })
+      )
     ),
   ]);
 };
 
-export const serverToClient = Sub.create<{
-  clientIds: ClientId[];
-  msg: ToClient;
+export const toClient = Sub.create<{
+  [clientId: ClientId]: {
+    clientId: ClientId;
+    msgs: ToClient[];
+  };
 }>();
 
-export const serverToClientBroadcast = Sub.create<ToClient>();
+export const toClientBroadcast = Sub.create<ToClient[]>();
 
-export const clientToServer = Sub.create<{
+export const fromClient = Sub.create<{
   sessionId: SessionId;
   clientId: ClientId;
-  msg: ToServer;
+  msgs: ToServer[];
 }>();
 
 export const wire = Sub.create<ServerWireMsg>();

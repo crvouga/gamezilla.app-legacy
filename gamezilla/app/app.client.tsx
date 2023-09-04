@@ -1,7 +1,6 @@
 import { Browser, Eff, Posix, Sub } from "gamezilla/@SHARED/core";
 import {
   APP_SOUND,
-  AnonymousClientCtx,
   AnonymousViewCtx,
   ClientCmd,
   ClientCtx,
@@ -17,7 +16,7 @@ import {
   VDom,
   cn,
 } from "gamezilla/app/@SHARED/ui";
-import { Routing, Toast, Wire, Sound } from "./app-client";
+import { Routing, Sound, Toast, Wire } from "./app-client";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./app.core";
 import { AuthClient } from "./auth";
 import { ChatClient } from "./chat";
@@ -106,7 +105,6 @@ export const update = (input: {
   eff?: Eff<ClientMsg>;
 } => {
   let acc = updateMain(input);
-
   for (const evt of acc.evt ?? []) {
     const updatedEvt = updateFromEvt({
       ...input,
@@ -146,10 +144,14 @@ const updateMain = ({
   cmd?: ClientCmd<ToServer>[];
 } => {
   const ctx = toCtx({ model, now });
-
+  console.log(msg);
   switch (msg.t) {
     case "➡️": {
-      return updateFromServer({ now, msg: msg.c, model });
+      return updateFromServer({
+        now,
+        msg: msg.c,
+        model,
+      });
     }
 
     case "auth": {
@@ -419,7 +421,7 @@ const updateFromCmd = ({
       return {
         model,
         eff: () => {
-          clientToServer.publish(cmd.msg);
+          toServer.publish([cmd.msg]);
         },
       };
     }
@@ -491,8 +493,8 @@ const updateFromEvt = ({
 //
 
 export const wire = Sub.create<Wire.Msg>();
-export const clientToServer = Sub.create<ToServer>();
-export const serverToClient = Sub.create<ToClient>();
+export const toServer = Sub.create<ToServer[]>();
+export const fromServer = Sub.create<ToClient[]>();
 
 //
 //
@@ -512,7 +514,7 @@ export const subscriptions = ({
   model: ClientModel;
 }): Sub<ClientMsg> => {
   return Sub.batch<ClientMsg>([
-    Sub.tag("➡️", serverToClient),
+    Sub.flatten(fromServer, (msgs) => msgs.map((msg) => ({ t: "➡️", c: msg }))),
     Sub.tag("wire", wire),
     Sub.tag("routing", Routing.subscriptions),
     Sub.tag("auth", AuthClient.subscriptions(model.auth)),

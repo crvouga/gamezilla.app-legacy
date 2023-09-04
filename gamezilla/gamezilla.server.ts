@@ -22,9 +22,9 @@ const httpServer = createServer(async (_request, response) => {
 attachServerTransport({
   httpServer,
   wire: AppServer.wire,
-  clientToServer: AppServer.clientToServer,
-  serverToClient: AppServer.serverToClient,
-  serverToClientBroadcast: AppServer.serverToClientBroadcast,
+  fromClient: AppServer.fromClient,
+  toClient: AppServer.toClient,
+  toClientBroadcast: AppServer.toClientBroadcast,
 });
 
 const run = async () => {

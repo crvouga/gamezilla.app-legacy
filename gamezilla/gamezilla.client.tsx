@@ -4,10 +4,9 @@ import {
   attachClientTransport,
 } from "gamezilla/@SHARED/core";
 import { render } from "preact";
-import { attachDebugger, createDebugger } from "./@SHARED/core/debug";
+import { attachDebugger } from "./@SHARED/core/debug";
 import * as AppClient from "./app/app.client";
 import "./main.css";
-import { ClientModel, ClientMsg } from "./app/app.core";
 
 const program = Program.create({
   init: (input) => {
@@ -25,10 +24,7 @@ const program = Program.create({
     });
   },
   subscriptions: (input) => {
-    return AppClient.subscriptions({
-      now: input.ctx.now,
-      model: input.model,
-    });
+    return AppClient.subscriptions({ now: input.ctx.now, model: input.model });
   },
 });
 
@@ -55,8 +51,8 @@ attachDebugger(program).then(() => {
   attachClientTransport({
     baseServerUrl: serverUrl,
     wire: AppClient.wire,
-    serverToClient: AppClient.serverToClient,
-    clientToServer: AppClient.clientToServer,
+    fromServer: AppClient.fromServer,
+    toServer: AppClient.toServer,
   });
 
   program.subscribe((model, ctx) => {

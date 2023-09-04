@@ -185,17 +185,14 @@ export const update = ({
 
     case "client-authenticated": {
       return {
-        model: {
-          ...model,
-          currentUser: { t: "logged-in", userId: msg.userId },
-        },
+        model: { ...model, currentUser: { t: "loading" } },
         cmd: [sendToServer(msg)],
       };
     }
 
     case "client-unauthenticated": {
       return {
-        model: { ...model, currentUser: { t: "logged-out" } },
+        model: { ...model, currentUser: { t: "loading" } },
         cmd: [sendToServer(msg)],
       };
     }
@@ -241,6 +238,7 @@ export const updateFromEvt = ({
       }
       return { model };
     }
+
     case "document-visibility-changed": {
       if (
         msg.state === "hidden" &&
@@ -279,9 +277,23 @@ export const updateFromServer = ({
   switch (msg.t) {
     case "acknowledged": {
       switch (msg.msg.t) {
-        case "client-unauthenticated":
+        case "client-unauthenticated": {
+          return {
+            model: {
+              ...model,
+              currentUser: { t: "logged-out" },
+            },
+            evt: [msg.msg],
+          };
+        }
         case "client-authenticated": {
-          return { model, evt: [msg.msg] };
+          return {
+            model: {
+              ...model,
+              currentUser: { t: "logged-in", userId: msg.msg.userId },
+            },
+            evt: [msg.msg],
+          };
         }
 
         default: {

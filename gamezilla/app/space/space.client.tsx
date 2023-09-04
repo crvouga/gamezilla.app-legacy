@@ -23,7 +23,7 @@ import {
   sendToServer,
   showToast,
 } from "gamezilla/app/@SHARED/client";
-import { SpaceId, UserId } from "gamezilla/app/@SHARED/data";
+import { Profile, SpaceId, UserId } from "gamezilla/app/@SHARED/data";
 import {
   ActionButton,
   Button,
@@ -125,13 +125,7 @@ export const update = ({
       return {
         model: { ...model, modal: null },
         cmd: [
-          {
-            t: "routing/push",
-            route: {
-              t: "profile",
-              c: { t: "profile", userId: msg.userId },
-            },
-          },
+          pushRoute({ t: "profile", c: { t: "profile", userId: msg.userId } }),
         ],
       };
     }
@@ -314,6 +308,8 @@ export const updateFromServerMain: typeof updateFromServer = ({
             },
           };
 
+          let profiles: { [userId: UserId]: Profile } = {};
+
           for (const server of msg.result.value) {
             const mergedSpace = mergeWithServer({
               ctx,
@@ -332,8 +328,16 @@ export const updateFromServerMain: typeof updateFromServer = ({
               cmd: [...(merged?.cmd ?? []), ...(mergedSpace.cmd ?? [])],
               evt: [...(merged?.evt ?? []), ...(mergedSpace.evt ?? [])],
             };
+            profiles = {
+              ...profiles,
+              ...server.profileCache,
+            };
           }
 
+          merged = {
+            ...merged,
+            evt: [...(merged?.evt ?? []), gotProfiles(profiles)],
+          };
           return merged;
         })
       );
@@ -584,13 +588,13 @@ export const updateFromEvt = (input: {
   const { msg } = input;
 
   switch (msg.t) {
-    case "server-connected": {
-      return listSpaces(input);
-    }
+    // case "server-connected": {
+    //   return listSpaces(input);
+    // }
 
-    case "client-authenticated": {
-      return listSpaces(input);
-    }
+    // case "client-authenticated": {
+    //   return listSpaces(input);
+    // }
 
     // case "route-changed": {
     //   if (msg.route.t === "space" && msg.route.c.t === "space-list") {

@@ -11,19 +11,21 @@ import {
 
 export const attachServerTransport = <ToServer, ToClient>({
   httpServer,
-  clientToServer,
-  serverToClientBroadcast,
-  serverToClient,
+  fromClient,
+  toClientBroadcast,
+  toClient,
   wire,
 }: {
   httpServer: http.Server;
-  serverToClientBroadcast: PubSub<ToClient>;
-  serverToClient: PubSub<{
-    clientIds: ClientId[];
-    msg: ToClient;
+  toClientBroadcast: PubSub<ToClient[]>;
+  toClient: PubSub<{
+    [clientId: ClientId]: {
+      clientId: ClientId;
+      msgs: ToClient[];
+    };
   }>;
-  clientToServer: PubSub<{
-    msg: ToServer;
+  fromClient: PubSub<{
+    msgs: ToServer[];
     clientId: ClientId;
     sessionId: SessionId;
   }>;
@@ -75,7 +77,7 @@ export const attachServerTransport = <ToServer, ToClient>({
       const msg = JSON.parse(data.toString()) as ClientToServerMsg<ToServer>; // leap of faith
 
       if (msg.t === "to-server") {
-        clientToServer.publish({ clientId, sessionId, msg: msg.c });
+        fromClient.publish({ clientId, sessionId, msgs: msg.msgs });
         return;
       }
     });
@@ -87,26 +89,39 @@ export const attachServerTransport = <ToServer, ToClient>({
   });
 
   const send = (client: WebSocket, msg: ServerToClientMsg<ToClient>) => {
-    if (client.readyState === WebSocket.OPEN) {
-      client.send(JSON.stringify(msg));
+    if (msg.t === "to-client" && msg.msgs.length === 0) {
+      return;
     }
+    if (client.readyState !== WebSocket.OPEN) {
+      return;
+    }
+    client.send(JSON.stringify(msg));
   };
 
-  serverToClientBroadcast.subscribe((msg) => {
+  toClientBroadcast.subscribe((msgs) => {
     for (const client of clients.values()) {
-      send(client, { t: "to-client", c: msg });
+      send(client, { t: "to-client", msgs });
     }
   });
 
-  serverToClient.subscribe(({ clientIds, msg }) => {
-    for (const clientId of clientIds) {
+  toClient.subscribe((toClient) => {
+    for (const clientId in toClient) {
+      if (!ClientId.is(clientId)) {
+        continue;
+      }
+
+      const toClientSingle = toClient[clientId];
+
+      if (!toClientSingle) {
+        continue;
+      }
+
       const client = clients.get(clientId);
 
       if (!client) {
         continue;
       }
-
-      send(client, { t: "to-client", c: msg });
+      send(client, { t: "to-client", msgs: toClientSingle.msgs });
     }
   });
 };

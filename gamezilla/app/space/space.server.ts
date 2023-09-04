@@ -517,6 +517,19 @@ export const updateFromEvt = async (input: {
   const { msg } = input;
 
   switch (msg.t) {
+    case "client-authenticated": {
+      const listed = await SpaceStore.list(input.ctx.now, input.model);
+      return {
+        ...input,
+        cmd: [
+          sendToUser([msg.userId], {
+            t: "list",
+            result: Ok(listed),
+            source: msg,
+          }),
+        ],
+      };
+    }
     default: {
       return input;
     }
