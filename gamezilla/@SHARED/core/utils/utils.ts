@@ -6,7 +6,7 @@ export const exhaustive = (discriminatedUnionType: "Missing Case!"): never => {
 
 /**
  * @description
- * A helper function for chaining update functions
+ * A helper function used for chaining update functions together.
  */
 export const andThen =
   <Model, Msg, Evt, Cmd>(
