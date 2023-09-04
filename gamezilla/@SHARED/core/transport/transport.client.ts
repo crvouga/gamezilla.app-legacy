@@ -27,6 +27,7 @@ export const attachClientTransport = <ToServer, ToClient>({
   let ws: WebSocket;
   let isConnected = false;
   let isDocumentHidden = false;
+  let queue: ClientToServerMsg<ToServer>[] = [];
 
   const connect = () => {
     if (isConnected) {
@@ -38,6 +39,10 @@ export const attachClientTransport = <ToServer, ToClient>({
     ws.onopen = () => {
       reconnectAttempts = 0;
       wire.publish({ t: "server-connected" });
+      for (const msg of queue) {
+        send(msg);
+      }
+      queue = [];
     };
 
     ws.onerror = () => {
@@ -100,6 +105,8 @@ export const attachClientTransport = <ToServer, ToClient>({
       ws.send(JSON.stringify(msg));
       return;
     }
+    queue.push(msg);
+    queue = queue.slice(-100);
   };
 
   clientToServer.subscribe((msg) => {
