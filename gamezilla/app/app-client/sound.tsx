@@ -134,9 +134,7 @@ const getHowl = (src: string) => {
   const howl = new Howl({
     src,
     preload: true,
-    onload: () => {
-      console.log("loaded", src);
-    },
+    onload: () => {},
 
     format: ["wav"],
   });
@@ -167,4 +165,8 @@ const preloadSounds = async (srcList: string[]) => {
   }
 };
 
+// docs: https://github.com/goldfire/howler.js#documentation
 Howler.volume(1);
+Howler.autoUnlock = true;
+Howler.usingWebAudio = true;
+Howler.autoSuspend = false;
