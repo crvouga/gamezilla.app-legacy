@@ -14,14 +14,30 @@ import {
  */
 export type Space<T> = ProfileCache &
   Game<T> & {
-    visibility?: "public" | "private";
-    state?: "started" | "ended";
+    visibility: "public" | "private";
+    state: "started" | "ended";
     spaceId: SpaceId;
     hostId: UserId;
     users: {
       [userId: UserId]: UserId;
     };
   };
+
+export const initSpace = <T>({
+  spaceId,
+  hostId,
+}: {
+  spaceId: SpaceId;
+  hostId: UserId;
+}): Space<T> => {
+  return {
+    state: "started",
+    visibility: "public",
+    spaceId,
+    hostId,
+    users: {},
+  };
+};
 
 export type Game<T> = { game?: T | null };
 

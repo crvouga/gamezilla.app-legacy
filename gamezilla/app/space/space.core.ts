@@ -1,9 +1,10 @@
-import { RemoteResult, Result } from "gamezilla/@SHARED/core";
+import { Err, RemoteResult, Result } from "gamezilla/@SHARED/core";
 import { UserId, Profile } from "gamezilla/app/@SHARED/data";
 import { Space } from "gamezilla/app/space/@SHARED";
 import * as Game from "./game/game.core";
 import { SpaceId } from "../@SHARED/data/space-id";
 import { SpaceStoreInstance } from "./space-store";
+import { Follower, Leader } from "gamezilla/@SHARED/core/sync/msg-ordering";
 
 //
 //
@@ -16,6 +17,9 @@ import { SpaceStoreInstance } from "./space-store";
 export type ServerModel = SpaceStoreInstance;
 
 export type ClientModel = {
+  events: {
+    [spaceId: SpaceId]: SpaceEvent[];
+  };
   spaces: {
     [spaceId: SpaceId]: Space<Game.ClientModel>;
   };
@@ -130,4 +134,115 @@ export const toSpaceByUserId = (model: ClientModel, userId: UserId) => {
     }
   }
   return null;
+};
+
+//
+//
+//
+//
+//
+//
+//
+
+export type SpaceCommand =
+  | {
+      t: "create-space";
+      spaceId: SpaceId;
+    }
+  | {
+      t: "end-space";
+      spaceId: SpaceId;
+    }
+  | {
+      t: "join-space";
+      spaceId: SpaceId;
+    }
+  | {
+      t: "leave-space";
+      spaceId: SpaceId;
+    }
+  | {
+      t: "input-game";
+      spaceId: SpaceId;
+      gameName?: Game.GameName | null;
+    };
+
+export type SpaceEvent =
+  | {
+      t: "user-created-space";
+      creatorId: UserId;
+      spaceId: SpaceId;
+    }
+  | {
+      t: "user-joined-space";
+      userId: UserId;
+      spaceId: SpaceId;
+    }
+  | {
+      t: "user-left-space";
+      userId: UserId;
+      spaceId: SpaceId;
+    }
+  | {
+      t: "user-ended-space";
+      userId: UserId;
+      spaceId: SpaceId;
+    }
+  | {
+      t: "user-inputted-game";
+      userId: UserId;
+      spaceId: SpaceId;
+      gameName: Game.GameName | null;
+    };
+
+export const spaceReducer = <T>(space: Space<T>, evt: SpaceEvent): Space<T> => {
+  switch (evt.t) {
+    case "user-created-space": {
+      return {
+        hostId: evt.creatorId,
+        spaceId: evt.spaceId,
+        state: "started",
+        visibility: "public",
+        users: {},
+      };
+    }
+
+    case "user-ended-space": {
+      return {
+        ...space,
+        state: "ended",
+      };
+    }
+    case "user-inputted-game": {
+      return {
+        ...space,
+      };
+    }
+
+    case "user-joined-space": {
+      return {
+        ...space,
+        users: {
+          ...space.users,
+          [evt.userId]: evt.userId,
+        },
+      };
+    }
+
+    case "user-left-space": {
+      const users = { ...space.users };
+      delete users[evt.userId];
+      return {
+        ...space,
+        users,
+      };
+    }
+  }
+};
+
+export const spaceMutationHandler = <T>(
+  space: Space<T>,
+  mutation: SpaceCommand
+): Result<string, Event> => {
+  return Err("");
 };

@@ -4,17 +4,18 @@
 //
 //
 
-export type Leader<State, Msg> = {
+export type Leader<State, Event, Command> = {
   runningOrderId: number;
   acc: State;
-  sent: ToFollower<Msg>[];
-  received: ToLeader<Msg>[];
+  sent: ToFollower<Event>[];
+  received: ToLeader<Command>[];
 };
 
-export type Follower<State, Msg> = {
+export type Follower<State, Event, Command> = {
   acc: State;
-  sent: ToLeader<Msg>[];
-  received: ToFollower<Msg>[];
+  sent: ToLeader<Command>[];
+  sentAck: ToFollower<Command>[];
+  received: ToFollower<Event>[];
 };
 
 export type ToFollower<Msg> = Msg & {
@@ -26,17 +27,15 @@ export type ToLeader<Msg> = Msg & {
   msgId: string;
 };
 
-export const isSyncing = <State, Msg>(model: Follower<State, Msg>): boolean => {
-  return model.sent.length > 0;
-};
-
 //
 //
 //
 //
 //
 
-export const initLeader = <State, Msg>(acc: State): Leader<State, Msg> => {
+export const initLeader = <State, Event, Command>(
+  acc: State
+): Leader<State, Event, Command> => {
   return {
     runningOrderId: 0,
     acc,
@@ -45,42 +44,38 @@ export const initLeader = <State, Msg>(acc: State): Leader<State, Msg> => {
   };
 };
 
-export const initFollower = <State, Msg>(acc: State): Follower<State, Msg> => {
+export const initFollower = <State, Event, Command>(
+  acc: State
+): Follower<State, Event, Command> => {
   return {
     acc,
+    sentAck: [],
     received: [],
     sent: [],
   };
 };
 
-export const reduce = <State, Msg>(
-  reducer: (state: State, msg: Msg) => State,
-  model: Leader<State, Msg>
-): State => {
-  return model.received.reduce(reducer, model.acc);
-};
-
 //
 //
 //
 //
 //
 
-export const updateLeader = <State, Msg>(
-  reducer: (state: State, msg: Msg) => State,
-  model: Leader<State, Msg>,
-  msg: Msg
+export const updateLeader = <State, Event, Command>(
+  reducer: (state: State, msg: Event) => State,
+  model: Leader<State, Event, Command>,
+  msg: Event
 ): {
-  model: Leader<State, Msg>;
-  toFollower: ToFollower<Msg>;
+  model: Leader<State, Event, Command>;
+  toFollower: ToFollower<Event>;
 } => {
-  const toFollower: ToFollower<Msg> = {
+  const toFollower: ToFollower<Event> = {
     ...msg,
     orderId: model.runningOrderId,
     msgId: Math.random().toString(),
   };
 
-  const modelNew: Leader<State, Msg> = {
+  const modelNew: Leader<State, Event, Command> = {
     ...model,
     runningOrderId: model.runningOrderId + 1,
   };
@@ -88,11 +83,11 @@ export const updateLeader = <State, Msg>(
   return { model: modelNew, toFollower };
 };
 
-export const updateFromFollower = <State, Msg>(
-  reducer: (state: State, msg: Msg) => State,
-  model: Leader<State, Msg>,
-  msg: ToLeader<Msg>
-): Leader<State, Msg> => {
+export const updateFromFollower = <State, Event, Command>(
+  reducer: (state: State, msg: Event) => State,
+  model: Leader<State, Event, Command>,
+  msg: ToLeader<Event>
+): Leader<State, Event, Command> => {
   return model;
 };
 
@@ -101,19 +96,3 @@ export const updateFromFollower = <State, Msg>(
 //
 //
 //
-
-export const updateFollower = <State, Msg>(
-  reducer: (state: State, msg: Msg) => State,
-  model: Follower<State, Msg>,
-  msg: ToFollower<Msg>
-): Follower<State, Msg> => {
-  return model;
-};
-
-export const updateFromLeader = <State, Msg>(
-  reducer: (state: State, msg: Msg) => State,
-  model: Follower<State, Msg>,
-  msg: ToFollower<Msg>
-): Follower<State, Msg> => {
-  return model;
-};

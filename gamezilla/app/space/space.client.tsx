@@ -82,6 +82,7 @@ export const init: {
   cmd: ClientCmd<ToServer>[];
 } = {
   model: {
+    events: {},
     spaces: {},
     requests: {},
     modal: null,

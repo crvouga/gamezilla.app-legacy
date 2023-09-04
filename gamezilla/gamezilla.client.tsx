@@ -43,6 +43,20 @@ attachDebugger(program);
 //
 //
 
+program.subscribe((model, ctx) => {
+  render(
+    <AppClient.View now={ctx.now} model={model} dispatch={program.dispatch} />,
+    document.body
+  );
+});
+
+program.start();
+
+//
+//
+//
+//
+
 const env = {
   isDev: process.env.NODE_ENV === "development",
   isProd: process.env.NODE_ENV === "production",
@@ -61,17 +75,3 @@ attachClientTransport({
   serverToClient: AppClient.serverToClient,
   clientToServer: AppClient.clientToServer,
 });
-
-//
-//
-//
-//
-
-program.subscribe((model, ctx) => {
-  render(
-    <AppClient.View now={ctx.now} model={model} dispatch={program.dispatch} />,
-    document.body
-  );
-});
-
-program.start();
