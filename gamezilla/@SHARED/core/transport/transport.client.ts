@@ -101,12 +101,15 @@ export const attachClientTransport = <ToServer, ToClient>({
   });
 
   const send = (msg: ClientToServerMsg<ToServer>) => {
+    if (!isConnected) {
+      queue.push(msg);
+      queue = queue.slice(-100);
+      return;
+    }
     if (ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify(msg));
       return;
     }
-    queue.push(msg);
-    queue = queue.slice(-100);
   };
 
   clientToServer.subscribe((msg) => {
