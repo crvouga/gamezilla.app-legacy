@@ -141,8 +141,10 @@ const loadHowl = (src: string) => {
   const howl = new Howl({
     src,
     preload: true,
-    html5: true,
-    onload: () => {},
+    html5: false,
+    autoplay: false,
+    loop: false,
+    mute: false,
     format: ["wav"],
     volume: 1,
   });
