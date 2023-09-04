@@ -1,10 +1,6 @@
-import { Browser, Eff, Err, Ok, Result } from "gamezilla/@SHARED/core";
-import {
-  AnonymousClientCtx,
-  ClientCtx,
-  ClientEvt,
-  SoundCmd,
-} from "gamezilla/app/@SHARED/client";
+import { Eff, Err, Ok, Result } from "gamezilla/@SHARED/core";
+import { ClientEvt, SoundCmd } from "gamezilla/app/@SHARED/client";
+import "./sound-audio-context-monkey-patch";
 
 export type Model = {
   muted: boolean;
