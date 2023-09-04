@@ -106,8 +106,9 @@ export const update = (input: {
   eff?: Eff<ClientMsg>;
 } => {
   let acc = updateMain(input);
-
+  console.log(input.msg);
   for (const evt of acc.evt ?? []) {
+    console.log(evt);
     const updatedEvt = updateFromEvt({
       ...input,
       model: acc.model,
@@ -121,6 +122,7 @@ export const update = (input: {
   }
 
   for (const cmd of acc.cmd ?? []) {
+    console.log(cmd);
     const updatedCmd = updateFromCmd({ ...input, model: acc.model, cmd });
     acc = {
       model: updatedCmd.model,
@@ -439,7 +441,6 @@ const updateFromEvt = ({
   eff?: Eff<ClientMsg>;
   cmd?: ClientCmd<ToServer>[];
 } => {
-  console.log(msg);
   const ctx = toCtx({ model, now });
 
   const chat = ChatClient.updateFromEvt({

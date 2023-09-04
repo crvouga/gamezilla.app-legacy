@@ -207,24 +207,12 @@ export const mergeWithServer: Client["mergeWithServer"] = ({
     }
 
     case "vs-user": {
-      if (client.t === "vs-user") {
-        return {
-          model: {
-            t: "vs-user",
-            c: VsUser.mergeWithServer({
-              clientModel: client.c,
-              serverModel: server.c,
-            }),
-          },
-        };
-      }
-
       return {
         model: {
           t: "vs-user",
           c: VsUser.mergeWithServer({
-            clientModel: VsUser.init(server.c),
-            serverModel: server.c,
+            client: client.t === "vs-user" ? client.c : undefined,
+            server: server.c,
           }),
         },
       };

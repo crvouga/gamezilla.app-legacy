@@ -96,8 +96,8 @@ export const update = ({
   });
 
   const modelNew = mergeWithServer({
-    clientModel: model,
-    serverModel: handled.t === "ok" ? handled.value : model,
+    client: model,
+    server: handled.t === "ok" ? handled.value : model,
   });
 
   return {
@@ -118,39 +118,44 @@ export const updateFromServer = ({
 } => {
   if (msg.t === "tick-done") {
     const merged = mergeWithServer({
-      clientModel: model,
-      serverModel: msg.model,
+      client: model,
+      server: msg.model,
     });
     return { model: merged };
   }
 
   if (msg.t === "player-left") {
     const merged = mergeWithServer({
-      clientModel: model,
-      serverModel: msg.model,
+      client: model,
+      server: msg.model,
     });
     return { model: merged };
   }
 
   const modelNew = msg.result.t === "err" ? model : msg.result.value;
   const merged = mergeWithServer({
-    clientModel: model,
-    serverModel: modelNew,
+    client: model,
+    server: modelNew,
   });
   return { model: { ...merged, openedModal: "none" } };
 };
 
 export const mergeWithServer = ({
-  clientModel,
-  serverModel,
+  client = init({
+    players: {
+      "player-one": null,
+      "player-two": null,
+    },
+  }),
+  server,
 }: {
-  clientModel: ClientModel;
-  serverModel: ServerModel;
+  client?: ClientModel;
+  server: ServerModel;
 }): ClientModel => {
   return {
-    ...serverModel,
-    openedModal: clientModel.openedModal,
-    ghostIndex: clientModel.ghostIndex,
+    ...server,
+    openedModal: client.openedModal,
+    ghostIndex: client.ghostIndex,
   };
 };
 
