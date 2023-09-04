@@ -3,6 +3,13 @@ import { ClientEvt, SoundCmd } from "gamezilla/app/@SHARED/client";
 // https://github.com/goldfire/howler.js#quick-start
 import { Howl, Howler } from "howler";
 
+// docs: https://github.com/goldfire/howler.js#documentation
+Howler.volume(1);
+Howler.autoUnlock = true;
+Howler.usingWebAudio = true;
+Howler.autoSuspend = false;
+Howler.html5PoolSize = 100;
+
 export type Model = {
   muted: boolean;
   isDocumentVisible: boolean;
@@ -126,7 +133,7 @@ export const updateFromCmd = ({
 };
 
 const howls = new Map<string, Howl>();
-const getHowl = (src: string) => {
+const loadHowl = (src: string) => {
   const cached = howls.get(src);
   if (cached) {
     return cached;
@@ -134,9 +141,16 @@ const getHowl = (src: string) => {
   const howl = new Howl({
     src,
     preload: true,
+    html5: true,
     onload: () => {},
-
     format: ["wav"],
+    volume: 1,
+  });
+  howl.once("loaderror", () => {
+    Howler.unload();
+  });
+  howl.once("playerror", () => {
+    Howler.unload();
   });
   howls.set(src, howl);
   return howl;
@@ -144,7 +158,7 @@ const getHowl = (src: string) => {
 
 const playSound = async (src: string) => {
   try {
-    const howl = getHowl(src);
+    const howl = loadHowl(src);
 
     howl.play();
 
@@ -157,16 +171,10 @@ const playSound = async (src: string) => {
 const preloadSounds = async (srcList: string[]) => {
   try {
     for (const src of srcList) {
-      getHowl(src);
+      loadHowl(src);
     }
     return Ok(null);
   } catch (error) {
     return Err({ error, message: "Caught error" });
   }
 };
-
-// docs: https://github.com/goldfire/howler.js#documentation
-Howler.volume(1);
-Howler.autoUnlock = true;
-Howler.usingWebAudio = true;
-Howler.autoSuspend = false;
