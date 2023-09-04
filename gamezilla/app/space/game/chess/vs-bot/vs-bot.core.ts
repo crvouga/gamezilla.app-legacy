@@ -130,136 +130,157 @@ export const updateCore = ({
   msg: Req;
   model: CoreModel;
 }): Result<string, CoreModel & { didCapture?: boolean }> => {
-  if (model.type === "setup") {
-    if (msg.t === "start-game") {
-      if (!model.userId) {
-        return Err("missing-user");
+  switch (model.type) {
+    case "setup": {
+      switch (msg.t) {
+        case "start-game": {
+          if (!model.userId) {
+            return Err("missing-user");
+          }
+          if (
+            model.userId !== ctx.currentUserId ||
+            model.userId !== ctx.hostId
+          ) {
+            return Err("not-allowed");
+          }
+          return Ok({
+            type: "game",
+            botLevel: model.botLevel,
+            userColor: model.userColor,
+            userId: model.userId,
+            board: Chess.init(),
+          });
+        }
+
+        case "input-bot-level": {
+          if (
+            model.userId !== ctx.currentUserId ||
+            model.userId !== ctx.hostId
+          ) {
+            return Err("not-allowed");
+          }
+          return Ok({
+            ...model,
+            botLevel: msg.botLevel,
+          });
+        }
+
+        case "stop-playing": {
+          if (model.userId !== ctx.currentUserId) {
+            return Err("not-allowed");
+          }
+          return Ok({
+            ...model,
+            userId: null,
+          });
+        }
+
+        case "start-playing": {
+          if (model.userId !== null && model.userId !== ctx.currentUserId) {
+            return Err("not-allowed");
+          }
+          return Ok({
+            ...model,
+            userId: ctx.currentUserId,
+            userColor: msg.color,
+          });
+        }
+
+        default: {
+          return Err("unhandled");
+        }
       }
-      if (model.userId !== ctx.currentUserId || model.userId !== ctx.hostId) {
-        return Err("not-allowed");
-      }
-      return Ok({
-        type: "game",
-        botLevel: model.botLevel,
-        userColor: model.userColor,
-        userId: model.userId,
-        board: Chess.init(),
-      });
     }
 
-    if (msg.t === "input-bot-level") {
-      if (model.userId !== ctx.currentUserId || model.userId !== ctx.hostId) {
-        return Err("not-allowed");
+    case "game": {
+      switch (msg.t) {
+        case "input-move": {
+          if (model.userId !== ctx.currentUserId) {
+            return Err("must-be-playing");
+          }
+
+          if (Chess.toTurn(model.board) !== model.userColor) {
+            return Err("must-be-turn");
+          }
+
+          const moved = Chess.move(msg.move, model.board);
+
+          if (moved.t === "err") {
+            return moved;
+          }
+
+          const boardNew = moved.value;
+
+          const gameOver = Chess.toGameOver(boardNew);
+
+          if (gameOver.type !== "none") {
+            return Ok({
+              ...model,
+              type: "game-over",
+              board: boardNew,
+              gameOver: gameOver,
+              didCapture: boardNew.didCapture,
+            });
+          }
+
+          const modelNew: CoreModel = {
+            ...model,
+            board: boardNew,
+          };
+
+          return Result.Ok({
+            ...modelNew,
+            didCapture: boardNew.didCapture,
+          });
+        }
+
+        case "stop-game": {
+          if (
+            model.userId !== ctx.currentUserId ||
+            ctx.currentUserId !== ctx.hostId
+          ) {
+            return Err("not-allowed");
+          }
+          return Ok({
+            type: "setup",
+            botLevel: model.botLevel,
+            userColor: model.userColor,
+            userId: model.userId,
+          });
+        }
+
+        default: {
+          return Err("unhandled");
+        }
       }
-      return Ok({
-        ...model,
-        botLevel: msg.botLevel,
-      });
     }
 
-    if (msg.t === "stop-playing") {
-      if (model.userId !== ctx.currentUserId) {
-        return Err("not-allowed");
+    case "game-over": {
+      switch (msg.t) {
+        case "stop-game": {
+          if (
+            model.userId !== ctx.currentUserId ||
+            ctx.currentUserId !== ctx.hostId
+          ) {
+            return Err("not-allowed");
+          }
+          return Ok({
+            type: "setup",
+            botLevel: model.botLevel,
+            userColor: model.userColor,
+            userId: model.userId,
+          });
+        }
+        default: {
+          return Err("unhandled");
+        }
       }
-      return Ok({
-        ...model,
-        userId: null,
-      });
     }
 
-    if (msg.t === "start-playing") {
-      if (model.userId !== null && model.userId !== ctx.currentUserId) {
-        return Err("not-allowed");
-      }
-      return Ok({
-        ...model,
-        userId: ctx.currentUserId,
-        userColor: msg.color,
-      });
+    default: {
+      return Err("unhandled");
     }
-
-    return Err("unhandled");
   }
-
-  if (model.type === "game") {
-    if (msg.t === "input-move") {
-      if (model.userId !== ctx.currentUserId) {
-        return Err("must-be-playing");
-      }
-
-      if (Chess.toTurn(model.board) !== model.userColor) {
-        return Err("must-be-turn");
-      }
-
-      const moved = Chess.move(msg.move, model.board);
-
-      if (moved.t === "err") {
-        return moved;
-      }
-
-      const boardNew = moved.value;
-
-      const gameOver = Chess.toGameOver(boardNew);
-
-      if (gameOver.type !== "none") {
-        return Ok({
-          ...model,
-          type: "game-over",
-          board: boardNew,
-          gameOver: gameOver,
-          didCapture: boardNew.didCapture,
-        });
-      }
-
-      const modelNew: CoreModel = {
-        ...model,
-        board: boardNew,
-      };
-
-      return Result.Ok({
-        ...modelNew,
-        didCapture: boardNew.didCapture,
-      });
-    }
-
-    if (msg.t === "stop-game") {
-      if (
-        model.userId !== ctx.currentUserId ||
-        ctx.currentUserId !== ctx.hostId
-      ) {
-        return Err("not-allowed");
-      }
-      return Ok({
-        type: "setup",
-        botLevel: model.botLevel,
-        userColor: model.userColor,
-        userId: model.userId,
-      });
-    }
-
-    return Err("unhandled");
-  }
-
-  if (model.type === "game-over") {
-    if (msg.t === "stop-game") {
-      if (
-        model.userId !== ctx.currentUserId ||
-        ctx.currentUserId !== ctx.hostId
-      ) {
-        return Err("not-allowed");
-      }
-      return Ok({
-        type: "setup",
-        botLevel: model.botLevel,
-        userColor: model.userColor,
-        userId: model.userId,
-      });
-    }
-
-    return Err("unhandled");
-  }
-
-  return Err("unhandled");
 };
 
 //

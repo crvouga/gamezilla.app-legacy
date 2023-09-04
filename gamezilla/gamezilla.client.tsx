@@ -4,9 +4,10 @@ import {
   attachClientTransport,
 } from "gamezilla/@SHARED/core";
 import { render } from "preact";
-import { attachDebugger } from "./@SHARED/core/debug";
+import { attachDebugger, createDebugger } from "./@SHARED/core/debug";
 import * as AppClient from "./app/app.client";
 import "./main.css";
+import { ClientModel, ClientMsg } from "./app/app.core";
 
 const program = Program.create({
   init: (input) => {
@@ -36,42 +37,36 @@ const program = Program.create({
 //
 //
 
-attachDebugger(program);
+attachDebugger(program).then(() => {
+  program.start();
 
-//
-//
-//
-//
+  const env = {
+    isDev: process.env.NODE_ENV === "development",
+    isProd: process.env.NODE_ENV === "production",
+    useNgrok: false,
+  };
 
-program.subscribe((model, ctx) => {
-  render(
-    <AppClient.View now={ctx.now} model={model} dispatch={program.dispatch} />,
-    document.body
-  );
-});
+  const serverUrl = env.isProd
+    ? "https://server.gamezilla.app/"
+    : env.useNgrok
+    ? "https://gamezilla-server.ngrok.io/"
+    : `http://localhost:${5000}/`;
 
-program.start();
+  attachClientTransport({
+    baseServerUrl: serverUrl,
+    wire: AppClient.wire,
+    serverToClient: AppClient.serverToClient,
+    clientToServer: AppClient.clientToServer,
+  });
 
-//
-//
-//
-//
-
-const env = {
-  isDev: process.env.NODE_ENV === "development",
-  isProd: process.env.NODE_ENV === "production",
-  useNgrok: false,
-};
-
-const serverUrl = env.isProd
-  ? "https://server.gamezilla.app/"
-  : env.useNgrok
-  ? "https://gamezilla-server.ngrok.io/"
-  : `http://localhost:${5000}/`;
-
-attachClientTransport({
-  baseServerUrl: serverUrl,
-  wire: AppClient.wire,
-  serverToClient: AppClient.serverToClient,
-  clientToServer: AppClient.clientToServer,
+  program.subscribe((model, ctx) => {
+    render(
+      <AppClient.View
+        now={ctx.now}
+        model={model}
+        dispatch={program.dispatch}
+      />,
+      document.body
+    );
+  });
 });

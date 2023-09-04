@@ -5,11 +5,11 @@
  *
  * @since 0.5.0
  */
-import { toMsgPayload, toMsgType } from "..";
+import { Sub, toMsgPayload, toMsgType } from "..";
 import * as Json from "../json";
 import { p } from "../pipe";
 import { Program } from "../program";
-import { Result } from "../result";
+import { Err, Result } from "../result";
 import { Task } from "../task";
 import {
   Debug,
@@ -462,12 +462,11 @@ export const attachDebugger = async <Model, Msg extends {}>(
     }
   });
 
-  const created = makeDebugger<Model, Msg>(connection);
+  const Debugger = makeDebugger<Model, Msg>(connection);
 
-  const started = created({
+  const debuggerInstance = Debugger({
     dispatch: (msg) => {
       if ("type" in msg) {
-        console.log(msg.type);
         switch (msg.type) {
           case "__DebugApplyMsg__": {
             return;
@@ -485,6 +484,15 @@ export const attachDebugger = async <Model, Msg extends {}>(
     init: program.getState(),
   });
 
+  await new Promise<null>((resolve) => {
+    const unsubscribe = connection.subscribe((msg) => {
+      if (msg.type === "START") {
+        unsubscribe();
+        resolve(null);
+      }
+    });
+  });
+
   program.subscribe((model, ctx, msg) => {
     if (msg) {
       const action = {
@@ -496,5 +504,67 @@ export const attachDebugger = async <Model, Msg extends {}>(
     }
   });
 
-  return started;
+  return debuggerInstance;
+};
+
+export const createDebugger = <Model, Msg extends {}>(initialModel: Model) => {
+  const connection = getConnection<Model, Msg>(window);
+
+  if (!connection) {
+    return {
+      model: Sub.create<Model>(),
+      started: Promise.resolve(null),
+      snapshot: () => {},
+      stop: () => {},
+    };
+  }
+
+  const snapshot = (
+    action: { type: string; payload: unknown },
+    model: Model
+  ) => {
+    // @ts-ignore
+    connection.send(action, model);
+  };
+
+  const started = new Promise<null>((resolve) => {
+    const unsubscribe = connection.subscribe((msg) => {
+      if (msg.type === "START") {
+        unsubscribe();
+        resolve(null);
+      }
+    });
+  });
+
+  const Debugger = makeDebugger<Model, Msg>(connection);
+
+  const model = Sub.create<Model>();
+
+  const debuggerInstance = Debugger({
+    dispatch: (msg) => {
+      if ("type" in msg) {
+        switch (msg.type) {
+          case "__DebugApplyMsg__": {
+            return;
+          }
+          case "__DebugStarted__": {
+            return;
+          }
+          case "__DebugUpdateModel__": {
+            model.publish(msg.payload);
+
+            return;
+          }
+        }
+      }
+    },
+    init: initialModel,
+  });
+
+  return {
+    model,
+    started,
+    snapshot,
+    stop: debuggerInstance.stop,
+  };
 };

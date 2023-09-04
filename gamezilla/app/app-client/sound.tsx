@@ -126,24 +126,28 @@ export const updateFromCmd = ({
 };
 
 const howls = new Map<string, Howl>();
+const getHowl = (src: string) => {
+  const cached = howls.get(src);
+  if (cached) {
+    return cached;
+  }
+  const howl = new Howl({
+    src,
+    preload: true,
+    onload: () => {
+      console.log("loaded", src);
+    },
+
+    format: ["wav"],
+  });
+  howls.set(src, howl);
+  return howl;
+};
 
 const playSound = async (src: string) => {
   try {
-    const cached = howls.get(src);
+    const howl = getHowl(src);
 
-    if (cached) {
-      cached.play();
-      return Ok(null);
-    }
-
-    const howl = new Howl({
-      src,
-      preload: true,
-      onload: () => {
-        console.log("loaded", src);
-      },
-    });
-    howls.set(src, howl);
     howl.play();
 
     return Ok(null);
@@ -155,18 +159,7 @@ const playSound = async (src: string) => {
 const preloadSounds = async (srcList: string[]) => {
   try {
     for (const src of srcList) {
-      const cached = howls.get(src);
-      if (cached) {
-        continue;
-      }
-      const howl = new Howl({
-        src,
-        preload: true,
-        onload: () => {
-          console.log("loaded", src);
-        },
-      });
-      howls.set(src, howl);
+      getHowl(src);
     }
     return Ok(null);
   } catch (error) {
