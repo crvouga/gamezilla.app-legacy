@@ -13,6 +13,7 @@ import {
   initCore,
   inputMove,
 } from "./vs-user.core";
+import { Button, IconArrowLeftOnRect } from "gamezilla/app/@SHARED/ui";
 
 //
 //
@@ -298,14 +299,33 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 export const View = ({
   model,
   dispatch,
+  onQuit,
 }: {
   ctx: ViewCtx;
   model: Model;
   dispatch: (msg: Msg) => void;
-  onClose: () => void;
+  onQuit: () => void;
 }) => {
   if (model.coreModel.type === "setup") {
-    return <div>hello</div>;
+    return (
+      <div>
+        <div className="flex-1"></div>
+        <div className="flex items-center gap-4 border-t border-neutral-700 p-4">
+          <Button
+            className="flex-1"
+            onClick={onQuit}
+            start={<IconArrowLeftOnRect className="h-6 w-6" />}
+            text="Quit"
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            className="flex-1"
+            text="Start Game"
+          />
+        </div>
+      </div>
+    );
   }
 
   // const { w, b } = model.coreModel;

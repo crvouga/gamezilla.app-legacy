@@ -64,8 +64,8 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
     if (msg.result.t === "err") {
       return { model };
     }
-    const synced = mergeWithServer({ ...input, server: msg.result.value });
-    return synced;
+    const merged = mergeWithServer({ ...input, server: msg.result.value });
+    return merged;
   }
 
   if (msg.t === "puzzle-builder" && model.t === "puzzle-builder") {

@@ -1,4 +1,4 @@
-import { Eff, Sub } from "gamezilla/@SHARED/core";
+import { Eff, Sub, andThen, p } from "gamezilla/@SHARED/core";
 import { SpaceGameClient } from "gamezilla/app/space/@SHARED";
 import {
   MainMenuScreen,
@@ -14,7 +14,7 @@ import {
 } from "./connect-four.core";
 import * as VsBot from "./vs-bot/vs-bot.client";
 import * as VsUser from "./vs-user/vs-user.client";
-import { ClientCmd } from "gamezilla/app/@SHARED/client";
+import { APP_SOUND, ClientCmd, playSound } from "gamezilla/app/@SHARED/client";
 
 export const ConnectFour = () => {};
 
@@ -85,18 +85,29 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
   const { ctx, model, msg } = input;
 
   if (msg.t === "input-mode") {
-    if (msg.result.t === "err") {
-      return { model };
-    }
+    return p(
+      { model },
+      andThen((model) => {
+        if (msg.result.t === "err") {
+          return { model };
+        }
 
-    const merged = mergeWithServer({
-      ...input,
-      client: model,
-      server: msg.result.value,
-      ctx,
-    });
+        const merged = mergeWithServer({
+          ...input,
+          client: model,
+          server: msg.result.value,
+          ctx,
+        });
 
-    return merged;
+        return merged;
+      }),
+      andThen((model) => {
+        if (model.t === "none") {
+          return { model, cmd: [playSound(APP_SOUND.navBackwardMin)] };
+        }
+        return { model, cmd: [playSound(APP_SOUND.navForwardMin)] };
+      })
+    );
   }
 
   if (msg.t === "vs-user" && model.t === "vs-user") {

@@ -1,4 +1,11 @@
-import { Eff, Posix, RemoteResult, Sub } from "gamezilla/@SHARED/core";
+import {
+  Eff,
+  Posix,
+  RemoteResult,
+  Sub,
+  andThen,
+  p,
+} from "gamezilla/@SHARED/core";
 import { IconPuzzlePiece } from "gamezilla/app/@SHARED/ui";
 import { SpaceGameClient, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
 import {
@@ -16,7 +23,12 @@ import {
 import * as Puzzle from "./puzzle/puzzle.client";
 import * as VsBot from "./vs-bot/vs-bot.client";
 import * as VsUser from "./vs-user/vs-user.client";
-import { ClientCmd } from "gamezilla/app/@SHARED/client";
+import {
+  APP_SOUND,
+  ClientCmd,
+  playSound,
+  sendToServer,
+} from "gamezilla/app/@SHARED/client";
 
 type Client = SpaceGameClient<
   ClientModel,
@@ -53,17 +65,13 @@ export const init: Client["init"] = () => {
 
 export const update: Client["update"] = ({ msg, model, ctx }) => {
   switch (msg.t) {
-    case "preload-audio-done": {
-      return { model };
-    }
-
     case "input-mode": {
       return {
         model: {
           ...model,
           requests: { ...model.requests, [msg.t]: RemoteResult.Loading },
         },
-        cmd: [{ t: "send-to-server", msg }],
+        cmd: [sendToServer(msg)],
       };
     }
 
@@ -126,27 +134,40 @@ export const updateFromServer: Client["updateFromServer"] = ({
 }) => {
   switch (msg.t) {
     case "input-mode": {
-      const { result } = msg;
-
-      const modelNew: ClientModel = {
-        ...model,
-        requests: {
-          ...model.requests,
-          [msg.t]: RemoteResult.map(result, () => null),
+      return p(
+        {
+          model,
         },
-      };
+        andThen((model) => {
+          const { result } = msg;
 
-      if (result.t === "err") {
-        return { model: modelNew };
-      }
+          const modelNew: ClientModel = {
+            ...model,
+            requests: {
+              ...model.requests,
+              [msg.t]: RemoteResult.map(result, () => null),
+            },
+          };
 
-      const merged = mergeWithServer({
-        ctx,
-        client: modelNew,
-        server: result.value,
-      });
+          if (result.t === "err") {
+            return { model: modelNew };
+          }
 
-      return merged;
+          const merged = mergeWithServer({
+            ctx,
+            client: modelNew,
+            server: result.value,
+          });
+
+          return merged;
+        }),
+        andThen((model) => {
+          if (model.mode.t === "none") {
+            return { model, cmd: [playSound(APP_SOUND.navBackwardMin)] };
+          }
+          return { model, cmd: [playSound(APP_SOUND.navForwardMin)] };
+        })
+      );
     }
 
     case "vs-user": {
@@ -290,7 +311,7 @@ export const View: Client["View"] = ({ ctx, model, dispatch }) => {
           ctx={ctx}
           model={model.mode.c}
           dispatch={(c) => dispatch({ t: "vs-user", c })}
-          onClose={() => {
+          onQuit={() => {
             dispatch({
               t: "input-mode",
               mode: "none",

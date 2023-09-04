@@ -26,7 +26,6 @@ type Mode = ServerModel["t"];
 
 export type ClientMsg =
   | Req
-  | { t: "preload-audio-done" }
   | { t: "vs-user"; c: VsUser.ClientMsg }
   | { t: "vs-bot"; c: VsBot.ClientMsg }
   | { t: "puzzle"; c: Puzzle.ClientMsg };

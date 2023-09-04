@@ -73,8 +73,8 @@ import {
 const SPACE_SOUND = {
   // joined: "./space/joined.wav",
   // left: "./space/left.wav",
-  joined: "./nav-forward.wav",
-  left: "./nav-backward.wav",
+  joined: APP_SOUND.navForward,
+  left: APP_SOUND.navBackward,
 };
 
 export const init: {
@@ -88,7 +88,7 @@ export const init: {
     modal: null,
     previewUserId: null,
   },
-  cmd: [preloadSound(Object.values(SPACE_SOUND))],
+  cmd: [],
 };
 
 //
@@ -495,7 +495,30 @@ export const updateFromServerMain: typeof updateFromServer = ({
       return p(
         { model },
         andThen((model) => updateLoading({ res: msg, model })),
-        andThen((model) => mergeWithResult({ ctx, result: msg.result, model }))
+        andThen((model) => mergeWithResult({ ctx, result: msg.result, model })),
+        andThen((model) => {
+          if (msg.result.t === "err") {
+            return { model };
+          }
+
+          const currentUserSpace = toSpaceByUserId(model, ctx.currentUserId);
+
+          if (currentUserSpace?.spaceId !== msg.spaceId) {
+            return { model };
+          }
+
+          if (msg.result.value.game) {
+            return {
+              model,
+              cmd: [playSound(APP_SOUND.navForwardMin)],
+            };
+          }
+
+          return {
+            model,
+            cmd: [playSound(APP_SOUND.navBackwardMin)],
+          };
+        })
       );
     }
   }

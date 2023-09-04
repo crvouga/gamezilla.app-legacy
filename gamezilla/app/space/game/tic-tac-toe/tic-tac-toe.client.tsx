@@ -1,5 +1,5 @@
-import { Eff, Sub } from "gamezilla/@SHARED/core";
-import { ClientCmd } from "gamezilla/app/@SHARED/client";
+import { Eff, Sub, andThen, p } from "gamezilla/@SHARED/core";
+import { APP_SOUND, ClientCmd, playSound } from "gamezilla/app/@SHARED/client";
 import { SpaceGameClient, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
 import {
   MainMenuScreen,
@@ -80,19 +80,30 @@ export const updateFromServer: Client["updateFromServer"] = ({
   model,
 }) => {
   if (msg.t === "input-mode") {
-    const { result } = msg;
+    return p(
+      { model },
+      andThen((model) => {
+        const { result } = msg;
 
-    if (result.t === "err") {
-      return { model };
-    }
+        if (result.t === "err") {
+          return { model };
+        }
 
-    const synced = mergeWithServer({
-      ctx,
-      client: model,
-      server: result.value,
-    });
+        const merged = mergeWithServer({
+          ctx,
+          client: model,
+          server: result.value,
+        });
 
-    return synced;
+        return merged;
+      }),
+      andThen((model) => {
+        if (model.t === "none") {
+          return { model, cmd: [playSound(APP_SOUND.navBackwardMin)] };
+        }
+        return { model, cmd: [playSound(APP_SOUND.navForwardMin)] };
+      })
+    );
   }
 
   if (msg.t === "vs-user" && model.t === "vs-user") {
