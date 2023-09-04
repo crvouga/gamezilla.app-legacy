@@ -185,8 +185,7 @@ const findElseCreate = async ({ userId }: { userId: UserId }) => {
           style: "adventurer-neutral",
         }),
         theme_mode: "DARK",
-        name: "todo",
-        username: "todo",
+        username: Username.generate("."),
       },
     ])
     .single();
