@@ -189,7 +189,7 @@ export const mergeWithServer = ({
   client,
   server,
 }: {
-  client: ClientModel;
+  client?: ClientModel;
   server: CoreModel;
 }): ClientModel => {
   return {

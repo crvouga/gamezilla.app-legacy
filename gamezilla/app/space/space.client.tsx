@@ -82,7 +82,6 @@ export const init: {
   cmd: ClientCmd<ToServer>[];
 } = {
   model: {
-    events: {},
     spaces: {},
     requests: {},
     modal: null,
@@ -302,13 +301,13 @@ export const updateFromServerMain: typeof updateFromServer = ({
     case "list": {
       return p(
         { model },
-        andThen((model) => updateLoading({ res: msg, model })),
-        andThen((model): ReturnType<typeof updateFromServer> => {
+        andThen((model) => updateLoading({ msg: msg, model })),
+        andThen((model) => {
           if (msg.result.t === "err") {
             return { model, cmd: [showToast(msg.result.error, "error")] };
           }
 
-          let merged: { model: ClientModel; eff?: Eff<ClientMsg> } = {
+          let merged: ReturnType<typeof updateFromServer> = {
             model: {
               ...model,
               spaces: {},
@@ -330,6 +329,8 @@ export const updateFromServerMain: typeof updateFromServer = ({
                 },
               },
               eff: Eff.batch([merged.eff, mergedSpace.eff]),
+              cmd: [...(merged?.cmd ?? []), ...(mergedSpace.cmd ?? [])],
+              evt: [...(merged?.evt ?? []), ...(mergedSpace.evt ?? [])],
             };
           }
 
@@ -341,7 +342,7 @@ export const updateFromServerMain: typeof updateFromServer = ({
     case "destroy": {
       return p(
         { model },
-        andThen((model) => updateLoading({ res: msg, model })),
+        andThen((model) => updateLoading({ msg: msg, model })),
         andThen((model): ReturnType<typeof update> => {
           const currentUserSpace = toSpaceByUserId(model, ctx.currentUserId);
 
@@ -387,7 +388,7 @@ export const updateFromServerMain: typeof updateFromServer = ({
     case "join": {
       return p(
         { model },
-        andThen((model) => updateLoading({ res: msg, model })),
+        andThen((model) => updateLoading({ msg: msg, model })),
         andThen((model) => mergeWithResult({ ctx, result: msg.result, model })),
         andThen((model) => {
           if (msg.result.t === "err") {
@@ -433,7 +434,7 @@ export const updateFromServerMain: typeof updateFromServer = ({
     case "leave": {
       return p(
         { model },
-        andThen((model) => updateLoading({ res: msg, model })),
+        andThen((model) => updateLoading({ msg: msg, model })),
         andThen((model) => mergeWithResult({ ctx, result: msg.result, model })),
         andThen((model) => {
           if (msg.result.t === "err") {
@@ -464,7 +465,7 @@ export const updateFromServerMain: typeof updateFromServer = ({
     case "create": {
       return p(
         { model },
-        andThen((model) => updateLoading({ res: msg, model })),
+        andThen((model) => updateLoading({ msg: msg, model })),
         andThen((model) => mergeWithResult({ ctx, result: msg.result, model })),
         andThen((model) => {
           if (msg.result.t === "err") {
@@ -494,7 +495,7 @@ export const updateFromServerMain: typeof updateFromServer = ({
     case "input-game": {
       return p(
         { model },
-        andThen((model) => updateLoading({ res: msg, model })),
+        andThen((model) => updateLoading({ msg: msg, model })),
         andThen((model) => mergeWithResult({ ctx, result: msg.result, model })),
         andThen((model) => {
           if (msg.result.t === "err") {
@@ -525,10 +526,10 @@ export const updateFromServerMain: typeof updateFromServer = ({
 };
 
 const updateLoading = ({
-  res,
+  msg,
   model,
 }: {
-  res: Res & ToClientExtra;
+  msg: Res;
   model: ClientModel;
 }): ReturnType<typeof updateFromServer> => {
   return {
@@ -536,7 +537,7 @@ const updateLoading = ({
       ...model,
       requests: {
         ...model.requests,
-        [res.t]: res.result,
+        [msg.t]: msg.result,
       },
     },
   };
@@ -567,6 +568,8 @@ const mergeWithResult = ({
         [merged.client.spaceId]: merged.client,
       },
     },
+    cmd: merged.cmd,
+    evt: merged.evt,
     eff: merged.eff,
   };
 };
@@ -623,6 +626,9 @@ const listSpaces = (input: {
   };
 };
 
+/**
+ * Merges server space state into client space state.
+ */
 const mergeWithServer = ({
   ctx,
   client,
@@ -634,6 +640,8 @@ const mergeWithServer = ({
 }): {
   client: Space<Game.ClientModel>;
   eff?: Eff<ClientMsg>;
+  cmd?: ClientCmd<ToServer>[];
+  evt?: ClientEvt[];
 } => {
   if (!server.game) {
     const clientNew: Space<Game.ClientModel> = {
@@ -658,6 +666,8 @@ const mergeWithServer = ({
 
   return {
     client: clientNew,
+    evt: mergedGame.evt,
+    cmd: ClientCmd.tag("game", mergedGame.cmd),
     eff: Eff.t("game", mergedGame.eff),
   };
 };

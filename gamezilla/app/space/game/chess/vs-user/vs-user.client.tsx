@@ -28,17 +28,18 @@ export type Model = ClientModel;
 export const init = ({
   userId,
 }: {
-  userId: UserId | "none";
-}): [ClientModel, Eff<Msg>] => {
-  return [
-    {
-      coreModel: initCore({ userId }),
+  userId?: UserId | null;
+}): {
+  model: ClientModel;
+} => {
+  return {
+    model: {
+      coreModel: initCore({ userId: userId ?? "none" }),
       openedMenuId: Option.None,
       openedModal: "none",
       isFlipped: false,
     },
-    Eff.None,
-  ];
+  };
 };
 
 //
@@ -453,14 +454,19 @@ const toGameText = (model: CoreModel): string => {
 //
 //
 
-export const mergeWithServer = (
-  clientModel: ClientModel,
-  serverModel: ServerModel
-): ClientModel => {
+export const mergeWithServer = ({
+  client,
+  server,
+}: {
+  client?: ClientModel;
+  server: ServerModel;
+}): ClientModel => {
+  const initial = init({ userId: null });
+  const clientModel = client ?? initial.model;
   return {
     isFlipped: clientModel.isFlipped,
     openedMenuId: clientModel.openedMenuId,
     openedModal: clientModel.openedModal,
-    coreModel: serverModel,
+    coreModel: server,
   };
 };
