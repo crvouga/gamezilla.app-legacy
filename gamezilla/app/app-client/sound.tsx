@@ -1,6 +1,7 @@
 import { Eff, Err, Ok, Result } from "gamezilla/@SHARED/core";
 import { ClientEvt, SoundCmd } from "gamezilla/app/@SHARED/client";
-import "./sound-audio-context-monkey-patch";
+// https://github.com/goldfire/howler.js#quick-start
+import { Howl, Howler } from "howler";
 
 export type Model = {
   muted: boolean;
@@ -124,48 +125,27 @@ export const updateFromCmd = ({
   }
 };
 
-let audioContext: AudioContext | null = null;
+const howls = new Map<string, Howl>();
 
-const bufferCache = new Map<string, AudioBuffer>();
-
-let userGestureRequired = false;
-const playSound = async (url: string) => {
+const playSound = async (src: string) => {
   try {
-    if (!audioContext) {
-      audioContext = new (window.AudioContext ||
-        (window as any).webkitAudioContext)();
-
-      // Try resuming context to handle user gesture requirement
-      if (audioContext.state === "suspended") {
-        await audioContext.resume();
-        userGestureRequired = false;
-      }
-    }
-
-    if (userGestureRequired) {
-      return Err({ message: "User gesture required" });
-    }
-
-    const cached = bufferCache.get(url);
+    const cached = howls.get(src);
 
     if (cached) {
-      const source = audioContext.createBufferSource();
-      source.buffer = cached;
-      source.connect(audioContext.destination);
-      source.start(0);
+      cached.play();
       return Ok(null);
     }
 
-    const response = await fetch(url);
-    const arrayBuffer = await response.arrayBuffer();
-    const buffer = await audioContext.decodeAudioData(arrayBuffer);
-    const source = audioContext.createBufferSource();
+    const howl = new Howl({
+      src,
+      preload: true,
+      onload: () => {
+        console.log("loaded", src);
+      },
+    });
+    howls.set(src, howl);
+    howl.play();
 
-    bufferCache.set(url, buffer);
-
-    source.buffer = buffer;
-    source.connect(audioContext.destination);
-    source.start(0);
     return Ok(null);
   } catch (error) {
     return Err({ error, message: "Caught error" });
@@ -174,24 +154,24 @@ const playSound = async (url: string) => {
 
 const preloadSounds = async (srcList: string[]) => {
   try {
-    if (!audioContext) {
-      audioContext = new (window.AudioContext ||
-        (window as any).webkitAudioContext)();
-    }
-
     for (const src of srcList) {
-      const cached = bufferCache.get(src);
+      const cached = howls.get(src);
       if (cached) {
         continue;
       }
-      const response = await fetch(src);
-      const arrayBuffer = await response.arrayBuffer();
-      const buffer = await audioContext.decodeAudioData(arrayBuffer);
-
-      bufferCache.set(src, buffer);
+      const howl = new Howl({
+        src,
+        preload: true,
+        onload: () => {
+          console.log("loaded", src);
+        },
+      });
+      howls.set(src, howl);
     }
     return Ok(null);
   } catch (error) {
     return Err({ error, message: "Caught error" });
   }
 };
+
+Howler.volume(1);
