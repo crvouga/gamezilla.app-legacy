@@ -11,5 +11,11 @@ export type ServerEvt =
   | {
       t: "client-authenticated";
       userId: UserId;
+      sessionId: SessionId;
+      clientId: ClientId;
+    }
+  | {
+      t: "client-unauthenticated";
+      sessionId: SessionId;
       clientId: ClientId;
     };

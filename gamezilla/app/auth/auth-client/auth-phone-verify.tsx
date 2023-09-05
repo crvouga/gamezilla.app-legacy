@@ -86,7 +86,6 @@ export const update = ({
   model: Model;
   eff?: Eff<Msg>;
   cmd?: RouteCmd[];
-  shouldLoadCurrentUser?: boolean;
 } => {
   if (msg.t === "clicked-verify-code") {
     return {
@@ -117,7 +116,6 @@ export const update = ({
           code: model.code,
           submission: { type: "ok" },
         },
-        shouldLoadCurrentUser: true,
       };
     }
 

@@ -1,10 +1,12 @@
 import { Eff, NotAsked, RemoteResult, Sub } from "gamezilla/@SHARED/core";
 import {
+  AnonymousClientCtx,
   AnonymousViewCtx,
   ClientCmd,
   ClientEvt,
   Route,
   RouteAuth,
+  replaceRoute,
   sendToServer,
 } from "gamezilla/app/@SHARED/client";
 import {
@@ -49,7 +51,7 @@ export const init: { model: ClientModel; eff?: Eff<ClientMsg> } = {
     emailLink,
     currentUser: { t: "loading" },
   },
-  eff: loadCurrentUser(authService),
+  // eff: loadCurrentUser(authService),
 };
 
 //
@@ -96,7 +98,6 @@ export const update = ({
     case "login-done": {
       return {
         model,
-        eff: loadCurrentUser(authService),
       };
     }
 
@@ -119,10 +120,9 @@ export const update = ({
       return {
         model: {
           ...model,
-          currentUser: {
-            t: "logged-out",
-          },
+          currentUser: { t: "loading" },
         },
+        cmd: [sendToServer({ t: "logged-out-client-side" })],
       };
     }
 
@@ -150,22 +150,15 @@ export const update = ({
         phoneNumber: route.c.phoneNumber,
         authService: authService,
       });
+
       return {
         ...updated,
         model: {
           ...model,
           phoneVerify: updated.model,
-          currentUser: updated.shouldLoadCurrentUser
-            ? { t: "loading" }
-            : model.currentUser,
         },
         cmd: updated.cmd,
-        eff: Eff.batch([
-          Eff.t("phone-verify", updated.eff),
-          updated.shouldLoadCurrentUser
-            ? loadCurrentUser(authService)
-            : Eff.None,
-        ]),
+        eff: Eff.t("phone-verify", updated.eff),
       };
     }
 
@@ -183,28 +176,18 @@ export const update = ({
       };
     }
 
-    case "client-authenticated": {
+    case "auth-state-changed": {
+      if (msg.userId) {
+        return {
+          model,
+          cmd: [
+            sendToServer({ t: "logged-in-client-side", userId: msg.userId }),
+          ],
+        };
+      }
       return {
-        model: {
-          ...model,
-          currentUser: {
-            t: "logged-in-client-side",
-            userId: msg.userId,
-          },
-        },
-        cmd: [sendToServer(msg)],
-      };
-    }
-
-    case "client-unauthenticated": {
-      return {
-        model: {
-          ...model,
-          currentUser: {
-            t: "logged-out-client-side",
-          },
-        },
-        cmd: [sendToServer(msg)],
+        model,
+        cmd: [sendToServer({ t: "logged-out-client-side" })],
       };
     }
 
@@ -218,9 +201,11 @@ export const update = ({
 };
 
 export const updateFromEvt = ({
+  ctx,
   model,
   msg,
 }: {
+  ctx: AnonymousClientCtx;
   msg: ClientEvt;
   model: ClientModel;
 }): {
@@ -229,33 +214,6 @@ export const updateFromEvt = ({
   cmd?: ClientCmd<ToServer>[];
 } => {
   switch (msg.t) {
-    case "server-connected": {
-      if (
-        model.currentUser.t === "logged-in" ||
-        model.currentUser.t === "logged-in-client-side"
-      ) {
-        return {
-          model,
-          cmd: [
-            sendToServer({
-              t: "client-authenticated",
-              userId: model.currentUser.userId,
-            }),
-          ],
-        };
-      }
-      if (
-        model.currentUser.t === "logged-out" ||
-        model.currentUser.t === "logged-out-client-side"
-      ) {
-        return {
-          model,
-          cmd: [sendToServer({ t: "client-unauthenticated" })],
-        };
-      }
-      return { model };
-    }
-
     case "document-visibility-changed": {
       if (
         msg.state === "hidden" &&
@@ -271,6 +229,27 @@ export const updateFromEvt = ({
           },
         };
       }
+      return { model };
+    }
+
+    case "client-unauthenticated": {
+      if (ctx.currentRoute.t === "auth") {
+        return { model };
+      }
+      return {
+        model,
+        cmd: [replaceRoute({ t: "auth", c: { t: "login" } })],
+      };
+    }
+
+    case "client-authenticated": {
+      if (ctx.currentRoute.t === "auth") {
+        return {
+          model,
+          cmd: [replaceRoute({ t: "space", c: { t: "space-list" } })],
+        };
+      }
+
       return { model };
     }
 
@@ -292,31 +271,23 @@ export const updateFromServer = ({
   evt?: ClientEvt[];
 } => {
   switch (msg.t) {
-    case "acknowledged": {
-      switch (msg.msg.t) {
-        case "client-unauthenticated": {
-          return {
-            model: {
-              ...model,
-              currentUser: { t: "logged-out" },
-            },
-            evt: [msg.msg],
-          };
-        }
-        case "client-authenticated": {
-          return {
-            model: {
-              ...model,
-              currentUser: { t: "logged-in", userId: msg.msg.userId },
-            },
-            evt: [msg.msg],
-          };
-        }
-
-        default: {
-          return { model };
-        }
-      }
+    case "client-unauthenticated": {
+      return {
+        model: {
+          ...model,
+          currentUser: { t: "logged-out" },
+        },
+        evt: [msg],
+      };
+    }
+    case "client-authenticated": {
+      return {
+        model: {
+          ...model,
+          currentUser: { t: "logged-in", userId: msg.userId },
+        },
+        evt: [msg],
+      };
     }
     default: {
       return { model };
@@ -330,22 +301,11 @@ export const updateFromServer = ({
 //
 //
 
-function loadCurrentUser(authService: AuthService): Eff<ClientMsg> {
-  return async (dispatch) => {
-    const got = await authService.getCurrentUser();
-    if (got.t === "err") {
-      dispatch({ t: "client-unauthenticated" });
-      return;
-    }
-    const user = got.value;
-    if (!user) {
-      dispatch({ t: "client-unauthenticated" });
-      return;
-    }
-    dispatch({ t: "client-authenticated", userId: user.userId });
-    return;
-  };
-}
+export const subscriptions = (_model: ClientModel): Sub<ClientMsg> => {
+  return Sub.map(authService.currentUserSub, (currentUser): ClientMsg => {
+    return { t: "auth-state-changed", userId: currentUser?.userId ?? null };
+  });
+};
 
 //
 //
@@ -355,19 +315,7 @@ function loadCurrentUser(authService: AuthService): Eff<ClientMsg> {
 //
 //
 
-export const ViewLoggedIn = ({
-  model,
-  ctx,
-  dispatch,
-}: {
-  model: ClientModel;
-  dispatch: (m: ClientMsg) => void;
-  ctx: AnonymousViewCtx;
-}) => {
-  return <ViewLogoutScreen ctx={ctx} model={model} dispatch={dispatch} />;
-};
-
-export const ViewLoggedOut = ({
+export const View = ({
   route,
   model,
   ctx,
@@ -378,41 +326,41 @@ export const ViewLoggedOut = ({
   dispatch: (m: ClientMsg) => void;
   ctx: AnonymousViewCtx;
 }) => {
-  if (route.t === "login") {
-    return <ViewLoginScreen ctx={ctx} model={model} dispatch={dispatch} />;
-  }
+  switch (route.t) {
+    case "login": {
+      return <ViewLoginScreen ctx={ctx} model={model} dispatch={dispatch} />;
+    }
 
-  if (route.t === "login-phone") {
-    return (
-      <AuthPhone.View
-        ctx={ctx}
-        model={model.phone}
-        dispatch={(m) => dispatch({ t: "phone", c: m })}
-      />
-    );
-  }
+    case "login-phone": {
+      return (
+        <AuthPhone.View
+          ctx={ctx}
+          model={model.phone}
+          dispatch={(m) => dispatch({ t: "phone", c: m })}
+        />
+      );
+    }
 
-  if (route.t === "login-email-link") {
-    return (
-      <AuthEmailLink.View
-        model={model.emailLink}
-        dispatch={(m) => dispatch({ t: "email-link", c: m })}
-      />
-    );
-  }
+    case "login-email-link": {
+      return (
+        <AuthEmailLink.View
+          model={model.emailLink}
+          dispatch={(m) => dispatch({ t: "email-link", c: m })}
+        />
+      );
+    }
 
-  if (route.t === "login-phone-verify") {
-    return (
-      <AuthPhoneVerify.View
-        ctx={ctx}
-        phoneNumber={route.phoneNumber}
-        model={model.phoneVerify}
-        dispatch={(m) => dispatch({ t: "phone-verify", c: m })}
-      />
-    );
+    case "login-phone-verify": {
+      return (
+        <AuthPhoneVerify.View
+          ctx={ctx}
+          phoneNumber={route.phoneNumber}
+          model={model.phoneVerify}
+          dispatch={(m) => dispatch({ t: "phone-verify", c: m })}
+        />
+      );
+    }
   }
-
-  return <ViewLoginScreen ctx={ctx} model={model} dispatch={dispatch} />;
 };
 
 const ViewLoginScreen = ({
@@ -502,19 +450,11 @@ export const ViewLogoutScreen = ({
       open
       title="Logout of Gamezilla?"
       confirmTitle="Logout"
+      onClose={ctx.back}
+      onCancel={ctx.back}
       onConfirm={() => {
         dispatch({ t: "logout" });
       }}
-      onClose={() => {
-        ctx.back();
-      }}
-      onCancel={() => {
-        ctx.back();
-      }}
     />
   );
-};
-
-export const subscriptions = (_model: ClientModel): Sub<ClientMsg> => {
-  return Sub.None;
 };

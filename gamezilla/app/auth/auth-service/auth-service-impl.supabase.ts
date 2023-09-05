@@ -1,4 +1,4 @@
-import { Err, Ok, PhoneNumber } from "gamezilla/@SHARED/core";
+import { Err, Ok, PhoneNumber, PubSub } from "gamezilla/@SHARED/core";
 import { AuthService } from "./auth-service";
 import { createClient } from "@supabase/supabase-js";
 import { UserId } from "gamezilla/app/@SHARED/data";
@@ -11,7 +11,27 @@ const SUPABASE_ANON_KEY =
 export const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 export const createAuthService = (): AuthService => {
+  const currentUserSub = PubSub.create<{ userId: UserId } | null>();
+
+  supabaseClient.auth.onAuthStateChange((event, supabaseSession) => {
+    if (!supabaseSession) {
+      currentUserSub.publish(null);
+      return;
+    }
+
+    const parsed = UserId.decode(supabaseSession?.user?.id);
+
+    if (parsed.t === "err") {
+      currentUserSub.publish(null);
+      return;
+    }
+
+    currentUserSub.publish({ userId: parsed.value });
+    return;
+  });
+
   return {
+    currentUserSub,
     getCurrentUser: async () => {
       const supabaseSession = supabaseClient.auth.session();
 
@@ -37,7 +57,6 @@ export const createAuthService = (): AuthService => {
           if (response.error) {
             return Err(response.error.message);
           }
-
           return Ok(null);
         }
       }

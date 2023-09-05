@@ -1,6 +1,7 @@
 import { Browser, Eff, Posix, Sub } from "gamezilla/@SHARED/core";
 import {
   APP_SOUND,
+  AnonymousClientCtx,
   AnonymousViewCtx,
   ClientCmd,
   ClientCtx,
@@ -12,10 +13,10 @@ import {
 import {
   IconGamepad,
   IconUserCircle,
-  LoadingScreen,
   VDom,
   cn,
 } from "gamezilla/app/@SHARED/ui";
+import { UserId } from "./@SHARED/data";
 import { Routing, Sound, Toast, Wire } from "./app-client";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./app.core";
 import { AuthClient } from "./auth";
@@ -50,7 +51,7 @@ export const init = ({
   const wire = Wire.init;
   const auth = AuthClient.init;
   const space = SpaceClient.init;
-  const profile = ProfileClient.init;
+  const profile = ProfileClient.init({ currentRoute: routing.model });
   const chat = ChatClient.init;
   const search = SearchClient.init;
   const sound = Sound.init;
@@ -62,18 +63,20 @@ export const init = ({
       wire,
       sound,
       //
+      documentVisibilityState,
+      //
       chat,
       space: space.model,
       auth: auth.model,
       search: search.model,
-      profile,
-      documentVisibilityState,
+      profile: profile.model,
     },
     eff: Eff.batch<ClientMsg>([routing.eff, Eff.t("auth", auth.eff)]),
   };
 
   const cmdList: ClientCmd<ToServer>[] = [
     ...ClientCmd.tag("space", space.cmd),
+    ...ClientCmd.tag("profile", profile.cmd),
     preloadSound(Object.values(APP_SOUND)),
   ];
 
@@ -105,6 +108,7 @@ export const update = (input: {
   eff?: Eff<ClientMsg>;
 } => {
   let acc = updateMain(input);
+
   for (const evt of acc.evt ?? []) {
     const updatedEvt = updateFromEvt({
       ...input,
@@ -144,7 +148,7 @@ const updateMain = ({
   cmd?: ClientCmd<ToServer>[];
 } => {
   const ctx = toCtx({ model, now });
-  console.log(msg);
+
   switch (msg.t) {
     case "➡️": {
       return updateFromServer({
@@ -204,21 +208,22 @@ const updateMain = ({
     }
 
     case "space": {
-      if (!ctx) {
-        return { model };
-      }
-      const updated = SpaceClient.update({
-        ctx: ctx,
-        msg: msg.c,
-        model: model.space,
-      });
+      if (UserId.is(ctx.currentUserId)) {
+        const updated = SpaceClient.update({
+          ctx: { ...ctx, currentUserId: ctx.currentUserId },
+          msg: msg.c,
+          model: model.space,
+        });
 
-      return {
-        model: { ...model, space: updated.model },
-        eff: Eff.t("space", updated.eff ?? Eff.None),
-        evt: updated.evt,
-        cmd: ClientCmd.tag("space", updated.cmd),
-      };
+        return {
+          model: { ...model, space: updated.model },
+          eff: Eff.t("space", updated.eff ?? Eff.None),
+          evt: updated.evt,
+          cmd: ClientCmd.tag("space", updated.cmd),
+        };
+      }
+
+      return { model };
     }
 
     case "profile": {
@@ -261,16 +266,23 @@ const updateMain = ({
   }
 };
 
-const toCtx = (input: { model: ClientModel; now: Posix }): ClientCtx | null => {
+const toCtx = (input: {
+  model: ClientModel;
+  now: Posix;
+}): ClientCtx | AnonymousClientCtx => {
+  const anonymousCtx: AnonymousClientCtx = {
+    profiles: input.model.profile.profiles,
+    now: input.now,
+    documentVisibilityState: input.model.documentVisibilityState,
+    currentRoute: input.model.routing,
+  };
   if (input.model.auth.currentUser.t === "logged-in") {
     return {
+      ...anonymousCtx,
       currentUserId: input.model.auth.currentUser.userId,
-      profiles: input.model.profile.profiles,
-      now: input.now,
-      documentVisibilityState: input.model.documentVisibilityState,
     };
   }
-  return null;
+  return anonymousCtx;
 };
 
 const updateFromServer = ({
@@ -327,21 +339,24 @@ const updateFromServer = ({
     }
 
     case "space": {
-      if (!ctx) {
-        return { model };
-      }
-      const updated = SpaceClient.updateFromServer({
-        ctx,
-        msg: msg.c,
-        model: model.space,
-      });
+      if (UserId.is(ctx.currentUserId)) {
+        const updated = SpaceClient.updateFromServer({
+          ctx: {
+            ...ctx,
+            currentUserId: ctx.currentUserId,
+          },
+          msg: msg.c,
+          model: model.space,
+        });
 
-      return {
-        evt: updated.evt,
-        cmd: ClientCmd.tag("space", updated.cmd),
-        model: { ...model, space: updated.model },
-        eff: Eff.t("space", updated.eff),
-      };
+        return {
+          evt: updated.evt,
+          cmd: ClientCmd.tag("space", updated.cmd),
+          model: { ...model, space: updated.model },
+          eff: Eff.t("space", updated.eff),
+        };
+      }
+      return { model };
     }
 
     case "profile": {
@@ -462,6 +477,7 @@ const updateFromEvt = ({
   const auth = AuthClient.updateFromEvt({
     model: model.auth,
     msg,
+    ctx,
   });
 
   return {
@@ -480,6 +496,7 @@ const updateFromEvt = ({
     cmd: [
       ...ClientCmd.tag("space", space.cmd),
       ...ClientCmd.tag("auth", auth.cmd),
+      ...ClientCmd.tag("profile", profile.cmd),
     ],
   };
 };
@@ -532,6 +549,7 @@ const spaceSub = (now: Posix, model: ClientModel): Sub<ClientMsg> => {
       "space",
       SpaceClient.subscriptions(
         {
+          currentRoute: model.routing,
           now,
           currentUserId: model.auth.currentUser.userId,
           profiles: model.profile.profiles,
@@ -593,6 +611,7 @@ const ViewMain = ({
           dispatch={dispatch}
           ctx={{
             now,
+            currentRoute: model.routing,
             currentUserId: model.auth.currentUser.userId,
             profiles: model.profile.profiles,
             sound: model.sound,
@@ -613,6 +632,7 @@ const ViewMain = ({
           model={model}
           ctx={{
             now,
+            currentRoute: model.routing,
             profiles: model.profile.profiles,
             sound: model.sound,
             documentVisibilityState: model.documentVisibilityState,
@@ -654,7 +674,7 @@ const ViewLoggedOut = ({
 }) => {
   if (model.routing.t === "auth") {
     return (
-      <AuthClient.ViewLoggedOut
+      <AuthClient.View
         dispatch={(m) => dispatch({ t: "auth", c: m })}
         model={model.auth}
         ctx={ctx}
@@ -663,14 +683,7 @@ const ViewLoggedOut = ({
     );
   }
 
-  return (
-    <AuthClient.ViewLoggedOut
-      dispatch={(m) => dispatch({ t: "auth", c: m })}
-      model={model.auth}
-      ctx={ctx}
-      route={{ t: "login" }}
-    />
-  );
+  return <LogoScreen />;
 };
 
 const ViewLoggedIn = ({
@@ -733,16 +746,6 @@ const ViewLoggedIn = ({
     );
   }
 
-  if (model.routing.t === "auth") {
-    return (
-      <AuthClient.ViewLoggedIn
-        dispatch={(m) => dispatch({ t: "auth", c: m })}
-        ctx={ctx}
-        model={model.auth}
-      />
-    );
-  }
-
   if (model.routing.t === "search") {
     return (
       <SearchClient.View
@@ -765,7 +768,7 @@ const ViewLoggedIn = ({
     );
   }
 
-  return <LoadingScreen />;
+  return <LogoScreen />;
 };
 
 const ViewBottomBar = ({

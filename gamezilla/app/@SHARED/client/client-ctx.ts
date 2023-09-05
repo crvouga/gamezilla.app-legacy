@@ -11,6 +11,7 @@ type Profile = {
 export type AnonymousViewCtx = {
   push: (route: Route.Route) => void;
   back: () => void;
+  currentRoute: Route.Route;
   now: Posix;
   documentVisibilityState: DocumentVisibilityState;
   profiles: { [userId: UserId]: Profile };
@@ -22,16 +23,14 @@ export type ViewCtx = AnonymousViewCtx & {
   currentUserId: UserId;
 };
 
-export type ClientCtx = {
+export type AnonymousClientCtx = {
+  currentRoute: Route.Route;
   now: Posix;
+  currentUserId?: UserId | null;
   profiles: { [userId: UserId]: Profile };
-  currentUserId: UserId;
   documentVisibilityState: DocumentVisibilityState;
 };
 
-export type AnonymousClientCtx = {
-  currentUserId?: UserId | null;
-  now: Posix;
-  profiles: { [userId: UserId]: Profile };
-  documentVisibilityState: DocumentVisibilityState;
+export type ClientCtx = AnonymousClientCtx & {
+  currentUserId: UserId;
 };

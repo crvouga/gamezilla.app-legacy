@@ -6,7 +6,7 @@ import {
   MyTextField,
   TopBar,
 } from "gamezilla/app/@SHARED/ui";
-import { ClientModel, ClientMsg } from "./profile.core";
+import { ClientModel, ClientMsg } from "../profile.core";
 
 export const ViewUpdateAvatarScreen = ({
   ctx,

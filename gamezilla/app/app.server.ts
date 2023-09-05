@@ -324,29 +324,38 @@ const updateFromEvt = async ({
   eff?: Eff<ServerMsg>;
   cmd?: ServerCmd<ToClient>[];
 }> => {
-  const spaceUpdated = await SpaceServer.updateFromEvt({
+  const space = await SpaceServer.updateFromEvt({
     ctx,
     msg,
     model: model.space,
   });
 
-  const profileUpdated = ProfileServer.updateFromEvt({
+  const profile = ProfileServer.updateFromEvt({
     ctx,
     msg,
     model: model.profile,
   });
 
+  const auth = AuthServer.updateFromEvt({
+    msg,
+    model: model.auth,
+  });
+
   return {
     model: {
       ...model,
-      space: spaceUpdated.model,
-      profile: profileUpdated.model,
+      space: space.model,
+      profile: profile.model,
+      auth: auth.model,
     },
     eff: Eff.batch<ServerMsg>([
-      Eff.t("space", spaceUpdated.eff),
-      Eff.t("profile", profileUpdated.eff),
+      Eff.t("space", space.eff),
+      Eff.t("profile", profile.eff),
     ]),
-    cmd: ServerCmd.tag("space", spaceUpdated.cmd),
+    cmd: [
+      ...(ServerCmd.tag("space", space.cmd) ?? []),
+      ...(ServerCmd.tag("auth", auth.cmd) ?? []),
+    ],
   };
 };
 

@@ -50,7 +50,7 @@ const decode = (pathname: string): Route | null => {
     }
     return { t: "profile", c: profile };
   }
-  if (pathname.startsWith("/game-space")) {
+  if (pathname.startsWith("/space")) {
     const space = decodeSpace(pathname);
     if (space === null) {
       return null;
@@ -199,20 +199,20 @@ export type RouteGameSpace =
 export const encodeSpace = (route: RouteGameSpace): string => {
   switch (route.t) {
     case "space":
-      return `/game-space/${route.spaceId}`;
+      return `/space/${route.spaceId}`;
     case "space-list":
-      return "/game-space";
+      return "/space";
   }
 };
 export const decodeSpace = (pathname: string): RouteGameSpace | null => {
-  if (pathname.startsWith("/game-space/")) {
-    const spaceId = pathname.slice("/game-space/".length);
+  if (pathname.startsWith("/space/")) {
+    const spaceId = pathname.slice("/space/".length);
     if (SpaceId.is(spaceId)) {
       return { t: "space", spaceId };
     }
     return null;
   }
-  if (pathname === "/game-space") {
+  if (pathname === "/space") {
     return { t: "space-list" };
   }
   return null;

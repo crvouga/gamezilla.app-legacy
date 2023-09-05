@@ -12,7 +12,6 @@ export type ClientModel = {
     | { t: "not-asked" }
     | { t: "loading" }
     | { t: "logged-in-client-side"; userId: UserId; name?: string }
-    | { t: "logged-out-client-side" }
     | { t: "logged-out" }
     | { t: "logged-in"; userId: UserId; name?: string };
   requests: {
@@ -47,12 +46,13 @@ export type ServerModel = {
 //
 
 type Event =
-  | { t: "client-authenticated"; userId: UserId }
-  | { t: "client-unauthenticated" };
+  | { t: "logged-in-client-side"; userId: UserId }
+  | { t: "logged-out-client-side" };
 
 export type ClientMsg =
   | Req
   | Event
+  | { t: "auth-state-changed"; userId?: UserId | null }
   | { t: "login-done"; result: Result<string, null> }
   | { t: "logout-done"; result: Result<string, null> }
   | { t: "phone"; c: AuthPhone.Msg }
@@ -63,7 +63,10 @@ export type ServerMsg = { t: "none" };
 
 export type ToServer = Req | Event;
 
-export type ToClient = Res | { t: "acknowledged"; msg: ToServer };
+export type ToClient =
+  | Res
+  | { t: "client-authenticated"; userId: UserId }
+  | { t: "client-unauthenticated" };
 
 export type Req =
   | { t: "logout" }

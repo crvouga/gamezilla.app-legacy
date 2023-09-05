@@ -1,10 +1,12 @@
-import { PhoneNumber, Result } from "gamezilla/@SHARED/core";
+import { PhoneNumber, Result, Sub } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
 
 export type AuthService = {
   logout: () => Promise<Result<string, null>>;
 
   getCurrentUser: () => Promise<Result<string, { userId: UserId } | null>>;
+
+  currentUserSub: Sub<{ userId: UserId } | null>;
 
   loginWithProvider: ({
     provider,

@@ -1,8 +1,9 @@
 import { Eff, Loading, andThen, p } from "gamezilla/@SHARED/core";
 import {
+  AnonymousClientCtx,
   ClientCmd,
-  ClientCtx,
   ClientEvt,
+  Route,
   RouteProfile,
   ViewCtx,
 } from "gamezilla/app/@SHARED/client";
@@ -29,9 +30,25 @@ import { ClientModel, ClientMsg, ToClient, ToServer } from "./profile.core";
 //
 //
 
-export const init: ClientModel = {
-  profiles: {},
-  requests: {},
+export const init = ({
+  currentRoute,
+}: {
+  currentRoute: Route;
+}): {
+  model: ClientModel;
+  cmd?: ClientCmd<ToServer>[];
+} => {
+  return p(
+    {
+      model: { profiles: {}, requests: {} },
+    },
+    andThen((model) => {
+      if (currentRoute.t === "profile" && currentRoute.c.t === "profile") {
+        return loadProfiles([currentRoute.c.userId], model);
+      }
+      return { model };
+    })
+  );
 };
 
 //
@@ -152,7 +169,7 @@ export const updateFromEvt = ({
 }: {
   evt: ClientEvt;
   model: ClientModel;
-  ctx: ClientCtx | null;
+  ctx: AnonymousClientCtx;
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
@@ -198,15 +215,13 @@ const loadProfileRoute = ({
   cmd?: ClientCmd<ToServer>[];
   eff?: Eff<ClientMsg>;
 } => {
-  if (
-    evt.t !== "route-changed" ||
-    evt.route.t !== "profile" ||
-    evt.route.c.t !== "profile"
-  ) {
-    return { model };
+  if (evt.t === "route-changed" && evt.route.t === "profile") {
+    if (evt.route.c.t === "profile") {
+      return loadProfiles([evt.route.c.userId], model);
+    }
   }
 
-  return loadProfiles([evt.route.c.userId], model);
+  return { model };
 };
 
 const loadProfiles = (
@@ -268,7 +283,7 @@ const updateUsernameDraft = ({
 }: {
   model: ClientModel;
   evt: ClientEvt;
-  ctx: ClientCtx | null;
+  ctx: AnonymousClientCtx;
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
@@ -286,7 +301,7 @@ const updateUsernameDraft = ({
     return { model };
   }
 
-  if (!ctx) {
+  if (!ctx.currentUserId) {
     return { model };
   }
 
