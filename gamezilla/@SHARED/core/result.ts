@@ -50,6 +50,10 @@ const withDefault =
     }
   };
 
+/**
+ * Combines an array of results into a single result.
+ * If any of the results are an error, the first error is returned.
+ */
 const combine = <E, A>(results: Result<E, A>[]): Result<E, A[]> => {
   return results.reduce<Result<E, A[]>>((combined, result) => {
     if (combined.t === "err") {

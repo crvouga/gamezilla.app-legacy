@@ -17,8 +17,8 @@ import {
   TopBarBackButton,
   VDom,
 } from "gamezilla/app/@SHARED/ui";
-import { ViewProfileScreen } from "./profile-client-view-profile-screen";
-import { ViewUpdateAvatarScreen } from "./profile-client-view-update-avatar-screen";
+import { ViewProfileScreen } from "./profile-client/profile-client-view-profile-screen";
+import { ViewUpdateAvatarScreen } from "./profile-client/profile-client-view-update-avatar-screen";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./profile.core";
 
 //

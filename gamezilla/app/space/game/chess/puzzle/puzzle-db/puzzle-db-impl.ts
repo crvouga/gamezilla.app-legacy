@@ -7,7 +7,7 @@ import {
   has,
   is,
   num,
-  obj,
+  isObj,
   str,
   to,
   tuple,
@@ -86,7 +86,7 @@ const isInt = is(toInt);
 
 export const toPuzzleRow = (x: unknown): PuzzleRow | null => {
   if (
-    obj(x) &&
+    isObj(x) &&
     has(x, "puzzle_id", str) &&
     has(x, "rating", isInt) &&
     has(x, "rating_deviation", isInt) &&
@@ -118,7 +118,7 @@ export const toPuzzleInteractionRow = (
   x: unknown
 ): PuzzleInteractionRow | null => {
   if (
-    obj(x) &&
+    isObj(x) &&
     has(x, "id", str) &&
     has(x, "puzzle_id", str) &&
     has(x, "user_id", str) &&
@@ -138,7 +138,7 @@ export type PuzzleQueryJSON = {
 };
 
 const toPuzzleQueryJSON = (x: unknown): PuzzleQueryJSON | null => {
-  if (obj(x) && has(x, "ratingRange", is(toRatingRange))) {
+  if (isObj(x) && has(x, "ratingRange", is(toRatingRange))) {
     return x;
   }
   return null;
@@ -146,7 +146,7 @@ const toPuzzleQueryJSON = (x: unknown): PuzzleQueryJSON | null => {
 
 export const toPuzzleProfileRow = (x: unknown): PuzzleProfileRow | null => {
   if (
-    obj(x) &&
+    isObj(x) &&
     has(x, "id", str) &&
     has(x, "user_id", str) &&
     has(x, "elo_rating", isInt) &&

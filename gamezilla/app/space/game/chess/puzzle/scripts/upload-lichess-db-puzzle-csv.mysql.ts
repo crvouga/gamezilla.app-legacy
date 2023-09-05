@@ -1,4 +1,4 @@
-import { has, obj, str } from "gamezilla/@SHARED/core";
+import { has, isObj, str } from "gamezilla/@SHARED/core";
 import { DbConnSql } from "gamezilla/app/@SHARED/server";
 import { PuzzleDb, PuzzleRow } from "../puzzle-db/puzzle-db-impl";
 
@@ -25,7 +25,7 @@ export type LichessRow = {
 
 export const toLichessRow = (x: unknown): LichessRow | null => {
   if (
-    obj(x) &&
+    isObj(x) &&
     has(x, "PuzzleId", str) &&
     has(x, "FEN", str) &&
     has(x, "Moves", str) &&

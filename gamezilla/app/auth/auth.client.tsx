@@ -1,6 +1,8 @@
-import { Session as SupabaseSession } from "@supabase/supabase-js";
 import {
-  Browser,
+  Session as SupabaseSession,
+  createClient,
+} from "@supabase/supabase-js";
+import {
   Eff,
   Err,
   NotAsked,
@@ -21,7 +23,6 @@ import {
   sendToServer,
 } from "gamezilla/app/@SHARED/client";
 import { UserId } from "gamezilla/app/@SHARED/data";
-import { supabaseClient } from "gamezilla/app/@SHARED/third-party-services";
 import {
   Button,
   ConformationDialog,
@@ -521,6 +522,15 @@ export const subscriptions = (_model: ClientModel): Sub<ClientMsg> => {
 //
 //
 //
+
+const SUPABASE_URL = "https://ldxpcprlgecjvqwzuxgv.supabase.co";
+
+const SUPABASE_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYzNzA0MDQ5NywiZXhwIjoxOTUyNjE2NDk3fQ.ReI8CpIFbLB9Q53Az7CDBIyrn_o1JeGhPoZXdqx8Ac4";
+
+export type Session = SupabaseSession;
+
+export const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 export type Provider = "Google";
 

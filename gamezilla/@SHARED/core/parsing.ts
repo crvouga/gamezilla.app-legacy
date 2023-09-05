@@ -14,7 +14,7 @@ export const has = <T extends Record<string, unknown>, K extends keyof T, V>(
   return key in obj && checkType(obj[key]);
 };
 
-export const obj = (item: unknown): item is Record<string, unknown> => {
+export const isObj = (item: unknown): item is Record<string, unknown> => {
   return typeof item === "object" && item !== null && !Array.isArray(item);
 };
 

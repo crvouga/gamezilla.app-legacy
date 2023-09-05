@@ -331,6 +331,7 @@ const updateFromEvt = async ({
   });
 
   const profileUpdated = ProfileServer.updateFromEvt({
+    ctx,
     msg,
     model: model.profile,
   });
