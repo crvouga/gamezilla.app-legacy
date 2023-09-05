@@ -1,19 +1,4 @@
-import {
-  Session as SupabaseSession,
-  createClient,
-} from "@supabase/supabase-js";
-import {
-  Eff,
-  Err,
-  NotAsked,
-  Ok,
-  PhoneNumber,
-  RemoteResult,
-  Result,
-  Sub,
-  Task,
-  p,
-} from "gamezilla/@SHARED/core";
+import { Eff, NotAsked, RemoteResult, Sub } from "gamezilla/@SHARED/core";
 import {
   AnonymousViewCtx,
   ClientCmd,
@@ -22,7 +7,6 @@ import {
   RouteAuth,
   sendToServer,
 } from "gamezilla/app/@SHARED/client";
-import { UserId } from "gamezilla/app/@SHARED/data";
 import {
   Button,
   ConformationDialog,
@@ -34,7 +18,17 @@ import {
   cn,
 } from "gamezilla/app/@SHARED/ui";
 import { AuthEmailLink, AuthPhone, AuthPhoneVerify } from "./auth-client";
+import { AuthService, createAuthService } from "./auth-service";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./auth.core";
+
+//
+//
+//
+//
+//
+//
+
+const authService = createAuthService();
 
 //
 //
@@ -55,7 +49,7 @@ export const init: { model: ClientModel; eff?: Eff<ClientMsg> } = {
     emailLink,
     currentUser: { t: "loading" },
   },
-  eff: loadCurrentUser,
+  eff: loadCurrentUser(authService),
 };
 
 //
@@ -90,17 +84,19 @@ export const update = ({
             "login-with-google": RemoteResult.Loading,
           },
         },
-        eff: p(
-          loginWithProvider({ provider: "Google" }),
-          Eff.perform((result) => ({ t: "login-done", result }))
-        ),
+        eff: async (dispatch) => {
+          const loggedIn = await authService.loginWithProvider({
+            provider: "google",
+          });
+          dispatch({ t: "login-done", result: loggedIn });
+        },
       };
     }
 
     case "login-done": {
       return {
         model,
-        eff: loadCurrentUser,
+        eff: loadCurrentUser(authService),
       };
     }
 
@@ -112,10 +108,10 @@ export const update = ({
             t: "loading",
           },
         },
-        eff: p(
-          logout,
-          Eff.perform((result) => ({ t: "logout-done", result }))
-        ),
+        eff: async (dispatch) => {
+          const loggedOut = await authService.logout();
+          dispatch({ t: "logout-done", result: loggedOut });
+        },
       };
     }
 
@@ -134,7 +130,7 @@ export const update = ({
       const updated = AuthPhone.update({
         msg: msg.c,
         model: model.phone,
-        sendCode,
+        authService: authService,
       });
       return {
         cmd: updated.cmd,
@@ -152,7 +148,7 @@ export const update = ({
         msg: msg.c,
         model: model.phoneVerify,
         phoneNumber: route.c.phoneNumber,
-        verifyCode,
+        authService: authService,
       });
       return {
         ...updated,
@@ -166,7 +162,9 @@ export const update = ({
         cmd: updated.cmd,
         eff: Eff.batch([
           Eff.t("phone-verify", updated.eff),
-          updated.shouldLoadCurrentUser ? loadCurrentUser : Eff.None,
+          updated.shouldLoadCurrentUser
+            ? loadCurrentUser(authService)
+            : Eff.None,
         ]),
       };
     }
@@ -175,8 +173,9 @@ export const update = ({
       const updated = AuthEmailLink.update({
         msg: msg.c,
         model: model.emailLink,
-        sendEmailLink,
+        authService: authService,
       });
+
       return {
         model: { ...model, emailLink: updated.model },
         eff: Eff.t("email-link", updated.eff),
@@ -307,6 +306,30 @@ export const updateFromServer = ({
     }
   }
 };
+
+//
+//
+//
+//
+//
+
+function loadCurrentUser(authService: AuthService): Eff<ClientMsg> {
+  return async (dispatch) => {
+    await new Promise((r) => setTimeout(r, 100));
+    const got = await authService.getCurrentUser();
+    if (got.t === "err") {
+      dispatch({ t: "client-unauthenticated" });
+      return;
+    }
+    const user = got.value;
+    if (!user) {
+      dispatch({ t: "client-unauthenticated" });
+      return;
+    }
+    dispatch({ t: "client-authenticated", userId: user.userId });
+    return;
+  };
+}
 
 //
 //
@@ -476,137 +499,6 @@ export const ViewLogoutScreen = ({
   );
 };
 
-//
-//
-//
-// Subscriptions
-//
-//
-//
-
-const fromSupabaseSession = (auth: SupabaseSession | null): ClientMsg => {
-  const userId = UserId.decode(auth?.user?.id);
-
-  if (userId.t === "ok") {
-    return {
-      t: "client-authenticated",
-      userId: userId.value,
-    };
-  }
-
-  return {
-    t: "client-unauthenticated",
-  };
-};
-
-function loadCurrentUser(dispatch: (m: ClientMsg) => void) {
-  setTimeout(() => {
-    const supabaseSession = supabaseClient.auth.session();
-    const msg = fromSupabaseSession(supabaseSession);
-    dispatch(msg);
-  }, 1_000);
-}
-//
-//
-//
-//
-//
-
 export const subscriptions = (_model: ClientModel): Sub<ClientMsg> => {
   return Sub.None;
-};
-
-//
-//
-//
-//
-//
-//
-
-const SUPABASE_URL = "https://ldxpcprlgecjvqwzuxgv.supabase.co";
-
-const SUPABASE_ANON_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYzNzA0MDQ5NywiZXhwIjoxOTUyNjE2NDk3fQ.ReI8CpIFbLB9Q53Az7CDBIyrn_o1JeGhPoZXdqx8Ac4";
-
-export type Session = SupabaseSession;
-
-export const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-export type Provider = "Google";
-
-export const loginWithProvider =
-  ({ provider }: { provider: Provider }): Task<Result<string, null>> =>
-  async () => {
-    switch (provider) {
-      case "Google": {
-        const response = await supabaseClient.auth.signIn({
-          provider: "google",
-        });
-
-        if (response.error) {
-          return Err(response.error.message);
-        }
-
-        return Ok(null);
-      }
-    }
-  };
-
-const sendCode =
-  ({ phoneNumber }: { phoneNumber: PhoneNumber }): Task<Result<string, null>> =>
-  async () => {
-    const response = await supabaseClient.auth.signIn({
-      phone: PhoneNumber.toString(phoneNumber),
-    });
-
-    if (response.error) {
-      return Err(response.error.message);
-    }
-
-    return Ok(null);
-  };
-
-const verifyCode =
-  ({
-    code,
-    phoneNumber,
-  }: {
-    code: string;
-    phoneNumber: PhoneNumber;
-  }): Task<Result<string, null>> =>
-  async () => {
-    const response = await supabaseClient.auth.verifyOTP({
-      phone: PhoneNumber.toString(phoneNumber),
-      token: code,
-    });
-
-    if (response.error) {
-      return Err(response.error.message);
-    }
-
-    return Ok(null);
-  };
-
-const sendEmailLink =
-  ({ emailAddress }: { emailAddress: string }): Task<Result<string, null>> =>
-  async () => {
-    const response = await supabaseClient.auth.signIn({
-      email: emailAddress,
-    });
-
-    if (response.error) {
-      return Err(response.error.message);
-    }
-
-    return Ok(null);
-  };
-
-const logout: Task<Result<string, null>> = async () => {
-  const { error } = await supabaseClient.auth.signOut();
-
-  if (error) {
-    return Err(error.message);
-  }
-
-  return Ok(null);
 };

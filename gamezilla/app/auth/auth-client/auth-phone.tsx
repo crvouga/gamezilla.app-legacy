@@ -15,6 +15,7 @@ import {
   TopBar,
   TopBarBackButton,
 } from "gamezilla/app/@SHARED/ui";
+import { AuthService } from "../auth-service/auth-service";
 
 //
 //
@@ -83,11 +84,11 @@ export type Msg =
 export const update = ({
   msg,
   model,
-  sendCode,
+  authService,
 }: {
   msg: Msg;
   model: Model;
-  sendCode: (input: { phoneNumber: PhoneNumber }) => Task<Result<string, null>>;
+  authService: AuthService;
 }): {
   model: Model;
   eff?: Eff<Msg>;
@@ -109,12 +110,10 @@ export const update = ({
 
       return {
         model: { ...model, submission: { type: "loading" } },
-        eff: p(
-          sendCode({ phoneNumber: phoneNumber }),
-          Eff.perform(
-            (result): Msg => ({ t: "send-code-done", phoneNumber, result })
-          )
-        ),
+        eff: async (dispatch) => {
+          const sent = await authService.sendCode({ phoneNumber: phoneNumber });
+          dispatch({ t: "send-code-done", phoneNumber, result: sent });
+        },
       };
     }
 

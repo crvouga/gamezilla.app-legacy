@@ -13,6 +13,7 @@ import {
   TopBar,
   TopBarBackButton,
 } from "gamezilla/app/@SHARED/ui";
+import { AuthService } from "../auth-service/auth-service";
 
 //
 //
@@ -54,13 +55,11 @@ export type Msg =
 export const update = ({
   msg,
   model,
-  sendEmailLink,
+  authService,
 }: {
   msg: Msg;
   model: Model;
-  sendEmailLink: (input: {
-    emailAddress: string;
-  }) => Task<Result<string, null>>;
+  authService: AuthService;
 }): {
   model: Model;
   eff?: Eff<Msg>;
@@ -117,10 +116,12 @@ export const update = ({
           sentToEmailAddress: model.emailAddress,
         },
       },
-      eff: p(
-        sendEmailLink({ emailAddress: model.emailAddress }),
-        Eff.perform((result) => ({ t: "login-done", result }))
-      ),
+      eff: async (dispatch) => {
+        const sent = await authService.sendEmailLink({
+          emailAddress: model.emailAddress,
+        });
+        dispatch({ t: "login-done", result: sent });
+      },
     };
   }
 
