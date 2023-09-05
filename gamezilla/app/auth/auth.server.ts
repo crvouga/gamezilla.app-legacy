@@ -1,12 +1,16 @@
-import { Eff, dissoc } from "gamezilla/@SHARED/core";
 import {
   AnonymousReqCtx,
   ServerCmd,
   ServerEvt,
-  sendBack,
   sendToClient,
 } from "gamezilla/app/@SHARED/server";
-import { ServerModel, ServerMsg, ToClient, ToServer } from "./auth.core";
+import {
+  ServerModel,
+  ServerMsg,
+  SocialLoginState,
+  ToClient,
+  ToServer,
+} from "./auth.core";
 
 //
 //
@@ -16,9 +20,11 @@ import { ServerModel, ServerMsg, ToClient, ToServer } from "./auth.core";
 //
 //
 
-export type Model = ServerModel;
-
-export const init: Model = { sessions: {}, verifications: {} };
+export const init: ServerModel = {
+  sessions: {},
+  socialLogin: {},
+  verifications: {},
+};
 
 //
 //
@@ -28,15 +34,13 @@ export const init: Model = { sessions: {}, verifications: {} };
 //
 //
 
-export type Msg = ServerMsg;
-
 export const update = ({
   model,
 }: {
-  msg: Msg;
-  model: Model;
+  msg: ServerMsg;
+  model: ServerModel;
 }): {
-  model: Model;
+  model: ServerModel;
 } => {
   return { model };
 };
@@ -48,37 +52,87 @@ export const updateFromClient = ({
 }: {
   ctx: AnonymousReqCtx;
   msg: ToServer;
-  model: Model;
+  model: ServerModel;
 }): {
-  model: Model;
+  model: ServerModel;
   evt?: ServerEvt[];
   cmd?: ServerCmd<ToClient>[];
 } => {
   switch (msg.t) {
-    case "logged-in-client-side": {
+    case "started-social-login": {
       return {
         model: {
           ...model,
-          sessions: {
-            ...model.sessions,
+          socialLogin: {
+            ...model.socialLogin,
             [ctx.sessionId]: {
               sessionId: ctx.sessionId,
-              userId: msg.userId,
+              t: "in-progress",
             },
           },
         },
+      };
+    }
+
+    case "got-social-login-result": {
+      const socialLogin = model.socialLogin[ctx.sessionId];
+      if (!socialLogin) {
+        return { model };
+      }
+
+      const userId = msg.result.t === "ok" ? msg.result.value : null;
+
+      const socialLoginNew: SocialLoginState = {
+        t: "done",
+        sessionId: ctx.sessionId,
+        userId: userId,
+      };
+      const socialLoginsNew = {
+        ...model.socialLogin,
+        [socialLoginNew.sessionId]: socialLoginNew,
+      };
+
+      if (userId) {
+        const sessionsNew = {
+          ...model.sessions,
+          [ctx.sessionId]: {
+            sessionId: ctx.sessionId,
+            userId,
+          },
+        };
+        return {
+          model: {
+            ...model,
+            socialLogin: socialLoginsNew,
+            sessions: sessionsNew,
+          },
+          evt: [
+            {
+              t: "client-authenticated",
+              clientId: ctx.clientId,
+              sessionId: ctx.sessionId,
+              userId,
+            },
+          ],
+        };
+      }
+
+      return {
+        model: {
+          ...model,
+          socialLogin: socialLoginsNew,
+        },
         evt: [
           {
-            t: "client-authenticated",
+            t: "client-unauthenticated",
             clientId: ctx.clientId,
-            userId: msg.userId,
             sessionId: ctx.sessionId,
           },
         ],
       };
     }
 
-    case "logged-out-client-side": {
+    case "logout": {
       const sessionsNew = { ...model.sessions };
       delete sessionsNew[ctx.sessionId];
       return {
@@ -95,9 +149,6 @@ export const updateFromClient = ({
         ],
       };
     }
-    default: {
-      return { model };
-    }
   }
 };
 
@@ -106,14 +157,48 @@ export const updateFromEvt = ({
   model,
 }: {
   msg: ServerEvt;
-  model: Model;
+  model: ServerModel;
 }): {
-  model: Model;
+  model: ServerModel;
   cmd?: ServerCmd<ToClient>[];
 } => {
   switch (evt.t) {
-    case "client-authenticated":
     case "client-connected": {
+      const socialLoginState = model.socialLogin[evt.sessionId];
+
+      if (socialLoginState?.t === "in-progress") {
+        return {
+          model,
+          cmd: [sendToClient([evt.clientId], { t: "get-social-login-result" })],
+        };
+      }
+
+      const session = model.sessions[evt.sessionId];
+      if (!session) {
+        return {
+          model,
+          cmd: [sendToClient([evt.clientId], { t: "client-unauthenticated" })],
+        };
+      }
+
+      const userId = session.userId;
+
+      if (!userId) {
+        return {
+          model,
+          cmd: [sendToClient([evt.clientId], { t: "client-unauthenticated" })],
+        };
+      }
+
+      return {
+        model,
+        cmd: [
+          sendToClient([evt.clientId], { t: "client-authenticated", userId }),
+        ],
+      };
+    }
+
+    case "client-authenticated": {
       const session = model.sessions[evt.sessionId];
       if (!session) {
         return {

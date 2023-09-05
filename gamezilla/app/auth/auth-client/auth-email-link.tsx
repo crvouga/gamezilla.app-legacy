@@ -1,10 +1,5 @@
-import { Eff, Result, Task, exhaustive, p } from "gamezilla/@SHARED/core";
-import {
-  ClientCmd,
-  ClientEvt,
-  RouteCmd,
-  ToastCmd,
-} from "gamezilla/app/@SHARED/client";
+import { Eff, Result, exhaustive } from "gamezilla/@SHARED/core";
+import { RouteCmd } from "gamezilla/app/@SHARED/client";
 import {
   AlertError,
   AlertSuccess,
@@ -13,7 +8,7 @@ import {
   TopBar,
   TopBarBackButton,
 } from "gamezilla/app/@SHARED/ui";
-import { AuthService } from "../auth-service/auth-service";
+import { AuthService } from "../auth-service";
 
 //
 //

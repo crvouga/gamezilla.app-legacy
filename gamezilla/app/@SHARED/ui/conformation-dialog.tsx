@@ -26,7 +26,12 @@ export const ConformationDialog = ({
         "absolute left-0 top-0 grid h-full w-full place-items-center",
         open ? "block" : "hidden"
       )}
-      onClick={onClose}>
+      onClick={(event) => {
+        if (event.target !== event.currentTarget) {
+          return;
+        }
+        onClose();
+      }}>
       <div className="flex w-80 flex-col gap-6 rounded-lg bg-neutral-900 p-6">
         <p className="text-center text-xl font-semibold">{title}</p>
 
@@ -44,7 +49,10 @@ export const ConformationDialog = ({
           <Button
             variant="contained"
             color="danger"
-            onClick={onConfirm}
+            onClick={(event) => {
+              event.stopPropagation();
+              onConfirm();
+            }}
             className="flex-1"
             text={confirmTitle}
           />

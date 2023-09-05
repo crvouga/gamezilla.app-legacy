@@ -116,7 +116,7 @@ const cmdToEff = (
         for (const clientId of cmd.clientIds) {
           toClientMsgs[clientId] = {
             clientId,
-            msgs: [...(toClientMsgs[clientId]?.msgs ?? []), cmd.msg],
+            msgs: [cmd.msg, ...(toClientMsgs[clientId]?.msgs ?? [])],
           };
         }
         break;
@@ -157,7 +157,7 @@ const cmdToEff = (
         for (const clientId of clientIds) {
           toClientMsgs[clientId] = {
             clientId,
-            msgs: [...(toClientMsgs[clientId]?.msgs ?? []), cmd.msg],
+            msgs: [cmd.msg, ...(toClientMsgs[clientId]?.msgs ?? [])],
           };
         }
 

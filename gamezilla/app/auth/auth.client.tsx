@@ -1,4 +1,4 @@
-import { Eff, NotAsked, RemoteResult, Sub } from "gamezilla/@SHARED/core";
+import { Eff, Loading, NotAsked, Sub } from "gamezilla/@SHARED/core";
 import {
   AnonymousClientCtx,
   AnonymousViewCtx,
@@ -19,8 +19,7 @@ import {
   LoadingScreen,
   cn,
 } from "gamezilla/app/@SHARED/ui";
-import { AuthEmailLink, AuthPhone, AuthPhoneVerify } from "./auth-client";
-import { AuthService, createAuthService } from "./auth-service";
+import { createAuthenticator } from "./auth-client-authenticator/authenticator-impl.supabase";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./auth.core";
 
 //
@@ -30,7 +29,8 @@ import { ClientModel, ClientMsg, ToClient, ToServer } from "./auth.core";
 //
 //
 
-const authService = createAuthService();
+// const authService = createAuthService();
+const authenticator = createAuthenticator();
 
 //
 //
@@ -40,18 +40,12 @@ const authService = createAuthService();
 //
 //
 
-const phone = AuthPhone.init;
-const phoneVerify = AuthPhoneVerify.init;
-const emailLink = AuthEmailLink.init;
 export const init: { model: ClientModel; eff?: Eff<ClientMsg> } = {
   model: {
-    requests: {},
-    phone: phone.model,
-    phoneVerify: phoneVerify.model,
-    emailLink,
     currentUser: { t: "loading" },
+    loginWithGoogle: NotAsked,
+    logout: NotAsked,
   },
-  // eff: loadCurrentUser(authService),
 };
 
 //
@@ -65,7 +59,6 @@ export const init: { model: ClientModel; eff?: Eff<ClientMsg> } = {
 export const update = ({
   msg,
   model,
-  route,
 }: {
   route: Route;
   msg: ClientMsg;
@@ -81,23 +74,14 @@ export const update = ({
       return {
         model: {
           ...model,
-          requests: {
-            ...model.requests,
-            "login-with-google": RemoteResult.Loading,
-          },
+          loginWithGoogle: Loading,
         },
-        eff: async (dispatch) => {
-          const loggedIn = await authService.loginWithProvider({
+        cmd: [sendToServer({ t: "started-social-login" })],
+        eff: async () => {
+          await authenticator.startSocialLogin({
             provider: "google",
           });
-          dispatch({ t: "login-done", result: loggedIn });
         },
-      };
-    }
-
-    case "login-done": {
-      return {
-        model,
       };
     }
 
@@ -109,89 +93,11 @@ export const update = ({
             t: "loading",
           },
         },
-        eff: async (dispatch) => {
-          const loggedOut = await authService.logout();
-          dispatch({ t: "logout-done", result: loggedOut });
-        },
+        cmd: [sendToServer({ t: "logout" })],
       };
     }
 
-    case "logout-done": {
-      return {
-        model: {
-          ...model,
-          currentUser: { t: "loading" },
-        },
-        cmd: [sendToServer({ t: "logged-out-client-side" })],
-      };
-    }
-
-    case "phone": {
-      const updated = AuthPhone.update({
-        msg: msg.c,
-        model: model.phone,
-        authService: authService,
-      });
-      return {
-        cmd: updated.cmd,
-        model: { ...model, phone: updated.model },
-        eff: Eff.t("phone", updated.eff),
-      };
-    }
-
-    case "phone-verify": {
-      if (!(route.t === "auth" && route.c.t === "login-phone-verify")) {
-        return { model };
-      }
-
-      const updated = AuthPhoneVerify.update({
-        msg: msg.c,
-        model: model.phoneVerify,
-        phoneNumber: route.c.phoneNumber,
-        authService: authService,
-      });
-
-      return {
-        ...updated,
-        model: {
-          ...model,
-          phoneVerify: updated.model,
-        },
-        cmd: updated.cmd,
-        eff: Eff.t("phone-verify", updated.eff),
-      };
-    }
-
-    case "email-link": {
-      const updated = AuthEmailLink.update({
-        msg: msg.c,
-        model: model.emailLink,
-        authService: authService,
-      });
-
-      return {
-        model: { ...model, emailLink: updated.model },
-        eff: Eff.t("email-link", updated.eff),
-        cmd: updated.cmd,
-      };
-    }
-
-    case "auth-state-changed": {
-      if (msg.userId) {
-        return {
-          model,
-          cmd: [
-            sendToServer({ t: "logged-in-client-side", userId: msg.userId }),
-          ],
-        };
-      }
-      return {
-        model,
-        cmd: [sendToServer({ t: "logged-out-client-side" })],
-      };
-    }
-
-    default: {
+    case "got-social-login-result": {
       return {
         model,
         cmd: [sendToServer(msg)],
@@ -214,30 +120,20 @@ export const updateFromEvt = ({
   cmd?: ClientCmd<ToServer>[];
 } => {
   switch (msg.t) {
-    case "document-visibility-changed": {
-      if (
-        msg.state === "hidden" &&
-        model.requests["login-with-google"]?.t === "loading"
-      ) {
+    case "client-unauthenticated": {
+      if (ctx.currentRoute.t === "auth") {
         return {
           model: {
             ...model,
-            requests: {
-              ...model.requests,
-              "login-with-google": NotAsked,
-            },
+            currentUser: { t: "logged-out" },
           },
         };
       }
-      return { model };
-    }
-
-    case "client-unauthenticated": {
-      if (ctx.currentRoute.t === "auth") {
-        return { model };
-      }
       return {
-        model,
+        model: {
+          ...model,
+          currentUser: { t: "logged-out" },
+        },
         cmd: [replaceRoute({ t: "auth", c: { t: "login" } })],
       };
     }
@@ -245,12 +141,20 @@ export const updateFromEvt = ({
     case "client-authenticated": {
       if (ctx.currentRoute.t === "auth") {
         return {
-          model,
+          model: {
+            ...model,
+            currentUser: { t: "logged-in", userId: msg.userId },
+          },
           cmd: [replaceRoute({ t: "space", c: { t: "space-list" } })],
         };
       }
 
-      return { model };
+      return {
+        model: {
+          ...model,
+          currentUser: { t: "logged-in", userId: msg.userId },
+        },
+      };
     }
 
     default: {
@@ -271,6 +175,15 @@ export const updateFromServer = ({
   evt?: ClientEvt[];
 } => {
   switch (msg.t) {
+    case "get-social-login-result": {
+      return {
+        model,
+        eff: async (dispatch) => {
+          const result = await authenticator.getSocialLoginResult();
+          dispatch({ t: "got-social-login-result", result });
+        },
+      };
+    }
     case "client-unauthenticated": {
       return {
         model: {
@@ -302,9 +215,7 @@ export const updateFromServer = ({
 //
 
 export const subscriptions = (_model: ClientModel): Sub<ClientMsg> => {
-  return Sub.map(authService.currentUserSub, (currentUser): ClientMsg => {
-    return { t: "auth-state-changed", userId: currentUser?.userId ?? null };
-  });
+  return Sub.None;
 };
 
 //
@@ -326,41 +237,7 @@ export const View = ({
   dispatch: (m: ClientMsg) => void;
   ctx: AnonymousViewCtx;
 }) => {
-  switch (route.t) {
-    case "login": {
-      return <ViewLoginScreen ctx={ctx} model={model} dispatch={dispatch} />;
-    }
-
-    case "login-phone": {
-      return (
-        <AuthPhone.View
-          ctx={ctx}
-          model={model.phone}
-          dispatch={(m) => dispatch({ t: "phone", c: m })}
-        />
-      );
-    }
-
-    case "login-email-link": {
-      return (
-        <AuthEmailLink.View
-          model={model.emailLink}
-          dispatch={(m) => dispatch({ t: "email-link", c: m })}
-        />
-      );
-    }
-
-    case "login-phone-verify": {
-      return (
-        <AuthPhoneVerify.View
-          ctx={ctx}
-          phoneNumber={route.phoneNumber}
-          model={model.phoneVerify}
-          dispatch={(m) => dispatch({ t: "phone-verify", c: m })}
-        />
-      );
-    }
-  }
+  return <ViewLoginScreen ctx={ctx} model={model} dispatch={dispatch} />;
 };
 
 const ViewLoginScreen = ({
@@ -372,7 +249,7 @@ const ViewLoginScreen = ({
   model: ClientModel;
   dispatch: (msg: ClientMsg) => void;
 }) => {
-  const isLoading = model.requests["login-with-google"]?.t === "loading";
+  const isLoading = model.loginWithGoogle?.t === "loading";
   return (
     <div className="relative flex h-full w-full flex-1 flex-col">
       <LoadingBar
@@ -441,7 +318,7 @@ export const ViewLogoutScreen = ({
   model: ClientModel;
   dispatch: (msg: ClientMsg) => void;
 }) => {
-  if (model.requests.logout?.t === "loading") {
+  if (model.logout?.t === "loading") {
     return <LoadingScreen />;
   }
 

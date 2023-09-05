@@ -1,26 +1,25 @@
-import {
-  PhoneNumber,
-  RemoteResult,
-  Result,
-  SessionId,
-} from "gamezilla/@SHARED/core";
+import { PhoneNumber, RemoteResult, SessionId } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
-import { AuthEmailLink, AuthPhone, AuthPhoneVerify } from "./auth-client";
 
 export type ClientModel = {
+  loginWithGoogle: RemoteResult<string, null>;
+  logout: RemoteResult<string, null>;
   currentUser:
-    | { t: "not-asked" }
     | { t: "loading" }
-    | { t: "logged-in-client-side"; userId: UserId; name?: string }
     | { t: "logged-out" }
     | { t: "logged-in"; userId: UserId; name?: string };
-  requests: {
-    [key in Req["t"]]?: RemoteResult<string, null>;
-  };
-  phone: AuthPhone.Model;
-  phoneVerify: AuthPhoneVerify.Model;
-  emailLink: AuthEmailLink.Model;
 };
+
+export type SocialLoginState =
+  | {
+      t: "in-progress";
+      sessionId: SessionId;
+    }
+  | {
+      t: "done";
+      sessionId: SessionId;
+      userId: UserId | null;
+    };
 
 export type ServerModel = {
   sessions: {
@@ -28,6 +27,10 @@ export type ServerModel = {
       sessionId: SessionId;
       userId: UserId;
     };
+  };
+
+  socialLogin: {
+    [sessionId: SessionId]: SocialLoginState;
   };
 
   verifications: {
@@ -45,33 +48,19 @@ export type ServerModel = {
 //
 //
 
-type Event =
-  | { t: "logged-in-client-side"; userId: UserId }
-  | { t: "logged-out-client-side" };
-
 export type ClientMsg =
-  | Req
-  | Event
-  | { t: "auth-state-changed"; userId?: UserId | null }
-  | { t: "login-done"; result: Result<string, null> }
-  | { t: "logout-done"; result: Result<string, null> }
-  | { t: "phone"; c: AuthPhone.Msg }
-  | { t: "phone-verify"; c: AuthPhoneVerify.Msg }
-  | { t: "email-link"; c: AuthEmailLink.Msg };
-
-export type ServerMsg = { t: "none" };
-
-export type ToServer = Req | Event;
-
-export type ToClient =
-  | Res
-  | { t: "client-authenticated"; userId: UserId }
-  | { t: "client-unauthenticated" };
-
-export type Req =
   | { t: "logout" }
   | { t: "login-with-google" }
-  | { t: "send-code"; phoneNumber: PhoneNumber }
-  | { t: "verify-code"; phoneNumber: PhoneNumber; code: number };
+  | { t: "got-social-login-result"; result: RemoteResult<string, UserId> };
 
-export type Res = Req & { result: Result<string, null> };
+export type ServerMsg = { t: null };
+
+export type ToServer =
+  | { t: "logout" }
+  | { t: "started-social-login" }
+  | { t: "got-social-login-result"; result: RemoteResult<string, UserId> };
+
+export type ToClient =
+  | { t: "client-authenticated"; userId: UserId }
+  | { t: "client-unauthenticated" }
+  | { t: "get-social-login-result" };
