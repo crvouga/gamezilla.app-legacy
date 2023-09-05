@@ -585,52 +585,54 @@ const ViewMain = ({
   model: ClientModel;
   dispatch: (msg: ClientMsg) => void;
 }) => {
-  if (
-    model.auth.currentUser.t === "loading" ||
-    model.auth.currentUser.t === "not-asked"
-  ) {
-    return <LogoScreen />;
-  }
+  switch (model.auth.currentUser.t) {
+    case "logged-in": {
+      return (
+        <ViewLoggedIn
+          model={model}
+          dispatch={dispatch}
+          ctx={{
+            now,
+            currentUserId: model.auth.currentUser.userId,
+            profiles: model.profile.profiles,
+            sound: model.sound,
+            documentVisibilityState: model.documentVisibilityState,
+            toggleSound: () =>
+              dispatch({ t: "sound", c: { t: "toggle-mute" } }),
+            push: (route) =>
+              dispatch({ t: "routing", c: { t: "clicked-link", route } }),
+            back: () => dispatch({ t: "routing", c: { t: "clicked-back" } }),
+          }}
+        />
+      );
+    }
+    case "logged-out": {
+      return (
+        <ViewLoggedOut
+          dispatch={dispatch}
+          model={model}
+          ctx={{
+            now,
+            profiles: model.profile.profiles,
+            sound: model.sound,
+            documentVisibilityState: model.documentVisibilityState,
+            toggleSound: () =>
+              dispatch({ t: "sound", c: { t: "toggle-mute" } }),
+            back: () => dispatch({ t: "routing", c: { t: "clicked-back" } }),
+            push: (route) =>
+              dispatch({
+                t: "routing",
+                c: { t: "clicked-link", route },
+              }),
+          }}
+        />
+      );
+    }
 
-  if (model.auth.currentUser.t === "logged-out") {
-    return (
-      <ViewLoggedOut
-        dispatch={dispatch}
-        model={model}
-        ctx={{
-          now,
-          profiles: model.profile.profiles,
-          sound: model.sound,
-          documentVisibilityState: model.documentVisibilityState,
-          toggleSound: () => dispatch({ t: "sound", c: { t: "toggle-mute" } }),
-          back: () => dispatch({ t: "routing", c: { t: "clicked-back" } }),
-          push: (route) =>
-            dispatch({
-              t: "routing",
-              c: { t: "clicked-link", route },
-            }),
-        }}
-      />
-    );
+    default: {
+      return <LogoScreen />;
+    }
   }
-
-  return (
-    <ViewLoggedIn
-      model={model}
-      dispatch={dispatch}
-      ctx={{
-        now,
-        currentUserId: model.auth.currentUser.userId,
-        profiles: model.profile.profiles,
-        sound: model.sound,
-        documentVisibilityState: model.documentVisibilityState,
-        toggleSound: () => dispatch({ t: "sound", c: { t: "toggle-mute" } }),
-        push: (route) =>
-          dispatch({ t: "routing", c: { t: "clicked-link", route } }),
-        back: () => dispatch({ t: "routing", c: { t: "clicked-back" } }),
-      }}
-    />
-  );
 };
 
 const LogoScreen = () => {

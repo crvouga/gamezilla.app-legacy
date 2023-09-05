@@ -11,6 +11,8 @@ export type ClientModel = {
   currentUser:
     | { t: "not-asked" }
     | { t: "loading" }
+    | { t: "logged-in-client-side"; userId: UserId; name?: string }
+    | { t: "logged-out-client-side" }
     | { t: "logged-out" }
     | { t: "logged-in"; userId: UserId; name?: string };
   requests: {

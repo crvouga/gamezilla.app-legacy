@@ -185,14 +185,25 @@ export const update = ({
 
     case "client-authenticated": {
       return {
-        model: { ...model, currentUser: { t: "loading" } },
+        model: {
+          ...model,
+          currentUser: {
+            t: "logged-in-client-side",
+            userId: msg.userId,
+          },
+        },
         cmd: [sendToServer(msg)],
       };
     }
 
     case "client-unauthenticated": {
       return {
-        model: { ...model, currentUser: { t: "loading" } },
+        model: {
+          ...model,
+          currentUser: {
+            t: "logged-out-client-side",
+          },
+        },
         cmd: [sendToServer(msg)],
       };
     }
@@ -219,7 +230,10 @@ export const updateFromEvt = ({
 } => {
   switch (msg.t) {
     case "server-connected": {
-      if (model.currentUser.t === "logged-in") {
+      if (
+        model.currentUser.t === "logged-in" ||
+        model.currentUser.t === "logged-in-client-side"
+      ) {
         return {
           model,
           cmd: [
@@ -230,7 +244,10 @@ export const updateFromEvt = ({
           ],
         };
       }
-      if (model.currentUser.t === "logged-out") {
+      if (
+        model.currentUser.t === "logged-out" ||
+        model.currentUser.t === "logged-out-client-side"
+      ) {
         return {
           model,
           cmd: [sendToServer({ t: "client-unauthenticated" })],
@@ -315,7 +332,6 @@ export const updateFromServer = ({
 
 function loadCurrentUser(authService: AuthService): Eff<ClientMsg> {
   return async (dispatch) => {
-    await new Promise((r) => setTimeout(r, 100));
     const got = await authService.getCurrentUser();
     if (got.t === "err") {
       dispatch({ t: "client-unauthenticated" });
