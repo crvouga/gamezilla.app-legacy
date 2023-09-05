@@ -8,6 +8,7 @@ import {
   RouteAuth,
   replaceRoute,
   sendToServer,
+  showToast,
 } from "gamezilla/app/@SHARED/client";
 import {
   Button,
@@ -165,6 +166,7 @@ export const updateFromServer = ({
   model: ClientModel;
   eff?: Eff<ClientMsg>;
   evt?: ClientEvt[];
+  cmd?: ClientCmd<ToServer>[];
 } => {
   switch (msg.t) {
     case "get-social-login-result": {
@@ -193,9 +195,6 @@ export const updateFromServer = ({
         },
         evt: [msg],
       };
-    }
-    default: {
-      return { model };
     }
   }
 };

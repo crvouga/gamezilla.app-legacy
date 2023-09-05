@@ -50,8 +50,9 @@ export type ServerMsg = { t: "handled"; clientId: ClientId; msg: ToClient };
 export type ToClient =
   | {
       t: "current-user-profile";
-      result: Result<string, Profile[]>;
+      result: Result<string, Profile>;
       source: unknown;
+      loggedIn?: boolean;
     }
   | Res;
 

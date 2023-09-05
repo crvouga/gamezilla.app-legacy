@@ -311,6 +311,7 @@ const updateFromServer = ({
         evt: updated.evt,
         model: { ...model, auth: updated.model },
         eff: Eff.t("auth", updated.eff),
+        cmd: ClientCmd.tag("auth", updated.cmd),
       };
     }
 
@@ -363,9 +364,10 @@ const updateFromServer = ({
       const updated = ProfileClient.updateFromServer({
         msg: msg.c,
         model: model.profile,
+
       });
       return {
-        ...updated,
+        cmd: ClientCmd.tag("profile", updated.cmd),
         model: { ...model, profile: updated.model },
         eff: Eff.t("profile", updated.eff),
       };

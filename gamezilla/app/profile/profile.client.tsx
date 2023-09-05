@@ -6,6 +6,7 @@ import {
   Route,
   RouteProfile,
   ViewCtx,
+  showToast,
 } from "gamezilla/app/@SHARED/client";
 import { ProfileAvatar, UserId } from "gamezilla/app/@SHARED/data";
 import {
@@ -129,43 +130,69 @@ export const updateFromServer = ({
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
+  cmd?: ClientCmd<ToServer>[];
 } => {
-  if (msg.result.t === "err") {
-    return {
-      model: {
+  switch (msg.t) {
+    case "current-user-profile": {
+      if (msg.result.t === "err") {
+        return { model };
+      }
+
+      const profile = msg.result.value;
+
+      const modelNew: ClientModel = {
         ...model,
-        requests: {
-          ...model.requests,
-          [msg.t]: msg.result,
+        profiles: {
+          ...model.profiles,
+          [profile.userId]: profile,
         },
-      },
-    };
-  }
-
-  const profilesNew = msg.result.value.reduce<ClientModel["profiles"]>(
-    (acc, profile) => {
-      return {
-        ...acc,
-        [profile.userId]: profile,
       };
-    },
-    model.profiles
-  );
 
-  const modelNew: ClientModel = {
-    ...model,
-    profiles: profilesNew,
-  };
+      return {
+        model: modelNew,
+        cmd: msg.loggedIn
+          ? [showToast(`Logged in as ${profile.username}`)]
+          : undefined,
+      };
+    }
+    default: {
+      if (msg.result.t === "err") {
+        return {
+          model: {
+            ...model,
+            requests: {
+              ...model.requests,
+              [msg.t]: msg.result,
+            },
+          },
+        };
+      }
 
-  return {
-    model: modelNew,
-  };
+      const profilesNew = msg.result.value.reduce<ClientModel["profiles"]>(
+        (acc, profile) => {
+          return {
+            ...acc,
+            [profile.userId]: profile,
+          };
+        },
+        model.profiles
+      );
+
+      const modelNew: ClientModel = {
+        ...model,
+        profiles: profilesNew,
+      };
+
+      return {
+        model: modelNew,
+      };
+    }
+  }
 };
 
 export const updateFromEvt = ({
   evt,
   model,
-  ctx,
 }: {
   evt: ClientEvt;
   model: ClientModel;
@@ -175,53 +202,28 @@ export const updateFromEvt = ({
   eff?: Eff<ClientMsg>;
   cmd?: ClientCmd<ToServer>[];
 } => {
-  return p(
-    { model },
-    andThen((model) => loadProfileRoute({ evt, model })),
-    andThen((model) => updateUsernameDraft({ model, evt, ctx })),
-    andThen((model) => gotProfiles({ evt, model })),
-    andThen((model) => loadCurrentUserProfile({ evt, model }))
-  );
-};
-
-const loadCurrentUserProfile = ({
-  evt,
-  model,
-}: {
-  evt: ClientEvt;
-  model: ClientModel;
-}): {
-  model: ClientModel;
-  cmd?: ClientCmd<ToServer>[];
-} => {
   switch (evt.t) {
-    case "client-authenticated": {
-      return loadProfiles([evt.userId], model);
+    case "route-changed": {
+      if (evt.route.t === "profile" && evt.route.c.t === "profile") {
+        return loadProfiles([evt.route.c.userId], model);
+      }
+      return { model };
+    }
+    case "got-profiles": {
+      return {
+        model: {
+          ...model,
+          profiles: {
+            ...model.profiles,
+            ...evt.profiles,
+          },
+        },
+      };
     }
     default: {
       return { model };
     }
   }
-};
-
-const loadProfileRoute = ({
-  evt,
-  model,
-}: {
-  evt: ClientEvt;
-  model: ClientModel;
-}): {
-  model: ClientModel;
-  cmd?: ClientCmd<ToServer>[];
-  eff?: Eff<ClientMsg>;
-} => {
-  if (evt.t === "route-changed" && evt.route.t === "profile") {
-    if (evt.route.c.t === "profile") {
-      return loadProfiles([evt.route.c.userId], model);
-    }
-  }
-
-  return { model };
 };
 
 const loadProfiles = (
@@ -245,74 +247,6 @@ const loadProfiles = (
         },
       },
     ],
-  };
-};
-
-const gotProfiles = ({
-  evt,
-  model,
-}: {
-  evt: ClientEvt;
-  model: ClientModel;
-}): {
-  model: ClientModel;
-  eff?: Eff<ClientMsg>;
-} => {
-  switch (evt.t) {
-    case "got-profiles": {
-      return {
-        model: {
-          ...model,
-          profiles: {
-            ...model.profiles,
-            ...evt.profiles,
-          },
-        },
-      };
-    }
-    default: {
-      return { model };
-    }
-  }
-};
-
-const updateUsernameDraft = ({
-  model,
-  evt,
-  ctx,
-}: {
-  model: ClientModel;
-  evt: ClientEvt;
-  ctx: AnonymousClientCtx;
-}): {
-  model: ClientModel;
-  eff?: Eff<ClientMsg>;
-} => {
-  if (evt.t !== "route-changed") {
-    return { model };
-  }
-  const route = evt.route;
-
-  if (route.t !== "profile") {
-    return { model };
-  }
-
-  if (route.c.t !== "profile-update-username") {
-    return { model };
-  }
-
-  if (!ctx.currentUserId) {
-    return { model };
-  }
-
-  return {
-    model: {
-      ...model,
-      draft: {
-        ...model.draft,
-        username: model.profiles[ctx.currentUserId]?.username ?? "",
-      },
-    },
   };
 };
 

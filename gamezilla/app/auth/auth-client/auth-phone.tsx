@@ -4,7 +4,6 @@ import {
   Iso3166Alpha2Code,
   PhoneNumber,
   Result,
-  Task,
   p,
 } from "gamezilla/@SHARED/core";
 import { AnonymousViewCtx, RouteCmd } from "gamezilla/app/@SHARED/client";
@@ -15,7 +14,6 @@ import {
   TopBar,
   TopBarBackButton,
 } from "gamezilla/app/@SHARED/ui";
-import { AuthService } from "../auth-service/auth-service";
 
 //
 //
@@ -84,11 +82,9 @@ export type Msg =
 export const update = ({
   msg,
   model,
-  authService,
 }: {
   msg: Msg;
   model: Model;
-  authService: AuthService;
 }): {
   model: Model;
   eff?: Eff<Msg>;
@@ -111,8 +107,7 @@ export const update = ({
       return {
         model: { ...model, submission: { type: "loading" } },
         eff: async (dispatch) => {
-          const sent = await authService.sendCode({ phoneNumber: phoneNumber });
-          dispatch({ t: "send-code-done", phoneNumber, result: sent });
+          //
         },
       };
     }

@@ -111,7 +111,12 @@ export const updateFromEvt = ({
           dispatch({
             t: "handled",
             clientId: msg.clientId,
-            msg: { t: "current-user-profile", result, source: msg },
+            msg: {
+              t: "current-user-profile",
+              result,
+              source: msg,
+              loggedIn: msg.loggedIn,
+            },
           });
         },
       };
@@ -168,7 +173,7 @@ const findElseInsertNew = async ({
   const profile = found.value[0];
 
   if (profile) {
-    return Ok([profile]);
+    return Ok(profile);
   }
 
   const randomSeed = await ProfileAvatar.generateRandomSeed();
@@ -188,5 +193,5 @@ const findElseInsertNew = async ({
     return inserted;
   }
 
-  return Ok([profileNew]);
+  return Ok(profileNew);
 };

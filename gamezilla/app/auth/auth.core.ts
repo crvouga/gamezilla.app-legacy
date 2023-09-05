@@ -61,6 +61,6 @@ export type ToServer =
   | { t: "got-social-login-result"; result: RemoteResult<string, UserId> };
 
 export type ToClient =
-  | { t: "client-authenticated"; userId: UserId }
+  | { t: "client-authenticated"; userId: UserId; loggedIn?: boolean }
   | { t: "client-unauthenticated" }
   | { t: "get-social-login-result" };

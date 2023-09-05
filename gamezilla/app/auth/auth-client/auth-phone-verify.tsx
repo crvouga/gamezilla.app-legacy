@@ -16,7 +16,6 @@ import {
   TopBar,
   TopBarBackButton,
 } from "gamezilla/app/@SHARED/ui";
-import { AuthService } from "../auth-service/auth-service";
 
 //
 //
@@ -76,12 +75,10 @@ export const update = ({
   phoneNumber,
   msg,
   model,
-  authService,
 }: {
   phoneNumber: PhoneNumber;
   msg: Msg;
   model: Model;
-  authService: AuthService;
 }): {
   model: Model;
   eff?: Eff<Msg>;
@@ -94,11 +91,7 @@ export const update = ({
         submission: { type: "loading" },
       },
       eff: async (dispatch) => {
-        const verified = await authService.verifyCode({
-          code: model.code,
-          phoneNumber,
-        });
-        dispatch({ t: "verify-code-done", result: verified });
+        //
       },
     };
   }

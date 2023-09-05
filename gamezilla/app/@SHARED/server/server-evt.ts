@@ -13,6 +13,7 @@ export type ServerEvt =
       userId: UserId;
       sessionId: SessionId;
       clientId: ClientId;
+      loggedIn?: boolean;
     }
   | {
       t: "client-unauthenticated";

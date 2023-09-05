@@ -112,6 +112,7 @@ export const updateFromClient = ({
               clientId: ctx.clientId,
               sessionId: ctx.sessionId,
               userId,
+              loggedIn: true,
             },
           ],
         };
@@ -199,36 +200,11 @@ export const updateFromEvt = ({
     }
 
     case "client-authenticated": {
-      const session = model.sessions[evt.sessionId];
-      if (!session) {
-        return {
-          model,
-          cmd: [sendToClient([evt.clientId], { t: "client-unauthenticated" })],
-        };
-      }
-
-      const userId = session.userId;
-
-      if (!userId) {
-        return {
-          model,
-          cmd: [sendToClient([evt.clientId], { t: "client-unauthenticated" })],
-        };
-      }
-
-      return {
-        model,
-        cmd: [
-          sendToClient([evt.clientId], { t: "client-authenticated", userId }),
-        ],
-      };
+      return { model, cmd: [sendToClient([evt.clientId], evt)] };
     }
 
     case "client-unauthenticated": {
-      return {
-        model,
-        cmd: [sendToClient([evt.clientId], { t: "client-unauthenticated" })],
-      };
+      return { model, cmd: [sendToClient([evt.clientId], evt)] };
     }
 
     default: {

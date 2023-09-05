@@ -8,7 +8,6 @@ import {
   TopBar,
   TopBarBackButton,
 } from "gamezilla/app/@SHARED/ui";
-import { AuthService } from "../auth-service";
 
 //
 //
@@ -50,11 +49,9 @@ export type Msg =
 export const update = ({
   msg,
   model,
-  authService,
 }: {
   msg: Msg;
   model: Model;
-  authService: AuthService;
 }): {
   model: Model;
   eff?: Eff<Msg>;
@@ -112,10 +109,7 @@ export const update = ({
         },
       },
       eff: async (dispatch) => {
-        const sent = await authService.sendEmailLink({
-          emailAddress: model.emailAddress,
-        });
-        dispatch({ t: "login-done", result: sent });
+        //
       },
     };
   }
