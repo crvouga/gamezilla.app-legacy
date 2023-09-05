@@ -1,7 +1,7 @@
 import { RemoteResult, Result } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
 
-export type Authenticator = {
+export type SocialLogin = {
   startSocialLogin: ({
     provider,
   }: {

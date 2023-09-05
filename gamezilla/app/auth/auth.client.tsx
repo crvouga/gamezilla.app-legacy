@@ -19,18 +19,8 @@ import {
   LoadingScreen,
   cn,
 } from "gamezilla/app/@SHARED/ui";
-import { createAuthenticator } from "./auth-client-authenticator/authenticator-impl.supabase";
+import { createSocialLogin } from "./auth-client-social-login/social-login-impl.supabase";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./auth.core";
-
-//
-//
-//
-//
-//
-//
-
-// const authService = createAuthService();
-const authenticator = createAuthenticator();
 
 //
 //
@@ -56,6 +46,8 @@ export const init: { model: ClientModel; eff?: Eff<ClientMsg> } = {
 //
 //
 
+const socialLogin = createSocialLogin();
+
 export const update = ({
   msg,
   model,
@@ -78,7 +70,7 @@ export const update = ({
         },
         cmd: [sendToServer({ t: "started-social-login" })],
         eff: async () => {
-          await authenticator.startSocialLogin({
+          await socialLogin.startSocialLogin({
             provider: "google",
           });
         },
@@ -179,7 +171,7 @@ export const updateFromServer = ({
       return {
         model,
         eff: async (dispatch) => {
-          const result = await authenticator.getSocialLoginResult();
+          const result = await socialLogin.getSocialLoginResult();
           dispatch({ t: "got-social-login-result", result });
         },
       };

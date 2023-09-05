@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import { Authenticator } from "./authenticator";
+import { SocialLogin } from "./social-login";
 import { Err, NotAsked, Ok } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
 
@@ -9,7 +9,7 @@ const SocialLoginState = {
   STARTED: "STARTED",
 };
 
-export const createAuthenticator = (): Authenticator => {
+export const createSocialLogin = (): SocialLogin => {
   const SUPABASE_URL = "https://ldxpcprlgecjvqwzuxgv.supabase.co";
 
   const SUPABASE_ANON_KEY =
