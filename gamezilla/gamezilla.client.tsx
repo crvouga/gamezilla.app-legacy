@@ -8,6 +8,13 @@ import { attachDebugger } from "./@SHARED/core/debug";
 import * as AppClient from "./app/app.client";
 import "./main.css";
 
+//
+//
+//
+//
+//
+//
+
 const program = Program.create({
   init: (input) => {
     return AppClient.init({
@@ -28,12 +35,24 @@ const program = Program.create({
   },
 });
 
+program.subscribe((model, ctx) => {
+  render(
+    <AppClient.View now={ctx.now} model={model} dispatch={program.dispatch} />,
+    document.body
+  );
+});
+
 //
 //
 //
 //
 
-attachDebugger(program).then(() => {
+const main = async () => {
+  await Promise.race([
+    attachDebugger(program),
+    new Promise((r) => setTimeout(r, 2000)),
+  ]);
+
   program.start();
 
   const env = {
@@ -54,15 +73,6 @@ attachDebugger(program).then(() => {
     fromServer: AppClient.fromServer,
     toServer: AppClient.toServer,
   });
+};
 
-  program.subscribe((model, ctx) => {
-    render(
-      <AppClient.View
-        now={ctx.now}
-        model={model}
-        dispatch={program.dispatch}
-      />,
-      document.body
-    );
-  });
-});
+main();
