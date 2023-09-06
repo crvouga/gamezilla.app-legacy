@@ -493,20 +493,16 @@ export const attachDebugger = <Model, Msg extends {}>(
     });
   });
 
-  const msgsBeforeStarted: { msg: Msg; model: Model }[] = [];
+  const sub = Sub.create<{ msg: Msg; model: Model }>();
 
-  const unsubscribe = program.subscribe((model, ctx, msg) => {
+  program.subscribe((model, ctx, msg) => {
     if (msg) {
-      msgsBeforeStarted.push({ msg, model });
+      sub.publish({ msg, model });
     }
   });
 
   started.then(() => {
-    program.subscribe((model, ctx, msg) => {
-      unsubscribe();
-      if (!msg) {
-        return;
-      }
+    sub.subscribe(({ model, msg }) => {
       const action = {
         type: toMsgType(msg),
         payload: toMsgPayload(msg, {}),
@@ -514,14 +510,6 @@ export const attachDebugger = <Model, Msg extends {}>(
       // @ts-ignore
       connection.send(action, model);
     });
-    for (const { msg, model } of msgsBeforeStarted) {
-      const action = {
-        type: toMsgType(msg),
-        payload: toMsgPayload(msg, {}),
-      };
-      // @ts-ignore
-      connection.send(action, model);
-    }
   });
 
   return { ...debuggerInstance, started };
