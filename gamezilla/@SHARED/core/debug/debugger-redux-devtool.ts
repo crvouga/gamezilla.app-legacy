@@ -439,7 +439,7 @@ const unsafeCopy = <A>(a: A): A => {
   return JSON.parse(JSON.stringify(a));
 };
 
-export const attachDebugger = async <Model, Msg extends {}>(
+export const attachDebugger = <Model, Msg extends {}>(
   program: Program<Model, Msg>
 ) => {
   const connection = getConnection<Model, Msg>(window);
@@ -484,7 +484,7 @@ export const attachDebugger = async <Model, Msg extends {}>(
     init: program.getState(),
   });
 
-  await new Promise<null>((resolve) => {
+  const started = new Promise<null>((resolve) => {
     const unsubscribe = connection.subscribe((msg) => {
       if (msg.type === "START") {
         unsubscribe();
@@ -493,8 +493,28 @@ export const attachDebugger = async <Model, Msg extends {}>(
     });
   });
 
-  program.subscribe((model, ctx, msg) => {
+  const msgsBeforeStarted: { msg: Msg; model: Model }[] = [];
+
+  const unsubscribe = program.subscribe((model, ctx, msg) => {
     if (msg) {
+      msgsBeforeStarted.push({ msg, model });
+    }
+  });
+
+  started.then(() => {
+    program.subscribe((model, ctx, msg) => {
+      unsubscribe();
+      if (!msg) {
+        return;
+      }
+      const action = {
+        type: toMsgType(msg),
+        payload: toMsgPayload(msg, {}),
+      };
+      // @ts-ignore
+      connection.send(action, model);
+    });
+    for (const { msg, model } of msgsBeforeStarted) {
       const action = {
         type: toMsgType(msg),
         payload: toMsgPayload(msg, {}),
@@ -504,7 +524,7 @@ export const attachDebugger = async <Model, Msg extends {}>(
     }
   });
 
-  return debuggerInstance;
+  return { ...debuggerInstance, started };
 };
 
 export const createDebugger = <Model, Msg extends {}>(initialModel: Model) => {

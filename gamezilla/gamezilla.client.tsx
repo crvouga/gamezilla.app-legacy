@@ -8,13 +8,6 @@ import { attachDebugger } from "./@SHARED/core/debug";
 import * as AppClient from "./app/app.client";
 import "./main.css";
 
-//
-//
-//
-//
-//
-//
-
 const program = Program.create({
   init: (input) => {
     return AppClient.init({
@@ -42,37 +35,20 @@ program.subscribe((model, ctx) => {
   );
 });
 
-//
-//
-//
-//
-
-const main = async () => {
-  await Promise.race([
-    attachDebugger(program),
-    new Promise((r) => setTimeout(r, 2000)),
-  ]);
-
-  program.start();
-
-  const env = {
-    isDev: process.env.NODE_ENV === "development",
-    isProd: process.env.NODE_ENV === "production",
-    useNgrok: false,
-  };
-
-  const serverUrl = env.isProd
+const SERVER_URL =
+  process.env.NODE_ENV === "production"
     ? "https://server.gamezilla.app/"
-    : env.useNgrok
+    : false
     ? "https://gamezilla-server.ngrok.io/"
-    : `http://localhost:${5000}/`;
+    : `http://localhost:5000/`;
 
-  attachClientTransport({
-    baseServerUrl: serverUrl,
-    wire: AppClient.wire,
-    fromServer: AppClient.fromServer,
-    toServer: AppClient.toServer,
-  });
-};
+attachDebugger(program);
 
-main();
+attachClientTransport({
+  baseServerUrl: SERVER_URL,
+  wire: AppClient.wire,
+  fromServer: AppClient.fromServer,
+  toServer: AppClient.toServer,
+});
+
+program.start();
