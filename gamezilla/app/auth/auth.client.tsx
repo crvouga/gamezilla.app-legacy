@@ -1,4 +1,11 @@
-import { Eff, Loading, NotAsked, Sub } from "gamezilla/@SHARED/core";
+import {
+  Eff,
+  Loading,
+  NotAsked,
+  Sub,
+  andThen,
+  p,
+} from "gamezilla/@SHARED/core";
 import {
   AnonymousClientCtx,
   AnonymousViewCtx,
@@ -8,7 +15,6 @@ import {
   RouteAuth,
   replaceRoute,
   sendToServer,
-  showToast,
 } from "gamezilla/app/@SHARED/client";
 import {
   Button,
@@ -63,7 +69,7 @@ export const update = ({
   evt?: ClientEvt[];
 } => {
   switch (msg.t) {
-    case "login-with-google": {
+    case "clicked-login-with-google": {
       return {
         model: {
           ...model,
@@ -78,14 +84,9 @@ export const update = ({
       };
     }
 
-    case "logout": {
+    case "clicked-logout": {
       return {
-        model: {
-          ...model,
-          currentUser: {
-            t: "loading",
-          },
-        },
+        model: { ...model, currentUser: { t: "loading" } },
         cmd: [sendToServer({ t: "logout" })],
       };
     }
@@ -95,63 +96,6 @@ export const update = ({
         model,
         cmd: [sendToServer(msg)],
       };
-    }
-  }
-};
-
-export const updateFromEvt = ({
-  ctx,
-  model,
-  msg,
-}: {
-  ctx: AnonymousClientCtx;
-  msg: ClientEvt;
-  model: ClientModel;
-}): {
-  model: ClientModel;
-  eff?: Eff<ClientMsg>;
-  cmd?: ClientCmd<ToServer>[];
-} => {
-  switch (msg.t) {
-    case "client-unauthenticated": {
-      if (ctx.currentRoute.t === "auth") {
-        return {
-          model: {
-            ...model,
-            currentUser: { t: "logged-out" },
-          },
-        };
-      }
-      return {
-        model: {
-          ...model,
-          currentUser: { t: "logged-out" },
-        },
-        cmd: [replaceRoute({ t: "auth", c: { t: "login" } })],
-      };
-    }
-
-    case "client-authenticated": {
-      if (ctx.currentRoute.t === "auth") {
-        return {
-          model: {
-            ...model,
-            currentUser: { t: "logged-in", userId: msg.userId },
-          },
-          cmd: [replaceRoute({ t: "space", c: { t: "space-list" } })],
-        };
-      }
-
-      return {
-        model: {
-          ...model,
-          currentUser: { t: "logged-in", userId: msg.userId },
-        },
-      };
-    }
-
-    default: {
-      return { model };
     }
   }
 };
@@ -180,10 +124,7 @@ export const updateFromServer = ({
     }
     case "client-unauthenticated": {
       return {
-        model: {
-          ...model,
-          currentUser: { t: "logged-out" },
-        },
+        model: { ...model, currentUser: { t: "logged-out" } },
         evt: [msg],
       };
     }
@@ -195,6 +136,67 @@ export const updateFromServer = ({
         },
         evt: [msg],
       };
+    }
+  }
+};
+
+export const updateFromEvt = ({
+  ctx,
+  model,
+  msg,
+}: {
+  ctx: AnonymousClientCtx;
+  msg: ClientEvt;
+  model: ClientModel;
+}): {
+  model: ClientModel;
+  eff?: Eff<ClientMsg>;
+  cmd?: ClientCmd<ToServer>[];
+} => {
+  switch (msg.t) {
+    case "client-unauthenticated": {
+      return p(
+        { model },
+        andThen((model): ReturnType<typeof updateFromEvt> => {
+          if (ctx.currentRoute.t !== "auth") {
+            return {
+              model,
+              cmd: [replaceRoute({ t: "auth", c: { t: "login" } })],
+            };
+          }
+          return { model };
+        }),
+        andThen((model) => {
+          return { model: { ...model, currentUser: { t: "logged-out" } } };
+        })
+      );
+    }
+
+    case "client-authenticated": {
+      return p(
+        { model },
+        andThen((model): ReturnType<typeof updateFromEvt> => {
+          if (ctx.currentRoute.t === "auth") {
+            return {
+              model,
+              cmd: [replaceRoute({ t: "space", c: { t: "space-list" } })],
+            };
+          }
+          return { model };
+        }),
+        andThen((model) => {
+          return {
+            model: {
+              ...model,
+              currentUser: { t: "logged-in", userId: msg.userId },
+            },
+          };
+        })
+      );
+    }
+
+    default: {
+      return { model };
     }
   }
 };
@@ -218,7 +220,6 @@ export const subscriptions = (_model: ClientModel): Sub<ClientMsg> => {
 //
 
 export const View = ({
-  route,
   model,
   ctx,
   dispatch,
@@ -261,7 +262,7 @@ const ViewLoginScreen = ({
 
         <div className="flex w-full flex-col gap-6">
           <Button
-            onClick={() => dispatch({ t: "login-with-google" })}
+            onClick={() => dispatch({ t: "clicked-login-with-google" })}
             size="lg"
             className="w-full"
             start={<IconGoogle className="h-6 w-6" />}
@@ -320,9 +321,7 @@ export const ViewLogoutScreen = ({
       confirmTitle="Logout"
       onClose={ctx.back}
       onCancel={ctx.back}
-      onConfirm={() => {
-        dispatch({ t: "logout" });
-      }}
+      onConfirm={() => dispatch({ t: "clicked-logout" })}
     />
   );
 };

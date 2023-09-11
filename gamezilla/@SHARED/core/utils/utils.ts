@@ -5,19 +5,30 @@ export const exhaustive = (discriminatedUnionType: "Missing Case!"): never => {
 };
 
 /**
+ *
+ */
+type Output<Model, Msg, Evt, Cmd> = {
+  model: Model;
+  eff?: Eff<Msg>;
+  evt?: Evt[];
+  cmd?: Cmd[];
+};
+
+/**
  * @description
- * A helper function used for chaining update functions together.
+ * A helper function used for composing update functions together.
+ * @example
+ * const updated = p(
+ *  andThen((model) => ({ model, eff: () => {} })),
+ *  andThen((model) => ({ model, cmd: [] })),
+ *  andThen((model) => ({ model, evt: [] })),
+ * )
  */
 export const andThen =
   <Model, Msg, Evt, Cmd>(
-    updateStep: (input: Model) => {
-      model: Model;
-      eff?: Eff<Msg>;
-      evt?: Evt[];
-      cmd?: Cmd[];
-    }
+    updateStep: (input: Model) => Output<Model, Msg, Evt, Cmd>
   ) =>
-  (output: { eff?: Eff<Msg>; model: Model; evt?: Evt[]; cmd?: Cmd[] }) => {
+  (output: Output<Model, Msg, Evt, Cmd>) => {
     const updated = updateStep(output.model);
 
     return {

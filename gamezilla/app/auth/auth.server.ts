@@ -22,8 +22,7 @@ import {
 
 export const init: ServerModel = {
   sessions: {},
-  socialLogin: {},
-  verifications: {},
+  socialLoginStates: {},
 };
 
 //
@@ -63,8 +62,8 @@ export const updateFromClient = ({
       return {
         model: {
           ...model,
-          socialLogin: {
-            ...model.socialLogin,
+          socialLoginStates: {
+            ...model.socialLoginStates,
             [ctx.sessionId]: {
               sessionId: ctx.sessionId,
               t: "in-progress",
@@ -75,7 +74,8 @@ export const updateFromClient = ({
     }
 
     case "got-social-login-result": {
-      const socialLogin = model.socialLogin[ctx.sessionId];
+      const socialLogin = model.socialLoginStates[ctx.sessionId];
+
       if (!socialLogin) {
         return { model };
       }
@@ -87,8 +87,9 @@ export const updateFromClient = ({
         sessionId: ctx.sessionId,
         userId: userId,
       };
+
       const socialLoginsNew = {
-        ...model.socialLogin,
+        ...model.socialLoginStates,
         [socialLoginNew.sessionId]: socialLoginNew,
       };
 
@@ -103,7 +104,7 @@ export const updateFromClient = ({
         return {
           model: {
             ...model,
-            socialLogin: socialLoginsNew,
+            socialLoginStates: socialLoginsNew,
             sessions: sessionsNew,
           },
           evt: [
@@ -121,7 +122,7 @@ export const updateFromClient = ({
       return {
         model: {
           ...model,
-          socialLogin: socialLoginsNew,
+          socialLoginStates: socialLoginsNew,
         },
         evt: [
           {
@@ -162,10 +163,11 @@ export const updateFromEvt = ({
 }): {
   model: ServerModel;
   cmd?: ServerCmd<ToClient>[];
+  evt?: ServerEvt[];
 } => {
   switch (evt.t) {
     case "client-connected": {
-      const socialLoginState = model.socialLogin[evt.sessionId];
+      const socialLoginState = model.socialLoginStates[evt.sessionId];
 
       if (socialLoginState?.t === "in-progress") {
         return {
@@ -178,7 +180,13 @@ export const updateFromEvt = ({
       if (!session) {
         return {
           model,
-          cmd: [sendToClient([evt.clientId], { t: "client-unauthenticated" })],
+          evt: [
+            {
+              t: "client-unauthenticated",
+              clientId: evt.clientId,
+              sessionId: evt.sessionId,
+            },
+          ],
         };
       }
 
@@ -187,14 +195,25 @@ export const updateFromEvt = ({
       if (!userId) {
         return {
           model,
-          cmd: [sendToClient([evt.clientId], { t: "client-unauthenticated" })],
+          evt: [
+            {
+              t: "client-unauthenticated",
+              clientId: evt.clientId,
+              sessionId: evt.sessionId,
+            },
+          ],
         };
       }
 
       return {
         model,
-        cmd: [
-          sendToClient([evt.clientId], { t: "client-authenticated", userId }),
+        evt: [
+          {
+            t: "client-authenticated",
+            clientId: evt.clientId,
+            sessionId: evt.sessionId,
+            userId,
+          },
         ],
       };
     }

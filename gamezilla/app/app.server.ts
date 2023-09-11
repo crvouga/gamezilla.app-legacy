@@ -68,22 +68,25 @@ export const update = async (input: {
 
   const updated = await updateMain(input);
 
-  const evt = updated.evt ?? [];
-
   let acc = updated;
 
-  for (const e of evt) {
-    const updatedEvt = await updateFromEvt({
-      ...input,
-      ctx,
-      model: acc.model,
-      msg: e,
-    });
-    acc = {
-      model: updatedEvt.model,
-      eff: Eff.batch([acc.eff, updatedEvt.eff]),
-      cmd: [...(acc.cmd ?? []), ...(updatedEvt.cmd ?? [])],
-    };
+  let iterations = 0;
+  while (count(acc.evt) > 0 && iterations < 100) {
+    iterations++;
+    for (const e of acc.evt ?? []) {
+      const updatedEvt = await updateFromEvt({
+        ...input,
+        ctx,
+        model: acc.model,
+        msg: e,
+      });
+      acc = {
+        model: updatedEvt.model,
+        eff: Eff.batch([acc.eff, updatedEvt.eff]),
+        cmd: [...(acc.cmd ?? []), ...(updatedEvt.cmd ?? [])],
+        evt: updatedEvt.evt,
+      };
+    }
   }
 
   const eff = cmdToEff(model, acc.cmd ?? []);
@@ -92,6 +95,10 @@ export const update = async (input: {
     model: acc.model,
     eff: Eff.batch([eff, acc.eff]),
   };
+};
+
+const count = <T>(arr?: T[]): number => {
+  return arr?.length ?? 0;
 };
 
 const cmdToEff = (
@@ -311,54 +318,6 @@ const updateWire = ({
   }
 };
 
-const updateFromEvt = async ({
-  ctx,
-  msg,
-  model,
-}: {
-  ctx: ServerCtx;
-  msg: ServerEvt;
-  model: ServerModel;
-}): Promise<{
-  model: ServerModel;
-  eff?: Eff<ServerMsg>;
-  cmd?: ServerCmd<ToClient>[];
-}> => {
-  const space = await SpaceServer.updateFromEvt({
-    ctx,
-    msg,
-    model: model.space,
-  });
-
-  const profile = ProfileServer.updateFromEvt({
-    ctx,
-    msg,
-    model: model.profile,
-  });
-
-  const auth = AuthServer.updateFromEvt({
-    msg,
-    model: model.auth,
-  });
-
-  return {
-    model: {
-      ...model,
-      space: space.model,
-      profile: profile.model,
-      auth: auth.model,
-    },
-    eff: Eff.batch<ServerMsg>([
-      Eff.t("space", space.eff),
-      Eff.t("profile", profile.eff),
-    ]),
-    cmd: [
-      ...(ServerCmd.tag("space", space.cmd) ?? []),
-      ...(ServerCmd.tag("auth", auth.cmd) ?? []),
-    ],
-  };
-};
-
 const updateFromClient = async ({
   msg,
   model,
@@ -454,6 +413,56 @@ const updateFromClient = async ({
       };
     }
   }
+};
+
+const updateFromEvt = async ({
+  ctx,
+  msg,
+  model,
+}: {
+  ctx: ServerCtx;
+  msg: ServerEvt;
+  model: ServerModel;
+}): Promise<{
+  model: ServerModel;
+  eff?: Eff<ServerMsg>;
+  cmd?: ServerCmd<ToClient>[];
+  evt?: ServerEvt[];
+}> => {
+  const space = await SpaceServer.updateFromEvt({
+    ctx,
+    msg,
+    model: model.space,
+  });
+
+  const profile = ProfileServer.updateFromEvt({
+    ctx,
+    msg,
+    model: model.profile,
+  });
+
+  const auth = AuthServer.updateFromEvt({
+    msg,
+    model: model.auth,
+  });
+
+  return {
+    model: {
+      ...model,
+      space: space.model,
+      profile: profile.model,
+      auth: auth.model,
+    },
+    eff: Eff.batch<ServerMsg>([
+      Eff.t("space", space.eff),
+      Eff.t("profile", profile.eff),
+    ]),
+    cmd: [
+      ...(ServerCmd.tag("space", space.cmd) ?? []),
+      ...(ServerCmd.tag("auth", auth.cmd) ?? []),
+    ],
+    evt: [...(auth.evt ?? [])],
+  };
 };
 
 //

@@ -29,16 +29,8 @@ export type ServerModel = {
     };
   };
 
-  socialLogin: {
+  socialLoginStates: {
     [sessionId: SessionId]: SocialLoginState;
-  };
-
-  verifications: {
-    [requestId: string]: {
-      requestId: string;
-      phoneNumber: PhoneNumber;
-      code: number;
-    };
   };
 };
 
@@ -49,8 +41,8 @@ export type ServerModel = {
 //
 
 export type ClientMsg =
-  | { t: "logout" }
-  | { t: "login-with-google" }
+  | { t: "clicked-logout" }
+  | { t: "clicked-login-with-google" }
   | { t: "got-social-login-result"; result: RemoteResult<string, UserId> };
 
 export type ServerMsg = { t: null };
