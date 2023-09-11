@@ -1,11 +1,8 @@
-import { RemoteResult, Result } from "gamezilla/@SHARED/core";
-import { UserId } from "gamezilla/app/@SHARED/data";
+import { EmailAddress, RemoteResult, Result } from "gamezilla/@SHARED/core";
 
 export type SocialLogin = {
-  startSocialLogin: ({
-    provider,
-  }: {
+  startSocialLogin: (input: {
     provider: "google";
   }) => Promise<Result<string, null>>;
-  getSocialLoginResult: () => Promise<RemoteResult<string, UserId>>;
+  getSocialLoginResult: () => Promise<RemoteResult<string, EmailAddress>>;
 };

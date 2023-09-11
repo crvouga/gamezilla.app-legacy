@@ -1,5 +1,12 @@
-import { RemoteResult, SessionId } from "gamezilla/@SHARED/core";
+import {
+  ClientId,
+  EmailAddress,
+  RemoteResult,
+  Result,
+  SessionId,
+} from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
+import { Account } from "./account-db";
 
 export type ClientModel = {
   loginWithGoogle: RemoteResult<string, null>;
@@ -18,7 +25,7 @@ export type SocialLoginState =
   | {
       t: "done";
       sessionId: SessionId;
-      userId: UserId | null;
+      emailAddress: EmailAddress | null;
     };
 
 export type ServerModel = {
@@ -43,14 +50,25 @@ export type ServerModel = {
 export type ClientMsg =
   | { t: "clicked-logout" }
   | { t: "clicked-login-with-google" }
-  | { t: "got-social-login-result"; result: RemoteResult<string, UserId> };
+  | {
+      t: "got-social-login-result";
+      result: RemoteResult<string, EmailAddress>;
+    };
 
-export type ServerMsg = { t: null };
+export type ServerMsg = {
+  t: "got-user-account";
+  result: Result<string, Account>;
+  sessionId: SessionId;
+  clientId: ClientId;
+};
 
 export type ToServer =
   | { t: "logout" }
   | { t: "started-social-login" }
-  | { t: "got-social-login-result"; result: RemoteResult<string, UserId> };
+  | {
+      t: "got-social-login-result";
+      result: RemoteResult<string, EmailAddress>;
+    };
 
 export type ToClient =
   | { t: "client-authenticated"; userId: UserId; loggedIn?: boolean }

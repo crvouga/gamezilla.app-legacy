@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { SocialLogin } from "./social-login";
-import { Err, NotAsked, Ok } from "gamezilla/@SHARED/core";
+import { EmailAddress, Err, NotAsked, Ok } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
 
 const KEY = "social-login-state";
@@ -29,16 +29,18 @@ export const createSocialLogin = (): SocialLogin => {
 
       for (let i = 0; i < 15; i++) {
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        const session = supabaseClient.auth.session();
-        const userId = session?.user?.id ?? null;
 
-        if (!UserId.is(userId)) {
+        const session = supabaseClient.auth.session();
+
+        const emailAddress = session?.user?.email ?? null;
+
+        if (!EmailAddress.is(emailAddress)) {
           continue;
         }
 
         supabaseClient.auth.signOut();
 
-        return Ok(userId);
+        return Ok(emailAddress);
       }
 
       return Err("Failed to authenticate");

@@ -31,7 +31,6 @@ export const createAccountDb = ({
 }: {
   dbConn: DbConnSql;
 }): AccountDb => {
-  const accounts = new Map<UserId, Account>();
   return {
     async findOneByEmail(input) {
       const queried = await dbConn.query(

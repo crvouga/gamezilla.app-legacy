@@ -248,7 +248,10 @@ const updateMain = async ({
 
     case "auth": {
       const updated = AuthServer.update({ model: model.auth, msg: msg.c });
-      return { model: { ...model, auth: updated.model } };
+      return {
+        model: { ...model, auth: updated.model },
+        evt: updated.evt,
+      };
     }
 
     case "chat": {
@@ -350,6 +353,7 @@ const updateFromClient = async ({
         model: { ...model, auth: updated.model },
         cmd: ServerCmd.tag("auth", updated.cmd),
         evt: updated.evt,
+        eff: Eff.t("auth", updated.eff),
       };
     }
 
