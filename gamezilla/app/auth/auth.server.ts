@@ -131,7 +131,10 @@ export const updateFromClient = ({
 
       if (emailAddress) {
         return {
-          model,
+          model: {
+            ...model,
+            socialLoginStates: socialLoginsNew,
+          },
           eff: async (dispatch) => {
             const result = await findElseInsertAccount({
               emailAddress,
