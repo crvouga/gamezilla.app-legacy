@@ -37,8 +37,12 @@ const generateId = (length: number): string => {
   return runningId;
 };
 
+const namespace = "session";
+const separator = ":";
+
 export const generate = (): SessionId => {
-  const sessionId = `session-${generateId(5)}`;
+  const id = `${generateId(5)}`;
+  const sessionId = `${namespace}${separator}${id}`;
 
   if (is(sessionId)) {
     return sessionId;

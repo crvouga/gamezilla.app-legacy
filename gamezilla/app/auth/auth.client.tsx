@@ -26,7 +26,7 @@ import {
   LoadingScreen,
   cn,
 } from "gamezilla/app/@SHARED/ui";
-import { createSocialLogin } from "./auth-client-social-login/social-login-impl.supabase";
+import { createSocialLogin } from "./auth-client/social-login";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./auth.core";
 
 //
@@ -77,7 +77,7 @@ export const update = ({
         },
         cmd: [sendToServer({ t: "started-social-login" })],
         eff: async () => {
-          await socialLogin.startSocialLogin({
+          await socialLogin.redirectSocialLogin({
             provider: "google",
           });
         },
@@ -92,10 +92,7 @@ export const update = ({
     }
 
     case "got-social-login-result": {
-      return {
-        model,
-        cmd: [sendToServer(msg)],
-      };
+      return { model, cmd: [sendToServer(msg)] };
     }
   }
 };

@@ -1,6 +1,8 @@
 import { Err, Ok, Result, Uuid } from "gamezilla/@SHARED/core";
 
 export type UserId = string & { _opaque: "UserId" };
+const namespace = "user";
+const separator = ":";
 
 const is = (userId: unknown): userId is UserId => {
   return typeof userId === "string";
@@ -17,9 +19,10 @@ const parse = (id: unknown): Result<Problem, UserId> => {
 
 const generate = () => {
   const id = Uuid.generate();
+  const userId = `${namespace}${separator}${id}`;
 
-  if (is(id)) {
-    return id;
+  if (is(userId)) {
+    return userId;
   }
 
   throw new Error("impossible condition. generated invalid user id.");

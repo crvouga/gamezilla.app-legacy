@@ -1,10 +1,5 @@
 import { EmailAddress, Result } from "gamezilla/@SHARED/core";
-import { UserId } from "gamezilla/app/@SHARED/data";
-
-export type Account = {
-  userId: UserId;
-  emailAddress: EmailAddress;
-};
+import { Account } from "../../auth.core";
 
 export type AccountDb = {
   findOneByEmail: (input: {

@@ -1,15 +1,8 @@
+import { EmailAddress, Ok, has, is, isObj, str } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
-import { Account, AccountDb } from "./account-db";
-import {
-  EmailAddress,
-  Err,
-  Ok,
-  has,
-  is,
-  isObj,
-  str,
-} from "gamezilla/@SHARED/core";
 import { DbConnSql } from "gamezilla/app/@SHARED/server";
+import { Account } from "../../auth.core";
+import { AccountDb } from "./account-db";
 
 type AccountRow = {
   user_id: string;

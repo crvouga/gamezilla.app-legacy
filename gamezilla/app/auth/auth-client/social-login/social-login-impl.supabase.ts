@@ -1,7 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
-import { SocialLogin } from "./social-login";
 import { EmailAddress, Err, NotAsked, Ok } from "gamezilla/@SHARED/core";
-import { UserId } from "gamezilla/app/@SHARED/data";
+import { SocialLogin } from "./social-login";
 
 const KEY = "social-login-state";
 
@@ -46,7 +45,7 @@ export const createSocialLogin = (): SocialLogin => {
       return Err("Failed to authenticate");
     },
 
-    async startSocialLogin({ provider }) {
+    async redirectSocialLogin({ provider }) {
       switch (provider) {
         case "google": {
           const result = await supabaseClient.auth.signIn({

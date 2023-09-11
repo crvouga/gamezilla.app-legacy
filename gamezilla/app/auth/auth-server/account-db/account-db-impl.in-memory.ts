@@ -1,6 +1,7 @@
-import { UserId } from "gamezilla/app/@SHARED/data";
-import { Account, AccountDb } from "./account-db";
 import { Ok } from "gamezilla/@SHARED/core";
+import { UserId } from "gamezilla/app/@SHARED/data";
+import { Account } from "../../auth.core";
+import { AccountDb } from "./account-db";
 
 export const createAccountDb = (): AccountDb => {
   const accounts = new Map<UserId, Account>();

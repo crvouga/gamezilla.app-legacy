@@ -33,11 +33,16 @@ const generateId = (length: number): string => {
   return runningId;
 };
 
-const generate = (): ClientId => {
-  const id = `client-${generateId(5)}`;
+const namespace = "client";
+const separator = ":";
 
-  if (is(id)) {
-    return id;
+const generate = (): ClientId => {
+  const id = `${generateId(5)}`;
+
+  const clientId = `${namespace}${separator}${id}`;
+
+  if (is(clientId)) {
+    return clientId;
   }
 
   throw new Error("generated invalid client id");

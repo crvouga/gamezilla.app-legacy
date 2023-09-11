@@ -2,8 +2,8 @@ import { Result } from "gamezilla/@SHARED/core";
 
 export type SpaceId = string & { _opaque: "SpaceId" };
 
-const namespace = "";
-const separator = "";
+const namespace = "space";
+const separator = ":";
 
 const is = (id: unknown): id is SpaceId => {
   // todo: better validation

@@ -6,7 +6,11 @@ import {
   SessionId,
 } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
-import { Account } from "./account-db";
+
+export type Account = {
+  userId: UserId;
+  emailAddress: EmailAddress;
+};
 
 export type ClientModel = {
   loginWithGoogle: RemoteResult<string, null>;
