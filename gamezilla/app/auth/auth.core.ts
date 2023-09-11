@@ -1,4 +1,4 @@
-import { PhoneNumber, RemoteResult, SessionId } from "gamezilla/@SHARED/core";
+import { RemoteResult, SessionId } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
 
 export type ClientModel = {

@@ -103,7 +103,9 @@ export const update = ({
 export const updateFromServer = ({
   model,
   msg,
+  ctx,
 }: {
+  ctx: AnonymousClientCtx;
   msg: ToClient;
   model: ClientModel;
 }): {
@@ -122,26 +124,52 @@ export const updateFromServer = ({
         },
       };
     }
+
     case "client-unauthenticated": {
-      return {
-        model: { ...model, currentUser: { t: "logged-out" } },
-        evt: [msg],
-      };
-    }
-    case "client-authenticated": {
-      return {
-        model: {
-          ...model,
-          currentUser: { t: "logged-in", userId: msg.userId },
+      return p(
+        {
+          model: { ...model, currentUser: { t: "logged-out" } },
+          evt: [msg],
         },
-        evt: [msg],
-      };
+        andThen((model) => {
+          if (ctx.currentRoute.t !== "auth") {
+            return {
+              model,
+              cmd: [replaceRoute({ t: "auth", c: { t: "login" } })],
+            };
+          }
+          return { model };
+        })
+      );
+    }
+
+    case "client-authenticated": {
+      return p(
+        { model },
+        andThen((model): ReturnType<typeof updateFromServer> => {
+          return {
+            model: {
+              ...model,
+              currentUser: { t: "logged-in", userId: msg.userId },
+            },
+            evt: [msg],
+          };
+        }),
+        andThen((model) => {
+          if (ctx.currentRoute.t === "auth") {
+            return {
+              model,
+              cmd: [replaceRoute({ t: "space", c: { t: "space-list" } })],
+            };
+          }
+          return { model };
+        })
+      );
     }
   }
 };
 
 export const updateFromEvt = ({
-  ctx,
   model,
   msg,
 }: {
@@ -154,47 +182,6 @@ export const updateFromEvt = ({
   cmd?: ClientCmd<ToServer>[];
 } => {
   switch (msg.t) {
-    case "client-unauthenticated": {
-      return p(
-        { model },
-        andThen((model): ReturnType<typeof updateFromEvt> => {
-          if (ctx.currentRoute.t !== "auth") {
-            return {
-              model,
-              cmd: [replaceRoute({ t: "auth", c: { t: "login" } })],
-            };
-          }
-          return { model };
-        }),
-        andThen((model) => {
-          return { model: { ...model, currentUser: { t: "logged-out" } } };
-        })
-      );
-    }
-
-    case "client-authenticated": {
-      return p(
-        { model },
-        andThen((model): ReturnType<typeof updateFromEvt> => {
-          if (ctx.currentRoute.t === "auth") {
-            return {
-              model,
-              cmd: [replaceRoute({ t: "space", c: { t: "space-list" } })],
-            };
-          }
-          return { model };
-        }),
-        andThen((model) => {
-          return {
-            model: {
-              ...model,
-              currentUser: { t: "logged-in", userId: msg.userId },
-            },
-          };
-        })
-      );
-    }
-
     default: {
       return { model };
     }

@@ -304,6 +304,7 @@ const updateFromServer = ({
   switch (msg.t) {
     case "auth": {
       const updated = AuthClient.updateFromServer({
+        ctx,
         msg: msg.c,
         model: model.auth,
       });
@@ -364,7 +365,6 @@ const updateFromServer = ({
       const updated = ProfileClient.updateFromServer({
         msg: msg.c,
         model: model.profile,
-
       });
       return {
         cmd: ClientCmd.tag("profile", updated.cmd),
