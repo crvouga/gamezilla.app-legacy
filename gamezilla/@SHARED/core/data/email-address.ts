@@ -12,7 +12,7 @@ const is = (emailAddress: unknown): emailAddress is EmailAddress => {
   return typeof emailAddress === "string" && regex.test(emailAddress);
 };
 
-const decode = (emailAddress: string): Result<Problem, EmailAddress> => {
+const parse = (emailAddress: string): Result<Problem, EmailAddress> => {
   if (is(emailAddress)) {
     return Ok(emailAddress);
   }
@@ -21,5 +21,5 @@ const decode = (emailAddress: string): Result<Problem, EmailAddress> => {
 
 export const EmailAddress = {
   is,
-  decode,
+  parse,
 };
