@@ -271,38 +271,42 @@ export const View = ({
   dispatch: (msg: ClientMsg) => void;
   viewBottomBar: VDom;
 }) => {
-  if (route.t === "profile") {
-    return (
-      <div className="relative flex h-full w-full flex-col">
-        <ViewProfileScreen
-          model={model}
-          ctx={ctx}
-          dispatch={dispatch}
-          userId={route.userId}
-        />
+  switch (route.t) {
+    case "profile": {
+      return (
+        <div className="relative flex h-full w-full flex-col">
+          <ViewProfileScreen
+            model={model}
+            ctx={ctx}
+            dispatch={dispatch}
+            userId={route.userId}
+          />
 
-        {viewBottomBar}
-      </div>
-    );
+          {viewBottomBar}
+        </div>
+      );
+    }
+
+    case "profile-update": {
+      return <ViewUpdateScreen dispatch={dispatch} ctx={ctx} model={model} />;
+    }
+
+    case "profile-update-username": {
+      return (
+        <ViewUpdateUsernameScreen dispatch={dispatch} ctx={ctx} model={model} />
+      );
+    }
+
+    case "profile-update-avatar": {
+      return (
+        <ViewUpdateAvatarScreen dispatch={dispatch} ctx={ctx} model={model} />
+      );
+    }
+
+    default: {
+      return <LoadingScreen />;
+    }
   }
-
-  if (route.t === "profile-update") {
-    return <ViewUpdateScreen dispatch={dispatch} ctx={ctx} model={model} />;
-  }
-
-  if (route.t === "profile-update-username") {
-    return (
-      <ViewUpdateUsernameScreen dispatch={dispatch} ctx={ctx} model={model} />
-    );
-  }
-
-  if (route.t === "profile-update-avatar") {
-    return (
-      <ViewUpdateAvatarScreen dispatch={dispatch} ctx={ctx} model={model} />
-    );
-  }
-
-  return <LoadingScreen />;
 };
 
 const ViewUpdateScreen = ({

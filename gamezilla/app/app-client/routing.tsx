@@ -1,9 +1,11 @@
 import { Browser, Eff } from "gamezilla/@SHARED/core";
 import {
+  APP_SOUND,
   ClientCmd,
   ClientEvt,
   Route,
   RouteCmd,
+  playSound,
 } from "gamezilla/app/@SHARED/client";
 
 //
@@ -56,6 +58,7 @@ export const update = ({
   model: Model;
   eff?: Eff<Msg>;
   evt?: ClientEvt[];
+  cmd?: ClientCmd[];
 } => {
   switch (msg.t) {
     case "clicked-back": {
@@ -63,7 +66,11 @@ export const update = ({
     }
 
     case "clicked-link": {
-      return { model, eff: Browser.push(Route.encode(msg.route)) };
+      return {
+        model,
+        eff: Browser.push(Route.encode(msg.route)),
+        cmd: [playSound(APP_SOUND.tap)],
+      };
     }
 
     case "route-changed": {

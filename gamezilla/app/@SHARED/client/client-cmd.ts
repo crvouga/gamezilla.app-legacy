@@ -7,7 +7,7 @@ import { Route } from "./client-route";
 //
 //
 
-export type ClientCmd<ToServer = never> =
+export type ClientCmd<ToServer = null> =
   | SendToServerCmd<ToServer>
   | ToastCmd
   | RouteCmd
@@ -21,7 +21,7 @@ export type ClientCmd<ToServer = never> =
 
 export type SendToServerCmd<T> = {
   t: "send-to-server";
-  msg: T;
+  msg: T | null;
 };
 
 /**
@@ -137,8 +137,12 @@ const tagOne = <T extends string, Msg>(
 ): ClientCmd<{ t: T; c: Msg }> => {
   switch (cmd.t) {
     case "send-to-server": {
-      return { ...cmd, msg: { t, c: cmd.msg } };
+      if (cmd.msg) {
+        return { ...cmd, msg: { t, c: cmd.msg } };
+      }
+      return { ...cmd, msg: null };
     }
+
     default: {
       return cmd;
     }

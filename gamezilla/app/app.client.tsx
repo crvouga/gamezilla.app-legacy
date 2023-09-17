@@ -181,12 +181,16 @@ const updateMain = ({
     }
 
     case "routing": {
-      const updated = Routing.update({ msg: msg.c, model: model.routing });
+      const updated = Routing.update({
+        msg: msg.c,
+        model: model.routing,
+      });
 
       return {
         model: { ...model, routing: updated.model },
         eff: Eff.t("routing", updated.eff),
         evt: updated.evt,
+        cmd: updated.cmd,
       };
     }
 
@@ -438,7 +442,9 @@ const updateFromCmd = ({
       return {
         model,
         eff: () => {
-          toServer.publish([cmd.msg]);
+          if (cmd.msg) {
+            toServer.publish([cmd.msg]);
+          }
         },
       };
     }
