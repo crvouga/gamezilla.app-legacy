@@ -56,8 +56,7 @@ export type ClientMsg =
   | { t: "game"; c: Game.ClientMsg }
   | { t: "modal-closed" }
   | { t: "modal-open"; c: ModalModel }
-  | { t: "clicked-user"; userId: UserId }
-  | { t: "clicked-user-link"; userId: UserId };
+  | { t: "clicked-user"; userId: UserId };
 
 //
 //

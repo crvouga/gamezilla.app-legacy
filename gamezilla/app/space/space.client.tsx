@@ -1,13 +1,10 @@
 import {
   Eff,
   Loading,
-  Ok,
   Result,
   Sub,
-  andThen,
   chain,
   dissoc,
-  p,
 } from "gamezilla/@SHARED/core";
 import {
   APP_SOUND,
@@ -18,7 +15,6 @@ import {
   ViewCtx,
   gotProfiles,
   playSound,
-  preloadSound,
   pushRoute,
   replaceRoute,
   sendToServer,
@@ -122,15 +118,6 @@ export const update = ({
       return { model: { ...model, modal: msg.c } };
     }
 
-    case "clicked-user-link": {
-      return {
-        model: { ...model, modal: null },
-        cmd: [
-          pushRoute({ t: "profile", c: { t: "profile", userId: msg.userId } }),
-        ],
-      };
-    }
-
     case "clicked-user": {
       return {
         model: {
@@ -180,10 +167,10 @@ export const update = ({
     }
 
     case "create": {
-      return p(
-        { model },
-        andThen((model) => updateRequest({ ctx, msg, model })),
-        andThen((model) => {
+      return chain(
+        model,
+        (model) => updateRequest({ ctx, msg, model }),
+        (model) => {
           return {
             model,
             cmd: [
@@ -193,7 +180,7 @@ export const update = ({
               }),
             ],
           };
-        })
+        }
       );
     }
 
@@ -237,15 +224,15 @@ export const updateFromServer = ({
   evt?: ClientEvt[];
   cmd?: ClientCmd<ToServer>[];
 } => {
-  return p(
-    { model },
-    andThen((model) => updateFromServerMain({ ctx, msg, model })),
-    andThen((model) => {
+  return chain(
+    model,
+    (model) => updateFromServerMain({ ctx, msg, model }),
+    (model) => {
       return {
         model,
         evt: msg.profiles ? [gotProfiles(msg.profiles)] : [],
       };
-    })
+    }
   );
 };
 
@@ -452,11 +439,11 @@ export const updateFromServerMain: typeof updateFromServer = ({
     }
 
     case "leave": {
-      return p(
-        { model },
-        andThen((model) => updateLoading({ msg: msg, model })),
-        andThen((model) => mergeWithResult({ ctx, result: msg.result, model })),
-        andThen((model) => {
+      return chain(
+        model,
+        (model) => updateLoading({ msg: msg, model }),
+        (model) => mergeWithResult({ ctx, result: msg.result, model }),
+        (model) => {
           if (msg.result.t === "err") {
             return { model };
           }
@@ -478,16 +465,16 @@ export const updateFromServerMain: typeof updateFromServer = ({
               playSound(SPACE_SOUND.left),
             ],
           };
-        })
+        }
       );
     }
 
     case "create": {
-      return p(
-        { model },
-        andThen((model) => updateLoading({ msg: msg, model })),
-        andThen((model) => mergeWithResult({ ctx, result: msg.result, model })),
-        andThen((model) => {
+      return chain(
+        model,
+        (model) => updateLoading({ msg: msg, model }),
+        (model) => mergeWithResult({ ctx, result: msg.result, model }),
+        (model) => {
           if (msg.result.t === "err") {
             return { model };
           }
@@ -508,16 +495,16 @@ export const updateFromServerMain: typeof updateFromServer = ({
               }),
             ],
           };
-        })
+        }
       );
     }
 
     case "input-game": {
-      return p(
-        { model },
-        andThen((model) => updateLoading({ msg: msg, model })),
-        andThen((model) => mergeWithResult({ ctx, result: msg.result, model })),
-        andThen((model) => {
+      return chain(
+        model,
+        (model) => updateLoading({ msg: msg, model }),
+        (model) => mergeWithResult({ ctx, result: msg.result, model }),
+        (model) => {
           if (msg.result.t === "err") {
             return { model };
           }
@@ -539,7 +526,7 @@ export const updateFromServerMain: typeof updateFromServer = ({
             model,
             cmd: [playSound(APP_SOUND.navBackwardMin)],
           };
-        })
+        }
       );
     }
   }
@@ -601,9 +588,12 @@ export const updateFromEvt = (input: {
   model: ClientModel;
   cmd?: ClientCmd<ToServer>[];
 } => {
-  const { msg } = input;
+  const { msg, model } = input;
 
   switch (msg.t) {
+    case "route-changed": {
+      return { model: { ...model, modal: null } };
+    }
     default: {
       return input;
     }
@@ -821,9 +811,12 @@ const ViewSpaceScreen = ({
             className="flex w-full flex-col items-center justify-center gap-2 p-4"
             onClick={() => {
               if (model.previewUserId) {
-                dispatch({
-                  t: "clicked-user-link",
-                  userId: model.previewUserId,
+                ctx.push({
+                  t: "profile",
+                  c: {
+                    t: "profile",
+                    userId: model.previewUserId,
+                  },
                 });
               }
             }}>
@@ -852,9 +845,12 @@ const ViewSpaceScreen = ({
             <Button
               onClick={() => {
                 if (model.previewUserId) {
-                  dispatch({
-                    t: "clicked-user-link",
-                    userId: model.previewUserId,
+                  ctx.push({
+                    t: "profile",
+                    c: {
+                      t: "profile",
+                      userId: model.previewUserId,
+                    },
                   });
                 }
               }}

@@ -51,25 +51,47 @@ export const andThen =
  * )
  * //=> { model: 3, evt: [someEvt], eff: someEff, cmd: [someCmd] }
  *
- * @param model - the model to start with
+ * @param initial - the model to start with
  * @param updaters - a list of update functions to apply to the model
  * @returns Accumulated output from all the update functions
  */
 export const chain = <Model, Msg, Evt, Cmd>(
-  model: Model,
+  initial: Model,
   ...updaters: ((input: Model) => Output<Model, Msg, Evt, Cmd>)[]
 ): Output<Model, Msg, Evt, Cmd> => {
-  let acc: Output<Model, Msg, Evt, Cmd> = { model };
-  for (const updater of updaters) {
-    const updated = updater(acc.model);
-    acc = {
-      model: updated.model,
-      eff: Eff.batch([acc.eff, updated.eff]),
-      evt: [...(acc.evt ?? []), ...(updated.evt ?? [])],
-      cmd: [...(acc.cmd ?? []), ...(updated.cmd ?? [])],
-    };
+  const cmd: Cmd[] = [];
+  const evt: Evt[] = [];
+  const eff: Eff<Msg>[] = [];
+  let model: Model = initial;
+
+  for (let i = 0, len = updaters.length; i < len; ++i) {
+    // @ts-ignore
+    const updated = updaters[i](model);
+    model = updated.model;
+
+    if (updated.eff) {
+      eff.push(updated.eff);
+    }
+    if (updated.evt) {
+      for (let j = 0, len = updated.evt.length; j < len; ++j) {
+        // @ts-ignore
+        evt.push(updated.evt[j]);
+      }
+    }
+    if (updated.cmd) {
+      for (let j = 0, len = updated.cmd.length; j < len; ++j) {
+        // @ts-ignore
+        cmd.push(updated.cmd[j]);
+      }
+    }
   }
-  return acc;
+
+  return {
+    model,
+    eff: Eff.batch(eff),
+    evt,
+    cmd,
+  };
 };
 
 type Range = [number, number];
