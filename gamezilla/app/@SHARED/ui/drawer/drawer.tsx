@@ -12,12 +12,10 @@ export const Drawer = ({
 }) => {
   drawerSub.publish({ type: "props", id, onClose, open });
   return (
-    // @ts-ignore
     <bottom-drawer id={id}>
       <div className="w-full border border-neutral-700 bg-black">
         {children}
       </div>
-      {/* @ts-ignore */}
     </bottom-drawer>
   );
 };
