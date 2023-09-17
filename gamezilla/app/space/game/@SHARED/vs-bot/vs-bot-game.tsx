@@ -26,7 +26,10 @@ const overlayConfig = Transition.config<GameOver>({
     await fadeIn(toOverlayId(val), 600);
     await fadeIn(PLAY_AGAIN_ID, 600);
   },
-  exit: (val) => fadeOut(toOverlayId(val)),
+  exit: async (val) => {
+    await fadeOut(toOverlayId(val));
+    await fadeOut(PLAY_AGAIN_ID);
+  },
 });
 
 async function fadeIn(id: string, delay: number = 0) {
@@ -145,7 +148,7 @@ export const ViewGameOverOverlay = (props: Props) => {
                 <Winner {...props} winner={gameOver.winner} />
                 {props.onPlayAgain ? (
                   <div
-                    className="flex flex-1 items-center justify-center pb-2 text-2xl font-bold "
+                    className="flex flex-1 items-center justify-center pb-2 text-2xl font-bold opacity-0"
                     id={PLAY_AGAIN_ID}>
                     Tap to play again
                   </div>
@@ -160,7 +163,7 @@ export const ViewGameOverOverlay = (props: Props) => {
                 <Draw {...props} />
                 {props.onPlayAgain ? (
                   <div
-                    className="flex flex-1 items-center justify-center pb-2 text-2xl font-bold "
+                    className="flex flex-1 items-center justify-center pb-2 text-2xl font-bold opacity-0"
                     id={PLAY_AGAIN_ID}>
                     Tap to play again
                   </div>

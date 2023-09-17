@@ -1,4 +1,4 @@
-import { Eff, Err, Ok, Result } from "gamezilla/@SHARED/core";
+import { Eff, Err, Ok, Result, UnitInterval } from "gamezilla/@SHARED/core";
 import { ClientEvt, SoundCmd } from "gamezilla/app/@SHARED/client";
 // https://github.com/goldfire/howler.js#quick-start
 import { Howl, Howler } from "howler";
@@ -120,7 +120,10 @@ export const updateFromCmd = ({
       return {
         model,
         eff: async (dispatch) => {
-          const played = await playSound(cmd.src);
+          const played = await playSound(
+            cmd.src,
+            cmd.volume ?? UnitInterval.init(1)
+          );
           dispatch({
             t: "played-sound",
             src: cmd.src,
@@ -158,10 +161,11 @@ const loadHowl = (src: string) => {
   return howl;
 };
 
-const playSound = async (src: string) => {
+const playSound = async (src: string, volume: UnitInterval) => {
   try {
     const howl = loadHowl(src);
 
+    howl.volume(volume);
     howl.play();
 
     return Ok(null);

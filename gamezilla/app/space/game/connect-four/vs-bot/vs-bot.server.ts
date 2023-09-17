@@ -6,7 +6,7 @@ import {
 } from "gamezilla/app/space/@SHARED";
 import { findBestMove } from "../connect-four";
 import {
-  Event,
+  Evt,
   initCore,
   isBotTurn,
   Res,
@@ -145,7 +145,7 @@ export const updateFromEvt = ({
   eff?: Eff<Msg>;
 } => {
   if (msg.t === "user-left") {
-    const event: Event = {
+    const event: Evt = {
       t: "player-left",
       userId: msg.userId,
     };

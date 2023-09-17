@@ -5,6 +5,7 @@ import {
   Result,
   Sub,
   andThen,
+  chain,
   dissoc,
   p,
 } from "gamezilla/@SHARED/core";
@@ -293,10 +294,10 @@ export const updateFromServerMain: typeof updateFromServer = ({
     }
 
     case "list": {
-      return p(
-        { model },
-        andThen((model) => updateLoading({ msg: msg, model })),
-        andThen((model) => {
+      return chain(
+        model,
+        (model) => updateLoading({ msg: msg, model }),
+        (model) => {
           if (msg.result.t === "err") {
             return { model, cmd: [showToast(msg.result.error, "error")] };
           }
@@ -339,15 +340,17 @@ export const updateFromServerMain: typeof updateFromServer = ({
             evt: [...(merged?.evt ?? []), gotProfiles(profiles)],
           };
           return merged;
-        })
+        }
       );
     }
 
     case "destroy": {
-      return p(
-        { model },
-        andThen((model) => updateLoading({ msg: msg, model })),
-        andThen((model) => {
+      return chain(
+        model,
+        (model) => {
+          return updateLoading({ msg: msg, model });
+        },
+        (model) => {
           const currentUserSpace = toSpaceByUserId(model, ctx.currentUserId);
 
           if (currentUserSpace?.spaceId !== msg.spaceId) {
@@ -358,25 +361,9 @@ export const updateFromServerMain: typeof updateFromServer = ({
             return { model, cmd: [showToast(msg.result.error, "error")] };
           }
 
-          return p(
-            { model },
-            andThen((model): ReturnType<typeof updateFromServer> => {
-              return { model, cmd: [playSound(SPACE_SOUND.left)] };
-            }),
-            andThen((model) => {
-              if (msg.userId === ctx.currentUserId) {
-                return { model };
-              }
-              const profile = ctx.profiles[msg.userId];
-              if (profile) {
-                return {
-                  model,
-                  cmd: [showToast(`${profile.username} ended space`)],
-                };
-              }
-              return { model, cmd: [showToast("Host ended space")] };
-            }),
-            andThen((model) => {
+          return chain(
+            model,
+            (model) => {
               if (
                 ctx.currentRoute.t === "space" &&
                 ctx.currentRoute.c.t === "space" &&
@@ -388,23 +375,40 @@ export const updateFromServerMain: typeof updateFromServer = ({
                 };
               }
               return { model };
-            }),
-            andThen((model) => {
+            },
+            (model) => {
+              return { model, cmd: [playSound(SPACE_SOUND.left)] };
+            },
+            (model) => {
+              if (msg.userId === ctx.currentUserId) {
+                return { model };
+              }
+              const profile = ctx.profiles[msg.userId];
+              if (profile) {
+                return {
+                  model,
+                  cmd: [showToast(`${profile.username} ended space`)],
+                };
+              }
+              return { model, cmd: [showToast("Host ended space")] };
+            },
+
+            (model) => {
               return {
                 model: { ...model, spaces: dissoc(model.spaces, msg.spaceId) },
               };
-            })
+            }
           );
-        })
+        }
       );
     }
 
     case "join": {
-      return p(
-        { model },
-        andThen((model) => updateLoading({ msg: msg, model })),
-        andThen((model) => mergeWithResult({ ctx, result: msg.result, model })),
-        andThen((model) => {
+      return chain(
+        model,
+        (model) => updateLoading({ msg: msg, model }),
+        (model) => mergeWithResult({ ctx, result: msg.result, model }),
+        (model) => {
           if (msg.result.t === "err") {
             return {
               model,
@@ -421,27 +425,29 @@ export const updateFromServerMain: typeof updateFromServer = ({
             return { model };
           }
 
-          if (msg.userId === ctx.currentUserId) {
-            return {
-              model,
-              cmd: [playSound(SPACE_SOUND.joined)],
-            };
-          }
-
-          const profile = ctx.profiles[msg.userId];
-
-          if (!profile) {
-            return { model, cmd: [playSound(SPACE_SOUND.joined)] };
-          }
-
-          return {
+          return chain(
             model,
-            cmd: [
-              showToast(`${profile.username} joined space`),
-              playSound(SPACE_SOUND.joined),
-            ],
-          };
-        })
+            (model) => {
+              return {
+                model,
+                cmd: [playSound(SPACE_SOUND.joined)],
+              };
+            },
+            (model) => {
+              if (msg.userId === ctx.currentUserId) {
+                return { model };
+              }
+              const profile = ctx.profiles[msg.userId];
+              if (!profile) {
+                return { model };
+              }
+              return {
+                model,
+                cmd: [showToast(`${profile.username} joined space`)],
+              };
+            }
+          );
+        }
       );
     }
 

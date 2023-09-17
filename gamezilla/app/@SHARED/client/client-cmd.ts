@@ -1,3 +1,4 @@
+import { UnitInterval } from "gamezilla/@SHARED/core";
 import { Route } from "./client-route";
 
 //
@@ -68,7 +69,7 @@ export type SoundCmd =
   | {
       t: "sound/play";
       src: string;
-      volume?: number;
+      volume?: UnitInterval;
     }
   | {
       t: "sound/preload";
@@ -85,7 +86,10 @@ export const APP_SOUND = {
   navBackwardMin: "./nav-backward-min.wav",
 };
 
-export const playSound = <T>(src: string, volume?: number): ClientCmd<T> => {
+export const playSound = <T>(
+  src: string,
+  volume?: UnitInterval
+): ClientCmd<T> => {
   return {
     t: "sound/play",
     src,

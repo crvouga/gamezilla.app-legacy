@@ -39,6 +39,39 @@ export const andThen =
     };
   };
 
+/**
+ * @description
+ * A helper function used for composing update functions together.
+ * @example
+ * const updated = chain(
+ * { model: 0 },
+ * (model) => ({ model: model + 1, evt: [someEvent] }),
+ * (model) => ({ model: model + 1, eff: someEff }),
+ * (model) => ({ model: model + 1, cmd: [someCmd] }),
+ * )
+ * //=> { model: 3, evt: [someEvt], eff: someEff, cmd: [someCmd] }
+ *
+ * @param model - the model to start with
+ * @param updaters - a list of update functions to apply to the model
+ * @returns Accumulated output from all the update functions
+ */
+export const chain = <Model, Msg, Evt, Cmd>(
+  model: Model,
+  ...updaters: ((input: Model) => Output<Model, Msg, Evt, Cmd>)[]
+): Output<Model, Msg, Evt, Cmd> => {
+  let acc: Output<Model, Msg, Evt, Cmd> = { model };
+  for (const updater of updaters) {
+    const updated = updater(acc.model);
+    acc = {
+      model: updated.model,
+      eff: Eff.batch([acc.eff, updated.eff]),
+      evt: [...(acc.evt ?? []), ...(updated.evt ?? [])],
+      cmd: [...(acc.cmd ?? []), ...(updated.cmd ?? [])],
+    };
+  }
+  return acc;
+};
+
 type Range = [number, number];
 /**
  * @example

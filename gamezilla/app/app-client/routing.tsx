@@ -1,4 +1,4 @@
-import { Browser, Eff } from "gamezilla/@SHARED/core";
+import { Browser, Eff, UnitInterval } from "gamezilla/@SHARED/core";
 import {
   APP_SOUND,
   ClientCmd,
@@ -69,7 +69,7 @@ export const update = ({
       return {
         model,
         eff: Browser.push(Route.encode(msg.route)),
-        cmd: [playSound(APP_SOUND.tap)],
+        cmd: [playSound(APP_SOUND.tap, UnitInterval.init(0.5))],
       };
     }
 

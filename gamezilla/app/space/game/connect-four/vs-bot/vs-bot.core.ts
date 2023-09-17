@@ -125,13 +125,13 @@ export type ClientMsg =
   | { t: "vs-bot-setup"; c: VsBotSetup.Msg }
   | { t: "vs-bot-game"; c: VsBotGame.Msg };
 
-export type ServerMsg = BotMovedEvent;
+export type ServerMsg = BotMoved;
 
-export type ToClient = Res | Event;
+export type ToClient = Res | Evt;
 
-type BotMovedEvent = { t: "bot-moved"; moved: BestMoveResult };
+type BotMoved = { t: "bot-moved"; moved: BestMoveResult };
 
-export type Event = { t: "player-left"; userId: string } | BotMovedEvent;
+export type Evt = { t: "player-left"; userId: string } | BotMoved;
 
 export type ToServer = Req;
 
@@ -147,7 +147,7 @@ export type Req =
 
 export type Res = Req & { result: Result<string, null> };
 
-export type CoreMsg = Req | Event;
+export type CoreMsg = Req | Evt;
 
 type CoreCtx = { currentUserId: UserId; hostId: UserId };
 
@@ -176,147 +176,159 @@ export const updateCore = ({
   msg: Req;
   model: CoreModel;
 }): Result<string, CoreModel> => {
-  if (model.type === "setup") {
-    if (msg.t === "start-playing") {
-      return Ok({
-        ...model,
-        userPlayerType: msg.playerType,
-        player: ctx.currentUserId,
-      });
+  switch (model.type) {
+    case "setup": {
+      switch (msg.t) {
+        case "start-playing": {
+          return Ok({
+            ...model,
+            userPlayerType: msg.playerType,
+            player: ctx.currentUserId,
+          });
+        }
+
+        case "stop-playing": {
+          if (model.player !== ctx.currentUserId) {
+            return Err("not-allowed");
+          }
+
+          return Ok({
+            ...model,
+            player: null,
+          });
+        }
+
+        case "input-bot-level": {
+          if (
+            model.player !== ctx.currentUserId ||
+            ctx.currentUserId !== ctx.hostId
+          ) {
+            return Err("not-allowed");
+          }
+
+          const modelNew: CoreModel = {
+            ...model,
+            botLevel: msg.botLevel,
+          };
+
+          return Ok(modelNew);
+        }
+
+        case "start-game": {
+          if (
+            model.player !== ctx.currentUserId ||
+            ctx.currentUserId !== ctx.hostId
+          ) {
+            return Err("not-allowed");
+          }
+
+          if (model.player === null) {
+            return Err("missing-player");
+          }
+
+          const modelNew: CoreModel = {
+            type: "game",
+            gameId: 0,
+            botLevel: model.botLevel,
+            player: model.player,
+            userPlayerType: model.userPlayerType,
+            columns: emptyColumns,
+          };
+
+          return Ok(modelNew);
+        }
+
+        default: {
+          return Err("unhandled-request");
+        }
+      }
     }
 
-    if (msg.t === "stop-playing") {
-      if (model.player !== ctx.currentUserId) {
-        return Err("not-allowed");
-      }
+    case "game": {
+      switch (msg.t) {
+        case "stop-game": {
+          if (
+            model.player !== ctx.currentUserId ||
+            ctx.currentUserId !== ctx.hostId
+          ) {
+            return Err("not-playing");
+          }
 
-      return Ok({
-        ...model,
-        player: null,
-      });
+          const modelNew: CoreModel = {
+            type: "setup",
+            botLevel: model.botLevel,
+            player: model.player,
+            userPlayerType: model.userPlayerType,
+          };
+
+          return Ok(modelNew);
+        }
+
+        case "swap-sides": {
+          if (model.player !== ctx.currentUserId) {
+            return Err("not-playing");
+          }
+
+          const modelNew: CoreModel = {
+            ...model,
+            columns: emptyColumns,
+            gameId: model.gameId + 1,
+            userPlayerType: opposite[model.userPlayerType],
+          };
+
+          return Ok(modelNew);
+        }
+
+        case "input-move": {
+          if (model.player !== ctx.currentUserId) {
+            return Err("not-playing");
+          }
+
+          const result = move(
+            model.columns,
+            msg.columnIndex,
+            model.userPlayerType
+          );
+
+          if (result.t === "err") {
+            return result;
+          }
+
+          const modelNew: CoreModel = {
+            ...model,
+            columns: result.value,
+          };
+
+          return Ok(modelNew);
+        }
+
+        case "restart": {
+          if (model.player !== ctx.currentUserId) {
+            return Err("not-playing");
+          }
+
+          const modelNew: GameModel = {
+            ...model,
+            columns: emptyColumns,
+            gameId: model.gameId + 1,
+          };
+
+          return Ok(modelNew);
+        }
+
+        default: {
+          return Err("unhandled-request");
+        }
+      }
     }
-
-    if (msg.t === "input-bot-level") {
-      if (
-        model.player !== ctx.currentUserId ||
-        ctx.currentUserId !== ctx.hostId
-      ) {
-        return Err("not-allowed");
-      }
-
-      const modelNew: CoreModel = {
-        ...model,
-        botLevel: msg.botLevel,
-      };
-
-      return Ok(modelNew);
-    }
-
-    if (msg.t === "start-game") {
-      if (
-        model.player !== ctx.currentUserId ||
-        ctx.currentUserId !== ctx.hostId
-      ) {
-        return Err("not-allowed");
-      }
-
-      if (model.player === null) {
-        return Err("missing-player");
-      }
-
-      const modelNew: CoreModel = {
-        type: "game",
-        gameId: 0,
-        botLevel: model.botLevel,
-        player: model.player,
-        userPlayerType: model.userPlayerType,
-        columns: emptyColumns,
-      };
-
-      return Ok(modelNew);
-    }
-
-    return Err("unhandled-request");
   }
-
-  if (model.type === "game") {
-    if (msg.t === "stop-game") {
-      if (
-        model.player !== ctx.currentUserId ||
-        ctx.currentUserId !== ctx.hostId
-      ) {
-        return Err("not-playing");
-      }
-
-      const modelNew: CoreModel = {
-        type: "setup",
-        botLevel: model.botLevel,
-        player: model.player,
-        userPlayerType: model.userPlayerType,
-      };
-
-      return Ok(modelNew);
-    }
-
-    if (msg.t === "swap-sides") {
-      if (model.player !== ctx.currentUserId) {
-        return Err("not-playing");
-      }
-
-      const modelNew: CoreModel = {
-        ...model,
-        columns: emptyColumns,
-        gameId: model.gameId + 1,
-        userPlayerType: opposite[model.userPlayerType],
-      };
-
-      return Ok(modelNew);
-    }
-
-    if (msg.t === "input-move") {
-      if (model.player !== ctx.currentUserId) {
-        return Err("not-playing");
-      }
-
-      const result = move(model.columns, msg.columnIndex, model.userPlayerType);
-
-      if (result.t === "err") {
-        return result;
-      }
-
-      const modelNew: CoreModel = {
-        ...model,
-        columns: result.value,
-      };
-
-      return Ok(modelNew);
-    }
-
-    if (msg.t === "restart") {
-      if (model.player !== ctx.currentUserId) {
-        return Err("not-playing");
-      }
-
-      const modelNew: GameModel = {
-        ...model,
-        columns: emptyColumns,
-        gameId: model.gameId + 1,
-      };
-
-      return Ok(modelNew);
-    }
-
-    return Err("unhandled-request");
-  }
-
-  return Err("unhandled-request");
 };
 
 export const updateCoreEvent = ({
   msg,
   model,
 }: {
-  msg: Event;
+  msg: Evt;
   model: CoreModel;
 }): Result<string, CoreModel> => {
   if (msg.t === "bot-moved") {

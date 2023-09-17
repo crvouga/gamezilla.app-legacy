@@ -4,3 +4,4 @@ export * from "./non-neg-int";
 export * from "./phone-number";
 export * from "./pos-num";
 export * from "./uuid";
+export * from "./unit-interval";
