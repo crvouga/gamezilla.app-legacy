@@ -1,5 +1,5 @@
 import { UserId } from "gamezilla/app/@SHARED/data";
-import { MyAvatar, VDom } from "gamezilla/app/@SHARED/ui";
+import { MyAvatar, VDom, VDomChildren } from "gamezilla/app/@SHARED/ui";
 import { PlayerType, VsBotProps } from "./view-vs-bot";
 
 export const VsBotPlayerSection = ({
@@ -17,54 +17,44 @@ export const VsBotPlayerSection = ({
   const humanSlot = (
     <>
       <MyAvatar
-        className="h-6 w-6"
+        className="h-6 w-6 "
         src={ctx.profiles[human.userId]?.avatarUrl}
       />
-
-      <div className="text-ellipsis whitespace-nowrap">
-        <p className="text-ellipsis whitespace-nowrap text-sm">
-          {ctx.profiles[human.userId]?.username}
-        </p>
-      </div>
+      <p className="overflow-hidden text-ellipsis whitespace-nowrap">
+        {ctx.profiles[human.userId]?.username}
+      </p>
     </>
   );
 
   const botSlot = (
     <>
-      {bot.renderIcon({ className: "h-6 w-6" })}
-      <p className="text-ellipsis whitespace-nowrap text-sm">{bot.label}</p>
+      {bot.renderIcon({ className: "h-6 w-6 flex-shrink-0" })}
+      <p className="overflow-hidden text-ellipsis whitespace-nowrap">
+        {bot.label}
+      </p>
     </>
   );
 
-  const playerOneSlot = (
-    <Slot>
-      {playerOne.renderIcon({ className: "h-6 w-6" })}
-      {human.player === "player-one" ? humanSlot : botSlot}
-    </Slot>
-  );
-
-  const playerTwoSlot = (
-    <Slot>
-      {playerTwo.renderIcon({ className: "h-6 w-6" })}
-      {human.player === "player-two" ? humanSlot : botSlot}
-    </Slot>
-  );
-
   return (
-    <section className="flex w-full items-center gap-2 p-4">
-      {playerOneSlot}
-      <p className="flex items-center justify-center text-2xl font-black uppercase">
-        vs
-      </p>
-      {playerTwoSlot}
+    <section className="flex w-full items-center">
+      <Slot>
+        <div>{playerOne.renderIcon({ className: "h-6 w-6" })}</div>
+        {human.player === "player-one" ? humanSlot : botSlot}
+      </Slot>
+      <Slot>
+        {playerTwo.renderIcon({ className: "h-6 w-6" })}
+        {human.player === "player-two" ? humanSlot : botSlot}
+      </Slot>
     </section>
   );
 };
 
-const Slot = ({ children }: { children: VDom | VDom[] }) => {
+const Slot = ({ children }: { children: VDomChildren }) => {
   return (
-    <div className="flex flex-1 items-center gap-2 rounded-md border border-neutral-600 p-2">
-      {children}
+    <div className="w-1/2 p-2">
+      <div className="flex items-center gap-2 rounded-md border border-neutral-600 bg-neutral-900 p-2 text-sm">
+        {children}
+      </div>
     </div>
   );
 };

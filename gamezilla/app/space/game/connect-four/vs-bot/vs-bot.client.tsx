@@ -1,12 +1,18 @@
 import { Eff, Posix, Sub, andThen, p } from "gamezilla/@SHARED/core";
-import { ClientCmd, ClientCtx } from "gamezilla/app/@SHARED/client";
-import { SpaceClientCtx, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
+import {
+  APP_SOUND,
+  ClientCmd,
+  ClientCtx,
+  playSound,
+  sendToServer,
+} from "gamezilla/app/@SHARED/client";
 import {
   IconArrowLeftOnRect,
   IconArrowRotateLeft,
   IconRightLeft,
   LoadingBar,
 } from "gamezilla/app/@SHARED/ui";
+import { SpaceClientCtx, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
 import {
   GameLayout,
   IconBotHappy,
@@ -19,6 +25,7 @@ import {
   VsBotProps,
   VsBotSetup,
 } from "gamezilla/app/space/game/@SHARED";
+
 import { Columns, toStatus, toTurn } from "../connect-four";
 import { ViewCoverArt } from "../connect-four-cover-art";
 import {
@@ -34,6 +41,7 @@ import {
   ServerModel,
   ToClient,
   ToServer,
+  Req,
   allBotLevels,
   initCore,
   updateCore,
@@ -74,23 +82,36 @@ export const update = (input: {
   return p(updateMain(input), andThen(watch));
 };
 
-const updateMain: typeof update = ({ msg, model }) => {
-  if (msg.t === "columns-ui") {
-    const updated = ColumnsUI.update(model.columnsUI, msg.c);
-    return { model: { ...model, columnsUI: updated } };
-  }
+const updateMain: typeof update = ({ ctx, msg, model }) => {
+  switch (msg.t) {
+    case "columns-ui": {
+      const updated = ColumnsUI.update(model.columnsUI, msg.c);
+      return { model: { ...model, columnsUI: updated } };
+    }
 
-  if (msg.t === "vs-bot-game") {
-    const updated = VsBotGame.update(model.vsBotGame, msg.c);
-    return { model: { ...model, vsBotGame: updated } };
-  }
+    case "vs-bot-game": {
+      const updated = VsBotGame.update(model.vsBotGame, msg.c);
+      return { model: { ...model, vsBotGame: updated } };
+    }
 
-  if (msg.t === "vs-bot-setup") {
-    const updated = VsBotSetup.update(model.vsBotSetup, msg.c);
-    return { model: { ...model, vsBotSetup: updated } };
-  }
+    case "vs-bot-setup": {
+      const updated = VsBotSetup.update(model.vsBotSetup, msg.c);
+      return { model: { ...model, vsBotSetup: updated } };
+    }
 
-  return { model, cmd: [{ t: "send-to-server", msg }] };
+    default: {
+      const result = updateCore({ ctx, msg, model });
+
+      if (result.t === "err") {
+        return { model, cmd: [sendToServer(msg)] };
+      }
+
+      return {
+        model: { ...model, ...result.value },
+        cmd: [sendToServer(msg), ...msgToSoundCmd(msg)],
+      };
+    }
+  }
 };
 
 const watch = (model: ClientModel) => {
@@ -124,28 +145,51 @@ export const updateFromServer = (input: {
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
+  cmd?: ClientCmd<ToServer>[];
 } => {
   return p(updateFromServerMain(input), andThen(watch));
 };
 
 const updateFromServerMain: typeof updateFromServer = ({ ctx, msg, model }) => {
-  if (msg.t === "player-left" || msg.t === "bot-moved") {
-    const result = updateCoreEvent({ msg, model });
+  switch (msg.t) {
+    case "player-left":
+    case "bot-moved": {
+      const result = updateCoreEvent({ msg, model });
 
-    if (result.t === "err") {
-      return { model };
+      if (result.t === "err") {
+        return { model };
+      }
+
+      return { model: { ...model, ...result.value } };
     }
 
-    return { model: { ...model, ...result.value } };
+    default: {
+      const result = updateCore({ ctx, msg, model });
+
+      if (result.t === "err") {
+        return { model };
+      }
+
+      return { model: { ...model, ...result.value } };
+    }
   }
+};
 
-  const result = updateCore({ ctx, msg, model });
-
-  if (result.t === "err") {
-    return { model };
+const msgToSoundCmd = (msg: Req): ClientCmd<ToServer>[] => {
+  switch (msg.t) {
+    case "input-move": {
+      return [];
+    }
+    case "stop-game": {
+      return [playSound(APP_SOUND.navBackwardMin)];
+    }
+    case "start-game": {
+      return [playSound(APP_SOUND.navForwardMin)];
+    }
+    default: {
+      return [playSound(APP_SOUND.tap)];
+    }
   }
-
-  return { model: { ...model, ...result.value } };
 };
 
 export const mergeWithServer = ({

@@ -147,7 +147,7 @@ export const updateFromServerMain: typeof updateFromServer = ({
   model: ClientModel;
 }): {
   model: ClientModel;
-  cmd?: ToastCmd[];
+  cmd?: ClientCmd<ToServer>[];
 } => {
   switch (msg.t) {
     case "clock-tick": {

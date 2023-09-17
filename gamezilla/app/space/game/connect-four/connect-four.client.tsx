@@ -130,6 +130,7 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
     return {
       model: { t: "vs-bot", c: updated.model },
       eff: Eff.t("vs-bot", updated.eff ?? Eff.None),
+      cmd: ClientCmd.tag("vs-bot", updated.cmd),
     };
   }
 
