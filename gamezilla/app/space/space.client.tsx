@@ -358,33 +358,43 @@ export const updateFromServerMain: typeof updateFromServer = ({
             return { model, cmd: [showToast(msg.result.error, "error")] };
           }
 
-          const profile = ctx.profiles[msg.userId];
-
-          const toastCmd: ClientCmd<ToServer>[] =
-            msg.userId === ctx.currentUserId
-              ? []
-              : profile
-              ? [showToast(`${profile.username} ended space`)]
-              : [showToast("Space ended")];
-
-          return {
-            model,
-            cmd: [
-              playSound(SPACE_SOUND.left),
-              replaceRoute({ t: "space", c: { t: "space-list" } }),
-              ...toastCmd,
-            ],
-          };
-
-          return { model };
-        }),
-        andThen((model) => {
-          if (msg.result.t !== "ok") {
-            return { model };
-          }
-          return {
-            model: { ...model, spaces: dissoc(model.spaces, msg.spaceId) },
-          };
+          return p(
+            { model },
+            andThen((model): ReturnType<typeof updateFromServer> => {
+              return { model, cmd: [playSound(SPACE_SOUND.left)] };
+            }),
+            andThen((model) => {
+              if (msg.userId === ctx.currentUserId) {
+                return { model };
+              }
+              const profile = ctx.profiles[msg.userId];
+              if (profile) {
+                return {
+                  model,
+                  cmd: [showToast(`${profile.username} ended space`)],
+                };
+              }
+              return { model, cmd: [showToast("Host ended space")] };
+            }),
+            andThen((model) => {
+              if (
+                ctx.currentRoute.t === "space" &&
+                ctx.currentRoute.c.t === "space" &&
+                ctx.currentRoute.c.spaceId === msg.spaceId
+              ) {
+                return {
+                  model,
+                  cmd: [replaceRoute({ t: "space", c: { t: "space-list" } })],
+                };
+              }
+              return { model };
+            }),
+            andThen((model) => {
+              return {
+                model: { ...model, spaces: dissoc(model.spaces, msg.spaceId) },
+              };
+            })
+          );
         })
       );
     }
