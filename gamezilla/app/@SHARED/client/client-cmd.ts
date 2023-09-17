@@ -7,7 +7,7 @@ import { Route } from "./client-route";
 //
 //
 
-export type ClientCmd<ToServer = unknown> =
+export type ClientCmd<ToServer = never> =
   | SendToServerCmd<ToServer>
   | ToastCmd
   | RouteCmd
@@ -52,7 +52,7 @@ export const showToast = <T>(
   text: string,
   variant?: "error" | "info",
   duration?: number
-): ToastCmd => {
+): ClientCmd<T> => {
   return { t: "toast/enqueue", text, variant, duration };
 };
 

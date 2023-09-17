@@ -147,7 +147,10 @@ export const updateFromServer = ({
           return {
             model: {
               ...model,
-              currentUser: { t: "logged-in", userId: msg.userId },
+              currentUser: {
+                t: "logged-in",
+                userId: msg.userId,
+              },
             },
             evt: [msg],
           };

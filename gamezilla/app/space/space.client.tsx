@@ -347,7 +347,7 @@ export const updateFromServerMain: typeof updateFromServer = ({
       return p(
         { model },
         andThen((model) => updateLoading({ msg: msg, model })),
-        andThen((model): ReturnType<typeof update> => {
+        andThen((model) => {
           const currentUserSpace = toSpaceByUserId(model, ctx.currentUserId);
 
           if (currentUserSpace?.spaceId !== msg.spaceId) {
@@ -360,7 +360,7 @@ export const updateFromServerMain: typeof updateFromServer = ({
 
           const profile = ctx.profiles[msg.userId];
 
-          const toastCmd =
+          const toastCmd: ClientCmd<ToServer>[] =
             msg.userId === ctx.currentUserId
               ? []
               : profile
