@@ -200,7 +200,7 @@ export const toStatus = (columns: Columns): Status => {
 //
 //
 
-export type Position = { x: number; y: number };
+export type Pos2 = { x: number; y: number };
 
 const toKey = ({
   x,
@@ -233,7 +233,7 @@ const directions: [number, number][] = [
   [-1, 1],
 ];
 
-export type Win = [Position, Position, Position, Position, ...Position[]];
+export type Win = [Pos2, Pos2, Pos2, Pos2, ...Pos2[]];
 
 export const winToId = (win: Win) => win.map((x) => `${x.x},${x.y}`).join(" ");
 
@@ -261,7 +261,7 @@ export const toWins = (columns: Columns): Win[] => {
           continue;
         }
 
-        const win: Position[] = [];
+        const win: Pos2[] = [];
 
         let position = { x, y };
 
@@ -283,7 +283,7 @@ export const toWins = (columns: Columns): Win[] => {
   return unique(isSameWin, wins);
 };
 
-const isWin = (positions: Position[]): positions is Win => {
+const isWin = (positions: Pos2[]): positions is Win => {
   return positions.length >= minWinLength;
 };
 

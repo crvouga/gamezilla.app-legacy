@@ -186,7 +186,7 @@ async function draw(win: Win) {
   const length = node.getTotalLength();
   node.style.strokeDasharray = length.toString();
   node.style.strokeDashoffset = length.toString();
-  node.style.stroke = "white";
+  node.style.stroke = "#fff";
 
   const animation = node.animate(
     [{ strokeDashoffset: length }, { strokeDashoffset: 0 }],

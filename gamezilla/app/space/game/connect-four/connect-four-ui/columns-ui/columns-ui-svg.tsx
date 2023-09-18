@@ -3,7 +3,7 @@ import {
   COLUMN_COUNT,
   Columns,
   MAX_COLUMN_HEIGHT,
-  Position,
+  Pos2,
   isColumnIndex,
   winToId,
 } from "../../connect-four";
@@ -117,10 +117,10 @@ export const ViewColumnsSvg = ({
 /* Have to increase the viewBox so that the draw animation is smooth >:-{ */
 const n = 1000;
 
-const distance = (a: Position, b: Position): number =>
+const distance = (a: Pos2, b: Pos2): number =>
   ((a.x - b.x) ** 2 + (a.y - b.y) ** 2) ** 0.5;
 
-const angleBetween = (a: Position, b: Position): number =>
+const angleBetween = (a: Pos2, b: Pos2): number =>
   (Math.atan2(b.y - a.y, b.x - a.x) * 180) / Math.PI;
 
 const ViewWins = ({ model }: { model?: Model; columns: Columns }) => {

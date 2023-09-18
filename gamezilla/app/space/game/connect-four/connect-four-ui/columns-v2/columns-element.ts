@@ -4,7 +4,9 @@ import {
   COLUMN_COUNT,
   ColumnIndex,
   MAX_COLUMN_HEIGHT,
+  Win,
   isColumnIndex,
+  toWins,
 } from "../../connect-four";
 import { ColumnsProps, columnsPropsSub } from "./shared";
 
@@ -41,11 +43,16 @@ const ids = {
   columnGradient: `columnGradient${randomId}`,
   holeMask: `holeMask${randomId}`,
 };
+
+/* Have to increase the viewBox so that the draw animation is smooth >:-{ */
+const N = 1000;
+
 if (typeof window !== "undefined" && "customElements" in window) {
   customElements.define(
     "connect-four-columns",
     class extends HTMLElement {
       private props: ColumnsProps | null = null;
+      private prevProps: ColumnsProps | null = null;
       private cleanUps: (() => void)[] = [];
 
       constructor() {
@@ -65,8 +72,9 @@ if (typeof window !== "undefined" && "customElements" in window) {
 
       initUI() {
         const unsubscribe = columnsPropsSub.subscribe((props) => {
+          this.prevProps = this.props;
           this.props = props;
-          this.syncUI(props);
+          this.syncUI();
         });
         this.cleanUps.push(unsubscribe);
 
@@ -120,6 +128,14 @@ if (typeof window !== "undefined" && "customElements" in window) {
               mask="url(#${ids.holeMask})"
             />
 
+            <svg
+              id="wins"
+              x="0"
+              y="0"
+              width="${COLUMN_COUNT}"
+              height="${MAX_COLUMN_HEIGHT}"
+              viewBox="0 0 ${COLUMN_COUNT * N} ${MAX_COLUMN_HEIGHT * N}"></svg>
+
             <g id="columns"></g>
           </g>
         </svg>`;
@@ -127,6 +143,7 @@ if (typeof window !== "undefined" && "customElements" in window) {
         this.initColumns();
         if (this.props) {
           this.initDiscs(this.props);
+          this.initWins(this.props);
         }
       }
 
@@ -224,10 +241,15 @@ if (typeof window !== "undefined" && "customElements" in window) {
         return `disc-${input.x}-${input.y}`;
       }
 
-      syncDiscs(props: ColumnsProps) {
+      syncDiscs() {
+        if (!this.props) {
+          return;
+        }
+
         if (!this.shadowRoot) {
           return;
         }
+
         const discsNode = this.shadowRoot.getElementById("discs");
 
         if (!(discsNode instanceof SVGGElement)) {
@@ -236,7 +258,7 @@ if (typeof window !== "undefined" && "customElements" in window) {
 
         for (let x = 0; x < COLUMN_COUNT; x++) {
           for (let y = 0; y < MAX_COLUMN_HEIGHT; y++) {
-            const disc = props.columns[x]![y]!;
+            const disc = this.props.columns[x]![y]!;
 
             const node = discsNode.querySelector(`#${this.toDiscId({ x, y })}`);
 
@@ -306,13 +328,152 @@ if (typeof window !== "undefined" && "customElements" in window) {
             from: MAX_COLUMN_HEIGHT + 1,
             to: y,
             duration: 200 + 300 * (1 - y / MAX_COLUMN_HEIGHT),
-            easing: { type: "ease-out-quint" },
+            easing: { type: "ease-out-bounce" },
           },
         });
       }
 
-      syncUI(props: ColumnsProps) {
-        this.syncDiscs(props);
+      syncWins() {
+        const winsNode = this.shadowRoot?.getElementById("wins");
+
+        if (!(winsNode instanceof SVGElement)) {
+          return;
+        }
+
+        const prevWins = this.prevProps ? toWins(this.prevProps.columns) : null;
+        const wins = this.props ? toWins(this.props.columns) : [];
+
+        const additions = prevWins
+          ? wins.filter(
+              (win) =>
+                !prevWins.some((w) => this.toWinId(w) === this.toWinId(win))
+            )
+          : wins;
+
+        const removals = prevWins
+          ? prevWins.filter(
+              (win) => !wins.some((w) => this.toWinId(w) === this.toWinId(win))
+            )
+          : [];
+
+        for (const win of additions) {
+          this.drawWin({
+            win,
+            winsNode,
+          });
+        }
+
+        for (const win of removals) {
+          const node = winsNode.querySelector(`#${this.toWinId(win)}`);
+
+          if (node instanceof SVGRectElement) {
+            this.undrawWin({
+              node,
+            });
+          }
+        }
+      }
+
+      initWins(props: ColumnsProps) {
+        if (!this.shadowRoot) {
+          return;
+        }
+        const winsNodes = this.shadowRoot.getElementById("wins");
+
+        if (!winsNodes) {
+          return;
+        }
+
+        winsNodes.innerHTML = "";
+
+        const wins = toWins(props.columns);
+        for (const win of wins) {
+          const node = this.createWinNode(win);
+          winsNodes.appendChild(node);
+        }
+      }
+      toWinId(win: Win) {
+        return `win-${win.map((pos) => `${pos.x}-${pos.y}`).join("-")}`;
+      }
+
+      async drawWin({ win, winsNode }: { win: Win; winsNode: SVGElement }) {
+        const node = this.createWinNode(win);
+        winsNode.appendChild(node);
+
+        const length = node.getTotalLength();
+        node.style.strokeDasharray = length.toString();
+        node.style.strokeDashoffset = length.toString();
+        node.style.stroke = "#fff";
+
+        const animation = node.animate(
+          [{ strokeDashoffset: length }, { strokeDashoffset: 0 }],
+          {
+            duration: 500,
+            easing: "ease-in-out",
+            fill: "both",
+          }
+        );
+
+        await animation.finished;
+      }
+
+      async undrawWin({ node }: { node: SVGRectElement }) {
+        if (node.dataset.animating === "true") {
+          return;
+        }
+
+        node.dataset.animating = "true";
+
+        const length = node.getTotalLength();
+        node.style.strokeDasharray = length.toString();
+        node.style.strokeDashoffset = "0";
+
+        const animation = node.animate(
+          [{ strokeDashoffset: 0 }, { strokeDashoffset: length }],
+          {
+            duration: 500,
+            easing: "ease-in-out",
+            fill: "both",
+          }
+        );
+
+        await animation.finished;
+
+        node.remove();
+      }
+
+      createWinNode(win: Win) {
+        const westMost = win[0];
+        const eastMost = win[win.length - 1]!;
+        const theta = angleBetween(westMost, eastMost);
+        const originX = (westMost.x + 0.5) * N;
+        const originY = (westMost.y + 0.5) * N;
+        const width = (distance(westMost, eastMost) + 1) * N;
+
+        const winNode = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "rect"
+        );
+        winNode.setAttribute("id", this.toWinId(win));
+        winNode.setAttribute("x", `${westMost.x * N}`);
+        winNode.setAttribute("y", `${westMost.y * N}`);
+        winNode.setAttribute("width", `${width}`);
+        winNode.setAttribute("height", `${N}`);
+        winNode.setAttribute("rx", `${N / 2}`);
+        winNode.setAttribute("stroke", "#fff");
+        winNode.setAttribute("fill", "transparent");
+        winNode.setAttribute("stroke-width", `${N / 8}`);
+        winNode.classList.add("pointer-events-none");
+        winNode.setAttribute(
+          "transform",
+          `rotate(${theta} ${originX} ${originY})`
+        );
+        return winNode;
+      }
+
+      syncUI() {
+        this.syncDiscs();
+        this.syncWins();
       }
     }
   );
@@ -358,4 +519,14 @@ const createSvgDefs = ({ ids }: { ids: SvgIds }) => {
         <stop offset="100%" stop-color="${gameTheme["player-two"].dark}" />
       </linearGradient>
     </defs>`;
+};
+
+type Pos2 = { x: number; y: number };
+
+const distance = (a: Pos2, b: Pos2): number => {
+  return ((a.x - b.x) ** 2 + (a.y - b.y) ** 2) ** 0.5;
+};
+
+const angleBetween = (a: Pos2, b: Pos2): number => {
+  return (Math.atan2(b.y - a.y, b.x - a.x) * 180) / Math.PI;
 };
