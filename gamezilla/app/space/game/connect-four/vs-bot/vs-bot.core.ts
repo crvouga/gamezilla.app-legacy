@@ -11,7 +11,6 @@ import {
   opposite,
   toStatus,
 } from "../connect-four";
-import { ColumnsUI } from "../connect-four-ui";
 
 //
 //
@@ -56,7 +55,6 @@ export type ServerModel = CoreModel;
 export type ClientModel = CoreModel & {
   vsBotSetup: VsBotSetup.Model;
   vsBotGame: VsBotGame.Model;
-  columnsUI: ColumnsUI.Model;
 };
 
 export const initCore = ({ player }: { player: UserId | null }): CoreModel => {
@@ -121,7 +119,6 @@ export const allBotLevels: BotLevel[] = ["Easy", "Medium", "Hard"];
 
 export type ClientMsg =
   | Req
-  | { t: "columns-ui"; c: ColumnsUI.Msg }
   | { t: "vs-bot-setup"; c: VsBotSetup.Msg }
   | { t: "vs-bot-game"; c: VsBotGame.Msg };
 

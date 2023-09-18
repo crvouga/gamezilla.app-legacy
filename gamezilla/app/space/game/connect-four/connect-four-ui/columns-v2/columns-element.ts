@@ -6,17 +6,21 @@ import {
   MAX_COLUMN_HEIGHT,
   isColumnIndex,
 } from "../../connect-four";
-import { ViewColumnsProps, columnsPropsSub } from "./shared";
+import { ColumnsProps, columnsPropsSub } from "./shared";
 
 declare global {
   namespace preact.createElement.JSX {
     interface IntrinsicElements {
-      "connect-four-columns": {};
+      "connect-four-columns": {
+        "initial-columns-json": string;
+      };
     }
   }
   namespace JSX {
     interface IntrinsicElements {
-      "connect-four-columns": {};
+      "connect-four-columns": {
+        "initial-columns-json": string;
+      };
     }
   }
 }
@@ -41,7 +45,7 @@ if (typeof window !== "undefined" && "customElements" in window) {
   customElements.define(
     "connect-four-columns",
     class extends HTMLElement {
-      private props: ViewColumnsProps | null = null;
+      private props: ColumnsProps | null = null;
       private cleanUps: (() => void)[] = [];
 
       constructor() {
@@ -65,6 +69,13 @@ if (typeof window !== "undefined" && "customElements" in window) {
           this.syncUI(props);
         });
         this.cleanUps.push(unsubscribe);
+
+        const initialColumns = this.getAttribute("initial-columns-json");
+        if (initialColumns) {
+          this.props = {
+            columns: JSON.parse(initialColumns),
+          };
+        }
 
         if (!this.shadowRoot) {
           return;
@@ -114,6 +125,9 @@ if (typeof window !== "undefined" && "customElements" in window) {
         </svg>`;
 
         this.initColumns();
+        if (this.props) {
+          this.initDiscs(this.props);
+        }
       }
 
       onColumnClick(columnIndex: ColumnIndex) {
@@ -155,7 +169,7 @@ if (typeof window !== "undefined" && "customElements" in window) {
         }
       }
 
-      initDiscs(props: ViewColumnsProps) {
+      initDiscs(props: ColumnsProps) {
         if (!this.shadowRoot) {
           return;
         }
@@ -210,7 +224,7 @@ if (typeof window !== "undefined" && "customElements" in window) {
         return `disc-${input.x}-${input.y}`;
       }
 
-      syncDiscs(props: ViewColumnsProps) {
+      syncDiscs(props: ColumnsProps) {
         if (!this.shadowRoot) {
           return;
         }
@@ -297,7 +311,7 @@ if (typeof window !== "undefined" && "customElements" in window) {
         });
       }
 
-      syncUI(props: ViewColumnsProps) {
+      syncUI(props: ColumnsProps) {
         this.syncDiscs(props);
       }
     }

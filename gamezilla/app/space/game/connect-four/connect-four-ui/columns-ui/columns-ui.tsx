@@ -113,7 +113,7 @@ export function View({
   implementation = "svg",
   ...props
 }: ViewColumnsProps & {
-  implementation?: "svg" | "canvas" | "element";
+  implementation?: "svg" | "canvas";
 }) {
   switch (implementation) {
     case "canvas": {
@@ -122,11 +122,6 @@ export function View({
 
     case "svg": {
       return <ViewColumnsSvg id={rootId} {...props} />;
-    }
-
-    case "element": {
-      columnsPropsSub.publish(props);
-      return <connect-four-columns />;
     }
   }
 }

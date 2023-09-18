@@ -25,11 +25,10 @@ import {
   VsBotProps,
   VsBotSetup,
 } from "gamezilla/app/space/game/@SHARED";
-
 import { Columns, toStatus, toTurn } from "../connect-four";
 import { ViewCoverArt } from "../connect-four-cover-art";
 import {
-  ColumnsUI,
+  ViewColumns,
   PlayerOneIcon,
   PlayerTwoIcon,
   gameTheme,
@@ -60,7 +59,6 @@ export const init = (...params: Parameters<typeof initCore>): ClientModel => {
     ...shared,
     vsBotSetup: VsBotSetup.init,
     vsBotGame: VsBotGame.init(null),
-    columnsUI: ColumnsUI.init(),
   };
 };
 
@@ -84,11 +82,6 @@ export const update = (input: {
 
 const updateMain: typeof update = ({ ctx, msg, model }) => {
   switch (msg.t) {
-    case "columns-ui": {
-      const updated = ColumnsUI.update(model.columnsUI, msg.c);
-      return { model: { ...model, columnsUI: updated } };
-    }
-
     case "vs-bot-game": {
       const updated = VsBotGame.update(model.vsBotGame, msg.c);
       return { model: { ...model, vsBotGame: updated } };
@@ -115,11 +108,6 @@ const updateMain: typeof update = ({ ctx, msg, model }) => {
 };
 
 const watch = (model: ClientModel) => {
-  const columnsUI = ColumnsUI.watch(
-    model.columnsUI,
-    "columns" in model ? model.columns : undefined
-  );
-
   const vsBotGame = VsBotGame.watch(
     model.vsBotGame,
     "columns" in model ? toGameOver(model.columns) : undefined
@@ -128,13 +116,10 @@ const watch = (model: ClientModel) => {
   return {
     model: {
       ...model,
-      columnsUI: columnsUI.model,
+
       vsBotGame: vsBotGame.model,
     },
-    eff: Eff.batch<ClientMsg>([
-      Eff.t("vs-bot-game", vsBotGame.eff),
-      Eff.t("columns-ui", columnsUI.eff),
-    ]),
+    eff: Eff.batch<ClientMsg>([Eff.t("vs-bot-game", vsBotGame.eff)]),
   };
 };
 
@@ -203,11 +188,7 @@ export const mergeWithServer = ({
   const modelNew: ClientModel = {
     ...clientModel,
     ...serverModel,
-    columnsUI: clientModel.columnsUI
-      ? clientModel.columnsUI
-      : serverModel.type === "game"
-      ? ColumnsUI.init(serverModel.columns)
-      : ColumnsUI.init(),
+
     vsBotGame: clientModel.vsBotGame
       ? clientModel.vsBotGame
       : VsBotGame.init(
@@ -345,10 +326,9 @@ export const View = ({
             className="w-full"
             color={gameTheme.primary.dark}
           />
-          <ColumnsUI.View
+
+          <ViewColumns
             gameId={model.gameId}
-            model={model?.columnsUI}
-            implementation="element"
             columns={model.columns}
             disabled={ctx.currentUserId !== model.player}
             onClick={(columnIndex) => {
