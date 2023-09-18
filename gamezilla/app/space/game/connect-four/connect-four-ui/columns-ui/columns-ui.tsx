@@ -9,10 +9,12 @@ import {
 } from "../../connect-four";
 import { ViewColumnsCanvas } from "./columns-ui-canvas";
 import { ViewColumnsSvg } from "./columns-ui-svg";
+import "./columns-element";
 import {
   Disc,
   Model as SharedModel,
   ViewColumnsProps,
+  columnsPropsSub,
   toDiscs,
 } from "./shared";
 
@@ -111,7 +113,7 @@ export function View({
   implementation = "svg",
   ...props
 }: ViewColumnsProps & {
-  implementation?: "svg" | "canvas";
+  implementation?: "svg" | "canvas" | "element";
 }) {
   switch (implementation) {
     case "canvas": {
@@ -120,6 +122,11 @@ export function View({
 
     case "svg": {
       return <ViewColumnsSvg id={rootId} {...props} />;
+    }
+
+    case "element": {
+      columnsPropsSub.publish(props);
+      return <connect-four-columns />;
     }
   }
 }
@@ -139,7 +146,6 @@ async function discEnter(disc: Disc) {
   const node = await Transition.waitForElementById(id, rootId);
 
   if (!node) {
-    console.log("no node");
     return;
   }
   await easeAttrs(node, {
@@ -158,7 +164,6 @@ async function discExit(disc: Disc) {
   const node = await Transition.waitForElementById(id, rootId);
 
   if (!node) {
-    console.log("no node");
     return;
   }
 

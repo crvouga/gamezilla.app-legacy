@@ -348,7 +348,7 @@ export const View = ({
           <ColumnsUI.View
             gameId={model.gameId}
             model={model?.columnsUI}
-            implementation="svg"
+            implementation="element"
             columns={model.columns}
             disabled={ctx.currentUserId !== model.player}
             onClick={(columnIndex) => {

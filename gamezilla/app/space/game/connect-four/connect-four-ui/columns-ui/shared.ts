@@ -1,4 +1,4 @@
-import { Transition } from "gamezilla/@SHARED/core";
+import { Sub, Transition } from "gamezilla/@SHARED/core";
 import { VDom } from "gamezilla/app/@SHARED/ui";
 import { ColumnIndex, Columns, PlayerType, Win } from "../../connect-four";
 
@@ -12,6 +12,8 @@ export type ViewColumnsProps = {
   gameId?: string | number | null;
   gameOverOverlay?: () => VDom | VDom[] | null;
 };
+
+export const columnsPropsSub = Sub.create<ViewColumnsProps>();
 
 export type Model = {
   discs: Transition.Model<Disc>;
