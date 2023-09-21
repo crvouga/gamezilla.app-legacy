@@ -1,4 +1,4 @@
-import { Err, Ok, Result } from "gamezilla/@SHARED/core";
+import { Err, Ok, Posix, Result } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
 import { VsBotGame, VsBotSetup } from "gamezilla/app/space/game/@SHARED";
 import {
@@ -18,7 +18,7 @@ import {
 //
 //
 
-export type CoreModel = SetupModel | GameModel;
+export type CoreModel = { meta?: Meta } & (SetupModel | GameModel);
 
 export type SetupModel = {
   type: "setup";
@@ -34,6 +34,10 @@ export type GameModel = {
   botLevel: BotLevel;
   player: UserId;
   columns: Columns;
+};
+
+type Meta = {
+  updatedAt: Posix;
 };
 
 export const isBotTurn = (model: CoreModel): boolean => {
