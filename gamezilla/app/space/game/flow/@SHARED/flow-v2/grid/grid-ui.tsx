@@ -4,18 +4,11 @@ import * as FlowUI from "../flow-ui";
 import * as FlowGrid from "./grid";
 import * as FlowGridPosition from "./grid-position";
 
+// const TERMINAL_NODE_RADIUS_ACTIVE = 0.4;
 const TERMINAL_NODE_RADIUS = 0.33;
-export const TERMINAL_NODE_RADIUS_ACTIVE = 0.4;
-
 const EDGE_STROKE_WIDTH = 0.3;
 
-//
-//
-//
-//
-
-export type ViewModel = FlowGrid.Model;
-
+let lastDraggedOver: Flow.NodeId | null = null;
 /**
  * Renders the Flow Grid UI
  */
@@ -29,9 +22,7 @@ export const View = ({
   autocompleteEdge,
 }: {
   className?: string;
-  //
-  model: ViewModel;
-  //
+  model: FlowGrid.Model;
   onPressDown?: (nodeId: Flow.NodeId) => void;
   onPressUp?: (nodeId: Flow.NodeId) => void;
   onDraggedOver?: (nodeId: Flow.NodeId) => void;
@@ -44,6 +35,13 @@ export const View = ({
     nodeId: Flow.NodeId;
   }) => boolean;
 }) => {
+  const draggedOver = (nodeId: Flow.NodeId) => {
+    if (lastDraggedOver === nodeId) {
+      return;
+    }
+    lastDraggedOver = nodeId;
+    onDraggedOver?.(nodeId);
+  };
   return (
     <svg
       className={cn("w-full touch-none select-none", className)}
@@ -55,7 +53,7 @@ export const View = ({
       onTouchMove={(event) => {
         const nodeId = touchEventToNodeId(event);
         if (nodeId) {
-          onDraggedOver?.(nodeId);
+          draggedOver?.(nodeId);
         }
       }}>
       {/*
@@ -72,7 +70,7 @@ export const View = ({
             ? "transparent"
             : isActive?.({ nodeId: node.nodeId, groupId })
             ? "transparent"
-            : FlowUI.Color.toHex(FlowUI.groupIdToColor[groupId]);
+            : FlowUI.Color.toHex(FlowUI.GROUP_ID_TO_COLOR[groupId]);
           return (
             <rect
               key={node.nodeId}
@@ -215,10 +213,10 @@ export const View = ({
                 onPressUp?.(nodeId);
               }}
               onMouseOver={() => {
-                onDraggedOver?.(nodeId);
+                draggedOver?.(nodeId);
               }}
               onMouseMove={() => {
-                onDraggedOver?.(nodeId);
+                draggedOver?.(nodeId);
               }}
               onTouchStart={() => {
                 onPressDown?.(nodeId);

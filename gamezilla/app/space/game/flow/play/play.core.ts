@@ -1,4 +1,4 @@
-import { FlowGridPlayUI, flowGridSamples } from "../@SHARED/flow/flow-grid";
+import { FlowGridPlayUI, flowGridSamples } from "../@SHARED/flow-v2";
 
 //
 //
@@ -7,15 +7,17 @@ import { FlowGridPlayUI, flowGridSamples } from "../@SHARED/flow/flow-grid";
 //
 //
 
-export type CoreModel = FlowGridPlayUI.Model;
+export type CoreModel = {
+  grid: FlowGridPlayUI.Model;
+};
 
 export type ClientModel = CoreModel;
 
 export type ServerModel = CoreModel;
 
-export const initShared: CoreModel = FlowGridPlayUI.init(
-  flowGridSamples["8x8"][1]
-);
+export const initShared: CoreModel = {
+  grid: FlowGridPlayUI.init(flowGridSamples["8x8"][1]),
+};
 
 //
 //
@@ -24,7 +26,10 @@ export const initShared: CoreModel = FlowGridPlayUI.init(
 //
 //
 
-export type ClientMsg = FlowGridPlayUI.Msg;
+export type ClientMsg = {
+  t: "grid";
+  c: FlowGridPlayUI.Msg;
+};
 
 export type ServerMsg = { t: null };
 

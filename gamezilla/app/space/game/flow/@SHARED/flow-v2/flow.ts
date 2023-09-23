@@ -49,8 +49,10 @@ export const isGroupId = (groupId: string): groupId is GroupId => {
   return PATH_ID_ORDER.includes(groupId as GroupId);
 };
 
+const EDGE_ID_SEPARATOR = "➡️";
+
 export const toEdgeId = (edge: Edge): EdgeId => {
-  return `${edge.sourceId}->${edge.targetId}` as EdgeId;
+  return `${edge.sourceId}${EDGE_ID_SEPARATOR}${edge.targetId}` as EdgeId;
 };
 
 export const isEdgeId = (
@@ -77,7 +79,7 @@ export const isNodeId = (
  */
 export type Model = {
   /**
-   * Represents each cell in the puzzle
+   * Represents all the valid positions in the puzzle
    */
   nodes: {
     [nodeId: NodeId]: Node;
@@ -92,12 +94,6 @@ export type Model = {
 
   /**
    * For performance, we index all edges that go into a node.
-   *
-   * Node: •
-   * Edge: ->
-   *
-   * -> • <-
-   *
    **/
   indexEdgesIn: {
     [targetId: NodeId]: {
@@ -107,11 +103,6 @@ export type Model = {
 
   /**
    * For performance, we index all edges that go out of a node.
-   *
-   * Node: •
-   * Edge: ->
-   *
-   * <- • ->
    **/
   indexEdgesOut: {
     [sourceId: NodeId]: {
@@ -269,6 +260,10 @@ export const addEdge = <T extends Model>(model: T, edge: Edge): T => {
   };
 };
 
+/**
+ * Calls the inputted function on each node in the model
+ * and returns a new model with the updated nodes.
+ */
 export const mapNodes = <T extends Model>(
   model: T,
   fn: (node: Node) => Node
@@ -279,6 +274,7 @@ export const mapNodes = <T extends Model>(
   }
   return modelNew;
 };
+
 /**
  * Yields all nodes in the model.
  */

@@ -2,7 +2,7 @@ import { Sub, chain } from "gamezilla/@SHARED/core";
 import { Button, IconArrowLeftOnRect } from "gamezilla/app/@SHARED/ui";
 import { SpaceGameClient } from "gamezilla/app/space/@SHARED";
 import { FlowViewCtx } from "../@SHARED/flow-ctx";
-import { FlowGridPlayUI } from "../@SHARED/flow/flow-grid";
+import { FlowGridPlayUI } from "../@SHARED/flow-v2";
 import {
   ClientModel,
   ClientMsg,
@@ -26,9 +26,16 @@ const init: Client["init"] = () => {
 };
 
 const update: Client["update"] = (input) => {
-  return chain(input.model, (model) => {
-    return FlowGridPlayUI.update({ ...input, ...model });
-  });
+  const { msg, model } = input;
+  switch (msg.t) {
+    case "grid": {
+      const updated = FlowGridPlayUI.update({
+        msg: msg.c,
+        model: model.grid,
+      });
+      return { model: { ...model, grid: updated.model } };
+    }
+  }
 };
 
 const updateFromServer: Client["updateFromServer"] = (input) => {
@@ -52,7 +59,10 @@ const View: Client["View"] = ({ model, dispatch, ctx }) => {
   return (
     <div className="flex h-full w-full flex-1 flex-col">
       <div className="flex flex-1 items-center justify-center">
-        <FlowGridPlayUI.View dispatch={dispatch} model={model} />
+        <FlowGridPlayUI.View
+          dispatch={(c) => dispatch({ t: "grid", c })}
+          model={model.grid}
+        />
       </div>
       <div className="w-full p-4">
         <Button

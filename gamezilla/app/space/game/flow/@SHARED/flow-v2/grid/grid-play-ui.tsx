@@ -85,12 +85,21 @@ const updateIdle = ({ msg, model }: { msg: Msg; model: Model }): Model => {
     case "dragged-over": {
       return model;
     }
+
     case "mouse-leave": {
       return model;
     }
+
     case "pressed-down-node": {
-      return model;
+      const groupId = Flow.toGroupId(model.grid.flow, msg.nodeId);
+
+      if (!groupId) {
+        return model;
+      }
+
+      return { ...model, state: { t: "dragging", activeGroupId: groupId } };
     }
+
     case "pressed-up": {
       return model;
     }
@@ -102,14 +111,17 @@ const updateDragging = ({ msg, model }: { msg: Msg; model: Model }): Model => {
     case "dragged-over": {
       return model;
     }
+
     case "mouse-leave": {
-      return model;
+      return { ...model, state: { t: "idle" } };
     }
+
     case "pressed-down-node": {
       return model;
     }
+
     case "pressed-up": {
-      return model;
+      return { ...model, state: { t: "idle" } };
     }
   }
 };
@@ -132,7 +144,11 @@ export const View = ({
   return (
     <FlowGridUI.View
       model={{ ...model.grid }}
-      onDraggedOver={(nodeId) => dispatch({ t: "dragged-over", nodeId })}
+      onDraggedOver={
+        model.state.t === "dragging"
+          ? (nodeId) => dispatch({ t: "dragged-over", nodeId })
+          : undefined
+      }
       onPressDown={(nodeId) => dispatch({ t: "pressed-down-node", nodeId })}
       onPressUp={(nodeId) => dispatch({ t: "pressed-up", nodeId })}
       autocompleteEdge={

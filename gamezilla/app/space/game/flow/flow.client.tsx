@@ -1,4 +1,4 @@
-import { Sub } from "gamezilla/@SHARED/core";
+import { Sub, chain } from "gamezilla/@SHARED/core";
 import { IconGamepad, IconScrewdriverWrench } from "gamezilla/app/@SHARED/ui";
 import { SpaceGameClient } from "gamezilla/app/space/@SHARED";
 import { MainMenuScreen } from "gamezilla/app/space/game/@SHARED";
@@ -13,6 +13,11 @@ import {
 } from "./flow.core";
 import { PlayClient } from "./play";
 import { PuzzleBuilderClient } from "./puzzle-builder";
+import {
+  APP_SOUND,
+  playSound,
+  sendToServer,
+} from "gamezilla/app/@SHARED/client";
 
 type Client = SpaceGameClient<
   ClientModel,
@@ -40,43 +45,67 @@ export const init: Client["init"] = () => {
 export const update: Client["update"] = (input) => {
   const { model, msg } = input;
 
-  if (msg.t === "input-mode") {
-    return {
-      model,
-      cmd: [{ t: "send-to-server", msg }],
-    };
-  }
+  switch (msg.t) {
+    case "input-mode": {
+      return { model, cmd: [sendToServer(msg)] };
+    }
 
-  if (model.t === "puzzle-builder" && msg.t === "puzzle-builder") {
-    return PuzzleBuilder.update({ ...input, msg, model });
-  }
+    case "play": {
+      if (model.t === "play") {
+        return Play.update({ ...input, msg, model });
+      }
+      return { model };
+    }
 
-  if (model.t === "play" && msg.t === "play") {
-    return Play.update({ ...input, msg, model });
+    case "puzzle-builder": {
+      if (model.t === "puzzle-builder") {
+        return PuzzleBuilder.update({ ...input, msg, model });
+      }
+      return { model };
+    }
   }
-
-  return { model };
 };
 
 export const updateFromServer: Client["updateFromServer"] = (input) => {
   const { model, msg } = input;
-  if (msg.t === "input-mode") {
-    if (msg.result.t === "err") {
+  switch (msg.t) {
+    case "input-mode": {
+      const { result } = msg;
+      if (result.t === "err") {
+        return { model };
+      }
+      return chain(
+        model,
+        (model) => {
+          return mergeWithServer({
+            ...input,
+            client: model,
+            server: result.value,
+          });
+        },
+        (model) => {
+          if (model.t === "none") {
+            return { model, cmd: [playSound(APP_SOUND.navBackwardMin)] };
+          }
+          return { model, cmd: [playSound(APP_SOUND.navForwardMin)] };
+        }
+      );
+    }
+
+    case "play": {
+      if (model.t === "play") {
+        return Play.updateFromServer({ ...input, msg, model });
+      }
       return { model };
     }
-    const merged = mergeWithServer({ ...input, server: msg.result.value });
-    return merged;
-  }
 
-  if (msg.t === "puzzle-builder" && model.t === "puzzle-builder") {
-    return PuzzleBuilder.updateFromServer({ ...input, msg, model });
+    case "puzzle-builder": {
+      if (model.t === "puzzle-builder") {
+        return PuzzleBuilder.updateFromServer({ ...input, msg, model });
+      }
+      return { model };
+    }
   }
-
-  if (msg.t === "play" && model.t === "play") {
-    return Play.updateFromServer({ ...input, msg, model });
-  }
-
-  return { model };
 };
 
 export const updateFromEvt: Client["updateFromEvt"] = (input) => {
