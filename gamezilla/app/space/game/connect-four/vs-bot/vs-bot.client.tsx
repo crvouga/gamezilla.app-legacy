@@ -149,13 +149,11 @@ const updateFromServerMain: typeof updateFromServer = ({ ctx, msg, model }) => {
     }
 
     default: {
-      const result = updateCore({ ctx, msg, model });
-
-      if (result.t === "err") {
+      if (msg.result.t === "err") {
         return { model };
       }
 
-      return { model: { ...model, ...result.value } };
+      return { model: { ...model, ...msg.result.value } };
     }
   }
 };

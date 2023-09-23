@@ -1,11 +1,7 @@
 import { Eff, Sub } from "gamezilla/@SHARED/core";
-import { ServerCmd, ServerEvt } from "gamezilla/app/@SHARED/server";
-import {
-  SpaceEvt,
-  SpaceReqCtx,
-  SpaceServerCmd,
-  SpaceServerCtx,
-} from "../space";
+import { ServerEvt } from "gamezilla/app/@SHARED/server";
+import { SpaceEvt, SpaceReqCtx, SpaceServerCtx } from "../space";
+import { SpaceServerCmd } from "../space-cmd";
 
 //
 //

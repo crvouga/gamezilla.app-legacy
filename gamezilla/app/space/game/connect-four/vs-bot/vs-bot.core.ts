@@ -146,22 +146,11 @@ export type Req =
   | { t: "swap-sides" }
   | { t: "restart" };
 
-export type Res = Req & { result: Result<string, null> };
+export type Res = Req & { result: Result<string, CoreModel> };
 
 export type CoreMsg = Req | Evt;
 
 type CoreCtx = { currentUserId: UserId; hostId: UserId };
-
-export const reducer =
-  (ctx: CoreCtx) =>
-  (model: CoreModel, msg: CoreMsg): CoreModel => {
-    if (msg.t === "bot-moved" || msg.t === "player-left") {
-      const result = updateCoreEvent({ msg, model });
-      return result.t === "err" ? model : result.value;
-    }
-    const result = updateCore({ ctx, msg, model });
-    return result.t === "err" ? model : result.value;
-  };
 
 //
 //

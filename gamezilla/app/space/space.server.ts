@@ -1,5 +1,4 @@
 import { Eff, Err, Ok, Posix, Sub, dissoc } from "gamezilla/@SHARED/core";
-import { UserId } from "gamezilla/app/@SHARED/data";
 import {
   ReqCtx,
   ServerCmd,
@@ -28,7 +27,7 @@ import { ServerModel, ServerMsg, ToClient, ToServer } from "./space.core";
 //
 
 export const SpaceStore = createSpaceStoreInMemory({
-  maxEntryCount: 10,
+  maxEntryCount: 20,
 });
 
 export const init: ServerModel = SpaceStore.init(Posix.now());

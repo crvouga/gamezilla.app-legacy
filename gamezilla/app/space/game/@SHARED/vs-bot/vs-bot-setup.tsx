@@ -272,15 +272,14 @@ const PlayerLabels = ({
 }) => {
   return (
     <div className="col-span-3 grid grid-cols-2 place-items-center">
-      <div className="overflow-hidden text-ellipsis whitespace-nowrap">
-        <p className="text-center text-sm text-secondary">
-          {player.t === "bot"
-            ? player.botLabel
-            : player.userId
-            ? ctx.profiles[player.userId]?.username ?? "..."
-            : "?"}
-        </p>
-      </div>
+      <p className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm text-secondary">
+        {player.t === "bot"
+          ? player.botLabel
+          : player.userId
+          ? ctx.profiles[player.userId]?.username ?? "..."
+          : "?"}
+      </p>
+
       <p className="text-center text-sm text-secondary">{player.playerLabel}</p>
     </div>
   );
