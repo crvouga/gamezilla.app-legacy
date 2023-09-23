@@ -1,6 +1,6 @@
 import { NonEmpty } from "gamezilla/@SHARED/core";
-import { Flow } from "../flow";
-import { NodeId, GroupId, Terminal } from "../flow/flow";
+import { Flow } from "..";
+import { NodeId, GroupId, Terminal } from "../flow";
 import * as FlowGrid from "./flow-grid";
 
 export type Model = NonEmpty<NonEmpty<GroupId | null>>;

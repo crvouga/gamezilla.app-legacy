@@ -1,9 +1,9 @@
 import { err, ok, Result } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
-import { Flow } from "../flow";
-import { FlowGrid, FlowGridPlayUI } from "../flow-grid";
-import { bounds8x8 } from "../flow-grid/flow-grid-position";
-import { GroupId, NodeId, Terminal } from "../flow/flow";
+import { Flow } from "../@SHARED/flow";
+import { FlowGrid, FlowGridPlayUI } from "../@SHARED/flow/flow-grid";
+import { bounds8x8 } from "../@SHARED/flow/flow-grid/flow-grid-position";
+import { GroupId, NodeId, Terminal } from "../@SHARED/flow/flow";
 
 /**
  * Just like a Terminal but invalid

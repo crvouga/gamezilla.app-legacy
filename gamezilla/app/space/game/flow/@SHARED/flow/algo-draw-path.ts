@@ -4,7 +4,7 @@ import {
   Model,
   NodeId,
   GroupId,
-  findPath,
+  findGroup,
   findTerminal,
   setEdgePath,
   setStartNode,
@@ -24,7 +24,7 @@ export const startPath = <T extends Model>(model: T, nodeId: NodeId): T => {
     return setStartNode(destroyPath(model, terminal.groupId), terminal, nodeId);
   }
 
-  const groupId = findPath(model, nodeId);
+  const groupId = findGroup(model, nodeId);
 
   if (!groupId) {
     return model;
@@ -41,7 +41,7 @@ export const extendPath = <T extends Model>(
   groupId: GroupId,
   newNodeId: NodeId
 ): T => {
-  const newNodeGroupId = findPath(model, newNodeId);
+  const newNodeGroupId = findGroup(model, newNodeId);
   const isNewNodeInDifferentPath = newNodeGroupId && newNodeGroupId !== groupId;
   if (isNewNodeInDifferentPath) {
     return model;

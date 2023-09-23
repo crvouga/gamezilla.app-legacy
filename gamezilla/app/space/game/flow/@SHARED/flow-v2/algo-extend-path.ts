@@ -6,7 +6,7 @@ import {
   Model,
   NodeId,
   StartNode,
-  setNode,
+  addNode,
   yieldNodes,
 } from "./flow";
 
@@ -98,7 +98,7 @@ export const removePath = <T extends Model>(model: T, groupId: GroupId): T => {
   let modelNew: T = { ...model };
   for (const node of yieldNodes(model)) {
     if (node.t === "path" && node.groupId === groupId) {
-      modelNew = setNode(modelNew, {
+      modelNew = addNode(modelNew, {
         nodeId: node.nodeId,
         t: "empty",
       });
@@ -127,7 +127,7 @@ const addPath = <T extends Model>(
     return model;
   }
 
-  const modelNew = setNode(model, head);
+  const modelNew = addNode(model, head);
 
   return addPath(modelNew, groupId, tail);
 };

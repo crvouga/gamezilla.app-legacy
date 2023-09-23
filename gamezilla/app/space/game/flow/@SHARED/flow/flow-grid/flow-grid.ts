@@ -1,4 +1,4 @@
-import { Flow } from "../flow";
+import { Flow } from "..";
 import { Bounds, Position, deltas, yieldRange } from "./flow-grid-position";
 
 //

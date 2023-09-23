@@ -1,4 +1,4 @@
-import { GroupId } from "../flow/flow";
+import { GroupId } from "./flow";
 
 // source: https://tailwindcss.com/docs/customizing-colors
 const colorToHexMap = {

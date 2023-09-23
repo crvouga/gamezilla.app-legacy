@@ -1,18 +1,8 @@
 import { cn } from "gamezilla/app/@SHARED/ui";
-import { Flow, GroupId, NodeId } from "../flow";
-import { Color, groupIdToColor } from "../flow-ui";
+import * as Flow from "../flow";
+import * as FlowUI from "../flow-ui";
 import * as FlowGrid from "./flow-grid";
-import { Model } from "./flow-grid";
 import * as FlowGridPosition from "./flow-grid-position";
-import { debounce } from "gamezilla/@SHARED/core";
-
-//
-//
-//
-// View
-//
-//
-//
 
 const TERMINAL_NODE_RADIUS = 0.33;
 export const TERMINAL_NODE_RADIUS_ACTIVE = 0.4;
@@ -24,30 +14,7 @@ const EDGE_STROKE_WIDTH = 0.3;
 //
 //
 
-type DraftTerminal = {
-  groupId: GroupId;
-  startId: NodeId;
-  endId: NodeId | null;
-};
-
-export type ViewModel = Model & {
-  draftTerminals: {
-    [groupId in GroupId]?: DraftTerminal;
-  };
-};
-
-const yieldTerminals = function* (model: ViewModel): Generator<DraftTerminal> {
-  for (const groupId in model.draftTerminals) {
-    if (!Flow.isGroupId(groupId)) {
-      continue;
-    }
-    const terminal = model.draftTerminals[groupId];
-    if (!terminal) {
-      continue;
-    }
-    yield terminal;
-  }
-};
+export type ViewModel = FlowGrid.Model;
 
 /**
  * Renders the Flow Grid UI
@@ -100,12 +67,12 @@ export const View = ({
       */}
       <g>
         {map(FlowGrid.yieldNodes(model), (node) => {
-          const groupId = Flow.findPath(model, node.nodeId);
+          const groupId = Flow.toGroupId(model.flow, node.nodeId);
           const fill = !groupId
             ? "transparent"
             : isActive?.({ nodeId: node.nodeId, groupId })
             ? "transparent"
-            : Color.toHex(groupIdToColor[groupId]);
+            : FlowUI.Color.toHex(FlowUI.groupIdToColor[groupId]);
           return (
             <rect
               key={node.nodeId}
@@ -156,47 +123,47 @@ export const View = ({
 
       */}
       <g transform="translate(0.5, 0.5)">
-        {map(yieldTerminals(model), (terminal) => {
-          const startId = terminal.startId;
-
-          const startNode = FlowGrid.toNode(model, startId);
-          const endNode = terminal.endId
-            ? FlowGrid.toNode(model, terminal.endId)
-            : null;
-
-          return (
-            <g
-              key={`${terminal.groupId} ${terminal.startId} ${terminal.endId}`}>
-              {startNode && (
+        {map(FlowGrid.yieldNodes(model), (node) => {
+          switch (node.t) {
+            case "empty": {
+              return null;
+            }
+            case "path": {
+              return null;
+            }
+            case "start": {
+              return (
                 <ViewTerminalNode
-                  groupId={terminal.groupId}
-                  x={startNode.x}
-                  y={startNode.y}
+                  key={node.nodeId}
+                  groupId={node.groupId}
+                  x={node.x}
+                  y={node.y}
                   isActive={Boolean(
                     isActive?.({
-                      nodeId: startNode.nodeId,
-                      groupId: terminal.groupId,
+                      nodeId: node.nodeId,
+                      groupId: node.groupId,
                     })
                   )}
-                  key={startNode.nodeId}
                 />
-              )}
-              {endNode && (
+              );
+            }
+            case "end": {
+              return (
                 <ViewTerminalNode
-                  groupId={terminal.groupId}
-                  x={endNode.x}
-                  y={endNode.y}
+                  key={node.nodeId}
+                  groupId={node.groupId}
+                  x={node.x}
+                  y={node.y}
                   isActive={Boolean(
                     isActive?.({
-                      nodeId: endNode.nodeId,
-                      groupId: terminal.groupId,
+                      nodeId: node.nodeId,
+                      groupId: node.groupId,
                     })
                   )}
-                  key={endNode.nodeId}
                 />
-              )}
-            </g>
-          );
+              );
+            }
+          }
         })}
       </g>
 
@@ -210,48 +177,15 @@ export const View = ({
       <g transform="translate(0.5, 0.5)">
         {autocompleteEdge && (
           <line
-            x1={autocompleteEdge.nodeFrom.x}
-            y1={autocompleteEdge.nodeFrom.y}
-            x2={autocompleteEdge.nodeTo.x}
-            y2={autocompleteEdge.nodeTo.y}
-            stroke={Color.groupIdToHex(autocompleteEdge.groupId)}
+            x1={autocompleteEdge.source.x}
+            y1={autocompleteEdge.source.y}
+            x2={autocompleteEdge.target.x}
+            y2={autocompleteEdge.target.y}
+            stroke={FlowUI.Color.groupIdToHex(autocompleteEdge.groupId)}
             stroke-width={EDGE_STROKE_WIDTH}
             strokeOpacity={0.5}
           />
         )}
-      </g>
-
-      {/*
-
-
-      Edges
-
-
-      */}
-      <g transform="translate(0.5, 0.5)">
-        {map(FlowGrid.yieldEdges(model), (edge) => {
-          if (!edge.groupId) {
-            return null;
-          }
-          return (
-            <g key={Flow.toEdgeId(edge)}>
-              <line
-                x1={edge.nodeFrom.x}
-                y1={edge.nodeFrom.y}
-                x2={edge.nodeTo.x}
-                y2={edge.nodeTo.y}
-                stroke={Color.groupIdToHex(edge.groupId)}
-                stroke-width={EDGE_STROKE_WIDTH}
-              />
-              <circle
-                cx={edge.nodeTo.x}
-                cy={edge.nodeTo.y}
-                r={EDGE_STROKE_WIDTH / 2}
-                fill={Color.groupIdToHex(edge.groupId)}
-              />
-            </g>
-          );
-        })}
       </g>
 
       {/*
@@ -308,7 +242,7 @@ const ViewTerminalNode = ({
   x,
   y,
 }: {
-  groupId: GroupId;
+  groupId: Flow.GroupId;
   x: number;
   y: number;
   isActive: boolean;
@@ -318,7 +252,7 @@ const ViewTerminalNode = ({
       cx={x}
       cy={y}
       r={TERMINAL_NODE_RADIUS}
-      fill={Color.groupIdToHex(groupId)}
+      fill={FlowUI.Color.groupIdToHex(groupId)}
     />
   );
 };
@@ -340,7 +274,7 @@ const touchEventToNodeId = (event: TouchEvent): Flow.NodeId | null => {
     return null;
   }
   const svgPosition = point.matrixTransform(screenCTM.inverse());
-  const nodeId = FlowGrid.positionToId({
+  const nodeId = FlowGrid.positionToNodeId({
     x: Math.floor(svgPosition.x),
     y: Math.floor(svgPosition.y),
   });

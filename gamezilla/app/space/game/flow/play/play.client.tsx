@@ -1,8 +1,8 @@
-import { Sub, andThen, p } from "gamezilla/@SHARED/core";
+import { Sub, chain } from "gamezilla/@SHARED/core";
+import { Button, IconArrowLeftOnRect } from "gamezilla/app/@SHARED/ui";
 import { SpaceGameClient } from "gamezilla/app/space/@SHARED";
-import { IconArrowLeftOnRect, Button } from "gamezilla/app/@SHARED/ui";
-import { FlowGridPlayUI } from "../flow-grid";
-import { FlowViewCtx } from "../flow-shared";
+import { FlowViewCtx } from "../@SHARED/flow-ctx";
+import { FlowGridPlayUI } from "../@SHARED/flow/flow-grid";
 import {
   ClientModel,
   ClientMsg,
@@ -26,12 +26,9 @@ const init: Client["init"] = () => {
 };
 
 const update: Client["update"] = (input) => {
-  return p(
-    input,
-    andThen((step) => {
-      return FlowGridPlayUI.update({ ...input, ...step });
-    })
-  );
+  return chain(input.model, (model) => {
+    return FlowGridPlayUI.update({ ...input, ...model });
+  });
 };
 
 const updateFromServer: Client["updateFromServer"] = (input) => {

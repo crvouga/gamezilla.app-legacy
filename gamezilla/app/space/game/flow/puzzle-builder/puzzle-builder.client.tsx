@@ -7,9 +7,8 @@ import {
 } from "gamezilla/app/@SHARED/ui";
 import { SpaceGameClient } from "gamezilla/app/space/@SHARED";
 import { ViewBottomButtonBar } from "gamezilla/app/space/game/@SHARED";
-import { FlowGridPlayUI, FlowGridUI } from "../flow-grid";
-import { FlowViewCtx } from "../flow-shared";
-import { Color, groupIdToColor } from "../flow-ui";
+import { FlowGridPlayUI, FlowGridUI, FlowUI } from "../@SHARED/flow";
+import { FlowViewCtx } from "../@SHARED/flow-ctx";
 import {
   ClientModel,
   ClientMsg,
@@ -143,10 +142,12 @@ const View: Client["View"] = ({ model, dispatch, ctx }) => {
               cx={0}
               cy={0}
               r={1}
-              fill={Color.toHex(groupIdToColor[model.activeGroupId])}
+              fill={FlowUI.Color.toHex(
+                FlowUI.groupIdToColor[model.activeGroupId]
+              )}
             />
           </svg>
-          <p>{capitalize(groupIdToColor[model.activeGroupId])}</p>
+          <p>{capitalize(FlowUI.groupIdToColor[model.activeGroupId])}</p>
         </div>
       </div>
       <ViewBottomButtonBar

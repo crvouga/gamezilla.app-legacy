@@ -2,7 +2,7 @@ import {
   EdgeId,
   Model,
   NodeId,
-  findPath,
+  findGroup,
   findTerminal,
   toEdgeId,
   yieldOutEdges,
@@ -20,7 +20,7 @@ export const findShortestEmptyPath = ({
   source: NodeId;
   target: NodeId;
 }): EdgeId[] => {
-  const groupId = findPath(model, source);
+  const groupId = findGroup(model, source);
   const terminal = findTerminal(model, source);
   const sourceGroupId = groupId ?? terminal?.groupId;
   if (!sourceGroupId) {
@@ -58,7 +58,7 @@ export const findShortestEmptyPath = ({
         continue;
       }
 
-      const adjacentGroupId = findPath(model, adjacentId);
+      const adjacentGroupId = findGroup(model, adjacentId);
 
       if (adjacentGroupId && adjacentGroupId !== sourceGroupId) {
         continue;

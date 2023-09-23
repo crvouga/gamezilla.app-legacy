@@ -1,5 +1,5 @@
 import { Eff } from "gamezilla/@SHARED/core";
-import { Flow, AlgoDrawPath, AlgoAutocompletePath } from "../flow";
+import { Flow, AlgoDrawPath, AlgoAutocompletePath } from "..";
 import * as FlowGrid from "./flow-grid";
 import * as FlowGridUI from "./flow-grid-ui";
 
@@ -69,7 +69,7 @@ export const updateModel = ({
     if (msg.t === "pressed-down-node") {
       const pressedNodeId = msg.nodeId;
 
-      const groupId = Flow.findPath(model.grid, pressedNodeId);
+      const groupId = Flow.findGroup(model.grid, pressedNodeId);
 
       const terminal = Flow.findTerminal(model.grid, pressedNodeId);
 
