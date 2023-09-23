@@ -1,4 +1,4 @@
-import { EmailAddress, Ok, has, is, isObj, str } from "gamezilla/@SHARED/core";
+import { EmailAddress, ok, has, is, isObj, str } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
 import { DbConnSql } from "gamezilla/app/@SHARED/server";
 import { Account } from "../../auth.core";
@@ -39,7 +39,7 @@ export const createAccountDb = ({
       const row = queried.value[0] ?? null;
 
       if (!row) {
-        return Ok(null);
+        return ok(null);
       }
 
       const parsedUserId = UserId.parse(row.user_id);
@@ -58,7 +58,7 @@ export const createAccountDb = ({
         userId: parsedUserId.value,
         emailAddress: parsedEmailAddress.value,
       };
-      return Ok(account);
+      return ok(account);
     },
     async insertOne(input) {
       const queried = await dbConn.query(
@@ -70,7 +70,7 @@ export const createAccountDb = ({
       if (queried.t === "err") {
         return queried;
       }
-      return Ok(null);
+      return ok(null);
     },
   };
 };

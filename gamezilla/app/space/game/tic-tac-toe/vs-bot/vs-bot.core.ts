@@ -1,4 +1,4 @@
-import { Err, Ok, Result } from "gamezilla/@SHARED/core";
+import { err, ok, Result } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
 import { VsBotSetup } from "gamezilla/app/space/game/@SHARED";
 import { GetBestMoveResult } from "../tic-tic-toe/best-move";
@@ -121,14 +121,14 @@ export const handle = ({
   switch (msg.t) {
     case "input-bot-level": {
       if (model.type !== "setup") {
-        return Err("must-be-in-setup-mode");
+        return err("must-be-in-setup-mode");
       }
 
       if (model.player !== ctx.currentUserId) {
-        return Err("must-be-player");
+        return err("must-be-player");
       }
 
-      return Ok({
+      return ok({
         ...model,
         botLevel: msg.botLevel,
       });
@@ -136,14 +136,14 @@ export const handle = ({
 
     case "start-playing": {
       if (model.type !== "setup") {
-        return Err("must-be-in-setup-mode");
+        return err("must-be-in-setup-mode");
       }
 
       if (model.player && model.player !== ctx.currentUserId) {
-        return Err("not-allowed");
+        return err("not-allowed");
       }
 
-      return Ok({
+      return ok({
         ...model,
         userPlayerType: msg.playerType,
         player: ctx.currentUserId,
@@ -152,14 +152,14 @@ export const handle = ({
 
     case "stop-playing": {
       if (model.type !== "setup") {
-        return Err("must-be-in-setup-mode");
+        return err("must-be-in-setup-mode");
       }
 
       if (model.player !== ctx.currentUserId) {
-        return Err("must-be-player");
+        return err("must-be-player");
       }
 
-      return Ok({
+      return ok({
         ...model,
         player: null,
       });
@@ -167,18 +167,18 @@ export const handle = ({
 
     case "start-game": {
       if (model.type !== "setup") {
-        return Err("must-be");
+        return err("must-be");
       }
 
       if (model.player === "none") {
-        return Err("missing_player");
+        return err("missing_player");
       }
 
       if (model.player !== ctx.currentUserId) {
-        return Err("must-be-player");
+        return err("must-be-player");
       }
 
-      return Ok({
+      return ok({
         type: "game",
         board: emptyBoard,
         botLevel: model.botLevel,
@@ -189,14 +189,14 @@ export const handle = ({
 
     case "stop-game": {
       if (model.type !== "game") {
-        return Err("must-be-in-game-mode");
+        return err("must-be-in-game-mode");
       }
 
       if (model.player !== ctx.currentUserId) {
-        return Err("must-be-player");
+        return err("must-be-player");
       }
 
-      return Ok({
+      return ok({
         type: "setup",
         botLevel: model.botLevel,
         player: model.player,
@@ -206,11 +206,11 @@ export const handle = ({
 
     case "input-move": {
       if (model.type !== "game") {
-        return Err("must-be-in-game-mode");
+        return err("must-be-in-game-mode");
       }
 
       if (model.player !== ctx.currentUserId) {
-        return Err("must-be-player");
+        return err("must-be-player");
       }
 
       const result = move({
@@ -228,16 +228,16 @@ export const handle = ({
         board: result.value,
       };
 
-      return Ok(modelNext);
+      return ok(modelNext);
     }
 
     case "swap-sides": {
       if (model.type !== "game") {
-        return Err("must-be-in-game-mode");
+        return err("must-be-in-game-mode");
       }
 
       if (model.player !== ctx.currentUserId) {
-        return Err("must-be-player");
+        return err("must-be-player");
       }
 
       const modelNext: CoreModel = {
@@ -246,19 +246,19 @@ export const handle = ({
         userPlayerType: toOpposite(model.userPlayerType),
       };
 
-      return Ok(modelNext);
+      return ok(modelNext);
     }
 
     case "restart": {
       if (model.type !== "game") {
-        return Err("must-be-in-game-mode");
+        return err("must-be-in-game-mode");
       }
 
       if (model.player !== ctx.currentUserId) {
-        return Err("must-be-player");
+        return err("must-be-player");
       }
 
-      return Ok({
+      return ok({
         ...model,
         board: emptyBoard,
       });

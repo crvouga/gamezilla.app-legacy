@@ -3,7 +3,7 @@ import { UserId } from "gamezilla/app/@SHARED/data";
 import { Position } from "./battleship/position";
 import { ShotRule } from "./battleship/shot-rule";
 
-const { Err } = Result;
+const { err: Err } = Result;
 
 //
 //

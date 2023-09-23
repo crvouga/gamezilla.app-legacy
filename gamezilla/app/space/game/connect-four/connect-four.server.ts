@@ -1,4 +1,4 @@
-import { Eff, Err, Ok, Result, Sub } from "gamezilla/@SHARED/core";
+import { Eff, err, ok, Result, Sub } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
 import { GameServer, SpaceServerCmd } from "gamezilla/app/space/@SHARED";
 import {
@@ -84,7 +84,7 @@ export const updateFromClient: Server["updateFromClient"] = ({
             msg: {
               t: "input-mode",
               mode: msg.mode,
-              result: Err("You must be the host to change the game mode"),
+              result: err("You must be the host to change the game mode"),
             },
           },
         ],
@@ -98,7 +98,7 @@ export const updateFromClient: Server["updateFromClient"] = ({
       cmd: [
         {
           t: "send-to-space",
-          msg: { ...msg, result: Ok(modelNew) },
+          msg: { ...msg, result: ok(modelNew) },
         },
       ],
     };

@@ -1,7 +1,7 @@
 import {
   Eff,
-  Err,
-  Ok,
+  err,
+  ok,
   Result,
   Sub,
   Time,
@@ -82,7 +82,7 @@ const initialLoad = async ({
   const profile = found.value;
 
   if (!profile) {
-    return Err("Initial load failed. No profile found.");
+    return err("Initial load failed. No profile found.");
   }
 
   const foundPuzzles = await PuzzleDb.puzzles.findForProfile(dbConn, {
@@ -95,7 +95,7 @@ const initialLoad = async ({
 
   const puzzles = foundPuzzles.value;
 
-  return Ok({ profile, puzzles });
+  return ok({ profile, puzzles });
 };
 
 //
@@ -158,12 +158,12 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
       return {
         model: {
           ...modelNew,
-          requests: { ...model.requests, getPuzzles: Ok(null) },
+          requests: { ...model.requests, getPuzzles: ok(null) },
         },
         cmd: [
           {
             t: "send-to-space",
-            msg: { t: "db-got-puzzles", result: Ok(modelNew) },
+            msg: { t: "db-got-puzzles", result: ok(modelNew) },
           },
         ],
       };
@@ -194,7 +194,7 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
               t: "send-to-space",
               msg: {
                 t: "db-got-initial-load",
-                result: Err("No puzzles found."),
+                result: err("No puzzles found."),
               },
             },
           ],
@@ -216,7 +216,7 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
         cmd: [
           {
             t: "send-to-space",
-            msg: { t: "db-got-initial-load", result: Ok(modelNew) },
+            msg: { t: "db-got-initial-load", result: ok(modelNew) },
           },
         ],
       };

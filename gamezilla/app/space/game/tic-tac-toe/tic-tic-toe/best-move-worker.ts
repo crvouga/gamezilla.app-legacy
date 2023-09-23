@@ -1,4 +1,4 @@
-import { Err, Ok } from "gamezilla/@SHARED/core";
+import { err, ok } from "gamezilla/@SHARED/core";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { expose } from "threads/worker";
@@ -17,11 +17,11 @@ const toBestMove = ({
     const moved = move({ board, player: maximizingPlayer, position });
 
     if (moved.t === "ok") {
-      return Ok(position);
+      return ok(position);
     }
   }
 
-  return Err("no_valid_move");
+  return err("no_valid_move");
 };
 
 const WorkerAPI = {

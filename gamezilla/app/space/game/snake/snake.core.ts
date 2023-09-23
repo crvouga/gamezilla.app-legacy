@@ -133,11 +133,11 @@ export const canStartGame = (model: CoreModel): boolean => {
 
 export const startGame = (model: CoreModel): StartGame_Done[1] => {
   if (model.gameStatus.type !== "GameSetup") {
-    return Result.Err("must_be_in_game_setup");
+    return Result.err("must_be_in_game_setup");
   }
 
   if (model.gameStatus.player.type === "none") {
-    return Result.Err("missing_player");
+    return Result.err("missing_player");
   }
 
   const playerUserId = model.gameStatus.player.value[1];
@@ -150,5 +150,5 @@ export const startGame = (model: CoreModel): StartGame_Done[1] => {
     },
   };
 
-  return Result.Ok(modelNew);
+  return Result.ok(modelNew);
 };

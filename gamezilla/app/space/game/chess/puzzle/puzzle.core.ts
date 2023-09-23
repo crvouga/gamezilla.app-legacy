@@ -1,7 +1,7 @@
 import {
-  Err,
+  err,
   NonEmpty,
-  Ok,
+  ok,
   Posix,
   RemoteResult,
   Result,
@@ -284,7 +284,7 @@ export const updateCore = ({
   //
 
   if (ctx.currentUserId !== ctx.hostId) {
-    return Err("must-be-host");
+    return err("must-be-host");
   }
 
   //
@@ -309,7 +309,7 @@ export const updateCore = ({
       };
 
       if (didSolvePuzzle(model.puzzle, modelNew.moves) && model.hasUsedHint) {
-        return Ok({
+        return ok({
           ...modelNew,
           t: "solved-with-hint",
           endedAt: ctx.now,
@@ -319,7 +319,7 @@ export const updateCore = ({
       }
 
       if (didSolvePuzzle(model.puzzle, modelNew.moves)) {
-        return Ok({
+        return ok({
           ...modelNew,
           t: "solved",
           endedAt: ctx.now,
@@ -327,7 +327,7 @@ export const updateCore = ({
       }
 
       if (didFailPuzzle(model.puzzle, modelNew.moves)) {
-        return Ok({
+        return ok({
           ...modelNew,
           t: "incorrect",
           hasLost: true,
@@ -335,11 +335,11 @@ export const updateCore = ({
         });
       }
 
-      return Ok(modelNew);
+      return ok(modelNew);
     }
 
     if (msg.t === "show-hint") {
-      return Ok({
+      return ok({
         ...model,
         hint: model.hint ? hintToNextHint[model.hint] : "from",
         hasUsedHint: true,
@@ -349,27 +349,27 @@ export const updateCore = ({
 
   if (model.t === "solved") {
     if (msg.t === "next") {
-      return Ok(transitionNextPuzzle({ ctx, model }));
+      return ok(transitionNextPuzzle({ ctx, model }));
     }
   }
 
   if (model.t === "solved-with-hint") {
     if (msg.t === "next") {
-      return Ok(transitionNextPuzzle({ ctx, model }));
+      return ok(transitionNextPuzzle({ ctx, model }));
     }
   }
 
   if (model.t === "incorrect") {
     if (msg.t === "next") {
-      return Ok(transitionNextPuzzle({ ctx, model }));
+      return ok(transitionNextPuzzle({ ctx, model }));
     }
 
     if (msg.t === "skip") {
-      return Ok(transitionNextPuzzle({ ctx, model }));
+      return ok(transitionNextPuzzle({ ctx, model }));
     }
 
     if (msg.t === "retry") {
-      return Ok({
+      return ok({
         ...model,
         moves: [],
         t: "started",
@@ -378,7 +378,7 @@ export const updateCore = ({
     }
   }
 
-  return Err("unhandled");
+  return err("unhandled");
 };
 
 const transitionNextPuzzle = ({

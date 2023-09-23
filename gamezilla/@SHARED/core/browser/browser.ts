@@ -86,10 +86,10 @@ export const focus =
 
     if (element) {
       element.focus();
-      return Result.Ok(null);
+      return Result.ok(null);
     }
 
-    return Result.Err({ type: "ElementNotFound" });
+    return Result.err({ type: "ElementNotFound" });
   };
 
 export type ScrollResult = Result<Problem, null>;
@@ -108,10 +108,10 @@ export const scrollIntoView =
         inline: "center",
       });
 
-      return Result.Ok(null);
+      return Result.ok(null);
     }
 
-    return Result.Err({ type: "ElementNotFound" });
+    return Result.err({ type: "ElementNotFound" });
   };
 
 export type GetElementByIdResult = Result<Problem, DomElement>;
@@ -127,11 +127,11 @@ export const getElementById =
     const element = document.getElementById(htmlId);
 
     if (element) {
-      return Result.Ok({
+      return Result.ok({
         offsetHeight: element.offsetHeight,
         offsetWidth: element.offsetWidth,
       });
     }
 
-    return Result.Err({ type: "ElementNotFound" });
+    return Result.err({ type: "ElementNotFound" });
   };

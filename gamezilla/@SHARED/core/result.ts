@@ -4,11 +4,17 @@ export type Ok<T> = { t: "ok"; value: T };
 
 export type Err<T> = { t: "err"; error: T };
 
-export const Ok = <T>(value: T): Ok<T> => {
+/**
+ * `Ok<T>` represents a successful result
+ */
+export const ok = <T>(value: T): Ok<T> => {
   return { t: "ok", value };
 };
 
-export const Err = <T>(error: T): Err<T> => {
+/**
+ * `Err<T>` represents a failed result asa
+ */
+export const err = <T>(error: T): Err<T> => {
   return { t: "err", error };
 };
 
@@ -17,7 +23,7 @@ const mapErr =
   (result: Result<A, TValue>): Result<B, TValue> => {
     switch (result.t) {
       case "err":
-        return Err(mapper(result.error));
+        return err(mapper(result.error));
 
       case "ok":
         return result;
@@ -25,17 +31,17 @@ const mapErr =
   };
 
 const fromNullable =
-  <TError, TValue>(err: TError) =>
+  <TError, TValue>(error: TError) =>
   (value: TValue | undefined | null): Result<TError, TValue> => {
     if (value === undefined) {
-      return Err(err);
+      return err(error);
     }
 
     if (value === null) {
-      return Err(err);
+      return err(error);
     }
 
-    return Ok(value);
+    return ok(value);
   };
 
 const withDefault =
@@ -63,8 +69,8 @@ const combine = <E, A>(results: Result<E, A>[]): Result<E, A[]> => {
     if (result.t === "err") {
       return result;
     }
-    return Ok([...combined.value, result.value]);
-  }, Ok([]));
+    return ok([...combined.value, result.value]);
+  }, ok([]));
 };
 
 const mapOk = <TError, A, B>(
@@ -72,14 +78,14 @@ const mapOk = <TError, A, B>(
   mapper: (a: A) => B
 ): Result<TError, B> => {
   if (result.t === "ok") {
-    return Ok(mapper(result.value));
+    return ok(mapper(result.value));
   }
   return result;
 };
 
 export const Result = {
-  Ok,
-  Err,
+  ok,
+  err,
   mapOk,
   mapErr,
   fromNullable,

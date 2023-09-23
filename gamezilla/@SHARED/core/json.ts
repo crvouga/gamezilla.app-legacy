@@ -1,4 +1,4 @@
-import { Result } from './result';
+import { Result } from "./result";
 
 export type Json = boolean | number | string | null | JsonArray | JsonRecord;
 
@@ -14,11 +14,11 @@ export const parse = (s: string): Result<Problem, Json> => {
   try {
     const parsed: Json = JSON.parse(s);
 
-    return Result.Ok(parsed);
+    return Result.ok(parsed);
   } catch (error) {
     // todo make better
     const message = String(error);
-    return Result.Err({ message });
+    return Result.err({ message });
   }
 };
 
@@ -26,10 +26,10 @@ export const stringify = (json: Json): Result<Problem, string> => {
   try {
     const stringified: string = JSON.stringify(json);
 
-    return Result.Ok(stringified);
+    return Result.ok(stringified);
   } catch (error) {
     // todo make better
     const message = String(error);
-    return Result.Err({ message });
+    return Result.err({ message });
   }
 };

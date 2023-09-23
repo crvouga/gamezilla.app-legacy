@@ -1,4 +1,4 @@
-import { Err, NonEmpty, Ok, Result, shuffle } from "gamezilla/@SHARED/core";
+import { err, NonEmpty, ok, Result, shuffle } from "gamezilla/@SHARED/core";
 import { Direction, Position } from "./gomoku-position";
 
 export type Board = {
@@ -130,30 +130,30 @@ export const move = ({
   board: Board;
 }): Result<MoveProblem, Board> => {
   if (!inBounds(position)) {
-    return Err("out-of-bounds");
+    return err("out-of-bounds");
   }
 
   const status = toStatus(board);
 
   if (status.type === "win") {
-    return Err("game-over");
+    return err("game-over");
   }
 
   if (status.type === "draw") {
-    return Err("game-over");
+    return err("game-over");
   }
 
   if (status.turn !== stone) {
-    return Err("not-turn");
+    return err("not-turn");
   }
 
   if (toStone(position, board)) {
-    return Err("position-occupied");
+    return err("position-occupied");
   }
 
   const boardNew = setStone(position, stone, board);
 
-  return Ok(boardNew);
+  return ok(boardNew);
 };
 
 export const toBestMove = ({

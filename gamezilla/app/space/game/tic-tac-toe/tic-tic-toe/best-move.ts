@@ -1,4 +1,4 @@
-import { Err, Result, Task } from "gamezilla/@SHARED/core";
+import { err, Result, Task } from "gamezilla/@SHARED/core";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import * as threads from "threads";
@@ -23,11 +23,11 @@ export const getBestMove =
 
         return moved;
       } catch (error) {
-        return Err(`Spawn worker error. ${String(error)}`);
+        return err(`Spawn worker error. ${String(error)}`);
       } finally {
         await worker.terminate();
       }
     } catch (error) {
-      return Err(`New worker error. ${String(error)}`);
+      return err(`New worker error. ${String(error)}`);
     }
   };

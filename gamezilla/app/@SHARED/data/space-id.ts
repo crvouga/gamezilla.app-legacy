@@ -14,10 +14,10 @@ type Problem = "invalid_id";
 
 const decode = (id: string): Result<Problem, SpaceId> => {
   if (is(id)) {
-    return Result.Ok(id);
+    return Result.ok(id);
   }
 
-  return Result.Err("invalid_id");
+  return Result.err("invalid_id");
 };
 
 const generate = (): SpaceId => {

@@ -1,5 +1,5 @@
-import { Result } from '../result';
-import { Task } from '../task';
+import { Result } from "../result";
+import { Task } from "../task";
 
 export type CopyResult = Result<Problem, null>;
 
@@ -10,8 +10,8 @@ export const copy =
   async () => {
     try {
       await navigator.clipboard.writeText(text);
-      return Result.Ok(null);
+      return Result.ok(null);
     } catch {
-      return Result.Err({ message: 'Failed to copy to clipboard.' });
+      return Result.err({ message: "Failed to copy to clipboard." });
     }
   };

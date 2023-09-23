@@ -1,4 +1,4 @@
-import { Eff, Err, Ok, Result } from "gamezilla/@SHARED/core";
+import { Eff, err, ok, Result } from "gamezilla/@SHARED/core";
 import {
   Profile,
   ProfileAvatar,
@@ -144,15 +144,15 @@ const handler = async ({
     }
 
     case "change-username": {
-      return Err("not implemented");
+      return err("not implemented");
     }
 
     case "delete-forever": {
-      return Err("not implemented");
+      return err("not implemented");
     }
 
     case "search": {
-      return Err("not implemented");
+      return err("not implemented");
     }
   }
 };
@@ -173,7 +173,7 @@ const findElseInsertNew = async ({
   const profile = found.value[0];
 
   if (profile) {
-    return Ok(profile);
+    return ok(profile);
   }
 
   const randomSeed = await ProfileAvatar.generateRandomSeed();
@@ -193,5 +193,5 @@ const findElseInsertNew = async ({
     return inserted;
   }
 
-  return Ok(profileNew);
+  return ok(profileNew);
 };

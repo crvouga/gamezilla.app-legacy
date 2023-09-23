@@ -1,4 +1,4 @@
-import { Eff, Err, Ok, Sub, andThen, p } from "gamezilla/@SHARED/core";
+import { Eff, err, ok, Sub, andThen, p } from "gamezilla/@SHARED/core";
 import {
   SpaceEvt,
   SpaceReqCtx,
@@ -67,7 +67,7 @@ export const update = ({
             t: "send-to-space",
             msg: {
               t: "bot-moved",
-              result: Err("The bot moved not during game mode"),
+              result: err("The bot moved not during game mode"),
             },
           },
         ],
@@ -95,7 +95,7 @@ export const update = ({
     return {
       model: modelNew,
       cmd: [
-        { t: "send-to-space", msg: { t: "bot-moved", result: Ok(modelNew) } },
+        { t: "send-to-space", msg: { t: "bot-moved", result: ok(modelNew) } },
       ],
     };
   }
@@ -185,7 +185,7 @@ export const updateFromEvt = ({
     return {
       model: modelNew,
       cmd: [
-        { t: "send-to-space", msg: { t: "player-left", result: Ok(modelNew) } },
+        { t: "send-to-space", msg: { t: "player-left", result: ok(modelNew) } },
       ],
     };
   }

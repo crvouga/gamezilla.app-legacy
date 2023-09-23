@@ -11,7 +11,7 @@ import {
 import * as VsBot from "./vs-bot/vs-bot.server";
 import * as VsUser from "./vs-user/vs-user.server";
 
-const { Ok } = Result;
+const { ok: Ok } = Result;
 
 //
 //

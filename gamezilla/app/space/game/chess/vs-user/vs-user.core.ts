@@ -3,7 +3,7 @@ import { UserId } from "gamezilla/app/@SHARED/data";
 import { Chess } from "../@SHARED/chess";
 import * as Clock from "../@SHARED/chess/chess-clock";
 
-const { Ok, Err } = Result;
+const { ok: Ok, err: Err } = Result;
 
 //
 //

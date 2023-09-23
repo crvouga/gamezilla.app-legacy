@@ -3,7 +3,7 @@ import { UserId } from "gamezilla/app/@SHARED/data";
 import { Maze } from "./maze";
 import { Direction, Position } from "./position";
 
-const { Err, Ok } = Result;
+const { err: Err, ok: Ok } = Result;
 
 //
 //

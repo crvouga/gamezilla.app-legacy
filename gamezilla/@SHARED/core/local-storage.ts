@@ -13,9 +13,9 @@ export const put = <value, msg>(
   const task: Task<PutResult> = async () => {
     try {
       localStorage.setItem(key, JSON.stringify(value));
-      return Result.Ok(null);
+      return Result.ok(null);
     } catch (error) {
-      return Result.Err("failed_put_item_in_local_storage");
+      return Result.err("failed_put_item_in_local_storage");
     }
   };
   return p(task, Eff.perform(mapper));

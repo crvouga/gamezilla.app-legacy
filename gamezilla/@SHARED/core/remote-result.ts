@@ -1,4 +1,4 @@
-import { Err, Ok, Result } from "./result";
+import { err, ok, Result } from "./result";
 
 export type RemoteResult<TError, TValue> =
   | NotAsked
@@ -30,6 +30,6 @@ export const RemoteResult = {
   map,
   Loading,
   NotAsked,
-  Err,
-  Ok,
+  Err: err,
+  Ok: ok,
 };

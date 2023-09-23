@@ -1,4 +1,4 @@
-import { Err, Ok, Result, Task } from "gamezilla/@SHARED/core";
+import { err, ok, Result, Task } from "gamezilla/@SHARED/core";
 
 export type MicLoadResult = Result<string, null>;
 
@@ -8,16 +8,16 @@ const load: Task<MicLoadResult> = async () => {
       audio: true,
     });
 
-    return Ok(null);
+    return ok(null);
   } catch (error) {
-    return Err("failed_to_load");
+    return err("failed_to_load");
   }
 };
 
 export type MicUnloadResult = Result<string, null>;
 
 const unload: Task<MicUnloadResult> = async () => {
-  return Ok(null);
+  return ok(null);
 };
 
 export const Mic = {

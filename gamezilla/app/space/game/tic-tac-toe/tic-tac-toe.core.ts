@@ -1,4 +1,4 @@
-import { Err, Result } from "gamezilla/@SHARED/core";
+import { err, Result } from "gamezilla/@SHARED/core";
 import * as VsBot from "./vs-bot/vs-bot.core";
 import * as VsUser from "./vs-user/vs-user.core";
 
@@ -21,7 +21,7 @@ export type ServerModel =
   | { t: "vs-bot"; c: VsBot.ServerModel };
 
 export const parseModel = (): Result<string, ServerModel> => {
-  return Err("Unimplemented");
+  return err("Unimplemented");
 };
 
 //

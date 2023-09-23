@@ -1,4 +1,4 @@
-import { Ok, Result } from "gamezilla/@SHARED/core";
+import { ok, Result } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
 
 //
@@ -53,5 +53,5 @@ export const handle = (input: {
   model: ServerModel;
   ctx: { currentUserId: UserId };
 }): Result<string, CoreModel> => {
-  return Ok(input.model);
+  return ok(input.model);
 };

@@ -1,4 +1,4 @@
-import { Err, Ok, Result } from "../result";
+import { err, ok, Result } from "../result";
 
 type Problem = "Invalid";
 
@@ -14,9 +14,9 @@ const is = (emailAddress: unknown): emailAddress is EmailAddress => {
 
 const parse = (emailAddress: string): Result<Problem, EmailAddress> => {
   if (is(emailAddress)) {
-    return Ok(emailAddress);
+    return ok(emailAddress);
   }
-  return Err("Invalid");
+  return err("Invalid");
 };
 
 export const EmailAddress = {

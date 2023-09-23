@@ -4,7 +4,7 @@ import * as Piece from "./piece";
 import * as Position from "./position";
 import { Keyboard, Option, Result } from "gamezilla/@SHARED/core";
 
-const { Err, Ok } = Result;
+const { err: Err, ok: Ok } = Result;
 
 //
 //
@@ -168,10 +168,10 @@ export const inputTranslate = (
   };
 
   if (inCollision(modelNext)) {
-    return Result.Err("collision");
+    return Result.err("collision");
   }
 
-  return Result.Ok(modelNext);
+  return Result.ok(modelNext);
 };
 
 //
@@ -196,10 +196,10 @@ export const inputRotate = (model: CoreModel): InputRotate_Done[1] => {
   };
 
   if (inCollision(modelNew)) {
-    return Result.Err("collision");
+    return Result.err("collision");
   }
 
-  return Result.Ok(modelNew);
+  return Result.ok(modelNew);
 };
 
 const toNextRotation = (rotation: 0 | 1 | 2 | 3): 0 | 1 | 2 | 3 => {
@@ -233,7 +233,7 @@ export type InputDropProblem = "";
 export const inputDrop = (model: CoreModel): InputDrop_Done[1] => {
   const modelNext = tick(toDrop(model));
 
-  return Result.Ok(modelNext);
+  return Result.ok(modelNext);
 };
 
 //

@@ -1,4 +1,4 @@
-import { Eff, Err, Ok, Sub } from "gamezilla/@SHARED/core";
+import { Eff, err, ok, Sub } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
 import { sendBack } from "gamezilla/app/@SHARED/server";
 import {
@@ -297,14 +297,14 @@ const initMode = ({
   eff?: Eff<Msg>;
 } => {
   if (ctx.hostId !== userId) {
-    return { result: Err("must_be_the_host") };
+    return { result: err("must_be_the_host") };
   }
 
   switch (mode) {
     case "none": {
       const modelNew: ServerModel = { t: "none" };
 
-      return { result: Ok(modelNew) };
+      return { result: ok(modelNew) };
     }
 
     case "vs-bot": {
@@ -313,7 +313,7 @@ const initMode = ({
         c: VsBot.init({ userId: userId }),
       };
 
-      return { result: Ok(modelNew) };
+      return { result: ok(modelNew) };
     }
 
     case "vs-user": {
@@ -322,7 +322,7 @@ const initMode = ({
         c: VsUser.init({ userId: userId }),
       };
 
-      return { result: Ok(modelNew) };
+      return { result: ok(modelNew) };
     }
 
     case "puzzle": {
@@ -330,7 +330,7 @@ const initMode = ({
 
       const modelNew: ServerModel = { t: "puzzle", c: initial.model };
 
-      return { result: Ok(modelNew), eff: Eff.t("puzzle", initial.eff) };
+      return { result: ok(modelNew), eff: Eff.t("puzzle", initial.eff) };
     }
   }
 };

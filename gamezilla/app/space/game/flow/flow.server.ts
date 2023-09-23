@@ -1,4 +1,4 @@
-import { Err, Ok, Sub } from "gamezilla/@SHARED/core";
+import { err, ok, Sub } from "gamezilla/@SHARED/core";
 import { GameServer } from "gamezilla/app/space/@SHARED";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./flow.core";
 import { PlayServer } from "./play";
@@ -29,7 +29,7 @@ export const updateFromClient: Server["updateFromClient"] = (input) => {
         cmd: [
           {
             t: "send-to-space",
-            msg: { ...msg, result: Err("Must be the host") },
+            msg: { ...msg, result: err("Must be the host") },
           },
         ],
       };
@@ -39,7 +39,7 @@ export const updateFromClient: Server["updateFromClient"] = (input) => {
 
     return {
       ...initial,
-      cmd: [{ t: "send-to-space", msg: { ...msg, result: Ok(initial.model) } }],
+      cmd: [{ t: "send-to-space", msg: { ...msg, result: ok(initial.model) } }],
     };
   }
   return { model };

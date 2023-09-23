@@ -127,7 +127,7 @@ export const inputPlayer = (
   model: CoreModel
 ): InputPlayer_Done[1] => {
   if (model.gameStatus.type !== "GameSetup") {
-    return Result.Err("must_be_in_game_setup");
+    return Result.err("must_be_in_game_setup");
   }
 
   const modelNew: CoreModel = {
@@ -138,7 +138,7 @@ export const inputPlayer = (
     },
   };
 
-  return Result.Ok(modelNew);
+  return Result.ok(modelNew);
 };
 
 export const inputDirection = (
@@ -146,13 +146,13 @@ export const inputDirection = (
   model: CoreModel
 ): InputDirection_Done[1] => {
   if (model.gameStatus.type !== "GameStarted") {
-    return Result.Err("must_be_in_game_started");
+    return Result.err("must_be_in_game_started");
   }
 
   const playerUserId = model.gameStatus.player[1];
 
   if (playerUserId !== userId) {
-    return Result.Err("user_must_be_the_current_player");
+    return Result.err("user_must_be_the_current_player");
   }
 
   const modelNew: CoreModel = {
@@ -161,7 +161,7 @@ export const inputDirection = (
     status: "Playing",
   };
 
-  return Result.Ok(modelNew);
+  return Result.ok(modelNew);
 };
 
 export const toggleStatus = (
@@ -169,11 +169,11 @@ export const toggleStatus = (
   model: CoreModel
 ): ToggleStatusResult => {
   if (model.gameStatus.type !== "GameStarted") {
-    return Result.Err("must_be_in_game_started");
+    return Result.err("must_be_in_game_started");
   }
 
   if (model.gameStatus.player[1] !== userId) {
-    return Result.Err("user_must_be_the_current_player");
+    return Result.err("user_must_be_the_current_player");
   }
 
   const modelNew: CoreModel = {
@@ -181,5 +181,5 @@ export const toggleStatus = (
     status: model.status === "Paused" ? "Playing" : "Paused",
   };
 
-  return Result.Ok(modelNew);
+  return Result.ok(modelNew);
 };

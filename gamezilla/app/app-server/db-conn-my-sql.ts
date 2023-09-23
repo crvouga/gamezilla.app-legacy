@@ -1,4 +1,4 @@
-import { Err, Ok } from "gamezilla/@SHARED/core";
+import { err, ok } from "gamezilla/@SHARED/core";
 import { DbConnSql } from "gamezilla/app/@SHARED/server";
 import { PoolConnection, createPool } from "mysql2/promise";
 
@@ -41,11 +41,11 @@ export const createDbConnMySql = async ({
           values,
           fields,
         });
-        return Ok(parsed);
+        return ok(parsed);
       } catch (error) {
         log("error executing query", { text, error });
         console.log(error);
-        return Err(String(error));
+        return err(String(error));
       }
     },
   };

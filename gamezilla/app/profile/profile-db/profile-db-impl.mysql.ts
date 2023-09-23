@@ -1,6 +1,6 @@
 import { DbConnSql } from "gamezilla/app/@SHARED/server";
 import { ProfileDb } from "./profile-db";
-import { Err, Ok, Result, has, is, isObj, str } from "gamezilla/@SHARED/core";
+import { err, ok, Result, has, is, isObj, str } from "gamezilla/@SHARED/core";
 import { Profile, UserId, Username } from "gamezilla/app/@SHARED/data";
 
 type ProfileRow = {
@@ -32,14 +32,14 @@ const toProfileRow = (x: unknown): ProfileRow | null => {
 
 const fromProfileRow = (row: ProfileRow): Result<string, Profile> => {
   if (!UserId.is(row.user_id)) {
-    return Err("invalid user_id");
+    return err("invalid user_id");
   }
 
   if (!Username.is(row.username)) {
-    return Err("invalid username");
+    return err("invalid username");
   }
 
-  return Ok({
+  return ok({
     userId: row.user_id,
     avatarUrl: row.avatar_url,
     username: row.username,
@@ -67,7 +67,7 @@ export const createProfileDb = ({
         return parsed;
       }
 
-      return Ok(parsed.value);
+      return ok(parsed.value);
     },
     insertOne: async (profile) => {
       const inserted = await dbConn.query(
@@ -82,7 +82,7 @@ export const createProfileDb = ({
         return inserted;
       }
 
-      return Ok(null);
+      return ok(null);
     },
   };
 };

@@ -1,4 +1,4 @@
-import { Err, Ok, Result, Uuid } from "gamezilla/@SHARED/core";
+import { err, ok, Result, Uuid } from "gamezilla/@SHARED/core";
 
 export type UserId = string & { _opaque: "UserId" };
 const namespace = "user";
@@ -12,9 +12,9 @@ type Problem = "invalid_user_id";
 
 const parse = (id: unknown): Result<Problem, UserId> => {
   if (is(id)) {
-    return Ok(id);
+    return ok(id);
   }
-  return Err("invalid_user_id");
+  return err("invalid_user_id");
 };
 
 const generate = () => {

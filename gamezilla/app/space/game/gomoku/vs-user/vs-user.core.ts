@@ -1,5 +1,5 @@
 import { UserId } from "gamezilla/app/@SHARED/data";
-import { Err, NonEmpty, Ok, Result } from "gamezilla/@SHARED/core";
+import { err, NonEmpty, ok, Result } from "gamezilla/@SHARED/core";
 import {
   Board,
   MoveProblem,
@@ -166,13 +166,13 @@ export const handle = ({
   switch (msg.t) {
     case "start-playing": {
       if (model.type !== "setup") {
-        return Err("must-be-setup");
+        return err("must-be-setup");
       }
 
       const { stone } = msg;
 
       if (model[stone]) {
-        return Err("player-taken");
+        return err("player-taken");
       }
 
       const modelNew: Model = {
@@ -184,18 +184,18 @@ export const handle = ({
             : model[toOppositeStone(stone)],
       };
 
-      return Ok(modelNew);
+      return ok(modelNew);
     }
 
     case "stop-playing": {
       if (model.type !== "setup") {
-        return Err("must-be-setup");
+        return err("must-be-setup");
       }
 
       const { stone } = msg;
 
       if (model[stone] !== ctx.currentUserId) {
-        return Err("must-be-player");
+        return err("must-be-player");
       }
 
       const modelNew: Model = {
@@ -203,16 +203,16 @@ export const handle = ({
         [stone]: null,
       };
 
-      return Ok(modelNew);
+      return ok(modelNew);
     }
 
     case "start-game": {
       if (model.type !== "setup") {
-        return Err("must-be-setup");
+        return err("must-be-setup");
       }
 
       if (!(model.white && model.black)) {
-        return Err("missing-player");
+        return err("missing-player");
       }
 
       const modelNew: Model = {
@@ -222,12 +222,12 @@ export const handle = ({
         board: initBoard,
       };
 
-      return Ok(modelNew);
+      return ok(modelNew);
     }
 
     case "input-move": {
       if (model.type !== "playing") {
-        return Err("must-be-playing");
+        return err("must-be-playing");
       }
 
       const { position } = msg;
@@ -255,28 +255,28 @@ export const handle = ({
           winner: statusNew.winner,
           wins: statusNew.wins,
         };
-        return Ok(initGameOver({ model: modelNew, gameOver }));
+        return ok(initGameOver({ model: modelNew, gameOver }));
       }
 
       if (statusNew.type === "draw") {
-        return Ok(
+        return ok(
           initGameOver({ model: modelNew, gameOver: { type: "Draw" } })
         );
       }
 
-      return Ok(modelNew);
+      return ok(modelNew);
     }
 
     case "resign": {
       if (model.type !== "playing") {
-        return Err("must-be-playing");
+        return err("must-be-playing");
       }
 
       if (
         model.white !== ctx.currentUserId &&
         model.black !== ctx.currentUserId
       ) {
-        return Err("must-be-player");
+        return err("must-be-player");
       }
 
       const currentUserStone =
@@ -287,15 +287,15 @@ export const handle = ({
         gameOver: { type: "resigned", resigner: currentUserStone },
       });
 
-      return Ok(modelNew);
+      return ok(modelNew);
     }
 
     case "rematch-request": {
-      return Ok(model);
+      return ok(model);
     }
 
     case "rematch-respond": {
-      return Ok(model);
+      return ok(model);
     }
 
     case "stop-game": {
@@ -303,10 +303,10 @@ export const handle = ({
         model.black !== ctx.currentUserId &&
         model.white !== ctx.currentUserId
       ) {
-        return Err("must-be-player");
+        return err("must-be-player");
       }
 
-      return Ok(initSetup(model));
+      return ok(initSetup(model));
     }
   }
 };

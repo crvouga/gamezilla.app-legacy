@@ -1,7 +1,7 @@
 import {
-  Err,
+  err,
   NonEmpty,
-  Ok,
+  ok,
   Result,
   Uuid,
   has,
@@ -189,11 +189,11 @@ const rowToPuzzle = (row: PuzzleRow): Result<string, Puzzle> => {
   );
 
   if (!NonEmpty.is(moves)) {
-    return Err("Failed to parse moves from puzzle database record");
+    return err("Failed to parse moves from puzzle database record");
   }
 
   if (!EloRating.is(row.rating)) {
-    return Err("Failed to parse elo rating from puzzle database record");
+    return err("Failed to parse elo rating from puzzle database record");
   }
 
   const puzzle: Puzzle = {
@@ -218,7 +218,7 @@ const rowToPuzzle = (row: PuzzleRow): Result<string, Puzzle> => {
     openingTags: row.opening_tags.split(" "),
   };
 
-  return Ok(puzzle);
+  return ok(puzzle);
 };
 
 export const uciMovesToPuzzleMoves = (
@@ -226,7 +226,7 @@ export const uciMovesToPuzzleMoves = (
 ): Result<string, [MoveInput, MoveInput, ...MoveInput[]]> => {
   const [move1, move2, ...rest] = moves;
   if (!(move1 && move2)) {
-    return Err("Missing first two moves");
+    return err("Missing first two moves");
   }
   const moveInput1 = uciMoveToMoveInput(move1);
   const moveInput2 = uciMoveToMoveInput(move2);
@@ -245,7 +245,7 @@ export const uciMovesToPuzzleMoves = (
     return moveInputRest;
   }
 
-  return Ok([moveInput1.value, moveInput2.value, ...moveInputRest.value]);
+  return ok([moveInput1.value, moveInput2.value, ...moveInputRest.value]);
 };
 
 const puzzlesFindForProfile = async (
@@ -366,15 +366,15 @@ const profilesFind = async (
   const row = rows[0];
 
   if (!row) {
-    return Ok(null);
+    return ok(null);
   }
 
   if (!UserId.is(row.user_id)) {
-    return Err("Invalid user id");
+    return err("Invalid user id");
   }
 
   if (!EloRating.is(row.elo_rating)) {
-    return Err("Invalid elo rating");
+    return err("Invalid elo rating");
   }
 
   const puzzleQuery = toPuzzleQueryJSON(row.puzzle_query) ?? initQuery;
@@ -385,7 +385,7 @@ const profilesFind = async (
     puzzleQuery: puzzleQuery,
   };
 
-  return Ok(profile);
+  return ok(profile);
 };
 
 export const profilesInsert = async (
@@ -420,7 +420,7 @@ export const profilesInsert = async (
   if (mutated.t === "err") {
     return mutated;
   }
-  return Ok(null);
+  return ok(null);
 };
 
 export const profilesFindElseInsert = async (
@@ -434,7 +434,7 @@ export const profilesFindElseInsert = async (
   }
 
   if (found.value !== null) {
-    return Ok(found.value);
+    return ok(found.value);
   }
 
   const inserted = await profilesInsert(dbConn, profile);
@@ -443,7 +443,7 @@ export const profilesFindElseInsert = async (
     return inserted;
   }
 
-  return Ok(profile);
+  return ok(profile);
 };
 
 const profilesUpdate = async (
@@ -466,7 +466,7 @@ const profilesUpdate = async (
   if (mutated.t === "err") {
     return mutated;
   }
-  return Ok(null);
+  return ok(null);
 };
 
 export const PuzzleDb = {

@@ -1,5 +1,5 @@
 import { Result } from "gamezilla/@SHARED/core";
-const { Ok, Err } = Result;
+const { ok: Ok, err: Err } = Result;
 import { nouns } from "./noun";
 import { adjectives } from "./adjective";
 export type Username = string & { _opaque: "Username" };

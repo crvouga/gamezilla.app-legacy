@@ -1,4 +1,4 @@
-import { Eff, Err, Ok, Result, UnitInterval } from "gamezilla/@SHARED/core";
+import { Eff, err, ok, Result, UnitInterval } from "gamezilla/@SHARED/core";
 import { ClientEvt, SoundCmd } from "gamezilla/app/@SHARED/client";
 // https://github.com/goldfire/howler.js#quick-start
 import { Howl, Howler } from "howler";
@@ -168,9 +168,9 @@ const playSound = async (src: string, volume: UnitInterval) => {
     howl.volume(volume);
     howl.play();
 
-    return Ok(null);
+    return ok(null);
   } catch (error) {
-    return Err({ error, message: "Caught error" });
+    return err({ error, message: "Caught error" });
   }
 };
 
@@ -179,8 +179,8 @@ const preloadSounds = async (srcList: string[]) => {
     for (const src of srcList) {
       loadHowl(src);
     }
-    return Ok(null);
+    return ok(null);
   } catch (error) {
-    return Err({ error, message: "Caught error" });
+    return err({ error, message: "Caught error" });
   }
 };

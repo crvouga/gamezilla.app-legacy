@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import { EmailAddress, Err, NotAsked, Ok } from "gamezilla/@SHARED/core";
+import { EmailAddress, err, NotAsked, ok } from "gamezilla/@SHARED/core";
 import { SocialLogin } from "./social-login";
 
 const KEY = "social-login-state";
@@ -39,10 +39,10 @@ export const createSocialLogin = (): SocialLogin => {
 
         supabaseClient.auth.signOut();
 
-        return Ok(emailAddress);
+        return ok(emailAddress);
       }
 
-      return Err("Failed to authenticate");
+      return err("Failed to authenticate");
     },
 
     async redirectSocialLogin({ provider }) {
@@ -55,10 +55,10 @@ export const createSocialLogin = (): SocialLogin => {
           sessionStorage.setItem(KEY, SocialLoginState.STARTED);
 
           if (result.error) {
-            return Err(result.error.message);
+            return err(result.error.message);
           }
 
-          return Ok(null);
+          return ok(null);
         }
       }
     },

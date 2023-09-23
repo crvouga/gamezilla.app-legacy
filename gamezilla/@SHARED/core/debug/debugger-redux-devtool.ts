@@ -9,7 +9,7 @@ import { Sub, toMsgPayload, toMsgType } from "..";
 import * as Json from "../json";
 import { p } from "../pipe";
 import { Program } from "../program";
-import { Err, Result } from "../result";
+import { err, Result } from "../result";
 import { Task } from "../task";
 import {
   Debug,
@@ -191,16 +191,16 @@ const handleIncomingMsg = <Model, Msg extends {}>({
   return (msg) => {
     switch (msg.type) {
       case "START":
-        return Result.Ok(reInit);
+        return Result.ok(reInit);
 
       case "ACTION": {
         const result = Json.parse(String(msg.payload));
         switch (result.t) {
           case "err":
-            return Result.Err(result.error.message);
+            return Result.err(result.error.message);
 
           case "ok":
-            return Result.Ok(dispatchToApp(result.value));
+            return Result.ok(dispatchToApp(result.value));
         }
       }
 
@@ -213,7 +213,7 @@ const handleIncomingMsg = <Model, Msg extends {}>({
             return p(parseJump<Model>(msg), (x) => Result.mapOk(x, update));
 
           case "RESET":
-            return Result.Ok(
+            return Result.ok(
               p(
                 update(init),
                 Task.chain(() => reInit)
@@ -232,7 +232,7 @@ const handleIncomingMsg = <Model, Msg extends {}>({
 
           case "COMMIT":
             // return Result.Ok(restart(debug$.getValue()[1]));
-            return Result.Err("idk");
+            return Result.err("idk");
 
           case "IMPORT_STATE":
             return p(parseImportState<Model>(msg), (x) =>
@@ -257,11 +257,11 @@ const handleIncomingMsg = <Model, Msg extends {}>({
             );
 
           default:
-            return Result.Err(msg.payload.type);
+            return Result.err(msg.payload.type);
         }
 
       default:
-        return Result.Err("unhandled case");
+        return Result.err("unhandled case");
     }
   };
 };
@@ -329,8 +329,8 @@ const parseImportState = <Model>(
 ): Result<string, LiftedState<Model>> => {
   return typeof msg.payload["nextLiftedState"] === "object" &&
     msg.payload["nextLiftedState"] !== null
-    ? Result.Ok(msg.payload["nextLiftedState"] as LiftedState<Model>)
-    : Result.Err("IMPORT_STATE message has some bad payload...");
+    ? Result.ok(msg.payload["nextLiftedState"] as LiftedState<Model>)
+    : Result.err("IMPORT_STATE message has some bad payload...");
 };
 
 /**
@@ -366,7 +366,7 @@ const parseToggleAction = <Model>(
     return parseState;
   }
 
-  return Result.Ok([getId.value, parseState.value]);
+  return Result.ok([getId.value, parseState.value]);
 };
 
 /**

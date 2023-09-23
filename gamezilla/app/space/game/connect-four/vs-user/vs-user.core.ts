@@ -1,4 +1,4 @@
-import { Err, Ok, Result, exhaustive } from "gamezilla/@SHARED/core";
+import { err, ok, Result, exhaustive } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
 import {
   ColumnIndex,
@@ -172,14 +172,14 @@ export const handle = ({
   switch (req.t) {
     case "input-move": {
       if (model.type !== "game") {
-        return Err("not-in-game");
+        return err("not-in-game");
       }
       const { columnIndex } = req;
 
       const playerType = toPlayerType(ctx.currentUserId, model);
 
       if (!playerType) {
-        return Err("not-playing");
+        return err("not-playing");
       }
 
       const result = move(model.columns, columnIndex, playerType);
@@ -190,18 +190,18 @@ export const handle = ({
 
       const modelNew = handleMoveResult(result, model);
 
-      return Ok(modelNew);
+      return ok(modelNew);
     }
 
     case "start-playing": {
       if (model.type !== "setup") {
-        return Err("not-in-setup");
+        return err("not-in-setup");
       }
 
       const { playerType } = req;
 
       if (model.players[playerType] !== null) {
-        return Err("player-taken");
+        return err("player-taken");
       }
 
       const playersNew = {
@@ -214,12 +214,12 @@ export const handle = ({
 
       const modelNew: CoreModel = { ...model, players: playersNew };
 
-      return Ok(modelNew);
+      return ok(modelNew);
     }
 
     case "input-move-time-limit": {
       if (model.type !== "setup") {
-        return Err("not-in-setup");
+        return err("not-in-setup");
       }
 
       const { moveTimeLimit } = req;
@@ -227,7 +227,7 @@ export const handle = ({
       const playerType = toPlayerType(ctx.currentUserId, model);
 
       if (!playerType) {
-        return Err("not-playing");
+        return err("not-playing");
       }
 
       const modelNew: CoreModel = {
@@ -235,18 +235,18 @@ export const handle = ({
         moveTimeLimit,
       };
 
-      return Ok(modelNew);
+      return ok(modelNew);
     }
 
     case "stop-playing": {
       if (model.type !== "setup") {
-        return Err("not-in-setup");
+        return err("not-in-setup");
       }
 
       const playerType = toPlayerType(ctx.currentUserId, model);
 
       if (!playerType) {
-        return Err("not-playing");
+        return err("not-playing");
       }
 
       const modelNew: CoreModel = {
@@ -257,19 +257,19 @@ export const handle = ({
         },
       };
 
-      return Ok(modelNew);
+      return ok(modelNew);
     }
 
     case "start-game": {
       if (model.type !== "setup") {
-        return Err("not-in-setup");
+        return err("not-in-setup");
       }
 
       const playerOne = model.players["player-one"];
       const playerTwo = model.players["player-two"];
 
       if (!playerOne || !playerTwo) {
-        return Err("missing-player");
+        return err("missing-player");
       }
 
       const modelNew: CoreModel = {
@@ -284,22 +284,22 @@ export const handle = ({
         },
       };
 
-      return Ok(modelNew);
+      return ok(modelNew);
     }
 
     case "rematch-request": {
       if (model.type !== "game-over") {
-        return Err("not-game-over");
+        return err("not-game-over");
       }
 
       if (model.rematch.type === "Asking") {
-        return Err("already-asking");
+        return err("already-asking");
       }
 
       const playerType = toPlayerType(ctx.currentUserId, model);
 
       if (!playerType) {
-        return Err("not-playing");
+        return err("not-playing");
       }
 
       const modelNew: CoreModel = {
@@ -307,16 +307,16 @@ export const handle = ({
         rematch: { type: "Asking", asker: playerType },
       };
 
-      return Ok(modelNew);
+      return ok(modelNew);
     }
 
     case "rematch-respond": {
       if (model.type !== "game-over") {
-        return Err("not-game-over");
+        return err("not-game-over");
       }
 
       if (model.rematch.type === "NotAsking") {
-        return Err("not-asking");
+        return err("not-asking");
       }
 
       const { response } = req;
@@ -327,7 +327,7 @@ export const handle = ({
           rematch: { type: "NotAsking" },
         };
 
-        return Ok(modelNew);
+        return ok(modelNew);
       }
 
       const modelNew: CoreModel = {
@@ -339,18 +339,18 @@ export const handle = ({
         players: model.players,
       };
 
-      return Ok(modelNew);
+      return ok(modelNew);
     }
 
     case "new-game": {
       if (model.type !== "game-over") {
-        return Err("not-game-over");
+        return err("not-game-over");
       }
 
       const playerType = toPlayerType(ctx.currentUserId, model);
 
       if (!playerType) {
-        return Err("not-playing");
+        return err("not-playing");
       }
 
       const modelNew: CoreModel = {
@@ -359,26 +359,26 @@ export const handle = ({
         players: model.players,
       };
 
-      return Ok(modelNew);
+      return ok(modelNew);
     }
 
     case "rematch-cancel": {
       if (model.type !== "game-over") {
-        return Err("not-game-over");
+        return err("not-game-over");
       }
 
       const playerType = toPlayerType(ctx.currentUserId, model);
 
       if (!playerType) {
-        return Err("not-playing");
+        return err("not-playing");
       }
 
       if (model.rematch.type !== "Asking") {
-        return Err("not-asking");
+        return err("not-asking");
       }
 
       if (model.rematch.asker !== playerType) {
-        return Err("not-asking");
+        return err("not-asking");
       }
 
       const modelNew: CoreModel = {
@@ -386,18 +386,18 @@ export const handle = ({
         rematch: { type: "NotAsking" },
       };
 
-      return Ok(modelNew);
+      return ok(modelNew);
     }
 
     case "resign": {
       if (model.type !== "game") {
-        return Err("not-in-game");
+        return err("not-in-game");
       }
 
       const playerType = toPlayerType(ctx.currentUserId, model);
 
       if (!playerType) {
-        return Err("not-playing");
+        return err("not-playing");
       }
 
       const modelNew: CoreModel = {
@@ -410,7 +410,7 @@ export const handle = ({
         gameOver: { type: "resignation", resigner: playerType },
       };
 
-      return Ok(modelNew);
+      return ok(modelNew);
     }
 
     default: {

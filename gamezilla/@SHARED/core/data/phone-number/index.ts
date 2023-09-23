@@ -17,14 +17,14 @@ const decode = (
   const result = phone(phoneNumber, { country });
 
   if (result.isValid) {
-    return Result.Ok({
+    return Result.ok({
       _opaque: "PhoneNumber",
       _validPhoneNumber: result.phoneNumber,
       _country: country,
     });
   }
 
-  return Result.Err("invalid_phone_number");
+  return Result.err("invalid_phone_number");
 };
 
 const toString = (phoneNumber: PhoneNumber): string => {

@@ -1,4 +1,4 @@
-import { Ok, Result } from "gamezilla/@SHARED/core";
+import { ok, Result } from "gamezilla/@SHARED/core";
 import { ChildrenFn, Minimax, ScoreFn } from "gamezilla/app/space/game/@SHARED";
 import {
   Columns,
@@ -89,7 +89,7 @@ export const findBestMove = ({
 
   const bestMove = bestChildState?.lastMoveColumnIndex ?? null;
 
-  return Ok({
+  return ok({
     columnIndex: bestMove,
   });
 };

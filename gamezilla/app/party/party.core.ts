@@ -6,7 +6,7 @@ import {
 } from "gamezilla/@SHARED/core";
 import { PartyId, UserId } from "gamezilla/app/@SHARED/data";
 import { MicLoadResult, MicUnloadResult } from "./mic";
-const { Err, Ok } = Result;
+const { err: Err, ok: Ok } = Result;
 
 //
 //

@@ -9,7 +9,7 @@ import { ServerModel, ServerMsg, ToClient, ToServer } from "./tic-tac-toe.core";
 import * as VsBot from "./vs-bot/vs-bot.server";
 import * as VsUser from "./vs-user/vs-user.server";
 
-const { Err, Ok } = Result;
+const { err: Err, ok: Ok } = Result;
 
 //
 //

@@ -1,4 +1,4 @@
-import { Err, Ok, Result, eq, isSubset, unique } from "gamezilla/@SHARED/core";
+import { err, ok, Result, eq, isSubset, unique } from "gamezilla/@SHARED/core";
 
 //
 //
@@ -79,27 +79,27 @@ export const move = (
   const status = toStatus(columns);
 
   if (status.type === "Winner") {
-    return Err("game_over_winner");
+    return err("game_over_winner");
   }
 
   if (status.type === "Tie") {
-    return Err("game_over_tie");
+    return err("game_over_tie");
   }
 
   const turn = status.turn;
 
   if (turn !== player) {
-    return Err("not_turn");
+    return err("not_turn");
   }
 
   const column = columns[columnIndex];
 
   if (!column) {
-    return Err("out_of_bounds");
+    return err("out_of_bounds");
   }
 
   if (column.length === MAX_COLUMN_HEIGHT) {
-    return Err("column_is_full");
+    return err("column_is_full");
   }
 
   const columnsNew = columns.map((column, index) => {
@@ -109,7 +109,7 @@ export const move = (
     return column;
   });
 
-  return Ok(columnsNew);
+  return ok(columnsNew);
 };
 
 export function isGameOver(columns: Columns): boolean {

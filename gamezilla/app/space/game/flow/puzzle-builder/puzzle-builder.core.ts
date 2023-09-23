@@ -1,4 +1,4 @@
-import { Err, Ok, Result } from "gamezilla/@SHARED/core";
+import { err, ok, Result } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
 import { Flow } from "../flow";
 import { FlowGrid, FlowGridPlayUI } from "../flow-grid";
@@ -77,12 +77,12 @@ export const handle = ({
   model: CoreModel;
 }): Result<string, CoreModel> => {
   if (ctx.currentUserId !== ctx.hostId) {
-    return Err("must-be-host");
+    return err("must-be-host");
   }
 
   const updated = updateModel({ msg, model });
 
-  return Ok(updated);
+  return ok(updated);
 };
 
 export const updateModel = ({

@@ -1,4 +1,4 @@
-import { Eff, EmailAddress, Ok, Result } from "gamezilla/@SHARED/core";
+import { Eff, EmailAddress, ok, Result } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
 import {
   AnonymousReqCtx,
@@ -203,7 +203,7 @@ const findElseInsertAccount = async ({
   const maybeAccount = found.value;
 
   if (maybeAccount) {
-    return Ok(maybeAccount);
+    return ok(maybeAccount);
   }
 
   const accountNew: Account = {
@@ -217,7 +217,7 @@ const findElseInsertAccount = async ({
     return inserted;
   }
 
-  return Ok(accountNew);
+  return ok(accountNew);
 };
 
 export const updateFromEvt = ({

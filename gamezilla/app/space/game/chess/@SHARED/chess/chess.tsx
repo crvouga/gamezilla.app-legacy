@@ -85,7 +85,7 @@ export const toBestMoveInput = (
   };
 
   if (!isRecord(move)) {
-    return Result.Err("failed_to_calculate_best_move");
+    return Result.err("failed_to_calculate_best_move");
   }
 
   const bestMoveInput = Object.entries(move).flatMap<MoveInput>(([from, to]) =>
@@ -93,10 +93,10 @@ export const toBestMoveInput = (
   )[0];
 
   if (bestMoveInput) {
-    return Result.Ok(bestMoveInput);
+    return Result.ok(bestMoveInput);
   }
 
-  return Result.Err("failed_to_calculate_best_move");
+  return Result.err("failed_to_calculate_best_move");
 };
 
 export const toRandomMoveInput = (
@@ -108,10 +108,10 @@ export const toRandomMoveInput = (
     legalMoveInputs[Math.floor(Math.random() * legalMoveInputs.length)];
 
   if (!randomMoveInput) {
-    return Result.Err("no_legal_move");
+    return Result.err("no_legal_move");
   }
 
-  return Result.Ok(randomMoveInput);
+  return Result.ok(randomMoveInput);
 };
 
 export const getBestMove =
@@ -784,19 +784,19 @@ export const move = (
     const moved = instance.move(moveInput_);
 
     if (!moved) {
-      return Result.Err("invalid_move");
+      return Result.err("invalid_move");
     }
 
     // const capturesNew = capturedPieceSymbol ? [...model.captures] : model.captures
 
-    return Result.Ok({
+    return Result.ok({
       pgn: instance.pgn(),
       fen: instance.fen(),
       previousMove: moveInput,
       didCapture: Boolean(moved.captured),
     });
   } catch (error) {
-    return Result.Err("invalid_move");
+    return Result.err("invalid_move");
   }
 };
 
@@ -811,8 +811,8 @@ export const moveMany = (moveInputs: MoveInput[], model: Model) => {
     if (moved.t === "err") {
       return moved;
     }
-    return Result.Ok(moved.value);
-  }, Result.Ok({ ...model, didCapture: false }));
+    return Result.ok(moved.value);
+  }, Result.ok({ ...model, didCapture: false }));
 };
 
 export const toLegalMoveInputs = (model: Model): MoveInput[] => {
@@ -847,7 +847,7 @@ export const uciMoveToMoveInput = (
   const match = uciMove.match(uciMoveRegex);
 
   if (!match) {
-    return Result.Err(
+    return Result.err(
       `uci move did not match regex. uciMove: ${uciMove} regex: ${uciMoveRegex}`
     );
   }
@@ -855,21 +855,21 @@ export const uciMoveToMoveInput = (
   const [, from, to, promotion] = match;
 
   if (!(from && to)) {
-    return Result.Err("failed to extract from and to from uci move");
+    return Result.err("failed to extract from and to from uci move");
   }
 
   const upperCaseFrom = from.toUpperCase();
   const upperCaseTo = to.toUpperCase();
 
   if (!(isSquare(upperCaseFrom) && isSquare(upperCaseTo))) {
-    return Result.Err("from or to is not a valid square");
+    return Result.err("from or to is not a valid square");
   }
 
   const promotionPiece: PromotionPieceSymbol = isPromotionPieceSymbol(promotion)
     ? promotion
     : "q";
 
-  return Result.Ok({
+  return Result.ok({
     from: upperCaseFrom,
     to: upperCaseTo,
     promotion: promotionPiece,

@@ -1,4 +1,4 @@
-import { Eff, Err, Ok, Posix, Sub, dissoc } from "gamezilla/@SHARED/core";
+import { Eff, err, ok, Posix, Sub, dissoc } from "gamezilla/@SHARED/core";
 import {
   ReqCtx,
   ServerCmd,
@@ -125,7 +125,7 @@ export const updateFromClient = async (input: {
 
       return {
         model,
-        cmd: [sendBack(ctx, { t: "list", profiles, result: Ok(listed) })],
+        cmd: [sendBack(ctx, { t: "list", profiles, result: ok(listed) })],
       };
     }
 
@@ -142,7 +142,7 @@ export const updateFromClient = async (input: {
           cmd: [
             sendBack(ctx, {
               ...msg,
-              result: Err(
+              result: err(
                 "You're already in a space. You must leave your current space before joining another"
               ),
             }),
@@ -155,7 +155,7 @@ export const updateFromClient = async (input: {
       if (!space) {
         return {
           model,
-          cmd: [sendBack(ctx, { ...msg, result: Err("Space was not found") })],
+          cmd: [sendBack(ctx, { ...msg, result: err("Space was not found") })],
         };
       }
 
@@ -177,7 +177,7 @@ export const updateFromClient = async (input: {
 
       return {
         model: modelNew,
-        cmd: [{ t: "broadcast", msg: { ...msg, result: Ok(spaceNew) } }],
+        cmd: [{ t: "broadcast", msg: { ...msg, result: ok(spaceNew) } }],
       };
     }
 
@@ -191,7 +191,7 @@ export const updateFromClient = async (input: {
       if (!currentSpace) {
         return {
           model,
-          cmd: [sendBack(ctx, { ...msg, result: Err("Failed to find space") })],
+          cmd: [sendBack(ctx, { ...msg, result: err("Failed to find space") })],
         };
       }
 
@@ -201,7 +201,7 @@ export const updateFromClient = async (input: {
           cmd: [
             sendBack(ctx, {
               ...msg,
-              result: Err("You must be the host to destroy the space"),
+              result: err("You must be the host to destroy the space"),
             }),
           ],
         };
@@ -219,7 +219,7 @@ export const updateFromClient = async (input: {
           broadcast({
             ...msg,
             profiles: currentSpace.profileCache,
-            result: Ok(currentSpace),
+            result: ok(currentSpace),
           }),
         ],
       };
@@ -238,7 +238,7 @@ export const updateFromClient = async (input: {
           cmd: [
             sendBack(ctx, {
               ...msg,
-              result: Err(
+              result: err(
                 "You're already in a space. You must leave your current space before creating another"
               ),
             }),
@@ -269,7 +269,7 @@ export const updateFromClient = async (input: {
           broadcast({
             ...msg,
             profiles: spaceNew.profileCache,
-            result: Ok(spaceNew),
+            result: ok(spaceNew),
           }),
         ],
       };
@@ -288,7 +288,7 @@ export const updateFromClient = async (input: {
           cmd: [
             sendBack(ctx, {
               ...msg,
-              result: Err("Failed to find space"),
+              result: err("Failed to find space"),
             }),
           ],
         };
@@ -300,7 +300,7 @@ export const updateFromClient = async (input: {
           cmd: [
             sendBack(ctx, {
               ...msg,
-              result: Err("You must be the host to change the game"),
+              result: err("You must be the host to change the game"),
             }),
           ],
         };
@@ -328,7 +328,7 @@ export const updateFromClient = async (input: {
               msg: {
                 ...msg,
                 profiles: spaceNew.profileCache,
-                result: Ok(spaceNew),
+                result: ok(spaceNew),
               },
             },
           ],
@@ -363,7 +363,7 @@ export const updateFromClient = async (input: {
             msg: {
               ...msg,
               profiles: spaceNew.profileCache,
-              result: Ok(spaceNew),
+              result: ok(spaceNew),
             },
           },
         ],
@@ -384,7 +384,7 @@ export const updateFromClient = async (input: {
       if (!space) {
         return {
           model,
-          cmd: [sendBack(ctx, { ...msg, result: Err("Failed to find space") })],
+          cmd: [sendBack(ctx, { ...msg, result: err("Failed to find space") })],
         };
       }
 
@@ -394,7 +394,7 @@ export const updateFromClient = async (input: {
           cmd: [
             sendBack(ctx, {
               ...msg,
-              result: Err("You must destroy the space to leave as host"),
+              result: err("You must destroy the space to leave as host"),
             }),
           ],
         };
@@ -430,7 +430,7 @@ export const updateFromClient = async (input: {
           broadcast({
             ...msg,
             profiles: spaceNew.profileCache,
-            result: Ok(spaceNew),
+            result: ok(spaceNew),
           }),
         ],
         eff: Eff.batch([
@@ -546,7 +546,7 @@ const listSpaces: typeof updateFromEvt = async (input) => {
     cmd: [
       sendToClient([input.msg.clientId], {
         t: "list",
-        result: Ok(listed),
+        result: ok(listed),
         source: input.msg,
       }),
     ],

@@ -1,4 +1,4 @@
-import { Err, Ok, Posix, Result } from "gamezilla/@SHARED/core";
+import { err, ok, Posix, Result } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
 import { VsBotGame, VsBotSetup } from "gamezilla/app/space/game/@SHARED";
 import {
@@ -170,7 +170,7 @@ export const updateCore = ({
     case "setup": {
       switch (msg.t) {
         case "start-playing": {
-          return Ok({
+          return ok({
             ...model,
             userPlayerType: msg.playerType,
             player: ctx.currentUserId,
@@ -179,10 +179,10 @@ export const updateCore = ({
 
         case "stop-playing": {
           if (model.player !== ctx.currentUserId) {
-            return Err("not-allowed");
+            return err("not-allowed");
           }
 
-          return Ok({
+          return ok({
             ...model,
             player: null,
           });
@@ -193,7 +193,7 @@ export const updateCore = ({
             model.player !== ctx.currentUserId ||
             ctx.currentUserId !== ctx.hostId
           ) {
-            return Err("not-allowed");
+            return err("not-allowed");
           }
 
           const modelNew: CoreModel = {
@@ -201,7 +201,7 @@ export const updateCore = ({
             botLevel: msg.botLevel,
           };
 
-          return Ok(modelNew);
+          return ok(modelNew);
         }
 
         case "start-game": {
@@ -209,11 +209,11 @@ export const updateCore = ({
             model.player !== ctx.currentUserId ||
             ctx.currentUserId !== ctx.hostId
           ) {
-            return Err("not-allowed");
+            return err("not-allowed");
           }
 
           if (model.player === null) {
-            return Err("missing-player");
+            return err("missing-player");
           }
 
           const modelNew: CoreModel = {
@@ -225,11 +225,11 @@ export const updateCore = ({
             columns: emptyColumns,
           };
 
-          return Ok(modelNew);
+          return ok(modelNew);
         }
 
         default: {
-          return Err("unhandled-request");
+          return err("unhandled-request");
         }
       }
     }
@@ -241,7 +241,7 @@ export const updateCore = ({
             model.player !== ctx.currentUserId ||
             ctx.currentUserId !== ctx.hostId
           ) {
-            return Err("not-playing");
+            return err("not-playing");
           }
 
           const modelNew: CoreModel = {
@@ -251,12 +251,12 @@ export const updateCore = ({
             userPlayerType: model.userPlayerType,
           };
 
-          return Ok(modelNew);
+          return ok(modelNew);
         }
 
         case "swap-sides": {
           if (model.player !== ctx.currentUserId) {
-            return Err("not-playing");
+            return err("not-playing");
           }
 
           const modelNew: CoreModel = {
@@ -266,12 +266,12 @@ export const updateCore = ({
             userPlayerType: opposite[model.userPlayerType],
           };
 
-          return Ok(modelNew);
+          return ok(modelNew);
         }
 
         case "input-move": {
           if (model.player !== ctx.currentUserId) {
-            return Err("not-playing");
+            return err("not-playing");
           }
 
           const result = move(
@@ -289,12 +289,12 @@ export const updateCore = ({
             columns: result.value,
           };
 
-          return Ok(modelNew);
+          return ok(modelNew);
         }
 
         case "restart": {
           if (model.player !== ctx.currentUserId) {
-            return Err("not-playing");
+            return err("not-playing");
           }
 
           const modelNew: GameModel = {
@@ -303,11 +303,11 @@ export const updateCore = ({
             gameId: model.gameId + 1,
           };
 
-          return Ok(modelNew);
+          return ok(modelNew);
         }
 
         default: {
-          return Err("unhandled-request");
+          return err("unhandled-request");
         }
       }
     }
@@ -323,7 +323,7 @@ export const updateCoreEvent = ({
 }): Result<string, CoreModel> => {
   if (msg.t === "bot-moved") {
     if (model.type !== "game") {
-      return Err("not-game");
+      return err("not-game");
     }
 
     const bestMoveResult = msg.moved;
@@ -335,7 +335,7 @@ export const updateCoreEvent = ({
     const columnIndex = bestMoveResult.value.columnIndex;
 
     if (typeof columnIndex !== "number") {
-      return Err("no-move-available");
+      return err("no-move-available");
     }
 
     const moveResult = move(
@@ -353,12 +353,12 @@ export const updateCoreEvent = ({
       columns: moveResult.value,
     };
 
-    return Ok(modelNew);
+    return ok(modelNew);
   }
 
   if (msg.t === "player-left") {
     if (model.player !== msg.userId) {
-      return Ok(model);
+      return ok(model);
     }
 
     const modelNew: CoreModel = {
@@ -368,8 +368,8 @@ export const updateCoreEvent = ({
       player: null,
     };
 
-    return Ok(modelNew);
+    return ok(modelNew);
   }
 
-  return Err("unhandled-event");
+  return err("unhandled-event");
 };

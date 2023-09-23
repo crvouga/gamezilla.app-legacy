@@ -10,10 +10,10 @@ type Problem = "invalid_client_id";
 
 const decode = (id: string): Result<Problem, ClientId> => {
   if (is(id)) {
-    return Result.Ok(id);
+    return Result.ok(id);
   }
 
-  return Result.Err("invalid_client_id");
+  return Result.err("invalid_client_id");
 };
 
 const characters =

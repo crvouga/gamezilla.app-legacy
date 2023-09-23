@@ -3,7 +3,7 @@ import { UserId } from "gamezilla/app/@SHARED/data";
 import * as TicTacToe from "../tic-tic-toe/tic-tac-toe";
 import * as Round from "./vs-user-round";
 
-const { Err, Ok } = Result;
+const { err: Err, ok: Ok } = Result;
 
 //
 //

@@ -1,4 +1,4 @@
-import { Ok } from "gamezilla/@SHARED/core";
+import { ok } from "gamezilla/@SHARED/core";
 import { Profile, UserId } from "gamezilla/app/@SHARED/data";
 import { ProfileDb } from "./profile-db";
 
@@ -15,11 +15,11 @@ export const createProfileDb = (): ProfileDb => {
         }
       }
 
-      return Ok(output);
+      return ok(output);
     },
     insertOne: async (profile) => {
       profiles.set(profile.userId, profile);
-      return Ok(null);
+      return ok(null);
     },
   };
 };
