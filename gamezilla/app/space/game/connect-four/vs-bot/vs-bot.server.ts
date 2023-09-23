@@ -1,5 +1,6 @@
 import { andThen, chain, Eff, p, Result, Sub } from "gamezilla/@SHARED/core";
 import {
+  sendToSpace,
   SpaceEvt,
   SpaceReqCtx,
   SpaceServerCmd,
@@ -40,10 +41,10 @@ export const update = ({
       });
 
       if (updated.t === "err") {
-        return { model, cmd: [{ t: "send-to-space", msg }] };
+        return { model, cmd: [sendToSpace(msg)] };
       }
 
-      return { model: updated.value, cmd: [{ t: "send-to-space", msg }] };
+      return { model: updated.value, cmd: [sendToSpace(msg)] };
     }
   }
 };
