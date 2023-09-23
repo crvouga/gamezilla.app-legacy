@@ -26,10 +26,12 @@ type State =
       autocompleteEdge?: FlowGrid.Edge | null;
     };
 
-export const init = (grid: FlowGrid.Model): Model => ({
-  state: { t: "idle" },
-  grid,
-});
+export const init = (grid: FlowGrid.Model): Model => {
+  return {
+    state: { t: "idle" },
+    grid,
+  };
+};
 
 //
 //
