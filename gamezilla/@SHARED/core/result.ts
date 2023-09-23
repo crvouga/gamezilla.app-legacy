@@ -1,3 +1,6 @@
+/**
+ * A `Result` represents the result of an operation that may fail.
+ */
 export type Result<TError, TValue> = Err<TError> | Ok<TValue>;
 
 export type Ok<T> = { t: "ok"; value: T };
@@ -59,18 +62,24 @@ const withDefault =
 /**
  * Combines an array of results into a single result.
  * If any of the results are an error, the first error is returned.
+ * @example
+ * const results = [ok(1), ok(2), ok(3)];
+ * const result = combine(results);
+ * // result = ok([1, 2, 3]);
+ * @example
+ * const results = [ok(1), err("error"), ok(3)];
+ * const result = combine(results);
+ * // result = err("error");
  */
 const combine = <E, A>(results: Result<E, A>[]): Result<E, A[]> => {
-  return results.reduce<Result<E, A[]>>((combined, result) => {
-    if (combined.t === "err") {
-      return combined;
-    }
-
+  const values: A[] = [];
+  for (const result of results) {
     if (result.t === "err") {
       return result;
     }
-    return ok([...combined.value, result.value]);
-  }, ok([]));
+    values.push(result.value);
+  }
+  return ok(values);
 };
 
 const mapOk = <TError, A, B>(
