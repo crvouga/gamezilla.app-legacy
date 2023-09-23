@@ -81,13 +81,17 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
 
 export const updateFromEvt: Client["updateFromEvt"] = (input) => {
   const { model } = input;
-  if (model.t === "puzzle-builder") {
-    return PuzzleBuilder.updateFromEvt({ ...input, model });
+  switch (model.t) {
+    case "none": {
+      return { model };
+    }
+    case "play": {
+      return Play.updateFromEvt({ ...input, model });
+    }
+    case "puzzle-builder": {
+      return PuzzleBuilder.updateFromEvt({ ...input, model });
+    }
   }
-  if (model.t === "play") {
-    return Play.updateFromEvt({ ...input, model });
-  }
-  return input;
 };
 
 export const mergeWithServer: Client["mergeWithServer"] = (input) => {
@@ -95,40 +99,43 @@ export const mergeWithServer: Client["mergeWithServer"] = (input) => {
 
   const client: ClientModel = client_ ?? { t: "none" };
 
-  if (server.t === "none") {
-    return { model: server };
-  }
+  switch (server.t) {
+    case "none": {
+      return { model: server };
+    }
 
-  if (server.t === "puzzle-builder") {
-    return PuzzleBuilder.mergeWithServer({
-      ...input,
-      server,
-      client: client.t === "puzzle-builder" ? client : undefined,
-    });
-  }
+    case "puzzle-builder": {
+      return PuzzleBuilder.mergeWithServer({
+        ...input,
+        server,
+        client: client.t === "puzzle-builder" ? client : undefined,
+      });
+    }
 
-  if (server.t === "play") {
-    return Play.mergeWithServer({
-      ...input,
-      server,
-      client: client.t === "play" ? client : undefined,
-    });
+    case "play": {
+      return Play.mergeWithServer({
+        ...input,
+        server,
+        client: client.t === "play" ? client : undefined,
+      });
+    }
   }
-
-  return { model: client };
 };
 
 export const subscriptions: Client["subscriptions"] = (input) => {
   const { model } = input;
   switch (model.t) {
-    case "none":
+    case "none": {
       return Sub.None;
+    }
 
-    case "play":
+    case "play": {
       return Play.subscriptions({ ...input, model });
+    }
 
-    case "puzzle-builder":
+    case "puzzle-builder": {
       return PuzzleBuilder.subscriptions({ ...input, model });
+    }
   }
 };
 
@@ -145,37 +152,41 @@ export const View: Client["View"] = (input) => {
     onExit: () => dispatch({ t: "input-mode", mode: "none" }),
   };
 
-  if (model.t === "puzzle-builder") {
-    return <PuzzleBuilder.View {...input} ctx={ctx} model={model} />;
-  }
+  switch (model.t) {
+    case "none": {
+      return (
+        <MainMenuScreen
+          renderCoverArt={(props) => <ViewCoverArt {...props} />}
+          ctx={ctx}
+          title="Flow"
+          buttons={[
+            {
+              renderIcon: (props) => <IconGamepad {...props} />,
+              title: "Play",
+              description: "Start playing puzzles",
+              onClick: () => {
+                dispatch({ t: "input-mode", mode: "play" });
+              },
+            },
+            {
+              renderIcon: (props) => <IconScrewdriverWrench {...props} />,
+              title: "Puzzle builder",
+              description: "Build new puzzles to play",
+              onClick: () => {
+                dispatch({ t: "input-mode", mode: "puzzle-builder" });
+              },
+            },
+          ]}
+        />
+      );
+    }
 
-  if (model.t === "play") {
-    return <Play.View {...input} ctx={ctx} model={model} />;
-  }
+    case "play": {
+      return <Play.View {...input} ctx={ctx} model={model} />;
+    }
 
-  return (
-    <MainMenuScreen
-      renderCoverArt={(props) => <ViewCoverArt {...props} />}
-      ctx={ctx}
-      title="Flow"
-      buttons={[
-        {
-          renderIcon: (props) => <IconGamepad {...props} />,
-          title: "Play",
-          description: "Start playing puzzles",
-          onClick: () => {
-            dispatch({ t: "input-mode", mode: "play" });
-          },
-        },
-        {
-          renderIcon: (props) => <IconScrewdriverWrench {...props} />,
-          title: "Puzzle builder",
-          description: "Build new puzzles to play",
-          onClick: () => {
-            dispatch({ t: "input-mode", mode: "puzzle-builder" });
-          },
-        },
-      ]}
-    />
-  );
+    case "puzzle-builder": {
+      return <PuzzleBuilder.View {...input} ctx={ctx} model={model} />;
+    }
+  }
 };
