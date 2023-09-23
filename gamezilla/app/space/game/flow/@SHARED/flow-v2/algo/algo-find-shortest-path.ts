@@ -1,4 +1,4 @@
-import { Model, NodeId } from "./flow";
+import { Model, NodeId } from "../flow";
 
 /**
  * Returns a list of edges without a groupId that form the shortest path between the source and target nodes.

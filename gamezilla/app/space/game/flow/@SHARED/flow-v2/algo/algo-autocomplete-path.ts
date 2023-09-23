@@ -1,4 +1,4 @@
-import { Edge, Model, NodeId, GroupId, yieldOutEdges } from "./flow";
+import { Edge, GroupId, Model, NodeId, yieldOutEdges } from "../flow";
 
 /**
  *

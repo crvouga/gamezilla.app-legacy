@@ -1,7 +1,7 @@
 import { Eff } from "gamezilla/@SHARED/core";
 import { Flow } from "..";
-import * as FlowGrid from "./flow-grid";
-import * as FlowGridUI from "./flow-grid-ui";
+import * as FlowGrid from "./grid";
+import * as FlowGridUI from "./grid-ui";
 
 //
 //

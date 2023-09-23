@@ -1,4 +1,4 @@
-import { fromShorthand } from "./flow-grid-shorthand";
+import { fromShorthand } from "./grid-shorthand";
 
 export type Size = "5x5" | "6x6" | "7x7" | "8x8";
 

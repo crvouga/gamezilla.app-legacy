@@ -1,14 +1,14 @@
 import { takeWhile } from "gamezilla/@SHARED/core";
 // import { findShortestEmptyPath } from "./algo-find-shortest-path";
 import {
-  Node,
   GroupId,
   Model,
+  Node,
   NodeId,
   StartNode,
   addNode,
   yieldNodes,
-} from "./flow";
+} from "../flow";
 
 /**
  * Extends the path from the start node to the target node.

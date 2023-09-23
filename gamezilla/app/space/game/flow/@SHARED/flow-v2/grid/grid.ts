@@ -1,5 +1,5 @@
 import { Flow } from "..";
-import { Bounds, Position, deltas, yieldRange } from "./flow-grid-position";
+import { Bounds, Position, deltas, yieldRange } from "./grid-position";
 
 //
 //

@@ -1,14 +1,13 @@
 import { NonEmpty } from "gamezilla/@SHARED/core";
-import { Flow } from "..";
-import { NodeId, GroupId, Terminal } from "../flow";
+import * as Flow from "../flow";
 import * as FlowGrid from "./flow-grid";
 
-export type Model = NonEmpty<NonEmpty<GroupId | null>>;
+export type Model = NonEmpty<NonEmpty<Flow.GroupId | null>>;
 
 type DraftTerminal = {
-  groupId: GroupId;
-  startId: NodeId;
-  endId: NodeId | null;
+  groupId: Flow.GroupId;
+  startId: Flow.NodeId;
+  endId: Flow.NodeId | null;
 };
 
 export const fromShorthand = (model: Model): FlowGrid.Model => {
@@ -25,7 +24,7 @@ export const fromShorthand = (model: Model): FlowGrid.Model => {
     },
   });
 
-  const draftTerminals: { [groupId in GroupId]?: DraftTerminal } = {};
+  const draftTerminals: { [groupId in Flow.GroupId]?: DraftTerminal } = {};
 
   for (let y = 0; y < model.length; y++) {
     const row = model[y];
@@ -62,7 +61,7 @@ export const fromShorthand = (model: Model): FlowGrid.Model => {
         continue;
       }
 
-      const terminal: Terminal = {
+      const terminal: Flow.Terminal = {
         groupId,
         startId: draftTerminal.startId,
         endId: nodeId,

@@ -1,8 +1,8 @@
 import { cn } from "gamezilla/app/@SHARED/ui";
 import * as Flow from "../flow";
 import * as FlowUI from "../flow-ui";
-import * as FlowGrid from "./flow-grid";
-import * as FlowGridPosition from "./flow-grid-position";
+import * as FlowGrid from "./grid";
+import * as FlowGridPosition from "./grid-position";
 
 const TERMINAL_NODE_RADIUS = 0.33;
 export const TERMINAL_NODE_RADIUS_ACTIVE = 0.4;
