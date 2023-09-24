@@ -155,6 +155,22 @@ export const View = ({
         })}
       </g>
 
+      <g transform="translate(0.5, 0.5)">
+        {map(FlowGrid.yieldPipes(model), (pipe) => {
+          return (
+            <line
+              key={pipe.edgeId}
+              x1={pipe.source.x}
+              y1={pipe.source.y}
+              x2={pipe.target.x}
+              y2={pipe.target.y}
+              stroke={FlowUI.Color.groupIdToHex(pipe.groupId)}
+              stroke-width={EDGE_STROKE_WIDTH}
+            />
+          );
+        })}
+      </g>
+
       {/*
 
 

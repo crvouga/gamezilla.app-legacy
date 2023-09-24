@@ -1,5 +1,5 @@
 import { test } from "vitest";
-import { initFollower, initLeader, updateLeader } from "./msg-ordering";
+import { initFollower, initLeader } from "./msg-ordering";
 
 type State = {
   balance: number;
@@ -76,3 +76,5 @@ const initialize = () => {
     F2,
   };
 };
+
+test("nothing", () => {});

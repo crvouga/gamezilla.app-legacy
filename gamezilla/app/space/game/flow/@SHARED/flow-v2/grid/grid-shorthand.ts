@@ -10,7 +10,7 @@ type DraftTerminal = {
   endId: Flow.NodeId | null;
 };
 
-export const fromShorthand = (model: Model): FlowGrid.Model => {
+export function fromShorthand(model: Model): FlowGrid.Model {
   let grid = FlowGrid.init({
     bounds: {
       min: {
@@ -77,4 +77,4 @@ export const fromShorthand = (model: Model): FlowGrid.Model => {
   }
 
   return grid;
-};
+}

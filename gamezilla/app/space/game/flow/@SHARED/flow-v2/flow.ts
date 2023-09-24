@@ -428,3 +428,19 @@ export const toGroupId = (model: Model, nodeId: NodeId): GroupId | null => {
   }
   return null;
 };
+
+export const findPipeBySourceId = (
+  model: Model,
+  sourceId: NodeId
+): PipeJoined | null => {
+  for (const pipe of yieldPipes(model)) {
+    if (pipe.edge.sourceId === sourceId) {
+      return pipe;
+    }
+  }
+  return null;
+};
+
+export const hasEdge = (model: Model, edge: Edge): boolean => {
+  return toEdgeId(edge) in model.edges;
+};

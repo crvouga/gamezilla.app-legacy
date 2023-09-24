@@ -2,7 +2,7 @@ import { Eff } from "gamezilla/@SHARED/core";
 import { Flow } from "..";
 import * as FlowGrid from "./grid";
 import * as FlowGridUI from "./grid-ui";
-import { AlgoDrawPath } from "../algo";
+import { AlgoExtendPipeline } from "../algo";
 
 //
 //
@@ -98,7 +98,7 @@ const updateIdle = ({ msg, model }: { msg: Msg; model: Model }): Model => {
         return model;
       }
 
-      const started = AlgoDrawPath.startExtendPath({
+      const started = AlgoExtendPipeline.startPipeline({
         model: model.grid.flow,
         groupId,
         nodeId: msg.nodeId,
@@ -133,7 +133,7 @@ const updateDragging = ({
     case "dragged-over": {
       const { nodeId } = msg;
 
-      const extended = AlgoDrawPath.extendPath({
+      const extended = AlgoExtendPipeline.extendPipeline({
         model: model.grid.flow,
         groupId: state.activeGroupId,
         newId: nodeId,
