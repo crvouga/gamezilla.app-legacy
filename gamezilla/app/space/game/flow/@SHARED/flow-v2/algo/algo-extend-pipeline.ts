@@ -45,6 +45,7 @@ export const extendPipeline = ({
   groupId: Flow.GroupId;
   newNodeId: Flow.NodeId;
 }): Flow.Model => {
+  console.group("extendPipeline");
   const terminal = Flow.findTerminalByGroupId(model, groupId);
 
   if (!terminal) {
@@ -59,17 +60,21 @@ export const extendPipeline = ({
 
   const pipeline = findPipeline(model, terminal.groupId, terminal.startId);
 
+  console.log("terminal", terminal);
+  console.log("pipeline", pipeline);
+
   const pipelineNew = takeWhileInclusive(
     [...pipeline, newNodeId],
     (nodeId) => nodeId !== newNodeId && nodeId !== terminal.endId
   );
+  console.log("pipelineNew", pipelineNew);
 
   const added = addPipeline(
     removePipeline(model, groupId),
     terminal,
     pipelineNew
   );
-
+  console.groupEnd();
   return added;
 };
 
@@ -112,7 +117,7 @@ export const removePipeline = (
     }
     pipesBySourceId[pipe.edge.sourceId] = {
       edgeId: pipe.edgeId,
-      groupId,
+      groupId: pipe.groupId,
     };
   }
 

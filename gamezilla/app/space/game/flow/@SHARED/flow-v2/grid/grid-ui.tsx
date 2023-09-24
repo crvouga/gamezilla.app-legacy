@@ -26,6 +26,7 @@ export const View = ({
   model: FlowGrid.Model;
   onPressDown?: (nodeId: Flow.NodeId) => void;
   onPressUp?: (nodeId: Flow.NodeId) => void;
+  onLeave?: () => void;
   isDragging?: boolean;
   onDraggedOver?: (nodeId: Flow.NodeId) => void;
   autocompleteEdge?: (FlowGrid.Edge & { groupId: Flow.GroupId }) | null;
