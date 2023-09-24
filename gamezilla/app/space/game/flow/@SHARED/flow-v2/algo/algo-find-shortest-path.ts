@@ -3,7 +3,7 @@ import * as Flow from "../flow";
 /**
  * Returns a list of nodes without a groupId that form the shortest path between the source and target nodes.
  */
-export const findShortestEmptyPath = (
+export const findShortestEmptyPipeline = (
   model: Flow.Model,
   sourceId: Flow.NodeId,
   targetId: Flow.NodeId

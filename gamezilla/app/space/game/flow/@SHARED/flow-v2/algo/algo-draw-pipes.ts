@@ -1,6 +1,6 @@
 import { p } from "gamezilla/@SHARED/core";
 import * as Flow from "../flow";
-import { findShortestEmptyPath } from "./algo-find-shortest-path";
+import { findShortestEmptyPipeline } from "./algo-find-shortest-path";
 
 /**
  * A `Pipeline` represents the sequence of nodes the user draws when connecting terminals.
@@ -21,23 +21,21 @@ export const startDrawPipes = (
     return model;
   }
 
-  if (terminal.startId === newNodeId) {
-    const removed = removePipeline(model, groupId);
-    const extended = drawPipes(removed, groupId, newNodeId);
-    return extended;
-  }
-
   if (terminal.endId === newNodeId) {
     const reversed = Flow.flipTerminal(model, terminal);
-    const extended = drawPipes(reversed, groupId, newNodeId);
-    return extended;
+
+    const drew = drawPipes(reversed, groupId, newNodeId);
+
+    return drew;
   }
 
-  return drawPipes(model, groupId, newNodeId);
+  const drew = drawPipes(model, groupId, newNodeId);
+
+  return drew;
 };
 
 /**
- * Extends existing pipeline with the new node inputted
+ * Algorithm that draws pipes from the inputted group id to the inputted node id
  */
 export const drawPipes = (
   model: Flow.Model,
@@ -73,11 +71,15 @@ export const drawPipes = (
 
     (pipeline) => {
       const startNodeId = pipeline[pipeline.length - 1];
+
       if (!startNodeId) {
         return pipeline;
       }
-      const shortestPath = findShortestEmptyPath(model, startNodeId, newNodeId);
-      const pipelineNew = [...pipeline, ...shortestPath.slice(1)];
+
+      const shortest = findShortestEmptyPipeline(model, startNodeId, newNodeId);
+
+      const pipelineNew = [...pipeline, ...shortest.slice(1)];
+
       return pipelineNew;
     }
   );
@@ -124,8 +126,7 @@ const takeWhileConnected = (
 };
 
 /**
- * Returns an ordered list of nodes that are part of the pipeline
- * starting from the start node of the inputted group
+ * Returns a pipeline for inputted group id starting from inputted node id
  */
 const findPipeline = (
   model: Flow.Model,
