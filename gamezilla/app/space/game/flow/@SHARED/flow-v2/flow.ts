@@ -97,6 +97,8 @@ export type Model = {
 
   /**
    * Represents the pipes that are connected to each node.
+   * We associate a pipe with a node by the pipe's source node.
+   * so that it's impossible for a node to be associated with more than one group
    */
   pipesBySourceId: {
     [sourceId: NodeId]: Pipe;
@@ -123,7 +125,8 @@ export type Terminal = {
 };
 
 /**
- *
+ * A `Pipe` associates an edge with a group.
+ * These are the lines the user draws in the puzzle.
  */
 export type Pipe = {
   groupId: GroupId;
@@ -407,7 +410,7 @@ export const toGroupId = (model: Model, nodeId: NodeId): GroupId | null => {
   return null;
 };
 
-export const findPipeBySourceId = (
+export const toPipeBySourceId = (
   model: Model,
   sourceId: NodeId
 ): PipeJoined | null => {
@@ -425,10 +428,17 @@ export const findPipeBySourceId = (
   };
 };
 
-export const hasEdge = (model: Model, edge: Edge): boolean => {
-  return toEdgeId(edge) in model.edges;
+export const hasEdge = (
+  model: Model,
+  sourceId: NodeId,
+  targetId: NodeId
+): boolean => {
+  return toEdgeId({ sourceId, targetId }) in model.edges;
 };
 
+/**
+ * Finds the terminal associated with the inputted group.
+ */
 export const findTerminalByGroupId = (
   model: Model,
   groupId: GroupId
@@ -436,6 +446,9 @@ export const findTerminalByGroupId = (
   return model.terminalsByGroupId[groupId] ?? null;
 };
 
+/**
+ * Find the terminal where the inputted node id is either the start or end node.
+ */
 export const findTerminalByNodeId = (
   model: Model,
   nodeId: NodeId
@@ -446,6 +459,20 @@ export const findTerminalByNodeId = (
     }
     if (terminal.endId === nodeId) {
       return terminal;
+    }
+  }
+  return null;
+};
+export const findPipeByNodeId = (
+  model: Model,
+  nodeId: NodeId
+): PipeJoined | null => {
+  for (const pipe of yieldPipes(model)) {
+    if (pipe.edge.sourceId === nodeId) {
+      return pipe;
+    }
+    if (pipe.edge.targetId === nodeId) {
+      return pipe;
     }
   }
   return null;
@@ -472,13 +499,17 @@ export const findGroupIdByNodeId = (
   nodeId: NodeId
 ): GroupId | null => {
   const terminal = findTerminalByNodeId(model, nodeId);
+
   if (terminal) {
     return terminal.groupId;
   }
-  const pipe = findPipeBySourceId(model, nodeId);
+
+  const pipe = findPipeByNodeId(model, nodeId);
+
   if (pipe) {
     return pipe.groupId;
   }
+
   return null;
 };
 

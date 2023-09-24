@@ -1,116 +1,104 @@
-import { Model, NodeId } from "../flow";
+import * as Flow from "../flow";
 
 /**
- * Returns a list of edges without a groupId that form the shortest path between the source and target nodes.
+ * Returns a list of nodes without a groupId that form the shortest path between the source and target nodes.
  */
 export const findShortestEmptyPath = (
-  _model: Model,
-  _sourceId: NodeId,
-  _targetId: NodeId
-): NodeId[] => {
-  return [];
-  // const groupId = findPath(model, source);
-  // const terminal = findTerminal(model, source);
-  // const sourceGroupId = groupId ?? terminal?.groupId;
-  // if (!sourceGroupId) {
-  //   return [];
-  // }
-  //
-  //
-  // Construct the breadth first tree
-  //
-  //
-  // const queue: NodeId[] = [];
-  // const visited = new Set<NodeId>();
-  // const tree: { [id: NodeId]: { parent?: NodeId } } = {};
+  model: Flow.Model,
+  sourceId: Flow.NodeId,
+  targetId: Flow.NodeId
+): Flow.NodeId[] => {
+  const sourceGroupId = Flow.findGroupIdByNodeId(model, sourceId);
 
-  // visited.add(source);
-  // queue.push(source);
-
-  // while (queue.length > 0) {
-  //   const current = queue.shift();
-
-  //   if (!current) {
-  //     break;
-  //   }
-
-  //   visited.add(current);
-
-  //   if (current === target) {
-  //     break;
-  //   }
-
-  //   for (const outEdge of yieldOutEdges(model, current)) {
-  //     const adjacentId = outEdge.targetId;
-
-  //     if (visited.has(adjacentId)) {
-  //       continue;
-  //     }
-
-  //     const adjacentGroupId = findPath(model, adjacentId);
-
-  //     if (adjacentGroupId && adjacentGroupId !== sourceGroupId) {
-  //       continue;
-  //     }
-
-  //     const adjacentTerminal = findTerminal(model, adjacentId);
-
-  //     if (adjacentTerminal && adjacentTerminal.groupId !== sourceGroupId) {
-  //       continue;
-  //     }
-
-  //     queue.push(adjacentId);
-  //     tree[adjacentId] = { parent: current };
-  //   }
-  // }
+  if (!sourceGroupId) {
+    return [];
+  }
 
   //
   //
+  //  Construct the breadth first tree
+  //
+  //
+
+  const queue: Flow.NodeId[] = [];
+  const visited = new Set<Flow.NodeId>();
+  const tree: { [id: Flow.NodeId]: { parent?: Flow.NodeId } } = {};
+
+  visited.add(sourceId);
+  queue.push(sourceId);
+
+  while (true) {
+    const currentId = queue.shift();
+
+    if (!currentId) {
+      break;
+    }
+
+    visited.add(currentId);
+
+    if (currentId === targetId) {
+      break;
+    }
+
+    for (const outEdge of Flow.yieldEdgesOut(model, currentId)) {
+      const adjacentId = outEdge.targetId;
+
+      if (visited.has(adjacentId)) {
+        continue;
+      }
+
+      const adjacentGroupId = Flow.findGroupIdByNodeId(model, adjacentId);
+
+      if (adjacentGroupId) {
+        continue;
+      }
+
+      const adjacentTerminal = Flow.findTerminalByNodeId(model, adjacentId);
+
+      if (adjacentTerminal && adjacentTerminal.groupId !== sourceGroupId) {
+        continue;
+      }
+
+      queue.push(adjacentId);
+      tree[adjacentId] = { parent: currentId };
+    }
+  }
+
   // Construct the path from the breadth first tree
-  //
-  //
 
-  // let current = target;
-  // const nodePath: NodeId[] = [current];
+  let current = targetId;
+  const nodePath: Flow.NodeId[] = [current];
 
-  // while (current !== source) {
-  //   const parent = tree[current]?.parent;
+  while (current !== sourceId) {
+    const parent = tree[current]?.parent;
 
-  //   if (!parent) {
-  //     break;
-  //   }
+    if (!parent) {
+      break;
+    }
 
-  //   nodePath.push(parent);
-  //   current = parent;
-  // }
+    nodePath.push(parent);
+    current = parent;
+  }
 
-  // nodePath.reverse();
+  nodePath.reverse();
 
-  //
-  //
   // Convert node path to edge path
-  //
-  //
 
-  // const path: EdgeId[] = [];
+  const path: Flow.EdgeId[] = [];
 
-  // for (let i = 0; i < nodePath.length; i++) {
-  //   const from = nodePath[i];
-  //   if (!from) {
-  //     continue;
-  //   }
-  //   const to = nodePath[i + 1];
-  //   if (!to) {
-  //     continue;
-  //   }
-  //   path.push(toEdgeId({ sourceId: from, targetId: to }));
-  // }
+  for (let i = 0; i < nodePath.length; i++) {
+    const from = nodePath[i];
+    if (!from) {
+      continue;
+    }
+    const to = nodePath[i + 1];
+    if (!to) {
+      continue;
+    }
+    path.push(Flow.toEdgeId({ sourceId: from, targetId: to }));
+  }
 
-  //
-  //
   // Done
-  //
-  //
 
-  // return path;
+  return nodePath;
 };

@@ -21,6 +21,7 @@ export const View = ({
   isActive,
   className,
   autocompleteEdge,
+  showCoordinates,
 }: {
   className?: string;
   model: FlowGrid.Model;
@@ -30,6 +31,7 @@ export const View = ({
   isDragging?: boolean;
   onDraggedOver?: (nodeId: Flow.NodeId) => void;
   autocompleteEdge?: (FlowGrid.Edge & { groupId: Flow.GroupId }) | null;
+  showCoordinates?: boolean;
   isActive?: ({
     nodeId,
     groupId,
@@ -204,6 +206,24 @@ export const View = ({
           />
         )}
       </g>
+
+      {showCoordinates && (
+        <g transform="translate(0, 1)">
+          {map(FlowGrid.yieldNodes(model), (node) => {
+            return (
+              <text
+                className="pointer-events-none"
+                key={node.nodeId}
+                x={node.x}
+                y={node.y}
+                style={{ fontSize: 0.2 }}
+                fill="#fff">
+                {`${node.x},${node.y}`}
+              </text>
+            );
+          })}
+        </g>
+      )}
 
       {/*
 

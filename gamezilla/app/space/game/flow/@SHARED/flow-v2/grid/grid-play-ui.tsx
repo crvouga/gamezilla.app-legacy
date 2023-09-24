@@ -2,7 +2,7 @@ import { Eff } from "gamezilla/@SHARED/core";
 import { Flow } from "..";
 import * as FlowGrid from "./grid";
 import * as FlowGridUI from "./grid-ui";
-import { AlgoExtendPipeline } from "../algo";
+import { AlgoDrawPipes } from "../algo";
 
 //
 //
@@ -98,11 +98,11 @@ const updateIdle = ({ msg, model }: { msg: Msg; model: Model }): Model => {
         return model;
       }
 
-      const started = AlgoExtendPipeline.startPipeline({
-        model: model.grid.flow,
+      const started = AlgoDrawPipes.startDrawPipes(
+        model.grid.flow,
         groupId,
-        nodeId: msg.nodeId,
-      });
+        msg.nodeId
+      );
 
       return {
         ...model,
@@ -133,11 +133,11 @@ const updateDragging = ({
     case "dragged-over": {
       const { nodeId } = msg;
 
-      const extended = AlgoExtendPipeline.extendPipeline({
-        model: model.grid.flow,
-        groupId: state.activeGroupId,
-        newNodeId: nodeId,
-      });
+      const extended = AlgoDrawPipes.drawPipes(
+        model.grid.flow,
+        state.activeGroupId,
+        nodeId
+      );
 
       const gridNew: FlowGrid.Model = {
         ...model.grid,
@@ -184,7 +184,8 @@ export const View = ({
   return (
     <div className="flex w-full flex-col gap-4 overflow-y-auto">
       <FlowGridUI.View
-        model={{ ...model.grid }}
+        model={model.grid}
+        showCoordinates
         isDragging={model.state.t === "dragging"}
         onDraggedOver={(nodeId) => dispatch({ t: "dragged-over", nodeId })}
         onPressDown={(nodeId) => dispatch({ t: "pressed-down-node", nodeId })}

@@ -21,6 +21,7 @@
     "tailwindcss",
     "tetris",
     "tetromino",
-    "Unflip"
+    "Unflip",
+    "unpartition"
   ]
 }
