@@ -46,7 +46,11 @@ export const View = ({
   };
   return (
     <svg
-      className={cn("w-full touch-none select-none", className)}
+      className={cn(
+        "w-full touch-none select-none",
+        isDragging && "cursor-grabbing",
+        className
+      )}
       onContextMenu={(event) => {
         event.stopPropagation();
         event.preventDefault();
@@ -158,15 +162,23 @@ export const View = ({
       <g transform="translate(0.5, 0.5)">
         {map(FlowGrid.yieldPipes(model), (pipe) => {
           return (
-            <line
-              key={pipe.edgeId}
-              x1={pipe.source.x}
-              y1={pipe.source.y}
-              x2={pipe.target.x}
-              y2={pipe.target.y}
-              stroke={FlowUI.Color.groupIdToHex(pipe.groupId)}
-              stroke-width={EDGE_STROKE_WIDTH}
-            />
+            <g key={pipe.edgeId}>
+              <line
+                key={pipe.edgeId}
+                x1={pipe.source.x}
+                y1={pipe.source.y}
+                x2={pipe.target.x}
+                y2={pipe.target.y}
+                stroke={FlowUI.Color.groupIdToHex(pipe.groupId)}
+                stroke-width={EDGE_STROKE_WIDTH}
+              />
+              <circle
+                cx={pipe.target.x}
+                cy={pipe.target.y}
+                r={0.14}
+                fill={FlowUI.Color.groupIdToHex(pipe.groupId)}
+              />
+            </g>
           );
         })}
       </g>
@@ -209,7 +221,7 @@ export const View = ({
               x={node.x}
               y={node.y}
               width={1}
-              className="cursor-pointer"
+              className={cn(isDragging ? "cursor-grabbing" : "cursor-pointer")}
               height={1}
               fill="transparent"
               onMouseDown={() => {

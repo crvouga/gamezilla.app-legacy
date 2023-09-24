@@ -441,6 +441,24 @@ export const findPipeBySourceId = (
   return null;
 };
 
+export const findPipeByTargetId = (
+  model: Model,
+  sourceId: NodeId
+): PipeJoined | null => {
+  const pipe = model.pipesByTargetId[sourceId];
+  if (!pipe) {
+    return null;
+  }
+  const edge = toEdge(model, pipe.edgeId);
+  if (!edge) {
+    return null;
+  }
+  return {
+    ...pipe,
+    edge,
+  };
+};
+
 export const hasEdge = (model: Model, edge: Edge): boolean => {
   return toEdgeId(edge) in model.edges;
 };

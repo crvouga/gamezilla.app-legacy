@@ -182,26 +182,28 @@ export const View = ({
   dispatch: (m: Msg) => void;
 }) => {
   return (
-    <FlowGridUI.View
-      model={{ ...model.grid }}
-      isDragging={model.state.t === "dragging"}
-      onDraggedOver={(nodeId) => dispatch({ t: "dragged-over", nodeId })}
-      onPressDown={(nodeId) => dispatch({ t: "pressed-down-node", nodeId })}
-      onPressUp={(nodeId) => dispatch({ t: "pressed-up", nodeId })}
-      autocompleteEdge={
-        model.state.t === "dragging" && model.state.autocompleteEdge
-          ? {
-              ...model.state.autocompleteEdge,
-              groupId: model.state.activeGroupId,
-            }
-          : null
-      }
-      className={
-        model.state.t === "dragging" ? "cursor-grabbing" : "cursor-grab"
-      }
-      isActive={({ groupId }) =>
-        model.state.t === "dragging" && model.state.activeGroupId === groupId
-      }
-    />
+    <div className="flex w-full flex-col gap-4 overflow-y-auto">
+      <FlowGridUI.View
+        model={{ ...model.grid }}
+        isDragging={model.state.t === "dragging"}
+        onDraggedOver={(nodeId) => dispatch({ t: "dragged-over", nodeId })}
+        onPressDown={(nodeId) => dispatch({ t: "pressed-down-node", nodeId })}
+        onPressUp={(nodeId) => dispatch({ t: "pressed-up", nodeId })}
+        autocompleteEdge={
+          model.state.t === "dragging" && model.state.autocompleteEdge
+            ? {
+                ...model.state.autocompleteEdge,
+                groupId: model.state.activeGroupId,
+              }
+            : null
+        }
+        className={
+          model.state.t === "dragging" ? "cursor-grabbing" : "cursor-grab"
+        }
+        isActive={({ groupId }) =>
+          model.state.t === "dragging" && model.state.activeGroupId === groupId
+        }
+      />
+    </div>
   );
 };

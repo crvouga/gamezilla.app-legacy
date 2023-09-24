@@ -74,7 +74,7 @@ export const extendPipeline = ({
     return model;
   }
 
-  const pipeline = findPipeline(model, terminal);
+  const pipeline = findPipeline(model, terminal.groupId, terminal.startId);
 
   const pipelineSubset = takeWhile(pipeline, (nodeId) => nodeId !== newId);
 
@@ -92,28 +92,20 @@ export const extendPipeline = ({
  */
 const findPipeline = (
   model: Flow.Model,
-  terminal: Flow.Terminal
-): Flow.NodeId[] => {
-  const pipeline = findPipelineWalk(model, terminal.groupId, terminal.startId);
-  return [terminal.startId, ...pipeline];
-};
-
-const findPipelineWalk = (
-  model: Flow.Model,
   groupId: Flow.GroupId,
   currentId: Flow.NodeId
 ): Flow.NodeId[] => {
   const pipe = Flow.findPipeBySourceId(model, currentId);
 
   if (!pipe) {
-    return [];
+    return [currentId];
   }
 
   if (pipe.groupId !== groupId) {
     return [];
   }
 
-  const pipeline = findPipelineWalk(model, groupId, pipe.edge.targetId);
+  const pipeline = findPipeline(model, groupId, pipe.edge.targetId);
 
   return [currentId, ...pipeline];
 };
@@ -151,15 +143,21 @@ const addPipeline = (
   terminal: Flow.Terminal,
   pipeline: Flow.NodeId[]
 ): Flow.Model => {
-  const [headId, ...tail] = pipeline;
+  const first = pipeline[0];
 
-  if (!headId) {
+  if (!first) {
+    return model;
+  }
+
+  const second = pipeline[1];
+
+  if (!second) {
     return model;
   }
 
   const edge: Flow.Edge = {
-    sourceId: terminal.startId,
-    targetId: headId,
+    sourceId: first,
+    targetId: second,
   };
 
   const added = addPipe(model, terminal.groupId, edge);
@@ -168,22 +166,9 @@ const addPipeline = (
     return model;
   }
 
-  return addPipelineWalk(added, terminal.groupId, edge.targetId, tail);
-};
+  const tail = pipeline.slice(1);
 
-const addPipelineWalk = (
-  model: Flow.Model,
-  groupId: Flow.GroupId,
-  currentId: Flow.NodeId,
-  pipeline: Flow.NodeId[]
-): Flow.Model => {
-  const [headId, ...tail] = pipeline;
-
-  if (!headId) {
-    return model;
-  }
-
-  return model;
+  return addPipeline(added, terminal, tail);
 };
 
 const addPipe = (
