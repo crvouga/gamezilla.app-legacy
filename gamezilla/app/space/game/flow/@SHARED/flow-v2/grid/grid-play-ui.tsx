@@ -2,6 +2,7 @@ import { Eff } from "gamezilla/@SHARED/core";
 import { Flow } from "..";
 import * as FlowGrid from "./grid";
 import * as FlowGridUI from "./grid-ui";
+import { AlgoDrawPath } from "../algo";
 
 //
 //
@@ -16,15 +17,15 @@ export type Model = {
   state: State;
 };
 
-type State =
-  | {
-      t: "idle";
-    }
-  | {
-      t: "dragging";
-      activeGroupId: Flow.GroupId;
-      autocompleteEdge?: FlowGrid.Edge | null;
-    };
+type Idle = { t: "idle" };
+
+type Dragging = {
+  t: "dragging";
+  activeGroupId: Flow.GroupId;
+  autocompleteEdge?: FlowGrid.Edge | null;
+};
+
+type State = Idle | Dragging;
 
 export const init = (grid: FlowGrid.Model): Model => {
   return {
@@ -71,7 +72,7 @@ export const updateModel = ({
 }): Model => {
   switch (model.state.t) {
     case "dragging": {
-      return updateDragging({ msg, model });
+      return updateDragging({ msg, model, state: model.state });
     }
 
     case "idle": {
@@ -97,7 +98,20 @@ const updateIdle = ({ msg, model }: { msg: Msg; model: Model }): Model => {
         return model;
       }
 
-      return { ...model, state: { t: "dragging", activeGroupId: groupId } };
+      const started = AlgoDrawPath.startExtendPath({
+        model: model.grid.flow,
+        groupId,
+        nodeId: msg.nodeId,
+      });
+
+      return {
+        ...model,
+        grid: {
+          ...model.grid,
+          flow: started,
+        },
+        state: { t: "dragging", activeGroupId: groupId },
+      };
     }
 
     case "pressed-up": {
@@ -106,18 +120,44 @@ const updateIdle = ({ msg, model }: { msg: Msg; model: Model }): Model => {
   }
 };
 
-const updateDragging = ({ msg, model }: { msg: Msg; model: Model }): Model => {
+const updateDragging = ({
+  msg,
+  state,
+  model,
+}: {
+  msg: Msg;
+  model: Model;
+  state: Dragging;
+}): Model => {
   switch (msg.t) {
     case "dragged-over": {
+      const { nodeId } = msg;
+
+      const extended = AlgoDrawPath.extendPath({
+        model: model.grid.flow,
+        groupId: state.activeGroupId,
+        newId: nodeId,
+      });
+
+      const gridNew: FlowGrid.Model = {
+        ...model.grid,
+        flow: extended,
+      };
+
+      const modelNew: Model = {
+        ...model,
+        grid: gridNew,
+      };
+
+      return modelNew;
+    }
+
+    case "pressed-down-node": {
       return model;
     }
 
     case "mouse-leave": {
       return { ...model, state: { t: "idle" } };
-    }
-
-    case "pressed-down-node": {
-      return model;
     }
 
     case "pressed-up": {
@@ -144,11 +184,8 @@ export const View = ({
   return (
     <FlowGridUI.View
       model={{ ...model.grid }}
-      onDraggedOver={
-        model.state.t === "dragging"
-          ? (nodeId) => dispatch({ t: "dragged-over", nodeId })
-          : undefined
-      }
+      isDragging={model.state.t === "dragging"}
+      onDraggedOver={(nodeId) => dispatch({ t: "dragged-over", nodeId })}
       onPressDown={(nodeId) => dispatch({ t: "pressed-down-node", nodeId })}
       onPressUp={(nodeId) => dispatch({ t: "pressed-up", nodeId })}
       autocompleteEdge={

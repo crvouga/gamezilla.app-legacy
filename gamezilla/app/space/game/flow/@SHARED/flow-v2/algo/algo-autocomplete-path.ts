@@ -1,4 +1,4 @@
-import { Edge, GroupId, Model, NodeId, yieldOutEdges } from "../flow";
+import { Edge, GroupId, Model, NodeId, yieldEdgesOut } from "../flow";
 
 /**
  *
@@ -15,7 +15,7 @@ const findPathEndNode = (
   groupId: GroupId,
   nodeId: NodeId
 ): NodeId => {
-  for (const outEdge of yieldOutEdges(model, nodeId)) {
+  for (const outEdge of yieldEdgesOut(model, nodeId)) {
     if (outEdge.targetId === nodeId) {
       return nodeId;
     }

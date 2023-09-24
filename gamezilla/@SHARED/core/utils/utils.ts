@@ -123,8 +123,8 @@ export const rescale = ({
  * takeWhile(isNeg, []); //=> []
  */
 export const takeWhile = <T>(
-  predicate: (item: T) => boolean,
-  arr: Iterable<T>
+  arr: Iterable<T>,
+  predicate: (item: T) => boolean
 ): T[] => {
   const results: T[] = [];
   for (const item of arr) {

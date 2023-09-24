@@ -29,7 +29,7 @@ export const positionToNodeId = (position: Position): Flow.NodeId => {
 //
 //
 
-export const initEmpty = ({ bounds }: { bounds: Bounds }): Model => {
+export const init = ({ bounds }: { bounds: Bounds }): Model => {
   let model: Model = {
     flow: Flow.init,
     bounds,
@@ -37,7 +37,7 @@ export const initEmpty = ({ bounds }: { bounds: Bounds }): Model => {
   };
 
   for (const position of yieldRange({ bounds })) {
-    model = addEmptyNode(model, position);
+    model = addNode(model, position);
   }
 
   for (const nodePosition of yieldPositions(model)) {
@@ -126,12 +126,9 @@ export const toEdge = (model: Model, edgeId: Flow.EdgeId): Edge | null => {
 /**
  * Adds a node to the puzzle.
  */
-export const addEmptyNode = (model: Model, position: Position): Model => {
+export const addNode = (model: Model, position: Position): Model => {
   const nodeId = positionToNodeId(position);
-  const added = Flow.addNode(model.flow, {
-    t: "empty",
-    nodeId,
-  });
+  const added = Flow.addNode(model.flow, { nodeId });
   return {
     ...model,
     flow: added,
@@ -177,5 +174,28 @@ export const yieldNodes = function* (model: Model): Generator<Node> {
       continue;
     }
     yield { ...position, ...node };
+  }
+};
+
+export type Terminal = Flow.Terminal & {
+  start: Node;
+  end: Node;
+};
+
+export const yieldTerminals = function* (model: Model): Generator<Terminal> {
+  for (const terminal of Flow.yieldTerminals(model.flow)) {
+    const start = toNode(model, terminal.startId);
+
+    if (!start) {
+      continue;
+    }
+
+    const end = toNode(model, terminal.endId);
+
+    if (!end) {
+      continue;
+    }
+
+    yield { ...terminal, start, end };
   }
 };

@@ -14,6 +14,7 @@ let lastDraggedOver: Flow.NodeId | null = null;
  */
 export const View = ({
   model,
+  isDragging,
   onDraggedOver,
   onPressDown,
   onPressUp,
@@ -25,6 +26,7 @@ export const View = ({
   model: FlowGrid.Model;
   onPressDown?: (nodeId: Flow.NodeId) => void;
   onPressUp?: (nodeId: Flow.NodeId) => void;
+  isDragging?: boolean;
   onDraggedOver?: (nodeId: Flow.NodeId) => void;
   autocompleteEdge?: (FlowGrid.Edge & { groupId: Flow.GroupId }) | null;
   isActive?: ({
@@ -36,7 +38,7 @@ export const View = ({
   }) => boolean;
 }) => {
   const draggedOver = (nodeId: Flow.NodeId) => {
-    if (lastDraggedOver === nodeId) {
+    if (!isDragging || lastDraggedOver === nodeId) {
       return;
     }
     lastDraggedOver = nodeId;
@@ -121,47 +123,35 @@ export const View = ({
 
       */}
       <g transform="translate(0.5, 0.5)">
-        {map(FlowGrid.yieldNodes(model), (node) => {
-          switch (node.t) {
-            case "empty": {
-              return null;
-            }
-            case "path": {
-              return null;
-            }
-            case "start": {
-              return (
-                <ViewTerminalNode
-                  key={node.nodeId}
-                  groupId={node.groupId}
-                  x={node.x}
-                  y={node.y}
-                  isActive={Boolean(
-                    isActive?.({
-                      nodeId: node.nodeId,
-                      groupId: node.groupId,
-                    })
-                  )}
-                />
-              );
-            }
-            case "end": {
-              return (
-                <ViewTerminalNode
-                  key={node.nodeId}
-                  groupId={node.groupId}
-                  x={node.x}
-                  y={node.y}
-                  isActive={Boolean(
-                    isActive?.({
-                      nodeId: node.nodeId,
-                      groupId: node.groupId,
-                    })
-                  )}
-                />
-              );
-            }
-          }
+        {map(FlowGrid.yieldTerminals(model), (terminal) => {
+          return (
+            <g key={terminal.groupId}>
+              <ViewTerminalNode
+                key={terminal.start.nodeId}
+                groupId={terminal.groupId}
+                x={terminal.start.x}
+                y={terminal.start.y}
+                isActive={Boolean(
+                  isActive?.({
+                    nodeId: terminal.start.nodeId,
+                    groupId: terminal.groupId,
+                  })
+                )}
+              />
+              <ViewTerminalNode
+                key={terminal.end.nodeId}
+                groupId={terminal.groupId}
+                x={terminal.end.x}
+                y={terminal.end.y}
+                isActive={Boolean(
+                  isActive?.({
+                    nodeId: terminal.end.nodeId,
+                    groupId: terminal.groupId,
+                  })
+                )}
+              />
+            </g>
+          );
         })}
       </g>
 
@@ -294,10 +284,4 @@ const map = <T, TY>(iterable: Iterable<T>, fn: (x: T) => TY): TY[] => {
   }
 
   return result;
-};
-
-const yieldRange = function* (lower: number, upper: number) {
-  for (let i = lower; i < upper; i++) {
-    yield i;
-  }
 };

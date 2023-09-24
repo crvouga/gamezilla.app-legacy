@@ -29,6 +29,8 @@ const program = Program.create({
 });
 
 program.subscribe((model, ctx) => {
+  // @ts-ignore
+  window.model = model;
   render(
     <AppClient.View now={ctx.now} model={model} dispatch={program.dispatch} />,
     document.body
