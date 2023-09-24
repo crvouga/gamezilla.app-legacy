@@ -116,7 +116,8 @@ export const init: Model = {
 };
 
 /**
- *
+ * A terminal represents the start and end nodes for a group.
+ * These are the two circles the user is trying to connect
  */
 export type Terminal = {
   groupId: GroupId;
