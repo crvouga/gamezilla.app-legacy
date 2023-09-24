@@ -162,13 +162,42 @@ const addPipeline = (
     targetId: headId,
   };
 
-  if (!Flow.hasEdge(model, edge)) {
+  const added = addPipe(model, terminal.groupId, edge);
+
+  if (!added) {
     return model;
+  }
+
+  return addPipelineWalk(added, terminal.groupId, edge.targetId, tail);
+};
+
+const addPipelineWalk = (
+  model: Flow.Model,
+  groupId: Flow.GroupId,
+  currentId: Flow.NodeId,
+  pipeline: Flow.NodeId[]
+): Flow.Model => {
+  const [headId, ...tail] = pipeline;
+
+  if (!headId) {
+    return model;
+  }
+
+  return model;
+};
+
+const addPipe = (
+  model: Flow.Model,
+  groupId: Flow.GroupId,
+  edge: Flow.Edge
+): Flow.Model | null => {
+  if (!Flow.hasEdge(model, edge)) {
+    return null;
   }
 
   const pipeNew: Flow.Pipe = {
     edgeId: Flow.toEdgeId(edge),
-    groupId: terminal.groupId,
+    groupId: groupId,
   };
 
   const modelNew: Flow.Model = {
@@ -179,16 +208,7 @@ const addPipeline = (
     },
   };
 
-  return addPipelineWalk(modelNew, terminal.groupId, edge.targetId, tail);
-};
-
-const addPipelineWalk = (
-  model: Flow.Model,
-  groupId: Flow.GroupId,
-  currentId: Flow.NodeId,
-  pipeline: Flow.NodeId[]
-): Flow.Model => {
-  return model;
+  return modelNew;
 };
 
 const takeWhile = <T>(
