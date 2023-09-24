@@ -136,7 +136,7 @@ const updateDragging = ({
       const extended = AlgoExtendPipeline.extendPipeline({
         model: model.grid.flow,
         groupId: state.activeGroupId,
-        newId: nodeId,
+        newNodeId: nodeId,
       });
 
       const gridNew: FlowGrid.Model = {

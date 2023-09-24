@@ -12,7 +12,7 @@ export const startPipeline = ({
   groupId: Flow.GroupId;
   nodeId: Flow.NodeId;
 }): Flow.Model => {
-  const terminal = model.terminalsByGroupId[groupId];
+  const terminal = Flow.findTerminalByGroupId(model, groupId);
 
   if (!terminal) {
     return model;
@@ -25,35 +25,12 @@ export const startPipeline = ({
   }
 
   if (terminal.endId === nodeId) {
-    const reversed = reverseTerminal(model, groupId);
+    const reversed = Flow.flipTerminal(model, terminal);
 
     return reversed;
   }
 
   return model;
-};
-
-const reverseTerminal = (
-  model: Flow.Model,
-  groupId: Flow.GroupId
-): Flow.Model => {
-  const terminal = model.terminalsByGroupId[groupId];
-
-  if (!terminal) {
-    return model;
-  }
-
-  return {
-    ...model,
-    terminalsByGroupId: {
-      ...model.terminalsByGroupId,
-      [groupId]: {
-        ...terminal,
-        startId: terminal.endId,
-        endId: terminal.startId,
-      },
-    },
-  };
 };
 
 /**
@@ -62,33 +39,43 @@ const reverseTerminal = (
 export const extendPipeline = ({
   model,
   groupId,
-  newId,
+  newNodeId,
 }: {
   model: Flow.Model;
   groupId: Flow.GroupId;
-  newId: Flow.NodeId;
+  newNodeId: Flow.NodeId;
 }): Flow.Model => {
-  const terminal = model.terminalsByGroupId[groupId];
+  const terminal = Flow.findTerminalByGroupId(model, groupId);
 
   if (!terminal) {
     return model;
   }
 
+  const newNodeGroupId = Flow.findGroupIdByNodeId(model, newNodeId);
+
+  if (newNodeGroupId && newNodeGroupId !== groupId) {
+    return model;
+  }
+
   const pipeline = findPipeline(model, terminal.groupId, terminal.startId);
 
-  const pipelineSubset = takeWhile(pipeline, (nodeId) => nodeId !== newId);
+  const pipelineNew = takeWhileInclusive(
+    [...pipeline, newNodeId],
+    (nodeId) => nodeId !== newNodeId && nodeId !== terminal.endId
+  );
 
-  const pipelineNew = [...pipelineSubset, newId];
-
-  const removed = removePipeline(model, groupId);
-
-  const added = addPipeline(removed, terminal, pipelineNew);
+  const added = addPipeline(
+    removePipeline(model, groupId),
+    terminal,
+    pipelineNew
+  );
 
   return added;
 };
 
 /**
- * Returns ordered list of node from a group starting from a `start` mode.
+ * Returns an ordered list of nodes that are part of the pipeline
+ * starting from the start node of the inputted group
  */
 const findPipeline = (
   model: Flow.Model,
@@ -117,25 +104,22 @@ export const removePipeline = (
   model: Flow.Model,
   groupId: Flow.GroupId
 ): Flow.Model => {
-  let modelNew: Flow.Model = {
-    ...model,
-    pipesByTargetId: {},
-  };
+  const pipesBySourceId: Flow.Model["pipesBySourceId"] = {};
 
   for (const pipe of Flow.yieldPipes(model)) {
     if (pipe.groupId === groupId) {
       continue;
     }
-
-    modelNew = {
-      ...modelNew,
-      pipesByTargetId: {
-        ...modelNew.pipesByTargetId,
-        [pipe.edge.targetId]: pipe,
-      },
+    pipesBySourceId[pipe.edge.sourceId] = {
+      edgeId: pipe.edgeId,
+      groupId: pipe.groupId,
     };
   }
-  return modelNew;
+
+  return {
+    ...model,
+    pipesBySourceId,
+  };
 };
 
 const addPipeline = (
@@ -160,7 +144,12 @@ const addPipeline = (
     targetId: second,
   };
 
-  const added = addPipe(model, terminal.groupId, edge);
+  const pipeNew: Flow.Pipe = {
+    edgeId: Flow.toEdgeId(edge),
+    groupId: terminal.groupId,
+  };
+
+  const added = Flow.addPipe(model, pipeNew);
 
   if (!added) {
     return model;
@@ -171,41 +160,17 @@ const addPipeline = (
   return addPipeline(added, terminal, tail);
 };
 
-const addPipe = (
-  model: Flow.Model,
-  groupId: Flow.GroupId,
-  edge: Flow.Edge
-): Flow.Model | null => {
-  if (!Flow.hasEdge(model, edge)) {
-    return null;
-  }
-
-  const pipeNew: Flow.Pipe = {
-    edgeId: Flow.toEdgeId(edge),
-    groupId: groupId,
-  };
-
-  const modelNew: Flow.Model = {
-    ...model,
-    pipesByTargetId: {
-      ...model.pipesByTargetId,
-      [edge.targetId]: pipeNew,
-    },
-  };
-
-  return modelNew;
-};
-
-const takeWhile = <T>(
+const takeWhileInclusive = <T>(
   arr: Iterable<T>,
   predicate: (item: T) => boolean
 ): T[] => {
   const results: T[] = [];
   for (const item of arr) {
+    results.push(item);
+
     if (!predicate(item)) {
       break;
     }
-    results.push(item);
   }
   return results;
 };
