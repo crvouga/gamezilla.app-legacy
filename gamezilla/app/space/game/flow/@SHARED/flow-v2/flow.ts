@@ -1,3 +1,5 @@
+import { Result } from "gamezilla/@SHARED/core";
+
 export type NodeId = string & { readonly __brand: unique symbol };
 
 export const createNodeId = (nodeId: string): NodeId => {
@@ -396,6 +398,9 @@ export const toGroupId = (model: Model, nodeId: NodeId): GroupId | null => {
 
   for (const pipe of yieldPipes(model)) {
     if (pipe.edge.sourceId === nodeId) {
+      return pipe.groupId;
+    }
+    if (pipe.edge.targetId === nodeId) {
       return pipe.groupId;
     }
   }

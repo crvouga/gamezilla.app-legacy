@@ -112,7 +112,7 @@ export const removePipeline = (
     }
     pipesBySourceId[pipe.edge.sourceId] = {
       edgeId: pipe.edgeId,
-      groupId: pipe.groupId,
+      groupId,
     };
   }
 

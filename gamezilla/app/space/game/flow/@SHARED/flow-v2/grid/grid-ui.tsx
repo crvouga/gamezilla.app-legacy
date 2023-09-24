@@ -214,14 +214,20 @@ export const View = ({
       <g>
         {map(FlowGrid.yieldNodes(model), (node) => {
           const nodeId = node.nodeId;
-
+          const groupId = Flow.toGroupId(model.flow, node.nodeId);
           return (
             <rect
               key={node.nodeId}
               x={node.x}
               y={node.y}
               width={1}
-              className={cn(isDragging ? "cursor-grabbing" : "cursor-pointer")}
+              className={cn(
+                isDragging
+                  ? "cursor-grabbing"
+                  : groupId
+                  ? "cursor-pointer"
+                  : "cursor-default"
+              )}
               height={1}
               fill="transparent"
               onMouseDown={() => {
