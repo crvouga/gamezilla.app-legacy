@@ -10,10 +10,6 @@ export const findShortestEmptyPipeline = (
 ): Flow.NodeId[] => {
   const sourceGroupId = Flow.findGroupIdByNodeId(model, sourceId);
 
-  console.log("sourceId", sourceId);
-  console.log("targetId", targetId);
-  console.log("sourceGroupId", sourceGroupId);
-
   if (!sourceGroupId) {
     return [];
   }
@@ -67,8 +63,6 @@ export const findShortestEmptyPipeline = (
       tree[adjacentId] = { parent: currentId };
     }
   }
-
-  console.log("tree", tree);
 
   // Construct the path from the breadth first tree
 

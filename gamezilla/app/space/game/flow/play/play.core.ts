@@ -16,7 +16,7 @@ export type ClientModel = CoreModel;
 export type ServerModel = CoreModel;
 
 export const initShared: CoreModel = {
-  grid: FlowGridPlayUI.init(flowGridSamples["8x8"][1]),
+  grid: FlowGridPlayUI.init(flowGridSamples["8x8"][0]),
 };
 
 //

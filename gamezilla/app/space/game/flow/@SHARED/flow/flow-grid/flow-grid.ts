@@ -1,5 +1,5 @@
 import { Flow } from "..";
-import { Bounds, Position, deltas, yieldRange } from "./flow-grid-position";
+import { Bounds, Position, DELTAS, yieldRange } from "./flow-grid-position";
 
 //
 //
@@ -41,7 +41,7 @@ export const init = ({ bounds }: { bounds: Bounds }): Model => {
   }
 
   for (const nodePosition of yieldPositions(model)) {
-    for (const delta of deltas) {
+    for (const delta of DELTAS) {
       const to: Position = {
         x: nodePosition.x + delta.x,
         y: nodePosition.y + delta.y,

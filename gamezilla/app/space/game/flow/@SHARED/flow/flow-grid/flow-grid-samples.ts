@@ -31,6 +31,16 @@ export const flowGridSamples = {
   },
   "7x7": {},
   "8x8": {
+    0: fromShorthand([
+      ["A", null, null, "A", "B", null, null, null],
+      [null, null, "C", "D", "E", null, "E", null],
+      [null, null, "F", null, null, null, null, null],
+      [null, null, "G", null, "H", "I", null, null],
+      [null, null, null, null, "D", null, null, null],
+      [null, null, null, "C", null, null, null, null],
+      [null, "F", null, "G", null, null, "H", "B"],
+      [null, null, null, null, null, null, null, null],
+    ]),
     1: fromShorthand([
       ["A", null, null, "A", "B", null, null, null],
       [null, null, "C", "D", "E", null, "E", null],
