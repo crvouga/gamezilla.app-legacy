@@ -80,6 +80,9 @@ export const drawPipes = (
 
       const pipelineNew = [...pipeline, ...shortest.slice(1)];
 
+      console.log("pipeline", pipeline);
+      console.log("shortest", shortest);
+
       return pipelineNew;
     }
   );
