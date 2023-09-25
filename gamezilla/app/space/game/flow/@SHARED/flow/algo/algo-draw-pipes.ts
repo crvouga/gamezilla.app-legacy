@@ -44,6 +44,7 @@ export const drawPipes = (
 ): Flow.Model => {
   const newNodeGroupId = Flow.findGroupIdByNodeId(model, newNodeId);
 
+  // Prevent drawing over other groups
   if (newNodeGroupId && newNodeGroupId !== groupId) {
     return model;
   }
@@ -54,11 +55,21 @@ export const drawPipes = (
     return model;
   }
 
-  const pipeline = findPipeline(model, terminal.groupId, terminal.startId);
+  // For UX, prevent drawing from overshooting after terminals is connected
+  if (!newNodeGroupId && isTerminalConnected(model, terminal)) {
+    return model;
+  }
+
+  const existingPipeline = findPipeline(
+    model,
+    terminal.groupId,
+    terminal.startId
+  );
 
   const pipelineNew = p(
-    pipeline,
+    existingPipeline,
 
+    // Cutting off pipeline if user draws over existing pipeline
     (pipeline) =>
       takeWhile(
         pipeline,
@@ -79,9 +90,6 @@ export const drawPipes = (
       const shortest = findShortestEmptyPipeline(model, startNodeId, newNodeId);
 
       const pipelineNew = [...pipeline, ...shortest.slice(1)];
-
-      console.log("pipeline", pipeline);
-      console.log("shortest", shortest);
 
       return pipelineNew;
     }
@@ -126,6 +134,31 @@ const takeWhileConnected = (
     break;
   }
   return result;
+};
+
+/**
+ *
+ */
+const isTerminalConnected = (
+  model: Flow.Model,
+  terminal: Flow.Terminal,
+  currentId: Flow.NodeId = terminal.startId
+): boolean => {
+  if (currentId === terminal.endId) {
+    return true;
+  }
+
+  const pipe = Flow.toPipeBySourceId(model, currentId);
+
+  if (!pipe) {
+    return false;
+  }
+
+  if (pipe.groupId !== terminal.groupId) {
+    return false;
+  }
+
+  return isTerminalConnected(model, terminal, pipe.edge.targetId);
 };
 
 /**
