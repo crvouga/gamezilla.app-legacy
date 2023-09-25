@@ -15,7 +15,7 @@ export const startDrawPipes = (
   groupId: Flow.GroupId,
   newNodeId: Flow.NodeId
 ): Flow.Model => {
-  const terminal = Flow.findTerminalByGroupId(model, groupId);
+  const terminal = Flow.toTerminalByGroupId(model, groupId);
 
   if (!terminal) {
     return model;
@@ -49,7 +49,7 @@ export const drawPipes = (
     return model;
   }
 
-  const terminal = Flow.findTerminalByGroupId(model, groupId);
+  const terminal = Flow.toTerminalByGroupId(model, groupId);
 
   if (!terminal) {
     return model;
@@ -263,6 +263,23 @@ export const takeWhile = <T>(
       break;
     }
     results.push(item);
+  }
+  return results;
+};
+
+/**
+ * Utility function that takes items from the inputted array until the predicate returns false
+ */
+export const takeWhileInclusive = <T>(
+  arr: Iterable<T>,
+  predicate: (item: T) => boolean
+): T[] => {
+  const results: T[] = [];
+  for (const item of arr) {
+    results.push(item);
+    if (!predicate(item)) {
+      break;
+    }
   }
   return results;
 };

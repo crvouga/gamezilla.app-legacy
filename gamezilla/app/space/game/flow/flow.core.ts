@@ -30,7 +30,6 @@ export type ClientMsg =
   | { t: "play"; c: Play.ClientMsg };
 
 export type ServerMsg =
-  | { t: "none" }
   | { t: "puzzle-builder"; c: PuzzleBuilder.ServerMsg }
   | { t: "play"; c: Play.ServerMsg };
 

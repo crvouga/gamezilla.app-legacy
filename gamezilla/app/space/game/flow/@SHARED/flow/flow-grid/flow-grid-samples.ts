@@ -2,7 +2,7 @@ import { fromShorthand } from "./flow-grid-shorthand";
 
 export type Size = "5x5" | "6x6" | "7x7" | "8x8";
 
-export const flowGridSamples = {
+export const samples = {
   "5x5": {
     "1": fromShorthand([
       [null, "C", "B", null, null],

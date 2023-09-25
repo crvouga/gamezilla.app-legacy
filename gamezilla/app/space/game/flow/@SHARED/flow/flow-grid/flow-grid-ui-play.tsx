@@ -1,8 +1,8 @@
 import { Eff } from "gamezilla/@SHARED/core";
-import { Flow } from "..";
+import { AlgoDrawPipes } from "../algo";
+import * as Flow from "../flow";
 import * as FlowGrid from "./flow-grid";
 import * as FlowGridUI from "./flow-grid-ui";
-import { AlgoDrawPipes } from "../algo";
 
 //
 //
@@ -56,7 +56,6 @@ export const update = ({
   model: Model;
 }): {
   model: Model;
-  eff?: Eff;
 } => {
   return {
     model: updateModel({ msg, model }),

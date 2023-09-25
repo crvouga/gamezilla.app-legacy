@@ -1,12 +1,14 @@
 import { Sub } from "gamezilla/@SHARED/core";
-import { GameServer } from "gamezilla/app/space/@SHARED";
+import { GameServer, sendToSpace } from "gamezilla/app/space/@SHARED";
 import {
   ServerModel,
   ServerMsg,
   ToClient,
   ToServer,
   initCore,
+  updateCore,
 } from "./puzzle-builder.core";
+import { sendBack } from "gamezilla/app/@SHARED/server";
 
 type Server = GameServer<ServerModel, ServerMsg, ToClient, ToServer>;
 
@@ -21,7 +23,29 @@ const update: Server["update"] = (input) => {
 };
 
 const updateFromClient: Server["updateFromClient"] = (input) => {
-  return input;
+  const { ctx, msg, model } = input;
+
+  switch (msg.t) {
+    default: {
+      const updated = updateCore({
+        ctx,
+        msg,
+        model,
+      });
+
+      if (updated.t === "err") {
+        return {
+          model,
+          cmd: [sendBack(ctx, { ...msg, result: updated })],
+        };
+      }
+
+      return {
+        model: updated.value,
+        cmd: [sendToSpace({ ...msg, result: updated })],
+      };
+    }
+  }
 };
 
 const updateFromEvt: Server["updateFromEvt"] = (input) => {

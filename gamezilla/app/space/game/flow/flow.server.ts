@@ -1,5 +1,5 @@
 import { err, ok, Sub } from "gamezilla/@SHARED/core";
-import { GameServer } from "gamezilla/app/space/@SHARED";
+import { GameServer, sendToSpace } from "gamezilla/app/space/@SHARED";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./flow.core";
 import { PlayServer } from "./play";
 import { PuzzleBuilderServer } from "./puzzle-builder";
@@ -10,51 +10,79 @@ const Play = GameServer.tag("play", PlayServer);
 const PuzzleBuilder = GameServer.tag("puzzle-builder", PuzzleBuilderServer);
 
 export const init: Server["init"] = () => {
-  return {
-    model: { t: "none" },
-  };
+  return { model: { t: "none" } };
 };
 
-export const update: Server["update"] = (input) => {
-  return input;
+export const update: Server["update"] = ({ msg, model, ...input }) => {
+  switch (msg.t) {
+    case "play": {
+      if (model.t === "play") {
+        return Play.update({ ...input, model, msg });
+      }
+      return { model };
+    }
+
+    case "puzzle-builder": {
+      if (model.t === "puzzle-builder") {
+        return PuzzleBuilder.update({ ...input, model, msg });
+      }
+      return { model };
+    }
+  }
 };
 
 export const updateFromClient: Server["updateFromClient"] = (input) => {
   const { msg, model, ctx } = input;
 
-  if (msg.t === "input-mode") {
-    if (ctx.hostId !== ctx.currentUserId) {
+  switch (msg.t) {
+    case "input-mode": {
+      if (ctx.hostId !== ctx.currentUserId) {
+        return {
+          model,
+          cmd: [sendToSpace({ ...msg, result: err("Must be the host") })],
+        };
+      }
+
+      const initial = initMode(msg.mode)({ ...input, model: { t: "none" } });
+
       return {
-        model,
-        cmd: [
-          {
-            t: "send-to-space",
-            msg: { ...msg, result: err("Must be the host") },
-          },
-        ],
+        ...initial,
+        cmd: [sendToSpace({ ...msg, result: ok(initial.model) })],
       };
     }
 
-    const initial = initMode(msg.mode)({ ...input, model: { t: "none" } });
+    case "play": {
+      if (model.t === "play") {
+        return Play.updateFromClient({ ...input, model, msg });
+      }
+      return { model };
+    }
 
-    return {
-      ...initial,
-      cmd: [{ t: "send-to-space", msg: { ...msg, result: ok(initial.model) } }],
-    };
+    case "puzzle-builder": {
+      if (model.t === "puzzle-builder") {
+        return PuzzleBuilder.updateFromClient({ ...input, model, msg });
+      }
+      return { model };
+    }
   }
-  return { model };
 };
 
 const initMode =
   (mode: ServerModel["t"]): Server["updateFromClient"] =>
   (input) => {
-    if (mode === "puzzle-builder") {
-      return PuzzleBuilder.init(input);
+    switch (mode) {
+      case "none": {
+        return { model: { t: "none" } };
+      }
+
+      case "puzzle-builder": {
+        return PuzzleBuilder.init(input);
+      }
+
+      case "play": {
+        return Play.init(input);
+      }
     }
-    if (mode === "play") {
-      return Play.init(input);
-    }
-    return { model: { t: "none" } };
   };
 
 export const updateFromEvt: Server["updateFromEvt"] = (input) => {

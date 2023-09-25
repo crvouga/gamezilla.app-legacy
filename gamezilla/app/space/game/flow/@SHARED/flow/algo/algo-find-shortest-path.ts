@@ -14,6 +14,8 @@ export const findShortestEmptyPipeline = (
     return [];
   }
 
+  const terminal = Flow.toTerminalByGroupId(model, sourceGroupId);
+
   //
   //
   //  Construct the breadth first tree
@@ -37,6 +39,10 @@ export const findShortestEmptyPipeline = (
     visited.add(currentId);
 
     if (currentId === targetId) {
+      break;
+    }
+
+    if (currentId === terminal?.endId) {
       break;
     }
 

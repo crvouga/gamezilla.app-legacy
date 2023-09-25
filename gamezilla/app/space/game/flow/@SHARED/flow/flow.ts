@@ -1,5 +1,3 @@
-import { Result } from "gamezilla/@SHARED/core";
-
 export type NodeId = string & { readonly __brand: unique symbol };
 
 export const createNodeId = (nodeId: string): NodeId => {
@@ -51,7 +49,7 @@ export const isGroupId = (groupId: string): groupId is GroupId => {
   return PATH_ID_ORDER.includes(groupId as GroupId);
 };
 
-const EDGE_ID_SEPARATOR = "➡️";
+const EDGE_ID_SEPARATOR = "->";
 
 export const toEdgeId = (edge: Edge): EdgeId => {
   return `${edge.sourceId}${EDGE_ID_SEPARATOR}${edge.targetId}` as EdgeId;
@@ -202,9 +200,27 @@ export const addEdge = (model: Model, edge: Edge): Model => {
 
 /**
  *
+ */
+const hasNode = (model: Model, nodeId: NodeId): boolean => {
+  return nodeId in model.nodes;
+};
+
+/**
  * @param model
  */
 export const addTerminal = (model: Model, terminal: Terminal): Model => {
+  if (terminal.endId === terminal.startId) {
+    return model;
+  }
+
+  if (!hasNode(model, terminal.startId)) {
+    return model;
+  }
+
+  if (!hasNode(model, terminal.endId)) {
+    return model;
+  }
+
   return {
     ...model,
     terminalsByGroupId: {
@@ -440,7 +456,7 @@ export const hasEdge = (
 /**
  * Finds the terminal associated with the inputted group.
  */
-export const findTerminalByGroupId = (
+export const toTerminalByGroupId = (
   model: Model,
   groupId: GroupId
 ): Terminal | null => {
@@ -479,6 +495,9 @@ export const findPipeByNodeId = (
   return null;
 };
 
+/**
+ *
+ */
 export const addPipe = (model: Model, pipe: Pipe): Model | null => {
   const edge = toEdge(model, pipe.edgeId);
 

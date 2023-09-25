@@ -1,15 +1,17 @@
 import { err, ok, Result } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
-import { Flow } from "../@SHARED/flow-v1";
-import { FlowGrid, FlowGridPlayUI } from "../@SHARED/flow-v1/flow-grid";
-import { bounds8x8 } from "../@SHARED/flow-v1/flow-grid/flow-grid-position";
-import { GroupId, NodeId, Terminal } from "../@SHARED/flow-v1/flow";
+import {
+  Flow,
+  FlowGrid,
+  FlowGridPosition,
+  FlowGridUIPlay,
+} from "../@SHARED/flow";
 
 /**
  * Just like a Terminal but invalid
  */
 type DraftTerminal = {
-  groupId: GroupId;
+  groupId: Flow.GroupId;
   startId: Flow.NodeId;
   endId: Flow.NodeId | null;
 };
@@ -23,7 +25,7 @@ type DraftTerminal = {
 export type CoreModel = {
   mode: "edit" | "play";
   activeGroupId: Flow.GroupId;
-  playUI: FlowGridPlayUI.Model;
+  playUI: FlowGridUIPlay.Model;
   editUI: FlowGrid.Model;
   draftTerminals: {
     [groupId in Flow.GroupId]?: DraftTerminal;
@@ -34,10 +36,10 @@ export type ClientModel = CoreModel;
 
 export type ServerModel = CoreModel;
 
-const emptyGrid = FlowGrid.initEmpty({ bounds: bounds8x8 });
+const emptyGrid = FlowGrid.init({ bounds: FlowGridPosition.bounds8x8 });
 
 export const initCore: CoreModel = {
-  playUI: FlowGridPlayUI.init(emptyGrid),
+  playUI: FlowGridUIPlay.init(emptyGrid),
   editUI: emptyGrid,
   draftTerminals: {},
   activeGroupId: Flow.PATH_ID_ORDER[0],
@@ -50,7 +52,7 @@ export const initCore: CoreModel = {
 //
 //
 
-export type ClientMsg = Req | { t: "play-ui"; c: FlowGridPlayUI.Msg };
+export type ClientMsg = Req | { t: "play-ui"; c: FlowGridUIPlay.Msg };
 
 export type ServerMsg = { t: "none" };
 
@@ -59,7 +61,7 @@ export type ToServer = Req;
 export type ToClient = Res;
 
 export type Req =
-  | { t: "input-active-group"; groupId: GroupId }
+  | { t: "input-active-group"; groupId: Flow.GroupId }
   | { t: "input-mode"; mode: ServerModel["mode"] }
   | { t: "pressed-down-node"; nodeId: Flow.NodeId };
 
@@ -67,7 +69,7 @@ export type Res = Req & {
   result: Result<string, CoreModel>;
 };
 
-export const handle = ({
+export const updateCore = ({
   msg,
   ctx,
   model,
@@ -80,104 +82,101 @@ export const handle = ({
     return err("must-be-host");
   }
 
-  const updated = updateModel({ msg, model });
+  const updated = updateCoreModel({ msg, model });
 
   return ok(updated);
 };
 
-export const updateModel = ({
+export const updateCoreModel = ({
   msg,
   model,
 }: {
   msg: Req;
   model: CoreModel;
 }): CoreModel => {
-  if (model.mode === "edit") {
-    if (msg.t === "pressed-down-node") {
-      const pressedTerminal = findDraftTerminalByNodeId(model, msg.nodeId);
+  switch (model.mode) {
+    case "edit": {
+      if (msg.t === "pressed-down-node") {
+        const pressedTerminal = findDraftTerminalByNodeId(model, msg.nodeId);
 
-      if (pressedTerminal) {
-        if (pressedTerminal.groupId === model.activeGroupId) {
-          return removeNodeFromDraftTerminal(model, msg.nodeId);
+        if (pressedTerminal) {
+          if (pressedTerminal.groupId === model.activeGroupId) {
+            return removeNodeFromDraftTerminal(model, msg.nodeId);
+          }
+
+          return { ...model, activeGroupId: pressedTerminal.groupId };
         }
 
-        return { ...model, activeGroupId: pressedTerminal.groupId };
-      }
+        const activeTerminal = model.draftTerminals[model.activeGroupId];
 
-      const activeTerminal = model.draftTerminals[model.activeGroupId];
+        if (!activeTerminal) {
+          const terminalNew: DraftTerminal = {
+            groupId: model.activeGroupId,
+            startId: msg.nodeId,
+            endId: null,
+          };
 
-      if (!activeTerminal) {
+          return addDraftTerminal(model, terminalNew);
+        }
+
         const terminalNew: DraftTerminal = {
-          groupId: model.activeGroupId,
-          startId: msg.nodeId,
-          endId: null,
+          ...activeTerminal,
+          endId: msg.nodeId,
         };
-
-        return addDraftTerminal(model, terminalNew);
+        const modelNew = addDraftTerminal(
+          {
+            ...model,
+            activeGroupId: toNextGroupId(model.activeGroupId),
+          },
+          terminalNew
+        );
+        return modelNew;
       }
 
-      const terminalNew: DraftTerminal = {
-        ...activeTerminal,
-        endId: msg.nodeId,
-      };
-      const modelNew = addDraftTerminal(
-        {
-          ...model,
-          activeGroupId: toNextGroupId(model.activeGroupId),
-        },
-        terminalNew
-      );
-      return modelNew;
-    }
+      if (msg.t === "input-mode") {
+        if (msg.mode === "play") {
+          return {
+            ...model,
+            playUI: {
+              ...model.playUI,
+            },
+            mode: "play",
+          };
+        }
 
-    if (msg.t === "input-mode") {
-      if (msg.mode === "play") {
-        return {
-          ...model,
-          playUI: {
-            ...model.playUI,
-            grid: Flow.addTerminals(
-              model.playUI.grid,
-              findValidDraftTerminals(model)
-            ),
-          },
-          mode: "play",
-        };
+        return model;
       }
 
       return model;
     }
 
-    return model;
-  }
+    case "play": {
+      if (msg.t === "input-mode")
+        if (msg.mode === "edit") {
+          return {
+            ...model,
+            mode: "edit",
+            activeGroupId: Flow.PATH_ID_ORDER[0],
+          };
+        }
 
-  if (model.mode === "play") {
-    if (msg.t === "input-mode")
-      if (msg.mode === "edit") {
-        return {
-          ...model,
-          mode: "edit",
-          activeGroupId: Flow.PATH_ID_ORDER[0],
-        };
-      }
-
-    return model;
+      return model;
+    }
   }
-  return model;
 };
 
 /**
  * Finds all the valid terminals in the draft terminals.
  */
 export const findValidDraftTerminals = (model: CoreModel) => {
-  let terminals: { [groupId in GroupId]?: Terminal } = {};
+  let terminals: { [groupId in Flow.GroupId]?: Flow.Terminal } = {};
 
   for (const draft of yieldDraftTerminals(model)) {
     if (!draft.endId) {
       continue;
     }
 
-    const terminalNew: Terminal = {
+    const terminalNew: Flow.Terminal = {
       groupId: draft.groupId,
       startId: draft.startId,
       endId: draft.endId,
@@ -240,7 +239,7 @@ export const findDraftTerminalByNodeId = (
  */
 export const removeNodeFromDraftTerminal = (
   model: CoreModel,
-  nodeId: NodeId
+  nodeId: Flow.NodeId
 ): CoreModel => {
   const terminal = findDraftTerminalByNodeId(model, nodeId);
 
