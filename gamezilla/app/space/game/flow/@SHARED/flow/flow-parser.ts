@@ -1,24 +1,17 @@
+import { has, isObj } from "gamezilla/@SHARED/core";
 import { Model, Node, Edge } from "./flow";
 
-export const isModel = (model: unknown): model is Model => {
-  return (
-    typeof model === "object" &&
-    model !== null &&
-    "nodes" in model &&
-    "edges" in model &&
-    "edgesIn" in model &&
-    "edgesOut" in model &&
-    typeof model.nodes === "object" &&
-    typeof model.edges === "object" &&
-    typeof model.edgesIn === "object" &&
-    typeof model.edgesOut === "object" &&
-    model.nodes !== null &&
-    model.edges !== null &&
-    model.edgesIn !== null &&
-    model.edgesOut !== null &&
-    Object.values(model.nodes).every(isNode) &&
-    Object.values(model.edges).every(isEdge)
-  );
+export const toModel = (x: unknown): Model | null => {
+  if (
+    isObj(x) &&
+    has(x, "nodes", isObj) &&
+    has(x, "edges", isObj) &&
+    has(x, "indexEdgesIn", isObj) &&
+    has(x, "indexEdgesOut", isObj)
+  ) {
+    return null;
+  }
+  return null;
 };
 
 export const isNode = (node: unknown): node is Node => {

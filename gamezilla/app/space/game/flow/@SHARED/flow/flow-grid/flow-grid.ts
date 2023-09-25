@@ -9,15 +9,16 @@ import { Bounds, Position, deltas, yieldRange } from "./flow-grid-position";
 //
 //
 
-export type Model = Flow.Model & {
+export type Model = {
+  flow: Flow.Model;
   bounds: Bounds;
   positions: {
     [nodeId: Flow.NodeId]: Position;
   };
 };
 
-export const positionToId = (position: Position): Flow.NodeId => {
-  return `${position.x},${position.y}` as Flow.NodeId;
+export const positionToNodeId = (position: Position): Flow.NodeId => {
+  return Flow.createNodeId(`${position.x},${position.y}`);
 };
 
 //
@@ -28,9 +29,9 @@ export const positionToId = (position: Position): Flow.NodeId => {
 //
 //
 
-export const initEmpty = ({ bounds }: { bounds: Bounds }): Model => {
+export const init = ({ bounds }: { bounds: Bounds }): Model => {
   let model: Model = {
-    ...Flow.initEmpty,
+    flow: Flow.init,
     bounds,
     positions: {},
   };
@@ -46,16 +47,16 @@ export const initEmpty = ({ bounds }: { bounds: Bounds }): Model => {
         y: nodePosition.y + delta.y,
       };
 
-      if (!model.nodes[positionToId(to)]) {
+      if (!model.flow.nodes[positionToNodeId(to)]) {
         continue;
       }
 
       const edge: Flow.Edge = {
-        source: positionToId(nodePosition),
-        target: positionToId(to),
+        sourceId: positionToNodeId(nodePosition),
+        targetId: positionToNodeId(to),
       };
 
-      model = Flow.addEdge(model, edge);
+      model.flow = Flow.addEdge(model.flow, edge);
     }
   }
 
@@ -73,15 +74,12 @@ export const initEmpty = ({ bounds }: { bounds: Bounds }): Model => {
 export type Node = Flow.Node & Position;
 
 export type Edge = Flow.Edge & {
-  nodeFrom: Node;
-  nodeTo: Node;
+  source: Node;
+  target: Node;
 };
 
-export const toNode = (
-  model: Pick<Model, "nodes" | "positions">,
-  nodeId: Flow.NodeId
-): Node | null => {
-  const node = Flow.toNode(model, nodeId);
+export const toNode = (model: Model, nodeId: Flow.NodeId): Node | null => {
+  const node = Flow.toNode(model.flow, nodeId);
 
   if (!node) {
     return null;
@@ -100,60 +98,49 @@ export const toNode = (
 };
 
 export const toEdge = (model: Model, edgeId: Flow.EdgeId): Edge | null => {
-  const edge = Flow.toEdge(model, edgeId);
+  const edge = Flow.toEdge(model.flow, edgeId);
 
   if (!edge) {
     return null;
   }
 
-  const from = toNode(model, edge.source);
+  const source = toNode(model, edge.sourceId);
 
-  if (!from) {
+  if (!source) {
     return null;
   }
 
-  const to = toNode(model, edge.target);
+  const target = toNode(model, edge.targetId);
 
-  if (!to) {
+  if (!target) {
     return null;
   }
 
   return {
     ...edge,
-    nodeFrom: from,
-    nodeTo: to,
+    source: source,
+    target: target,
   };
 };
 
-//
-//
-//
-//
-//
-//
-
+/**
+ * Adds a node to the puzzle.
+ */
 export const addNode = (model: Model, position: Position): Model => {
-  const nodeId = positionToId(position);
-  const added = Flow.addNode(model, nodeId);
+  const nodeId = positionToNodeId(position);
+  const added = Flow.addNode(model.flow, { nodeId });
   return {
-    ...added,
+    ...model,
+    flow: added,
     positions: {
-      ...added.positions,
+      ...model.positions,
       [nodeId]: position,
     },
   };
 };
 
-//
-//
-//
-//
-//
-//
-//
-
 export const yieldPositions = function* (model: Model): Generator<Position> {
-  for (const node of Flow.yieldNodes(model)) {
+  for (const node of Flow.yieldNodes(model.flow)) {
     const position = model.positions[node.nodeId];
     if (!position) {
       continue;
@@ -162,38 +149,80 @@ export const yieldPositions = function* (model: Model): Generator<Position> {
   }
 };
 
-export const yieldEdges = function* (
-  model: Pick<Model, "edges" | "nodes" | "positions">
-): Generator<Edge> {
-  for (const edge of Flow.yieldEdges(model)) {
-    const from = toNode(model, edge.source);
+export const yieldEdges = function* (model: Model): Generator<Edge> {
+  for (const edge of Flow.yieldEdges(model.flow)) {
+    const source = toNode(model, edge.sourceId);
 
-    if (!from) {
+    if (!source) {
       continue;
     }
 
-    const to = toNode(model, edge.target);
+    const target = toNode(model, edge.targetId);
 
-    if (!to) {
+    if (!target) {
       continue;
     }
 
-    yield {
-      ...edge,
-      nodeFrom: from,
-      nodeTo: to,
-    };
+    yield { ...edge, source, target };
   }
 };
 
-export const yieldNodes = function* (
-  model: Pick<Model, "nodes" | "positions">
-): Generator<Node> {
-  for (const node of Flow.yieldNodes(model)) {
+export const yieldNodes = function* (model: Model): Generator<Node> {
+  for (const node of Flow.yieldNodes(model.flow)) {
     const position = model.positions[node.nodeId];
     if (!position) {
       continue;
     }
     yield { ...position, ...node };
+  }
+};
+
+export type Terminal = Flow.Terminal & {
+  start: Node;
+  end: Node;
+};
+
+export const yieldTerminals = function* (model: Model): Generator<Terminal> {
+  for (const terminal of Flow.yieldTerminals(model.flow)) {
+    const start = toNode(model, terminal.startId);
+
+    if (!start) {
+      continue;
+    }
+
+    const end = toNode(model, terminal.endId);
+
+    if (!end) {
+      continue;
+    }
+
+    yield { ...terminal, start, end };
+  }
+};
+
+type PipeJoined = Flow.PipeJoined & {
+  source: Node;
+  target: Node;
+};
+
+export const yieldPipes = function* (model: Model): Generator<PipeJoined> {
+  for (const pipe of Flow.yieldPipes(model.flow)) {
+    const source = toNode(model, pipe.edge.sourceId);
+
+    if (!source) {
+      continue;
+    }
+
+    const target = toNode(model, pipe.edge.targetId);
+
+    if (!target) {
+      continue;
+    }
+
+    yield {
+      ...pipe,
+      source,
+      target,
+    };
   }
 };

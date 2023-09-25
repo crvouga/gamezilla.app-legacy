@@ -1,6 +1,6 @@
 import { NonEmpty } from "gamezilla/@SHARED/core";
 import * as Flow from "../flow";
-import * as FlowGrid from "./grid";
+import * as FlowGrid from "./flow-grid";
 
 export type Model = NonEmpty<NonEmpty<Flow.GroupId | null>>;
 
@@ -10,8 +10,8 @@ type DraftTerminal = {
   endId: Flow.NodeId | null;
 };
 
-export function fromShorthand(model: Model): FlowGrid.Model {
-  let grid = FlowGrid.init({
+export const fromShorthand = (model: Model): FlowGrid.Model => {
+  let grid = FlowGrid.initEmpty({
     bounds: {
       min: {
         x: 0,
@@ -24,9 +24,7 @@ export function fromShorthand(model: Model): FlowGrid.Model {
     },
   });
 
-  const draftTerminals: {
-    [groupId in Flow.GroupId]?: DraftTerminal;
-  } = {};
+  const draftTerminals: { [groupId in Flow.GroupId]?: DraftTerminal } = {};
 
   for (let y = 0; y < model.length; y++) {
     const row = model[y];
@@ -41,7 +39,7 @@ export function fromShorthand(model: Model): FlowGrid.Model {
         y,
       };
 
-      const nodeId = FlowGrid.positionToNodeId(position);
+      const nodeId = FlowGrid.positionToId(position);
 
       grid = FlowGrid.addNode(grid, position);
 
@@ -63,18 +61,15 @@ export function fromShorthand(model: Model): FlowGrid.Model {
         continue;
       }
 
-      const added = Flow.addTerminal(grid.flow, {
-        groupId: draftTerminal.groupId,
+      const terminal: Flow.Terminal = {
+        groupId,
         startId: draftTerminal.startId,
         endId: nodeId,
-      });
-
-      grid = {
-        ...grid,
-        flow: added,
       };
+
+      grid = Flow.addTerminal(grid, terminal);
     }
   }
 
   return grid;
-}
+};

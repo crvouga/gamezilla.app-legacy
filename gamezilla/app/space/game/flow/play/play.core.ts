@@ -1,4 +1,4 @@
-import { FlowGridPlayUI, flowGridSamples } from "../@SHARED/flow-v2";
+import { FlowGridPlayUI, flowGridSamples } from "../@SHARED/flow";
 
 //
 //

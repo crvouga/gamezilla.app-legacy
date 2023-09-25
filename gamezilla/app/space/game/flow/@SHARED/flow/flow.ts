@@ -1,4 +1,10 @@
+import { Result } from "gamezilla/@SHARED/core";
+
 export type NodeId = string & { readonly __brand: unique symbol };
+
+export const createNodeId = (nodeId: string): NodeId => {
+  return nodeId as NodeId;
+};
 
 export type EdgeId = string & { readonly __brand: unique symbol };
 
@@ -45,21 +51,17 @@ export const isGroupId = (groupId: string): groupId is GroupId => {
   return PATH_ID_ORDER.includes(groupId as GroupId);
 };
 
+const EDGE_ID_SEPARATOR = "➡️";
+
 export const toEdgeId = (edge: Edge): EdgeId => {
-  return `${edge.source}->${edge.target}` as EdgeId;
+  return `${edge.sourceId}${EDGE_ID_SEPARATOR}${edge.targetId}` as EdgeId;
 };
 
-export const isEdgeId = (
-  model: Pick<Model, "edges">,
-  edgeId: string
-): edgeId is EdgeId => {
+export const isEdgeId = (model: Model, edgeId: string): edgeId is EdgeId => {
   return edgeId in model.edges;
 };
 
-export const isNodeId = (
-  model: Pick<Model, "nodes">,
-  nodeId: string
-): nodeId is NodeId => {
+export const isNodeId = (model: Model, nodeId: string): nodeId is NodeId => {
   return nodeId in model.nodes;
 };
 
@@ -73,74 +75,49 @@ export const isNodeId = (
  */
 export type Model = {
   /**
-   * Represents each cell in the puzzle
+   * The set of all valid nodes in the puzzle.
    */
   nodes: {
     [nodeId: NodeId]: Node;
   };
 
   /**
-   * Represents all the valid connections between two nodes.
+   * The set of all valid connections between nodes.
    */
   edges: {
     [edgeId: EdgeId]: Edge;
   };
 
   /**
-   * Represents the start and end node of a path.
+   * Represents the start and end nodes for each group.
    */
-  terminals: {
+  terminalsByGroupId: {
     [groupId in GroupId]?: Terminal;
   };
 
   /**
-   * For performance, we index all edges that go into a node.
-   *
-   * Node: •
-   * Edge: ->
-   *
-   * -> • <-
-   *
-   **/
-  indexEdgesIn: {
-    [targetId: NodeId]: {
-      [sourceId: NodeId]: EdgeId;
-    };
-  };
-
-  /**
-   * For performance, we index all edges that go out of a node.
-   *
-   * Node: •
-   * Edge: ->
-   *
-   * <- • ->
-   **/
-  indexEdgesOut: {
-    [sourceId: NodeId]: {
-      [targetId: NodeId]: EdgeId;
-    };
+   * Represents the pipes that are connected to each node.
+   * We index each pipe with pipe's source node
+   * so that it's impossible for a node to be associated with more than one group
+   */
+  pipesBySourceId: {
+    [sourceId: NodeId]: Pipe;
   };
 };
 
 /**
- * Represents a connection between two nodes.
+ *
  */
-export type Edge = {
-  source: NodeId;
-  target: NodeId;
-  groupId?: GroupId | null;
+export const init: Model = {
+  nodes: {},
+  edges: {},
+  terminalsByGroupId: {},
+  pipesBySourceId: {},
 };
 
 /**
- * Represents each cell in the puzzle
- */
-export type Node = {
-  nodeId: NodeId;
-};
-
-/**
- * Represents the start and end node of a path.
+ * A terminal represents the start and end nodes for a group.
+ * These are the two circles the user is trying to connect
  */
 export type Terminal = {
   groupId: GroupId;
@@ -149,34 +126,45 @@ export type Terminal = {
 };
 
 /**
- *
- *
+ * A `Pipe` associates an edge with a group.
+ * These are the lines the user draws in the puzzle.
  */
-export const initEmpty: Model = {
-  nodes: {},
-  terminals: {},
-  edges: {},
-  indexEdgesIn: {},
-  indexEdgesOut: {},
+export type Pipe = {
+  groupId: GroupId;
+  edgeId: EdgeId;
+};
+
+export type PipeJoined = Pipe & {
+  edge: Edge;
+};
+
+/**
+ * Represents a connection between two nodes.
+ */
+export type Edge = {
+  sourceId: NodeId;
+  targetId: NodeId;
+};
+
+export type Node = {
+  nodeId: NodeId;
+};
+
+export const toNodes = (model: Model): { [nodeId: NodeId]: Node } => {
+  return model.nodes;
 };
 
 /**
  * Finds node
  */
-export const toNode = (
-  model: Pick<Model, "nodes">,
-  nodeId: NodeId
-): Node | null => {
-  return model.nodes[nodeId] ?? null;
+export const toNode = (model: Model, nodeId: NodeId): Node | null => {
+  return toNodes(model)[nodeId] ?? null;
 };
 
 /**
  * Finds edge
  */
-export const toEdge = (
-  model: Pick<Model, "edges">,
-  edgeId: EdgeId
-): Edge | null => {
+export const toEdge = (model: Model, edgeId: EdgeId): Edge | null => {
   const edge = model.edges[edgeId];
 
   if (!edge) {
@@ -189,12 +177,12 @@ export const toEdge = (
 /**
  * Adds a node to the puzzle.
  */
-export const addNode = <T extends Model>(model: T, nodeId: NodeId): T => {
+export const addNode = (model: Model, node: Node): Model => {
   return {
     ...model,
     nodes: {
       ...model.nodes,
-      [nodeId]: { nodeId },
+      [node.nodeId]: node,
     },
   };
 };
@@ -202,118 +190,34 @@ export const addNode = <T extends Model>(model: T, nodeId: NodeId): T => {
 /**
  * Adds an edge to the puzzle.
  */
-export const addEdge = <T extends Model>(model: T, edge: Edge): T => {
+export const addEdge = (model: Model, edge: Edge): Model => {
   return {
     ...model,
     edges: {
       ...model.edges,
       [toEdgeId(edge)]: edge,
     },
-    indexEdgesIn: {
-      ...model.indexEdgesIn,
-      [edge.target]: {
-        ...model.indexEdgesIn[edge.target],
-        [edge.source]: toEdgeId(edge),
-      },
-    },
-    indexEdgesOut: {
-      ...model.indexEdgesOut,
-      [edge.source]: {
-        ...model.indexEdgesOut[edge.source],
-        [edge.target]: toEdgeId(edge),
-      },
-    },
   };
 };
 
 /**
- * Adds a terminal to the puzzle.
+ *
+ * @param model
  */
-export const addTerminal = <T extends Model>(
-  model: T,
-  terminal: Terminal
-): T => {
+export const addTerminal = (model: Model, terminal: Terminal): Model => {
   return {
-    ...addNode(addNode(model, terminal.startId), terminal.endId),
-    terminals: {
-      ...model.terminals,
+    ...model,
+    terminalsByGroupId: {
+      ...model.terminalsByGroupId,
       [terminal.groupId]: terminal,
     },
   };
 };
 
-export const addTerminals = <T extends Model>(
-  model: T,
-  terminals: Model["terminals"]
-): T => {
-  return Object.values(terminals).reduce(addTerminal, model);
-};
-
-/**
- * Sets the start node of the inputted terminal
- */
-export const setStartNode = <T extends Model>(
-  model: T,
-  terminal: Terminal,
-  nodeId: NodeId
-): T => {
-  const terminalNew: Terminal = {
-    ...terminal,
-    startId: nodeId,
-    endId: terminal.endId === nodeId ? terminal.startId : terminal.endId,
-  };
-  return addTerminal(model, terminalNew);
-};
-
-/**
- * Associates an edge with the inputted path.
- */
-export const setEdgePath = <T extends Model>(
-  model: T,
-  edgeId: EdgeId,
-  groupId: GroupId | null
-): T => {
-  const edge = model.edges[edgeId];
-
-  if (!edge) {
-    return model;
-  }
-
-  const edgeNew: Edge = {
-    ...edge,
-    groupId: groupId,
-  };
-
-  return addEdge(model, edgeNew);
-};
-
-/**
- * Yields all terminals in the model.
- */
-export const yieldTerminals = function* <T extends Model>(
-  model: Pick<T, "terminals">
-): Generator<Terminal> {
-  for (const groupId in model.terminals) {
-    if (!isGroupId(groupId)) {
-      continue;
-    }
-
-    const terminal = model.terminals[groupId];
-
-    if (!terminal) {
-      continue;
-    }
-
-    yield terminal;
-  }
-};
-
 /**
  * Yields all nodes in the model.
  */
-export const yieldNodes = function* (
-  model: Pick<Model, "nodes">
-): Generator<Node> {
+export const yieldNodes = function* (model: Model): Generator<Node> {
   for (const nodeId in model.nodes) {
     if (!isNodeId(model, nodeId)) {
       continue;
@@ -328,13 +232,100 @@ export const yieldNodes = function* (
 };
 
 /**
+ *
+ */
+
+export const yieldPipes = function* (model: Model): Generator<PipeJoined> {
+  for (const nodeId in model.pipesBySourceId) {
+    if (!isNodeId(model, nodeId)) {
+      continue;
+    }
+
+    const pipe = model.pipesBySourceId[nodeId];
+
+    if (!pipe) {
+      continue;
+    }
+
+    const edge = toEdge(model, pipe.edgeId);
+
+    if (!edge) {
+      continue;
+    }
+
+    yield {
+      ...pipe,
+      edge,
+    };
+  }
+};
+
+/**
  * Yields all edges in the model.
  */
-export const yieldEdges = function* (
-  model: Pick<Model, "edges">
-): Generator<Edge> {
+export const yieldEdges = function* (model: Model): Generator<Edge> {
   for (const edgeId in model.edges) {
     if (!isEdgeId(model, edgeId)) {
+      continue;
+    }
+
+    const edge = toEdge(model, edgeId);
+
+    if (!edge) {
+      continue;
+    }
+
+    yield edge;
+  }
+};
+
+export const toIndexEdgesOut = (model: Model) => {
+  let indexEdgesOut: { [sourceId: NodeId]: { [targetId: NodeId]: EdgeId } } =
+    {};
+
+  for (const edge of yieldEdges(model)) {
+    indexEdgesOut = {
+      ...indexEdgesOut,
+      [edge.sourceId]: {
+        ...indexEdgesOut[edge.sourceId],
+        [edge.targetId]: toEdgeId(edge),
+      },
+    };
+  }
+  return indexEdgesOut;
+};
+
+export const toIndexEdgesIn = (model: Model) => {
+  let indexEdgesIn: { [targetId: NodeId]: { [sourceId: NodeId]: EdgeId } } = {};
+
+  for (const edge of yieldEdges(model)) {
+    indexEdgesIn = {
+      ...indexEdgesIn,
+      [edge.targetId]: {
+        ...indexEdgesIn[edge.targetId],
+        [edge.sourceId]: toEdgeId(edge),
+      },
+    };
+  }
+  return indexEdgesIn;
+};
+
+/**
+ * Yields all edges where the inputted node is the source node
+ */
+export const yieldEdgesOut = function* (
+  model: Model,
+  sourceNodeId: NodeId
+): Iterable<Edge> {
+  const indexEdgesOut = toIndexEdgesOut(model);
+  for (const targetId in indexEdgesOut[sourceNodeId]) {
+    if (!isNodeId(model, targetId)) {
+      continue;
+    }
+
+    const edgeId = indexEdgesOut[sourceNodeId]?.[targetId];
+
+    if (!edgeId) {
       continue;
     }
 
@@ -351,44 +342,17 @@ export const yieldEdges = function* (
 /**
  * Yields all edges where the inputted node is the source node
  */
-export const yieldOutEdges = function* (
-  model: Pick<Model, "indexEdgesOut" | "edges" | "nodes">,
-  sourceNodeId: NodeId
-): Generator<Edge> {
-  for (const outNodeId in model.indexEdgesOut[sourceNodeId]) {
-    if (!isNodeId(model, outNodeId)) {
-      continue;
-    }
-
-    const edgeId = model.indexEdgesOut[sourceNodeId]?.[outNodeId];
-
-    if (!edgeId) {
-      continue;
-    }
-
-    const edge = toEdge(model, edgeId);
-
-    if (!edge) {
-      continue;
-    }
-
-    yield edge;
-  }
-};
-
-/**
- * Yields all edges where the inputted node is the target node
- */
-export const yieldInEdges = function* (
-  model: Pick<Model, "indexEdgesIn" | "edges" | "nodes">,
+export const yieldEdgesIn = function* (
+  model: Model,
   targetNodeId: NodeId
-): Generator<Edge> {
-  for (const sourceNodeId in model.indexEdgesIn[targetNodeId]) {
-    if (!isNodeId(model, sourceNodeId)) {
+): Iterable<Edge> {
+  const indexEdgesIn = toIndexEdgesIn(model);
+  for (const sourceId in indexEdgesIn[targetNodeId]) {
+    if (!isNodeId(model, sourceId)) {
       continue;
     }
 
-    const edgeId = model.indexEdgesIn[targetNodeId]?.[sourceNodeId];
+    const edgeId = indexEdgesIn[targetNodeId]?.[sourceId];
 
     if (!edgeId) {
       continue;
@@ -405,38 +369,166 @@ export const yieldInEdges = function* (
 };
 
 /**
- * Finds the terminal that contains the inputted node.
+ *
  */
-export const findTerminal = (
-  model: Pick<Model, "terminals">,
+export const yieldTerminals = function* (model: Model): Iterable<Terminal> {
+  for (const groupId in model.terminalsByGroupId) {
+    if (!isGroupId(groupId)) {
+      continue;
+    }
+
+    const terminal = model.terminalsByGroupId[groupId];
+
+    if (!terminal) {
+      continue;
+    }
+
+    yield terminal;
+  }
+};
+
+/**
+ *
+ */
+export const toGroupId = (model: Model, nodeId: NodeId): GroupId | null => {
+  for (const terminal of yieldTerminals(model)) {
+    if (terminal.startId === nodeId) {
+      return terminal.groupId;
+    }
+    if (terminal.endId === nodeId) {
+      return terminal.groupId;
+    }
+  }
+
+  for (const pipe of yieldPipes(model)) {
+    if (pipe.edge.sourceId === nodeId) {
+      return pipe.groupId;
+    }
+    if (pipe.edge.targetId === nodeId) {
+      return pipe.groupId;
+    }
+  }
+  return null;
+};
+
+export const toPipeBySourceId = (
+  model: Model,
+  sourceId: NodeId
+): PipeJoined | null => {
+  const pipe = model.pipesBySourceId[sourceId];
+  if (!pipe) {
+    return null;
+  }
+  const edge = toEdge(model, pipe.edgeId);
+  if (!edge) {
+    return null;
+  }
+  return {
+    ...pipe,
+    edge,
+  };
+};
+
+export const hasEdge = (
+  model: Model,
+  sourceId: NodeId,
+  targetId: NodeId
+): boolean => {
+  return toEdgeId({ sourceId, targetId }) in model.edges;
+};
+
+/**
+ * Finds the terminal associated with the inputted group.
+ */
+export const findTerminalByGroupId = (
+  model: Model,
+  groupId: GroupId
+): Terminal | null => {
+  return model.terminalsByGroupId[groupId] ?? null;
+};
+
+/**
+ * Find the terminal where the inputted node id is either the start or end node.
+ */
+export const findTerminalByNodeId = (
+  model: Model,
   nodeId: NodeId
 ): Terminal | null => {
-  for (const pathTerminal of yieldTerminals(model)) {
-    if (pathTerminal.startId === nodeId || pathTerminal.endId === nodeId) {
-      return pathTerminal;
+  for (const terminal of yieldTerminals(model)) {
+    if (terminal.startId === nodeId) {
+      return terminal;
+    }
+    if (terminal.endId === nodeId) {
+      return terminal;
+    }
+  }
+  return null;
+};
+export const findPipeByNodeId = (
+  model: Model,
+  nodeId: NodeId
+): PipeJoined | null => {
+  for (const pipe of yieldPipes(model)) {
+    if (pipe.edge.sourceId === nodeId) {
+      return pipe;
+    }
+    if (pipe.edge.targetId === nodeId) {
+      return pipe;
     }
   }
   return null;
 };
 
-/**
- * Finds the path id that the inputted node is associated with.
- */
-export const findGroup = (
-  model: Pick<Model, "indexEdgesIn" | "indexEdgesOut" | "edges" | "nodes">,
-  nodeId: NodeId
-): GroupId | null => {
-  for (const edge of yieldInEdges(model, nodeId)) {
-    if (edge.groupId) {
-      return edge.groupId;
-    }
+export const addPipe = (model: Model, pipe: Pipe): Model | null => {
+  const edge = toEdge(model, pipe.edgeId);
+
+  if (!edge) {
+    return null;
   }
 
-  for (const edge of yieldOutEdges(model, nodeId)) {
-    if (edge.groupId) {
-      return edge.groupId;
-    }
+  return {
+    ...model,
+    pipesBySourceId: {
+      ...model.pipesBySourceId,
+      [edge.sourceId]: pipe,
+    },
+  };
+};
+
+export const findGroupIdByNodeId = (
+  model: Model,
+  nodeId: NodeId
+): GroupId | null => {
+  const terminal = findTerminalByNodeId(model, nodeId);
+
+  if (terminal) {
+    return terminal.groupId;
+  }
+
+  const pipe = findPipeByNodeId(model, nodeId);
+
+  if (pipe) {
+    return pipe.groupId;
   }
 
   return null;
+};
+
+/**
+ * Flips the start and end nodes of the inputted terminal.
+ */
+export const flipTerminal = (model: Model, terminal: Terminal): Model => {
+  const terminalNew: Terminal = {
+    ...terminal,
+    startId: terminal.endId,
+    endId: terminal.startId,
+  };
+
+  return {
+    ...model,
+    terminalsByGroupId: {
+      ...model.terminalsByGroupId,
+      [terminal.groupId]: terminalNew,
+    },
+  };
 };

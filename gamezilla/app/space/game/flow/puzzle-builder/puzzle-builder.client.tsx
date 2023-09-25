@@ -7,7 +7,7 @@ import {
 } from "gamezilla/app/@SHARED/ui";
 import { SpaceGameClient } from "gamezilla/app/space/@SHARED";
 import { ViewBottomButtonBar } from "gamezilla/app/space/game/@SHARED";
-import { FlowGridPlayUI, FlowGridUI, FlowUI } from "../@SHARED/flow";
+import { FlowGridPlayUI, FlowGridUI, FlowUI } from "../@SHARED/flow-v1";
 import { FlowViewCtx } from "../@SHARED/flow-ctx";
 import {
   ClientModel,

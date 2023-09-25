@@ -2,7 +2,7 @@ import { Sub, chain } from "gamezilla/@SHARED/core";
 import { Button, IconArrowLeftOnRect } from "gamezilla/app/@SHARED/ui";
 import { SpaceGameClient } from "gamezilla/app/space/@SHARED";
 import { FlowViewCtx } from "../@SHARED/flow-ctx";
-import { FlowGridPlayUI } from "../@SHARED/flow-v2";
+import { FlowGridPlayUI } from "../@SHARED/flow";
 import {
   ClientModel,
   ClientMsg,

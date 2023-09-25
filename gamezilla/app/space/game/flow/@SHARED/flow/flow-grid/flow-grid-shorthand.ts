@@ -10,8 +10,8 @@ type DraftTerminal = {
   endId: Flow.NodeId | null;
 };
 
-export const fromShorthand = (model: Model): FlowGrid.Model => {
-  let grid = FlowGrid.initEmpty({
+export function fromShorthand(model: Model): FlowGrid.Model {
+  let grid = FlowGrid.init({
     bounds: {
       min: {
         x: 0,
@@ -24,7 +24,9 @@ export const fromShorthand = (model: Model): FlowGrid.Model => {
     },
   });
 
-  const draftTerminals: { [groupId in Flow.GroupId]?: DraftTerminal } = {};
+  const draftTerminals: {
+    [groupId in Flow.GroupId]?: DraftTerminal;
+  } = {};
 
   for (let y = 0; y < model.length; y++) {
     const row = model[y];
@@ -39,7 +41,7 @@ export const fromShorthand = (model: Model): FlowGrid.Model => {
         y,
       };
 
-      const nodeId = FlowGrid.positionToId(position);
+      const nodeId = FlowGrid.positionToNodeId(position);
 
       grid = FlowGrid.addNode(grid, position);
 
@@ -61,15 +63,18 @@ export const fromShorthand = (model: Model): FlowGrid.Model => {
         continue;
       }
 
-      const terminal: Flow.Terminal = {
-        groupId,
+      const added = Flow.addTerminal(grid.flow, {
+        groupId: draftTerminal.groupId,
         startId: draftTerminal.startId,
         endId: nodeId,
-      };
+      });
 
-      grid = Flow.addTerminal(grid, terminal);
+      grid = {
+        ...grid,
+        flow: added,
+      };
     }
   }
 
   return grid;
-};
+}

@@ -1,7 +1,7 @@
 import { GroupId } from "./flow";
 
 // source: https://tailwindcss.com/docs/customizing-colors
-const COLOR_TO_HEX = {
+const colorToHexMap = {
   red: "#FE0500",
   orange: "#ea580c",
   amber: "#d97706",
@@ -21,7 +21,7 @@ const COLOR_TO_HEX = {
   rose: "#e11d48",
 } as const;
 
-export const GROUP_ID_TO_COLOR: { [groupId in GroupId]: Color } = {
+export const groupIdToColor: { [groupId in GroupId]: Color } = {
   A: "red",
   B: "blue",
   C: "yellow",
@@ -41,19 +41,17 @@ export const GROUP_ID_TO_COLOR: { [groupId in GroupId]: Color } = {
   Q: "rose",
 };
 
-const ALL_COLORS = Object.keys(COLOR_TO_HEX) as Color[];
-
 const colorToHex = (color: Color): string => {
-  return COLOR_TO_HEX[color];
+  return colorToHexMap[color];
 };
 
-export type Color = keyof typeof COLOR_TO_HEX;
+export type Color = keyof typeof colorToHexMap;
 
 const isColor = (value: string): value is Color => {
-  return value in COLOR_TO_HEX;
+  return value in colorToHexMap;
 };
 
-const COLOR_TO_EMOJI: { [key in Color]: Emoji } = {
+const colorToEmojiMap: { [key in Color]: Emoji } = {
   blue: "🔵",
   violet: "🍇",
   red: "🔴",
@@ -74,8 +72,10 @@ const COLOR_TO_EMOJI: { [key in Color]: Emoji } = {
 };
 
 const colorToEmoji = (color: Color): Emoji => {
-  return COLOR_TO_EMOJI[color];
+  return colorToEmojiMap[color];
 };
+
+const allColors = Object.keys(colorToHexMap) as Color[];
 
 export type Emoji =
   | "🔵" // blue
@@ -96,7 +96,7 @@ export type Emoji =
   | "🌹" // rose
   | "💜"; // fuchsia
 
-const EMOJI_TO_COLOR_MAP: { [key in Emoji]: Color } = {
+const emojiToColorMap: { [key in Emoji]: Color } = {
   "🔵": "blue",
   "🍇": "violet",
   "🔴": "red",
@@ -116,14 +116,14 @@ const EMOJI_TO_COLOR_MAP: { [key in Emoji]: Color } = {
   "💜": "fuchsia",
 };
 
-const ALL_EMOJI = Object.keys(EMOJI_TO_COLOR_MAP) as Emoji[];
+const allEmoji = Object.keys(emojiToColorMap) as Emoji[];
 
 const emojiToColor = (emoji: Emoji): Color => {
-  return EMOJI_TO_COLOR_MAP[emoji];
+  return emojiToColorMap[emoji];
 };
 
 export const isEmoji = (value: string): value is Emoji => {
-  return value in EMOJI_TO_COLOR_MAP;
+  return value in emojiToColorMap;
 };
 
 const emojiToHex = (emoji: Emoji): string => {
@@ -133,17 +133,17 @@ const emojiToHex = (emoji: Emoji): string => {
 export const Emoji = {
   is: isEmoji,
   fromColor: colorToEmoji,
-  all: ALL_EMOJI,
+  all: allEmoji,
   toHex: emojiToHex,
 };
 
 export const Color = {
   is: isColor,
   fromEmoji: emojiToColor,
-  all: ALL_COLORS,
+  all: allColors,
   toHex: colorToHex,
-  groupIdToColor: GROUP_ID_TO_COLOR,
+  groupIdToColor,
   groupIdToHex: (groupId: GroupId): string => {
-    return colorToHex(GROUP_ID_TO_COLOR[groupId]);
+    return colorToHex(groupIdToColor[groupId]);
   },
 };

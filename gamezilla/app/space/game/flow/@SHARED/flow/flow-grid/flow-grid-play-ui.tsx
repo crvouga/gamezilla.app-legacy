@@ -1,7 +1,8 @@
 import { Eff } from "gamezilla/@SHARED/core";
-import { Flow, AlgoDrawPath, AlgoAutocompletePath } from "..";
+import { Flow } from "..";
 import * as FlowGrid from "./flow-grid";
 import * as FlowGridUI from "./flow-grid-ui";
+import { AlgoDrawPipes } from "../algo";
 
 //
 //
@@ -16,18 +17,22 @@ export type Model = {
   state: State;
 };
 
-type State =
-  | { t: "idle" }
-  | {
-      t: "dragging";
-      activeGroupId: Flow.GroupId;
-      autocompleteEdge?: FlowGrid.Edge | null;
-    };
+type Idle = { t: "idle" };
 
-export const init = (grid: FlowGrid.Model): Model => ({
-  state: { t: "idle" },
-  grid,
-});
+type Dragging = {
+  t: "dragging";
+  activeGroupId: Flow.GroupId;
+  autocompleteEdge?: FlowGrid.Edge | null;
+};
+
+type State = Idle | Dragging;
+
+export const init = (grid: FlowGrid.Model): Model => {
+  return {
+    state: { t: "idle" },
+    grid,
+  };
+};
 
 //
 //
@@ -65,91 +70,100 @@ export const updateModel = ({
   msg: Msg;
   model: Model;
 }): Model => {
-  if (model.state.t === "idle") {
-    if (msg.t === "pressed-down-node") {
-      const pressedNodeId = msg.nodeId;
-
-      const groupId = Flow.findGroup(model.grid, pressedNodeId);
-
-      const terminal = Flow.findTerminal(model.grid, pressedNodeId);
-
-      const activeGroupId = groupId ?? terminal?.groupId ?? null;
-
-      if (!activeGroupId) {
-        return {
-          ...model,
-          state: { t: "idle" },
-        };
-      }
-
-      return {
-        ...model,
-        grid: AlgoDrawPath.startPath(model.grid, pressedNodeId),
-        state: {
-          t: "dragging",
-          activeGroupId,
-          autocompleteEdge: null,
-        },
-      };
+  switch (model.state.t) {
+    case "dragging": {
+      return updateDragging({ msg, model, state: model.state });
     }
 
-    return model;
+    case "idle": {
+      return updateIdle({ msg, model });
+    }
   }
+};
 
-  if (model.state.t === "dragging") {
-    if (msg.t === "dragged-over") {
-      const gridNew = AlgoDrawPath.extendPath(
-        model.grid,
-        model.state.activeGroupId,
+const updateIdle = ({ msg, model }: { msg: Msg; model: Model }): Model => {
+  switch (msg.t) {
+    case "dragged-over": {
+      return model;
+    }
+
+    case "mouse-leave": {
+      return model;
+    }
+
+    case "pressed-down-node": {
+      const groupId = Flow.toGroupId(model.grid.flow, msg.nodeId);
+
+      if (!groupId) {
+        return model;
+      }
+
+      const started = AlgoDrawPipes.startDrawPipes(
+        model.grid.flow,
+        groupId,
         msg.nodeId
       );
 
-      const autocompleteEdge = AlgoAutocompletePath.toAutocompleteEdge(
-        gridNew,
-        model.state.activeGroupId
-      );
-
-      const autocompleteGridEdge = autocompleteEdge
-        ? FlowGrid.toEdge(gridNew, Flow.toEdgeId(autocompleteEdge))
-        : null;
-
       return {
         ...model,
-        grid: gridNew,
-        state: {
-          ...model.state,
-          autocompleteEdge: autocompleteGridEdge,
+        grid: {
+          ...model.grid,
+          flow: started,
         },
+        state: { t: "dragging", activeGroupId: groupId },
       };
     }
 
-    if (msg.t === "pressed-up") {
-      return { ...addAutocompleteEdge(model), state: { t: "idle" } };
+    case "pressed-up": {
+      return model;
     }
-
-    if (msg.t === "mouse-leave") {
-      return { ...addAutocompleteEdge(model), state: { t: "idle" } };
-    }
-
-    return model;
   }
-
-  return model;
 };
 
-const addAutocompleteEdge = (model: Model): Model => {
-  if (model.state.t === "dragging" && model.state.autocompleteEdge) {
-    const gridNew = AlgoDrawPath.extendPath(
-      model.grid,
-      model.state.activeGroupId,
-      model.state.autocompleteEdge.target
-    );
-    return {
-      ...model,
-      grid: gridNew,
-    };
+const updateDragging = ({
+  msg,
+  state,
+  model,
+}: {
+  msg: Msg;
+  model: Model;
+  state: Dragging;
+}): Model => {
+  switch (msg.t) {
+    case "dragged-over": {
+      const { nodeId } = msg;
+
+      const extended = AlgoDrawPipes.drawPipes(
+        model.grid.flow,
+        state.activeGroupId,
+        nodeId
+      );
+
+      const gridNew: FlowGrid.Model = {
+        ...model.grid,
+        flow: extended,
+      };
+
+      const modelNew: Model = {
+        ...model,
+        grid: gridNew,
+      };
+
+      return modelNew;
+    }
+
+    case "pressed-down-node": {
+      return model;
+    }
+
+    case "mouse-leave": {
+      return { ...model, state: { t: "idle" } };
+    }
+
+    case "pressed-up": {
+      return { ...model, state: { t: "idle" } };
+    }
   }
-  return model;
 };
 
 //
@@ -168,25 +182,29 @@ export const View = ({
   dispatch: (m: Msg) => void;
 }) => {
   return (
-    <FlowGridUI.View
-      model={{ ...model.grid, draftTerminals: model.grid.terminals }}
-      onDraggedOver={(nodeId) => dispatch({ t: "dragged-over", nodeId })}
-      onPressDown={(nodeId) => dispatch({ t: "pressed-down-node", nodeId })}
-      onPressUp={(nodeId) => dispatch({ t: "pressed-up", nodeId })}
-      autocompleteEdge={
-        model.state.t === "dragging" && model.state.autocompleteEdge
-          ? {
-              ...model.state.autocompleteEdge,
-              groupId: model.state.activeGroupId,
-            }
-          : null
-      }
-      className={
-        model.state.t === "dragging" ? "cursor-grabbing" : "cursor-grab"
-      }
-      isActive={({ groupId }) =>
-        model.state.t === "dragging" && model.state.activeGroupId === groupId
-      }
-    />
+    <div className="flex w-full flex-col gap-4 overflow-y-auto">
+      <FlowGridUI.View
+        model={model.grid}
+        showCoordinates
+        isDragging={model.state.t === "dragging"}
+        onDraggedOver={(nodeId) => dispatch({ t: "dragged-over", nodeId })}
+        onPressDown={(nodeId) => dispatch({ t: "pressed-down-node", nodeId })}
+        onPressUp={(nodeId) => dispatch({ t: "pressed-up", nodeId })}
+        autocompleteEdge={
+          model.state.t === "dragging" && model.state.autocompleteEdge
+            ? {
+                ...model.state.autocompleteEdge,
+                groupId: model.state.activeGroupId,
+              }
+            : null
+        }
+        className={
+          model.state.t === "dragging" ? "cursor-grabbing" : "cursor-grab"
+        }
+        isActive={({ groupId }) =>
+          model.state.t === "dragging" && model.state.activeGroupId === groupId
+        }
+      />
+    </div>
   );
 };
