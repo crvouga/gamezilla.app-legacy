@@ -97,7 +97,7 @@ export type Model = {
 
   /**
    * Represents the pipes that are connected to each node.
-   * We associate a pipe with a node by the pipe's source node.
+   * We index each pipe with pipe's source node
    * so that it's impossible for a node to be associated with more than one group
    */
   pipesBySourceId: {
