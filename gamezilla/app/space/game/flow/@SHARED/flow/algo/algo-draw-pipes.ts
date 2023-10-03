@@ -1,6 +1,6 @@
 import { p } from "gamezilla/@SHARED/core";
 import * as Flow from "../flow";
-import { findShortestEmptyPipeline } from "./algo-find-shortest-path";
+import { takeWhile } from "./utils";
 
 /**
  * A `Pipeline` represents the sequence of nodes the user draws when connecting terminals.
@@ -251,35 +251,110 @@ const addPipeline = (
 };
 
 /**
- * Utility function that takes items from the inputted array until the predicate returns false
+ * Returns a list of nodes without a groupId that form the shortest path between the source and target nodes.
  */
-export const takeWhile = <T>(
-  arr: Iterable<T>,
-  predicate: (item: T) => boolean
-): T[] => {
-  const results: T[] = [];
-  for (const item of arr) {
-    if (!predicate(item)) {
-      break;
-    }
-    results.push(item);
-  }
-  return results;
-};
+export const findShortestEmptyPipeline = (
+  model: Flow.Model,
+  sourceId: Flow.NodeId,
+  targetId: Flow.NodeId
+): Flow.NodeId[] => {
+  const sourceGroupId = Flow.findGroupIdByNodeId(model, sourceId);
 
-/**
- * Utility function that takes items from the inputted array until the predicate returns false
- */
-export const takeWhileInclusive = <T>(
-  arr: Iterable<T>,
-  predicate: (item: T) => boolean
-): T[] => {
-  const results: T[] = [];
-  for (const item of arr) {
-    results.push(item);
-    if (!predicate(item)) {
+  if (!sourceGroupId) {
+    return [];
+  }
+
+  const terminal = Flow.toTerminalByGroupId(model, sourceGroupId);
+
+  //
+  //
+  //  Construct the breadth first tree
+  //
+  //
+
+  const queue: Flow.NodeId[] = [];
+  const visited = new Set<Flow.NodeId>();
+  const tree: { [id: Flow.NodeId]: { parent?: Flow.NodeId } } = {};
+
+  visited.add(sourceId);
+  queue.push(sourceId);
+
+  while (true) {
+    const currentId = queue.shift();
+
+    if (!currentId) {
       break;
     }
+
+    visited.add(currentId);
+
+    if (currentId === targetId) {
+      break;
+    }
+
+    if (currentId === terminal?.endId) {
+      break;
+    }
+
+    for (const outEdge of Flow.yieldEdgesOut(model, currentId)) {
+      const adjacentId = outEdge.targetId;
+
+      if (visited.has(adjacentId)) {
+        continue;
+      }
+
+      const adjacentPipe = Flow.findPipeByNodeId(model, adjacentId);
+
+      if (adjacentPipe) {
+        continue;
+      }
+
+      const adjacentTerminal = Flow.findTerminalByNodeId(model, adjacentId);
+
+      if (adjacentTerminal && adjacentTerminal.groupId !== sourceGroupId) {
+        continue;
+      }
+
+      queue.push(adjacentId);
+      tree[adjacentId] = { parent: currentId };
+    }
   }
-  return results;
+
+  // Construct the path from the breadth first tree
+
+  let current = targetId;
+  const nodePath: Flow.NodeId[] = [current];
+
+  while (current !== sourceId) {
+    const parent = tree[current]?.parent;
+
+    if (!parent) {
+      break;
+    }
+
+    nodePath.push(parent);
+    current = parent;
+  }
+
+  nodePath.reverse();
+
+  // Convert node path to edge path
+
+  const path: Flow.EdgeId[] = [];
+
+  for (let i = 0; i < nodePath.length; i++) {
+    const from = nodePath[i];
+    if (!from) {
+      continue;
+    }
+    const to = nodePath[i + 1];
+    if (!to) {
+      continue;
+    }
+    path.push(Flow.toEdgeId({ sourceId: from, targetId: to }));
+  }
+
+  // Done
+
+  return nodePath;
 };

@@ -22,6 +22,7 @@ export const View = ({
   className,
   autocompleteEdge,
   showCoordinates,
+  onLeave,
 }: {
   className?: string;
   model: FlowGrid.Model;
@@ -47,6 +48,14 @@ export const View = ({
     lastDraggedOver = nodeId;
     onDraggedOver?.(nodeId);
   };
+  const left = () => {
+    if (!isDragging) {
+      return;
+    }
+    lastDraggedOver = null;
+    onLeave?.();
+  };
+
   return (
     <svg
       className={cn(
@@ -64,7 +73,8 @@ export const View = ({
         if (nodeId) {
           draggedOver?.(nodeId);
         }
-      }}>
+      }}
+      onMouseLeave={left}>
       {/*
 
 

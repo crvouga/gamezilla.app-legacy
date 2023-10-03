@@ -1,4 +1,3 @@
-import { Eff } from "gamezilla/@SHARED/core";
 import { AlgoDrawPipes } from "../algo";
 import * as Flow from "../flow";
 import * as FlowGrid from "./flow-grid";
@@ -44,9 +43,9 @@ export const init = (grid: FlowGrid.Model): Model => {
 
 export type Msg =
   | { t: "dragged-over"; nodeId: Flow.NodeId }
-  | { t: "pressed-down-node"; nodeId: Flow.NodeId }
+  | { t: "pressed-down"; nodeId: Flow.NodeId }
   | { t: "pressed-up"; nodeId: Flow.NodeId }
-  | { t: "mouse-leave" };
+  | { t: "left" };
 
 export const update = ({
   msg,
@@ -82,15 +81,7 @@ export const updateModel = ({
 
 const updateIdle = ({ msg, model }: { msg: Msg; model: Model }): Model => {
   switch (msg.t) {
-    case "dragged-over": {
-      return model;
-    }
-
-    case "mouse-leave": {
-      return model;
-    }
-
-    case "pressed-down-node": {
+    case "pressed-down": {
       const groupId = Flow.toGroupId(model.grid.flow, msg.nodeId);
 
       if (!groupId) {
@@ -113,6 +104,12 @@ const updateIdle = ({ msg, model }: { msg: Msg; model: Model }): Model => {
       };
     }
 
+    case "left": {
+      return model;
+    }
+    case "dragged-over": {
+      return model;
+    }
     case "pressed-up": {
       return model;
     }
@@ -151,11 +148,11 @@ const updateDragging = ({
       return modelNew;
     }
 
-    case "pressed-down-node": {
+    case "pressed-down": {
       return model;
     }
 
-    case "mouse-leave": {
+    case "left": {
       return { ...model, state: { t: "idle" } };
     }
 
@@ -187,8 +184,9 @@ export const View = ({
         showCoordinates
         isDragging={model.state.t === "dragging"}
         onDraggedOver={(nodeId) => dispatch({ t: "dragged-over", nodeId })}
-        onPressDown={(nodeId) => dispatch({ t: "pressed-down-node", nodeId })}
+        onPressDown={(nodeId) => dispatch({ t: "pressed-down", nodeId })}
         onPressUp={(nodeId) => dispatch({ t: "pressed-up", nodeId })}
+        onLeave={() => dispatch({ t: "left" })}
         autocompleteEdge={
           model.state.t === "dragging" && model.state.autocompleteEdge
             ? {
