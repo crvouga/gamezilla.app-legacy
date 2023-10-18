@@ -373,3 +373,101 @@ export const updateCoreEvent = ({
 
   return err("unhandled-event");
 };
+
+type Event =
+  | { t: "user-dropped-disc"; columnIndex: ColumnIndex }
+  | { t: "user-left"; userId: UserId }
+  | { t: "bot-dropped-disc"; columnIndex: ColumnIndex }
+  | { t: "user-started-playing"; playerUserId: UserId; playerType: PlayerType }
+  | { t: "user-stopped-playing"; playerUserId: UserId }
+  | { t: "user-started-game" }
+  | { t: "user-stopped-game" }
+  | { t: "user-swapped-sides" }
+  | { t: "user-changed-bot-level" }
+  | { t: "time-passed"; now: Posix };
+
+export type State = StateSetup | StateGame;
+
+export type StateSetup = {
+  type: "setup";
+  userPlayerType: PlayerType;
+  botLevel: BotLevel;
+  player: UserId | null;
+};
+
+export type StateGame = {
+  type: "game";
+  gameId: number;
+  userPlayerType: PlayerType;
+  botLevel: BotLevel;
+  player: UserId;
+  columns: Columns;
+  errors: (Event & { error: string })[];
+};
+
+export const reducer = (state: State, event: Event): State => {
+  switch (state.type) {
+    case "setup": {
+      switch (event.t) {
+        case "user-started-playing": {
+          return {
+            ...state,
+            player: event.playerUserId,
+            userPlayerType: event.playerType,
+          };
+        }
+      }
+      return state;
+    }
+
+    case "game": {
+      switch (event.t) {
+        case "bot-dropped-disc": {
+          const moved = move(
+            state.columns,
+            event.columnIndex,
+            toBotPlayer(state)
+          );
+          if (moved.t === "err") {
+            return {
+              ...state,
+              errors: [...state.errors, { ...event, error: moved.error }],
+            };
+          }
+          return { ...state, columns: moved.value };
+        }
+
+        case "user-dropped-disc": {
+          const moved = move(
+            state.columns,
+            event.columnIndex,
+            state.userPlayerType
+          );
+          if (moved.t === "err") {
+            return {
+              ...state,
+              errors: [...state.errors, { ...event, error: moved.error }],
+            };
+          }
+          return { ...state, columns: moved.value };
+        }
+
+        case "user-left": {
+          if (event.userId === state.player) {
+            return {
+              type: "setup",
+              botLevel: state.botLevel,
+              userPlayerType: state.userPlayerType,
+              player: null,
+            };
+          }
+          return state;
+        }
+
+        default: {
+          return state;
+        }
+      }
+    }
+  }
+};
