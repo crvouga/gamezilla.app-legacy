@@ -263,17 +263,16 @@ const puzzlesFindForProfile = async (
       p.*
     FROM
       game_chess_puzzle p
-    LEFT JOIN
-      game_chess_puzzle_interaction pi
-    ON
-      p.puzzle_id = pi.puzzle_id
-      AND pi.user_id = "${userId}"
     WHERE
-      rating BETWEEN ${minRating} AND ${maxRating}
-      AND pi.puzzle_id IS NULL
+      NOT EXISTS (
+        SELECT 1
+        FROM game_chess_puzzle_interaction pi
+        WHERE p.puzzle_id = pi.puzzle_id AND pi.user_id = '${userId}'
+      )
+      AND p.rating BETWEEN ${minRating} AND ${maxRating}
       ${omit ? `AND p.puzzle_id NOT IN (${omit})` : ""}
     ORDER BY
-      popularity DESC
+      p.popularity DESC
     LIMIT 1
   `;
 
