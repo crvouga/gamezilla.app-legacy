@@ -1,4 +1,4 @@
-import { err, ok, Posix, Result } from "gamezilla/@SHARED/core";
+import { err, ok, Posix, Result, Uuid } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
 import { VsBotGame, VsBotSetup } from "gamezilla/app/space/game/@SHARED";
 import {
@@ -18,7 +18,10 @@ import {
 //
 //
 
-export type CoreModel = { meta?: Meta } & (SetupModel | GameModel);
+export type CoreModel = { meta?: Meta; events?: Event[] } & (
+  | SetupModel
+  | GameModel
+);
 
 export type SetupModel = {
   type: "setup";
@@ -386,7 +389,19 @@ type Event =
   | { t: "user-changed-bot-level" }
   | { t: "time-passed"; now: Posix };
 
-export type State = StateSetup | StateGame;
+export type State = (StateSetup | StateGame) & {
+  errors: (Event & { error: string })[];
+};
+
+const toInitialState = (input: { hostId: UserId }): State => {
+  return {
+    type: "setup",
+    botLevel: "Medium",
+    userPlayerType: "player-one",
+    player: input.hostId,
+    errors: [],
+  };
+};
 
 export type StateSetup = {
   type: "setup";
@@ -402,22 +417,36 @@ export type StateGame = {
   botLevel: BotLevel;
   player: UserId;
   columns: Columns;
-  errors: (Event & { error: string })[];
 };
 
-export const reducer = (state: State, event: Event): State => {
+export const reducer = (input: {
+  ctx: { hostId: UserId };
+  state: State;
+  event: Event;
+}): State => {
+  const { state, event } = input;
+
   switch (state.type) {
     case "setup": {
       switch (event.t) {
         case "user-started-playing": {
+          if (state.player !== null) {
+            return {
+              ...state,
+              errors: [...state.errors, { ...event, error: "already-playing" }],
+            };
+          }
+
           return {
             ...state,
             player: event.playerUserId,
             userPlayerType: event.playerType,
           };
         }
+        default: {
+          return state;
+        }
       }
-      return state;
     }
 
     case "game": {
@@ -459,6 +488,7 @@ export const reducer = (state: State, event: Event): State => {
               botLevel: state.botLevel,
               userPlayerType: state.userPlayerType,
               player: null,
+              errors: [],
             };
           }
           return state;
@@ -471,3 +501,28 @@ export const reducer = (state: State, event: Event): State => {
     }
   }
 };
+
+const toState = (ctx: { hostId: UserId }, model: CoreModel): State => {
+  return (model.events ?? []).reduce(
+    (state, event) => reducer({ ctx, state, event }),
+    toInitialState(ctx)
+  );
+};
+
+type EventMeta = {
+  id: Uuid;
+  createdAt: Posix;
+};
+
+function appendEvent(
+  ctx: { hostId: UserId },
+  model: CoreModel,
+  event: Event & EventMeta
+): CoreModel {
+  const eventsNew = [...(model.events ?? []), event];
+
+  return {
+    ...model,
+    events: [...(model.events ?? []), event],
+  };
+}
