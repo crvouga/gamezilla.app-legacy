@@ -381,3 +381,29 @@ export const appendEvent = (
     events: sortedEvents,
   };
 };
+
+export const mergeLeftModel = (
+  modelLeft: CoreModel,
+  modelRight: CoreModel
+): CoreModel => {
+  const eventsMap: Map<string, Event & WithMeta> = new Map();
+
+  // Add events from modelLeft
+  for (const event of modelLeft.events) {
+    eventsMap.set(event.eventId, event);
+  }
+
+  // Add events from modelRight
+  for (const event of modelRight.events) {
+    eventsMap.set(event.eventId, event);
+  }
+
+  // Convert back to array and sort by 'happenedAt'
+  const sortedEvents = Array.from(eventsMap.values()).sort(
+    (a, b) => a.happenedAt - b.happenedAt
+  );
+
+  return {
+    events: sortedEvents,
+  };
+};

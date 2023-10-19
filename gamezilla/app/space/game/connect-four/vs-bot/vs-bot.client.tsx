@@ -37,6 +37,7 @@ import {
   allBotLevels,
   appendEvent,
   initCore,
+  mergeLeftModel,
   toState,
   withMeta,
 } from "./vs-bot.core";
@@ -168,16 +169,15 @@ export const mergeWithServer = ({
   clientModel?: ClientModel;
   serverModel: ServerModel;
 }): { model: ClientModel; eff?: Eff<ClientMsg> } => {
-  const serverState = toState(ctx, serverModel);
+  const merged = mergeLeftModel(clientModel, serverModel);
+  const state = toState(ctx, merged);
 
   const modelNew: ClientModel = {
-    ...clientModel,
-    ...serverModel,
+    ...merged,
+    vsBotSetup: clientModel.vsBotSetup,
     vsBotGame: clientModel.vsBotGame
       ? clientModel.vsBotGame
-      : VsBotGame.init(
-          "columns" in serverState ? toGameOver(serverState.columns) : null
-        ),
+      : VsBotGame.init("columns" in state ? toGameOver(state.columns) : null),
   };
 
   return watch({ ctx, model: modelNew });
