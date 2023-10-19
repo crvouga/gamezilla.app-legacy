@@ -388,13 +388,13 @@ export const mergeLeftModel = (
 ): CoreModel => {
   const eventsMap: Map<string, Event & WithMeta> = new Map();
 
-  // Add events from modelLeft
-  for (const event of modelLeft.events) {
+  // Add events from modelRight
+  for (const event of modelRight.events) {
     eventsMap.set(event.eventId, event);
   }
 
-  // Add events from modelRight
-  for (const event of modelRight.events) {
+  // Add events from modelLeft
+  for (const event of modelLeft.events) {
     eventsMap.set(event.eventId, event);
   }
 
