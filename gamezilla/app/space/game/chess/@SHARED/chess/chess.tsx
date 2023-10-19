@@ -1,5 +1,5 @@
 import * as ChessJS from "chess.js";
-import { Result, Task, exhaustive } from "gamezilla/@SHARED/core";
+import { Result, Task, err, exhaustive, ok } from "gamezilla/@SHARED/core";
 import { VDom } from "gamezilla/app/@SHARED/ui";
 import {
   IconBotCute,
@@ -85,7 +85,7 @@ export const toBestMoveInput = (
   };
 
   if (!isRecord(move)) {
-    return Result.err("failed_to_calculate_best_move");
+    return err("failed_to_calculate_best_move");
   }
 
   const bestMoveInput = Object.entries(move).flatMap<MoveInput>(([from, to]) =>
@@ -93,10 +93,10 @@ export const toBestMoveInput = (
   )[0];
 
   if (bestMoveInput) {
-    return Result.ok(bestMoveInput);
+    return ok(bestMoveInput);
   }
 
-  return Result.err("failed_to_calculate_best_move");
+  return err("failed_to_calculate_best_move");
 };
 
 export const toRandomMoveInput = (
@@ -108,10 +108,10 @@ export const toRandomMoveInput = (
     legalMoveInputs[Math.floor(Math.random() * legalMoveInputs.length)];
 
   if (!randomMoveInput) {
-    return Result.err("no_legal_move");
+    return err("no_legal_move");
   }
 
-  return Result.ok(randomMoveInput);
+  return ok(randomMoveInput);
 };
 
 export const getBestMove =
@@ -784,19 +784,19 @@ export const move = (
     const moved = instance.move(moveInput_);
 
     if (!moved) {
-      return Result.err("invalid_move");
+      return err("invalid_move");
     }
 
     // const capturesNew = capturedPieceSymbol ? [...model.captures] : model.captures
 
-    return Result.ok({
+    return ok({
       pgn: instance.pgn(),
       fen: instance.fen(),
       previousMove: moveInput,
       didCapture: Boolean(moved.captured),
     });
   } catch (error) {
-    return Result.err("invalid_move");
+    return err("invalid_move");
   }
 };
 
@@ -811,8 +811,8 @@ export const moveMany = (moveInputs: MoveInput[], model: Model) => {
     if (moved.t === "err") {
       return moved;
     }
-    return Result.ok(moved.value);
-  }, Result.ok({ ...model, didCapture: false }));
+    return ok(moved.value);
+  }, ok({ ...model, didCapture: false }));
 };
 
 export const toLegalMoveInputs = (model: Model): MoveInput[] => {
@@ -847,7 +847,7 @@ export const uciMoveToMoveInput = (
   const match = uciMove.match(uciMoveRegex);
 
   if (!match) {
-    return Result.err(
+    return err(
       `uci move did not match regex. uciMove: ${uciMove} regex: ${uciMoveRegex}`
     );
   }
@@ -855,21 +855,21 @@ export const uciMoveToMoveInput = (
   const [, from, to, promotion] = match;
 
   if (!(from && to)) {
-    return Result.err("failed to extract from and to from uci move");
+    return err("failed to extract from and to from uci move");
   }
 
   const upperCaseFrom = from.toUpperCase();
   const upperCaseTo = to.toUpperCase();
 
   if (!(isSquare(upperCaseFrom) && isSquare(upperCaseTo))) {
-    return Result.err("from or to is not a valid square");
+    return err("from or to is not a valid square");
   }
 
   const promotionPiece: PromotionPieceSymbol = isPromotionPieceSymbol(promotion)
     ? promotion
     : "q";
 
-  return Result.ok({
+  return ok({
     from: upperCaseFrom,
     to: upperCaseTo,
     promotion: promotionPiece,
