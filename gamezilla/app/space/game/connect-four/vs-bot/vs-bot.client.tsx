@@ -173,7 +173,7 @@ export const mergeWithServer = ({
   const state = toState(ctx, merged);
 
   const modelNew: ClientModel = {
-    ...merged,
+    events: merged.events,
     vsBotSetup: clientModel.vsBotSetup,
     vsBotGame: clientModel.vsBotGame
       ? clientModel.vsBotGame

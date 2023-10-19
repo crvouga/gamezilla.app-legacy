@@ -21,6 +21,17 @@ export type ClientModel = CoreModel & {
 };
 
 export const initCore = ({ player }: { player: UserId | null }): CoreModel => {
+  if (player) {
+    return {
+      events: [
+        withMeta({
+          t: "user-started-playing",
+          playerType: "player-one",
+          userId: player,
+        }),
+      ],
+    };
+  }
   return {
     events: [],
   };
