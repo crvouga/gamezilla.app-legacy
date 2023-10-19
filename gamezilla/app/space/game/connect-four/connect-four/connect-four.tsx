@@ -41,8 +41,9 @@ export type Columns = Column[];
 
 export const MAX_COLUMN_HEIGHT = 6;
 
-export const emptyColumns: Columns = [[], [], [], [], [], [], []];
-export const COLUMN_COUNT = emptyColumns.length;
+export const EMPTY_COLUMNS: Columns = [[], [], [], [], [], [], []];
+
+export const COLUMN_COUNT = EMPTY_COLUMNS.length;
 
 export type ColumnIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
@@ -79,7 +80,7 @@ export type MoveProblem =
 
 export type MoveResult = Result<MoveProblem, Columns>;
 
-export const move = (
+export const dropDisc = (
   columns: Columns,
   columnIndex: number,
   player: PlayerType

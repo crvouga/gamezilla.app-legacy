@@ -6,8 +6,8 @@ import {
   MoveResult,
   PlayerType,
   allColumnIndexes,
-  emptyColumns,
-  move,
+  EMPTY_COLUMNS,
+  dropDisc,
   opposite,
   toStatus,
   toTurn,
@@ -182,7 +182,7 @@ export const handle = ({
         return err("not-playing");
       }
 
-      const result = move(model.columns, columnIndex, playerType);
+      const result = dropDisc(model.columns, columnIndex, playerType);
 
       if (result.t === "err") {
         return result;
@@ -274,7 +274,7 @@ export const handle = ({
 
       const modelNew: CoreModel = {
         type: "game",
-        columns: emptyColumns,
+        columns: EMPTY_COLUMNS,
         moveTimeLimit: model.moveTimeLimit,
         moveCountDown: model.moveTimeLimit,
         gameId: 0,
@@ -332,7 +332,7 @@ export const handle = ({
 
       const modelNew: CoreModel = {
         type: "game",
-        columns: emptyColumns,
+        columns: EMPTY_COLUMNS,
         moveCountDown: model.moveTimeLimit,
         gameId: model.gameId + 1,
         moveTimeLimit: model.moveTimeLimit,
@@ -462,7 +462,7 @@ export const tick = (model: CoreModel): CoreModel => {
   const turn = toTurn(model.columns);
 
   for (const columnIndex of shuffle(allColumnIndexes)) {
-    const result = move(model.columns, columnIndex, turn);
+    const result = dropDisc(model.columns, columnIndex, turn);
 
     if (result.t === "err") {
       continue;

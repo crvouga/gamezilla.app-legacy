@@ -1,11 +1,5 @@
-import { Eff, Posix, Sub, andThen, p } from "gamezilla/@SHARED/core";
-import {
-  APP_SOUND,
-  ClientCmd,
-  ClientCtx,
-  playSound,
-  sendToServer,
-} from "gamezilla/app/@SHARED/client";
+import { Eff, Posix, Sub, chain } from "gamezilla/@SHARED/core";
+import { ClientCmd, sendToServer } from "gamezilla/app/@SHARED/client";
 import {
   IconArrowLeftOnRect,
   IconArrowRotateLeft,
@@ -28,9 +22,9 @@ import {
 import { Columns, toStatus, toTurn } from "../connect-four";
 import { ViewCoverArt } from "../connect-four-cover-art";
 import {
-  ViewColumns,
   PlayerOneIcon,
   PlayerTwoIcon,
+  ViewColumns,
   gameTheme,
 } from "../connect-four-ui";
 import {
@@ -40,11 +34,11 @@ import {
   ServerModel,
   ToClient,
   ToServer,
-  Req,
   allBotLevels,
+  appendEvent,
   initCore,
-  updateCore,
-  updateCoreEvent,
+  toState,
+  withMeta,
 } from "./vs-bot.core";
 
 //
@@ -77,50 +71,38 @@ export const update = (input: {
   cmd?: ClientCmd<ToServer>[];
   eff?: Eff<ClientMsg>;
 } => {
-  return p(updateMain(input), andThen(watch));
-};
+  return chain(
+    input.model,
+    (model) => {
+      const { msg } = input;
+      switch (msg.t) {
+        case "vs-bot-game": {
+          const updated = VsBotGame.update(model.vsBotGame, msg.c);
+          return { model: { ...model, vsBotGame: updated } };
+        }
 
-const updateMain: typeof update = ({ ctx, msg, model }) => {
-  switch (msg.t) {
-    case "vs-bot-game": {
-      const updated = VsBotGame.update(model.vsBotGame, msg.c);
-      return { model: { ...model, vsBotGame: updated } };
-    }
+        case "vs-bot-setup": {
+          const updated = VsBotSetup.update(model.vsBotSetup, msg.c);
+          return { model: { ...model, vsBotSetup: updated } };
+        }
 
-    case "vs-bot-setup": {
-      const updated = VsBotSetup.update(model.vsBotSetup, msg.c);
-      return { model: { ...model, vsBotSetup: updated } };
-    }
+        default: {
+          const eventNew = withMeta(msg);
 
-    default: {
-      const result = updateCore({ ctx, msg, model });
+          const modelNew: ClientModel = {
+            ...model,
+            ...appendEvent(model, eventNew),
+          };
 
-      if (result.t === "err") {
-        return { model, cmd: [sendToServer(msg)] };
+          return {
+            model: modelNew,
+            cmd: [sendToServer(eventNew)],
+          };
+        }
       }
-
-      return {
-        model: { ...model, ...result.value },
-        cmd: [sendToServer(msg), ...msgToSoundCmd(msg)],
-      };
-    }
-  }
-};
-
-const watch = (model: ClientModel) => {
-  const vsBotGame = VsBotGame.watch(
-    model.vsBotGame,
-    "columns" in model ? toGameOver(model.columns) : undefined
-  );
-
-  return {
-    model: {
-      ...model,
-
-      vsBotGame: vsBotGame.model,
     },
-    eff: Eff.batch<ClientMsg>([Eff.t("vs-bot-game", vsBotGame.eff)]),
-  };
+    (model) => watch({ ...input, model })
+  );
 };
 
 export const updateFromServer = (input: {
@@ -132,69 +114,73 @@ export const updateFromServer = (input: {
   eff?: Eff<ClientMsg>;
   cmd?: ClientCmd<ToServer>[];
 } => {
-  return p(updateFromServerMain(input), andThen(watch));
+  return chain(
+    input.model,
+    (model) => {
+      const { msg } = input;
+      switch (msg.t) {
+        default: {
+          const modelNew: ClientModel = {
+            ...model,
+            ...appendEvent(model, msg),
+          };
+
+          return { model: modelNew };
+        }
+      }
+    },
+    (model) => watch({ ...input, model })
+  );
 };
 
-const updateFromServerMain: typeof updateFromServer = ({ ctx, msg, model }) => {
-  switch (msg.t) {
-    case "player-left":
-    case "bot-moved": {
-      const result = updateCoreEvent({ msg, model });
+const watch = ({
+  model,
+  ctx,
+}: {
+  ctx: SpaceClientCtx;
+  model: ClientModel;
+}): {
+  model: ClientModel;
+  eff?: Eff<ClientMsg>;
+  cmd?: ClientCmd<ToServer>[];
+} => {
+  const state = toState(ctx, model);
+  const vsBotGame = VsBotGame.watch(
+    model.vsBotGame,
+    "columns" in state ? toGameOver(state.columns) : undefined
+  );
 
-      if (result.t === "err") {
-        return { model };
-      }
-
-      return { model: { ...model, ...result.value } };
-    }
-
-    default: {
-      if (msg.result.t === "err") {
-        return { model };
-      }
-
-      return { model: { ...model, ...msg.result.value } };
-    }
-  }
-};
-
-const msgToSoundCmd = (msg: Req): ClientCmd<ToServer>[] => {
-  switch (msg.t) {
-    case "input-move": {
-      return [];
-    }
-    case "stop-game": {
-      return [playSound(APP_SOUND.navBackwardMin)];
-    }
-    case "start-game": {
-      return [playSound(APP_SOUND.navForwardMin)];
-    }
-    default: {
-      return [playSound(APP_SOUND.tap)];
-    }
-  }
+  return {
+    model: {
+      ...model,
+      vsBotGame: vsBotGame.model,
+    },
+    eff: Eff.batch<ClientMsg>([Eff.t("vs-bot-game", vsBotGame.eff)]),
+  };
 };
 
 export const mergeWithServer = ({
   serverModel,
+  ctx,
   clientModel = init({ player: null }),
 }: {
-  ctx: ClientCtx;
+  ctx: SpaceClientCtx;
   clientModel?: ClientModel;
   serverModel: ServerModel;
 }): { model: ClientModel; eff?: Eff<ClientMsg> } => {
+  const serverState = toState(ctx, serverModel);
+
   const modelNew: ClientModel = {
     ...clientModel,
     ...serverModel,
-
     vsBotGame: clientModel.vsBotGame
       ? clientModel.vsBotGame
       : VsBotGame.init(
-          "columns" in serverModel ? toGameOver(serverModel.columns) : null
+          "columns" in serverState ? toGameOver(serverState.columns) : null
         ),
   };
 
-  return watch(modelNew);
+  return watch({ ctx, model: modelNew });
 };
 
 //
@@ -240,7 +226,7 @@ function toGameOver(columns: Columns): VsBotGame.GameOver {
 }
 
 export const View = ({
-  model,
+  model: model_,
   onQuit,
   ctx,
   dispatch,
@@ -250,18 +236,28 @@ export const View = ({
   onQuit: () => void;
   ctx: SpaceViewCtx;
 }) => {
+  const model = toState(ctx, model_);
+
   const vsBotProps: VsBotProps = {
     ctx: ctx,
     onQuit: onQuit,
     title: "Connect Four",
     renderCoverArt: (props) => <ViewCoverArt {...props} />,
     canStartGame: model.player !== null,
-    onStartGame: () => dispatch({ t: "start-game" }),
+    onStartGame: () =>
+      dispatch({ t: "user-started-game", userId: ctx.currentUserId }),
     botVariants: allBotLevels.map((botLevel) => {
       return {
         label: botLevel,
         renderIcon: (props) => renderBotLevel({ level: botLevel, ...props }),
-        onSelect: () => dispatch({ t: "input-bot-level", botLevel }),
+        onSelect: () =>
+          dispatch(
+            withMeta({
+              t: "user-changed-bot-level",
+              botLevel,
+              userId: ctx.currentUserId,
+            })
+          ),
       };
     }),
     human: {
@@ -278,22 +274,32 @@ export const View = ({
       label: "Red",
       renderIcon: (props) => <PlayerOneIcon {...props} />,
       onStartPlaying: () =>
-        dispatch({ t: "start-playing", playerType: "player-one" }),
-      onStopPlaying: () => dispatch({ t: "stop-playing" }),
+        dispatch({
+          t: "user-started-playing",
+          playerType: "player-one",
+          userId: ctx.currentUserId,
+        }),
+      onStopPlaying: () =>
+        dispatch({ t: "user-stopped-playing", userId: ctx.currentUserId }),
     },
     playerTwo: {
       label: "Yellow",
       renderIcon: (props) => <PlayerTwoIcon {...props} />,
       onStartPlaying: () =>
-        dispatch({ t: "start-playing", playerType: "player-two" }),
-      onStopPlaying: () => dispatch({ t: "stop-playing" }),
+        dispatch({
+          t: "user-started-playing",
+          playerType: "player-two",
+          userId: ctx.currentUserId,
+        }),
+      onStopPlaying: () =>
+        dispatch({ t: "user-stopped-playing", userId: ctx.currentUserId }),
     },
   };
 
   if (model.type === "setup") {
     return (
       <VsBotSetup.View
-        model={model.vsBotSetup}
+        model={model_.vsBotSetup}
         dispatch={(c) => dispatch({ t: "vs-bot-setup", c })}
         {...vsBotProps}
       />
@@ -330,14 +336,16 @@ export const View = ({
             columns={model.columns}
             disabled={ctx.currentUserId !== model.player}
             onClick={(columnIndex) => {
-              dispatch({ t: "input-move", columnIndex });
+              dispatch({ t: "user-dropped-disc", columnIndex });
             }}
           />
 
           <ViewGameOverOverlay
             {...vsBotGameProps}
-            model={model.vsBotGame}
-            onPlayAgain={() => dispatch({ t: "restart" })}
+            model={model_.vsBotGame}
+            onPlayAgain={() =>
+              dispatch({ t: "user-restarted-game", userId: ctx.currentUserId })
+            }
             gameOver={
               status.type === "Tie"
                 ? { t: "draw" }
@@ -361,17 +369,26 @@ export const View = ({
             {
               label: "Exit",
               icon: <IconArrowLeftOnRect className="h-6 w-6" />,
-              onClick: () => dispatch({ t: "stop-game" }),
+              onClick: () =>
+                dispatch({ t: "user-stopped-game", userId: ctx.currentUserId }),
             },
             {
               label: "Swap sides",
               icon: <IconRightLeft className="h-6 w-6" />,
-              onClick: () => dispatch({ t: "swap-sides" }),
+              onClick: () =>
+                dispatch({
+                  t: "user-swapped-sides",
+                  userId: ctx.currentUserId,
+                }),
             },
             {
               label: "Restart",
               icon: <IconArrowRotateLeft className="h-6 w-6" />,
-              onClick: () => dispatch({ t: "restart" }),
+              onClick: () =>
+                dispatch({
+                  t: "user-restarted-game",
+                  userId: ctx.currentUserId,
+                }),
             },
           ]}
         />
