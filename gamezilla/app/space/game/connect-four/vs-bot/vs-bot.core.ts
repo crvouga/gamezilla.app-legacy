@@ -406,6 +406,10 @@ export const mergeLeftModel = (
 
   // Add events from modelLeft
   for (const event of modelLeft.events) {
+    if (eventsMap.has(event.eventId)) {
+      console.log("duplicate event", event);
+      continue;
+    }
     eventsMap.set(event.eventId, event);
   }
 
