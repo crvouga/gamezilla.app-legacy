@@ -125,13 +125,6 @@ export const reducer = (input: {
     case "setup": {
       switch (event.t) {
         case "user-started-playing": {
-          if (state.player !== null) {
-            return {
-              ...state,
-              errors: [...state.errors, { ...event, error: "already-playing" }],
-            };
-          }
-
           return {
             ...state,
             player: event.userId,
