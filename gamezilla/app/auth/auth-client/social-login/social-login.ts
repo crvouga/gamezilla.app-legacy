@@ -1,11 +1,13 @@
 import { EmailAddress, RemoteResult, Result } from "gamezilla/@SHARED/core";
 
+type SocialLoginProvider = "google";
+
 export type SocialLogin = {
   /**
    * Redirects the user to the social login provider's website.
    */
   redirectSocialLogin: (input: {
-    provider: "google";
+    provider: SocialLoginProvider;
   }) => Promise<Result<string, null>>;
   /**
    * Returns the result of the social login redirect.

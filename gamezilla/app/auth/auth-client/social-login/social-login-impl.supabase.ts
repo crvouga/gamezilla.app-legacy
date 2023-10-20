@@ -2,7 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import { EmailAddress, err, NotAsked, ok } from "gamezilla/@SHARED/core";
 import { SocialLogin } from "./social-login";
 
-const KEY = "social-login-state";
+const SESSION_STORAGE_KEY = "gamezilla-social-login-state";
 
 const SocialLoginState = {
   STARTED: "STARTED",
@@ -18,16 +18,16 @@ export const createSocialLogin = (): SocialLogin => {
 
   return {
     async getSocialLoginResult() {
-      const state = sessionStorage.getItem(KEY);
+      const state = sessionStorage.getItem(SESSION_STORAGE_KEY);
 
       if (state !== SocialLoginState.STARTED) {
         return NotAsked;
       }
 
-      sessionStorage.removeItem(KEY);
+      sessionStorage.removeItem(SESSION_STORAGE_KEY);
 
-      for (let i = 0; i < 15; i++) {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+      for (let attempt = 0; attempt < 15; attempt++) {
+        await new Promise((r) => setTimeout(r, 1000));
 
         const session = supabaseClient.auth.session();
 
@@ -52,7 +52,7 @@ export const createSocialLogin = (): SocialLogin => {
             provider: "google",
           });
 
-          sessionStorage.setItem(KEY, SocialLoginState.STARTED);
+          sessionStorage.setItem(SESSION_STORAGE_KEY, SocialLoginState.STARTED);
 
           if (result.error) {
             return err(result.error.message);

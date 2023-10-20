@@ -1,11 +1,4 @@
-import {
-  Eff,
-  Loading,
-  NotAsked,
-  Sub,
-  andThen,
-  p,
-} from "gamezilla/@SHARED/core";
+import { Eff, Loading, NotAsked, Sub, chain } from "gamezilla/@SHARED/core";
 import {
   AnonymousClientCtx,
   AnonymousViewCtx,
@@ -86,13 +79,19 @@ export const update = ({
 
     case "clicked-logout": {
       return {
-        model: { ...model, currentUser: { t: "loading" } },
+        model: {
+          ...model,
+          currentUser: { t: "loading" },
+        },
         cmd: [sendToServer({ t: "logout" })],
       };
     }
 
     case "got-social-login-result": {
-      return { model, cmd: [sendToServer(msg)] };
+      return {
+        model,
+        cmd: [sendToServer(msg)],
+      };
     }
   }
 };
@@ -123,12 +122,15 @@ export const updateFromServer = ({
     }
 
     case "client-unauthenticated": {
-      return p(
-        {
-          model: { ...model, currentUser: { t: "logged-out" } },
-          evt: [msg],
+      return chain(
+        model,
+        (model) => {
+          return {
+            model: { ...model, currentUser: { t: "logged-out" } },
+            evt: [msg],
+          };
         },
-        andThen((model) => {
+        (model) => {
           if (ctx.currentRoute.t !== "auth") {
             return {
               model,
@@ -136,14 +138,14 @@ export const updateFromServer = ({
             };
           }
           return { model };
-        })
+        }
       );
     }
 
     case "client-authenticated": {
-      return p(
-        { model },
-        andThen((model): ReturnType<typeof updateFromServer> => {
+      return chain(
+        model,
+        (model) => {
           return {
             model: {
               ...model,
@@ -154,8 +156,8 @@ export const updateFromServer = ({
             },
             evt: [msg],
           };
-        }),
-        andThen((model) => {
+        },
+        (model) => {
           if (ctx.currentRoute.t === "auth") {
             return {
               model,
@@ -163,7 +165,7 @@ export const updateFromServer = ({
             };
           }
           return { model };
-        })
+        }
       );
     }
   }

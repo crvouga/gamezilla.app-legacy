@@ -1,5 +1,5 @@
 /**
- * A `Result` represents the result of an operation that may fail.
+ * A `Result` represents the result of an operation that may succeed or fail.
  */
 export type Result<TError, TValue> = Err<TError> | Ok<TValue>;
 
@@ -15,7 +15,7 @@ export const ok = <T>(value: T): Ok<T> => {
 };
 
 /**
- * `Err<T>` represents a failed result asa
+ * `Err<T>` represents a failed result
  */
 export const err = <T>(error: T): Err<T> => {
   return { t: "err", error };
