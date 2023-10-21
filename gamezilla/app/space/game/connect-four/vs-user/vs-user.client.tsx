@@ -261,7 +261,7 @@ export const View = ({
           <ViewColumns
             columns={model.columns}
             gameId={model.gameId}
-            onClick={(columnIndex) =>
+            onDropDisc={(columnIndex) =>
               dispatch({
                 t: "input-move",
                 userId: ctx.currentUserId,

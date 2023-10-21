@@ -1,9 +1,8 @@
-import { gameTheme } from "../..";
+import { gameTheme } from "../../shared";
 import {
   COLUMN_COUNT,
   ColumnIndex,
   MAX_COLUMN_HEIGHT,
-  isColumnIndex,
 } from "../../../connect-four";
 import { ColumnsProps, columnsPropsSub } from "../shared";
 import { initColumns } from "./columns";
@@ -87,6 +86,7 @@ if (typeof window !== "undefined" && "customElements" in window) {
           :host {
             display: block;
             width: 100%;
+            cursor: pointer;
           }
         </style>
         <svg width="100%" viewBox="0 0 ${COLUMN_COUNT} ${MAX_COLUMN_HEIGHT}">
@@ -151,7 +151,7 @@ if (typeof window !== "undefined" && "customElements" in window) {
       }
 
       onColumnClick(columnIndex: ColumnIndex) {
-        this.props?.onClick?.(columnIndex);
+        this.props?.onDropDisc?.(columnIndex);
       }
 
       getColumnsParentNode() {

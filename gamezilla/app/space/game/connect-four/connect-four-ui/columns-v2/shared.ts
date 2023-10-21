@@ -8,7 +8,7 @@ export type ColumnsProps = {
     columnIndex: ColumnIndex;
     playerType: PlayerType;
   };
-  onClick?: (columnIndex: ColumnIndex) => void;
+  onDropDisc?: (columnIndex: ColumnIndex) => void;
   onHover?: (columnINdex: ColumnIndex) => void;
   disabled?: boolean;
   gameId?: string | number | null;

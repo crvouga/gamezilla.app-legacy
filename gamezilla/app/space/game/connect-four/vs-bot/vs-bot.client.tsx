@@ -5,6 +5,7 @@ import {
   IconArrowRotateLeft,
   IconRightLeft,
   LoadingBar,
+  cn,
 } from "gamezilla/app/@SHARED/ui";
 import { SpaceClientCtx, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
 import {
@@ -31,15 +32,21 @@ import {
   BotLevel,
   ClientModel,
   ClientMsg,
+  CoreModel,
+  Evt,
+  WithMeta,
   ServerModel,
+  State,
   ToClient,
   ToServer,
   allBotLevels,
   appendEvent,
+  botLevel,
   initCore,
-  mergeLeftModel,
+  mergeModels,
   toState,
   withMeta,
+  eventErrorToString,
 } from "./vs-bot.core";
 
 //
@@ -169,7 +176,7 @@ export const mergeWithServer = ({
   clientModel?: ClientModel;
   serverModel: ServerModel;
 }): { model: ClientModel; eff?: Eff<ClientMsg> } => {
-  const merged = mergeLeftModel(clientModel, serverModel);
+  const merged = mergeModels(clientModel, serverModel);
   const state = toState(ctx, merged);
 
   const modelNew: ClientModel = {
@@ -226,7 +233,7 @@ function toGameOver(columns: Columns): VsBotGame.GameOver {
 }
 
 export const View = ({
-  model: model_,
+  model,
   onQuit,
   ctx,
   dispatch,
@@ -236,14 +243,14 @@ export const View = ({
   onQuit: () => void;
   ctx: SpaceViewCtx;
 }) => {
-  const model = toState(ctx, model_);
+  const state = toState(ctx, model);
 
   const vsBotProps: VsBotProps = {
     ctx: ctx,
     onQuit: onQuit,
     title: "Connect Four",
     renderCoverArt: (props) => <ViewCoverArt {...props} />,
-    canStartGame: model.player !== null,
+    canStartGame: state.player !== null,
     onStartGame: () =>
       dispatch({ t: "user-started-game", userId: ctx.currentUserId }),
     botVariants: allBotLevels.map((botLevel) => {
@@ -262,13 +269,13 @@ export const View = ({
     }),
     human: {
       player:
-        model.userPlayerType === "player-one" ? "player-one" : "player-two",
-      userId: model.player,
+        state.userPlayerType === "player-one" ? "player-one" : "player-two",
+      userId: state.player,
     },
     bot: {
-      label: model.botLevel,
+      label: state.botLevel,
       renderIcon: (props) =>
-        renderBotLevel({ level: model.botLevel, ...props }),
+        renderBotLevel({ level: state.botLevel, ...props }),
     },
     playerOne: {
       label: "Red",
@@ -296,13 +303,16 @@ export const View = ({
     },
   };
 
-  if (model.type === "setup") {
+  if (state.type === "setup") {
     return (
-      <VsBotSetup.View
-        model={model_.vsBotSetup}
-        dispatch={(c) => dispatch({ t: "vs-bot-setup", c })}
-        {...vsBotProps}
-      />
+      <div className="flex h-full w-full flex-col">
+        <ViewActivityFeedBar model={model} ctx={ctx} />
+        <VsBotSetup.View
+          model={model.vsBotSetup}
+          dispatch={(c) => dispatch({ t: "vs-bot-setup", c })}
+          {...vsBotProps}
+        />
+      </div>
     );
   }
 
@@ -310,39 +320,45 @@ export const View = ({
     ...vsBotProps,
     human: {
       ...vsBotProps.human,
-      userId: model.player,
+      userId: state.player,
     },
   };
 
-  const turn = toTurn(model.columns);
-  const status = toStatus(model.columns);
+  const turn = toTurn(state.columns);
+  const status = toStatus(state.columns);
 
   return (
-    <GameLayout isSpectating={ctx.currentUserId !== model.player}>
+    <GameLayout isSpectating={ctx.currentUserId !== state.player}>
+      <ViewActivityFeedBar model={model} ctx={ctx} />
+
       <div className="flex w-full flex-1 flex-col items-center justify-center">
         <VsBotPlayerSection {...vsBotGameProps} />
 
         <div className="relative flex w-full flex-col items-center justify-center overflow-hidden">
           <LoadingBar
             disabled={
-              turn === model.userPlayerType || status.type !== "Playing"
+              turn === state.userPlayerType || status.type !== "Playing"
             }
             className="w-full"
             color={gameTheme.primary.dark}
           />
 
           <ViewColumns
-            gameId={model.gameId}
-            columns={model.columns}
-            disabled={ctx.currentUserId !== model.player}
-            onClick={(columnIndex) => {
-              dispatch({ t: "user-dropped-disc", columnIndex });
+            gameId={state.gameId}
+            columns={state.columns}
+            disabled={ctx.currentUserId !== state.player}
+            onDropDisc={(columnIndex) => {
+              dispatch({
+                t: "user-dropped-disc",
+                columnIndex,
+                userId: ctx.currentUserId,
+              });
             }}
           />
 
           <ViewGameOverOverlay
             {...vsBotGameProps}
-            model={model_.vsBotGame}
+            model={model.vsBotGame}
             onPlayAgain={() =>
               dispatch({ t: "user-restarted-game", userId: ctx.currentUserId })
             }
@@ -363,7 +379,7 @@ export const View = ({
         </div>
       </div>
 
-      {ctx.currentUserId === model.player && (
+      {ctx.currentUserId === state.player && (
         <ViewBottomButtonBar
           actions={[
             {
@@ -394,6 +410,102 @@ export const View = ({
         />
       )}
     </GameLayout>
+  );
+};
+
+const ViewActivityFeedBar = ({
+  model,
+  ctx,
+}: {
+  model: CoreModel;
+  ctx: SpaceViewCtx;
+}) => {
+  const latestEvent = model.events[model.events.length - 1];
+  if (!latestEvent) {
+    return null;
+  }
+  return (
+    <ViewActivityFeedItem
+      event={latestEvent}
+      ctx={ctx}
+      state={toState(ctx, model)}
+    />
+  );
+};
+
+const ViewActivityFeedItem = ({
+  event,
+  ctx,
+  state,
+}: {
+  ctx: SpaceViewCtx;
+  event: Evt & WithMeta;
+  state: State;
+}) => {
+  const username =
+    "userId" in event ? ctx.profiles[event.userId]?.username ?? null : null;
+
+  switch (event.t) {
+    case "bot-dropped-disc": {
+      return <Item text={`Bot dropped disc`} />;
+    }
+    case "user-changed-bot-level": {
+      return (
+        <Item text={`${username} changed bot level to ${event.botLevel}`} />
+      );
+    }
+    case "user-dropped-disc": {
+      if (event.userId === ctx.currentUserId) {
+        const errored = state.errors[event.eventId];
+        if (errored) {
+          return <Item variant="error" text={eventErrorToString(errored)} />;
+        }
+        return <Item text={`You dropped disc`} />;
+      }
+      return <Item text={`${username} dropped disc`} />;
+    }
+    case "user-restarted-game": {
+      return <Item text={`${username} restarted game`} />;
+    }
+    case "user-started-game": {
+      return <Item text={`${username} started game`} />;
+    }
+    case "user-started-playing": {
+      return <Item text={`${username} started playing`} />;
+    }
+    case "user-stopped-game": {
+      return <Item text={`${username} stopped game`} />;
+    }
+    case "user-stopped-playing": {
+      return <Item text={`${username} stopped playing`} />;
+    }
+    case "user-swapped-sides": {
+      return <Item text={`${username} swapped sides`} />;
+    }
+    case "time-passed": {
+      return null;
+    }
+    case "user-left": {
+      return <Item text={`${username} left`} />;
+    }
+  }
+};
+
+const Item = ({
+  text,
+  variant,
+}: {
+  text: string;
+  variant?: "error" | "normal";
+}) => {
+  return (
+    <div
+      className={cn(
+        "w-full bg-neutral-800 p-1 text-center text-sm font-bold",
+        variant === "error" && "bg-orange-500 text-white"
+      )}>
+      {text}
+    </div>
   );
 };
 

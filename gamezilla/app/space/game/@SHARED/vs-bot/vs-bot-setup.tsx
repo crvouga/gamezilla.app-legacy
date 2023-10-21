@@ -148,7 +148,7 @@ export const View = ({
         };
 
   return (
-    <div className="flex h-full w-full flex-1 flex-col">
+    <div className="flex w-full flex-1 flex-col">
       <ViewGameHeader renderCoverArt={renderCoverArt} title={title} />
 
       <div className="flex w-full flex-col gap-2 p-4">

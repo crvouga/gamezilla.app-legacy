@@ -72,11 +72,26 @@ export const isColumnIndex = (index: unknown): index is ColumnIndex => {
 export type RowIndex = 0 | 1 | 2 | 3 | 4 | 5;
 
 export type MoveProblem =
-  | "game_over_winner"
-  | "game_over_tie"
-  | "not_turn"
-  | "column_is_full"
-  | "out_of_bounds";
+  | "game-over-winner"
+  | "game-over-tie"
+  | "not-turn"
+  | "column-is-full"
+  | "out-of-bounds";
+
+export const moveProblemToString = (problem: MoveProblem): string => {
+  switch (problem) {
+    case "game-over-winner":
+      return "Game over, winner";
+    case "game-over-tie":
+      return "Game over, tie";
+    case "not-turn":
+      return "Not your turn";
+    case "column-is-full":
+      return "Column is full";
+    case "out-of-bounds":
+      return "Out of bounds";
+  }
+};
 
 export type MoveResult = Result<MoveProblem, Columns>;
 
@@ -88,27 +103,27 @@ export const dropDisc = (
   const status = toStatus(columns);
 
   if (status.type === "Winner") {
-    return err("game_over_winner");
+    return err("game-over-winner");
   }
 
   if (status.type === "Tie") {
-    return err("game_over_tie");
+    return err("game-over-tie");
   }
 
   const turn = status.turn;
 
   if (turn !== player) {
-    return err("not_turn");
+    return err("not-turn");
   }
 
   const column = columns[columnIndex];
 
   if (!column) {
-    return err("out_of_bounds");
+    return err("out-of-bounds");
   }
 
   if (column.length === MAX_COLUMN_HEIGHT) {
-    return err("column_is_full");
+    return err("column-is-full");
   }
 
   const columnsNew = columns.map((column, index) => {
