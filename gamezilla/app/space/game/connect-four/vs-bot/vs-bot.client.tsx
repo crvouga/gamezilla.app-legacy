@@ -1,6 +1,7 @@
 import { Eff, Posix, Sub, chain } from "gamezilla/@SHARED/core";
 import { ClientCmd, sendToServer } from "gamezilla/app/@SHARED/client";
 import {
+  Drawer,
   IconArrowLeftOnRect,
   IconArrowRotateLeft,
   IconRightLeft,
@@ -59,6 +60,7 @@ export const init = (...params: Parameters<typeof initCore>): ClientModel => {
 
   return {
     ...shared,
+    opened: null,
     vsBotSetup: VsBotSetup.init,
     vsBotGame: VsBotGame.init(null),
   };
@@ -92,6 +94,13 @@ export const update = (input: {
         case "vs-bot-setup": {
           const updated = VsBotSetup.update(model.vsBotSetup, msg.c);
           return { model: { ...model, vsBotSetup: updated } };
+        }
+
+        case "opened-activity-feed-drawer": {
+          return { model: { ...model, opened: "activity-feed-drawer" } };
+        }
+        case "closed-activity-feed-drawer": {
+          return { model: { ...model, opened: null } };
         }
 
         default: {
@@ -181,6 +190,7 @@ export const mergeWithServer = ({
 
   const modelNew: ClientModel = {
     events: merged.events,
+    opened: clientModel.opened,
     vsBotSetup: clientModel.vsBotSetup,
     vsBotGame: clientModel.vsBotGame
       ? clientModel.vsBotGame
@@ -306,7 +316,7 @@ export const View = ({
   if (state.type === "setup") {
     return (
       <div className="flex h-full w-full flex-col">
-        <ViewActivityFeedBar model={model} ctx={ctx} />
+        <ViewActivityFeedBar state={state} model={model} ctx={ctx} />
         <VsBotSetup.View
           model={model.vsBotSetup}
           dispatch={(c) => dispatch({ t: "vs-bot-setup", c })}
@@ -329,7 +339,16 @@ export const View = ({
 
   return (
     <GameLayout isSpectating={ctx.currentUserId !== state.player}>
-      <ViewActivityFeedBar model={model} ctx={ctx} />
+      <button onClick={() => dispatch({ t: "opened-activity-feed-drawer" })}>
+        <ViewActivityFeedBar state={state} model={model} ctx={ctx} />
+      </button>
+
+      <ViewActivityFeedDrawer
+        state={state}
+        ctx={ctx}
+        dispatch={dispatch}
+        model={model}
+      />
 
       <div className="flex w-full flex-1 flex-col items-center justify-center">
         <VsBotPlayerSection {...vsBotGameProps} />
@@ -416,7 +435,9 @@ export const View = ({
 const ViewActivityFeedBar = ({
   model,
   ctx,
+  state,
 }: {
+  state: State;
   model: CoreModel;
   ctx: SpaceViewCtx;
 }) => {
@@ -424,12 +445,40 @@ const ViewActivityFeedBar = ({
   if (!latestEvent) {
     return null;
   }
+  return <ViewActivityFeedItem event={latestEvent} ctx={ctx} state={state} />;
+};
+
+const ViewActivityFeedDrawer = ({
+  model,
+  state,
+  dispatch,
+  ctx,
+}: {
+  dispatch: (m: ClientMsg) => void;
+  state: State;
+  model: ClientModel;
+  ctx: SpaceViewCtx;
+}) => {
+  console.log(model.events.length);
+
   return (
-    <ViewActivityFeedItem
-      event={latestEvent}
-      ctx={ctx}
-      state={toState(ctx, model)}
-    />
+    <Drawer
+      id="activity-feed-drawer"
+      open={model.opened === "activity-feed-drawer"}
+      onClose={() => dispatch({ t: "closed-activity-feed-drawer" })}>
+      <div class="max-h-96 w-full overflow-y-scroll">
+        {model.events.map((event) => {
+          return (
+            <ViewActivityFeedItem
+              key={event.eventId}
+              ctx={ctx}
+              event={event}
+              state={state}
+            />
+          );
+        })}
+      </div>
+    </Drawer>
   );
 };
 
@@ -501,7 +550,7 @@ const Item = ({
   return (
     <div
       className={cn(
-        "w-full bg-neutral-800 p-1 text-center text-sm font-bold",
+        "w-full p-1 text-left text-sm font-bold",
         variant === "error" && "bg-orange-500 text-white"
       )}>
       {text}

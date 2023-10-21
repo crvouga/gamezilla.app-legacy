@@ -16,6 +16,7 @@ export type CoreModel = {
 export type ServerModel = CoreModel;
 
 export type ClientModel = CoreModel & {
+  opened: "activity-feed-drawer" | null;
   vsBotSetup: VsBotSetup.Model;
   vsBotGame: VsBotGame.Model;
 };
@@ -45,6 +46,8 @@ export const initCore = ({ player }: { player: UserId | null }): CoreModel => {
 
 export type ClientMsg =
   | Evt
+  | { t: "opened-activity-feed-drawer" }
+  | { t: "closed-activity-feed-drawer" }
   | { t: "vs-bot-setup"; c: VsBotSetup.Msg }
   | { t: "vs-bot-game"; c: VsBotGame.Msg };
 
