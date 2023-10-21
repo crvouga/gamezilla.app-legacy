@@ -1,6 +1,14 @@
 const FOCUSABLE_ELEMENTS =
   'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
+const debug = false;
+
+const log = (...args: unknown[]) => {
+  if (debug) {
+    log("[Focus Trap]", ...args);
+  }
+};
+
 export const createFocusTrap = () => {
   let firstFocusableEl: HTMLElement | null = null;
   let lastFocusableEl: HTMLElement | null = null;
@@ -27,17 +35,17 @@ export const createFocusTrap = () => {
 
   const handleTrap = (e: KeyboardEvent) => {
     if (!firstFocusableEl || !lastFocusableEl) {
-      console.log("no focusable elements");
+      log("no focusable elements");
       return;
     }
 
     if (e.key !== "Tab") {
-      console.log("not tab");
+      log("not tab");
       return;
     }
 
     if (e.shiftKey && document.activeElement === firstFocusableEl) {
-      console.log("shift tab");
+      log("shift tab");
       e.preventDefault();
       lastFocusableEl?.focus();
       return;
