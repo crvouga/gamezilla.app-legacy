@@ -316,7 +316,13 @@ export const View = ({
   if (state.type === "setup") {
     return (
       <div className="flex h-full w-full flex-col">
-        <ViewActivityFeedBar state={state} model={model} ctx={ctx} />
+        <ViewActivityFeedBar
+          dispatch={dispatch}
+          state={state}
+          model={model}
+          ctx={ctx}
+        />
+
         <VsBotSetup.View
           model={model.vsBotSetup}
           dispatch={(c) => dispatch({ t: "vs-bot-setup", c })}
@@ -339,15 +345,11 @@ export const View = ({
 
   return (
     <GameLayout isSpectating={ctx.currentUserId !== state.player}>
-      <button onClick={() => dispatch({ t: "opened-activity-feed-drawer" })}>
-        <ViewActivityFeedBar state={state} model={model} ctx={ctx} />
-      </button>
-
-      <ViewActivityFeedDrawer
-        state={state}
-        ctx={ctx}
+      <ViewActivityFeedBar
         dispatch={dispatch}
+        state={state}
         model={model}
+        ctx={ctx}
       />
 
       <div className="flex w-full flex-1 flex-col items-center justify-center">
@@ -436,49 +438,42 @@ const ViewActivityFeedBar = ({
   model,
   ctx,
   state,
-}: {
-  state: State;
-  model: CoreModel;
-  ctx: SpaceViewCtx;
-}) => {
-  const latestEvent = model.events[model.events.length - 1];
-  if (!latestEvent) {
-    return null;
-  }
-  return <ViewActivityFeedItem event={latestEvent} ctx={ctx} state={state} />;
-};
-
-const ViewActivityFeedDrawer = ({
-  model,
-  state,
   dispatch,
-  ctx,
 }: {
   dispatch: (m: ClientMsg) => void;
   state: State;
   model: ClientModel;
   ctx: SpaceViewCtx;
 }) => {
-  console.log(model.events.length);
-
+  const latestEvent = model.events[model.events.length - 1];
+  if (!latestEvent) {
+    return null;
+  }
   return (
-    <Drawer
-      id="activity-feed-drawer"
-      open={model.opened === "activity-feed-drawer"}
-      onClose={() => dispatch({ t: "closed-activity-feed-drawer" })}>
-      <div class="max-h-96 w-full overflow-y-scroll">
-        {model.events.map((event) => {
-          return (
-            <ViewActivityFeedItem
-              key={event.eventId}
-              ctx={ctx}
-              event={event}
-              state={state}
-            />
-          );
-        })}
-      </div>
-    </Drawer>
+    <>
+      <button
+        className="flex w-full items-center justify-start"
+        onClick={() => dispatch({ t: "opened-activity-feed-drawer" })}>
+        <ViewActivityFeedItem event={latestEvent} ctx={ctx} state={state} />
+      </button>
+      <Drawer
+        id="activity-feed-drawer"
+        open={model.opened === "activity-feed-drawer"}
+        onClose={() => dispatch({ t: "closed-activity-feed-drawer" })}>
+        <div class="max-h-96 w-full overflow-y-scroll">
+          {model.events.map((event) => {
+            return (
+              <ViewActivityFeedItem
+                key={event.eventId}
+                ctx={ctx}
+                event={event}
+                state={state}
+              />
+            );
+          })}
+        </div>
+      </Drawer>
+    </>
   );
 };
 
@@ -496,7 +491,7 @@ const ViewActivityFeedItem = ({
 
   switch (event.t) {
     case "bot-dropped-disc": {
-      return <Item text={`Bot dropped disc`} />;
+      return <Item text="Bot dropped disc" />;
     }
     case "user-changed-bot-level": {
       return (
@@ -509,7 +504,7 @@ const ViewActivityFeedItem = ({
         if (errored) {
           return <Item variant="error" text={eventErrorToString(errored)} />;
         }
-        return <Item text={`You dropped disc`} />;
+        return <Item text="You dropped disc" />;
       }
       return <Item text={`${username} dropped disc`} />;
     }
@@ -550,8 +545,8 @@ const Item = ({
   return (
     <div
       className={cn(
-        "w-full p-1 text-left text-sm font-bold",
-        variant === "error" && "bg-orange-500 text-white"
+        "w-full p-1 text-left text-sm font-semibold",
+        variant === "error" && "text-orange-500"
       )}>
       {text}
     </div>

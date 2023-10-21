@@ -401,20 +401,17 @@ export const mergeModels = (
 ): CoreModel => {
   const eventsMap: Map<string, Evt & WithMeta> = new Map();
 
-  // Add events from modelRight
   for (const event of modelLeft.events) {
     eventsMap.set(event.eventId, event);
   }
 
   for (const event of modelRight.events) {
     if (eventsMap.has(event.eventId)) {
-      console.log("duplicate event", event);
       continue;
     }
     eventsMap.set(event.eventId, event);
   }
 
-  // Convert back to array and sort by 'happenedAt'
   const sortedEvents = Array.from(eventsMap.values()).sort(
     (a, b) => a.happenedAt - b.happenedAt
   );

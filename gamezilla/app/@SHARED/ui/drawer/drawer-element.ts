@@ -1,3 +1,4 @@
+import { FocusTrap, createFocusTrap } from "../focus-trap";
 import { drawerSub, DrawerProps } from "./drawer-shared";
 
 declare global {
@@ -27,10 +28,12 @@ if (typeof window !== "undefined" && "customElements" in window) {
 
     private unsubscribe: () => void = () => {};
     private props: DrawerProps | null = null;
+    private focusTrap: FocusTrap;
 
     constructor() {
       super();
       this.attachShadow({ mode: "open" });
+      this.focusTrap = createFocusTrap();
     }
 
     disconnectedCallback() {
@@ -120,13 +123,18 @@ if (typeof window !== "undefined" && "customElements" in window) {
         this.root.classList.remove("pointer-events-none");
         this.root.classList.add("darken-background");
         this.backdrop.classList.add("visible");
+        // this.root.tabIndex = 0;
+        this.focusTrap.activate(this.root);
         return;
       }
 
+      // this.root.tabIndex = -1;
+      this.focusTrap.deactivate(this.root);
       this.backdrop.classList.remove("visible");
       this.content.classList.remove("open");
       this.root.classList.remove("darken-background");
       this.root.classList.add("pointer-events-none");
+      this.focusTrap.activate(this.root);
     }
   }
 
