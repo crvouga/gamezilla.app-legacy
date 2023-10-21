@@ -72,15 +72,20 @@ export type Event =
   | { t: "user-restarted-game"; userId: UserId };
 
 type WithMeta = {
-  eventId: Uuid;
+  eventId: string;
   happenedAt: Posix;
+};
+
+const generateEventId = (): string => {
+  const uuid = Uuid.generate();
+  return `event:${uuid}`;
 };
 
 export const withMeta = (eventNew: Event): Event & WithMeta => {
   return {
     ...eventNew,
     happenedAt: Posix.now(),
-    eventId: Uuid.generate(),
+    eventId: generateEventId(),
   };
 };
 
