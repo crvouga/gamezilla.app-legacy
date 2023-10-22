@@ -1,7 +1,7 @@
 import { Eff, Sub } from "gamezilla/@SHARED/core";
-import { ClientEvt, ClientCmd } from "gamezilla/app/@SHARED/client";
+import { ClientCmd } from "gamezilla/app/@SHARED/client";
 import { VDom } from "gamezilla/app/@SHARED/ui";
-import { SpaceClientCtx, SpaceEvt, SpaceViewCtx } from "../space";
+import { SpaceClientCtx, SpaceClientEvt, SpaceViewCtx } from "../space";
 
 /**
  * Represents all the functions needed to run a game client side
@@ -11,15 +11,14 @@ export type SpaceGameClient<
   ClientMsg,
   ToClient,
   ToServer,
-  State = null,
-  Evt = null,
+  GameState = null,
+  GameEvt = null,
   ViewCtx = SpaceViewCtx,
   ClientCtx = SpaceClientCtx
 > = {
-  init: (input: { ctx: ClientCtx; state: State }) => {
+  init: (input: { ctx: ClientCtx; state: GameState }) => {
     model: ClientModel;
     eff?: Eff<ClientMsg>;
-    evt?: Evt[];
     cmd?: ClientCmd<ToServer>[];
   };
 
@@ -27,11 +26,10 @@ export type SpaceGameClient<
     ctx: ClientCtx;
     msg: ClientMsg;
     model: ClientModel;
-    state: State;
+    state: GameState;
   }) => {
     model: ClientModel;
     eff?: Eff<ClientMsg>;
-    evt?: Evt[];
     cmd?: ClientCmd<ToServer>[];
   };
 
@@ -39,11 +37,10 @@ export type SpaceGameClient<
     ctx: ClientCtx;
     msg: ToClient;
     model: ClientModel;
-    state: State;
+    state: GameState;
   }) => {
     model: ClientModel;
     eff?: Eff<ClientMsg>;
-    evt?: Evt[];
     cmd?: ClientCmd<ToServer>[];
   };
 
@@ -52,28 +49,41 @@ export type SpaceGameClient<
    */
   updateFromEvt: (input: {
     ctx: SpaceClientCtx;
-    msg: Evt;
+    msg: SpaceClientEvt;
     model: ClientModel;
-    state: State;
+    state: GameState;
   }) => {
     model: ClientModel;
     eff?: Eff<ClientMsg>;
     cmd?: ClientCmd<ToServer>[];
-    evt?: Evt[];
+  };
+
+  /**
+   * Handles messages from the game space like users leaving and joining
+   */
+  updateFromGameEvt: (input: {
+    ctx: SpaceClientCtx;
+    msg: GameEvt;
+    model?: ClientModel;
+    state: GameState;
+  }) => {
+    model: ClientModel;
+    eff?: Eff<ClientMsg>;
+    cmd?: ClientCmd<ToServer>[];
   };
 
   subscriptions: (input: {
     intervalId: string;
     ctx: ClientCtx;
     model: ClientModel;
-    state: State;
+    state: GameState;
   }) => Sub<ClientMsg>;
 
   View: (input: {
     ctx: ViewCtx;
     dispatch: (msg: ClientMsg) => void;
-    state: State;
-    dispatchEvent: (evt: Evt) => void;
+    state: GameState;
+    dispatchEvent: (evt: GameEvt) => void;
     model: ClientModel;
   }) => VDom;
 };
@@ -119,7 +129,6 @@ const tag = <
       return {
         model: { t: tag, c: initial.model },
         eff: Eff.t(tag, initial.eff),
-        evt: initial.evt?.map((evt) => ({ t: tag, c: evt })),
         cmd: ClientCmd.tag(tag, initial.cmd),
       };
     },
@@ -134,7 +143,6 @@ const tag = <
       return {
         model: { t: tag, c: updated.model },
         eff: Eff.t(tag, updated.eff),
-        evt: updated.evt?.map((evt) => ({ t: tag, c: evt })),
         cmd: ClientCmd.tag(tag, updated.cmd),
       };
     },
@@ -149,7 +157,6 @@ const tag = <
       return {
         model: { t: tag, c: updated.model },
         eff: Eff.t(tag, updated.eff),
-        evt: updated.evt?.map((evt) => ({ t: tag, c: evt })),
         cmd: ClientCmd.tag(tag, updated.cmd),
       };
     },
@@ -158,17 +165,30 @@ const tag = <
       const updated = client.updateFromEvt({
         ctx: input.ctx,
         state: input.state.c,
-        msg: input.msg.c,
+        msg: input.msg,
         model: input.model.c,
       });
       return {
         model: { t: tag, c: updated.model },
         eff: Eff.t(tag, updated.eff),
-        evt: updated.evt?.map((evt) => ({ t: tag, c: evt })),
+
         cmd: ClientCmd.tag(tag, updated.cmd),
       };
     },
 
+    updateFromGameEvt: (input) => {
+      const updated = client.updateFromGameEvt({
+        ctx: input.ctx,
+        state: input.state.c,
+        msg: input.msg.c,
+        model: input.model?.c,
+      });
+      return {
+        model: { t: tag, c: updated.model },
+        eff: Eff.t(tag, updated.eff),
+        cmd: ClientCmd.tag(tag, updated.cmd),
+      };
+    },
     subscriptions: (input) => {
       return Sub.tag(
         tag,

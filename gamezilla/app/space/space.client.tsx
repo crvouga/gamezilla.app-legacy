@@ -1,11 +1,4 @@
-import {
-  Eff,
-  Loading,
-  Result,
-  Sub,
-  chain,
-  dissoc,
-} from "gamezilla/@SHARED/core";
+import { Eff, Sub, chain } from "gamezilla/@SHARED/core";
 import {
   APP_SOUND,
   ClientCmd,
@@ -14,13 +7,9 @@ import {
   RouteGameSpace,
   ViewCtx,
   gotProfiles,
-  playSound,
-  pushRoute,
-  replaceRoute,
   sendToServer,
-  showToast,
 } from "gamezilla/app/@SHARED/client";
-import { Profile, SpaceId, UserId } from "gamezilla/app/@SHARED/data";
+import { SpaceId } from "gamezilla/app/@SHARED/data";
 import {
   ActionButton,
   Button,
@@ -34,15 +23,14 @@ import {
   MyAvatar,
   VDom,
 } from "gamezilla/app/@SHARED/ui";
-import { Space, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
+import { SpaceViewCtx } from "gamezilla/app/space/@SHARED";
 import {
   ViewSpaceHostChip,
   ViewUsersInSpaceList,
   ViewYouChip,
 } from "gamezilla/app/space/game/@SHARED";
-import { EvtMeta, appendEvt, withMeta } from "./@SHARED/evt";
+import { withMeta } from "./@SHARED/evt";
 import * as GameClient from "./game/game.client";
-import * as Game from "./game/game.core";
 import { ViewCoverArt } from "./game/game.core";
 import {
   ViewNotInGameScreen,
@@ -53,10 +41,8 @@ import {
   ClientModel,
   ClientMsg,
   Evt,
-  SpaceModel,
   StateStarted,
   ToClient,
-  ToClientExtra,
   ToServer,
   appendEvent,
   findSpaceByUserId,
@@ -70,13 +56,6 @@ import {
 //
 //
 //
-
-const SPACE_SOUND = {
-  // joined: "./space/joined.wav",
-  // left: "./space/left.wav",
-  joined: APP_SOUND.navForward,
-  left: APP_SOUND.navBackward,
-};
 
 export const init: {
   model: ClientModel;
@@ -192,32 +171,22 @@ export const update = ({
     }
 
     default: {
-      const space = model.spaces[msg.spaceId] ?? {
-        events: [],
-        initialState: {
-          type: "initial",
+      return chain(
+        model,
+        (model): ReturnType<typeof update> => {
+          const appended = appendEvent(model, msg);
+
+          const modelNew: ClientModel = {
+            ...model,
+            ...appended,
+          };
+
+          return { model: modelNew, cmd: [sendToServer(msg)] };
         },
-      };
-
-      const eventsNew = appendEvt(space.events, msg);
-
-      const spaceModelNew: SpaceModel = {
-        ...space,
-        events: eventsNew,
-      };
-
-      const modelNew: ClientModel = {
-        ...model,
-        spaces: {
-          ...model.spaces,
-          [msg.spaceId]: spaceModelNew,
-        },
-      };
-
-      return {
-        model: modelNew,
-        cmd: [sendToServer(msg)],
-      };
+        (model) => {
+          return updateGameModel({ msg, ctx, model });
+        }
+      );
     }
   }
 };
@@ -309,7 +278,7 @@ export const updateFromServer = ({
               };
             },
             (model) => {
-              return { model };
+              return updateGameModel({ msg, ctx, model });
             }
           );
         }
@@ -322,6 +291,114 @@ export const updateFromServer = ({
       };
     }
   );
+};
+
+const updateGameModel = ({
+  model,
+  msg,
+  ctx,
+}: {
+  model: ClientModel;
+  msg: Evt;
+  ctx: ClientCtx;
+}): {
+  model: ClientModel;
+  eff?: Eff<ClientMsg>;
+  cmd?: ClientCmd<ToServer>[];
+} => {
+  switch (msg.t) {
+    case "user-inputted-game": {
+      const spaceModel = model.spaces[msg.spaceId];
+
+      if (!spaceModel) {
+        return { model };
+      }
+
+      const state = toState(spaceModel);
+
+      if (state.type === "initial") {
+        return { model };
+      }
+
+      if (state.type === "ended") {
+        return { model };
+      }
+
+      if (!state.game) {
+        return { model };
+      }
+
+      const initial = GameClient.init({
+        ctx: { ...ctx, space: state.space },
+        state: state.game,
+      });
+
+      return {
+        model: {
+          ...model,
+          games: {
+            ...model.games,
+            [msg.spaceId]: initial.model,
+          },
+        },
+        eff: Eff.t("game-msg", initial.eff),
+        cmd: ClientCmd.map(initial.cmd ?? [], (m) => ({
+          t: "game-msg",
+          spaceId: msg.spaceId,
+          c: m,
+        })),
+      };
+    }
+
+    case "game": {
+      const spaceModel = model.spaces[msg.spaceId];
+
+      if (!spaceModel) {
+        return { model };
+      }
+
+      const state = toState(spaceModel);
+
+      if (state.type === "initial") {
+        return { model };
+      }
+
+      if (state.type === "ended") {
+        return { model };
+      }
+
+      if (!state.game) {
+        return { model };
+      }
+
+      const updated = GameClient.updateFromGameEvt({
+        ctx: { ...ctx, space: state.space },
+        msg: msg.c,
+        model: model.games[msg.spaceId],
+        state: state.game,
+      });
+
+      return {
+        model: {
+          ...model,
+          games: {
+            ...model.games,
+            [msg.spaceId]: updated.model,
+          },
+        },
+        eff: Eff.t("game-msg", updated.eff),
+        cmd: ClientCmd.map(updated.cmd ?? [], (m) => ({
+          t: "game-msg",
+          spaceId: msg.spaceId,
+          c: m,
+        })),
+      };
+    }
+
+    default: {
+      return { model };
+    }
+  }
 };
 
 export const updateFromEvt = (input: {

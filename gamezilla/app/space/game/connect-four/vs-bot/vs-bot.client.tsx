@@ -120,6 +120,14 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
   );
 };
 
+export const updateFromGameEvt: Client["updateFromGameEvt"] = (input) => {
+  const { model } = input;
+  if (model) {
+    return { model };
+  }
+  return init(input);
+};
+
 export const updateFromEvt: Client["updateFromEvt"] = (input) => {
   return input;
 };

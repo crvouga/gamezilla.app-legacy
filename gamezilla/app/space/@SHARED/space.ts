@@ -1,4 +1,4 @@
-import { ClientCtx, ViewCtx } from "gamezilla/app/@SHARED/client";
+import { ClientCtx, ClientEvt, ViewCtx } from "gamezilla/app/@SHARED/client";
 import { Profile, SpaceId, UserId } from "gamezilla/app/@SHARED/data";
 import { ReqCtx, ServerCtx, ServerEvt } from "gamezilla/app/@SHARED/server";
 
@@ -20,33 +20,21 @@ export type Space = {
   };
 };
 
-export const initSpace = <T>({
-  spaceId,
-  hostId,
-}: {
-  spaceId: SpaceId;
-  hostId: UserId;
-}): Space => {
-  return {
-    visibility: "public",
-    spaceId,
-    hostId,
-    users: {},
-  };
-};
-
-export type Game<T> = { game?: T | null };
-
-export type ProfileCache = {
-  profileCache?: {
-    [userId: UserId]: Profile;
-  };
-};
-
-export type SpaceEvt =
-  | ServerEvt
+type SpaceEvt =
   | { t: "user-left"; userId: UserId }
   | { t: "user-joined"; userId: UserId };
+
+/**
+ * @description
+ * Represents outside events that happened in the server app
+ */
+export type SpaceServerEvt = ServerEvt | SpaceEvt;
+
+/**
+ * @description
+ * Represents outside events that happened in the client app
+ */
+export type SpaceClientEvt = ClientEvt | SpaceEvt;
 
 //
 //
@@ -71,6 +59,16 @@ export type SpaceViewCtx = ViewCtx &
     quit: () => void;
     viewProfile: (userId: UserId) => void;
   };
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 export const spaceToProfiles = (ctx: SpaceViewCtx, space: Space) => {
   const profiles: Profile[] = [];

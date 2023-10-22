@@ -88,6 +88,10 @@ const subscriptions: Client["subscriptions"] = () => {
   return Sub.None;
 };
 
+const updateFromGameEvt: Client["updateFromGameEvt"] = (input) => {
+  return init(input);
+};
+
 const View: Client["View"] = ({ model, dispatch, ctx }) => {
   switch (model.mode) {
     case "edit": {
@@ -189,5 +193,6 @@ export const PuzzleBuilderClient: Client = {
   updateFromServer,
   updateFromEvt,
   subscriptions,
+  updateFromGameEvt,
   View,
 };

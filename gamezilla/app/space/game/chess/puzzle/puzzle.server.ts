@@ -12,7 +12,7 @@ import {
 import { UserId } from "gamezilla/app/@SHARED/data";
 import { DbConnSql } from "gamezilla/app/@SHARED/server";
 import {
-  SpaceEvt,
+  SpaceServerEvt,
   SpaceReqCtx,
   SpaceServerCmd,
   SpaceServerCtx,
@@ -409,7 +409,7 @@ export const updateFromGame = ({
 export const updateFromEvt = ({
   model,
 }: {
-  msg: SpaceEvt;
+  msg: SpaceServerEvt;
   model: ServerModel;
 }): {
   model: ServerModel;

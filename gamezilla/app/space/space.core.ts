@@ -1,8 +1,8 @@
 import { Profile, UserId } from "gamezilla/app/@SHARED/data";
 import { SpaceId } from "../@SHARED/data/space-id";
+import { Space } from "./@SHARED";
 import { EvtMeta, appendEvt } from "./@SHARED/evt";
 import * as Game from "./game/game.core";
-import { Space } from "./@SHARED";
 
 //
 //

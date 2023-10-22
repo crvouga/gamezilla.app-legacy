@@ -1,6 +1,6 @@
 import { Eff, Sub } from "gamezilla/@SHARED/core";
 import { ServerEvt } from "gamezilla/app/@SHARED/server";
-import { SpaceEvt, SpaceReqCtx, SpaceServerCtx } from "../space";
+import { SpaceServerEvt, SpaceReqCtx, SpaceServerCtx } from "../space";
 import { SpaceServerCmd } from "../space-cmd";
 
 //
@@ -68,7 +68,7 @@ export type SpaceGameServer<
    */
   updateFromEvt: (input: {
     ctx: SpaceServerCtx;
-    msg: SpaceEvt;
+    msg: SpaceServerEvt;
     model: ServerModel;
     state: State;
   }) => MaybePromise<{

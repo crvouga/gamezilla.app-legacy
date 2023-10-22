@@ -4,16 +4,11 @@ import {
   SpaceGameClient,
   SpaceViewCtx,
 } from "gamezilla/app/space/@SHARED";
-import { ChessClient } from "gamezilla/app/space/game/chess";
 import { ConnectFourClient } from "gamezilla/app/space/game/connect-four";
-import { FlowClient } from "gamezilla/app/space/game/flow";
-import { TicTacToeClient } from "gamezilla/app/space/game/tic-tac-toe";
 import {
   ClientModel,
   ClientMsg,
   Evt,
-  GameName,
-  ServerModel,
   State,
   ToClient,
   ToServer,
@@ -94,6 +89,20 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
   }
 
   return { model };
+};
+
+export const updateFromGameEvt: Client["updateFromGameEvt"] = (input) => {
+  const { state, model } = input;
+
+  if (!model) {
+    return init(input);
+  }
+
+  if (state.t === "connect-four" && model.t === "connect-four") {
+    return ConnectFour.updateFromGameEvt({ ...input, state, model });
+  }
+
+  return init(input);
 };
 
 export const updateFromEvt: Client["updateFromEvt"] = (input) => {

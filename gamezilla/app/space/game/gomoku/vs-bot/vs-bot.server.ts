@@ -1,5 +1,5 @@
 import { Eff, Sub, andThen, p } from "gamezilla/@SHARED/core";
-import { SpaceEvt, SpaceReqCtx } from "gamezilla/app/space/@SHARED";
+import { SpaceServerEvt, SpaceReqCtx } from "gamezilla/app/space/@SHARED";
 import {
   Res,
   ServerModel,
@@ -101,7 +101,7 @@ export const updateFromEvt = ({
   msg,
   model,
 }: {
-  msg: SpaceEvt;
+  msg: SpaceServerEvt;
   model: Model;
 }): {
   model: Model;

@@ -1,9 +1,6 @@
 import { SpaceCtx } from "../@SHARED";
 import { EvtMeta } from "../@SHARED/evt";
-import * as Chess from "./chess";
 import * as ConnectFour from "./connect-four";
-import * as Flow from "./flow";
-import * as TicTacToe from "./tic-tac-toe";
 
 //
 //

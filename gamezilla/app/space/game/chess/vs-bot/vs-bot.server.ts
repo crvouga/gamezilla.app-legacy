@@ -1,6 +1,6 @@
 import { Eff, p, Sub } from "gamezilla/@SHARED/core";
 import {
-  SpaceEvt,
+  SpaceServerEvt,
   SpaceReqCtx,
   SpaceServerCmd,
 } from "gamezilla/app/space/@SHARED";
@@ -113,7 +113,7 @@ export const updateFromEvt = ({
   msg,
   model,
 }: {
-  msg: SpaceEvt;
+  msg: SpaceServerEvt;
   model: Model;
 }): {
   model: Model;

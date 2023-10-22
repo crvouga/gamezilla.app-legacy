@@ -38,6 +38,14 @@ const updateFromEvt: Client["updateFromEvt"] = (input) => {
   return input;
 };
 
+const updateFromGameEvt: Client["updateFromGameEvt"] = (input) => {
+  const { model } = input;
+  if (model) {
+    return { model };
+  }
+  return init(input);
+};
+
 const subscriptions: Client["subscriptions"] = () => {
   return Sub.None;
 };
@@ -68,6 +76,7 @@ export const PlayClient: Client = {
   update,
   updateFromServer,
   updateFromEvt,
+  updateFromGameEvt,
   subscriptions,
   View,
 };

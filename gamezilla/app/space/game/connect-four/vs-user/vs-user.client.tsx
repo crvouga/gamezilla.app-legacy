@@ -95,6 +95,14 @@ export const updateFromEvt: Client["updateFromEvt"] = (
   return input;
 };
 
+export const updateFromGameEvt: Client["updateFromGameEvt"] = (input) => {
+  const { model } = input;
+  if (model) {
+    return { model };
+  }
+  return init(input);
+};
+
 //
 //
 //

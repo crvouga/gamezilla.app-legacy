@@ -1,5 +1,5 @@
 import { Eff, Sub, Time } from "gamezilla/@SHARED/core";
-import { SpaceEvt, SpaceServerCmd } from "gamezilla/app/space/@SHARED";
+import { SpaceServerEvt, SpaceServerCmd } from "gamezilla/app/space/@SHARED";
 import * as Board from "../@SHARED/chess/chess";
 import {
   initCore,
@@ -49,7 +49,7 @@ export const updateFromEvt = ({
   msg,
   model,
 }: {
-  msg: SpaceEvt;
+  msg: SpaceServerEvt;
   model: ServerModel;
 }): {
   model: ServerModel;
