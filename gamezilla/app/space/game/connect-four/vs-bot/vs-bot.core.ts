@@ -276,14 +276,14 @@ const addError = (
   };
 };
 
-export const isBotTurn = (model: State): boolean => {
-  if (model.type !== "game") {
+export const isBotTurn = (state: State): boolean => {
+  if (state.type !== "game") {
     return false;
   }
-  const status = ConnectFour.toStatus(model.columns);
+  const status = ConnectFour.toStatus(state.columns);
   return (
     status.type === "Playing" &&
-    status.turn === ConnectFour.opposite[model.userPlayerType]
+    status.turn === ConnectFour.opposite[state.userPlayerType]
   );
 };
 

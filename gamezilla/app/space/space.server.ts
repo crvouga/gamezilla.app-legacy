@@ -1,4 +1,4 @@
-import { Eff, Sub, chain, chainAwait, p } from "gamezilla/@SHARED/core";
+import { Eff, Sub } from "gamezilla/@SHARED/core";
 import {
   ReqCtx,
   ServerCmd,
@@ -10,7 +10,6 @@ import {
 } from "gamezilla/app/@SHARED/server";
 import {
   Space,
-  SpaceGameServer,
   SpaceServerCmd,
   SpaceServerCtx,
 } from "gamezilla/app/space/@SHARED";
@@ -26,15 +25,6 @@ import {
   appendEvent,
   toState,
 } from "./space.core";
-
-type Server = SpaceGameServer<
-  ServerModel,
-  ServerMsg,
-  ToClient,
-  ToServer,
-  State,
-  Evt
->;
 
 //
 //
@@ -217,47 +207,49 @@ export const updateFromClient = async (input: {
     }
 
     default: {
-      return chainAwait(
-        model,
-        async (model) => {
-          const space = model.spaces[msg.spaceId];
-
-          const state = toState(
-            space ?? {
-              events: [],
-              initialState: {
-                type: "initial",
-              },
-            }
-          );
-
-          const appended = appendEvent(model, msg);
-
-          return {
-            model: {
-              ...model,
-              ...appended,
-            },
-            cmd: [
-              msg.t === "game" && state.type === "started"
-                ? sendToUser(Object.values(state.space.users), msg)
-                : broadcast(msg),
-            ],
-          };
-        },
-        async (model) => {
-          const updated = await updateGameModel({
-            model,
-            msg,
-            ctx,
-          });
-          return {
-            model: updated.model,
-            // cmd: updated.cmd,
-            eff: updated.eff,
-          };
+      const before = toState(
+        model.spaces[msg.spaceId] ?? {
+          events: [],
+          initialState: {
+            type: "initial",
+          },
         }
       );
+
+      const appended = appendEvent(model, msg);
+
+      const after = toState(
+        appended.spaces[msg.spaceId] ?? {
+          events: [],
+          initialState: {
+            type: "initial",
+          },
+        }
+      );
+
+      const updated = await updateGameModel({
+        model,
+        msg,
+        ctx,
+        before,
+        after,
+      });
+
+      return {
+        model: {
+          ...model,
+          ...appended,
+          games: {
+            ...model.games,
+            ...updated.model.games,
+          },
+        },
+        cmd: [
+          msg.t === "game" && after.type === "started"
+            ? sendToUser(Object.values(after.space.users), msg)
+            : broadcast(msg),
+        ],
+      };
     }
   }
 };
@@ -325,7 +317,11 @@ const updateGameModel = async ({
   model,
   msg,
   ctx,
+  before,
+  after,
 }: {
+  before: State;
+  after: State;
   model: ServerModel;
   msg: Evt;
   ctx: ServerCtx;
@@ -389,31 +385,29 @@ const updateGameModel = async ({
     }
 
     case "game": {
-      const spaceModel = model.spaces[msg.spaceId];
-
-      if (!spaceModel) {
+      if (
+        before.type === "initial" ||
+        before.type === "ended" ||
+        !before.game ||
+        after.type === "initial" ||
+        after.type === "ended" ||
+        !after.game
+      ) {
         return { model };
       }
 
-      const state = toState(spaceModel);
+      const game = model.games[msg.spaceId];
 
-      if (state.type === "initial") {
-        return { model };
-      }
-
-      if (state.type === "ended") {
-        return { model };
-      }
-
-      if (!state.game) {
+      if (!game) {
         return { model };
       }
 
       const updated = await GameServer.updateFromGameEvt({
-        ctx: { ...ctx, space: state.space },
+        ctx: { ...ctx, space: after.space },
         msg: msg.c,
-        model: model.games[msg.spaceId],
-        state: state.game,
+        model: game,
+        before: before.game,
+        after: after.game,
       });
 
       return {
@@ -434,7 +428,7 @@ const updateGameModel = async ({
         ),
 
         cmd: spaceCmdToCmd(
-          state.space,
+          after.space,
           SpaceServerCmd.map(updated.cmd ?? [], (c) => ({
             t: "game-msg",
             spaceId: msg.spaceId,

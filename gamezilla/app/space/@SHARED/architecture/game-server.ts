@@ -78,14 +78,12 @@ export type SpaceGameServer<
     cmd?: SpaceServerCmd<ToClient>[];
   }>;
 
-  /**
-   * This handles updates from the game space itself.
-   */
   updateFromGameEvt: (input: {
     ctx: SpaceServerCtx;
     msg: Evt;
-    model?: ServerModel;
-    state: State;
+    model: ServerModel;
+    before: State;
+    after: State;
   }) => MaybePromise<{
     model: ServerModel;
     eff?: Eff<ServerMsg>;
@@ -178,7 +176,8 @@ const tag = <
     updateFromGameEvt: async (input) => {
       const updated = await server.updateFromGameEvt({
         ctx: input.ctx,
-        state: input.state.c,
+        before: input.before.c,
+        after: input.after.c,
         msg: input.msg.c,
         model: input.model?.c,
       });

@@ -85,18 +85,21 @@ export const updateFromEvt: Server["updateFromEvt"] = (input) => {
 };
 
 export const updateFromGameEvt: Server["updateFromGameEvt"] = (input) => {
-  const { model, state, msg } = input;
-
-  if (!model) {
-    return init(input);
-  }
+  const { model, before, after, msg } = input;
 
   if (
-    state.t === "connect-four" &&
+    before.t === "connect-four" &&
+    after.t === "connect-four" &&
     model.t === "connect-four" &&
     msg.t === "connect-four"
   ) {
-    return ConnectFour.updateFromGameEvt({ ...input, state, model, msg });
+    return ConnectFour.updateFromGameEvt({
+      ...input,
+      before,
+      after,
+      model,
+      msg,
+    });
   }
 
   return { model };

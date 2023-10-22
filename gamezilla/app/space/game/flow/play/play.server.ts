@@ -41,9 +41,6 @@ const subscriptions: Server["subscriptions"] = () => {
 
 export const updateFromGameEvt: Server["updateFromGameEvt"] = (input) => {
   const { model } = input;
-  if (!model) {
-    return init(input);
-  }
   return { model };
 };
 

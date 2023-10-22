@@ -7,6 +7,7 @@ import {
   State,
   ToClient,
   ToServer,
+  isBotTurn,
 } from "./vs-bot.core";
 
 type Server = SpaceGameServer<
@@ -37,10 +38,15 @@ export const updateFromEvt: Server["updateFromEvt"] = (input) => {
 };
 
 export const updateFromGameEvt: Server["updateFromGameEvt"] = (input) => {
-  const { model } = input;
-  if (!model) {
-    return init(input);
+  const { model, msg, before, after } = input;
+
+  if (!isBotTurn(before) && isBotTurn(after)) {
+    return {
+      model,
+      eff: async (dispatch) => {},
+    };
   }
+
   return { model };
 };
 
