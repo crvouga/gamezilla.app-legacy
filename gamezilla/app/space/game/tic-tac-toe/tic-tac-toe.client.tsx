@@ -61,7 +61,6 @@ export const update: Client["update"] = ({ msg, model, ctx }) => {
     return {
       model: { t: "vs-bot", c: updated.model },
       eff: Eff.t("vs-bot", updated.eff),
-      evt: updated.evt,
       cmd: ClientCmd.tag("vs-bot", updated.cmd),
     };
   }

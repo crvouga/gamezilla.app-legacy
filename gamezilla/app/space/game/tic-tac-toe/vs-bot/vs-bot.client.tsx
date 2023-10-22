@@ -75,7 +75,7 @@ export const update = ({
   model: Model;
 }): {
   model: Model;
-  evt?: ClientEvt[];
+
   eff?: Eff<Msg>;
   cmd?: ClientCmd<ToServer>[];
 } => {

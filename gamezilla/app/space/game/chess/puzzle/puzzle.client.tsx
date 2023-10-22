@@ -2,8 +2,6 @@ import { Eff, andThen, p } from "gamezilla/@SHARED/core";
 import {
   APP_SOUND,
   ClientCmd,
-  ClientEvt,
-  ToastCmd,
   playSound,
   showToast,
 } from "gamezilla/app/@SHARED/client";
@@ -35,9 +33,9 @@ import {
   ToClient,
   ToServer,
   initCore,
+  isIncorrect,
   isNoMoreHints,
   isSolved,
-  isIncorrect,
   toCurrentBoard,
   toNextEloRating,
   toPlayerColor,
@@ -132,7 +130,6 @@ export const updateFromServer = (input: {
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
-  evt?: ClientEvt[];
   cmd?: ClientCmd<ToServer>[];
 } => {
   return p(updateFromServerMain(input), andThen(watch));

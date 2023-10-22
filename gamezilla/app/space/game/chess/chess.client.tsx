@@ -129,6 +129,7 @@ export const updateFromServer: Client["updateFromServer"] = ({
   ctx,
   msg,
   model,
+  state,
 }) => {
   switch (msg.t) {
     case "input-mode": {
@@ -209,7 +210,7 @@ export const updateFromServer: Client["updateFromServer"] = ({
       return {
         model: { ...model, mode: { t: "puzzle", c: updated.model } },
         eff: Eff.t("puzzle", updated?.eff ?? Eff.None),
-        evt: updated.evt,
+
         cmd: ClientCmd.tag("puzzle", updated.cmd),
       };
     }

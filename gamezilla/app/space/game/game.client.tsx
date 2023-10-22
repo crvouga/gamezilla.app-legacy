@@ -135,7 +135,8 @@ export const subscriptions: Client["subscriptions"] = (input): Sub<Msg> => {
 export const View: Client["View"] = (input) => {
   const { model, ctx, state, dispatch, dispatchEvent } = input;
 
-  if (model.t === "connect-four" && state.t === "connect-four") {
+  console.log(state);
+  if (state.t === "connect-four") {
     return (
       <ConnectFourClient.View
         ctx={ctx}

@@ -19,7 +19,7 @@ export type SpaceGameClient<
   init: (input: { ctx: ClientCtx; state: State }) => {
     model: ClientModel;
     eff?: Eff<ClientMsg>;
-    evt?: ClientEvt[];
+    evt?: Evt[];
     cmd?: ClientCmd<ToServer>[];
   };
 
@@ -31,7 +31,7 @@ export type SpaceGameClient<
   }) => {
     model: ClientModel;
     eff?: Eff<ClientMsg>;
-    evt?: ClientEvt[];
+    evt?: Evt[];
     cmd?: ClientCmd<ToServer>[];
   };
 
@@ -43,7 +43,7 @@ export type SpaceGameClient<
   }) => {
     model: ClientModel;
     eff?: Eff<ClientMsg>;
-    evt?: ClientEvt[];
+    evt?: Evt[];
     cmd?: ClientCmd<ToServer>[];
   };
 
@@ -51,15 +51,15 @@ export type SpaceGameClient<
    * Handles messages from the game space like users leaving and joining
    */
   updateFromEvt: (input: {
-    ctx: SpaceViewCtx;
-    msg: SpaceEvt;
+    ctx: SpaceClientCtx;
+    msg: Evt;
     model: ClientModel;
     state: State;
   }) => {
     model: ClientModel;
     eff?: Eff<ClientMsg>;
     cmd?: ClientCmd<ToServer>[];
-    evt?: ClientEvt[];
+    evt?: Evt[];
   };
 
   subscriptions: (input: {
@@ -119,7 +119,7 @@ const tag = <
       return {
         model: { t: tag, c: initial.model },
         eff: Eff.t(tag, initial.eff),
-        evt: initial.evt,
+        evt: initial.evt?.map((evt) => ({ t: tag, c: evt })),
         cmd: ClientCmd.tag(tag, initial.cmd),
       };
     },
@@ -134,7 +134,7 @@ const tag = <
       return {
         model: { t: tag, c: updated.model },
         eff: Eff.t(tag, updated.eff),
-        evt: updated.evt,
+        evt: updated.evt?.map((evt) => ({ t: tag, c: evt })),
         cmd: ClientCmd.tag(tag, updated.cmd),
       };
     },
@@ -149,7 +149,7 @@ const tag = <
       return {
         model: { t: tag, c: updated.model },
         eff: Eff.t(tag, updated.eff),
-        evt: updated.evt,
+        evt: updated.evt?.map((evt) => ({ t: tag, c: evt })),
         cmd: ClientCmd.tag(tag, updated.cmd),
       };
     },
@@ -158,13 +158,13 @@ const tag = <
       const updated = client.updateFromEvt({
         ctx: input.ctx,
         state: input.state.c,
-        msg: input.msg,
+        msg: input.msg.c,
         model: input.model.c,
       });
       return {
         model: { t: tag, c: updated.model },
         eff: Eff.t(tag, updated.eff),
-        evt: updated.evt,
+        evt: updated.evt?.map((evt) => ({ t: tag, c: evt })),
         cmd: ClientCmd.tag(tag, updated.cmd),
       };
     },

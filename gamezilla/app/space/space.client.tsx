@@ -53,6 +53,7 @@ import {
   ClientModel,
   ClientMsg,
   Evt,
+  SpaceModel,
   StateStarted,
   ToClient,
   ToClientExtra,
@@ -182,7 +183,6 @@ export const update = ({
       return {
         model: modelNew,
         eff: Eff.t("game-msg", updated.eff),
-        evt: updated.evt,
         cmd: ClientCmd.map(updated.cmd ?? [], (m) => ({
           t: "game-msg",
           spaceId: space.spaceId,
@@ -201,17 +201,21 @@ export const update = ({
 
       const eventsNew = appendEvt(space.events, msg);
 
-      return {
-        model: {
-          ...model,
-          spaces: {
-            ...model.spaces,
-            [msg.spaceId]: {
-              ...space,
-              events: eventsNew,
-            },
-          },
+      const spaceModelNew: SpaceModel = {
+        ...space,
+        events: eventsNew,
+      };
+
+      const modelNew: ClientModel = {
+        ...model,
+        spaces: {
+          ...model.spaces,
+          [msg.spaceId]: spaceModelNew,
         },
+      };
+
+      return {
+        model: modelNew,
         cmd: [sendToServer(msg)],
       };
     }
@@ -234,7 +238,7 @@ export const updateFromServer = ({
 } => {
   return chain(
     model,
-    (model) => {
+    (model): ReturnType<typeof updateFromServer> => {
       switch (msg.t) {
         case "game-msg": {
           const space = model.spaces[msg.spaceId];
@@ -284,7 +288,6 @@ export const updateFromServer = ({
               spaceId: msg.spaceId,
               c: m,
             })),
-            evt: updated.evt,
           };
         }
 
@@ -293,14 +296,22 @@ export const updateFromServer = ({
         }
 
         default: {
-          const modelNew = appendEvent(model, msg);
+          return chain(
+            model,
+            (model) => {
+              const modelNew = appendEvent(model, msg);
 
-          return {
-            model: {
-              ...model,
-              ...modelNew,
+              return {
+                model: {
+                  ...model,
+                  ...modelNew,
+                },
+              };
             },
-          };
+            (model) => {
+              return { model };
+            }
+          );
         }
       }
     },
@@ -485,7 +496,7 @@ const ViewSpaceScreen = ({
 
   return (
     <>
-      <pre class="w-full text-xs">{JSON.stringify(state, null, 4)}</pre>
+      {/* <pre class="w-full text-xs">{JSON.stringify(state, null, 4)}</pre> */}
 
       <ViewSpaceScreenMain
         state={state}
@@ -664,7 +675,7 @@ const ViewSpaceScreenMain = ({
       </nav>
 
       <div className="flex w-full flex-1 flex-col overflow-hidden">
-        {state.game && gameModel ? (
+        {state.game ? (
           <GameClient.View
             state={state.game}
             ctx={ctx}
@@ -672,7 +683,13 @@ const ViewSpaceScreenMain = ({
               dispatchEvent({ t: "game", spaceId: ctx.space.spaceId, c })
             }
             dispatch={(msg) => dispatch({ t: "game-msg", c: msg })}
-            model={gameModel}
+            model={
+              gameModel ??
+              GameClient.init({
+                ctx,
+                state: state.game,
+              }).model
+            }
           />
         ) : (
           <ViewNotInGameScreen ctx={ctx} dispatchEvent={dispatchEvent} />
