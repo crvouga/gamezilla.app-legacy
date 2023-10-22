@@ -4,6 +4,7 @@ import { Space } from "gamezilla/app/space/@SHARED";
 import { SpaceId } from "../@SHARED/data/space-id";
 import * as Game from "./game/game.core";
 import { SpaceStoreInstance } from "./space-store";
+import { EvtMeta } from "./@SHARED/evt";
 
 //
 //
@@ -129,4 +130,67 @@ export const toSpaceByUserId = (model: ClientModel, userId: UserId) => {
     }
   }
   return null;
+};
+
+type Evt =
+  | {
+      t: "user-created-space";
+      userId: UserId;
+      spaceId: SpaceId;
+    }
+  | {
+      t: "user-ended-space";
+      userId: UserId;
+      spaceId: SpaceId;
+    }
+  | {
+      t: "user-joined-space";
+      userId: UserId;
+      spaceId: SpaceId;
+      profile?: Profile;
+    }
+  | {
+      t: "user-left-space";
+      userId: UserId;
+      spaceId: SpaceId;
+    }
+  | {
+      t: "user-inputted-game";
+      userId: UserId;
+      spaceId: SpaceId;
+      game: Game.GameName | null;
+    };
+
+type State = Space<null>;
+
+export const reducer = (state: State, evt: Evt & EvtMeta): State => {
+  switch (evt.t) {
+    case "user-created-space": {
+      return state;
+    }
+
+    case "user-ended-space": {
+      return state;
+    }
+
+    case "user-inputted-game": {
+      return {
+        ...state,
+      };
+    }
+
+    case "user-joined-space": {
+      return {
+        ...state,
+        users: {
+          ...state.users,
+          [evt.userId]: evt.userId,
+        },
+      };
+    }
+
+    case "user-left-space": {
+      return state;
+    }
+  }
 };

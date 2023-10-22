@@ -1,4 +1,4 @@
-import { err, ok, Result, exhaustive } from "gamezilla/@SHARED/core";
+import { err, ok, Result, exhaustive, Posix } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
 import {
   ColumnIndex,
@@ -11,7 +11,9 @@ import {
   opposite,
   toStatus,
   toTurn,
+  MoveProblem,
 } from "../connect-four/connect-four";
+import { EvtMeta } from "gamezilla/app/space/@SHARED/evt";
 
 //
 //
@@ -518,4 +520,134 @@ const handleMoveResult = (
 
 const shuffle = <X>(xs: X[]): X[] => {
   return [...xs].sort(() => (Math.random() > 0.5 ? -1 : 1));
+};
+
+export type Evt =
+  //
+  | { t: "user-stopped-playing"; userId: UserId }
+  | { t: "user-started-playing"; userId: UserId; playerType: PlayerType }
+  | {
+      t: "user-inputted-move-time-limit";
+      userId: UserId;
+      moveTimeLimit: MoveTimeLimit;
+    }
+  | { t: "user-dropped-disc"; columnIndex: ColumnIndex; userId: UserId }
+  | { t: "user-started-game"; userId: UserId }
+  //
+  | { t: "user-requested-rematch"; userId: UserId }
+  | {
+      t: "user-responded-to-rematch-request";
+      userId: UserId;
+      response: "Accept" | "Decline";
+    }
+  | {
+      t: "user-cancelled-rematch";
+    }
+  //
+  | { t: "user-resigned" };
+
+type EventError = { t: "not-playing" } | { t: "move"; c: MoveProblem };
+
+export type State = (StateSetup | StateGame | StateGameOver) & {
+  errors: {
+    [eventId: string]: Evt & EvtMeta & { error: EventError };
+  };
+};
+
+const addError = (
+  state: State,
+  event: Evt & EvtMeta,
+  error: EventError
+): State => {
+  return {
+    ...state,
+    errors: {
+      ...state.errors,
+      [event.eventId]: { ...event, error },
+    },
+  };
+};
+
+export type StateSetup = {
+  type: "setup";
+  moveTimeLimit: MoveTimeLimit;
+  players: {
+    [playerType in PlayerType]: UserId | null;
+  };
+};
+
+export type StateGame = {
+  type: "game";
+  moveTimeLimit: MoveTimeLimit;
+  moveCountDown: number;
+  columns: Columns;
+  gameId: number;
+  players: {
+    [playerType in PlayerType]: UserId;
+  };
+};
+
+export type StateGameOver = {
+  type: "game-over";
+  moveTimeLimit: MoveTimeLimit;
+  columns: Columns;
+  gameId: number;
+  gameOver: GameOver;
+  rematch: Rematch;
+  players: {
+    [playerType in PlayerType]: UserId;
+  };
+};
+
+export const reducer = (state: State, event: Evt & EvtMeta): State => {
+  switch (state.type) {
+    case "setup": {
+      switch (event.t) {
+        case "user-started-playing": {
+          if (state.players[event.playerType] !== null) {
+            return addError(state, event, { t: "not-playing" });
+          }
+
+          return {
+            ...state,
+            players: {
+              ...state.players,
+              [event.playerType]: event.userId,
+            },
+          };
+        }
+
+        case "user-stopped-playing": {
+          const playerType = toPlayerType(event.userId, state);
+
+          if (!playerType) {
+            return addError(state, event, { t: "not-playing" });
+          }
+
+          return {
+            ...state,
+            players: {
+              ...state.players,
+              [playerType]: null,
+            },
+          };
+        }
+
+        default: {
+          return state;
+        }
+      }
+
+      return state;
+    }
+
+    case "game-over": {
+      return state;
+    }
+
+    case "setup": {
+      return state;
+    }
+  }
+  return state;
 };
