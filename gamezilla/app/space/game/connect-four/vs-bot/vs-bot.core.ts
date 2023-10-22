@@ -11,6 +11,7 @@ import * as ConnectFour from "../connect-four";
 
 export type CoreModel = {
   events: (Evt & WithMeta)[];
+  initialState: State;
 };
 
 export type ServerModel = CoreModel;
@@ -21,20 +22,10 @@ export type ClientModel = CoreModel & {
   vsBotGame: VsBotGame.Model;
 };
 
-export const initCore = ({ player }: { player: UserId | null }): CoreModel => {
-  if (player) {
-    return {
-      events: [
-        withMeta({
-          t: "user-started-playing",
-          playerType: "player-one",
-          userId: player,
-        }),
-      ],
-    };
-  }
+export const initCore = (input: { hostId: UserId }): CoreModel => {
   return {
     events: [],
+    initialState: toInitialState(input),
   };
 };
 
@@ -101,7 +92,6 @@ export const withMeta = (eventNew: Evt): Evt & WithMeta => {
 
 type EventError =
   | { t: "not-playing" }
-  | { t: "not-your-turn" }
   | { t: "move"; c: ConnectFour.MoveProblem };
 
 export const eventErrorToString = ({
@@ -115,9 +105,6 @@ export const eventErrorToString = ({
     }
     case "move": {
       return ConnectFour.moveProblemToString(error.c);
-    }
-    case "not-your-turn": {
-      return "It's not your turn";
     }
   }
 };
@@ -133,7 +120,7 @@ const toInitialState = (input: { hostId: UserId }): State => {
     type: "setup",
     botLevel: "Medium",
     userPlayerType: "player-one",
-    player: input.hostId,
+    playingUserId: input.hostId,
     errors: {},
   };
 };
@@ -142,15 +129,14 @@ export type StateSetup = {
   type: "setup";
   userPlayerType: ConnectFour.PlayerType;
   botLevel: BotLevel;
-  player: UserId | null;
+  playingUserId: UserId | null;
 };
 
 export type StateGame = {
   type: "game";
-  gameId: number;
   userPlayerType: ConnectFour.PlayerType;
   botLevel: BotLevel;
-  player: UserId;
+  playingUserId: UserId;
   columns: ConnectFour.Columns;
 };
 
@@ -167,24 +153,24 @@ export const reducer = (input: {
         case "user-started-playing": {
           return {
             ...state,
-            player: event.userId,
+            playingUserId: event.userId,
             userPlayerType: event.playerType,
           };
         }
 
         case "user-stopped-playing": {
-          if (state.player !== event.userId) {
+          if (state.playingUserId !== event.userId) {
             return addError(state, event, { t: "not-playing" });
           }
 
           return {
             ...state,
-            player: null,
+            playingUserId: null,
           };
         }
 
         case "user-swapped-sides": {
-          if (state.player !== event.userId) {
+          if (state.playingUserId !== event.userId) {
             return addError(state, event, { t: "not-playing" });
           }
 
@@ -195,29 +181,30 @@ export const reducer = (input: {
         }
 
         case "user-started-game": {
-          if (state.player !== event.userId) {
+          if (state.playingUserId !== event.userId) {
             return addError(state, event, { t: "not-playing" });
           }
 
           return {
             ...state,
             type: "game",
-            botLevel: state.botLevel,
-            userPlayerType: state.userPlayerType,
-            player: state.player,
-            gameId: 0,
+            playingUserId: state.playingUserId,
             columns: ConnectFour.EMPTY_COLUMNS,
           };
         }
 
         case "user-changed-bot-level": {
-          if (state.player !== event.userId) {
+          if (state.playingUserId !== event.userId) {
             return addError(state, event, { t: "not-playing" });
           }
           return {
             ...state,
             botLevel: event.botLevel,
           };
+        }
+
+        case "bot-dropped-disc": {
+          return addError(state, event, { t: "not-playing" });
         }
 
         default: {
@@ -241,6 +228,10 @@ export const reducer = (input: {
         }
 
         case "user-dropped-disc": {
+          if (state.playingUserId !== event.userId) {
+            return addError(state, event, { t: "not-playing" });
+          }
+
           const moved = ConnectFour.dropDisc(
             state.columns,
             event.columnIndex,
@@ -253,20 +244,20 @@ export const reducer = (input: {
         }
 
         case "user-left": {
-          if (event.userId === state.player) {
+          if (event.userId === state.playingUserId) {
             return {
               ...state,
               type: "setup",
               botLevel: state.botLevel,
               userPlayerType: state.userPlayerType,
-              player: null,
+              playingUserId: null,
             };
           }
           return state;
         }
 
         case "user-stopped-game": {
-          if (event.userId !== state.player) {
+          if (event.userId !== state.playingUserId) {
             return addError(state, event, { t: "not-playing" });
           }
 
@@ -275,12 +266,12 @@ export const reducer = (input: {
             type: "setup",
             botLevel: state.botLevel,
             userPlayerType: state.userPlayerType,
-            player: state.player,
+            playingUserId: state.playingUserId,
           };
         }
 
         case "user-swapped-sides": {
-          if (event.userId !== state.player) {
+          if (event.userId !== state.playingUserId) {
             return addError(state, event, { t: "not-playing" });
           }
 
@@ -292,7 +283,7 @@ export const reducer = (input: {
         }
 
         case "user-restarted-game": {
-          if (event.userId !== state.player) {
+          if (event.userId !== state.playingUserId) {
             return addError(state, event, { t: "not-playing" });
           }
 
@@ -392,7 +383,18 @@ export const appendEvent = (
   model: CoreModel,
   event: Evt & WithMeta
 ): CoreModel => {
-  return mergeModels(model, { events: [event] });
+  const eventsMap: Map<string, Evt & WithMeta> = new Map();
+  for (const event of model.events) {
+    eventsMap.set(event.eventId, event);
+  }
+  eventsMap.set(event.eventId, event);
+  const sortedEvents = Array.from(eventsMap.values()).sort(
+    (a, b) => a.happenedAt - b.happenedAt
+  );
+  return {
+    ...model,
+    events: sortedEvents,
+  };
 };
 
 export const mergeModels = (
@@ -417,6 +419,7 @@ export const mergeModels = (
   );
 
   return {
+    initialState: modelRight.initialState,
     events: sortedEvents,
   };
 };

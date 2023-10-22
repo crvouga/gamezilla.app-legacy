@@ -114,6 +114,7 @@ export const View = ({
   playerTwo,
   canStartGame,
   onStartGame,
+  onSwapSides,
 }: Props) => {
   const playerOneProp: PlayerProp =
     human.player === "player-one"
@@ -170,6 +171,7 @@ export const View = ({
 
         <div className="mt-2 grid w-full grid-cols-7">
           <PlayerButtons
+            onSwapSides={onSwapSides}
             dispatch={dispatch}
             human={human}
             player={playerOneProp}
@@ -177,6 +179,7 @@ export const View = ({
           />
           <div className="col-span-1"></div>
           <PlayerButtons
+            onSwapSides={onSwapSides}
             dispatch={dispatch}
             human={human}
             player={playerTwoProp}
@@ -289,8 +292,10 @@ const PlayerButtons = ({
   human,
   player,
   ctx,
+  onSwapSides,
   dispatch,
 }: {
+  onSwapSides: () => void;
   human: { userId: UserId | null };
   ctx: SpaceViewCtx;
   player: PlayerProp;
@@ -317,7 +322,7 @@ const PlayerButtons = ({
       )}
       {player.t === "bot" && human.userId === ctx.currentUserId && (
         <Button
-          onClick={player.onStartPlaying}
+          onClick={onSwapSides}
           className="w-full"
           variant="text"
           color="primary"

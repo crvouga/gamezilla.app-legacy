@@ -1,6 +1,9 @@
-import { Eff, err, ok, Result, Sub } from "gamezilla/@SHARED/core";
-import { UserId } from "gamezilla/app/@SHARED/data";
-import { GameServer, SpaceServerCmd } from "gamezilla/app/space/@SHARED";
+import { Eff, err, ok, Sub } from "gamezilla/@SHARED/core";
+import {
+  GameServer,
+  SpaceServerCmd,
+  SpaceServerCtx,
+} from "gamezilla/app/space/@SHARED";
 import {
   Mode,
   ServerModel,
@@ -91,7 +94,7 @@ export const updateFromClient: Server["updateFromClient"] = ({
       };
     }
 
-    const modelNew = initMode(mode, ctx.currentUserId);
+    const modelNew = initMode(mode, ctx);
 
     return {
       model: modelNew,
@@ -166,7 +169,7 @@ export const updateFromEvt: Server["updateFromEvt"] = ({ msg, model }) => {
   }
 };
 
-const initMode = (mode: Mode, userId: UserId): Model => {
+const initMode = (mode: Mode, ctx: SpaceServerCtx): Model => {
   switch (mode) {
     case "none": {
       return { t: "none" };
@@ -175,7 +178,7 @@ const initMode = (mode: Mode, userId: UserId): Model => {
     case "vs-bot": {
       return {
         t: "vs-bot",
-        c: VsBot.init({ player: userId }),
+        c: VsBot.init(ctx),
       };
     }
 
@@ -183,7 +186,7 @@ const initMode = (mode: Mode, userId: UserId): Model => {
       return {
         t: "vs-user",
         c: VsUser.init({
-          players: { "player-one": userId, "player-two": null },
+          players: { "player-one": ctx.hostId, "player-two": null },
         }),
       };
     }

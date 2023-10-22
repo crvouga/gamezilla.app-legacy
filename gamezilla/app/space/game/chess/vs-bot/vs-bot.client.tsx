@@ -279,6 +279,12 @@ export const View = ({
             onSelect: () => dispatch({ t: "input-bot-level", botLevel }),
           };
         })}
+        onSwapSides={() =>
+          dispatch({
+            t: "start-playing",
+            color: model.coreModel.userColor === "w" ? "b" : "w",
+          })
+        }
         canStartGame={model.coreModel.userId !== null}
         ctx={ctx}
         human={{

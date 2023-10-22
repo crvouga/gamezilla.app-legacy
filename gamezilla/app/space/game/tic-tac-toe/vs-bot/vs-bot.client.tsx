@@ -163,6 +163,7 @@ export const View = ({
       renderIcon: (props) =>
         renderBotLevel({ level: model.botLevel, ...props }),
     },
+    onSwapSides: () => dispatch({ t: "swap-sides" }),
     canStartGame: Boolean(model.player),
     ctx,
     human: {

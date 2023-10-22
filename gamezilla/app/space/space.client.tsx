@@ -940,7 +940,7 @@ const ViewSpaceScreenMain = ({
         />
       </nav>
 
-      <div className="w-full flex-1 overflow-hidden">
+      <div className="flex w-full flex-1 flex-col overflow-hidden">
         {space.game ? (
           <GameClient.View
             ctx={ctx}

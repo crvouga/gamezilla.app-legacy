@@ -209,10 +209,7 @@ export const mergeWithServer: Client["mergeWithServer"] = ({
     case "vs-bot": {
       const sync = VsBot.mergeWithServer({
         ctx,
-        clientModel:
-          client.t === "vs-bot"
-            ? client.c
-            : VsBot.init({ player: ctx.currentUserId }),
+        clientModel: client.t === "vs-bot" ? client.c : VsBot.init(ctx),
         serverModel: server.c,
       });
       return {

@@ -15,6 +15,7 @@ export type VsBotProps = {
     player: PlayerType;
     userId: UserId | null;
   };
+  onSwapSides: () => void;
   bot: {
     label: string;
     renderIcon: (props: { className: string }) => VDom;
