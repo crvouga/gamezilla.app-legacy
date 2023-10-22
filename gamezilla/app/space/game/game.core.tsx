@@ -1,3 +1,5 @@
+import { SpaceCtx } from "../@SHARED";
+import { EvtMeta } from "../@SHARED/evt";
 import * as Chess from "./chess";
 import * as ConnectFour from "./connect-four";
 import * as Flow from "./flow";
@@ -126,6 +128,45 @@ export const gameNameToString = (gameName: GameName): string => {
 
     case "flow": {
       return "Flow";
+    }
+  }
+};
+
+export type State = {
+  t: "connect-four";
+  c: ConnectFour.State;
+};
+
+export const initState = (gameName: GameName): State => {
+  switch (gameName) {
+    case "connect-four": {
+      return {
+        t: "connect-four",
+        c: ConnectFour.initState(),
+      };
+    }
+    default: {
+      return {
+        t: "connect-four",
+        c: ConnectFour.initState(),
+      };
+    }
+  }
+};
+
+export type Evt = { t: "connect-four"; c: ConnectFour.Evt };
+
+export const reducer = (
+  ctx: SpaceCtx,
+  state: State,
+  evt: Evt & EvtMeta
+): State => {
+  switch (evt.t) {
+    case "connect-four": {
+      return {
+        t: "connect-four",
+        c: ConnectFour.reducer(ctx, state.c, { ...evt, ...evt.c }),
+      };
     }
   }
 };

@@ -13,7 +13,7 @@ let model: ServerModel;
 const httpServer = createServer(async (_request, response) => {
   response.end(
     JSON.stringify({
-      SpaceStore: await SpaceStore.list(Posix.now(), model.space),
+      SpaceStore: await SpaceStore.list(Posix.now(), model.space.spaces),
       model,
     })
   );

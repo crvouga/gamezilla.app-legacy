@@ -79,6 +79,7 @@ export const init: {
   cmd: ClientCmd<ToServer>[];
 } = {
   model: {
+    evtsBySpaceId: {},
     spaces: {},
     requests: {},
     modal: null,

@@ -14,9 +14,14 @@ import { EvtMeta } from "./@SHARED/evt";
 //
 //
 
-export type ServerModel = SpaceStoreInstance;
+export type ServerModel = {
+  spaces: SpaceStoreInstance;
+};
 
 export type ClientModel = {
+  evtsBySpaceId: {
+    [spaceId: SpaceId]: Evt & EvtMeta;
+  };
   spaces: {
     [spaceId: SpaceId]: Space<Game.ClientModel>;
   };
@@ -159,23 +164,55 @@ type Evt =
       userId: UserId;
       spaceId: SpaceId;
       game: Game.GameName | null;
+    }
+  | {
+      t: "game";
+      c: Game.Evt;
     };
 
-type State = Space<null>;
+export type State = {
+  visibility: "public" | "private";
+  state: "started" | "ended";
+  spaceId: SpaceId;
+  hostId: UserId;
+  users: {
+    [userId: UserId]: UserId;
+  };
+  game: Game.State | null;
+};
 
 export const reducer = (state: State, evt: Evt & EvtMeta): State => {
   switch (evt.t) {
     case "user-created-space": {
-      return state;
+      return {
+        spaceId: evt.spaceId,
+        hostId: evt.userId,
+        visibility: "public",
+        state: "started",
+        users: {
+          [evt.userId]: evt.userId,
+        },
+        game: null,
+      };
     }
 
     case "user-ended-space": {
-      return state;
+      return {
+        ...state,
+        state: "ended",
+      };
     }
 
     case "user-inputted-game": {
+      if (!evt.game) {
+        return {
+          ...state,
+          game: null,
+        };
+      }
       return {
         ...state,
+        game: Game.initState(evt.game),
       };
     }
 
@@ -191,6 +228,17 @@ export const reducer = (state: State, evt: Evt & EvtMeta): State => {
 
     case "user-left-space": {
       return state;
+    }
+
+    case "game": {
+      if (!state.game) {
+        return state;
+      }
+
+      return {
+        ...state,
+        game: Game.reducer(state, state.game, { ...evt, ...evt.c }),
+      };
     }
   }
 };

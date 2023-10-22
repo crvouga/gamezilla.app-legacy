@@ -30,7 +30,9 @@ export const SpaceStore = createSpaceStoreInMemory({
   maxEntryCount: 20,
 });
 
-export const init: ServerModel = SpaceStore.init(Posix.now());
+export const init: ServerModel = {
+  spaces: SpaceStore.init(Posix.now()),
+};
 
 //
 //
@@ -57,7 +59,7 @@ export const update = async ({
     case "game": {
       const { spaceId } = msg;
 
-      const space = await SpaceStore.get(ctx.now, model, spaceId);
+      const space = await SpaceStore.get(ctx.now, model.spaces, spaceId);
 
       if (!space) {
         return { model };
@@ -83,10 +85,10 @@ export const update = async ({
         game: updated.model,
       };
 
-      const modelNew = await SpaceStore.assoc(ctx.now, model, spaceNew);
+      const modelNew = await SpaceStore.assoc(ctx.now, model.spaces, spaceNew);
 
       return {
-        model: modelNew,
+        model: { spaces: modelNew },
         eff: Eff.map_(
           (m): ServerMsg => ({ t: "game", spaceId, c: m }),
           updated.eff
@@ -116,7 +118,7 @@ export const updateFromClient = async (input: {
 
   switch (msg.t) {
     case "list": {
-      const listed = await SpaceStore.list(ctx.now, model);
+      const listed = await SpaceStore.list(ctx.now, model.spaces);
 
       const profiles = listed.reduce(
         (acc, space) => ({ ...acc, ...space.profileCache }),
@@ -132,7 +134,7 @@ export const updateFromClient = async (input: {
     case "join": {
       const currentSpace = await SpaceStore.getByUserId(
         ctx.now,
-        model,
+        model.spaces,
         ctx.currentUserId
       );
 
@@ -150,7 +152,7 @@ export const updateFromClient = async (input: {
         };
       }
 
-      const space = await SpaceStore.get(ctx.now, model, msg.spaceId);
+      const space = await SpaceStore.get(ctx.now, model.spaces, msg.spaceId);
 
       if (!space) {
         return {
@@ -173,10 +175,10 @@ export const updateFromClient = async (input: {
           : space.profileCache,
       };
 
-      const modelNew = await SpaceStore.assoc(ctx.now, model, spaceNew);
+      const modelNew = await SpaceStore.assoc(ctx.now, model.spaces, spaceNew);
 
       return {
-        model: modelNew,
+        model: { spaces: modelNew },
         cmd: [{ t: "broadcast", msg: { ...msg, result: ok(spaceNew) } }],
       };
     }
@@ -184,7 +186,7 @@ export const updateFromClient = async (input: {
     case "destroy": {
       const currentSpace = await SpaceStore.getByUserId(
         ctx.now,
-        model,
+        model.spaces,
         ctx.currentUserId
       );
 
@@ -209,12 +211,12 @@ export const updateFromClient = async (input: {
 
       const modelNew = await SpaceStore.dissoc(
         ctx.now,
-        model,
+        model.spaces,
         currentSpace.spaceId
       );
 
       return {
-        model: modelNew,
+        model: { spaces: modelNew },
         cmd: [
           broadcast({
             ...msg,
@@ -228,7 +230,7 @@ export const updateFromClient = async (input: {
     case "create": {
       const currentSpace = await SpaceStore.getByUserId(
         ctx.now,
-        model,
+        model.spaces,
         ctx.currentUserId
       );
 
@@ -261,10 +263,10 @@ export const updateFromClient = async (input: {
           : {},
       };
 
-      const modelNew = await SpaceStore.assoc(ctx.now, model, spaceNew);
+      const modelNew = await SpaceStore.assoc(ctx.now, model.spaces, spaceNew);
 
       return {
-        model: modelNew,
+        model: { spaces: modelNew },
         cmd: [
           broadcast({
             ...msg,
@@ -278,7 +280,7 @@ export const updateFromClient = async (input: {
     case "input-game": {
       const currentSpace = await SpaceStore.getByUserId(
         ctx.now,
-        model,
+        model.spaces,
         ctx.currentUserId
       );
 
@@ -318,10 +320,14 @@ export const updateFromClient = async (input: {
             : currentSpace.profileCache,
         };
 
-        const modelNew = await SpaceStore.assoc(ctx.now, model, spaceNew);
+        const modelNew = await SpaceStore.assoc(
+          ctx.now,
+          model.spaces,
+          spaceNew
+        );
 
         return {
-          model: modelNew,
+          model: { spaces: modelNew },
           cmd: [
             {
               t: "broadcast",
@@ -353,10 +359,10 @@ export const updateFromClient = async (input: {
           : currentSpace.profileCache,
       };
 
-      const modelNew = await SpaceStore.assoc(ctx.now, model, spaceNew);
+      const modelNew = await SpaceStore.assoc(ctx.now, model.spaces, spaceNew);
 
       return {
-        model: modelNew,
+        model: { spaces: modelNew },
         cmd: [
           {
             t: "broadcast",
@@ -377,7 +383,7 @@ export const updateFromClient = async (input: {
     case "leave": {
       const space = await SpaceStore.getByUserId(
         ctx.now,
-        model,
+        model.spaces,
         ctx.currentUserId
       );
 
@@ -422,10 +428,10 @@ export const updateFromClient = async (input: {
             msg: { t: "user-left", userId: ctx.currentUserId },
           });
 
-      const modelNew = await SpaceStore.assoc(ctx.now, model, spaceNew);
+      const modelNew = await SpaceStore.assoc(ctx.now, model.spaces, spaceNew);
 
       return {
-        model: modelNew,
+        model: { spaces: modelNew },
         cmd: [
           broadcast({
             ...msg,
@@ -445,7 +451,7 @@ export const updateFromClient = async (input: {
     case "game": {
       const space = await SpaceStore.getByUserId(
         ctx.now,
-        model,
+        model.spaces,
         ctx.currentUserId
       );
 
@@ -468,10 +474,12 @@ export const updateFromClient = async (input: {
         game: updated.model,
       };
 
-      const modelNew = await SpaceStore.assoc(ctx.now, model, spaceNew);
+      const modelNew = await SpaceStore.assoc(ctx.now, model.spaces, spaceNew);
 
       return {
-        model: modelNew,
+        model: {
+          spaces: modelNew,
+        },
         eff: Eff.map_(
           (c) => ({ t: "game", spaceId: space.spaceId, c }),
           updated.eff
@@ -539,7 +547,7 @@ export const updateFromEvt = async (input: {
 };
 
 const listSpaces: typeof updateFromEvt = async (input) => {
-  const listed = await SpaceStore.list(input.ctx.now, input.model);
+  const listed = await SpaceStore.list(input.ctx.now, input.model.spaces);
 
   return {
     ...input,
@@ -569,7 +577,7 @@ export const subscriptions = async ({
   ctx: ServerCtx;
 }): Promise<Sub<ServerMsg>> => {
   const batch: Sub<ServerMsg>[] = [];
-  for (const space of await SpaceStore.list(ctx.now, model)) {
+  for (const space of await SpaceStore.list(ctx.now, model.spaces)) {
     if (!space.game) {
       continue;
     }

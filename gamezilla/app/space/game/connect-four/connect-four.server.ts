@@ -176,19 +176,11 @@ const initMode = (mode: Mode, ctx: SpaceServerCtx): Model => {
     }
 
     case "vs-bot": {
-      return {
-        t: "vs-bot",
-        c: VsBot.init(ctx),
-      };
+      return { t: "vs-bot", c: VsBot.init(ctx) };
     }
 
     case "vs-user": {
-      return {
-        t: "vs-user",
-        c: VsUser.init({
-          players: { "player-one": ctx.hostId, "player-two": null },
-        }),
-      };
+      return { t: "vs-user", c: VsUser.init(ctx) };
     }
   }
 };
