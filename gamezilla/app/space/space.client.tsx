@@ -40,6 +40,7 @@ import {
   ViewUsersInSpaceList,
   ViewYouChip,
 } from "gamezilla/app/space/game/@SHARED";
+import { appendEvt } from "./@SHARED/evt";
 import * as GameClient from "./game/game.client";
 import * as Game from "./game/game.core";
 import { ViewCoverArt } from "./game/game.core";
@@ -79,7 +80,7 @@ export const init: {
   cmd: ClientCmd<ToServer>[];
 } = {
   model: {
-    evtsBySpaceId: {},
+    evtsById: {},
     spaces: {},
     requests: {},
     modal: null,
@@ -185,6 +186,32 @@ export const update = ({
       );
     }
 
+    case "evt": {
+      const evts: ClientModel["evtsById"][SpaceId] = model.evtsById[
+        msg.evt.spaceId
+      ] ?? {
+        evts: [],
+        initialState: {
+          type: "initial",
+        },
+      };
+
+      const evtsNew = appendEvt(evts.evts, msg.evt);
+
+      return {
+        model: {
+          ...model,
+          evtsById: {
+            ...model.evtsById,
+            [msg.evt.spaceId]: {
+              evts: evtsNew,
+            },
+          },
+        },
+        cmd: [sendToServer({ t: "evt", evt: msg.evt })],
+      };
+    }
+
     default: {
       return updateRequest({ ctx, msg, model });
     }
@@ -243,6 +270,31 @@ export const updateFromServerMain: typeof updateFromServer = ({
   model,
 }) => {
   switch (msg.t) {
+    case "evt": {
+      const evts: ClientModel["evtsById"][SpaceId] = model.evtsById[
+        msg.evt.spaceId
+      ] ?? {
+        evts: [],
+        initialState: {
+          type: "initial",
+        },
+      };
+
+      const evtsNew = appendEvt(evts.evts, msg.evt);
+
+      return {
+        model: {
+          ...model,
+          evtsById: {
+            ...model.evtsById,
+            [msg.evt.spaceId]: {
+              evts: evtsNew,
+            },
+          },
+        },
+      };
+    }
+
     case "game": {
       const space = model.spaces[msg.spaceId];
 

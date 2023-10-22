@@ -1,4 +1,4 @@
-import { Eff, err, ok, Posix, Sub, dissoc } from "gamezilla/@SHARED/core";
+import { Eff, Posix, Sub, dissoc, err, ok } from "gamezilla/@SHARED/core";
 import {
   ReqCtx,
   ServerCmd,
@@ -14,9 +14,16 @@ import {
   SpaceServerCmd,
   SpaceServerCtx,
 } from "gamezilla/app/space/@SHARED";
+import { appendEvt } from "./@SHARED/evt";
 import * as GameServer from "./game/game.server";
 import { createSpaceStoreInMemory } from "./space-store";
-import { ServerModel, ServerMsg, ToClient, ToServer } from "./space.core";
+import {
+  ServerModel,
+  ServerMsg,
+  ToClient,
+  ToServer,
+  toState,
+} from "./space.core";
 
 //
 //
@@ -32,6 +39,7 @@ export const SpaceStore = createSpaceStoreInMemory({
 
 export const init: ServerModel = {
   spaces: SpaceStore.init(Posix.now()),
+  evtsById: {},
 };
 
 //
@@ -88,7 +96,7 @@ export const update = async ({
       const modelNew = await SpaceStore.assoc(ctx.now, model.spaces, spaceNew);
 
       return {
-        model: { spaces: modelNew },
+        model: { ...model, spaces: modelNew },
         eff: Eff.map_(
           (m): ServerMsg => ({ t: "game", spaceId, c: m }),
           updated.eff
@@ -117,6 +125,37 @@ export const updateFromClient = async (input: {
   const { msg, model, ctx } = input;
 
   switch (msg.t) {
+    case "evt": {
+      const evts = model.evtsById[msg.evt.spaceId];
+
+      const state = toState(
+        evts ?? {
+          evts: [],
+          initialState: {
+            type: "initial",
+          },
+        }
+      );
+
+      return {
+        model: {
+          ...model,
+          evtsById: {
+            ...model.evtsById,
+            [msg.evt.spaceId]: {
+              evts: appendEvt(evts?.evts ?? [], msg.evt),
+              initialState: null,
+            },
+          },
+        },
+        cmd: [
+          msg.evt.t === "game" && state.type === "started"
+            ? sendToUser(Object.values(state.users), msg)
+            : broadcast(msg),
+        ],
+      };
+    }
+
     case "list": {
       const listed = await SpaceStore.list(ctx.now, model.spaces);
 
@@ -178,7 +217,7 @@ export const updateFromClient = async (input: {
       const modelNew = await SpaceStore.assoc(ctx.now, model.spaces, spaceNew);
 
       return {
-        model: { spaces: modelNew },
+        model: { ...model, spaces: modelNew },
         cmd: [{ t: "broadcast", msg: { ...msg, result: ok(spaceNew) } }],
       };
     }
@@ -216,7 +255,7 @@ export const updateFromClient = async (input: {
       );
 
       return {
-        model: { spaces: modelNew },
+        model: { ...model, spaces: modelNew },
         cmd: [
           broadcast({
             ...msg,
@@ -266,7 +305,7 @@ export const updateFromClient = async (input: {
       const modelNew = await SpaceStore.assoc(ctx.now, model.spaces, spaceNew);
 
       return {
-        model: { spaces: modelNew },
+        model: { ...model, spaces: modelNew },
         cmd: [
           broadcast({
             ...msg,
@@ -327,7 +366,7 @@ export const updateFromClient = async (input: {
         );
 
         return {
-          model: { spaces: modelNew },
+          model: { ...model, spaces: modelNew },
           cmd: [
             {
               t: "broadcast",
@@ -362,7 +401,7 @@ export const updateFromClient = async (input: {
       const modelNew = await SpaceStore.assoc(ctx.now, model.spaces, spaceNew);
 
       return {
-        model: { spaces: modelNew },
+        model: { ...model, spaces: modelNew },
         cmd: [
           {
             t: "broadcast",
@@ -431,7 +470,7 @@ export const updateFromClient = async (input: {
       const modelNew = await SpaceStore.assoc(ctx.now, model.spaces, spaceNew);
 
       return {
-        model: { spaces: modelNew },
+        model: { ...model, spaces: modelNew },
         cmd: [
           broadcast({
             ...msg,
@@ -478,6 +517,7 @@ export const updateFromClient = async (input: {
 
       return {
         model: {
+          ...model,
           spaces: modelNew,
         },
         eff: Eff.map_(
