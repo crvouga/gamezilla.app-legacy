@@ -9,6 +9,7 @@ import {
   cn,
 } from "gamezilla/app/@SHARED/ui";
 import { SpaceClientCtx, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
+import { EvtMeta, withMeta } from "gamezilla/app/space/@SHARED/evt";
 import {
   GameLayout,
   IconBotHappy,
@@ -38,16 +39,13 @@ import {
   State,
   ToClient,
   ToServer,
-  WithMeta,
   allBotLevels,
   appendEvent,
   eventErrorToString,
   initCore,
   mergeModels,
   toState,
-  withMeta,
 } from "./vs-bot.core";
-import { ActivityFeed } from "gamezilla/app/@SHARED/ui/activity-feed";
 
 //
 //
@@ -494,7 +492,7 @@ const toActivityFeedItemUI = ({
   state,
 }: {
   ctx: SpaceViewCtx;
-  event: Evt & WithMeta;
+  event: Evt & EvtMeta;
   state: State;
 }): {
   text: string;
@@ -569,7 +567,7 @@ const ViewActivityFeedItem = ({
   state,
 }: {
   ctx: SpaceViewCtx;
-  event: Evt & WithMeta;
+  event: Evt & EvtMeta;
   state: State;
 }) => {
   const itemUI = toActivityFeedItemUI({

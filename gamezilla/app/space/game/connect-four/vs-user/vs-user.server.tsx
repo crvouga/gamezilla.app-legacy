@@ -3,16 +3,16 @@ import {
   SpaceEvt,
   SpaceReqCtx,
   SpaceServerCmd,
+  sendToSpace,
 } from "gamezilla/app/space/@SHARED";
+import { appendEvt, withMeta } from "gamezilla/app/space/@SHARED/evt";
 import {
-  Res,
+  Evt,
   ServerModel,
   ServerMsg,
   ToClient,
   ToServer,
-  handle,
-  initShared,
-  tick,
+  initCore,
   toPlayerType,
 } from "./vs-user.core";
 
@@ -26,7 +26,7 @@ import {
 
 export type Model = ServerModel;
 
-export const init = initShared;
+export const init = initCore;
 
 //
 //
@@ -48,14 +48,11 @@ export const update = ({
   model: Model;
   cmd?: SpaceServerCmd<ToClient>[];
 } => {
-  if (msg.t === "tick") {
-    const modelNew = tick(model);
-    return {
-      model: modelNew,
-      cmd: [{ t: "send-to-space", msg: { t: "tick-done", model: modelNew } }],
-    };
+  switch (msg.t) {
+    case null: {
+      return { model };
+    }
   }
-  return { model };
 };
 
 export const updateFromClient = ({
@@ -71,19 +68,12 @@ export const updateFromClient = ({
   eff?: Eff<Msg>;
   cmd?: SpaceServerCmd<ToClient>[];
 } => {
-  const res: Res = { ...msg, result: handle({ req: msg, ctx, model }) };
-
-  if (res.result.t === "err") {
-    return {
-      model,
-      cmd: [{ t: "send-to-client", clientIds: [ctx.clientId], msg: res }],
-    };
-  }
-
-  return {
-    model: res.result.value,
-    cmd: [{ t: "send-to-space", msg: res }],
+  const modelNew: ServerModel = {
+    events: appendEvt(model.events, msg),
+    initialState: model.initialState,
   };
+
+  return { model: modelNew, cmd: [sendToSpace(msg)] };
 };
 
 export const updateFromEvt = ({
@@ -97,30 +87,22 @@ export const updateFromEvt = ({
   eff?: Eff<Msg>;
   cmd?: SpaceServerCmd<ToClient>[];
 } => {
-  if (msg.t === "user-left") {
-    const userId = msg.userId;
-    const player = toPlayerType(userId, model);
+  switch (msg.t) {
+    case "user-left": {
+      const evt = withMeta<Evt>({ t: "user-left", userId: msg.userId });
 
-    if (player === null) {
-      return { model };
+      const modelNew: ServerModel = {
+        ...model,
+        events: appendEvt(model.events, withMeta(evt)),
+      };
+
+      return { model: modelNew, cmd: [sendToSpace(evt)] };
     }
 
-    const modelNew: Model = {
-      type: "setup",
-      moveTimeLimit: model.moveTimeLimit,
-      players: {
-        ...model.players,
-        [player]: null,
-      },
-    };
-
-    return {
-      model: modelNew,
-      cmd: [{ t: "send-to-space", msg: { t: "player-left", model: modelNew } }],
-    };
+    default: {
+      return { model };
+    }
   }
-
-  return { model };
 };
 
 //
@@ -132,9 +114,5 @@ export const updateFromEvt = ({
 //
 
 export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
-  if (model.type === "game") {
-    return Time.every(intervalId, 1000, () => ({ t: "tick" }));
-  }
-
   return Sub.None;
 };

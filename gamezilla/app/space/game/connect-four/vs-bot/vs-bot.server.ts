@@ -16,9 +16,10 @@ import {
   ToClient,
   ToServer,
   toState,
-  withMeta,
   appendEvent,
+  Evt,
 } from "./vs-bot.core";
+import { withMeta } from "gamezilla/app/space/@SHARED/evt";
 
 export const init = initCore;
 
@@ -34,7 +35,8 @@ export const update = ({
 } => {
   switch (msg.t) {
     case "bot-dropped-disc": {
-      const eventNew = withMeta(msg);
+      const eventNew = withMeta<Evt>(msg);
+
       const modelNew: ServerModel = {
         ...model,
         events: [...(model.events ?? []), eventNew],
@@ -136,7 +138,7 @@ export const updateFromEvt = ({
   eff?: Eff<ServerMsg>;
 } => {
   if (msg.t === "user-left") {
-    const event = withMeta({
+    const event = withMeta<Evt>({
       t: "user-left",
       userId: msg.userId,
     });

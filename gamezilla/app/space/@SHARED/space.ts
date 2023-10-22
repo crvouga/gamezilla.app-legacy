@@ -67,9 +67,11 @@ export type SpaceReqCtx = ReqCtx & {
  *
  */
 
-export type SpaceClientCtx = ClientCtx & {
+export type SpaceCtx = {
   hostId: UserId;
 };
+
+export type SpaceClientCtx = ClientCtx & SpaceCtx;
 
 export type SpaceViewCtx = ViewCtx & {
   quit: () => void;

@@ -1,5 +1,5 @@
 import { Eff, Sub } from "gamezilla/@SHARED/core";
-import { ClientCmd, ViewCtx } from "gamezilla/app/@SHARED/client";
+import { ClientCmd, ViewCtx, sendToServer } from "gamezilla/app/@SHARED/client";
 import {
   Button,
   ConformationDialog,
@@ -13,9 +13,11 @@ import {
 } from "gamezilla/app/@SHARED/ui";
 import {
   SpaceClientCtx,
+  SpaceCtx,
   SpaceEvt,
   SpaceViewCtx,
 } from "gamezilla/app/space/@SHARED";
+import { appendEvt, withMeta } from "gamezilla/app/space/@SHARED/evt";
 import {
   GameLayout,
   ViewBottomButtonBar,
@@ -23,19 +25,18 @@ import {
 } from "gamezilla/app/space/game/@SHARED";
 import { PlayerType, toTurn } from "../connect-four";
 import { ViewCoverArt } from "../connect-four-cover-art";
-import { ViewColumns, PlayerIcon } from "../connect-four-ui";
+import { PlayerIcon, ViewColumns } from "../connect-four-ui";
 import {
   ClientModel,
   ClientMsg,
-  GameModel,
-  GameOverModel,
-  Res,
   ServerModel,
+  StateGame,
+  StateGameOver,
   ToClient,
   ToServer,
-  handle,
-  initShared,
+  initCore,
   toPlayerType,
+  toState,
 } from "./vs-user.core";
 
 //
@@ -46,11 +47,9 @@ import {
 //
 //
 
-export const init = ({
-  players,
-}: Pick<ClientModel, "players">): ClientModel => {
+export const init = (...params: Parameters<typeof initCore>): ClientModel => {
   return {
-    ...initShared({ players }),
+    ...initCore(...params),
     ghostIndex: "none",
     openedModal: "none",
   };
@@ -77,33 +76,30 @@ export const update = ({
   eff?: Eff<ClientMsg>;
   cmd?: ClientCmd<ToServer>[];
 } => {
-  if (msg.t === "clicked-resign") {
-    return { model: { ...model, openedModal: "ConfirmResign" } };
+  switch (msg.t) {
+    case "clicked-resign": {
+      return { model: { ...model, openedModal: "ConfirmResign" } };
+    }
+
+    case "hovered-over-columns": {
+      return { model: { ...model, ghostIndex: msg.columnIndex } };
+    }
+
+    case "close-modal": {
+      return { model: { ...model, openedModal: "none" } };
+    }
+
+    default: {
+      const evt = withMeta(msg);
+
+      const modelNew: ClientModel = {
+        ...model,
+        events: appendEvt(model.events, evt),
+      };
+
+      return { model: modelNew, cmd: [sendToServer(evt)] };
+    }
   }
-
-  if (msg.t === "hovered-over-columns") {
-    return { model: { ...model, ghostIndex: msg.columnIndex } };
-  }
-
-  if (msg.t === "close-modal") {
-    return { model: { ...model, openedModal: "none" } };
-  }
-
-  const handled = handle({
-    ctx: ctx,
-    model,
-    req: msg,
-  });
-
-  const modelNew = mergeWithServer({
-    client: model,
-    server: handled.t === "ok" ? handled.value : model,
-  });
-
-  return {
-    model: modelNew,
-    cmd: [{ t: "send-to-server", msg }],
-  };
 };
 
 export const updateFromServer = ({
@@ -116,39 +112,23 @@ export const updateFromServer = ({
   model: ClientModel;
   eff?: Eff<ClientMsg>;
 } => {
-  if (msg.t === "tick-done") {
-    const merged = mergeWithServer({
-      client: model,
-      server: msg.model,
-    });
-    return { model: merged };
+  switch (msg.t) {
+    default: {
+      const modelNew: ClientModel = {
+        ...model,
+        events: appendEvt(model.events, msg),
+      };
+      return { model: modelNew };
+    }
   }
-
-  if (msg.t === "player-left") {
-    const merged = mergeWithServer({
-      client: model,
-      server: msg.model,
-    });
-    return { model: merged };
-  }
-
-  const modelNew = msg.result.t === "err" ? model : msg.result.value;
-  const merged = mergeWithServer({
-    client: model,
-    server: modelNew,
-  });
-  return { model: { ...merged, openedModal: "none" } };
 };
 
 export const mergeWithServer = ({
-  client = init({
-    players: {
-      "player-one": null,
-      "player-two": null,
-    },
-  }),
+  ctx,
   server,
+  client = init(ctx),
 }: {
+  ctx: SpaceCtx;
   client?: ClientModel;
   server: ServerModel;
 }): ClientModel => {
@@ -199,7 +179,9 @@ export const View = ({
   dispatch: (msg: ClientMsg) => void;
   onQuit: () => void;
 }) => {
-  if (model.type === "setup") {
+  const state = toState(model);
+
+  if (state.type === "setup") {
     return (
       <VsUserSetupScreen
         ctx={ctx}
@@ -212,58 +194,66 @@ export const View = ({
           );
         }}
         onStartGame={() => {
-          dispatch({ t: "start-game" });
+          dispatch({ t: "user-started-game", userId: ctx.currentUserId });
         }}
         onQuit={onQuit}
         playerOne={{
           label: "Red",
           onStartPlaying: () => {
-            dispatch({ t: "start-playing", playerType: "player-one" });
+            dispatch({
+              t: "user-started-playing",
+              playerType: "player-one",
+              userId: ctx.currentUserId,
+            });
           },
           onStopPlaying: () => {
-            dispatch({ t: "stop-playing" });
+            dispatch({ t: "user-stopped-playing", userId: ctx.currentUserId });
           },
           renderIcon: (props) => {
             return <PlayerIcon playerType="player-one" {...props} />;
           },
-          userId: model.players["player-one"],
+          userId: state.players["player-one"],
         }}
         playerTwo={{
           label: "Yellow",
           onStartPlaying: () => {
-            dispatch({ t: "start-playing", playerType: "player-two" });
+            dispatch({
+              t: "user-started-playing",
+              userId: ctx.currentUserId,
+              playerType: "player-two",
+            });
           },
           onStopPlaying: () => {
-            dispatch({ t: "stop-playing" });
+            dispatch({ t: "user-stopped-playing", userId: ctx.currentUserId });
           },
           renderIcon: (props) => {
             return <PlayerIcon playerType="player-two" {...props} />;
           },
-          userId: model.players["player-two"],
+          userId: state.players["player-two"],
         }}
       />
     );
   }
 
-  const currentUserPlayerType = toPlayerType(ctx.currentUserId, model);
+  const currentUserPlayerType = toPlayerType(ctx.currentUserId, state);
 
   return (
     <GameLayout isSpectating={currentUserPlayerType === null}>
       <div className="flex w-full flex-1 flex-col items-center justify-center gap-2">
         <div className="flex w-full items-center gap-2 px-2">
-          <PlayerSlot playerType="player-one" model={model} ctx={ctx} />
-          <PlayerSlot playerType="player-two" model={model} ctx={ctx} />
+          <PlayerSlot playerType="player-one" state={state} ctx={ctx} />
+          <PlayerSlot playerType="player-two" state={state} ctx={ctx} />
         </div>
 
-        <Feedback ctx={ctx} model={model} />
+        <Feedback ctx={ctx} state={state} />
 
         <div className="relative w-full">
           <ViewColumns
-            columns={model.columns}
-            gameId={model.gameId}
+            columns={state.columns}
+            gameId={state.gameId}
             onDropDisc={(columnIndex) =>
               dispatch({
-                t: "input-move",
+                t: "user-dropped-disc",
                 userId: ctx.currentUserId,
                 columnIndex,
               })
@@ -272,24 +262,16 @@ export const View = ({
               dispatch({ t: "hovered-over-columns", columnIndex })
             }
             disabled={
-              toTurn(model.columns) !== currentUserPlayerType ||
-              model.type === "game-over"
-            }
-            ghost={
-              currentUserPlayerType !== null && model.ghostIndex !== "none"
-                ? {
-                    playerType: currentUserPlayerType,
-                    columnIndex: model.ghostIndex,
-                  }
-                : undefined
+              toTurn(state.columns) !== currentUserPlayerType ||
+              state.type === "game-over"
             }
           />
-          {model.type === "game-over" && (
+          {state.type === "game-over" && (
             <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center bg-black/50">
               <ViewGameOverMessage
                 dispatch={dispatch}
                 ctx={ctx}
-                model={model}
+                state={state}
               />
             </div>
           )}
@@ -298,7 +280,7 @@ export const View = ({
 
       <ViewBottomButtonBar
         actions={[
-          ...(model.type === "game"
+          ...(state.type === "game"
             ? [
                 {
                   icon: <IconFlag className="h-6 w-6" />,
@@ -312,20 +294,26 @@ export const View = ({
                 },
               ]
             : []),
-          ...(model.type === "game-over" && ctx.currentUserId === ctx.hostId
+          ...(state.type === "game-over" && ctx.currentUserId === ctx.hostId
             ? [
                 {
                   icon: <IconArrowLeftOnRect className="h-6 w-6" />,
                   label: "Exit",
                   onClick: () => {
-                    dispatch({ t: "new-game" });
+                    dispatch({
+                      t: "user-stopped-game",
+                      userId: ctx.currentUserId,
+                    });
                   },
                 },
                 {
                   icon: <IconArrowRotateLeft className="h-6 w-6" />,
                   label: "Rematch",
                   onClick: () => {
-                    dispatch({ t: "rematch-request" });
+                    dispatch({
+                      t: "user-requested-rematch",
+                      userId: ctx.currentUserId,
+                    });
                   },
                 },
               ]
@@ -339,7 +327,9 @@ export const View = ({
         onCancel={() => dispatch({ t: "close-modal" })}
         onClose={() => dispatch({ t: "close-modal" })}
         confirmTitle="Resign"
-        onConfirm={() => dispatch({ t: "resign" })}
+        onConfirm={() =>
+          dispatch({ t: "user-resigned", userId: ctx.currentUserId })
+        }
         open={model.openedModal === "ConfirmResign"}
       />
     </GameLayout>
@@ -348,18 +338,18 @@ export const View = ({
 
 const ViewGameOverMessage = ({
   ctx,
-  model,
+  state,
   dispatch,
 }: {
-  model: GameOverModel;
+  state: StateGameOver;
   ctx: ViewCtx;
   dispatch: (msg: ClientMsg) => void;
 }) => {
-  const currentPlayerType = toPlayerType(ctx.currentUserId, model);
+  const currentPlayerType = toPlayerType(ctx.currentUserId, state);
 
   if (
-    model.rematch.type === "Asking" &&
-    model.rematch.asker === currentPlayerType
+    state.rematch.type === "Asking" &&
+    state.rematch.asker === currentPlayerType
   ) {
     return (
       <>
@@ -367,7 +357,9 @@ const ViewGameOverMessage = ({
         <IconSpinner className="mb-4 h-8 w-8 animate-spin" />
         <Button
           variant="contained"
-          onClick={() => dispatch({ t: "rematch-cancel" })}
+          onClick={() =>
+            dispatch({ t: "user-cancelled-rematch", userId: ctx.currentUserId })
+          }
           text="Cancel"
         />
       </>
@@ -375,8 +367,8 @@ const ViewGameOverMessage = ({
   }
 
   if (
-    model.rematch.type === "Asking" &&
-    model.rematch.asker !== currentPlayerType &&
+    state.rematch.type === "Asking" &&
+    state.rematch.asker !== currentPlayerType &&
     currentPlayerType !== null
   ) {
     return (
@@ -387,7 +379,8 @@ const ViewGameOverMessage = ({
             variant="contained"
             onClick={() =>
               dispatch({
-                t: "rematch-respond",
+                t: "user-responded-to-rematch-request",
+                userId: ctx.currentUserId,
                 response: "Decline",
               })
             }
@@ -398,7 +391,11 @@ const ViewGameOverMessage = ({
           <Button
             variant="contained"
             onClick={() =>
-              dispatch({ t: "rematch-respond", response: "Accept" })
+              dispatch({
+                t: "user-responded-to-rematch-request",
+                userId: ctx.currentUserId,
+                response: "Decline",
+              })
             }
             start={<IconCheckmarkCircle className="h-6 w-6" />}
             text="Accept"
@@ -408,12 +405,12 @@ const ViewGameOverMessage = ({
     );
   }
 
-  if (model.gameOver.type === "Draw") {
+  if (state.gameOver.type === "Draw") {
     return <p className="text-xl">Tie</p>;
   }
 
-  if (model.gameOver.type === "resignation") {
-    const { resigner } = model.gameOver;
+  if (state.gameOver.type === "resignation") {
+    const { resigner } = state.gameOver;
 
     const winner: PlayerType =
       resigner === "player-one" ? "player-two" : "player-one";
@@ -425,7 +422,7 @@ const ViewGameOverMessage = ({
             <PlayerIcon playerType={winner} />
             <MyAvatar
               alt=""
-              src={ctx.profiles[model.players[winner]]?.avatarUrl}
+              src={ctx.profiles[state.players[winner]]?.avatarUrl}
             />
           </div>
           <p>Winner</p>
@@ -441,8 +438,8 @@ const ViewGameOverMessage = ({
     );
   }
 
-  if (model.gameOver.type === "Winner") {
-    const { winner } = model.gameOver;
+  if (state.gameOver.type === "Winner") {
+    const { winner } = state.gameOver;
 
     if (currentPlayerType === null) {
       return (
@@ -451,7 +448,7 @@ const ViewGameOverMessage = ({
             <PlayerIcon playerType={winner} className="h-20 w-20" />
             <MyAvatar
               className="h-20 w-20"
-              src={ctx.profiles[model.players[winner]]?.avatarUrl}
+              src={ctx.profiles[state.players[winner]]?.avatarUrl}
             />
           </div>
           <p>Winner</p>
@@ -467,12 +464,12 @@ const ViewGameOverMessage = ({
 
 const Feedback = ({
   ctx,
-  model,
+  state,
 }: {
   ctx: SpaceViewCtx;
-  model: GameModel | GameOverModel;
+  state: StateGame | StateGameOver;
 }) => {
-  if (model.type === "game-over") {
+  if (state.type === "game-over") {
     return (
       <p className="flex items-center justify-center text-secondary">
         Game Over
@@ -480,23 +477,15 @@ const Feedback = ({
     );
   }
 
-  const turn = toTurn(model.columns);
+  const turn = toTurn(state.columns);
 
-  const currentUserPlayerType = toPlayerType(ctx.currentUserId, model);
+  const currentUserPlayerType = toPlayerType(ctx.currentUserId, state);
 
   if (currentUserPlayerType !== turn) {
     return (
       <p className="flex items-center justify-center gap-2 text-center text-secondary">
         <PlayerIcon className="h-4 w-4" playerType={turn} />
         Turn
-      </p>
-    );
-  }
-
-  if (model.moveCountDown <= 5) {
-    return (
-      <p className="flex items-center justify-center gap-2 text-center">
-        Move in {model.moveCountDown}...
       </p>
     );
   }
@@ -510,11 +499,11 @@ const Feedback = ({
 };
 
 const PlayerSlot = ({
-  model,
+  state,
   playerType,
   ctx,
 }: {
-  model: GameModel | GameOverModel;
+  state: StateGame | StateGameOver;
   playerType: PlayerType;
   ctx: SpaceViewCtx;
 }) => {
@@ -524,25 +513,11 @@ const PlayerSlot = ({
       <MyAvatar
         className="h-8 w-8"
         alt=""
-        src={ctx.profiles[model.players[playerType]]?.avatarUrl}
+        src={ctx.profiles[state.players[playerType]]?.avatarUrl}
       />
       <p className="text-secondary">
-        {ctx.profiles[model.players[playerType]]?.username ?? "..."}
+        {ctx.profiles[state.players[playerType]]?.username ?? "..."}
       </p>
     </div>
   );
-};
-
-export const resToStr = ({ res }: { ctx: SpaceClientCtx; res: Res }) => {
-  if (res.t === "start-playing" && res.result.t === "ok") {
-    // const username = ctx.profiles[res.user]?.username ?? "...";
-    return `Started playing`;
-  }
-
-  if (res.t === "stop-playing" && res.result.t === "ok") {
-    // const username = ctx.profiles[res.user]?.username ?? "...";
-    return `Stopped playing`;
-  }
-
-  return null;
 };

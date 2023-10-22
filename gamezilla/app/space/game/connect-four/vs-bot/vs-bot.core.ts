@@ -2,6 +2,8 @@ import { Posix, Uuid } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
 import { VsBotGame, VsBotSetup } from "gamezilla/app/space/game/@SHARED";
 import * as ConnectFour from "../connect-four";
+import { SpaceCtx } from "gamezilla/app/space/@SHARED";
+import { EvtMeta } from "gamezilla/app/space/@SHARED/evt";
 
 //
 //
@@ -10,7 +12,7 @@ import * as ConnectFour from "../connect-four";
 //
 
 export type CoreModel = {
-  events: (Evt & WithMeta)[];
+  events: (Evt & EvtMeta)[];
   initialState: State;
 };
 
@@ -25,7 +27,7 @@ export type ClientModel = CoreModel & {
 export const initCore = (input: { hostId: UserId }): CoreModel => {
   return {
     events: [],
-    initialState: toInitialState(input),
+    initialState: initState(input),
   };
 };
 
@@ -44,9 +46,9 @@ export type ClientMsg =
 
 export type ServerMsg = Evt;
 
-export type ToClient = Evt & WithMeta;
+export type ToClient = Evt & EvtMeta;
 
-export type ToServer = Evt & WithMeta;
+export type ToServer = Evt & EvtMeta;
 
 export type Evt =
   | {
@@ -72,33 +74,11 @@ export type Evt =
   | { t: "time-passed"; now: Posix }
   | { t: "user-restarted-game"; userId: UserId };
 
-export type WithMeta = {
-  eventId: string;
-  happenedAt: Posix;
-};
-
-const generateEventId = (): string => {
-  const uuid = Uuid.generate();
-  return `event:${uuid}`;
-};
-
-export const withMeta = (eventNew: Evt): Evt & WithMeta => {
-  return {
-    ...eventNew,
-    happenedAt: Posix.now(),
-    eventId: generateEventId(),
-  };
-};
-
-type EventError =
+type EvtError =
   | { t: "not-playing" }
   | { t: "move"; c: ConnectFour.MoveProblem };
 
-export const eventErrorToString = ({
-  error,
-}: {
-  error: EventError;
-}): string => {
+export const eventErrorToString = ({ error }: { error: EvtError }): string => {
   switch (error.t) {
     case "not-playing": {
       return "You're not playing";
@@ -111,11 +91,11 @@ export const eventErrorToString = ({
 
 export type State = (StateSetup | StateGame) & {
   errors: {
-    [eventId: string]: Evt & WithMeta & { error: EventError };
+    [eventId: string]: Evt & EvtMeta & { error: EvtError };
   };
 };
 
-const toInitialState = (input: { hostId: UserId }): State => {
+export const initState = (input: SpaceCtx): State => {
   return {
     type: "setup",
     botLevel: "Medium",
@@ -140,13 +120,7 @@ export type StateGame = {
   columns: ConnectFour.Columns;
 };
 
-export const reducer = (input: {
-  ctx: { hostId: UserId };
-  state: State;
-  event: Evt & WithMeta;
-}): State => {
-  const { state, event } = input;
-
+export const reducer = (state: State, event: Evt & EvtMeta): State => {
   switch (state.type) {
     case "setup": {
       switch (event.t) {
@@ -303,8 +277,8 @@ export const reducer = (input: {
 
 const addError = (
   state: State,
-  event: Evt & WithMeta,
-  error: EventError
+  event: Evt & EvtMeta,
+  error: EvtError
 ): State => {
   return {
     ...state,
@@ -315,10 +289,10 @@ const addError = (
   };
 };
 
-export const toState = (ctx: { hostId: UserId }, model: CoreModel): State => {
+export const toState = (ctx: SpaceCtx, model: CoreModel): State => {
   return (model.events ?? []).reduce(
-    (state, event) => reducer({ ctx, state, event }),
-    toInitialState(ctx)
+    (state, event) => reducer(state, event),
+    initState(ctx)
   );
 };
 
@@ -381,9 +355,9 @@ export const allBotLevels: BotLevel[] = ["Easy", "Medium", "Hard"];
 
 export const appendEvent = (
   model: CoreModel,
-  event: Evt & WithMeta
+  event: Evt & EvtMeta
 ): CoreModel => {
-  const eventsMap: Map<string, Evt & WithMeta> = new Map();
+  const eventsMap: Map<string, Evt & EvtMeta> = new Map();
   for (const event of model.events) {
     eventsMap.set(event.eventId, event);
   }
@@ -401,7 +375,7 @@ export const mergeModels = (
   modelLeft: CoreModel,
   modelRight: CoreModel
 ): CoreModel => {
-  const eventsMap: Map<string, Evt & WithMeta> = new Map();
+  const eventsMap: Map<string, Evt & EvtMeta> = new Map();
 
   for (const event of modelLeft.events) {
     eventsMap.set(event.eventId, event);

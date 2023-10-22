@@ -223,6 +223,7 @@ export const mergeWithServer: Client["mergeWithServer"] = ({
         model: {
           t: "vs-user",
           c: VsUser.mergeWithServer({
+            ctx,
             client: client.t === "vs-user" ? client.c : undefined,
             server: server.c,
           }),
