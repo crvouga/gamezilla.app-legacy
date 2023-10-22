@@ -63,10 +63,19 @@ const subscriptions: Server["subscriptions"] = () => {
   return Sub.None;
 };
 
+export const updateFromGameEvt: Server["updateFromGameEvt"] = (input) => {
+  const { model } = input;
+  if (!model) {
+    return init(input);
+  }
+  return { model };
+};
+
 export const PuzzleBuilderServer: Server = {
   init,
   update,
   updateFromClient,
   updateFromEvt,
   subscriptions,
+  updateFromGameEvt,
 };

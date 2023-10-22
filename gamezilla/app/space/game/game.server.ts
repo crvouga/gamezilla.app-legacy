@@ -1,14 +1,11 @@
-import { Eff, Sub } from "gamezilla/@SHARED/core";
-import { ChessServer } from "gamezilla/app/space/game/chess";
+import { Sub } from "gamezilla/@SHARED/core";
+import { SpaceGameServer } from "gamezilla/app/space/@SHARED";
 import { ConnectFourServer } from "gamezilla/app/space/game/connect-four";
-import { FlowServer } from "gamezilla/app/space/game/flow";
-import { TicTacToeServer } from "gamezilla/app/space/game/tic-tac-toe";
-import { SpaceGameServer, SpaceServerCmd } from "gamezilla/app/space/@SHARED";
 import {
-  State,
   Evt,
   ServerModel,
   ServerMsg,
+  State,
   ToClient,
   ToServer,
 } from "./game.core";
@@ -82,6 +79,24 @@ export const updateFromEvt: Server["updateFromEvt"] = (input) => {
 
   if (state.t === "connect-four" && model.t === "connect-four") {
     return ConnectFour.updateFromEvt({ ...input, state, model });
+  }
+
+  return { model };
+};
+
+export const updateFromGameEvt: Server["updateFromGameEvt"] = (input) => {
+  const { model, state, msg } = input;
+
+  if (!model) {
+    return init(input);
+  }
+
+  if (
+    state.t === "connect-four" &&
+    model.t === "connect-four" &&
+    msg.t === "connect-four"
+  ) {
+    return ConnectFour.updateFromGameEvt({ ...input, state, model, msg });
   }
 
   return { model };

@@ -25,8 +25,8 @@ const mapOne = <A, B>(
 };
 
 const map = <A, B>(
-  fn: (a: A) => B,
-  cmd?: SpaceServerCmd<A>[]
+  cmd: SpaceServerCmd<A>[],
+  fn: (a: A) => B
 ): SpaceServerCmd<B>[] | undefined => {
   return cmd?.map((m) => mapOne(fn, m));
 };
@@ -35,7 +35,7 @@ const tag = <T extends string, A>(
   tag: T,
   cmd?: SpaceServerCmd<A>[]
 ): SpaceServerCmd<{ t: T; c: A }>[] | undefined => {
-  return map((c) => ({ t: tag, c }), cmd);
+  return map(cmd ?? [], (c) => ({ t: tag, c }));
 };
 
 export const SpaceServerCmd = {

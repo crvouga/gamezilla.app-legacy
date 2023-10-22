@@ -1,6 +1,6 @@
 import { Eff, Sub } from "gamezilla/@SHARED/core";
 import { ServerEvt } from "gamezilla/app/@SHARED/server";
-import { SpaceServerEvt, SpaceReqCtx, SpaceServerCtx } from "../space";
+import { SpaceReqCtx, SpaceServerCtx, SpaceServerEvt } from "../space";
 import { SpaceServerCmd } from "../space-cmd";
 
 //
@@ -30,7 +30,7 @@ export type SpaceGameServer<
   init: (input: { ctx: SpaceServerCtx; state: State }) => MaybePromise<{
     model: ServerModel;
     eff?: Eff<ServerMsg>;
-    evt?: ServerEvt[];
+    cmd?: SpaceServerCmd<ToClient>[];
   }>;
 
   /**
@@ -75,6 +75,20 @@ export type SpaceGameServer<
     model: ServerModel;
     eff?: Eff<ServerMsg>;
     evt?: ServerEvt[];
+    cmd?: SpaceServerCmd<ToClient>[];
+  }>;
+
+  /**
+   * This handles updates from the game space itself.
+   */
+  updateFromGameEvt: (input: {
+    ctx: SpaceServerCtx;
+    msg: Evt;
+    model?: ServerModel;
+    state: State;
+  }) => MaybePromise<{
+    model: ServerModel;
+    eff?: Eff<ServerMsg>;
     cmd?: SpaceServerCmd<ToClient>[];
   }>;
 
@@ -130,7 +144,7 @@ const tag = <
       return {
         model: { t: tag, c: initial.model },
         eff: Eff.t(tag, initial.eff),
-        evt: initial.evt,
+        cmd: SpaceServerCmd.tag(tag, initial.cmd),
       };
     },
     update: async (input) => {
@@ -158,6 +172,19 @@ const tag = <
         model: { t: tag, c: updated.model },
         eff: Eff.t(tag, updated.eff),
         evt: updated.evt,
+        cmd: SpaceServerCmd.tag(tag, updated.cmd),
+      };
+    },
+    updateFromGameEvt: async (input) => {
+      const updated = await server.updateFromGameEvt({
+        ctx: input.ctx,
+        state: input.state.c,
+        msg: input.msg.c,
+        model: input.model?.c,
+      });
+      return {
+        model: { t: tag, c: updated.model },
+        eff: Eff.t(tag, updated.eff),
         cmd: SpaceServerCmd.tag(tag, updated.cmd),
       };
     },

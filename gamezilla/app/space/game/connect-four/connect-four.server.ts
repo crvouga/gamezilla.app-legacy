@@ -105,6 +105,24 @@ export const updateFromEvt: Server["updateFromEvt"] = (input) => {
   return { model };
 };
 
+export const updateFromGameEvt: Server["updateFromGameEvt"] = (input) => {
+  const { state, model, msg } = input;
+
+  if (!model) {
+    return init(input);
+  }
+
+  if (state.t === "vs-bot" && model.t === "vs-bot" && msg.t === "vs-bot") {
+    return VsBot.updateFromGameEvt({ ...input, msg, state, model });
+  }
+
+  if (state.t === "vs-user" && model.t === "vs-user" && msg.t === "vs-user") {
+    return VsUser.updateFromGameEvt({ ...input, state, model, msg });
+  }
+
+  return init(input);
+};
+
 //
 //
 //
