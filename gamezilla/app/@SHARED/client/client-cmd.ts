@@ -160,7 +160,23 @@ const tag = <T extends string, Msg>(
   return cmd?.map((c) => tagOne(t, c)) ?? [];
 };
 
+const map = <A, B>(cmd: ClientCmd<A>[], f: (a: A) => B): ClientCmd<B>[] => {
+  return cmd.map((cmd) => {
+    switch (cmd.t) {
+      case "send-to-server": {
+        if (cmd.msg) {
+          return { ...cmd, msg: f(cmd.msg) };
+        }
+        return { ...cmd, msg: null };
+      }
+      default: {
+        return cmd;
+      }
+    }
+  });
+};
 export const ClientCmd = {
   tagOne,
   tag,
+  map,
 };

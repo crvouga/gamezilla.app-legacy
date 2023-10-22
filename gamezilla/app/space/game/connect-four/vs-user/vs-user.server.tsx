@@ -1,118 +1,41 @@
-import { Eff, Sub, Time } from "gamezilla/@SHARED/core";
-import {
-  SpaceEvt,
-  SpaceReqCtx,
-  SpaceServerCmd,
-  sendToSpace,
-} from "gamezilla/app/space/@SHARED";
-import { appendEvt, withMeta } from "gamezilla/app/space/@SHARED/evt";
+import { Sub } from "gamezilla/@SHARED/core";
+import { SpaceGameServer } from "gamezilla/app/space/@SHARED";
 import {
   Evt,
   ServerModel,
   ServerMsg,
+  State,
   ToClient,
   ToServer,
-  initCore,
-  toPlayerType,
 } from "./vs-user.core";
 
-//
-//
-//
-// Model
-//
-//
-//
+type Server = SpaceGameServer<
+  ServerModel,
+  ServerMsg,
+  ToClient,
+  ToServer,
+  State,
+  Evt
+>;
 
-export type Model = ServerModel;
-
-export const init = initCore;
-
-//
-//
-//
-// Update
-//
-//
-//
-
-export type Msg = ServerMsg;
-
-export const update = ({
-  msg,
-  model,
-}: {
-  msg: Msg;
-  model: Model;
-}): {
-  model: Model;
-  cmd?: SpaceServerCmd<ToClient>[];
-} => {
-  switch (msg.t) {
-    case null: {
-      return { model };
-    }
-  }
-};
-
-export const updateFromClient = ({
-  msg,
-  model,
-  ctx,
-}: {
-  msg: ToServer;
-  model: Model;
-  ctx: SpaceReqCtx;
-}): {
-  model: Model;
-  eff?: Eff<Msg>;
-  cmd?: SpaceServerCmd<ToClient>[];
-} => {
-  const modelNew: ServerModel = {
-    events: appendEvt(model.events, msg),
-    initialState: model.initialState,
+export const init: Server["init"] = async () => {
+  return {
+    model: null,
   };
-
-  return { model: modelNew, cmd: [sendToSpace(msg)] };
 };
 
-export const updateFromEvt = ({
-  msg,
-  model,
-}: {
-  msg: SpaceEvt;
-  model: Model;
-}): {
-  model: Model;
-  eff?: Eff<Msg>;
-  cmd?: SpaceServerCmd<ToClient>[];
-} => {
-  switch (msg.t) {
-    case "user-left": {
-      const evt = withMeta<Evt>({ t: "user-left", userId: msg.userId });
-
-      const modelNew: ServerModel = {
-        ...model,
-        events: appendEvt(model.events, withMeta(evt)),
-      };
-
-      return { model: modelNew, cmd: [sendToSpace(evt)] };
-    }
-
-    default: {
-      return { model };
-    }
-  }
+export const update: Server["update"] = (input) => {
+  return input;
 };
 
-//
-//
-//
-// Subscriptions
-//
-//
-//
+export const updateFromClient: Server["updateFromClient"] = (input) => {
+  return input;
+};
 
-export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
+export const updateFromEvt: Server["updateFromEvt"] = (input) => {
+  return input;
+};
+
+export const subscriptions: Server["subscriptions"] = (input) => {
   return Sub.None;
 };

@@ -11,24 +11,12 @@ import { EvtMeta } from "gamezilla/app/space/@SHARED/evt";
 //
 //
 
-export type CoreModel = {
-  events: (Evt & EvtMeta)[];
-  initialState: State;
-};
+export type ServerModel = null;
 
-export type ServerModel = CoreModel;
-
-export type ClientModel = CoreModel & {
+export type ClientModel = {
   opened: "activity-feed-drawer" | null;
   vsBotSetup: VsBotSetup.Model;
   vsBotGame: VsBotGame.Model;
-};
-
-export const initCore = (input: { hostId: UserId }): CoreModel => {
-  return {
-    events: [],
-    initialState: initState(input),
-  };
 };
 
 //
@@ -38,17 +26,16 @@ export const initCore = (input: { hostId: UserId }): CoreModel => {
 //
 
 export type ClientMsg =
-  | Evt
   | { t: "opened-activity-feed-drawer" }
   | { t: "closed-activity-feed-drawer" }
   | { t: "vs-bot-setup"; c: VsBotSetup.Msg }
   | { t: "vs-bot-game"; c: VsBotGame.Msg };
 
-export type ServerMsg = Evt;
+export type ServerMsg = { t: null };
 
-export type ToClient = Evt & EvtMeta;
+export type ToClient = { t: null };
 
-export type ToServer = Evt & EvtMeta;
+export type ToServer = { t: null };
 
 export type Evt =
   | {
@@ -100,7 +87,7 @@ export const initState = (input: SpaceCtx): State => {
     type: "setup",
     botLevel: "Medium",
     userPlayerType: "player-one",
-    playingUserId: input.hostId,
+    playingUserId: input.space.hostId,
     errors: {},
   };
 };
@@ -289,13 +276,6 @@ const addError = (
   };
 };
 
-export const toState = (ctx: SpaceCtx, model: CoreModel): State => {
-  return (model.events ?? []).reduce(
-    (state, event) => reducer(state, event),
-    initState(ctx)
-  );
-};
-
 export const isBotTurn = (model: State): boolean => {
   if (model.type !== "game") {
     return false;
@@ -352,48 +332,3 @@ export const botLevel: { [botLevel in BotLevel]: BotLevel } = {
 };
 
 export const allBotLevels: BotLevel[] = ["Easy", "Medium", "Hard"];
-
-export const appendEvent = (
-  model: CoreModel,
-  event: Evt & EvtMeta
-): CoreModel => {
-  const eventsMap: Map<string, Evt & EvtMeta> = new Map();
-  for (const event of model.events) {
-    eventsMap.set(event.eventId, event);
-  }
-  eventsMap.set(event.eventId, event);
-  const sortedEvents = Array.from(eventsMap.values()).sort(
-    (a, b) => a.happenedAt - b.happenedAt
-  );
-  return {
-    ...model,
-    events: sortedEvents,
-  };
-};
-
-export const mergeModels = (
-  modelLeft: CoreModel,
-  modelRight: CoreModel
-): CoreModel => {
-  const eventsMap: Map<string, Evt & EvtMeta> = new Map();
-
-  for (const event of modelLeft.events) {
-    eventsMap.set(event.eventId, event);
-  }
-
-  for (const event of modelRight.events) {
-    if (eventsMap.has(event.eventId)) {
-      continue;
-    }
-    eventsMap.set(event.eventId, event);
-  }
-
-  const sortedEvents = Array.from(eventsMap.values()).sort(
-    (a, b) => a.happenedAt - b.happenedAt
-  );
-
-  return {
-    initialState: modelRight.initialState,
-    events: sortedEvents,
-  };
-};

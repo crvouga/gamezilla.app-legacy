@@ -10,6 +10,7 @@ import { UserId } from "gamezilla/app/@SHARED/data";
 import { Chess } from "../@SHARED/chess";
 import { EloRating } from "./elo-rating";
 import { zip } from "./utils";
+import { SpaceCtx } from "gamezilla/app/space/@SHARED";
 
 export const maxRating = 3212;
 export const minRating = 545;
@@ -267,14 +268,17 @@ const didFailPuzzle = (
   );
 };
 
-type Ctx = { now: Posix; currentUserId: UserId; hostId: UserId };
+type CoreCtx = SpaceCtx & {
+  now: Posix;
+  currentUserId: UserId;
+};
 
 export const updateCore = ({
   ctx,
   msg,
   model,
 }: {
-  ctx: Ctx;
+  ctx: CoreCtx;
   msg: Req;
   model: CoreModel;
 }): Result<string, CoreModel> => {
@@ -283,7 +287,7 @@ export const updateCore = ({
   //
   //
 
-  if (ctx.currentUserId !== ctx.hostId) {
+  if (ctx.currentUserId !== ctx.space.hostId) {
     return err("must-be-host");
   }
 
@@ -385,7 +389,7 @@ const transitionNextPuzzle = ({
   model,
   ctx,
 }: {
-  ctx: Ctx;
+  ctx: CoreCtx;
   model: CoreModel;
 }): CoreModel => {
   if (model.t === "loading") {

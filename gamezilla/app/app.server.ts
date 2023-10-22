@@ -40,7 +40,7 @@ import {
 export const init: { model: ServerModel; eff?: Eff<ServerMsg> } = {
   model: {
     sessions: {},
-    space: SpaceServer.init,
+    space: SpaceServer.init().model,
     profile: ProfileServer.init,
     search: SearchServer.init.model,
     chat: ChatServer.init.model,

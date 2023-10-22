@@ -1,9 +1,8 @@
-import { Result } from "gamezilla/@SHARED/core";
-import * as VsBot from "./vs-bot/vs-bot.core";
-import * as VsUser from "./vs-user/vs-user.core";
 import { UserId } from "gamezilla/app/@SHARED/data";
 import { SpaceCtx } from "../../@SHARED";
 import { EvtMeta } from "../../@SHARED/evt";
+import * as VsBot from "./vs-bot/vs-bot.core";
+import * as VsUser from "./vs-user/vs-user.core";
 
 //
 //
@@ -14,16 +13,16 @@ import { EvtMeta } from "../../@SHARED/evt";
 //
 
 export type ClientModel =
-  | { t: "none" }
+  | { t: "vs-bot"; c: VsBot.ClientModel }
   | { t: "vs-user"; c: VsUser.ClientModel }
-  | { t: "vs-bot"; c: VsBot.ClientModel };
+  | { t: null };
 
 export type ServerModel =
-  | { t: "none" }
+  | { t: "vs-bot"; c: VsBot.ServerModel }
   | { t: "vs-user"; c: VsUser.ServerModel }
-  | { t: "vs-bot"; c: VsBot.ServerModel };
+  | { t: null };
 
-export type Mode = ServerModel["t"];
+export type Mode = "none" | "vs-user" | "vs-bot";
 
 //
 //
@@ -35,8 +34,7 @@ export type Mode = ServerModel["t"];
 
 export type ClientMsg =
   | { t: "vs-user"; c: VsUser.ClientMsg }
-  | { t: "vs-bot"; c: VsBot.ClientMsg }
-  | Req;
+  | { t: "vs-bot"; c: VsBot.ClientMsg };
 
 export type ServerMsg =
   | { t: "vs-user"; c: VsUser.ServerMsg }
@@ -44,22 +42,17 @@ export type ServerMsg =
 
 export type ToClient =
   | { t: "vs-user"; c: VsUser.ToClient }
-  | { t: "vs-bot"; c: VsBot.ToClient }
-  | Res;
+  | { t: "vs-bot"; c: VsBot.ToClient };
 
 export type ToServer =
   | { t: "vs-user"; c: VsUser.ToServer }
-  | { t: "vs-bot"; c: VsBot.ToServer }
-  | Req;
+  | { t: "vs-bot"; c: VsBot.ToServer };
 
 //
 //
 //
 //
 //
-
-export type Req = { t: "input-mode"; mode: Mode };
-export type Res = Req & { result: Result<string, ServerModel> };
 
 export type Evt =
   | { t: "user-changed-mode"; mode: Mode; userId: UserId }
@@ -85,11 +78,15 @@ export const initState = (): State => {
   };
 };
 
-export const reducer = (
-  ctx: SpaceCtx,
-  state: State,
-  evt: Evt & EvtMeta
-): State => {
+export const reducer = ({
+  ctx,
+  evt,
+  state,
+}: {
+  ctx: SpaceCtx;
+  state: State;
+  evt: Evt & EvtMeta;
+}): State => {
   if (evt.t === "user-changed-mode") {
     switch (evt.mode) {
       case "none": {

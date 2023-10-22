@@ -40,7 +40,7 @@ import {
   ViewUsersInSpaceList,
   ViewYouChip,
 } from "gamezilla/app/space/game/@SHARED";
-import { appendEvt } from "./@SHARED/evt";
+import { EvtMeta, appendEvt, withMeta } from "./@SHARED/evt";
 import * as GameClient from "./game/game.client";
 import * as Game from "./game/game.core";
 import { ViewCoverArt } from "./game/game.core";
@@ -52,12 +52,14 @@ import {
 import {
   ClientModel,
   ClientMsg,
-  Req,
-  Res,
+  Evt,
+  StateStarted,
   ToClient,
   ToClientExtra,
   ToServer,
-  toSpaceByUserId,
+  appendEvent,
+  findSpaceByUserId,
+  toState,
 } from "./space.core";
 
 //
@@ -80,9 +82,8 @@ export const init: {
   cmd: ClientCmd<ToServer>[];
 } = {
   model: {
-    evtsById: {},
     spaces: {},
-    requests: {},
+    games: {},
     modal: null,
     previewUserId: null,
   },
@@ -130,112 +131,91 @@ export const update = ({
       };
     }
 
-    case "game": {
-      const space = toSpaceByUserId(model, ctx.currentUserId);
+    case "game-msg": {
+      const space = findSpaceByUserId(model, ctx.currentUserId);
 
       if (!space) {
         return { model };
       }
 
-      if (!space.game) {
+      const game = model.games[space.spaceId];
+
+      if (!game) {
+        return { model };
+      }
+
+      const spaceModel = model.spaces[space.spaceId];
+
+      if (!spaceModel) {
+        return { model };
+      }
+
+      const state = toState(spaceModel);
+
+      if (state.type === "initial") {
+        return { model };
+      }
+
+      if (state.type === "ended") {
+        return { model };
+      }
+
+      if (!state.game) {
         return { model };
       }
 
       const updated = GameClient.update({
-        ctx: { ...ctx, hostId: space.hostId },
+        ctx: { ...ctx, space: space },
         msg: msg.c,
-        model: space.game,
+        model: game,
+        state: state.game,
       });
-
-      const spaceNew: Space<Game.ClientModel> = {
-        ...space,
-        game: updated.model,
-      };
 
       const modelNew: ClientModel = {
         ...model,
-        spaces: {
-          ...model.spaces,
-          [space.spaceId]: spaceNew,
+        games: {
+          ...model.games,
+          [space.spaceId]: updated.model,
         },
       };
 
       return {
         model: modelNew,
-        eff: Eff.t("game", updated.eff),
+        eff: Eff.t("game-msg", updated.eff),
         evt: updated.evt,
-        cmd: ClientCmd.tag("game", updated.cmd),
+        cmd: ClientCmd.map(updated.cmd ?? [], (m) => ({
+          t: "game-msg",
+          spaceId: space.spaceId,
+          c: m,
+        })),
       };
     }
 
-    case "create": {
-      return chain(
-        model,
-        (model) => updateRequest({ ctx, msg, model }),
-        (model) => {
-          return {
-            model,
-            cmd: [
-              pushRoute({
-                t: "space",
-                c: { t: "space", spaceId: msg.spaceId },
-              }),
-            ],
-          };
-        }
-      );
-    }
-
-    case "evt": {
-      const evts: ClientModel["evtsById"][SpaceId] = model.evtsById[
-        msg.evt.spaceId
-      ] ?? {
-        evts: [],
+    default: {
+      const space = model.spaces[msg.spaceId] ?? {
+        events: [],
         initialState: {
           type: "initial",
         },
       };
 
-      const evtsNew = appendEvt(evts.evts, msg.evt);
+      const eventsNew = appendEvt(space.events, msg);
 
       return {
         model: {
           ...model,
-          evtsById: {
-            ...model.evtsById,
-            [msg.evt.spaceId]: {
-              evts: evtsNew,
+          spaces: {
+            ...model.spaces,
+            [msg.spaceId]: {
+              ...space,
+              events: eventsNew,
             },
           },
         },
-        cmd: [sendToServer({ t: "evt", evt: msg.evt })],
+        cmd: [sendToServer(msg)],
       };
     }
-
-    default: {
-      return updateRequest({ ctx, msg, model });
-    }
   }
-};
-
-const updateRequest = ({
-  ctx,
-  msg,
-  model,
-}: {
-  ctx: ClientCtx;
-  msg: Req & ToClientExtra;
-  model: ClientModel;
-}): {
-  model: ClientModel;
-  cmd?: ClientCmd<ToServer>[];
-  eff?: Eff<ClientMsg>;
-  evt?: ClientEvt[];
-} => {
-  return {
-    model: { ...model, requests: { ...model.requests, [msg.t]: Loading } },
-    cmd: [sendToServer({ ...msg, profile: ctx.profiles[ctx.currentUserId] })],
-  };
 };
 
 export const updateFromServer = ({
@@ -254,7 +234,76 @@ export const updateFromServer = ({
 } => {
   return chain(
     model,
-    (model) => updateFromServerMain({ ctx, msg, model }),
+    (model) => {
+      switch (msg.t) {
+        case "game-msg": {
+          const space = model.spaces[msg.spaceId];
+
+          if (!space) {
+            return { model };
+          }
+
+          const state = toState(space);
+
+          if (state.type === "initial") {
+            return { model };
+          }
+
+          if (state.type === "ended") {
+            return { model };
+          }
+
+          const game = model.games[msg.spaceId];
+
+          if (!game) {
+            return { model };
+          }
+
+          if (!state.game) {
+            return { model };
+          }
+
+          const updated = GameClient.updateFromServer({
+            ctx: { ...ctx, space: state.space },
+            model: game,
+            msg: msg.c,
+            state: state.game,
+          });
+
+          return {
+            model: {
+              ...model,
+              games: {
+                ...model.games,
+                [msg.spaceId]: updated.model,
+              },
+            },
+            eff: Eff.t("game-msg", updated.eff),
+            cmd: ClientCmd.map(updated.cmd ?? [], (m) => ({
+              t: "game-msg",
+              spaceId: msg.spaceId,
+              c: m,
+            })),
+            evt: updated.evt,
+          };
+        }
+
+        case "list": {
+          return { model };
+        }
+
+        default: {
+          const modelNew = appendEvent(model, msg);
+
+          return {
+            model: {
+              ...model,
+              ...modelNew,
+            },
+          };
+        }
+      }
+    },
     (model) => {
       return {
         model,
@@ -262,376 +311,6 @@ export const updateFromServer = ({
       };
     }
   );
-};
-
-export const updateFromServerMain: typeof updateFromServer = ({
-  ctx,
-  msg,
-  model,
-}) => {
-  switch (msg.t) {
-    case "evt": {
-      const evts: ClientModel["evtsById"][SpaceId] = model.evtsById[
-        msg.evt.spaceId
-      ] ?? {
-        evts: [],
-        initialState: {
-          type: "initial",
-        },
-      };
-
-      const evtsNew = appendEvt(evts.evts, msg.evt);
-
-      return {
-        model: {
-          ...model,
-          evtsById: {
-            ...model.evtsById,
-            [msg.evt.spaceId]: {
-              evts: evtsNew,
-            },
-          },
-        },
-      };
-    }
-
-    case "game": {
-      const space = model.spaces[msg.spaceId];
-
-      if (!space) {
-        return { model };
-      }
-
-      if (!space.game) {
-        return { model };
-      }
-
-      const updated = GameClient.updateFromServer({
-        ctx: { ...ctx, hostId: space.hostId },
-        model: space.game,
-        msg: msg.c,
-      });
-
-      const spaceNew = {
-        ...space,
-        game: updated.model,
-      };
-
-      const modelNew: ClientModel = {
-        ...model,
-        spaces: {
-          ...model.spaces,
-          [space.spaceId]: spaceNew,
-        },
-      };
-
-      return {
-        model: modelNew,
-        eff: Eff.t("game", updated.eff),
-        evt: updated.evt,
-        cmd: ClientCmd.tag("game", updated.cmd),
-      };
-    }
-
-    case "list": {
-      return chain(
-        model,
-        (model) => updateLoading({ msg: msg, model }),
-        (model) => {
-          if (msg.result.t === "err") {
-            return { model, cmd: [showToast(msg.result.error, "error")] };
-          }
-
-          let merged: ReturnType<typeof updateFromServer> = {
-            model: {
-              ...model,
-              spaces: {},
-            },
-          };
-
-          let profiles: { [userId: UserId]: Profile } = {};
-
-          for (const server of msg.result.value) {
-            const mergedSpace = mergeWithServer({
-              ctx,
-              client: merged.model.spaces[server.spaceId],
-              server: server,
-            });
-            merged = {
-              model: {
-                ...merged.model,
-                spaces: {
-                  ...merged.model.spaces,
-                  [server.spaceId]: mergedSpace.client,
-                },
-              },
-              eff: Eff.batch([merged.eff, mergedSpace.eff]),
-              cmd: [...(merged?.cmd ?? []), ...(mergedSpace.cmd ?? [])],
-              evt: [...(merged?.evt ?? []), ...(mergedSpace.evt ?? [])],
-            };
-            profiles = {
-              ...profiles,
-              ...server.profileCache,
-            };
-          }
-
-          merged = {
-            ...merged,
-            evt: [...(merged?.evt ?? []), gotProfiles(profiles)],
-          };
-          return merged;
-        }
-      );
-    }
-
-    case "destroy": {
-      return chain(
-        model,
-        (model) => {
-          return updateLoading({ msg: msg, model });
-        },
-        (model) => {
-          const currentUserSpace = toSpaceByUserId(model, ctx.currentUserId);
-
-          if (currentUserSpace?.spaceId !== msg.spaceId) {
-            return { model };
-          }
-
-          if (msg.result.t === "err") {
-            return { model, cmd: [showToast(msg.result.error, "error")] };
-          }
-
-          return chain(
-            model,
-            (model) => {
-              if (
-                ctx.currentRoute.t === "space" &&
-                ctx.currentRoute.c.t === "space" &&
-                ctx.currentRoute.c.spaceId === msg.spaceId
-              ) {
-                return {
-                  model,
-                  cmd: [replaceRoute({ t: "space", c: { t: "space-list" } })],
-                };
-              }
-              return { model };
-            },
-            (model) => {
-              return { model, cmd: [playSound(SPACE_SOUND.left)] };
-            },
-            (model) => {
-              if (msg.userId === ctx.currentUserId) {
-                return { model };
-              }
-              const profile = ctx.profiles[msg.userId];
-              if (profile) {
-                return {
-                  model,
-                  cmd: [showToast(`${profile.username} ended space`)],
-                };
-              }
-              return { model, cmd: [showToast("Host ended space")] };
-            },
-
-            (model) => {
-              return {
-                model: { ...model, spaces: dissoc(model.spaces, msg.spaceId) },
-              };
-            }
-          );
-        }
-      );
-    }
-
-    case "join": {
-      return chain(
-        model,
-        (model) => updateLoading({ msg: msg, model }),
-        (model) => mergeWithResult({ ctx, result: msg.result, model }),
-        (model) => {
-          if (msg.result.t === "err") {
-            return {
-              model,
-              cmd: [
-                showToast(msg.result.error, "error", 4000),
-                playSound(APP_SOUND.error),
-              ],
-            };
-          }
-
-          const currentUserSpace = toSpaceByUserId(model, ctx.currentUserId);
-
-          if (currentUserSpace?.spaceId !== msg.spaceId) {
-            return { model };
-          }
-
-          return chain(
-            model,
-            (model) => {
-              return {
-                model,
-                cmd: [playSound(SPACE_SOUND.joined)],
-              };
-            },
-            (model) => {
-              if (msg.userId === ctx.currentUserId) {
-                return { model };
-              }
-              const profile = ctx.profiles[msg.userId];
-              if (!profile) {
-                return { model };
-              }
-              return {
-                model,
-                cmd: [showToast(`${profile.username} joined space`)],
-              };
-            }
-          );
-        }
-      );
-    }
-
-    case "leave": {
-      return chain(
-        model,
-        (model) => updateLoading({ msg: msg, model }),
-        (model) => mergeWithResult({ ctx, result: msg.result, model }),
-        (model) => {
-          if (msg.result.t === "err") {
-            return { model };
-          }
-
-          if (msg.userId === ctx.currentUserId) {
-            return { model, cmd: [playSound(SPACE_SOUND.left)] };
-          }
-
-          const profile = ctx.profiles[msg.userId];
-
-          if (!profile) {
-            return { model, cmd: [playSound(SPACE_SOUND.left)] };
-          }
-
-          return {
-            model,
-            cmd: [
-              showToast(`${profile.username} left space`),
-              playSound(SPACE_SOUND.left),
-            ],
-          };
-        }
-      );
-    }
-
-    case "create": {
-      return chain(
-        model,
-        (model) => updateLoading({ msg: msg, model }),
-        (model) => mergeWithResult({ ctx, result: msg.result, model }),
-        (model) => {
-          if (msg.result.t === "err") {
-            return { model };
-          }
-
-          const currentUserSpace = toSpaceByUserId(model, ctx.currentUserId);
-
-          if (currentUserSpace?.spaceId !== msg.spaceId) {
-            return { model };
-          }
-
-          return {
-            model,
-            cmd: [
-              playSound(SPACE_SOUND.joined),
-              replaceRoute({
-                t: "space",
-                c: { t: "space", spaceId: msg.spaceId },
-              }),
-            ],
-          };
-        }
-      );
-    }
-
-    case "input-game": {
-      return chain(
-        model,
-        (model) => updateLoading({ msg: msg, model }),
-        (model) => mergeWithResult({ ctx, result: msg.result, model }),
-        (model) => {
-          if (msg.result.t === "err") {
-            return { model };
-          }
-
-          const currentUserSpace = toSpaceByUserId(model, ctx.currentUserId);
-
-          if (currentUserSpace?.spaceId !== msg.spaceId) {
-            return { model };
-          }
-
-          if (msg.result.value.game) {
-            return {
-              model,
-              cmd: [playSound(APP_SOUND.navForwardMin)],
-            };
-          }
-
-          return {
-            model,
-            cmd: [playSound(APP_SOUND.navBackwardMin)],
-          };
-        }
-      );
-    }
-  }
-};
-
-const updateLoading = ({
-  msg,
-  model,
-}: {
-  msg: Res;
-  model: ClientModel;
-}): ReturnType<typeof updateFromServer> => {
-  return {
-    model: {
-      ...model,
-      requests: {
-        ...model.requests,
-        [msg.t]: msg.result,
-      },
-    },
-  };
-};
-
-const mergeWithResult = ({
-  ctx,
-  model,
-  result,
-}: {
-  ctx: ClientCtx;
-  result: Result<string, Space<Game.ServerModel>>;
-  model: ClientModel;
-}): ReturnType<typeof updateFromServer> => {
-  if (result.t === "err") {
-    return { model };
-  }
-  const merged = mergeWithServer({
-    ctx,
-    server: result.value,
-    client: model.spaces[result.value.spaceId],
-  });
-  return {
-    model: {
-      ...model,
-      spaces: {
-        ...model.spaces,
-        [merged.client.spaceId]: merged.client,
-      },
-    },
-    cmd: merged.cmd,
-    evt: merged.evt,
-    eff: merged.eff,
-  };
 };
 
 export const updateFromEvt = (input: {
@@ -653,72 +332,6 @@ export const updateFromEvt = (input: {
   }
 };
 
-const listSpaces = (input: {
-  model: ClientModel;
-}): {
-  model: ClientModel;
-  cmd?: ClientCmd<ToServer>[];
-} => {
-  const { model } = input;
-
-  return {
-    model: {
-      ...model,
-      requests: {
-        ...model.requests,
-        list: Loading,
-      },
-    },
-    cmd: [sendToServer({ t: "list" })],
-  };
-};
-
-/**
- * Merges server space state into client space state.
- */
-const mergeWithServer = ({
-  ctx,
-  client,
-  server,
-}: {
-  ctx: ClientCtx;
-  client?: Space<Game.ClientModel> | null;
-  server: Space<Game.ServerModel>;
-}): {
-  client: Space<Game.ClientModel>;
-  eff?: Eff<ClientMsg>;
-  cmd?: ClientCmd<ToServer>[];
-  evt?: ClientEvt[];
-} => {
-  if (!server.game) {
-    const clientNew: Space<Game.ClientModel> = {
-      ...client,
-      ...server,
-      game: null,
-    };
-    return { client: clientNew };
-  }
-
-  const mergedGame = GameClient.mergeWithServer({
-    ctx: { ...ctx, hostId: server.hostId },
-    server: server.game,
-    client: client?.game,
-  });
-
-  const clientNew: Space<Game.ClientModel> = {
-    ...client,
-    ...server,
-    game: mergedGame.model,
-  };
-
-  return {
-    client: clientNew,
-    evt: mergedGame.evt,
-    cmd: ClientCmd.tag("game", mergedGame.cmd),
-    eff: Eff.t("game", mergedGame.eff),
-  };
-};
-
 //
 //
 //
@@ -733,24 +346,49 @@ export const subscriptions = (
   ctx: ClientCtx,
   model: ClientModel
 ): Sub<ClientMsg> => {
-  const space = toSpaceByUserId(model, ctx.currentUserId);
+  for (const spaceId in model.spaces) {
+    if (!SpaceId.is(spaceId)) {
+      continue;
+    }
 
-  if (!space) {
-    return Sub.None;
+    const game = model.games[spaceId];
+
+    if (!game) {
+      continue;
+    }
+
+    const space = model.spaces[spaceId];
+
+    if (!space) {
+      continue;
+    }
+
+    const state = toState(space);
+
+    if (state.type === "initial") {
+      continue;
+    }
+
+    if (state.type === "ended") {
+      continue;
+    }
+
+    if (!state.game) {
+      continue;
+    }
+
+    return Sub.tag(
+      "game-msg",
+      GameClient.subscriptions({
+        ctx: { ...ctx, space: state.space },
+        state: state.game,
+        model: game,
+        intervalId: String(spaceId),
+      })
+    );
   }
 
-  if (!space.game) {
-    return Sub.None;
-  }
-
-  return Sub.tag(
-    "game",
-    GameClient.subscriptions({
-      ctx: { ...ctx, hostId: space.hostId },
-      model: space.game,
-      intervalId: space.spaceId,
-    })
-  );
+  return Sub.None;
 };
 
 //
@@ -776,6 +414,9 @@ export const View = ({
   route: RouteGameSpace;
   viewBottomBar: VDom;
 }): VDom => {
+  const dispatchEvent = (m: Evt) => {
+    dispatch(withMeta(m));
+  };
   switch (route.t) {
     case "space-list": {
       return (
@@ -789,6 +430,7 @@ export const View = ({
     case "space": {
       return (
         <ViewSpaceScreen
+          dispatchEvent={dispatchEvent}
           spaceId={route.spaceId}
           ctx={ctx}
           dispatch={dispatch}
@@ -801,50 +443,55 @@ export const View = ({
 
 const ViewSpaceScreen = ({
   ctx,
+  dispatchEvent,
   dispatch,
   model,
   spaceId,
 }: {
   model: ClientModel;
   ctx: ViewCtx;
+  dispatchEvent: (m: Evt) => void;
   dispatch: (m: ClientMsg) => void;
   spaceId: SpaceId;
 }) => {
-  const isLoading =
-    model.requests.list?.t === "loading" ||
-    model.requests.create?.t === "loading";
-
-  if (isLoading) {
-    return <LoadingScreen />;
-  }
-
   const space = model.spaces[spaceId];
 
   if (!space) {
     return <ViewSpaceNotFound ctx={ctx} />;
   }
 
+  const state = toState(space);
+
+  if (state.type === "initial") {
+    return <LoadingScreen />;
+  }
+
+  if (state.type === "ended") {
+    return <ViewSpaceNotFound ctx={ctx} />;
+  }
+
   const spaceCtx: SpaceViewCtx = {
     ...ctx,
-    hostId: space.hostId,
-    spaceId: space.spaceId,
+    space: state.space,
     viewProfile: (userId) => dispatch({ t: "clicked-user", userId: userId }),
     quit: () =>
-      dispatch({
-        t: "input-game",
-        spaceId: space.spaceId,
+      dispatchEvent({
+        t: "user-inputted-game",
+        spaceId: state.space.spaceId,
         userId: ctx.currentUserId,
-        gameName: undefined,
+        game: null,
       }),
-    space,
   };
 
   return (
     <>
+      <pre class="w-full text-xs">{JSON.stringify(state, null, 4)}</pre>
+
       <ViewSpaceScreenMain
+        state={state}
+        dispatchEvent={dispatchEvent}
         dispatch={dispatch}
         model={model}
-        space={space}
         ctx={spaceCtx}
       />
 
@@ -852,7 +499,7 @@ const ViewSpaceScreen = ({
         id="users"
         open={model.modal === "users"}
         onClose={() => dispatch({ t: "modal-closed" })}>
-        {spaceCtx && <ViewUsersInSpaceList space={space} ctx={spaceCtx} />}
+        <ViewUsersInSpaceList ctx={spaceCtx} />
       </Drawer>
 
       <Drawer
@@ -887,7 +534,9 @@ const ViewSpaceScreen = ({
                 : "..."}
             </p>
             <div className="flex items-center gap-2">
-              {spaceCtx.hostId === model.previewUserId && <ViewSpaceHostChip />}
+              {spaceCtx.space.hostId === model.previewUserId && (
+                <ViewSpaceHostChip />
+              )}
               {spaceCtx.currentUserId === model.previewUserId && (
                 <ViewYouChip />
               )}
@@ -919,21 +568,32 @@ const ViewSpaceScreen = ({
 
 const ViewSpaceScreenMain = ({
   ctx,
-  dispatch,
+  state,
   model,
-  space,
+  dispatch,
+  dispatchEvent,
 }: {
+  state: StateStarted;
   model: ClientModel;
   ctx: SpaceViewCtx;
   dispatch: (m: ClientMsg) => void;
-  space: Space<Game.ClientModel>;
+  dispatchEvent: (m: Evt) => void;
 }) => {
-  const currentUserSpace = toSpaceByUserId(model, ctx.currentUserId);
+  const currentUserSpace = findSpaceByUserId(model, ctx.currentUserId);
 
-  if (currentUserSpace?.spaceId !== space.spaceId) {
-    return <ViewSpaceJoinScreen ctx={ctx} dispatch={dispatch} model={model} />;
+  if (state.space.spaceId !== currentUserSpace?.spaceId) {
+    return (
+      <ViewSpaceJoinScreen
+        ctx={ctx}
+        dispatchEvent={dispatchEvent}
+        model={model}
+      />
+    );
   }
-  const peopleCount = Object.keys(space.users).length;
+
+  const peopleCount = Object.keys(ctx.space.users).length;
+
+  const gameModel = model.games[ctx.space.spaceId];
 
   return (
     <div className="flex h-full w-full flex-1 flex-col">
@@ -970,38 +630,52 @@ const ViewSpaceScreenMain = ({
           />
         </div>
 
-        <Button
-          color="danger"
-          variant="contained"
-          size="sm"
-          text={space.hostId === ctx.currentUserId ? "End" : "Leave"}
-          onClick={() => {
-            if (space.hostId === ctx.currentUserId) {
-              dispatch({
-                t: "destroy",
+        {ctx.space.hostId !== ctx.currentUserId && (
+          <Button
+            color="danger"
+            variant="contained"
+            size="sm"
+            text="Leave"
+            onClick={() => {
+              dispatchEvent({
+                t: "user-left-space",
+                spaceId: ctx.space.spaceId,
                 userId: ctx.currentUserId,
-                spaceId: space.spaceId,
               });
-              return;
-            }
-            dispatch({
-              t: "leave",
-              spaceId: space.spaceId,
-              userId: ctx.currentUserId,
-            });
-          }}
-        />
+            }}
+          />
+        )}
+
+        {ctx.space.hostId === ctx.currentUserId && (
+          <Button
+            color="danger"
+            variant="contained"
+            size="sm"
+            text="End"
+            onClick={() => {
+              dispatchEvent({
+                t: "user-ended-space",
+                userId: ctx.currentUserId,
+                spaceId: ctx.space.spaceId,
+              });
+            }}
+          />
+        )}
       </nav>
 
       <div className="flex w-full flex-1 flex-col overflow-hidden">
-        {space.game ? (
+        {state.game && gameModel ? (
           <GameClient.View
+            state={state.game}
             ctx={ctx}
-            dispatch={(msg) => dispatch({ t: "game", c: msg })}
-            model={space.game}
+            dispatchEvent={(c) =>
+              dispatchEvent({ t: "game", spaceId: ctx.space.spaceId, c })
+            }
+            dispatch={(msg) => dispatch({ t: "game-msg", c: msg })}
+            model={gameModel}
           />
         ) : (
-          <ViewNotInGameScreen space={space} ctx={ctx} dispatch={dispatch} />
+          <ViewNotInGameScreen ctx={ctx} dispatchEvent={dispatchEvent} />
         )}
       </div>
     </div>
@@ -1033,71 +707,102 @@ export const ViewCurrentSpaceBar = ({
   model: ClientModel;
   dispatch: (msg: ClientMsg) => void;
 }) => {
-  const space = toSpaceByUserId(model, ctx.currentUserId);
+  const dispatchEvent = (msg: Evt) => {
+    dispatch(withMeta(msg));
+  };
+  for (const spaceId in model.spaces) {
+    if (!SpaceId.is(spaceId)) {
+      continue;
+    }
+    const space = model.spaces[spaceId];
 
-  if (!space) {
-    return null;
+    if (!space) {
+      continue;
+    }
+
+    const state = toState(space);
+
+    if (state.type === "initial") {
+      continue;
+    }
+
+    if (state.type === "ended") {
+      continue;
+    }
+
+    const game = model.games[spaceId];
+
+    const hostProfile = ctx.profiles[state.space.hostId];
+
+    const userCount = Object.values(state.space.users).length;
+
+    return (
+      <div className="flex w-full items-center overflow-hidden border-t-2 border-blue-600 text-inherit">
+        <button
+          className="flex flex-1 items-center overflow-hidden"
+          onClick={() => {
+            ctx.push({
+              t: "space",
+              c: { t: "space", spaceId: state.space.spaceId },
+            });
+          }}>
+          <div className="mr-2 p-2">
+            {!game && (
+              <MyAvatar
+                src={hostProfile?.avatarUrl}
+                alt="Host Avatar"
+                className="h-12 w-12"
+              />
+            )}
+            {game && (
+              <div className="h-12 w-12 overflow-hidden rounded border border-neutral-600">
+                <ViewCoverArt gameName={game.t} />
+              </div>
+            )}
+          </div>
+
+          <div className="flex flex-1 flex-col gap-1 overflow-hidden">
+            <p className="text-left">
+              {hostProfile ? `${hostProfile.username}'s space` : "..."}
+            </p>
+            <p className="text-left text-xs text-neutral-300">
+              {userCount} in space
+            </p>
+          </div>
+        </button>
+
+        {ctx.currentUserId === state.space.hostId && (
+          <button
+            aria-label="end space"
+            onClick={() => {
+              dispatchEvent({
+                t: "user-ended-space",
+                userId: ctx.currentUserId,
+                spaceId: state.space.spaceId,
+              });
+            }}
+            className="mr-4">
+            <IconXMark className="h-8 w-8" />
+          </button>
+        )}
+
+        {ctx.currentUserId !== state.space.hostId && (
+          <button
+            aria-label="leave space"
+            onClick={() => {
+              dispatchEvent({
+                t: "user-left-space",
+                userId: ctx.currentUserId,
+                spaceId: state.space.spaceId,
+              });
+            }}
+            className="mr-4">
+            <IconXMark className="h-8 w-8" />
+          </button>
+        )}
+      </div>
+    );
   }
 
-  const hostProfile = ctx.profiles[space.hostId];
-
-  const userCount = Object.values(space.users).length;
-
-  return (
-    <div className="flex w-full items-center overflow-hidden border-t-2 border-blue-600 text-inherit">
-      <button
-        className="flex flex-1 items-center overflow-hidden"
-        onClick={() => {
-          ctx.push({
-            t: "space",
-            c: { t: "space", spaceId: space.spaceId },
-          });
-        }}>
-        <div className="mr-2 p-2">
-          {!space.game && (
-            <MyAvatar
-              src={hostProfile?.avatarUrl}
-              alt="Host Avatar"
-              className="h-12 w-12"
-            />
-          )}
-          {space.game && (
-            <div className="h-12 w-12 overflow-hidden rounded border border-neutral-600">
-              <ViewCoverArt gameName={space.game.t} />
-            </div>
-          )}
-        </div>
-
-        <div className="flex flex-1 flex-col gap-1 overflow-hidden">
-          <p className="text-left">
-            {hostProfile ? `${hostProfile.username}'s space` : "..."}
-          </p>
-          <p className="text-left text-xs text-neutral-300">
-            {userCount} in space
-          </p>
-        </div>
-      </button>
-
-      <button
-        aria-label="destroy or leave space"
-        onClick={() => {
-          if (ctx.currentUserId === space.hostId) {
-            dispatch({
-              t: "destroy",
-              userId: ctx.currentUserId,
-              spaceId: space.spaceId,
-            });
-            return;
-          }
-          dispatch({
-            t: "leave",
-            spaceId: space.spaceId,
-            userId: ctx.currentUserId,
-          });
-        }}
-        className="mr-4">
-        <IconXMark className="h-8 w-8" />
-      </button>
-    </div>
-  );
+  return null;
 };

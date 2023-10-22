@@ -11,28 +11,42 @@ import { SpaceServerCmd } from "../space-cmd";
 //
 //
 
+type MaybePromise<T> = Promise<T> | T;
+
 /**
  * This is the interface for a game server.
  */
-export type GameServer<Model, Msg, ToClient, ToServer> = {
+export type SpaceGameServer<
+  ServerModel,
+  ServerMsg,
+  ToClient,
+  ToServer,
+  State = null,
+  Evt = null
+> = {
   /**
    * This returns the initial state
    */
-  init: (input: { ctx: SpaceServerCtx }) => {
-    model: Model;
-    eff?: Eff<Msg>;
+  init: (input: { ctx: SpaceServerCtx; state: State }) => MaybePromise<{
+    model: ServerModel;
+    eff?: Eff<ServerMsg>;
     evt?: ServerEvt[];
-  };
+  }>;
 
   /**
    * This handles updates from the server
    */
-  update: (input: { ctx: SpaceServerCtx; msg: Msg; model: Model }) => {
-    model: Model;
-    eff?: Eff<Msg>;
+  update: (input: {
+    ctx: SpaceServerCtx;
+    msg: ServerMsg;
+    model: ServerModel;
+    state: State;
+  }) => MaybePromise<{
+    model: ServerModel;
+    eff?: Eff<ServerMsg>;
     evt?: ServerEvt[];
     cmd?: SpaceServerCmd<ToClient>[];
-  };
+  }>;
 
   /**
    * This handles updates from the client.
@@ -40,13 +54,14 @@ export type GameServer<Model, Msg, ToClient, ToServer> = {
   updateFromClient: (input: {
     ctx: SpaceReqCtx;
     msg: ToServer;
-    model: Model;
-  }) => {
-    model: Model;
-    eff?: Eff<Msg>;
+    model: ServerModel;
+    state: State;
+  }) => MaybePromise<{
+    model: ServerModel;
+    eff?: Eff<ServerMsg>;
     evt?: ServerEvt[];
     cmd?: SpaceServerCmd<ToClient>[];
-  };
+  }>;
 
   /**
    * This handles updates from the game space itself.
@@ -54,13 +69,14 @@ export type GameServer<Model, Msg, ToClient, ToServer> = {
   updateFromEvt: (input: {
     ctx: SpaceServerCtx;
     msg: SpaceEvt;
-    model: Model;
-  }) => {
-    model: Model;
-    eff?: Eff<Msg>;
+    model: ServerModel;
+    state: State;
+  }) => MaybePromise<{
+    model: ServerModel;
+    eff?: Eff<ServerMsg>;
     evt?: ServerEvt[];
     cmd?: SpaceServerCmd<ToClient>[];
-  };
+  }>;
 
   /**
    *
@@ -68,33 +84,59 @@ export type GameServer<Model, Msg, ToClient, ToServer> = {
    * @param model
    * @returns
    */
-  subscriptions: (intervalId: string, model: Model) => Sub<Msg>;
+  subscriptions: (input: {
+    model: ServerModel;
+    intervalId: string;
+    ctx: SpaceServerCtx;
+    state: State;
+  }) => MaybePromise<Sub<ServerMsg>>;
 };
 
 /**
  * Tags to all the messages and models that are inputted and outputted from this module
  */
-const tag = <T extends string, Model, Msg, ToClient, ToServer>(
+const tag = <
+  T extends string,
+  ServerModel,
+  ServerMsg,
+  ToClient,
+  ToServer,
+  State,
+  Evt
+>(
   tag: T,
-  server: GameServer<Model, Msg, ToClient, ToServer>
-): GameServer<
-  { t: T; c: Model },
-  { t: T; c: Msg },
+  server: SpaceGameServer<
+    ServerModel,
+    ServerMsg,
+    ToClient,
+    ToServer,
+    State,
+    Evt
+  >
+): SpaceGameServer<
+  { t: T; c: ServerModel },
+  { t: T; c: ServerMsg },
   { t: T; c: ToClient },
-  { t: T; c: ToServer }
+  { t: T; c: ToServer },
+  { t: T; c: State },
+  { t: T; c: Evt }
 > => {
   return {
-    init: (input) => {
-      const initial = server.init(input);
+    init: async (input) => {
+      const initial = await server.init({
+        ctx: input.ctx,
+        state: input.state.c,
+      });
       return {
         model: { t: tag, c: initial.model },
         eff: Eff.t(tag, initial.eff),
         evt: initial.evt,
       };
     },
-    update: (input) => {
-      const updated = server.update({
-        ...input,
+    update: async (input) => {
+      const updated = await server.update({
+        ctx: input.ctx,
+        state: input.state.c,
         msg: input.msg.c,
         model: input.model.c,
       });
@@ -105,9 +147,10 @@ const tag = <T extends string, Model, Msg, ToClient, ToServer>(
         cmd: SpaceServerCmd.tag(tag, updated.cmd),
       };
     },
-    updateFromClient: (input) => {
-      const updated = server.updateFromClient({
-        ...input,
+    updateFromClient: async (input) => {
+      const updated = await server.updateFromClient({
+        ctx: input.ctx,
+        state: input.state.c,
         msg: input.msg.c,
         model: input.model.c,
       });
@@ -118,9 +161,10 @@ const tag = <T extends string, Model, Msg, ToClient, ToServer>(
         cmd: SpaceServerCmd.tag(tag, updated.cmd),
       };
     },
-    updateFromEvt: (input) => {
-      const updated = server.updateFromEvt({
-        ...input,
+    updateFromEvt: async (input) => {
+      const updated = await server.updateFromEvt({
+        ctx: input.ctx,
+        state: input.state.c,
         msg: input.msg,
         model: input.model.c,
       });
@@ -130,12 +174,20 @@ const tag = <T extends string, Model, Msg, ToClient, ToServer>(
         evt: updated.evt,
       };
     },
-    subscriptions: (intervalId, model) => {
-      return Sub.tag(tag, server.subscriptions(intervalId, model.c));
+    subscriptions: async (input) => {
+      return Sub.tag(
+        tag,
+        await server.subscriptions({
+          ctx: input.ctx,
+          intervalId: input.intervalId,
+          model: input.model.c,
+          state: input.state.c,
+        })
+      );
     },
   };
 };
 
-export const GameServer = {
+export const SpaceGameServer = {
   tag,
 };

@@ -12,6 +12,7 @@ import {
   toOpposite,
   toStatus,
 } from "../tic-tic-toe/tic-tac-toe";
+import { SpaceCtx } from "gamezilla/app/space/@SHARED";
 
 //
 //
@@ -114,7 +115,7 @@ export const handle = ({
   msg,
   model,
 }: {
-  ctx: { currentUserId: UserId; hostId: UserId };
+  ctx: SpaceCtx & { currentUserId: UserId };
   msg: Req;
   model: CoreModel;
 }): Result<string, CoreModel> => {

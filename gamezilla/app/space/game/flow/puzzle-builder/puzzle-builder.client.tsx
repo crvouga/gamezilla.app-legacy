@@ -17,7 +17,6 @@ import { FlowViewCtx } from "../@SHARED/flow-ctx";
 import {
   ClientModel,
   ClientMsg,
-  ServerModel,
   ToClient,
   ToServer,
   initCore,
@@ -26,10 +25,11 @@ import {
 
 type Client = SpaceGameClient<
   ClientModel,
-  ServerModel,
   ClientMsg,
   ToClient,
   ToServer,
+  null,
+  null,
   FlowViewCtx
 >;
 
@@ -70,29 +70,18 @@ const updateFromServer: Client["updateFromServer"] = (input) => {
         return { model };
       }
 
-      return chain(
-        model,
-        (model) => {
-          return mergeWithServer({ ctx, client: model, server: result.value });
-        },
-        (model) => {
-          if (msg.t === "input-mode") {
-            return { model, cmd: [playSound(APP_SOUND.tap)] };
-          }
-          return { model };
+      return chain(model, (model) => {
+        if (msg.t === "input-mode") {
+          return { model, cmd: [playSound(APP_SOUND.tap)] };
         }
-      );
+        return { model };
+      });
     }
   }
 };
 
 const updateFromEvt: Client["updateFromEvt"] = (input) => {
   return input;
-};
-
-const mergeWithServer: Client["mergeWithServer"] = ({ client, server }) => {
-  const client_ = client ?? initCore;
-  return { model: { ...client_, ...server } };
 };
 
 const subscriptions: Client["subscriptions"] = () => {
@@ -199,7 +188,6 @@ export const PuzzleBuilderClient: Client = {
   update,
   updateFromServer,
   updateFromEvt,
-  mergeWithServer,
   subscriptions,
   View,
 };

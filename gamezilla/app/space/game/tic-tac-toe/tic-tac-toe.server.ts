@@ -81,7 +81,7 @@ export const updateFromClient = ({
   cmd?: SpaceServerCmd<ToClient>[];
 } => {
   if (msg.t === "input-mode") {
-    if (ctx.currentUserId !== ctx.hostId) {
+    if (ctx.currentUserId !== ctx.space.hostId) {
       return {
         model,
         cmd: [
@@ -96,7 +96,7 @@ export const updateFromClient = ({
 
     const modelNew: ServerModel = initMode({
       mode: msg.mode,
-      userId: ctx.hostId,
+      userId: ctx.space.hostId,
     });
 
     return {

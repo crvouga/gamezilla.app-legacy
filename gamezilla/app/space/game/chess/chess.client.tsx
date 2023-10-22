@@ -1,4 +1,11 @@
-import { Eff, RemoteResult, Sub, andThen, p } from "gamezilla/@SHARED/core";
+import {
+  Eff,
+  RemoteResult,
+  Sub,
+  andThen,
+  chain,
+  p,
+} from "gamezilla/@SHARED/core";
 import {
   APP_SOUND,
   ClientCmd,
@@ -14,23 +21,18 @@ import {
 } from "gamezilla/app/space/game/@SHARED";
 import { ViewCoverArt } from "./@SHARED/chess-ui";
 import { CHESS_SOUND } from "./@SHARED/chess/chess-sounds";
-import {
-  ClientModel,
-  ClientMsg,
-  ServerModel,
-  ToClient,
-  ToServer,
-} from "./chess.core";
+import { ClientModel, ClientMsg, ToClient, ToServer } from "./chess.core";
 import * as Puzzle from "./puzzle/puzzle.client";
 import * as VsBot from "./vs-bot/vs-bot.client";
 import * as VsUser from "./vs-user/vs-user.client";
 
 type Client = SpaceGameClient<
   ClientModel,
-  ServerModel,
   ClientMsg,
   ToClient,
-  ToServer
+  ToServer,
+  null,
+  null
 >;
 
 //
@@ -130,11 +132,10 @@ export const updateFromServer: Client["updateFromServer"] = ({
 }) => {
   switch (msg.t) {
     case "input-mode": {
-      return p(
-        {
-          model,
-        },
-        andThen((model) => {
+      return chain(
+        model,
+
+        (model) => {
           const { result } = msg;
 
           const modelNew: ClientModel = {
@@ -149,20 +150,15 @@ export const updateFromServer: Client["updateFromServer"] = ({
             return { model: modelNew };
           }
 
-          const merged = mergeWithServer({
-            ctx,
-            client: modelNew,
-            server: result.value,
-          });
+          return { model: modelNew };
+        },
 
-          return merged;
-        }),
-        andThen((model) => {
+        (model) => {
           if (model.mode.t === "none") {
             return { model, cmd: [playSound(APP_SOUND.navBackwardMin)] };
           }
           return { model, cmd: [playSound(APP_SOUND.navForwardMin)] };
-        })
+        }
       );
     }
 
@@ -334,81 +330,6 @@ export const View: Client["View"] = ({ ctx, model, dispatch }) => {
           }}
         />
       );
-    }
-  }
-};
-
-//
-//
-//
-//
-//
-//
-
-export const mergeWithServer: Client["mergeWithServer"] = ({
-  ctx,
-  client,
-  server,
-}) => {
-  const initial = init({ ctx });
-  switch (server.t) {
-    case "none": {
-      const model: ClientModel = {
-        ...client,
-        mode: { t: "none" },
-      };
-      return {
-        ...initial,
-        model,
-      };
-    }
-
-    case "puzzle": {
-      return {
-        ...initial,
-        model: {
-          ...client,
-          mode: {
-            t: "puzzle",
-            c: Puzzle.mergeWithServer({
-              client: client?.mode.t === "puzzle" ? client.mode.c : undefined,
-              server: server.c,
-            }),
-          },
-        },
-      };
-    }
-
-    case "vs-user": {
-      return {
-        ...initial,
-        model: {
-          ...client,
-          mode: {
-            t: "vs-user",
-            c: VsUser.mergeWithServer({
-              client: client?.mode.t === "vs-user" ? client.mode.c : undefined,
-              server: server.c,
-            }),
-          },
-        },
-      };
-    }
-
-    case "vs-bot": {
-      return {
-        ...initial,
-        model: {
-          ...client,
-          mode: {
-            t: "vs-bot",
-            c: VsBot.mergeWithServer({
-              server: server.c,
-              client: client?.mode.t === "vs-bot" ? client.mode.c : undefined,
-            }),
-          },
-        },
-      };
     }
   }
 };

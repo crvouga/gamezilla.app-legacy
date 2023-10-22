@@ -180,7 +180,7 @@ export const VsUserSetupScreen = ({
         <VersusSection playerOne={playerOne} playerTwo={playerTwo} ctx={ctx} />
       </div>
 
-      {ctx.currentUserId === ctx.hostId && (
+      {ctx.currentUserId === ctx.space.hostId && (
         <div className="flex w-full items-center gap-4 border-t border-neutral-700 p-4">
           <Button
             variant="contained"

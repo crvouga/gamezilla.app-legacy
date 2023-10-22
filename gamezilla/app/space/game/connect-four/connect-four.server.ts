@@ -1,20 +1,32 @@
 import { Eff, err, ok, Sub } from "gamezilla/@SHARED/core";
 import {
-  GameServer,
+  SpaceGameServer,
   SpaceServerCmd,
   SpaceServerCtx,
 } from "gamezilla/app/space/@SHARED";
 import {
+  Evt,
   Mode,
+  ServerModel,
+  ServerMsg,
+  State,
+  ToClient,
+  ToServer,
+} from "./connect-four.core";
+import * as VsBotServer from "./vs-bot/vs-bot.server";
+import * as VsUserServer from "./vs-user/vs-user.server";
+
+type Server = SpaceGameServer<
   ServerModel,
   ServerMsg,
   ToClient,
   ToServer,
-} from "./connect-four.core";
-import * as VsBot from "./vs-bot/vs-bot.server";
-import * as VsUser from "./vs-user/vs-user.server";
+  State,
+  Evt
+>;
 
-type Server = GameServer<Model, Msg, ToClient, ToServer>;
+const VsBot = SpaceGameServer.tag("vs-bot", VsBotServer);
+const VsUser = SpaceGameServer.tag("vs-user", VsUserServer);
 
 //
 //
@@ -24,12 +36,21 @@ type Server = GameServer<Model, Msg, ToClient, ToServer>;
 //
 //
 
-export type Model = ServerModel;
+export const init: Server["init"] = async (input) => {
+  const { state } = input;
+  switch (state.t) {
+    case "none": {
+      return { model: { t: null } };
+    }
 
-export const init: Server["init"] = () => {
-  return {
-    model: { t: "none" },
-  };
+    case "vs-bot": {
+      return VsBot.init({ ...input, state });
+    }
+
+    case "vs-user": {
+      return VsUser.init({ ...input, state });
+    }
+  }
 };
 
 //
@@ -42,147 +63,46 @@ export const init: Server["init"] = () => {
 
 export type Msg = ServerMsg;
 
-export const update: Server["update"] = ({ msg, model }) => {
-  if (msg.t === "vs-bot" && model.t === "vs-bot") {
-    const updated = VsBot.update({
-      msg: msg.c,
-      model: model.c,
-    });
+export const update: Server["update"] = (input) => {
+  const { state, msg, model } = input;
 
-    return {
-      model: { t: "vs-bot", c: updated.model },
-      cmd: SpaceServerCmd.tag("vs-bot", updated.cmd),
-    };
+  if (state.t === "vs-bot" && msg.t === "vs-bot" && model.t === "vs-bot") {
+    return VsBot.update({ ...input, msg, state, model });
   }
 
-  if (msg.t === "vs-user" && model.t === "vs-user") {
-    const updated = VsUser.update({
-      msg: msg.c,
-      model: model.c,
-    });
-    return {
-      model: { t: "vs-user", c: updated.model },
-      cmd: SpaceServerCmd.tag("vs-user", updated.cmd),
-    };
+  if (state.t === "vs-user" && msg.t === "vs-user" && model.t === "vs-user") {
+    return VsUser.update({ ...input, msg, state, model });
   }
 
   return { model };
 };
 
-export const updateFromClient: Server["updateFromClient"] = ({
-  msg,
-  model,
-  ctx,
-}) => {
-  if (msg.t === "input-mode") {
-    const { mode } = msg;
+export const updateFromClient: Server["updateFromClient"] = (input) => {
+  const { state, msg, model } = input;
 
-    if (ctx.currentUserId !== ctx.hostId) {
-      return {
-        model,
-        cmd: [
-          {
-            t: "send-to-client",
-            clientIds: [ctx.clientId],
-            msg: {
-              t: "input-mode",
-              mode: msg.mode,
-              result: err("You must be the host to change the game mode"),
-            },
-          },
-        ],
-      };
-    }
-
-    const modelNew = initMode(mode, ctx);
-
-    return {
-      model: modelNew,
-      cmd: [
-        {
-          t: "send-to-space",
-          msg: { ...msg, result: ok(modelNew) },
-        },
-      ],
-    };
+  if (state.t === "vs-bot" && msg.t === "vs-bot" && model.t === "vs-bot") {
+    return VsBot.updateFromClient({ ...input, msg, state, model });
   }
 
-  if (msg.t === "vs-bot" && model.t === "vs-bot") {
-    const updated = VsBot.updateFromClient({
-      ctx,
-      msg: msg.c,
-      model: model.c,
-    });
-
-    return {
-      model: { t: "vs-bot", c: updated.model },
-      eff: Eff.t("vs-bot", updated.eff),
-      cmd: SpaceServerCmd.tag("vs-bot", updated.cmd),
-    };
-  }
-
-  if (msg.t === "vs-user" && model.t === "vs-user") {
-    const updated = VsUser.updateFromClient({
-      msg: msg.c,
-      model: model.c,
-      ctx,
-    });
-
-    return {
-      model: { t: "vs-user", c: updated.model },
-      eff: Eff.t("vs-user", updated.eff),
-      cmd: SpaceServerCmd.tag("vs-user", updated.cmd),
-    };
+  if (state.t === "vs-user" && msg.t === "vs-user" && model.t === "vs-user") {
+    return VsUser.updateFromClient({ ...input, msg, state, model });
   }
 
   return { model };
 };
 
-export const updateFromEvt: Server["updateFromEvt"] = ({ msg, model }) => {
-  switch (model.t) {
-    case "none": {
-      return { model };
-    }
+export const updateFromEvt: Server["updateFromEvt"] = (input) => {
+  const { state, model } = input;
 
-    case "vs-bot": {
-      const updated = VsBot.updateFromEvt({
-        msg,
-        model: model.c,
-      });
-      return {
-        model: { t: "vs-bot", c: updated.model },
-        eff: Eff.t("vs-bot", updated.eff),
-      };
-    }
-
-    case "vs-user": {
-      const updated = VsUser.updateFromEvt({
-        msg,
-        model: model.c,
-      });
-
-      return {
-        model: { t: "vs-user", c: updated.model },
-        eff: Eff.t("vs-user", updated.eff),
-      };
-    }
+  if (state.t === "vs-bot" && model.t === "vs-bot") {
+    return VsBot.updateFromEvt({ ...input, state, model });
   }
-};
 
-const initMode = (mode: Mode, ctx: SpaceServerCtx): Model => {
-  switch (mode) {
-    case "none": {
-      return { t: "none" };
-    }
-
-    case "vs-bot": {
-      return { t: "vs-bot", c: VsBot.init(ctx) };
-    }
-
-    case "vs-user": {
-      return { t: "vs-user", c: VsUser.init(ctx) };
-    }
+  if (state.t === "vs-user" && model.t === "vs-user") {
+    return VsUser.updateFromEvt({ ...input, state, model });
   }
+
+  return { model };
 };
 
 //
@@ -193,18 +113,16 @@ const initMode = (mode: Mode, ctx: SpaceServerCtx): Model => {
 //
 //
 
-export const subscriptions: Server["subscriptions"] = (intervalId, model) => {
-  switch (model.t) {
-    case "none": {
-      return Sub.None;
-    }
+export const subscriptions: Server["subscriptions"] = (input) => {
+  const { state, model } = input;
 
-    case "vs-bot": {
-      return Sub.None;
-    }
-
-    case "vs-user": {
-      return Sub.tag("vs-user", VsUser.subscriptions(intervalId, model.c));
-    }
+  if (state.t === "vs-bot" && model.t === "vs-bot") {
+    return VsBot.subscriptions({ ...input, state, model });
   }
+
+  if (state.t === "vs-user" && model.t === "vs-user") {
+    return VsUser.subscriptions({ ...input, state, model });
+  }
+
+  return Sub.None;
 };

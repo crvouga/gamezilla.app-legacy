@@ -296,7 +296,7 @@ const initMode = ({
   result: Res["result"];
   eff?: Eff<Msg>;
 } => {
-  if (ctx.hostId !== userId) {
+  if (ctx.space.hostId !== userId) {
     return { result: err("must_be_the_host") };
   }
 

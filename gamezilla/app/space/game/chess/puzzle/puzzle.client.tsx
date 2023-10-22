@@ -233,7 +233,7 @@ export const View = ({
   onClose: () => void;
 }) => {
   const durationMs = toDurationMs(ctx, model);
-  const isSpectating = ctx.currentUserId !== ctx.hostId;
+  const isSpectating = ctx.currentUserId !== ctx.space.hostId;
   const nextEloRating = toNextEloRating(model);
   return (
     <GameLayout isSpectating={isSpectating}>
@@ -243,7 +243,7 @@ export const View = ({
       <div className="flex w-full flex-1 flex-col items-center justify-center">
         <div className="flex w-full items-center gap-2 px-3 py-2">
           <MyAvatar
-            src={ctx.profiles[ctx.hostId]?.avatarUrl}
+            src={ctx.profiles[ctx.space.hostId]?.avatarUrl}
             className="h-10 w-10"
             alt=""
           />
@@ -293,7 +293,7 @@ export const View = ({
 
               return (
                 color === toPlayerColor(model.puzzle) &&
-                ctx.hostId === ctx.currentUserId
+                ctx.space.hostId === ctx.currentUserId
               );
             }}
             onPieceDrop={(input) => {

@@ -6,6 +6,7 @@ import {
   FlowGridPosition,
   FlowGridUIPlay,
 } from "../@SHARED/flow";
+import { SpaceCtx } from "gamezilla/app/space/@SHARED";
 
 /**
  * Just like a Terminal but invalid
@@ -74,11 +75,11 @@ export const updateCore = ({
   ctx,
   model,
 }: {
-  ctx: { hostId: UserId; currentUserId: UserId };
+  ctx: SpaceCtx & { currentUserId: UserId };
   msg: Req;
   model: CoreModel;
 }): Result<string, CoreModel> => {
-  if (ctx.currentUserId !== ctx.hostId) {
+  if (ctx.currentUserId !== ctx.space.hostId) {
     return err("must-be-host");
   }
 

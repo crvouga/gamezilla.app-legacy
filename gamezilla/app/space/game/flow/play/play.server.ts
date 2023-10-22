@@ -1,4 +1,4 @@
-import { GameServer } from "gamezilla/app/space/@SHARED";
+import { SpaceGameServer } from "gamezilla/app/space/@SHARED";
 import {
   ServerModel,
   ServerMsg,
@@ -8,7 +8,14 @@ import {
 } from "./play.core";
 import { Sub } from "gamezilla/@SHARED/core";
 
-type Server = GameServer<ServerModel, ServerMsg, ToClient, ToServer>;
+type Server = SpaceGameServer<
+  ServerModel,
+  ServerMsg,
+  ToClient,
+  ToServer,
+  null,
+  null
+>;
 
 const init: Server["init"] = () => {
   return {

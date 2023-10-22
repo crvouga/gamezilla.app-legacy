@@ -13,23 +13,22 @@ import {
   gameNameList,
   gameNameToString,
 } from "../game/game.core";
-import { ClientMsg } from "../space.core";
+import { Evt } from "../space.core";
 
 export const ViewNotInGameScreen = ({
   ctx,
-  space,
-  dispatch,
+
+  dispatchEvent,
 }: {
-  space: Space<Game.ClientModel>;
   ctx: SpaceViewCtx;
-  dispatch: (m: ClientMsg) => void;
+  dispatchEvent: (m: Evt) => void;
 }) => {
-  if (space.hostId !== ctx.currentUserId) {
-    const hostTitle = spaceToHostTitle(ctx, space);
+  if (ctx.space.hostId !== ctx.currentUserId) {
+    const hostTitle = spaceToHostTitle(ctx, ctx.space);
     return (
       <>
         <ViewGameHeader title={hostTitle ?? " "} />
-        <ViewUsersInSpaceList space={space} ctx={ctx} />
+        <ViewUsersInSpaceList ctx={ctx} />
       </>
     );
   }
@@ -45,11 +44,11 @@ export const ViewNotInGameScreen = ({
               <button
                 aria-label={gameName}
                 onClick={() =>
-                  dispatch({
-                    t: "input-game",
-                    spaceId: space.spaceId,
+                  dispatchEvent({
+                    t: "user-inputted-game",
+                    spaceId: ctx.space.spaceId,
                     userId: ctx.currentUserId,
-                    gameName,
+                    game: gameName,
                   })
                 }
                 className="flex overflow-hidden rounded-lg">
@@ -63,8 +62,8 @@ export const ViewNotInGameScreen = ({
           ))}
         </div>
       </section>
-      {Object.values(space.users).length > 1 && (
-        <ViewUsersInSpaceList space={space} ctx={ctx} />
+      {Object.values(ctx.space.users).length > 1 && (
+        <ViewUsersInSpaceList ctx={ctx} />
       )}
       <div>
         <div className="h-24 w-full"></div>

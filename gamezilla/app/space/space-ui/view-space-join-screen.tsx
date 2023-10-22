@@ -5,26 +5,37 @@ import {
   ViewUsersInSpaceList,
 } from "gamezilla/app/space/game/@SHARED";
 import { ViewCoverArt, gameNameToString } from "../game/game.core";
-import { ClientModel, ClientMsg } from "../space.core";
+import { ClientModel, Evt, toState } from "../space.core";
 
 export const ViewSpaceJoinScreen = ({
   model,
   ctx,
-  dispatch,
+  dispatchEvent,
 }: {
   ctx: SpaceViewCtx;
   model: ClientModel;
-  dispatch: (msg: ClientMsg) => void;
+  dispatchEvent: (m: Evt) => void;
 }) => {
-  const space = model.spaces[ctx.spaceId];
+  const space = model.spaces[ctx.space.spaceId];
 
   if (!space) {
-    return null;
+    return <div>Space not found</div>;
   }
 
-  const game = space?.game;
+  const state = toState(space);
 
-  const hostTitle = spaceToHostTitle(ctx, space);
+  if (state.type === "ended") {
+    return <div>Space ended</div>;
+  }
+
+  if (state.type === "initial") {
+    return <div>Space not started</div>;
+  }
+
+  const game = state.game;
+
+  const hostTitle =
+    ctx.profiles[state.space.hostId]?.username ?? state.space.hostId;
 
   return (
     <div className="flex h-full w-full flex-col">
@@ -51,7 +62,7 @@ export const ViewSpaceJoinScreen = ({
           }
         />
 
-        <ViewUsersInSpaceList space={space} ctx={ctx} />
+        <ViewUsersInSpaceList ctx={ctx} />
       </div>
 
       <div className="flex border-t border-neutral-700 p-4">
@@ -59,12 +70,11 @@ export const ViewSpaceJoinScreen = ({
           className="w-full"
           variant="contained"
           color="primary"
-          loading={model.requests.join?.t === "loading"}
           onClick={() => {
-            dispatch({
-              t: "join",
+            dispatchEvent({
+              t: "user-joined-space",
               userId: ctx.currentUserId,
-              spaceId: space.spaceId,
+              spaceId: ctx.space.spaceId,
             });
           }}
           text="Join space"

@@ -1,29 +1,40 @@
-import { Eff, Posix, Sub, dissoc, err, ok } from "gamezilla/@SHARED/core";
+import { Eff, Sub } from "gamezilla/@SHARED/core";
 import {
   ReqCtx,
   ServerCmd,
   ServerCtx,
   ServerEvt,
   broadcast,
-  sendBack,
   sendToClient,
   sendToUser,
 } from "gamezilla/app/@SHARED/server";
 import {
   Space,
+  SpaceGameServer,
   SpaceServerCmd,
   SpaceServerCtx,
 } from "gamezilla/app/space/@SHARED";
-import { appendEvt } from "./@SHARED/evt";
+import { SpaceId } from "../@SHARED/data";
 import * as GameServer from "./game/game.server";
-import { createSpaceStoreInMemory } from "./space-store";
 import {
+  Evt,
+  ServerModel,
+  ServerMsg,
+  State,
+  ToClient,
+  ToServer,
+  appendEvent,
+  toState,
+} from "./space.core";
+
+type Server = SpaceGameServer<
   ServerModel,
   ServerMsg,
   ToClient,
   ToServer,
-  toState,
-} from "./space.core";
+  State,
+  Evt
+>;
 
 //
 //
@@ -33,13 +44,15 @@ import {
 //
 //
 
-export const SpaceStore = createSpaceStoreInMemory({
-  maxEntryCount: 20,
-});
-
-export const init: ServerModel = {
-  spaces: SpaceStore.init(Posix.now()),
-  evtsById: {},
+export const init = (): {
+  model: ServerModel;
+} => {
+  return {
+    model: {
+      games: {},
+      spaces: {},
+    },
+  };
 };
 
 //
@@ -55,56 +68,76 @@ export const update = async ({
   msg,
   ctx,
 }: {
-  ctx: ServerCtx;
-  msg: ServerMsg;
   model: ServerModel;
+  msg: ServerMsg;
+  ctx: ServerCtx;
 }): Promise<{
   model: ServerModel;
   eff?: Eff<ServerMsg>;
   cmd?: ServerCmd<ToClient>[];
 }> => {
   switch (msg.t) {
-    case "game": {
+    case "game-msg": {
       const { spaceId } = msg;
 
-      const space = await SpaceStore.get(ctx.now, model.spaces, spaceId);
+      const space = model.spaces[spaceId];
 
       if (!space) {
         return { model };
       }
 
-      if (!space.game) {
+      const game = model.games[spaceId];
+
+      if (!game) {
+        return { model };
+      }
+
+      const state = toState(space);
+
+      if (state.type === "initial") {
         return { model };
       }
 
       const spaceCtx: SpaceServerCtx = {
         ...ctx,
-        hostId: space.hostId,
+        space: state.space,
       };
 
-      const updated = GameServer.update({
+      if (state.type === "ended") {
+        return { model };
+      }
+
+      if (!state.game) {
+        return { model };
+      }
+
+      const updated = await GameServer.update({
         ctx: spaceCtx,
-        model: space.game,
+        model: game,
         msg: msg.c,
+        state: state.game,
       });
 
-      const spaceNew: Space<GameServer.Model> = {
-        ...space,
-        game: updated.model,
-      };
-
-      const modelNew = await SpaceStore.assoc(ctx.now, model.spaces, spaceNew);
-
       return {
-        model: { ...model, spaces: modelNew },
+        model: {
+          ...model,
+          games: {
+            ...model.games,
+            [spaceId]: updated.model,
+          },
+        },
         eff: Eff.map_(
-          (m): ServerMsg => ({ t: "game", spaceId, c: m }),
+          (c): ServerMsg => ({ t: "game-msg", spaceId, c }),
           updated.eff
         ),
         cmd: spaceCmdToCmd(
-          spaceNew,
+          state.space,
           SpaceServerCmd.map(
-            (c) => ({ t: "game", spaceId: msg.spaceId, c }),
+            (c) => ({
+              t: "game-msg",
+              spaceId: msg.spaceId,
+              c,
+            }),
             updated.cmd
           )
         ),
@@ -125,421 +158,100 @@ export const updateFromClient = async (input: {
   const { msg, model, ctx } = input;
 
   switch (msg.t) {
-    case "evt": {
-      const evts = model.evtsById[msg.evt.spaceId];
+    case "game-msg": {
+      const space = model.spaces[msg.spaceId];
+
+      if (!space) {
+        return { model };
+      }
+
+      const game = model.games[msg.spaceId];
+
+      if (!game) {
+        return { model };
+      }
+
+      const state = toState(space);
+
+      if (state.type === "initial") {
+        return { model };
+      }
+
+      if (state.type === "ended") {
+        return { model };
+      }
+
+      if (!state.game) {
+        return { model };
+      }
+
+      const updated = await GameServer.updateFromClient({
+        ctx: { ...ctx, space: state.space },
+        state: state.game,
+        msg: msg.c,
+        model: game,
+      });
+
+      return {
+        model: {
+          ...model,
+          games: {
+            ...model.games,
+            [msg.spaceId]: updated.model,
+          },
+        },
+        eff: Eff.map_(
+          (c) => ({ t: "game-msg", spaceId: state.space.spaceId, c }),
+          updated.eff
+        ),
+        cmd: spaceCmdToCmd(
+          state.space,
+          SpaceServerCmd.map(
+            (c) => ({
+              t: "game-msg",
+              spaceId: state.space.spaceId,
+              c,
+            }),
+            updated.cmd
+          )
+        ),
+      };
+    }
+
+    case "list": {
+      return { model };
+    }
+
+    default: {
+      const space = model.spaces[msg.spaceId];
 
       const state = toState(
-        evts ?? {
-          evts: [],
+        space ?? {
+          events: [],
           initialState: {
             type: "initial",
           },
         }
       );
 
+      const appended = appendEvent(model, msg);
+
       return {
         model: {
           ...model,
-          evtsById: {
-            ...model.evtsById,
-            [msg.evt.spaceId]: {
-              evts: appendEvt(evts?.evts ?? [], msg.evt),
-              initialState: null,
-            },
-          },
+          ...appended,
         },
         cmd: [
-          msg.evt.t === "game" && state.type === "started"
-            ? sendToUser(Object.values(state.users), msg)
+          msg.t === "game" && state.type === "started"
+            ? sendToUser(Object.values(state.space.users), msg)
             : broadcast(msg),
         ],
-      };
-    }
-
-    case "list": {
-      const listed = await SpaceStore.list(ctx.now, model.spaces);
-
-      const profiles = listed.reduce(
-        (acc, space) => ({ ...acc, ...space.profileCache }),
-        {}
-      );
-
-      return {
-        model,
-        cmd: [sendBack(ctx, { t: "list", profiles, result: ok(listed) })],
-      };
-    }
-
-    case "join": {
-      const currentSpace = await SpaceStore.getByUserId(
-        ctx.now,
-        model.spaces,
-        ctx.currentUserId
-      );
-
-      if (currentSpace) {
-        return {
-          model,
-          cmd: [
-            sendBack(ctx, {
-              ...msg,
-              result: err(
-                "You're already in a space. You must leave your current space before joining another"
-              ),
-            }),
-          ],
-        };
-      }
-
-      const space = await SpaceStore.get(ctx.now, model.spaces, msg.spaceId);
-
-      if (!space) {
-        return {
-          model,
-          cmd: [sendBack(ctx, { ...msg, result: err("Space was not found") })],
-        };
-      }
-
-      const spaceNew: Space<GameServer.Model> = {
-        ...space,
-        users: {
-          ...space.users,
-          [ctx.currentUserId]: ctx.currentUserId,
-        },
-        profileCache: msg.profile
-          ? {
-              ...space.profileCache,
-              [ctx.currentUserId]: msg.profile,
-            }
-          : space.profileCache,
-      };
-
-      const modelNew = await SpaceStore.assoc(ctx.now, model.spaces, spaceNew);
-
-      return {
-        model: { ...model, spaces: modelNew },
-        cmd: [{ t: "broadcast", msg: { ...msg, result: ok(spaceNew) } }],
-      };
-    }
-
-    case "destroy": {
-      const currentSpace = await SpaceStore.getByUserId(
-        ctx.now,
-        model.spaces,
-        ctx.currentUserId
-      );
-
-      if (!currentSpace) {
-        return {
-          model,
-          cmd: [sendBack(ctx, { ...msg, result: err("Failed to find space") })],
-        };
-      }
-
-      if (currentSpace.hostId !== ctx.currentUserId) {
-        return {
-          model,
-          cmd: [
-            sendBack(ctx, {
-              ...msg,
-              result: err("You must be the host to destroy the space"),
-            }),
-          ],
-        };
-      }
-
-      const modelNew = await SpaceStore.dissoc(
-        ctx.now,
-        model.spaces,
-        currentSpace.spaceId
-      );
-
-      return {
-        model: { ...model, spaces: modelNew },
-        cmd: [
-          broadcast({
-            ...msg,
-            profiles: currentSpace.profileCache,
-            result: ok(currentSpace),
-          }),
-        ],
-      };
-    }
-
-    case "create": {
-      const currentSpace = await SpaceStore.getByUserId(
-        ctx.now,
-        model.spaces,
-        ctx.currentUserId
-      );
-
-      if (currentSpace) {
-        return {
-          model,
-          cmd: [
-            sendBack(ctx, {
-              ...msg,
-              result: err(
-                "You're already in a space. You must leave your current space before creating another"
-              ),
-            }),
-          ],
-        };
-      }
-
-      const spaceNew: Space<GameServer.Model> = {
-        spaceId: msg.spaceId,
-        hostId: ctx.currentUserId,
-        state: "started",
-        visibility: "public",
-        users: {
-          [ctx.currentUserId]: ctx.currentUserId,
-        },
-        profileCache: msg.profile
-          ? {
-              [ctx.currentUserId]: msg.profile,
-            }
-          : {},
-      };
-
-      const modelNew = await SpaceStore.assoc(ctx.now, model.spaces, spaceNew);
-
-      return {
-        model: { ...model, spaces: modelNew },
-        cmd: [
-          broadcast({
-            ...msg,
-            profiles: spaceNew.profileCache,
-            result: ok(spaceNew),
-          }),
-        ],
-      };
-    }
-
-    case "input-game": {
-      const currentSpace = await SpaceStore.getByUserId(
-        ctx.now,
-        model.spaces,
-        ctx.currentUserId
-      );
-
-      if (!currentSpace) {
-        return {
-          model,
-          cmd: [
-            sendBack(ctx, {
-              ...msg,
-              result: err("Failed to find space"),
-            }),
-          ],
-        };
-      }
-
-      if (currentSpace.hostId !== ctx.currentUserId) {
-        return {
-          model,
-          cmd: [
-            sendBack(ctx, {
-              ...msg,
-              result: err("You must be the host to change the game"),
-            }),
-          ],
-        };
-      }
-
-      if (!msg.gameName) {
-        const spaceNew: Space<GameServer.Model> = {
-          ...currentSpace,
-          game: null,
-          profileCache: msg.profile
-            ? {
-                ...currentSpace.profileCache,
-                [msg.profile.userId]: msg.profile,
-              }
-            : currentSpace.profileCache,
-        };
-
-        const modelNew = await SpaceStore.assoc(
-          ctx.now,
-          model.spaces,
-          spaceNew
-        );
-
-        return {
-          model: { ...model, spaces: modelNew },
-          cmd: [
-            {
-              t: "broadcast",
-              msg: {
-                ...msg,
-                profiles: spaceNew.profileCache,
-                result: ok(spaceNew),
-              },
-            },
-          ],
-        };
-      }
-
-      const initial = GameServer.init({ gameName: msg.gameName })({
-        ctx: {
-          ...ctx,
-          hostId: currentSpace.hostId,
-        },
-      });
-
-      const spaceNew: Space<GameServer.Model> = {
-        ...currentSpace,
-        game: initial.model,
-        profileCache: msg.profile
-          ? {
-              ...currentSpace.profileCache,
-              [msg.profile.userId]: msg.profile,
-            }
-          : currentSpace.profileCache,
-      };
-
-      const modelNew = await SpaceStore.assoc(ctx.now, model.spaces, spaceNew);
-
-      return {
-        model: { ...model, spaces: modelNew },
-        cmd: [
-          {
-            t: "broadcast",
-            msg: {
-              ...msg,
-              profiles: spaceNew.profileCache,
-              result: ok(spaceNew),
-            },
-          },
-        ],
-        eff: Eff.map_(
-          (c) => ({ t: "game", c, spaceId: currentSpace.spaceId }),
-          initial.eff
-        ),
-      };
-    }
-
-    case "leave": {
-      const space = await SpaceStore.getByUserId(
-        ctx.now,
-        model.spaces,
-        ctx.currentUserId
-      );
-
-      if (!space) {
-        return {
-          model,
-          cmd: [sendBack(ctx, { ...msg, result: err("Failed to find space") })],
-        };
-      }
-
-      if (space.hostId === ctx.currentUserId) {
-        return {
-          model,
-          cmd: [
-            sendBack(ctx, {
-              ...msg,
-              result: err("You must destroy the space to leave as host"),
-            }),
-          ],
-        };
-      }
-
-      const spaceNew: Space<GameServer.Model> = {
-        ...space,
-        users: dissoc(space.users, ctx.currentUserId),
-        profileCache: msg.profile
-          ? {
-              ...space.profileCache,
-              [msg.profile.userId]: msg.profile,
-            }
-          : space.profileCache,
-      };
-
-      const updated = !spaceNew.game
-        ? {
-            model: spaceNew.game,
-            eff: Eff.None,
-          }
-        : GameServer.updateFromEvt({
-            ctx: { ...ctx, hostId: space.hostId },
-            model: spaceNew.game,
-            msg: { t: "user-left", userId: ctx.currentUserId },
-          });
-
-      const modelNew = await SpaceStore.assoc(ctx.now, model.spaces, spaceNew);
-
-      return {
-        model: { ...model, spaces: modelNew },
-        cmd: [
-          broadcast({
-            ...msg,
-            profiles: spaceNew.profileCache,
-            result: ok(spaceNew),
-          }),
-        ],
-        eff: Eff.batch([
-          Eff.map_(
-            (c) => ({ t: "game", spaceId: space.spaceId, c }),
-            updated.eff
-          ),
-        ]),
-      };
-    }
-
-    case "game": {
-      const space = await SpaceStore.getByUserId(
-        ctx.now,
-        model.spaces,
-        ctx.currentUserId
-      );
-
-      if (!space) {
-        return { model };
-      }
-
-      if (!space.game) {
-        return { model };
-      }
-
-      const updated = GameServer.updateFromClient({
-        ctx: { ...ctx, hostId: space.hostId },
-        msg: msg.c,
-        model: space.game,
-      });
-
-      const spaceNew: Space<GameServer.Model> = {
-        ...space,
-        game: updated.model,
-      };
-
-      const modelNew = await SpaceStore.assoc(ctx.now, model.spaces, spaceNew);
-
-      return {
-        model: {
-          ...model,
-          spaces: modelNew,
-        },
-        eff: Eff.map_(
-          (c) => ({ t: "game", spaceId: space.spaceId, c }),
-          updated.eff
-        ),
-        cmd: spaceCmdToCmd(
-          spaceNew,
-          SpaceServerCmd.map(
-            (m) => ({ t: "game", spaceId: space.spaceId, c: m }),
-            updated.cmd
-          )
-        ),
       };
     }
   }
 };
 
-const spaceCmdToCmd = (
-  space: Space<GameServer.Model>,
-  cmd?: SpaceServerCmd<ToClient>[]
-) => {
+const spaceCmdToCmd = (space: Space, cmd?: SpaceServerCmd<ToClient>[]) => {
   return cmd?.map((cmd): ServerCmd<ToClient> => {
     switch (cmd.t) {
       case "send-to-space": {
@@ -587,15 +299,12 @@ export const updateFromEvt = async (input: {
 };
 
 const listSpaces: typeof updateFromEvt = async (input) => {
-  const listed = await SpaceStore.list(input.ctx.now, input.model.spaces);
-
   return {
     ...input,
     cmd: [
       sendToClient([input.msg.clientId], {
         t: "list",
-        result: ok(listed),
-        source: input.msg,
+        spaces: input.model.spaces,
       }),
     ],
   };
@@ -617,20 +326,52 @@ export const subscriptions = async ({
   ctx: ServerCtx;
 }): Promise<Sub<ServerMsg>> => {
   const batch: Sub<ServerMsg>[] = [];
-  for (const space of await SpaceStore.list(ctx.now, model.spaces)) {
-    if (!space.game) {
+
+  for (const spaceId in model.games) {
+    if (!SpaceId.is(spaceId)) {
       continue;
     }
-    const sub = GameServer.subscriptions(space.spaceId, space.game);
+
+    const game = model.games[spaceId];
+
+    if (!game) {
+      continue;
+    }
+
+    const space = model.spaces[spaceId];
+
+    if (!space) {
+      continue;
+    }
+
+    const state = toState(space);
+
+    if (state.type === "initial") {
+      continue;
+    }
+
+    if (state.type === "ended") {
+      continue;
+    }
+
+    if (!state.game) {
+      continue;
+    }
+
+    const sub = await GameServer.subscriptions({
+      ctx: { ...ctx, space: state.space },
+      intervalId: state.space.spaceId,
+      model: game,
+      state: state.game,
+    });
+
     const mapped = Sub.map(
       sub,
-      (msg): ServerMsg => ({
-        t: "game",
-        c: msg,
-        spaceId: space.spaceId,
-      })
+      (c): ServerMsg => ({ t: "game-msg", c, spaceId })
     );
+
     batch.push(mapped);
   }
+
   return Sub.batch(batch);
 };

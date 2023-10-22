@@ -1,18 +1,8 @@
 import { IconCrown, MyAvatar } from "gamezilla/app/@SHARED/ui";
-import {
-  Space,
-  SpaceViewCtx,
-  spaceToProfiles,
-} from "gamezilla/app/space/@SHARED";
+import { SpaceViewCtx, spaceToProfiles } from "gamezilla/app/space/@SHARED";
 
-export const ViewUsersInSpaceList = <T,>({
-  space,
-  ctx,
-}: {
-  space: Space<T>;
-  ctx: SpaceViewCtx;
-}) => {
-  const profiles = spaceToProfiles(ctx, space);
+export const ViewUsersInSpaceList = ({ ctx }: { ctx: SpaceViewCtx }) => {
+  const profiles = spaceToProfiles(ctx, ctx.space);
   return (
     <section className="flex w-full flex-col gap-2 py-4">
       <p className="text-center text-3xl font-bold">People</p>
@@ -26,7 +16,7 @@ export const ViewUsersInSpaceList = <T,>({
               className="flex w-full items-center gap-2 p-2 px-4 active:opacity-60">
               <MyAvatar src={profile.avatarUrl} />
               <p>{profile.username}</p>
-              {profile.userId === ctx.hostId && <ViewSpaceHostChip />}
+              {profile.userId === ctx.space.hostId && <ViewSpaceHostChip />}
               {profile.userId === ctx.currentUserId && <ViewYouChip />}
             </button>
           );

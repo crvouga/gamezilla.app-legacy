@@ -1,27 +1,22 @@
-import { Eff, Sub, andThen, p } from "gamezilla/@SHARED/core";
+import { Eff, Sub, andThen, chain, p } from "gamezilla/@SHARED/core";
 import { APP_SOUND, ClientCmd, playSound } from "gamezilla/app/@SHARED/client";
 import { SpaceGameClient, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
 import {
   MainMenuScreen,
   mainMenuButtons,
 } from "gamezilla/app/space/game/@SHARED";
-import {
-  ClientModel,
-  ClientMsg,
-  ServerModel,
-  ToClient,
-  ToServer,
-} from "./tic-tac-toe.core";
+import { ClientModel, ClientMsg, ToClient, ToServer } from "./tic-tac-toe.core";
 import { ViewCoverArt } from "./tic-tic-toe/tic-tac-toe-ui";
 import * as VsBot from "./vs-bot/vs-bot.client";
 import * as VsUser from "./vs-user/vs-user.client";
 
 type Client = SpaceGameClient<
   ClientModel,
-  ServerModel,
   ClientMsg,
   ToClient,
-  ToServer
+  ToServer,
+  null,
+  null
 >;
 
 //
@@ -32,7 +27,7 @@ type Client = SpaceGameClient<
 //
 //
 
-export const init: Client["init"] = () => {
+export const init = (): { model: ClientModel } => {
   return { model: { t: "none" } };
 };
 
@@ -80,29 +75,23 @@ export const updateFromServer: Client["updateFromServer"] = ({
   model,
 }) => {
   if (msg.t === "input-mode") {
-    return p(
-      { model },
-      andThen((model) => {
+    return chain(
+      model,
+      (model) => {
         const { result } = msg;
 
         if (result.t === "err") {
           return { model };
         }
 
-        const merged = mergeWithServer({
-          ctx,
-          client: model,
-          server: result.value,
-        });
-
-        return merged;
-      }),
-      andThen((model) => {
+        return { model };
+      },
+      (model) => {
         if (model.t === "none") {
           return { model, cmd: [playSound(APP_SOUND.navBackwardMin)] };
         }
         return { model, cmd: [playSound(APP_SOUND.navForwardMin)] };
-      })
+      }
     );
   }
 
@@ -125,42 +114,6 @@ export const updateFromServer: Client["updateFromServer"] = ({
   }
 
   return { model };
-};
-
-export const mergeWithServer: Client["mergeWithServer"] = ({
-  client = { t: "none" },
-  server,
-  ctx,
-}) => {
-  if (server.t === "none") {
-    return { model: { t: "none" } };
-  }
-
-  if (server.t === "vs-user") {
-    const clientChild = client?.t === "vs-user" ? client.c : VsUser.init;
-
-    return {
-      model: {
-        t: "vs-user",
-        c: VsUser.mergeWithServer(clientChild, server.c),
-      },
-    };
-  }
-
-  if (server.t === "vs-bot") {
-    return {
-      model: {
-        t: "vs-bot",
-        c: VsBot.mergeWithServer({
-          now: ctx.now,
-          client: client?.t === "vs-bot" ? client.c : undefined,
-          server: server.c,
-        }),
-      },
-    };
-  }
-
-  return { model: { t: "none" } };
 };
 
 export const updateFromEvt: Client["updateFromEvt"] = (input) => {

@@ -55,7 +55,7 @@ export const init = ({
     eff: async (dispatch) => {
       const result = await initialLoad({
         dbConn: ctx.mySql,
-        userId: ctx.hostId,
+        userId: ctx.space.hostId,
       });
       dispatch({ t: "db-got-initial-load", result });
     },
@@ -306,7 +306,7 @@ const watchPutInteraction = ({
   ) {
     const interaction: PuzzleInteraction = {
       puzzleId: model.puzzle.puzzleId,
-      userId: ctx.hostId,
+      userId: ctx.space.hostId,
       type: model.t,
     };
     return {

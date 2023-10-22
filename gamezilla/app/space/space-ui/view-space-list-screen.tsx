@@ -10,7 +10,13 @@ import {
 import { ViewSpaceHostChip } from "gamezilla/app/space/game/@SHARED";
 import { SpaceId } from "gamezilla/app/@SHARED/data";
 import { GameName, ViewCoverArt, gameNameToString } from "../game/game.core";
-import { ClientModel, ClientMsg, toSpaceByUserId } from "../space.core";
+import {
+  ClientModel,
+  ClientMsg,
+  findSpaceByUserId,
+  toState,
+} from "../space.core";
+import { withMeta } from "../@SHARED/evt";
 
 export const ViewSpaceListScreen = ({
   ctx,
@@ -21,33 +27,31 @@ export const ViewSpaceListScreen = ({
   ctx: ViewCtx;
   dispatch: (m: ClientMsg) => void;
 }) => {
-  const currentSpace = toSpaceByUserId(model, ctx.currentUserId);
+  const currentSpace = findSpaceByUserId(model, ctx.currentUserId);
 
-  const spaces = Object.values(model.spaces);
-
-  const isLoading = model.requests.list?.t === "loading";
+  const spaces = Object.values(model.spaces).flatMap((space) => {
+    const state = toState(space);
+    if (state.type === "started") {
+      return [state];
+    }
+    return [];
+  });
 
   return (
     <div className="flex h-full max-h-full w-full flex-1 flex-col gap-4 overflow-hidden">
       <TopBar title="Spaces" />
 
       <div className="relative flex h-full w-full flex-1 flex-col">
-        {isLoading && <LoadingScreen absolute />}
-        {!isLoading && spaces.length === 0 && (
+        {spaces.length === 0 && (
           <div className="absolute inset-0 flex h-full w-full flex-1 flex-col items-center justify-center gap-2 opacity-60">
             <IconGamepad className="h-14 w-14" />
-
             <p className="text-lg text-secondary">No active spaces</p>
           </div>
         )}
-        <div
-          className={cn(
-            isLoading && "pointer-events-none opacity-50",
-            "flex w-full flex-1 flex-col gap-4 overflow-y-scroll px-5"
-          )}>
-          {spaces.map((space) => {
-            const host = ctx.profiles[space.hostId];
-            const users = Object.values(space.users).flatMap((userId) => {
+        <div className="flex w-full flex-1 flex-col gap-4 overflow-y-scroll px-5">
+          {spaces.flatMap((state) => {
+            const host = ctx.profiles[state.space.hostId];
+            const users = Object.values(state.space.users).flatMap((userId) => {
               const profile = ctx.profiles[userId];
 
               if (!profile) {
@@ -62,22 +66,22 @@ export const ViewSpaceListScreen = ({
               ];
             });
 
-            const gameName = space.game?.t ?? null;
-            const currentSpaceId = currentSpace?.spaceId ?? null;
+            const gameName = state.game?.t ?? null;
+
             return (
               <ViewSpaceCard
                 host={{
                   username: host?.username ?? "...",
                   avatarUrl: host?.avatarUrl,
                 }}
-                key={space.spaceId}
-                isCurrentSpace={currentSpaceId === space.spaceId}
+                key={state.space.spaceId}
+                isCurrentSpace={currentSpace?.spaceId === state.space.spaceId}
                 users={users}
                 gameName={gameName}
                 onClick={() => {
                   ctx.push({
                     t: "space",
-                    c: { t: "space", spaceId: space.spaceId },
+                    c: { t: "space", spaceId: state.space.spaceId },
                   });
                 }}
               />
@@ -86,16 +90,20 @@ export const ViewSpaceListScreen = ({
         </div>
       </div>
 
-      {!currentSpace && !isLoading && (
+      {!currentSpace && (
         <div className="w-full p-4">
           <Button
             size="lg"
             className="w-full"
             color="primary"
-            disabled={model.requests.list?.t === "loading"}
-            loading={model.requests.create?.t === "loading"}
             onClick={() =>
-              dispatch({ t: "create", spaceId: SpaceId.generate() })
+              dispatch(
+                withMeta({
+                  t: "user-started-space",
+                  spaceId: SpaceId.generate(),
+                  userId: ctx.currentUserId,
+                })
+              )
             }
             text="Create space"
           />

@@ -19,13 +19,7 @@ import {
   sendToServer,
 } from "gamezilla/app/@SHARED/client";
 
-type Client = SpaceGameClient<
-  ClientModel,
-  ServerModel,
-  ClientMsg,
-  ToClient,
-  ToServer
->;
+type Client = SpaceGameClient<ClientModel, ClientMsg, ToClient, ToServer>;
 
 const PuzzleBuilder = SpaceGameClient.tag(
   "puzzle-builder",
@@ -51,16 +45,10 @@ export const update: Client["update"] = (input) => {
     }
 
     case "play": {
-      if (model.t === "play") {
-        return Play.update({ ...input, msg, model });
-      }
       return { model };
     }
 
     case "puzzle-builder": {
-      if (model.t === "puzzle-builder") {
-        return PuzzleBuilder.update({ ...input, msg, model });
-      }
       return { model };
     }
   }
@@ -76,13 +64,7 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
       }
       return chain(
         model,
-        (model) => {
-          return mergeWithServer({
-            ...input,
-            client: model,
-            server: result.value,
-          });
-        },
+
         (model) => {
           if (model.t === "none") {
             return { model, cmd: [playSound(APP_SOUND.navBackwardMin)] };
@@ -93,16 +75,10 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
     }
 
     case "play": {
-      if (model.t === "play") {
-        return Play.updateFromServer({ ...input, msg, model });
-      }
       return { model };
     }
 
     case "puzzle-builder": {
-      if (model.t === "puzzle-builder") {
-        return PuzzleBuilder.updateFromServer({ ...input, msg, model });
-      }
       return { model };
     }
   }
@@ -110,62 +86,20 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
 
 export const updateFromEvt: Client["updateFromEvt"] = (input) => {
   const { model } = input;
-  switch (model.t) {
-    case "none": {
-      return { model };
-    }
-    case "play": {
-      return Play.updateFromEvt({ ...input, model });
-    }
-    case "puzzle-builder": {
-      return PuzzleBuilder.updateFromEvt({ ...input, model });
-    }
-  }
+  return { model };
 };
 
-export const mergeWithServer: Client["mergeWithServer"] = (input) => {
-  const { client: client_, server } = input;
-
-  const client: ClientModel = client_ ?? { t: "none" };
-
-  switch (server.t) {
-    case "none": {
-      return { model: server };
-    }
-
-    case "puzzle-builder": {
-      return PuzzleBuilder.mergeWithServer({
-        ...input,
-        server,
-        client: client.t === "puzzle-builder" ? client : undefined,
-      });
-    }
-
-    case "play": {
-      return Play.mergeWithServer({
-        ...input,
-        server,
-        client: client.t === "play" ? client : undefined,
-      });
-    }
-  }
-};
+//
+//
+//
+//
+//
+//
+//
+//
 
 export const subscriptions: Client["subscriptions"] = (input) => {
-  const { model } = input;
-  switch (model.t) {
-    case "none": {
-      return Sub.None;
-    }
-
-    case "play": {
-      return Play.subscriptions({ ...input, model });
-    }
-
-    case "puzzle-builder": {
-      return PuzzleBuilder.subscriptions({ ...input, model });
-    }
-  }
+  return Sub.None;
 };
 
 //
@@ -175,47 +109,35 @@ export const subscriptions: Client["subscriptions"] = (input) => {
 //
 
 export const View: Client["View"] = (input) => {
-  const { dispatch, model } = input;
+  const { dispatch } = input;
   const ctx: FlowViewCtx = {
     ...input.ctx,
     onExit: () => dispatch({ t: "input-mode", mode: "none" }),
   };
 
-  switch (model.t) {
-    case "none": {
-      return (
-        <MainMenuScreen
-          renderCoverArt={(props) => <ViewCoverArt {...props} />}
-          ctx={ctx}
-          title="Flow"
-          buttons={[
-            {
-              renderIcon: (props) => <IconGamepad {...props} />,
-              title: "Play",
-              description: "Start playing puzzles",
-              onClick: () => {
-                dispatch({ t: "input-mode", mode: "play" });
-              },
-            },
-            {
-              renderIcon: (props) => <IconScrewdriverWrench {...props} />,
-              title: "Puzzle builder",
-              description: "Build new puzzles to play",
-              onClick: () => {
-                dispatch({ t: "input-mode", mode: "puzzle-builder" });
-              },
-            },
-          ]}
-        />
-      );
-    }
-
-    case "play": {
-      return <Play.View {...input} ctx={ctx} model={model} />;
-    }
-
-    case "puzzle-builder": {
-      return <PuzzleBuilder.View {...input} ctx={ctx} model={model} />;
-    }
-  }
+  return (
+    <MainMenuScreen
+      renderCoverArt={(props) => <ViewCoverArt {...props} />}
+      ctx={ctx}
+      title="Flow"
+      buttons={[
+        {
+          renderIcon: (props) => <IconGamepad {...props} />,
+          title: "Play",
+          description: "Start playing puzzles",
+          onClick: () => {
+            dispatch({ t: "input-mode", mode: "play" });
+          },
+        },
+        {
+          renderIcon: (props) => <IconScrewdriverWrench {...props} />,
+          title: "Puzzle builder",
+          description: "Build new puzzles to play",
+          onClick: () => {
+            dispatch({ t: "input-mode", mode: "puzzle-builder" });
+          },
+        },
+      ]}
+    />
+  );
 };

@@ -27,11 +27,11 @@ export const MainMenuScreen = ({
   renderCoverArt: (props: { className: string }) => VDom;
   buttons: MainMenuButton[];
 }) => {
-  if (ctx.currentUserId !== ctx.hostId) {
+  if (ctx.currentUserId !== ctx.space.hostId) {
     return (
       <div className="flex h-full w-full flex-col">
         <ViewGameHeader title={title} renderCoverArt={renderCoverArt} />
-        <ViewUsersInSpaceList space={ctx.space} ctx={ctx} />
+        <ViewUsersInSpaceList ctx={ctx} />
       </div>
     );
   }

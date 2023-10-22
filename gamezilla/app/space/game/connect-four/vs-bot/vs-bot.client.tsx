@@ -1,5 +1,5 @@
-import { Eff, Posix, Sub, chain } from "gamezilla/@SHARED/core";
-import { ClientCmd, sendToServer } from "gamezilla/app/@SHARED/client";
+import { Eff, Sub, chain } from "gamezilla/@SHARED/core";
+import { ClientCmd } from "gamezilla/app/@SHARED/client";
 import {
   Drawer,
   IconArrowLeftOnRect,
@@ -8,8 +8,12 @@ import {
   LoadingBar,
   cn,
 } from "gamezilla/app/@SHARED/ui";
-import { SpaceClientCtx, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
-import { EvtMeta, withMeta } from "gamezilla/app/space/@SHARED/evt";
+import {
+  SpaceClientCtx,
+  SpaceGameClient,
+  SpaceViewCtx,
+} from "gamezilla/app/space/@SHARED";
+import { EvtMeta } from "gamezilla/app/space/@SHARED/evt";
 import {
   GameLayout,
   IconBotHappy,
@@ -35,31 +39,35 @@ import {
   ClientModel,
   ClientMsg,
   Evt,
-  ServerModel,
   State,
   ToClient,
   ToServer,
   allBotLevels,
-  appendEvent,
   eventErrorToString,
-  initCore,
-  mergeModels,
-  toState,
 } from "./vs-bot.core";
 
+type Client = SpaceGameClient<
+  ClientModel,
+  ClientMsg,
+  ToClient,
+  ToServer,
+  State,
+  Evt,
+  SpaceViewCtx & { onQuit: () => void }
+>;
+
 //
 //
 //
 //
 
-export const init = (...params: Parameters<typeof initCore>): ClientModel => {
-  const shared = initCore(...params);
-
+export const init: Client["init"] = () => {
   return {
-    ...shared,
-    opened: null,
-    vsBotSetup: VsBotSetup.init,
-    vsBotGame: VsBotGame.init(null),
+    model: {
+      opened: null,
+      vsBotSetup: VsBotSetup.init,
+      vsBotGame: VsBotGame.init(null),
+    },
   };
 };
 
@@ -69,15 +77,7 @@ export const init = (...params: Parameters<typeof initCore>): ClientModel => {
 //
 //
 
-export const update = (input: {
-  ctx: SpaceClientCtx;
-  msg: ClientMsg;
-  model: ClientModel;
-}): {
-  model: ClientModel;
-  cmd?: ClientCmd<ToServer>[];
-  eff?: Eff<ClientMsg>;
-} => {
+export const update: Client["update"] = (input) => {
   return chain(
     input.model,
     (model) => {
@@ -99,47 +99,20 @@ export const update = (input: {
         case "closed-activity-feed-drawer": {
           return { model: { ...model, opened: null } };
         }
-
-        default: {
-          const eventNew = withMeta(msg);
-
-          const modelNew: ClientModel = {
-            ...model,
-            ...appendEvent(model, eventNew),
-          };
-
-          return {
-            model: modelNew,
-            cmd: [sendToServer(eventNew)],
-          };
-        }
       }
     },
     (model) => watch({ ...input, model })
   );
 };
 
-export const updateFromServer = (input: {
-  ctx: SpaceClientCtx;
-  msg: ToClient;
-  model: ClientModel;
-}): {
-  model: ClientModel;
-  eff?: Eff<ClientMsg>;
-  cmd?: ClientCmd<ToServer>[];
-} => {
+export const updateFromServer: Client["updateFromServer"] = (input) => {
   return chain(
     input.model,
     (model) => {
       const { msg } = input;
       switch (msg.t) {
         default: {
-          const modelNew: ClientModel = {
-            ...model,
-            ...appendEvent(model, msg),
-          };
-
-          return { model: modelNew };
+          return { model };
         }
       }
     },
@@ -147,18 +120,21 @@ export const updateFromServer = (input: {
   );
 };
 
+export const updateFromEvt: Client["updateFromEvt"] = (input) => {
+  return input;
+};
+
 const watch = ({
   model,
-  ctx,
+  state,
 }: {
-  ctx: SpaceClientCtx;
+  state: State;
   model: ClientModel;
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
   cmd?: ClientCmd<ToServer>[];
 } => {
-  const state = toState(ctx, model);
   const vsBotGame = VsBotGame.watch(
     model.vsBotGame,
     "columns" in state ? toGameOver(state.columns) : undefined
@@ -173,31 +149,6 @@ const watch = ({
   };
 };
 
-export const mergeWithServer = ({
-  serverModel,
-  ctx,
-  clientModel = init(ctx),
-}: {
-  ctx: SpaceClientCtx;
-  clientModel?: ClientModel;
-  serverModel: ServerModel;
-}): { model: ClientModel; eff?: Eff<ClientMsg> } => {
-  const merged = mergeModels(clientModel, serverModel);
-  const state = toState(ctx, merged);
-
-  const modelNew: ClientModel = {
-    events: merged.events,
-    initialState: merged.initialState,
-    opened: clientModel.opened,
-    vsBotSetup: clientModel.vsBotSetup,
-    vsBotGame: clientModel.vsBotGame
-      ? clientModel.vsBotGame
-      : VsBotGame.init("columns" in state ? toGameOver(state.columns) : null),
-  };
-
-  return watch({ ctx, model: modelNew });
-};
-
 //
 //
 //
@@ -206,10 +157,8 @@ export const mergeWithServer = ({
 //
 //
 
-export const subscriptions = (
-  _intervalId: string,
-  _now: Posix,
-  _model: ClientModel
+export const subscriptions: Client["subscriptions"] = (
+  input
 ): Sub<ClientMsg> => {
   return Sub.None;
 };
@@ -240,41 +189,33 @@ function toGameOver(columns: Columns): VsBotGame.GameOver {
   }
 }
 
-export const View = ({
+export const View: Client["View"] = ({
   model,
-  onQuit,
   ctx,
+  state,
   dispatch,
-}: {
-  model: ClientModel;
-  dispatch: (msg: ClientMsg) => void;
-  onQuit: () => void;
-  ctx: SpaceViewCtx;
+  dispatchEvent,
 }) => {
-  const state = toState(ctx, model);
-
   const vsBotProps: VsBotProps = {
     ctx: ctx,
-    onQuit: onQuit,
+    onQuit: ctx.onQuit,
     title: "Connect Four",
     renderCoverArt: (props) => <ViewCoverArt {...props} />,
     canStartGame: state.playingUserId !== null,
     onSwapSides: () =>
-      dispatch({ t: "user-swapped-sides", userId: ctx.currentUserId }),
+      dispatchEvent({ t: "user-swapped-sides", userId: ctx.currentUserId }),
     onStartGame: () =>
-      dispatch({ t: "user-started-game", userId: ctx.currentUserId }),
+      dispatchEvent({ t: "user-started-game", userId: ctx.currentUserId }),
     botVariants: allBotLevels.map((botLevel) => {
       return {
         label: botLevel,
         renderIcon: (props) => renderBotLevel({ level: botLevel, ...props }),
         onSelect: () =>
-          dispatch(
-            withMeta({
-              t: "user-changed-bot-level",
-              botLevel,
-              userId: ctx.currentUserId,
-            })
-          ),
+          dispatchEvent({
+            t: "user-changed-bot-level",
+            botLevel,
+            userId: ctx.currentUserId,
+          }),
       };
     }),
     human: {
@@ -291,25 +232,25 @@ export const View = ({
       label: "Red",
       renderIcon: (props) => <PlayerOneIcon {...props} />,
       onStartPlaying: () =>
-        dispatch({
+        dispatchEvent({
           t: "user-started-playing",
           playerType: "player-one",
           userId: ctx.currentUserId,
         }),
       onStopPlaying: () =>
-        dispatch({ t: "user-stopped-playing", userId: ctx.currentUserId }),
+        dispatchEvent({ t: "user-stopped-playing", userId: ctx.currentUserId }),
     },
     playerTwo: {
       label: "Yellow",
       renderIcon: (props) => <PlayerTwoIcon {...props} />,
       onStartPlaying: () =>
-        dispatch({
+        dispatchEvent({
           t: "user-started-playing",
           playerType: "player-two",
           userId: ctx.currentUserId,
         }),
       onStopPlaying: () =>
-        dispatch({ t: "user-stopped-playing", userId: ctx.currentUserId }),
+        dispatchEvent({ t: "user-stopped-playing", userId: ctx.currentUserId }),
     },
   };
 
@@ -369,7 +310,7 @@ export const View = ({
               columns={state.columns}
               disabled={ctx.currentUserId !== state.playingUserId}
               onDropDisc={(columnIndex) => {
-                dispatch({
+                dispatchEvent({
                   t: "user-dropped-disc",
                   columnIndex,
                   userId: ctx.currentUserId,
@@ -381,7 +322,7 @@ export const View = ({
               {...vsBotGameProps}
               model={model.vsBotGame}
               onPlayAgain={() =>
-                dispatch({
+                dispatchEvent({
                   t: "user-restarted-game",
                   userId: ctx.currentUserId,
                 })
@@ -410,7 +351,7 @@ export const View = ({
                 label: "Exit",
                 icon: <IconArrowLeftOnRect className="h-6 w-6" />,
                 onClick: () =>
-                  dispatch({
+                  dispatchEvent({
                     t: "user-stopped-game",
                     userId: ctx.currentUserId,
                   }),
@@ -419,7 +360,7 @@ export const View = ({
                 label: "Swap sides",
                 icon: <IconRightLeft className="h-6 w-6" />,
                 onClick: () =>
-                  dispatch({
+                  dispatchEvent({
                     t: "user-swapped-sides",
                     userId: ctx.currentUserId,
                   }),
@@ -428,7 +369,7 @@ export const View = ({
                 label: "Restart",
                 icon: <IconArrowRotateLeft className="h-6 w-6" />,
                 onClick: () =>
-                  dispatch({
+                  dispatchEvent({
                     t: "user-restarted-game",
                     userId: ctx.currentUserId,
                   }),
@@ -452,7 +393,8 @@ const ViewActivityFeedBar = ({
   model: ClientModel;
   ctx: SpaceViewCtx;
 }) => {
-  const latestEvent = model.events.findLast(
+  const events: (Evt & EvtMeta)[] = [];
+  const latestEvent = events.findLast(
     (e) => toActivityFeedItemUI({ event: e, ctx, state }) !== null
   );
   if (!latestEvent) {
@@ -470,7 +412,7 @@ const ViewActivityFeedBar = ({
         open={model.opened === "activity-feed-drawer"}
         onClose={() => dispatch({ t: "closed-activity-feed-drawer" })}>
         <div className="pb-4ya flex max-h-72 w-full flex-col justify-end overflow-y-scroll text-left">
-          {model.events.map((event) => {
+          {events.map((event) => {
             return (
               <ViewActivityFeedItem
                 key={event.eventId}

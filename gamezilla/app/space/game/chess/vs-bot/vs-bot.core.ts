@@ -2,6 +2,7 @@ import { err, ok, Result } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
 import { VsBotSetup } from "gamezilla/app/space/game/@SHARED";
 import { Chess } from "../@SHARED/chess";
+import { SpaceCtx } from "gamezilla/app/space/@SHARED";
 
 //
 //
@@ -126,7 +127,7 @@ export const updateCore = ({
   model,
   ctx,
 }: {
-  ctx: { currentUserId: UserId; hostId: UserId };
+  ctx: SpaceCtx & { currentUserId: UserId };
   msg: Req;
   model: CoreModel;
 }): Result<string, CoreModel & { didCapture?: boolean }> => {
@@ -139,7 +140,7 @@ export const updateCore = ({
           }
           if (
             model.userId !== ctx.currentUserId ||
-            model.userId !== ctx.hostId
+            model.userId !== ctx.space.hostId
           ) {
             return err("not-allowed");
           }
@@ -155,7 +156,7 @@ export const updateCore = ({
         case "input-bot-level": {
           if (
             model.userId !== ctx.currentUserId ||
-            model.userId !== ctx.hostId
+            model.userId !== ctx.space.hostId
           ) {
             return err("not-allowed");
           }
@@ -237,7 +238,7 @@ export const updateCore = ({
         case "stop-game": {
           if (
             model.userId !== ctx.currentUserId ||
-            ctx.currentUserId !== ctx.hostId
+            ctx.currentUserId !== ctx.space.hostId
           ) {
             return err("not-allowed");
           }
@@ -260,7 +261,7 @@ export const updateCore = ({
         case "stop-game": {
           if (
             model.userId !== ctx.currentUserId ||
-            ctx.currentUserId !== ctx.hostId
+            ctx.currentUserId !== ctx.space.hostId
           ) {
             return err("not-allowed");
           }

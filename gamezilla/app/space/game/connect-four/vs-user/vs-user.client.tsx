@@ -1,5 +1,5 @@
-import { Eff, Sub } from "gamezilla/@SHARED/core";
-import { ClientCmd, ViewCtx, sendToServer } from "gamezilla/app/@SHARED/client";
+import { Sub } from "gamezilla/@SHARED/core";
+import { ViewCtx } from "gamezilla/app/@SHARED/client";
 import {
   Button,
   ConformationDialog,
@@ -11,13 +11,7 @@ import {
   IconXMark,
   MyAvatar,
 } from "gamezilla/app/@SHARED/ui";
-import {
-  SpaceClientCtx,
-  SpaceCtx,
-  SpaceEvt,
-  SpaceViewCtx,
-} from "gamezilla/app/space/@SHARED";
-import { appendEvt, withMeta } from "gamezilla/app/space/@SHARED/evt";
+import { SpaceGameClient, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
 import {
   GameLayout,
   ViewBottomButtonBar,
@@ -29,15 +23,24 @@ import { PlayerIcon, ViewColumns } from "../connect-four-ui";
 import {
   ClientModel,
   ClientMsg,
-  ServerModel,
+  Evt,
+  State,
   StateGame,
   StateGameOver,
   ToClient,
   ToServer,
-  initCore,
   toPlayerType,
-  toState,
 } from "./vs-user.core";
+
+type Client = SpaceGameClient<
+  ClientModel,
+  ClientMsg,
+  ToClient,
+  ToServer,
+  State,
+  Evt,
+  SpaceViewCtx & { onQuit: () => void }
+>;
 
 //
 //
@@ -47,11 +50,12 @@ import {
 //
 //
 
-export const init = (...params: Parameters<typeof initCore>): ClientModel => {
+export const init: Client["init"] = () => {
   return {
-    ...initCore(...params),
-    ghostIndex: "none",
-    openedModal: "none",
+    model: {
+      ghostIndex: "none",
+      openedModal: "none",
+    },
   };
 };
 
@@ -63,19 +67,7 @@ export const init = (...params: Parameters<typeof initCore>): ClientModel => {
 //
 //
 
-export const update = ({
-  msg,
-  model,
-  ctx,
-}: {
-  ctx: SpaceClientCtx;
-  msg: ClientMsg;
-  model: ClientModel;
-}): {
-  model: ClientModel;
-  eff?: Eff<ClientMsg>;
-  cmd?: ClientCmd<ToServer>[];
-} => {
+export const update: Client["update"] = ({ msg, model }) => {
   switch (msg.t) {
     case "clicked-resign": {
       return { model: { ...model, openedModal: "ConfirmResign" } };
@@ -88,61 +80,16 @@ export const update = ({
     case "close-modal": {
       return { model: { ...model, openedModal: "none" } };
     }
-
-    default: {
-      const evt = withMeta(msg);
-
-      const modelNew: ClientModel = {
-        ...model,
-        events: appendEvt(model.events, evt),
-      };
-
-      return { model: modelNew, cmd: [sendToServer(evt)] };
-    }
   }
 };
 
-export const updateFromServer = ({
-  msg,
-  model,
-}: {
-  msg: ToClient;
-  model: ClientModel;
-}): {
-  model: ClientModel;
-  eff?: Eff<ClientMsg>;
-} => {
-  switch (msg.t) {
-    default: {
-      const modelNew: ClientModel = {
-        ...model,
-        events: appendEvt(model.events, msg),
-      };
-      return { model: modelNew };
-    }
-  }
+export const updateFromServer: Client["updateFromServer"] = (input) => {
+  return input;
 };
 
-export const mergeWithServer = ({
-  ctx,
-  server,
-  client = init(ctx),
-}: {
-  ctx: SpaceCtx;
-  client?: ClientModel;
-  server: ServerModel;
-}): ClientModel => {
-  return {
-    ...server,
-    openedModal: client.openedModal,
-    ghostIndex: client.ghostIndex,
-  };
-};
-
-export const updateFromEvt = (input: {
-  model: ClientModel;
-  msg: SpaceEvt;
-}): {
+export const updateFromEvt: Client["updateFromEvt"] = (
+  input
+): {
   model: ClientModel;
 } => {
   return input;
@@ -156,7 +103,7 @@ export const updateFromEvt = (input: {
 //
 //
 
-export const subscriptions = (_model: ClientModel): Sub<ClientMsg> => {
+export const subscriptions: Client["subscriptions"] = () => {
   return Sub.None;
 };
 
@@ -168,19 +115,13 @@ export const subscriptions = (_model: ClientModel): Sub<ClientMsg> => {
 //
 //
 
-export const View = ({
+export const View: Client["View"] = ({
   ctx,
   model,
+  state,
   dispatch,
-  onQuit,
-}: {
-  model: ClientModel;
-  ctx: SpaceViewCtx;
-  dispatch: (msg: ClientMsg) => void;
-  onQuit: () => void;
+  dispatchEvent,
 }) => {
-  const state = toState(model);
-
   if (state.type === "setup") {
     return (
       <VsUserSetupScreen
@@ -194,20 +135,23 @@ export const View = ({
           );
         }}
         onStartGame={() => {
-          dispatch({ t: "user-started-game", userId: ctx.currentUserId });
+          dispatchEvent({ t: "user-started-game", userId: ctx.currentUserId });
         }}
-        onQuit={onQuit}
+        onQuit={ctx.onQuit}
         playerOne={{
           label: "Red",
           onStartPlaying: () => {
-            dispatch({
+            dispatchEvent({
               t: "user-started-playing",
               playerType: "player-one",
               userId: ctx.currentUserId,
             });
           },
           onStopPlaying: () => {
-            dispatch({ t: "user-stopped-playing", userId: ctx.currentUserId });
+            dispatchEvent({
+              t: "user-stopped-playing",
+              userId: ctx.currentUserId,
+            });
           },
           renderIcon: (props) => {
             return <PlayerIcon playerType="player-one" {...props} />;
@@ -217,14 +161,17 @@ export const View = ({
         playerTwo={{
           label: "Yellow",
           onStartPlaying: () => {
-            dispatch({
+            dispatchEvent({
               t: "user-started-playing",
               userId: ctx.currentUserId,
               playerType: "player-two",
             });
           },
           onStopPlaying: () => {
-            dispatch({ t: "user-stopped-playing", userId: ctx.currentUserId });
+            dispatchEvent({
+              t: "user-stopped-playing",
+              userId: ctx.currentUserId,
+            });
           },
           renderIcon: (props) => {
             return <PlayerIcon playerType="player-two" {...props} />;
@@ -252,7 +199,7 @@ export const View = ({
             columns={state.columns}
             gameId={state.gameId}
             onDropDisc={(columnIndex) =>
-              dispatch({
+              dispatchEvent({
                 t: "user-dropped-disc",
                 userId: ctx.currentUserId,
                 columnIndex,
@@ -269,7 +216,7 @@ export const View = ({
           {state.type === "game-over" && (
             <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center bg-black/50">
               <ViewGameOverMessage
-                dispatch={dispatch}
+                dispatchEvent={dispatchEvent}
                 ctx={ctx}
                 state={state}
               />
@@ -294,13 +241,14 @@ export const View = ({
                 },
               ]
             : []),
-          ...(state.type === "game-over" && ctx.currentUserId === ctx.hostId
+          ...(state.type === "game-over" &&
+          ctx.currentUserId === ctx.space.hostId
             ? [
                 {
                   icon: <IconArrowLeftOnRect className="h-6 w-6" />,
                   label: "Exit",
                   onClick: () => {
-                    dispatch({
+                    dispatchEvent({
                       t: "user-stopped-game",
                       userId: ctx.currentUserId,
                     });
@@ -310,7 +258,7 @@ export const View = ({
                   icon: <IconArrowRotateLeft className="h-6 w-6" />,
                   label: "Rematch",
                   onClick: () => {
-                    dispatch({
+                    dispatchEvent({
                       t: "user-requested-rematch",
                       userId: ctx.currentUserId,
                     });
@@ -328,7 +276,7 @@ export const View = ({
         onClose={() => dispatch({ t: "close-modal" })}
         confirmTitle="Resign"
         onConfirm={() =>
-          dispatch({ t: "user-resigned", userId: ctx.currentUserId })
+          dispatchEvent({ t: "user-resigned", userId: ctx.currentUserId })
         }
         open={model.openedModal === "ConfirmResign"}
       />
@@ -339,11 +287,11 @@ export const View = ({
 const ViewGameOverMessage = ({
   ctx,
   state,
-  dispatch,
+  dispatchEvent,
 }: {
   state: StateGameOver;
   ctx: ViewCtx;
-  dispatch: (msg: ClientMsg) => void;
+  dispatchEvent: (msg: Evt) => void;
 }) => {
   const currentPlayerType = toPlayerType(ctx.currentUserId, state);
 
@@ -358,7 +306,10 @@ const ViewGameOverMessage = ({
         <Button
           variant="contained"
           onClick={() =>
-            dispatch({ t: "user-cancelled-rematch", userId: ctx.currentUserId })
+            dispatchEvent({
+              t: "user-cancelled-rematch",
+              userId: ctx.currentUserId,
+            })
           }
           text="Cancel"
         />
@@ -378,7 +329,7 @@ const ViewGameOverMessage = ({
           <Button
             variant="contained"
             onClick={() =>
-              dispatch({
+              dispatchEvent({
                 t: "user-responded-to-rematch-request",
                 userId: ctx.currentUserId,
                 response: "Decline",
@@ -391,7 +342,7 @@ const ViewGameOverMessage = ({
           <Button
             variant="contained"
             onClick={() =>
-              dispatch({
+              dispatchEvent({
                 t: "user-responded-to-rematch-request",
                 userId: ctx.currentUserId,
                 response: "Decline",

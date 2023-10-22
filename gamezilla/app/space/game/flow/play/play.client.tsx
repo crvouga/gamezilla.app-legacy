@@ -1,12 +1,11 @@
-import { Sub, chain } from "gamezilla/@SHARED/core";
+import { Sub } from "gamezilla/@SHARED/core";
 import { Button, IconArrowLeftOnRect } from "gamezilla/app/@SHARED/ui";
 import { SpaceGameClient } from "gamezilla/app/space/@SHARED";
-import { FlowViewCtx } from "../@SHARED/flow-ctx";
 import { FlowGridUIPlay } from "../@SHARED/flow";
+import { FlowViewCtx } from "../@SHARED/flow-ctx";
 import {
   ClientModel,
   ClientMsg,
-  CoreModel,
   ToClient,
   ToServer,
   initShared,
@@ -14,10 +13,11 @@ import {
 
 type Client = SpaceGameClient<
   ClientModel,
-  CoreModel,
   ClientMsg,
   ToClient,
   ToServer,
+  null,
+  null,
   FlowViewCtx
 >;
 
@@ -27,15 +27,7 @@ const init: Client["init"] = () => {
 
 const update: Client["update"] = (input) => {
   const { msg, model } = input;
-  switch (msg.t) {
-    case "grid": {
-      const updated = FlowGridUIPlay.update({
-        msg: msg.c,
-        model: model.grid,
-      });
-      return { model: { ...model, grid: updated.model } };
-    }
-  }
+  return { model };
 };
 
 const updateFromServer: Client["updateFromServer"] = (input) => {
@@ -44,11 +36,6 @@ const updateFromServer: Client["updateFromServer"] = (input) => {
 
 const updateFromEvt: Client["updateFromEvt"] = (input) => {
   return input;
-};
-
-const mergeWithServer: Client["mergeWithServer"] = ({ client, server }) => {
-  const client_ = client ?? init;
-  return { model: { ...client_, ...server } };
 };
 
 const subscriptions: Client["subscriptions"] = () => {
@@ -81,7 +68,6 @@ export const PlayClient: Client = {
   update,
   updateFromServer,
   updateFromEvt,
-  mergeWithServer,
   subscriptions,
   View,
 };

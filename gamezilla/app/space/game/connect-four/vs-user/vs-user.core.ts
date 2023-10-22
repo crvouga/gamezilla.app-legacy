@@ -21,24 +21,12 @@ import { SpaceCtx } from "gamezilla/app/space/@SHARED";
 //
 //
 
-export type CoreModel = {
-  events: (Evt & EvtMeta)[];
-  initialState: State;
-};
-
-export const initCore = (ctx: SpaceCtx): CoreModel => {
-  return {
-    events: [],
-    initialState: initState(ctx),
-  };
-};
-
-export type ClientModel = CoreModel & {
+export type ClientModel = {
   openedModal: "ConfirmResign" | "none";
   ghostIndex: ColumnIndex | "none";
 };
 
-export type ServerModel = CoreModel;
+export type ServerModel = null;
 
 //
 //
@@ -51,29 +39,13 @@ export type ServerModel = CoreModel;
 export type ServerMsg = { t: null };
 
 export type ClientMsg =
-  | Evt
   | { t: "hovered-over-columns"; columnIndex: ColumnIndex }
   | { t: "clicked-resign"; userId: UserId }
   | { t: "close-modal" };
 
-export type ToServer = Evt & EvtMeta;
+export type ToServer = { t: null };
 
-export type ToClient = Evt & EvtMeta;
-
-export const toPlayerType = (
-  userId: UserId,
-  state: State
-): PlayerType | null => {
-  if (state.players["player-one"] === userId) {
-    return "player-one";
-  }
-
-  if (state.players["player-two"] === userId) {
-    return "player-two";
-  }
-
-  return null;
-};
+export type ToClient = { t: null };
 
 //
 //
@@ -113,7 +85,7 @@ export const initState = (ctx: SpaceCtx): State => {
     type: "setup",
     moveTimeLimit: 5,
     players: {
-      "player-one": ctx.hostId,
+      "player-one": ctx.space.hostId,
       "player-two": null,
     },
     errors: {},
@@ -335,10 +307,22 @@ export const reducer = (state: State, event: Evt & EvtMeta): State => {
   }
 };
 
-export const toState = (model: CoreModel): State => {
-  const events = model.events;
+export const toState = (events: (Evt & EvtMeta)[], state: State): State => {
+  const stateNew = events.reduce(reducer, state);
+  return stateNew;
+};
 
-  const state = events.reduce(reducer, model.initialState);
+export const toPlayerType = (
+  userId: UserId,
+  state: State
+): PlayerType | null => {
+  if (state.players["player-one"] === userId) {
+    return "player-one";
+  }
 
-  return state;
+  if (state.players["player-two"] === userId) {
+    return "player-two";
+  }
+
+  return null;
 };

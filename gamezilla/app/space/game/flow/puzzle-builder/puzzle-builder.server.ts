@@ -1,5 +1,5 @@
 import { Sub } from "gamezilla/@SHARED/core";
-import { GameServer, sendToSpace } from "gamezilla/app/space/@SHARED";
+import { SpaceGameServer, sendToSpace } from "gamezilla/app/space/@SHARED";
 import {
   ServerModel,
   ServerMsg,
@@ -10,7 +10,14 @@ import {
 } from "./puzzle-builder.core";
 import { sendBack } from "gamezilla/app/@SHARED/server";
 
-type Server = GameServer<ServerModel, ServerMsg, ToClient, ToServer>;
+type Server = SpaceGameServer<
+  ServerModel,
+  ServerMsg,
+  ToClient,
+  ToServer,
+  null,
+  null
+>;
 
 const init: Server["init"] = () => {
   return {
