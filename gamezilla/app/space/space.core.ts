@@ -1,7 +1,7 @@
 import { Profile, UserId } from "gamezilla/app/@SHARED/data";
 import { SpaceId } from "../@SHARED/data/space-id";
 import { Space } from "./@SHARED";
-import { EvtMeta, appendEvt } from "./@SHARED/evt";
+import { EventMeta, appendEvt } from "./@SHARED/evt";
 import * as Game from "./game/game.core";
 
 //
@@ -52,7 +52,7 @@ export const findSpaceByUserId = (
 
 export const appendEvent = (
   model: CoreModel,
-  evt: Evt & EvtMeta
+  evt: Evt & EventMeta
 ): CoreModel => {
   const space = model.spaces[evt.spaceId] ?? {
     events: [],
@@ -75,7 +75,7 @@ export const appendEvent = (
 };
 
 export type SpaceModel = {
-  events: (Evt & EvtMeta)[];
+  events: (Evt & EventMeta)[];
   initialState: State;
 };
 
@@ -105,14 +105,14 @@ type ModalModel = null | "user-preview" | "users";
 
 export type ToClient = ToClientExtra &
   (
-    | (Evt & EvtMeta)
+    | (Evt & EventMeta)
     | { t: "game-msg"; spaceId: SpaceId; c: Game.ToClient }
     | { t: "list"; spaces: CoreModel["spaces"] }
   );
 
 export type ToServer = ToServerExtra &
   (
-    | (Evt & EvtMeta)
+    | (Evt & EventMeta)
     | { t: "game-msg"; spaceId: SpaceId; c: Game.ToServer }
     | { t: "list" }
   );
@@ -128,7 +128,7 @@ export type ToServerExtra = {
 export type ServerMsg = { t: "game-msg"; spaceId: SpaceId; c: Game.ServerMsg };
 
 export type ClientMsg =
-  | (Evt & EvtMeta)
+  | (Evt & EventMeta)
   | { t: "game-msg"; c: Game.ClientMsg }
   | { t: "modal-closed" }
   | { t: "modal-open"; c: ModalModel }
@@ -193,7 +193,7 @@ export type StateEnded = {
 
 export type State = StateInitial | StateStarted | StateEnded;
 
-export const reducer = (state: State, evt: Evt & EvtMeta): State => {
+export const reducer = (state: State, evt: Evt & EventMeta): State => {
   switch (state.type) {
     case "ended": {
       return state;

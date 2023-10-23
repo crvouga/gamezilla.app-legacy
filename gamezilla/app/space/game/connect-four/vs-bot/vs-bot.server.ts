@@ -1,7 +1,7 @@
 import { Sub } from "gamezilla/@SHARED/core";
 import { SpaceGameServer } from "gamezilla/app/space/@SHARED";
 import {
-  Evt,
+  Event,
   ServerModel,
   ServerMsg,
   State,
@@ -16,7 +16,7 @@ type Server = SpaceGameServer<
   ToClient,
   ToServer,
   State,
-  Evt
+  Event
 >;
 
 export const init: Server["init"] = async () => {

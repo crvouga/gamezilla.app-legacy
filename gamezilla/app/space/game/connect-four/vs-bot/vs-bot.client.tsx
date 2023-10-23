@@ -13,7 +13,7 @@ import {
   SpaceGameClient,
   SpaceViewCtx,
 } from "gamezilla/app/space/@SHARED";
-import { EvtMeta } from "gamezilla/app/space/@SHARED/evt";
+import { EventMeta } from "gamezilla/app/space/@SHARED/evt";
 import {
   GameLayout,
   IconBotHappy,
@@ -38,7 +38,7 @@ import {
   BotLevel,
   ClientModel,
   ClientMsg,
-  Evt,
+  Event,
   State,
   ToClient,
   ToServer,
@@ -52,7 +52,7 @@ type Client = SpaceGameClient<
   ToClient,
   ToServer,
   State,
-  Evt,
+  Event,
   SpaceViewCtx & { onQuit: () => void }
 >;
 
@@ -401,7 +401,7 @@ const ViewActivityFeedBar = ({
   model: ClientModel;
   ctx: SpaceViewCtx;
 }) => {
-  const events: (Evt & EvtMeta)[] = [];
+  const events: (Event & EventMeta)[] = [];
   const latestEvent = events.findLast(
     (e) => toActivityFeedItemUI({ event: e, ctx, state }) !== null
   );
@@ -442,7 +442,7 @@ const toActivityFeedItemUI = ({
   state,
 }: {
   ctx: SpaceViewCtx;
-  event: Evt & EvtMeta;
+  event: Event & EventMeta;
   state: State;
 }): {
   text: string;
@@ -517,7 +517,7 @@ const ViewActivityFeedItem = ({
   state,
 }: {
   ctx: SpaceViewCtx;
-  event: Evt & EvtMeta;
+  event: Event & EventMeta;
   state: State;
 }) => {
   const itemUI = toActivityFeedItemUI({

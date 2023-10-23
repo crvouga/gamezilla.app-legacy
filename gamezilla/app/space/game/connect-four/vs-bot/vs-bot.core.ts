@@ -1,9 +1,9 @@
-import { Posix, Uuid } from "gamezilla/@SHARED/core";
+import { Posix } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
+import { SpaceCtx } from "gamezilla/app/space/@SHARED";
+import { EventMeta } from "gamezilla/app/space/@SHARED/evt";
 import { VsBotGame, VsBotSetup } from "gamezilla/app/space/game/@SHARED";
 import * as ConnectFour from "../connect-four";
-import { SpaceCtx } from "gamezilla/app/space/@SHARED";
-import { EvtMeta } from "gamezilla/app/space/@SHARED/evt";
 
 //
 //
@@ -37,17 +37,14 @@ export type ToClient = { t: null };
 
 export type ToServer = { t: null };
 
-export type Evt =
+export type Event =
   | {
       t: "user-dropped-disc";
       columnIndex: ConnectFour.ColumnIndex;
       userId: UserId;
     }
   | { t: "user-left"; userId: UserId }
-  | {
-      t: "bot-dropped-disc";
-      columnIndex: ConnectFour.ColumnIndex;
-    }
+  | { t: "bot-dropped-disc"; columnIndex: ConnectFour.ColumnIndex }
   | {
       t: "user-started-playing";
       userId: UserId;
@@ -78,7 +75,7 @@ export const eventErrorToString = ({ error }: { error: EvtError }): string => {
 
 export type State = (StateSetup | StateGame) & {
   errors: {
-    [eventId: string]: Evt & EvtMeta & { error: EvtError };
+    [eventId: string]: Event & EventMeta & { error: EvtError };
   };
 };
 
@@ -107,7 +104,7 @@ export type StateGame = {
   columns: ConnectFour.Columns;
 };
 
-export const reducer = (state: State, event: Evt & EvtMeta): State => {
+export const reducer = (state: State, event: Event & EventMeta): State => {
   switch (state.type) {
     case "setup": {
       switch (event.t) {
@@ -264,7 +261,7 @@ export const reducer = (state: State, event: Evt & EvtMeta): State => {
 
 const addError = (
   state: State,
-  event: Evt & EvtMeta,
+  event: Event & EventMeta,
   error: EvtError
 ): State => {
   return {

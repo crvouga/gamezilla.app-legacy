@@ -1,12 +1,12 @@
 import { Posix } from "gamezilla/@SHARED/core";
 import { EvtId } from "./evt-id";
 
-export type EvtMeta = {
+export type EventMeta = {
   happenedAt: Posix;
   eventId: EvtId;
 };
 
-export const withMeta = <T>(eventNew: T): T & EvtMeta => {
+export const withMeta = <T>(eventNew: T): T & EventMeta => {
   return {
     ...eventNew,
     happenedAt: Posix.now(),
@@ -15,10 +15,10 @@ export const withMeta = <T>(eventNew: T): T & EvtMeta => {
 };
 
 export const appendEvt = <T>(
-  evts: (T & EvtMeta)[],
-  evt: T & EvtMeta
-): (T & EvtMeta)[] => {
-  const evtMap: Map<string, T & EvtMeta> = new Map();
+  evts: (T & EventMeta)[],
+  evt: T & EventMeta
+): (T & EventMeta)[] => {
+  const evtMap: Map<string, T & EventMeta> = new Map();
 
   for (const evt of evts) {
     evtMap.set(evt.eventId, evt);
@@ -34,10 +34,10 @@ export const appendEvt = <T>(
 };
 
 export const mergeEvts = <T>(
-  left: (T & EvtMeta)[],
-  right: (T & EvtMeta)[]
-): (T & EvtMeta)[] => {
-  const evtMap: Map<string, T & EvtMeta> = new Map();
+  left: (T & EventMeta)[],
+  right: (T & EventMeta)[]
+): (T & EventMeta)[] => {
+  const evtMap: Map<string, T & EventMeta> = new Map();
 
   for (const evt of left) {
     evtMap.set(evt.eventId, evt);

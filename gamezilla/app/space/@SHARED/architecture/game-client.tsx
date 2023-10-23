@@ -44,9 +44,6 @@ export type SpaceGameClient<
     cmd?: ClientCmd<ToServer>[];
   };
 
-  /**
-   * Handles messages from the game space like users leaving and joining
-   */
   updateFromEvt: (input: {
     ctx: SpaceClientCtx;
     msg: SpaceClientEvt;
@@ -58,9 +55,6 @@ export type SpaceGameClient<
     cmd?: ClientCmd<ToServer>[];
   };
 
-  /**
-   * Handles messages from the game space like users leaving and joining
-   */
   updateFromGameEvt: (input: {
     ctx: SpaceClientCtx;
     msg: GameEvt;

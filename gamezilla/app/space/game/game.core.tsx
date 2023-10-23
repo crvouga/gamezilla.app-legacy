@@ -1,5 +1,5 @@
 import { SpaceCtx } from "../@SHARED";
-import { EvtMeta } from "../@SHARED/evt";
+import { EventMeta } from "../@SHARED/evt";
 import * as ConnectFour from "./connect-four";
 
 //
@@ -184,7 +184,7 @@ export const reducer = ({
 }: {
   ctx: SpaceCtx;
   state: State;
-  evt: Evt & EvtMeta;
+  evt: Evt & EventMeta;
 }): State => {
   if (state.t === "connect-four" && evt.t === "connect-four") {
     return {

@@ -1,6 +1,6 @@
 import { Posix } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
-import { EvtMeta } from "gamezilla/app/space/@SHARED/evt";
+import { EventMeta } from "gamezilla/app/space/@SHARED/evt";
 import {
   ColumnIndex,
   Columns,
@@ -94,13 +94,13 @@ export const initState = (ctx: SpaceCtx): State => {
 
 type Errors = {
   errors: {
-    [eventId: string]: Evt & EvtMeta & { error: EventError };
+    [eventId: string]: Evt & EventMeta & { error: EventError };
   };
 };
 
 const addError = (
   state: State,
-  event: Evt & EvtMeta,
+  event: Evt & EventMeta,
   error: EventError
 ): State => {
   return {
@@ -192,7 +192,7 @@ export const allMoveTimeLimit: {
   "9": 9,
 };
 
-export const reducer = (state: State, event: Evt & EvtMeta): State => {
+export const reducer = (state: State, event: Evt & EventMeta): State => {
   switch (state.type) {
     case "setup": {
       switch (event.t) {
@@ -307,7 +307,7 @@ export const reducer = (state: State, event: Evt & EvtMeta): State => {
   }
 };
 
-export const toState = (events: (Evt & EvtMeta)[], state: State): State => {
+export const toState = (events: (Evt & EventMeta)[], state: State): State => {
   const stateNew = events.reduce(reducer, state);
   return stateNew;
 };

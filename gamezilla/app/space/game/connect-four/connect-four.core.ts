@@ -1,6 +1,6 @@
 import { UserId } from "gamezilla/app/@SHARED/data";
 import { SpaceCtx } from "../../@SHARED";
-import { EvtMeta } from "../../@SHARED/evt";
+import { EventMeta } from "../../@SHARED/evt";
 import * as VsBot from "./vs-bot/vs-bot.core";
 import * as VsUser from "./vs-user/vs-user.core";
 
@@ -56,7 +56,7 @@ export type ToServer =
 
 export type Evt =
   | { t: "user-changed-mode"; mode: Mode; userId: UserId }
-  | { t: "vs-bot"; c: VsBot.Evt }
+  | { t: "vs-bot"; c: VsBot.Event }
   | { t: "vs-user"; c: VsUser.Evt };
 
 export type State =
@@ -85,7 +85,7 @@ export const reducer = ({
 }: {
   ctx: SpaceCtx;
   state: State;
-  evt: Evt & EvtMeta;
+  evt: Evt & EventMeta;
 }): State => {
   if (evt.t === "user-changed-mode") {
     switch (evt.mode) {
