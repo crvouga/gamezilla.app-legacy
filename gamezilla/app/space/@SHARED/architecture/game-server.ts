@@ -1,5 +1,4 @@
 import { Eff, Sub } from "gamezilla/@SHARED/core";
-import { ServerEvt } from "gamezilla/app/@SHARED/server";
 import { SpaceReqCtx, SpaceServerCtx, SpaceServerEvt } from "../space";
 import { SpaceServerCmd } from "../space-cmd";
 
@@ -13,94 +12,74 @@ import { SpaceServerCmd } from "../space-cmd";
 
 type MaybePromise<T> = Promise<T> | T;
 
-/**
- * This is the interface for a game server.
- */
-export type SpaceGameServer<
+export type GameServer<
   ServerModel,
   ServerMsg,
   ToClient,
   ToServer,
-  State = null,
-  Evt = null
+  GameState = null,
+  GameEvent = null
 > = {
-  /**
-   * This returns the initial state
-   */
-  init: (input: { ctx: SpaceServerCtx; state: State }) => MaybePromise<{
+  init: (input: { ctx: SpaceServerCtx; state: GameState }) => MaybePromise<{
     model: ServerModel;
     eff?: Eff<ServerMsg>;
     cmd?: SpaceServerCmd<ToClient>[];
   }>;
 
-  /**
-   * This handles updates from the server
-   */
   update: (input: {
     ctx: SpaceServerCtx;
     msg: ServerMsg;
     model: ServerModel;
-    state: State;
+    state: GameState;
   }) => MaybePromise<{
     model: ServerModel;
+    events?: GameEvent[];
     eff?: Eff<ServerMsg>;
-    evt?: ServerEvt[];
     cmd?: SpaceServerCmd<ToClient>[];
   }>;
 
-  /**
-   * This handles updates from the client.
-   */
   updateFromClient: (input: {
     ctx: SpaceReqCtx;
     msg: ToServer;
     model: ServerModel;
-    state: State;
+    state: GameState;
   }) => MaybePromise<{
     model: ServerModel;
+    events?: GameEvent[];
     eff?: Eff<ServerMsg>;
-    evt?: ServerEvt[];
     cmd?: SpaceServerCmd<ToClient>[];
   }>;
 
-  /**
-   * This handles updates from the game space itself.
-   */
-  updateFromEvt: (input: {
+  updateFromEvent: (input: {
     ctx: SpaceServerCtx;
     msg: SpaceServerEvt;
     model: ServerModel;
-    state: State;
+    state: GameState;
   }) => MaybePromise<{
     model: ServerModel;
+    events?: GameEvent[];
     eff?: Eff<ServerMsg>;
-    evt?: ServerEvt[];
     cmd?: SpaceServerCmd<ToClient>[];
   }>;
 
-  updateFromGameEvt: (input: {
+  updateFromGame: (input: {
     ctx: SpaceServerCtx;
-    msg: Evt;
+    msg: GameEvent;
     model: ServerModel;
-    before: State;
-    after: State;
+    before: GameState | null;
+    after: GameState;
   }) => MaybePromise<{
     model: ServerModel;
+    events?: GameEvent[];
     eff?: Eff<ServerMsg>;
     cmd?: SpaceServerCmd<ToClient>[];
   }>;
 
-  /**
-   *
-   * @param intervalId
-   * @param model
-   * @returns
-   */
   subscriptions: (input: {
     model: ServerModel;
     intervalId: string;
     ctx: SpaceServerCtx;
-    state: State;
+    state: GameState;
   }) => MaybePromise<Sub<ServerMsg>>;
 };
 
@@ -117,15 +96,8 @@ const tag = <
   Evt
 >(
   tag: T,
-  server: SpaceGameServer<
-    ServerModel,
-    ServerMsg,
-    ToClient,
-    ToServer,
-    State,
-    Evt
-  >
-): SpaceGameServer<
+  server: GameServer<ServerModel, ServerMsg, ToClient, ToServer, State, Evt>
+): GameServer<
   { t: T; c: ServerModel },
   { t: T; c: ServerMsg },
   { t: T; c: ToClient },
@@ -155,7 +127,7 @@ const tag = <
       return {
         model: { t: tag, c: updated.model },
         eff: Eff.t(tag, updated.eff),
-        evt: updated.evt,
+        events: updated.events?.map((event) => ({ t: tag, c: event })),
         cmd: SpaceServerCmd.tag(tag, updated.cmd),
       };
     },
@@ -169,14 +141,14 @@ const tag = <
       return {
         model: { t: tag, c: updated.model },
         eff: Eff.t(tag, updated.eff),
-        evt: updated.evt,
+        events: updated.events?.map((event) => ({ t: tag, c: event })),
         cmd: SpaceServerCmd.tag(tag, updated.cmd),
       };
     },
-    updateFromGameEvt: async (input) => {
-      const updated = await server.updateFromGameEvt({
+    updateFromGame: async (input) => {
+      const updated = await server.updateFromGame({
         ctx: input.ctx,
-        before: input.before.c,
+        before: input.before?.c ?? null,
         after: input.after.c,
         msg: input.msg.c,
         model: input.model?.c,
@@ -187,8 +159,8 @@ const tag = <
         cmd: SpaceServerCmd.tag(tag, updated.cmd),
       };
     },
-    updateFromEvt: async (input) => {
-      const updated = await server.updateFromEvt({
+    updateFromEvent: async (input) => {
+      const updated = await server.updateFromEvent({
         ctx: input.ctx,
         state: input.state.c,
         msg: input.msg,
@@ -197,7 +169,7 @@ const tag = <
       return {
         model: { t: tag, c: updated.model },
         eff: Eff.t(tag, updated.eff),
-        evt: updated.evt,
+        events: updated.events?.map((event) => ({ t: tag, c: event })),
       };
     },
     subscriptions: async (input) => {
@@ -214,6 +186,6 @@ const tag = <
   };
 };
 
-export const SpaceGameServer = {
+export const GameServer = {
   tag,
 };

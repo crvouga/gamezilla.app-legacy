@@ -10,7 +10,7 @@ import {
   dropDisc,
   toStatus,
   toTurn,
-} from "../connect-four/connect-four";
+} from "../@SHARED/connect-four/connect-four";
 import { SpaceCtx } from "gamezilla/app/space/@SHARED";
 
 //

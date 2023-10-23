@@ -1,6 +1,6 @@
 import { Uuid } from "gamezilla/@SHARED/core";
-import { COLUMN_COUNT, MAX_COLUMN_HEIGHT } from "./connect-four";
-import { gameTheme } from "./connect-four-ui/shared";
+import { COLUMN_COUNT, MAX_COLUMN_HEIGHT } from "./@SHARED/connect-four";
+import { gameTheme } from "./@SHARED/connect-four-ui/shared";
 
 const coverArtId = Uuid.generate();
 

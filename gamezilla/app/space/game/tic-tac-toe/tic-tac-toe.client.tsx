@@ -1,6 +1,6 @@
 import { Eff, Sub, andThen, chain, p } from "gamezilla/@SHARED/core";
 import { APP_SOUND, ClientCmd, playSound } from "gamezilla/app/@SHARED/client";
-import { SpaceGameClient, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
+import { GameClient, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
 import {
   MainMenuScreen,
   mainMenuButtons,
@@ -10,7 +10,7 @@ import { ViewCoverArt } from "./tic-tic-toe/tic-tac-toe-ui";
 import * as VsBot from "./vs-bot/vs-bot.client";
 import * as VsUser from "./vs-user/vs-user.client";
 
-type Client = SpaceGameClient<
+type Client = GameClient<
   ClientModel,
   ClientMsg,
   ToClient,
@@ -115,7 +115,7 @@ export const updateFromServer: Client["updateFromServer"] = ({
   return { model };
 };
 
-export const updateFromEvt: Client["updateFromEvt"] = (input) => {
+export const updateFromEvent: Client["updateFromEvent"] = (input) => {
   return input;
 };
 

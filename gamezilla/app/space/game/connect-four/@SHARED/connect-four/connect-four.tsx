@@ -47,7 +47,7 @@ export const COLUMN_COUNT = EMPTY_COLUMNS.length;
 
 export type ColumnIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
-export const allColumnIndexes: ColumnIndex[] = [0, 1, 2, 3, 4, 5, 6];
+export const ALL_COLUMN_INDEXES: ColumnIndex[] = [0, 1, 2, 3, 4, 5, 6];
 
 export const allPositions: { x: number; y: number }[] = [];
 for (let x = 0; x < COLUMN_COUNT; x++) {

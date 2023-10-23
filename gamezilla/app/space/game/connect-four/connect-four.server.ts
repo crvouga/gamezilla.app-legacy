@@ -1,6 +1,6 @@
 import { Eff, err, ok, Sub } from "gamezilla/@SHARED/core";
 import {
-  SpaceGameServer,
+  GameServer,
   SpaceServerCmd,
   SpaceServerCtx,
 } from "gamezilla/app/space/@SHARED";
@@ -16,7 +16,7 @@ import {
 import * as VsBotServer from "./vs-bot/vs-bot.server";
 import * as VsUserServer from "./vs-user/vs-user.server";
 
-type Server = SpaceGameServer<
+type Server = GameServer<
   ServerModel,
   ServerMsg,
   ToClient,
@@ -25,8 +25,8 @@ type Server = SpaceGameServer<
   Evt
 >;
 
-const VsBot = SpaceGameServer.tag("vs-bot", VsBotServer);
-const VsUser = SpaceGameServer.tag("vs-user", VsUserServer);
+const VsBot = GameServer.tag("vs-bot", VsBotServer);
+const VsUser = GameServer.tag("vs-user", VsUserServer);
 
 //
 //
@@ -91,39 +91,41 @@ export const updateFromClient: Server["updateFromClient"] = (input) => {
   return { model };
 };
 
-export const updateFromEvt: Server["updateFromEvt"] = (input) => {
+export const updateFromEvent: Server["updateFromEvent"] = (input) => {
   const { state, model } = input;
 
   if (state.t === "vs-bot" && model.t === "vs-bot") {
-    return VsBot.updateFromEvt({ ...input, state, model });
+    return VsBot.updateFromEvent({ ...input, state, model });
   }
 
   if (state.t === "vs-user" && model.t === "vs-user") {
-    return VsUser.updateFromEvt({ ...input, state, model });
+    return VsUser.updateFromEvent({ ...input, state, model });
   }
 
   return { model };
 };
 
-export const updateFromGameEvt: Server["updateFromGameEvt"] = (input) => {
+export const updateFromGame: Server["updateFromGame"] = (input) => {
   const { before, after, model, msg } = input;
 
-  if (
-    after.t === "vs-bot" &&
-    before.t === "vs-bot" &&
-    model.t === "vs-bot" &&
-    msg.t === "vs-bot"
-  ) {
-    return VsBot.updateFromGameEvt({ ...input, msg, before, after, model });
+  if (after.t === "vs-bot" && model.t === "vs-bot" && msg.t === "vs-bot") {
+    return VsBot.updateFromGame({
+      ...input,
+      msg,
+      model,
+      after,
+      before: before?.t === "vs-bot" ? before : null,
+    });
   }
 
-  if (
-    after.t === "vs-user" &&
-    before.t === "vs-user" &&
-    model.t === "vs-user" &&
-    msg.t === "vs-user"
-  ) {
-    return VsUser.updateFromGameEvt({ ...input, before, after, model, msg });
+  if (after.t === "vs-user" && model.t === "vs-user" && msg.t === "vs-user") {
+    return VsUser.updateFromGame({
+      ...input,
+      before: before?.t === "vs-user" ? before : null,
+      after,
+      model,
+      msg,
+    });
   }
 
   return input;

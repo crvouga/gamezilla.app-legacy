@@ -74,7 +74,7 @@ export const update = async (input: {
   while (count(acc.evt) > 0 && iterations < 100) {
     iterations++;
     for (const e of acc.evt ?? []) {
-      const updatedEvt = await updateFromEvt({
+      const updatedEvt = await updateFromEvent({
         ...input,
         ctx,
         model: acc.model,
@@ -419,7 +419,7 @@ const updateFromClient = async ({
   }
 };
 
-const updateFromEvt = async ({
+const updateFromEvent = async ({
   ctx,
   msg,
   model,
@@ -433,19 +433,19 @@ const updateFromEvt = async ({
   cmd?: ServerCmd<ToClient>[];
   evt?: ServerEvt[];
 }> => {
-  const space = await SpaceServer.updateFromEvt({
+  const space = await SpaceServer.updateFromEvent({
     ctx,
     msg,
     model: model.space,
   });
 
-  const profile = ProfileServer.updateFromEvt({
+  const profile = ProfileServer.updateFromEvent({
     ctx,
     msg,
     model: model.profile,
   });
 
-  const auth = AuthServer.updateFromEvt({
+  const auth = AuthServer.updateFromEvent({
     msg,
     model: model.auth,
   });

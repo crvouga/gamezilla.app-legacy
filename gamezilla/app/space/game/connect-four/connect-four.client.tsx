@@ -1,5 +1,5 @@
 import { Sub } from "gamezilla/@SHARED/core";
-import { SpaceGameClient, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
+import { GameClient, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
 import {
   MainMenuScreen,
   mainMenuButtons,
@@ -16,7 +16,7 @@ import {
 import * as VsBotClient from "./vs-bot/vs-bot.client";
 import * as VsUserClient from "./vs-user/vs-user.client";
 
-type Client = SpaceGameClient<
+type Client = GameClient<
   ClientModel,
   ClientMsg,
   ToClient,
@@ -25,9 +25,9 @@ type Client = SpaceGameClient<
   Evt
 >;
 
-const VsBot = SpaceGameClient.tag("vs-bot", VsBotClient);
+const VsBot = GameClient.tag("vs-bot", VsBotClient);
 
-const VsUser = SpaceGameClient.tag("vs-user", VsUserClient);
+const VsUser = GameClient.tag("vs-user", VsUserClient);
 
 //
 //
@@ -103,11 +103,11 @@ export const updateFromServer: Client["updateFromServer"] = ({
   return { model };
 };
 
-export const updateFromEvt: Client["updateFromEvt"] = (input) => {
+export const updateFromEvent: Client["updateFromEvent"] = (input) => {
   return input;
 };
 
-export const updateFromGameEvt: Client["updateFromGameEvt"] = (input) => {
+export const updateFromGame: Client["updateFromGame"] = (input) => {
   const { model, msg, state } = input;
 
   if (!model) {
@@ -115,11 +115,11 @@ export const updateFromGameEvt: Client["updateFromGameEvt"] = (input) => {
   }
 
   if (state.t === "vs-bot" && model.t === "vs-bot" && msg.t === "vs-bot") {
-    return VsBot.updateFromGameEvt({ ...input, state, model, msg });
+    return VsBot.updateFromGame({ ...input, state, model, msg });
   }
 
   if (state.t === "vs-user" && model.t === "vs-user" && msg.t === "vs-user") {
-    return VsUser.updateFromGameEvt({ ...input, state, model, msg });
+    return VsUser.updateFromGame({ ...input, state, model, msg });
   }
 
   return init(input);

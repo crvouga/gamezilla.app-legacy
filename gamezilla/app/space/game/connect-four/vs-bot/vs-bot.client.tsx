@@ -10,7 +10,7 @@ import {
 } from "gamezilla/app/@SHARED/ui";
 import {
   SpaceClientCtx,
-  SpaceGameClient,
+  GameClient,
   SpaceViewCtx,
 } from "gamezilla/app/space/@SHARED";
 import { EventMeta } from "gamezilla/app/space/@SHARED/evt";
@@ -26,14 +26,14 @@ import {
   VsBotProps,
   VsBotSetup,
 } from "gamezilla/app/space/game/@SHARED";
-import { Columns, toStatus, toTurn } from "../connect-four";
+import { Columns, toStatus, toTurn } from "../@SHARED/connect-four";
 import { ViewCoverArt } from "../connect-four-cover-art";
 import {
   PlayerOneIcon,
   PlayerTwoIcon,
   ViewColumns,
   gameTheme,
-} from "../connect-four-ui";
+} from "../@SHARED/connect-four-ui";
 import {
   BotLevel,
   ClientModel,
@@ -46,7 +46,7 @@ import {
   eventErrorToString,
 } from "./vs-bot.core";
 
-type Client = SpaceGameClient<
+type Client = GameClient<
   ClientModel,
   ClientMsg,
   ToClient,
@@ -120,7 +120,7 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
   );
 };
 
-export const updateFromGameEvt: Client["updateFromGameEvt"] = (input) => {
+export const updateFromGame: Client["updateFromGame"] = (input) => {
   const { model } = input;
   if (model) {
     return { model };
@@ -128,7 +128,7 @@ export const updateFromGameEvt: Client["updateFromGameEvt"] = (input) => {
   return init(input);
 };
 
-export const updateFromEvt: Client["updateFromEvt"] = (input) => {
+export const updateFromEvent: Client["updateFromEvent"] = (input) => {
   return input;
 };
 
@@ -388,6 +388,10 @@ export const View: Client["View"] = ({
       </GameLayout>
     </div>
   );
+};
+
+export const ViewEvent: Client["ViewEvent"] = (input) => {
+  return null;
 };
 
 const ViewActivityFeedBar = ({

@@ -10,7 +10,7 @@ import {
   IconPlay,
   cn,
 } from "gamezilla/app/@SHARED/ui";
-import { SpaceGameClient } from "gamezilla/app/space/@SHARED";
+import { GameClient } from "gamezilla/app/space/@SHARED";
 import { ViewBottomButtonBar } from "gamezilla/app/space/game/@SHARED";
 import { FlowGridUIPlay, FlowGridUI, FlowUI } from "../@SHARED/flow";
 import { FlowViewCtx } from "../@SHARED/flow-ctx";
@@ -23,7 +23,7 @@ import {
   updateCore,
 } from "./puzzle-builder.core";
 
-type Client = SpaceGameClient<
+type Client = GameClient<
   ClientModel,
   ClientMsg,
   ToClient,
@@ -80,7 +80,7 @@ const updateFromServer: Client["updateFromServer"] = (input) => {
   }
 };
 
-const updateFromEvt: Client["updateFromEvt"] = (input) => {
+const updateFromEvent: Client["updateFromEvent"] = (input) => {
   return input;
 };
 
@@ -88,7 +88,7 @@ const subscriptions: Client["subscriptions"] = () => {
   return Sub.None;
 };
 
-const updateFromGameEvt: Client["updateFromGameEvt"] = (input) => {
+const updateFromGame: Client["updateFromGame"] = (input) => {
   return init(input);
 };
 
@@ -191,8 +191,8 @@ export const PuzzleBuilderClient: Client = {
   init,
   update,
   updateFromServer,
-  updateFromEvt,
+  updateFromEvent,
   subscriptions,
-  updateFromGameEvt,
+  updateFromGame,
   View,
 };

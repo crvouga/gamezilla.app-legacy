@@ -86,7 +86,7 @@ export const updateFromClient = ({
   };
 };
 
-export const updateFromEvt = ({
+export const updateFromEvent = ({
   msg,
   model,
   ctx,

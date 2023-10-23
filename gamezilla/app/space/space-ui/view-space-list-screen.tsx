@@ -10,12 +10,7 @@ import {
 import { ViewSpaceHostChip } from "gamezilla/app/space/game/@SHARED";
 import { SpaceId } from "gamezilla/app/@SHARED/data";
 import { GameName, ViewCoverArt, gameNameToString } from "../game/game.core";
-import {
-  ClientModel,
-  ClientMsg,
-  findSpaceByUserId,
-  toState,
-} from "../space.core";
+import { ClientModel, ClientMsg, toState } from "../space.core";
 import { withMeta } from "../@SHARED/evt";
 
 export const ViewSpaceListScreen = ({
@@ -27,10 +22,10 @@ export const ViewSpaceListScreen = ({
   ctx: ViewCtx;
   dispatch: (m: ClientMsg) => void;
 }) => {
-  const currentSpace = findSpaceByUserId(model, ctx.currentUserId);
+  const currentSpaceId = model.spaceByUserId[ctx.currentUserId];
 
-  const spaces = Object.values(model.spaces).flatMap((space) => {
-    const state = toState(space);
+  const spaces = Object.values(model.spaceEvents).flatMap((space) => {
+    const state = toState(model.spaceByUserId, space);
     if (state.type === "started") {
       return [state];
     }
@@ -75,7 +70,7 @@ export const ViewSpaceListScreen = ({
                   avatarUrl: host?.avatarUrl,
                 }}
                 key={state.space.spaceId}
-                isCurrentSpace={currentSpace?.spaceId === state.space.spaceId}
+                isCurrentSpace={currentSpaceId === state.space.spaceId}
                 users={users}
                 gameName={gameName}
                 onClick={() => {
@@ -90,7 +85,7 @@ export const ViewSpaceListScreen = ({
         </div>
       </div>
 
-      {!currentSpace && (
+      {!currentSpaceId && (
         <div className="w-full p-4">
           <Button
             size="lg"

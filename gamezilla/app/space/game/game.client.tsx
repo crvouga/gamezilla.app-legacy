@@ -1,7 +1,7 @@
 import { Sub } from "gamezilla/@SHARED/core";
 import {
   SpaceClientCtx,
-  SpaceGameClient,
+  GameClient,
   SpaceViewCtx,
 } from "gamezilla/app/space/@SHARED";
 import { ConnectFourClient } from "gamezilla/app/space/game/connect-four";
@@ -22,7 +22,7 @@ import {
 //
 //
 
-type Client = SpaceGameClient<
+type Client = GameClient<
   ClientModel,
   ClientMsg,
   ToClient,
@@ -33,7 +33,7 @@ type Client = SpaceGameClient<
   SpaceClientCtx
 >;
 
-const ConnectFour = SpaceGameClient.tag("connect-four", ConnectFourClient);
+const ConnectFour = GameClient.tag("connect-four", ConnectFourClient);
 
 //
 //
@@ -91,7 +91,7 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
   return { model };
 };
 
-export const updateFromGameEvt: Client["updateFromGameEvt"] = (input) => {
+export const updateFromGame: Client["updateFromGame"] = (input) => {
   const { state, model } = input;
 
   if (!model) {
@@ -99,17 +99,17 @@ export const updateFromGameEvt: Client["updateFromGameEvt"] = (input) => {
   }
 
   if (state.t === "connect-four" && model.t === "connect-four") {
-    return ConnectFour.updateFromGameEvt({ ...input, state, model });
+    return ConnectFour.updateFromGame({ ...input, state, model });
   }
 
   return init(input);
 };
 
-export const updateFromEvt: Client["updateFromEvt"] = (input) => {
+export const updateFromEvent: Client["updateFromEvent"] = (input) => {
   const { state, model } = input;
 
   if (state.t === "connect-four" && model.t === "connect-four") {
-    return ConnectFour.updateFromEvt(input);
+    return ConnectFour.updateFromEvent(input);
   }
 
   return input;

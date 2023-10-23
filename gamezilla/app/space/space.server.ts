@@ -40,7 +40,9 @@ export const init = (): {
   return {
     model: {
       games: {},
-      spaces: {},
+      spaceEvents: {},
+      spaceByUserId: {},
+      profileCache: {},
     },
   };
 };
@@ -70,7 +72,7 @@ export const update = async ({
     case "game-msg": {
       const { spaceId } = msg;
 
-      const space = model.spaces[spaceId];
+      const space = model.spaceEvents[spaceId];
 
       if (!space) {
         return { model };
@@ -82,7 +84,7 @@ export const update = async ({
         return { model };
       }
 
-      const state = toState(space);
+      const state = toState(model.spaceByUserId, space);
 
       if (state.type === "initial") {
         return { model };
@@ -146,7 +148,7 @@ export const updateFromClient = async (input: {
 
   switch (msg.t) {
     case "game-msg": {
-      const space = model.spaces[msg.spaceId];
+      const space = model.spaceEvents[msg.spaceId];
 
       if (!space) {
         return { model };
@@ -158,7 +160,7 @@ export const updateFromClient = async (input: {
         return { model };
       }
 
-      const state = toState(space);
+      const state = toState(model.spaceByUserId, space);
 
       if (state.type === "initial") {
         return { model };
@@ -202,13 +204,10 @@ export const updateFromClient = async (input: {
       };
     }
 
-    case "list": {
-      return { model };
-    }
-
     default: {
       const before = toState(
-        model.spaces[msg.spaceId] ?? {
+        model.spaceByUserId,
+        model.spaceEvents[msg.spaceId] ?? {
           events: [],
           initialState: {
             type: "initial",
@@ -219,7 +218,8 @@ export const updateFromClient = async (input: {
       const appended = appendEvent(model, msg);
 
       const after = toState(
-        appended.spaces[msg.spaceId] ?? {
+        model.spaceByUserId,
+        appended.spaceEvents[msg.spaceId] ?? {
           events: [],
           initialState: {
             type: "initial",
@@ -242,6 +242,10 @@ export const updateFromClient = async (input: {
           games: {
             ...model.games,
             ...updated.model.games,
+          },
+          profileCache: {
+            ...model.profileCache,
+            ...(msg.profile ? { [msg.profile.userId]: msg.profile } : {}),
           },
         },
         cmd: [
@@ -268,7 +272,7 @@ const spaceCmdToCmd = (space: Space, cmd?: SpaceServerCmd<ToClient>[]) => {
   });
 };
 
-export const updateFromEvt = async (input: {
+export const updateFromEvent = async (input: {
   ctx: ServerCtx;
   msg: ServerEvt;
   model: ServerModel;
@@ -282,7 +286,7 @@ export const updateFromEvt = async (input: {
   switch (msg.t) {
     case "client-authenticated": {
       if (msg.loggedIn) {
-        return listSpaces(input);
+        return sync(input);
       }
 
       return input;
@@ -290,7 +294,7 @@ export const updateFromEvt = async (input: {
 
     case "client-connected": {
       if (msg.userId) {
-        return listSpaces(input);
+        return sync(input);
       }
       return input;
     }
@@ -301,13 +305,17 @@ export const updateFromEvt = async (input: {
   }
 };
 
-const listSpaces: typeof updateFromEvt = async (input) => {
+const sync: typeof updateFromEvent = async (input) => {
   return {
     ...input,
     cmd: [
       sendToClient([input.msg.clientId], {
-        t: "list",
-        spaces: input.model.spaces,
+        t: "sync",
+        model: {
+          spaceByUserId: input.model.spaceByUserId,
+          spaceEvents: input.model.spaceEvents,
+        },
+        profiles: input.model.profileCache,
       }),
     ],
   };
@@ -332,13 +340,13 @@ const updateGameModel = async ({
 }> => {
   switch (msg.t) {
     case "user-inputted-game": {
-      const spaceModel = model.spaces[msg.spaceId];
+      const spaceModel = model.spaceEvents[msg.spaceId];
 
       if (!spaceModel) {
         return { model };
       }
 
-      const state = toState(spaceModel);
+      const state = toState(model.spaceByUserId, spaceModel);
 
       if (state.type === "initial") {
         return { model };
@@ -402,7 +410,7 @@ const updateGameModel = async ({
         return { model };
       }
 
-      const updated = await GameServer.updateFromGameEvt({
+      const updated = await GameServer.updateFromGame({
         ctx: { ...ctx, space: after.space },
         msg: msg.c,
         model: game,
@@ -472,13 +480,13 @@ export const subscriptions = async ({
       continue;
     }
 
-    const space = model.spaces[spaceId];
+    const space = model.spaceEvents[spaceId];
 
     if (!space) {
       continue;
     }
 
-    const state = toState(space);
+    const state = toState(model.spaceByUserId, space);
 
     if (state.type === "initial") {
       continue;

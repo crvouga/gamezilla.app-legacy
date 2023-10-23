@@ -14,7 +14,7 @@ import {
   sendToServer,
 } from "gamezilla/app/@SHARED/client";
 import { IconPuzzlePiece } from "gamezilla/app/@SHARED/ui";
-import { SpaceGameClient } from "gamezilla/app/space/@SHARED";
+import { GameClient } from "gamezilla/app/space/@SHARED";
 import {
   MainMenuScreen,
   mainMenuButtons,
@@ -26,7 +26,7 @@ import * as Puzzle from "./puzzle/puzzle.client";
 import * as VsBot from "./vs-bot/vs-bot.client";
 import * as VsUser from "./vs-user/vs-user.client";
 
-type Client = SpaceGameClient<
+type Client = GameClient<
   ClientModel,
   ClientMsg,
   ToClient,
@@ -217,7 +217,7 @@ export const updateFromServer: Client["updateFromServer"] = ({
   }
 };
 
-export const updateFromEvt: Client["updateFromEvt"] = (input) => {
+export const updateFromEvent: Client["updateFromEvent"] = (input) => {
   return input;
 };
 

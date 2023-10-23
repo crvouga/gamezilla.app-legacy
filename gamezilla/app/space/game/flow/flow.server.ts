@@ -1,10 +1,10 @@
 import { err, ok, Sub } from "gamezilla/@SHARED/core";
-import { SpaceGameServer, sendToSpace } from "gamezilla/app/space/@SHARED";
+import { GameServer, sendToSpace } from "gamezilla/app/space/@SHARED";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./flow.core";
 import { PlayServer } from "./play";
 import { PuzzleBuilderServer } from "./puzzle-builder";
 
-type Server = SpaceGameServer<ServerModel, ServerMsg, ToClient, ToServer>;
+type Server = GameServer<ServerModel, ServerMsg, ToClient, ToServer>;
 
 export const init: Server["init"] = () => {
   return { model: { t: "none" } };
@@ -47,7 +47,7 @@ export const updateFromClient: Server["updateFromClient"] = (input) => {
   }
 };
 
-export const updateFromEvt: Server["updateFromEvt"] = (input) => {
+export const updateFromEvent: Server["updateFromEvent"] = (input) => {
   return input;
 };
 

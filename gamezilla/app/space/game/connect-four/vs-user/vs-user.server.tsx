@@ -1,5 +1,5 @@
 import { Sub } from "gamezilla/@SHARED/core";
-import { SpaceGameServer } from "gamezilla/app/space/@SHARED";
+import { GameServer } from "gamezilla/app/space/@SHARED";
 import {
   Evt,
   ServerModel,
@@ -9,7 +9,7 @@ import {
   ToServer,
 } from "./vs-user.core";
 
-type Server = SpaceGameServer<
+type Server = GameServer<
   ServerModel,
   ServerMsg,
   ToClient,
@@ -32,7 +32,7 @@ export const updateFromClient: Server["updateFromClient"] = (input) => {
   return input;
 };
 
-export const updateFromEvt: Server["updateFromEvt"] = (input) => {
+export const updateFromEvent: Server["updateFromEvent"] = (input) => {
   return input;
 };
 
@@ -40,7 +40,7 @@ export const subscriptions: Server["subscriptions"] = (input) => {
   return Sub.None;
 };
 
-export const updateFromGameEvt: Server["updateFromGameEvt"] = (input) => {
+export const updateFromGame: Server["updateFromGame"] = (input) => {
   const { model } = input;
   return { model };
 };

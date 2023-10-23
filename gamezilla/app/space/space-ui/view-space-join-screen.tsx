@@ -16,13 +16,13 @@ export const ViewSpaceJoinScreen = ({
   model: ClientModel;
   dispatchEvent: (m: Evt) => void;
 }) => {
-  const space = model.spaces[ctx.space.spaceId];
+  const space = model.spaceEvents[ctx.space.spaceId];
 
   if (!space) {
     return <div>Space not found</div>;
   }
 
-  const state = toState(space);
+  const state = toState(model.spaceByUserId, space);
 
   if (state.type === "ended") {
     return <div>Space ended</div>;

@@ -1,5 +1,5 @@
 import { Sub } from "gamezilla/@SHARED/core";
-import { SpaceGameServer } from "gamezilla/app/space/@SHARED";
+import { GameServer } from "gamezilla/app/space/@SHARED";
 import {
   Event,
   ServerModel,
@@ -9,8 +9,9 @@ import {
   ToServer,
   isBotTurn,
 } from "./vs-bot.core";
+import * as ConnectFour from "../@SHARED/connect-four/connect-four";
 
-type Server = SpaceGameServer<
+type Server = GameServer<
   ServerModel,
   ServerMsg,
   ToClient,
@@ -26,24 +27,41 @@ export const init: Server["init"] = async () => {
 };
 
 export const update: Server["update"] = (input) => {
-  return input;
+  const { msg, model } = input;
+  switch (msg.t) {
+    case "bot-dropped-disc": {
+      return {
+        model,
+        events: [msg],
+      };
+    }
+  }
 };
 
 export const updateFromClient: Server["updateFromClient"] = (input) => {
   return input;
 };
 
-export const updateFromEvt: Server["updateFromEvt"] = (input) => {
+export const updateFromEvent: Server["updateFromEvent"] = (input) => {
   return input;
 };
 
-export const updateFromGameEvt: Server["updateFromGameEvt"] = (input) => {
-  const { model, msg, before, after } = input;
+export const updateFromGame: Server["updateFromGame"] = (input) => {
+  const { model, before, after } = input;
 
-  if (!isBotTurn(before) && isBotTurn(after)) {
+  if ((!before || !isBotTurn(before)) && isBotTurn(after)) {
     return {
       model,
-      eff: async (dispatch) => {},
+      eff: async (dispatch) => {
+        const columnIndex =
+          ConnectFour.ALL_COLUMN_INDEXES[
+            Math.floor(Math.random() * ConnectFour.ALL_COLUMN_INDEXES.length)
+          ];
+
+        if (columnIndex) {
+          dispatch({ t: "bot-dropped-disc", columnIndex });
+        }
+      },
     };
   }
 

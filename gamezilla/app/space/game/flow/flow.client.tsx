@@ -1,6 +1,6 @@
 import { Sub, chain } from "gamezilla/@SHARED/core";
 import { IconGamepad, IconScrewdriverWrench } from "gamezilla/app/@SHARED/ui";
-import { SpaceGameClient } from "gamezilla/app/space/@SHARED";
+import { GameClient } from "gamezilla/app/space/@SHARED";
 import { MainMenuScreen } from "gamezilla/app/space/game/@SHARED";
 import { ViewCoverArt } from "./@SHARED/flow-cover-art";
 import { FlowViewCtx } from "./@SHARED/flow-ctx";
@@ -19,14 +19,11 @@ import {
   sendToServer,
 } from "gamezilla/app/@SHARED/client";
 
-type Client = SpaceGameClient<ClientModel, ClientMsg, ToClient, ToServer>;
+type Client = GameClient<ClientModel, ClientMsg, ToClient, ToServer>;
 
-const PuzzleBuilder = SpaceGameClient.tag(
-  "puzzle-builder",
-  PuzzleBuilderClient
-);
+const PuzzleBuilder = GameClient.tag("puzzle-builder", PuzzleBuilderClient);
 
-const Play = SpaceGameClient.tag("play", PlayClient);
+const Play = GameClient.tag("play", PlayClient);
 
 export const init: Client["init"] = () => {
   return {
@@ -84,7 +81,7 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
   }
 };
 
-export const updateFromEvt: Client["updateFromEvt"] = (input) => {
+export const updateFromEvent: Client["updateFromEvent"] = (input) => {
   const { model } = input;
   return { model };
 };

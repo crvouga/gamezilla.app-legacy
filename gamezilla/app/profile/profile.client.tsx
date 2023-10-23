@@ -190,7 +190,7 @@ export const updateFromServer = ({
   }
 };
 
-export const updateFromEvt = ({
+export const updateFromEvent = ({
   evt,
   model,
 }: {

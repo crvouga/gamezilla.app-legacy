@@ -110,7 +110,7 @@ export const update = (input: {
   let acc = updateMain(input);
 
   for (const evt of acc.evt ?? []) {
-    const updatedEvt = updateFromEvt({
+    const updatedEvt = updateFromEvent({
       ...input,
       model: acc.model,
       msg: evt,
@@ -451,7 +451,7 @@ const updateFromCmd = ({
   }
 };
 
-const updateFromEvt = ({
+const updateFromEvent = ({
   model,
   msg,
   now,
@@ -466,23 +466,23 @@ const updateFromEvt = ({
 } => {
   const ctx = toCtx({ model, now });
 
-  const chat = ChatClient.updateFromEvt({
+  const chat = ChatClient.updateFromEvent({
     model: model.chat,
     msg,
   });
 
-  const space = SpaceClient.updateFromEvt({
+  const space = SpaceClient.updateFromEvent({
     model: model.space,
     msg,
   });
 
-  const profile = ProfileClient.updateFromEvt({
+  const profile = ProfileClient.updateFromEvent({
     model: model.profile,
     evt: msg,
     ctx,
   });
 
-  const auth = AuthClient.updateFromEvt({
+  const auth = AuthClient.updateFromEvent({
     model: model.auth,
     msg,
     ctx,

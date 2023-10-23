@@ -1,5 +1,5 @@
 import { Sub } from "gamezilla/@SHARED/core";
-import { SpaceGameServer } from "gamezilla/app/space/@SHARED";
+import { GameServer } from "gamezilla/app/space/@SHARED";
 import { ConnectFourServer } from "gamezilla/app/space/game/connect-four";
 import {
   Evt,
@@ -10,7 +10,7 @@ import {
   ToServer,
 } from "./game.core";
 
-type Server = SpaceGameServer<
+type Server = GameServer<
   ServerModel,
   ServerMsg,
   ToClient,
@@ -19,7 +19,7 @@ type Server = SpaceGameServer<
   Evt
 >;
 
-const ConnectFour = SpaceGameServer.tag("connect-four", ConnectFourServer);
+const ConnectFour = GameServer.tag("connect-four", ConnectFourServer);
 
 //
 //
@@ -74,28 +74,27 @@ export const updateFromClient: Server["updateFromClient"] = (input) => {
   return { model };
 };
 
-export const updateFromEvt: Server["updateFromEvt"] = (input) => {
+export const updateFromEvent: Server["updateFromEvent"] = (input) => {
   const { model, state } = input;
 
   if (state.t === "connect-four" && model.t === "connect-four") {
-    return ConnectFour.updateFromEvt({ ...input, state, model });
+    return ConnectFour.updateFromEvent({ ...input, state, model });
   }
 
   return { model };
 };
 
-export const updateFromGameEvt: Server["updateFromGameEvt"] = (input) => {
+export const updateFromGame: Server["updateFromGame"] = async (input) => {
   const { model, before, after, msg } = input;
 
   if (
-    before.t === "connect-four" &&
     after.t === "connect-four" &&
     model.t === "connect-four" &&
     msg.t === "connect-four"
   ) {
-    return ConnectFour.updateFromGameEvt({
+    return ConnectFour.updateFromGame({
       ...input,
-      before,
+      before: before?.t === "connect-four" ? before : null,
       after,
       model,
       msg,

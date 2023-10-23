@@ -3,7 +3,7 @@ import { UserId } from "gamezilla/app/@SHARED/data";
 import { SpaceCtx } from "gamezilla/app/space/@SHARED";
 import { EventMeta } from "gamezilla/app/space/@SHARED/evt";
 import { VsBotGame, VsBotSetup } from "gamezilla/app/space/game/@SHARED";
-import * as ConnectFour from "../connect-four";
+import * as ConnectFour from "../@SHARED/connect-four";
 
 //
 //
@@ -31,7 +31,10 @@ export type ClientMsg =
   | { t: "vs-bot-setup"; c: VsBotSetup.Msg }
   | { t: "vs-bot-game"; c: VsBotGame.Msg };
 
-export type ServerMsg = { t: null };
+export type ServerMsg = {
+  t: "bot-dropped-disc";
+  columnIndex: ConnectFour.ColumnIndex;
+};
 
 export type ToClient = { t: null };
 

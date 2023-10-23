@@ -136,7 +136,7 @@ export const updateFromClient = ({
   return { model };
 };
 
-export const updateFromEvt = ({
+export const updateFromEvent = ({
   msg,
   model,
 }: {
@@ -151,7 +151,7 @@ export const updateFromEvt = ({
   }
 
   if (model.t === "vs-bot") {
-    const updated = VsBot.updateFromEvt({
+    const updated = VsBot.updateFromEvent({
       msg,
       model: model.c,
     });
@@ -162,7 +162,7 @@ export const updateFromEvt = ({
   }
 
   if (model.t === "vs-user") {
-    const updated = VsUser.updateFromEvt({
+    const updated = VsUser.updateFromEvent({
       msg,
       model: model.c,
     });

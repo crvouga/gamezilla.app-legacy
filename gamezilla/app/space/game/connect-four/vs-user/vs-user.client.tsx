@@ -11,15 +11,15 @@ import {
   IconXMark,
   MyAvatar,
 } from "gamezilla/app/@SHARED/ui";
-import { SpaceGameClient, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
+import { GameClient, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
 import {
   GameLayout,
   ViewBottomButtonBar,
   VsUserSetupScreen,
 } from "gamezilla/app/space/game/@SHARED";
-import { PlayerType, toTurn } from "../connect-four";
+import { PlayerType, toTurn } from "../@SHARED/connect-four";
 import { ViewCoverArt } from "../connect-four-cover-art";
-import { PlayerIcon, ViewColumns } from "../connect-four-ui";
+import { PlayerIcon, ViewColumns } from "../@SHARED/connect-four-ui";
 import {
   ClientModel,
   ClientMsg,
@@ -32,7 +32,7 @@ import {
   toPlayerType,
 } from "./vs-user.core";
 
-type Client = SpaceGameClient<
+type Client = GameClient<
   ClientModel,
   ClientMsg,
   ToClient,
@@ -87,7 +87,7 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
   return input;
 };
 
-export const updateFromEvt: Client["updateFromEvt"] = (
+export const updateFromEvent: Client["updateFromEvent"] = (
   input
 ): {
   model: ClientModel;
@@ -95,7 +95,7 @@ export const updateFromEvt: Client["updateFromEvt"] = (
   return input;
 };
 
-export const updateFromGameEvt: Client["updateFromGameEvt"] = (input) => {
+export const updateFromGame: Client["updateFromGame"] = (input) => {
   const { model } = input;
   if (model) {
     return { model };

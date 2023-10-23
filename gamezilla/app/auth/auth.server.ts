@@ -220,7 +220,7 @@ const findElseInsertAccount = async ({
   return ok(accountNew);
 };
 
-export const updateFromEvt = ({
+export const updateFromEvent = ({
   msg: evt,
   model,
 }: {

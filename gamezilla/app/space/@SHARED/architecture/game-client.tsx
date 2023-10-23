@@ -3,16 +3,13 @@ import { ClientCmd } from "gamezilla/app/@SHARED/client";
 import { VDom } from "gamezilla/app/@SHARED/ui";
 import { SpaceClientCtx, SpaceClientEvt, SpaceViewCtx } from "../space";
 
-/**
- * Represents all the functions needed to run a game client side
- */
-export type SpaceGameClient<
+export type GameClient<
   ClientModel,
   ClientMsg,
   ToClient,
   ToServer,
   GameState = null,
-  GameEvt = null,
+  GameEvent = null,
   ViewCtx = SpaceViewCtx,
   ClientCtx = SpaceClientCtx
 > = {
@@ -44,7 +41,7 @@ export type SpaceGameClient<
     cmd?: ClientCmd<ToServer>[];
   };
 
-  updateFromEvt: (input: {
+  updateFromEvent: (input: {
     ctx: SpaceClientCtx;
     msg: SpaceClientEvt;
     model: ClientModel;
@@ -55,9 +52,9 @@ export type SpaceGameClient<
     cmd?: ClientCmd<ToServer>[];
   };
 
-  updateFromGameEvt: (input: {
+  updateFromGame: (input: {
     ctx: SpaceClientCtx;
-    msg: GameEvt;
+    msg: GameEvent;
     model?: ClientModel;
     state: GameState;
   }) => {
@@ -77,9 +74,11 @@ export type SpaceGameClient<
     ctx: ViewCtx;
     dispatch: (msg: ClientMsg) => void;
     state: GameState;
-    dispatchEvent: (evt: GameEvt) => void;
+    dispatchEvent: (evt: GameEvent) => void;
     model: ClientModel;
   }) => VDom;
+
+  ViewEvent?: (input: { ctx: ViewCtx; event: GameEvent }) => VDom;
 };
 
 /**
@@ -96,7 +95,7 @@ const tag = <
   ViewCtx
 >(
   tag: T,
-  client: SpaceGameClient<
+  client: GameClient<
     ClientModel,
     ClientMsg,
     ToClient,
@@ -105,7 +104,7 @@ const tag = <
     Evt,
     ViewCtx
   >
-): SpaceGameClient<
+): GameClient<
   { t: T; c: ClientModel },
   { t: T; c: ClientMsg },
   { t: T; c: ToClient },
@@ -155,8 +154,8 @@ const tag = <
       };
     },
 
-    updateFromEvt: (input) => {
-      const updated = client.updateFromEvt({
+    updateFromEvent: (input) => {
+      const updated = client.updateFromEvent({
         ctx: input.ctx,
         state: input.state.c,
         msg: input.msg,
@@ -170,8 +169,8 @@ const tag = <
       };
     },
 
-    updateFromGameEvt: (input) => {
-      const updated = client.updateFromGameEvt({
+    updateFromGame: (input) => {
+      const updated = client.updateFromGame({
         ctx: input.ctx,
         state: input.state.c,
         msg: input.msg.c,
@@ -209,6 +208,6 @@ const tag = <
   };
 };
 
-export const SpaceGameClient = {
+export const GameClient = {
   tag,
 };

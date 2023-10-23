@@ -66,7 +66,7 @@ export const update = ({
   }
 };
 
-export const updateFromEvt = ({
+export const updateFromEvent = ({
   model,
   evt,
 }: {
