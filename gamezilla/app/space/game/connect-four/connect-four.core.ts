@@ -57,7 +57,7 @@ export type ToServer =
 export type Evt =
   | { t: "user-changed-mode"; mode: Mode; userId: UserId }
   | { t: "vs-bot"; c: VsBot.Event }
-  | { t: "vs-user"; c: VsUser.Evt };
+  | { t: "vs-user"; c: VsUser.Event };
 
 export type State =
   | {

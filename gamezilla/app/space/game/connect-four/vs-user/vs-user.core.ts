@@ -53,7 +53,7 @@ export type ToClient = { t: null };
 //
 //
 
-export type Evt =
+export type Event =
   //
   | { t: "user-stopped-playing"; userId: UserId }
   | { t: "user-started-playing"; userId: UserId; playerType: PlayerType }
@@ -94,13 +94,13 @@ export const initState = (ctx: SpaceCtx): State => {
 
 type Errors = {
   errors: {
-    [eventId: string]: Evt & EventMeta & { error: EventError };
+    [eventId: string]: Event & EventMeta & { error: EventError };
   };
 };
 
 const addError = (
   state: State,
-  event: Evt & EventMeta,
+  event: Event & EventMeta,
   error: EventError
 ): State => {
   return {
@@ -192,7 +192,7 @@ export const allMoveTimeLimit: {
   "9": 9,
 };
 
-export const reducer = (state: State, event: Evt & EventMeta): State => {
+export const reducer = (state: State, event: Event & EventMeta): State => {
   switch (state.type) {
     case "setup": {
       switch (event.t) {
@@ -307,7 +307,7 @@ export const reducer = (state: State, event: Evt & EventMeta): State => {
   }
 };
 
-export const toState = (events: (Evt & EventMeta)[], state: State): State => {
+export const toState = (events: (Event & EventMeta)[], state: State): State => {
   const stateNew = events.reduce(reducer, state);
   return stateNew;
 };
