@@ -1,12 +1,7 @@
-import { Eff, err, ok, Sub } from "gamezilla/@SHARED/core";
-import {
-  GameServer,
-  SpaceServerCmd,
-  SpaceServerCtx,
-} from "gamezilla/app/space/@SHARED";
+import { Sub } from "gamezilla/@SHARED/core";
+import { GameServer } from "gamezilla/app/space/@SHARED";
 import {
   Evt,
-  Mode,
   ServerModel,
   ServerMsg,
   State,
@@ -106,23 +101,23 @@ export const updateFromEvent: Server["updateFromEvent"] = (input) => {
 };
 
 export const updateFromGame: Server["updateFromGame"] = (input) => {
-  const { before, after, model, msg } = input;
+  const { prev, next, model, msg } = input;
 
-  if (after.t === "vs-bot" && model.t === "vs-bot" && msg.t === "vs-bot") {
+  if (next.t === "vs-bot" && model.t === "vs-bot" && msg.t === "vs-bot") {
     return VsBot.updateFromGame({
       ...input,
       msg,
       model,
-      after,
-      before: before?.t === "vs-bot" ? before : null,
+      next: next,
+      prev: prev?.t === "vs-bot" ? prev : null,
     });
   }
 
-  if (after.t === "vs-user" && model.t === "vs-user" && msg.t === "vs-user") {
+  if (next.t === "vs-user" && model.t === "vs-user" && msg.t === "vs-user") {
     return VsUser.updateFromGame({
       ...input,
-      before: before?.t === "vs-user" ? before : null,
-      after,
+      prev: prev?.t === "vs-user" ? prev : null,
+      next: next,
       model,
       msg,
     });

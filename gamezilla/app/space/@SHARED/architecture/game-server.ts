@@ -66,8 +66,8 @@ export type GameServer<
     ctx: SpaceServerCtx;
     msg: GameEvent;
     model: ServerModel;
-    before: GameState | null;
-    after: GameState;
+    prev: GameState | null;
+    next: GameState;
   }) => MaybePromise<{
     model: ServerModel;
     events?: GameEvent[];
@@ -148,8 +148,8 @@ const tag = <
     updateFromGame: async (input) => {
       const updated = await server.updateFromGame({
         ctx: input.ctx,
-        before: input.before?.c ?? null,
-        after: input.after.c,
+        prev: input.prev?.c ?? null,
+        next: input.next.c,
         msg: input.msg.c,
         model: input.model?.c,
       });

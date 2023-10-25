@@ -47,12 +47,13 @@ export const updateFromEvent: Server["updateFromEvent"] = (input) => {
 };
 
 export const updateFromGame: Server["updateFromGame"] = (input) => {
-  const { model, before, after } = input;
+  const { model, prev, next } = input;
 
-  if ((!before || !isBotTurn(before)) && isBotTurn(after)) {
+  if ((!prev || !isBotTurn(prev)) && isBotTurn(next)) {
     return {
       model,
       eff: async (dispatch) => {
+        await new Promise((resolve) => setTimeout(resolve, 1500));
         const columnIndex =
           ConnectFour.ALL_COLUMN_INDEXES[
             Math.floor(Math.random() * ConnectFour.ALL_COLUMN_INDEXES.length)

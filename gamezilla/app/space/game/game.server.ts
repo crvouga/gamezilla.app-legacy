@@ -85,17 +85,17 @@ export const updateFromEvent: Server["updateFromEvent"] = (input) => {
 };
 
 export const updateFromGame: Server["updateFromGame"] = async (input) => {
-  const { model, before, after, msg } = input;
+  const { model, prev, next, msg } = input;
 
   if (
-    after.t === "connect-four" &&
+    next.t === "connect-four" &&
     model.t === "connect-four" &&
     msg.t === "connect-four"
   ) {
     return ConnectFour.updateFromGame({
       ...input,
-      before: before?.t === "connect-four" ? before : null,
-      after,
+      prev: prev?.t === "connect-four" ? prev : null,
+      next: next,
       model,
       msg,
     });

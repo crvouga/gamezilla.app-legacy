@@ -300,6 +300,23 @@ export const View: Client["View"] = ({
         model={model}
         ctx={ctx}
       />
+      {Object.keys(state.errors).length > 0 && (
+        <div>
+          {Object.keys(state.errors)
+            .slice(Object.keys(state.errors).length - 3)
+            .map((eventId) => {
+              const error = state.errors[eventId];
+              if (!error) {
+                return null;
+              }
+              return (
+                <div key={eventId} className="text-red-500">
+                  {eventErrorToString(error)}
+                </div>
+              );
+            })}
+        </div>
+      )}
       <GameLayout isSpectating={ctx.currentUserId !== state.playingUserId}>
         <div className="flex w-full flex-1 flex-col items-center justify-center">
           <VsBotPlayerSection {...vsBotGameProps} />
