@@ -8,9 +8,10 @@ import {
   ToClient,
   ToServer,
   isBotTurn,
+  toBotPlayer,
 } from "./vs-bot.core";
 import * as ConnectFour from "../@SHARED/connect-four/connect-four";
-
+import { ConnectFourBotWorker } from "../@SHARED/connect-four";
 type Server = GameServer<
   ServerModel,
   ServerMsg,
@@ -49,19 +50,28 @@ export const updateFromEvent: Server["updateFromEvent"] = (input) => {
 export const updateFromGame: Server["updateFromGame"] = (input) => {
   const { model, prev, next } = input;
 
-  if ((!prev || !isBotTurn(prev)) && isBotTurn(next)) {
+  if ((!prev || !isBotTurn(prev)) && isBotTurn(next) && next.type === "game") {
     return {
       model,
       eff: async (dispatch) => {
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-        const columnIndex =
-          ConnectFour.ALL_COLUMN_INDEXES[
-            Math.floor(Math.random() * ConnectFour.ALL_COLUMN_INDEXES.length)
-          ];
+        const found = await ConnectFourBotWorker.findBestMove({
+          maximizingPlayer: toBotPlayer(next),
+          columns: next.columns,
+          maxDepth: 4,
+        });
+        await new Promise((resolve) => setTimeout(resolve, 500));
 
-        if (columnIndex) {
-          dispatch({ t: "bot-dropped-disc", columnIndex });
+        if (found.t === "err") {
+          return;
         }
+
+        const columnIndex = found.value.columnIndex;
+
+        if (!ConnectFour.isColumnIndex(columnIndex)) {
+          return;
+        }
+
+        dispatch({ t: "bot-dropped-disc", columnIndex });
       },
     };
   }
