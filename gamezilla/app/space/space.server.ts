@@ -16,7 +16,7 @@ import {
 import { SpaceId } from "../@SHARED/data";
 import * as GameServer from "./game/game.server";
 import {
-  Evt,
+  Event,
   ServerModel,
   ServerMsg,
   State,
@@ -42,7 +42,7 @@ export const init = (): {
     model: {
       games: {},
       spaceEvents: {},
-      spaceByUserId: {},
+      spaceIdByUserId: {},
       profileCache: {},
     },
   };
@@ -85,7 +85,7 @@ export const update = async ({
         return { model };
       }
 
-      const state = toState(model.spaceByUserId, space);
+      const state = toState(model.spaceIdByUserId, space);
 
       if (state.type === "initial") {
         return { model };
@@ -182,7 +182,7 @@ export const updateFromClient = async (input: {
         return { model };
       }
 
-      const state = toState(model.spaceByUserId, space);
+      const state = toState(model.spaceIdByUserId, space);
 
       if (state.type === "initial") {
         return { model };
@@ -228,7 +228,7 @@ export const updateFromClient = async (input: {
 
     default: {
       const prev = toState(
-        model.spaceByUserId,
+        model.spaceIdByUserId,
         model.spaceEvents[msg.spaceId] ?? {
           events: [],
           initialState: {
@@ -240,7 +240,7 @@ export const updateFromClient = async (input: {
       const appended = appendEvent(model, msg);
 
       const next = toState(
-        model.spaceByUserId,
+        model.spaceIdByUserId,
         appended.spaceEvents[msg.spaceId] ?? {
           events: [],
           initialState: {
@@ -284,10 +284,10 @@ export const updateFromClient = async (input: {
 const myAppendEvent = async (
   ctx: ServerCtx,
   model: ServerModel,
-  events: Evt & EventMeta
+  events: Event & EventMeta
 ): ReturnType<typeof update> => {
   const prev = toState(
-    model.spaceByUserId,
+    model.spaceIdByUserId,
     model.spaceEvents[events.spaceId] ?? {
       events: [],
       initialState: {
@@ -299,7 +299,7 @@ const myAppendEvent = async (
   const appended = appendEvent(model, events);
 
   const next = toState(
-    model.spaceByUserId,
+    model.spaceIdByUserId,
     appended.spaceEvents[events.spaceId] ?? {
       events: [],
       initialState: {
@@ -383,12 +383,12 @@ export const updateFromEvent = async (input: {
 
 const sync: typeof updateFromEvent = async (input) => {
   return {
-    ...input,
+    model: input.model,
     cmd: [
       sendToClient([input.msg.clientId], {
         t: "sync",
         model: {
-          spaceByUserId: input.model.spaceByUserId,
+          spaceIdByUserId: input.model.spaceIdByUserId,
           spaceEvents: input.model.spaceEvents,
         },
         profiles: input.model.profileCache,
@@ -407,7 +407,7 @@ const updateGameModel = async ({
   prev: State;
   next: State;
   model: ServerModel;
-  msg: Evt;
+  msg: Event;
   ctx: ServerCtx;
 }): Promise<{
   model: ServerModel;
@@ -543,7 +543,7 @@ export const subscriptions = async ({
       continue;
     }
 
-    const state = toState(model.spaceByUserId, space);
+    const state = toState(model.spaceIdByUserId, space);
 
     if (state.type === "initial") {
       continue;

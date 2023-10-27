@@ -22,10 +22,10 @@ export const ViewSpaceListScreen = ({
   ctx: ViewCtx;
   dispatch: (m: ClientMsg) => void;
 }) => {
-  const currentSpaceId = model.spaceByUserId[ctx.currentUserId];
+  const currentSpaceId = model.spaceIdByUserId[ctx.currentUserId];
 
   const spaces = Object.values(model.spaceEvents).flatMap((space) => {
-    const state = toState(model.spaceByUserId, space);
+    const state = toState(model.spaceIdByUserId, space);
     if (state.type === "started") {
       return [state];
     }

@@ -14,25 +14,6 @@ export const withMeta = <T>(eventNew: T): T & EventMeta => {
   };
 };
 
-export const appendEvt = <T>(
-  evts: (T & EventMeta)[],
-  evt: T & EventMeta
-): (T & EventMeta)[] => {
-  const evtMap: Map<string, T & EventMeta> = new Map();
-
-  for (const evt of evts) {
-    evtMap.set(evt.eventId, evt);
-  }
-
-  evtMap.set(evt.eventId, evt);
-
-  const sorted = Array.from(evtMap.values()).sort(
-    (a, b) => a.happenedAt - b.happenedAt
-  );
-
-  return sorted;
-};
-
 export const mergeEvts = <T>(
   left: (T & EventMeta)[],
   right: (T & EventMeta)[]

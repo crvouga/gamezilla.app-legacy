@@ -5,7 +5,7 @@ import {
   ViewUsersInSpaceList,
 } from "gamezilla/app/space/game/@SHARED";
 import { ViewCoverArt, gameNameToString } from "../game/game.core";
-import { ClientModel, Evt, toState } from "../space.core";
+import { ClientModel, Event, toState } from "../space.core";
 
 export const ViewSpaceJoinScreen = ({
   model,
@@ -14,7 +14,7 @@ export const ViewSpaceJoinScreen = ({
 }: {
   ctx: SpaceViewCtx;
   model: ClientModel;
-  dispatchEvent: (m: Evt) => void;
+  dispatchEvent: (m: Event) => void;
 }) => {
   const space = model.spaceEvents[ctx.space.spaceId];
 
@@ -22,7 +22,7 @@ export const ViewSpaceJoinScreen = ({
     return <div>Space not found</div>;
   }
 
-  const state = toState(model.spaceByUserId, space);
+  const state = toState(model.spaceIdByUserId, space);
 
   if (state.type === "ended") {
     return <div>Space ended</div>;

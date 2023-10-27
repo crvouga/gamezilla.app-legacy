@@ -13,7 +13,7 @@ import {
   gameNameList,
   gameNameToString,
 } from "../game/game.core";
-import { Evt } from "../space.core";
+import { Event } from "../space.core";
 
 export const ViewNotInGameScreen = ({
   ctx,
@@ -21,7 +21,7 @@ export const ViewNotInGameScreen = ({
   dispatchEvent,
 }: {
   ctx: SpaceViewCtx;
-  dispatchEvent: (m: Evt) => void;
+  dispatchEvent: (m: Event) => void;
 }) => {
   if (ctx.space.hostId !== ctx.currentUserId) {
     const hostTitle = spaceToHostTitle(ctx, ctx.space);

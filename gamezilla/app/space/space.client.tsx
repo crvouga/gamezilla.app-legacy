@@ -40,7 +40,7 @@ import {
 import {
   ClientModel,
   ClientMsg,
-  Evt,
+  Event,
   StateStarted,
   ToClient,
   ToServer,
@@ -63,7 +63,7 @@ export const init: {
 } = {
   model: {
     spaceEvents: {},
-    spaceByUserId: {},
+    spaceIdByUserId: {},
     games: {},
     modal: null,
     previewUserId: null,
@@ -113,7 +113,7 @@ export const update = ({
     }
 
     case "game-msg": {
-      const spaceId = model.spaceByUserId[ctx.currentUserId];
+      const spaceId = model.spaceIdByUserId[ctx.currentUserId];
 
       if (!spaceId) {
         return { model };
@@ -131,7 +131,7 @@ export const update = ({
         return { model };
       }
 
-      const state = toState(model.spaceByUserId, spaceModel);
+      const state = toState(model.spaceIdByUserId, spaceModel);
 
       if (state.type === "initial") {
         return { model };
@@ -225,7 +225,7 @@ export const updateFromServer = ({
             return { model };
           }
 
-          const state = toState(model.spaceByUserId, space);
+          const state = toState(model.spaceIdByUserId, space);
 
           if (state.type === "initial") {
             return { model };
@@ -311,7 +311,7 @@ const updateGameModel = ({
   ctx,
 }: {
   model: ClientModel;
-  msg: Evt;
+  msg: Event;
   ctx: ClientCtx;
 }): {
   model: ClientModel;
@@ -326,7 +326,7 @@ const updateGameModel = ({
         return { model };
       }
 
-      const state = toState(model.spaceByUserId, spaceModel);
+      const state = toState(model.spaceIdByUserId, spaceModel);
 
       if (state.type === "initial") {
         return { model };
@@ -369,7 +369,7 @@ const updateGameModel = ({
         return { model };
       }
 
-      const state = toState(model.spaceByUserId, spaceModel);
+      const state = toState(model.spaceIdByUserId, spaceModel);
 
       if (state.type === "initial") {
         return { model };
@@ -463,7 +463,7 @@ export const subscriptions = (
       continue;
     }
 
-    const state = toState(model.spaceByUserId, space);
+    const state = toState(model.spaceIdByUserId, space);
 
     if (state.type === "initial") {
       continue;
@@ -514,7 +514,7 @@ export const View = ({
   route: RouteGameSpace;
   viewBottomBar: VDom;
 }): VDom => {
-  const dispatchEvent = (m: Evt) => {
+  const dispatchEvent = (m: Event) => {
     dispatch(withMeta(m));
   };
   switch (route.t) {
@@ -550,7 +550,7 @@ const ViewSpaceScreen = ({
 }: {
   model: ClientModel;
   ctx: ViewCtx;
-  dispatchEvent: (m: Evt) => void;
+  dispatchEvent: (m: Event) => void;
   dispatch: (m: ClientMsg) => void;
   spaceId: SpaceId;
 }) => {
@@ -560,7 +560,7 @@ const ViewSpaceScreen = ({
     return <ViewSpaceNotFound ctx={ctx} />;
   }
 
-  const state = toState(model.spaceByUserId, space);
+  const state = toState(model.spaceIdByUserId, space);
 
   if (state.type === "initial") {
     return <LoadingScreen />;
@@ -677,9 +677,9 @@ const ViewSpaceScreenMain = ({
   model: ClientModel;
   ctx: SpaceViewCtx;
   dispatch: (m: ClientMsg) => void;
-  dispatchEvent: (m: Evt) => void;
+  dispatchEvent: (m: Event) => void;
 }) => {
-  const currentUserSpaceId = model.spaceByUserId[ctx.currentUserId];
+  const currentUserSpaceId = model.spaceIdByUserId[ctx.currentUserId];
 
   if (!currentUserSpaceId) {
     return (
@@ -839,11 +839,11 @@ export const ViewCurrentSpaceBar = ({
   model: ClientModel;
   dispatch: (msg: ClientMsg) => void;
 }) => {
-  const dispatchEvent = (msg: Evt) => {
+  const dispatchEvent = (msg: Event) => {
     dispatch(withMeta(msg));
   };
 
-  const currentUserSpaceId = model.spaceByUserId[ctx.currentUserId];
+  const currentUserSpaceId = model.spaceIdByUserId[ctx.currentUserId];
 
   if (!currentUserSpaceId) {
     return null;
@@ -855,7 +855,7 @@ export const ViewCurrentSpaceBar = ({
     return null;
   }
 
-  const state = toState(model.spaceByUserId, space);
+  const state = toState(model.spaceIdByUserId, space);
 
   if (state.type === "initial") {
     return null;
