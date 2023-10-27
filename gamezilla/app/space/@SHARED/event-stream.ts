@@ -58,8 +58,17 @@ const subset = <T, TIndexName extends string>(
   return stream;
 };
 
+const resetIndexes = <T, TIndexName extends string>(
+  config: EventStreamConfig<T, TIndexName>,
+  stream: EventStream<T>,
+  indexName: TIndexName
+): EventStream<T> => {
+  return stream;
+};
+
 export const EventStream = {
   subset,
+  resetIndexes,
   append,
   merge,
   init,
