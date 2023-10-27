@@ -1,6 +1,5 @@
 import { Eff, Sub, chain } from "gamezilla/@SHARED/core";
 import {
-  APP_SOUND,
   ClientCmd,
   ClientCtx,
   ClientEvt,
@@ -29,7 +28,6 @@ import {
   ViewUsersInSpaceList,
   ViewYouChip,
 } from "gamezilla/app/space/game/@SHARED";
-import { withMeta } from "./@SHARED/evt";
 import * as GameClient from "./game/game.client";
 import { ViewCoverArt } from "./game/game.core";
 import {
@@ -44,10 +42,11 @@ import {
   StateStarted,
   ToClient,
   ToServer,
-  appendEvent,
-  toState,
+  updateCore,
   mergeModels,
+  toState,
 } from "./space.core";
+import { withMeta } from "gamezilla/app/space/@SHARED";
 
 //
 //
@@ -146,7 +145,7 @@ export const update = ({
       }
 
       const updated = GameClient.update({
-        ctx: { ...ctx, space: state.space },
+        ctx: { ...ctx, space: state },
         msg: msg.c,
         model: game,
         state: state.game,
@@ -175,11 +174,11 @@ export const update = ({
       return chain(
         model,
         (model): ReturnType<typeof update> => {
-          const appended = appendEvent(model, msg);
+          const updated = updateCore(model, msg);
 
           const modelNew: ClientModel = {
             ...model,
-            ...appended,
+            ...updated,
           };
 
           return {
@@ -246,7 +245,7 @@ export const updateFromServer = ({
           }
 
           const updated = GameClient.updateFromServer({
-            ctx: { ...ctx, space: state.space },
+            ctx: { ...ctx, space: state },
             model: game,
             msg: msg.c,
             state: state.game,
@@ -280,7 +279,7 @@ export const updateFromServer = ({
           return chain(
             model,
             (model) => {
-              const modelNew = appendEvent(model, msg);
+              const modelNew = updateCore(model, msg);
 
               return {
                 model: {
@@ -341,7 +340,7 @@ const updateGameModel = ({
       }
 
       const initial = GameClient.init({
-        ctx: { ...ctx, space: state.space },
+        ctx: { ...ctx, space: state },
         state: state.game,
       });
 
@@ -384,7 +383,7 @@ const updateGameModel = ({
       }
 
       const updated = GameClient.updateFromGame({
-        ctx: { ...ctx, space: state.space },
+        ctx: { ...ctx, space: state },
         msg: msg.c,
         model: model.games[msg.spaceId],
         state: state.game,
@@ -480,7 +479,7 @@ export const subscriptions = (
     return Sub.tag(
       "game-msg",
       GameClient.subscriptions({
-        ctx: { ...ctx, space: state.space },
+        ctx: { ...ctx, space: state },
         state: state.game,
         model: game,
         intervalId: String(spaceId),
@@ -572,12 +571,12 @@ const ViewSpaceScreen = ({
 
   const spaceCtx: SpaceViewCtx = {
     ...ctx,
-    space: state.space,
+    space: state,
     viewProfile: (userId) => dispatch({ t: "clicked-user", userId: userId }),
     quit: () =>
       dispatchEvent({
         t: "user-inputted-game",
-        spaceId: state.space.spaceId,
+        spaceId: state.spaceId,
         userId: ctx.currentUserId,
         game: null,
       }),
@@ -691,7 +690,7 @@ const ViewSpaceScreenMain = ({
     );
   }
 
-  if (state.space.spaceId !== currentUserSpaceId) {
+  if (state.spaceId !== currentUserSpaceId) {
     return (
       <ViewSpaceJoinScreen
         ctx={ctx}
@@ -867,9 +866,9 @@ export const ViewCurrentSpaceBar = ({
 
   const game = model.games[currentUserSpaceId];
 
-  const hostProfile = ctx.profiles[state.space.hostId];
+  const hostProfile = ctx.profiles[state.hostId];
 
-  const userCount = Object.values(state.space.users).length;
+  const userCount = Object.values(state.users).length;
 
   return (
     <div className="flex w-full items-center overflow-hidden border-t-2 border-blue-600 text-inherit">
@@ -878,7 +877,7 @@ export const ViewCurrentSpaceBar = ({
         onClick={() => {
           ctx.push({
             t: "space",
-            c: { t: "space", spaceId: state.space.spaceId },
+            c: { t: "space", spaceId: state.spaceId },
           });
         }}>
         <div className="mr-2 p-2">
@@ -906,14 +905,14 @@ export const ViewCurrentSpaceBar = ({
         </div>
       </button>
 
-      {ctx.currentUserId === state.space.hostId && (
+      {ctx.currentUserId === state.hostId && (
         <button
           aria-label="end space"
           onClick={() => {
             dispatchEvent({
               t: "user-ended-space",
               userId: ctx.currentUserId,
-              spaceId: state.space.spaceId,
+              spaceId: state.spaceId,
             });
           }}
           className="mr-4">
@@ -921,14 +920,14 @@ export const ViewCurrentSpaceBar = ({
         </button>
       )}
 
-      {ctx.currentUserId !== state.space.hostId && (
+      {ctx.currentUserId !== state.hostId && (
         <button
           aria-label="leave space"
           onClick={() => {
             dispatchEvent({
               t: "user-left-space",
               userId: ctx.currentUserId,
-              spaceId: state.space.spaceId,
+              spaceId: state.spaceId,
             });
           }}
           className="mr-4">

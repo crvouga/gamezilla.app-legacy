@@ -1,17 +1,16 @@
 import { ViewCtx } from "gamezilla/app/@SHARED/client";
+import { SpaceId } from "gamezilla/app/@SHARED/data";
 import {
   Button,
   IconGamepad,
-  LoadingScreen,
   MyAvatar,
   TopBar,
   cn,
 } from "gamezilla/app/@SHARED/ui";
 import { ViewSpaceHostChip } from "gamezilla/app/space/game/@SHARED";
-import { SpaceId } from "gamezilla/app/@SHARED/data";
+import { withMeta } from "gamezilla/app/space/@SHARED";
 import { GameName, ViewCoverArt, gameNameToString } from "../game/game.core";
 import { ClientModel, ClientMsg, toState } from "../space.core";
-import { withMeta } from "../@SHARED/evt";
 
 export const ViewSpaceListScreen = ({
   ctx,
@@ -45,8 +44,8 @@ export const ViewSpaceListScreen = ({
         )}
         <div className="flex w-full flex-1 flex-col gap-4 overflow-y-scroll px-5">
           {spaces.flatMap((state) => {
-            const host = ctx.profiles[state.space.hostId];
-            const users = Object.values(state.space.users).flatMap((userId) => {
+            const host = ctx.profiles[state.hostId];
+            const users = Object.values(state.users).flatMap((userId) => {
               const profile = ctx.profiles[userId];
 
               if (!profile) {
@@ -69,14 +68,14 @@ export const ViewSpaceListScreen = ({
                   username: host?.username ?? "...",
                   avatarUrl: host?.avatarUrl,
                 }}
-                key={state.space.spaceId}
-                isCurrentSpace={currentSpaceId === state.space.spaceId}
+                key={state.spaceId}
+                isCurrentSpace={currentSpaceId === state.spaceId}
                 users={users}
                 gameName={gameName}
                 onClick={() => {
                   ctx.push({
                     t: "space",
-                    c: { t: "space", spaceId: state.space.spaceId },
+                    c: { t: "space", spaceId: state.spaceId },
                   });
                 }}
               />

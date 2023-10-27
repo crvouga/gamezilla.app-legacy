@@ -1,6 +1,5 @@
 import { Posix } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
-import { EventMeta } from "gamezilla/app/space/@SHARED/evt";
 import {
   ColumnIndex,
   Columns,
@@ -94,20 +93,16 @@ export const initState = (ctx: SpaceCtx): State => {
 
 type Errors = {
   errors: {
-    [eventId: string]: Event & EventMeta & { error: EventError };
+    [eventId: string]: Event & { error: EventError };
   };
 };
 
-const addError = (
-  state: State,
-  event: Event & EventMeta,
-  error: EventError
-): State => {
+const addError = (state: State, event: Event, error: EventError): State => {
   return {
     ...state,
     errors: {
       ...state.errors,
-      [event.eventId]: { ...event, error },
+      [JSON.stringify(event)]: { ...event, error },
     },
   };
 };
@@ -192,7 +187,7 @@ export const allMoveTimeLimit: {
   "9": 9,
 };
 
-export const reducer = (state: State, event: Event & EventMeta): State => {
+export const reducer = (state: State, event: Event): State => {
   switch (state.type) {
     case "setup": {
       switch (event.t) {
@@ -246,7 +241,7 @@ export const reducer = (state: State, event: Event & EventMeta): State => {
             type: "game",
             columns: EMPTY_COLUMNS,
             moveTimeLimit: state.moveTimeLimit,
-            lastMoveAt: event.happenedAt,
+            lastMoveAt: Posix.now(),
             gameId: 0,
             players: {
               "player-one": playerOne,
@@ -275,7 +270,7 @@ export const reducer = (state: State, event: Event & EventMeta): State => {
           return {
             ...state,
             columns: dropped.value,
-            lastMoveAt: event.happenedAt,
+            // lastMoveAt: event.happenedAt,
           };
         }
 
@@ -307,7 +302,7 @@ export const reducer = (state: State, event: Event & EventMeta): State => {
   }
 };
 
-export const toState = (events: (Event & EventMeta)[], state: State): State => {
+export const toState = (events: Event[], state: State): State => {
   const stateNew = events.reduce(reducer, state);
   return stateNew;
 };

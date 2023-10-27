@@ -8,7 +8,7 @@ import { ViewCoverArt } from "./connect-four-cover-art";
 import {
   ClientModel,
   ClientMsg,
-  Evt,
+  Event,
   State,
   ToClient,
   ToServer,
@@ -22,7 +22,7 @@ type Client = GameClient<
   ToClient,
   ToServer,
   State,
-  Evt
+  Event
 >;
 
 const VsBot = GameClient.tag("vs-bot", VsBotClient);
@@ -141,7 +141,7 @@ export const View = ({
   model,
 }: {
   dispatch: (msg: ClientMsg) => void;
-  dispatchEvent: (m: Evt) => void;
+  dispatchEvent: (m: Event) => void;
   ctx: SpaceViewCtx;
   state: State;
   model: ClientModel;

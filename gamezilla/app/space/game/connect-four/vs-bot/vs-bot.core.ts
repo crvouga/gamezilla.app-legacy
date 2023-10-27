@@ -1,7 +1,6 @@
 import { Posix } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
 import { SpaceCtx } from "gamezilla/app/space/@SHARED";
-import { EventMeta } from "gamezilla/app/space/@SHARED/evt";
 import { VsBotGame, VsBotSetup } from "gamezilla/app/space/game/@SHARED";
 import * as ConnectFour from "../@SHARED/connect-four";
 
@@ -78,7 +77,7 @@ export const eventErrorToString = ({ error }: { error: EvtError }): string => {
 
 export type State = (StateSetup | StateGame) & {
   errors: {
-    [eventId: string]: Event & EventMeta & { error: EvtError };
+    [eventId: string]: Event & { error: EvtError };
   };
 };
 
@@ -107,7 +106,7 @@ export type StateGame = {
   columns: ConnectFour.Columns;
 };
 
-export const reducer = (state: State, event: Event & EventMeta): State => {
+export const reducer = (state: State, event: Event): State => {
   switch (state.type) {
     case "setup": {
       switch (event.t) {
@@ -262,16 +261,12 @@ export const reducer = (state: State, event: Event & EventMeta): State => {
   }
 };
 
-const addError = (
-  state: State,
-  event: Event & EventMeta,
-  error: EvtError
-): State => {
+const addError = (state: State, event: Event, error: EvtError): State => {
   return {
     ...state,
     errors: {
       ...state.errors,
-      [event.eventId]: { ...event, error },
+      [JSON.stringify(event)]: { ...event, error },
     },
   };
 };

@@ -1,6 +1,5 @@
 import { UserId } from "gamezilla/app/@SHARED/data";
-import { SpaceCtx } from "../../@SHARED";
-import { EventMeta } from "../../@SHARED/evt";
+import { SpaceCtx } from "gamezilla/app/space/@SHARED";
 import * as VsBot from "./vs-bot/vs-bot.core";
 import * as VsUser from "./vs-user/vs-user.core";
 
@@ -54,7 +53,7 @@ export type ToServer =
 //
 //
 
-export type Evt =
+export type Event =
   | { t: "user-changed-mode"; mode: Mode; userId: UserId }
   | { t: "vs-bot"; c: VsBot.Event }
   | { t: "vs-user"; c: VsUser.Event };
@@ -80,15 +79,15 @@ export const initState = (): State => {
 
 export const reducer = ({
   ctx,
-  evt,
+  event,
   state,
 }: {
   ctx: SpaceCtx;
   state: State;
-  evt: Evt & EventMeta;
+  event: Event;
 }): State => {
-  if (evt.t === "user-changed-mode") {
-    switch (evt.mode) {
+  if (event.t === "user-changed-mode") {
+    switch (event.mode) {
       case "none": {
         return {
           t: "none",
@@ -110,17 +109,17 @@ export const reducer = ({
     }
   }
 
-  if (evt.t === "vs-bot" && state.t === "vs-bot") {
+  if (event.t === "vs-bot" && state.t === "vs-bot") {
     return {
       t: "vs-bot",
-      c: VsBot.reducer(state.c, { ...evt, ...evt.c }),
+      c: VsBot.reducer(state.c, { ...event, ...event.c }),
     };
   }
 
-  if (evt.t === "vs-user" && state.t === "vs-user") {
+  if (event.t === "vs-user" && state.t === "vs-user") {
     return {
       t: "vs-user",
-      c: VsUser.reducer(state.c, { ...evt, ...evt.c }),
+      c: VsUser.reducer(state.c, { ...event, ...event.c }),
     };
   }
 

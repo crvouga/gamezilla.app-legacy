@@ -1,5 +1,4 @@
 import { SpaceCtx } from "../@SHARED";
-import { EventMeta } from "../@SHARED/evt";
 import * as ConnectFour from "./connect-four";
 
 //
@@ -172,7 +171,7 @@ export const initState = (gameName: GameName): State => {
   }
 };
 
-export type Evt = { t: "connect-four"; c: ConnectFour.Evt };
+export type Event = { t: "connect-four"; c: ConnectFour.Event };
 // | { t: "chess"; c: null }
 // | { t: "flow"; c: null }
 // | { t: "tic-tac-toe"; c: null };
@@ -180,38 +179,38 @@ export type Evt = { t: "connect-four"; c: ConnectFour.Evt };
 export const reducer = ({
   ctx,
   state,
-  evt,
+  event,
 }: {
   ctx: SpaceCtx;
   state: State;
-  evt: Evt & EventMeta;
+  event: Event;
 }): State => {
-  if (state.t === "connect-four" && evt.t === "connect-four") {
+  if (state.t === "connect-four" && event.t === "connect-four") {
     return {
       t: "connect-four",
       c: ConnectFour.reducer({
         ctx,
-        evt: { ...evt, ...evt.c },
+        event: { ...event, ...event.c },
         state: state.c,
       }),
     };
   }
 
-  // if (state.t === "chess" && evt.t === "chess") {
+  // if (state.t === "chess" && event.t === "chess") {
   //   return {
   //     t: "chess",
   //     c: null,
   //   };
   // }
 
-  // if (state.t === "flow" && evt.t === "flow") {
+  // if (state.t === "flow" && event.t === "flow") {
   //   return {
   //     t: "flow",
   //     c: null,
   //   };
   // }
 
-  // if (state.t === "tic-tac-toe" && evt.t === "tic-tac-toe") {
+  // if (state.t === "tic-tac-toe" && event.t === "tic-tac-toe") {
   //   return {
   //     t: "tic-tac-toe",
   //     c: null,

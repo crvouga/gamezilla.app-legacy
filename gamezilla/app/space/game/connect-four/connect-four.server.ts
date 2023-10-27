@@ -1,7 +1,7 @@
 import { Sub } from "gamezilla/@SHARED/core";
 import { GameServer } from "gamezilla/app/space/@SHARED";
 import {
-  Evt,
+  Event,
   ServerModel,
   ServerMsg,
   State,
@@ -17,7 +17,7 @@ type Server = GameServer<
   ToClient,
   ToServer,
   State,
-  Evt
+  Event
 >;
 
 const VsBot = GameServer.tag("vs-bot", VsBotServer);

@@ -34,8 +34,7 @@ export const ViewSpaceJoinScreen = ({
 
   const game = state.game;
 
-  const hostTitle =
-    ctx.profiles[state.space.hostId]?.username ?? state.space.hostId;
+  const hostTitle = ctx.profiles[state.hostId]?.username ?? state.hostId;
 
   return (
     <div className="flex h-full w-full flex-col">

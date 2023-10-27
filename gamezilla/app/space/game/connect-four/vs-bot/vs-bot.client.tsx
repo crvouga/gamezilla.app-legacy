@@ -8,12 +8,7 @@ import {
   LoadingBar,
   cn,
 } from "gamezilla/app/@SHARED/ui";
-import {
-  SpaceClientCtx,
-  GameClient,
-  SpaceViewCtx,
-} from "gamezilla/app/space/@SHARED";
-import { EventMeta } from "gamezilla/app/space/@SHARED/evt";
+import { GameClient, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
 import {
   GameLayout,
   IconBotHappy,
@@ -27,13 +22,13 @@ import {
   VsBotSetup,
 } from "gamezilla/app/space/game/@SHARED";
 import { Columns, toStatus, toTurn } from "../@SHARED/connect-four";
-import { ViewCoverArt } from "../connect-four-cover-art";
 import {
   PlayerOneIcon,
   PlayerTwoIcon,
   ViewColumns,
   gameTheme,
 } from "../@SHARED/connect-four-ui";
+import { ViewCoverArt } from "../connect-four-cover-art";
 import {
   BotLevel,
   ClientModel,
@@ -422,7 +417,7 @@ const ViewActivityFeedBar = ({
   model: ClientModel;
   ctx: SpaceViewCtx;
 }) => {
-  const events: (Event & EventMeta)[] = [];
+  const events: Event[] = [];
   const latestEvent = events.findLast(
     (e) => toActivityFeedItemUI({ event: e, ctx, state }) !== null
   );
@@ -444,7 +439,7 @@ const ViewActivityFeedBar = ({
           {events.map((event) => {
             return (
               <ViewActivityFeedItem
-                key={event.eventId}
+                key={JSON.stringify(event)}
                 ctx={ctx}
                 event={event}
                 state={state}
@@ -463,7 +458,7 @@ const toActivityFeedItemUI = ({
   state,
 }: {
   ctx: SpaceViewCtx;
-  event: Event & EventMeta;
+  event: Event;
   state: State;
 }): {
   text: string;
@@ -474,7 +469,7 @@ const toActivityFeedItemUI = ({
 
   switch (event.t) {
     case "bot-dropped-disc": {
-      const errored = state.errors[event.eventId];
+      const errored = state.errors[JSON.stringify(event)];
       if (errored) {
         return null;
       }
@@ -484,7 +479,7 @@ const toActivityFeedItemUI = ({
       return { text: `${username} changed bot level to ${event.botLevel}` };
     }
     case "user-dropped-disc": {
-      const errored = state.errors[event.eventId];
+      const errored = state.errors[JSON.stringify(event)];
 
       if (event.userId === ctx.currentUserId) {
         if (errored) {
@@ -500,7 +495,7 @@ const toActivityFeedItemUI = ({
       return { text: `${username} dropped disc` };
     }
     case "user-restarted-game": {
-      const errored = state.errors[event.eventId];
+      const errored = state.errors[JSON.stringify(event)];
 
       if (errored) {
         return null;
@@ -538,7 +533,7 @@ const ViewActivityFeedItem = ({
   state,
 }: {
   ctx: SpaceViewCtx;
-  event: Event & EventMeta;
+  event: Event;
   state: State;
 }) => {
   const itemUI = toActivityFeedItemUI({
