@@ -55,6 +55,11 @@ const append = <T, TIndexName extends string>(
   event: T & EventMeta
 ): EventStream<T, TIndexName> => {
   const { ordering, events } = stream;
+
+  if (event.eventId in events) {
+    return stream;
+  }
+
   const newOrdering = [];
   let inserted = false;
 

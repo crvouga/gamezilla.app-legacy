@@ -5,7 +5,7 @@ import {
   ViewUsersInSpaceList,
 } from "gamezilla/app/space/game/@SHARED";
 import { ViewCoverArt, gameNameToString } from "../game/game.core";
-import { ClientModel, Event, toState } from "../space.core";
+import { ClientModel, Event, toStateSpace } from "../space.core";
 
 export const ViewSpaceJoinScreen = ({
   model,
@@ -16,7 +16,7 @@ export const ViewSpaceJoinScreen = ({
   model: ClientModel;
   dispatchEvent: (m: Event) => void;
 }) => {
-  const space = toState(model, ctx.space.spaceId);
+  const space = toStateSpace(model, ctx.space.spaceId);
 
   if (space.type === "ended") {
     return <div>Space ended</div>;

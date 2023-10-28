@@ -45,7 +45,7 @@ import {
   appendEvent,
   initCore,
   mergeModels,
-  toState,
+  toStateSpace,
   toStateUser,
 } from "./space.core";
 
@@ -118,7 +118,7 @@ export const update = ({
         return { model };
       }
 
-      const space = toState(model, msg.spaceId);
+      const space = toStateSpace(model, msg.spaceId);
 
       if (space.type === "initial") {
         return { model };
@@ -213,7 +213,7 @@ export const updateFromServer = ({
     (model): ReturnType<typeof updateFromServer> => {
       switch (msg.t) {
         case "game-msg": {
-          const space = toState(model, msg.spaceId);
+          const space = toStateSpace(model, msg.spaceId);
 
           if (space.type === "initial") {
             return { model };
@@ -315,7 +315,7 @@ const updateGameModel = ({
 } => {
   switch (msg.t) {
     case "user-inputted-game": {
-      const space = toState(model, msg.spaceId);
+      const space = toStateSpace(model, msg.spaceId);
 
       if (space.type === "initial") {
         return { model };
@@ -359,7 +359,7 @@ const updateGameModel = ({
     }
 
     case "game": {
-      const space = toState(model, msg.spaceId);
+      const space = toStateSpace(model, msg.spaceId);
 
       if (space.type === "initial") {
         return { model };
@@ -455,7 +455,7 @@ export const subscriptions = (
       continue;
     }
 
-    const space = toState(model, spaceId);
+    const space = toStateSpace(model, spaceId);
 
     if (space.type === "initial") {
       continue;
@@ -551,7 +551,7 @@ const ViewSpaceScreen = ({
   dispatch: (m: ClientMsg) => void;
   spaceId: SpaceId;
 }) => {
-  const space = toState(model, spaceId);
+  const space = toStateSpace(model, spaceId);
 
   if (space.type === "initial") {
     return <ViewSpaceNotFound ctx={ctx} />;
@@ -832,7 +832,7 @@ export const ViewCurrentSpaceBar = ({
     return null;
   }
 
-  const space = toState(model, userState.spaceId);
+  const space = toStateSpace(model, userState.spaceId);
 
   if (space.type === "initial") {
     return null;

@@ -13,6 +13,7 @@ import * as Game from "./game/game.core";
 
 export type CoreModel = {
   events: EventStream<Event, Indexes>;
+  initialState: State;
 };
 
 export type ServerModel = CoreModel & {
@@ -81,6 +82,7 @@ export type ClientMsg =
 export const initCore = (): CoreModel => {
   return {
     events: EventStream.empty(config),
+    initialState: initState(),
   };
 };
 
@@ -97,6 +99,7 @@ export const appendEvent = (
 export const mergeModels = (left: CoreModel, right: CoreModel): CoreModel => {
   const streamNew = EventStream.merge(config, left.events, right.events);
   return {
+    initialState: initState(),
     events: streamNew,
   };
 };
@@ -113,48 +116,16 @@ type StateUser = {
   spaceId: SpaceId | null;
 };
 
-const reducerUser = (state: StateUser, event: EventWithMeta): StateUser => {
-  switch (event.t) {
-    case "user-started-space": {
-      if (state.spaceId) {
-        return state;
-      }
-      return { ...state, spaceId: event.spaceId };
-    }
-    case "user-joined-space": {
-      if (state.spaceId) {
-        return state;
-      }
-      return { ...state, spaceId: event.spaceId };
-    }
-    case "user-left-space": {
-      if (state.spaceId !== event.spaceId) {
-        return state;
-      }
-      return { ...state, spaceId: null };
-    }
-    case "user-ended-space": {
-      if (state.spaceId !== event.spaceId) {
-        return state;
-      }
-      return { ...state, spaceId: null };
-    }
-    default: {
-      return state;
-    }
-  }
-};
-
 export const toStateUser = (model: CoreModel, userId: UserId): StateUser => {
-  const events = EventStream.subset(config, model.events, "byUserId", [userId]);
+  const state = toState(model);
 
-  let state: StateUser = { userId, spaceId: null };
+  const userSpaceId = state.spaceIdByUserId[userId];
 
-  for (const event of EventStream.iter(config, events)) {
-    state = reducerUser(state, event);
-  }
-
-  return state;
+  const stateUser: StateUser = {
+    userId,
+    spaceId: userSpaceId ?? null,
+  };
+  return stateUser;
 };
 
 //
@@ -216,136 +187,256 @@ export type StateEnded = Space & {
 
 export type StateSpace = StateInitial | StateStarted | StateEnded;
 
-export const reducer = ({
+export const toStateSpace = (
+  model: CoreModel,
+  spaceId: SpaceId
+): StateSpace => {
+  const state = toState(model);
+
+  const spaceState: StateSpace = state.spaces[spaceId] ?? {
+    type: "initial",
+  };
+
+  return spaceState;
+};
+
+type State = {
+  spaces: {
+    [spaceId: string]: StateSpace;
+  };
+  spaceIdByUserId: {
+    [userId: string]: SpaceId;
+  };
+};
+
+const initState = (): State => {
+  return {
+    spaces: {},
+    spaceIdByUserId: {},
+  };
+};
+
+const reducer = ({
   state,
   event,
-  model,
 }: {
-  model: CoreModel;
-  state: StateSpace;
+  state: State;
   event: EventWithMeta;
-}): StateSpace => {
-  switch (state.type) {
-    case "ended": {
-      return state;
-    }
-    case "initial": {
-      switch (event.t) {
-        case "user-started-space": {
-          return {
-            type: "started",
-            spaceId: event.spaceId,
-            hostId: event.userId,
-            visibility: "public",
-            users: {
-              [event.userId]: event.userId,
-            },
-            game: null,
-          };
-        }
-        default: {
-          return state;
-        }
+}): State => {
+  switch (event.t) {
+    case "game": {
+      const space = state.spaces[event.spaceId];
+      if (!space) {
+        return state;
       }
-    }
-    case "started": {
-      switch (event.t) {
-        case "user-started-space": {
-          return {
-            type: "started",
-            spaceId: event.spaceId,
-            hostId: event.userId,
-            visibility: "public",
-            users: {
-              [event.userId]: event.userId,
-            },
-            game: null,
-          };
-        }
-
-        case "user-ended-space": {
-          return {
-            ...state,
-            type: "ended",
-          };
-        }
-
-        case "user-inputted-game": {
-          if (!event.game) {
-            return {
-              ...state,
-              game: null,
-            };
-          }
-          return {
-            ...state,
-            game: Game.initState(event.game),
-          };
-        }
-
-        case "user-joined-space": {
-          const user = toStateUser(model, event.userId);
-          if (user.spaceId) {
-            return state;
-          }
-          return {
-            ...state,
-            users: {
-              ...state.users,
-              [event.userId]: event.userId,
-            },
-          };
-        }
-
-        case "user-left-space": {
-          const usersNew = { ...state.users };
-          delete usersNew[event.userId];
-          return {
-            ...state,
-            users: usersNew,
-          };
-        }
-
-        case "game": {
-          if (!state.game) {
-            return state;
-          }
-
-          const gameNew = Game.reducer({
-            ctx: { space: state },
-            state: state.game,
-            event: { ...event, ...event.c },
-          });
-
-          return {
-            ...state,
+      if (space.type === "initial") {
+        return state;
+      }
+      if (space.type === "ended") {
+        return state;
+      }
+      if (!space.game) {
+        return state;
+      }
+      const gameNew = Game.reducer({
+        ctx: { space },
+        state: space.game,
+        event: { ...event, ...event.c },
+      });
+      return {
+        ...state,
+        spaces: {
+          ...state.spaces,
+          [event.spaceId]: {
+            ...space,
             game: gameNew,
-          };
-        }
+          },
+        },
+      };
+    }
+    case "user-ended-space": {
+      const space = state.spaces[event.spaceId];
+
+      if (!space) {
+        return state;
       }
+
+      if (space.type === "initial") {
+        return state;
+      }
+
+      if (space.type === "ended") {
+        return state;
+      }
+
+      if (event.userId !== space.hostId) {
+        return state;
+      }
+
+      const spaceIdByUserIdNew = { ...state.spaceIdByUserId };
+      for (const userId in space.users) {
+        delete spaceIdByUserIdNew[userId];
+      }
+
+      return {
+        ...state,
+        spaces: {
+          ...state.spaces,
+          [event.spaceId]: {
+            ...space,
+            type: "ended",
+          },
+        },
+        spaceIdByUserId: spaceIdByUserIdNew,
+      };
+    }
+
+    case "user-inputted-game": {
+      const space = state.spaces[event.spaceId];
+
+      if (!space) {
+        return state;
+      }
+
+      if (space.type === "initial") {
+        return state;
+      }
+
+      if (space.type === "ended") {
+        return state;
+      }
+
+      if (event.userId !== space.hostId) {
+        return state;
+      }
+
+      return {
+        ...state,
+        spaces: {
+          ...state.spaces,
+          [event.spaceId]: {
+            ...space,
+            game: event.game ? Game.initState(event.game) : null,
+          },
+        },
+      };
+    }
+
+    case "user-joined-space": {
+      const userSpaceId = state.spaceIdByUserId[event.userId];
+      if (userSpaceId) {
+        return state;
+      }
+      const space = state.spaces[event.spaceId];
+      if (!space) {
+        return state;
+      }
+      if (space.type === "ended") {
+        return state;
+      }
+      if (space.type === "initial") {
+        return state;
+      }
+
+      return {
+        ...state,
+        spaces: {
+          ...state.spaces,
+          [event.spaceId]: {
+            ...space,
+            users: {
+              ...space.users,
+              [event.userId]: event.userId,
+            },
+          },
+        },
+        spaceIdByUserId: {
+          ...state.spaceIdByUserId,
+          [event.userId]: event.spaceId,
+        },
+      };
+    }
+
+    case "user-left-space": {
+      const userSpaceId = state.spaceIdByUserId[event.userId];
+      if (userSpaceId !== event.spaceId) {
+        return state;
+      }
+      const space = state.spaces[userSpaceId];
+      if (!space) {
+        return state;
+      }
+      if (space.type === "ended") {
+        return state;
+      }
+      if (space.type === "initial") {
+        return state;
+      }
+      if (space.hostId === event.userId) {
+        return state;
+      }
+      const usersNew = { ...space.users };
+      delete usersNew[event.userId];
+      const spaceIdByUserIdNew = { ...state.spaceIdByUserId };
+      delete spaceIdByUserIdNew[event.userId];
+      return {
+        ...state,
+        spaces: {
+          ...state.spaces,
+          [userSpaceId]: {
+            ...space,
+            users: usersNew,
+          },
+        },
+        spaceIdByUserId: spaceIdByUserIdNew,
+      };
+    }
+
+    case "user-started-space": {
+      const space = state.spaces[event.spaceId];
+      if (space) {
+        return state;
+      }
+      const userSpaceId = state.spaceIdByUserId[event.userId];
+      if (userSpaceId) {
+        return state;
+      }
+      const spaceIdByUserIdNew = { ...state.spaceIdByUserId };
+      spaceIdByUserIdNew[event.userId] = event.spaceId;
+      return {
+        ...state,
+        spaces: {
+          ...state.spaces,
+          [event.spaceId]: {
+            type: "started",
+            spaceId: event.spaceId,
+            hostId: event.userId,
+            visibility: "public",
+            users: {
+              [event.userId]: event.userId,
+            },
+            game: null,
+          },
+        },
+        spaceIdByUserId: spaceIdByUserIdNew,
+      };
     }
   }
 };
 
-export const toState = (model: CoreModel, spaceId: SpaceId): StateSpace => {
-  const bySpaceId = EventStream.subset(config, model.events, "bySpaceId", [
-    spaceId,
-  ]);
+function toState(model: CoreModel): State {
+  let state: State = {
+    spaceIdByUserId: {},
+    spaces: {},
+  };
 
-  let state: StateSpace = { type: "initial" };
-
-  for (const event of EventStream.iter(config, bySpaceId)) {
-    state = reducer({ state, event, model });
+  for (const event of EventStream.iter(config, model.events)) {
+    state = reducer({ state, event });
   }
-
   return state;
-};
+}
 
-//@ts-ignore
-window.config = config;
-//@ts-ignore
-window.EventStream = EventStream;
-// @ts-ignore
-window.toStateUser = toStateUser;
-// @ts-ignore
-window.toState = toState;
+if (typeof window !== "undefined") {
+  //@ts-ignore
+  window.toState_ = toState;
+}

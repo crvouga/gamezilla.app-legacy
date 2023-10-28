@@ -10,7 +10,12 @@ import {
 } from "gamezilla/app/@SHARED/ui";
 import { ViewSpaceHostChip } from "gamezilla/app/space/game/@SHARED";
 import { GameName, ViewCoverArt, gameNameToString } from "../game/game.core";
-import { ClientModel, ClientMsg, toState, toStateUser } from "../space.core";
+import {
+  ClientModel,
+  ClientMsg,
+  toStateSpace,
+  toStateUser,
+} from "../space.core";
 
 export const ViewSpaceListScreen = ({
   ctx,
@@ -29,7 +34,7 @@ export const ViewSpaceListScreen = ({
         return [];
       }
 
-      const state = toState(model, spaceId);
+      const state = toStateSpace(model, spaceId);
 
       if (state.type !== "started") {
         return [];
@@ -152,10 +157,14 @@ const ViewSpaceCard = ({
         </div>
       )}
 
-      <div className="flex items-center justify-start gap-2">
+      <div className="flex items-center justify-start gap-2 overflow-hidden">
         <MyAvatar src={host.avatarUrl} alt="avatar" className="h-12 w-12" />
 
-        <p className="text-xl">{host.username}</p>
+        <div className="flex-1 overflow-hidden">
+          <p className="overflow-hidden text-ellipsis whitespace-nowrap text-xl">
+            {host.username}
+          </p>
+        </div>
         <ViewSpaceHostChip />
       </div>
 

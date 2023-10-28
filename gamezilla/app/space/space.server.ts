@@ -25,7 +25,7 @@ import {
   ToServer,
   appendEvent,
   initCore,
-  toState,
+  toStateSpace,
 } from "./space.core";
 
 //
@@ -73,7 +73,7 @@ export const update = async ({
     case "game-msg": {
       const { spaceId } = msg;
 
-      const space = toState(model, spaceId);
+      const space = toStateSpace(model, spaceId);
 
       const game = model.games[spaceId];
 
@@ -164,7 +164,7 @@ export const updateFromClient = async (input: {
 
   switch (msg.t) {
     case "game-msg": {
-      const space = toState(model, msg.spaceId);
+      const space = toStateSpace(model, msg.spaceId);
 
       const game = model.games[msg.spaceId];
 
@@ -215,11 +215,11 @@ export const updateFromClient = async (input: {
     }
 
     default: {
-      const prev = toState(model, msg.spaceId);
+      const prev = toStateSpace(model, msg.spaceId);
 
       const appended = appendEvent(model, msg);
 
-      const next = toState(appended, msg.spaceId);
+      const next = toStateSpace(appended, msg.spaceId);
 
       const updated = await updateGameModel({
         model,
@@ -258,11 +258,11 @@ const appendEventServer = async (
   model: ServerModel,
   event: Event & EventMeta
 ): ReturnType<typeof update> => {
-  const prev = toState(model, event.spaceId);
+  const prev = toStateSpace(model, event.spaceId);
 
   const appended = appendEvent(model, event);
 
-  const next = toState(appended, event.spaceId);
+  const next = toStateSpace(appended, event.spaceId);
 
   const updated = await updateGameModel({
     model,
@@ -344,6 +344,7 @@ const sync: typeof updateFromEvent = async (input) => {
       sendToClient([input.msg.clientId], {
         t: "sync",
         model: {
+          initialState: input.model.initialState,
           events: input.model.events,
         },
         profiles: input.model.profileCache,
@@ -492,7 +493,7 @@ export const subscriptions = async ({
       continue;
     }
 
-    const space = toState(model, spaceId);
+    const space = toStateSpace(model, spaceId);
 
     if (space.type === "initial") {
       continue;
