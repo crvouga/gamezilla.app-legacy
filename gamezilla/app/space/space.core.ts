@@ -1,6 +1,7 @@
 import { Profile, SpaceId, UserId } from "gamezilla/app/@SHARED/data";
 import { EventMeta, Space } from "gamezilla/app/space/@SHARED";
 import * as Game from "./game/game.core";
+import { EventStream } from "./@SHARED/event-stream";
 
 //
 //
@@ -10,13 +11,34 @@ import * as Game from "./game/game.core";
 //
 //
 
+type Indexes = "bySpaceId" | "bySpaceIdUserId";
+
 export type CoreModel = {
+  events: EventStream<Event, Indexes>;
   spaceEvents: {
     [spaceId: SpaceId]: SpaceEvents;
   };
   spaceIdByUserId: {
     [userId: UserId]: SpaceId;
   };
+};
+
+const config = EventStream.init<Event, Indexes>({
+  bySpaceId: (event) => event.spaceId,
+  bySpaceIdUserId: (event) => event.spaceId,
+});
+
+const toSpaceEvents = (model: CoreModel, spaceId: SpaceId): Event[] => {
+  const bySpaceId = EventStream.subset(
+    config,
+    model.events,
+    "bySpaceId",
+    spaceId
+  );
+
+  bySpaceId;
+
+  return [];
 };
 
 export type SpaceEvents = {
@@ -184,6 +206,7 @@ export const mergeModels = (
   }
 
   return {
+    events: model.events,
     spaceEvents: spacesNew,
     spaceIdByUserId: {
       ...model.spaceIdByUserId,
