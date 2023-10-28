@@ -16,20 +16,18 @@ export type EventStream<T, TIndexName extends string> = {
    * Indexes of events in the stream
    */
   indexes: {
-    [indexName in TIndexName]?: EventStreamIndex;
-  };
-};
-
-type EventStreamIndex = {
-  [indexKey: string]: {
-    ordering: EventId[];
-    events: { [eventId: EventId]: EventId };
+    [indexName in TIndexName]?: {
+      [indexKey: string]: {
+        ordering: EventId[];
+        events: { [eventId: EventId]: EventId };
+      };
+    };
   };
 };
 
 export type EventStreamConfig<T, TIndexName extends string> = {
   indexes: {
-    [indexName in TIndexName]: (event: T & EventMeta) => string;
+    [indexName in TIndexName]: (event: T & EventMeta) => string[];
   };
 };
 
@@ -56,19 +54,33 @@ const append = <T, TIndexName extends string>(
   stream: EventStream<T, TIndexName>,
   event: T & EventMeta
 ): EventStream<T, TIndexName> => {
-  const streamNew: EventStream<T, TIndexName> = {
-    indexes: stream.indexes,
-    events: { ...stream.events, [event.eventId]: event },
-    ordering: [...stream.ordering, event.eventId],
+  const { ordering, events } = stream;
+  const newOrdering = [];
+  let inserted = false;
+
+  for (let i = 0; i < ordering.length; i++) {
+    if (!inserted && events[ordering[i]!]!.happenedAt > event.happenedAt) {
+      newOrdering.push(event.eventId);
+      inserted = true;
+    }
+    newOrdering.push(ordering[i]!);
+  }
+
+  if (!inserted) {
+    newOrdering.push(event.eventId);
+  }
+
+  const newEvents = { ...events, [event.eventId]: event };
+
+  return {
+    ordering: newOrdering,
+    events: newEvents,
+    indexes: updateIndexes(
+      config,
+      { ordering: newOrdering, events: newEvents, indexes: stream.indexes },
+      event
+    ).indexes,
   };
-
-  streamNew.ordering.sort((a, b) => {
-    return streamNew.events[a]!.happenedAt - streamNew.events[b]!.happenedAt;
-  });
-
-  const updated = updateIndexes(config, streamNew, event);
-
-  return updated;
 };
 
 const updateIndexes = <T, TIndexName extends string>(
@@ -79,17 +91,29 @@ const updateIndexes = <T, TIndexName extends string>(
   const indexesNew = { ...stream.indexes };
 
   for (let indexName in config.indexes) {
-    const indexKey = config.indexes[indexName](event);
+    const indexKey = config.indexes[indexName](event).join("-");
     const index = indexesNew[indexName] || {};
     const indexEvents = index[indexKey] || { ordering: [], events: {} };
 
-    indexEvents.ordering.push(event.eventId);
+    // Similar optimized insertion as in the append function
+    let inserted = false;
+    const newOrdering = [];
+    for (let i = 0; i < indexEvents.ordering.length; i++) {
+      if (
+        !inserted &&
+        stream.events[indexEvents.ordering[i]!]!.happenedAt > event.happenedAt
+      ) {
+        newOrdering.push(event.eventId);
+        inserted = true;
+      }
+      newOrdering.push(indexEvents.ordering[i]!);
+    }
+    if (!inserted) {
+      newOrdering.push(event.eventId);
+    }
+
+    indexEvents.ordering = newOrdering;
     indexEvents.events[event.eventId] = event.eventId;
-
-    indexEvents.ordering.sort((a, b) => {
-      return stream.events[a]!.happenedAt - stream.events[b]!.happenedAt;
-    });
-
     index[indexKey] = indexEvents;
     indexesNew[indexName] = index;
   }
@@ -135,35 +159,35 @@ const subset = <T, TIndexName extends string>(
   config: EventStreamConfig<T, TIndexName>,
   stream: EventStream<T, TIndexName>,
   indexName: TIndexName,
-  indexKey: string
+  targetIndexVal: string[]
 ): EventStream<T, TIndexName> => {
-  const eventStreamIndex = stream.indexes[indexName];
+  let streamNew = empty(config);
 
-  if (!eventStreamIndex) {
-    return empty(config);
+  for (const event of iter(config, stream)) {
+    const eventIndexVal = config.indexes[indexName](event).join("-");
+
+    if (eventIndexVal === targetIndexVal.join("-")) {
+      streamNew = append(config, streamNew, event);
+    }
   }
 
-  const events = eventStreamIndex[indexKey];
+  return streamNew;
+};
 
-  if (!events) {
-    return empty(config);
-  }
-
-  const orderingNew: EventId[] = [];
-  const eventsNew: { [eventId: string]: T & EventMeta } = {};
-
-  for (let eventId in events.events) {
+const iter = function* <T, TIndexName extends string>(
+  config: EventStreamConfig<T, TIndexName>,
+  stream: EventStream<T, TIndexName>
+): Iterable<T & EventMeta> {
+  for (const eventId of stream.ordering) {
     if (!EventId.is(eventId)) {
       continue;
     }
-    events.ordering.push(eventId);
+    const event = stream.events[eventId];
+    if (!event) {
+      continue;
+    }
+    yield event;
   }
-
-  return {
-    ordering: orderingNew,
-    events: eventsNew,
-    indexes: {},
-  };
 };
 
 const count = <T, TIndexName extends string>(
@@ -206,4 +230,5 @@ export const EventStream = {
   init,
   toArray,
   fromArray,
+  iter,
 };

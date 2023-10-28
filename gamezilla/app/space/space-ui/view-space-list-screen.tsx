@@ -1,3 +1,4 @@
+import { withMeta } from "gamezilla/@SHARED/event-stream";
 import { ViewCtx } from "gamezilla/app/@SHARED/client";
 import { SpaceId } from "gamezilla/app/@SHARED/data";
 import {
@@ -8,9 +9,8 @@ import {
   cn,
 } from "gamezilla/app/@SHARED/ui";
 import { ViewSpaceHostChip } from "gamezilla/app/space/game/@SHARED";
-import { withMeta } from "gamezilla/app/space/@SHARED";
 import { GameName, ViewCoverArt, gameNameToString } from "../game/game.core";
-import { ClientModel, ClientMsg, toState } from "../space.core";
+import { ClientModel, ClientMsg, toState, toStateUser } from "../space.core";
 
 export const ViewSpaceListScreen = ({
   ctx,
@@ -21,15 +21,23 @@ export const ViewSpaceListScreen = ({
   ctx: ViewCtx;
   dispatch: (m: ClientMsg) => void;
 }) => {
-  const currentSpaceId = model.spaceIdByUserId[ctx.currentUserId];
+  const user = toStateUser(model, ctx.currentUserId);
 
-  const spaces = Object.values(model.spaceEvents).flatMap((space) => {
-    const state = toState(model.spaceIdByUserId, space);
-    if (state.type === "started") {
+  const spaces = Object.keys(model.events.indexes.bySpaceId ?? {}).flatMap(
+    (spaceId) => {
+      if (!SpaceId.is(spaceId)) {
+        return [];
+      }
+
+      const state = toState(model, spaceId);
+
+      if (state.type !== "started") {
+        return [];
+      }
+
       return [state];
     }
-    return [];
-  });
+  );
 
   return (
     <div className="flex h-full max-h-full w-full flex-1 flex-col gap-4 overflow-hidden">
@@ -42,7 +50,7 @@ export const ViewSpaceListScreen = ({
             <p className="text-lg text-secondary">No active spaces</p>
           </div>
         )}
-        <div className="flex w-full flex-1 flex-col gap-4 overflow-y-scroll px-5">
+        <div className="flex w-full flex-1 flex-col gap-4 overflow-x-hidden overflow-y-scroll px-5">
           {spaces.flatMap((state) => {
             const host = ctx.profiles[state.hostId];
             const users = Object.values(state.users).flatMap((userId) => {
@@ -69,7 +77,7 @@ export const ViewSpaceListScreen = ({
                   avatarUrl: host?.avatarUrl,
                 }}
                 key={state.spaceId}
-                isCurrentSpace={currentSpaceId === state.spaceId}
+                isCurrentSpace={user.spaceId === state.spaceId}
                 users={users}
                 gameName={gameName}
                 onClick={() => {
@@ -84,7 +92,7 @@ export const ViewSpaceListScreen = ({
         </div>
       </div>
 
-      {!currentSpaceId && (
+      {!user.spaceId && (
         <div className="w-full p-4">
           <Button
             size="lg"

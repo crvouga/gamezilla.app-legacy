@@ -1,4 +1,5 @@
 import { Eff, Sub, chainAwait } from "gamezilla/@SHARED/core";
+import { EventMeta, withMeta } from "gamezilla/@SHARED/event-stream";
 import {
   ReqCtx,
   ServerCmd,
@@ -9,11 +10,9 @@ import {
   sendToUser,
 } from "gamezilla/app/@SHARED/server";
 import {
-  EventMeta,
   Space,
   SpaceServerCmd,
   SpaceServerCtx,
-  withMeta,
 } from "gamezilla/app/space/@SHARED";
 import { SpaceId } from "../@SHARED/data";
 import * as GameServer from "./game/game.server";
@@ -21,10 +20,11 @@ import {
   Event,
   ServerModel,
   ServerMsg,
-  State,
+  StateSpace,
   ToClient,
   ToServer,
-  updateCore,
+  appendEvent,
+  initCore,
   toState,
 } from "./space.core";
 
@@ -41,9 +41,8 @@ export const init = (): {
 } => {
   return {
     model: {
+      ...initCore(),
       games: {},
-      spaceEvents: {},
-      spaceIdByUserId: {},
       profileCache: {},
     },
   };
@@ -74,11 +73,7 @@ export const update = async ({
     case "game-msg": {
       const { spaceId } = msg;
 
-      const space = model.spaceEvents[spaceId];
-
-      if (!space) {
-        return { model };
-      }
+      const space = toState(model, spaceId);
 
       const game = model.games[spaceId];
 
@@ -86,30 +81,28 @@ export const update = async ({
         return { model };
       }
 
-      const state = toState(model.spaceIdByUserId, space);
+      if (space.type === "initial") {
+        return { model };
+      }
 
-      if (state.type === "initial") {
+      if (space.type === "ended") {
+        return { model };
+      }
+
+      if (!space.game) {
         return { model };
       }
 
       const spaceCtx: SpaceServerCtx = {
         ...ctx,
-        space: state,
+        space: space,
       };
-
-      if (state.type === "ended") {
-        return { model };
-      }
-
-      if (!state.game) {
-        return { model };
-      }
 
       const updated = await GameServer.update({
         ctx: spaceCtx,
         model: game,
         msg: msg.c,
-        state: state.game,
+        state: space.game,
       });
 
       const gameEvent = updated.events?.[0] ?? null;
@@ -120,7 +113,7 @@ export const update = async ({
           if (!gameEvent) {
             return { model };
           }
-          return myAppendEvent(
+          return appendEventServer(
             spaceCtx,
             model,
             withMeta({
@@ -144,7 +137,7 @@ export const update = async ({
               updated.eff
             ),
             cmd: spaceCmdToCmd(
-              state,
+              space,
               SpaceServerCmd.map(updated.cmd ?? [], (c) => ({
                 t: "game-msg",
                 spaceId: msg.spaceId,
@@ -171,11 +164,7 @@ export const updateFromClient = async (input: {
 
   switch (msg.t) {
     case "game-msg": {
-      const space = model.spaceEvents[msg.spaceId];
-
-      if (!space) {
-        return { model };
-      }
+      const space = toState(model, msg.spaceId);
 
       const game = model.games[msg.spaceId];
 
@@ -183,23 +172,21 @@ export const updateFromClient = async (input: {
         return { model };
       }
 
-      const state = toState(model.spaceIdByUserId, space);
-
-      if (state.type === "initial") {
+      if (space.type === "initial") {
         return { model };
       }
 
-      if (state.type === "ended") {
+      if (space.type === "ended") {
         return { model };
       }
 
-      if (!state.game) {
+      if (!space.game) {
         return { model };
       }
 
       const updated = await GameServer.updateFromClient({
-        ctx: { ...ctx, space: state },
-        state: state.game,
+        ctx: { ...ctx, space: space },
+        state: space.game,
         msg: msg.c,
         model: game,
       });
@@ -213,11 +200,11 @@ export const updateFromClient = async (input: {
           },
         },
         eff: Eff.map_(
-          (c) => ({ t: "game-msg", spaceId: state.spaceId, c }),
+          (c) => ({ t: "game-msg", spaceId: space.spaceId, c }),
           updated.eff
         ),
         cmd: spaceCmdToCmd(
-          state,
+          space,
           SpaceServerCmd.map(updated.cmd ?? [], (c) => ({
             t: "game-msg",
             spaceId: msg.spaceId,
@@ -228,27 +215,11 @@ export const updateFromClient = async (input: {
     }
 
     default: {
-      const prev = toState(
-        model.spaceIdByUserId,
-        model.spaceEvents[msg.spaceId] ?? {
-          events: [],
-          initialState: {
-            type: "initial",
-          },
-        }
-      );
+      const prev = toState(model, msg.spaceId);
 
-      const updatedCore = updateCore(model, msg);
+      const appended = appendEvent(model, msg);
 
-      const next = toState(
-        model.spaceIdByUserId,
-        updatedCore.spaceEvents[msg.spaceId] ?? {
-          events: [],
-          initialState: {
-            type: "initial",
-          },
-        }
-      );
+      const next = toState(appended, msg.spaceId);
 
       const updated = await updateGameModel({
         model,
@@ -261,7 +232,7 @@ export const updateFromClient = async (input: {
       return {
         model: {
           ...model,
-          ...updatedCore,
+          ...appended,
           games: {
             ...model.games,
             ...updated.model.games,
@@ -282,36 +253,20 @@ export const updateFromClient = async (input: {
   }
 };
 
-const myAppendEvent = async (
+const appendEventServer = async (
   ctx: ServerCtx,
   model: ServerModel,
-  events: Event & EventMeta
+  event: Event & EventMeta
 ): ReturnType<typeof update> => {
-  const prev = toState(
-    model.spaceIdByUserId,
-    model.spaceEvents[events.spaceId] ?? {
-      events: [],
-      initialState: {
-        type: "initial",
-      },
-    }
-  );
+  const prev = toState(model, event.spaceId);
 
-  const appended = updateCore(model, events);
+  const appended = appendEvent(model, event);
 
-  const next = toState(
-    model.spaceIdByUserId,
-    appended.spaceEvents[events.spaceId] ?? {
-      events: [],
-      initialState: {
-        type: "initial",
-      },
-    }
-  );
+  const next = toState(appended, event.spaceId);
 
   const updated = await updateGameModel({
     model,
-    msg: events,
+    msg: event,
     ctx,
     prev,
     next,
@@ -328,9 +283,9 @@ const myAppendEvent = async (
     },
     eff: updated.eff,
     cmd: [
-      events.t === "game" && next.type === "started"
-        ? sendToUser(Object.values(next.users), events)
-        : broadcast(events),
+      event.t === "game" && next.type === "started"
+        ? sendToUser(Object.values(next.users), event)
+        : broadcast(event),
     ],
   };
 };
@@ -389,8 +344,7 @@ const sync: typeof updateFromEvent = async (input) => {
       sendToClient([input.msg.clientId], {
         t: "sync",
         model: {
-          spaceIdByUserId: input.model.spaceIdByUserId,
-          spaceEvents: input.model.spaceEvents,
+          events: input.model.events,
         },
         profiles: input.model.profileCache,
       }),
@@ -405,8 +359,8 @@ const updateGameModel = async ({
   prev,
   next,
 }: {
-  prev: State;
-  next: State;
+  prev: StateSpace;
+  next: StateSpace;
   model: ServerModel;
   msg: Event;
   ctx: ServerCtx;
@@ -538,31 +492,25 @@ export const subscriptions = async ({
       continue;
     }
 
-    const space = model.spaceEvents[spaceId];
+    const space = toState(model, spaceId);
 
-    if (!space) {
+    if (space.type === "initial") {
       continue;
     }
 
-    const state = toState(model.spaceIdByUserId, space);
-
-    if (state.type === "initial") {
+    if (space.type === "ended") {
       continue;
     }
 
-    if (state.type === "ended") {
-      continue;
-    }
-
-    if (!state.game) {
+    if (!space.game) {
       continue;
     }
 
     const sub = await GameServer.subscriptions({
-      ctx: { ...ctx, space: state },
-      intervalId: state.spaceId,
+      ctx: { ...ctx, space: space },
+      intervalId: space.spaceId,
       model: game,
-      state: state.game,
+      state: space.game,
     });
 
     const mapped = Sub.map(

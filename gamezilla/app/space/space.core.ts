@@ -1,7 +1,7 @@
+import { EventMeta, EventStream } from "gamezilla/@SHARED/event-stream";
 import { Profile, SpaceId, UserId } from "gamezilla/app/@SHARED/data";
-import { EventMeta, Space } from "gamezilla/app/space/@SHARED";
+import { Space } from "gamezilla/app/space/@SHARED";
 import * as Game from "./game/game.core";
-import { EventStream } from "./@SHARED/event-stream";
 
 //
 //
@@ -11,208 +11,8 @@ import { EventStream } from "./@SHARED/event-stream";
 //
 //
 
-type Indexes = "bySpaceId" | "bySpaceIdUserId";
-
 export type CoreModel = {
   events: EventStream<Event, Indexes>;
-  spaceEvents: {
-    [spaceId: SpaceId]: SpaceEvents;
-  };
-  spaceIdByUserId: {
-    [userId: UserId]: SpaceId;
-  };
-};
-
-const config = EventStream.init<Event, Indexes>({
-  bySpaceId: (event) => event.spaceId,
-  bySpaceIdUserId: (event) => event.spaceId,
-});
-
-const toSpaceEvents = (model: CoreModel, spaceId: SpaceId): Event[] => {
-  const bySpaceId = EventStream.subset(
-    config,
-    model.events,
-    "bySpaceId",
-    spaceId
-  );
-
-  bySpaceId;
-
-  return [];
-};
-
-export type SpaceEvents = {
-  events: EventWithMeta[];
-  initialState: State;
-};
-
-const updateSpaceEvents = (
-  model: CoreModel,
-  eventNew: EventWithMeta
-): CoreModel => {
-  const spaceEvents = model.spaceEvents[eventNew.spaceId] ?? {
-    events: [],
-    initialState: {
-      type: "initial",
-    },
-  };
-
-  const eventMap = new Map<string, EventWithMeta>();
-
-  for (const event of spaceEvents.events) {
-    eventMap.set(event.eventId, event);
-  }
-
-  eventMap.set(eventNew.eventId, eventNew);
-
-  const sorted = Array.from(eventMap.values()).sort(
-    (a, b) => a.happenedAt - b.happenedAt
-  );
-
-  const spaceEventsNew: SpaceEvents = {
-    initialState: spaceEvents.initialState,
-    events: sorted,
-  };
-
-  return {
-    ...model,
-    spaceEvents: {
-      ...model.spaceEvents,
-      [eventNew.spaceId]: spaceEventsNew,
-    },
-  };
-};
-
-export const updateSpaceByUserId = (
-  model: CoreModel,
-  eventNew: EventWithMeta
-): CoreModel => {
-  switch (eventNew.t) {
-    case "user-started-space": {
-      return {
-        ...model,
-        spaceIdByUserId: {
-          ...model.spaceIdByUserId,
-          [eventNew.userId]: eventNew.spaceId,
-        },
-      };
-    }
-    case "user-joined-space": {
-      return {
-        ...model,
-        spaceIdByUserId: {
-          ...model.spaceIdByUserId,
-          [eventNew.userId]: eventNew.spaceId,
-        },
-      };
-    }
-    case "user-left-space": {
-      const spaceIdByUserId = { ...model.spaceIdByUserId };
-      delete spaceIdByUserId[eventNew.userId];
-      return {
-        ...model,
-        spaceIdByUserId,
-      };
-    }
-    case "user-ended-space": {
-      const space = toState(
-        model.spaceIdByUserId,
-        model.spaceEvents[eventNew.spaceId] ?? {
-          events: [],
-          initialState: {
-            type: "initial",
-          },
-        }
-      );
-
-      const users =
-        space.type === "started"
-          ? new Set([...Object.values(space.users), space.hostId])
-          : [];
-
-      const spaceIdByUserId = { ...model.spaceIdByUserId };
-
-      for (const userId of users) {
-        delete model.spaceIdByUserId[userId];
-      }
-
-      return {
-        ...model,
-        spaceIdByUserId,
-      };
-    }
-    default: {
-      return model;
-    }
-  }
-};
-
-export const updateCore = (
-  model: CoreModel,
-  eventNew: EventWithMeta
-): CoreModel => {
-  return updateSpaceByUserId(updateSpaceEvents(model, eventNew), eventNew);
-};
-
-const mergeEvents = (
-  events: EventWithMeta[],
-  eventsNew: EventWithMeta[]
-): EventWithMeta[] => {
-  const eventsNewMap = new Map<string, EventWithMeta>();
-
-  for (const event of events) {
-    eventsNewMap.set(event.eventId, event);
-  }
-  for (const event of eventsNew) {
-    eventsNewMap.set(event.eventId, event);
-  }
-  const sorted = Array.from(eventsNewMap.values()).sort(
-    (a, b) => a.happenedAt - b.happenedAt
-  );
-  return sorted;
-};
-
-export const mergeModels = (
-  model: CoreModel,
-  modelNew: CoreModel
-): CoreModel => {
-  const spacesNew: CoreModel["spaceEvents"] = {};
-
-  for (const spaceId in modelNew.spaceEvents) {
-    if (!SpaceId.is(spaceId)) {
-      continue;
-    }
-    const space = model.spaceEvents[spaceId];
-    const spaceNew = modelNew.spaceEvents[spaceId];
-    if (!space && !spaceNew) {
-      continue;
-    }
-    if (!space && spaceNew) {
-      spacesNew[spaceId] = spaceNew;
-      continue;
-    }
-    if (!spaceNew && space) {
-      spacesNew[spaceId] = space;
-      continue;
-    }
-
-    if (space && spaceNew) {
-      spacesNew[spaceId] = {
-        ...space,
-        events: mergeEvents(space.events, spaceNew.events),
-      };
-      continue;
-    }
-  }
-
-  return {
-    events: model.events,
-    spaceEvents: spacesNew,
-    spaceIdByUserId: {
-      ...model.spaceIdByUserId,
-      ...modelNew.spaceIdByUserId,
-    },
-  };
 };
 
 export type ServerModel = CoreModel & {
@@ -264,10 +64,98 @@ export type ServerMsg = { t: "game-msg"; spaceId: SpaceId; c: Game.ServerMsg };
 
 export type ClientMsg =
   | EventWithMeta
-  | { t: "game-msg"; c: Game.ClientMsg }
+  | { t: "game-msg"; spaceId: SpaceId; c: Game.ClientMsg }
   | { t: "modal-closed" }
   | { t: "modal-open"; c: ModalModel }
   | { t: "clicked-user"; userId: UserId };
+
+//
+//
+//
+//
+//
+//
+//
+//
+
+export const initCore = (): CoreModel => {
+  return {
+    events: EventStream.empty(config),
+  };
+};
+
+export const appendEvent = (
+  model: CoreModel,
+  event: EventWithMeta
+): CoreModel => {
+  return {
+    ...model,
+    events: EventStream.append(config, model.events, event),
+  };
+};
+
+export const mergeModels = (left: CoreModel, right: CoreModel): CoreModel => {
+  const streamNew = EventStream.merge(config, left.events, right.events);
+  return {
+    events: streamNew,
+  };
+};
+
+type Indexes = "bySpaceId" | "byUserId";
+
+const config = EventStream.init<Event, Indexes>({
+  bySpaceId: (event) => [event.spaceId],
+  byUserId: (event) => ("userId" in event ? [event.userId] : []),
+});
+
+type StateUser = {
+  userId: UserId;
+  spaceId: SpaceId | null;
+};
+
+const reducerUser = (state: StateUser, event: EventWithMeta): StateUser => {
+  switch (event.t) {
+    case "user-started-space": {
+      if (state.spaceId) {
+        return state;
+      }
+      return { ...state, spaceId: event.spaceId };
+    }
+    case "user-joined-space": {
+      if (state.spaceId) {
+        return state;
+      }
+      return { ...state, spaceId: event.spaceId };
+    }
+    case "user-left-space": {
+      if (state.spaceId !== event.spaceId) {
+        return state;
+      }
+      return { ...state, spaceId: null };
+    }
+    case "user-ended-space": {
+      if (state.spaceId !== event.spaceId) {
+        return state;
+      }
+      return { ...state, spaceId: null };
+    }
+    default: {
+      return state;
+    }
+  }
+};
+
+export const toStateUser = (model: CoreModel, userId: UserId): StateUser => {
+  const events = EventStream.subset(config, model.events, "byUserId", [userId]);
+
+  let state: StateUser = { userId, spaceId: null };
+
+  for (const event of EventStream.iter(config, events)) {
+    state = reducerUser(state, event);
+  }
+
+  return state;
+};
 
 //
 //
@@ -326,15 +214,17 @@ export type StateEnded = Space & {
   type: "ended";
 };
 
-export type State = StateInitial | StateStarted | StateEnded;
+export type StateSpace = StateInitial | StateStarted | StateEnded;
 
 export const reducer = ({
   state,
   event,
+  model,
 }: {
-  state: State;
+  model: CoreModel;
+  state: StateSpace;
   event: EventWithMeta;
-}): State => {
+}): StateSpace => {
   switch (state.type) {
     case "ended": {
       return state;
@@ -394,18 +284,25 @@ export const reducer = ({
         }
 
         case "user-joined-space": {
-          return {
-            ...state,
-          };
-        }
-
-        case "user-left-space": {
+          const user = toStateUser(model, event.userId);
+          if (user.spaceId) {
+            return state;
+          }
           return {
             ...state,
             users: {
               ...state.users,
-              [event.userId]: undefined,
+              [event.userId]: event.userId,
             },
+          };
+        }
+
+        case "user-left-space": {
+          const usersNew = { ...state.users };
+          delete usersNew[event.userId];
+          return {
+            ...state,
+            users: usersNew,
           };
         }
 
@@ -430,61 +327,25 @@ export const reducer = ({
   }
 };
 
-type SpaceIdByUserId = {
-  [userId: UserId]: SpaceId;
-};
+export const toState = (model: CoreModel, spaceId: SpaceId): StateSpace => {
+  const bySpaceId = EventStream.subset(config, model.events, "bySpaceId", [
+    spaceId,
+  ]);
 
-export const toSpaceIdByUserId = (model: CoreModel): SpaceIdByUserId => {
-  const allEvents = toAllEvents(model);
+  let state: StateSpace = { type: "initial" };
 
-  const spaceIdByUserId: SpaceIdByUserId = {};
-
-  for (const event of allEvents) {
-    switch (event.t) {
-      case "user-started-space": {
-        spaceIdByUserId[event.userId] = event.spaceId;
-        break;
-      }
-      case "user-joined-space": {
-        spaceIdByUserId[event.userId] = event.spaceId;
-        break;
-      }
-      case "user-left-space": {
-        delete spaceIdByUserId[event.userId];
-        break;
-      }
-      case "user-ended-space": {
-        delete spaceIdByUserId[event.userId];
-        break;
-      }
-    }
+  for (const event of EventStream.iter(config, bySpaceId)) {
+    state = reducer({ state, event, model });
   }
 
-  return spaceIdByUserId;
+  return state;
 };
 
-const toAllEvents = (model: CoreModel): EventWithMeta[] => {
-  const events: EventWithMeta[] = [];
-  for (const spaceId in model.spaceEvents) {
-    if (!SpaceId.is(spaceId)) {
-      continue;
-    }
-    const space = model.spaceEvents[spaceId];
-    if (!space) {
-      continue;
-    }
-    events.push(...space.events);
-  }
-  events.sort((a, b) => a.happenedAt - b.happenedAt);
-  return events;
-};
-
-export const toState = (
-  spaceByUserId: CoreModel["spaceIdByUserId"],
-  model: SpaceEvents
-): State => {
-  return model.events.reduce(
-    (state, event) => reducer({ event, state }),
-    model.initialState
-  );
-};
+//@ts-ignore
+window.config = config;
+//@ts-ignore
+window.EventStream = EventStream;
+// @ts-ignore
+window.toStateUser = toStateUser;
+// @ts-ignore
+window.toState = toState;

@@ -16,25 +16,19 @@ export const ViewSpaceJoinScreen = ({
   model: ClientModel;
   dispatchEvent: (m: Event) => void;
 }) => {
-  const space = model.spaceEvents[ctx.space.spaceId];
+  const space = toState(model, ctx.space.spaceId);
 
-  if (!space) {
-    return <div>Space not found</div>;
-  }
-
-  const state = toState(model.spaceIdByUserId, space);
-
-  if (state.type === "ended") {
+  if (space.type === "ended") {
     return <div>Space ended</div>;
   }
 
-  if (state.type === "initial") {
+  if (space.type === "initial") {
     return <div>Space not started</div>;
   }
 
-  const game = state.game;
+  const game = space.game;
 
-  const hostTitle = ctx.profiles[state.hostId]?.username ?? state.hostId;
+  const hostTitle = ctx.profiles[space.hostId]?.username ?? space.hostId;
 
   return (
     <div className="flex h-full w-full flex-col">
