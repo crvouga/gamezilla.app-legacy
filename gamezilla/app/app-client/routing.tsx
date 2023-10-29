@@ -95,7 +95,7 @@ export const updateFromCmd = ({
   switch (msg.t) {
     case "routing/push": {
       return {
-        model,
+        model: msg.route,
         eff: Browser.push(Route.encode(msg.route)),
       };
     }
@@ -109,7 +109,7 @@ export const updateFromCmd = ({
 
     case "routing/replace": {
       return {
-        model,
+        model: msg.route,
         eff: Browser.replace(Route.encode(msg.route)),
       };
     }
