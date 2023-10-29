@@ -99,18 +99,11 @@ export const appendEvent = (
 
 export const mergeModels = (left: CoreModel, right: CoreModel): CoreModel => {
   const streamNew = EventStream.merge(config, left.events, right.events);
+
   const modelNew = {
     initialState: left.initialState,
     events: streamNew,
   };
-
-  if (modelNew.events.hash === left.events.hash) {
-    console.log("hashes are equal");
-  }
-
-  if (modelNew.events.hash === right.events.hash) {
-    console.log("hashes are equal");
-  }
 
   return modelNew;
 };
