@@ -4,6 +4,7 @@ import {
   Sub,
   andThen,
   chain,
+  chainV2,
   p,
 } from "gamezilla/@SHARED/core";
 import {
@@ -131,11 +132,11 @@ export const updateFromServer: Client["updateFromServer"] = ({
   model,
   state,
 }) => {
+  const initial = model ? { model } : init({ ctx, state });
   switch (msg.t) {
     case "input-mode": {
-      return chain(
-        model,
-
+      return chainV2(
+        initial,
         (model) => {
           const { result } = msg;
 
@@ -164,7 +165,7 @@ export const updateFromServer: Client["updateFromServer"] = ({
     }
 
     case "vs-user": {
-      if (model.mode?.t === "vs-user") {
+      if (model?.mode?.t === "vs-user") {
         const [child, eff] = VsUser.updateFromServer(
           { ctx },
           msg.c,
@@ -177,11 +178,11 @@ export const updateFromServer: Client["updateFromServer"] = ({
         };
       }
 
-      return { model };
+      return initial;
     }
 
     case "vs-bot": {
-      if (model.mode?.t === "vs-bot") {
+      if (model?.mode?.t === "vs-bot") {
         const updated = VsBot.updateFromServer({
           msg: msg.c,
           model: model.mode.c,
@@ -193,12 +194,12 @@ export const updateFromServer: Client["updateFromServer"] = ({
         };
       }
 
-      return { model };
+      return initial;
     }
 
     case "puzzle": {
-      if (model.mode?.t !== "puzzle") {
-        return { model };
+      if (model?.mode?.t !== "puzzle") {
+        return initial;
       }
 
       const updated = Puzzle.updateFromServer({

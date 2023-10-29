@@ -83,8 +83,18 @@ export const update: Client["update"] = ({ msg, model }) => {
   }
 };
 
-export const updateFromServer: Client["updateFromServer"] = (input) => {
-  return input;
+export const updateFromServer: Client["updateFromServer"] = ({
+  model,
+  state,
+  ctx,
+}) => {
+  const initial = model
+    ? { model }
+    : init({
+        state,
+        ctx,
+      });
+  return initial;
 };
 
 export const updateFromEvent: Client["updateFromEvent"] = (

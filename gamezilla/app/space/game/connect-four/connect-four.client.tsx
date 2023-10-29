@@ -83,24 +83,26 @@ export const updateFromServer: Client["updateFromServer"] = ({
   model,
   state,
 }) => {
+  const initial = model ? { model } : init({ ctx, state });
+
   if (state.t === "none") {
-    return { model };
+    return initial;
   }
 
-  if (state.t === "vs-bot" && model.t === "vs-bot" && msg.t === "vs-bot") {
+  if (state.t === "vs-bot" && msg.t === "vs-bot") {
     return VsBot.updateFromServer({
       ctx,
       msg,
-      model,
+      model: model?.t === "vs-bot" ? model : null,
       state,
     });
   }
 
-  if (state.t === "vs-user" && model.t === "vs-user" && msg.t === "vs-user") {
-    return { model };
+  if (state.t === "vs-user" && msg.t === "vs-user") {
+    return initial;
   }
 
-  return { model };
+  return initial;
 };
 
 export const updateFromEvent: Client["updateFromEvent"] = (input) => {

@@ -1,4 +1,4 @@
-import { Eff, Sub, chain } from "gamezilla/@SHARED/core";
+import { Eff, Sub, chain, chainV2 } from "gamezilla/@SHARED/core";
 import {
   APP_SOUND,
   playSound,
@@ -62,15 +62,16 @@ const update: Client["update"] = (input) => {
 
 const updateFromServer: Client["updateFromServer"] = (input) => {
   const { ctx, msg, model } = input;
+  const initial = model ? { model } : init(input);
 
   switch (msg.t) {
     default: {
       const { result } = msg;
       if (result.t === "err") {
-        return { model };
+        return initial;
       }
 
-      return chain(model, (model) => {
+      return chainV2(initial, (model) => {
         if (msg.t === "input-mode") {
           return { model, cmd: [playSound(APP_SOUND.tap)] };
         }

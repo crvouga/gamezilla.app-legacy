@@ -80,15 +80,12 @@ export const update: Client["update"] = (input) => {
 export const updateFromServer: Client["updateFromServer"] = (input) => {
   const { ctx, msg, model, state } = input;
 
-  if (
-    state.t === "connect-four" &&
-    msg.t === "connect-four" &&
-    model.t === "connect-four"
-  ) {
+  if (state.t === "connect-four" && msg.t === "connect-four") {
     return ConnectFour.updateFromServer({ ...input, msg, model });
   }
 
-  return { model };
+  const initial = model ? { model } : init(input);
+  return initial;
 };
 
 export const updateFromGame: Client["updateFromGame"] = (input) => {
@@ -143,7 +140,6 @@ export const subscriptions: Client["subscriptions"] = (input): Sub<Msg> => {
 
 export const View: Client["View"] = (input) => {
   const { model, ctx, state, dispatch, dispatchEvent } = input;
-
 
   if (state.t === "connect-four") {
     return (

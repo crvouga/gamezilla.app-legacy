@@ -1,4 +1,4 @@
-import { Eff, Sub, andThen, chain, p } from "gamezilla/@SHARED/core";
+import { Eff, Sub, andThen, chain, chainV2, p } from "gamezilla/@SHARED/core";
 import { APP_SOUND, ClientCmd, playSound } from "gamezilla/app/@SHARED/client";
 import { GameClient, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
 import {
@@ -73,9 +73,10 @@ export const updateFromServer: Client["updateFromServer"] = ({
   msg,
   model,
 }) => {
+  const initial = model ? { model } : init();
   if (msg.t === "input-mode") {
-    return chain(
-      model,
+    return chainV2(
+      initial,
       (model) => {
         const { result } = msg;
 
@@ -94,14 +95,14 @@ export const updateFromServer: Client["updateFromServer"] = ({
     );
   }
 
-  if (msg.t === "vs-user" && model.t === "vs-user") {
+  if (msg.t === "vs-user" && model?.t === "vs-user") {
     const updated = VsUser.updateFromServer({ ctx }, msg.c, model.c);
     return {
       model: { t: "vs-user", c: updated[0] },
     };
   }
 
-  if (msg.t === "vs-bot" && model.t === "vs-bot") {
+  if (msg.t === "vs-bot" && model?.t === "vs-bot") {
     const updated = VsBot.updateFromServer({
       ctx,
       msg: msg.c,
@@ -112,7 +113,7 @@ export const updateFromServer: Client["updateFromServer"] = ({
     };
   }
 
-  return { model };
+  return initial;
 };
 
 export const updateFromEvent: Client["updateFromEvent"] = (input) => {

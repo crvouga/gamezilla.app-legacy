@@ -33,7 +33,7 @@ export type GameClient<
   updateFromServer: (input: {
     ctx: ClientCtx;
     msg: ToClient;
-    model: ClientModel;
+    model: ClientModel | null;
     state: GameState;
   }) => {
     model: ClientModel;
@@ -143,7 +143,7 @@ const tag = <
     updateFromServer: (input) => {
       const updated = client.updateFromServer({
         msg: input.msg.c,
-        model: input.model.c,
+        model: input.model?.c ?? null,
         ctx: input.ctx,
         state: input.state.c,
       });

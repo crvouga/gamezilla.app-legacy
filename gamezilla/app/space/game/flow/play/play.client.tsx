@@ -31,7 +31,8 @@ const update: Client["update"] = (input) => {
 };
 
 const updateFromServer: Client["updateFromServer"] = (input) => {
-  return input;
+  const initial = input.model ? { model: input.model } : init(input);
+  return initial;
 };
 
 const updateFromEvent: Client["updateFromEvent"] = (input) => {

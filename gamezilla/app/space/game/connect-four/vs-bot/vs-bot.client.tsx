@@ -1,4 +1,4 @@
-import { Eff, Sub, chain } from "gamezilla/@SHARED/core";
+import { Eff, Sub, andThen, chain, chainV2, p } from "gamezilla/@SHARED/core";
 import { ClientCmd } from "gamezilla/app/@SHARED/client";
 import {
   Drawer,
@@ -101,8 +101,8 @@ export const update: Client["update"] = (input) => {
 };
 
 export const updateFromServer: Client["updateFromServer"] = (input) => {
-  return chain(
-    input.model,
+  return chainV2(
+    input.model ? { model: input.model } : init(input),
     (model) => {
       const { msg } = input;
       switch (msg.t) {

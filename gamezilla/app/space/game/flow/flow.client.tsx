@@ -1,4 +1,4 @@
-import { Sub, chain } from "gamezilla/@SHARED/core";
+import { Sub, chain, chainV2 } from "gamezilla/@SHARED/core";
 import { IconGamepad, IconScrewdriverWrench } from "gamezilla/app/@SHARED/ui";
 import { GameClient } from "gamezilla/app/space/@SHARED";
 import { MainMenuScreen } from "gamezilla/app/space/game/@SHARED";
@@ -53,30 +53,27 @@ export const update: Client["update"] = (input) => {
 
 export const updateFromServer: Client["updateFromServer"] = (input) => {
   const { model, msg } = input;
+  const initial = model ? { model } : init(input);
   switch (msg.t) {
     case "input-mode": {
       const { result } = msg;
       if (result.t === "err") {
-        return { model };
+        return initial;
       }
-      return chain(
-        model,
-
-        (model) => {
-          if (model.t === "none") {
-            return { model, cmd: [playSound(APP_SOUND.navBackwardMin)] };
-          }
-          return { model, cmd: [playSound(APP_SOUND.navForwardMin)] };
+      return chainV2(initial, (model) => {
+        if (model.t === "none") {
+          return { model, cmd: [playSound(APP_SOUND.navBackwardMin)] };
         }
-      );
+        return { model, cmd: [playSound(APP_SOUND.navForwardMin)] };
+      });
     }
 
     case "play": {
-      return { model };
+      return initial;
     }
 
     case "puzzle-builder": {
-      return { model };
+      return initial;
     }
   }
 };
