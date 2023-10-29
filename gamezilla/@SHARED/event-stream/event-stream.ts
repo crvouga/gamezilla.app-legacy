@@ -26,7 +26,7 @@ export type EventStream<T, TIndexName extends string> = {
   /**
    *
    */
-  hash: number;
+  hash: string | number;
 };
 
 export type EventStreamConfig<T, TIndexName extends string> = {
@@ -50,7 +50,7 @@ const empty = <T, TIndexName extends string>(
     events: {},
     indexes: {},
     ordering: [],
-    hash: simpleHash(""),
+    hash: hash([]),
   };
 };
 
@@ -145,31 +145,17 @@ const merge = <T, TIndexName extends string>(
   left: EventStream<T, TIndexName>,
   right: EventStream<T, TIndexName>
 ): EventStream<T, TIndexName> => {
-  const newOrdering = [];
-  for (let i = 0; i < left.ordering.length; i++) {
-    newOrdering.push(left.ordering[i]!);
-  }
-  for (let i = 0; i < right.ordering.length; i++) {
-    newOrdering.push(right.ordering[i]!);
+  let stream = empty(config);
+
+  for (const event of toIterable(left)) {
+    stream = append(config, stream, event);
   }
 
-  const newEvents = { ...left.events };
-  for (let eventId in right.events) {
-    // @ts-ignore
-    newEvents[eventId] = right.events[eventId];
+  for (const event of toIterable(right)) {
+    stream = append(config, stream, event);
   }
 
-  const newIndexes = { ...left.indexes };
-  for (let indexName in right.indexes) {
-    newIndexes[indexName] = { ...right.indexes[indexName] };
-  }
-
-  return {
-    ordering: newOrdering,
-    events: newEvents,
-    indexes: newIndexes,
-    hash: hash(newOrdering),
-  };
+  return stream;
 };
 
 const subset = <T, TIndexName extends string>(
@@ -230,19 +216,15 @@ export const EventStream = {
   toIterable,
 };
 
-function hash(ordering: EventId[]): number {
-  return simpleHash(ordering.join(""));
+function hash(ordering: EventId[]): string | number {
+  return djb2Hash(ordering.join(""));
 }
 
-function simpleHash(str: string): number {
-  let hash = 0;
-  if (str.length === 0) {
-    return hash;
-  }
-  for (var i = 0; i < str.length; i++) {
-    var char = str.charCodeAt(i);
-    hash = (hash << 5) - hash + char;
-    hash = hash & hash; // Convert to 32bit integer
+function djb2Hash(str: string) {
+  let hash = 5381;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = (hash << 5) + hash + char; /* hash * 33 + c */
   }
   return hash;
 }

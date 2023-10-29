@@ -283,13 +283,21 @@ export const updateFromServer = ({
         }
 
         case "sync": {
-          const merged = mergeModels(model, {
-            events: msg.events,
-            initialState: model.initialState,
-          });
-          return {
-            model: { ...model, ...merged },
-          };
+          return chain(
+            model,
+            (model) => {
+              const merged = mergeModels(model, {
+                events: msg.events,
+                initialState: model.initialState,
+              });
+              return {
+                model: { ...model, ...merged },
+              };
+            },
+            (model) => {
+              return { model };
+            }
+          );
         }
 
         default: {

@@ -99,10 +99,20 @@ export const appendEvent = (
 
 export const mergeModels = (left: CoreModel, right: CoreModel): CoreModel => {
   const streamNew = EventStream.merge(config, left.events, right.events);
-  return {
-    initialState: initState(),
+  const modelNew = {
+    initialState: left.initialState,
     events: streamNew,
   };
+
+  if (modelNew.events.hash === left.events.hash) {
+    console.log("hashes are equal");
+  }
+
+  if (modelNew.events.hash === right.events.hash) {
+    console.log("hashes are equal");
+  }
+
+  return modelNew;
 };
 
 type Indexes = "indexSpaceId";
@@ -246,12 +256,10 @@ const reducer = ({
       if (space.type === "ended") {
         return state;
       }
-      if (!space.game) {
-        return state;
-      }
+      const gameState = space.game ?? Game.initState(event.c.t);
       const gameNew = Game.reducer({
         ctx: { space },
-        state: space.game,
+        state: gameState,
         event: { ...event, ...event.c },
       });
       return {
@@ -447,8 +455,13 @@ function toState_(model: CoreModel): State {
 }
 
 const toState = memoize((model) => model.events.hash, toState_);
+// const toState = toState_;
 
 if (typeof window !== "undefined") {
   //@ts-ignore
-  window.toState_ = toState;
+  window.toState_ = toState_;
+  //@ts-ignore
+  window.toState = toState;
+  // @ts-ignore
+  window.toStateSpace = toStateSpace;
 }

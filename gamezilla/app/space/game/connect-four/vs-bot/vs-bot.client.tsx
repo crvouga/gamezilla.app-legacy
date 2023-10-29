@@ -61,7 +61,7 @@ export const init: Client["init"] = () => {
     model: {
       opened: null,
       vsBotSetup: VsBotSetup.init,
-      vsBotGame: VsBotGame.init(null),
+      vsBotGame: VsBotGame.init(),
     },
   };
 };

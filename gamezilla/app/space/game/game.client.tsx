@@ -144,7 +144,7 @@ export const subscriptions: Client["subscriptions"] = (input): Sub<Msg> => {
 export const View: Client["View"] = (input) => {
   const { model, ctx, state, dispatch, dispatchEvent } = input;
 
-  console.log(state);
+
   if (state.t === "connect-four") {
     return (
       <ConnectFourClient.View
