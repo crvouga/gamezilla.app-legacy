@@ -17,8 +17,8 @@ type Event =
 type Indexes = "byUserId" | "byCounterId";
 
 const config = EventStream.init<Event, Indexes>({
-  byUserId: (event) => [event.userId],
-  byCounterId: (event) => [event.counterId],
+  byUserId: (event) => event.userId,
+  byCounterId: (event) => event.counterId,
 });
 
 test("should be able to append events", () => {
@@ -30,29 +30,33 @@ test("should be able to append events", () => {
   });
   const after = EventStream.append(config, before, event);
 
-  expect(EventStream.count(config, before)).toEqual(0);
-  expect(EventStream.count(config, after)).toEqual(1);
-  expect(EventStream.toArray(config, before)).toEqual([]);
-  expect(EventStream.toArray(config, after)).toEqual([event]);
+  expect(EventStream.toArray(before)).toEqual([]);
+  expect(EventStream.toArray(after)).toEqual([event]);
 });
 
 test("should be able to append events", () => {
-  const before = EventStream.fromArray(config, [
-    withMeta<Event>({ t: "incremented", userId: "1", counterId: "1" }),
-    withMeta<Event>({ t: "incremented", userId: "1", counterId: "2" }),
-  ]);
-
-  const event = withMeta<Event>({
+  const event1 = withMeta<Event>({
+    t: "incremented",
+    userId: "1",
+    counterId: "1",
+  });
+  const event2 = withMeta<Event>({
+    t: "incremented",
+    userId: "1",
+    counterId: "2",
+  });
+  const event3 = withMeta<Event>({
     t: "incremented",
     userId: "1",
     counterId: "3",
   });
+  const before = EventStream.fromArray(config, [event1, event2]);
 
-  const after = EventStream.append(config, before, event);
+  const after = EventStream.append(config, before, event3);
 
-  expect(EventStream.count(config, before)).toEqual(2);
+  expect(EventStream.toArray(before)).toEqual([event1, event2]);
 
-  expect(EventStream.count(config, after)).toEqual(3);
+  expect(EventStream.toArray(after)).toEqual([event1, event2, event3]);
 });
 
 test("should be able get subsets", () => {
@@ -80,22 +84,25 @@ test("should be able get subsets", () => {
     user_b_count_a,
   ]);
 
-  const userA = EventStream.subset(config, stream, "byUserId", ["userA"]);
-  const userB = EventStream.subset(config, stream, "byUserId", ["userB"]);
-  const counterA = EventStream.subset(config, stream, "byCounterId", [
-    "counterA",
-  ]);
-  const counterB = EventStream.subset(config, stream, "byCounterId", [
-    "counterB",
-  ]);
+  const userA = EventStream.subset(config, stream, "byUserId", "userA");
+  const userB = EventStream.subset(config, stream, "byUserId", "userB");
+  const counterA = EventStream.subset(
+    config,
+    stream,
+    "byCounterId",
+    "counterA"
+  );
+  const counterB = EventStream.subset(
+    config,
+    stream,
+    "byCounterId",
+    "counterB"
+  );
 
-  expect(EventStream.toArray(config, userA)).toEqual([
-    user_a_count_a,
-    user_a_count_b,
-  ]);
-  expect(EventStream.toArray(config, userB)).toEqual([user_b_count_a]);
-  expect(EventStream.toArray(config, counterA)).toEqual([user_a_count_a]);
-  expect(EventStream.toArray(config, counterB)).toEqual([
+  expect(EventStream.toArray(userA)).toEqual([user_a_count_a, user_a_count_b]);
+  expect(EventStream.toArray(userB)).toEqual([user_b_count_a]);
+  expect(EventStream.toArray(counterA)).toEqual([user_a_count_a]);
+  expect(EventStream.toArray(counterB)).toEqual([
     user_a_count_b,
     user_b_count_a,
   ]);

@@ -26,6 +26,8 @@ import {
   appendEvent,
   initCore,
   toStateSpace,
+  toStateUser,
+  toSpaceEvents,
 } from "./space.core";
 
 //
@@ -229,6 +231,27 @@ export const updateFromClient = async (input: {
         next,
       });
 
+      const cmd: ServerCmd<ToClient>[] = [];
+
+      if (
+        msg.t === "user-joined-space" &&
+        toStateUser(appended, msg.userId).spaceId === msg.spaceId
+      ) {
+        cmd.push(
+          sendToClient([ctx.clientId], {
+            t: "sync",
+            events: appended.events,
+            profiles: model.profileCache,
+          })
+        );
+      }
+
+      if (msg.t === "game" && next.type === "started") {
+        cmd.push(sendToUser(Object.values(next.users), msg));
+      } else {
+        cmd.push(broadcast(msg));
+      }
+
       return {
         model: {
           ...model,
@@ -243,11 +266,7 @@ export const updateFromClient = async (input: {
           },
         },
         eff: updated.eff,
-        cmd: [
-          msg.t === "game" && next.type === "started"
-            ? sendToUser(Object.values(next.users), msg)
-            : broadcast(msg),
-        ],
+        cmd: cmd,
       };
     }
   }
@@ -343,10 +362,7 @@ const sync: typeof updateFromEvent = async (input) => {
     cmd: [
       sendToClient([input.msg.clientId], {
         t: "sync",
-        model: {
-          initialState: input.model.initialState,
-          events: input.model.events,
-        },
+        events: input.model.events,
         profiles: input.model.profileCache,
       }),
     ],

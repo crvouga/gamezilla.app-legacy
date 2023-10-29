@@ -244,8 +244,11 @@ export const isSubset = <X>(
  * const memoizedFibonacci = memoize(fibonacci)
  *
  */
-export const memoize = <X, Y>(toKey: (x: X) => string, f: (x: X) => Y) => {
-  const cache = new Map<string, Y>();
+export const memoize = <X, Y>(
+  toKey: (x: X) => string | number,
+  f: (x: X) => Y
+) => {
+  const cache = new Map<string | number, Y>();
   return (x: X): Y => {
     const key = toKey(x);
     const cached = cache.get(key);

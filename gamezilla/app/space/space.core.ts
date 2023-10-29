@@ -2,6 +2,7 @@ import { EventMeta, EventStream } from "gamezilla/@SHARED/event-stream";
 import { Profile, SpaceId, UserId } from "gamezilla/app/@SHARED/data";
 import { Space } from "gamezilla/app/space/@SHARED";
 import * as Game from "./game/game.core";
+import { memoize } from "gamezilla/@SHARED/core";
 
 //
 //
@@ -47,7 +48,7 @@ export type ToClient = ToClientExtra &
   (
     | EventWithMeta
     | { t: "game-msg"; spaceId: SpaceId; c: Game.ToClient }
-    | { t: "sync"; model: CoreModel }
+    | { t: "sync"; events: CoreModel["events"] }
   );
 
 export type ToServer = ToServerExtra &
@@ -104,12 +105,18 @@ export const mergeModels = (left: CoreModel, right: CoreModel): CoreModel => {
   };
 };
 
-type Indexes = "bySpaceId" | "byUserId";
+type Indexes = "indexSpaceId";
 
 const config = EventStream.init<Event, Indexes>({
-  bySpaceId: (event) => [event.spaceId],
-  byUserId: (event) => ("userId" in event ? [event.userId] : []),
+  indexSpaceId: (event) => event.spaceId,
 });
+
+export const toSpaceEvents = (
+  model: CoreModel,
+  spaceId: SpaceId
+): EventStream<Event, Indexes> => {
+  return EventStream.subset(config, model.events, "indexSpaceId", spaceId);
+};
 
 type StateUser = {
   userId: UserId;
@@ -202,10 +209,13 @@ export const toStateSpace = (
 
 type State = {
   spaces: {
-    [spaceId: string]: StateSpace;
+    [spaceId: SpaceId]: StateSpace;
   };
   spaceIdByUserId: {
-    [userId: string]: SpaceId;
+    [userId: UserId]: SpaceId;
+  };
+  errorsByUserId: {
+    [userId: UserId]: EventWithMeta & { error: string };
   };
 };
 
@@ -213,6 +223,7 @@ const initState = (): State => {
   return {
     spaces: {},
     spaceIdByUserId: {},
+    errorsByUserId: {},
   };
 };
 
@@ -275,7 +286,9 @@ const reducer = ({
 
       const spaceIdByUserIdNew = { ...state.spaceIdByUserId };
       for (const userId in space.users) {
-        delete spaceIdByUserIdNew[userId];
+        if (UserId.is(userId)) {
+          delete spaceIdByUserIdNew[userId];
+        }
       }
 
       return {
@@ -424,17 +437,16 @@ const reducer = ({
   }
 };
 
-function toState(model: CoreModel): State {
-  let state: State = {
-    spaceIdByUserId: {},
-    spaces: {},
-  };
+function toState_(model: CoreModel): State {
+  let state: State = model.initialState;
 
-  for (const event of EventStream.iter(config, model.events)) {
+  for (const event of EventStream.toIterable(model.events)) {
     state = reducer({ state, event });
   }
   return state;
 }
+
+const toState = memoize((model) => model.events.hash, toState_);
 
 if (typeof window !== "undefined") {
   //@ts-ignore

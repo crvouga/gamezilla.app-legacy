@@ -23,11 +23,15 @@ export type EventStream<T, TIndexName extends string> = {
       };
     };
   };
+  /**
+   *
+   */
+  hash: number;
 };
 
 export type EventStreamConfig<T, TIndexName extends string> = {
   indexes: {
-    [indexName in TIndexName]: (event: T & EventMeta) => string[];
+    [indexName in TIndexName]: (event: T & EventMeta) => string;
   };
 };
 
@@ -46,6 +50,7 @@ const empty = <T, TIndexName extends string>(
     events: {},
     indexes: {},
     ordering: [],
+    hash: simpleHash(""),
   };
 };
 
@@ -82,9 +87,15 @@ const append = <T, TIndexName extends string>(
     events: newEvents,
     indexes: updateIndexes(
       config,
-      { ordering: newOrdering, events: newEvents, indexes: stream.indexes },
+      {
+        ordering: newOrdering,
+        events: newEvents,
+        indexes: stream.indexes,
+        hash: stream.hash,
+      },
       event
     ).indexes,
+    hash: hash(newOrdering),
   };
 };
 
@@ -96,7 +107,7 @@ const updateIndexes = <T, TIndexName extends string>(
   const indexesNew = { ...stream.indexes };
 
   for (let indexName in config.indexes) {
-    const indexKey = config.indexes[indexName](event).join("-");
+    const indexKey = config.indexes[indexName](event);
     const index = indexesNew[indexName] || {};
     const indexEvents = index[indexKey] || { ordering: [], events: {} };
 
@@ -157,6 +168,7 @@ const merge = <T, TIndexName extends string>(
     ordering: newOrdering,
     events: newEvents,
     indexes: newIndexes,
+    hash: hash(newOrdering),
   };
 };
 
@@ -164,14 +176,14 @@ const subset = <T, TIndexName extends string>(
   config: EventStreamConfig<T, TIndexName>,
   stream: EventStream<T, TIndexName>,
   indexName: TIndexName,
-  targetIndexVal: string[]
+  targetIndexVal: string
 ): EventStream<T, TIndexName> => {
   let streamNew = empty(config);
 
-  for (const event of iter(config, stream)) {
-    const eventIndexVal = config.indexes[indexName](event).join("-");
+  for (const event of toIterable(stream)) {
+    const eventIndexVal = config.indexes[indexName](event);
 
-    if (eventIndexVal === targetIndexVal.join("-")) {
+    if (eventIndexVal === targetIndexVal) {
       streamNew = append(config, streamNew, event);
     }
   }
@@ -179,40 +191,21 @@ const subset = <T, TIndexName extends string>(
   return streamNew;
 };
 
-const iter = function* <T, TIndexName extends string>(
-  config: EventStreamConfig<T, TIndexName>,
+const toIterable = function* <T, TIndexName extends string>(
   stream: EventStream<T, TIndexName>
 ): Iterable<T & EventMeta> {
   for (const eventId of stream.ordering) {
-    if (!EventId.is(eventId)) {
-      continue;
+    const event = stream.events[eventId as EventId];
+    if (event) {
+      yield event;
     }
-    const event = stream.events[eventId];
-    if (!event) {
-      continue;
-    }
-    yield event;
   }
-};
-
-const count = <T, TIndexName extends string>(
-  config: EventStreamConfig<T, TIndexName>,
-  stream: EventStream<T, TIndexName>
-): number => {
-  return stream.ordering.length;
 };
 
 const toArray = <T, TIndexName extends string>(
-  config: EventStreamConfig<T, TIndexName>,
   stream: EventStream<T, TIndexName>
 ): (T & EventMeta)[] => {
-  const events: (T & EventMeta)[] = [];
-  for (let i = 0; i < stream.ordering.length; i++) {
-    const eventId = stream.ordering[i]!;
-    // @ts-ignore
-    events.push(stream.events[eventId]);
-  }
-  return events;
+  return Array.from(toIterable(stream));
 };
 
 const fromArray = <T, TIndexName extends string>(
@@ -227,7 +220,6 @@ const fromArray = <T, TIndexName extends string>(
 };
 
 export const EventStream = {
-  count,
   subset,
   append,
   merge,
@@ -235,5 +227,22 @@ export const EventStream = {
   init,
   toArray,
   fromArray,
-  iter,
+  toIterable,
 };
+
+function hash(ordering: EventId[]): number {
+  return simpleHash(ordering.join(""));
+}
+
+function simpleHash(str: string): number {
+  let hash = 0;
+  if (str.length === 0) {
+    return hash;
+  }
+  for (var i = 0; i < str.length; i++) {
+    var char = str.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  return hash;
+}

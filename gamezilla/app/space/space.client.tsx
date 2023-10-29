@@ -7,6 +7,7 @@ import {
   RouteGameSpace,
   ViewCtx,
   gotProfiles,
+  pushRoute,
   sendToServer,
 } from "gamezilla/app/@SHARED/client";
 import { SpaceId } from "gamezilla/app/@SHARED/data";
@@ -187,6 +188,23 @@ export const update = ({
           };
         },
         (model) => {
+          if (
+            msg.t === "user-started-space" &&
+            toStateUser(model, msg.userId).spaceId === msg.spaceId
+          ) {
+            return {
+              model,
+              cmd: [
+                pushRoute({
+                  t: "space",
+                  c: { t: "space", spaceId: msg.spaceId },
+                }),
+              ],
+            };
+          }
+          return { model };
+        },
+        (model) => {
           return updateGameModel({ msg, ctx, model });
         }
       );
@@ -265,7 +283,10 @@ export const updateFromServer = ({
         }
 
         case "sync": {
-          const merged = mergeModels(model, msg.model);
+          const merged = mergeModels(model, {
+            events: msg.events,
+            initialState: model.initialState,
+          });
           return {
             model: { ...model, ...merged },
           };
@@ -444,7 +465,7 @@ export const subscriptions = (
   model: ClientModel
 ): Sub<ClientMsg> => {
   const subs: Sub<ClientMsg>[] = [];
-  for (const spaceId in model.events.indexes.bySpaceId) {
+  for (const spaceId in model.events.indexes.indexSpaceId) {
     if (!SpaceId.is(spaceId)) {
       continue;
     }

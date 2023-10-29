@@ -7,7 +7,6 @@ export * as Debug from "./debug";
 export { Eff } from "./eff";
 export * from "./equals";
 export * from "./hex";
-export * from "./immutable-store";
 export * as Keyboard from "./keyboard";
 export * as LocalStorage from "./local-storage";
 export { NonEmpty } from "./non-empty";
