@@ -17,16 +17,25 @@ export type EventStream<T, TIndexName extends string> = {
    */
   indexes: {
     [indexName in TIndexName]?: {
-      [indexKey: string]: {
-        ordering: EventId[];
-        events: { [eventId: EventId]: EventId };
-      };
+      [indexKey: string]: EventStreamIndex;
     };
   };
   /**
    *
    */
   hash: string | number;
+};
+
+type EventStreamIndex = {
+  ordering: EventId[];
+  events: { [eventId: EventId]: EventId };
+};
+
+const initEventStreamIndex = (): EventStreamIndex => {
+  return {
+    ordering: [],
+    events: {},
+  };
 };
 
 export type EventStreamConfig<T, TIndexName extends string> = {
@@ -166,10 +175,12 @@ const subset = <T, TIndexName extends string>(
 ): EventStream<T, TIndexName> => {
   let streamNew = empty(config);
 
-  for (const event of toIterable(stream)) {
-    const eventIndexVal = config.indexes[indexName](event);
+  const index: EventStreamIndex =
+    stream.indexes[indexName]?.[targetIndexVal] ?? initEventStreamIndex();
 
-    if (eventIndexVal === targetIndexVal) {
+  for (const eventId of index.ordering) {
+    const event = stream.events[eventId as EventId];
+    if (event) {
       streamNew = append(config, streamNew, event);
     }
   }
