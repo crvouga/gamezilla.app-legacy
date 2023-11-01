@@ -217,6 +217,9 @@ type State = {
   spaceIdByUserId: {
     [userId: UserId]: SpaceId;
   };
+  active: {
+    [spaceId: SpaceId]: true;
+  };
   errorsByUserId: {
     [userId: UserId]: EventWithMeta & { error: string };
   };
@@ -226,6 +229,7 @@ const initState = (): State => {
   return {
     spaces: {},
     spaceIdByUserId: {},
+    active: {},
     errorsByUserId: {},
   };
 };
@@ -292,6 +296,9 @@ const reducer = ({
         }
       }
 
+      const activeNew = { ...state.active };
+      delete activeNew[event.spaceId];
+
       return {
         ...state,
         spaces: {
@@ -301,6 +308,7 @@ const reducer = ({
             type: "ended",
           },
         },
+        active: activeNew,
         spaceIdByUserId: spaceIdByUserIdNew,
       };
     }
@@ -417,8 +425,12 @@ const reducer = ({
       }
       const spaceIdByUserIdNew = { ...state.spaceIdByUserId };
       spaceIdByUserIdNew[event.userId] = event.spaceId;
+
+      const activeNew = { ...state.active };
+      activeNew[event.spaceId] = true;
       return {
         ...state,
+        active: activeNew,
         spaces: {
           ...state.spaces,
           [event.spaceId]: {

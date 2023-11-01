@@ -1,5 +1,9 @@
 import { Eff, Sub, chainAwait } from "gamezilla/@SHARED/core";
-import { EventMeta, withMeta } from "gamezilla/@SHARED/event-stream";
+import {
+  EventMeta,
+  EventStream,
+  withMeta,
+} from "gamezilla/@SHARED/event-stream";
 import {
   ReqCtx,
   ServerCmd,
@@ -241,7 +245,7 @@ export const updateFromClient = async (input: {
         cmd.push(
           sendToClient([ctx.clientId], {
             t: "sync",
-            events: appended.events,
+            events: toSpaceEvents(appended, msg.spaceId),
             profiles: model.profileCache,
           })
         );
