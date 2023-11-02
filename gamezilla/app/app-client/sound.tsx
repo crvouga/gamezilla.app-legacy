@@ -133,6 +133,12 @@ const MyAudioContext: typeof window.AudioContext =
 
 const audioContext = new MyAudioContext();
 
+document.body.addEventListener("click", function () {
+  audioContext.resume().then(() => {
+    console.log("AudioContext resumed successfully");
+  });
+});
+
 const audioBuffers = new Map<string, AudioBuffer>();
 
 async function preloadSounds(src: string[]) {
@@ -152,6 +158,9 @@ async function playSound(
   src: string,
   volume: number
 ): Promise<Result<string, null>> {
+  if (audioContext.state === "suspended") {
+    await audioContext.resume();
+  }
   const audioBuffer = audioBuffers.get(src);
   if (!audioBuffer) {
     return err(`Sound not loaded. src: ${src}`);
