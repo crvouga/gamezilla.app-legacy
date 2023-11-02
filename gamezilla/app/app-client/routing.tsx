@@ -62,12 +62,16 @@ export const update = ({
 } => {
   switch (msg.t) {
     case "clicked-back": {
-      return { model, eff: Browser.back };
+      return {
+        model,
+        eff: Browser.back,
+        cmd: [playSound(APP_SOUND.navForwardMin, UnitInterval.init(0.5))],
+      };
     }
 
     case "clicked-link": {
       return {
-        model,
+        model: msg.route,
         eff: Browser.push(Route.encode(msg.route)),
         cmd: [playSound(APP_SOUND.tap, UnitInterval.init(0.5))],
       };
