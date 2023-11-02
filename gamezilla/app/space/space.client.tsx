@@ -246,11 +246,20 @@ const updateSound = ({
   if (msg.t === "user-started-space" && msg.userId === ctx.currentUserId) {
     return {
       model,
+      cmd: [playSound(APP_SOUND.navForward)],
+    };
+  }
+
+  if (msg.t === "user-ended-space" && msg.userId === ctx.currentUserId) {
+    return {
+      model,
       cmd: [playSound(APP_SOUND.navBackward)],
     };
   }
 
-  return { model };
+  return {
+    model,
+  };
 };
 
 export const updateFromServer = ({
