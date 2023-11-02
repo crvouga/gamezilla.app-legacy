@@ -1,12 +1,14 @@
 import { Eff, Sub, chain } from "gamezilla/@SHARED/core";
 import { withMeta } from "gamezilla/@SHARED/event-stream";
 import {
+  APP_SOUND,
   ClientCmd,
   ClientCtx,
   ClientEvt,
   RouteGameSpace,
   ViewCtx,
   gotProfiles,
+  playSound,
   pushRoute,
   sendToServer,
 } from "gamezilla/app/@SHARED/client";
@@ -206,10 +208,49 @@ export const update = ({
         },
         (model) => {
           return updateGameModel({ msg, ctx, model });
+        },
+        (model) => {
+          return updateSound({ ctx, model, msg });
         }
       );
     }
   }
+};
+
+const updateSound = ({
+  ctx,
+  model,
+  msg,
+}: {
+  ctx: ClientCtx;
+  model: ClientModel;
+  msg: ClientMsg;
+}): {
+  model: ClientModel;
+  cmd?: ClientCmd<ToServer>[];
+} => {
+  if (msg.t === "user-joined-space" && msg.userId === ctx.currentUserId) {
+    return {
+      model,
+      cmd: [playSound(APP_SOUND.navForward)],
+    };
+  }
+
+  if (msg.t === "user-left-space" && msg.userId === ctx.currentUserId) {
+    return {
+      model,
+      cmd: [playSound(APP_SOUND.navBackward)],
+    };
+  }
+
+  if (msg.t === "user-started-space" && msg.userId === ctx.currentUserId) {
+    return {
+      model,
+      cmd: [playSound(APP_SOUND.navBackward)],
+    };
+  }
+
+  return { model };
 };
 
 export const updateFromServer = ({
