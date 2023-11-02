@@ -134,9 +134,11 @@ const MyAudioContext: typeof window.AudioContext =
 const audioContext = new MyAudioContext();
 
 document.body.addEventListener("click", function () {
-  audioContext.resume().then(() => {
-    console.log("AudioContext resumed successfully");
-  });
+  if (audioContext.state === "suspended") {
+    audioContext.resume().then(() => {
+      console.log("AudioContext resumed successfully");
+    });
+  }
 });
 
 const audioBuffers = new Map<string, AudioBuffer>();
