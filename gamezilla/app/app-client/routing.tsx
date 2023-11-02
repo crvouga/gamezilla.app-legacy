@@ -69,7 +69,7 @@ export const update = ({
       return {
         model,
         eff: Browser.push(Route.encode(msg.route)),
-        // cmd: [playSound(APP_SOUND.tap, UnitInterval.init(0.5))],
+        cmd: [playSound(APP_SOUND.tap, UnitInterval.init(0.5))],
       };
     }
 
