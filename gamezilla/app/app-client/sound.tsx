@@ -1,6 +1,16 @@
 import { Eff, err, ok, Result, UnitInterval } from "gamezilla/@SHARED/core";
 import { ClientEvt, SoundCmd } from "gamezilla/app/@SHARED/client";
 
+//
+//
+//
+//
+// Model
+//
+//
+//
+//
+
 export type Model = {
   muted: boolean;
   isDocumentVisible: boolean;
@@ -10,6 +20,16 @@ export const init: Model = {
   muted: false,
   isDocumentVisible: false,
 };
+
+//
+//
+//
+//
+// Update
+//
+//
+//
+//
 
 export type Msg =
   | {
@@ -125,6 +145,18 @@ export const updateFromCmd = ({
     }
   }
 };
+
+//
+//
+//
+//
+//
+// Web Audio
+//
+//
+//
+//
+//
 
 const MyAudioContext: typeof window.AudioContext =
   window.AudioContext ||
