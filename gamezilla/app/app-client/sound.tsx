@@ -1,14 +1,5 @@
 import { Eff, err, ok, Result, UnitInterval } from "gamezilla/@SHARED/core";
 import { ClientEvt, SoundCmd } from "gamezilla/app/@SHARED/client";
-// https://github.com/goldfire/howler.js#quick-start
-import { Howl, Howler } from "howler";
-
-// docs: https://github.com/goldfire/howler.js#documentation
-Howler.volume(1);
-Howler.autoUnlock = true;
-Howler.usingWebAudio = true;
-Howler.autoSuspend = false;
-Howler.html5PoolSize = 100;
 
 export type Model = {
   muted: boolean;
@@ -27,12 +18,12 @@ export type Msg =
   | {
       t: "played-sound";
       src: string;
-      result: Result<unknown, null>;
+      result: Result<string, null>;
     }
   | {
       t: "preloaded-sounds";
       src: string[];
-      result: Result<unknown, null>;
+      result: Result<string, null>;
     };
 
 export const update = ({
@@ -135,52 +126,46 @@ export const updateFromCmd = ({
   }
 };
 
-const howls = new Map<string, Howl>();
-const loadHowl = (src: string) => {
-  const cached = howls.get(src);
-  if (cached) {
-    return cached;
+const MyAudioContext: typeof window.AudioContext =
+  window.AudioContext ||
+  // @ts-ignore
+  window.webkitAudioContext;
+
+const audioContext = new MyAudioContext();
+
+const audioBuffers = new Map<string, AudioBuffer>();
+
+async function preloadSounds(src: string[]) {
+  await Promise.allSettled(src.map((s) => preloadSound(s)));
+  return ok(null);
+}
+
+async function preloadSound(src: string) {
+  const response = await fetch(src);
+  const arrayBuffer = await response.arrayBuffer();
+  const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+  audioBuffers.set(src, audioBuffer);
+  return ok(null);
+}
+
+async function playSound(
+  src: string,
+  volume: number
+): Promise<Result<string, null>> {
+  const audioBuffer = audioBuffers.get(src);
+  if (!audioBuffer) {
+    return err(`Sound not loaded. src: ${src}`);
   }
-  const howl = new Howl({
-    src,
-    preload: true,
-    html5: false,
-    autoplay: false,
-    loop: false,
-    mute: false,
-    format: ["wav"],
-    volume: 1,
-  });
-  howl.once("loaderror", () => {
-    Howler.unload();
-  });
-  howl.once("playerror", () => {
-    Howler.unload();
-  });
-  howls.set(src, howl);
-  return howl;
-};
 
-const playSound = async (src: string, volume: UnitInterval) => {
-  try {
-    const howl = loadHowl(src);
+  const sourceNode = audioContext.createBufferSource();
+  sourceNode.buffer = audioBuffer;
+  const gainNode = audioContext.createGain();
+  gainNode.gain.value = volume;
 
-    howl.volume(volume);
-    howl.play();
+  sourceNode.connect(gainNode);
+  gainNode.connect(audioContext.destination);
 
-    return ok(null);
-  } catch (error) {
-    return err({ error, message: "Caught error" });
-  }
-};
+  sourceNode.start(0);
 
-const preloadSounds = async (srcList: string[]) => {
-  try {
-    for (const src of srcList) {
-      loadHowl(src);
-    }
-    return ok(null);
-  } catch (error) {
-    return err({ error, message: "Caught error" });
-  }
-};
+  return ok(null);
+}
