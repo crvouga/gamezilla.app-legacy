@@ -1,23 +1,17 @@
-import { Sub, chain, chainV2 } from "gamezilla/@SHARED/core";
-import { IconGamepad, IconScrewdriverWrench } from "gamezilla/app/@SHARED/ui";
-import { GameClient } from "gamezilla/app/space/@SHARED";
-import { MainMenuScreen } from "gamezilla/app/space/game/@SHARED";
-import { ViewCoverArt } from "./@SHARED/flow-cover-art";
-import { FlowViewCtx } from "./@SHARED/flow-ctx";
-import {
-  ClientModel,
-  ClientMsg,
-  ServerModel,
-  ToClient,
-  ToServer,
-} from "./flow.core";
-import { PlayClient } from "./play";
-import { PuzzleBuilderClient } from "./puzzle-builder";
+import { Sub, chain } from "gamezilla/@SHARED/core";
 import {
   APP_SOUND,
   playSound,
   sendToServer,
 } from "gamezilla/app/@SHARED/client";
+import { IconGamepad, IconScrewdriverWrench } from "gamezilla/app/@SHARED/ui";
+import { GameClient } from "gamezilla/app/space/@SHARED";
+import { MainMenuScreen } from "gamezilla/app/space/game/@SHARED";
+import { ViewCoverArt } from "./@SHARED/flow-cover-art";
+import { FlowViewCtx } from "./@SHARED/flow-ctx";
+import { ClientModel, ClientMsg, ToClient, ToServer } from "./flow.core";
+import { PlayClient } from "./play";
+import { PuzzleBuilderClient } from "./puzzle-builder";
 
 type Client = GameClient<ClientModel, ClientMsg, ToClient, ToServer>;
 
@@ -60,7 +54,7 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
       if (result.t === "err") {
         return initial;
       }
-      return chainV2(initial, (model) => {
+      return chain(initial, (model) => {
         if (model.t === "none") {
           return { model, cmd: [playSound(APP_SOUND.navBackwardMin)] };
         }

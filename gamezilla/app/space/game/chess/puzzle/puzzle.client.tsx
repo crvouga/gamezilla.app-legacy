@@ -1,4 +1,4 @@
-import { Eff, andThen, p } from "gamezilla/@SHARED/core";
+import { Eff, andThen, chain, p } from "gamezilla/@SHARED/core";
 import {
   APP_SOUND,
   ClientCmd,
@@ -71,11 +71,10 @@ export const update = (input: {
   eff?: Eff<ClientMsg>;
   cmd?: ClientCmd<ToServer>[];
 } => {
-  return p(
+  return chain(
     input,
-    andThen((model) => updateMain({ ...input, model })),
-    andThen(watch),
-    andThen((model) => {
+    (model) => updateMain({ ...input, model }),
+    (model) => {
       if (input.msg.t === "input-move") {
         if (input.msg.didCapture) {
           return { model, cmd: [playSound(CHESS_SOUND.captureSound)] };
@@ -83,8 +82,8 @@ export const update = (input: {
         return { model, cmd: [playSound(CHESS_SOUND.moveSound)] };
       }
       return { model };
-    }),
-    andThen((model) => {
+    },
+    (model) => {
       if (!isIncorrect(input.model) && isIncorrect(model)) {
         return { model, cmd: [playSound(APP_SOUND.error)] };
       }
@@ -92,7 +91,7 @@ export const update = (input: {
         return { model, cmd: [playSound(APP_SOUND.celebration)] };
       }
       return { model };
-    })
+    }
   );
 };
 

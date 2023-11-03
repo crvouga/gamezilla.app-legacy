@@ -1,4 +1,4 @@
-import { Eff, Sub, andThen, chain, chainV2, p } from "gamezilla/@SHARED/core";
+import { Eff, Sub, chain } from "gamezilla/@SHARED/core";
 import { APP_SOUND, ClientCmd, playSound } from "gamezilla/app/@SHARED/client";
 import {
   Drawer,
@@ -74,7 +74,7 @@ export const init: Client["init"] = () => {
 
 export const update: Client["update"] = (input) => {
   return chain(
-    input.model,
+    input,
     (model) => {
       const { msg } = input;
       switch (msg.t) {
@@ -101,7 +101,7 @@ export const update: Client["update"] = (input) => {
 };
 
 export const updateFromServer: Client["updateFromServer"] = (input) => {
-  return chainV2(
+  return chain(
     input.model ? { model: input.model } : init(input),
     (model) => {
       const { msg } = input;
@@ -118,20 +118,46 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
 export const updateFromGame: Client["updateFromGame"] = (input) => {
   const { model, msg } = input;
 
-  if (!model) {
-    return init(input);
-  }
-
-  switch (msg.t) {
-    case "user-started-playing": {
+  return chain(
+    model ? { model } : init(input),
+    (model) => {
+      const soundCmd = eventToSound(msg);
       return {
         model,
-        cmd: [playSound(APP_SOUND.tap)],
+        cmd: soundCmd,
       };
+    },
+
+    (model) => {
+      return watch({ ...input, model });
+    }
+  );
+};
+
+const eventToSound = (event: Event): ClientCmd<ToServer>[] => {
+  switch (event.t) {
+    case "user-started-playing":
+    case "user-stopped-playing":
+    case "user-dropped-disc":
+    case "user-changed-bot-level":
+    case "user-swapped-sides":
+    case "bot-dropped-disc": {
+      return [playSound(APP_SOUND.tap)];
+    }
+
+    case "user-restarted-game":
+    case "user-started-game": {
+      return [playSound(APP_SOUND.navForwardMin)];
+    }
+
+    case "user-stopped-game": {
+      return [playSound(APP_SOUND.navBackwardMin)];
+    }
+
+    default: {
+      return [];
     }
   }
-
-  return { model };
 };
 
 export const updateFromEvent: Client["updateFromEvent"] = (input) => {

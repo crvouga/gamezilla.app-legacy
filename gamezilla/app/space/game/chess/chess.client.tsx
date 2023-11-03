@@ -1,12 +1,4 @@
-import {
-  Eff,
-  RemoteResult,
-  Sub,
-  andThen,
-  chain,
-  chainV2,
-  p,
-} from "gamezilla/@SHARED/core";
+import { Eff, RemoteResult, Sub, chain } from "gamezilla/@SHARED/core";
 import {
   APP_SOUND,
   ClientCmd,
@@ -135,7 +127,7 @@ export const updateFromServer: Client["updateFromServer"] = ({
   const initial = model ? { model } : init({ ctx, state });
   switch (msg.t) {
     case "input-mode": {
-      return chainV2(
+      return chain(
         initial,
         (model) => {
           const { result } = msg;

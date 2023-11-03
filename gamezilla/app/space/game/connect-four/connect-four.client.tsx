@@ -117,27 +117,20 @@ export const updateFromEvent: Client["updateFromEvent"] = (input) => {
 export const updateFromGame: Client["updateFromGame"] = (input) => {
   const { model, msg, state, ctx } = input;
 
-  if (!model) {
-    return init(input);
-  }
+  return chain(model ? { model } : init(input), (model) => {
+    if (msg.t === "user-changed-mode") {
+      return initMode({ ctx, model, state });
+    }
 
-  if (msg.t === "user-changed-mode") {
-    return initMode({
-      ctx,
-      model,
-      state,
-    });
-  }
+    if (state.t === "vs-bot" && model.t === "vs-bot" && msg.t === "vs-bot") {
+      return VsBot.updateFromGame({ ...input, state, model, msg });
+    }
 
-  if (state.t === "vs-bot" && model.t === "vs-bot" && msg.t === "vs-bot") {
-    return VsBot.updateFromGame({ ...input, state, model, msg });
-  }
-
-  if (state.t === "vs-user" && model.t === "vs-user" && msg.t === "vs-user") {
-    return VsUser.updateFromGame({ ...input, state, model, msg });
-  }
-
-  return init(input);
+    if (state.t === "vs-user" && model.t === "vs-user" && msg.t === "vs-user") {
+      return VsUser.updateFromGame({ ...input, state, model, msg });
+    }
+    return { model };
+  });
 };
 
 const initMode = (input: {
@@ -145,42 +138,23 @@ const initMode = (input: {
   state: State;
   model: ClientModel;
 }) => {
-  return chain(
-    input.model,
-    () => {
-      const { ctx, state } = input;
+  const { state, model } = input;
 
-      const initial = init({ ctx, state });
-
-      if (state.t === "vs-bot") {
-        return VsBot.init({ ...input, state });
-      }
-
-      if (state.t === "vs-user") {
-        return VsUser.init({ ...input, state });
-      }
-
-      return initial;
-    },
-    (model) => {
-      const { state } = input;
-      switch (state.t) {
-        case "none": {
-          return {
-            model,
-            cmd: [playSound(APP_SOUND.navBackwardMin)],
-          };
-        }
-        case "vs-user":
-        case "vs-bot": {
-          return {
-            model,
-            cmd: [playSound(APP_SOUND.navForwardMin)],
-          };
-        }
-      }
+  switch (state.t) {
+    case "none": {
+      return {
+        model,
+        cmd: [playSound(APP_SOUND.navBackwardMin)],
+      };
     }
-  );
+    case "vs-user":
+    case "vs-bot": {
+      return {
+        model,
+        cmd: [playSound(APP_SOUND.navForwardMin)],
+      };
+    }
+  }
 };
 
 //

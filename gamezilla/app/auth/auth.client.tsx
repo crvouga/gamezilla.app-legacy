@@ -123,7 +123,7 @@ export const updateFromServer = ({
 
     case "client-unauthenticated": {
       return chain(
-        model,
+        { model },
         (model) => {
           return {
             model: { ...model, currentUser: { t: "logged-out" } },
@@ -144,7 +144,7 @@ export const updateFromServer = ({
 
     case "client-authenticated": {
       return chain(
-        model,
+        { model },
         (model) => {
           return {
             model: {

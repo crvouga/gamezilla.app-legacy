@@ -18,61 +18,6 @@ type Output<Model, Msg, Evt, Cmd> = {
  * @description
  * A helper function used for composing update functions together.
  * @example
- * const updated = chain(
- * { model: 0 },
- * (model) => ({ model: model + 1, evt: [someEvent] }),
- * (model) => ({ model: model + 1, eff: someEff }),
- * (model) => ({ model: model + 1, cmd: [someCmd] }),
- * )
- * //=> { model: 3, evt: [someEvt], eff: someEff, cmd: [someCmd] }
- *
- * @param initial - the model to start with
- * @param updaters - a list of update functions to apply to the model
- * @returns Accumulated output from all the update functions
- */
-export const chain = <Model, Msg, Evt, Cmd>(
-  initial: Model,
-  ...updaters: ((input: Model) => Output<Model, Msg, Evt, Cmd>)[]
-): Output<Model, Msg, Evt, Cmd> => {
-  const cmd: Cmd[] = [];
-  const evt: Evt[] = [];
-  const eff: Eff<Msg>[] = [];
-  let model: Model = initial;
-
-  for (let i = 0, len = updaters.length; i < len; ++i) {
-    // @ts-ignore
-    const updated = updaters[i](model);
-    model = updated.model;
-
-    if (updated.eff) {
-      eff.push(updated.eff);
-    }
-    if (updated.evt) {
-      for (let j = 0, len = updated.evt.length; j < len; ++j) {
-        // @ts-ignore
-        evt.push(updated.evt[j]);
-      }
-    }
-    if (updated.cmd) {
-      for (let j = 0, len = updated.cmd.length; j < len; ++j) {
-        // @ts-ignore
-        cmd.push(updated.cmd[j]);
-      }
-    }
-  }
-
-  return {
-    model,
-    eff: Eff.batch(eff),
-    evt,
-    cmd,
-  };
-};
-
-/**
- * @description
- * A helper function used for composing update functions together.
- * @example
  * const updated = p(
  *  andThen((model) => ({ model, eff: () => {} })),
  *  andThen((model) => ({ model, cmd: [] })),
@@ -96,7 +41,7 @@ export const andThen =
 
 /**
  * @description
- * A helper function used for composing update functions together.
+ * A helper function used for chaining together update functions together.
  * @example
  * const updated = chain(
  * { model: 0 },
@@ -110,7 +55,7 @@ export const andThen =
  * @param updaters - a list of update functions to apply to the model
  * @returns Accumulated output from all the update functions
  */
-export const chainV2 = <Model, Msg, Evt, Cmd>(
+export const chain = <Model, Msg, Evt, Cmd>(
   initial: Output<Model, Msg, Evt, Cmd>,
   ...updaters: ((input: Model) => Output<Model, Msg, Evt, Cmd>)[]
 ): Output<Model, Msg, Evt, Cmd> => {
@@ -118,25 +63,29 @@ export const chainV2 = <Model, Msg, Evt, Cmd>(
   const evt: Evt[] = initial.evt ?? [];
   const eff: Eff<Msg>[] = initial.eff ? [initial.eff] : [];
   let model = initial.model;
+  let i = 0;
+  let len = updaters.length;
 
-  for (let i = 0, len = updaters.length; i < len; ++i) {
-    // @ts-ignore
-    const updated = updaters[i](model);
+  for (i = 0; i < len; ++i) {
+    const updated = updaters[i]!(model);
+
     model = updated.model;
 
     if (updated.eff) {
       eff.push(updated.eff);
     }
     if (updated.evt) {
-      for (let j = 0, len = updated.evt.length; j < len; ++j) {
-        // @ts-ignore
-        evt.push(updated.evt[j]);
+      let j = 0;
+      let len = updated.evt.length;
+      for (j = 0; j < len; ++j) {
+        evt.push(updated.evt[j]!);
       }
     }
     if (updated.cmd) {
-      for (let j = 0, len = updated.cmd.length; j < len; ++j) {
-        // @ts-ignore
-        cmd.push(updated.cmd[j]);
+      let j = 0;
+      let len = updated.cmd.length;
+      for (j = 0; j < len; ++j) {
+        cmd.push(updated.cmd[j]!);
       }
     }
   }

@@ -1,4 +1,4 @@
-import { Eff, Sub, andThen, chain, chainV2, p } from "gamezilla/@SHARED/core";
+import { Eff, Sub, chain } from "gamezilla/@SHARED/core";
 import { APP_SOUND, ClientCmd, playSound } from "gamezilla/app/@SHARED/client";
 import { GameClient, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
 import {
@@ -75,7 +75,7 @@ export const updateFromServer: Client["updateFromServer"] = ({
 }) => {
   const initial = model ? { model } : init();
   if (msg.t === "input-mode") {
-    return chainV2(
+    return chain(
       initial,
       (model) => {
         const { result } = msg;

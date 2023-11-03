@@ -171,7 +171,7 @@ export const update = ({
 
     default: {
       return chain(
-        model,
+        { model },
         (model): ReturnType<typeof update> => {
           const updated = appendEvent(model, msg);
 
@@ -289,7 +289,7 @@ export const updateFromServer = ({
   cmd?: ClientCmd<ToServer>[];
 } => {
   return chain(
-    model,
+    { model },
     (model): ReturnType<typeof updateFromServer> => {
       switch (msg.t) {
         case "game-msg": {
@@ -346,7 +346,7 @@ export const updateFromServer = ({
 
         case "sync": {
           return chain(
-            model,
+            { model },
             (model) => {
               const merged = mergeModels(model, {
                 events: msg.events,
@@ -367,7 +367,7 @@ export const updateFromServer = ({
             return { model };
           }
           return chain(
-            model,
+            { model },
             (model) => {
               const modelNew = appendEvent(model, msg);
 

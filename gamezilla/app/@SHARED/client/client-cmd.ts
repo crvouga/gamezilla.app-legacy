@@ -86,10 +86,7 @@ export const APP_SOUND = {
   navBackwardMin: "./nav-backward-min.wav",
 };
 
-export const playSound = <T>(
-  src: string,
-  volume?: UnitInterval
-): ClientCmd<T> => {
+export const playSound = <T>(src: string, volume?: UnitInterval): SoundCmd => {
   return {
     t: "sound/play",
     src,

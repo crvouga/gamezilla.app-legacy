@@ -1,4 +1,4 @@
-import { Eff, Sub, chain, chainV2 } from "gamezilla/@SHARED/core";
+import { Sub, chain } from "gamezilla/@SHARED/core";
 import {
   APP_SOUND,
   playSound,
@@ -12,7 +12,7 @@ import {
 } from "gamezilla/app/@SHARED/ui";
 import { GameClient } from "gamezilla/app/space/@SHARED";
 import { ViewBottomButtonBar } from "gamezilla/app/space/game/@SHARED";
-import { FlowGridUIPlay, FlowGridUI, FlowUI } from "../@SHARED/flow";
+import { FlowGridUI, FlowGridUIPlay, FlowUI } from "../@SHARED/flow";
 import { FlowViewCtx } from "../@SHARED/flow-ctx";
 import {
   ClientModel,
@@ -71,7 +71,7 @@ const updateFromServer: Client["updateFromServer"] = (input) => {
         return initial;
       }
 
-      return chainV2(initial, (model) => {
+      return chain(initial, (model) => {
         if (msg.t === "input-mode") {
           return { model, cmd: [playSound(APP_SOUND.tap)] };
         }
