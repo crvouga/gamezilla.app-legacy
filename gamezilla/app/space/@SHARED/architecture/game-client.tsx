@@ -79,14 +79,10 @@ export type GameClient<
     model: ClientModel;
   }) => VDom;
 
-  viewEventFeedItem?: (input: {
-    ctx: ViewCtx;
+  viewEvent?: (input: {
+    ctx: ClientCtx;
     event: GameEvent;
-    state: GameState;
-    model: ClientModel;
   }) => ActivityFeedItem | null;
-
-  ViewEvent?: (input: { ctx: ViewCtx; event: GameEvent }) => VDom;
 };
 
 /**
@@ -212,6 +208,16 @@ const tag = <
           model={input.model.c}
         />
       );
+    },
+
+    viewEvent: (input) => {
+      if (client.viewEvent) {
+        return client.viewEvent({
+          ctx: input.ctx,
+          event: input.event.c,
+        });
+      }
+      return null;
     },
   };
 };

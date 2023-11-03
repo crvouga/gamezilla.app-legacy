@@ -242,6 +242,33 @@ export const View = ({
   );
 };
 
+export const viewEvent: Client["viewEvent"] = (input) => {
+  const { event, ctx } = input;
+
+  if (event.t === "user-changed-mode") {
+    const profile = ctx.profiles[ctx.currentUserId];
+    if (!profile) {
+      return null;
+    }
+    if (event.mode === "none") {
+      return { text: `${profile.username} exited game to main menu` };
+    }
+    return {
+      text: `${profile.username} changed`,
+    };
+  }
+
+  if (event.t === "vs-bot") {
+    return VsBot.viewEvent?.({ ctx, event }) ?? null;
+  }
+
+  if (event.t === "vs-user") {
+    return VsUser.viewEvent?.({ ctx, event }) ?? null;
+  }
+
+  return null;
+};
+
 //
 //
 //
