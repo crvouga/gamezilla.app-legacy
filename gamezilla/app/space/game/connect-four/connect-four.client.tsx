@@ -137,24 +137,30 @@ const initMode = (input: {
   ctx: SpaceClientCtx;
   state: GameState;
   model: ClientModel;
-}) => {
+}): ReturnType<typeof updateFromGame> => {
   const { state, model } = input;
 
-  switch (state.t) {
-    case "none": {
-      return {
-        model,
-        cmd: [playSound(APP_SOUND.navBackwardMin)],
-      };
+  return chain(
+    //
+    init(input),
+    (model) => {
+      switch (state.t) {
+        case "none": {
+          return {
+            model,
+            cmd: [playSound(APP_SOUND.navBackwardMin)],
+          };
+        }
+        case "vs-user":
+        case "vs-bot": {
+          return {
+            model,
+            cmd: [playSound(APP_SOUND.navForwardMin)],
+          };
+        }
+      }
     }
-    case "vs-user":
-    case "vs-bot": {
-      return {
-        model,
-        cmd: [playSound(APP_SOUND.navForwardMin)],
-      };
-    }
-  }
+  );
 };
 
 //

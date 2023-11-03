@@ -1,4 +1,4 @@
-import { Sub } from "gamezilla/@SHARED/core";
+import { Sub, chain } from "gamezilla/@SHARED/core";
 import { ViewCtx } from "gamezilla/app/@SHARED/client";
 import {
   Button,
@@ -53,8 +53,8 @@ type Client = GameClient<
 export const init: Client["init"] = () => {
   return {
     model: {
-      ghostIndex: "none",
-      openedModal: "none",
+      ghostIndex: null,
+      openedModal: null,
     },
   };
 };
@@ -70,7 +70,7 @@ export const init: Client["init"] = () => {
 export const update: Client["update"] = ({ msg, model }) => {
   switch (msg.t) {
     case "clicked-resign": {
-      return { model: { ...model, openedModal: "ConfirmResign" } };
+      return { model: { ...model, openedModal: "confirm-resign" } };
     }
 
     case "hovered-over-columns": {
@@ -78,7 +78,7 @@ export const update: Client["update"] = ({ msg, model }) => {
     }
 
     case "close-modal": {
-      return { model: { ...model, openedModal: "none" } };
+      return { model: { ...model, openedModal: null } };
     }
   }
 };
@@ -107,10 +107,14 @@ export const updateFromEvent: Client["updateFromEvent"] = (
 
 export const updateFromGame: Client["updateFromGame"] = (input) => {
   const { model } = input;
-  if (model) {
-    return { model };
-  }
-  return init(input);
+
+  return chain(
+    //
+    model ? { model } : init(input),
+    (model) => {
+      return { model };
+    }
+  );
 };
 
 //
@@ -296,7 +300,7 @@ export const View: Client["View"] = ({
         onConfirm={() =>
           dispatchEvent({ t: "user-resigned", userId: ctx.currentUserId })
         }
-        open={model.openedModal === "ConfirmResign"}
+        open={model.openedModal === "confirm-resign"}
       />
     </GameLayout>
   );

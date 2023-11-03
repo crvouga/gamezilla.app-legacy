@@ -21,8 +21,8 @@ import { SpaceCtx } from "gamezilla/app/space/@SHARED";
 //
 
 export type ClientModel = {
-  openedModal: "ConfirmResign" | "none";
-  ghostIndex: ColumnIndex | "none";
+  openedModal: "confirm-resign" | null;
+  ghostIndex: ColumnIndex | null;
 };
 
 export type ServerModel = null;
