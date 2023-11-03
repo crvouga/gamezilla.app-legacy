@@ -771,37 +771,20 @@ const ViewSpaceScreen = ({
 const ViewActivityFeedBar = ({
   model,
   ctx,
-  state,
+
   dispatch,
 }: {
   dispatch: (m: ClientMsg) => void;
-  state: GameState;
+
   model: ClientModel;
   ctx: SpaceViewCtx;
 }) => {
-  const events: GameEvent[] = [];
-
   return (
     <>
-      <button
-        className="flex w-full items-center justify-start text-center"
-        onClick={() => dispatch({ t: "opened-activity-feed-drawer" })}></button>
-      <Drawer
-        id="activity-feed-drawer"
-        open={model.opened === "activity-feed-drawer"}
-        onClose={() => dispatch({ t: "closed-activity-feed-drawer" })}>
-        <div className="pb-4ya flex max-h-72 w-full flex-col justify-end overflow-y-scroll text-left">
-          {events.map((event) => {
-            return (
-              <ViewActivityFeedItem
-                key={JSON.stringify(event)}
-                ctx={ctx}
-                event={event}
-                state={state}
-              />
-            );
-          })}
-        </div>
+      <button className="flex w-full items-center justify-start text-center"></button>
+
+      <Drawer id="activity-feed-drawer" open={false} onClose={() => {}}>
+        <div className="pb-4ya flex max-h-72 w-full flex-col justify-end overflow-y-scroll text-left"></div>
       </Drawer>
     </>
   );
