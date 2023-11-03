@@ -2,6 +2,7 @@ import { Eff, Sub } from "gamezilla/@SHARED/core";
 import { ClientCmd } from "gamezilla/app/@SHARED/client";
 import { VDom } from "gamezilla/app/@SHARED/ui";
 import { SpaceClientCtx, SpaceClientEvt, SpaceViewCtx } from "../space";
+import { ActivityFeedItem } from "..";
 
 export type GameClient<
   ClientModel,
@@ -77,6 +78,13 @@ export type GameClient<
     dispatchEvent: (evt: GameEvent) => void;
     model: ClientModel;
   }) => VDom;
+
+  viewEventFeedItem?: (input: {
+    ctx: ViewCtx;
+    event: GameEvent;
+    state: GameState;
+    model: ClientModel;
+  }) => ActivityFeedItem | null;
 
   ViewEvent?: (input: { ctx: ViewCtx; event: GameEvent }) => VDom;
 };

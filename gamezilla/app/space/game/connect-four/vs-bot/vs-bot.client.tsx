@@ -8,7 +8,11 @@ import {
   LoadingBar,
   cn,
 } from "gamezilla/app/@SHARED/ui";
-import { GameClient, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
+import {
+  GameClient,
+  SpaceViewCtx,
+  ViewActivityFeedItem,
+} from "gamezilla/app/space/@SHARED";
 import {
   GameLayout,
   IconBotHappy,
@@ -455,19 +459,12 @@ const ViewActivityFeedBar = ({
   ctx: SpaceViewCtx;
 }) => {
   const events: Event[] = [];
-  const latestEvent = events.findLast(
-    (e) => toActivityFeedItemUI({ event: e, ctx, state }) !== null
-  );
-  if (!latestEvent) {
-    return null;
-  }
+
   return (
     <>
       <button
         className="flex w-full items-center justify-start text-center"
-        onClick={() => dispatch({ t: "opened-activity-feed-drawer" })}>
-        <ViewActivityFeedItem event={latestEvent} ctx={ctx} state={state} />
-      </button>
+        onClick={() => dispatch({ t: "opened-activity-feed-drawer" })}></button>
       <Drawer
         id="activity-feed-drawer"
         open={model.opened === "activity-feed-drawer"}
@@ -489,18 +486,11 @@ const ViewActivityFeedBar = ({
   );
 };
 
-const toActivityFeedItemUI = ({
+export const viewEventFeedItem: Client["viewEventFeedItem"] = ({
   event,
-  ctx,
   state,
-}: {
-  ctx: SpaceViewCtx;
-  event: Event;
-  state: State;
-}): {
-  text: string;
-  variant?: "error";
-} | null => {
+  ctx,
+}) => {
   const username =
     "userId" in event ? ctx.profiles[event.userId]?.username ?? null : null;
 
@@ -510,7 +500,9 @@ const toActivityFeedItemUI = ({
       if (errored) {
         return null;
       }
-      return { text: "Bot dropped disc" };
+      return {
+        text: "Bot dropped disc",
+      };
     }
     case "user-changed-bot-level": {
       return { text: `${username} changed bot level to ${event.botLevel}` };
@@ -573,12 +565,7 @@ const ViewActivityFeedItem = ({
   event: Event;
   state: State;
 }) => {
-  const itemUI = toActivityFeedItemUI({
-    event,
-    ctx,
-    state,
-  });
-  return itemUI ? <Item text={itemUI.text} variant={itemUI.variant} /> : null;
+  return null;
 };
 
 const Item = ({
