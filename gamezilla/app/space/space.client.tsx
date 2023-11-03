@@ -42,6 +42,7 @@ import {
   ClientModel,
   ClientMsg,
   Event,
+  EventWithMeta,
   StateStarted,
   ToClient,
   ToServer,
@@ -362,6 +363,9 @@ export const updateFromServer = ({
         }
 
         default: {
+          if (msg.eventId in model.events.events) {
+            return { model };
+          }
           return chain(
             model,
             (model) => {
@@ -396,7 +400,7 @@ const updateGameModel = ({
   ctx,
 }: {
   model: ClientModel;
-  msg: Event;
+  msg: EventWithMeta;
   ctx: ClientCtx;
 }): {
   model: ClientModel;
