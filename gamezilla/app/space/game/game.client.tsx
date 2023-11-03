@@ -91,10 +91,6 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
 export const updateFromGame: Client["updateFromGame"] = (input) => {
   const { state, model } = input;
 
-  if (!model) {
-    return init(input);
-  }
-
   if (state.t === "connect-four" && model.t === "connect-four") {
     return ConnectFour.updateFromGame({ ...input, state, model });
   }

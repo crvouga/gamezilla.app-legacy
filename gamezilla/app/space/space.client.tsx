@@ -257,6 +257,17 @@ const updateSound = ({
     };
   }
 
+  if (msg.t === "user-inputted-game") {
+    return {
+      model,
+      cmd: [
+        playSound(
+          msg.game ? APP_SOUND.navForwardMin : APP_SOUND.navBackwardMin
+        ),
+      ],
+    };
+  }
+
   return {
     model,
   };
@@ -448,15 +459,23 @@ const updateGameModel = ({
         return { model };
       }
 
-      if (!space.game) {
+      const gameState = space.game;
+
+      if (!gameState) {
+        return { model };
+      }
+
+      const gameModel = model.games[msg.spaceId];
+
+      if (!gameModel) {
         return { model };
       }
 
       const updated = GameClient.updateFromGame({
         ctx: { ...ctx, space: space },
         msg: msg.c,
-        model: model.games[msg.spaceId],
-        state: space.game,
+        model: gameModel,
+        state: gameState,
       });
 
       return {

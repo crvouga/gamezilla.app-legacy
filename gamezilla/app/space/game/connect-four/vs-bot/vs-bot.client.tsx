@@ -1,5 +1,5 @@
 import { Eff, Sub, andThen, chain, chainV2, p } from "gamezilla/@SHARED/core";
-import { ClientCmd } from "gamezilla/app/@SHARED/client";
+import { APP_SOUND, ClientCmd, playSound } from "gamezilla/app/@SHARED/client";
 import {
   Drawer,
   IconArrowLeftOnRect,
@@ -116,11 +116,18 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
 };
 
 export const updateFromGame: Client["updateFromGame"] = (input) => {
-  const { model } = input;
-  if (model) {
-    return { model };
+  const { model, msg } = input;
+
+  switch (msg.t) {
+    case "user-started-playing": {
+      return {
+        model,
+        cmd: [playSound(APP_SOUND.navForwardMin)],
+      };
+    }
   }
-  return init(input);
+
+  return { model };
 };
 
 export const updateFromEvent: Client["updateFromEvent"] = (input) => {

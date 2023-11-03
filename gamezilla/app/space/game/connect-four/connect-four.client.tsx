@@ -15,6 +15,7 @@ import {
 } from "./connect-four.core";
 import * as VsBotClient from "./vs-bot/vs-bot.client";
 import * as VsUserClient from "./vs-user/vs-user.client";
+import { APP_SOUND, playSound } from "gamezilla/app/@SHARED/client";
 
 type Client = GameClient<
   ClientModel,
@@ -112,8 +113,22 @@ export const updateFromEvent: Client["updateFromEvent"] = (input) => {
 export const updateFromGame: Client["updateFromGame"] = (input) => {
   const { model, msg, state } = input;
 
-  if (!model) {
-    return init(input);
+  if (msg.t === "user-changed-mode") {
+    switch (msg.mode) {
+      case "none": {
+        return {
+          model,
+          cmd: [playSound(APP_SOUND.navBackwardMin)],
+        };
+      }
+      case "vs-user":
+      case "vs-bot": {
+        return {
+          model,
+          cmd: [playSound(APP_SOUND.navBackwardMin)],
+        };
+      }
+    }
   }
 
   if (state.t === "vs-bot" && model.t === "vs-bot" && msg.t === "vs-bot") {
