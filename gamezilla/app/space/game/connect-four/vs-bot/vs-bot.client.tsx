@@ -126,7 +126,7 @@ export const updateFromGame: Client["updateFromGame"] = (input) => {
     case "user-started-playing": {
       return {
         model,
-        cmd: [playSound(APP_SOUND.navForwardMin)],
+        cmd: [playSound(APP_SOUND.tap)],
       };
     }
   }

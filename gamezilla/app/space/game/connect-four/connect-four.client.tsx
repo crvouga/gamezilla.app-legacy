@@ -175,7 +175,7 @@ const initMode = (input: {
         case "vs-bot": {
           return {
             model,
-            cmd: [playSound(APP_SOUND.navForward)],
+            cmd: [playSound(APP_SOUND.navForwardMin)],
           };
         }
       }
