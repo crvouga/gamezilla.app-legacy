@@ -13,8 +13,8 @@ import { ViewCoverArt } from "./connect-four-cover-art";
 import {
   ClientModel,
   ClientMsg,
-  Event,
-  State,
+  GameEvent,
+  GameState,
   ToClient,
   ToServer,
 } from "./connect-four.core";
@@ -26,8 +26,8 @@ type Client = GameClient<
   ClientMsg,
   ToClient,
   ToServer,
-  State,
-  Event
+  GameState,
+  GameEvent
 >;
 
 const VsBot = GameClient.tag("vs-bot", VsBotClient);
@@ -135,7 +135,7 @@ export const updateFromGame: Client["updateFromGame"] = (input) => {
 
 const initMode = (input: {
   ctx: SpaceClientCtx;
-  state: State;
+  state: GameState;
   model: ClientModel;
 }) => {
   const { state, model } = input;
@@ -173,9 +173,9 @@ export const View = ({
   model,
 }: {
   dispatch: (msg: ClientMsg) => void;
-  dispatchEvent: (m: Event) => void;
+  dispatchEvent: (m: GameEvent) => void;
   ctx: SpaceViewCtx;
-  state: State;
+  state: GameState;
   model: ClientModel;
 }) => {
   const onQuit = () =>

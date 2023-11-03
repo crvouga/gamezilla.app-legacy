@@ -39,7 +39,7 @@ export type ToClient = { t: null };
 
 export type ToServer = { t: null };
 
-export type Event =
+export type GameEvent =
   | {
       t: "user-dropped-disc";
       columnIndex: ConnectFour.ColumnIndex;
@@ -60,11 +60,11 @@ export type Event =
   | { t: "time-passed"; now: Posix }
   | { t: "user-restarted-game"; userId: UserId };
 
-type EvtError =
+type EventErr =
   | { t: "not-playing" }
   | { t: "move"; c: ConnectFour.MoveProblem };
 
-export const eventErrorToString = ({ error }: { error: EvtError }): string => {
+export const eventErrorToString = ({ error }: { error: EventErr }): string => {
   switch (error.t) {
     case "not-playing": {
       return "You're not playing";
@@ -75,13 +75,13 @@ export const eventErrorToString = ({ error }: { error: EvtError }): string => {
   }
 };
 
-export type State = (StateSetup | StateGame) & {
+export type GameState = (StateSetup | StateGame) & {
   errors: {
-    [eventId: string]: Event & { error: EvtError };
+    [eventId: string]: GameEvent & { error: EventErr };
   };
 };
 
-export const initState = (input: SpaceCtx): State => {
+export const initState = (input: SpaceCtx): GameState => {
   return {
     type: "setup",
     botLevel: "Medium",
@@ -106,7 +106,7 @@ export type StateGame = {
   columns: ConnectFour.Columns;
 };
 
-export const reducer = (state: State, event: Event): State => {
+export const reducer = (state: GameState, event: GameEvent): GameState => {
   switch (state.type) {
     case "setup": {
       switch (event.t) {
@@ -261,7 +261,11 @@ export const reducer = (state: State, event: Event): State => {
   }
 };
 
-const addError = (state: State, event: Event, error: EvtError): State => {
+const addError = (
+  state: GameState,
+  event: GameEvent,
+  error: EventErr
+): GameState => {
   return {
     ...state,
     errors: {
@@ -271,7 +275,7 @@ const addError = (state: State, event: Event, error: EvtError): State => {
   };
 };
 
-export const isBotTurn = (state: State): boolean => {
+export const isBotTurn = (state: GameState): boolean => {
   if (state.type !== "game") {
     return false;
   }
@@ -282,7 +286,7 @@ export const isBotTurn = (state: State): boolean => {
   );
 };
 
-export const toBotPlayer = (state: State): ConnectFour.PlayerType => {
+export const toBotPlayer = (state: GameState): ConnectFour.PlayerType => {
   return ConnectFour.opposite[state.userPlayerType];
 };
 
@@ -290,7 +294,7 @@ export type GameOver =
   | { type: "Tie" }
   | { type: "Winner"; winner: ConnectFour.PlayerType };
 
-export const toGameOver = (model: State): GameOver | { type: null } => {
+export const toGameOver = (model: GameState): GameOver | { type: null } => {
   switch (model.type) {
     case "game": {
       const status = ConnectFour.toStatus(model.columns);

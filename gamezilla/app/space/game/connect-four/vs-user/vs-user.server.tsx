@@ -1,10 +1,10 @@
 import { Sub } from "gamezilla/@SHARED/core";
 import { GameServer } from "gamezilla/app/space/@SHARED";
 import {
-  Event,
+  GameEvent,
   ServerModel,
   ServerMsg,
-  State,
+  GameState,
   ToClient,
   ToServer,
 } from "./vs-user.core";
@@ -14,8 +14,8 @@ type Server = GameServer<
   ServerMsg,
   ToClient,
   ToServer,
-  State,
-  Event
+  GameState,
+  GameEvent
 >;
 
 export const init: Server["init"] = async () => {

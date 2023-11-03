@@ -177,7 +177,7 @@ export type Event =
   | {
       t: "game";
       spaceId: SpaceId;
-      c: Game.Event;
+      c: Game.GameEvent;
     };
 
 export type EventWithMeta = Event & EventMeta;
@@ -188,7 +188,7 @@ export type StateInitial = {
 
 export type StateStarted = Space & {
   type: "started";
-  game: Game.State | null;
+  game: Game.GameState | null;
 };
 
 export type StateEnded = Space & {

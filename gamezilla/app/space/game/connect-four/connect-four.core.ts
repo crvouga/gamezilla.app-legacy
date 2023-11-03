@@ -53,25 +53,25 @@ export type ToServer =
 //
 //
 
-export type Event =
+export type GameEvent =
   | { t: "user-changed-mode"; mode: Mode; userId: UserId }
-  | { t: "vs-bot"; c: VsBot.Event }
-  | { t: "vs-user"; c: VsUser.Event };
+  | { t: "vs-bot"; c: VsBot.GameEvent }
+  | { t: "vs-user"; c: VsUser.GameEvent };
 
-export type State =
+export type GameState =
   | {
       t: "none";
     }
   | {
       t: "vs-user";
-      c: VsUser.State;
+      c: VsUser.GameState;
     }
   | {
       t: "vs-bot";
-      c: VsBot.State;
+      c: VsBot.GameState;
     };
 
-export const initState = (): State => {
+export const initState = (): GameState => {
   return {
     t: "none",
   };
@@ -83,9 +83,9 @@ export const reducer = ({
   state,
 }: {
   ctx: SpaceCtx;
-  state: State;
-  event: Event;
-}): State => {
+  state: GameState;
+  event: GameEvent;
+}): GameState => {
   if (event.t === "user-changed-mode") {
     switch (event.mode) {
       case "none": {
@@ -100,6 +100,7 @@ export const reducer = ({
           c: VsBot.initState(ctx),
         };
       }
+
       case "vs-user": {
         return {
           t: "vs-user",

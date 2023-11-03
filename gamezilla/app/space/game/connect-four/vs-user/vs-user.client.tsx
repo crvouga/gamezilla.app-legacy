@@ -23,8 +23,8 @@ import { PlayerIcon, ViewColumns } from "../@SHARED/connect-four-ui";
 import {
   ClientModel,
   ClientMsg,
-  Event,
-  State,
+  GameEvent,
+  GameState,
   StateGame,
   StateGameOver,
   ToClient,
@@ -37,8 +37,8 @@ type Client = GameClient<
   ClientMsg,
   ToClient,
   ToServer,
-  State,
-  Event,
+  GameState,
+  GameEvent,
   SpaceViewCtx & { onQuit: () => void }
 >;
 
@@ -309,7 +309,7 @@ const ViewGameOverMessage = ({
 }: {
   state: StateGameOver;
   ctx: ViewCtx;
-  dispatchEvent: (msg: Event) => void;
+  dispatchEvent: (msg: GameEvent) => void;
 }) => {
   const currentPlayerType = toPlayerType(ctx.currentUserId, state);
 

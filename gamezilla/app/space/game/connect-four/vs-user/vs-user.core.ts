@@ -52,7 +52,7 @@ export type ToClient = { t: null };
 //
 //
 
-export type Event =
+export type GameEvent =
   //
   | { t: "user-stopped-playing"; userId: UserId }
   | { t: "user-started-playing"; userId: UserId; playerType: PlayerType }
@@ -77,9 +77,9 @@ export type Event =
 
 type EventError = { t: "not-playing" } | { t: "move"; c: MoveProblem };
 
-export type State = StateSetup | StateGame | StateGameOver;
+export type GameState = StateSetup | StateGame | StateGameOver;
 
-export const initState = (ctx: SpaceCtx): State => {
+export const initState = (ctx: SpaceCtx): GameState => {
   return {
     type: "setup",
     moveTimeLimit: 5,
@@ -93,11 +93,15 @@ export const initState = (ctx: SpaceCtx): State => {
 
 type Errors = {
   errors: {
-    [eventId: string]: Event & { error: EventError };
+    [eventId: string]: GameEvent & { error: EventError };
   };
 };
 
-const addError = (state: State, event: Event, error: EventError): State => {
+const addError = (
+  state: GameState,
+  event: GameEvent,
+  error: EventError
+): GameState => {
   return {
     ...state,
     errors: {
@@ -159,7 +163,7 @@ export type GameOver =
       resigner: PlayerType;
     };
 
-export const toGameOver = (state: State): GameOver | { type: "none" } => {
+export const toGameOver = (state: GameState): GameOver | { type: "none" } => {
   if (state.type === "setup") {
     return { type: "none" };
   }
@@ -187,7 +191,7 @@ export const allMoveTimeLimit: {
   "9": 9,
 };
 
-export const reducer = (state: State, event: Event): State => {
+export const reducer = (state: GameState, event: GameEvent): GameState => {
   switch (state.type) {
     case "setup": {
       switch (event.t) {
@@ -302,14 +306,14 @@ export const reducer = (state: State, event: Event): State => {
   }
 };
 
-export const toState = (events: Event[], state: State): State => {
+export const toState = (events: GameEvent[], state: GameState): GameState => {
   const stateNew = events.reduce(reducer, state);
   return stateNew;
 };
 
 export const toPlayerType = (
   userId: UserId,
-  state: State
+  state: GameState
 ): PlayerType | null => {
   if (state.players["player-one"] === userId) {
     return "player-one";

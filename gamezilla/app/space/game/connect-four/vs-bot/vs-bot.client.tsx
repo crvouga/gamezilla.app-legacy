@@ -37,8 +37,8 @@ import {
   BotLevel,
   ClientModel,
   ClientMsg,
-  Event,
-  State,
+  GameEvent,
+  GameState,
   ToClient,
   ToServer,
   allBotLevels,
@@ -50,8 +50,8 @@ type Client = GameClient<
   ClientMsg,
   ToClient,
   ToServer,
-  State,
-  Event,
+  GameState,
+  GameEvent,
   SpaceViewCtx & { onQuit: () => void }
 >;
 
@@ -138,7 +138,7 @@ export const updateFromGame: Client["updateFromGame"] = (input) => {
   );
 };
 
-const eventToSound = (event: Event): ClientCmd<ToServer>[] => {
+const eventToSound = (event: GameEvent): ClientCmd<ToServer>[] => {
   switch (event.t) {
     case "user-started-playing":
     case "user-stopped-playing":
@@ -172,7 +172,7 @@ const watch = ({
   model,
   state,
 }: {
-  state: State;
+  state: GameState;
   model: ClientModel;
 }): {
   model: ClientModel;
@@ -454,11 +454,11 @@ const ViewActivityFeedBar = ({
   dispatch,
 }: {
   dispatch: (m: ClientMsg) => void;
-  state: State;
+  state: GameState;
   model: ClientModel;
   ctx: SpaceViewCtx;
 }) => {
-  const events: Event[] = [];
+  const events: GameEvent[] = [];
 
   return (
     <>
@@ -562,8 +562,8 @@ const ViewActivityFeedItem = ({
   state,
 }: {
   ctx: SpaceViewCtx;
-  event: Event;
-  state: State;
+  event: GameEvent;
+  state: GameState;
 }) => {
   return null;
 };

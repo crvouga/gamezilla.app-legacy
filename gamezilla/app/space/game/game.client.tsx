@@ -8,8 +8,8 @@ import { ConnectFourClient } from "gamezilla/app/space/game/connect-four";
 import {
   ClientModel,
   ClientMsg,
-  Event,
-  State,
+  GameEvent,
+  GameState,
   ToClient,
   ToServer,
 } from "./game.core";
@@ -27,8 +27,8 @@ type Client = GameClient<
   ClientMsg,
   ToClient,
   ToServer,
-  State,
-  Event,
+  GameState,
+  GameEvent,
   SpaceViewCtx,
   SpaceClientCtx
 >;

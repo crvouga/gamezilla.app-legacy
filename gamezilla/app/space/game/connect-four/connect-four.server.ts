@@ -1,10 +1,10 @@
 import { Sub } from "gamezilla/@SHARED/core";
 import { GameServer } from "gamezilla/app/space/@SHARED";
 import {
-  Event,
+  GameEvent,
   ServerModel,
   ServerMsg,
-  State,
+  GameState,
   ToClient,
   ToServer,
 } from "./connect-four.core";
@@ -16,8 +16,8 @@ type Server = GameServer<
   ServerMsg,
   ToClient,
   ToServer,
-  State,
-  Event
+  GameState,
+  GameEvent
 >;
 
 const VsBot = GameServer.tag("vs-bot", VsBotServer);

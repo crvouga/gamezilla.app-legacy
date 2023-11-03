@@ -123,9 +123,9 @@ export const gameNameToString = (gameName: GameName): string => {
   }
 };
 
-export type State = {
+export type GameState = {
   t: "connect-four";
-  c: ConnectFour.State;
+  c: ConnectFour.GameState;
 };
 // | {
 //     t: "chess";
@@ -140,7 +140,7 @@ export type State = {
 //     c: null;
 //   };
 
-export const initState = (gameName: GameName): State => {
+export const initState = (gameName: GameName): GameState => {
   switch (gameName) {
     case "connect-four": {
       return {
@@ -171,7 +171,7 @@ export const initState = (gameName: GameName): State => {
   }
 };
 
-export type Event = { t: "connect-four"; c: ConnectFour.Event };
+export type GameEvent = { t: "connect-four"; c: ConnectFour.GameEvent };
 // | { t: "chess"; c: null }
 // | { t: "flow"; c: null }
 // | { t: "tic-tac-toe"; c: null };
@@ -182,9 +182,9 @@ export const reducer = ({
   event,
 }: {
   ctx: SpaceCtx;
-  state: State;
-  event: Event;
-}): State => {
+  state: GameState;
+  event: GameEvent;
+}): GameState => {
   if (state.t === "connect-four" && event.t === "connect-four") {
     return {
       t: "connect-four",
