@@ -467,14 +467,19 @@ const updateGameModel = ({
 
       const gameModel = model.games[msg.spaceId];
 
-      if (!gameModel) {
-        return { model };
-      }
+      const game = gameModel
+        ? {
+            model: gameModel,
+          }
+        : GameClient.init({
+            ctx: { ...ctx, space: space },
+            state: gameState,
+          });
 
       const updated = GameClient.updateFromGame({
         ctx: { ...ctx, space: space },
         msg: msg.c,
-        model: gameModel,
+        model: game.model,
         state: gameState,
       });
 
@@ -494,11 +499,14 @@ const updateGameModel = ({
           }),
           updated.eff
         ),
-        cmd: ClientCmd.map(updated.cmd ?? [], (m) => ({
-          t: "game-msg",
-          spaceId: msg.spaceId,
-          c: m,
-        })),
+        cmd: ClientCmd.map(
+          [...(updated.cmd ?? []), ...(game.cmd ?? [])],
+          (m) => ({
+            t: "game-msg",
+            spaceId: msg.spaceId,
+            c: m,
+          })
+        ),
       };
     }
 
