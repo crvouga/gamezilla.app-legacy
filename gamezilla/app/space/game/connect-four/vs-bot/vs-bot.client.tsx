@@ -118,6 +118,10 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
 export const updateFromGame: Client["updateFromGame"] = (input) => {
   const { model, msg } = input;
 
+  if (!model) {
+    return init(input);
+  }
+
   switch (msg.t) {
     case "user-started-playing": {
       return {

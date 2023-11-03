@@ -55,7 +55,7 @@ export type GameClient<
   updateFromGame: (input: {
     ctx: SpaceClientCtx;
     msg: GameEvent;
-    model: ClientModel;
+    model?: ClientModel;
     state: GameState;
   }) => {
     model: ClientModel;

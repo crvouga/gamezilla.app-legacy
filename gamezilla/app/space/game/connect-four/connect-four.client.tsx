@@ -113,6 +113,10 @@ export const updateFromEvent: Client["updateFromEvent"] = (input) => {
 export const updateFromGame: Client["updateFromGame"] = (input) => {
   const { model, msg, state } = input;
 
+  if (!model) {
+    return init(input);
+  }
+
   if (msg.t === "user-changed-mode") {
     switch (msg.mode) {
       case "none": {
