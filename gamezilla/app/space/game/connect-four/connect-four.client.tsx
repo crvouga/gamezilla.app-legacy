@@ -1,5 +1,10 @@
-import { Sub } from "gamezilla/@SHARED/core";
-import { GameClient, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
+import { Sub, chain } from "gamezilla/@SHARED/core";
+import { APP_SOUND, playSound } from "gamezilla/app/@SHARED/client";
+import {
+  GameClient,
+  SpaceClientCtx,
+  SpaceViewCtx,
+} from "gamezilla/app/space/@SHARED";
 import {
   MainMenuScreen,
   mainMenuButtons,
@@ -15,7 +20,6 @@ import {
 } from "./connect-four.core";
 import * as VsBotClient from "./vs-bot/vs-bot.client";
 import * as VsUserClient from "./vs-user/vs-user.client";
-import { APP_SOUND, playSound } from "gamezilla/app/@SHARED/client";
 
 type Client = GameClient<
   ClientModel,
@@ -111,28 +115,18 @@ export const updateFromEvent: Client["updateFromEvent"] = (input) => {
 };
 
 export const updateFromGame: Client["updateFromGame"] = (input) => {
-  const { model, msg, state } = input;
+  const { model, msg, state, ctx } = input;
 
   if (!model) {
     return init(input);
   }
 
   if (msg.t === "user-changed-mode") {
-    switch (msg.mode) {
-      case "none": {
-        return {
-          model,
-          cmd: [playSound(APP_SOUND.navBackwardMin)],
-        };
-      }
-      case "vs-user":
-      case "vs-bot": {
-        return {
-          model,
-          cmd: [playSound(APP_SOUND.navBackwardMin)],
-        };
-      }
-    }
+    return initMode({
+      ctx,
+      model,
+      state,
+    });
   }
 
   if (state.t === "vs-bot" && model.t === "vs-bot" && msg.t === "vs-bot") {
@@ -144,6 +138,49 @@ export const updateFromGame: Client["updateFromGame"] = (input) => {
   }
 
   return init(input);
+};
+
+const initMode = (input: {
+  ctx: SpaceClientCtx;
+  state: State;
+  model: ClientModel;
+}) => {
+  return chain(
+    input.model,
+    () => {
+      const { ctx, state } = input;
+
+      const initial = init({ ctx, state });
+
+      if (state.t === "vs-bot") {
+        return VsBot.init({ ...input, state });
+      }
+
+      if (state.t === "vs-user") {
+        return VsUser.init({ ...input, state });
+      }
+
+      return initial;
+    },
+    (model) => {
+      const { state } = input;
+      switch (state.t) {
+        case "none": {
+          return {
+            model,
+            cmd: [playSound(APP_SOUND.navBackwardMin)],
+          };
+        }
+        case "vs-user":
+        case "vs-bot": {
+          return {
+            model,
+            cmd: [playSound(APP_SOUND.navForward)],
+          };
+        }
+      }
+    }
+  );
 };
 
 //
