@@ -1,10 +1,10 @@
 import { ClientId, ServerWireMsg, SessionId } from "gamezilla/@SHARED/core";
 import { Routing, Toast, Wire, Sound } from "./app-client";
-import * as Auth from "./auth";
-import * as Chat from "./chat";
-import * as Profile from "./profile";
-import * as Search from "./search";
-import * as Space from "./space";
+import * as Auth from "./@CHILD/auth/auth.core";
+import * as Chat from "./@CHILD/chat/chat.core";
+import * as Profile from "./@CHILD/profile/profile.core";
+import * as Search from "./@CHILD/search/search.core";
+import * as Space from "./@CHILD/space/space.core";
 
 export type ServerModel = {
   sessions: {

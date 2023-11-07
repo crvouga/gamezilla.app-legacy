@@ -19,11 +19,11 @@ import {
 import { UserId } from "./@SHARED/data";
 import { Routing, Sound, Toast, Wire } from "./app-client";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./app.core";
-import { AuthClient } from "./auth";
-import { ChatClient } from "./chat";
-import { ProfileClient } from "./profile";
-import { SearchClient } from "./search";
-import { SpaceClient } from "./space";
+import * as AuthClient from "./@CHILD/auth/auth.client";
+import * as ChatClient from "./@CHILD/chat/chat.client";
+import * as ProfileClient from "./@CHILD/profile/profile.client";
+import * as SearchClient from "./@CHILD/search/search.client";
+import * as SpaceClient from "./@CHILD/space/space.client";
 
 //
 //

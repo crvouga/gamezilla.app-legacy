@@ -15,11 +15,11 @@ import {
   ServerEvt,
   sendBack,
 } from "gamezilla/app/@SHARED/server";
-import { AuthServer } from "gamezilla/app/auth";
-import { ChatServer } from "gamezilla/app/chat";
-import { ProfileServer } from "gamezilla/app/profile";
-import { SearchServer } from "gamezilla/app/search";
-import { SpaceServer } from "gamezilla/app/space";
+import * as AuthServer from "./@CHILD/auth/auth.server";
+import * as ChatServer from "./@CHILD/chat/chat.server";
+import * as ProfileServer from "./@CHILD/profile/profile.server";
+import * as SearchServer from "./@CHILD/search/search.server";
+import * as SpaceServer from "./@CHILD/space/space.server";
 import { createDbConnMySql } from "./app-server";
 import {
   ServerModel,
