@@ -1,13 +1,13 @@
 import {
-  err,
   NonEmpty,
-  ok,
   Result,
   Uuid,
+  err,
   has,
   is,
-  num,
   isObj,
+  num,
+  ok,
   str,
   to,
   tuple,
@@ -15,10 +15,7 @@ import {
 } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
 import { DbConnSql } from "gamezilla/app/@SHARED/server";
-import {
-  MoveInput,
-  uciMoveToMoveInput,
-} from "gamezilla/app/space/game/chess/@SHARED/chess";
+import { MoveInput, uciMoveToMoveInput } from "../../../@SHARED/chess";
 import { EloRating } from "../elo-rating";
 import {
   Puzzle,

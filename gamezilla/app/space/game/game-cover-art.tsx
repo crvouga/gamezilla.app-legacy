@@ -1,5 +1,5 @@
 import { GameName } from "./game.core";
-import * as ConnectFour from "./connect-four/connect-four-cover-art";
+import * as ConnectFour from "./@CHILD/connect-four/connect-four-cover-art";
 
 export const CoverArt = ({ gameName }: { gameName: GameName }) => {
   switch (gameName) {

@@ -1,5 +1,5 @@
 import { SpaceCtx } from "../@SHARED";
-import * as ConnectFour from "./connect-four/connect-four.core";
+import * as ConnectFour from "./@CHILD/connect-four/connect-four.core";
 
 //
 //

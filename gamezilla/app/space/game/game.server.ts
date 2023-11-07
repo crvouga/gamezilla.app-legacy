@@ -1,6 +1,6 @@
 import { Sub } from "gamezilla/@SHARED/core";
 import { GameServer } from "gamezilla/app/space/@SHARED";
-import * as ConnectFourServer from "./connect-four/connect-four.server";
+import * as ConnectFourServer from "./@CHILD/connect-four/connect-four.server";
 import {
   GameEvent,
   ServerModel,
