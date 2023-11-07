@@ -4,8 +4,8 @@ import {
   toMsgType,
 } from "gamezilla/@SHARED/core";
 import { createServer } from "http";
-import { ServerModel } from "./app/app.core";
-import * as AppServer from "./app/app.server";
+import { ServerModel } from "./@CHILD/app/app.core";
+import * as AppServer from "./@CHILD/app/app.server";
 
 let model: ServerModel;
 const httpServer = createServer(async (_request, response) => {

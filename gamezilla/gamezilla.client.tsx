@@ -5,7 +5,7 @@ import {
 } from "gamezilla/@SHARED/core";
 import { render } from "preact";
 import { attachDebugger } from "./@SHARED/core/debug";
-import * as AppClient from "./app/app.client";
+import * as AppClient from "./@CHILD/app/app.client";
 import "./main.css";
 
 const program = Program.create({
