@@ -8,9 +8,9 @@ import {
   TopBar,
   cn,
 } from "gamezilla/app/@SHARED/ui";
-import { ViewSpaceHostChip } from "gamezilla/app/space/game/@SHARED";
-import { CoverArt } from "../game/game-cover-art";
-import { GameName, gameNameToString } from "../game/game.core";
+import { ViewSpaceHostChip } from "gamezilla/app/space/@CHILD/game/@SHARED";
+import { CoverArt } from "../@CHILD/game/game-cover-art";
+import { GameName, gameNameToString } from "../@CHILD/game/game.core";
 import {
   ClientModel,
   ClientMsg,

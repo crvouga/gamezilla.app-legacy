@@ -3,9 +3,9 @@ import { SpaceViewCtx, spaceToHostTitle } from "gamezilla/app/space/@SHARED";
 import {
   ViewGameHeader,
   ViewUsersInSpaceList,
-} from "gamezilla/app/space/game/@SHARED";
-import { gameNameToString } from "../game/game.core";
-import { CoverArt } from "../game/game-cover-art";
+} from "gamezilla/app/space/@CHILD/game/@SHARED";
+import { gameNameToString } from "../@CHILD/game/game.core";
+import { CoverArt } from "../@CHILD/game/game-cover-art";
 import { ClientModel, Event, toStateSpace } from "../space.core";
 
 export const ViewSpaceJoinScreen = ({

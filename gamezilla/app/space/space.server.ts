@@ -19,7 +19,7 @@ import {
   SpaceServerCtx,
 } from "gamezilla/app/space/@SHARED";
 import { SpaceId } from "../@SHARED/data";
-import * as GameServer from "./game/game.server";
+import * as GameServer from "./@CHILD/game/game.server";
 import {
   Event,
   ServerModel,

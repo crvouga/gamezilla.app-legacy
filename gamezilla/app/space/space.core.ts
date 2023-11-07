@@ -1,7 +1,7 @@
 import { EventMeta, EventStream } from "gamezilla/@SHARED/event-stream";
 import { Profile, SpaceId, UserId } from "gamezilla/app/@SHARED/data";
 import { Space } from "gamezilla/app/space/@SHARED";
-import * as Game from "./game/game.core";
+import * as Game from "./@CHILD/game/game.core";
 import { memoize } from "gamezilla/@SHARED/core";
 
 //

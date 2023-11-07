@@ -6,9 +6,9 @@ import {
 import {
   ViewGameHeader,
   ViewUsersInSpaceList,
-} from "gamezilla/app/space/game/@SHARED";
-import { CoverArt } from "../game/game-cover-art";
-import { gameNameList, gameNameToString } from "../game/game.core";
+} from "gamezilla/app/space/@CHILD/game/@SHARED";
+import { CoverArt } from "../@CHILD/game/game-cover-art";
+import { gameNameList, gameNameToString } from "../@CHILD/game/game.core";
 import { Event } from "../space.core";
 
 export const ViewNotInGameScreen = ({

@@ -31,9 +31,9 @@ import {
   ViewSpaceHostChip,
   ViewUsersInSpaceList,
   ViewYouChip,
-} from "gamezilla/app/space/game/@SHARED";
-import * as GameClient from "./game/game.client";
-import { CoverArt } from "./game/game-cover-art";
+} from "gamezilla/app/space/@CHILD/game/@SHARED";
+import * as GameClient from "./@CHILD/game/game.client";
+import { CoverArt } from "./@CHILD/game/game-cover-art";
 import {
   ViewNotInGameScreen,
   ViewSpaceJoinScreen,
