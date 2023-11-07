@@ -4,11 +4,12 @@ import {
   GameClient,
   SpaceViewCtx,
 } from "gamezilla/app/space/@SHARED";
-import { ConnectFourClient } from "gamezilla/app/space/game/connect-four";
+import * as ConnectFourClient from "./connect-four/connect-four.client";
 import {
   ClientModel,
   ClientMsg,
   GameEvent,
+  GameName,
   GameState,
   ToClient,
   ToServer,

@@ -12,7 +12,7 @@ import {
   MainMenuScreen,
   mainMenuButtons,
 } from "gamezilla/app/space/game/@SHARED";
-import { ViewCoverArt } from "./@SHARED/chess-ui";
+import { CoverArt } from "./@SHARED/chess-ui";
 import { CHESS_SOUND } from "./@SHARED/chess/chess-sounds";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./chess.core";
 import * as Puzzle from "./puzzle/puzzle.client";
@@ -241,7 +241,7 @@ export const View: Client["View"] = ({ ctx, model, dispatch }) => {
         <MainMenuScreen
           title="Chess"
           ctx={ctx}
-          renderCoverArt={(props) => <ViewCoverArt {...props} />}
+          renderCoverArt={(props) => <CoverArt {...props} />}
           buttons={[
             mainMenuButtons.playComputer({
               onClick: () =>

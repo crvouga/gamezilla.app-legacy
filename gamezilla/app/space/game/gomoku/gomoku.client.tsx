@@ -12,7 +12,7 @@ import {
   ToClient,
   ToServer,
 } from "./gomoku.core";
-import { ViewCoverArt } from "./gomoku/gomoku-ui";
+import { CoverArt } from "./gomoku/gomoku-ui";
 import * as VsBot from "./vs-bot/vs-bot.client";
 import * as VsUser from "./vs-user/vs-user.client";
 
@@ -236,7 +236,7 @@ export const view = ({
       return (
         <MainMenuScreen
           title="Gomoku"
-          renderCoverArt={(props) => <ViewCoverArt {...props} />}
+          renderCoverArt={(props) => <CoverArt {...props} />}
           ctx={spaceCtx}
           buttons={[
             mainMenuButtons.playComputer({
@@ -297,4 +297,4 @@ export const view = ({
   }
 };
 
-export const coverArt = ViewCoverArt;
+export const coverArt = CoverArt;

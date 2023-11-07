@@ -13,7 +13,7 @@ import {
   VsBotSetup,
 } from "gamezilla/app/space/game/@SHARED";
 import { Chess } from "../@SHARED/chess";
-import { Chessboard, PlayerIcon, ViewCoverArt } from "../@SHARED/chess-ui";
+import { Chessboard, PlayerIcon, CoverArt } from "../@SHARED/chess-ui";
 import {
   ClientModel,
   ClientMsg,
@@ -261,7 +261,7 @@ export const View = ({
         dispatch={(c) => dispatch({ t: "vs-bot-setup", c })}
         title="Chess"
         renderCoverArt={(props) => {
-          return <ViewCoverArt {...props} />;
+          return <CoverArt {...props} />;
         }}
         bot={{
           label: Chess.botLevelToString(model.coreModel.botLevel),

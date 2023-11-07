@@ -4,7 +4,8 @@ import {
   ViewGameHeader,
   ViewUsersInSpaceList,
 } from "gamezilla/app/space/game/@SHARED";
-import { ViewCoverArt, gameNameToString } from "../game/game.core";
+import { gameNameToString } from "../game/game.core";
+import { CoverArt } from "../game/game-cover-art";
 import { ClientModel, Event, toStateSpace } from "../space.core";
 
 export const ViewSpaceJoinScreen = ({
@@ -48,7 +49,7 @@ export const ViewSpaceJoinScreen = ({
             game
               ? (props) => (
                   <div {...props}>
-                    <ViewCoverArt gameName={game.t} />
+                    <CoverArt gameName={game.t} />
                   </div>
                 )
               : undefined

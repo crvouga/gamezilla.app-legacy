@@ -1,18 +1,12 @@
 import { Eff, Sub, chain } from "gamezilla/@SHARED/core";
 import { APP_SOUND, ClientCmd, playSound } from "gamezilla/app/@SHARED/client";
 import {
-  Drawer,
   IconArrowLeftOnRect,
   IconArrowRotateLeft,
   IconRightLeft,
   LoadingBar,
-  cn,
 } from "gamezilla/app/@SHARED/ui";
-import {
-  GameClient,
-  SpaceViewCtx,
-  ViewActivityFeedItem,
-} from "gamezilla/app/space/@SHARED";
+import { GameClient, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
 import {
   GameLayout,
   IconBotHappy,
@@ -25,14 +19,14 @@ import {
   VsBotProps,
   VsBotSetup,
 } from "gamezilla/app/space/game/@SHARED";
-import { Columns, toStatus, toTurn } from "../@SHARED/connect-four";
+import { Columns, toStatus, toTurn } from "../../@SHARED/connect-four";
 import {
   PlayerOneIcon,
   PlayerTwoIcon,
   ViewColumns,
+  CoverArt,
   gameTheme,
-} from "../@SHARED/connect-four-ui";
-import { ViewCoverArt } from "../connect-four-cover-art";
+} from "../../@SHARED/connect-four-ui";
 import {
   BotLevel,
   ClientModel,
@@ -42,7 +36,6 @@ import {
   ToClient,
   ToServer,
   allBotLevels,
-  eventErrorToString,
 } from "./vs-bot.core";
 
 type Client = GameClient<
@@ -244,7 +237,7 @@ export const View: Client["View"] = ({
     ctx: ctx,
     onQuit: ctx.onQuit,
     title: "Connect Four",
-    renderCoverArt: (props) => <ViewCoverArt {...props} />,
+    renderCoverArt: (props) => <CoverArt {...props} />,
     canStartGame: state.playingUserId !== null,
     onSwapSides: () =>
       dispatchEvent({ t: "user-swapped-sides", userId: ctx.currentUserId }),

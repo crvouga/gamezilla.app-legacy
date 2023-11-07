@@ -44,7 +44,7 @@ export const viewStoneIcon = ({ stone }: { stone: Stone }) => {
   );
 };
 
-export const ViewCoverArt = (props: { className?: string }) => {
+export const CoverArt = (props: { className?: string }) => {
   return (
     <ViewBoard
       {...props}

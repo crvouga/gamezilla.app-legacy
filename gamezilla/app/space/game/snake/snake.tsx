@@ -262,7 +262,7 @@ const isOdd = (x: number) => !isEven(x);
 const toViewBox = ({ lower, upper }: Model["bounds"]) =>
   [lower.x, lower.y, upper.x, upper.y].join(", ");
 
-export const ViewCoverArt = () => {
+export const CoverArt = () => {
   const bounds: Model["bounds"] = {
     lower: {
       x: 0,

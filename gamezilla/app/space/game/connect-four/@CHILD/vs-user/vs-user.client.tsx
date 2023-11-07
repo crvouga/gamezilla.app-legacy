@@ -17,9 +17,9 @@ import {
   ViewBottomButtonBar,
   VsUserSetupScreen,
 } from "gamezilla/app/space/game/@SHARED";
-import { PlayerType, toTurn } from "../@SHARED/connect-four";
-import { ViewCoverArt } from "../connect-four-cover-art";
-import { PlayerIcon, ViewColumns } from "../@SHARED/connect-four-ui";
+import { PlayerType, toTurn } from "../../@SHARED/connect-four";
+import { CoverArt } from "../../@SHARED/connect-four-ui/connect-four-cover-art";
+import { PlayerIcon, ViewColumns } from "../../@SHARED/connect-four-ui";
 import {
   ClientModel,
   ClientMsg,
@@ -152,7 +152,7 @@ export const View: Client["View"] = ({
         renderCoverArt={(props) => {
           return (
             <div {...props}>
-              <ViewCoverArt />
+              <CoverArt />
             </div>
           );
         }}

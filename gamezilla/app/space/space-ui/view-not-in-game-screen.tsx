@@ -7,12 +7,8 @@ import {
   ViewGameHeader,
   ViewUsersInSpaceList,
 } from "gamezilla/app/space/game/@SHARED";
-import * as Game from "../game/game.core";
-import {
-  ViewCoverArt,
-  gameNameList,
-  gameNameToString,
-} from "../game/game.core";
+import { CoverArt } from "../game/game-cover-art";
+import { gameNameList, gameNameToString } from "../game/game.core";
 import { Event } from "../space.core";
 
 export const ViewNotInGameScreen = ({
@@ -52,7 +48,7 @@ export const ViewNotInGameScreen = ({
                   })
                 }
                 className="flex overflow-hidden rounded-lg">
-                <ViewCoverArt gameName={gameName} />
+                <CoverArt gameName={gameName} />
               </button>
 
               <p className="mt-2 w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-semibold">

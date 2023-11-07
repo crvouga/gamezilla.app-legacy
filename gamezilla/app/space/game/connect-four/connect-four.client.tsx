@@ -9,7 +9,7 @@ import {
   MainMenuScreen,
   mainMenuButtons,
 } from "gamezilla/app/space/game/@SHARED";
-import { ViewCoverArt } from "./connect-four-cover-art";
+import { CoverArt } from "./@SHARED/connect-four-ui/connect-four-cover-art";
 import {
   ClientModel,
   ClientMsg,
@@ -18,8 +18,8 @@ import {
   ToClient,
   ToServer,
 } from "./connect-four.core";
-import * as VsBotClient from "./vs-bot/vs-bot.client";
-import * as VsUserClient from "./vs-user/vs-user.client";
+import * as VsBotClient from "./@CHILD/vs-bot/vs-bot.client";
+import * as VsUserClient from "./@CHILD/vs-user/vs-user.client";
 
 type Client = GameClient<
   ClientModel,
@@ -219,7 +219,7 @@ export const View = ({
     <MainMenuScreen
       ctx={ctx}
       title="Connect Four"
-      renderCoverArt={(props) => <ViewCoverArt {...props} />}
+      renderCoverArt={(props) => <CoverArt {...props} />}
       buttons={[
         mainMenuButtons.playFriend({
           onClick: () =>

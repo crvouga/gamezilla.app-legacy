@@ -8,8 +8,8 @@ import {
   ToClient,
   ToServer,
 } from "./connect-four.core";
-import * as VsBotServer from "./vs-bot/vs-bot.server";
-import * as VsUserServer from "./vs-user/vs-user.server";
+import * as VsBotServer from "./@CHILD/vs-bot/vs-bot.server";
+import * as VsUserServer from "./@CHILD/vs-user/vs-user.server";
 
 type Server = GameServer<
   ServerModel,

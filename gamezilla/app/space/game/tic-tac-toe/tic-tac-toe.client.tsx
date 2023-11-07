@@ -6,7 +6,7 @@ import {
   mainMenuButtons,
 } from "gamezilla/app/space/game/@SHARED";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./tic-tac-toe.core";
-import { ViewCoverArt } from "./tic-tic-toe/tic-tac-toe-ui";
+import { CoverArt } from "./tic-tic-toe/tic-tac-toe-ui";
 import * as VsBot from "./vs-bot/vs-bot.client";
 import * as VsUser from "./vs-user/vs-user.client";
 
@@ -156,7 +156,7 @@ export const View = ({
       <MainMenuScreen
         title="Tic-Tac-Toe"
         ctx={ctx}
-        renderCoverArt={(props) => <ViewCoverArt {...props} />}
+        renderCoverArt={(props) => <CoverArt {...props} />}
         buttons={[
           mainMenuButtons.playFriend({
             onClick: () => dispatch({ t: "input-mode", mode: "vs-user" }),

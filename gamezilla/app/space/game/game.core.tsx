@@ -1,5 +1,5 @@
 import { SpaceCtx } from "../@SHARED";
-import * as ConnectFour from "./connect-four";
+import * as ConnectFour from "./connect-four/connect-four.core";
 
 //
 //
@@ -72,36 +72,6 @@ export const gameNameList: GameName[] = [
   // "tic-tac-toe",
   // "flow",
 ];
-
-//
-//
-//
-//
-//
-
-export const ViewCoverArt = ({ gameName }: { gameName: GameName }) => {
-  switch (gameName) {
-    case "connect-four": {
-      return <ConnectFour.ViewCoverArt />;
-    }
-
-    // case "chess": {
-    //   return <Chess.ViewCoverArt />;
-    // }
-    // case "tic-tac-toe": {
-    //   return <TicTacToe.ViewCoverArt />;
-    // }
-
-    // case "flow": {
-    //   return <Flow.ViewCoverArt />;
-    // }
-
-    default: {
-      const check: never = gameName;
-      return check;
-    }
-  }
-};
 
 export const gameNameToString = (gameName: GameName): string => {
   switch (gameName) {

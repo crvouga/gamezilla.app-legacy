@@ -350,7 +350,7 @@ export const PlayerTypeIcon = ({
   );
 };
 
-export const ViewCoverArt = (props: { className?: string }) => {
+export const CoverArt = (props: { className?: string }) => {
   const positions: [Position, Slot][] = [
     [{ row: 0, column: 0 }, "X"],
     [{ row: 0, column: 1 }, Empty],

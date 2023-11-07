@@ -7,7 +7,7 @@ import {
 import { IconGamepad, IconScrewdriverWrench } from "gamezilla/app/@SHARED/ui";
 import { GameClient } from "gamezilla/app/space/@SHARED";
 import { MainMenuScreen } from "gamezilla/app/space/game/@SHARED";
-import { ViewCoverArt } from "./@SHARED/flow-cover-art";
+import { CoverArt } from "./@SHARED/flow-cover-art";
 import { FlowViewCtx } from "./@SHARED/flow-ctx";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./flow.core";
 import { PlayClient } from "./play";
@@ -105,7 +105,7 @@ export const View: Client["View"] = (input) => {
 
   return (
     <MainMenuScreen
-      renderCoverArt={(props) => <ViewCoverArt {...props} />}
+      renderCoverArt={(props) => <CoverArt {...props} />}
       ctx={ctx}
       title="Flow"
       buttons={[

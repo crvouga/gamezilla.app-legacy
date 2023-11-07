@@ -25,7 +25,7 @@ import {
 import {
   PlayerTypeIcon,
   ViewBoard,
-  ViewCoverArt,
+  CoverArt,
   gameTheme,
 } from "../tic-tic-toe/tic-tac-toe-ui";
 import {
@@ -191,7 +191,7 @@ export const View = ({
       onStopPlaying: () => dispatch({ t: "stop-playing" }),
       renderIcon: (props) => <PlayerTypeIcon {...props} playerType="O" />,
     },
-    renderCoverArt: (props) => <ViewCoverArt {...props} />,
+    renderCoverArt: (props) => <CoverArt {...props} />,
     title: "Tic-Tac-Toe",
   };
 

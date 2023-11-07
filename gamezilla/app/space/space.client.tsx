@@ -33,7 +33,7 @@ import {
   ViewYouChip,
 } from "gamezilla/app/space/game/@SHARED";
 import * as GameClient from "./game/game.client";
-import { ViewCoverArt } from "./game/game.core";
+import { CoverArt } from "./game/game-cover-art";
 import {
   ViewNotInGameScreen,
   ViewSpaceJoinScreen,
@@ -1028,7 +1028,7 @@ export const ViewCurrentSpaceBar = ({
           )}
           {game && (
             <div className="h-12 w-12 overflow-hidden rounded border border-neutral-600">
-              <ViewCoverArt gameName={game.t} />
+              <CoverArt gameName={game.t} />
             </div>
           )}
         </div>

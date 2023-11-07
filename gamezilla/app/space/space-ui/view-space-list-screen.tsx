@@ -9,7 +9,8 @@ import {
   cn,
 } from "gamezilla/app/@SHARED/ui";
 import { ViewSpaceHostChip } from "gamezilla/app/space/game/@SHARED";
-import { GameName, ViewCoverArt, gameNameToString } from "../game/game.core";
+import { CoverArt } from "../game/game-cover-art";
+import { GameName, gameNameToString } from "../game/game.core";
 import {
   ClientModel,
   ClientMsg,
@@ -151,7 +152,7 @@ const ViewSpaceCard = ({
       {gameName && (
         <div className="flex items-center justify-start gap-2">
           <div className="h-12 w-12 overflow-hidden rounded border-2 border-white/40">
-            <ViewCoverArt gameName={gameName} />
+            <CoverArt gameName={gameName} />
           </div>
           <p className="text-xl">{gameNameToString(gameName)}</p>
         </div>

@@ -10,8 +10,8 @@ import {
   isBotTurn,
   toBotPlayer,
 } from "./vs-bot.core";
-import * as ConnectFour from "../@SHARED/connect-four/connect-four";
-import { ConnectFourBotWorker } from "../@SHARED/connect-four";
+import * as ConnectFour from "../../@SHARED/connect-four/connect-four";
+import { ConnectFourBotWorker } from "../../@SHARED/connect-four";
 type Server = GameServer<
   ServerModel,
   ServerMsg,

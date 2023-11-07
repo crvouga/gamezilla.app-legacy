@@ -2,7 +2,7 @@ import { Posix } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
 import { SpaceCtx } from "gamezilla/app/space/@SHARED";
 import { VsBotGame, VsBotSetup } from "gamezilla/app/space/game/@SHARED";
-import * as ConnectFour from "../@SHARED/connect-four";
+import * as ConnectFour from "../../@SHARED/connect-four";
 
 //
 //
