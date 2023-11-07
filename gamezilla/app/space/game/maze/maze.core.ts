@@ -1,7 +1,7 @@
 import { Keyboard, NonEmpty, dissoc, Result } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
-import { Maze } from "./maze";
-import { Direction, Position } from "./position";
+import { Maze } from "./@SHARED/maze";
+import { Direction, Position } from "./@SHARED/position";
 
 const { err: Err, ok: Ok } = Result;
 

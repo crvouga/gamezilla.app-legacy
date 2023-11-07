@@ -8,7 +8,7 @@ import {
 } from "gamezilla/@SHARED/core";
 import { ViewCtx } from "gamezilla/app/@SHARED/client";
 import { SpaceClientCtx } from "gamezilla/app/space/@SHARED";
-import { Direction } from "./direction";
+import { Direction } from "./@SHARED/direction";
 import {
   ClientModel,
   ClientMsg,

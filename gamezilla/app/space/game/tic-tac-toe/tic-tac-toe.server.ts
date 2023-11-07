@@ -6,8 +6,8 @@ import {
   SpaceServerCmd,
 } from "gamezilla/app/space/@SHARED";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./tic-tac-toe.core";
-import * as VsBot from "./vs-bot/vs-bot.server";
-import * as VsUser from "./vs-user/vs-user.server";
+import * as VsBot from "./@CHILD/vs-bot/vs-bot.server";
+import * as VsUser from "./@CHILD/vs-user/vs-user.server";
 
 const { err: Err, ok: Ok } = Result;
 

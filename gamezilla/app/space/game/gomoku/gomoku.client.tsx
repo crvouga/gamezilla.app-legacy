@@ -12,9 +12,9 @@ import {
   ToClient,
   ToServer,
 } from "./gomoku.core";
-import { CoverArt } from "./gomoku/gomoku-ui";
-import * as VsBot from "./vs-bot/vs-bot.client";
-import * as VsUser from "./vs-user/vs-user.client";
+import { CoverArt } from "./@SHARED/gomoku/gomoku-ui";
+import * as VsBot from "./@CHILD/vs-bot/vs-bot.client";
+import * as VsUser from "./@CHILD/vs-user/vs-user.client";
 
 //
 //

@@ -1,5 +1,5 @@
 import { Eff, Result, Sub, Time } from "gamezilla/@SHARED/core";
-import * as Snake from "./snake";
+import * as Snake from "./@SHARED/snake";
 import {
   ServerModel,
   ServerMsg,

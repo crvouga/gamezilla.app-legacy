@@ -9,9 +9,9 @@ import {
 } from "gamezilla/app/space/@SHARED";
 import { ChessGameMsg } from "./@SHARED/chess/chess-shared";
 import { Res, ServerModel, ServerMsg, ToClient, ToServer } from "./chess.core";
-import * as Puzzle from "./puzzle/puzzle.server";
-import * as VsBot from "./vs-bot/vs-bot.server";
-import * as VsUser from "./vs-user/vs-user.server";
+import * as Puzzle from "./@CHILD/puzzle/puzzle.server";
+import * as VsBot from "./@CHILD/vs-bot/vs-bot.server";
+import * as VsUser from "./@CHILD/vs-user/vs-user.server";
 
 //
 //

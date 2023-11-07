@@ -1,7 +1,7 @@
 import { Keyboard, Option, Result } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/app/@SHARED/data";
-import * as Direction from "./direction";
-import * as Snake from "./snake";
+import * as Direction from "./@SHARED/direction";
+import * as Snake from "./@SHARED/snake";
 
 //
 //

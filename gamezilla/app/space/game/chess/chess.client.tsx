@@ -15,9 +15,9 @@ import {
 import { CoverArt } from "./@SHARED/chess-ui";
 import { CHESS_SOUND } from "./@SHARED/chess/chess-sounds";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./chess.core";
-import * as Puzzle from "./puzzle/puzzle.client";
-import * as VsBot from "./vs-bot/vs-bot.client";
-import * as VsUser from "./vs-user/vs-user.client";
+import * as Puzzle from "./@CHILD/puzzle/puzzle.client";
+import * as VsBot from "./@CHILD/vs-bot/vs-bot.client";
+import * as VsUser from "./@CHILD/vs-user/vs-user.client";
 
 type Client = GameClient<
   ClientModel,

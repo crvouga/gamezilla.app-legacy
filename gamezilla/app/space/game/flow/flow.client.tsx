@@ -10,8 +10,8 @@ import { MainMenuScreen } from "gamezilla/app/space/game/@SHARED";
 import { CoverArt } from "./@SHARED/flow-cover-art";
 import { FlowViewCtx } from "./@SHARED/flow-ctx";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./flow.core";
-import { PlayClient } from "./play";
-import { PuzzleBuilderClient } from "./puzzle-builder";
+import { PlayClient } from "./@CHILD/play";
+import { PuzzleBuilderClient } from "./@CHILD/puzzle-builder";
 
 type Client = GameClient<ClientModel, ClientMsg, ToClient, ToServer>;
 

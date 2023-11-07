@@ -1,7 +1,7 @@
 import { Eff, Keyboard, Sub, p } from "gamezilla/@SHARED/core";
 import { SpaceClientCtx, SpaceViewCtx } from "gamezilla/app/space/@SHARED";
 import { ActionButton, IconArrowLeftOnRect } from "gamezilla/app/@SHARED/ui";
-import { Maze } from "./maze";
+import { Maze } from "./@SHARED/maze";
 import {
   ClientModel,
   ClientMsg,
@@ -11,7 +11,7 @@ import {
   ToServer,
   initShared,
 } from "./maze.core";
-import { Direction, Position } from "./position";
+import { Direction, Position } from "./@SHARED/position";
 
 //
 //

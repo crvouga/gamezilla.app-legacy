@@ -1,8 +1,8 @@
 import { err, ok, Sub } from "gamezilla/@SHARED/core";
 import { GameServer, sendToSpace } from "gamezilla/app/space/@SHARED";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./flow.core";
-import { PlayServer } from "./play";
-import { PuzzleBuilderServer } from "./puzzle-builder";
+import { PlayServer } from "./@CHILD/play";
+import { PuzzleBuilderServer } from "./@CHILD/puzzle-builder";
 
 type Server = GameServer<ServerModel, ServerMsg, ToClient, ToServer>;
 

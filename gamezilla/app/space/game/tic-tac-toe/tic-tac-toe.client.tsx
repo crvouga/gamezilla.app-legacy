@@ -6,9 +6,9 @@ import {
   mainMenuButtons,
 } from "gamezilla/app/space/game/@SHARED";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./tic-tac-toe.core";
-import { CoverArt } from "./tic-tic-toe/tic-tac-toe-ui";
-import * as VsBot from "./vs-bot/vs-bot.client";
-import * as VsUser from "./vs-user/vs-user.client";
+import { CoverArt } from "./@SHARED/tic-tic-toe/tic-tac-toe-ui";
+import * as VsBot from "./@CHILD/vs-bot/vs-bot.client";
+import * as VsUser from "./@CHILD/vs-user/vs-user.client";
 
 type Client = GameClient<
   ClientModel,
