@@ -1,3 +1,4 @@
+import { SpaceViewCtx } from "gamezilla/app/@CHILD/space/@SHARED";
 import {
   Button,
   IconArrowLeftOnRect,
@@ -5,9 +6,8 @@ import {
   IconUsers,
   VDom,
 } from "gamezilla/app/@SHARED/ui";
-import { SpaceViewCtx } from "gamezilla/app/@CHILD/space/@SHARED";
 import { ViewGameHeader } from "./view-game-header";
-import { ViewUsersInSpaceList } from ".";
+import { ViewUsersInSpaceList } from "./view-users-in-space-list";
 
 type MainMenuButton = {
   renderIcon: (input: { className: string }) => VDom;

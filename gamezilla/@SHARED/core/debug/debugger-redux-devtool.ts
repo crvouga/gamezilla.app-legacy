@@ -5,7 +5,8 @@
  *
  * @since 0.5.0
  */
-import { Sub, toMsgPayload, toMsgType } from "..";
+import { Sub } from "../sub";
+import { toMsgPayload, toMsgType } from "../utils";
 import * as Json from "../json";
 import { p } from "../pipe";
 import { Program } from "../program";
