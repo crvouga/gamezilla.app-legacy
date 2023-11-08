@@ -8,26 +8,26 @@ export type Store<TKey extends string | number, TValue> = {
   init: (timestamp: number) => StoreInstance<TKey, TValue>;
 
   assoc: (
-    now: number,
+    timestamp: number,
     instance: StoreInstance<TKey, TValue>,
     key: TKey,
     value: TValue
   ) => Promise<StoreInstance<TKey, TValue>>;
 
   assocMany: (
-    now: number,
+    timestamp: number,
     instance: StoreInstance<TKey, TValue>,
     entries: [TKey, TValue][]
   ) => Promise<StoreInstance<TKey, TValue>>;
 
   dissoc: (
-    now: number,
+    timestamp: number,
     instance: StoreInstance<TKey, TValue>,
     key: TKey
   ) => Promise<StoreInstance<TKey, TValue>>;
 
   dissocMany: (
-    now: number,
+    timestamp: number,
     instance: StoreInstance<TKey, TValue>,
     keys: TKey[]
   ) => Promise<StoreInstance<TKey, TValue>>;
