@@ -22,8 +22,8 @@ function deepEqual(
   }
 
   if (
-    typeof a !== 'object' ||
-    typeof b !== 'object' ||
+    typeof a !== "object" ||
+    typeof b !== "object" ||
     a === null ||
     b === null
   ) {
