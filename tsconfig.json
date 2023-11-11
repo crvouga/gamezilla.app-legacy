@@ -1,10 +1,32 @@
 {
-  "extends": "./tsconfig.base.json",
   "compilerOptions": {
+    "target": "ES2015",
+    "lib": ["DOM", "DOM.Iterable", "ESNext", "WebWorker", "es2016", "dom"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "strictNullChecks": true,
+    "noImplicitAny": true,
+    "noUncheckedIndexedAccess": true,
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
+    "allowUnreachableCode": true,
+    "strictPropertyInitialization": true,
+    "incremental": true,
+    "outDir": "dist",
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
     "moduleResolution": "Bundler",
     "types": ["vite/client", "preact", "bun-types"],
-
     "jsx": "react-jsx",
-    "jsxImportSource": "preact"
-  }
+    "jsxImportSource": "preact",
+    "baseUrl": "."
+  },
+  "include": ["gamezilla"],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }
