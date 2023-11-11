@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "server:build": "echo 'no build step'",
-    "server": "tsx --tsconfig ./tsconfig.server.json gamezilla/gamezilla.server.ts",
+    "server": "bun run gamezilla/gamezilla.server.ts",
     "client:build": "vite build",
     "client:preview": "vite preview",
     "client": "vite",
