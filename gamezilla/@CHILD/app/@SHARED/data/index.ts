@@ -5,3 +5,5 @@ export * from "./profile-avatar";
 export * from "./space-id";
 export * from "./user-id";
 export * from "./username";
+export * from "./client-id";
+export * from "./session-id";

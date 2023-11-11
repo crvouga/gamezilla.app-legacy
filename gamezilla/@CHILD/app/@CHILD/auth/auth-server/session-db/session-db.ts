@@ -1,6 +1,6 @@
-import { Posix, SessionId } from "gamezilla/@SHARED/core";
+import { Posix } from "gamezilla/@SHARED/core";
 import { StoreInstance } from "gamezilla/@SHARED/immutable-store";
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
+import { SessionId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 
 type AuthSession = {
   sessionId: SessionId;

@@ -1,4 +1,4 @@
-import { expect, test } from "vitest";
+import { expect, test } from "bun:test";
 import { Store } from "./immutable-store";
 
 export const buildTest = (Store: Store<string, string | null | undefined>) => {
@@ -12,6 +12,7 @@ export const buildTest = (Store: Store<string, string | null | undefined>) => {
 
     const t1 = t0 + 1000;
 
+    // @ts-ignore
     expect(await Store.latest(t0, t1, store1, key)).toEqual(undefined);
     expect(await Store.latest(t0, t1, store2A, key)).toEqual("2A");
     expect(await Store.latest(t0, t1, store2B, key)).toEqual("2B");
@@ -29,10 +30,13 @@ export const buildTest = (Store: Store<string, string | null | undefined>) => {
     const store2 = await Store.assoc(t0, store1, key2, "value-2");
 
     const t1 = t0 + 1000;
+    // @ts-ignore
     expect(await Store.latest(t0, t1, store0, key1)).toEqual(undefined);
+    // @ts-ignore
     expect(await Store.latest(t0, t1, store0, key2)).toEqual(undefined);
 
     expect(await Store.latest(t0, t1, store1, key1)).toEqual("value-1");
+    // @ts-ignore
     expect(await Store.latest(t0, t1, store1, key2)).toEqual(undefined);
 
     expect(await Store.latest(t0, t1, store2, key1)).toEqual("value-1");
@@ -48,6 +52,7 @@ export const buildTest = (Store: Store<string, string | null | undefined>) => {
 
     const t1 = t0 + 1000;
     // Ensure the original store is unchanged after 'set'
+    // @ts-ignore
     expect(await Store.latest(t0, t1, store1, key)).toEqual(undefined);
 
     // Ensure the new store has the updated value
@@ -66,9 +71,12 @@ export const buildTest = (Store: Store<string, string | null | undefined>) => {
     const t1 = t0 + 1000;
 
     // Ensure original stores are unchanged
+    // @ts-ignore
     expect(await Store.latest(t0, t1, store0, key1)).toEqual(undefined);
+    // @ts-ignore
     expect(await Store.latest(t0, t1, store0, key2)).toEqual(undefined);
     expect(await Store.latest(t0, t1, store1, key1)).toEqual("value-1");
+    // @ts-ignore
     expect(await Store.latest(t0, t1, store1, key2)).toEqual(undefined);
 
     // Ensure the new store has updated values
@@ -86,12 +94,14 @@ export const buildTest = (Store: Store<string, string | null | undefined>) => {
 
     const t1 = t0 + 1000;
     // Ensure the original store is unchanged
+    // @ts-ignore
     expect(await Store.latest(t0, t1, store1, key)).toEqual(undefined);
 
     // Ensure the new store has the updated value
     expect(await Store.latest(t0, t1, store2, key)).toEqual("value");
 
     // Ensure the key is deleted in the final store
+    // @ts-ignore
     expect(await Store.latest(t0, t1, store3, key)).toEqual(undefined);
   });
 
@@ -102,6 +112,7 @@ export const buildTest = (Store: Store<string, string | null | undefined>) => {
     const store = Store.init(t0);
     const t1 = t0 + 1000;
     // Ensure a key that doesn't exist returns null
+    // @ts-ignore
     expect(await Store.latest(t0, t1, store, key)).toEqual(undefined);
   });
 
@@ -114,6 +125,7 @@ export const buildTest = (Store: Store<string, string | null | undefined>) => {
     const store3 = await Store.assoc(t0, store2, key, "value2");
     const t1 = t0 + 1000;
     // Ensure original values remain unchanged
+    // @ts-ignore
     expect(await Store.latest(t0, t1, store1, key)).toEqual(undefined);
     expect(await Store.latest(t0, t1, store2, key)).toEqual("value1");
 
@@ -132,9 +144,12 @@ export const buildTest = (Store: Store<string, string | null | undefined>) => {
 
     const t1 = t0 + 1000;
     // Ensure original stores are unchanged
+    // @ts-ignore
     expect(await Store.latest(t0, t1, store1, key1)).toEqual(undefined);
+    // @ts-ignore
     expect(await Store.latest(t0, t1, store1, key2)).toEqual(undefined);
     expect(await Store.latest(t0, t1, store2, key1)).toEqual("value1");
+    // @ts-ignore
     expect(await Store.latest(t0, t1, store2, key2)).toEqual(undefined);
 
     // Ensure the new store has updated values
@@ -164,6 +179,7 @@ export const buildTest = (Store: Store<string, string | null | undefined>) => {
 
     const t1 = t0 + 1000;
     expect(await Store.latest(t0, t1, store3, key1)).toEqual(null);
+    // @ts-ignore
     expect(await Store.latest(t0, t1, store3, key2)).toEqual(undefined);
   });
 
@@ -219,6 +235,7 @@ export const buildTest = (Store: Store<string, string | null | undefined>) => {
     const removed = await Store.dissoc(t2, added, key);
 
     expect(await Store.latest(t0, t1, added, key)).toEqual("value");
+    // @ts-ignore
     expect(await Store.latest(t0, t2, removed, key)).toEqual(undefined);
   });
 
@@ -234,6 +251,7 @@ export const buildTest = (Store: Store<string, string | null | undefined>) => {
     const addedAgain = await Store.assoc(t3, removed, key, "valueAgain");
 
     expect(await Store.latest(t0, t1, added, key)).toEqual("value");
+    // @ts-ignore
     expect(await Store.latest(t0, t2, removed, key)).toEqual(undefined);
     expect(await Store.latest(t0, t3, addedAgain, key)).toEqual("valueAgain");
   });

@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "types": ["bun-types"],
     "target": "ES2015",
     "lib": ["DOM", "DOM.Iterable", "ESNext", "WebWorker", "es2016", "dom"],
     "module": "ESNext",

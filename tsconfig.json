@@ -2,7 +2,7 @@
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
     "moduleResolution": "Bundler",
-    "types": ["vite/client", "preact"],
+    "types": ["vite/client", "preact", "bun-types"],
 
     "jsx": "react-jsx",
     "jsxImportSource": "preact"

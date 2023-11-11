@@ -1,192 +1,24 @@
-import { ClientId, Eff, PubSub, SessionId, Sub } from "gamezilla/@SHARED/core";
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
-import { ServerCmd, ServerEvt } from "gamezilla/@CHILD/app/@SHARED/server";
-import http from "http";
-import WebSocket, { WebSocketServer } from "ws";
+import { ServerWebSocket } from "bun";
+import { PubSub } from "../../../@SHARED/core/sub";
+import { ClientId } from "../@SHARED/data/client-id";
+import { SessionId } from "../@SHARED/data/session-id";
 import {
-  ServerModel,
-  Session,
+  ClientToServerMsg,
   ServerToClientMsg,
   ServerWireMsg,
-  ClientToServerMsg,
-} from "./wire.core";
+} from "./wire-core";
 
-export const update = ({
-  msg,
-  model,
-}: {
-  msg: ServerWireMsg;
-  model: ServerModel;
-}): {
-  model: ServerModel;
-  evt?: ServerEvt[];
-} => {
-  switch (msg.t) {
-    case "client-connected": {
-      const sessionId = msg.sessionId;
-      const sessionNew: Session = {
-        clientId: msg.clientId,
-        sessionId,
-      };
-
-      return {
-        model: {
-          ...model,
-          sessions: {
-            ...model.sessions,
-            [sessionNew.sessionId]: sessionNew,
-          },
-        },
-        evt: [
-          {
-            ...msg,
-            // userId: model.auth.sessions[msg.sessionId]?.userId,
-            t: "client-connected",
-          },
-        ],
-      };
-    }
-
-    case "client-disconnected": {
-      const sessionNew: Session = {
-        sessionId: msg.sessionId,
-      };
-      return {
-        model: {
-          ...model,
-          sessions: {
-            ...model.sessions,
-            [sessionNew.sessionId]: sessionNew,
-          },
-        },
-      };
-    }
-  }
-};
-
-export const updateFromCmd = <T>({
-  model,
-  msg,
-}: {
-  model: ServerModel;
-  msg: ServerCmd<T>;
-}): {
-  model: ServerModel;
-  eff?: Eff;
-} => {
-  switch (msg.t) {
-    case "broadcast": {
-      return { model };
-    }
-    case "send-to-client": {
-      return { model };
-    }
-    case "send-to-user": {
-      return { model };
-    }
-  }
-};
-
-const cmdToEff = (model: ServerModel, cmdList: ServerCmd<unknown>[]): Eff => {
-  const broadcastMsgs: unknown[] = [];
-  const toClientMsgs: {
-    [clientId: ClientId]: {
-      clientId: ClientId;
-      msgs: unknown[];
-    };
-  } = {};
-
-  for (const cmd of cmdList) {
-    switch (cmd.t) {
-      case "broadcast": {
-        broadcastMsgs.push(cmd.msg);
-        break;
-      }
-      case "send-to-client": {
-        for (const clientId of cmd.clientIds) {
-          toClientMsgs[clientId] = {
-            clientId,
-            msgs: [cmd.msg, ...(toClientMsgs[clientId]?.msgs ?? [])],
-          };
-        }
-        break;
-      }
-      case "send-to-user": {
-        const clientIds: ClientId[] = [];
-
-        const userIdSet = new Set<UserId>(cmd.userIds);
-
-        for (const sessionId in model.sessions) {
-          if (!SessionId.is(sessionId)) {
-            continue;
-          }
-
-          const session = model.sessions[sessionId];
-
-          // const authSession = model.auth.sessions[sessionId];
-
-          if (!session) {
-            continue;
-          }
-
-          // if (!authSession) {
-          //   continue;
-          // }
-
-          // if (!userIdSet.has(authSession.userId)) {
-          //   continue;
-          // }
-
-          if (!session.clientId) {
-            continue;
-          }
-
-          clientIds.push(session.clientId);
-        }
-
-        for (const clientId of clientIds) {
-          toClientMsgs[clientId] = {
-            clientId,
-            msgs: [cmd.msg, ...(toClientMsgs[clientId]?.msgs ?? [])],
-          };
-        }
-
-        break;
-      }
-    }
-  }
-
-  return () => {
-    toClientBroadcast.publish(broadcastMsgs);
-    toClient.publish(toClientMsgs);
-  };
-};
-
-export const toClient = Sub.create<{
-  [clientId: ClientId]: {
-    clientId: ClientId;
-    msgs: unknown[];
-  };
-}>();
-
-export const toClientBroadcast = Sub.create<unknown[]>();
-
-export const fromClient = Sub.create<{
-  sessionId: SessionId;
+type ServerWebSocketData = {
   clientId: ClientId;
-  msgs: unknown[];
-}>();
-
-export const wire = Sub.create<ServerWireMsg>();
+  sessionId: SessionId;
+};
 
 export const attachServerTransport = <ToServer, ToClient>({
-  httpServer,
   fromClient,
   toClientBroadcast,
   toClient,
   wire,
 }: {
-  httpServer: http.Server;
   toClientBroadcast: PubSub<ToClient[]>;
   toClient: PubSub<{
     [clientId: ClientId]: {
@@ -201,71 +33,95 @@ export const attachServerTransport = <ToServer, ToClient>({
   }>;
   wire: PubSub<ServerWireMsg>;
 }) => {
-  const wsServer = new WebSocketServer({ noServer: true });
-  const clients = new Map<ClientId, WebSocket>();
+  const clients = new Map<ClientId, ServerWebSocket<ServerWebSocketData>>();
 
-  httpServer.on("upgrade", (req, socket, head) => {
-    const reqUrl = req?.url;
+  const port = Number(process.env["PORT"]) || 5000;
 
-    if (!reqUrl) {
-      return;
-    }
+  const server = Bun.serve({
+    port: port,
 
-    const parsedUrl = new URL(reqUrl, `http://${req.headers.host}`);
+    fetch(req, server) {
+      const reqUrl = req.url;
 
-    if (parsedUrl.pathname === "/ws") {
-      wsServer.handleUpgrade(req, socket, head, (ws) => {
-        wsServer.emit("connection", ws, req);
-      });
-    }
-  });
-
-  wsServer.on("connection", (ws, req) => {
-    const reqUrl = req?.url;
-
-    if (!reqUrl) {
-      return;
-    }
-
-    const parsedUrl = new URL(reqUrl, `http://${req.headers.host}`);
-
-    const maybeSessionId = parsedUrl.searchParams.get("session-id");
-
-    const sessionId = SessionId.is(maybeSessionId)
-      ? maybeSessionId
-      : SessionId.generate();
-
-    const clientId = ClientId.generate();
-
-    clients.set(clientId, ws);
-
-    ws.send(JSON.stringify({ t: "session-id", sessionId }));
-
-    wire.publish({ t: "client-connected", clientId, sessionId });
-
-    ws.on("message", (data) => {
-      const msg = JSON.parse(data.toString()) as ClientToServerMsg<ToServer>; // leap of faith
-
-      if (msg.t === "to-server") {
-        fromClient.publish({ clientId, sessionId, msgs: msg.msgs });
+      if (!reqUrl) {
         return;
       }
-    });
 
-    ws.on("close", () => {
-      clients.delete(clientId);
-      wire.publish({ t: "client-disconnected", clientId, sessionId });
-    });
+      const parsedUrl = new URL(reqUrl, `http://${req.headers.get("host")}`);
+
+      const maybeSessionId = parsedUrl.searchParams.get("session-id");
+
+      const sessionId = SessionId.is(maybeSessionId)
+        ? maybeSessionId
+        : SessionId.generate();
+
+      const clientId = ClientId.generate();
+
+      const data: ServerWebSocketData = {
+        clientId,
+        sessionId,
+      };
+
+      if (server.upgrade(req, { data })) {
+        return;
+      }
+      return new Response("Upgrade failed :(", { status: 500 });
+    },
+
+    websocket: {
+      message(ws: ServerWebSocket<ServerWebSocketData>, message) {
+        const msg = JSON.parse(
+          message.toString()
+        ) as ClientToServerMsg<ToServer>; // leap of faith
+
+        if (msg.t === "to-server") {
+          fromClient.publish({
+            clientId: ws.data.clientId,
+            sessionId: ws.data.sessionId,
+            msgs: msg.msgs,
+          });
+          return;
+        }
+      },
+      open(ws: ServerWebSocket<ServerWebSocketData>) {
+        clients.set(ws.data.clientId, ws);
+
+        ws.send(
+          JSON.stringify({ t: "session-id", sessionId: ws.data.sessionId })
+        );
+
+        wire.publish({
+          t: "client-connected",
+          clientId: ws.data.clientId,
+          sessionId: ws.data.sessionId,
+        });
+      },
+      close(ws: ServerWebSocket<ServerWebSocketData>, code, message) {
+        clients.delete(ws.data.clientId);
+        wire.publish({
+          t: "client-disconnected",
+          clientId: ws.data.clientId,
+          sessionId: ws.data.sessionId,
+        });
+      },
+      drain(ws) {},
+    },
   });
 
-  const send = (client: WebSocket, msg: ServerToClientMsg<ToClient>) => {
+  console.log(`[server] Listening on port ${port}`);
+
+  const send = (
+    ws: ServerWebSocket<ServerWebSocketData>,
+    msg: ServerToClientMsg<ToClient>
+  ) => {
     if (msg.t === "to-client" && msg.msgs.length === 0) {
       return;
     }
-    if (client.readyState !== WebSocket.OPEN) {
+
+    if (ws.readyState === 1) {
+      ws.send(JSON.stringify(msg));
       return;
     }
-    client.send(JSON.stringify(msg));
   };
 
   toClientBroadcast.subscribe((msgs) => {
@@ -291,6 +147,7 @@ export const attachServerTransport = <ToServer, ToClient>({
       if (!client) {
         continue;
       }
+
       send(client, { t: "to-client", msgs: toClientSingle.msgs });
     }
   });

@@ -23,6 +23,5 @@ export * from "./sub";
 export { Task } from "./task";
 export * as Time from "./time";
 export * as Transition from "./transition";
-export * from "./transport";
 export { Posix } from "./unix-time";
 export * from "./utils";

@@ -1,5 +1,5 @@
 import { Columns, PlayerType, toStatus, toWins } from "./connect-four";
-import { expect, test } from "vitest";
+import { expect, test } from "bun:test";
 
 const expectWinner = (columns: Columns) => {
   const status = toStatus(columns);

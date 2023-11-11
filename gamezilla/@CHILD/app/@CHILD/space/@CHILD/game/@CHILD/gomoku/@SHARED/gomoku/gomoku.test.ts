@@ -1,5 +1,5 @@
 import { Board, setStone, Stone, toWins } from "./gomoku";
-import { expect, test } from "vitest";
+import { expect, test } from "bun:test";
 
 type Matrix = (" " | "b" | "w")[][];
 const _ = " ";

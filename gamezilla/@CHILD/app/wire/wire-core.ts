@@ -1,5 +1,4 @@
-import { ClientId } from "./client-id";
-import { SessionId } from "./session-id";
+import { ClientId, SessionId } from "../@SHARED/data";
 
 export type ServerToClientMsg<ToClient> =
   | { t: "to-client"; msgs: ToClient[] }

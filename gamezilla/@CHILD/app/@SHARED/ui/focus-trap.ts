@@ -15,7 +15,9 @@ export const createFocusTrap = () => {
 
   let index = 0;
   const findFocusableElements = (root: HTMLElement) => {
-    const focusableContent = root.querySelectorAll(FOCUSABLE_ELEMENTS);
+    const focusableContent = Array.from(
+      root.querySelectorAll(FOCUSABLE_ELEMENTS)
+    );
 
     index = 0;
     for (const el of focusableContent) {

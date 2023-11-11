@@ -8,7 +8,6 @@
     "client:build": "vite build",
     "client:preview": "vite preview",
     "client": "vite",
-    "test": "vitest",
     "ngrok": "ngrok start --all",
     "db:dev": "pscale connect gamezilla dev",
     "tc": "bun x tsc --noEmit --watch",
@@ -19,18 +18,15 @@
     "@supabase/supabase-js": "^1.30.0",
     "chess.js": "^1.0.0-beta.6",
     "mysql2": "^3.2.0",
-    "preact": "^10.17.0",
-    "threads": "^1.7.0",
-    "ws": "^8.13.0"
+    "preact": "^10.17.0"
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.5.0",
-    "@types/howler": "^2.2.8",
     "@types/ws": "^8.5.5",
     "@typescript-eslint/eslint-plugin": "^5.57.1",
     "@typescript-eslint/parser": "^5.57.1",
-    "@vitejs/plugin-legacy": "^4.1.1",
     "autoprefixer": "^10.4.14",
+    "bun-types": "^1.0.11",
     "csv-parser": "^3.0.0",
     "eslint": "^8.38.0",
     "postcss": "^8.4.23",

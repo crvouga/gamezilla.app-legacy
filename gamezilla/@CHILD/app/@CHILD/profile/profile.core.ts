@@ -1,5 +1,6 @@
-import { ClientId, RemoteResult, Result } from "gamezilla/@SHARED/core";
+import { RemoteResult, Result } from "gamezilla/@SHARED/core";
 import {
+  ClientId,
   Profile,
   ProfileAvatarSeed,
   ProfileAvatarStyle,

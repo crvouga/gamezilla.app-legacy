@@ -1,11 +1,8 @@
-import {
-  Browser,
-  Program,
-  attachClientTransport,
-} from "gamezilla/@SHARED/core";
+import { Browser, Program } from "gamezilla/@SHARED/core";
 import { render } from "preact";
-import { attachDebugger } from "./@SHARED/core/debug";
 import * as AppClient from "./@CHILD/app/app.client";
+import { attachClientTransport } from "./@CHILD/app/wire";
+import { attachDebugger } from "./@SHARED/core/debug";
 import "./main.css";
 
 const program = Program.create({

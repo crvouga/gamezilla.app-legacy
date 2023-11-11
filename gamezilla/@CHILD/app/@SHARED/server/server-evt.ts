@@ -1,5 +1,4 @@
-import { ClientId, SessionId } from "gamezilla/@SHARED/core";
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
+import { ClientId, SessionId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 
 export type ServerEvt =
   | {

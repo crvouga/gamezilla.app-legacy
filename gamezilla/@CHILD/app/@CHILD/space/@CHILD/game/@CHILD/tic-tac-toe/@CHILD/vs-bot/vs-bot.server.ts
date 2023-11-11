@@ -5,7 +5,6 @@ import {
   SpaceServerCmd,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
 import { TicTacToe } from "../../@SHARED/tic-tic-toe";
-import { getBestMove } from "../../@SHARED/tic-tic-toe/best-move";
 import {
   Res,
   ServerModel,
@@ -50,15 +49,6 @@ export const update = ({
   cmd?: SpaceServerCmd<ToClient>[];
 } => {
   if (msg.t === "bot-moved") {
-    if (msg.result.t === "err") {
-      return {
-        model,
-        cmd: [
-          { t: "send-to-space", msg: { t: "bot-moved", result: msg.result } },
-        ],
-      };
-    }
-
     if (model.type !== "game") {
       return {
         model,
@@ -75,7 +65,10 @@ export const update = ({
     }
 
     const moved = TicTacToe.move({
-      position: msg.result.value,
+      position: {
+        column: 0,
+        row: 0,
+      },
       board: model.board,
       player: TicTacToe.toOpposite(model.userPlayerType),
     });
@@ -137,14 +130,6 @@ const watchBotMove = ({
   if (!isBotTurn(modelPrev) && isBotTurn(model)) {
     return {
       model,
-      eff: p(
-        getBestMove({
-          depth: TicTacToe.toDepth(model.botLevel),
-          maximizingPlayer: TicTacToe.toOpposite(model.userPlayerType),
-          board: model.board,
-        }),
-        Eff.perform((result) => ({ t: "bot-moved", result }))
-      ),
     };
   }
   return { model };

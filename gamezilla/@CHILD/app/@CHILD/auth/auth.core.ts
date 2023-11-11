@@ -1,11 +1,5 @@
-import {
-  ClientId,
-  EmailAddress,
-  RemoteResult,
-  Result,
-  SessionId,
-} from "gamezilla/@SHARED/core";
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
+import { EmailAddress, RemoteResult, Result } from "gamezilla/@SHARED/core";
+import { ClientId, SessionId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 
 export type Account = {
   userId: UserId;

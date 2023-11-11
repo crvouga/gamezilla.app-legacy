@@ -1,7 +1,6 @@
 import { err, ok, Result } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { VsBotSetup } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
-import { GetBestMoveResult } from "../../@SHARED/tic-tic-toe/best-move";
 import {
   BotLevel,
   Model,
@@ -80,7 +79,7 @@ export const isBotTurn = (model: CoreModel): model is GameModel => {
 
 export type ClientMsg = Req | { t: "vs-bot-setup"; c: VsBotSetup.Msg };
 
-export type ServerMsg = { t: "bot-moved"; result: GetBestMoveResult };
+export type ServerMsg = { t: "bot-moved" };
 
 export type ToServer = Req;
 

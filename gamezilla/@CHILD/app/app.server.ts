@@ -1,11 +1,3 @@
-import {
-  ClientId,
-  Eff,
-  Posix,
-  ServerWireMsg,
-  SessionId,
-  Sub,
-} from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   AnonymousReqCtx,
@@ -15,11 +7,13 @@ import {
   ServerEvt,
   sendBack,
 } from "gamezilla/@CHILD/app/@SHARED/server";
+import { Eff, Posix, Sub } from "gamezilla/@SHARED/core";
 import * as AuthServer from "./@CHILD/auth/auth.server";
 import * as ChatServer from "./@CHILD/chat/chat.server";
 import * as ProfileServer from "./@CHILD/profile/profile.server";
 import * as SearchServer from "./@CHILD/search/search.server";
 import * as SpaceServer from "./@CHILD/space/space.server";
+import { ClientId, SessionId } from "./@SHARED/data";
 import { createDbConnMySql } from "./app-server";
 import {
   ServerModel,
@@ -28,6 +22,7 @@ import {
   ToServer,
   WireSession,
 } from "./app.core";
+import { ServerWireMsg } from "./wire";
 
 //
 //

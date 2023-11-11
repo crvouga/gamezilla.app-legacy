@@ -1,5 +1,4 @@
-import { ClientId } from "gamezilla/@SHARED/core";
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
+import { ClientId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 
 //
 //
