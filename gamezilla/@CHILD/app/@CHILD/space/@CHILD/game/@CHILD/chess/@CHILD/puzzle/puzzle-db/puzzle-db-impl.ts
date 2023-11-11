@@ -273,7 +273,7 @@ const puzzlesFindForProfile = async (
     LIMIT 1
   `;
 
-  const found = await dbConn.query(is(toPuzzleRow), sql);
+  const found = await dbConn.query(is(toPuzzleRow), sql, {});
 
   if (found.t === "err") {
     return found;
@@ -313,7 +313,7 @@ const puzzlesReplace = async ({
       )}
   `;
 
-  const inserted = await dbConn.query(is(toPuzzleRow), queryString);
+  const inserted = await dbConn.query(is(toPuzzleRow), queryString, {});
 
   return inserted;
 };
@@ -332,7 +332,8 @@ const interactionsInsert = async (
         ) VALUES ${interactions
           .map((x) => `('${x.puzzleId}', '${x.userId}', '${x.type}')`)
           .join(", ")}
-      `
+      `,
+    {}
   );
   return Result.mapOk(result, () => null);
 };
@@ -349,8 +350,11 @@ const profilesFind = async (
       FROM
         game_chess_puzzle_profile
       WHERE
-        user_id = "${userId}"
-    `
+        user_id = :user_id
+    `,
+    {
+      user_id: userId,
+    }
   );
 
   if (found.t === "err") {
@@ -399,12 +403,18 @@ export const profilesInsert = async (
           elo_rating,
           puzzle_query
         ) VALUES (
-          '${puzzleProfileId}',
-          '${profile.userId}',
-          '${profile.eloRating}',
-          '${JSON.stringify(profile.puzzleQuery)}',
+          :puzzle_profile_id,
+          :user_id,
+          :elo_rating,
+          :puzzle_query
         )
-      `
+      `,
+    {
+      puzzle_profile_id: puzzleProfileId,
+      user_id: profile.userId,
+      elo_rating: profile.eloRating,
+      puzzle_query: JSON.stringify(profile.puzzleQuery),
+    }
   );
 
   if (mutated.t === "err") {
@@ -445,12 +455,17 @@ const profilesUpdate = async (
     `
       UPDATE game_chess_puzzle_profile
       SET
-        user_id = '${profile.userId}',
-        elo_rating = ${profile.eloRating},
-        puzzle_query = '${JSON.stringify(profile.puzzleQuery)}'
+        user_id = :user_id,
+        elo_rating = :elo_rating,
+        puzzle_query = :puzzle_query
       WHERE
-        user_id = '${profile.userId}'
-    `
+        user_id = :user_id
+    `,
+    {
+      user_id: profile.userId,
+      elo_rating: profile.eloRating,
+      puzzle_query: JSON.stringify(profile.puzzleQuery),
+    }
   );
 
   if (mutated.t === "err") {

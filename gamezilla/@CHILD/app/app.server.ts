@@ -525,21 +525,33 @@ export const wire = Sub.create<ServerWireMsg>();
 export const initCtx = async (): Promise<ServerCtx> => {
   console.log("[server] db connecting...");
 
-  const DATABASE_URL =
-    'mysql://scuu9usphxh6zuxltqbe:pscale_pw_lkZooGgR8H09Uc59IVrcZEt8avVQ54VObBfoFwbCIa3@aws.connect.psdb.cloud/gamezilla?ssl={"rejectUnauthorized":true}';
+  const DATABASE_URL = process.env["DATABASE_URL"];
 
-  const mySql = await createDbConnMySql({
-    connectionString: DATABASE_URL,
-  });
+  if (!DATABASE_URL) {
+    throw new Error("DATABASE_URL not set");
+  }
 
-  const sqlLite = await createDbConnSqlLite({
-    connectionString: "gamezilla.db",
-  });
+  if (DATABASE_URL.includes("sqlite")) {
+    const sqlLite = createDbConnSqlLite({
+      connectionString: DATABASE_URL.replace("sqlite:", ""),
+    });
+    console.log("[server] sql lite db connected.");
+    return {
+      dbConn: sqlLite,
+      now: Posix.now(),
+    };
+  }
 
-  console.log("[server] db connected.");
-  return {
-    dbConn: mySql,
-    // dbConn: sqlLite,
-    now: Posix.now(),
-  };
+  if (DATABASE_URL.includes("mysql")) {
+    const mySql = await createDbConnMySql({
+      connectionString: DATABASE_URL,
+    });
+    console.log("[server] my sql db connected.");
+    return {
+      dbConn: mySql,
+      now: Posix.now(),
+    };
+  }
+
+  throw new Error(`DATABASE_URL not supported. ${DATABASE_URL}`);
 };

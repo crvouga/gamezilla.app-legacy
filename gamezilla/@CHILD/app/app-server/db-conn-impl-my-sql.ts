@@ -1,6 +1,7 @@
 import { err, ok } from "gamezilla/@SHARED/core";
 import { DbConnSql } from "gamezilla/@CHILD/app/@SHARED/server";
 import { PoolConnection, createPool } from "mysql2/promise";
+import { toSql } from "./sql";
 
 export const createDbConnMySql = async ({
   connectionString,
@@ -22,10 +23,13 @@ export const createDbConnMySql = async ({
   };
 
   return {
-    query: async (isRow, rawSql) => {
+    query: async (isRow, rawSql, params) => {
       try {
         const conn = await getConnection();
-        const [rows, fields] = await conn.query(rawSql);
+
+        const sql = toSql(rawSql, params);
+
+        const [rows, fields] = await conn.query(sql);
         conn.release();
 
         const parsed = Array.isArray(rows)

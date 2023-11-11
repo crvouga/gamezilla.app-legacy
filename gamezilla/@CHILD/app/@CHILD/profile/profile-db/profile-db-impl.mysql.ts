@@ -55,7 +55,8 @@ export const createProfileDb = ({
     findManyByUserId: async (userIds) => {
       const userIdsSql = userIds.map((id) => `"${id}"`).join(", ");
       const sql = `SELECT user_id, username, avatar_url FROM user_profile WHERE user_id IN (${userIdsSql})`;
-      const queried = await dbConn.query(is(toProfileRow), sql);
+
+      const queried = await dbConn.query(is(toProfileRow), sql, {});
 
       if (queried.t === "err") {
         return queried;
@@ -74,8 +75,13 @@ export const createProfileDb = ({
         is(toProfileRow),
         `
         INSERT INTO user_profile (user_id, username, avatar_url)
-        VALUES ("${profile.userId}", "${profile.username}", "${profile.avatarUrl}")
-        `
+        VALUES (:user_id, :username, :avatar_url)
+        `,
+        {
+          user_id: profile.userId,
+          username: profile.username,
+          avatar_url: profile.avatarUrl,
+        }
       );
 
       if (inserted.t === "err") {
