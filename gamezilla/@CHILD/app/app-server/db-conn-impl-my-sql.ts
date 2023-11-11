@@ -22,10 +22,10 @@ export const createDbConnMySql = async ({
   };
 
   return {
-    query: async (isRow, text, values) => {
+    query: async (isRow, rawSql) => {
       try {
         const conn = await getConnection();
-        const [rows, fields] = await conn.query(text, values);
+        const [rows, fields] = await conn.query(rawSql);
         conn.release();
 
         const parsed = Array.isArray(rows)
@@ -34,16 +34,15 @@ export const createDbConnMySql = async ({
                 return [row];
               }
               return [];
-            }, values)
+            })
           : [];
         log("executed query", {
-          text,
-          values,
+          rawSql,
           fields,
         });
         return ok(parsed);
       } catch (error) {
-        log("error executing query", { text, error });
+        log("error executing query", { rawSql, error });
         console.log(error);
         return err(String(error));
       }
