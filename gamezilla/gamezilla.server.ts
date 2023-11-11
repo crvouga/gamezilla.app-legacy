@@ -2,13 +2,6 @@ import { Program, toMsgType } from "gamezilla/@SHARED/core";
 import * as AppServer from "./@CHILD/app/app.server";
 import { attachServerTransport } from "./@CHILD/app/wire/wire.server";
 
-attachServerTransport({
-  wire: AppServer.wire,
-  fromClient: AppServer.fromClient,
-  toClient: AppServer.toClient,
-  toClientBroadcast: AppServer.toClientBroadcast,
-});
-
 const run = async () => {
   const ctx = await AppServer.initCtx();
 
@@ -46,6 +39,13 @@ const run = async () => {
   });
 
   program.start();
+
+  attachServerTransport({
+    wire: AppServer.wire,
+    fromClient: AppServer.fromClient,
+    toClient: AppServer.toClient,
+    toClientBroadcast: AppServer.toClientBroadcast,
+  });
 };
 
 run();
