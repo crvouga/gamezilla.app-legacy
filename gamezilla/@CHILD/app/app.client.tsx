@@ -657,7 +657,7 @@ const ViewMain = ({
       );
     }
 
-    default: {
+    case "loading": {
       return <LogoScreen />;
     }
   }
