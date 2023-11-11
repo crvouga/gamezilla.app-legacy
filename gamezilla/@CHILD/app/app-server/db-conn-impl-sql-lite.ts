@@ -2,8 +2,12 @@ import { err, ok } from "gamezilla/@SHARED/core";
 import { DbConnSql } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Database } from "bun:sqlite";
 
-export const createDbConnSqlLite = async (): Promise<DbConnSql> => {
-  const database = new Database("./gamezilla.db");
+export const createDbConnSqlLite = ({
+  connectionString,
+}: {
+  connectionString: string;
+}): DbConnSql => {
+  const database = new Database(connectionString);
 
   return {
     query: async (isRow, rawSql) => {

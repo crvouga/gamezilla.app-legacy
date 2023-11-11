@@ -523,7 +523,7 @@ export const wire = Sub.create<ServerWireMsg>();
 //
 
 export const initCtx = async (): Promise<ServerCtx> => {
-  console.log("[server] planet scale connecting...");
+  console.log("[server] db connecting...");
 
   const DATABASE_URL =
     'mysql://scuu9usphxh6zuxltqbe:pscale_pw_lkZooGgR8H09Uc59IVrcZEt8avVQ54VObBfoFwbCIa3@aws.connect.psdb.cloud/gamezilla?ssl={"rejectUnauthorized":true}';
@@ -532,9 +532,14 @@ export const initCtx = async (): Promise<ServerCtx> => {
     connectionString: DATABASE_URL,
   });
 
-  console.log("[server] planet scale connected.");
+  const sqlLite = await createDbConnSqlLite({
+    connectionString: "gamezilla.db",
+  });
+
+  console.log("[server] db connected.");
   return {
-    mySql,
+    dbConn: mySql,
+    // dbConn: sqlLite,
     now: Posix.now(),
   };
 };

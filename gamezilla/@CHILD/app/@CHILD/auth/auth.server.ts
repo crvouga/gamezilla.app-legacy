@@ -51,6 +51,7 @@ export const update = ({
   switch (msg.t) {
     case "got-user-account": {
       if (msg.result.t === "err") {
+        console.error(msg.result.error);
         return { model };
       }
       return {
@@ -138,7 +139,7 @@ export const updateFromClient = ({
           eff: async (dispatch) => {
             const result = await findElseInsertAccount({
               emailAddress,
-              dbConn: ctx.mySql,
+              dbConn: ctx.dbConn,
             });
             dispatch({
               t: "got-user-account",

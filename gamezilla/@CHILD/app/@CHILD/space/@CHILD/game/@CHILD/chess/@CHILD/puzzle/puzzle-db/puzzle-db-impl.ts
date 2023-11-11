@@ -399,18 +399,12 @@ export const profilesInsert = async (
           elo_rating,
           puzzle_query
         ) VALUES (
-          ?,
-          ?,
-          ?,
-          ?
+          '${puzzleProfileId}',
+          '${profile.userId}',
+          '${profile.eloRating}',
+          '${JSON.stringify(profile.puzzleQuery)}',
         )
-      `,
-    [
-      puzzleProfileId,
-      profile.userId,
-      profile.eloRating,
-      JSON.stringify(profile.puzzleQuery),
-    ]
+      `
   );
 
   if (mutated.t === "err") {

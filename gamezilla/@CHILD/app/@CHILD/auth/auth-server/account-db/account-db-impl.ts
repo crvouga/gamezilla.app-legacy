@@ -1,1 +1,1 @@
-export * from "./account-db-impl.mysql";
+export * from "./account-db-impl.sql";

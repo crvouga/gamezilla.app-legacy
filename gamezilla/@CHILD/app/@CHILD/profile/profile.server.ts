@@ -74,7 +74,7 @@ export const updateFromClient = ({
   return {
     model,
     eff: async (dispatch) => {
-      const ProfileDb = createProfileDb({ dbConn: ctx.mySql });
+      const ProfileDb = createProfileDb({ dbConn: ctx.dbConn });
       const result = await handler({ ProfileDb, msg, ctx });
 
       dispatch({
@@ -103,7 +103,7 @@ export const updateFromEvent = ({
       return {
         model,
         eff: async (dispatch) => {
-          const ProfileDb = createProfileDb({ dbConn: ctx.mySql });
+          const ProfileDb = createProfileDb({ dbConn: ctx.dbConn });
           const result = await findElseInsertNew({
             ProfileDb,
             userId: msg.userId,

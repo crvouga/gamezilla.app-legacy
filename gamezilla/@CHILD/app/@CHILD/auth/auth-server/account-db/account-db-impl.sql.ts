@@ -28,8 +28,7 @@ export const createAccountDb = ({
     async findOneByEmail(input) {
       const queried = await dbConn.query(
         is(toAccountRow),
-        "SELECT user_id, email_address FROM user_account WHERE email_address = ?",
-        [input.emailAddress]
+        `SELECT user_id, email_address FROM user_account WHERE email_address = '${input.emailAddress}'`
       );
 
       if (queried.t === "err") {
@@ -63,8 +62,7 @@ export const createAccountDb = ({
     async insertOne(input) {
       const queried = await dbConn.query(
         is(toAccountRow),
-        "INSERT INTO user_account (user_id, email_address) VALUES (?, ?)",
-        [input.account.userId, input.account.emailAddress]
+        `INSERT INTO user_account (user_id, email_address) VALUES ('${input.account.userId}', '${input.account.emailAddress}')`
       );
 
       if (queried.t === "err") {

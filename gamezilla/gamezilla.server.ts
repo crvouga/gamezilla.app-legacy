@@ -20,7 +20,7 @@ const run = async () => {
         model: input.model,
         msg: input.msg,
         ctx: {
-          mySql: ctx.mySql,
+          dbConn: ctx.dbConn,
           now: input.ctx.now,
         },
       });
@@ -32,7 +32,7 @@ const run = async () => {
       return AppServer.subscriptions({
         ...input,
         ctx: {
-          mySql: ctx.mySql,
+          dbConn: ctx.dbConn,
           now: input.ctx.now,
         },
       });

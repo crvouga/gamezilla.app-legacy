@@ -3,7 +3,7 @@ import { ClientId, SessionId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { DbConnSql } from "./server-db-conn-sql";
 
 export type ServerCtx = {
-  mySql: DbConnSql;
+  dbConn: DbConnSql;
   now: Posix;
 };
 
