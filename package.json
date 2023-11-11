@@ -4,7 +4,6 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "server:build": "echo 'no build step'",
     "server": "bun run gamezilla/gamezilla.server.ts",
     "client:build": "vite build",
     "client:preview": "vite preview",
@@ -12,9 +11,9 @@
     "test": "vitest",
     "ngrok": "ngrok start --all",
     "db:dev": "pscale connect gamezilla dev",
-    "tc": "tsc --noEmit --watch",
-    "viz-bundle": "npx vite-bundle-visualizer",
-    "cir-deps": "dpdm --progress --no-warning --no-tree ./gamezilla/gamezilla.client.tsx"
+    "tc": "bun x tsc --noEmit --watch",
+    "viz-bundle": "bun x vite-bundle-visualizer",
+    "cir-deps": "bun x dpdm --progress --no-warning --no-tree ./gamezilla/gamezilla.client.tsx"
   },
   "dependencies": {
     "@supabase/supabase-js": "^1.30.0",
