@@ -34,7 +34,7 @@ const connectionStringToDatabaseType = (
     return "postgres";
   }
 
-  if (connectionString.includes("sql-lite")) {
+  if (connectionString.includes("sqlite")) {
     return "sql-lite";
   }
 
