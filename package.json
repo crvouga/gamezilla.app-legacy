@@ -15,14 +15,13 @@
     "cir-deps": "bun x dpdm --progress --no-warning --no-tree ./gamezilla/gamezilla.client.tsx"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^1.30.0",
+    "@supabase/supabase-js": "^2.38.4",
     "chess.js": "^1.0.0-beta.6",
-    "mysql2": "^3.2.0",
-    "preact": "^10.17.0"
+    "mysql2": "^3.6.3",
+    "preact": "^10.19.1"
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.5.0",
-    "@types/ws": "^8.5.5",
     "@typescript-eslint/eslint-plugin": "^5.57.1",
     "@typescript-eslint/parser": "^5.57.1",
     "autoprefixer": "^10.4.14",
