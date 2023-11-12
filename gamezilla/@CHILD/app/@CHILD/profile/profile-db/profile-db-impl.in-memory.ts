@@ -5,14 +5,12 @@ import { ProfileDb } from "./profile-db";
 export const createProfileDb = (): ProfileDb => {
   const profiles = new Map<UserId, Profile>();
   return {
-    findOneByUserId: async (userIds) => {
+    findOneByUserId: async (userId) => {
       const output: Profile[] = [];
 
-      for (const userId of userIds) {
-        const profile = profiles.get(userId) ?? null;
-        if (profile) {
-          output.push(profile);
-        }
+      const profile = profiles.get(userId) ?? null;
+      if (profile) {
+        output.push(profile);
       }
 
       return ok(output);

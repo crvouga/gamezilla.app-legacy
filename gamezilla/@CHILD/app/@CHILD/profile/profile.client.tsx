@@ -45,7 +45,7 @@ export const init = ({
     },
     andThen((model) => {
       if (currentRoute.t === "profile" && currentRoute.c.t === "profile") {
-        return loadProfiles([currentRoute.c.userId], model);
+        return loadProfile(currentRoute.c.userId, model);
       }
       return { model };
     })
@@ -205,7 +205,7 @@ export const updateFromEvent = ({
   switch (evt.t) {
     case "route-changed": {
       if (evt.route.t === "profile" && evt.route.c.t === "profile") {
-        return loadProfiles([evt.route.c.userId], model);
+        return loadProfile(evt.route.c.userId, model);
       }
       return { model };
     }
@@ -226,8 +226,8 @@ export const updateFromEvent = ({
   }
 };
 
-const loadProfiles = (
-  userIds: UserId[],
+const loadProfile = (
+  userId: UserId,
   model: ClientModel
 ): {
   model: ClientModel;
@@ -236,14 +236,14 @@ const loadProfiles = (
   return {
     model: {
       ...model,
-      requests: { ...model.requests, "find-many": Loading },
+      requests: { ...model.requests, "find-one": Loading },
     },
     cmd: [
       {
         t: "send-to-server",
         msg: {
-          t: "find-many",
-          userIds,
+          t: "find-one",
+          userId,
         },
       },
     ],
