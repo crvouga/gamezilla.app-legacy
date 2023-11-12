@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "server:prod": "NODE_ENV=production bun gamezilla/gamezilla.server.ts",
     "server": "bun gamezilla/gamezilla.server.ts",
     "client:build": "vite build",
     "client:preview": "vite preview",
