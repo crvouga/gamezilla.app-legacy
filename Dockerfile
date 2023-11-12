@@ -7,4 +7,4 @@ RUN bun install
 
 EXPOSE 5000
 
-CMD bun server:prod
+CMD bun server
