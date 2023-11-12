@@ -29,9 +29,9 @@ export const createSocialLogin = (): SocialLogin => {
       for (let attempt = 0; attempt < 15; attempt++) {
         await new Promise((r) => setTimeout(r, 1000));
 
-        const session = supabaseClient.auth.session();
+        const session = await supabaseClient.auth.getSession();
 
-        const emailAddress = session?.user?.email ?? null;
+        const emailAddress = session.data.session?.user?.email ?? null;
 
         if (!EmailAddress.is(emailAddress)) {
           continue;
@@ -48,7 +48,7 @@ export const createSocialLogin = (): SocialLogin => {
     async redirectSocialLogin({ provider }) {
       switch (provider) {
         case "google": {
-          const result = await supabaseClient.auth.signIn({
+          const result = await supabaseClient.auth.signInWithOAuth({
             provider: "google",
           });
 
