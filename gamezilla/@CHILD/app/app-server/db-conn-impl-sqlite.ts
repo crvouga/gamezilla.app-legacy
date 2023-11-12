@@ -3,7 +3,7 @@ import { DbConnSql } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Database } from "bun:sqlite";
 import { toSql } from "./sql";
 
-export const createDbConnSqlLite = ({
+export const createDbConnSqlite = ({
   databaseUrl,
 }: {
   databaseUrl: string;
@@ -16,7 +16,7 @@ export const createDbConnSqlLite = ({
       try {
         const sql = toSql(rawSql, params);
 
-        const rows = await database.query(sql).all();
+        const rows = database.query(sql).all();
 
         const parsed = Array.isArray(rows)
           ? rows.flatMap((row) => {

@@ -1,7 +1,7 @@
 import { Result, err, ok } from "gamezilla/@SHARED/core";
 import { DbConnSql } from "../@SHARED/server";
 import { createDbConnPostgres } from "./db-conn-impl-postgres";
-import { createDbConnSqlLite } from "./db-conn-impl-sql-lite";
+import { createDbConnSqlite } from "./db-conn-impl-sqlite";
 
 export const createDbConn = async ({
   databaseUrl,
@@ -11,8 +11,8 @@ export const createDbConn = async ({
   const databaseType = connectionStringToDatabaseType(databaseUrl);
 
   switch (databaseType) {
-    case "sql-lite": {
-      return ok(createDbConnSqlLite({ databaseUrl }));
+    case "sqlite": {
+      return ok(createDbConnSqlite({ databaseUrl }));
     }
 
     case "postgres": {
@@ -25,7 +25,7 @@ export const createDbConn = async ({
   }
 };
 
-type DatabaseType = "sql-lite" | "postgres";
+type DatabaseType = "sqlite" | "postgres";
 
 const connectionStringToDatabaseType = (
   connectionString: string
@@ -35,7 +35,7 @@ const connectionStringToDatabaseType = (
   }
 
   if (connectionString.includes("sqlite")) {
-    return "sql-lite";
+    return "sqlite";
   }
 
   return null;
