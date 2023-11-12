@@ -522,48 +522,37 @@ export const wire = Sub.create<ServerWireMsg>();
 //
 //
 
-export const initCtx = async (): Promise<ServerCtx> => {
-  console.log("[server] db connecting...");
+type Env = "local" | "prod";
 
+export const initCtx = async (): Promise<ServerCtx> => {
   const env = getEnv();
 
+  console.log("[server] env", env);
+
+  const databaseUrl = getDatabaseUrl(env);
+
+  if (!databaseUrl) {
+    throw new Error("database url is not set");
+  }
+
+  const dbConn = await createDbConn({ databaseUrl });
+
+  console.log("[server] db connecting...");
+
+  return {
+    dbConn,
+    now: Posix.now(),
+  };
+};
+
+const getDatabaseUrl = (env: Env): string | null => {
   switch (env) {
     case "local": {
-      const DATABASE_URL_LOCAL = process.env["DATABASE_URL_LOCAL"];
-
-      if (!DATABASE_URL_LOCAL) {
-        throw new Error("DATABASE_URL_LOCAL not set");
-      }
-
-      const dbConn = await createDbConn({
-        databaseUrl: DATABASE_URL_LOCAL,
-      });
-
-      console.log("[server] local db connected.");
-
-      return {
-        dbConn,
-        now: Posix.now(),
-      };
+      return process.env["DATABASE_URL_LOCAL"] ?? null;
     }
 
     case "prod": {
-      const DATABASE_URL_PROD = process.env["DATABASE_URL_PROD"];
-
-      if (!DATABASE_URL_PROD) {
-        throw new Error("DATABASE_URL_PROD not set");
-      }
-
-      const dbConn = await createDbConn({
-        databaseUrl: DATABASE_URL_PROD,
-      });
-
-      console.log("[server] prod db connected.");
-
-      return {
-        dbConn,
-        now: Posix.now(),
-      };
+      return process.env["DATABASE_URL_PROD"] ?? null;
     }
   }
 };
@@ -571,7 +560,7 @@ export const initCtx = async (): Promise<ServerCtx> => {
 const getEnv = (): "local" | "prod" => {
   const env = process.env["NODE_ENV"];
 
-  if (env === "prod") {
+  if (env === "production") {
     return "prod";
   }
 
