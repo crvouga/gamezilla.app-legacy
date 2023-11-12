@@ -25,6 +25,7 @@
     "types": ["vite/client", "preact", "bun-types"],
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
+    //
     "baseUrl": "."
   },
   "include": ["gamezilla"],
