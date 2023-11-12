@@ -21,7 +21,7 @@ export const has = <T extends Record<string, unknown>, K extends keyof T, V>(
   key: K,
   checkType: (value: unknown) => value is V
 ): obj is T & Record<K, V> => {
-  return key in obj && checkType(obj[key]);
+  return checkType(obj[key]);
 };
 
 export const obj = (item: unknown): item is Record<string, unknown> => {
