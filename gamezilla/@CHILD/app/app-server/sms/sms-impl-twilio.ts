@@ -1,5 +1,5 @@
 import { err } from "gamezilla/@SHARED/core";
-import { SMS } from "./sms-interface";
+import { SMS } from "../../@SHARED/server/sms-interface";
 
 export const createSMSTwilio = (): SMS => {
   return {

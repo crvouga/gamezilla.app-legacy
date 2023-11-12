@@ -1,14 +1,13 @@
 import { err, ok } from "gamezilla/@SHARED/core";
 import { DbConnSql } from "gamezilla/@CHILD/app/@SHARED/server";
 import { toSql } from "./sql";
+import { Database } from "bun:sqlite";
 
 export const createDbConnSqlite = async ({
   databaseUrl,
 }: {
   databaseUrl: string;
 }): Promise<DbConnSql> => {
-  const { Database } = await import("bun:sqlite");
-
   const cleaned = databaseUrl.replace("sqlite:", "");
   const database = new Database(cleaned);
 
