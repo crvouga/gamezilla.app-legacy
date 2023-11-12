@@ -43,29 +43,29 @@ export const attachServerTransport = <ToServer, ToClient>({
     fetch(req, server) {
       const reqUrl = req.url;
 
-      if (!reqUrl) {
-        return;
+      const parsedUrl = new URL(reqUrl);
+
+      if (parsedUrl.pathname === "/ws") {
+        const maybeSessionId = parsedUrl.searchParams.get("session-id");
+
+        const sessionId = SessionId.is(maybeSessionId)
+          ? maybeSessionId
+          : SessionId.generate();
+
+        const clientId = ClientId.generate();
+
+        const data: ServerWebSocketData = {
+          clientId,
+          sessionId,
+        };
+
+        if (server.upgrade(req, { data })) {
+          return;
+        }
+        return new Response("Upgrade failed :(", { status: 500 });
       }
 
-      const parsedUrl = new URL(reqUrl, `http://${req.headers.get("host")}`);
-
-      const maybeSessionId = parsedUrl.searchParams.get("session-id");
-
-      const sessionId = SessionId.is(maybeSessionId)
-        ? maybeSessionId
-        : SessionId.generate();
-
-      const clientId = ClientId.generate();
-
-      const data: ServerWebSocketData = {
-        clientId,
-        sessionId,
-      };
-
-      if (server.upgrade(req, { data })) {
-        return;
-      }
-      return new Response("Upgrade failed :(", { status: 500 });
+      return new Response("Not found :(", { status: 404 });
     },
 
     websocket: {
