@@ -4,11 +4,12 @@ import { Database } from "bun:sqlite";
 import { toSql } from "./sql";
 
 export const createDbConnSqlLite = ({
-  connectionString,
+  databaseUrl,
 }: {
-  connectionString: string;
+  databaseUrl: string;
 }): DbConnSql => {
-  const database = new Database(connectionString);
+  const cleaned = databaseUrl.replace("sqlite:", "");
+  const database = new Database(cleaned);
 
   return {
     query: async (isRow, rawSql, params) => {

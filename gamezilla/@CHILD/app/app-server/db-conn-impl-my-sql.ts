@@ -4,11 +4,11 @@ import { PoolConnection, createPool } from "mysql2/promise";
 import { toSql } from "./sql";
 
 export const createDbConnMySql = async ({
-  connectionString,
+  databaseUrl,
 }: {
-  connectionString: string;
+  databaseUrl: string;
 }): Promise<DbConnSql> => {
-  const pool = createPool(connectionString);
+  const pool = createPool(databaseUrl);
 
   const getConnection = async (): Promise<PoolConnection> => {
     const conn = await pool.getConnection();

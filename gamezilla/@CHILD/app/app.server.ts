@@ -14,7 +14,7 @@ import * as ProfileServer from "./@CHILD/profile/profile.server";
 import * as SearchServer from "./@CHILD/search/search.server";
 import * as SpaceServer from "./@CHILD/space/space.server";
 import { ClientId, SessionId } from "./@SHARED/data";
-import { createDbConnMySql, createDbConnSqlLite } from "./app-server";
+import { createDbConn } from "./app-server";
 import {
   ServerModel,
   ServerMsg,
@@ -525,33 +525,55 @@ export const wire = Sub.create<ServerWireMsg>();
 export const initCtx = async (): Promise<ServerCtx> => {
   console.log("[server] db connecting...");
 
-  const DATABASE_URL = process.env["DATABASE_URL"];
+  const env = getEnv();
 
-  if (!DATABASE_URL) {
-    throw new Error("DATABASE_URL not set");
+  switch (env) {
+    case "local": {
+      const DATABASE_URL_LOCAL = process.env["DATABASE_URL_LOCAL"];
+
+      if (!DATABASE_URL_LOCAL) {
+        throw new Error("DATABASE_URL_LOCAL not set");
+      }
+
+      const dbConn = await createDbConn({
+        databaseUrl: DATABASE_URL_LOCAL,
+      });
+
+      console.log("[server] local db connected.");
+
+      return {
+        dbConn,
+        now: Posix.now(),
+      };
+    }
+
+    case "prod": {
+      const DATABASE_URL_PROD = process.env["DATABASE_URL_PROD"];
+
+      if (!DATABASE_URL_PROD) {
+        throw new Error("DATABASE_URL_PROD not set");
+      }
+
+      const dbConn = await createDbConn({
+        databaseUrl: DATABASE_URL_PROD,
+      });
+
+      console.log("[server] prod db connected.");
+
+      return {
+        dbConn,
+        now: Posix.now(),
+      };
+    }
+  }
+};
+
+const getEnv = (): "local" | "prod" => {
+  const env = process.env["NODE_ENV"];
+
+  if (env === "prod") {
+    return "prod";
   }
 
-  if (DATABASE_URL.includes("sqlite")) {
-    const sqlLite = createDbConnSqlLite({
-      connectionString: DATABASE_URL.replace("sqlite:", ""),
-    });
-    console.log("[server] sql lite db connected.");
-    return {
-      dbConn: sqlLite,
-      now: Posix.now(),
-    };
-  }
-
-  if (DATABASE_URL.includes("mysql")) {
-    const mySql = await createDbConnMySql({
-      connectionString: DATABASE_URL,
-    });
-    console.log("[server] my sql db connected.");
-    return {
-      dbConn: mySql,
-      now: Posix.now(),
-    };
-  }
-
-  throw new Error(`DATABASE_URL not supported. ${DATABASE_URL}`);
+  return "local";
 };
