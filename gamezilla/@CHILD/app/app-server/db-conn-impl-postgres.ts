@@ -21,6 +21,8 @@ export const createDbConnPostgres = async ({
 
         const res = await pool.query(sqlStr);
 
+        console.log(res);
+
         const parsed = res.rows.flatMap((row) => {
           if (isRow(row)) {
             return [row];
