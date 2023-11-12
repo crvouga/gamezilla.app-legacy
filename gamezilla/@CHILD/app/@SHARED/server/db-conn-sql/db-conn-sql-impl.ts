@@ -1,7 +1,7 @@
 import { Result, err, ok } from "gamezilla/@SHARED/core";
 import { DbConnSql } from "..";
-import { createDbConnPostgres } from "./db-conn-impl-postgres";
-import { createDbConnSqlite } from "./db-conn-impl-sqlite";
+import { createDbConnPostgres } from "./db-conn-sql-impl-postgres";
+import { createDbConnSqlite } from "./db-conn-sql-impl-sqlite";
 
 export const createDbConn = async ({
   databaseUrl,
@@ -12,7 +12,7 @@ export const createDbConn = async ({
 
   switch (databaseType) {
     case "sqlite": {
-      return ok(createDbConnSqlite({ databaseUrl }));
+      return ok(await createDbConnSqlite({ databaseUrl }));
     }
 
     case "postgres": {
