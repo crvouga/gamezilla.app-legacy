@@ -9,21 +9,16 @@ const run = async () => {
     init: () => AppServer.init,
 
     update: (input) => {
-      try {
-        const updated = AppServer.update({
-          model: input.model,
-          msg: input.msg,
-          ctx: {
-            dbConn: ctx.dbConn,
-            now: input.ctx.now,
-          },
-        });
+      const updated = AppServer.update({
+        model: input.model,
+        msg: input.msg,
+        ctx: {
+          dbConn: ctx.dbConn,
+          now: input.ctx.now,
+        },
+      });
 
-        return updated;
-      } catch (error) {
-        console.log(error);
-        return input;
-      }
+      return updated;
     },
 
     subscriptions: (input) => {
