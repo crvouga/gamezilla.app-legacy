@@ -1,9 +1,11 @@
-import { Posix } from "gamezilla/@SHARED/core";
 import { ClientId, SessionId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
-import { DbConnSql } from "./server-db-conn-sql";
+import { Posix } from "gamezilla/@SHARED/core";
+import { DbConnSql } from "./db-conn/db-conn-interface";
+import { SMS } from "./sms";
 
 export type ServerCtx = {
   dbConn: DbConnSql;
+  sms: SMS;
   now: Posix;
 };
 

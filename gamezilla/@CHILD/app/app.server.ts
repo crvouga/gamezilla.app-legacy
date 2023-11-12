@@ -6,6 +6,8 @@ import {
   ServerCtx,
   ServerEvt,
   sendBack,
+  createDbConn,
+  createSMSTwilio,
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Eff, Posix, Sub } from "gamezilla/@SHARED/core";
 import * as AuthServer from "./@CHILD/auth/auth.server";
@@ -14,7 +16,7 @@ import * as ProfileServer from "./@CHILD/profile/profile.server";
 import * as SearchServer from "./@CHILD/search/search.server";
 import * as SpaceServer from "./@CHILD/space/space.server";
 import { ClientId, SessionId } from "./@SHARED/data";
-import { createDbConn } from "./app-server";
+
 import {
   ServerModel,
   ServerMsg,
@@ -549,7 +551,10 @@ export const initCtx = async (): Promise<ServerCtx> => {
 
   console.log("[server] db connected.");
 
+  const sms = createSMSTwilio();
+
   return {
+    sms,
     dbConn,
     now: Posix.now(),
   };

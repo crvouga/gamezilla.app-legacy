@@ -1,5 +1,5 @@
 import { Result, err, ok } from "gamezilla/@SHARED/core";
-import { DbConnSql } from "../@SHARED/server";
+import { DbConnSql } from "..";
 import { createDbConnPostgres } from "./db-conn-impl-postgres";
 import { createDbConnSqlite } from "./db-conn-impl-sqlite";
 

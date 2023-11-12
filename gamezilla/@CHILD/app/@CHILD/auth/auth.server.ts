@@ -95,6 +95,18 @@ export const updateFromClient = ({
   eff?: Eff<ServerMsg>;
 } => {
   switch (msg.t) {
+    case "send-sms-code": {
+      return {
+        model,
+        eff: async (dispatch) => {
+          const randomCode = Math.floor(Math.random() * 10_000);
+          await ctx.sms.sendMessage({
+            message: `Your code is ${randomCode}`,
+            phoneNumber: msg.phoneNumber,
+          });
+        },
+      };
+    }
     case "started-social-login": {
       return {
         model: {

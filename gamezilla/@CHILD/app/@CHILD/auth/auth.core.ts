@@ -1,4 +1,9 @@
-import { EmailAddress, RemoteResult, Result } from "gamezilla/@SHARED/core";
+import {
+  EmailAddress,
+  PhoneNumber,
+  RemoteResult,
+  Result,
+} from "gamezilla/@SHARED/core";
 import { ClientId, SessionId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 
 export type Account = {
@@ -66,6 +71,10 @@ export type ToServer =
   | {
       t: "got-social-login-result";
       result: RemoteResult<string, EmailAddress>;
+    }
+  | {
+      t: "send-sms-code";
+      phoneNumber: PhoneNumber;
     };
 
 export type ToClient =
