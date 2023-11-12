@@ -19,7 +19,13 @@ export const createDbConnPostgres = async ({
 
         console.log("[db]", sqlStr);
 
+        const interval = setInterval(() => {
+          console.log("[db] waiting...");
+        }, 1000);
+
         const res = await pool.query(sqlStr);
+
+        clearInterval(interval);
 
         console.log("[db]", res.rows);
 
