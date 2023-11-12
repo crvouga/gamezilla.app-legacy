@@ -7,4 +7,4 @@ RUN bun install
 
 EXPOSE 5000
 
-CMD bun gamezilla/gamezilla.server.ts
+CMD NODE_ENV=production bun gamezilla/gamezilla.server.ts
