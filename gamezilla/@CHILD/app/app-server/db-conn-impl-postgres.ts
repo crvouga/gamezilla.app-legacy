@@ -15,22 +15,26 @@ export const createDbConnPostgres = async ({
 
   const connection = new Connection(databaseUrl);
 
+  console.log("[postgres] connecting...");
+  await connection.connect();
+  console.log("[postgres] connected");
+
   return {
     query: async (isRow, rawSql, params) => {
       try {
         const sqlStr = toSql(rawSql, params);
 
-        console.log("[db]", sqlStr);
+        console.log("[postgres]", sqlStr);
 
         const interval = setInterval(() => {
-          console.log("[db] waiting...");
+          console.log("[postgres] waiting...");
         }, 1000);
 
         const res = await connection.query(sqlStr);
 
         clearInterval(interval);
 
-        console.log("[db]", res.rows);
+        console.log("[postgres]", res.rows);
 
         const parsed =
           res.rows?.flatMap((row) => {
