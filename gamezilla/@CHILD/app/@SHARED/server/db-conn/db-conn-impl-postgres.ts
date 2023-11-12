@@ -1,6 +1,5 @@
 import { err, ok } from "gamezilla/@SHARED/core";
 import { DbConnSql } from "gamezilla/@CHILD/app/@SHARED/server";
-import postgres from "postgres";
 import { toSql } from "./sql";
 
 export const createDbConnPostgres = async ({
@@ -8,6 +7,7 @@ export const createDbConnPostgres = async ({
 }: {
   databaseUrl: string;
 }): Promise<DbConnSql> => {
+  const { default: postgres } = await import("postgres");
   const sql = postgres(databaseUrl);
   return {
     query: async (isRow, rawSql, params) => {
