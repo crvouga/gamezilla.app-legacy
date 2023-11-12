@@ -19,7 +19,11 @@ export const createDbConnPostgres = async ({
 
         console.log("[db]", sqlStr);
 
-        const res = await pool.query(sqlStr);
+        const client = await pool.connect();
+
+        const res = await client.query(sqlStr);
+
+        client.release();
 
         console.log("[db]", res.rows);
 
