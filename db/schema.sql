@@ -9,7 +9,7 @@ CREATE TABLE user_profile (
 CREATE INDEX idx_username ON user_profile (username);
 CREATE TABLE user_account (
   user_id TEXT NOT NULL,
-  email_address TEXT,
+  email_address TEXT, phone_number TEXT,
   PRIMARY KEY (user_id),
   UNIQUE (email_address)
 );
@@ -46,4 +46,5 @@ CREATE INDEX game_chess_puzzle_interaction_puzzle_id_idx ON game_chess_puzzle_in
 CREATE INDEX game_chess_puzzle_interaction_puzzle_id_user_id_idx ON game_chess_puzzle_interaction (puzzle_id, user_id);
 -- Dbmate schema migrations
 INSERT INTO "schema_migrations" (version) VALUES
-  ('20231111232244');
+  ('20231111232244'),
+  ('20231112003940');
