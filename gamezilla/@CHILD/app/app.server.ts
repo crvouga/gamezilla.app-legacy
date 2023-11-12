@@ -525,9 +525,13 @@ export const wire = Sub.create<ServerWireMsg>();
 export const initCtx = async (): Promise<ServerCtx> => {
   console.log("[server] init ctx");
 
-  const databaseUrl = process.env["DATABASE_URL"];
+  const env = getEnv();
 
-  console.log("[server] db url: ", databaseUrl);
+  console.log("[server] env:", env);
+
+  const databaseUrl = getDatabaseUrl(env);
+
+  console.log("[server] db url:", databaseUrl);
 
   if (typeof databaseUrl !== "string") {
     throw new Error("database url is not set");
@@ -549,4 +553,28 @@ export const initCtx = async (): Promise<ServerCtx> => {
     dbConn,
     now: Posix.now(),
   };
+};
+
+type Env = "prod" | "local";
+
+const getEnv = (): Env => {
+  const nodeEnv = process.env["NODE_ENV"];
+
+  if (nodeEnv?.includes("prod")) {
+    return "prod";
+  }
+
+  return "local";
+};
+
+const getDatabaseUrl = (env: Env): string | null => {
+  switch (env) {
+    case "prod": {
+      return process.env["DATABASE_URL_PROD"] ?? null;
+    }
+
+    case "local": {
+      return process.env["DATABASE_URL_LOCAL"] ?? null;
+    }
+  }
 };
