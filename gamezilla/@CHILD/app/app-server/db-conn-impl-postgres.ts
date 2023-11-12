@@ -1,6 +1,7 @@
 import { err, ok } from "gamezilla/@SHARED/core";
 import { DbConnSql } from "gamezilla/@CHILD/app/@SHARED/server";
-import pg from "pg";
+// import pg from "pg";
+import { Connection } from "postgresql-client";
 import { toSql } from "./sql";
 
 export const createDbConnPostgres = async ({
@@ -8,9 +9,11 @@ export const createDbConnPostgres = async ({
 }: {
   databaseUrl: string;
 }): Promise<DbConnSql> => {
-  const pool = new pg.Pool({
-    connectionString: databaseUrl,
-  });
+  // const pool = new pg.Pool({
+  //   connectionString: databaseUrl,
+  // });
+
+  const connection = new Connection(databaseUrl);
 
   return {
     query: async (isRow, rawSql, params) => {
@@ -23,7 +26,7 @@ export const createDbConnPostgres = async ({
           console.log("[db] waiting...");
         }, 1000);
 
-        const res = await pool.query(sqlStr);
+        const res = await connection.query(sqlStr);
 
         clearInterval(interval);
 
