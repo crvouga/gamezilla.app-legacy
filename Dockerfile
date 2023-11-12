@@ -3,8 +3,8 @@ FROM jarredsumner/bun:edge
 WORKDIR /usr/src/app
 COPY . /usr/src/app
 
-RUN ["bun", "install"]
+RUN bun install
 
 EXPOSE 5000
 
-CMD ["bun", "server"]
+CMD bun gamezilla/gamezilla.server.ts

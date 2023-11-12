@@ -3,6 +3,7 @@
     "checkmark",
     "chessboardjs",
     "cmds",
+    "compat",
     "deinterleave",
     "dissoc",
     "dpdm",
