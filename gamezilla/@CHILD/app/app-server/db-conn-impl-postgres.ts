@@ -12,6 +12,8 @@ export const createDbConnPostgres = async ({
     connectionString: databaseUrl,
   });
 
+  const client = await pool.connect();
+
   return {
     query: async (isRow, rawSql, params) => {
       try {
@@ -19,11 +21,7 @@ export const createDbConnPostgres = async ({
 
         console.log("[db]", sqlStr);
 
-        const client = await pool.connect();
-
         const res = await client.query(sqlStr);
-
-        client.release();
 
         console.log("[db]", res.rows);
 
