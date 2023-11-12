@@ -5,7 +5,7 @@ import { ProfileDb } from "./profile-db";
 export const createProfileDb = (): ProfileDb => {
   const profiles = new Map<UserId, Profile>();
   return {
-    findManyByUserId: async (userIds) => {
+    findOneByUserId: async (userIds) => {
       const output: Profile[] = [];
 
       for (const userId of userIds) {

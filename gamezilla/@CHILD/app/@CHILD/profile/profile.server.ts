@@ -138,8 +138,8 @@ const handler = async ({
   ctx: { currentUserId: UserId };
 }): Promise<Result<string, Profile[]>> => {
   switch (msg.t) {
-    case "find-many": {
-      const found = await ProfileDb.findManyByUserId(msg.userIds);
+    case "find-one": {
+      const found = await ProfileDb.findOneByUserId(msg.userId);
       return found;
     }
 
@@ -164,7 +164,7 @@ const findElseInsertNew = async ({
   ProfileDb: ProfileDb;
   userId: UserId;
 }) => {
-  const found = await ProfileDb.findManyByUserId([userId]);
+  const found = await ProfileDb.findOneByUserId(userId);
 
   if (found.t === "err") {
     return found;

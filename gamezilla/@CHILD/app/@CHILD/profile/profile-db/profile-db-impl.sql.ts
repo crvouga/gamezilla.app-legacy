@@ -52,11 +52,12 @@ export const createProfileDb = ({
   dbConn: DbConnSql;
 }): ProfileDb => {
   return {
-    findManyByUserId: async (userIds) => {
-      const userIdsSql = userIds.map((id) => `"${id}"`).join(", ");
-      const sql = `SELECT user_id, username, avatar_url FROM user_profile WHERE user_id IN (${userIdsSql})`;
+    findOneByUserId: async (userId) => {
+      const sql = `SELECT user_id, username, avatar_url FROM user_profile WHERE user_id = :user_id`;
 
-      const queried = await dbConn.query(is(toProfileRow), sql, {});
+      const queried = await dbConn.query(is(toProfileRow), sql, {
+        user_id: userId,
+      });
 
       if (queried.t === "err") {
         return queried;

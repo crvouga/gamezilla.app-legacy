@@ -60,7 +60,7 @@ export type ToClient =
 export type ToServer = Req;
 
 export type Req =
-  | { t: "find-many"; userIds: UserId[] }
+  | { t: "find-one"; userId: UserId }
   | { t: "change-username"; username: string }
   | { t: "search"; query: string }
   | { t: "delete-forever"; query: string };
