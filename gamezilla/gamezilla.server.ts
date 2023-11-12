@@ -13,6 +13,7 @@ const run = async () => {
         model: input.model,
         msg: input.msg,
         ctx: {
+          sms: ctx.sms,
           dbConn: ctx.dbConn,
           now: input.ctx.now,
         },
@@ -26,6 +27,7 @@ const run = async () => {
         ...input,
         ctx: {
           dbConn: ctx.dbConn,
+          sms: ctx.sms,
           now: input.ctx.now,
         },
       });
