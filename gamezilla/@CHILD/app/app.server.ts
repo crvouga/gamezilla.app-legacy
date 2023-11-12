@@ -535,9 +535,11 @@ export const initCtx = async (): Promise<ServerCtx> => {
     throw new Error("database url is not set");
   }
 
+  console.log("[server] db connecting...");
+
   const dbConn = await createDbConn({ databaseUrl });
 
-  console.log("[server] db connecting...");
+  console.log("[server] db connected.");
 
   return {
     dbConn,
