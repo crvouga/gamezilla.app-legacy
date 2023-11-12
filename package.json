@@ -18,12 +18,12 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.38.4",
     "chess.js": "^1.0.0-beta.6",
-    "mysql2": "^3.6.3",
-    "postgres": "^3.4.3",
+    "pg": "^8.11.3",
     "preact": "^10.19.1"
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.5.0",
+    "@types/pg": "^8.10.9",
     "@typescript-eslint/eslint-plugin": "^5.57.1",
     "@typescript-eslint/parser": "^5.57.1",
     "autoprefixer": "^10.4.14",
