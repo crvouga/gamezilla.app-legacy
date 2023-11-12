@@ -17,9 +17,11 @@ export const createDbConnPostgres = async ({
       try {
         const sqlStr = toSql(rawSql, params);
 
-        console.log(sqlStr);
+        console.log("[db]", sqlStr);
 
         const res = await pool.query(sqlStr);
+
+        console.log("[db]", res.rows);
 
         const parsed = res.rows.flatMap((row) => {
           if (isRow(row)) {
