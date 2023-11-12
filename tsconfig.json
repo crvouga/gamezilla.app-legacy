@@ -4,6 +4,7 @@
     "lib": ["DOM", "DOM.Iterable", "ESNext", "WebWorker", "es2016", "dom"],
     "module": "ESNext",
     "esModuleInterop": true,
+
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "strictNullChecks": true,
@@ -20,7 +21,7 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
-    "moduleResolution": "Bundler",
+    "moduleResolution": "Node",
     "types": ["vite/client", "preact", "bun-types"],
 
     "jsxImportSource": "preact",
