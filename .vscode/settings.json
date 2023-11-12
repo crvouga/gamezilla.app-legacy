@@ -4,6 +4,7 @@
     "chessboardjs",
     "cmds",
     "compat",
+    "dbmate",
     "deinterleave",
     "dissoc",
     "dpdm",

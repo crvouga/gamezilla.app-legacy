@@ -11,7 +11,9 @@
     "ngrok": "ngrok start --all",
     "tc": "bun x tsc --noEmit --watch",
     "viz-bundle": "bun x vite-bundle-visualizer",
-    "cir-deps": "bun x dpdm --progress --no-warning --no-tree ./gamezilla/gamezilla.client.tsx"
+    "cir-deps": "bun x dpdm --progress --no-warning --no-tree ./gamezilla/gamezilla.client.tsx",
+    "db-local": "bun x dbmate -e DATABASE_URL_LOCAL",
+    "db-prod": "bun x dbmate -e DATABASE_URL_PROD"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.38.4",
