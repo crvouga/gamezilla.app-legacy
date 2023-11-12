@@ -559,8 +559,8 @@ const getDatabaseUrl = (env: Env): string | null => {
   }
 };
 
-const getEnv = (): "local" | "prod" => {
-  const env = process.env["NODE_ENV"];
+const getEnv = (): Env => {
+  const env = process.env.NODE_ENV ?? "local";
 
   if (env === "production") {
     return "prod";
