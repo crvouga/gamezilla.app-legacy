@@ -12,7 +12,7 @@ import {
   ServerEvt,
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import { ProfileDb } from "./profile-db/profile-db";
-import { createProfileDb } from "./profile-db/profile-db-impl.mysql";
+import { createProfileDb } from "./profile-db/profile-db-impl.sql";
 import {
   Req,
   ServerModel,
