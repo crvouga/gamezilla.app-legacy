@@ -9,7 +9,6 @@
     "client:preview": "vite preview",
     "client": "vite",
     "ngrok": "ngrok start --all",
-    "db:dev": "pscale connect gamezilla dev",
     "tc": "bun x tsc --noEmit --watch",
     "viz-bundle": "bun x vite-bundle-visualizer",
     "cir-deps": "bun x dpdm --progress --no-warning --no-tree ./gamezilla/gamezilla.client.tsx"

@@ -1,6 +1,6 @@
-import { has, isObj, str } from "gamezilla/@SHARED/core";
 import { DbConnSql } from "gamezilla/@CHILD/app/@SHARED/server";
 import { PuzzleDb, PuzzleRow } from "../puzzle-db/puzzle-db-impl";
+import { Parsing as P } from "gamezilla/@SHARED/parsing";
 
 //
 //
@@ -25,17 +25,17 @@ export type LichessRow = {
 
 export const toLichessRow = (x: unknown): LichessRow | null => {
   if (
-    isObj(x) &&
-    has(x, "PuzzleId", str) &&
-    has(x, "FEN", str) &&
-    has(x, "Moves", str) &&
-    has(x, "Rating", str) &&
-    has(x, "RatingDeviation", str) &&
-    has(x, "Popularity", str) &&
-    has(x, "NbPlays", str) &&
-    has(x, "Themes", str) &&
-    has(x, "GameUrl", str) &&
-    has(x, "OpeningTags", str)
+    P.obj(x) &&
+    P.has(x, "PuzzleId", P.str) &&
+    P.has(x, "FEN", P.str) &&
+    P.has(x, "Moves", P.str) &&
+    P.has(x, "Rating", P.str) &&
+    P.has(x, "RatingDeviation", P.str) &&
+    P.has(x, "Popularity", P.str) &&
+    P.has(x, "NbPlays", P.str) &&
+    P.has(x, "Themes", P.str) &&
+    P.has(x, "GameUrl", P.str) &&
+    P.has(x, "OpeningTags", P.str)
   ) {
     return x;
   }

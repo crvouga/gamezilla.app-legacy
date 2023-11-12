@@ -11,7 +11,6 @@ export * as Keyboard from "./keyboard";
 export * as LocalStorage from "./local-storage";
 export { NonEmpty } from "./non-empty";
 export { Option } from "./option";
-export * from "./parsing";
 export * from "./pipe";
 export * as Program from "./program";
 export { Random, shuffle } from "./random";

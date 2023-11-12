@@ -1,7 +1,8 @@
 import { Result } from "gamezilla/@SHARED/core";
-import { Profile, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
+import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
+import { ProfileCore } from "../profile.core";
 
 export type ProfileDb = {
-  findOneByUserId: (userId: UserId) => Promise<Result<string, Profile[]>>;
-  insertOne: (profile: Profile) => Promise<Result<string, null>>;
+  findOneByUserId: (userId: UserId) => Promise<Result<string, ProfileCore[]>>;
+  insertOne: (profile: ProfileCore) => Promise<Result<string, null>>;
 };

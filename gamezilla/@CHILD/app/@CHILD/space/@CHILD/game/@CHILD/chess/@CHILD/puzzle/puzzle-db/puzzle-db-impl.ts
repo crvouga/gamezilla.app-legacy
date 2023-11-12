@@ -1,20 +1,7 @@
-import {
-  NonEmpty,
-  Result,
-  Uuid,
-  err,
-  has,
-  is,
-  isObj,
-  num,
-  ok,
-  str,
-  to,
-  tuple,
-  union,
-} from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { DbConnSql } from "gamezilla/@CHILD/app/@SHARED/server";
+import { NonEmpty, Result, Uuid, err, ok } from "gamezilla/@SHARED/core";
+import { Parsing as P } from "gamezilla/@SHARED/parsing";
 import { MoveInput, uciMoveToMoveInput } from "../../../@SHARED/chess";
 import { EloRating } from "../elo-rating";
 import {
@@ -73,27 +60,27 @@ export type PuzzleProfileRow = {
 const types = ["started", "solved", "incorrect", "solved-with-hint"] as const;
 
 const toInt = (x: unknown): Int | null => {
-  if (str(x) || num(x)) {
+  if (P.str(x) || P.num(x)) {
     return x;
   }
   return null;
 };
 
-const isInt = is(toInt);
+const isInt = P.is(toInt);
 
 export const toPuzzleRow = (x: unknown): PuzzleRow | null => {
   if (
-    isObj(x) &&
-    has(x, "puzzle_id", str) &&
-    has(x, "rating", isInt) &&
-    has(x, "rating_deviation", isInt) &&
-    has(x, "opening_tags", str) &&
-    has(x, "fen", str) &&
-    has(x, "moves", str) &&
-    has(x, "popularity", isInt) &&
-    has(x, "number_of_plays", isInt) &&
-    has(x, "themes", str) &&
-    has(x, "game_url", str)
+    P.obj(x) &&
+    P.has(x, "puzzle_id", P.str) &&
+    P.has(x, "rating", isInt) &&
+    P.has(x, "rating_deviation", isInt) &&
+    P.has(x, "opening_tags", P.str) &&
+    P.has(x, "fen", P.str) &&
+    P.has(x, "moves", P.str) &&
+    P.has(x, "popularity", isInt) &&
+    P.has(x, "number_of_plays", isInt) &&
+    P.has(x, "themes", P.str) &&
+    P.has(x, "game_url", P.str)
   ) {
     return {
       fen: x.fen,
@@ -115,11 +102,11 @@ export const toPuzzleInteractionRow = (
   x: unknown
 ): PuzzleInteractionRow | null => {
   if (
-    isObj(x) &&
-    has(x, "id", str) &&
-    has(x, "puzzle_id", str) &&
-    has(x, "user_id", str) &&
-    has(x, "type", union(types))
+    P.obj(x) &&
+    P.has(x, "id", P.str) &&
+    P.has(x, "puzzle_id", P.str) &&
+    P.has(x, "user_id", P.str) &&
+    P.has(x, "type", P.union(types))
   ) {
     return x;
   }
@@ -128,14 +115,14 @@ export const toPuzzleInteractionRow = (
 
 export type RatingRange = [number, number];
 
-const toRatingRange = to<RatingRange>(tuple(num, num));
+const toRatingRange = P.to<RatingRange>(P.tuple(P.num, P.num));
 
 export type PuzzleQueryJSON = {
   ratingRange: RatingRange;
 };
 
 const toPuzzleQueryJSON = (x: unknown): PuzzleQueryJSON | null => {
-  if (isObj(x) && has(x, "ratingRange", is(toRatingRange))) {
+  if (P.obj(x) && P.has(x, "ratingRange", P.is(toRatingRange))) {
     return x;
   }
   return null;
@@ -143,11 +130,11 @@ const toPuzzleQueryJSON = (x: unknown): PuzzleQueryJSON | null => {
 
 export const toPuzzleProfileRow = (x: unknown): PuzzleProfileRow | null => {
   if (
-    isObj(x) &&
-    has(x, "id", str) &&
-    has(x, "user_id", str) &&
-    has(x, "elo_rating", isInt) &&
-    has(x, "puzzle_query", is(toPuzzleQueryJSON))
+    P.obj(x) &&
+    P.has(x, "id", P.str) &&
+    P.has(x, "user_id", P.str) &&
+    P.has(x, "elo_rating", isInt) &&
+    P.has(x, "puzzle_query", P.is(toPuzzleQueryJSON))
   ) {
     return x;
   }
@@ -273,7 +260,7 @@ const puzzlesFindForProfile = async (
     LIMIT 1
   `;
 
-  const found = await dbConn.query(is(toPuzzleRow), sql, {});
+  const found = await dbConn.query(P.is(toPuzzleRow), sql, {});
 
   if (found.t === "err") {
     return found;
@@ -313,7 +300,7 @@ const puzzlesReplace = async ({
       )}
   `;
 
-  const inserted = await dbConn.query(is(toPuzzleRow), queryString, {});
+  const inserted = await dbConn.query(P.is(toPuzzleRow), queryString, {});
 
   return inserted;
 };
@@ -323,7 +310,7 @@ const interactionsInsert = async (
   interactions: PuzzleInteraction[]
 ): Promise<Result<string, null>> => {
   const result = await dbConn.query(
-    is(toPuzzleInteractionRow),
+    P.is(toPuzzleInteractionRow),
     `
         INSERT INTO game_chess_puzzle_interaction (
           puzzle_id,
@@ -343,7 +330,7 @@ const profilesFind = async (
   userId: UserId
 ): Promise<Result<string, PuzzleProfile | null>> => {
   const found = await dbConn.query(
-    is(toPuzzleProfileRow),
+    P.is(toPuzzleProfileRow),
     `
       SELECT
         *
@@ -395,7 +382,7 @@ export const profilesInsert = async (
   const puzzleProfileId = Uuid.generate();
 
   const mutated = await dbConn.query(
-    is(toPuzzleProfileRow),
+    P.is(toPuzzleProfileRow),
     `
         INSERT INTO game_chess_puzzle_profile (
           id,
@@ -451,7 +438,7 @@ const profilesUpdate = async (
   profile: PuzzleProfile
 ): Promise<Result<string, null>> => {
   const mutated = await dbConn.query(
-    is(toPuzzleProfileRow),
+    P.is(toPuzzleProfileRow),
     `
       UPDATE game_chess_puzzle_profile
       SET

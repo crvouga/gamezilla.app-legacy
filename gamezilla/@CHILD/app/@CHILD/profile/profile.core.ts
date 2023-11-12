@@ -5,6 +5,7 @@ import {
   ProfileAvatarSeed,
   ProfileAvatarStyle,
   UserId,
+  Username,
 } from "gamezilla/@CHILD/app/@SHARED/data";
 
 //
@@ -14,6 +15,14 @@ import {
 //
 //
 //
+
+export type ProfileCore = {
+  userId: UserId;
+  avatarUrl: string;
+  username: Username;
+  avatarSeed: ProfileAvatarSeed | null;
+  avatarStyle: ProfileAvatarStyle | null;
+};
 
 export type ClientModel = {
   profiles: {

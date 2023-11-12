@@ -1,8 +1,9 @@
-import { EmailAddress, ok, has, is, isObj, str } from "gamezilla/@SHARED/core";
+import { EmailAddress, ok } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { DbConnSql } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Account } from "../../auth.core";
 import { AccountDb } from "./account-db";
+import { Parsing as P } from "gamezilla/@SHARED/parsing";
 
 type AccountRow = {
   user_id: string;
@@ -10,7 +11,11 @@ type AccountRow = {
 };
 
 export const toAccountRow = (x: unknown): AccountRow | null => {
-  if (isObj(x) && has(x, "user_id", str) && has(x, "email_address", str)) {
+  if (
+    P.obj(x) &&
+    P.has(x, "user_id", P.str) &&
+    P.has(x, "email_address", P.str)
+  ) {
     return {
       user_id: x.user_id,
       email_address: x.email_address,
@@ -27,7 +32,7 @@ export const createAccountDb = ({
   return {
     async findOneByEmail(input) {
       const queried = await dbConn.query(
-        is(toAccountRow),
+        P.is(toAccountRow),
         `SELECT user_id, email_address FROM user_account WHERE email_address = :email_address`,
         {
           email_address: input.emailAddress,
@@ -64,7 +69,7 @@ export const createAccountDb = ({
     },
     async insertOne(input) {
       const queried = await dbConn.query(
-        is(toAccountRow),
+        P.is(toAccountRow),
         `INSERT INTO user_account (user_id, email_address) VALUES (:user_id, :email_address)`,
         {
           email_address: input.account.emailAddress,

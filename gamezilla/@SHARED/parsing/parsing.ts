@@ -2,6 +2,16 @@ export const str = (value: unknown): value is string => {
   return typeof value === "string";
 };
 
+export const nullish = (value: unknown): value is null | undefined => {
+  return value === null || value === undefined;
+};
+
+export const or =
+  <A, B>(isA: (x: unknown) => x is A, isB: (x: unknown) => x is B) =>
+  (x: unknown): x is A | B => {
+    return isA(x) || isB(x);
+  };
+
 export const num = (value: unknown): value is number => {
   return typeof value === "number";
 };
@@ -14,7 +24,7 @@ export const has = <T extends Record<string, unknown>, K extends keyof T, V>(
   return key in obj && checkType(obj[key]);
 };
 
-export const isObj = (item: unknown): item is Record<string, unknown> => {
+export const obj = (item: unknown): item is Record<string, unknown> => {
   return typeof item === "object" && item !== null && !Array.isArray(item);
 };
 

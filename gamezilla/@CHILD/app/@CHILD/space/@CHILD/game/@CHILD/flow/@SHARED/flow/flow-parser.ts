@@ -1,13 +1,13 @@
-import { has, isObj } from "gamezilla/@SHARED/core";
+import { Parsing as P } from "gamezilla/@SHARED/parsing";
 import { Model, Node, Edge } from "./flow";
 
 export const toModel = (x: unknown): Model | null => {
   if (
-    isObj(x) &&
-    has(x, "nodes", isObj) &&
-    has(x, "edges", isObj) &&
-    has(x, "indexEdgesIn", isObj) &&
-    has(x, "indexEdgesOut", isObj)
+    P.obj(x) &&
+    P.has(x, "nodes", P.obj) &&
+    P.has(x, "edges", P.obj) &&
+    P.has(x, "indexEdgesIn", P.obj) &&
+    P.has(x, "indexEdgesOut", P.obj)
   ) {
     return null;
   }

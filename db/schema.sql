@@ -83,7 +83,9 @@ CREATE TABLE public.user_account (
 CREATE TABLE public.user_profile (
     user_id character varying(255) NOT NULL,
     avatar_url character varying(255) DEFAULT NULL::character varying,
-    username character varying(255) DEFAULT NULL::character varying
+    username character varying(255) DEFAULT NULL::character varying,
+    avatar_seed text,
+    avatar_style text
 );
 
 
@@ -204,4 +206,5 @@ CREATE INDEX idx_username ON public.user_profile USING btree (username);
 
 INSERT INTO public.schema_migrations (version) VALUES
     ('20231111232244'),
-    ('20231112003940');
+    ('20231112003940'),
+    ('20231112220209');

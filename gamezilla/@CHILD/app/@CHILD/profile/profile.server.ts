@@ -14,6 +14,7 @@ import {
 import { ProfileDb } from "./profile-db/profile-db";
 import { createProfileDb } from "./profile-db/profile-db-impl.sql";
 import {
+  ProfileCore,
   Req,
   ServerModel,
   ServerMsg,
@@ -178,13 +179,15 @@ const findElseInsertNew = async ({
 
   const randomSeed = await ProfileAvatar.generateRandomSeed();
   const randomUsername = Username.generate(".");
-  const profileNew: Profile = {
+  const profileNew: ProfileCore = {
     userId,
     avatarUrl: ProfileAvatar.toUrl({
       seed: randomSeed,
       style: "adventurer-neutral",
     }),
     username: randomUsername,
+    avatarSeed: randomSeed,
+    avatarStyle: "adventurer-neutral",
   };
 
   const inserted = await ProfileDb.insertOne(profileNew);
