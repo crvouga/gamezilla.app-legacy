@@ -48,14 +48,14 @@ CREATE INDEX IF NOT EXISTS game_chess_puzzle_interaction_puzzle_id_user_id_idx O
 
 -- migrate:down
 
-DROP TABLE IF EXISTS user_profile
-DROP INDEX IF EXISTS idx_username
-DROP TABLE IF EXISTS user_account
-DROP TABLE IF EXISTS game_chess_puzzle
-DROP INDEX IF EXISTS idx_game_chess_puzzle_rating
-DROP INDEX IF EXISTS idx_game_chess_puzzle_popularity
-DROP TABLE IF EXISTS game_chess_puzzle_profile
-DROP INDEX IF EXISTS idx_game_chess_puzzle_profile_user_id
-DROP TABLE IF EXISTS game_chess_puzzle_interaction
-DROP INDEX IF EXISTS game_chess_puzzle_interaction_puzzle_id_idx
-DROP INDEX IF EXISTS game_chess_puzzle_interaction_puzzle_id_user_id_idx
+DROP TABLE IF EXISTS  user_profile;
+DROP INDEX IF EXISTS  idx_username;
+DROP TABLE IF EXISTS  user_account;
+DROP TABLE IF EXISTS  game_chess_puzzle;
+DROP INDEX IF EXISTS  idx_game_chess_puzzle_rating;
+DROP INDEX IF EXISTS  idx_game_chess_puzzle_popularity;
+DROP TABLE IF EXISTS  game_chess_puzzle_profile;
+DROP INDEX IF EXISTS  idx_game_chess_puzzle_profile_user_id;
+DROP TABLE IF EXISTS  game_chess_puzzle_interaction;
+DROP INDEX IF EXISTS  game_chess_puzzle_interaction_puzzle_id_idx;
+DROP INDEX IF EXISTS  game_chess_puzzle_interaction_puzzle_id_user_id_idx;
