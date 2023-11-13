@@ -1,5 +1,7 @@
 export type StoreInstance<_TKey, _TValue> = {
   timestamp: number;
+  // parentId: string | null;
+  // id: string;
   instanceStep: number;
   appendStep: number;
 };

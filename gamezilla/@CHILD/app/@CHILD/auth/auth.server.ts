@@ -4,6 +4,7 @@ import {
   AnonymousReqCtx,
   DbConnSql,
   ServerCmd,
+  ServerCtx,
   ServerEvt,
   sendToClient,
 } from "gamezilla/@CHILD/app/@SHARED/server";
@@ -16,6 +17,7 @@ import {
   ToClient,
   ToServer,
 } from "./auth.core";
+import { ISessionDb, SessionDb } from "./auth-server/session-db";
 
 //
 //
@@ -39,11 +41,13 @@ export const init: ServerModel = {
 //
 
 export const update = ({
+  ctx,
   model,
   msg,
 }: {
   msg: ServerMsg;
   model: ServerModel;
+  ctx: ServerCtx;
 }): {
   model: ServerModel;
   evt?: ServerEvt[];
@@ -54,6 +58,7 @@ export const update = ({
         console.error(msg.result.error);
         return { model };
       }
+
       return {
         model: {
           ...model,

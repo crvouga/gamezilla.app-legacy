@@ -6,7 +6,7 @@ type AuthSession = {
   userId: UserId;
 };
 
-export type SessionDb = {
+export type ISessionDb = {
   assoc: (now: Posix, session: AuthSession) => Promise<null>;
   dissoc: (now: Posix, session: AuthSession) => Promise<null>;
   findOneBySessionId: (

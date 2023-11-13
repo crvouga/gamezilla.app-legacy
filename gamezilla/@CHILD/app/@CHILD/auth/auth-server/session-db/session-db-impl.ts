@@ -1,5 +1,5 @@
 import { DbConnSql } from "gamezilla/@CHILD/app/@SHARED/server";
-import { SessionDb } from "./session-db";
+import { ISessionDb } from "./session-db";
 import { Parsing as P } from "gamezilla/@SHARED/parsing";
 
 type SessionRow = {
@@ -27,11 +27,7 @@ const toSessionRow = (row: unknown): SessionRow | null => {
   return null;
 };
 
-export const createSessionDb = ({
-  dbConn,
-}: {
-  dbConn: DbConnSql;
-}): SessionDb => {
+export const SessionDb = ({ dbConn }: { dbConn: DbConnSql }): ISessionDb => {
   return {
     async assoc(now, session) {
       const queried = await dbConn.query(

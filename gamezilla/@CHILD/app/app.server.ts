@@ -245,7 +245,7 @@ const updateMain = async ({
     }
 
     case "auth": {
-      const updated = AuthServer.update({ model: model.auth, msg: msg.c });
+      const updated = AuthServer.update({ ctx, model: model.auth, msg: msg.c });
       return {
         model: { ...model, auth: updated.model },
         evt: updated.evt,
