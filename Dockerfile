@@ -40,9 +40,6 @@ COPY --from=dbmate /usr/local/bin/dbmate /usr/local/bin/dbmate
 # Define the volume for SQLite data
 VOLUME /data
 
-# Set environment variable for SQLite database file
-ENV SQLITE_DATABASE_FILE="/data/my-database.db"
-
 # Expose the application port
 EXPOSE 5000
 
