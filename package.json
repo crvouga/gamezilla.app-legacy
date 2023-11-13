@@ -4,7 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "server": "bun db-prod && bun gamezilla/gamezilla.server.ts",
+    "server:prod": "bun db-prod && bun server",
+    "server": "bun gamezilla/gamezilla.server.ts",
     "client:build": "vite build",
     "client:preview": "vite preview",
     "client": "vite",

@@ -42,4 +42,4 @@ ENV SQLITE_DATABASE_FILE="/data/my-database.db"
 EXPOSE 5000
 
 # Start the server by default, this can be overwritten at runtime
-CMD [ "bun", "run", "server" ]
+CMD [ "bun", "run", "server:prod" ]
