@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "server:prod": "dbmate -e DATABASE_URL_PROD up && bun server",
+    "server:prod": "bun db:up && bun server",
     "server": "bun gamezilla/gamezilla.server.ts",
     "client:build": "vite build",
     "client:preview": "vite preview",
@@ -13,7 +13,8 @@
     "tc": "bun x tsc --noEmit --watch",
     "viz-bundle": "bun x vite-bundle-visualizer",
     "cir-deps": "bun x dpdm --progress --no-warning --no-tree ./gamezilla/gamezilla.client.tsx",
-    "db-local": "bun x dbmate -e DATABASE_URL_LOCAL"
+    "db:up": "dbmate -e DATABASE_URL up",
+    "db:down": "dbmate -e DATABASE_URL down"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.38.4",

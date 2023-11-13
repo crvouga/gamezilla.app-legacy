@@ -525,10 +525,14 @@ export const wire = Sub.create<ServerWireMsg>();
 //
 //
 
-const DATABASE_URL = "sqlite:data/gamezilla.db";
-
 export const initCtx = async (): Promise<ServerCtx> => {
   console.log("[server] init ctx");
+
+  const DATABASE_URL = process.env["DATABASE_URL"];
+
+  if (!DATABASE_URL) {
+    throw new Error("DATABASE_URL not set");
+  }
 
   console.log("[server] db url:", DATABASE_URL);
 
