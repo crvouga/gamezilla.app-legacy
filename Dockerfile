@@ -12,13 +12,12 @@ WORKDIR /app
 # Set production environment
 ENV NODE_ENV="production"
 
-
 # Throw-away build stage to reduce size of final image
 FROM base as build
 
 # Install packages needed to build node modules
 RUN apt-get update -qq && \
-    apt-get install -y build-essential pkg-config python-is-python3
+    apt-get install -y build-essential pkg-config python-is-python3 libsqlite3-dev
 
 # Install node modules
 COPY --link bun.lockb package.json ./
@@ -27,13 +26,20 @@ RUN bun install --ci
 # Copy application code
 COPY --link . .
 
-
 # Final stage for app image
 FROM base
 
 # Copy built application
 COPY --from=build /app /app
 
-# Start the server by default, this can be overwritten at runtime
+# Define the volume where SQLite data will be stored
+VOLUME /data
+
+# Update environment variables to use the volume for SQLite data
+ENV SQLITE_DATABASE_FILE="/data/my-database.db"
+
+# Expose the port the server runs on
 EXPOSE 5000
+
+# Start the server by default, this can be overwritten at runtime
 CMD [ "bun", "run", "server" ]
