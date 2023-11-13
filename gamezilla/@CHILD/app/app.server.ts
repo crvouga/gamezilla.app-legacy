@@ -525,24 +525,16 @@ export const wire = Sub.create<ServerWireMsg>();
 //
 //
 
+const DATABASE_URL = "sqlite:data/gamezilla.db";
+
 export const initCtx = async (): Promise<ServerCtx> => {
   console.log("[server] init ctx");
 
-  const env = getEnv();
-
-  console.log("[server] env:", env);
-
-  const databaseUrl = getDatabaseUrl(env);
-
-  console.log("[server] db url:", databaseUrl);
-
-  if (typeof databaseUrl !== "string") {
-    throw new Error("database url is not set");
-  }
+  console.log("[server] db url:", DATABASE_URL);
 
   console.log("[server] db connecting...");
 
-  const created = await createDbConn({ databaseUrl });
+  const created = await createDbConn({ databaseUrl: DATABASE_URL });
 
   if (created.t === "err") {
     throw new Error(`Failed to connect to db. Error: ${created.error}`);

@@ -18,7 +18,6 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.38.4",
     "chess.js": "^1.0.0-beta.6",
-    "postgres": "^3.4.3",
     "preact": "^10.19.1"
   },
   "devDependencies": {
