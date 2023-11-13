@@ -44,8 +44,17 @@ CREATE TABLE game_chess_puzzle_interaction (
 );
 CREATE INDEX game_chess_puzzle_interaction_puzzle_id_idx ON game_chess_puzzle_interaction (puzzle_id);
 CREATE INDEX game_chess_puzzle_interaction_puzzle_id_user_id_idx ON game_chess_puzzle_interaction (puzzle_id, user_id);
+CREATE TABLE user_session (
+    session_id TEXT PRIMARY KEY,
+    user_id    TEXT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    is_active  BOOLEAN NOT NULL DEFAULT FALSE
+);
+CREATE INDEX idx_user_session_created_at ON user_session(created_at);
+CREATE INDEX idx_user_session_session_id_created_at ON user_session(session_id, created_at);
 -- Dbmate schema migrations
 INSERT INTO "schema_migrations" (version) VALUES
   ('20231111232244'),
   ('20231112003940'),
-  ('20231112220209');
+  ('20231112220209'),
+  ('20231113081720');

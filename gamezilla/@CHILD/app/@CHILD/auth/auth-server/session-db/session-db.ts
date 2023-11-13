@@ -1,28 +1,16 @@
-import { Posix } from "gamezilla/@SHARED/core";
-import { StoreInstance } from "gamezilla/@SHARED/immutable-store";
 import { SessionId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
+import { Posix } from "gamezilla/@SHARED/core";
 
 type AuthSession = {
   sessionId: SessionId;
   userId: UserId;
 };
 
-export type AuthSessionStoreInstance = StoreInstance<SessionId, AuthSession>;
-
-export type AuthSessionStore = {
-  assoc: (
+export type SessionDb = {
+  assoc: (now: Posix, session: AuthSession) => Promise<null>;
+  dissoc: (now: Posix, session: AuthSession) => Promise<null>;
+  findOneBySessionId: (
     now: Posix,
-    instance: AuthSessionStoreInstance,
-    session: AuthSession
-  ) => Promise<AuthSessionStoreInstance>;
-  dissoc: (
-    now: Posix,
-    instance: AuthSessionStoreInstance,
     sessionId: SessionId
-  ) => Promise<AuthSessionStoreInstance>;
-  getBySessionId: (
-    now: Posix,
-    instance: AuthSessionStoreInstance,
-    sessionId: SessionId
-  ) => Promise<AuthSession | undefined>;
+  ) => Promise<AuthSession | null>;
 };

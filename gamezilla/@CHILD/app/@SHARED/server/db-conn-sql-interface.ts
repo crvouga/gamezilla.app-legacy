@@ -4,6 +4,6 @@ export type DbConnSql = {
   query: <TRow>(
     isRow: (row: unknown) => row is TRow,
     rawSql: string,
-    params: { [key: string]: number | string }
+    params: { [key: string]: number | string | boolean }
   ) => Promise<Result<string, TRow[]>>;
 };
