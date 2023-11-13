@@ -104,7 +104,9 @@ export const attachServerTransport = <ToServer, ToClient>({
           sessionId: ws.data.sessionId,
         });
       },
-      drain(ws) {},
+      drain(ws) {
+        console.log("drain");
+      },
     },
   });
 
