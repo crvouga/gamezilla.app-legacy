@@ -65,7 +65,7 @@ export const attachServerTransport = <ToServer, ToClient>({
         return new Response("Upgrade failed :(", { status: 500 });
       }
 
-      return new Response("Not found :(", { status: 404 });
+      return new Response("Hello from gamezilla server", { status: 404 });
     },
 
     websocket: {
