@@ -1,51 +1,50 @@
 # syntax = docker/dockerfile:1
 
-# Adjust BUN_VERSION as desired
+# Base Stage: Install Bun
 ARG BUN_VERSION=1.0.3
 FROM oven/bun:${BUN_VERSION} as base
-FROM amacneil/dbmate as dbmate
 
-
-LABEL fly_launch_runtime="Bun"
-
-# Bun app lives here
+# Set the working directory for the base image
 WORKDIR /app
 
-# Set production environment
+# Set production environment variable
 ENV NODE_ENV="production"
 
-# Throw-away build stage to reduce size of final image
+# Dbmate Stage: Get dbmate binary
+# You should specify a specific version tag for dbmate
+FROM amacneil/dbmate:latest as dbmate
+
+# Build Stage: Compile and build the application
 FROM base as build
 
-# Install packages needed to build node modules
+# Install necessary packages for building
 RUN apt-get update -qq && \
     apt-get install -y build-essential pkg-config python-is-python3 libsqlite3-dev
 
-# Install node modules
+# Copy package files and install dependencies
 COPY bun.lockb package.json ./
 RUN bun install --ci
 
-# Copy application code
-COPY . .
+# Copy application code to the /app directory
+COPY . /app
 
-# Final stage for app image
+# Final Stage: Create the final image
 FROM base
 
-# Copy built application
+# Copy the built application from the build stage
 COPY --from=build /app /app
 
 # Copy dbmate binary from the dbmate image
 COPY --from=dbmate /usr/local/bin/dbmate /usr/local/bin/dbmate
 
-
-# Define the volume where SQLite data will be stored
+# Define the volume for SQLite data
 VOLUME /data
 
-# Update environment variables to use the volume for SQLite data
+# Set environment variable for SQLite database file
 ENV SQLITE_DATABASE_FILE="/data/my-database.db"
 
-# Expose the port the server runs on
+# Expose the application port
 EXPOSE 5000
 
-# Start the server by default, this can be overwritten at runtime
+# Command to run the server
 CMD [ "bun", "run", "server:prod" ]
