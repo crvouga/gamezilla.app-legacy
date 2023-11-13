@@ -27,6 +27,7 @@ RUN bun install --ci
 
 # Copy application code
 COPY . .
+COPY db/migrations /app/db/migrations
 
 # Final stage for app image
 FROM base
