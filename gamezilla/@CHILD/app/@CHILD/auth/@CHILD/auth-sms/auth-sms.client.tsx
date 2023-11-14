@@ -1,16 +1,12 @@
+import { Location } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   AlertError,
   Button,
   MyTextField,
   TopBar,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { ClientModel, ClientMsg } from "./auth-sms.core";
-import {
-  AnonymousClientCtx,
-  Location,
-} from "gamezilla/@CHILD/app/@SHARED/client";
 import { toRoute } from "./auth-sms-client-route";
-import { AuthRoute } from "../../@SHARED/auth-client-route";
+import { ClientModel, ClientMsg } from "./auth-sms.core";
 
 export const update = ({
   model,
