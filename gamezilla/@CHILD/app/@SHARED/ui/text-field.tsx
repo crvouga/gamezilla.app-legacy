@@ -38,7 +38,7 @@ export const MyTextField = ({
 
       <div
         className={cn(
-          "flex items-center rounded-md bg-white/10 p-3 text-lg outline-none",
+          "flex items-center rounded-md bg-white/10 p-3 py-4 text-lg outline-none",
           error && "border border-red-500 text-red-500",
           !error && " ring-blue-600 focus:ring-2"
         )}>
@@ -56,6 +56,7 @@ export const MyTextField = ({
           auto-save="off"
           step={step}
           onInput={(e) => {
+            e.preventDefault();
             onChange(e.currentTarget.value);
           }}
           className="w-auto flex-1 bg-transparent outline-none"

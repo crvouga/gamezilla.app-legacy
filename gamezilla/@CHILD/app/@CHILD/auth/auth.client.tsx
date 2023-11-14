@@ -22,7 +22,7 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { createSocialLogin } from "./auth-client/social-login";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./auth.core";
-import { toRoute } from "./@SHARED/auth-client-route";
+import * as AuthClientSMS from "./@CHILD/auth-sms/auth-sms.client";
 
 //
 //
@@ -37,6 +37,7 @@ export const init: { model: ClientModel; eff?: Eff<ClientMsg> } = {
     currentUser: { t: "loading" },
     loginWithGoogle: NotAsked,
     logout: NotAsked,
+    sms: AuthClientSMS.init,
   },
 };
 
@@ -93,6 +94,19 @@ export const update = ({
       return {
         model,
         cmd: [sendToServer(msg)],
+      };
+    }
+
+    case "sms": {
+      const updated = AuthClientSMS.update({
+        model: model.sms,
+        msg: msg.c,
+      });
+      return {
+        model: {
+          ...model,
+          sms: updated.model,
+        },
       };
     }
   }
@@ -215,6 +229,7 @@ export const View = ({
   ctx,
   location,
   dispatch,
+  route,
 }: {
   location: Location;
   route: RouteAuth;
@@ -222,15 +237,21 @@ export const View = ({
   dispatch: (m: ClientMsg) => void;
   ctx: AnonymousViewCtx;
 }) => {
-  const route = toRoute(location);
-
   switch (route.t) {
-    case "/": {
+    case "login": {
       return <ViewLoginScreen ctx={ctx} model={model} dispatch={dispatch} />;
     }
 
-    case "/sms": {
-      return <ViewLogoutScreen ctx={ctx} model={model} dispatch={dispatch} />;
+    case "login-phone-verify":
+    case "login-phone": {
+      return (
+        <AuthClientSMS.View
+          ctx={ctx}
+          dispatch={(c) => dispatch({ t: "sms", c })}
+          location={location}
+          model={model.sms}
+        />
+      );
     }
   }
 };
@@ -264,15 +285,17 @@ const ViewLoginScreen = ({
         </div>
 
         <div className="flex w-full flex-col gap-6">
-          <Button
-            onClick={() => dispatch({ t: "clicked-login-with-google" })}
-            size="lg"
-            className="w-full"
-            start={<IconGoogle className="h-6 w-6" />}
-            text="Continue With Google"
-          />
+          {true && (
+            <Button
+              onClick={() => dispatch({ t: "clicked-login-with-google" })}
+              size="lg"
+              className="w-full"
+              start={<IconGoogle className="h-6 w-6" />}
+              text="Continue With Google"
+            />
+          )}
 
-          {false && (
+          {true && (
             <Button
               onClick={() =>
                 ctx.push({
@@ -283,7 +306,7 @@ const ViewLoginScreen = ({
               size="lg"
               className="w-full"
               start={<IconMobilePhone className="h-6 w-6" />}
-              text="Continue With Text"
+              text="Continue With Phone"
             />
           )}
 

@@ -6,11 +6,21 @@ import {
   AlertError,
   Button,
   MyTextField,
+  Select,
   TopBar,
   TopBarBackButton,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { toLocation, toRoute } from "./route";
 import { ClientModel, ClientMsg } from "./auth-sms.core";
+import { Iso3166Alpha2Code } from "gamezilla/@SHARED/core";
+
+export const init: ClientModel = {
+  code: "",
+  codeInput: "",
+  phoneNumberInput: "",
+  sendCode: { t: "not-asked" },
+  verifyCode: { t: "not-asked" },
+};
 
 export const update = ({
   model,
@@ -22,7 +32,19 @@ export const update = ({
   model: ClientModel;
   // cmd: RouteCmd<AuthRoute>;
 } => {
-  return { model };
+  switch (msg.t) {
+    case "inputted-phone-number": {
+      return {
+        model: {
+          ...model,
+          phoneNumberInput: msg.phoneNumber,
+        },
+      };
+    }
+    default: {
+      return { model };
+    }
+  }
 };
 
 export const View = ({
@@ -42,9 +64,25 @@ export const View = ({
     case "/": {
       return (
         <div className="w-full">
-          <TopBar title="Login with phone" />
+          <TopBar
+            left={<TopBarBackButton onClick={() => ctx.back()} />}
+            title="Login with phone"
+          />
 
-          <div className="w-full">
+          <div className="flex w-full flex-col gap-6 p-4 py-6">
+            <Select
+              id="countryCode"
+              label="Country"
+              onChange={() => {
+                //
+              }}
+              options={Iso3166Alpha2Code.all}
+              toKey={(countryCode) => countryCode}
+              toName={(countryCode) =>
+                Iso3166Alpha2Code.toNameWithEmoji(countryCode)
+              }
+            />
+
             <MyTextField
               value={model.phoneNumberInput}
               id="phoneNumberInput"
@@ -53,8 +91,14 @@ export const View = ({
                 dispatch({ t: "inputted-phone-number", phoneNumber: value });
               }}
             />
+
+            <div className="w-full pt-1"></div>
+
             <Button
               text="Send Code"
+              className="w-full"
+              variant="contained"
+              color="primary"
               loading={model.sendCode.t === "loading"}
               onClick={() => {
                 dispatch({ t: "clicked-send-code" });

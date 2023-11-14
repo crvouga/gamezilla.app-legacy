@@ -10,6 +10,7 @@ export * from "./icon";
 export * from "./icon-button";
 export * from "./loading-bar";
 export * from "./loading-screen";
+export * from "./select";
 export * from "./spinner";
 export * from "./text-field";
 export * from "./top-bar";

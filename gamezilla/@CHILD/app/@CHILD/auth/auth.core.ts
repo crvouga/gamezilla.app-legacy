@@ -19,7 +19,7 @@ export type ClientModel = {
     | { t: "loading" }
     | { t: "logged-out" }
     | { t: "logged-in"; userId: UserId; name?: string };
-  sms?: AuthSMS.ClientModel;
+  sms: AuthSMS.ClientModel;
 };
 
 export type SocialLoginState =
@@ -58,7 +58,8 @@ export type ClientMsg =
   | {
       t: "got-social-login-result";
       result: RemoteResult<string, EmailAddress>;
-    };
+    }
+  | { t: "sms"; c: AuthSMS.ClientMsg };
 
 export type ServerMsg = {
   t: "got-user-account";
