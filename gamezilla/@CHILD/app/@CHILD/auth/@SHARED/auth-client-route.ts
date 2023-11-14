@@ -8,7 +8,7 @@
 
 import { Location } from "gamezilla/@CHILD/app/@SHARED/client";
 
-export type Route =
+export type AuthRoute =
   | {
       t: "/";
       c: Location;
@@ -18,7 +18,7 @@ export type Route =
       c: Location;
     };
 
-const encode = (route: Route): string => {
+const encode = (route: AuthRoute): string => {
   switch (route.t) {
     case "/":
       return "/";
@@ -27,7 +27,7 @@ const encode = (route: Route): string => {
   }
 };
 
-const decode = (pathname: string): Route | null => {
+const decode = (pathname: string): AuthRoute | null => {
   if (pathname.startsWith("/sms")) {
     const child = pathname.slice(4);
 
@@ -53,7 +53,7 @@ const decode = (pathname: string): Route | null => {
   return null;
 };
 
-export const toRoute = (location: Location): Route => {
+export const toRoute = (location: Location): AuthRoute => {
   const route = decode(location.pathname);
   if (route === null) {
     return {

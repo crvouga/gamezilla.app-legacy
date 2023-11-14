@@ -1,3 +1,4 @@
+import { Location } from "gamezilla/@CHILD/app/@SHARED/client";
 import { PhoneNumber } from "gamezilla/@SHARED/core";
 
 //
@@ -10,7 +11,7 @@ import { PhoneNumber } from "gamezilla/@SHARED/core";
 
 export type Route = { t: "/" } | { t: "/verify"; phoneNumber: PhoneNumber };
 
-const encode = (route: Route): string => {
+export const toLocation = (route: Route): string => {
   switch (route.t) {
     case "/":
       return "/";
@@ -19,27 +20,10 @@ const encode = (route: Route): string => {
   }
 };
 
-const decode = (
-  pathname: string,
-  queryParams: Record<string, unknown>
-): Route | null => {
-  if (pathname.includes("verify")) {
-    const phoneNumber = String(queryParams.phoneNumber);
-    const decoded = PhoneNumber.decode("US", phoneNumber);
-    if (decoded.t === "err") {
-      return null;
-    }
-    return { t: "/verify", phoneNumber: decoded.value };
+export const toRoute = (location: Location): Route => {
+  if (location.pathname.includes("verify")) {
+    // return { t: "/verify", phoneNumber: decoded.value };
   }
 
-  if (pathname === "/") {
-    return { t: "/" };
-  }
-
-  return null;
-};
-
-export const Route = {
-  encode,
-  decode,
+  return { t: "/" };
 };

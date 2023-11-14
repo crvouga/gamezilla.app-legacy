@@ -5,6 +5,12 @@ import {
   TopBar,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { ClientModel, ClientMsg } from "./auth-sms.core";
+import {
+  AnonymousClientCtx,
+  Location,
+} from "gamezilla/@CHILD/app/@SHARED/client";
+import { toRoute } from "./auth-sms-client-route";
+import { AuthRoute } from "../../@SHARED/auth-client-route";
 
 export const update = ({
   model,
@@ -14,69 +20,24 @@ export const update = ({
   msg: ClientMsg;
 }): {
   model: ClientModel;
+  // cmd: RouteCmd<AuthRoute>;
 } => {
-  switch (model.t) {
-    case "input-code": {
-      switch (msg.t) {
-        case "clicked-verify-code": {
-          return { model };
-        }
-        case "inputted-code": {
-          return { model };
-        }
-        default: {
-          return { model };
-        }
-      }
-    }
-
-    case "input-phone-number": {
-      switch (msg.t) {
-        case "clicked-send-code": {
-          return { model };
-        }
-        case "inputted-phone-number": {
-          return { model };
-        }
-        default: {
-          return { model };
-        }
-      }
-    }
-
-    case "send-code-error": {
-      return { model };
-    }
-
-    case "sending-code": {
-      return { model };
-    }
-
-    case "verified": {
-      return { model };
-    }
-
-    case "verify-code-error": {
-      return { model };
-    }
-
-    case "verifying-code": {
-      return { model };
-    }
-  }
+  return { model };
 };
 
 export const View = ({
+  location,
   model,
   dispatch,
 }: {
+  location: Location;
   model: ClientModel;
   dispatch: (m: ClientMsg) => void;
 }) => {
-  switch (model.t) {
-    case "input-phone-number":
-    case "sending-code":
-    case "send-code-error":
+  const route = toRoute(location);
+
+  switch (route.t) {
+    case "/": {
       return (
         <div className="w-full">
           <TopBar title="Login with phone" />
@@ -92,42 +53,48 @@ export const View = ({
             />
             <Button
               text="Send Code"
-              loading={model.t === "sending-code"}
+              loading={model.sendCode.t === "loading"}
               onClick={() => {
                 dispatch({ t: "clicked-send-code" });
               }}
             />
           </div>
 
-          {model.t === "send-code-error" && (
-            <AlertError>{model.error}</AlertError>
+          {model.sendCode.t === "err" && (
+            <AlertError>{model.sendCode.error}</AlertError>
           )}
         </div>
       );
+    }
 
-    case "input-code":
-    case "verified":
-    case "verify-code-error":
-    case "verifying-code":
+    case "/verify": {
       return (
         <div className="w-full">
           <TopBar title="Login with phone" />
 
           <div className="w-full">
-            <MyTextField id="codeInput" label="Code" onChange={(value) => {}} />
+            <MyTextField
+              value={model.phoneNumberInput}
+              id="phoneNumberInput"
+              label="Phone Number"
+              onChange={(value) => {
+                dispatch({ t: "inputted-phone-number", phoneNumber: value });
+              }}
+            />
             <Button
               text="Verify Code"
-              loading={model.t === "verifying-code"}
+              loading={model.verifyCode.t === "loading"}
               onClick={() => {
-                dispatch({ t: "clicked-verify-code" });
+                dispatch({ t: "clicked-send-code" });
               }}
             />
           </div>
 
-          {model.t === "verify-code-error" && (
-            <AlertError>{model.error}</AlertError>
+          {model.verifyCode.t === "err" && (
+            <AlertError>{model.verifyCode.error}</AlertError>
           )}
         </div>
       );
+    }
   }
 };
