@@ -35,7 +35,16 @@ export const Select = <T,>({
           "flex appearance-none items-center rounded-md bg-white/10 p-3 py-4 text-lg outline-none",
           error && "border border-red-500 text-red-500",
           !error && " ring-blue-600 focus:ring-2"
-        )}>
+        )}
+        value={value ? toKey(value) : undefined}
+        onChange={(e) => {
+          for (const option of options) {
+            if (toKey(option) === e.currentTarget.value) {
+              onChange(option);
+              return;
+            }
+          }
+        }}>
         {options.map((option) => {
           return (
             <option key={option} value={toKey(option)}>

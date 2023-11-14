@@ -20,6 +20,7 @@ export const init: ClientModel = {
   phoneNumberInput: "",
   sendCode: { t: "not-asked" },
   verifyCode: { t: "not-asked" },
+  countryCodeInput: Iso3166Alpha2Code.of("US"),
 };
 
 export const update = ({
@@ -38,6 +39,14 @@ export const update = ({
         model: {
           ...model,
           phoneNumberInput: msg.phoneNumber,
+        },
+      };
+    }
+    case "inputted-country-code": {
+      return {
+        model: {
+          ...model,
+          countryCodeInput: msg.countryCode,
         },
       };
     }
@@ -73,9 +82,13 @@ export const View = ({
             <Select
               id="countryCode"
               label="Country"
-              onChange={() => {
-                //
+              onChange={(countryCodeNew) => {
+                dispatch({
+                  t: "inputted-country-code",
+                  countryCode: countryCodeNew,
+                });
               }}
+              value={model.countryCodeInput}
               options={Iso3166Alpha2Code.all}
               toKey={(countryCode) => countryCode}
               toName={(countryCode) =>
