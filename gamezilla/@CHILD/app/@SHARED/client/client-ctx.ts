@@ -9,9 +9,9 @@ type Profile = {
 };
 
 export type AnonymousViewCtx = {
-  push: (route: Route.Route) => void;
+  push: (route: Route.AppRoute) => void;
   back: () => void;
-  currentRoute: Route.Route;
+  currentRoute: Route.AppRoute;
   now: Posix;
   documentVisibilityState: DocumentVisibilityState;
   profiles: { [userId: UserId]: Profile };
@@ -24,7 +24,7 @@ export type ViewCtx = AnonymousViewCtx & {
 };
 
 export type AnonymousClientCtx = {
-  currentRoute: Route.Route;
+  currentRoute: Route.AppRoute;
   now: Posix;
   currentUserId?: UserId | null;
   profiles: { [userId: UserId]: Profile };

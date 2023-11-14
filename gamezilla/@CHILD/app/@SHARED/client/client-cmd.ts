@@ -1,5 +1,5 @@
 import { UnitInterval } from "gamezilla/@SHARED/core";
-import { Route } from "./client-route";
+import { AppRoute } from "./client-route";
 
 //
 //
@@ -111,15 +111,15 @@ export const preloadSound = <T>(src: string[]): ClientCmd<T> => {
 //
 
 export type RouteCmd =
-  | { t: "routing/push"; route: Route }
-  | { t: "routing/replace"; route: Route }
+  | { t: "routing/push"; route: AppRoute }
+  | { t: "routing/replace"; route: AppRoute }
   | { t: "routing/back" };
 
-export const pushRoute = <T>(route: Route): ClientCmd<T> => {
+export const pushRoute = <T>(route: AppRoute): ClientCmd<T> => {
   return { t: "routing/push", route };
 };
 
-export const replaceRoute = <T>(route: Route): ClientCmd<T> => {
+export const replaceRoute = <T>(route: AppRoute): ClientCmd<T> => {
   return { t: "routing/replace", route };
 };
 

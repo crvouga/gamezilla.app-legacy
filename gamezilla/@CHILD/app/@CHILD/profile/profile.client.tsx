@@ -3,7 +3,7 @@ import {
   AnonymousClientCtx,
   ClientCmd,
   ClientEvt,
-  Route,
+  AppRoute,
   RouteProfile,
   ViewCtx,
   showToast,
@@ -34,7 +34,7 @@ import { ClientModel, ClientMsg, ToClient, ToServer } from "./profile.core";
 export const init = ({
   currentRoute,
 }: {
-  currentRoute: Route;
+  currentRoute: AppRoute;
 }): {
   model: ClientModel;
   cmd?: ClientCmd<ToServer>[];

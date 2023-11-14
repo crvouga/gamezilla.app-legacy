@@ -1,5 +1,9 @@
 import { Eff, RemoteResult, Sub, exhaustive, p } from "gamezilla/@SHARED/core";
-import { ClientCtx, Route, ViewCtx } from "gamezilla/@CHILD/app/@SHARED/client";
+import {
+  ClientCtx,
+  AppRoute,
+  ViewCtx,
+} from "gamezilla/@CHILD/app/@SHARED/client";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { Mic } from "./mic";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./party.core";
@@ -188,7 +192,7 @@ export const ViewBanner = ({
   ctx,
 }: {
   ctx: ViewCtx;
-  route: Route;
+  route: AppRoute;
   model: Model;
   dispatch: (msg: Msg) => void;
 }) => {

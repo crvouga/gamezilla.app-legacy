@@ -5,7 +5,7 @@ import {
   ClientCmd,
   ClientEvt,
   Location,
-  Route,
+  AppRoute,
   RouteAuth,
   replaceRoute,
   sendToServer,
@@ -54,7 +54,7 @@ export const update = ({
   msg,
   model,
 }: {
-  route: Route;
+  route: AppRoute;
   msg: ClientMsg;
   model: ClientModel;
 }): {

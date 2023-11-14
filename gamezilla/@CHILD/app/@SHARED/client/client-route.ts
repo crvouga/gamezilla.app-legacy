@@ -15,7 +15,7 @@ export type Location = {
   search: string;
 };
 
-export type Route =
+export type AppRoute =
   | { t: "auth"; c: RouteAuth; location?: Location }
   | { t: "logout" }
   | { t: "profile"; c: RouteProfile }
@@ -23,7 +23,7 @@ export type Route =
   | { t: "chat"; c: RouteChat }
   | { t: "search" };
 
-const encode = (route: Route): string => {
+const encode = (route: AppRoute): string => {
   switch (route.t) {
     case "auth":
       return encodeAuth(route.c);
@@ -40,7 +40,7 @@ const encode = (route: Route): string => {
   }
 };
 
-const decode = (pathname: string): Route | null => {
+const decode = (pathname: string): AppRoute | null => {
   if (pathname.startsWith("/auth")) {
     const auth = decodeAuth(pathname);
     if (auth === null) {
@@ -265,11 +265,11 @@ export const decodeChat = (pathname: string): RouteChat | null => {
 //
 //
 
-const eq = (a: Route, b: Route): boolean => {
+const eq = (a: AppRoute, b: AppRoute): boolean => {
   return encode(a) === encode(b);
 };
 
-export const Route = {
+export const AppRoute = {
   eq,
   encode,
   decode,

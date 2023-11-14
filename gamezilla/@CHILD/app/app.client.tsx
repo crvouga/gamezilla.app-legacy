@@ -6,7 +6,7 @@ import {
   ClientCmd,
   ClientCtx,
   ClientEvt,
-  Route,
+  AppRoute,
   ViewCtx,
   preloadSound,
 } from "gamezilla/@CHILD/app/@SHARED/client";
@@ -793,7 +793,7 @@ const ViewBottomBar = ({
   dispatch: (m: ClientMsg) => void;
 }) => {
   const items: {
-    route: Route;
+    route: AppRoute;
     label: string;
     icon: VDom;
   }[] = [
@@ -821,10 +821,10 @@ const ViewBottomBar = ({
       />
       <div className="flex w-full items-center justify-center border-t border-neutral-700">
         {items.map((item) => {
-          const isSelected = Route.eq(model.routing, item.route);
+          const isSelected = AppRoute.eq(model.routing, item.route);
           return (
             <button
-              key={Route.encode(item.route)}
+              key={AppRoute.encode(item.route)}
               onClick={() => ctx.push(item.route)}
               className={cn(
                 "flex flex-1 flex-col items-center justify-center pb-2 pt-1",

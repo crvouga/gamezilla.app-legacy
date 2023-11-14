@@ -3,7 +3,7 @@ import {
   APP_SOUND,
   ClientCmd,
   ClientEvt,
-  Route,
+  AppRoute,
   RouteCmd,
   playSound,
 } from "gamezilla/@CHILD/app/@SHARED/client";
@@ -16,9 +16,9 @@ import {
 //
 //
 
-export type Model = Route;
+export type Model = AppRoute;
 
-const FALLBACK: Route = { t: "space", c: { t: "space-list" } };
+const FALLBACK: AppRoute = { t: "space", c: { t: "space-list" } };
 
 export const init = (
   location: Browser.Location
@@ -26,13 +26,13 @@ export const init = (
   model: Model;
   eff?: Eff;
 } => {
-  const decoded = Route.decode(location.pathname);
+  const decoded = AppRoute.decode(location.pathname);
 
   if (decoded) {
     return { model: decoded };
   }
 
-  return { model: FALLBACK, eff: Browser.replace(Route.encode(FALLBACK)) };
+  return { model: FALLBACK, eff: Browser.replace(AppRoute.encode(FALLBACK)) };
 };
 
 //
@@ -44,8 +44,8 @@ export const init = (
 //
 
 export type Msg =
-  | { t: "route-changed"; route: Route }
-  | { t: "clicked-link"; route: Route }
+  | { t: "route-changed"; route: AppRoute }
+  | { t: "clicked-link"; route: AppRoute }
   | { t: "clicked-back" };
 
 export const update = ({
@@ -72,7 +72,7 @@ export const update = ({
     case "clicked-link": {
       return {
         model: msg.route,
-        eff: Browser.push(Route.encode(msg.route)),
+        eff: Browser.push(AppRoute.encode(msg.route)),
         cmd: [playSound(APP_SOUND.tap, UnitInterval.init(0.5))],
       };
     }
@@ -100,7 +100,7 @@ export const updateFromCmd = ({
     case "routing/push": {
       return {
         model: msg.route,
-        eff: Browser.push(Route.encode(msg.route)),
+        eff: Browser.push(AppRoute.encode(msg.route)),
       };
     }
 
@@ -114,7 +114,7 @@ export const updateFromCmd = ({
     case "routing/replace": {
       return {
         model: msg.route,
-        eff: Browser.replace(Route.encode(msg.route)),
+        eff: Browser.replace(AppRoute.encode(msg.route)),
       };
     }
   }
@@ -129,7 +129,7 @@ export const updateFromCmd = ({
 //
 
 const onLocationChange = (location: Browser.Location): Msg => {
-  const decoded = Route.decode(location.pathname);
+  const decoded = AppRoute.decode(location.pathname);
 
   if (decoded) {
     return { t: "route-changed", route: decoded };
