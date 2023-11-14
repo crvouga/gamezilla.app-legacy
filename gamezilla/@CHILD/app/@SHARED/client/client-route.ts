@@ -12,7 +12,7 @@ import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data/space-id";
 
 export type Location = {
   pathname: string;
-  search: string;
+  searchParams?: URLSearchParams;
 };
 
 export type AppRoute =

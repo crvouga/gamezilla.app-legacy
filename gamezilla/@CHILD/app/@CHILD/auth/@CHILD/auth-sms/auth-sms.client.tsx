@@ -1,11 +1,15 @@
-import { Location } from "gamezilla/@CHILD/app/@SHARED/client";
+import {
+  AnonymousViewCtx,
+  Location,
+} from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   AlertError,
   Button,
   MyTextField,
   TopBar,
+  TopBarBackButton,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { toRoute } from "./auth-sms-client-route";
+import { toLocation, toRoute } from "./route";
 import { ClientModel, ClientMsg } from "./auth-sms.core";
 
 export const update = ({
@@ -25,7 +29,9 @@ export const View = ({
   location,
   model,
   dispatch,
+  ctx,
 }: {
+  ctx: AnonymousViewCtx;
   location: Location;
   model: ClientModel;
   dispatch: (m: ClientMsg) => void;
@@ -66,7 +72,10 @@ export const View = ({
     case "/verify": {
       return (
         <div className="w-full">
-          <TopBar title="Login with phone" />
+          <TopBar
+            left={<TopBarBackButton onClick={() => {}} />}
+            title="Login with phone"
+          />
 
           <div className="w-full">
             <MyTextField
