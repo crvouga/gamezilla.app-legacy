@@ -4,6 +4,7 @@ import {
   AnonymousViewCtx,
   ClientCmd,
   ClientEvt,
+  Location,
   Route,
   RouteAuth,
   replaceRoute,
@@ -21,6 +22,7 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { createSocialLogin } from "./auth-client/social-login";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./auth.core";
+import { toRoute } from "./@SHARED/auth-client-route";
 
 //
 //
@@ -211,14 +213,26 @@ export const subscriptions = (_model: ClientModel): Sub<ClientMsg> => {
 export const View = ({
   model,
   ctx,
+  location,
   dispatch,
 }: {
+  location: Location;
   route: RouteAuth;
   model: ClientModel;
   dispatch: (m: ClientMsg) => void;
   ctx: AnonymousViewCtx;
 }) => {
-  return <ViewLoginScreen ctx={ctx} model={model} dispatch={dispatch} />;
+  const route = toRoute(location);
+
+  switch (route.t) {
+    case "/": {
+      return <ViewLoginScreen ctx={ctx} model={model} dispatch={dispatch} />;
+    }
+
+    case "/sms": {
+      return <ViewLogoutScreen ctx={ctx} model={model} dispatch={dispatch} />;
+    }
+  }
 };
 
 const ViewLoginScreen = ({

@@ -683,6 +683,10 @@ const ViewLoggedOut = ({
   if (model.routing.t === "auth") {
     return (
       <AuthClient.View
+        location={{
+          pathname: model.routing.c.t,
+          search: "",
+        }}
         dispatch={(m) => dispatch({ t: "auth", c: m })}
         model={model.auth}
         ctx={ctx}

@@ -1,13 +1,13 @@
-import { Eff, EmailAddress, ok, Result } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   AnonymousReqCtx,
   DbConnSql,
+  sendToClient,
   ServerCmd,
   ServerCtx,
   ServerEvt,
-  sendToClient,
 } from "gamezilla/@CHILD/app/@SHARED/server";
+import { Eff, EmailAddress, ok, Result } from "gamezilla/@SHARED/core";
 import { createAccountDb } from "./auth-server/account-db";
 import {
   Account,
@@ -17,7 +17,6 @@ import {
   ToClient,
   ToServer,
 } from "./auth.core";
-import { ISessionDb, SessionDb } from "./auth-server/session-db";
 
 //
 //
@@ -100,18 +99,6 @@ export const updateFromClient = ({
   eff?: Eff<ServerMsg>;
 } => {
   switch (msg.t) {
-    case "send-sms-code": {
-      return {
-        model,
-        eff: async (dispatch) => {
-          const randomCode = Math.floor(Math.random() * 10_000);
-          await ctx.sms.sendMessage({
-            message: `Your code is ${randomCode}`,
-            phoneNumber: msg.phoneNumber,
-          });
-        },
-      };
-    }
     case "started-social-login": {
       return {
         model: {

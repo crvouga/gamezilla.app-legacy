@@ -10,8 +10,13 @@ import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data/space-id";
 //
 //
 
+export type Location = {
+  pathname: string;
+  search: string;
+};
+
 export type Route =
-  | { t: "auth"; c: RouteAuth }
+  | { t: "auth"; c: RouteAuth; location?: Location }
   | { t: "logout" }
   | { t: "profile"; c: RouteProfile }
   | { t: "space"; c: RouteGameSpace }
