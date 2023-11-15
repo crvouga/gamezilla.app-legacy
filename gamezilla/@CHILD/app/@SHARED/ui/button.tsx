@@ -44,13 +44,14 @@ export const Button = ({
       type={type}
       className={cn(
         className,
-        "flex select-none flex-nowrap items-center justify-center font-semibold",
+        "relative flex select-none flex-nowrap items-center justify-center font-semibold",
         combo === "contained-primary" && "rounded-md bg-blue-600 text-white",
         combo === "contained-danger" && "rounded-md bg-red-600 text-white",
         combo === "contained-default" &&
           "rounded-md border border-neutral-700 bg-neutral-900 text-blue-500",
         combo === "outlined-default" &&
           "rounded-md border border-neutral-800 text-inherit text-neutral-400",
+
         !disabled && combo === "text-primary" && "text-blue-500",
         size === "lg" && "px-4 py-3 text-xl",
         size === "md" && "px-4 py-2 text-lg",
@@ -62,13 +63,18 @@ export const Button = ({
       onClick={(event) => {
         onClick?.({ stopPropagation: () => event.stopPropagation() });
       }}>
-      {loading ? (
-        <Spinner className="h-6 w-6" />
-      ) : (
-        <>
-          {start && <div className="mr-2">{start}</div>}
-          {text}
-        </>
+      <div
+        className={cn(
+          "flex h-full w-full items-center justify-center",
+          loading && "text-transparent"
+        )}>
+        {start && <div className="mr-2">{start}</div>}
+        {text}
+      </div>
+      {loading && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <Spinner className="h-6 w-6" />
+        </div>
       )}
     </button>
   );

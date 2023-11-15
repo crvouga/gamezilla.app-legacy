@@ -243,6 +243,7 @@ export const View = ({
             <Button
               className="w-full"
               text="Verify Code"
+              color="primary"
               loading={model.verifyCode.t === "loading"}
               onClick={() => {
                 dispatch({ t: "clicked-verify-code" });
