@@ -102,7 +102,17 @@ export const update = ({
 
     case "clicked-verify-code": {
       return {
-        model,
+        model: {
+          ...model,
+          verifyCode: RemoteResult.loading,
+        },
+        cmd: [
+          sendToServer({
+            t: "verify-code",
+            code: model.codeInput,
+            phoneNumber: msg.phoneNumber,
+          }),
+        ],
       };
     }
 
@@ -145,6 +155,16 @@ export const updateFromServer = ({
           focusView("codeInput"),
           playSound(APP_SOUND.navForwardMin),
         ],
+      };
+    }
+
+    case "verified-code": {
+      if (msg.result.t === "err") {
+        return { model: { ...model, verifyCode: msg.result } };
+      }
+      return {
+        model: { ...model, verifyCode: msg.result },
+        cmd: [playSound(APP_SOUND.celebration)],
       };
     }
   }
@@ -246,7 +266,10 @@ export const View = ({
               color="primary"
               loading={model.verifyCode.t === "loading"}
               onClick={() => {
-                dispatch({ t: "clicked-verify-code" });
+                dispatch({
+                  t: "clicked-verify-code",
+                  phoneNumber: route.phoneNumber,
+                });
               }}
             />
           </div>

@@ -1,10 +1,11 @@
-import { ClientId } from "gamezilla/@CHILD/app/@SHARED/data";
+import { ClientId, SessionId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   Iso3166Alpha2Code,
   PhoneNumber,
   RemoteResult,
   Result,
 } from "gamezilla/@SHARED/core";
+import { Account } from "../../auth.core";
 
 export type ServerModel = {
   verifications: {
@@ -42,7 +43,7 @@ export type ClientMsg =
   | { t: "inputted-country-code"; countryCode: Iso3166Alpha2Code }
   | { t: "clicked-send-code" }
   | { t: "inputted-code"; code: string }
-  | { t: "clicked-verify-code" };
+  | { t: "clicked-verify-code"; phoneNumber: PhoneNumber };
 
 type SentCode = {
   t: "sent-code";
@@ -50,17 +51,31 @@ type SentCode = {
   result: Result<string, null>;
 };
 
+type VerifiedCode = {
+  t: "verified-code";
+  phoneNumber: PhoneNumber;
+  result: Result<string, null>;
+};
+
 export type ServerMsg =
   | (SentCode & { clientId: ClientId })
+  | (VerifiedCode & { clientId: ClientId; sessionId: SessionId })
   | {
-      t: "verified-code";
+      t: "got-user-account";
+      result: Result<string, Account>;
+      clientId: ClientId;
+      sessionId: SessionId;
+    };
+
+export type ToServer =
+  | {
+      t: "send-code";
+      phoneNumber: PhoneNumber;
+    }
+  | {
+      t: "verify-code";
       phoneNumber: PhoneNumber;
       code: string;
     };
 
-export type ToServer = {
-  t: "send-code";
-  phoneNumber: PhoneNumber;
-};
-
-export type ToClient = SentCode;
+export type ToClient = SentCode | VerifiedCode;

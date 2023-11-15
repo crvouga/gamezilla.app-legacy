@@ -6,6 +6,14 @@ export const nullish = (value: unknown): value is null | undefined => {
   return value === null || value === undefined;
 };
 
+export const orNullish = <T>(
+  is: (x: unknown) => x is T
+): ((x: unknown) => x is T | null | undefined) => {
+  return (x: unknown): x is T | null | undefined => {
+    return is(x) || nullish(x);
+  };
+};
+
 export const or =
   <A, B>(isA: (x: unknown) => x is A, isB: (x: unknown) => x is B) =>
   (x: unknown): x is A | B => {

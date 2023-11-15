@@ -3,7 +3,7 @@ import { expect, test } from "bun:test";
 
 test("sql - replaces named parameter with number", () => {
   expect(toSql("SELECT * FROM users WHERE id = :id", { id: 1 })).toBe(
-    "SELECT * FROM users WHERE id = '1'"
+    "SELECT * FROM users WHERE id = 1"
   );
 });
 
@@ -25,7 +25,7 @@ test("sql - handles multiple parameters", () => {
       id: 2,
       name: "John",
     })
-  ).toBe("SELECT * FROM users WHERE id = '2' AND name = 'John'");
+  ).toBe("SELECT * FROM users WHERE id = 2 AND name = 'John'");
 });
 
 test("sql - handles parameters not in query", () => {
@@ -46,6 +46,6 @@ test("sql - handles missing parameter", () => {
 
 test("sql - handles non-string parameter values", () => {
   expect(toSql("SELECT * FROM users WHERE age > :age", { age: 30 })).toBe(
-    "SELECT * FROM users WHERE age > '30'"
+    "SELECT * FROM users WHERE age > 30"
   );
 });

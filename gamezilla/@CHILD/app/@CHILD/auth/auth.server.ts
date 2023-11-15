@@ -8,7 +8,7 @@ import {
   ServerEvt,
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Eff, EmailAddress, ok, Result } from "gamezilla/@SHARED/core";
-import { createAccountDb } from "./auth-server/account-db";
+import { createAccountDb } from "./@SHARED/auth-server/account-db";
 import * as AuthServerSMS from "./@CHILD/auth-sms/auth-sms.server";
 import {
   Account,
@@ -89,6 +89,7 @@ export const update = ({
       const updated = AuthServerSMS.update({
         model: model.sms,
         msg: msg.c,
+        ctx,
       });
 
       return {
@@ -98,6 +99,7 @@ export const update = ({
         },
         cmd: ServerCmd.tag("sms", updated.cmd),
         eff: Eff.t("sms", updated.eff),
+        evt: updated.evt,
       };
     }
   }
@@ -327,7 +329,19 @@ export const updateFromEvent = ({
     }
 
     case "client-authenticated": {
-      return { model, cmd: [sendToClient([evt.clientId], evt)] };
+      return {
+        model: {
+          ...model,
+          sessions: {
+            ...model.sessions,
+            [evt.sessionId]: {
+              sessionId: evt.sessionId,
+              userId: evt.userId,
+            },
+          },
+        },
+        cmd: [sendToClient([evt.clientId], evt)],
+      };
     }
 
     case "client-unauthenticated": {

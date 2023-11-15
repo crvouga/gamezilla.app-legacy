@@ -9,7 +9,8 @@ import * as AuthSMS from "./@CHILD/auth-sms/auth-sms.core";
 
 export type Account = {
   userId: UserId;
-  emailAddress: EmailAddress;
+  emailAddress?: EmailAddress | null;
+  phoneNumber?: PhoneNumber | null;
 };
 
 export type ClientModel = {

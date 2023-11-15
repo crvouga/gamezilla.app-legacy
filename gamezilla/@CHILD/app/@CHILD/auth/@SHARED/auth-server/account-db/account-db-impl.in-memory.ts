@@ -1,6 +1,6 @@
 import { ok } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
-import { Account } from "../../auth.core";
+import { Account } from "../../../auth.core";
 import { AccountDb } from "./account-db";
 
 export const createAccountDb = (): AccountDb => {
@@ -9,6 +9,14 @@ export const createAccountDb = (): AccountDb => {
     async findOneByEmail(input) {
       for (const account of accounts.values()) {
         if (account.emailAddress === input.emailAddress) {
+          return ok(account);
+        }
+      }
+      return ok(null);
+    },
+    async findOneByPhoneNumber(input) {
+      for (const account of accounts.values()) {
+        if (account.phoneNumber === input.phoneNumber) {
           return ok(account);
         }
       }

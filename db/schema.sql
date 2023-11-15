@@ -9,7 +9,7 @@ CREATE TABLE user_profile (
 CREATE INDEX idx_username ON user_profile (username);
 CREATE TABLE user_account (
   user_id TEXT NOT NULL,
-  email_address TEXT, phone_number TEXT,
+  email_address TEXT, phone_number TEXT, phone_number_iso_3166_alpha_2 TEXT,
   PRIMARY KEY (user_id),
   UNIQUE (email_address)
 );
@@ -57,4 +57,5 @@ INSERT INTO "schema_migrations" (version) VALUES
   ('20231111232244'),
   ('20231112003940'),
   ('20231112220209'),
-  ('20231113081720');
+  ('20231113081720'),
+  ('20231115190935');
