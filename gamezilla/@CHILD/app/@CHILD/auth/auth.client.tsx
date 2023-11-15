@@ -301,7 +301,7 @@ const ViewLoginScreen = ({
         </div>
 
         <div className="flex w-full flex-col gap-6">
-          {true && (
+          {false && (
             <Button
               onClick={() => dispatch({ t: "clicked-login-with-google" })}
               size="lg"
