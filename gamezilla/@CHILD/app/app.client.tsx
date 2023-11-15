@@ -438,6 +438,18 @@ const updateFromCmd = ({
       };
     }
 
+    case "view/focus": {
+      return {
+        model,
+        eff: () => {
+          const element = document.getElementById(cmd.htmlId);
+          if (element) {
+            element.focus();
+          }
+        },
+      };
+    }
+
     case "send-to-server": {
       return {
         model,
@@ -685,7 +697,7 @@ const ViewLoggedOut = ({
       <AuthClient.View
         location={{
           pathname: model.routing.c.t,
-          search: "",
+          searchParams: new URLSearchParams(),
         }}
         dispatch={(m) => dispatch({ t: "auth", c: m })}
         model={model.auth}

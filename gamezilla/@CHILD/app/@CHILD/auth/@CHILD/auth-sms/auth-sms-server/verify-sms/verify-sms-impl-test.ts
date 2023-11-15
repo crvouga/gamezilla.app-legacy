@@ -1,4 +1,4 @@
-import { err, ok } from "gamezilla/@SHARED/core";
+import { PhoneNumber, err, ok } from "gamezilla/@SHARED/core";
 import { IVerifySMS } from "./verify-sms";
 
 const CODE = "123";
@@ -8,7 +8,11 @@ export const VerifySMS = (): IVerifySMS => {
     async sendCode(input) {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      console.log(`sent code to ${input.phoneNumber}. code: ${CODE}`);
+      console.log(
+        `[verify-sms] [test] fake sent code to ${PhoneNumber.toString(
+          input.phoneNumber
+        )}. code: ${CODE}`
+      );
 
       return ok(null);
     },

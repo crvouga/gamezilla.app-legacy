@@ -35,7 +35,7 @@ const decode = (pathname: string): AuthRoute | null => {
       t: "/sms",
       c: {
         pathname: child,
-        search: "",
+        searchParams: new URLSearchParams(),
       },
     };
   }
@@ -45,7 +45,7 @@ const decode = (pathname: string): AuthRoute | null => {
       t: "/",
       c: {
         pathname: "/",
-        search: "",
+        searchParams: new URLSearchParams(),
       },
     };
   }

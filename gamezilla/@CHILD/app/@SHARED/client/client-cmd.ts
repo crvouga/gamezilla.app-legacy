@@ -12,7 +12,8 @@ export type ClientCmd<ToServer = null> =
   | SendToServerCmd<ToServer>
   | ToastCmd
   | RouteCmd
-  | SoundCmd;
+  | SoundCmd
+  | ViewCmd;
 
 //
 //
@@ -99,6 +100,23 @@ export const preloadSound = <T>(src: string[]): ClientCmd<T> => {
     t: "sound/preload",
     src,
   };
+};
+
+//
+//
+//
+//
+//
+//
+//
+
+type ViewCmd = {
+  t: "view/focus";
+  htmlId: string;
+};
+
+export const focusView = <T>(htmlId: string): ClientCmd<T> => {
+  return { t: "view/focus", htmlId };
 };
 
 //

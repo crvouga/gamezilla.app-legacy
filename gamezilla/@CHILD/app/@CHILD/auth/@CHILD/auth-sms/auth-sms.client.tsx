@@ -1,9 +1,13 @@
 import {
+  APP_SOUND,
   AnonymousViewCtx,
   ClientCmd,
   RouteAuth,
+  focusView,
+  playSound,
   pushRoute,
   sendToServer,
+  showToast,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   AlertError,
@@ -124,7 +128,7 @@ export const updateFromServer = ({
         return { model: { ...model, sendCode: msg.result } };
       }
       return {
-        model: { ...model, sendCode: msg.result },
+        model: { ...model, sendCode: msg.result, codeInput: "" },
         cmd: [
           pushRoute({
             t: "auth",
@@ -133,6 +137,13 @@ export const updateFromServer = ({
               phoneNumber: msg.phoneNumber,
             },
           }),
+          showToast(
+            `Sent code to ${PhoneNumber.toString(msg.phoneNumber)}`,
+            "info",
+            4000
+          ),
+          focusView("codeInput"),
+          playSound(APP_SOUND.navForwardMin),
         ],
       };
     }
@@ -214,7 +225,7 @@ export const View = ({
       return (
         <div className="w-full">
           <TopBar
-            left={<TopBarBackButton onClick={() => {}} />}
+            left={<TopBarBackButton onClick={() => ctx.back()} />}
             title="Login with phone"
           />
 
@@ -223,6 +234,7 @@ export const View = ({
               value={model.codeInput}
               id="codeInput"
               label="Code"
+              autoFocus
               type="tel"
               onChange={(value) => {
                 dispatch({ t: "inputted-code", code: value });

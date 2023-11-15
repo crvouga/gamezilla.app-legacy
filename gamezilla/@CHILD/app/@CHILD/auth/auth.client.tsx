@@ -265,6 +265,10 @@ export const View = ({
         />
       );
     }
+
+    case "login-email-link": {
+      return null;
+    }
   }
 };
 
