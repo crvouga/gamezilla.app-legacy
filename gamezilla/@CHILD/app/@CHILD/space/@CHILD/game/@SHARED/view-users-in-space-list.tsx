@@ -31,7 +31,7 @@ export const ViewUsersInSpaceList = ({ ctx }: { ctx: SpaceViewCtx }) => {
 
 export const ViewSpaceHostChip = () => {
   return (
-    <div className="flex items-center gap-1 rounded-xl border border-white/20 bg-white/10 px-2 py-1 text-xs font-semibold">
+    <div className="flex items-center gap-1 rounded-xl border border-white/20 bg-neutral-800 px-2 py-1 text-xs font-semibold">
       <IconCrown className="h-4 w-4 text-yellow-300" />
       Host
     </div>
@@ -40,7 +40,7 @@ export const ViewSpaceHostChip = () => {
 
 export const ViewYouChip = () => {
   return (
-    <div className="rounded-xl border border-white/20 bg-white/10 px-2 py-1 text-xs">
+    <div className="rounded-xl border border-white/20 bg-neutral-800 px-2 py-1 text-xs">
       You
     </div>
   );

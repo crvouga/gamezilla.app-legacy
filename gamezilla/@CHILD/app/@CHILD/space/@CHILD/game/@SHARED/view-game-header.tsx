@@ -27,7 +27,7 @@ const renderDefaultCoverArt = (props: { key: string; className: string }) => {
     <div
       key={props.key}
       className={cn(
-        "flex items-center justify-center overflow-hidden rounded-lg border border-white/20 bg-white/10 p-4 text-secondary",
+        "flex items-center justify-center overflow-hidden rounded-lg border border-white/20 bg-neutral-800 p-4 text-secondary",
         props.className
       )}>
       <svg
