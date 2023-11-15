@@ -1,8 +1,9 @@
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
+import { ClientId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   Iso3166Alpha2Code,
   PhoneNumber,
   RemoteResult,
+  Result,
 } from "gamezilla/@SHARED/core";
 
 export type ServerModel = {
@@ -26,6 +27,7 @@ export type Route =
 export type ClientModel = {
   //
   phoneNumberInput: string;
+  phoneNumberError: string | null;
   countryCodeInput: Iso3166Alpha2Code;
   //
   codeInput: string;
@@ -39,20 +41,26 @@ export type ClientMsg =
   | { t: "inputted-phone-number"; phoneNumber: string }
   | { t: "inputted-country-code"; countryCode: Iso3166Alpha2Code }
   | { t: "clicked-send-code" }
-  | { t: "inputted-code"; error: string }
+  | { t: "inputted-code"; code: string }
   | { t: "clicked-verify-code" };
 
+type SentCode = {
+  t: "sent-code";
+  phoneNumber: PhoneNumber;
+  result: Result<string, null>;
+};
+
 export type ServerMsg =
-  | {
-      t: "sent-code";
-      phoneNumber: PhoneNumber;
-    }
+  | (SentCode & { clientId: ClientId })
   | {
       t: "verified-code";
       phoneNumber: PhoneNumber;
       code: string;
     };
 
-export type ToServer = { t: null };
+export type ToServer = {
+  t: "send-code";
+  phoneNumber: PhoneNumber;
+};
 
-export type ToClient = { t: null };
+export type ToClient = SentCode;

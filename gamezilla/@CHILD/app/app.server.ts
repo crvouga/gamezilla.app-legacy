@@ -248,6 +248,8 @@ const updateMain = async ({
       const updated = AuthServer.update({ ctx, model: model.auth, msg: msg.c });
       return {
         model: { ...model, auth: updated.model },
+        cmd: ServerCmd.tag("auth", updated.cmd),
+        eff: Eff.t("auth", updated.eff),
         evt: updated.evt,
       };
     }

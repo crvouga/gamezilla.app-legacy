@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import { EmailAddress, err, NotAsked, ok } from "gamezilla/@SHARED/core";
+import { EmailAddress, err, notAsked, ok } from "gamezilla/@SHARED/core";
 import { SocialLogin } from "./social-login";
 
 const SESSION_STORAGE_KEY = "gamezilla-social-login-state";
@@ -21,7 +21,7 @@ export const createSocialLogin = (): SocialLogin => {
       const state = sessionStorage.getItem(SESSION_STORAGE_KEY);
 
       if (state !== SocialLoginState.STARTED) {
-        return NotAsked;
+        return notAsked;
       }
 
       sessionStorage.removeItem(SESSION_STORAGE_KEY);

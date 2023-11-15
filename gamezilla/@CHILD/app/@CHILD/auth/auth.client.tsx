@@ -1,4 +1,4 @@
-import { Eff, Loading, NotAsked, Sub, chain } from "gamezilla/@SHARED/core";
+import { Eff, loading, notAsked, Sub, chain } from "gamezilla/@SHARED/core";
 import {
   AnonymousClientCtx,
   AnonymousViewCtx,
@@ -35,8 +35,8 @@ import * as AuthClientSMS from "./@CHILD/auth-sms/auth-sms.client";
 export const init: { model: ClientModel; eff?: Eff<ClientMsg> } = {
   model: {
     currentUser: { t: "loading" },
-    loginWithGoogle: NotAsked,
-    logout: NotAsked,
+    loginWithGoogle: notAsked,
+    logout: notAsked,
     sms: AuthClientSMS.init,
   },
 };
@@ -69,7 +69,7 @@ export const update = ({
       return {
         model: {
           ...model,
-          loginWithGoogle: Loading,
+          loginWithGoogle: loading,
         },
         cmd: [sendToServer({ t: "started-social-login" })],
         eff: async () => {
@@ -107,6 +107,7 @@ export const update = ({
           ...model,
           sms: updated.model,
         },
+        cmd: ClientCmd.tag("sms", updated.cmd),
       };
     }
   }
@@ -184,6 +185,17 @@ export const updateFromServer = ({
         }
       );
     }
+
+    case "sms": {
+      const updated = AuthClientSMS.updateFromServer({
+        model: model.sms,
+        msg: msg.c,
+      });
+      return {
+        model: { ...model, sms: updated.model },
+        cmd: ClientCmd.tag("sms", updated.cmd),
+      };
+    }
   }
 };
 
@@ -248,7 +260,7 @@ export const View = ({
         <AuthClientSMS.View
           ctx={ctx}
           dispatch={(c) => dispatch({ t: "sms", c })}
-          location={location}
+          route={route}
           model={model.sms}
         />
       );

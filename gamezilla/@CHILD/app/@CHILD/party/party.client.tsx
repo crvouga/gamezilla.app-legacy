@@ -64,7 +64,7 @@ export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
       return [
         {
           ...model,
-          requests: { ...model.requests, [msg[0]]: RemoteResult.Loading },
+          requests: { ...model.requests, [msg[0]]: RemoteResult.loading },
         },
         Eff.None,
       ];

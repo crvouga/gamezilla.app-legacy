@@ -1,23 +1,30 @@
 import {
   AnonymousViewCtx,
-  Location,
+  ClientCmd,
+  RouteAuth,
+  pushRoute,
+  sendToServer,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   AlertError,
   Button,
-  TextField,
   Select,
+  TextField,
   TopBar,
   TopBarBackButton,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { toLocation, toRoute } from "./route";
-import { ClientModel, ClientMsg } from "./auth-sms.core";
-import { Iso3166Alpha2Code } from "gamezilla/@SHARED/core";
+import {
+  Iso3166Alpha2Code,
+  PhoneNumber,
+  RemoteResult,
+} from "gamezilla/@SHARED/core";
+import { ClientModel, ClientMsg, ToClient, ToServer } from "./auth-sms.core";
 
 export const init: ClientModel = {
   code: "",
   codeInput: "",
   phoneNumberInput: "",
+  phoneNumberError: null,
   sendCode: { t: "not-asked" },
   verifyCode: { t: "not-asked" },
   countryCodeInput: Iso3166Alpha2Code.of("US"),
@@ -31,6 +38,7 @@ export const update = ({
   msg: ClientMsg;
 }): {
   model: ClientModel;
+  cmd?: ClientCmd<ToServer>[];
   // cmd: RouteCmd<AuthRoute>;
 } => {
   switch (msg.t) {
@@ -39,9 +47,11 @@ export const update = ({
         model: {
           ...model,
           phoneNumberInput: msg.phoneNumber,
+          phoneNumberError: null,
         },
       };
     }
+
     case "inputted-country-code": {
       return {
         model: {
@@ -50,27 +60,98 @@ export const update = ({
         },
       };
     }
+
+    case "clicked-send-code": {
+      const phoneNumber = PhoneNumber.decode(
+        model.countryCodeInput,
+        model.phoneNumberInput
+      );
+
+      if (phoneNumber.t === "err") {
+        return {
+          model: {
+            ...model,
+            phoneNumberError: "Phone number is invalid",
+          },
+        };
+      }
+
+      return {
+        model: { ...model, sendCode: RemoteResult.loading },
+        cmd: [
+          sendToServer({
+            t: "send-code",
+            phoneNumber: phoneNumber.value,
+          }),
+        ],
+      };
+    }
+
+    case "inputted-code": {
+      return {
+        model: {
+          ...model,
+          codeInput: msg.code,
+        },
+      };
+    }
+
+    case "clicked-verify-code": {
+      return {
+        model,
+      };
+    }
+
     default: {
       return { model };
     }
   }
 };
 
+export const updateFromServer = ({
+  msg,
+  model,
+}: {
+  msg: ToClient;
+  model: ClientModel;
+}): {
+  model: ClientModel;
+  cmd?: ClientCmd<ToServer>[];
+} => {
+  switch (msg.t) {
+    case "sent-code": {
+      if (msg.result.t === "err") {
+        return { model: { ...model, sendCode: msg.result } };
+      }
+      return {
+        model: { ...model, sendCode: msg.result },
+        cmd: [
+          pushRoute({
+            t: "auth",
+            c: {
+              t: "login-phone-verify",
+              phoneNumber: msg.phoneNumber,
+            },
+          }),
+        ],
+      };
+    }
+  }
+};
+
 export const View = ({
-  location,
+  route,
   model,
   dispatch,
   ctx,
 }: {
   ctx: AnonymousViewCtx;
-  location: Location;
+  route: RouteAuth;
   model: ClientModel;
   dispatch: (m: ClientMsg) => void;
 }) => {
-  const route = toRoute(location);
-
   switch (route.t) {
-    case "/": {
+    case "login-phone": {
       return (
         <div className="w-full">
           <TopBar
@@ -121,13 +202,15 @@ export const View = ({
           </div>
 
           {model.sendCode.t === "err" && (
-            <AlertError>{model.sendCode.error}</AlertError>
+            <div className="w-full p-4">
+              <AlertError>{model.sendCode.error}</AlertError>
+            </div>
           )}
         </div>
       );
     }
 
-    case "/verify": {
+    case "login-phone-verify": {
       return (
         <div className="w-full">
           <TopBar
@@ -135,29 +218,37 @@ export const View = ({
             title="Login with phone"
           />
 
-          <div className="w-full">
+          <div className="flex w-full flex-col gap-6 p-4 py-6">
             <TextField
-              value={model.phoneNumberInput}
-              id="phoneNumberInput"
-              label="Phone Number"
+              value={model.codeInput}
+              id="codeInput"
+              label="Code"
+              type="tel"
               onChange={(value) => {
-                dispatch({ t: "inputted-phone-number", phoneNumber: value });
+                dispatch({ t: "inputted-code", code: value });
               }}
             />
             <Button
+              className="w-full"
               text="Verify Code"
               loading={model.verifyCode.t === "loading"}
               onClick={() => {
-                dispatch({ t: "clicked-send-code" });
+                dispatch({ t: "clicked-verify-code" });
               }}
             />
           </div>
 
           {model.verifyCode.t === "err" && (
-            <AlertError>{model.verifyCode.error}</AlertError>
+            <div className="w-full p-4">
+              <AlertError>{model.verifyCode.error}</AlertError>
+            </div>
           )}
         </div>
       );
+    }
+
+    default: {
+      return null;
     }
   }
 };

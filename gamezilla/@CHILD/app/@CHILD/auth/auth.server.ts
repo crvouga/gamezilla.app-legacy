@@ -9,6 +9,7 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Eff, EmailAddress, ok, Result } from "gamezilla/@SHARED/core";
 import { createAccountDb } from "./auth-server/account-db";
+import * as AuthServerSMS from "./@CHILD/auth-sms/auth-sms.server";
 import {
   Account,
   ServerModel,
@@ -29,6 +30,7 @@ import {
 export const init: ServerModel = {
   sessions: {},
   socialLoginStates: {},
+  sms: AuthServerSMS.init,
 };
 
 //
@@ -49,7 +51,9 @@ export const update = ({
   ctx: ServerCtx;
 }): {
   model: ServerModel;
+  cmd?: ServerCmd<ToClient>[];
   evt?: ServerEvt[];
+  eff?: Eff<ServerMsg>;
 } => {
   switch (msg.t) {
     case "got-user-account": {
@@ -80,8 +84,23 @@ export const update = ({
         ],
       };
     }
+
+    case "sms": {
+      const updated = AuthServerSMS.update({
+        model: model.sms,
+        msg: msg.c,
+      });
+
+      return {
+        model: {
+          ...model,
+          sms: updated.model,
+        },
+        cmd: ServerCmd.tag("sms", updated.cmd),
+        eff: Eff.t("sms", updated.eff),
+      };
+    }
   }
-  return { model };
 };
 
 export const updateFromClient = ({
@@ -185,6 +204,23 @@ export const updateFromClient = ({
             sessionId: ctx.sessionId,
           },
         ],
+      };
+    }
+
+    case "sms": {
+      const updated = AuthServerSMS.updateFromClient({
+        model: model.sms,
+        msg: msg.c,
+        ctx,
+      });
+
+      return {
+        model: {
+          ...model,
+          sms: updated.model,
+        },
+        cmd: ServerCmd.tag("sms", updated.cmd),
+        eff: Eff.t("sms", updated.eff),
       };
     }
   }

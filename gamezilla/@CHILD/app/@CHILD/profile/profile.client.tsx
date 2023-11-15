@@ -1,4 +1,4 @@
-import { Eff, Loading, andThen, p } from "gamezilla/@SHARED/core";
+import { Eff, loading, andThen, p } from "gamezilla/@SHARED/core";
 import {
   AnonymousClientCtx,
   ClientCmd,
@@ -236,7 +236,7 @@ const loadProfile = (
   return {
     model: {
       ...model,
-      requests: { ...model.requests, "find-one": Loading },
+      requests: { ...model.requests, "find-one": loading },
     },
     cmd: [
       {

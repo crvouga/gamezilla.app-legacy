@@ -44,6 +44,8 @@ export type ServerModel = {
   socialLoginStates: {
     [sessionId: SessionId]: SocialLoginState;
   };
+
+  sms: AuthSMS.ServerModel;
 };
 
 //
@@ -61,12 +63,17 @@ export type ClientMsg =
     }
   | { t: "sms"; c: AuthSMS.ClientMsg };
 
-export type ServerMsg = {
-  t: "got-user-account";
-  result: Result<string, Account>;
-  sessionId: SessionId;
-  clientId: ClientId;
-};
+export type ServerMsg =
+  | {
+      t: "got-user-account";
+      result: Result<string, Account>;
+      sessionId: SessionId;
+      clientId: ClientId;
+    }
+  | {
+      t: "sms";
+      c: AuthSMS.ServerMsg;
+    };
 
 export type ToServer =
   | { t: "logout" }
@@ -74,12 +81,20 @@ export type ToServer =
   | {
       t: "got-social-login-result";
       result: RemoteResult<string, EmailAddress>;
+    }
+  | {
+      t: "sms";
+      c: AuthSMS.ToServer;
     };
 
 export type ToClient =
   | { t: "client-authenticated"; userId: UserId; loggedIn?: boolean }
   | { t: "client-unauthenticated" }
-  | { t: "get-social-login-result" };
+  | { t: "get-social-login-result" }
+  | {
+      t: "sms";
+      c: AuthSMS.ToClient;
+    };
 
 export type Req =
   | {

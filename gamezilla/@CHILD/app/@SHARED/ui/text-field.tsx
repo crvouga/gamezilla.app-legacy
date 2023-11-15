@@ -5,6 +5,7 @@ export const TextField = ({
   label,
   id,
   value,
+
   onChange,
   onClear,
   type,
@@ -27,6 +28,7 @@ export const TextField = ({
   min?: number;
   max?: number;
   step?: number;
+
   onClear?: () => void;
   onChange: (value: string) => void;
 }) => {

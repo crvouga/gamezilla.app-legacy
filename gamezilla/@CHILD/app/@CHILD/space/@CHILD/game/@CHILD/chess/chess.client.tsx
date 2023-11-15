@@ -60,7 +60,7 @@ export const update: Client["update"] = ({ msg, model, ctx }) => {
       return {
         model: {
           ...model,
-          requests: { ...model.requests, [msg.t]: RemoteResult.Loading },
+          requests: { ...model.requests, [msg.t]: RemoteResult.loading },
         },
         cmd: [sendToServer(msg)],
       };

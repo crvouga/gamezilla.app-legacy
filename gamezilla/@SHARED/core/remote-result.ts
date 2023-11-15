@@ -6,10 +6,10 @@ export type RemoteResult<TError, TValue> =
   | Result<TError, TValue>;
 
 export type NotAsked = { t: "not-asked" };
-export const NotAsked: NotAsked = { t: "not-asked" };
+export const notAsked: NotAsked = { t: "not-asked" };
 
 export type Loading = { t: "loading" };
-export const Loading: Loading = { t: "loading" };
+export const loading: Loading = { t: "loading" };
 
 export const map = <E, A, B>(
   result: RemoteResult<E, A>,
@@ -28,8 +28,8 @@ export const map = <E, A, B>(
 
 export const RemoteResult = {
   map,
-  Loading,
-  NotAsked,
-  Err: err,
-  Ok: ok,
+  loading,
+  notAsked,
+  err,
+  ok,
 };
