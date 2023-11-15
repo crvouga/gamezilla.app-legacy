@@ -38,7 +38,8 @@ COPY --from=build /app /app
 COPY --from=dbmate /usr/local/bin/dbmate /usr/local/bin/dbmate
 
 # Define the volume for SQLite data
-VOLUME /data
+# defined in deployment platform
+# VOLUME /data
 
 # Expose the application port
 EXPOSE 5000
