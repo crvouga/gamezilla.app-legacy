@@ -17,7 +17,6 @@
     "db:down": "dbmate -e DATABASE_URL down"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.38.4",
     "chess.js": "^1.0.0-beta.6",
     "preact": "^10.19.1"
   },
