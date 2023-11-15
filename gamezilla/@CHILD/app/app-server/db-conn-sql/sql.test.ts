@@ -19,6 +19,12 @@ test("sql - handles SQL injection attempt", () => {
   ).toBe("SELECT * FROM users WHERE id = '1'' OR ''1'' = ''1'");
 });
 
+test("sql - prevents SQL injection", () => {
+  expect(
+    toSql("SELECT * FROM users WHERE id = :id", { id: "DROP DATABASE;" })
+  ).toBe("SELECT * FROM users WHERE id = 'DROP DATABASE;'");
+});
+
 test("sql - handles multiple parameters", () => {
   expect(
     toSql("SELECT * FROM users WHERE id = :id AND name = :name", {
@@ -45,6 +51,18 @@ test("sql - handles missing parameter", () => {
 });
 
 test("sql - handles non-string parameter values", () => {
+  expect(toSql("SELECT * FROM users WHERE age > :age", { age: 30 })).toBe(
+    "SELECT * FROM users WHERE age > 30"
+  );
+});
+
+test("sql - handles non-string parameter names", () => {
+  expect(toSql("SELECT * FROM users WHERE age > :age", { age: 30 })).toBe(
+    "SELECT * FROM users WHERE age > 30"
+  );
+});
+
+test("sql - handles parameter names with underscores", () => {
   expect(toSql("SELECT * FROM users WHERE age > :age", { age: 30 })).toBe(
     "SELECT * FROM users WHERE age > 30"
   );

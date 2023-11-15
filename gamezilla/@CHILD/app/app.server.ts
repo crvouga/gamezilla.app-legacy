@@ -538,8 +538,6 @@ export const initCtx = async (): Promise<ServerCtx> => {
 
   console.log("[server] db url:", DATABASE_URL);
 
-  console.log("[server] db connecting...");
-
   const created = await createDbConn({ databaseUrl: DATABASE_URL });
 
   if (created.t === "err") {
@@ -548,8 +546,6 @@ export const initCtx = async (): Promise<ServerCtx> => {
 
   const dbConn = created.value;
 
-  console.log("[server] db connected.");
-
   const sms = createSMS("twilio");
 
   return {
@@ -557,28 +553,4 @@ export const initCtx = async (): Promise<ServerCtx> => {
     dbConn,
     now: Posix.now(),
   };
-};
-
-type Env = "prod" | "local";
-
-const getEnv = (): Env => {
-  const nodeEnv = process.env["NODE_ENV"];
-
-  if (nodeEnv?.includes("prod")) {
-    return "prod";
-  }
-
-  return "local";
-};
-
-const getDatabaseUrl = (env: Env): string | null => {
-  switch (env) {
-    case "prod": {
-      return process.env["DATABASE_URL_PROD"] ?? null;
-    }
-
-    case "local": {
-      return process.env["DATABASE_URL_LOCAL"] ?? null;
-    }
-  }
 };
