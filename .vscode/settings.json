@@ -25,5 +25,14 @@
     "tetromino",
     "Unflip",
     "unpartition"
-  ]
+  ],
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "driver": "SQLite",
+      "database": "${workspaceFolder:gamezilla.app}/data/gamezilla.db",
+      "name": "gamezilla"
+    }
+  ],
+  "sqltools.useNodeRuntime": true
 }
