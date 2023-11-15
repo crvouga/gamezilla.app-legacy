@@ -1,7 +1,7 @@
 import { IconXMark } from "./icon";
 import { VDom, cn } from "./utils";
 
-export const MyTextField = ({
+export const TextField = ({
   label,
   id,
   value,

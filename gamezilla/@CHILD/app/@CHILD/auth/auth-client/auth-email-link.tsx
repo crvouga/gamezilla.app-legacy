@@ -4,7 +4,7 @@ import {
   AlertError,
   AlertSuccess,
   Button,
-  MyTextField,
+  TextField,
   TopBar,
   TopBarBackButton,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
@@ -154,7 +154,7 @@ export const View = ({
           event.preventDefault();
           dispatch({ t: "clicked-send-login-link" });
         }}>
-        <MyTextField
+        <TextField
           autoFocus
           id="email-address"
           type="email"

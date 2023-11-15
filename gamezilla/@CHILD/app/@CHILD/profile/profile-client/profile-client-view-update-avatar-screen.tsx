@@ -3,7 +3,7 @@ import { ProfileAvatar } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   Button,
   MyAvatar,
-  MyTextField,
+  TextField,
   TopBar,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { ClientModel, ClientMsg } from "../profile.core";
@@ -46,7 +46,7 @@ export const ViewUpdateAvatarScreen = ({
         />
 
         <div className="flex w-full flex-col gap-4">
-          <MyTextField
+          <TextField
             label="Seed"
             value={model.draft?.avatarSeed ?? ""}
             onChange={(val) =>

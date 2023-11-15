@@ -13,7 +13,7 @@ import {
 import {
   Button,
   IconPhone,
-  MyTextField,
+  TextField,
   TopBar,
   TopBarBackButton,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
@@ -202,7 +202,7 @@ export const View = ({
           e.preventDefault();
           dispatch({ t: "clicked-send-code" });
         }}>
-        <MyTextField
+        <TextField
           id="phone-number"
           startIcon={
             <IconPhone className="mr-2 h-6 w-6 text-inherit opacity-80" />

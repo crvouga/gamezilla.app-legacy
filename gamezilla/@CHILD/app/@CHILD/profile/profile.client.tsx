@@ -14,7 +14,7 @@ import {
   IconChevronRight,
   LoadingScreen,
   MyAvatar,
-  MyTextField,
+  TextField,
   TopBar,
   TopBarBackButton,
   VDom,
@@ -434,7 +434,7 @@ const ViewUpdateUsernameScreen = ({
       />
 
       <div className="w-full p-4">
-        <MyTextField
+        <TextField
           label="Username"
           value={inputVal}
           id={"username"}

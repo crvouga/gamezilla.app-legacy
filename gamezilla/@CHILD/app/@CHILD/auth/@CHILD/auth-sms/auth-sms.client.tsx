@@ -5,7 +5,7 @@ import {
 import {
   AlertError,
   Button,
-  MyTextField,
+  TextField,
   Select,
   TopBar,
   TopBarBackButton,
@@ -96,10 +96,11 @@ export const View = ({
               }
             />
 
-            <MyTextField
+            <TextField
               value={model.phoneNumberInput}
               id="phoneNumberInput"
               label="Phone Number"
+              type="tel"
               onChange={(value) => {
                 dispatch({ t: "inputted-phone-number", phoneNumber: value });
               }}
@@ -135,7 +136,7 @@ export const View = ({
           />
 
           <div className="w-full">
-            <MyTextField
+            <TextField
               value={model.phoneNumberInput}
               id="phoneNumberInput"
               label="Phone Number"

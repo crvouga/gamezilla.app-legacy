@@ -15,7 +15,7 @@ import {
   AlertError,
   AlertSuccess,
   Button,
-  MyTextField,
+  TextField,
   TopBar,
   TopBarBackButton,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
@@ -165,7 +165,7 @@ export const View = ({
           </p>
         </AlertSuccess>
 
-        <MyTextField
+        <TextField
           id={codeInputId}
           autoFocus
           type="tel"
