@@ -36,8 +36,7 @@ program.subscribe((model, ctx) => {
 
 const SERVER_URL =
   process.env.NODE_ENV === "production"
-    ? // ? "https://server.gamezilla.app/"
-      "https://plankton-app-ndkwy.ondigitalocean.app/"
+    ? "https://server.gamezilla.app/"
     : false
     ? "https://gamezilla-server.ngrok.io/"
     : `http://localhost:5000/`;
