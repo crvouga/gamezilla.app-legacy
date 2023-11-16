@@ -26,13 +26,14 @@ export type Route =
     };
 
 export type ClientModel = {
+  loggingIn: boolean;
   //
   phoneNumberInput: string;
   phoneNumberError: string | null;
   countryCodeInput: Iso3166Alpha2Code;
   //
   codeInput: string;
-  code: string | null;
+  codeError: string | null;
   //
   sendCode: RemoteResult<string, null>;
   verifyCode: RemoteResult<string, null>;

@@ -9,6 +9,8 @@ import {
   RouteAuth,
   replaceRoute,
   sendToServer,
+  playSound,
+  APP_SOUND,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   Button,
@@ -162,7 +164,7 @@ export const updateFromServer = ({
     case "client-authenticated": {
       return chain(
         { model },
-        (model) => {
+        (model): ReturnType<typeof updateFromServer> => {
           return {
             model: {
               ...model,
@@ -173,6 +175,15 @@ export const updateFromServer = ({
             },
             evt: [msg],
           };
+        },
+        (model) => {
+          if (msg.loggedIn) {
+            return {
+              model,
+              cmd: [playSound(APP_SOUND.navForward)],
+            };
+          }
+          return { model };
         },
         (model) => {
           if (ctx.currentRoute.t === "auth") {
@@ -211,11 +222,14 @@ export const updateFromEvent = ({
   eff?: Eff<ClientMsg>;
   cmd?: ClientCmd<ToServer>[];
 } => {
-  switch (msg.t) {
-    default: {
-      return { model };
-    }
-  }
+  const updated = AuthClientSMS.updateFromEvent({
+    model: model.sms,
+    msg: msg,
+  });
+  return {
+    model: { ...model, sms: updated.model },
+    // cmd: ClientCmd.tag("sms", updated.cmd),
+  };
 };
 
 //

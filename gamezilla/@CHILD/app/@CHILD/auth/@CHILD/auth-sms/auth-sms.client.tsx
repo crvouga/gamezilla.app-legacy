@@ -2,6 +2,7 @@ import {
   APP_SOUND,
   AnonymousViewCtx,
   ClientCmd,
+  ClientEvt,
   RouteAuth,
   focusView,
   playSound,
@@ -25,13 +26,16 @@ import {
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./auth-sms.core";
 
 export const init: ClientModel = {
-  code: "",
   codeInput: "",
+  codeError: null,
+  //
   phoneNumberInput: "",
-  phoneNumberError: null,
-  sendCode: { t: "not-asked" },
-  verifyCode: { t: "not-asked" },
   countryCodeInput: Iso3166Alpha2Code.of("US"),
+  phoneNumberError: null,
+  //
+  loggingIn: false,
+  sendCode: RemoteResult.notAsked,
+  verifyCode: RemoteResult.notAsked,
 };
 
 export const update = ({
@@ -95,6 +99,7 @@ export const update = ({
         model: {
           ...model,
           codeInput: msg.code,
+          codeError: null,
         },
       };
     }
@@ -104,13 +109,11 @@ export const update = ({
         return {
           model: {
             ...model,
-            verifyCode: {
-              t: "err",
-              error: "Code cannot be empty",
-            },
+            codeError: "Please enter the code",
           },
         };
       }
+
       return {
         model: {
           ...model,
@@ -173,8 +176,38 @@ export const updateFromServer = ({
         return { model: { ...model, verifyCode: msg.result } };
       }
       return {
-        model: { ...model, verifyCode: msg.result },
-        cmd: [playSound(APP_SOUND.navForward)],
+        model: {
+          ...model,
+          verifyCode: msg.result,
+          loggingIn: true,
+        },
+      };
+    }
+  }
+};
+
+export const updateFromEvent = ({
+  model,
+  msg,
+}: {
+  model: ClientModel;
+  msg: ClientEvt;
+}): {
+  model: ClientModel;
+} => {
+  switch (msg.t) {
+    case "client-authenticated": {
+      return {
+        model: {
+          ...model,
+          loggingIn: false,
+        },
+      };
+    }
+
+    default: {
+      return {
+        model,
       };
     }
   }
@@ -266,6 +299,10 @@ export const View = ({
               value={model.codeInput}
               id="codeInput"
               label="Code"
+              error={typeof model.codeError === "string"}
+              helperText={
+                typeof model.codeError === "string" ? model.codeError : null
+              }
               autoFocus
               type="tel"
               onChange={(value) => {
@@ -276,7 +313,7 @@ export const View = ({
               className="w-full"
               text="Verify Code"
               color="primary"
-              loading={model.verifyCode.t === "loading"}
+              loading={model.verifyCode.t === "loading" || model.loggingIn}
               onClick={() => {
                 dispatch({
                   t: "clicked-verify-code",
