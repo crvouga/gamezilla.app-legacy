@@ -33,6 +33,13 @@ export const update = ({
 } => {
   switch (msg.t) {
     case "verified-code": {
+      if (msg.result.t === "err") {
+        return {
+          model,
+          cmd: [sendToClient([msg.clientId], msg)],
+        };
+      }
+
       return {
         model,
         cmd: [sendToClient([msg.clientId], msg)],
