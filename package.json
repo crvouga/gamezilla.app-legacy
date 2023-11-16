@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "server-prod": "bun db:up && bun server",
+    "server-prod": "bun db-prod:up && bun server",
     "db-prob:up": "dbmate -e DATABASE_URL_PROD up",
     "server": "bun gamezilla/gamezilla.server.ts",
     "db:up": "dbmate -e DATABASE_URL up",
