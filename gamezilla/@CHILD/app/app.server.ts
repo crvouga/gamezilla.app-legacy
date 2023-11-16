@@ -530,15 +530,18 @@ export const wire = Sub.create<ServerWireMsg>();
 export const initCtx = async (): Promise<ServerCtx> => {
   console.log("[server] init ctx");
 
-  const DATABASE_URL = process.env["DATABASE_URL"];
+  const databaseUrl =
+    process.env.NODE_ENV === "production"
+      ? process.env["DATABASE_URL_PROD"]
+      : process.env["DATABASE_URL"];
 
-  if (!DATABASE_URL) {
-    throw new Error("DATABASE_URL not set");
+  if (!databaseUrl) {
+    throw new Error("databaseUrl not found in env vars");
   }
 
-  console.log("[server] db url:", DATABASE_URL);
+  console.log("[server] db url:", databaseUrl);
 
-  const created = await createDbConn({ databaseUrl: DATABASE_URL });
+  const created = await createDbConn({ databaseUrl });
 
   if (created.t === "err") {
     throw new Error(`Failed to connect to db. Error: ${created.error}`);

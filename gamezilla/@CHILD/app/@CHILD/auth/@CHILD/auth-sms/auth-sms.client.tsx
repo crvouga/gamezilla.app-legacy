@@ -164,7 +164,7 @@ export const updateFromServer = ({
       }
       return {
         model: { ...model, verifyCode: msg.result },
-        cmd: [playSound(APP_SOUND.celebration)],
+        cmd: [playSound(APP_SOUND.navForward)],
       };
     }
   }

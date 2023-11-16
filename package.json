@@ -4,20 +4,21 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "server:prod": "bun db:up && bun server",
+    "server-prod": "bun db:up && bun server",
+    "db-prob:up": "dbmate -e DATABASE_URL_PROD up",
     "server": "bun gamezilla/gamezilla.server.ts",
+    "db:up": "dbmate -e DATABASE_URL up",
     "client:build": "vite build",
     "client:preview": "vite preview",
     "client": "vite",
     "ngrok": "ngrok start --all",
     "tc": "bun x tsc --noEmit --watch",
     "viz-bundle": "bun x vite-bundle-visualizer",
-    "cir-deps": "bun x dpdm --progress --no-warning --no-tree ./gamezilla/gamezilla.client.tsx",
-    "db:up": "dbmate -e DATABASE_URL up",
-    "db:down": "dbmate -e DATABASE_URL down"
+    "cir-deps": "bun x dpdm --progress --no-warning --no-tree ./gamezilla/gamezilla.client.tsx"
   },
   "dependencies": {
     "chess.js": "^1.0.0-beta.6",
+    "postgres": "^3.4.3",
     "preact": "^10.19.1"
   },
   "devDependencies": {

@@ -45,4 +45,4 @@ COPY --from=dbmate /usr/local/bin/dbmate /usr/local/bin/dbmate
 EXPOSE 5000
 
 # Command to run the server
-CMD [ "bun", "run", "server:prod" ]
+CMD [ "bun", "run", "server-prod" ]
