@@ -85,19 +85,19 @@ export const attachClientTransport = <ToServer, ToClient>({
 
   let closeTimeout: ReturnType<typeof setTimeout> | null = null;
   document.addEventListener("visibilitychange", () => {
-    if (closeTimeout) {
-      clearTimeout(closeTimeout);
-    }
-
     if (document.hidden) {
       isDocumentHidden = true;
-      closeTimeout = setTimeout(() => {
-        ws.close();
-      }, 5000);
-      return;
+      if (ws) {
+        ws.close(); // Close the WebSocket connection
+        isConnected = false;
+      }
+      if (closeTimeout) {
+        clearTimeout(closeTimeout);
+      }
+    } else {
+      isDocumentHidden = false;
+      connect(); // Re-establish the WebSocket connection when the page is shown again
     }
-    isDocumentHidden = false;
-    connect();
   });
 
   const send = (msg: ClientToServerMsg<ToServer>) => {
