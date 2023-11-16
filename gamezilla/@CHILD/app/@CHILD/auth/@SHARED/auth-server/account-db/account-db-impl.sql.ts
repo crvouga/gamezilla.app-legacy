@@ -76,6 +76,19 @@ const rowToAccount = (row: AccountRow): Result<string, Account> => {
   return ok(account);
 };
 
+const accountToRow = (account: Account): AccountRow => {
+  return {
+    user_id: account.userId,
+    email_address: account.emailAddress,
+    phone_number: account.phoneNumber
+      ? PhoneNumber.toString(account.phoneNumber)
+      : null,
+    phone_number_iso_3166_alpha_2: account.phoneNumber
+      ? PhoneNumber.toCountry(account.phoneNumber)
+      : null,
+  };
+};
+
 export const createAccountDb = ({
   dbConn,
 }: {
@@ -85,7 +98,15 @@ export const createAccountDb = ({
     async findOneByEmail(input) {
       const queried = await dbConn.query(
         P.is(toAccountRow),
-        `SELECT user_id, email_address, phone_number FROM user_account WHERE email_address = :email_address`,
+        `SELECT
+          user_id,
+          email_address,
+          phone_number,
+          phone_number_iso_3166_alpha_2
+        FROM
+          user_account
+        WHERE
+          email_address = :email_address`,
         {
           email_address: input.emailAddress,
         }
@@ -129,13 +150,31 @@ export const createAccountDb = ({
       return account;
     },
     async insertOne(input) {
+      const rowNew: AccountRow = {
+        user_id: input.account.userId,
+        email_address: input.account.emailAddress,
+        phone_number: input.account.phoneNumber
+          ? PhoneNumber.toString(input.account.phoneNumber)
+          : null,
+        phone_number_iso_3166_alpha_2: input.account.phoneNumber
+          ? PhoneNumber.toCountry(input.account.phoneNumber)
+          : null,
+      };
       const queried = await dbConn.query(
         P.is(toAccountRow),
-        `INSERT INTO user_account (user_id, email_address) VALUES (:user_id, :email_address)`,
-        {
-          email_address: input.account.emailAddress,
-          user_id: input.account.userId,
-        }
+        `INSERT INTO user_account (
+            user_id,
+            email_address,
+            phone_number,
+            phone_number_iso_3166_alpha_2
+          )
+          VALUES (
+            :user_id,
+            :email_address,
+            :phone_number,
+            :phone_number_iso_3166_alpha_2
+          )`,
+        rowNew
       );
 
       if (queried.t === "err") {
