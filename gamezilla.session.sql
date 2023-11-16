@@ -13,4 +13,5 @@ INSERT INTO user_account (
 
 DELETE FROM user_account WHERE email_address = ':email_address'
 
-SELECT * FROM user_account
+
+SELECT * FROM user_profile
