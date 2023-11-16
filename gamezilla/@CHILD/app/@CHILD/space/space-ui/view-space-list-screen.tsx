@@ -46,60 +46,59 @@ export const ViewSpaceListScreen = ({
   );
 
   return (
-    <div className="flex h-full max-h-full w-full flex-1 flex-col gap-4 overflow-hidden">
+    <div className="flex w-full flex-1 flex-col overflow-hidden">
       <TopBar title="Spaces" />
 
-      <div className="relative flex h-full w-full flex-1 flex-col">
+      <div className="relative flex w-full flex-1 flex-col gap-5 overflow-hidden overflow-y-scroll p-5 pb-8">
         {spaces.length === 0 && (
           <div className="absolute inset-0 flex h-full w-full flex-1 flex-col items-center justify-center gap-2 opacity-60">
             <IconGamepad className="h-14 w-14" />
             <p className="text-lg text-secondary">No active spaces</p>
           </div>
         )}
-        <div className="flex w-full flex-1 flex-col gap-4 overflow-x-hidden overflow-y-scroll px-5">
-          {spaces.flatMap((state) => {
-            const host = ctx.profiles[state.hostId];
-            const users = Object.values(state.users).flatMap((userId) => {
-              const profile = ctx.profiles[userId];
 
-              if (!profile) {
-                return [];
-              }
+        {spaces.flatMap((state) => {
+          const host = ctx.profiles[state.hostId];
+          const users = Object.values(state.users).flatMap((userId) => {
+            const profile = ctx.profiles[userId];
 
-              return [
-                {
-                  username: profile.username,
-                  avatarUrl: profile.avatarUrl,
-                },
-              ];
-            });
+            if (!profile) {
+              return [];
+            }
 
-            const gameName = state.game?.t ?? null;
+            return [
+              {
+                username: profile.username,
+                avatarUrl: profile.avatarUrl,
+              },
+            ];
+          });
 
-            return (
-              <ViewSpaceCard
-                host={{
-                  username: host?.username ?? "...",
-                  avatarUrl: host?.avatarUrl,
-                }}
-                key={state.spaceId}
-                isCurrentSpace={user.spaceId === state.spaceId}
-                users={users}
-                gameName={gameName}
-                onClick={() => {
-                  ctx.push({
-                    t: "space",
-                    c: { t: "space", spaceId: state.spaceId },
-                  });
-                }}
-              />
-            );
-          })}
-        </div>
+          const gameName = state.game?.t ?? null;
+
+          return (
+            <ViewSpaceCard
+              host={{
+                username: host?.username ?? "...",
+                avatarUrl: host?.avatarUrl,
+              }}
+              key={state.spaceId}
+              isCurrentSpace={user.spaceId === state.spaceId}
+              users={users}
+              gameName={gameName}
+              onClick={() => {
+                ctx.push({
+                  t: "space",
+                  c: { t: "space", spaceId: state.spaceId },
+                });
+              }}
+            />
+          );
+        })}
       </div>
 
       {!user.spaceId && (
-        <div className="w-full p-4">
+        <div className="w-full border-t border-neutral-700 p-4">
           <Button
             size="lg"
             className="w-full"
