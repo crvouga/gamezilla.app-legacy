@@ -1,7 +1,6 @@
 CREATE TABLE IF NOT EXISTS "schema_migrations" (version varchar(128) primary key);
 CREATE TABLE user_profile (
   user_id varchar(255) NOT NULL,
-  avatar_url varchar(255) DEFAULT NULL,
   username varchar(255) DEFAULT NULL, avatar_seed TEXT, avatar_style TEXT,
   PRIMARY KEY (user_id),
   UNIQUE (username)
@@ -60,4 +59,5 @@ INSERT INTO "schema_migrations" (version) VALUES
   ('20231113081720'),
   ('20231115190935'),
   ('20231116190003'),
-  ('20231116191553');
+  ('20231116191553'),
+  ('20231116192910');

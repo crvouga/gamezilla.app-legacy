@@ -69,9 +69,6 @@ const toSeed = (seedString: string) => {
     .replace(".", "") as ProfileAvatarSeed;
 };
 
-const BASE_URL = `https://avatars.dicebear.com/api`;
-const FILE_TYPE = "png";
-
 const toUrl = ({
   seed,
   style,
@@ -79,11 +76,14 @@ const toUrl = ({
   style: ProfileAvatarStyle;
   seed: string;
 }) => {
-  const url = new URL(`${BASE_URL}/${style}/${seed}.${FILE_TYPE}`);
+  const BASE_URL = `https://api.dicebear.com/7.x`;
+  const FILE_TYPE = "svg";
+  const url = new URL(`${BASE_URL}/${style}/${FILE_TYPE}`);
+  url.searchParams.append("seed", seed);
 
-  // url.searchParams.append("backgroundColor", "white")
+  const str = url.toString();
 
-  return url.toString();
+  return str;
 };
 
 const parseUrl = (

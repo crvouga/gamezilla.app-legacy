@@ -1,18 +1,16 @@
-import { DbConnSql } from "gamezilla/@CHILD/app/@SHARED/server";
-import { ProfileDb } from "./profile-db";
-import { err, ok, Result } from "gamezilla/@SHARED/core";
 import {
-  Profile,
   ProfileAvatar,
   UserId,
   Username,
 } from "gamezilla/@CHILD/app/@SHARED/data";
+import { DbConnSql } from "gamezilla/@CHILD/app/@SHARED/server";
+import { err, ok, Result } from "gamezilla/@SHARED/core";
 import { Parsing as P } from "gamezilla/@SHARED/parsing";
 import { ProfileCore } from "../profile.core";
+import { ProfileDb } from "./profile-db";
 
 type ProfileRow = {
   user_id: string;
-  avatar_url: string;
   username: string;
   avatar_seed: string | null;
   avatar_style: string | null;
@@ -22,7 +20,6 @@ const toProfileRow = (x: unknown): ProfileRow | null => {
   if (
     P.obj(x) &&
     P.has(x, "user_id", P.str) &&
-    P.has(x, "avatar_url", P.str) &&
     P.has(x, "username", P.str) &&
     P.has(x, "avatar_seed", P.or(P.nullish, P.str)) &&
     P.has(x, "avatar_style", P.or(P.nullish, P.str))
@@ -47,15 +44,20 @@ const fromProfileRow = (row: ProfileRow): Result<string, ProfileCore> => {
 
   const avatarSeed = row.avatar_seed
     ? ProfileAvatar.toSeed(row.avatar_seed)
-    : null;
+    : ProfileAvatar.toSeed(row.username);
 
   const avatarStyle = row.avatar_style
     ? ProfileAvatar.toStyle(row.avatar_style)
-    : null;
+    : ProfileAvatar.STYLES["big-ears-neutral"];
+
+  const avatarUrl = ProfileAvatar.toUrl({
+    seed: avatarSeed,
+    style: avatarStyle,
+  });
 
   return ok({
     userId: row.user_id,
-    avatarUrl: row.avatar_url,
+    avatarUrl: avatarUrl,
     username: row.username,
     avatarSeed: avatarSeed,
     avatarStyle: avatarStyle,
@@ -73,7 +75,6 @@ export const createProfileDb = ({
         SELECT
           user_id,
           username,
-          avatar_url,
           avatar_seed,
           avatar_style
         FROM
@@ -99,17 +100,30 @@ export const createProfileDb = ({
       return ok(parsed.value);
     },
     insertOne: async (profile) => {
+      const rowNew: ProfileRow = {
+        user_id: profile.userId,
+        username: profile.username,
+        avatar_seed: profile.avatarSeed,
+        avatar_style: profile.avatarStyle,
+      };
+
       const inserted = await dbConn.query(
         P.is(toProfileRow),
         `
-        INSERT INTO user_profile (user_id, username, avatar_url)
-        VALUES (:user_id, :username, :avatar_url)
+        INSERT INTO user_profile (
+          user_id,
+          username,
+          avatar_seed,
+          avatar_style
+        )
+        VALUES (
+          :user_id,
+          :username,
+          :avatar_seed,
+          :avatar_style
+        )
         `,
-        {
-          user_id: profile.userId,
-          username: profile.username,
-          avatar_url: profile.avatarUrl,
-        }
+        rowNew
       );
 
       if (inserted.t === "err") {
